@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.llmlog/
+.mimosa/
+.zcode/
+_ref/
+*.log
+*.tsbuildinfo
+.env
+.env.*
+!.env.example

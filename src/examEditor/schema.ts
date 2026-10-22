@@ -1,0 +1,674 @@
+/**
+ * Schema TipTap cho tài liệu đề thi.
+ *
+ * Mỗi node cấp cao nhất tương ứng 1 `ExamBlock` — nhờ vậy:
+ *   - vòng lặp AI sửa doc không cần biết cấu trúc đề, chỉ thao tác node;
+ *   - phân trang A4 đo theo khối top-level (giống GenOffice `pagination-slices`);
+ *   - chuyển đổi hai chiều với mô hình `ExamBlock` cũ vẫn giữ được.
+ *
+ * Node đặc biệt: `answerKey` và `rubric` là bảng (render bằng node table chuẩn
+ * của TipTap) nên mọi ô đều sửa trực tiếp được trong editor.
+ */
+import { Mark, Node, mergeAttributes } from '@tiptap/core'
+
+/** Thuộc tính chung: id để AI/undo tham chiếu ổn định. */
+export interface ExamNodeAttrs {
+  id?: string
+  [key: string]: unknown
+}
+
+// id node nội bộ của editor (tham chiếu undo/AI) — không dùng cho bảo mật
+const uid = () => Math.random().toString(36).slice(2, 10)
+
+/* ------------------------------------------------------------------ *
+ * Marks bổ sung (StarterKit chỉ có bold/italic/strike; underline,
+ * highlight, textStyle đến từ extension riêng)
+ * ------------------------------------------------------------------ */
+
+export const UnderlineMark = Mark.create({
+  name: 'underline',
+  parseHTML() {
+    return [{ tag: 'u' }, { style: 'text-decoration', consuming: false }]
+  },
+  renderHTML({ HTMLAttributes }) {
+    return ['u', mergeAttributes(HTMLAttributes), 0]
+  },
+  addCommands() {
+    return {
+      toggleUnderline:
+        () =>
+        ({ commands }) => commands.toggleMark(this.name),
+      unsetUnderline:
+        () =>
+        ({ commands }) => commands.unsetMark(this.name),
+    }
+  },
+})
+
+declare module '@tiptap/core' {
+  interface Commands<ReturnType> {
+    underline: {
+      setUnderline: () => ReturnType
+      toggleUnderline: () => ReturnType
+      unsetUnderline: () => ReturnType
+    }
+  }
+}
+
+export const SubscriptMark = Mark.create({
+  name: 'sub',
+  parseHTML() {
+    return [{ tag: 'sub' }]
+  },
+  renderHTML({ HTMLAttributes }) {
+    return ['sub', mergeAttributes(HTMLAttributes), 0]
+  },
+})
+
+export const SuperscriptMark = Mark.create({
+  name: 'super',
+  parseHTML() {
+    return [{ tag: 'sup' }]
+  },
+  renderHTML({ HTMLAttributes }) {
+    return ['sup', mergeAttributes(HTMLAttributes), 0]
+  },
+})
+
+/* ------------------------------------------------------------------ *
+ * Format attrs chung cho mọi node text-bearing (tương ứng pPr của Word)
+ * ------------------------------------------------------------------ */
+
+function formatAttrs() {
+  return {
+    align: { default: null },
+    lineHeight: { default: null },
+    indentLeft: { default: null },
+    indentFirstLine: { default: null },
+    spaceBefore: { default: null },
+    spaceAfter: { default: null },
+    borders: { default: null },
+    shading: { default: null },
+  }
+}
+
+function formatStyle(attrs: Record<string, unknown>): Record<string, string> {
+  const s: Record<string, string> = {}
+  const align = attrs.textAlign ?? attrs.align
+  if (align) s.textAlign = String(align)
+  if (attrs.lineHeight != null) s.lineHeight = String(attrs.lineHeight)
+  if (attrs.indentLeft != null) s.marginLeft = `${Number(attrs.indentLeft)}px`
+  if (attrs.indentFirstLine != null) s.textIndent = `${Number(attrs.indentFirstLine)}px`
+  if (attrs.spaceBefore != null) s.marginTop = `${Number(attrs.spaceBefore)}px`
+  if (attrs.spaceAfter != null) s.marginBottom = `${Number(attrs.spaceAfter)}px`
+  if (attrs.shading) s.backgroundColor = String(attrs.shading)
+  const b = attrs.borders as string | null | undefined
+  if (b && b !== 'none') {
+    const w = '1px solid #000'
+    if (b === 'box') s.border = w
+    else if (b === 'top') s.borderTop = w
+    else if (b === 'bottom') s.borderBottom = w
+    else if (b === 'left') s.borderLeft = w
+    else if (b === 'right') s.borderRight = w
+  }
+  return s
+}
+
+/** Node chỉ chứa văn bản trong một đoạn (title, heading, paragraph…). */
+function textBlock(name: string, group: string, extra?: Record<string, unknown>) {
+  return Node.create({
+    name,
+    group,
+    content: 'inline*',
+    defining: true,
+    addAttributes() {
+      return {
+        id: { default: null },
+        ...formatAttrs(),
+        ...(extra ?? {}),
+      }
+    },
+    parseHTML() {
+      return [{ tag: `div[data-exam-node="${name}"]` }]
+    },
+    renderHTML({ HTMLAttributes }) {
+      const { id, ...rest } = HTMLAttributes as Record<string, unknown>
+      return [
+        'div',
+        mergeAttributes(
+          { 'data-exam-node': name, ...(id ? { 'data-id': id } : {}) },
+          { style: formatStyle(rest) },
+        ),
+        0,
+      ]
+    },
+  })
+}
+
+/* ------------------------------------------------------------------ *
+ * Node cụ thể
+ * ------------------------------------------------------------------ */
+
+export const HeaderNode = Node.create({
+  name: 'examHeader',
+  group: 'block',
+  content: 'inline*',
+  defining: true,
+  addAttributes() {
+    return { id: { default: null }, side: { default: 'left' }, ...formatAttrs() }
+  },
+  parseHTML() {
+    return [{ tag: 'div[data-exam-node="header"]' }]
+  },
+  renderHTML({ HTMLAttributes }) {
+    const { id, side, ...rest } = HTMLAttributes as Record<string, unknown>
+    return [
+      'div',
+      mergeAttributes(
+        {
+          'data-exam-node': 'header',
+          'data-side': (side as string) ?? 'left',
+          ...(id ? { 'data-id': id } : {}),
+        },
+        { style: formatStyle(rest) },
+      ),
+      0,
+    ]
+  },
+})
+
+/** Tiêu đề đề — h1 căn giữa, in hoa. */
+export const TitleNode = textBlock('examTitle', 'block')
+
+/** Khối thông tin (năm học, môn, thời gian) — mỗi dòng là một `examMetaRow`. */
+export const MetaNode = Node.create({
+  name: 'examMeta',
+  group: 'block',
+  content: 'examMetaRow+',
+  defining: true,
+  addAttributes() {
+    return { id: { default: null }, ...formatAttrs() }
+  },
+  parseHTML() {
+    return [{ tag: 'div[data-exam-node="meta"]' }]
+  },
+  renderHTML({ HTMLAttributes }) {
+    const { id, ...rest } = HTMLAttributes as Record<string, unknown>
+    return [
+      'div',
+      mergeAttributes(
+        { 'data-exam-node': 'meta', ...(id ? { 'data-id': id } : {}) },
+        { style: formatStyle(rest) },
+      ),
+      0,
+    ]
+  },
+})
+
+export const MetaRowNode = Node.create({
+  name: 'examMetaRow',
+  content: 'inline*',
+  defining: false,
+  addAttributes() {
+    return { label: { default: '' }, ...formatAttrs() }
+  },
+  parseHTML() {
+    return [{ tag: 'div[data-exam-node="metaRow"]' }]
+  },
+  renderHTML({ HTMLAttributes }) {
+    const { label, ...rest } = HTMLAttributes as Record<string, unknown>
+    return [
+      'div',
+      mergeAttributes({ 'data-exam-node': 'metaRow', 'data-label': label }, { style: formatStyle(rest) }),
+      0,
+    ]
+  },
+})
+
+/** Thông tin thí sinh. */
+export const StudentNode = textBlock('examStudent', 'block')
+
+/** Tiêu đề phần (PHẦN I. TRẮC NGHIỆM…). */
+export const HeadingNode = textBlock('examHeading', 'block', { level: { default: 1 } })
+
+export const ParagraphNode = textBlock('examParagraph', 'block')
+
+/** Ngắt trang cứng. */
+export const PageBreakNode = Node.create({
+  name: 'examPageBreak',
+  group: 'block',
+  atom: true,
+  selectable: true,
+  addAttributes() {
+    return { id: { default: null }, ...formatAttrs() }
+  },
+  parseHTML() {
+    return [{ tag: 'div[data-exam-node="pageBreak"]' }]
+  },
+  renderHTML({ HTMLAttributes }) {
+    const { id, ...rest } = HTMLAttributes as Record<string, unknown>
+    return [
+      'div',
+      mergeAttributes(
+        {
+          'data-exam-node': 'pageBreak',
+          class: 'exam-pagebreak',
+          ...(id ? { 'data-id': id } : {}),
+        },
+        { style: formatStyle(rest) },
+      ),
+    ]
+  },
+})
+
+/** Danh sách gạch đầu dòng. */
+export const BulletsNode = Node.create({
+  name: 'examBullets',
+  group: 'block',
+  content: 'examBullet+',
+  defining: true,
+  addAttributes() {
+    return { id: { default: null }, ...formatAttrs() }
+  },
+  parseHTML() {
+    return [{ tag: 'div[data-exam-node="bullets"]' }]
+  },
+  renderHTML({ HTMLAttributes }) {
+    const { id, ...rest } = HTMLAttributes as Record<string, unknown>
+    return [
+      'div',
+      mergeAttributes(
+        { 'data-exam-node': 'bullets', ...(id ? { 'data-id': id } : {}) },
+        { style: formatStyle(rest) },
+      ),
+      0,
+    ]
+  },
+})
+
+export const BulletNode = Node.create({
+  name: 'examBullet',
+  content: 'inline*',
+  defining: false,
+  addAttributes() {
+    return formatAttrs()
+  },
+  parseHTML() {
+    return [{ tag: 'div[data-exam-node="bullet"]' }]
+  },
+  renderHTML({ HTMLAttributes }) {
+    return [
+      'div',
+      mergeAttributes(
+        { 'data-exam-node': 'bullet' },
+        { style: formatStyle(HTMLAttributes as Record<string, unknown>) },
+      ),
+      0,
+    ]
+  },
+})
+
+/** Câu trắc nghiệm: prompt + các phương án A/B/C/D. */
+export const QuestionNode = Node.create({
+  name: 'examQuestion',
+  group: 'block',
+  content: 'examQuestionPrompt examOption*',
+  defining: true,
+  addAttributes() {
+    return { id: { default: null }, no: { default: 1 }, ...formatAttrs() }
+  },
+  parseHTML() {
+    return [{ tag: 'div[data-exam-node="question"]' }]
+  },
+  renderHTML({ HTMLAttributes }) {
+    const { id, no, ...rest } = HTMLAttributes as Record<string, unknown>
+    return [
+      'div',
+      mergeAttributes(
+        { 'data-exam-node': 'question', ...(id ? { 'data-id': id } : {}), 'data-no': no },
+        { style: formatStyle(rest) },
+      ),
+      0,
+    ]
+  },
+})
+
+export const QuestionPromptNode = Node.create({
+  name: 'examQuestionPrompt',
+  content: 'inline*',
+  defining: false,
+  addAttributes() {
+    return formatAttrs()
+  },
+  parseHTML() {
+    return [{ tag: 'div[data-exam-node="questionPrompt"]' }]
+  },
+  renderHTML({ HTMLAttributes }) {
+    return [
+      'div',
+      mergeAttributes(
+        { 'data-exam-node': 'questionPrompt' },
+        { style: formatStyle(HTMLAttributes as Record<string, unknown>) },
+      ),
+      0,
+    ]
+  },
+})
+
+/** Một phương án: `label` (A/B/C/D) + nội dung. */
+export const OptionNode = Node.create({
+  name: 'examOption',
+  content: 'inline*',
+  defining: false,
+  addAttributes() {
+    return { label: { default: 'A' }, ...formatAttrs() }
+  },
+  parseHTML() {
+    return [{ tag: 'div[data-exam-node="option"]' }]
+  },
+  renderHTML({ HTMLAttributes }) {
+    const { label, ...rest } = HTMLAttributes as Record<string, unknown>
+    return [
+      'div',
+      mergeAttributes(
+        { 'data-exam-node': 'option', 'data-label': label },
+        { style: formatStyle(rest) },
+      ),
+      0,
+    ]
+  },
+})
+
+/** Câu tự luận: prompt + các ý nhỏ (sub). */
+export const EssayNode = Node.create({
+  name: 'examEssay',
+  group: 'block',
+  content: 'examEssayPrompt examEssaySub*',
+  defining: true,
+  addAttributes() {
+    return { id: { default: null }, no: { default: 1 }, score: { default: 0 }, ...formatAttrs() }
+  },
+  parseHTML() {
+    return [{ tag: 'div[data-exam-node="essay"]' }]
+  },
+  renderHTML({ HTMLAttributes }) {
+    const { id, no, score, ...rest } = HTMLAttributes as Record<string, unknown>
+    return [
+      'div',
+      mergeAttributes(
+        {
+          'data-exam-node': 'essay',
+          ...(id ? { 'data-id': id } : {}),
+          'data-no': no,
+          'data-score': score,
+        },
+        { style: formatStyle(rest) },
+      ),
+      0,
+    ]
+  },
+})
+
+export const EssayPromptNode = Node.create({
+  name: 'examEssayPrompt',
+  content: 'inline*',
+  defining: false,
+  addAttributes() {
+    return formatAttrs()
+  },
+  parseHTML() {
+    return [{ tag: 'div[data-exam-node="essayPrompt"]' }]
+  },
+  renderHTML({ HTMLAttributes }) {
+    return [
+      'div',
+      mergeAttributes(
+        { 'data-exam-node': 'essayPrompt' },
+        { style: formatStyle(HTMLAttributes as Record<string, unknown>) },
+      ),
+      0,
+    ]
+  },
+})
+
+export const EssaySubNode = Node.create({
+  name: 'examEssaySub',
+  content: 'inline*',
+  defining: false,
+  addAttributes() {
+    return formatAttrs()
+  },
+  parseHTML() {
+    return [{ tag: 'div[data-exam-node="essaySub"]' }]
+  },
+  renderHTML({ HTMLAttributes }) {
+    return [
+      'div',
+      mergeAttributes(
+        { 'data-exam-node': 'essaySub' },
+        { style: formatStyle(HTMLAttributes as Record<string, unknown>) },
+      ),
+      0,
+    ]
+  },
+})
+
+/** Đường kẻ ngang. */
+export const DividerNode = Node.create({
+  name: 'examDivider',
+  group: 'block',
+  atom: true,
+  selectable: true,
+  addAttributes() {
+    return { id: { default: null } }
+  },
+  parseHTML() {
+    return [{ tag: 'hr[data-exam-node="divider"]' }]
+  },
+  renderHTML({ HTMLAttributes }) {
+    return ['hr', mergeAttributes(HTMLAttributes, { 'data-exam-node': 'divider' })]
+  },
+})
+
+/* ------------------------------------------------------------------ *
+ * Bảng đáp án / thang điểm
+ * ------------------------------------------------------------------ *
+ * Dùng node table chuẩn của TipTap: ô nào cũng sửa được, AI có thể
+ * chèn/xoá ô, và phân trang đo được như mọi khối khác.
+ */
+export const AnswerKeyNode = Node.create({
+  name: 'examAnswerKey',
+  group: 'block',
+  content: 'table',
+  defining: true,
+  addAttributes() {
+    return { id: { default: null }, ...formatAttrs() }
+  },
+  parseHTML() {
+    return [{ tag: 'div[data-exam-node="answerKey"]' }]
+  },
+  renderHTML({ HTMLAttributes }) {
+    const { id, ...rest } = HTMLAttributes as Record<string, unknown>
+    return [
+      'div',
+      mergeAttributes(
+        { 'data-exam-node': 'answerKey', ...(id ? { 'data-id': id } : {}) },
+        { style: formatStyle(rest) },
+      ),
+      0,
+    ]
+  },
+})
+
+export const RubricNode = Node.create({
+  name: 'examRubric',
+  group: 'block',
+  content: 'examRubricTitle? examRubricItem+',
+  defining: true,
+  addAttributes() {
+    return { id: { default: null }, ...formatAttrs() }
+  },
+  parseHTML() {
+    return [{ tag: 'div[data-exam-node="rubric"]' }]
+  },
+  renderHTML({ HTMLAttributes }) {
+    const { id, ...rest } = HTMLAttributes as Record<string, unknown>
+    return [
+      'div',
+      mergeAttributes(
+        { 'data-exam-node': 'rubric', ...(id ? { 'data-id': id } : {}) },
+        { style: formatStyle(rest) },
+      ),
+      0,
+    ]
+  },
+})
+
+export const RubricTitleNode = Node.create({
+  name: 'examRubricTitle',
+  content: 'inline*',
+  defining: false,
+  addAttributes() {
+    return formatAttrs()
+  },
+  parseHTML() {
+    return [{ tag: 'div[data-exam-node="rubricTitle"]' }]
+  },
+  renderHTML({ HTMLAttributes }) {
+    return [
+      'div',
+      mergeAttributes(
+        { 'data-exam-node': 'rubricTitle' },
+        { style: formatStyle(HTMLAttributes as Record<string, unknown>) },
+      ),
+      0,
+    ]
+  },
+})
+
+export const RubricItemNode = Node.create({
+  name: 'examRubricItem',
+  content: 'inline*',
+  defining: false,
+  addAttributes() {
+    return { label: { default: '' }, ...formatAttrs() }
+  },
+  parseHTML() {
+    return [{ tag: 'div[data-exam-node="rubricItem"]' }]
+  },
+  renderHTML({ HTMLAttributes }) {
+    const { label, ...rest } = HTMLAttributes as Record<string, unknown>
+    return [
+      'div',
+      mergeAttributes(
+        { 'data-exam-node': 'rubricItem', 'data-label': label },
+        { style: formatStyle(rest) },
+      ),
+      0,
+    ]
+  },
+})
+
+/* ------------------------------------------------------------------ *
+ * Danh sách node
+ * ------------------------------------------------------------------ */
+
+export const EXAM_MARKS = [UnderlineMark, SubscriptMark, SuperscriptMark]
+
+/** Ảnh chèn inline trong khối đề (base64 data URL). */
+export const ImageNode = Node.create({
+  name: 'image',
+  group: 'inline',
+  inline: true,
+  atom: true,
+  draggable: true,
+  addAttributes() {
+    return {
+      src: { default: null },
+      alt: { default: null },
+      width: { default: null },
+    }
+  },
+  parseHTML() {
+    return [{ tag: 'img[data-exam-image]' }]
+  },
+  renderHTML({ HTMLAttributes }) {
+    return ['img', mergeAttributes({ 'data-exam-image': '' }, HTMLAttributes)]
+  },
+  addCommands() {
+    return {
+      setImage:
+        (options: { src: string; alt?: string; width?: number }) =>
+        ({ commands }) =>
+          commands.insertContent({ type: this.name, attrs: options }),
+    }
+  },
+})
+
+declare module '@tiptap/core' {
+  interface Commands<ReturnType> {
+    setImage: {
+      setImage: (options: { src: string; alt?: string; width?: number }) => ReturnType
+    }
+  }
+}
+
+export const EXAM_NODES = [
+  HeaderNode,
+  TitleNode,
+  MetaNode,
+  MetaRowNode,
+  StudentNode,
+  HeadingNode,
+  ParagraphNode,
+  BulletsNode,
+  BulletNode,
+  QuestionNode,
+  QuestionPromptNode,
+  OptionNode,
+  EssayNode,
+  EssayPromptNode,
+  EssaySubNode,
+  PageBreakNode,
+  DividerNode,
+  AnswerKeyNode,
+  RubricNode,
+  RubricTitleNode,
+  RubricItemNode,
+  ImageNode,
+]
+
+/** Node cấp cao nhất — đơn vị đo cho phân trang A4. */
+export const TOP_LEVEL_EXAM_NODES = [
+  'examHeader',
+  'examTitle',
+  'examMeta',
+  'examStudent',
+  'examHeading',
+  'examParagraph',
+  'examBullets',
+  'examQuestion',
+  'examEssay',
+  'examPageBreak',
+  'examDivider',
+  'examAnswerKey',
+  'examRubric',
+] as const
+
+/**
+ * Mọi node chứa inline text — TextAlign/LineHeight phải đăng ký cho tất cả,
+ * không chỉ node cấp cao nhất, nếu không prompt/option/bullet không căn lề được.
+ */
+export const TEXT_CONTENT_NODES = [
+  ...TOP_LEVEL_EXAM_NODES,
+  'examMetaRow',
+  'examBullet',
+  'examQuestionPrompt',
+  'examOption',
+  'examEssayPrompt',
+  'examEssaySub',
+  'examRubricTitle',
+  'examRubricItem',
+] as const
+
+export { uid as newExamNodeId }

@@ -1,0 +1,186 @@
+import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react'
+import { cn } from '@/lib/cn'
+
+type Variant = 'primary' | 'soft' | 'ghost' | 'outline' | 'clay' | 'quiet'
+type Size = 'sm' | 'md' | 'lg' | 'icon'
+
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: Variant
+  size?: Size
+  children?: ReactNode
+}
+
+const VARIANTS: Record<Variant, string> = {
+  primary:
+    'bg-deep text-deep-text hover:bg-ink active:bg-ink shadow-[0_1px_2px_rgba(20,24,28,0.16),0_8px_18px_-10px_rgba(20,24,28,0.4)]',
+  clay:
+    'bg-clay text-white hover:bg-clay-deep active:bg-clay-deep shadow-[0_1px_2px_rgba(180,83,42,0.2),0_10px_20px_-10px_rgba(180,83,42,0.5)]',
+  soft: 'bg-sunken text-ink hover:bg-veil active:bg-veil',
+  outline: 'border border-line-2 bg-white text-ink hover:border-ink-4 hover:bg-sunken/60',
+  ghost: 'bg-transparent text-ink-2 hover:bg-sunken hover:text-ink',
+  quiet: 'bg-transparent text-ink-3 hover:text-ink',
+}
+
+const SIZES: Record<Size, string> = {
+  sm: 'h-9 px-3.5 text-[13px] gap-1.5 rounded-[6px]',
+  md: 'h-10.5 px-4.5 text-[14px] gap-2 rounded-[6px]',
+  lg: 'h-12.5 px-6 text-[15px] gap-2.5 rounded-[8px]',
+  icon: 'h-10 w-10 justify-center rounded-[6px]',
+}
+
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
+  { variant = 'soft', size = 'md', className, ...props },
+  ref,
+) {
+  return (
+    <button
+      ref={ref}
+      className={cn(
+        'inline-flex shrink-0 items-center font-semibold transition-all duration-300 select-none',
+        'active:scale-[0.97] disabled:pointer-events-none disabled:opacity-40',
+        VARIANTS[variant],
+        SIZES[size],
+        className,
+      )}
+      {...props}
+    />
+  )
+})
+
+export function Badge({
+  children,
+  tone = 'neutral',
+  className,
+}: {
+  children: ReactNode
+  tone?: 'neutral' | 'clay' | 'sage' | 'honey' | 'outline'
+  className?: string
+}) {
+  const tones = {
+    neutral: 'bg-sunken text-ink-2',
+    clay: 'bg-clay-soft text-clay',
+    sage: 'bg-sage-soft text-sage',
+    honey: 'bg-honey-soft text-honey',
+    outline: 'border border-line-2 text-ink-3',
+  }
+  return (
+    <span
+      className={cn(
+        'inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11.5px] font-semibold leading-4',
+        tones[tone],
+        className,
+      )}
+    >
+      {children}
+    </span>
+  )
+}
+
+export function Card({
+  children,
+  className,
+  as: As = 'div',
+}: {
+  children: ReactNode
+  className?: string
+  as?: 'div' | 'article' | 'section'
+}) {
+  return (
+    <As
+      className={cn(
+        'rounded-[6px] bg-surface shadow-[0_1px_2px_rgba(60,48,32,0.03)]',
+        className,
+      )}
+    >
+      {children}
+    </As>
+  )
+}
+
+export function Field({
+  label,
+  hint,
+  children,
+  className,
+}: {
+  label: string
+  hint?: string
+  children: ReactNode
+  className?: string
+}) {
+  return (
+    <label className={cn('block', className)}>
+      <span className="eyebrow mb-2 block">{label}</span>
+      {children}
+      {hint ? <span className="mt-1.5 block text-[12px] text-ink-3">{hint}</span> : null}
+    </label>
+  )
+}
+
+export const inputClass =
+  'w-full rounded-[6px] border border-line-2 bg-white px-4 py-2.5 text-[14px] text-ink placeholder:text-ink-4 ' +
+  'transition-all duration-200 hover:border-ink-4 focus:border-clay focus:bg-white focus:outline-none focus:ring-2 focus:ring-clay/15'
+
+export const selectClass =
+  inputClass +
+  ' cursor-pointer appearance-none bg-[url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'14\' height=\'14\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%236b757e\' stroke-width=\'2.2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3E%3Cpath d=\'m6 9 6 6 6-6\'/%3E%3C/svg%3E")] bg-[right_1rem_center] bg-no-repeat pr-10'
+
+/** same look, but sizes to its own content — for filter toolbars */
+export const selectAutoClass = selectClass.replace('w-full ', 'w-auto min-w-[9rem] ')
+
+export function Kbd({ children }: { children: ReactNode }) {
+  return (
+    <kbd className="rounded-[7px] border border-line-2 bg-sunken px-1.5 py-0.5 font-mono text-[11px] text-ink-2">
+      {children}
+    </kbd>
+  )
+}
+
+export function Divider({ className }: { className?: string }) {
+  return <div className={cn('h-px w-full bg-line', className)} />
+}
+
+export function Spinner({ className }: { className?: string }) {
+  return (
+    <span
+      className={cn(
+        'inline-block size-4 animate-spin rounded-full border-2 border-current border-t-transparent',
+        className,
+      )}
+    />
+  )
+}
+
+export function EmptyState({
+  icon,
+  title,
+  description,
+  action,
+  className,
+}: {
+  icon?: ReactNode
+  title: string
+  description?: string
+  action?: ReactNode
+  className?: string
+}) {
+  return (
+    <div
+      className={cn(
+        'flex flex-col items-center justify-center rounded-[8px] bg-sunken/60 px-8 py-16 text-center',
+        className,
+      )}
+    >
+      {icon ? (
+        <div className="mb-4 flex size-14 items-center justify-center rounded-full bg-surface text-ink-3 shadow-soft">
+          {icon}
+        </div>
+      ) : null}
+      <p className="font-display text-[21px] font-semibold tracking-[-0.01em] text-ink">{title}</p>
+      {description ? (
+        <p className="mt-2 max-w-[44ch] text-[13.5px] leading-relaxed text-ink-3">{description}</p>
+      ) : null}
+      {action ? <div className="mt-6">{action}</div> : null}
+    </div>
+  )
+}

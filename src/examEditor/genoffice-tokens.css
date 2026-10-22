@@ -1,0 +1,151 @@
+/* ============================================================================
+ * GenOffice design tokens — bản port từ genoffice (Apache-2.0)
+ * packages/ui/src/tokens.css + apps/docs/src/renderer/styles.css
+ *
+ * Đây là nguồn sự thật cho lớp vỏ của trình soạn đề: màu chrome trung tính,
+ * accent, đường kẻ thước, status bar, nền giấy A4.
+ *
+ * Đã re-theme theo palette web của app (clay/ink/canvas, Be Vietnam Pro)
+ * thay cho word-blue/Inter của bản gốc — số đo (ribbon 80px, ruler 20px,
+ * status bar 24px, A4 794×1123…) giữ nguyên.
+ * ========================================================================== */
+
+:root {
+  /* ---- chrome nền (packages/ui/src/tokens.css) ---- */
+  --surface: #ffffff;
+  --surface-subtle: #f7f8f7;
+  --chrome-bg: #ffffff;
+  --canvas: #eef0ef;
+  --border: #e3e7e6;
+  --border-subtle: #eef0ef;
+  --border-strong: #cdd3d2;
+  --border-hover: #c2c9c8;
+  --text: #14181c;
+  --text-primary: #14181c;
+  --text-secondary: #3d454d;
+  --text-tertiary: #6b757e;
+  --text-muted: #6b757e;
+  --text-dim: #98a2aa;
+  --hover: #f3f4f3;
+  --pressed: #e7e9e8;
+  --active-bg: #e7e9e8;
+  --bg-hover: #f3f4f3;
+  --bg-hover-subtle: #eef0ef;
+  --bg-hover-strong: #e3e7e6;
+  --bg-hover-accent: #e3e7e6;
+  --bg-content: #f7f8f7;
+  --icon-muted: #98a2aa;
+  --danger: #c0392b;
+  --danger-bg: #fbeeec;
+  --danger-border: #f0c8c9;
+  --success: #5b7a5e;
+  --success-bg: #e9efe5;
+  --success-border: #c8e8d4;
+  --color-bg-overlay: rgb(20 24 28 / 50%);
+  --shadow-modal-strong: 0 20px 25px rgb(20 24 28 / 10%);
+  --shadow-btn-hover: 0 2px 8px rgb(20 24 28 / 15%);
+  --shadow-menu: 0 8px 24px rgb(20 24 28 / 18%);
+
+  /* ---- AI panel ---- */
+  --gs-font-sans:
+    'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, sans-serif;
+  --color-btn-primary: #14181c;
+  --color-btn-primary-hover: #2a3138;
+  --color-btn-primary-text: #ffffff;
+  --color-ai-action: #b4532a;
+  --color-ai-action-hover: #8e3f1f;
+  --color-ai-action-text: #ffffff;
+  --color-brand-secondary: #b4532a;
+  --color-text-primary: #14181c;
+  --color-text-secondary: #3d454d;
+  --color-text-tertiary: #6b757e;
+  --color-bg-page: #ffffff;
+  --color-bg-subtle: #f7f8f7;
+  --color-border-default: #e3e7e6;
+  --color-border-strong: #cdd3d2;
+  --color-border-brand: #b4532a;
+  --color-error: #e74c3c;
+  --color-error-hover: #c0392b;
+
+  /* ---- non-color ---- */
+  --radius-6: 6px;
+  --radius-8: 8px;
+  --radius-12: 12px;
+  --radius-16: 16px;
+  --radius-30: 30px;
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --text-body-lg: 18px;
+  --text-small: 14px;
+  --text-caption: 12px;
+
+  /* ---- accent (clay family — palette web của app) ---- */
+  --word-blue: #b4532a;
+  --word-blue-dark: #8e3f1f;
+  --word-heading: #8e3f1f;
+  --accent: var(--word-blue);
+  --accent-dark: var(--word-blue-dark);
+  --accent-soft: #f4e7de;
+
+  --docs-heading-3: #8e3f1f;
+  --docs-accent-ghost: rgb(180 83 42 / 10%);
+  --docs-swatch-outline: rgb(0 0 0 / 15%);
+  --docs-swatch-outline-strong: rgb(0 0 0 / 25%);
+  --docs-swatch-border: #cdd3d2;
+  --docs-brand-ghost: rgb(180 83 42 / 8%);
+  --docs-brand-ghost-weak: rgb(180 83 42 / 6%);
+  --docs-brand-ring: rgb(180 83 42 / 40%);
+  --docs-focus-ring: rgb(20 24 28 / 20%);
+  --docs-input-focus: #b4532a;
+  --docs-input-ring: rgb(180 83 42 / 10%);
+  --docs-scroll-thumb: rgb(0 0 0 / 25%);
+  --docs-tooltip-bg: #14181c;
+  --docs-tooltip-ink: #ffffff;
+  --docs-statusbar-bg: #eef0ef;
+  --docs-statusbar-border: #e3e7e6;
+  --docs-statusbar-hover: rgb(0 0 0 / 8%);
+  --docs-zoom-slider: #98a2aa;
+
+  /* ---- thước kẻ ---- */
+  --docs-ruler-bg: #f7f8f7;
+  --docs-ruler-tick: #cdd3d2;
+  --docs-ruler-border: #e3e7e6;
+  --docs-ruler-ink: #6b757e;
+  --docs-ruler-btn-bg: #eef0ef;
+  --docs-ruler-btn-hover: #e3e7e6;
+  --docs-ruler-btn-border: #cdd3d2;
+  --docs-ruler-btn-ink: #3d454d;
+  --docs-ruler-tab-guide: #98a2aa;
+  --docs-ruler-zone: rgb(0 0 0 / 8%);
+
+  /* ---- giấy A4 ---- */
+  --docs-paper: #ffffff;
+  --docs-paper-ink: #000;
+  --docs-paper-ink-dim: #333;
+  --docs-paper-ink-mid: #555;
+  --docs-paper-ink-soft: #777;
+  --docs-paper-ink-faint: #888;
+  --docs-paper-heading: #8e3f1f;
+  --docs-paper-link: #b4532a;
+  --docs-paper-accent: #b4532a;
+  --docs-page-shadow: 0 1px 3px rgb(0 0 0 / 28%), 0 4px 16px rgb(0 0 0 / 10%);
+
+  /* ---- bóng & menu ---- */
+  --docs-shadow-menu: 0 8px 24px rgb(20 24 28 / 18%);
+  --docs-shadow-ctx: 0 8px 28px rgb(20 24 28 / 22%);
+  --docs-shadow-modal: 0 3px 30px rgb(20 24 28 / 8%);
+  --docs-shadow-chip: 0 2px 8px rgb(20 24 28 / 12%);
+  --docs-shadow-tooltip: 0 4px 6px rgb(20 24 28 / 10%);
+  --docs-shadow-composer: 0 6px 30px rgb(20 24 28 / 8%);
+  --docs-shadow-toast: 0 4px 16px rgb(20 24 28 / 18%);
+  --docs-on-accent: #fff;
+  --docs-toast-bg: rgb(20 24 28 / 92%);
+  --docs-toast-ink: #fff;
+  --docs-toast-ok: #5b7a5e;
+
+  /* ---- tab strip kiểu Chrome (apps/shell/src/renderer/src/tabbar.css) ---- */
+  --tabstrip-bg: #eef0ef;
+  --tabstrip-text: #3d454d;
+  --tabstrip-text-active: #14181c;
+  --tab-separator: rgb(0 0 0 / 22%);
+}

@@ -1,0 +1,106 @@
+export type Subject =
+  | 'Toán'
+  | 'Ngữ văn'
+  | 'Tiếng Việt'
+  | 'Tiếng Anh'
+  | 'Vật lí'
+  | 'Hoá học'
+  | 'Sinh học'
+  | 'Lịch sử'
+  | 'Địa lí'
+  | 'Tin học'
+
+export type QuestionType = 'trac-nghiem' | 'tu-luan' | 'tu-luan-dong'
+
+export interface Option {
+  key: string
+  text: string
+}
+
+export interface Question {
+  id: string
+  number: number
+  type: QuestionType
+  prompt: string
+  options?: Option[]
+  answer?: string
+  explanation?: string
+  points: number
+  /** for tự luận / tự luận động: a working + final answer */
+  solution?: string[]
+  /** id of the bank entry this question came from — lets the AI avoid repeats */
+  sourceId?: string
+}
+
+export interface Section {
+  id: string
+  title: string
+  points: number
+  questions: Question[]
+}
+
+export interface Exam {
+  id: string
+  title: string
+  subject: Subject
+  grade: string
+  school: string
+  year: string
+  term: string
+  durationMinutes: number
+  /** true → the exam can be launched as an interactive quiz */
+  interactive: boolean
+  sections: Section[]
+  author: string
+  createdAt: string
+  views: number
+  likes: number
+  shared: boolean
+  cover?: string
+  /** id of the community exam this was copied from — prevents duplicate imports */
+  importedFrom?: string
+}
+
+export const SUBJECTS: Subject[] = [
+  'Toán',
+  'Ngữ văn',
+  'Tiếng Việt',
+  'Tiếng Anh',
+  'Vật lí',
+  'Hoá học',
+  'Sinh học',
+  'Lịch sử',
+  'Địa lí',
+  'Tin học',
+]
+
+export const GRADES = [
+  'Lớp 3',
+  'Lớp 4',
+  'Lớp 5',
+  'Lớp 6',
+  'Lớp 7',
+  'Lớp 8',
+  'Lớp 9',
+  'Lớp 10',
+  'Lớp 11',
+  'Lớp 12',
+]
+
+export const TYPE_LABEL: Record<QuestionType, string> = {
+  'trac-nghiem': 'Trắc nghiệm',
+  'tu-luan': 'Tự luận',
+  'tu-luan-dong': 'Tự luận động',
+}
+
+export function totalPoints(exam: Exam): number {
+  return exam.sections.reduce((sum, s) => sum + s.questions.reduce((n, q) => n + q.points, 0), 0)
+}
+
+export function questionCount(exam: Exam): number {
+  return exam.sections.reduce((sum, s) => sum + s.questions.length, 0)
+}
+
+export function flatQuestions(exam: Exam): Question[] {
+  return exam.sections.flatMap((s) => s.questions)
+}

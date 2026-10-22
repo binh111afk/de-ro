@@ -1,0 +1,2072 @@
+/* ============================================================================
+ * Giao diện trình soạn đề — port từ GenOffice (Apache-2.0)
+ *
+ * Bản port lấy nguyên số đo từ:
+ *   apps/docs/src/renderer/styles.css      (ribbon, ai-panel, nav-pane, ruler, doc-page, status-bar)
+ *   apps/shell/src/renderer/src/tabbar.css  (tab strip kiểu Chrome)
+ *
+ * Nguyên tắc bám gốc (đã re-theme theo palette web của app):
+ *   - chrome trung tính (trắng/xám), accent clay #b4532a
+ *   - ribbon cao cố định 80px, nút lớn có icon + nhãn bên dưới
+ *   - sân giấy nền xám, trang A4 trắng có đổ bóng
+ *   - AI dock 360px có rail thu gọn 34px, nav pane có tab dưới
+ *   - KHÔNG emoji: mọi icon là SVG stroke currentColor
+ * ========================================================================== */
+
+@layer components {
+  /* ------------------------------------------------------------------ *
+   * Shell
+   * ------------------------------------------------------------------ */
+  .compose-app {
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    background: var(--canvas);
+    overflow: hidden;
+    font-family: var(--gs-font-sans);
+    color: var(--text-primary);
+  }
+
+  .compose-body {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .compose-center {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Ribbon — hàng tab
+   * ------------------------------------------------------------------ */
+  .ribbon {
+    flex-shrink: 0;
+    background: var(--chrome-bg);
+    border-bottom: 1px solid var(--border-strong);
+    user-select: none;
+    color: var(--text-primary);
+  }
+
+  .ribbon-tabs {
+    display: flex;
+    align-items: center;
+    padding: 6px 12px 4px;
+    gap: 2px;
+    user-select: none;
+  }
+
+  .ribbon-tab {
+    position: relative;
+    border: none;
+    background: none;
+    padding: 7px 9px 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: inherit;
+    cursor: pointer;
+    border-bottom: 2.5px solid transparent;
+    border-radius: 4px 4px 0 0;
+  }
+
+  .ribbon-tab:hover {
+    color: var(--word-blue);
+  }
+
+  .ribbon-tab.active {
+    color: var(--word-blue);
+  }
+
+  /* gạch chân đúng bề ngang chữ, không phải capsule */
+  .ribbon-tab.active::after {
+    content: '';
+    position: absolute;
+    left: 13px;
+    right: 13px;
+    bottom: -2.5px;
+    height: 2.5px;
+    border-radius: 1px;
+    background: var(--word-blue);
+  }
+
+  .ribbon-tabs-spacer {
+    flex: 1;
+  }
+
+  /* nút nhanh góc phải hàng tab (AutoSave + lưu/in) */
+  .ribbon-quick {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 4px;
+  }
+
+  .ribbon-quick__meta {
+    font-size: 11.5px;
+    color: var(--text-dim);
+  }
+
+  .ribbon-quick__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    border: none;
+    background: none;
+    padding: 3px 7px;
+    border-radius: 3px;
+    font-size: 12.5px;
+    color: var(--text-primary);
+    cursor: pointer;
+  }
+
+  .ribbon-quick__btn:hover:not(:disabled) {
+    background: var(--hover);
+  }
+
+  .ribbon-quick__btn:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  .ribbon-quick__btn svg {
+    display: block;
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Ribbon — thân (cao cố định 80px như gốc)
+   * ------------------------------------------------------------------ */
+  .ribbon-body {
+    display: flex;
+    align-items: stretch;
+    padding: 8px 14px 6px;
+    height: 92px;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    background: var(--chrome-bg);
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .ribbon-body::-webkit-scrollbar {
+    height: 5px;
+  }
+  .ribbon-body::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .ribbon-body::-webkit-scrollbar-thumb {
+    border-radius: 2.5px;
+    background: var(--docs-scroll-thumb);
+  }
+
+  .ribbon-group {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 2px 4px;
+  }
+
+  .ribbon-group-items {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex: 1;
+  }
+
+  /* gốc không hiện nhãn nhóm dưới ribbon (giống Word for Mac) */
+  .ribbon-group-label {
+    display: none;
+  }
+
+  .ribbon-sep {
+    width: 1px;
+    flex-shrink: 0;
+    background: var(--border);
+    margin: 2px 6px;
+  }
+
+  /* nút lớn: icon trên, nhãn dưới */
+  .rb-big {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    border: none;
+    background: none;
+    border-radius: 4px;
+    padding: 4px 7px 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    cursor: pointer;
+    color: var(--text);
+  }
+
+  .rb-big-icon {
+    min-height: 28px;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-primary);
+  }
+
+  /* hover chỉ tô vùng icon, nhãn bên dưới nằm ngoài vùng xám */
+  .rb-big .rb-big-icon {
+    align-self: stretch;
+    border-radius: 4px;
+    padding: 3px 4px;
+    margin: 0 -4px;
+  }
+
+  .rb-big:hover:not(:disabled) .rb-big-icon {
+    background: var(--hover);
+  }
+
+  .rb-big.active .rb-big-icon {
+    background: var(--active-bg);
+  }
+
+  .rb-big:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+
+  .rb-big:disabled .rb-big-icon {
+    opacity: 0.4;
+  }
+
+  /* nút icon nhỏ 28×30, chữ 15px/500 như gốc */
+  .rb-icon {
+    min-width: 28px;
+    height: 30px;
+    border: none;
+    background: none;
+    border-radius: 3px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--text);
+    padding: 0 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .rb-icon b {
+    font-weight: 700;
+  }
+
+  .rb-icon:hover:not(:disabled) {
+    background: var(--hover);
+  }
+
+  .rb-icon.active {
+    background: var(--active-bg);
+  }
+
+  .rb-icon:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  .rb-icon svg {
+    display: block;
+    margin: 0 auto;
+  }
+
+  .rb-mini-sep {
+    width: 1px;
+    height: 20px;
+    background: var(--border);
+    margin: 0 5px;
+  }
+
+  /* hàng + cột dùng trong ribbon */
+  .rb-row {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+
+  /* hàng canh trên — cho nhóm xếp ngang kiểu Clipboard (nút lớn + cột icon) */
+  .rb-row--top {
+    align-items: flex-start;
+  }
+
+  .rb-col {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  /* cột icon nhỏ 28×30 chồng lên nhau (Clipboard: cắt/sao chép/sao chép định dạng) */
+  .rb-col--icons {
+    gap: 1px;
+  }
+
+  .rb-font-group {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+    justify-content: center;
+  }
+
+  /* select có viền như gốc */
+  .rb-select {
+    height: 28px;
+    border: 1px solid var(--border-strong);
+    border-radius: 3px;
+    background: var(--surface);
+    font-size: 12px;
+    padding: 0 4px;
+    color: var(--text);
+  }
+
+  .rb-select:disabled {
+    opacity: 0.55;
+  }
+
+  .rb-font-family {
+    width: 128px;
+  }
+
+  .rb-font-size {
+    width: 44px;
+  }
+
+  .rb-mini-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border: none;
+    background: none;
+    border-radius: 3px;
+    color: var(--text-primary);
+    cursor: pointer;
+  }
+
+  .rb-mini-btn:hover:not(:disabled) {
+    background: var(--hover);
+  }
+
+  .rb-mini-btn:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  .rb-toggle {
+    min-width: 28px;
+    height: 26px;
+    border: none;
+    background: none;
+    border-radius: 3px;
+    font-size: 14px;
+    cursor: pointer;
+    color: var(--text);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .rb-toggle:hover:not(:disabled) {
+    background: var(--hover);
+  }
+
+  .rb-toggle.is-active {
+    background: var(--active-bg);
+  }
+
+  .rb-toggle:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  /* ---- split button + color picker (font color / highlight / shading) ---- */
+  .rb-split {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 1px;
+  }
+
+  .rb-color-bar {
+    display: block;
+    width: 16px;
+    height: 3px;
+    border-radius: 1px;
+    margin: 0 2px;
+    border: 1px solid var(--border-strong);
+  }
+
+  .rb-color-drop {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .rb-color-caret {
+    width: 14px;
+    height: 24px;
+    border: none;
+    background: none;
+    border-radius: 3px;
+    font-size: 9px;
+    line-height: 1;
+    cursor: pointer;
+    color: var(--text-secondary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .rb-color-caret:hover:not(:disabled) {
+    background: var(--hover);
+  }
+
+  .rb-color-caret:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  .rb-color-menu {
+    z-index: 70;
+    position: fixed;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    box-shadow: var(--shadow-menu);
+    padding: 6px;
+    min-width: 148px;
+  }
+
+  .rb-color-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 14px);
+    gap: 2px;
+    margin-bottom: 4px;
+  }
+
+  .rb-color-swatch {
+    width: 14px;
+    height: 14px;
+    border: 1px solid var(--docs-swatch-outline);
+    border-radius: 2px;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .rb-color-swatch:hover {
+    border-color: var(--docs-swatch-outline-strong);
+  }
+
+  .rb-color-item {
+    display: block;
+    width: 100%;
+    border: none;
+    background: none;
+    text-align: left;
+    padding: 5px 8px;
+    font-size: 12px;
+    border-radius: 3px;
+    cursor: pointer;
+    color: var(--text);
+  }
+
+  .rb-color-item:hover {
+    background: var(--hover);
+  }
+
+  /* ---- styles gallery (Normal / Heading / Quote…) ---- */
+  .rb-styles {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .rb-style-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    min-width: 68px;
+    height: 56px;
+    padding: 4px 6px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    background: none;
+    cursor: pointer;
+    color: var(--text);
+  }
+
+  .rb-style-card:hover:not(:disabled) {
+    background: var(--hover);
+    border-color: var(--border);
+  }
+
+  .rb-style-card:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  .rb-style-card__preview {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    font-family: 'Times New Roman', serif;
+    white-space: nowrap;
+  }
+
+  .rb-style-card__label {
+    font-size: 10px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    max-width: 68px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .rb-ink-bar {
+    display: block;
+    width: 16px;
+    height: 3px;
+    border-radius: 1px;
+    margin-top: 1px;
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Tab strip nhiều đề — kiểu Chrome (apps/shell/.../tabbar.css)
+   * ------------------------------------------------------------------ */
+  .compose-tabbar {
+    display: flex;
+    align-items: stretch;
+    height: 42px;
+    flex-shrink: 0;
+    background: var(--tabstrip-bg);
+    color: var(--tabstrip-text);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tab-strip {
+    display: flex;
+    align-items: stretch;
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 0 14px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .tab-strip::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+    padding: 0 8px 6px 12px;
+    flex: 0 1 240px;
+    min-width: 104px;
+    border-radius: 10px 10px 0 0;
+    cursor: pointer;
+    color: var(--tabstrip-text);
+    font-size: 12.5px;
+    user-select: none;
+  }
+
+  .tab-item:not(.active):not(:first-child)::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: calc(50% - 3px);
+    width: 1px;
+    height: 16px;
+    transform: translateY(-50%);
+    background: var(--tab-separator);
+  }
+
+  .tab-item:not(.active):hover::before,
+  .tab-item:hover + .tab-item:not(.active)::before,
+  .tab-item.active + .tab-item:not(.active)::before {
+    opacity: 0;
+  }
+
+  /* đĩa nền dùng chung cho hover và active */
+  .tab-plate {
+    position: absolute;
+    inset: 0 3px 6px;
+    border-radius: 9px;
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  .tab-item:not(.active):hover .tab-plate {
+    background: rgb(255 255 255 / 85%);
+  }
+
+  .tab-item.active {
+    color: var(--tabstrip-text-active);
+    z-index: 1;
+  }
+
+  .tab-item.active .tab-plate {
+    inset: 0 3px;
+    border-radius: 10px 10px 0 0;
+    background: var(--surface);
+  }
+
+  /* chân cong nối tab active xuống vùng trắng bên dưới */
+  .tab-item.active .tab-plate::before,
+  .tab-item.active .tab-plate::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    width: 10px;
+    height: 10px;
+  }
+
+  .tab-item.active .tab-plate::before {
+    left: -10px;
+    background: radial-gradient(circle at 0 0, transparent 9.5px, var(--surface) 10px);
+  }
+
+  .tab-item.active .tab-plate::after {
+    right: -10px;
+    background: radial-gradient(circle at 100% 0, transparent 9.5px, var(--surface) 10px);
+  }
+
+  .tab-item__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    color: var(--text-secondary);
+  }
+
+  .tab-item.active .tab-item__icon {
+    color: var(--word-blue);
+  }
+
+  .tab-item__title {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .tab-item__dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--word-blue);
+    margin-left: 5px;
+    vertical-align: middle;
+  }
+
+  .tab-item__close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    border: none;
+    background: none;
+    border-radius: 4px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0;
+    opacity: 0;
+  }
+
+  .tab-item:hover .tab-item__close,
+  .tab-item.active .tab-item__close {
+    opacity: 1;
+  }
+
+  .tab-item__close:hover {
+    background: rgb(0 0 0 / 8%);
+    color: var(--text-primary);
+  }
+
+  .tab-item__input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: none;
+    font: inherit;
+    font-size: 12.5px;
+    color: var(--text-primary);
+    padding: 0;
+  }
+
+  .tab-new-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    margin: 6px 0 6px 2px;
+    align-self: flex-start;
+    border: none;
+    background: none;
+    border-radius: 6px;
+    color: var(--tabstrip-text);
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .tab-new-btn::before {
+    content: '';
+    position: absolute;
+    left: -2.5px;
+    top: 50%;
+    width: 1px;
+    height: 16px;
+    transform: translateY(-50%);
+    background: var(--tab-separator);
+  }
+
+  .tab-item.active + .tab-new-btn::before,
+  .tab-item:hover + .tab-new-btn::before,
+  .tab-new-btn:hover::before {
+    opacity: 0;
+  }
+
+  .tab-new-btn:hover {
+    background: rgb(255 255 255 / 85%);
+  }
+
+  .compose-tabbar__right {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 0 10px 0 4px;
+    flex-shrink: 0;
+  }
+
+  .compose-icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: none;
+    border-radius: 4px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .compose-icon-btn:hover {
+    background: rgb(255 255 255 / 85%);
+    color: var(--text-primary);
+  }
+
+  .compose-icon-btn.is-on {
+    background: var(--surface);
+    color: var(--word-blue);
+  }
+
+  /* ------------------------------------------------------------------ *
+   * AI dock bên trái (360px, rail thu gọn 34px)
+   * ------------------------------------------------------------------ */
+  .ai-dock {
+    display: flex;
+    flex-shrink: 0;
+    min-height: 0;
+    width: var(--ai-panel-width, 360px);
+    overflow: hidden;
+    transition: width 180ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .ai-dock.collapsed {
+    width: 34px;
+  }
+
+  .ai-dock .ai-rail {
+    flex: 1;
+    width: auto;
+  }
+
+  /* nút thu gọn nằm trên mép phải của panel */
+  .ai-dock {
+    position: relative;
+  }
+
+  .ai-dock__collapse {
+    position: absolute;
+    top: 10px;
+    right: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border: none;
+    background: none;
+    border-radius: var(--radius-8);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    padding: 0;
+    z-index: 2;
+    transition: all var(--transition-fast);
+  }
+
+  .ai-dock__collapse:hover {
+    background: var(--color-bg-subtle);
+    color: var(--color-text-primary);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ai-dock {
+      transition: none;
+    }
+  }
+
+  .ai-panel {
+    position: relative;
+    width: 360px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    background: var(--color-bg-page);
+    border-right: 1px solid var(--color-border-strong);
+    font-family: var(--gs-font-sans);
+    color: var(--color-text-primary);
+  }
+
+  .ai-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px 10px 14px;
+    border-bottom: 1px solid var(--color-border-default);
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--color-text-primary);
+    flex-shrink: 0;
+  }
+
+  .ai-panel-title {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    white-space: nowrap;
+  }
+
+  .ai-header-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    flex-shrink: 0;
+    border: none;
+    background: none;
+    border-radius: var(--radius-8);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    padding: 0;
+    transition: all var(--transition-fast);
+  }
+
+  .ai-header-btn:hover {
+    background: var(--color-bg-subtle);
+    color: var(--color-text-primary);
+  }
+
+  /* rail thu gọn: chữ dọc */
+  .ai-rail {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: 34px;
+    padding: 12px 2px;
+    border: none;
+    border-right: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .ai-rail:hover {
+    background: var(--hover);
+  }
+
+  .ai-rail-text {
+    writing-mode: vertical-rl;
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+  }
+
+  /* vùng chat */
+  .ai-chat {
+    flex: 1;
+    overflow-y: auto;
+    padding: 32px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    font-family: var(--gs-font-sans);
+  }
+
+  .ai-chat-empty {
+    margin-top: 36px;
+    padding: 0 10px;
+    text-align: center;
+  }
+
+  .ai-chat-empty-title {
+    font-size: var(--text-body-lg);
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: 8px;
+  }
+
+  .ai-chat-empty-body {
+    color: var(--color-text-secondary);
+    font-size: var(--text-small);
+    line-height: 1.5;
+  }
+
+  /* gợi ý dạng pill viền, bo tròn 30px như gốc */
+  .ai-starter-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .ai-starter {
+    padding: 8px 16px;
+    border-radius: var(--radius-30);
+    border: 1px solid var(--color-border-default);
+    background: var(--color-bg-page);
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.4;
+    color: var(--color-text-primary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .ai-starter:hover {
+    border-color: var(--color-border-strong);
+    background: var(--color-bg-subtle);
+  }
+
+  .ai-starter:active {
+    filter: brightness(0.88);
+    transform: scale(0.98);
+  }
+
+  .ai-msg {
+    position: relative;
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  /* lượt người dùng: pill xám bo tròn */
+  .ai-msg-user {
+    align-self: flex-end;
+    background: var(--color-bg-subtle);
+    color: var(--color-text-primary);
+    padding: 8px 16px;
+    border-radius: 14px;
+    max-width: 80%;
+    line-height: 1.5;
+  }
+
+  /* lượt AI: chữ thuần, không bong bóng */
+  .ai-msg-assistant {
+    align-self: stretch;
+    background: none;
+    border: none;
+    padding: 0;
+    max-width: 100%;
+    color: var(--color-text-primary);
+  }
+
+  .ai-msg-error {
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--danger);
+  }
+
+  .ai-thinking {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--color-text-tertiary);
+    font-size: 14px;
+  }
+
+  .ai-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--color-text-tertiary);
+    animation: ai-pulse 1.2s infinite ease-in-out;
+  }
+  .ai-dot:nth-child(2) {
+    animation-delay: 0.18s;
+  }
+  .ai-dot:nth-child(3) {
+    animation-delay: 0.36s;
+  }
+
+  @keyframes ai-pulse {
+    0%,
+    60%,
+    100% {
+      opacity: 0.25;
+    }
+    30% {
+      opacity: 1;
+    }
+  }
+
+  /* composer: thẻ bo 16px, viền mảnh, đổ bóng nhẹ */
+  .ai-composer {
+    flex-shrink: 0;
+    padding: 10px 14px 14px;
+  }
+
+  .ai-input-box {
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-16);
+    background: var(--color-bg-page);
+    box-shadow: var(--docs-shadow-composer);
+    transition:
+      border-color var(--transition-fast),
+      box-shadow var(--transition-fast);
+  }
+
+  .ai-input-box:focus-within {
+    border-color: var(--docs-input-focus);
+    box-shadow:
+      var(--docs-shadow-composer),
+      0 0 0 3px var(--docs-input-ring);
+  }
+
+  .ai-input-box textarea {
+    display: block;
+    width: 100%;
+    resize: none;
+    border: none;
+    background: none;
+    border-radius: var(--radius-16) var(--radius-16) 0 0;
+    padding: 0 14px;
+    margin: 12px 0 4px;
+    font-size: 15px;
+    font-family: inherit;
+    line-height: 24px;
+    outline: none;
+    color: var(--color-text-primary);
+    min-height: 44px;
+    max-height: 168px;
+    overflow-y: auto;
+  }
+
+  .ai-input-box textarea::placeholder {
+    color: var(--color-text-tertiary);
+  }
+
+  .ai-input-footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    padding: 4px 8px 8px 10px;
+  }
+
+  .ai-input-hint {
+    font-size: 11.5px;
+    color: var(--color-text-tertiary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ai-send-btn {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+    border: none;
+    border-radius: 50%;
+    background: var(--color-btn-primary);
+    color: var(--color-btn-primary-text);
+    cursor: pointer;
+    padding: 0;
+    transition: all var(--transition-fast);
+  }
+
+  .ai-send-btn:hover:not(:disabled) {
+    background: var(--color-btn-primary-hover);
+  }
+
+  .ai-send-btn:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  .ai-send-btn.is-stop {
+    background: var(--danger);
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Nav pane bên phải (mục lục / khối mẫu / tìm kiếm)
+   * ------------------------------------------------------------------ */
+  .nav-pane {
+    position: relative;
+    flex: none;
+    border-right: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .nav-pane-resizer {
+    position: absolute;
+    top: 0;
+    left: -3px;
+    bottom: 0;
+    width: 7px;
+    cursor: col-resize;
+    z-index: 2;
+  }
+
+  .nav-search {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 8px 10px 0;
+    padding: 0 8px;
+    height: 26px;
+    border: 1px solid var(--border-strong);
+    border-radius: 5px;
+    background: var(--surface);
+    color: var(--text-dim);
+  }
+
+  .nav-search:focus-within {
+    border-color: var(--accent);
+  }
+
+  .nav-search-input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    background: none;
+    outline: none;
+    font-size: 12px;
+    color: var(--text);
+  }
+
+  .nav-tabs {
+    display: flex;
+    margin: 6px 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-tab {
+    flex: 1;
+    border: none;
+    background: none;
+    padding: 5px 0 6px;
+    font-size: 12px;
+    color: var(--text-dim);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+  }
+
+  .nav-tab:hover {
+    color: var(--text);
+  }
+
+  .nav-tab.on {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+    font-weight: 600;
+  }
+
+  .nav-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 6px 0;
+  }
+
+  .nav-body__empty {
+    margin: 0;
+    padding: 12px 14px;
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: var(--text-dim);
+  }
+
+  .nav-toc {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nav-toc li {
+    margin: 0;
+  }
+
+  .nav-toc button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    border: none;
+    background: none;
+    padding: 5px 12px;
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: var(--text);
+    cursor: pointer;
+  }
+
+  .nav-toc button:hover {
+    background: var(--hover);
+  }
+
+  .nav-tpl {
+    list-style: none;
+    margin: 0;
+    padding: 0 10px;
+  }
+
+  .nav-tpl button {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    width: 100%;
+    text-align: left;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    background: var(--surface);
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .nav-tpl button:hover {
+    border-color: var(--border-strong);
+    background: var(--surface-subtle);
+  }
+
+  .nav-tpl__label {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .nav-tpl__desc {
+    font-size: 11.5px;
+    line-height: 1.45;
+    color: var(--text-tertiary);
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Sân soạn + thước kẻ
+   * ------------------------------------------------------------------ */
+  .compose-scroll {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: auto;
+    background: var(--canvas);
+    scrollbar-gutter: stable;
+    padding: 26px 24px 140px;
+  }
+
+  /* `width: fit-content` + `margin: auto` giữ trang giấy luôn nằm giữa sân,
+     kể cả khi nó co lại theo tỉ lệ (gốc dùng .doc-zoom). */
+  .compose-canvas {
+    width: fit-content;
+    margin: 0 auto;
+  }
+
+  .ruler {
+    position: relative;
+    height: 20px;
+    margin: 0 auto 6px;
+    background: var(--docs-ruler-bg);
+    border: 1px solid var(--docs-ruler-border);
+    border-radius: 2px;
+    font-size: 9px;
+    color: var(--docs-ruler-ink);
+    user-select: none;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .ruler-tab-type {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 20px;
+    height: 100%;
+    background: var(--docs-ruler-btn-bg);
+    border: none;
+    border-right: 1px solid var(--docs-ruler-btn-border);
+    font-size: 9px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--docs-ruler-btn-ink);
+  }
+
+  .ruler-tab-type:hover {
+    background: var(--docs-ruler-btn-hover);
+  }
+
+  .ruler-zone {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background: var(--docs-ruler-zone);
+  }
+
+  .ruler-zone--drag {
+    cursor: col-resize;
+  }
+
+  .ruler-zone--drag:hover {
+    background: var(--docs-accent-ghost);
+  }
+
+  /* marker thụt lề kéo được (giống Word) */
+  .ruler-marker {
+    position: absolute;
+    width: 11px;
+    height: 11px;
+    padding: 0;
+    border: none;
+    cursor: col-resize;
+    z-index: 2;
+    background: none;
+  }
+
+  .ruler-marker::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--surface);
+    border: 1px solid var(--docs-ruler-btn-border);
+  }
+
+  .ruler-marker:hover::before {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+
+  /* tam giác chỉ xuống: dòng đầu */
+  .ruler-marker--first {
+    top: -1px;
+  }
+
+  .ruler-marker--first::before {
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+  }
+
+  /* tam giác chỉ lên: thụt treo */
+  .ruler-marker--hang {
+    top: 8px;
+  }
+
+  .ruler-marker--hang::before {
+    clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  }
+
+  /* khối vuông nhỏ: thụt lề trái */
+  .ruler-marker--left {
+    top: 16px;
+    height: 6px;
+    width: 11px;
+  }
+
+  .ruler-num {
+    position: absolute;
+    top: 3px;
+    transform: translateX(-50%);
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .ruler-tick {
+    position: absolute;
+    bottom: 0;
+    width: 1px;
+    height: 3px;
+    background: var(--docs-ruler-tick);
+    pointer-events: none;
+  }
+
+  .ruler-tick--mid {
+    height: 6px;
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Giấy A4
+   * ------------------------------------------------------------------ */
+  .doc-stage {
+    position: relative;
+  }
+
+  .doc-papers {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .doc-paper {
+    position: absolute;
+    left: 0;
+    background: var(--docs-paper);
+    box-shadow: var(--docs-page-shadow);
+  }
+
+  .doc-flow {
+    position: absolute;
+    z-index: 1;
+  }
+
+  .doc-flow .doc-content {
+    outline: none;
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Thanh trạng thái
+   * ------------------------------------------------------------------ */
+  .status-bar {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 12px;
+    height: 24px;
+    font-size: 11.5px;
+    color: var(--text-dim);
+    background: var(--docs-statusbar-bg);
+    border-top: 1px solid var(--docs-statusbar-border);
+  }
+
+  .status-left {
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .status-item {
+    margin-right: 14px;
+    flex-shrink: 0;
+  }
+
+  .status-right {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .zoom-btn {
+    border: none;
+    background: none;
+    color: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .zoom-btn:hover:not(:disabled) {
+    background: var(--docs-statusbar-hover);
+  }
+
+  .zoom-btn:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* toast lưu */
+  .compose-flash {
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Find / Replace panel
+   * ------------------------------------------------------------------ */
+  .find-panel {
+    position: absolute;
+    top: 8px;
+    right: 16px;
+    z-index: 30;
+    width: 320px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    box-shadow: var(--shadow-menu);
+    font-family: var(--gs-font-sans);
+  }
+
+  .find-panel__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 6px 0;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .find-panel__tabs {
+    display: flex;
+    gap: 2px;
+  }
+
+  .find-panel__tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border: none;
+    background: none;
+    padding: 5px 8px;
+    border-radius: 3px 3px 0 0;
+    font-size: 12px;
+    cursor: pointer;
+    color: var(--text-secondary);
+  }
+
+  .find-panel__tab:hover {
+    background: var(--hover);
+    color: var(--text);
+  }
+
+  .find-panel__tab.on {
+    background: var(--active-bg);
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .find-panel__close {
+    border: none;
+    background: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 3px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .find-panel__close:hover {
+    background: var(--hover);
+    color: var(--text);
+  }
+
+  .find-panel__body {
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .find-panel__row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .find-panel__input {
+    flex: 1;
+    min-width: 0;
+    height: 26px;
+    border: 1px solid var(--border-strong);
+    border-radius: 3px;
+    padding: 0 6px;
+    font-size: 12px;
+    background: var(--surface);
+    color: var(--text);
+  }
+
+  .find-panel__input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  .find-panel__count {
+    font-size: 11px;
+    color: var(--text-secondary);
+    min-width: 32px;
+    text-align: right;
+  }
+
+  .find-panel__nav {
+    width: 22px;
+    height: 22px;
+    border: 1px solid var(--border-strong);
+    border-radius: 3px;
+    background: var(--surface);
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-size: 14px;
+    line-height: 1;
+  }
+
+  .find-panel__nav:hover {
+    background: var(--hover);
+    color: var(--text);
+  }
+
+  .find-panel__btn {
+    height: 26px;
+    border: 1px solid var(--border-strong);
+    border-radius: 3px;
+    background: var(--surface);
+    padding: 0 8px;
+    font-size: 11.5px;
+    cursor: pointer;
+    color: var(--text);
+    white-space: nowrap;
+  }
+
+  .find-panel__btn:hover {
+    background: var(--hover);
+  }
+
+  .find-panel__btn--primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--docs-on-accent);
+  }
+
+  .find-panel__btn--primary:hover {
+    background: var(--accent-dark);
+  }
+
+  .find-panel__opts {
+    display: flex;
+    gap: 12px;
+    font-size: 11px;
+    color: var(--text-secondary);
+  }
+
+  .find-panel__opts label {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+  }
+
+  /* highlight kết quả tìm kiếm trong editor */
+  .doc-search-hit {
+    background: #ffe28a;
+    border-radius: 2px;
+  }
+
+  .doc-search-hit--active {
+    background: #ffb84d;
+  }
+
+  /* nhãn nhỏ + ô nhập số trong ribbon Bố cục */
+  .rb-label {
+    font-size: 10px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+  }
+
+  .rb-col--gap4 {
+    gap: 4px;
+  }
+
+  .rb-inline-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 11px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+  }
+
+  .rb-num-input {
+    width: 44px;
+    height: 24px;
+    border: 1px solid var(--border-strong);
+    border-radius: 3px;
+    padding: 0 4px;
+    font-size: 11.5px;
+    background: var(--surface);
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .rb-num-input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  .rb-num-input:disabled {
+    opacity: 0.55;
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Dropdown thay <select> native (gs-dd*)
+   * ------------------------------------------------------------------ */
+  .gs-dd {
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .gs-dd-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2px;
+    height: 28px;
+    border: 1px solid var(--border-strong);
+    border-radius: 3px;
+    background: var(--surface);
+    padding: 0 2px 0 6px;
+    font-size: 12px;
+    color: var(--text);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .gs-dd-trigger:hover:not(:disabled) {
+    border-color: var(--border-hover);
+    background: var(--bg-hover-subtle);
+  }
+
+  .gs-dd-trigger.open {
+    border-color: var(--accent);
+  }
+
+  .gs-dd-trigger:disabled {
+    opacity: 0.55;
+    cursor: default;
+  }
+
+  .gs-dd-value {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+    text-align: left;
+  }
+
+  .gs-dd-caret {
+    width: 14px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    color: var(--text-secondary);
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  .gs-dd-trigger:hover:not(:disabled) .gs-dd-caret {
+    background: var(--hover);
+  }
+
+  .gs-dd-pop {
+    /* position/top/left/width do inline style đặt theo tọa độ trigger
+       (position: fixed) — để thoát khỏi overflow clipping của ribbon body */
+    z-index: 60;
+    max-height: 320px;
+    overflow-y: auto;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    box-shadow: var(--shadow-menu);
+    padding: 3px;
+  }
+
+  .gs-dd-item {
+    padding: 5px 8px;
+    border-radius: 3px;
+    font-size: 12px;
+    color: var(--text);
+    cursor: pointer;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 24px;
+  }
+
+  .gs-dd-item.active {
+    background: var(--hover);
+  }
+
+  .gs-dd-item.selected {
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  .gs-dd-item.disabled {
+    opacity: 0.45;
+    cursor: default;
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Insert menus: table picker, symbol grid, modals
+   * ------------------------------------------------------------------ */
+  .rb-drop {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .rb-drop-menu {
+    z-index: 70;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    box-shadow: var(--shadow-menu);
+    padding: 8px;
+  }
+
+  .rb-table-picker {
+    width: max-content !important;
+    min-width: 224px;
+    max-width: calc(100vw - 16px);
+    white-space: nowrap;
+  }
+
+  .rb-table-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 18px);
+    gap: 3px;
+  }
+
+  .rb-table-cell {
+    width: 18px;
+    height: 18px;
+    border: 1px solid var(--border-strong);
+    border-radius: 1px;
+    background: var(--surface);
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .rb-table-cell.on {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+  }
+
+  .rb-table-label {
+    margin-top: 6px;
+    font-size: 11px;
+    color: var(--text-secondary);
+    text-align: center;
+    min-height: 14px;
+    white-space: nowrap;
+  }
+
+  .rb-symbol-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 28px);
+    gap: 2px;
+    max-width: 300px;
+  }
+
+  .rb-symbol-cell {
+    width: 28px;
+    height: 28px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    background: none;
+    cursor: pointer;
+    font-size: 15px;
+    color: var(--text);
+    padding: 0;
+  }
+
+  .rb-symbol-cell:hover {
+    background: var(--hover);
+    border-color: var(--border);
+  }
+
+  /* modal dùng chung (công thức / liên kết) */
+  .rb-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: var(--color-bg-overlay);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .rb-modal {
+    width: 420px;
+    background: var(--surface);
+    border-radius: 8px;
+    box-shadow: var(--shadow-modal-strong);
+    font-family: var(--gs-font-sans);
+    color: var(--text);
+  }
+
+  .rb-modal__header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .rb-modal__close {
+    margin-left: auto;
+    border: none;
+    background: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 3px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .rb-modal__close:hover {
+    background: var(--hover);
+    color: var(--text);
+  }
+
+  .rb-modal__body {
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .rb-modal__label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  .rb-modal__input {
+    width: 100%;
+    border: 1px solid var(--border-strong);
+    border-radius: 4px;
+    padding: 6px 8px;
+    font-size: 13px;
+    font-family: inherit;
+    background: var(--surface);
+    color: var(--text);
+    resize: vertical;
+  }
+
+  .rb-modal__input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  .rb-modal__preview {
+    min-height: 48px;
+    padding: 10px;
+    border: 1px dashed var(--border-strong);
+    border-radius: 4px;
+    background: var(--bg-content);
+    overflow-x: auto;
+    font-size: 15px;
+  }
+
+  .rb-modal__err {
+    font-size: 12px;
+    color: var(--danger);
+  }
+
+  .rb-modal__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 12px 14px;
+    border-top: 1px solid var(--border);
+  }
+
+  .rb-modal__btn {
+    height: 30px;
+    padding: 0 14px;
+    border: 1px solid var(--border-strong);
+    border-radius: 4px;
+    background: var(--surface);
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--text);
+  }
+
+  .rb-modal__btn:hover {
+    background: var(--hover);
+  }
+
+  .rb-modal__btn--primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--docs-on-accent);
+  }
+
+  .rb-modal__btn--primary:hover {
+    background: var(--accent-dark);
+  }
+}

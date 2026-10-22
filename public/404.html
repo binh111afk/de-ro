@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>đề rõ</title>
+    <script>
+      // Static-host fallback for SPA deep links.
+      // If the host does not rewrite unknown paths to index.html, this page runs
+      // and sends the original route back to the SPA through ?__redirect=.
+      (function () {
+        var l = window.location
+        var target = l.pathname + l.search + l.hash
+        l.replace('/?__redirect=' + encodeURIComponent(target))
+      })()
+    </script>
+  </head>
+  <body>
+    <p>Đang mở đề rõ…</p>
+  </body>
+</html>
