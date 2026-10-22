@@ -18,6 +18,7 @@ import { TableRow } from '@tiptap/extension-table-row'
 import { TableCell } from '@tiptap/extension-table-cell'
 import { TableHeader } from '@tiptap/extension-table-header'
 import { TextStyle } from '@tiptap/extension-text-style'
+import { Color } from '@tiptap/extension-text-style/color'
 import { FontFamily } from '@tiptap/extension-text-style/font-family'
 import { FontSize } from '@tiptap/extension-text-style/font-size'
 import { Highlight } from '@tiptap/extension-highlight'
@@ -85,9 +86,10 @@ export function ExamEditor({ content, onChange, onReady, pageSetup }: ExamEditor
         underline: false,
       }),
       TextStyle,
+      Color,
       FontFamily,
       FontSize,
-      Highlight.configure({ multicolor: false }),
+      Highlight.configure({ multicolor: true }),
       Link.configure({ openOnClick: false }),
       TextAlign.configure({ types: ['paragraph', ...TEXT_CONTENT_NODES] }),
       // GenOffice stores line spacing on the text-style mark; using node types

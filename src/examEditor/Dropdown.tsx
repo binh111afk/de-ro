@@ -8,6 +8,7 @@
  */
 import { useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { cn } from '@/lib/cn'
+import { IconCaret } from './icons'
 
 export interface DropdownOption<K extends string = string> {
   value: K
@@ -169,7 +170,7 @@ export function Dropdown<K extends string>({
       >
         <span className="gs-dd-value">{selected?.render ?? selected?.label ?? value}</span>
         <span className="gs-dd-caret" aria-hidden="true">
-          ▾
+          <IconCaret size={14} />
         </span>
       </button>
 

@@ -59,6 +59,19 @@ const cases = [
       },
     ],
   },
+  {
+    name: 'màu chữ + màu tô sáng giữ attrs khi round-trip',
+    blocks: [
+      {
+        type: 'paragraph',
+        text: [
+          { text: 'đỏ', marks: [{ type: 'textStyle', attrs: { color: '#ff0000' } }] },
+          { text: ' và ' },
+          { text: 'vàng', marks: [{ type: 'highlight', attrs: { color: '#ffff00' } }] },
+        ],
+      },
+    ],
+  },
 ]
 
 let pass = 0

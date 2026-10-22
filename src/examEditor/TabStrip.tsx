@@ -6,19 +6,24 @@
 import { useEffect, useRef, useState } from 'react'
 import type { OpenTab } from '@/store/compose'
 import { cn } from '@/lib/cn'
-import { IconClose, IconDoc, IconPlus } from './icons'
+import { IconClose, IconDoc, IconPlus, IconSparkle } from './icons'
 
 export function TabStrip({
   tabs,
   activeId,
+  startActive,
   onSelect,
+  onSelectStart,
   onClose,
   onNew,
   onRename,
 }: {
   tabs: OpenTab[]
   activeId: string | null
+  /** tab khởi động (đầu tiên, không đóng được) đang mở */
+  startActive: boolean
   onSelect: (id: string) => void
+  onSelectStart: () => void
   onClose: (id: string) => void
   onNew: () => void
   onRename: (id: string, title: string) => void
@@ -26,6 +31,21 @@ export function TabStrip({
   return (
     <>
       <div className="tab-strip" role="tablist" aria-label="Đề đang mở">
+        <div
+          className={cn('tab-item tab-item--start', startActive && 'active')}
+          onMouseDown={(e) => {
+            if (e.button === 0) onSelectStart()
+          }}
+          role="tab"
+          aria-selected={startActive}
+          title="Trang bắt đầu"
+        >
+          <span className="tab-plate" aria-hidden="true" />
+          <span className="tab-item__icon" aria-hidden="true">
+            <IconSparkle size={15} />
+          </span>
+          <span className="tab-item__title">Bắt đầu</span>
+        </div>
         {tabs.map((t) => (
           <TabItem
             key={t.id}

@@ -35,6 +35,7 @@ import {
   IconAnswerKey,
   IconBullets,
   IconBorderAll,
+  IconCaret,
   IconChangeCase,
   IconClearFormat,
   IconCopy,
@@ -165,6 +166,9 @@ export function Ribbon({
 }) {
   const [font, setFont] = useState('Times New Roman')
   const [size, setSize] = useState('14')
+  // "bút" màu nhớ lần chọn gần nhất — nút chính áp màu này, giống Word/GenOffice
+  const [penHighlight, setPenHighlight] = useState('#ffff00')
+  const [penColor, setPenColor] = useState('#000000')
   const [painter, setPainter] = useState(false)
   const [dialog, setDialog] = useState<'link' | 'equation' | null>(null)
   const painterRef = useRef<{
@@ -410,14 +414,47 @@ export function Ribbon({
                   <RibbonIconButton icon={<IconSuperscript size={16} />} title="Chỉ số trên" active={format.super} disabled={disabled} onClick={() => chain()?.toggleMark('super').run()} />
                   <span className="rb-mini-sep" />
                   <div className="rb-split">
-                    <RibbonIconButton icon={<IconHighlight size={16} />} title="Tô sáng" active={format.highlight} disabled={disabled} onClick={() => chain()?.toggleHighlight().run()} />
-                    <ColorBar color={format.highlightColor || '#ffff00'} />
-                    <ColorDropdown colors={HIGHLIGHTS} onPick={(c) => chain()?.setMark('highlight', { color: c }).run()} disabled={disabled} />
+                    <RibbonIconButton
+                      icon={
+                        <span className="rb-color-glyph">
+                          <IconHighlight size={16} />
+                          <ColorBar color={format.highlightColor || '#ffff00'} />
+                        </span>
+                      }
+                      title="Tô sáng"
+                      active={format.highlight}
+                      disabled={disabled}
+                      onClick={() => chain()?.toggleHighlight({ color: penHighlight }).run()}
+                    />
+                    <ColorDropdown
+                      colors={HIGHLIGHTS}
+                      onPick={(c) => {
+                        setPenHighlight(c)
+                        chain()?.toggleHighlight({ color: c }).run()
+                      }}
+                      disabled={disabled}
+                    />
                   </div>
                   <div className="rb-split">
-                    <RibbonIconButton icon={<IconFontColorA size={16} />} title="Màu chữ" disabled={disabled} onClick={() => chain()?.setMark('textStyle', { color: '#000000' }).run()} />
-                    <ColorBar color={format.color || '#000000'} />
-                    <ColorDropdown colors={THEME_COLORS} onPick={(c) => chain()?.setMark('textStyle', { color: c }).run()} disabled={disabled} />
+                    <RibbonIconButton
+                      icon={
+                        <span className="rb-color-glyph">
+                          <IconFontColorA size={16} />
+                          <ColorBar color={penColor} />
+                        </span>
+                      }
+                      title="Màu chữ"
+                      disabled={disabled}
+                      onClick={() => chain()?.setMark('textStyle', { color: penColor }).run()}
+                    />
+                    <ColorDropdown
+                      colors={THEME_COLORS}
+                      onPick={(c) => {
+                        setPenColor(c)
+                        chain()?.setMark('textStyle', { color: c }).run()
+                      }}
+                      disabled={disabled}
+                    />
                   </div>
                 </div>
               </div>
@@ -456,8 +493,17 @@ export function Ribbon({
                   />
                   <span className="rb-mini-sep" />
                   <div className="rb-split">
-                    <RibbonIconButton icon={<IconShading size={16} />} title="Đổ bóng đoạn" disabled={disabled} onClick={() => editor && applyFormatAttrs(editor, { shading: format.shading ? undefined : '#fff2cc' })} />
-                    <ColorBar color={format.shading || '#fff2cc'} />
+                    <RibbonIconButton
+                      icon={
+                        <span className="rb-color-glyph">
+                          <IconShading size={16} />
+                          <ColorBar color={format.shading || '#fff2cc'} />
+                        </span>
+                      }
+                      title="Đổ bóng đoạn"
+                      disabled={disabled}
+                      onClick={() => editor && applyFormatAttrs(editor, { shading: format.shading ? undefined : '#fff2cc' })}
+                    />
                     <ColorDropdown colors={THEME_COLORS} onPick={(c) => editor && applyFormatAttrs(editor, { shading: c })} disabled={disabled} />
                   </div>
                   <div className="rb-split">
@@ -820,7 +866,7 @@ function ColorDropdown({
         title="Chọn màu"
         aria-label="Chọn màu"
       >
-        ▾
+        <IconCaret size={14} />
       </button>
       {open && (
         <div className="rb-color-menu" style={{ ...popoverStyle(pos), width: 'auto', minWidth: 148 }}>

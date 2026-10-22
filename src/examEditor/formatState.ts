@@ -76,7 +76,7 @@ export function computeFormatState(editor: Editor): FormatState {
     sub: editor.isActive('sub'),
     super: editor.isActive('super'),
     highlight: editor.isActive('highlight'),
-    highlightColor: (ts.highlight as string) ?? '#fff3a3',
+    highlightColor: (editor.getAttributes('highlight').color as string) ?? '#fff3a3',
     color: (ts.color as string) ?? '',
     fontFamily: (ts.fontFamily as string) ?? '',
     fontSize: (ts.fontSize as string) ?? '',

@@ -11,7 +11,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { callLlm, type LlmMessage } from '@/lib/llm'
 import { cn } from '@/lib/cn'
-import { IconSend, IconSparkle, IconStop } from './icons'
+import { IconEnter, IconSparkle, IconStop } from './icons'
 
 export interface ChatTurn {
   id: string
@@ -220,7 +220,7 @@ export function AiPanel({
         <div className="ai-input-box">
           <textarea
             ref={taRef}
-            placeholder="Mô tả bài toán soạn thảo, hoặc đặt câu hỏi"
+            placeholder="Mô tả đề cần soạn…"
             value={input}
             rows={1}
             onChange={(e) => setInput(e.target.value)}
@@ -228,7 +228,6 @@ export function AiPanel({
             aria-label="Nhập yêu cầu cho AI"
           />
           <div className="ai-input-footer">
-            <span className="ai-input-hint">Enter gửi · Shift+Enter xuống dòng</span>
             {busy ? (
               <button
                 type="button"
@@ -248,7 +247,7 @@ export function AiPanel({
                 title="Gửi"
                 aria-label="Gửi"
               >
-                <IconSend size={15} />
+                <IconEnter size={16} />
               </button>
             )}
           </div>

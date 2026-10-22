@@ -197,37 +197,35 @@
     box-sizing: border-box;
   }
 
-  /* Nội dung dùng chung cho doc và .doc */
+  /* Nội dung dùng chung cho doc và .doc.
+     Số đo lấy từ đề mẫu (.docx): thân 11,5pt, giãn dòng 1,625, Times New Roman. */
   .doc-content,
   .doc {
     font-family: 'Times New Roman', 'Liberation Serif', var(--font-display);
-    font-size: 14.5px;
-    line-height: 1.6;
+    font-size: 11.5pt;
+    line-height: 1.625;
     color: #000;
     text-align: left;
   }
 
-  /* các node cấp cao nhất trong editor */
+  /* các node cấp cao nhất trong editor — nhịp dọc lấy từ đề mẫu:
+     các đoạn sát nhau, không có khoảng trống lớn giữa câu hỏi và phương án */
   .doc-content > div[data-exam-node] {
-    margin: 0 0 0.35rem;
+    margin: 0;
   }
   .doc-content > div[data-exam-node='examTitle'] {
-    margin: 0.4rem 0 0.3rem;
+    margin: 0.3rem 0;
   }
   .doc-content > div[data-exam-node='examHeading'] {
-    margin: 0.85rem 0 0.4rem;
+    margin: 0.6rem 0 0.25rem;
   }
   .doc-content > div[data-exam-node='examQuestion'],
   .doc-content > div[data-exam-node='examEssay'] {
-    margin: 0 0 0.55rem;
-  }
-  .doc-content > div[data-exam-node='examMeta'],
-  .doc-content > div[data-exam-node='examStudent'] {
-    margin: 0.35rem 0 0.5rem;
+    margin: 0 0 0.3rem;
   }
   .doc-content > div[data-exam-node='examAnswerKey'],
   .doc-content > div[data-exam-node='examRubric'] {
-    margin: 0.35rem 0 0.6rem;
+    margin: 0.3rem 0;
   }
 
   /* trang A4 cũ (dùng cho bản in / preview tĩnh) */
@@ -421,20 +419,25 @@
   /* ---------------------------------------------------------------- *
    * Node TipTap trong editor
    * ---------------------------------------------------------------- */
+  /* hai node side=left/right ghép thành 2 cột như bảng đầu đề của đề mẫu
+     (trái ~34%, phải ~66% — đúng tỉ lệ bảng 5,6cm / 11,9cm) */
   .doc-content div[data-exam-node='examHeader'] {
-    display: flex;
-    justify-content: space-between;
+    display: inline-block;
+    vertical-align: top;
     font-weight: 700;
     text-transform: uppercase;
-    font-size: 13px;
-    margin-bottom: 0.35rem;
+    text-align: center;
+    margin: 0;
+  }
+  .doc-content div[data-exam-node='examHeader'][data-side='left'] {
+    width: 34%;
   }
   .doc-content div[data-exam-node='examHeader'][data-side='right'] {
-    text-align: right;
+    width: 66%;
   }
 
   .doc-content div[data-exam-node='examTitle'] {
-    font-size: 17px;
+    font-size: 13pt;
     font-weight: 700;
     text-align: center;
     text-transform: uppercase;
@@ -442,17 +445,14 @@
   }
 
   .doc-content div[data-exam-node='examMeta'] {
-    font-size: 13.5px;
+    text-align: center;
   }
   .doc-content div[data-exam-node='examMetaRow'] {
-    margin: 0 0 0.1rem;
-  }
-  .doc-content div[data-exam-node='examMetaRow'] strong:first-child {
-    font-weight: 700;
+    margin: 0;
   }
 
   .doc-content div[data-exam-node='examStudent'] {
-    font-size: 13.5px;
+    margin: 0.5rem 0;
   }
 
   .doc-content div[data-exam-node='examHeading'] {
@@ -460,11 +460,10 @@
     text-transform: uppercase;
   }
   .doc-content div[data-exam-node='examHeading'][data-level='1'] {
-    font-size: 14.5px;
-    text-align: center;
+    font-size: 12pt;
   }
   .doc-content div[data-exam-node='examHeading'][data-level='2'] {
-    font-size: 14px;
+    font-size: 11.5pt;
   }
 
   .doc-content div[data-exam-node='examParagraph'] {
@@ -476,20 +475,55 @@
     list-style: disc;
   }
   .doc-content div[data-exam-node='examBullet'] {
-    margin: 0 0 0.15rem;
+    margin: 0;
+  }
+
+  /* nhãn "Câu N." / "Bài N." vẽ bằng CSS counter — số tự chạy theo thứ tự nên
+     chèn/xoá câu không phải sửa tay, và không lẫn vào nội dung khi xuất */
+  .doc-content {
+    counter-reset: exam-q exam-essay;
+  }
+  .doc-content div[data-exam-node='examQuestion'] {
+    counter-increment: exam-q;
+  }
+  .doc-content div[data-exam-node='examEssay'] {
+    counter-increment: exam-essay;
+  }
+  .doc-content div[data-exam-node='examQuestionPrompt']::before {
+    content: 'Câu ' counter(exam-q) '. ';
+    font-weight: 700;
+  }
+  .doc-content div[data-exam-node='examEssayPrompt']::before {
+    content: 'Bài ' counter(exam-essay) '. ';
+    font-weight: 700;
+  }
+
+  /* nhãn cột "Năm học:", "Môn:", "Ý" của khối thông tin / thang điểm */
+  .doc-content div[data-exam-node='examMetaRow']::before {
+    content: attr(data-label) ': ';
+    font-weight: 700;
+  }
+  .doc-content div[data-exam-node='examRubricItem']::before {
+    content: attr(data-label) ' ';
+    font-weight: 700;
   }
 
   .doc-content div[data-exam-node='examQuestionPrompt'],
   .doc-content div[data-exam-node='examEssayPrompt'] {
     text-align: justify;
   }
+  /* phương án 2 cột như đề mẫu; nhãn A./B./C./D. in đậm */
   .doc-content div[data-exam-node='examOption'] {
-    margin: 0 0 0.1rem;
     display: inline-block;
-    width: 48%;
+    width: 50%;
+    vertical-align: top;
+    padding-right: 0.5rem;
+  }
+  .doc-content div[data-exam-node='examOption']::before {
+    content: attr(data-label) '. ';
+    font-weight: 700;
   }
   .doc-content div[data-exam-node='examEssaySub'] {
-    margin: 0 0 0.15rem;
     padding-left: 1.6rem;
   }
 
@@ -499,23 +533,30 @@
     margin: 0.6rem 0;
   }
 
+  /* bảng: kẻ mảnh như đề mẫu, nội dung canh trái; riêng bảng đáp án canh giữa */
   .doc-content div[data-exam-node='examAnswerKey'] table,
   .doc-content table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 13px;
+    margin: 0.15rem 0 0.3rem;
+    font-size: inherit;
   }
   .doc-content table td,
   .doc-content table th {
     border: 1px solid #000;
-    padding: 0.18rem 0.3rem;
-    text-align: center;
-    min-width: 1.8rem;
+    padding: 0.1rem 0.3rem;
+    text-align: left;
+    vertical-align: top;
     position: relative;
   }
   .doc-content table th {
-    background: #f2f2f2;
     font-weight: 700;
+  }
+  .doc-content div[data-exam-node='examAnswerKey'] table td,
+  .doc-content div[data-exam-node='examAnswerKey'] table th {
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
   }
   .doc-content table .selectedCell::after {
     content: '';
@@ -528,10 +569,10 @@
   .doc-content div[data-exam-node='examRubricTitle'] {
     font-weight: 700;
     text-transform: uppercase;
-    margin: 0.35rem 0 0.25rem;
+    margin: 0.3rem 0 0.2rem;
   }
   .doc-content div[data-exam-node='examRubricItem'] {
-    margin: 0 0 0.2rem;
+    margin: 0;
     text-align: justify;
   }
 

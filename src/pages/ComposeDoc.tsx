@@ -13,13 +13,13 @@
  *   └────────┴───────────────────────────────┴─────────────────┘
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import type { Editor } from '@tiptap/core'
 import type { JSONContent } from '@tiptap/core'
 import { ExamEditor, pageGeometry, CM, type PageSetup } from '@/examEditor/ExamEditor'
 import { Ribbon } from '@/examEditor/Ribbon'
 import { TabStrip } from '@/examEditor/TabStrip'
 import { AiPanel } from '@/examEditor/AiPanel'
+import { StartTab } from '@/examEditor/StartTab'
 import { NavPanel } from '@/examEditor/NavPanel'
 import type { BlockTemplate } from '@/examEditor/templates'
 import { AiDock, NavPane, Ruler, useViewportSize } from '@/examEditor/Layout'
@@ -29,13 +29,11 @@ import { FindPanel } from '@/examEditor/FindPanel'
 import { exportDocBlocks, printDoc } from '@/examEditor/exportBlocks'
 import { useComposeStore } from '@/store/compose'
 import { extractJson } from '@/lib/llm'
-import { cn } from '@/lib/cn'
-import { IconDoc, IconNavPane, IconSparkle, IconZoomIn, IconZoomOut } from '@/examEditor/icons'
+import { IconZoomIn, IconZoomOut } from '@/examEditor/icons'
 import type { ExamBlock, ExamDoc } from '@/data/docTypes'
 import { emptyDoc } from '@/data/docTypes'
 
 export default function ComposeDoc() {
-  const navigate = useNavigate()
   const viewport = useViewportSize()
 
   const {
@@ -49,17 +47,19 @@ export default function ComposeDoc() {
     renameTab,
     setContent,
     saveDoc,
+    openDoc,
   } = useComposeStore()
 
   const [editor, setEditor] = useState<Editor | null>(null)
   const [ribbonTab, setRibbonTab] = useState('home')
   const [findTab, setFindTab] = useState<'find' | 'replace' | null>(null)
+  // tab khởi động (trang bắt đầu) hiện thay cho sân soạn khi được chọn
+  const [startOpen, setStartOpen] = useState(true)
   const [aiOpen, setAiOpen] = useState(true)
   const [navOpen, setNavOpen] = useState(true)
   const [navWidth, setNavWidth] = useState(288)
   const [zoom, setZoom] = useState(100)
   const [pageCount, setPageCount] = useState(1)
-  const [saveFlash, setSaveFlash] = useState('')
   const stageRef = useRef<HTMLDivElement>(null)
   const format = useFormatState(editor)
   const [pageSetup, setPageSetup] = useState<PageSetup>({ marginCm: 2, orientation: 'portrait' })
@@ -72,6 +72,25 @@ export default function ComposeDoc() {
   useEffect(() => {
     ensureDoc()
   }, [ensureDoc])
+
+  // mở đề = rời trang bắt đầu
+  const selectDoc = useCallback(
+    (id: string) => {
+      setActive(id)
+      setStartOpen(false)
+    },
+    [setActive],
+  )
+
+  const newDocAndOpen = useCallback(() => {
+    // tab trống duy nhất lúc mở app: dùng lại nó thay vì đẻ thêm tab rỗng thứ hai
+    const only = tabs.length === 1 ? tabs[0] : null
+    const empty =
+      only && !only.dirty && (contents[only.id]?.content?.length ?? 0) === 0
+    if (empty) setActive(only.id)
+    else newDoc()
+    setStartOpen(false)
+  }, [tabs, contents, setActive, newDoc])
 
   /** Đề đang soạn — dựng từ nội dung TipTap hiện tại. */
   const activeDoc = useMemo<ExamDoc | null>(() => {
@@ -103,8 +122,6 @@ export default function ComposeDoc() {
   const handleSave = useCallback(() => {
     if (!activeId) return
     saveDoc(activeId)
-    setSaveFlash('Đã lưu')
-    setTimeout(() => setSaveFlash(''), 1600)
   }, [activeId, saveDoc])
 
   const handleExportWord = useCallback(async () => {
@@ -226,47 +243,30 @@ export default function ComposeDoc() {
       <div className="compose-tabbar">
         <TabStrip
           tabs={tabs}
-          activeId={activeId}
-          onSelect={setActive}
+          activeId={startOpen ? null : activeId}
+          startActive={startOpen}
+          onSelect={selectDoc}
+          onSelectStart={() => setStartOpen(true)}
           onClose={(id) => {
             closeTab(id)
             if (id === activeId && tabs.length === 1) newDoc()
           }}
-          onNew={newDoc}
+          onNew={newDocAndOpen}
           onRename={renameTab}
         />
-        <div className="compose-tabbar__right">
-          {saveFlash ? <span className="compose-flash">{saveFlash}</span> : null}
-          <button
-            type="button"
-            className={cn('compose-icon-btn', aiOpen && 'is-on')}
-            onClick={() => setAiOpen((v) => !v)}
-            title="Trợ lý AI"
-            aria-label="Trợ lý AI"
-          >
-            <IconSparkle size={16} />
-          </button>
-          <button
-            type="button"
-            className={cn('compose-icon-btn', navOpen && 'is-on')}
-            onClick={() => setNavOpen((v) => !v)}
-            title="Bảng bên"
-            aria-label="Bảng bên"
-          >
-            <IconNavPane size={16} />
-          </button>
-          <button
-            type="button"
-            className="compose-icon-btn"
-            onClick={() => navigate('/de-cua-toi')}
-            title="Thư viện đề của tôi"
-            aria-label="Thư viện đề của tôi"
-          >
-            <IconDoc size={16} />
-          </button>
-        </div>
       </div>
 
+      {/* ---------- trang bắt đầu: ẩn ribbon/sân soạn, chỉ còn dashboard ---------- */}
+      {startOpen ? (
+        <StartTab
+          onNewDoc={newDocAndOpen}
+          onOpenDoc={(doc) => {
+            openDoc(doc)
+            setStartOpen(false)
+          }}
+        />
+      ) : (
+        <>
       {/* ---------- ribbon (hàng tab → ribbon body) ---------- */}
       <Ribbon
         editor={editor}
@@ -378,6 +378,8 @@ export default function ComposeDoc() {
           </NavPane>
         )}
       </div>
+        </>
+      )}
     </div>
   )
 }

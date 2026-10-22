@@ -1581,11 +1581,12 @@ export function IconDoc(props: IconProps) {
 
 /* ---------- AI panel ---------- */
 
-export function IconSend(props: IconProps) {
+/** Mũi tên Enter (↵) — nút gửi dạng icon, giống GenOffice. */
+export function IconEnter(props: IconProps) {
   return (
     <Svg {...props}>
-      <path d="M 3.01 8 12.99 3.36 10.58 12.64 7.66 9.38 z" strokeLinejoin="round" />
-      <path d="M 7.66 9.38 12.99 3.36" />
+      <path d="M12.5 3.5v3.6a2.4 2.4 0 0 1-2.4 2.4H4" />
+      <path d="M6.8 6.9 3.9 9.5l2.9 2.6" />
     </Svg>
   )
 }
