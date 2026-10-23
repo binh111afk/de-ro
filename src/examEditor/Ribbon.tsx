@@ -144,6 +144,10 @@ export function Ribbon({
   onMarginChange,
   orientation = 'portrait',
   onOrientationChange,
+  pageColor = '#ffffff',
+  onPageColorChange,
+  pageBorder = 0,
+  onPageBorderChange,
 }: {
   editor: Editor | null
   activeTab: string
@@ -163,6 +167,10 @@ export function Ribbon({
   onMarginChange?: (cm: number) => void
   orientation?: 'portrait' | 'landscape'
   onOrientationChange?: (o: 'portrait' | 'landscape') => void
+  pageColor?: string
+  onPageColorChange?: (c: string) => void
+  pageBorder?: number
+  onPageBorderChange?: (w: number) => void
 }) {
   const [font, setFont] = useState('Times New Roman')
   const [size, setSize] = useState('14')
@@ -182,11 +190,16 @@ export function Ribbon({
   }, [format.fontFamily, format.fontSize])
 
   const chain = () => {
-    if (!editor) return undefined
+    // Một editor đã bị destroy vẫn trả về `chain()` nhưng mọi command đều
+    // rơi vào im lặng — đây là nguyên nhân "ribbon bấm không ăn". Editor cũ
+    // hay bị giữ lại khi đổi tab (StrictMode remount), nên phải chặn ở đây.
+    if (!editor || editor.isDestroyed) return undefined
     syncDomSelection(editor)
     return editor.chain()
   }
-  const disabled = !editor
+  const disabled = !editor || editor.isDestroyed
+  /** editor còn sống — dùng cho các lệnh gọi trực tiếp, không qua chain() */
+  const live = editor && !editor.isDestroyed ? editor : null
 
   const setFontFamily = (name: string) => {
     setFont(name)
@@ -206,16 +219,16 @@ export function Ribbon({
   }
 
   const applyCase = (mode: 'sentence' | 'lower' | 'upper' | 'title') => {
-    if (!editor) return
-    const { from, to } = editor.state.selection
+    if (!live) return
+    const { from, to } = live.state.selection
     if (from === to) return
-    const text = editor.state.doc.textBetween(from, to, ' ')
+    const text = live.state.doc.textBetween(from, to, ' ')
     let out = text
     if (mode === 'lower') out = text.toLowerCase()
     else if (mode === 'upper') out = text.toUpperCase()
     else if (mode === 'title') out = text.replace(/\b\p{L}/gu, (c) => c.toUpperCase())
     else out = text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()
-    editor.chain().focus().deleteRange({ from, to }).insertContentAt(from, out).run()
+    live.chain().focus().deleteRange({ from, to }).insertContentAt(from, out).run()
   }
 
   const clearFormatting = () => {
@@ -223,8 +236,8 @@ export function Ribbon({
       ?.unsetAllMarks()
       .setMark('textStyle', { fontFamily: null, fontSize: null, color: null })
       .run()
-    if (editor)
-      applyFormatAttrs(editor, {
+    if (live)
+      applyFormatAttrs(live, {
         align: undefined,
         lineHeight: undefined,
         indentLeft: undefined,
@@ -237,10 +250,10 @@ export function Ribbon({
   }
 
   const capturePainter = () => {
-    if (!editor) return
-    const parent = editor.state.selection.$from.parent
+    if (!live) return
+    const parent = live.state.selection.$from.parent
     painterRef.current = {
-      marks: editor.getAttributes('textStyle') as Record<string, unknown>,
+      marks: live.getAttributes('textStyle') as Record<string, unknown>,
       attrs: { ...parent.attrs },
     }
     setPainter(true)
@@ -251,6 +264,7 @@ export function Ribbon({
     const onSel = () => {
       const p = painterRef.current
       if (!p) return
+      if (editor.isDestroyed) return
       const { from, to } = editor.state.selection
       if (from === to) return
       editor.chain().focus().setMark('textStyle', p.marks).run()
@@ -266,17 +280,27 @@ export function Ribbon({
 
   const insertTemplate = (id: string) => {
     const tpl = templateById(id)
-    if (!tpl || !editor) return
-    editor.chain().focus().insertContent(tpl.build()).run()
+    if (!tpl || !live) return
+    syncDomSelection(live)
+    // Chèn ở CẤP BLOCK. `insertContent` chèn tại con trỏ — nếu con trỏ đang ở
+    // giữa một bullet/option, khối mẫu sẽ bị nhét vào trong node text và
+    // schema báo "Invalid content for node examBullets".
+    const target = getSelectedBlock(live)
+    if (!target) {
+      live.chain().focus().insertContent(tpl.build()).run()
+      return
+    }
+    const at = target.pos + target.node.nodeSize
+    live.chain().focus().insertContentAt(at, tpl.build()).run()
   }
 
   const applyStylePreset = (id: string) => {
-    if (!editor) return
-    syncDomSelection(editor)
-    const target = getSelectedBlock(editor)
+    if (!live) return
+    syncDomSelection(live)
+    const target = getSelectedBlock(live)
     if (!target) return
     const { node, pos: nodePos } = target
-    const { state, view } = editor
+    const { state, view } = live
     const typeName = node.type.name
     let patch: Record<string, unknown> = {}
     let newType: string | null = null
@@ -336,7 +360,7 @@ export function Ribbon({
       className="ribbon"
       onMouseDown={(e) => {
         const target = e.target as HTMLElement
-        if (editor && target.closest('button')) syncDomSelection(editor)
+        if (live && target.closest('button')) syncDomSelection(live)
       }}
     >
       <RibbonTabs tabs={RIBBON_TABS} active={activeTab} onChange={onTabChange}>
@@ -356,7 +380,7 @@ export function Ribbon({
         </div>
       </RibbonTabs>
 
-      <RibbonBody>
+      <RibbonBody activeKey={activeTab}>
         {activeTab === 'home' && (
           <>
             <RibbonGroup label="Clipboard">
@@ -469,8 +493,8 @@ export function Ribbon({
                   <RibbonIconButton icon={<IconNumbered size={16} />} title="Danh sách đánh số" disabled={disabled} onClick={() => insertTemplate('question')} />
                   <RibbonIconButton icon={<IconMultilevel size={16} />} title="Danh sách nhiều cấp" disabled={disabled} onClick={() => insertTemplate('bullets')} />
                   <span className="rb-mini-sep" />
-                  <RibbonIconButton icon={<IconIndentDec size={16} />} title="Giảm thụt lề" disabled={disabled} onClick={() => editor && applyFormatAttrs(editor, { indentLeft: Math.max(0, format.indentLeft - 12) })} />
-                  <RibbonIconButton icon={<IconIndentInc size={16} />} title="Tăng thụt lề" disabled={disabled} onClick={() => editor && applyFormatAttrs(editor, { indentLeft: format.indentLeft + 12 })} />
+                  <RibbonIconButton icon={<IconIndentDec size={16} />} title="Giảm thụt lề" disabled={disabled} onClick={() => live && applyFormatAttrs(live, { indentLeft: Math.max(0, format.indentLeft - 12) })} />
+                  <RibbonIconButton icon={<IconIndentInc size={16} />} title="Tăng thụt lề" disabled={disabled} onClick={() => live && applyFormatAttrs(live, { indentLeft: format.indentLeft + 12 })} />
                   <span className="rb-mini-sep" />
                   <RibbonIconButton icon={<IconPilcrow size={16} />} title="Hiện/ẩn ký tự định dạng" disabled={disabled} onClick={() => chain()?.setNode('paragraph').run()} />
                 </div>
@@ -480,8 +504,8 @@ export function Ribbon({
                   <RibbonIconButton icon={<IconAlignRight size={16} />} title="Căn phải" active={format.align === 'right'} disabled={disabled} onClick={() => chain()?.setTextAlign('right').run()} />
                   <RibbonIconButton icon={<IconAlignJustify size={16} />} title="Căn đều" active={format.align === 'justify'} disabled={disabled} onClick={() => chain()?.setTextAlign('justify').run()} />
                   <span className="rb-mini-sep" />
-                  <RibbonIconButton icon={<IconDirLtr size={16} />} title="Trái sang phải" disabled={disabled} />
-                  <RibbonIconButton icon={<IconDirRtl size={16} />} title="Phải sang trái" disabled={disabled} />
+                  <RibbonIconButton icon={<IconDirLtr size={16} />} title="Trái sang phải" active={format.dir === 'ltr'} disabled={disabled} onClick={() => live && applyFormatAttrs(live, { dir: 'ltr' })} />
+                  <RibbonIconButton icon={<IconDirRtl size={16} />} title="Phải sang trái" active={format.dir === 'rtl'} disabled={disabled} onClick={() => live && applyFormatAttrs(live, { dir: 'rtl' })} />
                   <span className="rb-mini-sep" />
                   <Dropdown
                     value={String(format.lineHeight)}
@@ -502,21 +526,21 @@ export function Ribbon({
                       }
                       title="Đổ bóng đoạn"
                       disabled={disabled}
-                      onClick={() => editor && applyFormatAttrs(editor, { shading: format.shading ? undefined : '#fff2cc' })}
+                      onClick={() => live && applyFormatAttrs(live, { shading: format.shading ? undefined : '#fff2cc' })}
                     />
-                    <ColorDropdown colors={THEME_COLORS} onPick={(c) => editor && applyFormatAttrs(editor, { shading: c })} disabled={disabled} />
+                    <ColorDropdown colors={THEME_COLORS} onPick={(c) => live && applyFormatAttrs(live, { shading: c })} disabled={disabled} />
                   </div>
                   <div className="rb-split">
-                    <RibbonIconButton icon={<IconBorderAll size={16} />} title="Viền đoạn" disabled={disabled} onClick={() => editor && applyFormatAttrs(editor, { borders: format.borders === 'box' ? 'none' : 'box' })} />
+                    <RibbonIconButton icon={<IconBorderAll size={16} />} title="Viền đoạn" disabled={disabled} onClick={() => live && applyFormatAttrs(live, { borders: format.borders === 'box' ? 'none' : 'box' })} />
                     <ColorDropdown
                       colors={[]}
                       items={[
-                        { label: 'Trên', onClick: () => editor && applyFormatAttrs(editor, { borders: 'top' }) },
-                        { label: 'Dưới', onClick: () => editor && applyFormatAttrs(editor, { borders: 'bottom' }) },
-                        { label: 'Trái', onClick: () => editor && applyFormatAttrs(editor, { borders: 'left' }) },
-                        { label: 'Phải', onClick: () => editor && applyFormatAttrs(editor, { borders: 'right' }) },
-                        { label: 'Khung', onClick: () => editor && applyFormatAttrs(editor, { borders: 'box' }) },
-                        { label: 'Không viền', onClick: () => editor && applyFormatAttrs(editor, { borders: 'none' }) },
+                        { label: 'Trên', onClick: () => live && applyFormatAttrs(live, { borders: 'top' }) },
+                        { label: 'Dưới', onClick: () => live && applyFormatAttrs(live, { borders: 'bottom' }) },
+                        { label: 'Trái', onClick: () => live && applyFormatAttrs(live, { borders: 'left' }) },
+                        { label: 'Phải', onClick: () => live && applyFormatAttrs(live, { borders: 'right' }) },
+                        { label: 'Khung', onClick: () => live && applyFormatAttrs(live, { borders: 'box' }) },
+                        { label: 'Không viền', onClick: () => live && applyFormatAttrs(live, { borders: 'none' }) },
                       ]}
                       disabled={disabled}
                     />
@@ -535,7 +559,10 @@ export function Ribbon({
                     <span className="rb-style-card__label">{s.label}</span>
                   </button>
                 ))}
-                <RibbonIconButton icon={<IconStylesPane size={16} />} title="Khung kiểu" disabled={disabled} onClick={() => {}} />
+                <StylePaneButton
+                  disabled={disabled}
+                  onPick={(id) => applyStylePreset(id)}
+                />
               </div>
             </RibbonGroup>
 
@@ -577,10 +604,10 @@ export function Ribbon({
             <span className="ribbon-sep" />
 
             <RibbonGroup label="Xóa">
-              <RibbonButton icon={<IconTableDelete size={26} />} label="Xóa bảng" disabled={disabled} onClick={() => editor && deleteCurrentTable(editor)} />
-              <RibbonButton icon={<IconRowDelete size={26} />} label="Xóa hàng" disabled={disabled} onClick={() => editor && deleteCurrentTableRow(editor)} />
-              <RibbonButton icon={<IconColDelete size={26} />} label="Xóa cột" disabled={disabled} onClick={() => editor && deleteCurrentTableColumn(editor)} />
-              <RibbonButton icon={<IconTrash size={26} />} label="Xóa khối" disabled={disabled} onClick={() => editor && deleteCurrentBlock(editor)} />
+              <RibbonButton icon={<IconTableDelete size={26} />} label="Xóa bảng" disabled={disabled} onClick={() => live && deleteCurrentTable(live)} />
+              <RibbonButton icon={<IconRowDelete size={26} />} label="Xóa hàng" disabled={disabled} onClick={() => live && deleteCurrentTableRow(live)} />
+              <RibbonButton icon={<IconColDelete size={26} />} label="Xóa cột" disabled={disabled} onClick={() => live && deleteCurrentTableColumn(live)} />
+              <RibbonButton icon={<IconTrash size={26} />} label="Xóa khối" disabled={disabled} onClick={() => live && deleteCurrentBlock(live)} />
             </RibbonGroup>
 
             <span className="ribbon-sep" />
@@ -671,13 +698,13 @@ export function Ribbon({
                     icon={<IconIndentDec size={16} />}
                     title="Giảm thụt lề"
                     disabled={disabled}
-                    onClick={() => editor && applyFormatAttrs(editor, { indentLeft: Math.max(0, format.indentLeft - 12) })}
+                    onClick={() => live && applyFormatAttrs(live, { indentLeft: Math.max(0, format.indentLeft - 12) })}
                   />
                   <RibbonIconButton
                     icon={<IconIndentInc size={16} />}
                     title="Tăng thụt lề"
                     disabled={disabled}
-                    onClick={() => editor && applyFormatAttrs(editor, { indentLeft: format.indentLeft + 12 })}
+                    onClick={() => live && applyFormatAttrs(live, { indentLeft: format.indentLeft + 12 })}
                   />
                   <span className="rb-mini-sep" />
                   <label className="rb-inline-label">
@@ -688,7 +715,7 @@ export function Ribbon({
                       min={0}
                       value={format.spaceBefore}
                       disabled={disabled}
-                      onChange={(e) => editor && applyFormatAttrs(editor, { spaceBefore: Number(e.target.value) })}
+                      onChange={(e) => live && applyFormatAttrs(live, { spaceBefore: Number(e.target.value) })}
                       aria-label="Khoảng cách trước đoạn"
                     />
                   </label>
@@ -700,7 +727,7 @@ export function Ribbon({
                       min={0}
                       value={format.spaceAfter}
                       disabled={disabled}
-                      onChange={(e) => editor && applyFormatAttrs(editor, { spaceAfter: Number(e.target.value) })}
+                      onChange={(e) => live && applyFormatAttrs(live, { spaceAfter: Number(e.target.value) })}
                       aria-label="Khoảng cách sau đoạn"
                     />
                   </label>
@@ -714,7 +741,7 @@ export function Ribbon({
                       min={0}
                       value={format.indentLeft}
                       disabled={disabled}
-                      onChange={(e) => editor && applyFormatAttrs(editor, { indentLeft: Number(e.target.value) })}
+                      onChange={(e) => live && applyFormatAttrs(live, { indentLeft: Number(e.target.value) })}
                       aria-label="Thụt lề trái"
                     />
                   </label>
@@ -725,7 +752,7 @@ export function Ribbon({
                       type="number"
                       value={format.indentFirstLine}
                       disabled={disabled}
-                      onChange={(e) => editor && applyFormatAttrs(editor, { indentFirstLine: Number(e.target.value) })}
+                      onChange={(e) => live && applyFormatAttrs(live, { indentFirstLine: Number(e.target.value) })}
                       aria-label="Thụt dòng đầu"
                     />
                   </label>
@@ -775,8 +802,43 @@ export function Ribbon({
         {activeTab === 'design' && (
           <>
             <RibbonGroup label="Giao diện">
-              <RibbonButton icon={<IconDoc size={26} />} label="Trang trắng" />
-              <RibbonButton icon={<IconTable size={26} />} label="Viền đậm" />
+              <div className="rb-split">
+                <RibbonButton
+                  icon={
+                    <span className="rb-color-glyph">
+                      <IconDoc size={26} />
+                      <ColorBar color={pageColor} />
+                    </span>
+                  }
+                  label="Màu trang"
+                  onClick={() => onPageColorChange?.('#ffffff')}
+                />
+                <ColorDropdown
+                  colors={['#ffffff', '#f7f8f7', '#fff8e6', '#eef4ff', '#eaf4ed', '#fdeceb']}
+                  onPick={(c) => onPageColorChange?.(c)}
+                />
+              </div>
+              <div className="rb-split">
+                <RibbonButton
+                  icon={
+                    <span className="rb-color-glyph">
+                      <IconTable size={26} />
+                      <ColorBar color={pageBorder ? '#000000' : '#c0c0c0'} />
+                    </span>
+                  }
+                  label="Viền trang"
+                  onClick={() => onPageBorderChange?.(pageBorder ? 0 : 3)}
+                />
+                <ColorDropdown
+                  colors={[]}
+                  items={[
+                    { label: 'Không viền', onClick: () => onPageBorderChange?.(0) },
+                    { label: 'Mảnh (1px)', onClick: () => onPageBorderChange?.(1) },
+                    { label: 'Đậm (3px)', onClick: () => onPageBorderChange?.(3) },
+                    { label: 'Rất đậm (6px)', onClick: () => onPageBorderChange?.(6) },
+                  ]}
+                />
+              </div>
             </RibbonGroup>
 
             <span className="ribbon-sep" />
@@ -828,6 +890,66 @@ export function Ribbon({
 
 function ColorBar({ color }: { color: string }) {
   return <span className="rb-color-bar" style={{ background: color }} />
+}
+
+/**
+ * Nút "Khung kiểu" — mở popover liệt kê các kiểu đã có. Không dựng thêm
+ * panel cố định: gallery ngay cạnh đã hiển thị kiểu, popover chỉ là cách
+ * liệt kê đầy đủ (Word mở Styles pane, nhưng ở đân popover là đủ dùng).
+ */
+function StylePaneButton({
+  disabled,
+  onPick,
+}: {
+  disabled?: boolean
+  onPick: (id: string) => void
+}) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+  const { triggerRef, pos } = useAnchoredPopover(open, 180)
+
+  useEffect(() => {
+    if (!open) return
+    const onDown = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener('mousedown', onDown)
+    return () => document.removeEventListener('mousedown', onDown)
+  }, [open])
+
+  return (
+    <div className="rb-color-drop" ref={ref}>
+      <button
+        ref={triggerRef as React.RefObject<HTMLButtonElement>}
+        type="button"
+        className="rb-icon"
+        title="Khung kiểu"
+        aria-label="Khung kiểu"
+        disabled={disabled}
+        onMouseDown={(e) => e.preventDefault()}
+        onClick={() => setOpen((o) => !o)}
+      >
+        <IconStylesPane size={16} />
+      </button>
+      {open && (
+        <div className="rb-color-menu" style={{ ...popoverStyle(pos), minWidth: 180 }}>
+          {STYLE_PRESETS.map((s) => (
+            <button
+              key={s.id}
+              type="button"
+              className="rb-color-item"
+              onClick={() => {
+                onPick(s.id)
+                setOpen(false)
+              }}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
 }
 
 function ColorDropdown({

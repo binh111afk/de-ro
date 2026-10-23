@@ -36,7 +36,7 @@ export function TablePicker({ editor, disabled }: { editor: Editor | null; disab
   }, [open])
 
   const insert = (rows: number, cols: number) => {
-    if (!editor) return
+    if (!editor || editor.isDestroyed) return
     editor.chain().focus().insertTable({ rows, cols, withHeaderRow: true }).run()
     setOpen(false)
   }
@@ -99,7 +99,8 @@ const SYMBOLS = [
 export function SymbolPicker({ editor, disabled }: { editor: Editor | null; disabled?: boolean }) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
-  const { triggerRef, pos } = useAnchoredPopover(open)
+  // lưới 10 cột × 28px + 9 gap 2px = 298px, cộng padding 2×8px của menu
+  const { triggerRef, pos } = useAnchoredPopover(open, 314)
 
   useEffect(() => {
     if (!open) return
@@ -129,7 +130,11 @@ export function SymbolPicker({ editor, disabled }: { editor: Editor | null; disa
               className="rb-symbol-cell"
               onMouseDown={(e) => e.preventDefault()}
               onClick={() => {
-                editor?.chain().focus().insertContent(s).run()
+                if (!editor || editor.isDestroyed) {
+                  setOpen(false)
+                  return
+                }
+                editor.chain().focus().insertContent(s).run()
                 setOpen(false)
               }}
             >
@@ -333,8 +338,9 @@ export function ImagePicker({ editor, disabled }: { editor: Editor | null; disab
   const onFile = (file: File) => {
     const reader = new FileReader()
     reader.onload = () => {
+      if (!editor || editor.isDestroyed) return
       const dataUrl = String(reader.result ?? '')
-      editor?.chain().focus().setImage({ src: dataUrl }).run()
+      editor.chain().focus().setImage({ src: dataUrl }).run()
     }
     reader.readAsDataURL(file)
   }

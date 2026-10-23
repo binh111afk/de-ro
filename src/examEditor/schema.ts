@@ -82,6 +82,7 @@ export const SuperscriptMark = Mark.create({
 function formatAttrs() {
   return {
     align: { default: null },
+    dir: { default: null },
     lineHeight: { default: null },
     indentLeft: { default: null },
     indentFirstLine: { default: null },
@@ -92,27 +93,86 @@ function formatAttrs() {
   }
 }
 
-function formatStyle(attrs: Record<string, unknown>): Record<string, string> {
+/**
+ * Chuyển attrs cấp đoạn thành chuỗi CSS inline.
+ *
+ * Phải trả về **chuỗi**, không phải object: `mergeAttributes` của TipTap parse
+ * `style` bằng `parseStyleEntries` — chỉ hiểu chuỗi "prop: value; ...". Truyền
+ * object sẽ bị nuốt thành rỗng và mọi định dạng cấp đoạn (thụt lề, đổ bóng,
+ * viền…) im lặng biến mất.
+ */
+function formatStyle(attrs: Record<string, unknown>): string {
   const s: Record<string, string> = {}
   const align = attrs.textAlign ?? attrs.align
-  if (align) s.textAlign = String(align)
-  if (attrs.lineHeight != null) s.lineHeight = String(attrs.lineHeight)
-  if (attrs.indentLeft != null) s.marginLeft = `${Number(attrs.indentLeft)}px`
-  if (attrs.indentFirstLine != null) s.textIndent = `${Number(attrs.indentFirstLine)}px`
-  if (attrs.spaceBefore != null) s.marginTop = `${Number(attrs.spaceBefore)}px`
-  if (attrs.spaceAfter != null) s.marginBottom = `${Number(attrs.spaceAfter)}px`
-  if (attrs.shading) s.backgroundColor = String(attrs.shading)
+  if (align) s['text-align'] = String(align)
+  if (attrs.dir) s['direction'] = String(attrs.dir)
+  if (attrs.lineHeight != null) s['line-height'] = String(attrs.lineHeight)
+  if (attrs.indentLeft != null) s['margin-left'] = `${Number(attrs.indentLeft)}px`
+  if (attrs.indentFirstLine != null) s['text-indent'] = `${Number(attrs.indentFirstLine)}px`
+  if (attrs.spaceBefore != null) s['margin-top'] = `${Number(attrs.spaceBefore)}px`
+  if (attrs.spaceAfter != null) s['margin-bottom'] = `${Number(attrs.spaceAfter)}px`
+  if (attrs.shading) s['background-color'] = String(attrs.shading)
   const b = attrs.borders as string | null | undefined
   if (b && b !== 'none') {
     const w = '1px solid #000'
     if (b === 'box') s.border = w
-    else if (b === 'top') s.borderTop = w
-    else if (b === 'bottom') s.borderBottom = w
-    else if (b === 'left') s.borderLeft = w
-    else if (b === 'right') s.borderRight = w
+    else if (b === 'top') s['border-top'] = w
+    else if (b === 'bottom') s['border-bottom'] = w
+    else if (b === 'left') s['border-left'] = w
+    else if (b === 'right') s['border-right'] = w
   }
-  return s
+  return Object.entries(s)
+    .map(([k, v]) => `${k}: ${v}`)
+    .join('; ')
 }
+
+/**
+ * `paragraph` của StarterKit chỉ có `textAlign` — thiếu `indentLeft`,
+ * `shading`, `borders`… nên các nút thụt lề / đổ bóng / viền rơi vào im lặng
+ * khi đoạn đang đứng là paragraph (ô bảng, dòng trả lời…).
+ * Bản này thay thế nó: thêm đủ `formatAttrs` và render chúng ra inline style.
+ */
+export const BaseParagraphNode = Node.create({
+  name: 'paragraph',
+  priority: 1000,
+  group: 'block',
+  content: 'inline*',
+  defining: true,
+  addAttributes() {
+    return {
+      textAlign: { default: null },
+      ...formatAttrs(),
+    }
+  },
+  parseHTML() {
+    return [{ tag: 'p' }]
+  },
+  renderHTML({ node, HTMLAttributes }) {
+    // Đọc thẳng `node.attrs` chứ không dựa vào `HTMLAttributes`: TipTap chỉ
+    // đưa attribute có `rendered: true` vào đó, và các attr định dạng cấp đoạn
+    // của node này không đi qua đường đó.
+    const { textAlign, ...rest } = {
+      ...(node.attrs as Record<string, unknown>),
+      ...(HTMLAttributes as Record<string, unknown>),
+    }
+    return [
+      'p',
+      mergeAttributes(
+        textAlign ? { style: `text-align: ${textAlign}` } : {},
+        { style: formatStyle(rest) },
+      ),
+      0,
+    ]
+  },
+  addCommands() {
+    return {
+      setParagraph:
+        () =>
+        ({ commands }) =>
+          commands.setNode(this.name),
+    }
+  },
+})
 
 /** Node chỉ chứa văn bản trong một đoạn (title, heading, paragraph…). */
 function textBlock(name: string, group: string, extra?: Record<string, unknown>) {
@@ -621,8 +681,7 @@ export const EXAM_NODES = [
   StudentNode,
   HeadingNode,
   ParagraphNode,
-  BulletsNode,
-  BulletNode,
+  BulletsNode,  BulletNode,
   QuestionNode,
   QuestionPromptNode,
   OptionNode,

@@ -1,6 +1,7 @@
 @import 'tailwindcss';
 @import './examEditor/genoffice-tokens.css';
 @import './examEditor/compose.css';
+@import './examEditor/slide.css';
 
 @theme {
   /* Be Vietnam Pro — font chính, có đủ subset tiếng Việt */
@@ -171,6 +172,24 @@
   .doc-stage {
     position: relative;
     margin: 0 auto;
+  }
+
+  /* placeholder ở trang trống của trình soạn đề (giống ảnh tham chiếu) */
+  .doc-placeholder {
+    position: absolute;
+    z-index: 2;
+    border: none;
+    background: none;
+    padding: 0;
+    font-family: 'Times New Roman', 'Liberation Serif', serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--color-ink-4);
+    cursor: text;
+  }
+
+  .doc-placeholder:hover {
+    color: var(--color-ink-3);
   }
 
   /* lớp giấy trắng, vẽ dưới nội dung */
@@ -715,6 +734,20 @@
 .anim-shimmer {
   animation: shimmer 1.8s ease-in-out infinite;
 }
+/* chuyển tab tài liệu: nội dung trượt nhẹ vào thay vì đổi tức thì */
+.anim-tab-in {
+  animation: tab-content-in 200ms var(--ease-soft) both;
+}
+@keyframes tab-content-in {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
 
 /* slow horizontal crawl for the subject ticker */
 @keyframes crawl {
@@ -729,7 +762,11 @@
   animation: crawl 42s linear infinite;
 }
 @media (prefers-reduced-motion: reduce) {
-  .anim-crawl {
+  .anim-crawl,
+  .anim-tab-in,
+  .ribbon-tab-page,
+  .ai-attachment,
+  .recent-row-item.is-removing {
     animation: none;
   }
 }
@@ -819,4 +856,14 @@
   .print-sheet:last-child {
     page-break-after: auto;
   }
+}
+
+/* ------------------------------------------------------------------ *
+ * Slide — container query để nội dung slide co đúng tỉ lệ với khung.
+ *
+ * Khung slide là container; các kích thước chữ dùng `cqw` (1% bề rộng
+ * container) nên thumbnail nhỏ vẫn giữ đúng tỉ lệ với slide lớn.
+ * ------------------------------------------------------------------ */
+.slide-frame {
+  container-type: inline-size;
 }

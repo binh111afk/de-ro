@@ -2,12 +2,13 @@
  * Nav pane bên phải — port từ GenOffice (`apps/docs/.../components/NavPane.tsx`):
  * ô tìm kiếm trên, dải tab (Mục lục / Khối mẫu / Tìm kiếm), rồi vùng nội dung.
  */
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import type { JSONContent } from '@tiptap/core'
 import { buildTocFromDoc, type TocEntry } from './convert'
 import { BLOCK_TEMPLATES, type BlockTemplate } from './templates'
 import { cn } from '@/lib/cn'
 import { IconSearch } from './icons'
+import { useSlidingThumb } from './useSlidingThumb'
 
 type PaneTab = 'toc' | 'blocks' | 'search'
 
@@ -22,6 +23,9 @@ export function NavPanel({
 }) {
   const [tab, setTab] = useState<PaneTab>('toc')
   const [query, setQuery] = useState('')
+  // thẻ trắng trượt giữa các tab
+  const tabsRef = useRef<HTMLDivElement>(null)
+  const thumb = useSlidingThumb(tabsRef, '.nav-tab.on', tab)
 
   const toc = useMemo(() => buildTocFromDoc(doc), [doc])
 
@@ -53,7 +57,13 @@ export function NavPanel({
         ) : null}
       </div>
 
-      <div className="nav-tabs" role="tablist">
+      <div className="nav-tabs" role="tablist" ref={tabsRef}>
+        {thumb ? (
+          <span
+            className="nav-tab__thumb"
+            style={{ transform: `translateX(${thumb.x}px)`, width: thumb.w }}
+          />
+        ) : null}
         <button
           role="tab"
           type="button"

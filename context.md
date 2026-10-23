@@ -4,9 +4,9 @@ Tài liệu này ghi lại toàn bộ trạng thái dự án: đã làm gì, đ�
 rút ra, và **những gì còn chưa làm xong**. Đọc file này là đủ để tiếp tục làm việc
 mà không cần đọc lại lịch sử hội thoại.
 
-> Cập nhật lần cuối: 22/10/2026 — Chặng 1+2: nâng cấp ExamBlock lên rich text,
-> sửa 3 bug converter, Ribbon Trang chủ + Chèn đầy đủ, Tìm/Thay thế, re-theme
-> clay/Be Vietnam Pro, sửa bố cục tab strip.
+> Cập nhật lần cuối: 23/10/2026 — Chặng 6: làm lại trình soạn slide theo vỏ
+> GenOffice (ribbon nhiều tab, nhóm công cụ, gallery/popup, tab ngữ cảnh,
+> chọn/kéo/resize/undo).
 
 ## 0. Vị trí dự án
 
@@ -35,7 +35,14 @@ thi tiếng Việt theo mô hình tài liệu Word. Trang **Soạn đề** (`/so
 soạn thảo chính: full-screen, ribbon nhiều tab, tab strip nhiều đề, dock AI bên trái,
 nav pane (mục lục / khối mẫu / tìm kiếm) bên phải, sân giấy A4 thật ở giữa.
 
-Các màn khác: Soạn slide, Đề thi của tôi, Thư viện, Cộng đồng, Chấm điểm, Quiz.
+**Trợ lý AI nằm ở đâu (quyết định của chủ dự án, không theo GenOffice):** ở
+trình soạn đề (`/soan-de`) panel AI ở cột **trái**; ở trình soạn slide panel AI ở
+cột **phải** (cột trái là danh sách thumbnail). `AiDock` nhận prop `side="left" |
+"right"` để đảo rail, viền panel và hướng nút thu gọn.
+
+Các màn khác: Đề thi của tôi, Thư viện, Cộng đồng, Chấm điểm, Quiz. Slide không có
+màn riêng — mọi tài liệu (đề/slide/bảng tính) được tạo và mở từ tab **Bắt đầu**
+trong `/soan-de`; `/soan-slide` chỉ redirect về đó.
 
 ### Nguyên tắc bất di bất dịch của dự án
 
@@ -104,7 +111,7 @@ Cấu trúc:
 ┌──────────────────────────────────────────────────────────┐
 │ ribbon-tabs: Trang chủ | Chèn | Bố cục | Thiết kế | Tài liệu │  ribbon (cao 80px)
 ├──────────────────────────────────────────────────────────┤
-│ tab strip kiểu Chrome — nhiều đề đang mở                │  (cao 40px)
+│ tab strip kiểu Chrome — "Bắt đầu" + các đề đang mở      │  (cao 40px)
 ├──────────┬───────────────────────────────┬───────────────┤
 │  AI      │  ruler (cao 20px)             │  nav pane     │
 │  dock    ├───────────────────────────────┤  (288px)      │
@@ -114,6 +121,11 @@ Cấu trúc:
 │          │  status bar (cao 24px)         │               │
 └──────────┴───────────────────────────────┴───────────────┘
 ```
+
+Khi tab "Bắt đầu" active: vùng dưới tab strip hiện **trang dashboard**
+(`StartTab.tsx`) thay cho vỏ soạn đề — hero chào theo giờ, 3 thẻ loại tài liệu,
+bộ lọc + danh sách "Gần đây". Nền trang = `--surface` (trắng) khớp với nền tab
+active để chân cong của tab nối liền.
 
 Files:
 
@@ -129,8 +141,16 @@ Files:
 - `src/examEditor/Layout.tsx` — `RibbonTabs`, `RibbonBody`, `RibbonGroup`,
   `RibbonButton`, `RibbonIconButton`, `Ruler`, `AiDock`, `NavPane`, `useViewportSize`.
 - `src/examEditor/TabStrip.tsx` — tab strip kiểu Chrome (đĩa hover/active, chân cong).
+  Tab đầu tiên là "Bắt đầu" (icon nhà từ GenOffice shell); tab tài liệu dùng icon
+  theo loại (`DocIcon`).
+- `src/examEditor/StartTab.tsx` — trang "Bắt đầu": hero chào theo giờ, 3 thẻ loại
+  tài liệu (Đề thi / Slide / Bảng tính), bộ lọc + danh sách "Gần đây".
+- `src/examEditor/useSlidingThumb.ts` — hook đo vị trí phần tử active để làm thẻ
+  trượt của segmented control.
+- `src/components/docIcons.tsx` — 3 icon loại tài liệu (đề xanh lam / slide cam đất /
+  bảng tính xanh lá) vẽ lại từ file SVG gốc.
 - `src/examEditor/AiPanel.tsx` — empty state + starter pill + composer bo 16px.
-- `src/examEditor/NavPanel.tsx` — ô tìm kiếm + dải tab + vùng nội dung.
+- `src/examEditor/NavPanel.tsx` — ô tìm kiếm + dải tab (có thẻ trượt) + vùng nội dung.
 - `src/pages/ComposeDoc.tsx` — ghép toàn bộ, auto-fit, save, print, export.
 - `src/store/compose.ts` — store phiên nhiều tab, nội dung + undo/redo riêng từng tab.
 
@@ -143,8 +163,9 @@ undo/redo theo từng tab (trong store).
 ### 3.7. Build
 
 - `npx tsc -b --noEmit` — **sạch**.
-- `npm run build` — **thành công**. Còn cảnh báo bundle chính ~1 MB vượt ngưỡng
+- `npm run build` — **thành công**. Còn cảnh báo bundle chính ~1.1 MB vượt ngưỡng
   Vite 500 kB (đã có `manualChunks` cho vendor/math).
+- `npm run test:convert` — **6/6 pass**.
 
 ### 3.8. Dọn dẹp bloat (ponytail-audit, 22/10/2026)
 
@@ -163,7 +184,9 @@ undo/redo theo từng tab (trong store).
 `@tiptap/extension-link`, `@tiptap/extension-underline`,
 `@tiptap/extension-placeholder`, `@fontsource-variable/figtree`,
 `@fontsource-variable/fraunces`, `@fontsource-variable/inter`,
-`@fontsource-variable/newsreader`, `tsx` (chỉ dùng cho script test đã xóa).
+`@fontsource-variable/newsreader`.
+- `tsx` — **vẫn cần**: `npm run test:convert` chạy `tsx scripts/test-convert.mjs`.
+  (Ghi chú cũ trong context nói đã gỡ `tsx` là không đúng.)
 
 **Giữ lại** (grep nhầm lúc đầu, thực ra đang dùng):
 - `@tiptap/extension-text-style` — `ExamEditor.tsx` import `TextStyle`.
@@ -239,7 +262,7 @@ status 24px, A4 794×1123, margin 76px). `var(--word-blue)` trong `compose.css`
 tự nhận màu mới vì đã map qua token.
 
 **Kiểm chứng:** `npx tsc -b --noEmit` sạch · `npm run build` thành công ·
-`npm run test:convert` 5/5 pass.
+`npm run test:convert` 6/6 pass.
 
 **Còn lại (chặng 2/3):** Tìm/Thay thế panel, ribbon Chèn đầy đủ (table picker,
 picture, symbol, equation, link), ribbon Bố cục (margins/paper/columns/breaks),
@@ -325,7 +348,7 @@ header/footer theo trang, ruler indent markers kéo được.
 - Vùng lề trái/phải kéo được → đổi `marginCm` của trang (snap 5px, clamp 20px–nửa trang).
 
 **Kiểm chứng:** `npx tsc -b --noEmit` sạch · `npm run build` thành công ·
-`npm run test:convert` 5/5 pass.
+`npm run test:convert` 6/6 pass.
 
 **Còn lại:** header/footer theo trang, bảng thuộc tính bảng đầy đủ (borders/
 shading per-cell), dark theme.
@@ -357,7 +380,7 @@ shading per-cell), dark theme.
 - Xóa khối dùng `getSelectedBlock`, giữ paragraph hợp lệ nếu đó là block cuối.
 
 **Validation:** `npx tsc -b --noEmit` sạch · `npm run build` thành công ·
-`npm run test:convert` 5/5 pass.
+`npm run test:convert` 6/6 pass.
 
 ### 3.12. Sửa 2 lỗi người dùng báo: ribbon không hoạt động + dropdown bị che (22/10/2026)
 
@@ -381,9 +404,262 @@ shading per-cell), dark theme.
   `SymbolPicker` (`rb-drop-menu`), `ColorDropdown` (`rb-color-menu`).
 
 **Kiểm chứng:** `npx tsc -b --noEmit` sạch · `npm run build` thành công ·
-`npm run test:convert` 5/5 pass.
+`npm run test:convert` 6/6 pass.
 
 ---
+
+### 3.14. Chặng 4 — Nhận diện thương hiệu mới + tab Bắt đầu + animation (23/10/2026)
+
+Commit `9b5ba99` (đã push) + một lượt sửa chưa commit (xem mục 6.6).
+
+**Bộ nhận diện mới (file do người dùng cung cấp):**
+- `public/brand/logo-de-ro.svg` — logo chính 194×72 (mark + chữ "đề rõ", fill
+  `#15191C`). Dùng thẳng file gốc bằng `<img>` để giữ nguyên nét chữ.
+- `public/brand/favicon.svg` — cắt riêng phần mark trong logo (viewBox
+  `4 2 68 68`) làm favicon; `index.html` trỏ sang file này thay vì data-URI cũ.
+- `src/components/docIcons.tsx` (mới) — vẽ lại 3 icon loại tài liệu từ file gốc
+  để chỉnh size tuỳ ý: `IconDocExam` (nền xanh lam `#EAF1FB`, đề + bút chì),
+  `IconDocSlide` (nền cam đất `#FBECE5`, màn hình + biểu đồ), `IconDocSheet`
+  (nền xanh lá `#EAF4ED`, lưới ô) + `DocIcon` bộ phân loại theo `kind`.
+
+**Logo web** (`src/components/Layout.tsx`): xoá component `Mark` (icon trang trắng
+vẽ tay + chữ font) → thay bằng `<img src="/brand/logo-de-ro.svg">`. Header cao
+36px (`h-9`), footer 28px (`h-7`).
+
+**Loại tài liệu** (`src/data/docTypes.ts`, `src/store/compose.ts`):
+- Thêm `DocKind = 'exam' | 'slide' | 'sheet'`.
+- `ExamDoc.kind?` (mặc định `'exam'`), `OpenTab.kind` — tab trong tab strip giờ
+  render `DocIcon` theo loại tài liệu thay vì icon trang trắng chung.
+- Trang Bắt đầu: thẻ "Đề thi" (bấm được) / "Slide" / "Bảng tính" dùng icon mới;
+  pill lọc "Gần đây" thêm **Bảng tính** → trạng thái rỗng "Bảng tính chưa mở".
+- Xoá thẻ "Mở đề đã lưu" (không cần — danh sách Gần đây đã ở ngay dưới) và
+  bỏ luôn CSS `.quick-folder` thành code chết.
+
+**Bố cục thẻ loại** (`compose.css` `.quick-cards`): đổi từ flex sang **grid**
+`repeat(auto-fit, minmax(min(100%, 200px), 1fr))`. Lý do: flex `flex: 1` kéo giãn
+thẻ cuối hết hàng khi số thẻ không chia hết. Grid tự chia đều phần chiều rộng
+còn lại, tự xuống hàng khi chật.
+
+**Icon tab "Bắt đầu" = ngôi nhà** (`src/examEditor/icons.tsx` `IconHome`):
+lấy nguyên artwork từ GenOffice shell
+(`_ref/genoffice/apps/shell/src/renderer/src/TabBar.tsx` → `HomeIcon`, canvas
+24×24, nhà + chấm cửa, stroke `currentColor` 1.5). Bản `IconHome` 16×16 có sẵn
+trong repo nhưng là icon ribbon của app docs, **chưa dùng ở đâu** — đã thay.
+
+**Animation thẻ trượt** (segmented control):
+- `src/examEditor/useSlidingThumb.ts` (mới) — hook đo `offsetLeft`/`offsetWidth`
+  của phần tử active + `ResizeObserver`, trả về `{x, w}`.
+- Dùng cho 2 chỗ: `.filter-pills` (trang Bắt đầu: Tất cả / Đề thi / Slide /
+  Bảng tính) và `.nav-tabs` (nav pane phải: Mục lục / Khối mẫu / Tìm kiếm).
+- Thẻ trắng là phần tử riêng `.filter-pill__thumb` / `.nav-tab__thumb`
+  (`pointer-events: none`), pill có `z-index: 1` để chữ luôn nằm trên.
+- Chuyển động: `transform` + `width` 280ms `cubic-bezier(0.32,0.72,0,1)`;
+  pill `:active` `scale(0.96)` (bộ lọc) / `scale(0.97)` (nav tab).
+- Vì sao đo bằng JS chứ không hardcode: chữ active đậm hơn (`font-weight: 600`)
+  nên bề rộng pill đổi theo → hardcode sẽ lệch.
+
+**Sửa nền trang Bắt đầu** (`compose.css` `.start-scroll`): nền cũ
+`var(--color-paper)` = `#f7f8f7` lệch với nền tab active (`--surface` trắng) →
+tab trắng bị "đứt" khỏi vùng dưới. Đổi sang `var(--surface)`.
+
+**Kiểm chứng:** `npx tsc -b --noEmit` sạch · `npm run build` thành công ·
+`npm run test:convert` 6/6 pass · browser: logo header/footer, favicon 200, 3
+thẻ loại + pill Bảng tính, icon nhà trên tab, thẻ trượt ở cả 2 segmented
+control, console không lỗi.
+
+### 3.15. Chặng 5 — Sửa triệt để lỗi ribbon không hoạt động (23/10/2026)
+
+Người dùng báo: "các công gụ trên ribbon không hoạt động được", menu Ký hiệu
+(tab Chèn) bị tràn, và không mở được tab làm việc mới. Đã tái hiện trong
+trình duyệt thật và sửa gốc — không phải sửa triệu hiện tượng.
+
+**Nguyên nhân gốc #1 — ribbon giữ editor đã bị destroy:**
+`ExamEditor` báo editor cho host qua `onCreate` (TipTap gọi trong `setTimeout(0)`
+sau `mount()`). Khi đổi tab, `key={activeId}` remount `ExamEditor`: editor cũ bị
+destroy, editor mới được tạo — nhưng `onCreate` của editor **cũ** vẫn chạy
+sau đó và set vào state. Ribbon nhận editor đã chết → mọi `chain()` rơi vào im
+lặng (ProseMirror không báo lỗi khi view đã destroy).
+
+Cách phát hiện: đọc React fiber của `.ribbon` để lấy `props.editor`, so với
+`document.querySelector('.ProseMirror').editor` (TipTap gắn editor instance
+lên DOM node) → thấy `same: false`, `ribbonDestroyed: true`.
+
+Sửa:
+- `ExamEditor` báo editor trong `useEffect` (sau commit) thay vì `onCreate` /
+  `onMount` — `onMount` của TipTap gọi trong lúc `EditorContent` đang render →
+  React báo *"Cannot update a component while rendering a different component"*.
+- `ComposeDoc` dùng **derived state**: `editorState = { id, editor }`, lấy
+  `editor = editorState.id === activeId ? editorState.editor : null`. Nhờ vậy
+  đổi tab là editor cũ biến mất ngay, không phải đợi effect con báo lại.
+  (Dùng `useEffect(() => setEditor(null), [activeId])` sẽ **xoá nhầm** editor
+  mới vì effect cha chạy sau effect con.)
+- `Ribbon` chặn editor đã destroy ở **một chỗ duy nhất**: `chain()` trả
+  `undefined` nếu `editor.isDestroyed`, `disabled = !editor || editor.isDestroyed`.
+  Các lệnh gọi trực tiếp dùng biến `live` (editor còn sống) — `insertTemplate`,
+  `applyStylePreset`, `applyCase`, `clearFormatting`, `capturePainter`, xóa
+  bảng/hàng/cột/khối, các `applyFormatAttrs`.
+
+**Nguyên nhân gốc #2 — `formatStyle` sinh CSS sai:**
+- Trả về **object** `{ marginLeft: '24px' }` → `mergeAttributes` của TipTap parse
+  `style` bằng `parseStyleEntries` — chỉ hiểu **chuỗi** → style bị nuốt rỗng.
+  Sửa: `formatStyle` trả về chuỗi `"margin-left: 24px; …"`.
+- Dùng **camelCase** (`marginLeft`) — CSS cần kebab-case (`margin-left`).
+  Sửa: đổi hết sang kebab-case.
+- Node `paragraph` của StarterKit chỉ có `textAlign` → các nút thụt lề / đổ
+  bóng / viền im lặng khi đoạn đang đứng là paragraph (ô bảng, dòng trả lời).
+  Sửa: thêm `BaseParagraphNode` (tên node `paragraph`, `priority: 1000`) có đủ
+  `formatAttrs`; tắt `paragraph` của StarterKit (`paragraph: false`).
+
+**Nguyên nhân gốc #3 — chèn khối mẫu sai cấp:**
+`insertContent` chèn tại con trỏ; nếu con trỏ đang ở giữa một `examBullet`,
+khối mẫu bị nhét vào trong node text → schema báo *"Invalid content for node
+examBullets"*. Sửa: chèn tại `target.pos + target.node.nodeSize` (sau khối cấp
+cao nhất) bằng `insertContentAt`. Áp cho cả ribbon (`insertTemplate`) và nav
+panel (`handleInsertTemplate` trong `ComposeDoc`).
+
+**Nguyên nhân gốc #4 — menu Ký hiệu bị tràn:**
+`useAnchoredPopover` ép `width: 220px` trong khi lưới ký hiệu cần
+10×28px + 9 gap 2px + padding = 314px → ô cuối nằm ngoài viewport.
+Sửa: `useAnchoredPopover(open, minWidth)` nhận minWidth tuỳ chỉnh;
+`popoverStyle` dùng `minWidth` thay vì `width` cứng (menu co theo nội dung);
+`SymbolPicker` truyền `314`; bỏ `max-width: 300px` của `.rb-symbol-grid`.
+
+**Nguyên nhân gốc #5 — nút "+" không tạo tab mới:**
+`newDocAndOpen` tái dùng tab trống duy nhất → bấm "+" thấy không có gì xảy
+ra, tưởng nút hỏng. Sửa: tách 2 hành vi — nút "+" trên tab strip **luôn** tạo
+tab mới (`newDocAndOpen(false)`), thẻ "Đề thi" ở trang Bắt đầu mới tái dùng
+tab trống (`newDocAndOpen(true)`).
+
+**Nguyên nhân gốc #6 — nút In im lặng khi popup bị chặn:**
+`printDoc` gọi `window.open(...)`; khi trình duyệt chặn popup thì trả `null`, code cũ
+`if (!w) return` → bấm In không ra gì, tưởng nút hỏng. Thêm `printViaHiddenFrame`:
+in ra chính trang hiện tại qua iframe ẩn (vẫn đúng A4 nhờ CSS `@page`). Đồng
+thời gán `w.onload` **trước** `w.document.close()` — gán sau thì nội dung có
+thể đã load xong, `w.print()` không bao giờ chạy.
+
+**5 nút ribbon không có handler — đã nối:**
+- Trái sang phải / Phải sang trái → thêm attr `dir` (`'ltr' | 'rtl'`) vào
+  `formatAttrs` + `FormatAttrs`, render thành CSS `direction`.
+- Màu trang (tab Thiết kế) → `PageSetup.pageColor`, áp vào `.doc-paper`.
+- Viền trang (tab Thiết kế) → `PageSetup.pageBorder` (px), áp vào `.doc-paper`.
+- Khung kiểu → popover liệt kê `STYLE_PRESETS` (dùng lại `applyStylePreset`).
+
+**Kiểm chứng (trình duyệt thật, 1 tab, từng nút một):**
+- Tab Trang chủ: 20/20 nút định dạng OK (Đậm, Nghiêng, Gạch chân, Gạch ngang,
+  Chỉ số dưới/trên, 4 nút căn lề, thụt lề ±, đổ bóng, viền, tô sáng, màu chữ,
+  phóng/thu chữ, đổi kiểu chữ, xóa định dạng) + 15/15 nút còn lại (3 kiểu danh
+  sách, chọn tất cả, hiện ¶, LTR/RTL, 8 style preset, khung kiểu).
+- Tab Chèn: ngắt trang, bảng (TablePicker 3×3), bảng đáp án, thang điểm, xóa
+  bảng/hàng/cột/khối, trắc nghiệm, tự luận, đoạn văn, tiêu đề, danh sách,
+  liên kết, ký hiệu, công thức — tất cả OK. Menu ký hiệu 315.6px, mép phải
+  1433.6 < viewport 1440 → không tràn.
+- Tab Bố cục: lề 1→3cm, hướng dọc/ngang (794px ↔ 1123px), input Trước/Sau/
+  Thụt trái/Dòng đầu, giãn dòng, ngắt trang, zoom — tất cả OK.
+- Tab Thiết kế: màu trang (nền đổi sang rgb(238,244,255)), viền trang — OK.
+- Tab Tài liệu: Lưu, Xuất Word (download OK), Xuất PDF — OK. Nút In: giả lập
+  chặn popup → fallback iframe chạy, `print()` được gọi 1 lần, không lỗi.
+- Luồng nhiều tab: tạo 3 tab bằng "+", chuyển qua lại, nội dung + định dạng
+  được giữ, ribbon vẫn ăn trên tab mới, Lưu → "Đã lưu".
+- Tìm/Thay thế: tìm "Phương án" → 5 hit, đếm 1/5; thay tất cả → OK.
+- Console: không còn lỗi nào.
+- `npx tsc -b --noEmit` sạch · `npm run build` thành công ·
+  `npm run test:convert` 6/6 pass.
+
+### 3.16. Chặng 6 — Làm lại trình soạn slide theo vỏ GenOffice (23/10/2026)
+
+Mục tiêu: slide không còn là một hàng toolbar icon; port cơ chế ribbon, nhóm lệnh,
+gallery/popup và tab ngữ cảnh từ `_ref/genoffice/apps/slides` vào model `Deck` hiện
+có (không kéo Konva/IPC/PPTX engine).
+
+**Vỏ mới (`SlideRibbon.tsx`, `slide.css`):**
+- Ribbon **trải hết chiều ngang** phía trên editor (trước nằm trong cột giữa), rồi
+  mới tới hàng `thumbnail | stage | AI dock`.
+- Hàng tab: Trang chủ · Chèn · Vẽ · Thiết kế · Chuyển tiếp · Hoạt ảnh · Trình chiếu ·
+  Xem lại · Xem; tab ngữ cảnh thêm vào cuối theo loại đối tượng đang chọn
+  (Định dạng hình / Định dạng ảnh / Thiết kế bảng / Thiết kế biểu đồ).
+- Body 92px, nhóm ngăn bằng `.ribbon-sep`, nút lớn icon + nhãn dưới, nút nhỏ 28×30.
+- **Icon port đúng bộ slide của GenOffice** (`slideIcons.tsx`, canvas 24×24,
+  `pinnedStroke` giữ nét ~1.5px): New Slide, Slide Layout, Play current/from start,
+  Find, AI Beautify/FactCheck/Image, object align/flip, shape gallery, transition
+  gallery. Các icon trùng tên dùng lại bộ docs (`icons.tsx`, canvas 16×16). Không
+  còn dùng Lucide trong ribbon.
+- Quick Access (Lưu/Hoàn tác/Làm lại, 16px) nằm **trước hàng tab** như GenOffice;
+  không còn tiêu đề bài giảng hay nút Trình chiếu ở góc phải hàng tab. Tên bài
+  giảng sửa được ở đầu cột thumbnail.
+- Popup/gallery dùng `useAnchoredPopover` (`position: fixed`) nên không bị ribbon
+  `overflow-x` cắt: menu Dán/Slide/Trình chiếu, bảng 8×5, gallery hình, gallery
+  biểu đồ, gallery chủ đề.
+- Tab Trang chủ bám thứ tự ảnh mẫu: AI (Trợ lý AI + 3 nút chưa hỗ trợ) · Bảng tạm
+  (Dán + Cắt/Sao chép) · Trình chiếu · Slide · Phông chữ (2 combo + tăng/giảm cỡ +
+  B/I/U/x²/x₂/màu chữ) · Đoạn văn · Định dạng (Format Pane) · Căn chỉnh ·
+  Tìm/Thay thế (disabled — slide chưa có find).
+- Tab Chèn: Slide mới/Bố cục · Bảng · Hình ảnh · Hình dạng/Biểu đồ · Hộp văn bản.
+- Tab Thiết kế: gallery chủ đề + nền; Chuyển tiếp: 4 hiệu ứng + áp dụng tất cả;
+  Xem: zoom + bật/tắt Bảng chọn/AI.
+- **AI trên ribbon (23/10/2026):** icon nút "Trợ lý AI" dùng file tĩnh
+  `public/brand/ai-static.svg` (do người dùng cung cấp), nhóm AI được đẩy ra **rìa
+  phải** ribbon bằng `.ribbon-flex-spacer`. Icon Lottie động ở header panel AI đã bị
+  xoá cho cả slide và docx (header chỉ còn chữ "Trợ lý AI").
+- Icon trên tab tài liệu (đề/slide) và tab "Bắt đầu" cùng cỡ 20px; container
+  `.tab-item__icon` nới từ 18 lên 20px.
+
+**Lõi chỉnh sửa (`SlideEditor.tsx`, `store/docs.ts`):**
+- Chọn phần tử bằng click (outline clay), tab ngữ cảnh tự mở cho ảnh/bảng/biểu đồ.
+- Kéo để di chuyển, handle góc để resize; tọa độ vẫn % để thumbnail/presenter khớp.
+- Phím tắt: Delete/Backspace xoá, Ctrl/Cmd+Z/Shift+Z undo/redo, Ctrl/Cmd+D nhân
+  bản, Esc bỏ chọn.
+- Undo/redo trong phiên editor: mọi mutation đi qua `commitDeck` (chụp snapshot
+  trước khi đổi); kéo/resize chỉ chụp 1 lần lúc bắt đầu rồi preview không ghi history.
+- Copy/cut/paste nội bộ, sắp xếp lớp (front/back/forward/backward), căn theo slide,
+  lật ngang/dọc.
+- Bảng chọn định dạng (X/Y/Rộng/Cao %, màu chữ/màu tô) mở từ ribbon.
+- `SlideElement` thêm optional: `fontWeight`, `fontFamily`, `textColor`,
+  `fontStyle`, `textDecoration`, `align`, `zIndex`, `flipX`, `flipY` — deck cũ vẫn đọc được.
+- `SlideThumb`/`SlideElView` render cùng style mới (font, màu, căn lề, lật, z-index).
+
+**Home là nơi duy nhất chứa tài liệu (23/10/2026):**
+- `/soan-slide` không còn trang danh sách/tạo riêng — redirect về `/soan-de`
+  (`Navigate replace`). Xoá `pages/Slides.tsx`. Mọi thứ bắt đầu từ tab "Bắt đầu"
+  trong `/soan-de`; MyDocs cũng trỏ về `/soan-de`.
+- Autosave ở store compose: `saveTab(id)` lưu cả đề và slide vào `myDocs`/`myDecks`;
+  `saveAll()` gọi khi đóng tab, bấm "Bắt đầu", `pagehide`/`beforeunload`, và khi
+  unmount route (chỉ nếu có tab dirty). Tab chưa sửa và chưa từng lưu thì không tạo
+  bản ghi rỗng.
+- Đóng tab = lưu xong vào Home; danh sách "Gần đây" hiển thị cả `.docx` và `.pptx`.
+
+**Sửa lỗi kèm theo:** `/soan-slide` trước cao `100dvh - 68px` dù route đã full-screen
+→ dải trắng 68px dưới đáy; route này giờ redirect nên không còn trang đó.
+
+**Chưa hỗ trợ (hiện disabled, không giả lập):** Tìm/Thay thế trong slide, bố cục
+slide, cỡ slide, viền hình, hoạt ảnh, comment, media/SmartArt, import-export PPTX.
+
+**Đính kèm trong composer AI + placeholder docx (23/10/2026):**
+- Nút đính kèm (paperclip) ở góc trái footer composer, `multiple`, chỉ nhận
+  `.doc/.docx/.xls/.xlsx/.csv/.pdf` và `image/*`; file khác bị bỏ qua.
+- Chip tệp hiện phía trên textarea: Word/Excel/PDF dùng icon tĩnh
+  `public/brand/file-icons/{doc,sheet,pdf}.svg`; ảnh dùng thumbnail object URL.
+  Có nút bỏ từng tệp, hiện cả tên + dung lượng, và hiển thị lại trong lượt chat.
+- Gửi kèm danh sách tệp (tên + loại) trong message cho LLM; chưa parse nội dung
+  nhị phân của docx/xlsx/pdf (cần thư viện riêng nếu muốn trích xuất).
+- Editor docx có placeholder “Bắt đầu soạn đề…” khi tài liệu rỗng; bấm vào là
+  focus editor, gõ chữ đầu tiên thì placeholder biến mất.
+
+**Animation (23/10/2026):**
+- Đổi tab ribbon: `.ribbon-tab-page` remount theo tab, fade + trượt lên 3px
+  (170ms `--ease-soft`) — áp cho cả ribbon đề và ribbon slide.
+- Đổi tab tài liệu: `.anim-tab-in` trên `.compose-canvas` (đề) và `.slide-stage`
+  (slide), 200ms.
+- Chip tệp AI: `attach-in` 200ms khi thêm, `attach-out` 160ms trước khi bỏ khỏi
+  state (delay 170ms) nên có animation xoá thật.
+- Dòng “Gần đây” ở tab Bắt đầu: `recent-out` 170ms (mờ dần + trượt trái) rồi mới
+  xoá khỏi store.
+- Tất cả animation bị tắt khi `prefers-reduced-motion: reduce`.
+
+**Kiểm chứng:** `npx tsc -b --noEmit` sạch · `npm run build` thành công ·
+`npm run test:convert` 6/6 pass · browser thật: placeholder hiện/ẩn đúng, đính kèm
+đủ 4 loại tệp với icon/thumbnail, kéo-thả nút gửi bật đúng; slide vẫn chọn/kéo/
+resize/undo, chèn hình, đổi tab Thiết kế/Chuyển tiếp/Xem và trình chiếu bình thường,
+console không lỗi.
 
 ## 4. Lỗi đã gặp và cách sửa
 
@@ -524,25 +800,26 @@ sẵn trong thư viện).
 Phần này là danh sách công việc **còn dở** tại thời điểm ghi file. Xếp theo mức độ
 quan trọng.
 
-### 6.1. Chưa kiểm chứng lại trong trình duyệt sau đợt dựng lại giao diện
+### 6.1. Đã kiểm chứng lại trong trình duyệt (chặng 5, 23/10/2026)
 
-Đợt dựng lại vừa rồi mới xác nhận bằng **typecheck + build + một ảnh chụp màn hình**
-(rồi: ribbon, tab strip, AI rail, ruler, trang A4, status bar đều render đúng;
-đúng 1 tab đề; `zoom` đúng áp dụng). **Chưa** kiểm chứng bằng thao tác thật:
+Xem mục **3.15** — đã kiểm chứng bằng thao tác thật trên trình duyệt:
+chèn khối mẫu từ ribbon và nav panel, sửa + lưu + đóng/mở lại tab, áp kết quả
+AI, xuất Word, nhiều tab đổi qua lại, Tìm/Thay thế, toàn bộ nút ribbon.
+Còn lại:
 
-- [ ] Chèn khối mẫu từ ribbon và từ nav panel → xác nhận node xuất hiện trên giấy.
-- [ ] Sửa nội dung, lưu, đóng tab, mở lại → xác nhận nội dung được khôi phục.
-- [ ] Undo/redo theo từng tab (hiện có trong store nhưng chưa test qua UI).
-- [ ] Áp kết quả AI vào tài liệu (`handleAiResult`).
-- [ ] Xuất Word (`exportDocBlocks`) và in A4 (`printDoc`).
-- [ ] Mục lục / tìm kiếm nhảy đúng khối (`handleGoToBlock`).
-- [ ] Mở nhiều tab, đổi tab qua lại, xác nhận nội dung và lịch sử không lẫn nhau.
+- [ ] **Undo/redo theo từng tab** — có trong store nhưng chưa có nút ribbon
+      gọi tới (chỉ TipTap undo/redo nội bộ). Chưa test qua UI.
+- [ ] **Mục lục / tìm kiếm ở nav panel nhảy đúng khối** (`handleGoToBlock`) —
+      chưa test thao tác nhảy.
+- [ ] **Áp kết quả AI** (`handleAiResult`) — chưa chạy thật với proxy LLM.
 
-### 6.2. Lỗi fidelity của converter (đã sửa 2/3, còn 1)
+### 6.2. Lỗi fidelity của converter (đã sửa 3/3, còn 1 việc khác)
 
 - [x] **Bảng đáp án mất dữ liệu khi round-trip** — đã sửa (xem mục 3.9): duyệt đúng
       cấp bảng `table > tableRow > cell`, bỏ ô nhãn cột nhưng vẫn đọc ô dữ liệu.
 - [x] **Header trái/phải không ghép lại** — đã sửa (xem mục 3.9): gộp theo attr `side`.
+- [x] **Mất `formatAttrs` khi round-trip** — đã sửa (xem mục 3.9): giữ attrs cấu
+      hình ở node/mark.
 - [ ] Phân trang hiện **đo theo khối cấp cao nhất**, chưa tách nội dung dài qua biên
       giữa trang (giống GenOffice đã có `tests/pagination-corpus` — tham khảo
       `apps/docs/src/renderer/editor/`).
@@ -550,9 +827,10 @@ quan trọng.
 ### 6.3. Về mặt thẩm mỹ, còn lệch so với bản gốc
 
 - [ ] Ribbon hiện **chưa có** các nhóm lớn như bản gốc: Styles gallery (Normal /
-      No Spacing), font colour + highlight colour với thanh màu, Borders, Shading,
-      Page Number, Watermark, Table Layout… Bản gốc có đầy đủ; hiện chỉ có các nhóm
-      cơ bản vì cần map sang schema đề.
+      No Spacing), Borders, Shading, Page Number, Watermark, Table Layout…
+      Bản gốc có đầy đủ; hiện chỉ có các nhóm cơ bản vì cần map sang schema đề.
+      *(Font colour + highlight colour **đã có** từ chặng 1, mục 3.9; commit
+      `9b5ba99` bổ sung highlight đa màu + nhớ màu đã chọn.)*
 - [ ] Ribbon gốc có **nút "File" màu word-blue** ở đầu hàng tab, menu File, AutoSave
       toggle, nút Styles Pane. Chưa port.
 - [ ] AI panel gốc có rail icon Genspark, nút header (mở rộng/thu gọn), composer có
@@ -567,9 +845,9 @@ quan trọng.
       bỏ bản ở cột phải, chỉ còn cột trái + nhóm zoom ở cột phải.
 - [x] `setLineHeight` không tồn tại trong tiptap → đã đăng ký extension
       `LineHeight` của `@tiptap/extension-text-style/line-height` (xem mục 4.9).
-- [ ] Dropdown "Giãn dòng" ở `Ribbon.tsx` đang dùng `defaultValue` cứng `"1.5"`,
-      không đọc giá trị hiện tại của node đang chọn → hiển thị sai nếu người dùng
-      đổi rồi quay lại. Cần đọc `editor.getAttributes('paragraph').lineHeight`.
+- [x] Dropdown "Giãn dòng" đọc `format.lineHeight` (từ `useFormatState`) — đã
+      đúng, không còn `defaultValue` cứng. Đã kiểm chứng: chọn "2,0" → span
+      `style="line-height: 2"`.
 - [ ] Số trang trong status bar lấy bằng cách đếm `.doc-paper` trong DOM → cập nhật
       chậm hơn 1 nhịp so với nội dung thật. Nên lấy trực tiếp từ `ExamEditor`
       (đã có state `pageCount` bên trong) thay vì đếm DOM.
@@ -581,12 +859,53 @@ quan trọng.
 
 - [ ] Bundle chính ~1 MB, vượt ngưỡng Vite 500 kB. Cần code-split (lazy route cho
       `/soan-de`, tách `bank.ts`/`community.ts` ra chunk riêng).
-- [ ] Thư mục `_ref/genoffice/` (74 MB, clone git của GenOffice) nằm trong dự án —
-      nên giữ lại làm tài liệu tham chiếu, hoặc xoá / chuyển ra ngoài sau khi port
-      xong. **Chưa xoá.**
-- [ ] Chưa viết test cho converter (`tipTapToBlocks` ⇄ `blocksToTipTap`).
+- [ ] Thư mục `_ref/genoffice/` (clone git của GenOffice) nằm trong dự án — nên giữ
+      lại làm tài liệu tham chiếu (dùng để lấy icon nhà, icon loại tài liệu), hoặc
+      chuyển ra ngoài sau khi port xong. **Đã xác nhận còn nguyên** — lần trước
+      báo "thư mục trống" là do `Get-ChildItem` chạy sai, không phải mất file.
+- [x] Test cho converter (`tipTapToBlocks` ⇄ `blocksToTipTap`) — `scripts/test-convert.mjs`,
+      `npm run test:convert`, hiện **6/6 pass** (mục 3.9 thêm case màu chữ + tô sáng).
 - [x] `_ref/_shell_extract*.txt` — đã xoá.
 - [x] Chạy ponytail-audit, xóa code chết + dependency thừa (xem mục 3.8).
+- [ ] Update lại chính file `context.md` này sau mỗi chặng — mục 3.14 mới bổ sung
+      ngày 23/10, các mục 3.9–3.13 vẫn còn sót chi tiết cũ.
+
+### 6.6. Thay đổi chưa commit (23/10/2026)
+
+Working tree hiện có 9 file sửa + 3 file mới, **chưa commit** (chỉ `9b5ba99` đã push):
+
+| File | Nội dung |
+|---|---|
+| `index.html` | favicon → `/brand/favicon.svg` |
+| `src/components/Layout.tsx` | logo mới ở header + footer (xoá `Mark`) |
+| `src/components/docIcons.tsx` | **mới** — 3 icon loại tài liệu + `DocIcon` |
+| `src/data/docTypes.ts` | `DocKind`, `ExamDoc.kind` |
+| `src/store/compose.ts` | `OpenTab.kind` |
+| `src/examEditor/StartTab.tsx` | thẻ icon mới + Bảng tính + xoá "Mở đề đã lưu" + thẻ trượt |
+| `src/examEditor/TabStrip.tsx` | icon theo loại tài liệu, tab Bắt đầu dùng icon nhà |
+| `src/examEditor/NavPanel.tsx` | thẻ trượt cho dải tab nav pane |
+| `src/examEditor/useSlidingThumb.ts` | **mới** — hook đo thẻ trượt |
+| `src/examEditor/icons.tsx` | `IconHome` thay bằng artwork GenOffice shell |
+| `src/examEditor/compose.css` | grid `.quick-cards`, `.start-scroll` nền surface, animation thumb |
+| `public/brand/*` | **mới** — `logo-de-ro.svg`, `favicon.svg` |
+
+**Chặng 5 (mục 3.15) — sửa lỗi ribbon, thêm file nữa:**
+
+| File | Nội dung |
+|---|---|
+| `src/examEditor/ExamEditor.tsx` | báo editor trong `useEffect`; `PageSetup` thêm `pageColor` / `pageBorder`; `.doc-paper` áp màu + viền |
+| `src/examEditor/Ribbon.tsx` | chặn editor đã destroy qua biến `live`; nối 5 nút rỗng (LTR/RTL, màu trang, viền trang, khung kiểu); chèn khối mẫu ở cấp block; `StylePaneButton` |
+| `src/examEditor/schema.ts` | `formatAttrs` thêm `dir`; `formatStyle` sinh CSS kebab-case dạng chuỗi; `BaseParagraphNode` (node `paragraph` có đủ `formatAttrs`, thay paragraph của StarterKit) |
+| `src/examEditor/formatState.ts` | `FormatState.dir`; `getSelectedBlock` / `syncDomSelection` dùng chung |
+| `src/examEditor/useAnchoredPopover.ts` | `minWidth` tuỳ chỉnh thay vì `width` cứng 220px |
+| `src/examEditor/InsertMenus.tsx` | `SymbolPicker` truyền `minWidth: 314` cho popover ký hiệu; `TablePicker` |
+| `src/examEditor/exportBlocks.ts` | `printDoc` fallback in qua iframe ẩn khi `window.open` bị chặn; gán `onload` trước `close()` |
+| `src/components/Layout.tsx` | thanh nav còn 4 mục (Trang chủ / Soạn đề / Đề cộng đồng / Kho tài liệu), mỗi mục nằm **một dòng** (`whitespace-nowrap`); bỏ Soạn slide, Đề của tôi, Chấm bài khỏi nav (route vẫn còn) |
+| `src/examEditor/TabStrip.tsx` | nút quay lại (mũi tên `‹`) đứng trước tab "Bắt đầu" → `navigate('/')` về landing page |
+| `src/examEditor/compose.css` | style `.tab-back-btn` (30×30, bo tròn 6px, hover nền 6%) |
+| `src/pages/ComposeDoc.tsx` | editor theo derived state (`editorState.id === activeId`); nối `pageColor`/`pageBorder`; nút "+" luôn tạo tab mới; `handleInsertTemplate` chèn ở cấp block |
+| `src/data/docTypes.ts` | `FormatAttrs.dir` |
+
 
 ---
 
@@ -597,7 +916,11 @@ src/
   examEditor/
     genoffice-tokens.css   token chrome/ruler/paper — đã re-theme clay/Be Vietnam Pro
     compose.css            toàn bộ vỏ giao diện (ribbon, tab strip, nav, AI dock, doc stage)
-    icons.tsx              189 icon SVG (port từ GenOffice + tự vẽ)
+    slide.css              vỏ trình soạn slide (ribbon gallery/popup, stage, Format Pane)
+    SlideRibbon.tsx        ribbon slide nhiều tab + nhóm lệnh + tab ngữ cảnh
+    SlideEditor.tsx        trình soạn slide (thumbnail, stage, chọn/kéo/resize, AI dock)
+    slideIcons.tsx         icon slide port GenOffice (canvas 24×24, nét 1.5px)
+    icons.tsx              189 icon SVG (port từ GenOffice + tự vẽ, canvas 16×16)
     schema.ts              node + mark TipTap cho cấu trúc đề (kèm format attrs)
     convert.ts             ExamBlock <-> TipTap JSON (giữ marks/format), buildTocFromDoc
     formatState.ts         useFormatState + applyFormatAttrs (trạng thái định dạng cho ribbon)
@@ -606,23 +929,36 @@ src/
     FindPanel.tsx          panel Tìm/Thay thế (2 tab, match case, nguyên từ)
     InsertMenus.tsx        TablePicker/ImagePicker/SymbolPicker/EquationDialog/LinkDialog
     useAnchoredPopover.ts  fixed popover + viewport collision handling
+    useSlidingThumb.ts     hook đo vị trí active → thẻ trượt của segmented control
     deleteActions.ts       GenOffice-style delete table/image/block commands
-    ExamEditor.tsx         editor TipTap + dựng lớp giấy A4 + đo phân trang (PageSetup/pageGeometry)
+    ExamEditor.tsx         editor TipTap + lớp giấy A4 + placeholder "Bắt đầu soạn đề…"
     Layout.tsx             RibbonTabs/RibbonBody/RibbonGroup/RibbonButton/Ruler/AiDock/NavPane
     Ribbon.tsx             ribbon Word (Home đầy đủ + Insert/Layout/Design/Doc)
-    TabStrip.tsx           tab strip kiểu Chrome
-    AiPanel.tsx            panel AI (chat + starter + composer)
-    NavPanel.tsx           nav pane (mục lục / khối mẫu / tìm kiếm)
+    TabStrip.tsx           tab strip kiểu Chrome (tab "Bắt đầu" + icon theo loại tài liệu)
+    StartTab.tsx           trang "Bắt đầu" (hero + thẻ loại tài liệu + danh sách Gần đây)
+    AiPanel.tsx            panel AI (chat + starter + composer + đính kèm docx/xlsx/pdf/ảnh)
+    NavPanel.tsx           nav pane (mục lục / khối mẫu / tìm kiếm) — dải tab có thẻ trượt
     templates.ts           BLOCK_TEMPLATES — nguồn duy nhất cho ribbon + nav panel
     exportBlocks.ts        xuất Word + in A4 (richToHtml + format CSS)
+  components/
+    Layout.tsx             vỏ web (header/footer) — logo mới /brand/logo-de-ro.svg
+    docIcons.tsx           icon loại tài liệu: IconDocExam/IconDocSlide/IconDocSheet + DocIcon
   pages/ComposeDoc.tsx     trang Soạn đề (ghép vỏ, auto-fit, save, print, export)
-  store/compose.ts         store phiên nhiều tab (nội dung + undo/redo từng tab)
+  store/compose.ts         store phiên nhiều tab (nội dung + undo/redo từng tab, OpenTab.kind)
   store/docs.ts            store tài liệu đã lưu (myDocs, saveDocById)
-  data/docTypes.ts         kiểu ExamBlock + RichText/Span/Mark/FormatAttrs
+  data/docTypes.ts         kiểu ExamBlock + RichText/Span/Mark/FormatAttrs + DocKind
   lib/llm.ts               client gọi /api/llm
 server/llmProxy.ts         proxy LLM (key server-side)
-scripts/test-convert.mjs   test round-trip converter (npm run test:convert)
-_ref/genoffice/            clone mã nguồn GenOffice (Apache-2.0) — tham chiếu
+public/brand/
+  logo-de-ro.svg           logo chính 194×72 (mark + chữ "đề rõ")
+  favicon.svg              mark cắt từ logo, dùng làm favicon
+  ai-static.svg            icon AI tĩnh cho nút "Trợ lý AI" trên ribbon
+  file-icons/
+    doc.svg                icon Word cho tệp đính kèm AI
+    sheet.svg              icon bảng tính cho tệp đính kèm AI
+    pdf.svg                icon PDF cho tệp đính kèm AI
+scripts/test-convert.mjs   test round-trip converter (npm run test:convert) — 6/6 pass
+_ref/genoffice/            clone mã nguồn GenOffice (Apache-2.0) — tham chiếu (còn nguyên)
 ```
 
 ---
@@ -634,15 +970,24 @@ _ref/genoffice/            clone mã nguồn GenOffice (Apache-2.0) — tham chi
 cd C:\Users\Lenovo\Desktop\workspace\dethinhbien
 npm run dev -- --port 5184 --host 127.0.0.1
 
+# chạy tách rời (không bị giới hạn 1 giờ của task nền)
+Start-Process cmd.exe -ArgumentList '/c','npm run dev -- --port 5184 --host 127.0.0.1 > dev-server.log 2>&1' -WindowStyle Hidden
+
 # kiểm tra
 npx tsc -b --noEmit
 npm run build
+npm run test:convert    # 6/6 pass
 
 # test proxy LLM
 npm run test:llm        # scripts/test-llm.mjs
 ```
 
 Route ứng dụng: `http://127.0.0.1:5184/soan-de`
+
+**Lưu ý:** dev server chạy trong task nền của MCode sẽ bị dừng sau 1 giờ
+(`maxRunMs` 3600000). Nếu bị tắt giữa chừng — đây là hạn chế runtime, **không
+phải lỗi code**; kiểm tra `dev-server.log` rồi chạy lại bằng lệnh `Start-Process`
+ở trên.
 
 ---
 
@@ -654,8 +999,13 @@ Route ứng dụng: `http://127.0.0.1:5184/soan-de`
 | File đích | Nguồn |
 |---|---|
 | `src/examEditor/icons.tsx` | `apps/docs/src/renderer/components/icons.tsx` |
+| `src/examEditor/icons.tsx` (`IconHome`) | `apps/shell/src/renderer/src/TabBar.tsx` → `HomeIcon` |
 | `src/examEditor/genoffice-tokens.css` | `packages/ui/src/tokens.css` + `apps/docs/src/renderer/styles.css` |
 | `src/examEditor/compose.css` | `apps/docs/src/renderer/styles.css` + `apps/shell/src/renderer/src/tabbar.css` |
+
+Ngoài ra, 3 icon loại tài liệu trong `src/components/docIcons.tsx` **không** port từ
+GenOffice — đó là file SVG do người dùn cung cấp, vẽ lại bằng React theo cùng
+nét. Logo chính + favicon cũng là file SVG do người dùn cung cấp.
 
 Apache-2.0 cho phép dùng lại kể cả thương mại, chỉ cần giữ phần thông báo bản
 quyền. File `icons.tsx` đã có ghi chú attribution ở đầu file.

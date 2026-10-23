@@ -4,34 +4,25 @@ import { ChevronDown, Menu, X } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import { Button } from '@/components/ui'
 
+/**
+ * Thanh nav chính — chỉ 4 mục, mỗi mục nằm trên MỘT dòng (không xuống
+ * dòng như bản trước). Các route còn lại (Soạn slide, Đề của tôi, Chấm bài)
+ * vẫn tồn tại, chỉ không đưa lên thanh nav — vào được từ footer/trang con.
+ */
 const NAV = [
   { to: '/', label: 'Trang chủ', end: true },
   { to: '/soan-de', label: 'Soạn đề' },
-  { to: '/soan-slide', label: 'Soạn slide' },
   { to: '/de-cong-dong', label: 'Đề cộng đồng' },
-  { to: '/de-cua-toi', label: 'Đề của tôi' },
   { to: '/kho-tai-lieu', label: 'Kho tài liệu' },
-  { to: '/cham-trac-nghiem', label: 'Chấm bài' },
 ]
 
-/** A soft hand-drawn-ish mark — three stacked strokes like paper sheets. */
-function Mark({ className }: { className?: string }) {
+/**
+ * Logo "đề rõ" — file SVG gốc ở `public/brand/logo-de-ro.svg`
+ * (mark + chữ, 194×72). Dùng thẳng file gốc để giữ nguyên nét chữ.
+ */
+function Logo({ className }: { className?: string }) {
   return (
-    <span
-      className={cn(
-        'relative flex size-9 items-center justify-center rounded-[6px] bg-ink shadow-[0_2px_10px_-3px_rgba(35,32,28,0.5)]',
-        className,
-      )}
-    >
-      <svg viewBox="0 0 24 24" className="size-5" fill="none">
-        <path
-          d="M5.5 7.5c0-.83.67-1.5 1.5-1.5h9c.83 0 1.5.67 1.5 1.5v9c0 .83-.67 1.5-1.5 1.5H7c-.83 0-1.5-.67-1.5-1.5v-9Z"
-          stroke="#f7f3ec"
-          strokeWidth="1.6"
-        />
-        <path d="M8.8 10.2h6.4M8.8 13.4h4.4" stroke="#f7f3ec" strokeWidth="1.6" strokeLinecap="round" />
-      </svg>
-    </span>
+    <img src="/brand/logo-de-ro.svg" alt="đề rõ" width={194} height={72} className={className} />
   )
 }
 
@@ -59,11 +50,8 @@ export function Header() {
       )}
     >
       <div className="mx-auto flex h-[68px] max-w-[1180px] items-center gap-3 px-5 sm:px-6">
-        <Link to="/" className="group flex shrink-0 items-center gap-2.5">
-          <Mark className="transition-transform duration-500 group-hover:-rotate-6 group-hover:scale-105" />
-          <span className="font-display text-[19px] font-semibold tracking-[-0.015em] text-ink">
-            đề rõ
-          </span>
+        <Link to="/" className="group flex shrink-0 items-center" aria-label="đề rõ — trang chủ">
+          <Logo className="h-9 w-auto transition-transform duration-500 group-hover:scale-105" />
         </Link>
 
         <nav className="ml-4 hidden items-center gap-0.5 lg:flex">
@@ -74,7 +62,7 @@ export function Header() {
               end={item.end}
               className={({ isActive }) =>
                 cn(
-                  'relative rounded-full px-3.5 py-2 text-[13.5px] font-semibold transition-colors duration-300',
+                  'relative whitespace-nowrap rounded-full px-3.5 py-2 text-[13.5px] font-semibold transition-colors duration-300',
                   isActive ? 'text-ink' : 'text-ink-3 hover:text-ink',
                 )
               }
@@ -166,8 +154,7 @@ export function Footer() {
       <div className="mx-auto grid max-w-[1180px] gap-10 px-5 pb-14 pt-2 sm:px-6 md:grid-cols-2 lg:grid-cols-4">
         <div>
           <div className="flex items-center gap-2.5">
-            <Mark className="size-8" />
-            <span className="font-display text-[17px] font-semibold text-ink">đề rõ</span>
+            <Logo className="h-7 w-auto" />
           </div>
           <p className="mt-3.5 max-w-[32ch] text-[13px] leading-relaxed text-ink-3">
             Trợ lý soạn đề thi miễn phí cho giáo viên. Soạn đề, xuất Word, làm đề tương tác và

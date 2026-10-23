@@ -38,6 +38,8 @@ export type RichText = string | Span[]
 /** Thuộc tính định dạng cấp đoạn (tương ứng pPr của Word). */
 export interface FormatAttrs {
   align?: 'left' | 'center' | 'right' | 'justify'
+  /** hướng viết: trái→phải hoặc phải→trái (RTL) */
+  dir?: 'ltr' | 'rtl'
   lineHeight?: number
   indentLeft?: number
   indentFirstLine?: number
@@ -156,9 +158,14 @@ export type ExamBlock =
   | PageBreakBlock
   | DividerBlock
 
+/** Loại tài liệu — quyết định icon hiển thị trên tab và thẻ loại ở trang bắt đầu. */
+export type DocKind = 'exam' | 'slide' | 'sheet'
+
 export interface ExamDoc {
   id: string
   title: string
+  /** loại tài liệu — mặc định 'exam' (đề thi) */
+  kind?: DocKind
   subject: string
   grade: string
   term: string

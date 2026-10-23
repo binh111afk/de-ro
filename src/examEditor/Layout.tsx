@@ -16,7 +16,7 @@
  */
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { cn } from '@/lib/cn'
-import { IconChevronLeft, IconSidebarLeft, IconSidebarRight } from './icons'
+import { IconChevronLeft, IconChevronRight, IconSidebarLeft, IconSidebarRight } from './icons'
 
 /* ------------------------------------------------------------------ *
  * Thanh ribbon tab
@@ -31,15 +31,19 @@ export function RibbonTabs({
   tabs,
   active,
   onChange,
+  leading,
   children,
 }: {
   tabs: RibbonTabDef[]
   active: string
   onChange: (id: string) => void
+  /** nội dung đứng trước hàng tab (Quick Access: Lưu/Hoàn tác/Làm lại) */
+  leading?: ReactNode
   children?: ReactNode
 }) {
   return (
     <div className="ribbon-tabs" role="tablist">
+      {leading}
       {tabs.map((t) => (
         <button
           key={t.id}
@@ -57,8 +61,18 @@ export function RibbonTabs({
   )
 }
 
-export function RibbonBody({ children }: { children: ReactNode }) {
-  return <div className="ribbon-body">{children}</div>
+export function RibbonBody({ children, activeKey }: { children: ReactNode; activeKey?: string }) {
+  return (
+    <div className="ribbon-body">
+      {activeKey ? (
+        <div key={activeKey} className="ribbon-tab-page">
+          {children}
+        </div>
+      ) : (
+        children
+      )}
+    </div>
+  )
 }
 
 /** Một nhóm nút trong ribbon. Bản gốc không hiện nhãn nhóm dưới ribbon. */
@@ -286,37 +300,44 @@ export function Ruler({
 }
 
 /* ------------------------------------------------------------------ *
- * Dock AI bên trái (có rail thu gọn)
+ * Dock AI (có rail thu gọn) — mặc định bên trái, `side="right"` để
+ * đặt ở cột phải (dùng cho trình soạn slide).
  * ------------------------------------------------------------------ */
 
 export function AiDock({
   open,
   onToggle,
   width,
+  side = 'left',
   children,
 }: {
   open: boolean
   onToggle: () => void
   width: number
+  /** cột đặt panel — 'left' cho soạn đề, 'right' cho soạn slide */
+  side?: 'left' | 'right'
   children: ReactNode
 }) {
   if (!open) {
     return (
       <button
         type="button"
-        className="ai-rail"
+        className={cn('ai-rail', side === 'right' && 'ai-rail--right')}
         onClick={onToggle}
         title="Mở trợ lý AI"
         aria-label="Mở trợ lý AI"
       >
-        <IconSidebarLeft size={18} />
+        {side === 'right' ? <IconSidebarRight size={18} /> : <IconSidebarLeft size={18} />}
         <span className="ai-rail-text">Trợ lý AI</span>
       </button>
     )
   }
 
   return (
-    <aside className="ai-dock" style={{ ['--ai-panel-width' as string]: `${width}px` }}>
+    <aside
+      className={cn('ai-dock', side === 'right' && 'ai-dock--right')}
+      style={{ ['--ai-panel-width' as string]: `${width}px` }}
+    >
       {children}
       <button
         type="button"
@@ -325,7 +346,7 @@ export function AiDock({
         title="Thu gọn trợ lý AI"
         aria-label="Thu gọn trợ lý AI"
       >
-        <IconChevronLeft size={16} />
+        {side === 'right' ? <IconChevronRight size={16} /> : <IconChevronLeft size={16} />}
       </button>
     </aside>
   )

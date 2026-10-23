@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Route, Routes, useLocation } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { Footer, Header } from '@/components/Layout'
 import { cn } from '@/lib/cn'
 import Home from '@/pages/Home'
@@ -7,7 +7,6 @@ import ComposeDoc from '@/pages/ComposeDoc'
 import Community from '@/pages/Community'
 import MyExams from '@/pages/MyExams'
 import MyDocs from '@/pages/MyDocs'
-import Slides from '@/pages/Slides'
 import Library from '@/pages/Library'
 import Grading from '@/pages/Grading'
 import Quiz from '@/pages/Quiz'
@@ -21,7 +20,7 @@ function ScrollToTop() {
   return null
 }
 
-/** Trang soạn đề chạy full-screen, không dùng header/footer chung của site. */
+/** Trang soạn chạy full-screen, không dùng header/footer chung của site. */
 const FULLSCREEN_ROUTES = ['/soan-de', '/soan-slide']
 
 export default function App() {
@@ -36,7 +35,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/soan-de" element={<ComposeDoc />} />
-          <Route path="/soan-slide" element={<Slides />} />
+          <Route path="/soan-slide" element={<Navigate to="/soan-de" replace />} />
           <Route path="/de-cong-dong" element={<Community />} />
           <Route path="/de-cua-toi" element={<MyDocs />} />
           <Route path="/de-cua-toi/phan-tich" element={<MyExams />} />

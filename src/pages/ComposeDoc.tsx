@@ -24,10 +24,11 @@ import { NavPanel } from '@/examEditor/NavPanel'
 import type { BlockTemplate } from '@/examEditor/templates'
 import { AiDock, NavPane, Ruler, useViewportSize } from '@/examEditor/Layout'
 import { tipTapToBlocks, blocksToTipTap } from '@/examEditor/convert'
-import { useFormatState, applyFormatAttrs } from '@/examEditor/formatState'
+import { useFormatState, applyFormatAttrs, getSelectedBlock, syncDomSelection } from '@/examEditor/formatState'
 import { FindPanel } from '@/examEditor/FindPanel'
 import { exportDocBlocks, printDoc } from '@/examEditor/exportBlocks'
 import { useComposeStore } from '@/store/compose'
+import { SlideEditor } from '@/examEditor/SlideEditor'
 import { extractJson } from '@/lib/llm'
 import { IconZoomIn, IconZoomOut } from '@/examEditor/icons'
 import type { ExamBlock, ExamDoc } from '@/data/docTypes'
@@ -40,17 +41,22 @@ export default function ComposeDoc() {
     tabs,
     activeId,
     contents,
+    decks,
     newDoc,
+    newSlide,
     ensureDoc,
     closeTab,
     setActive,
     renameTab,
     setContent,
     saveDoc,
+    saveTab,
+    saveAll,
     openDoc,
+    openDeck,
+    updateDeck,
   } = useComposeStore()
 
-  const [editor, setEditor] = useState<Editor | null>(null)
   const [ribbonTab, setRibbonTab] = useState('home')
   const [findTab, setFindTab] = useState<'find' | 'replace' | null>(null)
   // tab khởi động (trang bắt đầu) hiện thay cho sân soạn khi được chọn
@@ -61,6 +67,24 @@ export default function ComposeDoc() {
   const [zoom, setZoom] = useState(100)
   const [pageCount, setPageCount] = useState(1)
   const stageRef = useRef<HTMLDivElement>(null)
+
+  // Đổi tab → editor cũ bị destroy, editor mới chưa sẵn sàng. Xóa editor khỏi
+  // state ngay để ribbon không trỏ vào instance đã chết (mọi lệnh sẽ im
+  // lặng). `ExamEditor` báo lại editor mới sau khi mount.
+  //
+  // Dùng "derived state" (so sánh trong lúc render) thay vì `useEffect`: effect
+  // cha chạy SAU effect con, nên `setEditor(null)` trong effect sẽ xóa luôn
+  // editor mới mà con vừa báo.
+  const [editorState, setEditorState] = useState<{ id: string | null; editor: Editor | null }>({
+    id: null,
+    editor: null,
+  })
+  const editor = editorState.id === activeId ? editorState.editor : null
+  const handleEditorReady = useCallback(
+    (e: Editor) => setEditorState({ id: activeId, editor: e }),
+    [activeId],
+  )
+
   const format = useFormatState(editor)
   const [pageSetup, setPageSetup] = useState<PageSetup>({ marginCm: 2, orientation: 'portrait' })
   const geo = pageGeometry(pageSetup)
@@ -73,6 +97,21 @@ export default function ComposeDoc() {
     ensureDoc()
   }, [ensureDoc])
 
+  // Tự lưu toàn bộ tab khi rời trang (đóng tab trình duyệt, tải lại, điều hướng).
+  useEffect(() => {
+    const flush = () => useComposeStore.getState().saveAll()
+    window.addEventListener('pagehide', flush)
+    window.addEventListener('beforeunload', flush)
+    return () => {
+      window.removeEventListener('pagehide', flush)
+      window.removeEventListener('beforeunload', flush)
+      // rời /soan-de bằng điều hướng SPA: chỉ lưu tab có thay đổi, tránh tạo
+      // bản ghi rỗng khi StrictMode mount/unmount hai lần
+      const s = useComposeStore.getState()
+      if (s.tabs.some((t) => t.dirty)) s.saveAll()
+    }
+  }, [])
+
   // mở đề = rời trang bắt đầu
   const selectDoc = useCallback(
     (id: string) => {
@@ -82,15 +121,30 @@ export default function ComposeDoc() {
     [setActive],
   )
 
-  const newDocAndOpen = useCallback(() => {
-    // tab trống duy nhất lúc mở app: dùng lại nó thay vì đẻ thêm tab rỗng thứ hai
-    const only = tabs.length === 1 ? tabs[0] : null
-    const empty =
-      only && !only.dirty && (contents[only.id]?.content?.length ?? 0) === 0
-    if (empty) setActive(only.id)
-    else newDoc()
-    setStartOpen(false)
-  }, [tabs, contents, setActive, newDoc])
+  /**
+   * Tạo đề mới và mở nó.
+   * `reuseEmpty` = dùng lại tab trống đang mở thay vì đẻ thêm tab rỗng thứ
+   * hai — chỉ áp dụng cho thẻ "Đề thi" ở trang Bắt đầu. Nút "+" trên tab
+   * strip LUÔN tạo tab mới: bấm mà không thấy tab nào xuất hiện thì tưởng
+   * như nút hỏng.
+   */
+  const newDocAndOpen = useCallback(
+    (reuseEmpty: boolean) => {
+      if (reuseEmpty) {
+        const only = tabs.length === 1 ? tabs[0] : null
+        const empty =
+          only && !only.dirty && (contents[only.id]?.content?.length ?? 0) === 0
+        if (empty) {
+          setActive(only.id)
+          setStartOpen(false)
+          return
+        }
+      }
+      newDoc()
+      setStartOpen(false)
+    },
+    [tabs, contents, setActive, newDoc],
+  )
 
   /** Đề đang soạn — dựng từ nội dung TipTap hiện tại. */
   const activeDoc = useMemo<ExamDoc | null>(() => {
@@ -110,6 +164,18 @@ export default function ComposeDoc() {
   )
 
   const activeTab = tabs.find((t) => t.id === activeId)
+
+  /** deck đang mở — chỉ có khi tab active là slide */
+  const activeDeck = useMemo(() => {
+    if (!activeId) return null
+    if (tabs.find((t) => t.id === activeId)?.kind !== 'slide') return null
+    return decks[activeId] ?? null
+  }, [activeId, tabs, decks])
+
+  /** lưu bài trình bày đang soạn vào kho tài liệu của Home */
+  const handleSaveSlide = useCallback(() => {
+    if (activeDeck) saveTab(activeDeck.id)
+  }, [activeDeck, saveTab])
 
   const onChange = useCallback(
     (doc: JSONContent) => {
@@ -149,11 +215,18 @@ export default function ComposeDoc() {
     [activeId, editor],
   )
 
-  /** Chèn khối mẫu tại vị trí con trỏ. */
+  /** Chèn khối mẫu ở CẤP BLOCK (sau khối cấp cao nhất đang chứa con trỏ). */
   const handleInsertTemplate = useCallback(
     (tpl: BlockTemplate) => {
-      if (!editor) return
-      editor.chain().focus().insertContent(tpl.build()).run()
+      if (!editor || editor.isDestroyed) return
+      syncDomSelection(editor)
+      const target = getSelectedBlock(editor)
+      if (!target) {
+        editor.chain().focus().insertContent(tpl.build()).run()
+        return
+      }
+      const at = target.pos + target.node.nodeSize
+      editor.chain().focus().insertContentAt(at, tpl.build()).run()
     },
     [editor],
   )
@@ -246,25 +319,56 @@ export default function ComposeDoc() {
           activeId={startOpen ? null : activeId}
           startActive={startOpen}
           onSelect={selectDoc}
-          onSelectStart={() => setStartOpen(true)}
+          onSelectStart={() => {
+            saveAll()
+            setStartOpen(true)
+          }}
           onClose={(id) => {
+            saveTab(id)
             closeTab(id)
             if (id === activeId && tabs.length === 1) newDoc()
           }}
-          onNew={newDocAndOpen}
+          onNew={() => newDocAndOpen(false)}
+          onNewSlide={() => {
+            newSlide()
+            setStartOpen(false)
+          }}
+          slideEnabled
           onRename={renameTab}
+          onBack={saveAll}
         />
       </div>
 
       {/* ---------- trang bắt đầu: ẩn ribbon/sân soạn, chỉ còn dashboard ---------- */}
       {startOpen ? (
         <StartTab
-          onNewDoc={newDocAndOpen}
+          onNewDoc={() => newDocAndOpen(true)}
           onOpenDoc={(doc) => {
             openDoc(doc)
             setStartOpen(false)
           }}
+          onNewSlide={() => {
+            newSlide()
+            setStartOpen(false)
+          }}
+          onOpenDeck={(deck) => {
+            openDeck(deck)
+            setStartOpen(false)
+          }}
         />
+      ) : activeDeck ? (
+        /* ---------- tab slide: trình soạn trình chiếu dùng chung với /soan-slide ---------- */
+        <div className="compose-body">
+          <SlideEditor
+            deck={activeDeck}
+            updateDeck={(patch) => updateDeck(activeDeck.id, patch)}
+            onSave={handleSaveSlide}
+            onRename={(title) => {
+              updateDeck(activeDeck.id, { title })
+              renameTab(activeDeck.id, title)
+            }}
+          />
+        </div>
       ) : (
         <>
       {/* ---------- ribbon (hàng tab → ribbon body) ---------- */}
@@ -287,6 +391,10 @@ export default function ComposeDoc() {
         onMarginChange={(cm) => setPageSetup((p) => ({ ...p, marginCm: cm }))}
         orientation={pageSetup.orientation}
         onOrientationChange={(o) => setPageSetup((p) => ({ ...p, orientation: o }))}
+        pageColor={pageSetup.pageColor}
+        onPageColorChange={(c) => setPageSetup((p) => ({ ...p, pageColor: c }))}
+        pageBorder={pageSetup.pageBorder}
+        onPageBorderChange={(w) => setPageSetup((p) => ({ ...p, pageBorder: w }))}
       />
 
       {/* ---------- thân ---------- */}
@@ -311,7 +419,7 @@ export default function ComposeDoc() {
           <div className="compose-scroll" ref={stageRef}>
             {/* `zoom` (không phải transform) để thước kẻ và trang giấy co cùng
                 tỉ lệ và container vẫn đúng bề rộng — giống GenOffice `.doc-zoom`. */}
-            <div className="compose-canvas" style={{ zoom: effectiveScale }}>
+            <div className="compose-canvas anim-tab-in" key={activeId ?? 'none'} style={{ zoom: effectiveScale }}>
               <Ruler
                 width={PAGE_W}
                 margin={MARGIN}
@@ -328,10 +436,9 @@ export default function ComposeDoc() {
                 key={activeId ?? 'none'}
                 content={activeContent}
                 onChange={onChange}
-                onReady={setEditor}
+                onReady={handleEditorReady}
                 pageSetup={pageSetup}
-              />
-            </div>
+              />            </div>
           </div>
 
           {/* thanh trạng thái */}

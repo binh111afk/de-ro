@@ -25,6 +25,19 @@ export interface SlideElement {
   src?: string
   rows?: string[][]
   chart?: { type: 'bar' | 'line' | 'pie'; data: Array<{ label: string; value: number }> }
+  /** kiểu chữ: tiêu đề to hơn, nội dung nhỏ hơn */
+  variant?: 'title' | 'body'
+  /** cỡ chữ tính bằng cqw (1% bề rộng khung slide) — ghi đè khi cần */
+  fontSize?: number
+  fontWeight?: number
+  fontFamily?: string
+  textColor?: string
+  fontStyle?: 'normal' | 'italic'
+  textDecoration?: 'none' | 'underline'
+  align?: 'left' | 'center' | 'right'
+  zIndex?: number
+  flipX?: boolean
+  flipY?: boolean
 }
 
 export interface Slide {
@@ -119,6 +132,8 @@ export interface DocStore {
   newDeck: () => void
   updateDeck: (patch: Partial<Deck>) => void
   saveDeck: () => void
+  /** lưu một deck theo id (dùng khi soạn slide trong tab) */
+  saveDeckById: (deck: Deck) => void
   deleteDeck: (id: string) => void
 }
 
@@ -231,6 +246,13 @@ export const useDocStore = create<DocStore>()(
         set((s) => ({
           myDecks: s.myDecks.filter((d) => d.id !== id),
           deck: s.deck?.id === id ? null : s.deck,
+        })),
+
+      saveDeckById: (deck) =>
+        set((s) => ({
+          myDecks: s.myDecks.some((d) => d.id === deck.id)
+            ? s.myDecks.map((d) => (d.id === deck.id ? deck : d))
+            : [deck, ...s.myDecks],
         })),
     }),
     {

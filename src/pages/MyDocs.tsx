@@ -120,7 +120,7 @@ export default function MyDocs() {
           </p>
         </div>
         <div className="flex flex-wrap gap-2.5">
-          <Button variant="outline" onClick={() => navigate('/soan-slide')}>
+          <Button variant="outline" onClick={() => navigate('/soan-de')}>
             <Presentation className="size-4" />
             Soạn slide
           </Button>
@@ -228,7 +228,7 @@ export default function MyDocs() {
           title="Chưa có bài giảng slide"
           description="Soạn bài giảng trình chiếu cho lớp, xuất PowerPoint."
           action={
-            <Button variant="primary" onClick={() => navigate('/soan-slide')}>
+            <Button variant="primary" onClick={() => navigate('/soan-de')}>
               Soạn slide
             </Button>
           }

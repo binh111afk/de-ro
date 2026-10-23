@@ -26,7 +26,7 @@ import { Link } from '@tiptap/extension-link'
 import { TextAlign } from '@tiptap/extension-text-align'
 import { LineHeight } from '@tiptap/extension-text-style/line-height'
 import type { Editor, JSONContent } from '@tiptap/core'
-import { EXAM_MARKS, EXAM_NODES, TEXT_CONTENT_NODES } from './schema'
+import { EXAM_MARKS, EXAM_NODES, TEXT_CONTENT_NODES, BaseParagraphNode } from './schema'
 import { createSearchPlugin } from './find'
 import { DeleteObjects } from './deleteActions'
 
@@ -42,6 +42,10 @@ export interface PageSetup {
   marginCm: number
   /** hướng trang */
   orientation: 'portrait' | 'landscape'
+  /** màu nền trang giấy (mặc định trắng) */
+  pageColor?: string
+  /** viền trang: độ dày (px) — 0 = không viền */
+  pageBorder?: number
 }
 
 export function pageGeometry(setup: PageSetup) {
@@ -60,6 +64,7 @@ export function pageGeometry(setup: PageSetup) {
 export interface ExamEditorProps {
   content: JSONContent
   onChange: (doc: JSONContent) => void
+  /** nhận editor khi nó mount vào DOM (chỉ báo "đã sẵn sàng", không báo hủy) */
   onReady?: (editor: Editor) => void
   pageSetup?: PageSetup
 }
@@ -69,6 +74,16 @@ export function ExamEditor({ content, onChange, onReady, pageSetup }: ExamEditor
   const [pageCount, setPageCount] = useState(1)
   const geo = pageGeometry(pageSetup ?? { marginCm: 2, orientation: 'portrait' })
   const { PAGE_W, PAGE_H, MARGIN, CONTENT_H } = geo
+
+  // `useEditor` chỉ đọc options ở lần render đầu, nên callback đưa vào
+  // options phải đi qua ref để không giữ closure cũ (onChange/onReady hay
+  // đổi identity theo tab).
+  const onChangeRef = useRef(onChange)
+  onChangeRef.current = onChange
+  const onReadyRef = useRef(onReady)
+  onReadyRef.current = onReady
+  /** editor đang sống — dùng để chỉ clear host khi đúng instance bị tháo */
+  const liveRef = useRef<Editor | null>(null)
 
   const editor = useEditor({
     extensions: [
@@ -84,6 +99,9 @@ export function ExamEditor({ content, onChange, onReady, pageSetup }: ExamEditor
         hardBreak: false,
         link: false,
         underline: false,
+        // `paragraph` dùng bản riêng (có formatAttrs) — bản của StarterKit
+        // thiếu indentLeft/shading/borders nên các nút đó im lặng.
+        paragraph: false,
       }),
       TextStyle,
       Color,
@@ -101,6 +119,7 @@ export function ExamEditor({ content, onChange, onReady, pageSetup }: ExamEditor
       TableCell,
       ...EXAM_MARKS,
       ...EXAM_NODES,
+      BaseParagraphNode,
       createSearchPlugin(),
       DeleteObjects,
     ],
@@ -111,41 +130,35 @@ export function ExamEditor({ content, onChange, onReady, pageSetup }: ExamEditor
         spellcheck: 'false',
       },
     },
-    onCreate: ({ editor: e }) => {
-      // EditorContent mounts its ProseMirror view immediately after this hook.
-      // Notify the host on the next frame, then retry once if the view is still
-      // being attached. This keeps the ribbon enabled without exposing a
-      // pre-mount Editor instance.
-      if (!onReady) return
-      const notify = () => {
-        try {
-          if (e.view.dom) onReady(e)
-        } catch {
-          requestAnimationFrame(notify)
-        }
-      }
-      requestAnimationFrame(notify)
-    },
+    // KHÔNG báo editor từ `onMount`/`onCreate`: TipTap gọi chúng trong lúc
+    // `EditorContent` đang render, mà `onReady` setState ở component cha →
+    // React báo "Cannot update a component while rendering a different
+    // component". Effect bên dưới báo sau commit nên an toàn.
+    //
+    // Chỉ báo "đã sẵn sàng", KHÔNG báo "đã hủy": khi đổi tab, editor cũ bị
+    // destroy sau khi editor mới đã mount, nên nếu báo `null` ở đó sẽ xóa
+    // nhầm editor đang sống. Ribbon tự chặn editor đã `isDestroyed`.
     onUpdate: ({ editor: e }) => {
-      onChange(e.getJSON())
+      onChangeRef.current(e.getJSON())
     },
   })
 
-  // Handles an editor created after the first render (React StrictMode/useEditor).
+  // Báo editor cho host sau khi commit. Editor instance có thể bị thay thế
+  // (StrictMode remount, `key` đổi khi chuyển tab) — luôn lấy instance mới
+  // nhất và bỏ qua instance đã bị destroy.
   useEffect(() => {
-    if (!editor || !onReady) return
-    try {
-      if (editor.view.dom) onReady(editor)
-    } catch {
-      requestAnimationFrame(() => {
-        try {
-          if (editor.view.dom) onReady(editor)
-        } catch {
-          // EditorContent will notify through onCreate when it mounts.
-        }
-      })
+    if (!editor || editor.isDestroyed) return
+    let raf = 0
+    const report = () => {
+      if (editor.isDestroyed) return
+      liveRef.current = editor
+      onReadyRef.current?.(editor)
     }
-  }, [editor, onReady])
+    // `EditorContent` gắn ProseMirror view trong `componentDidMount`; effect
+    // cha chạy sau nên view đã sẵn sàng, nhưng đợi thêm 1 frame cho chắc.
+    raf = requestAnimationFrame(report)
+    return () => cancelAnimationFrame(raf)
+  }, [editor])
 
   // nạp lại nội dung khi đổi tab (component được remount bằng key nên không cần,
   // nhưng vẫn giữ để an toàn khi nạp đề từ thư viện)
@@ -210,6 +223,8 @@ export function ExamEditor({ content, onChange, onReady, pageSetup }: ExamEditor
 
   // vẽ lớp giấy trắng cho từng trang
   const papers = Array.from({ length: pageCount }, (_, i) => i)
+  const pageColor = pageSetup?.pageColor ?? '#ffffff'
+  const pageBorder = pageSetup?.pageBorder ?? 0
 
   return (
     <div className="doc-stage" style={{ minHeight: pageCount * (PAGE_H + PAGE_GAP) }}>
@@ -223,6 +238,9 @@ export function ExamEditor({ content, onChange, onReady, pageSetup }: ExamEditor
               top: i * (PAGE_H + PAGE_GAP),
               width: PAGE_W,
               height: PAGE_H,
+              background: pageColor,
+              border: pageBorder ? `${pageBorder}px solid #000` : undefined,
+              boxSizing: 'border-box',
             }}
           />
         ))}
@@ -239,6 +257,16 @@ export function ExamEditor({ content, onChange, onReady, pageSetup }: ExamEditor
           padding: `${MARGIN}px ${MARGIN}px`,
         }}
       >
+        {!content.content?.length && (
+          <button
+            type="button"
+            className="doc-placeholder"
+            style={{ top: MARGIN, left: MARGIN }}
+            onClick={() => editor?.commands.focus()}
+          >
+            Bắt đầu soạn đề…
+          </button>
+        )}
         <EditorContent editor={editor} />
       </div>
     </div>

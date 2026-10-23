@@ -1,0 +1,401 @@
+/* Trình soạn slide — vỏ ribbon + stage + gallery, bám số đo GenOffice. */
+
+.slide-stage {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  overflow: auto;
+  padding: 26px 32px 36px;
+  background: var(--canvas);
+}
+
+.slide-stage__inner {
+  width: min(100%, 1000px);
+  margin: 0 auto;
+}
+
+.slide-stage .slide-frame {
+  box-shadow: 0 2px 6px rgb(0 0 0 / 10%), 0 18px 48px -24px rgb(0 0 0 / 35%);
+}
+
+.slide-el-handle {
+  position: absolute;
+  right: -6px;
+  bottom: -6px;
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  border: 2px solid var(--accent);
+  border-radius: 2px;
+  cursor: nwse-resize;
+  z-index: 10;
+}
+
+/* ---------------------------------------------------------------- *
+ * Ribbon chrome
+ * ---------------------------------------------------------------- */
+.slide-ribbon .ribbon-tabs {
+  padding: 6px 12px 0;
+}
+
+.rb-drop-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Quick Access Toolbar — đứng trước hàng tab như GenOffice */
+.qa-btn {
+  width: 30px;
+  height: 28px;
+  flex-shrink: 0;
+  border: none;
+  background: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--text-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.qa-btn:hover:not(:disabled) {
+  background: var(--hover);
+}
+
+.qa-btn:disabled {
+  color: var(--text-tertiary);
+  cursor: default;
+}
+
+.qa-sep {
+  width: 1px;
+  height: 16px;
+  flex-shrink: 0;
+  margin: 0 6px;
+  background: var(--border-strong);
+}
+
+.slide-ribbon-color-btn {
+  position: relative;
+  flex-direction: column;
+  gap: 0;
+}
+
+.slide-ribbon-A {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.slide-ribbon-color-btn .rb-color-bar {
+  width: 14px;
+  height: 3px;
+  margin: 1px 0 0;
+}
+
+.slide-ribbon-color-dot {
+  display: block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 12%);
+}
+
+.slide-ribbon-chart-icon {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.slide-ribbon-zoom-glyph {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.slide-ribbon-caret {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 2px;
+  color: var(--text-dim);
+}
+
+/* đẩy nhóm Trợ lý AI ra rìa phải ribbon */
+.ribbon-flex-spacer {
+  flex: 1 1 0;
+  min-width: 8px;
+}
+
+.slide-ribbon-ai-mark {
+  display: block;
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.slide-ribbon-triangle {
+  font-size: 20px;
+  line-height: 1;
+}
+
+/* ---------------------------------------------------------------- *
+ * Popup menus + galleries
+ * ---------------------------------------------------------------- */
+.slide-ribbon-menu {
+  padding: 6px;
+  min-width: 170px;
+}
+
+.slide-ribbon-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  border: none;
+  background: none;
+  text-align: left;
+  padding: 6px 8px;
+  border-radius: 3px;
+  font-size: 12.5px;
+  color: var(--text);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.slide-ribbon-menu-item:hover:not(:disabled) {
+  background: var(--hover);
+}
+
+.slide-ribbon-menu-item.active {
+  background: var(--active-bg);
+}
+
+.slide-ribbon-menu-item:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.slide-ribbon-menu-icon {
+  display: inline-flex;
+  color: var(--text-secondary);
+}
+
+.slide-ribbon-menu-sep {
+  height: 1px;
+  background: var(--border);
+  margin: 4px 2px;
+}
+
+.slide-ribbon-menu-title {
+  font-size: 11px;
+  color: var(--text-dim);
+  padding: 2px 4px 6px;
+}
+
+.slide-ribbon-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 64px);
+  gap: 4px;
+}
+
+.slide-ribbon-gallery-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 4px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: none;
+  color: var(--text);
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.slide-ribbon-gallery-item:hover {
+  background: var(--hover);
+  border-color: var(--border);
+}
+
+.slide-ribbon-gallery-glyph {
+  display: grid;
+  place-items: center;
+  height: 26px;
+}
+
+.slide-ribbon-table-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 20px);
+  gap: 2px;
+}
+
+.slide-ribbon-table-grid button {
+  width: 20px;
+  height: 18px;
+  border: 1px solid var(--border-strong);
+  border-radius: 1px;
+  background: var(--surface);
+  cursor: pointer;
+  padding: 0;
+}
+
+.slide-ribbon-table-grid button:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+.slide-ribbon-theme-grid {
+  display: flex;
+  gap: 6px;
+}
+
+.slide-ribbon-theme-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 3px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: none;
+  cursor: pointer;
+}
+
+.slide-ribbon-theme-card:hover {
+  background: var(--hover);
+}
+
+.slide-ribbon-theme-card.active {
+  border-color: var(--accent);
+}
+
+.slide-ribbon-theme-preview {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 62px;
+  height: 40px;
+  padding: 4px 5px;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  font-size: 12px;
+}
+
+.slide-ribbon-theme-preview i {
+  display: block;
+  width: 26px;
+  height: 4px;
+  border-radius: 1px;
+}
+
+.slide-ribbon-theme-card small {
+  font-size: 10px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------- *
+ * Cột thumbnail — tiêu đề bài giảng
+ * ---------------------------------------------------------------- */
+.slide-rail-head {
+  flex-shrink: 0;
+  padding: 10px 12px 4px;
+}
+
+.slide-rail-title {
+  display: block;
+  width: 100%;
+  padding: 4px 6px;
+  border: none;
+  border-radius: 4px;
+  background: none;
+  color: var(--text-primary);
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+input.slide-rail-title:hover {
+  background: var(--hover);
+}
+
+input.slide-rail-title:focus {
+  background: var(--hover);
+  outline: none;
+}
+
+/* ---------------------------------------------------------------- *
+ * Bảng chọn định dạng (Format Pane)
+ * ---------------------------------------------------------------- */
+.slide-format-pane {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  z-index: 20;
+  width: 192px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  box-shadow: var(--shadow-menu);
+  font-size: 12px;
+}
+
+.slide-format-pane__title {
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.slide-format-pane__row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.slide-format-pane__row span {
+  width: 38px;
+  color: var(--text-secondary);
+}
+
+.slide-format-pane__row input[type='number'] {
+  flex: 1;
+  min-width: 0;
+  height: 24px;
+  border: 1px solid var(--border-strong);
+  border-radius: 3px;
+  padding: 0 4px;
+}
+
+.slide-format-pane__row em {
+  font-style: normal;
+  color: var(--text-dim);
+}
+
+.slide-format-pane__row input[type='color'] {
+  width: 30px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: 3px;
+  background: none;
+}
+
+.slide-format-pane__close {
+  width: 100%;
+  height: 26px;
+  margin-top: 2px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.slide-format-pane__close:hover {
+  background: var(--hover);
+}

@@ -26,6 +26,7 @@
     "@tiptap/starter-kit": "^3.32.0",
     "clsx": "^2.1.1",
     "katex": "^0.16.21",
+    "lottie-react": "^3.1.2",
     "lucide-react": "^0.468.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

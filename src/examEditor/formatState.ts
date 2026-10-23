@@ -21,6 +21,8 @@ export interface FormatState {
   fontFamily: string
   fontSize: string
   align: 'left' | 'center' | 'right' | 'justify'
+  /** hướng viết của đoạn đang đứng */
+  dir: 'ltr' | 'rtl'
   lineHeight: number
   indentLeft: number
   indentFirstLine: number
@@ -45,6 +47,7 @@ const DEFAULT_STATE: FormatState = {
   fontFamily: '',
   fontSize: '',
   align: 'left',
+  dir: 'ltr',
   lineHeight: 1.5,
   indentLeft: 0,
   indentFirstLine: 0,
@@ -88,6 +91,7 @@ export function computeFormatState(editor: Editor): FormatState {
           ? 'justify'
           : (pa.textAlign as FormatState['align']) ?? (pa.align as FormatState['align']) ?? 'left',
     lineHeight: num((editor.getAttributes('textStyle') as Record<string, unknown>).lineHeight ?? pa.lineHeight, 1.5),
+    dir: (pa.dir as FormatState['dir']) ?? 'ltr',
     indentLeft: num(pa.indentLeft, 0),
     indentFirstLine: num(pa.indentFirstLine, 0),
     spaceBefore: num(pa.spaceBefore, 0),

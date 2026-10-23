@@ -160,6 +160,25 @@
     background: var(--docs-scroll-thumb);
   }
 
+  .ribbon-tab-page {
+    display: flex;
+    align-items: stretch;
+    flex: 0 0 auto;
+    min-width: max-content;
+    animation: ribbon-tab-in 170ms var(--ease-soft);
+  }
+
+  @keyframes ribbon-tab-in {
+    from {
+      opacity: 0;
+      transform: translateY(3px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
   .ribbon-group {
     display: flex;
     flex-direction: column;
@@ -659,8 +678,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
     flex-shrink: 0;
     color: var(--text-secondary);
   }
@@ -725,6 +744,29 @@
     padding: 0;
   }
 
+  .tab-back-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    margin: 6px 4px 6px 0;
+    align-self: flex-start;
+    flex-shrink: 0;
+    border: none;
+    background: none;
+    border-radius: 6px;
+    color: var(--tabstrip-text);
+    cursor: pointer;
+    padding: 0;
+    transition: background-color 0.2s var(--ease-soft), color 0.2s var(--ease-soft);
+  }
+
+  .tab-back-btn:hover {
+    background: rgb(0 0 0 / 6%);
+    color: var(--tabstrip-text-active);
+  }
+
   .tab-new-btn {
     position: relative;
     display: flex;
@@ -753,8 +795,8 @@
     background: var(--tab-separator);
   }
 
-  .tab-item.active + .tab-new-btn::before,
-  .tab-item:hover + .tab-new-btn::before,
+  .tab-item.active + .new-doc-menu .tab-new-btn::before,
+  .tab-item:hover + .new-doc-menu .tab-new-btn::before,
   .tab-new-btn:hover::before {
     opacity: 0;
   }
@@ -764,7 +806,105 @@
   }
 
   /* ------------------------------------------------------------------ *
-   * AI dock bên trái (360px, rail thu gọn 34px)
+   * Menu "+" — chọn loại tài liệu cần soạn
+   * ------------------------------------------------------------------ */
+  .new-doc-menu {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .new-doc-pop {
+    z-index: 90;
+    padding: 6px;
+    border: 1px solid var(--color-border-default);
+    border-radius: 10px;
+    background: var(--color-surface);
+    box-shadow: 0 10px 30px rgb(0 0 0 / 14%);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .new-doc-pop__head {
+    padding: 4px 8px 6px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .new-doc-opt {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 7px 8px;
+    border: none;
+    border-radius: 8px;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+    color: var(--color-text-primary);
+  }
+
+  .new-doc-opt:hover:not(.is-disabled) {
+    background: var(--hover);
+  }
+
+  .new-doc-opt.is-disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+
+  .new-doc-opt__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .new-doc-opt__text {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+  }
+
+  .new-doc-opt__title {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    font-size: 13.5px;
+    font-weight: 600;
+  }
+
+  .new-doc-opt__ext {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-dim);
+  }
+
+  .new-doc-opt__note {
+    font-size: 11.5px;
+    color: var(--text-dim);
+  }
+
+  .new-doc-opt__soon {
+    margin-left: auto;
+    flex-shrink: 0;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: var(--color-clay-soft);
+    color: var(--color-clay);
+    font-size: 10.5px;
+    font-weight: 700;
+  }
+
+  /* ------------------------------------------------------------------ *
+   * AI dock (360px, rail thu gọn 34px) — mặc định bên trái,
+   * `.ai-dock--right` đặt ở cột phải (trình soạn slide).
    * ------------------------------------------------------------------ */
   .ai-dock {
     display: flex;
@@ -773,6 +913,12 @@
     width: var(--ai-panel-width, 360px);
     overflow: hidden;
     transition: width 180ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* đặt bên phải: viền dọc chuyển sang mép trái của panel */
+  .ai-dock--right .ai-panel {
+    border-right: none;
+    border-left: 1px solid var(--color-border-strong);
   }
 
   .ai-dock.collapsed {
@@ -811,6 +957,12 @@
   .ai-dock__collapse:hover {
     background: var(--color-bg-subtle);
     color: var(--color-text-primary);
+  }
+
+  /* panel bên phải: nút thu gọn nằm ở mép trái */
+  .ai-dock--right .ai-dock__collapse {
+    right: auto;
+    left: 8px;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -890,6 +1042,12 @@
 
   .ai-rail:hover {
     background: var(--hover);
+  }
+
+  /* rail ở cột phải: viền dọc nằm ở mép trái */
+  .ai-rail--right {
+    border-right: none;
+    border-left: 1px solid var(--border);
   }
 
   .ai-rail-text {
@@ -1110,9 +1268,172 @@
     padding: 2px 8px 8px;
   }
 
+  /* ---- tệp đính kèm trong composer ---- */
+  .ai-attachments {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 10px 12px 0;
+  }
+
+  .ai-attachment {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    max-width: 100%;
+    padding: 3px 5px 3px 4px;
+    border: 1px solid var(--color-border-default);
+    border-radius: 8px;
+    background: var(--color-bg-subtle);
+    animation: attach-in 200ms var(--ease-soft) both;
+  }
+
+  .ai-attachment.is-removing {
+    animation: attach-out 160ms ease forwards;
+    pointer-events: none;
+  }
+
+  @keyframes attach-in {
+    from {
+      opacity: 0;
+      transform: translateY(4px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes attach-out {
+    to {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+  }
+
+  .ai-attachment__thumb {
+    width: 30px;
+    height: 30px;
+    object-fit: cover;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+
+  .ai-attachment__icon {
+    width: 20px;
+    height: 25px;
+    object-fit: contain;
+    flex-shrink: 0;
+  }
+
+  .ai-attachment__meta {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    max-width: 150px;
+  }
+
+  .ai-attachment__name {
+    font-size: 11.5px;
+    color: var(--color-text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ai-attachment__size {
+    font-size: 10.5px;
+    color: var(--color-text-tertiary);
+  }
+
+  .ai-attachment__remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    border: none;
+    border-radius: 4px;
+    background: none;
+    color: var(--color-text-tertiary);
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .ai-attachment__remove:hover {
+    background: var(--hover);
+    color: var(--color-text-primary);
+  }
+
+  .ai-attach-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    border: none;
+    border-radius: 4px;
+    background: none;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .ai-attach-btn:hover {
+    background: var(--color-bg-subtle);
+    color: var(--color-text-primary);
+  }
+
+  .ai-attach-input {
+    display: none;
+  }
+
+  .ai-input-spacer {
+    flex: 1;
+  }
+
+  /* chip tệp hiển thị lại trong lượt chat */
+  .ai-msg-files {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  .ai-msg-file {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    max-width: 100%;
+    padding: 2px 6px;
+    border-radius: 6px;
+    background: rgb(0 0 0 / 6%);
+    font-size: 11px;
+  }
+
+  .ai-msg-file__thumb {
+    width: 18px;
+    height: 18px;
+    object-fit: cover;
+    border-radius: 3px;
+  }
+
+  .ai-msg-file__icon {
+    width: 14px;
+    height: 17px;
+    object-fit: contain;
+  }
+
+  .ai-msg-file > span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   /* nút gửi: icon trơn như các nút khác của editor, không phải bong bóng đặc */
   .ai-send-btn {
-    margin-left: auto;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1214,6 +1535,7 @@
   }
 
   .nav-tabs {
+    position: relative;
     display: flex;
     gap: 2px;
     margin: 12px 12px 0;
@@ -1223,7 +1545,26 @@
     background: var(--color-canvas);
   }
 
+  /* thẻ trắng trượt giữa các tab */
+  .nav-tab__thumb {
+    position: absolute;
+    top: 3px;
+    left: 0;
+    height: calc(100% - 6px);
+    border-radius: 7px;
+    background: var(--color-surface);
+    box-shadow:
+      0 1px 2px rgb(20 24 28 / 6%),
+      0 2px 6px -2px rgb(20 24 28 / 10%);
+    pointer-events: none;
+    transition:
+      transform 280ms cubic-bezier(0.32, 0.72, 0, 1),
+      width 280ms cubic-bezier(0.32, 0.72, 0, 1);
+  }
+
   .nav-tab {
+    position: relative;
+    z-index: 1;
     flex: 1;
     border: none;
     background: none;
@@ -1235,22 +1576,21 @@
     cursor: pointer;
     white-space: nowrap;
     transition:
-      background 180ms ease,
       color 180ms ease,
-      box-shadow 180ms ease;
+      transform 180ms ease;
   }
 
   .nav-tab:hover {
     color: var(--color-text-primary);
   }
 
+  .nav-tab:active {
+    transform: scale(0.97);
+  }
+
   .nav-tab.on {
-    background: var(--color-surface);
     color: var(--color-ink);
     font-weight: 600;
-    box-shadow:
-      0 1px 2px rgb(20 24 28 / 6%),
-      0 2px 6px -2px rgb(20 24 28 / 10%);
   }
 
   .nav-body {
@@ -1995,7 +2335,6 @@
     display: grid;
     grid-template-columns: repeat(10, 28px);
     gap: 2px;
-    max-width: 300px;
   }
 
   .rb-symbol-cell {
@@ -2182,18 +2521,18 @@
     font-weight: 500;
   }
 
-  /* ---- hàng thẻ loại (quick-cards) ---- */
+  /* ---- hàng thẻ loại (quick-cards) ----
+     Grid thay flex: số thẻ có thể đổi (3 → 4) mà thẻ cuối không bị kéo giãn
+     hết hàng như flex `flex: 1`. Track tự chia đều phần chiều rộng còn lại. */
   .quick-cards {
-    display: flex;
-    align-items: stretch;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
     gap: 10px;
   }
 
   .quick-card {
     position: relative;
-    flex: 1;
     min-width: 0;
-    max-width: 280px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -2259,17 +2598,6 @@
     white-space: nowrap;
   }
 
-  .quick-folder {
-    flex-shrink: 0;
-    width: 30px;
-    height: 30px;
-    display: grid;
-    place-items: center;
-    border: 1px solid var(--color-line);
-    border-radius: 8px;
-    color: var(--color-ink-3);
-  }
-
   .ai-chip {
     padding: 1px 6px;
     border-radius: 4px;
@@ -2278,17 +2606,6 @@
     font-size: 12px;
     font-weight: 700;
     letter-spacing: 0.03em;
-  }
-
-  @media (max-width: 1100px) {
-    .quick-cards {
-      flex-wrap: wrap;
-    }
-
-    .quick-card {
-      flex: 1 1 calc(50% - 5px);
-      max-width: none;
-    }
   }
 
   /* ---- mục "Đề gần đây" ---- */
@@ -2305,8 +2622,9 @@
     padding: 10px 0 14px;
   }
 
-  /* segmented control: nền xám, mục active = thẻ trắng */
+  /* segmented control: nền xám, thẻ trắng trượt theo mục active */
   .filter-pills {
+    position: relative;
     display: flex;
     align-items: center;
     height: 40px;
@@ -2316,7 +2634,24 @@
     flex-shrink: 0;
   }
 
+  /* thẻ trắng trượt — vị trí/độ rộng do JS đo (offsetLeft của pill active) */
+  .filter-pill__thumb {
+    position: absolute;
+    top: 3px;
+    left: 0;
+    height: calc(100% - 6px);
+    border-radius: 8px;
+    background: var(--color-surface);
+    box-shadow: 0 1px 2px rgb(20 24 28 / 8%);
+    pointer-events: none;
+    transition:
+      transform 280ms cubic-bezier(0.32, 0.72, 0, 1),
+      width 280ms cubic-bezier(0.32, 0.72, 0, 1);
+  }
+
   .filter-pill {
+    position: relative;
+    z-index: 1;
     padding: 7px 15px;
     border: none;
     border-radius: 8px;
@@ -2327,19 +2662,21 @@
     cursor: pointer;
     white-space: nowrap;
     transition:
-      background 160ms ease,
-      color 160ms ease;
+      color 160ms ease,
+      transform 160ms ease;
   }
 
   .filter-pill:hover {
     color: var(--color-ink);
   }
 
+  .filter-pill:active {
+    transform: scale(0.96);
+  }
+
   .filter-pill.active {
-    background: var(--color-surface);
     color: var(--color-ink);
     font-weight: 600;
-    box-shadow: 0 1px 2px rgb(20 24 28 / 8%);
   }
 
   .recents-heading {
@@ -2452,6 +2789,22 @@
 
   .recent-list li + li {
     border-top: 1px solid var(--color-line);
+  }
+
+  .recent-row-item {
+    transition: border-color 160ms ease;
+  }
+
+  .recent-row-item.is-removing {
+    animation: recent-out 170ms var(--ease-soft) forwards;
+    pointer-events: none;
+  }
+
+  @keyframes recent-out {
+    to {
+      opacity: 0;
+      transform: translateX(-8px);
+    }
   }
 
   .recent-row {

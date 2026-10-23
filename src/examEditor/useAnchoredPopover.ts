@@ -13,14 +13,14 @@ export interface PopoverPos {
   placement: 'below' | 'above'
 }
 
-export function useAnchoredPopover(open: boolean) {
+export function useAnchoredPopover(open: boolean, minWidth = 220) {
   const triggerRef = useRef<HTMLElement | null>(null)
   const [pos, setPos] = useState<PopoverPos | null>(null)
 
   const sync = () => {
     const rect = triggerRef.current?.getBoundingClientRect()
     if (!rect) return
-    const menuWidth = Math.max(rect.width, 220)
+    const menuWidth = Math.max(rect.width, minWidth)
     const menuHeight = 300
     const gap = 6
     const left = Math.max(8, Math.min(rect.left, window.innerWidth - menuWidth - 8))
@@ -33,7 +33,7 @@ export function useAnchoredPopover(open: boolean) {
 
   useLayoutEffect(() => {
     if (open) sync()
-  }, [open])
+  }, [open, minWidth])
 
   useEffect(() => {
     if (!open) return
@@ -56,6 +56,8 @@ export function popoverStyle(pos: PopoverPos | null): React.CSSProperties | unde
     top: pos.placement === 'above' ? undefined : pos.top,
     bottom: pos.placement === 'above' ? window.innerHeight - pos.top : undefined,
     left: pos.left,
-    width: pos.width,
+    // `minWidth` chứ không phải `width`: menu co theo nội dung thật, tránh
+    // ép lưới (bảng/ký hiệu) bị tràn ra ngoài khung.
+    minWidth: pos.width,
   }
 }

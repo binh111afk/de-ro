@@ -245,18 +245,60 @@ ${blocksToHtml(doc.blocks)}
 /**
  * Mở hộp thoại in với CSS @page A4.
  * Nội dung in lấy từ chính tài liệu đang mở nên khớp với màn hình.
+ *
+ * `window.open` có thể bị chặn (popup blocker, hoặc trình duyệt chặn cửa
+ * sổ mới từ handler không phải thao tác trực tiếp) → trả `null`. Khi đó
+ * fallback sang iframe ẩn: in ra chính trang hiện tại, vẫn ra đúng A4 nhờ
+ * CSS @page. Không fallback thì bấm In im lặng, user tưởng nút hỏng.
  */
 export function printDoc(doc: ExamDoc): void {
-  const w = window.open('', '_blank', 'width=900,height=1000')
-  if (!w) return
   const html = buildPrintHtml(doc)
-  w.document.open()
-  w.document.write(html)
-  w.document.close()
-  w.focus()
-  // chờ nạp xong nội dung rồi mới mở hộp thoại in
-  w.onload = () => {
-    setTimeout(() => w.print(), 250)
+  const w = window.open('', '_blank', 'width=900,height=1000')
+  if (w) {
+    w.document.open()
+    w.document.write(html)
+    // gán onload TRƯỚC khi close — gán sau thì load có thể đã xong,
+    // `print()` không bao giờ chạy
+    w.onload = () => {
+      setTimeout(() => {
+        w.focus()
+        w.print()
+      }, 250)
+    }
+    w.document.close()
+    w.focus()
+    return
+  }
+  printViaHiddenFrame(html)
+}
+
+/** In bằng iframe ẩn — dùng khi `window.open` bị chặn. */
+function printViaHiddenFrame(html: string): void {
+  const frame = document.createElement('iframe')
+  frame.setAttribute('aria-hidden', 'true')
+  frame.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden'
+  document.body.appendChild(frame)
+  const cleanup = () => {
+    // đợi hộp thoại in đóng rồi mới gỡ iframe (bỏ sớm sẽ huỷ lệnh in)
+    setTimeout(() => frame.remove(), 1000)
+  }
+  const doc = frame.contentDocument
+  if (!doc) {
+    frame.remove()
+    return
+  }
+  doc.open()
+  doc.write(html)
+  doc.close()
+  frame.onload = () => {
+    setTimeout(() => {
+      try {
+        frame.contentWindow?.focus()
+        frame.contentWindow?.print()
+      } finally {
+        cleanup()
+      }
+    }, 250)
   }
 }
 
