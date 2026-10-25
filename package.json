@@ -8,7 +8,12 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "typecheck": "tsc -b --noEmit",
-    "test:convert": "tsx scripts/test-convert.mjs"
+    "test:convert": "tsx scripts/test-convert.mjs",
+    "test:markdown": "tsx --tsconfig tsconfig.app.json scripts/test-markdown.mjs",
+    "test:export": "tsx --tsconfig tsconfig.app.json scripts/test-export.mjs",
+    "test:layout": "tsx --tsconfig tsconfig.app.json scripts/test-layout.mjs",
+    "test:templates": "tsx --tsconfig tsconfig.app.json scripts/test-templates.mjs",
+    "test:pagination": "tsx --tsconfig tsconfig.app.json scripts/test-pagination.mjs"
   },
   "dependencies": {
     "@fontsource-variable/jetbrains-mono": "^5.1.2",
@@ -26,13 +31,11 @@
     "@tiptap/starter-kit": "^3.32.0",
     "clsx": "^2.1.1",
     "katex": "^0.16.21",
-    "lottie-react": "^3.1.2",
     "lucide-react": "^0.468.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.1.1",
     "tailwind-merge": "^2.6.0",
-    "yaml": "^2.9.1",
     "zustand": "^5.0.2"
   },
   "devDependencies": {

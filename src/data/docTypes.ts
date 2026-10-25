@@ -16,6 +16,7 @@ export type MarkType =
   | 'super'
   | 'highlight'
   | 'textStyle'
+  | 'boxed'
 
 export interface Mark {
   type: MarkType
@@ -57,6 +58,7 @@ export type BlockType =
   | 'heading'
   | 'paragraph'
   | 'bullets'
+  | 'grid'
   | 'question'
   | 'essay'
   | 'answerKey'
@@ -106,6 +108,15 @@ export interface BulletsBlock {
   format?: FormatAttrs
 }
 
+/** Lưới nhiều cột — xếp nội dung ngắn cạnh nhau (ý nhỏ, hình, đáp án phụ). */
+export interface GridBlock {
+  type: 'grid'
+  /** số cột, 2 hoặc 3 */
+  cols: 2 | 3
+  cells: RichText[]
+  format?: FormatAttrs
+}
+
 export interface QuestionBlock {
   type: 'question'
   no: number
@@ -151,6 +162,7 @@ export type ExamBlock =
   | HeadingBlock
   | ParagraphBlock
   | BulletsBlock
+  | GridBlock
   | QuestionBlock
   | EssayBlock
   | AnswerKeyBlock

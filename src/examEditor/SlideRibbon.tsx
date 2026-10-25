@@ -488,8 +488,9 @@ export function SlideRibbon(props: SlideRibbonProps) {
       <div className="ribbon-flex-spacer" />
       <RibbonGroup label="Trợ lý AI">
         <RibbonButton icon={<IconAiBeautify size={28} />} label="Làm đẹp" disabled title="Chưa hỗ trợ" />
-        <RibbonButton icon={<IconAiFactCheck size={28} />} label="Kiểm tra" disabled title="Chưa hỗ trợ" />
-        <RibbonButton icon={<IconAiImage size={28} />} label="Ảnh AI" disabled title="Chưa hỗ trợ" />
+        {/* hai glyph này vẽ ở 24px để nét 1.5 của file gốc in đúng 1.5px */}
+        <RibbonButton icon={<IconAiFactCheck size={24} />} label="Kiểm tra" disabled title="Chưa hỗ trợ" />
+        <RibbonButton icon={<IconAiImage size={24} />} label="Ảnh AI" disabled title="Chưa hỗ trợ" />
         <RibbonButton
           icon={<img src="/brand/ai-static.svg" alt="" className="slide-ribbon-ai-mark" />}
           label="Trợ lý AI"

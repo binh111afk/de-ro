@@ -5,12 +5,23 @@
 import { useMemo, useRef, useState } from 'react'
 import type { JSONContent } from '@tiptap/core'
 import { buildTocFromDoc, type TocEntry } from './convert'
-import { BLOCK_TEMPLATES, type BlockTemplate } from './templates'
+import { BLOCK_TEMPLATES, BLOCK_TEMPLATE_MIME, type BlockTemplate } from './templates'
 import { cn } from '@/lib/cn'
-import { IconSearch } from './icons'
+import { IconGrip, IconSearch } from './icons'
 import { useSlidingThumb } from './useSlidingThumb'
 
 type PaneTab = 'toc' | 'blocks' | 'search'
+
+/** Gom danh sách mẫu theo nhóm liền kề, giữ thứ tự khai báo. */
+function groupTemplates(list: BlockTemplate[]): Array<{ name: string; items: BlockTemplate[] }> {
+  const out: Array<{ name: string; items: BlockTemplate[] }> = []
+  for (const tpl of list) {
+    const last = out[out.length - 1]
+    if (last && last.name === tpl.group) last.items.push(tpl)
+    else out.push({ name: tpl.group, items: [tpl] })
+  }
+  return out
+}
 
 export function NavPanel({
   doc,
@@ -115,16 +126,35 @@ export function NavPanel({
 
       {tab === 'blocks' && (
         <div className="nav-body">
-          <ul className="nav-tpl">
-            {BLOCK_TEMPLATES.map((tpl) => (
-              <li key={tpl.id}>
-                <button type="button" onClick={() => onInsertTemplate(tpl)}>
-                  <span className="nav-tpl__label">{tpl.label}</span>
-                  <span className="nav-tpl__desc">{tpl.desc}</span>
-                </button>
-              </li>
-            ))}
-          </ul>
+          {groupTemplates(BLOCK_TEMPLATES).map((group) => (
+            <section key={group.name} className="nav-tpl-group">
+              <h3 className="nav-tpl-group__name">{group.name}</h3>
+              <ul className="nav-tpl">
+                {group.items.map((tpl) => (
+                  <li key={tpl.id}>
+                    <button
+                      type="button"
+                      draggable
+                      onDragStart={(e) => {
+                        e.dataTransfer.setData(BLOCK_TEMPLATE_MIME, JSON.stringify(tpl.build()))
+                        e.dataTransfer.effectAllowed = 'copy'
+                      }}
+                      onClick={() => onInsertTemplate(tpl)}
+                      title="Bấm để chèn tại con trỏ, hoặc kéo vào trang"
+                    >
+                      <span className="nav-tpl__grip">
+                        <IconGrip size={12} />
+                      </span>
+                      <span className="nav-tpl__texts">
+                        <span className="nav-tpl__label">{tpl.label}</span>
+                        <span className="nav-tpl__desc">{tpl.desc}</span>
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
         </div>
       )}
 

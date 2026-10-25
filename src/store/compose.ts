@@ -1,7 +1,8 @@
 /**
  * Store cho trình soạn đề nhiều tab (kiểu GenOffice / VS Code).
  *
- * Mỗi tab là một tài liệu TipTap độc lập, kèm lịch sử undo/redo riêng.
+ * Mỗi tab là một tài liệu TipTap độc lập; lịch sử hoàn tác nằm ở chính editor
+ * (một sổ duy nhất, xem `Ribbon.tsx`), không nhân bản vào store.
  * Tài liệu đã lưu nằm ở `useDocStore().myDocs` — store này chỉ giữ phiên làm việc.
  */
 import { create } from 'zustand'
@@ -19,18 +20,11 @@ export interface OpenTab {
   kind: DocKind
 }
 
-interface History {
-  past: JSONContent[]
-  future: JSONContent[]
-}
-
 export interface ComposeStore {
   tabs: OpenTab[]
   activeId: string | null
   /** nội dung TipTap hiện tại của từng tab */
   contents: Record<string, JSONContent>
-  /** lịch sử undo/redo của từng tab */
-  histories: Record<string, History>
 
   newDoc: () => string
   /** mở tab đầu tiên nếu chưa có — idempotent, an toàn với StrictMode */
@@ -49,13 +43,7 @@ export interface ComposeStore {
   renameTab: (id: string, title: string) => void
   /** đánh dấu tab đã lưu / chưa lưu */
   setTabDirty: (id: string, dirty: boolean) => void
-  setContent: (
-    id: string,
-    doc: JSONContent,
-    opts?: { pushHistory?: boolean },
-  ) => void
-  undo: (id: string) => void
-  redo: (id: string) => void
+  setContent: (id: string, doc: JSONContent) => void
   saveDoc: (id: string) => void
   /** lưu một tab bất kỳ (đề hoặc slide) vào kho tài liệu của Home */
   saveTab: (id: string) => void
@@ -64,13 +52,10 @@ export interface ComposeStore {
   myDocs: () => ExamDoc[]
 }
 
-const emptyHistory = (): History => ({ past: [], future: [] })
-
 export const useComposeStore = create<ComposeStore>()((set, get) => ({
   tabs: [],
   activeId: null,
   contents: {},
-  histories: {},
   decks: {},
 
   newDoc: () => {
@@ -80,7 +65,6 @@ export const useComposeStore = create<ComposeStore>()((set, get) => ({
       tabs: [...s.tabs, { id, title: doc.title, dirty: false, kind: doc.kind ?? 'exam' }],
       activeId: id,
       contents: { ...s.contents, [id]: { type: 'doc', content: [] } },
-      histories: { ...s.histories, [id]: emptyHistory() },
     }))
     return id
   },
@@ -151,7 +135,6 @@ export const useComposeStore = create<ComposeStore>()((set, get) => ({
       tabs: [...s.tabs, { id: doc.id, title: doc.title, dirty: false, kind: doc.kind ?? 'exam' }],
       activeId: doc.id,
       contents: { ...s.contents, [doc.id]: blocksToTipTap(doc.blocks) },
-      histories: { ...s.histories, [doc.id]: emptyHistory() },
     }))
     return doc.id
   },
@@ -160,11 +143,10 @@ export const useComposeStore = create<ComposeStore>()((set, get) => ({
     set((s) => {
       const tabs = s.tabs.filter((t) => t.id !== id)
       const { [id]: _removedContent, ...contents } = s.contents
-      const { [id]: _removedHistory, ...histories } = s.histories
       const { [id]: _removedDeck, ...decks } = s.decks
       const activeId =
         s.activeId === id ? (tabs[tabs.length - 1]?.id ?? null) : s.activeId
-      return { tabs, contents, histories, decks, activeId }
+      return { tabs, contents, decks, activeId }
     }),
 
   setActive: (id) => set({ activeId: id }),
@@ -179,55 +161,12 @@ export const useComposeStore = create<ComposeStore>()((set, get) => ({
       tabs: s.tabs.map((t) => (t.id === id ? { ...t, dirty } : t)),
     })),
 
-  setContent: (id, doc, opts) =>
+  setContent: (id, doc) =>
     set((s) => {
       if (!s.contents[id]) return s
-      const h = s.histories[id] ?? emptyHistory()
-      const push = opts?.pushHistory !== false
-      const prev = s.contents[id]
       return {
         contents: { ...s.contents, [id]: doc },
-        histories: {
-          ...s.histories,
-          [id]: push
-            ? { past: [...h.past, prev].slice(-100), future: [] }
-            : h,
-        },
         tabs: s.tabs.map((t) => (t.id === id && !t.dirty ? { ...t, dirty: true } : t)),
-      }
-    }),
-
-  undo: (id) =>
-    set((s) => {
-      const h = s.histories[id]
-      if (!h || h.past.length === 0) return s
-      const prev = h.past[h.past.length - 1]
-      return {
-        contents: { ...s.contents, [id]: prev },
-        histories: {
-          ...s.histories,
-          [id]: {
-            past: h.past.slice(0, -1),
-            future: [s.contents[id], ...h.future].slice(0, 100),
-          },
-        },
-      }
-    }),
-
-  redo: (id) =>
-    set((s) => {
-      const h = s.histories[id]
-      if (!h || h.future.length === 0) return s
-      const next = h.future[0]
-      return {
-        contents: { ...s.contents, [id]: next },
-        histories: {
-          ...s.histories,
-          [id]: {
-            past: [...h.past, s.contents[id]].slice(-100),
-            future: h.future.slice(1),
-          },
-        },
       }
     }),
 

@@ -25,6 +25,7 @@ const MARK_TYPES: MarkType[] = [
   'super',
   'highlight',
   'textStyle',
+  'boxed',
 ]
 
 /** Đọc nội dung rich text từ một node TipTap (inline*), giữ nguyên marks. */
@@ -44,11 +45,52 @@ export function richOf(node: JSONContent | undefined): RichText {
   return merged
 }
 
-function walkInline(node: JSONContent | undefined, inherited: Mark[], out: Span[]): void {
-  if (!node) return
+/** Tách RichText thành từng dòng (mỗi dòng thành một paragraph trong cột đầu đề). */
+export function splitRichLines(rt: RichText): RichText[] {
+  const spans: Span[] = typeof rt === 'string' ? [{ text: rt }] : rt
+  const lines: Span[][] = [[]]
+  for (const s of spans) {
+    const parts = s.text.split('\n')
+    parts.forEach((part, i) => {
+      if (i > 0) lines.push([])
+      if (part) lines[lines.length - 1].push({ ...s, text: part })
+    })
+  }
+  return lines.map((l) => {
+    if (l.length === 0) return ''
+    return l.length === 1 && !l[0].marks?.length ? l[0].text : l
+  })
+}
+
+/** Nối các paragraph của một cột đầu đề thành RichText, xuống dòng bằng '\n'. */
+function columnToRich(column: JSONContent | undefined): RichText {
+  const lines = (column?.content ?? []).map((p) => richOf(p))
+  if (lines.length <= 1) return lines[0] ?? ''
+  const spans: Span[] = []
+  lines.forEach((line, i) => {
+    if (i > 0) spans.push({ text: '\n' })
+    if (typeof line === 'string') {
+      if (line) spans.push({ text: line })
+    } else {
+      spans.push(...line)
+    }
+  })
+  return spans.every((s) => !s.marks?.length) ? spans.map((s) => s.text).join('') : spans
+}
+
+function walkInline(node: JSONContent | undefined, inherited: Mark[], out: Span[]): void {  if (!node) return
   if (node.type === 'text') {
     const marks = [...inherited, ...marksOf(node)]
     out.push({ text: node.text ?? '', ...(marks.length ? { marks } : {}) })
+    return
+  }
+  // công thức inline → trả về đúng quy ước `$...$` của ExamBlock
+  if (node.type === 'inlineMath') {
+    const marks = [...inherited, ...marksOf(node)]
+    out.push({
+      text: `$${String(node.attrs?.latex ?? '')}$`,
+      ...(marks.length ? { marks } : {}),
+    })
     return
   }
   // node bọc inline như sub/superscript (nếu khai báo dạng wrapper) — gộp marks
@@ -130,11 +172,12 @@ export function tipTapToBlocks(doc: JSONContent): ExamBlock[] {
   for (const node of nodes) {
     switch (node.type) {
       case 'examHeader': {
-        const side = (node.attrs?.side as string | undefined) ?? 'left'
-        const text = richOf(node)
-        if (!pendingHeader) pendingHeader = {}
-        if (side === 'right') pendingHeader.right = text
-        else pendingHeader.left = text
+        const cols = (node.content ?? []).filter((c) => c.type === 'examHeaderColumn')
+        pendingHeader = {
+          left: columnToRich(cols[0]),
+          right: columnToRich(cols[1]),
+        }
+        flushHeader()
         break
       }
 
@@ -193,6 +236,16 @@ export function tipTapToBlocks(doc: JSONContent): ExamBlock[] {
         out.push({
           type: 'bullets',
           items: (node.content ?? []).map((li) => richOf(li)),
+          ...(formatFromAttrs(node.attrs) ? { format: formatFromAttrs(node.attrs) } : {}),
+        })
+        break
+
+      case 'examGrid':
+        flushHeader()
+        out.push({
+          type: 'grid',
+          cols: Number(node.attrs?.cols) === 3 ? 3 : 2,
+          cells: (node.content ?? []).map((cell) => richOf(cell)),
           ...(formatFromAttrs(node.attrs) ? { format: formatFromAttrs(node.attrs) } : {}),
         })
         break
@@ -311,15 +364,40 @@ function answerKeyItems(node: JSONContent): Array<{ no: number; answer: RichText
  * Blocks -> TipTap
  * ------------------------------------------------------------------ */
 
+/** Tách text thành các text node + node toán inline từ `$...$`. */
+const MATH_RE = /\$([^$\n]+)\$/g
+
+function splitMath(text: string, marks?: JSONContent['marks']): JSONContent[] {
+  const out: JSONContent[] = []
+  let last = 0
+  for (const m of text.matchAll(MATH_RE)) {
+    const idx = m.index ?? 0
+    if (idx > last) {
+      out.push({ type: 'text', text: text.slice(last, idx), ...(marks?.length ? { marks } : {}) })
+    }
+    out.push({
+      type: 'inlineMath',
+      attrs: { latex: m[1] },
+      ...(marks?.length ? { marks } : {}),
+    })
+    last = idx + m[0].length
+  }
+  if (last < text.length) {
+    out.push({ type: 'text', text: text.slice(last), ...(marks?.length ? { marks } : {}) })
+  }
+  return out
+}
+
 function richNodes(rt: RichText): JSONContent[] {
-  if (typeof rt === 'string') return rt ? [{ type: 'text', text: rt }] : []
-  return rt.map((s) => ({
-    type: 'text',
-    text: s.text,
-    ...(s.marks?.length
-      ? { marks: s.marks.map((m) => ({ type: m.type, ...(m.attrs ? { attrs: m.attrs } : {}) })) }
-      : {}),
-  }))
+  if (typeof rt === 'string') return rt ? splitMath(rt) : []
+  const out: JSONContent[] = []
+  for (const s of rt) {
+    const marks = s.marks?.length
+      ? s.marks.map((m) => ({ type: m.type, ...(m.attrs ? { attrs: m.attrs } : {}) }))
+      : undefined
+    out.push(...splitMath(s.text, marks))
+  }
+  return out
 }
 
 export function blocksToTipTap(blocks: ExamBlock[]): JSONContent {
@@ -327,20 +405,21 @@ export function blocksToTipTap(blocks: ExamBlock[]): JSONContent {
 
   for (const b of blocks) {
     switch (b.type) {
-      case 'header':
+      case 'header': {
+        const column = (rt: RichText): JSONContent => ({
+          type: 'examHeaderColumn',
+          content: splitRichLines(rt).map((line) => ({
+            type: 'paragraph',
+            content: richNodes(line),
+          })),
+        })
         content.push({
           type: 'examHeader',
-          attrs: { id: `h${content.length}`, side: 'left' },
-          content: richNodes(b.left),
+          attrs: { id: `h${content.length}` },
+          content: [column(b.left), column(b.right)],
         })
-        if (plainText(b.right)) {
-          content.push({
-            type: 'examHeader',
-            attrs: { id: `h${content.length}`, side: 'right' },
-            content: richNodes(b.right),
-          })
-        }
         break
+      }
 
       case 'title':
         content.push({
@@ -394,6 +473,18 @@ export function blocksToTipTap(blocks: ExamBlock[]): JSONContent {
             type: 'examBullet',
             attrs: { id: `bi${i}` },
             content: richNodes(item),
+          })),
+        })
+        break
+
+      case 'grid':
+        content.push({
+          type: 'examGrid',
+          attrs: { id: `g${content.length}`, cols: b.cols ?? 2, ...attrsFromFormat(b.format) },
+          content: b.cells.map((cell, i) => ({
+            type: 'examGridCell',
+            attrs: { id: `gc${i}` },
+            content: richNodes(cell),
           })),
         })
         break

@@ -4,9 +4,11 @@ Tài liệu này ghi lại toàn bộ trạng thái dự án: đã làm gì, đ�
 rút ra, và **những gì còn chưa làm xong**. Đọc file này là đủ để tiếp tục làm việc
 mà không cần đọc lại lịch sử hội thoại.
 
-> Cập nhật lần cuối: 23/10/2026 — Chặng 6: làm lại trình soạn slide theo vỏ
-> GenOffice (ribbon nhiều tab, nhóm công cụ, gallery/popup, tab ngữ cảnh,
-> chọn/kéo/resize/undo).
+> Cập nhật lần cuối: 25/10/2026 — Chặng 18: phân trang theo khối (spacer
+> decoration) + sửa pageCount luôn = 1; trước đó chặng 17: sửa gốc lỗi con
+> trỏ/block loạn, render LaTeX trong editor, hợp đồng sinh đề AI
+> replace/append/patch. Trước nữa: chặng 16 (thêm khối như soandethi),
+> 15 (đầu đề hai cột), 14 (choice layout + block lưới).
 
 ## 0. Vị trí dự án
 
@@ -76,13 +78,14 @@ trong `/soan-de`; `/soan-slide` chỉ redirect về đó.
 ### 3.1. Hạ tầng AI
 
 - Proxy LLM server-side: `server/llmProxy.ts` — key ở server, client gọi
-  `/api/llm` cùng origin.
+  `/api/llm` cùng origin. Đọc cấu hình từ `.env` (`LLM_BASE_URL`,
+  `LLM_API_KEY`, `LLM_MODEL`) — xem mục 3.18.
+- Vite dev mount chính proxy này ở `/api/llm` (`vite.config.ts`), nên
+  `npm run dev` gọi AI được ngay, không cần chạy server riêng.
 - Client: `src/lib/llm.ts` (`callLlm`, `extractJson`).
-- Module xử lý AI đề: `src/lib/examAI.ts`.
 - Kiểu dữ liệu tài liệu: `src/data/docTypes.ts` (`ExamBlock` và các biến thể).
 - **Đã sửa lỗi provider trả về content rỗng**: thêm retry, log raw response và
-  thông báo lỗi rõ ràng thay vì im lặng. Đã test thật với
-  `xkiro/minimax-m3.1-flash` → trả về JSON 37 block thành công.
+  thông báo lỗi rõ ràng thay vì im lặng.
 
 ### 3.2. Các màn hình khác
 
@@ -152,13 +155,14 @@ Files:
 - `src/examEditor/AiPanel.tsx` — empty state + starter pill + composer bo 16px.
 - `src/examEditor/NavPanel.tsx` — ô tìm kiếm + dải tab (có thẻ trượt) + vùng nội dung.
 - `src/pages/ComposeDoc.tsx` — ghép toàn bộ, auto-fit, save, print, export.
-- `src/store/compose.ts` — store phiên nhiều tab, nội dung + undo/redo riêng từng tab.
+- `src/store/compose.ts` — store phiên nhiều tab (nội dung + deck). Lịch sử
+  hoàn tác nằm ở editor, không nhân bản trong store (xem 3.17).
 
 ### 3.6. Chức năng đã nối
 
 Chèn khối mẫu (ribbon + nav panel) · lưu theo từng tab · xuất Word · in A4 ·
 áp kết quả AI · điều hướng khối từ mục lục / tìm kiếm · zoom + auto-fit ·
-undo/redo theo từng tab (trong store).
+hoàn tác/làm lại (lịch sử TipTap, nút trên ribbon).
 
 ### 3.7. Build
 
@@ -661,6 +665,599 @@ slide, cỡ slide, viền hình, hoạt ảnh, comment, media/SmartArt, import-e
 resize/undo, chèn hình, đổi tab Thiết kế/Chuyển tiếp/Xem và trình chiếu bình thường,
 console không lỗi.
 
+### 3.17. Chặng 7 — Hoàn tác/Làm lại trên ribbon, sửa số trang, dọn Lottie (23/10/2026)
+
+Rà lại toàn bộ mục 6 của context và đối chiếu với code, rồi xử lý 4 việc rẻ mà có
+lý do thật.
+
+**Hoàn tác/Làm lại cho trình soạn đề (`Ribbon.tsx`):**
+- Trước đây store ghi lịch sử (`histories`) **mỗi lần gõ phím** nhưng không UI nào
+  gọi `undo`/`redo` → trả giá bộ nhớ cho tính năng không tồn tại, còn người dùng
+  chỉ có Ctrl+Z.
+- Giờ dùng **một sổ duy nhất** là lịch sử của TipTap: thêm 2 nút icon cạnh "Lưu"
+  ở cụm quick phải (`ribbon-quick`), gọi `chain()?.undo()/redo().run()`;
+  `onMouseDown preventDefault` giữ selection như các nút khác.
+- Bật/tắt nút theo `editor.can().undo()/redo()`; listener `transaction` riêng vì
+  `useFormatState` chỉ re-render khi định dạng đổi.
+- Đã xoá `History`, `histories`, `undo`, `redo` và option `pushHistory` khỏi
+  `store/compose.ts` — hết cảnh hai sổ hoàn tác song song. Đánh đổi đã chấp nhận:
+  đổi tab là editor remount nên hoàn tác **không xuyên tab** (giống Ctrl+Z).
+
+**Sửa số trang sai khi đổi khổ giấy (`ExamEditor.tsx`):**
+- `measure` dùng `CONTENT_H` nhưng `useCallback` deps rỗng → giữ closure của lần
+  render đầu. Đổi dọc↔ngang hoặc kéo lề xong, số trang/số tờ giấy vẫn tính theo
+  khổ cũ. Thêm `CONTENT_H` vào deps.
+
+**Dọn code chết (Lottie):**
+- Đã xoá `src/components/AIAssistantIcon.tsx` (không được import ở đâu) và gỡ
+  dependency `lottie-react`. **Hai file trong `src/assets/` là của người dùng
+  cung cấp — không xoá**; sau đó SVG được dùng cho animation "đang suy luận"
+  (xem 3.19).
+
+**Kiểm chứng:** `npx tsc -b --noEmit` sạch · `npm run build` thành công (chunk
+chính 1.146 MB, vẫn vượt ngưỡng 500 kB — xem 6.5) · `npm run test:convert`
+6/6 pass.
+
+### 3.18. Chặng 8 — Nối API thật cho trợ lý AI (23/10/2026)
+
+Mục tiêu: AI dùng endpoint thật `https://opencode.ai/inference/go/openai/v1`,
+model `deepseek-v4.1-flash`, key do người dùng tự điền — key không bao giờ vào
+bundle.
+
+**Cấu hình (`.env` + `.env.example`):**
+
+| Biến | Mặc định | Ghi chú |
+|---|---|---|
+| `LLM_BASE_URL` | `https://opencode.ai/inference/go/openai/v1` | không có `/` cuối |
+| `LLM_API_KEY` | — (bắt buộc) | `.env` đã nằm trong `.gitignore` |
+| `LLM_MODEL` | `deepseek-v4.1-flash` | model id theo tài liệu opencode |
+
+`.env.example` được commit; `.env` chỉ tạo cục bộ và bị git bỏ qua. Proxy báo
+lỗi rõ khi thiếu key ("Chưa cấu hình LLM_API_KEY…") và khi key bị từ chối
+("API key bị từ chối…"), thay vì "dịch vụ đang bận".
+
+**Proxy (`server/llmProxy.ts`):**
+- Bỏ hoàn toàn cơ chế đọc `~/.minimax/config.yaml` (provider `xkiro`); gỡ
+  dependency `yaml`. Cấu hình giờ chỉ từ env.
+- **Header bắt buộc `x-opencode-session`**: gateway của opencode trả
+  400 `MissingSessionID` nếu thiếu. Dùng một UUID sinh lúc khởi động process
+  (app cục bộ, một người dùng); kèm `User-Agent: de-ro/1.0` theo khuyến nghị
+  của gateway. **Đừng xoá 2 header này.**
+- Kiểm tra URL trước khi gọi: chỉ http/https, chặn `localhost`, loopback, dải
+  riêng/link-local/CGNAT/multicast IPv4 và IPv6 nội bộ (floor: chống SSRF nếu
+  ai đó sửa `LLM_BASE_URL`).
+- Sửa lỗi path traversal có sẵn ở phần serve static: `path.resolve(dist, rel)`
+  phải nằm trong `dist/`, ngược lại 404; SPA fallback chỉ cho đường dẫn không
+  có phần mở rộng.
+- Tách `handleLlmRequest` (dùng chung dev/prod) và `llmMiddleware`
+  (Connect-style) để Vite mount; `createAppServer` giữ nguyên vai trò server
+  production (API + `dist/`), tự nạp `.env` khi chạy `tsx server/llmProxy.ts`.
+
+**Vite (`vite.config.ts`):**
+- Dùng `loadDotEnv()` export từ `server/llmProxy.ts` thay cho `loadEnv` của Vite.
+  **Lý do:** `loadEnv` để biến sẵn có trong `process.env` thắng file `.env`; máy
+  này có `LLM_API_KEY=sk-…` cũ trong shell nên key mới điền vào `.env` bị đè và
+  mọi lời gọi trả 401. `loadDotEnv` cho giá trị không rỗng trong file thắng —
+  cùng quy tắc cho dev và production.
+- Plugin `llm-proxy` mount `llmMiddleware` ở `/api/llm`. Trước đây repo **chưa
+  hề nối** route này vào dev server → mọi lời gọi AI trong `npm run dev` đều
+  404.
+- `optimizeDeps.entries: ['index.html']` — mặc định Vite quét mọi `*.html`
+  trong repo, gồm cả `_ref/genoffice/**` (clone tham chiếu) làm dev khởi động
+  chậm.
+
+**Kiểm chứng:** `npx tsc -b --noEmit` sạch (đã thêm `server` vào
+`tsconfig.node.json` để file proxy được typecheck) · `npm run build` thành
+công · **gọi thật thành công** cả hai đường:
+- Vite dev `POST /api/llm` (đúng payload của panel: `reasoningEffort: 'max'`)
+  → 200, `content: "ok"`, `model: "deepseek-v4.1-flash"`, có `reasoning_content`.
+- Server production `node/tsx server/llmProxy.ts` → 200, cùng kết quả.
+- Key dùng trực tiếp với upstream cũng 200; `GET …/v1/models` trả đúng 2 model
+  (`deepseek-v4.1-flash`, `deepseek-v4-pro`).
+
+### 3.19. Chặng 9 — Gắn animation "Trợ lý giấy" vào trạng thái đang suy luận (23/10/2026)
+
+Người dùng phát hiện animation họ cung cấp (`src/assets/ai-assistant.json` +
+`.svg`) chưa được gắn vào đâu. Đã gắn vào đúng trạng thái chờ của panel AI.
+
+- **Vị trí:** `AiPanel.tsx`, lượt trả lời đang chờ (`turn.pending && !turn.text`)
+  — dòng "Đang suy luận…". Panel này dùng chung cho cả trình soạn đề và slide
+  nên animation xuất hiện ở cả hai.
+- **Chọn SVG, không chọn Lottie:** hai file là cùng một artwork (bản SVG do
+  công cụ Lottie xuất ra, có sẵn `@keyframes` bên trong, tự chạy khi đặt trong
+  `<img>`). Dùng `lottie-react` làm chunk chính tăng từ 1.146 MB lên 1.595 MB
+  (lottie-web ~450 KB); dùng SVG chỉ thêm 50 KB asset, chỉ tải khi indicator
+  hiện. Vì vậy `AIAssistantIcon.tsx` + dependency `lottie-react` bị gỡ lần nữa,
+  còn **hai file asset vẫn giữ** (đồ của người dùng, `ai-assistant.json` là bản
+  gốc).
+- **CSS:** `.ai-thinking__anim` khung 22px, `transform: scale(1.55)` quanh tâm
+  vì hình gốc chỉ chiếm ~31/64 viewBox (phần còn lại là lề trong suốt); ẩn hẳn
+  khi `prefers-reduced-motion: reduce` — chữ "Đang suy luận…" vẫn còn.
+- Bỏ hiệu ứng 3 chấm nhấp nháy cũ (`.ai-dot`, `@keyframes ai-pulse`).
+- Thêm `src/vite-env.d.ts` (`/// <reference types="vite/client" />`) để TS hiểu
+  import `*.svg`.
+
+**Kiểm chứng:** `npx tsc -b --noEmit` sạch · `npm run build` thành công, chunk
+chính trở lại 1.145,8 kB (gzip 337,7 kB), SVG phát ra thành asset riêng.
+
+### 3.20. Chặng 10 — Markdown + hiệu ứng gõ chữ cho câu trả lời AI (23/10/2026)
+
+Trước đây khung chat in thô `turn.text`: `**đậm**`, danh sách, code đều hiện
+nguyên dấu; câu trả lời hiện ra một cục.
+
+**Markdown (`src/examEditor/markdown.tsx`, mới):**
+- Chỉ hỗ trợ tập con đủ dùng: đoạn văn, tiêu đề `#`, danh sách `-`/`1.`, trích
+  dẫn `>`, hàng kẻ, khối ``` ``` ```, đậm `**`/`__`, nghiêng `*`/`_`, code nội
+  tuyến, link `[chữ](url)`.
+- Render ra **React node**, không dùng `dangerouslySetInnerHTML` → nội dung model
+  trả về không thể chèn HTML/script. Link chỉ nhận `http(s)`/`mailto`; giao thức
+  khác (kể cả `javascript:`) bị hạ thành chữ thường.
+- Nếu cả câu trả lời bắt đầu bằng `{` hoặc `[` (AI trả JSON đề/slide), hiển thị
+  trong một khối `<pre>` cuộn được thay vì để markdown nuốt dấu.
+- `_nghiêng_` yêu cầu ranh giới từ để `snake_case` không bị in nghiêng nhầm.
+
+**Hiệu ứng gõ chữ (`AiPanel.tsx` — `TypedMarkdown`):**
+- Sau khi câu trả lời về, chữ hiện dần bằng `requestAnimationFrame`; thời lượng
+  `min(1.6s, 140ms + 3ms/ký tự)` nên đề dài không kéo dài quá lâu.
+- Hiện đúng như đang gõ nhưng không stream thật: API vẫn trả một lần (đường
+  ống không đổi). Muốn stream thật thì phải làm SSE ở proxy + client.
+- Tắt hẳn khi `prefers-reduced-motion: reduce` (hiện ngay toàn bộ).
+- Lượt người dùng vẫn in thuần (không render markdown).
+
+**CSS (`compose.css`):** khối `.ai-md*` — đoạn/tiêu đề/danh sách/`pre` (nền
+`--color-bg-subtle`, cao tối đa 280px)/trích dẫn/link. `.ai-msg` gốc có
+`white-space: pre-wrap` nên `.ai-md` đặt lại `normal` để markdown xuống dòng
+đúng. Khoảng cách icon ↔ "Đang suy luận…" nới từ 6px lên 10px vì icon phóng
+1.55 tràn ~3px sang phải.
+
+**Phạm vi trả lời (`SCOPE_RULE` trong `AiPanel.tsx`):** nối vào system prompt
+của **cả hai** chế độ — chỉ trả lời việc soạn đề/bài giảng và các chủ đề học
+tập, nghiên cứu; từ chối một câu rồi hướng người dùng quay lại soạn đề với các
+yêu cầu ngoài phạm vi (viết cả trang web/ứng dụng hoàn chỉnh, hỏi model là gì /
+ai tạo, đời sống, giải trí, tin tức, tư vấn cá nhân). Đoạn mã ngắn để học hoặc
+minh hoạ kiến thức vẫn được phép.
+
+**Kiểm chứng:** `npx tsc -b --noEmit` sạch · `npm run build` thành công (chunk
+chính 1.149,5 kB) · `npm run test:markdown` **14/14 pass** (test mới:
+`scripts/test-markdown.mjs`, chạy với `--tsconfig tsconfig.app.json` để hiểu
+alias `@/`) · `npm run test:convert` 6/6 pass · gọi thật với `deepseek-v4.1-flash`:
+hỏi "Bạn là model nào / do ai tạo" → từ chối gọn một câu; yêu cầu "viết một
+trang web bán hàng hoàn chỉnh" → từ chối và gợi ý quay lại soạn đề.
+
+### 3.21. Chặng 11 — Sửa canvas/thumbnail/icon slide theo bản gốc (23/10/2026)
+
+Người dùng báo: icon "Kiểm tra"/"Ảnh AI" sai, resize không đúng, không kéo được
+thumbnail để đổi thứ tự, thumbnail vẽ sai bố cục. Đã đọc lại
+`_ref/genoffice/apps/slides` để so cơ chế.
+
+**Thumbnail lệch bố cục — nguyên nhân gốc:** mọi cỡ chữ trong slide dùng `cqw`
+(1% bề rộng khung), nhưng `.slide-frame` **không đặt `container-type`** → `cqw`
+rơi về viewport. Thumbnail ~166px và sân soạn ~1000px vẽ chữ cùng một cỡ px, nên
+thumbnail trông như phóng to và tràn. Sửa:
+- `.slide-frame { container-type: inline-size }` (`slide.css`) — bề rộng frame
+  thành tham chiếu cho `cqw`; thumbnail và sân soạn vẽ cùng tỉ lệ.
+- Đồng bộ số đo chữ giữa `SlideElView` và `EditableEl`: padding `1%`,
+  `line-height: 1.25` (trước là `0 2%` / `1.3`) để thumbnail khớp canvas.
+
+**Zoom (đổi để không nhân đôi cỡ chữ):** `zoom` chuyển từ chính `.slide-frame`
+sang lớp bọc `.slide-stage__inner`. Frame là container query; giữ nó ở bề rộng
+layout thật để `cqw` không bị tính lại theo tỉ lệ zoom.
+
+**Biểu đồ lệch giữa canvas và thumbnail:** trong `EditableEl`, `ChartView` được
+đặt trong một div đã neo `left/top/w/h` bằng `%`, mà `ChartView` lại tự neo thêm
+lần nữa → toạ độ nhân đôi. Thêm prop `absolute` (mặc định true cho thumbnail;
+canvas truyền `false` để lấp đầy khung bao).
+
+**Kéo thumbnail đổi thứ tự (port từ bản gốc):** HTML5 drag native, không thêm
+thư viện. `dragIndex` + `dropPos` (khe chèn 0..n), tính lại vị trí tại điểm thả,
+`moveSlide(from, insertAt)` sửa chỉ số khi chèn sau vị trí gỡ, một bước undo.
+Chỉ báo `.thumb-dragging`, `.thumb-drop-before/after` (thanh accent 3px).
+
+**Resize (port cơ chế 8 anchor):** thay 1 tay nắm góc bằng 8 tay nắm
+(n/nw/ne/e/se/s/sw/w) với `cursor` riêng; mỗi hướng chỉ dịch đúng cạnh đó và giữ
+cạnh đối diện (`left/right/top/bottom` tính theo %, min 4%). Kéo phần tử giờ
+bắt đầu ngay trong cùng thao tác chọn (trước phải click chọn rồi kéo lần hai);
+dọn listener cả `pointerup` lẫn `pointercancel`.
+
+**Icon AI:** hai glyph `IconAiFactCheck`/`IconAiImage` trước dùng path vẽ tay
+rút gọn. Đã thay bằng **path chính xác** từ
+`apps/slides/src/renderer/components/icons.tsx` (circle nét + dấu check là path
+tô; ảnh AI gồm 4 path nét + tia sáng góc trên phải) và render ở **24px** —
+file gốc dùng `strokeWidth="1.5"` cố định, chỉ đúng khi viewBox 24 vẽ 1:1.
+
+**Kiểm chứng:** `npx tsc -b --noEmit` sạch · `npm run build` thành công ·
+`test:convert` 6/6 · `test:markdown` 14/14. Chưa có kiểm tra trực quan trong
+trình duyệt (automation trình duyệt hay treo phiên); các thay đổi là CSS/layout
++ handler, cần một lượt bấm thử thực tế.
+
+### 3.22. Chặng 12 — Chữ co theo hộp, tay nắm thẳng hàng, thêm xoay (23/10/2026)
+
+Phản hồi sau chặng 11: thu nhỏ hộp thì chữ bị cắt thay vì nhỏ lại, ô vuông tay
+nắm trông lệch, và thiếu nút xoay như bản gốc.
+
+- **Chữ co theo hộp:** khi kéo cạnh trên/dưới (hoặc góc) của phần tử `text`,
+  `fontSize` (đơn vị `cqw`) được nhân theo tỉ lệ chiều cao mới, kẹp 0,8–12. Kéo
+  ngang không đổi cỡ chữ như PowerPoint. Thêm `ResizeObserver` vào `FitText` và
+  `AutoFitText` để fit lại khi **hộp** đổi kích thước (trước chỉ fit khi đổi
+  chữ/cỡ chữ) — đây mới là lý do chữ bị "che".
+- **Tay nắm thẳng hàng:** bỏ `outline-offset: 2px` (đường chọn vẽ lệch ra ngoài
+  so với tâm các ô vuông). Giờ outline sát cạnh hộp, ô vuông canh đúng góc/cạnh.
+- **Xoay:** thêm `SlideElement.rotation?` (độ, quanh tâm) — deck cũ vẫn đọc
+  được. `elTransform()` gộp `rotate()` với `scaleX/scaleY` cho cả canvas và
+  thumbnail. Tay nắm xoay là nút tròn phía trên cạnh trên (icon RotateCw, dây nối
+  12px như bản gốc); kéo để xoay, giữ Shift bắt góc 15°. Toạ độ góc tính từ tâm
+  hộp trong hệ toạ độ khung slide nên vẫn đúng khi hộp đã xoay.
+  *Hạn chế đã biết:* resize phần tử đã xoay vẫn dùng trục màn hình (không chiếu
+  delta qua phép quay) — đã ghi chú trong code.
+
+**Kiểm chứng:** `npx tsc -b --noEmit` sạch · `npm run build` thành công ·
+`test:convert` 6/6 · `test:markdown` 14/14.
+
+### 3.23. Chặng 13 — Lớp trình bày block (23/10/2026)
+
+Học từ soandethi: block "đẹp đều" nhờ CSS theo node + hình học trang, không
+phải nhờ phân trang. Giữ nguyên phân trang hiện tại (quyết định của chủ dự án).
+
+- **Không thêm class mới:** repo đã có selector ổn định `data-exam-node` (và
+  `data-side`, `data-label`, `data-level`) trong `index.css`; thêm class song
+  song chỉ là trùng lặp. Dùng lại các selector này.
+- **Phương án trắc nghiệm → grid:** `examQuestion` là grid 2 cột, lời dẫn
+  `examQuestionPrompt` phủ cả hàng (`grid-column: 1/-1`), `examOption` bỏ
+  `inline-block 50%`. Khoảng cách cột tính theo bề rộng nội dung thật nên đổi
+  lề/hướng trang vẫn cân.
+- **Biến hình học:** `ExamEditor` đặt `--doc-content-w`, `--doc-margin`,
+  `--doc-orient` lên `.doc-flow` từ `pageGeometry()`. CSS khối dùng biến thay
+  vì số cứng.
+- **Thang điểm:** tiêu đề đậm/in hoa, mỗi ý thụt treo (`padding-left` +
+  `text-indent` âm) để nhãn điểm không lấn nội dung.
+- **Xuất Word/in khớp màn hình:**
+  - Phương án xuất thành **bảng 2 cột** (`.opts table`, 50%/ô). Trước đây dùng
+    `display:flex` — Word không hiểu flex nên phương án bị dồn một cột.
+  - Đánh số **theo thứ tự khối** thay vì `block.no`: màn hình dùng CSS counter
+    nên chèn/xoá/sắp xếp lại câu là số tự đổi; bản Word giờ cũng vậy (trước đó
+    có thể lệch số sau khi sửa thứ tự).
+  - Gộp CSS của Word và bản in thành một hằng `EXPORT_CSS` (trước là hai khối
+    copy gần giống nhau, dễ lệch).
+- **Hạn chế đã biết:** phương án rất dài vẫn nằm trong nửa cột; bản gốc đo cột
+  thật để cho phép chiếm cả hàng. Để sau, không cần cho bản nháp hiện tại.
+
+**Kiểm chứng:** `npx tsc -b --noEmit` sạch · `npm run build` thành công ·
+`test:convert` 6/6 · `test:markdown` 14/14 · `test:export` **4/4** (test mới:
+`scripts/test-export.mjs` — đánh số tuần tự, bảng 2 cột, CSS dùng chung).
+
+### 3.24. Chặng 14 — Lấy block bố cục từ soandethi (đợt 1, 23/10/2026)
+
+Mục tiêu: port các block cấu trúc trong đề mẫu của soandethi, làm dần từng đợt.
+Đợt này lấy hai thứ dùng ở mọi đề và không cần engine hình học.
+
+**1. Choice layout — số cột phương án theo bề rộng thật (`choiceLayout.ts`, mới):**
+- Port thuật toán `choiceLayout` của bản gốc: đo bề rộng tự nhiên của từng
+  phương án rồi chọn số cột lớn nhất (2–4) mà mọi phương án còn vừa; chỉ chọn
+  số cột chia hết cho số phương án (4 phương án → 4 hoặc 2, không phải 3).
+- Cách đo: tạm gắn class `.exam-choice-measuring` (chuyển khối câu hỏi sang
+  flex, ẩn lời dẫn, phương án co về `max-content`), đọc `getBoundingClientRect`,
+  rồi trả lại grid — tất cả trong một frame nên không nhấp nháy.
+- Có `<br>` cứng hoặc công thức `.katex-display` trong phương án → xếp 1 cột.
+- Chạy bằng effect trong `ExamEditor` (ResizeObserver + MutationObserver, gộp
+  bằng rAF) thay vì ProseMirror plugin, vì câu hỏi của mình không phải node view.
+
+**2. Block lưới nhiều cột (`grid`):**
+- `ExamBlock` thêm `GridBlock { type:'grid', cols: 2|3, cells: RichText[] }`;
+  schema thêm `examGrid` (attr `cols`) + `examGridCell` (inline*).
+- CSS: grid thật, số cột đặt inline khi render, khoảng cách cột theo
+  `--doc-content-w`; `examGridCell` đăng ký trong `TEXT_CONTENT_NODES` để căn
+  lề/giãn dòng dùng được.
+- Converter hai chiều + test round-trip (giữ số cột, marks trong ô).
+- Xuất Word/in: `<table class="grid">` một hàng, mỗi ô một `<td>` (Word không
+  hiểu grid/flex).
+- Có 2 mục trong `BLOCK_TEMPLATES` ("Lưới 2 cột", "Lưới 3 cột") nên xuất hiện
+  ở cả ribbon Chèn và panel Khối mẫu; prompt AI liệt kê thêm block `grid`.
+
+**Còn lại của bộ block bên họ (các đợt sau):**
+bảng biến thiên (`variationTable`) · biểu đồ thống kê (`statChart`) · đồ thị hàm
+số (`functionGraph`) · hình học / vector (`geometryDiagram`, `vectorDiagram`) ·
+`docColumns` (toàn văn 2 cột) · mark `boxed`. Mỗi loại cần thêm ExamBlock +
+renderer + export, nên tách đợt.
+
+**Kiểm chứng:** `tsc` sạch · `npm run build` thành công · `test:convert` 7/7
+(thêm case lưới) · `test:layout` **7/7** (mới: chọn số cột) · `test:export` 4/4 ·
+`test:markdown` 14/14.
+
+### 3.25. Chặng 15 — Đầu đề hai cột theo mô hình bản gốc (23/10/2026)
+
+Đầu đề cũ là **hai block rời** (`side=left/right`, `inline-block 34%/66%`): mỗi
+bên chỉ có một dòng inline, muốn xuống dòng thì để trình duyệt tự wrap (ảnh
+chụp cho thấy "SỞ GIÁO DỤC VÀ ĐÀO TẠO TỈNH …" bị gãy dòng tuỳ ý), không thể
+định dạng riêng từng dòng và không có khung "ĐỀ CHÍNH THỨC".
+
+Port đúng mô hình soandethi:
+
+- **Schema:** `examHeader` giờ là một block chứa đúng hai `examHeaderColumn`,
+  mỗi cột `content: 'paragraph+'`. Mỗi dòng là một paragraph thật nên xuống
+  dòng là chủ động và mỗi dòng có định dạng riêng.
+- **Dữ liệu:** `HeaderBlock.left/right` vẫn là `RichText`; các dòng ngăn bằng
+  `'\n'`. `splitRichLines()` (convert) tách thành paragraph khi dựng editor;
+  `columnToRich()` nối lại khi lưu. Không đổi mô hình lưu, tài liệu cũ đọc được.
+- **Mark `boxed`:** thêm mark (span `data-boxed` + class `doc-boxed`) để dòng
+  "ĐỀ CHÍNH THỨC" có khung viền; đi qua converter/`MARK_TYPES` và xuất Word
+  thành `<span style="border:…;display:inline-block">`.
+- **CSS:** `.doc-content [data-exam-node='examHeader']` là grid `34fr 66fr`,
+  khe hở theo `--doc-content-w`, `align-items:start`, `line-height:1.2` (chặt
+  hơn thân bài 1,625 — đây là lý do các dòng đầu đề trước đây bị rã). Bỏ
+  `text-transform: uppercase` để dòng "Thời gian làm bài…" in nghiêng chữ
+  thường như đề mẫu. Cột căn giữa mặc định; format của từng paragraph vẫn thắng.
+- **Template "Đầu đề hai cột":** dựng đúng bố cục đề mẫu — trái: Sở GD / Tỉnh /
+  "ĐỀ CHÍNH THỨC" (boxed); phải: KỲ THI / NĂM HỌC / Môn thi / Thời gian (italic).
+- **Xuất Word/in:** header vẫn là bảng 2 ô; mỗi dòng nối bằng `<br>`, ô căn
+  giữa, `.hdr` line-height 1.2; boxed thành span có viền.
+
+**Chưa có:** nút ribbon bật/tắt mark `boxed` cho vùng chọn (hiện chỉ template
+tạo ra; muốn thêm thì phải mở rộng `useFormatState`). Định dạng **cấp đoạn**
+(căn lề riêng từng dòng) trong cột đầu đề chỉ sống trong phiên — lưu xuống chỉ
+giữ marks inline; muốn giữ thì phải mở rộng `HeaderBlock` thành mảng dòng có
+format.
+
+**Kiểm chứng:** `tsc` sạch · `build` thành công · `test:convert` **9/9** (thêm
+2 case: xuống dòng, boxed) · `test:export` **5/5** (thêm case header) ·
+`test:layout` 7/7 · `test:markdown` 14/14.
+
+### 3.26. Ghi chú audit soandethi.com — tư liệu cho các đợt port (23/10/2026)
+
+Phương pháp: tải HTML + toàn bộ JS/CSS công khai (Next.js, ~45 chunk), đọc mã
+minify. **Không thấy prompt/model phía server** (cần đăng nhập); các kết luận
+về server là suy ra từ payload client. Muốn lấy lại tư liệu: curl trang chủ,
+`/exams`, `/slides`, `/doc/test` rồi bò theo tham chiếu `static/chunks/*.js`.
+
+**Node của editor họ** (TipTap + ReactNodeViewRenderer cho node phức tạp):
+`examHeader` (2 `headerColumn` `paragraph+`), `grid`/`gridCell` (attr
+`columns`, `autoColumns`; plugin `choiceLayout` đo `.doc-grid` rồi đặt
+`grid-template-columns`), `examTable` (row/header/cell), `pageBreak` (atom,
+Mod-Enter), `docMath`, `examImage` (align/width), và 5 node atom giữ JSON
+trong attr `data`: `variationTable`, `functionGraph`, `geometryDiagram`,
+`vectorDiagram`, `statChart`. Marks: font family/size/color/highlight,
+`boxed`, `tableAppearance`, `paragraphFormat`.
+
+**Dữ liệu `variationTable` mặc định của họ:**
+`{caption, bottomCaption, width:440, yHeight:90, showDerivative:true,
+points:[{x,y,yPos}|{x,yPrime:'||',doubleLine,yLeft,yLeftPos,yRight,yRightPos}],
+intervals:[{sign}]}` — plus `analyzeVariation(expression)` sinh points/intervals
+từ chuỗi hàm số (dạng `x^3-3x+1`, `(2x+1)/(x-1)`).
+
+**Phân trang họ** (mình KHÔNG port — chủ dự án giữ nguyên): plugin ProseMirror
+dùng Decoration spacer (`.pg-spacer`, `.pg-lift-spacer`, `.pg-table-gap`),
+đo DOM qua `.pg-measuring`, cắt bảng + lặp header, tự ngắt trước heading
+"HƯỚNG DẪN CHẤM/ĐÁP ÁN"; print flow riêng `.doc-print-root` + `@page A4
+20mm 15mm 18mm 20mm`.
+
+**Luồng AI họ** (đáng học, chưa làm): 2 bước `POST /api/chat-exam/plan` →
+`POST /api/chat-exam`. Planner trả `{taskKind, decision, intent, contextSource,
+examScope, editRanges, operations, agents, verificationToken, …}` + OCR ảnh.
+Solver trả `{action: replace|append|patch|none, patches}`; client kiểm tra
+editRanges hợp lệ rồi mới áp (`applyExamPatches`), sai thì từ chối. Transport:
+SSE (`progress`/`delta`/`reset`/`result`) + fallback poll job 15 phút + cancel.
+Trong lúc chờ, markdown stream được ghi **trực tiếp vào editor** qua
+`startMarkdownStream` (chỉ parse tới biên block ổn định, tạm `setEditable(false)`).
+
+**Slide họ:** DOM + react-moveable (kéo/resize/xoay/snap); AI sửa qua **command
+registry** (`scope: slide|document`, params có schema + mô tả: addText,
+setTransition, setNotes…) thay vì replace deck; deck lưu server có `/versions`,
+upload asset, import/export PPTX (PptxGenJS).
+
+### 3.27. Chặng 16 — Audit "thêm khối" so với soandethi, nâng lên ngang tầm (24/10/2026)
+
+Audit phần thêm khối (tab "Khối mẫu" nav panel + ribbon Chèn) đối chiếu với tab
+"Mẫu đề thi" của soandethi.com (tải lại ~45 chunk JS công khai vào
+`_ref/soandethi/`, đọc mã minify — chunk chính `1cqwn8a32l5hb.js`).
+
+**Họ làm gì (từ mã nguồn):** sidebar 2 tab (Mục lục / Mẫu đề thi), danh mục
+mẫu chia 5 nhóm (Hình minh hoạ SVG / Đầu đề / Câu hỏi / Nội dung / Bố cục,
+~25 mẫu), mỗi mẫu `markdown()` sinh chuỗi markup riêng; bấm = chèn tại con trỏ
+hoặc **kéo vào trang** (payload qua DataTransfer MIME riêng, `dropRange` tính
+vị trí thả: nửa trên khối → chèn trước, nửa dưới → chèn sau); "Thông tin thí
+sinh" và "Đường kẻ" chèn **cuối đề** (`insertExamFooter`: trước phần
+HƯỚNG DẪN CHẤM/ĐÁP ÁN, lùi qua pageBreak liền trước; đề THPT Quốc gia thì
+thí sinh nằm ngay sau đầu đề); chèn qua `parseExamBlocks` → `insertContentAt`;
+đề trống (1 paragraph rỗng) thì thay toàn bộ doc.
+
+**Khoảng cách của mình trước chặng này:** danh sách mẫu phẳng 14 mục, không
+nhóm; chỉ bấm, không kéo-thả; "Thông tin thí sinh" chèn tại con trỏ như mẫu
+thường; thiếu câu đúng/sai, trả lời ngắn, ngữ liệu, dòng HẾT, đầu hướng dẫn
+chấm.
+
+**Đã port (`templates.ts` viết lại + `NavPanel.tsx` + `ExamEditor.tsx` +
+`compose.css` + `icons.tsx`):**
+- **Nhóm mẫu:** `TplGroup` 4 nhóm (Đầu đề / Câu hỏi / Nội dung / Bố cục) giữ
+  thứ tự khai báo, nav panel render heading nhóm + mục có grip icon (port bố
+  cục, không sao chép palette của họ).
+- **Kéo-thả:** nút mẫu `draggable`, payload JSON qua MIME
+  `application/x-exam-block` (`BLOCK_TEMPLATE_MIME`); `handleDrop` trong
+  `ExamEditor` dùng `posAtCoords` + nửa trên/dưới khối cấp cao nhất để quyết
+  định chèn trước/sau — đúng cơ chế `dropRange` của họ.
+- **Chèn cuối đề:** `examFooterPos(doc, place)` port `insertExamFooter`;
+  `place: 'student'` (thí sinh — lên ngay sau đầu đề nếu text đầu đề khớp
+  THPT Quốc gia/Tốt nghiệp THPT) và `place: 'footer'` (đường kẻ — trước phần
+  chấm, lùi qua pageBreak liền trước).
+- **Đường chèn chung `insertBlockTemplate(editor, tpl)`:** đề trống →
+  `setContent` thay toàn bộ; có `place` → cuối đề; đang đứng trong đoạn
+  paragraph rỗng → thay đoạn đó (hết đoạn trống sót lại); còn lại → chèn sau
+  khối cấp cao nhất chứa con trỏ. Ribbon (`insertTemplate`) và nav panel
+  (`handleInsertTemplate`) cùng gọi một chỗ — xoá 2 bản sao logic cũ.
+- **6 mẫu mới:** Đầu hướng dẫn chấm (pageBreak + 2 heading + rubric — mẫu đa
+  khối đầu tiên), Câu đúng/sai, Câu trả lời ngắn, Ngữ liệu/đoạn trích (căn
+  giữa/phải qua `format.align`), Dòng HẾT, Câu tự luận có ý a) b). Tổng 20
+  mẫu. `build()` được phép trả mảng JSONContent.
+
+**Phát hiện khi kiểm chứng:** StarterKit v3 bật `trailingNode` — doc bao giờ
+cũng kết thúc bằng 1 paragraph để con trỏ có chỗ đứng (giống Word). Chèn
+"đề trống → đầu đề" cho kết quả `header + paragraph` là hành vi chủ ý, không
+phải bug; test chỉ khẳng định không có 2 paragraph.
+
+**Kiểm chứng:** `tsc` sạch · `build` thành công · `test:templates` **9/9**
+(mới: mọi mẫu dựng được node hợp lệ theo schema, id không trùng,
+examFooterPos 6 case) · convert 9/9 · markdown 14/14 · export 5/5 ·
+layout 7/7 · trình duyệt thật: 4 nhóm + 20 mẫu draggable, chèn đầu đề/câu
+hỏi/hướng dẫn chấm đúng thứ tự, thí sinh + đường kẻ chèn trước phần chấm
+(lùi qua pageBreak), kéo-thả nửa trên → trước / nửa dưới → sau khối, ribbon
+chèn + undo hoạt động, console sạch.
+
+**Chưa có (nợ nhỏ):** các nhóm "Hình minh hoạ SVG" của họ (diagram vector dữ
+liệu JSON — thuộc đợt 4/5 về block hình học ở mục 6.1b, không phải UI thêm
+khối); kéo-thả chưa có chỉ báo vị trí thả (họ cũng không có).
+
+
+
+---
+
+### 3.28. Chặng 17 — Sửa gốc con trỏ/block loạn, đầu đề chuẩn, AI sinh đề có hợp đồng (24/10/2026)
+
+Người dùng báo: đầu đề 2 cột chưa đạt chất lượng như ảnh mẫu; tab Khối mẫu
+không cuộn được; cần animation đóng/mở bar AI; và con trỏ soạn thảo "mất điểm
+bắt đầu" làm vị trí block loạn. Khi kiểm tra phát hiện thêm: sau khi chèn khối
+vào đề trống, **cả document bị chọn** (AllSelection) thay vì con trỏ ở cuối.
+
+**Nguyên nhân gốc #1 — lệch `data-exam-node` giữa schema và CSS.**
+Schema render `data-exam-node='header'/'question'/'essay'/…` nhưng toàn bộ CSS
+trình bày block (chặng 13–15) và `choiceLayout.ts` viết theo dạng
+`examHeader/examQuestion/…`. Chỉ các node dựng qua helper `textBlock()`
+(`examTitle`, `examHeading`, `examStudent`, `examParagraph`) là khớp. Hệ quả:
+grid 34/66 của đầu đề, 2 cột phương án, thụt treo thang điểm… **chưa từng chạy**
+trong trình duyệt — đúng như mục 6.1 ghi "chưa kiểm tra trực quan chặng 13–15".
+Sửa: đưa toàn bộ giá trị về đúng tên node (exam-prefix), trừ `headerCol` (CSS
+cũng dùng `headerCol`). Quy ước: **giá trị `data-exam-node` phải trùng tên
+node**, CSS/choiceLayout bám theo tên đó.
+
+**Nguyên nhân gốc #2 — choiceLayout ghi DOM của ProseMirror.**
+`layoutChoiceQuestions` (bản đầu) toggle class + ghi inline
+`grid-template-columns` lên chính node PM quản lý. Khi selector vừa khớp sau
+fix #1, mỗi lần gõ phím PM re-render lại xoá inline style, MutationObserver
+đo lại ghi lại → layout nhảy liên tục; PM còn đọc DOM mutation ngoài và map
+lại selection → con trỏ nhảy ("mất điểm bắt đầu"). Sửa gốc:
+- Đo trên **bản clone** trong host `.doc-content` ẩn ngoài editor
+  (`measureChoiceColumns`), không đụng DOM thật.
+- Áp số cột bằng **ProseMirror decoration** (`ChoiceLayoutExtension`), class
+  `exam-cols-1/3/4` do PM tự quản (2 cột là mặc định CSS), key theo `id` khối
+  để không lệch khi chèn/xoá khối khác.
+- Effect trong `ExamEditor` chỉ dispatch transaction meta khi số cột **thực sự
+  đổi** (`addToHistory: false`), nên gõ phím không tạo vòng lặp.
+
+**Sửa AllSelection sau khi chèn vào đề trống:** `insertBlockTemplate` dùng
+`setContent` (thay cả doc) rồi `focus('end')` để collapse con trỏ về cuối;
+trước đó setContent để lại selection phủ toàn bộ tài liệu.
+
+**Đầu đề 2 cột:** text dòng cuối đổi "ĐỀ CHÍNH THỨC" → "Đề chính thức" đúng
+ảnh mẫu; sau fix #1 CSS grid 34/66 + căn giữa + đậm + line-height 1.2 + khung
+boxed mới thực sự có hiệu lực. Đã chụp so sánh: khớp ảnh người dùng gửi.
+
+**Nav panel cuộn được:** `.nav-panel` (div gốc của NavPanel) **không có CSS**;
+nằm trong `.nav-pane` (flex column, overflow hidden) nên `.nav-body`
+(flex:1; min-height:0; overflow-y:auto) không bị chặn chiều cao → nội dung bị
+cắt. Thêm `.nav-panel { display:flex; flex-direction:column; flex:1;
+min-height:0 }`.
+
+**Animation AI dock:** CSS `.ai-dock.collapsed` + transition đã có sẵn nhưng
+`AiDock` render có điều kiện (rail thay panel) nên không dùng. Giờ panel **luôn
+mount** (giữ lịch sử chat), `.ai-dock` transition width 180ms, `.ai-panel` teo
+về 0 + mờ dần khi collapsed, rail hiện thay nút thu gọn; `inert` khi đóng để
+không tab vào nội dung ẩn. Đo thực tế: 360 → 34px và ngược lại mượt.
+
+**Sinh đề AI — hợp đồng kiểu soandethi, một lượt gọi:**
+Trước đây model chỉ biết tiêu đề + số khối, và mọi JSON trả về đều
+`setContent` **thay sạch cả đề** — kể cả khi người dùng bảo "thêm 5 câu" hay
+"sửa lỗi". Đã thay bằng hợp đồng:
+`{"action":"replace"|"append"|"patch","blocks":[...],"patch":[{"id","block"}],"note":"..."}`
+- Prompt (`examSystemPrompt`) mô tả **shape từng loại block**, quy ước đề thi
+  Việt Nam (header 2 cột, title, student, heading phần, 4 phương án, essay
+  score/sub, answerKey, rubric, LaTeX trong `$...$`).
+- Client gửi kèm **digest tài liệu**: mỗi khối cấp cao nhất một dòng
+  `[id] loại: trích đoạn` (từ TipTap JSON — `ExamBlock` không lưu id) để model
+  patch đúng khối.
+- `handleAiResult` (ComposeDoc) chuẩn hoá block trước khi áp (`sanitizeBlocks`:
+  whitelist type + default field, chấp nhận dạng viết tắt như answerKey items
+  là chuỗi, meta rows dạng object, options là chuỗi), rồi:
+  `replace` → setContent; `append` → insertContentAt cuối doc; `patch` → thay
+  node cấp cao nhất theo id trong một transaction; không khớp id nào thì không
+  đụng tài liệu.
+- Chat hiện **câu tóm tắt** (`note` hoặc số khối đã áp) thay vì JSON thô;
+  câu trả lời văn bản thường vẫn hiện nguyên.
+
+**Kiểm chứng (trình duyệt thật, gọi LLM thật):** tsc sạch · build thành công ·
+convert 9/9 · markdown 14/14 · export 5/5 · layout 7/7 · templates 9/9 ·
+- Header render grid 211/411px, chữ đen đậm căn giữa, "Đề chính thức" boxed.
+- Click giữa lời dẫn rồi gõ "123" → chèn đúng chỗ click, caret 169→172, cột
+  giữ nguyên.
+- Gõ chuỗi dài vào phương án → decoration đổi `exam-cols-4` → `exam-cols-1`,
+  caret đứng yên.
+- Khối mẫu: scrollHeight 1593 / clientHeight 448, cuộn được.
+- AI dock: 360→34 và 34→360 mượt.
+- Sinh đề "15 phút Toán 9, 4 câu căn bậc hai" → 14 khối đúng thứ tự
+  (header/title/meta/student/heading/paragraph/4 question/pageBreak/heading/
+  answerKey/rubric), bảng đáp án có dữ liệu, câu hỏi 4 cột, chat hiện tóm tắt.
+- "Bổ sung 2 câu" → 6 câu liền mạch, bảng đáp án cập nhật 6 đáp án.
+- "Sửa câu 1" → chỉ câu 1 đổi, 5 câu còn lại nguyên vẹn.
+- Console sạch.
+
+**Công thức toán inline trong editor (`inlineMath`):**
+AI sinh LaTeX `$...$` nhưng editor chỉ hiện chuỗi thô (trước đó `MathText` chỉ
+dùng ở trang xem `/de/:id`). Đã thêm node atom `inlineMath` (schema.ts) render
+bằng KaTeX qua NodeView; mô hình lưu **không đổi** — `ExamBlock` vẫn là text
+`$latex$`, converter tách chuỗi thành node khi dựng editor (`splitMath` trong
+`richNodes`, kèm marks) và nối lại khi lưu (`walkInline`). Gõ `$x^2$` trong
+editor được input rule chuyển ngay thành công thức. CSS KaTeX import ở
+`ExamEditor.tsx` (không import trong schema.ts để test Node không vướng CSS).
+Kiểm chứng: mở lại đề 20 câu đã lưu → **171** công thức render (`.katex`),
+không còn `$\frac`/`$\sqrt` thô; `scrollWidth = clientWidth = 642`, không khối
+nào tràn. Test convert thêm 2 case (math + math có marks), **11/11**.
+
+*về "tràn trang": không tái hiện được với đúng nội dung đó — mọi khối cũng như
+`.doc-content` đều đúng 642px; ảnh người dùng gửi nhiều khả năng là cửa sổ hẹp
+ở zoom 100% nên trang 794px rộng hơn vùng nhìn (phải cuộn ngang). Nếu còn tái
+hiện sau khi render toán, cần thêm thông tin cửa sổ/khối cụ thể.*
+
+**Chưa làm:** streaming thật vào editor (SSE) — API hiện một lượt; OCR/đọc nội
+dung tệp đính kèm (chỉ gửi tên); plan 2 bước + verificationToken như họ (đã
+gộp còn 1 lượt có action); **in/xuất Word vẫn để `$...$` thô** (KaTeX chỉ render
+trong editor và trang xem `/de/:id`). Ghi ở mục 6.1b.
+
+
+
+### 3.29. Chặng 18 — Phân trang theo khối + sửa đếm trang (25/10/2026)
+
+**Nguyên nhân gốc — pageCount luôn = 1.** `measure` tìm khối bằng
+`:scope > .doc-content > *`, nhưng TipTap v3 bọc `.doc-content` trong một div
+của `EditorContent` → selector không khớp, `blocks.length === 0`, hàm set
+`pageCount = 1` và thoát. Vì vậy chỉ 1 tờ giấy được vẽ dù nội dung dài; chữ
+"rơi" ra nền xám (đúng ảnh người dùng gửi). Sửa: lấy `flow.querySelector('.doc-content')`
+rồi đọc `content.children`.
+
+**Phân trang theo khối (`pagination.ts`, mới):**
+- `computePagePlan(heights, spaces, contentH, stride, marginTop)` — hàm thuần:
+  mô phỏng vị trí khối từ chiều cao thật; khối không đủ chỗ và còn vừa một trang
+  thì chèn spacer để nó bắt đầu đúng đầu vùng nội dung trang sau. Khối cao hơn
+  cả trang để tràn (không cắt nội dung bên trong — giữ nguyên tắc một editor).
+- `PaginationExtension` — spacer là **widget decoration** của ProseMirror
+  (`.doc-page-gap`), PM tự chèn/gỡ DOM; không ghi trực tiếp vào node editor
+  (bài học chặng 17).
+- `ExamEditor.layoutPass` — đo chiều cao khối + khoảng cách tự nhiên (trừ các
+  spacer đã biết), tính plan, chỉ dispatch khi bản đồ spacer đổi; mọi trigger
+  (ResizeObserver + MutationObserver) gộp vào một rAF.
+
+**Sự cố trong lúc làm (đã sửa):** lần đầu dispatch spacer bằng số lẻ từ
+`getBoundingClientRect` → lượt đo sau lệch dưới 1px lại dispatch → vòng lặp vô
+hạn làm treo renderer (tab phải mở lại). Sửa: chỉ **làm tròn spacer cuối**
+(giữ số thực khi mô phỏng để không dồn sai số — làm tròn từng khối từng gây lệch
+5px), gộp đo bằng rAF. Test `test:pagination` khoá hành vi này (6 case).
+
+**Kiểm chứng:** đề 20 câu → 3 tờ giấy, 2 spacer (185px, 267px), khối mở đầu
+trang 2/3 đúng tại 1147/2294px; quét toàn bộ khối: **0 khối cắt qua mép trang**;
+gõ thêm chữ khi phân trang bật vẫn ổn định (không loop, caret đúng); status bar
+"3 trang". `tsc` sạch · build thành công · convert 11/11 · templates 9/9 ·
+layout 7/7 · pagination 6/6 · markdown 14/14 · export 5/5.
+
+**Giới hạn còn lại:** khối cao hơn một trang (bảng đáp án dài, bài đọc dài) vẫn
+tràn qua trang — muốn cắt bên trong khối phải port cơ chế slicing của họ (đã
+chốt không làm). Bản in/Word do trình duyệt/Word phân trang nên không bị ảnh
+hưởng.
+
 ## 4. Lỗi đã gặp và cách sửa
 
 ### 4.1. TipTap v3 — `content` phải là mảng
@@ -792,6 +1389,14 @@ sẵn trong thư viện).
    trùng". Kiểm tra idempotency ở tầng store, không ở tầng component.
 6. **Một editor liên tục + lớp giấy vẽ nền** là cách đúng để có phân trang thật mà
    không phá con trỏ / undo.
+7. **Không bao giờ sửa DOM do ProseMirror quản lý từ bên ngoài.** Ghi inline
+   style/toggle class trên node của editor khiến PM đọc lại DOM và map lại
+   selection → con trỏ nhảy, block reflow loạn. Muốn đổi cách hiển thị theo dữ
+   liệu đo được thì dùng **decoration** (PM tự quản class) và đo trên bản clone
+   ngoài editor.
+8. **`data-exam-node` phải trùng tên node** (`examHeader`, `examQuestion`, …).
+   CSS và `choiceLayout` bám theo giá trị này; lệch tên thì CSS "sống" mà không
+   có tác dụng và rất khó thấy vì không có lỗi nào được báo.
 
 ---
 
@@ -800,46 +1405,75 @@ sẵn trong thư viện).
 Phần này là danh sách công việc **còn dở** tại thời điểm ghi file. Xếp theo mức độ
 quan trọng.
 
-### 6.1. Đã kiểm chứng lại trong trình duyệt (chặng 5, 23/10/2026)
+### 6.1. Còn cần kiểm chứng (không phải viết mới)
 
-Xem mục **3.15** — đã kiểm chứng bằng thao tác thật trên trình duyệt:
-chèn khối mẫu từ ribbon và nav panel, sửa + lưu + đóng/mở lại tab, áp kết quả
-AI, xuất Word, nhiều tab đổi qua lại, Tìm/Thay thế, toàn bộ nút ribbon.
-Còn lại:
+Xem mục **3.15** cho lần kiểm chứng trình duyệt đầy đủ ở chặng 5.
 
-- [ ] **Undo/redo theo từng tab** — có trong store nhưng chưa có nút ribbon
-      gọi tới (chỉ TipTap undo/redo nội bộ). Chưa test qua UI.
+- [x] **Hoàn tác/Làm lại** — đã có nút trên ribbon, dùng lịch sử TipTap (3.17).
+- [x] **Áp kết quả AI** (`handleAiResult`) — đã chạy thật, mục cũ ghi "chưa" là sai.
 - [ ] **Mục lục / tìm kiếm ở nav panel nhảy đúng khối** (`handleGoToBlock`) —
-      chưa test thao tác nhảy.
-- [ ] **Áp kết quả AI** (`handleAiResult`) — chưa chạy thật với proxy LLM.
+      code có vẻ đúng, chỉ còn thiếu một lần test thao tác nhảy.
+- [x] **Kiểm tra trực quan chặng 13–15** — đã làm ở chặng 17 (3.28): phát hiện
+      lệch `data-exam-node` khiến CSS block chưa từng chạy, đã sửa; đầu đề
+      2 cột + choice layout 4/2/1 cột đã kiểm chứng trên trình duyệt thật.
+      Còn lại: xuất Word sau các thay đổi (mới chạy test tự động, chưa mở file).
 
-### 6.2. Lỗi fidelity của converter (đã sửa 3/3, còn 1 việc khác)
+### 6.1b. Đợt còn lại của bộ block soandethi (tiếp tục từ chặng 15)
+
+Người dùng chốt: **lấy hết** các block trong đề mẫu của soandethi, làm dần từng
+đợt (mỗi đợt = 1 chặng, có kiểm chứng). Xem ghi chú audit ở mục 3.26.
+
+- [ ] **Đợt 2 — Bảng biến thiên** (`variationTable`): dữ liệu gốc của họ là
+      `{points[], intervals[], caption, width, yHeight, showDerivative}` trong
+      một node atom; họ có cả `analyzeVariation(expression)` sinh bảng từ hàm
+      số — phiên mình làm atom + dữ liệu tay trước, phân tích hàm để sau.
+- [ ] **Đợt 3 — Biểu đồ thống kê** (`statChart`): atom + data JSON; có thể tái
+      dùng logic vẽ bar/line/pie của `ChartView` bên slide.
+- [ ] **Đợt 4 — Đồ thị hàm số** (`functionGraph`): cần parser biểu thức + vẽ
+      SVG lấy mẫu; nặng nhất.
+- [ ] **Đợt 5 — Hình học / vector** (`geometryDiagram`, `vectorDiagram`) và
+      `docColumns` (toàn văn 2 cột), mark `boxed` nút ribbon.
+- [ ] **Nợ của chặng 15:** nút ribbon bật/tắt `boxed`; lưu định dạng cấp đoạn
+      (căn lề) cho từng dòng trong cột đầu đề — cần mở rộng `HeaderBlock`.
+- Sau đợt block: quay lại **hợp đồng AI** — đã làm một phần ở chặng 17 (3.28):
+      một lượt gọi với `action: replace|append|patch` + digest tài liệu kèm id.
+      Còn: plan 2 bước + verificationToken, stream SSE ghi thẳng vào editor,
+      OCR/đọc nội dung tệp đính kèm; sau đó là slide command registry.
+
+### 6.2. Hạn chế đã biết — cố ý để nguyên
 
 - [x] **Bảng đáp án mất dữ liệu khi round-trip** — đã sửa (xem mục 3.9): duyệt đúng
       cấp bảng `table > tableRow > cell`, bỏ ô nhãn cột nhưng vẫn đọc ô dữ liệu.
 - [x] **Header trái/phải không ghép lại** — đã sửa (xem mục 3.9): gộp theo attr `side`.
 - [x] **Mất `formatAttrs` khi round-trip** — đã sửa (xem mục 3.9): giữ attrs cấu
       hình ở node/mark.
-- [ ] Phân trang hiện **đo theo khối cấp cao nhất**, chưa tách nội dung dài qua biên
-      giữa trang (giống GenOffice đã có `tests/pagination-corpus` — tham khảo
-      `apps/docs/src/renderer/editor/`).
+- [x] **Phân trang trên màn hình** — 25/10 (3.29): khối không đủ chỗ được đẩy
+      sang đầu trang sau bằng spacer (widget decoration), không còn chữ rơi ra
+      nền xám. **Còn giới hạn:** khối cao hơn một trang vẫn tràn; cắt bên trong
+      khối (bảng dài, lặp header) là cơ chế slicing của soandethi — chưa làm vì
+      đụng nguyên tắc "một editor liên tục". In/xuất Word vẫn do trình duyệt /
+      Word phân trang.
 
-### 6.3. Về mặt thẩm mỹ, còn lệch so với bản gốc
+### 6.3. Không làm — quyết định YAGNI (23/10/2026)
 
-- [ ] Ribbon hiện **chưa có** các nhóm lớn như bản gốc: Styles gallery (Normal /
-      No Spacing), Borders, Shading, Page Number, Watermark, Table Layout…
-      Bản gốc có đầy đủ; hiện chỉ có các nhóm cơ bản vì cần map sang schema đề.
-      *(Font colour + highlight colour **đã có** từ chặng 1, mục 3.9; commit
-      `9b5ba99` bổ sung highlight đa màu + nhớ màu đã chọn.)*
-- [ ] Ribbon gốc có **nút "File" màu word-blue** ở đầu hàng tab, menu File, AutoSave
-      toggle, nút Styles Pane. Chưa port.
-- [ ] AI panel gốc có rail icon Genspark, nút header (mở rộng/thu gọn), composer có
-      nút đính kèm file và pill "Track changes". Hiện mới có tiêu đề + composer.
-- [ ] Chưa có dark theme (bản gốc có `[data-theme='dark']` với đầy đủ token).
-- [ ] Trạng thái hover/active của ribbon button đã copy nhưng chưa tinh chỉnh theo
-      pixel so với bản gốc.
+Đã đối chiếu code và chốt không port thêm các mục sau. Ghi lại để phiên sau
+không mất thời gian làm lại.
 
-### 6.4. Lỗi nhỏ đã phát hiện khi rà lại (đã sửa 1, còn theo dõi)
+- **Watermark, Page Number, Table Layout, nút/menu File, toggle AutoSave,
+  Styles Pane** — AutoSave đã chạy tự động (`saveTab`/`saveAll` khi đóng tab,
+  pagehide); gallery kiểu + Styles Pane đã có từ chặng 1/5; watermark và số
+  trang không có chỗ trong model đề thi.
+- **Dark theme** — không ai yêu cầu, và phải làm lại toàn bộ token.
+- **Rail icon Genspark, pill "Track changes"** — track changes không có model dữ
+  liệu; dựng UI giả còn tệ hơn không có.
+- **Nhóm Styles/Borders/Shading "còn thiếu"** — thực tế đã có (nhóm Kiểu +
+  split button viền/tô sáng trong Đoạn văn). Dòng cũ trong context là sai.
+- **Auto-fit bị gutter** — không phải lỗi: `clientWidth` đã trừ scrollbar dọc,
+  scrollbar ngang chỉ ảnh hưởng chiều cao.
+- Còn lại (hover/active tinh chỉnh theo pixel) là việc thẩm mỹ vô hạn, không có
+  tiêu chí "xong" — bỏ.
+
+### 6.4. Lỗi nhỏ còn theo dõi
 
 - [x] Status bar hiện "Đã lưu" **hai lần** (một ở cột trái, một ở cột phải) — đã
       bỏ bản ở cột phải, chỉ còn cột trái + nhóm zoom ở cột phải.
@@ -848,63 +1482,71 @@ Còn lại:
 - [x] Dropdown "Giãn dòng" đọc `format.lineHeight` (từ `useFormatState`) — đã
       đúng, không còn `defaultValue` cứng. Đã kiểm chứng: chọn "2,0" → span
       `style="line-height: 2"`.
-- [ ] Số trang trong status bar lấy bằng cách đếm `.doc-paper` trong DOM → cập nhật
-      chậm hơn 1 nhịp so với nội dung thật. Nên lấy trực tiếp từ `ExamEditor`
-      (đã có state `pageCount` bên trong) thay vì đếm DOM.
-- [ ] Auto-fit đang tính theo `clientWidth` của `.compose-scroll`; khi người dùng
-      cuộn ngang, thanh cuộn ngang chiếm chỗ → tỉ lệ nhảy. Cần trừ cả gutter
-      ngang.
+- [x] Số trang sai sau khi đổi hướng/lề — `measure` giữ `CONTENT_H` cũ trong
+      closure; đã thêm dep (3.17).
+- [ ] Số trang trong status bar đếm `.doc-paper` trong DOM → chậm hơn 1 nhịp so
+      với `pageCount` thật của `ExamEditor`. Sửa rẻ nhưng giá trị thấp.
+- [ ] **Hiệu năng gõ phím** (chưa đo): mỗi phím gõ làm `ComposeDoc` re-render
+      toàn trang (destructure cả store) và `ExamEditor` `JSON.stringify` hai lần
+      để so sánh. Đáng đo với đề dài trước khi sửa; hướng sửa: selector zustand
+      thay vì lấy cả state, và so sánh bằng ref thay vì stringify.
 
 ### 6.5. Việc khác
 
-- [ ] Bundle chính ~1 MB, vượt ngưỡng Vite 500 kB. Cần code-split (lazy route cho
-      `/soan-de`, tách `bank.ts`/`community.ts` ra chunk riêng).
-- [ ] Thư mục `_ref/genoffice/` (clone git của GenOffice) nằm trong dự án — nên giữ
-      lại làm tài liệu tham chiếu (dùng để lấy icon nhà, icon loại tài liệu), hoặc
-      chuyển ra ngoài sau khi port xong. **Đã xác nhận còn nguyên** — lần trước
-      báo "thư mục trống" là do `Get-ChildItem` chạy sai, không phải mất file.
+- [ ] Bundle chính **1,146 MB** (gzip 338 kB), vượt ngưỡng Vite 500 kB. Cách rẻ:
+      `React.lazy` cho route (`/soan-de` và các trang phụ) + `Suspense` — khoảng
+      6 dòng, chủ yếu để landing không tải cả TipTap. Chưa làm vì chưa phải lỗi.
+- [x] `_ref/genoffice/` — đã nằm trong `.gitignore`, **0 file được track**; giữ
+      làm tài liệu tham chiếu, không cần chuyển đi.
 - [x] Test cho converter (`tipTapToBlocks` ⇄ `blocksToTipTap`) — `scripts/test-convert.mjs`,
       `npm run test:convert`, hiện **6/6 pass** (mục 3.9 thêm case màu chữ + tô sáng).
 - [x] `_ref/_shell_extract*.txt` — đã xoá.
-- [x] Chạy ponytail-audit, xóa code chết + dependency thừa (xem mục 3.8).
-- [ ] Update lại chính file `context.md` này sau mỗi chặng — mục 3.14 mới bổ sung
-      ngày 23/10, các mục 3.9–3.13 vẫn còn sót chi tiết cũ.
+- [x] Chạy ponytail-audit, xóa code chết + dependency thừa (xem mục 3.8, 3.17).
+- [x] Update lại chính file `context.md` này sau mỗi chặng — mục 6 đã được rà và
+      viết lại ngày 23/10 (chặng 7).
 
-### 6.6. Thay đổi chưa commit (23/10/2026)
+### 6.6. Thay đổi chặng 7 (23/10/2026)
 
-Working tree hiện có 9 file sửa + 3 file mới, **chưa commit** (chỉ `9b5ba99` đã push):
-
-| File | Nội dung |
-|---|---|
-| `index.html` | favicon → `/brand/favicon.svg` |
-| `src/components/Layout.tsx` | logo mới ở header + footer (xoá `Mark`) |
-| `src/components/docIcons.tsx` | **mới** — 3 icon loại tài liệu + `DocIcon` |
-| `src/data/docTypes.ts` | `DocKind`, `ExamDoc.kind` |
-| `src/store/compose.ts` | `OpenTab.kind` |
-| `src/examEditor/StartTab.tsx` | thẻ icon mới + Bảng tính + xoá "Mở đề đã lưu" + thẻ trượt |
-| `src/examEditor/TabStrip.tsx` | icon theo loại tài liệu, tab Bắt đầu dùng icon nhà |
-| `src/examEditor/NavPanel.tsx` | thẻ trượt cho dải tab nav pane |
-| `src/examEditor/useSlidingThumb.ts` | **mới** — hook đo thẻ trượt |
-| `src/examEditor/icons.tsx` | `IconHome` thay bằng artwork GenOffice shell |
-| `src/examEditor/compose.css` | grid `.quick-cards`, `.start-scroll` nền surface, animation thumb |
-| `public/brand/*` | **mới** — `logo-de-ro.svg`, `favicon.svg` |
-
-**Chặng 5 (mục 3.15) — sửa lỗi ribbon, thêm file nữa:**
+Trạng thái git lúc rà: **sạch**, chặng 6 đã vào commit `5c92e66`
+(`feat: rebuild slide editor ribbon, unify docs in Start tab`). Chặng 7 chưa commit:
 
 | File | Nội dung |
 |---|---|
-| `src/examEditor/ExamEditor.tsx` | báo editor trong `useEffect`; `PageSetup` thêm `pageColor` / `pageBorder`; `.doc-paper` áp màu + viền |
-| `src/examEditor/Ribbon.tsx` | chặn editor đã destroy qua biến `live`; nối 5 nút rỗng (LTR/RTL, màu trang, viền trang, khung kiểu); chèn khối mẫu ở cấp block; `StylePaneButton` |
-| `src/examEditor/schema.ts` | `formatAttrs` thêm `dir`; `formatStyle` sinh CSS kebab-case dạng chuỗi; `BaseParagraphNode` (node `paragraph` có đủ `formatAttrs`, thay paragraph của StarterKit) |
-| `src/examEditor/formatState.ts` | `FormatState.dir`; `getSelectedBlock` / `syncDomSelection` dùng chung |
-| `src/examEditor/useAnchoredPopover.ts` | `minWidth` tuỳ chỉnh thay vì `width` cứng 220px |
-| `src/examEditor/InsertMenus.tsx` | `SymbolPicker` truyền `minWidth: 314` cho popover ký hiệu; `TablePicker` |
-| `src/examEditor/exportBlocks.ts` | `printDoc` fallback in qua iframe ẩn khi `window.open` bị chặn; gán `onload` trước `close()` |
-| `src/components/Layout.tsx` | thanh nav còn 4 mục (Trang chủ / Soạn đề / Đề cộng đồng / Kho tài liệu), mỗi mục nằm **một dòng** (`whitespace-nowrap`); bỏ Soạn slide, Đề của tôi, Chấm bài khỏi nav (route vẫn còn) |
-| `src/examEditor/TabStrip.tsx` | nút quay lại (mũi tên `‹`) đứng trước tab "Bắt đầu" → `navigate('/')` về landing page |
-| `src/examEditor/compose.css` | style `.tab-back-btn` (30×30, bo tròn 6px, hover nền 6%) |
-| `src/pages/ComposeDoc.tsx` | editor theo derived state (`editorState.id === activeId`); nối `pageColor`/`pageBorder`; nút "+" luôn tạo tab mới; `handleInsertTemplate` chèn ở cấp block |
-| `src/data/docTypes.ts` | `FormatAttrs.dir` |
+| `src/examEditor/Ribbon.tsx` | nút Hoàn tác/Làm lại ở cụm quick phải, trạng thái theo `editor.can()` + listener `transaction` |
+| `src/store/compose.ts` | xoá `History`/`histories`/`undo`/`redo`/`pushHistory` — chỉ còn một sổ hoàn tác của TipTap |
+| `src/pages/ComposeDoc.tsx` | `setContent(activeId, doc)` không còn option lịch sử |
+| `src/examEditor/ExamEditor.tsx` | `measure` thêm `CONTENT_H` vào deps (sửa số trang sai khi đổi khổ) |
+| `src/components/AIAssistantIcon.tsx` | **xoá** — code chết |
+| `src/assets/ai-assistant.json`, `.svg` | **giữ** — asset người dùng cung cấp; `.svg` dùng cho animation suy luận (3.19) |
+| `package.json`, `package-lock.json` | gỡ `lottie-react` |
+
+**Chặng 8 (mục 3.18) — API thật:**
+
+| File | Nội dung |
+|---|---|
+| `server/llmProxy.ts` | cấu hình qua env; header `x-opencode-session` + `User-Agent`; kiểm tra URL (chặn host nội bộ); `llmMiddleware` cho Vite; sửa path traversal ở serve static |
+| `vite.config.ts` | plugin `llm-proxy` mount `/api/llm`; `loadEnv` → `process.env`; `optimizeDeps.entries` |
+| `tsconfig.node.json` | thêm `server` vào include để proxy được typecheck |
+| `.env` | **tạo cục bộ, bị gitignore** — người dùng điền `LLM_API_KEY` |
+| `.env.example` | **mới** — mẫu cấu hình, được commit |
+| `package.json`, `package-lock.json` | gỡ `yaml` (không còn đọc config.yaml) |
+
+**Chặng 9–15 cũng chưa commit** (chi tiết từng chặng ở mục 3.19–3.25). Tóm tắt
+working tree tính đến cuối phiên 23/10: animation suy luận (SVG), markdown +
+typing cho chat AI, SCOPE_RULE, sửa slide (container-type, kéo thumbnail đổi
+thứ tự, 8 tay nắm resize + xoay, icon AI), lớp trình bày block + export Word
+(đánh số tuần tự, bảng phương án), choice layout đo cột, block `grid`, đầu đề
+hai cột mới + mark `boxed`. Danh sách file chính xác: xem `git status`.
+Khuyến nghị phiên sau: **commit lại trước khi làm tiếp** để mỗi chặng là một
+commit như thói quen.
+
+### 6.7. Trạng thái cuối phiên 23/10 (buổi chiều)
+
+- Dev server 5184 **đã tắt** (task nền bị đóng khi kết thúc lượt). Chạy lại:
+  `npm run dev -- --port 5184 --host 127.0.0.1`.
+- Mọi test đều xanh lúc dừng: `tsc` sạch, build thành công, convert 9/9,
+  markdown 14/14, export 5/5, layout 7/7.
+- Việc tiếp theo theo ý chủ dự án: đợt 2 (bảng biến thiên) — xem 6.1b.
 
 
 ---
@@ -924,6 +1566,7 @@ src/
     schema.ts              node + mark TipTap cho cấu trúc đề (kèm format attrs)
     convert.ts             ExamBlock <-> TipTap JSON (giữ marks/format), buildTocFromDoc
     formatState.ts         useFormatState + applyFormatAttrs (trạng thái định dạng cho ribbon)
+    choiceLayout.ts        chọn số cột phương án theo bề rộng thật (port soandethi)
     Dropdown.tsx           dropdown tùy chỉnh thay <select> native (gs-dd*)
     find.ts                tìm kiếm ProseMirror + plugin bôi vàng kết quả
     FindPanel.tsx          panel Tìm/Thay thế (2 tab, match case, nguyên từ)
@@ -937,18 +1580,25 @@ src/
     TabStrip.tsx           tab strip kiểu Chrome (tab "Bắt đầu" + icon theo loại tài liệu)
     StartTab.tsx           trang "Bắt đầu" (hero + thẻ loại tài liệu + danh sách Gần đây)
     AiPanel.tsx            panel AI (chat + starter + composer + đính kèm docx/xlsx/pdf/ảnh)
+    markdown.tsx           parse/render markdown tối giản cho chat AI (an toàn XSS) + Markdown
     NavPanel.tsx           nav pane (mục lục / khối mẫu / tìm kiếm) — dải tab có thẻ trượt
     templates.ts           BLOCK_TEMPLATES — nguồn duy nhất cho ribbon + nav panel
     exportBlocks.ts        xuất Word + in A4 (richToHtml + format CSS)
   components/
     Layout.tsx             vỏ web (header/footer) — logo mới /brand/logo-de-ro.svg
     docIcons.tsx           icon loại tài liệu: IconDocExam/IconDocSlide/IconDocSheet + DocIcon
+  assets/
+    ai-assistant.svg       animation "Trợ lý giấy" cho trạng thái đang suy luận (asset người dùng)
+    ai-assistant.json      bản gốc Lottie của cùng animation (nguồn, không import)
+  vite-env.d.ts            reference vite/client — để TS hiểu import *.svg
   pages/ComposeDoc.tsx     trang Soạn đề (ghép vỏ, auto-fit, save, print, export)
-  store/compose.ts         store phiên nhiều tab (nội dung + undo/redo từng tab, OpenTab.kind)
+  store/compose.ts         store phiên nhiều tab (nội dung + deck, OpenTab.kind)
   store/docs.ts            store tài liệu đã lưu (myDocs, saveDocById)
   data/docTypes.ts         kiểu ExamBlock + RichText/Span/Mark/FormatAttrs + DocKind
   lib/llm.ts               client gọi /api/llm
-server/llmProxy.ts         proxy LLM (key server-side)
+server/llmProxy.ts         proxy LLM (env LLM_*, header x-opencode-session, middleware cho Vite)
+vite.config.ts             dev: mount /api/llm + nạp .env; manualChunks
+.env.example               mẫu cấu hình AI (được commit; .env thật bị gitignore)
 public/brand/
   logo-de-ro.svg           logo chính 194×72 (mark + chữ "đề rõ")
   favicon.svg              mark cắt từ logo, dùng làm favicon
@@ -958,6 +1608,8 @@ public/brand/
     sheet.svg              icon bảng tính cho tệp đính kèm AI
     pdf.svg                icon PDF cho tệp đính kèm AI
 scripts/test-convert.mjs   test round-trip converter (npm run test:convert) — 6/6 pass
+scripts/test-export.mjs    test đánh số + bảng phương án của bản Word/in — 4/4 pass
+scripts/test-layout.mjs    test chọn số cột phương án — 7/7 pass
 _ref/genoffice/            clone mã nguồn GenOffice (Apache-2.0) — tham chiếu (còn nguyên)
 ```
 
@@ -977,10 +1629,15 @@ Start-Process cmd.exe -ArgumentList '/c','npm run dev -- --port 5184 --host 127.
 npx tsc -b --noEmit
 npm run build
 npm run test:convert    # 6/6 pass
-
-# test proxy LLM
-npm run test:llm        # scripts/test-llm.mjs
+npm run test:markdown   # 14/14 pass (parser markdown của chat AI)
+npm run test:export     # 4/4 pass (đánh số + phương án 2 cột khi xuất Word)
+npm run test:layout     # 7/7 pass (chọn số cột phương án)
 ```
+
+**Cấu hình AI:** điền `LLM_API_KEY` vào `.env` ở gốc dự án (mẫu ở
+`.env.example`). `.env` đã bị gitignore. `npm run dev` tự mount `/api/llm`; bản
+production chạy `npx tsx server/llmProxy.ts` (tự nạp `.env`, mặc định cổng
+8787).
 
 Route ứng dụng: `http://127.0.0.1:5184/soan-de`
 

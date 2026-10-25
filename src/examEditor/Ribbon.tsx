@@ -21,7 +21,7 @@ import {
   type RibbonTabDef,
 } from './Layout'
 import { cn } from '@/lib/cn'
-import { templateById } from './templates'
+import { templateById, insertBlockTemplate } from './templates'
 import { applyFormatAttrs, getSelectedBlock, syncDomSelection, type FormatState } from './formatState'
 import { TablePicker, SymbolPicker, ImagePicker, EquationDialog, LinkDialog } from './InsertMenus'
 import { Dropdown } from './Dropdown'
@@ -60,6 +60,7 @@ import {
   IconPilcrow,
   IconPrinter,
   IconPrintLayout,
+  IconRedo,
   IconReplace,
   IconRubric,
   IconRowDelete,
@@ -76,6 +77,7 @@ import {
   IconTableDelete,
   IconTrash,
   IconTextBox,
+  IconUndo,
 } from './icons'
 
 export const RIBBON_TABS: RibbonTabDef[] = [
@@ -201,6 +203,26 @@ export function Ribbon({
   /** editor còn sống — dùng cho các lệnh gọi trực tiếp, không qua chain() */
   const live = editor && !editor.isDestroyed ? editor : null
 
+  /**
+   * Hoàn tác/Làm lại dùng lịch sử của chính TipTap (một sổ duy nhất cho mỗi
+   * tài liệu). `useFormatState` chỉ re-render khi định dạng đổi, nên trạng thái
+   * bật/tắt của 2 nút phải tự theo dõi transaction.
+   */
+  const [canUndo, setCanUndo] = useState(false)
+  const [canRedo, setCanRedo] = useState(false)
+  useEffect(() => {
+    if (!live) return
+    const sync = () => {
+      setCanUndo(live.can().undo())
+      setCanRedo(live.can().redo())
+    }
+    sync()
+    live.on('transaction', sync)
+    return () => {
+      live.off('transaction', sync)
+    }
+  }, [live])
+
   const setFontFamily = (name: string) => {
     setFont(name)
     chain()?.setMark('textStyle', { fontFamily: name }).run()
@@ -280,18 +302,9 @@ export function Ribbon({
 
   const insertTemplate = (id: string) => {
     const tpl = templateById(id)
-    if (!tpl || !live) return
-    syncDomSelection(live)
-    // Chèn ở CẤP BLOCK. `insertContent` chèn tại con trỏ — nếu con trỏ đang ở
-    // giữa một bullet/option, khối mẫu sẽ bị nhét vào trong node text và
-    // schema báo "Invalid content for node examBullets".
-    const target = getSelectedBlock(live)
-    if (!target) {
-      live.chain().focus().insertContent(tpl.build()).run()
-      return
-    }
-    const at = target.pos + target.node.nodeSize
-    live.chain().focus().insertContentAt(at, tpl.build()).run()
+    // Chèn qua đường chèn chung (đề trống / cuối đề / sau khối cấp cao nhất
+    // đang chứa con trỏ) — xem `insertBlockTemplate` trong templates.ts.
+    if (tpl && live) insertBlockTemplate(live, tpl)
   }
 
   const applyStylePreset = (id: string) => {
@@ -369,6 +382,28 @@ export function Ribbon({
           <span className="ribbon-quick__meta">
             {pageCount} trang{dirty ? ' · chưa lưu' : ''}
           </span>
+          <button
+            type="button"
+            className="ribbon-quick__btn"
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => chain()?.undo().run()}
+            disabled={disabled || !canUndo}
+            title="Hoàn tác"
+            aria-label="Hoàn tác"
+          >
+            <IconUndo size={16} />
+          </button>
+          <button
+            type="button"
+            className="ribbon-quick__btn"
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => chain()?.redo().run()}
+            disabled={disabled || !canRedo}
+            title="Làm lại"
+            aria-label="Làm lại"
+          >
+            <IconRedo size={16} />
+          </button>
           <button type="button" className="ribbon-quick__btn" onClick={onSave} title="Lưu đề" aria-label="Lưu đề">
             <IconSave size={16} />
             Lưu

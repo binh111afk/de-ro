@@ -2200,3 +2200,16 @@ export function IconFile(props: IconProps) {
     </Svg>
   )
 }
+
+/** grip: 6 chấm tay nắm — đánh dấu mục khối mẫu kéo được (nav panel) */
+export function IconGrip(props: IconProps) {
+  return (
+    <Svg {...props}>
+      {[4.4, 8, 11.6].map((x) =>
+        [5.4, 10.6].map((y) => (
+          <circle key={`${x}-${y}`} cx={x} cy={y} r={1.15} fill="currentColor" stroke="none" />
+        )),
+      )}
+    </Svg>
+  )
+}

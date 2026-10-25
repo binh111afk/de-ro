@@ -72,6 +72,53 @@ const cases = [
       },
     ],
   },
+  {
+    name: 'lưới nhiều cột giữ số cột và nội dung ô',
+    blocks: [
+      {
+        type: 'grid',
+        cols: 3,
+        cells: ['Cột một', [{ text: 'Cột hai', marks: [{ type: 'bold' }] }], 'Cột ba'],
+      },
+    ],
+  },
+  {
+    name: 'đầu đề 2 cột: mỗi dòng thành một paragraph',
+    blocks: [
+      { type: 'header', left: 'SỞ GIÁO DỤC\nTỈNH …', right: 'KỲ THI …\nMôn thi: Toán' },
+    ],
+  },
+  {
+    name: 'đầu đề: mark boxed giữ nguyên',
+    blocks: [
+      {
+        type: 'header',
+        left: [{ text: 'ĐỀ CHÍNH THỨC', marks: [{ type: 'boxed' }] }],
+        right: '',
+      },
+    ],
+  },
+  {
+    name: 'công thức $...$ thành node Toán và round-trip giữ nguyên',
+    blocks: [
+      {
+        type: 'paragraph',
+        text: 'Cho $x^2 + 1$ và $\\frac{a}{b}$ cùng $\\sqrt{2}$.',
+      },
+    ],
+  },
+  {
+    name: 'công thức trong span có marks vẫn giữ marks khi round-trip',
+    blocks: [
+      {
+        type: 'paragraph',
+        text: [
+          { text: 'Đáp án ', marks: [{ type: 'bold' }] },
+          { text: '$x = 3$', marks: [{ type: 'italic' }] },
+        ],
+      },
+    ],
+  },
 ]
 
 let pass = 0

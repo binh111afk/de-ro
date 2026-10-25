@@ -38,6 +38,8 @@ export interface SlideElement {
   zIndex?: number
   flipX?: boolean
   flipY?: boolean
+  /** góc xoay (độ, quanh tâm) — deck cũ không có field này vẫn đọc được */
+  rotation?: number
 }
 
 export interface Slide {

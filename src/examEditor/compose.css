@@ -925,6 +925,25 @@
     width: 34px;
   }
 
+  /* panel teo về 0 khi đóng — width của `.ai-dock` transition lo phần trượt,
+     opacity lo phần mờ dần; body giữ `display: contents` để panel vẫn là
+     flex item trực tiếp của dock. */
+  .ai-dock__body {
+    display: contents;
+  }
+
+  .ai-dock.collapsed .ai-panel {
+    width: 0;
+    min-width: 0;
+    opacity: 0;
+    pointer-events: none;
+    border-right-width: 0;
+  }
+
+  .ai-dock.collapsed.ai-dock--right .ai-panel {
+    border-left-width: 0;
+  }
+
   .ai-dock .ai-rail {
     flex: 1;
     width: auto;
@@ -966,7 +985,8 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .ai-dock {
+    .ai-dock,
+    .ai-panel {
       transition: none;
     }
   }
@@ -981,6 +1001,9 @@
     border-right: 1px solid var(--color-border-strong);
     font-family: var(--gs-font-sans);
     color: var(--color-text-primary);
+    transition:
+      width 180ms cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 180ms cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .ai-panel-header {
@@ -1163,6 +1186,79 @@
     color: var(--color-text-primary);
   }
 
+  /* ---------- markdown trong câu trả lời AI ---------- */
+  .ai-md {
+    white-space: normal;
+  }
+  .ai-md > :first-child {
+    margin-top: 0;
+  }
+  .ai-md > :last-child {
+    margin-bottom: 0;
+  }
+  .ai-md p {
+    margin: 0 0 8px;
+  }
+  .ai-md h3,
+  .ai-md h4 {
+    margin: 12px 0 6px;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+  .ai-md h3 {
+    font-size: 16px;
+  }
+  .ai-md h4 {
+    font-size: 15px;
+  }
+  .ai-md ul,
+  .ai-md ol {
+    margin: 0 0 8px;
+    padding-left: 22px;
+  }
+  .ai-md li {
+    margin: 2px 0;
+  }
+  .ai-md li::marker {
+    color: var(--color-text-tertiary);
+  }
+  .ai-md code {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+  }
+  .ai-md-inline-code {
+    padding: 1px 4px;
+    border-radius: 4px;
+    background: rgb(0 0 0 / 6%);
+  }
+  .ai-md-pre {
+    margin: 8px 0;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: var(--color-bg-subtle);
+    font-size: 12px;
+    line-height: 1.5;
+    overflow: auto;
+    max-height: 280px;
+    white-space: pre;
+  }
+  .ai-md blockquote {
+    margin: 8px 0;
+    padding-left: 10px;
+    border-left: 2px solid var(--border);
+    color: var(--color-text-secondary);
+  }
+  .ai-md a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .ai-md hr {
+    margin: 10px 0;
+    border: none;
+    border-top: 1px solid var(--border);
+  }
+
   .ai-msg-error {
     margin-top: 8px;
     font-size: 13px;
@@ -1172,33 +1268,24 @@
   .ai-thinking {
     display: flex;
     align-items: center;
-    gap: 6px;
+    /* icon phóng 1.55 nên phần vẽ tràn ~3px sang phải; 10px để chữ không dính */
+    gap: 10px;
     color: var(--color-text-tertiary);
     font-size: 14px;
   }
 
-  .ai-dot {
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: var(--color-text-tertiary);
-    animation: ai-pulse 1.2s infinite ease-in-out;
-  }
-  .ai-dot:nth-child(2) {
-    animation-delay: 0.18s;
-  }
-  .ai-dot:nth-child(3) {
-    animation-delay: 0.36s;
+  /* Hình trong file gốc chỉ chiếm ~31/64 viewBox (phần còn lại là lề trong
+     suốt), nên phóng 1.55 quanh tâm để nhìn rõ ở khung 22px. */
+  .ai-thinking__anim {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    transform: scale(1.55);
   }
 
-  @keyframes ai-pulse {
-    0%,
-    60%,
-    100% {
-      opacity: 0.25;
-    }
-    30% {
-      opacity: 1;
+  @media (prefers-reduced-motion: reduce) {
+    .ai-thinking__anim {
+      display: none;
     }
   }
 
@@ -1479,6 +1566,15 @@
     color: var(--color-ink);
   }
 
+  /* NavPanel gốc: phải là cột flex có chiều cao chặn thì `.nav-body` bên trong
+     mới cuộn được; thiếu rule này danh sách khối mẫu bị cắt và không scroll. */
+  .nav-panel {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+  }
+
   .nav-pane-resizer {
     position: absolute;
     top: 0;
@@ -1673,6 +1769,21 @@
     height: 14px;
   }
 
+  /* nhóm mẫu (Đầu đề / Câu hỏi / Nội dung / Bố cục) — port bố cục tab
+     "Mẫu đề thi" của soandethi */
+  .nav-tpl-group + .nav-tpl-group {
+    margin-top: 6px;
+  }
+
+  .nav-tpl-group__name {
+    margin: 14px 14px 6px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--color-ink-3);
+  }
+
   .nav-tpl {
     list-style: none;
     margin: 0;
@@ -1681,8 +1792,9 @@
 
   .nav-tpl button {
     display: flex;
-    flex-direction: column;
-    gap: 3px;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 8px;
     width: 100%;
     text-align: left;
     border: 1px solid var(--color-line);
@@ -1691,7 +1803,7 @@
     padding: 10px 12px;
     margin-bottom: 8px;
     font-family: inherit;
-    cursor: pointer;
+    cursor: grab;
     box-shadow: 0 1px 2px rgb(20 24 28 / 3%);
     transition:
       transform 260ms var(--ease-soft),
@@ -1705,6 +1817,34 @@
     box-shadow:
       0 2px 4px rgb(20 24 28 / 5%),
       0 14px 30px -18px rgb(20 24 28 / 24%);
+  }
+
+  .nav-tpl button:active {
+    cursor: grabbing;
+    transform: translateY(0) scale(0.985);
+  }
+
+  .nav-tpl__grip {
+    display: flex;
+    flex-shrink: 0;
+    margin-top: 4px;
+    color: var(--color-ink-3);
+    opacity: 0.55;
+    transition: color 180ms ease, opacity 180ms ease;
+  }
+
+  .nav-tpl button:hover .nav-tpl__grip,
+  .nav-tpl button:active .nav-tpl__grip {
+    color: var(--color-clay);
+    opacity: 1;
+  }
+
+  .nav-tpl__texts {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+    flex: 1;
   }
 
   .nav-tpl__label {

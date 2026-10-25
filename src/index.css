@@ -438,21 +438,30 @@
   /* ---------------------------------------------------------------- *
    * Node TipTap trong editor
    * ---------------------------------------------------------------- */
-  /* hai node side=left/right ghép thành 2 cột như bảng đầu đề của đề mẫu
-     (trái ~34%, phải ~66% — đúng tỉ lệ bảng 5,6cm / 11,9cm) */
+  /* Đầu đề 2 cột: MỘT block, hai cột (port soandethi). Dùng grid 34/66 với
+     khe hở, line-height chặt hơn thân bài để các dòng tiêu đề không bị rã. */
   .doc-content div[data-exam-node='examHeader'] {
-    display: inline-block;
-    vertical-align: top;
+    display: grid;
+    grid-template-columns: 34fr 66fr;
+    column-gap: calc(var(--doc-content-w, 642px) * 0.03);
+    align-items: start;
     font-weight: 700;
-    text-transform: uppercase;
-    text-align: center;
+    line-height: 1.2;
     margin: 0;
   }
-  .doc-content div[data-exam-node='examHeader'][data-side='left'] {
-    width: 34%;
+  .doc-content div[data-exam-node='headerCol'] {
+    min-width: 0;
+    text-align: center;
   }
-  .doc-content div[data-exam-node='examHeader'][data-side='right'] {
-    width: 66%;
+  .doc-content div[data-exam-node='headerCol'] p {
+    margin: 0;
+  }
+  /* "ĐỀ CHÍNH THỨC" — khung viền quanh cụm chữ (mark boxed). */
+  .doc-content .doc-boxed {
+    display: inline-block;
+    border: 1px solid #000;
+    padding: 0 0.35em;
+    line-height: 1.35;
   }
 
   .doc-content div[data-exam-node='examTitle'] {
@@ -497,6 +506,16 @@
     margin: 0;
   }
 
+  /* Lưới nhiều cột: số cột đặt inline trong node (2 hoặc 3). */
+  .doc-content div[data-exam-node='examGrid'] {
+    display: grid;
+    column-gap: calc(var(--doc-content-w, 642px) * 0.03);
+    margin: 0.15rem 0;
+  }
+  .doc-content div[data-exam-node='examGridCell'] {
+    min-width: 0;
+  }
+
   /* nhãn "Câu N." / "Bài N." vẽ bằng CSS counter — số tự chạy theo thứ tự nên
      chèn/xoá câu không phải sửa tay, và không lẫn vào nội dung khi xuất */
   .doc-content {
@@ -531,12 +550,61 @@
   .doc-content div[data-exam-node='examEssayPrompt'] {
     text-align: justify;
   }
-  /* phương án 2 cột như đề mẫu; nhãn A./B./C./D. in đậm */
+  /* Câu trắc nghiệm: lời dẫn chiếm cả hàng, phương án chia 2 cột bằng grid.
+     Dùng grid thay inline-block 50% để cột luôn đều và không bị đẩy xuống
+     hàng do khoảng trắng giữa hai node. Khoảng cách cột theo bề rộng vùng
+     nội dung thật (đổi lề/hướng trang là tự co giãn). */
+  .doc-content div[data-exam-node='examQuestion'] {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: calc(var(--doc-content-w, 642px) * 0.03);
+    row-gap: 0.05rem;
+  }
+  /* số cột do plugin choiceLayout quyết định (decoration của ProseMirror) */
+  .doc-content div[data-exam-node='examQuestion'].exam-cols-1 {
+    grid-template-columns: 1fr;
+  }
+  .doc-content div[data-exam-node='examQuestion'].exam-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .doc-content div[data-exam-node='examQuestion'].exam-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  /* Công thức toán inline ($...$) — KaTeX render trong editor, không xuống dòng
+     giữa công thức; khi chọn (click vào) hiện nền nhạt để biết là một atom. */
+  .doc-content .inline-math {
+    white-space: nowrap;
+  }
+  .doc-content .inline-math.ProseMirror-selectednode {
+    border-radius: 3px;
+    background: color-mix(in oklab, var(--color-clay) 12%, transparent);
+    outline: 1px solid var(--color-clay-line);
+  }
+  /* trạng thái tạm khi đo bề rộng tự nhiên của phương án (xem choiceLayout.ts) */
+  .doc-content div[data-exam-node='examQuestion'].exam-choice-measuring {
+    display: flex;
+    column-gap: 0;
+  }
+  .doc-content
+    div[data-exam-node='examQuestion'].exam-choice-measuring
+    > div[data-exam-node='examQuestionPrompt'] {
+    display: none;
+  }
+  .doc-content
+    div[data-exam-node='examQuestion'].exam-choice-measuring
+    > div[data-exam-node='examOption'] {
+    flex: 0 0 auto;
+    width: max-content;
+    max-width: none;
+  }
+  .doc-content div[data-exam-node='examQuestionPrompt'] {
+    grid-column: 1 / -1;
+  }
   .doc-content div[data-exam-node='examOption'] {
-    display: inline-block;
-    width: 50%;
-    vertical-align: top;
-    padding-right: 0.5rem;
+    display: block;
+    width: auto;
+    padding-right: 0;
+    overflow-wrap: anywhere;
   }
   .doc-content div[data-exam-node='examOption']::before {
     content: attr(data-label) '. ';
@@ -544,6 +612,16 @@
   }
   .doc-content div[data-exam-node='examEssaySub'] {
     padding-left: 1.6rem;
+  }
+
+  /* Thang điểm: tiêu đề đậm, mỗi ý thụt treo để nhãn điểm không lấn nội dung. */
+  .doc-content div[data-exam-node='examRubricTitle'] {
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .doc-content div[data-exam-node='examRubricItem'] {
+    padding-left: 1.5rem;
+    text-indent: -1.5rem;
   }
 
   .doc-content div[data-exam-node='examPageBreak'] {

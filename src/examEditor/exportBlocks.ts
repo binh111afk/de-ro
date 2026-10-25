@@ -5,6 +5,7 @@
  * đề cộng đồng), còn trình soạn dùng mô hình block `ExamDoc`.
  */
 import type { ExamBlock, ExamDoc, FormatAttrs, RichText, Span } from '@/data/docTypes'
+import { splitRichLines } from './convert'
 
 /* ------------------------------------------------------------------ *
  * Word (.doc)
@@ -32,9 +33,16 @@ function escapeHtml(s: string): string {
 }
 
 /** Rich text → HTML có mark (`<b>/<i>/<u>/<s>/<sub>/<sup>/<span style>`). */
-export function richToHtml(rt: RichText): string {
+function richToHtml(rt: RichText): string {
   if (typeof rt === 'string') return escapeHtml(rt)
   return rt.map(spanToHtml).join('')
+}
+
+/** Mỗi dòng của đầu đề thành một dòng trong ô bảng (Word không cần paragraph). */
+function richLines(rt: RichText): string {
+  return splitRichLines(rt)
+    .map((line) => richToHtml(line))
+    .join('<br>')
 }
 
 function spanToHtml(s: Span): string {
@@ -58,6 +66,9 @@ function spanToHtml(s: Span): string {
         break
       case 'super':
         inner = `<sup>${inner}</sup>`
+        break
+      case 'boxed':
+        inner = `<span style="border:1px solid #000;padding:0 4px;display:inline-block">${inner}</span>`
         break
       case 'highlight': {
         const c = (m.attrs?.color as string | undefined) ?? '#fff3a3'
@@ -98,13 +109,27 @@ function formatCss(f: FormatAttrs | undefined): string {
 }
 
 function blocksToHtml(blocks: ExamBlock[]): string {
-  return blocks.map((b) => blockToHtml(b)).join('\n')
+  // Số câu/bài lấy theo thứ tự khối, khớp với CSS counter trên màn hình:
+  // `block.no` có thể cũ sau khi chèn/xoá/sắp xếp lại câu.
+  const seq: BlockSeq = { q: 0, essay: 0 }
+  return blocks
+    .map((b) => {
+      if (b.type === 'question') seq.q += 1
+      if (b.type === 'essay') seq.essay += 1
+      return blockToHtml(b, seq)
+    })
+    .join('\n')
 }
 
-function blockToHtml(b: ExamBlock): string {
+interface BlockSeq {
+  q: number
+  essay: number
+}
+
+function blockToHtml(b: ExamBlock, seq: BlockSeq): string {
   switch (b.type) {
     case 'header':
-      return `<table class="hdr"><tr><td>${richToHtml(b.left)}</td><td align="right">${richToHtml(
+      return `<table class="hdr"><tr><td>${richLines(b.left)}</td><td>${richLines(
         b.right,
       )}</td></tr></table>`
 
@@ -130,20 +155,40 @@ function blockToHtml(b: ExamBlock): string {
         .map((i) => `<li>${richToHtml(i)}</li>`)
         .join('')}</ul>`
 
-    case 'question':
+    case 'grid': {
+      const width = Math.round(100 / (b.cols || 2))
       return (
-        `<p class="q"${formatCss(b.format)}><b>Câu ${b.no}.</b> ${richToHtml(b.text)}</p>` +
-        `<div class="opts">${b.options
-          .map(
-            (o) =>
-              `<div class="opt"${formatCss(o.format)}><b>${escapeHtml(o.label)}.</b> ${richToHtml(o.text)}</div>`,
-          )
-          .join('')}</div>`
+        '<table class="grid"><tr>' +
+        b.cells.map((c) => `<td style="width:${width}%">${richToHtml(c)}</td>`).join('') +
+        '</tr></table>'
       )
+    }
+
+    case 'question': {
+      const rows = chunk(b.options, 2)
+        .map(
+          (row) =>
+            '<tr>' +
+            row
+              .map(
+                (o) =>
+                  `<td class="opt"${formatCss(o.format)}><b>${escapeHtml(o.label)}.</b> ${richToHtml(
+                    o.text,
+                  )}</td>`,
+              )
+              .join('') +
+            '</tr>',
+        )
+        .join('')
+      return (
+        `<p class="q"${formatCss(b.format)}><b>Câu ${seq.q}.</b> ${richToHtml(b.text)}</p>` +
+        (rows ? `<div class="opts"><table>${rows}</table></div>` : '')
+      )
+    }
 
     case 'essay':
       return (
-        `<p class="q"${formatCss(b.format)}><b>Bài ${b.no}${b.score ? ` (${fmt(b.score)} điểm)` : ''}.</b> ${richToHtml(
+        `<p class="q"${formatCss(b.format)}><b>Bài ${seq.essay}${b.score ? ` (${fmt(b.score)} điểm)` : ''}.</b> ${richToHtml(
           b.text,
         )}</p>` +
         (b.sub?.length
@@ -200,17 +245,12 @@ function fmt(n: number): string {
   })
 }
 
-function buildWordHtml(doc: ExamDoc): string {
-  return `<!DOCTYPE html>
-<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
-<head>
-<meta charset="utf-8">
-<title>${escapeHtml(doc.title)}</title>
-<style>
+/** CSS dùng chung cho bản Word và bản in — một nguồn, tránh hai nơi lệch nhau. */
+const EXPORT_CSS = `
   @page { size: A4; margin: 1.8cm 1.6cm; }
   body { font-family: "Times New Roman", serif; font-size: 13pt; line-height: 1.5; color: #000; }
-  .hdr { width: 100%; border: none; margin: 0 0 6px; font-weight: bold; font-size: 12pt; text-transform: uppercase; }
-  .hdr td { border: none; }
+  .hdr { width: 100%; border: none; margin: 0 0 6px; font-weight: bold; font-size: 12pt; line-height: 1.2; }
+  .hdr td { border: none; vertical-align: top; text-align: center; }
   .t { text-align: center; font-size: 15pt; font-weight: bold; margin: 0 0 6px; text-transform: uppercase; }
   .meta { text-align: center; font-size: 12pt; margin: 0 0 4px; }
   .stu { font-size: 12.5pt; margin: 8px 0 10px; }
@@ -220,9 +260,14 @@ function buildWordHtml(doc: ExamDoc): string {
   .p { margin: 0 0 6px; text-align: justify; }
   .p.it { font-style: italic; }
   .bul { margin: 0 0 8px 24px; }
+  .grid { width: 100%; border: none; border-collapse: collapse; margin: 4px 0; }
+  .grid td { border: none; vertical-align: top; padding: 0 6px 0 0; }
   .q { margin: 8px 0 3px; text-align: justify; }
-  .opts { display: flex; flex-wrap: wrap; margin-left: 22px; }
-  .opt { width: 46%; }
+  /* Phương án 2 cột bằng bảng: Word không hiểu flex, dùng bảng để file Word
+     và bản in giống nhau. */
+  .opts { margin: 0 0 4px 22px; }
+  .opts table { width: 100%; border-collapse: collapse; }
+  .opts td { width: 50%; vertical-align: top; padding: 0 6px 0 0; border: none; }
   .subs { margin-left: 22px; }
   .sub { margin: 0 0 3px; }
   .ak { border-collapse: collapse; margin: 10px 0; font-size: 12pt; }
@@ -230,6 +275,16 @@ function buildWordHtml(doc: ExamDoc): string {
   .ak th { background: #f2f2f2; }
   .rub { margin: 0 0 8px 22px; }
   .hr { border: 0; border-top: 1px solid #999; margin: 10px 0; }
+`
+
+export function buildWordHtml(doc: ExamDoc): string {
+  return `<!DOCTYPE html>
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<meta charset="utf-8">
+<title>${escapeHtml(doc.title)}</title>
+<style>
+${EXPORT_CSS}
 </style>
 </head>
 <body>
@@ -305,30 +360,6 @@ function printViaHiddenFrame(html: string): void {
 function buildPrintHtml(doc: ExamDoc): string {
   return `<!DOCTYPE html>
 <html lang="vi"><head><meta charset="utf-8"><title>${escapeHtml(doc.title)}</title>
-<style>
-  @page { size: A4; margin: 1.8cm 1.6cm; }
-  body { font-family: "Times New Roman", serif; font-size: 13pt; line-height: 1.5; color: #000; }
-  .hdr { width: 100%; border: none; margin: 0 0 6px; font-weight: bold; font-size: 12pt; text-transform: uppercase; }
-  .hdr td { border: none; }
-  .t { text-align: center; font-size: 15pt; font-weight: bold; margin: 0 0 6px; text-transform: uppercase; }
-  .meta { text-align: center; font-size: 12pt; margin: 0 0 4px; }
-  .stu { font-size: 12.5pt; margin: 8px 0 10px; }
-  .h1 { font-size: 13pt; font-weight: bold; text-align: center; margin: 16px 0 8px; text-transform: uppercase; }
-  .h2 { font-size: 12.5pt; font-weight: bold; margin: 12px 0 6px; text-transform: uppercase; }
-  .h3 { font-size: 12.5pt; font-weight: bold; margin: 10px 0 5px; }
-  .p { margin: 0 0 6px; text-align: justify; }
-  .p.it { font-style: italic; }
-  .bul { margin: 0 0 8px 24px; }
-  .q { margin: 8px 0 3px; text-align: justify; }
-  .opts { display: flex; flex-wrap: wrap; margin-left: 22px; }
-  .opt { width: 46%; }
-  .subs { margin-left: 22px; }
-  .sub { margin: 0 0 3px; }
-  .ak { border-collapse: collapse; margin: 10px 0; font-size: 12pt; }
-  .ak td, .ak th { border: 1px solid #000; padding: 2px 6px; text-align: center; }
-  .ak th { background: #f2f2f2; }
-  .rub { margin: 0 0 8px 22px; }
-  .hr { border: 0; border-top: 1px solid #999; margin: 10px 0; }
-</style></head>
+<style>${EXPORT_CSS}</style></head>
 <body>${blocksToHtml(doc.blocks)}</body></html>`
 }

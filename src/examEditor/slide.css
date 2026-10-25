@@ -14,21 +14,91 @@
   margin: 0 auto;
 }
 
+/**
+ * Mọi cỡ chữ trong slide dùng đơn vị `cqw` (1% bề rộng khung slide). Thiếu
+ * container-type thì `cqw` rơi về viewport, nên thumbnail 170px và sân soạn
+ * 1000px vẽ chữ cùng một cỡ px — thumbnail sai bố cục và chữ tràn.
+ */
+.slide-frame {
+  container-type: inline-size;
+}
+
 .slide-stage .slide-frame {
   box-shadow: 0 2px 6px rgb(0 0 0 / 10%), 0 18px 48px -24px rgb(0 0 0 / 35%);
 }
 
+/* 8 tay nắm resize quanh hộp đang chọn (giống anchor của Transformer bên gốc) */
 .slide-el-handle {
   position: absolute;
-  right: -6px;
-  bottom: -6px;
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
+  margin: -5px;
   background: #fff;
-  border: 2px solid var(--accent);
+  border: 1.5px solid var(--accent);
   border-radius: 2px;
-  cursor: nwse-resize;
   z-index: 10;
+}
+.slide-el-handle--nw { left: 0; top: 0; cursor: nwse-resize; }
+.slide-el-handle--n { left: 50%; top: 0; cursor: ns-resize; }
+.slide-el-handle--ne { left: 100%; top: 0; cursor: nesw-resize; }
+.slide-el-handle--e { left: 100%; top: 50%; cursor: ew-resize; }
+.slide-el-handle--se { left: 100%; top: 100%; cursor: nwse-resize; }
+.slide-el-handle--s { left: 50%; top: 100%; cursor: ns-resize; }
+.slide-el-handle--sw { left: 0; top: 100%; cursor: nesw-resize; }
+.slide-el-handle--w { left: 0; top: 50%; cursor: ew-resize; }
+
+/* tay nắm xoay phía trên, có dây nối xuống cạnh trên như bản gốc */
+.slide-el-rotate {
+  position: absolute;
+  left: 50%;
+  top: -31px;
+  width: 18px;
+  height: 18px;
+  margin-left: -9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border: 1.5px solid var(--accent);
+  border-radius: 50%;
+  color: var(--accent);
+  cursor: grab;
+  z-index: 11;
+}
+.slide-el-rotate:active {
+  cursor: grabbing;
+}
+.slide-el-rotate::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  width: 1.5px;
+  height: 12px;
+  margin-left: -0.75px;
+  background: var(--accent);
+}
+
+/* kéo thumbnail để đổi thứ tự slide */
+.thumb-dragging {
+  opacity: 0.4;
+}
+.thumb-drop-before::before,
+.thumb-drop-after::after {
+  content: '';
+  position: absolute;
+  left: -2px;
+  right: -2px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--accent);
+  z-index: 5;
+}
+.thumb-drop-before::before {
+  top: -6px;
+}
+.thumb-drop-after::after {
+  bottom: -6px;
 }
 
 /* ---------------------------------------------------------------- *

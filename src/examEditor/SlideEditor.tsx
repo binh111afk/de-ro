@@ -13,6 +13,7 @@ import {
   LayoutTemplate,
   MonitorPlay,
   Plus,
+  RotateCw,
   Trash2,
 } from 'lucide-react'
 import { EmptyState } from '@/components/ui'
@@ -51,6 +52,9 @@ export function SlideEditor({
   const [zoom, setZoom] = useState(100)
   const [formatPaneOpen, setFormatPaneOpen] = useState(false)
   const [clipboardElement, setClipboardElement] = useState<SlideElement | null>(null)
+  /** chỉ số slide đang kéo + vị trí chèn (0..n) khi kéo thumbnail */
+  const [dragIndex, setDragIndex] = useState<number | null>(null)
+  const [dropPos, setDropPos] = useState<number | null>(null)
   const historyRef = useRef<{ past: Deck[]; future: Deck[] }>({ past: [], future: [] })
 
   const slides = deck.slides
@@ -125,6 +129,16 @@ export function SlideEditor({
     commitDeck({ ...deck, slides: next })
     setSelectedSlideId(copy.id)
     setSelectedElementId(null)
+  }
+
+  /** Kéo thumbnail: chèn slide `from` vào khe `insertAt` (0..n), như PowerPoint. */
+  const moveSlide = (from: number, insertAt: number) => {
+    const target = insertAt > from ? insertAt - 1 : insertAt
+    if (target === from) return
+    const next = [...deck.slides]
+    const [moved] = next.splice(from, 1)
+    next.splice(target, 0, moved)
+    commitDeck({ ...deck, slides: next })
   }
 
   const removeSlide = (id: string) => {
@@ -446,7 +460,42 @@ export function SlideEditor({
         </div>
         <div className="flex-1 space-y-2 overflow-y-auto p-3">
           {deck.slides.map((s, i) => (
-            <div key={s.id} className="group relative">
+            <div
+              key={s.id}
+              draggable
+              onDragStart={(e) => {
+                e.dataTransfer.effectAllowed = 'move'
+                e.dataTransfer.setData('text/plain', String(i))
+                setDragIndex(i)
+              }}
+              onDragOver={(e) => {
+                if (dragIndex === null) return
+                e.preventDefault()
+                e.dataTransfer.dropEffect = 'move'
+                const r = e.currentTarget.getBoundingClientRect()
+                setDropPos(e.clientY < r.top + r.height / 2 ? i : i + 1)
+              }}
+              onDrop={(e) => {
+                if (dragIndex === null) return
+                e.preventDefault()
+                // Tính lại tại điểm thả: dragover cuối có thể chưa kịp commit.
+                const r = e.currentTarget.getBoundingClientRect()
+                const pos = e.clientY < r.top + r.height / 2 ? i : i + 1
+                moveSlide(dragIndex, pos)
+                setDragIndex(null)
+                setDropPos(null)
+              }}
+              onDragEnd={() => {
+                setDragIndex(null)
+                setDropPos(null)
+              }}
+              className={cn(
+                'group relative',
+                dragIndex === i && 'thumb-dragging',
+                dropPos === i && 'thumb-drop-before',
+                dropPos === i + 1 && i === deck.slides.length - 1 && 'thumb-drop-after',
+              )}
+            >
               <button
                 type="button"
                 onClick={() => { setSelectedSlideId(s.id); setSelectedElementId(null) }}
@@ -524,11 +573,14 @@ export function SlideEditor({
               <button type="button" className="slide-format-pane__close" onClick={() => setFormatPaneOpen(false)}>Đóng</button>
             </aside>
           )}
-          <div className="slide-stage__inner">
+          {/* zoom đặt ở lớp bọc, không đặt lên chính `.slide-frame`: frame là
+              container query của `cqw`, giữ nó ở bề rộng layout thật để chữ chỉ
+              bị phóng đúng một lần. */}
+          <div className="slide-stage__inner" style={{ zoom: zoom / 100 }}>
             {currentSlide ? (
               <div
                 className="slide-frame relative aspect-[16/9] w-full overflow-hidden bg-white shadow-[0_2px_24px_-8px_rgba(35,32,28,0.35)]"
-                style={{ background: currentSlide.background, zoom: zoom / 100 }}
+                style={{ background: currentSlide.background }}
                 onClick={() => setSelectedElementId(null)}
               >
                 {currentSlide.elements.map((el) => (
@@ -613,16 +665,22 @@ function FitText({
     const el = ref.current
     if (!el) return
     const min = baseSize * 0.6
-    let s = baseSize
-    const fits = (px: number) => {
-      el.style.fontSize = `${px}cqw`
-      return el.scrollHeight <= el.clientHeight + 1
+    const fit = () => {
+      let s = baseSize
+      const fits = (px: number) => {
+        el.style.fontSize = `${px}cqw`
+        return el.scrollHeight <= el.clientHeight + 1
+      }
+      if (!fits(s)) while (s > min && !fits(s)) s -= 0.1
+      const final = Math.round(s * 10) / 10
+      setSize(final)
+      el.style.fontSize = `${final}cqw`
     }
-    if (fits(s)) return
-    while (s > min && !fits(s)) s -= 0.1
-    const final = Math.round(s * 10) / 10
-    setSize(final)
-    el.style.fontSize = `${final}cqw`
+    fit()
+    // hộp đổi kích thước (kéo tay nắm) cũng phải fit lại, không chỉ khi đổi chữ
+    const ro = new ResizeObserver(fit)
+    ro.observe(el)
+    return () => ro.disconnect()
   }, [children, baseSize])
 
   return (
@@ -641,6 +699,18 @@ function FitText({
   )
 }
 
+/** transform của phần tử: xoay quanh tâm rồi lật (giữ nguyên thứ tự trong CSS). */
+function elTransform(el: SlideElement): string | undefined {
+  const t = [
+    el.rotation ? `rotate(${el.rotation}deg)` : '',
+    el.flipX ? 'scaleX(-1)' : '',
+    el.flipY ? 'scaleY(-1)' : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
+  return t || undefined
+}
+
 function SlideElView({ el }: { el: SlideElement }) {
   const style: React.CSSProperties = {
     position: 'absolute',
@@ -649,7 +719,7 @@ function SlideElView({ el }: { el: SlideElement }) {
     width: `${el.w}%`,
     height: `${el.h}%`,
     zIndex: el.zIndex,
-    transform: `${el.flipX ? 'scaleX(-1)' : ''}${el.flipY ? ' scaleY(-1)' : ''}`.trim() || undefined,
+    transform: elTransform(el),
   }
 
   if (el.type === 'text') {
@@ -664,8 +734,8 @@ function SlideElView({ el }: { el: SlideElement }) {
           fontStyle: el.fontStyle,
           textDecoration: el.textDecoration,
           textAlign: el.align,
-          lineHeight: 1.3,
-          padding: '0 2%',
+          lineHeight: 1.25,
+          padding: '1%',
         }}
         baseSize={size}
       >
@@ -757,25 +827,31 @@ function SlideElView({ el }: { el: SlideElement }) {
   return null
 }
 
-function ChartView({ el }: { el: SlideElement }) {
+/**
+ * `absolute` = true: tự neo theo % của khung slide (dùng trong thumbnail).
+ * false: lấp đầy khung bao ngoài đã neo sẵn (dùng trong canvas soạn) — nếu
+ * vẫn neo tuyệt đối lần nữa, toạ độ bị nhân đôi và biểu đồ lệch khỏi thumbnail.
+ */
+function ChartView({ el, absolute = true }: { el: SlideElement; absolute?: boolean }) {
   const data = el.chart?.data ?? []
   const max = Math.max(1, ...data.map((d) => d.value))
   const type = el.chart?.type ?? 'bar'
+  const pos: React.CSSProperties = absolute
+    ? {
+        position: 'absolute',
+        left: `${el.x}%`,
+        top: `${el.y}%`,
+        width: `${el.w}%`,
+        height: `${el.h}%`,
+      }
+    : { width: '100%', height: '100%' }
 
   if (type === 'pie') {
     const total = data.reduce((s, d) => s + d.value, 0) || 1
     let acc = 0
     const colors = ['#2563eb', '#c05a3c', '#16a34a', '#b8862f', '#9333ea']
     return (
-      <div
-        style={{
-          position: 'absolute',
-          left: `${el.x}%`,
-          top: `${el.y}%`,
-          width: `${el.w}%`,
-          height: `${el.h}%`,
-        }}
-      >
+      <div style={pos}>
         <svg viewBox="0 0 42 42" style={{ width: '100%', height: '100%' }}>
           {data.map((d, i) => {
             const start = (acc / total) * 360
@@ -808,15 +884,7 @@ function ChartView({ el }: { el: SlideElement }) {
       return `${x},${y}`
     })
     return (
-      <div
-        style={{
-          position: 'absolute',
-          left: `${el.x}%`,
-          top: `${el.y}%`,
-          width: `${el.w}%`,
-          height: `${el.h}%`,
-        }}
-      >
+      <div style={pos}>
         <svg
           viewBox="0 0 100 100"
           preserveAspectRatio="none"
@@ -851,11 +919,7 @@ function ChartView({ el }: { el: SlideElement }) {
   return (
     <div
       style={{
-        position: 'absolute',
-        left: `${el.x}%`,
-        top: `${el.y}%`,
-        width: `${el.w}%`,
-        height: `${el.h}%`,
+        ...pos,
         display: 'flex',
         alignItems: 'flex-end',
         gap: '4%',
@@ -913,17 +977,24 @@ function AutoFitText({
   useLayoutEffect(() => {
     const ta = ref.current
     if (!ta) return
-    // co dần cho tới khi vừa khung; không nhỏ hơn 60% cỡ gốc
     const min = baseSize * 0.6
-    let s = baseSize
-    const fits = (px: number) => {
-      ta.style.fontSize = `${px}cqw`
-      return ta.scrollHeight <= ta.clientHeight + 1
+    const fit = () => {
+      // co dần cho tới khi vừa khung; không nhỏ hơn 60% cỡ gốc
+      let s = baseSize
+      const fits = (px: number) => {
+        ta.style.fontSize = `${px}cqw`
+        return ta.scrollHeight <= ta.clientHeight + 1
+      }
+      if (!fits(s)) while (s > min && !fits(s)) s -= 0.1
+      const final = Math.round(s * 10) / 10
+      setSize(final)
+      ta.style.fontSize = `${final}cqw`
     }
-    if (fits(s)) return
-    while (s > min && !fits(s)) s -= 0.1
-    setSize(Math.round(s * 10) / 10)
-    ta.style.fontSize = `${Math.round(s * 10) / 10}cqw`
+    fit()
+    // kéo tay nắm đổi chiều cao/chiều rộng hộp → fit lại ngay khi hộp đổi
+    const ro = new ResizeObserver(fit)
+    ro.observe(ta)
+    return () => ro.disconnect()
   }, [value, baseSize])
 
   return (
@@ -944,6 +1015,10 @@ function AutoFitText({
     />
   )
 }
+
+/** Hướng tay nắm resize — 8 anchor như Transformer của bản gốc. */
+type ResizeDir = 'nw' | 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w'
+const HANDLE_DIRS: ResizeDir[] = ['nw', 'n', 'ne', 'e', 'se', 's', 'sw', 'w']
 
 function EditableEl({
   el,
@@ -969,21 +1044,19 @@ function EditableEl({
     width: `${el.w}%`,
     height: `${el.h}%`,
     zIndex: el.zIndex,
-    transform: `${el.flipX ? 'scaleX(-1)' : ''}${el.flipY ? ' scaleY(-1)' : ''}`.trim() || undefined,
+    transform: elTransform(el),
     outline: selected ? '2px solid #b4532a' : undefined,
-    outlineOffset: selected ? '2px' : undefined,
+    outlineOffset: selected ? 0 : undefined,
   }
 
-  const startDrag = (e: React.PointerEvent, mode: 'move' | 'resize') => {
+  const startDrag = (e: React.PointerEvent, mode: 'move' | 'resize', dir?: ResizeDir) => {
     if ((e.target as HTMLElement).closest('textarea, input, button, label')) {
       onSelect()
       return
     }
     e.stopPropagation()
-    if (!selected) {
-      onSelect()
-      return
-    }
+    // Chọn và bắt đầu kéo trong cùng một thao tác, như PowerPoint.
+    if (!selected) onSelect()
     e.preventDefault()
     const frame = (e.currentTarget as HTMLElement).closest('.slide-frame') as HTMLElement | null
     if (!frame) return
@@ -991,22 +1064,49 @@ function EditableEl({
     const base = { x: el.x, y: el.y, w: el.w, h: el.h }
     const startX = e.clientX
     const startY = e.clientY
+    const MIN = 4
     onBeginHistory()
     const move = (ev: PointerEvent) => {
       const dx = ((ev.clientX - startX) / rect.width) * 100
       const dy = ((ev.clientY - startY) / rect.height) * 100
-      if (mode === 'move') {
+      if (mode === 'move' || !dir) {
         onPreview({ x: clamp(base.x + dx, 0, 100 - base.w), y: clamp(base.y + dy, 0, 100 - base.h) })
-      } else {
-        onPreview({ w: clamp(base.w + dx, 4, 100 - base.x), h: clamp(base.h + dy, 4, 100 - base.y) })
+        return
       }
+      // Resize từ cạnh/góc đang kéo: giữ nguyên cạnh đối diện.
+      let left = base.x
+      let top = base.y
+      let right = base.x + base.w
+      let bottom = base.y + base.h
+      if (dir.includes('w')) left = clamp(base.x + dx, 0, right - MIN)
+      if (dir.includes('e')) right = clamp(base.x + base.w + dx, left + MIN, 100)
+      if (dir.includes('n')) top = clamp(base.y + dy, 0, bottom - MIN)
+      if (dir.includes('s')) bottom = clamp(base.y + base.h + dy, top + MIN, 100)
+      const patch: Partial<SlideElement> = {
+        x: left,
+        y: top,
+        w: right - left,
+        h: bottom - top,
+      }
+      // Chữ co/giãn theo chiều cao hộp (như "shrink text on overflow" của
+      // PowerPoint) — nếu không, thu nhỏ hộp sẽ cắt mất chữ.
+      // ponytail: phần tử đã xoay vẫn resize theo trục màn hình; đủ dùng cho
+      // slide, muốn chính xác tuyệt đối thì phải chiếu delta qua phép quay.
+      if (el.type === 'text' && (dir.includes('n') || dir.includes('s'))) {
+        const baseFont = el.fontSize ?? (el.variant === 'body' ? 2.4 : 3.6)
+        const ratio = (bottom - top) / base.h
+        patch.fontSize = clamp(Number((baseFont * ratio).toFixed(2)), 0.8, 12)
+      }
+      onPreview(patch)
     }
     const up = () => {
       window.removeEventListener('pointermove', move)
       window.removeEventListener('pointerup', up)
+      window.removeEventListener('pointercancel', up)
     }
     window.addEventListener('pointermove', move)
     window.addEventListener('pointerup', up)
+    window.addEventListener('pointercancel', up)
   }
 
   const common = {
@@ -1015,12 +1115,46 @@ function EditableEl({
     onPointerDown: (e: React.PointerEvent) => startDrag(e, 'move'),
   }
 
+  /** Xoay quanh tâm hộp; giữ Shift để bắt góc 15°. */
+  const startRotate = (e: React.PointerEvent) => {
+    e.stopPropagation()
+    e.preventDefault()
+    if (!selected) onSelect()
+    const frame = (e.currentTarget as HTMLElement).closest('.slide-frame') as HTMLElement | null
+    if (!frame) return
+    const rect = frame.getBoundingClientRect()
+    const cx = rect.left + ((el.x + el.w / 2) / 100) * rect.width
+    const cy = rect.top + ((el.y + el.h / 2) / 100) * rect.height
+    onBeginHistory()
+    const move = (ev: PointerEvent) => {
+      // +90 vì tay nắm nằm trên đỉnh: con trỏ ở chính giữa phía trên = 0°.
+      const deg = (Math.atan2(ev.clientY - cy, ev.clientX - cx) * 180) / Math.PI + 90
+      const snapped = ev.shiftKey ? Math.round(deg / 15) * 15 : Math.round(deg)
+      onPreview({ rotation: ((snapped % 360) + 360) % 360 })
+    }
+    const up = () => {
+      window.removeEventListener('pointermove', move)
+      window.removeEventListener('pointerup', up)
+      window.removeEventListener('pointercancel', up)
+    }
+    window.addEventListener('pointermove', move)
+    window.addEventListener('pointerup', up)
+    window.addEventListener('pointercancel', up)
+  }
+
   const handle = selected ? (
-    <span
-      className="slide-el-handle"
-      title="Kéo để đổi kích thước"
-      onPointerDown={(e) => startDrag(e, 'resize')}
-    />
+    <>
+      {HANDLE_DIRS.map((dir) => (
+        <span
+          key={dir}
+          className={`slide-el-handle slide-el-handle--${dir}`}
+          onPointerDown={(e) => startDrag(e, 'resize', dir)}
+        />
+      ))}
+      <span className="slide-el-rotate" title="Xoay" onPointerDown={startRotate}>
+        <RotateCw size={11} strokeWidth={2} />
+      </span>
+    </>
   ) : null
 
   if (el.type === 'text')
@@ -1099,7 +1233,7 @@ function EditableEl({
   if (el.type === 'chart')
     return (
       <div {...common}>
-        <ChartView el={el} />
+        <ChartView el={el} absolute={false} />
         {handle}
       </div>
     )

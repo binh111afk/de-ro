@@ -9,7 +9,8 @@
  * Node đặc biệt: `answerKey` và `rubric` là bảng (render bằng node table chuẩn
  * của TipTap) nên mọi ô đều sửa trực tiếp được trong editor.
  */
-import { Mark, Node, mergeAttributes } from '@tiptap/core'
+import { Mark, Node, mergeAttributes, nodeInputRule } from '@tiptap/core'
+import katex from 'katex'
 
 /** Thuộc tính chung: id để AI/undo tham chiếu ổn định. */
 export interface ExamNodeAttrs {
@@ -209,28 +210,48 @@ function textBlock(name: string, group: string, extra?: Record<string, unknown>)
  * Node cụ thể
  * ------------------------------------------------------------------ */
 
+/**
+ * Đầu đề 2 cột — một block chứa đúng 2 `examHeaderColumn`, mỗi cột là các
+ * paragraph thật (port từ soandethi). Nhờ vậy xuống dòng là chủ động, mỗi dòng
+ * mang định dạng riêng (ví dụ dòng "ĐỀ CHÍNH THỨC" có mark `boxed`).
+ */
 export const HeaderNode = Node.create({
   name: 'examHeader',
   group: 'block',
-  content: 'inline*',
+  content: 'examHeaderColumn examHeaderColumn',
   defining: true,
   addAttributes() {
-    return { id: { default: null }, side: { default: 'left' }, ...formatAttrs() }
+    return { id: { default: null } }
   },
   parseHTML() {
-    return [{ tag: 'div[data-exam-node="header"]' }]
+    return [{ tag: 'div[data-exam-node="examHeader"]' }]
   },
   renderHTML({ HTMLAttributes }) {
-    const { id, side, ...rest } = HTMLAttributes as Record<string, unknown>
+    const { id } = HTMLAttributes as Record<string, unknown>
+    return [
+      'div',
+      mergeAttributes({ 'data-exam-node': 'examHeader', ...(id ? { 'data-id': id } : {}) }),
+      0,
+    ]
+  },
+})
+
+export const HeaderColumnNode = Node.create({
+  name: 'examHeaderColumn',
+  content: 'paragraph+',
+  isolating: true,
+  addAttributes() {
+    return formatAttrs()
+  },
+  parseHTML() {
+    return [{ tag: 'div[data-exam-node="headerCol"]' }]
+  },
+  renderHTML({ HTMLAttributes }) {
     return [
       'div',
       mergeAttributes(
-        {
-          'data-exam-node': 'header',
-          'data-side': (side as string) ?? 'left',
-          ...(id ? { 'data-id': id } : {}),
-        },
-        { style: formatStyle(rest) },
+        { 'data-exam-node': 'headerCol' },
+        { style: formatStyle(HTMLAttributes as Record<string, unknown>) },
       ),
       0,
     ]
@@ -250,14 +271,14 @@ export const MetaNode = Node.create({
     return { id: { default: null }, ...formatAttrs() }
   },
   parseHTML() {
-    return [{ tag: 'div[data-exam-node="meta"]' }]
+    return [{ tag: 'div[data-exam-node="examMeta"]' }]
   },
   renderHTML({ HTMLAttributes }) {
     const { id, ...rest } = HTMLAttributes as Record<string, unknown>
     return [
       'div',
       mergeAttributes(
-        { 'data-exam-node': 'meta', ...(id ? { 'data-id': id } : {}) },
+        { 'data-exam-node': 'examMeta', ...(id ? { 'data-id': id } : {}) },
         { style: formatStyle(rest) },
       ),
       0,
@@ -273,13 +294,13 @@ export const MetaRowNode = Node.create({
     return { label: { default: '' }, ...formatAttrs() }
   },
   parseHTML() {
-    return [{ tag: 'div[data-exam-node="metaRow"]' }]
+    return [{ tag: 'div[data-exam-node="examMetaRow"]' }]
   },
   renderHTML({ HTMLAttributes }) {
     const { label, ...rest } = HTMLAttributes as Record<string, unknown>
     return [
       'div',
-      mergeAttributes({ 'data-exam-node': 'metaRow', 'data-label': label }, { style: formatStyle(rest) }),
+      mergeAttributes({ 'data-exam-node': 'examMetaRow', 'data-label': label }, { style: formatStyle(rest) }),
       0,
     ]
   },
@@ -303,7 +324,7 @@ export const PageBreakNode = Node.create({
     return { id: { default: null }, ...formatAttrs() }
   },
   parseHTML() {
-    return [{ tag: 'div[data-exam-node="pageBreak"]' }]
+    return [{ tag: 'div[data-exam-node="examPageBreak"]' }]
   },
   renderHTML({ HTMLAttributes }) {
     const { id, ...rest } = HTMLAttributes as Record<string, unknown>
@@ -311,7 +332,7 @@ export const PageBreakNode = Node.create({
       'div',
       mergeAttributes(
         {
-          'data-exam-node': 'pageBreak',
+          'data-exam-node': 'examPageBreak',
           class: 'exam-pagebreak',
           ...(id ? { 'data-id': id } : {}),
         },
@@ -331,14 +352,14 @@ export const BulletsNode = Node.create({
     return { id: { default: null }, ...formatAttrs() }
   },
   parseHTML() {
-    return [{ tag: 'div[data-exam-node="bullets"]' }]
+    return [{ tag: 'div[data-exam-node="examBullets"]' }]
   },
   renderHTML({ HTMLAttributes }) {
     const { id, ...rest } = HTMLAttributes as Record<string, unknown>
     return [
       'div',
       mergeAttributes(
-        { 'data-exam-node': 'bullets', ...(id ? { 'data-id': id } : {}) },
+        { 'data-exam-node': 'examBullets', ...(id ? { 'data-id': id } : {}) },
         { style: formatStyle(rest) },
       ),
       0,
@@ -354,13 +375,64 @@ export const BulletNode = Node.create({
     return formatAttrs()
   },
   parseHTML() {
-    return [{ tag: 'div[data-exam-node="bullet"]' }]
+    return [{ tag: 'div[data-exam-node="examBullet"]' }]
   },
   renderHTML({ HTMLAttributes }) {
     return [
       'div',
       mergeAttributes(
-        { 'data-exam-node': 'bullet' },
+        { 'data-exam-node': 'examBullet' },
+        { style: formatStyle(HTMLAttributes as Record<string, unknown>) },
+      ),
+      0,
+    ]
+  },
+})
+
+/** Lưới nhiều cột — mỗi ô là một `examGridCell`. */
+export const GridNode = Node.create({
+  name: 'examGrid',
+  group: 'block',
+  content: 'examGridCell+',
+  defining: true,
+  addAttributes() {
+    return { id: { default: null }, cols: { default: 2 }, ...formatAttrs() }
+  },
+  parseHTML() {
+    return [{ tag: 'div[data-exam-node="examGrid"]' }]
+  },
+  renderHTML({ HTMLAttributes }) {
+    const { id, cols, ...rest } = HTMLAttributes as Record<string, unknown>
+    const n = Math.min(3, Math.max(2, Number(cols) || 2))
+    return [
+      'div',
+      mergeAttributes(
+        { 'data-exam-node': 'examGrid', 'data-cols': n, ...(id ? { 'data-id': id } : {}) },
+        {
+          // số cột đặt inline để đổi được ngay khi sửa thuộc tính
+          style: `grid-template-columns: repeat(${n}, minmax(0, 1fr));${formatStyle(rest)}`,
+        },
+      ),
+      0,
+    ]
+  },
+})
+
+export const GridCellNode = Node.create({
+  name: 'examGridCell',
+  content: 'inline*',
+  defining: false,
+  addAttributes() {
+    return formatAttrs()
+  },
+  parseHTML() {
+    return [{ tag: 'div[data-exam-node="examGridCell"]' }]
+  },
+  renderHTML({ HTMLAttributes }) {
+    return [
+      'div',
+      mergeAttributes(
+        { 'data-exam-node': 'examGridCell' },
         { style: formatStyle(HTMLAttributes as Record<string, unknown>) },
       ),
       0,
@@ -378,14 +450,14 @@ export const QuestionNode = Node.create({
     return { id: { default: null }, no: { default: 1 }, ...formatAttrs() }
   },
   parseHTML() {
-    return [{ tag: 'div[data-exam-node="question"]' }]
+    return [{ tag: 'div[data-exam-node="examQuestion"]' }]
   },
   renderHTML({ HTMLAttributes }) {
     const { id, no, ...rest } = HTMLAttributes as Record<string, unknown>
     return [
       'div',
       mergeAttributes(
-        { 'data-exam-node': 'question', ...(id ? { 'data-id': id } : {}), 'data-no': no },
+        { 'data-exam-node': 'examQuestion', ...(id ? { 'data-id': id } : {}), 'data-no': no },
         { style: formatStyle(rest) },
       ),
       0,
@@ -401,13 +473,13 @@ export const QuestionPromptNode = Node.create({
     return formatAttrs()
   },
   parseHTML() {
-    return [{ tag: 'div[data-exam-node="questionPrompt"]' }]
+    return [{ tag: 'div[data-exam-node="examQuestionPrompt"]' }]
   },
   renderHTML({ HTMLAttributes }) {
     return [
       'div',
       mergeAttributes(
-        { 'data-exam-node': 'questionPrompt' },
+        { 'data-exam-node': 'examQuestionPrompt' },
         { style: formatStyle(HTMLAttributes as Record<string, unknown>) },
       ),
       0,
@@ -424,14 +496,14 @@ export const OptionNode = Node.create({
     return { label: { default: 'A' }, ...formatAttrs() }
   },
   parseHTML() {
-    return [{ tag: 'div[data-exam-node="option"]' }]
+    return [{ tag: 'div[data-exam-node="examOption"]' }]
   },
   renderHTML({ HTMLAttributes }) {
     const { label, ...rest } = HTMLAttributes as Record<string, unknown>
     return [
       'div',
       mergeAttributes(
-        { 'data-exam-node': 'option', 'data-label': label },
+        { 'data-exam-node': 'examOption', 'data-label': label },
         { style: formatStyle(rest) },
       ),
       0,
@@ -449,7 +521,7 @@ export const EssayNode = Node.create({
     return { id: { default: null }, no: { default: 1 }, score: { default: 0 }, ...formatAttrs() }
   },
   parseHTML() {
-    return [{ tag: 'div[data-exam-node="essay"]' }]
+    return [{ tag: 'div[data-exam-node="examEssay"]' }]
   },
   renderHTML({ HTMLAttributes }) {
     const { id, no, score, ...rest } = HTMLAttributes as Record<string, unknown>
@@ -457,7 +529,7 @@ export const EssayNode = Node.create({
       'div',
       mergeAttributes(
         {
-          'data-exam-node': 'essay',
+          'data-exam-node': 'examEssay',
           ...(id ? { 'data-id': id } : {}),
           'data-no': no,
           'data-score': score,
@@ -477,13 +549,13 @@ export const EssayPromptNode = Node.create({
     return formatAttrs()
   },
   parseHTML() {
-    return [{ tag: 'div[data-exam-node="essayPrompt"]' }]
+    return [{ tag: 'div[data-exam-node="examEssayPrompt"]' }]
   },
   renderHTML({ HTMLAttributes }) {
     return [
       'div',
       mergeAttributes(
-        { 'data-exam-node': 'essayPrompt' },
+        { 'data-exam-node': 'examEssayPrompt' },
         { style: formatStyle(HTMLAttributes as Record<string, unknown>) },
       ),
       0,
@@ -499,13 +571,13 @@ export const EssaySubNode = Node.create({
     return formatAttrs()
   },
   parseHTML() {
-    return [{ tag: 'div[data-exam-node="essaySub"]' }]
+    return [{ tag: 'div[data-exam-node="examEssaySub"]' }]
   },
   renderHTML({ HTMLAttributes }) {
     return [
       'div',
       mergeAttributes(
-        { 'data-exam-node': 'essaySub' },
+        { 'data-exam-node': 'examEssaySub' },
         { style: formatStyle(HTMLAttributes as Record<string, unknown>) },
       ),
       0,
@@ -523,10 +595,10 @@ export const DividerNode = Node.create({
     return { id: { default: null } }
   },
   parseHTML() {
-    return [{ tag: 'hr[data-exam-node="divider"]' }]
+    return [{ tag: 'hr[data-exam-node="examDivider"]' }]
   },
   renderHTML({ HTMLAttributes }) {
-    return ['hr', mergeAttributes(HTMLAttributes, { 'data-exam-node': 'divider' })]
+    return ['hr', mergeAttributes(HTMLAttributes, { 'data-exam-node': 'examDivider' })]
   },
 })
 
@@ -545,14 +617,14 @@ export const AnswerKeyNode = Node.create({
     return { id: { default: null }, ...formatAttrs() }
   },
   parseHTML() {
-    return [{ tag: 'div[data-exam-node="answerKey"]' }]
+    return [{ tag: 'div[data-exam-node="examAnswerKey"]' }]
   },
   renderHTML({ HTMLAttributes }) {
     const { id, ...rest } = HTMLAttributes as Record<string, unknown>
     return [
       'div',
       mergeAttributes(
-        { 'data-exam-node': 'answerKey', ...(id ? { 'data-id': id } : {}) },
+        { 'data-exam-node': 'examAnswerKey', ...(id ? { 'data-id': id } : {}) },
         { style: formatStyle(rest) },
       ),
       0,
@@ -569,14 +641,14 @@ export const RubricNode = Node.create({
     return { id: { default: null }, ...formatAttrs() }
   },
   parseHTML() {
-    return [{ tag: 'div[data-exam-node="rubric"]' }]
+    return [{ tag: 'div[data-exam-node="examRubric"]' }]
   },
   renderHTML({ HTMLAttributes }) {
     const { id, ...rest } = HTMLAttributes as Record<string, unknown>
     return [
       'div',
       mergeAttributes(
-        { 'data-exam-node': 'rubric', ...(id ? { 'data-id': id } : {}) },
+        { 'data-exam-node': 'examRubric', ...(id ? { 'data-id': id } : {}) },
         { style: formatStyle(rest) },
       ),
       0,
@@ -592,13 +664,13 @@ export const RubricTitleNode = Node.create({
     return formatAttrs()
   },
   parseHTML() {
-    return [{ tag: 'div[data-exam-node="rubricTitle"]' }]
+    return [{ tag: 'div[data-exam-node="examRubricTitle"]' }]
   },
   renderHTML({ HTMLAttributes }) {
     return [
       'div',
       mergeAttributes(
-        { 'data-exam-node': 'rubricTitle' },
+        { 'data-exam-node': 'examRubricTitle' },
         { style: formatStyle(HTMLAttributes as Record<string, unknown>) },
       ),
       0,
@@ -614,14 +686,14 @@ export const RubricItemNode = Node.create({
     return { label: { default: '' }, ...formatAttrs() }
   },
   parseHTML() {
-    return [{ tag: 'div[data-exam-node="rubricItem"]' }]
+    return [{ tag: 'div[data-exam-node="examRubricItem"]' }]
   },
   renderHTML({ HTMLAttributes }) {
     const { label, ...rest } = HTMLAttributes as Record<string, unknown>
     return [
       'div',
       mergeAttributes(
-        { 'data-exam-node': 'rubricItem', 'data-label': label },
+        { 'data-exam-node': 'examRubricItem', 'data-label': label },
         { style: formatStyle(rest) },
       ),
       0,
@@ -633,7 +705,93 @@ export const RubricItemNode = Node.create({
  * Danh sách node
  * ------------------------------------------------------------------ */
 
-export const EXAM_MARKS = [UnderlineMark, SubscriptMark, SuperscriptMark]
+/** Khung viền quanh một cụm chữ — dùng cho dòng "ĐỀ CHÍNH THỨC". */
+export const BoxedMark = Mark.create({
+  name: 'boxed',
+  parseHTML() {
+    return [
+      { tag: 'span[data-boxed]' },
+      { style: 'border', consuming: false },
+    ]
+  },
+  renderHTML({ HTMLAttributes }) {
+    return [
+      'span',
+      mergeAttributes(HTMLAttributes, { 'data-boxed': '', class: 'doc-boxed' }),
+      0,
+    ]
+  },
+})
+
+export const EXAM_MARKS = [UnderlineMark, SubscriptMark, SuperscriptMark, BoxedMark]
+
+/**
+ * Công thức toán inline `$...$` — atom, render bằng KaTeX ngay trong editor.
+ *
+ * Mô hình lưu bền vững KHÔNG đổi: `ExamBlock` vẫn là text `$latex$`; converter
+ * tách chuỗi thành node này khi dựng editor và nối lại khi lưu. Nhờ vậy Word /
+ * bản in / trang xem `/de/:id` giữ đúng quy ước `$...$` sẵn có.
+ */
+export const InlineMathNode = Node.create({
+  name: 'inlineMath',
+  group: 'inline',
+  inline: true,
+  atom: true,
+  selectable: true,
+  addAttributes() {
+    return { latex: { default: '' } }
+  },
+  parseHTML() {
+    return [
+      {
+        tag: 'span[data-inline-math]',
+        getAttrs: (el) => ({
+          latex: (el as HTMLElement).getAttribute('data-inline-math') ?? '',
+        }),
+      },
+    ]
+  },
+  renderHTML({ HTMLAttributes }) {
+    const latex = String((HTMLAttributes as Record<string, unknown>).latex ?? '')
+    return ['span', { 'data-inline-math': latex, class: 'inline-math' }, latex]
+  },
+  addNodeView() {
+    return ({ node }) => {
+      const dom = document.createElement('span')
+      dom.className = 'inline-math'
+      dom.contentEditable = 'false'
+      let current = node
+      const paint = () => {
+        dom.dataset.inlineMath = String(current.attrs.latex ?? '')
+        try {
+          dom.innerHTML = katex.renderToString(String(current.attrs.latex ?? ''), {
+            throwOnError: false,
+            strict: false,
+            output: 'html',
+            trust: false,
+          })
+        } catch {
+          dom.textContent = `$${current.attrs.latex}$`
+        }
+      }
+      paint()
+      return {
+        dom,
+        update: (updated) => {
+          if (updated.type.name !== 'inlineMath') return false
+          if (updated.attrs.latex === current.attrs.latex) return true
+          current = updated
+          paint()
+          return true
+        },
+      }
+    }
+  },
+  addInputRules() {
+    // gõ `$x^2$` trong editor → chuyển ngay thành công thức
+    return [nodeInputRule({ find: /\$([^$\n]+)\$$/, type: this.type, getAttributes: (m) => ({ latex: m[1] }) })]
+  },
+})
 
 /** Ảnh chèn inline trong khối đề (base64 data URL). */
 export const ImageNode = Node.create({
@@ -675,6 +833,7 @@ declare module '@tiptap/core' {
 
 export const EXAM_NODES = [
   HeaderNode,
+  HeaderColumnNode,
   TitleNode,
   MetaNode,
   MetaRowNode,
@@ -682,6 +841,8 @@ export const EXAM_NODES = [
   HeadingNode,
   ParagraphNode,
   BulletsNode,  BulletNode,
+  GridNode,
+  GridCellNode,
   QuestionNode,
   QuestionPromptNode,
   OptionNode,
@@ -695,6 +856,7 @@ export const EXAM_NODES = [
   RubricTitleNode,
   RubricItemNode,
   ImageNode,
+  InlineMathNode,
 ]
 
 /** Node cấp cao nhất — đơn vị đo cho phân trang A4. */
@@ -722,6 +884,7 @@ export const TEXT_CONTENT_NODES = [
   ...TOP_LEVEL_EXAM_NODES,
   'examMetaRow',
   'examBullet',
+  'examGridCell',
   'examQuestionPrompt',
   'examOption',
   'examEssayPrompt',

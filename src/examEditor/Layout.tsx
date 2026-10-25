@@ -318,36 +318,38 @@ export function AiDock({
   side?: 'left' | 'right'
   children: ReactNode
 }) {
-  if (!open) {
-    return (
-      <button
-        type="button"
-        className={cn('ai-rail', side === 'right' && 'ai-rail--right')}
-        onClick={onToggle}
-        title="Mở trợ lý AI"
-        aria-label="Mở trợ lý AI"
-      >
-        {side === 'right' ? <IconSidebarRight size={18} /> : <IconSidebarLeft size={18} />}
-        <span className="ai-rail-text">Trợ lý AI</span>
-      </button>
-    )
-  }
-
+  // Panel luôn được mount (giữ lịch sử chat); đóng/mở chỉ đổi width bằng CSS
+  // transition `.ai-dock` ↔ `.ai-dock.collapsed`, panel teo về 0 và rail hiện ra.
   return (
     <aside
-      className={cn('ai-dock', side === 'right' && 'ai-dock--right')}
+      className={cn('ai-dock', !open && 'collapsed', side === 'right' && 'ai-dock--right')}
       style={{ ['--ai-panel-width' as string]: `${width}px` }}
     >
-      {children}
-      <button
-        type="button"
-        className="ai-dock__collapse"
-        onClick={onToggle}
-        title="Thu gọn trợ lý AI"
-        aria-label="Thu gọn trợ lý AI"
-      >
-        {side === 'right' ? <IconChevronRight size={16} /> : <IconChevronLeft size={16} />}
-      </button>
+      <div className="ai-dock__body" inert={!open}>
+        {children}
+      </div>
+      {open ? (
+        <button
+          type="button"
+          className="ai-dock__collapse"
+          onClick={onToggle}
+          title="Thu gọn trợ lý AI"
+          aria-label="Thu gọn trợ lý AI"
+        >
+          {side === 'right' ? <IconChevronRight size={16} /> : <IconChevronLeft size={16} />}
+        </button>
+      ) : (
+        <button
+          type="button"
+          className={cn('ai-rail', side === 'right' && 'ai-rail--right')}
+          onClick={onToggle}
+          title="Mở trợ lý AI"
+          aria-label="Mở trợ lý AI"
+        >
+          {side === 'right' ? <IconSidebarRight size={18} /> : <IconSidebarLeft size={18} />}
+          <span className="ai-rail-text">Trợ lý AI</span>
+        </button>
+      )}
     </aside>
   )
 }
