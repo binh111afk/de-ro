@@ -1,6 +1,6 @@
 /**
  * Sinh deck bằng LLM thật rồi chụp ảnh từng slide để xem bằng mắt.
- * Chạy: npm run eval:slides -- "Hàm số bậc nhất" "Chí Phèo" [--out thư-mục]
+ * Chạy: npm run eval:slides -- "Hàm số bậc nhất" "Chí Phèo" [--out thư-mục] [--slides]
  * Cần `.env` có LLM_API_KEY. Mỗi chủ đề ~1–3 phút; ảnh lưu `eval-out/<n>.png`.
  */
 import { createServer } from 'vite'
@@ -11,6 +11,7 @@ import { withPage, waitFor } from './lib/cdp.mjs'
 const args = process.argv.slice(2)
 const outAt = args.indexOf('--out')
 const outDir = outAt >= 0 ? args.splice(outAt, 2)[1] : 'eval-out'
+const perSlide = args.includes('--slides') && args.splice(args.indexOf('--slides'), 1).length > 0
 const topics = args.length ? args : ['Hàm số bậc nhất và đồ thị']
 mkdirSync(outDir, { recursive: true })
 
@@ -26,9 +27,17 @@ let exit = 0
 try {
   for (const [i, topic] of topics.entries()) {
     const url = `${base}scripts/eval-slides/index.html?topic=${encodeURIComponent(topic)}`
-    const { result, png } = await withPage(url, { width: 1900, height: 1000 }, async ({ evaluate, screenshot }) => {
+    const { result, png, slides } = await withPage(url, { width: 1900, height: 1000 }, async ({ evaluate, screenshot }) => {
       const encoded = await waitFor(evaluate, 'document.getElementById("eval-result")?.textContent', 360000)
-      return { result: JSON.parse(Buffer.from(encoded, 'base64').toString('utf8')), png: await screenshot() }
+      const result = JSON.parse(Buffer.from(encoded, 'base64').toString('utf8'))
+      // --slides: mỗi slide một ảnh 2× để model chấm điểm đọc được chữ nhỏ
+      const slides = []
+      if (perSlide && !result.fatal) {
+        for (const r of result.rects) {
+          slides.push(await screenshot({ x: r.x, y: r.y, width: r.w, height: r.h, scale: 2 }))
+        }
+      }
+      return { result, png: await screenshot(), slides }
     })
     if (result.fatal) {
       if (result.raw) writeFileSync(join(outDir, `plan-raw-${i + 1}.txt`), result.raw)
@@ -38,6 +47,7 @@ try {
     }
     const file = join(outDir, `${i + 1}.png`)
     writeFileSync(file, png)
+    slides.forEach((buf, k) => writeFileSync(join(outDir, `${i + 1}-s${String(k + 1).padStart(2, '0')}.png`), buf))
     console.log(`✓ "${topic}" → ${file}`)
     console.log(`  theme=${result.theme} pack=${result.stylePack} slides=${result.slides} failed=[${result.failed}] plan=${result.planMs}ms total=${result.totalMs}ms`)
     console.log(`  layouts: ${result.layouts.join(', ')}`)

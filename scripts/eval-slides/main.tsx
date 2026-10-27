@@ -82,6 +82,11 @@ async function main() {
     layouts: plan.slides.map((s) => s.layout),
     slides: plan.slides.length,
     failed,
+    // vùng từng slide (toạ độ trang) để runner chụp riêng từng ảnh khi cần chấm điểm
+    rects: [...document.querySelectorAll('.slide-frame')].map((el, i) => {
+      const r = el.getBoundingClientRect()
+      return { x: r.left + scrollX, y: r.top + scrollY, w: r.width, h: r.height, layout: plan.slides[i]?.layout }
+    }),
     planMs,
     totalMs: Math.round(performance.now() - t0),
   })

@@ -57,13 +57,13 @@ export async function withPage(url, { width = 1400, height = 900 } = {}, fn) {
     await send('Page.navigate', { url })
     const evaluate = async (expression) =>
       (await send('Runtime.evaluate', { expression, returnByValue: true })).result?.result?.value
-    /** Chụp toàn bộ chiều cao tài liệu. */
-    const screenshot = async () => {
+    /** Chụp toàn bộ chiều cao tài liệu, hoặc một vùng `clip` {x,y,width,height,scale}. */
+    const screenshot = async (clip) => {
       const h = await evaluate('document.documentElement.scrollHeight')
       const shot = await send('Page.captureScreenshot', {
         format: 'png',
         captureBeyondViewport: true,
-        clip: { x: 0, y: 0, width, height: h, scale: 1 },
+        clip: clip ?? { x: 0, y: 0, width, height: h, scale: 1 },
       })
       return Buffer.from(shot.result.data, 'base64')
     }
