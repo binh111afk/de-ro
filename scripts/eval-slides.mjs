@@ -13,6 +13,8 @@ const outAt = args.indexOf('--out')
 const outDir = outAt >= 0 ? args.splice(outAt, 2)[1] : 'eval-out'
 const withImages = args.includes('--images') && args.splice(args.indexOf('--images'), 1).length > 0
 const perSlide = args.includes('--slides') && args.splice(args.indexOf('--slides'), 1).length > 0
+const polish = args.includes('--polish') && args.splice(args.indexOf('--polish'), 1).length > 0
+const POLISH_BELOW = 6.5 // slide điểm thấp hơn mức này được viết lại một lượt rồi chấm lại
 const topics = args.length ? args : ['Hàm số bậc nhất và đồ thị']
 mkdirSync(outDir, { recursive: true })
 
@@ -36,6 +38,21 @@ try {
       if (perSlide && !result.fatal) {
         for (const r of result.rects) {
           slides.push(await screenshot({ x: r.x, y: r.y, width: r.w, height: r.h, scale: 2 }))
+        }
+      }
+      // --polish (cần --slides): chấm từng slide, viết lại slide bị chê, chỉ giữ bản được điểm cao hơn
+      if (polish && perSlide && !result.fatal && result.failed.length === 0) {
+        const { judge } = await import('./judge-slides.mjs')
+        for (let k = 0; k < slides.length; k++) {
+          const before = await judge(slides[k])
+          if (!before || before.overall >= POLISH_BELOW) continue
+          if (!(await evaluate(`window.__polish(${k}, ${JSON.stringify(before.issues ?? [])})`))) continue
+          const rect = JSON.parse(await evaluate('window.__rects()'))[k]
+          const after = await screenshot({ x: rect.x, y: rect.y, width: rect.w, height: rect.h, scale: 2 })
+          const verdict = await judge(after)
+          const kept = verdict && verdict.overall > before.overall
+          if (kept) slides[k] = after
+          console.log(`  polish ${k + 1}: ${before.overall} → ${verdict?.overall ?? '?'} ${kept ? '(giữ bản mới)' : '(giữ bản cũ)'}`)
         }
       }
       return { result, png: await screenshot(), slides }

@@ -10,7 +10,7 @@ import '@fontsource/be-vietnam-pro/700.css'
 import '@/index.css'
 import { createRoot } from 'react-dom/client'
 import { SlideThumb } from '@/examEditor/SlideEditor'
-import { SLIDE_PLAN_SYSTEM, generateSlide } from '@/examEditor/AiPanel'
+import { SLIDE_PLAN_SYSTEM, generateSlide, polishSlide } from '@/examEditor/AiPanel'
 import { callLlm } from '@/lib/llm'
 import { parseDeckPlan } from '@/lib/aiDeck'
 import { slideFromAi, withImage } from '@/lib/slideAi'
@@ -58,7 +58,6 @@ async function main() {
   )
 
   const theme = themeById(plan.theme ?? 'sang')
-  const cells: JSX.Element[] = []
   const failed: string[] = []
   const built: Array<Slide | null> = pages.map((page) => (page ? slideFromAi(page, theme) : null))
   // ?images=1: sinh ảnh AI thật cho bìa + layout ảnh (như app làm nền) rồi mới chụp
@@ -79,21 +78,42 @@ async function main() {
       }),
     )
   }
-  pages.forEach((page, i) => {
-    const ps = plan.slides[i]
-    const slide = built[i]
-    if (!page || !slide) {
-      failed.push(`${i + 1}:${ps.layout}`)
-      return
-    }
-    cells.push(
-      <div key={i} style={{ width: 620 }}>
-        <div className="cap">{i + 1}. {ps.layout}{ps.tone ? `/${ps.tone}` : ''} — {ps.title}</div>
-        <SlideThumb slide={slide} theme={theme} />
-      </div>,
+  const root = createRoot(document.getElementById('host')!)
+  const renderAll = () =>
+    root.render(
+      <>
+        {built.map((slide, i) =>
+          slide ? (
+            <div key={i} style={{ width: 620 }}>
+              <div className="cap">{i + 1}. {plan.slides[i].layout}{plan.slides[i].tone ? `/${plan.slides[i].tone}` : ''} — {plan.slides[i].title}</div>
+              <SlideThumb slide={slide} theme={theme} />
+            </div>
+          ) : null,
+        )}
+      </>,
     )
+  built.forEach((slide, i) => {
+    if (!slide) failed.push(`${i + 1}:${plan.slides[i].layout}`)
   })
-  createRoot(document.getElementById('host')!).render(<>{cells}</>)
+  renderAll()
+  const rectsOf = () =>
+    [...document.querySelectorAll('.slide-frame')].map((el) => {
+      const r = el.getBoundingClientRect()
+      return { x: r.left + scrollX, y: r.top + scrollY, w: r.width, h: r.height }
+    })
+  // --polish: runner chấm ảnh rồi gọi lại để viết lại slide bị chê (vòng chấm bằng mắt).
+  ;(window as unknown as Record<string, unknown>).__polish = async (i: number, issues: string[]) => {
+    const page = pages[i]
+    if (!page) return false
+    const better = await polishSlide(plan, plan.slides[i], i, page, issues, controller.signal)
+    if (!better) return false
+    pages[i] = better
+    built[i] = slideFromAi(better, theme)
+    renderAll()
+    await new Promise((r) => setTimeout(r, 1200))
+    return true
+  }
+  ;(window as unknown as Record<string, unknown>).__rects = () => JSON.stringify(rectsOf())
   await new Promise((r) => setTimeout(r, 1200)) // FitText + font settle
   done({
     topic,

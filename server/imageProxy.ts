@@ -20,8 +20,8 @@ import { json, readBody } from './http'
 const DEFAULT_BASE_URL = 'https://api.xkiro.com/v1'
 const DEFAULT_MODEL = 'sensenova/sensenova-u1.5-lite'
 const POLL_MS = 1500
-/** model ảnh thường 20–75 giây; để 3 phút cho lúc gateway chậm */
-const DEADLINE_MS = 150_000
+/** model ảnh thường 20–75 giây; để 4 phút cho lúc gateway chậm */
+const DEADLINE_MS = 240_000
 const MAX_PROMPT = 2000
 const MAX_IMAGE_BYTES = 8 * 1024 * 1024
 
@@ -155,7 +155,7 @@ export async function handleImageRequest(
         return json(res, 502, { error: 'Job ảnh xong nhưng không có dữ liệu ảnh' })
       }
     }
-    return json(res, 504, { error: 'Tạo ảnh quá lâu (quá 3 phút)' })
+    return json(res, 504, { error: 'Tạo ảnh quá lâu (quá 4 phút)' })
   } catch (err) {
     return json(res, 500, { error: err instanceof Error ? err.message : String(err) })
   }

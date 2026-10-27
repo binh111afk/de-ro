@@ -12,7 +12,7 @@ import { normalizeTheme, themeById, type ResolvedTheme } from './slideTheme'
 import { stylePackById } from './slideStyles'
 import { subjectById, subjectRulesBlock } from './slideSubjects'
 import { fixMathEscapes, mathToPlain } from './slideMath'
-import { graphicCatalogText, isGraphicId } from './slideGraphics'
+import { graphicCatalogText, isGraphicId, searchGraphics } from './slideGraphics'
 import {
   composeLayout,
   contentFromSlide,
@@ -485,15 +485,22 @@ export function pageSystemPrompt(
   // Chỉ những layout đang dùng đồ hoạ; không nhồi catalog 112 mục vào mọi lượt gọi.
   const supportsGraphic =
     layout.id === 'title' ||
+    layout.id === 'hook' ||
     layout.id === 'bullets' ||
     layout.id === 'image-left' ||
     layout.id === 'image-right'
   const isImageLayout = layout.id === 'image-left' || layout.id === 'image-right'
+  const hints = supportsGraphic
+    ? searchGraphics(`${slide.title} ${slide.brief ?? ''}`, 6).map((g) => `${g.id}=${g.name}`)
+    : []
   const graphicBlock = supportsGraphic
     ? '\n\nĐỒ HOẠ CÓ SẴN — chọn MỘT id khớp chủ đề cho field "graphic" ' +
-      '(nhanh, đúng màu, không tốn lượt vẽ ảnh; không có id phù hợp thì bỏ trống):\n' +
+      '(nhanh, đúng màu, không tốn lượt vẽ ảnh):\n' +
       graphicCatalogText(subjectById(plan.subject)?.graphicGroups) +
       '\n- "graphic" chỉ dùng id trong danh sách trên; KHÔNG bịa id mới.\n' +
+      '- Chọn theo NGHĨA CỦA NỘI DUNG slide, không theo hình tượng chung của môn (vd: cái cân không hợp với ƯCLN). ' +
+      'Không có id khớp nghĩa thì BỎ TRỐNG "graphic" — hình lệch nghĩa tệ hơn không có hình.\n' +
+      (hints.length ? `- Gợi ý khớp từ khoá tiêu đề (xét trước): ${hints.join(', ')}.\n` : '') +
       (isImageLayout
         ? '- Layout ảnh: ĐỂ TRỐNG "image" (app tự vẽ ảnh minh hoạ nền sau 45–90 giây). Có id đồ hoạ phù hợp thì ' +
           'đặt "graphic" để slide có hình ngay trong lúc chờ ảnh.\n'

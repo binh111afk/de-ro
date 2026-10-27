@@ -487,6 +487,38 @@ export async function generateSlide(
 }
 
 /**
+ * Vòng chấm bằng mắt: giám khảo (model nhìn ảnh slide) chê gì thì nêu đúng điều đó cho
+ * model viết lại slide — giữ layout, đổi cách viết/chia ý. Trả null nếu bản sửa hỏng.
+ * Ảnh chụp do caller lo (app không có sẵn DOM→ảnh; xem `eval-slides --polish`).
+ */
+export async function polishSlide(
+  plan: DeckPlan,
+  planSlide: DeckPlanSlide,
+  index: number,
+  previous: AiSlidePayload,
+  issues: string[],
+  signal: AbortSignal,
+): Promise<AiSlidePayload | null> {
+  const reply = await callLlm(
+    [
+      { role: 'system', content: pageSystemPrompt(plan, planSlide, index) },
+      { role: 'user', content: `Viết slide ${index + 1}: "${planSlide.title}".` },
+      { role: 'assistant', content: JSON.stringify(previous) },
+      {
+        role: 'user',
+        content:
+          'Giám khảo nhìn ảnh slide vừa dựng và chê: ' + issues.join(' | ') +
+          '. Sửa NỘI DUNG để khắc phục (chia ý rõ hơn, rút gọn chỗ dày chữ, nêu ý chính nổi bật; ' +
+          'bỏ "graphic" nếu bị chê lạc nghĩa), giữ nguyên layout, trả DUY NHẤT một JSON hợp lệ.',
+      },
+    ],
+    { signal, reasoningEffort: 'medium' },
+  )
+  const check = checkSlide(parseAiObject(reply.content), planSlide.layout, planSlide.tone)
+  return check.errors.length ? null : check.page
+}
+
+/**
  * Phạm vi trả lời — áp cho cả hai chế độ. Web này là công cụ soạn đề/bài giảng;
  * phần lớn chi phí gọi model đến từ các câu hỏi ngoài lề, nên chặn ngay ở prompt.
  */

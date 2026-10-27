@@ -11,6 +11,7 @@
  */
 import { readFileSync, readdirSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { pathToFileURL } from 'node:url'
 
 const args = process.argv.slice(2)
 const flag = (name, fallback) => {
@@ -20,7 +21,8 @@ const flag = (name, fallback) => {
 const label = flag('--label', 'deck')
 const concurrency = Number(flag('--concurrency', 3))
 const dir = args[0]
-if (!dir) {
+const isMain = import.meta.url === pathToFileURL(process.argv[1]).href
+if (isMain && !dir) {
   console.error('Thiếu thư mục ảnh.')
   process.exit(2)
 }
@@ -57,8 +59,8 @@ THANG ĐIỂM THAM CHIẾU (áp dụng cho từng tiêu chí và tổng):
 Trả lời DUY NHẤT một JSON, không chữ ngoài JSON:
 {"scores":{"layout":n,"typography":n,"color":n,"hierarchy":n,"imagery":n,"polish":n},"overall":n,"issues":["lỗi cụ thể quan trọng nhất","lỗi thứ hai (nếu có)"]}`
 
-async function judge(file) {
-  const image = readFileSync(file).toString('base64')
+export async function judge(file) {
+  const image = Buffer.isBuffer(file) ? file.toString('base64') : readFileSync(file).toString('base64')
   for (let attempt = 0; attempt < 3; attempt++) {
     const res = await fetch(`${env.LLM_BASE_URL}/chat/completions`, {
       method: 'POST',
@@ -98,45 +100,47 @@ async function judge(file) {
   return null
 }
 
-const files = readdirSync(dir)
-  .filter((name) => /\.png$/i.test(name) && /-s\d+\.png$|^ref-|^slide-/i.test(name))
-  .sort()
-const results = new Array(files.length)
-let next = 0
-await Promise.all(
-  Array.from({ length: concurrency }, async () => {
-    while (next < files.length) {
-      const i = next++
-      results[i] = { file: files[i], ...(await judge(join(dir, files[i]))) }
-      process.stderr.write(`\r${i + 1}/${files.length} `)
-    }
-  }),
-)
-process.stderr.write('\n')
+if (isMain) {
+  const files = readdirSync(dir)
+    .filter((name) => /\.png$/i.test(name) && /-s\d+\.png$|^ref-|^slide-/i.test(name))
+    .sort()
+  const results = new Array(files.length)
+  let next = 0
+  await Promise.all(
+    Array.from({ length: concurrency }, async () => {
+      while (next < files.length) {
+        const i = next++
+        results[i] = { file: files[i], ...(await judge(join(dir, files[i]))) }
+        process.stderr.write(`\r${i + 1}/${files.length} `)
+      }
+    }),
+  )
+  process.stderr.write('\n')
 
-const ok = results.filter((r) => r.scores)
-const mean = (list) => (list.length ? list.reduce((a, b) => a + b, 0) / list.length : 0)
-const fmt = (n) => n.toFixed(1)
-const byCriterion = Object.fromEntries(
-  Object.keys(CRITERIA).map((key) => [key, mean(ok.map((r) => r.scores[key]))]),
-)
-const overall = mean(ok.map((r) => r.overall))
+  const ok = results.filter((r) => r.scores)
+  const mean = (list) => (list.length ? list.reduce((a, b) => a + b, 0) / list.length : 0)
+  const fmt = (n) => n.toFixed(1)
+  const byCriterion = Object.fromEntries(
+    Object.keys(CRITERIA).map((key) => [key, mean(ok.map((r) => r.scores[key]))]),
+  )
+  const overall = mean(ok.map((r) => r.overall))
 
-// theo deck (tiền tố "<n>-s" của tên tệp)
-const decks = new Map()
-for (const r of ok) {
-  const deck = r.file.match(/^(\d+)-s/)?.[1] ?? 'all'
-  decks.set(deck, [...(decks.get(deck) ?? []), r.overall])
-}
+  // theo deck (tiền tố "<n>-s" của tên tệp)
+  const decks = new Map()
+  for (const r of ok) {
+    const deck = r.file.match(/^(\d+)-s/)?.[1] ?? 'all'
+    decks.set(deck, [...(decks.get(deck) ?? []), r.overall])
+  }
 
-console.log(`\n=== ${label}: ${ok.length}/${files.length} slide được chấm — model ${MODEL} ===`)
-console.log(`Tổng: ${fmt(overall)}/10`)
-for (const [key, value] of Object.entries(byCriterion)) console.log(`  ${key.padEnd(11)} ${fmt(value)}`)
-if (decks.size > 1) {
-  console.log('Theo deck:', [...decks].map(([k, v]) => `#${k}=${fmt(mean(v))}`).join('  '))
+  console.log(`\n=== ${label}: ${ok.length}/${files.length} slide được chấm — model ${MODEL} ===`)
+  console.log(`Tổng: ${fmt(overall)}/10`)
+  for (const [key, value] of Object.entries(byCriterion)) console.log(`  ${key.padEnd(11)} ${fmt(value)}`)
+  if (decks.size > 1) {
+    console.log('Theo deck:', [...decks].map(([k, v]) => `#${k}=${fmt(mean(v))}`).join('  '))
+  }
+  console.log('\n5 slide thấp nhất:')
+  for (const r of [...ok].sort((a, b) => a.overall - b.overall).slice(0, 5)) {
+    console.log(`  ${r.file} ${r.overall} — ${(r.issues ?? []).join(' | ')}`)
+  }
+  writeFileSync(join(dir, 'judge.json'), JSON.stringify({ label, model: MODEL, overall, byCriterion, results }, null, 2))
 }
-console.log('\n5 slide thấp nhất:')
-for (const r of [...ok].sort((a, b) => a.overall - b.overall).slice(0, 5)) {
-  console.log(`  ${r.file} ${r.overall} — ${(r.issues ?? []).join(' | ')}`)
-}
-writeFileSync(join(dir, 'judge.json'), JSON.stringify({ label, model: MODEL, overall, byCriterion, results }, null, 2))

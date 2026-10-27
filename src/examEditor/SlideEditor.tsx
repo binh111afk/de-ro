@@ -482,9 +482,9 @@ export function SlideEditor({
     const isCover = page.layout === 'title'
     const bullets = page.bullets ?? page.steps ?? page.items ?? [page.subtitle ?? '']
     const orientation = isCover ? 'square' : page.layout === 'image-left' || page.layout === 'image-right' ? 'portrait' : 'landscape'
-    void queueImage(() =>
-      generateSlideImage(buildImagePrompt(page.title, bullets, orientation, palette)),
-    )
+    const prompt = buildImagePrompt(page.title, bullets, orientation, palette)
+    // Provider hay quá hạn/lỗi thoáng qua: thử lại một lần trong cùng lượt hàng đợi.
+    void queueImage(() => generateSlideImage(prompt).catch(() => generateSlideImage(prompt)))
       .then((generated) => setSlideImage(slide.id, generated.dataUrl))
       .catch(() => {})
   }

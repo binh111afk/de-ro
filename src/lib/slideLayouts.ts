@@ -399,6 +399,15 @@ function ornament(id: string, ornId: string, x: number, y: number, w: number, in
   return graphicEl(id, ornId, { x, y: centerY ? y - h / 2 : y, w, h }, ink)
 }
 
+/**
+ * Thẻ số 1–5 (pastel + nét tối `GRAPHIC_INK`): chỉ đặt khi nền `bg` đủ sáng để nét đọc được,
+ * ngược lại trả null để caller dùng chấm/huy hiệu theo theme.
+ */
+function numberTag(id: string, n: number, bg: string, x: number, cy: number, w: number): SlideElement | null {
+  if (n < 1 || n > 5 || contrastRatio(bg, GRAPHIC_INK) < 4.5) return null
+  return ornament(id, `orn-the-so-${n}`, x, cy, w, GRAPHIC_INK, true)
+}
+
 /** Tấm nền sáng cố định cho đồ hoạ thiết kế sẵn (nét tối + mảng pastel). */
 const GRAPHIC_PLATE = '#f7f9fc'
 
@@ -1141,6 +1150,16 @@ function composeTimeline(p: LayoutPalette, content: SlideLayoutContent): SlideEl
   const nodes = steps.flatMap((step, index) => {
     const center = 8 + slot * (index + 0.5)
     const left = center - slot / 2
+    const tag = numberTag(`step-${index + 1}`, index + 1, p.panel, center - 2.1, 44, 4.2)
+    const label = textEl(`item-${index + 1}`, step, {
+      x: left + 1,
+      y: 51,
+      w: slot - 2,
+      h: 29,
+    }, {
+      variant: 'body', fontSize: stepSize, textColor: p.fg, align: 'center',
+    })
+    if (tag) return [tag, label]
     return [
       textEl(`step-${index + 1}-index`, String(index + 1).padStart(2, '0'), {
         x: left,
@@ -1160,14 +1179,7 @@ function composeTimeline(p: LayoutPalette, content: SlideLayoutContent): SlideEl
         w: 2.2,
         h: 3.9,
       },
-      textEl(`item-${index + 1}`, step, {
-        x: left + 1,
-        y: 50,
-        w: slot - 2,
-        h: 30,
-      }, {
-        variant: 'body', fontSize: stepSize, textColor: p.fg, align: 'center',
-      }),
+      label,
     ]
   })
   return compact([
@@ -1211,6 +1223,13 @@ function composeCycle(p: LayoutPalette, content: SlideLayoutContent): SlideEleme
       }, {
         variant: 'body', fontSize: count <= 4 ? 1.6 : 1.45, fontWeight: 600, textColor: p.onAccent,
         align: 'center', valign: 'middle',
+      }),
+      // Số thứ tự trên vành node: không có mũi tên nên người xem cần biết bắt đầu từ đâu.
+      { ...shapeEl(`node-${index + 1}-badge`, { x: cx - nodeW / 2 - 0.6, y: cy - nodeH / 2 - 1, w: 4, h: 7.1 }, p.background, 'ellipse') },
+      textEl(`node-${index + 1}-index`, String(index + 1), {
+        x: cx - nodeW / 2 - 0.6, y: cy - nodeH / 2 - 1, w: 4, h: 7.1,
+      }, {
+        variant: 'body', fontSize: 1.6, fontWeight: 700, textColor: p.ink, align: 'center', valign: 'middle',
       }),
     ]
   })
@@ -1316,13 +1335,18 @@ function composeExample(p: LayoutPalette, content: SlideLayoutContent): SlideEle
     }),
     ...steps.flatMap((step, index) => {
       const y = stepsTop + index * rowH
+      const tag = rowH >= 12 ? numberTag(`step-${index + 1}-badge`, index + 1, p.background, 43.5, y + rowH / 2, 3.2) : null
       return [
-        shapeEl(`step-${index + 1}-badge`, { x: 43, y: y + (rowH - badgeH) / 2, w: badgeW, h: badgeH }, p.accent, 'ellipse'),
-        textEl(`step-${index + 1}-index`, String(index + 1), {
-          x: 43, y: y + (rowH - badgeH) / 2, w: badgeW, h: badgeH,
-        }, {
-          variant: 'body', fontSize: 1.9, fontWeight: 700, textColor: p.onAccent, align: 'center', valign: 'middle',
-        }),
+        ...(tag
+          ? [tag]
+          : [
+              shapeEl(`step-${index + 1}-badge`, { x: 43, y: y + (rowH - badgeH) / 2, w: badgeW, h: badgeH }, p.accent, 'ellipse'),
+              textEl(`step-${index + 1}-index`, String(index + 1), {
+                x: 43, y: y + (rowH - badgeH) / 2, w: badgeW, h: badgeH,
+              }, {
+                variant: 'body', fontSize: 1.9, fontWeight: 700, textColor: p.onAccent, align: 'center', valign: 'middle',
+              }),
+            ]),
         textEl(`item-${index + 1}`, step, { x: 49, y, w: 43, h: rowH }, {
           variant: 'body', fontSize: 2.2, textColor: p.fg, valign: 'middle',
         }),
