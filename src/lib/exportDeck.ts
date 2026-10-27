@@ -5,6 +5,7 @@
  * bundle chính. Toạ độ của deck là % (0–100) nên truyền thẳng dạng `"12%"`
  * — PptxGenJS hiểu % theo kích thước slide 16:9.
  */
+import { mathToPlain } from './slideMath'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { Deck } from '@/store/docs'
@@ -53,7 +54,7 @@ export async function exportDeckPptx(deck: Deck): Promise<void> {
       }
       const rotate = el.rotation ?? 0
       if (el.type === 'text') {
-        slide.addText(el.text ?? '', {
+        slide.addText(mathToPlain(el.text ?? ''), {
           ...box,
           rotate,
           fontSize: pt(el.fontSize ?? (el.variant === 'body' ? 2.4 : 3.6)),
@@ -95,7 +96,7 @@ export async function exportDeckPptx(deck: Deck): Promise<void> {
         slide.addTable(
           el.rows.map((row, ri) =>
             row.map((cell) => ({
-              text: cell,
+              text: mathToPlain(cell),
               options: {
                 fill: {
                   color: hex(ri === 0 ? deck.theme.accent : ri % 2 === 0 ? bodyBg : deck.theme.bg),

@@ -43,6 +43,10 @@ export interface AiSlidePayload {
   question?: string
   options?: string[]
   answer?: string | number
+  /** đề bài / kết luận của layout example, giải thích đáp án của quiz */
+  problem?: string
+  conclusion?: string
+  explanation?: string
   /** ghi chú trình bày cho slide */
   notes?: string[]
   /** mô tả ngắn gọn nội dung deck */
@@ -107,7 +111,10 @@ export function repairJson(raw: string): string | null {
   let inString = false
   let escaped = false
   const stack: string[] = []
-  for (const ch of raw) {
+  // `\cdot`, `\(`… không phải escape JSON hợp lệ: nhân đôi gạch chéo để giữ LaTeX.
+  // (`\frac`, `\times`… lại là escape hợp lệ — xử lý ở `fixMathEscapes`.)
+  const src = raw.replace(/\\(["\\/bfnrt]|u[0-9a-fA-F]{4})|\\/g, (m, ok?: string) => (ok ? m : '\\\\'))
+  for (const ch of src) {
     if (inString) {
       if (escaped) {
         escaped = false

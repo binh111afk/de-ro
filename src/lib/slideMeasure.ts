@@ -16,6 +16,11 @@
  * vẫn chặn tràn, nên không cần đo DOM.
  */
 
+import { mathToPlain, tallMathCount } from './slideMath'
+
+/** Phần cao thêm (tính theo số dòng) của mỗi dòng chứa phân số/căn. */
+const TALL_MATH_EXTRA = 0.6
+
 /**
  * Bề rộng ký tự trung bình, tính theo em. 0,52 thay vì 0,5 vì font sans tiếng
  * Việt (Be Vietnam Pro) có dấu và nhiều nét ngang: đo ở 0,5 thì chữ vừa khít
@@ -150,6 +155,9 @@ export function textBoxHeight(
   opts: TextStyleOpts = {},
 ): number {
   if (!text.trim()) return 0
+  // Công thức `$...$` đo theo chữ Unicode tương đương, không theo mã LaTeX dài hơn nhiều.
+  const tall = tallMathCount(text)
+  text = mathToPlain(text)
   // Padding ngang 1% mỗi bên ăn vào bề rộng khả dụng; bỏ qua bước này thì
   // ước lượng lạc quan đúng ở biên (chữ vừa khít một dòng trên giấy nhưng
   // xuống dòng thật trong DOM → tràn 2px).
@@ -165,7 +173,9 @@ export function textBoxHeight(
       .reduce((total, line) => total + Math.max(1, Math.ceil(line.length / charsPerLine)), 0)
   }
   const linePct = fontCqw * lineHeight * (16 / 9)
-  return Math.round((lines * linePct + TEXT_PADDING_PCT) * 10) / 10
+  // Dòng có phân số/căn cao hơn dòng chữ thường (~1,6×): cộng phần phình thêm.
+  const extraLines = Math.min(lines, tall) * TALL_MATH_EXTRA
+  return Math.round(((lines + extraLines) * linePct + TEXT_PADDING_PCT) * 10) / 10
 }
 
 export interface FitFontOptions {

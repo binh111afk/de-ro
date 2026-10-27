@@ -73,6 +73,9 @@ const rich = {
   question: 'Chọn đáp án đúng?',
   options: ['A', 'B'],
   answer: 0,
+  problem: 'Đề bài ví dụ',
+  conclusion: 'Kết luận ví dụ',
+  explanation: 'Vì A đúng',
 }
 for (const layout of SLIDE_LAYOUTS) {
   const check = checkSlide(rich, layout.id)

@@ -2194,6 +2194,36 @@ Sau audit "AI sinh slide vỡ layout": gốc là tọa độ cố định + đo 
   mở bài, quiz có đáp án, chart); dùng kho 112 đồ hoạ cho cards/stats (hiện chỉ
   title/bullets/image-left/right); mở rộng kho minh hoạ cho tin, ngoại ngữ, địa.
 
+### 3.54. Giai đoạn 2 — công thức KaTeX, ví dụ mẫu, mở bài, quiz có đáp án (27/10/2026)
+
+- **Công thức `$...$` trong chữ slide** (`lib/slideMath.ts`, thuần chuỗi, test được
+  ở Node): `hasMath`, `latexToPlain`/`mathToPlain` (LaTeX → Unicode gần đúng),
+  `fixMathEscapes`. Vẽ bằng `renderMath` (KaTeX + `mhchem` cho `\ce{...}`):
+  thumbnail/trình chiếu qua `FitText html=...`, editor hiện công thức khi không gõ
+  và nhấp đúp để sửa mã (`AutoFitText`). Đo chữ (`textBoxHeight`) và ngân sách
+  ký tự tính theo chữ Unicode tương đương, xuất PPTX dùng `mathToPlain` (công
+  thức thành chữ Unicode, **không** thành ảnh — giới hạn đã biết).
+- **JSON và gạch chéo:** `JSON.parse` nuốt `\frac`→form-feed, `\times`→tab…;
+  `fixMathEscapes` khôi phục trong đoạn `$...$` (sanitize), `repairJson` nhân đôi
+  gạch chéo không hợp lệ (`\cdot`, `\(`); prompt dặn model viết `\\frac`.
+- **Layout mới (tổng 21):** `example` (đề bài trái, 2–4 bước đánh số phải, thanh
+  kết luận; fields `problem/steps/conclusion`), `hook` (bong bóng thoại + 2–3
+  pill gợi ý, đuôi lật `flipY`); `quiz` có thanh "Đáp án: C — giải thích"
+  (`explanation`, id `answer`), `contentFromSlide` đọc ngược đáp án thành chỉ số.
+- Gói môn tham chiếu `hook`/`example` trong cấu trúc + layout ưu tiên; gói Toán/
+  KHTN dặn dùng LaTeX cho phân số/phương trình hoá học.
+- Test: `test:slide-math` mới, test layout round-trip example/hook/quiz; lint
+  630 slide, 0 error (warn còn lại: cycle/pill hook ở nội dung stress).
+- **Sửa tương phản đồ hoạ 112 icon:** icon có nét `#22333B` + mảng pastel; đổi nét
+  thành trắng/sáng trên panel accent hoặc nền tối làm nét lẫn vào pastel (quả cân
+  trắng trên nền xanh đậm). Giờ `graphicPlate()` đặt đồ hoạ trên **tấm nền sáng cố
+  định** (`GRAPHIC_PLATE #f7f9fc`) với đúng nét gốc — bìa, bullets, image-left/right,
+  hook; đã kiểm chứng trên cả 6 theme gồm nền tối và theme Đỏ poster.
+- **Lỗi KaTeX trong hộp canh giữa:** hộp chữ `valign: middle` là flex-column nên
+  "Vậy" và `.katex` thành hai hàng riêng → bọc HTML công thức trong một khối con.
+  Phân số dùng `\tfrac` khi vẽ slide; `textBoxHeight` cộng 0,6 dòng cho mỗi công
+  thức cao (`tallMathCount`). Ô bảng có `$...$` cũng vẽ KaTeX (`MathCell`).
+
 ## 4. Lỗi đã gặp và cách sửa
 
 ### 4.1. TipTap v3 — `content` phải là mảng

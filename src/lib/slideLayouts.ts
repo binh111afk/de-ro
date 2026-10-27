@@ -9,7 +9,7 @@
 import type { DeckTheme, Slide, SlideElement, SlideTone } from '@/store/docs'
 import { textBoxHeight } from './slideText'
 import { fitFontSize } from './slideMeasure'
-import { isGraphicId } from './slideGraphics'
+import { GRAPHIC_INK, isGraphicId } from './slideGraphics'
 import { pickSlideAsset, type SlideAssetId } from './slideAssets'
 import { contrastRatio, mixHex, normalizeTheme, readableTextOn } from './slideTheme'
 
@@ -33,6 +33,8 @@ export type SlideLayoutId =
   | 'timeline'
   | 'cycle'
   | 'quiz'
+  | 'example'
+  | 'hook'
 
 export interface SlideStat {
   value?: string
@@ -69,6 +71,12 @@ export interface SlideLayoutContent {
   options?: string[]
   /** chỉ số (0-based), chữ cái A–D, hoặc khớp nguyên văn một phương án */
   answer?: string | number
+  /** đề bài của layout example */
+  problem?: string
+  /** thanh kết luận của layout example */
+  conclusion?: string
+  /** giải thích đáp án của layout quiz */
+  explanation?: string
 }
 
 export interface SlideLayoutDef {
@@ -190,8 +198,23 @@ export const SLIDE_LAYOUTS: SlideLayoutDef[] = [
   {
     id: 'quiz',
     name: 'Câu hỏi',
-    description: 'Câu hỏi + 2–4 phương án, đáp án đúng được tô màu. Nền dịu.',
-    fields: ['kicker', 'question', 'options', 'answer'],
+    description: 'Câu hỏi + 2–4 phương án, đáp án đúng được tô màu, kèm thanh "Đáp án" có giải thích. Nền dịu.',
+    fields: ['kicker', 'question', 'options', 'answer', 'explanation'],
+  },
+  {
+    id: 'example',
+    name: 'Ví dụ mẫu',
+    description:
+      'Bài mẫu có lời giải: đề bài bên trái, 2–4 bước giải đánh số bên phải, thanh kết luận ở dưới. ' +
+      'Dùng cho toán/lý/hoá/tin (đề → các bước → kết quả) hoặc phân tích đoạn trích, sự kiện.',
+    fields: ['title', 'problem', 'steps', 'conclusion'],
+  },
+  {
+    id: 'hook',
+    name: 'Mở bài',
+    description:
+      'Mở bài gợi mở: câu hỏi/tình huống trong bong bóng thoại + 2–3 gợi ý ngắn bên dưới. Nền dịu.',
+    fields: ['kicker', 'title', 'body', 'items'],
   },
 ]
 
@@ -211,7 +234,7 @@ export function isTone(value: unknown): value is SlideTone {
 export function defaultTone(layoutId: string): SlideTone {
   const id: SlideLayoutId = isLayoutId(layoutId) ? layoutId : 'bullets'
   if (id === 'title' || id === 'section' || id === 'statement') return 'accent'
-  if (id === 'quote' || id === 'quiz' || id === 'closing' || id === 'agenda') return 'soft'
+  if (id === 'quote' || id === 'quiz' || id === 'closing' || id === 'agenda' || id === 'hook') return 'soft'
   return 'theme'
 }
 
@@ -368,6 +391,28 @@ function graphicEl(id: string, graphicId: string, box: Box, ink: string): SlideE
   return { id, type: 'graphic', graphicId, textColor: ink, ...box }
 }
 
+/** Tấm nền sáng cố định cho đồ hoạ thiết kế sẵn (nét tối + mảng pastel). */
+const GRAPHIC_PLATE = '#f7f9fc'
+
+/**
+ * Đồ hoạ thiết kế sẵn có nét `#22333B` và mảng pastel — đổi nét thành trắng trên
+ * panel màu nhấn (hoặc nét sáng trên nền tối) làm pastel và nét lẫn vào nhau.
+ * Đặt trên một tấm nền sáng cố định với đúng nét gốc: tương phản luôn tốt, mọi theme.
+ */
+function graphicPlate(id: string, graphicId: string, box: Box, p: LayoutPalette): SlideElement[] {
+  const inset = 1.4
+  const insetY = inset * (16 / 9)
+  return [
+    { ...shapeEl(`${id}-plate`, box, GRAPHIC_PLATE, 'round'), radius: Math.min(p.radius, 18) },
+    graphicEl(id, graphicId, {
+      x: box.x + inset,
+      y: box.y + insetY,
+      w: box.w - inset * 2,
+      h: box.h - insetY * 2,
+    }, GRAPHIC_INK),
+  ]
+}
+
 /** Đồ hoạ AI chọn, chỉ nhận id có trong catalog. */
 function chosenGraphic(content: SlideLayoutContent): string | undefined {
   return content.graphic && isGraphicId(content.graphic) ? content.graphic : undefined
@@ -443,9 +488,9 @@ function composeTitle(p: LayoutPalette, content: SlideLayoutContent): SlideEleme
   return compact([
     // Bìa cần một neo thị giác có chủ đích: panel màu bên phải thay cho chấm trang trí rời.
     shapeEl('hero-panel', { x: 70, y: 14, w: 23, h: 72 }, p.accent, 'round'),
-    graphic
-      ? graphicEl('hero-graphic', graphic, { x: 72.5, y: 25, w: 18, h: 28 }, p.onAccent)
-      : iconEl('hero-icon', pickSlideAsset(`${content.title ?? ''} ${content.kicker ?? ''}`) ?? 'idea', { x: 74.5, y: 30, w: 14, h: 20 }, p.onAccent),
+    ...(graphic
+      ? graphicPlate('hero-graphic', graphic, { x: 72.5, y: 24, w: 18, h: 32 }, p)
+      : [iconEl('hero-icon', pickSlideAsset(`${content.title ?? ''} ${content.kicker ?? ''}`) ?? 'idea', { x: 74.5, y: 30, w: 14, h: 20 }, p.onAccent)]),
     shapeEl('hero-line', { x: 76, y: 57, w: 11, h: 0.9 }, p.onAccent),
     p.tone === 'accent'
       ? shapeEl('accent-band', { x: 0, y: 0, w: 100, h: 1.4 }, p.accent)
@@ -528,10 +573,12 @@ function composeBullets(p: LayoutPalette, content: SlideLayoutContent): SlideEle
     shapeEl('content-panel', { x: 7, y: top - 3, w: 66, h: boxH + 6 }, p.panel, 'round'),
     shapeEl('accent-rail', { x: 5.6, y: top, w: 0.9, h: boxH }, p.accent),
     // Neo thị giác semantic bên phải: graph/icon theo chủ đề thay cho khối số vô nghĩa.
-    shapeEl('bullet-anchor', { x: 76, y: top + 2, w: 15, h: 21 }, p.accent, 'round'),
-    graphic
-      ? graphicEl('bullet-graphic', graphic, { x: 76.8, y: top + 3.5, w: 13.4, h: 18 }, p.onAccent)
-      : iconEl('bullet-anchor-icon', pickSlideAsset(content.title ?? text) ?? 'idea', { x: 77, y: top + 3.5, w: 13, h: 18 }, p.onAccent),
+    ...(graphic
+      ? graphicPlate('bullet-graphic', graphic, { x: 76, y: top + 2, w: 15, h: 21 }, p)
+      : [
+          shapeEl('bullet-anchor', { x: 76, y: top + 2, w: 15, h: 21 }, p.accent, 'round'),
+          iconEl('bullet-anchor-icon', pickSlideAsset(content.title ?? text) ?? 'idea', { x: 77, y: top + 3.5, w: 13, h: 18 }, p.onAccent),
+        ]),
     textEl('kicker', content.kicker, { x: 8, y: 9, w: 84, h: 6 }, {
       variant: 'body', fontSize: 1.7, fontWeight: 600, textColor: p.ink,
     }),
@@ -874,12 +921,12 @@ function composeImageSide(
     ...(graphic && !content.image
       ? [
           // AI chọn đồ hoạ thay ảnh: nền thẻ + hình vuông căn giữa, không gọi vẽ ảnh.
-          shapeEl('image-panel', imageBox, p.panel, 'round'),
+          shapeEl('image-panel', imageBox, GRAPHIC_PLATE, 'round'),
           graphicEl(
             'image-1',
             graphic,
             { x: imageBox.x + 3, y: imageBox.y + 14, w: imageBox.w - 6, h: imageBox.w - 6 },
-            p.fg,
+            GRAPHIC_INK,
           ),
         ]
       : [
@@ -1118,21 +1165,28 @@ function composeQuiz(p: LayoutPalette, content: SlideLayoutContent): SlideElemen
     const col = twoColumns ? index % 2 : 0
     const row = twoColumns ? Math.floor(index / 2) : index
     const correct = index === answer
+    const optionW = twoColumns ? 41 : 84
+    const optionText = `${String.fromCharCode(65 + index)}. ${option}`
     return {
       id: `option-${index + 1}`,
       type: 'text',
       x: twoColumns ? (col === 0 ? 8 : 51) : 8,
       y: 42 + row * 17,
-      w: twoColumns ? 41 : 84,
+      w: optionW,
       h: 14,
-      text: `${String.fromCharCode(65 + index)}. ${option}`,
+      text: optionText,
       variant: 'body',
-      fontSize: 2.3,
+      // ô có nền đệm 3% hai bên (+4cqw so với hộp thường) nên đo trên hộp thu hẹp
+      fontSize: fitFontSize({ text: optionText, widthPct: optionW - 4, heightPct: 12, baseCqw: 2.3, lineHeight: 1.25, weight: 500 }),
       textColor: correct ? p.onAccent : p.fg,
       fill: correct ? p.accent : p.panel,
       fixedHeight: true,
     }
   })
+  // Thanh đáp án + giải thích: giáo viên chiếu là thấy lời giải như deck mẫu.
+  const explanation = content.explanation?.trim()
+  const answerText =
+    answer >= 0 ? `Đáp án: ${String.fromCharCode(65 + answer)}${explanation ? ` — ${explanation}` : ''}` : ''
   return compact([
     textEl('kicker', content.kicker, { x: 8, y: 10, w: 84, h: 6 }, {
       variant: 'body', fontSize: 1.7, fontWeight: 600, textColor: p.ink,
@@ -1141,6 +1195,96 @@ function composeQuiz(p: LayoutPalette, content: SlideLayoutContent): SlideElemen
       variant: 'title', fontSize: 3.2, fontWeight: 700, textColor: p.fg,
     }),
     ...optionEls,
+    answerText ? shapeEl('answer-bar', { x: 8, y: 77, w: 84, h: 14 }, p.surface, 'round') : null,
+    answerText ? shapeEl('answer-stripe', { x: 8, y: 77, w: 0.8, h: 14 }, p.accent) : null,
+    textEl('answer', answerText, { x: 10.5, y: 77, w: 80, h: 14 }, {
+      variant: 'body', fontSize: 2.1, fontWeight: 600, textColor: p.fg, valign: 'middle',
+    }),
+  ])
+}
+
+/** Ví dụ mẫu: đề bài trái, các bước đánh số phải, thanh kết luận dưới. */
+function composeExample(p: LayoutPalette, content: SlideLayoutContent): SlideElement[] {
+  const steps = cleanList(content.steps).slice(0, 4)
+  const problem = content.problem?.trim() || content.body?.trim()
+  if (!problem || steps.length < 2) return []
+  const conclusion = content.conclusion?.trim()
+  const header = titleEls(p, content.title, HEADER_BOX, HEADER_SIZES, true)
+  const top = Math.max(26, bottomOf(header) + 2.5)
+  const barH = conclusion ? 13 : 0
+  const barY = 94 - barH
+  const bottom = conclusion ? barY - 3 : 94
+  const areaH = bottom - top
+  const leftW = 32
+  const rowH = Math.min(16, areaH / steps.length)
+  const stepsTop = top + (areaH - rowH * steps.length) / 2
+  const badgeW = 4.2
+  const badgeH = (badgeW * 16) / 9
+  return compact([
+    ...header,
+    shapeEl('problem-panel', { x: 8, y: top, w: leftW, h: areaH }, p.panel, 'round'),
+    textEl('problem-label', 'ĐỀ BÀI', { x: 10, y: top + 2, w: leftW - 4, h: 6 }, {
+      variant: 'body', fontSize: 1.7, fontWeight: 700, textColor: p.ink, letterSpacing: 0.12,
+    }),
+    textEl('problem', problem, { x: 10, y: top + 9, w: leftW - 4, h: areaH - 11 }, {
+      variant: 'body', fontSize: 2.5, textColor: p.fg,
+    }),
+    ...steps.flatMap((step, index) => {
+      const y = stepsTop + index * rowH
+      return [
+        shapeEl(`step-${index + 1}-badge`, { x: 43, y: y + (rowH - badgeH) / 2, w: badgeW, h: badgeH }, p.accent, 'ellipse'),
+        textEl(`step-${index + 1}-index`, String(index + 1), {
+          x: 43, y: y + (rowH - badgeH) / 2, w: badgeW, h: badgeH,
+        }, {
+          variant: 'body', fontSize: 1.9, fontWeight: 700, textColor: p.onAccent, align: 'center', valign: 'middle',
+        }),
+        textEl(`item-${index + 1}`, step, { x: 49, y, w: 43, h: rowH }, {
+          variant: 'body', fontSize: 2.2, textColor: p.fg, valign: 'middle',
+        }),
+      ]
+    }),
+    conclusion ? shapeEl('conclusion-bar', { x: 8, y: barY, w: 84, h: barH }, p.accent, 'round') : null,
+    textEl('conclusion', conclusion, { x: 10, y: barY, w: 80, h: barH }, {
+      variant: 'body', fontSize: 2.4, fontWeight: 700, textColor: p.onAccent, align: 'center', valign: 'middle',
+    }),
+  ])
+}
+
+/** Mở bài: bong bóng thoại chứa câu hỏi/tình huống + gợi ý ngắn bên dưới. */
+function composeHook(p: LayoutPalette, content: SlideLayoutContent): SlideElement[] {
+  const body = content.body?.trim() || cleanList(content.bullets)[0]
+  if (!body) return []
+  const pills = cleanList(content.items).slice(0, 3)
+  const graphic = chosenGraphic(content)
+  const bubbleH = pills.length ? 36 : 48
+  const pillsX = 30
+  const pillGap = 2.5
+  const pillW = (92 - pillsX - pillGap * (pills.length - 1)) / Math.max(pills.length, 1)
+  return compact([
+    textEl('kicker', content.kicker, { x: 8, y: 9, w: 84, h: 6 }, {
+      variant: 'body', fontSize: 1.7, fontWeight: 600, textColor: p.ink,
+    }),
+    ...titleEls(p, content.title, { x: 8, y: 14, w: 84, h: 12 }, [3.8, 3.4, 3.1, 2.8], false),
+    shapeEl('bubble', { x: 8, y: 27, w: 84, h: bubbleH }, p.panel, 'round'),
+    pills.length
+      ? { ...shapeEl('bubble-tail', { x: 22, y: 27 + bubbleH - 0.2, w: 5, h: 8 }, p.panel, 'triangle'), flipY: true }
+      : null,
+    textEl('body', body, { x: 12, y: 29, w: 76, h: bubbleH - 4 }, {
+      variant: 'title', fontSize: 3.1, fontWeight: 600, textColor: p.fg, align: 'center', valign: 'middle',
+    }),
+    ...(pills.length && graphic ? graphicPlate('hook-graphic', graphic, { x: 8, y: 68, w: 16, h: 24 }, p) : []),
+    pills.length && !graphic
+      ? iconEl('hook-icon', pickSlideAsset(`${content.title ?? ''} ${body}`) ?? 'idea', { x: 9, y: 69, w: 12, h: 21 }, p.accent)
+      : null,
+    ...pills.flatMap((pill, index) => {
+      const x = pillsX + index * (pillW + pillGap)
+      return [
+        shapeEl(`pill-${index + 1}`, { x, y: 73, w: pillW, h: 15 }, p.accent, 'round'),
+        textEl(`card-${index + 1}`, pill, { x: x + 1, y: 73, w: pillW - 2, h: 15 }, {
+          variant: 'body', fontSize: 1.9, fontWeight: 600, textColor: p.onAccent, align: 'center', valign: 'middle',
+        }),
+      ]
+    }),
   ])
 }
 
@@ -1173,6 +1317,10 @@ export function composeLayout(
       return composeComparison(palette, content)
     case 'quote':
       return composeQuote(palette, content)
+    case 'example':
+      return composeExample(palette, content)
+    case 'hook':
+      return composeHook(palette, content)
     case 'closing':
       return composeClosing(palette, content)
     case 'agenda':
@@ -1206,6 +1354,7 @@ export function composeLayout(
 const RESERVED = new Set([
   'title', 'kicker', 'subtitle', 'quote', 'author', 'mark',
   'bullets', 'body', 'body-2', 'question', 'left-title', 'right-title', 'bullet-anchor-mark',
+  'problem', 'problem-label', 'conclusion', 'answer',
 ])
 const NUMBERED = /^(card|option|stat|step|item|node)-\d+(-value|-label|-index|-heading)?$/
 const isRoleId = (id: string): boolean => RESERVED.has(id) || NUMBERED.test(id)
@@ -1248,8 +1397,12 @@ export function contentFromSlide(slide: Slide): SlideLayoutContent {
     (el) => el.type === 'graphic' && isGraphicId(el.graphicId),
   )
 
+  const answerMatch = byId('answer')?.match(/^Đáp án:\s*([A-D])(?:\s*[—–-]\s*([\s\S]*))?$/i)
   return {
     title: byId('title') ?? titleEl?.text,
+    problem: byId('problem'),
+    conclusion: byId('conclusion'),
+    explanation: answerMatch?.[2]?.trim() || undefined,
     kicker: byId('kicker'),
     subtitle: byId('subtitle'),
     body: byId('body'),
@@ -1282,7 +1435,7 @@ export function contentFromSlide(slide: Slide): SlideLayoutContent {
     options: optionEls.length
       ? optionEls.map((el) => el.text.replace(/^[A-D]\.\s*/i, ''))
       : undefined,
-    answer: uniqueFill ? fills.indexOf(uniqueFill) : undefined,
+    answer: answerMatch ? answerMatch[1].toUpperCase().charCodeAt(0) - 65 : uniqueFill ? fills.indexOf(uniqueFill) : undefined,
   }
 }
 
@@ -1362,6 +1515,23 @@ const DEMO: Record<SlideLayoutId, SlideLayoutContent> = {
     question: 'Phân số nào dưới đây bằng 1/2?',
     options: ['2/4', '2/3', '3/4', '1/3'],
     answer: 0,
+    explanation: 'Rút gọn 2/4 chia cả tử và mẫu cho 2 được 1/2.',
+  },
+  example: {
+    title: 'Ví dụ mẫu',
+    problem: 'Tìm ƯCLN(24, 36) bằng cách phân tích ra thừa số nguyên tố.',
+    steps: [
+      'Phân tích: 24 = 2³ · 3 và 36 = 2² · 3²',
+      'Lấy thừa số chung với số mũ nhỏ nhất: 2² và 3',
+      'Nhân lại: 2² · 3 = 12',
+    ],
+    conclusion: 'Kết quả: ƯCLN(24, 36) = 12',
+  },
+  hook: {
+    kicker: 'KHỞI ĐỘNG',
+    title: 'Thử thách mở đầu',
+    body: 'Có 18 quyển vở và 24 bút, chia đều vào các túi quà. Chia được nhiều nhất mấy túi?',
+    items: ['Chia đều 18 và 24', 'Số túi là ước chung?', 'Nhiều nhất mấy túi?'],
   },
 }
 
@@ -1460,7 +1630,20 @@ export function withPlaceholders(
       if (!list(out.options)) {
         out.options = demo.options
         out.answer = demo.answer
+        out.explanation = out.explanation || demo.explanation
       }
+      break
+    case 'example':
+      if (!has(out.title)) out.title = demo.title
+      if (!has(out.problem) && !has(out.body)) out.problem = demo.problem
+      if (!list(out.steps)) out.steps = demo.steps
+      if (!has(out.conclusion)) out.conclusion = demo.conclusion
+      break
+    case 'hook':
+      if (!has(out.kicker)) out.kicker = demo.kicker
+      if (!has(out.title)) out.title = demo.title
+      if (!has(out.body) && !list(out.bullets)) out.body = demo.body
+      if (!list(out.items)) out.items = demo.items
       break
   }
   return out

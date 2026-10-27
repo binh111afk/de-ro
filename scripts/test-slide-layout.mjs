@@ -1,5 +1,5 @@
 /**
- * Test layout engine 19 bố cục: catalog/geometry, cards, quote/closing, fallback,
+ * Test layout engine 21 bố cục: catalog/geometry, cards, quote/closing, fallback,
  * đọc nội dung slide, bảng 6×8, timeline/cycle 3–6 bước, quiz 2–4 đáp án, tone,
  * 5 bố cục art-directed (statement/comparison/agenda/image-full/stat-image).
  * Chạy: npm run test:slide-layout
@@ -46,8 +46,8 @@ const rich = {
 }
 
 /* 1. Catalog đủ 19 layout; mọi phần tử nằm trong khung 0–100, id không trùng. */
-assert.equal(SLIDE_LAYOUTS.length, 19)
-assert.equal(new Set(SLIDE_LAYOUTS.map((l) => l.id)).size, 19, 'id layout không trùng')
+assert.equal(SLIDE_LAYOUTS.length, 21)
+assert.equal(new Set(SLIDE_LAYOUTS.map((l) => l.id)).size, 21, 'id layout không trùng')
 for (const layout of SLIDE_LAYOUTS) {
   const elements = composeLayout(theme, layout.id, rich)
   assert.ok(elements.length > 0, `${layout.id} phải dựng được phần tử`)
@@ -270,6 +270,53 @@ for (const catalogTheme of DECK_THEMES) {
   }
 }
 
-console.log('✅ layout v3: 19 bố cục, bảng 8×6, timeline/cycle, quiz, tone, art-directed, đọc nội dung + theme')
+/* 11. Ví dụ mẫu, mở bài, quiz có thanh đáp án: dựng được và đọc ngược lại không mất dữ liệu. */
+{
+  const { composeLayout: compose, contentFromSlide: read } = await import('../src/lib/slideLayouts.ts')
+  const fromEls = (layout, content) => {
+    const elements = compose(theme, layout, content)
+    return { elements, content: read({ id: 's', background: '#fff', elements }) }
+  }
+  const example = fromEls('example', {
+    title: 'Ví dụ mẫu',
+    problem: 'Tìm ƯCLN(24, 36).',
+    steps: ['Phân tích 24 và 36', 'Chọn thừa số chung', 'Nhân lại'],
+    conclusion: 'ƯCLN(24, 36) = 12',
+  })
+  assert.ok(example.elements.some((el) => el.id === 'conclusion-bar'), 'có thanh kết luận')
+  assert.deepEqual(example.content.steps, ['Phân tích 24 và 36', 'Chọn thừa số chung', 'Nhân lại'])
+  assert.equal(example.content.problem, 'Tìm ƯCLN(24, 36).')
+  assert.equal(example.content.conclusion, 'ƯCLN(24, 36) = 12')
+  assert.deepEqual(compose(theme, 'example', { title: 'Thiếu', steps: ['a', 'b'] }), [], 'thiếu đề bài → không dựng')
+
+  const hook = fromEls('hook', {
+    kicker: 'KHỞI ĐỘNG',
+    title: 'Thử thách',
+    body: 'Chia 18 vở và 24 bút vào các túi quà?',
+    items: ['Chia đều', 'Ước chung', 'Nhiều nhất'],
+  })
+  assert.ok(hook.elements.some((el) => el.id === 'bubble-tail' && el.flipY), 'đuôi bong bóng lật xuống')
+  assert.equal(hook.content.body, 'Chia 18 vở và 24 bút vào các túi quà?')
+  assert.deepEqual(hook.content.items, ['Chia đều', 'Ước chung', 'Nhiều nhất'])
+  assert.equal(compose(theme, 'hook', { body: 'Chỉ có câu hỏi?' }).some((el) => el.id.startsWith('pill-')), false, 'không gợi ý → không pill')
+
+  const quiz = fromEls('quiz', {
+    question: '1/2 bằng?',
+    options: ['2/4', '2/3', '3/4'],
+    answer: 'C',
+    explanation: 'Vì 3/4 không bằng 1/2 nhưng đề đã cho đáp án này.',
+  })
+  const bar = quiz.elements.find((el) => el.id === 'answer')
+  assert.ok(bar?.text.startsWith('Đáp án: C — '), 'thanh đáp án nêu chữ cái + giải thích')
+  assert.equal(quiz.content.answer, 2, 'đọc lại đáp án thành chỉ số')
+  assert.equal(quiz.content.explanation, 'Vì 3/4 không bằng 1/2 nhưng đề đã cho đáp án này.')
+  assert.equal(
+    compose(theme, 'quiz', { question: 'Q?', options: ['a', 'b'] }).some((el) => el.id === 'answer'),
+    false,
+    'chưa biết đáp án → không có thanh đáp án',
+  )
+}
+
+console.log('✅ layout v3: 21 bố cục, bảng 8×6, timeline/cycle, quiz, tone, art-directed, đọc nội dung + theme')
 console.log('✅ tương phản: panel ≥1,1:1 và kicker ≥4,5:1 trên mọi theme × tông')
 console.log('\n10/10 pass, 0 fail')

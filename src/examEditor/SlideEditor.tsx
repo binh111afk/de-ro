@@ -18,6 +18,38 @@ import {
 } from 'lucide-react'
 import { SLIDE_ASSETS, isSlideAssetId } from '@/lib/slideAssets'
 import { graphicMarkup, isGraphicId } from '@/lib/slideGraphics'
+import { hasMath } from '@/lib/slideMath'
+import { renderMath } from '@/lib/math'
+
+/**
+ * Vẽ công thức trong slide. `\frac` → `\tfrac` (phân số cỡ chữ thường): phân số
+ * cỡ display cao ~2,2em làm dòng chữ phình ra và bị `FitText` co nhỏ.
+ */
+const slideMathHtml = (text: string): string => renderMath(text.replace(/\\(d?)frac/g, '\\tfrac'))
+
+/** Ô bảng có công thức: hiện KaTeX khi không gõ, nhấp đúp để sửa mã. */
+function MathCell({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+  const [editing, setEditing] = useState(false)
+  if (hasMath(value) && !editing) {
+    return (
+      <span
+        title="Nhấp đúp để sửa công thức"
+        onDoubleClick={() => setEditing(true)}
+        dangerouslySetInnerHTML={{ __html: slideMathHtml(value) }}
+      />
+    )
+  }
+  return (
+    <input
+      autoFocus={editing}
+      onBlur={() => setEditing(false)}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="w-full bg-transparent outline-none"
+      style={{ color: 'inherit' }}
+    />
+  )
+}
 import { EmptyState } from '@/components/ui'
 import { cn } from '@/lib/cn'
 import type { Deck, DeckTheme, Slide, SlideElement, SlideTone } from '@/store/docs'
@@ -815,10 +847,13 @@ function refitOnFonts(fit: () => void): () => void {
 
 function FitText({
   children,
+  html,
   baseSize,
   style,
 }: {
   children: React.ReactNode
+  /** HTML đã vẽ công thức (KaTeX) — có thì dùng thay cho `children` */
+  html?: string
   /** cỡ chữ tối đa, tính bằng cqw */
   baseSize: number
   style: React.CSSProperties
@@ -856,18 +891,22 @@ function FitText({
       stopFonts()
       ro.disconnect()
     }
-  }, [children, baseSize])
+  }, [children, html, baseSize])
 
-  return (
-    <div
-      ref={ref}
-      style={{
-        ...style,
-        fontSize: `${size}cqw`,
-        whiteSpace: 'pre-wrap',
-        overflow: 'hidden',
-      }}
-    >
+  const box: React.CSSProperties = {
+    ...style,
+    fontSize: `${size}cqw`,
+    whiteSpace: 'pre-wrap',
+    overflow: 'hidden',
+  }
+  // Công thức nằm trong MỘT khối con: hộp chữ canh giữa dùng flex-column, nếu để
+  // chữ và `.katex` làm con trực tiếp thì mỗi phần thành một hàng riêng ("Vậy" / phân số).
+  return html !== undefined ? (
+    <div ref={ref} style={box}>
+      <div dangerouslySetInnerHTML={{ __html: html }} />
+    </div>
+  ) : (
+    <div ref={ref} style={box}>
       {children}
     </div>
   )
@@ -906,6 +945,8 @@ function SlideElView({ el, theme }: { el: SlideElement; theme: ResolvedTheme }) 
     const size = el.fontSize ?? (isBody ? 2.4 : 3.6)
     return (
       <FitText
+        // công thức `$...$` vẽ bằng KaTeX (HTML do KaTeX sinh, không phải input thô)
+        html={hasMath(el.text) ? slideMathHtml(el.text ?? '') : undefined}
         style={{
           ...style,
           color: el.textColor ?? theme.fg,
@@ -1047,7 +1088,7 @@ function SlideElView({ el, theme }: { el: SlideElement; theme: ResolvedTheme }) 
                     fontWeight: ri === 0 ? 600 : 400,
                   }}
                 >
-                  {c}
+                  {hasMath(c) ? <span dangerouslySetInnerHTML={{ __html: slideMathHtml(c) }} /> : c}
                 </td>
               ))}
             </tr>
@@ -1221,6 +1262,9 @@ function AutoFitText({
 }) {
   const ref = useRef<HTMLTextAreaElement>(null)
   const [size, setSize] = useState(baseSize)
+  // Công thức hiển thị bằng KaTeX khi không gõ; nhấp đúp để sửa mã LaTeX.
+  const [editing, setEditing] = useState(false)
+  const showMath = hasMath(value) && !editing
 
   useEffect(() => {
     setSize(baseSize)
@@ -1253,11 +1297,41 @@ function AutoFitText({
       stopFonts()
       ro.disconnect()
     }
-  }, [value, baseSize])
+  }, [value, baseSize, showMath])
+
+  if (showMath) {
+    return (
+      <div className="h-full w-full" onDoubleClick={() => setEditing(true)} title="Nhấp đúp để sửa công thức">
+        <FitText
+          html={slideMathHtml(value)}
+          baseSize={baseSize}
+          style={{
+            width: '100%',
+            height: '100%',
+            padding: background ? '1.5% 3%' : '1%',
+            color: color ?? 'inherit',
+            background,
+            borderRadius: background ? '0.6cqw' : undefined,
+            fontFamily: fontFamily ?? 'Be Vietnam Pro, sans-serif',
+            fontWeight: weight,
+            fontStyle,
+            textDecoration,
+            textAlign: align,
+            lineHeight: lineHeight ?? 1.25,
+            letterSpacing: letterSpacing ? `${letterSpacing}em` : undefined,
+          }}
+        >
+          {value}
+        </FitText>
+      </div>
+    )
+  }
 
   return (
     <textarea
       ref={ref}
+      autoFocus={editing}
+      onBlur={() => setEditing(false)}
       value={value}
       onChange={(e) => onChange(e.target.value)}
       className="h-full w-full resize-none overflow-hidden bg-transparent p-[1%] outline-none"
@@ -1584,15 +1658,13 @@ function EditableEl({
                       fontWeight: ri === 0 ? 600 : 400,
                     }}
                   >
-                    <input
+                    <MathCell
                       value={c}
-                      onChange={(e) => {
+                      onChange={(value) => {
                         const rows = (el.rows ?? []).map((row) => [...row])
-                        rows[ri][ci] = e.target.value
+                        rows[ri][ci] = value
                         onChange({ rows })
                       }}
-                      className="w-full bg-transparent outline-none"
-                      style={{ color: 'inherit' }}
                     />
                   </td>
                 ))}

@@ -253,7 +253,7 @@ const SLIDE_SYSTEM =
   '{"title":"...","slides":[{"layout":"bullets","title":"...","bullets":["..."],"notes":["..."]}]} . ' +
   'Mỗi slide chọn "layout" trong: title, section, statement, bullets, cards, two-column, ' +
   'comparison, quote, closing, agenda, table, image-left, image-right, image-full, stats, ' +
-  'stat-image, timeline, cycle, quiz. ' +
+  'stat-image, timeline, cycle, quiz, example, hook. ' +
   'Field theo layout: title/section/closing dùng {title, kicker, subtitle}; statement dùng ' +
   '{kicker, body (một câu lớn), author}; bullets dùng {title, kicker, bullets (2-4 ý ngắn)}; ' +
   'cards dùng {title, items (2-5 thẻ)}; two-column dùng {title, left (2-3 ý), right (2-3 ý)}; ' +
@@ -262,7 +262,9 @@ const SLIDE_SYSTEM =
   'image-left/image-right/image-full dùng {title, bullets (2-4) hoặc body, image (tuỳ chọn)}; ' +
   'stats dùng {title, stats (1-4 mục {value, label})}; stat-image dùng {title, stats (1-2), image}; ' +
   'timeline/cycle dùng {title, steps (3-5 bước)}; quiz dùng ' +
-  '{kicker, question, options (2-4 phương án), answer (chỉ số 0-based hoặc "A")}. ' +
+  '{kicker, question, options (2-4 phương án), answer (chỉ số 0-based hoặc "A"), explanation}; ' +
+  'example dùng {title, problem (đề bài), steps (2-4 bước giải), conclusion}; ' +
+  'hook dùng {kicker, title, body (câu hỏi mở bài), items (2-3 gợi ý ngắn)}. ' +
   '"tone" tuỳ chọn: theme | soft | accent; thiếu thì theo mặc định của layout. "notes" là mảng ' +
   'chuỗi ghi chú trình bày (tuỳ chọn). Công thức toán viết bằng ký tự Unicode (², √, ·, ×, Δ…), ' +
   'không dùng LaTeX. Không thêm trường khác, không bọc markdown.'
@@ -291,6 +293,8 @@ export const SLIDE_PLAN_SYSTEM =
   '(table, stats, stat-image, quiz) khi nội dung thật có dữ liệu.\n' +
   '- Bám cấu trúc bài gợi ý của môn đã chọn (xem MÔN HỌC) nhưng gộp/bỏ bước nếu deck ngắn; ' +
   'ưu tiên layout gợi ý của môn khi nội dung hợp.\n' +
+  '- Bài giảng có ví dụ: dùng "example" cho ví dụ mẫu có lời giải (đề bài → các bước → kết luận) và ' +
+  '"hook" cho mở bài gợi mở (câu hỏi/tình huống) ngay sau slide tiêu đề hoặc nội dung bài.\n' +
   '- Slide đầu dùng "title"; slide cuối dùng "closing" hoặc "quote" nếu phù hợp.\n' +
   '- Ưu tiên layout có bố cục rõ: "agenda" cho tổng quan, "statement" cho một thông điệp lớn, ' +
   '"comparison" khi có hai mặt đối lập, "bullets" chỉ khi thật sự có 2–4 ý ngắn.\n' +

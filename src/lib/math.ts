@@ -1,4 +1,5 @@
 import katex from 'katex'
+import 'katex/contrib/mhchem' // \ce{...} cho phương trình hoá học
 import 'katex/dist/katex.min.css'
 
 /**

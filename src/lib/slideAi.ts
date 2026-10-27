@@ -11,6 +11,7 @@ import type { Deck, Slide, SlideElement, SlideTone } from '@/store/docs'
 import { normalizeTheme, themeById, type ResolvedTheme } from './slideTheme'
 import { stylePackById } from './slideStyles'
 import { subjectRulesBlock } from './slideSubjects'
+import { fixMathEscapes, mathToPlain } from './slideMath'
 import { graphicCatalogText, isGraphicId } from './slideGraphics'
 import {
   composeLayout,
@@ -28,7 +29,7 @@ import {
 
 const clean = (value: unknown, max: number): string | undefined => {
   if (typeof value !== 'string') return undefined
-  const trimmed = value.trim().slice(0, max)
+  const trimmed = fixMathEscapes(value.trim()).slice(0, max)
   return trimmed || undefined
 }
 
@@ -78,6 +79,9 @@ export function sanitizeSlide(raw: unknown, layout: string, tone?: SlideTone): A
   const question = clean(source.question, 300)
   const options = cleanList(source.options, 4, 120)
   const notes = cleanList(source.notes, 6, 300)
+  const problem = clean(source.problem, 240)
+  const conclusion = clean(source.conclusion, 140)
+  const explanation = clean(source.explanation, 240)
 
   const rows = Array.isArray(source.rows)
     ? source.rows
@@ -122,6 +126,9 @@ export function sanitizeSlide(raw: unknown, layout: string, tone?: SlideTone): A
     ...(question ? { question } : {}),
     ...(options ? { options } : {}),
     ...(answer !== undefined ? { answer } : {}),
+    ...(problem ? { problem } : {}),
+    ...(conclusion ? { conclusion } : {}),
+    ...(explanation ? { explanation } : {}),
     ...(notes ? { notes } : {}),
   }
 }
@@ -136,7 +143,8 @@ interface Budget {
   total: number
   fields?: Partial<
     Record<
-      'title' | 'kicker' | 'subtitle' | 'body' | 'quote' | 'author' | 'question' | 'leftTitle' | 'rightTitle',
+      | 'title' | 'kicker' | 'subtitle' | 'body' | 'quote' | 'author' | 'question' | 'leftTitle' | 'rightTitle'
+      | 'problem' | 'conclusion' | 'explanation',
       number
     >
   >
@@ -212,9 +220,19 @@ const BUDGETS: Record<SlideLayoutId, Budget> = {
     lists: [{ field: 'steps', max: 5, itemMax: 36 }],
   },
   quiz: {
-    total: 380,
-    fields: { question: 140, kicker: 50 },
+    total: 520,
+    fields: { question: 140, kicker: 50, explanation: 150 },
     lists: [{ field: 'options', max: 4, itemMax: 60 }],
+  },
+  example: {
+    total: 520,
+    fields: { title: 80, problem: 170, conclusion: 90 },
+    lists: [{ field: 'steps', max: 4, itemMax: 70 }],
+  },
+  hook: {
+    total: 280,
+    fields: { title: 80, kicker: 50, body: 150 },
+    lists: [{ field: 'items', max: 3, itemMax: 30 }],
   },
 }
 
@@ -318,6 +336,14 @@ export function validateSlide(page: AiSlidePayload, layout: string): string[] {
     case 'quote':
       need(!!page.quote, 'thiếu "quote"')
       break
+    case 'example':
+      need(!!page.problem, 'thiếu "problem" (đề bài)')
+      need(count(page.steps) >= 2, '"steps" cần 2–4 bước giải')
+      need(!!page.conclusion, 'thiếu "conclusion" (kết luận)')
+      break
+    case 'hook':
+      need(!!page.body, 'thiếu "body" (câu hỏi/tình huống mở bài)')
+      break
     case 'agenda':
       need(count(page.items) >= 3, '"items" cần ít nhất 3 mục')
       break
@@ -362,7 +388,11 @@ export function validateSlide(page: AiSlidePayload, layout: string): string[] {
       break
     }
   }
-  return [...errors, ...budgetErrors(page, id)]
+  // Ngân sách tính theo chữ hiển thị: `$\frac{a}{b}$` đếm như "a/b", không đếm mã LaTeX.
+  const plain = JSON.parse(JSON.stringify(page), (_key, value) =>
+    typeof value === 'string' ? mathToPlain(value) : value,
+  ) as AiSlidePayload
+  return [...errors, ...budgetErrors(plain, id)]
 }
 
 /* ------------------------------------------------------------------ *
@@ -390,6 +420,19 @@ const FIELD_HINTS: Record<keyof SlideLayoutContent, string> = {
   question: '"question" — câu hỏi (chuỗi ≤ 140)',
   options: '"options" — mảng 2–4 phương án, mỗi phương án ≤ 60',
   answer: '"answer" — chỉ số 0-based của phương án đúng trong "options"',
+  problem: '"problem" — đề bài/yêu cầu của ví dụ (chuỗi ≤ 170)',
+  conclusion: '"conclusion" — kết luận/đáp số một dòng (≤ 90)',
+  explanation: '"explanation" — giải thích ngắn vì sao đáp án đúng (≤ 150)',
+}
+
+/** Lưu ý riêng của từng layout, chèn sau danh sách field. */
+const LAYOUT_NOTES: Partial<Record<SlideLayoutId, string>> = {
+  example:
+    '- Ví dụ mẫu: "steps" 2–4 bước giải, mỗi bước một phép biến đổi/ý có số liệu cụ thể; "conclusion" nêu kết quả cuối. Lời giải phải ĐÚNG, tự kiểm tra lại phép tính.\n',
+  hook:
+    '- Mở bài: "body" là câu hỏi/tình huống gần gũi kết thúc bằng câu hỏi; "items" là 2–3 gợi ý ngắn (≤ 30 ký tự) dẫn học sinh tới bài mới.\n',
+  quiz:
+    '- Quiz: chỉ MỘT đáp án đúng chắc chắn; "explanation" nêu lý do ngắn gọn (kể cả vì sao các phương án khác sai khi cần).\n',
 }
 
 const LIST_LABEL: Record<'bullets' | 'items' | 'left' | 'right' | 'steps' | 'options', string> = {
@@ -463,6 +506,7 @@ export function pageSystemPrompt(
     `LAYOUT BẮT BUỘC: "${layout.id}" (${layout.name}) — ${layout.description}\n` +
     `FIELD CẦN ĐIỀN:\n${fields}\n` +
     '- "notes" — mảng 0–6 chuỗi ghi chú trình bày (tuỳ chọn).\n' +
+    (LAYOUT_NOTES[layout.id] ?? '') +
     (supportsGraphic ? '- "graphic" — id đồ hoạ có sẵn (tuỳ chọn).\n' : '') +
     `- "layout" phải đúng "${layout.id}"; không thêm field khác.\n\n` +
     budgetLine(layout.id) +
@@ -475,8 +519,10 @@ export function pageSystemPrompt(
     '- Nếu layout có nhãn lớn (số liệu, bước, câu trích), chọn giá trị làm điểm nhấn của slide.\n' +
     '- Bám đúng brief của slide; không lặp ý các slide khác.\n' +
     '- Không bịa số liệu thật; số liệu minh hoạ phải ghi rõ "ví dụ".\n' +
-    '- Công thức toán viết bằng ký tự Unicode (², ³, √, ·, ×, ≤, ≥, α, β, Δ…), ' +
-    'KHÔNG dùng LaTeX hay dấu $ (slide chỉ hiển thị chữ thuần).\n\n' +
+    '- Công thức đơn giản (x², √, ≤, →, π, α) viết bằng ký tự Unicode. Công thức có phân số, căn dài, ' +
+    'chỉ số, tích phân hoặc phương trình hoá học viết LaTeX giữa $...$ ' +
+    '(vd $\\frac{18}{24}=\\frac{3}{4}$, $\\ce{Zn + CuSO4 -> ZnSO4 + Cu}$). Trong JSON PHẢI viết hai dấu ' +
+    'gạch chéo ngược (\\\\frac, \\\\sqrt, \\\\cdot). Chỉ dùng $ cho công thức, không dùng cho tiền.\n\n' +
     'BỐI CẢNH DECK:\n' +
     `- Tiêu đề: ${plan.title ?? '(chưa có)'}\n` +
     `- Đối tượng: ${plan.audience ?? 'học sinh'}\n` +
@@ -561,6 +607,9 @@ function contentOfPage(page: AiSlidePayload): SlideLayoutContent {
     question: page.question,
     options: page.options,
     answer: page.answer,
+    problem: page.problem,
+    conclusion: page.conclusion,
+    explanation: page.explanation,
   }
 }
 

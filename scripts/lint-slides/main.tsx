@@ -71,6 +71,9 @@ const STRESS: SlideLayoutContent = {
   question: 'Cho hàm số y = x² − 4x + 3. Toạ độ đỉnh của parabol là điểm nào dưới đây?',
   options: ['I(2; −1)', 'I(−2; 1)', 'I(1; 2)', 'I(−1; −2)'],
   answer: 0,
+  explanation: 'Hoành độ đỉnh x = −b/2a = 2, thay vào được y = −1 nên đỉnh là I(2; −1), đáp án A đúng.',
+  problem: 'Cho hàm số y = x² − 4x + 3. Tìm toạ độ đỉnh, trục đối xứng và vẽ bảng biến thiên của parabol.',
+  conclusion: 'Đỉnh I(2; −1), trục đối xứng x = 2, bề lõm hướng lên',
 }
 
 /** Nội dung vừa phải, tiêu đề dài 2 dòng — ca hay gặp nhất khi AI sinh slide. */
@@ -93,6 +96,9 @@ const MEDIUM: SlideLayoutContent = {
   question: 'Hàm số nào sau đây là hàm số bậc nhất?',
   options: ['y = 2x + 1', 'y = x² + 3', 'y = 5', 'y = 1/x'],
   answer: 0,
+  explanation: 'Chỉ y = 2x + 1 có dạng y = ax + b với a ≠ 0.',
+  problem: 'Rút gọn phân số $\\frac{18}{24}$ bằng ƯCLN.',
+  conclusion: 'Kết quả: $\\frac{18}{24} = \\frac{3}{4}$',
 }
 
 const TONES: SlideTone[] = ['theme', 'soft', 'accent']
