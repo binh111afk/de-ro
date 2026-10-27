@@ -2171,6 +2171,29 @@ Sau audit "AI sinh slide vỡ layout": gốc là tọa độ cố định + đo 
 - **Chưa làm:** hero panel bìa/section vẫn là khối accent đặc lớn (diện tích >
   10%); giảm tiếp là quyết định thẩm mỹ cần xem bằng mắt.
 
+### 3.53. Đo thật + giai đoạn 1: parse bền, gói theo môn (27/10/2026)
+
+- **Eval bằng LLM thật:** `npm run eval:slides -- "chủ đề" ... [--out dir]` chạy
+  đúng pipeline (dàn ý → từng slide + repair → layout) trong Chrome headless
+  (CDP, `scripts/lib/cdp.mjs` dùng chung với `lint:slides`) và chụp ảnh lưới
+  slide; `eval-out/` đã gitignore. Dùng để xem bằng mắt sau mỗi đợt sửa.
+- **A–C (e9c7674):** `checkSlide` trả thêm `readability` — dựng thử layout, hộp
+  chữ co < 78% cỡ thiết kế và < 1,9cqw bị báo để repair (còn lỗi mềm sau repair
+  vẫn giữ slide); chỉnh timeline/comparison/thẻ 4 ô/phụ đề/quiz; `pickSlideAsset`
+  không còn icon sách mặc định, dedupe theo slide (`used` set).
+- **Parse bền** (`aiDeck.ts`): `repairJson` cứu dấu phẩy thừa, xuống dòng trần
+  trong chuỗi, phản hồi cụt (đóng chuỗi + ngoặc); `jsonCandidates` thử bản sửa;
+  `AiPanel` có đúng một lượt retry khi dàn ý vẫn không parse được (lỗi quan sát
+  được: ~1/4 lần dàn ý Chí Phèo trả JSON hỏng; 3 lần chạy lại đều ổn).
+- **Gói theo môn** (`slideSubjects.ts`): `SUBJECT_PACKS` (toán, văn, sử-địa,
+  ngoại ngữ, tin, khtn, khác) khai báo `structure` (cấu trúc bài), `layouts` ưu
+  tiên, `rules` nội dung, `themeHint`. Dàn ý có field `subject` (model chọn, thiếu
+  thì `inferSubject` suy từ tiêu đề/đối tượng); prompt dàn ý có catalog môn,
+  prompt từng slide chèn `subjectRulesBlock`. Thêm môn = thêm một mục mảng.
+- **Còn lại:** lõi dùng chung giai đoạn 2 (công thức KaTeX, layout ví dụ mẫu,
+  mở bài, quiz có đáp án, chart); dùng kho 112 đồ hoạ cho cards/stats (hiện chỉ
+  title/bullets/image-left/right); mở rộng kho minh hoạ cho tin, ngoại ngữ, địa.
+
 ## 4. Lỗi đã gặp và cách sửa
 
 ### 4.1. TipTap v3 — `content` phải là mảng

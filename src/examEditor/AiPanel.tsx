@@ -278,7 +278,7 @@ export const SLIDE_PLAN_SYSTEM =
   'Bạn là trợ lý AI của trình soạn bài trình bày tiếng Việt. Nhiệm vụ: LẬP DÀN Ý, ' +
   'chưa viết nội dung chi tiết. Chỉ trả về DUY NHẤT một JSON hợp lệ (không bọc markdown, ' +
   'không chữ ngoài JSON):\n' +
-  '{"title":"...","theme":"<id>","stylePack":"<id>","audience":"...","style":"...","mainIdeas":["..."],' +
+  '{"title":"...","theme":"<id>","stylePack":"<id>","subject":"<id>","audience":"...","style":"...","mainIdeas":["..."],' +
   '"slides":[{"title":"...","layout":"<id>","tone":"theme|soft|accent","kicker":"...","brief":"..."}]}\n\n' +
   slideCatalogText() +
   '\n\nQUY TẮC:\n' +
@@ -289,6 +289,8 @@ export const SLIDE_PLAN_SYSTEM =
   '- Đa dạng bố cục: không dùng cùng một layout ở hai slide liền nhau; deck 6 slide phải có ' +
   'ít nhất 4 layout khác nhau; "cards" tối đa 1 lần trong 6 slide; chỉ dùng layout cần dữ liệu ' +
   '(table, stats, stat-image, quiz) khi nội dung thật có dữ liệu.\n' +
+  '- Bám cấu trúc bài gợi ý của môn đã chọn (xem MÔN HỌC) nhưng gộp/bỏ bước nếu deck ngắn; ' +
+  'ưu tiên layout gợi ý của môn khi nội dung hợp.\n' +
   '- Slide đầu dùng "title"; slide cuối dùng "closing" hoặc "quote" nếu phù hợp.\n' +
   '- Ưu tiên layout có bố cục rõ: "agenda" cho tổng quan, "statement" cho một thông điệp lớn, ' +
   '"comparison" khi có hai mặt đối lập, "bullets" chỉ khi thật sự có 2–4 ý ngắn.\n' +
@@ -761,7 +763,24 @@ export function AiPanel({
       }
       if (mode === 'slide') {
         // Lượt lập dàn ý: chỉ hiện thẻ chờ duyệt, chưa chạm vào deck.
-        const plan = slideDoc ? parseDeckPlan(res.content) : null
+        let plan = slideDoc ? parseDeckPlan(res.content) : null
+        if (slideDoc && !plan) {
+          // Model thỉnh thoảng trả JSON hỏng/cụt: cho đúng một lượt sửa trước khi bỏ cuộc.
+          const again = await callLlm(
+            [
+              ...messages,
+              { role: 'assistant', content: res.content },
+              {
+                role: 'user',
+                content:
+                  'JSON dàn ý vừa trả không đọc được (sai dấu hoặc bị cắt). Trả lại DUY NHẤT một JSON hợp lệ, ' +
+                  'ngắn gọn hơn: mỗi "brief" ≤ 100 ký tự, không xuống dòng trong chuỗi.',
+              },
+            ],
+            { signal: controller.signal, reasoningEffort: 'medium' },
+          )
+          plan = parseDeckPlan(again.content)
+        }
         if (plan) {
           setTurns((t) =>
             t.map((turn) =>

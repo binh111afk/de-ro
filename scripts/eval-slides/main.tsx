@@ -34,7 +34,10 @@ async function main() {
     { signal: controller.signal, reasoningEffort: 'medium' },
   )
   const plan = parseDeckPlan(res.content)
-  if (!plan) throw new Error(`Không parse được dàn ý: ${res.content.slice(0, 300)}`)
+  if (!plan) {
+    done({ fatal: 'Không parse được dàn ý', raw: res.content })
+    return
+  }
   const planMs = Math.round(performance.now() - t0)
 
   // đồng thời 3 như AiPanel

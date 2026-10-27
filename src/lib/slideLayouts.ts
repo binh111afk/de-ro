@@ -573,7 +573,12 @@ function composeCards(p: LayoutPalette, content: SlideLayoutContent): SlideEleme
     const x = area.x + (index % cols) * (cardW + gap)
     const y = startY + Math.floor(index / cols) * (cardH + gap)
     const asset = pickSlideAsset(item, used)
-    const { heading, body } = wide ? splitCardItem(item) : { heading: '', body: item }
+    const split = wide ? splitCardItem(item) : { heading: '', body: item }
+    // Không có "Nhãn: mô tả" mà cả mục dài → là một câu mô tả, đặt vào ô nội dung
+    // (ô tiêu đề hẹp sẽ co chữ còn ~1,4cqw như thẻ "since 2020 …" trước đây).
+    const longPlain = wide && !split.body && split.heading.length > 28
+    const heading = longPlain ? '' : split.heading
+    const body = longPlain ? split.heading : split.body
 
     if (wide) {
       // Thẻ 2×2: hàng đầu = badge số + tiêu đề (+ icon nhỏ góc phải nếu có), mô tả

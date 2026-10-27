@@ -31,7 +31,8 @@ try {
       return { result: JSON.parse(Buffer.from(encoded, 'base64').toString('utf8')), png: await screenshot() }
     })
     if (result.fatal) {
-      console.error(`✗ "${topic}": ${result.fatal}`)
+      if (result.raw) writeFileSync(join(outDir, `plan-raw-${i + 1}.txt`), result.raw)
+      console.error(`✗ "${topic}": ${result.fatal}${result.raw ? ` (raw → plan-raw-${i + 1}.txt)` : ''}`)
       exit = 1
       continue
     }

@@ -10,7 +10,7 @@ import {
 } from '../src/lib/aiDeck.ts'
 import { DECK_THEMES } from '../src/lib/slideTheme.ts'
 import { SLIDE_LAYOUTS } from '../src/lib/slideLayouts.ts'
-import { enforceRhythm } from '../src/lib/aiDeck.ts'
+import { enforceRhythm, repairJson } from '../src/lib/aiDeck.ts'
 
 /* 1. Dàn ý hợp lệ giữ nguyên field; theme/layout/tone đúng danh mục. */
 const good = parseDeckPlan(
@@ -128,4 +128,44 @@ assert.equal(deck.slides[0].bullets?.length, 1)
   assert.ok(plan.filter((s) => s.layout === 'bullets').length <= Math.floor(plan.length * 0.4))
 }
 
-console.log('test-slide-plan: 7 nhóm kiểm tra đạt')
+/* JSON hỏng thường gặp vẫn cứu được dàn ý: dấu phẩy thừa, xuống dòng trần, cụt giữa chừng. */
+{
+  const slide = (t) => `{"title":"${t}","layout":"bullets"}`
+  const trailing = `{"title":"D","slides":[${slide('A')},${slide('B')},],}`
+  assert.equal(parseDeckPlan(trailing)?.slides.length, 2, 'dấu phẩy thừa')
+  const newline = `{"title":"D","slides":[{"title":"Hai\ndòng","layout":"bullets"}]}`
+  assert.equal(parseDeckPlan(newline)?.slides[0].title, 'Hai dòng', 'xuống dòng trần trong chuỗi')
+  const cut = `{"title":"D","theme":"sang","slides":[${slide('A')},${slide('B')},{"title":"C","lay`
+  const plan = parseDeckPlan(cut)
+  assert.ok(plan && plan.slides.length >= 2, 'phản hồi bị cắt cụt vẫn lấy được các slide đầy đủ')
+  assert.equal(parseDeckPlan('không có JSON nào'), null)
+  assert.equal(repairJson('{"a":1}'), null, 'JSON hợp lệ không cần sửa')
+}
+
+/* Gói môn: suy từ chủ đề, model trả subject hợp lệ thì tôn trọng, prompt có luật môn. */
+{
+  const { inferSubject, SUBJECT_PACKS, subjectRulesBlock } = await import('../src/lib/slideSubjects.ts')
+  const { pageSystemPrompt } = await import('../src/lib/slideAi.ts')
+  const cases = {
+    'Ước chung lớn nhất và cách tìm': 'toan',
+    'Phân tích nhân vật Chí Phèo': 'van',
+    'Chiến thắng Điện Biên Phủ năm 1954': 'su-dia',
+    'Thì hiện tại hoàn thành trong tiếng Anh': 'ngoai-ngu',
+    'Vòng lặp for trong Python': 'tin',
+    'Phản ứng oxi hoá khử': 'khtn',
+    'Kỹ năng quản lý thời gian': 'khac',
+  }
+  for (const [topic, id] of Object.entries(cases)) assert.equal(inferSubject(topic), id, topic)
+  assert.ok(SUBJECT_PACKS.every((p) => DECK_THEMES.some((t) => t.id === p.themeHint)), 'themeHint là id theme có thật')
+  assert.ok(SUBJECT_PACKS.every((p) => p.layouts.every((l) => SLIDE_LAYOUTS.some((x) => x.id === l))), 'layout ưu tiên có thật')
+  const slides = [{ title: 'Tổng quan Chí Phèo', layout: 'title' }, { title: 'Hậu quả', layout: 'quote' }]
+  const mk = (extra) => parseDeckPlan(JSON.stringify({ title: 'Chí Phèo', slides, ...extra }))
+  assert.equal(mk({}).subject, 'van', 'thiếu subject → suy từ chủ đề')
+  assert.equal(mk({ subject: 'toan' }).subject, 'toan', 'model chọn hợp lệ thì giữ')
+  assert.equal(mk({ subject: 'xyz' }).subject, 'van', 'subject lạ → suy lại')
+  assert.ok(catalog.includes('MÔN HỌC') && catalog.includes('ngoai-ngu'), 'catalog dàn ý có gói môn')
+  assert.equal(subjectRulesBlock('khac'), '')
+  assert.ok(pageSystemPrompt(mk({ subject: 'van' }), slides[1], 1).includes('Ngữ văn'), 'prompt từng slide có luật môn')
+}
+
+console.log('test-slide-plan: 9 nhóm kiểm tra đạt')

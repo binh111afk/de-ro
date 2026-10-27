@@ -10,6 +10,7 @@ import type { DeckPlan, DeckPlanSlide } from './aiDeck'
 import type { Deck, Slide, SlideElement, SlideTone } from '@/store/docs'
 import { normalizeTheme, themeById, type ResolvedTheme } from './slideTheme'
 import { stylePackById } from './slideStyles'
+import { subjectRulesBlock } from './slideSubjects'
 import { graphicCatalogText, isGraphicId } from './slideGraphics'
 import {
   composeLayout,
@@ -481,6 +482,7 @@ export function pageSystemPrompt(
     `- Đối tượng: ${plan.audience ?? 'học sinh'}\n` +
     `- Phong cách: ${plan.style ?? 'thuyết trình rõ ràng, có điểm nhấn: mỗi slide chốt một thông điệp, ưu tiên số liệu và ví dụ cụ thể'}\n\n` +
     packBlock +
+    subjectRulesBlock(plan.subject) +
     `DÀN Ý CẢ DECK (để không lặp ý):\n${outline}\n\n` +
     `SLIDE CẦN VIẾT: ${index + 1}/${plan.slides.length} — ${slide.title}` +
     `${slide.kicker ? ` (nhãn: ${slide.kicker})` : ''}\n` +

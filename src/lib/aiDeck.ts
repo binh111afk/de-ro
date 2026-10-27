@@ -7,6 +7,7 @@
 import type { SlideElement, SlideTone } from '@/store/docs'
 import { isLayoutId, isTone, SLIDE_LAYOUTS } from './slideLayouts'
 import { DECK_THEMES, resolveThemeId } from './slideTheme'
+import { inferSubject, isSubjectId, subjectCatalogText } from './slideSubjects'
 import { isStylePackId, stylePackCatalogText } from './slideStyles'
 
 export interface AiSlidePayload {
@@ -72,6 +73,8 @@ export interface DeckPlan {
   style?: string
   /** art direction (lib/slideStyles.ts); id lạ bị bỏ */
   stylePack?: string
+  /** gói môn (lib/slideSubjects.ts): cấu trúc bài + luật nội dung; thiếu thì suy từ chủ đề */
+  subject?: string
   mainIdeas: string[]
   slides: DeckPlanSlide[]
 }
@@ -94,6 +97,48 @@ const textList = (value: unknown, maxItems: number, maxLen: number): string[] =>
     : []
 
 /** Mọi JSON đọc được trong phản hồi, theo thứ tự: fence → ngoặc ngoài → cả chuỗi. */
+/**
+ * Sửa các lỗi JSON model hay mắc mà vẫn cứu được nội dung: dấu phẩy thừa, ký
+ * tự xuống dòng trần trong chuỗi, dấu ngoặc kép cong, và phản hồi bị cắt cụt
+ * (đóng chuỗi + ngoặc còn mở). Trả `null` nếu không có gì để sửa.
+ */
+export function repairJson(raw: string): string | null {
+  let out = ''
+  let inString = false
+  let escaped = false
+  const stack: string[] = []
+  for (const ch of raw) {
+    if (inString) {
+      if (escaped) {
+        escaped = false
+        out += ch
+      } else if (ch === '\\') {
+        escaped = true
+        out += ch
+      } else if (ch === '"') {
+        inString = false
+        out += ch
+      } else if (ch === '\n' || ch === '\r' || ch === '\t') {
+        out += ' '
+      } else {
+        out += ch
+      }
+      continue
+    }
+    if (ch === '"') inString = true
+    else if (ch === '{') stack.push('}')
+    else if (ch === '[') stack.push(']')
+    else if (ch === '}' || ch === ']') stack.pop()
+    out += ch
+  }
+  if (inString) out += '"'
+  out = out.replace(/[\s,:]+$/, '')
+  out = out.replace(/,\s*([}\]])/g, '$1')
+  out += stack.reverse().join('')
+  out = out.replace(/,\s*([}\]])/g, '$1')
+  return out === raw ? null : out
+}
+
 function jsonCandidates(raw: string): unknown[] {
   const raws: string[] = []
   const fence = raw.match(/```(?:json)?\s*([\s\S]*?)```/i)
@@ -101,14 +146,20 @@ function jsonCandidates(raw: string): unknown[] {
   const first = raw.indexOf('{')
   const last = raw.lastIndexOf('}')
   if (first >= 0 && last > first) raws.push(raw.slice(first, last + 1))
+  // phản hồi cắt cụt thiếu `}` cuối: lấy từ `{` đầu tới hết
+  if (first >= 0) raws.push(raw.slice(first))
   raws.push(raw)
 
   const parsed: unknown[] = []
   for (const candidate of raws) {
-    try {
-      parsed.push(JSON.parse(candidate.trim()))
-    } catch {
-      // thử ứng viên tiếp theo
+    for (const attempt of [candidate.trim(), repairJson(candidate.trim())]) {
+      if (!attempt) continue
+      try {
+        parsed.push(JSON.parse(attempt))
+        break
+      } catch {
+        // thử bản sửa / ứng viên tiếp theo
+      }
     }
   }
   return parsed
@@ -220,10 +271,15 @@ export function parseDeckPlan(raw: string): DeckPlan | null {
 
     const themeId = text(source.theme, 40)
     const packId = text(source.stylePack, 40)
+    const title = text(source.title, 160)
+    const subjectId = text(source.subject, 40)
     return {
-      title: text(source.title, 160),
+      title,
       theme: resolveThemeId(themeId),
       ...(isStylePackId(packId) ? { stylePack: packId } : {}),
+      subject: isSubjectId(subjectId)
+        ? subjectId
+        : inferSubject([title, text(source.audience, 120), ...slides.map((s) => s.title)].join(' ')),
       audience: text(source.audience, 120),
       style: text(source.style, 600),
       mainIdeas: textList(source.mainIdeas, 6, 160),
@@ -246,6 +302,8 @@ export function slideCatalogText(): string {
     ),
     '',
     stylePackCatalogText(),
+    '',
+    subjectCatalogText(),
     '',
     'BỐ CỤC (chọn "layout" đúng một id; field trong ngoặc là field nội dung):',
     ...SLIDE_LAYOUTS.map(
