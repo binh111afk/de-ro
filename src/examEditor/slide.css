@@ -21,6 +21,8 @@
  */
 .slide-frame {
   container-type: inline-size;
+  /* tránh từ mồ côi ở cuối đoạn */
+  text-wrap: pretty;
 }
 
 /* Hoạ tiết nền theo theme (thuần CSS, không dùng ảnh). Vẽ ở lớp dưới cùng của

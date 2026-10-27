@@ -14,6 +14,7 @@ import { SLIDE_LAYOUTS, composeLayout, contentFromSlide } from '../src/lib/slide
 import {
   GRAPHIC_IDS,
   SLIDE_GRAPHICS,
+  graphicById,
   graphicCatalogText,
   graphicMarkup,
   isGraphicId,
@@ -51,6 +52,17 @@ check('mỗi icon: 2 path, nét gốc #22333B, không chữ/nền/ảnh ngoài',
     assert.ok(!/https?:\/\/(?!www\.w3\.org)/.test(graphic.svg), graphic.id)
     assert.ok(graphic.svg.includes('viewBox="'), graphic.id)
   }
+})
+
+check('78 ornament: tra được, nét đổi màu được, không vào catalog/AI', () => {
+  const ids = ['orn-ke-song', 'orn-nguyet-que', 'orn-the-so-5', 'orn-nen-song']
+  for (const id of ids) {
+    assert.ok(graphicById(id), id)
+    assert.equal(isGraphicId(id), false, id)
+    assert.ok(graphicMarkup(id, '#ff0000').includes('#ff0000'), id)
+  }
+  assert.ok(!graphicCatalogText().includes('orn-'))
+  assert.ok(!searchGraphics('hoa trang tri duong ke song').some((g) => g.id.startsWith('orn-')))
 })
 
 check('id hợp lệ / id lạ', () => {
@@ -127,7 +139,7 @@ check('layout bullets thay icon neo bằng graphic', () => {
 
 check('layout ảnh dùng graphic thay ảnh, không còn khung ảnh trống', () => {
   const els = composeLayout(theme, 'image-left', content)
-  const graphic = els.find((el) => el.type === 'graphic')
+  const graphic = els.find((el) => el.type === 'graphic' && !el.graphicId?.startsWith('orn-'))
   assert.ok(graphic)
   assert.equal(graphic.id, 'image-1')
   assert.ok(!els.some((el) => el.type === 'image'))
@@ -135,7 +147,7 @@ check('layout ảnh dùng graphic thay ảnh, không còn khung ảnh trống', 
 
 check('id lạ bị bỏ, layout vẫn dựng bình thường', () => {
   const els = composeLayout(theme, 'title', { ...content, graphic: 'khong-co' })
-  assert.ok(!els.some((el) => el.type === 'graphic'))
+  assert.ok(!els.some((el) => el.type === 'graphic' && !el.graphicId?.startsWith('orn-')))
   assert.ok(els.some((el) => el.id === 'hero-icon'))
 })
 

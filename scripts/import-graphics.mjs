@@ -10,6 +10,8 @@
  * một dòng vào mảng ICONS theo đúng thứ tự đọc trên sheet rồi chạy lại.
  */
 import { readFileSync, writeFileSync } from 'node:fs'
+import { bboxOf } from './lib/svg-bbox.mjs'
+import { importDecor } from './import-decor.mjs'
 import { ICONS_100, ICONS_PROG, SHEET_100, SHEET_PROG } from './graphics-extra.mjs'
 
 const SHEET = 'C:/Users/Lenovo/Downloads/112 educational icons · 64px.svg'
@@ -144,68 +146,6 @@ if (paths.length !== ICONS.length * 2) {
   throw new Error(`Sheet có ${paths.length} path, cần ${ICONS.length * 2} (mỗi icon 2 path)`)
 }
 
-const NUM = /[a-zA-Z]|-?\d*\.?\d+(?:e[-+]?\d+)?/g
-function bboxOf(d) {
-  const tokens = d.match(NUM) || []
-  let i = 0
-  let cmd = ''
-  let x = 0
-  let y = 0
-  let sx = 0
-  let sy = 0
-  const xs = []
-  const ys = []
-  const add = (px, py) => {
-    if (Number.isFinite(px) && Number.isFinite(py)) {
-      xs.push(px)
-      ys.push(py)
-    }
-  }
-  const num = () => Number(tokens[i++])
-  while (i < tokens.length) {
-    if (/[a-zA-Z]/.test(tokens[i])) cmd = tokens[i++]
-    if (!cmd) break
-    const rel = cmd === cmd.toLowerCase()
-    const C = cmd.toUpperCase()
-    if (C === 'M') {
-      x = rel ? x + num() : num()
-      y = rel ? y + num() : num()
-      add(x, y)
-      sx = x
-      sy = y
-      cmd = rel ? 'l' : 'L'
-      continue
-    }
-    if (C === 'Z') { x = sx; y = sy; continue }
-    if (C === 'L') { x = rel ? x + num() : num(); y = rel ? y + num() : num(); add(x, y); continue }
-    if (C === 'H') { x = rel ? x + num() : num(); add(x, y); continue }
-    if (C === 'V') { y = rel ? y + num() : num(); add(x, y); continue }
-    if (C === 'C' || C === 'S' || C === 'Q') {
-      const n = C === 'C' ? 3 : 2
-      for (let k = 0; k < n; k++) {
-        const px = rel ? x + num() : num()
-        const py = rel ? y + num() : num()
-        add(px, py)
-        if (k === n - 1) { x = px; y = py }
-      }
-      continue
-    }
-    if (C === 'T') { x = rel ? x + num() : num(); y = rel ? y + num() : num(); add(x, y); continue }
-    if (C === 'A') {
-      const rx = Math.abs(num())
-      const ry = Math.abs(num())
-      num(); num(); num()
-      x = rel ? x + num() : num()
-      y = rel ? y + num() : num()
-      add(x - rx, y - ry)
-      add(x + rx, y + ry)
-      add(x, y)
-      continue
-    }
-    i++
-  }
-  return { x1: Math.min(...xs), y1: Math.min(...ys), x2: Math.max(...xs), y2: Math.max(...ys) }
-}
 
 const rawIcons = []
 for (let i = 0; i < paths.length; i += 2) {
@@ -254,6 +194,7 @@ const entries = [
   ...importSheet(SHEET, ICONS),
   ...importSheet(SHEET_100, ICONS_100),
   ...importSheet(SHEET_PROG, ICONS_PROG),
+  ...importDecor(),
 ]
 const seen = new Set()
 for (const e of entries) {
@@ -269,7 +210,8 @@ const body = entries
   .join('\n')
 
 const file = `/* AUTO-GENERATED bởi scripts/import-graphics.mjs — đừng sửa tay.
- * Nguồn: 3 contact sheet (112 icon gốc + 100 icon bổ sung + 20 ngôn ngữ lập trình;
+ * Nguồn: 4 contact sheet (112 icon gốc + 100 icon bổ sung + 20 ngôn ngữ lập trình + 78
+ * asset trang trí "ornament" — scripts/import-decor.mjs; ornament không vào catalog/tìm kiếm của AI;
  * 64px, 3px stroke #22333B, 8 màu pastel).
  * Cắt cửa sổ 70×70 quanh tâm từng icon để nét 3px không bị cắt.
  */
@@ -299,6 +241,7 @@ export type GraphicCategory =
   | 'art'
   | 'pe'
   | 'life'
+  | 'ornament'
 
 export interface SlideGraphicData {
   id: string

@@ -10,11 +10,12 @@ import { GRAPHICS, type GraphicCategory, type SlideGraphicData } from './graphic
 
 export type { GraphicCategory, SlideGraphicData }
 
-export const SLIDE_GRAPHICS = GRAPHICS
+/** Icon AI được chọn; `ornament` (trang trí do layout đặt) chỉ tra được qua graphicById. */
+export const SLIDE_GRAPHICS = GRAPHICS.filter((graphic) => graphic.category !== 'ornament')
 
 const BY_ID = new Map(GRAPHICS.map((graphic) => [graphic.id, graphic]))
 
-export const GRAPHIC_IDS = new Set(BY_ID.keys())
+export const GRAPHIC_IDS = new Set(SLIDE_GRAPHICS.map((graphic) => graphic.id))
 
 /** Màu nét gốc trong file thiết kế — thay bằng màu theme khi render. */
 export const GRAPHIC_INK = '#22333B'
@@ -45,6 +46,7 @@ export const GRAPHIC_CATEGORY_LABEL: Record<GraphicCategory, string> = {
   art: 'Nghệ thuật',
   pe: 'Thể chất',
   life: 'Kỹ năng sống',
+  ornament: 'Trang trí (layout dùng, không vào catalog AI)',
 }
 
 const CATEGORY_ORDER: GraphicCategory[] = [
@@ -84,7 +86,7 @@ const norm = (value: string) =>
     .toLowerCase()
 
 export function isGraphicId(value: unknown): value is string {
-  return typeof value === 'string' && BY_ID.has(value)
+  return typeof value === 'string' && GRAPHIC_IDS.has(value)
 }
 
 export function graphicById(id: string | undefined): SlideGraphicData | undefined {
@@ -100,7 +102,7 @@ export function searchGraphics(text: string, limit = 8): SlideGraphicData[] {
   if (!q) return []
   const tokens = q.split(/[^a-z0-9]+/).filter((token) => token.length >= 2)
   if (!tokens.length) return []
-  return GRAPHICS.map((graphic) => {
+  return SLIDE_GRAPHICS.map((graphic) => {
     const hay = `${norm(graphic.name)} ${graphic.keywords} ${graphic.id.replace(/-/g, ' ')}`
     let score = 0
     for (const token of tokens) {

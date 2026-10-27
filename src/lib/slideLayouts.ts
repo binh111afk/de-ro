@@ -9,7 +9,7 @@
 import type { DeckTheme, Slide, SlideElement, SlideTone } from '@/store/docs'
 import { textBoxHeight } from './slideText'
 import { fitFontSize } from './slideMeasure'
-import { GRAPHIC_INK, isGraphicId } from './slideGraphics'
+import { GRAPHIC_INK, graphicById, isGraphicId } from './slideGraphics'
 import { pickSlideAsset, type SlideAssetId } from './slideAssets'
 import { contrastRatio, mixHex, normalizeTheme, readableTextOn } from './slideTheme'
 
@@ -391,6 +391,14 @@ function graphicEl(id: string, graphicId: string, box: Box, ink: string): SlideE
   return { id, type: 'graphic', graphicId, textColor: ink, ...box }
 }
 
+/** Asset trang trí (`orn-*`): đặt theo bề rộng, chiều cao suy từ tỉ lệ thật của hình trên khung 16:9. */
+function ornament(id: string, ornId: string, x: number, y: number, w: number, ink: string, centerY = false): SlideElement | null {
+  const ratio = graphicById(ornId)?.ratio
+  if (!ratio) return null
+  const h = (w * 16) / (9 * ratio)
+  return graphicEl(id, ornId, { x, y: centerY ? y - h / 2 : y, w, h }, ink)
+}
+
 /** Tấm nền sáng cố định cho đồ hoạ thiết kế sẵn (nét tối + mảng pastel). */
 const GRAPHIC_PLATE = '#f7f9fc'
 
@@ -450,7 +458,7 @@ function titleEls(
     textEl('title', text, { ...box, h }, {
       variant: 'title', fontSize: size, fontWeight: 700, textColor: color,
     }),
-    rule ? shapeEl('title-rule', { x: box.x, y: box.y + h + 0.8, w: 10, h: 0.9 }, p.accent) : null,
+    rule ? ornament('title-rule', 'orn-ke-song-ngan', box.x, box.y + h + 1.25, 10, p.accent, true) : null,
   ])
 }
 
@@ -527,7 +535,7 @@ function composeSection(p: LayoutPalette, content: SlideLayoutContent): SlideEle
       variant: 'body', fontSize: 1.7, fontWeight: 700, textColor: p.onAccent,
     }),
     ...titleEls(p, content.title, { x: 5, y: titleY, w: 25, h: 68 - titleY }, [4.1, 3.6, 3.2, 2.8, 2.5], false, p.onAccent),
-    shapeEl('section-rule', { x: 6, y: 70, w: 10, h: 0.9 }, p.onAccent),
+    ornament('section-rule', 'orn-ke-song-ngan', 5, 70.45, 10, p.onAccent, true),
     textEl('subtitle', content.subtitle, { x: 42, y: 40, w: 48, h: 20 }, {
       variant: 'body', fontSize: 2.6, textColor: p.fg, valign: 'middle',
     }),
@@ -541,11 +549,8 @@ function composeStatement(p: LayoutPalette, content: SlideLayoutContent): SlideE
     cleanList(content.bullets).join(' ')
   if (!text) return []
   return compact([
-    shapeEl('decor-1', { x: 72, y: 6, w: 16, h: 28 }, p.panel, 'ellipse'),
-    shapeEl('decor-2', { x: 4, y: 82, w: 5, h: 9 }, p.accent, 'ellipse'),
-    textEl('mark', '“', { x: 8, y: 8, w: 14, h: 18 }, {
-      variant: 'title', fontSize: 10, fontWeight: 700, textColor: p.ink,
-    }),
+    ornament('decor-1', 'orn-nhanh-hoa-goc', 88, 3, 8, p.ink),
+    ornament('decor-2', 'orn-canh-hoa-roi', 4, 76, 9, p.ink),
     textEl('kicker', content.kicker, { x: 14, y: 18, w: 76, h: 6 }, {
       variant: 'body', fontSize: 1.7, fontWeight: 600, textColor: p.ink,
     }),
@@ -761,7 +766,7 @@ function composeTwoColumn(p: LayoutPalette, content: SlideLayoutContent): SlideE
     const size = left.length + right.length <= 4 ? 3.2 : 2.8
     return compact([
       ...titleEls(p, content.title, HEADER_BOX, HEADER_SIZES, true),
-      both ? shapeEl('divider', { x: 49.4, y: 27, w: 0.6, h: 60 }, p.secondary) : null,
+      both ? shapeEl('divider', { x: 49.4, y: 27, w: 0.6, h: 60 }, p.muted) : null,
       textEl('body', bulletText(left), boxFor('left'), {
         variant: 'body', fontSize: size, textColor: p.fg, valign: 'middle',
       }),
@@ -822,7 +827,7 @@ function composeTwoColumn(p: LayoutPalette, content: SlideLayoutContent): SlideE
 
   return compact([
     ...titleEls(p, content.title, HEADER_BOX, HEADER_SIZES, true),
-    both ? shapeEl('divider', { x: 49.4, y: 27, w: 0.6, h: 60 }, p.secondary) : null,
+    both ? shapeEl('divider', { x: 49.4, y: 27, w: 0.6, h: 60 }, p.muted) : null,
     ...column('left'),
     ...column('right'),
   ])
@@ -890,8 +895,8 @@ function composeClosing(p: LayoutPalette, content: SlideLayoutContent): SlideEle
   const title = content.title?.trim() || content.body?.trim()
   if (!title) return []
   return compact([
-    shapeEl('decor-1', { x: 74, y: 6, w: 14, h: 25 }, p.panel, 'ellipse'),
-    shapeEl('decor-2', { x: 10, y: 74, w: 5, h: 9 }, p.accent, 'ellipse'),
+    ornament('decor-1', 'orn-canh-la', 5, 6, 12, p.ink),
+    ornament('decor-2', 'orn-bo-hoa', 85, 72, 10, p.ink),
     shapeEl('accent-line', { x: 47, y: 32, w: 6, h: 0.8 }, p.accent),
     textEl('title', title, { x: 8, y: 36, w: 84, h: 18 }, {
       variant: 'title', fontSize: 5.2, fontWeight: 700, textColor: p.fg, align: 'center',
@@ -1347,7 +1352,7 @@ function composeHook(p: LayoutPalette, content: SlideLayoutContent): SlideElemen
     ...titleEls(p, content.title, { x: 8, y: 14, w: 84, h: 12 }, [3.8, 3.4, 3.1, 2.8], false),
     shapeEl('bubble', { x: 8, y: 27, w: 84, h: bubbleH }, p.panel, 'round'),
     pills.length
-      ? { ...shapeEl('bubble-tail', { x: 22, y: 27 + bubbleH - 0.2, w: 5, h: 8 }, p.panel, 'triangle'), flipY: true }
+      ? { ...shapeEl('bubble-tail', { x: 13.5, y: 27 + bubbleH - 0.2, w: 5, h: 5.2 }, p.panel, 'triangle'), flipY: true }
       : null,
     textEl('body', body, { x: 12, y: 29, w: 76, h: bubbleH - 4 }, {
       variant: 'title', fontSize: 3.1, fontWeight: 600, textColor: p.fg, align: 'center', valign: 'middle',

@@ -39,14 +39,11 @@ Sau các sửa theo góp ý người dùng, điểm model vẫn 6,6 → **hình 
 
 ### Việc tiếp theo (ưu tiên)
 
-1. **Asset trang trí** (người dùng đang tạo; prompt đã đưa: loại A = một nét recolor được, loại B =
-   hai path pastel; đường kẻ, khung, hoa lá góc, blob nền, nhãn/ruy-băng, điểm nhấn, họa tiết nền lát).
-   Khi có file: mở rộng `import-graphics.mjs` (sheet/manifest), thay vòng tròn/chấm/dấu ngoặc trang trí
-   vô nghĩa và `title-rule`/`divider` phẳng.
-2. **4 lỗi nhỏ model còn chê (chưa sửa):** (a) hình trang trí vô nghĩa (vòng mờ góc, chấm lơ lửng,
-   dấu ngoặc kép) ở `statement`/`closing`/`quote`/`section`; (b) `divider` hai cột dùng `p.secondary`
-   (nâu cam, lệch tông xanh) → đổi sang accent/muted; (c) đuôi bong bóng `hook` trỏ vào chỗ trống →
-   trỏ vào icon hoặc bỏ; (d) từ mồ côi cuối dòng → CSS `text-wrap: pretty/balance`.
+1. ~~Asset trang trí~~ **ĐÃ NHẬP (3.57):** 78 ornament từ `Downloads/B.svg` (+2 bản đường kẻ ngắn). Còn nợ: dùng
+   khung/thẻ kẹp giấy/thẻ băng keo/thẻ số/blob/họa tiết nền lát vào layout (mới dùng đường kẻ + hoa lá góc).
+2. ~~4 lỗi nhỏ~~ **ĐÃ SỬA (3.57):** (a) decor vô nghĩa ở statement/closing/section → hoa lá/vạch lượn; (b) divider hai cột
+   đổi `p.muted`; (c) đuôi bong bóng hook trỏ vào icon; (d) `text-wrap: pretty` cho `.slide-frame`.
+
 3. **Hình ảnh:** bìa hay mất ảnh do quá hạn → retry/hạn dài hơn; cân nhắc dùng ảnh cho
    `statement`/`section`, ảnh stock, layout **biểu đồ** (`ChartView` có sẵn, chưa cho AI sinh data).
 4. **Chọn icon lệch nghĩa** (cái cân cho ƯCLN): AI chọn id theo catalog; thử khớp ngữ nghĩa tốt hơn
@@ -2339,6 +2336,23 @@ Sau audit "AI sinh slide vỡ layout": gốc là tọa độ cố định + đo 
 - **Sự cố công cụ:** helper ghi file kiểu `open(p,'wb').write(f(s))` mở file TRƯỚC khi
   `f` chạy → assert lỗi làm file rỗng (mất `slideAi.ts`, khôi phục bằng git). Luôn
   tính xong rồi mới mở để ghi.
+
+### 3.57. Asset trang trí `ornament` từ B.svg (27/10/2026)
+
+- **Nhập:** `scripts/import-decor.mjs` (gọi từ `import-graphics.mjs`; `bboxOf` tách ra `scripts/lib/svg-bbox.mjs`) đọc
+  `Downloads/B.svg` (78 item, không nhãn → id/tên/keyword đặt theo thứ tự đọc trong `ICONS_DECOR`). Item gom theo ô lưới
+  (cột = cx/360, hàng = cụm cy), item trong `<g clip-path>` lấy hộp cắt làm viewBox. Thêm `orn-ke-song-ngan`/`orn-ke-zigzag-ngan`
+  (64 đơn vị) vì đường kẻ 256 đơn vị thu nhỏ còn ~10% slide thì nét 3 đơn vị chỉ còn sợi tóc.
+- **Registry:** category mới `ornament` nằm chung `graphics.ts` (310+2 mục) nhưng KHÔNG vào `SLIDE_GRAPHICS`/`GRAPHIC_IDS`/
+  catalog/`searchGraphics` (AI chỉ chọn 232 icon); tra qua `graphicById`. Renderer bỏ đệm 1–2% cho ornament (đệm làm
+  vạch mảnh co thành hairline).
+- **Layout:** helper `ornament()` (`slideLayouts.ts`) đặt theo bề rộng, chiều cao suy từ tỉ lệ thật trên khung 16:9.
+  `title-rule`/`section-rule` → vạch lượn ngắn; statement → nhánh hoa + cánh hoa rơi; closing → cành lá + bó hoa;
+  bỏ ngoặc kép ở statement (quote vẫn giữ). Sửa (b)(c)(d) ở mục BÀN GIAO.
+- **Chưa dùng:** khung (bo tròn/vát/ảnh/tem), thẻ kẹp giấy/băng keo, thẻ số 1–5, blob/vòm/sóng đồi, ruy-băng, họa tiết nền lát,
+  góc ngoặc. Khung/blob cần co giãn: ornament chỉ scale đều (`meet`), nên phải chọn bản vuông/ngang theo tỉ lệ hộp.
+- **Kiểm chứng:** `tsc` sạch, test `slide-graphics` 21 nhóm (thêm test ornament), layout/measure/ai/theme xanh, lint 0 error
+  (90 warn cũ), build ok; chụp ảnh preview 6 layout × 2 theme bằng trang tạm (đã xoá).
 
 ## 4. Lỗi đã gặp và cách sửa
 

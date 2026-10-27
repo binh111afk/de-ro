@@ -17,7 +17,7 @@ import {
   Trash2,
 } from 'lucide-react'
 import { SLIDE_ASSETS, isSlideAssetId } from '@/lib/slideAssets'
-import { graphicMarkup, isGraphicId } from '@/lib/slideGraphics'
+import { graphicById, graphicMarkup } from '@/lib/slideGraphics'
 import { hasMath } from '@/lib/slideMath'
 import { renderMath } from '@/lib/math'
 
@@ -995,10 +995,10 @@ function SlideElView({ el, theme }: { el: SlideElement; theme: ResolvedTheme }) 
   }
 
   if (el.type === 'graphic') {
-    if (!isGraphicId(el.graphicId)) return null
+    if (!el.graphicId || !graphicById(el.graphicId)) return null
     return (
       <div
-        style={{ ...style, padding: '1%' }}
+        style={{ ...style, padding: graphicById(el.graphicId)?.category === 'ornament' ? 0 : '1%' }}
         // SVG do chính app sinh ra từ file thiết kế (không phải dữ liệu người
         // dùng nhập) nên nhúng trực tiếp là an toàn.
         dangerouslySetInnerHTML={{ __html: graphicMarkup(el.graphicId, el.textColor ?? theme.fg) }}
@@ -1621,11 +1621,11 @@ function EditableEl({
   }
 
   if (el.type === 'graphic') {
-    if (!isGraphicId(el.graphicId)) return null
+    if (!el.graphicId || !graphicById(el.graphicId)) return null
     return (
       <div {...common} style={{ ...style, cursor: selected ? 'move' : 'default' }}>
         <div
-          className="h-full w-full p-[2%]"
+          className={`h-full w-full ${graphicById(el.graphicId)?.category === 'ornament' ? '' : 'p-[2%]'}`}
           dangerouslySetInnerHTML={{ __html: graphicMarkup(el.graphicId, el.textColor ?? theme.fg) }}
         />
         {handle}
