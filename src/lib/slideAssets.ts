@@ -16,6 +16,7 @@ import {
   CheckCircle,
   ClockCounterClockwise,
   Code,
+  DeviceMobile,
   Dna,
   Flask,
   Function as FunctionIcon,
@@ -33,6 +34,7 @@ import {
   Target,
   TestTube,
   Translate,
+  UsersThree,
 } from '@phosphor-icons/react'
 import type { Icon } from '@phosphor-icons/react'
 
@@ -40,12 +42,13 @@ export const SLIDE_ASSET_IDS = [
   'book', 'calculator', 'sigma', 'flask', 'microscope', 'atom', 'globe', 'map',
   'history', 'idea', 'chart', 'check', 'target', 'brain', 'pen', 'leaf',
   'literature', 'language', 'code', 'function', 'art', 'music', 'health', 'economy', 'scroll',
+  'people', 'phone',
 ] as const
 
 export type SlideAssetId = (typeof SLIDE_ASSET_IDS)[number]
 
 export const SLIDE_ASSETS: Record<SlideAssetId, { icon: Icon; tags: string[] }> = {
-  book: { icon: BookOpen, tags: ['sách', 'đọc', 'văn', 'bài học', 'nội dung'] },
+  book: { icon: BookOpen, tags: ['sách', 'đọc', 'giáo trình', 'tài liệu'] },
   calculator: { icon: Calculator, tags: ['toán', 'tính', 'số', 'phép tính', 'nghiệm', 'phân số'] },
   sigma: { icon: Sigma, tags: ['toán', 'hàm số', 'đại số', 'công thức', 'nghiệm', 'phương trình'] },
   flask: { icon: Flask, tags: ['thí nghiệm', 'hoá', 'khoa học', 'phản ứng', 'dung dịch'] },
@@ -53,12 +56,12 @@ export const SLIDE_ASSETS: Record<SlideAssetId, { icon: Icon; tags: string[] }> 
   atom: { icon: Atom, tags: ['lý', 'vật lý', 'nguyên tử', 'khoa học'] },
   globe: { icon: GlobeHemisphereWest, tags: ['địa', 'địa lý', 'thế giới', 'toàn cầu'] },
   map: { icon: MapTrifold, tags: ['bản đồ', 'địa lý', 'vị trí', 'lịch sử'] },
-  history: { icon: ClockCounterClockwise, tags: ['sử', 'lịch sử', 'mốc', 'thời gian'] },
-  idea: { icon: Lightbulb, tags: ['ý tưởng', 'ghi nhớ', 'mẹo', 'khái niệm'] },
-  chart: { icon: ChartBar, tags: ['số liệu', 'biểu đồ', 'thống kê', 'dữ liệu', 'trục', 'tỉ lệ'] },
-  check: { icon: CheckCircle, tags: ['kiểm tra', 'đáp án', 'đúng', 'bài tập', 'kết quả'] },
-  target: { icon: Target, tags: ['mục tiêu', 'kết quả', 'bài học', 'đỉnh', 'giá trị'] },
-  brain: { icon: Brain, tags: ['tư duy', 'phân tích', 'kiến thức'] },
+  history: { icon: ClockCounterClockwise, tags: ['sử', 'lịch sử', 'mốc', 'thời gian', 'giờ', 'phút', 'lịch', 'hạn', 'trì hoãn'] },
+  idea: { icon: Lightbulb, tags: ['ý tưởng', 'ghi nhớ', 'mẹo', 'khái niệm', 'kế hoạch', 'ưu tiên'] },
+  chart: { icon: ChartBar, tags: ['số liệu', 'biểu đồ', 'thống kê', 'dữ liệu', 'trục', 'tỉ lệ', 'tiến độ'] },
+  check: { icon: CheckCircle, tags: ['kiểm tra', 'đáp án', 'đúng', 'bài tập', 'kết quả', 'hoàn thành', 'thói quen'] },
+  target: { icon: Target, tags: ['mục tiêu', 'đỉnh', 'giá trị', 'ưu tiên', 'tập trung'] },
+  brain: { icon: Brain, tags: ['tư duy', 'phân tích', 'kiến thức', 'học tập', 'tập trung', 'trí nhớ'] },
   pen: { icon: PencilSimple, tags: ['viết', 'ngữ văn', 'ghi chú'] },
   leaf: { icon: Leaf, tags: ['thực vật', 'sinh thái', 'lá', 'quang hợp'] },
   literature: { icon: BookOpenText, tags: ['văn', 'ngữ văn', 'tác phẩm', 'thơ', 'đọc hiểu'] },
@@ -70,6 +73,8 @@ export const SLIDE_ASSETS: Record<SlideAssetId, { icon: Icon; tags: string[] }> 
   health: { icon: Heartbeat, tags: ['thể dục', 'sức khoẻ', 'y tế', 'sinh lý'] },
   economy: { icon: ChartLineUp, tags: ['kinh tế', 'tài chính', 'tăng trưởng', 'thị trường'] },
   scroll: { icon: Scroll, tags: ['sử', 'lịch sử', 'văn bản cổ', 'sự kiện'] },
+  people: { icon: UsersThree, tags: ['bạn bè', 'nhóm', 'cộng đồng', 'người', 'làng'] },
+  phone: { icon: DeviceMobile, tags: ['điện thoại', 'mạng xã hội', 'tiktok', 'facebook', 'thông báo', 'màn hình'] },
 }
 
 /** Danh sách phụ kiện cho nơi cần icon dạng linh hoạt (không bắt buộc dùng). */
@@ -86,16 +91,24 @@ function hasTag(haystack: string, tag: string): boolean {
   return new RegExp(`(^|[^a-zà-ỹ0-9])${escaped}([^a-zà-ỹ0-9]|$)`, 'i').test(haystack)
 }
 
-export function pickSlideAsset(text: string): SlideAssetId {
+/**
+ * Icon khớp nghĩa nhất với `text`, hoặc `undefined` khi không từ khoá nào khớp —
+ * không còn icon sách mặc định (slide ba thẻ ba icon sách là rác thị giác).
+ * Truyền `used` để một slide không lặp icon: icon đã dùng bị bỏ qua và icon vừa
+ * chọn được thêm vào `used`.
+ */
+export function pickSlideAsset(text: string, used?: Set<SlideAssetId>): SlideAssetId | undefined {
   const haystack = text.toLowerCase()
-  let best: SlideAssetId = 'book'
+  let best: SlideAssetId | undefined
   let bestScore = 0
   for (const id of SLIDE_ASSET_IDS) {
+    if (used?.has(id)) continue
     const score = SLIDE_ASSETS[id].tags.reduce((sum, tag) => sum + (hasTag(haystack, tag) ? 1 : 0), 0)
     if (score > bestScore) {
       best = id
       bestScore = score
     }
   }
+  if (best) used?.add(best)
   return best
 }

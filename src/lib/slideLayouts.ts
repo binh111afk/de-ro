@@ -292,6 +292,15 @@ export function toneBackground(theme: DeckTheme, tone: SlideTone = 'theme'): str
  * ------------------------------------------------------------------ */
 type Box = Pick<SlideElement, 'x' | 'y' | 'w' | 'h'>
 
+/** Cỡ chữ thiết kế (trước khi co) của hộp chữ do `textEl` dựng — để đo mức bị co. */
+const BASE_SIZE = new WeakMap<SlideElement, number>()
+
+/** Tỉ lệ cỡ chữ cuối / cỡ thiết kế (1 = không co); `undefined` nếu không phải hộp của `textEl`. */
+export function fitRatio(el: SlideElement): number | undefined {
+  const base = BASE_SIZE.get(el)
+  return base && el.fontSize ? el.fontSize / base : undefined
+}
+
 function textEl(
   id: string,
   value: string | undefined,
@@ -324,7 +333,7 @@ function textEl(
     // của layout chỉ cao 12–13% nên 60% không đủ cho tiêu đề 60–80 ký tự.
     minScale: style.variant === 'title' ? 0.55 : undefined,
   })
-  return {
+  const el: SlideElement = {
     id,
     type: 'text',
     text,
@@ -337,6 +346,8 @@ function textEl(
     fontSize,
     lineHeight,
   }
+  BASE_SIZE.set(el, baseSize)
+  return el
 }
 
 function shapeEl(
@@ -434,7 +445,7 @@ function composeTitle(p: LayoutPalette, content: SlideLayoutContent): SlideEleme
     shapeEl('hero-panel', { x: 70, y: 14, w: 23, h: 72 }, p.accent, 'round'),
     graphic
       ? graphicEl('hero-graphic', graphic, { x: 72.5, y: 25, w: 18, h: 28 }, p.onAccent)
-      : iconEl('hero-icon', pickSlideAsset(`${content.title ?? ''} ${content.kicker ?? ''}`), { x: 74.5, y: 30, w: 14, h: 20 }, p.onAccent),
+      : iconEl('hero-icon', pickSlideAsset(`${content.title ?? ''} ${content.kicker ?? ''}`) ?? 'idea', { x: 74.5, y: 30, w: 14, h: 20 }, p.onAccent),
     shapeEl('hero-line', { x: 76, y: 57, w: 11, h: 0.9 }, p.onAccent),
     p.tone === 'accent'
       ? shapeEl('accent-band', { x: 0, y: 0, w: 100, h: 1.4 }, p.accent)
@@ -445,7 +456,7 @@ function composeTitle(p: LayoutPalette, content: SlideLayoutContent): SlideEleme
     textEl('title', content.title, { x: 9, y, w: 58, h: 30 }, {
       variant: 'title', fontSize: 5.3, fontWeight: 700, textColor: p.fg,
     }),
-    textEl('subtitle', content.subtitle, { x: 9, y: y + 34, w: 54, h: 11 }, {
+    textEl('subtitle', content.subtitle, { x: 9, y: y + 34, w: 54, h: 17 }, {
       variant: 'body', fontSize: 2.4, textColor: p.muted,
     }),
   ])
@@ -520,7 +531,7 @@ function composeBullets(p: LayoutPalette, content: SlideLayoutContent): SlideEle
     shapeEl('bullet-anchor', { x: 76, y: top + 2, w: 15, h: 21 }, p.accent, 'round'),
     graphic
       ? graphicEl('bullet-graphic', graphic, { x: 76.8, y: top + 3.5, w: 13.4, h: 18 }, p.onAccent)
-      : iconEl('bullet-anchor-icon', pickSlideAsset(content.title ?? text), { x: 77, y: top + 3.5, w: 13, h: 18 }, p.onAccent),
+      : iconEl('bullet-anchor-icon', pickSlideAsset(content.title ?? text) ?? 'idea', { x: 77, y: top + 3.5, w: 13, h: 18 }, p.onAccent),
     textEl('kicker', content.kicker, { x: 8, y: 9, w: 84, h: 6 }, {
       variant: 'body', fontSize: 1.7, fontWeight: 600, textColor: p.ink,
     }),
@@ -545,6 +556,7 @@ function composeCards(p: LayoutPalette, content: SlideLayoutContent): SlideEleme
   if (items.length === 0) items = cleanList(content.bullets)
   if (items.length < 2) return []
   const picked = items.slice(0, 6)
+  const used = new Set<SlideAssetId>()
   // 4 thẻ → lưới 2×2 kiểu "illustration card": badge tròn góc trái, tiêu đề cạnh
   // badge, minh hoạ trái và mô tả phải (theo mẫu slide giáo dục).
   const wide = picked.length === 4
@@ -553,27 +565,28 @@ function composeCards(p: LayoutPalette, content: SlideLayoutContent): SlideEleme
   const gap = 3
   const area = { x: 8, y: 24, w: 84, h: 76 }
   const cardW = (area.w - gap * (cols - 1)) / cols
-  const cardH = rows === 1 ? 46 : wide ? 34 : 36.5
+  const cardH = rows === 1 ? 46 : wide ? 36 : 36.5
   const totalH = rows * cardH + (rows - 1) * gap
   const startY = area.y + (area.h - totalH) / 2
 
   const cards = picked.flatMap((item, index) => {
     const x = area.x + (index % cols) * (cardW + gap)
     const y = startY + Math.floor(index / cols) * (cardH + gap)
-    const asset = pickSlideAsset(item)
+    const asset = pickSlideAsset(item, used)
     const { heading, body } = wide ? splitCardItem(item) : { heading: '', body: item }
 
     if (wide) {
+      // Thẻ 2×2: hàng đầu = badge số + tiêu đề (+ icon nhỏ góc phải nếu có), mô tả
+      // chiếm cả bề rộng thẻ bên dưới — không còn nhét chữ vào cột hẹp cạnh icon.
       const badgeW = 6.6
       const badgeH = (badgeW * 16) / 9
-      const iconTop = y + 2 + badgeH + 1.5
-      const iconW = 15
-      const textX = x + 2.5 + iconW + 2.5
-      const textW = cardW - iconW - 7.5
-      const available = y + cardH - 2.5 - iconTop
+      const iconW = 7
+      const bodyTop = y + 15
+      const bodyH = y + cardH - 2 - bodyTop
+      const bodyW = cardW - 5
       const font =
         [2.4, 2.2, 2, 1.85].find(
-          (size) => !body || textBoxHeight(body, textW, size, 1.45) <= available,
+          (size) => !body || textBoxHeight(body, bodyW, size, 1.45, { weight: 400 }) <= bodyH,
         ) ?? 1.8
       return [
         { id: `card-${index + 1}-panel`, type: 'shape', shape: 'round', fill: p.surface, shadow: p.shadow !== 'none', radius: p.radius, border: p.border, borderColor: p.borderColor, x, y, w: cardW, h: cardH } as SlideElement,
@@ -584,11 +597,13 @@ function composeCards(p: LayoutPalette, content: SlideLayoutContent): SlideEleme
           variant: 'body', fontSize: 1.9, fontWeight: 700, textColor: p.onAccent,
           align: 'center', valign: 'middle',
         }),
-        textEl(`card-${index + 1}-heading`, heading, { x: x + 10.5, y: y + 2.5, w: cardW - 12.5, h: 11 }, {
+        textEl(`card-${index + 1}-heading`, heading, { x: x + 10.5, y: y + 2.5, w: cardW - 12.5 - (asset ? iconW + 1 : 0), h: 11 }, {
           variant: 'title', fontSize: heading.length > 24 ? 2.1 : 2.5, fontWeight: 700, textColor: p.fg,
         }),
-        iconEl(`card-${index + 1}-icon`, asset, { x: x + 2.5, y: iconTop, w: iconW, h: 17 }, p.accent),
-        textEl(`card-${index + 1}`, body, { x: textX, y: iconTop - 0.5, w: textW, h: available + 1 }, {
+        asset
+          ? iconEl(`card-${index + 1}-icon`, asset, { x: x + cardW - iconW - 2, y: y + 2.5, w: iconW, h: 12 }, p.accent)
+          : null,
+        textEl(`card-${index + 1}`, body, { x: x + 2.5, y: bodyTop, w: bodyW, h: bodyH }, {
           variant: 'body', fontSize: font, fontWeight: 400, textColor: p.fg,
         }),
       ]
@@ -620,8 +635,8 @@ function composeCards(p: LayoutPalette, content: SlideLayoutContent): SlideEleme
     return [
       panel,
       shapeEl(`card-${index + 1}-stripe`, { x, y, w: cardW, h: 0.9 }, p.accent),
-      shapeEl(`card-${index + 1}-icon-badge`, { x: x + cardW - badgeW - 2.5, y: y + 3, w: badgeW, h: badgeH }, p.accent, 'round'),
-      iconEl(`card-${index + 1}-icon`, asset, { x: x + cardW - badgeW - 1.8, y: y + 3.4, w: badgeW - 1.4, h: badgeH - 0.8 }, p.onAccent),
+      asset ? shapeEl(`card-${index + 1}-icon-badge`, { x: x + cardW - badgeW - 2.5, y: y + 3, w: badgeW, h: badgeH }, p.accent, 'round') : null,
+      asset ? iconEl(`card-${index + 1}-icon`, asset, { x: x + cardW - badgeW - 1.8, y: y + 3.4, w: badgeW - 1.4, h: badgeH - 0.8 }, p.onAccent) : null,
       textEl(`card-${index + 1}-index`, String(index + 1).padStart(2, '0'), {
         x: x + 2.5,
         y: y + 3,
@@ -697,14 +712,14 @@ function composeComparison(p: LayoutPalette, content: SlideLayoutContent): Slide
       shape: 'round',
       fill: p.panel,
       x,
-      y: 26,
+      y: 25.5,
       w: 40,
-      h: 60,
+      h: 66,
     },
-    textEl(x < 50 ? 'left-title' : 'right-title', title, { x: x + 2, y: 29, w: 36, h: 7 }, {
+    textEl(x < 50 ? 'left-title' : 'right-title', title, { x: x + 2, y: 28, w: 36, h: 8 }, {
       variant: 'body', fontSize: 2.1, fontWeight: 700, textColor: color, align: 'center',
     }),
-    textEl(x < 50 ? 'body' : 'body-2', bulletText(items), { x: x + 4, y: 41, w: 32, h: 41 }, {
+    textEl(x < 50 ? 'body' : 'body-2', bulletText(items), { x: x + 2.5, y: 38, w: 35, h: 51 }, {
       variant: 'body', fontSize: 2.8, textColor: p.fg, valign: 'middle',
     }),
   ]
@@ -713,8 +728,8 @@ function composeComparison(p: LayoutPalette, content: SlideLayoutContent): Slide
     ...titleEls(p, content.title, HEADER_BOX, HEADER_SIZES, true),
     ...side(left, content.leftTitle, 8, p.ink),
     ...side(right, content.rightTitle, 52, p.ink),
-    shapeEl('vs-badge', { x: 47.5, y: 49, w: 5, h: 8.9 }, p.accent, 'ellipse'),
-    textEl('mark', 'VS', { x: 47.5, y: 49, w: 5, h: 8.9 }, {
+    shapeEl('vs-badge', { x: 47.5, y: 52, w: 5, h: 8.9 }, p.accent, 'ellipse'),
+    textEl('mark', 'VS', { x: 47.5, y: 52, w: 5, h: 8.9 }, {
       variant: 'body', fontSize: 1.6, fontWeight: 700, textColor: p.onAccent, align: 'center',
       valign: 'middle',
     }),
@@ -749,7 +764,7 @@ function composeClosing(p: LayoutPalette, content: SlideLayoutContent): SlideEle
     textEl('title', title, { x: 8, y: 36, w: 84, h: 18 }, {
       variant: 'title', fontSize: 5.2, fontWeight: 700, textColor: p.fg, align: 'center',
     }),
-    textEl('subtitle', content.subtitle, { x: 12, y: 57, w: 76, h: 10 }, {
+    textEl('subtitle', content.subtitle, { x: 12, y: 57, w: 76, h: 16 }, {
       variant: 'body', fontSize: 2.2, textColor: p.muted, align: 'center',
     }),
   ])
@@ -907,6 +922,7 @@ function composeStats(p: LayoutPalette, content: SlideLayoutContent): SlideEleme
     .slice(0, 4)
   if (stats.length === 0) return []
   const gap = 3
+  const usedIcons = new Set<SlideAssetId>()
   const area = { x: 8, y: 27, w: 84, h: 56 }
   const cellW = (area.w - gap * (stats.length - 1)) / stats.length
   const cells = stats.flatMap((stat, index) => {
@@ -921,11 +937,11 @@ function composeStats(p: LayoutPalette, content: SlideLayoutContent): SlideEleme
       w: cellW,
       h: 52,
     }
-    const asset = pickSlideAsset(`${stat.label ?? ''} ${stat.value ?? ''}`)
+    const asset = pickSlideAsset(`${stat.label ?? ''} ${stat.value ?? ''}`, usedIcons)
     return [
       panel,
-      shapeEl(`stat-${index + 1}-icon-badge`, { x: x + cellW / 2 - 9, y: area.y + 2, w: 18, h: 14 }, p.accent, 'round'),
-      iconEl(`stat-${index + 1}-icon`, asset, { x: x + cellW / 2 - 8, y: area.y + 3, w: 16, h: 12 }, p.onAccent),
+      asset ? shapeEl(`stat-${index + 1}-icon-badge`, { x: x + cellW / 2 - 9, y: area.y + 2, w: 18, h: 14 }, p.accent, 'round') : null,
+      asset ? iconEl(`stat-${index + 1}-icon`, asset, { x: x + cellW / 2 - 8, y: area.y + 3, w: 16, h: 12 }, p.onAccent) : null,
       textEl(`stat-${index + 1}-value`, stat.value || stat.label, { x, y: area.y + 17, w: cellW, h: 16 }, {
         variant: 'title', fontSize: 6.2, fontWeight: 700, textColor: p.ink, align: 'center', valign: 'middle',
       }),
@@ -983,17 +999,19 @@ function composeTimeline(p: LayoutPalette, content: SlideLayoutContent): SlideEl
   const steps = stepsOf(content)
   if (steps.length < 3) return []
   const slot = 84 / steps.length
+  // Chữ bước lớn hơn khi ít bước (4 bước × 60 ký tự vẫn vừa nhờ hộp cao 30%).
+  const stepSize = steps.length <= 3 ? 2.6 : steps.length === 4 ? 2.3 : 2.05
   const nodes = steps.flatMap((step, index) => {
     const center = 8 + slot * (index + 0.5)
     const left = center - slot / 2
     return [
       textEl(`step-${index + 1}-index`, String(index + 1).padStart(2, '0'), {
         x: left,
-        y: 32.5,
+        y: 34,
         w: slot,
-        h: 6,
+        h: 7,
       }, {
-        variant: 'body', fontSize: 1.35, fontWeight: 700, textColor: p.ink, align: 'center',
+        variant: 'body', fontSize: 1.8, fontWeight: 700, textColor: p.ink, align: 'center',
       }),
       {
         id: `step-${index + 1}`,
@@ -1001,24 +1019,24 @@ function composeTimeline(p: LayoutPalette, content: SlideLayoutContent): SlideEl
         shape: 'ellipse' as const,
         fill: p.accent,
         x: center - 1.1,
-        y: 39.15,
+        y: 42.15,
         w: 2.2,
         h: 3.9,
       },
       textEl(`item-${index + 1}`, step, {
         x: left + 1,
-        y: 47,
+        y: 50,
         w: slot - 2,
-        h: 24,
+        h: 30,
       }, {
-        variant: 'body', fontSize: 1.75, textColor: p.fg, align: 'center',
+        variant: 'body', fontSize: stepSize, textColor: p.fg, align: 'center',
       }),
     ]
   })
   return compact([
-    ...titleEls(p, content.title, { x: 8, y: 8, w: 84, h: 12 }, [3.8, 3.4, 3.1, 2.8]),
-    shapeEl('timeline-panel', { x: 6, y: 28, w: 88, h: 48 }, p.panel, 'round'),
-    shapeEl('timeline-line', { x: 8, y: 41, w: 84, h: 0.4 }, p.muted),
+    ...titleEls(p, content.title, { x: 8, y: 8, w: 84, h: 14 }, [3.8, 3.4, 3.1, 2.8]),
+    shapeEl('timeline-panel', { x: 6, y: 29, w: 88, h: 56 }, p.panel, 'round'),
+    shapeEl('timeline-line', { x: 8, y: 44, w: 84, h: 0.4 }, p.muted),
     ...nodes,
   ])
 }
@@ -1099,12 +1117,12 @@ function composeQuiz(p: LayoutPalette, content: SlideLayoutContent): SlideElemen
       id: `option-${index + 1}`,
       type: 'text',
       x: twoColumns ? (col === 0 ? 8 : 51) : 8,
-      y: 44 + row * 14,
+      y: 42 + row * 17,
       w: twoColumns ? 41 : 84,
-      h: 12,
+      h: 14,
       text: `${String.fromCharCode(65 + index)}. ${option}`,
       variant: 'body',
-      fontSize: 1.9,
+      fontSize: 2.3,
       textColor: correct ? p.onAccent : p.fg,
       fill: correct ? p.accent : p.panel,
       fixedHeight: true,

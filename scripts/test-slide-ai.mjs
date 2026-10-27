@@ -232,4 +232,21 @@ const fallback = slideFromAi(
 assert.equal(fallback.layout, undefined)
 assert.ok(fallback.elements.length >= 2, 'fallback có tiêu đề + khối ý')
 
+/* 11. Đọc được: nhồi chữ vào thẻ → báo; slide ngắn → sạch; icon không mặc định/không lặp. */
+{
+  const { readabilityIssues, checkSlide } = await import('../src/lib/slideAi.ts')
+  const { composeLayout } = await import('../src/lib/slideLayouts.ts')
+  const long = 'Một ý rất dài được viết liền mạch như một đoạn văn xuôi để chắc chắn sẽ làm chữ trong thẻ bị co nhỏ '.repeat(2)
+  const crowded = sanitizeSlide({ title: 'Bốn ý', items: [1, 2, 3, 4].map((n) => `Ý ${n}: ${long}`) }, 'cards')
+  assert.ok(readabilityIssues(crowded, 'cards').length > 0, 'thẻ nhồi chữ phải bị báo')
+  const short = sanitizeSlide({ title: 'Bốn ý', items: ['Một: ngắn gọn', 'Hai: ngắn gọn', 'Ba: ngắn gọn', 'Bốn: ngắn gọn'] }, 'cards')
+  assert.deepEqual(readabilityIssues(short, 'cards'), [])
+  assert.deepEqual(checkSlide({ title: 'Bốn ý', items: short.items }, 'cards').readability, [])
+  const els = composeLayout(DECK_THEMES[0], 'cards', { title: 'Ba mục', items: ['Alpha beta', 'Gamma delta', 'Epsilon zeta'] })
+  assert.equal(els.some((el) => el.type === 'icon'), false, 'không khớp từ khoá → không icon sách mặc định')
+  const timeIcons = composeLayout(DECK_THEMES[0], 'cards', { title: 'Thời gian', items: ['Giờ học', 'Phút nghỉ', 'Lịch tuần'] })
+    .filter((el) => el.type === 'icon')
+  assert.equal(new Set(timeIcons.map((el) => el.assetId)).size, timeIcons.length, 'icon không lặp trong một slide')
+}
+
 console.log('test-slide-ai: 10 nhóm kiểm tra đạt')

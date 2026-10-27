@@ -18,6 +18,7 @@
     "test:slide-theme": "tsx --tsconfig tsconfig.app.json scripts/test-slide-theme.mjs",
     "test:slide-layout": "tsx --tsconfig tsconfig.app.json scripts/test-slide-layout.mjs",
     "lint:slides": "node scripts/lint-slides.mjs",
+    "eval:slides": "node scripts/eval-slides.mjs",
     "test:slide-measure": "tsx --tsconfig tsconfig.app.json scripts/test-slide-measure.mjs",
     "test:slide-graphics": "tsx --tsconfig tsconfig.app.json scripts/test-slide-graphics.mjs",
     "test:slide-plan": "tsx --tsconfig tsconfig.app.json scripts/test-slide-plan.mjs",

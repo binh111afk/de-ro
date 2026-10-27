@@ -14,6 +14,7 @@ import { graphicCatalogText, isGraphicId } from './slideGraphics'
 import {
   composeLayout,
   contentFromSlide,
+  fitRatio,
   defaultTone,
   isLayoutId,
   isTone,
@@ -41,7 +42,10 @@ const cleanList = (value: unknown, maxItems: number, maxLen: number): string[] |
 
 export interface SlideCheck {
   page: AiSlidePayload
+  /** lỗi cứng: thiếu field/vượt ngân sách — slide không dùng được */
   errors: string[]
+  /** lỗi mềm: dựng thử layout thấy chữ bị co nhỏ — nên rút ngắn, nhưng vẫn dùng được */
+  readability: string[]
 }
 
 /**
@@ -496,7 +500,34 @@ export function repairPrompt(errors: string[]): string {
 /** Tiện cho test và nơi cần kiểm tra nhanh một phản hồi thô. */
 export function checkSlide(raw: unknown, layout: string, tone?: SlideTone): SlideCheck {
   const page = sanitizeSlide(raw, layout, tone)
-  return { page, errors: validateSlide(page, layout) }
+  const errors = validateSlide(page, layout)
+  return { page, errors, readability: errors.length ? [] : readabilityIssues(page, layout) }
+}
+
+/** Cỡ chữ nội dung tối thiểu (cqw) ≈ 24px ở slide 1280px. */
+export const READABLE_MIN = 1.9
+/** Chữ bị co quá mức này so với cỡ thiết kế thì coi là nhồi quá nhiều chữ. */
+const READABLE_SHRINK = 0.78
+/** Nhãn/số thứ tự nhỏ theo thiết kế, không tính. */
+const SMALL_BY_DESIGN = /kicker|index|mark|author|-title$/
+
+/**
+ * Dựng thử slide bằng layout engine (hình học không phụ thuộc theme) và báo hộp
+ * chữ nào bị co còn < 78% cỡ thiết kế và < 1,9cqw. Thay cho ngân sách ký tự đoán
+ * mò: ngân sách chỉ chặn quá đà, còn đây đo đúng hộp của layout đang dùng.
+ */
+export function readabilityIssues(page: AiSlidePayload, layout: string): string[] {
+  const id = isLayoutId(layout) ? layout : 'bullets'
+  const tone = isTone(page.tone) ? page.tone : defaultTone(id)
+  const issues: string[] = []
+  for (const el of composeLayout(themeById('sang'), id, contentOfPage(page), tone)) {
+    if (el.type !== 'text' || !el.text || SMALL_BY_DESIGN.test(el.id)) continue
+    const ratio = fitRatio(el)
+    if (ratio === undefined || ratio >= READABLE_SHRINK || (el.fontSize ?? 0) >= READABLE_MIN) continue
+    const excerpt = el.text.replace(/\s+/g, ' ').slice(0, 36)
+    issues.push(`chữ "${excerpt}…" quá dài cho khung, bị co còn ${Math.round(ratio * 100)}% — rút ngắn ý này`)
+  }
+  return issues.slice(0, 3)
 }
 
 /* ------------------------------------------------------------------ *
@@ -506,9 +537,8 @@ export function checkSlide(raw: unknown, layout: string, tone?: SlideTone): Slid
 let seq = 0
 const newId = () => `ai-${Date.now().toString(36)}-${(seq++).toString(36)}`
 
-/** Dựng một slide AI bằng layout engine; layout lạ rơi về title + bullets. */
-export function slideFromAi(page: AiSlidePayload, theme: ResolvedTheme): Slide {
-  const content: SlideLayoutContent = {
+function contentOfPage(page: AiSlidePayload): SlideLayoutContent {
+  return {
     title: page.title,
     kicker: page.kicker,
     subtitle: page.subtitle,
@@ -530,6 +560,11 @@ export function slideFromAi(page: AiSlidePayload, theme: ResolvedTheme): Slide {
     options: page.options,
     answer: page.answer,
   }
+}
+
+/** Dựng một slide AI bằng layout engine; layout lạ rơi về title + bullets. */
+export function slideFromAi(page: AiSlidePayload, theme: ResolvedTheme): Slide {
+  const content = contentOfPage(page)
   const layout = page.layout?.trim()
   const tone = isTone(page.tone) ? page.tone : defaultTone(layout ?? 'bullets')
   const composed =

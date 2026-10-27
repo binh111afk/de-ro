@@ -274,7 +274,7 @@ const HTML_SYSTEM = HTML_DECK_SYSTEM
  * Lượt 1 của pipeline slide (chặng 26a): lập dàn ý + chọn style, chưa viết nội
  * dung chi tiết. Người dùng duyệt dàn ý rồi mới gọi lượt sinh deck.
  */
-const SLIDE_PLAN_SYSTEM =
+export const SLIDE_PLAN_SYSTEM =
   'Bạn là trợ lý AI của trình soạn bài trình bày tiếng Việt. Nhiệm vụ: LẬP DÀN Ý, ' +
   'chưa viết nội dung chi tiết. Chỉ trả về DUY NHẤT một JSON hợp lệ (không bọc markdown, ' +
   'không chữ ngoài JSON):\n' +
@@ -439,7 +439,7 @@ function DeckProgress({
  * Sinh nội dung một slide từ dàn ý đã duyệt. Sai field bắt buộc thì sửa đúng
  * một lần; vẫn sai trả null để slide đó bị bỏ, không chèn nội dung rác.
  */
-async function generateSlide(
+export async function generateSlide(
   plan: DeckPlan,
   planSlide: DeckPlanSlide,
   index: number,
@@ -459,14 +459,14 @@ async function generateSlide(
     planSlide.layout,
     planSlide.tone,
   )
-  if (!check.errors.length) return check.page
+  if (!check.errors.length && !check.readability.length) return check.page
 
   const repaired = await callLlm(
     [
       { role: 'system', content: system },
       { role: 'user', content: user },
       { role: 'assistant', content: first.content },
-      { role: 'user', content: repairPrompt(check.errors) },
+      { role: 'user', content: repairPrompt([...check.errors, ...check.readability]) },
     ],
     { signal, reasoningEffort: 'medium' },
   )
@@ -475,7 +475,9 @@ async function generateSlide(
     planSlide.layout,
     planSlide.tone,
   )
-  return second.errors.length ? null : second.page
+  // Lỗi cứng sau repair → bỏ slide; chỉ còn lỗi "chữ nhỏ" thì vẫn dùng (đừng mất slide vì thẩm mỹ).
+  if (second.errors.length) return check.errors.length ? null : check.page
+  return second.page
 }
 
 /**
