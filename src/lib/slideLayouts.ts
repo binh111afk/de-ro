@@ -489,7 +489,10 @@ function composeTitle(p: LayoutPalette, content: SlideLayoutContent): SlideEleme
     // Bìa cần một neo thị giác có chủ đích: panel màu bên phải thay cho chấm trang trí rời.
     // Huy hiệu tròn (không còn khối panel cao nửa trống): vòng accent + hình đặt giữa.
     shapeEl('hero-panel', { x: 67, y: 20, w: 26, h: 46.2 }, p.accent, 'ellipse'),
-    ...(graphic
+    // Ảnh AI (sinh nền sau khi slide đã hiện) thay hình có sẵn: ảnh cắt tròn trong vòng accent.
+    ...(content.image
+      ? [{ id: 'hero-image', type: 'image' as const, shape: 'ellipse' as const, src: content.image, x: 69, y: 23.5, w: 22, h: 39.1 }]
+      : graphic
       ? [
           shapeEl('hero-graphic-plate', { x: 70, y: 25.3, w: 20, h: 35.6 }, GRAPHIC_PLATE, 'ellipse'),
           graphicEl('hero-graphic', graphic, { x: 73.5, y: 31.5, w: 13, h: 23.1 }, GRAPHIC_INK),

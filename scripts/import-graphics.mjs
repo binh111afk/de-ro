@@ -10,6 +10,7 @@
  * một dòng vào mảng ICONS theo đúng thứ tự đọc trên sheet rồi chạy lại.
  */
 import { readFileSync, writeFileSync } from 'node:fs'
+import { ICONS_100, ICONS_PROG, SHEET_100, SHEET_PROG } from './graphics-extra.mjs'
 
 const SHEET = 'C:/Users/Lenovo/Downloads/112 educational icons · 64px.svg'
 const OUT = 'src/lib/graphics.ts'
@@ -131,6 +132,8 @@ const ICONS = [
 
 /* ------------------------------ đọc sheet ------------------------------ */
 
+/** Đọc một contact sheet (mỗi icon 2 path) và ghép với danh sách tên theo thứ tự đọc. */
+function importSheet(SHEET, ICONS) {
 const raw = readFileSync(SHEET, 'utf8')
 const paths = [...raw.matchAll(/<path\b([^>]*)>/g)].map((m) => {
   const attrs = {}
@@ -244,6 +247,19 @@ const entries = sorted.map((icon, index) => {
     `</svg>`
   return { id, name, category, keywords, ratio: 1, svg }
 })
+return entries
+}
+
+const entries = [
+  ...importSheet(SHEET, ICONS),
+  ...importSheet(SHEET_100, ICONS_100),
+  ...importSheet(SHEET_PROG, ICONS_PROG),
+]
+const seen = new Set()
+for (const e of entries) {
+  if (seen.has(e.id)) throw new Error(`id trùng: ${e.id}`)
+  seen.add(e.id)
+}
 
 const body = entries
   .map(
@@ -253,7 +269,8 @@ const body = entries
   .join('\n')
 
 const file = `/* AUTO-GENERATED bởi scripts/import-graphics.mjs — đừng sửa tay.
- * Nguồn: contact sheet 112 icon (64px, 3px stroke #22333B, 8 màu pastel).
+ * Nguồn: 3 contact sheet (112 icon gốc + 100 icon bổ sung + 20 ngôn ngữ lập trình;
+ * 64px, 3px stroke #22333B, 8 màu pastel).
  * Cắt cửa sổ 70×70 quanh tâm từng icon để nét 3px không bị cắt.
  */
 export type GraphicCategory =
@@ -270,6 +287,18 @@ export type GraphicCategory =
   | 'arrow'
   | 'decor'
   | 'misc'
+  | 'cs'
+  | 'prog'
+  | 'eng'
+  | 'geo'
+  | 'his'
+  | 'lit'
+  | 'bio'
+  | 'chem'
+  | 'phys'
+  | 'art'
+  | 'pe'
+  | 'life'
 
 export interface SlideGraphicData {
   id: string

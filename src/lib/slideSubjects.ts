@@ -21,6 +21,8 @@ export interface SubjectPack {
   layouts: string[]
   /** luật nội dung riêng của môn, chèn vào prompt từng slide */
   rules: string[]
+  /** nhóm đồ hoạ (slideGraphics) đưa vào prompt cho môn này */
+  graphicGroups: string[]
 }
 
 export const SUBJECT_PACKS: SubjectPack[] = [
@@ -28,6 +30,7 @@ export const SUBJECT_PACKS: SubjectPack[] = [
     id: 'toan',
     name: 'Toán',
     keywords: ['toan', 'ham so', 'phuong trinh', 'bat phuong trinh', 'hinh hoc', 'dai so', 'uoc', 'boi', 'phan so', 'luong giac', 'dao ham', 'tich phan', 'xac suat', 'thong ke', 'vector', 'so hoc'],
+    graphicGroups: ['math', 'class', 'sci', 'sym', 'people', 'reward', 'life'],
     themeHint: 'sang',
     structure: [
       'Khởi động (hook): một bài toán/tình huống gợi mở',
@@ -49,6 +52,7 @@ export const SUBJECT_PACKS: SubjectPack[] = [
     id: 'van',
     name: 'Ngữ văn',
     keywords: ['van', 'ngu van', 'truyen', 'tho', 'tac pham', 'tac gia', 'nhan vat', 'phan tich', 'nghi luan', 'doan trich', 'chi pheo', 'kieu', 'bai tho', 'van hoc'],
+    graphicGroups: ['lit', 'lang', 'soc', 'his', 'people', 'nat', 'reward'],
     themeHint: 'giay-am',
     structure: [
       'Giới thiệu tác giả và tác phẩm',
@@ -70,6 +74,7 @@ export const SUBJECT_PACKS: SubjectPack[] = [
     id: 'su-dia',
     name: 'Lịch sử & Địa lí',
     keywords: ['lich su', 'dia li', 'dia ly', 'chien tranh', 'khoi nghia', 'cach mang', 'trieu dai', 'khi hau', 'dan cu', 'kinh te', 'ban do', 'song ngoi', 'chien thang', 'chien dich', 'dien bien phu', 'phong kien', 'thuc dan'],
+    graphicGroups: ['his', 'geo', 'soc', 'nat', 'people', 'lit'],
     themeHint: 'giay-am',
     structure: [
       'Bối cảnh / vị trí, phạm vi',
@@ -90,6 +95,7 @@ export const SUBJECT_PACKS: SubjectPack[] = [
     id: 'ngoai-ngu',
     name: 'Ngoại ngữ',
     keywords: ['tieng anh', 'english', 'ngu phap', 'tu vung', 'grammar', 'vocabulary', 'ielts', 'toeic', 'present', 'past tense', 'thi hien tai', 'thi qua khu', 'hoi thoai', 'tieng phap', 'tieng nhat', 'tieng han'],
+    graphicGroups: ['eng', 'lang', 'people', 'class', 'soc', 'lit', 'reward'],
     themeHint: 'tim',
     structure: [
       'Khởi động (câu hỏi, hình ảnh gợi mở)',
@@ -110,6 +116,7 @@ export const SUBJECT_PACKS: SubjectPack[] = [
     id: 'tin',
     name: 'Tin học',
     keywords: ['tin hoc', 'lap trinh', 'thuat toan', 'python', 'scratch', 'bien so', 'vong lap', 'co so du lieu', 'mang may tinh', 'internet', 'excel', 'html', 'code', 'phan mem', 'an toan thong tin'],
+    graphicGroups: ['cs', 'prog', 'sci', 'class', 'people', 'life'],
     themeHint: 'dem-xanh',
     structure: [
       'Vấn đề / tình huống mở đầu (hook)',
@@ -130,6 +137,7 @@ export const SUBJECT_PACKS: SubjectPack[] = [
     id: 'khtn',
     name: 'Khoa học tự nhiên (Lý, Hoá, Sinh)',
     keywords: ['vat li', 'vat ly', 'hoa hoc', 'sinh hoc', 'khoa hoc tu nhien', 'luc', 'chuyen dong', 'dong dien', 'dien tro', 'phan ung', 'bang tuan hoan', 'tinh the', 'te bao', 'quang hop', 'di truyen', 'sinh thai', 'axit', 'bazo', 'nang luong', 'khtn'],
+    graphicGroups: ['bio', 'chem', 'phys', 'sci', 'nat', 'math', 'geo'],
     themeHint: 'rung',
     structure: [
       'Hiện tượng / câu hỏi mở đầu (hook)',
@@ -151,6 +159,7 @@ export const SUBJECT_PACKS: SubjectPack[] = [
     id: 'khac',
     name: 'Chủ đề chung',
     keywords: [],
+    graphicGroups: ['class', 'people', 'reward', 'life', 'sci', 'nat', 'soc', 'art', 'pe', 'sym', 'misc'],
     themeHint: 'sang',
     structure: [
       'Mở đầu: vấn đề hoặc câu hỏi',

@@ -13,7 +13,8 @@ import { SlideThumb } from '@/examEditor/SlideEditor'
 import { SLIDE_PLAN_SYSTEM, generateSlide } from '@/examEditor/AiPanel'
 import { callLlm } from '@/lib/llm'
 import { parseDeckPlan } from '@/lib/aiDeck'
-import { slideFromAi } from '@/lib/slideAi'
+import { slideFromAi, withImage } from '@/lib/slideAi'
+import { IMAGE_LAYOUTS, buildImagePrompt, generateSlideImage, queueImage } from '@/lib/imageGen'
 import { ensureMeasureFonts } from '@/lib/slideMeasure'
 import { themeById } from '@/lib/slideTheme'
 import type { Slide } from '@/store/docs'
@@ -59,13 +60,32 @@ async function main() {
   const theme = themeById(plan.theme ?? 'sang')
   const cells: JSX.Element[] = []
   const failed: string[] = []
+  const built: Array<Slide | null> = pages.map((page) => (page ? slideFromAi(page, theme) : null))
+  // ?images=1: sinh ảnh AI thật cho bìa + layout ảnh (như app làm nền) rồi mới chụp
+  if (new URLSearchParams(location.search).get('images')) {
+    await Promise.all(
+      built.map(async (slide, i) => {
+        const page = pages[i]
+        if (!slide || !page || !IMAGE_LAYOUTS.includes(page.layout ?? '')) return
+        const isCover = page.layout === 'title'
+        const bullets = page.bullets ?? page.steps ?? page.items ?? [page.subtitle ?? '']
+        const orientation = isCover ? 'square' : page.layout === 'image-left' || page.layout === 'image-right' ? 'portrait' : 'landscape'
+        try {
+          const img = await queueImage(() => generateSlideImage(buildImagePrompt(page.title, bullets, orientation, theme.accent)))
+          built[i] = withImage(slide, theme, img.dataUrl)
+        } catch {
+          // giữ đồ hoạ/icon
+        }
+      }),
+    )
+  }
   pages.forEach((page, i) => {
     const ps = plan.slides[i]
-    if (!page) {
+    const slide = built[i]
+    if (!page || !slide) {
       failed.push(`${i + 1}:${ps.layout}`)
       return
     }
-    const slide: Slide = slideFromAi(page, theme)
     cells.push(
       <div key={i} style={{ width: 620 }}>
         <div className="cap">{i + 1}. {ps.layout}{ps.tone ? `/${ps.tone}` : ''} — {ps.title}</div>

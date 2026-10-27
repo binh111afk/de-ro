@@ -4,22 +4,99 @@ Tài liệu này ghi lại toàn bộ trạng thái dự án: đã làm gì, đ�
 rút ra, và **những gì còn chưa làm xong**. Đọc file này là đủ để tiếp tục làm việc
 mà không cần đọc lại lịch sử hội thoại.
 
-> Cập nhật lần cuối: **27/10/2026** — audit code soandethi trích xuất (3.48);
-> **chặng 1: typography engine** đo trước khi đặt cho cả 19 layout (3.49);
-> **chặng 2: kho 112 đồ hoạ vector** + AI chọn graphic thay ảnh, render/PPTX
-> (3.50); sửa timeout AI slide 45s → 120s + hạ reasoning cho slide (3.47).
-> Ước **~72%** so với workflow soandethi (thang 3.36/6.8).
-> Trước đó (25/10): chặng 23.5 polish 14 layout (tông nhấn nền tint, card/stat
-> panel, timeline/cycle, bảng có header màu, ảnh bo góc, audit GenOffice 3.41);
-> chặng 23 + bổ sung: layout v2 đủ 14 bố cục + tone theme/soft/accent, UI chọn
-> tông, tạo ảnh AI cho khung ảnh qua Xkiro (`sensenova/sensenova-u1.5-lite`)
-> (3.39–3.40); chặng 22: layout engine v1 (7 bố cục), gallery Bố cục ở ribbon
-> Chèn (3.38); chặng 21: theme v2 cho slide (10 theme gồm 4 theme theo môn,
-> token/font/decor, deck cũ vẫn đọc được) (3.37); chặng 20: đổi tên/xoá tài
-> liệu ở tab Bắt đầu (3.32), menu Tệp + nhập docx/xlsx/pptx + xuất pptx (3.33),
-> khung chữ slide ôm nội dung (3.34), resize đúng cho phần tử xoay/lật (3.35),
-> audit workflow AI slide soandethi + lộ trình 6.8 (3.36); thang nguồn khi soạn
-> đề (tệp mẫu → tài liệu đã lưu → search web), đọc docx/pdf/xlsx server-side.
+> Cập nhật lần cuối: **27/10/2026 (cuối phiên)** — xem mục **BÀN GIAO PHIÊN** ngay dưới.
+> Lịch sử từng chặng nằm ở mục 3.x (mới nhất 3.51–3.56: P0/P1 slide, gói môn, KaTeX,
+> layout ví dụ mẫu/mở bài, công cụ chấm điểm, icon bổ sung, ảnh AI nền).
+
+## BÀN GIAO PHIÊN (27/10/2026) — đọc mục này trước
+
+### Trạng thái nhanh
+
+Trọng tâm phiên này: **chất lượng slide do AI sinh** (không đụng nhiều tới trình soạn đề).
+Pipeline: dàn ý (`SLIDE_PLAN_SYSTEM`, có `subject`/`stylePack`/`theme`) → duyệt → sinh từng
+slide (`generateSlide` + repair, kiểm tra chữ co `readabilityIssues`) → layout engine
+(`slideLayouts.ts`, **21 layout**, đo chữ bằng canvas) → slide hiện ngay → ảnh AI sinh nền
+(bìa + layout ảnh) rồi `withImage()` thay vào.
+
+- **6 theme OKLCH** (`sang`, `dem-xanh`, `giay-am`, `rung`, `tim`, `do`); id cũ tra qua `resolveThemeId`.
+- **7 gói môn** (`slideSubjects.ts`: toán, văn, sử-địa, ngoại ngữ, tin, khtn, khác): cấu trúc bài,
+  layout ưu tiên, luật nội dung, nhóm icon cho prompt.
+- **Công thức** `$...$` bằng KaTeX (+ `\ce{}` mhchem) ở thumbnail/trình chiếu/editor/ô bảng;
+  xuất PPTX đổi thành chữ Unicode (giới hạn đã biết).
+- **Kho đồ hoạ 232 icon** (112 gốc + 100 bổ sung + 20 ngôn ngữ lập trình), đặt trên "tấm nền sáng"
+  cố định (`graphicPlate`) để nét tối + pastel luôn tương phản.
+- **Ảnh AI**: Xkiro `sensenova/sensenova-u1.5-lite` (45–90s/ảnh, đôi khi quá hạn → giữ icon).
+
+### Điểm chất lượng (thước tương đối, model deepseek-v4.1-flash chấm ảnh slide)
+
+| | Model | Người dùng |
+|---|---|---|
+| 6 deck do dự án sinh (59 slide) | **6,6/10** (layout 7,0 · chữ 7,1 · màu 7,5 · điểm nhấn 7,1 · **hình ảnh 4,4** · hoàn thiện 6,1) | 6,8 / 6,8 / 6,8 / 6,8 / 7 / 7 (TB 6,87) |
+| Deck mẫu người dùng gửi ("Ước Chung Lớn Nhất") | 6,4 (6,8 nếu bỏ slide gần trống) | — |
+
+Model khắt khe hơn người dùng ~0,3; dùng để so TRƯỚC/SAU mỗi lần sửa (nhiễu ±1/slide).
+Sau các sửa theo góp ý người dùng, điểm model vẫn 6,6 → **hình ảnh/minh hoạ mới là nút thắt**.
+
+### Việc tiếp theo (ưu tiên)
+
+1. **Asset trang trí** (người dùng đang tạo; prompt đã đưa: loại A = một nét recolor được, loại B =
+   hai path pastel; đường kẻ, khung, hoa lá góc, blob nền, nhãn/ruy-băng, điểm nhấn, họa tiết nền lát).
+   Khi có file: mở rộng `import-graphics.mjs` (sheet/manifest), thay vòng tròn/chấm/dấu ngoặc trang trí
+   vô nghĩa và `title-rule`/`divider` phẳng.
+2. **4 lỗi nhỏ model còn chê (chưa sửa):** (a) hình trang trí vô nghĩa (vòng mờ góc, chấm lơ lửng,
+   dấu ngoặc kép) ở `statement`/`closing`/`quote`/`section`; (b) `divider` hai cột dùng `p.secondary`
+   (nâu cam, lệch tông xanh) → đổi sang accent/muted; (c) đuôi bong bóng `hook` trỏ vào chỗ trống →
+   trỏ vào icon hoặc bỏ; (d) từ mồ côi cuối dòng → CSS `text-wrap: pretty/balance`.
+3. **Hình ảnh:** bìa hay mất ảnh do quá hạn → retry/hạn dài hơn; cân nhắc dùng ảnh cho
+   `statement`/`section`, ảnh stock, layout **biểu đồ** (`ChartView` có sẵn, chưa cho AI sinh data).
+4. **Chọn icon lệch nghĩa** (cái cân cho ƯCLN): AI chọn id theo catalog; thử khớp ngữ nghĩa tốt hơn
+   hoặc cho phép bỏ icon khi không khớp.
+5. **Vòng chấm bằng mắt trong pipeline** (render → `judge-slides` → repair một lượt): chưa làm.
+6. Tồn đọng cũ: lazy-load bundle (>1 MB), so chế độ HTML với PPT, khối bảng biến thiên/biểu đồ/đồ thị
+   cho TRÌNH SOẠN ĐỀ (mục 6.1b), `reasoning` model, quiz chưa có "hiện đáp án khi bấm" (đáp án luôn hiện).
+
+### Lệnh và công cụ (chạy ở thư mục dự án)
+
+- Dev: `npm run dev -- --port 5184 --host 127.0.0.1` (cổng bận thì preview tự đổi 5186). Sửa `server/*`
+  phải khởi động lại dev server.
+- Test slide (đều `npm run test:<tên>`): `slide-math`, `slide-theme`, `slide-layout`, `slide-measure`,
+  `slide-text`, `slide-ai`, `slide-plan`, `slide-graphics`, `slide-assets`, `image`, `convert`.
+- `npm run lint:slides` — dựng 630 slide (6 theme × 21 layout × 3 bộ nội dung × tông) trong Chrome
+  headless, đo DOM: tràn/đè/ngoài khung/**sát mép (edge)** là *error*, chữ nhỏ/tương phản là *warn*.
+  Hiện **0 error**, ~90 warn (chữ `cycle`/pill `hook` với nội dung stress vượt ngân sách).
+- `npm run eval:slides -- "chủ đề" ... --out <dir> [--slides] [--images]` — chạy pipeline LLM THẬT,
+  chụp lưới/ từng slide (`--slides`), sinh ảnh AI thật (`--images`, chậm vài phút). Ảnh vào `eval-out/`
+  (gitignored).
+- `node scripts/judge-slides.mjs <thư-mục-ảnh> --label "..."` — chấm bằng `LLM_MODEL` (nhận ảnh);
+  ghi `judge.json`. Gateway opencode đòi header `x-opencode-session` (đã có trong script/proxy).
+- `node scripts/import-graphics.mjs` — nhập 3 contact sheet (đường dẫn ở `Downloads/`, tên/keyword
+  trong `scripts/graphics-extra.mjs` và đầu script) → `src/lib/graphics.ts` (đừng sửa tay).
+- `.env` (không commit): `LLM_BASE_URL`, `LLM_API_KEY`, `LLM_MODEL` (opencode, deepseek-v4.1-flash).
+  Ảnh/Xkiro lấy key từ `~/.zcode/v2/provider_config.json` nếu `.env` không có `IMAGE_*`.
+- `.claude/launch.json` (cấu hình dev server cho công cụ preview) để ngoài git.
+
+### Bẫy đã gặp (đừng lặp lại)
+
+- Bash heredoc/tool **làm hỏng ký tự `\`** (LaTeX, regex, `'\n'`): tạo file chứa backslash bằng công
+  cụ Write, hoặc sinh ký tự bằng `chr(92)`. Kiểm tra `tsc` ngay sau khi sửa.
+- Helper ghi file `open(p,'wb').write(f(s))` mở file TRƯỚC khi `f` chạy → lỗi assert làm file rỗng
+  (đã mất `slideAi.ts`, khôi phục bằng `git checkout`). Tính xong rồi mới mở để ghi.
+- Nhiều file là **CRLF**; khi thay chuỗi nhiều dòng phải tính tới `\r\n`.
+- Trang `scripts/*/main.tsx` (lint/eval) KHÔNG nằm trong `tsc` (chỉ `src`); chạy thật mới biết lỗi.
+- `.katex` toàn cục của app là 1,03em (hợp đề thi) → slide ghi đè trong `slide.css`.
+- Hộp chữ canh giữa là flex-column: chữ + `.katex` làm con trực tiếp sẽ tách hàng → bọc một khối con.
+- Editor dùng `<textarea>` (không có valign) → `AutoFitText` tự bọc flex để canh giữa như bản xem.
+
+### Bản đồ file chính của pipeline slide
+
+`src/lib/`: `slideLayouts.ts` (21 layout, `composeLayout`, `contentFromSlide`, `graphicPlate`),
+`slideMeasure.ts` (đo chữ canvas), `slideAi.ts` (sanitize/validate/budget/`readabilityIssues`/`withImage`),
+`aiDeck.ts` (parse dàn ý, `repairJson`, `enforceRhythm`), `slideTheme.ts` (OKLCH), `slideSubjects.ts`,
+`slideGraphics.ts` + `graphics.ts` (232 icon), `slideAssets.ts` (Phosphor), `slideMath.ts`, `math.ts`,
+`imageGen.ts` (`queueImage`, `IMAGE_LAYOUTS`), `exportDeck.ts`. `src/examEditor/`: `SlideEditor.tsx`
+(renderer + editor + `applyAiSlide`), `AiPanel.tsx` (prompt/luồng chat). `server/`: `llmProxy.ts`,
+`imageProxy.ts`. `scripts/`: `lint-slides*`, `eval-slides*`, `judge-slides.mjs`, `lib/cdp.mjs`,
+`import-graphics.mjs`, `graphics-extra.mjs`, `test-slide-*.mjs`.
 
 ## 0. Vị trí dự án
 
@@ -2242,6 +2319,26 @@ Sau audit "AI sinh slide vỡ layout": gốc là tọa độ cố định + đo 
   một cỡ chữ cho hai cột, `contentFromSlide` đọc lại `left-N`/`right-N`;
   (4) phân số KaTeX nhỏ do `.katex {1.03em}` toàn cục của app → `slide.css` đặt
   `.slide-frame .katex 1.2em`, `.mfrac 1.15em`.
+
+### 3.56. Icon bổ sung, ảnh AI nền, canh giữa trong editor (27/10/2026)
+
+- **Kho đồ hoạ 112 → 232:** nhập thêm "100 icon giáo dục bổ sung" (cs, eng, geo, his,
+  lit, bio, chem, phys, math, art, pe, life) và "20 ngôn ngữ lập trình" (prog).
+  Sheet không có nhãn nên tên/keyword đặt theo hình thật (`scripts/graphics-extra.mjs`);
+  `import-graphics.mjs` đọc 3 sheet và báo id trùng. Prompt từng slide chỉ gửi các
+  nhóm hợp với môn (`SubjectPack.graphicGroups` → `graphicCatalogText(groups)`).
+- **Ảnh AI (Xkiro `sensenova/sensenova-u1.5-lite`, mặc định của `imageProxy`):** ~45–90s
+  mỗi ảnh, đôi khi quá 150s → lỗi thì giữ đồ hoạ. Slide hiện NGAY, ảnh sinh nền
+  (`queueImage`, tối đa 2 song song) rồi `withImage()` dựng lại slide: bìa có ảnh cắt
+  tròn trong vòng accent (`hero-image`, `shape: 'ellipse'`), layout ảnh thay graphic
+  bằng ảnh. `eval:slides --images` chạy đúng luồng này để xem.
+- **Canh giữa dọc trong editor:** `AutoFitText` dùng `<textarea>` nên không có valign →
+  chữ/số dính đỉnh khung (bong bóng `hook`, số trong vòng tròn của `example`) dù
+  thumbnail đúng. Giờ textarea cao đúng nội dung, hộp bọc flex căn giữa; chế độ xem
+  công thức cũng căn giữa. Đã chụp editor thật để kiểm.
+- **Sự cố công cụ:** helper ghi file kiểu `open(p,'wb').write(f(s))` mở file TRƯỚC khi
+  `f` chạy → assert lỗi làm file rỗng (mất `slideAi.ts`, khôi phục bằng git). Luôn
+  tính xong rồi mới mở để ghi.
 
 ## 4. Lỗi đã gặp và cách sửa
 

@@ -1,6 +1,6 @@
 /**
  * Test kho đồ hoạ vector (chặng 2):
- *  - registry 112 icon, id duy nhất, SVG hợp lệ (2 path, không chữ, không nền)
+ *  - registry 232 icon, id duy nhất, SVG hợp lệ (2 path, không chữ, không nền)
  *  - search theo tiếng Việt có dấu/không dấu
  *  - graphicMarkup đổi màu nét + phủ kín hộp
  *  - catalog gửi model có đủ id
@@ -35,9 +35,9 @@ const check = (name, fn) => {
 
 console.log('\n[1] registry')
 
-check('112 icon, id duy nhất', () => {
-  assert.equal(SLIDE_GRAPHICS.length, 112)
-  assert.equal(GRAPHIC_IDS.size, 112)
+check('232 icon, id duy nhất', () => {
+  assert.equal(SLIDE_GRAPHICS.length, 232)
+  assert.equal(GRAPHIC_IDS.size, 232)
 })
 
 check('mỗi icon: 2 path, nét gốc #22333B, không chữ/nền/ảnh ngoài', () => {
@@ -94,7 +94,7 @@ check('id lạ → chuỗi rỗng', () => {
   assert.equal(graphicMarkup('khong-co'), '')
 })
 
-check('catalog có đủ 112 id, gom theo nhóm', () => {
+check('catalog có đủ 232 id, gom theo nhóm', () => {
   const text = graphicCatalogText()
   for (const id of GRAPHIC_IDS) assert.ok(text.includes(`${id}=`), id)
   assert.ok(text.includes('math: '))
@@ -177,13 +177,24 @@ check('prompt layout ảnh khuyên dùng graphic thay vẽ ảnh', () => {
   }
   const prompt = pageSystemPrompt(plan, plan.slides[0], 0)
   assert.ok(prompt.includes('ĐỒ HOẠ CÓ SẴN'))
-  assert.ok(prompt.includes('55–90 giây'))
+  assert.ok(prompt.includes('45–90 giây') && prompt.includes('ĐỂ TRỐNG "image"'))
 })
 
 check('19 layout vẫn dựng được với graphic', () => {
   for (const layout of SLIDE_LAYOUTS) {
     const els = composeLayout(theme, layout.id, { ...content, graphic: 'math-eke' })
     assert.ok(Array.isArray(els), layout.id)
+  }
+})
+
+check('catalog theo môn: chỉ gửi nhóm hợp với môn, đủ icon mới', () => {
+  const full = graphicCatalogText()
+  const cs = graphicCatalogText(['cs', 'prog'])
+  assert.ok(cs.includes('prog-python=Python') && cs.includes('cs-laptop='))
+  assert.ok(!cs.includes('bio: ') && !cs.includes('math: '), 'không lẫn nhóm môn khác')
+  assert.ok(cs.length < full.length / 4, 'nhỏ hơn nhiều so với catalog đầy đủ')
+  for (const group of ['cs', 'prog', 'eng', 'geo', 'his', 'lit', 'bio', 'chem', 'phys', 'art', 'pe', 'life']) {
+    assert.ok(full.includes(`${group}: `), `thiếu nhóm ${group}`)
   }
 })
 

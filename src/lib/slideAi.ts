@@ -7,10 +7,10 @@
  */
 import type { AiSlidePayload } from './aiDeck'
 import type { DeckPlan, DeckPlanSlide } from './aiDeck'
-import type { Deck, Slide, SlideElement, SlideTone } from '@/store/docs'
+import type { Deck, DeckTheme, Slide, SlideElement, SlideTone } from '@/store/docs'
 import { normalizeTheme, themeById, type ResolvedTheme } from './slideTheme'
 import { stylePackById } from './slideStyles'
-import { subjectRulesBlock } from './slideSubjects'
+import { subjectById, subjectRulesBlock } from './slideSubjects'
 import { fixMathEscapes, mathToPlain } from './slideMath'
 import { graphicCatalogText, isGraphicId } from './slideGraphics'
 import {
@@ -492,11 +492,11 @@ export function pageSystemPrompt(
   const graphicBlock = supportsGraphic
     ? '\n\nĐỒ HOẠ CÓ SẴN — chọn MỘT id khớp chủ đề cho field "graphic" ' +
       '(nhanh, đúng màu, không tốn lượt vẽ ảnh; không có id phù hợp thì bỏ trống):\n' +
-      graphicCatalogText() +
+      graphicCatalogText(subjectById(plan.subject)?.graphicGroups) +
       '\n- "graphic" chỉ dùng id trong danh sách trên; KHÔNG bịa id mới.\n' +
       (isImageLayout
-        ? '- Layout ảnh: có id phù hợp thì đặt "graphic" và ĐỂ TRỐNG "image" — app sẽ không gọi vẽ ảnh ' +
-          '(nhanh hơn 55–90 giây). Chỉ khi thật cần ảnh chụp mới bỏ trống cả hai.\n'
+        ? '- Layout ảnh: ĐỂ TRỐNG "image" (app tự vẽ ảnh minh hoạ nền sau 45–90 giây). Có id đồ hoạ phù hợp thì ' +
+          'đặt "graphic" để slide có hình ngay trong lúc chờ ảnh.\n'
         : '')
     : ''
 
@@ -611,6 +611,18 @@ function contentOfPage(page: AiSlidePayload): SlideLayoutContent {
     conclusion: page.conclusion,
     explanation: page.explanation,
   }
+}
+
+/**
+ * Dựng lại slide với ảnh AI (ảnh về sau khi slide đã hiện). Đọc nội dung từ chính
+ * các phần tử của slide nên chữ người dùng đã sửa trong lúc chờ ảnh không mất;
+ * layout không dựng được thì giữ nguyên slide.
+ */
+export function withImage(slide: Slide, theme: DeckTheme, image: string): Slide {
+  const layout = slide.layout
+  if (!layout || !isLayoutId(layout)) return slide
+  const elements = composeLayout(theme, layout, { ...contentFromSlide(slide), image }, slide.tone)
+  return elements.length ? { ...slide, elements } : slide
 }
 
 /** Dựng một slide AI bằng layout engine; layout lạ rơi về title + bullets. */

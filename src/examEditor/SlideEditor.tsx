@@ -57,8 +57,8 @@ import { parseAiDeck, type AiSlidePayload, type DeckPlan } from '@/lib/aiDeck'
 import { exportDeckPptx } from '@/lib/exportDeck'
 import { elementHeight } from '@/lib/slideText'
 import { normalizeTheme, readableTextOn, type ResolvedTheme } from '@/lib/slideTheme'
-import { appendSlidesToDeck } from '@/lib/slideAi'
-import { buildImagePrompt, generateSlideImage } from '@/lib/imageGen'
+import { appendSlidesToDeck, withImage } from '@/lib/slideAi'
+import { IMAGE_LAYOUTS, buildImagePrompt, generateSlideImage, queueImage } from '@/lib/imageGen'
 import {
   SLIDE_LAYOUTS,
   composeLayout,
@@ -435,11 +435,11 @@ export function SlideEditor({
    * sửa/xoá slide trong lúc chờ. Việc dựng slide + đổi theme nằm ở
    * `appendSlidesToDeck` (lib/slideAi.ts) để test được.
    */
-  const appendAiSlides = (pages: AiSlidePayload[], plan?: DeckPlan) => {
-    if (!pages.length) return
+  const appendAiSlides = (pages: AiSlidePayload[], plan?: DeckPlan): Slide[] => {
+    if (!pages.length) return []
     const latest = deckRef.current
     const { patch, added } = appendSlidesToDeck(latest, pages, plan)
-    if (!added.length) return
+    if (!added.length) return []
 
     historyRef.current.past = [...historyRef.current.past, latest].slice(-50)
     historyRef.current.future = []
@@ -447,6 +447,7 @@ export function SlideEditor({
     updateDeck(patch)
     setSelectedSlideId(added[0].id)
     setSelectedElementId(null)
+    return added
   }
 
   /** Đường deck một lượt (dàn ý không parse được hoặc câu trả lời cũ). */
@@ -456,20 +457,36 @@ export function SlideEditor({
     appendAiSlides(parsed.slides, plan)
   }
 
-  /** Đường 26b: mỗi trang xong được chèn ngay, đúng thứ tự. */
+  /** Ghi ảnh AI vào slide theo deck mới nhất lúc ảnh về (slide có thể đã được sửa/xoá). */
+  const setSlideImage = (slideId: string, image: string) => {
+    const latest = deckRef.current
+    const slide = latest.slides.find((s) => s.id === slideId)
+    if (!slide) return
+    historyRef.current.past = [...historyRef.current.past, latest].slice(-50)
+    historyRef.current.future = []
+    const slides = latest.slides.map((s) => (s.id === slideId ? withImage(s, normalizeTheme(latest.theme), image) : s))
+    deckRef.current = { ...latest, slides }
+    updateDeck({ slides })
+  }
+
+  /**
+   * Đường 26b: mỗi trang xong được chèn NGAY (đúng thứ tự); ảnh AI mất 45–90 giây
+   * nên sinh nền sau rồi thay vào — bìa và layout ảnh. Lỗi provider thì giữ
+   * nguyên đồ hoạ/icon đang có.
+   */
   const applyAiSlide = async (page: AiSlidePayload, plan: DeckPlan) => {
-    const needsImage = ['image-left', 'image-right', 'image-full', 'stat-image'].includes(page.layout ?? '')
-    if (needsImage && !page.image && !page.graphic) {
-      try {
-        const bullets = page.bullets ?? page.steps ?? page.items ?? []
-        const orientation = page.layout === 'image-left' || page.layout === 'image-right' ? 'portrait' : 'landscape'
-        const generated = await generateSlideImage(buildImagePrompt(page.title, bullets, orientation))
-        page = { ...page, image: generated.dataUrl }
-      } catch {
-        // Giữ slide với placeholder theme nếu provider ảnh tạm thời không dùng được.
-      }
-    }
-    appendAiSlides([page], plan)
+    const added = appendAiSlides([page], plan)
+    const slide = added[0]
+    if (!slide || page.image || !IMAGE_LAYOUTS.includes(page.layout ?? '')) return
+    const palette = normalizeTheme(deckRef.current.theme).accent
+    const isCover = page.layout === 'title'
+    const bullets = page.bullets ?? page.steps ?? page.items ?? [page.subtitle ?? '']
+    const orientation = isCover ? 'square' : page.layout === 'image-left' || page.layout === 'image-right' ? 'portrait' : 'landscape'
+    void queueImage(() =>
+      generateSlideImage(buildImagePrompt(page.title, bullets, orientation, palette)),
+    )
+      .then((generated) => setSlideImage(slide.id, generated.dataUrl))
+      .catch(() => {})
   }
 
   /* ---------------------------------------------------------------- *
@@ -1034,7 +1051,7 @@ function SlideElView({ el, theme }: { el: SlideElement; theme: ResolvedTheme }) 
           // khung chờ ảnh ở bản xem là panel theme (nét đứt chỉ có ở bản chỉnh sửa)
           background: el.src ? undefined : `linear-gradient(135deg, ${theme.surface} 0 48%, ${theme.accent}22 48% 54%, ${theme.surface} 54% 100%)`,
           border: el.src ? undefined : `1px solid ${theme.accent}66`,
-          borderRadius: '1cqw',
+          borderRadius: el.shape === 'ellipse' ? '50%' : '1cqw',
           overflow: 'hidden',
           color: el.src ? theme.muted : theme.accent,
           fontSize: '1.9cqw',
@@ -1243,11 +1260,14 @@ function AutoFitText({
   background,
   lineHeight,
   letterSpacing,
+  valign,
   onChange,
 }: {
   value: string
   /** cỡ chữ tối đa, tính bằng cqw */
   baseSize: number
+  /** canh giữa dọc — khớp bản xem (SlideElView) để chữ không nhảy lên đỉnh khi chọn */
+  valign?: 'top' | 'middle'
   weight: number
   fontFamily?: string
   fontStyle?: 'normal' | 'italic'
@@ -1261,6 +1281,8 @@ function AutoFitText({
   onChange: (text: string) => void
 }) {
   const ref = useRef<HTMLTextAreaElement>(null)
+  const boxRef = useRef<HTMLDivElement>(null)
+  const middle = valign === 'middle'
   const [size, setSize] = useState(baseSize)
   // Công thức hiển thị bằng KaTeX khi không gõ; nhấp đúp để sửa mã LaTeX.
   const [editing, setEditing] = useState(false)
@@ -1273,13 +1295,20 @@ function AutoFitText({
   useLayoutEffect(() => {
     const ta = ref.current
     if (!ta) return
+    const box = boxRef.current
     const min = baseSize * 0.6
+    // Canh giữa dọc: textarea cao đúng bằng nội dung, hộp bọc flex căn giữa nó —
+    // textarea tự nó không có valign nên trước đây chữ luôn dính đỉnh khung.
+    const need = () => {
+      ta.style.height = '0px'
+      return ta.scrollHeight
+    }
     const fit = () => {
       // co dần cho tới khi vừa khung; không nhỏ hơn 60% cỡ gốc
       let s = baseSize
       const fits = (px: number) => {
         ta.style.fontSize = `${px}cqw`
-        return ta.scrollHeight <= ta.clientHeight + 1
+        return middle && box ? need() <= box.clientHeight + 1 : ta.scrollHeight <= ta.clientHeight + 1
       }
       if (!fits(s)) while (s > min && !fits(s)) s -= 0.1
       // giữ 2 chữ số: compose-time đã fit tới 0,01cqw, làm tròn lên 0,1 sẽ
@@ -1287,17 +1316,18 @@ function AutoFitText({
       const final = Math.floor(s * 100) / 100
       setSize(final)
       ta.style.fontSize = `${final}cqw`
+      if (middle && box) ta.style.height = `${Math.min(need(), box.clientHeight)}px`
     }
     fit()
     // kéo tay nắm đổi chiều cao/chiều rộng hộp → fit lại ngay khi hộp đổi
     const ro = new ResizeObserver(fit)
-    ro.observe(ta)
+    ro.observe(middle && box ? box : ta)
     const stopFonts = refitOnFonts(fit)
     return () => {
       stopFonts()
       ro.disconnect()
     }
-  }, [value, baseSize, showMath])
+  }, [value, baseSize, showMath, middle])
 
   if (showMath) {
     return (
@@ -1309,6 +1339,7 @@ function AutoFitText({
             width: '100%',
             height: '100%',
             padding: background ? '1.5% 3%' : '1%',
+            ...(middle ? { display: 'flex', flexDirection: 'column' as const, justifyContent: 'center' } : {}),
             color: color ?? 'inherit',
             background,
             borderRadius: background ? '0.6cqw' : undefined,
@@ -1327,18 +1358,18 @@ function AutoFitText({
     )
   }
 
-  return (
+  const textarea = (
     <textarea
       ref={ref}
       autoFocus={editing}
       onBlur={() => setEditing(false)}
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="h-full w-full resize-none overflow-hidden bg-transparent p-[1%] outline-none"
+      className={cn('w-full resize-none overflow-hidden bg-transparent p-[1%] outline-none', !middle && 'h-full')}
       style={{
         color: color ?? 'inherit',
-        background,
-        borderRadius: background ? '0.6cqw' : undefined,
+        background: middle ? undefined : background,
+        borderRadius: !middle && background ? '0.6cqw' : undefined,
         padding: background ? '1.5% 3%' : undefined,
         fontFamily: fontFamily ?? 'Be Vietnam Pro, sans-serif',
         fontSize: `${size}cqw`,
@@ -1350,6 +1381,17 @@ function AutoFitText({
         letterSpacing: letterSpacing ? `${letterSpacing}em` : undefined,
       }}
     />
+  )
+  return middle ? (
+    <div
+      ref={boxRef}
+      className="flex h-full w-full flex-col justify-center"
+      style={{ background, borderRadius: background ? '0.6cqw' : undefined }}
+    >
+      {textarea}
+    </div>
+  ) : (
+    textarea
   )
 }
 
@@ -1561,6 +1603,7 @@ function EditableEl({
           lineHeight={el.lineHeight}
           letterSpacing={el.letterSpacing}
           background={el.fill}
+          valign={el.valign === 'middle' || el.fill ? 'middle' : 'top'}
           onChange={(text) => onChange({ text })}
         />
         {handle}
@@ -1690,7 +1733,8 @@ function EditableEl({
       <div
         {...common}
         className={cn(
-          'flex items-center justify-center overflow-hidden rounded-[1cqw]',
+          'flex items-center justify-center overflow-hidden',
+          el.shape === 'ellipse' ? 'rounded-full' : 'rounded-[1cqw]',
           el.src
             ? ''
             : 'border-2 border-dashed border-[#9ca3af] text-[1.8cqw] text-[#6b7280]',

@@ -56,7 +56,7 @@ export async function withPage(url, { width = 1400, height = 900 } = {}, fn) {
     await send('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: 1, mobile: false })
     await send('Page.navigate', { url })
     const evaluate = async (expression) =>
-      (await send('Runtime.evaluate', { expression, returnByValue: true })).result?.result?.value
+      (await send('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true })).result?.result?.value
     /** Chụp toàn bộ chiều cao tài liệu, hoặc một vùng `clip` {x,y,width,height,scale}. */
     const screenshot = async (clip) => {
       const h = await evaluate('document.documentElement.scrollHeight')

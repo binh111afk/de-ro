@@ -89,7 +89,7 @@ export async function exportDeckPptx(deck: Deck): Promise<void> {
         })
       } else if (el.type === 'image' && el.src) {
         const image = el.src.startsWith('data:') ? { data: el.src } : { path: el.src }
-        slide.addImage({ ...box, ...image })
+        slide.addImage({ ...box, ...image, ...(el.shape === 'ellipse' ? { rounding: true } : {}) })
       } else if (el.type === 'table' && el.rows?.length) {
         const headerFg = readableTextOn(deck.theme.accent)
         const bodyBg = deck.theme.surface ?? deck.theme.bg

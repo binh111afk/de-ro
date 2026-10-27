@@ -14,23 +14,31 @@ export interface GeneratedImage {
   model?: string
 }
 
-export type ImageOrientation = 'portrait' | 'landscape'
+export type ImageOrientation = 'portrait' | 'landscape' | 'square'
 
 /** Prompt tiếng Việt bám nội dung slide; model không vẽ chữ trong ảnh. */
 export function buildImagePrompt(
   title?: string,
   bullets?: string[],
   orientation: ImageOrientation = 'portrait',
+  /** màu nhấn của theme (hex) để ảnh ăn với bảng màu slide */
+  accent?: string,
 ): string {
   const points = (bullets ?? [])
     .map((bullet) => bullet.trim())
     .filter(Boolean)
     .slice(0, 3)
   const topic = [title?.trim(), ...points].filter(Boolean).join('; ')
-  const layout = orientation === 'portrait' ? 'bố cục dọc, chủ thể ở giữa' : 'bố cục ngang'
+  const layout =
+    orientation === 'portrait'
+      ? 'bố cục dọc, chủ thể ở giữa'
+      : orientation === 'square'
+        ? 'bố cục vuông, một chủ thể ở giữa trên nền đơn giản (sẽ được cắt tròn)'
+        : 'bố cục ngang'
+  const palette = accent ? `, tông màu chủ đạo ${accent}` : ''
   return (
     `Minh hoạ giáo dục chuyên nghiệp cho slide: ${topic || 'bài học'}. ` +
-    `Phong cách editorial hiện đại, hình khối rõ, tương phản vừa mạnh, màu theo bài giảng, ` +
+    `Phong cách editorial hiện đại, hình khối rõ, tương phản vừa mạnh, màu theo bài giảng${palette}, ` +
     `một chủ thể chính dễ nhận biết, có khoảng thở cho phần chữ, ${layout}, không có chữ, ` +
     `không watermark, không logo, không bố cục trống.`
   )
@@ -68,5 +76,27 @@ export async function generateSlideImage(prompt: string): Promise<GeneratedImage
     return { dataUrl: await shrink(dataUrl), model: body.model }
   } catch {
     return { dataUrl, model: body.model }
+  }
+}
+
+/** Layout được nâng cấp bằng ảnh AI sau khi slide đã hiện (bìa luôn có; layout ảnh nếu có chỗ). */
+export const IMAGE_LAYOUTS = ['title', 'image-left', 'image-right', 'image-full', 'stat-image']
+
+const MAX_PARALLEL_IMAGES = 2
+let running = 0
+const waiting: Array<() => void> = []
+
+/**
+ * Chạy tác vụ tạo ảnh với tối đa 2 ảnh song song — mỗi ảnh 45–90 giây nên deck 10
+ * slide không được bắn cùng lúc nhiều lời gọi vào provider.
+ */
+export async function queueImage<T>(task: () => Promise<T>): Promise<T> {
+  if (running >= MAX_PARALLEL_IMAGES) await new Promise<void>((resolve) => waiting.push(resolve))
+  running++
+  try {
+    return await task()
+  } finally {
+    running--
+    waiting.shift()?.()
   }
 }

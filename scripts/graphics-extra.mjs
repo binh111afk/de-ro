@@ -1,0 +1,148 @@
+/**
+ * Danh sách tên cho hai contact sheet icon bổ sung (đọc theo hàng, trái → phải):
+ *  - "100 icon giáo dục bổ sung · SVG.svg" (10 cột × 10 hàng)
+ *  - "20 ngôn ngữ lập trình · pastel SVG.svg" (10 cột × 2 hàng)
+ * Sheet không có nhãn nên id/tên/keyword ở đây được đặt theo hình thật trên sheet
+ * (đối chiếu bằng mắt). Thêm/sửa icon: sửa dòng tương ứng rồi chạy lại
+ * `node scripts/import-graphics.mjs`.
+ */
+export const SHEET_100 = 'C:/Users/Lenovo/Downloads/100 icon giáo dục bổ sung · SVG.svg'
+export const SHEET_PROG = 'C:/Users/Lenovo/Downloads/20 ngôn ngữ lập trình · pastel SVG.svg'
+
+export const ICONS_100 = [
+  // Tin học
+  ['cs-may-tinh-ban', 'Máy tính để bàn', 'cs', 'may tinh de ban man hinh pc tin hoc'],
+  ['cs-laptop', 'Laptop', 'cs', 'laptop may tinh xach tay tin hoc'],
+  ['cs-ban-phim', 'Bàn phím', 'cs', 'ban phim go phim may tinh tin hoc'],
+  ['cs-chuot', 'Chuột máy tính', 'cs', 'chuot may tinh click tin hoc'],
+  ['cs-ma-nguon', 'Mã nguồn', 'cs', 'ma nguon code lap trinh html tin hoc'],
+  ['cs-thuat-toan', 'Sơ đồ thuật toán', 'cs', 'thuat toan so do khoi luu do re nhanh lap trinh'],
+  ['cs-mang-may-tinh', 'Mạng máy tính', 'cs', 'mang may tinh lan server internet'],
+  ['cs-dam-may', 'Điện toán đám mây', 'cs', 'dam may cloud luu tru mang'],
+  ['cs-co-so-du-lieu', 'Cơ sở dữ liệu', 'cs', 'co so du lieu database luu tru sql'],
+  ['cs-bao-mat', 'Khoá bảo mật', 'cs', 'khoa bao mat an toan thong tin mat khau'],
+  // Ngoại ngữ
+  ['eng-phat-am', 'Phát âm', 'eng', 'phat am noi mieng hoi thoai tieng anh ngoai ngu'],
+  ['eng-tai-nghe', 'Tai nghe', 'eng', 'tai nghe nghe hieu am thanh ngoai ngu'],
+  ['eng-micro', 'Micro', 'eng', 'micro thu am noi speaking phat bieu'],
+  ['eng-the-tu-vung', 'Thẻ từ vựng', 'eng', 'the tu vung flashcard hinh anh ghi nho'],
+  ['eng-dich-thuat', 'Dịch hai chiều', 'eng', 'dich thuat translate chuyen doi ngon ngu'],
+  ['eng-ho-chieu', 'Hộ chiếu', 'eng', 'ho chieu du lich quoc te ngoai ngu'],
+  ['eng-sach-ngu-phap', 'Sách ngữ pháp', 'eng', 'sach ngu phap grammar tu dien ngoai ngu'],
+  ['eng-lang-nghe', 'Lắng nghe', 'eng', 'tai lang nghe nghe hieu listening'],
+  // Địa lí
+  ['geo-nui-lua', 'Núi lửa', 'geo', 'nui lua phun trao dia ly dia chat'],
+  ['geo-song-ngoi', 'Sông ngòi', 'geo', 'song ngoi dong chay dia ly nuoc'],
+  ['geo-sa-mac', 'Sa mạc', 'geo', 'sa mac xuong rong cat khi hau'],
+  ['geo-dao', 'Đảo', 'geo', 'dao hon dao bien nhiet doi dia ly'],
+  ['phys-dong-ho-do', 'Đồng hồ đo', 'phys', 'dong ho do bam gio toc do dung cu do luong'],
+  ['geo-dia-hinh', 'Bản đồ đồng mức', 'geo', 'dia hinh duong dong muc ban do dia ly'],
+  ['geo-khi-hau', 'Khí hậu', 'geo', 'khi hau nhiet do thoi tiet may nhiet ke'],
+  ['geo-tuabin-gio', 'Tua-bin gió', 'geo', 'tuabin gio nang luong gio dien'],
+  ['geo-ruong-bac-thang', 'Ruộng bậc thang', 'geo', 'ruong bac thang nong nghiep dia ly viet nam'],
+  ['geo-thanh-pho', 'Thành phố', 'geo', 'thanh pho do thi toa nha dan cu'],
+  // Lịch sử
+  ['his-thanh-co', 'Thành cổ', 'his', 'thanh co cong thanh lich su phong kien'],
+  ['his-guom-co', 'Gươm cổ', 'his', 'guom kiem vu khi lich su chien tranh'],
+  ['his-khien', 'Khiên', 'his', 'khien bao ve phong thu chien tranh'],
+  ['his-thuyen-buom', 'Thuyền buồm', 'his', 'thuyen buom tau bien hai trinh lich su'],
+  ['his-chua-mot-cot', 'Chùa Một Cột', 'his', 'chua mot cot ha noi kien truc van hoa lich su'],
+  ['his-dong-tien-co', 'Đồng tiền cổ', 'his', 'dong tien co tien xu thuong mai lich su'],
+  ['his-bia-da', 'Bia đá', 'his', 'bia da bia tien si van mieu tuong niem'],
+  ['his-cung-ten', 'Cung tên', 'his', 'cung ten vu khi chien dau lich su'],
+  ['his-dai-bac', 'Đại bác', 'his', 'dai bac phao chien tranh lich su'],
+  ['his-ngon-duoc', 'Ngọn đuốc', 'his', 'ngon duoc lua soi sang truyen thong'],
+  // Ngữ văn
+  ['lit-may-chu', 'Máy chữ', 'lit', 'may chu viet van soan thao nha van'],
+  ['lit-quat-giay', 'Quạt giấy', 'lit', 'quat giay van hoa truyen thong'],
+  ['lit-mat-na', 'Mặt nạ sân khấu', 'lit', 'mat na san khau kich nghe thuat'],
+  ['lit-chong-sach', 'Chồng sách', 'lit', 'chong sach tac pham doc van hoc'],
+  ['lit-tre', 'Tre', 'lit', 'tre truc lang que viet nam van hoc'],
+  ['lit-hoa-sen', 'Hoa sen', 'lit', 'hoa sen thanh khiet viet nam van hoc'],
+  ['lit-cong-lang', 'Cổng làng', 'lit', 'cong lang lang que nong thon van hoc'],
+  ['lit-thuyen-song', 'Thuyền trên sông', 'lit', 'thuyen song nuoc que huong van hoc'],
+  ['lit-den-long', 'Đèn lồng', 'lit', 'den long le hoi tet trung thu'],
+  ['lit-cuon-tho', 'Cuộn thơ', 'lit', 'cuon tho tho ca bai tho thu phap'],
+  // Sinh học
+  ['bio-te-bao', 'Tế bào', 'bio', 'te bao sinh hoc nhan mang'],
+  ['bio-hat-nay-mam', 'Hạt nảy mầm', 'bio', 'hat nay mam cay con sinh truong thuc vat'],
+  ['bio-tim', 'Tim', 'bio', 'tim tuan hoan co the nguoi sinh hoc'],
+  ['bio-phoi', 'Phổi', 'bio', 'phoi ho hap co the nguoi sinh hoc'],
+  ['bio-nao', 'Não', 'bio', 'nao than kinh tu duy tri nho sinh hoc'],
+  ['bio-xuong', 'Xương', 'bio', 'xuong bo xuong co the nguoi sinh hoc'],
+  ['bio-chuoi-thuc-an', 'Chuỗi thức ăn', 'bio', 'chuoi thuc an sinh thai la sau chim'],
+  ['bio-con-ca', 'Con cá', 'bio', 'ca dong vat thuy sinh sinh hoc'],
+  ['bio-chim', 'Chim', 'bio', 'chim dong vat tu nhien sinh hoc'],
+  ['bio-ong-mat', 'Ong mật', 'bio', 'ong mat thu phan con trung sinh hoc'],
+  ['bio-nam', 'Nấm', 'bio', 'nam sinh vat phan huy sinh hoc'],
+  ['bio-hoa-cau-tao', 'Cấu tạo hoa', 'bio', 'hoa nhi nhuy cau tao hoa thuc vat sinh hoc'],
+  // Hoá học
+  ['chem-o-nguyen-to', 'Ô nguyên tố', 'chem', 'o nguyen to bang tuan hoan hoa hoc nguyen tu'],
+  ['chem-den-con', 'Đèn cồn', 'chem', 'den con ngon lua thi nghiem hoa hoc'],
+  ['chem-giay-ph', 'Giấy pH và ống nghiệm', 'chem', 'giay ph quy tim thi nghiem axit bazo'],
+  ['chem-ong-nho-giot', 'Ống nhỏ giọt', 'chem', 'ong nho giot pipet thi nghiem hoa chat'],
+  ['chem-tinh-the', 'Tinh thể', 'chem', 'tinh the khoang vat chat ran hoa hoc'],
+  ['chem-giot-nuoc', 'Giọt nước', 'chem', 'giot nuoc nuoc dung dich chat long'],
+  ['chem-binh-hoa-chat', 'Bình hoá chất', 'chem', 'binh hoa chat chai dung dich thi nghiem'],
+  ['chem-pin-dien-hoa', 'Pin điện hoá', 'chem', 'pin dien hoa dien phan cuc dung dich'],
+  // Vật lí
+  ['phys-con-lac', 'Con lắc', 'phys', 'con lac dao dong chu ky vat ly'],
+  ['phys-thau-kinh', 'Thấu kính', 'phys', 'thau kinh tia sang quang hoc vat ly'],
+  ['phys-lang-kinh', 'Lăng kính tán sắc', 'phys', 'lang kinh tan sac anh sang quang pho'],
+  ['phys-song', 'Sóng', 'phys', 'song dao dong tan so bien do vat ly'],
+  ['phys-lo-xo', 'Lò xo', 'phys', 'lo xo dan hoi luc keo vat ly'],
+  ['phys-nhiet-ke', 'Nhiệt kế', 'phys', 'nhiet ke nhiet do do luong vat ly'],
+  ['phys-tia-chop', 'Tia chớp', 'phys', 'tia chop dien tich nang luong set vat ly'],
+  ['phys-guong-phan-xa', 'Gương phản xạ', 'phys', 'guong phan xa tia sang quang hoc'],
+  ['phys-don-bay', 'Đòn bẩy', 'phys', 'don bay can bang momen luc vat ly'],
+  ['phys-pin-mat-troi', 'Pin mặt trời', 'phys', 'pin mat troi nang luong quang dien'],
+  // Toán
+  ['math-hinh-cau', 'Hình cầu', 'math', 'hinh cau khoi cau the tich hinh hoc'],
+  ['math-hinh-tru', 'Hình trụ', 'math', 'hinh tru khoi tru the tich hinh hoc'],
+  ['math-hinh-non', 'Hình nón', 'math', 'hinh non khoi non the tich hinh hoc'],
+  ['math-truc-so', 'Trục số', 'math', 'truc so so nguyen so thuc so sanh'],
+  ['math-bieu-do-cot', 'Biểu đồ cột', 'math', 'bieu do cot thong ke du lieu so lieu'],
+  ['math-xuc-xac', 'Xúc xắc', 'math', 'xuc xac xac suat ngau nhien thong ke'],
+  // Nghệ thuật
+  ['art-bang-pha-mau', 'Bảng pha màu', 'art', 'bang pha mau ve mau sac my thuat'],
+  ['art-gia-ve', 'Giá vẽ', 'art', 'gia ve tranh hoi hoa my thuat'],
+  ['art-guitar', 'Đàn guitar', 'art', 'guitar dan am nhac nhac cu'],
+  ['art-piano', 'Phím đàn piano', 'art', 'piano phim dan am nhac nhac cu'],
+  ['art-may-anh', 'Máy ảnh', 'art', 'may anh chup hinh nhiep anh'],
+  ['art-trong', 'Trống', 'art', 'trong am nhac nhip dieu nhac cu'],
+  // Thể chất
+  ['pe-giay-chay', 'Giày chạy', 'pe', 'giay chay the duc the thao chay bo'],
+  ['pe-ta-tay', 'Tạ tay', 'pe', 'ta tay the luc tap luyen the duc'],
+  ['pe-coi', 'Còi', 'pe', 'coi trong tai the duc the thao'],
+  ['pe-bong-ro', 'Bóng rổ', 'pe', 'bong ro the thao bong the duc'],
+  // Kỹ năng sống
+  ['life-checklist', 'Danh sách việc', 'life', 'danh sach viec checklist ke hoach nhiem vu'],
+  ['life-bao-thuc', 'Đồng hồ báo thức', 'life', 'bao thuc dong ho thoi gian quan ly thoi gian'],
+  ['life-tai-che', 'Tái chế', 'life', 'tai che moi truong bao ve rac thai'],
+  ['life-ong-heo', 'Heo đất', 'life', 'heo dat tiet kiem tien tai chinh'],
+  ['life-den-giao-thong', 'Đèn giao thông', 'life', 'den giao thong an toan luat giao thong'],
+  ['life-hop-so-cuu', 'Hộp sơ cứu', 'life', 'hop so cuu y te cap cuu suc khoe'],
+]
+
+export const ICONS_PROG = [
+  ['prog-python', 'Python', 'prog', 'python lap trinh ngon ngu khoa hoc du lieu ai'],
+  ['prog-javascript', 'JavaScript', 'prog', 'javascript js lap trinh web trinh duyet'],
+  ['prog-typescript', 'TypeScript', 'prog', 'typescript ts lap trinh web kieu du lieu'],
+  ['prog-java', 'Java', 'prog', 'java lap trinh huong doi tuong ung dung'],
+  ['prog-c', 'Ngôn ngữ C', 'prog', 'ngon ngu c lap trinh he thong co ban'],
+  ['prog-cpp', 'C++', 'prog', 'c++ cpp lap trinh huong doi tuong thuat toan'],
+  ['prog-csharp', 'C#', 'prog', 'c# csharp lap trinh dotnet game unity'],
+  ['prog-go', 'Go', 'prog', 'go golang lap trinh may chu'],
+  ['prog-rust', 'Rust', 'prog', 'rust lap trinh he thong an toan bo nho'],
+  ['prog-php', 'PHP', 'prog', 'php lap trinh web may chu'],
+  ['prog-ruby', 'Ruby', 'prog', 'ruby lap trinh web rails'],
+  ['prog-swift', 'Swift', 'prog', 'swift lap trinh ios apple'],
+  ['prog-kotlin', 'Kotlin', 'prog', 'kotlin lap trinh android'],
+  ['prog-dart', 'Dart', 'prog', 'dart flutter lap trinh di dong'],
+  ['prog-r', 'Ngôn ngữ R', 'prog', 'r thong ke phan tich du lieu'],
+  ['prog-sql', 'SQL', 'prog', 'sql co so du lieu truy van'],
+  ['prog-shell', 'Dòng lệnh', 'prog', 'shell bash terminal dong lenh console'],
+  ['prog-lua', 'Lua', 'prog', 'lua lap trinh game script'],
+  ['prog-html', 'HTML5', 'prog', 'html html5 web trang web cau truc'],
+  ['prog-css', 'CSS3', 'prog', 'css css3 web giao dien kieu dang'],
+]

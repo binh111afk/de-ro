@@ -33,6 +33,18 @@ export const GRAPHIC_CATEGORY_LABEL: Record<GraphicCategory, string> = {
   arrow: 'Mũi tên',
   decor: 'Trang trí',
   misc: 'Khác',
+  cs: 'Tin học',
+  prog: 'Ngôn ngữ lập trình',
+  eng: 'Ngoại ngữ',
+  geo: 'Địa lí',
+  his: 'Lịch sử',
+  lit: 'Văn học',
+  bio: 'Sinh học',
+  chem: 'Hoá học',
+  phys: 'Vật lí',
+  art: 'Nghệ thuật',
+  pe: 'Thể chất',
+  life: 'Kỹ năng sống',
 }
 
 const CATEGORY_ORDER: GraphicCategory[] = [
@@ -49,6 +61,18 @@ const CATEGORY_ORDER: GraphicCategory[] = [
   'arrow',
   'decor',
   'misc',
+  'cs',
+  'prog',
+  'eng',
+  'geo',
+  'his',
+  'lit',
+  'bio',
+  'chem',
+  'phys',
+  'art',
+  'pe',
+  'life',
 ]
 
 /** Bỏ dấu tiếng Việt để search bằng chuỗi không dấu (giống pickSlideAsset). */
@@ -101,15 +125,17 @@ export function graphicMarkup(id: string, ink = GRAPHIC_INK): string {
 }
 
 /**
- * Catalog gửi cho model: chỉ id + tên ngắn, gom theo nhóm.
- * 112 mục ≈ 2,5K ký tự — đủ để chọn đúng mà không nổ prompt.
+ * Catalog gửi cho model: chỉ id + tên ngắn, gom theo nhóm. 232 mục ≈ 5,5K ký tự,
+ * nên prompt từng slide chỉ gửi các nhóm hợp với môn (`categories`); không truyền
+ * thì gửi hết (dùng khi chưa biết môn).
  */
-export function graphicCatalogText(): string {
-  return CATEGORY_ORDER.map((category) => {
-    const items = GRAPHICS.filter((graphic) => graphic.category === category)
-    if (!items.length) return ''
-    return `${category}: ${items.map((graphic) => `${graphic.id}=${graphic.name}`).join(', ')}`
-  })
+export function graphicCatalogText(categories?: readonly string[]): string {
+  return CATEGORY_ORDER.filter((category) => !categories || categories.includes(category))
+    .map((category) => {
+      const items = GRAPHICS.filter((graphic) => graphic.category === category)
+      if (!items.length) return ''
+      return `${category}: ${items.map((graphic) => `${graphic.id}=${graphic.name}`).join(', ')}`
+    })
     .filter(Boolean)
     .join('\n')
 }
