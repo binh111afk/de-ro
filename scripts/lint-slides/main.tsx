@@ -173,7 +173,8 @@ function lintSlide(
     const size = Number.parseFloat(node.style.fontSize)
     if (size && size < 1.3) push('tiny', 'warn', el.id, `${size}cqw`)
     const color = el.textColor ?? fg
-    const back = backdropOf(els, i, rect, fr, slide.background)
+    // ô chữ có nền riêng (đáp án đúng của quiz) thì lấy nền đó, không lấy shape bên dưới
+    const back = isHex(el.fill) ? el.fill : backdropOf(els, i, rect, fr, slide.background)
     if (isHex(color) && isHex(back)) {
       const need = size >= 2.2 || (el.fontWeight ?? 0) >= 700 ? 3 : 4.5
       const ratio = contrastRatio(color, back)

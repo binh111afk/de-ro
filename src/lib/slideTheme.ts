@@ -12,211 +12,169 @@ const SANS = 'Be Vietnam Pro'
 const SERIF = "'Times New Roman', 'Liberation Serif', serif"
 const MONO = "'JetBrains Mono Variable', ui-monospace, monospace"
 
-/** 10 theme: 6 theme cũ (đổi tên/font cho đúng font đang nạp) + 4 theme theo môn. */
+/**
+ * OKLCH → hex sRGB. Palette dựng từ một hue duy nhất nên các màu cùng "độ sáng
+ * cảm nhận" và tương phản đoán trước được (tối ưu hơn chọn tay từng mã hex).
+ */
+function oklch(l: number, c: number, hue: number): string {
+  const a = c * Math.cos((hue * Math.PI) / 180)
+  const b = c * Math.sin((hue * Math.PI) / 180)
+  const l_ = (l + 0.3963377774 * a + 0.2158037573 * b) ** 3
+  const m_ = (l - 0.1055613458 * a - 0.0638541728 * b) ** 3
+  const s_ = (l - 0.0894841775 * a - 1.291485548 * b) ** 3
+  const linear = [
+    4.0767416621 * l_ - 3.3077115913 * m_ + 0.2309699292 * s_,
+    -1.2684380046 * l_ + 2.6097574011 * m_ - 0.3413193965 * s_,
+    -0.0041960863 * l_ - 0.7034186147 * m_ + 1.707614701 * s_,
+  ]
+  const encode = (x: number) => {
+    const v = Math.max(0, Math.min(1, x))
+    return v <= 0.0031308 ? 12.92 * v : 1.055 * v ** (1 / 2.4) - 0.055
+  }
+  return `#${linear.map((v) => Math.round(encode(v) * 255).toString(16).padStart(2, '0')).join('')}`
+}
+
+/**
+ * Bộ màu từ một hue: nền gần trắng/đen ngả hue, **một** màu nhấn, màu phụ lệch
+ * 150°. Accent đủ đậm để chữ trắng trên accent đạt ≥ 4,5:1 (light) và ngược lại
+ * ở nền tối — test theme kiểm tra bất biến này.
+ */
+function palette(hue: number, opts: { chroma?: number; dark?: boolean } = {}) {
+  const { chroma = 0.15, dark = false } = opts
+  const hue2 = hue + 150
+  return dark
+    ? {
+        bg: oklch(0.2, 0.03, hue),
+        fg: oklch(0.96, 0.01, hue),
+        surface: oklch(0.27, 0.035, hue),
+        muted: oklch(0.76, 0.03, hue),
+        accent: oklch(0.78, chroma * 0.85, hue),
+        secondary: oklch(0.78, 0.1, hue2),
+        chart: [0, 60, -60, 120, 210].map((d, i) => oklch(0.76, i ? 0.11 : chroma * 0.85, hue + d)),
+      }
+    : {
+        bg: oklch(0.985, 0.008, hue),
+        fg: oklch(0.24, 0.035, hue),
+        surface: oklch(0.955, 0.02, hue),
+        muted: oklch(0.46, 0.03, hue),
+        accent: oklch(0.5, chroma, hue),
+        secondary: oklch(0.5, 0.1, hue2),
+        chart: [0, 150, 60, -60, 210].map((d, i) => oklch(i ? 0.58 : 0.5, i ? 0.11 : chroma, hue + d)),
+      }
+}
+
+const FONTS_SANS = { heading: SANS, body: SANS, serif: SERIF, mono: MONO }
+const FONTS_SERIF = { heading: SERIF, body: SANS, serif: SERIF, mono: MONO }
+
+/**
+ * 6 theme, mỗi theme một hue và một "tính cách". Gộp theo môn vào `tags`
+ * (khoa học → Sáng, văn sử địa → Giấy ấm, sinh → Rừng, ngoại ngữ/nghệ thuật →
+ * Tím). Bỏ hoạ tiết ồn (confetti/waves/grid/dots): hoạ tiết chỉ còn vân giấy và
+ * vệt sáng góc. Id cũ vẫn tra được qua `LEGACY_THEME_IDS`.
+ */
 export const DECK_THEMES: DeckTheme[] = [
   {
     id: 'sang',
+    name: 'Sáng',
+    vibe: 'tin cậy, học thuật, chính xác — an toàn cho mọi chủ đề, hợp toán lý hoá',
+    ...palette(262, { chroma: 0.17 }),
     radius: 14,
     shadow: 'soft',
-    name: 'Sáng',
-    vibe: 'tin cậy, học thuật, an toàn cho mọi chủ đề',
-    bg: '#ffffff',
-    fg: '#111827',
-    accent: '#2563eb',
-    surface: '#f3f6fb',
-    muted: '#6b7280',
-    secondary: '#0f766e',
     fontHeading: SANS,
     fontBody: SANS,
-    fonts: { heading: SANS, body: SANS, serif: SERIF, mono: MONO },
-    chart: ['#2563eb', '#0f766e', '#c05a3c', '#b8862f', '#9333ea'],
+    fonts: FONTS_SANS,
     decor: 'none',
     dark: false,
-    tags: ['cơ bản'],
+    tags: ['cơ bản', 'toán', 'lý', 'hoá', 'khoa học', 'tự nhiên'],
   },
   {
     id: 'dem-xanh',
-    radius: 14,
-    shadow: 'none',
     name: 'Đêm xanh',
     vibe: 'công nghệ, hiện đại, trình chiếu trong phòng tối',
-    bg: '#0f172a',
-    fg: '#f8fafc',
-    accent: '#38bdf8',
-    surface: '#1e293b',
-    muted: '#94a3b8',
-    secondary: '#a78bfa',
+    ...palette(240, { chroma: 0.15, dark: true }),
+    radius: 14,
+    shadow: 'none',
     fontHeading: SANS,
     fontBody: SANS,
-    fonts: { heading: SANS, body: SANS, serif: SERIF, mono: MONO },
-    chart: ['#38bdf8', '#a78bfa', '#f472b6', '#facc15', '#4ade80'],
+    fonts: FONTS_SANS,
     decor: 'none',
     dark: true,
-    tags: ['cơ bản'],
+    tags: ['cơ bản', 'công nghệ', 'tin học'],
   },
   {
     id: 'giay-am',
+    name: 'Giấy ấm',
+    vibe: 'ấm, truyền thống, văn chương, lịch sử, hoài niệm',
+    ...palette(50, { chroma: 0.13 }),
     radius: 24,
     shadow: 'soft',
-    decor: 'grain',
-    name: 'Giấy ấm',
-    vibe: 'ấm, truyền thống, văn chương, hoài niệm',
-    bg: '#fdf6ec',
-    fg: '#3f2d1c',
-    accent: '#c05a3c',
-    surface: '#f4e7d5',
-    muted: '#8a6f57',
-    secondary: '#7c6a3f',
     fontHeading: SERIF,
     fontBody: SANS,
-    fonts: { heading: SERIF, body: SANS, serif: SERIF, mono: MONO },
-    chart: ['#c05a3c', '#7c6a3f', '#0f766e', '#b8862f', '#6b4f7a'],
+    fonts: FONTS_SERIF,
+    decor: 'grain',
     dark: false,
-    tags: ['cơ bản'],
+    tags: ['cơ bản', 'văn', 'sử', 'địa', 'xã hội'],
   },
   {
     id: 'rung',
+    name: 'Rừng',
+    vibe: 'tươi, dịu, tự nhiên, sinh thái, sinh học',
+    ...palette(155, { chroma: 0.12 }),
     radius: 18,
     shadow: 'soft',
-    decor: 'dots',
-    name: 'Rừng',
-    vibe: 'tươi, tự nhiên, sinh thái',
-    bg: '#f0fdf4',
-    fg: '#14532d',
-    accent: '#16a34a',
-    surface: '#dcfce7',
-    muted: '#4d7c5f',
-    secondary: '#0e7490',
     fontHeading: SANS,
     fontBody: SANS,
-    fonts: { heading: SANS, body: SANS, serif: SERIF, mono: MONO },
-    chart: ['#16a34a', '#0e7490', '#b8862f', '#7c6a3f', '#4d7c5f'],
+    fonts: FONTS_SANS,
+    decor: 'none',
     dark: false,
-    tags: ['cơ bản'],
+    tags: ['cơ bản', 'sinh', 'sinh học', 'tự nhiên'],
+  },
+  {
+    id: 'tim',
+    name: 'Tím',
+    vibe: 'sáng tạo, trẻ trung, nghệ thuật, ngoại ngữ',
+    ...palette(305, { chroma: 0.16 }),
+    radius: 24,
+    shadow: 'soft',
+    fontHeading: SANS,
+    fontBody: SANS,
+    fonts: FONTS_SANS,
+    decor: 'glow',
+    dark: false,
+    tags: ['cơ bản', 'ngoại ngữ', 'tiếng anh', 'nghệ thuật'],
   },
   {
     id: 'do',
+    name: 'Đỏ',
+    vibe: 'mạnh, cảnh báo, năng lượng cao — kiểu poster',
+    ...palette(28, { chroma: 0.18 }),
     radius: 0,
     shadow: 'hard',
     border: 2,
-    borderColor: '#111827',
-    name: 'Đỏ',
-    vibe: 'mạnh, cảnh báo, năng lượng cao',
-    bg: '#fef2f2',
-    fg: '#7f1d1d',
-    accent: '#dc2626',
-    surface: '#fee2e2',
-    muted: '#9a5b5b',
-    secondary: '#b45309',
+    borderColor: oklch(0.24, 0.035, 28),
     fontHeading: SERIF,
     fontBody: SANS,
-    fonts: { heading: SERIF, body: SANS, serif: SERIF, mono: MONO },
-    chart: ['#dc2626', '#b45309', '#7f1d1d', '#9a5b5b', '#0f766e'],
+    fonts: FONTS_SERIF,
     decor: 'none',
     dark: false,
     tags: ['cơ bản'],
   },
-  {
-    id: 'tim',
-    radius: 24,
-    shadow: 'soft',
-    decor: 'glow',
-    name: 'Tím',
-    vibe: 'sáng tạo, trẻ trung, nghệ thuật',
-    bg: '#faf5ff',
-    fg: '#4c1d95',
-    accent: '#9333ea',
-    surface: '#f3e8ff',
-    muted: '#7e6a9e',
-    secondary: '#db2777',
-    fontHeading: SANS,
-    fontBody: SANS,
-    fonts: { heading: SANS, body: SANS, serif: SERIF, mono: MONO },
-    chart: ['#9333ea', '#db2777', '#2563eb', '#0f766e', '#b45309'],
-    dark: false,
-    tags: ['cơ bản'],
-  },
-  {
-    id: 'khoa-hoc',
-    radius: 12,
-    shadow: 'soft',
-    name: 'Khoa học',
-    vibe: 'chính xác, logic, kỹ thuật',
-    bg: '#f4f8ff',
-    fg: '#12233f',
-    accent: '#1d4ed8',
-    surface: '#e5edfb',
-    muted: '#5b6b85',
-    secondary: '#0f766e',
-    fontHeading: SANS,
-    fontBody: SANS,
-    fonts: { heading: SANS, body: SANS, serif: SERIF, mono: MONO },
-    chart: ['#1d4ed8', '#0f766e', '#b45309', '#9333ea', '#0e7490'],
-    decor: 'grid',
-    dark: false,
-    tags: ['toán', 'lý', 'hoá', 'khoa học', 'tự nhiên'],
-  },
-  {
-    id: 'van-su-dia',
-    radius: 20,
-    shadow: 'soft',
-    name: 'Văn Sử Địa',
-    vibe: 'cổ điển, lịch sử, trang trọng',
-    bg: '#fbf7f0',
-    fg: '#3a2a1f',
-    accent: '#a24a2b',
-    surface: '#f3e9db',
-    muted: '#7d6a58',
-    secondary: '#7c6a3f',
-    fontHeading: SERIF,
-    fontBody: SANS,
-    fonts: { heading: SERIF, body: SANS, serif: SERIF, mono: MONO },
-    chart: ['#a24a2b', '#7c6a3f', '#8a5a44', '#b8862f', '#5d6b4a'],
-    decor: 'waves',
-    dark: false,
-    tags: ['văn', 'sử', 'địa', 'xã hội'],
-  },
-  {
-    id: 'sinh-hoc',
-    radius: 24,
-    shadow: 'soft',
-    decor: 'grain',
-    name: 'Sinh học',
-    vibe: 'dịu, hữu cơ, tự nhiên',
-    bg: '#f2fbf4',
-    fg: '#14351f',
-    accent: '#15803d',
-    surface: '#e0f4e6',
-    muted: '#547a60',
-    secondary: '#0e7490',
-    fontHeading: SANS,
-    fontBody: SANS,
-    fonts: { heading: SANS, body: SANS, serif: SERIF, mono: MONO },
-    chart: ['#15803d', '#0e7490', '#b8862f', '#0f766e', '#4d7c5f'],
-    dark: false,
-    tags: ['sinh', 'sinh học', 'tự nhiên'],
-  },
-  {
-    id: 'ngoai-ngu-tin',
-    radius: 16,
-    shadow: 'soft',
-    name: 'Ngoại ngữ & Tin',
-    vibe: 'năng động, đa văn hoá, công nghệ trẻ',
-    bg: '#f7f5ff',
-    fg: '#241a4a',
-    accent: '#6d28d9',
-    surface: '#ece7fb',
-    muted: '#6b6383',
-    secondary: '#c026d3',
-    fontHeading: SANS,
-    fontBody: SANS,
-    fonts: { heading: SANS, body: SANS, serif: SERIF, mono: MONO },
-    chart: ['#6d28d9', '#c026d3', '#2563eb', '#0f766e', '#b45309'],
-    decor: 'confetti',
-    dark: false,
-    tags: ['tiếng anh', 'tin học', 'ngoại ngữ'],
-  },
 ]
+
+/** Id theme đã gộp ở chặng P1 → theme thay thế (deck cũ và dàn ý AI cũ vẫn chạy). */
+const LEGACY_THEME_IDS: Record<string, string> = {
+  'khoa-hoc': 'sang',
+  'van-su-dia': 'giay-am',
+  'sinh-hoc': 'rung',
+  'ngoai-ngu-tin': 'tim',
+}
+
+/** Id catalog hợp lệ (đã đổi id cũ sang id mới), hoặc `undefined` nếu lạ. */
+export function resolveThemeId(id?: string): string | undefined {
+  if (!id) return undefined
+  const mapped = LEGACY_THEME_IDS[id] ?? id
+  return DECK_THEMES.some((t) => t.id === mapped) ? mapped : undefined
+}
 
 /* ------------------------------------------------------------------ *
  * Màu: parse/mix/tương phản
@@ -289,8 +247,9 @@ export interface ResolvedTheme extends DeckTheme {
  */
 export function normalizeTheme(theme?: DeckTheme | null): ResolvedTheme {
   const source = theme ?? DECK_THEMES[0]
+  const sourceId = resolveThemeId(source.id)
   const catalog = DECK_THEMES.find(
-    (t) => (source.id && t.id === source.id) || (t.bg && source.bg && t.bg.toLowerCase() === source.bg.toLowerCase()),
+    (t) => (sourceId && t.id === sourceId) || (t.bg && source.bg && t.bg.toLowerCase() === source.bg.toLowerCase()),
   )
   const bg = source.bg || catalog?.bg || '#ffffff'
   const fg = source.fg || catalog?.fg || readableTextOn(bg)
@@ -332,5 +291,6 @@ export function normalizeTheme(theme?: DeckTheme | null): ResolvedTheme {
 
 /** Theme theo id; id lạ rơi về theme đầu tiên thay vì làm hỏng deck. */
 export function themeById(id: string): ResolvedTheme {
-  return normalizeTheme(DECK_THEMES.find((t) => t.id === id) ?? DECK_THEMES[0])
+  const mapped = resolveThemeId(id)
+  return normalizeTheme(DECK_THEMES.find((t) => t.id === mapped) ?? DECK_THEMES[0])
 }

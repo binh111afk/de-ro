@@ -10,6 +10,7 @@ import {
 } from '../src/lib/aiDeck.ts'
 import { DECK_THEMES } from '../src/lib/slideTheme.ts'
 import { SLIDE_LAYOUTS } from '../src/lib/slideLayouts.ts'
+import { enforceRhythm } from '../src/lib/aiDeck.ts'
 
 /* 1. Dàn ý hợp lệ giữ nguyên field; theme/layout/tone đúng danh mục. */
 const good = parseDeckPlan(
@@ -29,7 +30,7 @@ const good = parseDeckPlan(
 )
 assert.ok(good)
 assert.equal(good.title, 'Hệ thức lượng')
-assert.equal(good.theme, 'khoa-hoc')
+assert.equal(good.theme, 'sang', 'id theme cũ khoa-hoc được đổi sang theme thay thế')
 assert.equal(good.stylePack, 'editorial')
 assert.equal(good.audience, 'Học sinh lớp 9')
 assert.equal(good.style, 'Tối giản, nhiều hình minh hoạ.')
@@ -99,12 +100,12 @@ assert.equal(parseDeckPlan('Mình gợi ý bài giảng gồm 3 phần.'), null)
 assert.equal(parseDeckPlan('{"slides":[]}'), null)
 assert.equal(parseDeckPlan('{"slides":[{"bullets":["a"]}]}'), null)
 
-/* 6. Catalog prompt sinh từ code: đủ 10 theme + 19 layout. */
+/* 6. Catalog prompt sinh từ code: đủ 6 theme + 19 layout. */
 const catalog = slideCatalogText()
 for (const theme of DECK_THEMES) assert.ok(catalog.includes(theme.id), `thiếu theme ${theme.id}`)
 for (const layout of SLIDE_LAYOUTS)
   assert.ok(catalog.includes(layout.id), `thiếu layout ${layout.id}`)
-assert.equal(DECK_THEMES.length, 10)
+assert.equal(DECK_THEMES.length, 6)
 assert.equal(SLIDE_LAYOUTS.length, 19)
 
 /* 7. Hợp đồng deck cũ vẫn đọc được (không hồi quy). */
@@ -114,5 +115,17 @@ const deck = parseAiDeck(
 assert.ok(deck)
 assert.equal(deck.title, 'Deck')
 assert.equal(deck.slides[0].bullets?.length, 1)
+
+/* Ép nhịp: không lặp layout liền kề, bullets ≤ 40%, đầu/cuối giữ nguyên. */
+{
+  const mk = (layout) => ({ title: layout, layout })
+  const plan = enforceRhythm(
+    ['title', 'bullets', 'bullets', 'bullets', 'bullets', 'bullets', 'bullets', 'closing'].map(mk),
+  )
+  for (let i = 1; i < plan.length; i++) assert.notEqual(plan[i].layout, plan[i - 1].layout, `lặp liền kề ở ${i}`)
+  assert.equal(plan[0].layout, 'title')
+  assert.equal(plan.at(-1).layout, 'closing')
+  assert.ok(plan.filter((s) => s.layout === 'bullets').length <= Math.floor(plan.length * 0.4))
+}
 
 console.log('test-slide-plan: 7 nhóm kiểm tra đạt')

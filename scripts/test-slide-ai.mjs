@@ -194,14 +194,14 @@ const baseDeck = {
 }
 const themePlan = {
   title: 'Deck',
-  theme: 'khoa-hoc',
+  theme: 'giay-am',
   style: 'Tối giản, nhiều hình',
   mainIdeas: [],
   slides: [{ title: 'Mở', layout: 'bullets' }],
 }
 const page1 = sanitizeSlide({ title: 'Mở', bullets: ['a', 'b'] }, 'bullets', 'accent')
 const first = appendSlidesToDeck(baseDeck, [page1], themePlan)
-assert.equal(first.patch.theme.id, 'khoa-hoc', 'trang đầu đổi theme theo dàn ý')
+assert.equal(first.patch.theme.id, 'giay-am', 'trang đầu đổi theme theo dàn ý')
 assert.equal(first.patch.style, 'Tối giản, nhiều hình')
 assert.equal(first.patch.slides.length, 1)
 assert.equal(first.patch.slides[0].layout, 'bullets')

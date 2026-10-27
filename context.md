@@ -2148,6 +2148,29 @@ Sau audit "AI sinh slide vỡ layout": gốc là tọa độ cố định + đo 
   (tương phản `stats` label/`quiz` option-1, số thứ tự timeline 1cqw) — việc P1.
 - Ghi chú: font serif của vài theme hẹp hơn Be Vietnam Pro nên đo dư (an toàn).
 
+### 3.52. Gói P1 — palette OKLCH, panel nhạt, ép nhịp deck (27/10/2026)
+
+- **Theme 10 → 6** (`slideTheme.ts`): mỗi theme một hue, dựng bằng `oklch()` +
+  `palette(hue)` (nền gần trắng/đen ngả hue, **một** accent, màu phụ lệch 150°;
+  accent đủ đậm để chữ trên accent ≥ 4,5:1). Giữ `sang`, `dem-xanh`, `giay-am`,
+  `rung`, `tim`, `do`; môn học gộp vào `tags`. Bỏ hoạ tiết ồn (confetti/waves/
+  grid/dots) — CSS vẫn giữ cho deck cũ. Id cũ (`khoa-hoc`, `van-su-dia`,
+  `sinh-hoc`, `ngoai-ngu-tin`) tra qua `resolveThemeId` nên dàn ý/deck cũ chạy.
+- **Panel nhạt hơn** (`paletteOf`): pha accent 0,12–0,14 thay vì 0,22–0,24; nền
+  tông `accent` 0,07. `muted`/`ink` được lùi về phía mực tới khi ≥ 4,5:1 trên
+  **cả** nền slide lẫn panel (`legible`).
+- **Ép nhịp bằng code** (`enforceRhythm` trong `aiDeck.ts`, gọi trong
+  `parseDeckPlan`): không hai layout liền kề trùng nhau, `bullets` ≤ 40% deck ≥ 6
+  slide; đổi sang layout cùng "họ" nội dung, giữ slide đầu/cuối.
+- **Layout:** agenda xếp kicker → title theo chiều cao đo; `bullets` tiêu đề lớn
+  hơn khi không có kicker, panel ôm nội dung (không còn khoảng trống dưới);
+  `textEl` nới hộp một dòng cho cả hộp có `align`.
+- **Lint:** 716 → 54 cảnh báo, 0 error; còn lại là bước `cycle` dài hơn budget
+  36 ký tự trong nội dung stress (luồng AI thật bị repair chặn). Backdrop của ô
+  chữ có `fill` (đáp án quiz) tính theo fill.
+- **Chưa làm:** hero panel bìa/section vẫn là khối accent đặc lớn (diện tích >
+  10%); giảm tiếp là quyết định thẩm mỹ cần xem bằng mắt.
+
 ## 4. Lỗi đã gặp và cách sửa
 
 ### 4.1. TipTap v3 — `content` phải là mảng

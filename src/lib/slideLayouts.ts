@@ -239,11 +239,11 @@ interface LayoutPalette {
   borderColor: string
 }
 
-/** Màu chữ nhấn: lùi dần từ accent về phía mực chữ tới khi đạt 4,5:1 trên nền. */
-function inkOf(accent: string, bg: string, fg: string): string {
+/** Lùi `color` về phía mực chữ tới khi đạt 4,5:1 trên **mọi** nền trong `bgs`. */
+function legible(color: string, bgs: string[], fg: string): string {
   for (let t = 0; t <= 1; t += 0.05) {
-    const candidate = mixHex(accent, fg, t)
-    if (contrastRatio(candidate, bg) >= 4.5) return candidate
+    const candidate = mixHex(color, fg, t)
+    if (bgs.every((bg) => contrastRatio(candidate, bg) >= 4.5)) return candidate
   }
   return fg
 }
@@ -253,7 +253,6 @@ function paletteOf(theme: ReturnType<typeof normalizeTheme>, tone: SlideTone): L
   const base = {
     tone,
     fg: theme.fg,
-    muted: theme.muted,
     accent: theme.accent,
     secondary: theme.secondary,
     onAccent,
@@ -262,33 +261,24 @@ function paletteOf(theme: ReturnType<typeof normalizeTheme>, tone: SlideTone): L
     border: theme.border,
     borderColor: theme.borderColor,
   }
-  if (tone === 'accent') {
-    // Nền tint nhẹ thay vì tô kín màu nhấn: chữ giữ màu theme nên vẫn đọc tốt,
-    // còn band/vạch nhấn mới dùng màu accent đặc.
-    const background = mixHex(theme.bg, theme.accent, theme.dark ? 0.22 : 0.12)
-    return {
-      ...base,
-      background,
-      surface: theme.bg,
-      panel: mixHex(background, theme.accent, theme.dark ? 0.22 : 0.22),
-      ink: inkOf(theme.accent, background, theme.fg),
-    }
-  }
-  if (tone === 'soft') {
-    return {
-      ...base,
-      background: theme.surface,
-      surface: theme.bg,
-      panel: mixHex(theme.surface, theme.accent, theme.dark ? 0.22 : 0.22),
-      ink: inkOf(theme.accent, theme.surface, theme.fg),
-    }
-  }
+  // Nền + tỉ lệ pha accent cho panel: panel đủ nhạt để chữ đọc thoải mái và
+  // accent chỉ chiếm diện tích nhỏ (vạch, badge), không tô cả khối chữ.
+  const pick =
+    tone === 'accent'
+      ? { background: mixHex(theme.bg, theme.accent, theme.dark ? 0.2 : 0.07), surface: theme.bg, panelMix: theme.dark ? 0.18 : 0.14 }
+      : tone === 'soft'
+        ? { background: theme.surface, surface: theme.bg, panelMix: theme.dark ? 0.18 : 0.14 }
+        : { background: theme.bg, surface: theme.surface, panelMix: theme.dark ? 0.18 : 0.12 }
+  const panel = mixHex(pick.background, theme.accent, pick.panelMix)
+  const bgs = [pick.background, panel, pick.surface]
   return {
     ...base,
-    background: theme.bg,
-    surface: theme.surface,
-    panel: mixHex(theme.bg, theme.accent, theme.dark ? 0.22 : 0.24),
-    ink: inkOf(theme.accent, theme.bg, theme.fg),
+    background: pick.background,
+    surface: pick.surface,
+    panel,
+    // chữ phụ/nhấn phải đọc được trên cả nền slide lẫn panel/thẻ
+    muted: legible(theme.muted, bgs, theme.fg),
+    ink: legible(theme.accent, bgs, theme.fg),
   }
 }
 
@@ -320,7 +310,7 @@ function textEl(
   // 1,8cqw cần ≥ 8%. Hộp canh trên thấp hơn mức đó thì nới xuống thay vì co chữ
   // xuống 60% (kicker 1,2cqw đọc không nổi). Hộp canh giữa giữ nguyên để không lệch tâm.
   const oneLine = textBoxHeight(text.split('\n')[0], 1000, baseSize, lineHeight)
-  if (!style.valign && !style.align && box.h < oneLine) box = { ...box, h: oneLine }
+  if (!style.valign && box.h < oneLine) box = { ...box, h: oneLine }
   const fontSize = fitFontSize({
     text,
     widthPct: box.w,
@@ -514,12 +504,14 @@ function composeBullets(p: LayoutPalette, content: SlideLayoutContent): SlideEle
   const text = bulletText(lines)
   const size = listSize(lines.length, text)
   const graphic = chosenGraphic(content)
-  const header = titleEls(p, content.title, { x: 8, y: 15, w: 84, h: 15 }, [4.2, 3.8, 3.4, 3, 2.8], true)
+  // không có kicker thì tiêu đề được nhích lên và cao hơn → 2 dòng vẫn giữ cỡ lớn
+  const headerBox: Box = content.kicker?.trim() ? { x: 8, y: 15, w: 84, h: 15 } : { x: 8, y: 10, w: 84, h: 20 }
+  const header = titleEls(p, content.title, headerBox, [4.2, 3.8, 3.4, 3.1, 2.8], true)
   // Vùng nội dung bắt đầu dưới tiêu đề/vạch (đã đo), không còn y cố định.
   const regionTop = Math.max(33, bottomOf(header) + 3)
   const regionH = 96 - regionTop
   // Khối ý bám chiều cao thật rồi canh giữa vùng nội dung, không dồn sát đỉnh.
-  const boxH = Math.min(regionH - 6, Math.max(30, textBoxHeight(text, 56, size, 1.4, { weight: 500 }) * 1.6))
+  const boxH = Math.min(regionH - 6, Math.max(24, textBoxHeight(text, 56, size, 1.4, { weight: 500 }) * 1.3))
   const top = regionTop + (regionH - boxH) / 2
   return compact([
     shapeEl('content-panel', { x: 7, y: top - 3, w: 66, h: boxH + 6 }, p.panel, 'round'),
@@ -534,7 +526,7 @@ function composeBullets(p: LayoutPalette, content: SlideLayoutContent): SlideEle
     }),
     ...header,
     textEl('bullets', text, { x: 8, y: top, w: 56, h: boxH }, {
-      variant: 'body', fontSize: size, textColor: p.fg,
+      variant: 'body', fontSize: size, textColor: p.fg, valign: 'middle',
     }),
   ])
 }
@@ -773,6 +765,12 @@ function composeAgenda(p: LayoutPalette, content: SlideLayoutContent): SlideElem
   const top = 22
   const rowH = 68 / items.length
 
+  // Kicker có thể xuống 2 dòng: đo rồi đặt tiêu đề ngay dưới, không đè lên nhau.
+  const agendaKicker = content.kicker?.trim()
+  const agendaKickerH = agendaKicker
+    ? Math.min(12, textBoxHeight(agendaKicker, 24, 1.6, 1.4, { weight: 600, letterSpacing: 0.12 }))
+    : 0
+  const agendaTitleY = agendaKicker ? 24 + agendaKickerH + 1.5 : 28
   return compact([
     {
       id: 'side-panel',
@@ -783,12 +781,10 @@ function composeAgenda(p: LayoutPalette, content: SlideLayoutContent): SlideElem
       h: 100,
       fill: p.accent,
     },
-    textEl('kicker', content.kicker, { x: 6, y: 24, w: 22, h: 6 }, {
+    textEl('kicker', agendaKicker, { x: 6, y: 24, w: 24, h: agendaKickerH }, {
       variant: 'body', fontSize: 1.6, fontWeight: 600, textColor: p.onAccent,
     }),
-    textEl('title', content.title, { x: 6, y: 31, w: 22, h: 30 }, {
-      variant: 'title', fontSize: 3.2, fontWeight: 700, textColor: p.onAccent,
-    }),
+    ...titleEls(p, content.title, { x: 6, y: agendaTitleY, w: 24, h: 63 - agendaTitleY }, [3.2, 2.9, 2.6, 2.4], false, p.onAccent),
     shapeEl('rule', { x: 6, y: 66, w: 9, h: 0.7 }, p.onAccent),
     ...items.flatMap((item, index) => {
       const y = top + index * rowH

@@ -57,7 +57,7 @@ export const SLIDE_STYLE_PACKS: SlideStylePack[] = [
     id: 'bento',
     name: 'Bento',
     description: 'Lưới ô không đều: một ô lớn, vài ô nhỏ, mỗi ô một ý.',
-    themeHint: 'khoa-hoc',
+    themeHint: 'sang',
     rules: [
       'Bố cục ô không đều: 1 ô lớn + 2–4 ô nhỏ, mỗi ô một ý.',
       'Dùng cards/stats/timeline để tạo ô; giữ khoảng thở giữa các ô.',
@@ -69,7 +69,7 @@ export const SLIDE_STYLE_PACKS: SlideStylePack[] = [
     id: 'classroom',
     name: 'Lớp học',
     description: 'Bài giảng: mục tiêu → bước/ví dụ → kiểm tra nhanh.',
-    themeHint: 'sinh-hoc',
+    themeHint: 'rung',
     rules: [
       'Mở bằng mục tiêu, giữa là các bước/ví dụ, cuối là kiểm tra nhanh.',
       'Mỗi slide 2–4 ý ngắn, kèm ví dụ cụ thể.',

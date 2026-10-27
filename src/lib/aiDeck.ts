@@ -6,7 +6,7 @@
  */
 import type { SlideElement, SlideTone } from '@/store/docs'
 import { isLayoutId, isTone, SLIDE_LAYOUTS } from './slideLayouts'
-import { DECK_THEMES } from './slideTheme'
+import { DECK_THEMES, resolveThemeId } from './slideTheme'
 import { isStylePackId, stylePackCatalogText } from './slideStyles'
 
 export interface AiSlidePayload {
@@ -137,6 +137,51 @@ export function parseAiObject(raw: string): unknown | null {
   return null
 }
 
+/** Layout thay thế cùng "họ nội dung" khi hai slide liền kề trùng bố cục. */
+const RHYTHM_ALTERNATES: Record<string, string[]> = {
+  bullets: ['cards', 'two-column'],
+  cards: ['bullets', 'timeline'],
+  'two-column': ['comparison', 'cards'],
+  comparison: ['two-column'],
+  'image-left': ['image-right'],
+  'image-right': ['image-left'],
+  stats: ['cards'],
+  timeline: ['cycle', 'cards'],
+  cycle: ['timeline'],
+}
+
+/** Tỉ lệ tối đa slide `bullets` trong một deck dài (≥ 6 slide). */
+const MAX_BULLET_SHARE = 0.4
+
+/**
+ * Ép nhịp deck bằng code (prompt chỉ khuyên, model vẫn hay lặp): không có hai
+ * slide liền kề cùng layout, `bullets` ≤ 40%. Slide đầu và cuối giữ nguyên.
+ * Layout chỉ đổi sang "họ" nội dung tương đương nên brief vẫn dùng được.
+ */
+export function enforceRhythm(slides: DeckPlanSlide[]): DeckPlanSlide[] {
+  const out = slides.map((slide) => ({ ...slide }))
+  const swap = (i: number, avoid: Set<string>) => {
+    const alt = (RHYTHM_ALTERNATES[out[i].layout] ?? []).find((id) => !avoid.has(id))
+    if (alt && isLayoutId(alt)) out[i].layout = alt
+  }
+  for (let i = 1; i < out.length - 1; i++) {
+    if (out[i].layout === out[i - 1].layout) {
+      swap(i, new Set([out[i - 1].layout, out[i + 1]?.layout ?? '']))
+    }
+  }
+  if (out.length >= 6) {
+    const cap = Math.floor(out.length * MAX_BULLET_SHARE)
+    let extra = out.filter((slide) => slide.layout === 'bullets').length - cap
+    for (let i = out.length - 2; i > 0 && extra > 0; i--) {
+      if (out[i].layout !== 'bullets') continue
+      const before = out[i].layout
+      swap(i, new Set([out[i - 1].layout, out[i + 1].layout]))
+      if (out[i].layout !== before) extra--
+    }
+  }
+  return out
+}
+
 /**
  * Chuẩn hoá dàn ý: bỏ slide không có tiêu đề, layout/tone lạ về mặc định,
  * theme lạ bỏ trống để không phá theme đang dùng. Trả null khi không có dàn ý.
@@ -177,13 +222,12 @@ export function parseDeckPlan(raw: string): DeckPlan | null {
     const packId = text(source.stylePack, 40)
     return {
       title: text(source.title, 160),
-      theme:
-        themeId && DECK_THEMES.some((theme) => theme.id === themeId) ? themeId : undefined,
+      theme: resolveThemeId(themeId),
       ...(isStylePackId(packId) ? { stylePack: packId } : {}),
       audience: text(source.audience, 120),
       style: text(source.style, 600),
       mainIdeas: textList(source.mainIdeas, 6, 160),
-      slides,
+      slides: enforceRhythm(slides),
     }
   }
   return null
