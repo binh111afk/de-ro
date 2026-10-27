@@ -1120,3 +1120,12 @@ input.slide-rail-title:focus {
 .slide-format-pane__close:hover {
   background: var(--hover);
 }
+
+/* Công thức trong slide: biến `.katex` toàn cục của app (1.03em, hợp văn bản đề thi)
+   khiến phân số trên slide nhỏ như chú thích — nới lại cho đọc được từ xa. */
+.slide-frame .katex {
+  font-size: 1.2em;
+}
+.slide-frame .katex .mfrac {
+  font-size: 1.15em;
+}

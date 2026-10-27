@@ -2224,6 +2224,25 @@ Sau audit "AI sinh slide vỡ layout": gốc là tọa độ cố định + đo 
   Phân số dùng `\tfrac` khi vẽ slide; `textBoxHeight` cộng 0,6 dòng cho mỗi công
   thức cao (`tallMathCount`). Ô bảng có `$...$` cũng vẽ KaTeX (`MathCell`).
 
+### 3.55. Chấm điểm bằng model thị giác + sửa theo góp ý người dùng (27/10/2026)
+
+- **Công cụ:** `node scripts/judge-slides.mjs <thư-mục-ảnh>` chấm ảnh slide bằng
+  `LLM_MODEL` (deepseek-v4.1-flash nhận ảnh) theo 6 tiêu chí (layout, typography,
+  color, hierarchy, imagery, polish); `eval:slides --slides` lưu mỗi slide một
+  ảnh 2×. Gateway opencode đòi header `x-opencode-session`.
+- **Lần chấm 1** (6 deck, 59 slide): model **6,6/10**; deck mẫu người dùng gửi
+  (Ước Chung Lớn Nhất) **6,4** (6,8 nếu bỏ slide gần trống). Điểm yếu: hình ảnh 4,4.
+  **Người dùng tự chấm** 6 deck: 6,8 / 6,8 / 6,8 / 6,8 / 7 / 7 (TB 6,87) — gần điểm
+  model (6,5–7,0), model khắt khe hơn ~0,3 → dùng làm thước tương đối.
+- **Góp ý người dùng → sửa:** (1) bìa: khối panel cao nửa trống + sticker không đẹp →
+  huy hiệu tròn (`hero-panel` ellipse + đĩa sáng + hình); (2) thẻ 2×2 sát mép dưới
+  (đáy 99,5%) → vùng thẻ kết thúc ở y=93, lint thêm luật `edge` (đáy/phải > 96%);
+  thẻ không có "nhãn:" dùng cả bề rộng bên phải badge, chữ lớn hơn; (3) two-column
+  khó nhìn → `splitLabel`: "Bước 1: …" thành nhãn đậm màu nhấn + mô tả, dùng chung
+  một cỡ chữ cho hai cột, `contentFromSlide` đọc lại `left-N`/`right-N`;
+  (4) phân số KaTeX nhỏ do `.katex {1.03em}` toàn cục của app → `slide.css` đặt
+  `.slide-frame .katex 1.2em`, `.mfrac 1.15em`.
+
 ## 4. Lỗi đã gặp và cách sửa
 
 ### 4.1. TipTap v3 — `content` phải là mảng

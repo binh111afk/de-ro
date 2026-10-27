@@ -487,11 +487,14 @@ function composeTitle(p: LayoutPalette, content: SlideLayoutContent): SlideEleme
   const graphic = chosenGraphic(content)
   return compact([
     // Bìa cần một neo thị giác có chủ đích: panel màu bên phải thay cho chấm trang trí rời.
-    shapeEl('hero-panel', { x: 70, y: 14, w: 23, h: 72 }, p.accent, 'round'),
+    // Huy hiệu tròn (không còn khối panel cao nửa trống): vòng accent + hình đặt giữa.
+    shapeEl('hero-panel', { x: 67, y: 20, w: 26, h: 46.2 }, p.accent, 'ellipse'),
     ...(graphic
-      ? graphicPlate('hero-graphic', graphic, { x: 72.5, y: 24, w: 18, h: 32 }, p)
-      : [iconEl('hero-icon', pickSlideAsset(`${content.title ?? ''} ${content.kicker ?? ''}`) ?? 'idea', { x: 74.5, y: 30, w: 14, h: 20 }, p.onAccent)]),
-    shapeEl('hero-line', { x: 76, y: 57, w: 11, h: 0.9 }, p.onAccent),
+      ? [
+          shapeEl('hero-graphic-plate', { x: 70, y: 25.3, w: 20, h: 35.6 }, GRAPHIC_PLATE, 'ellipse'),
+          graphicEl('hero-graphic', graphic, { x: 73.5, y: 31.5, w: 13, h: 23.1 }, GRAPHIC_INK),
+        ]
+      : [iconEl('hero-icon', pickSlideAsset(`${content.title ?? ''} ${content.kicker ?? ''}`) ?? 'idea', { x: 73, y: 30.65, w: 14, h: 24.9 }, p.onAccent)]),
     p.tone === 'accent'
       ? shapeEl('accent-band', { x: 0, y: 0, w: 100, h: 1.4 }, p.accent)
       : null,
@@ -610,9 +613,10 @@ function composeCards(p: LayoutPalette, content: SlideLayoutContent): SlideEleme
   const cols = picked.length <= 3 ? picked.length : picked.length === 4 ? 2 : 3
   const rows = Math.ceil(picked.length / cols)
   const gap = 3
-  const area = { x: 8, y: 24, w: 84, h: 76 }
+  // Vùng thẻ kết thúc ở y=93 (lề đáy ≥ 7%); trước đây thẻ chạm sát mép dưới slide.
+  const area = { x: 8, y: 25, w: 84, h: 68 }
   const cardW = (area.w - gap * (cols - 1)) / cols
-  const cardH = rows === 1 ? 46 : wide ? 36 : 36.5
+  const cardH = rows === 1 ? 46 : (area.h - gap * (rows - 1)) / rows
   const totalH = rows * cardH + (rows - 1) * gap
   const startY = area.y + (area.h - totalH) / 2
 
@@ -633,12 +637,15 @@ function composeCards(p: LayoutPalette, content: SlideLayoutContent): SlideEleme
       const badgeW = 6.6
       const badgeH = (badgeW * 16) / 9
       const iconW = 7
-      const bodyTop = y + 15
-      const bodyH = y + cardH - 2 - bodyTop
-      const bodyW = cardW - 5
+      // Không có tiêu đề: mô tả dùng cả khoảng bên phải badge (cao gần cả thẻ) thay vì
+      // nằm dưới một hàng tiêu đề trống — chữ lớn gấp rưỡi.
+      const solo = !heading
+      const bodyBox: Box = solo
+        ? { x: x + 10.5, y: y + 2, w: cardW - 13 - (asset ? iconW + 1 : 0), h: cardH - 4 }
+        : { x: x + 2.5, y: y + 14, w: cardW - 5, h: cardH - 16 }
       const font =
-        [2.4, 2.2, 2, 1.85].find(
-          (size) => !body || textBoxHeight(body, bodyW, size, 1.45, { weight: 400 }) <= bodyH,
+        [2.5, 2.3, 2.1, 1.95, 1.85].find(
+          (size) => !body || textBoxHeight(body, bodyBox.w, size, 1.45, { weight: 400 }) <= bodyBox.h,
         ) ?? 1.8
       return [
         { id: `card-${index + 1}-panel`, type: 'shape', shape: 'round', fill: p.surface, shadow: p.shadow !== 'none', radius: p.radius, border: p.border, borderColor: p.borderColor, x, y, w: cardW, h: cardH } as SlideElement,
@@ -655,8 +662,8 @@ function composeCards(p: LayoutPalette, content: SlideLayoutContent): SlideEleme
         asset
           ? iconEl(`card-${index + 1}-icon`, asset, { x: x + cardW - iconW - 2, y: y + 2.5, w: iconW, h: 12 }, p.accent)
           : null,
-        textEl(`card-${index + 1}`, body, { x: x + 2.5, y: bodyTop, w: bodyW, h: bodyH }, {
-          variant: 'body', fontSize: font, fontWeight: 400, textColor: p.fg,
+        textEl(`card-${index + 1}`, body, bodyBox, {
+          variant: 'body', fontSize: font, fontWeight: 400, textColor: p.fg, ...(solo ? { valign: 'middle' as const } : {}),
         }),
       ]
     }
@@ -727,6 +734,15 @@ function splitTwoColumns(content: SlideLayoutContent): { left: string[]; right: 
   return { left, right }
 }
 
+/** "Nhãn: mô tả" → nhãn đậm + mô tả; không có nhãn ngắn thì chỉ có mô tả. */
+function splitLabel(item: string): { label: string; text: string } {
+  const at = item.indexOf(':')
+  if (at < 2 || at > 28) return { label: '', text: item }
+  const label = item.slice(0, at).trim()
+  const text = item.slice(at + 1).trim()
+  return label && text && !label.includes('$') ? { label, text } : { label: '', text: item }
+}
+
 function composeTwoColumn(p: LayoutPalette, content: SlideLayoutContent): SlideElement[] {
   const { left, right } = splitTwoColumns(content)
   if (left.length === 0 && right.length === 0) return []
@@ -735,16 +751,77 @@ function composeTwoColumn(p: LayoutPalette, content: SlideLayoutContent): SlideE
     both
       ? { x: side === 'left' ? 8 : 53, y: 27, w: 39, h: 60 }
       : { x: 8, y: 27, w: 84, h: 60 }
-  const size = left.length + right.length <= 4 ? 3.2 : 2.8
+  const columns = { left: left.map(splitLabel), right: right.map(splitLabel) }
+  const labelled = [...columns.left, ...columns.right].some((block) => block.label)
+
+  if (!labelled) {
+    const size = left.length + right.length <= 4 ? 3.2 : 2.8
+    return compact([
+      ...titleEls(p, content.title, HEADER_BOX, HEADER_SIZES, true),
+      both ? shapeEl('divider', { x: 49.4, y: 27, w: 0.6, h: 60 }, p.secondary) : null,
+      textEl('body', bulletText(left), boxFor('left'), {
+        variant: 'body', fontSize: size, textColor: p.fg, valign: 'middle',
+      }),
+      textEl('body-2', bulletText(right), boxFor('right'), {
+        variant: 'body', fontSize: size, textColor: p.fg, valign: 'middle',
+      }),
+    ])
+  }
+
+  // Có "Nhãn: mô tả" (các bước, khái niệm…): mỗi ý là nhãn đậm màu nhấn + mô tả,
+  // xếp chồng theo chiều cao đo và dùng CHUNG một cỡ chữ cho cả hai cột.
+  const colW = both ? 39 : 84
+  const blockGap = 0.9
+  // Mỗi hộp có đệm dọc ~3,6%: nhãn và mô tả xếp sát nhau (nhãn bớt 1,8%) cho đỡ loãng.
+  const labelH = (label: string, size: number) =>
+    textBoxHeight(label, colW, size, 1.3, { weight: 700 }) - 1.8
+  const heightOf = (blocks: Array<{ label: string; text: string }>, size: number) =>
+    blocks.reduce(
+      (sum, block) =>
+        sum +
+        (block.label ? labelH(block.label, size) : 0) +
+        textBoxHeight(block.text, colW, size * 0.95, 1.4, { weight: 500 }) +
+        blockGap,
+      0,
+    )
+  const SIZES = [3.2, 3, 2.8, 2.6, 2.4, 2.2, 2.1, 2.0]
+  const size =
+    SIZES.find((s) => Math.max(heightOf(columns.left, s), heightOf(columns.right, s)) <= 62) ??
+    SIZES[SIZES.length - 1]
+  const used = Math.max(heightOf(columns.left, size), heightOf(columns.right, size))
+  const top = 27 + Math.max(0, (60 - used) / 2)
+
+  const column = (side: 'left' | 'right') => {
+    const box = boxFor(side)
+    let y = top
+    return columns[side].flatMap((block, index) => {
+      const out: Array<SlideElement | null> = []
+      const id = `${side}-${index + 1}`
+      if (block.label) {
+        const h = labelH(block.label, size)
+        out.push(
+          textEl(`${id}-heading`, block.label, { x: box.x, y, w: colW, h }, {
+            variant: 'body', fontSize: size, fontWeight: 700, lineHeight: 1.3, textColor: p.ink,
+          }),
+        )
+        y += h
+      }
+      const h = textBoxHeight(block.text, colW, size * 0.95, 1.4, { weight: 500 })
+      out.push(
+        textEl(id, block.text, { x: box.x, y, w: colW, h }, {
+          variant: 'body', fontSize: size * 0.95, textColor: p.fg,
+        }),
+      )
+      y += h + blockGap
+      return out
+    })
+  }
+
   return compact([
     ...titleEls(p, content.title, HEADER_BOX, HEADER_SIZES, true),
     both ? shapeEl('divider', { x: 49.4, y: 27, w: 0.6, h: 60 }, p.secondary) : null,
-    textEl('body', bulletText(left), boxFor('left'), {
-      variant: 'body', fontSize: size, textColor: p.fg, valign: 'middle',
-    }),
-    textEl('body-2', bulletText(right), boxFor('right'), {
-      variant: 'body', fontSize: size, textColor: p.fg, valign: 'middle',
-    }),
+    ...column('left'),
+    ...column('right'),
   ])
 }
 
@@ -1356,7 +1433,7 @@ const RESERVED = new Set([
   'bullets', 'body', 'body-2', 'question', 'left-title', 'right-title', 'bullet-anchor-mark',
   'problem', 'problem-label', 'conclusion', 'answer',
 ])
-const NUMBERED = /^(card|option|stat|step|item|node)-\d+(-value|-label|-index|-heading)?$/
+const NUMBERED = /^(card|option|stat|step|item|node|left|right)-\d+(-value|-label|-index|-heading)?$/
 const isRoleId = (id: string): boolean => RESERVED.has(id) || NUMBERED.test(id)
 
 /** Đọc nội dung slide đang có để đổi layout mà không mất chữ/ảnh/bảng. */
@@ -1397,6 +1474,17 @@ export function contentFromSlide(slide: Slide): SlideLayoutContent {
     (el) => el.type === 'graphic' && isGraphicId(el.graphicId),
   )
 
+  // two-column có nhãn: mỗi ý là `left-N` (+ `left-N-heading`) — ghép lại "nhãn: mô tả"
+  const sideItems = (side: 'left' | 'right'): string[] | undefined => {
+    const els = texts
+      .filter((el) => new RegExp(`^${side}-\\d+$`).test(el.id))
+      .sort((a, b) => suffixOf(a.id) - suffixOf(b.id))
+    if (!els.length) return undefined
+    return els.map((el) => {
+      const heading = byId(`${el.id}-heading`)
+      return heading ? `${heading}: ${el.text}` : el.text
+    })
+  }
   const answerMatch = byId('answer')?.match(/^Đáp án:\s*([A-D])(?:\s*[—–-]\s*([\s\S]*))?$/i)
   return {
     title: byId('title') ?? titleEl?.text,
@@ -1414,8 +1502,8 @@ export function contentFromSlide(slide: Slide): SlideLayoutContent {
         const heading = byId(`${el.id}-heading`)
         return heading ? `${heading}: ${el.text}` : el.text
       }),
-    left: linesOf(byId('body')),
-    right: linesOf(byId('body-2')),
+    left: sideItems('left') ?? linesOf(byId('body')),
+    right: sideItems('right') ?? linesOf(byId('body-2')),
     leftTitle: byId('left-title'),
     rightTitle: byId('right-title'),
     quote: byId('quote'),

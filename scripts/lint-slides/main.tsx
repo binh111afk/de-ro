@@ -103,7 +103,7 @@ const MEDIUM: SlideLayoutContent = {
 
 const TONES: SlideTone[] = ['theme', 'soft', 'accent']
 
-type Rule = 'overflow' | 'overlap' | 'bounds' | 'tiny' | 'contrast'
+type Rule = 'overflow' | 'overlap' | 'bounds' | 'edge' | 'tiny' | 'contrast'
 interface Issue {
   rule: Rule
   severity: 'error' | 'warn'
@@ -188,6 +188,13 @@ function lintSlide(
     }
   })
 
+  // lề an toàn: phần tử không tràn nền (bắt đầu sau mép trên/trái) mà đáy/phải > 96% → sát mép
+  els.forEach((el) => {
+    if (el.type === 'image' || el.y <= 1 || el.x <= 1) return
+    if (el.y + el.h > 96 || (el.x + el.w > 96 && el.x + el.w < 99.5)) {
+      push('edge', 'error', el.id, `sát mép: đáy ${(el.y + el.h).toFixed(1)}%, phải ${(el.x + el.w).toFixed(1)}%`)
+    }
+  })
   // chữ ↔ chữ
   for (let a = 0; a < texts.length; a++) {
     for (let b = a + 1; b < texts.length; b++) {
