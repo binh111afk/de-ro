@@ -49,8 +49,11 @@ export function useAnchoredPopover(open: boolean, minWidth = 220) {
 }
 
 /** Gán vào style của popover — luôn `position: fixed`. */
-export function popoverStyle(pos: PopoverPos | null): React.CSSProperties | undefined {
-  if (!pos) return undefined
+export function popoverStyle(pos: PopoverPos | null): React.CSSProperties {
+  // Lần mở đầu `pos` chưa có. Vẫn phải là `fixed` và ẩn: nếu để phần tử nằm
+  // trong luồng (style rỗng) thì hàng ribbon cao lên, nút trigger bị đẩy xuống;
+  // `sync()` đo rect của nút đã bị đẩy → menu lệch cho tới lần mở thứ hai.
+  if (!pos) return { position: 'fixed', top: 0, left: 0, visibility: 'hidden' }
   return {
     position: 'fixed',
     top: pos.placement === 'above' ? undefined : pos.top,

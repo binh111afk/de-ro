@@ -10,18 +10,37 @@
  * Prod: `node server/llmProxy.ts` phục vụ API + static `dist/`.
  */
 import { readFileSync, existsSync, writeFileSync, mkdirSync } from 'node:fs'
+import { homedir } from 'node:os'
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http'
 import { readFile } from 'node:fs/promises'
 import { randomUUID } from 'node:crypto'
 import { isIP } from 'node:net'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { json, readBody } from './http'
+import { handleExtractRequest } from './extract'
+import { handleSearchRequest } from './searchProxy'
+import { handleImageRequest } from './imageProxy'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.resolve(__dirname, '..')
 
 const DEFAULT_BASE_URL = 'https://opencode.ai/inference/go/openai/v1'
 const DEFAULT_MODEL = 'deepseek-v4.1-flash'
+const DEFAULT_FALLBACK_MODEL = 'deepseek-v4.1-flash-free'
+const DEFAULT_XKIRO_MODEL = 'google/gemini-3.8-flash'
+const DEFAULT_XKIRO_FALLBACK_MODEL = 'google/gemini-3-flash'
+const DEFAULT_UPSTREAM_TIMEOUT_MS = 120_000
+
+/**
+ * Thời gian chờ mỗi lượt gọi model. Model reasoning (deepseek) có thể suy luận
+ * 5–10k token cho một dàn ý slide, 45s cũ không đủ → đọc `LLM_TIMEOUT_MS` trong
+ * `.env` để chỉnh, mặc định 120s.
+ */
+function upstreamTimeoutMs(): number {
+  const raw = Number(process.env.LLM_TIMEOUT_MS)
+  return Number.isFinite(raw) && raw >= 10_000 ? raw : DEFAULT_UPSTREAM_TIMEOUT_MS
+}
 
 /**
  * Gateway opencode.ai đòi header `x-opencode-session` để định tuyến/cache; thiếu
@@ -88,24 +107,33 @@ function assertAllowedUrl(raw: string): URL {
   return url
 }
 
-function providerConfig() {
-  const baseURL = process.env.LLM_BASE_URL?.trim() || DEFAULT_BASE_URL
-  return {
-    apiKey: process.env.LLM_API_KEY?.trim() ?? '',
-    model: process.env.LLM_MODEL?.trim() || DEFAULT_MODEL,
-    endpoint: assertAllowedUrl(`${baseURL.replace(/\/+$/, '')}/chat/completions`),
+function xkiroConfig(): { apiKey: string; baseURL: string } {
+  try {
+    const file = path.join(homedir(), '.zcode', 'v2', 'provider_config.json')
+    const parsed = JSON.parse(readFileSync(file, 'utf8')) as {
+      config?: { providerConfigRules?: { providerRules?: Array<{ providerName?: string; config?: { access?: { apiKey?: string }; api?: { baseUrl?: string } } }> } }
+    }
+    const rule = parsed.config?.providerConfigRules?.providerRules?.find((item) => /xkiro/i.test(item.providerName ?? ''))
+    return { apiKey: rule?.config?.access?.apiKey ?? '', baseURL: rule?.config?.api?.baseUrl ?? 'https://api.xkiro.com/v1' }
+  } catch {
+    return { apiKey: '', baseURL: 'https://api.xkiro.com/v1' }
   }
 }
 
-function json(res: ServerResponse, code: number, body: unknown) {
-  const payload = JSON.stringify(body)
-  res.writeHead(code, {
-    'Content-Type': 'application/json; charset=utf-8',
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  })
-  res.end(payload)
+function providerConfig() {
+  const baseURL = process.env.LLM_BASE_URL?.trim() || DEFAULT_BASE_URL
+  const xkiro = xkiroConfig()
+  return {
+    apiKey: process.env.LLM_API_KEY?.trim() ?? '',
+    model: process.env.LLM_MODEL?.trim() || DEFAULT_MODEL,
+    fallbackModel: process.env.LLM_FALLBACK_MODEL?.trim() || DEFAULT_FALLBACK_MODEL,
+    // ZCode provider config is the source of truth for local Xkiro fallback;
+    // stale shell/.env keys must not shadow the currently selected provider key.
+    xkiroApiKey: xkiro.apiKey || process.env.XKIRO_API_KEY?.trim() || '',
+    xkiroBaseURL: (xkiro.baseURL || process.env.XKIRO_BASE_URL?.trim() || 'https://api.xkiro.com/v1').replace(/\/+$/, ''),
+    xkiroModel: process.env.XKIRO_MODEL?.trim() || DEFAULT_XKIRO_MODEL,
+    endpoint: assertAllowedUrl(`${baseURL.replace(/\/+$/, '')}/chat/completions`),
+  }
 }
 
 /** Ghi log raw response của upstream để chẩn đoán khi model trả rỗng. */
@@ -121,12 +149,6 @@ function writeRawLog(raw: string, parsed?: Record<string, unknown>) {
   } catch {
     /* bỏ qua lỗi log */
   }
-}
-
-async function readBody(req: IncomingMessage): Promise<string> {
-  const chunks: Buffer[] = []
-  for await (const c of req) chunks.push(c as Buffer)
-  return Buffer.concat(chunks).toString('utf8')
 }
 
 /** Xử lý một lời gọi /api/llm. Luôn tự ghi response. */
@@ -150,13 +172,14 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
     } catch (err) {
       return json(res, 500, { error: err instanceof Error ? err.message : String(err) })
     }
-    if (!prov.apiKey) {
+    if (!prov.apiKey && !prov.xkiroApiKey) {
       return json(res, 500, {
-        error: 'Chưa cấu hình LLM_API_KEY. Mở file .env ở gốc dự án và dán API key vào.',
+        error: 'Chưa cấu hình LLM_API_KEY hoặc XKIRO_API_KEY. Kiểm tra file .env/config provider.',
       })
     }
 
     const model = body.model ?? prov.model
+    const models = [model, prov.fallbackModel].filter((value, index, all) => value && all.indexOf(value) === index)
 
     let requestBody = JSON.stringify({
       model,
@@ -166,94 +189,94 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
       ...(body.temperature !== undefined ? { temperature: body.temperature } : {}),
     })
 
-    // Gọi upstream, thử lại tối đa 2 lần nếu model trả về rỗng
-    // (hay gặp khi reasoning quá dài và bị cắt trước khi xuất nội dung).
     let lastErr: string | null = null
-    for (let attempt = 0; attempt < 2; attempt++) {
-      const upstream = await fetch(prov.endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${prov.apiKey}`,
-          'x-opencode-session': SESSION_ID,
-          // Gateway yêu cầu client tự giới thiệu thay vì User-Agent mặc định của fetch.
-          'User-Agent': 'de-ro/1.0',
-        },
-        body: requestBody,
+    const allModels = prov.xkiroApiKey ? [...models, prov.xkiroModel, DEFAULT_XKIRO_FALLBACK_MODEL] : models
+    for (const [modelIndex, selectedModel] of allModels.entries()) {
+      const isXkiro = selectedModel === prov.xkiroModel || selectedModel === DEFAULT_XKIRO_FALLBACK_MODEL
+      let attemptBody = JSON.stringify({
+        model: selectedModel,
+        messages: body.messages,
+        max_tokens: body.maxTokens ?? 32000,
+        ...(!isXkiro && body.reasoningEffort ? { reasoning_effort: body.reasoningEffort } : {}),
+        ...(body.temperature !== undefined ? { temperature: body.temperature } : {}),
       })
-
-      const text = await upstream.text()
-      if (!upstream.ok) {
-        // Lỗi tạm thời (quá tải, timeout, 429, 5xx) → thử lại sau khi nghỉ
-        const transient = upstream.status === 429 || upstream.status >= 500
-        if (transient && attempt < 1) {
-          lastErr = `Upstream ${upstream.status}: ${text.slice(0, 500)}`
-          await new Promise((r) => setTimeout(r, 4000 * (attempt + 1)))
-          continue
-        }
-        const authFailed = upstream.status === 401 || upstream.status === 403
-        return json(res, upstream.status, {
-          error: authFailed
-            ? 'API key bị từ chối. Kiểm tra LLM_API_KEY trong file .env.'
-            : `Dịch vụ AI đang bận (${upstream.status}). Vui lòng thử lại sau.`,
-          detail: text.slice(0, 800),
-        })
-      }
-      let data: {
-        choices?: Array<{
-          finish_reason?: string
-          message?: { content?: string; reasoning_content?: string }
-        }>
-        usage?: unknown
-        model?: string
-      }
-      try {
-        data = JSON.parse(text)
-      } catch {
-        // Upstream trả body không phải JSON — lưu lại để chẩn đoán
-        writeRawLog(text, { _attempt: attempt })
-        return json(res, 502, { error: 'Upstream returned non-JSON body' })
-      }
-      const choice = data.choices?.[0]
-      const msg = choice?.message ?? {}
-      const content = msg.content ?? ''
-      const reasoning = msg.reasoning_content ?? ''
-
-      // Ghi log để debug khi model trả về JSON hỏng / bị cắt
-      writeRawLog(text, {
-        _attempt: attempt,
-        finishReason: choice?.finish_reason,
-        usage: data.usage,
-        content,
-        reasoning,
-      })
-
-      if (content.trim()) {
-        return json(res, 200, {
-          content,
-          reasoning,
-          usage: data.usage ?? null,
-          model: data.model ?? model,
-          finishReason: choice?.finish_reason ?? 'unknown',
-        })
-      }
-
-      // content rỗng — thử lại với reasoning nhẹ hơn để chắc chắn có output
-      lastErr = `Upstream returned empty content (finish_reason=${
-        choice?.finish_reason ?? 'unknown'
-      }, reasoning_len=${reasoning.length})`
-      if (attempt === 0) {
+      for (let attempt = 0; attempt < 2; attempt++) {
+        let upstream: Response
         try {
-          const retryBody = JSON.parse(requestBody) as Record<string, unknown>
-          retryBody.reasoning_effort = 'medium'
-          requestBody = JSON.stringify(retryBody)
+          upstream = await fetch(isXkiro ? `${prov.xkiroBaseURL}/chat/completions` : prov.endpoint, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${isXkiro ? prov.xkiroApiKey : prov.apiKey}`,
+              ...(isXkiro ? {} : { 'x-opencode-session': SESSION_ID, 'User-Agent': 'de-ro/1.0' }),
+            },
+            body: attemptBody,
+            signal: AbortSignal.timeout(upstreamTimeoutMs()),
+          })
+        } catch (err) {
+          // AbortSignal.timeout() ném DOMException 'TimeoutError'; báo đúng
+          // nguyên nhân thay vì chuỗi "operation was aborted" khó hiểu.
+          const timedOut =
+            err instanceof Error && (err.name === 'TimeoutError' || err.name === 'AbortError')
+          lastErr = `${selectedModel}: ${
+            timedOut
+              ? `quá thời gian chờ ${Math.round(upstreamTimeoutMs() / 1000)}s`
+              : err instanceof Error
+                ? err.message
+                : String(err)
+          }`
+          break
+        }
+
+        const text = await upstream.text()
+        if (!upstream.ok) {
+          const authFailed = upstream.status === 401 || upstream.status === 403
+          lastErr = `${selectedModel}: upstream ${upstream.status}`
+          if (authFailed) {
+            // Một provider/model có thể bị vô hiệu nhưng fallback khác vẫn dùng được.
+            // Không return sớm; tiếp tục chuỗi fallback và chỉ báo cuối nếu tất cả đều lỗi.
+            lastErr = `${selectedModel}: API key bị từ chối (${upstream.status})`
+            break
+          }
+          if ((upstream.status === 429 || upstream.status >= 500) && attempt < 1) {
+            await new Promise((r) => setTimeout(r, 4000 * (attempt + 1)))
+            continue
+          }
+          break
+        }
+
+        let data: {
+          choices?: Array<{ finish_reason?: string; message?: { content?: string; reasoning_content?: string } }>
+          usage?: unknown
+          model?: string
+        }
+        try {
+          data = JSON.parse(text)
         } catch {
-          /* giữ nguyên payload gốc */
+          writeRawLog(text, { _model: selectedModel, _attempt: attempt })
+          lastErr = `${selectedModel}: upstream returned non-JSON body`
+          break
+        }
+        const choice = data.choices?.[0]
+        const msg = choice?.message ?? {}
+        const content = msg.content ?? ''
+        const reasoning = msg.reasoning_content ?? ''
+        writeRawLog(text, { _model: selectedModel, _attempt: attempt, finishReason: choice?.finish_reason, usage: data.usage, content, reasoning })
+
+        if (content.trim()) {
+          return json(res, 200, { content, reasoning, usage: data.usage ?? null, model: data.model ?? selectedModel, finishReason: choice?.finish_reason ?? 'unknown' })
+        }
+        lastErr = `${selectedModel}: empty content (finish_reason=${choice?.finish_reason ?? 'unknown'})`
+        if (attempt === 0 && !isXkiro) {
+          const retryBody = JSON.parse(attemptBody) as Record<string, unknown>
+          retryBody.reasoning_effort = 'medium'
+          attemptBody = JSON.stringify(retryBody)
         }
       }
+      if (modelIndex < models.length - 1) await new Promise((r) => setTimeout(r, 500))
     }
 
-    return json(res, 502, { error: lastErr ?? 'Upstream returned empty content' })
+    return json(res, 502, { error: `Các model AI đều không phản hồi. ${lastErr ?? ''}`.trim() })
   } catch (err) {
     return json(res, 500, { error: err instanceof Error ? err.message : String(err) })
   }
@@ -279,6 +302,18 @@ export function createAppServer() {
 
     if (url.pathname === '/api/llm') {
       await handleLlmRequest(req, res)
+      return
+    }
+    if (url.pathname === '/api/extract') {
+      await handleExtractRequest(req, res)
+      return
+    }
+    if (url.pathname === '/api/search') {
+      await handleSearchRequest(req, res)
+      return
+    }
+    if (url.pathname === '/api/image') {
+      await handleImageRequest(req, res)
       return
     }
 

@@ -4,11 +4,22 @@ Tài liệu này ghi lại toàn bộ trạng thái dự án: đã làm gì, đ�
 rút ra, và **những gì còn chưa làm xong**. Đọc file này là đủ để tiếp tục làm việc
 mà không cần đọc lại lịch sử hội thoại.
 
-> Cập nhật lần cuối: 25/10/2026 — Chặng 18: phân trang theo khối (spacer
-> decoration) + sửa pageCount luôn = 1; trước đó chặng 17: sửa gốc lỗi con
-> trỏ/block loạn, render LaTeX trong editor, hợp đồng sinh đề AI
-> replace/append/patch. Trước nữa: chặng 16 (thêm khối như soandethi),
-> 15 (đầu đề hai cột), 14 (choice layout + block lưới).
+> Cập nhật lần cuối: **27/10/2026** — audit code soandethi trích xuất (3.48);
+> **chặng 1: typography engine** đo trước khi đặt cho cả 19 layout (3.49);
+> **chặng 2: kho 112 đồ hoạ vector** + AI chọn graphic thay ảnh, render/PPTX
+> (3.50); sửa timeout AI slide 45s → 120s + hạ reasoning cho slide (3.47).
+> Ước **~72%** so với workflow soandethi (thang 3.36/6.8).
+> Trước đó (25/10): chặng 23.5 polish 14 layout (tông nhấn nền tint, card/stat
+> panel, timeline/cycle, bảng có header màu, ảnh bo góc, audit GenOffice 3.41);
+> chặng 23 + bổ sung: layout v2 đủ 14 bố cục + tone theme/soft/accent, UI chọn
+> tông, tạo ảnh AI cho khung ảnh qua Xkiro (`sensenova/sensenova-u1.5-lite`)
+> (3.39–3.40); chặng 22: layout engine v1 (7 bố cục), gallery Bố cục ở ribbon
+> Chèn (3.38); chặng 21: theme v2 cho slide (10 theme gồm 4 theme theo môn,
+> token/font/decor, deck cũ vẫn đọc được) (3.37); chặng 20: đổi tên/xoá tài
+> liệu ở tab Bắt đầu (3.32), menu Tệp + nhập docx/xlsx/pptx + xuất pptx (3.33),
+> khung chữ slide ôm nội dung (3.34), resize đúng cho phần tử xoay/lật (3.35),
+> audit workflow AI slide soandethi + lộ trình 6.8 (3.36); thang nguồn khi soạn
+> đề (tệp mẫu → tài liệu đã lưu → search web), đọc docx/pdf/xlsx server-side.
 
 ## 0. Vị trí dự án
 
@@ -1258,6 +1269,885 @@ tràn qua trang — muốn cắt bên trong khối phải port cơ chế slicing
 chốt không làm). Bản in/Word do trình duyệt/Word phân trang nên không bị ảnh
 hưởng.
 
+### 3.30. Chặng 19 — Đầu đề AI bám 2 mẫu PDF chuẩn (25/10/2026)
+
+Đối chiếu 2 đề PDF mẫu (Toán 12 khảo sát đầu năm, Ngữ văn 12 giữa kì I) rồi sửa:
+
+- **Prompt** (`AiPanel.tsx`): cột trái thêm "TRƯỜNG THPT …", đơn vị + tỉnh nằm
+  một dòng (không `\n` cứng giữa "TẠO" và tên tỉnh); tên đề nằm ở dòng đầu cột
+  phải; **không sinh `title`/`meta` trùng header**. Gọi thật
+  `deepseek-v4.1-flash`: trả `header, heading, question…`, không còn title/meta.
+- **Template** (`templates.ts`): "SỞ GIÁO DỤC VÀ ĐÀO TẠO …" + "TRƯỜNG THPT …"
+  + "Đề chính thức" (boxed).
+- **CSS** (`index.css`): `31fr 69fr`, khe `6,9%` — đo từ PDF: content 481,9pt
+  thì trái 140,8pt / khe 33,3pt / phải 307,8pt; line-height `1,5` (mẫu
+  ~17,3pt); `em` trong header weight 400 (dòng thời gian nghiêng thường).
+- **Converter** (`convert.ts`): `splitRichLines` nhận mảng trộn string + span
+  (AI có lúc trả vậy) — trước đó throw làm cả kết quả AI không áp được.
+- **Sanitize** (`ComposeDoc.tsx`): chuẩn hoá span string ở mọi field; header
+  dạng cũ `{text}` rơi vào cột trái thay vì rỗng.
+- **AI replace + con trỏ** (`ComposeDoc.tsx`): sau `setContent` đặt lại con trỏ
+  về đầu đề bằng `Selection.near(doc.resolve(1))` — trước đó selection cũ được
+  map qua toàn bộ tài liệu nên có thể rơi vào khối bất kỳ.
+- **Chat sau khi áp** (`AiPanel.tsx`, `ComposeDoc.tsx`): bỏ `note` khỏi hợp đồng
+  và khỏi câu hiển thị (model hay lặp lại đúng câu prompt); câu xác nhận cố
+  định "Đã soạn xong đề (N khối)." / "Đã thêm N khối…" / "Đã cập nhật N khối…".
+- **Trạng thái chờ AI** (`AiPanel.tsx`): thay "Đang suy luận…" bằng dải trạng
+  thái theo tiến trình (phân tích → bố cục → đầu đề → câu hỏi → đáp án → rà
+  soát → hoàn thiện), đổi mỗi 2,4 giây; slide có dải riêng. `detectIntent` chọn
+  dải theo câu lệnh: câu hỏi thường như "Chào bạn" dùng "Đang xem câu hỏi… /
+  Đang soạn câu trả lời… / Đang kiểm tra lại…", không hiện bước soạn đề. API
+  vẫn trả một lượt nên đây là mô phỏng tiến trình, không phải log suy luận thật.
+- **Thêm/xoá khối + con trỏ** (`formatState.getTopBlock`): trước đây
+  `insertBlockTemplate` và `deleteCurrentBlock` dùng `getSelectedBlock` — khối
+  **sâu nhất** (prompt/phương án). Chèn một block cấp cao vào trong câu hỏi là
+  sai schema; xoá chỉ xoá lời dẫn, để lại câu hỏi rỗng → con trỏ nhảy. Giờ lấy
+  con trực tiếp của `doc`; `applyStylePreset` vẫn dùng khối sâu nhất.
+- **Xuất Word/in** (`exportBlocks.ts`): `.hdr` 31%/69%, `table-layout: fixed`,
+  11,5pt/1,5, `i` weight thường.
+
+**Kiểm chứng:** tsc sạch · build thành công · test:convert **12/12** (thêm case
+mảng trộn) · test:export 5/5 · render header tĩnh ở 794px khớp tâm cột mẫu
+(trái 127pt, phải 384pt) · gọi LLM thật trả header đúng, không title/meta ·
+trình duyệt thật: chèn khối khi con trỏ trong prompt → khối mới là con trực
+tiếp của doc (không nằm trong câu hỏi); xoá khối → mất cả câu hỏi (20→19),
+undo khôi phục đủ 20.
+
+### 3.31. Chặng 20 — Thang nguồn khi soạn đề: tệp mẫu → tài liệu lưu → web (25/10/2026)
+
+Chủ dự án chốt thứ tự nguồn: (1) tệp mẫu giáo viên đính kèm, (2) tài liệu đã
+lưu trong app, (3) web; không đủ nguồn thì model phải nói rõ chỗ chưa chắc.
+
+- **Đọc tệp mẫu** (`server/extract.ts`, `/api/extract`): `mammoth` cho `.docx`,
+  `pdfjs-dist` (legacy) cho `.pdf`, `exceljs` cho `.xlsx`, text cho
+  `.csv/.txt/.md/.json`; `.doc/.xls` báo cần lưu lại. Chạy server-side, parser
+  import động nên client không phình bundle; cap 12 MB / 60k ký tự.
+- **Client giữ `File`** (`AiPanel.tsx`): `Attachment.file` chỉ dùng để trích;
+  lượt chat chỉ lưu metadata để không giữ tệp lớn trong state.
+- **Ưu tiên 2** (`src/lib/sources.ts` `findSavedSources`): quét `myDocs`, lọc
+  theo lớp (regex `lớp N`) + môn (từ khoá) + trùng từ khoá, bỏ tài liệu hiện
+  tại, tối đa 3 tài liệu × 8k ký tự. Tên trùng được đánh số (2), (3).
+- **Ưu tiên 3** (`server/searchProxy.ts`, `/api/search`): adapter Tavily
+  (endpoint cố định, key server-side). Chưa có key → `configured:false` +
+  cảnh báo trong chat, không lỗi. `.env` hiện chỉ có `LLM_*`, không có search;
+  opencode gateway là inference, không thấy endpoint search.
+- **Prompt** (`sourceRule`/`sourcePrompt`): tier 1 bắt bám cấu trúc/độ khó/
+  phạm vi của tệp mẫu, không thay bằng kiến thức ngoài; tier 2 dùng tài liệu
+  lưu; tier 3 chỉ tham khảo; tier 0 cảnh báo chưa có nguồn. Nội dung nguồn là
+  **dữ liệu không tin cậy** — có câu lệnh bỏ qua mọi instruction trong nguồn.
+- **UI**: lượt AI hiện dòng `Nguồn: …` (tên tệp/tài liệu/web) và cảnh báo nguồn
+  nhỏ bên dưới; nguồn chỉ dùng cho lượt có intent soạn/sửa (`detectIntent`),
+  câu chào/hỏi đáp không search.
+
+**Kiểm chứng:** tsc sạch · build thành công · `test:sources` **4/4** ·
+`test:extract` **2/2** · convert 12/12 · export 5/5 · templates 9/9 · trình
+duyệt thật: đính kèm CSV giả → chat hiện `Nguồn: mau-lop-7.csv`, AI áp 16 khối;
+không đính kèm → lấy 3 tài liệu Toán 9 đã lưu; câu "Chào bạn" không gọi search.
+
+**Giới hạn:** ảnh đề chưa OCR (chỉ nhận dạng tên tệp); `.doc/.xls` cũ chưa đọc;
+search web cần `TAVILY_API_KEY`; nguồn chỉ gắn với lượt gửi (follow-up muốn dùng
+lại tệp mẫu phải đính kèm lại).
+
+### 3.32. Đổi tên / xoá tài liệu ngay tại tab Bắt đầu (25/10/2026)
+
+Tab Bắt đầu trước chỉ xoá được (nút "Xoá" neo `absolute` đè lên cột kích thước);
+đổi tên chỉ làm được bằng nhấn đúp tab.
+
+- **Đổi tên tại chỗ** (`StartTab.tsx`): cột thao tác mới có nút bút chì → ô tên
+  thành input, Enter/blur lưu, Esc huỷ, tên rỗng hoặc không đổi thì bỏ qua. Nút
+  xoá đổi sang icon thùng rác cùng cột.
+- **Đồng bộ tab đang mở**: sau khi đổi tên gọi `compose.renameTab` (và
+  `updateDeck` nếu deck đang mở) — nếu không, lần tự lưu sau sẽ ghi đè tên cũ.
+  Thêm `renameDeck` vào `store/docs.ts` (trước chỉ có `renameDoc`).
+- **Bố cục**: cột thao tác rộng 64px cố định; header thêm ô trống cùng bề rộng nên
+  5 cột dữ liệu vẫn thẳng hàng (đo trên trình duyệt: header và row cùng x =
+  183/219/805/947/1089). Hai nút icon 30px hiện khi rê dòng hoặc focus bàn phím.
+- **Tên mặc định vẫn là** "Đề thi mới" / "Bài giảng mới" — không tự lấy tiêu đề
+  trong đề; muốn đổi thì dùng bút chì ở Home, nhấn đúp tab, hoặc ô tên ở cột
+  thumbnail của slide.
+- **Kiểm chứng:** tsc sạch · build thành công · headless Chrome: rê dòng hiện 2
+  nút, đổi tên lưu vào `localStorage`, tab đang mở đổi tên theo, chuyển tab rồi
+  quay lại (saveAll) tên vẫn giữ, Esc không đổi tên.
+
+### 3.33. Menu Tệp ở ribbon đề và slide: Đề mới / Nhập file / Tải xuống (25/10/2026)
+
+Nút "Tệp" nâu chữ trắng đứng đầu hàng tab ribbon, bấm mở menu neo `fixed`.
+
+- **Menu dùng chung** (`src/examEditor/FileMenu.tsx`): Đề mới / Bài giảng mới ·
+  Nhập file… · Tải xuống file. Nút dùng `--color-clay`; menu dùng
+  `useAnchoredPopover` nên không bị ribbon `overflow` cắt, đóng khi bấm ra ngoài
+  hoặc Esc. Có dòng "Đang xử lý…" và lỗi hiện ngay trong menu.
+- **Nhập file** (`src/lib/importFile.ts` + `/api/extract`): chấp nhận
+  .docx/.doc/.xlsx/.xls/.pptx/.ppt. docx → mammoth; xlsx → exceljs; **pptx →
+  jszip đọc `ppt/slides/slideN.xml`**, trả `slides[]` đúng thứ tự số hiệu, giải
+  mã XML. `.doc/.xls/.ppt` (nhị phân cũ) báo rõ cần lưu lại thành
+  .docx/.xlsx/.pptx — chưa parse. Nội dung nhập là **text**: đề nhận mỗi dòng
+  một đoạn văn; slide nhận mỗi slide gốc (hoặc lô 12 dòng) thành một slide,
+  dòng đầu làm tiêu đề.
+- **Tải xuống:** đề dùng `exportDocBlocks` (tệp .doc mở bằng Word, như nút Xuất
+  Word); slide dùng `src/lib/exportDeck.ts` — `pptxgenjs` **nạp động** (chunk
+  ~373 kB chỉ tải khi bấm), map text/shape/image/table/chart, toạ độ % → `Coord`,
+  cỡ chữ cqw × 7,2 = pt cho slide 16:9.
+- **Tab mới:** "Đề mới"/"Bài giảng mới" tạo tab trống; nhập file cũng tạo tab
+  mới (không đè tài liệu đang mở), tên tab = tên tệp.
+- **Kiểm chứng:** tsc sạch · build thành công · test:extract **4/4** (thêm pptx)
+  · convert 12/12 · sources 4/4 · headless Chrome: nút đúng nâu/trắng và đứng
+  đầu hàng tab ở cả 2 ribbon, menu đủ 3 mục, docx → 3 đoạn văn, pptx → 2 slide
+  đúng nội dung, .doc hiện lỗi rõ, tải .doc và .pptx thành công; **pptx xuất ra
+  được nhập lại** đúng 2 slide.
+- **Lần mở đầu bị lệch:** `popoverStyle(null)` giờ trả `position:fixed;
+  visibility:hidden` thay vì style rỗng. Trước đó popover lần đầu nằm trong
+  luồng, làm hàng ribbon cao lên và đẩy nút trigger xuống, nên rect dùng để neo
+  bị đo sai; lần mở thứ hai đã có `pos` nên đúng. Sửa ở hook dùng chung
+  (`useAnchoredPopover.ts`) nên mọi dropdown/popover trong ribbon cũng hết lệch.
+- **Giới hạn:** nhập chỉ giữ text, không giữ định dạng/bảng/ảnh của tệp nguồn;
+  .doc/.ppt cũ chưa đọc; pptx xuất bỏ qua lật (flipX/flipY) của phần tử.
+
+### 3.34. Khung chọn hộp chữ slide ôm nội dung (25/10/2026)
+
+Hộp chữ luôn cao đúng `el.h` (mặc định 16–20% ở đề mặc định/AI/nhập pptx) trong
+khi chữ một dòng chỉ chiếm phần trên → khung chọn và 8 tay nắm thừa một đoạn dưới.
+
+- **`src/lib/slideText.ts`:** `textBoxHeight` ước lượng số dòng theo bề rộng hộp +
+  cỡ chữ cqw (0,5em/ký tự); `elementHeight` = `min(el.h, ước lượng)` cho node
+  text, hộp rỗng giữ `el.h` để vẫn chọn/nhập được.
+- **Chốt chiều cao thủ công:** thêm `SlideElement.fixedHeight`; kéo tay nắm
+  trên/dưới hoặc sửa ô "Cao" trong bảng Định dạng sẽ đặt cờ này. Khi đó khung
+  giữ đúng số đo người dùng đặt, không tự co nữa.
+- **`EditableEl`** dùng `elementHeight` cho style và cho `base.h` lúc kéo (tránh
+  nhảy chiều cao ở lần kéo đầu); bảng Định dạng hiện chiều cao thực; căn
+  giữa/dưới tính theo chiều cao thực.
+- **Xuất PPTX** dùng `elementHeight` và `valign: 'top'` cho khớp bản xem.
+- **Kiểm chứng:** tsc sạch · build thành công · `test:slide-text` **5/5** ·
+  headless Chrome: tiêu đề mặc định 16% co còn 11,6% (72,7 → 52,7px); kéo nam
+  45px → 21,5% và giữ nguyên khi gõ thêm; bảng Định dạng hiện 12, sửa thành 30
+  thì khung đúng 30%.
+- **Giới hạn:** ước lượng 0,5em/ký tự nên chữ toàn in hoa có thể thiếu một dòng
+  (AutoFitText co chữ bù). Đã kéo thủ công thì muốn tự co lại phải xoá
+  `fixedHeight` (chưa có nút UI).
+
+### 3.35. Resize phần tử slide chính xác khi xoay/lật (25/10/2026)
+
+- **Trước:** delta kéo tính theo trục màn hình nên phần tử đã xoay/lật resize
+  lệch, cạnh đối diện không đứng yên. Kéo xong nhả chuột ra ngoài phần tử thì
+  click rơi vào nền khung → mất vùng chọn (tưởng như resize hỏng).
+- **Giờ:** delta màn hình được chiếu vào hệ trục cục bộ của hộp (nghịch đảo phép
+  xoay, rồi bỏ lật), cập nhật các cạnh trong hệ đó, sau đó dời tâm nửa delta đã
+  xoay về trục slide → cạnh/góc đối diện đứng yên. Phần tử chưa xoay giữ nguyên
+  hành vi cũ, kể cả kẹp trong trang.
+- **Giữ vùng chọn:** `EditableEl` báo `onDragEnd` khi nhả chuột (kéo/resize/xoay);
+  khung slide dùng `onClickCapture` bỏ qua cú click kế tiếp nếu vừa kéo — nhả
+  chuột ngoài phần tử không còn xoá chọn. Click nền bình thường vẫn bỏ chọn.
+- **Kiểm chứng (headless Chrome):** shape xoay 30° kéo cạnh E 80px → handle đi
+  đúng (60; 34,7) theo trục chéo, cạnh W đứng yên (0; 0); kéo góc SE (60; 30) →
+  SE đi đúng (60; 30), NW đứng yên; lật ngang kéo cạnh trái ảo 40px → cạnh phải
+  ảo đứng yên; click nền vẫn bỏ chọn; không xoay thì E +80px, S +40px, NW
+  −30/−20 chính xác như trước. tsc sạch · build thành công · 66 test pass.
+- **Giới hạn:** kéo **cạnh** của phần tử xoay là chiếu delta lên trục của hộp
+  (giống PowerPoint) nên handle không bám đúng con trỏ khi kéo chéo trục; kéo
+  **góc** thì bám đúng con trỏ.
+
+### 3.36. Audit workflow AI sinh slide của soandethi.com (25/10/2026)
+
+Tải lại toàn bộ JS/CSS công khai của `/slides`, `/slides/[id]`, `/exams`; đọc
+bundle Turbopack. Báo cáo đầy đủ: `_ref/soandethi/AI-SLIDE-AUDIT.md` (không
+commit — `_ref/` đã gitignore). Prompt/model phía server không có trong bundle;
+các kết luận dưới đây suy ra từ payload + hợp đồng phía client.
+
+- **Hai bước:** `POST /api/slide-deck/plan` → `outline` + `grant` (decision
+  proceed/propose/reject/clarify) → `POST /api/slide-deck/generate` stream từng
+  slide `{id, calls, error}`. `proceed` tự chạy; `propose` chờ duyệt outline.
+- **Catalog gửi kèm cả 2 bước:** 20 lệnh có schema, 19 theme, 26 layout, 8 preset
+  motion, 208 đồ hoạ (200 cái AI thấy) + 122 icon. Model chỉ chọn trong bộ này.
+- **Đẹp/chuẩn nhờ layout engine:** AI trả `composeSlide` (layout + trường nội
+  dung), client `composeLayout` dựng toạ độ/font/màu theo canvas 1280×720, safe
+  margin 64, tone theme/soft/accent, id vai trò, callout tự xếp, co chữ theo số
+  ý, tương phản chữ/nền. 26 layout: title/section/agenda/bullets/cards/split/
+  two-column/venn/table/image-*/quote/big-number/stats/timeline/cycle/pyramid/
+  mindmap/example/quiz/discussion/formula/chart/closing/blank.
+- **Motion:** element có `{effect,start,order,duration,delay,byLine}`; 18 hiệu
+  ứng (11 khối + 7 chữ theo ký tự), 8 preset; `animationPlan` xếp enter/click
+  (~900ms/bước, byLine); renderer gắn `sa-enter`/`sa-fx` + CSS vars, hiệu ứng
+  native dùng fragment Reveal, chữ tách `.sa-ch` với `--i`; `--sa-step` 15–90ms
+  theo độ dài; reduced-motion; đồ hoạ idle `sg-*`; present bằng Reveal.js
+  (transition none/fade/slide/convex/zoom + speed, notes, presenter window).
+- **Ảnh async:** slide hiện trước, ảnh chờ được vẽ sau qua `/api/exam-image`
+  (prompt + context slide 2800 ký tự), tối đa 12 ảnh/bộ, chèn vào vùng trống.
+- **Apply an toàn:** command registry + validate kiểu/enum/màu/icon/graphic;
+  `lenient` bỏ tham số lạ, lỗi từng slide không chặn slide khác; digest
+  `deckBrief`/`slideContent` ≤22 KB cho model sửa đúng chỗ.
+- **Chưa thấy:** prompt/model server, cách sinh grant, model ảnh, scheduler các
+  agent, quota. Không chạy thử vì cần tài khoản.
+
+### 3.37. Chặng 21 — Theme v2: token theo môn + font + decor (25/10/2026)
+
+Mục tiêu: theme đủ giàu để layout (chặng 22) dùng lại, thay vì 6 theme chỉ có
+bg/fg/accent.
+
+- **Token (`src/store/docs.ts`):** `DeckTheme` giữ `bg/fg/accent/fontHeading/
+  fontBody` (deck lưu trước chặng 21 vẫn đọc được), thêm optional `id`, `name`,
+  `tags`, `decor`, `dark`, `surface`, `muted`, `secondary`, `chart`, `fonts`.
+  Không thêm `background/text/primary` trùng nghĩa với `bg/fg/accent` — một
+  nguồn duy nhất cho nền/chữ/màu nhấn.
+- **`src/lib/slideTheme.ts` (mới):** `DECK_THEMES` 10 theme — 6 theme cũ (đặt
+  tên đúng: Sáng, Đêm xanh, Giấy ấm, Rừng, Đỏ, Tím; trước đây bảng tên trong
+  ribbon bị lệch thứ tự Đỏ/Tím) + 4 theme theo môn: **Khoa học** (Toán/Lý/Hoá),
+  **Văn Sử Địa**, **Sinh học**, **Ngoại ngữ & Tin**, mỗi theme có `tags` môn để
+  AI chọn sau này. `normalizeTheme` điền token thiếu cho theme cũ (surface/muted
+  suy ra bằng trộn màu, chart mặc định, fonts mặc định); theme người dùng thắng
+  catalog cùng `id`, deck cũ không lưu id thì khớp theo `bg`. `readableTextOn`
+  chọn mực `#111827`/trắng theo tương phản WCAG (≥4,5:1), `themeById` (id lạ →
+  theme đầu).
+- **Font:** bỏ Figtree/Fraunces khỏi theme (hai font này đã bị gỡ khỏi bundle từ
+  chặng 7 nên trước đây chỉ rơi về sans-serif). Dùng font thật đang nạp: Be
+  Vietnam Pro (sans), Times New Roman/Liberation Serif (serif), JetBrains Mono.
+  `SlideElView`/`EditableEl` lấy `theme.fonts.heading/body`; `FitText` không còn
+  hardcode Figtree đè lên font của phần tử; chữ mặc định dùng `theme.fg` (trước
+  là `#000` nên theme tối bị chữ đen).
+- **Decor:** 4 hoạ tiết CSS thuần qua `data-decor` trên `.slide-frame` — chấm
+  (Sinh học), lưới (Khoa học), sóng (Văn Sử Địa), confetti (Ngoại ngữ & Tin);
+  màu lấy từ biến `--slide-decor-ink/--slide-decor-accent` do editor đặt theo
+  theme. Vẽ ở lớp `::before` dưới nội dung nên không che chữ; áp cho cả canvas,
+  thumbnail và màn trình chiếu.
+- **Bảng/biểu đồ:** bảng dùng `theme.fg/surface/muted` thay màu xám cứng;
+  `ChartView` nhận `theme.chart` cho cột/đường/tròn.
+- **Ribbon Thiết kế:** gallery 10 theme hiển thị palette (nền/chữ/2 thanh màu,
+  "Aa" bằng font heading); active so theo `normalizeTheme(deck.theme).id` thay
+  vì so `bg`; bỏ nhóm "Nền" (trùng hoàn toàn với gallery); dropdown phông chữ
+  chỉ còn font thực có trong bundle.
+- **PPTX:** text không phải `body` xuất bằng `fontHeading` (trước dùng body cho
+  cả tiêu đề).
+
+**Kiểm chứng:** `tsc` sạch · `npm run build` thành công · `test:slide-theme`
+**4/4** (normalize theme cũ, tương phản ≥4,5:1, themeById, catalog 10 theme) ·
+toàn bộ test cũ xanh (convert 12/12, markdown 14/14, export 5/5, layout 7/7,
+templates 9/9, pagination 6/6, slide-text 5/5, sources 4/4, extract 4/4) ·
+Chrome headless 1440×900: gallery đủ 10 theme, đổi theme đổi nền đúng
+(`#fbf7f0`, `#f4f8ff`, `#f2fbf4`…), 4 pattern render ở cả canvas lẫn thumbnail
+(`repeating-radial-gradient`, `linear-gradient`, `radial-gradient`), tiêu đề
+Văn Sử Địa dùng Times New Roman, màu chữ theo `fg`, active chuyển đúng theo id.
+
+**Giới hạn:** decor là CSS nên không đi kèm file .pptx xuất ra; đổi theme vẫn
+ghi đè `background` của mọi slide như hành vi cũ (chưa có UI nền riêng từng
+slide); deck cũ có `fontFamily: 'Figtree'` vẫn rơi về sans-serif.
+
+### 3.38. Chặng 22 — Layout engine v1 + 7 bố cục (25/10/2026)
+
+Mục tiêu: AI và người dùng chọn layout + nội dung, máy dựng hình — thay vì mỗi
+slide chỉ có tiêu đề + một khối bullets.
+
+- **`src/lib/slideLayouts.ts` (mới):** `SLIDE_LAYOUTS` 7 bố cục — `title`,
+  `section`, `bullets`, `cards` (2–6), `two-column`, `quote`, `closing`; mỗi
+  bố cục khai báo field dùng. `composeLayout(theme, id, content)` trả
+  `SlideElement[]` theo % (lề an toàn 5–8%). Id phần tử là **vai trò cố định**
+  (`title`, `kicker`, `subtitle`, `bullets`, `card-1…6`, `body`, `body-2`,
+  `quote`, `author`, `accent-bar`, `divider`, `accent-line`, `mark`) để sau này
+  AI sửa đúng chỗ. Layout lạ rơi về `bullets`; thiếu field bắt buộc trả mảng
+  rỗng để caller fallback. Màu/font lấy từ `normalizeTheme` của chặng 21.
+- **Giữ nội dung khi đổi bố cục:** `contentFromSlide(slide)` đọc lại chữ theo
+  vai trò/variant — deck mặc định cũ (một ô chữ không có id/variant) vẫn được
+  coi là tiêu đề; bullets bỏ dấu `•`; `two-column` đọc `body`/`body-2`;
+  `cards` đọc `card-N`. `withPlaceholders` chỉ bù chữ mẫu cho field mà layout
+  cần và slide thực sự chưa có (slide trống vẫn dựng được bố cục).
+- **Mô hình:** `Slide.layout?: string` (optional; deck cũ không có vẫn render
+  như trước). Hộp chữ do layout dựng đặt `fixedHeight: true` — nếu không,
+  `elementHeight` (chặng 20) co thẻ/hai cột về đúng một dòng và phá hình học.
+  Hộp chữ có `fill` giờ render nền ở cả canvas/thumbnail/presenter (trước chỉ
+  file PPTX dùng `fill`).
+- **UI:** nút **Bố cục** ở ribbon Chèn mở gallery 7 thẻ có hình xem trước CSS;
+  thẻ active theo `slide.layout`; áp layout hỏi xác nhận (thay phần tử hiện
+  có), giữ `notes`/`transition`, một bước undo.
+- **AI:** `AiSlidePayload` thêm `layout/kicker/subtitle/body/items/left/right/
+  quote/author`; `applyAiResult` dựng bằng `composeLayout` khi layout hợp lệ,
+  sai/thiếu field thì rơi về tiêu đề + bullets như cũ. `SLIDE_SYSTEM` liệt kê
+  7 layout + field để model chọn.
+
+**Kiểm chứng:** `tsc` sạch · build thành công · `test:slide-layout` **6/6**
+(catalog/geometry 0–100 + id không trùng, cards 2–6/cắt 9→6, quote/closing,
+layout lạ = bullets, đọc nội dung cũ + placeholder + màu theme) · toàn bộ test
+cũ xanh (convert 12/12, markdown 14/14, export 5/5, layout 7/7, templates 9/9,
+pagination 6/6, slide-text 5/5, slide-theme 4/4, sources 4/4, extract 4/4) ·
+Chrome headless 1440×900: gallery 7 thẻ đúng hình xem trước; áp Thẻ → tiêu đề
+cũ được giữ + 3 thẻ nền `surface` (x 8/37/66, y 29, h 40); áp Hai cột → 2 cột
+39% + vạch ngăn; slide trống + Trích dẫn → quote/author mẫu; **gọi AI thật**
+(“3 slide phân số lớp 6, slide 1 title, slide 2 cards 3 thẻ, slide 3 bullets”)
+→ model trả đúng 3 layout, cards có 3 thẻ nền, bullets 3 ý, chat chỉ hiện tóm
+tắt danh sách slide.
+
+**Giới hạn:** layout v1 chỉ dựng chữ + vạch/accent bằng shape (chưa có ảnh,
+bảng, biểu đồ — chặng 23); đổi bố cục chỉ giữ được **chữ**, hình ảnh/khối
+custom bị thay sau khi xác nhận (cảnh báo trong hộp thoại); `fixedHeight` khiến
+hộp chữ không còn tự ôm nội dung (chủ ý để giữ hình học layout).
+
+### 3.39. Chặng 23 — Layout v2 + tone (25/10/2026)
+
+Đủ 14 bố cục và tông nền, để slide AI sinh ra có hình thức đa dạng thay vì chỉ
+tiêu đề + bullets.
+
+- **7 layout mới (`src/lib/slideLayouts.ts`):** `table` (bảng tối đa 6 cột × 8
+  hàng, tự pad ô thiếu), `image-left`/`image-right` (element `image` chưa có
+  `src` → khung chọn ảnh; giữ `src` khi đổi layout), `stats` (1–4 cặp số
+  lớn/nhãn), `timeline` (3–6 bước: vạch ngang + chấm + nhãn đánh số), `cycle`
+  (3–6 nút ellipse quanh vòng, chữ trên nền nhấn đọc được), `quiz` (câu hỏi +
+  2–4 phương án; `answer` nhận chỉ số 0-based, chữ cái A–D hoặc khớp nguyên
+  văn; đáp án đúng tô `accent` + chữ tương phản). Tổng **14 layout**.
+- **Tone:** `Slide.tone?: 'theme' | 'soft' | 'accent'` (optional). `defaultTone`
+  — title/section → `accent`, quote/quiz/closing → `soft`, còn lại `theme`;
+  `toneBackground(theme, tone)` trả màu nền để caller ghi vào
+  `Slide.background`. Palette theo tông có `onAccent` = `readableTextOn(accent)`
+  nên chữ trên nền nhấn luôn ≥4,5:1. Chưa có UI chọn tông riêng — tông do
+  layout quyết định hoặc AI gửi kèm.
+- **Đổi theme dựng lại slide layout (`SlideEditor.applyTheme`):** trước đây đổi
+  theme chỉ đổi `background`; màu chữ của layout là màu cụ thể nên sẽ lệch.
+  Giờ slide có `layout` được `contentFromSlide` + `composeLayout` dựng lại theo
+  theme/tone mới (giữ notes/transition); slide freeform giữ hành vi cũ.
+- **Đọc lại nội dung (`contentFromSlide`):** thêm `rows`, `image`, `stats`,
+  `steps`, `question`/`options`, suy `answer` từ ô có màu tô khác các ô còn
+  lại; đọc được cả khối `bullets` theo id vai trò; bỏ tiền tố do builder sinh
+  (`1. `, `A. `) để dựng lại không bị “1. 1.” / “A. A.”.
+- **AI/ribbon:** `AiSlidePayload` thêm `tone`, `rows`, `image`, `stats`,
+  `steps`, `question`, `options`, `answer`; `applyAiResult` dùng tone của AI
+  hoặc mặc định layout; prompt slide liệt kê 14 layout + field + tone. Gallery
+  Bố cục có 14 thẻ, mỗi thẻ một hình xem trước CSS riêng (bảng, ảnh trái/phải,
+  cột số liệu, trục bước, vòng chu trình, 2×2 đáp án).
+
+**Kiểm chứng:** `tsc` sạch · build thành công · `test:slide-layout` **10/10**
+(14 layout trong khung 0–100 + id không trùng, cards, quote/closing, fallback,
+đọc nội dung, bảng 8×6 + pad, timeline/cycle 3–6, quiz 2–4 + đáp án, tone +
+dựng lại idempotent) · toàn bộ test cũ xanh (tổng **80 test**) · Chrome headless
+1440×900: gallery 14 thẻ đúng hình xem trước; áp Bảng/Số liệu/Tiến trình/Chu
+trình/Câu hỏi/Ảnh trái đúng hình học, quiz nền `soft` + đáp án A tô accent;
+title nền accent chữ đọc được; đổi theme Sáng → Đêm xanh dựng lại toàn bộ slide
+layout (nền `#38bdf8`, chữ `#111827`, thumbnail đồng bộ); **gọi AI thật** yêu
+cầu 4 slide table/stats/timeline/quiz → model trả đủ 4 layout, bảng có dữ liệu,
+stats 3 số, timeline 4 bước, quiz 4 phương án và đáp án C được tô.
+
+**Giới hạn:** (UI chọn tone + tạo ảnh AI cho khung ảnh đã bổ sung ở 3.40);
+timeline/cycle chỉ chữ + shape, chưa icon; bảng dùng renderer bảng cơ bản
+(không merge cell/định dạng ô); đổi bố cục vẫn thay phần tử không phải chữ sau
+khi xác nhận.
+
+### 3.40. Chặng 23 bổ sung — ảnh AI qua Xkiro + UI chọn tông (25/10/2026)
+
+**Provider:** config ZCode (`~/.zcode/v2/provider_config.json`) có provider
+**Xkiro**: base `https://api.xkiro.com/v1`, key server-side. Model mặc định
+`openai/gpt-image-2.5` là **image model**, không phải chat: POST
+`/images/generations` trả job (202 `{id,status}`), poll `GET /images/generations/:id`
+tới `status=succeeded` và `data[0].url`. Gọi chat vào model này bị 400 kèm
+hướng dẫn dùng endpoint ảnh.
+
+- **`server/imageProxy.ts` + `/api/image`** (dev mount trong `vite.config.ts`,
+  production trong `createAppServer`): prompt ≤2000 ký tự; poll 1,5s, hạn 3
+  phút (model thực tế 20–75s); tải ảnh CDN về **data URL** (≤8 MB) để deck lưu
+  offline. Key lấy `IMAGE_API_KEY`/`IMAGE_BASE_URL`/`IMAGE_MODEL`, thiếu thì
+  đọc provider Xkiro trong config ZCode — **không đưa key vào bundle**. Có
+  `IMAGE_*` mẫu trong `.env.example`.
+- **`src/lib/imageGen.ts`:** `buildImagePrompt` lấy tiêu đề + tối đa 3 ý và dặn
+  model không vẽ chữ trong ảnh; `generateSlideImage` gọi `/api/image` rồi thu
+  nhỏ bằng canvas (tối đa 1280px, JPEG q0.85): PNG 1,3 MB → **~140 KB**, nên
+  localStorage chịu được nhiều ảnh; canvas lỗi thì giữ ảnh gốc.
+- **UI khung ảnh:** khung trống có "Chọn ảnh" và **"Tạo ảnh AI"**; đang chờ hiện
+  "Đang tạo ảnh…", lỗi hiện "Lỗi tạo ảnh" (title có thông điệp đầy đủ). Ảnh ghi
+  vào slide chứa nó qua `deckRef` (chờ 20–75s không đè sửa đổi khác); viền nét
+  đứt chỉ còn khi chưa có ảnh.
+- **UI tông nền:** tab Thiết kế thêm nhóm **"Tông nền"** — Theo theme / Dịu /
+  Nhấn — active theo `slide.tone` (hoặc mặc định của layout); chỉ bật khi slide
+  có layout; đổi tông dựng lại phần tử nhưng giữ ảnh/nội dung.
+
+**Kiểm chứng:** `test:image` **3/3** (prompt bám tiêu đề + 3 ý, fallback, không
+chữ trong ảnh) · tsc sạch · build thành công · toàn bộ **83 test** xanh ·
+`POST /api/image` thật trả 200, data URL PNG 1,3 MB (model đúng) · Chrome
+headless: áp "Ảnh trái" → bấm Tạo ảnh AI → 74s trả **JPEG 138 KB, 1024²** render
+đúng trong khung; đổi tông "Nhấn" → nền `rgb(37,99,235)`, ảnh còn nguyên, nút
+active chuyển đúng; viền nét đứt biến mất khi có ảnh.
+
+**Giới hạn:** mỗi lần một ảnh, chưa có hàng đợi/chèn ảnh hàng loạt vào vùng
+trống (phần còn lại của chặng 28); ảnh vuông 1024² bị crop theo khung; fallback
+key phụ thuộc config ZCode của máy — triển khai máy khác phải điền `IMAGE_*`.
+
+### 3.41. Audit AI sinh slide của GenOffice (25/10/2026)
+
+Báo cáo đầy đủ: `_ref/genoffice/AI-SLIDES-AUDIT.md` (không commit — `_ref/` đã
+gitignore). Đọc `apps/slides/src/renderer/ai/*`, `packages/pipelines/src/slides/*`,
+`agent-core`, `ai-provider`, `pptx-ops`.
+
+- **Họ làm gì:** agent ReAct nhiều lượt có tool; `generate_deck` = hỏi yêu cầu →
+  web_search → **Style Skill** (một call riêng) → **outline** (một call, layout
+  chỉ là nhãn gợi ý) → tự search ảnh → **sinh từng trang một call** (output cap
+  16k, validate/clamp page-spec, repair 1 lần) → land dần → **QC từng trang**
+  (geometry audit + screenshot vision; tối đa 20 trang; rollback nếu xấu). Sửa
+  element bằng edit queue + script DSL + 71 op giao dịch atomic.
+- **Không có template layout:** model tự viết page-spec toạ độ tuyệt đối; chất
+  lượng hình học nhờ prompt anti-AI, font metrics/autofit và QC. Vì vậy không
+  nên copy freeform của họ — mình đang có 14 layout deterministic + theme/tone,
+  đó là lợi thế.
+- **Mình thiếu để bằng họ:** style/outline/per-page/repair/QC/streaming thật;
+  ảnh tự động theo brief; sửa theo element/selection; font metrics/valign;
+  style template/layout skeleton. **Mình có:** layout engine + test hình học,
+  theme/tone, freeform editor, image gen thủ công, PPTX export.
+- **Chưa biết:** prompt/model thật sau proxy Genspark (`claude-opus-5-5` chỉ là
+  alias); provider mình (deepseek qua opencode) có tool calls/streaming/vision
+  không; tỷ lệ đóng góp model vs prompt vs QC; hiệu quả layout-skeleton; image
+  provider phía họ; prompt “HTML pipeline first” trong repo đã lỗi thời.
+- **Đề xuất:** 23.5 polish (đã xong 3.42) → 24 motion → 26a style+outline →
+  26b per-slide + repair → 27 regenerate/QC → 28 ảnh tự động; agent tools chỉ
+  khi cần sửa element bằng ngôn ngữ tự nhiên.
+
+### 3.42. Chặng 23.5 — Polish 14 layout (25/10/2026)
+
+Sau khi xem ảnh chặng 23: slide đúng hình học nhưng khô (chữ dồn góc trên,
+card rỗng, bảng lưới đen, tone accent tô kín). Chặng này chỉ sửa thẩm mỹ, không
+đổi model dữ liệu.
+
+- **Tông nhấn:** `paletteOf('accent')` giờ dùng nền **tint** `mixHex(bg, accent,
+  12–22%)` thay vì tô kín accent; chữ giữ `theme.fg` nên vẫn ≥4,5:1. Title
+  accent thêm dải nhấn trên cùng (`accent-band` 100×1,4%). Section giữ vạch trái,
+  quote thêm `quote-bar` dọc.
+- **Cards:** bỏ kiểu chữ tô nền cao 40%; mỗi thẻ = panel `round` nền `surface`
+  + số thứ tự `01…` màu accent + nội dung. Chiều cao 34% (1 hàng) / 28% (2
+  hàng), căn giữa vùng nội dung. Id mới `card-N-panel`, `card-N-index`; đọc lại
+  nội dung vẫn lấy `card-N`.
+- **Stats:** mỗi số liệu có panel `round` nền `surface`, số lớn accent, nhãn
+  muted; id `stat-N-panel`.
+- **Timeline:** panel nền `surface` bao cả trục; đường mảnh màu muted; chấm tròn
+  accent; số bước `01…` phía trên; nhãn dưới bỏ tiền tố “1.” (đã tách số riêng).
+- **Cycle:** node thành hình tròn thật (h = w × 16/9), nhỏ hơn khi 6 bước; chữ
+  trong node căn giữa theo hộp.
+- **Bảng:** header nền accent + chữ `readableTextOn(accent)`, hàng zebra
+  `surface`, border muted, bo góc ngoài, padding rộng hơn; áp cho cả canvas soạn
+  và bản xem/thumbnail. Xuất PPTX cũng tô header/zebra theo theme.
+- **Ảnh:** khung ảnh bo góc 1cqw; prompt ảnh thêm “vector phẳng, nét mảnh, màu
+  pastel, bố cục dọc” để khớp khung ảnh dọc.
+- Không thêm `valign` vào model: thay bằng panel + số thứ tự + hộp chữ đặt đúng
+  chỗ, giữ editor textarea WYSIWYG (tránh đổi cơ chế soạn chữ).
+
+**Kiểm chứng:** `tsc` sạch · build thành công · `test:slide-layout` **10/10**
+(thêm case tông accent tint cho **mọi** theme, panel/index card, timeline không
+còn tiền tố) · `test:image` 3/3 · toàn bộ **83 test** xanh · Chrome headless:
+title nền `rgb(229,236,253)` + dải xanh; cards 3 panel + 01/02/03; stats 3
+panel; timeline 4 chấm + số; cycle 4 hình tròn; bảng header xanh + zebra + bo
+góc; quote có vạch dọc; theme Đêm xanh đổi đúng panel/chữ.
+
+**Giới hạn:** không thêm vertical-align (chữ vẫn bắt đầu từ đỉnh hộp); card
+nội dung ngắn vẫn còn khoảng trống dưới; timeline/cycle chưa có mũi tên/icon;
+bảng chưa merge cell; polish mới áp cho layout dựng bằng engine, slide freeform
+giữ nguyên.
+
+### 3.43. Chặng 26a — Dàn ý + duyệt trước khi sinh slide (25/10/2026)
+
+Trước đây một câu lệnh là một lượt gọi trả cả deck JSON rồi áp ngay: không xem
+trước được hướng đi, và model phải vừa chọn bố cục vừa viết nội dung trong một
+lần. Chặng này tách lượt đầu thành **lập dàn ý + chọn style**, người dùng duyệt
+rồi mới sinh nội dung — đúng nửa đầu của chặng 27 trong lộ trình 6.8, làm sớm
+vì nó cải thiện chất lượng deck rõ hơn motion.
+
+- **Hai lượt gọi**: (1) `SLIDE_PLAN_SYSTEM` trả
+  `{title, theme, audience, style, mainIdeas[], slides:[{title, layout, tone?,
+  kicker?, brief?}]}`; (2) sau khi duyệt, `SLIDE_SYSTEM` + JSON dàn ý trả deck
+  đầy đủ như cũ (26b đã thay bằng sinh từng trang — 3.44). Gộp style + outline
+  vào **một** lượt (audit GenOffice tách hai lượt) vì với 10 theme/14 layout thì
+  style chỉ là chọn theme + 2 câu mô tả; 26b tái dùng đúng `style` này trong
+  prompt từng trang.
+- **Catalog sinh từ code**: `slideCatalogText()` đọc thẳng `DECK_THEMES` +
+  `SLIDE_LAYOUTS` (id, mô tả, field) nên thêm theme/layout không phải sửa prompt.
+- **Chuẩn hoá dàn ý** (`parseDeckPlan`): bỏ slide không tiêu đề; layout lạ →
+  `bullets`; tone lạ bỏ; theme lạ bỏ (giữ theme deck); cắt 20 slide/6 ý chính,
+  title 160, brief 400 ký tự. Nhận JSON trần, `{"plan":…}` hoặc fence.
+- **Thẻ duyệt trong chat** (`PlanCard`): tiêu đề, bộ màu + đối tượng + số slide,
+  ý chính, danh sách slide (số thứ tự, tên layout, tone, brief), nút **Tạo
+  slide** / **Huỷ**. Huỷ không chạm deck; duyệt mới gọi lượt 2.
+- **Theme do dàn ý chọn**: `applyAiResult(text, plan)` áp `theme` của dàn ý cho
+  cả deck như đổi theme (slide layout được dựng lại, slide freeform đổi nền),
+  rồi mới thêm slide mới — tránh deck trộn hai bộ màu.
+- Dàn ý không parse được → rơi về hành vi cũ (deck một lượt) thay vì chặn người
+  dùng; chat vẫn chỉ hiện tóm tắt, không phun JSON.
+
+**Kiểm chứng:** `tsc -b --noEmit` sạch · `npm run build` thành công · toàn bộ
+**90 test** xanh (83 cũ + `test:slide-plan` 7 nhóm: sanitize, cap, wrapper,
+fence, null, catalog đủ 10 theme/14 layout, không hồi quy `parseAiDeck`) ·
+smoke test thật qua `/api/llm`: dàn ý 8 slide sau 28 s (theme `khoa-hoc`, đúng
+title → section → bullets → two-column → table → cards → quiz → closing), deck
+đầy đủ sau 21 s, `parseAiDeck` đọc đủ 8 slide · Chrome headless (bản CSS build):
+thẻ dàn ý đúng bố cục, số `01…04` không xuống dòng, nút Tạo slide/Huỷ đúng màu.
+
+**Giới hạn:** hai lượt gọi ~50 s/deck (provider 20–30 s mỗi lượt) — chấp nhận
+vì có bước duyệt; chưa sửa từng dòng dàn ý (chỉ duyệt/huỷ — để chặng 27); chưa
+lưu `style` vào `Deck` (26b đã thêm ở 3.44); chưa sinh từng trang/validate/repair
+(26b đã làm ở 3.44); dàn ý 16 slide làm thẻ chat dài (danh sách cuộn trong 320 px).
+
+### 3.44. Chặng 26b — Sinh từng slide + validate/repair + chèn dần (25/10/2026)
+
+Lượt 2 của 26a vẫn bắt model trả cả deck trong một JSON: slide sau dễ lặp ý
+slide trước, một field sai làm hỏng cả deck, và người dùng chỉ thấy kết quả sau
+20–30 s. Chặng này gọi **mỗi slide một lần**, kiểm tra theo layout, sửa tối đa
+một lần, rồi chèn ngay vào deck theo đúng thứ tự dàn ý.
+
+- **Hợp đồng một slide** (`src/lib/slideAi.ts`):
+  - `sanitizeSlide(raw, layout, tone?)` — ép đúng layout của dàn ý (AI không
+    được đổi), giữ tone của dàn ý, cắt mọi field theo giới hạn layout chịu được
+    (bullets/items ≤6, rows 8×6, stats ≤4, notes ≤6…), bỏ field lạ.
+  - `validateSlide(page, layout)` — field bắt buộc theo từng layout: title/
+    section/closing cần `title`; cards ≥2 thẻ; two-column ≥2 ý; table ≥2 hàng ×
+    2 cột; stats ≥1 value; timeline/cycle ≥2 bước; quiz cần `question`, ≥2 phương
+    án và `answer` trỏ đúng phương án (index 0-based, chữ A–D hoặc nguyên văn —
+    dùng chung `resolveAnswer` với layout engine).
+  - `pageSystemPrompt(plan, slide, i)` — chỉ gửi layout bắt buộc + field hint
+    (sinh từ `layout.fields`), style/đối tượng của dàn ý và cả dàn ý (để không
+    lặp ý), không gửi catalog 14 layout. Công thức toán viết **Unicode** (², √,
+    ·…), không LaTeX — slide render chữ thuần.
+  - `repairPrompt(errors)` — lượt sửa thứ hai nêu đúng lỗi, model chỉ được trả
+    một JSON; vẫn sai thì bỏ slide, không chèn nội dung rác.
+- **Chạy song song 2 luồng, chèn đúng thứ tự** (`AiPanel.generateFromPlan`):
+  `results[i]` giữ trang đã xong; con trỏ `cursor` chỉ chèn khi các trang trước
+  đã có (trang lỗi = `null` → bỏ qua). Trang đầu tiên áp theme + style của dàn
+  ý, các trang sau chỉ nối thêm. Huỷ giữa đường: dừng gọi mới, các trang đã
+  chèn vẫn giữ, deck cũ không bị xoá.
+- **Chèn dần** (`appendSlidesToDeck` trong `slideAi.ts` + `SlideEditor`): đọc
+  `deckRef.current` tại thời điểm trang xong (không dùng bản render cũ), trả
+  patch `{theme?, style?, slides}`; lần đầu đổi theme còn dựng lại slide layout
+  cũ, slide freeform chỉ đổi nền. `Deck.style?: string` được lưu để tái dùng.
+  Logic dựng slide + đổi theme nằm ở lib để test được, editor chỉ ghi patch.
+- **Tiến trình thật** (`ChatTurn.progress` + `DeckProgress`): animation Trợ lý
+  giấy + “Đang viết: <tên slide> · 3/8 slide” + thanh tiến trình; xong thì thay
+  bằng “Đã thêm 8 slide…” hoặc “Bỏ qua N slide vì nội dung không hợp lệ”.
+- **Skeleton thumbnail** (`onPendingSlides` → `SlideEditor.pendingSlides`): sau
+  khi duyệt, cột thumbnail vẽ `total − done` ô xám 16:9 (3 thanh + vệt sáng
+  chạy, tắt khi `prefers-reduced-motion`); trang nào về thì thay bằng thumbnail
+  thật, trang bị bỏ cũng làm số ô giảm. Chỉ là CSS, không đụng model deck.
+
+**Kiểm chứng:** `tsc -b --noEmit` sạch · `npm run build` thành công · toàn bộ
+**99 test** xanh (90 cũ + `test:slide-ai` 9 nhóm: sanitize/cap, validate 14
+layout, quiz answer, prompt, repair, parse, chèn dần + đổi theme + fallback) ·
+smoke thật qua `/api/llm` với 4 layout (title/section/bullets/two-column),
+concurrency 2: **7,9–9,6 s cho cả 4 slide**, cả 4 hợp lệ, **0 lượt repair**; nội
+dung toán ra `b² = a·b′` (Unicode, không LaTeX) · Chrome headless (CSS build):
+thanh tiến trình đúng màu/vị trí, trạng thái 0/8 và 3/8; ô skeleton 16:9 đúng
+bề rộng thumbnail, 3 thanh + số thứ tự, không tràn cột 190 px.
+
+**Giới hạn:** chỉ validate **cấu trúc** (không QC nội dung/hình học như
+GenOffice); lỗi mạng của một trang → bỏ trang đó, không retry (lượt sửa chỉ dành
+cho lỗi field); 2 request đồng thời là mức an toàn với provider hiện tại; chưa
+sửa/xoá từng slide bằng AI hay sinh lại một trang (chặng 27); `style` đã lưu
+nhưng chưa hiện trong UI; dàn ý 16 slide vẫn tốn ~20 s.
+
+### 3.45. Chặng 27a — Ngân sách chữ + bố cục art-directed (25/10/2026)
+
+Sau 26b, người dùng nhận xét slide vẫn "như người làm sơ cấp": không bố cục, nhiều
+chữ, thiếu thành phần trang trí. Nguyên nhân chính không nằm ở model mà ở hai chỗ:
+prompt cho phép mỗi slide tới 6 ý × 220 ký tự, và `FitText` tự thu chữ xuống 60%
+để nhét vừa hộp (`SlideEditor.tsx:805`) nên slide dày vẫn "hợp lệ" nhưng trông
+chữ nhỏ, bí. Chặng này sửa lớp thiết kế tĩnh trước khi làm ảnh (28).
+
+- **Ngân sách chữ** (`BUDGETS` trong `slideAi.ts`): mỗi layout có tổng ký tự,
+  số mục và độ dài mỗi mục; prompt sinh đúng câu ngân sách từ bảng này
+  (`budgetLine`) nên không lệch validate. Ví dụ: bullets tổng ≤ 400, 2–4 ý ×
+  ≤ 90; cards 2–5 mục × ≤ 80; comparison 3 × ≤ 55 mỗi bên; timeline 3–5 bước ×
+  ≤ 60; bảng ≤ 6 hàng, ô ≤ 40; tiêu đề ≤ 80. Vượt ngân sách → lỗi repair
+  ("quá nhiều chữ 460/400") thay vì để FitText thu nhỏ.
+- **Prompt viết như slide:** một ý lớn mỗi slide, mỗi ý 8–15 từ, cắt từ nối và
+  giải thích dài, ưu tiên số liệu; brief dàn ý 1 câu ≤ 140 ký tự, title ≤ 10 từ.
+- **5 bố cục mới** (tổng **19**):
+  - `statement` — một câu lớn, dấu trích + vạch nhấn + tác giả, nền accent.
+  - `agenda` — panel màu bên trái (kicker + title) + danh sách đánh số `01…`
+    bên phải, có đường phân cách; tự bỏ tiền tố số trong item để không bị "01 · 01".
+  - `comparison` — hai panel đối lập có nhãn `leftTitle`/`rightTitle`, huy hiệu
+    VS tròn ở giữa.
+  - `image-full` — ảnh phủ kín, thẻ chữ nhỏ góc dưới trái + vạch accent.
+  - `stat-image` — hai số liệu lớn bên trái, ảnh phủ nửa phải.
+- **Trang trí thuần shape** (không asset): title/closing thêm vòng tròn lớn +
+  chấm accent (h = w × 16/9 để tròn thật), bullets thêm vạch dọc accent,
+  statement thêm dấu trích + vạch; agenda/ comparison có panel/badge.
+- **Model dữ liệu:** thêm `leftTitle`/`rightTitle` optional vào
+  `SlideLayoutContent` + `AiSlidePayload`; `contentFromSlide` đọc lại; DEMO và
+  `withPlaceholders` phủ đủ 19 layout để gallery/đổi layout không trống.
+- **Plan prompt:** ưu tiên agenda/statement/comparison, bullets chỉ khi thật có
+  2–4 ý ngắn; layout ảnh tối đa 3 slide và chỉ khi brief có hình.
+
+**Kiểm chứng:** `tsc -b --noEmit` sạch · `npm run build` thành công · toàn bộ
+**100 test** xanh (thêm 10 nhóm `test:slide-ai` gồm ngân sách chữ; layout 19/19
+nằm trong 0–100) · smoke thật 6 trang (statement/agenda/comparison/bullets/
+stat-image/image-full), concurrency 2: **20,8 s**, cả 6 hợp lệ, **0 repair**,
+mỗi slide **70–270 ký tự** (trước đây 400–1.000) · plan thật 17 s cho 9 slide
+chọn title → agenda → section → cards → two-column → comparison → timeline →
+quiz → closing · Chrome headless render 8 layout: sửa title bị tràn 3 dòng
+(hạ cỡ, nới hộp) và lỗi agenda "01 · 01".
+
+**Giới hạn:** ngân sách là heuristic theo ký tự, không đo pixel; chữ vẫn bắt
+đầu từ đỉnh hộp (không vertical-align) nên slide ít chữ còn khoảng trống dưới;
+layout ảnh vẫn là khung chờ (28 mới tự sinh/chèn ảnh); chưa có icon/graphic
+chuyên nghiệp; 27a không đụng motion (24/25).
+
+
+
+### 3.46. Vòng “visual material” cho slide — icon semantic, ảnh thật, fallback model (27/10/2026)
+
+Sau khi tự chấm contact sheet: slide đúng hình học nhưng vẫn “an toàn”. Vòng này
+thêm vật liệu thị giác thật thay vì chỉnh màu.
+
+- **Icon semantic (`src/lib/slideAssets.ts`):** 16 icon Lucide (ISC) theo môn/chủ
+  đề, chọn bằng `pickSlideAsset(text)` theo tags tiếng Việt. `SlideElement` thêm
+  `type: 'icon'` + `assetId` (optional). Renderer editor/thumbnail/presenter dùng
+  chung một nhánh; PPTX export render icon thành SVG data URL.
+- **Layout dùng icon:** title (icon trong panel nhấn), bullets (icon theo tiêu đề
+  thay cho khối số vô nghĩa), cards (badge icon + số thứ tự), stats (mỗi số liệu
+  một icon theo nhãn: nghiệm → sigma, trục → chart, đỉnh → target).
+- **Vùng nội dung:** bullets/cards tính chiều cao theo text rồi canh giữa; card
+  text canh giữa dọc; image-left/right tăng cỡ chữ và bề rộng cột chữ.
+- **Tự sinh ảnh:** `applyAiSlide` gọi `generateSlideImage` cho 4 layout ảnh khi
+  AI không trả `image`; lỗi provider thì giữ placeholder theme, không mất slide.
+- **Ảnh:** proxy mặc định chuyển sang `openai/gpt-image-2.5` (Xkiro, async job,
+  ~55s), timeout 90s; prompt chuyển sang editorial education, có chủ thể, không chữ.
+- **Fallback model:** chuỗi `deepseek-v4.1-flash` → `deepseek-v4.1-flash-free` →
+  `google/gemini-3.8-flash` (Xkiro) → `google/gemini-3-flash`. Proxy không return
+  sớm khi một model 401/429/5xx; key Xkiro lấy từ provider_config (không bị key
+  stale trong shell đè); Gemini không nhận `reasoning_effort`.
+- **Test:** `test:slide-assets` mới; layout/ai/image cập nhật. Toàn bộ suite xanh.
+
+**Tự chấm (ảnh focus kích thước gần thật):** title 8 · bullets 8 · cards 8 ·
+stats 8 · image-right 8 → **trung bình 8/10**. Ảnh minh hoạ trong bản chấm được
+sinh thật qua `/api/image`; vẫn là đánh giá thị giác của trợ lý, không phải QC
+vision độc lập.
+
+**Giới hạn:** ảnh AI mất 55–90s/slide nên deck 3 slide ảnh chậm hơn; icon Lucide
+là nét mảnh, ở slide rất ít chữ vẫn có thể nhỏ; chưa có QC hình học tự động.
+
+**Sửa lỗi cards sau phản hồi 27/10:** slide 4 thẻ bị cắt chữ, icon góc đè tiêu đề,
+4 thẻ xếp 3 cột lẻ loi. Đã sửa: 4 thẻ → lưới 2×2; badge icon co theo bề rộng thẻ
+(không còn chiếm nửa thẻ); cỡ chữ trong thẻ chọn theo chiều cao còn lại nên không
+mất dòng cuối; tiêu đề dài tự giảm cỡ (3,2/3,6/4,3 cqw) và bỏ icon nổi ở góc.
+
+**Chọn màu theo chủ đề (27/10):** theme không gắn cứng vào môn. Mỗi theme có
+`vibe` (cảm giác/tông) và tags chỉ là gợi ý; catalog gửi cho model ghi rõ "chọn
+theme theo chủ đề, cảm xúc, đối tượng — không bắt buộc theo môn", nên chủ đề tự do
+(hướng nghiệp, kỹ năng…) vẫn chọn được bộ màu phù hợp. Icon dùng `currentColor`
+nên tự đổi theo accent của theme (đã kiểm chứng 4 theme: xanh, nâu đất, tím, navy).
+Bộ icon mở rộng lên 25 mục (văn, ngoại ngữ, tin, hàm số, mỹ thuật, nhạc, thể dục,
+kinh tế, lịch sử…) bằng Phosphor Duotone (MIT).
+
+**Style pack cho deck (27/10):** thêm `src/lib/slideStyles.ts` — 6 art direction
+(editorial / keynote / consulting / bento / classroom / bold) rút gọn từ
+SlideSpeak/presentation-design-prompts (MIT). Planner trả `stylePack`; plan card
+hiện tên pack; prompt từng slide chèn luật pack + điều cần tránh. `parseDeckPlan`
+bỏ id lạ. Đây là phần trả lời cho "deck lúc nào cũng một nhịp": nhịp/mật độ do
+pack quyết định, không chỉ do layout.
+
+**Design token từ beautiful-html-templates (27/10):** giữ engine hiện tại, mượn
+design (MIT, repo zarazhangrui/beautiful-html-templates): thêm token theme
+`radius`, `shadow` (soft/hard/none), `border`/`borderColor`; decor mới `grain`
+(vân giấy), `glow` (vệt sáng góc), `frame` (khung poster). 10 theme được gán
+tính cách: Đỏ = poster cứng (radius 0, bóng lệch 6px, viền đen), Giấy ấm/Sinh =
+radius lớn + grain, Tím = glow. Renderer shape dùng token theme, element có thể
+ghi đè `radius`/`border`. **Chưa** dùng HTML template — đúng lựa chọn của chủ dự
+án; giới hạn còn lại là illustration/backdrop thật.
+
+**AI panel 2 chế độ PPT/HTML (27/10):** segmented control trong composer của chế
+độ slide (thẻ trượt 260ms, `useSlidingThumb`). `PPT` giữ pipeline dàn ý → sinh
+từng slide. `HTML` gọi một lượt với `HTML_SYSTEM`: model trả **một tệp HTML tự
+chứa** (16:9, CSS trong `<style>`, phím chuyển slide), app mở modal xem trước
+bằng iframe `sandbox="allow-scripts"` + nút tải `.html`. Không đụng deck hiện
+tại. Đã test thật qua `/api/llm`: Gemini 3 Flash trả 5.162 ký tự HTML bắt đầu
+bằng `<!doctype html>`.
+
+**HTML mode tự sinh theo brief thiết kế (27/10):** bỏ hướng template HTML
+(đã vendor thử 3 template MIT rồi gỡ theo quyết định của chủ dự án). Prompt
+`src/lib/htmlDeckPrompt.ts` là brief đầy đủ: nền sáng, một màu nhấn, tương phản
+≥4,5:1, font hỗ trợ tiếng Việt, mỗi slide một ý, bố cục đa dạng, animation vào
+nhẹ có stagger + reduced-motion, kèm checklist QA (không tràn/đè, ≤60 từ/slide).
+App chuẩn hoá NFC và thay Georgia/Cambria bằng Times New Roman vì hai font này
+làm vỡ dấu tiếng Việt trên Windows (đã kiểm chứng bằng ảnh so sánh font).
+Smoke test thật: Gemini 3 Flash trả 11.656 ký tự, 8 section; render slide 1/3/4
+đúng bố cục, không tràn, dấu tiếng Việt đúng.
+
+### 3.47. Sửa lỗi “Các model AI đều không phản hồi” khi lập dàn ý slide (27/10/2026)
+
+**Triệu chứng:** bấm Gửi ở trợ lý AI của trình soạn slide, chờ một lúc rồi nhận
+`Các model AI đều không phản hồi. deepseek-v4.1-flash: The operation was aborted
+due to timeout`. Đề thi vẫn chạy vì prompt ngắn.
+
+**Nguyên nhân:** `UPSTREAM_TIMEOUT_MS` trong `server/llmProxy.ts` là 45s, trong
+khi model reasoning hiện tại (`deepseek-v4.1-flash`) tiêu 7–10k token suy luận cho
+một dàn ý 10–16 slide → 30–90s mới trả. Prompt càng dài càng dễ vượt hạn, dù
+provider vẫn khoẻ.
+
+**Sửa:**
+
+- `server/llmProxy.ts`: timeout đọc từ `LLM_TIMEOUT_MS`, mặc định **120s**
+  (`upstreamTimeoutMs()` đọc lúc gọi, không phải lúc import — `.env` được nạp sau
+  khi module load).
+- `src/examEditor/AiPanel.tsx`: lượt lập dàn ý và lượt sinh từng slide (kể cả
+  lượt repair) truyền `reasoningEffort: 'medium'` thay vì `max`. Đo thật cùng một
+  prompt 10 slide: `max` 7.173 token suy luận / 33s, `low` 1.927 token / 21s; JSON
+  vẫn qua `sanitizeSlide` + `checkSlide` nên hạ effort không làm hỏng hợp đồng.
+- `.env.example`: ghi chú `LLM_TIMEOUT_MS` để tự chỉnh khi mạng chậm.
+
+**Lưu ý vận hành:** phần timeout nằm ở server nên **phải khởi động lại
+`npm run dev`** mới có hiệu lực; sửa client thì HMR tự áp. Typecheck xanh.
+
+### 3.48. Audit đối chiếu với code soandethi trích xuất (27/10/2026)
+
+Chủ dự án trích được **mã nguồn client** của soandethi.com (bundle public) vào
+`~/Downloads/soandethi-slide-code/` (19 file, có `ANALYSIS.md`). Đối chiếu trực
+tiếp với `src/lib/slide*` + `AiPanel`/`SlideEditor`. Báo cáo đầy đủ:
+`_ref/soandethi/SLIDE-GAP-AUDIT.md` (không commit — `_ref/` đã gitignore).
+
+**Kết luận:** thua không phải do prompt mà do **thiếu lớp design engine** giữa
+JSON của AI và pixel: họ "AI điền khuôn, code vẽ hình" với auto-typography đo
+trước khi đặt (`S(lines)`, `x(texts,width,fontSize)`, clamp theo từng layout,
+repair vùng đè), kho **208 đồ hoạ vector (200 cái AI thấy) + 122 icon** thay ảnh
+AI, **18 hiệu ứng
++ 8 preset mood theo vai trò** + click-reveal cho quiz/example, lenient repair
+(không bao giờ mất slide), nén ngữ cảnh 22KB/slide, hàng đợi ảnh dedupe + dừng
+khi hết quota. Mình có **25 icon**, không animation (transition lưu nhưng trình
+chiếu không chạy), 1 lần repair rồi bỏ slide, gửi nguyên lịch sử chat.
+
+**Cái mình không thua (giữ nguyên):** ngân sách chữ theo layout (họ không có),
+tương phản WCAG + `inkOf`, 6 style pack, pipeline plan → duyệt → sinh từng trang,
+chế độ HTML tự chứa.
+
+Lộ trình mới (chi tiết ở báo cáo): 1) typography engine → 2) kho đồ hoạ vector →
+3) motion + click-reveal → 4) lenient repair → 5) nén ngữ cảnh → 6) hàng đợi ảnh →
+7) PPTX import + version history + formula. Ước lúc audit ~57–60%; **chặng 1–2
+đã xong (3.49/3.50) đưa lên ~72%**, chặng 3 mục tiêu ~80%.
+
+### 3.49. Chặng 1 — Typography engine: đo trước khi đặt (27/10/2026)
+
+Mục tiêu theo audit 3.48: bỏ tình trạng mỗi nơi hiển thị tự co chữ một kiểu
+(editor/thumbnail co bằng `FitText`, PPTX không co) và chữ dài tràn hộp.
+
+**Lõi mới — `src/lib/slideMeasure.ts`:**
+
+- `textBoxHeight(text, width, fontCqw, lineHeight)` — công thức duy nhất để ước
+  lượng chiều cao khối chữ, dùng chung cho layout engine, `elementHeight` và test.
+  Hai hằng số hiệu chỉnh: `CHAR_WIDTH_EM = 0.52` (font sans tiếng Việt rộng hơn
+  0,5em; đo ở 0,5 thì chữ vừa khít trên giấy lại xuống dòng thật trong DOM) và
+  `TEXT_INNER_WIDTH = 0.98` (trừ padding ngang `p-[1%]` mỗi bên).
+- `fitFontSize({ text, widthPct, heightPct, baseCqw, lineHeight, minScale })` —
+  chọn cỡ lớn nhất ≤ cỡ thiết kế mà vẫn vừa hộp; chỉ co, không phóng to; sàn 60%
+  (tiêu đề 55% vì hộp tiêu đề layout chỉ cao 12–13%).
+
+**Một điểm chặn duy nhất — `textEl()` trong `slideLayouts.ts`:** mọi hộp chữ của
+cả 19 layout đều đi qua đây, nên chỉ cần fit ở đây là cả bộ layout được "đo trước
+khi đặt". Cỡ đã fit được ghi thẳng vào `SlideElement.fontSize` → editor, thumbnail
+và PPTX dùng chung một cỡ; `FitText` chỉ còn là lưới an toàn cho chữ người dùng
+tự nhập.
+
+**Sửa kèm theo (đều là lỗi thật phát hiện khi đo):**
+
+- `textEl` trước đây đặt `lineHeight` rồi spread `...style`, nên style có
+  `lineHeight` sẽ ghi đè; giờ tính lineHeight một lần và ghi sau spread.
+- `elementHeight` bỏ qua `el.lineHeight` (luôn 1,25) → hộp auto-height lệch với
+  hộp layout (1,4). Đã truyền `el.lineHeight ?? 1.25`.
+- Hộp quá nhỏ so với sàn 60%: kicker/subtitle layout `title` và body
+  `image-full` được nới 0,5–2% chiều cao (không đè phần tử nào).
+- `FitText`/`AutoFitText` fit trước khi webfont load xong → font swap đổi số dòng
+  mà `ResizeObserver` không thấy. Thêm `refitOnFonts()` (`document.fonts.ready` +
+  `loadingdone`).
+- FitText làm tròn **lên** 0,1cqw (`2,45 → 2,5`) — đúng ở biên là tràn. Đổi sang
+  làm tròn xuống 0,01cqw.
+
+**Kiểm chứng:**
+
+- `test:slide-measure` mới, 9 nhóm: công thức đo · fitFontSize (không phóng to,
+  sàn, ổn định) · **bất biến 19 layout** với nội dung stress (tiêu đề 64 ký tự,
+  4 bullet dài, 6 thẻ, bảng 6×4, stats nhãn dài…) — không hộp chữ nào tràn quá
+  0,15%; layout ngắn vẫn giữ đúng cỡ thiết kế (bullets 3 ý = 3,25cqw).
+- Toàn bộ suite slide xanh (text 5/5, layout 10/10, theme 4/4, plan, ai, assets
+  5/5, layout 7/7, pagination 6/6), `tsc` sạch, build thành công.
+- Kiểm tra DOM thật: bơm deck stress 12 layout vào localStorage, đo
+  `scrollHeight > clientHeight` trên **12 thumbnail + stage của từng slide**
+  (editor dùng textarea) → **0 tràn**. Trước khi sửa, title layout cards tràn 2px.
+
+**Còn lại của chặng (để chặng sau):** repair vùng đè (callout) và clamp riêng
+theo layout kiểu soandethi (stats theo độ dài nhãn, bảng theo số hàng) — hiện
+fitFontSize đã xử lý phần lớn; các clamp đó chỉ cần khi thêm layout mới.
+
+### 3.50. Chặng 2 — Kho 112 đồ hoạ vector + AI chọn thay ảnh (27/10/2026)
+
+Chủ dự án giao 2 contact sheet (100 rồi 112 icon, 64px, nét 3px `#22333B`,
+8 màu pastel). Đây là đòn bẩy thị giác lớn thứ hai sau typography engine.
+
+**Nhập kho — `scripts/import-graphics.mjs`:**
+
+- Đọc sheet, tách từng cặp path (1 fill + 1 nét), cắt cửa sổ **70×70** quanh tâm
+  icon (3px đệm để nét 3px không bị cắt), bỏ nền trắng, ghi ra
+  `src/lib/graphics.ts` (**112 icon**, 13 nhóm, ~115KB).
+- Danh sách id/tên/keyword nằm ngay trong script theo đúng thứ tự đọc — thêm
+  icon mới chỉ cần thêm một dòng rồi chạy lại.
+- Mỗi SVG chỉ có 2 path, không chữ/không `<rect>`/không ảnh ngoài; nét giữ
+  `#22333B` để thay màu lúc render.
+
+**Registry — `src/lib/slideGraphics.ts`:**
+
+- `isGraphicId`, `graphicById`, `searchGraphics` (bỏ dấu tiếng Việt, khớp
+  name/keyword/id), `graphicMarkup(id, ink)` (đổi màu nét + ép `width/height
+  100%`, `preserveAspectRatio`), `graphicCatalogText()` (112 id + tên ngắn, gom
+  nhóm ≈ 2,5K ký tự).
+
+**Model & render:**
+
+- `SlideElType` thêm `'graphic'`; `SlideElement.graphicId?` (optional — deck cũ
+  không đổi). Renderer editor/thumbnail/presenter dùng `dangerouslySetInnerHTML`
+  với SVG do app sinh (không phải input người dùng).
+- Màu nét theo ngữ cảnh: bìa/bullets dùng `p.onAccent` (nằm trên panel màu),
+  layout ảnh dùng `p.fg`. Khối fill pastel giữ nguyên như thiết kế.
+- Xuất PPTX: SVG → `data:image/svg+xml;base64` qua `slide.addImage` (cùng đường
+  với icon Phosphor).
+
+**Layout & AI:**
+
+- `SlideLayoutContent.graphic?`; `composeTitle` đặt graphic vào panel bìa,
+  `composeBullets` thay icon neo, `composeImageSide` dùng graphic + panel thay
+  khung ảnh trống. `contentFromSlide` đọc lại được khi đổi layout.
+- `AiSlidePayload.graphic?`; `sanitizeSlide` chỉ nhận id có trong catalog (id lạ
+  bị bỏ, không lỗi); `pageSystemPrompt` chỉ nhồi catalog cho 4 layout dùng được
+  (`title`, `bullets`, `image-left`, `image-right`) để không phình mọi lượt gọi.
+  Layout ảnh được dặn: có graphic khớp thì để trống `image` → **không gọi vẽ ảnh
+  (55–90s)**.
+- `applyAiSlide` chỉ sinh ảnh khi thiếu cả `image` lẫn `graphic`.
+
+**Kiểm chứng:**
+
+- `test:slide-graphics` mới, **19 nhóm**: registry 112 id duy nhất · SVG hợp lệ
+  (2 path, không chữ/nền/ảnh ngoài) · search có dấu/không dấu · recolor ·
+  catalog đủ id · title/bullets/image-left dùng graphic · id lạ bị bỏ ·
+  `contentFromSlide` đọc lại · prompt có/không catalog đúng layout · 19 layout
+  vẫn dựng được.
+- Gọi AI thật 2 lượt: layout `title` chọn `math-tam-giac` (6s); layout
+  `image-right` chọn `math-tam-giac` và để trống `image` (9s) → không sinh ảnh.
+- Kiểm tra DOM thật: deck 5 slide (bìa/bullets/ảnh trái), graphic render đúng
+  hộp (bìa 16×24% trong panel, bullets 11×14%, ảnh trái 30×28%), không còn khung
+  "Chọn ảnh".
+- Toàn bộ suite slide xanh, export 5/5, layout 7/7, `tsc` sạch, build thành công
+  (bundle chính +~100KB do SVG inline).
+
+**Chưa làm:** gallery chèn đồ hoạ thủ công trong ribbon (hiện chỉ AI/layout
+dùng), và graphic cho các layout khác ngoài 4 layout trên.
+
+### 3.51. Gói P0 — đo chữ thật, xếp chồng theo chiều cao đo, lint render (27/10/2026)
+
+Sau audit "AI sinh slide vỡ layout": gốc là tọa độ cố định + đo chữ bằng đếm ký tự.
+
+- **`slideMeasure.ts`:** `textBoxHeight(text, w, size, lineHeight, {weight, letterSpacing})`
+  ngắt dòng bằng `canvas.measureText` với Be Vietnam Pro (cache theo weight+chuỗi,
+  xoá cache khi font nạp xong). Node/test không có canvas → rơi về công thức ký tự
+  cũ. `ensureMeasureFonts()` nạp trước 4 độ đậm. Sửa luôn mô hình padding ngang:
+  `padding: 1%` là % của **khung slide**, nên chiều rộng chữ = `w − 2cqw` (trước đây
+  `w × 0.98` → hộp hẹp tràn).
+- **`slideLayouts.ts`:** `titleEls()` chọn cỡ tiêu đề lớn nhất vừa hộp (cho 2 dòng
+  thay vì co sàn), hộp ôm đúng chữ, vạch `title-rule` đặt ngay dưới chữ; dùng cho
+  10 layout. `bullets` tính vùng nội dung dưới tiêu đề đã đo; `section` xếp
+  kicker → title theo chiều cao đo; `cycle` đặt chữ trong hình chữ nhật nội tiếp
+  của vòng tròn (budget bước 60 → 36 ký tự, `slideAi.ts`). `textEl` đo đúng độ
+  đậm renderer (title 600 / body 500) và nới hộp canh-trên quá thấp cho một dòng
+  (kicker không còn bị co xuống 1,2cqw).
+- **`npm run lint:slides`** (`scripts/lint-slides.mjs` + `scripts/lint-slides/`):
+  dựng 950 slide (10 theme × 19 layout × stress/medium/demo × 3 tông) bằng
+  `SlideThumb` thật trong Chrome headless (CDP, ~10s), đo DOM: tràn, đè
+  chữ/vạch/icon, ngoài khung (error → exit 1); chữ < 1,3cqw, tương phản (warn).
+  Trước khi sửa: **115 overflow + 30 overlap**; sau: **0 error**. Còn 716 warn
+  (tương phản `stats` label/`quiz` option-1, số thứ tự timeline 1cqw) — việc P1.
+- Ghi chú: font serif của vài theme hẹp hơn Be Vietnam Pro nên đo dư (an toàn).
+
 ## 4. Lỗi đã gặp và cách sửa
 
 ### 4.1. TipTap v3 — `content` phải là mảng
@@ -1499,7 +2389,7 @@ không mất thời gian làm lại.
 - [x] `_ref/genoffice/` — đã nằm trong `.gitignore`, **0 file được track**; giữ
       làm tài liệu tham chiếu, không cần chuyển đi.
 - [x] Test cho converter (`tipTapToBlocks` ⇄ `blocksToTipTap`) — `scripts/test-convert.mjs`,
-      `npm run test:convert`, hiện **6/6 pass** (mục 3.9 thêm case màu chữ + tô sáng).
+      `npm run test:convert`, hiện **12/12 pass** (mục 3.30 thêm case mảng trộn string + span).
 - [x] `_ref/_shell_extract*.txt` — đã xoá.
 - [x] Chạy ponytail-audit, xóa code chết + dependency thừa (xem mục 3.8, 3.17).
 - [x] Update lại chính file `context.md` này sau mỗi chặng — mục 6 đã được rà và
@@ -1548,6 +2438,283 @@ commit như thói quen.
   markdown 14/14, export 5/5, layout 7/7.
 - Việc tiếp theo theo ý chủ dự án: đợt 2 (bảng biến thiên) — xem 6.1b.
 
+### 6.8. Lộ trình bắt kịp workflow AI slide soandethi (sau audit 3.36, 25/10/2026)
+
+Hiện trạng ước **~72%** so với workflow của họ (cách chấm ở 3.36 + báo cáo
+`_ref/soandethi/SLIDE-GAP-AUDIT.md`, đã cộng chặng
+21–27a + chặng 1–2 ngày 27/10). Điểm mạnh hiện có:
+trình soạn slide freeform (kéo/resize/xoay, auto-fit chữ, undo, thumbnail),
+theme v2 10 màu + font + decor, layout engine **19 bố cục** + tone + 5 bố cục
+art-directed, typography engine đo trước khi đặt, **kho 112 đồ hoạ vector**,
+pipeline AI **dàn ý → duyệt → sinh từng trang → validate/repair → chèn dần**,
+ngân sách chữ chống slide dày, xuất PPTX cơ bản, autosave localStorage. Khoảng
+cách lớn nhất còn lại: **motion + presenter**, **QC/regenerate**, **hàng đợi
+ảnh**; layout tĩnh đã khá hơn nhưng chưa image-led.
+
+Thứ tự dưới đây ưu tiên thứ nhìn thấy khác ngay trước, pipeline AI sau. Ước %
+chỉ là tương đối (±5%), đo lại sau mỗi chặng bằng đúng thang ở 3.36.
+
+> **Cập nhật sau audit GenOffice (3.41):** khoảng cách lớn nhất về chất lượng
+> không phải số layout mà là pipeline AI (style → outline → sinh từng trang →
+> QC/repair) và ảnh tự động. 23.5 (3.42), **26a dàn ý + duyệt** (3.43), **26b
+> sinh từng trang + validate/repair** (3.44) và **27a ngân sách chữ + bố cục
+> art-directed** (3.45) đã xong. Bước tiếp theo là **28 ảnh tự động + icon**
+> (đòn bẩy thị giác lớn nhất còn lại), rồi **27 regenerate/QC**, sau đó
+> 24/25 motion + presenter nếu ưu tiên trình chiếu.
+
+> **Cập nhật sau audit code soandethi trích xuất (3.48, 27/10/2026):** khoảng
+> cách lớn nhất không phải số layout mà là **design engine**: auto-typography
+> đo trước khi đặt, kho đồ hoạ vector thay ảnh AI, motion + click-reveal.
+> **Chặng 1 (typography engine) đã xong** — 3.49: cả 19 layout fit cỡ chữ lúc
+> compose, editor/thumbnail/PPTX dùng chung một cỡ, test bất biến + đo DOM thật
+> 0 tràn. **Chặng 2 (kho 112 đồ hoạ vector) đã xong** — 3.50: nhập sheet tự
+> động, AI chọn theo catalog, render + PPTX + 4 layout dùng graphic, gọi AI thật
+> xác nhận chọn đúng id và bỏ vẽ ảnh. Hiện trạng ước **~72%**.
+> Tiếp theo: **chặng 3 — motion + click-reveal** (transition đã lưu nhưng chưa
+> chạy, chưa có animation phần tử); sau đó lenient repair, nén ngữ cảnh, hàng
+> đợi ảnh.
+
+**Nguyên tắc chung**
+
+- Không copy CSS/asset/theme của soandethi; chỉ học kiến trúc rồi tự viết layout,
+  keyframes và đồ hoạ. `_ref/soandethi/` chỉ là tài liệu tham chiếu.
+- Mọi field mới của `Slide`/`SlideElement`/`DeckTheme` phải **optional**; deck cũ
+  (không có layout/theme mới/animation) phải render y như trước, normalize khi đọc.
+- Không phá trình soạn đề (`ExamEditor`, converter, test 12/12). Slide là tab
+  riêng trong `ComposeDoc`; autosave local vẫn là nguồn chính.
+- Mỗi chặng chốt bằng: `npx tsc -b --noEmit` sạch · `npm run build` thành công ·
+  test liên quan xanh · mở browser thật 1 tab kiểm tra trực quan · cập nhật
+  context (mục 3.x) + tick chặng ở đây.
+
+---
+
+#### ✅ Chặng 21 — Theme v2: token theo môn + font + decor (~28%, xong 25/10/2026 — 3.37)
+
+**Mục tiêu:** theme đủ giàu để layout dùng lại, thay vì 6 theme chỉ có bg/fg/accent.
+
+- `src/store/docs.ts` — mở rộng `DeckTheme` (giữ `bg/fg/accent` cũ để deck cũ đọc
+  được): thêm `id?`, `name?`, `tags?: string[]`, `decor?: string`, `dark?: boolean`,
+  `surface`, `muted`, `primary`, `secondary`, `chart?: string[]`,
+  `fonts?: { heading; body; serif; mono }`.
+- `src/lib/slideTheme.ts` (mới) — `normalizeTheme(theme)` map theme cũ
+  (bg→background, fg→text, accent→primary, font mặc định), `readableTextOn(bg)`
+  chọn màu chữ tương phản ≥4.5:1, `themeById(id)`.
+- Bộ theme: 6 theme cũ + 4 theme mới theo môn (Toán/Lý/Hoá, Văn/Sử/Địa, Sinh,
+  Tiếng Anh/Tin) — tự chọn palette, không lấy màu của họ. Mỗi theme có tags môn
+  để sau này AI chọn.
+- Decor: 3–4 hoạ tiết CSS thuần (chấm, lưới, sóng, confetti) qua
+  `data-decor` trên `.slide-frame`; không dùng ảnh/asset ngoài.
+- `SlideEditor.tsx` — `SlideElView`/`EditableEl` dùng `theme.fonts.heading/body`
+  thay vì hardcode Figtree; thẻ theme ở tab Thiết kế hiển thị đúng palette mới.
+- Test: `scripts/test-slide-theme.mjs` — normalize theme cũ, contrast, themeById.
+
+**Done khi:** đổi theme đổi được nền/chữ/font/decor; deck cũ mở vẫn đúng; test
+theme 4/4; build sạch. Chưa đụng AI.
+
+#### ✅ Chặng 22 — Layout engine v1 + 7 layout (~35%, xong 25/10/2026 — 3.38)
+
+**Mục tiêu:** AI (và người dùng) chọn layout + nội dung; máy dựng hình. Đây là
+chặng tạo khác biệt lớn nhất về "chuẩn".
+
+- `src/lib/slideLayouts.ts` (mới) — `SLIDE_LAYOUTS` catalog (id, name, mô tả,
+  field dùng), `composeLayout(theme, layoutId, content)` → `SlideElement[]`.
+  Làm việc theo % (0–100), safe margin 5%; role id cố định:
+  `title, kicker, subtitle, body, bullets, item-1…, card-1…, quote, author,
+  image-1…, center`.
+- 7 layout v1: `title`, `section`, `bullets`, `cards` (2–6), `two-column`,
+  `quote`, `closing`.
+- `Slide.layout?: string` (optional; deck cũ = undefined → render như cũ).
+- `SlideRibbon.tsx` — mở khoá nút **Bố cục** (tab Chèn) thành gallery; áp layout
+  thay element hiện có (có xác nhận vì phá nội dung); giữ notes/transition.
+- `src/lib/aiDeck.ts` + `SlideEditor.applyAiResult` — nhận `layout` + field cấu
+  trúc; nếu layout hợp lệ thì `composeLayout`, sai/thiếu thì fallback title+bullets
+  như hiện tại.
+- Test: `scripts/test-slide-layout.mjs` — mọi element nằm 0–100; id role không
+  trùng; cards 2–6; quote/closing đúng field; layout lạ fallback.
+
+**Done khi:** 7 layout dựng được bằng UI và bằng AI; deck cũ không đổi; xuất PPTX
+vẫn chạy; test layout 6/6.
+
+#### ✅ Chặng 23 — Layout v2 + tone (~41%, xong 25/10/2026 — 3.39)
+
+- Thêm 7 layout: `table`, `image-left`, `image-right`, `stats`, `timeline`,
+  `cycle`, `quiz` → tổng 14.
+- `Slide.tone?: 'theme' | 'soft' | 'accent'` (optional) + compose dùng nền/màu
+  chữ tương phản. Mặc định theo layout: title/section → accent; quote/quiz/
+  closing → soft.
+- Layout ảnh: tạo element `image` không có `src` + nhãn "chọn ảnh" (ảnh AI để
+  chặng 28); không chặn phần còn lại.
+- `timeline`/`cycle` dùng shape + text (chưa cần icon); `quiz` có đáp án tô màu.
+- Test: thêm case bảng 6 cột/8 hàng, timeline 3–6 bước, quiz 2–4 phương án.
+
+**Done khi:** 14 layout; không element nào tràn khung; AI chọn được layout mới;
+test 10/10.
+
+#### Chặng 24 — Motion v1: animation phần tử + preview (ước ~49%)
+
+**Mục tiêu:** slide không còn tĩnh; preset + enter/click + byLine; chưa cần
+Reveal.
+
+- `src/lib/slideAnimation.ts` (mới) — `EFFECTS` (fade-in/up/down/left/right,
+  zoom-in, wipe, pop, blur-in; có thể thêm drift/tumble), `PRESETS`
+  (subtle/build/lively/chill), `normalizeAnimation`, `applyAnimationPreset`,
+  `animationPlan` (enter/click, order, delay, byLine).
+- `SlideElement.animation?: { effect; start: 'enter'|'click'; order; duration;
+  delay; byLine }` — optional.
+- `slide.css` — tự viết keyframes `sa-fade-*`, `sa-zoom-in`, `sa-wipe`, `sa-pop`,
+  `sa-blur-in`; class `sa-enter`, `sa-play`; `--sa-duration/--sa-delay`; tôn
+  trọng `prefers-reduced-motion`.
+- `SlideEditor.tsx`/`SlideElView` — nhận `mode: edit|preview|present`; edit tĩnh;
+  preview thêm `sa-play`; byLine tách text theo dòng và gán delay từng dòng
+  (chưa tách ký tự).
+- `SlideRibbon.tsx` — tab **Hoạt ảnh** (đang "Chưa hỗ trợ"): gallery hiệu ứng,
+  preset áp cả slide, nút "Xem trước" (dialog phát lại), nút áp dụng tất cả.
+  `Slide.transition` hiện có vẫn chỉ lưu, chưa dùng ở đây.
+- Test: `scripts/test-slide-animation.mjs` — plan enter/click/order/byLine;
+  preset gán đúng loại element; normalize rác.
+
+**Done khi:** preview chạy hiệu ứng; presenter đơn giản phát enter; dữ liệu
+animation optional; deck cũ không đổi; test 6/6.
+
+#### Chặng 25 — Presenter v2: transition + click build + notes (ước ~56%)
+
+- `SlideEditor.tsx` — presenter dùng `slide.transition` (none/fade/slide/zoom)
+  và `transitionSpeed` (fast/default/slow) bằng CSS trên key đổi slide; đây là
+  chỗ hiện tại **có field nhưng chưa chạy**.
+- Click build: state `step`; `animationPlan` chia enter (vào slide) và click
+  (theo order); next/prev đi qua từng step trước khi sang slide; nút/space/←/→;
+  Esc thoát; F fullscreen.
+- Notes: hiện `slide.notes` trong panel cạnh hoặc overlay (dữ liệu đã có, hiện
+  chưa hiển thị khi trình chiếu). Chưa cần cửa sổ presenter thứ hai.
+- Preview trong editor dùng cùng logic để WYSIWYG.
+- Không thêm Reveal.js ở chặng này; nếu sau này cần presenter window/fragments
+  phức tạp mới cân nhắc.
+
+**Done khi:** transition chạy thật; click build đúng thứ tự; notes xem được;
+reduced-motion vẫn ổn; kiểm tra browser 1 tab.
+
+#### ✅ Chặng 26 — AI prompt v2 + validate (26a 3.43, 26b 3.44 — xong 25/10/2026)
+
+**26a:** catalog text sinh từ code, `parseDeckPlan` (whitelist layout/theme/tone,
+cắt độ dài), thẻ dàn ý + duyệt trong chat, theme của dàn ý áp cho cả deck, dàn ý
+hỏng thì rơi về deck một lượt. Xem 3.43.
+
+**26b:** sinh **từng trang** với prompt ngắn (layout + field hint + brief +
+style + cả dàn ý), validate theo layout, **repair 1 lần**, bỏ trang vẫn sai;
+hai luồng song song, chèn dần đúng thứ tự; tiến trình thật + huỷ an toàn;
+`Deck.style` được lưu. Xem 3.44.
+
+**Còn để chặng 27:** sửa/xoá/sinh lại **một slide hoặc vùng chọn** (regenerate
+theo yêu cầu), và QC nội dung/hình học sau khi sinh. `sanitizeSlide` hiện chỉ
+whitelist layout/theme/tone/field của 26b; motion (chặng 24) chưa có để
+whitelist.
+
+#### ✅ Chặng 27a — Ngân sách chữ + bố cục art-directed (xong 25/10/2026 — 3.45)
+
+Thêm trước 27 vì người dùng chốt: slide vẫn "sơ cấp" do nhiều chữ, thiếu bố cục
+và trang trí. Đã làm:
+
+- `BUDGETS` theo layout + `budgetLine` sinh từ cùng bảng; vượt ngân sách →
+  repair, không để `FitText` thu nhỏ. Một ý lớn/slide, 8–15 từ/ý.
+- 5 layout mới: `statement`, `agenda`, `comparison`, `image-full`, `stat-image`
+  → tổng 19; decor shape cho title/closing/bullets.
+- `leftTitle`/`rightTitle` optional; plan prompt ưu tiên agenda/statement/
+  comparison, giới hạn layout ảnh.
+- Test 100 xanh; smoke 6 trang ~21 s, 0 repair, 70–270 ký tự/slide.
+
+Chi tiết + giới hạn: 3.45.
+
+#### Chặng 27 — Regenerate/QC + sửa outline
+
+**Phần plan/duyệt/sinh đã xong ở 26a + 26b (3.43, 3.44).** Phần còn lại:
+
+- **Sửa outline** ngay trong thẻ dàn ý: đổi tiêu đề/layout/brief, bỏ/thêm slide
+  trước khi sinh (hiện chỉ duyệt hoặc huỷ).
+- **Sinh lại một slide** đã có: gửi nội dung hiện tại + yêu cầu sửa → cùng
+  contract `sanitizeSlide`/`validateSlide`, thay slide theo id thay vì nối thêm
+  (cần `replaceSlide` trong `appendSlidesToDeck` hoặc hàm riêng).
+- **Sửa/xoá theo vùng chọn**: dùng `selectedSlideId` / `selectedElementId` làm
+  target; chưa cần agent tools.
+- **QC nhẹ sau sinh**: kiểm tra trùng ý giữa các slide, độ dài quá khung, slide
+  thiếu tiêu đề; chỉ báo + cho sinh lại, không tự rollback như GenOffice.
+- Test: replace theo id, regenerate lỗi giữ slide cũ, QC phát hiện trùng/thiếu.
+
+**Done khi:** sửa được dàn ý trước khi sinh; sinh lại đúng một slide; QC báo
+được lỗi nội dung; không JSON thô trong chat.
+
+#### Chặng 28 — Asset/ảnh minh hoạ (một phần đã làm sớm ở 3.40)
+
+- Ảnh AI: đã có provider **Xkiro** + `/api/image` (model
+  `sensenova/sensenova-u1.5-lite`) và nút "Tạo ảnh AI" cho từng khung ảnh
+  (3.40). Còn lại: hàng đợi async nhiều ảnh, prompt + context slide ≤2800 ký tự,
+  tối đa 12 ảnh/bộ, tự chèn vào vùng trống, retry/abort.
+- Bộ icon/graphic SVG: chưa có asset; nếu chủ dự án cung cấp thì thêm
+  `SlideElement.type='icon'|'graphic'`, picker, render, xuất PPTX.
+- Nếu có API ảnh: hàng đợi async như audit (prompt + context slide ≤2800 ký tự,
+  tối đa 12 ảnh/bộ, chèn vào vùng trống), không chặn hiện slide.
+- Test: queue/abort/retry; ảnh lỗi → placeholder + thông báo.
+
+#### Chặng 29 — PPTX fidelity (optional, sau cùng)
+
+- Thêm speaker notes vào export (`pptxgenjs` hỗ trợ `addNotes`).
+- Transition/animation của PPTX: `pptxgenjs` không hỗ trợ — ghi rõ giới hạn,
+  không giả lập.
+- Icon/graphic nếu có asset thì export; import PPTX vẫn chỉ text (như hiện tại).
+- Chỉ làm khi 21–27 đã xong.
+
+#### Chặng 30 — Server storage/versions (deferred, YAGNI)
+
+- App hiện local-first, một người dùng; `myDecks` localStorage là đủ. Chỉ làm khi
+  chủ dự án cần đồng bộ nhiều máy/version/sources như họ. Không đưa vào lộ trình
+  mặc định.
+
+---
+
+**Bảng ước lượng sau từng chặng** (đo lại bằng thang 3.36):
+
+| Sau chặng | Ước % |
+|---|---|
+| sau chặng 20 (hiện trạng trước 21) | ~20% |
+| 21 theme v2 | ~28% (đã xong) |
+| 22 layout v1 | ~35% (đã xong) |
+| 23 layout v2 | ~41% (đã xong) |
+| 23.5 polish layout | ~41% (đã xong — chất lượng thị giác, không đổi thang) |
+| 24 motion v1 | ~49% |
+| 25 presenter v2 | ~56% |
+| 26 AI prompt v2 | ~61% |
+| 27 plan/generate | ~67% |
+| 28 asset/ảnh | ~72% (nếu có nguồn) |
+| 29 PPTX fidelity | ~75% |
+| **27/10 chặng 1 — typography engine (3.49)** | **~65%** |
+| **27/10 chặng 2 — 112 đồ hoạ + AI chọn (3.50)** | **~72%** |
+| **kế tiếp chặng 3 — motion + click-reveal** | mục tiêu ~80% |
+
+**Cập nhật 27a (25/10/2026):** pipeline (3.43/3.44) và ngân sách chữ + art
+direction (3.45) đã xong — ước **~57%** feature coverage; thẩm mỹ tĩnh ước
+**~6/10** theo cảm nhận (đã hết "slide dày chữ", có 5 bố cục nhìn ra thiết kế).
+**7/10 cần 28** (ảnh tự động + icon); **8/10 cần thêm 24/25** (motion/presenter)
+và QC bằng vision — không đạt 8/10 chỉ bằng danh sách chặng.
+
+**Cập nhật 27/10/2026 (sau audit code trích xuất 3.48):** typography engine
+(3.49) và kho 112 đồ hoạ (3.50) đã xong → **~72%**; thẩm mỹ tĩnh ước **~7/10**
+(đã có đo chữ + đồ hoạ vector thay ảnh AI). Việc còn lại để lên **~8/10**:
+**motion + click-reveal** (chặng 3), **QC/regenerate từng slide** và **hàng đợi
+ảnh** (dedupe/giới hạn/dừng khi hết quota). Streaming/clarification vẫn là
+nice-to-have, không tính vào thang.
+
+**Không làm trong lộ trình này:** copy CSS/theme/asset của soandethi; copy 208
+đồ hoạ của họ (kho của mình do chủ dự án thiết kế — hiện 112 icon); thêm
+Reveal.js khi presenter tự viết đã đủ; server/version khi chưa cần;
+mindmap/venn/pyramid phức tạp trước khi có 19 layout cơ bản.
+
+**Rủi ro lớn nhất cần theo dõi:** (1) deck cũ mất theme khi thêm token — phải
+normalize; (2) layout thay element có thể làm mất nội dung người dùng — luôn xác
+nhận + undo; (3) pipeline nhiều lượt (1 dàn ý + N trang) — 2 luồng song song,
+tiến trình thật, cho huỷ; dàn ý được duyệt nên không phí lượt sinh; (4) motion
+làm nặng re-render — chỉ chạy khi preview/present, edit tĩnh; (5) ngân sách chữ
+quá chặt gây repair lặp — prompt và validate dùng chung một bảng, một lượt sửa
+rồi bỏ trang; smoke thật đang 0 repair.
+
 
 ---
 
@@ -1558,7 +2725,7 @@ src/
   examEditor/
     genoffice-tokens.css   token chrome/ruler/paper — đã re-theme clay/Be Vietnam Pro
     compose.css            toàn bộ vỏ giao diện (ribbon, tab strip, nav, AI dock, doc stage)
-    slide.css              vỏ trình soạn slide (ribbon gallery/popup, stage, Format Pane)
+    slide.css              vỏ trình soạn slide (ribbon gallery/popup, stage, Format Pane, hoạ tiết theme, gallery bố cục)
     SlideRibbon.tsx        ribbon slide nhiều tab + nhóm lệnh + tab ngữ cảnh
     SlideEditor.tsx        trình soạn slide (thumbnail, stage, chọn/kéo/resize, AI dock)
     slideIcons.tsx         icon slide port GenOffice (canvas 24×24, nét 1.5px)
@@ -1580,6 +2747,7 @@ src/
     TabStrip.tsx           tab strip kiểu Chrome (tab "Bắt đầu" + icon theo loại tài liệu)
     StartTab.tsx           trang "Bắt đầu" (hero + thẻ loại tài liệu + danh sách Gần đây)
     AiPanel.tsx            panel AI (chat + starter + composer + đính kèm docx/xlsx/pdf/ảnh)
+    FileMenu.tsx           menu "Tệp" (Đề mới / Nhập file / Tải xuống) dùng chung 2 ribbon
     markdown.tsx           parse/render markdown tối giản cho chat AI (an toàn XSS) + Markdown
     NavPanel.tsx           nav pane (mục lục / khối mẫu / tìm kiếm) — dải tab có thẻ trượt
     templates.ts           BLOCK_TEMPLATES — nguồn duy nhất cho ribbon + nav panel
@@ -1593,11 +2761,27 @@ src/
   vite-env.d.ts            reference vite/client — để TS hiểu import *.svg
   pages/ComposeDoc.tsx     trang Soạn đề (ghép vỏ, auto-fit, save, print, export)
   store/compose.ts         store phiên nhiều tab (nội dung + deck, OpenTab.kind)
-  store/docs.ts            store tài liệu đã lưu (myDocs, saveDocById)
+  store/docs.ts            store tài liệu đã lưu (myDocs, saveDocById) + kiểu theme/deck/tone
   data/docTypes.ts         kiểu ExamBlock + RichText/Span/Mark/FormatAttrs + DocKind
   lib/llm.ts               client gọi /api/llm
+  lib/sources.ts           thang nguồn: đọc tệp, tìm myDocs, search web, rule/prompt nguồn
+  lib/importFile.ts        nhập docx/xlsx/pptx → block đề hoặc slide (text)
+  lib/exportDeck.ts        xuất bài giảng .pptx bằng pptxgenjs (nạp động)
+  lib/slideText.ts         chiều cao hộp chữ bám nội dung (elementHeight)
+  lib/slideMeasure.ts      typography engine: đo chữ + fitFontSize (dùng chung layout/FitText/PPTX)
+  lib/graphics.ts          112 icon SVG sinh tự động từ contact sheet (2 path/icon, 8 màu pastel)
+  lib/slideGraphics.ts     registry đồ hoạ: search không dấu, recolor nét, catalog text cho AI
+  lib/slideTheme.ts        catalog 10 theme + normalizeTheme/readableTextOn/themeById
+  lib/slideLayouts.ts      layout v1–v3: 19 bố cục + tone/art-directed + composeLayout/contentFromSlide
+  lib/aiDeck.ts            đọc JSON AI: deck một lượt + dàn ý (parseDeckPlan) + catalog text
+  lib/slideAi.ts           26b: sanitize/validate một slide + prompt trang/repair + chèn vào deck
+  lib/imageGen.ts          prompt ảnh từ slide + gọi /api/image + thu nhỏ JPEG
 server/llmProxy.ts         proxy LLM (env LLM_*, header x-opencode-session, middleware cho Vite)
-vite.config.ts             dev: mount /api/llm + nạp .env; manualChunks
+server/extract.ts          trích text docx/pdf/xlsx/csv/pptx — endpoint /api/extract
+server/searchProxy.ts      adapter Tavily cho /api/search (env TAVILY_API_KEY)
+server/imageProxy.ts       tạo ảnh Xkiro (sensenova-u1.5-lite) cho /api/image, key server-side
+server/http.ts             json/readBody dùng chung cho các endpoint
+vite.config.ts             dev: mount /api/llm, /api/extract, /api/search + nạp .env
 .env.example               mẫu cấu hình AI (được commit; .env thật bị gitignore)
 public/brand/
   logo-de-ro.svg           logo chính 194×72 (mark + chữ "đề rõ")
@@ -1607,10 +2791,22 @@ public/brand/
     doc.svg                icon Word cho tệp đính kèm AI
     sheet.svg              icon bảng tính cho tệp đính kèm AI
     pdf.svg                icon PDF cho tệp đính kèm AI
-scripts/test-convert.mjs   test round-trip converter (npm run test:convert) — 6/6 pass
-scripts/test-export.mjs    test đánh số + bảng phương án của bản Word/in — 4/4 pass
+scripts/test-convert.mjs   test round-trip converter (npm run test:convert) — 12/12 pass
+scripts/test-export.mjs    test đánh số + bảng phương án của bản Word/in — 5/5 pass
 scripts/test-layout.mjs    test chọn số cột phương án — 7/7 pass
+scripts/test-slide-text.mjs test chiều cao hộp chữ slide — 5/5 pass
+scripts/test-slide-theme.mjs test theme v2 (normalize/tương phản/catalog) — 4/4 pass
+scripts/test-slide-layout.mjs test layout v1–v3 (19 bố cục/geometry/quiz/tone) — 10/10 pass
+scripts/test-slide-measure.mjs test typography engine (đo chữ/fit 19 layout) — 9 nhóm pass
+scripts/test-slide-graphics.mjs test kho 112 đồ hoạ (registry/search/recolor/layout/prompt) — 19 nhóm pass
+scripts/import-graphics.mjs nhập contact sheet icon → src/lib/graphics.ts (chạy lại khi có đợt mới)
+scripts/test-slide-plan.mjs test dàn ý 26a (sanitize/catalog/không hồi quy) — 7 nhóm pass
+scripts/test-slide-ai.mjs test 26b+27a (sanitize/validate/ngân sách chữ/prompt/repair/chèn dần) — 10 nhóm pass
+scripts/test-image.mjs     test prompt tạo ảnh (tiêu đề + 3 ý, fallback) — 3/3 pass
+scripts/test-sources.mjs   test thang nguồn (myDocs + rule) — 4/4 pass
+scripts/test-extract.mjs   test trích tệp server-side (csv/.doc/.ppt/pptx) — 4/4 pass
 _ref/genoffice/            clone mã nguồn GenOffice (Apache-2.0) — tham chiếu (còn nguyên)
+_ref/soandethi/AI-SLIDE-AUDIT.md  audit workflow AI slide + motion (mục 3.36, lộ trình 6.8)
 ```
 
 ---
@@ -1628,16 +2824,28 @@ Start-Process cmd.exe -ArgumentList '/c','npm run dev -- --port 5184 --host 127.
 # kiểm tra
 npx tsc -b --noEmit
 npm run build
-npm run test:convert    # 6/6 pass
+npm run test:convert    # 12/12 pass
 npm run test:markdown   # 14/14 pass (parser markdown của chat AI)
-npm run test:export     # 4/4 pass (đánh số + phương án 2 cột khi xuất Word)
+npm run test:export     # 5/5 pass (đánh số + phương án 2 cột khi xuất Word)
 npm run test:layout     # 7/7 pass (chọn số cột phương án)
+npm run test:slide-text # 5/5 pass (chiều cao hộp chữ slide)
+npm run test:slide-theme # 4/4 pass (theme v2: normalize/tương phản/catalog)
+npm run test:slide-layout # 10/10 pass (layout v1+v2: 14 bố cục/quiz/tone)
+npm run test:slide-measure # 9 nhóm pass (đo chữ + fit 19 layout, bất biến không tràn)
+npm run test:slide-graphics # 19 nhóm pass (112 icon: registry/search/recolor/layout/prompt)
+npm run test:image      # 3/3 pass (prompt tạo ảnh từ nội dung slide)
+npm run test:sources    # 4/4 pass (thang nguồn + myDocs)
+npm run test:extract    # 4/4 pass (trích docx/pdf/xlsx/csv/pptx)
 ```
 
 **Cấu hình AI:** điền `LLM_API_KEY` vào `.env` ở gốc dự án (mẫu ở
-`.env.example`). `.env` đã bị gitignore. `npm run dev` tự mount `/api/llm`; bản
-production chạy `npx tsx server/llmProxy.ts` (tự nạp `.env`, mặc định cổng
-8787).
+`.env.example`). `.env` đã bị gitignore. `npm run dev` tự mount `/api/llm`,
+`/api/extract`, `/api/search`, `/api/image`; bản production chạy
+`npx tsx server/llmProxy.ts` (tự nạp `.env`, mặc định cổng 8787). Search web
+(ưu tiên 3) cần thêm `TAVILY_API_KEY`; để trống thì app bỏ qua bước search và
+báo trong chat. Tạo ảnh dùng `IMAGE_BASE_URL`/`IMAGE_API_KEY`/`IMAGE_MODEL`
+(mặc định Xkiro + `sensenova/sensenova-u1.5-lite`); thiếu env thì server đọc
+provider Xkiro từ `~/.zcode/v2/provider_config.json` của máy.
 
 Route ứng dụng: `http://127.0.0.1:5184/soan-de`
 

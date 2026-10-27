@@ -1,15 +1,47 @@
 /**
- * Đọc kết quả AI (dạng JSON deck) thành cấu trúc slide.
+ * Đọc kết quả AI cho slide: dàn ý (chặng 26a) và deck JSON đầy đủ.
  *
  * AI có thể trả về JSON thuần, JSON bọc trong ```json fence, hoặc lời văn
  * kèm JSON. Ta thử bóc fence trước, rồi tìm đoạn JSON đầu tiên hợp lệ.
  */
-import type { SlideElement } from '@/store/docs'
+import type { SlideElement, SlideTone } from '@/store/docs'
+import { isLayoutId, isTone, SLIDE_LAYOUTS } from './slideLayouts'
+import { DECK_THEMES } from './slideTheme'
+import { isStylePackId, stylePackCatalogText } from './slideStyles'
 
 export interface AiSlidePayload {
   title?: string
+  /** id layout của lib/slideLayouts.ts; thiếu/sai thì rơi về title+bullets cũ */
+  layout?: string
+  /** tông nền: theme | soft | accent; thiếu thì theo mặc định của layout */
+  tone?: string
+  kicker?: string
+  subtitle?: string
+  body?: string
   /** các ý chính dạng danh sách — dạng ngắn gọn AI hay trả về */
   bullets?: string[]
+  /** thẻ nội dung cho layout cards */
+  items?: string[]
+  /** hai cột cho layout two-column */
+  left?: string[]
+  right?: string[]
+  /** nhãn hai bên của layout comparison */
+  leftTitle?: string
+  rightTitle?: string
+  quote?: string
+  author?: string
+  /** bảng cho layout table */
+  rows?: string[][]
+  image?: string
+  /** id đồ hoạ vector trong catalog slideGraphics (ưu tiên hơn ảnh AI) */
+  graphic?: string
+  /** số liệu lớn cho layout stats */
+  stats?: Array<{ value?: string; label?: string }>
+  /** các bước cho timeline/cycle */
+  steps?: string[]
+  question?: string
+  options?: string[]
+  answer?: string | number
   /** ghi chú trình bày cho slide */
   notes?: string[]
   /** mô tả ngắn gọn nội dung deck */
@@ -18,34 +50,164 @@ export interface AiSlidePayload {
   elements?: Array<Partial<Omit<SlideElement, 'type'>> & { type?: string }>
 }
 
-export function parseAiDeck(text: string): { slides: AiSlidePayload[]; title?: string } | null {
-  const candidates: string[] = []
+/* ------------------------------------------------------------------ *
+ * Dàn ý (chặng 26a) — lượt 1 trả style + outline, chưa có nội dung chi tiết
+ * ------------------------------------------------------------------ */
 
-  const fence = text.match(/```(?:json)?\s*([\s\S]*?)```/i)
-  if (fence) candidates.push(fence[1])
+export interface DeckPlanSlide {
+  title: string
+  layout: string
+  tone?: SlideTone
+  kicker?: string
+  /** nội dung cần trình bày ở lượt sinh chi tiết */
+  brief?: string
+}
 
-  // đoạn ngoặc ngoài cùng
-  const first = text.indexOf('{')
-  const last = text.lastIndexOf('}')
-  if (first >= 0 && last > first) candidates.push(text.slice(first, last + 1))
+export interface DeckPlan {
+  title?: string
+  /** id trong DECK_THEMES; id lạ bị bỏ để deck giữ theme hiện tại */
+  theme?: string
+  audience?: string
+  /** phong cách trình bày, đưa vào prompt sinh từng slide */
+  style?: string
+  /** art direction (lib/slideStyles.ts); id lạ bị bỏ */
+  stylePack?: string
+  mainIdeas: string[]
+  slides: DeckPlanSlide[]
+}
 
-  candidates.push(text)
+/** Số slide tối đa của một dàn ý — chặn model trả về danh sách vô hạn. */
+const PLAN_MAX_SLIDES = 20
 
-  for (const raw of candidates) {
+const text = (value: unknown, max: number): string | undefined => {
+  if (typeof value !== 'string') return undefined
+  const cleaned = value.replace(/\s+/g, ' ').trim()
+  return cleaned ? cleaned.slice(0, max) : undefined
+}
+
+const textList = (value: unknown, maxItems: number, maxLen: number): string[] =>
+  Array.isArray(value)
+    ? value
+        .map((item) => text(item, maxLen))
+        .filter((item): item is string => !!item)
+        .slice(0, maxItems)
+    : []
+
+/** Mọi JSON đọc được trong phản hồi, theo thứ tự: fence → ngoặc ngoài → cả chuỗi. */
+function jsonCandidates(raw: string): unknown[] {
+  const raws: string[] = []
+  const fence = raw.match(/```(?:json)?\s*([\s\S]*?)```/i)
+  if (fence) raws.push(fence[1])
+  const first = raw.indexOf('{')
+  const last = raw.lastIndexOf('}')
+  if (first >= 0 && last > first) raws.push(raw.slice(first, last + 1))
+  raws.push(raw)
+
+  const parsed: unknown[] = []
+  for (const candidate of raws) {
     try {
-      const data = JSON.parse(raw.trim())
-      const slides = Array.isArray(data) ? data : data?.slides
-      if (Array.isArray(slides) && slides.length > 0) {
-        return {
-          slides: slides as AiSlidePayload[],
-          title: Array.isArray(data) ? undefined : data?.title,
-        }
-      }
+      parsed.push(JSON.parse(candidate.trim()))
     } catch {
-      // thử candidate tiếp theo
+      // thử ứng viên tiếp theo
+    }
+  }
+  return parsed
+}
+
+export function parseAiDeck(raw: string): { slides: AiSlidePayload[]; title?: string } | null {
+  for (const data of jsonCandidates(raw)) {
+    const slides = Array.isArray(data) ? data : (data as { slides?: unknown })?.slides
+    if (Array.isArray(slides) && slides.length > 0) {
+      return {
+        slides: slides as AiSlidePayload[],
+        title: Array.isArray(data)
+          ? undefined
+          : text((data as { title?: unknown }).title, 160),
+      }
     }
   }
   return null
+}
+
+/** Một object JSON bất kỳ trong phản hồi (dùng cho lượt sinh từng slide). */
+export function parseAiObject(raw: string): unknown | null {
+  for (const data of jsonCandidates(raw)) {
+    if (data && typeof data === 'object' && !Array.isArray(data)) return data
+  }
+  return null
+}
+
+/**
+ * Chuẩn hoá dàn ý: bỏ slide không có tiêu đề, layout/tone lạ về mặc định,
+ * theme lạ bỏ trống để không phá theme đang dùng. Trả null khi không có dàn ý.
+ */
+export function parseDeckPlan(raw: string): DeckPlan | null {
+  for (const data of jsonCandidates(raw)) {
+    if (!data || typeof data !== 'object') continue
+    const outer = data as Record<string, unknown>
+    const source =
+      outer.plan && typeof outer.plan === 'object'
+        ? (outer.plan as Record<string, unknown>)
+        : outer
+    const rawSlides = Array.isArray(source.slides) ? source.slides : null
+    if (!rawSlides?.length) continue
+
+    const slides: DeckPlanSlide[] = []
+    for (const item of rawSlides.slice(0, PLAN_MAX_SLIDES)) {
+      if (!item || typeof item !== 'object') continue
+      const slide = item as Record<string, unknown>
+      const title = text(slide.title, 160)
+      if (!title) continue
+      const kicker = text(slide.kicker, 80)
+      const brief = text(slide.brief, 400)
+      slides.push({
+        title,
+        layout:
+          typeof slide.layout === 'string' && isLayoutId(slide.layout)
+            ? slide.layout
+            : 'bullets',
+        ...(isTone(slide.tone) ? { tone: slide.tone } : {}),
+        ...(kicker ? { kicker } : {}),
+        ...(brief ? { brief } : {}),
+      })
+    }
+    if (!slides.length) continue
+
+    const themeId = text(source.theme, 40)
+    const packId = text(source.stylePack, 40)
+    return {
+      title: text(source.title, 160),
+      theme:
+        themeId && DECK_THEMES.some((theme) => theme.id === themeId) ? themeId : undefined,
+      ...(isStylePackId(packId) ? { stylePack: packId } : {}),
+      audience: text(source.audience, 120),
+      style: text(source.style, 600),
+      mainIdeas: textList(source.mainIdeas, 6, 160),
+      slides,
+    }
+  }
+  return null
+}
+
+/**
+ * Catalog layout + theme dạng text cho prompt — sinh từ chính hai catalog
+ * trong code để prompt không lệch khi thêm layout/theme.
+ */
+export function slideCatalogText(): string {
+  return [
+    'BỘ MÀU (chọn "theme" đúng một id — theo chủ đề, cảm xúc và đối tượng; tags chỉ là gợi ý, không bắt buộc theo môn):',
+    ...DECK_THEMES.map(
+      (theme) =>
+        `- ${theme.id}: ${theme.name}${theme.vibe ? ` — ${theme.vibe}` : ''}${theme.tags?.length ? ` (gợi ý: ${theme.tags.join(', ')})` : ''}${theme.dark ? ' — nền tối' : ''}`,
+    ),
+    '',
+    stylePackCatalogText(),
+    '',
+    'BỐ CỤC (chọn "layout" đúng một id; field trong ngoặc là field nội dung):',
+    ...SLIDE_LAYOUTS.map(
+      (layout) => `- ${layout.id}: ${layout.description} [${layout.fields.join(', ')}]`,
+    ),
+  ].join('\n')
 }
 
 /**

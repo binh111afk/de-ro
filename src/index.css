@@ -442,11 +442,11 @@
      khe hở, line-height chặt hơn thân bài để các dòng tiêu đề không bị rã. */
   .doc-content div[data-exam-node='examHeader'] {
     display: grid;
-    grid-template-columns: 34fr 66fr;
-    column-gap: calc(var(--doc-content-w, 642px) * 0.03);
+    grid-template-columns: 31fr 69fr;
+    column-gap: calc(var(--doc-content-w, 642px) * 0.069);
     align-items: start;
     font-weight: 700;
-    line-height: 1.2;
+    line-height: 1.5;
     margin: 0;
   }
   .doc-content div[data-exam-node='headerCol'] {
@@ -455,6 +455,10 @@
   }
   .doc-content div[data-exam-node='headerCol'] p {
     margin: 0;
+  }
+  /* Dòng "Thời gian làm bài…" là nghiêng thường, không đậm như các dòng khác. */
+  .doc-content div[data-exam-node='examHeader'] em {
+    font-weight: 400;
   }
   /* "ĐỀ CHÍNH THỨC" — khung viền quanh cụm chữ (mark boxed). */
   .doc-content .doc-boxed {

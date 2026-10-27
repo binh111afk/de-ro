@@ -6,11 +6,12 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { ExamBlock, ExamDoc } from '@/data/docTypes'
 import { emptyDoc, uid } from '@/data/docTypes'
+import { DECK_THEMES } from '@/lib/slideTheme'
 
 /* ------------------------------------------------------------------ *
  * Slide
  * ------------------------------------------------------------------ */
-export type SlideElType = 'text' | 'shape' | 'image' | 'table' | 'chart' | 'formula'
+export type SlideElType = 'text' | 'shape' | 'image' | 'icon' | 'graphic' | 'table' | 'chart' | 'formula'
 
 export interface SlideElement {
   id: string
@@ -22,13 +23,30 @@ export interface SlideElement {
   text?: string
   shape?: 'rect' | 'round' | 'ellipse' | 'triangle' | 'arrow'
   fill?: string
+  /** bóng đổ mềm cho thẻ/panel (renderer web; PPTX bỏ qua) */
+  shadow?: boolean
+  /** bo góc ghi đè theme (px) */
+  radius?: number
+  /** viền ghi đè theme (px, màu lấy `borderColor`) */
+  border?: number
+  borderColor?: string
   src?: string
+  /** icon semantic trong catalog slideAssets — optional để deck cũ không đổi */
+  assetId?: string
+  /** id đồ hoạ vector trong catalog slideGraphics (chặng 2) */
+  graphicId?: string
   rows?: string[][]
   chart?: { type: 'bar' | 'line' | 'pie'; data: Array<{ label: string; value: number }> }
   /** kiểu chữ: tiêu đề to hơn, nội dung nhỏ hơn */
   variant?: 'title' | 'body'
   /** cỡ chữ tính bằng cqw (1% bề rộng khung slide) — ghi đè khi cần */
   fontSize?: number
+  /** khoảng cách dòng (bội số cỡ chữ); mặc định 1.25 khi không có */
+  lineHeight?: number
+  /** khoảng cách chữ tính bằng em (vd. 0.12 cho nhãn in hoa) */
+  letterSpacing?: number
+  /** canh giữa dọc nội dung trong hộp (mặc định đỉnh hộp) */
+  valign?: 'top' | 'middle'
   fontWeight?: number
   fontFamily?: string
   textColor?: string
@@ -40,7 +58,14 @@ export interface SlideElement {
   flipY?: boolean
   /** góc xoay (độ, quanh tâm) — deck cũ không có field này vẫn đọc được */
   rotation?: number
+  /**
+   * Hộp chữ đã được kéo cao/thấp thủ công. Mặc định (undefined) chiều cao bám
+   * theo nội dung; xem `elementHeight` trong `lib/slideText.ts`.
+   */
+  fixedHeight?: boolean
 }
+
+export type SlideTone = 'theme' | 'soft' | 'accent'
 
 export interface Slide {
   id: string
@@ -48,6 +73,10 @@ export interface Slide {
   elements: SlideElement[]
   notes?: string
   transition?: 'none' | 'fade' | 'slide' | 'zoom'
+  /** id layout đã dựng slide (lib/slideLayouts.ts); deck cũ không có vẫn đọc được */
+  layout?: string
+  /** tông nền do layout/AI chọn; thiếu thì theo mặc định của layout */
+  tone?: SlideTone
 }
 
 export interface Deck {
@@ -55,26 +84,52 @@ export interface Deck {
   title: string
   theme: DeckTheme
   slides: Slide[]
+  /** phong cách AI đã chọn cho cả deck (từ dàn ý); chỉ để tái dùng khi sinh/sửa */
+  style?: string
   createdAt: string
   updatedAt: string
 }
 
+export type ThemeDecor = 'none' | 'dots' | 'grid' | 'waves' | 'confetti' | 'grain' | 'glow' | 'frame'
+
+export interface DeckFonts {
+  heading: string
+  body: string
+  serif: string
+  mono: string
+}
+
+/**
+ * Theme slide. `bg/fg/accent/fontHeading/fontBody` là bộ token gốc mà mọi deck
+ * (kể cả deck lưu trước chặng 21) đều có; các token sau là optional và được
+ * `normalizeTheme` (lib/slideTheme.ts) điền khi thiếu.
+ */
 export interface DeckTheme {
   bg: string
   fg: string
   accent: string
   fontHeading: string
   fontBody: string
+  id?: string
+  name?: string
+  tags?: string[]
+  /** mô tả ngắn về cảm giác/tông — để AI chọn theme cho chủ đề bất kỳ */
+  vibe?: string
+  decor?: ThemeDecor
+  dark?: boolean
+  surface?: string
+  muted?: string
+  secondary?: string
+  chart?: string[]
+  fonts?: DeckFonts
+  /** bo góc mặc định của thẻ/panel (px trên canvas 1280) */
+  radius?: number
+  /** kiểu bóng: soft (mềm), hard (khối lệch kiểu poster), none */
+  shadow?: 'none' | 'soft' | 'hard'
+  /** viền mặc định cho thẻ/panel (px) */
+  border?: number
+  borderColor?: string
 }
-
-export const DECK_THEMES: DeckTheme[] = [
-  { bg: '#ffffff', fg: '#111827', accent: '#2563eb', fontHeading: 'Figtree', fontBody: 'Figtree' },
-  { bg: '#0f172a', fg: '#f8fafc', accent: '#38bdf8', fontHeading: 'Figtree', fontBody: 'Figtree' },
-  { bg: '#fdf6ec', fg: '#3f2d1c', accent: '#c05a3c', fontHeading: 'Fraunces', fontBody: 'Figtree' },
-  { bg: '#f0fdf4', fg: '#14532d', accent: '#16a34a', fontHeading: 'Figtree', fontBody: 'Figtree' },
-  { bg: '#fef2f2', fg: '#7f1d1d', accent: '#dc2626', fontHeading: 'Fraunces', fontBody: 'Figtree' },
-  { bg: '#faf5ff', fg: '#4c1d95', accent: '#9333ea', fontHeading: 'Figtree', fontBody: 'Figtree' },
-]
 
 export function emptyDeck(title = 'Bài giảng mới'): Deck {
   const now = new Date().toISOString()
@@ -136,6 +191,7 @@ export interface DocStore {
   saveDeck: () => void
   /** lưu một deck theo id (dùng khi soạn slide trong tab) */
   saveDeckById: (deck: Deck) => void
+  renameDeck: (id: string, title: string) => void
   deleteDeck: (id: string) => void
 }
 
@@ -255,6 +311,12 @@ export const useDocStore = create<DocStore>()(
           myDecks: s.myDecks.some((d) => d.id === deck.id)
             ? s.myDecks.map((d) => (d.id === deck.id ? deck : d))
             : [deck, ...s.myDecks],
+        })),
+
+      renameDeck: (id, title) =>
+        set((s) => ({
+          myDecks: s.myDecks.map((d) => (d.id === id ? { ...d, title } : d)),
+          deck: s.deck?.id === id ? { ...s.deck, title } : s.deck,
         })),
     }),
     {

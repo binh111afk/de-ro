@@ -23,6 +23,82 @@
   container-type: inline-size;
 }
 
+/* Hoạ tiết nền theo theme (thuần CSS, không dùng ảnh). Vẽ ở lớp dưới cùng của
+   khung nên chữ/hình vẫn nằm trên; màu lấy từ `--slide-decor-ink`/`-accent` do
+   SlideEditor đặt theo theme. */
+.slide-frame[data-decor='dots']::before,
+.slide-frame[data-decor='grid']::before,
+.slide-frame[data-decor='waves']::before,
+.slide-frame[data-decor='confetti']::before,
+.slide-frame[data-decor='grain']::before,
+.slide-frame[data-decor='glow']::before,
+.slide-frame[data-decor='frame']::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.slide-frame[data-decor='dots']::before {
+  background-image: radial-gradient(var(--slide-decor-ink, #111827) 1px, transparent 1.2px);
+  background-size: 16px 16px;
+  opacity: 0.08;
+}
+
+.slide-frame[data-decor='grid']::before {
+  background-image:
+    linear-gradient(to right, var(--slide-decor-ink, #111827) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--slide-decor-ink, #111827) 1px, transparent 1px);
+  background-size: 32px 32px;
+  opacity: 0.02;
+}
+
+.slide-frame[data-decor='waves']::before {
+  background-image: repeating-radial-gradient(
+    circle at 0 100%,
+    transparent 0 22px,
+    var(--slide-decor-ink, #111827) 22px 23px,
+    transparent 23px 44px
+  );
+  background-size: 88px 88px;
+  opacity: 0.035;
+}
+
+.slide-frame[data-decor='confetti']::before {
+  background-image:
+    radial-gradient(circle at 12% 22%, var(--slide-decor-accent, #2563eb) 3px, transparent 3.4px),
+    radial-gradient(circle at 68% 12%, var(--slide-decor-ink, #111827) 2px, transparent 2.4px),
+    radial-gradient(circle at 34% 74%, var(--slide-decor-accent, #2563eb) 2.4px, transparent 2.8px),
+    radial-gradient(circle at 84% 66%, var(--slide-decor-ink, #111827) 2.8px, transparent 3.2px);
+  background-size: 180px 140px;
+  opacity: 0.16;
+}
+
+/* Vân giấy: hai lớp chấm lệch nhau rất nhỏ, đọc như giấy in. */
+.slide-frame[data-decor='grain']::before {
+  background-image:
+    radial-gradient(circle at 18% 27%, var(--slide-decor-ink, #111827) 0.5px, transparent 0.7px),
+    radial-gradient(circle at 71% 63%, var(--slide-decor-ink, #111827) 0.5px, transparent 0.7px);
+  background-size: 7px 9px, 11px 13px;
+  opacity: 0.07;
+}
+
+/* Hai vệt sáng lớn ở góc, tạo chiều sâu mà không cần ảnh. */
+.slide-frame[data-decor='glow']::before {
+  background-image:
+    radial-gradient(60% 55% at 100% 0%, var(--slide-decor-accent, #2563eb) 0%, transparent 62%),
+    radial-gradient(50% 45% at 0% 100%, var(--slide-decor-accent, #2563eb) 0%, transparent 66%);
+  opacity: 0.14;
+}
+
+/* Khung kép kiểu poster/print. */
+.slide-frame[data-decor='frame']::before {
+  inset: 3.2%;
+  border: 2px solid var(--slide-decor-ink, #111827);
+  opacity: 0.28;
+}
+
 .slide-stage .slide-frame {
   box-shadow: 0 2px 6px rgb(0 0 0 / 10%), 0 18px 48px -24px rgb(0 0 0 / 35%);
 }
@@ -165,7 +241,7 @@
   margin: 1px 0 0;
 }
 
-.slide-ribbon-color-dot {
+.slide-ribbon-tone-dot {
   display: block;
   width: 16px;
   height: 16px;
@@ -316,6 +392,500 @@
   border-color: var(--accent);
 }
 
+/* Gallery bố cục slide: 7 thẻ có hình xem trước thu nhỏ */
+.slide-layout-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 64px);
+  gap: 4px;
+}
+
+.slide-layout-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 3px 5px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: none;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.slide-layout-card:hover:not(:disabled) {
+  background: var(--hover);
+  border-color: var(--border);
+}
+
+.slide-layout-card.active {
+  border-color: var(--accent);
+}
+
+.slide-layout-card:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.slide-layout-card small {
+  font-size: 10.5px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.slide-layout-thumb {
+  position: relative;
+  display: block;
+  width: 56px;
+  height: 32px;
+  padding: 5px 6px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: var(--surface);
+}
+
+.slide-layout-thumb i {
+  display: block;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--text-tertiary);
+}
+
+.slide-layout-thumb--title,
+.slide-layout-thumb--section,
+.slide-layout-thumb--bullets,
+.slide-layout-thumb--closing {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.slide-layout-thumb--title,
+.slide-layout-thumb--closing {
+  align-items: center;
+  justify-content: center;
+}
+
+.slide-layout-thumb--title i:nth-child(1) {
+  width: 34px;
+  height: 4px;
+  background: var(--text-secondary);
+}
+
+.slide-layout-thumb--title i:nth-child(2) {
+  width: 22px;
+}
+
+.slide-layout-thumb--title i:nth-child(3) {
+  display: none;
+}
+
+.slide-layout-thumb--section {
+  justify-content: center;
+}
+
+.slide-layout-thumb--section i:nth-child(1) {
+  width: 12px;
+  background: var(--accent);
+}
+
+.slide-layout-thumb--section i:nth-child(2) {
+  width: 38px;
+  height: 4px;
+  background: var(--text-secondary);
+}
+
+.slide-layout-thumb--section i:nth-child(3) {
+  width: 28px;
+}
+
+.slide-layout-thumb--bullets {
+  justify-content: center;
+}
+
+.slide-layout-thumb--bullets i {
+  width: 100%;
+}
+
+.slide-layout-thumb--cards {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.slide-layout-thumb--cards i {
+  flex: 1;
+  height: 18px;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: var(--accent-soft);
+}
+
+.slide-layout-thumb--two-column {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.slide-layout-thumb--two-column i {
+  flex: 1;
+  height: 20px;
+  background: var(--border-strong);
+}
+
+.slide-layout-thumb--two-column i:nth-child(3) {
+  display: none;
+}
+
+.slide-layout-thumb--quote i {
+  display: none;
+}
+
+.slide-layout-thumb--quote::after {
+  content: '“';
+  position: absolute;
+  left: 6px;
+  top: 0;
+  color: var(--accent);
+  font-family: Georgia, serif;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.slide-layout-thumb--closing i:nth-child(1) {
+  width: 20px;
+  background: var(--accent);
+}
+
+.slide-layout-thumb--closing i:nth-child(2) {
+  width: 34px;
+  height: 4px;
+  background: var(--text-secondary);
+}
+
+.slide-layout-thumb--closing i:nth-child(3) {
+  width: 24px;
+}
+
+.slide-layout-thumb--table {
+  background-image:
+    repeating-linear-gradient(to bottom, transparent 0 7px, var(--border) 7px 8px),
+    repeating-linear-gradient(to right, transparent 0 14px, var(--border) 14px 15px);
+  background-position: 5px 5px;
+}
+
+.slide-layout-thumb--table i {
+  display: none;
+}
+
+.slide-layout-thumb--image-left i,
+.slide-layout-thumb--image-right i {
+  position: absolute;
+  height: auto;
+}
+
+.slide-layout-thumb--image-left i:nth-child(1),
+.slide-layout-thumb--image-right i:nth-child(1) {
+  top: 6px;
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--border);
+  background: var(--accent-soft);
+}
+
+.slide-layout-thumb--image-left i:nth-child(1) {
+  left: 5px;
+}
+
+.slide-layout-thumb--image-right i:nth-child(1) {
+  left: 31px;
+}
+
+.slide-layout-thumb--image-left i:nth-child(2),
+.slide-layout-thumb--image-left i:nth-child(3),
+.slide-layout-thumb--image-right i:nth-child(2),
+.slide-layout-thumb--image-right i:nth-child(3) {
+  width: 19px;
+}
+
+.slide-layout-thumb--image-left i:nth-child(2),
+.slide-layout-thumb--image-left i:nth-child(3) {
+  left: 30px;
+}
+
+.slide-layout-thumb--image-right i:nth-child(2),
+.slide-layout-thumb--image-right i:nth-child(3) {
+  left: 7px;
+}
+
+.slide-layout-thumb--image-left i:nth-child(2),
+.slide-layout-thumb--image-right i:nth-child(2) {
+  top: 11px;
+}
+
+.slide-layout-thumb--image-left i:nth-child(3),
+.slide-layout-thumb--image-right i:nth-child(3) {
+  top: 17px;
+}
+
+.slide-layout-thumb--stats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.slide-layout-thumb--stats i {
+  width: 10px;
+  height: 14px;
+  border-top: 2px solid var(--accent);
+  background: var(--accent-soft);
+}
+
+.slide-layout-thumb--stats i:nth-child(1) {
+  height: 10px;
+}
+
+.slide-layout-thumb--stats i:nth-child(3) {
+  height: 12px;
+}
+
+.slide-layout-thumb--timeline {
+  position: relative;
+}
+
+.slide-layout-thumb--timeline::before {
+  content: '';
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  top: 15px;
+  height: 1.5px;
+  background: var(--border-strong);
+}
+
+.slide-layout-thumb--timeline i {
+  position: absolute;
+  top: 13px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.slide-layout-thumb--timeline i:nth-child(1) {
+  left: 7px;
+}
+
+.slide-layout-thumb--timeline i:nth-child(2) {
+  left: 25px;
+}
+
+.slide-layout-thumb--timeline i:nth-child(3) {
+  left: 43px;
+}
+
+.slide-layout-thumb--cycle {
+  position: relative;
+}
+
+.slide-layout-thumb--cycle::before {
+  content: '';
+  position: absolute;
+  inset: 5px 7px;
+  border: 1px dashed var(--border-strong);
+  border-radius: 50%;
+}
+
+.slide-layout-thumb--cycle i {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.slide-layout-thumb--cycle i:nth-child(1) {
+  left: 24px;
+  top: 4px;
+}
+
+.slide-layout-thumb--cycle i:nth-child(2) {
+  left: 43px;
+  top: 13px;
+}
+
+.slide-layout-thumb--cycle i:nth-child(3) {
+  left: 24px;
+  top: 21px;
+}
+
+.slide-layout-thumb--cycle i:nth-child(4) {
+  left: 5px;
+  top: 13px;
+}
+
+.slide-layout-thumb--quiz {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3px;
+  align-content: center;
+}
+
+.slide-layout-thumb--quiz i {
+  height: 9px;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: var(--surface);
+}
+
+.slide-layout-thumb--quiz i:nth-child(2) {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+/* 5 bố cục art-directed (chặng 27a) — thumbnail riêng cho gallery */
+.slide-layout-thumb--statement {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+}
+
+.slide-layout-thumb--statement i:nth-child(1) {
+  width: 26px;
+  height: 4px;
+  background: var(--accent);
+}
+
+.slide-layout-thumb--statement i:nth-child(2) {
+  width: 34px;
+}
+
+.slide-layout-thumb--statement i:nth-child(3) {
+  width: 20px;
+}
+
+.slide-layout-thumb--agenda {
+  position: relative;
+}
+
+.slide-layout-thumb--agenda::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 15px;
+  background: var(--accent);
+}
+
+.slide-layout-thumb--agenda i {
+  position: absolute;
+  left: 21px;
+  width: 28px;
+}
+
+.slide-layout-thumb--agenda i:nth-child(1) {
+  top: 8px;
+}
+
+.slide-layout-thumb--agenda i:nth-child(2) {
+  top: 15px;
+}
+
+.slide-layout-thumb--agenda i:nth-child(3) {
+  top: 22px;
+}
+
+.slide-layout-thumb--comparison::before,
+.slide-layout-thumb--comparison::after {
+  content: '';
+  position: absolute;
+  top: 6px;
+  width: 18px;
+  height: 20px;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: var(--accent-soft);
+}
+
+.slide-layout-thumb--comparison::before {
+  left: 5px;
+}
+
+.slide-layout-thumb--comparison::after {
+  right: 5px;
+}
+
+.slide-layout-thumb--comparison i {
+  position: absolute;
+  left: 25px;
+  top: 13px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.slide-layout-thumb--comparison i:nth-child(2),
+.slide-layout-thumb--comparison i:nth-child(3) {
+  display: none;
+}
+
+.slide-layout-thumb--image-full::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--accent-soft);
+}
+
+.slide-layout-thumb--image-full i {
+  position: absolute;
+  left: 6px;
+  bottom: 7px;
+  width: 24px;
+  height: 3px;
+  background: var(--text-secondary);
+}
+
+.slide-layout-thumb--image-full i:nth-child(2),
+.slide-layout-thumb--image-full i:nth-child(3) {
+  display: none;
+}
+
+.slide-layout-thumb--stat-image::after {
+  content: '';
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  bottom: 5px;
+  width: 18px;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: var(--accent-soft);
+}
+
+.slide-layout-thumb--stat-image i {
+  position: absolute;
+  left: 6px;
+}
+
+.slide-layout-thumb--stat-image i:nth-child(1) {
+  top: 8px;
+  width: 13px;
+  height: 5px;
+  background: var(--accent);
+}
+
+.slide-layout-thumb--stat-image i:nth-child(2) {
+  top: 16px;
+  width: 19px;
+}
+
+.slide-layout-thumb--stat-image i:nth-child(3) {
+  top: 22px;
+  width: 15px;
+}
+
 .slide-ribbon-theme-grid {
   display: flex;
   gap: 6px;
@@ -353,9 +923,18 @@
   font-size: 12px;
 }
 
+.slide-ribbon-theme-preview b {
+  font-weight: 600;
+}
+
+.slide-ribbon-theme-bars {
+  display: flex;
+  gap: 3px;
+}
+
 .slide-ribbon-theme-preview i {
   display: block;
-  width: 26px;
+  width: 18px;
   height: 4px;
   border-radius: 1px;
 }
@@ -396,6 +975,78 @@ input.slide-rail-title:hover {
 input.slide-rail-title:focus {
   background: var(--hover);
   outline: none;
+}
+
+/* Ô chờ trong cột thumbnail khi AI đang sinh từng slide (chặng 26b).
+   Bề rộng/bo góc khớp thumbnail thật; vệt sáng chạy qua để thấy đang chờ. */
+.slide-skeleton {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border: 2px solid var(--border);
+  border-radius: 6px;
+  background: var(--hover);
+}
+
+.slide-skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 25%,
+    rgb(255 255 255 / 65%) 50%,
+    transparent 75%
+  );
+  transform: translateX(-100%);
+  animation: slide-skeleton-sweep 1.6s ease-in-out infinite;
+}
+
+.slide-skeleton__bar {
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  height: 5%;
+  border-radius: 3px;
+  background: var(--border);
+}
+
+/* thanh tiêu đề dày hơn, thanh cuối ngắn hơn để đọc ra "một slide" */
+.slide-skeleton__bar--title {
+  top: 18%;
+  right: 48%;
+  height: 9%;
+}
+
+.slide-skeleton__bar:nth-child(2) {
+  top: 42%;
+}
+
+.slide-skeleton__bar--short {
+  top: 56%;
+  right: 38%;
+}
+
+.slide-skeleton__index {
+  position: absolute;
+  bottom: 5px;
+  left: 7px;
+  font-size: 10px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-tertiary);
+}
+
+@keyframes slide-skeleton-sweep {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide-skeleton::after {
+    display: none;
+  }
 }
 
 /* ---------------------------------------------------------------- *

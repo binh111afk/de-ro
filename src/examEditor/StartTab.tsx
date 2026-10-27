@@ -7,12 +7,13 @@
  * Khác bản gốc: bản gốc liệt kê file trên đĩa; ở đây danh sách là các đề đã lưu
  * trong `useDocStore().myDocs`.
  */
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { ExamDoc } from '@/data/docTypes'
 import { docSize, formatBytes, useDocStore, type Deck } from '@/store/docs'
+import { useComposeStore } from '@/store/compose'
 import { cn } from '@/lib/cn'
 import { DocIcon, IconDocExam, IconDocSheet, IconDocSlide } from '@/components/docIcons'
-import { IconSearch } from './icons'
+import { IconPencil, IconSearch, IconTrash } from './icons'
 import { useSlidingThumb } from './useSlidingThumb'
 
 /** sub-lines của lời chào — chọn ngẫu nhiên mỗi lần mở, như bản gốc */
@@ -82,10 +83,45 @@ export function StartTab({
   const myDecks = useDocStore((s) => s.myDecks)
   const deleteDoc = useDocStore((s) => s.deleteDoc)
   const deleteDeck = useDocStore((s) => s.deleteDeck)
+  const renameDoc = useDocStore((s) => s.renameDoc)
+  const renameDeck = useDocStore((s) => s.renameDeck)
   const [query, setQuery] = useState('')
   const [filter, setFilter] = useState<FilterKey>('all')
   const [removing, setRemoving] = useState<string[]>([])
+  const [editing, setEditing] = useState<string | null>(null)
+  const [draft, setDraft] = useState('')
+  const editRef = useRef<HTMLInputElement>(null)
+  /** Esc huỷ: input bị gỡ có thể bắn blur → chặn commit một lần */
+  const cancelled = useRef(false)
   const [ask] = useState(() => GREET_ASKS[Math.floor(Math.random() * GREET_ASKS.length)]!)
+
+  useEffect(() => {
+    if (!editing) return
+    editRef.current?.focus()
+    editRef.current?.select()
+  }, [editing])
+
+  const startRename = (item: RecentItem) => {
+    cancelled.current = false
+    setEditing(item.id)
+    setDraft(item.title)
+  }
+
+  const commitRename = (item: RecentItem) => {
+    if (cancelled.current) {
+      cancelled.current = false
+      return
+    }
+    const title = draft.trim()
+    setEditing(null)
+    if (!title || title === item.title) return
+    if (item.kind === 'slide') renameDeck(item.id, title)
+    else renameDoc(item.id, title)
+    // tab đang mở cũng phải đổi tên, nếu không lần tự lưu sau ghi đè tên cũ
+    const compose = useComposeStore.getState()
+    compose.renameTab(item.id, title)
+    if (compose.decks[item.id]) compose.updateDeck(item.id, { title })
+  }
 
   /** xoá có animation: giữ dòng lại 170ms rồi mới bỏ khỏi store */
   const removeItem = (item: RecentItem) => {
@@ -265,6 +301,7 @@ export function StartTab({
                   </svg>
                 </span>
                 <span className="col-size">Kích thước</span>
+                <span />
               </div>
               <ul className="recent-list">
                 {docs.map((d) => (
@@ -272,36 +309,77 @@ export function StartTab({
                     key={d.id}
                     className={cn('recent-row-item', removing.includes(d.id) && 'is-removing')}
                   >
-                    <button
-                      type="button"
-                      className="recent-row"
-                      onClick={() => {
-                        if (d.kind === 'slide') onOpenDeck?.(d.deck!)
-                        else onOpenDoc(d.doc!)
-                      }}
-                      disabled={removing.includes(d.id)}
-                    >
-                      <span className="recent-item">
+                    {editing === d.id ? (
+                      <div className="recent-item">
                         <span className="recent-icon">
                           <DocIcon kind={d.kind} size={22} />
                         </span>
-                        <span className="recent-name">{d.title}</span>
+                        <input
+                          ref={editRef}
+                          className="recent-name-input"
+                          value={draft}
+                          aria-label={`Đổi tên ${d.title}`}
+                          onChange={(e) => setDraft(e.target.value)}
+                          onBlur={() => commitRename(d)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') commitRename(d)
+                            if (e.key === 'Escape') {
+                              cancelled.current = true
+                              setEditing(null)
+                            }
+                          }}
+                        />
                         <span className="recent-path">
                           {d.kind === 'slide' ? 'Bài giảng của tôi' : 'Đề của tôi'}
                         </span>
                         <span className="recent-time">{formatModified(d.updatedAt)}</span>
                         <span className="col-size recent-time">{formatBytes(d.size)}</span>
-                      </span>
-                    </button>
-                    <button
-                      type="button"
-                      className="recent-del"
-                      title="Xoá tệp"
-                      aria-label={`Xoá ${d.title}`}
-                      onClick={() => removeItem(d)}
-                    >
-                      Xoá
-                    </button>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        className="recent-row"
+                        onClick={() => {
+                          if (d.kind === 'slide') onOpenDeck?.(d.deck!)
+                          else onOpenDoc(d.doc!)
+                        }}
+                        disabled={removing.includes(d.id)}
+                      >
+                        <span className="recent-item">
+                          <span className="recent-icon">
+                            <DocIcon kind={d.kind} size={22} />
+                          </span>
+                          <span className="recent-name">{d.title}</span>
+                          <span className="recent-path">
+                            {d.kind === 'slide' ? 'Bài giảng của tôi' : 'Đề của tôi'}
+                          </span>
+                          <span className="recent-time">{formatModified(d.updatedAt)}</span>
+                          <span className="col-size recent-time">{formatBytes(d.size)}</span>
+                        </span>
+                      </button>
+                    )}
+                    {editing === d.id ? null : (
+                      <div className="recent-actions">
+                        <button
+                          type="button"
+                          className="recent-act"
+                          title="Đổi tên"
+                          aria-label={`Đổi tên ${d.title}`}
+                          onClick={() => startRename(d)}
+                        >
+                          <IconPencil size={16} />
+                        </button>
+                        <button
+                          type="button"
+                          className="recent-act recent-act--danger"
+                          title="Xoá tệp"
+                          aria-label={`Xoá ${d.title}`}
+                          onClick={() => removeItem(d)}
+                        >
+                          <IconTrash size={16} />
+                        </button>
+                      </div>
+                    )}
                   </li>
                 ))}
               </ul>

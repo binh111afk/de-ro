@@ -3,7 +3,7 @@ import { Extension } from '@tiptap/core'
 import { NodeSelection } from '@tiptap/pm/state'
 import { CellSelection } from '@tiptap/pm/tables'
 import type { Editor } from '@tiptap/core'
-import { getSelectedBlock } from './formatState'
+import { getTopBlock } from './formatState'
 
 function tableTarget(editor: Editor): { pos: number; node: ReturnType<typeof editor.state.doc.nodeAt> } | null {
   const $from = editor.state.selection.$from
@@ -64,7 +64,7 @@ export function deleteCurrentTableColumn(editor: Editor): boolean {
 }
 
 export function deleteCurrentBlock(editor: Editor): boolean {
-  const target = getSelectedBlock(editor)
+  const target = getTopBlock(editor)
   if (!target) return false
   const { state, view } = editor
   if (state.doc.childCount === 1) {

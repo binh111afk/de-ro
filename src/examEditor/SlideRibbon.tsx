@@ -59,6 +59,7 @@ import {
 } from './slideIcons'
 import { cn } from '@/lib/cn'
 import { Dropdown } from './Dropdown'
+import { FileMenu } from './FileMenu'
 import {
   RibbonBody,
   RibbonButton,
@@ -68,8 +69,15 @@ import {
   type RibbonTabDef,
 } from './Layout'
 import { useAnchoredPopover, popoverStyle } from './useAnchoredPopover'
-import type { Deck, DeckTheme, Slide, SlideElement, SlideElType } from '@/store/docs'
-import { DECK_THEMES } from '@/store/docs'
+import type { Deck, DeckTheme, Slide, SlideElement, SlideElType, SlideTone } from '@/store/docs'
+import { DECK_THEMES, normalizeTheme } from '@/lib/slideTheme'
+import {
+  SLIDE_LAYOUTS,
+  defaultTone,
+  isLayoutId,
+  isTone,
+  type SlideLayoutId,
+} from '@/lib/slideLayouts'
 
 export type SlideRibbonTab =
   | 'home'
@@ -93,6 +101,10 @@ export interface SlideRibbonProps {
   selected: SlideElement | null
   activeTab: SlideRibbonTab
   onTabChange: (tab: SlideRibbonTab) => void
+  /** menu Tệp: tạo bài giảng mới / nhập tệp / tải xuống */
+  onNewDeck?: () => void
+  onImportFile?: (file: File) => Promise<void>
+  onDownload?: () => void | Promise<void>
   onSave?: () => void
   onUndo: () => void
   onRedo: () => void
@@ -112,6 +124,10 @@ export interface SlideRibbonProps {
   onAlign: (action: 'left' | 'center' | 'right' | 'top' | 'middle' | 'bottom') => void
   onFlip: (axis: 'x' | 'y') => void
   onTheme: (theme: DeckTheme) => void
+  /** áp bố cục cho slide đang chọn (xác nhận trong SlideEditor) */
+  onApplyLayout: (layout: SlideLayoutId) => void
+  /** đổi tông nền cho slide đã có layout */
+  onTone: (tone: SlideTone) => void
   onTransition: (transition: NonNullable<Slide['transition']>, allSlides: boolean) => void
   onPresent: () => void
   formatPaneOpen: boolean
@@ -138,6 +154,8 @@ const CONTEXT_LABELS: Record<SlideElType, { id: SlideRibbonTab; label: string } 
   text: { id: 'shapeFormat', label: 'Định dạng hình' },
   shape: { id: 'shapeFormat', label: 'Định dạng hình' },
   image: { id: 'pictureFormat', label: 'Định dạng ảnh' },
+  icon: { id: 'shapeFormat', label: 'Định dạng hình' },
+  graphic: { id: 'shapeFormat', label: 'Định dạng đồ hoạ' },
   table: { id: 'tableDesign', label: 'Thiết kế bảng' },
   chart: { id: 'chartDesign', label: 'Thiết kế biểu đồ' },
   formula: null,
@@ -150,16 +168,10 @@ const TRANSITIONS: Array<{ id: NonNullable<Slide['transition']>; label: string }
   { id: 'zoom', label: 'Thu phóng' },
 ]
 
-const FONT_FAMILIES = ['Figtree', 'Be Vietnam Pro', 'Inter', 'Times New Roman', 'Arial', 'Georgia']
+const FONT_FAMILIES = ['Be Vietnam Pro', 'Times New Roman', 'Arial', 'Georgia', 'JetBrains Mono Variable']
 const FONT_SIZES = [12, 14, 16, 18, 20, 24, 28, 32, 36, 44, 54]
 /** 1cqw ≈ 9.6px ở khung 960px, 1pt ≈ 1.333px → 1pt ≈ 0.139cqw */
 const PT_TO_CQW = 0.139
-
-const THEME_NAMES = ['Sáng', 'Đêm xanh', 'Giấy ấm', 'Rừng', 'Tím', 'Đỏ']
-const THEMES: Array<DeckTheme & { name: string }> = DECK_THEMES.map((theme, i) => ({
-  ...theme,
-  name: THEME_NAMES[i] ?? theme.bg,
-}))
 
 function uid() {
   return Math.random().toString(36).slice(2, 10)
@@ -243,6 +255,9 @@ export function SlideRibbon(props: SlideRibbonProps) {
     selected,
     activeTab,
     onTabChange,
+    onNewDeck,
+    onImportFile,
+    onDownload,
     onSave,
     onUndo,
     onRedo,
@@ -262,6 +277,8 @@ export function SlideRibbon(props: SlideRibbonProps) {
     onAlign,
     onFlip,
     onTheme,
+    onApplyLayout,
+    onTone,
     onTransition,
     onPresent,
     formatPaneOpen,
@@ -389,7 +406,10 @@ export function SlideRibbon(props: SlideRibbonProps) {
             <Dropdown
               width={132}
               ariaLabel="Phông chữ"
-              value={selected?.fontFamily ?? deck.theme.fontBody}
+              value={
+                selected?.fontFamily ??
+                (selected && selected.variant !== 'body' ? deck.theme.fontHeading : deck.theme.fontBody)
+              }
               disabled={!isText}
               options={FONT_FAMILIES.map((f) => ({
                 value: f,
@@ -420,7 +440,7 @@ export function SlideRibbon(props: SlideRibbonProps) {
               className="rb-icon slide-ribbon-color-btn"
               title="Màu chữ"
               onMouseDown={(e) => e.preventDefault()}
-              onClick={() => onUpdateSelected({ textColor: selected?.textColor === deck.theme.accent ? '#111827' : deck.theme.accent })}
+              onClick={() => onUpdateSelected({ textColor: selected?.textColor === deck.theme.accent ? deck.theme.fg : deck.theme.accent })}
               disabled={!isText}
             >
               <span className="slide-ribbon-A">A</span>
@@ -505,7 +525,47 @@ export function SlideRibbon(props: SlideRibbonProps) {
     <>
       <RibbonGroup label="Slide">
         <RibbonButton icon={<IconNewSlide size={28} />} label="Slide mới" onClick={onAddSlide} />
-        <RibbonButton icon={<IconSlideLayout size={28} />} label="Bố cục" disabled />
+        <Anchored
+          open={popup === 'layout'}
+          minWidth={288}
+          trigger={
+            <RibbonButton
+              icon={<><IconSlideLayout size={28} /><Caret /></>}
+              label="Bố cục"
+              onClick={() => toggle('layout')}
+              active={popup === 'layout'}
+              disabled={!slide}
+            />
+          }
+        >
+          <div className="slide-ribbon-menu-title">Bố cục slide</div>
+          <div className="slide-layout-grid">
+            {SLIDE_LAYOUTS.map((layout) => (
+              <button
+                key={layout.id}
+                type="button"
+                className={cn('slide-layout-card', slide?.layout === layout.id && 'active')}
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => {
+                  onApplyLayout(layout.id)
+                  close()
+                }}
+                title={layout.description}
+                disabled={!slide}
+              >
+                <span
+                  className={cn('slide-layout-thumb', `slide-layout-thumb--${layout.id}`)}
+                  aria-hidden
+                >
+                  <i />
+                  <i />
+                  <i />
+                </span>
+                <small>{layout.name}</small>
+              </button>
+            ))}
+          </div>
+        </Anchored>
       </RibbonGroup>
       <div className="ribbon-sep" />
       <RibbonGroup label="Bảng">
@@ -576,22 +636,36 @@ export function SlideRibbon(props: SlideRibbonProps) {
     </>
   )
 
-  const renderDesign = () => (
+  const renderDesign = () => {
+    const activeThemeId = normalizeTheme(deck.theme).id
+    const activeTone = slide
+      ? isTone(slide.tone)
+        ? slide.tone
+        : defaultTone(slide.layout ?? 'bullets')
+      : 'theme'
+    const toneEnabled = Boolean(slide?.layout && isLayoutId(slide.layout))
+    return (
     <>
       <RibbonGroup label="Chủ đề">
         <div className="slide-ribbon-theme-grid">
-          {THEMES.map((theme) => (
+          {DECK_THEMES.map((theme) => (
             <button
-              key={theme.bg}
+              key={theme.id}
               type="button"
-              className={cn('slide-ribbon-theme-card', deck.theme.bg === theme.bg && 'active')}
+              className={cn('slide-ribbon-theme-card', activeThemeId === theme.id && 'active')}
               onMouseDown={(e) => e.preventDefault()}
               onClick={() => onTheme(theme)}
               title={theme.name}
             >
-              <span className="slide-ribbon-theme-preview" style={{ background: theme.bg, color: theme.fg }}>
+              <span
+                className="slide-ribbon-theme-preview"
+                style={{ background: theme.bg, color: theme.fg, fontFamily: theme.fonts?.heading }}
+              >
                 <b>Aa</b>
-                <i style={{ background: theme.accent }} />
+                <span className="slide-ribbon-theme-bars">
+                  <i style={{ background: theme.accent }} />
+                  <i style={{ background: theme.secondary ?? theme.accent }} />
+                </span>
               </span>
               <small>{theme.name}</small>
             </button>
@@ -599,14 +673,26 @@ export function SlideRibbon(props: SlideRibbonProps) {
         </div>
       </RibbonGroup>
       <div className="ribbon-sep" />
-      <RibbonGroup label="Nền">
-        {THEMES.map((theme) => (
+      <RibbonGroup label="Tông nền">
+        {(
+          [
+            ['theme', 'Theo theme', deck.theme.bg],
+            ['soft', 'Dịu', deck.theme.surface ?? deck.theme.bg],
+            ['accent', 'Nhấn', deck.theme.accent],
+          ] as const
+        ).map(([tone, label, color]) => (
           <RibbonIconButton
-            key={theme.bg}
-            icon={<span className="slide-ribbon-color-dot" style={{ background: theme.bg, borderColor: theme.accent }} />}
-            title={theme.name}
-            onClick={() => onTheme(theme)}
-            active={deck.theme.bg === theme.bg}
+            key={tone}
+            icon={
+              <span
+                className="slide-ribbon-tone-dot"
+                style={{ background: color, borderColor: deck.theme.fg }}
+              />
+            }
+            title={toneEnabled ? label : `${label} (áp bố cục trước)`}
+            onClick={() => onTone(tone)}
+            active={activeTone === tone}
+            disabled={!toneEnabled}
           />
         ))}
       </RibbonGroup>
@@ -615,7 +701,8 @@ export function SlideRibbon(props: SlideRibbonProps) {
         <RibbonButton icon={<IconPageSize size={28} />} label="Cỡ slide" disabled title="Chưa hỗ trợ" />
       </RibbonGroup>
     </>
-  )
+    )
+  }
 
   const renderTransitions = () => (
     <>
@@ -717,6 +804,16 @@ export function SlideRibbon(props: SlideRibbonProps) {
         onChange={(id) => onTabChange(id as SlideRibbonTab)}
         leading={
           <>
+            {onNewDeck && onImportFile ? (
+              <FileMenu
+                kind="slide"
+                onNew={onNewDeck}
+                onImport={onImportFile}
+                onDownload={onDownload ?? (() => {})}
+                downloadHint=".pptx"
+              />
+            ) : null}
+            <span className="qa-sep" aria-hidden="true" />
             {onSave && (
               <button type="button" className="qa-btn" title="Lưu" aria-label="Lưu" onClick={onSave}>
                 <IconSave size={16} />

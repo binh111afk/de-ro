@@ -16,16 +16,38 @@ import {
   RotateCw,
   Trash2,
 } from 'lucide-react'
+import { SLIDE_ASSETS, isSlideAssetId } from '@/lib/slideAssets'
+import { graphicMarkup, isGraphicId } from '@/lib/slideGraphics'
 import { EmptyState } from '@/components/ui'
 import { cn } from '@/lib/cn'
-import type { Deck, Slide, SlideElement } from '@/store/docs'
-import { parseAiDeck } from '@/lib/aiDeck'
+import type { Deck, DeckTheme, Slide, SlideElement, SlideTone } from '@/store/docs'
+import { parseAiDeck, type AiSlidePayload, type DeckPlan } from '@/lib/aiDeck'
+import { exportDeckPptx } from '@/lib/exportDeck'
+import { elementHeight } from '@/lib/slideText'
+import { normalizeTheme, readableTextOn, type ResolvedTheme } from '@/lib/slideTheme'
+import { appendSlidesToDeck } from '@/lib/slideAi'
+import { buildImagePrompt, generateSlideImage } from '@/lib/imageGen'
+import {
+  SLIDE_LAYOUTS,
+  composeLayout,
+  contentFromSlide,
+  defaultTone,
+  isLayoutId,
+  isTone,
+  toneBackground,
+  withPlaceholders,
+  type SlideLayoutId,
+} from '@/lib/slideLayouts'
 import { AiPanel } from './AiPanel'
 import { AiDock } from './Layout'
 import { SlideRibbon, type SlideRibbonTab } from './SlideRibbon'
 
 const uid = () => Math.random().toString(36).slice(2, 10)
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
+
+/** biến màu cho hoạ tiết nền `.slide-frame[data-decor]` (slide.css) */
+const decorStyle = (theme: ResolvedTheme): React.CSSProperties =>
+  ({ '--slide-decor-ink': theme.fg, '--slide-decor-accent': theme.secondary }) as React.CSSProperties
 
 export interface SlideEditorProps {
   deck: Deck
@@ -35,6 +57,10 @@ export interface SlideEditorProps {
   onSave?: () => void
   /** tiêu đề deck, sửa tại chỗ */
   onRename?: (title: string) => void
+  /** menu Tệp: tạo bài giảng mới trong tab khác */
+  onNewDeck?: () => void
+  /** menu Tệp: nhập .pptx/.docx/.xlsx thành tab bài giảng mới */
+  onImportFile?: (file: File) => Promise<void>
 }
 
 export function SlideEditor({
@@ -42,6 +68,8 @@ export function SlideEditor({
   updateDeck,
   onSave,
   onRename,
+  onNewDeck,
+  onImportFile,
 }: SlideEditorProps) {
   const [selectedSlideId, setSelectedSlideId] = useState<string | null>(null)
   const [selectedElementId, setSelectedElementId] = useState<string | null>(null)
@@ -55,10 +83,25 @@ export function SlideEditor({
   /** chỉ số slide đang kéo + vị trí chèn (0..n) khi kéo thumbnail */
   const [dragIndex, setDragIndex] = useState<number | null>(null)
   const [dropPos, setDropPos] = useState<number | null>(null)
+  /** AI đang sinh slide: cột thumbnail vẽ ô chờ skeleton (chặng 26b) */
+  const [pendingSlides, setPendingSlides] = useState<{ done: number; total: number } | null>(null)
   const historyRef = useRef<{ past: Deck[]; future: Deck[] }>({ past: [], future: [] })
+  /** deck mới nhất — ảnh AI tạo xong sau ~20s không được ghi đè sửa đổi trong lúc chờ */
+  const deckRef = useRef(deck)
+  /** vừa kéo/resize/xoay: bỏ qua cú click kế tiếp rơi ra ngoài phần tử */
+  const didDragRef = useRef(false)
 
   const slides = deck.slides
-  const theme = deck.theme
+  /** số ô skeleton còn chờ trong cột thumbnail (trang bị bỏ cũng tính là xong) */
+  const pendingCount = pendingSlides
+    ? Math.max(0, pendingSlides.total - pendingSlides.done)
+    : 0
+  /** theme đã điền đủ token — deck cũ chỉ có bg/fg/accent vẫn dựng đúng */
+  const theme = useMemo(() => normalizeTheme(deck.theme), [deck.theme])
+
+  useEffect(() => {
+    deckRef.current = deck
+  }, [deck])
 
   const currentSlide = useMemo(
     () => slides.find((s) => s.id === selectedSlideId) ?? slides[0] ?? null,
@@ -171,6 +214,32 @@ export function SlideEditor({
     setSelectedElementId(null)
   }
 
+  /** Ghi ảnh AI xong vào đúng phần tử, dựa trên deck mới nhất lúc hoàn tất. */
+  const setElementImage = (slideId: string, elId: string, src: string) => {
+    const latest = deckRef.current
+    historyRef.current.past = [...historyRef.current.past, latest].slice(-50)
+    historyRef.current.future = []
+    updateDeck({
+      slides: latest.slides.map((slide) =>
+        slide.id === slideId
+          ? {
+              ...slide,
+              elements: slide.elements.map((el) => (el.id === elId ? { ...el, src } : el)),
+            }
+          : slide,
+      ),
+    })
+  }
+
+  /** Prompt lấy từ tiêu đề + ý chính của slide đang chứa ảnh. */
+  const generateImageFor = async (slideId: string, elId: string) => {
+    const slide = slides.find((s) => s.id === slideId)
+    if (!slide) return
+    const content = contentFromSlide(slide)
+    const image = await generateSlideImage(buildImagePrompt(content.title, content.bullets))
+    setElementImage(slideId, elId, image.dataUrl)
+  }
+
   const previewElement = useCallback(
     (slideId: string, elId: string, patch: Partial<SlideElement>) => {
       updateDeck({
@@ -254,7 +323,8 @@ export function SlideEditor({
 
   const alignSelected = (action: 'left' | 'center' | 'right' | 'top' | 'middle' | 'bottom') => {
     if (!currentSlide || !selectedElement) return
-    const patch = action === 'left' ? { x: 0 } : action === 'center' ? { x: (100 - selectedElement.w) / 2 } : action === 'right' ? { x: 100 - selectedElement.w } : action === 'top' ? { y: 0 } : action === 'middle' ? { y: (100 - selectedElement.h) / 2 } : { y: 100 - selectedElement.h }
+    const h = elementHeight(selectedElement)
+    const patch = action === 'left' ? { x: 0 } : action === 'center' ? { x: (100 - selectedElement.w) / 2 } : action === 'right' ? { x: 100 - selectedElement.w } : action === 'top' ? { y: 0 } : action === 'middle' ? { y: (100 - h) / 2 } : { y: 100 - h }
     updateElement(currentSlide.id, selectedElement.id, patch)
   }
 
@@ -263,76 +333,111 @@ export function SlideEditor({
     updateElement(currentSlide.id, selectedElement.id, axis === 'x' ? { flipX: !selectedElement.flipX } : { flipY: !selectedElement.flipY })
   }
 
-  const applyTheme = (nextTheme: typeof theme) => {
-    commitDeck({ ...deck, theme: nextTheme, slides: deck.slides.map((s) => ({ ...s, background: nextTheme.bg })) })
+  /**
+   * Đổi theme: slide có layout được dựng lại để màu/font khớp theme mới (màu chữ
+   * của layout là màu cụ thể, không tự theo theme); slide freeform giữ hành vi cũ.
+   */
+  const applyTheme = (nextTheme: DeckTheme) => {
+    commitDeck({
+      ...deck,
+      theme: nextTheme,
+      slides: deck.slides.map((slide) => {
+        if (slide.layout && isLayoutId(slide.layout)) {
+          const tone = isTone(slide.tone) ? slide.tone : defaultTone(slide.layout)
+          const elements = composeLayout(
+            nextTheme,
+            slide.layout,
+            contentFromSlide(slide),
+            tone,
+          )
+          if (elements.length > 0) {
+            return { ...slide, tone, background: toneBackground(nextTheme, tone), elements }
+          }
+        }
+        return { ...slide, background: nextTheme.bg }
+      }),
+    })
+  }
+
+  /** Đổi tông cho slide đã có layout; dựng lại phần tử theo tông mới. */
+  const applyTone = (tone: SlideTone) => {
+    if (!currentSlide?.layout || !isLayoutId(currentSlide.layout)) return
+    const elements = composeLayout(
+      deck.theme,
+      currentSlide.layout,
+      contentFromSlide(currentSlide),
+      tone,
+    )
+    if (elements.length === 0) return
+    patchSlide(currentSlide.id, {
+      tone,
+      background: toneBackground(deck.theme, tone),
+      elements,
+    })
   }
 
   const onUpdateSelected = (patch: Partial<SlideElement>) => {
     if (currentSlide && selectedElement) updateElement(currentSlide.id, selectedElement.id, patch)
   }
 
-  const applyAiResult = (text: string) => {
+  /** Áp layout cho slide đang chọn; hỏi trước vì thay toàn bộ phần tử. */
+  const applyLayout = (layoutId: SlideLayoutId) => {
+    if (!currentSlide) return
+    const name = SLIDE_LAYOUTS.find((layout) => layout.id === layoutId)?.name ?? layoutId
+    if (!window.confirm(`Áp bố cục "${name}"? Nội dung hiện tại của slide sẽ được thay.`)) return
+    const content = withPlaceholders(layoutId, contentFromSlide(currentSlide))
+    const tone = defaultTone(layoutId)
+    const elements = composeLayout(deck.theme, layoutId, content, tone)
+    if (elements.length === 0) return
+    patchSlide(currentSlide.id, {
+      layout: layoutId,
+      tone,
+      background: toneBackground(deck.theme, tone),
+      elements,
+    })
+  }
+
+  /**
+   * Nối slide AI vào **deck mới nhất** (deckRef), không dùng `deck` của lần
+   * render trước: các trang sinh xong cách nhau vài giây, người dùng có thể đã
+   * sửa/xoá slide trong lúc chờ. Việc dựng slide + đổi theme nằm ở
+   * `appendSlidesToDeck` (lib/slideAi.ts) để test được.
+   */
+  const appendAiSlides = (pages: AiSlidePayload[], plan?: DeckPlan) => {
+    if (!pages.length) return
+    const latest = deckRef.current
+    const { patch, added } = appendSlidesToDeck(latest, pages, plan)
+    if (!added.length) return
+
+    historyRef.current.past = [...historyRef.current.past, latest].slice(-50)
+    historyRef.current.future = []
+    deckRef.current = { ...latest, ...patch }
+    updateDeck(patch)
+    setSelectedSlideId(added[0].id)
+    setSelectedElementId(null)
+  }
+
+  /** Đường deck một lượt (dàn ý không parse được hoặc câu trả lời cũ). */
+  const applyAiResult = (text: string, plan?: DeckPlan) => {
     const parsed = parseAiDeck(text)
     if (!parsed) return
-    const newSlides: Slide[] = parsed.slides.map((s) => {
-      const bullets = s.bullets ?? []
-      // co chữ theo độ dài nội dung để không tràn khung slide
-      const bodyChars = bullets.join(' ').length
-      const bodySize = bodyChars > 420 ? 1.9 : bodyChars > 260 ? 2.2 : 2.5
-      const elements: SlideElement[] = [
-        {
-          id: uid(),
-          type: 'text',
-          x: 8,
-          y: 10,
-          w: 84,
-          h: 16,
-          variant: 'title',
-          text: s.title,
-        },
-        // dạng "bullets": gộp các ý thành một khối chữ, xuống dòng bằng \n
-        ...(bullets.length
-          ? [
-              {
-                id: uid(),
-                type: 'text' as const,
-                x: 8,
-                y: 32,
-                w: 84,
-                h: 52,
-                variant: 'body' as const,
-                fontSize: bodySize,
-                text: bullets.map((b) => `• ${b}`).join('\n'),
-              },
-            ]
-          : []),
-        ...(s.elements ?? []).map((e) => ({
-          id: uid(),
-          type: (e.type ?? 'text') as SlideElement['type'],
-          x: e.x ?? 8,
-          y: e.y ?? 32,
-          w: e.w ?? 84,
-          h: e.h ?? 24,
-          text: e.text,
-          shape: e.shape,
-          fill: e.fill,
-          src: e.src,
-          rows: e.rows,
-          chart: e.chart,
-        })),
-      ]
-      return {
-        id: uid(),
-        background: deck.theme.bg,
-        transition: 'none',
-        notes: s.notes?.join('\n') || undefined,
-        elements,
+    appendAiSlides(parsed.slides, plan)
+  }
+
+  /** Đường 26b: mỗi trang xong được chèn ngay, đúng thứ tự. */
+  const applyAiSlide = async (page: AiSlidePayload, plan: DeckPlan) => {
+    const needsImage = ['image-left', 'image-right', 'image-full', 'stat-image'].includes(page.layout ?? '')
+    if (needsImage && !page.image && !page.graphic) {
+      try {
+        const bullets = page.bullets ?? page.steps ?? page.items ?? []
+        const orientation = page.layout === 'image-left' || page.layout === 'image-right' ? 'portrait' : 'landscape'
+        const generated = await generateSlideImage(buildImagePrompt(page.title, bullets, orientation))
+        page = { ...page, image: generated.dataUrl }
+      } catch {
+        // Giữ slide với placeholder theme nếu provider ảnh tạm thời không dùng được.
       }
-    })
-    if (newSlides.length === 0) return
-    commitDeck({ ...deck, slides: [...deck.slides, ...newSlides] })
-    setSelectedSlideId(newSlides[0].id)
-    setSelectedElementId(null)
+    }
+    appendAiSlides([page], plan)
   }
 
   /* ---------------------------------------------------------------- *
@@ -349,10 +454,11 @@ export function SlideEditor({
         <div className="flex flex-1 items-center justify-center p-6">
           <div
             className="slide-frame relative aspect-[16/9] w-full max-w-[1200px] overflow-hidden shadow-2xl"
-            style={{ background: slide.background }}
+            data-decor={theme.decor}
+            style={{ background: slide.background, ...decorStyle(theme) }}
           >
             {slide.elements.map((el) => (
-              <SlideElView key={el.id} el={el} />
+              <SlideElView key={el.id} el={el} theme={theme} />
             ))}
           </div>
         </div>
@@ -402,6 +508,9 @@ export function SlideEditor({
         selected={selectedElement}
         activeTab={ribbonTab}
         onTabChange={setRibbonTab}
+        onNewDeck={onNewDeck}
+        onImportFile={onImportFile}
+        onDownload={() => exportDeckPptx(deck)}
         onSave={onSave}
         onUndo={undo}
         onRedo={redo}
@@ -421,6 +530,8 @@ export function SlideEditor({
         onAlign={alignSelected}
         onFlip={flipSelected}
         onTheme={applyTheme}
+        onApplyLayout={applyLayout}
+        onTone={applyTone}
         onTransition={(transition, allSlides) => {
           if (allSlides) commitDeck({ ...deck, slides: deck.slides.map((s) => ({ ...s, transition })) })
           else if (currentSlide) patchSlide(currentSlide.id, { transition })
@@ -504,7 +615,7 @@ export function SlideEditor({
                   currentSlide?.id === s.id ? 'border-clay' : 'border-line',
                 )}
               >
-                <SlideThumb slide={s} />
+                <SlideThumb slide={s} theme={theme} />
                 <span className="absolute bottom-1 left-1.5 rounded bg-black/55 px-1.5 py-0.5 text-[10px] font-semibold text-white">
                   {i + 1}
                 </span>
@@ -529,6 +640,19 @@ export function SlideEditor({
               </div>
             </div>
           ))}
+          {Array.from({ length: pendingCount }, (_, i) => (
+            <div
+              key={`pending-${i}`}
+              className="slide-skeleton"
+              aria-hidden="true"
+              title="AI đang viết slide…"
+            >
+              <span className="slide-skeleton__bar slide-skeleton__bar--title" />
+              <span className="slide-skeleton__bar" />
+              <span className="slide-skeleton__bar slide-skeleton__bar--short" />
+              <span className="slide-skeleton__index">{deck.slides.length + i + 1}</span>
+            </div>
+          ))}
         </div>
       </aside>
 
@@ -544,8 +668,17 @@ export function SlideEditor({
                   <span>{{ x: 'X', y: 'Y', w: 'Rộng', h: 'Cao' }[key]}</span>
                   <input
                     type="number"
-                    value={Math.round(selectedElement[key])}
-                    onChange={(e) => updateElement(currentSlide.id, selectedElement.id, { [key]: Number(e.target.value) })}
+                    value={Math.round(key === 'h' ? elementHeight(selectedElement) : selectedElement[key])}
+                    onChange={(e) => {
+                      const value = Number(e.target.value)
+                      updateElement(
+                        currentSlide.id,
+                        selectedElement.id,
+                        key === 'h' && selectedElement.type === 'text'
+                          ? { h: value, fixedHeight: true }
+                          : { [key]: value },
+                      )
+                    }}
                   />
                   <em>%</em>
                 </label>
@@ -555,7 +688,7 @@ export function SlideEditor({
                   <span>Màu</span>
                   <input
                     type="color"
-                    value={selectedElement.textColor ?? '#111827'}
+                    value={selectedElement.textColor ?? theme.fg}
                     onChange={(e) => updateElement(currentSlide.id, selectedElement.id, { textColor: e.target.value })}
                   />
                 </label>
@@ -580,7 +713,15 @@ export function SlideEditor({
             {currentSlide ? (
               <div
                 className="slide-frame relative aspect-[16/9] w-full overflow-hidden bg-white shadow-[0_2px_24px_-8px_rgba(35,32,28,0.35)]"
-                style={{ background: currentSlide.background }}
+                data-decor={theme.decor}
+                style={{ background: currentSlide.background, ...decorStyle(theme) }}
+                onClickCapture={(e) => {
+                  // Kéo xoay/resize có thể nhả chuột ngoài phần tử; đừng để cú
+                  // click rơi vào nền xoá mất vùng chọn vừa thao tác.
+                  if (!didDragRef.current) return
+                  e.stopPropagation()
+                  didDragRef.current = false
+                }}
                 onClick={() => setSelectedElementId(null)}
               >
                 {currentSlide.elements.map((el) => (
@@ -590,9 +731,16 @@ export function SlideEditor({
                     theme={theme}
                     selected={selectedElementId === el.id}
                     onSelect={() => setSelectedElementId(el.id)}
+                    onDragEnd={() => {
+                      didDragRef.current = true
+                      window.setTimeout(() => {
+                        didDragRef.current = false
+                      }, 0)
+                    }}
                     onBeginHistory={beginHistory}
                     onPreview={(patch) => previewElement(currentSlide.id, el.id, patch)}
                     onChange={(patch) => updateElement(currentSlide.id, el.id, patch)}
+                    onGenerateImage={() => generateImageFor(currentSlide.id, el.id)}
                   />
                 ))}
               </div>
@@ -612,6 +760,8 @@ export function SlideEditor({
         <AiPanel
           mode="slide"
           onApplySlides={applyAiResult}
+          onAppendSlide={applyAiSlide}
+          onPendingSlides={setPendingSlides}
           contextSummary={`bài giảng "${deck.title}", ${deck.slides.length} slide`}
         />
       </AiDock>
@@ -627,14 +777,15 @@ export function SlideEditor({
  * Thumbnail một slide — dùng trong cột thumbnail của editor và bảng "Gần đây"
  * ở tab Bắt đầu.
  */
-export function SlideThumb({ slide }: { slide: Slide }) {
+export function SlideThumb({ slide, theme }: { slide: Slide; theme: ResolvedTheme }) {
   return (
     <div
       className="slide-frame relative aspect-[16/9] w-full overflow-hidden"
-      style={{ background: slide.background }}
+      data-decor={theme.decor}
+      style={{ background: slide.background, ...decorStyle(theme) }}
     >
       {slide.elements.map((el) => (
-        <SlideElView key={el.id} el={el} />
+        <SlideElView key={el.id} el={el} theme={theme} />
       ))}
     </div>
   )
@@ -644,6 +795,24 @@ export function SlideThumb({ slide }: { slide: Slide }) {
  * Khối chữ trong slide ở chế độ xem: tự co cỡ chữ cho tới khi nội dung
  * vừa khung, nên nội dung dài (AI sinh nhiều ý) không bị cắt.
  */
+/**
+ * Fit lại chữ khi webfont load xong. Font swap đổi bề rộng ký tự → số dòng đổi,
+ * nhưng kích thước hộp không đổi nên ResizeObserver không bắt được. Thiếu bước
+ * này, lần fit đầu (font fallback) tưởng vừa nhưng hiển thị thật lại tràn 1–2px.
+ */
+function refitOnFonts(fit: () => void): () => void {
+  let alive = true
+  const run = () => {
+    if (alive) fit()
+  }
+  document.fonts?.ready.then(run).catch(() => {})
+  document.fonts?.addEventListener('loadingdone', run)
+  return () => {
+    alive = false
+    document.fonts?.removeEventListener('loadingdone', run)
+  }
+}
+
 function FitText({
   children,
   baseSize,
@@ -672,7 +841,9 @@ function FitText({
         return el.scrollHeight <= el.clientHeight + 1
       }
       if (!fits(s)) while (s > min && !fits(s)) s -= 0.1
-      const final = Math.round(s * 10) / 10
+      // giữ 2 chữ số: compose-time đã fit tới 0,01cqw, làm tròn lên 0,1 sẽ
+      // biến 2,45 thành 2,5 và gây tràn đúng ở biên
+      const final = Math.floor(s * 100) / 100
       setSize(final)
       el.style.fontSize = `${final}cqw`
     }
@@ -680,7 +851,11 @@ function FitText({
     // hộp đổi kích thước (kéo tay nắm) cũng phải fit lại, không chỉ khi đổi chữ
     const ro = new ResizeObserver(fit)
     ro.observe(el)
-    return () => ro.disconnect()
+    const stopFonts = refitOnFonts(fit)
+    return () => {
+      stopFonts()
+      ro.disconnect()
+    }
   }, [children, baseSize])
 
   return (
@@ -688,7 +863,6 @@ function FitText({
       ref={ref}
       style={{
         ...style,
-        fontFamily: 'Figtree, sans-serif',
         fontSize: `${size}cqw`,
         whiteSpace: 'pre-wrap',
         overflow: 'hidden',
@@ -711,7 +885,12 @@ function elTransform(el: SlideElement): string | undefined {
   return t || undefined
 }
 
-function SlideElView({ el }: { el: SlideElement }) {
+/** font của theme đã là CSS stack đầy đủ, font người dùng chọn chỉ là tên */
+function fontStack(font: string): string {
+  return font.includes(',') ? font : `${font}, sans-serif`
+}
+
+function SlideElView({ el, theme }: { el: SlideElement; theme: ResolvedTheme }) {
   const style: React.CSSProperties = {
     position: 'absolute',
     left: `${el.x}%`,
@@ -721,21 +900,29 @@ function SlideElView({ el }: { el: SlideElement }) {
     zIndex: el.zIndex,
     transform: elTransform(el),
   }
+  const isBody = el.variant === 'body'
 
   if (el.type === 'text') {
-    const size = el.fontSize ?? (el.variant === 'body' ? 2.4 : 3.6)
+    const size = el.fontSize ?? (isBody ? 2.4 : 3.6)
     return (
       <FitText
         style={{
           ...style,
-          color: el.textColor ?? '#000',
-          fontFamily: el.fontFamily ? `${el.fontFamily}, sans-serif` : 'Figtree, sans-serif',
-          fontWeight: el.fontWeight ?? (el.variant === 'body' ? 500 : 600),
+          color: el.textColor ?? theme.fg,
+          background: el.fill,
+          borderRadius: el.fill ? '0.6cqw' : undefined,
+          fontFamily: fontStack(el.fontFamily ?? (isBody ? theme.fonts.body : theme.fonts.heading)),
+          fontWeight: el.fontWeight ?? (isBody ? 500 : 600),
           fontStyle: el.fontStyle,
           textDecoration: el.textDecoration,
           textAlign: el.align,
-          lineHeight: 1.25,
-          padding: '1%',
+          lineHeight: el.lineHeight ?? 1.25,
+          letterSpacing: el.letterSpacing ? `${el.letterSpacing}em` : undefined,
+          // ô có nền canh giữa dọc: chữ nằm giữa khung thay vì dồn về phía trên
+          padding: el.fill ? '1.5% 3%' : '1%',
+          ...(el.fill || el.valign === 'middle'
+            ? { display: 'flex', flexDirection: 'column', justifyContent: 'center' }
+            : {}),
         }}
         baseSize={size}
       >
@@ -744,8 +931,37 @@ function SlideElView({ el }: { el: SlideElement }) {
     )
   }
 
+  if (el.type === 'icon') {
+    const Icon = isSlideAssetId(el.assetId) ? SLIDE_ASSETS[el.assetId].icon : null
+    return Icon ? <Icon size="100%" weight="duotone" style={{ ...style, padding: '1%', color: el.textColor ?? theme.accent }} /> : null
+  }
+
+  if (el.type === 'graphic') {
+    if (!isGraphicId(el.graphicId)) return null
+    return (
+      <div
+        style={{ ...style, padding: '1%' }}
+        // SVG do chính app sinh ra từ file thiết kế (không phải dữ liệu người
+        // dùng nhập) nên nhúng trực tiếp là an toàn.
+        dangerouslySetInnerHTML={{ __html: graphicMarkup(el.graphicId, el.textColor ?? theme.fg) }}
+      />
+    )
+  }
+
   if (el.type === 'shape') {
-    const radius = el.shape === 'ellipse' ? '50%' : el.shape === 'round' ? '12px' : '0'
+    const radius =
+      el.shape === 'ellipse'
+        ? '50%'
+        : el.shape === 'round'
+          ? `${el.radius ?? theme.radius}px`
+          : '0'
+    const shadow =
+      el.shadow === false || (el.shadow !== true && theme.shadow === 'none')
+        ? undefined
+        : theme.shadow === 'hard'
+          ? '6px 6px 0 rgb(17 24 39 / 0.92)'
+          : '0 0.8cqw 2.4cqw -0.6cqw rgb(15 23 42 / 0.28)'
+    const border = el.border ?? theme.border
     const clip =
       el.shape === 'triangle'
         ? 'polygon(50% 0, 100% 100%, 0 100%)'
@@ -756,9 +972,11 @@ function SlideElView({ el }: { el: SlideElement }) {
       <div
         style={{
           ...style,
-          background: el.fill ?? '#2563eb',
+          background: el.fill ?? theme.accent,
           borderRadius: radius,
           clipPath: clip,
+          boxShadow: shadow,
+          border: border ? `${border}px solid ${el.borderColor ?? theme.borderColor}` : undefined,
         }}
       />
     )
@@ -772,9 +990,16 @@ function SlideElView({ el }: { el: SlideElement }) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          border: '2px dashed #9ca3af',
-          color: '#6b7280',
-          fontSize: '2.1cqw',
+          // khung chờ ảnh ở bản xem là panel theme (nét đứt chỉ có ở bản chỉnh sửa)
+          background: el.src ? undefined : `linear-gradient(135deg, ${theme.surface} 0 48%, ${theme.accent}22 48% 54%, ${theme.surface} 54% 100%)`,
+          border: el.src ? undefined : `1px solid ${theme.accent}66`,
+          borderRadius: '1cqw',
+          overflow: 'hidden',
+          color: el.src ? theme.muted : theme.accent,
+          fontSize: '1.9cqw',
+          fontFamily: fontStack(theme.fonts.body),
+          letterSpacing: '0.04em',
+          fontWeight: el.src ? 400 : 600,
         }}
       >
         {el.src ? (
@@ -784,19 +1009,25 @@ function SlideElView({ el }: { el: SlideElement }) {
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           />
         ) : (
-          'Hình ảnh'
+          'Ảnh minh hoạ'
         )}
       </div>
     )
 
-  if (el.type === 'table')
+  if (el.type === 'table') {
+    const headerFg = readableTextOn(theme.accent)
+    const rowCount = el.rows?.length ?? 0
     return (
       <table
         style={{
           ...style,
-          borderCollapse: 'collapse',
-          fontSize: '1.65cqw',
-          color: '#000',
+          borderCollapse: 'separate',
+          borderSpacing: 0,
+          border: `1px solid ${theme.muted}`,
+          borderRadius: '0.8cqw',
+          overflow: 'hidden',
+          fontSize: '1.7cqw',
+          color: theme.fg,
         }}
       >
         <tbody>
@@ -806,9 +1037,13 @@ function SlideElView({ el }: { el: SlideElement }) {
                 <td
                   key={ci}
                   style={{
-                    border: '1px solid #9ca3af',
-                    padding: '0.4em 0.6em',
-                    background: ri === 0 ? '#f3f4f6' : '#fff',
+                    borderBottom:
+                      ri < rowCount - 1 ? `1px solid ${theme.muted}` : undefined,
+                    borderRight: ci < r.length - 1 ? `1px solid ${theme.muted}` : undefined,
+                    padding: '0.5em 0.7em',
+                    background:
+                      ri === 0 ? theme.accent : ri % 2 === 0 ? theme.surface : 'transparent',
+                    color: ri === 0 ? headerFg : theme.fg,
                     fontWeight: ri === 0 ? 600 : 400,
                   }}
                 >
@@ -820,9 +1055,10 @@ function SlideElView({ el }: { el: SlideElement }) {
         </tbody>
       </table>
     )
+  }
 
   if (el.type === 'chart')
-    return <ChartView el={el} />
+    return <ChartView el={el} colors={theme.chart} />
 
   return null
 }
@@ -832,7 +1068,17 @@ function SlideElView({ el }: { el: SlideElement }) {
  * false: lấp đầy khung bao ngoài đã neo sẵn (dùng trong canvas soạn) — nếu
  * vẫn neo tuyệt đối lần nữa, toạ độ bị nhân đôi và biểu đồ lệch khỏi thumbnail.
  */
-function ChartView({ el, absolute = true }: { el: SlideElement; absolute?: boolean }) {
+function ChartView({
+  el,
+  absolute = true,
+  colors = ['#2563eb'],
+}: {
+  el: SlideElement
+  absolute?: boolean
+  /** bảng màu của theme; thiếu thì dùng xanh mặc định */
+  colors?: string[]
+}) {
+  const palette = colors.length > 0 ? colors : ['#2563eb']
   const data = el.chart?.data ?? []
   const max = Math.max(1, ...data.map((d) => d.value))
   const type = el.chart?.type ?? 'bar'
@@ -849,7 +1095,6 @@ function ChartView({ el, absolute = true }: { el: SlideElement; absolute?: boole
   if (type === 'pie') {
     const total = data.reduce((s, d) => s + d.value, 0) || 1
     let acc = 0
-    const colors = ['#2563eb', '#c05a3c', '#16a34a', '#b8862f', '#9333ea']
     return (
       <div style={pos}>
         <svg viewBox="0 0 42 42" style={{ width: '100%', height: '100%' }}>
@@ -868,7 +1113,7 @@ function ChartView({ el, absolute = true }: { el: SlideElement; absolute?: boole
               <path
                 key={d.label}
                 d={`M 21 21 L ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2} Z`}
-                fill={colors[i % colors.length]}
+                fill={palette[i % palette.length]}
               />
             )
           })}
@@ -893,7 +1138,7 @@ function ChartView({ el, absolute = true }: { el: SlideElement; absolute?: boole
           <polyline
             points={pts.join(' ')}
             fill="none"
-            stroke="#2563eb"
+            stroke={palette[0]}
             strokeWidth="2.5"
             vectorEffect="non-scaling-stroke"
           />
@@ -906,7 +1151,7 @@ function ChartView({ el, absolute = true }: { el: SlideElement; absolute?: boole
                 cx={x}
                 cy={y}
                 r="2.5"
-                fill="#2563eb"
+                fill={palette[0]}
                 vectorEffect="non-scaling-stroke"
               />
             )
@@ -926,13 +1171,13 @@ function ChartView({ el, absolute = true }: { el: SlideElement; absolute?: boole
         padding: '0 2%',
       }}
     >
-      {data.map((d) => (
+      {data.map((d, i) => (
         <div
           key={d.label}
           style={{
             flex: 1,
             height: `${(d.value / max) * 100}%`,
-            background: '#2563eb',
+            background: palette[i % palette.length],
             borderRadius: '3px 3px 0 0',
           }}
         />
@@ -954,6 +1199,9 @@ function AutoFitText({
   textDecoration,
   align,
   color,
+  background,
+  lineHeight,
+  letterSpacing,
   onChange,
 }: {
   value: string
@@ -965,6 +1213,10 @@ function AutoFitText({
   textDecoration?: 'none' | 'underline'
   align?: 'left' | 'center' | 'right'
   color?: string
+  lineHeight?: number
+  letterSpacing?: number
+  /** nền hộp chữ (thẻ của layout cards) */
+  background?: string
   onChange: (text: string) => void
 }) {
   const ref = useRef<HTMLTextAreaElement>(null)
@@ -986,7 +1238,9 @@ function AutoFitText({
         return ta.scrollHeight <= ta.clientHeight + 1
       }
       if (!fits(s)) while (s > min && !fits(s)) s -= 0.1
-      const final = Math.round(s * 10) / 10
+      // giữ 2 chữ số: compose-time đã fit tới 0,01cqw, làm tròn lên 0,1 sẽ
+      // biến 2,45 thành 2,5 và gây tràn đúng ở biên
+      const final = Math.floor(s * 100) / 100
       setSize(final)
       ta.style.fontSize = `${final}cqw`
     }
@@ -994,7 +1248,11 @@ function AutoFitText({
     // kéo tay nắm đổi chiều cao/chiều rộng hộp → fit lại ngay khi hộp đổi
     const ro = new ResizeObserver(fit)
     ro.observe(ta)
-    return () => ro.disconnect()
+    const stopFonts = refitOnFonts(fit)
+    return () => {
+      stopFonts()
+      ro.disconnect()
+    }
   }, [value, baseSize])
 
   return (
@@ -1002,15 +1260,20 @@ function AutoFitText({
       ref={ref}
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="h-full w-full resize-none overflow-hidden bg-transparent p-[1%] leading-tight outline-none"
+      className="h-full w-full resize-none overflow-hidden bg-transparent p-[1%] outline-none"
       style={{
         color: color ?? 'inherit',
-        fontFamily: fontFamily ?? 'Figtree, sans-serif',
+        background,
+        borderRadius: background ? '0.6cqw' : undefined,
+        padding: background ? '1.5% 3%' : undefined,
+        fontFamily: fontFamily ?? 'Be Vietnam Pro, sans-serif',
         fontSize: `${size}cqw`,
         fontWeight: weight,
         fontStyle,
         textDecoration,
         textAlign: align,
+        lineHeight: lineHeight ?? 1.25,
+        letterSpacing: letterSpacing ? `${letterSpacing}em` : undefined,
       }}
     />
   )
@@ -1028,21 +1291,29 @@ function EditableEl({
   onBeginHistory,
   onPreview,
   onChange,
+  onDragEnd,
+  onGenerateImage,
 }: {
   el: SlideElement
-  theme: { fg: string; accent: string }
+  theme: ResolvedTheme
   selected: boolean
   onSelect: () => void
   onBeginHistory: () => void
   onPreview: (patch: Partial<SlideElement>) => void
   onChange: (patch: Partial<SlideElement>) => void
+  /** kết thúc kéo/resize/xoay — chặn cú click rơi ra ngoài phần tử làm bỏ chọn */
+  onDragEnd: () => void
+  /** tạo ảnh AI cho khung ảnh trống (prompt lấy từ nội dung slide) */
+  onGenerateImage: () => Promise<void>
 }) {
+  const [imageBusy, setImageBusy] = useState(false)
+  const [imageError, setImageError] = useState<string | null>(null)
   const style: React.CSSProperties = {
     position: 'absolute',
     left: `${el.x}%`,
     top: `${el.y}%`,
     width: `${el.w}%`,
-    height: `${el.h}%`,
+    height: `${elementHeight(el)}%`,
     zIndex: el.zIndex,
     transform: elTransform(el),
     outline: selected ? '2px solid #b4532a' : undefined,
@@ -1061,7 +1332,7 @@ function EditableEl({
     const frame = (e.currentTarget as HTMLElement).closest('.slide-frame') as HTMLElement | null
     if (!frame) return
     const rect = frame.getBoundingClientRect()
-    const base = { x: el.x, y: el.y, w: el.w, h: el.h }
+    const base = { x: el.x, y: el.y, w: el.w, h: elementHeight(el) }
     const startX = e.clientX
     const startY = e.clientY
     const MIN = 4
@@ -1073,28 +1344,68 @@ function EditableEl({
         onPreview({ x: clamp(base.x + dx, 0, 100 - base.w), y: clamp(base.y + dy, 0, 100 - base.h) })
         return
       }
-      // Resize từ cạnh/góc đang kéo: giữ nguyên cạnh đối diện.
-      let left = base.x
-      let top = base.y
-      let right = base.x + base.w
-      let bottom = base.y + base.h
-      if (dir.includes('w')) left = clamp(base.x + dx, 0, right - MIN)
-      if (dir.includes('e')) right = clamp(base.x + base.w + dx, left + MIN, 100)
-      if (dir.includes('n')) top = clamp(base.y + dy, 0, bottom - MIN)
-      if (dir.includes('s')) bottom = clamp(base.y + base.h + dy, top + MIN, 100)
+      // Resize theo trục cục bộ của phần tử (không theo trục màn hình) để
+      // phần tử đã xoay/lật vẫn bám đúng con trỏ và giữ cạnh đối diện đứng yên.
+      const rad = ((el.rotation ?? 0) * Math.PI) / 180
+      const cos = Math.cos(rad)
+      const sin = Math.sin(rad)
+      const moveX = ev.clientX - startX
+      const moveY = ev.clientY - startY
+      // chiếu delta màn hình vào hệ trục của hộp, rồi bỏ lật
+      let localX = moveX * cos + moveY * sin
+      let localY = -moveX * sin + moveY * cos
+      const flipX = el.flipX ? -1 : 1
+      const flipY = el.flipY ? -1 : 1
+      if (flipX < 0) localX = -localX
+      if (flipY < 0) localY = -localY
+
+      const wPx = (base.w / 100) * rect.width
+      const hPx = (base.h / 100) * rect.height
+      const minW = (MIN / 100) * rect.width
+      const minH = (MIN / 100) * rect.height
+      let l = -wPx / 2
+      let r = wPx / 2
+      let t = -hPx / 2
+      let b = hPx / 2
+      if (dir.includes('w')) l = Math.min(l + localX, r - minW)
+      if (dir.includes('e')) r = Math.max(r + localX, l + minW)
+      if (dir.includes('n')) t = Math.min(t + localY, b - minH)
+      if (dir.includes('s')) b = Math.max(b + localY, t + minH)
+
+      const nextW = r - l
+      const nextH = b - t
+      // tâm hộp dời nửa delta cục bộ của hai cạnh đối diện; đổi về trục slide
+      const shiftX = flipX * ((l + r) / 2)
+      const shiftY = flipY * ((t + b) / 2)
+      const cx = ((base.x + base.w / 2) / 100) * rect.width + shiftX * cos - shiftY * sin
+      const cy = ((base.y + base.h / 2) / 100) * rect.height + shiftX * sin + shiftY * cos
+      let nextXPct = ((cx - nextW / 2) / rect.width) * 100
+      let nextYPct = ((cy - nextH / 2) / rect.height) * 100
+      let nextWPct = (nextW / rect.width) * 100
+      let nextHPct = (nextH / rect.height) * 100
+      if (!el.rotation) {
+        // phần tử chưa xoay: giữ hộp trong trang như trước
+        nextWPct = Math.min(nextWPct, 100)
+        nextHPct = Math.min(nextHPct, 100)
+        nextXPct = clamp(nextXPct, 0, 100 - nextWPct)
+        nextYPct = clamp(nextYPct, 0, 100 - nextHPct)
+      }
       const patch: Partial<SlideElement> = {
-        x: left,
-        y: top,
-        w: right - left,
-        h: bottom - top,
+        x: nextXPct,
+        y: nextYPct,
+        w: nextWPct,
+        h: nextHPct,
+      }
+      // Hộp chữ mặc định bám theo nội dung; kéo cạnh trên/dưới là chốt chiều
+      // cao thủ công, từ đó khung giữ đúng kích thước người dùng đặt.
+      if (el.type === 'text' && (dir.includes('n') || dir.includes('s'))) {
+        patch.fixedHeight = true
       }
       // Chữ co/giãn theo chiều cao hộp (như "shrink text on overflow" của
       // PowerPoint) — nếu không, thu nhỏ hộp sẽ cắt mất chữ.
-      // ponytail: phần tử đã xoay vẫn resize theo trục màn hình; đủ dùng cho
-      // slide, muốn chính xác tuyệt đối thì phải chiếu delta qua phép quay.
       if (el.type === 'text' && (dir.includes('n') || dir.includes('s'))) {
         const baseFont = el.fontSize ?? (el.variant === 'body' ? 2.4 : 3.6)
-        const ratio = (bottom - top) / base.h
+        const ratio = nextH / hPx
         patch.fontSize = clamp(Number((baseFont * ratio).toFixed(2)), 0.8, 12)
       }
       onPreview(patch)
@@ -1103,6 +1414,7 @@ function EditableEl({
       window.removeEventListener('pointermove', move)
       window.removeEventListener('pointerup', up)
       window.removeEventListener('pointercancel', up)
+      onDragEnd()
     }
     window.addEventListener('pointermove', move)
     window.addEventListener('pointerup', up)
@@ -1136,6 +1448,7 @@ function EditableEl({
       window.removeEventListener('pointermove', move)
       window.removeEventListener('pointerup', up)
       window.removeEventListener('pointercancel', up)
+      onDragEnd()
     }
     window.addEventListener('pointermove', move)
     window.addEventListener('pointerup', up)
@@ -1164,16 +1477,44 @@ function EditableEl({
           value={el.text ?? ''}
           baseSize={el.fontSize ?? (el.variant === 'body' ? 2.4 : 3.6)}
           weight={el.fontWeight ?? (el.variant === 'body' ? 500 : 600)}
-          fontFamily={el.fontFamily}
+          fontFamily={fontStack(
+            el.fontFamily ?? (el.variant === 'body' ? theme.fonts.body : theme.fonts.heading),
+          )}
           fontStyle={el.fontStyle}
           textDecoration={el.textDecoration}
           align={el.align}
-          color={el.textColor}
+          color={el.textColor ?? theme.fg}
+          lineHeight={el.lineHeight}
+          letterSpacing={el.letterSpacing}
+          background={el.fill}
           onChange={(text) => onChange({ text })}
         />
         {handle}
       </div>
     )
+
+  if (el.type === 'icon') {
+    const Icon = isSlideAssetId(el.assetId) ? SLIDE_ASSETS[el.assetId].icon : null
+    return Icon ? (
+      <div {...common} style={{ ...style, color: el.textColor ?? theme.accent, cursor: selected ? 'move' : 'default' }}>
+        <Icon size="100%" weight="duotone" className="h-full w-full p-[2%]" />
+        {handle}
+      </div>
+    ) : null
+  }
+
+  if (el.type === 'graphic') {
+    if (!isGraphicId(el.graphicId)) return null
+    return (
+      <div {...common} style={{ ...style, cursor: selected ? 'move' : 'default' }}>
+        <div
+          className="h-full w-full p-[2%]"
+          dangerouslySetInnerHTML={{ __html: graphicMarkup(el.graphicId, el.textColor ?? theme.fg) }}
+        />
+        {handle}
+      </div>
+    )
+  }
 
   if (el.type === 'shape')
     return (
@@ -1182,7 +1523,21 @@ function EditableEl({
         style={{
           ...style,
           background: el.fill ?? theme.accent,
-          borderRadius: el.shape === 'ellipse' ? '50%' : el.shape === 'round' ? '12px' : 0,
+          borderRadius:
+            el.shape === 'ellipse'
+              ? '50%'
+              : el.shape === 'round'
+                ? `${el.radius ?? theme.radius}px`
+                : 0,
+          boxShadow:
+            el.shadow === false || (el.shadow !== true && theme.shadow === 'none')
+              ? undefined
+              : theme.shadow === 'hard'
+                ? '6px 6px 0 rgb(17 24 39 / 0.92)'
+                : '0 0.8cqw 2.4cqw -0.6cqw rgb(15 23 42 / 0.28)',
+          border: (el.border ?? theme.border)
+            ? `${el.border ?? theme.border}px solid ${el.borderColor ?? theme.borderColor}`
+            : undefined,
           clipPath:
             el.shape === 'triangle'
               ? 'polygon(50% 0, 100% 100%, 0 100%)'
@@ -1195,12 +1550,22 @@ function EditableEl({
       </div>
     )
 
-  if (el.type === 'table')
+  if (el.type === 'table') {
+    const headerFg = readableTextOn(theme.accent)
+    const rowCount = el.rows?.length ?? 0
     return (
       <div {...common}>
         <table
-          className="h-full w-full border-collapse text-[1.65cqw]"
-          style={{ color: theme.fg }}
+          className="h-full w-full"
+          style={{
+            borderCollapse: 'separate',
+            borderSpacing: 0,
+            border: `1px solid ${theme.muted}`,
+            borderRadius: '0.8cqw',
+            overflow: 'hidden',
+            fontSize: '1.7cqw',
+            color: theme.fg,
+          }}
         >
           <tbody>
             {(el.rows ?? []).map((r, ri) => (
@@ -1208,8 +1573,16 @@ function EditableEl({
                 {r.map((c, ci) => (
                   <td
                     key={ci}
-                    className="border border-[#9ca3af] px-1.5 py-1"
-                    style={{ background: ri === 0 ? '#f3f4f6' : '#fff' }}
+                    style={{
+                      padding: '0.5em 0.7em',
+                      borderBottom:
+                        ri < rowCount - 1 ? `1px solid ${theme.muted}` : undefined,
+                      borderRight: ci < r.length - 1 ? `1px solid ${theme.muted}` : undefined,
+                      background:
+                        ri === 0 ? theme.accent : ri % 2 === 0 ? theme.surface : 'transparent',
+                      color: ri === 0 ? headerFg : theme.fg,
+                      fontWeight: ri === 0 ? 600 : 400,
+                    }}
                   >
                     <input
                       value={c}
@@ -1219,6 +1592,7 @@ function EditableEl({
                         onChange({ rows })
                       }}
                       className="w-full bg-transparent outline-none"
+                      style={{ color: 'inherit' }}
                     />
                   </td>
                 ))}
@@ -1229,11 +1603,12 @@ function EditableEl({
         {handle}
       </div>
     )
+  }
 
   if (el.type === 'chart')
     return (
       <div {...common}>
-        <ChartView el={el} absolute={false} />
+        <ChartView el={el} absolute={false} colors={theme.chart} />
         {handle}
       </div>
     )
@@ -1242,26 +1617,57 @@ function EditableEl({
     return (
       <div
         {...common}
-        className="flex items-center justify-center border-2 border-dashed border-[#9ca3af] text-[2.1cqw] text-[#6b7280]"
+        className={cn(
+          'flex items-center justify-center overflow-hidden rounded-[1cqw]',
+          el.src
+            ? ''
+            : 'border-2 border-dashed border-[#9ca3af] text-[1.8cqw] text-[#6b7280]',
+        )}
       >
         {el.src ? (
           <img src={el.src} alt="" className="h-full w-full object-cover" />
         ) : (
-          <label className="cursor-pointer">
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => {
-                const file = e.target.files?.[0]
-                if (!file) return
-                const reader = new FileReader()
-                reader.onload = () => onChange({ src: String(reader.result) })
-                reader.readAsDataURL(file)
+          <div className="flex flex-col items-center gap-1 px-1 text-center">
+            <label className="cursor-pointer hover:underline">
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0]
+                  if (!file) return
+                  const reader = new FileReader()
+                  reader.onload = () => onChange({ src: String(reader.result) })
+                  reader.readAsDataURL(file)
+                }}
+              />
+              Chọn ảnh
+            </label>
+            <button
+              type="button"
+              disabled={imageBusy}
+              onClick={async (e) => {
+                e.stopPropagation()
+                setImageBusy(true)
+                setImageError(null)
+                try {
+                  await onGenerateImage()
+                } catch (err) {
+                  setImageError(err instanceof Error ? err.message : String(err))
+                } finally {
+                  setImageBusy(false)
+                }
               }}
-            />
-            Nhấn để chọn ảnh
-          </label>
+              className="rounded border border-clay/60 px-1.5 py-0.5 text-[1.5cqw] font-semibold text-clay disabled:opacity-60"
+            >
+              {imageBusy ? 'Đang tạo ảnh…' : 'Tạo ảnh AI'}
+            </button>
+            {imageError ? (
+              <span className="max-w-full truncate text-[1.3cqw] text-red-500" title={imageError}>
+                Lỗi tạo ảnh
+              </span>
+            ) : null}
+          </div>
         )}
         {handle}
       </div>

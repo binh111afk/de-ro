@@ -15,6 +15,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { Editor } from '@tiptap/core'
 import type { JSONContent } from '@tiptap/core'
+import { Selection } from '@tiptap/pm/state'
 import { ExamEditor, pageGeometry, CM, type PageSetup } from '@/examEditor/ExamEditor'
 import { Ribbon } from '@/examEditor/Ribbon'
 import { TabStrip } from '@/examEditor/TabStrip'
@@ -28,8 +29,10 @@ import { useFormatState, applyFormatAttrs } from '@/examEditor/formatState'
 import { FindPanel } from '@/examEditor/FindPanel'
 import { exportDocBlocks, printDoc } from '@/examEditor/exportBlocks'
 import { useComposeStore } from '@/store/compose'
+import { DECK_THEMES } from '@/lib/slideTheme'
 import { SlideEditor } from '@/examEditor/SlideEditor'
 import { extractJson } from '@/lib/llm'
+import { importedSlides, readImportFile, textToBlocks } from '@/lib/importFile'
 import { IconZoomIn, IconZoomOut } from '@/examEditor/icons'
 import type { ExamBlock, ExamDoc, FormatAttrs, RichText } from '@/data/docTypes'
 import { emptyDoc } from '@/data/docTypes'
@@ -39,7 +42,6 @@ interface AiExamEnvelope {
   action?: string
   blocks?: unknown
   patch?: unknown
-  note?: string
 }
 
 const AI_BLOCK_TYPES = new Set([
@@ -62,7 +64,13 @@ const AI_BLOCK_TYPES = new Set([
 /** Chuẩn hoá block AI trả về: đúng loại + field tối thiểu, sai thì bỏ. */
 function sanitizeBlocks(raw: unknown): ExamBlock[] {
   if (!Array.isArray(raw)) return []
-  const rich = (v: unknown): RichText => (typeof v === 'string' || Array.isArray(v) ? v : '')
+  // AI có lúc trả mảng trộn string + span; chuẩn hoá về Span[] để converter/export đọc được.
+  const rich = (v: unknown): RichText =>
+    typeof v === 'string'
+      ? v
+      : Array.isArray(v)
+        ? (v.map((s) => (typeof s === 'string' ? { text: s } : s)) as RichText)
+        : ''
   const fmt = (v: unknown): FormatAttrs | undefined =>
     v && typeof v === 'object' ? (v as FormatAttrs) : undefined
   const list = (v: unknown): unknown[] => (Array.isArray(v) ? v : [])
@@ -73,9 +81,12 @@ function sanitizeBlocks(raw: unknown): ExamBlock[] {
     const type = typeof b.type === 'string' ? b.type : ''
     if (!AI_BLOCK_TYPES.has(type)) continue
     switch (type) {
-      case 'header':
-        out.push({ type: 'header', left: rich(b.left), right: rich(b.right) })
+      case 'header': {
+        // dạng cũ {"type":"header","text":"…"} → đưa vào cột trái thay vì header rỗng
+        const left = rich(b.left) || (typeof b.text === 'string' ? b.text : '')
+        out.push({ type: 'header', left, right: rich(b.right) })
         break
+      }
       case 'title':
         out.push({ type: 'title', text: rich(b.text), format: fmt(b.format) })
         break
@@ -407,6 +418,29 @@ export default function ComposeDoc() {
     await exportDocBlocks(activeDoc)
   }, [activeDoc])
 
+  /** Tệp → Nhập file: mở tệp Word/Excel/PowerPoint thành một tab đề mới. */
+  const handleImportExam = useCallback(
+    async (file: File) => {
+      const data = await readImportFile(file)
+      const blocks = textToBlocks(data.text)
+      if (!blocks.length) throw new Error('Tệp không có nội dung văn bản để nhập.')
+      const id = newDoc()
+      renameTab(id, data.title)
+      setContent(id, blocksToTipTap(blocks))
+    },
+    [newDoc, renameTab, setContent],
+  )
+
+  /** Tệp → Nhập file trong trình soạn slide: tab bài giảng mới. */
+  const handleImportSlides = useCallback(
+    async (file: File) => {
+      const data = await readImportFile(file)
+      const id = newSlide()
+      updateDeck(id, { title: data.title, slides: importedSlides(data, DECK_THEMES[0]) })
+    },
+    [newSlide, updateDeck],
+  )
+
   const handlePrint = useCallback(() => {
     if (!activeDoc) return
     printDoc(activeDoc)
@@ -433,17 +467,19 @@ export default function ComposeDoc() {
           : blocks.length
             ? 'replace'
             : 'none'
-      const note = typeof raw.note === 'string' && raw.note.trim() ? raw.note.trim() : ''
-
       try {
         if (action === 'replace' && blocks.length) {
           editor.commands.setContent(blocksToTipTap(blocks))
-          return note || `Đã thay toàn bộ đề bằng ${blocks.length} khối mới.`
+          // setContent thay cả tài liệu nên selection cũ được map lại tuỳ vị trí
+          // → có thể rơi vào khối bất kỳ. Đặt lại con trỏ về đầu đề.
+          editor.commands.setTextSelection(Selection.near(editor.state.doc.resolve(1)).from)
+          // Luôn báo việc đã làm; `note` của model hay lặp lại đúng câu prompt.
+          return `Đã soạn xong đề (${blocks.length} khối).`
         }
         if (action === 'append' && blocks.length) {
           const content = blocksToTipTap(blocks).content ?? []
           editor.chain().focus().insertContentAt(editor.state.doc.content.size, content).run()
-          return note || `Đã thêm ${blocks.length} khối vào cuối đề.`
+          return `Đã thêm ${blocks.length} khối vào cuối đề.`
         }
         if (action === 'patch' && patches.length) {
           const { state, view } = editor
@@ -467,9 +503,9 @@ export default function ComposeDoc() {
           }
           if (applied) {
             view.dispatch(tr)
-            return note || `Đã cập nhật ${applied} khối trong đề.`
+            return `Đã cập nhật ${applied} khối trong đề.`
           }
-          return note || undefined
+          return 'Không tìm thấy khối cần sửa trong đề.'
         }
       } catch (err) {
         // Không áp được (JSON hỏng/cắt cụt, block lạ…) — log để chẩn đoán,
@@ -477,7 +513,7 @@ export default function ComposeDoc() {
         console.error('[AI] không áp được kết quả vào đề', err)
         return undefined
       }
-      return note || undefined
+      return 'AI không đề xuất thay đổi nào cho đề.'
     },
     [activeId, editor],
   )
@@ -623,6 +659,8 @@ export default function ComposeDoc() {
             deck={activeDeck}
             updateDeck={(patch) => updateDeck(activeDeck.id, patch)}
             onSave={handleSaveSlide}
+            onNewDeck={newSlide}
+            onImportFile={handleImportSlides}
             onRename={(title) => {
               updateDeck(activeDeck.id, { title })
               renameTab(activeDeck.id, title)
@@ -636,6 +674,8 @@ export default function ComposeDoc() {
         editor={editor}
         activeTab={ribbonTab}
         onTabChange={setRibbonTab}
+        onNewDoc={() => newDocAndOpen(false)}
+        onImportFile={handleImportExam}
         onSave={handleSave}
         onPrint={handlePrint}
         onExportWord={handleExportWord}

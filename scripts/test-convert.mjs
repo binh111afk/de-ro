@@ -99,6 +99,18 @@ const cases = [
     ],
   },
   {
+    name: 'đầu đề: mảng trộn string + span không vỡ',
+    // AI đôi khi trả dạng này; chỉ cần không throw (round-trip sẽ chuẩn hoá).
+    noThrow: true,
+    blocks: [
+      {
+        type: 'header',
+        left: ['SỞ GIÁO DỤC VÀ ĐÀO TẠO …\n', { text: 'Đề chính thức', marks: [{ type: 'boxed' }] }],
+        right: '',
+      },
+    ],
+  },
+  {
     name: 'công thức $...$ thành node Toán và round-trip giữ nguyên',
     blocks: [
       {
@@ -127,6 +139,11 @@ let fail = 0
 for (const c of cases) {
   try {
     const tipTap = blocksToTipTap(c.blocks)
+    if (c.noThrow) {
+      console.log(`✅ ${c.name}`)
+      pass++
+      continue
+    }
     const round = tipTapToBlocks(tipTap)
     assert.deepEqual(round, c.blocks, `round-trip mismatch: ${JSON.stringify(round)}`)
     console.log(`✅ ${c.name}`)

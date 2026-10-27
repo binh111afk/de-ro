@@ -21,6 +21,7 @@ import {
   type RibbonTabDef,
 } from './Layout'
 import { cn } from '@/lib/cn'
+import { FileMenu } from './FileMenu'
 import { templateById, insertBlockTemplate } from './templates'
 import { applyFormatAttrs, getSelectedBlock, syncDomSelection, type FormatState } from './formatState'
 import { TablePicker, SymbolPicker, ImagePicker, EquationDialog, LinkDialog } from './InsertMenus'
@@ -131,6 +132,8 @@ export function Ribbon({
   editor,
   activeTab,
   onTabChange,
+  onNewDoc,
+  onImportFile,
   onSave,
   onPrint,
   onExportWord,
@@ -154,6 +157,8 @@ export function Ribbon({
   editor: Editor | null
   activeTab: string
   onTabChange: (id: string) => void
+  onNewDoc: () => void
+  onImportFile: (file: File) => Promise<void>
   onSave: () => void
   onPrint: () => void
   onExportWord: () => void
@@ -376,7 +381,20 @@ export function Ribbon({
         if (live && target.closest('button')) syncDomSelection(live)
       }}
     >
-      <RibbonTabs tabs={RIBBON_TABS} active={activeTab} onChange={onTabChange}>
+      <RibbonTabs
+        tabs={RIBBON_TABS}
+        active={activeTab}
+        onChange={onTabChange}
+        leading={
+          <FileMenu
+            kind="exam"
+            onNew={onNewDoc}
+            onImport={onImportFile}
+            onDownload={onExportWord}
+            downloadHint=".doc"
+          />
+        }
+      >
         <span className="ribbon-tabs-spacer" />
         <div className="ribbon-quick">
           <span className="ribbon-quick__meta">

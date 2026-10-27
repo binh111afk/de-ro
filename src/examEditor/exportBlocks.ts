@@ -249,8 +249,11 @@ function fmt(n: number): string {
 const EXPORT_CSS = `
   @page { size: A4; margin: 1.8cm 1.6cm; }
   body { font-family: "Times New Roman", serif; font-size: 13pt; line-height: 1.5; color: #000; }
-  .hdr { width: 100%; border: none; margin: 0 0 6px; font-weight: bold; font-size: 12pt; line-height: 1.2; }
+  .hdr { width: 100%; table-layout: fixed; border: none; margin: 0 0 6px; font-weight: bold; font-size: 11.5pt; line-height: 1.5; }
   .hdr td { border: none; vertical-align: top; text-align: center; }
+  .hdr td:first-child { width: 31%; }
+  .hdr td:last-child { width: 69%; }
+  .hdr i { font-weight: normal; }
   .t { text-align: center; font-size: 15pt; font-weight: bold; margin: 0 0 6px; text-transform: uppercase; }
   .meta { text-align: center; font-size: 12pt; margin: 0 0 4px; }
   .stu { font-size: 12.5pt; margin: 8px 0 10px; }

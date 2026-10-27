@@ -3,6 +3,9 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import path from 'node:path'
 import { llmMiddleware, loadDotEnv } from './server/llmProxy'
+import { extractMiddleware } from './server/extract'
+import { searchMiddleware } from './server/searchProxy'
+import { imageMiddleware } from './server/imageProxy'
 
 // Nạp `.env` cho proxy. Không dùng `loadEnv` của Vite vì nó để process.env
 // thắng file — một biến LLM_API_KEY cũ trong shell sẽ đè key người dùng vừa
@@ -17,6 +20,9 @@ export default defineConfig({
       name: 'llm-proxy',
       configureServer(server) {
         server.middlewares.use('/api/llm', llmMiddleware)
+        server.middlewares.use('/api/extract', extractMiddleware)
+        server.middlewares.use('/api/search', searchMiddleware)
+        server.middlewares.use('/api/image', imageMiddleware)
       },
     },
   ],

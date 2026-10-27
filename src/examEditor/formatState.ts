@@ -190,6 +190,23 @@ export function getSelectedBlock(editor: Editor): { node: PMNode; pos: number } 
   return hit
 }
 
+/**
+ * Khối cấp cao nhất (con trực tiếp của `doc`) chứa selection — dùng cho thao
+ * tác thêm/xoá khối. `getSelectedBlock` trả khối sâu nhất (prompt/phương án),
+ * chèn một block cấp cao vào đó là sai schema và làm con trỏ nhảy.
+ */
+export function getTopBlock(editor: Editor): { node: PMNode; pos: number } | null {
+  const { state } = editor
+  const { $from, from, to } = state.selection
+  if ($from.depth >= 1) return { node: $from.node(1), pos: $from.before(1) }
+  let hit: { node: PMNode; pos: number } | null = null
+  state.doc.forEach((child, offset) => {
+    if (hit) return
+    if (offset + child.nodeSize > from && offset < to) hit = { node: child, pos: offset }
+  })
+  return hit
+}
+
 export function applyFormatAttrs(editor: Editor, patch: Partial<FormatAttrs>): void {
   syncDomSelection(editor)
   const target = getSelectedBlock(editor)

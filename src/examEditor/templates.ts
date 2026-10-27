@@ -7,7 +7,7 @@
  */
 import type { Editor, JSONContent } from '@tiptap/core'
 import type { Node as PMNode } from '@tiptap/pm/model'
-import { getSelectedBlock, syncDomSelection } from './formatState'
+import { getTopBlock, syncDomSelection } from './formatState'
 
 export type TplGroup = 'Đầu đề' | 'Câu hỏi' | 'Nội dung' | 'Bố cục'
 
@@ -76,8 +76,8 @@ export const BLOCK_TEMPLATES: BlockTemplate[] = [
           {
             type: 'examHeaderColumn',
             content: [
-              line('SỞ GIÁO DỤC VÀ ĐÀO TẠO'),
-              line('TỈNH …'),
+              line('SỞ GIÁO DỤC VÀ ĐÀO TẠO …'),
+              line('TRƯỜNG THPT …'),
               line('Đề chính thức', [{ type: 'boxed' }]),
             ],
           },
@@ -449,7 +449,7 @@ export function insertBlockTemplate(editor: Editor, tpl: BlockTemplate): void {
     editor.chain().focus().insertContentAt(examFooterPos(doc, tpl.place), json).run()
     return
   }
-  const target = getSelectedBlock(editor)
+  const target = getTopBlock(editor)
   if (!target) {
     editor.chain().focus().insertContent(json).run()
     return

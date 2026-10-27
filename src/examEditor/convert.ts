@@ -47,7 +47,12 @@ export function richOf(node: JSONContent | undefined): RichText {
 
 /** Tách RichText thành từng dòng (mỗi dòng thành một paragraph trong cột đầu đề). */
 export function splitRichLines(rt: RichText): RichText[] {
-  const spans: Span[] = typeof rt === 'string' ? [{ text: rt }] : rt
+  // AI đôi khi trả mảng trộn string + span ("text" thuần lẫn {"text","marks"})
+  // → chuẩn hoá phần tử string thành Span để không vỡ `.split`.
+  const spans: Span[] =
+    typeof rt === 'string'
+      ? [{ text: rt }]
+      : (rt as Array<Span | string>).map((s) => (typeof s === 'string' ? { text: s } : s))
   const lines: Span[][] = [[]]
   for (const s of spans) {
     const parts = s.text.split('\n')
