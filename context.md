@@ -5,8 +5,8 @@ rút ra, và **những gì còn chưa làm xong**. Đọc file này là đủ đ
 mà không cần đọc lại lịch sử hội thoại.
 
 > Cập nhật lần cuối: **27/10/2026 (cuối phiên)** — xem mục **BÀN GIAO PHIÊN** ngay dưới.
-> Lịch sử từng chặng nằm ở mục 3.x (mới nhất 3.51–3.56: P0/P1 slide, gói môn, KaTeX,
-> layout ví dụ mẫu/mở bài, công cụ chấm điểm, icon bổ sung, ảnh AI nền).
+> Lịch sử từng chặng nằm ở mục 3.x (mới nhất 3.51–3.57: P0/P1 slide, gói môn, KaTeX,
+> layout ví dụ mẫu/mở bài, công cụ chấm điểm, icon bổ sung, ảnh AI nền, asset trang trí `ornament`).
 
 ## BÀN GIAO PHIÊN (27/10/2026) — đọc mục này trước
 
@@ -38,6 +38,10 @@ Model khắt khe hơn người dùng ~0,3; dùng để so TRƯỚC/SAU mỗi l�
 Sau các sửa theo góp ý người dùng, điểm model vẫn 6,6 → **hình ảnh/minh hoạ mới là nút thắt**.
 
 ### Việc tiếp theo (ưu tiên)
+
+> **Cuối phiên 27/10 (phiên ornament):** làm 1–2 xong, đã push `main`. Chưa đo lại điểm sau đợt này —
+> chạy `eval:slides -- ... --slides` rồi `judge-slides` để so với 6,6/10. Worktree mới cần `npm install` (không có
+> `node_modules`). Việc 1 còn nợ dùng khung/thẻ số/blob/họa tiết lát; khung chỉ scale đều nên chọn bản vuông/ngang theo hộp.
 
 1. ~~Asset trang trí~~ **ĐÃ NHẬP (3.57):** 78 ornament từ `Downloads/B.svg` (+2 bản đường kẻ ngắn). Còn nợ: dùng
    khung/thẻ kẹp giấy/thẻ băng keo/thẻ số/blob/họa tiết nền lát vào layout (mới dùng đường kẻ + hoa lá góc).
