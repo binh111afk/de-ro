@@ -25,6 +25,7 @@ import { DECK_THEMES } from '@/lib/slideTheme'
 import { stylePackById } from '@/lib/slideStyles'
 import { HTML_DECK_SYSTEM } from '@/lib/htmlDeckPrompt'
 import { splitHtmlDeck } from '@/lib/htmlDeck'
+import { editSystemPrompt, looksLikeEdit, parseEditCommands, type SlideEditOp } from '@/lib/slideEdit'
 import { useSlidingThumb } from './useSlidingThumb'
 import { buildSourcePack, sourcePrompt, sourceRule, type SourcePack } from '@/lib/sources'
 import { cn } from '@/lib/cn'
@@ -596,6 +597,10 @@ export function AiPanel({
   onApplySlides,
   onAppendSlide,
   onApplyHtmlDeck,
+  existingSlideCount = 0,
+  onClearSlides,
+  editContext,
+  onApplyEdits,
   onPendingSlides,
   contextSummary,
   documentDigest,
@@ -609,6 +614,14 @@ export function AiPanel({
   onAppendSlide?: (page: AiSlidePayload, plan: DeckPlan) => void | Promise<void>
   /** chế độ HTML: nhận danh sách slide HTML (mỗi phần tử là một tài liệu HTML) để thay vào bài giảng */
   onApplyHtmlDeck?: (htmls: string[]) => void
+  /** số slide đã có nội dung: > 0 thì duyệt dàn ý sẽ hỏi ghi đè hay nối tiếp */
+  existingSlideCount?: number
+  /** xoá toàn bộ slide hiện có (khi người dùng chọn ghi đè) */
+  onClearSlides?: () => void
+  /** mô tả deck hiện tại (theme, phông, danh sách slide) cho lệnh sửa slide bằng AI */
+  editContext?: string
+  /** áp lệnh sửa slide có sẵn do AI trả về; trả các dòng báo lại người dùng */
+  onApplyEdits?: (ops: SlideEditOp[]) => string[]
   /** báo số slide còn chờ để editor vẽ ô skeleton (null = xong/huỷ) */
   onPendingSlides?: (state: { done: number; total: number } | null) => void
   /** mô tả ngắn tài liệu hiện tại, đưa vào system prompt */
@@ -628,6 +641,8 @@ export function AiPanel({
   const [slideFormat, setSlideFormat] = useState<'deck' | 'html'>('deck')
   /** modal lưu ý hiện khi bấm sang HTML (chỉ trình chiếu, không sửa/xuất PPT) */
   const [htmlNotice, setHtmlNotice] = useState(false)
+  /** dàn ý vừa duyệt khi deck đã có slide: chờ người dùng chọn ghi đè / nối tiếp */
+  const [overwriteAsk, setOverwriteAsk] = useState<{ turnId: string; plan: DeckPlan } | null>(null)
   const segRef = useRef<HTMLDivElement>(null)
   const segThumb = useSlidingThumb(segRef, '.ai-format-opt.active', slideFormat)
   const abortRef = useRef<AbortController | null>(null)
@@ -769,6 +784,29 @@ export function AiPanel({
     ]
 
     try {
+      // Sửa slide CÓ SẴN (đổi phông/màu/theme/tông, xoá, dời slide): model chỉ trả lệnh có cấu trúc,
+      // engine áp dụng. Không phải yêu cầu sửa ("action":"none") thì rơi xuống luồng soạn bình thường.
+      if (mode === 'slide' && !htmlMode && existingSlideCount > 0 && onApplyEdits && looksLikeEdit(text)) {
+        const editRes = await callLlm(
+          [
+            { role: 'system', content: editSystemPrompt(editContext ?? contextSummary ?? '') },
+            { role: 'user', content: text },
+          ],
+          { signal: controller.signal, reasoningEffort: 'low' },
+        )
+        const { ops, errors } = parseEditCommands(editRes.content)
+        if (ops.length) {
+          const lines = [...onApplyEdits(ops), ...errors.map((e) => `Bỏ qua: ${e}.`)]
+          setTurns((t) =>
+            t.map((turn) =>
+              turn.id === botId
+                ? { ...turn, text: lines.join('\n\n') + '\n\nBấm Ctrl+Z nếu muốn hoàn tác.', pending: false }
+                : turn,
+            ),
+          )
+          return
+        }
+      }
       const res = await callLlm(messages, {
         signal: controller.signal,
         // Soạn slide trả JSON có schema rõ ràng; reasoning 'max' chỉ làm lượt
@@ -899,7 +937,7 @@ export function AiPanel({
       setBusy(false)
       abortRef.current = null
     }
-  }, [input, files, busy, turns, contextSummary, documentDigest, mode, onApplyBlocks, onApplySlides])
+  }, [input, files, busy, turns, contextSummary, documentDigest, mode, onApplyBlocks, onApplySlides, slideFormat, existingSlideCount, editContext, onApplyEdits])
 
   const stop = useCallback(() => {
     abortRef.current?.abort()
@@ -1127,7 +1165,9 @@ export function AiPanel({
                 plan={turn.plan}
                 state={turn.planState}
                 busy={busy}
-                onApprove={(plan) => void generateFromPlan(turn.id, plan)}
+                onApprove={(plan) =>
+                  existingSlideCount > 0 ? setOverwriteAsk({ turnId: turn.id, plan }) : void generateFromPlan(turn.id, plan)
+                }
                 onCancel={() => cancelPlan(turn.id)}
               />
               {turn.files?.length ? (
@@ -1286,6 +1326,39 @@ export function AiPanel({
         </div>
       </div>
 
+      {overwriteAsk ? (
+        <div className="ai-html-modal" role="dialog" aria-modal="true" aria-label="Ghi đè slide cũ">
+          <div className="ai-html-modal__box ai-html-modal__box--notice">
+            <h3>Bài giảng đang có {existingSlideCount} slide</h3>
+            <p className="ai-html-modal__text">Ghi đè toàn bộ slide cũ bằng dàn ý mới, hay soạn nối tiếp sau slide cũ?</p>
+            <div className="ai-html-modal__actions">
+              <button type="button" onClick={() => setOverwriteAsk(null)}>Huỷ</button>
+              <button
+                type="button"
+                onClick={() => {
+                  const ask = overwriteAsk
+                  setOverwriteAsk(null)
+                  void generateFromPlan(ask.turnId, ask.plan)
+                }}
+              >
+                Nối tiếp
+              </button>
+              <button
+                type="button"
+                className="is-primary"
+                onClick={() => {
+                  const ask = overwriteAsk
+                  setOverwriteAsk(null)
+                  onClearSlides?.()
+                  void generateFromPlan(ask.turnId, ask.plan)
+                }}
+              >
+                Ghi đè
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
       {htmlNotice ? (
         <div className="ai-html-modal" role="dialog" aria-modal="true" aria-label="Lưu ý chế độ HTML">
           <div className="ai-html-modal__box ai-html-modal__box--notice">

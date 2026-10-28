@@ -24,6 +24,7 @@
     "test:slide-graphics": "tsx --tsconfig tsconfig.app.json scripts/test-slide-graphics.mjs",
     "test:slide-plan": "tsx --tsconfig tsconfig.app.json scripts/test-slide-plan.mjs",
     "test:slide-ai": "tsx --tsconfig tsconfig.app.json scripts/test-slide-ai.mjs",
+    "test:slide-edit": "tsx --tsconfig tsconfig.app.json scripts/test-slide-edit.mjs",
     "test:slide-assets": "tsx --tsconfig tsconfig.app.json scripts/test-slide-assets.mjs",
     "test:image": "tsx --tsconfig tsconfig.app.json scripts/test-image.mjs",
     "test:sources": "tsx --tsconfig tsconfig.app.json scripts/test-sources.mjs",

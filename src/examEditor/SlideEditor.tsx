@@ -57,6 +57,7 @@ import type { Deck, DeckTheme, Slide, SlideElement, SlideTone } from '@/store/do
 import { parseAiDeck, type AiSlidePayload, type DeckPlan } from '@/lib/aiDeck'
 import { exportDeckPptx } from '@/lib/exportDeck'
 import { HtmlDeckBar, HtmlSlideFrame } from './HtmlSlide'
+import { applyEdits, recomposeSlide, type SlideEditOp } from '@/lib/slideEdit'
 import { elementHeight } from '@/lib/slideText'
 import { normalizeTheme, readableTextOn, type ResolvedTheme } from '@/lib/slideTheme'
 import { appendSlidesToDeck, withImage } from '@/lib/slideAi'
@@ -67,7 +68,6 @@ import {
   contentFromSlide,
   defaultTone,
   isLayoutId,
-  isTone,
   toneBackground,
   withPlaceholders,
   type SlideLayoutId,
@@ -372,25 +372,7 @@ export function SlideEditor({
    * của layout là màu cụ thể, không tự theo theme); slide freeform giữ hành vi cũ.
    */
   const applyTheme = (nextTheme: DeckTheme) => {
-    commitDeck({
-      ...deck,
-      theme: nextTheme,
-      slides: deck.slides.map((slide) => {
-        if (slide.layout && isLayoutId(slide.layout)) {
-          const tone = isTone(slide.tone) ? slide.tone : defaultTone(slide.layout)
-          const elements = composeLayout(
-            nextTheme,
-            slide.layout,
-            contentFromSlide(slide),
-            tone,
-          )
-          if (elements.length > 0) {
-            return { ...slide, tone, background: toneBackground(nextTheme, tone), elements }
-          }
-        }
-        return { ...slide, background: nextTheme.bg }
-      }),
-    })
+    commitDeck({ ...deck, theme: nextTheme, slides: deck.slides.map((slide) => recomposeSlide(nextTheme, slide)) })
   }
 
   /** Đổi tông cho slide đã có layout; dựng lại phần tử theo tông mới. */
@@ -468,6 +450,38 @@ export function SlideEditor({
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [presenting, slides.length])
+
+  /** Deck có nội dung thật (không phải một slide mặc định chưa đụng tới) → duyệt dàn ý phải hỏi ghi đè. */
+  const hasContent = deck.slides.some((s) => s.html || s.layout || s.elements.length > 1)
+
+  /** Người dùng chọn "Ghi đè": xoá hết slide cũ (hoàn tác được), slide mới sinh ra bắt đầu từ deck rỗng. */
+  const clearSlides = () => {
+    const next: Deck = { ...deck, format: undefined, slides: [] }
+    commitDeck(next)
+    deckRef.current = next
+    setSelectedSlideId(null)
+    setSelectedElementId(null)
+  }
+
+  /** AI sửa slide có sẵn bằng lệnh có cấu trúc; áp lên deck mới nhất, có lịch sử để hoàn tác. */
+  const applyAiEdits = (ops: SlideEditOp[]): string[] => {
+    const latest = deckRef.current
+    const result = applyEdits(latest, ops)
+    if (result.changed) {
+      historyRef.current.past = [...historyRef.current.past, latest].slice(-50)
+      historyRef.current.future = []
+      deckRef.current = result.deck
+      updateDeck(result.deck)
+    }
+    return result.summary
+  }
+
+  /** Mô tả deck cho lệnh sửa: theme, phông, danh sách slide (số thứ tự bắt đầu từ 1). */
+  const editContext =
+    `bộ màu ${theme.id} (${theme.name}), phông tiêu đề ${theme.fonts.heading}, phông nội dung ${theme.fonts.body}; ` +
+    deck.slides
+      .map((s, i) => `${i + 1}. ${s.layout ?? 'slide'}${s.html ? ' (HTML)' : ''}`)
+      .join(', ')
 
   /** Chế độ HTML: thay toàn bộ slide bằng các slide HTML (hoàn tác được bằng lịch sử). */
   const applyHtmlDeck = (htmls: string[]) => {
@@ -856,6 +870,10 @@ export function SlideEditor({
           onApplySlides={applyAiResult}
           onAppendSlide={applyAiSlide}
           onApplyHtmlDeck={applyHtmlDeck}
+          existingSlideCount={hasContent ? deck.slides.length : 0}
+          onClearSlides={clearSlides}
+          editContext={editContext}
+          onApplyEdits={applyAiEdits}
           onPendingSlides={setPendingSlides}
           contextSummary={`bài giảng "${deck.title}", ${deck.slides.length} slide`}
         />

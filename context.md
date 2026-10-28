@@ -2381,6 +2381,19 @@ Sau audit "AI sinh slide vỡ layout": gốc là tọa độ cố định + đo 
 - Trình chiếu có ←/→/Space/PageUp/PageDown, Esc thoát. Kiểm chứng trên trình duyệt thật: sinh 5 slide, thumbnail, trình chiếu, lưu/mở lại, chặn xuất.
   **Chưa kiểm:** nhánh "dựng PPT sau khi có deck HTML"; slide HTML do AI lỗi JS/CSS lạ.
 
+### 3.60. Hỏi ghi đè khi duyệt dàn ý + AI sửa slide có sẵn bằng lệnh (28/10/2026)
+
+- **Ghi đè hay nối tiếp:** deck đã có nội dung (`hasContent` trong `SlideEditor`: slide HTML, có layout hoặc >1 phần tử) thì bấm "Tạo slide" mở hộp
+  Ghi đè / Nối tiếp / Huỷ (`overwriteAsk` trong `AiPanel`). Ghi đè gọi `clearSlides` (hoàn tác được); deck chỉ có slide mặc định chưa đụng tới thì không hỏi.
+- **Lệnh sửa slide (`lib/slideEdit.ts`):** model KHÔNG viết lại slide, chỉ trả `{"action":"edit","commands":[...]}`; engine kiểm tra rồi dựng lại bằng
+  layout engine. 7 lệnh: `set_theme`, `set_fonts` (whitelist 8 phông có dấu VN, không Georgia/Cambria), `set_colors` (hex + tương phản ≥4,5:1),
+  `set_tone`, `set_transition`, `delete_slides` (không xoá hết), `move_slide`. `applyEdits` thuần (test được); lệnh lỗi bị bỏ kèm lý do, phần còn lại vẫn chạy.
+  `set_theme` giữ phông đã đặt riêng. Deck HTML chỉ nhận xoá/dời. `recomposeSlide` dùng chung với `applyTheme` của ribbon.
+- **Luồng:** `looksLikeEdit(text)` (regex rẻ) + deck có slide → một lượt gọi model với `editSystemPrompt` (có danh sách theme/phông/slide hiện tại);
+  trả `{"action":"none"}` thì rơi xuống luồng soạn bình thường. Kết quả báo lại từng dòng; ghi vào lịch sử nên Ctrl+Z hoàn tác.
+  Kiểm chứng thật: "đổi phông tiêu đề sang Times New Roman, bộ màu tím, xoá slide 4" → 3 lệnh chạy, deck còn 3 slide màu tím. Test: `npm run test:slide-edit`.
+- **Chưa làm:** sửa NỘI DUNG slide có sẵn bằng AI (viết lại/rút gọn một slide), đổi cỡ chữ, sơ đồ tư duy (`mindmap` — AI trả cây dữ liệu, engine bố trí và vẽ SVG).
+
 ## 4. Lỗi đã gặp và cách sửa
 
 ### 4.1. TipTap v3 — `content` phải là mảng
