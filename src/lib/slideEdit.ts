@@ -16,6 +16,7 @@ import {
   type SlideLayoutContent,
 } from './slideLayouts'
 import { checkSlide, slideFromAi } from './slideAi'
+import { keepCustomBg } from './slideBackground'
 import { DECK_THEMES, contrastRatio, mixHex, normalizeTheme, resolveThemeId } from './slideTheme'
 
 export type SlideEditOp =
@@ -186,9 +187,9 @@ export function recomposeSlide(theme: DeckTheme, slide: Slide, tone?: SlideTone)
   if (slide.layout && isLayoutId(slide.layout)) {
     const t = tone ?? (isTone(slide.tone) ? slide.tone : defaultTone(slide.layout))
     const elements = composeLayout(theme, slide.layout, contentFromSlide(slide), t)
-    if (elements.length > 0) return { ...slide, tone: t, background: toneBackground(theme, t), elements }
+    if (elements.length > 0) return keepCustomBg(slide, { ...slide, tone: t, background: toneBackground(theme, t), elements }, theme.fg)
   }
-  return { ...slide, background: theme.bg }
+  return slide.customBg ? slide : { ...slide, background: theme.bg }
 }
 
 /** Mô tả ngắn một slide (bố cục + nội dung chữ) để đưa vào prompt cho model biết đang sửa gì. */
@@ -370,7 +371,7 @@ export function applyEdits(deck: Deck, ops: SlideEditOp[]): EditResult {
           summary.push(`Bỏ qua: nội dung slide ${op.slide} chưa đủ để dùng bố cục ${op.layout}.`)
           break
         }
-        const updated: Slide = { ...slide, layout: op.layout, tone, background: toneBackground(theme, tone), elements }
+        const updated: Slide = keepCustomBg(slide, { ...slide, layout: op.layout, tone, background: toneBackground(theme, tone), elements }, theme.fg)
         next = { ...next, slides: next.slides.map((s) => (s === slide ? updated : s)) }
         summary.push(`Đổi bố cục slide ${op.slide} sang ${op.layout}.`)
         break

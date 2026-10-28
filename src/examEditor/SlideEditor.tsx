@@ -7,10 +7,17 @@
  * Model dữ liệu (`Deck` / `Slide` / `SlideElement`) nằm ở `store/docs.ts`.
  */
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
+import { SelectionToolbar } from './SelectionToolbar'
+import { rewriteElement } from '@/lib/slideRewrite'
+import { keepCustomBg, slideBgStyle, withBackground } from '@/lib/slideBackground'
+import { shapeClipOf } from '@/lib/slideShapes'
+import { isPresetShape, isStrokeOnlyShape, presetPaths, prstOf } from '@/lib/slidePresets'
 import {
   ChevronLeft,
   ChevronRight,
-  LayoutTemplate,
+  Copy,
+  Minimize2,
   MonitorPlay,
   Plus,
   RotateCw,
@@ -20,6 +27,33 @@ import { SLIDE_ASSETS, isSlideAssetId } from '@/lib/slideAssets'
 import { graphicById, graphicMarkup } from '@/lib/slideGraphics'
 import { hasRich } from '@/lib/slideMath'
 import { renderMath } from '@/lib/math'
+import { autoAnimate, clearAnimation, slideSteps } from '@/lib/slideAnim'
+
+/** Trạng thái ẩn/hiện của hiệu ứng bấm-chuột: mờ dần + trượt/phóng nhẹ (translate/scale tách khỏi transform xoay của phần tử). */
+const HIDDEN_POSE = { fade: {}, rise: { translate: '0 2.4cqw' }, zoom: { scale: '0.8' } } as const
+const revealStyle = (shown: boolean, anim: SlideElement['anim'] = 'fade'): React.CSSProperties => ({
+  opacity: shown ? 1 : 0,
+  ...(shown ? { translate: '0 0', scale: '1' } : HIDDEN_POSE[anim]),
+  transition: 'opacity 450ms ease, translate 450ms cubic-bezier(.2,.8,.2,1), scale 450ms cubic-bezier(.2,.8,.2,1)',
+})
+
+/** Lớp phủ cả slide bọc một phần tử; zoom phóng quanh tâm phần tử chứ không quanh tâm slide. */
+function RevealLayer({ el, shown, children }: { el: SlideElement; shown: boolean; children: React.ReactNode }) {
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        inset: 0,
+        pointerEvents: 'none',
+        zIndex: el.zIndex,
+        transformOrigin: `${el.x + el.w / 2}% ${el.y + el.h / 2}%`,
+        ...revealStyle(shown, el.anim),
+      }}
+    >
+      {children}
+    </div>
+  )
+}
 
 /**
  * Vẽ công thức trong slide. `\frac` → `\tfrac` (phân số cỡ chữ thường): phân số
@@ -80,6 +114,43 @@ const uid = () => Math.random().toString(36).slice(2, 10)
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
 
 /** biến màu cho hoạ tiết nền `.slide-frame[data-decor]` (slide.css) */
+/**
+ * Xuất PDF: dựng mọi slide thành các trang 16:9 trong lớp chỉ hiện khi in, rồi mở hộp thoại in của
+ * trình duyệt (chọn "Lưu thành PDF"). Dùng đúng bộ vẽ của bản xem nên phông, công thức, màu giống hệt —
+ * không phụ thuộc phông trong PowerPoint. CSS in nằm ở slide.css (`.slide-print-*`).
+ */
+function PrintDeck({ slides, theme, onDone }: { slides: Slide[]; theme: ResolvedTheme; onDone: () => void }) {
+  const done = useRef(onDone)
+  done.current = onDone
+  useEffect(() => {
+    let alive = true
+    const finish = () => done.current()
+    window.addEventListener('afterprint', finish, { once: true })
+    // đợi phông (Be Vietnam Pro, KaTeX) nạp xong rồi mới in, nếu không trang đầu in bằng phông tạm
+    void (document.fonts?.ready ?? Promise.resolve()).then(() => requestAnimationFrame(() => alive && window.print()))
+    return () => {
+      alive = false
+      window.removeEventListener('afterprint', finish)
+    }
+  }, [])
+  return createPortal(
+    <div className="slide-print-root">
+      {slides.map((slide) => (
+        <div key={slide.id} className="slide-print-page">
+          {slide.html ? null : (
+            <div className="slide-frame relative h-full w-full overflow-hidden" data-decor={theme.decor} style={{ ...slideBgStyle(slide), ...decorStyle(theme) }}>
+              {slide.elements.map((el) => (
+                <SlideElView key={el.id} el={el} theme={theme} />
+              ))}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>,
+    document.body,
+  )
+}
+
 const decorStyle = (theme: ResolvedTheme): React.CSSProperties =>
   ({ '--slide-decor-ink': theme.fg, '--slide-decor-accent': theme.secondary }) as React.CSSProperties
 
@@ -110,6 +181,13 @@ export function SlideEditor({
   const [ribbonTab, setRibbonTab] = useState<SlideRibbonTab>('home')
   const [presenting, setPresenting] = useState(false)
   const [presentIndex, setPresentIndex] = useState(0)
+  /** số lần đã bấm trong slide đang chiếu (hiệu ứng bấm-chuột-rồi-hiện) */
+  const [presentStep, setPresentStep] = useState(0)
+  /** vùng chuột đang đứng khi chiếu: mép trái/phải hiện mũi tên, đáy hiện thanh điều khiển */
+  const [presentHover, setPresentHover] = useState<'left' | 'right' | 'bar' | null>(null)
+  const [printing, setPrinting] = useState(false)
+  /** hình khối đang được gõ chữ trong đó */
+  const [editingShapeId, setEditingShapeId] = useState<string | null>(null)
   const [aiOpen, setAiOpen] = useState(true)
   const [zoom, setZoom] = useState(100)
   const [formatPaneOpen, setFormatPaneOpen] = useState(false)
@@ -385,8 +463,11 @@ export function SlideEditor({
       tone,
     )
     if (elements.length === 0) return
+    // chọn tông = muốn nền theo bộ màu, nên bỏ nền riêng
     patchSlide(currentSlide.id, {
       tone,
+      customBg: undefined,
+      bgImage: undefined,
       background: toneBackground(deck.theme, tone),
       elements,
     })
@@ -405,12 +486,12 @@ export function SlideEditor({
     const tone = defaultTone(layoutId)
     const elements = composeLayout(deck.theme, layoutId, content, tone)
     if (elements.length === 0) return
-    patchSlide(currentSlide.id, {
-      layout: layoutId,
-      tone,
-      background: toneBackground(deck.theme, tone),
-      elements,
-    })
+    const next = keepCustomBg(
+      currentSlide,
+      { ...currentSlide, layout: layoutId, tone, background: toneBackground(deck.theme, tone), elements },
+      deck.theme.fg,
+    )
+    patchSlide(currentSlide.id, { layout: next.layout, tone: next.tone, background: next.background, elements: next.elements })
   }
 
   /**
@@ -439,17 +520,52 @@ export function SlideEditor({
     return added
   }
 
-  // Trình chiếu: ←/→/Space/PageUp/PageDown chuyển slide, Esc thoát (iframe không có phím điều hướng riêng).
+  // Bấm/→ hiện phần tử kế tiếp của slide; hết hiệu ứng mới sang slide sau. Lùi: ẩn bớt, rồi về slide trước (đã hiện đủ).
+  const goNext = () => {
+    if (presentStep < slideSteps(slides[presentIndex]?.elements ?? [])) setPresentStep(presentStep + 1)
+    else if (presentIndex < slides.length - 1) {
+      setPresentIndex(presentIndex + 1)
+      setPresentStep(0)
+    }
+  }
+  const goPrev = () => {
+    if (presentStep > 0) setPresentStep(presentStep - 1)
+    else if (presentIndex > 0) {
+      setPresentIndex(presentIndex - 1)
+      setPresentStep(slideSteps(slides[presentIndex - 1]?.elements ?? []))
+    }
+  }
+
+  useEffect(() => {
+    if (presenting) setPresentStep(0)
+  }, [presenting])
+
+  // Chiếu toàn màn hình; Esc của trình duyệt thoát toàn màn hình thì thoát luôn trình chiếu.
+  useEffect(() => {
+    if (!presenting) return
+    void document.documentElement.requestFullscreen?.().catch(() => {})
+    const onChange = () => {
+      if (!document.fullscreenElement) setPresenting(false)
+    }
+    document.addEventListener('fullscreenchange', onChange)
+    return () => {
+      document.removeEventListener('fullscreenchange', onChange)
+      setPresentHover(null)
+      if (document.fullscreenElement) void document.exitFullscreen().catch(() => {})
+    }
+  }, [presenting])
+
+  // Trình chiếu: ←/→/Space/PageUp/PageDown, Esc thoát (iframe không có phím điều hướng riêng).
   useEffect(() => {
     if (!presenting) return
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setPresenting(false)
-      else if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(e.key)) setPresentIndex((i) => Math.min(slides.length - 1, i + 1))
-      else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) setPresentIndex((i) => Math.max(0, i - 1))
+      else if (['ArrowRight', 'ArrowDown', 'PageDown', ' ', 'Enter'].includes(e.key)) goNext()
+      else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) goPrev()
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [presenting, slides.length])
+  })
 
   /** Deck có nội dung thật (không phải một slide mặc định chưa đụng tới) → duyệt dàn ý phải hỏi ghi đè. */
   const hasContent = deck.slides.some((s) => s.html || s.layout || s.elements.length > 1)
@@ -538,51 +654,90 @@ export function SlideEditor({
       setPresenting(false)
       return null
     }
-    return (
-      <div className="fixed inset-0 z-[100] flex flex-col bg-black">
-        <div className="flex flex-1 items-center justify-center p-6">
-          {slide.html ? (
-            <HtmlSlideFrame html={slide.html} interactive className="max-w-[1200px] shadow-2xl" />
-          ) : (
-            <div
-              className="slide-frame relative aspect-[16/9] w-full max-w-[1200px] overflow-hidden shadow-2xl"
-              data-decor={theme.decor}
-              style={{ background: slide.background, ...decorStyle(theme) }}
-            >
-              {slide.elements.map((el) => (
-                <SlideElView key={el.id} el={el} theme={theme} />
-              ))}
-            </div>
-          )}
-        </div>
-        <div className="flex items-center justify-center gap-3 pb-5 text-white/80">
-          <button
-            type="button"
-            onClick={() => setPresentIndex((i) => Math.max(0, i - 1))}
-            disabled={presentIndex === 0}
-            className="rounded-md p-2 transition-colors hover:bg-white/10 disabled:opacity-30"
+    const canPrev = presentIndex > 0 || presentStep > 0
+    const canNext = presentIndex < deck.slides.length - 1 || presentStep < slideSteps(slide.elements)
+    const onMove = (e: React.MouseEvent) => {
+      const { innerWidth: w, innerHeight: h } = window
+      setPresentHover(e.clientY > h - 90 ? 'bar' : e.clientX < w * 0.12 ? 'left' : e.clientX > w * 0.88 ? 'right' : null)
+    }
+    const edge = (side: 'left' | 'right') => {
+      const go = side === 'left' ? goPrev : goNext
+      const enabled = side === 'left' ? canPrev : canNext
+      const Icon = side === 'left' ? ChevronLeft : ChevronRight
+      return (
+        <div
+          className={cn('absolute inset-y-0 z-10 flex w-[12%] items-center', side === 'left' ? 'left-0 justify-start pl-5' : 'right-0 justify-end pr-5')}
+          style={{ cursor: enabled ? 'pointer' : 'default' }}
+          onClick={(e) => {
+            e.stopPropagation()
+            go()
+          }}
+        >
+          <span
+            className="flex size-12 items-center justify-center rounded-full bg-black/45 text-white backdrop-blur-sm transition-all duration-200"
+            style={{ opacity: presentHover === side && enabled ? 1 : 0, transform: presentHover === side && enabled ? 'scale(1)' : 'scale(0.85)' }}
           >
-            <ChevronLeft className="size-5" />
-          </button>
-          <span className="tnum text-[13px]">
-            {presentIndex + 1} / {deck.slides.length}
+            <Icon className="size-6" />
           </span>
-          <button
-            type="button"
-            onClick={() =>
-              setPresentIndex((i) => Math.min(deck.slides.length - 1, i + 1))
-            }
-            disabled={presentIndex === deck.slides.length - 1}
-            className="rounded-md p-2 transition-colors hover:bg-white/10 disabled:opacity-30"
+        </div>
+      )
+    }
+    return (
+      <div
+        className="fixed inset-0 z-[100] select-none overflow-hidden bg-black"
+        onClick={goNext}
+        onMouseMove={onMove}
+        onMouseLeave={() => setPresentHover(null)}
+      >
+        <div className="absolute inset-0 flex items-center justify-center">
+          {/* vừa khít màn hình, giữ 16:9 */}
+          <div
+            key={slide.id}
+            className={slide.transition && slide.transition !== 'none' ? `slide-enter-${slide.transition}` : undefined}
+            style={{ width: 'min(100vw, calc(100vh * 16 / 9))' }}
           >
-            <ChevronRight className="size-5" />
-          </button>
-          <button
-            type="button"
-            onClick={() => setPresenting(false)}
-            className="ml-4 rounded-md px-3 py-1.5 text-[13px] transition-colors hover:bg-white/10"
-          >
-            Thoát
+            {slide.html ? (
+              <HtmlSlideFrame html={slide.html} interactive />
+            ) : (
+              <div
+                className="slide-frame relative aspect-[16/9] w-full overflow-hidden"
+                data-decor={theme.decor}
+                style={{ ...slideBgStyle(slide), ...decorStyle(theme) }}
+              >
+                {slide.elements.map((el) =>
+                  el.step ? (
+                    <RevealLayer key={el.id} el={el} shown={el.step <= presentStep}>
+                      <SlideElView el={el} theme={theme} />
+                    </RevealLayer>
+                  ) : (
+                    <SlideElView key={el.id} el={el} theme={theme} revealStep={presentStep} />
+                  ),
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+        {edge('left')}
+        {edge('right')}
+        {/* thanh điều khiển trượt lên từ đáy, đè lên slide chứ không đẩy slide */}
+        <div
+          className="absolute inset-x-0 bottom-0 z-20 flex h-[68px] items-center justify-between px-10 text-white/85 backdrop-blur-md transition-transform duration-300 ease-out"
+          style={{ background: 'rgba(52, 58, 70, 0.92)', transform: presentHover === 'bar' ? 'translateY(0)' : 'translateY(100%)' }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="flex items-center gap-5">
+            <button type="button" aria-label="Slide trước" onClick={goPrev} disabled={!canPrev} className="rounded-md p-1.5 transition-colors hover:bg-white/10 disabled:opacity-30">
+              <ChevronLeft className="size-6" />
+            </button>
+            <span className="tnum min-w-[4.5rem] text-center text-[17px] font-semibold text-white">
+              {presentIndex + 1} / {deck.slides.length}
+            </span>
+            <button type="button" aria-label="Slide sau" onClick={goNext} disabled={!canNext} className="rounded-md p-1.5 transition-colors hover:bg-white/10 disabled:opacity-30">
+              <ChevronRight className="size-6" />
+            </button>
+          </div>
+          <button type="button" aria-label="Thoát trình chiếu" title="Thoát trình chiếu (Esc)" onClick={() => setPresenting(false)} className="rounded-md p-1.5 transition-colors hover:bg-white/10">
+            <Minimize2 className="size-6" />
           </button>
         </div>
       </div>
@@ -594,6 +749,7 @@ export function SlideEditor({
    * ---------------------------------------------------------------- */
   return (
     <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+      {printing && <PrintDeck slides={deck.slides} theme={theme} onDone={() => setPrinting(false)} />}
       {deck.format === 'html' ? (
         <HtmlDeckBar
           onSave={onSave}
@@ -635,7 +791,31 @@ export function SlideEditor({
           if (allSlides) commitDeck({ ...deck, slides: deck.slides.map((s) => ({ ...s, transition })) })
           else if (currentSlide) patchSlide(currentSlide.id, { transition })
         }}
+        onBackground={(background, allSlides, image) =>
+          commitDeck({
+            ...deck,
+            slides: deck.slides.map((s) =>
+              s.html || (!allSlides && s.id !== currentSlide?.id)
+                ? s
+                : background
+                  ? withBackground({ ...s, bgImage: image }, background, deck.theme.fg)
+                  : recomposeSlide(deck.theme, { ...s, customBg: undefined, bgImage: undefined }),
+            ),
+          })
+        }
+        onAnimate={(mode, allSlides) =>
+          commitDeck({
+            ...deck,
+            slides: deck.slides.map((s) =>
+              s.html || (!allSlides && s.id !== currentSlide?.id)
+                ? s
+                : { ...s, elements: mode === 'auto' ? autoAnimate(s.elements, s.layout ?? 'bullets') : clearAnimation(s.elements) },
+            ),
+          })
+        }
         onPresent={() => { setPresentIndex(currentSlide ? deck.slides.indexOf(currentSlide) : 0); setPresenting(true) }}
+        onPresentFromStart={() => { setPresentIndex(0); setPresenting(true) }}
+        onExportPdf={() => setPrinting(true)}
         formatPaneOpen={formatPaneOpen}
         onToggleFormatPane={() => setFormatPaneOpen((v) => !v)}
         aiOpen={aiOpen}
@@ -730,7 +910,7 @@ export function SlideEditor({
                   title="Nhân bản slide"
                   className="rounded bg-white/85 p-1 text-ink-3 hover:text-ink"
                 >
-                  <LayoutTemplate className="size-3" />
+                  <Copy className="size-3" />
                 </button>
                 )}
                 <button
@@ -820,7 +1000,7 @@ export function SlideEditor({
               <div
                 className="slide-frame relative aspect-[16/9] w-full overflow-hidden bg-white shadow-[0_2px_24px_-8px_rgba(35,32,28,0.35)]"
                 data-decor={theme.decor}
-                style={{ background: currentSlide.background, ...decorStyle(theme) }}
+                style={{ ...slideBgStyle(currentSlide), ...decorStyle(theme) }}
                 onClickCapture={(e) => {
                   // Kéo xoay/resize có thể nhả chuột ngoài phần tử; đừng để cú
                   // click rơi vào nền xoá mất vùng chọn vừa thao tác.
@@ -847,6 +1027,8 @@ export function SlideEditor({
                     onPreview={(patch) => previewElement(currentSlide.id, el.id, patch)}
                     onChange={(patch) => updateElement(currentSlide.id, el.id, patch)}
                     onGenerateImage={() => generateImageFor(currentSlide.id, el.id)}
+                    editingText={editingShapeId === el.id}
+                    onEditingText={(on) => setEditingShapeId(on ? el.id : null)}
                   />
                 ))}
               </div>
@@ -857,8 +1039,42 @@ export function SlideEditor({
                 description="Nhấn Thêm slide ở cột bên trái để bắt đầu."
               />
             )}
+            {selectedElement && currentSlide && !currentSlide.html && (
+              <SelectionToolbar
+                key={selectedElement.id}
+                el={selectedElement}
+                onAskAi={async (instruction) => {
+                  const patch = await rewriteElement(
+                    selectedElement,
+                    instruction,
+                    currentSlide.elements.find((e) => e.id === 'title')?.text ?? '',
+                  )
+                  updateElement(currentSlide.id, selectedElement.id, patch)
+                }}
+                height={elementHeight(selectedElement)}
+                accent={theme.accent}
+                fg={theme.fg}
+                onUpdate={(patch) => updateElement(currentSlide.id, selectedElement.id, patch)}
+                onEditText={() => setEditingShapeId(selectedElement.id)}
+                onDelete={() => removeElement(currentSlide.id, selectedElement.id)}
+              />
+            )}
           </div>
         </div>
+        {/* ghi chú diễn giả: AI viết vào đây (lệnh set_notes) và PPTX xuất ra phần ghi chú.
+            Không điều khiển theo từng phím: lưu khi rời ô để không sinh một bước hoàn tác mỗi ký tự. */}
+        {currentSlide && !currentSlide.html && (
+          <textarea
+            key={currentSlide.id}
+            className="slide-notes"
+            placeholder="Nhấp để thêm ghi chú diễn giả"
+            aria-label="Ghi chú diễn giả"
+            defaultValue={currentSlide.notes ?? ''}
+            onBlur={(e) => {
+              if (e.target.value !== (currentSlide.notes ?? '')) patchSlide(currentSlide.id, { notes: e.target.value })
+            }}
+          />
+        )}
       </div>
 
       {/* ---------------- AI panel (phải) — trợ lý AI nằm ở cột phải --------- */}
@@ -894,7 +1110,7 @@ export function SlideThumb({ slide, theme }: { slide: Slide; theme: ResolvedThem
     <div
       className="slide-frame relative aspect-[16/9] w-full overflow-hidden"
       data-decor={theme.decor}
-      style={{ background: slide.background, ...decorStyle(theme) }}
+      style={{ ...slideBgStyle(slide), ...decorStyle(theme) }}
     >
       {slide.elements.map((el) => (
         <SlideElView key={el.id} el={el} theme={theme} />
@@ -1025,7 +1241,104 @@ function ConnectorSvg({ el, theme }: { el: SlideElement; theme: ResolvedTheme })
   )
 }
 
-function SlideElView({ el, theme }: { el: SlideElement; theme: ResolvedTheme }) {
+/**
+ * CSS của hình khối (nền, bo góc, viền, bóng, đường cắt, độ đục) — dùng chung cho bản xem và bản chỉnh sửa.
+ * Hình bị cắt (sao, tim, tam giác…) cắt luôn cả viền CSS, nên viền của chúng vẽ bằng lớp trong thu vào (`shapeInner`).
+ */
+function shapeCss(el: SlideElement, theme: ResolvedTheme): React.CSSProperties {
+  // hình dựng sẵn vẽ bằng SVG (PresetSvg): chỉ cần độ đục và bóng (drop-shadow theo đúng đường viền hình)
+  if (isPresetShape(el.shape)) return { opacity: el.opacity, filter: SHADOW_FILTERS[shadowLevelOf(el, theme)] }
+  const isLine = el.shape === 'line'
+  const border = isLine ? 0 : (el.border ?? theme.border)
+  const clip = shapeClipOf(el)
+  const borderColor = el.borderColor ?? theme.borderColor
+  return {
+    background: clip && border ? borderColor : (el.fill ?? theme.accent),
+    borderRadius: el.shape === 'ellipse' ? '50%' : el.shape === 'round' ? `${el.radius ?? theme.radius}px` : 0,
+    clipPath: clip,
+    boxShadow: isLine ? undefined : shadowCss(el, theme),
+    border: !clip && border ? `${border}px solid ${borderColor}` : undefined,
+    opacity: el.opacity,
+  }
+}
+
+/** Bóng đổ theo mức (0 không, 1 nhẹ, 2 vừa, 3 đậm); chưa chọn mức thì theo `shadow` và bộ màu như trước. */
+const SHADOWS = [
+  undefined,
+  '0 0.3cqw 0.9cqw -0.2cqw rgb(15 23 42 / 0.25)',
+  '0 0.8cqw 2.4cqw -0.6cqw rgb(15 23 42 / 0.28)',
+  '0 1.2cqw 3.6cqw -0.5cqw rgb(15 23 42 / 0.42)',
+]
+const SHADOW_FILTERS = [
+  undefined,
+  'drop-shadow(0 0.3cqw 0.5cqw rgb(15 23 42 / 0.3))',
+  'drop-shadow(0 0.7cqw 1.1cqw rgb(15 23 42 / 0.32))',
+  'drop-shadow(0 1.1cqw 1.8cqw rgb(15 23 42 / 0.45))',
+]
+const shadowLevelOf = (el: SlideElement, theme: ResolvedTheme): 0 | 1 | 2 | 3 =>
+  el.shadowLevel ?? (el.shadow === true || (el.shadow !== false && theme.shadow !== 'none') ? 2 : 0)
+
+function shadowCss(el: SlideElement, theme: ResolvedTheme): string | undefined {
+  if (el.shadowLevel !== undefined) return SHADOWS[el.shadowLevel]
+  if (el.shadow === false || (el.shadow !== true && theme.shadow === 'none')) return undefined
+  return theme.shadow === 'hard' ? '6px 6px 0 rgb(17 24 39 / 0.92)' : SHADOWS[2]
+}
+
+/** Hình dựng sẵn (OOXML prst) vẽ bằng SVG: nền, nét, và phần chỉ có nét/chỉ có nền của từng hình. */
+function PresetSvg({ el, theme }: { el: SlideElement; theme: ResolvedTheme }) {
+  const { W, H, both, fillOnly, strokeOnly } = presetPaths(prstOf(el.shape), el.w, el.h)
+  const fill = el.fill ?? theme.accent
+  const border = el.border ?? theme.border ?? 0
+  const outline = border ? el.borderColor ?? theme.borderColor : 'none'
+  const common = { vectorEffect: 'non-scaling-stroke' as const, strokeLinejoin: 'round' as const, strokeLinecap: 'round' as const }
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', overflow: 'visible', display: 'block' }}>
+      {both && <path d={both} fill={isStrokeOnlyShape(el.shape) ? 'none' : fill} stroke={outline} strokeWidth={border} {...common} />}
+      {fillOnly && <path d={fillOnly} fill={fill} stroke="none" />}
+      {strokeOnly && (
+        // nét của đường nối/cung: dùng màu tô làm màu nét nếu hình không có nền
+        <path d={strokeOnly} fill="none" stroke={both || fillOnly ? outline : fill} strokeWidth={both || fillOnly ? border || 2 : Math.max(border, 3)} {...common} />
+      )}
+    </svg>
+  )
+}
+
+/** Phần ruột của hình bị cắt có viền: thu vào `border`px để lộ viền ở ngoài. */
+function shapeInner(el: SlideElement, theme: ResolvedTheme): React.ReactNode {
+  if (isPresetShape(el.shape)) return <PresetSvg el={el} theme={theme} />
+  const border = el.shape === 'line' ? 0 : (el.border ?? theme.border)
+  const clip = shapeClipOf(el)
+  if (!clip || !border) return null
+  return <div style={{ position: 'absolute', inset: border, background: el.fill ?? theme.accent, clipPath: clip }} />
+}
+
+/** Chữ nằm trong hình khối (căn giữa, tự co cho vừa); màu mặc định đọc được trên màu tô. */
+function ShapeText({ el, theme }: { el: SlideElement; theme: ResolvedTheme }) {
+  if (!el.text?.trim() || el.shape === 'line') return null
+  return (
+    <FitText
+      html={hasRich(el.text) ? slideMathHtml(el.text) : undefined}
+      baseSize={el.fontSize ?? 2.4}
+      style={{
+        position: 'absolute',
+        inset: '10% 12%',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        textAlign: el.align ?? 'center',
+        color: el.textColor ?? readableTextOn(el.fill ?? theme.accent),
+        fontFamily: fontStack(el.fontFamily ?? theme.fonts.body),
+        fontWeight: el.fontWeight ?? 600,
+        fontStyle: el.fontStyle,
+        lineHeight: 1.25,
+      }}
+    >
+      {el.text}
+    </FitText>
+  )
+}
+
+function SlideElView({ el, theme, revealStep }: { el: SlideElement; theme: ResolvedTheme; revealStep?: number }) {
   const style: React.CSSProperties = {
     position: 'absolute',
     left: `${el.x}%`,
@@ -1039,10 +1352,12 @@ function SlideElView({ el, theme }: { el: SlideElement; theme: ResolvedTheme }) 
 
   if (el.type === 'text') {
     const size = el.fontSize ?? (isBody ? 2.4 : 3.6)
+    // trình chiếu: mỗi dòng là một khối riêng để hiện lần lượt (bố cục không đổi vì chỉ đổi opacity/translate)
+    const lines = el.lineStep && revealStep !== undefined ? (el.text ?? '').split('\n') : null
     return (
       <FitText
         // công thức `$...$` vẽ bằng KaTeX (HTML do KaTeX sinh, không phải input thô)
-        html={hasRich(el.text) ? slideMathHtml(el.text ?? '') : undefined}
+        html={!lines && hasRich(el.text) ? slideMathHtml(el.text ?? '') : undefined}
         style={{
           ...style,
           color: el.textColor ?? theme.fg,
@@ -1063,7 +1378,13 @@ function SlideElView({ el, theme }: { el: SlideElement; theme: ResolvedTheme }) 
         }}
         baseSize={size}
       >
-        {el.text}
+        {lines
+          ? lines.map((line, i) => (
+              <div key={i} style={revealStyle((el.lineStep ?? 0) + i <= (revealStep ?? 0), el.anim)}>
+                {hasRich(line) ? <span dangerouslySetInnerHTML={{ __html: slideMathHtml(line) }} /> : line || ' '}
+              </div>
+            ))
+          : el.text}
       </FitText>
     )
   }
@@ -1093,39 +1414,13 @@ function SlideElView({ el, theme }: { el: SlideElement; theme: ResolvedTheme }) 
     )
   }
 
-  if (el.type === 'shape') {
-    const radius =
-      el.shape === 'ellipse'
-        ? '50%'
-        : el.shape === 'round'
-          ? `${el.radius ?? theme.radius}px`
-          : '0'
-    const shadow =
-      el.shadow === false || (el.shadow !== true && theme.shadow === 'none')
-        ? undefined
-        : theme.shadow === 'hard'
-          ? '6px 6px 0 rgb(17 24 39 / 0.92)'
-          : '0 0.8cqw 2.4cqw -0.6cqw rgb(15 23 42 / 0.28)'
-    const border = el.border ?? theme.border
-    const clip =
-      el.shape === 'triangle'
-        ? 'polygon(50% 0, 100% 100%, 0 100%)'
-        : el.shape === 'arrow'
-          ? 'polygon(0 35%, 78% 35%, 78% 10%, 100% 50%, 78% 90%, 78% 65%, 0 65%)'
-          : undefined
+  if (el.type === 'shape')
     return (
-      <div
-        style={{
-          ...style,
-          background: el.fill ?? theme.accent,
-          borderRadius: radius,
-          clipPath: clip,
-          boxShadow: shadow,
-          border: border ? `${border}px solid ${el.borderColor ?? theme.borderColor}` : undefined,
-        }}
-      />
+      <div style={{ ...style, ...shapeCss(el, theme) }}>
+        {shapeInner(el, theme)}
+        <ShapeText el={el} theme={theme} />
+      </div>
     )
-  }
 
   if (el.type === 'image')
     return (
@@ -1348,6 +1643,7 @@ function AutoFitText({
   lineHeight,
   letterSpacing,
   valign,
+  focusOnMount,
   onChange,
 }: {
   value: string
@@ -1355,6 +1651,8 @@ function AutoFitText({
   baseSize: number
   /** canh giữa dọc — khớp bản xem (SlideElView) để chữ không nhảy lên đỉnh khi chọn */
   valign?: 'top' | 'middle'
+  /** focus ô chữ ngay khi hiện (gõ chữ trong hình khối) */
+  focusOnMount?: boolean
   weight: number
   fontFamily?: string
   fontStyle?: 'normal' | 'italic'
@@ -1448,7 +1746,7 @@ function AutoFitText({
   const textarea = (
     <textarea
       ref={ref}
-      autoFocus={editing}
+      autoFocus={editing || focusOnMount}
       onBlur={() => setEditing(false)}
       value={value}
       onChange={(e) => onChange(e.target.value)}
@@ -1496,6 +1794,8 @@ function EditableEl({
   onChange,
   onDragEnd,
   onGenerateImage,
+  editingText,
+  onEditingText,
 }: {
   el: SlideElement
   theme: ResolvedTheme
@@ -1508,6 +1808,9 @@ function EditableEl({
   onDragEnd: () => void
   /** tạo ảnh AI cho khung ảnh trống (prompt lấy từ nội dung slide) */
   onGenerateImage: () => Promise<void>
+  /** đang gõ chữ trong hình khối (nhấp đúp hình hoặc nút "Thêm chữ" trên thanh nổi) */
+  editingText: boolean
+  onEditingText: (on: boolean) => void
 }) {
   const [imageBusy, setImageBusy] = useState(false)
   const [imageError, setImageError] = useState<string | null>(null)
@@ -1731,34 +2034,26 @@ function EditableEl({
 
   if (el.type === 'shape')
     return (
-      <div
-        {...common}
-        style={{
-          ...style,
-          background: el.fill ?? theme.accent,
-          borderRadius:
-            el.shape === 'ellipse'
-              ? '50%'
-              : el.shape === 'round'
-                ? `${el.radius ?? theme.radius}px`
-                : 0,
-          boxShadow:
-            el.shadow === false || (el.shadow !== true && theme.shadow === 'none')
-              ? undefined
-              : theme.shadow === 'hard'
-                ? '6px 6px 0 rgb(17 24 39 / 0.92)'
-                : '0 0.8cqw 2.4cqw -0.6cqw rgb(15 23 42 / 0.28)',
-          border: (el.border ?? theme.border)
-            ? `${el.border ?? theme.border}px solid ${el.borderColor ?? theme.borderColor}`
-            : undefined,
-          clipPath:
-            el.shape === 'triangle'
-              ? 'polygon(50% 0, 100% 100%, 0 100%)'
-              : el.shape === 'arrow'
-                ? 'polygon(0 35%, 78% 35%, 78% 10%, 100% 50%, 78% 90%, 78% 65%, 0 65%)'
-                : undefined,
-        }}
-      >
+      <div {...common} style={{ ...style, ...shapeCss(el, theme) }} onDoubleClick={() => el.shape !== 'line' && onEditingText(true)}>
+        {shapeInner(el, theme)}
+        {editingText && el.shape !== 'line' ? (
+          <div style={{ position: 'absolute', inset: '10% 12%' }} onBlur={() => onEditingText(false)}>
+            <AutoFitText
+              value={el.text ?? ''}
+              baseSize={el.fontSize ?? 2.4}
+              weight={el.fontWeight ?? 600}
+              fontFamily={fontStack(el.fontFamily ?? theme.fonts.body)}
+              fontStyle={el.fontStyle}
+              align={el.align ?? 'center'}
+              color={el.textColor ?? readableTextOn(el.fill ?? theme.accent)}
+              valign="middle"
+              focusOnMount
+              onChange={(text) => onChange({ text })}
+            />
+          </div>
+        ) : (
+          <ShapeText el={el} theme={theme} />
+        )}
         {handle}
       </div>
     )

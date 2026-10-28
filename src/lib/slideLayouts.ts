@@ -7,6 +7,7 @@
  * hardcode palette.
  */
 import type { DeckTheme, Slide, SlideElement, SlideTone } from '@/store/docs'
+import { autoAnimate } from './slideAnim'
 import { textBoxHeight } from './slideText'
 import { fitFontSize } from './slideMeasure'
 import { GRAPHIC_INK, graphicById, isGraphicId } from './slideGraphics'
@@ -1517,6 +1518,22 @@ function composeMindmap(p: LayoutPalette, content: SlideLayoutContent): SlideEle
  * bắt buộc trả mảng rỗng để caller tự fallback.
  */
 export function composeLayout(
+  theme: DeckTheme,
+  layoutId: string,
+  content: SlideLayoutContent,
+  tone?: SlideTone,
+): SlideElement[] {
+  const built = composeStatic(theme, layoutId, content, tone)
+  const animated = autoAnimate(built, isLayoutId(layoutId) ? layoutId : 'bullets')
+  // autoAnimate trả bản sao → giữ lại cỡ thiết kế để `fitRatio` còn đo được
+  animated.forEach((el, i) => {
+    const base = BASE_SIZE.get(built[i])
+    if (base) BASE_SIZE.set(el, base)
+  })
+  return animated
+}
+
+function composeStatic(
   theme: DeckTheme,
   layoutId: string,
   content: SlideLayoutContent,

@@ -9,6 +9,7 @@ import type { AiSlidePayload } from './aiDeck'
 import type { DeckPlan, DeckPlanSlide } from './aiDeck'
 import type { Deck, DeckTheme, Slide, SlideElement, SlideTone } from '@/store/docs'
 import { normalizeTheme, themeById, type ResolvedTheme } from './slideTheme'
+import { keepCustomBg } from './slideBackground'
 import { stylePackById } from './slideStyles'
 import { subjectById, subjectRulesBlock } from './slideSubjects'
 import { fixMathEscapes, limitBold, mathToPlain } from './slideMath'
@@ -733,10 +734,10 @@ function recompose(slides: Slide[], theme: ResolvedTheme): Slide[] {
       const tone = isTone(slide.tone) ? slide.tone : defaultTone(slide.layout)
       const elements = composeLayout(theme, slide.layout, contentFromSlide(slide), tone)
       if (elements.length > 0) {
-        return { ...slide, tone, background: toneBackground(theme, tone), elements }
+        return keepCustomBg(slide, { ...slide, tone, background: toneBackground(theme, tone), elements }, theme.fg)
       }
     }
-    return { ...slide, background: theme.bg }
+    return slide.customBg ? slide : { ...slide, background: theme.bg }
   })
 }
 

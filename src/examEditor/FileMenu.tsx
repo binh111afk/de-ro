@@ -17,6 +17,10 @@ export interface FileMenuProps {
   onDownload: () => void | Promise<void>
   /** phần mở rộng của tệp tải xuống, chỉ để hiện gợi ý */
   downloadHint: string
+  /** lưu ý dưới mục tải xuống (vd. giới hạn khi xuất) */
+  downloadNote?: string
+  /** mục xuất thêm sau "Tải xuống file" (vd. PDF) */
+  extra?: { label: string; hint: string; onClick: () => void }
 }
 
 function IconTray({ up = false }: { up?: boolean }) {
@@ -39,7 +43,7 @@ function IconTray({ up = false }: { up?: boolean }) {
   )
 }
 
-export function FileMenu({ kind, onNew, onImport, onDownload, downloadHint }: FileMenuProps) {
+export function FileMenu({ kind, onNew, onImport, onDownload, downloadHint, downloadNote, extra }: FileMenuProps) {
   const [open, setOpen] = useState(false)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -161,6 +165,27 @@ export function FileMenu({ kind, onNew, onImport, onDownload, downloadHint }: Fi
             </span>
           </button>
 
+          {extra && (
+            <button
+              type="button"
+              role="menuitem"
+              className="file-menu__item"
+              disabled={busy}
+              onClick={() => {
+                setOpen(false)
+                extra.onClick()
+              }}
+            >
+              <span className="file-menu__icon">
+                <IconTray up />
+              </span>
+              <span className="file-menu__text">
+                <span className="file-menu__label">{extra.label}</span>
+                <span className="file-menu__hint">{extra.hint}</span>
+              </span>
+            </button>
+          )}
+          {downloadNote && <div className="file-menu__note">{downloadNote}</div>}
           {busy && <div className="file-menu__status">Đang xử lý tệp…</div>}
           {error && (
             <div className="file-menu__error" role="alert">

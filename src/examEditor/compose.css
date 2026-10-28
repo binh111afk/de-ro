@@ -202,6 +202,16 @@
     background: var(--color-line);
   }
 
+  .file-menu__note {
+    margin: 2px 4px 2px;
+    padding: 7px 8px;
+    border-radius: 7px;
+    background: var(--color-paper);
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: var(--color-ink-3);
+  }
+
   .file-menu__status {
     padding: 7px 10px 3px;
     font-size: 12px;
@@ -229,32 +239,6 @@
   .ribbon-quick__meta {
     font-size: 11.5px;
     color: var(--text-dim);
-  }
-
-  .ribbon-quick__btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    border: none;
-    background: none;
-    padding: 3px 7px;
-    border-radius: 3px;
-    font-size: 12.5px;
-    color: var(--text-primary);
-    cursor: pointer;
-  }
-
-  .ribbon-quick__btn:hover:not(:disabled) {
-    background: var(--hover);
-  }
-
-  .ribbon-quick__btn:disabled {
-    opacity: 0.35;
-    cursor: default;
-  }
-
-  .ribbon-quick__btn svg {
-    display: block;
   }
 
   /* ------------------------------------------------------------------ *
@@ -1103,6 +1087,11 @@
   .ai-dock--right .ai-dock__collapse {
     right: auto;
     left: 8px;
+  }
+
+  /* chừa chỗ cho nút thu gọn (8 + 26 + 10px) để không đè lên tiêu đề */
+  .ai-dock--right .ai-panel-header {
+    padding-left: 44px;
   }
 
   @media (prefers-reduced-motion: reduce) {

@@ -10,6 +10,7 @@
 }
 
 .slide-stage__inner {
+  position: relative;
   width: min(100%, 1000px);
   margin: 0 auto;
 }
@@ -21,6 +22,8 @@
  */
 .slide-frame {
   container-type: inline-size;
+  /* thumbnail nằm trong <button> (mặc định canh giữa): chữ không đặt `align` sẽ thừa kế và lệch khỏi sân soạn */
+  text-align: left;
   /* tránh từ mồ côi ở cuối đoạn */
   text-wrap: pretty;
 }
@@ -216,6 +219,50 @@
   color: var(--text-tertiary);
   cursor: default;
 }
+
+/* Xuất PDF: lớp in chỉ hiện khi in, ẩn toàn bộ app; mỗi slide một trang 16:9 */
+.slide-print-root { display: none; }
+@media print {
+  @page { size: 13.333in 7.5in; margin: 0; }
+  #root { display: none !important; }
+  .slide-print-root { display: block; }
+  .slide-print-root * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .slide-print-page {
+    width: 13.333in;
+    height: 7.5in;
+    overflow: hidden;
+    break-after: page;
+    break-inside: avoid;
+  }
+  .slide-print-page:last-child { break-after: auto; }
+}
+
+.slide-notes {
+  flex-shrink: 0;
+  height: 72px;
+  resize: none;
+  border: none;
+  border-top: 1px solid var(--color-line);
+  background: var(--color-surface, #fff);
+  padding: 10px 16px;
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-ink-2);
+  outline: none;
+}
+
+.slide-notes::placeholder {
+  color: var(--color-ink-3);
+}
+
+/* chuyển tiếp khi chiếu: slide mới vào bằng hiệu ứng đã chọn ở tab Chuyển tiếp */
+@keyframes slide-enter-fade { from { opacity: 0; } }
+@keyframes slide-enter-slide { from { opacity: 0; translate: 6% 0; } }
+@keyframes slide-enter-zoom { from { opacity: 0; scale: 0.92; } }
+.slide-enter-fade { animation: slide-enter-fade 450ms ease both; }
+.slide-enter-slide { animation: slide-enter-slide 450ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.slide-enter-zoom { animation: slide-enter-zoom 450ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
 
 .qa-sep {
   width: 1px;

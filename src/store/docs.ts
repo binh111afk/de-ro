@@ -21,7 +21,14 @@ export interface SlideElement {
   w: number
   h: number
   text?: string
-  shape?: 'rect' | 'round' | 'ellipse' | 'triangle' | 'arrow'
+  /** hình khối: 'rect' | 'round' | 'ellipse' | 'triangle' | 'arrow' | 'star' | 'heart' | 'line', hoặc tên prst OOXML (lib/slidePresets.ts) */
+  shape?: string
+  /** độ đục của hình khối, 0–1 (thiếu = 1) */
+  opacity?: number
+  /** mức bóng đổ của hình khối: 0 không, 1 nhẹ, 2 vừa, 3 đậm; thiếu thì theo `shadow`/bộ màu */
+  shadowLevel?: 0 | 1 | 2 | 3
+  /** đường thẳng (`shape: 'line'`): đầu mũi tên; độ dày lấy từ `border` */
+  lineArrow?: 'none' | 'end' | 'both'
   fill?: string
   /** bóng đổ mềm cho thẻ/panel (renderer web; PPTX bỏ qua) */
   shadow?: boolean
@@ -63,13 +70,23 @@ export interface SlideElement {
    * theo nội dung; xem `elementHeight` trong `lib/slideText.ts`.
    */
   fixedHeight?: boolean
+  /** hiệu ứng bấm chuột (trình chiếu): hiện ở lần bấm thứ `step`; thiếu = hiện sẵn. Xem lib/slideAnim.ts */
+  step?: number
+  /** hộp chữ nhiều dòng: dòng đầu hiện ở lần bấm `lineStep`, mỗi bấm thêm một dòng */
+  lineStep?: number
+  anim?: 'fade' | 'rise' | 'zoom'
 }
 
 export type SlideTone = 'theme' | 'soft' | 'accent'
 
 export interface Slide {
   id: string
+  /** CSS `background` (màu hoặc linear-gradient) */
   background: string
+  /** nền do người dùng tô: đổi chủ đề / dựng lại bố cục giữ nguyên (lib/slideBackground.ts) */
+  customBg?: boolean
+  /** ảnh nền (data URL JPEG 16:9 đã thu nhỏ); `background` giữ màu trung bình của ảnh để tính độ tương phản */
+  bgImage?: string
   elements: SlideElement[]
   notes?: string
   transition?: 'none' | 'fade' | 'slide' | 'zoom'

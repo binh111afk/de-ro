@@ -386,13 +386,45 @@ export function Ribbon({
         active={activeTab}
         onChange={onTabChange}
         leading={
-          <FileMenu
-            kind="exam"
-            onNew={onNewDoc}
-            onImport={onImportFile}
-            onDownload={onExportWord}
-            downloadHint=".doc"
-          />
+          <>
+            <FileMenu
+              kind="exam"
+              onNew={onNewDoc}
+              onImport={onImportFile}
+              onDownload={onExportWord}
+              downloadHint=".doc"
+            />
+            <span className="qa-sep" aria-hidden="true" />
+            <button type="button" className="qa-btn" onClick={onSave} title="Lưu đề" aria-label="Lưu đề">
+              <IconSave size={16} />
+            </button>
+            <button
+              type="button"
+              className="qa-btn"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => chain()?.undo().run()}
+              disabled={disabled || !canUndo}
+              title="Hoàn tác"
+              aria-label="Hoàn tác"
+            >
+              <IconUndo size={16} />
+            </button>
+            <button
+              type="button"
+              className="qa-btn"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => chain()?.redo().run()}
+              disabled={disabled || !canRedo}
+              title="Làm lại"
+              aria-label="Làm lại"
+            >
+              <IconRedo size={16} />
+            </button>
+            <button type="button" className="qa-btn" onClick={onPrint} title="In đề" aria-label="In đề">
+              <IconPrinter size={16} />
+            </button>
+            <span className="qa-sep" aria-hidden="true" />
+          </>
         }
       >
         <span className="ribbon-tabs-spacer" />
@@ -400,36 +432,6 @@ export function Ribbon({
           <span className="ribbon-quick__meta">
             {pageCount} trang{dirty ? ' · chưa lưu' : ''}
           </span>
-          <button
-            type="button"
-            className="ribbon-quick__btn"
-            onMouseDown={(e) => e.preventDefault()}
-            onClick={() => chain()?.undo().run()}
-            disabled={disabled || !canUndo}
-            title="Hoàn tác"
-            aria-label="Hoàn tác"
-          >
-            <IconUndo size={16} />
-          </button>
-          <button
-            type="button"
-            className="ribbon-quick__btn"
-            onMouseDown={(e) => e.preventDefault()}
-            onClick={() => chain()?.redo().run()}
-            disabled={disabled || !canRedo}
-            title="Làm lại"
-            aria-label="Làm lại"
-          >
-            <IconRedo size={16} />
-          </button>
-          <button type="button" className="ribbon-quick__btn" onClick={onSave} title="Lưu đề" aria-label="Lưu đề">
-            <IconSave size={16} />
-            Lưu
-          </button>
-          <button type="button" className="ribbon-quick__btn" onClick={onPrint} title="In đề" aria-label="In đề">
-            <IconPrinter size={16} />
-            In
-          </button>
         </div>
       </RibbonTabs>
 
