@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
-import { ChevronDown, Menu, X } from 'lucide-react'
+import { LogOut, Menu, X } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import { Button } from '@/components/ui'
+import { signOut } from '@/lib/auth'
+import { useSession } from '@/lib/useSession'
 
 /**
  * Thanh nav chính — chỉ 4 mục, mỗi mục nằm trên MỘT dòng (không xuống
@@ -30,6 +32,7 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const location = useLocation()
+  const session = useSession()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10)
@@ -86,16 +89,38 @@ export function Header() {
             </Button>
           </Link>
 
-          <button
-            type="button"
-            className="hidden items-center gap-2 rounded-full bg-cream py-1.5 pl-1.5 pr-3 text-[13px] font-semibold text-ink shadow-soft transition-transform duration-300 hover:scale-[1.02] md:flex"
-          >
-            <span className="flex size-7 items-center justify-center rounded-full bg-clay text-[10.5px] font-bold text-white">
-              QB
-            </span>
-            Quang Bình
-            <ChevronDown className="size-3.5 text-ink-3" />
-          </button>
+          {session ? (
+            <div className="hidden items-center gap-1 md:flex">
+              <span className="flex max-w-[220px] items-center gap-2 rounded-full bg-cream py-1.5 pl-1.5 pr-3.5 text-[13px] font-semibold text-ink shadow-soft">
+                <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-clay text-[10.5px] font-bold uppercase text-white">
+                  {(session.user.name ?? session.user.email).charAt(0)}
+                </span>
+                <span className="truncate">{session.user.name ?? session.user.email}</span>
+              </span>
+              <button
+                type="button"
+                onClick={() => void signOut()}
+                className="flex shrink-0 items-center gap-1.5 rounded-full px-3 py-2 text-[13px] font-semibold text-ink-3 transition-colors hover:text-ink"
+              >
+                <LogOut className="size-3.5" />
+                Đăng xuất
+              </button>
+            </div>
+          ) : (
+            <div className="hidden items-center gap-1.5 md:flex">
+              <Link
+                to="/dang-nhap"
+                className="rounded-full px-3.5 py-2 text-[13.5px] font-semibold text-ink-3 transition-colors hover:text-ink"
+              >
+                Đăng nhập
+              </Link>
+              <Link to="/dang-ky">
+                <Button variant="outline" size="sm">
+                  Đăng ký
+                </Button>
+              </Link>
+            </div>
+          )}
 
           <button
             type="button"
@@ -131,6 +156,31 @@ export function Header() {
                 Soạn đề miễn phí
               </Button>
             </Link>
+            <div className="mt-2 border-t border-line/70 pt-2 md:hidden">
+              {session ? (
+                <>
+                  <p className="truncate px-3 py-2 text-[13.5px] text-ink-3">
+                    {session.user.name ? `${session.user.name} · ${session.user.email}` : session.user.email}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => void signOut()}
+                    className="block w-full rounded-[6px] px-3 py-2.5 text-left text-[14.5px] font-semibold text-ink-2"
+                  >
+                    Đăng xuất
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link to="/dang-nhap" className="block rounded-[6px] px-3 py-2.5 text-[14.5px] font-semibold text-ink-2">
+                    Đăng nhập
+                  </Link>
+                  <Link to="/dang-ky" className="block rounded-[6px] px-3 py-2.5 text-[14.5px] font-semibold text-ink-2">
+                    Đăng ký
+                  </Link>
+                </>
+              )}
+            </div>
           </div>
         </div>
       ) : null}

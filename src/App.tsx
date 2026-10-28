@@ -11,6 +11,8 @@ import Library from '@/pages/Library'
 import Grading from '@/pages/Grading'
 import Quiz from '@/pages/Quiz'
 import ExamView from '@/pages/ExamView'
+import Auth from '@/pages/Auth'
+import { consumeAuthRedirect } from '@/lib/auth'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -22,10 +24,17 @@ function ScrollToTop() {
 
 /** Trang soạn chạy full-screen, không dùng header/footer chung của site. */
 const FULLSCREEN_ROUTES = ['/soan-de', '/soan-slide']
+/** Trang đăng nhập/đăng ký: vừa một màn hình, không có footer. */
+const AUTH_ROUTES = ['/dang-nhap', '/dang-ky', '/quen-mat-khau', '/dat-lai-mat-khau']
 
 export default function App() {
   const { pathname } = useLocation()
   const fullscreen = FULLSCREEN_ROUTES.includes(pathname)
+  const authPage = AUTH_ROUTES.includes(pathname)
+
+  useEffect(() => {
+    consumeAuthRedirect().catch(() => {})
+  }, [])
 
   return (
     <div className={cn('flex min-h-dvh flex-col', fullscreen && 'h-dvh overflow-hidden')}>
@@ -43,10 +52,14 @@ export default function App() {
           <Route path="/cham-trac-nghiem" element={<Grading />} />
           <Route path="/lam-de/:id" element={<Quiz />} />
           <Route path="/de/:id" element={<ExamView />} />
+          <Route path="/dang-nhap" element={<Auth mode="login" />} />
+          <Route path="/dang-ky" element={<Auth mode="register" />} />
+          <Route path="/quen-mat-khau" element={<Auth mode="forgot" />} />
+          <Route path="/dat-lai-mat-khau" element={<Auth mode="reset" />} />
           <Route path="*" element={<Home />} />
         </Routes>
       </main>
-      {fullscreen ? null : <Footer />}
+      {fullscreen || authPage ? null : <Footer />}
     </div>
   )
 }
