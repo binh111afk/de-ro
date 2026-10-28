@@ -53,6 +53,7 @@
   }
 
   .ribbon-tabs {
+    position: relative;
     display: flex;
     align-items: center;
     padding: 6px 12px 4px;
@@ -81,16 +82,18 @@
     color: var(--word-blue);
   }
 
-  /* gạch chân đúng bề ngang chữ, không phải capsule */
-  .ribbon-tab.active::after {
-    content: '';
+  /* gạch chân trượt giữa các tab; vị trí do RibbonTabs đo (inset 13px hai bên, sát đáy hàng tab) */
+  .ribbon-tab__indicator {
     position: absolute;
-    left: 13px;
-    right: 13px;
-    bottom: -2.5px;
+    left: 0;
+    bottom: 4px;
     height: 2.5px;
     border-radius: 1px;
     background: var(--word-blue);
+    pointer-events: none;
+    transition:
+      transform 280ms cubic-bezier(0.32, 0.72, 0, 1),
+      width 280ms cubic-bezier(0.32, 0.72, 0, 1);
   }
 
   .ribbon-tabs-spacer {
@@ -689,6 +692,7 @@
   }
 
   .tab-strip {
+    position: relative;
     display: flex;
     align-items: stretch;
     flex: 1 1 auto;
@@ -696,6 +700,40 @@
     padding: 0 14px;
     overflow-x: auto;
     scrollbar-width: none;
+  }
+
+  /* đĩa trắng của tab đang chọn: một phần tử chung trượt tới tab active (vị trí do JS đo) */
+  .tab-active-plate {
+    position: absolute;
+    top: 6px;
+    bottom: 0;
+    left: 0;
+    border-radius: 10px 10px 0 0;
+    background: var(--surface);
+    pointer-events: none;
+    transition:
+      transform 280ms cubic-bezier(0.32, 0.72, 0, 1),
+      width 280ms cubic-bezier(0.32, 0.72, 0, 1);
+  }
+
+  /* chân cong nối tab active xuống vùng trắng bên dưới */
+  .tab-active-plate::before,
+  .tab-active-plate::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    width: 10px;
+    height: 10px;
+  }
+
+  .tab-active-plate::before {
+    left: -10px;
+    background: radial-gradient(circle at 0 0, transparent 9.5px, var(--surface) 10px);
+  }
+
+  .tab-active-plate::after {
+    right: -10px;
+    background: radial-gradient(circle at 100% 0, transparent 9.5px, var(--surface) 10px);
   }
 
   .tab-strip::-webkit-scrollbar {
@@ -753,31 +791,6 @@
     z-index: 1;
   }
 
-  .tab-item.active .tab-plate {
-    inset: 0 3px;
-    border-radius: 10px 10px 0 0;
-    background: var(--surface);
-  }
-
-  /* chân cong nối tab active xuống vùng trắng bên dưới */
-  .tab-item.active .tab-plate::before,
-  .tab-item.active .tab-plate::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    width: 10px;
-    height: 10px;
-  }
-
-  .tab-item.active .tab-plate::before {
-    left: -10px;
-    background: radial-gradient(circle at 0 0, transparent 9.5px, var(--surface) 10px);
-  }
-
-  .tab-item.active .tab-plate::after {
-    right: -10px;
-    background: radial-gradient(circle at 100% 0, transparent 9.5px, var(--surface) 10px);
-  }
 
   .tab-item__icon {
     display: flex;
@@ -2176,13 +2189,16 @@
     background: var(--canvas);
     scrollbar-gutter: stable;
     padding: 26px 24px 140px;
+    /* canh giữa bằng flex: `safe` để khi trang lớn hơn sân thì mép trái vẫn cuộn tới được.
+       `margin: auto` thì khi tràn nó bị đẩy lệch và trang ra ngoài vùng nhìn. */
+    display: flex;
+    justify-content: safe center;
   }
 
-  /* `width: fit-content` + `margin: auto` giữ trang giấy luôn nằm giữa sân,
-     kể cả khi nó co lại theo tỉ lệ (gốc dùng .doc-zoom). */
+  /* `width: fit-content` giữ trang giấy đúng bề rộng khi co theo tỉ lệ (gốc dùng .doc-zoom). */
   .compose-canvas {
     width: fit-content;
-    margin: 0 auto;
+    flex: none;
   }
 
   .ruler {

@@ -440,7 +440,7 @@ export function insertBlockTemplate(editor: Editor, tpl: BlockTemplate): void {
   if (doc.childCount === 1 && doc.firstChild?.type.name === 'paragraph' && doc.firstChild.content.size === 0) {
     // thay toàn bộ doc (giống insertExamFooter của bản gốc) — insertContentAt
     // với range 0..size vẫn để sót paragraph rỗng phía sau
-    editor.chain().setContent(json, { emitUpdate: true }).run()
+    editor.chain().setContent({ type: 'doc', content: Array.isArray(json) ? json : [json] }, { emitUpdate: true }).run()
     // setContent có thể để lại AllSelection (chọn cả doc) → đặt con trỏ về cuối
     editor.chain().focus('end').run()
     return

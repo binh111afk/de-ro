@@ -17,6 +17,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { cn } from '@/lib/cn'
 import { IconChevronLeft, IconChevronRight, IconSidebarLeft, IconSidebarRight } from './icons'
+import { useSlidingThumb } from './useSlidingThumb'
 
 /* ------------------------------------------------------------------ *
  * Thanh ribbon tab
@@ -41,8 +42,11 @@ export function RibbonTabs({
   leading?: ReactNode
   children?: ReactNode
 }) {
+  const ref = useRef<HTMLDivElement>(null)
+  // gạch chân trượt từ tab cũ sang tab mới (đo như thẻ trượt của segmented control)
+  const thumb = useSlidingThumb(ref, '.ribbon-tab.active', active)
   return (
-    <div className="ribbon-tabs" role="tablist">
+    <div className="ribbon-tabs" role="tablist" ref={ref}>
       {leading}
       {tabs.map((t) => (
         <button
@@ -56,6 +60,13 @@ export function RibbonTabs({
           {t.label}
         </button>
       ))}
+      {thumb ? (
+        <span
+          aria-hidden
+          className="ribbon-tab__indicator"
+          style={{ transform: `translateX(${thumb.x + 13}px)`, width: thumb.w - 26 }}
+        />
+      ) : null}
       {children}
     </div>
   )

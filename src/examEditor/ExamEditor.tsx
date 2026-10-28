@@ -285,7 +285,11 @@ export function ExamEditor({ content, onChange, onReady, pageSetup }: ExamEditor
     }
 
     const current = editor ? (pageGapsKey.getState(editor.state) ?? EMPTY_GAPS) : EMPTY_GAPS
-    const contentTop = contentEl.getBoundingClientRect().top
+    // getBoundingClientRect trả kích thước đã nhân tỉ lệ phóng to (CSS zoom của
+    // sân), còn PAGE_H/CONTENT_H tính theo px gốc. Chia lại theo `k` để hai bên khớp.
+    const contentRect = contentEl.getBoundingClientRect()
+    const k = contentEl.offsetWidth ? contentRect.width / contentEl.offsetWidth : 1
+    const contentTop = contentRect.top
     const heights: number[] = []
     const spaces: number[] = []
     let gapAcc = 0
@@ -293,12 +297,12 @@ export function ExamEditor({ content, onChange, onReady, pageSetup }: ExamEditor
     els.forEach((el, i) => {
       gapAcc += current.get(i) ?? 0
       const rect = el.getBoundingClientRect()
-      const naturalTop = rect.top - contentTop - gapAcc
+      const naturalTop = (rect.top - contentTop) / k - gapAcc
       // giữ số thực để không dồn sai số làm tròn qua nhiều khối; chỉ spacer
       // cuối cùng được làm tròn (trong computePagePlan) để ổn định vòng đo.
       spaces.push(i === 0 ? naturalTop : naturalTop - prevBottom)
-      heights.push(rect.height)
-      prevBottom = naturalTop + rect.height
+      heights.push(rect.height / k)
+      prevBottom = naturalTop + rect.height / k
     })
 
     const plan = computePagePlan(heights, spaces, CONTENT_H, PAGE_H + PAGE_GAP, MARGIN)

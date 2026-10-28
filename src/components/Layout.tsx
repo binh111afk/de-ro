@@ -91,12 +91,19 @@ export function Header() {
 
           {session ? (
             <div className="hidden items-center gap-1 md:flex">
-              <span className="flex max-w-[220px] items-center gap-2 rounded-full bg-cream py-1.5 pl-1.5 pr-3.5 text-[13px] font-semibold text-ink shadow-soft">
-                <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-clay text-[10.5px] font-bold uppercase text-white">
-                  {(session.user.name ?? session.user.email).charAt(0)}
+              <Link
+                to="/ho-so"
+                className="flex max-w-[220px] items-center gap-2 rounded-full bg-cream py-1.5 pl-1.5 pr-3.5 text-[13px] font-semibold text-ink shadow-soft transition-colors hover:text-clay"
+              >
+                <span className="flex size-7 shrink-0 items-center justify-center overflow-hidden rounded-full bg-clay text-[10.5px] font-bold uppercase text-white">
+                  {session.user.avatar ? (
+                    <img src={session.user.avatar} alt="" className="size-full object-cover" />
+                  ) : (
+                    (session.user.name ?? session.user.email).charAt(0)
+                  )}
                 </span>
                 <span className="truncate">{session.user.name ?? session.user.email}</span>
-              </span>
+              </Link>
               <button
                 type="button"
                 onClick={() => void signOut()}
@@ -159,6 +166,9 @@ export function Header() {
             <div className="mt-2 border-t border-line/70 pt-2 md:hidden">
               {session ? (
                 <>
+                  <Link to="/ho-so" className="block rounded-[6px] px-3 py-2.5 text-[14.5px] font-semibold text-ink-2">
+                    Hồ sơ
+                  </Link>
                   <p className="truncate px-3 py-2 text-[13.5px] text-ink-3">
                     {session.user.name ? `${session.user.name} · ${session.user.email}` : session.user.email}
                   </p>
@@ -190,13 +200,13 @@ export function Header() {
 
 export function Footer() {
   return (
-    <footer className="mt-24 overflow-hidden border-t border-line/70 bg-sunken/60">
+    <footer className="mt-24 overflow-hidden bg-[#f2f3f2]">
       {/* soft organic blob, not a hard divider */}
       <div className="pointer-events-none -mt-16 h-24 w-full">
         <svg viewBox="0 0 1200 100" preserveAspectRatio="none" className="h-full w-full">
           <path
             d="M0,64 C150,100 320,8 520,26 C720,44 860,92 1200,40 L1200,100 L0,100 Z"
-            fill="var(--color-paper)"
+            fill="#f2f3f2"
           />
         </svg>
       </div>
