@@ -2189,13 +2189,16 @@
     background: var(--canvas);
     scrollbar-gutter: stable;
     padding: 26px 24px 140px;
+    /* canh giữa bằng flex: `safe` để khi trang lớn hơn sân thì mép trái vẫn cuộn tới được.
+       `margin: auto` thì khi tràn nó bị đẩy lệch và trang ra ngoài vùng nhìn. */
+    display: flex;
+    justify-content: safe center;
   }
 
-  /* `width: fit-content` + `margin: auto` giữ trang giấy luôn nằm giữa sân,
-     kể cả khi nó co lại theo tỉ lệ (gốc dùng .doc-zoom). */
+  /* `width: fit-content` giữ trang giấy đúng bề rộng khi co theo tỉ lệ (gốc dùng .doc-zoom). */
   .compose-canvas {
     width: fit-content;
-    margin: 0 auto;
+    flex: none;
   }
 
   .ruler {
