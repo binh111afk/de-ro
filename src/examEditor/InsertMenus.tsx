@@ -10,6 +10,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { Editor } from '@tiptap/core'
 import katex from 'katex'
 import { cn } from '@/lib/cn'
+import { uploadImage } from '@/lib/mediaStore'
 import { IconClose, IconEquation, IconLink, IconPicture, IconSymbol, IconTable } from './icons'
 import { RibbonButton } from './Layout'
 import { useAnchoredPopover, popoverStyle } from './useAnchoredPopover'
@@ -337,10 +338,14 @@ export function ImagePicker({ editor, disabled }: { editor: Editor | null; disab
 
   const onFile = (file: File) => {
     const reader = new FileReader()
-    reader.onload = () => {
+    reader.onload = async () => {
       if (!editor || editor.isDestroyed) return
-      const dataUrl = String(reader.result ?? '')
-      editor.chain().focus().setImage({ src: dataUrl }).run()
+      try {
+        const src = await uploadImage(String(reader.result ?? ''))
+        if (!editor.isDestroyed) editor.chain().focus().setImage({ src }).run()
+      } catch (err) {
+        window.alert(err instanceof Error ? err.message : 'Không chèn được ảnh này.')
+      }
     }
     reader.readAsDataURL(file)
   }

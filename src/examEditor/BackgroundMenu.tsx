@@ -1,6 +1,7 @@
 /** Bảng chọn nền slide (tab Thiết kế): màu đặc, chuyển sắc dựng sẵn, màu tuỳ ý, hoặc quay về nền theo bộ màu. */
 import { useEffect, useRef, useState } from 'react'
 import { BACKGROUNDS, prepareBgImage } from '@/lib/slideBackground'
+import { uploadImage } from '@/lib/mediaStore'
 
 export function BackgroundMenu({
   current,
@@ -23,7 +24,7 @@ export function BackgroundMenu({
     setError(null)
     try {
       const { image, color } = await prepareBgImage(file)
-      onPick(color, all, image)
+      onPick(color, all, await uploadImage(image))
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Không dùng được ảnh này.')
     } finally {
