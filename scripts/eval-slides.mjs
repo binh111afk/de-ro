@@ -69,6 +69,7 @@ try {
     console.log(`✓ "${topic}" → ${file}`)
     console.log(`  theme=${result.theme} pack=${result.stylePack} slides=${result.slides} failed=[${result.failed}] plan=${result.planMs}ms total=${result.totalMs}ms`)
     console.log(`  layouts: ${result.layouts.join(', ')}`)
+    if (result.tokens) console.log(`  tokens: ${result.tokens.calls} lượt gọi · vào ${result.tokens.prompt} · ra ${result.tokens.completion} (suy luận ${result.tokens.reasoning})`)
   }
 } finally {
   await server.close()

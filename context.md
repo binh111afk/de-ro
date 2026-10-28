@@ -2397,7 +2397,10 @@ Sau audit "AI sinh slide vỡ layout": gốc là tọa độ cố định + đo 
   `adaptContent` lấy danh sách ý cho items/steps/left/right; không đủ nội dung — ví dụ timeline cần ≥3 bước — thì bỏ kèm lý do). `describeSlide` đưa
   nội dung hiện tại từng slide vào prompt để model biết đang sửa gì. Kiểm chứng thật: "Sửa tiêu đề slide 1…" chỉ đổi tiêu đề (nhãn/phụ đề/slide khác giữ nguyên);
   "Đổi bố cục slide 3 sang mốc thời gian" cycle→timeline.
-- **Chưa làm:** đổi cỡ chữ, thêm/chèn slide mới tại vị trí bất kỳ bằng lệnh, sơ đồ tư duy (`mindmap` — AI trả cây dữ liệu, engine bố trí và vẽ SVG).
+- **Lệnh bổ sung:** `add_slide` (chèn slide mới + vị trí, qua `checkSlide`), `duplicate_slide`, `set_notes`, `rename_deck` → tổng 11 lệnh. Prompt sửa ≈ 1,2K token vào mỗi lượt.
+- **Token thật một deck** (`eval:slides` giờ in `tokens`, cộng `usage` của gateway): ƯCLN 8 slide ≈ 21,8K vào + 7,1K ra (suy luận 4,4K); Chí Phèo 9 slide ≈ 24,1K vào + 16,7K ra
+  (suy luận 12,9K) → khoảng 29–41K token/deck, ~3,5–4,5K/slide; suy luận (`reasoningEffort: medium`) là phần lớn token ra. Chưa thử hạ xuống `low` (chưa đo chất lượng).
+- **Chưa làm:** đổi cỡ chữ, sơ đồ tư duy (`mindmap` — AI trả cây dữ liệu, engine bố trí và vẽ SVG).
 
 ## 4. Lỗi đã gặp và cách sửa
 

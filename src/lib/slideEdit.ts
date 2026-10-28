@@ -29,6 +29,11 @@ export type SlideEditOp =
   /** sửa ĐÚNG các field nêu trong `fields` của một slide; field không nêu giữ nguyên */
   | { op: 'edit_slide'; slide: number; fields: Record<string, unknown> }
   | { op: 'set_layout'; slide: number; layout: string }
+  /** chèn slide mới (bố cục + field) tại vị trí `position` (1-based, bỏ trống = cuối) */
+  | { op: 'add_slide'; layout: string; fields: Record<string, unknown>; position?: number }
+  | { op: 'duplicate_slide'; slide: number }
+  | { op: 'set_notes'; slide: number; notes: string }
+  | { op: 'rename_deck'; title: string }
 
 /** Phông cho phép: có đủ dấu tiếng Việt (Georgia/Cambria làm vỡ dấu nên không có). */
 export const EDIT_FONTS = ['Be Vietnam Pro', 'Times New Roman', 'Arial', 'Tahoma', 'Verdana', 'Segoe UI', 'Calibri', 'Courier New']
@@ -78,6 +83,10 @@ export function editSystemPrompt(context: string): string {
     `- {"op":"edit_slide","slide":3,"fields":{"title":"..."}} — sửa NỘI DUNG một slide. CHỈ nêu field cần đổi (đổi tiêu đề thì chỉ gửi title; ` +
     `KHÔNG gửi lại field không đổi). Field chữ: ${EDITABLE_FIELDS.join(', ')}; field danh sách (bullets, items…) gửi TOÀN BỘ danh sách mới. ` +
     'Công thức viết $...$, nhấn mạnh từ khoá bằng **đậm** (tối đa 2 cụm mỗi ý). Nội dung hiện tại của từng slide có trong "Bài trình bày hiện tại".\n' +
+    '- {"op":"add_slide","layout":"<id>","fields":{...},"position":2} — chèn slide MỚI (đủ field bắt buộc của bố cục; position bỏ trống = cuối)\n' +
+    '- {"op":"duplicate_slide","slide":3}\n' +
+    '- {"op":"set_notes","slide":3,"notes":"ghi chú trình bày"}\n' +
+    '- {"op":"rename_deck","title":"tên bài giảng"}\n' +
     `- {"op":"set_layout","slide":3,"layout":"<id>"} — đổi bố cục một slide, giữ nội dung. Bố cục: ${SLIDE_LAYOUTS.map((l) => `${l.id}=${l.name}`).join(', ')}\n` +
     'Nếu yêu cầu KHÔNG phải sửa giao diện/thứ tự slide có sẵn (ví dụ soạn slide mới, viết lại nội dung), trả {"action":"none"}.\n' +
     `Bài trình bày hiện tại: ${context}`
@@ -141,6 +150,28 @@ export function parseEditCommands(raw: string): { ops: SlideEditOp[]; errors: st
       case 'set_layout':
         if (Number.isInteger(c.slide) && typeof c.layout === 'string') ops.push({ op: 'set_layout', slide: c.slide as number, layout: c.layout })
         else errors.push('set_layout thiếu "slide" hoặc "layout"')
+        break
+      case 'add_slide':
+        if (typeof c.layout === 'string' && c.fields && typeof c.fields === 'object' && !Array.isArray(c.fields)) {
+          ops.push({
+            op: 'add_slide',
+            layout: c.layout,
+            fields: c.fields as Record<string, unknown>,
+            position: Number.isInteger(c.position) ? (c.position as number) : undefined,
+          })
+        } else errors.push('add_slide thiếu "layout" hoặc "fields"')
+        break
+      case 'duplicate_slide':
+        if (Number.isInteger(c.slide)) ops.push({ op: 'duplicate_slide', slide: c.slide as number })
+        else errors.push('duplicate_slide thiếu "slide"')
+        break
+      case 'set_notes':
+        if (Number.isInteger(c.slide) && typeof c.notes === 'string') ops.push({ op: 'set_notes', slide: c.slide as number, notes: c.notes })
+        else errors.push('set_notes thiếu "slide" hoặc "notes"')
+        break
+      case 'rename_deck':
+        if (typeof c.title === 'string' && c.title.trim()) ops.push({ op: 'rename_deck', title: c.title.trim().slice(0, 120) })
+        else errors.push('rename_deck thiếu "title"')
         break
       default:
         errors.push(`lệnh lạ: ${String(c.op)}`)
@@ -344,6 +375,52 @@ export function applyEdits(deck: Deck, ops: SlideEditOp[]): EditResult {
         summary.push(`Đổi bố cục slide ${op.slide} sang ${op.layout}.`)
         break
       }
+      case 'add_slide': {
+        if (!isLayoutId(op.layout)) {
+          summary.push(`Bỏ qua: không có bố cục "${op.layout}".`)
+          break
+        }
+        const patch = Object.fromEntries(Object.entries(op.fields).filter(([k]) => (EDITABLE_FIELDS as readonly string[]).includes(k)))
+        const check = checkSlide({ ...patch, layout: op.layout }, op.layout)
+        if (check.errors.length) {
+          summary.push(`Bỏ qua thêm slide: ${check.errors.join('; ')}.`)
+          break
+        }
+        const built = slideFromAi(check.page, theme)
+        const at = Math.min(Math.max((op.position ?? next.slides.length + 1) - 1, 0), next.slides.length)
+        const slides = [...next.slides]
+        slides.splice(at, 0, built)
+        next = { ...next, slides }
+        summary.push(`Thêm slide mới (${op.layout}) tại vị trí ${at + 1}.`)
+        break
+      }
+      case 'duplicate_slide': {
+        const at = op.slide - 1
+        const slide = next.slides[at]
+        if (!slide) {
+          summary.push(`Bỏ qua: không có slide ${op.slide}.`)
+          break
+        }
+        const slides = [...next.slides]
+        slides.splice(at + 1, 0, { ...slide, id: Math.random().toString(36).slice(2, 10) })
+        next = { ...next, slides }
+        summary.push(`Nhân bản slide ${op.slide}.`)
+        break
+      }
+      case 'set_notes': {
+        const slide = next.slides[op.slide - 1]
+        if (!slide) {
+          summary.push(`Bỏ qua: không có slide ${op.slide}.`)
+          break
+        }
+        next = { ...next, slides: next.slides.map((s) => (s === slide ? { ...s, notes: op.notes.trim() || undefined } : s)) }
+        summary.push(`Cập nhật ghi chú trình bày slide ${op.slide}.`)
+        break
+      }
+      case 'rename_deck':
+        next = { ...next, title: op.title }
+        summary.push(`Đổi tên bài giảng thành "${op.title}".`)
+        break
       case 'move_slide': {
         const n = next.slides.length
         if (op.from < 1 || op.from > n || op.to < 1 || op.to > n) {

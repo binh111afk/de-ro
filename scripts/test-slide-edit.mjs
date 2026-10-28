@@ -115,6 +115,21 @@ assert.equal(parseEditCommands('{"action":"edit","commands":[{"op":"set_tone","t
   assert.equal(applyEdits(d, [{ op: 'set_layout', slide: 1, layout: 'khong-co' }]).changed, false)
 }
 
+// --- lệnh bổ sung
+{
+  const d = deck()
+  const added = applyEdits(d, [{ op: 'add_slide', layout: 'statement', fields: { body: 'Một câu chốt ý.' }, position: 2 }])
+  assert.equal(added.deck.slides.length, 4)
+  assert.equal(added.deck.slides[1].layout, 'statement', 'chèn đúng vị trí')
+  assert.equal(applyEdits(d, [{ op: 'add_slide', layout: 'statement', fields: {} }]).changed, false, 'thiếu field bắt buộc → bị chặn')
+  const dup = applyEdits(d, [{ op: 'duplicate_slide', slide: 1 }])
+  assert.equal(dup.deck.slides.length, 4)
+  assert.notEqual(dup.deck.slides[1].id, dup.deck.slides[0].id)
+  assert.equal(applyEdits(d, [{ op: 'set_notes', slide: 2, notes: ' Nhắc học sinh ' }]).deck.slides[1].notes, 'Nhắc học sinh')
+  assert.equal(applyEdits(d, [{ op: 'rename_deck', title: 'Bài mới' }]).deck.title, 'Bài mới')
+  assert.equal(parseEditCommands('{"action":"edit","commands":[{"op":"rename_deck","title":"  "}]}').ops.length, 0)
+}
+
 // --- deck HTML: giao diện không đổi được, xoá/dời vẫn được
 {
   const d = { ...deck(), format: 'html', slides: ['A', 'B'].map((t, i) => ({ id: `h${i}`, background: '#fff', elements: [], html: '<p>x</p>' })) }

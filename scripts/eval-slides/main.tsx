@@ -19,6 +19,24 @@ import { ensureMeasureFonts } from '@/lib/slideMeasure'
 import { themeById } from '@/lib/slideTheme'
 import type { Slide } from '@/store/docs'
 
+/** Cộng token thật của mọi lượt gọi /api/llm (usage do gateway trả) để biết một deck tốn bao nhiêu. */
+const tokens = { calls: 0, prompt: 0, completion: 0, reasoning: 0 }
+const realFetch = window.fetch.bind(window)
+window.fetch = async (...args: Parameters<typeof fetch>) => {
+  const res = await realFetch(...args)
+  if (String(args[0]).includes('/api/llm')) {
+    void res.clone().json().then((j: { usage?: { prompt_tokens?: number; completion_tokens?: number; completion_tokens_details?: { reasoning_tokens?: number } } }) => {
+      const u = j.usage
+      if (!u) return
+      tokens.calls++
+      tokens.prompt += u.prompt_tokens ?? 0
+      tokens.completion += u.completion_tokens ?? 0
+      tokens.reasoning += u.completion_tokens_details?.reasoning_tokens ?? 0
+    }).catch(() => {})
+  }
+  return res
+}
+
 const done = (payload: unknown) => {
   document.getElementById('eval-result')!.textContent = btoa(unescape(encodeURIComponent(JSON.stringify(payload))))
 }
@@ -127,6 +145,7 @@ async function main() {
       const r = el.getBoundingClientRect()
       return { x: r.left + scrollX, y: r.top + scrollY, w: r.width, h: r.height, layout: plan.slides[i]?.layout }
     }),
+    tokens,
     planMs,
     totalMs: Math.round(performance.now() - t0),
   })
