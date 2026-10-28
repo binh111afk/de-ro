@@ -1,7 +1,7 @@
 /**
  * Lưu ảnh lên Cloudflare R2 — khoá truy cập chỉ nằm server-side (`.env`).
  *
- * POST /api/upload  {dataUrl}  → {url}   ghi ảnh, tên theo hash nội dung
+ * POST /api/upload  {dataUrl}  → {url}   ghi ảnh (img/) hoặc tệp PDF/DOCX (doc/), tên theo hash nội dung
  * GET  /api/files/<key>        → ảnh     đọc lại qua server (bucket để private)
  *
  * Cấu hình: `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`.
@@ -12,13 +12,17 @@ import type { IncomingMessage, ServerResponse } from 'node:http'
 import { json, readBody } from './http'
 
 const MAX_BYTES = 8 * 1024 * 1024
+const MAX_DOC_BYTES = 20 * 1024 * 1024
 const EXT: Record<string, string> = {
   'image/png': 'png',
   'image/jpeg': 'jpg',
   'image/webp': 'webp',
   'image/gif': 'gif',
+  'application/pdf': 'pdf',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
 }
-const KEY_PATTERN = /^img\/[a-f0-9]{40}\.(png|jpg|webp|gif)$/
+const DOC_TYPES = new Set(['pdf', 'docx'])
+const KEY_PATTERN = /^(img|doc)\/[a-f0-9]{40}\.(png|jpg|webp|gif|pdf|docx)$/
 
 const sha256Hex = (data: Buffer | string) => createHash('sha256').update(data).digest('hex')
 const hmac = (key: Buffer | string, data: string) => createHmac('sha256', key).update(data).digest()
@@ -77,15 +81,18 @@ export async function handleUploadRequest(req: IncomingMessage, res: ServerRespo
 
   try {
     const body = JSON.parse(await readBody(req)) as { dataUrl?: unknown }
-    const match = typeof body.dataUrl === 'string' ? /^data:(image\/[a-z]+);base64,([A-Za-z0-9+/=]+)$/.exec(body.dataUrl) : null
-    if (!match || !EXT[match[1]]) {
-      return json(res, 400, { error: 'Chỉ nhận ảnh PNG, JPEG, WebP hoặc GIF dạng base64' })
+    const match = typeof body.dataUrl === 'string' ? /^data:([a-z0-9.+/-]+);base64,([A-Za-z0-9+/=]+)$/.exec(body.dataUrl) : null
+    const ext = match ? EXT[match[1]] : undefined
+    if (!match || !ext) {
+      return json(res, 400, { error: 'Chỉ nhận ảnh PNG, JPEG, WebP, GIF hoặc tệp PDF, DOCX dạng base64' })
     }
+    const isDoc = DOC_TYPES.has(ext)
     const buf = Buffer.from(match[2], 'base64')
-    if (buf.length === 0 || buf.length > MAX_BYTES) {
-      return json(res, 400, { error: 'Ảnh rỗng hoặc quá lớn (tối đa 8 MB)' })
+    const limit = isDoc ? MAX_DOC_BYTES : MAX_BYTES
+    if (buf.length === 0 || buf.length > limit) {
+      return json(res, 400, { error: `Tệp rỗng hoặc quá lớn (tối đa ${limit / 1024 / 1024} MB)` })
     }
-    const key = `img/${sha256Hex(buf).slice(0, 40)}.${EXT[match[1]]}`
+    const key = `${isDoc ? 'doc' : 'img'}/${sha256Hex(buf).slice(0, 40)}.${ext}`
     const put = await r2Request('PUT', key, buf, match[1])
     if (!put.ok) return json(res, 502, { error: `R2 trả lỗi ${put.status}` })
     return json(res, 200, { url: `/api/files/${key}` })
@@ -98,7 +105,7 @@ export async function handleFileRequest(req: IncomingMessage, res: ServerRespons
   if (req.method !== 'GET') return json(res, 405, { error: 'Method not allowed' })
   // Vite cắt tiền tố `/api/files` khỏi req.url, còn lại `/img/<hash>.<ext>`
   const key = decodeURIComponent((req.url ?? '').split('?')[0].replace(/^\/+/, ''))
-  if (!KEY_PATTERN.test(key)) return json(res, 404, { error: 'Không tìm thấy ảnh' })
+  if (!KEY_PATTERN.test(key)) return json(res, 404, { error: 'Không tìm thấy tệp' })
 
   try {
     const got = await r2Request('GET', key, null)

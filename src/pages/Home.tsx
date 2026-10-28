@@ -232,7 +232,7 @@ const FEATURES = [
   },
   {
     title: 'Kho tài liệu mở',
-    body: 'Kho câu hỏi theo môn và khối lớp, sẵn sàng kéo vào bất kỳ đề nào bạn đang soạn.',
+    body: 'Lưu tài liệu tham khảo của bạn dưới dạng PDF hoặc Word, mở lại bất cứ lúc nào.',
     art: 'stack',
   },
 ]
