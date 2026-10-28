@@ -614,13 +614,17 @@ export interface TocEntry {
   index: number
   level: number
   text: string
+  /** heading = tiêu đề phần; question = một câu hỏi trong đề */
+  kind: 'heading' | 'question'
+  /** số thứ tự câu theo vị trí trong đề (chỉ với kind = question) */
+  no?: number
 }
 
-/** Lấy mục lục từ các node tiêu đề trong tài liệu TipTap. */
+/** Mục lục: tiêu đề phần và từng câu hỏi, theo đúng thứ tự trong đề. */
 export function buildTocFromDoc(doc: JSONContent): TocEntry[] {
   const out: TocEntry[] = []
-  const nodes = doc.content ?? []
-  nodes.forEach((node, index) => {
+  let questionNo = 0
+  ;(doc.content ?? []).forEach((node, index) => {
     if (node.type === 'examHeading' || node.type === 'examTitle') {
       const text = plainText(richOf(node)).trim()
       if (!text) return
@@ -628,7 +632,13 @@ export function buildTocFromDoc(doc: JSONContent): TocEntry[] {
         index,
         level: node.type === 'examTitle' ? 1 : ((node.attrs?.level as number) ?? 1),
         text,
+        kind: 'heading',
       })
+    } else if (node.type === 'examQuestion' || node.type === 'examEssay') {
+      questionNo += 1
+      const prompt = node.content?.find((c) => c.type?.endsWith('Prompt'))
+      const text = plainText(richOf(prompt)).trim()
+      out.push({ index, level: 2, text: text || '(chưa có nội dung)', kind: 'question', no: questionNo })
     }
   })
   return out
