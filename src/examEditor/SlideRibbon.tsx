@@ -156,6 +156,7 @@ const CONTEXT_LABELS: Record<SlideElType, { id: SlideRibbonTab; label: string } 
   image: { id: 'pictureFormat', label: 'Định dạng ảnh' },
   icon: { id: 'shapeFormat', label: 'Định dạng hình' },
   graphic: { id: 'shapeFormat', label: 'Định dạng đồ hoạ' },
+  connector: { id: 'shapeFormat', label: 'Định dạng đường nối' },
   table: { id: 'tableDesign', label: 'Thiết kế bảng' },
   chart: { id: 'chartDesign', label: 'Thiết kế biểu đồ' },
   formula: null,

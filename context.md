@@ -2400,7 +2400,20 @@ Sau audit "AI sinh slide vỡ layout": gốc là tọa độ cố định + đo 
 - **Lệnh bổ sung:** `add_slide` (chèn slide mới + vị trí, qua `checkSlide`), `duplicate_slide`, `set_notes`, `rename_deck` → tổng 11 lệnh. Prompt sửa ≈ 1,2K token vào mỗi lượt.
 - **Token thật một deck** (`eval:slides` giờ in `tokens`, cộng `usage` của gateway): ƯCLN 8 slide ≈ 21,8K vào + 7,1K ra (suy luận 4,4K); Chí Phèo 9 slide ≈ 24,1K vào + 16,7K ra
   (suy luận 12,9K) → khoảng 29–41K token/deck, ~3,5–4,5K/slide; suy luận (`reasoningEffort: medium`) là phần lớn token ra. Chưa thử hạ xuống `low` (chưa đo chất lượng).
-- **Chưa làm:** đổi cỡ chữ, sơ đồ tư duy (`mindmap` — AI trả cây dữ liệu, engine bố trí và vẽ SVG).
+- **Chưa làm:** đổi cỡ chữ, (sơ đồ tư duy đã làm: mục 3.61).
+
+### 3.61. Layout `mindmap` do engine vẽ (28/10/2026)
+
+- **Quyết định:** engine vẽ cả sơ đồ, AI chỉ đưa cây dữ liệu (không toạ độ). Bộ nét `mindmap_bo_net.svg` do agent tạo đã kiểm: **không nhập** — nhãn nhánh/đường nối phải co giãn theo chữ
+  và điểm nối nên engine tự vẽ; hai nhóm "mây"/"blob" vẽ sai hình; dùng `translate` tâm ô nên `import-decor.mjs` tính hộp bao sai; nét 3 cố định → hairline khi thu nhỏ.
+- **Phần tử mới `connector`** (`SlideElType`): S-curve tiếp tuyến ngang trong hộp phần tử (`flipY` lật chiều), màu `borderColor`, dày `border` (px, `non-scaling-stroke`).
+  Vẽ ở `SlideElView`/`EditableEl` bằng `ConnectorSvg`; xuất PPTX thành đường thẳng nối hai đầu (giới hạn đã biết).
+- **Layout `mindmap` (layout thứ 22):** `composeMindmap` — nút giữa (`body`, chủ đề dài thì nới nút + hạ cỡ chữ), 3–6 nhánh (`items`: "Nhãn nhánh: ý con; ý con", ≤3 ý con) chia hai cột
+  (nửa đầu phải, nửa sau trái), nhãn nhánh là hộp bo pastel theo `accent/secondary/mix`, ý con dưới nhãn, đường nối cong. Id: `center-node`, `card-N-box`, `card-N-heading`, `card-N`, `link-N`
+  (đọc ngược bằng `contentFromSlide` qua cơ chế `card-N`+`-heading` có sẵn). <2 nhánh hoặc thiếu nút giữa → `[]`.
+- **AI:** `mindmap` trong danh sách layout của dàn ý + luật dùng (tổng kết/hệ thống hoá, tối đa 1–2 slide), `LAYOUT_NOTES`, `validateSlide` (cần body + ≥3 nhánh), ngân sách; gợi ý cho môn Văn/Sử-Địa.
+  Kiểm chứng thật: dàn ý "tổng kết quang hợp" AI tự chọn `mindmap`, slide dựng đúng, có cả chữ đậm.
+- Test: `test-slide-layout` mục 9 (đủ nhánh, đọc ngược, ngoài khung), mọi test đếm layout đổi 21→22; lint 630 slide 0 error.
 
 ## 4. Lỗi đã gặp và cách sửa
 

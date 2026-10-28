@@ -11,7 +11,7 @@ import { DECK_THEMES } from '@/lib/slideTheme'
 /* ------------------------------------------------------------------ *
  * Slide
  * ------------------------------------------------------------------ */
-export type SlideElType = 'text' | 'shape' | 'image' | 'icon' | 'graphic' | 'table' | 'chart' | 'formula'
+export type SlideElType = 'text' | 'shape' | 'image' | 'icon' | 'graphic' | 'table' | 'chart' | 'formula' | 'connector'
 
 export interface SlideElement {
   id: string

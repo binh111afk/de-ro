@@ -100,13 +100,13 @@ assert.equal(parseDeckPlan('Mình gợi ý bài giảng gồm 3 phần.'), null)
 assert.equal(parseDeckPlan('{"slides":[]}'), null)
 assert.equal(parseDeckPlan('{"slides":[{"bullets":["a"]}]}'), null)
 
-/* 6. Catalog prompt sinh từ code: đủ 6 theme + 21 layout. */
+/* 6. Catalog prompt sinh từ code: đủ 6 theme + 22 layout. */
 const catalog = slideCatalogText()
 for (const theme of DECK_THEMES) assert.ok(catalog.includes(theme.id), `thiếu theme ${theme.id}`)
 for (const layout of SLIDE_LAYOUTS)
   assert.ok(catalog.includes(layout.id), `thiếu layout ${layout.id}`)
 assert.equal(DECK_THEMES.length, 6)
-assert.equal(SLIDE_LAYOUTS.length, 21)
+assert.equal(SLIDE_LAYOUTS.length, 22)
 
 /* 7. Hợp đồng deck cũ vẫn đọc được (không hồi quy). */
 const deck = parseAiDeck(

@@ -63,7 +63,7 @@ export const SUBJECT_PACKS: SubjectPack[] = [
       'Giá trị, ý nghĩa và liên hệ',
       'Tổng kết',
     ],
-    layouts: ['quote', 'statement', 'two-column', 'comparison', 'timeline', 'cards'],
+    layouts: ['quote', 'statement', 'two-column', 'comparison', 'mindmap', 'cards'],
     rules: [
       'Trích dẫn nguyên văn ngắn (≤ 2 câu), đặt trong dấu ngoặc kép và ghi rõ tác phẩm; không bịa câu trích.',
       'Mỗi luận điểm kèm một dẫn chứng cụ thể trong tác phẩm; tiêu đề slide nêu thẳng luận điểm.',
@@ -84,7 +84,7 @@ export const SUBJECT_PACKS: SubjectPack[] = [
       'Ý nghĩa, bài học',
       'Củng cố và liên hệ',
     ],
-    layouts: ['timeline', 'stats', 'comparison', 'table', 'statement', 'cards'],
+    layouts: ['timeline', 'stats', 'comparison', 'mindmap', 'statement', 'cards'],
     rules: [
       'Mốc thời gian (năm, ngày), tên riêng và số liệu phải chính xác; có đơn vị đi kèm (km², triệu người, %).',
       'Sự kiện xếp theo trình tự: nguyên nhân → diễn biến → kết quả → ý nghĩa.',

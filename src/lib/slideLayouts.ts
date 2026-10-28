@@ -35,6 +35,7 @@ export type SlideLayoutId =
   | 'quiz'
   | 'example'
   | 'hook'
+  | 'mindmap'
 
 export interface SlideStat {
   value?: string
@@ -215,6 +216,13 @@ export const SLIDE_LAYOUTS: SlideLayoutDef[] = [
     description:
       'Mở bài gợi mở: câu hỏi/tình huống lớn canh trái, cột phải có hình + 2–3 gợi ý ngắn xếp dọc. Nền dịu.',
     fields: ['kicker', 'title', 'body', 'items'],
+  },
+  {
+    id: 'mindmap',
+    name: 'Sơ đồ tư duy',
+    description:
+      'Sơ đồ tư duy: nút trung tâm ("body") nối 3–6 nhánh ("items": "Nhãn nhánh: ý con; ý con"), nhánh chia hai bên, mỗi nhánh 0–3 ý con.',
+    fields: ['title', 'body', 'items'],
   },
 ]
 
@@ -1400,6 +1408,109 @@ function composeHook(p: LayoutPalette, content: SlideLayoutContent): SlideElemen
   ])
 }
 
+/** Đường cong nối hai điểm (toạ độ % khung): S-curve tiếp tuyến ngang, vẽ bằng SVG ở renderer. */
+function connectorEl(id: string, x1: number, y1: number, x2: number, y2: number, color: string, width = 3): SlideElement {
+  const [xl, yl, xr, yr] = x1 <= x2 ? [x1, y1, x2, y2] : [x2, y2, x1, y1]
+  return {
+    id,
+    type: 'connector',
+    x: xl,
+    y: Math.min(yl, yr),
+    w: Math.max(xr - xl, 0.1),
+    h: Math.max(Math.abs(yr - yl), 0.1),
+    // đường mặc định đi từ góc trên-trái xuống dưới-phải; đầu trái thấp hơn đầu phải thì lật dọc
+    flipY: yl > yr,
+    border: width,
+    borderColor: color,
+  }
+}
+
+/** "Nhãn nhánh: ý con; ý con" → nhãn + tối đa 3 ý con. */
+function parseBranch(item: string): { label: string; children: string[] } {
+  const at = item.indexOf(':')
+  const label = (at > 0 ? item.slice(0, at) : item).trim()
+  const rest = at > 0 ? item.slice(at + 1) : ''
+  const children = rest
+    .split(/\s*[;\n]\s*/)
+    .map((c) => c.replace(/^[•\-–]\s*/, '').trim())
+    .filter(Boolean)
+    .slice(0, 3)
+  return { label, children }
+}
+
+/**
+ * Sơ đồ tư duy do engine bố trí: nút giữa, các nhánh chia hai cột (nửa đầu bên phải, nửa sau bên trái),
+ * đường nối cong, ý con xếp dưới nhãn nhánh. AI chỉ đưa cây dữ liệu, không đưa toạ độ.
+ */
+function composeMindmap(p: LayoutPalette, content: SlideLayoutContent): SlideElement[] {
+  const center = content.body?.trim() || content.subtitle?.trim()
+  const branches = cleanList(content.items).slice(0, 6).map(parseBranch)
+  if (!center || branches.length < 2) return []
+  const header = titleEls(p, content.title, { x: 8, y: 6, w: 84, h: 12 }, [3.8, 3.4, 3.1, 2.8])
+  const top = Math.max(24, bottomOf(header) + 2)
+  const area = 96 - top
+  const cy = top + area / 2
+  const colW = 25
+  const labelH = 8
+  const rightCount = Math.ceil(branches.length / 2)
+  const colors = [p.accent, p.secondary, mixHex(p.accent, p.secondary, 0.5)]
+  // Nút giữa: chủ đề ngắn dùng nút nhỏ chữ lớn; chủ đề dài nới nút ra và hạ cỡ chữ để vẫn nằm gọn trong nút.
+  const long = center.length > 40
+  const nodeW = long ? 26 : 18
+  const nodeH = long ? 28 : 16
+  const nodeSize =
+    [2.2, 1.9, 1.6, 1.4, 1.2].find((s) => textBoxHeight(center, nodeW - 2, s, 1.25, { weight: 700 }) <= nodeH - 2) ?? 1.2
+  const els: SlideElement[] = []
+  const nodes: Array<SlideElement | null> = []
+
+  const place = (side: 'right' | 'left', list: Array<{ branch: ReturnType<typeof parseBranch>; index: number }>) => {
+    const slot = area / list.length
+    const x = side === 'right' ? 100 - 6 - colW : 6
+    list.forEach(({ branch, index }, k) => {
+      const color = colors[index % colors.length]
+      const size = [1.6, 1.45, 1.3].find(
+        (s) => !branch.children.length || textBoxHeight(branch.children.join('\n'), colW - 1, s, 1.35, { weight: 500 }) <= slot - labelH - 3,
+      ) ?? 1.3
+      const kidsH = branch.children.length
+        ? Math.min(slot - labelH - 3, textBoxHeight(branch.children.join('\n'), colW - 1, size, 1.35, { weight: 500 }))
+        : 0
+      const block = labelH + (kidsH ? 1 + kidsH : 0)
+      const y = top + slot * k + (slot - block) / 2
+      els.push(
+        side === 'right'
+          ? connectorEl(`link-${index + 1}`, 50 + nodeW / 2, cy, x, y + labelH / 2, color)
+          : connectorEl(`link-${index + 1}`, x + colW, y + labelH / 2, 50 - nodeW / 2, cy, color),
+      )
+      nodes.push(
+        { ...shapeEl(`card-${index + 1}-box`, { x, y, w: colW, h: labelH }, mixHex(color, p.background, 0.8), 'round'), radius: 14, border: 2, borderColor: color, shadow: false },
+        textEl(`card-${index + 1}-heading`, branch.label, { x: x + 1, y, w: colW - 2, h: labelH }, {
+          variant: 'body', fontSize: 1.9, fontWeight: 700, textColor: p.fg, align: 'center', valign: 'middle',
+        }),
+      )
+      if (branch.children.length) {
+        nodes.push(
+          textEl(`card-${index + 1}`, branch.children.map((c) => `• ${c}`).join('\n'), { x: x + 0.5, y: y + labelH + 1, w: colW - 1, h: kidsH }, {
+            variant: 'body', fontSize: size, textColor: p.fg, align: side === 'right' ? 'left' : 'right',
+          }),
+        )
+      }
+    })
+  }
+  const indexed = branches.map((branch, index) => ({ branch, index }))
+  place('right', indexed.slice(0, rightCount))
+  place('left', indexed.slice(rightCount))
+
+  return compact([
+    ...header,
+    ...els,
+    { ...shapeEl('center-node', { x: 50 - nodeW / 2, y: cy - nodeH / 2, w: nodeW, h: nodeH }, p.accent, 'round'), radius: 40, shadow: false },
+    textEl('body', center, { x: 51 - nodeW / 2, y: cy - nodeH / 2, w: nodeW - 2, h: nodeH }, {
+      variant: 'body', fontSize: nodeSize, fontWeight: 700, textColor: p.onAccent, align: 'center', valign: 'middle',
+    }),
+    ...nodes,
+  ])
+}
+
 /**
  * Dựng phần tử cho một layout. Tông bỏ trống thì theo mặc định của layout.
  * Layout lạ rơi về `bullets` (hành vi an toàn cho AI); nội dung thiếu field
@@ -1455,6 +1566,8 @@ export function composeLayout(
       return composeCycle(palette, content)
     case 'quiz':
       return composeQuiz(palette, content)
+    case 'mindmap':
+      return composeMindmap(palette, content)
     default:
       return composeBullets(palette, content)
   }
@@ -1466,9 +1579,9 @@ export function composeLayout(
 const RESERVED = new Set([
   'title', 'kicker', 'subtitle', 'quote', 'author', 'mark',
   'bullets', 'body', 'body-2', 'question', 'left-title', 'right-title', 'bullet-anchor-mark',
-  'problem', 'problem-label', 'conclusion', 'answer',
+  'problem', 'problem-label', 'conclusion', 'answer', 'center-node',
 ])
-const NUMBERED = /^(card|option|stat|step|item|node|left|right)-\d+(-value|-label|-index|-heading)?$/
+const NUMBERED = /^(card|option|stat|step|item|node|left|right|link)-\d+(-value|-label|-index|-heading|-box)?$/
 const isRoleId = (id: string): boolean => RESERVED.has(id) || NUMBERED.test(id)
 
 /** Đọc nội dung slide đang có để đổi layout mà không mất chữ/ảnh/bảng. */
@@ -1633,6 +1746,11 @@ const DEMO: Record<SlideLayoutId, SlideLayoutContent> = {
     title: 'Chu trình học tập',
     steps: ['Trải nghiệm', 'Phân tích', 'Vận dụng', 'Đánh giá'],
   },
+  mindmap: {
+    title: 'Sơ đồ tư duy',
+    body: 'Chủ đề trung tâm',
+    items: ['Nhánh một: ý con A; ý con B', 'Nhánh hai: ý con C; ý con D', 'Nhánh ba: ý con E', 'Nhánh bốn: ý con F; ý con G'],
+  },
   quiz: {
     kicker: 'KIỂM TRA NHANH',
     question: 'Phân số nào dưới đây bằng 1/2?',
@@ -1744,6 +1862,11 @@ export function withPlaceholders(
     case 'cycle':
       if (!has(out.title)) out.title = demo.title
       if (!list(out.steps) && !list(out.bullets) && !has(out.body)) out.steps = demo.steps
+      break
+    case 'mindmap':
+      if (!has(out.title)) out.title = demo.title
+      if (!has(out.body)) out.body = demo.body
+      if (!list(out.items)) out.items = demo.items
       break
     case 'quiz':
       if (!has(out.question) && !has(out.body) && !list(out.bullets)) {

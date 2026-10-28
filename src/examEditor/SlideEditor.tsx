@@ -1009,6 +1009,22 @@ function fontStack(font: string): string {
   return font.includes(',') ? font : `${font}, sans-serif`
 }
 
+/** Đường nối cong (connector): S-curve tiếp tuyến ngang trong hộp phần tử; lật dọc bằng `flipY`. */
+function ConnectorSvg({ el, theme }: { el: SlideElement; theme: ResolvedTheme }) {
+  return (
+    <svg viewBox="0 0 100 100" preserveAspectRatio="none" width="100%" height="100%" style={{ overflow: 'visible', display: 'block' }}>
+      <path
+        d="M0,0 C50,0 50,100 100,100"
+        fill="none"
+        stroke={el.borderColor ?? theme.accent}
+        strokeWidth={el.border ?? 3}
+        strokeLinecap="round"
+        vectorEffect="non-scaling-stroke"
+      />
+    </svg>
+  )
+}
+
 function SlideElView({ el, theme }: { el: SlideElement; theme: ResolvedTheme }) {
   const style: React.CSSProperties = {
     position: 'absolute',
@@ -1055,6 +1071,14 @@ function SlideElView({ el, theme }: { el: SlideElement; theme: ResolvedTheme }) 
   if (el.type === 'icon') {
     const Icon = isSlideAssetId(el.assetId) ? SLIDE_ASSETS[el.assetId].icon : null
     return Icon ? <Icon size="100%" weight="duotone" style={{ ...style, padding: '1%', color: el.textColor ?? theme.accent }} /> : null
+  }
+
+  if (el.type === 'connector') {
+    return (
+      <div style={style}>
+        <ConnectorSvg el={el} theme={theme} />
+      </div>
+    )
   }
 
   if (el.type === 'graphic') {
@@ -1681,6 +1705,15 @@ function EditableEl({
         {handle}
       </div>
     ) : null
+  }
+
+  if (el.type === 'connector') {
+    return (
+      <div {...common} style={{ ...style, cursor: selected ? 'move' : 'default' }}>
+        <ConnectorSvg el={el} theme={theme} />
+        {handle}
+      </div>
+    )
   }
 
   if (el.type === 'graphic') {

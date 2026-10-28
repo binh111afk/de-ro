@@ -1,5 +1,5 @@
 /**
- * Test layout engine 21 bố cục: catalog/geometry, cards, quote/closing, fallback,
+ * Test layout engine 22 bố cục: catalog/geometry, cards, quote/closing, fallback,
  * đọc nội dung slide, bảng 6×8, timeline/cycle 3–6 bước, quiz 2–4 đáp án, tone,
  * 5 bố cục art-directed (statement/comparison/agenda/image-full/stat-image).
  * Chạy: npm run test:slide-layout
@@ -46,8 +46,8 @@ const rich = {
 }
 
 /* 1. Catalog đủ 19 layout; mọi phần tử nằm trong khung 0–100, id không trùng. */
-assert.equal(SLIDE_LAYOUTS.length, 21)
-assert.equal(new Set(SLIDE_LAYOUTS.map((l) => l.id)).size, 21, 'id layout không trùng')
+assert.equal(SLIDE_LAYOUTS.length, 22)
+assert.equal(new Set(SLIDE_LAYOUTS.map((l) => l.id)).size, 22, 'id layout không trùng')
 for (const layout of SLIDE_LAYOUTS) {
   const elements = composeLayout(theme, layout.id, rich)
   assert.ok(elements.length > 0, `${layout.id} phải dựng được phần tử`)
@@ -317,6 +317,22 @@ for (const catalogTheme of DECK_THEMES) {
   )
 }
 
-console.log('✅ layout v3: 21 bố cục, bảng 8×6, timeline/cycle, quiz, tone, art-directed, đọc nội dung + theme')
+/* 9. Mindmap: nút giữa + nhánh chia hai cột + đường nối cong; đọc ngược lại không mất nhánh. */
+{
+  const content = { title: 'Quang hợp', body: 'Quang hợp', items: ['Nguyên liệu: CO2; H2O', 'Sản phẩm: glucose; O2', 'Nơi diễn ra: lục lạp'] }
+  const els = composeLayout(theme, 'mindmap', content)
+  assert.equal(els.filter((e) => e.type === 'connector').length, 3, 'mỗi nhánh một đường nối')
+  assert.ok(els.some((e) => e.id === 'center-node'))
+  assert.equal(composeLayout(theme, 'mindmap', { ...content, items: ['Chỉ một nhánh'] }).length, 0, 'dưới 2 nhánh → rỗng')
+  assert.equal(composeLayout(theme, 'mindmap', { ...content, body: '' }).length, 0, 'thiếu nút giữa → rỗng')
+  const back = contentFromSlide({ id: 's', background: '#fff', layout: 'mindmap', elements: els })
+  assert.equal(back.body, 'Quang hợp')
+  assert.equal(back.items.length, 3, 'đọc lại đủ 3 nhánh')
+  assert.ok(back.items[0].startsWith('Nguyên liệu'), 'nhãn nhánh giữ nguyên')
+  const connectors = els.filter((e) => e.type === 'connector')
+  assert.ok(connectors.every((e) => e.w > 0 && e.h > 0 && e.x >= 0 && e.x + e.w <= 100), 'đường nối nằm trong khung')
+}
+
+console.log('✅ layout v3: 22 bố cục, bảng 8×6, timeline/cycle, quiz, tone, art-directed, đọc nội dung + theme')
 console.log('✅ tương phản: panel ≥1,1:1 và kicker ≥4,5:1 trên mọi theme × tông')
 console.log('\n10/10 pass, 0 fail')

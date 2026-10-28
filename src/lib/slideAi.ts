@@ -226,6 +226,11 @@ const BUDGETS: Record<SlideLayoutId, Budget> = {
     fields: { title: 80 },
     lists: [{ field: 'steps', max: 5, itemMax: 36 }],
   },
+  mindmap: {
+    total: 520,
+    fields: { title: 80, body: 40 },
+    lists: [{ field: 'items', max: 6, itemMax: 90 }],
+  },
   quiz: {
     total: 520,
     fields: { question: 140, kicker: 50, explanation: 150 },
@@ -383,6 +388,10 @@ export function validateSlide(page: AiSlidePayload, layout: string): string[] {
     case 'cycle':
       need(count(page.steps) >= 2, '"steps" cần 2–5 bước')
       break
+    case 'mindmap':
+      need(!!page.body, 'thiếu "body" (nút trung tâm)')
+      need(count(page.items) >= 3, '"items" cần 3–6 nhánh')
+      break
     case 'quiz': {
       need(!!page.question, 'thiếu "question"')
       const options = page.options ?? []
@@ -434,6 +443,8 @@ const FIELD_HINTS: Record<keyof SlideLayoutContent, string> = {
 
 /** Lưu ý riêng của từng layout, chèn sau danh sách field. */
 const LAYOUT_NOTES: Partial<Record<SlideLayoutId, string>> = {
+  mindmap:
+    '- Sơ đồ tư duy: "body" là chủ đề trung tâm (≤ 40 ký tự); "items" là 3–6 nhánh, mỗi nhánh viết dạng "Nhãn nhánh: ý con 1; ý con 2" (nhãn ≤ 25 ký tự, tối đa 3 ý con, mỗi ý con ≤ 28 ký tự, ngăn bằng dấu chấm phẩy). KHÔNG đưa toạ độ.\n',
   statement:
     '- Thông điệp lớn: "body" là MỘT câu ngắn (≤ 90 ký tự) hoặc một kết quả/công thức, nêu đúng ý chính; không liệt kê, không giải thích dài (phần giải thích dành cho slide khác).\n',
   example:

@@ -86,6 +86,12 @@ export async function exportDeckPptx(deck: Deck): Promise<void> {
         if (svg) {
           slide.addImage({ ...box, data: `data:image/svg+xml;base64,${btoa(svg)}` })
         }
+      } else if (el.type === 'connector') {
+        slide.addShape('line' as never, {
+          ...box,
+          flipV: el.flipY,
+          line: { color: hex(el.borderColor ?? deck.theme.accent), width: (el.border ?? 3) * 0.75 },
+        } as never)
       } else if (el.type === 'shape') {
         slide.addShape((SHAPES[el.shape ?? 'rect'] ?? 'rect') as never, {
           ...box,
