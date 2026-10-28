@@ -64,7 +64,7 @@ export function SiteSelect<K extends string>({
         <ul
           role="listbox"
           aria-label={label}
-          className="anim-pop absolute left-0 top-[calc(100%+8px)] z-30 max-h-[320px] min-w-full overflow-y-auto rounded-[8px] bg-surface p-1.5 shadow-float"
+          className="anim-pop absolute left-0 top-[calc(100%+8px)] z-30 max-h-[320px] w-max min-w-full overflow-y-auto rounded-[8px] bg-surface p-1.5 shadow-float"
         >
           {options.map((o) => {
             const active = o.value === value
@@ -77,7 +77,7 @@ export function SiteSelect<K extends string>({
                     setOpen(false)
                   }}
                   className={cn(
-                    'flex w-full items-center justify-between gap-6 rounded-[6px] px-3.5 py-2.5 text-left text-[14.5px] transition-colors',
+                    'flex w-full items-center justify-between gap-6 whitespace-nowrap rounded-[6px] px-3.5 py-2.5 text-left text-[14.5px] transition-colors',
                     active ? 'bg-clay-soft font-semibold text-clay' : 'text-ink-2 hover:bg-sunken hover:text-ink',
                   )}
                 >
