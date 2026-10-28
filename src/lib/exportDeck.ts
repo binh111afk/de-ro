@@ -15,6 +15,7 @@ import { isSlideAssetId, SLIDE_ASSETS } from './slideAssets'
 import { graphicMarkup } from './slideGraphics'
 import { firstColor, gradientSvg } from './slideBackground'
 import { isStrokeOnlyShape, prstOf } from './slidePresets'
+import { toDataUrl } from './mediaStore'
 
 const hex = (value: string | undefined, fallback = 'FFFFFF') => {
   const v = (value ?? '').replace('#', '').trim()
@@ -68,7 +69,7 @@ export async function buildDeckPptx(deck: Deck): Promise<ArrayBuffer> {
     if (gradient) slide.addImage({ data: `data:image/svg+xml;base64,${btoa(gradient)}`, x: 0, y: 0, w: '100%', h: '100%' })
     if (source.bgImage) {
       // ảnh đã cắt sẵn 16:9; lớp phủ cùng màu trung bình 30% như bản xem (`slideBgStyle`)
-      slide.addImage({ data: source.bgImage, x: 0, y: 0, w: '100%', h: '100%' })
+      slide.addImage({ data: await toDataUrl(source.bgImage), x: 0, y: 0, w: '100%', h: '100%' })
       slide.addShape('rect' as never, { x: 0, y: 0, w: '100%', h: '100%', fill: { color: hex(source.background), transparency: 70 }, line: { type: 'none' } } as never)
     }
 
@@ -186,8 +187,7 @@ export async function buildDeckPptx(deck: Deck): Promise<ArrayBuffer> {
           slide.addShape(kind, options as never)
         }
       } else if (el.type === 'image' && el.src) {
-        const image = el.src.startsWith('data:') ? { data: el.src } : { path: el.src }
-        slide.addImage({ ...box, ...image, ...(el.shape === 'ellipse' ? { rounding: true } : {}) })
+        slide.addImage({ ...box, data: await toDataUrl(el.src), ...(el.shape === 'ellipse' ? { rounding: true } : {}) })
       } else if (el.type === 'table' && el.rows?.length) {
         const headerFg = readableTextOn(deck.theme.accent)
         const bodyBg = deck.theme.surface ?? deck.theme.bg

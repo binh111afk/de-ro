@@ -96,6 +96,7 @@ import { elementHeight } from '@/lib/slideText'
 import { normalizeTheme, readableTextOn, type ResolvedTheme } from '@/lib/slideTheme'
 import { appendSlidesToDeck, withImage } from '@/lib/slideAi'
 import { IMAGE_LAYOUTS, buildImagePrompt, generateSlideImage, queueImage } from '@/lib/imageGen'
+import { uploadImage } from '@/lib/mediaStore'
 import {
   SLIDE_LAYOUTS,
   composeLayout,
@@ -349,7 +350,7 @@ export function SlideEditor({
     if (!slide) return
     const content = contentFromSlide(slide)
     const image = await generateSlideImage(buildImagePrompt(content.title, content.bullets))
-    setElementImage(slideId, elId, image.dataUrl)
+    setElementImage(slideId, elId, await uploadImage(image.dataUrl))
   }
 
   const previewElement = useCallback(
@@ -641,7 +642,8 @@ export function SlideEditor({
     const prompt = buildImagePrompt(page.title, bullets, orientation, palette)
     // Provider hay quá hạn/lỗi thoáng qua: thử lại một lần trong cùng lượt hàng đợi.
     void queueImage(() => generateSlideImage(prompt).catch(() => generateSlideImage(prompt)))
-      .then((generated) => setSlideImage(slide.id, generated.dataUrl))
+      .then((generated) => uploadImage(generated.dataUrl))
+      .then((src) => setSlideImage(slide.id, src))
       .catch(() => {})
   }
 
@@ -2144,7 +2146,11 @@ function EditableEl({
                   const file = e.target.files?.[0]
                   if (!file) return
                   const reader = new FileReader()
-                  reader.onload = () => onChange({ src: String(reader.result) })
+                  reader.onload = () => {
+                    uploadImage(String(reader.result))
+                      .then((src) => onChange({ src }))
+                      .catch((err) => setImageError(err instanceof Error ? err.message : String(err)))
+                  }
                   reader.readAsDataURL(file)
                 }}
               />
