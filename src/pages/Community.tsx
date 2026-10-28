@@ -376,7 +376,10 @@ function ExamCard({ item, index, busy }: { item: CardItem; index: number; busy: 
           <span className="text-[12px] font-semibold text-ink-3">{item.grade}</span>
         </div>
         <div className="relative">
-          <p className="line-clamp-2 font-display text-[16px] font-semibold leading-snug tracking-[-0.01em] text-ink">
+          <p
+            title={item.title}
+            className="line-clamp-2 font-display text-[16px] font-semibold leading-snug tracking-[-0.01em] text-ink"
+          >
             {item.title}
           </p>
           <p className="mt-1 truncate text-[12px] text-ink-3">{item.school || 'Chưa ghi tên trường'}</p>
@@ -404,11 +407,18 @@ function ExamCard({ item, index, busy }: { item: CardItem; index: number; busy: 
           </p>
         ) : null}
 
-        <div className="mt-auto flex items-center gap-2 pt-5">
-          <Button variant="soft" size="sm" className="flex-1" onClick={item.onView} disabled={busy}>
+        <div className="mt-auto grid grid-cols-2 gap-2 pt-5">
+          <Button variant="soft" size="sm" className="w-full justify-center" onClick={item.onView} disabled={busy}>
             Xem đề
           </Button>
-          <Button variant="clay" size="sm" onClick={item.onQuiz} disabled={busy} title="Làm đề tương tác">
+          <Button
+            variant="clay"
+            size="sm"
+            className="w-full justify-center"
+            onClick={item.onQuiz}
+            disabled={busy}
+            title="Làm đề tương tác"
+          >
             <MonitorPlay className="size-3.5" />
             {busy ? 'Đang mở…' : 'Làm đề'}
           </Button>
@@ -422,7 +432,10 @@ function ExamRow({ item, busy }: { item: CardItem; busy: boolean }) {
   return (
     <div className="flex flex-wrap items-center gap-4 border-b border-line-2 px-5 py-4 last:border-0 hover:bg-canvas/60">
       <button type="button" onClick={item.onView} disabled={busy} className="min-w-0 flex-1 text-left">
-        <p className="truncate font-display text-[16px] font-semibold text-ink transition-colors hover:text-clay">
+        <p
+          title={item.title}
+          className="line-clamp-2 font-display text-[16px] font-semibold text-ink transition-colors hover:text-clay"
+        >
           {item.title}
           {item.mine ? <span className="ml-2 align-middle text-[11.5px] font-semibold text-honey">Giáo viên</span> : null}
         </p>

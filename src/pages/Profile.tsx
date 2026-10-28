@@ -11,11 +11,6 @@ const CREDIT = {
   used: 128,
   total: 200,
   resetDay: '1/11',
-  breakdown: [
-    { label: 'Sinh đề', n: 46 },
-    { label: 'Sửa đề bằng lệnh', n: 52 },
-    { label: 'Tạo slide', n: 30 },
-  ],
 }
 
 export default function Profile() {
@@ -24,29 +19,24 @@ export default function Profile() {
   return <ProfilePage user={session.user} />
 }
 
+/** Hai cột: hồ sơ cố định bên trái, thông tin và lượt AI bên phải. Cột trái xếp lên trên khi màn hình hẹp. */
 function ProfilePage({ user }: { user: Session['user'] }) {
   return (
-    <div className="mx-auto max-w-[1180px] px-5 pt-12 sm:px-6 lg:pt-16">
-      <ProfileCard user={user} />
+    <div className="mx-auto grid max-w-[1080px] gap-8 px-5 pt-10 sm:px-6 lg:grid-cols-[280px_1fr] lg:pt-14">
+      <aside className="anim-rise lg:sticky lg:top-24 lg:self-start">
+        <IdentityCard user={user} />
+      </aside>
 
-      <div className="stagger mt-6 grid gap-6 lg:grid-cols-[1.25fr_1fr]">
+      <div className="stagger flex min-w-0 flex-col gap-6">
         <EditCard user={user} />
         <CreditCard />
-      </div>
-
-      <div className="anim-rise mt-6 flex flex-wrap items-center justify-between gap-4 rounded-[8px] border border-line-2 bg-surface/60 px-7 py-5 [animation-delay:0.3s]">
-        <p className="text-[14px] text-ink-3">Đăng xuất khỏi trình duyệt này. Đề và slide đã lưu vẫn còn.</p>
-        <Button variant="outline" onClick={() => void signOut()}>
-          <LogOut className="size-4" />
-          Đăng xuất
-        </Button>
       </div>
     </div>
   )
 }
 
-/** Thẻ đầu trang: ảnh đại diện bên trái, tên và email bên phải. */
-function ProfileCard({ user }: { user: Session['user'] }) {
+/** Cột trái: ảnh đại diện, tên, email, và đăng xuất ở cuối. */
+function IdentityCard({ user }: { user: Session['user'] }) {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
@@ -69,33 +59,42 @@ function ProfileCard({ user }: { user: Session['user'] }) {
   }
 
   return (
-    <div className="anim-rise grid overflow-hidden rounded-[8px] bg-surface shadow-lift md:grid-cols-[300px_1fr]">
-      <div className="flex flex-col items-center justify-center gap-4 bg-clay-tint px-8 py-10">
-        <span className="flex size-32 items-center justify-center overflow-hidden rounded-full bg-surface font-display text-[46px] font-semibold uppercase text-clay shadow-float ring-[6px] ring-white">
-          {user.avatar ? (
-            <img src={user.avatar} alt="" className="size-full object-cover" />
-          ) : (
-            (user.name ?? user.email).charAt(0)
-          )}
-        </span>
-        <Button variant="outline" size="sm" disabled={busy} onClick={() => fileRef.current?.click()}>
-          {busy ? 'Đang tải ảnh…' : 'Đổi ảnh đại diện'}
-        </Button>
-        <input ref={fileRef} type="file" accept="image/*" className="sr-only" onChange={changeAvatar} />
-        {error ? <p role="alert" className="text-center text-[12.5px] font-medium text-clay-deep">{error}</p> : null}
-      </div>
+    <div className="flex flex-col items-center rounded-[8px] bg-surface px-7 pb-7 pt-9 text-center shadow-lift">
+      <span className="flex size-28 items-center justify-center overflow-hidden rounded-full bg-clay-tint font-display text-[42px] font-semibold uppercase text-clay ring-4 ring-surface">
+        {user.avatar ? (
+          <img src={user.avatar} alt="" className="size-full object-cover" />
+        ) : (
+          (user.name ?? user.email).charAt(0)
+        )}
+      </span>
 
-      <div className="flex flex-col justify-center gap-4 px-8 py-10 md:px-12">
-        <h1 className="font-display text-[38px] font-semibold leading-[1.1] tracking-[-0.02em] text-ink sm:text-[46px]">
-          {user.name ?? 'Chưa đặt tên'}
-        </h1>
-        <p className="text-[15px] text-ink-3 break-all">{user.email}</p>
+      <h1 className="mt-5 max-w-full truncate font-display text-[26px] font-semibold leading-tight tracking-[-0.01em] text-ink">
+        {user.name ?? 'Chưa đặt tên'}
+      </h1>
+      <p className="mt-1 max-w-full break-all text-[13.5px] text-ink-3">{user.email}</p>
+
+      <Button variant="outline" size="sm" disabled={busy} className="mt-6" onClick={() => fileRef.current?.click()}>
+        {busy ? 'Đang tải ảnh…' : 'Đổi ảnh đại diện'}
+      </Button>
+      <input ref={fileRef} type="file" accept="image/*" className="sr-only" onChange={changeAvatar} />
+      {error ? <p role="alert" className="mt-3 text-[12.5px] font-medium text-clay-deep">{error}</p> : null}
+
+      <div className="mt-7 w-full border-t border-line pt-5">
+        <button
+          type="button"
+          onClick={() => void signOut()}
+          className="inline-flex items-center gap-2 text-[14px] font-semibold text-ink-3 transition-colors hover:text-clay-deep"
+        >
+          <LogOut className="size-4" />
+          Đăng xuất
+        </button>
+        <p className="mt-1.5 text-[12.5px] text-ink-4">Đề và slide đã lưu vẫn còn.</p>
       </div>
     </div>
   )
 }
 
-/** Form sửa thông tin: chỉ có tên hiển thị là đổi được. */
+/** Form sửa thông tin: tên đổi được, email chỉ hiển thị. */
 function EditCard({ user }: { user: Session['user'] }) {
   const [name, setName] = useState(user.name ?? '')
   const [busy, setBusy] = useState(false)
@@ -121,11 +120,13 @@ function EditCard({ user }: { user: Session['user'] }) {
   }
 
   return (
-    <form onSubmit={save} className="flex flex-col rounded-[8px] bg-surface p-7 shadow-lift sm:p-8" noValidate>
-      <h2 className="font-display text-[22px] font-semibold tracking-[-0.01em] text-ink">Thông tin</h2>
-      <p className="mt-1.5 text-[14px] text-ink-3">Tên hiển thị xuất hiện trên đầu trang và trong danh sách đề.</p>
+    <form onSubmit={save} className="rounded-[8px] bg-surface p-7 shadow-lift sm:p-8" noValidate>
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <h2 className="font-display text-[22px] font-semibold tracking-[-0.01em] text-ink">Thông tin cá nhân</h2>
+        <p className="text-[13px] text-ink-4">Tên hiển thị xuất hiện trên đầu trang và trong danh sách đề.</p>
+      </div>
 
-      <div className="mt-7 space-y-5">
+      <div className="mt-7 grid gap-5 sm:grid-cols-2">
         <label className="block">
           <span className="block text-[13px] font-semibold text-ink-2">Tên hiển thị</span>
           <input
@@ -138,13 +139,12 @@ function EditCard({ user }: { user: Session['user'] }) {
         </label>
 
         <div>
-          <span className="block text-[13px] font-semibold text-ink-2">Email</span>
-          <p className="mt-1.5 rounded-[6px] bg-sunken px-4 py-2.5 text-[14px] text-ink-3">{user.email}</p>
-          <p className="mt-1.5 text-[12px] text-ink-4">Email dùng để đăng nhập, chưa đổi được ở đây.</p>
+          <span className="block text-[13px] font-semibold text-ink-2">Email đăng nhập</span>
+          <p className="mt-1.5 truncate rounded-[6px] bg-sunken px-4 py-2.5 text-[14px] text-ink-3">{user.email}</p>
         </div>
       </div>
 
-      <div className="mt-auto flex items-center justify-between gap-4 pt-8">
+      <div className="mt-7 flex flex-wrap items-center justify-between gap-4 border-t border-line pt-6">
         <p className="min-h-5 text-[13.5px]" role="status">
           {error ? <span className="font-medium text-clay-deep">{error}</span> : null}
           {!error && notice ? <span className="text-sage">{notice}</span> : null}
@@ -157,41 +157,24 @@ function EditCard({ user }: { user: Session['user'] }) {
   )
 }
 
-/** Lượt AI: số lớn, thanh tiến độ, rồi chi tiết theo loại. Toàn bộ là số mẫu. */
+/** Lượt AI: số lớn và thanh tiến độ. Toàn bộ là số mẫu. */
 function CreditCard() {
   const pct = Math.round((CREDIT.used / CREDIT.total) * 100)
   return (
-    <section className="flex flex-col rounded-[8px] bg-surface p-7 shadow-lift sm:p-8">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h2 className="font-display text-[22px] font-semibold tracking-[-0.01em] text-ink">Lượt AI tháng này</h2>
-          <p className="mt-1.5 text-[14px] text-ink-3">Sinh đề, sửa đề và tạo slide.</p>
-        </div>
+    <section className="rounded-[8px] bg-surface p-7 shadow-lift sm:p-8">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="font-display text-[22px] font-semibold tracking-[-0.01em] text-ink">Lượt AI tháng này</h2>
         <Badge tone="honey">Số liệu mẫu</Badge>
       </div>
 
-      <p className="mt-7 font-display text-[44px] font-semibold leading-none tracking-[-0.02em] text-ink tnum">
+      <p className="mt-7 font-display text-[48px] font-semibold leading-none tracking-[-0.02em] text-ink tnum">
         {CREDIT.used}
         <span className="text-[18px] font-medium text-ink-3"> / {CREDIT.total}</span>
       </p>
-
       <CreditBar pct={pct} />
       <p className="mt-2.5 text-[12.5px] text-ink-3 tnum">
         Đã dùng {pct}% · làm mới ngày {CREDIT.resetDay}
       </p>
-
-      <ul className="mt-7 divide-y divide-line border-t border-line">
-        {CREDIT.breakdown.map((b, i) => (
-          <li
-            key={b.label}
-            className="anim-delay flex items-center justify-between py-3.5 text-[14px]"
-            style={{ '--delay': `${0.2 + i * 0.08}s` } as React.CSSProperties}
-          >
-            <span className="text-ink-2">{b.label}</span>
-            <span className="font-semibold text-ink tnum">{b.n}</span>
-          </li>
-        ))}
-      </ul>
     </section>
   )
 }

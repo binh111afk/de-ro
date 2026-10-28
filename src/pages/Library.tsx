@@ -1,12 +1,16 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { BookMarked, FolderPlus, Search, Tag } from 'lucide-react'
-import { Badge, Button, EmptyState, inputClass, selectAutoClass } from '@/components/ui'
+import { Badge, Button, EmptyState, inputClass } from '@/components/ui'
 import { MathText } from '@/components/MathText'
+import { SiteSelect } from '@/components/SiteSelect'
 import { BANK } from '@/data/bank'
 import { GRADES, SUBJECTS, TYPE_LABEL } from '@/data/types'
 import { useApp } from '@/store/app'
 import { formatPoints } from '@/lib/math'
+
+const SUBJECT_OPTIONS = [{ value: '', label: 'Mọi môn' }, ...SUBJECTS.map((s) => ({ value: s, label: s }))]
+const GRADE_OPTIONS = [{ value: '', label: 'Mọi lớp' }, ...GRADES.map((g) => ({ value: g, label: g }))]
 
 export default function Library() {
   const addQuestion = useApp((s) => s.addQuestion)
@@ -23,6 +27,10 @@ export default function Library() {
     for (const b of BANK) for (const t of b.tags) set.add(t)
     return [...set].sort()
   }, [])
+  const tagOptions = useMemo(
+    () => [{ value: '', label: 'Mọi chủ đề' }, ...tags.map((t) => ({ value: t, label: t }))],
+    [tags],
+  )
 
   const results = useMemo(() => {
     const needle = q.trim().toLowerCase()
@@ -101,36 +109,9 @@ export default function Library() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <select
-            value={subject}
-            onChange={(e) => setSubject(e.target.value)}
-            className={selectAutoClass}
-          >
-            <option value="">Mọi môn</option>
-            {SUBJECTS.map((s) => (
-              <option key={s}>{s}</option>
-            ))}
-          </select>
-          <select
-            value={grade}
-            onChange={(e) => setGrade(e.target.value)}
-            className={selectAutoClass}
-          >
-            <option value="">Mọi lớp</option>
-            {GRADES.map((g) => (
-              <option key={g}>{g}</option>
-            ))}
-          </select>
-          <select
-            value={tag}
-            onChange={(e) => setTag(e.target.value)}
-            className={selectAutoClass}
-          >
-            <option value="">Mọi chủ đề</option>
-            {tags.map((t) => (
-              <option key={t}>{t}</option>
-            ))}
-          </select>
+          <SiteSelect value={subject} options={SUBJECT_OPTIONS} onChange={setSubject} label="Lọc theo môn" className="w-[170px]" />
+          <SiteSelect value={grade} options={GRADE_OPTIONS} onChange={setGrade} label="Lọc theo lớp" className="w-[150px]" />
+          <SiteSelect value={tag} options={tagOptions} onChange={setTag} label="Lọc theo chủ đề" className="w-[200px]" />
         </div>
       </div>
 
