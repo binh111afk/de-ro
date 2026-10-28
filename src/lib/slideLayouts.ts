@@ -563,8 +563,9 @@ function composeStatement(p: LayoutPalette, content: SlideLayoutContent): SlideE
     textEl('kicker', content.kicker, { x: 14, y: 18, w: 76, h: 6 }, {
       variant: 'body', fontSize: 1.7, fontWeight: 600, textColor: p.ink,
     }),
+    // Câu dài (> 90 ký tự) hạ cỡ để vẫn là một khối gọn thay vì tràn hộp.
     textEl('body', text, { x: 14, y: 27, w: 76, h: 42 }, {
-      variant: 'title', fontSize: 4.6, fontWeight: 600, textColor: p.fg,
+      variant: 'title', fontSize: text.length > 90 ? 3.7 : 4.6, fontWeight: 600, textColor: p.fg,
     }),
     shapeEl('rule', { x: 14, y: 73, w: 12, h: 0.7 }, p.accent),
     textEl('author', content.author, { x: 14, y: 77, w: 76, h: 8 }, {

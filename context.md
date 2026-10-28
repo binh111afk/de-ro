@@ -4,7 +4,7 @@ Tài liệu này ghi lại toàn bộ trạng thái dự án: đã làm gì, đ�
 rút ra, và **những gì còn chưa làm xong**. Đọc file này là đủ để tiếp tục làm việc
 mà không cần đọc lại lịch sử hội thoại.
 
-> Cập nhật lần cuối: **27/10/2026 (cuối phiên)** — xem mục **BÀN GIAO PHIÊN** ngay dưới.
+> Cập nhật lần cuối: **28/10/2026** — xem mục **BÀN GIAO PHIÊN** ngay dưới.
 > Lịch sử từng chặng nằm ở mục 3.x (mới nhất 3.51–3.57: P0/P1 slide, gói môn, KaTeX,
 > layout ví dụ mẫu/mở bài, công cụ chấm điểm, icon bổ sung, ảnh AI nền, asset trang trí `ornament`).
 
@@ -39,22 +39,16 @@ Sau các sửa theo góp ý người dùng, điểm model vẫn 6,6 → **hình 
 
 ### Việc tiếp theo (ưu tiên)
 
-> **Cuối phiên 27/10 (phiên ornament):** làm 1–2 xong, đã push `main`. Chưa đo lại điểm sau đợt này —
-> chạy `eval:slides -- ... --slides` rồi `judge-slides` để so với 6,6/10. Worktree mới cần `npm install` (không có
-> `node_modules`). Việc 1 còn nợ dùng khung/thẻ số/blob/họa tiết lát; khung chỉ scale đều nên chọn bản vuông/ngang theo hộp.
+> **Phiên 28/10:** đo lại điểm, thẻ số, icon, ảnh, vòng chấm bằng mắt đều đã làm (mục 3.58). Điểm model **6,8/10**
+> (baseline cùng 6 chủ đề 6,7; nhiễu ±1/slide nên chưa kết luận). Có ảnh AI thật: 6,7 (chỉ bìa có ảnh).
 
-1. ~~Asset trang trí~~ **ĐÃ NHẬP (3.57):** 78 ornament từ `Downloads/B.svg` (+2 bản đường kẻ ngắn). Còn nợ: dùng
-   khung/thẻ kẹp giấy/thẻ băng keo/thẻ số/blob/họa tiết nền lát vào layout (mới dùng đường kẻ + hoa lá góc).
-2. ~~4 lỗi nhỏ~~ **ĐÃ SỬA (3.57):** (a) decor vô nghĩa ở statement/closing/section → hoa lá/vạch lượn; (b) divider hai cột
-   đổi `p.muted`; (c) đuôi bong bóng hook trỏ vào icon; (d) `text-wrap: pretty` cho `.slide-frame`.
-
-3. **Hình ảnh:** bìa hay mất ảnh do quá hạn → retry/hạn dài hơn; cân nhắc dùng ảnh cho
-   `statement`/`section`, ảnh stock, layout **biểu đồ** (`ChartView` có sẵn, chưa cho AI sinh data).
-4. **Chọn icon lệch nghĩa** (cái cân cho ƯCLN): AI chọn id theo catalog; thử khớp ngữ nghĩa tốt hơn
-   hoặc cho phép bỏ icon khi không khớp.
-5. **Vòng chấm bằng mắt trong pipeline** (render → `judge-slides` → repair một lượt): chưa làm.
-6. Tồn đọng cũ: lazy-load bundle (>1 MB), so chế độ HTML với PPT, khối bảng biến thiên/biểu đồ/đồ thị
-   cho TRÌNH SOẠN ĐỀ (mục 6.1b), `reasoning` model, quiz chưa có "hiện đáp án khi bấm" (đáp án luôn hiện).
+1. **Hình ảnh (4,7–5,0, thấp nhất)** — ĐỪNG thêm ảnh AI/ornament: giám khảo chê thiếu *minh hoạ đúng nội dung* (cây thừa
+   số, Venn, bản đồ, lục lạp), không phải thiếu trang trí; ảnh AI chỉ nâng bìa (6,4→7,3) mà bìa là 1/10 slide. Hướng thật sự:
+   **sơ đồ sinh từ dữ liệu** (trục số, cây thừa số, Venn, biểu đồ `ChartView`) cho toán/khtn/tin.
+2. Khung (`orn-khung-*`), blob, họa tiết nền lát vẫn chưa dùng (chỉ scale đều → chọn bản vuông/ngang theo hộp). Ưu tiên thấp.
+3. Vòng chấm bằng mắt mới nằm trong script (`eval:slides --slides --polish`); app chưa có DOM→ảnh nên chưa đưa vào pipeline.
+4. Tồn đọng cũ: lazy-load bundle (>1 MB), so chế độ HTML với PPT, khối bảng biến thiên/biểu đồ/đồ thị cho TRÌNH SOẠN ĐỀ
+   (mục 6.1b), `reasoning` model, quiz chưa có "hiện đáp án khi bấm".
 
 ### Lệnh và công cụ (chạy ở thư mục dự án)
 
@@ -2357,6 +2351,21 @@ Sau audit "AI sinh slide vỡ layout": gốc là tọa độ cố định + đo 
   góc ngoặc. Khung/blob cần co giãn: ornament chỉ scale đều (`meet`), nên phải chọn bản vuông/ngang theo tỉ lệ hộp.
 - **Kiểm chứng:** `tsc` sạch, test `slide-graphics` 21 nhóm (thêm test ornament), layout/measure/ai/theme xanh, lint 0 error
   (90 warn cũ), build ok; chụp ảnh preview 6 layout × 2 theme bằng trang tạm (đã xoá).
+
+### 3.58. Thẻ số, icon theo nghĩa, ảnh, vòng chấm bằng mắt (28/10/2026)
+
+- **Điểm:** baseline 6 deck (ƯCLN, Chí Phèo, Quang hợp, Điện Biên Phủ, Thì HTHT, Python for; không ảnh) **6,7**; sau đợt này
+  **6,8** (hình ảnh 4,7→5,0); sinh ảnh AI thật 6,7 (hình ảnh 4,8). Slide bìa có ảnh 7,3 so 6,4.
+- **Thẻ số:** `numberTag()` (`slideLayouts.ts`) dùng `orn-the-so-1..5` cho `timeline` (≤5 bước) và `example` (≤4 bước, hàng ≥12%);
+  chỉ khi nền đủ sáng cho nét `GRAPHIC_INK` (pastel + nét tối cố định), nền tối giữ chấm/badge cũ. `cycle` thêm badge số trên node.
+- **Icon:** `pageSystemPrompt` đưa gợi ý `searchGraphics(title+brief)`, dặn chọn theo nghĩa nội dung và bỏ trống nếu không khớp;
+  `hook` cũng được chọn đồ hoạ. Chưa đo lại lỗi "cái cân cho ƯCLN".
+- **Ảnh:** hạn server 150s→240s (`imageProxy.ts`); `applyAiSlide` thử lại một lần.
+- **Vòng chấm bằng mắt:** `polishSlide()` (`AiPanel.tsx`) viết lại slide theo lời chê của giám khảo. `eval:slides -- ... --slides --polish`
+  chấm từng slide, viết lại slide <6,5, chỉ giữ bản điểm cao hơn (ví dụ 5,5→7,4). `judge()` export từ `judge-slides.mjs`;
+  `eval-slides/main.tsx` có `window.__polish/__rects`. Chỉ chạy được khi không slide nào lỗi (`failed` rỗng).
+- **statement dồn chữ:** ngân sách `body` 160→100 ký tự (tổng 160), note prompt "một câu ngắn ≤90", chữ >90 ký tự hạ cỡ 4,6→3,7cqw.
+- Kiểm chứng: `tsc` sạch, test slide-ai/layout/measure/graphics/assets xanh, lint 630 slide 0 error (90 warn cũ).
 
 ## 4. Lỗi đã gặp và cách sửa
 

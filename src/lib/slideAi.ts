@@ -160,7 +160,7 @@ interface Budget {
 const BUDGETS: Record<SlideLayoutId, Budget> = {
   title: { total: 260, fields: { title: 80, kicker: 50, subtitle: 110 } },
   section: { total: 220, fields: { title: 60, kicker: 50, subtitle: 100 } },
-  statement: { total: 220, fields: { body: 160, kicker: 50, author: 50 } },
+  statement: { total: 160, fields: { body: 100, kicker: 40, author: 40 } },
   bullets: {
     total: 460,
     fields: { title: 80, kicker: 50 },
@@ -427,6 +427,8 @@ const FIELD_HINTS: Record<keyof SlideLayoutContent, string> = {
 
 /** Lưu ý riêng của từng layout, chèn sau danh sách field. */
 const LAYOUT_NOTES: Partial<Record<SlideLayoutId, string>> = {
+  statement:
+    '- Thông điệp lớn: "body" là MỘT câu ngắn (≤ 90 ký tự) hoặc một kết quả/công thức, nêu đúng ý chính; không liệt kê, không giải thích dài (phần giải thích dành cho slide khác).\n',
   example:
     '- Ví dụ mẫu: "steps" 2–4 bước giải, mỗi bước một phép biến đổi/ý có số liệu cụ thể; "conclusion" nêu kết quả cuối. Lời giải phải ĐÚNG, tự kiểm tra lại phép tính.\n',
   hook:
