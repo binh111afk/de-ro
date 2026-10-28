@@ -2392,7 +2392,12 @@ Sau audit "AI sinh slide vỡ layout": gốc là tọa độ cố định + đo 
 - **Luồng:** `looksLikeEdit(text)` (regex rẻ) + deck có slide → một lượt gọi model với `editSystemPrompt` (có danh sách theme/phông/slide hiện tại);
   trả `{"action":"none"}` thì rơi xuống luồng soạn bình thường. Kết quả báo lại từng dòng; ghi vào lịch sử nên Ctrl+Z hoàn tác.
   Kiểm chứng thật: "đổi phông tiêu đề sang Times New Roman, bộ màu tím, xoá slide 4" → 3 lệnh chạy, deck còn 3 slide màu tím. Test: `npm run test:slide-edit`.
-- **Chưa làm:** sửa NỘI DUNG slide có sẵn bằng AI (viết lại/rút gọn một slide), đổi cỡ chữ, sơ đồ tư duy (`mindmap` — AI trả cây dữ liệu, engine bố trí và vẽ SVG).
+- **Sửa nội dung/bố cục MỘT slide (cùng ngày):** thêm `edit_slide` (`{slide, fields}` — CHỈ field nêu mới đổi, field khác giữ nguyên; field danh sách gửi
+  trọn bộ; ảnh/đồ hoạ không cho AI đụng; qua `checkSlide` nên bị chặn nếu thiếu field bắt buộc/vượt ngân sách) và `set_layout` (đổi bố cục, giữ nội dung;
+  `adaptContent` lấy danh sách ý cho items/steps/left/right; không đủ nội dung — ví dụ timeline cần ≥3 bước — thì bỏ kèm lý do). `describeSlide` đưa
+  nội dung hiện tại từng slide vào prompt để model biết đang sửa gì. Kiểm chứng thật: "Sửa tiêu đề slide 1…" chỉ đổi tiêu đề (nhãn/phụ đề/slide khác giữ nguyên);
+  "Đổi bố cục slide 3 sang mốc thời gian" cycle→timeline.
+- **Chưa làm:** đổi cỡ chữ, thêm/chèn slide mới tại vị trí bất kỳ bằng lệnh, sơ đồ tư duy (`mindmap` — AI trả cây dữ liệu, engine bố trí và vẽ SVG).
 
 ## 4. Lỗi đã gặp và cách sửa
 

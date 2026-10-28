@@ -57,7 +57,7 @@ import type { Deck, DeckTheme, Slide, SlideElement, SlideTone } from '@/store/do
 import { parseAiDeck, type AiSlidePayload, type DeckPlan } from '@/lib/aiDeck'
 import { exportDeckPptx } from '@/lib/exportDeck'
 import { HtmlDeckBar, HtmlSlideFrame } from './HtmlSlide'
-import { applyEdits, recomposeSlide, type SlideEditOp } from '@/lib/slideEdit'
+import { applyEdits, describeSlide, recomposeSlide, type SlideEditOp } from '@/lib/slideEdit'
 import { elementHeight } from '@/lib/slideText'
 import { normalizeTheme, readableTextOn, type ResolvedTheme } from '@/lib/slideTheme'
 import { appendSlidesToDeck, withImage } from '@/lib/slideAi'
@@ -479,9 +479,7 @@ export function SlideEditor({
   /** Mô tả deck cho lệnh sửa: theme, phông, danh sách slide (số thứ tự bắt đầu từ 1). */
   const editContext =
     `bộ màu ${theme.id} (${theme.name}), phông tiêu đề ${theme.fonts.heading}, phông nội dung ${theme.fonts.body}; ` +
-    deck.slides
-      .map((s, i) => `${i + 1}. ${s.layout ?? 'slide'}${s.html ? ' (HTML)' : ''}`)
-      .join(', ')
+    '\n' + deck.slides.map(describeSlide).join('\n')
 
   /** Chế độ HTML: thay toàn bộ slide bằng các slide HTML (hoàn tác được bằng lịch sử). */
   const applyHtmlDeck = (htmls: string[]) => {

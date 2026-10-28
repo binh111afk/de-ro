@@ -23,6 +23,9 @@ assert.equal(looksLikeEdit('đổi phông chữ sang Times New Roman'), true)
 assert.equal(looksLikeEdit('thay bộ màu thành xanh rừng'), true)
 assert.equal(looksLikeEdit('xoá slide 3'), true)
 assert.equal(looksLikeEdit('soạn bài giảng về quang hợp'), false)
+assert.equal(looksLikeEdit('sửa tiêu đề slide 2 thành Mở đầu'), true)
+assert.equal(looksLikeEdit('rút gọn slide 3'), true)
+assert.equal(looksLikeEdit('đổi bố cục slide 4 sang mốc thời gian'), true)
 
 // --- parse
 const parsed = parseEditCommands('```json\n{"action":"edit","commands":[{"op":"set_theme","theme":"rung"},{"op":"zzz"},{"op":"delete_slides","slides":[2]}]}\n```')
@@ -78,6 +81,38 @@ assert.equal(parseEditCommands('{"action":"edit","commands":[{"op":"set_tone","t
   const moved = applyEdits(d, [{ op: 'move_slide', from: 3, to: 1 }])
   assert.equal(moved.deck.slides[0].id, d.slides[2].id)
   assert.equal(applyEdits(d, [{ op: 'move_slide', from: 0, to: 9 }]).changed, false)
+}
+
+// --- sửa nội dung một slide: chỉ field nêu mới đổi
+{
+  const d = deck()
+  const before = d.slides[1]
+  const r = applyEdits(d, [{ op: 'edit_slide', slide: 2, fields: { title: 'Tiêu đề mới', khongHopLe: 1 } }])
+  assert.equal(r.changed, true)
+  const s = r.deck.slides[1]
+  assert.equal(s.id, before.id, 'giữ id slide')
+  assert.equal(s.layout, 'bullets', 'giữ bố cục')
+  const texts = s.elements.filter((e) => e.type === 'text').map((e) => e.text)
+  assert.ok(texts.includes('Tiêu đề mới'))
+  assert.ok(texts.some((t) => t.includes('Ý thứ nhất') && t.includes('Ý thứ hai')), 'ý cũ giữ nguyên')
+  assert.equal(r.deck.slides[0], d.slides[0], 'slide khác không đụng')
+  const kept = applyEdits(d, [{ op: 'edit_slide', slide: 1, fields: { bullets: ['Chỉ một ý mới'] } }]).deck.slides[0]
+  const kt = kept.elements.filter((e) => e.type === 'text').map((e) => e.text)
+  assert.ok(kt.includes('A'), 'tiêu đề giữ nguyên khi chỉ đổi ý')
+  assert.ok(kt.some((t) => t.includes('Chỉ một ý mới')))
+  assert.equal(applyEdits(d, [{ op: 'edit_slide', slide: 2, fields: { bullets: [] } }]).changed, false, 'xoá hết ý → bị chặn')
+  assert.equal(applyEdits(d, [{ op: 'edit_slide', slide: 9, fields: { title: 'x' } }]).changed, false)
+  assert.equal(applyEdits(d, [{ op: 'edit_slide', slide: 1, fields: { image: 'x' } }]).changed, false, 'không cho đổi ảnh')
+}
+
+// --- đổi bố cục
+{
+  const d = deck()
+  const r = applyEdits(d, [{ op: 'set_layout', slide: 1, layout: 'cards' }])
+  assert.equal(r.deck.slides[0].layout, 'cards')
+  assert.equal(applyEdits(d, [{ op: 'set_layout', slide: 1, layout: 'timeline' }]).changed, false, '2 ý chưa đủ cho timeline (cần ≥3) → bị chặn')
+  assert.equal(r.changed, true)
+  assert.equal(applyEdits(d, [{ op: 'set_layout', slide: 1, layout: 'khong-co' }]).changed, false)
 }
 
 // --- deck HTML: giao diện không đổi được, xoá/dời vẫn được
