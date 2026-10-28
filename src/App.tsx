@@ -12,6 +12,7 @@ import Grading from '@/pages/Grading'
 import Quiz from '@/pages/Quiz'
 import ExamView from '@/pages/ExamView'
 import Auth from '@/pages/Auth'
+import Profile from '@/pages/Profile'
 import { consumeAuthRedirect } from '@/lib/auth'
 
 function ScrollToTop() {
@@ -56,6 +57,7 @@ export default function App() {
           <Route path="/dang-ky" element={<Auth mode="register" />} />
           <Route path="/quen-mat-khau" element={<Auth mode="forgot" />} />
           <Route path="/dat-lai-mat-khau" element={<Auth mode="reset" />} />
+          <Route path="/ho-so" element={<Profile />} />
           <Route path="*" element={<Home />} />
         </Routes>
       </main>

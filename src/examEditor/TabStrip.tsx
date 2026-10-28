@@ -10,6 +10,7 @@ import { cn } from '@/lib/cn'
 import { DocIcon, IconDocExam, IconDocSheet, IconDocSlide } from '@/components/docIcons'
 import { IconChevronLeft, IconClose, IconHome, IconPlus } from './icons'
 import { useAnchoredPopover, popoverStyle } from './useAnchoredPopover'
+import { useSlidingThumb } from './useSlidingThumb'
 
 export function TabStrip({
   tabs,
@@ -41,10 +42,20 @@ export function TabStrip({
   onBack?: () => void
 }) {
   const navigate = useNavigate()
+  const stripRef = useRef<HTMLDivElement>(null)
+  // đĩa trắng trượt tới tab đang chọn; đo lại khi đổi tab hoặc danh sách tab thay đổi
+  const thumb = useSlidingThumb(stripRef, '.tab-item.active', `${startActive ? 'start' : activeId}:${tabs.map((t) => t.id).join(',')}`)
 
   return (
     <>
-      <div className="tab-strip" role="tablist" aria-label="Đề đang mở">
+      <div className="tab-strip" role="tablist" aria-label="Đề đang mở" ref={stripRef}>
+        {thumb ? (
+          <span
+            aria-hidden
+            className="tab-active-plate"
+            style={{ transform: `translateX(${thumb.x + 3}px)`, width: thumb.w - 6 }}
+          />
+        ) : null}
         {/* Nút quay lại — đứng ngay trước tab "Bắt đầu", về trang chủ */}
         <button
           type="button"

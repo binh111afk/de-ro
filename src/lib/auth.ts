@@ -11,7 +11,7 @@ export interface Session {
   access_token: string
   refresh_token: string
   expires_at: number
-  user: { id: string; email: string; name?: string }
+  user: { id: string; email: string; name?: string; avatar?: string }
 }
 
 export class AuthError extends Error {}
@@ -67,12 +67,19 @@ function toVietnamese(data: Record<string, unknown>, status: number): string {
   return raw || 'Có lỗi xảy ra, thử lại sau.'
 }
 
-function toUser(u: { id: string; email: string; user_metadata?: { display_name?: string } }): Session['user'] {
-  return { id: u.id, email: u.email, name: u.user_metadata?.display_name || undefined }
+type RawUser = { id: string; email: string; user_metadata?: { display_name?: string; avatar_url?: string } }
+
+function toUser(u: RawUser): Session['user'] {
+  return {
+    id: u.id,
+    email: u.email,
+    name: u.user_metadata?.display_name || undefined,
+    avatar: u.user_metadata?.avatar_url || undefined,
+  }
 }
 
 function toSession(data: Record<string, unknown>): Session {
-  const user = data.user as Parameters<typeof toUser>[0]
+  const user = data.user as RawUser
   return {
     access_token: String(data.access_token),
     refresh_token: String(data.refresh_token),
@@ -106,6 +113,17 @@ export async function signOut(): Promise<void> {
   if (s) await request('/logout', { token: s.access_token }).catch(() => {})
 }
 
+/** Đổi tên hiển thị và/hoặc ảnh đại diện (lưu trong user_metadata, Supabase gộp các trường). */
+export async function updateProfile(patch: { name?: string; avatar?: string }): Promise<void> {
+  const s = await currentSession()
+  if (!s) throw new AuthError('Bạn cần đăng nhập lại.')
+  const data: Record<string, string> = {}
+  if (patch.name !== undefined) data.display_name = patch.name
+  if (patch.avatar !== undefined) data.avatar_url = patch.avatar
+  const user = await request<RawUser>('/user', { method: 'PUT', token: s.access_token, body: { data } })
+  saveSession({ ...s, user: toUser(user) })
+}
+
 /** Gửi email đặt lại mật khẩu. Luôn báo thành công để không lộ email nào đã có tài khoản. */
 export async function requestReset(email: string): Promise<void> {
   const redirect = `${window.location.origin}/dat-lai-mat-khau`
@@ -133,7 +151,7 @@ export async function consumeAuthRedirect(): Promise<'recovery' | 'session' | nu
     headers: { apikey: KEY, Authorization: `Bearer ${access}` },
   })
   if (!res.ok) return null
-  const user = (await res.json()) as Parameters<typeof toUser>[0]
+  const user = (await res.json()) as RawUser
   const expiresIn = Number(hash.get('expires_in') ?? 3600)
   saveSession({
     access_token: access,
