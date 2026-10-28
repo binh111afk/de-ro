@@ -4,94 +4,83 @@ Tài liệu này ghi lại toàn bộ trạng thái dự án: đã làm gì, đ�
 rút ra, và **những gì còn chưa làm xong**. Đọc file này là đủ để tiếp tục làm việc
 mà không cần đọc lại lịch sử hội thoại.
 
-> Cập nhật lần cuối: **28/10/2026** — xem mục **BÀN GIAO PHIÊN** ngay dưới.
-> Lịch sử từng chặng nằm ở mục 3.x (mới nhất 3.51–3.57: P0/P1 slide, gói môn, KaTeX,
-> layout ví dụ mẫu/mở bài, công cụ chấm điểm, icon bổ sung, ảnh AI nền, asset trang trí `ornament`).
+> Cập nhật lần cuối: **28/10/2026 (cuối phiên)** — xem mục **BÀN GIAO PHIÊN** ngay dưới.
+> Lịch sử từng chặng nằm ở mục 3.x (mới nhất **3.58–3.61**: thẻ số/icon/ảnh/polish, chữ đậm + HTML mode,
+> hỏi ghi đè + AI sửa slide bằng lệnh, layout `mindmap`; trước đó 3.51–3.57).
 
-## BÀN GIAO PHIÊN (27/10/2026) — đọc mục này trước
+## BÀN GIAO PHIÊN (28/10/2026) — đọc mục này trước
 
 ### Trạng thái nhanh
 
-Trọng tâm phiên này: **chất lượng slide do AI sinh** (không đụng nhiều tới trình soạn đề).
-Pipeline: dàn ý (`SLIDE_PLAN_SYSTEM`, có `subject`/`stylePack`/`theme`) → duyệt → sinh từng
-slide (`generateSlide` + repair, kiểm tra chữ co `readabilityIssues`) → layout engine
-(`slideLayouts.ts`, **21 layout**, đo chữ bằng canvas) → slide hiện ngay → ảnh AI sinh nền
-(bìa + layout ảnh) rồi `withImage()` thay vào.
+Trọng tâm 2 phiên gần nhất: **slide do AI sinh** và **AI sửa slide có sẵn**. Mọi thứ dưới đây đã commit + push lên `main`
+(commit cuối `7fba099`); thư mục `.claude/` là cấu hình cục bộ, KHÔNG commit.
 
-- **6 theme OKLCH** (`sang`, `dem-xanh`, `giay-am`, `rung`, `tim`, `do`); id cũ tra qua `resolveThemeId`.
-- **7 gói môn** (`slideSubjects.ts`: toán, văn, sử-địa, ngoại ngữ, tin, khtn, khác): cấu trúc bài,
-  layout ưu tiên, luật nội dung, nhóm icon cho prompt.
-- **Công thức** `$...$` bằng KaTeX (+ `\ce{}` mhchem) ở thumbnail/trình chiếu/editor/ô bảng;
-  xuất PPTX đổi thành chữ Unicode (giới hạn đã biết).
-- **Kho đồ hoạ 232 icon** (112 gốc + 100 bổ sung + 20 ngôn ngữ lập trình), đặt trên "tấm nền sáng"
-  cố định (`graphicPlate`) để nét tối + pastel luôn tương phản.
-- **Ảnh AI**: Xkiro `sensenova/sensenova-u1.5-lite` (45–90s/ảnh, đôi khi quá hạn → giữ icon).
+Pipeline: dàn ý (`SLIDE_PLAN_SYSTEM`) → duyệt (nếu deck đã có nội dung thì hộp **Ghi đè / Nối tiếp / Huỷ**) → sinh từng slide
+(`generateSlide` + repair, `readabilityIssues`) → layout engine (`slideLayouts.ts`, **22 layout**, đo chữ canvas) → slide hiện ngay → ảnh AI nền (bìa + layout ảnh).
+Hai chế độ trong AI panel (tab PPT/HTML): **PPT** = deck sửa được; **HTML** = slide HTML trong deck, CHỈ trình chiếu trên web (xem 3.59).
+
+Đã có trong 2 phiên này (chi tiết ở 3.58–3.61):
+- **Chữ đậm `**từ khoá**`**: vẽ/đo/xuất PPTX; AI nhấn 1–2 cụm/ý, code cắt tối đa 2 cụm × 6 từ.
+- **AI sửa slide có sẵn bằng LỆNH có cấu trúc** (`lib/slideEdit.ts`, **13 lệnh**): `set_theme`, `set_fonts`, `set_colors`, `set_tone`, `set_transition`, `delete_slides`, `move_slide`,
+  `edit_slide` (CHỈ đổi field nêu), `set_layout`, `add_slide`, `duplicate_slide`, `set_notes`, `rename_deck`. Model không viết lại slide; engine kiểm tra rồi dựng lại; Ctrl+Z hoàn tác.
+- **Layout `mindmap`** do engine vẽ (phần tử mới `connector`, S-curve SVG); AI chỉ đưa cây dữ liệu.
+- **Chặn icon lệch nghĩa** (`graphicFits`), layout `hook` mới (không bong bóng), `bullets` bỏ icon lẻ, thẻ số 1–5 cho `timeline`/`example`, badge số cho `cycle`.
+- **Chế độ HTML thành slide trong deck**: `Slide.html`, `Deck.format='html'`, `splitHtmlDeck`, `HtmlSlideFrame`, modal lưu ý khi bấm tab HTML, không xuất PPT/`.html`.
+- Công cụ: `eval:slides` in **token thật** và có `--polish` (chấm → viết lại slide <6,5 → giữ bản điểm cao hơn).
 
 ### Điểm chất lượng (thước tương đối, model deepseek-v4.1-flash chấm ảnh slide)
 
-| | Model | Người dùng |
+| Lần đo (6 chủ đề: ƯCLN, Chí Phèo, Quang hợp, Điện Biên Phủ, Thì HTHT, Python for) | Tổng | Hình ảnh |
 |---|---|---|
-| 6 deck do dự án sinh (59 slide) | **6,6/10** (layout 7,0 · chữ 7,1 · màu 7,5 · điểm nhấn 7,1 · **hình ảnh 4,4** · hoàn thiện 6,1) | 6,8 / 6,8 / 6,8 / 6,8 / 7 / 7 (TB 6,87) |
-| Deck mẫu người dùng gửi ("Ước Chung Lớn Nhất") | 6,4 (6,8 nếu bỏ slide gần trống) | — |
+| Baseline sau ornament (không ảnh AI) | 6,7 | 4,7 |
+| Sau thẻ số + polish | 6,8 | 5,0 |
+| Có ảnh AI thật (chỉ bìa có ảnh) | 6,7 | 4,8 (bìa 6,4→7,3) |
+| Sau chặn icon + hook mới | 6,6 | 4,7 |
 
-Model khắt khe hơn người dùng ~0,3; dùng để so TRƯỚC/SAU mỗi lần sửa (nhiễu ±1/slide).
-Sau các sửa theo góp ý người dùng, điểm model vẫn 6,6 → **hình ảnh/minh hoạ mới là nút thắt**.
+Toàn bộ nằm trong nhiễu chấm (±1/slide, ~±0,2 cả deck). Người dùng chấm thường cao hơn model ~0,3. **Hình ảnh/minh hoạ đúng nội dung vẫn là nút thắt.**
+Chi phí: ~29–41K token/deck (suy luận chiếm phần lớn token ra); lệnh sửa ≈ 1,2K token vào + vài trăm ra.
 
 ### Việc tiếp theo (ưu tiên)
 
-> **Phiên 28/10:** đo lại điểm, thẻ số, icon, ảnh, vòng chấm bằng mắt đều đã làm (mục 3.58). Điểm model **6,8/10**
-> (baseline cùng 6 chủ đề 6,7; nhiễu ±1/slide nên chưa kết luận). Có ảnh AI thật: 6,7 (chỉ bìa có ảnh).
-
-1. **Hình ảnh (4,7–5,0, thấp nhất)** — ĐỪNG thêm ảnh AI/ornament: giám khảo chê thiếu *minh hoạ đúng nội dung* (cây thừa
-   số, Venn, bản đồ, lục lạp), không phải thiếu trang trí; ảnh AI chỉ nâng bìa (6,4→7,3) mà bìa là 1/10 slide. Hướng thật sự:
-   **sơ đồ sinh từ dữ liệu** (trục số, cây thừa số, Venn, biểu đồ `ChartView`) cho toán/khtn/tin.
-2. Khung (`orn-khung-*`), blob, họa tiết nền lát vẫn chưa dùng (chỉ scale đều → chọn bản vuông/ngang theo hộp). Ưu tiên thấp.
-3. Vòng chấm bằng mắt mới nằm trong script (`eval:slides --slides --polish`); app chưa có DOM→ảnh nên chưa đưa vào pipeline.
-4. Tồn đọng cũ: lazy-load bundle (>1 MB), so chế độ HTML với PPT, khối bảng biến thiên/biểu đồ/đồ thị cho TRÌNH SOẠN ĐỀ
-   (mục 6.1b), `reasoning` model, quiz chưa có "hiện đáp án khi bấm".
+1. **Minh hoạ đúng nội dung (hình ảnh 4,7–5,0)** — ĐỪNG thêm ảnh AI/ornament (giám khảo chê thiếu sơ đồ đúng nội dung, không phải thiếu trang trí). Hướng thật:
+   **sơ đồ sinh từ dữ liệu** như `mindmap` đã làm: trục số, cây thừa số, Venn, biểu đồ (`ChartView` có sẵn nhưng AI chưa sinh data) cho toán/khtn/tin.
+2. **Mindmap còn thiếu:** nhánh con nhiều cấp, hộp riêng cho ý con; xuất PPTX hiện thành đường THẲNG (chưa mở file PPTX để xem); chưa thử với theme `do`/`tim`.
+3. **Chưa kiểm:** (a) PPTX có chữ đậm trong PowerPoint thật; (b) slide HTML do AI sinh có lỗi JS/CSS lạ; (c) chặn icon theo từ khoá có làm mất nhiều icon đúng nghĩa không (chưa đếm); (d) lệnh sửa trên deck dài >10 slide (prompt mô tả từng slide ≤600 ký tự).
+4. **Lệnh sửa chưa có:** đổi cỡ chữ; phông riêng từng slide (phông là của theme). Nếu thêm nhiều lệnh (>~20): chia nhóm lệnh theo từ khoá, chỉ gửi nhóm liên quan (xem 3.60) — chưa cần.
+5. Khung (`orn-khung-*`), blob, họa tiết nền lát chưa dùng; ưu tiên thấp. Vòng chấm bằng mắt chưa vào app (không có DOM→ảnh).
+6. Tồn đọng cũ: lazy-load bundle (>1 MB), khối bảng biến thiên/biểu đồ/đồ thị cho TRÌNH SOẠN ĐỀ (mục 6.1b), `reasoning` model, quiz chưa có "hiện đáp án khi bấm".
 
 ### Lệnh và công cụ (chạy ở thư mục dự án)
 
-- Dev: `npm run dev -- --port 5184 --host 127.0.0.1` (cổng bận thì preview tự đổi 5186). Sửa `server/*`
-  phải khởi động lại dev server.
-- Test slide (đều `npm run test:<tên>`): `slide-math`, `slide-theme`, `slide-layout`, `slide-measure`,
-  `slide-text`, `slide-ai`, `slide-plan`, `slide-graphics`, `slide-assets`, `image`, `convert`.
-- `npm run lint:slides` — dựng 630 slide (6 theme × 21 layout × 3 bộ nội dung × tông) trong Chrome
-  headless, đo DOM: tràn/đè/ngoài khung/**sát mép (edge)** là *error*, chữ nhỏ/tương phản là *warn*.
-  Hiện **0 error**, ~90 warn (chữ `cycle`/pill `hook` với nội dung stress vượt ngân sách).
-- `npm run eval:slides -- "chủ đề" ... --out <dir> [--slides] [--images]` — chạy pipeline LLM THẬT,
-  chụp lưới/ từng slide (`--slides`), sinh ảnh AI thật (`--images`, chậm vài phút). Ảnh vào `eval-out/`
-  (gitignored).
-- `node scripts/judge-slides.mjs <thư-mục-ảnh> --label "..."` — chấm bằng `LLM_MODEL` (nhận ảnh);
-  ghi `judge.json`. Gateway opencode đòi header `x-opencode-session` (đã có trong script/proxy).
-- `node scripts/import-graphics.mjs` — nhập 3 contact sheet (đường dẫn ở `Downloads/`, tên/keyword
-  trong `scripts/graphics-extra.mjs` và đầu script) → `src/lib/graphics.ts` (đừng sửa tay).
-- `.env` (không commit): `LLM_BASE_URL`, `LLM_API_KEY`, `LLM_MODEL` (opencode, deepseek-v4.1-flash).
-  Ảnh/Xkiro lấy key từ `~/.zcode/v2/provider_config.json` nếu `.env` không có `IMAGE_*`.
-- `.claude/launch.json` (cấu hình dev server cho công cụ preview) để ngoài git.
+- Dev: `npm run dev -- --port 5184 --host 127.0.0.1` (cổng bận thì preview tự đổi 5186). Sửa `server/*` phải khởi động lại dev server.
+- Test slide (đều `npm run test:<tên>`): `slide-math`, `slide-theme`, `slide-layout`, `slide-measure`, `slide-text`, `slide-ai`, `slide-plan`,
+  `slide-graphics`, `slide-assets`, **`slide-edit`**, `image`, `convert`, `export`. Sau khi đổi số layout phải sửa các số 22 trong `test-slide-layout`/`test-slide-plan`.
+- `npm run lint:slides` — dựng 630 slide trong Chrome headless, đo DOM: tràn/đè/ngoài khung/sát mép là *error*, chữ nhỏ/tương phản là *warn*. Hiện **0 error**, ~108 warn (chữ nhỏ ở `cycle`/`hook` với nội dung stress).
+- `npm run eval:slides -- "chủ đề" ... --out <dir> [--slides] [--images] [--polish]` — pipeline LLM THẬT, chụp lưới/từng slide, in token thật, `--polish` cần `--slides`.
+- `node scripts/judge-slides.mjs <thư-mục-ảnh> --label "..."` — chấm bằng `LLM_MODEL`; ghi `judge.json`. `judge()` được export cho `--polish`.
+- `node scripts/import-graphics.mjs` — nhập contact sheet → `src/lib/graphics.ts` (đừng sửa tay).
+- `.env` (không commit): `LLM_BASE_URL`, `LLM_API_KEY`, `LLM_MODEL` (opencode, deepseek-v4.1-flash). Ảnh/Xkiro lấy key từ `~/.zcode/v2/provider_config.json` nếu `.env` không có `IMAGE_*`.
+- `.claude/launch.json` (cấu hình dev server cho công cụ preview) để ngoài git. Ảnh/eval ra `eval-out/` (gitignored).
 
 ### Bẫy đã gặp (đừng lặp lại)
 
-- Bash heredoc/tool **làm hỏng ký tự `\`** (LaTeX, regex, `'\n'`): tạo file chứa backslash bằng công
-  cụ Write, hoặc sinh ký tự bằng `chr(92)`. Kiểm tra `tsc` ngay sau khi sửa.
-- Helper ghi file `open(p,'wb').write(f(s))` mở file TRƯỚC khi `f` chạy → lỗi assert làm file rỗng
-  (đã mất `slideAi.ts`, khôi phục bằng `git checkout`). Tính xong rồi mới mở để ghi.
-- Nhiều file là **CRLF**; khi thay chuỗi nhiều dòng phải tính tới `\r\n`.
-- Trang `scripts/*/main.tsx` (lint/eval) KHÔNG nằm trong `tsc` (chỉ `src`); chạy thật mới biết lỗi.
-- `.katex` toàn cục của app là 1,03em (hợp đề thi) → slide ghi đè trong `slide.css`.
-- Hộp chữ canh giữa là flex-column: chữ + `.katex` làm con trực tiếp sẽ tách hàng → bọc một khối con.
-- Editor dùng `<textarea>` (không có valign) → `AutoFitText` tự bọc flex để canh giữa như bản xem.
+- Bash heredoc/tool **làm hỏng ký tự `\`** và xuống dòng trong chuỗi (regex, LaTeX, `'\n'`): tạo file chứa backslash bằng công cụ **Write**, hoặc sửa bằng Edit; kiểm tra `tsc` ngay sau khi sửa. Python heredoc cũng bị (đã gặp ở `looksLikeEdit`, test toán).
+- Helper ghi file `open(p,'wb').write(f(s))` mở file TRƯỚC khi `f` chạy → lỗi assert làm file rỗng. Tính xong rồi mới mở để ghi.
+- Nhiều file là **CRLF**; script vá nên đọc `newline=''`, đổi về `\n` để sửa rồi trả lại CRLF.
+- Trang `scripts/*/main.tsx` (lint/eval) KHÔNG nằm trong `tsc`; chạy thật mới biết lỗi.
+- `.katex` toàn cục là 1,03em → slide ghi đè trong `slide.css`. Hộp chữ canh giữa là flex-column: bọc một khối con. Editor dùng `<textarea>`; `AutoFitText` tự bọc flex để canh giữa.
+- **Slide HTML** nằm trong `localStorage` (~9 KB/slide): deck dài có thể chạm giới hạn trình duyệt.
+- `slideAi.ts` `clean()` cắt chuỗi theo `max` → KHÔNG đưa `image` (data URL) qua `checkSlide`; `edit_slide` đã tách `image`/`graphic` ra trước.
+- `looksLikeEdit` là bước lọc regex rẻ: câu sửa mà không khớp sẽ đi luồng soạn mới; câu khớp nhầm thì model trả `{"action":"none"}` và rơi về luồng cũ.
 
 ### Bản đồ file chính của pipeline slide
 
-`src/lib/`: `slideLayouts.ts` (21 layout, `composeLayout`, `contentFromSlide`, `graphicPlate`),
-`slideMeasure.ts` (đo chữ canvas), `slideAi.ts` (sanitize/validate/budget/`readabilityIssues`/`withImage`),
-`aiDeck.ts` (parse dàn ý, `repairJson`, `enforceRhythm`), `slideTheme.ts` (OKLCH), `slideSubjects.ts`,
-`slideGraphics.ts` + `graphics.ts` (232 icon), `slideAssets.ts` (Phosphor), `slideMath.ts`, `math.ts`,
-`imageGen.ts` (`queueImage`, `IMAGE_LAYOUTS`), `exportDeck.ts`. `src/examEditor/`: `SlideEditor.tsx`
-(renderer + editor + `applyAiSlide`), `AiPanel.tsx` (prompt/luồng chat). `server/`: `llmProxy.ts`,
-`imageProxy.ts`. `scripts/`: `lint-slides*`, `eval-slides*`, `judge-slides.mjs`, `lib/cdp.mjs`,
-`import-graphics.mjs`, `graphics-extra.mjs`, `test-slide-*.mjs`.
+`src/lib/`: `slideLayouts.ts` (22 layout, `composeLayout`, `contentFromSlide`, `graphicPlate`, `composeMindmap`, `numberTag`), `slideMeasure.ts` (đo chữ canvas),
+`slideAi.ts` (sanitize/validate/budget/`readabilityIssues`/`withImage`, prompt từng slide), `slideEdit.ts` (**lệnh sửa slide**, `applyEdits`, `recomposeSlide`, `describeSlide`),
+`htmlDeck.ts` + `htmlDeckPrompt.ts` (chế độ HTML), `aiDeck.ts` (dàn ý, `repairJson`, `enforceRhythm`), `slideTheme.ts` (OKLCH), `slideSubjects.ts`, `slideGraphics.ts` + `graphics.ts`
+(232 icon + 78 ornament), `slideAssets.ts`, `slideMath.ts` (công thức + `**đậm**`), `math.ts`, `imageGen.ts`, `exportDeck.ts`.
+`src/examEditor/`: `SlideEditor.tsx` (renderer + editor + `applyAiSlide/applyAiEdits/applyHtmlDeck/clearSlides`), `HtmlSlide.tsx` (`HtmlSlideFrame`, `HtmlDeckBar`),
+`AiPanel.tsx` (prompt, luồng chat, `polishSlide`, hộp ghi đè, modal HTML). `server/`: `llmProxy.ts`, `imageProxy.ts`. `scripts/`: `lint-slides*`, `eval-slides*`, `judge-slides.mjs`, `lib/cdp.mjs`, `test-slide-*.mjs`.
 
 ## 0. Vị trí dự án
 
@@ -2397,7 +2386,7 @@ Sau audit "AI sinh slide vỡ layout": gốc là tọa độ cố định + đo 
   `adaptContent` lấy danh sách ý cho items/steps/left/right; không đủ nội dung — ví dụ timeline cần ≥3 bước — thì bỏ kèm lý do). `describeSlide` đưa
   nội dung hiện tại từng slide vào prompt để model biết đang sửa gì. Kiểm chứng thật: "Sửa tiêu đề slide 1…" chỉ đổi tiêu đề (nhãn/phụ đề/slide khác giữ nguyên);
   "Đổi bố cục slide 3 sang mốc thời gian" cycle→timeline.
-- **Lệnh bổ sung:** `add_slide` (chèn slide mới + vị trí, qua `checkSlide`), `duplicate_slide`, `set_notes`, `rename_deck` → tổng 11 lệnh. Prompt sửa ≈ 1,2K token vào mỗi lượt.
+- **Lệnh bổ sung:** `add_slide` (chèn slide mới + vị trí, qua `checkSlide`), `duplicate_slide`, `set_notes`, `rename_deck` → tổng 13 lệnh (không phải 11 như ghi nhầm trước đó). Prompt sửa ≈ 1,2K token vào mỗi lượt.
 - **Token thật một deck** (`eval:slides` giờ in `tokens`, cộng `usage` của gateway): ƯCLN 8 slide ≈ 21,8K vào + 7,1K ra (suy luận 4,4K); Chí Phèo 9 slide ≈ 24,1K vào + 16,7K ra
   (suy luận 12,9K) → khoảng 29–41K token/deck, ~3,5–4,5K/slide; suy luận (`reasoningEffort: medium`) là phần lớn token ra. Chưa thử hạ xuống `low` (chưa đo chất lượng).
 - **Chưa làm:** đổi cỡ chữ, (sơ đồ tư duy đã làm: mục 3.61).
