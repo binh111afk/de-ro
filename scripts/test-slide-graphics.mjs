@@ -162,10 +162,13 @@ check('contentFromSlide đọc lại graphic khi đổi layout', () => {
 })
 
 check('sanitizeSlide nhận graphic hợp lệ, bỏ id lạ', () => {
-  const good = sanitizeSlide({ title: 'A', graphic: 'sci-ten-lua' }, 'title')
+  const good = sanitizeSlide({ title: 'Tên lửa vũ trụ', graphic: 'sci-ten-lua' }, 'title')
   assert.equal(good.graphic, 'sci-ten-lua')
   const bad = sanitizeSlide({ title: 'A', graphic: 'khong-co' }, 'title')
   assert.equal(bad.graphic, undefined)
+  // hình lệch nghĩa (cái cân cho ƯCLN) bị bỏ
+  const off = sanitizeSlide({ title: 'Ước chung lớn nhất', graphic: 'math-can-bang' }, 'title')
+  assert.equal(off.graphic, undefined)
 })
 
 check('prompt title/bullets có catalog, layout khác thì không', () => {

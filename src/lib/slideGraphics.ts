@@ -117,6 +117,21 @@ export function searchGraphics(text: string, limit = 8): SlideGraphicData[] {
     .map((entry) => entry.graphic)
 }
 
+const words = (text: string): Set<string> =>
+  new Set(norm(text).split(/[^a-z0-9]+/).filter((word) => word.length >= 3))
+
+/**
+ * Đồ hoạ AI chọn có khớp nghĩa slide không: tên/từ khoá/id của hình phải chung ít nhất một từ
+ * với chữ trên slide. Không khớp thì bỏ hình (hình lệch nghĩa — cái cân cho ƯCLN — tệ hơn không hình).
+ */
+export function graphicFits(id: string, text: string): boolean {
+  const graphic = graphicById(id)
+  if (!graphic) return false
+  const hay = words(`${graphic.name} ${graphic.keywords} ${graphic.id.replace(/-/g, ' ')}`)
+  for (const word of words(text)) if (hay.has(word)) return true
+  return false
+}
+
 /** SVG sẵn sàng nhúng: đổi màu nét, ép phủ kín hộp chứa. */
 export function graphicMarkup(id: string, ink = GRAPHIC_INK): string {
   const graphic = graphicById(id)

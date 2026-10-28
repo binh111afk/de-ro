@@ -11,8 +11,8 @@ import type { Deck, DeckTheme, Slide, SlideElement, SlideTone } from '@/store/do
 import { normalizeTheme, themeById, type ResolvedTheme } from './slideTheme'
 import { stylePackById } from './slideStyles'
 import { subjectById, subjectRulesBlock } from './slideSubjects'
-import { fixMathEscapes, mathToPlain } from './slideMath'
-import { graphicCatalogText, isGraphicId, searchGraphics } from './slideGraphics'
+import { fixMathEscapes, limitBold, mathToPlain } from './slideMath'
+import { graphicCatalogText, graphicFits, isGraphicId, searchGraphics } from './slideGraphics'
 import {
   composeLayout,
   contentFromSlide,
@@ -29,7 +29,10 @@ import {
 
 const clean = (value: unknown, max: number): string | undefined => {
   if (typeof value !== 'string') return undefined
-  const trimmed = fixMathEscapes(value.trim()).slice(0, max)
+  // Tập hợp {1, 2, 3} và nhóm ngoặc ngắn không được ngắt dòng giữa chừng: đổi dấu cách trong đó thành NBSP.
+  const trimmed = limitBold(fixMathEscapes(value.trim()))
+    .replace(/\{[^{}$]{1,40}\}/g, (group) => group.replace(/ /g, '\u00a0'))
+    .slice(0, max)
   return trimmed || undefined
 }
 
@@ -74,7 +77,11 @@ export function sanitizeSlide(raw: unknown, layout: string, tone?: SlideTone): A
   const quote = clean(source.quote, 300)
   const author = clean(source.author, 80)
   const image = clean(source.image, 2000)
-  const graphic = isGraphicId(source.graphic) ? source.graphic : undefined
+  const graphic =
+    isGraphicId(source.graphic) &&
+    graphicFits(source.graphic, [title, kicker, subtitle, body, ...(bullets ?? []), ...(items ?? [])].join(' '))
+      ? source.graphic
+      : undefined
   const steps = cleanList(source.steps, 6, 160)
   const question = clean(source.question, 300)
   const options = cleanList(source.options, 4, 120)
@@ -526,6 +533,8 @@ export function pageSystemPrompt(
     '- Ưu tiên chi tiết có thể nhìn thấy: số liệu, ví dụ, tên riêng, phép tính. Tránh ý chung chung ' +
     'kiểu "quan trọng", "hiệu quả", "đa dạng"; cắt từ nối và giải thích dài.\n' +
     '- Nếu layout có nhãn lớn (số liệu, bước, câu trích), chọn giá trị làm điểm nhấn của slide.\n' +
+    '- Nhấn mạnh từ khoá bằng **đậm**: mỗi ý chọn 1–2 cụm quan trọng nhất (thuật ngữ, con số, kết quả; mỗi cụm ≤ 5 từ), ' +
+      'ví dụ "tìm **ước chung** rồi lấy số **lớn nhất**". KHÔNG bôi đậm cả câu, KHÔNG dùng trong tiêu đề, KHÔNG lồng vào công thức $...$.\n' +
     '- Bám đúng brief của slide; không lặp ý các slide khác.\n' +
     '- Không bịa số liệu thật; số liệu minh hoạ phải ghi rõ "ví dụ".\n' +
     '- Công thức đơn giản (x², √, ≤, →, π, α) viết bằng ký tự Unicode. Công thức có phân số, căn dài, ' +

@@ -18,19 +18,20 @@ import {
 } from 'lucide-react'
 import { SLIDE_ASSETS, isSlideAssetId } from '@/lib/slideAssets'
 import { graphicById, graphicMarkup } from '@/lib/slideGraphics'
-import { hasMath } from '@/lib/slideMath'
+import { hasRich } from '@/lib/slideMath'
 import { renderMath } from '@/lib/math'
 
 /**
  * Vẽ công thức trong slide. `\frac` → `\tfrac` (phân số cỡ chữ thường): phân số
  * cỡ display cao ~2,2em làm dòng chữ phình ra và bị `FitText` co nhỏ.
  */
-const slideMathHtml = (text: string): string => renderMath(text.replace(/\\(d?)frac/g, '\\tfrac'))
+const slideMathHtml = (text: string): string =>
+  renderMath(text.replace(/\\(d?)frac/g, '\\tfrac')).replace(/\*\*([\s\S]+?)\*\*/g, '<strong>$1</strong>')
 
 /** Ô bảng có công thức: hiện KaTeX khi không gõ, nhấp đúp để sửa mã. */
 function MathCell({ value, onChange }: { value: string; onChange: (value: string) => void }) {
   const [editing, setEditing] = useState(false)
-  if (hasMath(value) && !editing) {
+  if (hasRich(value) && !editing) {
     return (
       <span
         title="Nhấp đúp để sửa công thức"
@@ -55,6 +56,7 @@ import { cn } from '@/lib/cn'
 import type { Deck, DeckTheme, Slide, SlideElement, SlideTone } from '@/store/docs'
 import { parseAiDeck, type AiSlidePayload, type DeckPlan } from '@/lib/aiDeck'
 import { exportDeckPptx } from '@/lib/exportDeck'
+import { HtmlDeckBar, HtmlSlideFrame } from './HtmlSlide'
 import { elementHeight } from '@/lib/slideText'
 import { normalizeTheme, readableTextOn, type ResolvedTheme } from '@/lib/slideTheme'
 import { appendSlidesToDeck, withImage } from '@/lib/slideAi'
@@ -437,6 +439,11 @@ export function SlideEditor({
    */
   const appendAiSlides = (pages: AiSlidePayload[], plan?: DeckPlan): Slide[] => {
     if (!pages.length) return []
+    // Bài giảng HTML không trộn với slide PPT: dựng PPT mới thì bỏ các slide HTML.
+    if (deckRef.current.format === 'html') {
+      deckRef.current = { ...deckRef.current, format: undefined, slides: [] }
+      updateDeck({ format: undefined, slides: [] })
+    }
     const latest = deckRef.current
     const { patch, added } = appendSlidesToDeck(latest, pages, plan)
     if (!added.length) return []
@@ -448,6 +455,27 @@ export function SlideEditor({
     setSelectedSlideId(added[0].id)
     setSelectedElementId(null)
     return added
+  }
+
+  // Trình chiếu: ←/→/Space/PageUp/PageDown chuyển slide, Esc thoát (iframe không có phím điều hướng riêng).
+  useEffect(() => {
+    if (!presenting) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setPresenting(false)
+      else if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(e.key)) setPresentIndex((i) => Math.min(slides.length - 1, i + 1))
+      else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) setPresentIndex((i) => Math.max(0, i - 1))
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [presenting, slides.length])
+
+  /** Chế độ HTML: thay toàn bộ slide bằng các slide HTML (hoàn tác được bằng lịch sử). */
+  const applyHtmlDeck = (htmls: string[]) => {
+    const next: Slide[] = htmls.map((html) => ({ id: uid(), background: '#ffffff', elements: [], transition: 'none', html }))
+    if (!next.length) return
+    commitDeck({ ...deck, format: 'html', slides: next })
+    setSelectedSlideId(next[0].id)
+    setSelectedElementId(null)
   }
 
   /** Đường deck một lượt (dàn ý không parse được hoặc câu trả lời cũ). */
@@ -501,15 +529,19 @@ export function SlideEditor({
     return (
       <div className="fixed inset-0 z-[100] flex flex-col bg-black">
         <div className="flex flex-1 items-center justify-center p-6">
-          <div
-            className="slide-frame relative aspect-[16/9] w-full max-w-[1200px] overflow-hidden shadow-2xl"
-            data-decor={theme.decor}
-            style={{ background: slide.background, ...decorStyle(theme) }}
-          >
-            {slide.elements.map((el) => (
-              <SlideElView key={el.id} el={el} theme={theme} />
-            ))}
-          </div>
+          {slide.html ? (
+            <HtmlSlideFrame html={slide.html} interactive className="max-w-[1200px] shadow-2xl" />
+          ) : (
+            <div
+              className="slide-frame relative aspect-[16/9] w-full max-w-[1200px] overflow-hidden shadow-2xl"
+              data-decor={theme.decor}
+              style={{ background: slide.background, ...decorStyle(theme) }}
+            >
+              {slide.elements.map((el) => (
+                <SlideElView key={el.id} el={el} theme={theme} />
+              ))}
+            </div>
+          )}
         </div>
         <div className="flex items-center justify-center gap-3 pb-5 text-white/80">
           <button
@@ -550,6 +582,12 @@ export function SlideEditor({
    * ---------------------------------------------------------------- */
   return (
     <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+      {deck.format === 'html' ? (
+        <HtmlDeckBar
+          onSave={onSave}
+          onPresent={() => { setPresentIndex(currentSlide ? deck.slides.indexOf(currentSlide) : 0); setPresenting(true) }}
+        />
+      ) : (
       <SlideRibbon
         deck={deck}
         slide={currentSlide}
@@ -593,6 +631,7 @@ export function SlideEditor({
         zoom={zoom}
         onZoom={setZoom}
       />
+      )}
       <div className="flex min-h-0 min-w-0 flex-1">
       {/* ---------------- cột slide (thumbnail) ---------------- */}
       <aside className="flex w-[190px] shrink-0 flex-col overflow-hidden border-r border-line bg-surface">
@@ -608,6 +647,7 @@ export function SlideEditor({
             <span className="slide-rail-title">{deck.title}</span>
           )}
         </div>
+        {deck.format !== 'html' && (
         <div className="border-b border-line px-3 py-2">
           <button
             type="button"
@@ -618,6 +658,7 @@ export function SlideEditor({
             Thêm slide
           </button>
         </div>
+        )}
         <div className="flex-1 space-y-2 overflow-y-auto p-3">
           {deck.slides.map((s, i) => (
             <div
@@ -670,6 +711,7 @@ export function SlideEditor({
                 </span>
               </button>
               <div className="absolute right-1 top-1 flex gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
+                {!s.html && (
                 <button
                   type="button"
                   onClick={() => duplicateSlide(s.id)}
@@ -678,6 +720,7 @@ export function SlideEditor({
                 >
                   <LayoutTemplate className="size-3" />
                 </button>
+                )}
                 <button
                   type="button"
                   onClick={() => removeSlide(s.id)}
@@ -759,7 +802,9 @@ export function SlideEditor({
               container query của `cqw`, giữ nó ở bề rộng layout thật để chữ chỉ
               bị phóng đúng một lần. */}
           <div className="slide-stage__inner" style={{ zoom: zoom / 100 }}>
-            {currentSlide ? (
+            {currentSlide?.html ? (
+              <HtmlSlideFrame html={currentSlide.html} interactive className="shadow-[0_2px_24px_-8px_rgba(35,32,28,0.35)]" />
+            ) : currentSlide ? (
               <div
                 className="slide-frame relative aspect-[16/9] w-full overflow-hidden bg-white shadow-[0_2px_24px_-8px_rgba(35,32,28,0.35)]"
                 data-decor={theme.decor}
@@ -810,6 +855,7 @@ export function SlideEditor({
           mode="slide"
           onApplySlides={applyAiResult}
           onAppendSlide={applyAiSlide}
+          onApplyHtmlDeck={applyHtmlDeck}
           onPendingSlides={setPendingSlides}
           contextSummary={`bài giảng "${deck.title}", ${deck.slides.length} slide`}
         />
@@ -827,6 +873,7 @@ export function SlideEditor({
  * ở tab Bắt đầu.
  */
 export function SlideThumb({ slide, theme }: { slide: Slide; theme: ResolvedTheme }) {
+  if (slide.html) return <HtmlSlideFrame html={slide.html} />
   return (
     <div
       className="slide-frame relative aspect-[16/9] w-full overflow-hidden"
@@ -963,7 +1010,7 @@ function SlideElView({ el, theme }: { el: SlideElement; theme: ResolvedTheme }) 
     return (
       <FitText
         // công thức `$...$` vẽ bằng KaTeX (HTML do KaTeX sinh, không phải input thô)
-        html={hasMath(el.text) ? slideMathHtml(el.text ?? '') : undefined}
+        html={hasRich(el.text) ? slideMathHtml(el.text ?? '') : undefined}
         style={{
           ...style,
           color: el.textColor ?? theme.fg,
@@ -1105,7 +1152,7 @@ function SlideElView({ el, theme }: { el: SlideElement; theme: ResolvedTheme }) 
                     fontWeight: ri === 0 ? 600 : 400,
                   }}
                 >
-                  {hasMath(c) ? <span dangerouslySetInnerHTML={{ __html: slideMathHtml(c) }} /> : c}
+                  {hasRich(c) ? <span dangerouslySetInnerHTML={{ __html: slideMathHtml(c) }} /> : c}
                 </td>
               ))}
             </tr>
@@ -1286,7 +1333,7 @@ function AutoFitText({
   const [size, setSize] = useState(baseSize)
   // Công thức hiển thị bằng KaTeX khi không gõ; nhấp đúp để sửa mã LaTeX.
   const [editing, setEditing] = useState(false)
-  const showMath = hasMath(value) && !editing
+  const showMath = hasRich(value) && !editing
 
   useEffect(() => {
     setSize(baseSize)

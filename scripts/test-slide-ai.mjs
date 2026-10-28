@@ -252,4 +252,9 @@ assert.ok(fallback.elements.length >= 2, 'fallback có tiêu đề + khối ý')
   assert.equal(new Set(timeIcons.map((el) => el.assetId)).size, timeIcons.length, 'icon không lặp trong một slide')
 }
 
-console.log('test-slide-ai: 10 nhóm kiểm tra đạt')
+{
+  const set = sanitizeSlide({ title: 'Tập', bullets: ['ƯC(12, 18) = {1, 2, 3, 6}'] }, 'bullets')
+  assert.equal(set.bullets[0], 'ƯC(12, 18) = {1, 2, 3, 6}', 'tập hợp không bị ngắt dòng')
+}
+
+console.log('test-slide-ai: 11 nhóm kiểm tra đạt')

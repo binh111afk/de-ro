@@ -295,7 +295,7 @@ for (const catalogTheme of DECK_THEMES) {
     body: 'Chia 18 vở và 24 bút vào các túi quà?',
     items: ['Chia đều', 'Ước chung', 'Nhiều nhất'],
   })
-  assert.ok(hook.elements.some((el) => el.id === 'bubble-tail' && el.flipY), 'đuôi bong bóng lật xuống')
+  assert.ok(hook.elements.some((el) => el.id === 'hook-panel'), 'cột phải có panel hình + gợi ý')
   assert.equal(hook.content.body, 'Chia 18 vở và 24 bút vào các túi quà?')
   assert.deepEqual(hook.content.items, ['Chia đều', 'Ước chung', 'Nhiều nhất'])
   assert.equal(compose(theme, 'hook', { body: 'Chỉ có câu hỏi?' }).some((el) => el.id.startsWith('pill-')), false, 'không gợi ý → không pill')

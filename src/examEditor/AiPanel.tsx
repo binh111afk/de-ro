@@ -24,6 +24,7 @@ import { SLIDE_LAYOUTS } from '@/lib/slideLayouts'
 import { DECK_THEMES } from '@/lib/slideTheme'
 import { stylePackById } from '@/lib/slideStyles'
 import { HTML_DECK_SYSTEM } from '@/lib/htmlDeckPrompt'
+import { splitHtmlDeck } from '@/lib/htmlDeck'
 import { useSlidingThumb } from './useSlidingThumb'
 import { buildSourcePack, sourcePrompt, sourceRule, type SourcePack } from '@/lib/sources'
 import { cn } from '@/lib/cn'
@@ -594,6 +595,7 @@ export function AiPanel({
   onApplyBlocks,
   onApplySlides,
   onAppendSlide,
+  onApplyHtmlDeck,
   onPendingSlides,
   contextSummary,
   documentDigest,
@@ -605,6 +607,8 @@ export function AiPanel({
   onApplySlides?: (text: string, plan?: DeckPlan) => void
   /** chèn ngay một slide vừa sinh vào cuối deck (chặng 26b) */
   onAppendSlide?: (page: AiSlidePayload, plan: DeckPlan) => void | Promise<void>
+  /** chế độ HTML: nhận danh sách slide HTML (mỗi phần tử là một tài liệu HTML) để thay vào bài giảng */
+  onApplyHtmlDeck?: (htmls: string[]) => void
   /** báo số slide còn chờ để editor vẽ ô skeleton (null = xong/huỷ) */
   onPendingSlides?: (state: { done: number; total: number } | null) => void
   /** mô tả ngắn tài liệu hiện tại, đưa vào system prompt */
@@ -622,7 +626,8 @@ export function AiPanel({
   const [busy, setBusy] = useState(false)
   /** slide: 'deck' = layout engine (PPT), 'html' = một tệp HTML tự chứa */
   const [slideFormat, setSlideFormat] = useState<'deck' | 'html'>('deck')
-  const [htmlDeck, setHtmlDeck] = useState<string | null>(null)
+  /** modal lưu ý hiện khi bấm sang HTML (chỉ trình chiếu, không sửa/xuất PPT) */
+  const [htmlNotice, setHtmlNotice] = useState(false)
   const segRef = useRef<HTMLDivElement>(null)
   const segThumb = useSlidingThumb(segRef, '.ai-format-opt.active', slideFormat)
   const abortRef = useRef<AbortController | null>(null)
@@ -787,11 +792,22 @@ export function AiPanel({
           )
           return
         }
-        setHtmlDeck(html)
+        const htmlSlides = splitHtmlDeck(html)
+        if (!htmlSlides.length) {
+          setTurns((t) =>
+            t.map((turn) =>
+              turn.id === botId
+                ? { ...turn, text: '', pending: false, error: 'HTML của AI không có slide nào (<section class="slide">). Thử lại.' }
+                : turn,
+            ),
+          )
+          return
+        }
+        onApplyHtmlDeck?.(htmlSlides)
         setTurns((t) =>
           t.map((turn) =>
             turn.id === botId
-              ? { ...turn, text: 'Đã tạo bản trình bày HTML. Xem trước và tải xuống bên dưới.', pending: false }
+              ? { ...turn, text: `Đã tạo ${htmlSlides.length} slide HTML trong bài giảng. Bấm Trình chiếu để xem; bản này không sửa hay xuất PPT được.`, pending: false }
               : turn,
           ),
         )
@@ -1052,17 +1068,6 @@ export function AiPanel({
 
   const empty = turns.length === 0
 
-  const downloadHtml = () => {
-    if (!htmlDeck) return
-    const blob = new Blob([htmlDeck], { type: 'text/html;charset=utf-8' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = 'bai-giang.html'
-    link.click()
-    window.setTimeout(() => URL.revokeObjectURL(url), 1000)
-  }
-
   return (
     <div className="ai-panel">
       <div className="ai-panel-header">
@@ -1080,7 +1085,7 @@ export function AiPanel({
             <div className="ai-chat-empty-body">
               {mode === 'slide'
                 ? slideFormat === 'html'
-                  ? 'AI tạo một tệp HTML tự chứa (16:9, có phím chuyển slide) để bạn xem trước và tải về.'
+                  ? 'AI dựng từng slide bằng HTML (16:9) để trình chiếu trên web. Không sửa hay xuất PPT được.'
                   : 'Mô tả chủ đề bài giảng; AI lập dàn ý để bạn duyệt rồi viết nội dung từng slide.'
                 : 'Mô tả môn học và các ý chính, hoặc dán tài liệu tham khảo; AI sẽ viết bản nháp đầu tiên thẳng vào trang.'}
             </div>
@@ -1191,7 +1196,7 @@ export function AiPanel({
             placeholder={
               mode === 'slide'
                 ? slideFormat === 'html'
-                  ? 'Mô tả bài trình bày cần tạo (xuất HTML)…'
+                  ? 'Mô tả bài trình bày cần tạo (slide HTML)…'
                   : 'Mô tả bài giảng cần soạn…'
                 : 'Mô tả đề cần soạn…'
             }
@@ -1246,9 +1251,9 @@ export function AiPanel({
                   role="tab"
                   aria-selected={slideFormat === 'html'}
                   className={cn('ai-format-opt', slideFormat === 'html' && 'active')}
-                  onClick={() => setSlideFormat('html')}
+                  onClick={() => (slideFormat === 'html' ? undefined : setHtmlNotice(true))}
                   disabled={busy}
-                  title="Một tệp HTML tự chứa, tải về mở bằng trình duyệt"
+                  title="Slide HTML: chỉ trình chiếu trên web, không sửa/xuất PPT"
                 >
                   HTML
                 </button>
@@ -1281,22 +1286,28 @@ export function AiPanel({
         </div>
       </div>
 
-      {htmlDeck ? (
-        <div className="ai-html-modal" role="dialog" aria-modal="true" aria-label="Bản trình bày HTML">
-          <div className="ai-html-modal__box">
-            <header className="ai-html-modal__head">
-              <strong>Bản trình bày HTML</strong>
-              <div className="ai-html-modal__actions">
-                <button type="button" onClick={downloadHtml}>Tải .html</button>
-                <button type="button" onClick={() => setHtmlDeck(null)}>Đóng</button>
-              </div>
-            </header>
-            <iframe
-              className="ai-html-modal__frame"
-              title="Xem trước bản trình bày HTML"
-              srcDoc={htmlDeck}
-              sandbox="allow-scripts"
-            />
+      {htmlNotice ? (
+        <div className="ai-html-modal" role="dialog" aria-modal="true" aria-label="Lưu ý chế độ HTML">
+          <div className="ai-html-modal__box ai-html-modal__box--notice">
+            <h3>Chế độ HTML chỉ dùng để trình chiếu</h3>
+            <ul>
+              <li>Mỗi slide do AI dựng bằng HTML nên <b>không sửa được</b> bằng trình soạn (chỉ xoá hoặc đổi thứ tự slide).</li>
+              <li><b>Không xuất được PowerPoint</b>; bài giảng chỉ trình chiếu trên web.</li>
+              <li>Tạo bản HTML sẽ <b>thay toàn bộ slide hiện có</b> của bài giảng này (hoàn tác được bằng Ctrl+Z). Muốn giữ bản PPT, hãy mở bài giảng mới.</li>
+            </ul>
+            <div className="ai-html-modal__actions">
+              <button type="button" onClick={() => setHtmlNotice(false)}>Quay lại PPT</button>
+              <button
+                type="button"
+                className="is-primary"
+                onClick={() => {
+                  setSlideFormat('html')
+                  setHtmlNotice(false)
+                }}
+              >
+                Tiếp tục với HTML
+              </button>
+            </div>
           </div>
         </div>
       ) : null}

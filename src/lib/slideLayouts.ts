@@ -213,7 +213,7 @@ export const SLIDE_LAYOUTS: SlideLayoutDef[] = [
     id: 'hook',
     name: 'Mở bài',
     description:
-      'Mở bài gợi mở: câu hỏi/tình huống trong bong bóng thoại + 2–3 gợi ý ngắn bên dưới. Nền dịu.',
+      'Mở bài gợi mở: câu hỏi/tình huống lớn canh trái, cột phải có hình + 2–3 gợi ý ngắn xếp dọc. Nền dịu.',
     fields: ['kicker', 'title', 'body', 'items'],
   },
 ]
@@ -480,7 +480,10 @@ const linesOf = (text?: string): string[] =>
     .map((line) => line.replace(/^[•\-–]\s*/, '').trim())
     .filter(Boolean)
 
-const bulletText = (items: string[]): string => items.map((item) => `• ${item}`).join('\n')
+const NUMBERED_LINE = /^(bước|buoc|step)\s*\d+\s*[:.)\-–]|^\d+\s*[.)]/i
+/** Các ý đã tự đánh số ("Bước 1: …", "2. …") thì bỏ chấm đầu dòng cho khỏi thừa. */
+const bulletText = (items: string[]): string =>
+  items.every((item) => NUMBERED_LINE.test(item)) ? items.join('\n') : items.map((item) => `• ${item}`).join('\n')
 
 const suffixOf = (id: string): number => Number(id.match(/(\d+)/)?.[1] ?? 0)
 
@@ -587,24 +590,19 @@ function composeBullets(p: LayoutPalette, content: SlideLayoutContent): SlideEle
   // Vùng nội dung bắt đầu dưới tiêu đề/vạch (đã đo), không còn y cố định.
   const regionTop = Math.max(33, bottomOf(header) + 3)
   const regionH = 96 - regionTop
-  // Khối ý bám chiều cao thật rồi canh giữa vùng nội dung, không dồn sát đỉnh.
-  const boxH = Math.min(regionH - 6, Math.max(24, textBoxHeight(text, 56, size, 1.4, { weight: 500 }) * 1.3))
+  // Có hình khớp nghĩa → cột phải cao bằng panel chữ; không có → panel chữ rộng hết cỡ (không để icon lạc quẻ).
+  const textW = graphic ? 56 : 78
+  const boxH = Math.min(regionH - 6, Math.max(24, textBoxHeight(text, textW, size, 1.4, { weight: 500 }) * 1.3))
   const top = regionTop + (regionH - boxH) / 2
   return compact([
-    shapeEl('content-panel', { x: 7, y: top - 3, w: 66, h: boxH + 6 }, p.panel, 'round'),
+    shapeEl('content-panel', { x: 7, y: top - 3, w: graphic ? 66 : 86, h: boxH + 6 }, p.panel, 'round'),
     shapeEl('accent-rail', { x: 5.6, y: top, w: 0.9, h: boxH }, p.accent),
-    // Neo thị giác semantic bên phải: graph/icon theo chủ đề thay cho khối số vô nghĩa.
-    ...(graphic
-      ? graphicPlate('bullet-graphic', graphic, { x: 76, y: top + 2, w: 15, h: 21 }, p)
-      : [
-          shapeEl('bullet-anchor', { x: 76, y: top + 2, w: 15, h: 21 }, p.accent, 'round'),
-          iconEl('bullet-anchor-icon', pickSlideAsset(content.title ?? text) ?? 'idea', { x: 77, y: top + 3.5, w: 13, h: 18 }, p.onAccent),
-        ]),
+    ...(graphic ? graphicPlate('bullet-graphic', graphic, { x: 75, y: top - 3, w: 18, h: boxH + 6 }, p) : []),
     textEl('kicker', content.kicker, { x: 8, y: 9, w: 84, h: 6 }, {
       variant: 'body', fontSize: 1.7, fontWeight: 600, textColor: p.ink,
     }),
     ...header,
-    textEl('bullets', text, { x: 8, y: top, w: 56, h: boxH }, {
+    textEl('bullets', text, { x: 8, y: top, w: textW, h: boxH }, {
       variant: 'body', fontSize: size, textColor: p.fg, valign: 'middle',
     }),
   ])
@@ -1360,38 +1358,42 @@ function composeExample(p: LayoutPalette, content: SlideLayoutContent): SlideEle
   ])
 }
 
-/** Mở bài: bong bóng thoại chứa câu hỏi/tình huống + gợi ý ngắn bên dưới. */
+/**
+ * Mở bài: câu hỏi/tình huống lớn canh trái bên một vạch nhấn; cột phải là panel chứa hình
+ * (đồ hoạ/icon) và 2–3 gợi ý xếp dọc.
+ */
 function composeHook(p: LayoutPalette, content: SlideLayoutContent): SlideElement[] {
   const body = content.body?.trim() || cleanList(content.bullets)[0]
   if (!body) return []
   const pills = cleanList(content.items).slice(0, 3)
   const graphic = chosenGraphic(content)
-  const bubbleH = pills.length ? 36 : 48
-  const pillsX = 30
-  const pillGap = 2.5
-  const pillW = (92 - pillsX - pillGap * (pills.length - 1)) / Math.max(pills.length, 1)
+  const art = { x: 72, y: 14, w: 14.1, h: 25 }
+  const pillH = 13
+  const pillsTop = 46
   return compact([
-    textEl('kicker', content.kicker, { x: 8, y: 9, w: 84, h: 6 }, {
+    shapeEl('hook-bar', { x: 8, y: 13, w: 0.7, h: 74 }, p.accent),
+    textEl('kicker', content.kicker, { x: 11, y: 12, w: 50, h: 6 }, {
       variant: 'body', fontSize: 1.7, fontWeight: 600, textColor: p.ink,
     }),
-    ...titleEls(p, content.title, { x: 8, y: 14, w: 84, h: 12 }, [3.8, 3.4, 3.1, 2.8], false),
-    shapeEl('bubble', { x: 8, y: 27, w: 84, h: bubbleH }, p.panel, 'round'),
-    pills.length
-      ? { ...shapeEl('bubble-tail', { x: 13.5, y: 27 + bubbleH - 0.2, w: 5, h: 5.2 }, p.panel, 'triangle'), flipY: true }
-      : null,
-    textEl('body', body, { x: 12, y: 29, w: 76, h: bubbleH - 4 }, {
-      variant: 'title', fontSize: 3.1, fontWeight: 600, textColor: p.fg, align: 'center', valign: 'middle',
+    ...titleEls(p, content.title, { x: 11, y: 18, w: 50, h: 14 }, [3.4, 3.0, 2.7], false),
+    textEl('body', body, { x: 11, y: 36, w: 50, h: 52 }, {
+      variant: 'title', fontSize: 3.3, fontWeight: 600, textColor: p.fg, valign: 'top',
     }),
-    ...(pills.length && graphic ? graphicPlate('hook-graphic', graphic, { x: 8, y: 68, w: 16, h: 24 }, p) : []),
-    pills.length && !graphic
-      ? iconEl('hook-icon', pickSlideAsset(`${content.title ?? ''} ${body}`) ?? 'idea', { x: 9, y: 69, w: 12, h: 21 }, p.accent)
+    shapeEl('hook-panel', { x: 66, y: 11, w: 27, h: 80 }, p.panel, 'round'),
+    ...(graphic
+      ? graphicPlate('hook-graphic', graphic, art, p)
+      : [iconEl('hook-icon', pickSlideAsset(`${content.title ?? ''} ${body}`) ?? 'idea', art, p.accent)]),
+    pills.length
+      ? textEl('hook-label', 'GỢI Ý', { x: 68.5, y: 40.5, w: 22, h: 4.5 }, {
+          variant: 'body', fontSize: 1.5, fontWeight: 700, textColor: p.ink, letterSpacing: 0.12, align: 'center',
+        })
       : null,
     ...pills.flatMap((pill, index) => {
-      const x = pillsX + index * (pillW + pillGap)
+      const y = pillsTop + index * (pillH + 2)
       return [
-        shapeEl(`pill-${index + 1}`, { x, y: 73, w: pillW, h: 15 }, p.accent, 'round'),
-        textEl(`card-${index + 1}`, pill, { x: x + 1, y: 73, w: pillW - 2, h: 15 }, {
-          variant: 'body', fontSize: 1.9, fontWeight: 600, textColor: p.onAccent, align: 'center', valign: 'middle',
+        shapeEl(`pill-${index + 1}`, { x: 68.5, y, w: 22, h: pillH }, p.background, 'round'),
+        textEl(`card-${index + 1}`, pill, { x: 69.5, y, w: 20, h: pillH }, {
+          variant: 'body', fontSize: 1.8, fontWeight: 600, textColor: p.fg, align: 'center', valign: 'middle',
         }),
       ]
     }),

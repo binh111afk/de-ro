@@ -2367,6 +2367,20 @@ Sau audit "AI sinh slide vỡ layout": gốc là tọa độ cố định + đo 
 - **statement dồn chữ:** ngân sách `body` 160→100 ký tự (tổng 160), note prompt "một câu ngắn ≤90", chữ >90 ký tự hạ cỡ 4,6→3,7cqw.
 - Kiểm chứng: `tsc` sạch, test slide-ai/layout/measure/graphics/assets xanh, lint 630 slide 0 error (90 warn cũ).
 
+### 3.59. Chữ đậm `**` + chế độ HTML thành slide trong deck (28/10/2026)
+
+- **In đậm:** `**từ khoá**` trong chữ slide (`slideMath.ts`: `hasBold/hasRich/stripBold/limitBold/boldRuns`). Renderer đổi thành `<strong>`
+  (`slideMathHtml`), đo chữ/ngân sách dùng chữ đã bỏ `**` (`mathToPlain`), PPTX xuất thành run đậm. `clean()` trong `slideAi.ts` giữ tối đa
+  2 cụm × 6 từ mỗi chuỗi; prompt dặn nhấn 1–2 cụm/ý, không dùng trong tiêu đề/công thức.
+- **Slide HTML trong deck:** `Slide.html` (tài liệu HTML đầy đủ của một slide) + `Deck.format = 'html'`. AI vẫn sinh MỘT tệp HTML nhiều
+  `<section class="slide">`; `splitHtmlDeck()` (`lib/htmlDeck.ts`, cần DOM) tách thành từng slide độc lập (bỏ thanh tiến trình/số trang chung,
+  ép hiện ngay). `HtmlSlideFrame` (`examEditor/HtmlSlide.tsx`) = iframe sandbox 1280×720 thu phóng theo khung: dùng cho thumbnail, sân soạn, trình chiếu.
+- **Chính sách:** bài giảng HTML **chỉ trình chiếu trên web** — không sửa bằng trình soạn, không xuất PPT (`exportDeckPptx` ném lỗi),
+  không có tải `.html`. Ribbon thay bằng `HtmlDeckBar` (Lưu + Trình chiếu); ẩn Thêm slide/Nhân bản. Bấm tab HTML trong AI panel hiện modal lưu ý
+  (không sửa được, không xuất PPT, thay toàn bộ slide hiện có — hoàn tác bằng Ctrl+Z). Dựng PPT mới trên deck HTML thì bỏ slide HTML (`appendAiSlides`).
+- Trình chiếu có ←/→/Space/PageUp/PageDown, Esc thoát. Kiểm chứng trên trình duyệt thật: sinh 5 slide, thumbnail, trình chiếu, lưu/mở lại, chặn xuất.
+  **Chưa kiểm:** nhánh "dựng PPT sau khi có deck HTML"; slide HTML do AI lỗi JS/CSS lạ.
+
 ## 4. Lỗi đã gặp và cách sửa
 
 ### 4.1. TipTap v3 — `content` phải là mảng

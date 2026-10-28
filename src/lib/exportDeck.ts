@@ -5,7 +5,7 @@
  * bundle chính. Toạ độ của deck là % (0–100) nên truyền thẳng dạng `"12%"`
  * — PptxGenJS hiểu % theo kích thước slide 16:9.
  */
-import { mathToPlain } from './slideMath'
+import { boldRuns, hasBold, mathToPlain } from './slideMath'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { Deck } from '@/store/docs'
@@ -34,6 +34,7 @@ const SHAPES: Record<string, string> = {
 }
 
 export async function exportDeckPptx(deck: Deck): Promise<void> {
+  if (deck.format === 'html') throw new Error('Bài giảng HTML chỉ trình chiếu trên web, không xuất PowerPoint được.')
   const { default: PptxGenJS } = await import('pptxgenjs')
   const pptx = new PptxGenJS()
   pptx.layout = 'LAYOUT_16x9'
@@ -54,7 +55,12 @@ export async function exportDeckPptx(deck: Deck): Promise<void> {
       }
       const rotate = el.rotation ?? 0
       if (el.type === 'text') {
-        slide.addText(mathToPlain(el.text ?? ''), {
+        const baseBold = (el.fontWeight ?? 400) >= 600
+        // Chữ có **đậm** xuất thành các đoạn (run) để PowerPoint giữ nhấn mạnh.
+        const runs = hasBold(el.text)
+          ? boldRuns(el.text ?? '').map((run) => ({ text: mathToPlain(run.text), options: { bold: baseBold || run.bold } }))
+          : mathToPlain(el.text ?? '')
+        slide.addText(runs, {
           ...box,
           rotate,
           fontSize: pt(el.fontSize ?? (el.variant === 'body' ? 2.4 : 3.6)),

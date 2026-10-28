@@ -77,6 +77,8 @@ export interface Slide {
   layout?: string
   /** tông nền do layout/AI chọn; thiếu thì theo mặc định của layout */
   tone?: SlideTone
+  /** slide HTML (chế độ HTML): tài liệu HTML đầy đủ của riêng slide này; chỉ trình chiếu, không có elements */
+  html?: string
 }
 
 export interface Deck {
@@ -86,6 +88,8 @@ export interface Deck {
   slides: Slide[]
   /** phong cách AI đã chọn cho cả deck (từ dàn ý); chỉ để tái dùng khi sinh/sửa */
   style?: string
+  /** 'html' = bài giảng HTML của AI: chỉ trình chiếu trên web, không sửa trong trình soạn, không xuất PPT */
+  format?: 'html'
   createdAt: string
   updatedAt: string
 }

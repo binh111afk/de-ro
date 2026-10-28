@@ -3544,3 +3544,36 @@
     transition: none;
   }
 }
+
+.ai-html-modal__box--notice {
+  width: min(460px, 100%);
+  height: auto;
+  gap: 12px;
+  padding: 20px 22px;
+}
+
+.ai-html-modal__box--notice h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-ink);
+}
+
+.ai-html-modal__box--notice ul {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--color-ink-2, var(--color-ink));
+}
+
+.ai-html-modal__box--notice .ai-html-modal__actions {
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+.ai-html-modal__actions button.is-primary {
+  border-color: var(--color-clay);
+  background: var(--color-clay);
+  color: #fff;
+}

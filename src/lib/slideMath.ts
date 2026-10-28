@@ -90,6 +90,46 @@ export function tallMathCount(text: string): number {
 
 /** Chữ thuần của một chuỗi có thể chứa `$...$` — dùng đo chữ, đếm ngân sách, xuất PPTX. */
 export function mathToPlain(text: string): string {
-  if (!text.includes('$')) return text
-  return text.replace(MATH_SPAN, (_, latex: string) => latexToPlain(latex))
+  const plain = stripBold(text)
+  if (!plain.includes('$')) return plain
+  return plain.replace(MATH_SPAN, (_, latex: string) => latexToPlain(latex))
+}
+
+/**
+ * Nhấn mạnh `**từ khoá**` trong chữ slide. Một cặp `**` hợp lệ không chứa `*` và không xuống dòng;
+ * `**` lẻ không thành cặp không có nghĩa và bị bỏ.
+ */
+const BOLD = /\*\*([^*\n]+?)\*\*|\*\*/g
+
+export const hasBold = (text: string | undefined): boolean => !!text && /\*\*[^*\n]+?\*\*/.test(text)
+
+/** Có gì cần vẽ bằng HTML (công thức hoặc chữ đậm) thay vì chữ thuần. */
+export const hasRich = (text: string | undefined): boolean => hasMath(text) || hasBold(text)
+
+export const stripBold = (text: string): string => (text.includes('**') ? text.replace(BOLD, (_, body?: string) => body ?? '') : text)
+
+/**
+ * Giữ tối đa `maxSpans` cụm đậm, mỗi cụm ≤ `maxWords` từ; cụm thừa/quá dài thành chữ thường.
+ * AI hay bôi đậm cả câu — nhấn mạnh quá nhiều thì không còn điểm nhấn.
+ */
+export function limitBold(text: string, maxSpans = 2, maxWords = 6): string {
+  if (!text.includes('**')) return text
+  let kept = 0
+  return text.replace(BOLD, (_, body?: string) => {
+    if (body === undefined) return ''
+    return kept < maxSpans && body.trim().split(/\s+/).length <= maxWords && ++kept ? `**${body}**` : body
+  })
+}
+
+/** Tách thành các đoạn đậm/thường (xuất PPTX). */
+export function boldRuns(text: string): Array<{ text: string; bold: boolean }> {
+  const runs: Array<{ text: string; bold: boolean }> = []
+  let cursor = 0
+  for (const m of text.matchAll(/\*\*([^*\n]+?)\*\*/g)) {
+    if (m.index > cursor) runs.push({ text: text.slice(cursor, m.index), bold: false })
+    runs.push({ text: m[1], bold: true })
+    cursor = m.index + m[0].length
+  }
+  if (cursor < text.length) runs.push({ text: text.slice(cursor), bold: false })
+  return runs
 }
