@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Clock, Grid2x2, List, MonitorPlay, Search, Sparkles, Upload, Users, X } from 'lucide-react'
-import { Badge, Button, EmptyState, inputClass } from '@/components/ui'
+import { Badge, Button, EmptyState, inputClass, SkeletonCard } from '@/components/ui'
 import { SiteSelect } from '@/components/SiteSelect'
 import { useSlidingThumb } from '@/examEditor/useSlidingThumb'
 import { cn } from '@/lib/cn'
@@ -59,6 +59,7 @@ export default function Community() {
   const [view, setView] = useState<'grid' | 'list'>('grid')
   const [sort, setSort] = useState<'new' | 'popular'>('new')
   const [userDocs, setUserDocs] = useState<CommunityRow[]>([])
+  const [loading, setLoading] = useState(true)
   const [publishOpen, setPublishOpen] = useState(false)
   const [openingId, setOpeningId] = useState<string | null>(null)
   const [openError, setOpenError] = useState<string | null>(null)
@@ -67,6 +68,7 @@ export default function Community() {
     listCommunityDocs()
       .then(setUserDocs)
       .catch(() => {})
+      .finally(() => setLoading(false))
   }, [])
 
   /** Chuyển đề mẫu sang đề tương tác rồi làm ngay. */
@@ -217,7 +219,13 @@ export default function Community() {
 
       {openError ? <p role="alert" className="mb-6 text-[13.5px] font-medium text-clay-deep">{openError}</p> : null}
 
-      {results.length === 0 ? (
+      {loading ? (
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 6 }, (_, i) => (
+            <SkeletonCard key={i} variant="exam" />
+          ))}
+        </div>
+      ) : results.length === 0 ? (
         <EmptyState
           icon={<Search className="size-6" strokeWidth={1.6} />}
           title="Không tìm thấy đề nào"

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type ChangeEvent, type DragEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { Clock, ExternalLink, FileText, Search, Trash2, Upload } from 'lucide-react'
-import { Badge, Button, EmptyState, inputClass } from '@/components/ui'
+import { Badge, Button, EmptyState, inputClass, SkeletonCard } from '@/components/ui'
 import { SiteSelect } from '@/components/SiteSelect'
 import { deleteDocument, DOC_TYPES, listDocuments, MAX_DOC_MB, uploadDocument, type UserDocument } from '@/lib/documents'
 import { useSession } from '@/lib/useSession'
@@ -214,7 +214,11 @@ function Documents() {
 
       <div className="mt-10">
         {docs === null ? (
-          <p className="py-16 text-center text-[14px] text-ink-3">Đang tải…</p>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 6 }, (_, i) => (
+              <SkeletonCard key={i} variant="doc" />
+            ))}
+          </div>
         ) : (
           <DocGrid items={hasReal ? docs ?? [] : SAMPLE_DOCS} sample={!hasReal} onDelete={remove} />
         )}

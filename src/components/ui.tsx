@@ -117,6 +117,36 @@ export function Field({
   )
 }
 
+/**
+ * Thẻ chờ khi danh sách đang tải: cùng khung với thẻ thật để trang không nhảy khi dữ liệu về.
+ * `exam` có dải đầu như thẻ đề cộng đồng, `doc` như thẻ tài liệu.
+ */
+export function SkeletonCard({ variant = 'doc' }: { variant?: 'doc' | 'exam' }) {
+  return (
+    <div
+      aria-hidden="true"
+      className="relative flex flex-col overflow-hidden rounded-[8px] bg-surface p-5 shadow-[0_1px_2px_rgba(60,48,32,0.03)]"
+    >
+      {variant === 'exam' ? (
+        <span className="-mx-5 -mt-5 mb-5 block h-[120px] bg-sunken/70" />
+      ) : (
+        <div className="flex items-start justify-between">
+          <span className="size-10 rounded-[8px] bg-sunken" />
+          <span className="h-5 w-14 rounded-full bg-sunken" />
+        </div>
+      )}
+      <span className="block h-4 w-4/5 rounded bg-sunken" />
+      <span className="mt-2 block h-4 w-3/5 rounded bg-sunken" />
+      <span className="mt-3 block h-3 w-2/5 rounded bg-sunken" />
+      <span className="mt-auto block h-9 w-full rounded-[6px] bg-sunken" />
+      <span
+        className="anim-shimmer pointer-events-none absolute inset-y-0 left-0 w-1/3 motion-reduce:animation-none"
+        style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.7), transparent)' }}
+      />
+    </div>
+  )
+}
+
 export const inputClass =
   'w-full rounded-[6px] border border-line-2 bg-white px-4 py-2.5 text-[14px] text-ink placeholder:text-ink-4 ' +
   'transition-all duration-200 hover:border-ink-4 focus:border-clay focus:bg-white focus:outline-none focus:ring-2 focus:ring-clay/15'
