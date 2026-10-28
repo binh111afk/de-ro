@@ -21,7 +21,9 @@ import {
   type RibbonTabDef,
 } from './Layout'
 import { cn } from '@/lib/cn'
+import { BookMarked } from 'lucide-react'
 import { FileMenu } from './FileMenu'
+import { BankModal } from './BankModal'
 import { templateById, insertBlockTemplate } from './templates'
 import { applyFormatAttrs, getSelectedBlock, syncDomSelection, type FormatState } from './formatState'
 import { TablePicker, SymbolPicker, ImagePicker, EquationDialog, LinkDialog } from './InsertMenus'
@@ -304,6 +306,8 @@ export function Ribbon({
       editor.off('selectionUpdate', onSel)
     }
   }, [editor, painter])
+
+  const [bankOpen, setBankOpen] = useState(false)
 
   const insertTemplate = (id: string) => {
     const tpl = templateById(id)
@@ -650,6 +654,12 @@ export function Ribbon({
 
             <span className="ribbon-sep" />
 
+            <RibbonGroup label="Kho">
+              <RibbonButton icon={<BookMarked size={26} strokeWidth={1.75} />} label="Kho câu hỏi" disabled={disabled} onClick={() => setBankOpen(true)} />
+            </RibbonGroup>
+
+            <span className="ribbon-sep" />
+
             <RibbonGroup label="Bảng">
               <TablePicker editor={editor} disabled={disabled} />
               <RibbonButton icon={<IconAnswerKey size={26} />} label="Bảng đáp án" disabled={disabled} onClick={() => insertTemplate('answerKey')} />
@@ -935,6 +945,7 @@ export function Ribbon({
 
       {editor && dialog === 'link' && <LinkDialog editor={editor} onClose={() => setDialog(null)} />}
       {editor && dialog === 'equation' && <EquationDialog editor={editor} onClose={() => setDialog(null)} />}
+      {editor && bankOpen && <BankModal editor={editor} onClose={() => setBankOpen(false)} />}
     </div>
   )
 }
