@@ -21,6 +21,15 @@ import { QUESTION_STATES } from '@/data/questions'
 import { cn } from '@/lib/cn'
 import { formatPoints } from '@/lib/math'
 import type { Question } from '@/data/types'
+import {
+  SHORT_MAX_CHARS,
+  describeAnswer,
+  formatTrueFalse,
+  isAutoGraded,
+  isFullyCorrect,
+  readTrueFalseAnswer,
+  scoreQuestion,
+} from '@/lib/grading'
 
 export default function Quiz() {
   const { id } = useParams<{ id: string }>()
@@ -459,7 +468,11 @@ function QuestionCard({
         {formatPoints(question.points)} điểm
       </p>
 
-      {question.options ? (
+      {question.type === 'dung-sai' && question.options ? (
+        <TrueFalseInput question={question} chosen={chosen} onAnswer={onAnswer} />
+      ) : question.type === 'tra-loi-ngan' ? (
+        <ShortAnswerInput chosen={chosen} onAnswer={onAnswer} />
+      ) : question.options ? (
         <ul className="mt-6 space-y-2.5">
           {question.options.map((opt) => {
             const active = chosen === opt.key
@@ -505,6 +518,83 @@ function QuestionCard({
   )
 }
 
+/** Câu đúng/sai: mỗi ý a) b) c) d) chọn Đúng hoặc Sai; bài làm là chuỗi Đ/S/_ theo thứ tự ý. */
+function TrueFalseInput({
+  question,
+  chosen,
+  onAnswer,
+}: {
+  question: Question
+  chosen?: string
+  onAnswer: (v: string) => void
+}) {
+  const options = question.options ?? []
+  const values = readTrueFalseAnswer(chosen, options.length)
+  const set = (i: number, v: boolean) => onAnswer(formatTrueFalse(values.map((x, j) => (j === i ? v : x))))
+  return (
+    <ul className="mt-6 space-y-2.5">
+      {options.map((opt, i) => (
+        <li key={opt.key} className="flex items-start gap-3.5 rounded-[8px] px-4 py-3">
+          <span className="flex size-7 shrink-0 items-center justify-center rounded-full border border-line-2 bg-white text-[12.5px] font-bold text-ink-3">
+            {opt.key}
+          </span>
+          <span className="prose-exam min-w-0 flex-1 text-[15px]">
+            <MathText as="span" className="inline">
+              {opt.text}
+            </MathText>
+          </span>
+          <span className="flex shrink-0 gap-1.5">
+            {([true, false] as const).map((v) => (
+              <button
+                key={String(v)}
+                type="button"
+                aria-pressed={values[i] === v}
+                onClick={() => set(i, v)}
+                className={cn(
+                  'rounded-full border px-3.5 py-1.5 text-[13px] font-semibold transition-colors duration-200',
+                  values[i] === v
+                    ? 'border-ink bg-ink text-paper'
+                    : 'border-line-2 bg-white text-ink-3 hover:border-ink-4 hover:text-ink',
+                )}
+              >
+                {v ? 'Đúng' : 'Sai'}
+              </button>
+            ))}
+          </span>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+/** Câu trả lời ngắn: một số, tối đa 4 ký tự (chữ số, dấu âm, dấu phẩy) như phiếu trả lời. */
+function ShortAnswerInput({ chosen, onAnswer }: { chosen?: string; onAnswer: (v: string) => void }) {
+  return (
+    <div className="mt-6">
+      <input
+        value={chosen ?? ''}
+        inputMode="decimal"
+        maxLength={SHORT_MAX_CHARS}
+        autoComplete="off"
+        aria-label="Đáp án trả lời ngắn"
+        placeholder="…"
+        onChange={(e) =>
+          onAnswer(
+            e.target.value
+              .replace(/\./g, ',')
+              .replace(/[^0-9,-]/g, '')
+              .slice(0, SHORT_MAX_CHARS),
+          )
+        }
+        className="w-44 rounded-[8px] border border-line-2 bg-white px-4 py-3 text-center font-mono text-[22px] tracking-[0.35em] text-ink outline-none focus:border-ink"
+      />
+      <p className="mt-2.5 text-[12.5px] text-ink-3">
+        Điền một số, tối đa {SHORT_MAX_CHARS} ký tự (kể cả dấu âm và dấu phẩy), ví dụ 12, -3,5, 0,25.
+      </p>
+    </div>
+  )
+}
+
 function ResultView({
   examTitle,
   score,
@@ -523,7 +613,7 @@ function ResultView({
   onReview: () => void
 }) {
   const pct = totalPoints > 0 ? (score / totalPoints) * 100 : 0
-  const correct = questions.filter((q) => answers[q.id] === q.answer).length
+  const correct = questions.filter((q) => isFullyCorrect(q, answers[q.id])).length
   const grade =
     pct >= 85
       ? 'Xuất sắc'
@@ -588,7 +678,10 @@ function ResultView({
         <p className="eyebrow">Chi tiết từng câu</p>
         {questions.map((q, i) => {
           const given = answers[q.id]
-          const ok = given === q.answer
+          const got = scoreQuestion(q, given)
+          const ok = isFullyCorrect(q, given)
+          // tự luận không có đáp án tự chấm: chỉ hiện lời giải để đối chiếu
+          const graded = isAutoGraded(q)
           return (
             <div
               key={q.id}
@@ -612,8 +705,14 @@ function ResultView({
                   </MathText>
                 </p>
                 <p className="mt-1.5 text-[12.5px] text-ink-3">
-                  Bạn chọn: <span className="font-semibold text-ink-2">{given ?? 'không trả lời'}</span>{' '}
-                  · Đáp án: <span className="font-semibold text-ink">{q.answer ?? '—'}</span>
+                  Bạn chọn:{' '}
+                  <span className="font-semibold text-ink-2">{describeAnswer(q, given) || 'không trả lời'}</span> ·
+                  Đáp án: <span className="font-semibold text-ink">{describeAnswer(q, q.answer) || '—'}</span>
+                  {graded && q.type === 'dung-sai' ? (
+                    <span className="ml-1">
+                      · Được <span className="font-semibold text-ink-2 tnum">{formatPoints(got)}</span>/{formatPoints(q.points)}đ
+                    </span>
+                  ) : null}
                 </p>
                 {q.explanation ? (
                   <p className="mt-1.5 text-[12.5px] italic leading-relaxed text-ink-3">

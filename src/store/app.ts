@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { Exam, Question, Section } from '@/data/types'
 import { pickQuestions, type BankEntry } from '@/data/bank'
+import { scoreQuestion } from '@/lib/grading'
 
 export interface ChatMessage {
   id: string
@@ -397,10 +398,8 @@ export const useApp = create<AppState>()(
           if (!exam) return s
           const questions = exam.sections.flatMap((sec) => sec.questions)
           let score = 0
-          for (const q of questions) {
-            const given = s.quizAnswers[q.id]
-            if (given && given === q.answer) score += q.points
-          }
+          for (const q of questions) score += scoreQuestion(q, s.quizAnswers[q.id])
+          score = Math.round(score * 1000) / 1000
           const total = questions.reduce((sum, q) => sum + q.points, 0)
           return {
             quizSubmitted: true,

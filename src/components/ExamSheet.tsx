@@ -171,6 +171,15 @@ function QuestionBlock({
                 )
               })}
             </ul>
+          ) : question.type === 'tra-loi-ngan' ? (
+            <div className="mt-3 flex items-center gap-2.5">
+              <span className="text-[12.5px] italic text-ink-4">Đáp số:</span>
+              <span className="flex divide-x divide-ink-3 overflow-hidden rounded-[3px] border border-ink-3">
+                {[0, 1, 2, 3].map((i) => (
+                  <span key={i} className="size-8" />
+                ))}
+              </span>
+            </div>
           ) : (
             <div className="mt-3">
               <div className="h-20 rounded-[10px] border border-dashed border-line-2 bg-canvas/50 px-4 py-3">

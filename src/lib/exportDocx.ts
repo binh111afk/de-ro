@@ -32,11 +32,15 @@ function buildWordHtml(exam: Exam): string {
       const qs = section.questions
         .map((q) => {
           const body = plainText(q.prompt)
+          if (q.type === 'tra-loi-ngan') {
+            return `<p class="q"><b>Câu ${q.number}.</b> ${escapeHtml(body)} <i>(${fmt(q.points)}đ)</i></p><table class="sa" cellspacing="0"><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr></table>`
+          }
           if (q.options?.length) {
+            const mark = q.type === 'dung-sai' ? ')' : '.'
             const opts = q.options
               .map(
                 (o) =>
-                  `<p class="opt"><b>${o.key}.</b> ${escapeHtml(plainText(o.text))}</p>`,
+                  `<p class="opt"><b>${o.key}${mark}</b> ${escapeHtml(plainText(o.text))}</p>`,
               )
               .join('')
             return `<p class="q"><b>Câu ${q.number}.</b> ${escapeHtml(body)} <i>(${fmt(q.points)}đ)</i></p>${opts}`
@@ -66,6 +70,8 @@ function buildWordHtml(exam: Exam): string {
   .q { margin: 0 0 6px; }
   .opt { margin: 0 0 3px 26px; }
   .blank { margin: 0 0 10px 26px; color: #666; }
+  .sa { margin: 2px 0 8px 26px; border-collapse: collapse; }
+  .sa td { width: 28px; height: 28px; border: 1px solid #000; }
   .foot { margin-top: 22px; font-size: 11pt; border-top: 1px solid #999; padding-top: 6px; }
   .foot td { border: none; }
 </style>

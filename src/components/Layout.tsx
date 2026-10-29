@@ -254,7 +254,7 @@ export function Footer() {
           <p className="text-[12px] text-ink-4">
             © 2026 đề rõ — Dữ liệu mẫu phục vụ mục đích trình diễn.
           </p>
-          <p className="text-[12px] font-semibold text-ink-3">Miễn phí · Không cần đăng nhập</p>
+          <p className="text-[12px] font-semibold text-ink-3">Dành cho giáo viên Việt Nam</p>
         </div>
       </div>
     </footer>

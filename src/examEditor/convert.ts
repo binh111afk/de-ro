@@ -270,9 +270,11 @@ export function tipTapToBlocks(doc: JSONContent): ExamBlock[] {
             text: richOf(c),
             ...(formatFromAttrs(c.attrs) ? { format: formatFromAttrs(c.attrs) } : {}),
           }))
+        const kind = node.attrs?.kind
         out.push({
           type: 'question',
           no: Number(node.attrs?.no ?? out.length + 1),
+          ...(kind === 'tf' || kind === 'short' ? { kind } : {}),
           text: richOf(promptNode),
           options,
           ...(formatFromAttrs(node.attrs) ? { format: formatFromAttrs(node.attrs) } : {}),
@@ -501,7 +503,12 @@ export function blocksToTipTap(blocks: ExamBlock[]): JSONContent {
       case 'question':
         content.push({
           type: 'examQuestion',
-          attrs: { id: `q${content.length}`, no: b.no, ...attrsFromFormat(b.format) },
+          attrs: {
+            id: `q${content.length}`,
+            no: b.no,
+            ...(b.kind === 'tf' || b.kind === 'short' ? { kind: b.kind } : {}),
+            ...attrsFromFormat(b.format),
+          },
           content: [
             {
               type: 'examQuestionPrompt',

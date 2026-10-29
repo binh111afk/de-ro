@@ -20,7 +20,7 @@ export interface FileMenuProps {
   /** lưu ý dưới mục tải xuống (vd. giới hạn khi xuất) */
   downloadNote?: string
   /** mục xuất thêm sau "Tải xuống file" (vd. PDF) */
-  extra?: { label: string; hint: string; onClick: () => void }
+  extra?: { label: string; hint: string; onClick: () => void; icon?: React.ReactNode }
 }
 
 function IconTray({ up = false }: { up?: boolean }) {
@@ -176,9 +176,7 @@ export function FileMenu({ kind, onNew, onImport, onDownload, downloadHint, down
                 extra.onClick()
               }}
             >
-              <span className="file-menu__icon">
-                <IconTray up />
-              </span>
+              <span className="file-menu__icon">{extra.icon ?? <IconTray up />}</span>
               <span className="file-menu__text">
                 <span className="file-menu__label">{extra.label}</span>
                 <span className="file-menu__hint">{extra.hint}</span>

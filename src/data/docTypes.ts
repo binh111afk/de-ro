@@ -124,6 +124,13 @@ export interface GridBlock {
 export interface QuestionBlock {
   type: 'question'
   no: number
+  /**
+   * Dạng câu (đề tốt nghiệp THPT từ 2025): 'mcq' = trắc nghiệm 4 phương án A–D (mặc định);
+   * 'tf' = đúng/sai, 4 ý a) b) c) d) nằm trong `options` (nhãn chữ thường);
+   * 'short' = trả lời ngắn, không có `options`, đáp án là một số tối đa 4 ký tự.
+   * Số câu `no` đánh liên tục cho cả ba dạng để khối đáp án khớp được.
+   */
+  kind?: 'mcq' | 'tf' | 'short'
   text: RichText
   options: Array<{ label: string; text: RichText; format?: FormatAttrs }>
   /** định dạng cho prompt (câu hỏi); format cho từng option nằm trong options[i] */

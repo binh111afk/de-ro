@@ -22,6 +22,7 @@ import {
 } from './Layout'
 import { cn } from '@/lib/cn'
 import { BookMarked } from 'lucide-react'
+import { Hash, ListChecks, MonitorPlay } from 'lucide-react'
 import { FileMenu } from './FileMenu'
 import { BankModal } from './BankModal'
 import { templateById, insertBlockTemplate } from './templates'
@@ -137,6 +138,7 @@ export function Ribbon({
   onPrint,
   onExportWord,
   onExportPdf,
+  onStartQuiz,
   dirty,
   pageCount,
   zoom,
@@ -161,6 +163,8 @@ export function Ribbon({
   onSave: () => void
   onPrint: () => void
   onExportWord: () => void
+  /** Tệp → Làm đề tương tác: chuyển đề đang soạn sang bài làm có đếm ngược và chấm điểm */
+  onStartQuiz: () => void
   onExportPdf: () => void
   dirty: boolean
   pageCount: number
@@ -394,6 +398,7 @@ export function Ribbon({
               onImport={onImportFile}
               onDownload={onExportWord}
               downloadHint=".doc"
+              extra={{ label: 'Làm đề tương tác', hint: 'Làm thử có đếm ngược, tự chấm', onClick: onStartQuiz, icon: <MonitorPlay className="size-4" strokeWidth={1.5} /> }}
             />
             <span className="qa-sep" aria-hidden="true" />
             <button type="button" className="qa-btn" onClick={onSave} title="Lưu đề" aria-label="Lưu đề">
@@ -676,6 +681,8 @@ export function Ribbon({
 
             <RibbonGroup label="Câu hỏi">
               <RibbonButton icon={<IconNumbered size={26} />} label="Trắc nghiệm" disabled={disabled} onClick={() => insertTemplate('question')} />
+              <RibbonButton icon={<ListChecks className="size-[26px]" strokeWidth={1.3} />} label="Đúng/Sai" disabled={disabled} onClick={() => insertTemplate('truefalse')} />
+              <RibbonButton icon={<Hash className="size-[26px]" strokeWidth={1.3} />} label="Trả lời ngắn" disabled={disabled} onClick={() => insertTemplate('short')} />
               <RibbonButton icon={<IconEssay size={26} />} label="Tự luận" disabled={disabled} onClick={() => insertTemplate('essay')} />
             </RibbonGroup>
 

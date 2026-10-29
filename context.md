@@ -2,11 +2,11 @@
 
 Bản đồ dự án. Đọc file này trước, rồi mở file liên kết cần dùng. Lịch sử và chi tiết không để ở đây nữa, để tránh file quá dài.
 
-> Cập nhật lần cuối: **29/10/2026 (phiên 8)**.
+> Cập nhật lần cuối: **29/10/2026 (phiên 9)**.
 
 ## Đọc gì
 
-- **Bàn giao gần nhất:** [phiên 8](docs/handoff/phien-8.md) (panel thư viện kiểu Canva, menu Lớp, thanh nổi, màu chủ đạo, 325 icon, ô chữ nhấp đúp; nhánh `feat/slide-panel-ui`), [phiên 7](docs/handoff/phien-7.md) (ribbon danh sách Word, thanh slide dưới đáy kiểu Canva, panel Thành phần/Icon/Mẫu/Tải lên, tab Thành phần), [phiên 6](docs/handoff/phien-6.md) (hồ sơ, kho câu hỏi, kho tài liệu), [phiên 5](docs/handoff/phien-5.md) (trang hồ sơ, đề cộng đồng, thanh tab), [phiên 4](docs/handoff/phien-4.md) (tài khoản Supabase, R2, email), [phiên 3](docs/handoff/phien-3.md) (trình soạn slide), [phiên 2](docs/handoff/phien-2.md) (AI sinh và sửa slide).
+- **Bàn giao gần nhất:** [phiên 9](docs/handoff/phien-9.md) (câu Đúng/Sai và Trả lời ngắn theo đề THPT 2025, `Tệp → Làm đề tương tác`, chấm điểm; nhánh `feat/dung-sai-tra-loi-ngan`), [phiên 8](docs/handoff/phien-8.md) (panel thư viện kiểu Canva, menu Lớp, thanh nổi, màu chủ đạo, 325 icon, ô chữ nhấp đúp; nhánh `feat/slide-panel-ui`), [phiên 7](docs/handoff/phien-7.md) (ribbon danh sách Word, thanh slide dưới đáy kiểu Canva, panel Thành phần/Icon/Mẫu/Tải lên, tab Thành phần), [phiên 6](docs/handoff/phien-6.md) (hồ sơ, kho câu hỏi, kho tài liệu), [phiên 5](docs/handoff/phien-5.md) (trang hồ sơ, đề cộng đồng, thanh tab), [phiên 4](docs/handoff/phien-4.md) (tài khoản Supabase, R2, email), [phiên 3](docs/handoff/phien-3.md) (trình soạn slide), [phiên 2](docs/handoff/phien-2.md) (AI sinh và sửa slide).
 - **Việc còn tồn đọng:** [docs/viec-con-lai.md](docs/viec-con-lai.md).
 - **Lỗi đã gặp và bài học:** [docs/bai-hoc-va-loi.md](docs/bai-hoc-va-loi.md).
 - **Lịch sử từng chặng** (mục 3.x, số mục ở các file này vẫn giữ nguyên): [docs/history/muc-3-lich-su.md](docs/history/muc-3-lich-su.md).
@@ -92,6 +92,7 @@ npm run test:convert    # 12/12 pass
 npm run test:markdown   # 14/14 pass (parser markdown của chat AI)
 npm run test:export     # 5/5 pass (đánh số + phương án 2 cột khi xuất Word)
 npm run test:layout     # 7/7 pass (chọn số cột phương án)
+npm run test:grading    # chấm điểm đề THPT 2025: nhiều lựa chọn, đúng/sai (0,1/0,25/0,5/1), trả lời ngắn (≤4 ký tự)
 npm run test:slide-text # 5/5 pass (chiều cao hộp chữ slide)
 npm run test:slide-theme # 4/4 pass (theme v2: normalize/tương phản/catalog)
 npm run test:slide-layout # 10/10 pass (layout v1+v2: 14 bố cục/quiz/tone)
