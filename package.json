@@ -15,6 +15,7 @@
     "test:templates": "tsx --tsconfig tsconfig.app.json scripts/test-templates.mjs",
     "test:pagination": "tsx --tsconfig tsconfig.app.json scripts/test-pagination.mjs",
     "test:grading": "tsx --tsconfig tsconfig.app.json scripts/test-grading.ts",
+    "test:online": "tsx --tsconfig tsconfig.app.json scripts/test-online-exam.ts",
     "test:slide-text": "tsx --tsconfig tsconfig.app.json scripts/test-slide-text.mjs",
     "test:slide-theme": "tsx --tsconfig tsconfig.app.json scripts/test-slide-theme.mjs",
     "test:slide-layout": "tsx --tsconfig tsconfig.app.json scripts/test-slide-layout.mjs",

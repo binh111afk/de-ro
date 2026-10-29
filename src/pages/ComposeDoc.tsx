@@ -30,9 +30,9 @@ import { useFormatState, applyFormatAttrs } from '@/examEditor/formatState'
 import { FindPanel } from '@/examEditor/FindPanel'
 import { exportDocBlocks, printDoc } from '@/examEditor/exportBlocks'
 import { useComposeStore } from '@/store/compose'
-import { useApp } from '@/store/app'
+import { useOnline } from '@/store/online'
 import { docToExam } from '@/lib/docToExam'
-import { isAutoGraded } from '@/lib/grading'
+import { examToDraft } from '@/lib/onlineExam'
 import { DECK_THEMES } from '@/lib/slideTheme'
 import { SlideEditor } from '@/examEditor/SlideEditor'
 import { extractJson } from '@/lib/llm'
@@ -433,30 +433,24 @@ export default function ComposeDoc() {
   }, [activeDoc])
 
   /**
-   * Tệp → Làm đề tương tác: dựng đề tương tác từ các khối đang soạn (`docToExam`) rồi mở màn làm bài.
-   * Mỗi lần bấm thay bản đã chuyển trước đó của đề này (để sửa đề rồi làm lại không ra bản cũ).
+   * Tệp → Làm đề tương tác: chuyển các khối đang soạn (`docToExam`) thành bản nháp ở trang Tạo đề online
+   * để chỉnh đáp án, giải thích, cài đặt rồi làm thử hoặc đăng. Chuyển rồi mà bấm lại thì hỏi mở bản đã chỉnh hay chuyển lại từ đầu.
    */
   const handleStartQuiz = useCallback(() => {
     if (!activeDoc) return
     const exam = docToExam(activeDoc, `doc-${activeDoc.id}`)
-    const questions = exam.sections.flatMap((s) => s.questions)
-    if (!questions.length) {
-      window.alert('Đề chưa có câu hỏi nào để làm. Thêm câu trắc nghiệm hoặc tự luận trước nhé.')
+    if (!exam.sections.some((s) => s.questions.length)) {
+      window.alert('Đề chưa có câu hỏi nào để chuyển. Thêm câu trắc nghiệm hoặc tự luận trước nhé.')
       return
     }
-    // câu tự động chấm được (trắc nghiệm, đúng/sai, trả lời ngắn) mà thiếu đáp án thì không chấm được
-    const noAnswer = questions.filter((q) => q.type !== 'tu-luan' && q.type !== 'tu-luan-dong' && !isAutoGraded(q)).length
-    if (
-      noAnswer > 0 &&
-      !window.confirm(`${noAnswer} câu chưa có đáp án hợp lệ (thiếu khối đáp án, số câu không khớp, hoặc đáp án sai dạng: đúng/sai cần chuỗi Đ/S đủ 4 ý, trả lời ngắn cần một số), nên không chấm được các câu này. Vẫn làm thử?`)
-    )
+    const online = useOnline.getState()
+    const prev = online.items.find((it) => it.sourceDocId === activeDoc.id)
+    if (prev && window.confirm('Đề này đã được chuyển sang Tạo đề online trước đó.\n\nOK: mở bản đã chỉnh.\nHuỷ: chuyển lại từ đầu (bản chỉnh cũ bị thay).')) {
+      navigate(`/tao-de-online/${prev.id}`)
       return
-    const app = useApp.getState()
-    const prev = app.myExams.find((e) => e.importedFrom === exam.id)
-    if (prev) app.deleteExam(prev.id)
-    const id = app.importExam(exam)
-    app.startQuiz(id)
-    navigate(`/lam-de/${id}`)
+    }
+    if (prev) online.remove(prev.id)
+    navigate(`/tao-de-online/${online.create({ ...examToDraft(exam), sourceDocId: activeDoc.id })}`)
   }, [activeDoc, navigate])
 
   /** Tệp → Nhập file: mở tệp Word/Excel/PowerPoint thành một tab đề mới. */

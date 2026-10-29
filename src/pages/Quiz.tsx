@@ -27,6 +27,7 @@ import {
   formatTrueFalse,
   isAutoGraded,
   isFullyCorrect,
+  parseTrueFalse,
   readTrueFalseAnswer,
   scoreQuestion,
 } from '@/lib/grading'
@@ -49,12 +50,25 @@ export default function Quiz() {
   const [flagged, setFlagged] = useState<Set<string>>(new Set())
   const [showGrid, setShowGrid] = useState(false)
   const [confirm, setConfirm] = useState(false)
+  const [reviewing, setReviewing] = useState(false)
+  /** câu đã bấm kiểm tra (chế độ hiện đáp án ngay) — chỉ có hiệu lực khi đề bật `instantFeedback` */
+  const [checked, setChecked] = useState<Set<string>>(new Set())
+  const [shuffleKey, setShuffleKey] = useState(0)
   const timerRef = useRef<number | null>(null)
 
-  const questions = useMemo(
-    () => (exam ? exam.sections.flatMap((s) => s.questions) : []),
-    [exam],
-  )
+  const shuffle = Boolean(exam?.settings?.shuffleQuestions)
+  const questions = useMemo(() => {
+    const all = exam ? exam.sections.flatMap((s) => s.questions) : []
+    if (!shuffle) return all
+    const out = [...all]
+    for (let i = out.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[out[i], out[j]] = [out[j], out[i]]
+    }
+    return out
+    // shuffleKey: bấm Làm lại thì đảo lại
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [exam, shuffle, shuffleKey])
 
   useEffect(() => {
     if (!showGrid) return
@@ -72,7 +86,7 @@ export default function Quiz() {
   }, [exam?.id])
 
   useEffect(() => {
-    if (!exam || submitted) return
+    if (!exam || submitted || exam.settings?.noTimeLimit) return
     const total = exam.durationMinutes * 60
     setRemaining((r) => r ?? total)
 
@@ -142,11 +156,23 @@ export default function Quiz() {
     setIndex(0)
     setFlagged(new Set())
     setConfirm(false)
+    setReviewing(false)
+    setChecked(new Set())
+    setShuffleKey((k) => k + 1)
     startQuiz(exam.id)
   }
 
   if (submitted && lastResult) {
-    return (
+    return reviewing ? (
+      <ReviewView
+        questions={questions}
+        answers={answers}
+        index={index}
+        setIndex={setIndex}
+        onBack={() => setReviewing(false)}
+        onRestart={handleRestart}
+      />
+    ) : (
       <ResultView
         examTitle={exam.title}
         score={lastResult.score}
@@ -155,8 +181,8 @@ export default function Quiz() {
         answers={answers}
         onRestart={handleRestart}
         onReview={() => {
-          resetQuiz()
           setIndex(0)
+          setReviewing(true)
         }}
       />
     )
@@ -165,6 +191,10 @@ export default function Quiz() {
   const mm = String(Math.floor((remaining ?? 0) / 60)).padStart(2, '0')
   const ss = String((remaining ?? 0) % 60).padStart(2, '0')
   const low = (remaining ?? 0) <= 60
+  const noLimit = Boolean(exam.settings?.noTimeLimit)
+  const instant = Boolean(exam.settings?.instantFeedback)
+  const isChecked = instant && checked.has(current.id)
+  const markChecked = () => setChecked((c) => new Set(c).add(current.id))
 
   return (
     <div className="min-h-[calc(100dvh-3.5rem)] bg-sunken/35">
@@ -195,16 +225,23 @@ export default function Quiz() {
             Lưới câu
           </button>
 
-          <div
-            className={cn(
-              'flex items-center gap-2 rounded-full px-3.5 py-2 font-mono text-[13.5px] font-bold tabular-nums transition-colors duration-500',
-              low ? 'bg-clay-soft text-clay' : 'bg-cream text-ink shadow-soft',
-            )}
-            title="Thời gian còn lại"
-          >
-            <Clock className="size-3.5" />
-            {mm}:{ss}
-          </div>
+          {noLimit ? (
+            <div className="flex items-center gap-2 rounded-full bg-cream px-3.5 py-2 text-[13px] font-semibold text-ink-3 shadow-soft">
+              <Clock className="size-3.5" />
+              Không giới hạn
+            </div>
+          ) : (
+            <div
+              className={cn(
+                'flex items-center gap-2 rounded-full px-3.5 py-2 font-mono text-[13.5px] font-bold tabular-nums transition-colors duration-500',
+                low ? 'bg-clay-soft text-clay' : 'bg-cream text-ink shadow-soft',
+              )}
+              title="Thời gian còn lại"
+            >
+              <Clock className="size-3.5" />
+              {mm}:{ss}
+            </div>
+          )}
 
           <Button variant="clay" size="sm" onClick={() => setConfirm(true)}>
             <Send className="size-3.5" />
@@ -228,7 +265,10 @@ export default function Quiz() {
               index={index}
               total={questions.length}
               chosen={answers[current.id]}
-              onAnswer={(v) => setAnswer(current.id, v)}
+              onAnswer={(v) => {
+                setAnswer(current.id, v)
+                if (instant && current.type === 'trac-nghiem') markChecked()
+              }}
               flagged={flagged.has(current.id)}
               onToggleFlag={() =>
                 setFlagged((f) => {
@@ -238,7 +278,21 @@ export default function Quiz() {
                   return next
                 })
               }
+              review={isChecked}
             />
+
+            {instant && !isChecked && current.type !== 'trac-nghiem' ? (
+              <div className="mt-4 flex justify-end">
+                <Button
+                  variant="soft"
+                  size="sm"
+                  onClick={markChecked}
+                  disabled={isAutoGraded(current) && !answers[current.id]}
+                >
+                  {isAutoGraded(current) ? 'Kiểm tra đáp án' : 'Xem lời giải'}
+                </Button>
+              </div>
+            ) : null}
 
             <div className="mt-6 flex items-center justify-between">
               <Button
@@ -356,7 +410,7 @@ export default function Quiz() {
                       setShowGrid(false)
                     }}
                     className={cn(
-                      'tnum relative flex size-10 items-center justify-center rounded-[6px] text-[12.5px] font-bold transition-all duration-200',
+                      'tnum relative flex h-10 w-full items-center justify-center rounded-[6px] text-[12.5px] font-bold transition-all duration-200',
                       isAnswered
                         ? 'bg-sage-soft text-sage'
                         : i === index
@@ -433,6 +487,7 @@ function QuestionCard({
   onAnswer,
   flagged,
   onToggleFlag,
+  review = false,
 }: {
   question: Question
   index: number
@@ -441,24 +496,41 @@ function QuestionCard({
   onAnswer: (v: string) => void
   flagged: boolean
   onToggleFlag: () => void
+  /** xem lại sau khi nộp: khoá bài làm, đánh dấu đáp án đúng/sai */
+  review?: boolean
 }) {
+  const graded = isAutoGraded(question)
+  const ok = isFullyCorrect(question, chosen)
   return (
     <div className="rounded-[28px] bg-surface p-7 shadow-[0_1px_2px_rgba(60,48,32,0.03)] sm:p-9">
       <div className="mb-5 flex items-center justify-between">
         <Badge tone="neutral">
           Câu {index + 1} / {total}
         </Badge>
-        <button
-          type="button"
-          onClick={onToggleFlag}
-          className={cn(
-            'flex items-center gap-2 rounded-full px-3 py-1.5 text-[12.5px] font-semibold transition-colors duration-200',
-            flagged ? 'bg-clay-soft text-clay' : 'text-ink-3 hover:bg-sunken',
-          )}
-        >
-          <Flag className="size-3.5" />
-          {flagged ? 'Đã đánh dấu' : 'Đánh dấu'}
-        </button>
+        {review ? (
+          graded ? (
+            <span
+              className={cn(
+                'rounded-full px-3 py-1.5 text-[12.5px] font-semibold',
+                !chosen ? 'bg-sunken text-ink-3' : ok ? 'bg-sage-soft text-sage' : 'bg-clay-soft text-clay',
+              )}
+            >
+              {!chosen ? 'Chưa làm' : ok ? 'Đúng' : 'Sai'}
+            </span>
+          ) : null
+        ) : (
+          <button
+            type="button"
+            onClick={onToggleFlag}
+            className={cn(
+              'flex items-center gap-2 rounded-full px-3 py-1.5 text-[12.5px] font-semibold transition-colors duration-200',
+              flagged ? 'bg-clay-soft text-clay' : 'text-ink-3 hover:bg-sunken',
+            )}
+          >
+            <Flag className="size-3.5" />
+            {flagged ? 'Đã đánh dấu' : 'Đánh dấu'}
+          </button>
+        )}
       </div>
 
       <div className="prose-exam text-[17px]">
@@ -469,34 +541,71 @@ function QuestionCard({
       </p>
 
       {question.type === 'dung-sai' && question.options ? (
-        <TrueFalseInput question={question} chosen={chosen} onAnswer={onAnswer} />
+        <TrueFalseInput question={question} chosen={chosen} onAnswer={onAnswer} review={review} />
       ) : question.type === 'tra-loi-ngan' ? (
-        <ShortAnswerInput chosen={chosen} onAnswer={onAnswer} />
+        review ? (
+          <div className="mt-6 flex flex-wrap gap-3 font-mono text-[18px]">
+            <span
+              className={cn(
+                'rounded-[8px] px-4 py-2.5',
+                ok ? 'bg-sage-soft text-sage' : 'bg-clay-soft text-clay',
+              )}
+            >
+              Bạn điền: {chosen || 'không trả lời'}
+            </span>
+            {!ok && question.answer ? (
+              <span className="rounded-[8px] bg-sage-soft px-4 py-2.5 text-sage">
+                Đáp án: {question.answer}
+              </span>
+            ) : null}
+          </div>
+        ) : (
+          <ShortAnswerInput chosen={chosen} onAnswer={onAnswer} />
+        )
       ) : question.options ? (
         <ul className="mt-6 space-y-2.5">
           {question.options.map((opt) => {
             const active = chosen === opt.key
+            const right = review && opt.key === question.answer
+            const wrong = review && active && !right
             return (
               <li key={opt.key}>
                 <button
                   type="button"
-                  onClick={() => onAnswer(opt.key)}
+                  onClick={review ? undefined : () => onAnswer(opt.key)}
                   className={cn(
                     'group flex w-full items-start gap-3.5 rounded-[8px] px-4 py-3.5 text-left transition-all duration-200',
-                    active
-                      ? 'bg-sunken shadow-[inset_0_0_0_1.5px_rgba(35,32,28,0.85)]'
-                      : 'hover:bg-sunken/60',
+                    review && 'cursor-default',
+                    right
+                      ? 'bg-sage-soft ring-2 ring-sage'
+                      : wrong
+                        ? 'bg-clay-soft ring-2 ring-clay'
+                        : active
+                          ? 'bg-sunken shadow-[inset_0_0_0_1.5px_rgba(35,32,28,0.85)]'
+                          : !review && 'hover:bg-sunken/60',
                   )}
                 >
                   <span
                     className={cn(
                       'flex size-7 shrink-0 items-center justify-center rounded-full border text-[12.5px] font-bold transition-all duration-200',
-                      active
-                        ? 'border-ink bg-ink text-paper'
-                        : 'border-line-2 bg-white text-ink-3 group-hover:border-ink-4',
+                      right
+                        ? 'border-sage bg-sage text-white'
+                        : wrong
+                          ? 'border-clay bg-clay text-white'
+                          : active
+                            ? 'border-ink bg-ink text-paper'
+                            : 'border-line-2 bg-white text-ink-3 group-hover:border-ink-4',
                     )}
                   >
-                    {active ? <Check className="size-3.5" strokeWidth={3} /> : opt.key}
+                    {right ? (
+                      <Check className="size-3.5" strokeWidth={3} />
+                    ) : wrong ? (
+                      <X className="size-3.5" strokeWidth={3} />
+                    ) : active ? (
+                      <Check className="size-3.5" strokeWidth={3} />
+                    ) : (
+                      opt.key
+                    )}
                   </span>
                   <span className="prose-exam min-w-0 flex-1 text-[15px]">
                     <MathText as="span" className="inline">
@@ -508,12 +617,126 @@ function QuestionCard({
             )
           })}
         </ul>
+      ) : review ? (
+        <div className="mt-6 space-y-1.5 rounded-[8px] bg-sage-soft px-5 py-4 text-[14px] text-ink">
+          {question.solution?.length ? (
+            question.solution.map((line, i) => (
+              <MathText key={i} as="div">
+                {line}
+              </MathText>
+            ))
+          ) : (
+            <span className="italic text-ink-3">Câu tự luận — chưa có lời giải chi tiết.</span>
+          )}
+        </div>
       ) : (
         <div className="mt-6 rounded-[8px] border border-dashed border-line-2 bg-canvas/50 px-5 py-8 text-center text-[13.5px] italic text-ink-3">
           Câu tự luận — hãy viết lời giải ra giấy rồi đối chiếu với lời giải chi tiết sau khi
           nộp bài.
         </div>
       )}
+
+      {review && question.explanation ? (
+        <div className="mt-5 rounded-[8px] bg-sunken px-5 py-4 text-[13.5px] leading-relaxed text-ink-2">
+          <span className="font-semibold text-ink">Giải thích: </span>
+          <MathText as="span" className="inline">
+            {question.explanation}
+          </MathText>
+        </div>
+      ) : null}
+    </div>
+  )
+}
+
+function ReviewView({
+  questions,
+  answers,
+  index,
+  setIndex,
+  onBack,
+  onRestart,
+}: {
+  questions: Question[]
+  answers: Record<string, string>
+  index: number
+  setIndex: (i: number | ((i: number) => number)) => void
+  onBack: () => void
+  onRestart: () => void
+}) {
+  const q = questions[index]
+  return (
+    <div className="min-h-[calc(100dvh-3.5rem)] bg-sunken/35">
+      <div className="mx-auto max-w-[900px] px-5 py-9 sm:px-6">
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+          <Button variant="soft" size="sm" onClick={onBack}>
+            <ArrowLeft className="size-3.5" />
+            Về kết quả
+          </Button>
+          <p className="font-display text-[15px] font-semibold text-ink">Xem lại bài</p>
+          <Button variant="clay" size="sm" onClick={onRestart}>
+            <RotateCcw className="size-3.5" />
+            Làm lại
+          </Button>
+        </div>
+
+        <div className="mb-3 flex flex-wrap gap-1.5">
+          {questions.map((x, i) => {
+            const given = answers[x.id]
+            const tone = !given
+              ? 'bg-sunken text-ink-3'
+              : !isAutoGraded(x)
+                ? 'bg-sunken text-ink-2'
+                : isFullyCorrect(x, given)
+                  ? 'bg-sage text-white'
+                  : 'bg-clay text-white'
+            return (
+              <button
+                key={x.id}
+                type="button"
+                onClick={() => setIndex(i)}
+                className={cn(
+                  'tnum flex size-9 items-center justify-center rounded-[5px] text-[12px] font-bold transition-all duration-200',
+                  tone,
+                  i === index && 'ring-2 ring-ink ring-offset-2 ring-offset-canvas',
+                )}
+              >
+                {i + 1}
+              </button>
+            )
+          })}
+        </div>
+        <div className="mb-6 flex flex-wrap gap-x-5 gap-y-1">
+          <LegendRow className="bg-sage" label="Đúng" />
+          <LegendRow className="bg-clay" label="Sai" />
+          <LegendRow className="bg-sunken ring-1 ring-line-2" label="Chưa làm / tự luận" />
+        </div>
+
+        <QuestionCard
+          question={q}
+          index={index}
+          total={questions.length}
+          chosen={answers[q.id]}
+          onAnswer={() => {}}
+          flagged={false}
+          onToggleFlag={() => {}}
+          review
+        />
+
+        <div className="mt-6 flex items-center justify-between">
+          <Button variant="soft" onClick={() => setIndex((i) => Math.max(0, i - 1))} disabled={index === 0}>
+            <ArrowLeft className="size-4" />
+            Câu trước
+          </Button>
+          <Button
+            variant="primary"
+            onClick={() => setIndex((i) => Math.min(questions.length - 1, i + 1))}
+            disabled={index === questions.length - 1}
+          >
+            Câu sau
+            <ArrowRight className="size-4" />
+          </Button>
+        </div>
+      </div>
     </div>
   )
 }
@@ -523,13 +746,16 @@ function TrueFalseInput({
   question,
   chosen,
   onAnswer,
+  review = false,
 }: {
   question: Question
   chosen?: string
   onAnswer: (v: string) => void
+  review?: boolean
 }) {
   const options = question.options ?? []
   const values = readTrueFalseAnswer(chosen, options.length)
+  const correct = review ? parseTrueFalse(question.answer, options.length) : null
   const set = (i: number, v: boolean) => onAnswer(formatTrueFalse(values.map((x, j) => (j === i ? v : x))))
   return (
     <ul className="mt-6 space-y-2.5">
@@ -549,12 +775,19 @@ function TrueFalseInput({
                 key={String(v)}
                 type="button"
                 aria-pressed={values[i] === v}
-                onClick={() => set(i, v)}
+                onClick={review ? undefined : () => set(i, v)}
                 className={cn(
                   'rounded-full border px-3.5 py-1.5 text-[13px] font-semibold transition-colors duration-200',
-                  values[i] === v
-                    ? 'border-ink bg-ink text-paper'
-                    : 'border-line-2 bg-white text-ink-3 hover:border-ink-4 hover:text-ink',
+                  review && 'cursor-default',
+                  correct?.[i] === v
+                    ? 'border-sage bg-sage text-white'
+                    : review && values[i] === v
+                      ? 'border-clay bg-clay text-white'
+                      : values[i] === v
+                        ? 'border-ink bg-ink text-paper'
+                        : review
+                          ? 'border-line-2 bg-white text-ink-3'
+                          : 'border-line-2 bg-white text-ink-3 hover:border-ink-4 hover:text-ink',
                 )}
               >
                 {v ? 'Đúng' : 'Sai'}

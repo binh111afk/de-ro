@@ -1,3 +1,15 @@
+## 5b. Việc tiếp theo sau phiên 10 (tạo đề online)
+
+Xem [phiên 10](handoff/phien-10.md). Còn lại, theo thứ tự nên làm:
+
+- [ ] **Dán cả đề để tách câu** vào trang Tạo đề online (nhập tay đề 40 câu chậm). Đáng làm nhất.
+- [ ] **Thử đăng thật** bằng tài khoản đăng nhập (đường đăng + `/de-online/:id` mới kiểm bằng test/typecheck).
+- [ ] **Thử luồng `Tệp → Làm đề tương tác`** ở trình soạn bằng tay (đề có lời giải cuối tài liệu).
+- [ ] **Đề chỉ có link, không lên danh sách cộng đồng**: cần thêm cột (vd `unlisted`) trong `community_exams`. Hỏi chủ dự án trước khi đổi database.
+- [ ] **Lịch sử đề lưu theo tài khoản** (hiện chỉ `localStorage`, đổi máy là mất).
+- [ ] Đề đăng không tự cập nhật khi sửa (có nút "Đăng lại bản mới"); chưa có xoá/gỡ bản đã đăng.
+- [ ] Gộp hai đường vào làm đề tương tác (đề cộng đồng qua `Community.tsx` và đề online) nếu thêm tính năng.
+
 ## 6. ⚠️ CHƯA LÀM XONG (việc còn tồn đọng)
 
 Phần này là danh sách công việc **còn dở** tại thời điểm ghi file. Xếp theo mức độ

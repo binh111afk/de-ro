@@ -40,6 +40,15 @@ src/
     ai-assistant.json      bản gốc Lottie của cùng animation (nguồn, không import)
   vite-env.d.ts            reference vite/client — để TS hiểu import *.svg
   pages/ComposeDoc.tsx     trang Soạn đề (ghép vỏ, auto-fit, save, print, export)
+  pages/Quiz.tsx          làm bài + ResultView + ReviewView (xem lại: đáp án đúng/sai từng câu); đọc Exam.settings (không giới hạn giờ, hiện đáp án ngay, đảo câu)
+  pages/OnlineList.tsx     tab Tạo đề online: lịch sử đề trên máy (thẻ: Sửa, Làm thử, Đăng, chép link, xoá)
+  pages/OnlineBuilder.tsx  trình tạo đề 3 bước (soạn câu / thông tin + cài đặt / hoàn tất), tự lưu vào store/online
+  pages/OnlineOpen.tsx     /de-online/:id — link chia sẻ đề đã đăng, tải từ cộng đồng rồi vào làm bài
+  store/online.ts          lịch sử đề tạo online (persist localStorage "dethinhbien-online")
+  lib/onlineExam.ts        mô hình OnlineItem, kiểm lỗi câu, xếp theo dạng, itemToExam/itemToDoc/examToDraft, loadForQuiz
+  lib/onlinePublish.ts     đăng đề online lên cộng đồng (qua publishDoc) + shareUrl
+  lib/docToExam.ts         ExamDoc → Exam; đọc phần lời giải cuối tài liệu ("Câu N:"/"Bài N:"); doc.online trả nguyên đề online
+  components/CopyLink.tsx  ô link kèm nút chép
   store/compose.ts         store phiên nhiều tab (nội dung + deck, OpenTab.kind)
   store/docs.ts            store tài liệu đã lưu (myDocs, saveDocById) + kiểu theme/deck/tone
   data/docTypes.ts         kiểu ExamBlock + RichText/Span/Mark/FormatAttrs + DocKind

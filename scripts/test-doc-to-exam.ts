@@ -56,4 +56,25 @@ const onlyMcq = docToExam({ ...doc, blocks: doc.blocks.slice(0, 2) }, 'pub-2')
 assert.equal(onlyMcq.sections.length, 1)
 assert.equal(onlyMcq.sections[0].questions[0].points, 5)
 
+// Phần lời giải cuối tài liệu: "Câu N: …" gán theo số câu, đoạn tiếp theo nối vào câu trước, câu thiếu thì bỏ trống
+const withSolutions = docToExam(
+  {
+    ...doc,
+    blocks: [
+      ...doc.blocks,
+      { type: 'heading', text: 'HƯỚNG DẪN GIẢI' },
+      { type: 'paragraph', text: 'Câu 1: Thay $x=2$ được 4.' },
+      { type: 'paragraph', text: 'Vậy chọn B.' },
+      { type: 'paragraph', text: 'Bài 1: Chuyển vế được x = -1.' },
+    ],
+  },
+  'pub-3',
+)
+const [m3, e3] = withSolutions.sections
+// "Bài N" là tự luận, không đụng "Câu N" trắc nghiệm cùng số
+assert.deepEqual(e3.questions[0].solution, ['Chuyển vế được x = -1.'])
+assert.equal(m3.questions[0].explanation, 'Thay $x=2$ được 4.\nVậy chọn B.')
+assert.equal(m3.questions[1].explanation, undefined)
+assert.equal(exam.sections[0].questions[0].explanation, undefined)
+
 console.log('test-doc-to-exam: OK')

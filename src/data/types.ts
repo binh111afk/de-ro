@@ -41,6 +41,16 @@ export interface Section {
   questions: Question[]
 }
 
+/** Cài đặt làm bài của đề tạo online; thiếu = mặc định (có đếm ngược, hiện đáp án sau khi nộp). */
+export interface ExamSettings {
+  /** true → không đếm ngược và không tự nộp */
+  noTimeLimit?: boolean
+  /** hiện đúng/sai và giải thích ngay sau khi chọn (trắc nghiệm); dạng khác bấm "Kiểm tra đáp án" */
+  instantFeedback?: boolean
+  /** đảo thứ tự câu mỗi lượt làm */
+  shuffleQuestions?: boolean
+}
+
 export interface Exam {
   id: string
   title: string
@@ -61,6 +71,7 @@ export interface Exam {
   cover?: string
   /** id of the community exam this was copied from — prevents duplicate imports */
   importedFrom?: string
+  settings?: ExamSettings
 }
 
 export const SUBJECTS: Subject[] = [
