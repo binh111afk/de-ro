@@ -297,6 +297,35 @@ export const BLOCK_TEMPLATES: BlockTemplate[] = [
     }),
   },
   {
+    id: 'numbered',
+    group: 'Nội dung',
+    label: 'Danh sách đánh số',
+    desc: 'Các mục đánh số 1, 2, 3',
+    build: () => ({
+      type: 'examBullets',
+      attrs: { id: `b${Date.now()}`, ordered: true },
+      content: [
+        { type: 'examBullet', attrs: { id: 'bi0' }, content: [t('Mục 1')] },
+        { type: 'examBullet', attrs: { id: 'bi1' }, content: [t('Mục 2')] },
+      ],
+    }),
+  },
+  {
+    id: 'multilevel',
+    group: 'Nội dung',
+    label: 'Danh sách nhiều cấp',
+    desc: 'Mục lồng nhau — Tab để lùi vào, Shift+Tab để đưa ra',
+    build: () => ({
+      type: 'examBullets',
+      attrs: { id: `b${Date.now()}` },
+      content: [
+        { type: 'examBullet', attrs: { id: 'bi0' }, content: [t('Mục cấp 1')] },
+        { type: 'examBullet', attrs: { id: 'bi1', level: 1 }, content: [t('Mục cấp 2')] },
+        { type: 'examBullet', attrs: { id: 'bi2', level: 2 }, content: [t('Mục cấp 3')] },
+      ],
+    }),
+  },
+  {
     id: 'grid2',
     group: 'Nội dung',
     label: 'Lưới 2 cột',

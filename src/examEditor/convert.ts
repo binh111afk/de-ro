@@ -236,14 +236,18 @@ export function tipTapToBlocks(doc: JSONContent): ExamBlock[] {
         })
         break
 
-      case 'examBullets':
+      case 'examBullets': {
         flushHeader()
+        const levels = (node.content ?? []).map((li) => Number(li.attrs?.level) || 0)
         out.push({
           type: 'bullets',
           items: (node.content ?? []).map((li) => richOf(li)),
+          ...(node.attrs?.ordered ? { ordered: true } : {}),
+          ...(levels.some((l) => l > 0) ? { levels } : {}),
           ...(formatFromAttrs(node.attrs) ? { format: formatFromAttrs(node.attrs) } : {}),
         })
         break
+      }
 
       case 'examGrid':
         flushHeader()
@@ -473,10 +477,10 @@ export function blocksToTipTap(blocks: ExamBlock[]): JSONContent {
       case 'bullets':
         content.push({
           type: 'examBullets',
-          attrs: { id: `b${content.length}`, ...attrsFromFormat(b.format) },
+          attrs: { id: `b${content.length}`, ordered: b.ordered ?? null, ...attrsFromFormat(b.format) },
           content: b.items.map((item, i) => ({
             type: 'examBullet',
-            attrs: { id: `bi${i}` },
+            attrs: { id: `bi${i}`, level: b.levels?.[i] || null },
             content: richNodes(item),
           })),
         })

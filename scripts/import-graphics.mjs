@@ -12,7 +12,7 @@
 import { readFileSync, writeFileSync } from 'node:fs'
 import { bboxOf } from './lib/svg-bbox.mjs'
 import { importDecor } from './import-decor.mjs'
-import { ICONS_100, ICONS_PROG, SHEET_100, SHEET_PROG } from './graphics-extra.mjs'
+import { ICONS_100, ICONS_NEW, ICONS_PROG, SHEET_100, SHEET_NEW, SHEET_PROG } from './graphics-extra.mjs'
 
 const SHEET = 'C:/Users/Lenovo/Downloads/112 educational icons · 64px.svg'
 const OUT = 'src/lib/graphics.ts'
@@ -193,6 +193,7 @@ return entries
 const entries = [
   ...importSheet(SHEET, ICONS),
   ...importSheet(SHEET_100, ICONS_100),
+  ...importSheet(SHEET_NEW, ICONS_NEW),
   ...importSheet(SHEET_PROG, ICONS_PROG),
   ...importDecor(),
 ]

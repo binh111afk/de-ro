@@ -43,8 +43,6 @@ import {
   IconClearFormat,
   IconCopy,
   IconCut,
-  IconDirLtr,
-  IconDirRtl,
   IconDoc,
   IconEssay,
   IconEquation,
@@ -60,7 +58,6 @@ import {
   IconNumbered,
   IconPageBreak,
   IconPaste,
-  IconPilcrow,
   IconPrinter,
   IconPrintLayout,
   IconRedo,
@@ -549,22 +546,17 @@ export function Ribbon({
               <div className="rb-col">
                 <div className="rb-row">
                   <RibbonIconButton icon={<IconBullets size={16} />} title="Danh sách gạch đầu dòng" disabled={disabled} onClick={() => insertTemplate('bullets')} />
-                  <RibbonIconButton icon={<IconNumbered size={16} />} title="Danh sách đánh số" disabled={disabled} onClick={() => insertTemplate('question')} />
-                  <RibbonIconButton icon={<IconMultilevel size={16} />} title="Danh sách nhiều cấp" disabled={disabled} onClick={() => insertTemplate('bullets')} />
+                  <RibbonIconButton icon={<IconNumbered size={16} />} title="Danh sách đánh số" disabled={disabled} onClick={() => insertTemplate('numbered')} />
+                  <RibbonIconButton icon={<IconMultilevel size={16} />} title="Danh sách nhiều cấp" disabled={disabled} onClick={() => insertTemplate('multilevel')} />
                   <span className="rb-mini-sep" />
                   <RibbonIconButton icon={<IconIndentDec size={16} />} title="Giảm thụt lề" disabled={disabled} onClick={() => live && applyFormatAttrs(live, { indentLeft: Math.max(0, format.indentLeft - 12) })} />
                   <RibbonIconButton icon={<IconIndentInc size={16} />} title="Tăng thụt lề" disabled={disabled} onClick={() => live && applyFormatAttrs(live, { indentLeft: format.indentLeft + 12 })} />
-                  <span className="rb-mini-sep" />
-                  <RibbonIconButton icon={<IconPilcrow size={16} />} title="Hiện/ẩn ký tự định dạng" disabled={disabled} onClick={() => chain()?.setNode('paragraph').run()} />
                 </div>
                 <div className="rb-row">
                   <RibbonIconButton icon={<IconAlignLeft size={16} />} title="Căn trái" active={format.align === 'left'} disabled={disabled} onClick={() => chain()?.setTextAlign('left').run()} />
                   <RibbonIconButton icon={<IconAlignCenter size={16} />} title="Căn giữa" active={format.align === 'center'} disabled={disabled} onClick={() => chain()?.setTextAlign('center').run()} />
                   <RibbonIconButton icon={<IconAlignRight size={16} />} title="Căn phải" active={format.align === 'right'} disabled={disabled} onClick={() => chain()?.setTextAlign('right').run()} />
                   <RibbonIconButton icon={<IconAlignJustify size={16} />} title="Căn đều" active={format.align === 'justify'} disabled={disabled} onClick={() => chain()?.setTextAlign('justify').run()} />
-                  <span className="rb-mini-sep" />
-                  <RibbonIconButton icon={<IconDirLtr size={16} />} title="Trái sang phải" active={format.dir === 'ltr'} disabled={disabled} onClick={() => live && applyFormatAttrs(live, { dir: 'ltr' })} />
-                  <RibbonIconButton icon={<IconDirRtl size={16} />} title="Phải sang trái" active={format.dir === 'rtl'} disabled={disabled} onClick={() => live && applyFormatAttrs(live, { dir: 'rtl' })} />
                   <span className="rb-mini-sep" />
                   <Dropdown
                     value={String(format.lineHeight)}
@@ -641,7 +633,6 @@ export function Ribbon({
 
             <RibbonGroup label="Cỡ trang">
               <RibbonButton icon={<IconPrintLayout size={26} />} label="In" onClick={onPrint} />
-              <RibbonButton icon={<IconDoc size={26} />} label="Tỉ lệ" onClick={() => onZoomChange(zoom === 100 ? 125 : 100)} />
             </RibbonGroup>
           </>
         )}

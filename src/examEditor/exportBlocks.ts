@@ -150,10 +150,15 @@ function blockToHtml(b: ExamBlock, seq: BlockSeq): string {
     case 'paragraph':
       return `<p class="p"${formatCss(b.format)}>${richToHtml(b.text)}</p>`
 
-    case 'bullets':
-      return `<ul class="bul"${formatCss(b.format)}>${b.items
-        .map((i) => `<li>${richToHtml(i)}</li>`)
-        .join('')}</ul>`
+    case 'bullets': {
+      const tag = b.ordered ? 'ol' : 'ul'
+      return `<${tag} class="bul"${formatCss(b.format)}>${b.items
+        .map((i, n) => {
+          const lv = b.levels?.[n] ?? 0
+          return `<li${lv ? ` style="margin-left:${lv * 24}px"` : ''}>${richToHtml(i)}</li>`
+        })
+        .join('')}</${tag}>`
+    }
 
     case 'grid': {
       const width = Math.round(100 / (b.cols || 2))

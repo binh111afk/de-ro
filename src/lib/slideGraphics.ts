@@ -132,13 +132,30 @@ export function graphicFits(id: string, text: string): boolean {
   return false
 }
 
-/** SVG sẵn sàng nhúng: đổi màu nét, ép phủ kín hộp chứa. */
-export function graphicMarkup(id: string, ink = GRAPHIC_INK): string {
+/** màu pastel được tô nhiều nhất trong SVG (bỏ nét và trắng): đó là "màu chủ đạo" của hình */
+function dominantFill(svg: string): string | null {
+  const count = new Map<string, number>()
+  for (const [, color] of svg.matchAll(/fill="(#[0-9a-fA-F]{6})"/g)) {
+    if (color.toUpperCase() === GRAPHIC_INK || color.toUpperCase() === '#FFFFFF') continue
+    count.set(color, (count.get(color) ?? 0) + 1)
+  }
+  return [...count.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? null
+}
+
+/** màu chủ đạo hiện tại của đồ hoạ (để bảng màu hiện đúng màu đang dùng) */
+export function graphicMainColor(id: string | undefined): string {
+  const graphic = graphicById(id)
+  return (graphic && dominantFill(graphic.svg)) ?? '#b9d4ea'
+}
+
+/** SVG sẵn sàng nhúng: đổi màu nét và (tuỳ chọn) màu chủ đạo, ép phủ kín hộp chứa. */
+export function graphicMarkup(id: string, ink = GRAPHIC_INK, main?: string): string {
   const graphic = graphicById(id)
   if (!graphic) return ''
-  return graphic.svg
-    .replace(/^<svg /, '<svg width="100%" height="100%" preserveAspectRatio="xMidYMid meet" ')
-    .replaceAll(GRAPHIC_INK, ink)
+  let svg = graphic.svg.replace(/^<svg /, '<svg width="100%" height="100%" preserveAspectRatio="xMidYMid meet" ')
+  const dominant = main ? dominantFill(svg) : null
+  if (main && dominant) svg = svg.replaceAll(`fill="${dominant}"`, `fill="${main}"`)
+  return svg.replaceAll(GRAPHIC_INK, ink)
 }
 
 /**

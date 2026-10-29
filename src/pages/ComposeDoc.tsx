@@ -125,6 +125,8 @@ function sanitizeBlocks(raw: unknown): ExamBlock[] {
         out.push({
           type: 'bullets',
           items: list(b.items) as RichText[],
+          ...(b.ordered === true ? { ordered: true } : {}),
+          ...(Array.isArray(b.levels) ? { levels: b.levels.map(Number) } : {}),
           format: fmt(b.format),
         })
         break
@@ -661,10 +663,6 @@ export default function ComposeDoc() {
             onSave={handleSaveSlide}
             onNewDeck={newSlide}
             onImportFile={handleImportSlides}
-            onRename={(title) => {
-              updateDeck(activeDeck.id, { title })
-              renameTab(activeDeck.id, title)
-            }}
           />
         </div>
       ) : (

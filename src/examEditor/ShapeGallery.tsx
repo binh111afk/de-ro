@@ -2,7 +2,7 @@
 import { PRESET_GROUPS, presetPaths } from '@/lib/slidePresets'
 
 /** Hình xem trước kiểu nét viền (như bảng Shapes của PowerPoint): không tô nền, nét mảnh, đỡ dính nhau ở sao/răng cưa. */
-function Preview({ prst }: { prst: string }) {
+export function ShapePreview({ prst }: { prst: string }) {
   const line = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.3, strokeLinejoin: 'round' as const, strokeLinecap: 'round' as const }
   if (prst === 'line' || prst === 'lineArrow' || prst === 'lineArrowDouble') {
     const end = prst !== 'line'
@@ -27,13 +27,23 @@ function Preview({ prst }: { prst: string }) {
   )
 }
 
-export function ShapeGallery({ onPick }: { onPick: (prst: string) => void }) {
+/** nhóm hình còn lại sau khi lọc theo tên (không lọc = toàn bộ thư viện) */
+function visibleGroups(query: string) {
+  const q = query.trim().toLowerCase()
+  if (!q) return PRESET_GROUPS
+  return PRESET_GROUPS.map((group) => ({ ...group, shapes: group.shapes.filter((s) => s.label.toLowerCase().includes(q)) })).filter(
+    (group) => group.shapes.length > 0,
+  )
+}
+
+export function ShapeGallery({ onPick, query = '', scroll = true }: { onPick: (prst: string) => void; query?: string; scroll?: boolean }) {
+  // ribbon: có vùng cuộn riêng; panel: để panel chính cuộn, khỏi lồng hai thanh cuộn
   return (
-    <div className="max-h-[420px] w-[352px] overflow-y-auto p-1" onMouseDown={(e) => e.preventDefault()}>
-      {PRESET_GROUPS.map((group) => (
+    <div className={scroll ? 'max-h-[420px] w-[352px] max-w-full overflow-y-auto p-1' : 'w-full p-1'} onMouseDown={(e) => e.preventDefault()}>
+      {visibleGroups(query).map((group) => (
         <section key={group.group} className="mb-2 last:mb-0">
           <h4 className="mb-1 px-1 text-[11.5px] font-semibold text-ink-3">{group.group}</h4>
-          <div className="grid grid-cols-8 gap-1">
+          <div className="grid grid-cols-[repeat(auto-fill,40px)] gap-1">
             {group.shapes.map((shape) => (
               <button
                 key={shape.prst}
@@ -43,7 +53,7 @@ export function ShapeGallery({ onPick }: { onPick: (prst: string) => void }) {
                 className="flex size-[40px] items-center justify-center rounded-md text-ink-2 transition-colors hover:bg-paper-2 hover:text-clay"
                 onClick={() => onPick(shape.prst)}
               >
-                <Preview prst={shape.prst} />
+                <ShapePreview prst={shape.prst} />
               </button>
             ))}
           </div>

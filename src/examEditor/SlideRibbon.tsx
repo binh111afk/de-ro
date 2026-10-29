@@ -3,6 +3,7 @@ import {
   IconAlignCenter,
   IconAlignLeft,
   IconAlignRight,
+  IconBorderAll,
   IconCaret,
   IconChart,
   IconCopy,
@@ -60,6 +61,7 @@ import {
 import { useAnchoredPopover, popoverStyle } from './useAnchoredPopover'
 import type { Deck, DeckTheme, Slide, SlideElement, SlideElType, SlideTone } from '@/store/docs'
 import { DECK_THEMES, normalizeTheme } from '@/lib/slideTheme'
+import { graphicMainColor } from '@/lib/slideGraphics'
 import {
   SLIDE_LAYOUTS,
   defaultTone,
@@ -76,7 +78,7 @@ export type SlideRibbonTab =
   | 'animations'
   | 'slideShow'
   | 'view'
-  | 'shapeFormat'
+  | 'elementFormat'
   | 'pictureFormat'
   | 'tableDesign'
   | 'chartDesign'
@@ -143,12 +145,13 @@ const TABS: RibbonTabDef[] = [
 ]
 
 const CONTEXT_LABELS: Record<SlideElType, { id: SlideRibbonTab; label: string } | null> = {
-  text: { id: 'shapeFormat', label: 'Định dạng hình' },
-  shape: { id: 'shapeFormat', label: 'Định dạng hình' },
+  // chữ không có tab này (chỉnh ở Trang chủ); hình, icon, đồ hoạ và đường nối dùng chung tab Thành phần
+  text: null,
+  shape: { id: 'elementFormat', label: 'Thành phần' },
   image: { id: 'pictureFormat', label: 'Định dạng ảnh' },
-  icon: { id: 'shapeFormat', label: 'Định dạng hình' },
-  graphic: { id: 'shapeFormat', label: 'Định dạng đồ hoạ' },
-  connector: { id: 'shapeFormat', label: 'Định dạng đường nối' },
+  icon: { id: 'elementFormat', label: 'Thành phần' },
+  graphic: { id: 'elementFormat', label: 'Thành phần' },
+  connector: { id: 'elementFormat', label: 'Thành phần' },
   table: { id: 'tableDesign', label: 'Thiết kế bảng' },
   chart: { id: 'chartDesign', label: 'Thiết kế biểu đồ' },
   formula: null,
@@ -751,47 +754,205 @@ export function SlideRibbon(props: SlideRibbonProps) {
     </>
   )
 
-  const renderContext = () => (
-    <>
-      <RibbonGroup label="Kiểu hình">
-        <Anchored
-          open={popup === 'fill'}
-          minWidth={190}
-          trigger={
-            <RibbonButton
-              icon={<><IconFillColor size={28} /><Caret /></>}
-              label="Màu tô"
-              onClick={() => toggle('fill')}
-              active={popup === 'fill'}
-              disabled={!selected || selected.type === 'image'}
+  /** tab ngữ cảnh "Thành phần": hiện khi chọn hình khối, icon, đồ hoạ hoặc đường nối */
+  const renderElementFormat = () => {
+    const isShape = selected?.type === 'shape' || selected?.type === 'connector'
+    const transparency = Math.round((1 - (selected?.opacity ?? 1)) * 100)
+    return (
+      <>
+        <RibbonGroup label={isShape ? 'Tô' : selected?.type === 'graphic' ? 'Màu nét' : 'Màu'}>
+          <Anchored
+            open={popup === 'fill'}
+            minWidth={190}
+            trigger={
+              <RibbonButton
+                icon={<><IconFillColor size={28} /><Caret /></>}
+                label={isShape ? 'Màu tô' : selected?.type === 'graphic' ? 'Màu nét' : 'Màu'}
+                onClick={() => toggle('fill')}
+                active={popup === 'fill'}
+                disabled={!selected}
+              />
+            }
+          >
+            <ColorPalette
+              value={isShape ? (selected?.fill ?? deck.theme.accent) : (selected?.textColor ?? deck.theme.fg)}
+              themeColors={[deck.theme.accent, deck.theme.fg]}
+              onPick={(c) => {
+                onUpdateSelected(isShape ? { fill: c } : { textColor: c })
+                close()
+              }}
             />
-          }
-        >
-          <ColorPalette
-            value={selected?.fill ?? deck.theme.accent}
-            themeColors={[deck.theme.accent, deck.theme.fg]}
-            onPick={(fill) => {
-              onUpdateSelected({ fill })
-              close()
-            }}
-          />
-        </Anchored>
-      </RibbonGroup>
-      <div className="ribbon-sep" />
-      <RibbonGroup label="Sắp xếp">
-        <RibbonButton icon={<IconAlignCenter size={28} />} label="Căn giữa slide" onClick={() => onAlign('middle')} disabled={!selected} />
-        <RibbonButton icon={<IconObjFlipH size={28} />} label="Lật ngang" onClick={() => onFlip('x')} disabled={!selected} />
-        <RibbonButton icon={<IconObjFlipV size={28} />} label="Lật dọc" onClick={() => onFlip('y')} disabled={!selected} />
-      </RibbonGroup>
-      <div className="ribbon-sep" />
-      <RibbonGroup label="Đối tượng">
-        <RibbonButton icon={<IconTrash size={28} />} label="Xóa" onClick={onDeleteSelected} disabled={!selected} />
-      </RibbonGroup>
-    </>
-  )
+          </Anchored>
+        </RibbonGroup>
+
+        {selected?.type === 'graphic' && (
+          <RibbonGroup label="Chủ đạo">
+            <Anchored
+              open={popup === 'main'}
+              minWidth={190}
+              trigger={
+                <RibbonButton
+                  icon={<><IconFillColor size={28} /><Caret /></>}
+                  label="Màu chủ đạo"
+                  onClick={() => toggle('main')}
+                  active={popup === 'main'}
+                />
+              }
+            >
+              <ColorPalette
+                value={selected.fill ?? graphicMainColor(selected.graphicId)}
+                themeColors={[deck.theme.accent, deck.theme.fg]}
+                onPick={(c) => onUpdateSelected({ fill: c })}
+                onClose={close}
+              />
+            </Anchored>
+          </RibbonGroup>
+        )}
+
+        {isShape && (
+          <>
+            <div className="ribbon-sep" />
+            <RibbonGroup label="Viền">
+              <div className="rb-col">
+                <div className="rb-row">
+                  <Anchored
+                    open={popup === 'border'}
+                    minWidth={190}
+                    trigger={
+                      <RibbonButton
+                        icon={<><IconBorderAll size={28} /><Caret /></>}
+                        label="Màu viền"
+                        onClick={() => toggle('border')}
+                        active={popup === 'border'}
+                        disabled={!selected}
+                      />
+                    }
+                  >
+                    <ColorPalette
+                      value={selected?.borderColor ?? deck.theme.fg}
+                      themeColors={[deck.theme.accent, deck.theme.fg]}
+                      onPick={(c) => {
+                        onUpdateSelected({ borderColor: c })
+                        close()
+                      }}
+                    />
+                  </Anchored>
+                </div>
+                <div className="rb-row">
+                  <Dropdown
+                    value={String(selected?.border ?? 0)}
+                    options={[0, 1, 2, 3, 4, 6, 8].map((w) => ({ value: String(w), label: w === 0 ? 'Không viền' : `${w} px` }))}
+                    onPick={(v) => onUpdateSelected({ border: Number(v) })}
+                    disabled={!selected}
+                    ariaLabel="Độ dày viền"
+                    width={96}
+                  />
+                  <Dropdown
+                    value={selected?.borderStyle ?? 'solid'}
+                    options={[
+                      { value: 'solid', label: 'Liền' },
+                      { value: 'dashed', label: 'Đứt' },
+                      { value: 'dotted', label: 'Chấm' },
+                    ]}
+                    onPick={(v) => onUpdateSelected({ borderStyle: v as NonNullable<SlideElement['borderStyle']> })}
+                    disabled={!selected}
+                    ariaLabel="Kiểu nét viền"
+                    width={80}
+                  />
+                </div>
+              </div>
+            </RibbonGroup>
+          </>
+        )}
+
+        <div className="ribbon-sep" />
+        <RibbonGroup label="Hiệu ứng">
+          <div className="rb-col">
+            <div className="rb-row">
+              <label className="rb-inline-label">
+                Trong suốt
+                <input
+                  type="range"
+                  min={0}
+                  max={90}
+                  step={5}
+                  value={transparency}
+                  disabled={!selected}
+                  onChange={(e) => onUpdateSelected({ opacity: 1 - Number(e.target.value) / 100 })}
+                  aria-label="Độ trong suốt"
+                  className="w-24"
+                />
+                <span className="tnum">{transparency}%</span>
+              </label>
+            </div>
+            <div className="rb-row">
+              <Dropdown
+                value={String(selected?.shadowLevel ?? 0)}
+                options={[
+                  { value: '0', label: 'Không bóng' },
+                  { value: '1', label: 'Bóng nhẹ' },
+                  { value: '2', label: 'Bóng vừa' },
+                  { value: '3', label: 'Bóng đậm' },
+                ]}
+                onPick={(v) => onUpdateSelected({ shadowLevel: Number(v) as 0 | 1 | 2 | 3 })}
+                disabled={!selected}
+                ariaLabel="Bóng đổ"
+                width={112}
+              />
+              {selected?.shape === 'round' && (
+                <label className="rb-inline-label">
+                  Bo góc
+                  <input
+                    className="rb-num-input"
+                    type="number"
+                    min={0}
+                    max={80}
+                    value={selected.radius ?? 0}
+                    onChange={(e) => onUpdateSelected({ radius: Math.max(0, Number(e.target.value)) })}
+                    aria-label="Bo góc"
+                  />
+                </label>
+              )}
+            </div>
+          </div>
+        </RibbonGroup>
+
+        <div className="ribbon-sep" />
+        <RibbonGroup label="Xoay">
+          <div className="rb-row">
+            <label className="rb-inline-label">
+              Góc
+              <input
+                className="rb-num-input"
+                type="number"
+                min={0}
+                max={359}
+                value={Math.round(selected?.rotation ?? 0)}
+                disabled={!selected}
+                onChange={(e) => onUpdateSelected({ rotation: ((Number(e.target.value) % 360) + 360) % 360 })}
+                aria-label="Góc xoay"
+              />
+              °
+            </label>
+          </div>
+        </RibbonGroup>
+
+        <div className="ribbon-sep" />
+        <RibbonGroup label="Sắp xếp">
+          <RibbonButton icon={<IconAlignCenter size={28} />} label="Căn giữa slide" onClick={() => onAlign('middle')} disabled={!selected} />
+          <RibbonButton icon={<IconObjFlipH size={28} />} label="Lật ngang" onClick={() => onFlip('x')} disabled={!selected} />
+          <RibbonButton icon={<IconObjFlipV size={28} />} label="Lật dọc" onClick={() => onFlip('y')} disabled={!selected} />
+        </RibbonGroup>
+        <div className="ribbon-sep" />
+        <RibbonGroup label="Đối tượng">
+          <RibbonButton icon={<IconTrash size={28} />} label="Xóa" onClick={onDeleteSelected} disabled={!selected} />
+        </RibbonGroup>
+      </>
+    )
+  }
 
   const body = activeContext
-    ? renderContext()
+    ? renderElementFormat()
     : activeTab === 'home'
       ? renderHome()
       : activeTab === 'insert'
