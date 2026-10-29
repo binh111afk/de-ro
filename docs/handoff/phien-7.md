@@ -1,5 +1,7 @@
 ## BÀN GIAO PHIÊN 7 (29/10/2026) — soạn đề (ribbon Word), trình soạn slide kiểu Canva. Đọc mục này TRƯỚC.
 
+> Đã commit trong nhánh `feat/slide-panel-ui` ở phiên 8 (xem [phien-8.md](phien-8.md)); đoạn dưới là trạng thái lúc viết.
+
 Nhánh `main`, **chưa commit**. Working tree có thay đổi (xem danh sách dưới) và hai file mới chưa theo dõi. Chưa đẩy lên đâu. Chưa tạo PR. Chỉ commit khi người dùng yêu cầu.
 
 ### Đã làm
