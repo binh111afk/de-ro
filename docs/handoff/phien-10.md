@@ -12,6 +12,17 @@
   - `Tệp → Làm đề tương tác` ở trình soạn giờ chuyển đề sang bản nháp ở trang này (`examToDraft`), không vào thẳng làm bài. Chuyển lại thì hỏi mở bản đã chỉnh hay chuyển lại từ đầu.
 - Header: ẩn nút "Soạn đề miễn phí" dưới `xl` (thêm tab làm hàng nút vỡ ở 1024px).
 
+## Xuất Word thành .docx thật (sau khi đã gộp main)
+
+Trước đây "Tải Word" lưu một trang HTML đổi đuôi `.doc` (Word mở được nhưng hay cảnh báo, Google Docs/điện thoại dễ vỡ). Giờ xuất `.docx` thật bằng thư viện `docx`:
+
+- `src/examEditor/docxBlocks.ts`: `buildDocx(ExamDoc)` dựng OOXML bám bố cục bản HTML (A4, lề 1,8 × 1,6 cm, Times New Roman 13pt, phương án 2 cột bằng bảng, 4 ô trả lời ngắn, bảng đáp án lưới đều, danh sách đánh số, ngắt trang, định dạng đoạn/mark). Nạp động (chunk riêng ~188 kB), không nằm trong bundle chính.
+- `exportBlocks.ts`: `exportDocBlocks` gọi bản trên, tải `<tên>.docx`. `buildWordHtml` vẫn còn vì bản in và `test:export` dùng chung CSS.
+- `src/lib/exportDocx.ts`: `examToDoc(Exam)` đổi đề tương tác sang khối soạn rồi dùng chung bộ xuất (nút Tải Word ở trang xem đề cộng đồng, trước đây cũng là `.doc`).
+- `src/lib/mathText.ts`: `plainText`/`formatPoints` tách khỏi `math.ts` (file này nạp CSS KaTeX nên không chạy được bằng Node); `math.ts` re-export.
+- Test: `npm run test:docx` (zip OOXML, mammoth đọc lại được, thứ tự câu, tiêu đề in hoa, ngắt trang); đã mở file mẫu bằng LibreOffice → PDF để xem bố cục.
+- **Giới hạn:** công thức `$…$` vẫn ra dạng chữ như bản `.doc` cũ (chưa đổi LaTeX sang equation của Word); chưa mở bằng Microsoft Word thật.
+
 ## Đăng lên cộng đồng
 
 Không đổi schema Supabase: đề online được đăng vào `community_exams.doc` dạng `ExamDoc` rỗng khối + trường `online` (cả `Exam` kèm `settings`). `docToExam` thấy `doc.online` thì trả nguyên đề đó. Đề đăng sẽ hiện trong trang Đề cộng đồng như đề thường. Bản đăng không tự cập nhật khi sửa đề (có nút "Đăng lại bản mới").

@@ -94,6 +94,7 @@ npm run test:export     # 5/5 pass (đánh số + phương án 2 cột khi xuấ
 npm run test:layout     # 7/7 pass (chọn số cột phương án)
 npm run test:grading    # chấm điểm đề THPT 2025: nhiều lựa chọn, đúng/sai (0,1/0,25/0,5/1), trả lời ngắn (≤4 ký tự)
 npm run test:online     # đề tạo online: kiểm lỗi câu, xếp theo dạng, dựng đề, đề đăng (doc.online), đề từ trình soạn về bản nháp
+npm run test:docx       # xuất .docx thật: zip OOXML, mammoth đọc lại được, thứ tự câu
 npm run test:slide-text # 5/5 pass (chiều cao hộp chữ slide)
 npm run test:slide-theme # 4/4 pass (theme v2: normalize/tương phản/catalog)
 npm run test:slide-layout # 10/10 pass (layout v1+v2: 14 bố cục/quiz/tone)

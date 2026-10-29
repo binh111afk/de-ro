@@ -1,6 +1,7 @@
 import katex from 'katex'
 import 'katex/contrib/mhchem' // \ce{...} cho phương trình hoá học
 import 'katex/dist/katex.min.css'
+export { formatPoints, plainText } from './mathText'
 
 /**
  * Render a string that may contain `$...$` inline math and `$$...$$` display math.
@@ -43,14 +44,6 @@ export function escapeHtml(s: string): string {
     .replace(/"/g, '&quot;')
 }
 
-/** Strip math markup down to plain text — used for search indexing and previews. */
-export function plainText(input: string): string {
-  return input
-    .replace(/\$\$([\s\S]*?)\$\$/g, '$1')
-    .replace(/\$([^$\n]+?)\$/g, '$1')
-    .replace(/\\[a-zA-Z]+/g, '')
-    .replace(/[{}]/g, '')
-}
 
 /** Vietnamese-friendly number formatting for the UI (1.234,5). */
 export function formatNumber(n: number, digits = 2): string {
@@ -60,10 +53,3 @@ export function formatNumber(n: number, digits = 2): string {
   })
 }
 
-/** Points use the Vietnamese comma: 0,25 */
-export function formatPoints(p: number): string {
-  return p.toLocaleString('vi-VN', {
-    minimumFractionDigits: p % 1 === 0 ? 0 : 2,
-    maximumFractionDigits: 2,
-  })
-}
