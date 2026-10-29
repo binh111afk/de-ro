@@ -386,6 +386,16 @@ export function SlideEditor({
     setElementImage(slideId, elId, await uploadImage(image.dataUrl))
   }
 
+  // Panel thư viện được memo để kéo phần tử (cập nhật deck mỗi lần di chuột) không vẽ lại hàng trăm đồ hoạ;
+  // handler đi qua ref để callback ổn định mà vẫn luôn gọi bản mới nhất (không giữ deck cũ).
+  const panelHandlers = useRef({ insert: (_el: SlideElement) => {}, addLayout: (_id: SlideLayoutId) => {} })
+  panelHandlers.current = {
+    insert: (el) => { addElement(el); setSelectedElementId(el.id) },
+    addLayout: addLayoutSlide,
+  }
+  const insertFromPanel = useCallback((el: SlideElement) => panelHandlers.current.insert(el), [])
+  const addLayoutFromPanel = useCallback((id: SlideLayoutId) => panelHandlers.current.addLayout(id), [])
+
   const previewElement = useCallback(
     (slideId: string, elId: string, patch: Partial<SlideElement>) => {
       updateDeck({
@@ -869,8 +879,8 @@ export function SlideEditor({
         accent={theme.accent}
         canInsert={Boolean(currentSlide) && !currentSlide?.html}
         hint={`${deck.title} ${(currentSlide?.elements ?? []).map((e) => e.text ?? '').join(' ').replace(/<[^>]+>/g, ' ')}`}
-        onAddLayoutSlide={addLayoutSlide}
-        onInsert={(el) => { addElement(el); setSelectedElementId(el.id) }}
+        onAddLayoutSlide={addLayoutFromPanel}
+        onInsert={insertFromPanel}
       />
 
       {/* ---------------- sân soạn (giữa) ---------------- */}
@@ -999,6 +1009,9 @@ export function SlideEditor({
                 onUpdate={(patch) => updateElement(currentSlide.id, selectedElement.id, patch)}
                 onEditText={() => setEditingShapeId(selectedElement.id)}
                 onDelete={() => removeElement(currentSlide.id, selectedElement.id)}
+                onArrange={arrangeSelected}
+                elements={currentSlide.elements}
+                onSelectLayer={setSelectedElementId}
                 onDuplicate={() => {
                   const copy = { ...selectedElement, id: uid(), x: selectedElement.x + 3, y: selectedElement.y + 3 }
                   addElement(copy)
@@ -1623,6 +1636,8 @@ function AutoFitText({
   letterSpacing,
   valign,
   focusOnMount,
+  locked,
+  onDone,
   onChange,
 }: {
   value: string
@@ -1632,6 +1647,10 @@ function AutoFitText({
   valign?: 'top' | 'middle'
   /** focus ô chữ ngay khi hiện (gõ chữ trong hình khối) */
   focusOnMount?: boolean
+  /** chưa sửa chữ: textarea không nhận chuột để bấm một lần chỉ chọn/kéo hộp, nhấp đúp mới sửa */
+  locked?: boolean
+  /** rời ô chữ (mất focus) */
+  onDone?: () => void
   weight: number
   fontFamily?: string
   fontStyle?: 'normal' | 'italic'
@@ -1655,6 +1674,15 @@ function AutoFitText({
   useEffect(() => {
     setSize(baseSize)
   }, [baseSize])
+
+  // nhấp đúp mở khoá ô chữ: vào ô và đặt con trỏ cuối chữ (autoFocus chỉ chạy lúc gắn, ô này đã gắn sẵn)
+  useEffect(() => {
+    if (locked !== false) return
+    const ta = ref.current
+    if (!ta) return
+    ta.focus()
+    ta.setSelectionRange(ta.value.length, ta.value.length)
+  }, [locked])
 
   useLayoutEffect(() => {
     const ta = ref.current
@@ -1726,7 +1754,12 @@ function AutoFitText({
     <textarea
       ref={ref}
       autoFocus={editing || focusOnMount}
-      onBlur={() => setEditing(false)}
+      onBlur={() => {
+        setEditing(false)
+        onDone?.()
+      }}
+      readOnly={locked}
+      tabIndex={locked ? -1 : undefined}
       value={value}
       onChange={(e) => onChange(e.target.value)}
       className={cn('w-full resize-none overflow-hidden bg-transparent p-[1%] outline-none', !middle && 'h-full')}
@@ -1743,6 +1776,7 @@ function AutoFitText({
         textAlign: align,
         lineHeight: lineHeight ?? 1.25,
         letterSpacing: letterSpacing ? `${letterSpacing}em` : undefined,
+        pointerEvents: locked ? 'none' : undefined,
       }}
     />
   )
@@ -1912,8 +1946,17 @@ function EditableEl({
     onPointerDown: (e: React.PointerEvent) => startDrag(e, 'move'),
   }
 
-  // sát mép dưới slide thì nút xoay không còn chỗ phía dưới (bị cắt) nên lật lên đỉnh
-  const rotTop = el.y + elementHeight(el) > 88
+  // sát mép dưới slide thì nút xoay không còn chỗ phía dưới (bị cắt) nên lật lên đỉnh;
+  // phần tử phủ gần kín slide (không còn chỗ trên lẫn dưới) thì đặt nút xoay vào trong, sát đáy
+  const bottomEdge = el.y + elementHeight(el) > 88
+  const rotTop = bottomEdge && el.y > 10
+  const rotInside = bottomEdge && !(el.y > 10)
+  // khung slide cắt phần tràn ra ngoài: cạnh nào chạm mép slide thì tay nắm resize dời vào trong để còn kéo được
+  const edgeH = elementHeight(el)
+  const atL = el.x < 1.5
+  const atR = el.x + el.w > 98.5
+  const atT = el.y < 1.5
+  const atB = el.y + edgeH > 98.5
 
   /** Xoay quanh tâm hộp; giữ Shift để bắt góc 15°. */
   const startRotate = (e: React.PointerEvent) => {
@@ -1949,10 +1992,14 @@ function EditableEl({
         <span
           key={dir}
           className={`slide-el-handle slide-el-handle--${dir}`}
+          style={{
+            marginLeft: dir.includes('w') && atL ? 0 : dir.includes('e') && atR ? -10 : undefined,
+            marginTop: dir.includes('n') && atT ? 0 : dir.includes('s') && atB ? -10 : undefined,
+          }}
           onPointerDown={(e) => startDrag(e, 'resize', dir)}
         />
       ))}
-      <span className={`slide-el-rotate${rotTop ? ' slide-el-rotate--top' : ''}`} title="Xoay" onPointerDown={startRotate}>
+      <span className={`slide-el-rotate${rotTop ? ' slide-el-rotate--top' : ''}${rotInside ? ' slide-el-rotate--in' : ''}`} title="Xoay" onPointerDown={startRotate}>
         <RotateCw size={11} strokeWidth={2} />
       </span>
     </>
@@ -1960,8 +2007,11 @@ function EditableEl({
 
   if (el.type === 'text')
     return (
-      <div {...common} style={{ ...style, cursor: selected ? 'move' : 'default' }}>
+      <div {...common} style={{ ...style, cursor: selected && !editingText ? 'move' : 'default' }} onDoubleClick={() => onEditingText(true)}>
         <AutoFitText
+          locked={!editingText}
+          focusOnMount={editingText}
+          onDone={() => onEditingText(false)}
           value={el.text ?? ''}
           baseSize={el.fontSize ?? (el.variant === 'body' ? 2.4 : 3.6)}
           weight={el.fontWeight ?? (el.variant === 'body' ? 500 : 600)}
@@ -2103,16 +2153,17 @@ function EditableEl({
 
   if (el.type === 'image')
     return (
-      <div
-        {...common}
-        className={cn(
-          'flex items-center justify-center overflow-hidden',
-          el.shape === 'ellipse' ? 'rounded-full' : 'rounded-[1cqw]',
-          el.src
-            ? ''
-            : 'border-2 border-dashed border-[#9ca3af] text-[1.8cqw] text-[#6b7280]',
-        )}
-      >
+      <div {...common}>
+        {/* ô cắt (bo góc/elip) tách khỏi khung ngoài để tay nắm resize và xoay không bị overflow-hidden cắt mất */}
+        <div
+          className={cn(
+            'flex h-full w-full items-center justify-center overflow-hidden',
+            el.shape === 'ellipse' ? 'rounded-full' : 'rounded-[1cqw]',
+            el.src
+              ? ''
+              : 'border-2 border-dashed border-[#9ca3af] text-[1.8cqw] text-[#6b7280]',
+          )}
+        >
         {el.src ? (
           <img src={el.src} alt="" className="h-full w-full object-cover" />
         ) : (
@@ -2162,6 +2213,7 @@ function EditableEl({
             ) : null}
           </div>
         )}
+        </div>
         {handle}
       </div>
     )

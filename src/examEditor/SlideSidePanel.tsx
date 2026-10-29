@@ -6,7 +6,7 @@
  * khối và đồ hoạ vector, chia nhóm theo chủ đề), Icon (biểu tượng đơn sắc, chia
  * nhóm) và Tải lên (ảnh của giáo viên). Ô tìm kiếm ở Thành phần và Icon lọc theo tên.
  */
-import { useMemo, useState } from 'react'
+import { memo, useMemo, useState } from 'react'
 import { ChevronLeft, ChevronRight, LayoutTemplate, Shapes, Smile, Upload } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import { SLIDE_LAYOUTS, type SlideLayoutId } from '@/lib/slideLayouts'
@@ -41,7 +41,7 @@ interface SlideSidePanelProps {
   onInsert: (el: SlideElement) => void
 }
 
-export function SlideSidePanel({ accent, canInsert, hint = '', onAddLayoutSlide, onInsert }: SlideSidePanelProps) {
+function SlideSidePanelImpl({ accent, canInsert, hint = '', onAddLayoutSlide, onInsert }: SlideSidePanelProps) {
   const [active, setActive] = useState<PanelId | null>(null)
   // panel cuối cùng đã mở: giữ nội dung trong lúc trượt đóng (và giữ vị trí cuộn khi mở lại)
   const [last, setLast] = useState<PanelId | null>(null)
@@ -96,10 +96,10 @@ export function SlideSidePanel({ accent, canInsert, hint = '', onAddLayoutSlide,
           )}
           {/* ô tìm kiếm nằm ngoài vùng cuộn (kiểu Canva): thanh cuộn chỉ chạy qua phần nội dung bên dưới */}
           <div className="flex min-h-0 flex-1 flex-col">
-            {shown === 'templates' && <Scroll><TemplatesPanel onPick={onAddLayoutSlide} /></Scroll>}
+            {shown === 'templates' && <Scroll><div className="pt-3"><TemplatesPanel onPick={onAddLayoutSlide} /></div></Scroll>}
             {shown === 'elements' && <ElementsPanel accent={accent} canInsert={canInsert} hint={hint} onInsert={onInsert} />}
             {shown === 'icons' && <IconsPanel canInsert={canInsert} onInsert={onInsert} />}
-            {shown === 'uploads' && <Scroll><UploadsPanel canInsert={canInsert} onInsert={onInsert} /></Scroll>}
+            {shown === 'uploads' && <Scroll><div className="pt-3"><UploadsPanel canInsert={canInsert} onInsert={onInsert} /></div></Scroll>}
           </div>
         </aside>
       )}
@@ -107,6 +107,8 @@ export function SlideSidePanel({ accent, canInsert, hint = '', onAddLayoutSlide,
     </div>
   )
 }
+
+export const SlideSidePanel = memo(SlideSidePanelImpl)
 
 function Scroll({ children }: { children: React.ReactNode }) {
   return <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-3">{children}</div>
@@ -372,6 +374,14 @@ function ElementsPanel({ accent, canInsert, hint, onInsert }: { accent: string; 
   )
 }
 
+/** SVG đồ hoạ mặc định hay được vẽ lại: nhớ chuỗi đã dựng thay vì replace trên SVG vài KB mỗi lần */
+const markupCache = new Map<string, string>()
+const cachedMarkup = (id: string) => {
+  let m = markupCache.get(id)
+  if (m === undefined) markupCache.set(id, (m = graphicMarkup(id)))
+  return m
+}
+
 function GraphicGrid({ items, onPick }: { items: Array<{ id: string; name: string }>; onPick: (id: string) => void }) {
   return (
     <div className="grid grid-cols-4 gap-1.5">
@@ -385,7 +395,7 @@ function GraphicGrid({ items, onPick }: { items: Array<{ id: string; name: strin
           className="flex aspect-square items-center justify-center rounded-md p-1.5 text-ink-2 transition-colors hover:bg-paper-2 hover:text-clay"
         >
           {/* SVG lấy từ registry đồ hoạ của dự án (không phải nội dung người dùng) */}
-          <span className="size-full [&>svg]:size-full" dangerouslySetInnerHTML={{ __html: graphicMarkup(g.id) }} />
+          <span className="size-full [&>svg]:size-full" dangerouslySetInnerHTML={{ __html: cachedMarkup(g.id) }} />
         </button>
       ))}
     </div>
