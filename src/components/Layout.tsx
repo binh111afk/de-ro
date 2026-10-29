@@ -14,6 +14,7 @@ import { useSession } from '@/lib/useSession'
 const NAV = [
   { to: '/', label: 'Trang chủ', end: true },
   { to: '/soan-de', label: 'Soạn đề' },
+  { to: '/tao-de-online', label: 'Tạo đề online' },
   { to: '/de-cong-dong', label: 'Đề cộng đồng' },
   { to: '/kho-tai-lieu', label: 'Kho tài liệu' },
 ]
@@ -83,8 +84,8 @@ export function Header() {
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
-          <Link to="/soan-de" className="hidden sm:block">
-            <Button variant="primary" size="sm">
+          <Link to="/soan-de" className="hidden xl:block">
+            <Button variant="primary" size="sm" className="whitespace-nowrap">
               Soạn đề miễn phí
             </Button>
           </Link>
@@ -117,12 +118,12 @@ export function Header() {
             <div className="hidden items-center gap-1.5 md:flex">
               <Link
                 to="/dang-nhap"
-                className="rounded-full px-3.5 py-2 text-[13.5px] font-semibold text-ink-3 transition-colors hover:text-ink"
+                className="whitespace-nowrap rounded-full px-3.5 py-2 text-[13.5px] font-semibold text-ink-3 transition-colors hover:text-ink"
               >
                 Đăng nhập
               </Link>
               <Link to="/dang-ky">
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" className="whitespace-nowrap">
                   Đăng ký
                 </Button>
               </Link>

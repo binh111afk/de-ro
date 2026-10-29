@@ -197,6 +197,8 @@ export interface ExamDoc {
   unit: string
   authority: string
   blocks: ExamBlock[]
+  /** đề tạo online đăng lên cộng đồng: giữ nguyên đề tương tác (kèm cài đặt), `blocks` để trống */
+  online?: import('@/data/types').Exam
   /** tiêu đề hiển thị trên tab */
   createdAt: string
   updatedAt: string

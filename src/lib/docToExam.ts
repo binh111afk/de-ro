@@ -19,6 +19,34 @@ const round2 = (n: number) => Math.round(n * 100) / 100
 /** Đáp án trả lời ngắn: một số, ví dụ "12", "-3,5", "0.25". */
 const NUMERIC = /^[-+]?\d+([.,]\d+)?$/
 
+const SOLUTION_HEAD = /lời giải|hướng dẫn giải|giải thích/i
+
+/**
+ * Phần lời giải luôn là phần cuối tài liệu: một tiêu đề ("Lời giải", "Hướng dẫn giải", "Giải thích")
+ * rồi các đoạn "Câu N: …" (trắc nghiệm, đúng/sai, trả lời ngắn) và "Bài N: …" (tự luận, khớp nhãn khi xuất Word).
+ * Đoạn không bắt đầu bằng "Câu/Bài N" nối vào mục trước. Khoá trả về: `c<N>` hoặc `b<N>`.
+ */
+function explanations(blocks: ExamDoc['blocks']): Map<string, string> {
+  const out = new Map<string, string>()
+  let at = -1
+  blocks.forEach((b, i) => {
+    if ((b.type === 'heading' || b.type === 'title') && SOLUTION_HEAD.test(toPlain(b.text))) at = i
+  })
+  let cur = ''
+  for (const b of blocks.slice(at + 1)) {
+    if (at < 0) break
+    const lines = b.type === 'paragraph' ? [toPlain(b.text)] : b.type === 'bullets' ? b.items.map(toPlain) : []
+    for (const line of lines) {
+      const m = line.match(/^\s*(Câu|Bài)\s*(\d+)\s*[.:)–-]?\s*([\s\S]*)$/i)
+      if (m) {
+        cur = (m[1].toLowerCase() === 'bài' ? 'b' : 'c') + m[2]
+        out.set(cur, m[3].trim())
+      } else if (cur && line.trim()) out.set(cur, `${out.get(cur)}\n${line.trim()}`.trim())
+    }
+  }
+  return out
+}
+
 /** Số La Mã cho tên phần (tối đa 4 phần: trắc nghiệm, đúng/sai, trả lời ngắn, tự luận). */
 const ROMAN = ['I', 'II', 'III', 'IV']
 
@@ -30,6 +58,7 @@ const ROMAN = ['I', 'II', 'III', 'IV']
  * - Tự luận: giữ nội dung và điểm; đáp án (nếu có) làm lời giải tham khảo, không tự chấm.
  */
 export function docToExam(doc: ExamDoc, id: string): Exam {
+  if (doc.online) return { ...doc.online, id }
   // Khối đáp án đánh số chung cho cả trắc nghiệm và tự luận nên một số câu có thể có
   // nhiều mục: trắc nghiệm lấy mục dạng chữ cái (A–D), tự luận lấy mục còn lại.
   const keys = new Map<number, string[]>()
@@ -51,6 +80,7 @@ export function docToExam(doc: ExamDoc, id: string): Exam {
   const essayAnswer = (no: number) =>
     (keys.get(no) ?? []).find((a) => !letterOf(a) && !(used.get(no) ?? []).includes(a))
 
+  const explain = explanations(doc.blocks)
   const questionBlocks = doc.blocks.filter((b): b is QuestionBlock => b.type === 'question')
   const mcqBlocks = questionBlocks.filter((b) => b.kind !== 'tf' && b.kind !== 'short')
   const tfBlocks = questionBlocks.filter((b) => b.kind === 'tf')
@@ -71,6 +101,7 @@ export function docToExam(doc: ExamDoc, id: string): Exam {
     prompt: toPlain(b.text),
     options: b.options.map((o) => ({ key: o.label, text: toPlain(o.text) })),
     answer: mcqAnswer(b.no),
+    explanation: explain.get(`c${b.no}`) || undefined,
     points: mcqPoints,
   }))
 
@@ -85,6 +116,7 @@ export function docToExam(doc: ExamDoc, id: string): Exam {
       prompt: toPlain(b.text),
       options: b.options.map((o) => ({ key: o.label.toLowerCase(), text: toPlain(o.text) })),
       answer: parsed ? formatTrueFalse(parsed) : undefined,
+      explanation: explain.get(`c${b.no}`) || undefined,
       points: 1,
     }
   })
@@ -97,19 +129,21 @@ export function docToExam(doc: ExamDoc, id: string): Exam {
       type: 'tra-loi-ngan',
       prompt: toPlain(b.text),
       answer: raw ? normalizeShort(raw) : undefined,
+      explanation: explain.get(`c${b.no}`) || undefined,
       points: shortPoints,
     }
   })
 
   const essays: Question[] = essayBlocks.map((b, i) => {
     const answer = essayAnswer(b.no)
+    const written = explain.get(`b${b.no}`)
     return {
       id: `${id}-e${i}`,
       number: i + 1,
       type: 'tu-luan',
       prompt: [toPlain(b.text), ...(b.sub ?? []).map(toPlain)].filter(Boolean).join('\n'),
       points: b.score,
-      solution: answer ? [answer] : undefined,
+      solution: written ? written.split('\n') : answer ? [answer] : undefined,
     }
   })
 
