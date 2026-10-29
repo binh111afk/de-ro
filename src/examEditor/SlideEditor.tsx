@@ -8,23 +8,17 @@
  */
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { ColorPalette } from './ColorPalette'
 import { SelectionToolbar } from './SelectionToolbar'
+import { SlideSidePanel } from './SlideSidePanel'
+import { SlideStrip } from './SlideStrip'
 import { rewriteElement } from '@/lib/slideRewrite'
 import { keepCustomBg, slideBgStyle, withBackground } from '@/lib/slideBackground'
 import { shapeClipOf } from '@/lib/slideShapes'
 import { isPresetShape, isStrokeOnlyShape, presetPaths, prstOf } from '@/lib/slidePresets'
-import {
-  ChevronLeft,
-  ChevronRight,
-  Copy,
-  Minimize2,
-  MonitorPlay,
-  Plus,
-  RotateCw,
-  Trash2,
-} from 'lucide-react'
-import { SLIDE_ASSETS, isSlideAssetId } from '@/lib/slideAssets'
-import { graphicById, graphicMarkup } from '@/lib/slideGraphics'
+import { ChevronLeft, ChevronRight, Minimize2, MonitorPlay, RotateCw } from 'lucide-react'
+import { slideIconById } from '@/lib/slideIconLibrary'
+import { graphicById, graphicMainColor, graphicMarkup } from '@/lib/slideGraphics'
 import { hasRich } from '@/lib/slideMath'
 import { renderMath } from '@/lib/math'
 import { autoAnimate, clearAnimation, slideSteps } from '@/lib/slideAnim'
@@ -63,6 +57,27 @@ const slideMathHtml = (text: string): string =>
   renderMath(text.replace(/\\(d?)frac/g, '\\tfrac')).replace(/\*\*([\s\S]+?)\*\*/g, '<strong>$1</strong>')
 
 /** Ô bảng có công thức: hiện KaTeX khi không gõ, nhấp đúp để sửa mã. */
+/** hàng màu trong bảng Định dạng: bấm ô màu để mở bảng ô vuông + mã màu ngay bên dưới */
+function PaneColor({ label, value, themeColors, onPick }: { label: string; value: string; themeColors: string[]; onPick: (color: string) => void }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <div className="mb-1.5">
+      <div className="slide-format-pane__row" style={{ marginBottom: open ? 6 : 0 }}>
+        <span>{label}</span>
+        <button
+          type="button"
+          aria-label={label}
+          aria-expanded={open}
+          onClick={() => setOpen((v) => !v)}
+          className="h-6 w-[30px] rounded-[3px] border border-line-2"
+          style={{ background: value }}
+        />
+      </div>
+      {open && <ColorPalette value={value} themeColors={themeColors} onPick={onPick} />}
+    </div>
+  )
+}
+
 function MathCell({ value, onChange }: { value: string; onChange: (value: string) => void }) {
   const [editing, setEditing] = useState(false)
   if (hasRich(value) && !editing) {
@@ -161,8 +176,6 @@ export interface SlideEditorProps {
   updateDeck: (patch: Partial<Deck>) => void
   /** lưu deck */
   onSave?: () => void
-  /** tiêu đề deck, sửa tại chỗ */
-  onRename?: (title: string) => void
   /** menu Tệp: tạo bài giảng mới trong tab khác */
   onNewDeck?: () => void
   /** menu Tệp: nhập .pptx/.docx/.xlsx thành tab bài giảng mới */
@@ -173,7 +186,6 @@ export function SlideEditor({
   deck,
   updateDeck,
   onSave,
-  onRename,
   onNewDeck,
   onImportFile,
 }: SlideEditorProps) {
@@ -193,9 +205,8 @@ export function SlideEditor({
   const [zoom, setZoom] = useState(100)
   const [formatPaneOpen, setFormatPaneOpen] = useState(false)
   const [clipboardElement, setClipboardElement] = useState<SlideElement | null>(null)
-  /** chỉ số slide đang kéo + vị trí chèn (0..n) khi kéo thumbnail */
-  const [dragIndex, setDragIndex] = useState<number | null>(null)
-  const [dropPos, setDropPos] = useState<number | null>(null)
+  /** ghi chú diễn giả đang mở (nút nhỏ ở góc slide) */
+  const [notesOpen, setNotesOpen] = useState(false)
   /** AI đang sinh slide: cột thumbnail vẽ ô chờ skeleton (chặng 26b) */
   const [pendingSlides, setPendingSlides] = useState<{ done: number; total: number } | null>(null)
   const historyRef = useRef<{ past: Deck[]; future: Deck[] }>({ past: [], future: [] })
@@ -260,11 +271,33 @@ export function SlideEditor({
     patchSlide(currentSlide.id, { elements: [...currentSlide.elements, el] })
   }
 
-  const addSlide = () => {
+  /** thêm slide trống vào vị trí `index` (0..n) */
+  const addSlideAt = (index: number) => {
     const s: Slide = {
       id: uid(),
       background: deck.theme.bg,
       elements: [],
+      transition: 'none',
+    }
+    const next = [...deck.slides]
+    next.splice(index, 0, s)
+    commitDeck({ ...deck, slides: next })
+    setSelectedSlideId(s.id)
+    setSelectedElementId(null)
+  }
+
+  const addSlide = () => addSlideAt(deck.slides.length)
+
+  /** thêm một slide mới theo bố cục có sẵn (tab Mẫu) — slide đang mở không đổi */
+  const addLayoutSlide = (layoutId: SlideLayoutId) => {
+    const tone = defaultTone(layoutId)
+    const elements = composeLayout(deck.theme, layoutId, withPlaceholders(layoutId, {}), tone)
+    const s: Slide = {
+      id: uid(),
+      layout: layoutId,
+      tone,
+      background: toneBackground(deck.theme, tone),
+      elements,
       transition: 'none',
     }
     commitDeck({ ...deck, slides: [...deck.slides, s] })
@@ -375,13 +408,17 @@ export function SlideEditor({
 
   useEffect(() => {
     if (!selectedElement) {
-      if (['shapeFormat', 'pictureFormat', 'tableDesign', 'chartDesign'].includes(ribbonTab)) {
+      if (['elementFormat', 'pictureFormat', 'tableDesign', 'chartDesign'].includes(ribbonTab)) {
         setRibbonTab('home')
       }
       return
     }
     const auto: Partial<Record<SlideElement['type'], SlideRibbonTab>> = {
       image: 'pictureFormat',
+      shape: 'elementFormat',
+      icon: 'elementFormat',
+      graphic: 'elementFormat',
+      connector: 'elementFormat',
       table: 'tableDesign',
       chart: 'chartDesign',
     }
@@ -827,125 +864,19 @@ export function SlideEditor({
       />
       )}
       <div className="flex min-h-0 min-w-0 flex-1">
-      {/* ---------------- cột slide (thumbnail) ---------------- */}
-      <aside className="flex w-[190px] shrink-0 flex-col overflow-hidden border-r border-line bg-surface">
-        <div className="slide-rail-head">
-          {onRename ? (
-            <input
-              value={deck.title}
-              onChange={(e) => onRename(e.target.value)}
-              aria-label="Tên bài giảng"
-              className="slide-rail-title"
-            />
-          ) : (
-            <span className="slide-rail-title">{deck.title}</span>
-          )}
-        </div>
-        {deck.format !== 'html' && (
-        <div className="border-b border-line px-3 py-2">
-          <button
-            type="button"
-            onClick={addSlide}
-            className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-dashed border-line-2 py-1.5 text-[12.5px] font-semibold text-ink-3 transition-colors hover:border-clay hover:text-clay"
-          >
-            <Plus className="size-3.5" />
-            Thêm slide
-          </button>
-        </div>
-        )}
-        <div className="flex-1 space-y-2 overflow-y-auto p-3">
-          {deck.slides.map((s, i) => (
-            <div
-              key={s.id}
-              draggable
-              onDragStart={(e) => {
-                e.dataTransfer.effectAllowed = 'move'
-                e.dataTransfer.setData('text/plain', String(i))
-                setDragIndex(i)
-              }}
-              onDragOver={(e) => {
-                if (dragIndex === null) return
-                e.preventDefault()
-                e.dataTransfer.dropEffect = 'move'
-                const r = e.currentTarget.getBoundingClientRect()
-                setDropPos(e.clientY < r.top + r.height / 2 ? i : i + 1)
-              }}
-              onDrop={(e) => {
-                if (dragIndex === null) return
-                e.preventDefault()
-                // Tính lại tại điểm thả: dragover cuối có thể chưa kịp commit.
-                const r = e.currentTarget.getBoundingClientRect()
-                const pos = e.clientY < r.top + r.height / 2 ? i : i + 1
-                moveSlide(dragIndex, pos)
-                setDragIndex(null)
-                setDropPos(null)
-              }}
-              onDragEnd={() => {
-                setDragIndex(null)
-                setDropPos(null)
-              }}
-              className={cn(
-                'group relative',
-                dragIndex === i && 'thumb-dragging',
-                dropPos === i && 'thumb-drop-before',
-                dropPos === i + 1 && i === deck.slides.length - 1 && 'thumb-drop-after',
-              )}
-            >
-              <button
-                type="button"
-                onClick={() => { setSelectedSlideId(s.id); setSelectedElementId(null) }}
-                className={cn(
-                  'block w-full overflow-hidden rounded-md border-2 transition-colors',
-                  currentSlide?.id === s.id ? 'border-clay' : 'border-line',
-                )}
-              >
-                <SlideThumb slide={s} theme={theme} />
-                <span className="absolute bottom-1 left-1.5 rounded bg-black/55 px-1.5 py-0.5 text-[10px] font-semibold text-white">
-                  {i + 1}
-                </span>
-              </button>
-              <div className="absolute right-1 top-1 flex gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
-                {!s.html && (
-                <button
-                  type="button"
-                  onClick={() => duplicateSlide(s.id)}
-                  title="Nhân bản slide"
-                  className="rounded bg-white/85 p-1 text-ink-3 hover:text-ink"
-                >
-                  <Copy className="size-3" />
-                </button>
-                )}
-                <button
-                  type="button"
-                  onClick={() => removeSlide(s.id)}
-                  title="Xoá slide"
-                  className="rounded bg-white/85 p-1 text-ink-3 hover:text-clay"
-                >
-                  <Trash2 className="size-3" />
-                </button>
-              </div>
-            </div>
-          ))}
-          {Array.from({ length: pendingCount }, (_, i) => (
-            <div
-              key={`pending-${i}`}
-              className="slide-skeleton"
-              aria-hidden="true"
-              title="AI đang viết slide…"
-            >
-              <span className="slide-skeleton__bar slide-skeleton__bar--title" />
-              <span className="slide-skeleton__bar" />
-              <span className="slide-skeleton__bar slide-skeleton__bar--short" />
-              <span className="slide-skeleton__index">{deck.slides.length + i + 1}</span>
-            </div>
-          ))}
-        </div>
-      </aside>
+      {/* ---------------- thư viện (cột trái, kiểu Canva): panel trượt đẩy sân giấy ---------------- */}
+      <SlideSidePanel
+        accent={theme.accent}
+        canInsert={Boolean(currentSlide) && !currentSlide?.html}
+        hint={`${deck.title} ${(currentSlide?.elements ?? []).map((e) => e.text ?? '').join(' ').replace(/<[^>]+>/g, ' ')}`}
+        onAddLayoutSlide={addLayoutSlide}
+        onInsert={(el) => { addElement(el); setSelectedElementId(el.id) }}
+      />
 
       {/* ---------------- sân soạn (giữa) ---------------- */}
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
         {/* canvas */}
-        <div className="slide-stage anim-tab-in" key={deck.id}>
+        <div className="slide-stage group relative min-h-0 anim-tab-in" key={deck.id}>
           {formatPaneOpen && selectedElement && currentSlide && (
             <aside className="slide-format-pane" aria-label="Bảng chọn định dạng">
               <div className="slide-format-pane__title">Định dạng</div>
@@ -970,24 +901,33 @@ export function SlideEditor({
                 </label>
               ))}
               {selectedElement.type === 'text' && (
+                <PaneColor label="Màu" value={selectedElement.textColor ?? theme.fg} themeColors={[theme.accent, theme.fg]} onPick={(c) => updateElement(currentSlide.id, selectedElement.id, { textColor: c })} />
+              )}
+              {selectedElement.type === 'graphic' && (
+                <>
+                  <PaneColor label="Nét" value={selectedElement.textColor ?? theme.fg} themeColors={[theme.accent, theme.fg]} onPick={(c) => updateElement(currentSlide.id, selectedElement.id, { textColor: c })} />
+                  <PaneColor label="Chủ đạo" value={selectedElement.fill ?? graphicMainColor(selectedElement.graphicId)} themeColors={[theme.accent, theme.fg]} onPick={(c) => updateElement(currentSlide.id, selectedElement.id, { fill: c })} />
+                </>
+              )}
+              {selectedElement.type === 'icon' && (
+                <PaneColor label="Màu" value={selectedElement.textColor ?? theme.accent} themeColors={[theme.accent, theme.fg]} onPick={(c) => updateElement(currentSlide.id, selectedElement.id, { textColor: c })} />
+              )}
+              {(selectedElement.type === 'shape' || selectedElement.type === 'graphic' || selectedElement.type === 'icon') && (
                 <label className="slide-format-pane__row">
-                  <span>Màu</span>
+                  <span>Trong suốt</span>
                   <input
-                    type="color"
-                    value={selectedElement.textColor ?? theme.fg}
-                    onChange={(e) => updateElement(currentSlide.id, selectedElement.id, { textColor: e.target.value })}
+                    type="range"
+                    min={0}
+                    max={90}
+                    step={5}
+                    value={100 - Math.round((selectedElement.opacity ?? 1) * 100)}
+                    onChange={(e) => updateElement(currentSlide.id, selectedElement.id, { opacity: 1 - Number(e.target.value) / 100 })}
                   />
+                  <em>{100 - Math.round((selectedElement.opacity ?? 1) * 100)}%</em>
                 </label>
               )}
               {selectedElement.type === 'shape' && (
-                <label className="slide-format-pane__row">
-                  <span>Tô</span>
-                  <input
-                    type="color"
-                    value={selectedElement.fill ?? theme.accent}
-                    onChange={(e) => updateElement(currentSlide.id, selectedElement.id, { fill: e.target.value })}
-                  />
-                </label>
+                <PaneColor label="Tô" value={selectedElement.fill ?? theme.accent} themeColors={[theme.accent, theme.fg]} onPick={(c) => updateElement(currentSlide.id, selectedElement.id, { fill: c })} />
               )}
               <button type="button" className="slide-format-pane__close" onClick={() => setFormatPaneOpen(false)}>Đóng</button>
             </aside>
@@ -1038,7 +978,7 @@ export function SlideEditor({
               <EmptyState
                 icon={<MonitorPlay className="size-7" strokeWidth={1.4} />}
                 title="Chưa có slide nào"
-                description="Nhấn Thêm slide ở cột bên trái để bắt đầu."
+                description="Nhấn dấu + ở thanh slide phía dưới để bắt đầu."
               />
             )}
             {selectedElement && currentSlide && !currentSlide.html && (
@@ -1059,24 +999,57 @@ export function SlideEditor({
                 onUpdate={(patch) => updateElement(currentSlide.id, selectedElement.id, patch)}
                 onEditText={() => setEditingShapeId(selectedElement.id)}
                 onDelete={() => removeElement(currentSlide.id, selectedElement.id)}
+                onDuplicate={() => {
+                  const copy = { ...selectedElement, id: uid(), x: selectedElement.x + 3, y: selectedElement.y + 3 }
+                  addElement(copy)
+                  setSelectedElementId(copy.id)
+                }}
               />
             )}
           </div>
+          {/* ghi chú diễn giả: nút nhỏ ở góc dưới, hiện khi di chuột vào slide. AI viết vào đây (lệnh set_notes)
+              và PPTX xuất ra phần ghi chú. Lưu khi rời ô để không sinh một bước hoàn tác mỗi ký tự. */}
+          {currentSlide && !currentSlide.html && (
+            <div className="absolute bottom-3 left-3 z-20">
+              {notesOpen && (
+                <textarea
+                  key={currentSlide.id}
+                  className="slide-notes mb-2 block h-28 w-[320px] resize-none rounded-lg border border-line bg-white p-2.5 text-[13px] shadow-lg outline-none focus:border-clay"
+                  placeholder="Nhấp để thêm ghi chú diễn giả"
+                  aria-label="Ghi chú diễn giả"
+                  defaultValue={currentSlide.notes ?? ''}
+                  onBlur={(e) => {
+                    if (e.target.value !== (currentSlide.notes ?? '')) patchSlide(currentSlide.id, { notes: e.target.value })
+                  }}
+                />
+              )}
+              <button
+                type="button"
+                aria-pressed={notesOpen}
+                onClick={() => setNotesOpen((v) => !v)}
+                className={cn(
+                  'rounded-full bg-white/90 px-3 py-1 text-[12px] font-medium text-ink-2 shadow transition-opacity hover:text-clay focus-visible:opacity-100 group-hover:opacity-100',
+                  notesOpen ? 'opacity-100' : 'opacity-0',
+                )}
+              >
+                Ghi chú{currentSlide.notes ? ' ·' : ''}
+              </button>
+            </div>
+          )}
         </div>
-        {/* ghi chú diễn giả: AI viết vào đây (lệnh set_notes) và PPTX xuất ra phần ghi chú.
-            Không điều khiển theo từng phím: lưu khi rời ô để không sinh một bước hoàn tác mỗi ký tự. */}
-        {currentSlide && !currentSlide.html && (
-          <textarea
-            key={currentSlide.id}
-            className="slide-notes"
-            placeholder="Nhấp để thêm ghi chú diễn giả"
-            aria-label="Ghi chú diễn giả"
-            defaultValue={currentSlide.notes ?? ''}
-            onBlur={(e) => {
-              if (e.target.value !== (currentSlide.notes ?? '')) patchSlide(currentSlide.id, { notes: e.target.value })
-            }}
-          />
-        )}
+        {/* thanh slide dưới đáy: thumbnail ngang, dấu + cuối dãy và giữa hai slide, kéo để đổi thứ tự */}
+        <SlideStrip
+          slides={deck.slides}
+          currentId={currentSlide?.id ?? null}
+          allowAdd={deck.format !== 'html'}
+          pendingCount={pendingCount}
+          renderThumb={(s) => <SlideThumb slide={s} theme={theme} />}
+          onSelect={(id) => { setSelectedSlideId(id); setSelectedElementId(null) }}
+          onAddAt={addSlideAt}
+          onDuplicate={duplicateSlide}
+          onRemove={removeSlide}
+          onMove={moveSlide}
+        />
       </div>
 
       {/* ---------------- AI panel (phải) — trợ lý AI nằm ở cột phải --------- */}
@@ -1259,7 +1232,7 @@ function shapeCss(el: SlideElement, theme: ResolvedTheme): React.CSSProperties {
     borderRadius: el.shape === 'ellipse' ? '50%' : el.shape === 'round' ? `${el.radius ?? theme.radius}px` : 0,
     clipPath: clip,
     boxShadow: isLine ? undefined : shadowCss(el, theme),
-    border: !clip && border ? `${border}px solid ${borderColor}` : undefined,
+    border: !clip && border ? `${border}px ${el.borderStyle ?? 'solid'} ${borderColor}` : undefined,
     opacity: el.opacity,
   }
 }
@@ -1286,6 +1259,10 @@ function shadowCss(el: SlideElement, theme: ResolvedTheme): string | undefined {
   return theme.shadow === 'hard' ? '6px 6px 0 rgb(17 24 39 / 0.92)' : SHADOWS[2]
 }
 
+/** mẫu nét đứt/chấm theo độ dày viền (đơn vị px của SVG) */
+const dashOf = (style: SlideElement['borderStyle'], width: number): string | undefined =>
+  style === 'dashed' ? `${width * 3} ${width * 2}` : style === 'dotted' ? `0 ${width * 2}` : undefined
+
 /** Hình dựng sẵn (OOXML prst) vẽ bằng SVG: nền, nét, và phần chỉ có nét/chỉ có nền của từng hình. */
 function PresetSvg({ el, theme }: { el: SlideElement; theme: ResolvedTheme }) {
   const { W, H, both, fillOnly, strokeOnly } = presetPaths(prstOf(el.shape), el.w, el.h)
@@ -1295,7 +1272,7 @@ function PresetSvg({ el, theme }: { el: SlideElement; theme: ResolvedTheme }) {
   const common = { vectorEffect: 'non-scaling-stroke' as const, strokeLinejoin: 'round' as const, strokeLinecap: 'round' as const }
   return (
     <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', overflow: 'visible', display: 'block' }}>
-      {both && <path d={both} fill={isStrokeOnlyShape(el.shape) ? 'none' : fill} stroke={outline} strokeWidth={border} {...common} />}
+      {both && <path d={both} fill={isStrokeOnlyShape(el.shape) ? 'none' : fill} stroke={outline} strokeWidth={border} strokeDasharray={dashOf(el.borderStyle, border)} {...common} />}
       {fillOnly && <path d={fillOnly} fill={fill} stroke="none" />}
       {strokeOnly && (
         // nét của đường nối/cung: dùng màu tô làm màu nét nếu hình không có nền
@@ -1392,8 +1369,8 @@ function SlideElView({ el, theme, revealStep }: { el: SlideElement; theme: Resol
   }
 
   if (el.type === 'icon') {
-    const Icon = isSlideAssetId(el.assetId) ? SLIDE_ASSETS[el.assetId].icon : null
-    return Icon ? <Icon size="100%" weight="duotone" style={{ ...style, padding: '1%', color: el.textColor ?? theme.accent }} /> : null
+    const Icon = slideIconById(el.assetId)
+    return Icon ? <Icon size="100%" weight="duotone" style={{ ...style, opacity: el.opacity, padding: '1%', color: el.textColor ?? theme.accent }} /> : null
   }
 
   if (el.type === 'connector') {
@@ -1408,10 +1385,10 @@ function SlideElView({ el, theme, revealStep }: { el: SlideElement; theme: Resol
     if (!el.graphicId || !graphicById(el.graphicId)) return null
     return (
       <div
-        style={{ ...style, padding: graphicById(el.graphicId)?.category === 'ornament' ? 0 : '1%' }}
+        style={{ ...style, opacity: el.opacity, padding: graphicById(el.graphicId)?.category === 'ornament' ? 0 : '1%' }}
         // SVG do chính app sinh ra từ file thiết kế (không phải dữ liệu người
         // dùng nhập) nên nhúng trực tiếp là an toàn.
-        dangerouslySetInnerHTML={{ __html: graphicMarkup(el.graphicId, el.textColor ?? theme.fg) }}
+        dangerouslySetInnerHTML={{ __html: graphicMarkup(el.graphicId, el.textColor ?? theme.fg, el.fill) }}
       />
     )
   }
@@ -1935,6 +1912,9 @@ function EditableEl({
     onPointerDown: (e: React.PointerEvent) => startDrag(e, 'move'),
   }
 
+  // sát mép dưới slide thì nút xoay không còn chỗ phía dưới (bị cắt) nên lật lên đỉnh
+  const rotTop = el.y + elementHeight(el) > 88
+
   /** Xoay quanh tâm hộp; giữ Shift để bắt góc 15°. */
   const startRotate = (e: React.PointerEvent) => {
     e.stopPropagation()
@@ -1947,8 +1927,8 @@ function EditableEl({
     const cy = rect.top + ((el.y + el.h / 2) / 100) * rect.height
     onBeginHistory()
     const move = (ev: PointerEvent) => {
-      // +90 vì tay nắm nằm trên đỉnh: con trỏ ở chính giữa phía trên = 0°.
-      const deg = (Math.atan2(ev.clientY - cy, ev.clientX - cx) * 180) / Math.PI + 90
+      // tay nắm dưới đáy: con trỏ ở chính giữa phía dưới = 0° (−90); sát mép dưới slide thì tay nắm lật lên đỉnh (+90).
+      const deg = (Math.atan2(ev.clientY - cy, ev.clientX - cx) * 180) / Math.PI + (rotTop ? 90 : -90)
       const snapped = ev.shiftKey ? Math.round(deg / 15) * 15 : Math.round(deg)
       onPreview({ rotation: ((snapped % 360) + 360) % 360 })
     }
@@ -1972,7 +1952,7 @@ function EditableEl({
           onPointerDown={(e) => startDrag(e, 'resize', dir)}
         />
       ))}
-      <span className="slide-el-rotate" title="Xoay" onPointerDown={startRotate}>
+      <span className={`slide-el-rotate${rotTop ? ' slide-el-rotate--top' : ''}`} title="Xoay" onPointerDown={startRotate}>
         <RotateCw size={11} strokeWidth={2} />
       </span>
     </>
@@ -2003,9 +1983,9 @@ function EditableEl({
     )
 
   if (el.type === 'icon') {
-    const Icon = isSlideAssetId(el.assetId) ? SLIDE_ASSETS[el.assetId].icon : null
+    const Icon = slideIconById(el.assetId)
     return Icon ? (
-      <div {...common} style={{ ...style, color: el.textColor ?? theme.accent, cursor: selected ? 'move' : 'default' }}>
+      <div {...common} style={{ ...style, opacity: el.opacity, color: el.textColor ?? theme.accent, cursor: selected ? 'move' : 'default' }}>
         <Icon size="100%" weight="duotone" className="h-full w-full p-[2%]" />
         {handle}
       </div>
@@ -2024,10 +2004,10 @@ function EditableEl({
   if (el.type === 'graphic') {
     if (!el.graphicId || !graphicById(el.graphicId)) return null
     return (
-      <div {...common} style={{ ...style, cursor: selected ? 'move' : 'default' }}>
+      <div {...common} style={{ ...style, opacity: el.opacity, cursor: selected ? 'move' : 'default' }}>
         <div
           className={`h-full w-full ${graphicById(el.graphicId)?.category === 'ornament' ? '' : 'p-[2%]'}`}
-          dangerouslySetInnerHTML={{ __html: graphicMarkup(el.graphicId, el.textColor ?? theme.fg) }}
+          dangerouslySetInnerHTML={{ __html: graphicMarkup(el.graphicId, el.textColor ?? theme.fg, el.fill) }}
         />
         {handle}
       </div>

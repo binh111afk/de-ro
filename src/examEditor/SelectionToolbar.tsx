@@ -4,21 +4,24 @@
  * toạ độ theo % khung.
  */
 import { useState } from 'react'
-import { AlignCenter, AlignLeft, AlignRight, Bold, Italic, Palette, SlidersHorizontal, Sparkles, Trash2, Type } from 'lucide-react'
+import { AlignCenter, AlignLeft, AlignRight, Bold, Copy, Italic, Palette, SlidersHorizontal, Sparkles, Trash2, Type } from 'lucide-react'
 import type { SlideElement } from '@/store/docs'
 import { REWRITE_PRESETS } from '@/lib/slideRewrite'
+import { graphicMainColor } from '@/lib/slideGraphics'
 import { readableTextOn } from '@/lib/slideTheme'
 import { ColorPalette } from './ColorPalette'
 
-const POPOVER = 'absolute left-0 top-full z-10 mt-1.5 rounded-lg border border-line bg-surface p-2 shadow-[0_8px_24px_-6px_rgba(35,32,28,0.3)]'
+const POPOVER = 'absolute top-full z-10 mt-1.5 rounded-lg border border-line bg-surface p-2 shadow-[0_8px_24px_-6px_rgba(35,32,28,0.3)]'
 
 /** Nút màu: bấm mở bảng màu (màu của bộ màu + màu phổ biến + chọn màu tuỳ ý). */
 function ColorTool({
   title,
   value,
   themeColors,
+  right,
   onPick,
 }: {
+  right?: boolean
   title: string
   value: string
   themeColors: string[]
@@ -40,14 +43,12 @@ function ColorTool({
         <span className="h-[3px] w-4 rounded-full border border-black/10" style={{ background: value }} />
       </button>
       {open && (
-        <div className={POPOVER}>
+        <div className={`${POPOVER} ${right ? 'right-0' : 'left-0'}`}>
           <ColorPalette
             value={value}
             themeColors={themeColors}
-            onPick={(color) => {
-              onPick(color)
-              setOpen(false)
-            }}
+            onPick={onPick}
+            onClose={() => setOpen(false)}
           />
         </div>
       )}
@@ -86,8 +87,10 @@ const chip = (active: boolean) =>
 function ShapeStyleTool({
   el,
   themeColors,
+  right,
   onUpdate,
 }: {
+  right?: boolean
   el: SlideElement
   themeColors: string[]
   onUpdate: (patch: Partial<SlideElement>) => void
@@ -97,13 +100,14 @@ function ShapeStyleTool({
   const width = el.border ?? 0
   const opacity = Math.round((el.opacity ?? 1) * 100)
   // hình bị cắt (sao, tim, tam giác, mũi tên) cắt luôn bóng đổ nên không hiện mục bóng cho chúng
+  const plain = el.type !== 'shape' // đồ hoạ/icon: chỉ có độ trong suốt
   const clipped = el.shape === 'star' || el.shape === 'heart' || el.shape === 'triangle' || el.shape === 'arrow'
   const shadow = el.shadowLevel ?? (el.shadow ? 2 : 0)
   return (
     <div className="relative">
       <button
         type="button"
-        title={isLine ? 'Độ dày, đầu mũi tên' : 'Viền, độ trong suốt, bóng đổ'}
+        title={plain ? 'Độ trong suốt' : isLine ? 'Độ dày, đầu mũi tên' : 'Viền, độ trong suốt, bóng đổ'}
         aria-label="Kiểu hình"
         aria-expanded={open}
         className={`flex size-7 items-center justify-center rounded-md text-ink-2 transition-colors hover:bg-paper-2 ${open ? 'bg-paper-2' : ''}`}
@@ -113,8 +117,8 @@ function ShapeStyleTool({
         <SlidersHorizontal className="size-3.5" />
       </button>
       {open && (
-        <div className={`${POPOVER} w-[196px] text-[12px] text-ink-2`} onMouseDown={(e) => e.target instanceof HTMLInputElement || e.preventDefault()}>
-          {isLine ? (
+        <div className={`${POPOVER} ${right ? 'right-0' : 'left-0'} ${plain ? 'w-[196px]' : 'w-[240px]'} text-[12px] text-ink-2`} onMouseDown={(e) => e.target instanceof HTMLInputElement || e.preventDefault()}>
+          {plain ? null : isLine ? (
             <>
               <div className="mb-1 font-semibold">Độ dày</div>
               <div className="flex gap-1">
@@ -150,7 +154,7 @@ function ShapeStyleTool({
               )}
             </>
           )}
-          <label className="mt-3 block">
+          <label className={plain ? 'block' : 'mt-3 block'}>
             <span className="flex justify-between font-semibold">
               Độ trong suốt <span className="font-normal">{100 - opacity}%</span>
             </span>
@@ -164,7 +168,7 @@ function ShapeStyleTool({
               onChange={(e) => onUpdate({ opacity: 1 - Number(e.target.value) / 100 })}
             />
           </label>
-          {!isLine && !clipped && (
+          {!plain && !isLine && !clipped && (
             <>
               <div className="mb-1 mt-3 font-semibold">Bóng đổ</div>
               <div className="flex gap-1">
@@ -189,6 +193,7 @@ export function SelectionToolbar({
   fg,
   onUpdate,
   onDelete,
+  onDuplicate,
   onAskAi,
   onEditText,
 }: {
@@ -199,12 +204,15 @@ export function SelectionToolbar({
   fg: string
   onUpdate: (patch: Partial<SlideElement>) => void
   onDelete: () => void
+  onDuplicate: () => void
   /** nhờ AI viết lại chữ của ô (chỉ hộp chữ); ném lỗi có thông báo tiếng Việt khi thất bại */
   onAskAi?: (instruction: string) => Promise<void>
   /** bắt đầu gõ chữ trong hình khối */
   onEditText?: () => void
 }) {
   const isText = el.type === 'text'
+  // thanh nằm nửa phải khung thì bảng màu mở sang trái, khỏi tràn mép
+  const right = el.x > 25
   const [askOpen, setAskOpen] = useState(false)
   const [ask, setAsk] = useState('')
   const [busy, setBusy] = useState(false)
@@ -227,10 +235,14 @@ export function SelectionToolbar({
   const size = el.fontSize ?? (el.variant === 'body' ? 2.4 : 3.6)
   // thanh rộng ~33% khung: kẹp để không tràn mép phải; sát mép trên thì xuống dưới phần tử
   const above = el.y > 10
+  // nút xoay lật lên đỉnh khi phần tử sát mép dưới (khớp EditableEl): thanh nhường chỗ
+  const rotTop = el.y + height > 88
+  // phần tử nằm sát bên phải thì thanh canh theo mép phải phần tử, vẫn đi theo khi kéo
+  const alignEnd = el.x > 62
   const style: React.CSSProperties = {
     position: 'absolute',
-    left: `${Math.min(Math.max(el.x, 0), 62)}%`,
-    top: above ? `calc(${el.y}% - 44px)` : `calc(${el.y + height}% + 8px)`,
+    ...(alignEnd ? { right: `${Math.max(100 - (el.x + el.w), 0)}%` } : { left: `${Math.max(el.x, 0)}%` }),
+    top: above ? `calc(${el.y}% - ${rotTop ? 76 : 44}px)` : `calc(${el.y + height}% + 8px)`,
     zIndex: 50,
   }
   const btn = 'flex size-7 items-center justify-center rounded-md text-ink-2 transition-colors hover:bg-paper-2 disabled:opacity-30'
@@ -246,8 +258,8 @@ export function SelectionToolbar({
   // ô hỏi AI mở dưới phần tử (không che chữ đang sửa); phần tử gần đáy thì mở phía trên thanh
   const popStyle: React.CSSProperties =
     el.y + height > 70
-      ? { position: 'absolute', left: style.left, bottom: `calc(${100 - el.y}% + 52px)`, zIndex: 51 }
-      : { position: 'absolute', left: style.left, top: `calc(${el.y + height}% + 10px)`, zIndex: 51 }
+      ? { position: 'absolute', left: style.left, right: style.right, bottom: `calc(${100 - el.y}% + ${rotTop ? 84 : 52}px)`, zIndex: 51 }
+      : { position: 'absolute', left: style.left, right: style.right, top: `calc(${el.y + height}% + 10px)`, zIndex: 51 }
 
   return (
     <>
@@ -282,7 +294,7 @@ export function SelectionToolbar({
           {sep}
           {tool('Đậm', () => onUpdate({ fontWeight: (el.fontWeight ?? 500) >= 700 ? 400 : 700 }), <Bold className="size-3.5" />, (el.fontWeight ?? 500) >= 700)}
           {tool('Nghiêng', () => onUpdate({ fontStyle: el.fontStyle === 'italic' ? 'normal' : 'italic' }), <Italic className="size-3.5" />, el.fontStyle === 'italic')}
-          <ColorTool title="Màu chữ" value={el.textColor ?? fg} themeColors={[fg, accent]} onPick={(textColor) => onUpdate({ textColor })} />
+          <ColorTool right={right} title="Màu chữ" value={el.textColor ?? fg} themeColors={[fg, accent]} onPick={(textColor) => onUpdate({ textColor })} />
           {sep}
           {tool('Căn trái', () => onUpdate({ align: 'left' }), <AlignLeft className="size-3.5" />, (el.align ?? 'left') === 'left')}
           {tool('Căn giữa', () => onUpdate({ align: 'center' }), <AlignCenter className="size-3.5" />, el.align === 'center')}
@@ -297,7 +309,7 @@ export function SelectionToolbar({
             <>
               {tool('Giảm cỡ chữ', () => onUpdate({ fontSize: Math.max(1, (el.fontSize ?? 2.4) - 0.3) }), <span className="text-[11px] font-semibold">A−</span>)}
               {tool('Tăng cỡ chữ', () => onUpdate({ fontSize: (el.fontSize ?? 2.4) + 0.3 }), <span className="text-[13px] font-semibold">A+</span>)}
-              <ColorTool title="Màu chữ" value={el.textColor ?? readableTextOn(el.fill ?? accent)} themeColors={[fg, accent, '#ffffff']} onPick={(textColor) => onUpdate({ textColor })} />
+              <ColorTool right={right} title="Màu chữ" value={el.textColor ?? readableTextOn(el.fill ?? accent)} themeColors={[fg, accent, '#ffffff']} onPick={(textColor) => onUpdate({ textColor })} />
             </>
           )}
           {sep}
@@ -305,11 +317,25 @@ export function SelectionToolbar({
       )}
       {el.type === 'shape' && (
         <>
-          <ColorTool title="Màu tô" value={el.fill ?? accent} themeColors={[accent, fg]} onPick={(fill) => onUpdate({ fill })} />
-          <ShapeStyleTool el={el} themeColors={[accent, fg]} onUpdate={onUpdate} />
+          <ColorTool right={right} title="Màu tô" value={el.fill ?? accent} themeColors={[accent, fg]} onPick={(fill) => onUpdate({ fill })} />
+          <ShapeStyleTool right={right} el={el} themeColors={[accent, fg]} onUpdate={onUpdate} />
           {sep}
         </>
       )}
+      {el.type === 'graphic' && (
+        <>
+          <ColorTool right={right} title="Màu nét" value={el.textColor ?? fg} themeColors={[fg, accent]} onPick={(textColor) => onUpdate({ textColor })} />
+          <ColorTool right={right} title="Màu chủ đạo" value={el.fill ?? graphicMainColor(el.graphicId)} themeColors={[accent, fg]} onPick={(fill) => onUpdate({ fill })} />
+        </>
+      )}
+      {el.type === 'icon' && <ColorTool right={right} title="Màu icon" value={el.textColor ?? accent} themeColors={[accent, fg]} onPick={(textColor) => onUpdate({ textColor })} />}
+      {(el.type === 'graphic' || el.type === 'icon') && (
+        <>
+          <ShapeStyleTool right={right} el={el} themeColors={[accent, fg]} onUpdate={onUpdate} />
+          {sep}
+        </>
+      )}
+      {tool('Nhân đôi (Ctrl+D)', onDuplicate, <Copy className="size-3.5" />)}
       {tool('Xoá', onDelete, <Trash2 className="size-3.5" />)}
     </div>
     {askOpen && isText && (

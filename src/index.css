@@ -523,12 +523,22 @@
     text-align: justify;
   }
 
+  /* Danh sách: mục là display:list-item nên có dấu đầu dòng; số thứ tự đếm
+     từ danh sách cha (counter-reset), cấp lồng dùng ký hiệu khác. */
   .doc-content div[data-exam-node='examBullets'] {
     padding-left: 1.35rem;
-    list-style: disc;
+    list-style-type: disc;
+    counter-reset: list-item;
+  }
+  .doc-content div[data-exam-node='examBullets'][data-ordered] {
+    list-style-type: decimal;
   }
   .doc-content div[data-exam-node='examBullet'] {
+    display: list-item;
     margin: 0;
+  }
+  .doc-content div[data-exam-node='examBullet'][data-level] {
+    list-style-type: circle;
   }
 
   /* Lưới nhiều cột: số cột đặt inline trong node (2 hoặc 3). */

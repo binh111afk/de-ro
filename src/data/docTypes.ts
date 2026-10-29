@@ -105,6 +105,10 @@ export interface ParagraphBlock {
 export interface BulletsBlock {
   type: 'bullets'
   items: RichText[]
+  /** đánh số 1, 2, 3… thay vì gạch đầu dòng */
+  ordered?: boolean
+  /** cấp lồng của từng mục (0–2), cùng độ dài với `items`; bỏ qua nếu không có */
+  levels?: number[]
   format?: FormatAttrs
 }
 

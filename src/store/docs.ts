@@ -37,6 +37,8 @@ export interface SlideElement {
   /** viền ghi đè theme (px, màu lấy `borderColor`) */
   border?: number
   borderColor?: string
+  /** kiểu nét viền: liền (mặc định), đứt, chấm */
+  borderStyle?: 'solid' | 'dashed' | 'dotted'
   src?: string
   /** icon semantic trong catalog slideAssets — optional để deck cũ không đổi */
   assetId?: string

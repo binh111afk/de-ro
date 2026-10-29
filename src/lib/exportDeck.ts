@@ -11,7 +11,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import type { Deck } from '@/store/docs'
 import { elementHeight } from './slideText'
 import { readableTextOn } from './slideTheme'
-import { isSlideAssetId, SLIDE_ASSETS } from './slideAssets'
+import { slideIconById } from './slideIconLibrary'
 import { graphicMarkup } from './slideGraphics'
 import { firstColor, gradientSvg } from './slideBackground'
 import { isStrokeOnlyShape, prstOf } from './slidePresets'
@@ -120,14 +120,14 @@ export async function buildDeckPptx(deck: Deck): Promise<ArrayBuffer> {
           fit: 'shrink',
           fill: el.fill ? { color: hex(el.fill) } : undefined,
         })
-      } else if (el.type === 'icon' && isSlideAssetId(el.assetId)) {
-        const Icon = SLIDE_ASSETS[el.assetId].icon
+      } else if (el.type === 'icon' && slideIconById(el.assetId)) {
+        const Icon = slideIconById(el.assetId)!
         const svg = renderToStaticMarkup(createElement(Icon, { xmlns: 'http://www.w3.org/2000/svg', weight: 'duotone', color: `#${hex(el.textColor ?? deck.theme.accent)}`, size: 256 }))
-        slide.addImage({ ...box, data: `data:image/svg+xml;base64,${btoa(svg)}` })
+        slide.addImage({ ...box, data: `data:image/svg+xml;base64,${btoa(svg)}`, transparency: Math.round((1 - (el.opacity ?? 1)) * 100) })
       } else if (el.type === 'graphic' && el.graphicId) {
-        const svg = graphicMarkup(el.graphicId, `#${hex(el.textColor ?? deck.theme.fg)}`)
+        const svg = graphicMarkup(el.graphicId, `#${hex(el.textColor ?? deck.theme.fg)}`, el.fill ? `#${hex(el.fill)}` : undefined)
         if (svg) {
-          slide.addImage({ ...box, data: `data:image/svg+xml;base64,${btoa(svg)}` })
+          slide.addImage({ ...box, data: `data:image/svg+xml;base64,${btoa(svg)}`, transparency: Math.round((1 - (el.opacity ?? 1)) * 100) })
         }
       } else if (el.type === 'connector') {
         slide.addShape('line' as never, {

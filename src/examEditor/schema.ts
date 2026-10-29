@@ -349,17 +349,21 @@ export const BulletsNode = Node.create({
   content: 'examBullet+',
   defining: true,
   addAttributes() {
-    return { id: { default: null }, ...formatAttrs() }
+    return { id: { default: null }, ordered: { default: null }, ...formatAttrs() }
   },
   parseHTML() {
     return [{ tag: 'div[data-exam-node="examBullets"]' }]
   },
   renderHTML({ HTMLAttributes }) {
-    const { id, ...rest } = HTMLAttributes as Record<string, unknown>
+    const { id, ordered, ...rest } = HTMLAttributes as Record<string, unknown>
     return [
       'div',
       mergeAttributes(
-        { 'data-exam-node': 'examBullets', ...(id ? { 'data-id': id } : {}) },
+        {
+          'data-exam-node': 'examBullets',
+          ...(id ? { 'data-id': id } : {}),
+          ...(ordered ? { 'data-ordered': '' } : {}),
+        },
         { style: formatStyle(rest) },
       ),
       0,
@@ -367,22 +371,42 @@ export const BulletsNode = Node.create({
   },
 })
 
+/** Mục danh sách. `level` (0–2) do Tab / Shift+Tab đặt, dùng cho danh sách nhiều cấp. */
 export const BulletNode = Node.create({
   name: 'examBullet',
   content: 'inline*',
   defining: false,
   addAttributes() {
-    return formatAttrs()
+    return { ...formatAttrs(), level: { default: null } }
+  },
+  addKeyboardShortcuts() {
+    const shift = (delta: 1 | -1) => () => {
+      const { $from } = this.editor.state.selection
+      for (let depth = $from.depth; depth > 0; depth--) {
+        const node = $from.node(depth)
+        if (node.type.name !== 'examBullet') continue
+        const level = Math.max(0, Math.min(2, (Number(node.attrs.level) || 0) + delta))
+        this.editor.view.dispatch(
+          this.editor.state.tr.setNodeMarkup($from.before(depth), undefined, { ...node.attrs, level }),
+        )
+        return true
+      }
+      // ngoài danh sách thì để Tab/Shift+Tab làm việc mặc định (bảng, ô…)
+      return false
+    }
+    return { Tab: shift(1), 'Shift-Tab': shift(-1) }
   },
   parseHTML() {
     return [{ tag: 'div[data-exam-node="examBullet"]' }]
   },
   renderHTML({ HTMLAttributes }) {
+    const { level, ...rest } = HTMLAttributes as Record<string, unknown>
+    const lv = Number(level) || 0
     return [
       'div',
       mergeAttributes(
-        { 'data-exam-node': 'examBullet' },
-        { style: formatStyle(HTMLAttributes as Record<string, unknown>) },
+        { 'data-exam-node': 'examBullet', ...(lv ? { 'data-level': String(lv) } : {}) },
+        { style: [formatStyle(rest), lv ? `margin-left: ${lv * 24}px` : ''].filter(Boolean).join('; ') },
       ),
       0,
     ]
