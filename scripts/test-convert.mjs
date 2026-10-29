@@ -140,7 +140,37 @@ for (const c of cases) {
   try {
     const tipTap = blocksToTipTap(c.blocks)
     if (c.noThrow) {
-      console.log(`✅ ${c.name}`)
+      
+// bảng đáp án bị sửa tay: ô rỗng không thành "câu 0", đáp án lệch cột vẫn khớp theo thứ tự
+{
+  const cell = (type, text) => ({ type, content: [{ type: 'paragraph', content: text ? [{ type: 'text', text }] : [] }] })
+  const row = (head, cells) => ({ type: 'tableRow', content: [cell('tableHeader', head), ...cells.map((c) => cell('tableCell', c))] })
+  const doc = {
+    type: 'doc',
+    content: [
+      {
+        type: 'examAnswerKey',
+        content: [
+          {
+            type: 'table',
+            content: [
+              row('Câu', ['1', '2']),
+              row('Đáp án', ['B', 'C']),
+              row('Câu', ['21', '22', '', '', '', '']),
+              row('Đáp án', ['', '', '', '', 'Đáp án', '3', '200']),
+            ],
+          },
+        ],
+      },
+    ],
+  }
+  const key = tipTapToBlocks(doc).find((b) => b.type === 'answerKey')
+  const got = key.items.map((i) => [i.no, typeof i.answer === 'string' ? i.answer : i.answer.map((s) => s.text).join('')])
+  assert.deepEqual(got, [[1, 'B'], [2, 'C'], [21, '3'], [22, '200']], 'bỏ ô rỗng và nhãn; khớp theo thứ tự khi đủ số đáp án')
+  console.log('✅ bảng đáp án: ô rỗng và đáp án lệch cột')
+}
+
+console.log(`✅ ${c.name}`)
       pass++
       continue
     }

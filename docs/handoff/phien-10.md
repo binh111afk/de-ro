@@ -21,7 +21,9 @@ Trước đây "Tải Word" lưu một trang HTML đổi đuôi `.doc` (Word m�
 - `src/lib/exportDocx.ts`: `examToDoc(Exam)` đổi đề tương tác sang khối soạn rồi dùng chung bộ xuất (nút Tải Word ở trang xem đề cộng đồng, trước đây cũng là `.doc`).
 - `src/lib/mathText.ts`: `plainText`/`formatPoints` tách khỏi `math.ts` (file này nạp CSS KaTeX nên không chạy được bằng Node); `math.ts` re-export.
 - Test: `npm run test:docx` (zip OOXML, mammoth đọc lại được, thứ tự câu, tiêu đề in hoa, ngắt trang); đã mở file mẫu bằng LibreOffice → PDF để xem bố cục.
-- **Giới hạn:** công thức `$…$` vẫn ra dạng chữ như bản `.doc` cũ (chưa đổi LaTeX sang equation của Word); chưa mở bằng Microsoft Word thật.
+- **Công thức:** `src/lib/latexMath.ts` đọc LaTeX (phân số, căn, mũ/chỉ số, `\left\right`, ∑ ∫ lim, chữ Hy Lạp, vector/hat/bar, ký hiệu hay dùng) rồi dựng equation Word (OMML) qua các lớp `Math*` của `docx`. Bản in/PDF (`exportBlocks.ts`) xuất công thức bằng MathML của KaTeX (Chrome/Edge vẽ gốc, không cần CSS/font KaTeX). Giới hạn: hệ phương trình (`cases`/`aligned`) ra từng dòng cách nhau "; " (chưa có ngoặc nhọn bao); tên hàm (sin, lim) còn chữ nghiêng; lệnh LaTeX lạ in tên lệnh.
+- **Sửa sau khi kiểm file thật của người dùng** (`Đề học kì - Lớp 12.docx`): (1) phương án luôn 2 cột trong Word/in trong khi màn hình xếp 4/3/2/1 theo độ dài → `src/examEditor/choiceCols.ts` ước lượng số cột theo số ký tự (cùng luật `chooseColumns` của `choiceLayout.ts`), dùng cho cả `.docx` và bản in (`.opts.cN`); (2) bảng đáp án ra rác (hàng "câu 0", nhãn "Đáp án" lẫn vào đáp án) vì `answerKeyItems` (convert.ts) coi ô rỗng là câu 0 và ghép đáp án theo cột khi bảng bị lệch ô → nay bỏ ô rỗng/nhãn, khớp theo thứ tự khi số đáp án bằng số câu. Đề đã lưu cũ chỉ cần xuất lại là hết lỗi, không phải sửa nội dung.
+- **Chưa mở bằng Microsoft Word thật.** Người dùng báo bố cục .docx trong Word chưa đúng (LibreOffice thì đúng) — cần ảnh chụp để biết lệch chỗ nào.
 
 ## Đăng lên cộng đồng
 

@@ -71,10 +71,27 @@ check('phương án là bảng 2 cột (Word không hiểu flex)', () => {
       },
     ]),
   )
-  assert.match(html, /<div class="opts"><table><tr><td class="opt"/)
+  assert.match(html, /<div class="opts c\d"><table><tr><td class="opt"/)
   assert.equal((html.match(/<td class="opt/g) || []).length, 3)
   assert.ok(!/\.opts \{[^}]*display: flex/.test(html))
   assert.match(html, /\.opts td \{[^}]*width: 50%/)
+})
+
+check('số cột phương án theo độ dài như màn hình: 4 / 2 / 1', () => {
+  const q = (texts) => ({ type: 'question', no: 1, text: 'Chọn', options: texts.map((t, i) => ({ label: 'ABCD'[i], text: t })) })
+  const cols = (texts) => buildWordHtml(doc([q(texts)])).match(/class="opts c(\d)"/)[1]
+  assert.equal(cols(['2', '4', '6', '8']), '4')
+  assert.equal(cols(['$(-\\infty;-1)$', '$(-1;1)$', '$(1;+\\infty)$', '$(-\\infty;+\\infty)$']), '4')
+  assert.equal(cols(['Một câu trả lời dài vừa phải', 'Đáp án thứ hai cũng vừa phải', 'Phương án thứ ba đây', 'Phương án thứ bốn đây']), '2')
+  assert.equal(cols(['Một câu trả lời rất rất dài '.repeat(5), 'b', 'c', 'd']), '1')
+})
+
+check('công thức $…$ xuất MathML (bản in/PDF không còn dấu $ thô)', () => {
+  const html = buildWordHtml(doc([{ type: 'paragraph', text: 'Tính $\\frac{a}{b}$ và $x^2$; giá 5 đồng' }]))
+  assert.match(html, /<math[^>]*>[\s\S]*<mfrac>/)
+  assert.match(html, /<msup>/)
+  assert.ok(!html.includes('$'))
+  assert.ok(html.includes('giá 5 đồng'))
 })
 
 check('CSS dùng chung cho Word và bản in', () => {

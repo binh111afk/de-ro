@@ -2,7 +2,7 @@
  * Xuất tài liệu đề (ExamDoc) ra Word .docx thật (OOXML, thư viện `docx`).
  * Bố cục bám bản HTML ở `exportBlocks.ts` (A4, lề 1,8 × 1,6 cm, Times New Roman 13pt, phương án 2 cột bằng bảng).
  *
- * ponytail: công thức `$…$` giữ nguyên dạng chữ như bản .doc cũ; chuyển LaTeX sang equation của Word (OMML) khi cần.
+ * Công thức `$…$` / `$$…$$` thành equation Word (xem `lib/latexMath.ts`).
  */
 import {
   AlignmentType,
@@ -10,6 +10,7 @@ import {
   Document,
   HeightRule,
   LevelFormat,
+  Math as OMath,
   Packer,
   PageBreak,
   Paragraph,
@@ -25,6 +26,8 @@ import {
   type ParagraphChild,
 } from 'docx'
 import type { ExamBlock, ExamDoc, FormatAttrs, RichText, Span } from '@/data/docTypes'
+import { latexToMath } from '@/lib/latexMath'
+import { estimateChoiceCols } from './choiceCols'
 import { splitRichLines } from './convert'
 
 /** Các tuỳ chọn của `docx` đều readonly; ta dựng dần nên cần bản ghi được. */
@@ -65,7 +68,7 @@ function halfPoints(v: unknown): number | undefined {
   return Math.round(m[2]?.toLowerCase() === 'px' ? n * 1.5 : n * 2)
 }
 
-function spanRuns(s: Span, base: Base): TextRun[] {
+function spanRuns(s: Span, base: Base): ParagraphChild[] {
   const opts: Mut<IRunOptions> = {
     bold: base.bold,
     italics: base.italics,
@@ -110,8 +113,19 @@ function spanRuns(s: Span, base: Base): TextRun[] {
       }
     }
   }
-  // '\n' trong một đoạn thành xuống dòng mềm
-  return s.text.split('\n').map((line, i) => new TextRun({ ...opts, text: line, break: i > 0 ? 1 : undefined }))
+  // công thức tách riêng thành equation; '\n' trong chữ thường thành xuống dòng mềm
+  const out: ParagraphChild[] = []
+  let at = 0
+  const text = (t: string) => {
+    if (t) t.split('\n').forEach((line, i) => out.push(new TextRun({ ...opts, text: line, break: i > 0 ? 1 : undefined })))
+  }
+  for (const m of s.text.matchAll(/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g)) {
+    text(s.text.slice(at, m.index))
+    out.push(new OMath({ children: latexToMath(m[1] ?? m[2]) }))
+    at = m.index + m[0].length
+  }
+  text(s.text.slice(at))
+  return out
 }
 
 /** Rich text → các run; `string` và mảng trộn string + span đều nhận. */
@@ -283,9 +297,9 @@ function blockToDocx(b: ExamBlock, ctx: Ctx): Out[] {
         ]
       }
       if (!b.options.length) return [head]
-      // đúng/sai: mỗi ý một dòng, nhãn "a)"; trắc nghiệm: hai cột, nhãn "A."
+      // đúng/sai: mỗi ý một dòng, nhãn "a)"; trắc nghiệm: 4/3/2/1 cột theo độ dài như trên màn hình, nhãn "A."
       const tf = b.kind === 'tf'
-      const cols = tf ? 1 : 2
+      const cols = tf ? 1 : estimateChoiceCols(b.options.map((o) => o.text))
       const w = Math.floor((CONTENT_W - OPT_INDENT) / cols)
       const cell = (o: (typeof b.options)[number]) =>
         plainCell(w, [para([new TextRun({ text: `${o.label}${tf ? ')' : '.'} `, bold: true }), ...runs(o.text)], fmtOpts(o.format))])
