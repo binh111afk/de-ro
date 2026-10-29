@@ -362,11 +362,16 @@ function answerKeyItems(node: JSONContent): Array<{ no: number; answer: RichText
     const ansCells = rows[i + 1].content ?? []
     // ô đầu là tableHeader ('Câu'/'Đáp án') → dữ liệu bắt đầu từ ô 1
     const start = noCells[0]?.type === 'tableHeader' ? 1 : 0
-    for (let j = start; j < noCells.length && j < ansCells.length; j++) {
-      const no = Number(plainText(richOf(noCells[j])).trim())
-      if (!Number.isFinite(no)) continue
-      items.push({ no, answer: richOf(ansCells[j]) })
-    }
+    // số câu hợp lệ: ô rỗng không phải câu 0 (Number('') === 0)
+    const nos = noCells.slice(start).map((c, k) => ({ k: start + k, text: plainText(richOf(c)).trim() })).filter((c) => /^\d+$/.test(c.text))
+    // đáp án: bỏ ô rỗng và ô nhãn "Đáp án" (bảng bị sửa tay hay lệch ô, đáp án không nằm đúng cột với số câu)
+    const answers = ansCells.slice(start).map((c, k) => ({ k: start + k, rt: richOf(c) })).filter((c) => {
+      const t = plainText(c.rt).trim()
+      return t && !/^đáp\s*án$/i.test(t)
+    })
+    // khớp theo thứ tự khi số đáp án đúng bằng số câu (chịu được lệch cột); không thì khớp theo vị trí cột
+    if (answers.length === nos.length) nos.forEach((n, k) => items.push({ no: Number(n.text), answer: answers[k].rt }))
+    else for (const n of nos) if (n.k < ansCells.length) items.push({ no: Number(n.text), answer: richOf(ansCells[n.k]) })
   }
   return items
 }

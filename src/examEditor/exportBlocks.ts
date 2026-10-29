@@ -4,7 +4,10 @@
  * Tách riêng khỏi `exportDocx.ts` vì file đó xuất từ mô hình `Exam` (dùng cho
  * đề cộng đồng), còn trình soạn dùng mô hình block `ExamDoc`.
  */
+import katex from 'katex'
+import 'katex/contrib/mhchem' // \ce{...}
 import type { ExamBlock, ExamDoc, FormatAttrs, RichText, Span } from '@/data/docTypes'
+import { estimateChoiceCols } from './choiceCols'
 import { splitRichLines } from './convert'
 
 /* ------------------------------------------------------------------ *
@@ -34,7 +37,7 @@ function escapeHtml(s: string): string {
 
 /** Rich text → HTML có mark (`<b>/<i>/<u>/<s>/<sub>/<sup>/<span style>`). */
 function richToHtml(rt: RichText): string {
-  if (typeof rt === 'string') return escapeHtml(rt)
+  if (typeof rt === 'string') return textToHtml(rt)
   return rt.map(spanToHtml).join('')
 }
 
@@ -45,8 +48,23 @@ function richLines(rt: RichText): string {
     .join('<br>')
 }
 
+/**
+ * Văn bản có công thức `$…$` / `$$…$$` → HTML. Công thức xuất bằng MathML (KaTeX) nên cửa sổ in không cần
+ * CSS/font KaTeX; Chrome và Edge vẽ MathML gốc, ra PDF đúng công thức.
+ */
+function textToHtml(text: string): string {
+  let out = ''
+  let at = 0
+  for (const m of text.matchAll(/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g)) {
+    out += escapeHtml(text.slice(at, m.index))
+    out += katex.renderToString(m[1] ?? m[2], { output: 'mathml', displayMode: m[1] !== undefined, throwOnError: false })
+    at = m.index + m[0].length
+  }
+  return out + escapeHtml(text.slice(at))
+}
+
 function spanToHtml(s: Span): string {
-  let inner = escapeHtml(s.text)
+  let inner = textToHtml(s.text)
   for (const m of s.marks ?? []) {
     switch (m.type) {
       case 'bold':
@@ -175,9 +193,10 @@ function blockToHtml(b: ExamBlock, seq: BlockSeq): string {
       if (b.kind === 'short') {
         return head + '<table class="sa" cellspacing="0"><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr></table>'
       }
-      // đúng/sai: mỗi ý một dòng, nhãn "a)"; trắc nghiệm: hai cột, nhãn "A."
+      // đúng/sai: mỗi ý một dòng, nhãn "a)"; trắc nghiệm: 4/3/2/1 cột theo độ dài (như màn hình), nhãn "A."
       const tf = b.kind === 'tf'
-      const rows = chunk(b.options, tf ? 1 : 2)
+      const cols = tf ? 1 : estimateChoiceCols(b.options.map((o) => o.text))
+      const rows = chunk(b.options, cols)
         .map(
           (row) =>
             '<tr>' +
@@ -192,7 +211,7 @@ function blockToHtml(b: ExamBlock, seq: BlockSeq): string {
             '</tr>',
         )
         .join('')
-      return head + (rows ? `<div class="opts${tf ? ' tf' : ''}"><table>${rows}</table></div>` : '')
+      return head + (rows ? `<div class="opts${tf ? ' tf' : ` c${cols}`}"><table>${rows}</table></div>` : '')
     }
 
     case 'essay':
@@ -280,7 +299,9 @@ const EXPORT_CSS = `
   .opts { margin: 0 0 4px 22px; }
   .opts table { width: 100%; border-collapse: collapse; }
   .opts td { width: 50%; vertical-align: top; padding: 0 6px 0 0; border: none; }
-  .opts.tf td { width: 100%; }
+  .opts.c1 td, .opts.tf td { width: 100%; }
+  .opts.c3 td { width: 33.33%; }
+  .opts.c4 td { width: 25%; }
   .sa { margin: 2px 0 6px 22px; border-collapse: collapse; }
   .sa td { width: 28px; height: 28px; border: 1px solid #000; }
   .subs { margin-left: 22px; }
@@ -290,6 +311,8 @@ const EXPORT_CSS = `
   .ak th { background: #f2f2f2; }
   .rub { margin: 0 0 8px 22px; }
   .hr { border: 0; border-top: 1px solid #999; margin: 10px 0; }
+  /* công thức MathML: phân số cỡ chữ thường thay vì thu nhỏ như chỉ số */
+  math { math-style: normal; }
 `
 
 export function buildWordHtml(doc: ExamDoc): string {

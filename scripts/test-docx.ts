@@ -33,6 +33,11 @@ const doc: ExamDoc = {
     { type: 'question', no: 2, kind: 'tf', text: 'Xét các ý', options: ['a', 'b'].map((l) => ({ label: l, text: `Ý ${l}` })) },
     { type: 'question', no: 3, kind: 'short', text: 'Tìm x', options: [] },
     { type: 'bullets', items: ['Một', 'Hai'], ordered: true },
+    {
+      type: 'paragraph',
+      text: 'Công thức: $\\frac{a+b}{2}$, $x^2+\\sqrt{3}$, $\\sqrt[3]{8}=2$, $\\sum_{i=1}^{n} a_i$, $\\int_0^1 x^2\\,dx$, $\\left(\\frac{1}{2}\\right)^2$, $\\lim_{x\\to 0}\\frac{\\sin x}{x}=1$, $\\vec{AB}\\cdot\\vec{AC}$, $\\alpha \\le \\beta$, $H_2O$, $x_1^2$, $\\mathbb{R}$',
+    },
+    { type: 'paragraph', text: '$$\\Delta = b^2 - 4ac$$' },
     { type: 'essay', no: 1, score: 2, text: 'Chứng minh …', sub: ['a) Ý một'] },
     { type: 'pageBreak' },
     { type: 'answerKey', items: [{ no: 1, answer: 'B' }, { no: 2, answer: 'ĐS' }] },
@@ -47,12 +52,17 @@ const zip = await JSZip.loadAsync(buf)
 for (const name of ['[Content_Types].xml', 'word/document.xml', 'word/numbering.xml']) assert.ok(zip.file(name), `thiếu ${name}`)
 const xml = await zip.file('word/document.xml')!.async('string')
 assert.match(xml, /w:w="11906"/, 'khổ A4')
+assert.ok(xml.includes('<w:gridCol w:w="2440"/>'), 'phương án ngắn xếp 4 cột như trên màn hình')
 assert.ok(xml.includes('Câu 1. '), 'đánh số câu theo thứ tự khối, bỏ qua block.no')
 assert.ok(xml.includes('Câu 3. '))
 assert.ok(!xml.includes('Câu 9.'))
 assert.ok(xml.includes('Bài 1 (2 điểm). '))
 assert.ok(xml.includes('<w:caps'), 'tiêu đề in hoa')
 assert.ok(xml.includes('<w:lastRenderedPageBreak') || xml.includes('w:type="page"'), 'ngắt trang')
+
+// công thức thành equation Word (OMML), không còn dấu $ hay lệnh LaTeX thô
+for (const tag of ['<m:f>', '<m:rad>', '<m:sSup>', '<m:sSub>', '<m:sSubSup>', '<m:nary>', '<m:limLow>', '<m:d>']) assert.ok(xml.includes(tag), `thiếu ${tag}`)
+assert.ok(!xml.includes('\\frac') && !xml.includes('\\sqrt') && !/>[^<]*\$[^<]*</.test(xml), 'còn LaTeX thô')
 
 // mammoth đọc lại được và thấy đủ nội dung
 const text = (await mammoth.extractRawText({ buffer: buf })).value

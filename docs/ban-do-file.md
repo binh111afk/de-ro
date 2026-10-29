@@ -32,6 +32,7 @@ src/
     NavPanel.tsx           nav pane (mục lục / khối mẫu / tìm kiếm) — dải tab có thẻ trượt
     templates.ts           BLOCK_TEMPLATES — nguồn duy nhất cho ribbon + nav panel
     exportBlocks.ts        xuất Word (gọi docxBlocks) + in A4 (richToHtml + format CSS)
+    choiceCols.ts          ước lượng số cột phương án (4/3/2/1) khi xuất .docx/in, cùng luật với choiceLayout
     docxBlocks.ts          ExamDoc → .docx thật bằng thư viện docx (nạp động); lib/exportDocx.ts dùng chung cho Exam
   components/
     Layout.tsx             vỏ web (header/footer) — logo mới /brand/logo-de-ro.svg
@@ -50,6 +51,7 @@ src/
   lib/onlinePublish.ts     đăng đề online lên cộng đồng (qua publishDoc) + shareUrl
   lib/docToExam.ts         ExamDoc → Exam; đọc phần lời giải cuối tài liệu ("Câu N:"/"Bài N:"); doc.online trả nguyên đề online
   components/CopyLink.tsx  ô link kèm nút chép
+  lib/latexMath.ts         LaTeX → equation Word (OMML) cho xuất .docx
   store/compose.ts         store phiên nhiều tab (nội dung + deck, OpenTab.kind)
   store/docs.ts            store tài liệu đã lưu (myDocs, saveDocById) + kiểu theme/deck/tone
   data/docTypes.ts         kiểu ExamBlock + RichText/Span/Mark/FormatAttrs + DocKind
