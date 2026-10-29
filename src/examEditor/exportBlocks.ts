@@ -170,14 +170,21 @@ function blockToHtml(b: ExamBlock, seq: BlockSeq): string {
     }
 
     case 'question': {
-      const rows = chunk(b.options, 2)
+      const head = `<p class="q"${formatCss(b.format)}><b>Câu ${seq.q}.</b> ${richToHtml(b.text)}</p>`
+      // trả lời ngắn: 4 ô trống điền đáp số (khớp 4 cột trên phiếu trả lời)
+      if (b.kind === 'short') {
+        return head + '<table class="sa" cellspacing="0"><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr></table>'
+      }
+      // đúng/sai: mỗi ý một dòng, nhãn "a)"; trắc nghiệm: hai cột, nhãn "A."
+      const tf = b.kind === 'tf'
+      const rows = chunk(b.options, tf ? 1 : 2)
         .map(
           (row) =>
             '<tr>' +
             row
               .map(
                 (o) =>
-                  `<td class="opt"${formatCss(o.format)}><b>${escapeHtml(o.label)}.</b> ${richToHtml(
+                  `<td class="opt"${formatCss(o.format)}><b>${escapeHtml(o.label)}${tf ? ')' : '.'}</b> ${richToHtml(
                     o.text,
                   )}</td>`,
               )
@@ -185,10 +192,7 @@ function blockToHtml(b: ExamBlock, seq: BlockSeq): string {
             '</tr>',
         )
         .join('')
-      return (
-        `<p class="q"${formatCss(b.format)}><b>Câu ${seq.q}.</b> ${richToHtml(b.text)}</p>` +
-        (rows ? `<div class="opts"><table>${rows}</table></div>` : '')
-      )
+      return head + (rows ? `<div class="opts${tf ? ' tf' : ''}"><table>${rows}</table></div>` : '')
     }
 
     case 'essay':
@@ -276,6 +280,9 @@ const EXPORT_CSS = `
   .opts { margin: 0 0 4px 22px; }
   .opts table { width: 100%; border-collapse: collapse; }
   .opts td { width: 50%; vertical-align: top; padding: 0 6px 0 0; border: none; }
+  .opts.tf td { width: 100%; }
+  .sa { margin: 2px 0 6px 22px; border-collapse: collapse; }
+  .sa td { width: 28px; height: 28px; border: 1px solid #000; }
   .subs { margin-left: 22px; }
   .sub { margin: 0 0 3px; }
   .ak { border-collapse: collapse; margin: 10px 0; font-size: 12pt; }

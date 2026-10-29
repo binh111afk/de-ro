@@ -13,6 +13,7 @@
  *   └────────┴───────────────────────────────┴─────────────────┘
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import type { Editor } from '@tiptap/core'
 import type { JSONContent } from '@tiptap/core'
 import { Selection } from '@tiptap/pm/state'
@@ -29,6 +30,9 @@ import { useFormatState, applyFormatAttrs } from '@/examEditor/formatState'
 import { FindPanel } from '@/examEditor/FindPanel'
 import { exportDocBlocks, printDoc } from '@/examEditor/exportBlocks'
 import { useComposeStore } from '@/store/compose'
+import { useApp } from '@/store/app'
+import { docToExam } from '@/lib/docToExam'
+import { isAutoGraded } from '@/lib/grading'
 import { DECK_THEMES } from '@/lib/slideTheme'
 import { SlideEditor } from '@/examEditor/SlideEditor'
 import { extractJson } from '@/lib/llm'
@@ -138,25 +142,32 @@ function sanitizeBlocks(raw: unknown): ExamBlock[] {
           format: fmt(b.format),
         })
         break
-      case 'question':
+      case 'question': {
+        // kind: 'tf' = đúng/sai (4 ý a–d), 'short' = trả lời ngắn (không có phương án); còn lại là trắc nghiệm A–D
+        const kind = b.kind === 'tf' || b.kind === 'short' ? b.kind : undefined
         out.push({
           type: 'question',
           no: typeof b.no === 'number' ? b.no : 1,
+          ...(kind ? { kind } : {}),
           text: rich(b.text),
           // chấp nhận cả dạng viết tắt: options: ["A. …", "B. …"]
-          options: list(b.options).map((o, i) => {
-            const letter = String.fromCharCode(65 + i)
-            if (typeof o === 'string') return { label: letter, text: o }
-            const opt = (o ?? {}) as Record<string, unknown>
-            return {
-              label: typeof opt.label === 'string' ? opt.label : letter,
-              text: rich(opt.text),
-              format: fmt(opt.format),
-            }
-          }),
+          options:
+            kind === 'short'
+              ? []
+              : list(b.options).map((o, i) => {
+                  const letter = String.fromCharCode((kind === 'tf' ? 97 : 65) + i)
+                  if (typeof o === 'string') return { label: letter, text: o }
+                  const opt = (o ?? {}) as Record<string, unknown>
+                  return {
+                    label: typeof opt.label === 'string' ? (kind === 'tf' ? opt.label.toLowerCase() : opt.label) : letter,
+                    text: rich(opt.text),
+                    format: fmt(opt.format),
+                  }
+                }),
           format: fmt(b.format),
         })
         break
+      }
       case 'essay':
         out.push({
           type: 'essay',
@@ -233,6 +244,7 @@ function nodeText(node: JSONContent): string {
 }
 
 export default function ComposeDoc() {
+  const navigate = useNavigate()
   const viewport = useViewportSize()
 
   const {
@@ -419,6 +431,33 @@ export default function ComposeDoc() {
     if (!activeDoc) return
     await exportDocBlocks(activeDoc)
   }, [activeDoc])
+
+  /**
+   * Tệp → Làm đề tương tác: dựng đề tương tác từ các khối đang soạn (`docToExam`) rồi mở màn làm bài.
+   * Mỗi lần bấm thay bản đã chuyển trước đó của đề này (để sửa đề rồi làm lại không ra bản cũ).
+   */
+  const handleStartQuiz = useCallback(() => {
+    if (!activeDoc) return
+    const exam = docToExam(activeDoc, `doc-${activeDoc.id}`)
+    const questions = exam.sections.flatMap((s) => s.questions)
+    if (!questions.length) {
+      window.alert('Đề chưa có câu hỏi nào để làm. Thêm câu trắc nghiệm hoặc tự luận trước nhé.')
+      return
+    }
+    // câu tự động chấm được (trắc nghiệm, đúng/sai, trả lời ngắn) mà thiếu đáp án thì không chấm được
+    const noAnswer = questions.filter((q) => q.type !== 'tu-luan' && q.type !== 'tu-luan-dong' && !isAutoGraded(q)).length
+    if (
+      noAnswer > 0 &&
+      !window.confirm(`${noAnswer} câu chưa có đáp án hợp lệ (thiếu khối đáp án, số câu không khớp, hoặc đáp án sai dạng: đúng/sai cần chuỗi Đ/S đủ 4 ý, trả lời ngắn cần một số), nên không chấm được các câu này. Vẫn làm thử?`)
+    )
+      return
+    const app = useApp.getState()
+    const prev = app.myExams.find((e) => e.importedFrom === exam.id)
+    if (prev) app.deleteExam(prev.id)
+    const id = app.importExam(exam)
+    app.startQuiz(id)
+    navigate(`/lam-de/${id}`)
+  }, [activeDoc, navigate])
 
   /** Tệp → Nhập file: mở tệp Word/Excel/PowerPoint thành một tab đề mới. */
   const handleImportExam = useCallback(
@@ -678,6 +717,7 @@ export default function ComposeDoc() {
         onPrint={handlePrint}
         onExportWord={handleExportWord}
         onExportPdf={handlePrint}
+        onStartQuiz={handleStartQuiz}
         dirty={activeTab?.dirty ?? false}
         pageCount={pageCount}
         zoom={effectiveZoom}

@@ -645,6 +645,29 @@
     content: attr(data-label) '. ';
     font-weight: 700;
   }
+  /* Đúng/sai: mỗi ý một dòng, nhãn "a)". Trả lời ngắn: 4 ô trống để điền đáp số. */
+  .doc-content div[data-exam-node='examQuestion'][data-kind='tf'] {
+    grid-template-columns: 1fr;
+  }
+  .doc-content div[data-exam-node='examQuestion'][data-kind='tf'] > div[data-exam-node='examOption']::before {
+    content: attr(data-label) ') ';
+  }
+  .doc-content div[data-exam-node='examQuestion'][data-kind='short']::after {
+    content: '';
+    grid-column: 1 / -1;
+    display: block;
+    width: 8.8rem;
+    height: 2.2rem;
+    margin: 0.3rem 0 0.15rem;
+    border: 1px solid #333;
+    background: repeating-linear-gradient(
+      to right,
+      transparent 0,
+      transparent calc(2.2rem - 1px),
+      #333 calc(2.2rem - 1px),
+      #333 2.2rem
+    );
+  }
   .doc-content div[data-exam-node='examEssaySub'] {
     padding-left: 1.6rem;
   }

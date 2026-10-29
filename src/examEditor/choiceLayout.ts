@@ -104,7 +104,8 @@ export const ChoiceLayoutExtension = Extension.create({
             if (!cols || cols.size === 0) return null
             const decos: Decoration[] = []
             state.doc.forEach((node, offset) => {
-              if (node.type.name !== 'examQuestion') return
+              // đúng/sai và trả lời ngắn có bố cục riêng (CSS theo data-kind), không đo số cột
+              if (node.type.name !== 'examQuestion' || node.attrs.kind) return
               const n = cols.get(questionKey(node, offset))
               // 2 cột là mặc định trong CSS → không cần class
               if (n && n !== 2) {

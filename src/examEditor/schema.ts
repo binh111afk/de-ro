@@ -471,17 +471,23 @@ export const QuestionNode = Node.create({
   content: 'examQuestionPrompt examOption*',
   defining: true,
   addAttributes() {
-    return { id: { default: null }, no: { default: 1 }, ...formatAttrs() }
+    // kind: null = trắc nghiệm A–D; 'tf' = đúng/sai 4 ý; 'short' = trả lời ngắn
+    return { id: { default: null }, no: { default: 1 }, kind: { default: null }, ...formatAttrs() }
   },
   parseHTML() {
     return [{ tag: 'div[data-exam-node="examQuestion"]' }]
   },
   renderHTML({ HTMLAttributes }) {
-    const { id, no, ...rest } = HTMLAttributes as Record<string, unknown>
+    const { id, no, kind, ...rest } = HTMLAttributes as Record<string, unknown>
     return [
       'div',
       mergeAttributes(
-        { 'data-exam-node': 'examQuestion', ...(id ? { 'data-id': id } : {}), 'data-no': no },
+        {
+          'data-exam-node': 'examQuestion',
+          ...(id ? { 'data-id': id } : {}),
+          ...(kind ? { 'data-kind': kind } : {}),
+          'data-no': no,
+        },
         { style: formatStyle(rest) },
       ),
       0,

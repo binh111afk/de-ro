@@ -563,6 +563,8 @@ function examSystemPrompt(documentDigest?: string): string {
     '- {"type":"bullets","items":["ý 1","ý 2"]}\n' +
     '- {"type":"grid","cols":2,"cells":["cột 1","cột 2"]}\n' +
     '- {"type":"question","no":1,"text":"Nội dung câu hỏi","options":[{"label":"A","text":"..."},{"label":"B","text":"..."},{"label":"C","text":"..."},{"label":"D","text":"..."}]}\n' +
+    '- {"type":"question","kind":"tf","no":13,"text":"Lời dẫn của câu đúng/sai","options":[{"label":"a","text":"mệnh đề a"},{"label":"b","text":"mệnh đề b"},{"label":"c","text":"mệnh đề c"},{"label":"d","text":"mệnh đề d"}]}  (câu đúng/sai: đúng 4 ý a, b, c, d; nhãn chữ thường)\n' +
+    '- {"type":"question","kind":"short","no":17,"text":"Nội dung câu hỏi","options":[]}  (câu trả lời ngắn: không có phương án; đáp án là MỘT SỐ, tối đa 4 ký tự kể cả dấu âm và dấu phẩy, ví dụ 12, -3,5, 0,25)\n' +
     '- {"type":"essay","no":1,"score":2,"text":"Nội dung","sub":["a) …","b) …"]}\n' +
     '- {"type":"answerKey","items":[{"no":1,"answer":"A"},{"no":2,"answer":"C"}]}  (items là object {no, answer}, KHÔNG phải chuỗi)\n' +
     '- {"type":"rubric","title":"A. HƯỚNG DẪN CHUNG","items":[{"label":"1.","text":"Ý đúng — 1,0 điểm"}]}\n' +
@@ -581,6 +583,12 @@ function examSystemPrompt(documentDigest?: string): string {
     '- Chỉ dùng title/meta khi người dùng yêu cầu đề không có header (không ghi sở/trường). Sau header chỉ thêm student khi đề cần ô họ tên/số báo danh, rồi heading từng phần, ví dụ "PHẦN I. TRẮC NGHIỆM (3,0 điểm)".\n' +
     '- Câu trắc nghiệm: block question, đúng 4 phương án A–D, đúng một đáp án, độ khó tăng dần, không trùng ý.\n' +
     '- Câu tự luận: block essay có score, các ý a) b) trong sub.\n' +
+    '- Đề trắc nghiệm theo định dạng tốt nghiệp THPT từ 2025 gồm ba phần: PHẦN I nhiều lựa chọn (question mặc định, A–D, 0,25 điểm/câu); ' +
+    'PHẦN II đúng/sai (question kind "tf", mỗi câu 4 ý a) b) c) d), tối đa 1 điểm/câu: đúng 1 ý được 0,1; 2 ý 0,25; 3 ý 0,5; 4 ý 1 điểm); ' +
+    'PHẦN III trả lời ngắn (question kind "short", đáp án là số tối đa 4 ký tự, 0,25 điểm/câu, riêng môn Toán 0,5). ' +
+    'Ví dụ đề Toán: 12 câu nhiều lựa chọn, 4 câu đúng/sai, 6 câu trả lời ngắn. Chỉ dùng kind "tf"/"short" khi người dùng yêu cầu dạng đó hoặc đề theo định dạng này.\n' +
+    '- Số câu "no" của các block question đánh liên tục 1, 2, 3… trong cả đề, bất kể dạng (không đánh lại từ 1 ở mỗi phần). Câu tự luận (essay) đánh số riêng.\n' +
+    '- answerKey phải có đủ mọi câu question: nhiều lựa chọn = một chữ cái ("B"); đúng/sai = chuỗi Đ/S theo thứ tự ý a b c d, ví dụ "ĐSĐS"; trả lời ngắn = con số, dấu thập phân là dấu phẩy ("-1,5"). Đáp án tự luận để trong rubric.\n' +
     '- Kết thúc đề: answerKey (bảng đáp án trắc nghiệm) và/hoặc rubric (thang điểm tự luận).\n' +
     '- Công thức toán viết LaTeX trong $...$, không dùng ảnh cho công thức.\n' +
     '- Tiếng Việt chuẩn, số liệu nhất quán, mọi câu phải có đáp án đúng.\n\n' +

@@ -10,7 +10,7 @@ export type Subject =
   | 'Địa lí'
   | 'Tin học'
 
-export type QuestionType = 'trac-nghiem' | 'tu-luan' | 'tu-luan-dong'
+export type QuestionType = 'trac-nghiem' | 'dung-sai' | 'tra-loi-ngan' | 'tu-luan' | 'tu-luan-dong'
 
 export interface Option {
   key: string
@@ -22,7 +22,9 @@ export interface Question {
   number: number
   type: QuestionType
   prompt: string
+  /** trắc nghiệm: phương án A–D; đúng/sai: các ý a) b) c) d) (key là chữ cái thường) */
   options?: Option[]
+  /** trắc nghiệm: chữ cái; đúng/sai: chuỗi Đ/S theo thứ tự ý ("ĐSĐS"); trả lời ngắn: con số ("-1,5") */
   answer?: string
   explanation?: string
   points: number
@@ -89,6 +91,8 @@ export const GRADES = [
 
 export const TYPE_LABEL: Record<QuestionType, string> = {
   'trac-nghiem': 'Trắc nghiệm',
+  'dung-sai': 'Đúng/Sai',
+  'tra-loi-ngan': 'Trả lời ngắn',
   'tu-luan': 'Tự luận',
   'tu-luan-dong': 'Tự luận động',
 }

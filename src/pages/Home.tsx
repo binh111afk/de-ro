@@ -43,7 +43,7 @@ function Hero() {
         <div className="anim-rise">
           <Badge tone="clay" className="mb-7">
             <Sparkles className="size-3" />
-            Miễn phí · Không cần đăng nhập
+            Trợ lý AI cho giáo viên Việt Nam
           </Badge>
 
           <h1 className="font-display text-[42px] font-semibold leading-[1.04] tracking-[-0.025em] text-ink text-balance sm:text-[56px] lg:text-[66px]">
@@ -405,7 +405,7 @@ function HowItWorks() {
             một buổi tối.
           </h2>
           <p className="mt-5 max-w-[36ch] text-[14.5px] leading-[1.75] text-ink-2">
-            Không cần tạo tài khoản, không cần thẻ, không cần chờ ai duyệt. Mở là soạn.
+            Đăng ký bằng email, không cần thẻ, không cần chờ ai duyệt. Vào là soạn.
           </p>
         </div>
 
@@ -541,7 +541,7 @@ function CallToAction() {
             Đề thi của bạn đang chờ ở khung bên phải.
           </h2>
           <p className="mx-auto mt-4 max-w-[46ch] text-[15px] leading-[1.75] text-paper/65">
-            Miễn phí hoàn toàn. Không cần đăng nhập, không giới hạn số đề, không giới hạn số lần
+            Miễn phí hoàn toàn. Một tài khoản email là đủ, không giới hạn số đề, không giới hạn số lần
             tải.
           </p>
           <Link to="/soan-de" className="mt-9 inline-block">
