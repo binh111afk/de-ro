@@ -31,7 +31,8 @@ src/
     markdown.tsx           parse/render markdown tối giản cho chat AI (an toàn XSS) + Markdown
     NavPanel.tsx           nav pane (mục lục / khối mẫu / tìm kiếm) — dải tab có thẻ trượt
     templates.ts           BLOCK_TEMPLATES — nguồn duy nhất cho ribbon + nav panel
-    exportBlocks.ts        xuất Word + in A4 (richToHtml + format CSS)
+    exportBlocks.ts        xuất Word (gọi docxBlocks) + in A4 (richToHtml + format CSS)
+    docxBlocks.ts          ExamDoc → .docx thật bằng thư viện docx (nạp động); lib/exportDocx.ts dùng chung cho Exam
   components/
     Layout.tsx             vỏ web (header/footer) — logo mới /brand/logo-de-ro.svg
     docIcons.tsx           icon loại tài liệu: IconDocExam/IconDocSlide/IconDocSheet + DocIcon

@@ -8,16 +8,16 @@ import type { ExamBlock, ExamDoc, FormatAttrs, RichText, Span } from '@/data/doc
 import { splitRichLines } from './convert'
 
 /* ------------------------------------------------------------------ *
- * Word (.doc)
+ * Word (.docx)
  * ------------------------------------------------------------------ */
 
+/** Tải file .docx thật. Thư viện `docx` nạp động để không nằm trong bundle chính. */
 export async function exportDocBlocks(doc: ExamDoc): Promise<void> {
-  const html = buildWordHtml(doc)
-  const blob = new Blob(['﻿', html], { type: 'application/msword;charset=utf-8' })
-  const url = URL.createObjectURL(blob)
+  const { buildDocxBlob } = await import('./docxBlocks')
+  const url = URL.createObjectURL(await buildDocxBlob(doc))
   const a = document.createElement('a')
   a.href = url
-  a.download = `${sanitize(doc.title)}.doc`
+  a.download = `${sanitize(doc.title)}.docx`
   document.body.appendChild(a)
   a.click()
   document.body.removeChild(a)
@@ -254,7 +254,7 @@ function fmt(n: number): string {
   })
 }
 
-/** CSS dùng chung cho bản Word và bản in — một nguồn, tránh hai nơi lệch nhau. */
+/** CSS dùng chung cho bản in (và bản HTML cũ của Word, còn dùng trong test) — một nguồn, tránh hai nơi lệch nhau. */
 const EXPORT_CSS = `
   @page { size: A4; margin: 1.8cm 1.6cm; }
   body { font-family: "Times New Roman", serif; font-size: 13pt; line-height: 1.5; color: #000; }

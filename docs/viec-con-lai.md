@@ -8,6 +8,7 @@ Xem [phiên 10](handoff/phien-10.md). Còn lại, theo thứ tự nên làm:
 - [ ] **Đề chỉ có link, không lên danh sách cộng đồng**: cần thêm cột (vd `unlisted`) trong `community_exams`. Hỏi chủ dự án trước khi đổi database.
 - [ ] **Lịch sử đề lưu theo tài khoản** (hiện chỉ `localStorage`, đổi máy là mất).
 - [ ] Đề đăng không tự cập nhật khi sửa (có nút "Đăng lại bản mới"); chưa có xoá/gỡ bản đã đăng.
+- [ ] **Xuất .docx**: công thức `$…$` còn ra dạng chữ (chưa chuyển LaTeX sang equation Word/OMML); chưa mở bằng Microsoft Word thật (mới xem bằng LibreOffice).
 - [ ] Gộp hai đường vào làm đề tương tác (đề cộng đồng qua `Community.tsx` và đề online) nếu thêm tính năng.
 
 ## 6. ⚠️ CHƯA LÀM XONG (việc còn tồn đọng)
