@@ -280,7 +280,7 @@ function PublishModal({
     setBusyId(doc.id)
     setError(null)
     try {
-      onPublished(await publishDoc(doc))
+      onPublished(await publishDoc(doc, true))
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Có lỗi xảy ra, thử lại sau.')
     } finally {

@@ -293,7 +293,7 @@ export const useDocStore = create<DocStore>()(
 
       renameDoc: (id, title) =>
         set((s) => ({
-          myDocs: s.myDocs.map((d) => (d.id === id ? { ...d, title } : d)),
+          myDocs: s.myDocs.map((d) => (d.id === id ? { ...d, title, updatedAt: new Date().toISOString() } : d)),
           doc: s.doc?.id === id ? { ...s.doc, title } : s.doc,
         })),
 
@@ -338,7 +338,7 @@ export const useDocStore = create<DocStore>()(
 
       renameDeck: (id, title) =>
         set((s) => ({
-          myDecks: s.myDecks.map((d) => (d.id === id ? { ...d, title } : d)),
+          myDecks: s.myDecks.map((d) => (d.id === id ? { ...d, title, updatedAt: new Date().toISOString() } : d)),
           deck: s.deck?.id === id ? { ...s.deck, title } : s.deck,
         })),
     }),

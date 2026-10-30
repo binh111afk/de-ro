@@ -26,8 +26,10 @@ export interface OnlineItem {
   settings: ExamSettings
   createdAt: string
   updatedAt: string
-  /** id đề trên cộng đồng sau khi đăng; không có = chỉ nằm trên máy này */
+  /** id đề đã xuất bản; không có = chưa xuất bản (chỉ nằm trong lịch sử của bạn) */
   publishedId?: string
+  /** đề đã xuất bản có hiện trong danh sách cộng đồng không (false = chỉ có link cho học sinh) */
+  publishedListed?: boolean
   /** id tài liệu trong trình soạn nếu đề được chuyển từ đó (để chuyển lại không tạo trùng) */
   sourceDocId?: string
 }

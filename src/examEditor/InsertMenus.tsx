@@ -6,6 +6,7 @@
  *   - LinkDialog: chèn/sửa siêu liên kết
  *   - ImagePicker: chọn ảnh từ máy → chèn base64
  */
+import { dialog } from '@/components/Dialog'
 import { useEffect, useRef, useState } from 'react'
 import type { Editor } from '@tiptap/core'
 import katex from 'katex'
@@ -344,7 +345,7 @@ export function ImagePicker({ editor, disabled }: { editor: Editor | null; disab
         const src = await uploadImage(String(reader.result ?? ''))
         if (!editor.isDestroyed) editor.chain().focus().setImage({ src }).run()
       } catch (err) {
-        window.alert(err instanceof Error ? err.message : 'Không chèn được ảnh này.')
+        void dialog.alert(err instanceof Error ? err.message : 'Không chèn được ảnh này.', { title: 'Không chèn được ảnh' })
       }
     }
     reader.readAsDataURL(file)

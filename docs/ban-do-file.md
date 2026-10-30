@@ -97,6 +97,14 @@ scripts/test-slide-ai.mjs test 26b+27a (sanitize/validate/ngân sách chữ/prom
 scripts/test-image.mjs     test prompt tạo ảnh (tiêu đề + 3 ý, fallback) — 3/3 pass
 scripts/test-sources.mjs   test thang nguồn (myDocs + rule) — 4/4 pass
 scripts/test-extract.mjs   test trích tệp server-side (csv/.doc/.ppt/pptx) — 4/4 pass
+src/lib/sync.ts            đồng bộ lịch sử tạo đề, đề, bài giảng, ảnh tải lên lên bảng user_items (phiên 12)
+src/lib/attempts.ts        nộp bài / thống kê kết quả học sinh (exam_attempts)
+src/lib/onlineAi.ts        prompt + chuẩn hoá câu hỏi AI cho tạo đề online
+src/components/OnlineAiBox.tsx  ô AI trong vùng soạn tạo đề online (đính kèm file)
+src/components/Dialog.tsx  dialog.alert/confirm/prompt thay native; ui.tsx có Checkbox; Segmented.tsx
+src/pages/OnlinePublished.tsx  tab Đề đã xuất bản (thẻ báo cáo, top 3, cửa sổ kết quả)
+src/store/uploads.ts       ảnh đã tải lên cho slide (đồng bộ theo tài khoản)
+scripts/test-sync.ts, test-attempts.ts, test-online-ai.ts  test phiên 12
 _ref/genoffice/            clone mã nguồn GenOffice (Apache-2.0) — tham chiếu (còn nguyên)
 _ref/soandethi/AI-SLIDE-AUDIT.md  audit workflow AI slide + motion (mục 3.36, lộ trình 6.8)
 ```

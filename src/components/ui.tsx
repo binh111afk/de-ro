@@ -147,6 +147,65 @@ export function SkeletonCard({ variant = 'doc' }: { variant?: 'doc' | 'exam' }) 
   )
 }
 
+/**
+ * Ô tích thay `<input type="checkbox">` của trình duyệt. Vẫn là input thật (ẩn) nên bàn phím, đọc màn hình
+ * và `label` hoạt động như cũ; dấu tick được vẽ dần khi bật. Nhận chữ làm `children`, hoặc dùng một mình với `aria-label`.
+ */
+export function Checkbox({
+  checked,
+  onChange,
+  children,
+  disabled,
+  className,
+  'aria-label': ariaLabel,
+}: {
+  checked: boolean
+  onChange: (checked: boolean) => void
+  children?: ReactNode
+  disabled?: boolean
+  className?: string
+  'aria-label'?: string
+}) {
+  return (
+    <label
+      className={cn(
+        'inline-flex select-none items-center gap-2',
+        disabled ? 'cursor-not-allowed opacity-40' : 'cursor-pointer',
+        className,
+      )}
+    >
+      <input
+        type="checkbox"
+        className="peer sr-only"
+        checked={checked}
+        disabled={disabled}
+        aria-label={ariaLabel}
+        onChange={(e) => onChange(e.target.checked)}
+      />
+      <span
+        aria-hidden="true"
+        className={cn(
+          'flex size-4 shrink-0 items-center justify-center rounded-[4px] border-[1.5px] bg-white transition-[background-color,border-color,transform] duration-200 motion-reduce:transition-none',
+          'peer-focus-visible:ring-2 peer-focus-visible:ring-clay/30 peer-active:scale-90',
+          checked ? 'border-clay bg-clay' : 'border-ink-4 peer-hover:border-ink-3',
+        )}
+      >
+        <svg viewBox="0 0 12 12" className="size-3 text-white" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+          <path
+            d="M2.5 6.3 5 8.8l4.5-5.3"
+            pathLength={1}
+            strokeDasharray={1}
+            strokeDashoffset={checked ? 0 : 1}
+            className="transition-[stroke-dashoffset] duration-200 ease-out motion-reduce:transition-none"
+            style={{ transitionDelay: checked ? '60ms' : '0ms' }}
+          />
+        </svg>
+      </span>
+      {children}
+    </label>
+  )
+}
+
 export const inputClass =
   'w-full rounded-[6px] border border-line-2 bg-white px-4 py-2.5 text-[14px] text-ink placeholder:text-ink-4 ' +
   'transition-all duration-200 hover:border-ink-4 focus:border-clay focus:bg-white focus:outline-none focus:ring-2 focus:ring-clay/15'

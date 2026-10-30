@@ -1,3 +1,4 @@
+import { dialog } from '@/components/Dialog'
 import { useEffect, useRef, useState, type ChangeEvent, type DragEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { Clock, ExternalLink, FileText, Search, Trash2, Upload } from 'lucide-react'
@@ -146,7 +147,7 @@ function Documents() {
   }
 
   const remove = async (doc: UserDocument) => {
-    if (!window.confirm(`Xóa "${doc.name}" khỏi kho tài liệu?`)) return
+    if (!(await dialog.confirm(`Xóa "${doc.name}" khỏi kho tài liệu?`, { title: 'Xóa tài liệu', confirmLabel: 'Xóa', danger: true }))) return
     try {
       await deleteDocument(doc.id)
       setDocs((d) => (d ?? []).filter((x) => x.id !== doc.id))

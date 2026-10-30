@@ -97,7 +97,7 @@ export default function Auth({ mode }: { mode: Mode }) {
   const resetInvalid = mode === 'reset' && recoveryToken === null
 
   return (
-    <section className="mx-auto grid max-w-[1180px] items-center gap-8 px-4 py-8 sm:h-[calc(100dvh-69px)] sm:gap-10 sm:overflow-hidden sm:px-6 sm:py-6 lg:grid-cols-[1fr_440px] lg:gap-20">
+    <section className="mx-auto grid max-w-[1180px] items-center gap-8 px-4 py-8 sm:gap-10 sm:px-6 sm:py-6 lg:min-h-[calc(100dvh-69px)] lg:grid-cols-[1fr_440px] lg:gap-20">
       <div className="flex flex-col gap-8">
       <div className="anim-rise">
         <p className="eyebrow mb-4">{copy.eyebrow}</p>

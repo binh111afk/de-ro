@@ -1,16 +1,22 @@
+import { dialog } from '@/components/Dialog'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Clock, MonitorPlay, Plus, Sparkles, Trash2, Upload } from 'lucide-react'
+import { Clock, History, MonitorPlay, Plus, Send, Sparkles, Trash2, Upload, Users } from 'lucide-react'
 import { Badge, Button, EmptyState } from '@/components/ui'
 import { CopyLink } from '@/components/CopyLink'
+import { Segmented } from '@/components/Segmented'
+import { PublishedPanel } from '@/pages/OnlinePublished'
 import { MathText } from '@/components/MathText'
 import { formatPoints } from '@/lib/math'
 import { itemToExam, loadForQuiz, questionIssue, totalOf, type OnlineItem } from '@/lib/onlineExam'
 import { publishItem, shareUrl } from '@/lib/onlinePublish'
 import { useOnline } from '@/store/online'
 
+type Tab = 'history' | 'published'
+
 export default function OnlineList() {
   const navigate = useNavigate()
+  const [tab, setTab] = useState<Tab>('history')
   const items = useOnline((s) => s.items)
   const create = useOnline((s) => s.create)
   const remove = useOnline((s) => s.remove)
@@ -25,7 +31,7 @@ export default function OnlineList() {
           </h1>
           <p className="mt-4 max-w-[56ch] text-[15px] leading-[1.75] text-ink-2">
             Nhập từng câu, đặt đáp án và lời giải, cài đặt cách làm bài rồi cho học sinh làm trực tiếp. Đề đang soạn dở được tự lưu
-            ở đây; chỉ khi bấm Đăng thì đề mới lên cộng đồng.
+            ở đây. Xuất bản cho học sinh thì chỉ ai có link mới làm được; đăng lên cộng đồng thì mọi người cùng thấy.
           </p>
         </div>
         <Button variant="primary" onClick={() => navigate(`/tao-de-online/${create()}`)}>
@@ -34,11 +40,21 @@ export default function OnlineList() {
         </Button>
       </header>
 
-      <div className="mb-6 flex items-center gap-2.5 text-[13px] text-ink-3">
-        Lịch sử tạo đề <span className="tnum font-semibold text-ink">{items.length}</span>
+      <div className="mb-8">
+        <Segmented
+          value={tab}
+          onChange={setTab}
+          label="Chọn mục"
+          options={[
+            { key: 'history', label: 'Lịch sử tạo đề', count: items.length, icon: <History className="size-4" /> },
+            { key: 'published', label: 'Đề đã xuất bản', icon: <Send className="size-4" /> },
+          ]}
+        />
       </div>
 
-      {items.length === 0 ? (
+      {tab === 'published' ? (
+        <PublishedPanel />
+      ) : items.length === 0 ? (
         <EmptyState
           icon={<Sparkles className="size-6" strokeWidth={1.6} />}
           title="Chưa có đề nào"
@@ -70,11 +86,11 @@ function ItemCard({ item, index, onDelete }: { item: OnlineItem; index: number; 
   const playable = item.questions.length > 0 && issues === 0
   const published = Boolean(item.publishedId)
 
-  const publish = async () => {
+  const publish = async (listed: boolean) => {
     setBusy(true)
     setError(null)
     try {
-      await publishItem(item)
+      await publishItem(item, listed)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Không đăng được, thử lại sau.')
     } finally {
@@ -95,7 +111,7 @@ function ItemCard({ item, index, onDelete }: { item: OnlineItem; index: number; 
         <div className="relative flex items-start justify-between gap-2">
           <div className="flex flex-wrap items-center gap-1.5">
             <Badge tone="clay">{item.meta.subject}</Badge>
-            {published ? <Badge tone="sage">Đã đăng</Badge> : item.status === 'done' ? <Badge tone="honey">Đã tạo</Badge> : <Badge tone="neutral">Đang soạn</Badge>}
+            {published ? <Badge tone="sage">{item.publishedListed === false ? 'Cho học sinh' : 'Cộng đồng'}</Badge> : item.status === 'done' ? <Badge tone="honey">Đã tạo</Badge> : <Badge tone="neutral">Đang soạn</Badge>}
           </div>
           <span className="text-[12px] font-semibold text-ink-3">{item.meta.grade}</span>
         </div>
@@ -151,24 +167,40 @@ function ItemCard({ item, index, onDelete }: { item: OnlineItem; index: number; 
           {published ? (
             <CopyLink url={shareUrl(item.publishedId!)} className="min-w-0 flex-1" />
           ) : (
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex-1"
-              disabled={busy || item.status !== 'done' || !playable}
-              title={item.status !== 'done' ? 'Bấm Tạo đề ở bước cuối trước khi đăng' : undefined}
-              onClick={() => void publish()}
-            >
-              <Upload className="size-3.5" />
-              {busy ? 'Đang đăng…' : 'Đăng lên cộng đồng'}
-            </Button>
+            <div className="grid min-w-0 flex-1 grid-cols-2 gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={busy || item.status !== 'done' || !playable}
+                title={item.status !== 'done' ? 'Bấm Tạo đề ở bước cuối trước khi xuất bản' : 'Xuất bản cho học sinh: chỉ ai có link mới làm được'}
+                onClick={() => void publish(false)}
+              >
+                <Users className="size-3.5" />
+                Cho học sinh
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={busy || item.status !== 'done' || !playable}
+                title={item.status !== 'done' ? 'Bấm Tạo đề ở bước cuối trước khi đăng' : 'Đăng lên danh sách đề cộng đồng'}
+                onClick={() => void publish(true)}
+              >
+                <Upload className="size-3.5" />
+                Lên cộng đồng
+              </Button>
+            </div>
           )}
           <button
             type="button"
             aria-label="Xoá đề"
             title="Xoá đề"
-            onClick={() => {
-              if (window.confirm(`Xoá "${item.meta.title.trim() || 'Đề chưa đặt tên'}" khỏi lịch sử? Bản đã đăng lên cộng đồng (nếu có) không bị xoá.`)) onDelete()
+            onClick={async () => {
+              const ok = await dialog.confirm('Bản đã xuất bản (nếu có) không bị gỡ, vẫn xem được ở tab Đề đã xuất bản.', {
+                title: `Xoá "${item.meta.title.trim() || 'Đề chưa đặt tên'}" khỏi lịch sử?`,
+                confirmLabel: 'Xoá',
+                danger: true,
+              })
+              if (ok) onDelete()
             }}
             className="flex size-9 shrink-0 items-center justify-center rounded-[6px] text-ink-3 transition-colors hover:bg-clay-soft hover:text-clay"
           >

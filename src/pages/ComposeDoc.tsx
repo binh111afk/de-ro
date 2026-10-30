@@ -12,6 +12,7 @@
  *   │ (trái) │ sân A4 — trang giấy thật      │ Tìm kiếm        │
  *   └────────┴───────────────────────────────┴─────────────────┘
  */
+import { dialog } from '@/components/Dialog'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import type { Editor } from '@tiptap/core'
@@ -312,7 +313,13 @@ export default function ComposeDoc() {
     const flush = () => useComposeStore.getState().saveAll()
     window.addEventListener('pagehide', flush)
     window.addEventListener('beforeunload', flush)
+    // và cứ 5 giây lưu các tab có thay đổi, để treo máy hay trình duyệt đóng đột ngột cũng không mất bài (rồi đồng bộ lên tài khoản)
+    const timer = window.setInterval(() => {
+      const s = useComposeStore.getState()
+      for (const t of s.tabs) if (t.dirty) s.saveTab(t.id)
+    }, 5000)
     return () => {
+      window.clearInterval(timer)
       window.removeEventListener('pagehide', flush)
       window.removeEventListener('beforeunload', flush)
       // rời /soan-de bằng điều hướng SPA: chỉ lưu tab có thay đổi, tránh tạo
@@ -436,16 +443,25 @@ export default function ComposeDoc() {
    * Tệp → Làm đề tương tác: chuyển các khối đang soạn (`docToExam`) thành bản nháp ở trang Tạo đề online
    * để chỉnh đáp án, giải thích, cài đặt rồi làm thử hoặc đăng. Chuyển rồi mà bấm lại thì hỏi mở bản đã chỉnh hay chuyển lại từ đầu.
    */
-  const handleStartQuiz = useCallback(() => {
+  const handleStartQuiz = useCallback(async () => {
     if (!activeDoc) return
     const exam = docToExam(activeDoc, `doc-${activeDoc.id}`)
     if (!exam.sections.some((s) => s.questions.length)) {
-      window.alert('Đề chưa có câu hỏi nào để chuyển. Thêm câu trắc nghiệm hoặc tự luận trước nhé.')
+      await dialog.alert('Thêm câu trắc nghiệm hoặc tự luận trước nhé.', { title: 'Đề chưa có câu hỏi nào để chuyển' })
       return
     }
     const online = useOnline.getState()
     const prev = online.items.find((it) => it.sourceDocId === activeDoc.id)
-    if (prev && window.confirm('Đề này đã được chuyển sang Tạo đề online trước đó.\n\nOK: mở bản đã chỉnh.\nHuỷ: chuyển lại từ đầu (bản chỉnh cũ bị thay).')) {
+    // đóng hộp bằng Esc hay bấm ra ngoài thì mở bản đã chỉnh, không mất gì
+    const redo =
+      prev &&
+      (await dialog.confirm('Bản đã chỉnh đáp án, giải thích, cài đặt được giữ nếu bạn mở lại. Chuyển lại từ đầu thì bản đó bị thay.', {
+        title: 'Đề này đã được chuyển sang Tạo đề online',
+        confirmLabel: 'Chuyển lại từ đầu',
+        cancelLabel: 'Mở bản đã chỉnh',
+        danger: true,
+      }))
+    if (prev && !redo) {
       navigate(`/tao-de-online/${prev.id}`)
       return
     }

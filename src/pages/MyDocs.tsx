@@ -2,6 +2,7 @@
  * Trang "Đề của tôi" — quản lý tài liệu đề đã lưu.
  * Có: quota 10MB, sắp xếp, lưới/danh sách, tìm kiếm, menu Mở / Đổi tên / Chia sẻ / Xoá.
  */
+import { dialog } from '@/components/Dialog'
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -91,19 +92,19 @@ export default function MyDocs() {
     navigate('/soan-de')
   }
 
-  const onRename = (d: ExamDoc) => {
-    const t = window.prompt('Đổi tên đề', d.title)
+  const onRename = async (d: ExamDoc) => {
+    const t = await dialog.prompt('Tên mới sẽ hiện trong danh sách đề của bạn.', { title: 'Đổi tên đề', label: 'Tên đề', defaultValue: d.title })
     if (t?.trim()) renameDoc(d.id, t.trim())
   }
 
   const onShare = (d: ExamDoc) => {
     const url = `${window.location.origin}/de/${d.id}`
     navigator.clipboard?.writeText(url)
-    window.alert(`Đã sao chép liên kết chia sẻ:\n${url}`)
+    void dialog.alert(url, { title: 'Đã sao chép liên kết chia sẻ' })
   }
 
-  const onDelete = (d: ExamDoc) => {
-    if (window.confirm(`Xoá "${d.title}"?`)) deleteDoc(d.id)
+  const onDelete = async (d: ExamDoc) => {
+    if (await dialog.confirm(`Xoá "${d.title}"?`, { title: 'Xoá đề', confirmLabel: 'Xoá', danger: true })) deleteDoc(d.id)
   }
 
   return (

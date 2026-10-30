@@ -6,11 +6,10 @@ import { signOut, updateProfile, type Session } from '@/lib/auth'
 import { uploadImage } from '@/lib/mediaStore'
 import { useSession } from '@/lib/useSession'
 
-/** Số liệu credit AI là MOCK để thử giao diện. Chưa có backend đếm lượt thật. */
+/** Số liệu điểm AI là MOCK để thử giao diện. Chưa có backend đếm lượt thật. */
 const CREDIT = {
   used: 128,
   total: 200,
-  resetDay: '1/11',
 }
 
 export default function Profile() {
@@ -19,7 +18,7 @@ export default function Profile() {
   return <ProfilePage user={session.user} />
 }
 
-/** Hai cột: hồ sơ cố định bên trái, thông tin và lượt AI bên phải. Cột trái xếp lên trên khi màn hình hẹp. */
+/** Hai cột: hồ sơ cố định bên trái, thông tin và điểm AI bên phải. Cột trái xếp lên trên khi màn hình hẹp. */
 function ProfilePage({ user }: { user: Session['user'] }) {
   return (
     <div className="mx-auto grid max-w-[1080px] gap-8 px-5 pt-10 sm:px-6 lg:grid-cols-[280px_1fr] lg:pt-14">
@@ -157,30 +156,32 @@ function EditCard({ user }: { user: Session['user'] }) {
   )
 }
 
-/** Lượt AI: số lớn và thanh tiến độ. Toàn bộ là số mẫu. */
+/** Điểm AI: số dư còn lại là số lớn; điểm cấp một lần, dùng hết là hết, không làm mới theo tháng. */
 function CreditCard() {
-  const pct = Math.round((CREDIT.used / CREDIT.total) * 100)
+  const left = CREDIT.total - CREDIT.used
+  const pct = Math.round((left / CREDIT.total) * 100)
   return (
     <section className="rounded-[8px] bg-surface p-7 shadow-lift sm:p-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="font-display text-[22px] font-semibold tracking-[-0.01em] text-ink">Lượt AI tháng này</h2>
+        <h2 className="font-display text-[22px] font-semibold tracking-[-0.01em] text-ink">Điểm AI</h2>
         <Badge tone="honey">Số liệu mẫu</Badge>
       </div>
 
       <p className="mt-7 font-display text-[48px] font-semibold leading-none tracking-[-0.02em] text-ink tnum">
-        {CREDIT.used}
-        <span className="text-[18px] font-medium text-ink-3"> / {CREDIT.total}</span>
+        {left}
+        <span className="text-[18px] font-medium text-ink-3"> điểm còn lại</span>
       </p>
-      <CreditBar pct={pct} />
-      <p className="mt-2.5 text-[12.5px] text-ink-3 tnum">
-        Đã dùng {pct}% · làm mới ngày {CREDIT.resetDay}
-      </p>
+      <CreditBar pct={pct} left={left} />
+      <div className="mt-3 flex flex-wrap justify-between gap-x-4 gap-y-1 text-[12.5px] text-ink-3 tnum">
+        <span>Đã dùng {CREDIT.used} / {CREDIT.total} điểm</span>
+        <span>Điểm của tài khoản, không hết hạn và không làm mới hằng tháng</span>
+      </div>
     </section>
   )
 }
 
 /** Thanh tiến độ, chạy từ 0 lên giá trị thật sau khi trang hiện ra. */
-function CreditBar({ pct }: { pct: number }) {
+function CreditBar({ pct, left }: { pct: number; left: number }) {
   const [width, setWidth] = useState(0)
 
   useEffect(() => {
@@ -194,8 +195,8 @@ function CreditBar({ pct }: { pct: number }) {
       role="meter"
       aria-valuemin={0}
       aria-valuemax={CREDIT.total}
-      aria-valuenow={CREDIT.used}
-      aria-label="Lượt dùng AI"
+      aria-valuenow={left}
+      aria-label="Điểm AI còn lại"
     >
       <div
         className="h-full rounded-full bg-clay transition-[width] duration-[1200ms] ease-out"

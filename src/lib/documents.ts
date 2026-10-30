@@ -28,7 +28,7 @@ export interface UserDocument {
 
 const COLUMNS = 'id,name,mime,size,url,subject,created_at'
 
-async function rest<T>(
+export async function rest<T>(
   path: string,
   init: { method?: string; body?: unknown; token: string; prefer?: string },
 ): Promise<T> {

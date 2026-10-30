@@ -1,8 +1,9 @@
 import { useRef, useState, type ReactNode } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
-import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Check, Copy, MonitorPlay, Plus, Trash2, Upload } from 'lucide-react'
-import { Button, EmptyState, Field, inputClass } from '@/components/ui'
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Check, Copy, Eye, MonitorPlay, Plus, Trash2, Upload, Users, X } from 'lucide-react'
+import { Button, Checkbox, EmptyState, Field, inputClass } from '@/components/ui'
 import { CopyLink } from '@/components/CopyLink'
+import { OnlineAiBox } from '@/components/OnlineAiBox'
 import { SiteSelect } from '@/components/SiteSelect'
 import { cn } from '@/lib/cn'
 import { formatPoints } from '@/lib/math'
@@ -19,13 +20,15 @@ import {
   totalOf,
   type OnlineMeta,
 } from '@/lib/onlineExam'
-import { publishItem, shareUrl } from '@/lib/onlinePublish'
+import { listItem, publishItem, shareUrl } from '@/lib/onlinePublish'
 import { readImportFile } from '@/lib/importFile'
 import { parseExamText } from '@/lib/parseExamText'
 import { imageToSrc, pastedImage, uploadQuestionImages } from '@/lib/questionImage'
+import { MathText } from '@/components/MathText'
 import { QuestionBody } from '@/components/QuestionBody'
 import { QuestionImageField } from '@/components/QuestionImageField'
 import { useOnline } from '@/store/online'
+import { useSession } from '@/lib/useSession'
 
 const STEPS = ['Soạn câu hỏi', 'Thông tin & cài đặt', 'Hoàn tất']
 const KEYS = ['A', 'B', 'C', 'D', 'E', 'F']
@@ -39,12 +42,14 @@ export default function OnlineBuilder() {
   const navigate = useNavigate()
   const item = useOnline((s) => s.items.find((it) => it.id === id))
   const update = useOnline((s) => s.update)
+  const loggedIn = Boolean(useSession())
 
   const [step, setStep] = useState(0)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
   const [notice, setNotice] = useState<string | null>(null)
+  const [preview, setPreview] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
 
   if (!item) return <Navigate to="/tao-de-online" replace />
@@ -125,13 +130,14 @@ export default function OnlineBuilder() {
     setStep(2)
   }
 
-  const publish = async () => {
+  /** `listed` = hiện trong danh sách cộng đồng; false = chỉ học sinh có link làm được. Đề đã xuất bản thì cập nhật đúng bản đó. */
+  const publish = async (listed: boolean) => {
     setBusy(true)
     setError(null)
     try {
-      await publishItem(item)
+      await publishItem(item, listed)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Không đăng được, thử lại sau.')
+      setError(err instanceof Error ? err.message : 'Không xuất bản được, thử lại sau.')
     } finally {
       setBusy(false)
     }
@@ -151,12 +157,22 @@ export default function OnlineBuilder() {
           <ArrowLeft className="size-4" />
           Lịch sử tạo đề
         </Link>
-        <p className="text-[12.5px] text-ink-3">
-          Tự lưu · {new Date(item.updatedAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
-        </p>
+        <div className="flex items-center gap-4">
+          <p className="text-[12.5px] text-ink-3">
+            Tự lưu · {new Date(item.updatedAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
+          </p>
+          {questions.length ? (
+            <Button variant="outline" size="sm" onClick={() => setPreview(!preview)}>
+              {preview ? <X className="size-3.5" /> : <Eye className="size-3.5" />}
+              {preview ? 'Đóng xem trước' : 'Xem trước đề'}
+            </Button>
+          ) : null}
+        </div>
       </div>
 
-      <ol className="mb-8 flex flex-wrap gap-2">
+      {preview ? <ExamPreview title={item.meta.title} questions={questions} /> : null}
+
+      <ol className={cn('mb-8 flex flex-wrap gap-2', preview && 'hidden')}>
         {STEPS.map((label, i) => {
           const active = step === i
           const passed = step > i
@@ -203,7 +219,7 @@ export default function OnlineBuilder() {
         </p>
       ) : null}
 
-      {step === 0 ? (
+      {!preview && step === 0 ? (
         <div className="grid items-start gap-6 lg:grid-cols-[300px_1fr]">
           <aside className="rounded-[8px] bg-surface p-5 shadow-[0_1px_2px_rgba(60,48,32,0.03)] lg:sticky lg:top-[88px]">
             <p className="eyebrow mb-1">Mục lục câu hỏi</p>
@@ -227,12 +243,11 @@ export default function OnlineBuilder() {
               type="button"
               disabled={busy}
               onClick={() => fileRef.current?.click()}
-              className="mb-2 flex w-full items-center justify-center gap-1.5 rounded-[6px] bg-ink px-2 py-2 text-[12.5px] font-semibold text-paper transition-opacity hover:opacity-90 disabled:opacity-50"
+              className="mb-4 flex w-full items-center justify-center gap-1.5 rounded-[6px] bg-ink px-2 py-2 text-[12.5px] font-semibold text-paper transition-opacity hover:opacity-90 disabled:opacity-50"
             >
               <Upload className="size-3.5" />
               {busy ? 'Đang đọc file…' : 'Nhập đề từ file'}
             </button>
-            <p className="mb-4 text-[11.5px] leading-relaxed text-ink-3">Word (.docx), PDF, văn bản (.txt, .md). Tách câu theo "Câu 1.", A. B. C. D., a) b) c) d), "Đáp án:".</p>
 
             <div className="mb-4 grid grid-cols-2 gap-1.5">
               {ONLINE_TYPES.map((t) => (
@@ -304,7 +319,15 @@ export default function OnlineBuilder() {
             ) : null}
           </aside>
 
-          <section>
+          <section className="min-w-0">
+            <OnlineAiBox
+              meta={item.meta}
+              questions={questions}
+              onAdd={(qs) => {
+                setQuestions([...questions, ...qs])
+                setSelectedId(qs[0].id)
+              }}
+            />
             {current ? (
               <QuestionEditor
                 key={current.id}
@@ -355,7 +378,7 @@ export default function OnlineBuilder() {
         </div>
       ) : null}
 
-      {step === 1 ? (
+      {!preview && step === 1 ? (
         <div className="grid items-start gap-6 lg:grid-cols-2">
           <div className="space-y-5 rounded-[8px] bg-surface p-6 shadow-[0_1px_2px_rgba(60,48,32,0.03)]">
             <h2 className="font-display text-[20px] font-semibold text-ink">Thông tin đề</h2>
@@ -431,7 +454,7 @@ export default function OnlineBuilder() {
         </div>
       ) : null}
 
-      {step === 2 ? (
+      {!preview && step === 2 ? (
         <div className="mx-auto max-w-[640px] rounded-[8px] bg-surface p-8 text-center shadow-[0_1px_2px_rgba(60,48,32,0.03)] sm:p-10">
           <span className="mx-auto flex size-14 items-center justify-center rounded-full bg-sage-soft text-sage">
             <Check className="size-7" strokeWidth={2.5} />
@@ -441,7 +464,7 @@ export default function OnlineBuilder() {
             “{item.meta.title.trim()}” · {questions.length} câu · {formatPoints(totalOf(questions))} điểm ·{' '}
             {item.settings.noTimeLimit ? 'không giới hạn thời gian' : `${item.meta.durationMinutes} phút`}
           </p>
-          <p className="mt-1 text-[13px] text-ink-3">Đề đã lưu trong lịch sử trên máy này. Chưa đăng thì chỉ bạn thấy.</p>
+          <p className="mt-1 text-[13px] text-ink-3">{loggedIn ? 'Đề đã lưu vào tài khoản của bạn. Chưa đăng thì chỉ bạn thấy.' : 'Đề mới lưu trên máy này. Đăng nhập để lưu vào tài khoản. Chưa đăng thì chỉ bạn thấy.'}</p>
 
           <div className="mt-7 flex flex-wrap justify-center gap-2.5">
             <Button variant="clay" onClick={() => navigate(`/lam-de/${loadForQuiz(item)}`)}>
@@ -449,22 +472,54 @@ export default function OnlineBuilder() {
               Làm thử
             </Button>
             {item.publishedId ? null : (
-              <Button variant="outline" disabled={busy} onClick={() => void publish()}>
-                <Upload className="size-4" />
-                {busy ? 'Đang đăng…' : 'Đăng lên đề cộng đồng'}
-              </Button>
+              <>
+                <Button variant="outline" disabled={busy} onClick={() => void publish(false)} title="Chỉ ai có link mới làm được">
+                  <Users className="size-4" />
+                  {busy ? 'Đang xuất bản…' : 'Xuất bản cho học sinh'}
+                </Button>
+                <Button variant="outline" disabled={busy} onClick={() => void publish(true)} title="Hiện trong danh sách đề cộng đồng">
+                  <Upload className="size-4" />
+                  Đăng lên cộng đồng
+                </Button>
+              </>
             )}
           </div>
 
           {item.publishedId ? (
             <div className="mt-7 text-left">
-              <p className="mb-2 text-[13px] font-semibold text-ink">Đã đăng. Gửi link này cho học sinh:</p>
+              <p className="mb-2 text-[13px] font-semibold text-ink">
+                {item.publishedListed === false ? 'Đã xuất bản cho học sinh.' : 'Đã đăng lên cộng đồng.'} Gửi link này cho học sinh:
+              </p>
               <CopyLink url={shareUrl(item.publishedId)} />
-              <p className="mt-2 text-[12px] text-ink-3">Bản đăng không tự cập nhật khi bạn sửa đề. Sửa xong muốn đăng lại thì dùng nút bên dưới.</p>
-              <Button variant="soft" size="sm" className="mt-3" disabled={busy} onClick={() => void publish()}>
-                <Copy className="size-3.5" />
-                {busy ? 'Đang đăng…' : 'Đăng lại bản mới'}
-              </Button>
+              <p className="mt-2 text-[12px] text-ink-3">
+                Bản đã xuất bản không tự cập nhật khi bạn sửa đề. Sửa xong thì bấm Cập nhật: link và kết quả của học sinh được giữ nguyên. Xem kết quả ở{' '}
+                <Link to="/tao-de-online" className="font-semibold underline underline-offset-2">
+                  Đề đã xuất bản
+                </Link>
+                .
+              </p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Button variant="soft" size="sm" disabled={busy} onClick={() => void publish(item.publishedListed !== false)}>
+                  <Copy className="size-3.5" />
+                  {busy ? 'Đang cập nhật…' : 'Cập nhật bản đã xuất bản'}
+                </Button>
+                {item.publishedListed === false ? (
+                  <Button
+                    variant="soft"
+                    size="sm"
+                    disabled={busy}
+                    onClick={() => {
+                      setBusy(true)
+                      listItem(item, true)
+                        .catch((err) => setError(err instanceof Error ? err.message : 'Không đăng được, thử lại sau.'))
+                        .finally(() => setBusy(false))
+                    }}
+                  >
+                    <Upload className="size-3.5" />
+                    Đăng lên cộng đồng
+                  </Button>
+                ) : null}
+              </div>
             </div>
           ) : null}
 
@@ -478,6 +533,61 @@ export default function OnlineBuilder() {
           </div>
         </div>
       ) : null}
+    </div>
+  )
+}
+
+/** Xem toàn bộ đề trên một trang như học sinh thấy: công thức, ảnh, phương án. Bật "Hiện đáp án" để đối chiếu. */
+function ExamPreview({ title, questions }: { title: string; questions: Question[] }) {
+  const [answers, setAnswers] = useState(false)
+  return (
+    <div className="mx-auto max-w-[760px] rounded-[8px] bg-surface p-6 shadow-[0_1px_2px_rgba(60,48,32,0.03)] sm:p-9">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-line-2 pb-5">
+        <h2 className="font-display text-[22px] font-semibold text-ink">{title.trim() || 'Đề chưa đặt tên'}</h2>
+        <Checkbox checked={answers} onChange={setAnswers} className="text-[13.5px] font-semibold text-ink-2">
+          Hiện đáp án
+        </Checkbox>
+      </div>
+
+      <ol className="space-y-8">
+        {questions.map((q) => {
+          const tf = readTrueFalseAnswer(q.answer, q.options?.length ?? 0)
+          return (
+            <li key={q.id}>
+              <p className="mb-2 text-[12px] font-bold uppercase tracking-wide text-ink-4">
+                Câu {q.number} · {TYPE_LABEL[q.type]} · {formatPoints(q.points)}đ
+              </p>
+              <QuestionBody q={q} className="prose-exam text-[16px]" />
+
+              {q.options?.length ? (
+                <ul className="mt-3 space-y-1.5">
+                  {q.options.map((o, i) => {
+                    const ok = q.type === 'dung-sai' ? tf[i] : o.key === q.answer
+                    return (
+                      <li
+                        key={o.key}
+                        className={cn('flex gap-2 rounded-[6px] px-3 py-1.5 text-[15px]', answers && ok ? 'bg-sage-soft text-sage' : 'bg-sunken/60 text-ink')}
+                      >
+                        <span className="font-semibold">{q.type === 'dung-sai' ? `${o.key})` : `${o.key}.`}</span>
+                        <MathText as="span" className="inline">{o.text}</MathText>
+                        {answers && q.type === 'dung-sai' ? <span className="ml-auto font-bold">{tf[i] === null ? '?' : tf[i] ? 'Đúng' : 'Sai'}</span> : null}
+                      </li>
+                    )
+                  })}
+                </ul>
+              ) : null}
+
+              {answers ? (
+                <div className="mt-3 space-y-1 border-l-2 border-sage pl-3 text-[14px] text-ink-2">
+                  {q.type === 'tra-loi-ngan' ? <p>Đáp án: <b>{q.answer || '(chưa có)'}</b></p> : null}
+                  {q.solution?.map((s, i) => <MathText key={i} as="div">{s}</MathText>)}
+                  {q.explanation ? <MathText as="div">{q.explanation}</MathText> : null}
+                </div>
+              ) : null}
+            </li>
+          )
+        })}
+      </ol>
     </div>
   )
 }

@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { BACKGROUNDS, prepareBgImage } from '@/lib/slideBackground'
 import { uploadImage } from '@/lib/mediaStore'
+import { Checkbox } from '@/components/ui'
 
 export function BackgroundMenu({
   current,
@@ -90,10 +91,9 @@ export function BackgroundMenu({
       <button type="button" className="mt-1.5 block text-[12.5px] text-ink-2 underline-offset-2 hover:text-clay hover:underline" onClick={() => onPick(null, all)}>
         Theo bộ màu của bài
       </button>
-      <label className="mt-2 flex cursor-pointer items-center gap-2 border-t border-line pt-2 text-[12.5px] text-ink-2">
-        <input type="checkbox" checked={all} onChange={(e) => setAll(e.target.checked)} />
+      <Checkbox checked={all} onChange={setAll} className="mt-2 flex w-full border-t border-line pt-2 text-[12.5px] text-ink-2">
         Áp dụng cho tất cả slide
-      </label>
+      </Checkbox>
     </div>
   )
 }

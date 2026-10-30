@@ -17,6 +17,9 @@ import {
 import { Badge, Button, EmptyState } from '@/components/ui'
 import { MathText } from '@/components/MathText'
 import { QuestionBody } from '@/components/QuestionBody'
+import { dialog } from '@/components/Dialog'
+import { getSession } from '@/lib/auth'
+import { isRemoteExamId, submitAttempt } from '@/lib/attempts'
 import { useApp } from '@/store/app'
 import { QUESTION_STATES } from '@/data/questions'
 import { cn } from '@/lib/cn'
@@ -43,6 +46,7 @@ export default function Quiz() {
   const submitQuiz = useApp((s) => s.submitQuiz)
   const resetQuiz = useApp((s) => s.resetQuiz)
   const startQuiz = useApp((s) => s.startQuiz)
+  const startedAt = useApp((s) => s.quizStartedAt)
 
   const exam = myExams.find((e) => e.id === id)
 
@@ -109,6 +113,56 @@ export default function Quiz() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [exam?.id, submitted])
 
+  /** Đề lấy từ link/cộng đồng thì gửi kết quả về cho giáo viên khi nộp bài (mỗi lượt một lần). */
+  const sentFor = useRef<number | null>(null)
+  const [sent, setSent] = useState<'sent' | 'failed' | null>(null)
+  useEffect(() => {
+    if (!submitted || !lastResult || !exam || sentFor.current === lastResult.at) return
+    if (!isRemoteExamId(exam.importedFrom) || lastResult.examId !== exam.id) return
+    sentFor.current = lastResult.at
+    const result = lastResult
+    void (async () => {
+      const user = getSession()?.user
+      let name = user?.name ?? user?.email.split('@')[0] ?? ''
+      if (!name) {
+        const saved = (() => {
+          try {
+            return localStorage.getItem('dethinhbien-student-name') ?? ''
+          } catch {
+            return ''
+          }
+        })()
+        const typed = await dialog.prompt('Nhập tên của em để thầy cô xem được điểm và xếp hạng bài làm này.', {
+          title: 'Gửi kết quả cho giáo viên',
+          label: 'Tên của em',
+          defaultValue: saved,
+          confirmLabel: 'Gửi kết quả',
+          cancelLabel: 'Không gửi',
+        })
+        name = typed?.trim() ?? ''
+        if (!name) return
+        try {
+          localStorage.setItem('dethinhbien-student-name', name)
+        } catch {
+          /* không nhớ được tên: lần sau hỏi lại */
+        }
+      }
+      try {
+        await submitAttempt({
+          examId: exam.importedFrom!,
+          name,
+          score: result.score,
+          max: result.total,
+          seconds: startedAt ? (result.at - startedAt) / 1000 : 0,
+        })
+        setSent('sent')
+      } catch {
+        setSent('failed')
+      }
+    })()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [submitted, lastResult])
+
   if (!exam) {
     return (
       <div className="mx-auto max-w-[700px] px-5 py-20">
@@ -159,6 +213,7 @@ export default function Quiz() {
     setConfirm(false)
     setReviewing(false)
     setChecked(new Set())
+    setSent(null)
     setShuffleKey((k) => k + 1)
     startQuiz(exam.id)
   }
@@ -180,6 +235,7 @@ export default function Quiz() {
         totalPoints={totalPoints}
         questions={questions}
         answers={answers}
+        note={sent === 'sent' ? 'Đã gửi kết quả cho giáo viên.' : sent === 'failed' ? 'Chưa gửi được kết quả cho giáo viên, kiểm tra mạng rồi bấm Làm lại nếu cần.' : undefined}
         onRestart={handleRestart}
         onReview={() => {
           setIndex(0)
@@ -833,9 +889,11 @@ function ResultView({
   totalPoints,
   questions,
   answers,
+  note,
   onRestart,
   onReview,
 }: {
+  note?: string
   examTitle: string
   score: number
   totalPoints: number
@@ -889,6 +947,7 @@ function ResultView({
           </div>
 
           <p className="mt-7 text-[13.5px] text-ink-3">{examTitle}</p>
+          {note ? <p role="status" className="mt-2 text-[12.5px] text-ink-4">{note}</p> : null}
 
           <div className="mt-8 flex flex-wrap justify-center gap-2.5">
             <Button variant="soft" onClick={onReview}>

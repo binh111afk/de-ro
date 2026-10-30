@@ -4,10 +4,10 @@
  */
 import { useEffect, useMemo, useState } from 'react'
 import type { Editor } from '@tiptap/core'
-import { Check, Search, X } from 'lucide-react'
+import { Search, X } from 'lucide-react'
 import { SiteSelect } from '@/components/SiteSelect'
 import { MathText } from '@/components/MathText'
-import { Badge, Button, inputClass } from '@/components/ui'
+import { Badge, Button, Checkbox, inputClass } from '@/components/ui'
 import { BANK, type BankEntry } from '@/data/bank'
 import { GRADES, SUBJECTS, TYPE_LABEL, type QuestionType } from '@/data/types'
 import { cn } from '@/lib/cn'
@@ -144,19 +144,12 @@ export function BankModal({ editor, onClose }: { editor: Editor; onClose: () => 
                           {b.grades.includes('all') ? 'Mọi lớp' : b.grades.join(', ')} · {formatPoints(b.points)}đ
                         </p>
                       </button>
-                      <button
-                        type="button"
-                        role="checkbox"
-                        aria-checked={checked}
+                      <Checkbox
+                        checked={checked}
+                        onChange={() => toggle(b.id)}
                         aria-label="Chọn câu này"
-                        onClick={() => toggle(b.id)}
-                        className={cn(
-                          'absolute right-4 top-4 flex size-5 items-center justify-center rounded-[5px] border-2 transition-colors',
-                          checked ? 'border-clay bg-clay text-white' : 'border-line-2 bg-white hover:border-ink-4',
-                        )}
-                      >
-                        {checked ? <Check className="size-3" strokeWidth={3} /> : null}
-                      </button>
+                        className="absolute right-3 top-3 p-1"
+                      />
                     </li>
                   )
                 })}

@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
+import { DialogHost } from '@/components/Dialog'
 import { Footer, Header } from '@/components/Layout'
 import { cn } from '@/lib/cn'
 import Home from '@/pages/Home'
@@ -17,6 +18,8 @@ import ExamView from '@/pages/ExamView'
 import Auth from '@/pages/Auth'
 import Profile from '@/pages/Profile'
 import { consumeAuthRedirect } from '@/lib/auth'
+import { startSync } from '@/lib/sync'
+import { useSession } from '@/lib/useSession'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -40,9 +43,25 @@ export default function App() {
     consumeAuthRedirect().catch(() => {})
   }, [])
 
+  // đăng nhập thì đồng bộ đề, slide và lịch sử tạo đề với tài khoản; đăng xuất thì dừng
+  const userId = useSession()?.user.id
+  useEffect(() => {
+    if (!userId) return
+    let stop: (() => void) | undefined
+    let dead = false
+    startSync()
+      .then((fn) => (dead ? fn() : (stop = fn)))
+      .catch(() => {})
+    return () => {
+      dead = true
+      stop?.()
+    }
+  }, [userId])
+
   return (
     <div className={cn('flex min-h-dvh flex-col', fullscreen && 'h-dvh overflow-hidden')}>
       <ScrollToTop />
+      <DialogHost />
       {fullscreen ? null : <Header />}
       <main className={cn('flex-1', fullscreen && 'min-h-0 overflow-hidden')}>
         <Routes>

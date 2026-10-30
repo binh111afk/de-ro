@@ -2,11 +2,11 @@
 
 Bản đồ dự án. Đọc file này trước, rồi mở file liên kết cần dùng. Lịch sử và chi tiết không để ở đây nữa, để tránh file quá dài.
 
-> Cập nhật lần cuối: **30/10/2026 (phiên 11)**.
+> Cập nhật lần cuối: **30/10/2026 (phiên 12)**.
 
 ## Đọc gì
 
-- **Bàn giao gần nhất:** [phiên 11](docs/handoff/phien-11.md) (kiểm file .docx/.pptx bằng Word/PowerPoint/LibreOffice + sửa 3 lỗi xuất; nhập đề từ file Word/PDF/văn bản với đọc đáp án đánh dấu; ảnh trong câu hỏi: soạn, làm bài, xuất Word, nhập từ docx), [phiên 10](docs/handoff/phien-10.md) (tab Tạo đề online: lịch sử, trình tạo đề, cài đặt làm bài, đăng tuỳ chọn + link; xem lại bài có đáp án đúng/sai; lời giải ở cuối tài liệu), [phiên 9](docs/handoff/phien-9.md) (câu Đúng/Sai và Trả lời ngắn theo đề THPT 2025, `Tệp → Làm đề tương tác`, chấm điểm; nhánh `feat/dung-sai-tra-loi-ngan`), [phiên 8](docs/handoff/phien-8.md) (panel thư viện kiểu Canva, menu Lớp, thanh nổi, màu chủ đạo, 325 icon, ô chữ nhấp đúp; nhánh `feat/slide-panel-ui`), [phiên 7](docs/handoff/phien-7.md) (ribbon danh sách Word, thanh slide dưới đáy kiểu Canva, panel Thành phần/Icon/Mẫu/Tải lên, tab Thành phần), [phiên 6](docs/handoff/phien-6.md) (hồ sơ, kho câu hỏi, kho tài liệu), [phiên 5](docs/handoff/phien-5.md) (trang hồ sơ, đề cộng đồng, thanh tab), [phiên 4](docs/handoff/phien-4.md) (tài khoản Supabase, R2, email), [phiên 3](docs/handoff/phien-3.md) (trình soạn slide), [phiên 2](docs/handoff/phien-2.md) (AI sinh và sửa slide).
+- **Bàn giao gần nhất:** [phiên 12](docs/handoff/phien-12.md) (lưu theo tài khoản Supabase `user_items`; đề đã xuất bản cho học sinh + báo cáo kết quả; trợ lý AI trong tạo đề online có đính kèm file; hộp thoại, ô tích dùng chung), [phiên 11](docs/handoff/phien-11.md) (kiểm file .docx/.pptx bằng Word/PowerPoint/LibreOffice + sửa 3 lỗi xuất; nhập đề từ file Word/PDF/văn bản với đọc đáp án đánh dấu; ảnh trong câu hỏi: soạn, làm bài, xuất Word, nhập từ docx), [phiên 10](docs/handoff/phien-10.md) (tab Tạo đề online: lịch sử, trình tạo đề, cài đặt làm bài, đăng tuỳ chọn + link; xem lại bài có đáp án đúng/sai; lời giải ở cuối tài liệu), [phiên 9](docs/handoff/phien-9.md) (câu Đúng/Sai và Trả lời ngắn theo đề THPT 2025, `Tệp → Làm đề tương tác`, chấm điểm; nhánh `feat/dung-sai-tra-loi-ngan`), [phiên 8](docs/handoff/phien-8.md) (panel thư viện kiểu Canva, menu Lớp, thanh nổi, màu chủ đạo, 325 icon, ô chữ nhấp đúp; nhánh `feat/slide-panel-ui`), [phiên 7](docs/handoff/phien-7.md) (ribbon danh sách Word, thanh slide dưới đáy kiểu Canva, panel Thành phần/Icon/Mẫu/Tải lên, tab Thành phần), [phiên 6](docs/handoff/phien-6.md) (hồ sơ, kho câu hỏi, kho tài liệu), [phiên 5](docs/handoff/phien-5.md) (trang hồ sơ, đề cộng đồng, thanh tab), [phiên 4](docs/handoff/phien-4.md) (tài khoản Supabase, R2, email), [phiên 3](docs/handoff/phien-3.md) (trình soạn slide), [phiên 2](docs/handoff/phien-2.md) (AI sinh và sửa slide).
 - **Việc còn tồn đọng:** [docs/viec-con-lai.md](docs/viec-con-lai.md) (mục 5b là việc tiếp theo; gợi ý tiếp ở cuối phiên 11).
 - **Lỗi đã gặp và bài học:** [docs/bai-hoc-va-loi.md](docs/bai-hoc-va-loi.md).
 - **Lịch sử từng chặng** (mục 3.x, số mục ở các file này vẫn giữ nguyên): [docs/history/muc-3-lich-su.md](docs/history/muc-3-lich-su.md).
@@ -95,6 +95,9 @@ npm run test:layout     # 7/7 pass (chọn số cột phương án)
 npm run test:grading    # chấm điểm đề THPT 2025: nhiều lựa chọn, đúng/sai (0,1/0,25/0,5/1), trả lời ngắn (≤4 ký tự)
 npm run test:online     # đề tạo online: kiểm lỗi câu, xếp theo dạng, dựng đề, đề đăng (doc.online), đề từ trình soạn về bản nháp
 npm run test:docx       # xuất .docx thật: zip OOXML, mammoth đọc lại được, thứ tự câu, ảnh (trên/dưới/trái/phải)
+npm run test:sync       # đồng bộ lên tài khoản (máy chủ giả): kéo/gộp/đẩy/xoá, bản đệm người khác
+npm run test:attempts   # thống kê bài làm học sinh (top 3, điểm TB, phổ điểm)
+npm run test:online-ai  # chuẩn hoá câu hỏi AI trả về, xáo phương án, file đính kèm
 npm run test:parse      # nhập đề từ file: tách câu, đáp án cuối đề/đánh dấu (docx, PDF mẫu trong scripts/fixtures), ảnh
 npm run test:slide-text # 5/5 pass (chiều cao hộp chữ slide)
 npm run test:slide-theme # 4/4 pass (theme v2: normalize/tương phản/catalog)

@@ -8,6 +8,7 @@ import { TextSelection } from '@tiptap/pm/state'
 import { createSearchPlugin, findMatches, searchPluginKey, type SearchQuery } from './find'
 import { IconClose, IconSearch, IconReplace } from './icons'
 import { cn } from '@/lib/cn'
+import { Checkbox } from '@/components/ui'
 
 export function FindPanel({
   editor,
@@ -164,14 +165,12 @@ export function FindPanel({
         )}
 
         <div className="find-panel__opts">
-          <label>
-            <input type="checkbox" checked={matchCase} onChange={(e) => setMatchCase(e.target.checked)} />
+          <Checkbox checked={matchCase} onChange={setMatchCase} className="gap-1.5">
             Phân biệt hoa/thường
-          </label>
-          <label>
-            <input type="checkbox" checked={wholeWord} onChange={(e) => setWholeWord(e.target.checked)} />
+          </Checkbox>
+          <Checkbox checked={wholeWord} onChange={setWholeWord} className="gap-1.5">
             Nguyên từ
-          </label>
+          </Checkbox>
         </div>
       </div>
     </div>

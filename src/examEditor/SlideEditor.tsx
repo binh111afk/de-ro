@@ -6,6 +6,7 @@
  *
  * Model dữ liệu (`Deck` / `Slide` / `SlideElement`) nằm ở `store/docs.ts`.
  */
+import { dialog } from '@/components/Dialog'
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { ColorPalette } from './ColorPalette'
@@ -526,10 +527,10 @@ export function SlideEditor({
   }
 
   /** Áp layout cho slide đang chọn; hỏi trước vì thay toàn bộ phần tử. */
-  const applyLayout = (layoutId: SlideLayoutId) => {
+  const applyLayout = async (layoutId: SlideLayoutId) => {
     if (!currentSlide) return
     const name = SLIDE_LAYOUTS.find((layout) => layout.id === layoutId)?.name ?? layoutId
-    if (!window.confirm(`Áp bố cục "${name}"? Nội dung hiện tại của slide sẽ được thay.`)) return
+    if (!(await dialog.confirm('Nội dung hiện tại của slide sẽ được thay.', { title: `Áp bố cục "${name}"?`, confirmLabel: 'Áp bố cục' }))) return
     const content = withPlaceholders(layoutId, contentFromSlide(currentSlide))
     const tone = defaultTone(layoutId)
     const elements = composeLayout(deck.theme, layoutId, content, tone)

@@ -4,7 +4,7 @@
  * - Di chuột vào khe giữa hai slide thì hiện dấu + để chèn đúng vị trí đó.
  * - Kéo thả để đổi thứ tự, giống kéo thumbnail trước đây nhưng theo chiều ngang.
  */
-import { useRef, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { Copy, Plus, Trash2 } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import type { Slide } from '@/store/docs'
@@ -42,6 +42,18 @@ export function SlideStrip({
   const scrollRef = useRef<HTMLDivElement>(null)
   const count = slides.length
 
+  // slide đang chọn đổi (thêm từ Mẫu, nhân bản, AI sinh, phím mũi tên…) thì cuộn thanh tới đúng thumbnail, chỉ theo chiều ngang
+  useEffect(() => {
+    const box = scrollRef.current
+    const el = box?.querySelector<HTMLElement>(`[data-slide-id="${currentId}"]`)
+    if (!box || !el) return
+    const left = el.getBoundingClientRect().left - box.getBoundingClientRect().left + box.scrollLeft
+    const view = box.clientWidth
+    if (left < box.scrollLeft || left + el.offsetWidth > box.scrollLeft + view) {
+      box.scrollTo({ left: left - (view - el.offsetWidth) / 2, behavior: 'smooth' })
+    }
+  }, [currentId, count])
+
   return (
     <div className="flex h-[138px] shrink-0 border-t border-line bg-surface">
       <div
@@ -56,6 +68,7 @@ export function SlideStrip({
           <div key={s.id} className="flex h-full shrink-0 items-center">
             {i > 0 && <Gap enabled={allowAdd} onAdd={() => onAddAt(i)} />}
             <div
+              data-slide-id={s.id}
               draggable
               onDragStart={(e) => {
                 e.dataTransfer.effectAllowed = 'move'

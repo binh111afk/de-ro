@@ -7,7 +7,7 @@
  * nhóm) và Tải lên (ảnh của giáo viên). Ô tìm kiếm ở Thành phần và Icon lọc theo tên.
  */
 import { memo, useMemo, useState } from 'react'
-import { ChevronLeft, ChevronRight, LayoutTemplate, Shapes, Smile, Upload } from 'lucide-react'
+import { ChevronLeft, ChevronRight, LayoutTemplate, Shapes, Smile, Upload, X } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import { SLIDE_LAYOUTS, type SlideLayoutId } from '@/lib/slideLayouts'
 import { SLIDE_ASSET_IDS, SLIDE_ASSETS } from '@/lib/slideAssets'
@@ -15,6 +15,8 @@ import { ICON_LIBRARY } from '@/lib/slideIconLibrary'
 import { GRAPHIC_CATEGORY_LABEL, SLIDE_GRAPHICS, graphicById, graphicMarkup, searchGraphics, type GraphicCategory } from '@/lib/slideGraphics'
 import { PRESET_GROUPS, defaultBox, shapeNameOf } from '@/lib/slidePresets'
 import { uid } from '@/data/docTypes'
+import { uploadImage } from '@/lib/mediaStore'
+import { useUploads } from '@/store/uploads'
 import type { SlideElement } from '@/store/docs'
 import { ShapeGallery, ShapePreview } from './ShapeGallery'
 
@@ -461,7 +463,7 @@ function IconsPanel({ canInsert, onInsert }: { canInsert: boolean; onInsert: (el
 }
 
 /* ------------------------------------------------------------------ *
- * Tải lên: PNG/JPG/WebP. Ảnh đã tải lên được giữ trong phiên này để chèn lại.
+ * Tải lên: PNG/JPG/WebP. Ảnh được đẩy lên R2, danh sách giữ theo tài khoản để chèn lại ở máy nào cũng được.
  * ------------------------------------------------------------------ */
 interface UploadedImage {
   src: string
@@ -470,7 +472,9 @@ interface UploadedImage {
 }
 
 function UploadsPanel({ canInsert, onInsert }: { canInsert: boolean; onInsert: (el: SlideElement) => void }) {
-  const [images, setImages] = useState<UploadedImage[]>([])
+  const images = useUploads((s) => s.items)
+  const addUpload = useUploads((s) => s.add)
+  const removeUpload = useUploads((s) => s.remove)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -486,8 +490,15 @@ function UploadsPanel({ canInsert, onInsert }: { canInsert: boolean; onInsert: (
     setBusy(true)
     try {
       const img = await readImage(file)
-      setImages((list) => [img, ...list])
-      insert(img)
+      let src = img.src
+      try {
+        src = await uploadImage(img.src)
+        addUpload({ id: uid(), src, ratio: img.ratio })
+      } catch {
+        // không đẩy lên được (mất mạng…): vẫn chèn vào slide, ảnh sẽ được chuyển lên R2 khi đồng bộ
+        setError('Chưa lưu được ảnh vào tài khoản, ảnh vẫn được chèn vào slide.')
+      }
+      insert({ src, ratio: img.ratio })
     } catch {
       setError('Không đọc được ảnh này.')
     } finally {
@@ -520,19 +531,29 @@ function UploadsPanel({ canInsert, onInsert }: { canInsert: boolean; onInsert: (
 
       {images.length > 0 && (
         <>
-          <h4 className="mb-1.5 mt-4 text-[11.5px] font-semibold text-ink-3">Đã tải lên trong phiên này</h4>
+          <h4 className="mb-1.5 mt-4 text-[11.5px] font-semibold text-ink-3">Ảnh của bạn</h4>
           <div className="grid grid-cols-2 gap-2">
-            {images.map((img, i) => (
-              <button
-                key={i}
-                type="button"
-                disabled={!canInsert}
-                onClick={() => insert(img)}
-                title="Chèn vào slide"
-                className="overflow-hidden rounded-md border border-line bg-white p-1 transition-colors hover:border-clay disabled:opacity-40"
-              >
-                <img src={img.src} alt="" className="aspect-video w-full object-contain" />
-              </button>
+            {images.map((img) => (
+              <div key={img.id} className="group relative">
+                <button
+                  type="button"
+                  disabled={!canInsert}
+                  onClick={() => insert(img)}
+                  title="Chèn vào slide"
+                  className="block w-full overflow-hidden rounded-md border border-line bg-white p-1 transition-colors hover:border-clay disabled:opacity-40"
+                >
+                  <img src={img.src} alt="" loading="lazy" className="aspect-video w-full object-contain" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => removeUpload(img.id)}
+                  title="Xoá khỏi danh sách (slide đã chèn không đổi)"
+                  aria-label="Xoá ảnh khỏi danh sách"
+                  className="absolute right-1 top-1 flex size-5 items-center justify-center rounded-full bg-white/90 text-ink-3 opacity-0 shadow-soft transition-opacity hover:text-clay focus-visible:opacity-100 group-hover:opacity-100"
+                >
+                  <X className="size-3" />
+                </button>
+              </div>
             ))}
           </div>
         </>
