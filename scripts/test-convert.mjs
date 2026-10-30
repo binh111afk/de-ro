@@ -7,6 +7,12 @@ import assert from 'node:assert/strict'
 
 const cases = [
   {
+    name: 'ảnh inline giữ src/width khi round-trip',
+    blocks: [
+      { type: 'paragraph', text: [{ text: 'Xem hình ' }, { text: '', image: { src: 'data:image/png;base64,AAAA', width: 200 } }, { text: ' bên.' }] },
+    ],
+  },
+  {
     name: 'marks giữ nguyên khi round-trip',
     blocks: [
       {

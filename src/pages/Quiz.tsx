@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import { Badge, Button, EmptyState } from '@/components/ui'
 import { MathText } from '@/components/MathText'
+import { QuestionBody } from '@/components/QuestionBody'
 import { useApp } from '@/store/app'
 import { QUESTION_STATES } from '@/data/questions'
 import { cn } from '@/lib/cn'
@@ -533,9 +534,7 @@ function QuestionCard({
         )}
       </div>
 
-      <div className="prose-exam text-[17px]">
-        <MathText as="div">{question.prompt}</MathText>
-      </div>
+      <QuestionBody q={question} className="prose-exam text-[17px]" />
       <p className="mt-2.5 text-[12.5px] font-semibold text-ink-3 tnum">
         {formatPoints(question.points)} điểm
       </p>
@@ -937,6 +936,7 @@ function ResultView({
                     {q.prompt}
                   </MathText>
                 </p>
+                {q.image?.src ? <img src={q.image.src} alt={q.image.alt ?? ''} className="mt-2 max-h-40 max-w-full rounded-[6px] bg-white object-contain" /> : null}
                 <p className="mt-1.5 text-[12.5px] text-ink-3">
                   Bạn chọn:{' '}
                   <span className="font-semibold text-ink-2">{describeAnswer(q, given) || 'không trả lời'}</span> ·

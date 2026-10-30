@@ -1,11 +1,27 @@
 import type { EssayBlock, ExamDoc, QuestionBlock, RichText } from '@/data/docTypes'
-import type { Exam, Question, Section, Subject } from '@/data/types'
+import type { Exam, Question, QuestionImage, Section, Subject } from '@/data/types'
 import { formatTrueFalse, normalizeShort, parseTrueFalse } from '@/lib/grading'
 
 /** Văn bản thuần của một đoạn rich text (bỏ định dạng, giữ công thức `$…$`). */
 function toPlain(rt: RichText | undefined): string {
   if (!rt) return ''
   return typeof rt === 'string' ? rt : rt.map((s) => s.text).join('')
+}
+
+/**
+ * Ảnh đầu tiên chèn trong đề bài: nằm trước mọi chữ thì xếp trên đề bài, còn lại xếp dưới.
+ * Ảnh trong phương án chưa được hỗ trợ.
+ */
+function promptImage(...parts: Array<RichText | undefined>): QuestionImage | undefined {
+  for (const rt of parts) {
+    if (!rt || typeof rt === 'string') continue
+    const at = rt.findIndex((sp) => sp.image)
+    if (at < 0) continue
+    const { src, alt, width } = rt[at].image!
+    const first = !rt.slice(0, at).some((sp) => sp.text.trim())
+    return { src, position: first ? 'top' : 'bottom', ...(alt ? { alt } : {}), ...(width ? { width: Math.min(100, Math.max(10, Math.round(width))) } : {}) }
+  }
+  return undefined
 }
 
 /** Đáp án trắc nghiệm là chữ cái A–D ở đầu chuỗi, ví dụ "B" hoặc "B. 12 cm". */
@@ -99,6 +115,7 @@ export function docToExam(doc: ExamDoc, id: string): Exam {
     number: ++counter,
     type: 'trac-nghiem',
     prompt: toPlain(b.text),
+    image: promptImage(b.text),
     options: b.options.map((o) => ({ key: o.label, text: toPlain(o.text) })),
     answer: mcqAnswer(b.no),
     explanation: explain.get(`c${b.no}`) || undefined,
@@ -114,6 +131,7 @@ export function docToExam(doc: ExamDoc, id: string): Exam {
       number: ++counter,
       type: 'dung-sai',
       prompt: toPlain(b.text),
+      image: promptImage(b.text),
       options: b.options.map((o) => ({ key: o.label.toLowerCase(), text: toPlain(o.text) })),
       answer: parsed ? formatTrueFalse(parsed) : undefined,
       explanation: explain.get(`c${b.no}`) || undefined,
@@ -128,6 +146,7 @@ export function docToExam(doc: ExamDoc, id: string): Exam {
       number: ++counter,
       type: 'tra-loi-ngan',
       prompt: toPlain(b.text),
+      image: promptImage(b.text),
       answer: raw ? normalizeShort(raw) : undefined,
       explanation: explain.get(`c${b.no}`) || undefined,
       points: shortPoints,
@@ -142,6 +161,7 @@ export function docToExam(doc: ExamDoc, id: string): Exam {
       number: i + 1,
       type: 'tu-luan',
       prompt: [toPlain(b.text), ...(b.sub ?? []).map(toPlain)].filter(Boolean).join('\n'),
+      image: promptImage(b.text, ...(b.sub ?? [])),
       points: b.score,
       solution: written ? written.split('\n') : answer ? [answer] : undefined,
     }

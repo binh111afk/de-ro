@@ -14,6 +14,8 @@ import { newQuestion } from './onlineExam'
 
 const ON = ''
 const OFF = ''
+/** token vị trí ảnh nhúng do server chèn vào text: U+E002 <chỉ số> U+E003 (chỉ số tra trong mảng `images`) */
+const IMG_SPLIT = /(\d+)/
 const START = /^\s*(Câu|Bài)\s*(\d+)\s*[.:)–-]?\s*(.*)$/i
 const SECTION = /^\s*(phần|dạng)\s+[ivx\d]+/i
 const TAIL_HEAD = /^\s*(bảng\s+)?(đáp án|hướng dẫn giải|lời giải)[^:：]{0,40}[:：]?\s*$/i
@@ -29,18 +31,25 @@ const MARK = /(^|\s)([A-Da-d])([.)])\s*/g
 interface Line {
   text: string
   mask: boolean[]
+  /** ảnh nhúng trong dòng: `at` là vị trí trong `text` (ảnh nằm trước ký tự thứ `at`), `idx` là chỉ số ảnh */
+  imgs: Array<{ at: number; idx: number }>
 }
 
 function readLine(raw: string): Line {
   let text = ''
   const mask: boolean[] = []
+  const imgs: Line['imgs'] = []
   let on = false
-  for (const ch of raw.replace(new RegExp(`${OFF}(\\s*)${ON}`, 'g'), '$1')) {
-    if (ch === ON) on = true
-    else if (ch === OFF) on = false
-    else for (const unit of ch) { text += unit; mask.push(on) }
-  }
-  return trimLine({ text, mask })
+  const parts = raw.replace(new RegExp(`${OFF}(\\s*)${ON}`, 'g'), '$1').split(IMG_SPLIT)
+  parts.forEach((part, i) => {
+    if (i % 2) { imgs.push({ at: text.length, idx: Number(part) }); return }
+    for (const ch of part) {
+      if (ch === ON) on = true
+      else if (ch === OFF) on = false
+      else for (const unit of ch) { text += unit; mask.push(on) }
+    }
+  })
+  return trimLine({ text, mask, imgs })
 }
 
 /** Cắt khoảng trắng hai đầu và số trang dính đầu dòng ("1d. …", "3Câu 13") do đề chuyển từ PDF. */
@@ -49,7 +58,11 @@ function trimLine(l: Line): Line {
   const page = l.text.slice(from).match(/^\d{1,3}(?=(?:Câu|Bài)\s*\d|[A-Da-d][.)]\s)/i)
   if (page) from += page[0].length
   const text = l.text.slice(from).trimEnd()
-  return { text, mask: l.mask.slice(from, from + text.length) }
+  return {
+    text,
+    mask: l.mask.slice(from, from + text.length),
+    imgs: l.imgs.map((im) => ({ idx: im.idx, at: Math.min(text.length, Math.max(0, im.at - from)) })),
+  }
 }
 
 const sectionType = (line: string): QuestionType | null => {
@@ -143,6 +156,8 @@ interface Raw {
   head: string
   hint: QuestionType | null
   lines: Line[]
+  /** ảnh nằm ngay trên dòng "Câu N." ; `before` = đã có chữ của đề bài đứng trước ảnh */
+  headImgs: Array<{ idx: number; before: boolean }>
 }
 
 export interface ParsedExam {
@@ -151,23 +166,34 @@ export interface ParsedExam {
   noAnswer: number
   /** số câu không có đề bài bằng chữ (đề bài là ảnh) */
   noPrompt: number
+  /** số câu có ảnh đính kèm (`question.image`) */
+  imageCount: number
+  /** số ảnh trong file không gắn được vào câu nào (ảnh thứ hai trở đi của đề bài, ảnh trong phương án) */
+  extraImages: number
 }
 
+/** Đề bài chỉ có ảnh, không có chữ */
+export const IMAGE_ONLY_PROMPT = '(Xem ảnh)'
 const IMAGE_PROMPT = '(Đề bài là hình ảnh trong file, chưa đọc được. Hãy nhập lại đề bài.)'
 
-export function parseExamText(text: string): ParsedExam {
-  const lines = text.split(/\r?\n/).map(readLine).filter((l) => l.text)
+/** `images`: mảng data URL, tra theo chỉ số trong token ảnh của `text` (xem `/api/extract`, docx với marks). */
+export function parseExamText(text: string, images: string[] = []): ParsedExam {
+  const lines = text.split(/\r?\n/).map(readLine).filter((l) => l.text || l.imgs.length)
   // đề không có "Câu N." (hay gặp ở đề chuyển từ PDF, đề bài là ảnh): cứ một bộ phương án là một câu
   const bare = !lines.some((l) => START.test(l.text))
   const raws: Raw[] = []
   let hint: QuestionType | null = null
   let tailAt = lines.length
+  // chế độ bare: dòng chỉ có ảnh đứng sau bộ phương án của câu trước là đề bài của câu kế tiếp
+  let pending: Line[] = []
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i]
     if (raws.length && TAIL_HEAD.test(line.text)) { tailAt = i + 1; break }
     const m = line.text.match(START)
     if (m) {
-      raws.push({ tag: (m[1].toLowerCase() === 'bài' ? 'b' : 'c') + m[2], head: m[3], hint, lines: [] })
+      const from = line.text.length - m[3].length
+      const headImgs = line.imgs.map((im) => ({ idx: im.idx, before: im.at > from && line.text.slice(from, im.at).trim() !== '' }))
+      raws.push({ tag: (m[1].toLowerCase() === 'bài' ? 'b' : 'c') + m[2], head: m[3], hint, lines: [], headImgs })
       continue
     }
     if (SECTION.test(line.text)) { hint = sectionType(line.text) ?? hint; continue } // tiêu đề phần không thuộc câu nào
@@ -178,14 +204,28 @@ export function parseExamText(text: string): ParsedExam {
         const cur = raws.at(-1)
         const keys = new Set(cur?.lines.flatMap((x) => splitOptions(x)?.map((o) => o.key.toUpperCase()) ?? []))
         if (!cur || keys.size >= 4 || opts.some((o) => keys.has(o.key.toUpperCase()))) {
-          raws.push({ tag: `c${raws.length + 1}`, head: '', hint, lines: [] })
+          raws.push({ tag: `c${raws.length + 1}`, head: '', hint, lines: pending, headImgs: [] })
+        } else cur.lines.push(...pending)
+        pending = []
+        // dòng phương án cuối (D.) mà Word neo kèm ảnh: đó là các mảnh đề bài của câu kế tiếp
+        if (opts[0].key.toUpperCase() === 'D' && line.imgs.length) {
+          pending.push({ text: '', mask: [], imgs: line.imgs })
+          lines[i] = { ...line, imgs: [] }
+          raws.at(-1)!.lines.push(lines[i])
+          continue
         }
-      } else if (!raws.length) continue
+      } else if (!line.text) {
+        const cur = raws.at(-1)
+        // bộ phương án chưa đủ A–D mà gặp dòng chỉ có ảnh: mảnh đề bài bị Word chen giữa, vẫn của câu này
+        const have = new Set(cur?.lines.flatMap((x) => splitOptions(x)?.map((o) => o.key.toUpperCase()) ?? []))
+        if (!cur || have.size >= 4 || have.has('D')) { pending.push(line); continue }
+      } else if (!raws.length) { pending = []; continue }
     }
     raws.at(-1)?.lines.push(line)
   }
-  const tail = parseTail(lines.slice(tailAt).map((l) => l.text))
+  const tail = parseTail(lines.slice(tailAt).map((l) => l.text).filter(Boolean))
 
+  let extraImages = 0
   const questions = raws.map((r): Question => {
     const pts = r.head.match(/^\(\s*(\d+(?:[.,]\d+)?)\s*điểm\s*\)\s*[.:]?\s*/i)
     const head = r.head.slice(pts?.[0].length ?? 0)
@@ -194,10 +234,28 @@ export function parseExamText(text: string): ParsedExam {
     const options: Opt[] = []
     let inline: string | undefined
     let solution: string | undefined
+    // ảnh: ảnh đầu tiên của phần đề bài thành `question.image`, còn lại (và ảnh trong phương án) chỉ được đếm
+    let main: { idx: number; before: boolean } | undefined
+    const extra = new Set<number>()
+    const addImg = (idx: number, before: boolean, inPrompt: boolean) => {
+      if (!(idx in images)) return
+      if (inPrompt && !main) main = { idx, before }
+      else if (main?.idx !== idx) extra.add(idx)
+    }
+    r.headImgs.forEach((im) => addImg(im.idx, im.before, true))
     for (const line of r.lines) {
       const a = line.text.match(INLINE_ANS)
       const s = line.text.match(INLINE_SOL)
       const opts = solution === undefined ? splitOptions(line) : null
+      const promptHasText = prompt.some((t) => t.trim())
+      if (solution === undefined && !a) {
+        for (const im of line.imgs) {
+          // ảnh đứng trước nhãn "A." đầu tiên vẫn thuộc đề bài; ảnh sau nhãn thuộc phương án
+          const inPrompt = (!options.length && (!opts || im.at <= 0)) || (!main && !line.text)
+          addImg(im.idx, promptHasText || line.text.slice(0, im.at).trim() !== '', inPrompt)
+        }
+      }
+      if (!line.text) continue
       if (a) inline = a[2].trim()
       else if (s) solution = s[2]
       else if (solution !== undefined) solution += `\n${line.text}`
@@ -224,7 +282,11 @@ export function parseExamText(text: string): ParsedExam {
           : 'tu-luan'
     // tự luận: "a) …" là ý nhỏ của đề bài, không phải phương án
     if (type === 'tu-luan') prompt.push(...optLines)
-    const q = newQuestion(type, prompt.join('\n') || (bare && options.length ? IMAGE_PROMPT : ''))
+    const mainImg = main as { idx: number; before: boolean } | undefined
+    const promptText = prompt.join('\n') || (mainImg ? IMAGE_ONLY_PROMPT : bare && options.length ? IMAGE_PROMPT : '')
+    const q = newQuestion(type, promptText)
+    if (mainImg) q.image = { src: images[mainImg.idx], position: mainImg.before ? 'bottom' : 'top' }
+    extraImages += extra.size
     if (pts) q.points = Number(pts[1].replace(',', '.'))
     if (type === 'trac-nghiem') {
       q.options = mcq
@@ -261,5 +323,7 @@ export function parseExamText(text: string): ParsedExam {
     questions,
     noAnswer: questions.filter((q) => q.type !== 'tu-luan' && !q.answer).length,
     noPrompt: questions.filter((q) => q.prompt === IMAGE_PROMPT).length,
+    imageCount: questions.filter((q) => q.image).length,
+    extraImages,
   }
 }

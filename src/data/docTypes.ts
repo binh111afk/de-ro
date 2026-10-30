@@ -28,6 +28,8 @@ export interface Mark {
 export interface Span {
   text: string
   marks?: Mark[]
+  /** ảnh chèn trong dòng (node `image` của trình soạn): span này có `text` rỗng. `src` là đường dẫn R2 hoặc data URL */
+  image?: { src: string; alt?: string; width?: number }
 }
 
 /**
@@ -132,6 +134,8 @@ export interface QuestionBlock {
    */
   kind?: 'mcq' | 'tf' | 'short'
   text: RichText
+  /** ảnh đứng cạnh đề bài (bảng 2 ô) thay vì riêng một dòng; ảnh nằm trong `text` là span có `image` */
+  imagePosition?: 'left' | 'right'
   options: Array<{ label: string; text: RichText; format?: FormatAttrs }>
   /** định dạng cho prompt (câu hỏi); format cho từng option nằm trong options[i] */
   format?: FormatAttrs
@@ -141,6 +145,8 @@ export interface EssayBlock {
   type: 'essay'
   no: number
   text: RichText
+  /** ảnh đứng cạnh đề bài (bảng 2 ô) thay vì riêng một dòng; ảnh nằm trong `text` là span có `image` */
+  imagePosition?: 'left' | 'right'
   score: number
   sub?: RichText[]
   format?: FormatAttrs

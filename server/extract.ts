@@ -19,6 +19,8 @@ export interface ExtractedFile {
   text: string
   /** chỉ có với .pptx: text từng slide, đúng thứ tự */
   slides?: string[]
+  /** chỉ .docx khi `marks` bật: ảnh nhúng (data URL), tra theo chỉ số trong token U+E002<chỉ số>U+E003 chèn vào text đúng chỗ ảnh */
+  images?: string[]
   warning?: string
 }
 
@@ -53,25 +55,216 @@ function isEmphasised(rPr: string): boolean {
   return Math.max(r, g, b) - Math.min(r, g, b) > 40 || Math.max(r, g, b) > 110 // có sắc hoặc xám sáng; đen/xám đậm là chữ thường
 }
 
-/** Bọc chữ của mọi run nổi bật bằng ký tự đánh dấu, để chỗ khác (tách đề) tìm đáp án đúng được tô/đậm/gạch. */
-async function markEmphasis(data: Buffer): Promise<Buffer> {
+const IMG_ON = ''
+const IMG_OFF = ''
+const MAX_RAW_IMAGES = 1500 // ảnh nhúng đọc vào (trước khi ghép các mảnh)
+const MAX_IMAGES = 600 // ảnh trả về (sau khi ghép)
+const MAX_IMAGE_BYTES = 600 * 1024
+const MAX_RAW_BYTES = 40 * 1024 * 1024
+const MAX_TOTAL_IMAGE_BYTES = 12 * 1024 * 1024
+const MIN_IMAGE_EMU = 24 * 9525 // ảnh có cạnh lớn nhất dưới ~24px là icon trang trí
+const MIN_LINE_EMU = 4 * 9525 // cạnh nhỏ dưới ~4px là đường kẻ
+const MIME: Record<string, string> = {
+  png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', gif: 'image/gif', webp: 'image/webp', bmp: 'image/bmp', svg: 'image/svg+xml',
+}
+
+/** Thu nhỏ / nén ảnh quá lớn bằng @napi-rs/canvas nếu có; null nếu không làm được. */
+async function shrinkImage(buf: Buffer): Promise<Buffer | null> {
+  try {
+    const { createCanvas, loadImage } = await import('@napi-rs/canvas')
+    const img = await loadImage(buf)
+    for (const [maxSide, quality] of [[1400, 82], [1000, 70], [700, 60]] as const) {
+      const k = Math.min(1, maxSide / Math.max(img.width, img.height))
+      const canvas = createCanvas(Math.max(1, Math.round(img.width * k)), Math.max(1, Math.round(img.height * k)))
+      const ctx = canvas.getContext('2d')
+      ctx.fillStyle = '#ffffff'
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+      const out = canvas.toBuffer('image/jpeg', quality)
+      if (out.length <= MAX_IMAGE_BYTES) return out
+    }
+  } catch { /* không có canvas hoặc ảnh hỏng */ }
+  return null
+}
+
+/**
+ * Thay mỗi ảnh nhúng trong document.xml bằng một run chữ `U+E002<chỉ số>U+E003` (đúng vị trí trong đoạn),
+ * để mammoth `extractRawText` giữ nguyên thứ tự. Bỏ ảnh trang trí (<~24px), ảnh EMF/WMF, ảnh vượt giới hạn.
+ */
+async function tokenizeImages(zip: import('jszip'), xmlIn: string): Promise<{ xml: string; images: string[]; warning?: string }> {
+  const relsFile = zip.file('word/_rels/document.xml.rels')
+  if (!relsFile) return { xml: xmlIn, images: [] }
+  const rels = new Map<string, string>()
+  for (const m of (await relsFile.async('string')).matchAll(/<Relationship\b[^>]*>/g)) {
+    const id = m[0].match(/\bId="([^"]+)"/)?.[1]
+    const target = m[0].match(/\bTarget="([^"]+)"/)?.[1]
+    if (id && target && /\/image$/.test(m[0].match(/\bType="([^"]+)"/)?.[1] ?? '')) rels.set(id, target)
+  }
+  if (!rels.size) return { xml: xmlIn, images: [] }
+  // mc:AlternateContent: giữ phần Choice (tránh đếm ảnh hai lần cùng phần Fallback VML)
+  const xml = xmlIn.replace(/<mc:AlternateContent\b[^>]*>[\s\S]*?<\/mc:AlternateContent>/g, (block) => block.match(/<mc:Choice\b[^>]*>([\s\S]*?)<\/mc:Choice>/)?.[1] ?? block)
+  const images: string[] = []
+  const byTarget = new Map<string, number>()
+  let total = 0
+  let unsupported = 0
+  let tooBig = 0
+  let overLimit = 0
+  const resolve = async (rid: string): Promise<number | null> => {
+    const target = rels.get(rid)
+    if (!target) return null
+    if (byTarget.has(target)) return byTarget.get(target)!
+    const ext = target.split('.').pop()?.toLowerCase() ?? ''
+    const path = target.startsWith('/') ? target.slice(1) : `word/${target}`
+    const file = zip.file(path)
+    if (!MIME[ext] || !file) { unsupported++; return null }
+    let data = await file.async('nodebuffer')
+    let mime = MIME[ext]
+    if (data.length > MAX_IMAGE_BYTES) {
+      const small = ext === 'svg' ? null : await shrinkImage(data)
+      if (!small) { tooBig++; return null }
+      data = small
+      mime = 'image/jpeg'
+    }
+    if (images.length >= MAX_RAW_IMAGES || total + data.length > MAX_RAW_BYTES) { overLimit++; return null }
+    total += data.length
+    images.push(`data:${mime};base64,${data.toString('base64')}`)
+    byTarget.set(target, images.length - 1)
+    return images.length - 1
+  }
+  const parts: string[] = []
+  let last = 0
+  for (const m of xml.matchAll(/<w:drawing\b(?:(?!<w:drawing\b)[\s\S])*?<\/w:drawing>|<w:pict\b(?:(?!<w:pict\b)[\s\S])*?<\/w:pict>/g)) {
+    parts.push(xml.slice(last, m.index))
+    last = m.index! + m[0].length
+    const el = m[0]
+    if (el.includes('<w:txbxContent')) { parts.push(el); continue } // khung chữ: để mammoth đọc
+    const rid = el.match(/<a:blip\b[^>]*\br:embed="([^"]+)"/)?.[1] ?? el.match(/<v:imagedata\b[^>]*\br:id="([^"]+)"/)?.[1]
+    if (!rid) { parts.push(el); continue }
+    const ext = el.match(/<wp:extent\b[^>]*\bcx="(\d+)"[^>]*\bcy="(\d+)"/)
+    const pt = el.match(/width:([\d.]+)pt;\s*height:([\d.]+)pt/)
+    const [w, h] = ext ? [Number(ext[1]), Number(ext[2])] : pt ? [Number(pt[1]) * 12700, Number(pt[2]) * 12700] : [Infinity, Infinity]
+    // bỏ ảnh trang trí: cả hai cạnh nhỏ (icon) hoặc một cạnh mỏng như đường kẻ. Dải chữ cao ~13px nhưng rộng thì giữ.
+    if (Math.max(w, h) < MIN_IMAGE_EMU || Math.min(w, h) < MIN_LINE_EMU) continue
+    const idx = await resolve(rid)
+    if (idx !== null) parts.push(`<w:t>${IMG_ON}${idx}${IMG_OFF}</w:t>`)
+  }
+  parts.push(xml.slice(last))
+  const notes = [
+    unsupported && `${unsupported} ảnh định dạng chưa hỗ trợ (EMF/WMF…) bị bỏ`,
+    tooBig && `${tooBig} ảnh quá lớn bị bỏ`,
+    overLimit && `${overLimit} ảnh vượt giới hạn (tối đa ${MAX_RAW_IMAGES} ảnh) bị bỏ`,
+  ].filter(Boolean)
+  return { xml: parts.join(''), images, warning: notes.length ? `${notes.join('; ')}.` : undefined }
+}
+
+/** Tiền xử lý .docx khi `marks`: đánh dấu chữ nổi bật và thay ảnh bằng token vị trí. */
+async function prepareDocx(data: Buffer): Promise<{ data: Buffer; images: string[]; warning?: string }> {
   const mod = await import('jszip')
   const zip = await mod.default.loadAsync(data)
   const file = zip.file('word/document.xml')
-  if (!file) return data
-  const xml = (await file.async('string')).replace(/<w:r(?:\s[^>]*)?>[\s\S]*?<\/w:r>/g, (run) => {
+  if (!file) return { data, images: [] }
+  const marked = (await file.async('string')).replace(/<w:r(?:\s[^>]*)?>[\s\S]*?<\/w:r>/g, (run) => {
     const rPr = run.match(/<w:rPr>[\s\S]*?<\/w:rPr>/)?.[0] ?? ''
     if (!rPr || !isEmphasised(rPr)) return run
     return run.replace(/(<w:t(?:\s[^>]*)?>)([^<]*\S[^<]*)(<\/w:t>)/g, `$1${EMPH_ON}$2${EMPH_OFF}$3`)
   })
+  const { xml, images, warning } = await tokenizeImages(zip, marked)
   zip.file('word/document.xml', xml)
-  return zip.generateAsync({ type: 'nodebuffer' })
+  return { data: await zip.generateAsync({ type: 'nodebuffer' }), images, warning }
 }
 
-async function extractDocx(data: Buffer, marks = false): Promise<string> {
+async function extractDocx(data: Buffer, marks = false): Promise<{ text: string; images: string[]; warning?: string }> {
   const mammoth = await import('mammoth')
-  const result = await mammoth.extractRawText({ buffer: marks ? await markEmphasis(data) : data })
-  return result.value
+  const prep = marks ? await prepareDocx(data) : { data, images: [] as string[], warning: undefined }
+  const result = await mammoth.extractRawText({ buffer: prep.data })
+  return { text: result.value, images: prep.images, warning: prep.warning }
+}
+
+/**
+ * Đề dạng ảnh thường chia đề bài thành nhiều mảnh (mỗi dòng chữ là một ảnh mảnh). Các token ảnh đứng liền nhau
+ * (chỉ cách bằng khoảng trắng / xuống dòng) được ghép thành MỘT ảnh: cùng dòng thì xếp ngang, khác dòng thì xếp dọc.
+ * Không có @napi-rs/canvas thì giữ nguyên các mảnh (parser sẽ gắn mảnh đầu và đếm phần còn lại).
+ */
+async function stitchRuns(text: string, images: string[]): Promise<{ text: string; images: string[] }> {
+  let canvasMod: typeof import('@napi-rs/canvas')
+  try { canvasMod = await import('@napi-rs/canvas') } catch { return { text, images } }
+  const { createCanvas, loadImage } = canvasMod
+  const tok = `${IMG_ON}\\d+${IMG_OFF}`
+  const run = new RegExp(`${tok}(?:[ \\t\\u00a0\\n]*${tok})+`, 'g')
+  const out = [...images]
+  const loaded = new Map<number, Awaited<ReturnType<typeof loadImage>>>()
+  const load = async (i: number) => {
+    if (!loaded.has(i)) loaded.set(i, await loadImage(Buffer.from(images[i].slice(images[i].indexOf(',') + 1), 'base64')))
+    return loaded.get(i)!
+  }
+  const cache = new Map<string, string>()
+  const pieces: Array<{ before: string; idx: number }> = []
+  let result = ''
+  let last = 0
+  for (const m of text.matchAll(run)) {
+    result += text.slice(last, m.index)
+    last = m.index! + m[0].length
+    pieces.length = 0
+    let gap = ''
+    for (const part of m[0].split(new RegExp(`(${tok})`)).filter((x) => x !== '')) {
+      const t = part.match(new RegExp(`^${IMG_ON}(\\d+)${IMG_OFF}$`))
+      if (t) { pieces.push({ before: gap, idx: Number(t[1]) }); gap = '' } else gap += part
+    }
+    const key = pieces.map((p) => `${p.before.includes('\n') ? '|' : ','}${p.idx}`).join('')
+    if (!cache.has(key)) {
+      try {
+        const rows: Array<Awaited<ReturnType<typeof loadImage>>[]> = []
+        for (const p of pieces) {
+          const img = await load(p.idx)
+          if (!rows.length || p.before.includes('\n')) rows.push([img])
+          else rows[rows.length - 1].push(img)
+        }
+        const rowW = rows.map((r) => r.reduce((n, i) => n + i.width, 0))
+        const rowH = rows.map((r) => Math.max(...r.map((i) => i.height)))
+        const W = Math.max(...rowW)
+        const H = rowH.reduce((n, h) => n + h, 0)
+        const canvas = createCanvas(W, H)
+        const ctx = canvas.getContext('2d')
+        ctx.fillStyle = '#ffffff'
+        ctx.fillRect(0, 0, W, H)
+        let y = 0
+        rows.forEach((r, ri) => {
+          let x = 0
+          for (const img of r) { ctx.drawImage(img, x, y + (rowH[ri] - img.height) / 2); x += img.width }
+          y += rowH[ri]
+        })
+        let buf = canvas.toBuffer('image/png')
+        let mime = 'image/png'
+        if (buf.length > MAX_IMAGE_BYTES) { buf = canvas.toBuffer('image/jpeg', 82); mime = 'image/jpeg' }
+        out.push(`data:${mime};base64,${buf.toString('base64')}`)
+        cache.set(key, `${IMG_ON}${out.length - 1}${IMG_OFF}`)
+      } catch { cache.set(key, m[0]) }
+    }
+    result += cache.get(key)
+  }
+  return { text: result + text.slice(last), images: out }
+}
+
+/** Sau khi cắt text: bỏ ảnh không còn token nào, đánh lại chỉ số liền nhau. */
+function compactImages(text: string, images: string[]): { text: string; images: string[] } {
+  const map = new Map<number, number>()
+  const out: string[] = []
+  const next = text.replace(new RegExp(`${IMG_ON}(\\d+)${IMG_OFF}`, 'g'), (_, n: string) => {
+    const old = Number(n)
+    if (!map.has(old)) { map.set(old, out.length); out.push(images[old]) }
+    return `${IMG_ON}${map.get(old)}${IMG_OFF}`
+  })
+  return { text: next, images: out }
+}
+
+/** Giới hạn cuối: tối đa MAX_IMAGES ảnh và MAX_TOTAL_IMAGE_BYTES; token của ảnh bị bỏ được gỡ khỏi text. */
+function capImages(text: string, images: string[]): { text: string; images: string[]; dropped: number } {
+  let total = 0
+  let keep = 0
+  while (keep < images.length && keep < MAX_IMAGES && total + images[keep].length * 0.75 <= MAX_TOTAL_IMAGE_BYTES) total += images[keep++].length * 0.75
+  if (keep === images.length) return { text, images, dropped: 0 }
+  const next = text.replace(new RegExp(`${IMG_ON}(\\d+)${IMG_OFF}`, 'g'), (t, n: string) => (Number(n) < keep ? t : ''))
+  return { text: next, images: images.slice(0, keep), dropped: images.length - keep }
 }
 
 /** Màu chữ "nổi bật": có sắc hoặc xám sáng; đen và xám đậm là chữ thường. */
@@ -296,8 +489,16 @@ export async function extractFile(name: string, data: Buffer, marks = false): Pr
   const ext = extname(name).toLowerCase()
   try {
     if (ext === '.docx') {
-      const { text, warning } = capped(await extractDocx(data, marks))
-      return { name, kind: 'docx', text, warning }
+      const doc = await extractDocx(data, marks)
+      const cut = capped(doc.text)
+      const warning = [doc.warning, cut.warning].filter(Boolean).join(' ') || undefined
+      if (!marks) return { name, kind: 'docx', text: cut.text, warning }
+      const stitched = await stitchRuns(cut.text, doc.images)
+      const first = compactImages(stitched.text, stitched.images)
+      const capped2 = capImages(first.text, first.images)
+      const packed = compactImages(capped2.text, capped2.images)
+      const note = capped2.dropped ? `${capped2.dropped} ảnh vượt giới hạn trả về bị bỏ.` : undefined
+      return { name, kind: 'docx', text: packed.text, ...(packed.images.length ? { images: packed.images } : {}), warning: [warning, note].filter(Boolean).join(' ') || undefined }
     }
     if (ext === '.pdf') {
       const { text, warning } = capped(await extractPdf(data, marks))

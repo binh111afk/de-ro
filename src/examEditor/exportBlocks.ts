@@ -64,6 +64,10 @@ function textToHtml(text: string): string {
 }
 
 function spanToHtml(s: Span): string {
+  if (s.image) {
+    const w = s.image.width ? ` width="${Math.round(s.image.width)}"` : ''
+    return `<img src="${s.image.src.replace(/"/g, '&quot;')}" alt="${escapeHtml(s.image.alt ?? '')}"${w} style="max-width:100%">`
+  }
   let inner = textToHtml(s.text)
   for (const m of s.marks ?? []) {
     switch (m.type) {
