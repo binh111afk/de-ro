@@ -17,11 +17,22 @@ export interface Option {
   text: string
 }
 
+/** Ảnh của câu hỏi: trên / dưới đề bài (xếp dọc), hoặc bên trái / phải (đề bài cạnh ảnh). */
+export interface QuestionImage {
+  src: string
+  /** thiếu = dưới đề bài */
+  position?: 'top' | 'bottom' | 'left' | 'right'
+  /** bề rộng hiển thị, % của khung câu hỏi (thiếu = 60) */
+  width?: number
+  alt?: string
+}
+
 export interface Question {
   id: string
   number: number
   type: QuestionType
   prompt: string
+  image?: QuestionImage
   /** trắc nghiệm: phương án A–D; đúng/sai: các ý a) b) c) d) (key là chữ cái thường) */
   options?: Option[]
   /** trắc nghiệm: chữ cái; đúng/sai: chuỗi Đ/S theo thứ tự ý ("ĐSĐS"); trả lời ngắn: con số ("-1,5") */

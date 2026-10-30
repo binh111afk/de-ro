@@ -3,7 +3,6 @@ import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Check, Copy, MonitorPlay, Plus, Trash2, Upload } from 'lucide-react'
 import { Button, EmptyState, Field, inputClass } from '@/components/ui'
 import { CopyLink } from '@/components/CopyLink'
-import { MathText } from '@/components/MathText'
 import { SiteSelect } from '@/components/SiteSelect'
 import { cn } from '@/lib/cn'
 import { formatPoints } from '@/lib/math'
@@ -23,6 +22,9 @@ import {
 import { publishItem, shareUrl } from '@/lib/onlinePublish'
 import { readImportFile } from '@/lib/importFile'
 import { parseExamText } from '@/lib/parseExamText'
+import { imageToSrc, pastedImage, uploadQuestionImages } from '@/lib/questionImage'
+import { QuestionBody } from '@/components/QuestionBody'
+import { QuestionImageField } from '@/components/QuestionImageField'
 import { useOnline } from '@/store/online'
 
 const STEPS = ['Soạn câu hỏi', 'Thông tin & cài đặt', 'Hoàn tất']
@@ -94,12 +96,14 @@ export default function OnlineBuilder() {
     setNotice(null)
     try {
       const data = await readImportFile(file, true)
-      const { questions: found, noAnswer, noPrompt } = parseExamText(data.text)
+      const parsed = parseExamText(data.text, data.images)
+      const { noAnswer, noPrompt, imageCount, extraImages } = parsed
+      const found = await uploadQuestionImages(parsed.questions)
       if (!found.length) throw new Error('Không thấy câu hỏi nào. Mỗi câu cần bắt đầu bằng "Câu 1." hoặc "Bài 1.".')
       setQuestions([...questions, ...found])
       if (!item.meta.title.trim()) setMeta({ title: data.title })
       setSelectedId(found[0].id)
-      setNotice(`Đã nhập ${found.length} câu từ "${file.name}"${noAnswer ? `, ${noAnswer} câu chưa có đáp án` : ''}${noPrompt ? `, ${noPrompt} câu có đề bài là hình ảnh (chưa đọc được)` : ''}. Công thức dạng equation của Word không đọc được, hãy kiểm tra lại từng câu.`)
+      setNotice(`Đã nhập ${found.length} câu từ "${file.name}"${noAnswer ? `, ${noAnswer} câu chưa có đáp án` : ''}${imageCount ? `, ${imageCount} câu có ảnh` : ''}${extraImages ? ` (${extraImages} ảnh khác chưa gắn được)` : ''}${noPrompt ? `, ${noPrompt} câu có đề bài là hình ảnh (chưa đọc được)` : ''}. Công thức dạng equation của Word không đọc được, hãy kiểm tra lại từng câu.`)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Không nhập được tệp.')
     } finally {
@@ -549,6 +553,20 @@ function QuestionEditor({
 }) {
   const type = q.type === 'tu-luan-dong' ? 'tu-luan' : q.type
   const options = q.options ?? []
+  const [imgBusy, setImgBusy] = useState(false)
+  const [imgError, setImgError] = useState<string | null>(null)
+  const setImage = async (file: File) => {
+    setImgBusy(true)
+    setImgError(null)
+    try {
+      const src = await imageToSrc(file)
+      onPatch({ image: { position: 'bottom', ...q.image, src } })
+    } catch (err) {
+      setImgError(err instanceof Error ? err.message : 'Không thêm được ảnh.')
+    } finally {
+      setImgBusy(false)
+    }
+  }
   const setOption = (i: number, text: string) => onPatch({ options: options.map((o, j) => (j === i ? { ...o, text } : o)) })
 
   const removeOption = (i: number) => {
@@ -599,11 +617,24 @@ function QuestionEditor({
       </div>
 
       <Field label="Đề bài" hint="Công thức viết giữa hai dấu $, ví dụ $x^2 + 1$.">
-        <textarea rows={3} className={textareaClass} value={q.prompt} onChange={(e) => onPatch({ prompt: e.target.value })} placeholder="Nhập nội dung câu hỏi" />
+        <textarea
+          rows={3}
+          className={textareaClass}
+          value={q.prompt}
+          onChange={(e) => onPatch({ prompt: e.target.value })}
+          onPaste={(e) => {
+            const f = pastedImage(e)
+            if (!f) return
+            e.preventDefault()
+            void setImage(f)
+          }}
+          placeholder="Nhập nội dung câu hỏi"
+        />
       </Field>
-      {q.prompt.includes('$') ? (
+      <QuestionImageField image={q.image} onChange={(image) => onPatch({ image })} busy={imgBusy} error={imgError} pick={(f) => void setImage(f)} />
+      {q.prompt.includes('$') || q.image?.src ? (
         <div className="mt-2 rounded-[6px] bg-sunken/70 px-4 py-3 text-[15px] text-ink">
-          <MathText as="div">{q.prompt}</MathText>
+          <QuestionBody q={q} />
         </div>
       ) : null}
 

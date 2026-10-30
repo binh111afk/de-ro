@@ -19,6 +19,9 @@ export interface ImportedFile {
   text: string
   /** pptx: text từng slide; định dạng khác rỗng */
   slides: string[]
+  /** .docx với marks: ảnh nhúng (data URL), tra theo chỉ số trong token U+E002<chỉ số>U+E003 của `text` */
+  images?: string[]
+  warning?: string
 }
 
 function titleOf(name: string): string {
@@ -37,7 +40,7 @@ export async function readImportFile(file: File, marks = false): Promise<Importe
   if (!text && slides.length === 0) {
     throw new Error('Tệp không có nội dung văn bản để nhập.')
   }
-  return { title: titleOf(file.name), text, slides }
+  return { title: titleOf(file.name), text, slides, ...(payload.images?.length ? { images: payload.images } : {}), ...(payload.warning ? { warning: payload.warning } : {}) }
 }
 
 /** Mỗi dòng có nội dung thành một đoạn văn của đề. */

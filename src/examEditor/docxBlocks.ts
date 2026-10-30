@@ -9,6 +9,7 @@ import {
   BorderStyle,
   Document,
   HeightRule,
+  ImageRun,
   LevelFormat,
   Math as OMath,
   Packer,
@@ -27,6 +28,7 @@ import {
 } from 'docx'
 import type { ExamBlock, ExamDoc, FormatAttrs, RichText, Span } from '@/data/docTypes'
 import { latexToMath } from '@/lib/latexMath'
+import { toDataUrl } from '@/lib/mediaStore'
 import { estimateChoiceCols } from './choiceCols'
 import { splitRichLines } from './convert'
 
@@ -68,7 +70,97 @@ function halfPoints(v: unknown): number | undefined {
   return Math.round(m[2]?.toLowerCase() === 'px' ? n * 1.5 : n * 2)
 }
 
+
+/* ---------------------------- ảnh trong dòng ---------------------------- */
+
+type ImgType = 'png' | 'jpg' | 'gif'
+interface Decoded {
+  type: ImgType
+  data: Uint8Array
+  w: number
+  h: number
+}
+
+/** Đọc kích thước thật từ đầu file PNG / JPEG / GIF; định dạng khác (WebP, SVG…) trả null. */
+function decodeImage(src: string): Decoded | null {
+  const m = src.match(/^data:image\/[a-z+.-]+;base64,(.+)$/i)
+  if (!m) return null
+  let bin: string
+  try {
+    bin = atob(m[1])
+  } catch {
+    return null
+  }
+  const d = Uint8Array.from(bin, (c) => c.charCodeAt(0))
+  if (d.length > 24 && d[0] === 0x89 && d[1] === 0x50 && d[2] === 0x4e && d[3] === 0x47) {
+    const v = new DataView(d.buffer)
+    return { type: 'png', data: d, w: v.getUint32(16), h: v.getUint32(20) }
+  }
+  if (d.length > 10 && d[0] === 0x47 && d[1] === 0x49 && d[2] === 0x46) {
+    return { type: 'gif', data: d, w: d[6] | (d[7] << 8), h: d[8] | (d[9] << 8) }
+  }
+  if (d.length > 4 && d[0] === 0xff && d[1] === 0xd8) {
+    let i = 2
+    while (i + 9 < d.length) {
+      if (d[i] !== 0xff) {
+        i++
+        continue
+      }
+      const mk = d[i + 1]
+      if (mk === 0xff) {
+        i++
+        continue
+      }
+      if (mk >= 0xc0 && mk <= 0xcf && mk !== 0xc4 && mk !== 0xc8 && mk !== 0xcc) {
+        return { type: 'jpg', data: d, w: (d[i + 7] << 8) | d[i + 8], h: (d[i + 5] << 8) | d[i + 6] }
+      }
+      i += 2 + ((d[i + 2] << 8) | d[i + 3])
+    }
+  }
+  return null
+}
+
+const IMG_MAX_PX = 672 // bề rộng vùng chữ (CONTENT_W / PX)
+const IMG_DEFAULT_MAX_PX = 529 // ~14 cm
+
+function imageRun(img: NonNullable<Span['image']>): ParagraphChild[] {
+  const dec = decodeImage(img.src)
+  if (!dec || !dec.w || !dec.h) return []
+  let w = img.width && img.width > 0 ? Math.min(img.width, IMG_MAX_PX) : Math.min(dec.w, IMG_DEFAULT_MAX_PX)
+  let h = (w * dec.h) / dec.w
+  if (h > 900) {
+    h = 900
+    w = (h * dec.w) / dec.h
+  }
+  return [new ImageRun({ type: dec.type, data: dec.data, transformation: { width: Math.round(w), height: Math.round(h) }, altText: { name: 'image', description: img.alt ?? '', title: img.alt ?? '' } })]
+}
+
+/**
+ * Nạp trước mọi ảnh trong tài liệu: `src` dạng `/api/files/...` → data URL (bước async), để `buildDocx` vẫn đồng bộ.
+ * Ảnh không đọc được thì bỏ, không làm hỏng file.
+ */
+export async function inlineDocImages<T>(value: T): Promise<T> {
+  if (Array.isArray(value)) return (await Promise.all(value.map((v) => inlineDocImages(v)))) as T
+  if (value && typeof value === 'object') {
+    const o = value as Record<string, unknown>
+    const out: Record<string, unknown> = {}
+    for (const [k, v] of Object.entries(o)) {
+      if (k === 'image' && v && typeof v === 'object' && typeof (v as { src?: unknown }).src === 'string' && 'text' in o) {
+        const img = v as NonNullable<Span['image']>
+        try {
+          out[k] = { ...img, src: await toDataUrl(img.src) }
+        } catch {
+          // bỏ ảnh
+        }
+      } else out[k] = await inlineDocImages(v)
+    }
+    return out as T
+  }
+  return value
+}
+
 function spanRuns(s: Span, base: Base): ParagraphChild[] {
+  if (s.image) return imageRun(s.image)
   const opts: Mut<IRunOptions> = {
     bold: base.bold,
     italics: base.italics,
@@ -163,6 +255,29 @@ function fmtOpts(f: FormatAttrs | undefined): IParagraphOptions {
     o.border = f.borders === 'box' ? { top: b, bottom: b, left: b, right: b } : { [f.borders]: b }
   }
   return o
+}
+
+/** Có ảnh (hoặc xuống dòng mềm) thì căn trái: căn đều sẽ giãn cả dòng đứng trước chỗ ngắt. */
+const hasImage = (rt: RichText) => typeof rt !== 'string' && (rt as Array<Span | string>).some((s) => typeof s !== 'string' && s.image)
+const justify = (rt: RichText) => (hasImage(rt) ? AlignmentType.LEFT : AlignmentType.BOTH)
+
+/** Tách ảnh khỏi đề bài để đặt vào ô bên cạnh (chỉ khi imagePosition là left/right). */
+function sideImage(text: RichText, pos: 'left' | 'right' | undefined) {
+  if (!pos || typeof text === 'string') return null
+  const spans = text as Array<Span | string>
+  const imgs = spans.filter((s): s is Span => typeof s !== 'string' && !!s.image && !!decodeImage(s.image.src))
+  if (!imgs.length) return null
+  return { pos, imgs, rest: spans.filter((s) => !imgs.includes(s as Span)) as RichText }
+}
+
+/** Bảng 2 ô không viền: đề bài một bên, ảnh một bên. */
+function sideTable(pos: 'left' | 'right', textParas: Paragraph[], imgs: Span[]) {
+  const px = Math.min(Math.max(...imgs.map((s) => s.image?.width ?? 0), 1) || 1, IMG_MAX_PX)
+  const imgW = Math.min(Math.round(px * PX) + 200, Math.round(CONTENT_W * 0.5))
+  const imgCell = plainCell(imgW, imgs.map((s) => para(imageRun(s.image!), { alignment: AlignmentType.CENTER })))
+  const txt = plainCell(CONTENT_W - imgW, textParas)
+  const [a, b, wa, wb] = pos === 'left' ? [imgCell, txt, imgW, CONTENT_W - imgW] : [txt, imgCell, CONTENT_W - imgW, imgW]
+  return borderless([new TableRow({ children: [a, b] })], [wa, wb])
 }
 
 const para = (children: ParagraphChild[], o: IParagraphOptions = {}) => new Paragraph({ ...o, children })
@@ -270,12 +385,15 @@ function blockToDocx(b: ExamBlock, ctx: Ctx): Out[] {
 
     case 'question': {
       ctx.q += 1
-      const head = para([new TextRun({ text: `Câu ${ctx.q}. `, bold: true }), ...runs(b.text)], {
-        alignment: AlignmentType.BOTH,
+      const side = sideImage(b.text, b.imagePosition)
+      const headText = side ? side.rest : b.text
+      const headPara = para([new TextRun({ text: `Câu ${ctx.q}. `, bold: true }), ...runs(headText)], {
+        alignment: justify(headText),
         spacing: { before: 120, after: 45 },
         keepNext: true,
         ...fmtOpts(b.format),
       })
+      const head: Out = side ? sideTable(side.pos, [headPara], side.imgs) : headPara
       // trả lời ngắn: 4 ô trống điền đáp số
       if (b.kind === 'short') {
         const box = 28 * PX
@@ -311,13 +429,14 @@ function blockToDocx(b: ExamBlock, ctx: Ctx): Out[] {
 
     case 'essay': {
       ctx.essay += 1
-      const out: Out[] = [
-        para([new TextRun({ text: `Bài ${ctx.essay}${b.score ? ` (${fmt(b.score)} điểm)` : ''}. `, bold: true }), ...runs(b.text)], {
-          alignment: AlignmentType.BOTH,
-          spacing: { before: 120, after: 45 },
-          ...fmtOpts(b.format),
-        }),
-      ]
+      const side = sideImage(b.text, b.imagePosition)
+      const headText = side ? side.rest : b.text
+      const headPara = para([new TextRun({ text: `Bài ${ctx.essay}${b.score ? ` (${fmt(b.score)} điểm)` : ''}. `, bold: true }), ...runs(headText)], {
+        alignment: justify(headText),
+        spacing: { before: 120, after: 45 },
+        ...fmtOpts(b.format),
+      })
+      const out: Out[] = [side ? sideTable(side.pos, [headPara], side.imgs) : headPara]
       for (const s of b.sub ?? []) out.push(para(runs(s), { indent: { left: OPT_INDENT }, spacing: { after: 45 } }))
       return out
     }
@@ -398,4 +517,4 @@ export function buildDocx(doc: ExamDoc): Document {
 }
 
 /** File .docx dạng Blob (trình duyệt). */
-export const buildDocxBlob = (doc: ExamDoc): Promise<Blob> => Packer.toBlob(buildDocx(doc))
+export const buildDocxBlob = (doc: ExamDoc): Promise<Blob> => inlineDocImages(doc).then((d) => Packer.toBlob(buildDocx(d)))

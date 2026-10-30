@@ -36,12 +36,12 @@ export function richOf(node: JSONContent | undefined): RichText {
   const merged: Span[] = []
   for (const s of spans) {
     const last = merged[merged.length - 1]
-    if (last && sameMarks(last.marks, s.marks)) last.text += s.text
+    if (last && !last.image && !s.image && sameMarks(last.marks, s.marks)) last.text += s.text
     else merged.push({ ...s })
   }
   // nếu toàn bộ là plain text không marks → trả về string cho gọn + tương thích ngược
   if (merged.length === 0) return ''
-  if (merged.length === 1 && !merged[0].marks?.length) return merged[0].text
+  if (merged.length === 1 && !merged[0].marks?.length && !merged[0].image) return merged[0].text
   return merged
 }
 
@@ -55,6 +55,7 @@ export function splitRichLines(rt: RichText): RichText[] {
       : (rt as Array<Span | string>).map((s) => (typeof s === 'string' ? { text: s } : s))
   const lines: Span[][] = [[]]
   for (const s of spans) {
+    if (s.image) { lines[lines.length - 1].push(s); continue }
     const parts = s.text.split('\n')
     parts.forEach((part, i) => {
       if (i > 0) lines.push([])
@@ -87,6 +88,12 @@ function walkInline(node: JSONContent | undefined, inherited: Mark[], out: Span[
   if (node.type === 'text') {
     const marks = [...inherited, ...marksOf(node)]
     out.push({ text: node.text ?? '', ...(marks.length ? { marks } : {}) })
+    return
+  }
+  // ảnh inline → span không chữ, giữ nguyên src/độ rộng
+  if (node.type === 'image') {
+    const a = node.attrs ?? {}
+    if (a.src) out.push({ text: '', image: { src: String(a.src), ...(a.alt ? { alt: String(a.alt) } : {}), ...(a.width ? { width: Number(a.width) } : {}) } })
     return
   }
   // công thức inline → trả về đúng quy ước `$...$` của ExamBlock
@@ -408,6 +415,10 @@ function richNodes(rt: RichText): JSONContent[] {
   if (typeof rt === 'string') return rt ? splitMath(rt) : []
   const out: JSONContent[] = []
   for (const s of rt) {
+    if (s.image) {
+      out.push({ type: 'image', attrs: { src: s.image.src, alt: s.image.alt ?? null, width: s.image.width ?? null } })
+      continue
+    }
     const marks = s.marks?.length
       ? s.marks.map((m) => ({ type: m.type, ...(m.attrs ? { attrs: m.attrs } : {}) }))
       : undefined

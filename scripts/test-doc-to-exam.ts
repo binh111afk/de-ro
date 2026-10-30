@@ -77,4 +77,23 @@ assert.equal(m3.questions[0].explanation, 'Thay $x=2$ được 4.\nVậy chọn 
 assert.equal(m3.questions[1].explanation, undefined)
 assert.equal(exam.sections[0].questions[0].explanation, undefined)
 
+// ảnh trong đề bài: trước mọi chữ → trên, sau chữ → dưới; không ảnh → không có trường image
+const png = 'data:image/png;base64,AAAA'
+const withImg = docToExam(
+  {
+    ...doc,
+    blocks: [
+      { type: 'question', no: 1, text: [{ text: '', image: { src: png, width: 40 } }, { text: 'Cho hình vẽ.' }], options: [{ label: 'A', text: '1' }, { label: 'B', text: '2' }] },
+      { type: 'question', no: 2, text: [{ text: 'Xem hình:' }, { text: '', image: { src: '/api/files/x.png' } }], options: [{ label: 'A', text: '1' }, { label: 'B', text: '2' }] },
+      { type: 'question', no: 3, text: 'Không ảnh', options: [{ label: 'A', text: '1' }, { label: 'B', text: '2' }] },
+    ],
+  },
+  'img',
+)
+const [q1, q2, q3] = withImg.sections[0].questions
+assert.deepEqual(q1.image, { src: png, position: 'top', width: 40 })
+assert.equal(q1.prompt, 'Cho hình vẽ.')
+assert.deepEqual(q2.image, { src: '/api/files/x.png', position: 'bottom' })
+assert.equal(q3.image, undefined)
+
 console.log('test-doc-to-exam: OK')
