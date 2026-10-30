@@ -123,7 +123,18 @@ export async function buildDeckPptx(deck: Deck): Promise<ArrayBuffer> {
       } else if (el.type === 'icon' && slideIconById(el.assetId)) {
         const Icon = slideIconById(el.assetId)!
         const svg = renderToStaticMarkup(createElement(Icon, { xmlns: 'http://www.w3.org/2000/svg', weight: 'duotone', color: `#${hex(el.textColor ?? deck.theme.accent)}`, size: 256 }))
-        slide.addImage({ ...box, data: `data:image/svg+xml;base64,${btoa(svg)}`, transparency: Math.round((1 - (el.opacity ?? 1)) * 100) })
+        // icon vuông: đặt hình vuông nằm giữa hộp như bản web, không kéo giãn theo hộp chữ nhật (slide 10 × 5,625in)
+        const w = (el.w / 100) * 10
+        const h = (el.h / 100) * 5.625
+        const side = Math.min(w, h)
+        slide.addImage({
+          data: `data:image/svg+xml;base64,${btoa(svg)}`,
+          x: (el.x / 100) * 10 + (w - side) / 2,
+          y: (el.y / 100) * 5.625 + (h - side) / 2,
+          w: side,
+          h: side,
+          transparency: Math.round((1 - (el.opacity ?? 1)) * 100),
+        })
       } else if (el.type === 'graphic' && el.graphicId) {
         const svg = graphicMarkup(el.graphicId, `#${hex(el.textColor ?? deck.theme.fg)}`, el.fill ? `#${hex(el.fill)}` : undefined)
         if (svg) {
@@ -222,7 +233,11 @@ export async function buildDeckPptx(deck: Deck): Promise<ArrayBuffer> {
             },
           ],
           {
-            ...box,
+            // addChart không đọc toạ độ dạng "%" (đặt về 1in,1in) → đổi sang inch của slide 10 × 5,625
+            x: (el.x / 100) * 10,
+            y: (el.y / 100) * 5.625,
+            w: (el.w / 100) * 10,
+            h: (el.h / 100) * 5.625,
             showLegend: true,
             showValue: true,
             chartColors: [hex(el.fill ?? deck.theme.accent)],

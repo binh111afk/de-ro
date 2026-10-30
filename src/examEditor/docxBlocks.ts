@@ -350,10 +350,10 @@ function blockToDocx(b: ExamBlock, ctx: Ctx): Out[] {
     }
 
     case 'rubric': {
-      const instance = ++ctx.lists
       return [
         ...(b.title ? [para(runs(b.title, { bold: true, size: 25, caps: true }), { spacing: { before: 180, after: 120 }, keepNext: true })] : []),
-        ...b.items.map((i) => para([new TextRun({ text: `${i.label} ` }), ...runs(i.text)], { numbering: { reference: 'ord', level: 0, instance } })),
+        // nhãn "1." đã nằm trong dữ liệu, không đánh số tự động nữa (tránh "1. 1.")
+        ...b.items.map((i) => para([new TextRun({ text: `${i.label} `, bold: true }), ...runs(i.text)])),
       ]
     }
 
