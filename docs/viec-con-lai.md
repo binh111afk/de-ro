@@ -2,7 +2,7 @@
 
 Xem [phiên 10](handoff/phien-10.md). Còn lại, theo thứ tự nên làm:
 
-- [ ] **Dán cả đề để tách câu** vào trang Tạo đề online (nhập tay đề 40 câu chậm). Đáng làm nhất.
+- [x] **Nhập đề từ file** (30/10/2026): nút "Nhập đề từ file" ở trang Tạo đề online (.docx, .pdf, .txt, .md) → `src/lib/parseExamText.ts`, test `npm run test:parse`. Đáp án đọc từ: dòng "Đáp án:", bảng/dòng đáp án cuối đề (`Câu 1: a. Câu 11: b.`, `1A 2B`, bảng Word), hoặc phương án duy nhất được đậm/nghiêng/gạch chân/gạch ngang/đổi màu/tô nền (server bọc chữ bằng U+E000…U+E001, `markEmphasis` trong `server/extract.ts`) hay có dấu `* ✓`. Đề không có "Câu N." (chuyển từ PDF, đề bài là ảnh) vẫn tách theo từng bộ A–D. Chưa có: ô **dán văn bản**, hình/ảnh đề bài trong docx, công thức equation của Word (mammoth bỏ), ảnh scan/OCR. PDF chữ cũng đọc đánh dấu (`pdfEmphasis` trong `server/extract.ts`: tên font gốc → đậm/nghiêng, lệnh vẽ → màu chữ, đường kẻ mảnh/ô tô màu → gạch chân/gạch ngang/tô nền); mới thử với PDF xuất từ LibreOffice và Word (`scripts/fixtures`), chưa thử PDF nhiều cột hay chữ xoay.
 - [ ] **Thử đăng thật** bằng tài khoản đăng nhập (đường đăng + `/de-online/:id` mới kiểm bằng test/typecheck).
 - [ ] **Thử luồng `Tệp → Làm đề tương tác`** ở trình soạn bằng tay (đề có lời giải cuối tài liệu).
 - [ ] **Đề chỉ có link, không lên danh sách cộng đồng**: cần thêm cột (vd `unlisted`) trong `community_exams`. Hỏi chủ dự án trước khi đổi database.

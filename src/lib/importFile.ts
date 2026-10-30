@@ -26,9 +26,9 @@ function titleOf(name: string): string {
   return (base || 'Tài liệu nhập').slice(0, 120)
 }
 
-export async function readImportFile(file: File): Promise<ImportedFile> {
+export async function readImportFile(file: File, marks = false): Promise<ImportedFile> {
   if (file.size > MAX_BYTES) throw new Error('Tệp quá lớn (tối đa 12 MB).')
-  const payload = await extractAttachment(file)
+  const payload = await extractAttachment(file, marks)
   if (payload.kind === 'unsupported') {
     throw new Error(payload.warning ?? 'Chưa đọc được định dạng này.')
   }

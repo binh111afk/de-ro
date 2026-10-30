@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react'
+import { useRef, useState, type ReactNode } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Check, Copy, MonitorPlay, Plus, Trash2, Upload } from 'lucide-react'
 import { Button, EmptyState, Field, inputClass } from '@/components/ui'
@@ -21,6 +21,8 @@ import {
   type OnlineMeta,
 } from '@/lib/onlineExam'
 import { publishItem, shareUrl } from '@/lib/onlinePublish'
+import { readImportFile } from '@/lib/importFile'
+import { parseExamText } from '@/lib/parseExamText'
 import { useOnline } from '@/store/online'
 
 const STEPS = ['Soạn câu hỏi', 'Thông tin & cài đặt', 'Hoàn tất']
@@ -40,6 +42,8 @@ export default function OnlineBuilder() {
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
+  const [notice, setNotice] = useState<string | null>(null)
+  const fileRef = useRef<HTMLInputElement>(null)
 
   if (!item) return <Navigate to="/tao-de-online" replace />
 
@@ -81,6 +85,26 @@ export default function OnlineBuilder() {
     next[i] = other
     next[i + dir] = q
     setQuestions(next)
+  }
+
+  /** Nhập đề từ file (.docx, .pdf, .txt, .md): đọc chữ rồi tách thành câu hỏi, nối vào cuối đề. */
+  const importFile = async (file: File) => {
+    setBusy(true)
+    setError(null)
+    setNotice(null)
+    try {
+      const data = await readImportFile(file, true)
+      const { questions: found, noAnswer, noPrompt } = parseExamText(data.text)
+      if (!found.length) throw new Error('Không thấy câu hỏi nào. Mỗi câu cần bắt đầu bằng "Câu 1." hoặc "Bài 1.".')
+      setQuestions([...questions, ...found])
+      if (!item.meta.title.trim()) setMeta({ title: data.title })
+      setSelectedId(found[0].id)
+      setNotice(`Đã nhập ${found.length} câu từ "${file.name}"${noAnswer ? `, ${noAnswer} câu chưa có đáp án` : ''}${noPrompt ? `, ${noPrompt} câu có đề bài là hình ảnh (chưa đọc được)` : ''}. Công thức dạng equation của Word không đọc được, hãy kiểm tra lại từng câu.`)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Không nhập được tệp.')
+    } finally {
+      setBusy(false)
+    }
   }
 
   const finish = () => {
@@ -169,6 +193,12 @@ export default function OnlineBuilder() {
         </p>
       ) : null}
 
+      {notice ? (
+        <p role="status" className="mb-6 rounded-[6px] bg-sage-soft px-4 py-3 text-[13.5px] font-medium text-sage">
+          {notice}
+        </p>
+      ) : null}
+
       {step === 0 ? (
         <div className="grid items-start gap-6 lg:grid-cols-[300px_1fr]">
           <aside className="rounded-[8px] bg-surface p-5 shadow-[0_1px_2px_rgba(60,48,32,0.03)] lg:sticky lg:top-[88px]">
@@ -177,6 +207,28 @@ export default function OnlineBuilder() {
               {questions.length} câu · {formatPoints(totalOf(questions))}đ
               {issueCount ? <span className="font-semibold text-clay"> · {issueCount} câu chưa xong</span> : null}
             </p>
+
+            <input
+              ref={fileRef}
+              type="file"
+              accept=".docx,.pdf,.txt,.md"
+              hidden
+              onChange={(e) => {
+                const f = e.target.files?.[0]
+                e.target.value = ''
+                if (f) void importFile(f)
+              }}
+            />
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => fileRef.current?.click()}
+              className="mb-2 flex w-full items-center justify-center gap-1.5 rounded-[6px] bg-ink px-2 py-2 text-[12.5px] font-semibold text-paper transition-opacity hover:opacity-90 disabled:opacity-50"
+            >
+              <Upload className="size-3.5" />
+              {busy ? 'Đang đọc file…' : 'Nhập đề từ file'}
+            </button>
+            <p className="mb-4 text-[11.5px] leading-relaxed text-ink-3">Word (.docx), PDF, văn bản (.txt, .md). Tách câu theo "Câu 1.", A. B. C. D., a) b) c) d), "Đáp án:".</p>
 
             <div className="mb-4 grid grid-cols-2 gap-1.5">
               {ONLINE_TYPES.map((t) => (

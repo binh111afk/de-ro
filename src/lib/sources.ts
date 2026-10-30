@@ -52,12 +52,14 @@ function fileToBase64(file: File): Promise<string> {
 
 export async function extractAttachment(
   file: File,
+  /** .docx: giữ ký tự đánh dấu chữ nổi bật (U+E000/U+E001) — dùng khi tách đề để tìm đáp án được tô/đậm */
+  marks = false,
 ): Promise<{ text: string; kind?: string; slides?: string[]; warning?: string }> {
   const data = await fileToBase64(file)
   const res = await fetch('/api/extract', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name: file.name, data }),
+    body: JSON.stringify({ name: file.name, data, ...(marks ? { marks } : {}) }),
   })
   const payload = (await res.json().catch(() => null)) as
     | { text?: string; kind?: string; slides?: string[]; warning?: string; error?: string }
