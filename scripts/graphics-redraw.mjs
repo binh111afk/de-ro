@@ -1032,6 +1032,146 @@ BODY_NEW.reduce((after, [id, name, keywords, svg]) => {
   return id
 }, 'bio-xuong')
 
+// --- hình động (30 icon, nhóm "Hình động"): chuyển động SMIL nằm sẵn trong SVG, lặp vô hạn ---
+// Trên slide (SVG nhúng inline) hình tự chạy; xuất PPTX/ảnh thì lấy khung hình đầu.
+const T = (type, values, dur, extra = '') =>
+  `<animateTransform attributeName="transform" type="${type}" values="${values}" dur="${dur}s" repeatCount="indefinite"${extra}/>`
+const ag = (anim, ...parts) => `<g>${anim}${parts.join('')}</g>`
+const spin = (cx, cy, dur, rev = false) => T('rotate', rev ? `360 ${cx} ${cy};0 ${cx} ${cy}` : `0 ${cx} ${cy};360 ${cx} ${cy}`, dur)
+const swing = (cx, cy, a, dur) =>
+  T('rotate', `${-a} ${cx} ${cy};${a} ${cx} ${cy};${-a} ${cx} ${cy}`, dur, ' calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1"')
+const fade = (values, dur, begin = 0) => `<animate attributeName="opacity" values="${values}" dur="${dur}s" begin="${begin}s" repeatCount="indefinite"/>`
+const pulse = (cx, cy, values, dur, ...parts) =>
+  `<g transform="translate(${cx} ${cy})"><g>${T('scale', values, dur)}<g transform="translate(${-cx} ${-cy})">${parts.join('')}</g></g></g>`
+/** nét tự vẽ ra rồi giữ một lúc, lặp lại; khung đầu là nét đầy đủ (xuất PPTX/ảnh lấy khung đầu) */
+const draw = (d, len, dur) =>
+  `<path d="${d}" fill="none" stroke="${INK}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="${len}">` +
+  `<animate attributeName="stroke-dashoffset" values="0;${len};0;0" keyTimes="0;0.01;0.6;1" dur="${dur}s" repeatCount="indefinite"/></path>`
+/** chấm tròn chạy theo quỹ đạo `path` */
+const orbiter = (r, color, path, dur) =>
+  `<path d="M${-r} 0a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0 ${-2 * r} 0Z" fill="${color}" stroke="${INK}" stroke-width="3">` +
+  `<animateMotion path="${path}" dur="${dur}s" repeatCount="indefinite"/></path>`
+const rotg = (deg, ...parts) => `<g transform="rotate(${deg} 35 35)">${parts.join('')}</g>`
+const gear = (cx, cy, R, r, n) => {
+  const w = 360 / n / 4
+  return Array.from({ length: n }, (_, k) => {
+    const a = (360 * k) / n
+    return [polar(cx, cy, r, a - 1.6 * w), polar(cx, cy, R, a - 0.8 * w), polar(cx, cy, R, a + 0.8 * w), polar(cx, cy, r, a + 1.6 * w)]
+  }).flat()
+}
+const inner = (s) => s.replace(/^<svg[^>]*>/, '').replace(/<\/svg>$/, '')
+const HEART = 'M35 60Q8 42 8 24Q8 10 21 10Q30 10 35 18Q40 10 49 10Q62 10 62 24Q62 42 35 60Z'
+const CLOUD = 'M18 44Q8 44 8 36Q8 28 17 28Q18 16 31 16Q42 16 45 26Q48 22 54 24Q62 26 62 34Q62 44 52 44Z'
+const arcAt = (cx, cy, r) => `M${round1(cx - r * 0.707)} ${round1(cy - r * 0.707)}A${r} ${r} 0 0 1 ${round1(cx + r * 0.707)} ${round1(cy - r * 0.707)}`
+const blade = (deg, color) => rotg(deg, fill('M35 35V9Q50 13 47 25Z', color))
+const sail = (deg) => `<g transform="rotate(${deg} 35 28)">${fill('M33.5 26L30 4H40L36.5 26Z', WHITE)}</g>`
+const drop = (x, begin) =>
+  `<g>${T('translate', '0 -6;0 10', 0.9, ` begin="${begin}s"`)}${fade('1;0', 0.9, begin)}${line(`M${x} 46L${x - 3} 53`)}</g>`
+
+const ANIM_NEW = [
+  ['anim-banh-rang', 'Bánh răng quay', 'banh rang quay co khi may moc cai dat dong', svg(
+    ag(spin(35, 35, 6), poly(gear(35, 35, 28, 22, 10), BLUE), cp(35, 35, 8, WHITE)))],
+  ['anim-hai-banh-rang', 'Bánh răng ăn khớp', 'banh rang an khop truyen dong co khi quy trinh dong', svg(
+    ag(spin(24, 25, 4), poly(gear(24, 25, 19, 14, 8), BLUE), cp(24, 25, 5, WHITE)),
+    ag(spin(48, 48, 3, true), poly(gear(48, 48, 15, 10.5, 6), PEACH), cp(48, 48, 4, WHITE)))],
+  ['anim-dong-ho', 'Đồng hồ chạy', 'dong ho chay thoi gian dem gio kim dong', svg(
+    cp(35, 35, 27, WHITE), line('M35 12V16M35 54V58M12 35H16M54 35H58'),
+    ag(spin(35, 35, 24), line('M35 35V22')), ag(spin(35, 35, 2), line('M35 35V14')), cp(35, 35, 3, PEACH))],
+  ['anim-dong-ho-cat', 'Đồng hồ cát lật', 'dong ho cat lat thoi gian cho dong', svg(
+    ag(T('rotate', '0 35 35;0 35 35;180 35 35;180 35 35', 3, ' keyTimes="0;0.7;0.9;1"'),
+      fill('M20 8H50V12Q50 26 38 35Q50 44 50 58V62H20V58Q20 44 32 35Q20 26 20 12Z', WHITE),
+      fill('M25 18H45Q43 25 35 31Q27 25 25 18Z', YELLOW), fill('M35 46Q24 50 23 58H47Q46 50 35 46Z', YELLOW),
+      line('M15 8H55M15 62H55')))],
+  ['anim-bong-den', 'Bóng đèn sáng', 'bong den sang y tuong nhay sang dong', svg(
+    ag(fade('0.15;1;0.15', 1.6), line('M35 3V8M15 12L19 16M55 12L51 16M6 30H11M64 30H59')),
+    fill('M35 12Q52 12 52 30Q52 40 44 46V52H26V46Q18 40 18 30Q18 12 35 12Z', YELLOW),
+    fill('M27 52H43V59Q43 63 39 63H31Q27 63 27 59Z', BEIGE), line('M30 40L33 34L37 40L40 34'))],
+  ['anim-tim-dap', 'Tim đập', 'tim dap trai tim yeu thuong nhip tim dong', svg(
+    pulse(35, 36, '1;1.14;1;1.07;1', 1.2, fill(HEART, PINK), line('M20 22Q18 28 22 32')))],
+  ['anim-ngoi-sao', 'Sao lấp lánh', 'ngoi sao lap lanh khen thuong noi bat dong', svg(
+    pulse(35, 37, '1;0.86;1', 1.4, poly(starPts(35, 37, 24, 10), YELLOW)),
+    ag(fade('0;1;0', 1.4), line('M58 6V16M53 11H63')), ag(fade('0;1;0', 1.4, -0.7), line('M11 52V62M6 57H16')))],
+  ['anim-mat-troi', 'Mặt trời quay', 'mat troi quay nang thoi tiet dong', svg(
+    ag(spin(35, 35, 10), line(Array.from({ length: 12 }, (_, i) => {
+      const [a, b] = polar(35, 35, 21, i * 30), [c, d] = polar(35, 35, 30, i * 30)
+      return `M${a} ${b}L${c} ${d}`
+    }).join(''))), cp(35, 35, 15, YELLOW))],
+  ['anim-dang-tai', 'Đang tải', 'dang tai cho xu ly loading dong', svg(
+    ...Array.from({ length: 8 }, (_, i) => {
+      const [x, y] = polar(35, 35, 23, i * 45 - 90)
+      return ag(fade('1;0.2;1', 1.2, round1(-1.2 + (i * 1.2) / 8)), cp(x, y, 5, BLUE))
+    }))],
+  ['anim-vong-xoay', 'Vòng xoay', 'vong xoay dang tai cho loading dong', svg(
+    cp(35, 35, 24, BLUE), cp(35, 35, 12, WHITE), ag(spin(35, 35, 1.1), bold('M35 17A18 18 0 0 1 53 35', 6)))],
+  ['anim-chuong-reo', 'Chuông reo', 'chuong reo thong bao bao hieu dong', svg(
+    line('M8 24Q5 33 9 41M62 24Q65 33 61 41'),
+    ag(swing(35, 10, 16, 0.9), fill('M32 17Q32 10 35 10Q38 10 38 17Z', YELLOW),
+      cp(35, 56, 4.5, PEACH), fill('M21 46Q21 20 35 16Q49 20 49 46L55 52H15Z', YELLOW)))],
+  ['anim-kinh-lup', 'Kính lúp tìm kiếm', 'kinh lup tim kiem tra cuu kham pha dong', svg(
+    fill('M12 6H50V64H12Z', WHITE), line('M19 16H43M19 26H43M19 36H37M19 46H43'),
+    ag(T('translate', '0 0;6 -4;0 -8;-6 -4;0 0', 2.6), bold('M43 43L57 57', 6), cp(34, 34, 13, BLUE)))],
+  ['anim-ten-lua', 'Tên lửa bay', 'ten lua bay khoi dong phong khat vong dong', svg(
+    ag(T('translate', '0 1;0 -4;0 1', 1.2),
+      ag(fade('1;0.45;1', 0.3), fill('M28 44H42L35 63Z', YELLOW)),
+      fill('M24 34L13 47H25Z', PEACH), fill('M46 34L57 47H45Z', PEACH),
+      fill('M35 5Q48 17 46 44H24Q22 17 35 5Z', WHITE), cp(35, 25, 5, BLUE)))],
+  ['anim-may-troi', 'Mây trôi', 'may troi bau troi thoi tiet dong', svg(
+    cp(48, 22, 10, YELLOW), ag(T('translate', '-6 4;6 4;-6 4', 5), fill(CLOUD, WHITE)))],
+  ['anim-mua-roi', 'Mưa rơi', 'mua roi thoi tiet nuoc dong', svg(
+    drop(22, 0), drop(35, -0.3), drop(48, -0.6),
+    `<g transform="translate(0 -8)">${fill(CLOUD, BLUE)}</g>`)],
+  ['anim-bong-tuyet', 'Bông tuyết xoay', 'bong tuyet xoay mua dong lanh dong', svg(
+    ag(spin(35, 35, 8), inner(snowflake())))],
+  ['anim-chong-chong', 'Chong chóng quay', 'chong chong quay gio tuoi tho dong', svg(
+    line('M35 35V66'), ag(spin(35, 35, 1.6), blade(0, PINK), blade(90, BLUE), blade(180, YELLOW), blade(270, GREEN)), cp(35, 35, 3.5, WHITE))],
+  ['anim-coi-xay-gio', 'Cối xay gió', 'coi xay gio nang luong gio dong', svg(
+    fill('M30 30H40L47 64H23Z', BEIGE), fill('M31 64V55Q31 51 35 51Q39 51 39 55V64Z', PEACH),
+    ag(spin(35, 28, 4), sail(0), sail(90), sail(180), sail(270)), cp(35, 28, 4, PEACH))],
+  ['anim-but-viet', 'Bút đang viết', 'but viet ghi chep soan bai dong', svg(
+    draw('M8 52Q16 40 23 50T37 50T52 48', 60, 2.4),
+    ag(T('translate', '0 0;-44 2;0 0;0 0', 2.4, ' keyTimes="0;0.01;0.6;1"'),
+      fill('M52 48L54 38L63 16Q65 12 68 14Q70 16 68 20L59 42Z', WHITE), line('M54 38L59 42')))],
+  ['anim-dau-tich', 'Dấu tích', 'dau tich dung hoan thanh dong y dong', svg(
+    cp(35, 35, 27, GREEN), draw('M22 36L31 45L49 26', 40, 1.8))],
+  ['anim-mui-ten-nhay', 'Mũi tên nhún', 'mui ten chi xuong chu y tai xuong dong', svg(
+    line('M12 63H58'), ag(T('translate', '0 -5;0 4;0 -5', 1.1), fill('M28 6H42V30H52L35 50L18 30H28Z', PEACH)))],
+  ['anim-wifi', 'Sóng wifi', 'song wifi mang internet ket noi dong', svg(
+    cp(35, 56, 4.5, BLUE),
+    ...[12, 22, 32].map((r, i) => ag(fade('0.15;1;1;0.15', 1.8, round1(-1.8 + i * 0.3)), line(arcAt(35, 56, r)))))],
+  ['anim-loa', 'Loa phát', 'loa phat am thanh nghe dong', svg(
+    fill('M8 26H18L32 14V56L18 44H8Z', BLUE),
+    ...['M40 27Q45 35 40 43', 'M47 20Q55 35 47 50', 'M54 13Q65 35 54 57'].map((d, i) => ag(fade('0.15;1;0.15', 1.5, round1(-1.5 + i * 0.25)), line(d))))],
+  ['anim-pin-sac', 'Pin đang sạc', 'pin sac nang luong dien dong', svg(
+    fill('M7 20H58V50H7Z', WHITE), fill('M58 28H64V42H58Z', WHITE),
+    ...[12, 23, 34, 45].map((x, i) => ag(fade('0;0;1;1', 2.4, round1(-2.4 + i * 0.4)), fill(`M${x} 25H${x + 8}V45H${x}Z`, GREEN))))],
+  ['anim-con-lac', 'Con lắc', 'con lac dao dong vat ly dong', svg(
+    line('M12 8H58'), ag(swing(35, 8, 26, 1.6), line('M35 8V45'), cp(35, 51, 8, PEACH)))],
+  ['anim-nguyen-tu', 'Nguyên tử', 'nguyen tu electron hat nhan hoa hoc vat ly dong', svg(
+    ...[0, 60, 120].map((deg, i) => rotg(deg, line(ellipseD(35, 35, 28, 10)), orbiter(3.5, [BLUE, PINK, YELLOW][i], ellipseD(35, 35, 28, 10), 1.6 + i * 0.4))),
+    cp(35, 35, 6, PEACH))],
+  ['anim-trai-dat-quay', 'Trái Đất quay quanh Mặt Trời', 'trai dat quay quanh mat troi quy dao he mat troi dong', svg(
+    dash(ellipseD(35, 35, 26, 26)), cp(35, 35, 10, YELLOW), orbiter(5, BLUE, ellipseD(35, 35, 26, 26), 4))],
+  ['anim-dien-tam-do', 'Điện tâm đồ', 'dien tam do nhip tim may theo doi y te dong', svg(
+    fill('M5 12H65V58H5Z', WHITE), draw('M9 36H21L26 26L32 47L38 18L43 40L47 36H61', 95, 2))],
+  ['anim-bong-bay', 'Bóng bay', 'bong bay le hoi sinh nhat vui dong', svg(
+    ag(T('translate', '0 1;0 -4;0 1', 2.4), line('M35 49Q30 56 36 65'), poly([[31, 50], [35, 45], [39, 50]], PINK),
+      fill('M35 5Q52 5 52 23Q52 39 35 46Q18 39 18 23Q18 5 35 5Z', PINK), line('M25 17Q26 12 30 10')))],
+  ['anim-phao-hoa', 'Pháo hoa', 'phao hoa le hoi chuc mung tet dong', svg(
+    `<g>${fade('1;1;0', 1.6)}${pulse(35, 35, '0.3;1;1.05', 1.6,
+      line(Array.from({ length: 8 }, (_, i) => {
+        const [a, b] = polar(35, 35, 8, i * 45), [c, d] = polar(35, 35, 21, i * 45)
+        return `M${a} ${b}L${c} ${d}`
+      }).join('')),
+      ...Array.from({ length: 8 }, (_, i) => {
+        const [x, y] = polar(35, 35, 27, i * 45)
+        return cp(x, y, 3, [PINK, YELLOW, BLUE, GREEN][i % 4])
+      }))}</g>`)],
+]
+ANIM_NEW.reduce((after, [id, name, keywords, svg]) => {
+  ADDED.push({ after, id, name, category: 'anim', keywords, svg })
+  return id
+}, 'feel-vo-tay')
+
 export const REDRAWN = {
   // cấu tạo hoa (bổ dọc): cánh, nhị (chỉ nhị + bao phấn), nhuỵ (bầu, vòi, đầu nhuỵ), đài, cuống, lá
   'bio-hoa-cau-tao': svg(

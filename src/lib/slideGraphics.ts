@@ -49,6 +49,7 @@ export const GRAPHIC_CATEGORY_LABEL: Record<GraphicCategory, string> = {
   civic: 'Giáo dục công dân',
   event: 'Lễ & sự kiện',
   feel: 'Cảm xúc & phản hồi',
+  anim: 'Hình động',
   ornament: 'Hoạ tiết',
 }
 
@@ -80,6 +81,7 @@ const CATEGORY_ORDER: GraphicCategory[] = [
   'civic',
   'event',
   'feel',
+  'anim',
 ]
 
 /** Bỏ dấu tiếng Việt để search bằng chuỗi không dấu (giống pickSlideAsset). */

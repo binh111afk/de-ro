@@ -322,6 +322,7 @@ export type GraphicCategory =
   | 'civic'
   | 'event'
   | 'feel'
+  | 'anim'
   | 'ornament'
 
 export interface SlideGraphicData {
