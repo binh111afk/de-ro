@@ -155,8 +155,80 @@ const periodic = (() => {
   return svg(...cells.map(([i, j]) => sq(X + i * C, Y + j * C, color(i))), ...[1, 2, 3].map((i) => sq(X + i * C, 54, YELLOW)))
 })()
 
+
+// --- đợt bổ sung theo dáng bộ "Education Icon pack" (Figma Community), vẽ lại theo quy ước kho ---
+const eLearning = svg(
+  fill('M14 13H56Q59 13 59 16V45H11V16Q11 13 14 13Z', BLUE),
+  fill('M35 20L49 27L35 34L21 27Z', WHITE),
+  fill('M28 30.5V36Q35 40.5 42 36V30.5L35 34Z', WHITE),
+  line('M49 27V34'),
+  fill('M5 45H65L61 54H9Z', WHITE),
+)
+const videoLesson = svg(
+  fill('M10 14H60Q63 14 63 17V51Q63 54 60 54H10Q7 54 7 51V17Q7 14 10 14Z', PINK),
+  circle(35, 31, 10, WHITE),
+  fill('M32 26L40.5 31L32 36Z', INK),
+  line('M13 47H57'),
+  dot(27, 47, 3),
+)
+const webinar = svg(
+  fill('M11 10H59Q62 10 62 13V42Q62 45 59 45H11Q8 45 8 42V13Q8 10 11 10Z', MINT),
+  fill('M24 45Q24 33 35 33Q46 33 46 45Z', WHITE),
+  circle(35, 24, 6, WHITE),
+  line('M35 45V54M24 57H46'),
+)
+const box = (x, y, c) => fill(`M${x} ${y}h11v11h-11Z`, c)
+const tick = (x, y) => line(`M${x + 2.8} ${y + 5.8}L${x + 4.8} ${y + 7.8}L${x + 8.3} ${y + 3.3}`)
+const quiz = svg(
+  fill('M14 6H45L55 16V64H14Z', WHITE),
+  line('M45 6V16H55'),
+  box(20, 17, GREEN), tick(20, 17),
+  box(20, 32, GREEN), tick(20, 32),
+  box(20, 47, PINK), line('M23.5 50.5L27.5 54.5M27.5 50.5L23.5 54.5'),
+  line('M37 22.5H48M37 37.5H48M37 52.5H44'),
+)
+const tile = (x, y) => fill(`M${x + 3} ${y}H${x + 21}Q${x + 24} ${y} ${x + 24} ${y + 3}V${y + 21}Q${x + 24} ${y + 24} ${x + 21} ${y + 24}H${x + 3}Q${x} ${y + 24} ${x} ${y + 21}V${y + 3}Q${x} ${y} ${x + 3} ${y}Z`, BLUE)
+const operations = svg(
+  tile(9, 9), tile(37, 9), tile(9, 37), tile(37, 37),
+  line('M21 15V27M15 21H27M43 21H55M16.5 44.5L25.5 53.5M25.5 44.5L16.5 53.5M43 49H55'),
+  dot(49, 43.5, 2), dot(49, 54.5, 2),
+)
+const research = svg(
+  fill('M11 7H39L47 15V58H11Z', WHITE),
+  line('M39 7V15H47M17 21H33M17 28H39M17 35H29'),
+  fill('M50.5 52.5L54.5 48.5L63.5 57.5Q64 60.5 61.5 62Q59 62.5 57 60Z', PEACH),
+  circle(45, 44, 11, BLUE),
+  '<path d="M39 42C39.5 39.5 41.5 38 44 38" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>',
+)
+const schoolBuilding = svg(
+  line('M35 17V5'),
+  fill('M35 5H46L43 8.5L46 12H35Z', PINK),
+  fill('M14 33H56V62H14Z', PEACH),
+  fill('M9 34L35 17L61 34Z', PINK),
+  fill('M19 41H26V48H19Z', WHITE),
+  fill('M44 41H51V48H44Z', WHITE),
+  fill('M30 62V49Q30 44 35 44Q40 44 40 49V62Z', WHITE),
+  line('M6 62H64'),
+)
+const knowledge = svg(
+  line('M35 3V6M18 9L20 11M52 9L50 11M12 23H15M55 23H58'),
+  fill('M30 32H40V38Q40 40 38 40H32Q30 40 30 38Z', WHITE),
+  circle(35, 22, 12, YELLOW),
+  line('M31 22L33 26L35 22L37 26L39 22'),
+  fill('M35 49Q25 43 8 45V62Q25 60 35 66Z', BLUE),
+  fill('M35 49Q45 43 62 45V62Q45 60 35 66Z', BLUE),
+)
+
 /** icon mới (không có trong sheet): chèn ngay sau icon `after` */
 export const ADDED = [
+  { after: 'class-mu-tot-nghiep', id: 'class-hoc-truc-tuyen', name: 'Học trực tuyến', category: 'class', keywords: 'hoc truc tuyen online e-learning laptop mu tot nghiep', svg: eLearning },
+  { after: 'class-hoc-truc-tuyen', id: 'class-video-bai-giang', name: 'Video bài giảng', category: 'class', keywords: 'video bai giang khoa hoc online phat xem', svg: videoLesson },
+  { after: 'class-video-bai-giang', id: 'class-hoi-thao-truc-tuyen', name: 'Hội thảo trực tuyến', category: 'class', keywords: 'hoi thao truc tuyen webinar hop online man hinh', svg: webinar },
+  { after: 'class-hoi-thao-truc-tuyen', id: 'class-bai-trac-nghiem', name: 'Bài trắc nghiệm', category: 'class', keywords: 'bai trac nghiem kiem tra quiz dap an lua chon', svg: quiz },
+  { after: 'class-bai-trac-nghiem', id: 'class-ngoi-truong', name: 'Ngôi trường', category: 'class', keywords: 'ngoi truong truong hoc toa nha co', svg: schoolBuilding },
+  { after: 'class-ngoi-truong', id: 'class-tri-thuc', name: 'Tri thức', category: 'class', keywords: 'tri thuc kien thuc sach bong den y tuong hoc tap', svg: knowledge },
+  { after: 'math-tam-giac', id: 'math-phep-tinh', name: 'Phép tính', category: 'math', keywords: 'phep tinh cong tru nhan chia toan hoc so hoc', svg: operations },
+  { after: 'sci-kinh-lup', id: 'sci-nghien-cuu', name: 'Nghiên cứu', category: 'sci', keywords: 'nghien cuu tai lieu kinh lup tim hieu khoa hoc', svg: research },
   { after: 'feel-trai-tim', id: 'feel-trai-tim-vo', name: 'Trái tim vỡ', category: 'feel', keywords: 'trai tim vo buon that tinh dau long cam xuc', svg: brokenHeart },
 ]
 
@@ -326,10 +398,11 @@ export const REDRAWN = {
     line('M51 44C47 43.5 43 43.5 40 45'),
   ),
   'people-hoc-sinh-gio-tay': svg(
-    fill('M37 40L47.5 13A3.8 3.8 0 0 1 54.5 15.8L45 43Z', BLUE),
-    circle(51.5, 9.5, 5, PEACH),
-    fill('M14 62V47C14 39 20.5 34.5 28 34.5C35.5 34.5 42 39 42 47V62Z', BLUE),
-    circle(28, 22, 7.5, PEACH),
+    // tay mọc từ vai phải: vẽ tay trước, thân đè lên chân tay để nét nối liền
+    fill('M42.9 46.9L49.9 14.9A4 4 0 0 0 42.1 13.1L35.1 45.1Z', BLUE),
+    circle(46, 11, 5, PEACH),
+    fill('M16 62V49C16 41 22.5 36.5 30 36.5C37.5 36.5 44 41 44 49V62Z', BLUE),
+    circle(30, 24, 7.5, PEACH),
   ),
   'his-voi-chien': svg(
     fill('M28 39H35V57H28Z', BEIGE),
