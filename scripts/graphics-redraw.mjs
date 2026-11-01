@@ -821,6 +821,118 @@ GEO_NEW.reduce((after, [id, name, keywords, svg]) => {
   return id
 }, 'geo-ruong-bac-thang-2')
 
+// --- lịch sử bổ sung (30 icon, nhóm Lịch sử) ---
+const HIS_NEW = [
+  ['his-cuon-sac-phong', 'Cuộn sắc phong', 'cuon giay sac phong chieu chi van ban co lich su', svg(
+    fill('M16 14H54V56H16Z', BEIGE),
+    fill('M12 8H58Q62 8 62 12Q62 16 58 16H12Q8 16 8 12Q8 8 12 8Z', PEACH),
+    fill('M12 54H58Q62 54 62 58Q62 62 58 62H12Q8 62 8 58Q8 54 12 54Z', PEACH),
+    line('M23 27H47M23 35H47M23 43H39'))],
+  ['his-an-trien', 'Ấn triện', 'an trien con dau vua quyen luc trieu dinh phong kien', svg(
+    cp(35, 15, 6, YELLOW), fill('M28 40V30Q28 21 35 21Q42 21 42 30V40Z', YELLOW),
+    fill('M16 40H54V58H16Z', PEACH), line('M28 49H42M35 44V54'))],
+  ['his-vuong-mien', 'Vương miện', 'vuong mien vua chua hoang de trieu dai phong kien', svg(
+    poly([[12, 50], [10, 22], [23, 34], [35, 13], [47, 34], [60, 22], [58, 50]], YELLOW),
+    fill('M12 50H58V58H12Z', PEACH), cp(35, 42, 4, PINK))],
+  ['his-ngai-vang', 'Ngai vàng', 'ngai vang ngai vua trieu dinh hoang cung phong kien', svg(
+    line('M18 46V62M52 46V62'),
+    fill('M20 40V16Q20 8 35 8Q50 8 50 16V40Z', PEACH), fill('M27 36V21Q27 15 35 15Q43 15 43 21V36Z', YELLOW),
+    fill('M12 38H58V46H12Z', YELLOW))],
+  ['his-giao-mac', 'Giáo mác', 'giao mac vu khi co chien tranh linh', svg(
+    '<g transform="rotate(35 35 35)">', line('M35 22V66'),
+    poly([[35, 3], [42, 18], [35, 24], [28, 18]], BLUE), fill('M31 24H39L37 31H33Z', PEACH), '</g>')],
+  ['his-riu-dong', 'Rìu đồng', 'riu dong dong son thoi dai do dong cong cu co', svg(
+    fill('M12 62L44 12L49 15L17 65Z', BEIGE),
+    fill('M41 14L50 27Q60 32 65 26Q67 13 57 4Q51 11 41 14Z', YELLOW), line('M52 24Q60 19 59 9'))],
+  ['his-coc-bach-dang', 'Cọc Bạch Đằng', 'coc bach dang tran thuy chien ngo quyen tran hung dao song', svg(
+    poly([[11, 60], [11, 24], [16, 12], [21, 24], [21, 60]], BEIGE),
+    poly([[30, 60], [30, 18], [35, 6], [40, 18], [40, 60]], BEIGE),
+    poly([[49, 60], [49, 26], [54, 14], [59, 26], [59, 60]], BEIGE),
+    fill('M4 44Q12 40 20 44T36 44T52 44T66 44V62H4Z', BLUE))],
+  ['his-cong-thanh', 'Cổng thành', 'cong thanh kinh thanh hoang thanh di tich co', svg(
+    fill('M8 26H62V62H8Z', BEIGE), fill('M22 26V18H48V26Z', WHITE),
+    fill('M12 18Q24 15 26 8H44Q46 15 58 18Z', PEACH),
+    fill('M26 62V45Q26 36 35 36Q44 36 44 45V62Z', PEACH), line('M8 38H20M50 38H62M8 50H20M50 50H62'))],
+  ['his-dinh-lang', 'Đình làng', 'dinh lang kien truc co lang xa van hoa viet nam', svg(
+    fill('M14 32H56V58H14Z', BEIGE), line('M25 34V58M35 34V58M45 34V58'),
+    fill('M5 29Q16 30 22 17H48Q54 30 65 29Q50 35 35 35Q20 35 5 29Z', PEACH),
+    line('M22 17Q35 13 48 17'), fill('M8 58H62V63H8Z', PEACH))],
+  ['his-thap-co', 'Tháp cổ', 'thap co thap cham champa kien truc di tich', svg(
+    fill('M18 62V40H52V62Z', PEACH), fill('M23 40V26H47V40Z', PEACH), fill('M28 26V14H42V26Z', PEACH),
+    fill('M31 14L35 5L39 14Z', YELLOW), fill('M30 62V53Q30 47 35 47Q40 47 40 53V62Z', BEIGE))],
+  ['his-binh-gom', 'Bình gốm', 'binh gom co vat gom su chu dau bat trang', svg(
+    fill('M28 9H42V14Q42 18 46 22Q56 30 54 44Q52 58 35 62Q18 58 16 44Q14 30 24 22Q28 18 28 14Z', BLUE),
+    line('M18 37Q35 43 52 37M20 48Q35 54 50 48'), fill('M25 6H45V10H25Z', WHITE))],
+  ['his-den-long', 'Đèn lồng', 'den long hoi an pho co le hoi truyen thong', svg(
+    line('M35 4V12M35 56V66M31 58V64M39 58V64'), fill('M27 12H43V16H27Z', YELLOW),
+    fill('M24 16Q12 34 24 52H46Q58 34 46 16Z', PEACH), line('M35 16V52M29 16Q22 34 29 52M41 16Q48 34 41 52'),
+    fill('M27 52H43V56H27Z', YELLOW))],
+  ['his-banh-xe-go', 'Bánh xe gỗ', 'banh xe go xe ngua xe bo co phat minh', svg(
+    cp(35, 35, 26, BEIGE), ring(35, 35, 19), line('M35 16V54M16 35H54M21.6 21.6L48.4 48.4M48.4 21.6L21.6 48.4'),
+    cp(35, 35, 6, PEACH))],
+  ['his-nhat-quy', 'Đồng hồ mặt trời', 'dong ho mat troi nhat quy do thoi gian co', svg(
+    cp(14, 13, 6, YELLOW), fill('M26 50H44L48 64H22Z', BEIGE),
+    fill('M8 44Q8 34 35 34Q62 34 62 44Q62 54 35 54Q8 54 8 44Z', BEIGE),
+    poly([[35, 44], [35, 18], [52, 44]], BLUE), line('M35 44L18 41M13 44H16M54 44H57'))],
+  ['his-hoa-thach', 'Hoá thạch', 'hoa thach oc cuc da co sinh vat co tien su', svg(
+    fill('M10 40Q6 20 24 12Q44 4 58 18Q66 32 58 48Q46 64 26 60Q12 56 10 40Z', BEIGE),
+    line('M35 35A3 3 0 0 1 41 35A6 6 0 0 1 29 35A9 9 0 0 1 47 35A12 12 0 0 1 23 35A15 15 0 0 1 53 35'))],
+  ['his-riu-da', 'Rìu đá', 'riu da cong cu da nguoi tien su thoi dai do da', svg(
+    fill('M35 6Q52 18 54 40Q54 60 35 64Q16 60 16 40Q18 18 35 6Z', BEIGE),
+    line('M28 22L35 34L42 22M24 44L35 34L46 44M35 34V56'))],
+  ['his-hang-dong', 'Hang động', 'hang dong nguoi tien su nguoi nguyen thuy cu tru', svg(
+    fill('M4 62Q8 26 26 14Q44 6 58 22Q66 34 66 62Z', BEIGE), fill('M20 62Q20 38 35 36Q50 38 50 62Z', LILAC),
+    fill('M35 62Q28 56 33 47Q34 53 37 51Q42 56 35 62Z', PEACH))],
+  ['his-chuong-dong', 'Chuông đồng', 'chuong dong chua chien dai hong chung', svg(
+    cp(35, 59, 4, PEACH), fill('M30 12Q30 6 35 6Q40 6 40 12Z', YELLOW),
+    fill('M24 12H46Q48 30 50 44Q56 50 56 56H14Q14 50 20 44Q22 30 24 12Z', YELLOW), line('M22 34H48M19 46H51'))],
+  ['his-dinh-dong', 'Đỉnh đồng', 'dinh dong vac dong cuu dinh trieu nguyen co vat', svg(
+    line('M20 44L16 62M50 44L54 62M35 48V62M20 22V12H26V22M44 22V12H50V22'),
+    fill('M12 24H58Q58 46 35 48Q12 46 12 24Z', YELLOW), fill('M8 20H62V26H8Z', PEACH), line('M22 34H48'))],
+  ['his-but-long-ngong', 'Bút lông ngỗng', 'but long ngong lo muc tuyen ngon van kien lich su', svg(
+    fill('M32 44Q40 20 61 6Q56 28 36 44Z', WHITE), line('M34 44L52 18'),
+    fill('M24 40H38V46H24Z', BLUE), fill('M16 46H46V62H16Z', BLUE))],
+  ['his-xe-tang', 'Xe tăng', 'xe tang chien tranh khang chien thong nhat 30 4 1975', svg(
+    fill('M44 29H64V33H44Z', GREEN), fill('M24 37Q24 26 36 26Q46 26 46 37Z', GREEN),
+    fill('M10 46L16 36H54L60 46Z', GREEN),
+    fill('M10 46H60Q66 46 66 53Q66 60 58 60H12Q4 60 4 53Q4 46 10 46Z', BEIGE),
+    cp(15, 53, 3.5, GREEN), cp(28, 53, 3.5, GREEN), cp(42, 53, 3.5, GREEN), cp(55, 53, 3.5, GREEN))],
+  ['his-co-chien-thang', 'Cờ chiến thắng', 'co chien thang dien bien phu cam co tren dinh doi', svg(
+    line('M35 41V9'), fill('M35 9H61L55 17L61 25H35Z', PEACH), poly(starPts(45, 17, 5, 2), YELLOW),
+    fill('M4 62Q20 40 35 40Q50 40 66 62Z', GREEN))],
+  ['his-dong-thoi-gian', 'Dòng thời gian', 'dong thoi gian truc thoi gian moc su kien nien bieu', svg(
+    line('M6 35H64M14 22V30M35 40V48M56 22V30'),
+    fill('M6 11H22V22H6Z', BEIGE), fill('M27 48H43V59H27Z', BEIGE), fill('M48 11H64V22H48Z', BEIGE),
+    cp(14, 35, 5, PEACH), cp(35, 35, 5, BLUE), cp(56, 35, 5, GREEN))],
+  ['his-sach-co', 'Sách cổ', 'sach co sach su dong chi han nom su ky', svg(
+    fill('M14 8H56V62H14Z', BEIGE), line('M22 8V62M14 18H22M14 30H22M14 42H22M14 54H22'),
+    fill('M33 16H47V42H33Z', WHITE), line('M38 22V36M42 22V36'))],
+  ['his-khao-co', 'Khảo cổ', 'khao co hoc khai quat di chi co vat xeng', svg(
+    fill('M4 50H66V64H4Z', BEIGE), fill('M16 50Q12 41 16 34H32Q36 41 32 50Z', PEACH), line('M18 34H30'),
+    line('M58 8L50 36'), fill('M45 34L54 37L51 48L42 45Z', BLUE))],
+  ['his-kinh-vien-vong', 'Kính viễn vọng cổ', 'kinh vien vong ong nhom hai trinh tham hiem phat kien dia ly', svg(
+    '<g transform="rotate(-30 35 35)">', fill('M4 29H22V41H4Z', BEIGE), fill('M22 30H44V40H22Z', YELLOW),
+    fill('M44 31.5H64V38.5H44Z', BEIGE), line('M10 29V41M56 31.5V38.5'), '</g>')],
+  ['his-mo-neo', 'Mỏ neo', 'mo neo thuyen tau bien hang hai', svg(
+    ring(35, 11, 5), line('M12 42Q14 60 35 60Q56 60 58 42M7 47L12 40L18 45M63 47L58 40L52 45'),
+    fill('M32 16H38V60H32Z', BLUE), fill('M22 21H48V26H22Z', BLUE))],
+  ['his-ban-do-co', 'Bản đồ cổ', 'ban do co kho bau hanh trinh tham hiem', svg(
+    fill('M8 14L24 8L46 14L62 8V56L46 62L24 56L8 62Z', BEIGE), line('M24 8V56M46 14V62'),
+    dash('M14 50Q24 36 34 40T50 26'), line('M51 17L57 23M57 17L51 23'))],
+  ['his-ken-hieu', 'Kèn hiệu', 'ken hieu ken xung tran quan doi bao hieu', svg(
+    line('M16 34Q16 44 26 44H32Q38 44 38 34'), fill('M18 44H36V58L27 53L18 58Z', PEACH),
+    fill('M8 28H40V34H8Z', YELLOW), fill('M4 27H9V35H4Z', YELLOW), fill('M38 28L62 15V47L38 34Z', YELLOW))],
+  ['his-dau-may-hoi-nuoc', 'Đầu máy hơi nước', 'dau may hoi nuoc tau hoa cach mang cong nghiep', svg(
+    cp(23, 9, 4, WHITE), cp(31, 6, 3, WHITE), fill('M18 18H26V30H18Z', BLUE),
+    fill('M12 30H48V50H12Z', BLUE), fill('M46 18H62V50H46Z', PEACH), line('M43 18H65'),
+    fill('M50 24H58V32H50Z', WHITE), poly([[12, 42], [5, 52], [12, 52]], PEACH),
+    cp(22, 54, 6, BEIGE), cp(38, 54, 6, BEIGE), cp(54, 54, 6, BEIGE))],
+]
+HIS_NEW.reduce((after, [id, name, keywords, svg]) => {
+  ADDED.push({ after, id, name, category: 'his', keywords, svg })
+  return id
+}, 'geo-thung-lung')
+
 export const REDRAWN = {
   'class-but-bi': pen,
   'cs-usb': usb,

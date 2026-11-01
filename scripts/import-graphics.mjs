@@ -265,6 +265,10 @@ for (const { after, ...e } of ADDED) {
   entries.splice(i + 1, 0, { ...e, ratio: 1 })
 }
 
+// nhóm 'soc' (Lịch sử & địa lý) tách về hai nhóm Địa lí / Lịch sử (giữ id soc-*)
+const SOC_GEO = new Set(['soc-ban-do', 'soc-la-ban', 'soc-ghim-vi-tri', 'soc-hai-dang'])
+for (const e of entries) if (e.category === 'soc') e.category = SOC_GEO.has(e.id) ? 'geo' : 'his'
+
 const seen = new Set()
 for (const e of entries) {
   if (seen.has(e.id)) throw new Error(`id trùng: ${e.id}`)

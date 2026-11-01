@@ -57,7 +57,6 @@ const CATEGORY_ORDER: GraphicCategory[] = [
   'sci',
   'nat',
   'lang',
-  'soc',
   'class',
   'people',
   'reward',

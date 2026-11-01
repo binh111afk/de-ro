@@ -52,7 +52,7 @@ export const SUBJECT_PACKS: SubjectPack[] = [
     id: 'van',
     name: 'Ngữ văn',
     keywords: ['van', 'ngu van', 'truyen', 'tho', 'tac pham', 'tac gia', 'nhan vat', 'phan tich', 'nghi luan', 'doan trich', 'chi pheo', 'kieu', 'bai tho', 'van hoc'],
-    graphicGroups: ['lit', 'lang', 'soc', 'his', 'people', 'nat', 'reward'],
+    graphicGroups: ['lit', 'lang', 'his', 'people', 'nat', 'reward'],
     themeHint: 'giay-am',
     structure: [
       'Giới thiệu tác giả và tác phẩm',
@@ -74,7 +74,7 @@ export const SUBJECT_PACKS: SubjectPack[] = [
     id: 'su-dia',
     name: 'Lịch sử & Địa lí',
     keywords: ['lich su', 'dia li', 'dia ly', 'chien tranh', 'khoi nghia', 'cach mang', 'trieu dai', 'khi hau', 'dan cu', 'kinh te', 'ban do', 'song ngoi', 'chien thang', 'chien dich', 'dien bien phu', 'phong kien', 'thuc dan'],
-    graphicGroups: ['his', 'geo', 'soc', 'nat', 'people', 'lit'],
+    graphicGroups: ['his', 'geo', 'nat', 'people', 'lit'],
     themeHint: 'giay-am',
     structure: [
       'Bối cảnh / vị trí, phạm vi',
@@ -95,7 +95,7 @@ export const SUBJECT_PACKS: SubjectPack[] = [
     id: 'ngoai-ngu',
     name: 'Ngoại ngữ',
     keywords: ['tieng anh', 'english', 'ngu phap', 'tu vung', 'grammar', 'vocabulary', 'ielts', 'toeic', 'present', 'past tense', 'thi hien tai', 'thi qua khu', 'hoi thoai', 'tieng phap', 'tieng nhat', 'tieng han'],
-    graphicGroups: ['eng', 'lang', 'people', 'class', 'soc', 'lit', 'reward'],
+    graphicGroups: ['eng', 'lang', 'people', 'class', 'geo', 'lit', 'reward'],
     themeHint: 'tim',
     structure: [
       'Khởi động (câu hỏi, hình ảnh gợi mở)',
@@ -159,7 +159,7 @@ export const SUBJECT_PACKS: SubjectPack[] = [
     id: 'khac',
     name: 'Chủ đề chung',
     keywords: [],
-    graphicGroups: ['class', 'people', 'reward', 'life', 'sci', 'nat', 'soc', 'art', 'pe', 'sym', 'misc'],
+    graphicGroups: ['class', 'people', 'reward', 'life', 'sci', 'nat', 'geo', 'his', 'art', 'pe', 'sym', 'misc'],
     themeHint: 'sang',
     structure: [
       'Mở đầu: vấn đề hoặc câu hỏi',
