@@ -708,9 +708,9 @@ const LIT_NEW = [
     fill('M35 10Q42 18 40 24Q38 28 35 28Q32 28 30 24Q28 18 35 10Z', PEACH), rsq(26, 31, 18, 31, YELLOW, 2))],
 ]
 LIT_NEW.reduce((after, [id, name, keywords, svg]) => {
-  ADDED.push({ after, id, name, category: 'lit', keywords, svg })
+  ADDED.push({ after, id, name, category: 'lang', keywords, svg })
   return id
-}, 'lit-bang-chu-cai')
+}, 'lang-phong-bi')
 
 export const REDRAWN = {
   'class-but-bi': pen,
