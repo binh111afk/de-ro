@@ -2,29 +2,32 @@
  * Cột trái của trình soạn slide, kiểu Canva: thanh icon hẹp + một panel trượt
  * ra cạnh thanh đó. Panel đẩy sân giấy sang phải chứ không che slide đang sửa.
  *
- * Bốn tab: Mẫu (bố cục slide có sẵn, thêm thành slide mới), Thành phần (hình
+ * Bốn tab: Mẫu (bố cục slide có sẵn, thêm thành slide mới), Đồ hoạ (hình
  * khối và đồ hoạ vector, chia nhóm theo chủ đề), Icon (biểu tượng đơn sắc, chia
- * nhóm) và Tải lên (ảnh của giáo viên). Ô tìm kiếm ở Thành phần và Icon lọc theo tên.
+ * nhóm) và Tải lên (ảnh của giáo viên). Ô tìm kiếm ở Đồ hoạ và Icon lọc theo tên.
  */
 import { memo, useMemo, useState } from 'react'
-import { ChevronLeft, ChevronRight, LayoutTemplate, Shapes, Smile, Upload, X } from 'lucide-react'
+import { ChevronDown, ChevronLeft, ChevronRight, LayoutTemplate, Shapes, Smile, Sparkles, Upload, X } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import { SLIDE_LAYOUTS, type SlideLayoutId } from '@/lib/slideLayouts'
 import { SLIDE_ASSET_IDS, SLIDE_ASSETS } from '@/lib/slideAssets'
 import { ICON_LIBRARY } from '@/lib/slideIconLibrary'
-import { GRAPHIC_CATEGORY_LABEL, SLIDE_GRAPHICS, graphicById, graphicMarkup, searchGraphics, type GraphicCategory } from '@/lib/slideGraphics'
+import { GRAPHICS } from '@/lib/graphics'
+import { GRAPHIC_CATEGORY_LABEL, findGraphics, graphicById, graphicMarkup, matchesWords, searchGraphics, type GraphicCategory } from '@/lib/slideGraphics'
 import { PRESET_GROUPS, defaultBox, shapeNameOf } from '@/lib/slidePresets'
+import { FRAME_PLACEHOLDER, PHOTO_FRAMES, dragImage } from '@/lib/slideShapes'
 import { uid } from '@/data/docTypes'
 import { uploadImage } from '@/lib/mediaStore'
 import { useUploads } from '@/store/uploads'
 import type { SlideElement } from '@/store/docs'
-import { ShapeGallery, ShapePreview } from './ShapeGallery'
+import { ShapeGallery, ShapePreview, visibleGroups } from './ShapeGallery'
+import { useViewportSize } from './Layout'
 
 type PanelId = 'templates' | 'elements' | 'icons' | 'uploads'
 
 const PANELS: Array<{ id: PanelId; label: string; title: string; Icon: typeof Shapes }> = [
   { id: 'templates', label: 'Mẫu', title: 'Mẫu slide', Icon: LayoutTemplate },
-  { id: 'elements', label: 'Thành phần', title: 'Thành phần', Icon: Shapes },
+  { id: 'elements', label: 'Đồ hoạ', title: 'Đồ hoạ', Icon: Shapes },
   { id: 'icons', label: 'Icon', title: 'Icon', Icon: Smile },
   { id: 'uploads', label: 'Tải lên', title: 'Tải ảnh lên', Icon: Upload },
 ]
@@ -41,14 +44,88 @@ interface SlideSidePanelProps {
   hint?: string
   onAddLayoutSlide: (layoutId: SlideLayoutId) => void
   onInsert: (el: SlideElement) => void
+  /** điện thoại: mục "Trợ lý AI" ở thanh đáy mở AI toàn màn hình */
+  onOpenAi?: () => void
 }
 
-function SlideSidePanelImpl({ accent, canInsert, hint = '', onAddLayoutSlide, onInsert }: SlideSidePanelProps) {
+function SlideSidePanelImpl({ accent, canInsert, hint = '', onAddLayoutSlide, onInsert, onOpenAi }: SlideSidePanelProps) {
   const [active, setActive] = useState<PanelId | null>(null)
   // panel cuối cùng đã mở: giữ nội dung trong lúc trượt đóng (và giữ vị trí cuộn khi mở lại)
   const [last, setLast] = useState<PanelId | null>(null)
   const shown = active ?? last
   const current = PANELS.find((p) => p.id === shown) ?? null
+  const mobile = useViewportSize().w < 768
+
+  const body = current && (
+    <>
+      {!canInsert && <p className="px-3 pt-2 text-[12px] text-ink-3">Mở một slide để thêm nội dung vào đó.</p>}
+      {/* ô tìm kiếm nằm ngoài vùng cuộn (kiểu Canva): thanh cuộn chỉ chạy qua phần nội dung bên dưới */}
+      <div className="flex min-h-0 flex-1 flex-col">
+        {shown === 'templates' && <Scroll><div className="pt-3"><TemplatesPanel onPick={mobile ? (id) => { onAddLayoutSlide(id); setActive(null) } : onAddLayoutSlide} /></div></Scroll>}
+        {shown === 'elements' && <ElementsPanel accent={accent} canInsert={canInsert} hint={hint} onInsert={mobile ? insertAndClose : onInsert} />}
+        {shown === 'icons' && <IconsPanel canInsert={canInsert} onInsert={mobile ? insertAndClose : onInsert} />}
+        {shown === 'uploads' && <Scroll><div className="pt-3"><UploadsPanel canInsert={canInsert} onInsert={mobile ? insertAndClose : onInsert} /></div></Scroll>}
+      </div>
+    </>
+  )
+  // điện thoại: chèn xong thì hạ tấm trượt để thấy ngay kết quả trên slide (như Canva)
+  function insertAndClose(el: SlideElement) {
+    onInsert(el)
+    setActive(null)
+  }
+
+  if (mobile) {
+    return (
+      <>
+        {/* tấm trượt từ đáy lên, nằm trên thanh tab */}
+        <div
+          className="fixed inset-x-0 bottom-14 z-40 flex h-[62dvh] flex-col rounded-t-2xl border-t border-line bg-surface shadow-[0_-12px_40px_-16px_rgb(0_0_0/0.35)] transition-transform duration-200 ease-out motion-reduce:transition-none"
+          style={{ transform: active ? 'translateY(0)' : 'translateY(calc(100% + 56px))' }}
+          inert={!active}
+          aria-label={current?.title}
+          role="dialog"
+        >
+          <div className="flex shrink-0 items-center justify-between px-3 pt-2">
+            <span className="text-[14px] font-semibold text-ink">{current?.title}</span>
+            <button type="button" aria-label="Đóng" onClick={() => setActive(null)} className="rounded-md p-1.5 text-ink-2 hover:bg-paper-2">
+              <ChevronDown className="size-5" />
+            </button>
+          </div>
+          {body}
+        </div>
+        <nav aria-label="Thư viện slide" className="fixed inset-x-0 bottom-0 z-40 flex h-14 items-stretch justify-around border-t border-line bg-surface pb-[env(safe-area-inset-bottom)]">
+          {PANELS.map(({ id, label, Icon }) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => {
+                setActive((cur) => (cur === id ? null : id))
+                setLast(id)
+              }}
+              aria-pressed={active === id}
+              className={cn('flex flex-1 flex-col items-center justify-center gap-0.5 text-[11px] font-medium', active === id ? 'text-clay' : 'text-ink-3')}
+            >
+              <Icon className="size-5" strokeWidth={1.7} />
+              {label}
+            </button>
+          ))}
+          {onOpenAi && (
+            <button
+              type="button"
+              onClick={() => {
+                setActive(null)
+                onOpenAi()
+              }}
+              className="flex flex-1 flex-col items-center justify-center gap-0.5 text-[11px] font-medium text-clay"
+            >
+              <Sparkles className="size-5" strokeWidth={1.7} />
+              Trợ lý AI
+            </button>
+          )}
+        </nav>
+      </>
+    )
+  }
 
   return (
     <div className="relative flex min-h-0 shrink-0">
@@ -93,16 +170,7 @@ function SlideSidePanelImpl({ accent, canInsert, hint = '', onAddLayoutSlide, on
       >
       {current && (
         <aside className="flex h-full w-[280px] min-h-0 flex-col border-r border-line bg-surface" aria-label={current.title}>
-          {!canInsert && (
-            <p className="px-3 pt-2 text-[12px] text-ink-3">Mở một slide để thêm nội dung vào đó.</p>
-          )}
-          {/* ô tìm kiếm nằm ngoài vùng cuộn (kiểu Canva): thanh cuộn chỉ chạy qua phần nội dung bên dưới */}
-          <div className="flex min-h-0 flex-1 flex-col">
-            {shown === 'templates' && <Scroll><div className="pt-3"><TemplatesPanel onPick={onAddLayoutSlide} /></div></Scroll>}
-            {shown === 'elements' && <ElementsPanel accent={accent} canInsert={canInsert} hint={hint} onInsert={onInsert} />}
-            {shown === 'icons' && <IconsPanel canInsert={canInsert} onInsert={onInsert} />}
-            {shown === 'uploads' && <Scroll><div className="pt-3"><UploadsPanel canInsert={canInsert} onInsert={onInsert} /></div></Scroll>}
-          </div>
+          {body}
         </aside>
       )}
       </div>
@@ -174,20 +242,10 @@ function TemplatesPanel({ onPick }: { onPick: (id: SlideLayoutId) => void }) {
 }
 
 /* ------------------------------------------------------------------ *
- * Thành phần: hình khối (theo nhóm) và đồ hoạ vector (theo chủ đề)
+ * Đồ hoạ: hình khối (theo nhóm) và đồ hoạ vector (theo chủ đề)
  * ------------------------------------------------------------------ */
-const GRAPHIC_CATEGORIES = (Object.keys(GRAPHIC_CATEGORY_LABEL) as GraphicCategory[]).filter((c) => c !== 'ornament')
+const GRAPHIC_CATEGORIES = (Object.keys(GRAPHIC_CATEGORY_LABEL) as GraphicCategory[])
 
-/** 24 nhóm đồ hoạ gộp thành vài nhóm lớn để lọc nhanh (kiểu Canva); 'shapes' là thư viện hình khối */
-type GroupId = 'all' | 'subject' | 'class' | 'sym' | 'frame' | 'shapes'
-const GROUPS: Array<{ id: GroupId; label: string; cats: GraphicCategory[] }> = [
-  { id: 'all', label: 'Tất cả', cats: [] },
-  { id: 'subject', label: 'Môn học', cats: ['math', 'sci', 'lang', 'lit', 'eng', 'cs', 'prog', 'bio', 'chem', 'phys', 'soc', 'his', 'geo', 'civic', 'art', 'pe', 'nat'] },
-  { id: 'class', label: 'Lớp học', cats: ['class', 'people', 'reward', 'life', 'event'] },
-  { id: 'sym', label: 'Ký hiệu', cats: ['sym', 'feel', 'arrow'] },
-  { id: 'frame', label: 'Khung & trang trí', cats: ['frame', 'decor', 'misc'] },
-  { id: 'shapes', label: 'Hình khối', cats: [] },
-]
 
 const PREVIEW_COUNT = 4
 /** hình quen thuộc nhất, hiện ở hàng xem trước */
@@ -220,12 +278,11 @@ function RowHead({ title, onMore }: { title: string; onMore?: () => void }) {
 
 function ElementsPanel({ accent, canInsert, hint, onInsert }: { accent: string; canInsert: boolean; hint: string; onInsert: (el: SlideElement) => void }) {
   const [query, setQuery] = useState('')
-  const [group, setGroup] = useState<GroupId>('all')
   /** đang xem trang con của một nhóm đồ hoạ ('shapes' = toàn bộ hình khối) */
-  const [open, setOpen] = useState<GraphicCategory | 'shapes' | null>(null)
+  const [open, setOpen] = useState<GraphicCategory | 'shapes' | 'frames' | null>(null)
   const [recent, setRecent] = useState(loadRecent)
   const q = query.trim()
-  const hits = q ? searchGraphics(q, 200) : []
+  const hits = q ? findGraphics(q) : []
   // gợi ý theo tiêu đề bài giảng và chữ trên slide đang mở
   const suggested = hint.trim() ? searchGraphics(hint, PREVIEW_COUNT) : []
 
@@ -242,7 +299,15 @@ function ElementsPanel({ accent, canInsert, hint, onInsert }: { accent: string; 
 
   const insertGraphic = (graphicId: string) => {
     if (!canInsert) return
-    onInsert({ id: uid(), type: 'graphic', graphicId, x: 38, y: 28, w: 20, h: 35.6 })
+    // hộp theo đúng tỉ lệ đồ hoạ (ratio = rộng/cao), vừa trong ô 20% × 35.6% quanh giữa slide — hộp vuông cố định làm hoạ tiết chữ nhật thừa lề
+    const ratio = graphicById(graphicId)?.ratio || 1
+    let w = 20
+    let h = (w * 16) / (9 * ratio)
+    if (h > 35.6) {
+      h = 35.6
+      w = (h * 9 * ratio) / 16
+    }
+    onInsert({ id: uid(), type: 'graphic', graphicId, x: 48 - w / 2, y: 45.8 - h / 2, w, h })
     const next = [graphicId, ...recent.filter((id) => id !== graphicId)].slice(0, RECENT_MAX)
     setRecent(next)
     try {
@@ -252,50 +317,45 @@ function ElementsPanel({ accent, canInsert, hint, onInsert }: { accent: string; 
     }
   }
 
-  const items = (cat: GraphicCategory) => SLIDE_GRAPHICS.filter((g) => g.category === cat)
+  const items = (cat: GraphicCategory) => GRAPHICS.filter((g) => g.category === cat)
   const recentItems = recent.map((id) => graphicById(id)).filter((g): g is NonNullable<typeof g> => Boolean(g))
 
   const header = (
     <div className="shrink-0 border-b border-line bg-surface px-3 pb-2.5 pt-3">
       <SearchBox value={query} onChange={setQuery} placeholder="Tìm hình khối hoặc đồ hoạ" />
-      {!q && !open && (
-        <div className="mt-2 flex flex-wrap gap-1">
-          {GROUPS.map((g) => (
-            <button
-              key={g.id}
-              type="button"
-              aria-pressed={group === g.id}
-              onClick={() => setGroup(g.id)}
-              className={cn(
-                'rounded-full border px-2.5 py-1 text-[12px]',
-                group === g.id ? 'border-clay bg-paper-2 text-clay' : 'border-line text-ink-2 hover:border-clay hover:text-clay',
-              )}
-            >
-              {g.label}
-            </button>
-          ))}
-        </div>
-      )}
     </div>
   )
 
   // kết quả tìm kiếm: đồ hoạ gom theo nhóm, kèm số lượng
   if (q) {
-    const byCat = GRAPHIC_CATEGORIES.map((c) => ({ c, list: hits.filter((g) => g.category === c) })).filter((x) => x.list.length > 0)
+    // nhóm có kết quả khớp nhất lên trước (hits đã xếp theo độ khớp)
+    const byCat = GRAPHIC_CATEGORIES.map((c) => ({ c, list: hits.filter((g) => g.category === c) }))
+      .filter((x) => x.list.length > 0)
+      .sort((a, b) => hits.indexOf(a.list[0]) - hits.indexOf(b.list[0]))
+    const frameHits = PHOTO_FRAMES.filter((f) => matchesWords(`khung anh hinh ${f.label}`, q))
     return (
       <>
         {header}
         <Scroll>
           <div className="pt-3">
-            <Section title="Hình khối">
-              <ShapeGallery onPick={pickShape} query={q} scroll={false} />
-            </Section>
+            {visibleGroups(q).length > 0 && (
+              <Section title="Hình khối">
+                <ShapeGallery onPick={pickShape} query={q} scroll={false} />
+              </Section>
+            )}
+            {frameHits.length > 0 && (
+              <Section title={`Khung ảnh (${frameHits.length})`}>
+                <FrameGrid frames={frameHits} onInsert={onInsert} />
+              </Section>
+            )}
             {byCat.map(({ c, list }) => (
               <Section key={c} title={`${GRAPHIC_CATEGORY_LABEL[c]} (${list.length})`}>
                 <GraphicGrid items={list} onPick={insertGraphic} />
               </Section>
             ))}
-            {byCat.length === 0 && <p className="text-[12px] text-ink-3">Không có đồ hoạ nào khớp.</p>}
+            {byCat.length === 0 && frameHits.length === 0 && visibleGroups(q).length === 0 && (
+              <p className="text-[12px] text-ink-3">Không có đồ hoạ nào khớp.</p>
+            )}
           </div>
         </Scroll>
       </>
@@ -310,18 +370,17 @@ function ElementsPanel({ accent, canInsert, hint, onInsert }: { accent: string; 
           <button type="button" onClick={() => setOpen(null)} aria-label="Quay lại" className="rounded-md p-1 text-ink-2 hover:bg-paper-2 hover:text-clay">
             <ChevronLeft className="size-5" />
           </button>
-          <h3 className="text-[14px] font-semibold text-ink">{open === 'shapes' ? 'Hình khối' : GRAPHIC_CATEGORY_LABEL[open]}</h3>
+          <h3 className="text-[14px] font-semibold text-ink">{open === 'shapes' ? 'Hình khối' : open === 'frames' ? 'Khung ảnh' : GRAPHIC_CATEGORY_LABEL[open]}</h3>
         </div>
         <Scroll>
           <div className="pt-3">
-            {open === 'shapes' ? <ShapeGallery onPick={pickShape} scroll={false} /> : <GraphicGrid items={items(open)} onPick={insertGraphic} />}
+            {open === 'shapes' ? <ShapeGallery onPick={pickShape} scroll={false} /> : open === 'frames' ? <FrameGrid frames={PHOTO_FRAMES} onInsert={onInsert} /> : <GraphicGrid items={items(open)} onPick={insertGraphic} />}
           </div>
         </Scroll>
       </>
     )
   }
 
-  const cats = group === 'all' ? GRAPHIC_CATEGORIES : GROUPS.find((g) => g.id === group)?.cats ?? []
   const shapePreview = PRESET_GROUPS.flatMap((g) => g.shapes).filter((s) => PREVIEW_SHAPES.includes(s.prst))
 
   return (
@@ -329,38 +388,40 @@ function ElementsPanel({ accent, canInsert, hint, onInsert }: { accent: string; 
       {header}
       <Scroll>
       <div className="pt-3">
-        {group === 'all' && recentItems.length > 0 && (
+        {recentItems.length > 0 && (
           <Section>
             <RowHead title="Dùng gần đây" />
             <GraphicGrid items={recentItems.slice(0, PREVIEW_COUNT * 2)} onPick={insertGraphic} />
           </Section>
         )}
-        {group === 'all' && suggested.length > 0 && (
+        {suggested.length > 0 && (
           <Section>
             <RowHead title="Gợi ý cho slide này" />
             <GraphicGrid items={suggested} onPick={insertGraphic} />
           </Section>
         )}
-        {(group === 'all' || group === 'shapes') && (
-          <Section>
-            <RowHead title="Hình khối" onMore={() => setOpen('shapes')} />
-            <div className="flex flex-wrap gap-1" onMouseDown={(e) => e.preventDefault()}>
-              {shapePreview.map((s) => (
-                <button
-                  key={s.prst}
-                  type="button"
-                  title={s.label}
-                  aria-label={s.label}
-                  onClick={() => pickShape(s.prst)}
-                  className="flex size-[40px] items-center justify-center rounded-md text-ink-2 transition-colors hover:bg-paper-2 hover:text-clay"
-                >
-                  <ShapePreview prst={s.prst} />
-                </button>
-              ))}
-            </div>
-          </Section>
-        )}
-        {cats.map((cat) => {
+        <Section>
+          <RowHead title="Hình khối" onMore={() => setOpen('shapes')} />
+          <div className="flex flex-wrap gap-1" onMouseDown={(e) => e.preventDefault()}>
+            {shapePreview.map((s) => (
+              <button
+                key={s.prst}
+                type="button"
+                title={s.label}
+                aria-label={s.label}
+                onClick={() => pickShape(s.prst)}
+                className="flex size-[40px] items-center justify-center rounded-md text-ink-2 transition-colors hover:bg-paper-2 hover:text-clay"
+              >
+                <ShapePreview prst={s.prst} />
+              </button>
+            ))}
+          </div>
+        </Section>
+        <Section>
+          <RowHead title="Khung ảnh" onMore={() => setOpen('frames')} />
+          <FrameGrid frames={PHOTO_FRAMES.slice(0, PREVIEW_COUNT)} onInsert={onInsert} />
+        </Section>
+        {GRAPHIC_CATEGORIES.map((cat) => {
           const list = items(cat)
           if (list.length === 0) return null
           return (
@@ -373,6 +434,25 @@ function ElementsPanel({ accent, canInsert, hint, onInsert }: { accent: string; 
       </div>
       </Scroll>
     </>
+  )
+}
+
+function FrameGrid({ frames, onInsert }: { frames: typeof PHOTO_FRAMES; onInsert: (el: SlideElement) => void }) {
+  return (
+    <div className="grid grid-cols-4 gap-2" onMouseDown={(e) => e.preventDefault()}>
+      {frames.map((f) => (
+        <button
+          key={f.id}
+          type="button"
+          title={`${f.label} · kéo ảnh vào khung`}
+          aria-label={f.label}
+          onClick={() => onInsert({ id: uid(), type: 'image', shape: f.id, x: 37.5, y: 22.5, w: 25, h: 44.4 })}
+          className="flex aspect-square items-center justify-center rounded-md p-1 transition-colors hover:bg-paper-2"
+        >
+          <img src={FRAME_PLACEHOLDER} alt="" className="size-full object-cover" style={{ clipPath: f.clip }} />
+        </button>
+      ))}
+    </div>
   )
 }
 
@@ -542,7 +622,11 @@ function UploadsPanel({ canInsert, onInsert }: { canInsert: boolean; onInsert: (
                   title="Chèn vào slide"
                   className="block w-full overflow-hidden rounded-md border border-line bg-white p-1 transition-colors hover:border-clay disabled:opacity-40"
                 >
-                  <img src={img.src} alt="" loading="lazy" className="aspect-video w-full object-contain" />
+                  <img src={img.src} alt="" loading="lazy" className="aspect-video w-full object-contain" onDragStart={(e) => {
+                    e.dataTransfer.setData('text/uri-list', img.src)
+                    dragImage.src = img.src
+                  }}
+                  onDragEnd={() => (dragImage.src = '')} />
                 </button>
                 <button
                   type="button"

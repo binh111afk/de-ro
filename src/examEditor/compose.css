@@ -3589,3 +3589,84 @@
   line-height: 1.6;
   color: var(--color-ink);
 }
+
+/* ------------------------------------------------------------------ *
+ * Responsive (tablet / điện thoại) — học theo Canva di động:
+ * sân soạn chiếm trọn màn hình; trợ lý AI nổi đè lên thay vì bóp sân;
+ * trên điện thoại AI mở toàn màn hình, gọi bằng nút nổi (soạn đề) hoặc
+ * mục "Trợ lý AI" ở thanh đáy (soạn slide — xem SlideSidePanel).
+ * ------------------------------------------------------------------ */
+@media (max-width: 1023px) {
+  .ai-dock:not(.collapsed) {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 60;
+    background: var(--surface);
+    box-shadow: 0 12px 48px -12px rgb(0 0 0 / 0.4);
+  }
+  .ai-dock--right:not(.collapsed) {
+    left: auto;
+    right: 0;
+  }
+}
+
+@media (max-width: 767px) {
+  .ai-dock:not(.collapsed) {
+    width: 100vw;
+  }
+  .ai-dock:not(.collapsed) .ai-panel {
+    flex: 1;
+    width: auto;
+    border: none;
+  }
+  /* rail dọc biến thành nút nổi góc dưới phải */
+  .ai-dock.collapsed {
+    width: 0;
+    overflow: visible;
+  }
+  .ai-dock.collapsed .ai-rail {
+    position: fixed;
+    right: 14px;
+    bottom: calc(44px + env(safe-area-inset-bottom));
+    z-index: 55;
+    flex-direction: row;
+    width: auto;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 999px;
+    background: var(--color-clay);
+    color: #fff;
+    box-shadow: 0 8px 24px -8px rgb(0 0 0 / 0.45);
+  }
+  .ai-dock.collapsed .ai-rail-text {
+    writing-mode: horizontal-tb;
+    letter-spacing: 0;
+    font-weight: 600;
+    color: inherit;
+  }
+  /* soạn slide gọi AI từ thanh đáy — không cần nút nổi */
+  .ai-dock--right.collapsed .ai-rail {
+    display: none;
+  }
+
+  .ribbon-tabs {
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .ribbon-tab {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .slide-stage {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 14px 12px;
+  }
+  .status-bar .status-item + .status-item {
+    display: none;
+  }
+}

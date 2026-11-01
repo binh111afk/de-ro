@@ -274,7 +274,8 @@ export default function ComposeDoc() {
   // trang khác đã mở sẵn một tab (vd. Lưu vào trình soạn thảo ở trang xem đề) thì vào thẳng tab đó
   const { state: navState } = useLocation() as { state: { openTab?: boolean } | null }
   const [startOpen, setStartOpen] = useState(!navState?.openTab)
-  const [aiOpen, setAiOpen] = useState(true)
+  // màn hẹp (tablet/điện thoại): trợ lý AI nổi đè lên trang nên mặc định đóng
+  const [aiOpen, setAiOpen] = useState(() => window.innerWidth >= 1024)
   const [navOpen, setNavOpen] = useState(true)
   const [navWidth, setNavWidth] = useState(288)
   const [zoom, setZoom] = useState(100)
@@ -632,7 +633,8 @@ export default function ComposeDoc() {
     })
     ro.observe(el)
     return () => ro.disconnect()
-  }, [])
+    // khung soạn chỉ có khi rời màn Bắt đầu / tab slide — đo lại lúc nó xuất hiện, không thì autofit kẹt ở 100%
+  }, [startOpen, activeDeck?.id])
 
   // co trang A4 vừa chiều rộng khung nhìn (như Word), giới hạn 25%–130%.
   // Sàn thấp là 25% vì khi cả AI dock + nav pane đều mở trên màn hình hẹp,

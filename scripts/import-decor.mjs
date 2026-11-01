@@ -176,5 +176,76 @@ export function importDecor(sheet = SHEET_DECOR, names = ICONS_DECOR) {
     const svg = src.svg.replace(/viewBox="[^"]*"/, `viewBox="${x} ${y} 64 ${h}"`)
     return { ...src, id: id + '-ngan', name, ratio: Number((64 / Number(h)).toFixed(2)), svg }
   }
+  if (sheet !== SHEET_DECOR) return entries
   return [...entries, shorten('orn-ke-song', 'Đường kẻ sóng ngắn', 72), shorten('orn-ke-zigzag', 'Đường kẻ zigzag ngắn', 424)]
 }
+
+/** Đợt 2: 60 hoạ tiết nét tay (lưới 10×6, ô 360) — cùng cách gom theo ô như B.svg, tên theo thứ tự đọc. */
+export const SHEET_DECOR2 = 'C:/Users/Lenovo/Downloads/60 hoạ tiết bài giảng · nét tay 3px.svg'
+export const ICONS_DECOR2 = [
+  // nét vẽ tay nhấn mạnh
+  ['orn-mui-ten-cong-trai', 'Mũi tên cong trái', O, 'mui ten cong ve tay nhan manh'],
+  ['orn-mui-ten-cong-phai', 'Mũi tên cong phải', O, 'mui ten cong ve tay nhan manh'],
+  ['orn-mui-ten-xoan', 'Mũi tên xoắn', O, 'mui ten xoan ve tay'],
+  ['orn-mui-ten-hai-dau', 'Mũi tên hai đầu', O, 'mui ten hai dau ve tay'],
+  ['orn-khoanh-tron', 'Vòng khoanh tròn', O, 'vong khoanh tron danh dau'],
+  ['orn-khoanh-oval', 'Vòng khoanh oval', O, 'vong khoanh oval danh dau'],
+  ['orn-gach-chan-nguech', 'Gạch chân nguệch ngoạc', O, 'gach chan ve tay nhan manh'],
+  ['orn-gach-chan-doi', 'Gạch chân hai nét', O, 'gach chan doi nhan manh'],
+  ['orn-tick-ve-tay', 'Dấu tick vẽ tay', O, 'dau tick dung ve tay'],
+  ['orn-x-ve-tay', 'Dấu X vẽ tay', O, 'dau x sai ve tay'],
+  ['orn-sao-ve-tay', 'Ngôi sao vẽ tay', O, 'ngoi sao ve tay'],
+  ['orn-tia-nhan', 'Tia nhấn', O, 'tia nhan toa ra chu y'],
+  // giấy ghi chú
+  ['orn-washi-ngang', 'Băng dính washi ngang', O, 'bang dinh washi giay'],
+  ['orn-washi-cheo', 'Băng dính washi chéo', O, 'bang dinh washi cheo giay'],
+  ['orn-note-vuong', 'Giấy note vuông', O, 'giay note ghi chu'],
+  ['orn-note-gap-goc', 'Giấy note gấp góc', O, 'giay note gap goc ghi chu'],
+  ['orn-kep-giay-2', 'Kẹp giấy', O, 'kep giay ghi chu'],
+  ['orn-ghim-tron', 'Ghim đầu tròn', O, 'ghim dau tron bang ghim'],
+  ['orn-giay-xe', 'Mảnh giấy xé', O, 'manh giay xe'],
+  ['orn-giay-ke-dong', 'Giấy kẻ dòng', O, 'giay ke dong vo lo gay'],
+  ['orn-the-treo', 'Thẻ treo', O, 'the treo day nhan'],
+  ['orn-nhan-tron', 'Nhãn dán tròn', O, 'nhan dan tron sticker'],
+  ['orn-nhan-rang-cua', 'Nhãn dán răng cưa', O, 'nhan dan rang cua sticker'],
+  ['orn-kep-buom', 'Kẹp bướm', O, 'kep buom giay'],
+  // ô chứa chữ
+  ['orn-thoai-tron', 'Bong bóng thoại tròn', O, 'bong bong hoi thoai tron'],
+  ['orn-thoai-vuong', 'Bong bóng thoại vuông', O, 'bong bong hoi thoai vuong'],
+  ['orn-suy-nghi', 'Bong bóng suy nghĩ', O, 'bong bong suy nghi'],
+  ['orn-ruy-bang-ngang', 'Ruy băng tiêu đề', O, 'ruy bang tieu de'],
+  ['orn-ruy-bang-cong', 'Ruy băng cong', O, 'ruy bang cong tieu de'],
+  ['orn-banner-duoi', 'Banner hai đuôi', O, 'banner hai duoi tieu de'],
+  ['orn-khung-tieu-de', 'Khung tiêu đề bo tròn', O, 'khung tieu de bo tron'],
+  ['orn-khung-ngoac-nhon', 'Khung ngoặc nhọn', O, 'khung ngoac nhon'],
+  ['orn-bang-den', 'Bảng đen', O, 'bang den lop hoc khung'],
+  ['orn-bang-ghim', 'Bảng ghim', O, 'bang ghim khung'],
+  ['orn-bien-chi-dan', 'Biển chỉ dẫn', O, 'bien chi dan mui ten o chu'],
+  ['orn-danh-dau-trang', 'Thẻ đánh dấu trang', O, 'the danh dau trang bookmark'],
+  // góc và nền
+  ['orn-cum-cham-bi', 'Cụm chấm bi', O, 'cham bi nen goc'],
+  ['orn-o-li', 'Mảng ô li', O, 'o li tap vo nen'],
+  ['orn-ke-o-vuong', 'Mảng kẻ ô vuông', O, 'ke o vuong nen'],
+  ['orn-song-song-song', 'Đường sóng song song', O, 'duong song nen'],
+  ['orn-confetti', 'Confetti', O, 'confetti phao giay le hoi'],
+  ['orn-cum-sao-lap-lanh', 'Cụm sao lấp lánh', O, 'sao lap lanh'],
+  ['orn-cum-hinh-hoc', 'Cụm hình học', O, 'hinh hoc tron tam giac vuong'],
+  ['orn-goc-hoa-la', 'Góc hoa lá', O, 'goc hoa la trang tri'],
+  ['orn-goc-cham-tron', 'Góc chấm tròn', O, 'goc cham tron'],
+  ['orn-co-duoi-nheo', 'Dải cờ đuôi nheo', O, 'co duoi nheo le hoi'],
+  ['orn-vong-tron-long', 'Vòng tròn lồng nhau', O, 'vong tron long nhau'],
+  ['orn-soc-cheo', 'Mảng sọc chéo', O, 'soc cheo nen'],
+  // doodle học đường
+  ['orn-but-chi', 'Bút chì', O, 'but chi doodle hoc duong'],
+  ['orn-thuoc-ke', 'Thước kẻ', O, 'thuoc ke doodle'],
+  ['orn-bong-den-2', 'Bóng đèn ý tưởng', O, 'bong den y tuong doodle'],
+  ['orn-tia-nang', 'Tia sáng mặt trời', O, 'mat troi tia sang doodle'],
+  ['orn-dam-may', 'Đám mây nhỏ', O, 'dam may doodle'],
+  ['orn-sao-nam-canh', 'Ngôi sao năm cánh', O, 'ngoi sao doodle'],
+  ['orn-tim-nho', 'Trái tim nhỏ', O, 'trai tim doodle'],
+  ['orn-tia-chop', 'Tia chớp', O, 'tia chop doodle'],
+  ['orn-cham-hoi', 'Dấu chấm hỏi', O, 'dau cham hoi cau hoi doodle'],
+  ['orn-cham-than', 'Dấu chấm than', O, 'dau cham than chu y doodle'],
+  ['orn-kinh-lup', 'Kính lúp', O, 'kinh lup tim kiem doodle'],
+  ['orn-chiec-la', 'Chiếc lá', O, 'chiec la doodle'],
+]

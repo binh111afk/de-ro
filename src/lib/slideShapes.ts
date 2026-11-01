@@ -62,3 +62,63 @@ export function lineClip(el: Pick<SlideElement, 'border' | 'lineArrow'>): string
 
 export const shapeClipOf = (el: SlideElement): string | undefined =>
   el.shape === 'line' ? lineClip(el) : SHAPE_CLIP[el.shape ?? 'rect']
+
+const polar = (n: number, r: (t: number) => number, rot = -90) =>
+  polygon(
+    Array.from({ length: n }, (_, i): [number, number] => {
+      const t = ((rot + (i * 360) / n) * Math.PI) / 180
+      return [Math.cos(t) * r(t), Math.sin(t) * r(t)]
+    }),
+  )
+
+/** Khung ảnh (kiểu Canva): ảnh `type: 'image'` có `shape` là id dưới đây, ảnh tự `cover` rồi cắt theo khung. */
+export const PHOTO_FRAMES: Array<{ id: string; label: string; clip: string }> = [
+  { id: 'rect', label: 'Chữ nhật', clip: 'inset(0)' },
+  { id: 'ellipse', label: 'Tròn', clip: 'ellipse(50% 50%)' },
+  { id: 'round', label: 'Bo góc', clip: 'inset(0 round 12%)' },
+  { id: 'triangle', label: 'Tam giác', clip: SHAPE_CLIP.triangle! },
+  { id: 'arch', label: 'Cổng vòm', clip: 'inset(0 round 50% 50% 0 0 / 35% 35% 0 0)' },
+  { id: 'leaf', label: 'Chiếc lá', clip: 'inset(0 round 50% 0)' },
+  { id: 'diamond', label: 'Thoi', clip: 'polygon(50% 0, 100% 50%, 50% 100%, 0 50%)' },
+  { id: 'pentagon', label: 'Ngũ giác', clip: polar(5, () => 1) },
+  { id: 'hexagon', label: 'Lục giác', clip: polar(6, () => 1, 0) },
+  { id: 'octagon', label: 'Bát giác', clip: polar(8, () => 1, 22.5) },
+  { id: 'star', label: 'Ngôi sao', clip: star },
+  { id: 'heart', label: 'Trái tim', clip: heart },
+  { id: 'flower', label: 'Bông hoa', clip: polar(96, (t) => 1 + 0.16 * Math.cos(6 * t)) },
+  { id: 'burst', label: 'Huy hiệu', clip: polar(32, (t) => 1 + 0.1 * Math.sign(Math.cos(16 * t))) },
+  { id: 'blob', label: 'Giọt mềm', clip: polar(96, (t) => 1 + 0.08 * Math.sin(3 * t) + 0.06 * Math.cos(5 * t)) },
+  { id: 'cross', label: 'Dấu cộng', clip: 'polygon(33% 0, 67% 0, 67% 33%, 100% 33%, 100% 67%, 67% 67%, 67% 100%, 33% 100%, 33% 67%, 0 67%, 0 33%, 33% 33%)' },
+  { id: 'parallelogram', label: 'Bình hành', clip: 'polygon(20% 0, 100% 0, 80% 100%, 0 100%)' },
+  { id: 'pill', label: 'Viên thuốc', clip: 'inset(22% 0 round 999px)' },
+  { id: 'round-lg', label: 'Bo góc lớn', clip: 'inset(0 round 28%)' },
+  { id: 'arch-down', label: 'Vòm ngược', clip: 'inset(0 round 0 0 50% 50% / 0 0 35% 35%)' },
+  { id: 'tab', label: 'Thẻ tab', clip: 'inset(0 round 20% 20% 0 0)' },
+  { id: 'corner', label: 'Góc chéo', clip: 'inset(0 round 30% 0 30% 0)' },
+  { id: 'half-circle', label: 'Bán nguyệt', clip: 'inset(0 round 50% 50% 0 0 / 100% 100% 0 0)' },
+  { id: 'quarter', label: 'Góc tư', clip: 'inset(0 round 100% 0 0 0)' },
+  { id: 'triangle-right', label: 'Tam giác vuông', clip: 'polygon(0 0, 100% 100%, 0 100%)' },
+  { id: 'trapezoid', label: 'Hình thang', clip: 'polygon(18% 0, 82% 0, 100% 100%, 0 100%)' },
+  { id: 'chevron', label: 'Mũi tên gấp', clip: 'polygon(0 0, 75% 0, 100% 50%, 75% 100%, 0 100%, 25% 50%)' },
+  { id: 'arrow', label: 'Mũi tên', clip: SHAPE_CLIP.arrow! },
+  { id: 'cut-corner', label: 'Vát góc', clip: 'polygon(15% 0, 85% 0, 100% 15%, 100% 85%, 85% 100%, 15% 100%, 0 85%, 0 15%)' },
+  { id: 'ticket', label: 'Vé', clip: 'polygon(0 0, 100% 0, 100% 38%, 94% 50%, 100% 62%, 100% 100%, 0 100%, 0 62%, 6% 50%, 0 38%)' },
+  { id: 'flag', label: 'Lá cờ', clip: 'polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%)' },
+  { id: 'shield', label: 'Khiên', clip: 'polygon(0 0, 100% 0, 100% 60%, 50% 100%, 0 60%)' },
+  { id: 'star-4', label: 'Sao 4 cánh', clip: polar(8, (t) => 1 - 0.55 * Math.abs(Math.sin(2 * t))) },
+  { id: 'star-6', label: 'Sao 6 cánh', clip: polar(12, (t) => 1 - 0.42 * Math.abs(Math.sin(3 * t))) },
+  { id: 'cloud', label: 'Đám mây', clip: polar(120, (t) => 1 + 0.1 * Math.abs(Math.sin(4 * t))) },
+  { id: 'wave', label: 'Gợn sóng', clip: polar(120, (t) => 1 + 0.05 * Math.sin(12 * t)) },
+  { id: 'gear', label: 'Bánh răng', clip: polar(48, (t) => 1 + 0.12 * Math.sign(Math.cos(8 * t + 0.01))) },
+  { id: 'bubble', label: 'Bong bóng chat', clip: 'polygon(0 0, 100% 0, 100% 78%, 40% 78%, 22% 100%, 24% 78%, 0 78%)' },
+]
+
+export const photoFrameClip = (shape?: string): string | undefined => PHOTO_FRAMES.find((f) => f.id === shape)?.clip
+
+/** Ảnh chờ của khung ảnh (giấy kem, mặt trời, núi gấp khúc — theo màu đất sét của app), dùng ở panel và khung trống trên slide. */
+export const FRAME_PLACEHOLDER = `data:image/svg+xml,${encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="s" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fbefe4"/><stop offset="1" stop-color="#f3d9c4"/></linearGradient></defs><rect width="160" height="160" fill="url(#s)"/><circle cx="108" cy="54" r="15" fill="#f2b37a"/><path d="M-4 132 46 74l30 34 18-20 70 44v52H-4z" fill="#d98a63"/><path d="M-4 150 58 104l26 18 22-14 58 42v14H-4z" fill="#b5654a"/></svg>',
+)}`
+
+/** Ảnh đang kéo từ tab Tải lên — lúc dragover trình duyệt không cho đọc dữ liệu kéo, nên giữ ở đây để khung xem trước. */
+export const dragImage = { src: '' }

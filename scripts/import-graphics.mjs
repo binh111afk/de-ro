@@ -11,7 +11,7 @@
  */
 import { readFileSync, writeFileSync } from 'node:fs'
 import { bboxOf } from './lib/svg-bbox.mjs'
-import { importDecor } from './import-decor.mjs'
+import { ICONS_DECOR2, SHEET_DECOR2, importDecor } from './import-decor.mjs'
 import { ICONS_100, ICONS_DOT4, ICONS_NEW, ICONS_PROG, SHEET_100, SHEET_DOT4, SHEET_NEW, SHEET_PROG } from './graphics-extra.mjs'
 
 const SHEET = 'C:/Users/Lenovo/Downloads/112 educational icons · 64px.svg'
@@ -197,6 +197,7 @@ const entries = [
   ...importSheet(SHEET_PROG, ICONS_PROG),
   ...importSheet(SHEET_DOT4, ICONS_DOT4),
   ...importDecor(),
+  ...importDecor(SHEET_DECOR2, ICONS_DECOR2),
 ]
 const seen = new Set()
 for (const e of entries) {

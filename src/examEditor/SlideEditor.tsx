@@ -15,7 +15,7 @@ import { SlideSidePanel } from './SlideSidePanel'
 import { SlideStrip } from './SlideStrip'
 import { rewriteElement } from '@/lib/slideRewrite'
 import { keepCustomBg, slideBgStyle, withBackground } from '@/lib/slideBackground'
-import { shapeClipOf } from '@/lib/slideShapes'
+import { FRAME_PLACEHOLDER, dragImage, photoFrameClip, shapeClipOf } from '@/lib/slideShapes'
 import { isPresetShape, isStrokeOnlyShape, presetPaths, prstOf } from '@/lib/slidePresets'
 import { ChevronLeft, ChevronRight, Minimize2, MonitorPlay, RotateCw } from 'lucide-react'
 import { slideIconById } from '@/lib/slideIconLibrary'
@@ -202,7 +202,8 @@ export function SlideEditor({
   const [printing, setPrinting] = useState(false)
   /** hình khối đang được gõ chữ trong đó */
   const [editingShapeId, setEditingShapeId] = useState<string | null>(null)
-  const [aiOpen, setAiOpen] = useState(true)
+  // màn hẹp (tablet/điện thoại): trợ lý AI nổi đè lên slide nên mặc định đóng
+  const [aiOpen, setAiOpen] = useState(() => window.innerWidth >= 1024)
   const [zoom, setZoom] = useState(100)
   const [formatPaneOpen, setFormatPaneOpen] = useState(false)
   const [clipboardElement, setClipboardElement] = useState<SlideElement | null>(null)
@@ -798,7 +799,8 @@ export function SlideEditor({
    * Editor
    * ---------------------------------------------------------------- */
   return (
-    <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+    // điện thoại: chừa chỗ cho thanh tab đáy (SlideSidePanel) để dải slide không bị che
+    <div className="flex min-h-0 min-w-0 flex-1 flex-col max-md:pb-14">
       {printing && <PrintDeck slides={deck.slides} theme={theme} onDone={() => setPrinting(false)} />}
       {deck.format === 'html' ? (
         <HtmlDeckBar
@@ -882,6 +884,7 @@ export function SlideEditor({
         hint={`${deck.title} ${(currentSlide?.elements ?? []).map((e) => e.text ?? '').join(' ').replace(/<[^>]+>/g, ' ')}`}
         onAddLayoutSlide={addLayoutFromPanel}
         onInsert={insertFromPanel}
+        onOpenAi={() => setAiOpen(true)}
       />
 
       {/* ---------------- sân soạn (giữa) ---------------- */}
@@ -980,6 +983,19 @@ export function SlideEditor({
                     onPreview={(patch) => previewElement(currentSlide.id, el.id, patch)}
                     onChange={(patch) => updateElement(currentSlide.id, el.id, patch)}
                     onGenerateImage={() => generateImageFor(currentSlide.id, el.id)}
+                    onDropInFrame={(frameId, src) => {
+                      // một lần ghi (khung nhận ảnh + bỏ ảnh kéo), dựa trên deck mới nhất
+                      const latest = deckRef.current
+                      commitDeck({
+                        ...latest,
+                        slides: latest.slides.map((s) =>
+                          s.id === currentSlide.id
+                            ? { ...s, elements: s.elements.flatMap((e) => (e.id === el.id ? [] : e.id === frameId ? [{ ...e, src }] : [e])) }
+                            : s,
+                        ),
+                      })
+                      setSelectedElementId(frameId)
+                    }}
                     editingText={editingShapeId === el.id}
                     onEditingText={(on) => setEditingShapeId(on ? el.id : null)}
                   />
@@ -1426,7 +1442,8 @@ function SlideElView({ el, theme, revealStep }: { el: SlideElement; theme: Resol
           // khung chờ ảnh ở bản xem là panel theme (nét đứt chỉ có ở bản chỉnh sửa)
           background: el.src ? undefined : `linear-gradient(135deg, ${theme.surface} 0 48%, ${theme.accent}22 48% 54%, ${theme.surface} 54% 100%)`,
           border: el.src ? undefined : `1px solid ${theme.accent}66`,
-          borderRadius: el.shape === 'ellipse' ? '50%' : '1cqw',
+          borderRadius: photoFrameClip(el.shape) ? 0 : '1cqw',
+          clipPath: photoFrameClip(el.shape),
           overflow: 'hidden',
           color: el.src ? theme.muted : theme.accent,
           fontSize: '1.9cqw',
@@ -1442,7 +1459,7 @@ function SlideElView({ el, theme, revealStep }: { el: SlideElement; theme: Resol
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           />
         ) : (
-          'Ảnh minh hoạ'
+          photoFrameClip(el.shape) ? <img src={FRAME_PLACEHOLDER} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : 'Ảnh minh hoạ'
         )}
       </div>
     )
@@ -1794,6 +1811,8 @@ function AutoFitText({
   )
 }
 
+const FRAME_HOVER = 'slide-frame-hover'
+
 /** Hướng tay nắm resize — 8 anchor như Transformer của bản gốc. */
 type ResizeDir = 'nw' | 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w'
 const HANDLE_DIRS: ResizeDir[] = ['nw', 'n', 'ne', 'e', 'se', 's', 'sw', 'w']
@@ -1808,6 +1827,7 @@ function EditableEl({
   onChange,
   onDragEnd,
   onGenerateImage,
+  onDropInFrame,
   editingText,
   onEditingText,
 }: {
@@ -1822,12 +1842,16 @@ function EditableEl({
   onDragEnd: () => void
   /** tạo ảnh AI cho khung ảnh trống (prompt lấy từ nội dung slide) */
   onGenerateImage: () => Promise<void>
+  /** kéo ảnh trên slide thả vào khung ảnh: khung nhận ảnh, ảnh kéo bị bỏ */
+  onDropInFrame: (frameId: string, src: string) => void
   /** đang gõ chữ trong hình khối (nhấp đúp hình hoặc nút "Thêm chữ" trên thanh nổi) */
   editingText: boolean
   onEditingText: (on: boolean) => void
 }) {
   const [imageBusy, setImageBusy] = useState(false)
   const [imageError, setImageError] = useState<string | null>(null)
+  // ảnh đang được kéo qua khung: '' = file từ máy (chưa đọc được), null = không kéo
+  const [dropPreview, setDropPreview] = useState<string | null>(null)
   const style: React.CSSProperties = {
     position: 'absolute',
     left: `${el.x}%`,
@@ -1835,7 +1859,10 @@ function EditableEl({
     width: `${el.w}%`,
     height: `${elementHeight(el)}%`,
     zIndex: el.zIndex,
-    transform: elTransform(el),
+    // xoay + lật tách thành `rotate`/`scale` (cùng thứ tự với elTransform) để bấm Lật có chuyển động lật, còn xoay/kéo vẫn tức thì
+    rotate: el.rotation ? `${el.rotation}deg` : undefined,
+    scale: el.flipX || el.flipY ? `${el.flipX ? -1 : 1} ${el.flipY ? -1 : 1}` : undefined,
+    transition: 'scale 350ms cubic-bezier(.2,.8,.2,1)',
     outline: selected ? '2px solid #b4532a' : undefined,
     outlineOffset: selected ? 0 : undefined,
   }
@@ -1857,11 +1884,28 @@ function EditableEl({
     const startY = e.clientY
     const MIN = 4
     onBeginHistory()
+    // ảnh đang kéo đi qua khung ảnh nào (kiểu Canva): khung xem trước ảnh, thả ra thì ảnh vào khung
+    const self = e.currentTarget as HTMLElement
+    const canFill = mode === 'move' && el.type === 'image' && !!el.src && !photoFrameClip(el.shape)
+    let frameId: string | null = null
+    const hoverFrame = (id: string | null) => {
+      if (id === frameId) return
+      frameId = id
+      self.style.opacity = id ? '0.25' : ''
+      window.dispatchEvent(new CustomEvent(FRAME_HOVER, { detail: { id, src: el.src } }))
+    }
     const move = (ev: PointerEvent) => {
       const dx = ((ev.clientX - startX) / rect.width) * 100
       const dy = ((ev.clientY - startY) / rect.height) * 100
       if (mode === 'move' || !dir) {
-        onPreview({ x: clamp(base.x + dx, 0, 100 - base.w), y: clamp(base.y + dy, 0, 100 - base.h) })
+        // kéo ra ngoài slide được (phần ngoài bị khung che), chỉ giữ lại một mép 3% để còn nắm kéo về
+        onPreview({ x: clamp(base.x + dx, 3 - base.w, 97), y: clamp(base.y + dy, 3 - base.h, 97) })
+        if (canFill) {
+          const hit = document
+            .elementsFromPoint(ev.clientX, ev.clientY)
+            .find((n): n is HTMLElement => n instanceof HTMLElement && !!n.dataset.frameId && n.dataset.frameId !== el.id)
+          hoverFrame(hit?.dataset.frameId ?? null)
+        }
         return
       }
       // Resize theo trục cục bộ của phần tử (không theo trục màn hình) để
@@ -1891,6 +1935,13 @@ function EditableEl({
       if (dir.includes('e')) r = Math.max(r + localX, l + minW)
       if (dir.includes('n')) t = Math.min(t + localY, b - minH)
       if (dir.includes('s')) b = Math.max(b + localY, t + minH)
+      // đồ hoạ kéo góc: khoá theo tỉ lệ thật của hình (hộp cũ bị vuông/méo cũng tự khớp lại)
+      const ratio = el.type === 'graphic' && dir.length === 2 ? graphicById(el.graphicId)?.ratio : undefined
+      if (ratio) {
+        const fitH = (r - l) / ratio
+        if (dir.includes('n')) t = b - fitH
+        else b = t + fitH
+      }
 
       const nextW = r - l
       const nextH = b - t
@@ -1935,11 +1986,26 @@ function EditableEl({
       window.removeEventListener('pointerup', up)
       window.removeEventListener('pointercancel', up)
       onDragEnd()
+      const target = frameId
+      hoverFrame(null)
+      if (target && el.src) onDropInFrame(target, el.src)
     }
     window.addEventListener('pointermove', move)
     window.addEventListener('pointerup', up)
     window.addEventListener('pointercancel', up)
   }
+
+  // khung ảnh nghe ảnh trên slide đang kéo qua để xem trước
+  const isFrame = el.type === 'image' && !!photoFrameClip(el.shape)
+  useEffect(() => {
+    if (!isFrame) return
+    const on = (e: Event) => {
+      const { id, src } = (e as CustomEvent<{ id: string | null; src: string }>).detail
+      setDropPreview(id === el.id ? src : null)
+    }
+    window.addEventListener(FRAME_HOVER, on)
+    return () => window.removeEventListener(FRAME_HOVER, on)
+  }, [isFrame, el.id])
 
   const common = {
     style,
@@ -2154,19 +2220,57 @@ function EditableEl({
 
   if (el.type === 'image')
     return (
-      <div {...common}>
+      <div {...common} className="group/frame">
         {/* ô cắt (bo góc/elip) tách khỏi khung ngoài để tay nắm resize và xoay không bị overflow-hidden cắt mất */}
         <div
+          data-frame-id={isFrame ? el.id : undefined}
+          style={{ clipPath: photoFrameClip(el.shape) }}
+          onDragOver={(e) => {
+            if (!e.dataTransfer.types.includes('Files') && !e.dataTransfer.types.includes('text/uri-list')) return
+            e.preventDefault()
+            if (dropPreview === null) setDropPreview(dragImage.src)
+          }}
+          onDragLeave={(e) => {
+            if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setDropPreview(null)
+          }}
+          onDrop={(e) => {
+            setDropPreview(null)
+            // kéo ảnh (file từ máy hoặc ảnh ở tab Tải lên) thả vào khung: ảnh tự cover rồi cắt theo khung
+            const file = e.dataTransfer.files[0]
+            const url = e.dataTransfer.getData('text/uri-list')
+            if (!file?.type.startsWith('image/') && !url) return
+            e.preventDefault()
+            e.stopPropagation()
+            if (!file) return onChange({ src: url })
+            const reader = new FileReader()
+            reader.onload = () => {
+              const data = String(reader.result)
+              onChange({ src: data })
+              uploadImage(data)
+                .then((src) => onChange({ src }))
+                .catch(() => {})
+            }
+            reader.readAsDataURL(file)
+          }}
           className={cn(
             'flex h-full w-full items-center justify-center overflow-hidden',
-            el.shape === 'ellipse' ? 'rounded-full' : 'rounded-[1cqw]',
-            el.src
+            photoFrameClip(el.shape) ? '' : 'rounded-[1cqw]',
+            el.src || photoFrameClip(el.shape)
               ? ''
               : 'border-2 border-dashed border-[#9ca3af] text-[1.8cqw] text-[#6b7280]',
           )}
         >
-        {el.src ? (
+        {dropPreview !== null ? (
+          // xem trước khi kéo ảnh qua khung (file từ máy chưa đọc được thì làm mờ ảnh hiện có)
+          <img
+            src={dropPreview || el.src || FRAME_PLACEHOLDER}
+            alt=""
+            className={cn('pointer-events-none h-full w-full object-cover', dropPreview ? '' : 'opacity-60')}
+          />
+        ) : el.src ? (
           <img src={el.src} alt="" className="h-full w-full object-cover" />
+        ) : photoFrameClip(el.shape) ? (
+<img src={FRAME_PLACEHOLDER} alt="" className="pointer-events-none h-full w-full object-cover" />
         ) : (
           <div className="flex flex-col items-center gap-1 px-1 text-center">
             <label className="cursor-pointer hover:underline">
@@ -2215,6 +2319,29 @@ function EditableEl({
           </div>
         )}
         </div>
+        {isFrame && (
+          // nút chọn file nằm ngoài lớp cắt để khung tim/sao… không cắt mất; khung vẫn nhận kéo-thả
+          <label className="absolute bottom-[6%] left-1/2 z-10 -translate-x-1/2 cursor-pointer whitespace-nowrap rounded-full bg-white/95 px-[1.2cqw] py-[0.45cqw] text-[1.35cqw] font-semibold text-ink opacity-0 shadow transition-opacity group-hover/frame:opacity-100">
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0]
+                e.target.value = ''
+                if (!file) return
+                const reader = new FileReader()
+                reader.onload = () => {
+                  const data = String(reader.result)
+                  onChange({ src: data })
+                  uploadImage(data).then((src) => onChange({ src })).catch(() => {})
+                }
+                reader.readAsDataURL(file)
+              }}
+            />
+            {el.src ? 'Đổi ảnh' : 'Chọn ảnh'}
+          </label>
+        )}
         {handle}
       </div>
     )

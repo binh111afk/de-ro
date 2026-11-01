@@ -49,7 +49,7 @@ export const GRAPHIC_CATEGORY_LABEL: Record<GraphicCategory, string> = {
   civic: 'Giáo dục công dân',
   event: 'Lễ & sự kiện',
   feel: 'Cảm xúc & phản hồi',
-  ornament: 'Trang trí (layout dùng, không vào catalog AI)',
+  ornament: 'Hoạ tiết',
 }
 
 const CATEGORY_ORDER: GraphicCategory[] = [
@@ -121,6 +121,39 @@ export function searchGraphics(text: string, limit = 8): SlideGraphicData[] {
     .sort((a, b) => b.score - a.score)
     .slice(0, limit)
     .map((entry) => entry.graphic)
+}
+
+const wordsOf = (text: string) => norm(text).split(/[^a-z0-9]+/).filter(Boolean)
+
+/**
+ * Tìm cho panel Đồ hoạ (gồm cả hoạ tiết): MỌI từ gõ vào phải khớp đầu một từ trong tên/từ khoá
+ * (gõ "trai tim" không ra "bên trái", "tim" không ra "tìm kiếm"); khớp tên xếp trước khớp từ khoá.
+ */
+export function findGraphics(text: string): SlideGraphicData[] {
+  const tokens = wordsOf(text)
+  if (!tokens.length) return []
+  const phrase = tokens.join(' ')
+  return GRAPHICS.flatMap((graphic) => {
+    const name = wordsOf(graphic.name)
+    const rest = wordsOf(`${graphic.keywords} ${graphic.id}`)
+    let score = 0
+    for (const token of tokens) {
+      if (name.includes(token)) score += 3
+      else if (name.some((word) => word.startsWith(token))) score += 2
+      else if (rest.some((word) => word.startsWith(token))) score += 1
+      else return []
+    }
+    if (name.join(' ').startsWith(phrase)) score += 2
+    return [{ graphic, score }]
+  })
+    .sort((a, b) => b.score - a.score)
+    .map((entry) => entry.graphic)
+}
+
+/** Cùng luật khớp đầu từ, cho các danh sách nhỏ (khung ảnh…). */
+export const matchesWords = (text: string, query: string): boolean => {
+  const hay = wordsOf(text)
+  return wordsOf(query).every((token) => hay.some((word) => word.startsWith(token)))
 }
 
 const words = (text: string): Set<string> =>

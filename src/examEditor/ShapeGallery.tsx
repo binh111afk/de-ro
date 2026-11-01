@@ -1,5 +1,6 @@
 /** Thư viện hình khối (tab Chèn → Hình dạng): 109 hình theo 7 nhóm, giống bảng Shapes của PowerPoint. */
 import { PRESET_GROUPS, presetPaths } from '@/lib/slidePresets'
+import { matchesWords } from '@/lib/slideGraphics'
 
 /** Hình xem trước kiểu nét viền (như bảng Shapes của PowerPoint): không tô nền, nét mảnh, đỡ dính nhau ở sao/răng cưa. */
 export function ShapePreview({ prst }: { prst: string }) {
@@ -28,10 +29,10 @@ export function ShapePreview({ prst }: { prst: string }) {
 }
 
 /** nhóm hình còn lại sau khi lọc theo tên (không lọc = toàn bộ thư viện) */
-function visibleGroups(query: string) {
-  const q = query.trim().toLowerCase()
-  if (!q) return PRESET_GROUPS
-  return PRESET_GROUPS.map((group) => ({ ...group, shapes: group.shapes.filter((s) => s.label.toLowerCase().includes(q)) })).filter(
+export function visibleGroups(query: string) {
+  if (!query.trim()) return PRESET_GROUPS
+  // khớp đầu từ, không phân biệt dấu ("tron" ra "Hình tròn", không ra "Mũi tên tròn"… trừ khi có từ "tròn")
+  return PRESET_GROUPS.map((group) => ({ ...group, shapes: group.shapes.filter((s) => matchesWords(s.label, query)) })).filter(
     (group) => group.shapes.length > 0,
   )
 }
