@@ -219,6 +219,193 @@ const knowledge = svg(
   fill('M35 49Q45 43 62 45V62Q45 60 35 66Z', BLUE),
 )
 
+
+// --- Toán & hình học bổ sung (40 icon) ---
+/** đường tròn vẽ bằng path (test cần ≥2 path/icon; cũng tô được màu chủ đạo) */
+const cp = (cx, cy, r, color) =>
+  fill(`M${round1(cx - r)} ${round1(cy)}a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0 ${-2 * r} 0Z`, color)
+const ring = (cx, cy, r) => line(`M${round1(cx - r)} ${round1(cy)}a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0 ${-2 * r} 0Z`)
+const bold = (d, w = 5) => `<path d="${d}" fill="none" stroke="${INK}" stroke-width="${w}" stroke-linejoin="round" stroke-linecap="round"/>`
+const dash = (d) => line(d, ' stroke-dasharray="3 4.5"')
+const poly = (pts, color) => fill(`M${pts.map(([x, y]) => `${round1(x)} ${round1(y)}`).join('L')}Z`, color)
+const ngon = (n, cx, cy, r, rot = -90) =>
+  Array.from({ length: n }, (_, i) => {
+    const a = ((rot + (360 / n) * i) * Math.PI) / 180
+    return [cx + r * Math.cos(a), cy + r * Math.sin(a)]
+  })
+const rsq = (x, y, w, h, color, r = 4) =>
+  fill(`M${x + r} ${y}H${x + w - r}Q${x + w} ${y} ${x + w} ${y + r}V${y + h - r}Q${x + w} ${y + h} ${x + w - r} ${y + h}H${x + r}Q${x} ${y + h} ${x} ${y + h - r}V${y + r}Q${x} ${y} ${x + r} ${y}Z`, color)
+const card = (color) => rsq(8, 8, 54, 54, color, 6)
+
+const pentagon = ngon(5, 35, 37.5, 27)
+const hexagon = ngon(6, 35, 35, 27, 0)
+const cyclicQuad = [200, 290, 15, 120].map((d) => [35 + 26 * Math.cos((d * Math.PI) / 180), 35 + 26 * Math.sin((d * Math.PI) / 180)])
+
+const MATH_NEW = [
+  // ---- toán ----
+  ['math-so-sanh', 'Dấu so sánh', 'dau so sanh lon hon nho hon bang', svg(
+    rsq(3, 22, 20, 26, BLUE), rsq(25, 22, 20, 26, YELLOW), rsq(47, 22, 20, 26, BLUE),
+    bold('M17 29L9 35L17 41M30 31.5H40M30 38.5H40M53 29L61 35L53 41', 4))],
+  ['math-phan-tram', 'Phần trăm', 'phan tram ti le phan tram giam gia', svg(
+    cp(21, 21, 9, PEACH), cp(49, 49, 9, PEACH), bold('M53 13L17 57'))],
+  ['math-vo-cuc', 'Vô cực', 'vo cuc vo han gioi han', svg(
+    fill('M35 35C28 20 7 19 6 35C7 51 28 50 35 35Z', MINT), fill('M35 35C42 20 63 19 64 35C63 51 42 50 35 35Z', MINT))],
+  ['math-so-pi', 'Số pi', 'so pi hang so duong tron', svg(
+    cp(35, 35, 27, BLUE), bold('M20 25H50M29 25V50M42 25V45Q42 50 47 50'))],
+  ['math-tong-sigma', 'Kí hiệu tổng', 'ki hieu tong sigma day so cong', svg(
+    cp(35, 35, 27, YELLOW), bold('M47 19H23L36 35L23 51H47'))],
+  ['math-tich-phan', 'Tích phân', 'tich phan giai tich dao ham nguyen ham', svg(
+    cp(35, 35, 27, LILAC), bold('M45 16Q39 10 36 18L34 52Q32 60 25 55'))],
+  ['math-parabol', 'Đồ thị parabol', 'do thi parabol ham so bac hai', svg(
+    card(BLUE), line('M14 42H56M35 56V14'), line('M21 16Q35 80 49 16'))],
+  ['math-do-thi-sin', 'Đồ thị hình sin', 'do thi hinh sin luong giac song', svg(
+    card(BLUE), line('M14 35H56M17 15V55'), line('M17 35Q23 13 29 35T41 35T53 35'))],
+  ['math-bieu-do-duong', 'Biểu đồ đường', 'bieu do duong thong ke xu huong', svg(
+    card(YELLOW), line('M16 15V54H55'), line('M21 45L31 33L40 39L51 21'),
+    cp(31, 33, 3, WHITE), cp(40, 39, 3, WHITE), cp(51, 21, 3, WHITE))],
+  ['math-dong-xu', 'Đồng xu', 'dong xu xac suat tung dong xu sap ngua', svg(
+    cp(44, 28, 18, YELLOW), cp(27, 43, 18, YELLOW), ring(27, 43, 11))],
+  ['math-vong-quay', 'Vòng quay may mắn', 'vong quay xac suat may man con quay', svg(
+    fill('M35 38V14A24 24 0 0 1 59 38Z', PINK), fill('M35 38H59A24 24 0 0 1 35 62Z', YELLOW),
+    fill('M35 38V62A24 24 0 0 1 11 38Z', PINK), fill('M35 38H11A24 24 0 0 1 35 14Z', YELLOW),
+    line('M35 38L47 27'), cp(35, 38, 3.5, WHITE), fill('M30.5 5H39.5L35 12Z', INK))],
+  ['math-giay-o-ly', 'Giấy ô ly', 'giay o ly luoi o vuong ve hinh dien tich', svg(
+    fill('M12 12H58V58H12Z', WHITE),
+    fill('M23.5 23.5H35V46.5H23.5Z', PEACH), fill('M35 35H46.5V46.5H35Z', PEACH),
+    line('M23.5 12V58M35 12V58M46.5 12V58M12 23.5H58M12 35H58M12 46.5H58'))],
+  ['math-thuoc-day', 'Thước dây', 'thuoc day do chieu dai do dai', svg(
+    fill('M38 47H63V55H38Z', WHITE), line('M45 47V50.5M51 47V51.5M57 47V50.5M63 44V58'),
+    cp(29, 36, 20, YELLOW), cp(29, 36, 7, WHITE))],
+  ['math-khoi-don-vi', 'Khối đơn vị', 'khoi don vi hang chuc hang tram dem so', svg(
+    fill('M10 10H21V60H10Z', GREEN), line('M10 20H21M10 30H21M10 40H21M10 50H21'),
+    fill('M29 27H60V58H29Z', GREEN), line('M39.3 27V58M49.7 27V58M29 37.3H60M29 47.7H60'),
+    fill('M39 9H50V20H39Z', GREEN))],
+  ['math-quy-luat-day', 'Quy luật dãy hình', 'quy luat day hinh lap lai tim hinh tiep theo', svg(
+    cp(13, 24, 7, PINK), fill('M25 17H39V31H25Z', BLUE), fill('M45 31L52 17L59 31Z', YELLOW),
+    cp(13, 48, 7, PINK), fill('M25 41H39V55H25Z', BLUE), dash('M45 41H59V55H45Z'))],
+  ['math-phan-so-banh', 'Bánh phân số', 'phan so banh chia phan bang nhau ba phan tu', svg(
+    fill('M35 35H9A26 26 0 0 1 35 9Z', WHITE), fill('M35 35V9A26 26 0 0 1 61 35Z', PEACH),
+    fill('M35 35H61A26 26 0 0 1 35 61Z', PEACH), fill('M35 35V61A26 26 0 0 1 9 35Z', PEACH),
+    line('M35 9V61M9 35H61'))],
+  ['math-tap-hop', 'Tập hợp', 'tap hop phan tu ngoac nhon', svg(
+    line('M24 12Q16 12 16 20V30Q16 35 10 35Q16 35 16 40V50Q16 58 24 58M46 12Q54 12 54 20V30Q54 35 60 35Q54 35 54 40V50Q54 58 46 58'),
+    cp(28, 27, 4.5, PINK), cp(42, 27, 4.5, PINK), cp(35, 43, 4.5, PINK))],
+  ['math-ma-tran', 'Ma trận', 'ma tran bang so hang cot', svg(
+    line('M18 12H12V58H18M52 12H58V58H52'),
+    ...[22, 35, 48].flatMap((y) => [24, 35, 46].map((x) => cp(x, y, 3.5, BLUE))))],
+  ['math-so-do-cay', 'Sơ đồ cây', 'so do cay xac suat phan nhanh to hop', svg(
+    line('M13 35L34 20M13 35L34 50M34 20L57 12M34 20L57 28M34 50L57 42M34 50L57 58'),
+    cp(13, 35, 5, MINT), cp(34, 20, 5, MINT), cp(34, 50, 5, MINT),
+    cp(57, 12, 4, WHITE), cp(57, 28, 4, WHITE), cp(57, 42, 4, WHITE), cp(57, 58, 4, WHITE))],
+  ['math-bieu-do-phan-tan', 'Biểu đồ phân tán', 'bieu do phan tan diem du lieu thong ke tuong quan', svg(
+    line('M15 11V56H59'), dash('M20 51L56 17'),
+    ...[[23, 45], [28, 40], [33, 44], [38, 33], [44, 35], [48, 25], [54, 21]].map(([x, y]) => cp(x, y, 3.3, PEACH)))],
+  // ---- hình học ----
+  ['math-hinh-vuong', 'Hình vuông', 'hinh vuong canh bang nhau goc vuong', svg(
+    fill('M16 16H54V54H16Z', BLUE), line('M16 47H23V54M35 12V20M35 50V58M12 35H20M50 35H58'))],
+  ['math-hinh-thoi', 'Hình thoi', 'hinh thoi duong cheo vuong goc', svg(
+    fill('M35 7L59 35L35 63L11 35Z', PINK), dash('M35 7V63M11 35H59'), line('M35 29H41V35'))],
+  ['math-ngu-giac-deu', 'Ngũ giác đều', 'ngu giac deu da giac nam canh', svg(
+    poly(pentagon, YELLOW), dash(`M35 37.5L${round1(pentagon[0][0])} ${round1(pentagon[0][1])}`), dot(35, 37.5, 2.2))],
+  ['math-luc-giac-deu', 'Lục giác đều', 'luc giac deu da giac sau canh to ong', svg(
+    poly(hexagon, GREEN), dash(hexagon.slice(0, 3).map(([x, y], i) => {
+      const [ox, oy] = hexagon[i + 3]
+      return `M${round1(x)} ${round1(y)}L${round1(ox)} ${round1(oy)}`
+    }).join('')))],
+  ['math-tam-giac-vuong', 'Tam giác vuông', 'tam giac vuong canh huyen goc vuong', svg(
+    fill('M14 58V12L58 58Z', PEACH), line('M14 50H22V58'))],
+  ['math-tam-giac-can', 'Tam giác cân', 'tam giac can hai canh bang nhau', svg(
+    fill('M35 9L59 58H11Z', MINT), line('M20.6 32.2L26.4 35.6M43.6 35.6L49.4 32.2'))],
+  ['math-hinh-elip', 'Hình elip', 'hinh elip truc lon truc nho conic', svg(
+    fill('M7 35A28 18 0 1 0 63 35A28 18 0 1 0 7 35Z', LILAC), dash('M7 35H63M35 17V53'))],
+  ['math-hinh-quat', 'Hình quạt', 'hinh quat tron cung tron goc o tam', svg(
+    fill('M11 59H59A48 48 0 0 0 35 17.4Z', PEACH), line('M23 59A12 12 0 0 0 17 48.6'), dot(11, 59, 2.2))],
+  ['math-hinh-hop-chu-nhat', 'Hình hộp chữ nhật', 'hinh hop chu nhat khoi hop the tich', svg(
+    fill('M10 29H46V61H10Z', BLUE), fill('M10 29L23 16H59L46 29Z', WHITE), fill('M46 29L59 16V48L46 61Z', BLUE),
+    dash('M10 61L23 48H59M23 48V16'))],
+  ['math-lang-tru-tam-giac', 'Lăng trụ tam giác', 'lang tru tam giac khoi lang tru dung', svg(
+    fill('M34 56L60 42L48 18L22 32Z', YELLOW), fill('M10 56L22 32L34 56Z', YELLOW),
+    dash('M10 56L36 42L60 42M36 42L48 18'))],
+  ['math-duong-vuong-goc', 'Đường vuông góc', 'duong thang vuong goc goc vuong', svg(
+    line('M8 46H62M28 8V62'), fill('M28 38H36V46H28Z', PEACH), cp(28, 46, 3.5, PEACH))],
+  ['math-goc-nhon', 'Góc nhọn', 'goc nhon do goc nho hon 90', svg(
+    fill('M12 56H31A19 19 0 0 0 24.4 41.6Z', GREEN), line('M60 56H12L48 14'), dot(12, 56, 2.2))],
+  ['math-goc-tu', 'Góc tù', 'goc tu do goc lon hon 90', svg(
+    fill('M38 56H53A15 15 0 0 0 28.1 44.8Z', PEACH), line('M64 56H38L8 22'), dot(38, 56, 2.2))],
+  ['math-tia-phan-giac', 'Tia phân giác', 'tia phan giac chia doi goc', svg(
+    fill('M10 56H27A17 17 0 0 0 25 48Z', BLUE), fill('M10 56L25 48A17 17 0 0 0 19.3 41.8Z', BLUE),
+    line('M62 56H10L40 10'), dash('M10 56L58 30.3'))],
+  ['math-dinh-ly-pitago', 'Định lý Py-ta-go', 'dinh ly pitago tam giac vuong binh phuong canh', svg(
+    fill('M8 26H26V44H8Z', PEACH), fill('M26 44H42V60H26Z', BLUE), fill('M26 26L42 44L60 28L44 10Z', YELLOW),
+    fill('M26 26V44H42Z', WHITE), line('M26 39H31V44'))],
+  ['math-duong-tron-noi-tiep', 'Đường tròn nội tiếp', 'duong tron noi tiep tam giac tiep xuc', svg(
+    fill('M35 8L62 58H8Z', YELLOW), cp(35, 41.9, 15.8, WHITE), dot(35, 41.9, 2))],
+  ['math-tu-giac-noi-tiep', 'Tứ giác nội tiếp', 'tu giac noi tiep duong tron', svg(
+    cp(35, 35, 26, BLUE), poly(cyclicQuad, WHITE), ...cyclicQuad.map(([x, y]) => dot(round1(x), round1(y), 2.4)))],
+  ['math-diem-duong-thang', 'Điểm và đường thẳng', 'diem duong thang doan thang tia', svg(
+    line('M6 48L64 22'), cp(19, 42.2, 5, PINK), cp(51, 27.8, 5, PINK))],
+  ['math-tu-dien', 'Tứ diện', 'tu dien khoi chop tam giac hinh khong gian', svg(
+    dash('M8 47L62 43'), fill('M34 8L8 47L38 60Z', GREEN), fill('M34 8L38 60L62 43Z', GREEN))],
+  ['math-tam-giac-dong-dang', 'Tam giác đồng dạng', 'tam giac dong dang ti so ty le', svg(
+    fill('M6 58H40L16 22Z', PEACH), fill('M45 58H64L50.6 38Z', PEACH),
+    line('M14.5 58A8.5 8.5 0 0 0 9.2 50.2M50.5 58A5.5 5.5 0 0 0 47.3 52.9'))],
+]
+
+
+// đợt 2: giải tích, tổ hợp, chia hết — chữ (log, n!) vẽ bằng nét vì kho cấm <text>
+const circD = (cx, cy, r) => `M${cx - r} ${cy}a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0 ${-2 * r} 0Z`
+const PRIMES = new Set([2, 3, 5, 7, 11, 13, 17, 19, 23])
+MATH_NEW.push(
+  ['math-so-du', 'Phép chia có dư', 'phep chia co du so du chia deu', svg(
+    rsq(3, 9, 30, 26, BLUE), rsq(37, 9, 30, 26, BLUE),
+    ...[9, 18, 27, 43, 52, 61].map((x) => cp(x, 22, 3, PEACH)),
+    dash(circD(35, 52, 11)), cp(35, 52, 6, PEACH))],
+  ['math-dao-ham', 'Đạo hàm', 'dao ham tiep tuyen he so goc giai tich', svg(
+    card(BLUE), line('M14 52Q35 10 56 52'), bold('M12 48.8L40 20.8', 3.5), cp(24.5, 36.3, 3.5, PEACH))],
+  ['math-nguyen-ham', 'Nguyên hàm', 'nguyen ham ho nguyen ham hang so c giai tich', svg(
+    card(MINT), line('M14 56C26 56 30 42 38 38S50 32 56 30M14 44C26 44 30 30 38 26S50 20 56 18M14 32C26 32 30 18 38 14'))],
+  ['math-logarit', 'Logarit', 'logarit log ham so mu', svg(
+    cp(35, 35, 27, LILAC), bold('M17 23V47', 4), bold(circD(28, 41, 6), 4),
+    bold(`${circD(45, 41, 6)}M51 35V50Q51 57 44 57Q40 57 38 55`, 4))],
+  ['math-giai-thua', 'Giai thừa', 'giai thua n giai thua to hop', svg(
+    cp(35, 35, 27, YELLOW), bold('M19 30V48M19 37Q19 30 26 30Q33 30 33 37V48'), bold('M46 20V37'), dot(46, 47, 3.2))],
+  ['math-hoan-vi', 'Hoán vị', 'hoan vi doi cho sap xep thu tu to hop', svg(
+    line('M16 33Q35 12 54 33M48.5 32L54 33L55 27.5'), line('M54 55Q35 66 16 55M21.5 57.5L16 55L16.5 61'),
+    cp(14, 44, 7, PINK), cp(35, 44, 7, BLUE), cp(56, 44, 7, YELLOW))],
+  ['math-to-hop', 'Tổ hợp', 'to hop chon k phan tu xac suat', svg(
+    dash('M18 40A17 11 0 1 0 52 40A17 11 0 1 0 18 40Z'),
+    cp(9, 40, 6, MINT), cp(27, 40, 6, PEACH), cp(43, 40, 6, PEACH), cp(61, 40, 6, MINT))],
+  ['math-ucln', 'Ước chung lớn nhất', 'uoc chung lon nhat ucln uoc chung chia het', svg(
+    cp(25, 35, 20, WHITE), cp(45, 35, 20, WHITE), fill('M35 17.7A20 20 0 0 1 35 52.3A20 20 0 0 1 35 17.7Z', PEACH),
+    dot(35, 29, 2.4), dot(35, 41, 2.4), dot(16, 30, 2.4), dot(20, 43, 2.4), dot(53, 29, 2.4), dot(51, 42, 2.4))],
+  ['math-bcnn', 'Bội chung nhỏ nhất', 'boi chung nho nhat bcnn boi chung', svg(
+    line('M5 40H65'), line('M8 36Q17 18 26 36Q35 18 44 36Q53 18 62 36'), line('M8 44Q21.5 66 35 44Q48.5 66 62 44'),
+    cp(8, 40, 3, WHITE), cp(26, 40, 3.5, BLUE), cp(44, 40, 3.5, BLUE), cp(35, 40, 3.5, PINK), cp(62, 40, 6, YELLOW))],
+  ['math-uoc-so', 'Ước số', 'uoc so chia het chia thanh nhom bang nhau', svg(
+    rsq(8, 15, 54, 40, WHITE), dash('M26 18V52M44 18V52'),
+    ...[27, 43].flatMap((y) => [17, 35, 53].map((x) => cp(x, y, 5.5, PEACH))))],
+  ['math-boi-so', 'Bội số', 'boi so dem cach nhay buoc tia so', svg(
+    line('M5 46H65'), line('M8 42Q17 24 26 42Q35 24 44 42Q53 24 62 42'),
+    cp(8, 46, 3.5, WHITE), cp(26, 46, 4, GREEN), cp(44, 46, 4, GREEN), cp(62, 46, 4, GREEN))],
+  ['math-so-nguyen-to', 'Số nguyên tố', 'so nguyen to sang eratosthenes chia het', svg(
+    ...Array.from({ length: 25 }, (_, i) => {
+      const x = 10 + (i % 5) * 10
+      const y = 10 + Math.floor(i / 5) * 10
+      return fill(`M${x} ${y}h10v10h-10Z`, PRIMES.has(i + 1) ? YELLOW : WHITE)
+    }))],
+)
+
+
+// Venn: tô mờ để thấy phần giao, viền vẽ sau cùng
+const tint = (cx, cy, r, color) => `<path d="${circD(cx, cy, r)}" fill="${color}" fill-opacity="0.75"/>`
+MATH_NEW.push(
+  ['math-venn-3', 'Biểu đồ Venn ba tập', 'bieu do venn ba tap hop giao hop so do ven', svg(
+    tint(35, 25, 17, PINK), tint(24, 44, 17, BLUE), tint(46, 44, 17, YELLOW),
+    ring(35, 25, 17), ring(24, 44, 17), ring(46, 44, 17))],
+  ['math-tap-con', 'Tập con', 'tap con tap hop con chua trong bieu do venn so do ven', svg(
+    cp(35, 35, 27, BLUE), cp(42, 42, 13, PEACH), dot(24, 24, 2.4), dot(20, 38, 2.4), dot(40, 39, 2.4), dot(46, 46, 2.4))],
+)
+
 /** icon mới (không có trong sheet): chèn ngay sau icon `after` */
 export const ADDED = [
   { after: 'class-mu-tot-nghiep', id: 'class-hoc-truc-tuyen', name: 'Học trực tuyến', category: 'class', keywords: 'hoc truc tuyen online e-learning laptop mu tot nghiep', svg: eLearning },
@@ -231,6 +418,11 @@ export const ADDED = [
   { after: 'sci-kinh-lup', id: 'sci-nghien-cuu', name: 'Nghiên cứu', category: 'sci', keywords: 'nghien cuu tai lieu kinh lup tim hieu khoa hoc', svg: research },
   { after: 'feel-trai-tim', id: 'feel-trai-tim-vo', name: 'Trái tim vỡ', category: 'feel', keywords: 'trai tim vo buon that tinh dau long cam xuc', svg: brokenHeart },
 ]
+// 40 icon toán/hình học xếp nối nhau sau icon toán cuối của sheet
+MATH_NEW.reduce((after, [id, name, keywords, svg]) => {
+  ADDED.push({ after, id, name, category: 'math', keywords, svg })
+  return id
+}, 'math-xuc-xac-2')
 
 export const REDRAWN = {
   'class-but-bi': pen,

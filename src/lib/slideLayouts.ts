@@ -365,6 +365,19 @@ function textEl(
     // của layout chỉ cao 12–13% nên 60% không đủ cho tiêu đề 60–80 ký tự.
     minScale: style.variant === 'title' ? 0.55 : undefined,
   })
+  // Hộp ôm sát chữ: layout cấp khung tối đa (tiêu đề bìa cao 30%…), chữ ngắn thì
+  // phần dưới trống và khung chọn dư một khoảng. Co theo chiều cao đo được, giữ
+  // nguyên vị trí chữ (canh giữa/dưới thì dời y bù lại).
+  const need =
+    textBoxHeight(text, box.w, fontSize, lineHeight, {
+      weight: style.fontWeight ?? (style.variant === 'title' ? 600 : 500),
+      letterSpacing,
+    }) + 0.5
+  if (need < box.h - 2) {
+    const spare = box.h - need
+    const shift = style.valign === 'middle' ? spare / 2 : 0
+    box = { ...box, y: box.y + shift, h: need }
+  }
   const el: SlideElement = {
     id,
     type: 'text',
