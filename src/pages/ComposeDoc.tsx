@@ -13,7 +13,7 @@
  *   └────────┴───────────────────────────────┴─────────────────┘
  */
 import { dialog } from '@/components/Dialog'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import type { Editor } from '@tiptap/core'
 import type { JSONContent } from '@tiptap/core'
@@ -35,12 +35,14 @@ import { useOnline } from '@/store/online'
 import { docToExam } from '@/lib/docToExam'
 import { examToDraft } from '@/lib/onlineExam'
 import { DECK_THEMES } from '@/lib/slideTheme'
-import { SlideEditor } from '@/examEditor/SlideEditor'
 import { extractJson } from '@/lib/llm'
 import { importedSlides, readImportFile, textToBlocks } from '@/lib/importFile'
 import { IconZoomIn, IconZoomOut } from '@/examEditor/icons'
 import type { ExamBlock, ExamDoc, FormatAttrs, RichText } from '@/data/docTypes'
 import { emptyDoc } from '@/data/docTypes'
+
+// trình soạn slide (pptxgen, bố cục, trình chiếu…) chỉ tải khi mở tab slide
+const SlideEditor = lazy(() => import('@/examEditor/SlideEditor').then((m) => ({ default: m.SlideEditor })))
 
 /** Hợp đồng AI trả về: thay cả đề / thêm cuối / sửa theo id khối. */
 interface AiExamEnvelope {
@@ -710,6 +712,7 @@ export default function ComposeDoc() {
       ) : activeDeck ? (
         /* ---------- tab slide: trình soạn trình chiếu dùng chung với /soan-slide ---------- */
         <div className="compose-body">
+          <Suspense fallback={<div className="flex flex-1 items-center justify-center text-[13px] text-ink-3">Đang tải trình soạn slide…</div>}>
           <SlideEditor
             deck={activeDeck}
             updateDeck={(patch) => updateDeck(activeDeck.id, patch)}
@@ -717,6 +720,7 @@ export default function ComposeDoc() {
             onNewDeck={newSlide}
             onImportFile={handleImportSlides}
           />
+          </Suspense>
         </div>
       ) : (
         <>
