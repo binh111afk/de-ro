@@ -712,6 +712,115 @@ LIT_NEW.reduce((after, [id, name, keywords, svg]) => {
   return id
 }, 'lang-phong-bi')
 
+// --- địa lí bổ sung (30 icon) ---
+const starPts = (cx, cy, R, r) => Array.from({ length: 10 }, (_, i) => polar(cx, cy, i % 2 ? r : R, -90 + 36 * i))
+const pyramid = [[52, 27], [43, 22], [34, 17], [25, 12], [16, 7]]
+const GEO_NEW = [
+  ['geo-kinh-vi-tuyen', 'Kinh tuyến, vĩ tuyến', 'kinh tuyen vi tuyen xich dao toa do dia li qua dia cau luoi', svg(
+    cp(35, 35, 26, BLUE), line(ellipseD(35, 35, 11, 26)), line('M35 9V61M9 35H61M12.5 22H57.5M12.5 48H57.5'))],
+  ['geo-ti-le-ban-do', 'Tỉ lệ bản đồ', 'ti le ban do thuoc ti le khoang cach do ban do', svg(
+    rsq(6, 6, 58, 58, GREEN, 6), line('M6 30Q20 18 34 28T64 22'), dot(46, 16, 2.4),
+    fill('M13 46H26V54H13Z', WHITE), fill('M26 46H39V54H26Z', INK), fill('M39 46H52V54H39Z', WHITE), line('M13 42V46M52 42V46'))],
+  ['geo-nhiet-ke', 'Nhiệt kế', 'nhiet ke nhiet do khi hau thoi tiet do nong lanh', svg(
+    cp(15, 16, 6, YELLOW), line('M15 4V6M15 26V28M3 16H5M25 16H27'),
+    fill('M28 50V13Q28 7 35 7Q42 7 42 13V50Z', WHITE), fill('M32 50V26H38V50Z', PEACH), cp(35, 54, 9, PEACH),
+    line('M47 16H53M47 24H53M47 32H53M47 40H53'))],
+  ['geo-vu-ke', 'Đo lượng mưa', 'luong mua vu ke do mua khi hau thoi tiet', svg(
+    fill('M15 28Q7 28 7 21Q7 14 15 15Q18 7 27 8Q34 4 40 11Q50 9 53 17Q62 18 62 23Q62 28 55 28Z', WHITE),
+    line('M18 34L14 42M28 34L24 42M22 46L19 52'),
+    fill('M38 34H58V62H38Z', WHITE), fill('M38 48H58V62H38Z', BLUE), line('M38 41H45M38 48H45M38 55H45'))],
+  ['geo-cang-bien', 'Cảng biển', 'cang bien tau container van tai bien xuat nhap khau giao thong duong bien', svg(
+    rsq(20, 16, 12, 12, MINT, 1), rsq(14, 28, 12, 12, YELLOW, 1), rsq(26, 28, 12, 12, GREEN, 1), rsq(38, 28, 12, 12, PINK, 1),
+    fill('M6 40H64L56 54H14Z', PEACH), line('M4 61Q11 56 18 61T32 61T46 61T60 61'))],
+  ['geo-gian-khoan', 'Giàn khoan dầu', 'gian khoan dau khi dau mo khai thac bien dong khoang san', svg(
+    fill('M4 50Q19 45 35 50T66 50V62H4Z', BLUE), line('M18 38V58M31 38V58M44 38V58'),
+    fill('M22 32L27 8H33L38 32Z', WHITE), line('M25 20H35M24 26H36'), line('M46 32V18L60 13'),
+    fill('M12 32H52V38H12Z', BEIGE))],
+  ['geo-thuy-dien', 'Thuỷ điện', 'thuy dien dap nuoc ho chua nang luong dien song', svg(
+    fill('M4 20H30V58H4Z', BLUE), fill('M50 48Q58 44 66 48V58H50Z', BLUE),
+    fill('M28 14H40L50 58H28Z', BEIGE), line('M34 26V32M34 40V48'), line('M4 58H66'),
+    fill('M56 6L48 22H55L51 36L63 18H56L60 6Z', YELLOW))],
+  ['geo-nha-may', 'Nhà máy', 'nha may cong nghiep khu cong nghiep san xuat', svg(
+    fill('M52 10Q50 4 56 4Q60 2 63 5Q67 8 63 11Q58 13 52 10Z', WHITE), fill('M50 60V16H60V60Z', PEACH),
+    fill('M6 60V34L20 26V34L34 26V34L48 26V60Z', BEIGE),
+    rsq(11, 42, 9, 9, YELLOW, 1), rsq(24, 42, 9, 9, YELLOW, 1), rsq(37, 42, 9, 9, YELLOW, 1), line('M4 60H66'))],
+  ['geo-nha-san', 'Nhà sàn', 'nha san dan toc mien nui lang ban dan cu nong thon', svg(
+    line('M18 46V61M35 46V61M52 46V61M4 61H66'), fill('M14 32H56V46H14Z', BEIGE),
+    fill('M8 34L35 10L62 34Z', PEACH), rsq(30, 35, 10, 11, YELLOW, 1), line('M30 50L24 61M36 50L30 61'))],
+  ['geo-thap-dan-so', 'Tháp dân số', 'thap dan so co cau dan so do tuoi gioi tinh dan cu', svg(
+    ...pyramid.flatMap(([y, w]) => [fill(`M${35 - w} ${y}H35V${y + 9}H${35 - w}Z`, BLUE), fill(`M35 ${y}H${35 + w}V${y + 9}H35Z`, PINK)]),
+    line('M35 10V64'))],
+  ['geo-quy-dao', 'Quỹ đạo Trái Đất', 'quy dao trai dat quay quanh mat troi chuyen dong nam mua', svg(
+    dash(ellipseD(35, 35, 29, 16)), cp(35, 35, 9, YELLOW), line('M35 20V22M35 48V50M20 35H22M48 35H50'),
+    cp(58, 44, 6, BLUE), line('M12 25L17 21M12 25L18 26'))],
+  ['geo-ngay-dem', 'Ngày và đêm', 'ngay dem trai dat tu quay quanh truc sang toi mui gio', svg(
+    line('M4 26H9M4 35H9M4 44H9'), cp(35, 35, 22, BLUE), fill('M35 13A22 22 0 0 1 35 57Z', LILAC),
+    line('M35 13V57'), sparkle(47, 28, 5, YELLOW), dot(44, 44, 1.8))],
+  ['geo-bon-mua', 'Bốn mùa', 'bon mua xuan ha thu dong thoi tiet khi hau', svg(
+    fill('M35 35V11A24 24 0 0 1 59 35Z', GREEN), fill('M35 35H59A24 24 0 0 1 35 59Z', YELLOW),
+    fill('M35 35V59A24 24 0 0 1 11 35Z', PEACH), fill('M35 35H11A24 24 0 0 1 35 11Z', BLUE),
+    fill('M41 29Q41 20 50 20Q50 29 41 29Z', WHITE), cp(46, 46, 5, WHITE),
+    fill('M24 41Q18 47 22 51Q28 49 24 41Z', WHITE), line('M24 18V28M19 23H29'))],
+  ['geo-dong-dat', 'Động đất', 'dong dat dia chan rung chan thien tai vo trai dat', svg(
+    line('M4 24H15L19 14L24 34L29 8L34 38L39 18L43 28L47 24H66'),
+    fill('M4 44H66V62H4Z', BEIGE), line('M33 44L38 50L31 55L36 62'))],
+  ['geo-song-than', 'Sóng thần', 'song than thien tai bien dong dat bao lu', svg(
+    fill('M4 62V40Q8 14 34 10Q54 8 60 22Q50 16 42 22Q36 28 44 34Q34 36 30 46Q28 56 36 62Z', BLUE),
+    line('M42 22Q34 22 34 30'), fill('M48 62V48L56 41L64 48V62Z', PEACH))],
+  ['geo-hang-dong', 'Hang động', 'hang dong nhu da thach nhu karst dia hinh da voi', svg(
+    fill('M4 62V30Q8 10 35 8Q62 10 66 30V62Z', BEIGE), fill('M16 62V44Q16 26 35 26Q54 26 54 44V62Z', LILAC),
+    fill('M25 28L29 39L33 27Z', WHITE), fill('M38 27L42 36L46 29Z', WHITE), fill('M38 62L43 50L48 62Z', WHITE))],
+  ['geo-chau-tho', 'Đồng bằng châu thổ', 'dong bang chau tho song hong song cuu long cua song phu sa', svg(
+    fill('M4 8H66V44Q50 52 35 52Q20 52 4 44Z', GREEN), fill('M4 44Q20 52 35 52Q50 52 66 44V62H4Z', BLUE),
+    fill('M31 8H39L38 24L52 50H45L35 32L25 50H18L32 24Z', BLUE))],
+  ['geo-cao-nguyen', 'Cao nguyên', 'cao nguyen tay nguyen dia hinh doi nui', svg(
+    cp(54, 13, 6, YELLOW), fill('M4 60L14 26H56L66 60Z', PEACH), fill('M14 26H56L54 33H16Z', GREEN),
+    line('M10 42H60M7 52H63'))],
+  ['geo-rung-nhiet-doi', 'Rừng nhiệt đới', 'rung nhiet doi rung mua rung rung xanh sinh thai', svg(
+    line('M19 40V60M51 40V60M35 34V60M4 60H66'), cp(19, 30, 13, GREEN), cp(51, 30, 13, GREEN), cp(35, 22, 14, MINT),
+    line('M29 18Q35 24 41 18'))],
+  ['geo-vung-cuc', 'Vùng cực', 'vung cuc bac cuc nam cuc bang tuyet lanh nha tuyet', svg(
+    fill('M10 56Q10 24 35 24Q60 24 60 56Z', BLUE), line('M14 44H56M19 34H51M28 24V34M42 24V34M22 34V44M48 34V44'),
+    fill('M28 56V47Q28 40 35 40Q42 40 42 47V56Z', LILAC), line('M4 56H66'), sparkle(58, 12, 5, WHITE))],
+  ['geo-ca-phe', 'Cà phê', 'ca phe cay cong nghiep nong san tay nguyen xuat khau', svg(
+    fill('M38 12Q54 2 62 12Q50 22 38 12Z', GREEN),
+    '<g transform="rotate(-25 25 40)">', fill(ellipseD(25, 40, 11, 16), PEACH), line('M25 25Q20 40 25 55'), '</g>',
+    '<g transform="rotate(20 46 38)">', fill(ellipseD(46, 38, 11, 16), PEACH), line('M46 23Q41 38 46 53'), '</g>')],
+  ['geo-danh-ca', 'Đánh bắt cá', 'danh bat ca thuy san ngu nghiep thuyen ca bien', svg(
+    fill('M4 50Q19 46 35 50T66 50V62H4Z', BLUE), line('M30 38V10'), fill('M30 12L47 34H30Z', WHITE),
+    fill('M8 38H52L45 49H15Z', PEACH), dash('M52 38L60 56'),
+    fill('M40 56Q46 51 52 56Q46 61 40 56Z', YELLOW), fill('M52 56L58 52V60Z', YELLOW))],
+  ['geo-tau-hoa', 'Tàu hoả', 'tau hoa duong sat giao thong van tai xe lua', svg(
+    line('M25 52L16 63M45 52L54 63M20 58H50'), rsq(13, 8, 44, 44, PEACH, 7), rsq(19, 14, 32, 14, WHITE, 3),
+    cp(23, 41, 4, YELLOW), cp(47, 41, 4, YELLOW), line('M31 41H39'))],
+  ['geo-duong-cao-toc', 'Đường cao tốc', 'duong cao toc duong bo giao thong van tai quoc lo', svg(
+    fill('M4 62L26 8H4Z', GREEN), fill('M66 62L44 8H66Z', GREEN),
+    fill('M28 8H42L62 62H8Z', BEIGE), line('M35 14V20M35 29V37M35 47V57'))],
+  ['geo-may-bay', 'Hàng không', 'hang khong may bay san bay giao thong van tai du lich', svg(
+    '<g transform="rotate(45 35 35)">', fill('M30 24L6 38V44L30 37Z', BLUE), fill('M40 24L64 38V44L40 37Z', BLUE),
+    fill('M35 6Q40 6 40 14V48L46 55V60L35 56L24 60V55L30 48V14Q30 6 35 6Z', WHITE), '</g>')],
+  ['geo-dien-mat-troi', 'Điện mặt trời', 'dien mat troi nang luong tai tao pin mat troi nang luong sach', svg(
+    cp(15, 14, 7, YELLOW), line('M15 3V4M27 14H28M24 5L23 6'),
+    line('M40 50V62M30 62H50'), fill('M10 30H54L62 50H18Z', BLUE), line('M24.7 30L32.7 50M39.3 30L47.3 50M14 40H58'))],
+  ['geo-bieu-do-khi-hau', 'Biểu đồ khí hậu', 'bieu do khi hau nhiet do luong mua bieu do cot duong', svg(
+    fill('M15 60V50H22V60Z', BLUE), fill('M24 60V42H31V60Z', BLUE), fill('M33 60V30H40V60Z', BLUE),
+    fill('M42 60V24H49V60Z', BLUE), fill('M51 60V38H58V60Z', BLUE),
+    line('M18 30Q27 16 36 14T55 24'), cp(55, 24, 3, PEACH), cp(18, 30, 3, PEACH), line('M10 6V60H64'))],
+  ['geo-nha-kinh', 'Hiệu ứng nhà kính', 'hieu ung nha kinh bien doi khi hau nong len toan cau moi truong', svg(
+    cp(12, 12, 7, YELLOW), line('M19 19L28 30M28 30L22 29M28 30L27 24'),
+    dash('M7 60A28 28 0 0 1 63 60'), cp(35, 47, 13, BLUE), fill('M28 40Q34 36 37 42Q34 48 28 46Z', GREEN), line('M4 60H66'))],
+  ['geo-cot-moc', 'Cột mốc biên giới', 'cot moc bien gioi chu quyen lanh tho quoc gia', svg(
+    fill('M24 56V18Q24 9 35 9Q46 9 46 18V56Z', WHITE), fill('M24 18Q24 9 35 9Q46 9 46 18V24H24Z', PEACH),
+    poly(starPts(35, 38, 7, 3), YELLOW), fill('M14 54H56V62H14Z', BEIGE))],
+  ['geo-thung-lung', 'Thung lũng', 'thung lung nui doi song suoi dia hinh', svg(
+    cp(35, 14, 6, YELLOW), fill('M4 62V36Q12 14 20 14Q26 14 34 44Q35 47 36 44Q44 14 50 14Q58 14 66 36V62Z', GREEN),
+    fill('M29 62Q34 54 35 48Q36 54 41 62Z', BLUE))],
+]
+GEO_NEW.reduce((after, [id, name, keywords, svg]) => {
+  ADDED.push({ after, id, name, category: 'geo', keywords, svg })
+  return id
+}, 'geo-ruong-bac-thang-2')
+
 export const REDRAWN = {
   'class-but-bi': pen,
   'cs-usb': usb,
