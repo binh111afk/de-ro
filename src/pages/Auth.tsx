@@ -70,11 +70,11 @@ export default function Auth({ mode }: { mode: Mode }) {
     try {
       if (mode === 'login') {
         await signIn(email.trim(), password)
-        navigate('/soan-de')
+        navigate('/')
       } else if (mode === 'register') {
         const { needsConfirm } = await signUp(email.trim(), password, name.trim())
         if (needsConfirm) setNotice('Đã gửi email xác nhận. Mở email và bấm liên kết để kích hoạt tài khoản.')
-        else navigate('/soan-de')
+        else navigate('/')
       } else if (mode === 'forgot') {
         await requestReset(email.trim())
         setNotice('Nếu email này có tài khoản, liên kết đặt lại mật khẩu đã được gửi. Kiểm tra cả hộp thư rác.')

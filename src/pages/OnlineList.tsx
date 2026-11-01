@@ -1,7 +1,7 @@
 import { dialog } from '@/components/Dialog'
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { Clock, History, MonitorPlay, Plus, Send, Sparkles, Trash2, Upload, Users } from 'lucide-react'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { Clock, History, MonitorPlay, Plus, Send, Sparkles, Trash2, Upload } from 'lucide-react'
 import { Badge, Button, EmptyState } from '@/components/ui'
 import { CopyLink } from '@/components/CopyLink'
 import { Segmented } from '@/components/Segmented'
@@ -16,7 +16,9 @@ type Tab = 'history' | 'published'
 
 export default function OnlineList() {
   const navigate = useNavigate()
-  const [tab, setTab] = useState<Tab>('history')
+  const [params, setParams] = useSearchParams()
+  const tab: Tab = params.get('tab') === 'published' ? 'published' : 'history'
+  const setTab = (t: Tab) => setParams(t === 'published' ? { tab: t } : {}, { replace: true })
   const items = useOnline((s) => s.items)
   const create = useOnline((s) => s.create)
   const remove = useOnline((s) => s.remove)
@@ -31,7 +33,7 @@ export default function OnlineList() {
           </h1>
           <p className="mt-4 max-w-[56ch] text-[15px] leading-[1.75] text-ink-2">
             Nhập từng câu, đặt đáp án và lời giải, cài đặt cách làm bài rồi cho học sinh làm trực tiếp. Đề đang soạn dở được tự lưu
-            ở đây. Xuất bản cho học sinh thì chỉ ai có link mới làm được; đăng lên cộng đồng thì mọi người cùng thấy.
+            ở đây. Soạn xong bấm Đăng để đưa lên đề cộng đồng.
           </p>
         </div>
         <Button variant="primary" onClick={() => navigate(`/tao-de-online/${create()}`)}>
@@ -167,28 +169,17 @@ function ItemCard({ item, index, onDelete }: { item: OnlineItem; index: number; 
           {published ? (
             <CopyLink url={shareUrl(item.publishedId!)} className="min-w-0 flex-1" />
           ) : (
-            <div className="grid min-w-0 flex-1 grid-cols-2 gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={busy || item.status !== 'done' || !playable}
-                title={item.status !== 'done' ? 'Bấm Tạo đề ở bước cuối trước khi xuất bản' : 'Xuất bản cho học sinh: chỉ ai có link mới làm được'}
-                onClick={() => void publish(false)}
-              >
-                <Users className="size-3.5" />
-                Cho học sinh
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={busy || item.status !== 'done' || !playable}
-                title={item.status !== 'done' ? 'Bấm Tạo đề ở bước cuối trước khi đăng' : 'Đăng lên danh sách đề cộng đồng'}
-                onClick={() => void publish(true)}
-              >
-                <Upload className="size-3.5" />
-                Lên cộng đồng
-              </Button>
-            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              className="min-w-0 flex-1"
+              disabled={busy || item.status !== 'done' || !playable}
+              title={item.status !== 'done' ? 'Bấm Tạo đề ở bước cuối trước khi đăng' : 'Đăng lên đề cộng đồng'}
+              onClick={() => void publish(true)}
+            >
+              <Upload className="size-3.5" />
+              {busy ? 'Đang đăng…' : 'Đăng'}
+            </Button>
           )}
           <button
             type="button"

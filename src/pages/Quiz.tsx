@@ -19,7 +19,8 @@ import { MathText } from '@/components/MathText'
 import { QuestionBody } from '@/components/QuestionBody'
 import { dialog } from '@/components/Dialog'
 import { getSession } from '@/lib/auth'
-import { isRemoteExamId, submitAttempt } from '@/lib/attempts'
+import { isRemoteExamId, loadStudent, saveStudent, submitAttempt } from '@/lib/attempts'
+import { studentKey } from '@/pages/OnlineOpen'
 import { useApp } from '@/store/app'
 import { QUESTION_STATES } from '@/data/questions'
 import { cn } from '@/lib/cn'
@@ -122,30 +123,29 @@ export default function Quiz() {
     sentFor.current = lastResult.at
     const result = lastResult
     void (async () => {
+      const remote = exam.importedFrom!
+      // đề chỉ-link: học sinh đã nhập tên, lớp, số thứ tự ở màn trước
+      const filled = (() => {
+        try {
+          return sessionStorage.getItem(studentKey(remote)) === '1'
+        } catch {
+          return false
+        }
+      })()
+      const info = filled ? loadStudent() : null
       const user = getSession()?.user
-      let name = user?.name ?? user?.email.split('@')[0] ?? ''
+      let name = info?.name ?? user?.name ?? user?.email.split('@')[0] ?? ''
       if (!name) {
-        const saved = (() => {
-          try {
-            return localStorage.getItem('dethinhbien-student-name') ?? ''
-          } catch {
-            return ''
-          }
-        })()
         const typed = await dialog.prompt('Nhập tên của em để thầy cô xem được điểm và xếp hạng bài làm này.', {
           title: 'Gửi kết quả cho giáo viên',
           label: 'Tên của em',
-          defaultValue: saved,
+          defaultValue: loadStudent()?.name ?? '',
           confirmLabel: 'Gửi kết quả',
           cancelLabel: 'Không gửi',
         })
         name = typed?.trim() ?? ''
         if (!name) return
-        try {
-          localStorage.setItem('dethinhbien-student-name', name)
-        } catch {
-          /* không nhớ được tên: lần sau hỏi lại */
-        }
+        saveStudent({ ...(loadStudent() ?? { className: '' }), name })
       }
       try {
         await submitAttempt({
@@ -154,6 +154,8 @@ export default function Quiz() {
           score: result.score,
           max: result.total,
           seconds: startedAt ? (result.at - startedAt) / 1000 : 0,
+          className: info?.className,
+          seat: info?.seat,
         })
         setSent('sent')
       } catch {
@@ -218,6 +220,16 @@ export default function Quiz() {
     startQuiz(exam.id)
   }
 
+  // đề chỉ cho làm một lần (học sinh vào từ link): không có nút Làm lại
+  const locked = Boolean(exam.settings?.oneAttempt && isRemoteExamId(exam.importedFrom) && (() => {
+    try {
+      return sessionStorage.getItem(studentKey(exam.importedFrom!)) === '1'
+    } catch {
+      return false
+    }
+  })())
+  const restart = locked ? undefined : handleRestart
+
   if (submitted && lastResult) {
     return reviewing ? (
       <ReviewView
@@ -226,7 +238,7 @@ export default function Quiz() {
         index={index}
         setIndex={setIndex}
         onBack={() => setReviewing(false)}
-        onRestart={handleRestart}
+        onRestart={restart}
       />
     ) : (
       <ResultView
@@ -236,7 +248,7 @@ export default function Quiz() {
         questions={questions}
         answers={answers}
         note={sent === 'sent' ? 'Đã gửi kết quả cho giáo viên.' : sent === 'failed' ? 'Chưa gửi được kết quả cho giáo viên, kiểm tra mạng rồi bấm Làm lại nếu cần.' : undefined}
-        onRestart={handleRestart}
+        onRestart={restart}
         onReview={() => {
           setIndex(0)
           setReviewing(true)
@@ -716,7 +728,7 @@ function ReviewView({
   index: number
   setIndex: (i: number | ((i: number) => number)) => void
   onBack: () => void
-  onRestart: () => void
+  onRestart?: () => void
 }) {
   const q = questions[index]
   return (
@@ -728,10 +740,12 @@ function ReviewView({
             Về kết quả
           </Button>
           <p className="font-display text-[15px] font-semibold text-ink">Xem lại bài</p>
-          <Button variant="clay" size="sm" onClick={onRestart}>
-            <RotateCcw className="size-3.5" />
-            Làm lại
-          </Button>
+          {onRestart ? (
+            <Button variant="clay" size="sm" onClick={onRestart}>
+              <RotateCcw className="size-3.5" />
+              Làm lại
+            </Button>
+          ) : <span />}
         </div>
 
         <div className="mb-3 flex flex-wrap gap-1.5">
@@ -899,7 +913,7 @@ function ResultView({
   totalPoints: number
   questions: Question[]
   answers: Record<string, string>
-  onRestart: () => void
+  onRestart?: () => void
   onReview: () => void
 }) {
   const pct = totalPoints > 0 ? (score / totalPoints) * 100 : 0
@@ -954,10 +968,12 @@ function ResultView({
               <ArrowLeft className="size-4" />
               Xem lại bài
             </Button>
-            <Button variant="clay" onClick={onRestart}>
-              <RotateCcw className="size-4" />
-              Làm lại
-            </Button>
+            {onRestart ? (
+              <Button variant="clay" onClick={onRestart}>
+                <RotateCcw className="size-4" />
+                Làm lại
+              </Button>
+            ) : null}
             <Link to="/de-cong-dong">
               <Button variant="ghost">Về kho đề</Button>
             </Link>

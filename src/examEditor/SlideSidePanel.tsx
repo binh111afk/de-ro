@@ -63,7 +63,7 @@ function SlideSidePanelImpl({ accent, canInsert, hint = '', onAddLayoutSlide, on
             }}
             aria-pressed={active === id}
             className={cn(
-              'flex w-[56px] flex-col items-center gap-1 rounded-lg px-1 py-2 text-[11px] font-medium transition-colors',
+              'flex w-[60px] flex-col items-center gap-1 whitespace-nowrap rounded-lg px-0.5 py-2 text-[11px] font-medium tracking-[-0.01em] transition-colors',
               active === id ? 'bg-paper-2 text-clay' : 'text-ink-3 hover:bg-paper-2 hover:text-ink',
             )}
           >
@@ -182,9 +182,9 @@ const GRAPHIC_CATEGORIES = (Object.keys(GRAPHIC_CATEGORY_LABEL) as GraphicCatego
 type GroupId = 'all' | 'subject' | 'class' | 'sym' | 'frame' | 'shapes'
 const GROUPS: Array<{ id: GroupId; label: string; cats: GraphicCategory[] }> = [
   { id: 'all', label: 'Tất cả', cats: [] },
-  { id: 'subject', label: 'Môn học', cats: ['math', 'sci', 'lang', 'lit', 'eng', 'cs', 'prog', 'bio', 'chem', 'phys', 'soc', 'his', 'geo', 'art', 'pe', 'nat'] },
-  { id: 'class', label: 'Lớp học', cats: ['class', 'people', 'reward', 'life'] },
-  { id: 'sym', label: 'Ký hiệu', cats: ['sym', 'arrow'] },
+  { id: 'subject', label: 'Môn học', cats: ['math', 'sci', 'lang', 'lit', 'eng', 'cs', 'prog', 'bio', 'chem', 'phys', 'soc', 'his', 'geo', 'civic', 'art', 'pe', 'nat'] },
+  { id: 'class', label: 'Lớp học', cats: ['class', 'people', 'reward', 'life', 'event'] },
+  { id: 'sym', label: 'Ký hiệu', cats: ['sym', 'feel', 'arrow'] },
   { id: 'frame', label: 'Khung & trang trí', cats: ['frame', 'decor', 'misc'] },
   { id: 'shapes', label: 'Hình khối', cats: [] },
 ]

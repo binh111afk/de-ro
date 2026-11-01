@@ -9,7 +9,8 @@ import { MathText } from '@/components/MathText'
 import { useApp } from '@/store/app'
 import { useDocStore } from '@/store/docs'
 import { GRADES, SUBJECTS, questionCount, totalPoints, type Exam } from '@/data/types'
-import type { ExamDoc } from '@/data/docTypes'
+import { useOnline } from '@/store/online'
+import { publishItem } from '@/lib/onlinePublish'
 import { formatPoints } from '@/lib/math'
 import { COMMUNITY_EXAMS } from '@/data/community'
 import { getCommunityDoc, listCommunityDocs, publishDoc, type CommunityRow } from '@/lib/community'
@@ -176,8 +177,8 @@ export default function Community() {
         <PublishModal
           loggedIn={Boolean(session)}
           onClose={() => setPublishOpen(false)}
-          onPublished={(row) => {
-            setUserDocs((rows) => [row, ...rows])
+          onPublished={() => {
+            listCommunityDocs().then(setUserDocs).catch(() => {})
             setPublishOpen(false)
           }}
         />
@@ -261,10 +262,12 @@ function PublishModal({
 }: {
   loggedIn: boolean
   onClose: () => void
-  onPublished: (row: CommunityRow) => void
+  onPublished: () => void
 }) {
   const myDocs = useDocStore((s) => s.myDocs)
+  const onlineItems = useOnline((s) => s.items)
   const docs = myDocs.filter((d) => (d.kind ?? 'exam') === 'exam')
+  const online = onlineItems.filter((it) => it.status === 'done' && it.questions.length > 0)
   const [busyId, setBusyId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
@@ -276,11 +279,12 @@ function PublishModal({
     return () => window.removeEventListener('keydown', onKey)
   }, [onClose])
 
-  const publish = async (doc: ExamDoc) => {
-    setBusyId(doc.id)
+  const publish = async (id: string, run: () => Promise<unknown>) => {
+    setBusyId(id)
     setError(null)
     try {
-      onPublished(await publishDoc(doc, true))
+      await run()
+      onPublished()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Có lỗi xảy ra, thử lại sau.')
     } finally {
@@ -303,7 +307,7 @@ function PublishModal({
         <div className="flex items-start justify-between gap-4">
           <div>
             <h2 className="font-display text-[22px] font-semibold text-ink">Chọn đề để đăng</h2>
-            <p className="mt-1.5 text-[14px] text-ink-3">Đề lấy từ mục Gần đây ở tab Bắt đầu.</p>
+            <p className="mt-1.5 text-[14px] text-ink-3">Đề đã tạo ở Tạo đề online và đề trong mục Gần đây ở tab Bắt đầu.</p>
           </div>
           <button
             type="button"
@@ -322,7 +326,7 @@ function PublishModal({
               <Button variant="primary">Đăng nhập</Button>
             </Link>
           </div>
-        ) : docs.length === 0 ? (
+        ) : docs.length === 0 && online.length === 0 ? (
           <div className="mt-7 space-y-5">
             <p className="text-[14.5px] text-ink-2">Chưa có đề nào. Soạn đề xong rồi quay lại đây để đăng.</p>
             <Link to="/soan-de">
@@ -331,6 +335,25 @@ function PublishModal({
           </div>
         ) : (
           <ul className="mt-6 max-h-[360px] divide-y divide-line overflow-y-auto">
+            {online.map((it) => (
+              <li key={`o-${it.id}`} className="flex items-center gap-4 py-3.5">
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-[15px] font-semibold text-ink">{it.meta.title.trim() || 'Đề chưa đặt tên'}</p>
+                  <p className="mt-0.5 text-[12.5px] text-ink-3">
+                    Tạo đề online · {it.meta.subject} · {it.meta.grade} · {it.questions.length} câu
+                    {it.publishedId && it.publishedListed !== false ? ' · đã đăng' : ''}
+                  </p>
+                </div>
+                <Button
+                  variant="clay"
+                  size="sm"
+                  disabled={busyId !== null}
+                  onClick={() => void publish(it.id, () => publishItem(it, true))}
+                >
+                  {busyId === it.id ? 'Đang đăng…' : it.publishedId && it.publishedListed !== false ? 'Cập nhật' : 'Đăng'}
+                </Button>
+              </li>
+            ))}
             {docs.map((d) => (
               <li key={d.id} className="flex items-center gap-4 py-3.5">
                 <div className="min-w-0 flex-1">
@@ -344,7 +367,7 @@ function PublishModal({
                   size="sm"
                   disabled={busyId !== null || d.blocks.length === 0}
                   title={d.blocks.length === 0 ? 'Đề chưa có nội dung' : undefined}
-                  onClick={() => void publish(d)}
+                  onClick={() => void publish(d.id, () => publishDoc(d, true))}
                 >
                   {busyId === d.id ? 'Đang đăng…' : 'Đăng'}
                 </Button>

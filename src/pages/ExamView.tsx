@@ -1,13 +1,24 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeft, Download, MonitorPlay, Printer } from 'lucide-react'
+import { ArrowLeft, ChevronDown, Download, FileText, MonitorPlay, Printer, Save, Sparkles } from 'lucide-react'
 import { Badge, Button, EmptyState } from '@/components/ui'
-import { ExamSheet } from '@/components/ExamSheet'
+import { ExamEditor, A4_PORTRAIT_W } from '@/examEditor/ExamEditor'
+import { blocksToTipTap } from '@/examEditor/convert'
+import type { ExamBlock } from '@/data/docTypes'
 import { useApp } from '@/store/app'
 import { COMMUNITY_EXAMS } from '@/data/community'
 import { exportDocx } from '@/lib/exportDocx'
 import { totalPoints } from '@/data/types'
 import { formatPoints } from '@/lib/math'
+import { examToDoc } from '@/lib/exportDocx'
+import { examToDraft } from '@/lib/onlineExam'
+import { isRemoteExamId } from '@/lib/attempts'
+import { getCommunityDoc } from '@/lib/community'
+import { useDocStore } from '@/store/docs'
+import { useComposeStore } from '@/store/compose'
+import { useOnline } from '@/store/online'
+import { dialog } from '@/components/Dialog'
+import type { Exam } from '@/data/types'
 
 export default function ExamView() {
   const { id } = useParams<{ id: string }>()
@@ -73,6 +84,8 @@ export default function ExamView() {
             {exam.subject}
           </Badge>
 
+          <SaveMenu exam={exam} />
+
           <Button variant="soft" size="sm" onClick={() => window.print()}>
             <Printer className="size-3.5" />
             <span className="hidden md:inline">In</span>
@@ -92,8 +105,127 @@ export default function ExamView() {
       </div>
 
       <div className="px-4 py-8 sm:px-6">
-        <ExamSheet exam={exam} />
+        <DocView exam={exam} />
       </div>
+    </div>
+  )
+}
+
+/** Nút Lưu: sao đề về Tạo đề online hoặc về trình soạn để chỉnh sửa. Luôn là bản sao, đề gốc không đổi. */
+function SaveMenu({ exam }: { exam: Exam }) {
+  const navigate = useNavigate()
+  const [open, setOpen] = useState(false)
+  const [busy, setBusy] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!open) return
+    const close = (e: MouseEvent | KeyboardEvent) => {
+      if (e instanceof KeyboardEvent ? e.key === 'Escape' : !ref.current?.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener('mousedown', close)
+    document.addEventListener('keydown', close)
+    return () => {
+      document.removeEventListener('mousedown', close)
+      document.removeEventListener('keydown', close)
+    }
+  }, [open])
+
+  const toOnline = () => {
+    const draft = examToDraft(exam)
+    navigate(`/tao-de-online/${useOnline.getState().create(draft)}`)
+  }
+
+  const toEditor = async () => {
+    setBusy(true)
+    try {
+      // đề đăng từ trình soạn: lấy nguyên khối gốc để giữ định dạng; đề tạo online thì dựng lại từ câu hỏi
+      const remote = isRemoteExamId(exam.importedFrom) ? await getCommunityDoc(exam.importedFrom).catch(() => null) : null
+      const base = remote?.blocks.length ? remote : examToDoc(exam)
+      const now = new Date().toISOString()
+      const doc = { ...base, id: Math.random().toString(36).slice(2, 10), online: undefined, kind: 'exam' as const, createdAt: now, updatedAt: now }
+      useDocStore.getState().saveDocById(doc)
+      useComposeStore.getState().openDoc(doc)
+      navigate('/soan-de', { state: { openTab: true } })
+    } catch (err) {
+      void dialog.alert(err instanceof Error ? err.message : 'Không lưu được đề, thử lại sau.')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const item = 'flex w-full items-start gap-3 rounded-[6px] px-3 py-2.5 text-left transition-colors hover:bg-sunken disabled:opacity-50'
+  return (
+    <div ref={ref} className="relative">
+      <Button variant="soft" size="sm" onClick={() => setOpen((v) => !v)} aria-haspopup="menu" aria-expanded={open} disabled={busy}>
+        <Save className="size-3.5" />
+        <span className="hidden md:inline">{busy ? 'Đang lưu…' : 'Lưu'}</span>
+        <ChevronDown className={`size-3.5 transition-transform ${open ? 'rotate-180' : ''}`} />
+      </Button>
+      {open ? (
+        <div role="menu" className="anim-sheet absolute right-0 top-full z-40 mt-2 w-[280px] rounded-[8px] bg-surface p-1.5 shadow-float">
+          <button type="button" role="menuitem" className={item} onClick={() => { setOpen(false); toOnline() }}>
+            <Sparkles className="mt-0.5 size-4 shrink-0 text-clay" />
+            <span>
+              <span className="block text-[13.5px] font-semibold text-ink">Lưu vào đề online</span>
+              <span className="block text-[12px] text-ink-3">Bản sao trong Tạo đề online, sửa rồi cho học sinh làm.</span>
+            </span>
+          </button>
+          <button type="button" role="menuitem" className={item} disabled={busy} onClick={() => { setOpen(false); void toEditor() }}>
+            <FileText className="mt-0.5 size-4 shrink-0 text-clay" />
+            <span>
+              <span className="block text-[13.5px] font-semibold text-ink">Lưu vào trình soạn thảo</span>
+              <span className="block text-[12px] text-ink-3">Mở bản sao trong trình soạn để chỉnh sửa, in, xuất Word.</span>
+            </span>
+          </button>
+        </div>
+      ) : null}
+    </div>
+  )
+}
+
+/**
+ * Đề hiển thị đúng như trong trình soạn (giấy A4, kiểu chữ Word), chỉ đọc.
+ * Đề đăng từ trình soạn: dùng nguyên khối gốc; đề tạo online/đề mẫu: dựng khối từ câu hỏi như khi xuất Word.
+ */
+function DocView({ exam }: { exam: Exam }) {
+  const [blocks, setBlocks] = useState<ExamBlock[] | null>(null)
+  const [zoom, setZoom] = useState(1)
+  const boxRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    let alive = true
+    const fallback = () => examToDoc(exam).blocks
+    if (!isRemoteExamId(exam.importedFrom)) setBlocks(fallback())
+    else
+      getCommunityDoc(exam.importedFrom)
+        .then((d) => alive && setBlocks(d.blocks.length ? d.blocks : fallback()))
+        .catch(() => alive && setBlocks(fallback()))
+    return () => {
+      alive = false
+    }
+  }, [exam])
+
+  // co trang A4 cho vừa khung hẹp, giống auto-fit của trình soạn
+  useEffect(() => {
+    const box = boxRef.current
+    if (!box) return
+    const ro = new ResizeObserver(() => setZoom(Math.min(1, box.clientWidth / A4_PORTRAIT_W)))
+    ro.observe(box)
+    return () => ro.disconnect()
+  }, [])
+
+  const content = useMemo(() => (blocks ? blocksToTipTap(blocks) : null), [blocks])
+  return (
+    <div ref={boxRef} className="flex justify-center">
+      {content ? (
+        // trang giấy và lớp chữ đều absolute → phải đặt bề rộng A4 cho khung, không thì nó co về 0
+        <div style={{ zoom, width: A4_PORTRAIT_W }}>
+          <ExamEditor content={content} onChange={() => {}} readOnly />
+        </div>
+      ) : (
+        <div className="h-[1123px] w-full max-w-[794px] animate-pulse rounded-[4px] bg-surface" />
+      )}
     </div>
   )
 }

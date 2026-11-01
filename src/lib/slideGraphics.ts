@@ -46,6 +46,9 @@ export const GRAPHIC_CATEGORY_LABEL: Record<GraphicCategory, string> = {
   art: 'Nghệ thuật',
   pe: 'Thể chất',
   life: 'Kỹ năng sống',
+  civic: 'Giáo dục công dân',
+  event: 'Lễ & sự kiện',
+  feel: 'Cảm xúc & phản hồi',
   ornament: 'Trang trí (layout dùng, không vào catalog AI)',
 }
 
@@ -75,6 +78,9 @@ const CATEGORY_ORDER: GraphicCategory[] = [
   'art',
   'pe',
   'life',
+  'civic',
+  'event',
+  'feel',
 ]
 
 /** Bỏ dấu tiếng Việt để search bằng chuỗi không dấu (giống pickSlideAsset). */

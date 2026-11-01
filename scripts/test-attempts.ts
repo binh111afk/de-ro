@@ -24,6 +24,14 @@ assert.equal(summarize([at('Em', 15, 60, null, 20)]).avg, 7.5)
 assert.deepEqual(summarize([]).top, [])
 assert.equal(summarize([]).avg, 0)
 
+// cùng thiết bị gõ tên lệch vẫn là một người; khác thiết bị trùng tên là hai người
+const dev = (name: string, device: string, score: number) => ({ ...at(name, score, 300), device_id: device, class_name: '10A1', seat_no: 3 })
+const d = summarize([dev('an', 'device-aaaa', 6), dev('Nguyễn An', 'device-aaaa', 8), dev('Nguyễn An', 'device-bbbb', 5)])
+assert.equal(d.students.length, 2)
+assert.equal(d.students[0].attempts, 2)
+assert.equal(d.students[0].className, '10A1')
+assert.equal(d.students[0].seat, 3)
+
 assert.ok(isRemoteExamId('0b7e1c24-5f6a-4c0e-9a3d-1f2e3d4c5b6a'))
 assert.ok(!isRemoteExamId('p0k7s6wa') && !isRemoteExamId(undefined))
 console.log('test:attempts ok')

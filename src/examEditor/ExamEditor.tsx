@@ -74,9 +74,11 @@ export interface ExamEditorProps {
   /** nhận editor khi nó mount vào DOM (chỉ báo "đã sẵn sàng", không báo hủy) */
   onReady?: (editor: Editor) => void
   pageSetup?: PageSetup
+  /** chỉ xem (trang xem đề cộng đồng): cùng giấy A4 và kiểu chữ như trình soạn, không sửa được */
+  readOnly?: boolean
 }
 
-export function ExamEditor({ content, onChange, onReady, pageSetup }: ExamEditorProps) {
+export function ExamEditor({ content, onChange, onReady, pageSetup, readOnly }: ExamEditorProps) {
   const flowRef = useRef<HTMLDivElement>(null)
   const [pageCount, setPageCount] = useState(1)
   const geo = pageGeometry(pageSetup ?? { marginCm: 2, orientation: 'portrait' })
@@ -133,6 +135,7 @@ export function ExamEditor({ content, onChange, onReady, pageSetup }: ExamEditor
       DeleteObjects,
     ],
     content,
+    editable: !readOnly,
     editorProps: {
       attributes: {
         class: 'doc-content',
@@ -393,7 +396,7 @@ export function ExamEditor({ content, onChange, onReady, pageSetup }: ExamEditor
           '--doc-orient': pageSetup?.orientation ?? 'portrait',
         } as React.CSSProperties}
       >
-        {!content.content?.length && (
+        {!readOnly && !content.content?.length && (
           <button
             type="button"
             className="doc-placeholder"

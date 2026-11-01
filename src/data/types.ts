@@ -60,6 +60,10 @@ export interface ExamSettings {
   instantFeedback?: boolean
   /** đảo thứ tự câu mỗi lượt làm */
   shuffleQuestions?: boolean
+  /** mỗi thiết bị chỉ được nộp một lần (chặn theo id thiết bị, không tuyệt đối) */
+  oneAttempt?: boolean
+  /** danh sách lớp, mỗi phần tử một tên theo số thứ tự; có thì học sinh chọn tên thay vì gõ */
+  roster?: string[]
 }
 
 export interface Exam {

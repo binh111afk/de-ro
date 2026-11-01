@@ -12,7 +12,7 @@
 import { readFileSync, writeFileSync } from 'node:fs'
 import { bboxOf } from './lib/svg-bbox.mjs'
 import { importDecor } from './import-decor.mjs'
-import { ICONS_100, ICONS_NEW, ICONS_PROG, SHEET_100, SHEET_NEW, SHEET_PROG } from './graphics-extra.mjs'
+import { ICONS_100, ICONS_DOT4, ICONS_NEW, ICONS_PROG, SHEET_100, SHEET_DOT4, SHEET_NEW, SHEET_PROG } from './graphics-extra.mjs'
 
 const SHEET = 'C:/Users/Lenovo/Downloads/112 educational icons · 64px.svg'
 const OUT = 'src/lib/graphics.ts'
@@ -195,6 +195,7 @@ const entries = [
   ...importSheet(SHEET_100, ICONS_100),
   ...importSheet(SHEET_NEW, ICONS_NEW),
   ...importSheet(SHEET_PROG, ICONS_PROG),
+  ...importSheet(SHEET_DOT4, ICONS_DOT4),
   ...importDecor(),
 ]
 const seen = new Set()
@@ -211,7 +212,7 @@ const body = entries
   .join('\n')
 
 const file = `/* AUTO-GENERATED bởi scripts/import-graphics.mjs — đừng sửa tay.
- * Nguồn: 4 contact sheet (112 icon gốc + 100 icon bổ sung + 20 ngôn ngữ lập trình + 78
+ * Nguồn: 5 contact sheet (112 icon gốc + 100 icon bổ sung + 20 ngôn ngữ lập trình + 100 icon đợt 4 + 78
  * asset trang trí "ornament" — scripts/import-decor.mjs; ornament không vào catalog/tìm kiếm của AI;
  * 64px, 3px stroke #22333B, 8 màu pastel).
  * Cắt cửa sổ 70×70 quanh tâm từng icon để nét 3px không bị cắt.
@@ -242,6 +243,9 @@ export type GraphicCategory =
   | 'art'
   | 'pe'
   | 'life'
+  | 'civic'
+  | 'event'
+  | 'feel'
   | 'ornament'
 
 export interface SlideGraphicData {

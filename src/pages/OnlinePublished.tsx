@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { BarChart3, Check, Clock, Globe2, Link2, Lock, Sparkles, Trash2, X } from 'lucide-react'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { ArrowLeft, BarChart3, Check, Clock, Crown, Globe2, Link2, Lock, Sparkles, Trash2 } from 'lucide-react'
+import { CopyLink } from '@/components/CopyLink'
 import { dialog } from '@/components/Dialog'
 import { Badge, Button, EmptyState, SkeletonCard } from '@/components/ui'
 import { listAttempts, summarize, type Attempt, type ExamStats, type Student } from '@/lib/attempts'
@@ -25,7 +26,6 @@ export function PublishedPanel() {
   const [rows, setRows] = useState<CommunityRow[] | null>(null)
   const [attempts, setAttempts] = useState<Attempt[]>([])
   const [error, setError] = useState<string | null>(null)
-  const [detail, setDetail] = useState<CommunityRow | null>(null)
   const [busyId, setBusyId] = useState<string | null>(null)
   const userId = session?.user.id
 
@@ -126,7 +126,7 @@ export function PublishedPanel() {
               stats={stats.get(row.id)}
               busy={busyId === row.id}
               localId={items.find((it) => it.publishedId === row.id)?.id}
-              onResults={() => setDetail(row)}
+              onResults={() => navigate(`/tao-de-online/ket-qua/${row.id}`)}
               onToggleListed={() => void toggleListed(row)}
               onRemove={() => void remove(row)}
               onEdit={(id) => navigate(`/tao-de-online/${id}`)}
@@ -134,8 +134,6 @@ export function PublishedPanel() {
           ))}
         </div>
       )}
-
-      {detail ? <ResultsModal row={detail} stats={stats.get(detail.id)} onClose={() => setDetail(null)} /> : null}
     </>
   )
 }
@@ -216,18 +214,7 @@ function PublishedCard({
 
         {total ? <Bands bands={stats!.bands} /> : null}
 
-        <div className="mt-4 min-h-[84px]">
-          <p className="mb-2 text-[11.5px] font-bold uppercase tracking-wide text-ink-4">Top 3 điểm cao</p>
-          {stats?.top.length ? (
-            <ol className="space-y-1.5">
-              {stats.top.map((s, i) => (
-                <TopRow key={s.name + i} rank={i + 1} s={s} />
-              ))}
-            </ol>
-          ) : (
-            <p className="text-[13px] leading-relaxed text-ink-3">Chưa có ai làm. Gửi link cho học sinh, kết quả sẽ hiện ở đây.</p>
-          )}
-        </div>
+        {total ? null : <p className="mt-4 text-[13px] leading-relaxed text-ink-3">Chưa có ai làm. Gửi link cho học sinh, kết quả sẽ hiện ở đây.</p>}
 
         <div className="mt-auto grid grid-cols-2 gap-2 pt-5">
           <Button variant="soft" size="sm" onClick={onResults}>
@@ -307,39 +294,114 @@ function Bands({ bands }: { bands: ExamStats['bands'] }) {
   )
 }
 
-function TopRow({ rank, s }: { rank: number; s: Student }) {
+/** Huy chương vàng/bạc/đồng theo hạng. */
+const MEDAL = [
+  { ring: '#d4a017', fill: 'linear-gradient(145deg,#fde68a,#e0a82e 55%,#b7791f)', text: '#7a4d00' },
+  { ring: '#9ca3af', fill: 'linear-gradient(145deg,#f3f4f6,#c0c4cb 55%,#8b9099)', text: '#3f4652' },
+  { ring: '#b4693a', fill: 'linear-gradient(145deg,#f6c9a4,#c9814f 55%,#94522a)', text: '#5a2c10' },
+]
+/** Chiều cao bục theo hạng 1, 2, 3. */
+const PODIUM_H = ['h-[132px]', 'h-[96px]', 'h-[72px]']
+
+/** Bục top 3: hạng 2 bên trái, hạng 1 ở giữa (to và nổi nhất), hạng 3 bên phải. */
+function Podium({ top }: { top: Student[] }) {
+  const order = [1, 0, 2].filter((i) => top[i])
   return (
-    <li className="flex items-center gap-2.5 text-[13px]">
-      <span className={cn('tnum flex size-5 shrink-0 items-center justify-center rounded-full text-[11px] font-bold', rank === 1 ? 'bg-honey-soft text-honey' : 'bg-sunken text-ink-3')}>{rank}</span>
-      <span className="min-w-0 flex-1 truncate font-medium text-ink">{s.name}</span>
-      <span className="tnum font-semibold text-ink">{formatPoints(s.best)}</span>
-      <span className="tnum w-12 shrink-0 text-right text-[11.5px] text-ink-4">{s.attempts} lần</span>
-    </li>
+    <section aria-label="Top 3 điểm cao" className="mt-8 rounded-[8px] bg-sunken/50 px-3 pt-6 sm:px-8">
+      <ol className="mx-auto flex max-w-[560px] items-end justify-center gap-2 sm:gap-4">
+        {order.map((i) => {
+          const s = top[i]
+          const m = MEDAL[i]
+          const first = i === 0
+          return (
+            <li key={s.name + i} className={cn('flex min-w-0 flex-1 flex-col items-center', first && 'z-10')}>
+              {first ? <Crown className="mb-1 size-7 text-honey drop-shadow-[0_2px_6px_rgba(184,134,47,0.45)]" fill="currentColor" /> : null}
+              <span
+                className={cn('tnum flex shrink-0 items-center justify-center rounded-full font-display font-bold', first ? 'size-16 text-[26px]' : 'size-12 text-[19px]')}
+                style={{ background: m.fill, color: m.text, boxShadow: `0 0 0 3px ${m.ring}33, 0 6px 14px ${m.ring}55` }}
+              >
+                {i + 1}
+              </span>
+              <p className={cn('mt-2 w-full truncate text-center font-semibold text-ink', first ? 'text-[16px]' : 'text-[13.5px]')} title={s.name}>
+                {s.name}
+              </p>
+              <p className={cn('tnum font-display font-semibold', first ? 'text-[22px] text-honey' : 'text-[16px] text-ink-2')}>
+                {formatPoints(s.best)}
+                <span className="text-[12px] font-normal text-ink-4">/{formatPoints(s.max)}</span>
+              </p>
+              <div
+                className={cn('mt-2 flex w-full items-start justify-center rounded-t-[6px] pt-2 text-[12px] font-semibold', PODIUM_H[i], first ? 'bg-honey-soft text-honey shadow-[0_-8px_24px_rgba(184,134,47,0.25)]' : 'bg-surface text-ink-3')}
+              >
+                {mmss(s.seconds)} · {s.attempts} lần
+              </div>
+            </li>
+          )
+        })}
+      </ol>
+    </section>
   )
 }
 
-/** Cửa sổ kết quả của một đề: tóm tắt, phổ điểm và bảng từng học sinh (điểm cao nhất, số lần làm, thời gian). */
-function ResultsModal({ row, stats, onClose }: { row: CommunityRow; stats: ExamStats | undefined; onClose: () => void }) {
+/** Trang kết quả một đề (`/tao-de-online/ket-qua/:id`): tóm tắt, phổ điểm và bảng từng học sinh (điểm cao nhất, số lần làm, thời gian). */
+export default function OnlineResults() {
+  const { id = '' } = useParams()
+  const session = useSession()
+  const [row, setRow] = useState<CommunityRow | null | undefined>(undefined)
+  const [stats, setStats] = useState<ExamStats>()
+  const [error, setError] = useState<string | null>(null)
+  const userId = session?.user.id
+
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
+    // ponytail: dữ liệu giả để xem giao diện, chỉ ở dev (`/tao-de-online/ket-qua/demo`)
+    if (import.meta.env.DEV && id === 'demo') {
+      setRow(DEMO_ROW)
+      setStats(summarize(demoAttempts()))
+      return
     }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [onClose])
+    if (!userId) return
+    Promise.all([listMyPublished(), listAttempts([id])])
+      .then(([list, att]) => {
+        setRow(list.find((r) => r.id === id) ?? null)
+        setStats(summarize(att))
+      })
+      .catch((err) => setError(err instanceof Error ? err.message : 'Không tải được kết quả, thử lại sau.'))
+  }, [userId, id])
 
   const students = stats?.students ?? []
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-ink/40 px-5 py-8 backdrop-blur-sm" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-      <div role="dialog" aria-modal="true" aria-label="Kết quả học sinh" className="anim-sheet my-auto flex max-h-[min(720px,calc(100dvh-4rem))] w-full max-w-[640px] flex-col rounded-[8px] bg-surface p-6 shadow-float sm:p-7">
-        <div className="flex items-start justify-between gap-4">
+    <div className="mx-auto max-w-[960px] px-5 py-10 sm:px-6 lg:py-12">
+      <Link to="/tao-de-online?tab=published" className="mb-8 inline-flex items-center gap-2 text-[13.5px] font-semibold text-ink-3 transition-colors hover:text-ink">
+        <ArrowLeft className="size-4" />
+        Đề đã xuất bản
+      </Link>
+
+      {!session && id !== 'demo' ? (
+        <EmptyState
+          icon={<Lock className="size-6" strokeWidth={1.6} />}
+          title="Đăng nhập để xem kết quả"
+          description="Kết quả của học sinh gắn với tài khoản của bạn."
+          action={
+            <Link to="/dang-nhap">
+              <Button variant="primary">Đăng nhập</Button>
+            </Link>
+          }
+        />
+      ) : error ? (
+        <p role="alert" className="text-[13.5px] font-medium text-clay-deep">{error}</p>
+      ) : row === undefined ? (
+        <SkeletonCard variant="exam" />
+      ) : row === null ? (
+        <EmptyState icon={<Sparkles className="size-6" strokeWidth={1.6} />} title="Không tìm thấy đề" description="Đề này đã bị gỡ hoặc không thuộc tài khoản của bạn." />
+      ) : (
+      <div className="rounded-[8px] bg-surface p-6 shadow-[0_1px_2px_rgba(60,48,32,0.03)] sm:p-8">
+        <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="min-w-0">
-            <h2 className="line-clamp-2 font-display text-[21px] font-semibold leading-snug text-ink">{row.title.trim() || 'Đề chưa đặt tên'}</h2>
-            <p className="mt-1 text-[13px] text-ink-3">Kết quả học sinh · mỗi người tính điểm cao nhất</p>
+            <h1 className="font-display text-[28px] font-semibold leading-snug tracking-[-0.02em] text-ink">{row.title.trim() || 'Đề chưa đặt tên'}</h1>
+            <p className="mt-1 text-[13px] text-ink-3">
+              {row.subject} · {row.grade} · {row.question_count} câu · Kết quả học sinh, mỗi người tính điểm cao nhất
+            </p>
           </div>
-          <button type="button" onClick={onClose} aria-label="Đóng" className="flex size-9 shrink-0 items-center justify-center rounded-full bg-sunken text-ink-3 transition-colors hover:text-ink">
-            <X className="size-4" />
-          </button>
+          <CopyLink url={shareUrl(row.id)} className="w-full sm:w-[320px]" />
         </div>
 
         {students.length === 0 ? (
@@ -363,12 +425,16 @@ function ResultsModal({ row, stats, onClose }: { row: CommunityRow; stats: ExamS
               ))}
             </ul>
 
-            <div className="mt-5 min-h-0 flex-1 overflow-y-auto rounded-[6px] border border-line">
+            <Podium top={stats!.top} />
+
+            <div className="mt-5 overflow-x-auto rounded-[6px] border border-line">
               <table className="w-full border-collapse text-left text-[13px]">
                 <thead className="sticky top-0 whitespace-nowrap bg-sunken text-[11.5px] font-bold uppercase tracking-wide text-ink-4">
                   <tr>
                     <th className="w-10 px-3 py-2">#</th>
                     <th className="px-3 py-2">Tên</th>
+                    <th className="px-3 py-2">Lớp</th>
+                    <th className="px-3 py-2 text-right">STT</th>
                     <th className="px-3 py-2 text-right">Điểm</th>
                     <th className="px-3 py-2 text-right">Số lần</th>
                     <th className="hidden px-3 py-2 text-right sm:table-cell">Thời gian</th>
@@ -380,6 +446,8 @@ function ResultsModal({ row, stats, onClose }: { row: CommunityRow; stats: ExamS
                     <tr key={s.name + i} className="border-t border-line">
                       <td className="tnum px-3 py-2 text-ink-3">{i + 1}</td>
                       <td className="max-w-[160px] truncate px-3 py-2 font-medium text-ink">{s.name}</td>
+                      <td className="whitespace-nowrap px-3 py-2 text-ink-2">{s.className || '–'}</td>
+                      <td className="tnum px-3 py-2 text-right text-ink-2">{s.seat ?? '–'}</td>
                       <td className="tnum px-3 py-2 text-right font-semibold text-ink">
                         {formatPoints(s.best)}
                         <span className="font-normal text-ink-4">/{formatPoints(s.max)}</span>
@@ -394,8 +462,42 @@ function ResultsModal({ row, stats, onClose }: { row: CommunityRow; stats: ExamS
             </div>
           </>
         )}
-
       </div>
+      )}
     </div>
+  )
+}
+
+const DEMO_ROW: CommunityRow = {
+  id: 'demo',
+  title: 'Kiểm tra 15 phút — Hàm số bậc hai',
+  subject: 'Toán',
+  grade: 'Lớp 10',
+  school: 'THPT Nguyễn Du',
+  created_at: '2026-10-20T08:00:00Z',
+  question_count: 20,
+  duration_minutes: 15,
+  total_points: 10,
+  preview: '',
+  listed: true,
+}
+
+function demoAttempts(): Attempt[] {
+  const names = ['Nguyễn An', 'Trần Bảo', 'Lê Chi', 'Phạm Dũng', 'Hoàng Giang', 'Vũ Hà', 'Đặng Khoa', 'Bùi Lan', 'Đỗ Minh', 'Ngô Nam', 'Dương Oanh', 'Lý Phúc', 'Mai Quỳnh', 'Tạ Sơn', 'Hồ Trang']
+  const scores = [9.5, 8.75, 8, 7.5, 7.25, 6.5, 6, 5.75, 5, 4.5, 9, 3.75, 8.5, 6.75, 4]
+  return names.flatMap((name, i) =>
+    Array.from({ length: (i % 3) + 1 }, (_, k) => ({
+      id: `${i}-${k}`,
+      exam_id: 'demo',
+      user_id: null,
+      device_id: `demo-device-${i}`,
+      class_name: i < 8 ? '10A1' : '10A2',
+      seat_no: i + 1,
+      student_name: name,
+      score: Math.max(0, scores[i] - k * 0.75),
+      max_score: 10,
+      duration_seconds: 420 + ((i * 53 + k * 31) % 480),
+      created_at: new Date(Date.UTC(2026, 9, 21 + (i % 9), 8 + k)).toISOString(),
+    })),
   )
 }

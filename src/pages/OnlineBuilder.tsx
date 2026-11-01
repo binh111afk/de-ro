@@ -1,6 +1,6 @@
 import { useRef, useState, type ReactNode } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
-import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Check, Copy, Eye, MonitorPlay, Plus, Trash2, Upload, Users, X } from 'lucide-react'
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Check, Copy, Eye, MonitorPlay, Plus, Trash2, Upload, X } from 'lucide-react'
 import { Button, Checkbox, EmptyState, Field, inputClass } from '@/components/ui'
 import { CopyLink } from '@/components/CopyLink'
 import { OnlineAiBox } from '@/components/OnlineAiBox'
@@ -440,6 +440,40 @@ export default function OnlineBuilder() {
               />
             </div>
 
+            <div className="rounded-[8px] bg-surface p-3 shadow-[0_1px_2px_rgba(60,48,32,0.03)]">
+              <h2 className="px-3 pb-1 pt-3 font-display text-[20px] font-semibold text-ink">Thông tin học sinh</h2>
+              {item.publishedListed ? (
+                <p className="mx-3 mt-2 rounded-[6px] bg-honey-soft px-3 py-2 text-[12.5px] leading-relaxed text-honey">
+                  Đề đang ở cộng đồng nên phần này tạm tắt: ai cũng làm được, không hỏi lớp và số thứ tự. Rút đề khỏi cộng đồng (chỉ link) ở Đề đã xuất bản để bật lại.
+                </p>
+              ) : (
+                <p className="px-3 text-[12.5px] leading-relaxed text-ink-3">Trước khi làm, học sinh nhập tên, lớp và số thứ tự. Máy nhớ thông tin này cho lần sau.</p>
+              )}
+              <div className={cn(item.publishedListed && 'pointer-events-none opacity-40')}>
+                <Toggle
+                  label="Mỗi học sinh chỉ làm một lần"
+                  hint="Chặn theo thiết bị: máy đã nộp bài thì không làm lại được."
+                  checked={Boolean(item.settings.oneAttempt)}
+                  onChange={(v) => setSettings({ oneAttempt: v })}
+                />
+                <div className="px-4 pb-3">
+                  <Field label="Danh sách lớp (tuỳ chọn, mỗi dòng một tên theo số thứ tự)">
+                    <textarea
+                      rows={5}
+                      className={inputClass + ' h-auto py-2.5'}
+                      placeholder={'Nguyễn Văn An\nTrần Thị Bình\n…'}
+                      defaultValue={(item.settings.roster ?? []).join('\n')}
+                      onBlur={(e) => {
+                        const names = e.target.value.split('\n').map((s) => s.trim()).filter(Boolean)
+                        setSettings({ roster: names.length ? names : undefined })
+                      }}
+                    />
+                  </Field>
+                  <p className="mt-1.5 text-[12px] text-ink-4">Có danh sách thì học sinh chọn tên mình, số thứ tự tự điền theo dòng. Để trống thì học sinh tự gõ.</p>
+                </div>
+              </div>
+            </div>
+
             <div className="flex flex-wrap items-center justify-between gap-3">
               <Button variant="soft" onClick={() => goStep(0)}>
                 <ArrowLeft className="size-4" />
@@ -472,16 +506,10 @@ export default function OnlineBuilder() {
               Làm thử
             </Button>
             {item.publishedId ? null : (
-              <>
-                <Button variant="outline" disabled={busy} onClick={() => void publish(false)} title="Chỉ ai có link mới làm được">
-                  <Users className="size-4" />
-                  {busy ? 'Đang xuất bản…' : 'Xuất bản cho học sinh'}
-                </Button>
-                <Button variant="outline" disabled={busy} onClick={() => void publish(true)} title="Hiện trong danh sách đề cộng đồng">
-                  <Upload className="size-4" />
-                  Đăng lên cộng đồng
-                </Button>
-              </>
+              <Button variant="outline" disabled={busy} onClick={() => void publish(true)} title="Đăng lên đề cộng đồng">
+                <Upload className="size-4" />
+                {busy ? 'Đang đăng…' : 'Đăng'}
+              </Button>
             )}
           </div>
 

@@ -12,6 +12,7 @@ import Library from '@/pages/Library'
 import Grading from '@/pages/Grading'
 import Quiz from '@/pages/Quiz'
 import OnlineList from '@/pages/OnlineList'
+import OnlineResults from '@/pages/OnlinePublished'
 import OnlineBuilder from '@/pages/OnlineBuilder'
 import OnlineOpen from '@/pages/OnlineOpen'
 import ExamView from '@/pages/ExamView'
@@ -69,6 +70,7 @@ export default function App() {
           <Route path="/soan-de" element={<ComposeDoc />} />
           <Route path="/soan-slide" element={<Navigate to="/soan-de" replace />} />
           <Route path="/tao-de-online" element={<OnlineList />} />
+          <Route path="/tao-de-online/ket-qua/:id" element={<OnlineResults />} />
           <Route path="/tao-de-online/:id" element={<OnlineBuilder />} />
           <Route path="/de-online/:id" element={<OnlineOpen />} />
           <Route path="/de-cong-dong" element={<Community />} />

@@ -14,7 +14,7 @@
  */
 import { dialog } from '@/components/Dialog'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import type { Editor } from '@tiptap/core'
 import type { JSONContent } from '@tiptap/core'
 import { Selection } from '@tiptap/pm/state'
@@ -271,7 +271,9 @@ export default function ComposeDoc() {
   const [ribbonTab, setRibbonTab] = useState('home')
   const [findTab, setFindTab] = useState<'find' | 'replace' | null>(null)
   // tab khởi động (trang bắt đầu) hiện thay cho sân soạn khi được chọn
-  const [startOpen, setStartOpen] = useState(true)
+  // trang khác đã mở sẵn một tab (vd. Lưu vào trình soạn thảo ở trang xem đề) thì vào thẳng tab đó
+  const { state: navState } = useLocation() as { state: { openTab?: boolean } | null }
+  const [startOpen, setStartOpen] = useState(!navState?.openTab)
   const [aiOpen, setAiOpen] = useState(true)
   const [navOpen, setNavOpen] = useState(true)
   const [navWidth, setNavWidth] = useState(288)
