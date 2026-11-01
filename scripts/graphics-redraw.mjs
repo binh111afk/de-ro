@@ -933,7 +933,115 @@ HIS_NEW.reduce((after, [id, name, keywords, svg]) => {
   return id
 }, 'geo-thung-lung')
 
+// --- cơ thể người bổ sung (30 icon, nhóm Sinh học) ---
+const oval = (cx, cy, rx, ry, color) => fill(ellipseD(cx, cy, rx, ry), color)
+const vertebra = (y) => fill(`M26 ${y}H44Q48 ${y + 4} 44 ${y + 8}H26Q22 ${y + 4} 26 ${y}Z`, WHITE)
+const BODY_NEW = [
+  ['bio-mat', 'Mắt', 'mat thi giac giac quan nhin co the nguoi', svg(
+    fill('M6 35Q35 8 64 35Q35 62 6 35Z', WHITE), cp(35, 35, 12, BLUE), dot(35, 35, 5), cp(39, 31, 2, WHITE),
+    line('M35 14V8M22 18L18 12M48 18L52 12'))],
+  ['bio-tai', 'Tai', 'tai thinh giac giac quan nghe co the nguoi', svg(
+    fill('M22 28Q22 8 39 8Q56 8 56 28Q56 40 46 46Q42 49 42 56Q42 64 33 64Q25 64 24 56Z', PEACH),
+    line('M32 27Q32 18 39 18Q46 18 46 26Q46 34 38 36Q35 42 40 45'))],
+  ['bio-mui', 'Mũi', 'mui khuu giac giac quan ngui co the nguoi', svg(
+    fill('M30 8Q30 32 21 44Q18 54 28 54Q32 58 35 54Q38 58 42 54Q52 54 49 44Q40 32 40 8Z', PEACH),
+    fill(ellipseD(29, 48, 3, 2), INK), fill(ellipseD(41, 48, 3, 2), INK))],
+  ['bio-mieng', 'Miệng', 'mieng moi an noi co the nguoi', svg(
+    fill('M7 35Q20 16 35 25Q50 16 63 35Q50 56 35 56Q20 56 7 35Z', PINK), line('M7 35Q35 43 63 35'))],
+  ['bio-luoi', 'Lưỡi', 'luoi vi giac giac quan nem co the nguoi', svg(
+    fill('M18 10H52V34Q52 62 35 62Q18 62 18 34Z', PINK), line('M35 20V46'),
+    cp(27, 24, 2, WHITE), cp(43, 24, 2, WHITE), cp(28, 38, 2, WHITE), cp(42, 38, 2, WHITE))],
+  ['bio-rang', 'Răng', 'rang nha khoa ve sinh rang mieng co the nguoi', svg(
+    fill('M18 12Q26 6 35 12Q44 6 52 12Q61 22 55 40Q51 50 48 62Q42 65 40 52Q38 44 35 44Q32 44 30 52Q28 65 22 62Q19 50 15 40Q9 22 18 12Z', WHITE),
+    line('M23 19Q20 25 22 30'))],
+  ['bio-ban-tay', 'Bàn tay', 'ban tay ngon tay co the nguoi', svg(
+    fill('M20 64V40L11 30Q8 25 13 22Q17 20 21 25L24 29V13Q24 8 28 8Q32 8 32 13V30V9Q32 4 36 4Q40 4 40 9V30V11Q40 6 44 6Q48 6 48 11V32V17Q48 12 52 12Q56 12 56 17V44Q56 56 48 64Z', PEACH),
+    line('M32 22V30M40 22V30M48 24V32'))],
+  ['bio-ban-chan', 'Bàn chân', 'ban chan dau chan ngon chan co the nguoi', svg(
+    fill('M26 26Q44 20 48 34Q50 50 44 60Q36 68 28 60Q20 50 22 38Q22 30 26 26Z', PEACH),
+    cp(24, 15, 4.5, PEACH), cp(33, 11, 4, PEACH), cp(41, 12, 3.5, PEACH), cp(48, 16, 3, PEACH), cp(53, 22, 2.5, PEACH))],
+  ['bio-da-day', 'Dạ dày', 'da day tieu hoa co quan co the nguoi', svg(
+    line('M48 57Q51 64 60 63'),
+    fill('M26 5V18Q26 26 22 32Q14 46 22 56Q32 64 46 58Q58 52 56 40Q54 30 44 32Q38 34 36 26V5Z', PINK),
+    line('M24 44Q32 50 44 46'))],
+  ['bio-gan', 'Gan', 'gan tieu hoa thai doc co quan co the nguoi', svg(
+    oval(40, 50, 4, 5, GREEN),
+    fill('M6 30Q10 16 34 16Q58 14 64 22Q62 34 46 44Q32 52 20 52Q8 48 6 30Z', PEACH), line('M38 18Q36 30 40 42'))],
+  ['bio-than', 'Thận', 'than bai tiet nuoc tieu co quan co the nguoi', svg(
+    line('M27 32Q32 46 33 58M43 32Q38 46 37 58'), oval(35, 60, 9, 5.5, YELLOW),
+    fill('M22 8Q6 8 6 28Q6 48 22 50Q30 50 30 40Q30 34 26 29Q30 24 30 18Q30 8 22 8Z', PINK),
+    fill('M48 8Q64 8 64 28Q64 48 48 50Q40 50 40 40Q40 34 44 29Q40 24 40 18Q40 8 48 8Z', PINK))],
+  ['bio-ruot', 'Ruột', 'ruot non ruot gia tieu hoa co the nguoi', svg(
+    fill('M10 60V16Q10 10 16 10H54Q60 10 60 16V58H51V19H19V60Z', PEACH),
+    fill('M24 22Q35 18 46 22Q50 28 46 34Q50 40 46 46Q42 54 35 52Q28 54 24 46Q20 40 24 34Q20 28 24 22Z', PINK),
+    line('M28 28H42M28 34Q35 38 42 34M28 41H42M30 47H40'))],
+  ['bio-co-bap', 'Cơ bắp', 'co bap co bap tay van dong suc khoe co the nguoi', svg(
+    fill('M8 58Q6 40 18 36Q26 34 30 40Q32 26 44 20L40 10Q48 5 57 12Q63 24 57 35Q52 47 40 53Q26 60 8 58Z', PEACH),
+    line('M30 40Q36 33 45 36'))],
+  ['bio-hong-cau', 'Hồng cầu', 'hong cau te bao mau van chuyen oxy', svg(
+    oval(46, 46, 17, 13, PINK), oval(46, 46, 7, 4, PINK),
+    oval(26, 26, 18, 14, PINK), oval(26, 26, 8, 5, PINK))],
+  ['bio-bach-cau', 'Bạch cầu', 'bach cau te bao mau mien dich bao ve co the', svg(
+    fill('M35 8Q50 6 58 18Q66 30 60 44Q56 60 38 62Q20 64 12 50Q4 36 12 22Q20 10 35 8Z', LILAC),
+    fill('M24 30Q24 22 32 24Q38 18 44 26Q52 28 48 38Q46 46 38 42Q30 48 26 40Q20 36 24 30Z', PINK))],
+  ['bio-mach-mau', 'Mạch máu', 'mach mau dong mach tinh mach tuan hoan', svg(
+    fill('M30 64Q32 44 30 34Q20 26 12 10L18 7Q24 20 35 28Q46 20 52 7L58 10Q50 26 40 34Q38 44 40 64Z', PINK),
+    line('M35 34V60'))],
+  ['bio-noron', 'Nơ-ron thần kinh', 'noron te bao than kinh dan truyen xung than kinh', svg(
+    line('M14 20L6 14M15 32L7 38M22 16V7M29 18L35 10M29 31L50 52M50 52H62M50 52L52 64M50 52L59 60'),
+    fill('M34 34L38 30L44 36L40 40Z', YELLOW), cp(22, 26, 9, LILAC), cp(22, 26, 3.5, WHITE))],
+  ['bio-hop-so', 'Hộp sọ', 'hop so xuong dau bo xuong co the nguoi', svg(
+    fill('M14 30Q14 8 35 8Q56 8 56 30Q56 40 48 44V54H22V44Q14 40 14 30Z', WHITE),
+    cp(26, 30, 5, LILAC), cp(44, 30, 5, LILAC), poly([[35, 36], [32, 42], [38, 42]], LILAC), line('M29 54V47M35 54V47M41 54V47'))],
+  ['bio-cot-song', 'Cột sống', 'cot song dot song xuong song bo xuong', svg(
+    line('M35 4V66'), vertebra(6), vertebra(18), vertebra(30), vertebra(42), vertebra(54))],
+  ['bio-long-nguc', 'Lồng ngực', 'long nguc xuong suon bo xuong', svg(
+    line('M32 16Q14 16 12 30M38 16Q56 16 58 30M32 26Q14 26 14 42M38 26Q56 26 56 42M32 36Q18 38 18 52M38 36Q52 38 52 52'),
+    fill('M31 8H39V48H31Z', WHITE))],
+  ['bio-van-tay', 'Vân tay', 'van tay dau van tay nhan dang', svg(
+    oval(35, 36, 22, 28, PEACH),
+    line('M22 54Q16 34 24 22Q35 12 46 22Q54 32 50 50M28 56Q24 40 28 30Q35 22 42 30Q46 38 43 54M35 58V36'))],
+  ['bio-giot-mau', 'Giọt máu', 'giot mau hien mau mau', svg(
+    fill('M35 6Q54 32 54 44Q54 62 35 62Q16 62 16 44Q16 32 35 6Z', PINK), line('M24 44Q24 53 31 56'))],
+  ['bio-tui-mau', 'Túi máu', 'tui mau hien mau truyen mau', svg(
+    line('M35 58V66M30 14V7H40V14'), fill('M18 14H52Q56 14 56 18V52Q56 58 50 58H20Q14 58 14 52V18Q14 14 18 14Z', WHITE),
+    fill('M14 32H56V52Q56 58 50 58H20Q14 58 14 52Z', PINK), line('M35 38V50M29 44H41'))],
+  ['bio-khi-quan', 'Khí quản', 'khi quan phe quan ho hap co the nguoi', svg(
+    line('M30 36Q20 40 14 58M40 36Q50 40 56 58M20 46L10 48M50 46L60 48'),
+    fill('M30 5H40V38H30Z', WHITE), line('M30 12H40M30 19H40M30 26H40M30 33H40'))],
+  ['bio-nhip-tim', 'Nhịp tim', 'nhip tim dien tim mach dap tim mach', svg(
+    fill('M35 60Q8 42 8 24Q8 10 21 10Q30 10 35 18Q40 10 49 10Q62 10 62 24Q62 42 35 60Z', PINK),
+    line('M10 34H22L27 24L33 44L38 30L42 34H60'))],
+  ['bio-co-the-nguoi', 'Cơ thể người', 'co the nguoi hinh nguoi giai phau', svg(
+    cp(35, 12, 7, PEACH), fill('M24 22H46Q50 22 50 26V42H45V64H37V46H33V64H25V42H20V26Q20 22 24 22Z', BLUE))],
+  ['bio-vi-khuan', 'Vi khuẩn', 'vi khuan vi sinh vat benh', svg(
+    '<g transform="rotate(-30 35 35)">', line('M58 35Q62 30 66 35T74 35M12 35Q8 40 4 35'),
+    oval(35, 35, 24, 13, GREEN), cp(26, 33, 3, WHITE), cp(40, 38, 2.5, WHITE), cp(45, 31, 2, WHITE), '</g>')],
+  ['bio-tiem-vac-xin', 'Tiêm vắc-xin', 'tiem vac xin ong tiem phong benh mien dich', svg(
+    '<g transform="rotate(45 35 35)">', line('M35 20V8M28 8H42M35 54V66'),
+    fill('M28 20H42V50H28Z', WHITE), fill('M28 34H42V50H28Z', BLUE), fill('M31 50H39V55H31Z', BLUE), '</g>')],
+  ['bio-ong-nghe', 'Ống nghe', 'ong nghe bac si kham benh y te', svg(
+    line('M22 8V24Q22 38 35 38Q48 38 48 24V8M35 38V48Q35 56 44 56'),
+    cp(50, 56, 7, BLUE), cp(22, 8, 3, LILAC), cp(48, 8, 3, LILAC))],
+  ['bio-vien-thuoc', 'Viên thuốc', 'vien thuoc thuoc chua benh y te', svg(
+    '<g transform="rotate(-35 35 35)">', fill('M20 27H35V43H20Q12 43 12 35Q12 27 20 27Z', PINK),
+    fill('M35 27H50Q58 27 58 35Q58 43 50 43H35Z', WHITE), '</g>')],
+]
+BODY_NEW.reduce((after, [id, name, keywords, svg]) => {
+  ADDED.push({ after, id, name, category: 'bio', keywords, svg })
+  return id
+}, 'bio-xuong')
+
 export const REDRAWN = {
+  // cấu tạo hoa (bổ dọc): cánh, nhị (chỉ nhị + bao phấn), nhuỵ (bầu, vòi, đầu nhuỵ), đài, cuống, lá
+  'bio-hoa-cau-tao': svg(
+    line('M35 48V66'), fill('M35 59Q45 50 56 54Q47 63 35 59Z', GREEN),
+    fill('M25 44Q7 36 9 13Q22 17 31 40Z', PINK), fill('M45 44Q63 36 61 13Q48 17 39 40Z', PINK),
+    line('M30 38L22 19M40 38L48 19'), fill(ellipseD(21, 16, 3.5, 4.5), YELLOW), fill(ellipseD(49, 16, 3.5, 4.5), YELLOW),
+    fill('M20 40Q26 51 35 51Q44 51 50 40Z', GREEN),
+    fill('M28 43Q28 35 35 35Q42 35 42 43Q42 49 35 49Q28 49 28 43Z', MINT), cp(35, 43, 2.2, WHITE),
+    line('M35 35V17'), cp(35, 13, 4, PEACH),
+  ),
   'class-but-bi': pen,
   'cs-usb': usb,
   'cs-may-in': printer,

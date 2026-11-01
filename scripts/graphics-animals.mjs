@@ -1,35 +1,12 @@
 /**
  * 43 con vật nhóm Sinh học, nhập từ bộ SVG Repo (khung 1024, nét là khối tô #663333).
- * Đổi sang style kho: nét → #22333B, màu tô → bảng pastel. Thay các con vật vẽ cũ
- * (giữ id bio-meo/cho/ho/rua/buom để slide cũ vẫn hiện hình).
+ * Đã đổi sang style kho (nét #663333 → #22333B, màu tô → tông pastel) và lưu vào scripts/animals/;
+ * Thay các con vật vẽ cũ (giữ id bio-meo/cho/ho/rua/buom để slide cũ vẫn hiện hình).
  */
 import { readFileSync } from 'node:fs'
 
-const DIR = 'C:/Users/Lenovo/Downloads/'
-
-const INK = '#22333B'
-const COLORS = {
-  none: 'none',
-  '#663333': INK,
-  '#1C274C': INK,
-  '#000000': INK,
-  '#B2ABAC': '#D8CFF0', // xám → tím nhạt
-  '#D2CDCE': '#ECE8F6',
-  '#FFFFFF': '#FFFFFF',
-  'white': '#FFFFFF',
-  '#FFCC66': '#F7E6A8',
-  '#FDCB81': '#F7E6A8',
-  '#B88D5B': '#E8C9A0', // nâu
-  '#F9DCB2': '#F6E8D2',
-  '#F2EBDC': '#F6EFE3',
-  '#CA5F38': '#F6C6A8',
-  '#C85E4C': '#F2B8A8',
-  '#FE6865': '#F5C2C8',
-  '#F8464E': '#F5C2C8',
-  '#6A973A': '#C6E5B3',
-  '#9ACE57': '#DFF0CF',
-  '#4EC8D8': '#B9D4EA',
-}
+// bản đã đổi màu, lưu trong repo (scripts/animals/<file>.svg)
+const DIR = new URL('./animals/', import.meta.url)
 
 /** [file, id, tên, keyword] — thứ tự là thứ tự trong kho */
 const LIST = [
@@ -78,19 +55,9 @@ const LIST = [
   ['butterfly', 'bio-buom', 'Con bướm', 'buom con trung bien thai'],
 ]
 
-function convert(file) {
-  const raw = readFileSync(`${DIR}${file}-svgrepo-com.svg`, 'utf8')
-  const body = raw.slice(raw.indexOf('>', raw.indexOf('<svg')) + 1, raw.lastIndexOf('</svg>'))
-  if (/<(?!path\b|\/path)/.test(body)) throw new Error(`${file}: có thẻ khác <path>`)
-  const paths = body.replace(/fill="([^"]*)"/g, (_, c) => {
-    const to = COLORS[c] ?? COLORS[c.toUpperCase()]
-    if (!to) throw new Error(`${file}: chưa có màu thay cho ${c}`)
-    return `fill="${to}"`
-  })
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">${paths.replace(/\s+/g, ' ').trim()}</svg>`
-}
+const read = (file) => readFileSync(new URL(`${file}.svg`, DIR), 'utf8').trim()
 
-export const ANIMALS = LIST.map(([file, id, name, keywords]) => ({ id, name, category: 'bio', keywords, svg: convert(file) }))
+export const ANIMALS = LIST.map(([file, id, name, keywords]) => ({ id, name, category: 'bio', keywords, svg: read(file) }))
 
 /** con vật vẽ cũ bỏ đi (id dùng lại ở trên thì bản mới thay vào) */
 export const ANIMALS_REMOVED = ['bio-meo', 'bio-cho', 'bio-ga-trong', 'bio-trau', 'bio-voi', 'bio-ho', 'bio-tho', 'bio-ca-heo', 'bio-buom', 'bio-rua']
