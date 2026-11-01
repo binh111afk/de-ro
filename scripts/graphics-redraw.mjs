@@ -83,6 +83,16 @@ function arcArrow() {
   return svg(fill(body, PEACH), fill(head, PEACH))
 }
 
+
+/** la bàn: mặt tròn, 4 vạch chính, kim hình thoi xoay 45° quanh đúng tâm */
+const compass = svg(
+  circle(35, 35, 27, WHITE),
+  line('M35 11V15M35 55V59M11 35H15M55 35H59'),
+  fill('M46.3 23.7L38.5 38.5L31.5 31.5Z', BLUE),
+  fill('M23.7 46.3L31.5 31.5L38.5 38.5Z', WHITE),
+  dot(35, 35, 2),
+)
+
 /** Hoa sen (hai bản) xử lý riêng trong import-graphics.mjs; còn lại ở đây. */
 export const REDRAWN = {
   'soc-ban-do': svg(
@@ -274,4 +284,6 @@ export const REDRAWN = {
     dot(50, 40.5),
   ),
   'arrow-vong-cung': arcArrow(),
+  'soc-la-ban': compass,
+  'geo-la-ban': compass,
 }

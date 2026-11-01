@@ -6,7 +6,7 @@
  * khối và đồ hoạ vector, chia nhóm theo chủ đề), Icon (biểu tượng đơn sắc, chia
  * nhóm) và Tải lên (ảnh của giáo viên). Ô tìm kiếm ở Đồ hoạ và Icon lọc theo tên.
  */
-import { memo, useMemo, useState } from 'react'
+import { memo, useMemo, useRef, useState } from 'react'
 import { ChevronDown, ChevronLeft, ChevronRight, LayoutTemplate, Shapes, Smile, Sparkles, Upload, X } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import { SLIDE_LAYOUTS, type SlideLayoutId } from '@/lib/slideLayouts'
@@ -180,8 +180,16 @@ function SlideSidePanelImpl({ accent, canInsert, hint = '', onAddLayoutSlide, on
 
 export const SlideSidePanel = memo(SlideSidePanelImpl)
 
-function Scroll({ children }: { children: React.ReactNode }) {
-  return <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-3">{children}</div>
+/** `keep`: nhớ vị trí cuộn — mở "Xem tất cả" rồi quay lại thì về đúng chỗ đang lướt */
+function Scroll({ children, keep }: { children: React.ReactNode; keep?: React.MutableRefObject<number> }) {
+  const restore = (node: HTMLDivElement | null) => {
+    if (node && keep) node.scrollTop = keep.current
+  }
+  return (
+    <div ref={keep ? restore : undefined} onScroll={keep ? (e) => { keep.current = e.currentTarget.scrollTop } : undefined} className="min-h-0 flex-1 overflow-y-auto px-3 pb-3">
+      {children}
+    </div>
+  )
 }
 
 /** bỏ dấu tiếng Việt để tìm bằng chuỗi không dấu */
@@ -280,6 +288,7 @@ function ElementsPanel({ accent, canInsert, hint, onInsert }: { accent: string; 
   const [query, setQuery] = useState('')
   /** đang xem trang con của một nhóm đồ hoạ ('shapes' = toàn bộ hình khối) */
   const [open, setOpen] = useState<GraphicCategory | 'shapes' | 'frames' | null>(null)
+  const listScroll = useRef(0)
   const [recent, setRecent] = useState(loadRecent)
   const q = query.trim()
   const hits = q ? findGraphics(q) : []
@@ -386,7 +395,7 @@ function ElementsPanel({ accent, canInsert, hint, onInsert }: { accent: string; 
   return (
     <>
       {header}
-      <Scroll>
+      <Scroll keep={listScroll}>
       <div className="pt-3">
         {recentItems.length > 0 && (
           <Section>
