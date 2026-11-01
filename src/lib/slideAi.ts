@@ -506,6 +506,8 @@ export function pageSystemPrompt(
   // Chỉ những layout đang dùng đồ hoạ; không nhồi catalog 112 mục vào mọi lượt gọi.
   const supportsGraphic =
     layout.id === 'title' ||
+    layout.id === 'section' ||
+    layout.id === 'closing' ||
     layout.id === 'hook' ||
     layout.id === 'bullets' ||
     layout.id === 'image-left' ||
@@ -520,7 +522,8 @@ export function pageSystemPrompt(
       graphicCatalogText(subjectById(plan.subject)?.graphicGroups) +
       '\n- "graphic" chỉ dùng id trong danh sách trên; KHÔNG bịa id mới.\n' +
       '- Chọn theo NGHĨA CỦA NỘI DUNG slide, không theo hình tượng chung của môn (vd: cái cân không hợp với ƯCLN). ' +
-      'Không có id khớp nghĩa thì BỎ TRỐNG "graphic" — hình lệch nghĩa tệ hơn không có hình.\n' +
+      'NÊN chọn một hình: hình gần nghĩa (cùng chủ đề, cùng hoạt động — vd: mục tiêu → cờ đích, luyện tập → bút chì, ' +
+      'tổng kết → sách/bài trắc nghiệm) vẫn tốt hơn để trống. Chỉ BỎ TRỐNG khi mọi id đều lệch hẳn nghĩa.\n' +
       (hints.length ? `- Gợi ý khớp từ khoá tiêu đề (xét trước): ${hints.join(', ')}.\n` : '') +
       (isImageLayout
         ? '- Layout ảnh: ĐỂ TRỐNG "image" (app tự vẽ ảnh minh hoạ nền sau 45–90 giây). Có id đồ hoạ phù hợp thì ' +

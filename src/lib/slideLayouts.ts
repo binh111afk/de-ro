@@ -550,6 +550,7 @@ function composeSection(p: LayoutPalette, content: SlideLayoutContent): SlideEle
     ? Math.min(13, textBoxHeight(kicker, 24, 1.7, 1.4, { weight: 700, letterSpacing: 0.12 }))
     : 0
   const titleY = kicker ? 27 + kickerH + 1.5 : 34
+  const graphic = chosenGraphic(content)
   return compact([
     shapeEl('section-panel', { x: 0, y: 0, w: 34, h: 100 }, p.accent),
     textEl('kicker', kicker, { x: 5, y: 27, w: 24, h: kickerH }, {
@@ -557,7 +558,14 @@ function composeSection(p: LayoutPalette, content: SlideLayoutContent): SlideEle
     }),
     ...titleEls(p, content.title, { x: 5, y: titleY, w: 25, h: 68 - titleY }, [4.1, 3.6, 3.2, 2.8, 2.5], false, p.onAccent),
     ornament('section-rule', 'orn-ke-song-ngan', 5, 70.45, 10, p.onAccent, true),
-    textEl('subtitle', content.subtitle, { x: 42, y: 40, w: 48, h: 20 }, {
+    // có đồ hoạ: phụ đề co lại, hình tròn nền nhạt bên phải (cùng kiểu huy hiệu ở bìa)
+    ...(graphic
+      ? [
+          shapeEl('section-graphic-plate', { x: 72, y: 32.2, w: 20, h: 35.6 }, GRAPHIC_PLATE, 'ellipse'),
+          graphicEl('section-graphic', graphic, { x: 75.5, y: 38.45, w: 13, h: 23.1 }, GRAPHIC_INK),
+        ]
+      : []),
+    textEl('subtitle', content.subtitle, { x: 42, y: 40, w: graphic ? 27 : 48, h: 20 }, {
       variant: 'body', fontSize: 2.6, textColor: p.fg, valign: 'middle',
     }),
   ])
@@ -911,8 +919,10 @@ function composeQuote(p: LayoutPalette, content: SlideLayoutContent): SlideEleme
 function composeClosing(p: LayoutPalette, content: SlideLayoutContent): SlideElement[] {
   const title = content.title?.trim() || content.body?.trim()
   if (!title) return []
+  const graphic = chosenGraphic(content)
   return compact([
     ornament('decor-1', 'orn-canh-la', 5, 6, 12, p.ink),
+    graphic ? graphicEl('closing-graphic', graphic, { x: 45, y: 10, w: 10, h: 17.8 }, GRAPHIC_INK) : null,
     ornament('decor-2', 'orn-bo-hoa', 85, 72, 10, p.ink),
     shapeEl('accent-line', { x: 47, y: 32, w: 6, h: 0.8 }, p.accent),
     textEl('title', title, { x: 8, y: 36, w: 84, h: 18 }, {

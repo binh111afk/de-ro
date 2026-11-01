@@ -1355,10 +1355,11 @@ function shapeCss(el: SlideElement, theme: ResolvedTheme): React.CSSProperties {
   const borderColor = el.borderColor ?? theme.borderColor
   return {
     background: clip && border ? borderColor : (el.fill ?? theme.accent),
-    borderRadius: el.shape === 'ellipse' ? '50%' : el.shape === 'round' ? `${el.radius ?? theme.radius}px` : 0,
+    // bo góc / viền tính theo khung slide rộng 1000px (cqw) để thumbnail thu nhỏ đúng tỉ lệ, không bo tròn quá tay
+    borderRadius: el.shape === 'ellipse' ? '50%' : el.shape === 'round' ? `${(el.radius ?? theme.radius) / 10}cqw` : 0,
     clipPath: clip,
     boxShadow: isLine ? undefined : shadowCss(el, theme),
-    border: !clip && border ? `${border}px ${el.borderStyle ?? 'solid'} ${borderColor}` : undefined,
+    border: !clip && border ? `max(1px, ${border / 10}cqw) ${el.borderStyle ?? 'solid'} ${borderColor}` : undefined,
     opacity: el.opacity,
   }
 }
