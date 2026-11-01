@@ -11,6 +11,7 @@ import { autoAnimate } from './slideAnim'
 import { textBoxHeight } from './slideText'
 import { fitFontSize } from './slideMeasure'
 import { GRAPHIC_INK, graphicById, isGraphicId } from './slideGraphics'
+import { DECOR_ANCHORS, decorKitById } from './slideDecor'
 import { pickSlideAsset, type SlideAssetId } from './slideAssets'
 import { contrastRatio, mixHex, normalizeTheme, readableTextOn } from './slideTheme'
 
@@ -65,6 +66,8 @@ export interface SlideLayoutContent {
   image?: string
   /** id đồ hoạ vector (slideGraphics) — ưu tiên hơn ảnh AI khi phù hợp */
   graphic?: string
+  /** bộ trang trí của deck (slideDecor.ts); thiếu thì giữ hoạ tiết mặc định của bố cục */
+  decorKit?: string
   /** số liệu lớn của layout stats */
   stats?: SlideStat[]
   /** các bước của timeline/cycle */
@@ -450,6 +453,47 @@ function graphicPlate(id: string, graphicId: string, box: Box, p: LayoutPalette)
       h: box.h - insetY * 2,
     }, GRAPHIC_INK),
   ]
+}
+
+const overlaps = (a: Box, b: Box, pad = 0.6): boolean =>
+  a.x < b.x + b.w + pad && b.x < a.x + a.w + pad && a.y < b.y + b.h + pad && b.y < a.y + a.h + pad
+
+/** Slide nhiều chữ thì để trống, trang trí chỉ làm rối. */
+function textHeavy(content: SlideLayoutContent): boolean {
+  const lists = [content.bullets, content.items, content.steps, content.left, content.right]
+  const chars = lists.reduce((sum, list) => sum + (list ?? []).join('').length, content.body?.length ?? 0)
+  return chars > 320
+}
+
+/**
+ * Đặt hoạ tiết của bộ trang trí vào vị trí thiết kế sẵn của bố cục (slideDecor.ts).
+ * Có bộ thì thay hoạ tiết mặc định (`decor-N`) của bố cục; vị trí nào vướng phần tử khác
+ * (vd tiêu đề dài, hình chính) thì bỏ vị trí đó chứ không dời đi chỗ khác.
+ */
+function withKitDecor(id: SlideLayoutId, els: SlideElement[], content: SlideLayoutContent, p: LayoutPalette): SlideElement[] {
+  const kit = decorKitById(content.decorKit)
+  if (!kit) return els
+  const base = els.filter((el) => !/^decor-\d+$/.test(el.id))
+  const anchors = kit.pieces ? (DECOR_ANCHORS[id] ?? []) : []
+  if (!anchors.length || textHeavy(content)) return base
+  const blockers = base.filter((el) => el.w * el.h < 5000)
+  const out = [...base]
+  anchors.forEach((anchor, i) => {
+    const graphic = graphicById(kit.pieces?.[anchor.role])
+    if (!graphic) return
+    // thu vừa khung theo tỉ lệ thật của hình (khung 16:9 nên đổi đơn vị cao ↔ rộng)
+    const w = Math.min(anchor.w, (anchor.h * 9 * graphic.ratio) / 16)
+    const h = (w * 16) / (9 * graphic.ratio)
+    const mx = 2.5
+    const my = (mx * 16) / 9
+    const box =
+      typeof anchor.at === 'object'
+        ? { ...anchor.at, w, h }
+        : { x: anchor.at[1] === 'l' ? mx : 100 - mx - w, y: anchor.at[0] === 't' ? my : 100 - my - h, w, h }
+    if (blockers.some((el) => overlaps(box, el))) return
+    out.push(graphicEl(`decor-kit-${i + 1}`, graphic.id, box, p.ink))
+  })
+  return out
 }
 
 /** Đồ hoạ AI chọn, chỉ nhận id có trong catalog. */
@@ -1565,6 +1609,10 @@ function composeStatic(
   const resolved = normalizeTheme(theme)
   const id: SlideLayoutId = isLayoutId(layoutId) ? layoutId : 'bullets'
   const palette = paletteOf(resolved, tone && isTone(tone) ? tone : defaultTone(id))
+  return withKitDecor(id, composeById(id, palette, content), content, palette)
+}
+
+function composeById(id: SlideLayoutId, palette: LayoutPalette, content: SlideLayoutContent): SlideElement[] {
   switch (id) {
     case 'title':
       return composeTitle(palette, content)
@@ -1699,6 +1747,7 @@ export function contentFromSlide(slide: Slide): SlideLayoutContent {
     rows: tableEl?.rows,
     image: imageEl?.src,
     graphic: graphicEl?.graphicId,
+    decorKit: slide.decorKit,
     stats: statEls.length
       ? statEls.map((el) => ({
           value: el.text,

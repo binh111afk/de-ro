@@ -11,6 +11,7 @@ import type { Deck, DeckTheme, Slide, SlideElement, SlideTone } from '@/store/do
 import { normalizeTheme, themeById, type ResolvedTheme } from './slideTheme'
 import { keepCustomBg } from './slideBackground'
 import { stylePackById } from './slideStyles'
+import { defaultDecorKit, isDecorKitId } from './slideDecor'
 import { subjectById, subjectRulesBlock } from './slideSubjects'
 import { fixMathEscapes, limitBold, mathToPlain } from './slideMath'
 import { graphicCatalogText, graphicFits, isGraphicId, searchGraphics } from './slideGraphics'
@@ -129,6 +130,7 @@ export function sanitizeSlide(raw: unknown, layout: string, tone?: SlideTone): A
     ...(rows?.length ? { rows } : {}),
     ...(image ? { image } : {}),
     ...(graphic ? { graphic } : {}),
+    ...(isDecorKitId(source.decorKit) ? { decorKit: source.decorKit } : {}),
     ...(stats?.length ? { stats } : {}),
     ...(steps ? { steps } : {}),
     ...(question ? { question } : {}),
@@ -417,6 +419,8 @@ export function validateSlide(page: AiSlidePayload, layout: string): string[] {
  * ------------------------------------------------------------------ */
 
 const FIELD_HINTS: Record<keyof SlideLayoutContent, string> = {
+  // app gán từ dàn ý, không layout nào yêu cầu AI điền
+  decorKit: '"decorKit" — không điền',
   title: '"title" — tiêu đề slide (chuỗi ≤ 80 ký tự, ≤ 10 từ)',
   kicker: '"kicker" — nhãn nhỏ phía trên (chuỗi ≤ 50)',
   subtitle: '"subtitle" — dòng phụ (chuỗi ≤ 110)',
@@ -579,6 +583,11 @@ export function repairPrompt(errors: string[]): string {
 }
 
 /** Tiện cho test và nơi cần kiểm tra nhanh một phản hồi thô. */
+/** Bộ trang trí của deck: dàn ý chọn, thiếu thì suy từ style pack/môn. */
+export function planDecorKit(plan: DeckPlan): string {
+  return plan.decorKit ?? defaultDecorKit(plan.stylePack, plan.subject)
+}
+
 export function checkSlide(raw: unknown, layout: string, tone?: SlideTone): SlideCheck {
   const page = sanitizeSlide(raw, layout, tone)
   const errors = validateSlide(page, layout)
@@ -635,6 +644,7 @@ function contentOfPage(page: AiSlidePayload): SlideLayoutContent {
     rows: page.rows,
     image: page.image,
     graphic: page.graphic,
+    decorKit: page.decorKit,
     stats: page.stats,
     steps: page.steps,
     question: page.question,
@@ -673,6 +683,7 @@ export function slideFromAi(page: AiSlidePayload, theme: ResolvedTheme): Slide {
       notes: page.notes?.join('\n') || undefined,
       layout,
       tone,
+      ...(page.decorKit ? { decorKit: page.decorKit } : {}),
       elements: composed,
     }
   }

@@ -329,11 +329,14 @@ export function SlideEditor({
   /** thêm một slide mới theo bố cục có sẵn (tab Mẫu) — slide đang mở không đổi */
   const addLayoutSlide = (layoutId: SlideLayoutId) => {
     const tone = defaultTone(layoutId)
-    const elements = composeLayout(deck.theme, layoutId, withPlaceholders(layoutId, {}), tone)
+    // slide thêm tay vẫn theo bộ trang trí của deck
+    const decorKit = deck.slides.find((slide) => slide.decorKit)?.decorKit
+    const elements = composeLayout(deck.theme, layoutId, { ...withPlaceholders(layoutId, {}), decorKit }, tone)
     const s: Slide = {
       id: uid(),
       layout: layoutId,
       tone,
+      ...(decorKit ? { decorKit } : {}),
       background: toneBackground(deck.theme, tone),
       elements,
       transition: 'none',

@@ -24,6 +24,7 @@
     "test:slide-text": "tsx --tsconfig tsconfig.app.json scripts/test-slide-text.mjs",
     "test:slide-theme": "tsx --tsconfig tsconfig.app.json scripts/test-slide-theme.mjs",
     "test:slide-layout": "tsx --tsconfig tsconfig.app.json scripts/test-slide-layout.mjs",
+    "test:slide-decor": "tsx --tsconfig tsconfig.app.json scripts/test-slide-decor.mjs",
     "lint:slides": "node scripts/lint-slides.mjs",
     "eval:slides": "node scripts/eval-slides.mjs",
     "test:slide-math": "tsx --tsconfig tsconfig.app.json scripts/test-slide-math.mjs",

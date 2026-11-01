@@ -19,7 +19,7 @@ import {
   type DeckPlan,
   type DeckPlanSlide,
 } from '@/lib/aiDeck'
-import { checkSlide, pageSystemPrompt, repairPrompt } from '@/lib/slideAi'
+import { checkSlide, pageSystemPrompt, planDecorKit, repairPrompt } from '@/lib/slideAi'
 import { SLIDE_LAYOUTS } from '@/lib/slideLayouts'
 import { DECK_THEMES } from '@/lib/slideTheme'
 import { stylePackById } from '@/lib/slideStyles'
@@ -282,7 +282,7 @@ export const SLIDE_PLAN_SYSTEM =
   'Bạn là trợ lý AI của trình soạn bài trình bày tiếng Việt. Nhiệm vụ: LẬP DÀN Ý, ' +
   'chưa viết nội dung chi tiết. Chỉ trả về DUY NHẤT một JSON hợp lệ (không bọc markdown, ' +
   'không chữ ngoài JSON):\n' +
-  '{"title":"...","theme":"<id>","stylePack":"<id>","subject":"<id>","audience":"...","style":"...","mainIdeas":["..."],' +
+  '{"title":"...","theme":"<id>","stylePack":"<id>","decorKit":"<id>","subject":"<id>","audience":"...","style":"...","mainIdeas":["..."],' +
   '"slides":[{"title":"...","layout":"<id>","tone":"theme|soft|accent","kicker":"...","brief":"..."}]}\n\n' +
   slideCatalogText() +
   '\n\nQUY TẮC:\n' +
@@ -310,7 +310,8 @@ export const SLIDE_PLAN_SYSTEM =
   '- "theme" chọn theo chủ đề, cảm xúc và đối tượng — không bắt buộc theo môn; ' +
   'chủ đề tự do (hướng nghiệp, kỹ năng, sự kiện…) vẫn chọn bộ màu hợp tông. ' +
   '"stylePack" chọn một id trong danh sách style pack để quyết định nhịp và mật độ nội dung; ' +
-  '"style" 2 câu tả phong cách (nhịp bố cục, điểm nhấn màu, số liệu, hình ảnh).\n' +
+  '"style" 2 câu tả phong cách (nhịp bố cục, điểm nhấn màu, số liệu, hình ảnh). ' +
+  '"decorKit" chọn một bộ trang trí hợp chủ đề và đối tượng (dùng cho cả bài); bài trang trọng chọn "toi-gian".\n' +
   '- Không bịa số liệu thật; số liệu minh hoạ phải ghi rõ "ví dụ". Tiếng Việt chuẩn.'
 
 /** Tên layout để hiện trong thẻ dàn ý. */
@@ -456,6 +457,9 @@ export async function generateSlide(
 ): Promise<AiSlidePayload | null> {
   const system = pageSystemPrompt(plan, planSlide, index)
   const user = `Viết slide ${index + 1}: "${planSlide.title}".`
+  // bộ trang trí là của cả deck (chọn ở dàn ý), gắn vào mọi trang
+  const decorKit = planDecorKit(plan)
+  const withKit = (page: AiSlidePayload): AiSlidePayload => ({ ...page, decorKit })
   const first = await callLlm(
     [
       { role: 'system', content: system },
@@ -468,7 +472,7 @@ export async function generateSlide(
     planSlide.layout,
     planSlide.tone,
   )
-  if (!check.errors.length && !check.readability.length) return check.page
+  if (!check.errors.length && !check.readability.length) return withKit(check.page)
 
   const repaired = await callLlm(
     [
@@ -485,8 +489,8 @@ export async function generateSlide(
     planSlide.tone,
   )
   // Lỗi cứng sau repair → bỏ slide; chỉ còn lỗi "chữ nhỏ" thì vẫn dùng (đừng mất slide vì thẩm mỹ).
-  if (second.errors.length) return check.errors.length ? null : check.page
-  return second.page
+  if (second.errors.length) return check.errors.length ? null : withKit(check.page)
+  return withKit(second.page)
 }
 
 /**
@@ -518,7 +522,7 @@ export async function polishSlide(
     { signal, reasoningEffort: 'medium' },
   )
   const check = checkSlide(parseAiObject(reply.content), planSlide.layout, planSlide.tone)
-  return check.errors.length ? null : check.page
+  return check.errors.length ? null : { ...check.page, decorKit: planDecorKit(plan) }
 }
 
 /**

@@ -9,6 +9,7 @@ import { isLayoutId, isTone, SLIDE_LAYOUTS } from './slideLayouts'
 import { DECK_THEMES, resolveThemeId } from './slideTheme'
 import { inferSubject, isSubjectId, subjectCatalogText } from './slideSubjects'
 import { isStylePackId, stylePackCatalogText } from './slideStyles'
+import { decorKitCatalogText, isDecorKitId } from './slideDecor'
 
 export interface AiSlidePayload {
   title?: string
@@ -36,6 +37,8 @@ export interface AiSlidePayload {
   image?: string
   /** id đồ hoạ vector trong catalog slideGraphics (ưu tiên hơn ảnh AI) */
   graphic?: string
+  /** bộ trang trí của deck (lib/slideDecor.ts) — app gán từ dàn ý, không do AI chọn từng slide */
+  decorKit?: string
   /** số liệu lớn cho layout stats */
   stats?: Array<{ value?: string; label?: string }>
   /** các bước cho timeline/cycle */
@@ -77,6 +80,8 @@ export interface DeckPlan {
   style?: string
   /** art direction (lib/slideStyles.ts); id lạ bị bỏ */
   stylePack?: string
+  /** bộ trang trí dùng xuyên suốt deck (lib/slideDecor.ts); id lạ bị bỏ, khi đó suy từ style pack/môn */
+  decorKit?: string
   /** gói môn (lib/slideSubjects.ts): cấu trúc bài + luật nội dung; thiếu thì suy từ chủ đề */
   subject?: string
   mainIdeas: string[]
@@ -280,10 +285,12 @@ export function parseDeckPlan(raw: string): DeckPlan | null {
     const packId = text(source.stylePack, 40)
     const title = text(source.title, 160)
     const subjectId = text(source.subject, 40)
+    const kitId = text(source.decorKit, 40)
     return {
       title,
       theme: resolveThemeId(themeId),
       ...(isStylePackId(packId) ? { stylePack: packId } : {}),
+      ...(isDecorKitId(kitId) ? { decorKit: kitId } : {}),
       subject: isSubjectId(subjectId)
         ? subjectId
         : inferSubject([title, text(source.audience, 120), ...slides.map((s) => s.title)].join(' ')),
@@ -309,6 +316,8 @@ export function slideCatalogText(): string {
     ),
     '',
     stylePackCatalogText(),
+    '',
+    decorKitCatalogText(),
     '',
     subjectCatalogText(),
     '',

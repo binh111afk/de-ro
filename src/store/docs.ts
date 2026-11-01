@@ -96,6 +96,8 @@ export interface Slide {
   layout?: string
   /** tông nền do layout/AI chọn; thiếu thì theo mặc định của layout */
   tone?: SlideTone
+  /** bộ trang trí của deck (lib/slideDecor.ts) — giữ lại để dựng lại bố cục vẫn đúng bộ */
+  decorKit?: string
   /** slide HTML (chế độ HTML): tài liệu HTML đầy đủ của riêng slide này; chỉ trình chiếu, không có elements */
   html?: string
 }
