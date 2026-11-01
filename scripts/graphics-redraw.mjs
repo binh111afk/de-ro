@@ -94,7 +94,81 @@ const compass = svg(
 )
 
 /** Hoa sen (hai bản) xử lý riêng trong import-graphics.mjs; còn lại ở đây. */
+// trái tim cân đối: hai thuỳ tròn, đáy nhọn ở giữa; vệt sáng trắng trên thuỳ trái
+const HEART_L = 'C20 47 9 37 9 25C9 16 16 10 24 10C29 10 33 13 35 17'
+const HEART_R = 'C37 13 41 10 46 10C54 10 61 16 61 25C61 37 50 47 35 58'
+const shine = '<path d="M16 24C16 19.5 19 16.5 23 16" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>'
+const heart = svg(fill(`M35 58${HEART_L}${HEART_R}Z`, PINK), shine)
+// tim vỡ: vết nứt zigzag, hai nửa tách và nghiêng ra hai bên quanh đáy
+const CRACK = 'L31 27L38 35L32 44L35 58'
+const brokenHeart = svg(
+  `<g transform="translate(-3 1) rotate(-7 35 58)">${fill(`M35 17${CRACK}${HEART_L}Z`, PINK)}${shine}</g>`,
+  `<g transform="translate(3 1) rotate(7 35 58)">${fill(`M35 17${HEART_R}L32 44L38 35L31 27Z`, PINK)}</g>`,
+)
+
+
+// bút bi đứng rồi xoay chéo: thân, kẹp, ngòi
+const pen = svg(
+  '<g transform="rotate(40 35 35)">',
+  fill('M29 14Q29 9 35 9Q41 9 41 14V45H29Z', PEACH),
+  line('M41 15H44.5V32'),
+  line('M29 21H41'),
+  fill('M29 45H41L37 55H33Z', WHITE),
+  fill('M33 55H37L35 61Z', INK),
+  '</g>',
+)
+const usb = svg(
+  fill('M27 26V8H43V26Z', WHITE),
+  fill('M31 13H34V18H31Z', INK),
+  fill('M36 13H39V18H36Z', INK),
+  fill('M27 26H43Q47 26 47 30V58Q47 62 43 62H27Q23 62 23 58V30Q23 26 27 26Z', YELLOW),
+  line('M35 51V35M31 39L35 35L39 39M30 44H40'),
+)
+const printer = svg(
+  fill('M21 26V9H49V26Z', WHITE),
+  fill('M18 26H52Q57 26 57 31V45Q57 50 52 50H18Q13 50 13 45V31Q13 26 18 26Z', LILAC),
+  dot(50, 33, 2),
+  fill('M21 42H49V61H21Z', WHITE),
+  line('M26 49H44M26 55H38'),
+)
+// bông lúa trĩu: thân cong + hạt dọc theo đầu bông
+const tuft = (x, y) => line(`M${x} ${y}C${x} ${y - 10} ${x + 3} ${y - 15} ${x + 9} ${y - 16}`) + [[1, -11], [4, -14.5], [8, -10.5]].map(([dx, dy]) => dot(x + dx, y + dy, 2.2)).join('')
+const riceField = svg(
+  circle(53, 15, 7, YELLOW),
+  fill('M5 34Q35 26 65 34V62H5Z', GREEN),
+  line('M12 62Q24 46 35 40M35 40V62M58 62Q46 46 35 40M5 48Q16 42 26 41M65 48Q54 42 44 41'),
+  tuft(13, 31), tuft(25, 28),
+)
+const dropper = svg(
+  fill('M28 21V16Q28 7 35 7Q42 7 42 16V21Z', MINT),
+  fill('M25 21H45V27H25Z', MINT),
+  fill('M30 27H40V45L36.5 53H33.5L30 45Z', WHITE),
+  line('M33 35V44'),
+  fill('M35 57Q39 62 39 64.5Q39 68 35 68Q31 68 31 64.5Q31 62 35 57Z', MINT),
+)
+// bảng tuần hoàn: dáng ô đặc trưng (cột trái cao, cột phải cao, khối giữa thấp, hàng rời bên dưới)
+const periodic = (() => {
+  const C = 10, X = 10, Y = 8
+  const cells = [[0, 0], [4, 0], [0, 1], [1, 1], [4, 1], [0, 2], [1, 2], [2, 2], [3, 2], [4, 2], [0, 3], [1, 3], [2, 3], [3, 3], [4, 3]]
+  const sq = (x, y, c) => fill(`M${x} ${y}h${C}v${C}h-${C}Z`, c)
+  const color = (i) => (i === 0 ? PEACH : i === 4 ? MINT : YELLOW)
+  return svg(...cells.map(([i, j]) => sq(X + i * C, Y + j * C, color(i))), ...[1, 2, 3].map((i) => sq(X + i * C, 54, YELLOW)))
+})()
+
+/** icon mới (không có trong sheet): chèn ngay sau icon `after` */
+export const ADDED = [
+  { after: 'feel-trai-tim', id: 'feel-trai-tim-vo', name: 'Trái tim vỡ', category: 'feel', keywords: 'trai tim vo buon that tinh dau long cam xuc', svg: brokenHeart },
+]
+
 export const REDRAWN = {
+  'class-but-bi': pen,
+  'cs-usb': usb,
+  'cs-may-in': printer,
+  'geo-canh-dong-lua': riceField,
+  'chem-ong-nho-giot': dropper,
+  'chem-bang-tuan-hoan': periodic,
+  'decor-trai-tim': heart,
+  'feel-trai-tim': heart,
   'soc-ban-do': svg(
     fill('M8 17L24 11L46 17L62 11V53L46 59L24 53L8 59Z', MINT),
     line('M24 11V53'),

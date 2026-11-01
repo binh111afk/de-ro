@@ -12,7 +12,7 @@
 import { readFileSync, writeFileSync } from 'node:fs'
 import { bboxOf } from './lib/svg-bbox.mjs'
 import { ICONS_DECOR2, SHEET_DECOR2, importDecor } from './import-decor.mjs'
-import { REDRAWN } from './graphics-redraw.mjs'
+import { ADDED, REDRAWN } from './graphics-redraw.mjs'
 import { ICONS_100, ICONS_DOT4, ICONS_NEW, ICONS_PROG, SHEET_100, SHEET_DOT4, SHEET_NEW, SHEET_PROG } from './graphics-extra.mjs'
 
 const SHEET = 'C:/Users/Lenovo/Downloads/112 educational icons · 64px.svg'
@@ -257,6 +257,12 @@ for (const [id, svg] of Object.entries(REDRAWN)) {
   if (!e) throw new Error('vẽ lại: không có icon ' + id)
   e.svg = svg
   e.ratio = 1
+}
+
+for (const { after, ...e } of ADDED) {
+  const i = entries.findIndex((x) => x.id === after)
+  if (i < 0) throw new Error('thêm icon: không có ' + after)
+  entries.splice(i + 1, 0, { ...e, ratio: 1 })
 }
 
 const seen = new Set()
