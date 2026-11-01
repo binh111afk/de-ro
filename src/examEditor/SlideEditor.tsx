@@ -17,7 +17,23 @@ import { rewriteElement } from '@/lib/slideRewrite'
 import { keepCustomBg, slideBgStyle, withBackground } from '@/lib/slideBackground'
 import { FRAME_PLACEHOLDER, dragImage, photoFrameClip, shapeClipOf } from '@/lib/slideShapes'
 import { isPresetShape, isStrokeOnlyShape, presetPaths, prstOf } from '@/lib/slidePresets'
-import { ChevronLeft, ChevronRight, Minimize2, MonitorPlay, RotateCw } from 'lucide-react'
+import {
+  AlignCenterHorizontal,
+  AlignCenterVertical,
+  AlignEndHorizontal,
+  AlignEndVertical,
+  AlignHorizontalSpaceAround,
+  AlignStartHorizontal,
+  AlignStartVertical,
+  AlignVerticalSpaceAround,
+  ChevronLeft,
+  ChevronRight,
+  Minimize2,
+  MonitorPlay,
+  RotateCw,
+  Trash2,
+} from 'lucide-react'
+import { alignBoxes, type AlignMode } from '@/lib/slideAlign'
 import { slideIconById } from '@/lib/slideIconLibrary'
 import { graphicById, graphicMainColor, graphicMarkup } from '@/lib/slideGraphics'
 import { hasRich } from '@/lib/slideMath'
@@ -192,6 +208,8 @@ export function SlideEditor({
 }: SlideEditorProps) {
   const [selectedSlideId, setSelectedSlideId] = useState<string | null>(null)
   const [selectedElementId, setSelectedElementId] = useState<string | null>(null)
+  /** chọn nhiều (Shift+bấm, Ctrl+A): ≥2 id, khi đó selectedElementId = null */
+  const [groupIds, setGroupIds] = useState<string[]>([])
   const [ribbonTab, setRibbonTab] = useState<SlideRibbonTab>('home')
   const [presenting, setPresenting] = useState(false)
   const [presentIndex, setPresentIndex] = useState(0)
@@ -234,6 +252,24 @@ export function SlideEditor({
     [slides, selectedSlideId],
   )
   const selectedElement = currentSlide?.elements.find((el) => el.id === selectedElementId) ?? null
+  const groupEls = currentSlide?.elements.filter((el) => groupIds.includes(el.id)) ?? []
+
+  useEffect(() => {
+    if (selectedElementId) setGroupIds([])
+  }, [selectedElementId])
+  useEffect(() => setGroupIds([]), [currentSlide?.id])
+
+  const toggleInGroup = (id: string) => {
+    const base = groupIds.length ? groupIds : selectedElementId ? [selectedElementId] : []
+    const next = base.includes(id) ? base.filter((x) => x !== id) : [...base, id]
+    if (next.length >= 2) {
+      setGroupIds(next)
+      setSelectedElementId(null)
+    } else {
+      setGroupIds([])
+      setSelectedElementId(next[0] ?? null)
+    }
+  }
 
   const commitDeck = useCallback((next: Deck) => {
     historyRef.current.past = [...historyRef.current.past, deck].slice(-50)
@@ -412,6 +448,38 @@ export function SlideEditor({
     [deck, updateDeck],
   )
 
+  const previewMany = useCallback(
+    (slideId: string, patches: Record<string, Partial<SlideElement>>) => {
+      updateDeck({
+        ...deck,
+        slides: deck.slides.map((s) =>
+          s.id === slideId ? { ...s, elements: s.elements.map((e) => (patches[e.id] ? { ...e, ...patches[e.id] } : e)) } : s,
+        ),
+      })
+    },
+    [deck, updateDeck],
+  )
+
+  const alignGroup = (mode: AlignMode) => {
+    if (!currentSlide) return
+    const patches = alignBoxes(groupEls.map((e) => ({ id: e.id, x: e.x, y: e.y, w: e.w, h: elementHeight(e) })), mode)
+    commitDeck({
+      ...deck,
+      slides: deck.slides.map((s) =>
+        s.id === currentSlide.id ? { ...s, elements: s.elements.map((e) => (patches[e.id] ? { ...e, ...patches[e.id] } : e)) } : s,
+      ),
+    })
+  }
+
+  const removeGroup = () => {
+    if (!currentSlide) return
+    commitDeck({
+      ...deck,
+      slides: deck.slides.map((s) => (s.id === currentSlide.id ? { ...s, elements: s.elements.filter((e) => !groupIds.includes(e.id)) } : s)),
+    })
+    setGroupIds([])
+  }
+
   /** Chụp trạng thái trước khi bắt đầu một thao tác kéo/đổi text để undo gộp cả thao tác. */
   const beginHistory = useCallback(() => {
     historyRef.current.past = [...historyRef.current.past, deck].slice(-50)
@@ -454,16 +522,33 @@ export function SlideEditor({
         addElement({ ...selectedElement, id: uid(), x: selectedElement.x + 3, y: selectedElement.y + 3 })
         return
       }
+      if (mod && e.key.toLowerCase() === 'a' && currentSlide && !currentSlide.html && !typing) {
+        e.preventDefault()
+        const ids = currentSlide.elements.map((el) => el.id)
+        if (ids.length >= 2) {
+          setGroupIds(ids)
+          setSelectedElementId(null)
+        } else setSelectedElementId(ids[0] ?? null)
+        return
+      }
+      if ((e.key === 'Delete' || e.key === 'Backspace') && groupIds.length && !typing) {
+        e.preventDefault()
+        removeGroup()
+        return
+      }
       if ((e.key === 'Delete' || e.key === 'Backspace') && selectedElement && currentSlide && !typing) {
         e.preventDefault()
         removeElement(currentSlide.id, selectedElement.id)
         return
       }
-      if (e.key === 'Escape') setSelectedElementId(null)
+      if (e.key === 'Escape') {
+        setSelectedElementId(null)
+        setGroupIds([])
+      }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [selectedElement, currentSlide, undo, redo])
+  }, [selectedElement, currentSlide, undo, redo, groupIds])
 
   /**
    * Áp kết quả AI vào deck.
@@ -964,7 +1049,10 @@ export function SlideEditor({
                   e.stopPropagation()
                   didDragRef.current = false
                 }}
-                onClick={() => setSelectedElementId(null)}
+                onClick={() => {
+                  setSelectedElementId(null)
+                  setGroupIds([])
+                }}
               >
                 <SnapGuides />
                 {currentSlide.elements.map((el) => (
@@ -974,6 +1062,10 @@ export function SlideEditor({
                     theme={theme}
                     selected={selectedElementId === el.id}
                     onSelect={() => setSelectedElementId(el.id)}
+                    grouped={groupIds.includes(el.id)}
+                    group={groupIds.includes(el.id) ? groupEls.filter((g) => g.id !== el.id).map((g) => ({ id: g.id, x: g.x, y: g.y })) : []}
+                    onToggleSelect={() => toggleInGroup(el.id)}
+                    onPreviewMany={(patches) => previewMany(currentSlide.id, patches)}
                     onDragEnd={() => {
                       didDragRef.current = true
                       window.setTimeout(() => {
@@ -1008,6 +1100,9 @@ export function SlideEditor({
                 title="Chưa có slide nào"
                 description="Nhấn dấu + ở thanh slide phía dưới để bắt đầu."
               />
+            )}
+            {groupEls.length >= 2 && currentSlide && !currentSlide.html && (
+              <GroupToolbar els={groupEls} onAlign={alignGroup} onDelete={removeGroup} />
             )}
             {selectedElement && currentSlide && !currentSlide.html && (
               <SelectionToolbar
@@ -1814,6 +1909,49 @@ function AutoFitText({
 
 const FRAME_HOVER = 'slide-frame-hover'
 
+/* ---------- thanh nổi khi chọn nhiều phần tử: căn + phân bố đều ---------- */
+const GROUP_ACTIONS: Array<{ mode: AlignMode; label: string; Icon: typeof AlignStartVertical; min?: number }> = [
+  { mode: 'left', label: 'Căn trái', Icon: AlignStartVertical },
+  { mode: 'center', label: 'Căn giữa ngang', Icon: AlignCenterVertical },
+  { mode: 'right', label: 'Căn phải', Icon: AlignEndVertical },
+  { mode: 'top', label: 'Căn trên', Icon: AlignStartHorizontal },
+  { mode: 'middle', label: 'Căn giữa dọc', Icon: AlignCenterHorizontal },
+  { mode: 'bottom', label: 'Căn dưới', Icon: AlignEndHorizontal },
+  { mode: 'spreadX', label: 'Khoảng cách đều theo chiều ngang', Icon: AlignHorizontalSpaceAround, min: 3 },
+  { mode: 'spreadY', label: 'Khoảng cách đều theo chiều dọc', Icon: AlignVerticalSpaceAround, min: 3 },
+]
+
+function GroupToolbar({ els, onAlign, onDelete }: { els: SlideElement[]; onAlign: (mode: AlignMode) => void; onDelete: () => void }) {
+  const top = Math.min(...els.map((e) => e.y))
+  const bottom = Math.max(...els.map((e) => e.y + elementHeight(e)))
+  const above = top > 12
+  return (
+    <div
+      className="slide-sel-toolbar absolute left-1/2 z-[51] flex -translate-x-1/2 items-center gap-0.5 rounded-lg border border-line bg-surface p-1 shadow-[0_4px_16px_-4px_rgba(35,32,28,0.25)]"
+      style={above ? { top: `calc(${top}% - 44px)` } : { top: `calc(${Math.min(bottom, 100)}% + 8px)` }}
+      onPointerDown={(e) => e.stopPropagation()}
+      onClick={(e) => e.stopPropagation()}
+    >
+      <span className="whitespace-nowrap px-1.5 text-[12px] font-medium text-ink/60">{els.length} mục</span>
+      {GROUP_ACTIONS.map(({ mode, label, Icon, min }, i) => (
+        <button
+          key={mode}
+          type="button"
+          title={min && els.length < min ? `${label} (cần chọn từ ${min} mục)` : label}
+          disabled={!!min && els.length < min}
+          className={cn('grid size-7 place-items-center rounded-md text-ink hover:bg-black/5 disabled:opacity-35 disabled:hover:bg-transparent', (i === 3 || i === 6) && 'ml-1.5')}
+          onClick={() => onAlign(mode)}
+        >
+          <Icon size={16} strokeWidth={1.8} />
+        </button>
+      ))}
+      <button type="button" title="Xoá các mục đã chọn" className="ml-1.5 grid size-7 place-items-center rounded-md text-ink hover:bg-black/5" onClick={onDelete}>
+        <Trash2 size={16} strokeWidth={1.8} />
+      </button>
+    </div>
+  )
+}
+
 /* ---------- đường gióng khi kéo (smart guides kiểu Canva) ---------- */
 const GUIDES = 'slide-snap-guides'
 const SNAP_PX = 5
@@ -1909,11 +2047,22 @@ function EditableEl({
   onDropInFrame,
   editingText,
   onEditingText,
+  grouped = false,
+  group = [],
+  onToggleSelect,
+  onPreviewMany,
 }: {
   el: SlideElement
   theme: ResolvedTheme
   selected: boolean
   onSelect: () => void
+  /** nằm trong nhóm chọn nhiều: chỉ viền, không tay nắm */
+  grouped?: boolean
+  /** các phần tử khác trong nhóm — kéo phần tử này thì cả nhóm đi theo */
+  group?: Array<{ id: string; x: number; y: number }>
+  /** Shift+bấm: thêm/bớt khỏi nhóm chọn */
+  onToggleSelect?: () => void
+  onPreviewMany?: (patches: Record<string, Partial<SlideElement>>) => void
   onBeginHistory: () => void
   onPreview: (patch: Partial<SlideElement>) => void
   onChange: (patch: Partial<SlideElement>) => void
@@ -1927,6 +2076,7 @@ function EditableEl({
   editingText: boolean
   onEditingText: (on: boolean) => void
 }) {
+  const movedRef = useRef(false)
   const [imageBusy, setImageBusy] = useState(false)
   const [imageError, setImageError] = useState<string | null>(null)
   // ảnh đang được kéo qua khung: '' = file từ máy (chưa đọc được), null = không kéo
@@ -1942,8 +2092,8 @@ function EditableEl({
     rotate: el.rotation ? `${el.rotation}deg` : undefined,
     scale: el.flipX || el.flipY ? `${el.flipX ? -1 : 1} ${el.flipY ? -1 : 1}` : undefined,
     transition: 'scale 350ms cubic-bezier(.2,.8,.2,1)',
-    outline: selected ? '2px solid #b4532a' : undefined,
-    outlineOffset: selected ? 0 : undefined,
+    outline: selected || grouped ? '2px solid #b4532a' : undefined,
+    outlineOffset: selected || grouped ? 0 : undefined,
   }
 
   const startDrag = (e: React.PointerEvent, mode: 'move' | 'resize', dir?: ResizeDir) => {
@@ -1952,27 +2102,30 @@ function EditableEl({
       return
     }
     e.stopPropagation()
+    movedRef.current = false
+    if (e.shiftKey && mode === 'move' && onToggleSelect) {
+      e.preventDefault()
+      onToggleSelect()
+      return
+    }
     // Chọn và bắt đầu kéo trong cùng một thao tác, như PowerPoint.
-    if (!selected) onSelect()
+    if (!selected && !grouped) onSelect()
     e.preventDefault()
     const frame = (e.currentTarget as HTMLElement).closest('.slide-frame') as HTMLElement | null
     if (!frame) return
     const rect = frame.getBoundingClientRect()
     const base = { x: el.x, y: el.y, w: el.w, h: elementHeight(el) }
     // đường gióng (kiểu Canva): mép/tâm của slide và của các phần tử khác, tính theo % khung
-    const others =
-      mode === 'move'
-        ? [...frame.querySelectorAll<HTMLElement>('[data-el-id]')]
-            .filter((n) => n.dataset.elId !== el.id)
-            .map((n) => {
-              const r = n.getBoundingClientRect()
-              const l = ((r.left - rect.left) / rect.width) * 100
-              const rr = ((r.right - rect.left) / rect.width) * 100
-              const t = ((r.top - rect.top) / rect.height) * 100
-              const b = ((r.bottom - rect.top) / rect.height) * 100
-              return { xs: [l, (l + rr) / 2, rr], ys: [t, (t + b) / 2, b] }
-            })
-        : []
+    const others = [...frame.querySelectorAll<HTMLElement>('[data-el-id]')]
+      .filter((n) => n.dataset.elId !== el.id && !group.some((g) => g.id === n.dataset.elId))
+      .map((n) => {
+        const r = n.getBoundingClientRect()
+        const l = ((r.left - rect.left) / rect.width) * 100
+        const rr = ((r.right - rect.left) / rect.width) * 100
+        const t = ((r.top - rect.top) / rect.height) * 100
+        const b = ((r.bottom - rect.top) / rect.height) * 100
+        return { xs: [l, (l + rr) / 2, rr], ys: [t, (t + b) / 2, b] }
+      })
     if (mode === 'move') document.body.dataset.slideDrag = ''
     const snapXs = [0, 50, 100, ...others.flatMap((o) => o.xs)]
     const snapYs = [0, 50, 100, ...others.flatMap((o) => o.ys)]
@@ -1991,6 +2144,7 @@ function EditableEl({
       window.dispatchEvent(new CustomEvent(FRAME_HOVER, { detail: { id, src: el.src } }))
     }
     const move = (ev: PointerEvent) => {
+      movedRef.current = true
       const dx = ((ev.clientX - startX) / rect.width) * 100
       const dy = ((ev.clientY - startY) / rect.height) * 100
       if (mode === 'move' || !dir) {
@@ -2003,7 +2157,15 @@ function EditableEl({
         if (sy) y += sy.d
         showGuides({ x: sx?.at ?? null, y: sy?.at ?? null, gaps: gapsTo({ x, y, w: base.w, h: base.h }, others) })
         // kéo ra ngoài slide được (phần ngoài bị khung che), chỉ giữ lại một mép 3% để còn nắm kéo về
-        onPreview({ x: clamp(x, 3 - base.w, 97), y: clamp(y, 3 - base.h, 97) })
+        x = clamp(x, 3 - base.w, 97)
+        y = clamp(y, 3 - base.h, 97)
+        if (group.length && onPreviewMany) {
+          const patches: Record<string, Partial<SlideElement>> = { [el.id]: { x, y } }
+          for (const g of group) patches[g.id] = { x: g.x + x - base.x, y: g.y + y - base.y }
+          onPreviewMany(patches)
+          return
+        }
+        onPreview({ x, y })
         if (canFill) {
           const hit = document
             .elementsFromPoint(ev.clientX, ev.clientY)
@@ -2064,6 +2226,28 @@ function EditableEl({
         nextHPct = Math.min(nextHPct, 100)
         nextXPct = clamp(nextXPct, 0, 100 - nextWPct)
         nextYPct = clamp(nextYPct, 0, 100 - nextHPct)
+        // hút cạnh đang kéo vào đường gióng (góc khoá tỉ lệ thì bỏ — hút một trục sẽ làm lệch trục kia)
+        if (!ev.altKey && !ratio && !(el.type === 'text' && dir.length === 2)) {
+          const tolX = (SNAP_PX / rect.width) * 100
+          const tolY = (SNAP_PX / rect.height) * 100
+          let gx: number | null = null
+          let gy: number | null = null
+          if (dir.includes('w')) {
+            const s = snapTo(nextXPct, 0, snapXs, tolX)
+            if (s && nextWPct - s.d >= MIN) { nextXPct += s.d; nextWPct -= s.d; gx = s.at }
+          } else if (dir.includes('e')) {
+            const s = snapTo(nextXPct + nextWPct, 0, snapXs, tolX)
+            if (s && nextWPct + s.d >= MIN) { nextWPct += s.d; gx = s.at }
+          }
+          if (dir.includes('n')) {
+            const s = snapTo(nextYPct, 0, snapYs, tolY)
+            if (s && nextHPct - s.d >= MIN) { nextYPct += s.d; nextHPct -= s.d; gy = s.at }
+          } else if (dir.includes('s')) {
+            const s = snapTo(nextYPct + nextHPct, 0, snapYs, tolY)
+            if (s && nextHPct + s.d >= MIN) { nextHPct += s.d; gy = s.at }
+          }
+          showGuides({ x: gx, y: gy })
+        }
       }
       const patch: Partial<SlideElement> = {
         x: nextXPct,
@@ -2129,7 +2313,8 @@ function EditableEl({
   const common = {
     style,
     'data-el-id': el.id,
-    onClick: (e: React.MouseEvent) => { e.stopPropagation(); onSelect() },
+    // Shift+bấm đã xử lý ở pointerdown; vừa kéo xong thì giữ nguyên vùng chọn (nhóm không bị thu về một)
+    onClick: (e: React.MouseEvent) => { e.stopPropagation(); if (!e.shiftKey && !movedRef.current) onSelect() },
     onPointerDown: (e: React.PointerEvent) => startDrag(e, 'move'),
   }
 

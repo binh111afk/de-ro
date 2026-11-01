@@ -2261,7 +2261,7 @@ export const GRAPHICS: SlideGraphicData[] = [
     category: "arrow",
     keywords: "mui ten vong cung chuyen tiep quy dao",
     ratio: 1,
-    svg: "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"432.91 623.50 70 70\"><path d=\"M 454.50 638.50 L 478.50 638.50 Q 486.50 638.50 486.50 646.50 L 486.50 670.50 Q 486.50 678.50 478.50 678.50 L 454.50 678.50 Q 446.50 678.50 446.50 670.50 L 446.50 646.50 Q 446.50 638.50 454.50 638.50 Z M 482.50 656.50 L 492.50 664.50 L 480.50 666.50 Z\" fill=\"#F6C6A8\"/><path d=\"M 443.33 660.48 L 444.95 657.00 L 447.15 653.86 L 449.86 651.15 L 453.00 648.95 L 456.48 647.33 L 460.18 646.33 L 464.00 646.00 L 467.82 646.33 L 471.52 647.33 L 475.00 648.95 L 478.14 651.15 L 480.85 653.86 L 483.05 657.00 L 484.67 660.48 M 480.00 654.00 L 490.00 662.00 L 478.00 664.00 Z\" fill=\"none\" stroke=\"#22333B\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>",
+    svg: "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 70 70\"><path d=\"M21 50L10 50A25 25 0 0 1 58.9 42.7L48.4 45.9A14 14 0 0 0 21 50Z\" fill=\"#F6C6A8\" stroke=\"#22333B\" stroke-width=\"3\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><path d=\"M64.9 42L53.6 55.7L42.7 47.9Z\" fill=\"#F6C6A8\" stroke=\"#22333B\" stroke-width=\"3\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/></svg>",
   },
   {
     id: "arrow-chu-u",

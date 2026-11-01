@@ -63,6 +63,26 @@ const guitar = svg(
   '</g>',
 )
 
+
+/** mũi tên vòng cung: dải cung tô màu đi qua đỉnh, đầu mũi tên ở cuối bên phải */
+function arcArrow() {
+  const cx = 35, cy = 50, R = 25, r = 14
+  // góc toán học (y hướng lên): bắt đầu 180° bên trái, kết thúc 15° bên phải
+  const pt = (rad, deg) => {
+    const a = (deg * Math.PI) / 180
+    return `${round1(cx + rad * Math.cos(a))} ${round1(cy - rad * Math.sin(a))}`
+  }
+  const end = 15
+  const tip = (end - 32 + 360) % 360 // đầu nhọn đi tiếp theo chiều kim đồng hồ
+  const mid = (R + r) / 2
+  // thân cung (dừng trước đầu nhọn 2°) rồi đầu nhọn vẽ sau, che mép thân
+  const body =
+    `M${pt(r, 180)}L${pt(R, 180)}A${R} ${R} 0 0 1 ${pt(R, end + 2)}` +
+    `L${pt(r, end + 2)}A${r} ${r} 0 0 0 ${pt(r, 180)}Z`
+  const head = `M${pt(R + 6, end)}L${pt(mid, tip)}L${pt(r - 6, end)}Z`
+  return svg(fill(body, PEACH), fill(head, PEACH))
+}
+
 /** Hoa sen (hai bản) xử lý riêng trong import-graphics.mjs; còn lại ở đây. */
 export const REDRAWN = {
   'soc-ban-do': svg(
@@ -253,4 +273,5 @@ export const REDRAWN = {
     dot(35, 40.5),
     dot(50, 40.5),
   ),
+  'arrow-vong-cung': arcArrow(),
 }
