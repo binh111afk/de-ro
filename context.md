@@ -2,11 +2,12 @@
 
 Bản đồ dự án. Đọc file này trước, rồi mở file liên kết cần dùng. Lịch sử và chi tiết không để ở đây nữa, để tránh file quá dài.
 
-> Cập nhật lần cuối: **30/10/2026 (phiên 12)**.
+> Cập nhật lần cuối: **01/11/2026 (phiên 13)**.
 
 ## Đọc gì
 
-- **Bàn giao gần nhất:** [phiên 12](docs/handoff/phien-12.md) (lưu theo tài khoản Supabase `user_items`; đề đã xuất bản cho học sinh + báo cáo kết quả; trợ lý AI trong tạo đề online có đính kèm file; hộp thoại, ô tích dùng chung), [phiên 11](docs/handoff/phien-11.md) (kiểm file .docx/.pptx bằng Word/PowerPoint/LibreOffice + sửa 3 lỗi xuất; nhập đề từ file Word/PDF/văn bản với đọc đáp án đánh dấu; ảnh trong câu hỏi: soạn, làm bài, xuất Word, nhập từ docx), [phiên 10](docs/handoff/phien-10.md) (tab Tạo đề online: lịch sử, trình tạo đề, cài đặt làm bài, đăng tuỳ chọn + link; xem lại bài có đáp án đúng/sai; lời giải ở cuối tài liệu), [phiên 9](docs/handoff/phien-9.md) (câu Đúng/Sai và Trả lời ngắn theo đề THPT 2025, `Tệp → Làm đề tương tác`, chấm điểm; nhánh `feat/dung-sai-tra-loi-ngan`), [phiên 8](docs/handoff/phien-8.md) (panel thư viện kiểu Canva, menu Lớp, thanh nổi, màu chủ đạo, 325 icon, ô chữ nhấp đúp; nhánh `feat/slide-panel-ui`), [phiên 7](docs/handoff/phien-7.md) (ribbon danh sách Word, thanh slide dưới đáy kiểu Canva, panel Thành phần/Icon/Mẫu/Tải lên, tab Thành phần), [phiên 6](docs/handoff/phien-6.md) (hồ sơ, kho câu hỏi, kho tài liệu), [phiên 5](docs/handoff/phien-5.md) (trang hồ sơ, đề cộng đồng, thanh tab), [phiên 4](docs/handoff/phien-4.md) (tài khoản Supabase, R2, email), [phiên 3](docs/handoff/phien-3.md) (trình soạn slide), [phiên 2](docs/handoff/phien-2.md) (AI sinh và sửa slide).
+- **Sửa icon / đồ hoạ slide:** đọc mục "Hướng dẫn sửa icon" trong [phiên 13](docs/handoff/phien-13.md) trước khi đụng vào — `src/lib/graphics.ts` là file sinh tự động, sửa ở `scripts/graphics-redraw.mjs` / `scripts/import-graphics.mjs`.
+- **Bàn giao gần nhất:** [phiên 13](docs/handoff/phien-13.md) (đề online: một nút Đăng, trang kết quả + bục top 3, thông tin học sinh không cần tài khoản; slide: khung ảnh, hoạ tiết, đường gióng + khoảng cách, tay nắm kiểu Canva, responsive, lazy-load, F5 giữ tab; vẽ lại icon), [phiên 12](docs/handoff/phien-12.md) (lưu theo tài khoản Supabase `user_items`; đề đã xuất bản cho học sinh + báo cáo kết quả; trợ lý AI trong tạo đề online có đính kèm file; hộp thoại, ô tích dùng chung), [phiên 11](docs/handoff/phien-11.md) (kiểm file .docx/.pptx bằng Word/PowerPoint/LibreOffice + sửa 3 lỗi xuất; nhập đề từ file Word/PDF/văn bản với đọc đáp án đánh dấu; ảnh trong câu hỏi: soạn, làm bài, xuất Word, nhập từ docx), [phiên 10](docs/handoff/phien-10.md) (tab Tạo đề online: lịch sử, trình tạo đề, cài đặt làm bài, đăng tuỳ chọn + link; xem lại bài có đáp án đúng/sai; lời giải ở cuối tài liệu), [phiên 9](docs/handoff/phien-9.md) (câu Đúng/Sai và Trả lời ngắn theo đề THPT 2025, `Tệp → Làm đề tương tác`, chấm điểm; nhánh `feat/dung-sai-tra-loi-ngan`), [phiên 8](docs/handoff/phien-8.md) (panel thư viện kiểu Canva, menu Lớp, thanh nổi, màu chủ đạo, 325 icon, ô chữ nhấp đúp; nhánh `feat/slide-panel-ui`), [phiên 7](docs/handoff/phien-7.md) (ribbon danh sách Word, thanh slide dưới đáy kiểu Canva, panel Thành phần/Icon/Mẫu/Tải lên, tab Thành phần), [phiên 6](docs/handoff/phien-6.md) (hồ sơ, kho câu hỏi, kho tài liệu), [phiên 5](docs/handoff/phien-5.md) (trang hồ sơ, đề cộng đồng, thanh tab), [phiên 4](docs/handoff/phien-4.md) (tài khoản Supabase, R2, email), [phiên 3](docs/handoff/phien-3.md) (trình soạn slide), [phiên 2](docs/handoff/phien-2.md) (AI sinh và sửa slide).
 - **Việc còn tồn đọng:** [docs/viec-con-lai.md](docs/viec-con-lai.md) (mục 5b là việc tiếp theo; gợi ý tiếp ở cuối phiên 11).
 - **Lỗi đã gặp và bài học:** [docs/bai-hoc-va-loi.md](docs/bai-hoc-va-loi.md).
 - **Lịch sử từng chặng** (mục 3.x, số mục ở các file này vẫn giữ nguyên): [docs/history/muc-3-lich-su.md](docs/history/muc-3-lich-su.md).
@@ -103,7 +104,7 @@ npm run test:slide-text # 5/5 pass (chiều cao hộp chữ slide)
 npm run test:slide-theme # 4/4 pass (theme v2: normalize/tương phản/catalog)
 npm run test:slide-layout # 10/10 pass (layout v1+v2: 14 bố cục/quiz/tone)
 npm run test:slide-measure # 9 nhóm pass (đo chữ + fit 19 layout, bất biến không tràn)
-npm run test:slide-graphics # 21 nhóm pass (432 đồ hoạ catalog + 80 ornament: registry/search/recolor/layout/prompt)
+npm run test:slide-graphics # 21 nhóm pass (432 đồ hoạ catalog + 140 hoạ tiết: registry/search/recolor/layout/prompt)
 npm run test:image      # 3/3 pass (prompt tạo ảnh từ nội dung slide)
 npm run test:sources    # 4/4 pass (thang nguồn + myDocs)
 npm run test:extract    # 4/4 pass (trích docx/pdf/xlsx/csv/pptx)

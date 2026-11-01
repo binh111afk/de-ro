@@ -966,6 +966,7 @@ export function SlideEditor({
                 }}
                 onClick={() => setSelectedElementId(null)}
               >
+                <SnapGuides />
                 {currentSlide.elements.map((el) => (
                   <EditableEl
                     key={el.id}
@@ -1813,6 +1814,84 @@ function AutoFitText({
 
 const FRAME_HOVER = 'slide-frame-hover'
 
+/* ---------- đường gióng khi kéo (smart guides kiểu Canva) ---------- */
+const GUIDES = 'slide-snap-guides'
+const SNAP_PX = 5
+/** khoảng cách tới phần tử gần nhất: đoạn thẳng (% khung) và nhãn px */
+type Gap = { x1: number; y1: number; x2: number; y2: number; label: number }
+type Guides = { x: number | null; y: number | null; gaps?: Gap[] }
+/** slide quy về 1920×1080 để con số khoảng cách không đổi theo mức zoom (như Canva) */
+const SLIDE_W_PX = 1920
+const SLIDE_H_PX = 1080
+
+/** Khoảng trống ngang/dọc từ hộp đang kéo tới phần tử gần nhất cùng hàng/cột. */
+function gapsTo(box: { x: number; y: number; w: number; h: number }, others: Array<{ xs: number[]; ys: number[] }>): Gap[] {
+  const [l, r, t, b] = [box.x, box.x + box.w, box.y, box.y + box.h]
+  const cx = l + box.w / 2
+  const cy = t + box.h / 2
+  let left: Gap | null = null
+  let right: Gap | null = null
+  let up: Gap | null = null
+  let down: Gap | null = null
+  for (const o of others) {
+    const [ol, , or] = o.xs
+    const [ot, , ob] = o.ys
+    const rowOverlap = ot < b && ob > t
+    const colOverlap = ol < r && or > l
+    if (rowOverlap && or <= l && (!left || or > left.x1)) left = { x1: or, y1: cy, x2: l, y2: cy, label: 0 }
+    if (rowOverlap && ol >= r && (!right || ol < right.x2)) right = { x1: r, y1: cy, x2: ol, y2: cy, label: 0 }
+    if (colOverlap && ob <= t && (!up || ob > up.y1)) up = { x1: cx, y1: ob, x2: cx, y2: t, label: 0 }
+    if (colOverlap && ot >= b && (!down || ot < down.y2)) down = { x1: cx, y1: b, x2: cx, y2: ot, label: 0 }
+  }
+  return [left, right, up, down]
+    .filter((g): g is Gap => !!g)
+    .map((g) => ({ ...g, label: Math.round(g.y1 === g.y2 ? ((g.x2 - g.x1) * SLIDE_W_PX) / 100 : ((g.y2 - g.y1) * SLIDE_H_PX) / 100) }))
+    .filter((g) => g.label > 0)
+}
+const showGuides = (g: Guides) => window.dispatchEvent(new CustomEvent<Guides>(GUIDES, { detail: g }))
+
+/** Mép trái/giữa/phải (hoặc trên/giữa/dưới) của hộp gần đích nào nhất trong `tol` → độ dời và vị trí đường gióng. */
+function snapTo(pos: number, size: number, targets: number[], tol: number) {
+  let best: { d: number; at: number } | null = null
+  for (const off of [0, size / 2, size])
+    for (const at of targets) {
+      const d = at - (pos + off)
+      if (Math.abs(d) <= tol && (!best || Math.abs(d) < Math.abs(best.d))) best = { d, at }
+    }
+  return best
+}
+
+function SnapGuides() {
+  const [g, setG] = useState<Guides>({ x: null, y: null })
+  useEffect(() => {
+    const on = (e: Event) => setG((e as CustomEvent<Guides>).detail)
+    window.addEventListener(GUIDES, on)
+    return () => window.removeEventListener(GUIDES, on)
+  }, [])
+  return (
+    <>
+      {g.x !== null && <div className="pointer-events-none absolute inset-y-0 z-[60] w-px bg-[#e0368f]" style={{ left: `${g.x}%` }} />}
+      {g.y !== null && <div className="pointer-events-none absolute inset-x-0 z-[60] h-px bg-[#e0368f]" style={{ top: `${g.y}%` }} />}
+      {g.gaps?.map((gap, i) => {
+        const across = gap.y1 === gap.y2
+        return (
+          <div
+            key={i}
+            // khung trong suốt chỉ để canh nhãn vào giữa khoảng trống — không vẽ đường nối
+            className={cn('pointer-events-none absolute z-[60] flex items-center justify-center', across ? 'h-px' : 'w-px')}
+            style={{ left: `${gap.x1}%`, top: `${gap.y1}%`, width: across ? `${gap.x2 - gap.x1}%` : undefined, height: across ? undefined : `${gap.y2 - gap.y1}%` }}
+          >
+            {/* nhãn cùng kiểu viên thuốc "Chọn ảnh": nền trắng, bóng, chữ đậm — nằm giữa đoạn đo */}
+            <span className="shrink-0 whitespace-nowrap rounded-full bg-white px-2 py-[3px] text-[11px] font-semibold leading-none text-ink shadow-[0_0_0_1px_rgb(0_0_0/0.08),0_2px_6px_-1px_rgb(0_0_0/0.3)] tabular-nums">
+              {gap.label}
+            </span>
+          </div>
+        )
+      })}
+    </>
+  )
+}
+
 /** Hướng tay nắm resize — 8 anchor như Transformer của bản gốc. */
 type ResizeDir = 'nw' | 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w'
 const HANDLE_DIRS: ResizeDir[] = ['nw', 'n', 'ne', 'e', 'se', 's', 'sw', 'w']
@@ -1880,6 +1959,23 @@ function EditableEl({
     if (!frame) return
     const rect = frame.getBoundingClientRect()
     const base = { x: el.x, y: el.y, w: el.w, h: elementHeight(el) }
+    // đường gióng (kiểu Canva): mép/tâm của slide và của các phần tử khác, tính theo % khung
+    const others =
+      mode === 'move'
+        ? [...frame.querySelectorAll<HTMLElement>('[data-el-id]')]
+            .filter((n) => n.dataset.elId !== el.id)
+            .map((n) => {
+              const r = n.getBoundingClientRect()
+              const l = ((r.left - rect.left) / rect.width) * 100
+              const rr = ((r.right - rect.left) / rect.width) * 100
+              const t = ((r.top - rect.top) / rect.height) * 100
+              const b = ((r.bottom - rect.top) / rect.height) * 100
+              return { xs: [l, (l + rr) / 2, rr], ys: [t, (t + b) / 2, b] }
+            })
+        : []
+    if (mode === 'move') document.body.dataset.slideDrag = ''
+    const snapXs = [0, 50, 100, ...others.flatMap((o) => o.xs)]
+    const snapYs = [0, 50, 100, ...others.flatMap((o) => o.ys)]
     const startX = e.clientX
     const startY = e.clientY
     const MIN = 4
@@ -1898,8 +1994,16 @@ function EditableEl({
       const dx = ((ev.clientX - startX) / rect.width) * 100
       const dy = ((ev.clientY - startY) / rect.height) * 100
       if (mode === 'move' || !dir) {
+        let x = base.x + dx
+        let y = base.y + dy
+        // hút vào đường gióng khi lệch dưới 5px; giữ Alt để đặt tự do
+        const sx = ev.altKey ? null : snapTo(x, base.w, snapXs, (SNAP_PX / rect.width) * 100)
+        const sy = ev.altKey ? null : snapTo(y, base.h, snapYs, (SNAP_PX / rect.height) * 100)
+        if (sx) x += sx.d
+        if (sy) y += sy.d
+        showGuides({ x: sx?.at ?? null, y: sy?.at ?? null, gaps: gapsTo({ x, y, w: base.w, h: base.h }, others) })
         // kéo ra ngoài slide được (phần ngoài bị khung che), chỉ giữ lại một mép 3% để còn nắm kéo về
-        onPreview({ x: clamp(base.x + dx, 3 - base.w, 97), y: clamp(base.y + dy, 3 - base.h, 97) })
+        onPreview({ x: clamp(x, 3 - base.w, 97), y: clamp(y, 3 - base.h, 97) })
         if (canFill) {
           const hit = document
             .elementsFromPoint(ev.clientX, ev.clientY)
@@ -1967,6 +2071,19 @@ function EditableEl({
         w: nextWPct,
         h: nextHPct,
       }
+      // Kéo góc hộp chữ (kiểu Canva): phóng chữ theo bề rộng, chiều cao lại bám nội dung —
+      // trước đây góc bị coi như cạnh dưới nên chốt cứng chiều cao và thừa khoảng trống dưới chữ.
+      if (el.type === 'text' && dir.length === 2) {
+        const baseFont = el.fontSize ?? (el.variant === 'body' ? 2.4 : 3.6)
+        const ratio = nextW / wPx
+        patch.fontSize = clamp(Number((baseFont * ratio).toFixed(2)), 0.8, 12)
+        patch.fixedHeight = false
+        // chữ và hộp phóng cùng tỉ lệ nên các dòng giữ nguyên chỗ xuống dòng: chiều cao nhân đúng tỉ lệ
+        // (không lấy ước lượng — ước lượng cố tình dư để tránh tràn, chữ sát mép bị tính thành 2 dòng)
+        patch.h = base.h * ratio
+        onPreview(patch)
+        return
+      }
       // Hộp chữ mặc định bám theo nội dung; kéo cạnh trên/dưới là chốt chiều
       // cao thủ công, từ đó khung giữ đúng kích thước người dùng đặt.
       if (el.type === 'text' && (dir.includes('n') || dir.includes('s'))) {
@@ -1986,6 +2103,8 @@ function EditableEl({
       window.removeEventListener('pointerup', up)
       window.removeEventListener('pointercancel', up)
       onDragEnd()
+      showGuides({ x: null, y: null })
+      delete document.body.dataset.slideDrag
       const target = frameId
       hoverFrame(null)
       if (target && el.src) onDropInFrame(target, el.src)
@@ -2009,6 +2128,7 @@ function EditableEl({
 
   const common = {
     style,
+    'data-el-id': el.id,
     onClick: (e: React.MouseEvent) => { e.stopPropagation(); onSelect() },
     onPointerDown: (e: React.PointerEvent) => startDrag(e, 'move'),
   }
@@ -2055,19 +2175,22 @@ function EditableEl({
 
   const handle = selected ? (
     <>
-      {HANDLE_DIRS.map((dir) => (
+      {/* hộp chữ không có tay nắm trên/dưới (như Canva): chiều cao luôn ôm theo chữ */}
+      {HANDLE_DIRS.filter((dir) => el.type !== 'text' || (dir !== 'n' && dir !== 's')).map((dir) => (
         <span
           key={dir}
           className={`slide-el-handle slide-el-handle--${dir}`}
+          // tâm tay nắm nằm trên viền; sát mép slide (khung cắt overflow) thì đẩy hẳn vào trong
           style={{
-            marginLeft: dir.includes('w') && atL ? 0 : dir.includes('e') && atR ? -10 : undefined,
-            marginTop: dir.includes('n') && atT ? 0 : dir.includes('s') && atB ? -10 : undefined,
+            translate: `${dir.includes('w') ? (atL ? '0' : '-50%') : dir.includes('e') ? (atR ? '-100%' : '-50%') : '-50%'} ${
+              dir.includes('n') ? (atT ? '0' : '-50%') : dir.includes('s') ? (atB ? '-100%' : '-50%') : '-50%'
+            }`,
           }}
           onPointerDown={(e) => startDrag(e, 'resize', dir)}
         />
       ))}
       <span className={`slide-el-rotate${rotTop ? ' slide-el-rotate--top' : ''}${rotInside ? ' slide-el-rotate--in' : ''}`} title="Xoay" onPointerDown={startRotate}>
-        <RotateCw size={11} strokeWidth={2} />
+        <RotateCw size={13} strokeWidth={2} />
       </span>
     </>
   ) : null

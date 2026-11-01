@@ -431,7 +431,7 @@ export function SelectionToolbar({
     <div
       role="toolbar"
       aria-label="Định dạng nhanh"
-      className="flex items-center gap-0.5 rounded-lg border border-line bg-surface p-1 shadow-[0_4px_16px_-4px_rgba(35,32,28,0.25)]"
+      className="slide-sel-toolbar flex items-center gap-0.5 rounded-lg border border-line bg-surface p-1 shadow-[0_4px_16px_-4px_rgba(35,32,28,0.25)]"
       style={style}
       onClick={(e) => e.stopPropagation()}
     >

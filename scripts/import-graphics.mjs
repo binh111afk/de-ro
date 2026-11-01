@@ -12,6 +12,7 @@
 import { readFileSync, writeFileSync } from 'node:fs'
 import { bboxOf } from './lib/svg-bbox.mjs'
 import { ICONS_DECOR2, SHEET_DECOR2, importDecor } from './import-decor.mjs'
+import { REDRAWN } from './graphics-redraw.mjs'
 import { ICONS_100, ICONS_DOT4, ICONS_NEW, ICONS_PROG, SHEET_100, SHEET_DOT4, SHEET_NEW, SHEET_PROG } from './graphics-extra.mjs'
 
 const SHEET = 'C:/Users/Lenovo/Downloads/112 educational icons · 64px.svg'
@@ -199,6 +200,65 @@ const entries = [
   ...importDecor(),
   ...importDecor(SHEET_DECOR2, ICONS_DECOR2),
 ]
+// Lớp tô của các icon này gồm nhiều hình CHỒNG nhau (thẻ chồng thẻ); evenodd biến vùng chồng thành lỗ trắng.
+// Các hình vẽ cùng chiều nên nonzero (mặc định) tô kín phần hợp.
+// Danh sách lấy bằng cách so mặt nạ từng hình con: có cặp chồng MỘT PHẦN (không phải lỗ nằm trọn trong hình) → lỗi.
+const FILL_NONZERO = new Set([
+  'eng-the-tu-vung','feel-vo-tay','math-venn','cs-may-in','class-trong-truong','reward-bang-khen',
+  'bio-trau','pe-huy-chuong','art-keo-ho-dan','frame-cuon-tieu-de','bio-hoa-cau-tao','his-chua-mot-cot',
+  'bio-voi','his-voi-chien','people-doc-sach','nat-cay-thong','event-hop-qua','lit-hoa-sen',
+  'life-ban-chai','frame-bong-suy-nghi','his-dai-bac','class-hop-but-mau','bio-rua','sci-kep-ong-nghiem',
+  'decor-bong-bay','bio-cho','life-ly-sua','bio-tho','life-ca-rot','arrow-vong-cung',
+  'bio-meo','class-ban-ghe','civic-gia-dinh','frame-the-lat','reward-huy-chuong','lit-mat-na-2',
+  'geo-tuabin-gio','life-rua-tay','bio-buom','eng-dich-thuat','sci-binh-cau','lit-den-dau',
+  'civic-la-phieu','bio-ho','bio-tim','his-lau-dai','art-co-ve',
+])
+for (const e of entries) {
+  if (FILL_NONZERO.has(e.id)) e.svg = e.svg.replace(' fill-rule="evenodd" clip-rule="evenodd"', '')
+}
+
+// Hoa sen vẽ lại theo lớp: icon gốc dồn mọi nét vào một path nên nét cánh sau chạy đè qua cánh trước.
+// Ở đây cánh sau vẽ trước, cánh trước vẽ sau, mỗi cánh tự tô nên che nét phía sau (nối tiếp, không chồng).
+const SEN = entries.find((e) => e.id === 'lit-hoa-sen')
+if (SEN) {
+  const petal = (d) => `<path d="${d}" fill="#F5D6E0" stroke="#22333B" stroke-width="3" stroke-linejoin="round"/>`
+  SEN.svg =
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 70 70">' +
+    petal('M35 50C26 54 15.5 52 10.5 41C20 38.5 29 41.5 35 50Z') +
+    petal('M35 50C44 54 54.5 52 59.5 41C50 38.5 41 41.5 35 50Z') +
+    petal('M35 50C22 50 14.5 42 13.5 26.5C25 28.5 32 36.5 35 50Z') +
+    petal('M35 50C48 50 55.5 42 56.5 26.5C45 28.5 38 36.5 35 50Z') +
+    petal('M35 50C26 42.5 26 30 35 13C44 30 44 42.5 35 50Z') +
+    '<path d="M23 58.5H47" fill="none" stroke="#22333B" stroke-width="3" stroke-linecap="round"/>' +
+    '</svg>'
+}
+
+// Hoạ tiết hoa sen (B.svg) cùng lỗi: vẽ lại theo lớp — cánh bên (sau) → cuống → nụ giữa → cánh dưới (trước) → mặt nước.
+const SEN_ORN = entries.find((e) => e.id === 'orn-sen')
+if (SEN_ORN) {
+  const fill = (d) => `<path d="${d}" fill="#F5D6E0" stroke="#22333B" stroke-width="3" stroke-linejoin="round"/>`
+  const line = (d) => `<path d="${d}" fill="none" stroke="#22333B" stroke-width="3" stroke-linecap="round"/>`
+  SEN_ORN.ratio = 0.98
+  SEN_ORN.svg =
+    '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 107 110">' +
+    fill('M53.5 76.5C36.2 67.2 24.8 50.8 19.5 27.5C35.5 29.5 46.8 37.5 53.5 51.5C60.2 37.5 71.5 29.5 87.5 27.5C82.2 50.8 70.8 67.2 53.5 76.5Z') +
+    line('M53.5 59.5V73.5') +
+    fill('M53.5 59.5C38.8 43.5 38.8 24.5 53.5 2.5C68.2 24.5 68.2 43.5 53.5 59.5Z') +
+    fill('M53.5 76.5C35.5 86.5 18.5 79.2 2.5 54.5C21.8 50.5 38.8 57.8 53.5 76.5Z') +
+    fill('M53.5 76.5C71.5 86.5 88.5 79.2 104.5 54.5C85.2 50.5 68.2 57.8 53.5 76.5Z') +
+    line('M14.5 91.5C40.5 99.5 66.5 99.5 92.5 91.5') +
+    line('M34.5 104.5C47.2 107.2 59.8 107.2 72.5 104.5') +
+    '</svg>'
+}
+
+// icon vẽ lại bằng tay (xem graphics-redraw.mjs) thay bản từ sheet
+for (const [id, svg] of Object.entries(REDRAWN)) {
+  const e = entries.find((x) => x.id === id)
+  if (!e) throw new Error('vẽ lại: không có icon ' + id)
+  e.svg = svg
+  e.ratio = 1
+}
+
 const seen = new Set()
 for (const e of entries) {
   if (seen.has(e.id)) throw new Error(`id trùng: ${e.id}`)

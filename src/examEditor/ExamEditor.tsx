@@ -200,10 +200,15 @@ export function ExamEditor({ content, onChange, onReady, pageSetup, readOnly }: 
   // nạp lại nội dung khi đổi tab (component được remount bằng key nên không cần,
   // nhưng vẫn giữ để an toàn khi nạp đề từ thư viện)
   useEffect(() => {
-    if (!editor) return
-    const current = editor.getJSON()
-    if (JSON.stringify(current) !== JSON.stringify(content)) {
-      editor.commands.setContent(content, { emitUpdate: false })
+    // editor cũ có thể đã bị huỷ khi đổi tab dồn dập (vd. khôi phục phiên sau F5)
+    if (!editor || editor.isDestroyed) return
+    try {
+      const current = editor.getJSON()
+      if (JSON.stringify(current) !== JSON.stringify(content)) {
+        editor.commands.setContent(content, { emitUpdate: false })
+      }
+    } catch {
+      // editor đang ở trạng thái "đã gỡ, chưa huỷ" (StrictMode gắn lại) — bộ lệnh chưa có; lần gắn sau sẽ nạp
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor, content])

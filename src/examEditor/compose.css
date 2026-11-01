@@ -3622,9 +3622,9 @@
     border: none;
   }
   /* rail dọc biến thành nút nổi góc dưới phải */
+  /* nút nổi là position: fixed nên không bị overflow của dock cắt */
   .ai-dock.collapsed {
     width: 0;
-    overflow: visible;
   }
   .ai-dock.collapsed .ai-rail {
     position: fixed;

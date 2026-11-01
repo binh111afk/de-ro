@@ -31,6 +31,7 @@ import { useFormatState, applyFormatAttrs } from '@/examEditor/formatState'
 import { FindPanel } from '@/examEditor/FindPanel'
 import { exportDocBlocks, printDoc } from '@/examEditor/exportBlocks'
 import { useComposeStore } from '@/store/compose'
+import { useDocStore } from '@/store/docs'
 import { useOnline } from '@/store/online'
 import { docToExam } from '@/lib/docToExam'
 import { examToDraft } from '@/lib/onlineExam'
@@ -40,6 +41,35 @@ import { importedSlides, readImportFile, textToBlocks } from '@/lib/importFile'
 import { IconZoomIn, IconZoomOut } from '@/examEditor/icons'
 import type { ExamBlock, ExamDoc, FormatAttrs, RichText } from '@/data/docTypes'
 import { emptyDoc } from '@/data/docTypes'
+
+const SESSION_KEY = 'dethinhbien-compose-session'
+type ComposeSession = { ids: string[]; active: string | null; start: boolean }
+
+function readSession(): ComposeSession | null {
+  try {
+    return JSON.parse(sessionStorage.getItem(SESSION_KEY) ?? 'null')
+  } catch {
+    return null
+  }
+}
+
+/** Mở lại các tab của phiên trước (sau F5) từ kho tài liệu — tab trống chưa từng lưu thì bỏ qua. */
+function restoreSession() {
+  const session = readSession()
+  const compose = useComposeStore.getState()
+  if (!session || compose.tabs.length > 0) return
+  const { myDocs, myDecks } = useDocStore.getState()
+  for (const id of session.ids) {
+    const deck = myDecks.find((d) => d.id === id)
+    if (deck) compose.openDeck(deck)
+    else {
+      const doc = myDocs.find((d) => d.id === id)
+      if (doc) compose.openDoc(doc)
+    }
+  }
+  const { tabs } = useComposeStore.getState()
+  if (session.active && tabs.some((t) => t.id === session.active)) compose.setActive(session.active)
+}
 
 // trình soạn slide (pptxgen, bố cục, trình chiếu…) chỉ tải khi mở tab slide
 const SlideEditor = lazy(() => import('@/examEditor/SlideEditor').then((m) => ({ default: m.SlideEditor })))
@@ -275,7 +305,8 @@ export default function ComposeDoc() {
   // tab khởi động (trang bắt đầu) hiện thay cho sân soạn khi được chọn
   // trang khác đã mở sẵn một tab (vd. Lưu vào trình soạn thảo ở trang xem đề) thì vào thẳng tab đó
   const { state: navState } = useLocation() as { state: { openTab?: boolean } | null }
-  const [startOpen, setStartOpen] = useState(!navState?.openTab)
+  // F5 không về màn Bắt đầu: phiên (tab đang mở, tab đang xem) giữ trong sessionStorage — xem effect khôi phục bên dưới
+  const [startOpen, setStartOpen] = useState(() => (navState?.openTab ? false : (readSession()?.start ?? true)))
   // màn hẹp (tablet/điện thoại): trợ lý AI nổi đè lên trang nên mặc định đóng
   const [aiOpen, setAiOpen] = useState(() => window.innerWidth >= 1024)
   const [navOpen, setNavOpen] = useState(true)
@@ -310,8 +341,21 @@ export default function ComposeDoc() {
   // `ensureDoc` kiểm tra trạng thái tại thời điểm gọi nên StrictMode gọi effect
   // hai lần vẫn chỉ tạo ra một tab.
   useEffect(() => {
+    restoreSession()
     ensureDoc()
   }, [ensureDoc])
+
+  // ghi lại phiên mỗi khi đổi tab / mở-đóng màn Bắt đầu
+  const sessionTabs = useComposeStore((s) => s.tabs)
+  useEffect(() => {
+    // lần render đầu (trước khi khôi phục) chưa có tab — đừng ghi đè phiên cũ bằng danh sách rỗng
+    if (sessionTabs.length === 0) return
+    try {
+      sessionStorage.setItem(SESSION_KEY, JSON.stringify({ ids: sessionTabs.map((t) => t.id), active: activeId, start: startOpen }))
+    } catch {
+      /* chỉ là tiện ích */
+    }
+  }, [sessionTabs, activeId, startOpen])
 
   // Tự lưu toàn bộ tab khi rời trang (đóng tab trình duyệt, tải lại, điều hướng).
   useEffect(() => {
@@ -353,7 +397,8 @@ export default function ComposeDoc() {
   const newDocAndOpen = useCallback(
     (reuseEmpty: boolean) => {
       if (reuseEmpty) {
-        const only = tabs.length === 1 ? tabs[0] : null
+        // chỉ dùng lại tab ĐỀ trống — tab slide không có `contents` nên trước đây bị coi nhầm là đề trống
+        const only = tabs.length === 1 && tabs[0].kind !== 'slide' ? tabs[0] : null
         const empty =
           only && !only.dirty && (contents[only.id]?.content?.length ?? 0) === 0
         if (empty) {

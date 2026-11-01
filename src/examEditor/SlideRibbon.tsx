@@ -599,7 +599,7 @@ export function SlideRibbon(props: SlideRibbonProps) {
         <RibbonButton
           icon={<IconTextBox size={28} />}
           label="Hộp văn bản"
-          onClick={() => onInsert({ id: uid(), type: 'text', x: 10, y: 36, w: 80, h: 18, text: 'Nhập văn bản', variant: 'body' })}
+          onClick={() => onInsert({ id: uid(), type: 'text', x: 35, y: 42, w: 30, h: 18, text: 'Nhập văn bản', variant: 'body', fontSize: 3.2 })}
         />
       </RibbonGroup>
     </>

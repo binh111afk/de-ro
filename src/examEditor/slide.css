@@ -108,16 +108,46 @@
   box-shadow: 0 2px 6px rgb(0 0 0 / 10%), 0 18px 48px -24px rgb(0 0 0 / 35%);
 }
 
-/* 8 tay nắm resize quanh hộp đang chọn (giống anchor của Transformer bên gốc) */
+/* tay nắm resize kiểu Canva: vùng bấm 28px trong suốt, hình nhìn thấy là ::after —
+   góc chấm tròn trắng, cạnh thanh viên thuốc; nổi trên mọi nền nhờ bóng thay cho viền màu */
 .slide-el-handle {
   position: absolute;
-  width: 10px;
-  height: 10px;
-  margin: -5px;
-  background: #fff;
-  border: 1.5px solid var(--accent);
-  border-radius: 2px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: none;
   z-index: 10;
+}
+.slide-el-handle::after {
+  content: '';
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.14), 0 1px 4px rgb(0 0 0 / 0.3);
+  transition: transform 120ms ease-out;
+}
+/* góc luôn nằm trên tay nắm cạnh: hộp chữ một dòng thấp hơn vùng bấm 28px, cạnh sẽ đè mất góc */
+.slide-el-handle--nw,
+.slide-el-handle--ne,
+.slide-el-handle--se,
+.slide-el-handle--sw {
+  z-index: 12;
+}
+.slide-el-handle:hover::after {
+  transform: scale(1.18);
+}
+.slide-el-handle--n::after,
+.slide-el-handle--s::after {
+  width: 24px;
+  height: 7px;
+}
+.slide-el-handle--e::after,
+.slide-el-handle--w::after {
+  width: 7px;
+  height: 24px;
 }
 .slide-el-handle--nw { left: 0; top: 0; cursor: nwse-resize; }
 .slide-el-handle--n { left: 50%; top: 0; cursor: ns-resize; }
@@ -132,27 +162,24 @@
 .slide-el-rotate {
   position: absolute;
   left: 50%;
-  bottom: -31px;
-  width: 18px;
-  height: 18px;
-  margin-left: -9px;
+  bottom: -34px;
+  width: 24px;
+  height: 24px;
+  margin-left: -12px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: #fff;
-  border: 1.5px solid var(--accent);
   border-radius: 50%;
-  color: var(--accent);
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.14), 0 1px 4px rgb(0 0 0 / 0.3);
+  color: var(--ink, #374151);
   cursor: grab;
+  touch-action: none;
   z-index: 11;
 }
 .slide-el-rotate--top {
   bottom: auto;
-  top: -31px;
-}
-.slide-el-rotate--top::after {
-  bottom: auto;
-  top: 100%;
+  top: -34px;
 }
 .layer-menu {
   transform-origin: top left;
@@ -172,21 +199,8 @@
 .slide-el-rotate--in {
   bottom: 14px;
 }
-.slide-el-rotate--in::after {
-  display: none;
-}
 .slide-el-rotate:active {
   cursor: grabbing;
-}
-.slide-el-rotate::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  bottom: 100%;
-  width: 1.5px;
-  height: 12px;
-  margin-left: -0.75px;
-  background: var(--accent);
 }
 
 /* kéo thumbnail để đổi thứ tự slide */
@@ -1206,4 +1220,9 @@ input.slide-rail-title:focus {
 }
 .slide-frame .katex .mfrac {
   font-size: 1.15em;
+}
+
+/* đang kéo phần tử: ẩn thanh định dạng nổi để không che đường gióng và số khoảng cách (như Canva) */
+body[data-slide-drag] .slide-sel-toolbar {
+  visibility: hidden;
 }

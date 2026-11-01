@@ -41,10 +41,11 @@ check('432 icon, id duy nhất', () => {
   assert.equal(GRAPHIC_IDS.size, 432)
 })
 
-check('mỗi icon: 2 path, nét gốc #22333B, không chữ/nền/ảnh ngoài', () => {
+check('mỗi icon: ≥2 path (màu + nét), nét gốc #22333B, không chữ/nền/ảnh ngoài', () => {
   for (const graphic of SLIDE_GRAPHICS) {
     assert.ok(graphic.svg.startsWith('<svg'), graphic.id)
-    assert.equal((graphic.svg.match(/<path/g) ?? []).length, 2, graphic.id)
+    // icon từ sheet có đúng 2 path; icon vẽ lại theo lớp (hoa sen) có nhiều hơn — đổi màu theo mã màu nên vẫn đúng
+    assert.ok((graphic.svg.match(/<path/g) ?? []).length >= 2, graphic.id)
     assert.ok(graphic.svg.includes('#22333B'), graphic.id)
     assert.ok(!graphic.svg.includes('<text'), graphic.id)
     assert.ok(!graphic.svg.includes('<rect'), graphic.id)
