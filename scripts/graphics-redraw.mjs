@@ -1947,3 +1947,47 @@ LIT_MORE.reduce((after, [id, name, keywords, svg]) => {
   ADDED.push({ after, id, name, category: 'lit', keywords, svg })
   return id
 }, 'lit-bang-chu-cai')
+
+// --- hoá học bổ sung (30 icon, nhóm "Hoá học"): dụng cụ, biển cảnh báo, phân tử, quá trình ---
+const hazardD = (r) => P([[35, 35 - r], [35 + r, 35], [35, 35 + r], [35 - r, 35]])
+const hazard = (...inner) => svg(fill(hazardD(31), PINK), fill(hazardD(24), WHITE), ...inner)
+const beakerD = (top) => `M12 ${top}H58V60A4 4 0 0 1 54 64H16A4 4 0 0 1 12 60Z`
+const bladeD = (a) => `M${polar(35, 35, 7, a - 30).join(' ')}L${polar(35, 35, 24, a - 30).join(' ')}A24 24 0 0 1 ${polar(35, 35, 24, a + 30).join(' ')}L${polar(35, 35, 7, a + 30).join(' ')}A7 7 0 0 0 ${polar(35, 35, 7, a - 30).join(' ')}Z`
+const cubeA = [[14, 56], [44, 56], [44, 26], [14, 26]], cubeB = cubeA.map(([x, y]) => [x + 12, y - 12])
+
+const CHEM_NEW = [
+  ['chem-ong-dong', 'Ống đong', 'ong dong do the tich chat long dung cu thi nghiem', svg(fill(rrD(14, 57, 56, 64, 2), BEIGE), fill(rectD(25, 8, 45, 57), WHITE), fill(rectD(25, 30, 45, 57), BLUE), line('M21 8H49M25 18H31M25 26H33M25 38H31M25 46H33'))],
+  ['chem-pheu', 'Phễu', 'pheu rot chat long dung cu thi nghiem', svg(fill('M8 12H62L40 36V62H30V36Z', WHITE), fill('M18 20H52L40 32H30Z', BLUE))],
+  ['chem-coc-thuy-tinh', 'Cốc thuỷ tinh', 'coc thuy tinh coc dong dung cu thi nghiem', svg(fill('M8 8H58V58A6 6 0 0 1 52 64H20A6 6 0 0 1 14 58V14Z', WHITE), fill('M14 34H58V58A6 6 0 0 1 52 64H20A6 6 0 0 1 14 58Z', BLUE), line('M44 18H52M47 26H52M44 34H52'))],
+  ['chem-binh-dinh-muc', 'Bình định mức', 'binh dinh muc pha dung dich nong do', svg(fill(rectD(30, 8, 40, 34), WHITE), fill('M30 33Q14 40 16 54Q18 63 35 63Q52 63 54 54Q56 40 40 33Z', BLUE), line('M27 19H43'), fill(rrD(27, 3, 43, 9, 2), BEIGE))],
+  ['chem-phan-tu-metan', 'Phân tử metan', 'phan tu metan ch4 cacbon hidro huu co', svg(line('M35 9V61M9 35H61'), cp(35, 35, 12, LILAC), cp(35, 9, 7, BLUE), cp(35, 61, 7, BLUE), cp(9, 35, 7, BLUE), cp(61, 35, 7, BLUE))],
+  ['chem-coi-chay', 'Cối chày', 'coi chay nghien hoa chat', svg(fill(barD(30, 40, 54, 8, 9), PEACH), fill(rectD(26, 56, 44, 63), BEIGE), fill('M10 34H60Q60 57 35 59Q10 57 10 34Z', BEIGE), fill(rectD(7, 29, 63, 35), BEIGE))],
+  ['chem-can-dien-tu', 'Cân điện tử', 'can dien tu can khoi luong hoa chat', svg(fill('M27 37Q35 24 43 37Z', YELLOW), fill(rectD(12, 37, 58, 43), BLUE), fill('M6 45H64L60 63H10Z', BEIGE), fill(rectD(16, 50, 40, 57), MINT), cp(50, 53, 3, PINK))],
+  ['chem-binh-tia', 'Bình tia', 'binh tia nuoc cat rua dung cu', svg(line('M33 18V10Q33 6 37 6H52L59 14'), fill(rectD(24, 18, 42, 26), BEIGE), fill(rrD(16, 26, 50, 64, 6), BLUE))],
+  ['chem-binh-khi', 'Bình khí', 'binh khi nen oxi hidro', svg(line('M24 7H46'), fill(rectD(30, 7, 40, 16), BEIGE), fill(rrD(20, 16, 50, 64, 12), MINT), fill(rectD(20, 30, 50, 37), YELLOW))],
+  ['chem-de-chay', 'Biển dễ cháy', 'bien de chay canh bao hoa chat nguy hiem', hazard(fill('M35 18Q46 30 44 40Q42 50 35 50Q28 50 26 40Q25 32 31 26Q32 34 35 34Q32 26 35 18Z', PEACH), line('M24 51H46'))],
+  ['chem-canh-bao', 'Biển cảnh báo', 'bien canh bao chu y nguy hiem', hazard(fill(rrD(31, 17, 39, 41, 3), YELLOW), cp(35, 49, 4, YELLOW))],
+  ['chem-chat-doc', 'Biển chất độc', 'bien chat doc dau lau nguy hiem', hazard(line('M24 46L46 55M46 46L24 55'), fill('M24 33A11 11 0 0 1 46 33V39H42V44H28V39H24Z', BEIGE), dot(30, 34, 2.5), dot(40, 34, 2.5))],
+  ['chem-phong-xa', 'Phóng xạ', 'phong xa canh bao hat nhan', svg(fill(circD(35, 35, 29), YELLOW), fill([-90, 30, 150].map(bladeD).join(''), PEACH), cp(35, 35, 4, PEACH))],
+  ['chem-phan-tu-nuoc', 'Phân tử nước', 'phan tu nuoc h2o oxi hidro', svg(line('M35 30L16 52M35 30L54 52'), cp(35, 29, 15, PINK), cp(16, 52, 9, BLUE), cp(54, 52, 9, BLUE))],
+  ['chem-phan-tu-co2', 'Phân tử CO₂', 'phan tu co2 cacbon dioxit khi thai', svg(line('M14 31H56M14 39H56'), cp(10, 35, 8, PINK), cp(35, 35, 11, LILAC), cp(60, 35, 8, PINK))],
+  ['chem-vong-benzen', 'Vòng benzen', 'vong benzen huu co hidrocacbon thom', svg(fill(hexD(28), MINT), line(circD(35, 35, 14)))],
+  ['chem-mang-tinh-the', 'Mạng tinh thể', 'mang tinh the lap phuong cau truc', svg(line(P(cubeB) + cubeA.map((p, i) => `M${p.join(' ')}L${cubeB[i].join(' ')}`).join('')), fill(P(cubeA), WHITE), ...cubeB.map((p, i) => cp(...p, 5, i % 2 ? BLUE : PINK)), ...cubeA.map((p, i) => cp(...p, 5, i % 2 ? PINK : BLUE)))],
+  ['chem-ion', 'Ion dương và âm', 'ion duong ion am cation anion dien tich', svg(cp(21, 35, 15, PINK), line('M14 35H28M21 28V42'), cp(53, 35, 12, BLUE), line('M47 35H59'))],
+  ['chem-thang-ph', 'Thang pH', 'thang ph axit bazo trung tinh do ph', svg(...[PINK, PEACH, YELLOW, GREEN, MINT, BLUE, LILAC].map((c, i) => fill(rectD(4 + i * 9, 24, 13 + i * 9, 42), c)), poly([[35, 47], [40, 55], [30, 55]], BEIGE))],
+  ['chem-nha-may', 'Nhà máy xả khói', 'nha may khoi o nhiem khong khi cong nghiep hoa chat', svg(fill('M50 18A6 6 0 0 1 53 8A7 7 0 0 1 65 10A5 5 0 0 1 64 18Z', BLUE), fill('M6 64V36L20 44V36L34 44V36L48 44V20H60V64Z', BEIGE), fill(rectD(12, 50, 18, 57) + rectD(26, 50, 32, 57) + rectD(40, 50, 46, 57), YELLOW))],
+  ['chem-thung-dau', 'Thùng dầu', 'thung dau dau mo nhien lieu xang', svg(fill(rrD(16, 10, 54, 62, 5), PEACH), line('M16 25H54M16 47H54'), fill('M35 29Q41 36 35 41Q29 36 35 29Z', BEIGE))],
+  ['chem-ngon-lua', 'Sự cháy', 'su chay ngon lua phan ung chay oxi', svg(fill('M35 6Q54 26 52 42Q50 62 35 62Q20 62 18 42Q17 30 27 20Q28 34 35 36Q30 20 35 6Z', PEACH), fill('M35 36Q44 45 42 52Q40 58 35 58Q30 58 28 52Q27 45 35 36Z', YELLOW))],
+  ['chem-thoi-kim-loai', 'Thỏi kim loại', 'thoi kim loai vang dong sat', svg(poly([[6, 62], [34, 62], [30, 48], [10, 48]], YELLOW), poly([[36, 62], [64, 62], [60, 48], [40, 48]], YELLOW), poly([[21, 46], [49, 46], [45, 32], [25, 32]], YELLOW), line('M28 38H36'))],
+  ['chem-chai-thuoc-thu', 'Chai thuốc thử', 'chai thuoc thu hoa chat lo nut', svg(fill(rectD(26, 14, 44, 25), PEACH), fill(rrD(16, 24, 54, 64, 6), PEACH), fill(rrD(24, 6, 46, 14, 3), BEIGE), fill(rectD(22, 34, 48, 52), WHITE), txt(27, 43, 40, 46))],
+  ['chem-dia-petri', 'Đĩa petri', 'dia petri nuoi cay vi khuan', svg(fill(circD(35, 35, 28), BLUE), line(circD(35, 35, 22)), cp(28, 30, 4, YELLOW), cp(43, 27, 3, PINK), cp(39, 43, 5, YELLOW), cp(25, 43, 2.5, PINK))],
+  ['chem-bam-gio', 'Đồng hồ bấm giờ', 'dong ho bam gio toc do phan ung thoi gian', svg(fill(rectD(32, 9, 38, 16), BEIGE), fill(rrD(28, 3, 42, 9, 2), BEIGE), fill(circD(35, 41, 24), MINT), line('M35 41L45 31M35 21V25M55 41H51M35 61V57M15 41H19'), cp(35, 41, 2.5, MINT))],
+  ['chem-phan-ung', 'Phản ứng hoá học', 'phan ung hoa hoc chat tham gia san pham', svg(cp(13, 23, 8, PINK), cp(13, 47, 8, BLUE), uni(BEIGE, arD(25, 35, 45, 35, 6, 16, 9)), line('M55 30L57 43'), cp(54, 27, 8, PINK), cp(58, 46, 8, BLUE))],
+  ['chem-phan-bon', 'Phân bón', 'phan bon hoa hoc dam lan kali', svg(fill('M14 16Q20 12 26 16Q35 10 44 16Q50 12 56 16L60 60Q35 66 10 60Z', BEIGE), line('M18 22Q35 26 52 22'), fill('M35 53Q23 49 25 36Q36 38 35 53Z', GREEN), fill('M35 53Q47 47 46 35Q36 39 35 53Z', GREEN))],
+  ['chem-que-diem', 'Que diêm', 'que diem dot chay ngon lua', svg(fill(barD(16, 58, 45, 29, 6), BEIGE), cp(48, 26, 6.5, PINK), fill('M50 3Q60 11 57 17Q54 21 49 19Q44 14 50 3Z', YELLOW))],
+  ['chem-que-khuay', 'Khuấy dung dịch', 'que khuay hoa tan dung dich coc', svg(fill(beakerD(22), WHITE), fill(beakerD(36), MINT), fill(barD(30, 58, 53, 6, 5), BEIGE))],
+]
+CHEM_NEW.reduce((after, [id, name, keywords, svg]) => {
+  ADDED.push({ after, id, name, category: 'chem', keywords, svg })
+  return id
+}, 'chem-kinh-bao-ho')
