@@ -1608,3 +1608,77 @@ export const REDRAWN = {
   'soc-la-ban': compass,
   'geo-la-ban': compass,
 }
+
+// --- khung & nhãn: vẽ lại icon sheet bị lệch màu tô + 30 icon mới ---
+const rrD = (x1, y1, x2, y2, r) =>
+  `M${x1 + r} ${y1}H${x2 - r}A${r} ${r} 0 0 1 ${x2} ${y1 + r}V${y2 - r}A${r} ${r} 0 0 1 ${x2 - r} ${y2}H${x1 + r}A${r} ${r} 0 0 1 ${x1} ${y2 - r}V${y1 + r}A${r} ${r} 0 0 1 ${x1 + r} ${y1}Z`
+const txt = (x1, x2, ...ys) => line(ys.map((y) => `M${x1} ${y}H${x2}`).join(''))
+const dashed = (d, color) => `<path d="${d}" fill="${color}"/>` + line(d, ' stroke-dasharray="7 5"')
+const thin = (d) => `<path d="${d}" fill="none" stroke="${INK}" stroke-width="1.5"/>`
+/** tem: cạnh răng cưa (khuyết nửa tròn) quanh hình vuông a..b */
+const stampD = (a, b, n, r) => {
+  const step = (b - a) / n
+  const rot = ([x, y], k) => { for (let i = 0; i < k; i++) [x, y] = [70 - y, x]; return `${round1(x)} ${round1(y)}` }
+  let d = ''
+  for (let k = 0; k < 4; k++) {
+    d += (k ? 'L' : 'M') + rot([a, a], k)
+    for (let i = 0; i < n; i++) { const c = a + step * (i + 0.5); d += `L${rot([c - r, a], k)}A${r} ${r} 0 0 0 ${rot([c + r, a], k)}` }
+  }
+  return d + 'Z'
+}
+const rosetteD = (cx, cy, R, n, r) => {
+  const pts = Array.from({ length: n }, (_, i) => polar(cx, cy, R, (i * 360) / n - 90))
+  return `M${pts[0].join(' ')}` + pts.map((_, i) => `A${r} ${r} 0 0 1 ${pts[(i + 1) % n].join(' ')}`).join('') + 'Z'
+}
+const hexD = (r) => P(Array.from({ length: 6 }, (_, i) => polar(35, 35, r, i * 60 - 90)))
+const cloudD = 'M16 52A11 11 0 0 1 13 31A13 13 0 0 1 33 17A13 13 0 0 1 56 24A12 12 0 0 1 56 52Z'
+
+Object.assign(REDRAWN, {
+  'frame-bang-ron': svg(fill('M16 26H5L10 35L5 44H16Z', PINK), fill('M54 26H65L60 35L65 44H54Z', PINK), fill('M14 21H56V49H14Z', PINK), txt(23, 47, 35)),
+  'nav-ruy-bang': svg(fill('M13 30H3L8 39L3 48H15Z', PEACH), fill('M57 30H67L62 39L67 48H55Z', PEACH), fill('M10 24Q35 14 60 24V44Q35 34 10 44Z', YELLOW)),
+  'frame-vien-net-dut': svg(dashed(rrD(8, 12, 62, 58, 7), MINT), txt(20, 50, 30, 40)),
+  'frame-bong-suy-nghi': svg(fill('M20 46A9 9 0 0 1 16 28A11 11 0 0 1 34 17A11 11 0 0 1 53 22A10 10 0 0 1 56 42A9 9 0 0 1 44 48H26A7 7 0 0 1 20 46Z', LILAC), fill(circD(17, 55, 4.5), LILAC), fill(circD(9, 63, 2.5), LILAC)),
+  'frame-cuon-tieu-de': svg(fill('M14 20H56V50H14Z', BEIGE), fill(rrD(5, 16, 17, 54, 6), PEACH), fill(rrD(53, 16, 65, 54, 6), PEACH), txt(25, 45, 30, 40)),
+  'frame-the-lat': svg(fill('M14 8H56V48L44 62H14Z', BEIGE), fill('M56 48H47Q44 48 44 51V62Z', PEACH), txt(22, 48, 20, 29, 38)),
+  'frame-bong-het': svg(fill('M22 50L9 64L32 55Z', YELLOW), fill(P(Array.from({ length: 24 }, (_, i) => polar(35, 33, i % 2 ? 21 : 28, i * 15 - 90))), YELLOW), txt(26, 44, 30, 38)),
+  'nav-the-buoc': svg(fill('M6 60V46H25V32H44V18H64V60Z', GREEN), line('M25 46V60M44 32V60')),
+  'nav-cau-hoi': svg(fill(rrD(6, 14, 60, 60, 7), BLUE), txt(14, 38, 36, 46), fill(circD(54, 16, 10), PINK), line('M50.5 13.5A3.5 3.5 0 1 1 54 17V19'), dot(54, 23.5, 1.8)),
+  'nav-dap-an': svg(fill(rrD(6, 14, 60, 60, 7), MINT), txt(14, 38, 36, 46), fill(circD(54, 16, 10), GREEN), line('M49.5 16L53 19.5L59 13')),
+})
+
+const FRAME_NEW = [
+  ['frame-tron', 'Khung tròn', 'khung tron hinh tron vien tron', svg(fill(circD(35, 35, 27), BLUE), line(circD(35, 35, 20), ' stroke-dasharray="4 5"'))],
+  ['frame-oval', 'Khung bầu dục', 'khung bau duc oval elip', svg(fill(ellipseD(35, 35, 29, 21), PEACH), txt(23, 47, 31, 40))],
+  ['frame-luc-giac', 'Khung lục giác', 'khung luc giac sau canh to ong', svg(fill(hexD(29), MINT), line(hexD(21)))],
+  ['frame-trai-tim', 'Khung trái tim', 'khung trai tim yeu thuong loi chuc', svg(fill('M35 61C14 47 7 36 8 25A13 13 0 0 1 35 19A13 13 0 0 1 62 25C63 36 56 47 35 61Z', PINK), line('M16 27A7 7 0 0 1 22 21'))],
+  ['frame-dam-may', 'Khung đám mây', 'khung dam may y tuong suy nghi', svg(fill(cloudD, BLUE), txt(25, 47, 38, 46))],
+  ['frame-khien', 'Khung khiên', 'khung khien huy hieu bao ve', svg(fill('M35 7L60 15V33C60 48 49 58 35 64C21 58 10 48 10 33V15Z', LILAC), line('M35 15L52 20.5V33C52 43 45 50 35 55C25 50 18 43 18 33V20.5Z'))],
+  ['frame-hoa-van', 'Khung hoa văn tròn', 'khung hoa van tron rang cua huy hieu nhan dan', svg(fill(rosetteD(35, 35, 25, 12, 7), YELLOW), fill(circD(35, 35, 16), BEIGE))],
+  ['frame-tem', 'Khung tem thư', 'khung tem thu buu chinh rang cua', svg(fill(stampD(9, 61, 5, 2.6), BEIGE), fill(rectD(17, 17, 53, 53), PINK), line('M22 47L30 36L37 43L42 38L48 47'))],
+  ['frame-ghim', 'Giấy ghim', 'giay ghim ghi chu dinh ghim bang tin', svg(fill('M12 14H58V60H12Z', YELLOW), txt(20, 50, 30, 40, 50), fill(circD(35, 14, 6), PINK))],
+  ['frame-giay-o-li', 'Giấy ô li', 'giay o li o vuong ke o vo', svg(fill(rectD(10, 10, 60, 60), BLUE), thin('M10 22.5H60M10 35H60M10 47.5H60M22.5 10V60M35 10V60M47.5 10V60'), line(rectD(10, 10, 60, 60)))],
+  ['frame-giay-ke-dong', 'Giấy kẻ dòng', 'giay ke dong vo viet trang vo', svg(fill(rectD(12, 8, 58, 62), BEIGE), txt(12, 58, 22, 34, 46), line('M22 8V62'))],
+  ['frame-cuon-doc', 'Cuộn giấy dọc', 'cuon giay doc sac phong thu cuon', svg(fill(rectD(16, 14, 54, 56), BEIGE), fill(rrD(10, 8, 60, 18, 5), PEACH), fill(rrD(10, 52, 60, 62, 5), PEACH), txt(24, 46, 28, 36, 44))],
+  ['frame-ve', 'Khung vé', 'khung ve phieu coupon', svg(fill('M8 18H62V29A6 6 0 0 0 62 41V52H8V41A6 6 0 0 0 8 29Z', YELLOW), line('M46 18V52', ' stroke-dasharray="4 4"'), txt(17, 37, 30, 40))],
+  ['frame-the-ten', 'Thẻ tên', 'the ten bang ten deo nhan ten', svg(fill(rrD(8, 18, 62, 58, 6), BLUE), fill('M8 24A6 6 0 0 1 14 18H56A6 6 0 0 1 62 24V32H8Z', PINK), fill(rrD(29, 10, 41, 22, 3), BEIGE), txt(18, 52, 45))],
+  ['frame-bien-mui-ten', 'Biển mũi tên', 'bien mui ten nhan chi huong', svg(fill('M8 22H50L63 35L50 48H8Z', GREEN), txt(16, 44, 35))],
+  ['frame-cot-chi-duong', 'Cột chỉ đường', 'cot chi duong bien huong di', svg(fill(rectD(32, 26, 38, 64), BEIGE), fill('M10 10H52L60 18L52 26H10Z', PEACH), fill('M60 32H18L10 40L18 48H60Z', MINT))],
+  ['frame-thoai-tron', 'Bong bóng thoại tròn', 'bong bong thoai tron loi noi hoi thoai', svg(fill('M35 10C51 10 62 19 62 31C62 43 51 52 35 52C32 52 29 51.7 26.5 51L14 60L17 48C11 44 8 38 8 31C8 19 19 10 35 10Z', LILAC), txt(22, 48, 27, 36))],
+  ['frame-hoi-thoai', 'Hội thoại', 'hoi thoai hai bong bong trao doi tro chuyen', svg(fill('M33 8H57A7 7 0 0 1 64 15V31A7 7 0 0 1 57 38H56L58 46L48 38H33A7 7 0 0 1 26 31V15A7 7 0 0 1 33 8Z', BLUE), fill('M13 28H37A7 7 0 0 1 44 35V51A7 7 0 0 1 37 58H22L13 65V58A7 7 0 0 1 6 51V35A7 7 0 0 1 13 28Z', PEACH), txt(14, 36, 39, 47))],
+  ['frame-chu-thich', 'Khung chú thích', 'khung chu thich ghi chu chi xuong', svg(fill('M13 10H57A6 6 0 0 1 63 16V42A6 6 0 0 1 57 48H42L35 58L28 48H13A6 6 0 0 1 7 42V16A6 6 0 0 1 13 10Z', YELLOW), txt(17, 53, 22, 30, 38))],
+  ['frame-bat-giac', 'Khung bát giác', 'khung bat giac tam canh cat goc bien', svg(fill('M20 12H50L60 22V48L50 58H20L10 48V22Z', PEACH), line('M23 18H47L54 25V45L47 52H23L16 45V25Z'))],
+  ['frame-thu-muc', 'Thẻ thư mục', 'the thu muc tab ho so', svg(fill('M8 16A4 4 0 0 1 12 12H28L33 18H58A4 4 0 0 1 62 22V54A4 4 0 0 1 58 58H12A4 4 0 0 1 8 54Z', YELLOW), line('M8 26H62'))],
+  ['frame-phong-bi', 'Phong bì', 'phong bi thu thiep moi', svg(fill(rectD(8, 16, 62, 56), BEIGE), line('M8 16L35 38L62 16M8 56L28 33M62 56L42 33'))],
+  ['frame-man-hinh', 'Khung màn hình', 'khung man hinh may tinh trinh chieu', svg(fill('M28 48H42L44 60H26Z', BEIGE), fill(rrD(6, 10, 64, 50, 4), BLUE), fill(rectD(12, 16, 58, 44), MINT), line('M20 60H50'))],
+  ['frame-dien-thoai', 'Khung điện thoại', 'khung dien thoai man hinh di dong', svg(fill(rrD(20, 6, 50, 64, 6), LILAC), fill(rectD(24, 14, 46, 54), BLUE), line('M32 59H38'))],
+  ['frame-tranh', 'Khung tranh', 'khung tranh khung anh treo tuong', svg(fill(rectD(6, 6, 64, 64), YELLOW), fill(rectD(16, 16, 54, 54), BEIGE), line('M6 6L16 16M64 6L54 16M6 64L16 54M64 64L54 54'))],
+  ['frame-co-nheo', 'Cờ đuôi nheo', 'co duoi nheo nhan co hieu', svg(fill('M12 10H62L52 22L62 34H12Z', PINK), line('M12 8V64'))],
+  ['frame-ruy-bang-goc', 'Thẻ ruy băng góc', 'the ruy bang goc noi bat moi', svg(fill(rectD(8, 8, 62, 62), BLUE), fill('M36 8H49L62 21V34Z', PINK), txt(16, 38, 32, 42, 52))],
+  ['frame-bia-kep', 'Bìa kẹp hồ sơ', 'bia kep ho so bang kep giay', svg(fill(rrD(12, 10, 58, 64, 5), BEIGE), fill(rectD(18, 18, 52, 58), YELLOW), fill(rrD(26, 6, 44, 16, 3), PEACH), txt(24, 46, 30, 39, 48))],
+  ['frame-nhan-tron', 'Nhãn tròn treo', 'nhan tron the treo day nhan gia', svg(line('M38 24Q30 12 16 8'), fill(circD(38, 42, 20), MINT), fill(circD(38, 28, 3), BEIGE))],
+  ['frame-bang-den', 'Bảng đen', 'bang den bang phan lop hoc', svg(line('M18 52L14 63M52 52L56 63'), fill(rectD(6, 10, 64, 52), BEIGE), fill(rectD(12, 16, 58, 46), GREEN), line('M19 26H41M19 35H49'))],
+]
+FRAME_NEW.reduce((after, [id, name, keywords, svg]) => {
+  ADDED.push({ after, id, name, category: 'frame', keywords, svg })
+  return id
+}, 'nav-dap-an')
