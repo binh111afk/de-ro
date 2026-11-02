@@ -1172,6 +1172,231 @@ ANIM_NEW.reduce((after, [id, name, keywords, svg]) => {
   return id
 }, 'feel-vo-tay')
 
+// --- khen thưởng bổ sung (30 icon, nhóm "Khen thưởng") ---
+const star5 = (cx, cy, R, color, k = 0.45) => poly(Array.from({ length: 10 }, (_, i) => polar(cx, cy, i % 2 ? R * k : R, i * 36 - 90)), color)
+const leaf = (cx, cy, deg, color) => `<g transform="rotate(${round1(deg)} ${cx} ${cy})">${fill(ellipseD(cx, cy, 6, 3.2), color)}</g>`
+/** hoa 5 cánh cỡ lớn (blossom quá nhỏ cho bó hoa) */
+const flower5 = (cx, cy, color) =>
+  [0, 72, 144, 216, 288].map((d) => { const [x, y] = polar(cx, cy, 7, d - 90); return cp(x, y, 5.5, color) }).join('') + cp(cx, cy, 4, YELLOW)
+const REWARD_NEW = [
+  ['reward-ba-sao', 'Ba ngôi sao', 'ba ngoi sao danh gia 3 sao xuat sac khen thuong', svg(
+    star5(15, 45, 10, YELLOW), star5(55, 45, 10, YELLOW), star5(35, 29, 16, YELLOW))],
+  ['reward-like', 'Ngón cái tán thưởng', 'like ngon cai tuyet voi gioi lam khen thuong', svg(
+    rsq(8, 30, 11, 32, BLUE, 2),
+    fill('M19 33L30 21Q33 12 37 8Q44 7 43 17L41 27H55Q61 27 60 34L57 55Q56 61 50 61H19Z', PEACH),
+    line('M47 36H59M47 45H58M47 53H56'), dot(13.5, 55, 1.8))],
+  ['reward-the-sticker', 'Tờ sticker', 'sticker nhan dan ngoi sao phan thuong khen thuong', svg(
+    rsq(10, 8, 50, 54, WHITE, 5),
+    star5(23, 22, 9, YELLOW), star5(47, 22, 9, PINK), star5(23, 47, 9, BLUE), star5(47, 47, 9, YELLOW))],
+  ['reward-ken-tiec', 'Kèn tiệc', 'ken tiec phao giay chuc mung ky niem khen thuong', svg(
+    line('M33 39Q42 26 50 32Q56 38 50 42Q44 44 46 35Q50 22 62 18'),
+    fill('M10 60L22 30L40 48Z', YELLOW), line('M16 45L25 54'),
+    sparkle(56, 50, 6, PINK), cp(44, 12, 3, BLUE), cp(62, 34, 2.5, MINT))],
+  ['reward-bong-bay', 'Bóng bay', 'bong bay chuc mung ky niem vui khen thuong', svg(
+    line('M22 41Q22 52 34 64M48 39Q48 52 36 64M35 36Q31 50 35 64'),
+    fill(ellipseD(21, 26, 11, 13), PINK), fill(ellipseD(49, 24, 11, 13), BLUE),
+    fill(ellipseD(35, 20, 12, 14), YELLOW),
+    '<path d="M28 15Q29 10 33 9" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>',
+    fill('M19 42L21 39L23 42Z', PINK), fill('M47 40L49 37L51 40Z', BLUE), fill('M33 37L35 34L37 37Z', YELLOW))],
+  ['reward-co-dich', 'Cờ đích', 'co dich ve dich hoan thanh chien thang khen thuong', svg(
+    fill('M6 64Q15 56 24 64Z', GREEN),
+    fill('M15 10H59V38H15Z', WHITE),
+    ...[0, 1].flatMap((r) => [0, 1, 2, 3].filter((c) => (r + c) % 2).map((c) =>
+      fill(`M${15 + c * 11} ${10 + r * 14}h11v14h-11Z`, INK))),
+    line('M15 64V8'), cp(15, 7, 3, YELLOW))],
+  ['reward-nguyet-que', 'Vòng nguyệt quế', 'vong nguyet que vinh quang chien thang quan quan khen thuong', svg(
+    line(`M${polar(35, 36, 23, 100).join(' ')}A23 23 0 0 1 ${polar(35, 36, 23, 245).join(' ')}`),
+    line(`M${polar(35, 36, 23, 80).join(' ')}A23 23 0 0 0 ${polar(35, 36, 23, -65).join(' ')}`),
+    ...[115, 145, 175, 205, 235].map((d) => { const [x, y] = polar(35, 36, 23, d); return leaf(x, y, d + 90 + 25, GREEN) }),
+    ...[65, 35, 5, -25, -55].map((d) => { const [x, y] = polar(35, 36, 23, d); return leaf(x, y, d + 90 - 25, GREEN) }),
+    star5(35, 35, 11, YELLOW),
+    fill('M35 59L27 54V64Z', PINK), fill('M35 59L43 54V64Z', PINK))],
+  ['reward-kim-cuong', 'Kim cương', 'kim cuong vien ngoc quy gia phan thuong khen thuong', svg(
+    poly([[20, 20], [50, 20], [61, 31], [35, 62], [9, 31]], BLUE),
+    line('M9 31H61M20 20L27 31L35 62L43 31L50 20M27 31L35 20L43 31'),
+    sparkle(60, 11, 5, WHITE))],
+  ['reward-dong-xu', 'Đồng xu vàng', 'dong xu tien vang diem thuong xu khen thuong', svg(
+    cp(45, 27, 17, YELLOW), ring(45, 27, 11),
+    cp(28, 42, 20, YELLOW), ring(28, 42, 14), star5(28, 42, 8, WHITE))],
+  ['reward-ruong-bau', 'Rương kho báu', 'ruong kho bau bau vat phan thuong khen thuong', svg(
+    sparkle(35, 8, 5, YELLOW),
+    fill('M10 26Q10 15 35 15Q60 15 60 26V36H10Z', PEACH),
+    fill('M10 36H60V61H10Z', PEACH),
+    line('M22 16V61M48 16V61'),
+    rsq(29, 31, 12, 13, YELLOW, 2), dot(35, 38, 2))],
+  ['reward-cup-sao', 'Cúp ngôi sao', 'cup ngoi sao giai thuong vo dich quan quan khen thuong', svg(
+    fill('M23 55H47L50 63H20Z', PEACH),
+    fill('M31 42H39V55H31Z', YELLOW),
+    star5(35, 26, 20, YELLOW, 0.48))],
+  ['reward-ve-thuong', 'Vé thưởng', 've thuong phieu thuong coupon phan thuong khen thuong', svg(
+    '<g transform="rotate(-12 35 35)">',
+    fill('M6 20H64V30A5 5 0 0 0 64 40V50H6V40A5 5 0 0 0 6 30Z', PINK),
+    dash('M21 23V47'), star5(43, 35, 10, YELLOW), '</g>')],
+  ['reward-diem-a-cong', 'Điểm A+', 'diem a cong xuat sac gioi diem cao khen thuong', svg(
+    cp(35, 35, 28, MINT),
+    bold('M16 50L26 20L36 50M20 40H32'), bold('M48 28V44M40 36H56'))],
+  ['reward-thanh-tien-do', 'Thanh tiến độ', 'thanh tien do hoan thanh tien bo muc tieu khen thuong', svg(
+    rsq(5, 24, 50, 22, WHITE, 11), rsq(5, 24, 40, 22, GREEN, 11),
+    line('M19 29L14 41M30 29L25 41'),
+    star5(51, 35, 14, YELLOW))],
+  ['reward-bieu-do-tang', 'Biểu đồ đi lên', 'bieu do di len tien bo tang truong ket qua khen thuong', svg(
+    rsq(10, 44, 11, 18, BLUE, 2), rsq(26, 36, 11, 26, BLUE, 2), rsq(42, 28, 11, 34, BLUE, 2),
+    line('M8 34L24 20L34 26L58 8M48 8H58V18'))],
+  ['reward-ngon-lua', 'Ngọn lửa', 'ngon lua chuoi ngay nhiet huyet hang say khen thuong', svg(
+    fill('M35 6Q46 18 49 29Q55 24 54 16Q64 28 62 42Q60 62 35 64Q10 62 8 42Q8 30 18 22Q18 31 24 33Q22 18 35 6Z', PEACH),
+    fill('M35 34Q44 44 44 52Q44 60 35 60Q26 60 26 52Q26 44 35 34Z', YELLOW))],
+  ['reward-muc-tieu', 'Trúng hồng tâm', 'trung hong tam bia muc tieu chinh xac dat muc tieu khen thuong', svg(
+    cp(32, 38, 25, WHITE), cp(32, 38, 16, PINK), cp(32, 38, 7, WHITE),
+    line('M32 38L57 13'), fill('M57 13L56 5L63 7L65 14L59 15Z', YELLOW))],
+  ['reward-sao-bang', 'Sao băng', 'sao bang uoc mo tuyet voi xuat sac khen thuong', svg(
+    line('M7 50L27 37M12 61L32 45M22 64L37 52'),
+    star5(45, 28, 19, YELLOW))],
+  ['reward-bo-hoa', 'Bó hoa', 'bo hoa tang hoa chuc mung tri an khen thuong', svg(
+    line('M35 62L21 24M35 62V18M35 62L49 24'),
+    flower5(20, 25, PEACH), flower5(50, 25, LILAC), flower5(35, 17, PEACH),
+    fill('M19 38H51L41 64H29Z', PINK),
+    fill('M35 50L28 46V54Z', YELLOW), fill('M35 50L42 46V54Z', YELLOW))],
+  ['reward-cuon-giay-khen', 'Giấy khen cuộn', 'giay khen cuon chung nhan bang danh du khen thuong', svg(
+    fill('M15 13H55V57H15Z', WHITE),
+    line('M23 27H47M23 34H47M23 41H37'),
+    rsq(9, 7, 52, 10, BEIGE, 5), rsq(9, 53, 52, 10, BEIGE, 5),
+    cp(47, 44, 6, PINK))],
+  ['reward-cong-mot', 'Điểm cộng', 'diem cong cong mot cong diem thuong phat bieu khen thuong', svg(
+    cp(35, 35, 28, GREEN),
+    bold('M16 35H32M24 27V43'), bold('M42 27L48 23V48M42 48H54'))],
+  ['reward-loa-vinh-danh', 'Loa vinh danh', 'loa vinh danh thong bao tuyen duong khen thuong', svg(
+    fill('M21 44L25 57H32L30 46Z', BLUE),
+    fill('M10 28L44 12V58L10 42Z', YELLOW),
+    fill(ellipseD(44, 35, 5, 23), YELLOW),
+    sparkle(59, 18, 5, PINK), sparkle(60, 52, 5, PINK), line('M57 35H65'))],
+  ['reward-dau-tick', 'Dấu hoàn thành', 'dau tich hoan thanh dat yeu cau dung chinh xac khen thuong', svg(
+    poly(Array.from({ length: 24 }, (_, i) => polar(35, 35, i % 2 ? 24 : 29, i * 15)), GREEN),
+    cp(35, 35, 17, WHITE), bold('M26 35L32 41L44 29'))],
+  ['reward-cau-vong', 'Cầu vồng', 'cau vong vui ve tich cuc may man khen thuong', svg(
+    annular(35, 46, 22, 28, 180, 180, PINK), annular(35, 46, 16, 22, 180, 180, YELLOW), annular(35, 46, 10, 16, 180, 180, BLUE),
+    fill('M4 52Q4 44 11 45Q13 38 20 41Q27 41 26 48Q26 55 19 55H8Q4 55 4 52Z', WHITE),
+    fill('M66 52Q66 44 59 45Q57 38 50 41Q43 41 44 48Q44 55 51 55H62Q66 55 66 52Z', WHITE))],
+  ['reward-dinh-nui', 'Chinh phục đỉnh núi', 'chinh phuc dinh nui cam co thanh cong vuot kho khen thuong', svg(
+    line('M28 22V6'), fill('M28 6L42 10L28 14Z', PINK),
+    poly([[4, 62], [28, 22], [40, 38], [48, 28], [66, 62]], GREEN),
+    fill('M22 32L28 22L34.5 31L31 29L26 33Z', WHITE))],
+  ['reward-keo', 'Kẹo', 'keo ngot phan thuong qua nho khen thuong', svg(
+    '<g transform="rotate(-20 35 35)">',
+    fill('M23 35L8 24L11 35L8 46Z', YELLOW), fill('M47 35L62 24L59 35L62 46Z', YELLOW),
+    fill(ellipseD(35, 35, 14, 11), PINK), line('M30 25Q34 35 30 45M39 25Q43 35 39 45'), '</g>')],
+  ['reward-bang-vang', 'Bảng vàng', 'bang vang bang danh du vinh danh hoc sinh gioi khen thuong', svg(
+    line('M18 54L14 64M52 54L56 64'),
+    rsq(8, 8, 54, 46, YELLOW, 4), rsq(15, 15, 40, 32, WHITE, 2),
+    star5(35, 25, 7, YELLOW), line('M23 37H47M27 42H43'))],
+  ['reward-hu-sao', 'Hũ ngôi sao', 'hu ngoi sao tich sao lo sao phan thuong khen thuong', svg(
+    fill('M19 22H51Q58 30 58 44V56Q58 62 52 62H18Q12 62 12 56V44Q12 30 19 22Z', WHITE),
+    rsq(16, 10, 38, 12, PEACH, 3),
+    star5(25, 49, 7, YELLOW), star5(44, 50, 7, PINK), star5(34, 36, 7, BLUE))],
+  ['reward-hoa-diem-tot', 'Hoa điểm tốt', 'hoa diem tot diem 10 diem muoi thi dua khen thuong', svg(
+    ...Array.from({ length: 6 }, (_, i) => { const [x, y] = polar(35, 35, 19, i * 60 - 90); return cp(x, y, 11, PINK) }),
+    cp(35, 35, 13, YELLOW),
+    line('M28 30L31 28V42'), line(ellipseD(40, 35, 3.5, 6.5)))],
+  ['reward-the-tich-diem', 'Thẻ tích điểm', 'the tich diem tich sao dong dau phan thuong khen thuong', svg(
+    rsq(6, 12, 58, 46, BLUE, 5),
+    ...[[20, 26], [35, 26], [50, 26], [20, 44]].map(([x, y]) => star5(x, y, 8.5, YELLOW)),
+    cp(35, 44, 6, WHITE), cp(50, 44, 6, WHITE))],
+]
+REWARD_NEW.reduce((after, [id, name, keywords, svg]) => {
+  ADDED.push({ after, id, name, category: 'reward', keywords, svg })
+  return id
+}, 'reward-buc-nhan-giai')
+
+// --- ký hiệu bổ sung (30 icon, nhóm "Ký hiệu"): chữ khối như sym-* từ sheet ---
+// Mọi mảnh vẽ viền trước (nét 6, lộ 3 ra ngoài) rồi tô sau, nên chỗ các mảnh chồng nhau liền một khối.
+const uni = (color, ...ds) =>
+  ds.map((d) => `<path d="${d}" fill="none" stroke="${INK}" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>`).join('') +
+  ds.map((d) => `<path d="${d}" fill="${color}"/>`).join('')
+const P = (pts) => `M${pts.map(([x, y]) => `${round1(x)} ${round1(y)}`).join('L')}Z`
+const barD = (x1, y1, x2, y2, w) => {
+  const L = Math.hypot(x2 - x1, y2 - y1), nx = (-(y2 - y1) / L) * (w / 2), ny = ((x2 - x1) / L) * (w / 2)
+  return P([[x1 + nx, y1 + ny], [x2 + nx, y2 + ny], [x2 - nx, y2 - ny], [x1 - nx, y1 - ny]])
+}
+const rectD = (x1, y1, x2, y2) => P([[x1, y1], [x2, y1], [x2, y2], [x1, y2]])
+/** chữ V nằm ngang dày t: dir 1 mở trái (>), -1 mở phải (<) */
+const chevD = (a, b, cy, h, t, dir = 1) => {
+  const pts = [[a, cy - h], [a + t, cy - h], [b, cy], [a + t, cy + h], [a, cy + h], [b - t, cy]]
+  return P(dir > 0 ? pts : pts.map(([x, y]) => [a + b - x, y]))
+}
+const plusD = (cx, cy, L, t) => P([[cx - t / 2, cy - L], [cx + t / 2, cy - L], [cx + t / 2, cy - t / 2], [cx + L, cy - t / 2], [cx + L, cy + t / 2], [cx + t / 2, cy + t / 2], [cx + t / 2, cy + L], [cx - t / 2, cy + L], [cx - t / 2, cy + t / 2], [cx - L, cy + t / 2], [cx - L, cy - t / 2], [cx - t / 2, cy - t / 2]])
+/** vành khuyên (vòng trong ngược chiều nên thủng lỗ) */
+const ringD = (cx, cy, R, r) => `${circD(cx, cy, R)}M${cx - r} ${cy}a${r} ${r} 0 1 1 ${2 * r} 0a${r} ${r} 0 1 1 ${-2 * r} 0Z`
+/** chữ C dày: nửa vành trái + hai cánh kéo sang phải tới x2 */
+const cD = (cx, cy, R, r, x2) => `M${x2} ${cy - R}H${cx}A${R} ${R} 0 0 0 ${cx} ${cy + R}H${x2}V${cy + r}H${cx}A${r} ${r} 0 0 1 ${cx} ${cy - r}H${x2}Z`
+const boxD = 'M10 10H60V60H10ZM18 18V52H52V18Z'
+const SYM_NEW = [
+  ['sym-lon-hon-bang', 'Dấu lớn hơn hoặc bằng', 'dau lon hon hoac bang so sanh bat dang thuc toan', svg(
+    uni(BLUE, chevD(18, 52, 26, 17, 12), rectD(16, 50, 54, 59)))],
+  ['sym-be-hon-bang', 'Dấu bé hơn hoặc bằng', 'dau be hon hoac bang nho hon so sanh bat dang thuc toan', svg(
+    uni(PEACH, chevD(18, 52, 26, 17, 12, -1), rectD(16, 50, 54, 59)))],
+  ['sym-cong-tru', 'Dấu cộng trừ', 'dau cong tru sai so nghiem toan', svg(
+    uni(MINT, plusD(35, 26, 18, 10), rectD(17, 51, 53, 60)))],
+  ['sym-chia-het', 'Dấu chia hết', 'dau chia het boi uoc so hoc ba cham doc toan', svg(
+    uni(YELLOW, circD(35, 13, 7), circD(35, 35, 7), circD(35, 57, 7)))],
+  ['sym-khong-chia-het', 'Dấu không chia hết', 'dau khong chia het boi uoc so hoc toan', svg(
+    uni(PINK, circD(35, 13, 7), circD(35, 35, 7), circD(35, 57, 7)), uni(PINK, barD(54, 10, 16, 60, 6)))],
+  ['sym-thuoc', 'Dấu thuộc', 'dau thuoc phan tu tap hop toan', svg(
+    uni(LILAC, cD(38, 35, 22, 12, 58), rectD(26, 30.5, 58, 39.5)))],
+  ['sym-khong-thuoc', 'Dấu không thuộc', 'dau khong thuoc phan tu tap hop toan', svg(
+    uni(PEACH, cD(38, 35, 22, 12, 58), rectD(26, 30.5, 58, 39.5)), uni(PEACH, barD(53, 6, 23, 64, 6)))],
+  ['sym-suy-ra', 'Dấu suy ra', 'dau suy ra keo theo menh de logic toan', svg(
+    uni(BLUE, rectD(8, 22, 48, 30), rectD(8, 40, 48, 48), chevD(34, 60, 35, 22, 11)))],
+  ['sym-tuong-duong', 'Dấu tương đương', 'dau tuong duong khi va chi khi menh de logic toan', svg(
+    uni(GREEN, rectD(14, 25, 56, 31), rectD(14, 39, 56, 45), chevD(46, 64, 35, 17, 9), chevD(6, 24, 35, 17, 9, -1)))],
+  ['sym-do-c', 'Độ C', 'do c do xe nhiet do don vi vat ly', svg(
+    uni(PEACH, ringD(17, 17, 10, 4), cD(44, 40, 20, 11, 61)))],
+  ['sym-hai-cham', 'Dấu hai chấm', 'dau hai cham ty so liet ke dau cau', svg(
+    uni(MINT, circD(35, 20, 8), circD(35, 50, 8)))],
+  ['sym-cham-phay', 'Dấu chấm phẩy', 'dau cham phay dau cau ngu phap', svg(
+    uni(YELLOW, circD(35, 18, 8), 'M35 38A8 8 0 0 1 43 46Q43 56 33 64L28 61Q33 56 33 53.7A8 8 0 0 1 35 38Z'))],
+  ['sym-ngoac-vuong', 'Dấu ngoặc vuông', 'dau ngoac vuong bieu thuc hop nghiem toan', svg(
+    uni(LILAC, P([[12, 8], [28, 8], [28, 17], [21, 17], [21, 53], [28, 53], [28, 62], [12, 62]]),
+      P([[58, 8], [42, 8], [42, 17], [49, 17], [49, 53], [42, 53], [42, 62], [58, 62]])))],
+  ['sym-ba-cham', 'Dấu ba chấm', 'dau ba cham dau chung con nua dau cau', svg(
+    uni(BLUE, circD(13, 35, 7), circD(35, 35, 7), circD(57, 35, 7)))],
+  ['sym-thang', 'Dấu thăng', 'dau thang hashtag so thu tu am nhac', svg(
+    uni(PINK, barD(29, 8, 23, 62, 9), barD(48, 8, 42, 62, 9), barD(10, 25, 62, 25, 9), barD(8, 45, 60, 45, 9)))],
+  ['sym-sao', 'Dấu sao', 'dau sao hoa thi ghi chu chu thich', svg(
+    uni(YELLOW, ...[90, 30, 150].map((d) => barD(...polar(35, 35, 26, d), ...polar(35, 35, 26, d + 180), 10))))],
+  ['sym-vuong-goc', 'Dấu vuông góc', 'dau vuong goc duong vuong goc hinh hoc toan', svg(
+    uni(GREEN, rectD(30, 9, 40, 52), rectD(10, 52, 60, 61)))],
+  ['sym-goc', 'Kí hiệu góc', 'ki hieu goc dau goc hinh hoc toan', svg(
+    uni(MINT, barD(14, 56, 50, 10, 10), rectD(9, 51, 62, 61)))],
+  ['sym-dong-nhat', 'Dấu đồng nhất', 'dau dong nhat dong du hang dang thuc toan', svg(
+    uni(PEACH, rectD(12, 14, 58, 23), rectD(12, 30.5, 58, 39.5), rectD(12, 47, 58, 56)))],
+  ['sym-chu-dd', 'Chữ Đ', 'chu d dung dap an dung', svg(
+    uni(GREEN, 'M20 12H36A23 23 0 0 1 36 58H20ZM30 22V48H36A13 13 0 0 0 36 22Z', rectD(11, 31, 30, 39)))],
+  ['sym-chu-s', 'Chữ S', 'chu s sai dap an sai', svg(
+    uni(PINK, P([[16, 10], [54, 10], [54, 20], [26, 20], [26, 30], [54, 30], [54, 60], [16, 60], [16, 50], [44, 50], [44, 40], [16, 40]])))],
+  ['sym-o-tich', 'Ô đã đánh dấu', 'o danh dau o tich checkbox chon phuong an dung', svg(
+    uni(BLUE, boxD), uni(GREEN, barD(21, 35, 32, 46, 9), barD(30, 46, 55, 17, 9)))],
+  ['sym-o-gach', 'Ô gạch chéo', 'o gach cheo checkbox sai loai bo phuong an', svg(
+    uni(BLUE, boxD), uni(PINK, barD(22, 22, 48, 48, 9), barD(48, 22, 22, 48, 9)))],
+  ['sym-o-chon', 'Nút chọn', 'nut chon radio phuong an duoc chon trac nghiem', svg(
+    uni(LILAC, ringD(35, 35, 26, 17)), uni(YELLOW, circD(35, 35, 10)))],
+  ['sym-dau-dong', 'Dấu đầu dòng', 'dau dau dong gach dau dong liet ke y chinh', svg(
+    uni(PEACH, circD(14, 16, 6), circD(14, 35, 6), circD(14, 54, 6)),
+    uni(BEIGE, rectD(26, 12, 60, 20), rectD(26, 31, 60, 39), rectD(26, 50, 52, 58)))],
+  ['sym-voi-moi', 'Dấu với mọi', 'dau voi moi luong tu menh de logic toan', svg(
+    uni(MINT, barD(13, 9, 35, 60, 10), barD(57, 9, 35, 60, 10), rectD(22, 30, 48, 38)))],
+  ['sym-cam', 'Dấu cấm', 'dau cam khong duoc phep khong lam bien cam', svg(
+    uni(PINK, ringD(35, 35, 27, 18), barD(17, 17, 53, 53, 9)))],
+  ['sym-thong-tin', 'Dấu thông tin', 'dau thong tin chu i ghi chu luu y huong dan', svg(
+    uni(BLUE, ringD(35, 35, 27, 19)), uni(BLUE, circD(35, 23, 4.5), rectD(31, 31, 39, 49)))],
+  ['sym-delta', 'Kí hiệu Delta', 'delta tam giac denta bien thien phuong trinh bac hai toan', svg(
+    uni(YELLOW, P([[35, 8], [64, 60], [6, 60]]) + P([[35, 28], [20, 51], [50, 51]])))],
+  ['sym-tap-rong', 'Tập rỗng', 'tap rong tap hop rong khong co phan tu toan', svg(
+    uni(LILAC, ringD(35, 35, 21, 12), barD(51, 7, 19, 63, 8)))],
+]
+SYM_NEW.reduce((after, [id, name, keywords, svg]) => {
+  ADDED.push({ after, id, name, category: 'sym', keywords, svg })
+  return id
+}, 'sym-xap-xi')
+
 export const REDRAWN = {
   // cấu tạo hoa (bổ dọc): cánh, nhị (chỉ nhị + bao phấn), nhuỵ (bầu, vòi, đầu nhuỵ), đài, cuống, lá
   'bio-hoa-cau-tao': svg(

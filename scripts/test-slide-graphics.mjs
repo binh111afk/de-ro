@@ -1,6 +1,6 @@
 /**
  * Test kho đồ hoạ vector (chặng 2):
- *  - registry 718 icon, id duy nhất, SVG hợp lệ (2 path, không chữ, không nền)
+ *  - registry 778 icon, id duy nhất, SVG hợp lệ (2 path, không chữ, không nền)
  *  - search theo tiếng Việt có dấu/không dấu
  *  - graphicMarkup đổi màu nét + phủ kín hộp
  *  - catalog gửi model có đủ id
@@ -36,9 +36,9 @@ const check = (name, fn) => {
 
 console.log('\n[1] registry')
 
-check('718 icon, id duy nhất', () => {
-  assert.equal(SLIDE_GRAPHICS.length, 718)
-  assert.equal(GRAPHIC_IDS.size, 718)
+check('778 icon, id duy nhất', () => {
+  assert.equal(SLIDE_GRAPHICS.length, 778)
+  assert.equal(GRAPHIC_IDS.size, 778)
 })
 
 check('mỗi icon: ≥2 path (màu + nét), nét gốc #22333B, không chữ/nền/ảnh ngoài', () => {
@@ -107,7 +107,7 @@ check('id lạ → chuỗi rỗng', () => {
   assert.equal(graphicMarkup('khong-co'), '')
 })
 
-check('catalog có đủ 718 id, gom theo nhóm', () => {
+check('catalog có đủ 778 id, gom theo nhóm', () => {
   const text = graphicCatalogText()
   for (const id of GRAPHIC_IDS) assert.ok(text.includes(`${id}=`), id)
   assert.ok(text.includes('math: '))
