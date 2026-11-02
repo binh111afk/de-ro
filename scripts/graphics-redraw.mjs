@@ -1748,3 +1748,82 @@ ARROW_NEW.reduce((after, [id, name, keywords, svg]) => {
   ADDED.push({ after, id, name, category: 'arrow', keywords, svg })
   return id
 }, 'arrow-nhieu-buoc')
+
+// --- trang trí bổ sung (50 icon, nhóm "Trang trí"): hoa lá, thiên nhiên, lễ hội, hoạ tiết ---
+/** cánh hoa elip xoay quanh tâm (cx, cy), lệch off theo hướng "lên" */
+const pet = (cx, cy, deg, off, rx, ry, color) => `<g transform="rotate(${round1(deg)} ${cx} ${cy})">${fill(ellipseD(cx, cy - off, rx, ry), color)}</g>`
+const petals = (cx, cy, n, off, rx, ry, color, start = 0) => Array.from({ length: n }, (_, i) => pet(cx, cy, start + (i * 360) / n, off, rx, ry, color)).join('')
+/** lá nhọn hai đầu mọc từ (x, y), dài len, hướng deg (0 = lên) */
+const leafAt = (x, y, deg, len, color = GREEN) =>
+  `<g transform="rotate(${round1(deg)} ${x} ${y})">${fill(`M${x} ${y}Q${round1(x + len * 0.36)} ${round1(y - len / 2)} ${x} ${y - len}Q${round1(x - len * 0.36)} ${round1(y - len / 2)} ${x} ${y}Z`, color)}</g>`
+const heartD = (cx, cy, k) => {
+  const m = (x, y) => `${round1(cx + (x - 35) * k)} ${round1(cy + (y - 38) * k)}`, r = round1(13 * k)
+  return `M${m(35, 61)}C${m(14, 47)} ${m(7, 36)} ${m(8, 25)}A${r} ${r} 0 0 1 ${m(35, 19)}A${r} ${r} 0 0 1 ${m(62, 25)}C${m(63, 36)} ${m(56, 47)} ${m(35, 61)}Z`
+}
+const sparkD = (cx, cy, R, r = R * 0.3) => P(Array.from({ length: 8 }, (_, i) => polar(cx, cy, i % 2 ? r : R, i * 45 - 90)))
+/** dải dày đều theo đường tâm pts (không đầu mũi) */
+const ribbonD = (pts, w) => curveArrowD(pts, w, w, 0.01)
+const hexAt = (cx, cy, r) => P(Array.from({ length: 6 }, (_, i) => polar(cx, cy, r, i * 60 - 90)))
+const spiralPts = (cx, cy, r0, r1, turns) => Array.from({ length: 49 }, (_, k) => polar(cx, cy, r0 + ((r1 - r0) * k) / 48, (k / 48) * turns * 360))
+/** dây treo cong (Q) từ x=4 tới x=66, võng sag; trả về y tại x */
+const sagY = (y0, sag) => (x) => { const t = (x - 4) / 62; return y0 + 2 * sag * t * (1 - t) }
+const bunting = (y) => [[8, 22, PINK], [28, 42, YELLOW], [48, 62, MINT]].map(([a, b, c]) => poly([[a, y(a)], [b, y(b)], [(a + b) / 2, Math.max(y(a), y(b)) + 17]], c)).join('')
+const cloudSmall = (x) => fill(`M${x} 58A6 6 0 0 1 ${x + 6} 48A7 7 0 0 1 ${x + 18} 52A5 5 0 0 1 ${x + 18} 62H${x + 4}A4 4 0 0 1 ${x} 58Z`, WHITE)
+const bandD = (R, r) => `M${35 - R} 54A${R} ${R} 0 0 1 ${35 + R} 54H${35 + r}A${r} ${r} 0 0 0 ${35 - r} 54Z`
+
+const DECOR_NEW = [
+  ['decor-hoa-cuc', 'Hoa cúc', 'hoa cuc canh trang trang tri', svg(petals(35, 35, 8, 15, 6, 11, PINK), cp(35, 35, 8, YELLOW))],
+  ['decor-hoa-mai', 'Hoa năm cánh', 'hoa mai hoa dao nam canh tet', svg(petals(35, 36, 5, 14, 10, 13, PEACH), cp(35, 36, 7, YELLOW))],
+  ['decor-tulip', 'Hoa tulip', 'hoa tulip uat kim huong', svg(line('M35 40V64'), fill('M35 60Q20 56 18 42Q30 46 35 56Z', GREEN), fill('M20 16L27 24L35 12L43 24L50 16V32Q50 44 35 44Q20 44 20 32Z', PINK))],
+  ['decor-canh-hoa', 'Cành hoa', 'canh hoa hoa la than', svg(line('M35 30V64'), fill('M35 56Q22 56 17 43Q30 42 35 53Z', GREEN), fill('M35 47Q48 47 53 35Q40 34 35 45Z', GREEN), petals(35, 21, 6, 8, 5, 7, LILAC), cp(35, 21, 5, YELLOW))],
+  ['decor-la', 'Chiếc lá', 'chiec la xanh thien nhien', svg(fill('M12 58Q10 22 56 12Q60 50 12 58Z', GREEN), line('M12 58Q30 38 46 24'))],
+  ['decor-canh-la', 'Cành lá', 'canh la nhanh cay xanh', svg(line('M10 62Q30 44 58 12'), leafAt(22, 52, -5, 18), leafAt(22, 52, 95, 18, MINT), leafAt(36, 38, -5, 18), leafAt(36, 38, 95, 18, MINT), leafAt(49, 24, 0, 16), leafAt(49, 24, 90, 16, MINT))],
+  ['decor-vong-la', 'Vòng lá', 'vong la nguyet que vinh danh', svg(line(circD(35, 35, 21)), ...Array.from({ length: 10 }, (_, i) => { const a = i * 36; const [x, y] = polar(35, 35, 21, a); return leafAt(x, y, a + 180 + (i % 2 ? 40 : -40), 15, i % 2 ? GREEN : MINT) }))],
+  ['decor-co-ba-la', 'Cỏ ba lá', 'co ba la may man', svg(line('M35 38Q38 52 46 64'), ...[0, 120, 240].map((d) => `<g transform="rotate(${d} 35 35)">${fill(heartD(35, 25, 0.42), GREEN)}</g>`))],
+  ['decor-co-bon-la', 'Cỏ bốn lá', 'co bon la may man', svg(line('M35 38Q38 52 46 64'), ...[0, 90, 180, 270].map((d) => `<g transform="rotate(${d + 45} 35 35)">${fill(heartD(35, 25, 0.42), MINT)}</g>`))],
+  ['decor-lap-lanh', 'Lấp lánh', 'lap lanh sang lung linh', svg(fill(sparkD(28, 40, 24), YELLOW), fill(sparkD(54, 15, 10), YELLOW), fill(sparkD(56, 54, 7), YELLOW))],
+  ['decor-sao-bang', 'Sao băng', 'sao bang uoc nguyen', svg(fill('M6 62L32 30L42 40Z', PEACH), star5(46, 25, 18, YELLOW))],
+  ['decor-mat-troi', 'Mặt trời', 'mat troi nang am ap', svg(fill(Array.from({ length: 8 }, (_, i) => P([polar(35, 35, 17, i * 45 - 13), polar(35, 35, 31, i * 45), polar(35, 35, 17, i * 45 + 13)])).join(''), PEACH), cp(35, 35, 16, YELLOW))],
+  ['decor-trang-sao', 'Trăng sao', 'trang sao dem trung thu', svg(fill('M36 7A28 28 0 1 0 63 44A22 22 0 1 1 36 7Z', YELLOW), fill(sparkD(52, 18, 9), YELLOW))],
+  ['decor-cau-vong', 'Cầu vồng', 'cau vong mua nang', svg(fill(bandD(30, 24), PINK), fill(bandD(24, 18), YELLOW), fill(bandD(18, 12), BLUE), cloudSmall(1), cloudSmall(51))],
+  ['decor-giot-nuoc', 'Giọt nước', 'giot nuoc mua', svg(fill('M35 7C35 7 14 32 14 44A21 21 0 0 0 56 44C56 32 35 7 35 7Z', BLUE), line('M24 44A11 11 0 0 0 33 54'))],
+  ['decor-nam', 'Cây nấm', 'cay nam rung', svg(fill('M26 36Q23 60 28 62H42Q47 60 44 36Z', BEIGE), fill('M8 38A27 28 0 0 1 62 38Q35 44 8 38Z', PINK), cp(23, 27, 4, WHITE), cp(40, 19, 5, WHITE), cp(50, 31, 3, WHITE))],
+  ['decor-cay-thong', 'Cây thông', 'cay thong giang sinh noel', svg(fill(rectD(31, 54, 39, 64), BEIGE), poly([[35, 6], [52, 24], [44, 24], [58, 40], [47, 40], [62, 56], [8, 56], [23, 40], [12, 40], [26, 24], [18, 24]], GREEN))],
+  ['decor-xuong-rong', 'Xương rồng', 'xuong rong chau cay', svg(fill('M28 38H21A6 6 0 0 1 15 32V22A3.5 3.5 0 0 1 22 22V30H28Z', GREEN), fill('M42 32H48V18A3.5 3.5 0 0 1 55 18V28A6 6 0 0 1 49 34H42Z', GREEN), fill(rrD(28, 10, 42, 50, 7), GREEN), fill('M18 48H52L47 64H23Z', PEACH))],
+  ['decor-chau-cay', 'Chậu cây', 'chau cay xanh trong nha', svg(fill('M35 44Q14 40 12 20Q30 24 35 44Z', GREEN), fill('M35 44Q56 40 58 20Q40 24 35 44Z', GREEN), fill('M35 44Q26 24 35 8Q44 24 35 44Z', MINT), fill('M19 46H51L47 64H23Z', PEACH), fill(rectD(16, 40, 54, 48), PEACH))],
+  ['decor-buom', 'Con bướm', 'con buom mua xuan', svg(line('M33 22Q28 12 23 10M37 22Q42 12 47 10'), fill('M34 34C26 14 10 8 8 18C6 30 20 36 34 36Z', PINK), fill('M36 34C44 14 60 8 62 18C64 30 50 36 36 36Z', PINK), fill('M34 38C22 38 12 46 16 54C20 62 30 52 34 42Z', LILAC), fill('M36 38C48 38 58 46 54 54C50 62 40 52 36 42Z', LILAC), fill(rrD(32, 20, 38, 54, 3), BEIGE))],
+  ['decor-vo-so', 'Vỏ sò', 'vo so bien he', svg(fill('M35 62L9 30A26 26 0 0 1 61 30Z', PEACH), line('M35 62L22 14M35 62L35 10M35 62L48 14'))],
+  ['decor-sao-bien', 'Sao biển', 'sao bien bien he', svg(star5(35, 37, 29, PEACH, 0.5), cp(35, 37, 4, YELLOW))],
+  ['decor-no', 'Nơ', 'no ruy bang qua tang', svg(fill('M33 36L22 60L29 57L32 62Z', PINK), fill('M37 36L48 60L41 57L38 62Z', PINK), fill('M35 32C25 16 7 18 7 30C7 42 25 42 35 34Z', PINK), fill('M35 32C45 16 63 18 63 30C63 42 45 42 35 34Z', PINK), cp(35, 33, 5.5, PINK))],
+  ['decor-hop-qua', 'Hộp quà', 'hop qua tang sinh nhat', svg(fill(rectD(12, 30, 58, 62), PINK), fill(rectD(9, 22, 61, 32), PINK), fill(rectD(31, 22, 39, 62), YELLOW), fill('M35 22C28 8 16 12 22 20Q26 24 35 22Z', YELLOW), fill('M35 22C42 8 54 12 48 20Q44 24 35 22Z', YELLOW))],
+  ['decor-banh-kem', 'Bánh kem', 'banh kem sinh nhat', svg(fill(rectD(32, 20, 38, 38), BLUE), fill('M35 6Q41 14 35 18Q29 14 35 6Z', YELLOW), fill(rectD(10, 38, 60, 62), PEACH), fill('M10 38H60V45Q55 51 50 45Q45 51 40 45Q35 51 30 45Q25 51 20 45Q15 51 10 45Z', PINK))],
+  ['decor-nen', 'Ngọn nến', 'ngon nen thap sang', svg(line('M35 26V31'), fill('M35 7Q46 20 35 26Q24 20 35 7Z', YELLOW), fill(rrD(26, 31, 44, 64, 2), LILAC))],
+  ['decor-day-co', 'Dây cờ', 'day co duoi nheo le hoi', svg(line('M4 14Q35 38 66 14'), bunting(sagY(14, 12)))],
+  ['decor-den-long', 'Đèn lồng', 'den long trung thu tet', svg(line('M35 5V14M35 58V66'), fill(ellipseD(35, 36, 21, 19), PINK), line('M35 18V54M25 21Q17 36 25 51M45 21Q53 36 45 51'), fill(rectD(25, 13, 45, 20), YELLOW), fill(rectD(25, 52, 45, 59), YELLOW))],
+  ['decor-vong-cham', 'Vòng chấm', 'vong cham tron hoa tiet', svg(...Array.from({ length: 12 }, (_, i) => cp(...polar(35, 35, 25, i * 30), 4.5, i % 2 ? PINK : YELLOW)), fill(sparkD(35, 35, 12), MINT))],
+  ['decor-net-luon', 'Nét lượn sóng', 'net luon song hoa tiet', svg(fill(ribbonD(sinePts(8, 62, 24, 7, 1.5), 7), PINK), fill(ribbonD(sinePts(8, 62, 46, 7, 1.5), 7), BLUE))],
+  ['decor-xoan-oc', 'Xoắn ốc', 'xoan oc vong xoay hoa tiet', svg(fill(ribbonD(spiralPts(35, 35, 3, 25, 2.25), 6), LILAC), cp(35, 35, 4, LILAC))],
+  ['decor-memphis', 'Hoạ tiết hình học', 'hoa tiet hinh hoc memphis', svg(poly([[9, 26], [26, 9], [29, 31]], YELLOW), cp(50, 18, 9, PINK), fill(ribbonD([[8, 54], [18, 44], [28, 54], [38, 44], [48, 54]], 6), BLUE), poly([[52, 38], [63, 44], [57, 55], [46, 49]], MINT))],
+  ['decor-cham-bi', 'Chấm bi', 'cham bi tron hoa tiet', svg(cp(16, 18, 7, PINK), cp(40, 14, 5, YELLOW), cp(56, 30, 8, BLUE), cp(26, 42, 9, MINT), cp(50, 54, 6, LILAC), cp(13, 60, 4, PEACH))],
+  ['decor-kim-cuong', 'Kim cương', 'kim cuong da quy', svg(poly([[20, 12], [50, 12], [62, 26], [35, 62], [8, 26]], BLUE), line('M8 26H62M20 12L28 26L35 62L42 26L50 12M28 26L35 12L42 26'))],
+  ['decor-vuong-mien', 'Vương miện', 'vuong mien cong chua hoang gia', svg(fill('M11 50L8 21L22 34L35 14L48 34L62 21L59 50Z', YELLOW), fill(rectD(10, 49, 60, 60), YELLOW), cp(35, 40, 4, PINK))],
+  ['decor-hai-trai-tim', 'Hai trái tim', 'hai trai tim yeu thuong', svg(fill(heartD(26, 30, 0.62), PINK), fill(heartD(47, 44, 0.5), PEACH))],
+  ['decor-goc-hoa-van', 'Góc hoa văn', 'goc hoa van vien khung', svg(line('M8 64V24Q8 8 24 8H64'), leafAt(36, 8, 100, 14), leafAt(50, 8, 80, 12, MINT), leafAt(8, 36, 170, 14), leafAt(8, 50, 190, 12, MINT), petals(18, 18, 5, 5, 3.5, 5.5, PINK), cp(18, 18, 3, YELLOW))],
+  ['decor-chum-bong-bay', 'Chùm bóng bay', 'chum bong bay sinh nhat le hoi', svg(line('M20 34L35 64M35 30V64M50 34L35 64'), fill(ellipseD(19, 23, 11, 13), PINK), fill(ellipseD(51, 23, 11, 13), BLUE), fill(ellipseD(35, 18, 11, 13), YELLOW))],
+  ['decor-phao-hoa', 'Pháo hoa', 'phao hoa le hoi nam moi', svg(line(Array.from({ length: 12 }, (_, i) => `M${polar(35, 35, 12, i * 30).join(' ')}L${polar(35, 35, i % 2 ? 21 : 25, i * 30).join(' ')}`).join('')), ...Array.from({ length: 6 }, (_, i) => cp(...polar(35, 35, 30, i * 60 - 90), 3, [PINK, YELLOW, BLUE][i % 3])), fill(sparkD(35, 35, 9), YELLOW))],
+  ['decor-kem', 'Kem ốc quế', 'kem oc que mua he', svg(fill('M20 34L35 64L50 34Z', PEACH), line('M26 40L40 52M44 40L30 52'), fill('M18 36A10 10 0 0 1 22 22A13 13 0 0 1 48 22A10 10 0 0 1 52 36Z', PINK), cp(35, 9, 4, PINK))],
+  ['decor-keo', 'Viên kẹo', 'vien keo ngot', svg(fill('M23 35L8 24V46Z', PINK), fill('M47 35L62 24V46Z', PINK), fill(ellipseD(35, 35, 15, 11), YELLOW), line('M29 25Q33 35 29 45M40 25Q44 35 40 45'))],
+  ['decor-keo-mut', 'Kẹo mút', 'keo mut ngot', svg(fill(rectD(33, 40, 37, 66), BEIGE), cp(35, 25, 19, PINK), line(`M${spiralPts(35, 25, 2, 15, 2).map((p) => p.join(' ')).join('L')}`))],
+  ['decor-dua-hau', 'Dưa hấu', 'dua hau mua he trai cay', svg(fill('M6 24A29 29 0 0 0 64 24Z', GREEN), fill('M11 24A24 24 0 0 0 59 24Z', PINK), dot(24, 32, 2), dot(35, 36, 2), dot(46, 32, 2), dot(30, 42, 2), dot(40, 42, 2))],
+  ['decor-anh-dao', 'Quả anh đào', 'qua anh dao cherry trai cay', svg(line('M21 46Q28 22 44 8M48 48Q46 26 44 8'), fill('M44 8Q56 2 61 13Q50 16 44 8Z', GREEN), cp(20, 51, 10, PINK), cp(48, 52, 10, PINK))],
+  ['decor-to-ong', 'Tổ ong', 'to ong luc giac hoa tiet', svg(fill(hexAt(24, 26, 12), YELLOW), fill(hexAt(46, 26, 12), YELLOW), fill(hexAt(35, 45, 12), PEACH))],
+  ['decor-huong-duong', 'Hoa hướng dương', 'hoa huong duong mat troi', svg(petals(35, 35, 12, 18, 5, 10, YELLOW), cp(35, 35, 12, PEACH), dot(31, 32), dot(39, 32), dot(35, 38), dot(31, 40), dot(39, 40))],
+  ['decor-day-den', 'Dây đèn', 'day den le hoi trang tri', svg(line('M4 12Q35 36 66 12'), ...[[12, PINK], [28, YELLOW], [44, BLUE], [60, MINT]].map(([x, c]) => { const y = sagY(12, 12)(x); return fill(rectD(x - 3, y - 1, x + 3, y + 5), BEIGE) + fill(ellipseD(x, y + 13, 6, 8), c) }))],
+  ['decor-hoa-sen', 'Hoa sen', 'hoa sen viet nam', svg(line('M8 61H62'), fill('M35 52Q14 46 9 28Q28 30 35 52Z', PINK), fill('M35 52Q56 46 61 28Q42 30 35 52Z', PINK), fill('M35 9Q49 28 35 53Q21 28 35 9Z', PINK))],
+  ['decor-sao-cuoi', 'Ngôi sao cười', 'ngoi sao cuoi de thuong', svg(star5(35, 38, 29, YELLOW, 0.5), cp(27, 41, 3, PINK), cp(43, 41, 3, PINK), dot(30, 35, 2), dot(40, 35, 2), line('M31 43Q35 47 39 43'))],
+  ['decor-la-roi', 'Lá rơi', 'la roi mua thu', svg(leafAt(12, 32, 50, 28, PEACH), leafAt(58, 42, -40, 26, YELLOW), leafAt(28, 64, 70, 26, GREEN))],
+]
+DECOR_NEW.reduce((after, [id, name, keywords, svg]) => {
+  ADDED.push({ after, id, name, category: 'decor', keywords, svg })
+  return id
+}, 'decor-phao-giay')
