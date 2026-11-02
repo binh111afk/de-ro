@@ -2107,3 +2107,75 @@ PHYS_NEW.reduce((after, [id, name, keywords, svg]) => {
   ADDED.push({ after, id, name, category: 'phys', keywords, svg })
   return id
 }, 'phys-luc-ke')
+
+// --- nghệ thuật bổ sung (60 icon): nhạc cụ, sân khấu – điện ảnh, hoạ cụ, thủ công, thiết kế ---
+const ARTC = [PINK, PEACH, YELLOW, GREEN, MINT, BLUE, LILAC]
+const sectorD = (cx, cy, R, a0, a1) => `M${cx} ${cy}L${polar(cx, cy, R, a0).join(' ')}A${R} ${R} 0 0 1 ${polar(cx, cy, R, a1).join(' ')}Z`
+const rot = (deg, cx, cy, inner) => `<g transform="rotate(${deg} ${cx} ${cy})">${inner}</g>`
+
+const ART_NEW = [
+  ['art-violin', 'Đàn violin', 'dan violin vi cam nhac cu day', svg(fill(rectD(32, 8, 38, 34), BEIGE), cp(35, 8, 4, BEIGE), fill('M35 30C26 30 24 36 27 42C22 46 22 58 35 61C48 58 48 46 43 42C46 36 44 30 35 30Z', PEACH), line('M35 14V54M30 50H40M29 40Q31 45 29 50M41 40Q39 45 41 50'))],
+  ['art-ken-trumpet', 'Kèn trumpet', 'ken trumpet ken dong nhac cu hoi', svg(line('M12 34V44H40V34'), fill(rectD(20, 16, 24, 26) + rectD(28, 16, 32, 26) + rectD(36, 16, 40, 26), BEIGE), fill(rrD(6, 26, 46, 34, 2), YELLOW), fill('M44 26L64 14V46L44 34Z', YELLOW), fill(rectD(2, 27, 6, 33), BEIGE))],
+  ['art-mat-na-le-hoi', 'Mặt nạ lễ hội', 'mat na le hoi hoa trang bieu dien', svg(leafAt(58, 26, 30, 20, PINK), line('M56 44L62 64'), fill('M6 26Q20 20 35 28Q50 20 64 26Q66 42 50 46Q40 46 35 38Q30 46 20 46Q4 42 6 26Z', LILAC), fill(ellipseD(21, 34, 7, 4.5), WHITE), fill(ellipseD(49, 34, 7, 4.5), WHITE))],
+  ['art-xylophone', 'Đàn phím gõ', 'dan phim go xylophone moc cam nhac cu', svg(...ARTC.slice(0, 6).map((c, i) => fill(rrD(6 + i * 10, 12 + i * 4, 14 + i * 10, 58 - i * 4, 2), c)), line('M44 64L62 46'), cp(63, 45, 3.5, PINK))],
+  ['art-luc-lac', 'Trống lục lạc', 'trong luc lac tambourine nhac cu go', svg(fill(circD(35, 35, 26), BEIGE), ...Array.from({ length: 6 }, (_, i) => cp(...polar(35, 35, 22, i * 60), 4.5, YELLOW)))],
+  ['art-maracas', 'Maracas', 'maracas nhac cu lac', svg(rot(-25, 24, 30, fill(rectD(22, 36, 26, 60), BEIGE) + fill(ellipseD(24, 24, 11, 14), PINK)), rot(25, 46, 30, fill(rectD(44, 36, 48, 60), BEIGE) + fill(ellipseD(46, 24, 11, 14), YELLOW)))],
+  ['art-harmonica', 'Kèn harmonica', 'ken harmonica ken acmonica nhac cu hoi', svg(fill(rrD(6, 24, 64, 46, 4), BLUE), fill(rectD(10, 30, 60, 40), WHITE), line('M17 30V40M24 30V40M31 30V40M38 30V40M45 30V40M52 30V40'))],
+  ['art-chuong-tay', 'Chuông cầm tay', 'chuong cam tay chuong lac', svg(fill(rrD(31, 6, 39, 21, 3), PEACH), cp(35, 57, 4, BEIGE), fill('M20 50Q20 22 35 20Q50 22 50 50Z', YELLOW), fill(rrD(14, 48, 56, 54, 3), YELLOW))],
+  ['art-dia-than', 'Đĩa than', 'dia than dia nhac vinyl am nhac', svg(fill(circD(35, 35, 28), LILAC), line(circD(35, 35, 22) + circD(35, 35, 16)), fill(circD(35, 35, 9), PINK), dot(35, 35, 1.8))],
+  ['art-bang-cassette', 'Băng cát-xét', 'bang cassette bang nhac am nhac', svg(fill(rrD(4, 14, 66, 56, 4), BEIGE), fill(rectD(10, 19, 60, 33), PINK), fill(rectD(16, 38, 54, 52), WHITE), cp(25, 45, 4, BEIGE), cp(45, 45, 4, BEIGE))],
+  ['art-chieng', 'Chiêng', 'chieng cong chieng nhac cu dan toc', svg(line('M8 64V12Q8 8 12 8H58Q62 8 62 12V64M35 8V20'), fill(circD(35, 38, 18), YELLOW), cp(35, 38, 6, PEACH))],
+  ['art-dui-trong', 'Dùi trống', 'dui trong go trong nhac cu', svg(fill(barD(12, 60, 56, 14, 5), BEIGE), cp(57, 13, 4, BEIGE), fill(barD(58, 60, 14, 14, 5), BEIGE), cp(13, 13, 4, BEIGE))],
+  ['art-den-san-khau', 'Đèn sân khấu', 'den san khau den chieu bieu dien', svg(fill(P([[40, 18], [66, 6], [66, 42]]), YELLOW), line('M26 36V62M14 62H38'), fill(rrD(8, 14, 42, 36, 4), LILAC))],
+  ['art-bap-rang', 'Bắp rang', 'bap rang bo xem phim rap chieu', svg(cp(18, 24, 6, YELLOW), cp(28, 17, 7, YELLOW), cp(41, 17, 7, YELLOW), cp(52, 24, 6, YELLOW), cp(35, 10, 6, YELLOW), fill('M14 26H56L50 64H20Z', PINK), line('M28 26L29 64M42 26L41 64'))],
+  ['art-may-quay-phim', 'Máy quay phim', 'may quay phim dien anh quay video', svg(cp(20, 16, 9, BEIGE), cp(40, 16, 9, BEIGE), line('M28 52L20 64M28 52L36 64'), fill(rrD(6, 26, 48, 52, 4), LILAC), fill('M48 32L63 26V52L48 46Z', BLUE))],
+  ['art-cuon-phim', 'Cuộn phim', 'cuon phim dai phim dien anh', svg(fill(rectD(4, 16, 66, 54), BEIGE), fill([8, 19, 30, 41, 52, 63].slice(0, 5).map((x) => rectD(x + 2, 20, x + 7, 25) + rectD(x + 2, 45, x + 7, 50)).join(''), WHITE), fill(rectD(10, 29, 32, 41) + rectD(38, 29, 60, 41), BLUE))],
+  ['art-bang-clap', 'Bảng clapper', 'bang clapper bang danh dau canh quay dien anh', svg(fill(rectD(8, 32, 62, 62), BEIGE), fill(rectD(8, 24, 62, 32), WHITE), line('M18 24L14 32M30 24L26 32M42 24L38 32M54 24L50 32'), fill(P([[8, 22], [58, 8], [60, 15], [10, 29]]), WHITE), line('M20 19L18 26M32 15L30 23M44 12L42 19M16 44H54M16 52H40'))],
+  ['art-but-chi', 'Bút chì', 'but chi phac thao ve chi', svg(fill(barD(20, 50, 52, 18, 10), YELLOW), fill(P([[23.5, 53.5], [16.5, 46.5], [10, 60]]), BEIGE), fill(barD(52, 18, 59, 11, 10), PINK))],
+  ['art-o-giay', 'Ô giấy', 'o giay du giay thu cong trang tri', svg(line('M35 34V58Q35 64 29 64Q24 64 24 59'), fill('M6 34Q8 8 35 6Q62 8 64 34Q57 28 50 34Q43 28 35 34Q27 28 20 34Q13 28 6 34Z', PINK), line('M35 6Q26 18 20 34M35 6Q44 18 50 34M35 6V34'))],
+  ['art-lo-mau', 'Lọ màu và cọ', 'lo mau co ve mau goat', svg(fill(barD(46, 4, 34, 40, 5), BEIGE), fill(rrD(14, 30, 56, 64, 6), BLUE), fill(rectD(14, 30, 56, 38), YELLOW))],
+  ['art-con-lan-son', 'Con lăn sơn', 'con lan son quet son trang tri tuong', svg(line('M52 15H60V30H35V40'), fill(rrD(10, 8, 52, 22, 5), PINK), fill(rrD(31, 40, 39, 64, 3), BEIGE))],
+  ['art-binh-xit-son', 'Bình xịt sơn', 'binh xit son ve graffiti', svg(fill(rectD(40, 14, 46, 19), BEIGE), fill(rrD(26, 12, 40, 24, 3), BEIGE), fill(rrD(20, 24, 46, 64, 4), LILAC), line('M20 34H46'), dot(52, 12, 1.8), dot(57, 16, 1.8), dot(52, 21, 1.8), dot(60, 9, 1.8))],
+  ['art-hop-but-mau', 'Hộp bút màu', 'hop but mau but sap to mau', svg(...[PINK, YELLOW, GREEN, BLUE, LILAC].map((c, i) => { const x = 13 + i * 9; return fill(rectD(x, 16, x + 7, 32) + P([[x, 16], [x + 7, 16], [x + 3.5, 8]]), c) }), fill(rectD(10, 30, 60, 62), YELLOW), line('M18 44H52'))],
+  ['art-bang-mau-sac', 'Bảng mẫu màu', 'bang mau mau sac phoi mau thiet ke', svg(...[-36, -12, 12, 36].map((a, i) => rot(a, 35, 60, fill(rrD(29, 10, 41, 60, 3), [PINK, YELLOW, MINT, LILAC][i]))), cp(35, 58, 3, BEIGE))],
+  ['art-banh-xe-mau', 'Bánh xe màu', 'banh xe mau vong tron mau sac pha mau', svg(...[PINK, PEACH, YELLOW, GREEN, BLUE, LILAC].map((c, i) => fill(sectorD(35, 35, 28, i * 60 - 90, i * 60 - 30), c)), cp(35, 35, 8, WHITE))],
+  ['art-buc-tranh', 'Bức tranh phong cảnh', 'buc tranh phong canh tranh ve', svg(fill(rectD(6, 10, 64, 60), YELLOW), fill(rectD(14, 18, 56, 52), BLUE), fill('M14 52L28 32L38 44L44 38L56 52Z', GREEN), cp(46, 26, 4, YELLOW))],
+  ['art-manh-ghep', 'Mảnh ghép hình', 'manh ghep hinh tro choi xep hinh puzzle', svg(fill('M12 20H26A6 6 0 1 1 38 20H52V34A6 6 0 1 0 52 46V60H38A6 6 0 1 0 26 60H12V46A6 6 0 1 1 12 34Z', YELLOW), line('M18 26L22 30'))],
+  ['art-man-chieu', 'Màn chiếu', 'man chieu trinh chieu xem phim', svg(line('M35 48V64M35 55L24 64M35 55L46 64'), fill(rectD(10, 14, 60, 48), WHITE), fill(rrD(6, 8, 64, 14, 3), BEIGE))],
+  ['art-nut-ao', 'Cúc áo', 'cuc ao nut ao may vat thu cong', svg(fill(circD(35, 35, 26), PINK), line(circD(35, 35, 20)), cp(29, 29, 3, WHITE), cp(41, 29, 3, WHITE), cp(29, 41, 3, WHITE), cp(41, 41, 3, WHITE))],
+  ['art-con-dau', 'Con dấu', 'con dau in dau tem khac', svg(fill(rectD(18, 52, 52, 62), PINK), fill(rectD(30, 16, 40, 34), PEACH), cp(35, 12, 7, PEACH), fill(rrD(14, 34, 56, 46, 3), BEIGE))],
+  ['art-anh-polaroid', 'Ảnh polaroid', 'anh polaroid tam anh chup hinh', svg(rot(-6, 35, 35, fill(rectD(13, 8, 57, 64), WHITE) + fill(rectD(18, 13, 52, 46), BLUE) + fill('M18 46L30 30L38 40L44 34L52 46Z', GREEN)), cp(43, 21, 3.5, YELLOW))],
+  ['art-but-vector', 'Bút vẽ vector', 'but ve vector thiet ke do hoa', svg(line('M8 60H62'), fill('M35 8L50 34L42 54H28L20 34Z', LILAC), line('M35 8V32'), cp(35, 35, 3, WHITE), fill(rectD(3, 56, 11, 64), WHITE), fill(rectD(59, 56, 67, 64), WHITE))],
+  ['art-hinh-khoi', 'Hình khối tĩnh vật', 'hinh khoi tinh vat ve hinh khoi co ban', svg(fill(P([[34, 8], [50, 46], [18, 46]]), YELLOW), fill(rectD(38, 38, 62, 62), BLUE), cp(20, 50, 12, PINK))],
+  ['art-binh-hoa', 'Bình hoa', 'binh hoa tinh vat hoa cam binh', svg(line('M33 34L25 21M37 34L45 19M35 34V27'), petals(24, 18, 5, 4, 3, 4.5, PINK), cp(24, 18, 2.5, YELLOW), petals(46, 16, 5, 4, 3, 4.5, LILAC), cp(46, 16, 2.5, YELLOW), cp(35, 24, 4, YELLOW), fill('M26 34H44Q50 44 48 54Q46 62 35 62Q24 62 22 54Q20 44 26 34Z', BLUE))],
+  ['art-mu-hoa-si', 'Mũ nồi hoạ sĩ', 'mu noi hoa si mu beret', svg(line('M38 18V11'), fill('M8 40Q8 18 38 18Q62 18 62 34Q62 44 40 44H14Q8 44 8 40Z', PINK), fill(rrD(12, 42, 52, 49, 3), PINK))],
+  ['art-not-don', 'Nốt nhạc đơn', 'not nhac don not moc am nhac', svg(fill('M38 10Q55 18 52 34Q48 24 38 22Z', LILAC), fill(rectD(34, 10, 38, 50), LILAC), rot(-20, 26, 52, fill(ellipseD(26, 52, 11, 8), LILAC)))],
+  ['art-dan-harp', 'Đàn hạc', 'dan hac harp nhac cu day', svg(line('M24 12V57M32 13V54M40 17V51M48 26V47'), fill(rectD(12, 8, 18, 62), BEIGE), fill(ribbonD([[15, 10], [30, 10], [44, 20], [58, 44]], 6), BEIGE), fill(barD(15, 60, 58, 44, 7), PEACH))],
+  ['art-gia-nhac', 'Giá để nhạc', 'gia de nhac ban nhac nhac ly', svg(line('M35 40V60M24 64L35 56L46 64'), fill(P([[12, 8], [58, 8], [60, 40], [10, 40]]), WHITE), line('M16 16H54M16 22H54M16 28H54'), fill(rectD(8, 38, 62, 44), BEIGE))],
+  ['art-hop-mau-nuoc', 'Hộp màu nước', 'hop mau nuoc mau ve pha mau', svg(fill(rrD(4, 18, 66, 52, 4), WHITE), ...[10, 23, 36, 49].flatMap((x, i) => [fill(rrD(x, 23, x + 11, 34, 3), ARTC[i]), fill(rrD(x, 37, x + 11, 48, 3), ARTC[i + 3])]))],
+  ['art-so-ve', 'Sổ vẽ', 'so ve sketchbook phac thao', svg(fill(rrD(10, 10, 60, 64, 3), BEIGE), line(circD(18, 10, 3) + circD(28, 10, 3) + circD(38, 10, 3) + circD(48, 10, 3) + 'M18 50Q26 26 36 40T54 30'))],
+  ['art-vet-mau', 'Vệt màu loang', 'vet mau loang giot mau nghe thuat', svg(fill('M35 10Q42 20 50 14Q48 26 60 28Q50 34 58 46Q46 42 42 56Q36 46 26 56Q26 44 12 44Q22 36 12 26Q24 26 22 14Q30 22 35 10Z', PINK), cp(60, 12, 3, PINK), cp(10, 58, 3.5, PINK), cp(58, 58, 2.5, PINK))],
+  ['art-ong-but', 'Ống cắm bút', 'ong cam but ong but do dung ve', svg(fill(barD(28, 40, 18, 10, 6), YELLOW), fill(barD(35, 40, 35, 6, 6), BLUE), fill(barD(42, 40, 54, 9, 5), BEIGE), fill(rrD(18, 34, 52, 64, 4), PEACH))],
+  ['art-khung-theu', 'Khung thêu', 'khung theu theu tay thu cong', svg(fill(rectD(32, 2, 38, 9), BEIGE), fill(circD(35, 36, 22), WHITE), petals(35, 36, 5, 6, 3.5, 5, PINK), cp(35, 36, 3, YELLOW), fill(ringD(35, 36, 28, 22), PEACH))],
+  ['art-accordion', 'Đàn accordion', 'dan accordion phong cam nhac cu', svg(fill('M18 20H52V50H18Z', BEIGE), line('M25 20L23 50M31 20L33 50M38 20L36 50M45 20L47 50'), fill(rrD(4, 16, 18, 54, 3), PINK), fill(rrD(52, 16, 66, 54, 3), PINK), dot(59, 24, 1.8), dot(59, 32, 1.8), dot(59, 40, 1.8))],
+  ['art-mu-ao-thuat', 'Mũ ảo thuật', 'mu ao thuat xiec bieu dien', svg(fill('M20 14H50L48 48H22Z', LILAC), fill(rectD(21, 38, 49, 46), PINK), fill(rrD(8, 48, 62, 56, 4), LILAC), fill(sparkD(58, 14, 6), YELLOW))],
+  ['art-ghe-dao-dien', 'Ghế đạo diễn', 'ghe dao dien dien anh quay phim', svg(line('M16 64L52 38M52 64L16 38M16 38V10M52 38V10'), fill(rectD(14, 12, 54, 24), PEACH), fill(rectD(12, 34, 56, 40), PEACH))],
+  ['art-tranh-truu-tuong', 'Tranh trừu tượng', 'tranh truu tuong hinh khoi mau sac', svg(fill(rectD(6, 6, 64, 64), WHITE), cp(26, 26, 10, PINK), fill(rectD(38, 14, 56, 32), YELLOW), fill(P([[14, 56], [32, 38], [44, 56]]), BLUE), line('M42 46Q50 38 58 50'))],
+  ['art-bao-tang', 'Bảo tàng', 'bao tang trien lam nghe thuat', svg(fill(P([[4, 22], [35, 6], [66, 22]]), BEIGE), fill(rectD(8, 22, 62, 28), BEIGE), fill(rectD(12, 28, 18, 56) + rectD(26, 28, 32, 56) + rectD(38, 28, 44, 56) + rectD(52, 28, 58, 56), WHITE), fill(rectD(4, 56, 66, 64), BEIGE))],
+  ['art-kinh-3d', 'Kính 3D', 'kinh 3d xem phim dien anh', svg(line('M32 30Q35 26 38 30M6 30L2 25M64 30L68 25'), fill(rrD(6, 24, 32, 44, 6), PINK), fill(rrD(38, 24, 64, 44, 6), BLUE))],
+  ['art-cay-keo', 'Cây kéo', 'cay keo cat giay thu cong', svg(fill(barD(27, 46, 58, 8, 6), BEIGE), fill(barD(43, 46, 12, 8, 6), BEIGE), dot(35, 36, 2), fill(ringD(22, 53, 9, 5), PINK), fill(ringD(48, 53, 9, 5), PINK))],
+  ['art-ho-dan', 'Lọ hồ dán', 'lo ho dan keo dan thu cong', svg(fill('M28 26L32 10H38L42 26Z', PEACH), fill('M22 26H48V60A4 4 0 0 1 44 64H26A4 4 0 0 1 22 60Z', WHITE), fill(rectD(22, 36, 48, 50), YELLOW))],
+  ['art-bang-dinh', 'Cuộn băng dính', 'cuon bang dinh bang keo dan', svg(fill('M40 56L64 60V66L38 62Z', YELLOW), fill(ringD(32, 38, 22, 11), YELLOW))],
+  ['art-may-dem-nhip', 'Máy đếm nhịp', 'may dem nhip metronome nhip dieu am nhac', svg(fill(P([[20, 64], [50, 64], [41, 8], [29, 8]]), PEACH), fill(P([[27, 52], [43, 52], [39, 16], [31, 16]]), BEIGE), line('M35 52L45 18'), cp(42, 28, 3.5, PINK))],
+  ['art-giay-mau', 'Giấy màu', 'giay mau giay thu cong xep giay', svg(fill(rectD(16, 22, 58, 60), BLUE), fill(rectD(12, 16, 54, 54), YELLOW), fill(rectD(8, 10, 50, 48), PINK))],
+  ['art-hoa-van-gach', 'Gạch hoa văn', 'gach hoa van hoa tiet trang tri', svg(fill(rectD(8, 8, 62, 62), BLUE), fill(P([[35, 14], [56, 35], [35, 56], [14, 35]]), WHITE), fill(sparkD(35, 35, 12), YELLOW), line('M8 20A12 12 0 0 0 20 8M50 8A12 12 0 0 0 62 20M62 50A12 12 0 0 0 50 62M20 62A12 12 0 0 0 8 50'))],
+  ['art-gach-lap-ghep', 'Gạch lắp ghép', 'gach lap ghep do choi xep hinh', svg(fill(rrD(12, 12, 24, 22, 2) + rrD(29, 12, 41, 22, 2) + rrD(46, 12, 58, 22, 2), PINK), fill(rrD(8, 20, 62, 52, 3), PINK))],
+  ['art-kinh-mau', 'Cửa kính màu', 'cua kinh mau kinh ghep mau nha tho', svg(fill('M12 64V30A23 23 0 0 1 58 30V64Z', BEIGE), fill('M17 60V31A18 18 0 0 1 35 13V60Z', BLUE), fill('M35 13A18 18 0 0 1 53 31V60H35Z', PINK), line('M17 40H53M17 50H53M35 13V60'), cp(35, 28, 5, YELLOW))],
+  ['art-ban-mix', 'Bàn mix âm thanh', 'ban mix am thanh thu am phoi am', svg(fill(rrD(4, 14, 66, 58, 4), LILAC), line('M16 22V50M28 22V50M40 22V50M52 22V50'), fill(rectD(12, 38, 20, 44) + rectD(24, 26, 32, 32) + rectD(36, 42, 44, 48) + rectD(48, 30, 56, 36), PINK))],
+  ['art-chan-may', 'Chân máy ảnh', 'chan may anh tripod chup anh quay phim', svg(line('M35 30L16 64M35 30L54 64M35 30V64'), fill(rrD(18, 8, 52, 30, 4), BLUE), cp(35, 19, 6, WHITE))],
+  ['art-vong-tay-hat', 'Vòng tay hạt', 'vong tay hat xau hat thu cong trang suc', svg(line(circD(35, 35, 21)), ...Array.from({ length: 12 }, (_, i) => cp(...polar(35, 35, 21, i * 30), 5.5, ARTC[i % 7])))],
+]
+ART_NEW.reduce((after, [id, name, keywords, svg]) => {
+  ADDED.push({ after, id, name, category: 'art', keywords, svg })
+  return id
+}, 'art-cat-dan')
