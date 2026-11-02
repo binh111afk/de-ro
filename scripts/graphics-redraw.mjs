@@ -1991,3 +1991,119 @@ CHEM_NEW.reduce((after, [id, name, keywords, svg]) => {
   ADDED.push({ after, id, name, category: 'chem', keywords, svg })
   return id
 }, 'chem-kinh-bao-ho')
+
+// --- hoá học đợt 2 (30 icon): phân tử, ba thể, đời sống, môi trường, an toàn ---
+const vessel = () => fill(rrD(8, 8, 62, 62, 4), WHITE)
+const dropD = (x, y) => `M${x} ${y}Q${x + 5} ${y + 8} ${x} ${y + 11}Q${x - 5} ${y + 8} ${x} ${y}Z`
+const burstD = (n, R, r) => P(Array.from({ length: 2 * n }, (_, i) => polar(35, 35, i % 2 ? r : R, (i * 180) / n - 90)))
+const polyPts = sinePts(8, 62, 35, 12, 1)
+const flameSmall = 'M35 46Q42 53 39 58Q37 62 35 62Q33 62 31 58Q28 53 35 46Z'
+
+const CHEM_MORE = [
+  ['chem-phan-tu-oxi', 'Phân tử oxi', 'phan tu oxi o2 khi oxi lien ket doi', svg(line('M20 31H50M20 39H50'), cp(19, 35, 13, PINK), cp(51, 35, 13, PINK))],
+  ['chem-phan-tu-amoniac', 'Phân tử amoniac', 'phan tu amoniac nh3 nito hidro', svg(line('M35 27L14 52M35 27V60M35 27L56 52'), cp(35, 26, 13, LILAC), cp(14, 52, 7, BLUE), cp(35, 60, 7, BLUE), cp(56, 52, 7, BLUE))],
+  ['chem-tinh-the-muoi', 'Tinh thể muối ăn', 'tinh the muoi an natri clorua nacl ion', svg(line('M15 15H55M15 35H55M15 55H55M15 15V55M35 15V55M55 15V55'), ...[15, 35, 55].flatMap((y, r) => [15, 35, 55].map((x, c) => ((r + c) % 2 ? cp(x, y, 6, PEACH) : cp(x, y, 9, MINT)))))],
+  ['chem-polime', 'Chuỗi polime', 'polime chuoi mat xich cao phan tu nhua', svg(line(`M${polyPts.map((p) => p.join(' ')).join('L')}`), ...[0, 6, 13, 19, 26, 32].map((k, i) => cp(...polyPts[k], 6, i % 2 ? BLUE : YELLOW)))],
+  ['chem-the-ran', 'Thể rắn', 'the ran hat sap xep chat ran trang thai', svg(vessel(), ...[18, 29, 41, 52].flatMap((y) => [18, 29, 41, 52].map((x) => cp(x, y, 5, BLUE))))],
+  ['chem-the-long', 'Thể lỏng', 'the long hat chat long trang thai', svg(vessel(), fill('M8 30H62V58A4 4 0 0 1 58 62H12A4 4 0 0 1 8 58Z', MINT), ...[[17, 53], [29, 54], [42, 52], [54, 54], [23, 41], [36, 40], [49, 42]].map(([x, y]) => cp(x, y, 5, BLUE)))],
+  ['chem-the-khi', 'Thể khí', 'the khi hat chat khi trang thai chuyen dong', svg(vessel(), ...[[18, 21], [47, 16], [31, 38], [53, 45], [24, 52], [40, 33]].map(([x, y]) => cp(x, y, 5, BLUE)))],
+  ['chem-bay-hoi', 'Bay hơi', 'bay hoi soi hoi nuoc dun nong', svg(line('M24 24Q20 18 24 12Q28 6 24 2M35 24Q31 18 35 12Q39 6 35 2M46 24Q42 18 46 12Q50 6 46 2'), fill(beakerD(28), WHITE), fill(beakerD(42), BLUE))],
+  ['chem-banh-mi', 'Bánh mì lên men', 'banh mi len men men no bot', svg(fill('M8 44Q8 22 35 22Q62 22 62 44V54A4 4 0 0 1 58 58H12A4 4 0 0 1 8 54Z', PEACH), line('M20 31L26 39M32 28L38 36M44 31L50 39'))],
+  ['chem-khi-cau', 'Khí cầu', 'khi cau khinh khi cau khi nong khi heli', svg(line('M27 49L29 56M43 49L41 56'), fill('M35 5A22 22 0 0 1 57 27Q57 39 44 49H26Q13 39 13 27A22 22 0 0 1 35 5Z', PINK), line('M35 5Q25 27 30 49M35 5Q45 27 40 49'), fill(rectD(28, 56, 42, 65), BEIGE))],
+  ['chem-xa-phong', 'Xà phòng', 'xa phong bot tay rua phan ung xa phong hoa', svg(fill(rrD(8, 36, 52, 60, 8), PINK), line('M16 44H30'), fill(circD(47, 22, 9), BLUE), fill(circD(28, 18, 6), BLUE), fill(circD(60, 38, 5), BLUE))],
+  ['chem-chai-nhua', 'Chai nhựa', 'chai nhua plastic tai che rac thai', svg(fill('M29 11H41V16Q50 20 50 30V60A4 4 0 0 1 46 64H24A4 4 0 0 1 20 60V30Q20 20 29 16Z', MINT), fill(rectD(20, 34, 50, 46), WHITE), fill(rectD(29, 4, 41, 11), BLUE))],
+  ['chem-cay-xang', 'Cây xăng', 'cay xang nhien lieu dau mo xang dau', svg(line('M40 24H48Q54 24 54 30V46Q54 50 50 50'), fill(rrD(12, 10, 40, 64, 4), PEACH), fill(rectD(17, 16, 35, 28), WHITE), fill(rrD(44, 50, 52, 60, 2), BEIGE))],
+  ['chem-qua-chanh', 'Lát chanh', 'lat chanh axit chua axit xitric', svg(fill(circD(35, 35, 27), GREEN), fill(circD(35, 35, 21), YELLOW), line(Array.from({ length: 4 }, (_, i) => `M${polar(35, 35, 19, i * 45).join(' ')}L${polar(35, 35, 19, i * 45 + 180).join(' ')}`).join('')))],
+  ['chem-mua-axit', 'Mưa axit', 'mua axit o nhiem moi truong khi thai', svg(fill('M14 36A9 9 0 0 1 14 18A12 12 0 0 1 36 10A12 12 0 0 1 56 18A9 9 0 0 1 56 36Z', BEIGE), fill(dropD(22, 44), GREEN), fill(dropD(35, 50), GREEN), fill(dropD(48, 44), GREEN))],
+  ['chem-thep-chu-i', 'Thép chữ I', 'thep chu i sat thep kim loai hop kim', svg(fill('M10 12H60V24H42V46H60V58H10V46H28V24H10Z', BLUE), line('M16 18H30'))],
+  ['chem-so-thi-nghiem', 'Sổ thí nghiệm', 'so thi nghiem ghi chep bao cao thuc hanh', svg(fill(rrD(12, 6, 58, 64, 4), BEIGE), line('M20 6V64M28 52H52M28 58H46'), fill('M35 16H43V25L51 44H27L35 25Z', BLUE))],
+  ['chem-vu-no', 'Phản ứng nổ', 'phan ung no vu no chay no', svg(fill(burstD(8, 31, 18), PEACH), fill(burstD(8, 17, 9), YELLOW))],
+  ['chem-lo-dung', 'Lọ đựng hoá chất', 'lo dung hoa chat bot ran lo thuy tinh', svg(fill(rrD(16, 16, 54, 64, 6), WHITE), fill('M16 40Q35 34 54 40V58A6 6 0 0 1 48 64H22A6 6 0 0 1 16 58Z', YELLOW), fill(rrD(18, 8, 52, 16, 3), LILAC))],
+  ['chem-binh-xit', 'Bình xịt tẩy rửa', 'binh xit tay rua chat tay rua ve sinh', svg(line('M30 22L26 32'), fill(rectD(46, 12, 54, 18), PINK), fill(rectD(22, 9, 46, 22), PINK), fill(rectD(28, 22, 40, 28), PINK), fill('M24 28H44L48 40V60A4 4 0 0 1 44 64H24A4 4 0 0 1 20 60V40Z', BLUE), dot(59, 10, 1.8), dot(62, 15, 1.8), dot(59, 20, 1.8))],
+  ['chem-thung-son', 'Thùng sơn', 'thung son son phu chong gi', svg(line('M14 24Q35 2 56 24'), fill('M14 22H56L52 62H18Z', BLUE), fill('M14 22H56V30Q52 37 48 30Q44 39 40 30Q35 35 30 30Q24 39 20 30Q16 35 14 30Z', PEACH))],
+  ['chem-mach-cacbon', 'Mạch cacbon', 'mach cacbon cong thuc khung huu co', svg(line('M6 46L19 24L33 46L47 24L61 46'), ...[[6, 46], [19, 24], [33, 46], [47, 24], [61, 46]].map(([x, y]) => cp(x, y, 4.5, LILAC)))],
+  ['chem-tai-che', 'Tái chế', 'tai che rac thai bao ve moi truong vong tuan hoan', svg(uni(GREEN, ...[-90, 30, 150].map((a) => { const p = polar(35, 38, 27, a), q = polar(35, 38, 27, a + 120); const t = (k) => [p[0] + (q[0] - p[0]) * k, p[1] + (q[1] - p[1]) * k]; return arD(...t(0.12), ...t(0.88), 8, 18, 10) })))],
+  ['chem-acquy', 'Ắc quy', 'ac quy pin dien hoa dien cuc', svg(fill(rectD(14, 14, 24, 22), BEIGE), fill(rectD(46, 14, 56, 22), BEIGE), fill(rrD(6, 22, 64, 60, 4), LILAC), line('M14 40H24M19 35V45M46 40H56'))],
+  ['chem-thia-xuc', 'Thìa xúc hoá chất', 'thia xuc hoa chat bot lay hoa chat', svg(fill(barD(60, 10, 36, 34, 6), BEIGE), `<g transform="rotate(-45 26 44)">${fill(ellipseD(26, 44, 15, 10), BEIGE)}</g>`, cp(26, 44, 6, YELLOW))],
+  ['chem-tao-oxi-hoa', 'Táo bị oxi hoá', 'tao bi oxi hoa tham mau phan ung oxi hoa', svg(line('M35 18Q35 10 41 5'), fill('M35 18C20 10 6 20 8 38C10 54 22 64 35 60C48 64 60 54 62 38C64 20 50 10 35 18Z', PINK), fill('M35 23C22 16 12 25 13 38C14 51 24 59 35 56C46 59 56 51 57 38C58 25 48 16 35 23Z', BEIGE), cp(25, 35, 5, PEACH), cp(45, 45, 6, PEACH), cp(42, 31, 3, PEACH))],
+  ['chem-ap-ke', 'Áp kế', 'ap ke dong ho ap suat khi', svg(fill(rectD(31, 50, 39, 64), BEIGE), fill(circD(35, 30, 24), BEIGE), fill(circD(35, 30, 18), WHITE), line([150, 195, 240, 285, 330, 375].map((a) => `M${polar(35, 30, 14, a).join(' ')}L${polar(35, 30, 18, a).join(' ')}`).join('') + 'M35 30L45 20'), cp(35, 30, 3, PINK))],
+  ['chem-cuc-da', 'Cục nước đá', 'cuc nuoc da dong dac nong chay the ran', svg(fill(P([[35, 10], [60, 22], [35, 34], [10, 22]]), WHITE), fill(P([[10, 22], [35, 34], [35, 62], [10, 50]]), BLUE), fill(P([[35, 34], [60, 22], [60, 50], [35, 62]]), MINT), line('M17 31V40'))],
+  ['chem-lo-nung', 'Lò nung', 'lo nung lo luyen kim nung voi gom', svg(fill(rectD(44, 4, 54, 14), BEIGE), fill(rrD(10, 14, 60, 62, 4), BEIGE), line('M10 28H60'), fill('M22 62V44A13 13 0 0 1 48 44V62Z', PEACH), fill(flameSmall, YELLOW))],
+  ['chem-tui-nilon', 'Túi nilon', 'tui nilon rac thai nhua o nhiem', svg(line('M22 22Q22 8 30 8Q36 8 36 22M34 22Q34 8 42 8Q48 8 48 22'), fill('M12 22H58L54 64H16Z', BLUE), line('M26 30L24 56M44 30L46 56'))],
+]
+CHEM_MORE.reduce((after, [id, name, keywords, svg]) => {
+  ADDED.push({ after, id, name, category: 'chem', keywords, svg })
+  return id
+}, 'chem-que-khuay')
+
+// --- vật lí bổ sung (60 icon): kí hiệu mạch, quang, cơ, nhiệt, âm, điện từ, đồ dùng điện ---
+const leads = line('M4 35H18M52 35H66')
+const dash4 = ' stroke-dasharray="4 4"'
+const coilLoops = (xs, cy, rx, ry) => line(xs.map((x) => ellipseD(x, cy, rx, ry)).join(''))
+
+const PHYS_NEW = [
+  ['phys-dien-tro', 'Kí hiệu điện trở', 'ki hieu dien tro so do mach dien', svg(leads, fill(rectD(18, 25, 52, 45), YELLOW))],
+  ['phys-bien-tro', 'Kí hiệu biến trở', 'ki hieu bien tro dien tro thay doi so do mach', svg(leads, fill(rectD(18, 26, 52, 44), YELLOW), uni(PINK, arD(16, 58, 56, 12, 4, 12, 8)))],
+  ['phys-tu-dien', 'Kí hiệu tụ điện', 'ki hieu tu dien so do mach dien', svg(line('M4 35H26M44 35H66'), fill(rectD(26, 14, 32, 56), BLUE), fill(rectD(38, 14, 44, 56), BLUE))],
+  ['phys-ki-hieu-nguon', 'Kí hiệu nguồn điện', 'ki hieu nguon dien pin so do mach', svg(line('M4 35H26M46 35H66M10 22H18M14 18V26'), fill(rectD(26, 12, 31, 58), PINK), fill(rectD(39, 22, 46, 48), PINK))],
+  ['phys-cong-tac', 'Kí hiệu công tắc', 'ki hieu cong tac khoa k so do mach', svg(line('M4 46H16M54 46H66M23 43L47 25'), cp(20, 46, 4, WHITE), cp(50, 46, 4, WHITE))],
+  ['phys-ki-hieu-den', 'Kí hiệu bóng đèn', 'ki hieu bong den so do mach dien', svg(line('M4 35H15M55 35H66'), fill(circD(35, 35, 20), YELLOW), line('M21 21L49 49M49 21L21 49'))],
+  ['phys-ampe-ke', 'Ampe kế', 'ampe ke do cuong do dong dien', svg(line('M4 35H13M57 35H66'), fill(circD(35, 35, 22), MINT), line('M27 46L35 23L43 46M30 38H40'))],
+  ['phys-von-ke', 'Vôn kế', 'von ke do hieu dien the', svg(line('M4 35H13M57 35H66'), fill(circD(35, 35, 22), BLUE), line('M27 24L35 46L43 24'))],
+  ['phys-diot', 'Kí hiệu điốt', 'ki hieu diot dong dien mot chieu ban dan', svg(line('M4 35H66M47 20V50'), fill(P([[24, 20], [24, 50], [46, 35]]), PEACH))],
+  ['phys-ki-hieu-dat', 'Kí hiệu nối đất', 'ki hieu noi dat tiep dat an toan dien', svg(line('M35 6V30'), fill(rectD(14, 30, 56, 35), BEIGE), fill(rectD(22, 42, 48, 47), BEIGE), fill(rectD(30, 54, 40, 59), BEIGE))],
+  ['phys-mach-noi-tiep', 'Mạch điện nối tiếp', 'mach dien noi tiep so do pin den cong tac', svg(line('M30 14H10V56H26M44 56H60V14H40M28 56L42 47'), fill(rectD(30, 6, 33, 22), PINK), fill(rectD(37, 10, 40, 18), PINK), fill(circD(10, 35, 8), YELLOW), fill(circD(60, 35, 8), YELLOW), line('M5 30L15 40M15 30L5 40M55 30L65 40M65 30L55 40'))],
+  ['phys-cuon-day', 'Cuộn dây', 'cuon day ong day dien tu truong', svg(fill(rectD(10, 30, 60, 40), BEIGE), coilLoops([16, 24, 32, 40, 48, 56], 35, 4, 15), line('M4 50H12M58 50H66'))],
+  ['phys-dien-tich', 'Điện tích', 'dien tich duong am luc dien hut', svg(line('M24 29Q35 21 46 29M24 41Q35 49 46 41M27 35H43'), cp(18, 35, 11, PINK), cp(52, 35, 11, BLUE), line('M13 35H23M18 30V40M47 35H57'))],
+  ['phys-o-cam', 'Ổ cắm điện', 'o cam dien nguon dien an toan', svg(fill(rrD(10, 10, 60, 60, 8), BEIGE), fill(circD(35, 35, 16), WHITE), line('M30 29V39M40 29V39'))],
+  ['phys-o-dien-nhieu', 'Ổ điện kéo dài', 'o dien keo dai o cam nhieu', svg(line('M6 37Q2 37 2 44V62'), fill(rrD(6, 28, 64, 46, 5), BEIGE), fill(circD(18, 37, 5), WHITE), fill(circD(32, 37, 5), WHITE), fill(circD(46, 37, 5), WHITE), fill(rectD(54, 32, 60, 42), PINK))],
+  ['phys-cot-dien', 'Cột điện cao thế', 'cot dien cao the truyen tai dien nang', svg(line('M24 64L32 8H38L46 64M28 40H42M26 52H44M27 40L43 52M43 40L27 52'), fill(rectD(14, 15, 56, 20), BEIGE), fill(rectD(18, 27, 52, 32), BEIGE))],
+  ['phys-tua-bin-gio', 'Tua bin gió', 'tua bin gio dien gio nang luong tai tao', svg(fill('M33 28H37L40 64H30Z', BEIGE), leafAt(35, 26, 0, 22, BLUE), leafAt(35, 26, 120, 22, BLUE), leafAt(35, 26, 240, 22, BLUE), cp(35, 26, 4, BEIGE))],
+  ['phys-bien-ap', 'Máy biến áp', 'may bien ap bien the cuon day loi sat', svg(fill('M18 12H52V58H18ZM26 20V50H44V20Z', BEIGE), line([24, 30, 36, 42, 48].map((y) => ellipseD(22, y, 8, 2.5) + ellipseD(48, y, 8, 2.5)).join('')))],
+  ['phys-nam-cham-dien', 'Nam châm điện', 'nam cham dien cuon day loi sat', svg(line('M20 44V54H28M46 44V54H42'), fill('M10 31H54L62 35L54 39H10Z', BEIGE), coilLoops([20, 26, 32, 38, 44], 35, 3, 9), fill(rectD(28, 50, 42, 58), YELLOW))],
+  ['phys-cai-bua', 'Cái búa', 'cai bua luc cong co hoc va cham', svg(fill(barD(16, 62, 42, 26, 8), BEIGE), `<g transform="rotate(36 42 22)">${fill(rrD(24, 14, 60, 30, 3), BLUE)}</g>`)],
+  ['phys-khuc-xa', 'Khúc xạ ánh sáng', 'khuc xa anh sang tia sang nuoc', svg(fill(rectD(4, 35, 66, 64), BLUE), line('M35 8V62', dash4), uni(YELLOW, arD(10, 8, 34, 34, 5, 13, 8)), uni(YELLOW, arD(35, 35, 45, 62, 5, 13, 8)))],
+  ['phys-guong-cau-lom', 'Gương cầu lõm', 'guong cau lom hoi tu tia sang', svg(line('M4 22H56L36 35M4 35H59M4 48H56L36 35'), fill(ribbonD(arcPts(20, 35, 40, -40, 40, 16), 6), BEIGE))],
+  ['phys-guong-cau-loi', 'Gương cầu lồi', 'guong cau loi phan ky tia sang', svg(line('M4 24H52L30 10M4 46H52L30 60'), fill(ribbonD(arcPts(92, 35, 40, 140, 220, 16), 6), BEIGE))],
+  ['phys-thau-kinh-phan-ky', 'Thấu kính phân kỳ', 'thau kinh phan ky lom tia sang', svg(line('M4 24H30L64 12M4 46H30L64 58'), fill('M24 8H46Q36 35 46 62H24Q34 35 24 8Z', BLUE))],
+  ['phys-dong-ho-treo-tuong', 'Đồng hồ treo tường', 'dong ho treo tuong do thoi gian giay phut gio', svg(fill(circD(35, 35, 28), BEIGE), fill(circD(35, 35, 22), WHITE), line('M35 16V20M54 35H50M35 54V50M16 35H20M35 35V22M35 35L45 40'), cp(35, 35, 2.5, PINK))],
+  ['phys-den-pin', 'Đèn pin', 'den pin chum sang truyen thang', svg(fill('M38 26L66 12V58L38 44Z', YELLOW), fill(rrD(6, 28, 30, 42, 3), BLUE), fill('M28 26L38 20V50L28 44Z', LILAC), dot(16, 35, 2))],
+  ['phys-luc-keo', 'Lực kéo', 'luc keo vecto luc vat chuyen dong', svg(line('M4 54H66'), fill(rectD(10, 30, 34, 54), PEACH), uni(GREEN, arD(34, 42, 64, 42, 6, 16, 10)))],
+  ['phys-hop-luc', 'Tổng hợp lực', 'tong hop luc hinh binh hanh vecto', svg(line('M22 20H62M50 58L62 20', dash4), uni(BLUE, arD(10, 58, 50, 58, 5, 14, 9)), uni(BLUE, arD(10, 58, 22, 20, 5, 14, 9)), uni(PINK, arD(10, 58, 62, 20, 6, 16, 10)))],
+  ['phys-xich-du', 'Xích đu', 'xich du dao dong the nang dong nang', svg(line('M8 64L18 8H52L62 64M28 8V44M42 8V44'), fill(rrD(24, 44, 46, 50, 2), PEACH))],
+  ['phys-con-lac-newton', 'Con lắc Newton', 'con lac newton va cham dong luong', svg(line('M10 62V12H60V62M6 62H64M19 12V44M27 12V44M35 12V44M43 12V44M51 12L60 31'), ...[19, 27, 35, 43].map((x) => cp(x, 48, 4, BLUE)), cp(61.5, 34.5, 4, BLUE))],
+  ['phys-qua-tao-roi', 'Quả táo rơi', 'qua tao roi trong luc newton van vat hap dan', svg(line('M35 30Q35 24 39 20'), fill('M38 22Q46 14 52 18Q46 26 38 22Z', GREEN), fill('M35 30C26 24 16 30 18 44C20 56 28 62 35 58C42 62 50 56 52 44C54 30 44 24 35 30Z', PINK), uni(YELLOW, arD(8, 10, 8, 44, 5, 13, 9)))],
+  ['phys-luc-day-acsimet', 'Lực đẩy Ác-si-mét', 'luc day acsimet chat long noi chim', svg(fill(rectD(4, 28, 66, 64), BLUE), fill(rectD(24, 36, 46, 54), PEACH), uni(GREEN, arD(35, 38, 35, 6, 6, 15, 9)))],
+  ['phys-o-to', 'Ô tô', 'o to xe hoi chuyen dong van toc', svg(fill('M6 46V36Q6 32 10 32H18L26 20H46L56 32H60Q64 32 64 36V46Z', PINK), fill('M28 24H44L51 32H24Z', BLUE), cp(20, 48, 7, BEIGE), cp(50, 48, 7, BEIGE))],
+  ['phys-xe-dap', 'Xe đạp', 'xe dap chuyen dong banh xe don bay', svg(fill(ringD(16, 44, 12, 9), BEIGE), fill(ringD(54, 44, 12, 9), BEIGE), line('M16 44L28 26H48L54 44M28 26L36 44H16M36 44L48 26M24 20H32M48 26L46 18H52'))],
+  ['phys-tau-thuy', 'Tàu thuỷ', 'tau thuy noi tren nuoc luc day', svg(fill(rectD(36, 14, 44, 26), PINK), fill(rectD(20, 26, 48, 40), BEIGE), fill('M6 40H64L56 54H14Z', PEACH), waveLine(62))],
+  ['phys-du', 'Dù', 'du nhay du luc can khong khi', svg(line('M7 30L31 53M63 30L39 53M20 30L33 53M50 30L37 53'), fill('M6 30Q6 6 35 6Q64 6 64 30Q57 24 50 30Q43 24 35 30Q27 24 20 30Q13 24 6 30Z', PINK), fill(rectD(30, 52, 40, 62), BEIGE))],
+  ['phys-bong-nay', 'Bóng nảy', 'bong nay va cham dan hoi nang luong', svg(line('M4 62H66'), line('M6 58Q16 18 26 58Q36 30 46 58', dash4), cp(56, 52, 8, PEACH))],
+  ['phys-thuoc-cuon', 'Thước cuộn', 'thuoc cuon do chieu dai thuoc day', svg(fill(rectD(42, 42, 66, 50), WHITE), line('M48 42V46M54 42V46M60 42V46M66 39V53'), fill(rrD(8, 12, 46, 50, 10), YELLOW), fill(circD(27, 31, 8), BEIGE))],
+  ['phys-con-quay', 'Con quay', 'con quay chuyen dong quay can bang', svg(fill(rectD(32, 8, 38, 22), BEIGE), fill('M35 62L12 32Q12 24 35 22Q58 24 58 32Z', LILAC), line('M14 32Q35 40 56 32M8 18Q4 26 8 34M62 18Q66 26 62 34'))],
+  ['phys-am-dun', 'Ấm đun nước', 'am dun nuoc soi nhiet nang dun nong', svg(line('M18 36Q6 40 10 52Q12 56 17 56M62 22Q58 16 62 10'), fill('M52 46L63 30L66 34L56 54Z', BLUE), fill('M16 62L20 30H50L54 62Z', BLUE), fill('M22 30Q22 20 35 20Q48 20 48 30Z', BLUE), cp(35, 17, 3, BEIGE))],
+  ['phys-quat-dien', 'Quạt điện', 'quat dien dong co dien gio', svg(fill(rrD(20, 58, 50, 64, 3), BEIGE), fill(rectD(33, 48, 37, 58), BEIGE), fill(circD(35, 28, 22), WHITE), leafAt(35, 28, 0, 17, BLUE), leafAt(35, 28, 120, 17, BLUE), leafAt(35, 28, 240, 17, BLUE), cp(35, 28, 4, BEIGE))],
+  ['phys-tu-lanh', 'Tủ lạnh', 'tu lanh lam lanh nhiet do', svg(fill(rrD(16, 4, 54, 66, 4), MINT), line('M16 26H54M22 12V20M22 32V44'))],
+  ['phys-dieu-hoa', 'Điều hoà', 'dieu hoa may lanh nhiet do', svg(fill(rrD(4, 12, 66, 36, 6), WHITE), line('M12 30H58M18 44Q22 50 18 56M35 44Q39 50 35 56M52 44Q56 50 52 56'), cp(56, 20, 2.5, MINT))],
+  ['phys-binh-giu-nhiet', 'Bình giữ nhiệt', 'binh giu nhiet phich cach nhiet', svg(fill(rrD(20, 14, 50, 64, 8), BLUE), fill(rectD(20, 28, 50, 34), WHITE), fill(rrD(24, 4, 46, 14, 3), PINK))],
+  ['phys-ban-la', 'Bàn là', 'ban la ban ui nhiet nang dien', svg(line('M26 34Q26 16 38 16H52Q56 16 56 22V34'), fill('M6 52L18 34H58V52Z', BLUE), cp(40, 43, 4, YELLOW))],
+  ['phys-am-thoa', 'Âm thoa', 'am thoa nguon am dao dong tan so', svg(fill(rectD(32, 47, 38, 64), BEIGE), fill('M22 8H30V34Q30 40 35 40Q40 40 40 34V8H48V34Q48 48 35 48Q22 48 22 34Z', BEIGE), line('M14 14Q10 20 14 26M56 14Q60 20 56 26'))],
+  ['phys-loa-ken', 'Loa kèn', 'loa ken loa cam tay am thanh', svg(fill(rectD(24, 42, 30, 54), BEIGE), fill(rrD(10, 26, 20, 42, 2), PEACH), fill('M18 26L50 10V56L18 42Z', PEACH), line('M56 24Q62 33 56 42M61 17Q70 33 61 49'))],
+  ['phys-ra-da', 'Ra-đa', 'ra da song dien tu ang ten', svg(fill('M28 40L22 62H42L36 40Z', BEIGE), fill('M12 14A26 26 0 0 0 46 50Z', BLUE), line('M29 32L41 20M50 14Q56 20 52 28M55 6Q67 18 60 32'), cp(42, 19, 3, PEACH))],
+  ['phys-ong-nhom', 'Ống nhòm', 'ong nhom quang hoc thau kinh', svg(fill(rectD(28, 30, 42, 40), BEIGE), fill(rectD(12, 16, 26, 24), BEIGE), fill(rectD(44, 16, 58, 24), BEIGE), fill(rrD(8, 24, 30, 58, 6), LILAC), fill(rrD(40, 24, 62, 58, 6), LILAC))],
+  ['phys-ong-tiem', 'Ống tiêm', 'ong tiem xi lanh ap suat chat khi', svg(line('M22 48L9 61'), fill(barD(46, 24, 59, 11, 4), BEIGE), fill(barD(54, 6, 64, 16, 4), BEIGE), fill(barD(20, 50, 46, 24, 13), BLUE), fill(barD(42, 20, 52, 30, 4), BEIGE), line('M28 42L32 46M33 37L37 41'))],
+  ['phys-lo-vi-song', 'Lò vi sóng', 'lo vi song song dien tu nau nuong', svg(fill(rrD(4, 14, 66, 56, 4), BEIGE), fill(rectD(10, 20, 46, 50), BLUE), dot(56, 24, 2), dot(56, 32, 2), line('M52 42H60'))],
+  ['phys-may-giat', 'Máy giặt', 'may giat dong co quay ly tam', svg(fill(rrD(12, 4, 58, 66, 4), BEIGE), line('M12 18H58'), fill(circD(35, 41, 16), BLUE), line(circD(35, 41, 10)), cp(48, 11, 3, PINK))],
+  ['phys-dieu-khien', 'Điều khiển từ xa', 'dieu khien tu xa tia hong ngoai', svg(fill(rrD(22, 4, 48, 66, 8), LILAC), cp(35, 16, 4, PINK), dot(29, 32, 2), dot(35, 32, 2), dot(41, 32, 2), dot(29, 42, 2), dot(35, 42, 2), dot(41, 42, 2), dot(29, 52, 2), dot(35, 52, 2), dot(41, 52, 2))],
+  ['phys-thang-may', 'Thang máy', 'thang may rong roc dong co', svg(fill(rectD(8, 20, 62, 64), BEIGE), line('M35 20V64'), fill(rrD(22, 4, 48, 16, 3), WHITE), poly([[27, 13], [30, 7], [33, 13]], GREEN), poly([[37, 7], [43, 7], [40, 13]], PINK))],
+  ['phys-den-ban', 'Đèn bàn', 'den ban anh sang bong den hoc bai', svg(line('M20 58V30L40 16'), fill(rrD(8, 58, 34, 64, 2), BEIGE), fill('M34 10L48 6L62 30L42 36Z', YELLOW))],
+  ['phys-may-say-toc', 'Máy sấy tóc', 'may say toc nhiet dien gio nong', svg(fill('M38 38H48L44 62H36Z', PINK), fill(rrD(6, 18, 46, 36, 4), PINK), fill(circD(46, 27, 14), PINK), line(circD(46, 27, 7)))],
+  ['phys-noi-com-dien', 'Nồi cơm điện', 'noi com dien nhiet nang dien do dung', svg(fill('M10 32H60V56A6 6 0 0 1 54 62H16A6 6 0 0 1 10 56Z', PINK), fill('M10 32Q12 16 35 16Q58 16 60 32Z', BEIGE), fill(rrD(30, 10, 40, 16, 2), BEIGE), fill(rectD(26, 41, 44, 51), WHITE), cp(35, 46, 2.5, YELLOW))],
+  ['phys-tivi', 'Ti vi', 'ti vi tivi man hinh song dien tu', svg(line('M24 62H46M35 52V62'), fill(rrD(4, 10, 66, 52, 4), BEIGE), fill(rectD(10, 16, 60, 46), BLUE))],
+  ['phys-den-duong', 'Đèn đường', 'den duong chieu sang cong cong', svg(fill(P([[42, 16], [54, 16], [62, 42], [34, 42]]), YELLOW), line('M20 64V14Q20 8 28 8H40'), fill('M38 8H58L54 16H42Z', BEIGE), fill(rectD(14, 60, 26, 64), BEIGE))],
+  ['phys-dong-ho-van-nang', 'Đồng hồ vạn năng', 'dong ho van nang do dien ap dong dien dien tro', svg(fill(rrD(14, 4, 56, 66, 6), YELLOW), fill(rectD(20, 10, 50, 26), MINT), fill(circD(35, 44, 10), BEIGE), line('M35 44L41 38'), dot(22, 60, 2.5), dot(35, 60, 2.5), dot(48, 60, 2.5))],
+]
+PHYS_NEW.reduce((after, [id, name, keywords, svg]) => {
+  ADDED.push({ after, id, name, category: 'phys', keywords, svg })
+  return id
+}, 'phys-luc-ke')
