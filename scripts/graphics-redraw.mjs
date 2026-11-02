@@ -1897,3 +1897,53 @@ CS_NEW.reduce((after, [id, name, keywords, svg]) => {
   ADDED.push({ after, id, name, category: 'cs', keywords, svg })
   return id
 }, 'cs-usb')
+
+// --- văn học: vẽ lại 6 icon sheet khó nhận + 30 icon mới (truyện cổ tích, thơ, làng quê, đồ viết) ---
+const waveLine = (y) => line(`M4 ${y}Q11 ${y - 5} 18 ${y}T32 ${y}T46 ${y}T60 ${y}T74 ${y}`)
+
+Object.assign(REDRAWN, {
+  'lit-thuyen-song': svg(fill('M36 8L57 40H36Z', YELLOW), fill('M33 14L17 40H33Z', PEACH), line('M35 8V44'), fill('M7 43H63L55 55H15Z', BEIGE), waveLine(62)),
+  'lit-cuon-tho': svg(fill(rectD(18, 12, 52, 58), BEIGE), fill(rrD(12, 6, 58, 14, 4), PEACH), fill(rrD(12, 56, 58, 64, 4), PEACH), line('M27 21V50M35 21V44M43 21V48')),
+  'lit-mai-dinh': svg(fill(rectD(14, 38, 56, 61), BEIGE), line('M24 38V61M35 38V61M46 38V61M6 62H64'), fill('M3 28Q10 32 15 25L23 15H47L55 25Q60 32 67 28L60 39H10Z', PEACH), fill('M16 15Q14 9 20 10H50Q56 9 54 15Z', YELLOW)),
+  'lit-den-dau': svg(fill('M22 58H48L44 64H26Z', BEIGE), fill('M16 46H54Q54 58 35 58Q16 58 16 46Z', PEACH), fill('M28 8H42V18Q49 27 46 38L42 46H28L24 38Q21 27 28 18Z', BLUE), fill('M35 23Q41 31 35 37Q29 31 35 23Z', YELLOW)),
+  'lit-but-long': svg(line('M58 12Q63 4 66 9'), fill(barD(58, 12, 36, 34, 8), BEIGE), fill(barD(38, 32, 31, 39, 12), PEACH), `<g transform="rotate(225 32.5 38.5)">${fill('M27.5 38.5C27.5 30 30.5 22 32.5 11C34.5 22 37.5 30 37.5 38.5Z', LILAC)}</g>`),
+})
+
+const LIT_MORE = [
+  ['lit-the-tre', 'Thẻ tre', 'the tre sach tre thu tich co', svg(fill([14, 23, 32, 41, 50].map((x) => rrD(x, 8, x + 8, 62, 3)).join(''), BEIGE), line('M10 22H62M10 48H62'))],
+  ['lit-but-long-ga', 'Bút lông ngỗng', 'but long ngong viet tho van chuong', svg(line('M10 60L19 51'), leafAt(17, 53, 45, 52, BEIGE), line('M17 53L48 22'))],
+  ['lit-lo-muc', 'Lọ mực', 'lo muc but viet chu', svg(fill(barD(36, 30, 58, 4, 5), BEIGE), fill(rectD(26, 26, 44, 34), BEIGE), fill('M22 34Q14 36 14 46V58A6 6 0 0 0 20 64H50A6 6 0 0 0 56 58V46Q56 36 48 34Z', BLUE), line('M14 48H56'))],
+  ['lit-nen-sach', 'Nến và sách', 'nen va sach hoc dem doc sach', svg(fill(rectD(8, 50, 62, 62), PEACH), fill(rectD(12, 40, 58, 50), MINT), fill(rectD(29, 20, 41, 40), BEIGE), fill('M35 5Q42 13 35 18Q28 13 35 5Z', YELLOW))],
+  ['lit-kinh', 'Kính đọc sách', 'kinh doc sach kinh mat', svg(line('M33 36Q35 31 37 36M7 34L3 24M63 34L67 24'), fill(circD(20, 38, 13), BLUE), fill(circD(50, 38, 13), BLUE))],
+  ['lit-thu-tay', 'Lá thư', 'la thu thu tay buc thu tham', svg(fill(rectD(8, 16, 62, 56), BEIGE), line('M8 16L35 38L62 16'), cp(35, 40, 8, PINK))],
+  ['lit-trang-tho', 'Trang thơ', 'trang tho bai tho luc bat', svg(fill(rrD(14, 6, 56, 64, 3), BEIGE), line('M22 18H42M22 28H48M22 40H42M22 50H48'))],
+  ['lit-dieu-sao', 'Diều sáo', 'dieu sao tuoi tho dong que tho', svg(line('M35 52Q30 58 36 62Q44 64 40 68'), fill(P([[35, 6], [56, 28], [35 , 52], [14, 28]]), PEACH), line('M35 6V52M14 28H56'), poly([[38, 60], [46, 56], [44, 64]], YELLOW))],
+  ['lit-gieng', 'Giếng làng', 'gieng lang nuoc lang que', svg(line('M18 21V40M52 21V40M35 21V28'), fill('M30 28H40L38 36H32Z', BLUE), fill('M7 22L35 8L63 22Z', PEACH), fill(rectD(14, 40, 56, 62), BEIGE), line('M14 51H56M28 40V51M42 40V51M21 51V62M35 51V62M49 51V62'))],
+  ['lit-non-la', 'Nón lá', 'non la viet nam que huong', svg(line('M14 52Q35 66 56 52'), fill('M4 50L35 12L66 50Q35 58 4 50Z', YELLOW), line('M21 31Q35 37 49 31M12 41Q35 48 58 41'))],
+  ['lit-guong-than', 'Gương thần', 'guong than truyen co tich bach tuyet', svg(fill(rrD(30, 50, 40, 66, 3), PEACH), fill(ellipseD(35, 28, 22, 25), YELLOW), fill(ellipseD(35, 28, 15, 18), BLUE), line('M27 20Q30 14 36 13'))],
+  ['lit-trang-tren-song', 'Trăng trên sông', 'trang tren song dem trang tho', svg(cp(45, 20, 12, YELLOW), fill(rectD(4, 40, 66, 64), BLUE), line('M37 47H53M40 53H50M42 59H48'))],
+  ['lit-lau-dai', 'Lâu đài', 'lau dai truyen co tich hoang tu cong chua', svg(line('M35 30V16'), fill('M35 16L44 19L35 22Z', YELLOW), fill(rectD(16, 30, 54, 62), LILAC), fill(rectD(8, 20, 24, 62), LILAC), fill(rectD(46, 20, 62, 62), LILAC), fill('M6 20L16 6L26 20Z', PINK), fill('M44 20L54 6L64 20Z', PINK), fill('M29 62V51A6 6 0 0 1 41 51V62Z', BEIGE))],
+  ['lit-chiec-hai', 'Chiếc hài', 'chiec hai tam cam truyen co tich', svg(fill('M6 54Q3 30 18 30H30Q38 30 43 40L55 43Q62 36 59 22Q73 40 64 56H12Q6 56 6 54Z', PINK), fill(ellipseD(22, 31, 10, 3.5), BEIGE), line('M10 46Q30 50 58 48'), cp(36, 41, 3, YELLOW))],
+  ['lit-qua-thi', 'Quả thị', 'qua thi tam cam truyen co tich', svg(line('M35 18V10'), fill('M35 16Q46 4 58 10Q48 21 35 16Z', GREEN), fill(circD(35, 41, 22), YELLOW), fill(sparkD(35, 20, 8), GREEN), line('M27 31Q35 27 43 31'))],
+  ['lit-dua-than', 'Đũa thần', 'dua than phep thuat co tich bu tien', svg(fill(barD(10, 61, 40, 31, 6), LILAC), star5(47, 23, 15, YELLOW), fill(sparkD(19, 17, 7), YELLOW), fill(sparkD(60, 47, 6), YELLOW))],
+  ['lit-den-than', 'Đèn thần', 'den than aladdin phep thuat', svg(line('M14 42Q4 40 6 48Q8 54 16 50M64 32Q59 24 65 16'), fill(rectD(26, 54, 44, 60), PEACH), fill('M14 44Q14 32 35 32Q54 32 58 40L66 34Q66 42 58 48Q52 54 35 54Q14 54 14 44Z', YELLOW), fill('M24 32Q26 22 35 22Q44 22 46 32Z', YELLOW), cp(35, 19, 3, YELLOW))],
+  ['lit-thanh-kiem', 'Thanh kiếm', 'thanh kiem anh hung truyen thuyet', svg(fill('M35 4L41 12V44H29V12Z', BLUE), line('M35 12V42'), fill(rectD(31, 50, 39, 61), BEIGE), fill(rrD(18, 44, 52, 50, 3), YELLOW), cp(35, 63, 3.5, YELLOW))],
+  ['lit-cung-ten', 'Cung tên', 'cung ten no than truyen thuyet', svg(line('M35 11V59'), fill(ribbonD(arcPts(26, 35, 26, -70, 70), 6), BEIGE), uni(PEACH, arD(8, 35, 64, 35, 4, 13, 9)))],
+  ['lit-trong-dong', 'Trống đồng', 'trong dong dong son van hoa', svg(fill(circD(35, 35, 28), YELLOW), line(circD(35, 35, 20) + circD(35, 35, 13)), fill(P(Array.from({ length: 24 }, (_, i) => polar(35, 35, i % 2 ? 3.5 : 10, i * 15 - 90))), PEACH))],
+  ['lit-boc-trung', 'Bọc trứng', 'boc tram trung con rong chau tien', svg(fill(ellipseD(26, 27, 8, 10), BEIGE), fill(ellipseD(43, 27, 8, 10), BEIGE), fill(ellipseD(20, 42, 8, 10), BEIGE), fill(ellipseD(35, 40, 8, 10), BEIGE), fill(ellipseD(50, 42, 8, 10), BEIGE), fill('M5 45Q35 74 65 45Z', YELLOW))],
+  ['lit-san-khau', 'Sân khấu', 'san khau kich tuong cheo', svg(fill(rectD(4, 52, 66, 62), BEIGE), fill('M4 10H24Q20 30 26 52H4Z', PINK), fill('M66 10H46Q50 30 44 52H66Z', PINK), fill('M4 6H66V14Q60 18 53 14Q46 18 39 14Q35 17 31 14Q24 18 17 14Q10 18 4 14Z', PEACH))],
+  ['lit-vo-viet', 'Vở và bút chì', 'vo va but chi viet bai tap lam van', svg(fill(rrD(10, 8, 46, 62, 3), BLUE), line('M18 22H38M18 32H38M18 42H38'), fill(barD(61, 10, 47, 52, 7), YELLOW))],
+  ['lit-ke-sach', 'Kệ sách', 'ke sach thu vien doc sach', svg(fill(rectD(8, 8, 62, 62), BEIGE), fill(rectD(14, 14, 20, 35), PINK), fill(rectD(20, 18, 27, 35), BLUE), fill(rectD(27, 12, 33, 35), YELLOW), fill(rectD(40, 20, 47, 35), MINT), fill(rectD(14, 42, 22, 58), MINT), fill(rectD(22, 46, 28, 58), PEACH), fill(rectD(40, 40, 48, 58), LILAC), fill(rectD(48, 44, 55, 58), PINK), line('M8 35H62M8 58H62'))],
+  ['lit-dong-ho-cat', 'Đồng hồ cát', 'dong ho cat thoi gian', svg(fill('M20 13H50Q50 28 38 35Q50 42 50 57H20Q20 42 32 35Q20 28 20 13Z', BLUE), fill('M26 22H44Q42 28 35 32Q28 28 26 22Z', YELLOW), fill('M24 57Q26 46 35 44Q44 46 46 57Z', YELLOW), fill(rrD(14, 6, 56, 13, 2), BEIGE), fill(rrD(14, 57, 56, 64, 2), BEIGE))],
+  ['lit-qua-khe', 'Quả khế', 'qua khe an khe tra vang co tich', svg(line('M35 12V6'), fill('M35 12Q50 14 54 34Q50 58 35 62Q20 58 16 34Q20 14 35 12Z', YELLOW), line('M35 12Q28 36 35 62M35 12Q42 36 35 62'), fill('M35 10Q44 2 52 8Q44 14 35 10Z', GREEN))],
+  ['lit-hoa-dao', 'Cành đào', 'canh dao hoa dao tet mua xuan', svg(line('M8 62Q24 42 40 34Q52 29 62 18M27 45Q25 33 19 25'), petals(40, 33, 5, 5, 4, 5.5, PINK), cp(40, 33, 2.5, YELLOW), petals(19, 23, 5, 5, 4, 5.5, PINK), cp(19, 23, 2.5, YELLOW), petals(58, 19, 5, 5, 4, 5.5, PINK), cp(58, 19, 2.5, YELLOW), cp(50, 29, 3, PINK))],
+  ['lit-con-de', 'Chú dế', 'chu de de men phieu luu ky', svg(line('M14 33Q9 18 22 8M17 31Q21 16 35 10M30 47L24 60M44 47L55 57H64M49 45L47 60'), fill(ellipseD(39, 40, 19, 9), PEACH), line('M27 37Q40 33 56 38'), cp(19, 38, 7, PEACH), dot(17, 36, 1.8))],
+  ['lit-ban-do-kho-bau', 'Bản đồ kho báu', 'ban do kho bau phieu luu', svg(fill('M8 12L26 8L44 14L62 10V58L44 62L26 56L8 60Z', BEIGE), line('M26 8V56M44 14V62'), line('M14 50Q24 40 32 44T50 28', ' stroke-dasharray="3 4"'), line('M47 18L56 27M56 18L47 27'))],
+]
+/** icon bỏ khỏi kho (import-graphics.mjs gỡ khi dựng lại) */
+export const REMOVED = ['lit-canh-co']
+
+LIT_MORE.reduce((after, [id, name, keywords, svg]) => {
+  ADDED.push({ after, id, name, category: 'lit', keywords, svg })
+  return id
+}, 'lit-bang-chu-cai')

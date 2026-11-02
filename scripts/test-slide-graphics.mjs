@@ -1,6 +1,6 @@
 /**
  * Test kho đồ hoạ vector (chặng 2):
- *  - registry 938 icon, id duy nhất, SVG hợp lệ (2 path, không chữ, không nền)
+ *  - registry 966 icon, id duy nhất, SVG hợp lệ (2 path, không chữ, không nền)
  *  - search theo tiếng Việt có dấu/không dấu
  *  - graphicMarkup đổi màu nét + phủ kín hộp
  *  - catalog gửi model có đủ id
@@ -37,9 +37,9 @@ const check = (name, fn) => {
 
 console.log('\n[1] registry')
 
-check('938 icon, id duy nhất', () => {
-  assert.equal(SLIDE_GRAPHICS.length, 938)
-  assert.equal(GRAPHIC_IDS.size, 938)
+check('966 icon, id duy nhất', () => {
+  assert.equal(SLIDE_GRAPHICS.length, 966)
+  assert.equal(GRAPHIC_IDS.size, 966)
 })
 
 // graphics.ts khai báo category kiểu string (tránh TS2590) nên tsc không bắt nhóm sai — kiểm ở đây
@@ -113,7 +113,7 @@ check('id lạ → chuỗi rỗng', () => {
   assert.equal(graphicMarkup('khong-co'), '')
 })
 
-check('catalog có đủ 938 id, gom theo nhóm', () => {
+check('catalog có đủ 966 id, gom theo nhóm', () => {
   const text = graphicCatalogText()
   for (const id of GRAPHIC_IDS) assert.ok(text.includes(`${id}=`), id)
   assert.ok(text.includes('math: '))

@@ -12,7 +12,7 @@
 import { readFileSync, writeFileSync } from 'node:fs'
 import { bboxOf } from './lib/svg-bbox.mjs'
 import { ICONS_DECOR2, SHEET_DECOR2, importDecor } from './import-decor.mjs'
-import { ADDED, REDRAWN } from './graphics-redraw.mjs'
+import { ADDED, REDRAWN, REMOVED } from './graphics-redraw.mjs'
 import { ANIMALS, ANIMALS_REMOVED } from './graphics-animals.mjs'
 import { ICONS_100, ICONS_DOT4, ICONS_NEW, ICONS_PROG, SHEET_100, SHEET_DOT4, SHEET_NEW, SHEET_PROG } from './graphics-extra.mjs'
 
@@ -261,7 +261,7 @@ for (const [id, svg] of Object.entries(REDRAWN)) {
 }
 
 // con vật nhóm Sinh học: bỏ bản cũ, chèn bộ mới sau Ong mật (xem graphics-animals.mjs)
-for (const id of ANIMALS_REMOVED) entries.splice(entries.findIndex((x) => x.id === id), 1)
+for (const id of [...ANIMALS_REMOVED, ...REMOVED]) entries.splice(entries.findIndex((x) => x.id === id), 1)
 entries.splice(entries.findIndex((x) => x.id === 'bio-ong-mat') + 1, 0, ...ANIMALS.map((e) => ({ ...e, ratio: 1 })))
 
 for (const { after, ...e } of ADDED) {
