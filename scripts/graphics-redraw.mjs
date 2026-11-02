@@ -1682,3 +1682,69 @@ FRAME_NEW.reduce((after, [id, name, keywords, svg]) => {
   ADDED.push({ after, id, name, category: 'frame', keywords, svg })
   return id
 }, 'nav-dap-an')
+
+// --- mũi tên bổ sung (30 icon, nhóm "Mũi tên"): mũi tên khối, đường cong lấy mẫu rồi dời biên ±w/2 ---
+/** mũi tên khối theo đường tâm pts (điểm cuối là đầu mũi): thân rộng w, đầu rộng hw dài hl */
+const curveArrowD = (pts, w = 11, hw = 25, hl = 14) => {
+  // cắt bỏ đoạn cuối dài hl làm chỗ cho đầu mũi
+  const tip = pts[pts.length - 1]
+  let i = pts.length - 1, base
+  while (i > 0 && Math.hypot(pts[i - 1][0] - tip[0], pts[i - 1][1] - tip[1]) < hl) i--
+  const [ax, ay] = pts[i - 1], [bx, by] = pts[i]
+  const da = Math.hypot(ax - tip[0], ay - tip[1]), db = Math.hypot(bx - tip[0], by - tip[1])
+  const t = (da - hl) / (da - db || 1)
+  base = [ax + (bx - ax) * t, ay + (by - ay) * t]
+  const body = [...pts.slice(0, i), base]
+  const nrm = (k) => {
+    const [x0, y0] = body[Math.max(0, k - 1)], [x1, y1] = body[Math.min(body.length - 1, k + 1)]
+    const L = Math.hypot(x1 - x0, y1 - y0)
+    return [-(y1 - y0) / L, (x1 - x0) / L]
+  }
+  const side = (s, h) => body.map(([x, y], k) => { const [nx, ny] = nrm(k); return [x + nx * h * s, y + ny * h * s] })
+  const [nx, ny] = nrm(body.length - 1)
+  const L = side(1, w / 2), R = side(-1, w / 2).reverse()
+  return P([...L, [base[0] + nx * hw / 2, base[1] + ny * hw / 2], tip, [base[0] - nx * hw / 2, base[1] - ny * hw / 2], ...R])
+}
+const arD = (x1, y1, x2, y2, w, hw, hl) => curveArrowD([[x1, y1], [(x1 + x2) / 2, (y1 + y2) / 2], [x2, y2]], w, hw, hl)
+/** cung tròn từ góc a0 tới a1 (độ, chiều kim đồng hồ khi a1 > a0) */
+const arcPts = (cx, cy, R, a0, a1, n = 24) => Array.from({ length: n + 1 }, (_, k) => polar(cx, cy, R, a0 + ((a1 - a0) * k) / n))
+const sinePts = (x1, x2, cy, A, periods) => Array.from({ length: 33 }, (_, k) => { const x = x1 + ((x2 - x1) * k) / 32; return [x, cy - A * Math.sin((k / 32) * periods * 2 * Math.PI)] })
+const a1 = (color, d) => svg(uni(color, d))
+const barsD = (hs) => hs.map((h, k) => rectD(8 + k * 14, 62 - h, 18 + k * 14, 62))
+
+const ARROW_NEW = [
+  ['arrow-trai', 'Mũi tên trái', 'mui ten trai quay lai truoc', a1(PEACH, arD(62, 35, 8, 35, 14, 32, 22))],
+  ['arrow-len', 'Mũi tên lên', 'mui ten len tang di len', a1(GREEN, arD(35, 62, 35, 8, 14, 32, 22))],
+  ['arrow-xuong', 'Mũi tên xuống', 'mui ten xuong giam di xuong', a1(PINK, arD(35, 8, 35, 62, 14, 32, 22))],
+  ['arrow-cheo-len', 'Mũi tên chéo lên', 'mui ten cheo len tang truong', a1(MINT, arD(12, 58, 58, 12, 12, 30, 20))],
+  ['arrow-cheo-xuong', 'Mũi tên chéo xuống', 'mui ten cheo xuong suy giam', a1(LILAC, arD(12, 12, 58, 58, 12, 30, 20))],
+  ['arrow-hai-chieu-doc', 'Mũi tên hai chiều dọc', 'mui ten hai chieu doc len xuong', svg(uni(YELLOW, curveArrowD([[35, 35], [35, 6]], 12, 28, 17), curveArrowD([[35, 34], [35, 64]], 12, 28, 17)))],
+  ['arrow-bon-huong', 'Mũi tên bốn hướng', 'mui ten bon huong di chuyen moi phia', svg(uni(BLUE, ...[[35, 6], [64, 35], [35, 64], [6, 35]].map(([x, y]) => curveArrowD([[35, 35], [x, y]], 9, 20, 12))))],
+  ['arrow-toa-ra', 'Mũi tên tỏa ra', 'mui ten toa ra lan rong phan tan', svg(uni(PEACH, circD(35, 35, 8), ...[-45, 45, 135, 225].map((a) => curveArrowD([polar(35, 35, 8, a), polar(35, 35, 29, a)], 8, 19, 11))))],
+  ['arrow-thu-vao', 'Mũi tên thu vào', 'mui ten thu vao tap trung hoi tu', svg(uni(MINT, ...[-45, 45, 135, 225].map((a) => curveArrowD([polar(35, 35, 30, a), polar(35, 35, 8, a)], 8, 19, 11))))],
+  ['arrow-hoi-tu', 'Mũi tên hội tụ', 'mui ten hoi tu hop lai ket qua', svg(uni(LILAC, curveArrowD([[6, 12], [22, 12], [34, 33], [36, 35], [44, 35]], 9, 1, 0.1), curveArrowD([[6, 58], [22, 58], [34, 37], [36, 35], [44, 35]], 9, 1, 0.1), arD(34, 35, 64, 35, 10, 24, 14)))],
+  ['arrow-vong-tron', 'Mũi tên vòng tròn', 'mui ten vong tron chu trinh lap lai', a1(BLUE, curveArrowD(arcPts(35, 35, 22, -60, 250), 10, 23, 13))],
+  ['arrow-hoan-tac', 'Hoàn tác', 'hoan tac quay lai undo lam lai', a1(PEACH, curveArrowD([[24, 56], ...arcPts(38, 38, 18, 90, -90), [8, 20]], 10, 24, 13))],
+  ['arrow-lam-lai', 'Làm lại', 'lam lai redo tiep tuc', a1(GREEN, curveArrowD([[46, 56], ...arcPts(32, 38, 18, 90, 270), [62, 20]], 10, 24, 13))],
+  ['arrow-chu-l', 'Mũi tên gấp góc', 'mui ten gap goc chu l re phai', a1(YELLOW, curveArrowD([[16, 8], [16, 44], [17, 48], [20, 50], [24, 51], [62, 51]], 11, 25, 14))],
+  ['arrow-gap-khuc', 'Mũi tên gấp khúc', 'mui ten gap khuc zic zac bien dong', a1(PINK, curveArrowD([[6, 52], [24, 30], [36, 44], [62, 14]], 9, 22, 13))],
+  ['arrow-chu-trinh-ba', 'Chu trình ba bước', 'chu trinh ba buoc vong lap quy trinh', svg(uni(MINT, ...[-80, 40, 160].map((a) => curveArrowD(arcPts(35, 36, 22, a, a + 95, 12), 9, 20, 11))))],
+  ['arrow-song-song', 'Mũi tên song song', 'mui ten song song cung chieu', svg(uni(BLUE, arD(6, 22, 64, 22, 9, 22, 13)), uni(BLUE, arD(6, 48, 64, 48, 9, 22, 13)))],
+  ['arrow-nguoc-chieu', 'Mũi tên ngược chiều', 'mui ten nguoc chieu trao doi qua lai', svg(uni(PEACH, arD(6, 22, 64, 22, 9, 22, 13)), uni(MINT, arD(64, 48, 6, 48, 9, 22, 13)))],
+  ['arrow-tang-truong', 'Biểu đồ tăng', 'bieu do tang truong mui ten len cot', svg(uni(BEIGE, ...barsD([10, 18, 26, 34])), uni(GREEN, arD(8, 36, 62, 7, 9, 22, 13)))],
+  ['arrow-suy-giam', 'Biểu đồ giảm', 'bieu do giam suy giam mui ten xuong cot', svg(uni(BEIGE, ...barsD([34, 26, 18, 10])), uni(PINK, arD(8, 7, 62, 36, 9, 22, 13)))],
+  ['arrow-chevron-phai', 'Mũi tên kép phải', 'mui ten kep phai tiep theo tua nhanh', svg(uni(LILAC, chevD(10, 34, 35, 22, 12)), uni(LILAC, chevD(34, 58, 35, 22, 12)))],
+  ['arrow-chevron-len', 'Mũi tên kép lên', 'mui ten kep len cap bac thang hang', svg(...[12, 32].map((y) => uni(YELLOW, P([[35, y], [60, y + 18], [60, y + 28], [35, y + 10], [10, y + 28], [10, y + 18]])))) ],
+  ['arrow-nut-tron', 'Nút mũi tên tròn', 'nut mui ten tron tiep tuc bat dau', svg(fill(circD(35, 35, 28), BLUE), uni(WHITE, arD(18, 35, 52, 35, 8, 22, 13)))],
+  ['arrow-tai-xuong', 'Tải xuống', 'tai xuong download luu ve', svg(uni(MINT, arD(35, 6, 35, 44, 10, 26, 15)), uni(BEIGE, P([[8, 40], [16, 40], [16, 54], [54, 54], [54, 40], [62, 40], [62, 62], [8, 62]])))],
+  ['arrow-tai-len', 'Tải lên', 'tai len upload gui nop bai', svg(uni(PEACH, arD(35, 46, 35, 6, 10, 26, 15)), uni(BEIGE, P([[8, 40], [16, 40], [16, 54], [54, 54], [54, 40], [62, 40], [62, 62], [8, 62]])))],
+  ['arrow-di-vao', 'Đi vào', 'di vao dang nhap vao lop cua', svg(uni(BEIGE, P([[36, 8], [62, 8], [62, 62], [36, 62], [36, 54], [54, 54], [54, 16], [36, 16]])), uni(GREEN, arD(6, 35, 46, 35, 10, 24, 14)))],
+  ['arrow-cong-xuong', 'Mũi tên cong xuống', 'mui ten cong xuong re xuong', a1(LILAC, curveArrowD([[8, 22], ...arcPts(30, 44, 22, -90, 0, 12).slice(1), [52, 62]], 10, 24, 13))],
+  ['arrow-xoay', 'Mũi tên xoay', 'mui ten xoay quay goc', svg(uni(BEIGE, rectD(10, 30, 38, 58)), uni(PEACH, curveArrowD(arcPts(24, 44, 32, -100, -5, 16), 9, 22, 12)))],
+  ['arrow-hop-nhat', 'Mũi tên hợp nhất', 'mui ten hop nhat gop lai hai thanh mot', svg(uni(YELLOW, curveArrowD([[12, 62], [12, 52], [14, 46], [20, 40], [35, 34]], 9, 1, 0.1), curveArrowD([[58, 62], [58, 52], [56, 46], [50, 40], [35, 34]], 9, 1, 0.1), arD(35, 40, 35, 6, 10, 25, 14)))],
+  ['arrow-luon-song', 'Mũi tên lượn sóng', 'mui ten luon song dao dong song', a1(BLUE, curveArrowD(sinePts(6, 64, 35, 11, 1.25), 9, 22, 12))],
+]
+ARROW_NEW.reduce((after, [id, name, keywords, svg]) => {
+  ADDED.push({ after, id, name, category: 'arrow', keywords, svg })
+  return id
+}, 'arrow-nhieu-buoc')
