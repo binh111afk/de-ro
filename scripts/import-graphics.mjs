@@ -336,9 +336,12 @@ export interface SlideGraphicData {
   svg: string
 }
 
-export const GRAPHICS: SlideGraphicData[] = [
+// category để kiểu string khi khai báo: kiểm literal union cho >1000 phần tử làm tsc báo TS2590
+const RAW: (Omit<SlideGraphicData, 'category'> & { category: string })[] = [
 ${body}
 ]
+
+export const GRAPHICS = RAW as SlideGraphicData[]
 `
 
 writeFileSync(OUT, file)

@@ -1827,3 +1827,73 @@ DECOR_NEW.reduce((after, [id, name, keywords, svg]) => {
   ADDED.push({ after, id, name, category: 'decor', keywords, svg })
   return id
 }, 'decor-phao-giay')
+
+// --- tin học bổ sung (50 icon, nhóm "Tin học"): thiết bị, phần cứng, tệp, giao diện, lập trình, bảo mật ---
+const pageD = 'M14 6H42L56 20V64H14Z'
+const page = (color) => fill(pageD, color) + fill('M42 6V20H56Z', BEIGE)
+/** chân linh kiện quanh hình vuông a..b, mỗi cạnh n chân dài len */
+const pins = (a, b, n, len) => {
+  const ks = Array.from({ length: n }, (_, i) => round1(a + ((b - a) * (i + 0.5)) / n))
+  return line(ks.map((k) => `M${k} ${a - len}V${a}M${k} ${b}V${b + len}M${a - len} ${k}H${a}M${b} ${k}H${b + len}`).join(''))
+}
+const gearD = (cx, cy, R, r, n) => P(Array.from({ length: n }, (_, i) => { const a = (i * 360) / n; return [polar(cx, cy, r, a - 15), polar(cx, cy, R, a - 8), polar(cx, cy, R, a + 8), polar(cx, cy, r, a + 15)] }).flat())
+const asterisk = (x, y, r) => line([0, 60, 120].map((d) => `M${polar(x, y, r, d - 90).join(' ')}L${polar(x, y, r, d + 90).join(' ')}`).join(''))
+const one = (x, y) => fill(rrD(x - 3, y - 10, x + 3, y + 10, 2), MINT)
+const zero = (x, y) => fill(ellipseD(x, y, 7, 10), MINT) + fill(ellipseD(x, y, 2.5, 5), WHITE)
+
+const CS_NEW = [
+  ['cs-may-tinh-bang', 'Máy tính bảng', 'may tinh bang tablet ipad thiet bi', svg(fill(rrD(12, 6, 58, 64, 6), LILAC), fill(rectD(17, 12, 53, 54), BLUE), dot(35, 59, 2))],
+  ['cs-dong-ho-thong-minh', 'Đồng hồ thông minh', 'dong ho thong minh smartwatch deo tay', svg(fill(rectD(25, 4, 45, 18), BEIGE), fill(rectD(25, 52, 45, 66), BEIGE), fill(rectD(51, 30, 56, 40), BEIGE), fill(rrD(17, 16, 53, 54, 8), LILAC), fill(rrD(22, 21, 48, 49, 4), MINT), line('M35 35V27M35 35H41'))],
+  ['cs-bang-ve', 'Bảng vẽ điện tử', 'bang ve dien tu but cam ung do hoa', svg(fill(rrD(6, 12, 64, 54, 5), BEIGE), fill(rectD(15, 18, 57, 48), BLUE), fill(barD(18, 62, 44, 32, 6), PEACH))],
+  ['cs-loa', 'Loa', 'loa am thanh nghe nhac', svg(fill(rrD(16, 6, 54, 64, 6), BEIGE), cp(35, 44, 12, BLUE), cp(35, 44, 4, LILAC), cp(35, 20, 6, BLUE))],
+  ['cs-tai-nghe', 'Tai nghe', 'tai nghe headphone am thanh', svg(fill(ribbonD(arcPts(35, 40, 25, 180, 360), 6), BEIGE), fill(rrD(7, 36, 20, 60, 5), PINK), fill(rrD(50, 36, 63, 60, 5), PINK))],
+  ['cs-webcam', 'Webcam', 'webcam camera hoc truc tuyen', svg(line('M35 47V53'), fill('M23 52H47L51 62H19Z', BEIGE), fill(circD(35, 27, 20), LILAC), fill(circD(35, 27, 10), BLUE), cp(35, 27, 3.5, WHITE))],
+  ['cs-micro', 'Micro', 'micro thu am giong noi', svg(line('M17 28A18 18 0 0 0 53 28M35 46V60M24 61H46'), fill(rrD(26, 5, 44, 39, 9), BEIGE), line('M26 17H44M26 25H44'))],
+  ['cs-cpu', 'Bộ vi xử lý', 'bo vi xu ly cpu chip phan cung', svg(pins(17, 53, 4, 8), fill(rrD(17, 17, 53, 53, 4), BLUE), fill(rectD(27, 27, 43, 43), MINT))],
+  ['cs-ram', 'Thanh RAM', 'thanh ram bo nho trong phan cung', svg(line('M12 46V53M19 46V53M26 46V53M33 46V53M44 46V53M51 46V53M58 46V53'), fill('M6 22H64V46H40V42H36V46H6Z', GREEN), fill([11, 24, 37, 50].map((x) => rectD(x, 27, x + 9, 38)).join(''), BEIGE))],
+  ['cs-o-cung', 'Ổ cứng', 'o cung hdd luu tru du lieu', svg(fill(rrD(10, 6, 60, 64, 5), BEIGE), fill(circD(35, 30, 17), BLUE), cp(35, 30, 4, LILAC), line('M52 57L39 35'), dot(15, 11), dot(55, 11), dot(15, 59), dot(55, 59))],
+  ['cs-the-nho', 'Thẻ nhớ', 'the nho sd luu tru', svg(fill('M14 6H46L56 16V64H14Z', BLUE), line('M22 7V18M29 7V18M36 7V18M43 9V18'), fill(rectD(20, 32, 50, 54), YELLOW))],
+  ['cs-dia-cd', 'Đĩa CD', 'dia cd dvd luu tru', svg(fill(ringD(35, 35, 28, 5), LILAC), line(circD(35, 35, 11)), line('M35 15A20 20 0 0 1 55 35'))],
+  ['cs-may-chieu', 'Máy chiếu', 'may chieu trinh chieu projector', svg(line('M14 52V59M56 52V59'), fill(rrD(6, 24, 64, 52, 5), BEIGE), fill(circD(22, 38, 9), BLUE), cp(22, 38, 3.5, LILAC), line('M40 32H56M40 38H56M40 44H56'))],
+  ['cs-may-quet', 'Máy quét', 'may quet scan tai lieu', svg(fill(rrD(6, 34, 64, 58, 4), BEIGE), fill(rectD(12, 40, 58, 46), BLUE), line('M12 52H30'), fill(P([[6, 34], [56, 13], [60, 21], [16, 34]]), LILAC))],
+  ['cs-router', 'Bộ phát wifi', 'bo phat wifi router mang internet', svg(fill(rectD(15, 12, 21, 40), BEIGE), fill(rectD(49, 12, 55, 40), BEIGE), fill(rrD(8, 38, 62, 56, 5), LILAC), dot(19, 47, 2), dot(27, 47, 2), dot(35, 47, 2))],
+  ['cs-wifi', 'Sóng wifi', 'song wifi ket noi khong day internet', svg(fill(ribbonD(arcPts(35, 56, 40, -135, -45), 7), BLUE), fill(ribbonD(arcPts(35, 56, 27, -135, -45), 7), BLUE), fill(ribbonD(arcPts(35, 56, 14, -135, -45), 7), BLUE), cp(35, 56, 5, BLUE))],
+  ['cs-bluetooth', 'Bluetooth', 'bluetooth ket noi khong day', svg(fill(rrD(15, 5, 55, 65, 18), BLUE), line('M26 25L44 45L35 53V17L44 25L26 45'))],
+  ['cs-pin', 'Pin', 'pin nang luong sac', svg(fill(rectD(58, 28, 64, 42), BEIGE), fill(rrD(6, 20, 58, 50, 5), BEIGE), fill(rectD(12, 26, 40, 44), GREEN))],
+  ['cs-phich-cam', 'Phích cắm sạc', 'phich cam sac dien nguon', svg(fill(rectD(25, 8, 30, 24), YELLOW), fill(rectD(40, 8, 45, 24), YELLOW), line('M35 48V55Q35 62 44 62H62'), fill(rrD(18, 22, 52, 48, 5), BEIGE))],
+  ['cs-tay-cam', 'Tay cầm chơi game', 'tay cam choi game tro choi', svg(fill('M18 22H52C62 22 66 34 64 46C62 56 54 58 48 50L44 44H26L22 50C16 58 8 56 6 46C4 34 8 22 18 22Z', LILAC), fill(plusD(20, 34, 7, 4), BEIGE), cp(48, 28, 3, PINK), cp(54, 34, 3, BLUE), cp(42, 34, 3, YELLOW), cp(48, 40, 3, GREEN))],
+  ['cs-thu-muc', 'Thư mục', 'thu muc folder luu tru tep', svg(fill('M6 18A4 4 0 0 1 10 14H26L31 20H60A4 4 0 0 1 64 24V54A4 4 0 0 1 60 58H10A4 4 0 0 1 6 54Z', YELLOW), fill('M6 28H64V54A4 4 0 0 1 60 58H10A4 4 0 0 1 6 54Z', PEACH))],
+  ['cs-tep-van-ban', 'Tệp văn bản', 'tep van ban tai lieu file', svg(page(BLUE), txt(22, 48, 32, 40, 48))],
+  ['cs-tep-anh', 'Tệp ảnh', 'tep anh hinh anh file', svg(page(MINT), cp(27, 31, 4, YELLOW), fill('M18 58L29 42L37 51L43 45L52 58Z', GREEN))],
+  ['cs-tep-nen', 'Tệp nén', 'tep nen zip file', svg(page(LILAC), fill(rectD(31, 6, 39, 40), BEIGE), line('M31 14H39M31 22H39M31 30H39'), fill(rrD(29, 40, 41, 52, 3), YELLOW))],
+  ['cs-thung-rac', 'Thùng rác', 'thung rac xoa tep', svg(fill(rectD(28, 8, 42, 14), BEIGE), fill('M16 20H54L50 64H20Z', BLUE), fill(rectD(11, 14, 59, 20), BEIGE), line('M28 28V56M35 28V56M42 28V56'))],
+  ['cs-trinh-duyet', 'Trình duyệt web', 'trinh duyet web trang web cua so internet', svg(fill(rrD(6, 10, 64, 60, 5), WHITE), fill('M6 15A5 5 0 0 1 11 10H59A5 5 0 0 1 64 15V22H6Z', BLUE), dot(12, 16, 2), dot(18, 16, 2), dot(24, 16, 2), txt(14, 38, 32, 41, 50), fill(rectD(44, 30, 56, 52), YELLOW))],
+  ['cs-tim-kiem', 'Tìm kiếm', 'tim kiem kinh lup tra cuu', svg(fill(barD(42, 42, 61, 61, 9), BEIGE), fill(circD(28, 28, 19), BLUE), line('M17 24A12 12 0 0 1 25 16'))],
+  ['cs-email', 'Thư điện tử', 'thu dien tu email hop thu', svg(fill(rectD(8, 18, 62, 56), YELLOW), line('M8 18L35 40L62 18'), cp(58, 18, 7, PINK))],
+  ['cs-tai-ve', 'Tải về từ đám mây', 'tai ve dam may download', svg(fill(cloudD, BLUE), uni(PEACH, arD(35, 28, 35, 64, 9, 22, 13)))],
+  ['cs-dong-bo', 'Đồng bộ', 'dong bo cap nhat lam moi', svg(uni(GREEN, curveArrowD(arcPts(35, 35, 22, 200, 345), 8, 20, 12)), uni(GREEN, curveArrowD(arcPts(35, 35, 22, 20, 165), 8, 20, 12)))],
+  ['cs-cai-dat', 'Cài đặt', 'cai dat banh rang thiet lap', svg(fill(gearD(35, 35, 28, 21, 8), BEIGE), cp(35, 35, 9, BLUE))],
+  ['cs-nut-nguon', 'Nút nguồn', 'nut nguon bat tat may', svg(fill(ribbonD(arcPts(35, 38, 21, -55, 235), 7), GREEN), fill(rrD(31, 6, 39, 36, 4), GREEN))],
+  ['cs-con-tro', 'Con trỏ chuột', 'con tro chuot nhap chuot', svg(fill('M18 8L52 40L37 42L46 59L39 63L30 45L20 54Z', BLUE), line('M34 46L40 59'))],
+  ['cs-dong-lenh', 'Cửa sổ dòng lệnh', 'cua so dong lenh terminal lap trinh', svg(fill(rrD(6, 10, 64, 60, 5), BEIGE), line('M6 20H64M16 32L24 39L16 46M30 47H44'))],
+  ['cs-nhi-phan', 'Số nhị phân', 'so nhi phan ma hoa bit du lieu', svg(one(16, 20), zero(35, 20), one(54, 20), zero(16, 50), one(35, 50), one(54, 50))],
+  ['cs-loi-bug', 'Lỗi chương trình', 'loi chuong trinh bug go loi', svg(line('M31 13L26 6M39 13L44 6M21 34L10 28M21 42H8M22 50L11 58M49 34L60 28M49 42H62M48 50L59 58'), cp(35, 20, 8, PINK), fill(ellipseD(35, 41, 14, 18), PINK), line('M35 26V58'))],
+  ['cs-khoi-lenh', 'Khối lệnh', 'khoi lenh lap trinh keo tha scratch', svg(fill('M8 46H22L25 50H33L36 46H58V62H8Z', MINT), fill('M8 28H22L25 32H33L36 28H50V46H36L33 50H25L22 46H8Z', BLUE), fill('M8 10H22L25 14H33L36 10H62V28H36L33 32H25L22 28H8Z', YELLOW))],
+  ['cs-mang', 'Mảng', 'mang danh sach phan tu cau truc du lieu', svg(fill(rectD(6, 24, 64, 46), BLUE), fill(rectD(35, 24, 49.5, 46), YELLOW), line('M20.5 24V46M35 24V46M49.5 24V46'), line('M42 52V60'))],
+  ['cs-cay', 'Cây dữ liệu', 'cay du lieu cay nhi phan cau truc', svg(line('M35 15L18 36M35 15L52 36M18 36L10 56M18 36L26 56M52 36V56'), cp(35, 14, 7, PEACH), cp(18, 36, 6, BLUE), cp(52, 36, 6, BLUE), cp(10, 56, 5, MINT), cp(26, 56, 5, MINT), cp(52, 56, 5, MINT))],
+  ['cs-do-thi', 'Đồ thị', 'do thi dinh canh mang luoi', svg(line('M14 20L52 13M14 20L32 35M52 13L32 35M52 13L57 48M32 35L57 48M32 35L25 57M57 48L25 57'), cp(14, 20, 6, PEACH), cp(52, 13, 6, YELLOW), cp(32, 35, 7, BLUE), cp(57, 48, 6, MINT), cp(25, 57, 6, LILAC))],
+  ['cs-ngan-xep', 'Ngăn xếp', 'ngan xep stack cau truc du lieu', svg(fill(rrD(12, 50, 58, 62, 3), BLUE), fill(rrD(12, 36, 58, 48, 3), MINT), fill(rrD(12, 22, 58, 34, 3), YELLOW), fill(rrD(18, 6, 52, 16, 3), PEACH))],
+  ['cs-vong-lap', 'Vòng lặp', 'vong lap lap lai cau lenh', svg(uni(GREEN, curveArrowD(arcPts(35, 35, 27, -60, 245), 8, 19, 11)), fill(rrD(23, 25, 47, 45, 4), YELLOW))],
+  ['cs-re-nhanh', 'Rẽ nhánh', 're nhanh dieu kien if else', svg(line('M14 27H11V46M56 27H59V46'), fill(P([[35, 6], [56, 27], [35, 48], [14, 27]]), YELLOW), fill(rrD(3, 46, 21, 60, 3), GREEN), fill(rrD(49, 46, 67, 60, 3), PINK))],
+  ['cs-ma-qr', 'Mã QR', 'ma qr quet ma', svg(...[[8, 8], [44, 8], [8, 44]].map(([x, y]) => fill(rectD(x, y, x + 18, y + 18), BEIGE) + fill(rectD(x + 5, y + 5, x + 13, y + 13), LILAC)), fill([[44, 44, 52, 52], [54, 54, 62, 62], [44, 56, 50, 62], [56, 44, 62, 50], [31, 9, 38, 16], [31, 30, 38, 38], [10, 31, 17, 38], [21, 31, 28, 38], [31, 50, 38, 62]].map((r) => rectD(...r)).join(''), LILAC))],
+  ['cs-van-tay', 'Vân tay', 'van tay sinh trac hoc mo khoa', svg(fill(ellipseD(35, 36, 22, 28), PEACH), line('M23 50Q19 28 35 21Q51 22 48 44M28 55Q26 32 35 30Q44 32 42 52M35 38V57'))],
+  ['cs-mat-khau', 'Mật khẩu', 'mat khau dang nhap bao mat', svg(fill(rrD(4, 22, 66, 48, 6), BEIGE), asterisk(15, 35, 6), asterisk(29, 35, 6), asterisk(43, 35, 6), line('M56 28V42'))],
+  ['cs-khien-bao-ve', 'Khiên bảo vệ', 'khien bao ve an toan diet virus', svg(fill('M35 7L60 15V33C60 48 49 58 35 64C21 58 10 48 10 33V15Z', GREEN), line('M24 35L32 43L47 27'))],
+  ['cs-virus', 'Virus máy tính', 'virus may tinh ma doc', svg(line(Array.from({ length: 8 }, (_, i) => `M${polar(35, 35, 15, i * 45).join(' ')}L${polar(35, 35, 23, i * 45).join(' ')}`).join('')), ...Array.from({ length: 8 }, (_, i) => cp(...polar(35, 35, 26, i * 45), 4, PINK)), fill(circD(35, 35, 16), PINK), cp(30, 31, 3, WHITE), cp(40, 39, 3.5, WHITE))],
+  ['cs-tri-tue-nhan-tao', 'Trí tuệ nhân tạo', 'tri tue nhan tao ai hoc may mang no ron', svg(pins(15, 55, 4, 7), fill(rrD(15, 15, 55, 55, 5), LILAC), line('M25 26L35 35L45 26M25 44L35 35L45 44'), cp(25, 26, 3.5, YELLOW), cp(45, 26, 3.5, YELLOW), cp(25, 44, 3.5, YELLOW), cp(45, 44, 3.5, YELLOW), cp(35, 35, 4, PINK))],
+  ['cs-may-chu', 'Máy chủ', 'may chu server luu tru mang', svg(...[8, 27, 46].map((y) => fill(rrD(10, y, 60, y + 16, 3), BLUE) + cp(18, y + 8, 2.5, GREEN) + line(`M30 ${y + 8}H52`)))],
+]
+CS_NEW.reduce((after, [id, name, keywords, svg]) => {
+  ADDED.push({ after, id, name, category: 'cs', keywords, svg })
+  return id
+}, 'cs-usb')

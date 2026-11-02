@@ -1,6 +1,6 @@
 /**
  * Test kho đồ hoạ vector (chặng 2):
- *  - registry 888 icon, id duy nhất, SVG hợp lệ (2 path, không chữ, không nền)
+ *  - registry 938 icon, id duy nhất, SVG hợp lệ (2 path, không chữ, không nền)
  *  - search theo tiếng Việt có dấu/không dấu
  *  - graphicMarkup đổi màu nét + phủ kín hộp
  *  - catalog gửi model có đủ id
@@ -12,6 +12,7 @@ import assert from 'node:assert/strict'
 import { DECK_THEMES } from '../src/lib/slideTheme.ts'
 import { SLIDE_LAYOUTS, composeLayout, contentFromSlide } from '../src/lib/slideLayouts.ts'
 import {
+  GRAPHIC_CATEGORY_LABEL,
   GRAPHIC_IDS,
   SLIDE_GRAPHICS,
   graphicById,
@@ -36,9 +37,14 @@ const check = (name, fn) => {
 
 console.log('\n[1] registry')
 
-check('888 icon, id duy nhất', () => {
-  assert.equal(SLIDE_GRAPHICS.length, 888)
-  assert.equal(GRAPHIC_IDS.size, 888)
+check('938 icon, id duy nhất', () => {
+  assert.equal(SLIDE_GRAPHICS.length, 938)
+  assert.equal(GRAPHIC_IDS.size, 938)
+})
+
+// graphics.ts khai báo category kiểu string (tránh TS2590) nên tsc không bắt nhóm sai — kiểm ở đây
+check('mọi icon thuộc nhóm đã khai báo', () => {
+  for (const graphic of SLIDE_GRAPHICS) assert.ok(graphic.category in GRAPHIC_CATEGORY_LABEL, graphic.id)
 })
 
 check('mỗi icon: ≥2 path (màu + nét), nét gốc #22333B, không chữ/nền/ảnh ngoài', () => {
@@ -107,7 +113,7 @@ check('id lạ → chuỗi rỗng', () => {
   assert.equal(graphicMarkup('khong-co'), '')
 })
 
-check('catalog có đủ 888 id, gom theo nhóm', () => {
+check('catalog có đủ 938 id, gom theo nhóm', () => {
   const text = graphicCatalogText()
   for (const id of GRAPHIC_IDS) assert.ok(text.includes(`${id}=`), id)
   assert.ok(text.includes('math: '))
