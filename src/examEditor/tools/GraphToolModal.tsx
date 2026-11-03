@@ -20,11 +20,14 @@ const numClass = inputClass + ' h-9 px-2.5 py-1 text-center tabular-nums'
 
 export function GraphToolModal({
   initial,
+  submitLabel,
   onClose,
   onInsert,
 }: {
   /** đồ thị đã chèn, mở lại để sửa */
   initial?: PlotSpec | null
+  /** nhãn nút chèn (mặc định: "Cập nhật đồ thị" khi có `initial`, không thì "Chèn đồ thị") */
+  submitLabel?: string
   onClose: () => void
   onInsert: (img: PlotImage) => void
 }) {
@@ -230,7 +233,7 @@ export function GraphToolModal({
         <div className="flex items-center justify-end gap-2 border-t border-line px-6 py-3.5">
           <Button variant="ghost" size="sm" onClick={onClose}>Huỷ</Button>
           <Button variant="clay" size="sm" disabled={!canInsert} onClick={() => plot && onInsert(plot)}>
-            {initial ? 'Cập nhật đồ thị' : 'Chèn đồ thị'}
+            {submitLabel ?? (initial ? 'Cập nhật đồ thị' : 'Chèn đồ thị')}
           </Button>
         </div>
       </div>

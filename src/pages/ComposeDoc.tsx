@@ -24,11 +24,15 @@ import { TabStrip } from '@/examEditor/TabStrip'
 import { AiPanel } from '@/examEditor/AiPanel'
 import { StartTab } from '@/examEditor/StartTab'
 import { NavPanel } from '@/examEditor/NavPanel'
+import { DocSelectionAi } from '@/examEditor/DocSelectionAi'
 import { GraphToolModal, type PlotImage } from '@/examEditor/tools/GraphToolModal'
 import { readPlotSpec, svgToPng, type PlotSpec } from '@/lib/plot'
 
 /** bề rộng mặc định của ảnh đồ thị trong trang đề (px) */
 const PLOT_DOC_WIDTH = 300
+
+/** chỗ đặt đồ thị: thay ảnh cũ, hoặc chèn thành đoạn mới tại vị trí giữa hai khối */
+type PlotTarget = { replace: number } | { after: number }
 import { insertBlockTemplate, type BlockTemplate } from '@/examEditor/templates'
 import { AiDock, Ruler, useViewportSize } from '@/examEditor/Layout'
 import { tipTapToBlocks, blocksToTipTap } from '@/examEditor/convert'
@@ -634,20 +638,29 @@ export default function ComposeDoc() {
 
   /**
    * Chèn đồ thị (công cụ Toán) tại con trỏ — dạng PNG vì bản xuất Word không đọc SVG;
-   * cấu hình đi kèm trong attr `plot` để nhấp đúp sửa lại. Có `pos` thì thay ảnh cũ.
+   * cấu hình đi kèm trong attr `plot` để nhấp đúp sửa lại. `replace`: thay ảnh cũ ở vị trí đó;
+   * `after`: đặt thành đoạn riêng (căn giữa) tại vị trí giữa hai khối, vd. ngay dưới câu hỏi.
    */
   const handleInsertPlot = useCallback(
-    async (img: PlotImage, pos?: number) => {
+    async (img: PlotImage, target?: PlotTarget) => {
       if (!editor || editor.isDestroyed) return
       try {
         const src = await svgToPng(img.svg, img.width, img.height)
         if (editor.isDestroyed) return
         const plot = JSON.stringify(readPlotSpec(img.svg))
-        const node = pos === undefined ? null : editor.state.doc.nodeAt(pos)
-        if (pos !== undefined && node?.type.name === 'image') {
-          editor.view.dispatch(editor.state.tr.setNodeMarkup(pos, undefined, { ...node.attrs, src, plot }))
+        const attrs = { src, alt: 'Đồ thị hàm số', width: PLOT_DOC_WIDTH, plot }
+        const node = target && 'replace' in target ? editor.state.doc.nodeAt(target.replace) : null
+        if (target && 'replace' in target && node?.type.name === 'image') {
+          editor.view.dispatch(editor.state.tr.setNodeMarkup(target.replace, undefined, { ...node.attrs, src, plot }))
+        } else if (target && 'after' in target && target.after <= editor.state.doc.content.size) {
+          editor
+            .chain()
+            .insertContentAt(target.after, { type: 'paragraph', attrs: { textAlign: 'center' }, content: [{ type: 'image', attrs }] })
+            .setNodeSelection(target.after + 1)
+            .scrollIntoView()
+            .run()
         } else {
-          editor.chain().focus().setImage({ src, alt: 'Đồ thị hàm số', width: PLOT_DOC_WIDTH, plot }).run()
+          editor.chain().focus().setImage(attrs).run()
         }
       } catch (err) {
         void dialog.alert(err instanceof Error ? err.message : String(err))
@@ -657,7 +670,7 @@ export default function ComposeDoc() {
   )
 
   // nhấp đúp ảnh đồ thị trong trang → mở lại công cụ Đồ thị với cấu hình cũ
-  const [plotEdit, setPlotEdit] = useState<{ spec: PlotSpec; pos: number } | null>(null)
+  const [plotEdit, setPlotEdit] = useState<{ spec: PlotSpec; target: PlotTarget } | null>(null)
   useEffect(() => {
     if (!editor || editor.isDestroyed) return
     const dom = editor.view.dom
@@ -666,7 +679,7 @@ export default function ComposeDoc() {
       if (!img) return
       try {
         const spec = JSON.parse(img.getAttribute('data-plot') ?? '') as PlotSpec
-        setPlotEdit({ spec, pos: editor.view.posAtDOM(img.closest('.exam-image') ?? img, 0) })
+        setPlotEdit({ spec, target: { replace: editor.view.posAtDOM(img.closest('.exam-image') ?? img, 0) } })
       } catch {
         /* attr hỏng: bỏ qua */
       }
@@ -924,12 +937,19 @@ export default function ComposeDoc() {
         </div>
 
         {/* nav pane (phải) */}
+        <DocSelectionAi
+          editor={editor}
+          context={activeDoc ? `đề "${activeDoc.title}"` : undefined}
+          onInsertPlot={(img, after) => void handleInsertPlot(img, { after })}
+          onEditPlot={(spec, after) => setPlotEdit({ spec, target: { after } })}
+        />
         {plotEdit && (
           <GraphToolModal
             initial={plotEdit.spec}
+            submitLabel={'after' in plotEdit.target ? 'Chèn đồ thị' : undefined}
             onClose={() => setPlotEdit(null)}
             onInsert={(img) => {
-              void handleInsertPlot(img, plotEdit.pos)
+              void handleInsertPlot(img, plotEdit.target)
               setPlotEdit(null)
             }}
           />

@@ -195,6 +195,8 @@ const H_MAX = 720
 
 /** bước vạch chia "đẹp" (1, 2, 5 × 10^k) cho khoảng `span` */
 function niceStep(span: number) {
+  // khung vừa phải thì chia theo từng đơn vị như SGK
+  if (span >= 4 && span <= 20) return 1
   const raw = span / 10
   const p = Math.pow(10, Math.floor(Math.log10(raw)))
   const m = raw / p

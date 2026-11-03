@@ -53,6 +53,15 @@ Người dùng chốt: **lấy hết** các block trong đề mẫu của soande
       Còn: plan 2 bước + verificationToken, stream SSE ghi thẳng vào editor,
       OCR/đọc nội dung tệp đính kèm; sau đó là slide command registry.
 
+### 6.1c. Tab Công cụ — việc hẹn (03/11/2026)
+
+- Khi thêm công cụ của môn thứ hai: đầu panel Công cụ (`examEditor/tools/ToolsPanel.tsx`)
+  thêm ô tìm (không dấu, tìm mọi môn) + select môn (`SiteSelect`, có "Tất cả môn"),
+  nhớ môn chọn lần trước; lần đầu lấy môn dạy trong hồ sơ nếu có. Chưa làm sớm vì
+  hiện chỉ có Toán (Đồ thị hàm số).
+- Công cụ mới làm theo cùng khuôn với đồ thị: AI chỉ trả cấu hình, app tự vẽ
+  (`planPlot` trong `lib/docRewrite.ts`), ảnh nhúng cấu hình để nhấp đúp sửa lại.
+
 ### 6.2. Hạn chế đã biết — cố ý để nguyên
 
 - [x] **Bảng đáp án mất dữ liệu khi round-trip** — đã sửa (xem mục 3.9): duyệt đúng
