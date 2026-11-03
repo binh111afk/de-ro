@@ -137,6 +137,15 @@ sẵn trong thư viện).
 8. **`data-exam-node` phải trùng tên node** (`examHeader`, `examQuestion`, …).
    CSS và `choiceLayout` bám theo giá trị này; lệch tên thì CSS "sống" mà không
    có tác dụng và rất khó thấy vì không có lỗi nào được báo.
+9. **Ảnh SVG tự sinh: kiểm XML trước khi tin.** Một thuộc tính trùng (vd. `fill`
+   vừa nằm trong chuỗi font dùng chung vừa ghi thêm) làm `<img>` lỗi im lặng.
+   Kiểm bằng `DOMParser` + `parsererror`. Trang đề phải chèn PNG vì bản xuất Word
+   không đọc SVG; slide/PPTX thì SVG được.
+10. **Trang soạn đề dùng CSS `zoom`** — mọi thứ vẽ trong trang (tay nắm, viền
+    chọn) bị co theo. Bù bằng `--page-zoom`; đổi cỡ dùng pointer capture để không
+    đụng thao tác kéo node `draggable`.
+11. **Tính toán số (bảng biến thiên tự dựng) phải thử ca biên**: giới hạn tăng
+    chậm (`ln x`, `√x`), tiệm cận không trúng mẫu, đuôi phẳng (`eˣ/x`), nghiệm vô
+    tỉ (`±√3`). Thử bằng script `npx tsx` trước khi làm giao diện.
 
 ---
-
