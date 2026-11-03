@@ -25,7 +25,7 @@ import { AiPanel } from '@/examEditor/AiPanel'
 import { StartTab } from '@/examEditor/StartTab'
 import { NavPanel } from '@/examEditor/NavPanel'
 import { insertBlockTemplate, type BlockTemplate } from '@/examEditor/templates'
-import { AiDock, NavPane, Ruler, useViewportSize } from '@/examEditor/Layout'
+import { AiDock, Ruler, useViewportSize } from '@/examEditor/Layout'
 import { tipTapToBlocks, blocksToTipTap } from '@/examEditor/convert'
 import { useFormatState, applyFormatAttrs } from '@/examEditor/formatState'
 import { FindPanel } from '@/examEditor/FindPanel'
@@ -310,7 +310,6 @@ export default function ComposeDoc() {
   // màn hẹp (tablet/điện thoại): trợ lý AI nổi đè lên trang nên mặc định đóng
   const [aiOpen, setAiOpen] = useState(() => window.innerWidth >= 1024)
   const [navOpen, setNavOpen] = useState(true)
-  const [navWidth, setNavWidth] = useState(288)
   const [zoom, setZoom] = useState(100)
   const [pageCount, setPageCount] = useState(1)
   const stageRef = useRef<HTMLDivElement>(null)
@@ -877,14 +876,14 @@ export default function ComposeDoc() {
         </div>
 
         {/* nav pane (phải) */}
-        {navOpen && (
-          <NavPane width={navWidth} onResize={setNavWidth}>
+        {viewport.w >= 768 && (
             <NavPanel
               doc={activeContent}
+              open={navOpen}
+              onOpenChange={setNavOpen}
               onInsertTemplate={handleInsertTemplate}
               onGoToBlock={handleGoToBlock}
             />
-          </NavPane>
         )}
       </div>
         </>
