@@ -4,14 +4,16 @@
  * ra bên trái thanh đó.
  */
 import { useMemo, useState } from 'react'
-import { Blocks, ChevronRight, ListTree } from 'lucide-react'
+import { Blocks, ChevronRight, ListTree, Wrench } from 'lucide-react'
+import { ToolsPanel } from './tools/ToolsPanel'
+import type { PlotImage } from './tools/GraphToolModal'
 import type { JSONContent } from '@tiptap/core'
 import { buildTocFromDoc, type TocEntry } from './convert'
 import { BLOCK_TEMPLATES, BLOCK_TEMPLATE_MIME, type BlockTemplate } from './templates'
 import { cn } from '@/lib/cn'
 import { IconGrip } from './icons'
 
-type PaneTab = 'toc' | 'blocks'
+type PaneTab = 'toc' | 'blocks' | 'tools'
 
 /** Gom danh sách mẫu theo nhóm liền kề, giữ thứ tự khai báo. */
 function groupTemplates(list: BlockTemplate[]): Array<{ name: string; items: BlockTemplate[] }> {
@@ -27,6 +29,7 @@ function groupTemplates(list: BlockTemplate[]): Array<{ name: string; items: Blo
 const TABS: Array<{ id: PaneTab; label: string; Icon: typeof ListTree }> = [
   { id: 'toc', label: 'Mục lục', Icon: ListTree },
   { id: 'blocks', label: 'Khối mẫu', Icon: Blocks },
+  { id: 'tools', label: 'Công cụ', Icon: Wrench },
 ]
 
 /** rộng panel trượt (cùng cỡ thư viện bên soạn slide) */
@@ -38,6 +41,7 @@ export function NavPanel({
   onOpenChange,
   onInsertTemplate,
   onGoToBlock,
+  onInsertPlot,
 }: {
   doc: JSONContent
   /** panel đang mở hay chỉ còn thanh icon */
@@ -45,6 +49,7 @@ export function NavPanel({
   onOpenChange: (open: boolean) => void
   onInsertTemplate: (tpl: BlockTemplate) => void
   onGoToBlock: (index: number) => void
+  onInsertPlot: (img: PlotImage) => void
 }) {
   // tab cuối cùng đã chọn: giữ nội dung trong lúc panel trượt đóng
   const [tab, setTab] = useState<PaneTab>('toc')
@@ -127,6 +132,11 @@ export function NavPanel({
             ))}
           </div>
         )}
+          {shown === 'tools' && (
+            <div className="nav-body">
+              <div className="px-3"><ToolsPanel onInsertPlot={onInsertPlot} /></div>
+            </div>
+          )}
         </aside>
       </div>
       <nav aria-label="Bảng điều hướng" className="flex w-[64px] flex-col items-center gap-1 border-l border-line bg-surface py-2">

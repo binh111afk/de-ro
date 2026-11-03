@@ -3670,3 +3670,41 @@
     display: none;
   }
 }
+
+/* ảnh trong trang đề: tay nắm góc để co giãn (node view ImageNode) */
+.exam-image {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  line-height: 0;
+  vertical-align: bottom;
+}
+.exam-image img {
+  max-width: 100%;
+  height: auto;
+}
+.exam-image.is-selected img {
+  outline: 2px solid var(--color-clay, #b4532a);
+  outline-offset: 1px;
+}
+.exam-image__handle {
+  position: absolute;
+  right: -5px;
+  bottom: -5px;
+  width: 10px;
+  height: 10px;
+  border: 1.5px solid var(--color-clay, #b4532a);
+  border-radius: 2px;
+  background: #fff;
+  cursor: nwse-resize;
+  opacity: 0;
+}
+.exam-image:hover .exam-image__handle,
+.exam-image.is-selected .exam-image__handle {
+  opacity: 1;
+}
+@media print {
+  .exam-image__handle {
+    display: none;
+  }
+}

@@ -93,7 +93,7 @@ function walkInline(node: JSONContent | undefined, inherited: Mark[], out: Span[
   // ảnh inline → span không chữ, giữ nguyên src/độ rộng
   if (node.type === 'image') {
     const a = node.attrs ?? {}
-    if (a.src) out.push({ text: '', image: { src: String(a.src), ...(a.alt ? { alt: String(a.alt) } : {}), ...(a.width ? { width: Number(a.width) } : {}) } })
+    if (a.src) out.push({ text: '', image: { src: String(a.src), ...(a.alt ? { alt: String(a.alt) } : {}), ...(a.width ? { width: Number(a.width) } : {}), ...(a.plot ? { plot: String(a.plot) } : {}) } })
     return
   }
   // công thức inline → trả về đúng quy ước `$...$` của ExamBlock
@@ -416,7 +416,7 @@ function richNodes(rt: RichText): JSONContent[] {
   const out: JSONContent[] = []
   for (const s of rt) {
     if (s.image) {
-      out.push({ type: 'image', attrs: { src: s.image.src, alt: s.image.alt ?? null, width: s.image.width ?? null } })
+      out.push({ type: 'image', attrs: { src: s.image.src, alt: s.image.alt ?? null, width: s.image.width ?? null, plot: s.image.plot ?? null } })
       continue
     }
     const marks = s.marks?.length

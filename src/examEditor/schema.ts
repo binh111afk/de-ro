@@ -835,6 +835,12 @@ export const ImageNode = Node.create({
       src: { default: null },
       alt: { default: null },
       width: { default: null },
+      /** cấu hình đồ thị (JSON PlotSpec) khi ảnh vẽ bằng công cụ Đồ thị — để nhấp đúp sửa lại */
+      plot: {
+        default: null,
+        parseHTML: (el) => el.getAttribute('data-plot'),
+        renderHTML: (attrs) => (attrs.plot ? { 'data-plot': attrs.plot } : {}),
+      },
     }
   },
   parseHTML() {
@@ -843,10 +849,73 @@ export const ImageNode = Node.create({
   renderHTML({ HTMLAttributes }) {
     return ['img', mergeAttributes({ 'data-exam-image': '' }, HTMLAttributes)]
   },
+  /** khung ảnh có tay nắm góc phải dưới: kéo để đổi bề rộng (lưu vào attr `width`) */
+  addNodeView() {
+    return ({ node, getPos, editor }) => {
+      const dom = document.createElement('span')
+      dom.className = 'exam-image'
+      dom.contentEditable = 'false'
+      const img = document.createElement('img')
+      img.setAttribute('data-exam-image', '')
+      img.draggable = false
+      const handle = document.createElement('span')
+      handle.className = 'exam-image__handle'
+      handle.title = 'Kéo để đổi cỡ ảnh'
+      dom.append(img, handle)
+      let current = node
+      const paint = () => {
+        const { src, alt, width, plot } = current.attrs
+        img.src = String(src ?? '')
+        img.alt = String(alt ?? '')
+        img.style.width = width ? `${width}px` : ''
+        if (plot) img.setAttribute('data-plot', String(plot))
+        else img.removeAttribute('data-plot')
+      }
+      paint()
+
+      handle.addEventListener('mousedown', (e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        // trang có thể đang thu phóng: đổi độ dời chuột (px màn hình) sang px của trang
+        const scale = img.getBoundingClientRect().width / (img.offsetWidth || 1) || 1
+        const startX = e.clientX
+        const startW = img.offsetWidth
+        const maxW = (dom.parentElement?.clientWidth || 672) - 4
+        let w = startW
+        const move = (ev: MouseEvent) => {
+          w = Math.round(Math.min(maxW, Math.max(40, startW + (ev.clientX - startX) / scale)))
+          img.style.width = `${w}px`
+        }
+        const up = () => {
+          window.removeEventListener('mousemove', move)
+          window.removeEventListener('mouseup', up)
+          const pos = typeof getPos === 'function' ? getPos() : undefined
+          if (pos === undefined || w === startW || editor.isDestroyed) return
+          editor.view.dispatch(editor.state.tr.setNodeMarkup(pos, undefined, { ...current.attrs, width: w }))
+        }
+        window.addEventListener('mousemove', move)
+        window.addEventListener('mouseup', up)
+      })
+
+      return {
+        dom,
+        update: (updated) => {
+          if (updated.type.name !== 'image') return false
+          current = updated
+          paint()
+          return true
+        },
+        selectNode: () => dom.classList.add('is-selected'),
+        deselectNode: () => dom.classList.remove('is-selected'),
+        stopEvent: (e) => e.target === handle,
+        ignoreMutation: () => true,
+      }
+    }
+  },
   addCommands() {
     return {
       setImage:
-        (options: { src: string; alt?: string; width?: number }) =>
+        (options: { src: string; alt?: string; width?: number; plot?: string }) =>
         ({ commands }) =>
           commands.insertContent({ type: this.name, attrs: options }),
     }
@@ -856,7 +925,7 @@ export const ImageNode = Node.create({
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
     setImage: {
-      setImage: (options: { src: string; alt?: string; width?: number }) => ReturnType
+      setImage: (options: { src: string; alt?: string; width?: number; plot?: string }) => ReturnType
     }
   }
 }

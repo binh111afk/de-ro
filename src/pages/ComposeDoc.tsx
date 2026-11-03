@@ -24,6 +24,11 @@ import { TabStrip } from '@/examEditor/TabStrip'
 import { AiPanel } from '@/examEditor/AiPanel'
 import { StartTab } from '@/examEditor/StartTab'
 import { NavPanel } from '@/examEditor/NavPanel'
+import { GraphToolModal, type PlotImage } from '@/examEditor/tools/GraphToolModal'
+import { readPlotSpec, svgToPng, type PlotSpec } from '@/lib/plot'
+
+/** bề rộng mặc định của ảnh đồ thị trong trang đề (px) */
+const PLOT_DOC_WIDTH = 300
 import { insertBlockTemplate, type BlockTemplate } from '@/examEditor/templates'
 import { AiDock, Ruler, useViewportSize } from '@/examEditor/Layout'
 import { tipTapToBlocks, blocksToTipTap } from '@/examEditor/convert'
@@ -627,6 +632,49 @@ export default function ComposeDoc() {
     [editor],
   )
 
+  /**
+   * Chèn đồ thị (công cụ Toán) tại con trỏ — dạng PNG vì bản xuất Word không đọc SVG;
+   * cấu hình đi kèm trong attr `plot` để nhấp đúp sửa lại. Có `pos` thì thay ảnh cũ.
+   */
+  const handleInsertPlot = useCallback(
+    async (img: PlotImage, pos?: number) => {
+      if (!editor || editor.isDestroyed) return
+      try {
+        const src = await svgToPng(img.svg, img.width, img.height)
+        if (editor.isDestroyed) return
+        const plot = JSON.stringify(readPlotSpec(img.svg))
+        const node = pos === undefined ? null : editor.state.doc.nodeAt(pos)
+        if (pos !== undefined && node?.type.name === 'image') {
+          editor.view.dispatch(editor.state.tr.setNodeMarkup(pos, undefined, { ...node.attrs, src, plot }))
+        } else {
+          editor.chain().focus().setImage({ src, alt: 'Đồ thị hàm số', width: PLOT_DOC_WIDTH, plot }).run()
+        }
+      } catch (err) {
+        void dialog.alert(err instanceof Error ? err.message : String(err))
+      }
+    },
+    [editor],
+  )
+
+  // nhấp đúp ảnh đồ thị trong trang → mở lại công cụ Đồ thị với cấu hình cũ
+  const [plotEdit, setPlotEdit] = useState<{ spec: PlotSpec; pos: number } | null>(null)
+  useEffect(() => {
+    if (!editor || editor.isDestroyed) return
+    const dom = editor.view.dom
+    const onDbl = (e: MouseEvent) => {
+      const img = (e.target as HTMLElement).closest?.('img[data-plot]')
+      if (!img) return
+      try {
+        const spec = JSON.parse(img.getAttribute('data-plot') ?? '') as PlotSpec
+        setPlotEdit({ spec, pos: editor.view.posAtDOM(img.closest('.exam-image') ?? img, 0) })
+      } catch {
+        /* attr hỏng: bỏ qua */
+      }
+    }
+    dom.addEventListener('dblclick', onDbl)
+    return () => dom.removeEventListener('dblclick', onDbl)
+  }, [editor])
+
   /** Nhảy tới khối cấp cao nhất theo index (dùng cho mục lục / tìm kiếm). */
   const handleGoToBlock = useCallback(
     (index: number) => {
@@ -876,6 +924,16 @@ export default function ComposeDoc() {
         </div>
 
         {/* nav pane (phải) */}
+        {plotEdit && (
+          <GraphToolModal
+            initial={plotEdit.spec}
+            onClose={() => setPlotEdit(null)}
+            onInsert={(img) => {
+              void handleInsertPlot(img, plotEdit.pos)
+              setPlotEdit(null)
+            }}
+          />
+        )}
         {viewport.w >= 768 && (
             <NavPanel
               doc={activeContent}
@@ -883,6 +941,7 @@ export default function ComposeDoc() {
               onOpenChange={setNavOpen}
               onInsertTemplate={handleInsertTemplate}
               onGoToBlock={handleGoToBlock}
+              onInsertPlot={(img) => void handleInsertPlot(img)}
             />
         )}
       </div>

@@ -7,7 +7,7 @@
  * nhóm) và Tải lên (ảnh của giáo viên). Ô tìm kiếm ở Đồ hoạ và Icon lọc theo tên.
  */
 import { memo, useMemo, useRef, useState } from 'react'
-import { ChevronDown, ChevronLeft, ChevronRight, LayoutTemplate, Shapes, Smile, Sparkles, Upload, X } from 'lucide-react'
+import { ChevronDown, ChevronLeft, ChevronRight, LayoutTemplate, Shapes, Smile, Sparkles, Upload, Wrench, X } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import { SLIDE_LAYOUTS, type SlideLayoutId } from '@/lib/slideLayouts'
 import { SLIDE_ASSET_IDS, SLIDE_ASSETS } from '@/lib/slideAssets'
@@ -22,14 +22,17 @@ import { useUploads } from '@/store/uploads'
 import type { SlideElement } from '@/store/docs'
 import { ShapeGallery, ShapePreview, visibleGroups } from './ShapeGallery'
 import { useViewportSize } from './Layout'
+import { ToolsPanel } from './tools/ToolsPanel'
+import { svgDataUrl } from '@/lib/plot'
 
-type PanelId = 'templates' | 'elements' | 'icons' | 'uploads'
+type PanelId = 'templates' | 'elements' | 'icons' | 'uploads' | 'tools'
 
 const PANELS: Array<{ id: PanelId; label: string; title: string; Icon: typeof Shapes }> = [
   { id: 'templates', label: 'Mẫu', title: 'Mẫu slide', Icon: LayoutTemplate },
   { id: 'elements', label: 'Đồ hoạ', title: 'Đồ hoạ', Icon: Shapes },
   { id: 'icons', label: 'Icon', title: 'Icon', Icon: Smile },
   { id: 'uploads', label: 'Tải lên', title: 'Tải ảnh lên', Icon: Upload },
+  { id: 'tools', label: 'Công cụ', title: 'Công cụ', Icon: Wrench },
 ]
 
 /** ảnh tải lên lớn hơn mức này thì thu nhỏ trước khi đưa vào slide (đỡ nặng bài giảng) */
@@ -64,6 +67,19 @@ function SlideSidePanelImpl({ accent, canInsert, hint = '', onAddLayoutSlide, on
         {shown === 'templates' && <Scroll><div className="pt-3"><TemplatesPanel onPick={mobile ? (id) => { onAddLayoutSlide(id); setActive(null) } : onAddLayoutSlide} /></div></Scroll>}
         {shown === 'elements' && <ElementsPanel accent={accent} canInsert={canInsert} hint={hint} onInsert={mobile ? insertAndClose : onInsert} />}
         {shown === 'icons' && <IconsPanel canInsert={canInsert} onInsert={mobile ? insertAndClose : onInsert} />}
+        {shown === 'tools' && (
+          <Scroll>
+            <ToolsPanel
+              disabled={!canInsert}
+              onInsertPlot={(img) => {
+                // giữ đúng tỉ lệ ảnh trên khung 16:9 (toạ độ phần trăm)
+                const w = 46
+                const h = (w * img.height * 16) / (img.width * 9)
+                ;(mobile ? insertAndClose : onInsert)({ id: uid(), type: 'image', src: svgDataUrl(img.svg), x: (100 - w) / 2, y: (100 - h) / 2, w, h })
+              }}
+            />
+          </Scroll>
+        )}
         {shown === 'uploads' && <Scroll><div className="pt-3"><UploadsPanel canInsert={canInsert} onInsert={mobile ? insertAndClose : onInsert} /></div></Scroll>}
       </div>
     </>

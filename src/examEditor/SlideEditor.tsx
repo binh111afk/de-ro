@@ -9,6 +9,8 @@
 import { dialog } from '@/components/Dialog'
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { readPlotSpec, svgDataUrl, type PlotSpec } from '@/lib/plot'
+import { GraphToolModal } from './tools/GraphToolModal'
 import { ColorPalette } from './ColorPalette'
 import { SelectionToolbar } from './SelectionToolbar'
 import { SlideSidePanel } from './SlideSidePanel'
@@ -2085,6 +2087,22 @@ function EditableEl({
   const [imageError, setImageError] = useState<string | null>(null)
   // ảnh đang được kéo qua khung: '' = file từ máy (chưa đọc được), null = không kéo
   const [dropPreview, setDropPreview] = useState<string | null>(null)
+  // đồ thị đang mở lại để sửa (ảnh chèn từ công cụ Đồ thị hàm số)
+  const [plotEdit, setPlotEdit] = useState<PlotSpec | null>(null)
+  const plotModal =
+    plotEdit &&
+    createPortal(
+      <GraphToolModal
+        initial={plotEdit}
+        onClose={() => setPlotEdit(null)}
+        onInsert={(img) => {
+          // giữ bề rộng, chiều cao theo tỉ lệ ảnh mới trên khung 16:9
+          onChange({ src: svgDataUrl(img.svg), h: (el.w * img.height * 16) / (img.width * 9) })
+          setPlotEdit(null)
+        }}
+      />,
+      document.body,
+    )
   const style: React.CSSProperties = {
     position: 'absolute',
     left: `${el.x}%`,
@@ -2580,7 +2598,16 @@ function EditableEl({
             className={cn('pointer-events-none h-full w-full object-cover', dropPreview ? '' : 'opacity-60')}
           />
         ) : el.src ? (
-          <img src={el.src} alt="" className="h-full w-full object-cover" />
+          <img
+            src={el.src}
+            alt=""
+            className="h-full w-full object-cover"
+            onDoubleClick={() => {
+              // ảnh vẽ bằng công cụ Đồ thị: nhấp đúp mở lại modal để sửa
+              const spec = readPlotSpec(el.src)
+              if (spec) setPlotEdit(spec)
+            }}
+          />
         ) : photoFrameClip(el.shape) ? (
 <img src={FRAME_PLACEHOLDER} alt="" className="pointer-events-none h-full w-full object-cover" />
         ) : (
@@ -2655,6 +2682,7 @@ function EditableEl({
           </label>
         )}
         {handle}
+        {plotModal}
       </div>
     )
 
