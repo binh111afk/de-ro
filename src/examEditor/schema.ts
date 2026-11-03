@@ -858,10 +858,16 @@ export const ImageNode = Node.create({
       const img = document.createElement('img')
       img.setAttribute('data-exam-image', '')
       img.draggable = false
-      const handle = document.createElement('span')
-      handle.className = 'exam-image__handle'
-      handle.title = 'Kéo để đổi cỡ ảnh'
-      dom.append(img, handle)
+      // bốn tay nắm góc (kiểu Word): kéo góc trái thì đổi chiều độ dời
+      const handles = (['nw', 'ne', 'sw', 'se'] as const).map((corner) => {
+        const h = document.createElement('span')
+        h.className = `exam-image__handle exam-image__handle--${corner}`
+        h.title = 'Kéo để đổi cỡ ảnh'
+        h.draggable = false
+        h.addEventListener('pointerdown', (e) => startResize(e, corner === 'nw' || corner === 'sw' ? -1 : 1))
+        return h
+      })
+      dom.append(img, ...handles)
       let current = node
       const paint = () => {
         const { src, alt, width, plot } = current.attrs
@@ -873,29 +879,35 @@ export const ImageNode = Node.create({
       }
       paint()
 
-      handle.addEventListener('mousedown', (e) => {
+      function startResize(e: PointerEvent, dir: 1 | -1) {
         e.preventDefault()
         e.stopPropagation()
-        // trang có thể đang thu phóng: đổi độ dời chuột (px màn hình) sang px của trang
+        const target = e.currentTarget as HTMLElement
+        target.setPointerCapture(e.pointerId)
+        // trang có thể đang thu phóng (CSS zoom): đổi độ dời chuột sang px của trang
         const scale = img.getBoundingClientRect().width / (img.offsetWidth || 1) || 1
         const startX = e.clientX
         const startW = img.offsetWidth
         const maxW = (dom.parentElement?.clientWidth || 672) - 4
         let w = startW
-        const move = (ev: MouseEvent) => {
-          w = Math.round(Math.min(maxW, Math.max(40, startW + (ev.clientX - startX) / scale)))
+        dom.classList.add('is-resizing')
+        const move = (ev: PointerEvent) => {
+          w = Math.round(Math.min(maxW, Math.max(40, startW + (dir * (ev.clientX - startX)) / scale)))
           img.style.width = `${w}px`
         }
         const up = () => {
-          window.removeEventListener('mousemove', move)
-          window.removeEventListener('mouseup', up)
+          target.removeEventListener('pointermove', move)
+          target.removeEventListener('pointerup', up)
+          target.removeEventListener('pointercancel', up)
+          dom.classList.remove('is-resizing')
           const pos = typeof getPos === 'function' ? getPos() : undefined
           if (pos === undefined || w === startW || editor.isDestroyed) return
           editor.view.dispatch(editor.state.tr.setNodeMarkup(pos, undefined, { ...current.attrs, width: w }))
         }
-        window.addEventListener('mousemove', move)
-        window.addEventListener('mouseup', up)
-      })
+        target.addEventListener('pointermove', move)
+        target.addEventListener('pointerup', up)
+        target.addEventListener('pointercancel', up)
+      }
 
       return {
         dom,
@@ -907,7 +919,7 @@ export const ImageNode = Node.create({
         },
         selectNode: () => dom.classList.add('is-selected'),
         deselectNode: () => dom.classList.remove('is-selected'),
-        stopEvent: (e) => e.target === handle,
+        stopEvent: (e) => (e.target as HTMLElement).classList?.contains('exam-image__handle') ?? false,
         ignoreMutation: () => true,
       }
     }

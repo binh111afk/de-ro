@@ -868,7 +868,7 @@ export default function ComposeDoc() {
           <div className="compose-scroll" ref={stageRef}>
             {/* `zoom` (không phải transform) để thước kẻ và trang giấy co cùng
                 tỉ lệ và container vẫn đúng bề rộng — giống GenOffice `.doc-zoom`. */}
-            <div className="compose-canvas anim-tab-in" key={activeId ?? 'none'} style={{ zoom: effectiveScale }}>
+            <div className="compose-canvas anim-tab-in" key={activeId ?? 'none'} style={{ zoom: effectiveScale, ['--page-zoom' as string]: effectiveScale }}>
               <Ruler
                 width={PAGE_W}
                 margin={MARGIN}
