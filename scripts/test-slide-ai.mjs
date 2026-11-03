@@ -8,6 +8,7 @@ import { parseAiObject } from '../src/lib/aiDeck.ts'
 import {
   appendSlidesToDeck,
   checkSlide,
+  dropRepeatedGraphic,
   pageSystemPrompt,
   repairPrompt,
   sanitizeSlide,
@@ -257,4 +258,13 @@ assert.ok(fallback.elements.length >= 2, 'fallback có tiêu đề + khối ý')
   assert.equal(set.bullets[0], 'ƯC(12, 18) = {1, 2, 3, 6}', 'tập hợp không bị ngắt dòng')
 }
 
-console.log('test-slide-ai: 11 nhóm kiểm tra đạt')
+{
+  // một deck không dùng lại cùng đồ hoạ: slide sau trùng thì bỏ graphic
+  const used = new Set()
+  const pages = [{ graphic: 'lit-qua-thi' }, { graphic: 'lit-qua-thi' }, { title: 'x' }, { graphic: 'lang-sach-mo' }]
+  const out = pages.map((page) => dropRepeatedGraphic(page, used))
+  assert.deepEqual(out.map((page) => page.graphic), ['lit-qua-thi', undefined, undefined, 'lang-sach-mo'])
+  assert.ok(!('graphic' in out[1]), 'xoá hẳn field, không để graphic: undefined')
+}
+
+console.log('test-slide-ai: 12 nhóm kiểm tra đạt')

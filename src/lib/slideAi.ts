@@ -588,6 +588,20 @@ export function planDecorKit(plan: DeckPlan): string {
   return plan.decorKit ?? defaultDecorKit(plan.stylePack, plan.subject)
 }
 
+/**
+ * Mỗi slide được sinh riêng (song song) nên AI hay dùng lại một đồ hoạ cho bìa, khởi động
+ * và kết. Gọi theo thứ tự slide: đồ hoạ đã có ở slide trước thì bỏ (layout tự lo khi thiếu).
+ */
+export function dropRepeatedGraphic<T extends { graphic?: string }>(page: T, used: Set<string>): T {
+  if (!page.graphic) return page
+  if (!used.has(page.graphic)) {
+    used.add(page.graphic)
+    return page
+  }
+  const { graphic: _drop, ...rest } = page
+  return rest as T
+}
+
 export function checkSlide(raw: unknown, layout: string, tone?: SlideTone): SlideCheck {
   const page = sanitizeSlide(raw, layout, tone)
   const errors = validateSlide(page, layout)

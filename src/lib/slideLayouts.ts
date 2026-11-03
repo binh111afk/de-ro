@@ -682,8 +682,17 @@ function composeBullets(p: LayoutPalette, content: SlideLayoutContent): SlideEle
   ])
 }
 
+/**
+ * AI hay viết nhãn đậm kiểu "**Lan:** câu…" hoặc "**Lan**: câu…" — cắt ở ":" sẽ để sót
+ * một "**" mỗi bên và lộ dấu sao ra chữ. Nhãn vốn đã in đậm nên bỏ cặp ** quanh nhãn.
+ */
+function unboldLabel(item: string): string {
+  return item.replace(/^(\s*)\*\*([^*\n:]{1,44}):\*\*/, '$1$2:').replace(/^(\s*)\*\*([^*\n:]{1,44})\*\*\s*:/, '$1$2:')
+}
+
 /** "Nhãn: mô tả" trong một mục thẻ → tiêu đề ngắn + phần mô tả. */
-function splitCardItem(item: string): { heading: string; body: string } {
+function splitCardItem(raw: string): { heading: string; body: string } {
+  const item = unboldLabel(raw)
   const at = item.indexOf(':')
   if (at <= 0 || at > 44) return { heading: item, body: '' }
   const heading = item.slice(0, at).trim()
@@ -825,7 +834,8 @@ function splitTwoColumns(content: SlideLayoutContent): { left: string[]; right: 
 }
 
 /** "Nhãn: mô tả" → nhãn đậm + mô tả; không có nhãn ngắn thì chỉ có mô tả. */
-function splitLabel(item: string): { label: string; text: string } {
+function splitLabel(raw: string): { label: string; text: string } {
+  const item = unboldLabel(raw)
   const at = item.indexOf(':')
   if (at < 2 || at > 28) return { label: '', text: item }
   const label = item.slice(0, at).trim()
@@ -1494,7 +1504,8 @@ function connectorEl(id: string, x1: number, y1: number, x2: number, y2: number,
 }
 
 /** "Nhãn nhánh: ý con; ý con" → nhãn + tối đa 3 ý con. */
-function parseBranch(item: string): { label: string; children: string[] } {
+function parseBranch(raw: string): { label: string; children: string[] } {
+  const item = unboldLabel(raw)
   const at = item.indexOf(':')
   const label = (at > 0 ? item.slice(0, at) : item).trim()
   const rest = at > 0 ? item.slice(at + 1) : ''

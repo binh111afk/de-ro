@@ -333,6 +333,14 @@ for (const catalogTheme of DECK_THEMES) {
   assert.ok(connectors.every((e) => e.w > 0 && e.h > 0 && e.x >= 0 && e.x + e.w <= 100), 'đường nối nằm trong khung')
 }
 
+/* Nhãn đậm "**Lan:** câu" / "**Lan**: câu" — cắt ở ":" không được để sót dấu ** ra chữ. */
+for (const [layout, key] of [['two-column', 'left'], ['cards', 'items'], ['mindmap', 'items']]) {
+  // 4 mục: thẻ 2×2 mới tách "nhãn: mô tả" (3 thẻ giữ nguyên câu, cặp ** vẫn đủ)
+  const lines = ['**Lan:** What are you doing?', '**Tom**: I am **watching** the parade', '**Mai:** Hi there', '**Nam:** Me too']
+  const texts = JSON.stringify(composeLayout(theme, layout, { title: 'T', [key]: lines, right: lines }))
+  assert.ok(!/\*\*(Lan|Tom|Mai)\b|\*\* (What|I am|Hi)/.test(texts), `${layout}: lộ ** quanh nhãn`)
+}
+
 console.log('✅ layout v3: 22 bố cục, bảng 8×6, timeline/cycle, quiz, tone, art-directed, đọc nội dung + theme')
 console.log('✅ tương phản: panel ≥1,1:1 và kicker ≥4,5:1 trên mọi theme × tông')
 console.log('\n10/10 pass, 0 fail')

@@ -103,8 +103,10 @@ export function pickSlideAsset(text: string, used?: Set<SlideAssetId>): SlideAss
   let bestScore = 0
   for (const id of SLIDE_ASSET_IDS) {
     if (used?.has(id)) continue
-    const score = SLIDE_ASSETS[id].tags.reduce((sum, tag) => sum + (hasTag(haystack, tag) ? 1 : 0), 0)
-    if (score > bestScore) {
+    // từ khoá ngắn ("số", "anh", "tin") hay khớp nhầm ("số oxi hoá" → máy tính, "chim vàng
+    // anh" → tiếng Anh) nên chỉ tính nửa điểm: một mình nó không đủ để gắn icon
+    const score = SLIDE_ASSETS[id].tags.reduce((sum, tag) => sum + (hasTag(haystack, tag) ? (tag.length > 3 ? 1 : 0.5) : 0), 0)
+    if (score >= 1 && score > bestScore) {
       best = id
       bestScore = score
     }

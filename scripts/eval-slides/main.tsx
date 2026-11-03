@@ -13,7 +13,7 @@ import { SlideThumb } from '@/examEditor/SlideEditor'
 import { SLIDE_PLAN_SYSTEM, generateSlide, polishSlide } from '@/examEditor/AiPanel'
 import { callLlm } from '@/lib/llm'
 import { parseDeckPlan } from '@/lib/aiDeck'
-import { slideFromAi, withImage } from '@/lib/slideAi'
+import { dropRepeatedGraphic, slideFromAi, withImage } from '@/lib/slideAi'
 import { IMAGE_LAYOUTS, buildImagePrompt, generateSlideImage, queueImage } from '@/lib/imageGen'
 import { ensureMeasureFonts } from '@/lib/slideMeasure'
 import { themeById } from '@/lib/slideTheme'
@@ -75,6 +75,11 @@ async function main() {
     }),
   )
 
+  // như AiPanel: đồ hoạ đã dùng ở slide trước thì bỏ
+  const usedGraphics = new Set<string>()
+  pages.forEach((page, i) => {
+    if (page) pages[i] = dropRepeatedGraphic(page, usedGraphics)
+  })
   const theme = themeById(plan.theme ?? 'sang')
   const failed: string[] = []
   const built: Array<Slide | null> = pages.map((page) => (page ? slideFromAi(page, theme) : null))
@@ -137,6 +142,10 @@ async function main() {
     topic,
     theme: theme.id,
     stylePack: plan.stylePack,
+    subject: plan.subject,
+    decorKit: plan.decorKit ?? null,
+    // icon AI chọn cho từng slide (null = không dùng icon)
+    graphics: pages.map((page) => (page as { graphic?: string } | null)?.graphic ?? null),
     layouts: plan.slides.map((s) => s.layout),
     slides: plan.slides.length,
     failed,

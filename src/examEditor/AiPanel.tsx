@@ -19,7 +19,7 @@ import {
   type DeckPlan,
   type DeckPlanSlide,
 } from '@/lib/aiDeck'
-import { checkSlide, pageSystemPrompt, planDecorKit, repairPrompt } from '@/lib/slideAi'
+import { checkSlide, dropRepeatedGraphic, pageSystemPrompt, planDecorKit, repairPrompt } from '@/lib/slideAi'
 import { SLIDE_LAYOUTS } from '@/lib/slideLayouts'
 import { DECK_THEMES } from '@/lib/slideTheme'
 import { stylePackById } from '@/lib/slideStyles'
@@ -991,6 +991,7 @@ export function AiPanel({
       let cursor = 0
       let skipped = 0
       let lastError = ''
+      const usedGraphics = new Set<string>()
 
       const progress = (current?: string) => {
         // editor vẽ số ô skeleton còn lại = total - cursor (kể cả trang bị bỏ)
@@ -1004,7 +1005,8 @@ export function AiPanel({
 
       const landReady = async () => {
         while (cursor < total && results[cursor] !== undefined) {
-          const page = results[cursor]
+          const raw = results[cursor]
+          const page = raw ? dropRepeatedGraphic(raw, usedGraphics) : raw
           if (page) {
             if (onAppendSlide) await onAppendSlide(page, plan)
             else collected.push(page)
