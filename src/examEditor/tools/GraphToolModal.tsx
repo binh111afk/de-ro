@@ -8,11 +8,8 @@ import { Button, inputClass } from '@/components/ui'
 import { cn } from '@/lib/cn'
 import { PLOT_COLORS, autoYRange, parseExpr, renderPlotSvg, svgDataUrl, type Fn, type PlotSpec } from '@/lib/plot'
 
-export interface PlotImage {
-  svg: string
-  width: number
-  height: number
-}
+export type { ToolImage as PlotImage } from '@/lib/toolSpec'
+import type { ToolImage as PlotImage } from '@/lib/toolSpec'
 
 const MAX_CURVES = 4
 const fmtNum = (v: number) => String(v).replace('.', ',').replace('-', '−')

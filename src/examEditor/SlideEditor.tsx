@@ -9,8 +9,9 @@
 import { dialog } from '@/components/Dialog'
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { readPlotSpec, svgDataUrl, type PlotSpec } from '@/lib/plot'
-import { GraphToolModal } from './tools/GraphToolModal'
+import { svgDataUrl } from '@/lib/plot'
+import { readToolDoc, type ToolDoc } from '@/lib/toolSpec'
+import { ToolModal } from './tools/ToolModal'
 import { ColorPalette } from './ColorPalette'
 import { SelectionToolbar } from './SelectionToolbar'
 import { SlideSidePanel } from './SlideSidePanel'
@@ -2088,12 +2089,13 @@ function EditableEl({
   // ảnh đang được kéo qua khung: '' = file từ máy (chưa đọc được), null = không kéo
   const [dropPreview, setDropPreview] = useState<string | null>(null)
   // đồ thị đang mở lại để sửa (ảnh chèn từ công cụ Đồ thị hàm số)
-  const [plotEdit, setPlotEdit] = useState<PlotSpec | null>(null)
+  const [plotEdit, setPlotEdit] = useState<ToolDoc | null>(null)
   const plotModal =
     plotEdit &&
     createPortal(
-      <GraphToolModal
-        initial={plotEdit}
+      <ToolModal
+        kind={plotEdit.kind}
+        initial={plotEdit.spec}
         onClose={() => setPlotEdit(null)}
         onInsert={(img) => {
           // giữ bề rộng, chiều cao theo tỉ lệ ảnh mới trên khung 16:9
@@ -2604,8 +2606,8 @@ function EditableEl({
             className="h-full w-full object-cover"
             onDoubleClick={() => {
               // ảnh vẽ bằng công cụ Đồ thị: nhấp đúp mở lại modal để sửa
-              const spec = readPlotSpec(el.src)
-              if (spec) setPlotEdit(spec)
+              const doc = readToolDoc(el.src)
+              if (doc) setPlotEdit(doc)
             }}
           />
         ) : photoFrameClip(el.shape) ? (

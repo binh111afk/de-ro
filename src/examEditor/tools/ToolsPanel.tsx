@@ -4,19 +4,25 @@
  */
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
-import { ChartSpline } from 'lucide-react'
-import { GraphToolModal, type PlotImage } from './GraphToolModal'
+import { Box, ChartSpline, Table2, Triangle } from 'lucide-react'
+import type { ToolImage, ToolKind } from '@/lib/toolSpec'
+import { ToolModal } from './ToolModal'
 
-type ToolId = 'graph'
+type ToolId = ToolKind
 
 const SUBJECTS: Array<{ name: string; tools: Array<{ id: ToolId; label: string; desc: string; Icon: typeof ChartSpline }> }> = [
   {
     name: 'Toán',
-    tools: [{ id: 'graph', label: 'Đồ thị hàm số', desc: 'Vẽ y = f(x), nhiều hàm trên một hệ trục', Icon: ChartSpline }],
+    tools: [
+      { id: 'graph', label: 'Đồ thị hàm số', desc: 'Vẽ y = f(x), nhiều hàm trên một hệ trục', Icon: ChartSpline },
+      { id: 'vartable', label: 'Bảng biến thiên', desc: 'Tự dựng từ hàm số, sửa tay từng ô', Icon: Table2 },
+      { id: 'geo2d', label: 'Hình học phẳng', desc: 'Tam giác, tứ giác, đường tròn; đường cao, trung tuyến', Icon: Triangle },
+      { id: 'geo3d', label: 'Hình học không gian', desc: 'Hình chóp, lăng trụ, hộp, nón, trụ, cầu; nét khuất đứt', Icon: Box },
+    ],
   },
 ]
 
-export function ToolsPanel({ disabled, onInsertPlot }: { disabled?: boolean; onInsertPlot: (img: PlotImage) => void }) {
+export function ToolsPanel({ disabled, onInsertPlot }: { disabled?: boolean; onInsertPlot: (img: ToolImage) => void }) {
   const [open, setOpen] = useState<ToolId | null>(null)
 
   return (
@@ -47,9 +53,10 @@ export function ToolsPanel({ disabled, onInsertPlot }: { disabled?: boolean; onI
         </section>
       ))}
 
-      {open === 'graph' &&
+      {open &&
         createPortal(
-        <GraphToolModal
+        <ToolModal
+          kind={open}
           onClose={() => setOpen(null)}
           onInsert={(img) => {
             onInsertPlot(img)

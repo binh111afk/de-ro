@@ -25,11 +25,17 @@ import { AiPanel } from '@/examEditor/AiPanel'
 import { StartTab } from '@/examEditor/StartTab'
 import { NavPanel } from '@/examEditor/NavPanel'
 import { DocSelectionAi } from '@/examEditor/DocSelectionAi'
-import { GraphToolModal, type PlotImage } from '@/examEditor/tools/GraphToolModal'
-import { readPlotSpec, svgToPng, type PlotSpec } from '@/lib/plot'
+import { ToolModal } from '@/examEditor/tools/ToolModal'
+import { svgToPng } from '@/lib/plot'
+import { parseToolJson, readToolDoc, type ToolDoc, type ToolImage, type ToolKind } from '@/lib/toolSpec'
 
-/** bề rộng mặc định của ảnh đồ thị trong trang đề (px) */
-const PLOT_DOC_WIDTH = 300
+/** bề rộng mặc định (px) và chữ thay thế của ảnh công cụ trong trang đề */
+const TOOL_DOC_IMAGE: Record<ToolKind, { width: number; alt: string }> = {
+  graph: { width: 300, alt: 'Đồ thị hàm số' },
+  vartable: { width: 460, alt: 'Bảng biến thiên' },
+  geo2d: { width: 260, alt: 'Hình vẽ' },
+  geo3d: { width: 260, alt: 'Hình vẽ' },
+}
 
 /** chỗ đặt đồ thị: thay ảnh cũ, hoặc chèn thành đoạn mới tại vị trí giữa hai khối */
 type PlotTarget = { replace: number } | { after: number }
@@ -642,13 +648,15 @@ export default function ComposeDoc() {
    * `after`: đặt thành đoạn riêng (căn giữa) tại vị trí giữa hai khối, vd. ngay dưới câu hỏi.
    */
   const handleInsertPlot = useCallback(
-    async (img: PlotImage, target?: PlotTarget) => {
+    async (img: ToolImage, target?: PlotTarget) => {
       if (!editor || editor.isDestroyed) return
       try {
         const src = await svgToPng(img.svg, img.width, img.height)
         if (editor.isDestroyed) return
-        const plot = JSON.stringify(readPlotSpec(img.svg))
-        const attrs = { src, alt: 'Đồ thị hàm số', width: PLOT_DOC_WIDTH, plot }
+        const doc = readToolDoc(img.svg)
+        const plot = JSON.stringify(doc)
+        const look = TOOL_DOC_IMAGE[doc?.kind ?? 'graph']
+        const attrs = { src, alt: look.alt, width: look.width, plot }
         const node = target && 'replace' in target ? editor.state.doc.nodeAt(target.replace) : null
         if (target && 'replace' in target && node?.type.name === 'image') {
           editor.view.dispatch(editor.state.tr.setNodeMarkup(target.replace, undefined, { ...node.attrs, src, plot }))
@@ -670,19 +678,15 @@ export default function ComposeDoc() {
   )
 
   // nhấp đúp ảnh đồ thị trong trang → mở lại công cụ Đồ thị với cấu hình cũ
-  const [plotEdit, setPlotEdit] = useState<{ spec: PlotSpec; target: PlotTarget } | null>(null)
+  const [plotEdit, setPlotEdit] = useState<{ doc: ToolDoc; target: PlotTarget } | null>(null)
   useEffect(() => {
     if (!editor || editor.isDestroyed) return
     const dom = editor.view.dom
     const onDbl = (e: MouseEvent) => {
       const img = (e.target as HTMLElement).closest?.('img[data-plot]')
       if (!img) return
-      try {
-        const spec = JSON.parse(img.getAttribute('data-plot') ?? '') as PlotSpec
-        setPlotEdit({ spec, target: { replace: editor.view.posAtDOM(img.closest('.exam-image') ?? img, 0) } })
-      } catch {
-        /* attr hỏng: bỏ qua */
-      }
+      const doc = parseToolJson(img.getAttribute('data-plot'))
+      if (doc) setPlotEdit({ doc, target: { replace: editor.view.posAtDOM(img.closest('.exam-image') ?? img, 0) } })
     }
     dom.addEventListener('dblclick', onDbl)
     return () => dom.removeEventListener('dblclick', onDbl)
@@ -941,11 +945,12 @@ export default function ComposeDoc() {
           editor={editor}
           context={activeDoc ? `đề "${activeDoc.title}"` : undefined}
           onInsertPlot={(img, after) => void handleInsertPlot(img, { after })}
-          onEditPlot={(spec, after) => setPlotEdit({ spec, target: { after } })}
+          onEditPlot={(spec, after) => setPlotEdit({ doc: { kind: 'graph', spec }, target: { after } })}
         />
         {plotEdit && (
-          <GraphToolModal
-            initial={plotEdit.spec}
+          <ToolModal
+            kind={plotEdit.doc.kind}
+            initial={plotEdit.doc.spec}
             submitLabel={'after' in plotEdit.target ? 'Chèn đồ thị' : undefined}
             onClose={() => setPlotEdit(null)}
             onInsert={(img) => {

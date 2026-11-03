@@ -1,0 +1,115 @@
+/**
+ * Khung modal chung của các công cụ: tiêu đề, cột nhập bên trái, xem trước bên
+ * phải, chân có Huỷ / Chèn. Chặn sự kiện lan ra ngoài (modal có thể render qua
+ * portal từ trong phần tử slide).
+ */
+import { useEffect, type ReactNode } from 'react'
+import { X } from 'lucide-react'
+import { Button } from '@/components/ui'
+import { svgDataUrl } from '@/lib/plot'
+import type { ToolImage } from '@/lib/toolSpec'
+
+export function ToolShell({
+  title,
+  hint,
+  inputs,
+  preview,
+  emptyText = 'Chưa có gì để xem trước.',
+  submitLabel,
+  canSubmit,
+  onSubmit,
+  onClose,
+  inputsWidth = 340,
+}: {
+  title: string
+  hint?: string
+  inputs: ReactNode
+  preview: ToolImage | null
+  emptyText?: string
+  submitLabel: string
+  canSubmit: boolean
+  onSubmit: () => void
+  onClose: () => void
+  inputsWidth?: number
+}) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [onClose])
+
+  return (
+    <div
+      className="fixed inset-0 z-[120] flex items-center justify-center bg-ink/30 p-4"
+      onMouseDown={(e) => {
+        e.stopPropagation()
+        onClose()
+      }}
+      onDoubleClick={(e) => e.stopPropagation()}
+      onClick={(e) => e.stopPropagation()}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
+        className="anim-pop flex max-h-[92vh] w-full max-w-[980px] flex-col overflow-hidden rounded-[8px] bg-surface shadow-float md:h-[min(660px,92vh)]"
+        onMouseDown={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between gap-4 border-b border-line px-6 py-4">
+          <div className="min-w-0">
+            <h2 className="text-[17px] font-semibold text-ink">{title}</h2>
+            {hint && <p className="mt-0.5 text-[12.5px] text-ink-3">{hint}</p>}
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Đóng"
+            className="flex size-8 shrink-0 items-center justify-center rounded-[6px] text-ink-3 transition-colors hover:bg-sunken hover:text-ink"
+          >
+            <X className="size-4" />
+          </button>
+        </div>
+
+        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto md:flex-row md:overflow-hidden">
+          <div
+            className="flex shrink-0 flex-col gap-5 border-line p-5 md:w-[var(--inputs-w)] md:overflow-y-auto md:border-r"
+            style={{ ['--inputs-w' as string]: `${inputsWidth}px` }}
+          >
+            {inputs}
+          </div>
+          <div className="flex h-[min(56vh,520px)] min-h-0 min-w-0 flex-1 items-center justify-center bg-paper-2 p-5 md:h-auto">
+            {preview ? (
+              <img
+                src={svgDataUrl(preview.svg)}
+                alt="Xem trước"
+                className="max-h-full max-w-full rounded-[4px] border border-line bg-white object-contain"
+              />
+            ) : (
+              <p className="text-[13px] text-ink-3">{emptyText}</p>
+            )}
+          </div>
+        </div>
+
+        <div className="flex items-center justify-end gap-2 border-t border-line px-6 py-3.5">
+          <Button variant="ghost" size="sm" onClick={onClose}>
+            Huỷ
+          </Button>
+          <Button variant="clay" size="sm" disabled={!canSubmit} onClick={onSubmit}>
+            {submitLabel}
+          </Button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export const sectionTitle = 'mb-2 text-[12px] font-semibold uppercase tracking-[0.04em] text-ink-3'
+
+export function Check({ checked, onChange, children }: { checked: boolean; onChange: (v: boolean) => void; children: ReactNode }) {
+  return (
+    <label className="mt-2 flex cursor-pointer items-center gap-2 text-[13.5px] text-ink-2">
+      <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="size-4 accent-[var(--color-clay)]" />
+      {children}
+    </label>
+  )
+}
