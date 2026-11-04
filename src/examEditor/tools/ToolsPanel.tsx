@@ -7,7 +7,7 @@ import { createPortal } from 'react-dom'
 import { Box, ChartColumn, ChartSpline, Grid3x3, SquarePlus, Table2, Triangle, Zap } from 'lucide-react'
 import type { ToolImage, ToolKind } from '@/lib/toolSpec'
 import { ToolModal } from './ToolModal'
-import { Dropdown } from '../Dropdown'
+import { cn } from '@/lib/cn'
 
 type ToolId = ToolKind
 
@@ -51,13 +51,24 @@ export function ToolsPanel({ disabled, onInsertPlot }: { disabled?: boolean; onI
 
   return (
     <div className="flex flex-col gap-3 py-3">
-      <Dropdown
-        value={shown[0].name}
-        options={SUBJECTS.map((s) => ({ value: s.name, label: s.name }))}
-        onPick={pick}
-        ariaLabel="Chọn môn"
-        className="w-full"
-      />
+      <div role="tablist" aria-label="Chọn môn" className="flex gap-1 rounded-[8px] bg-paper-2 p-1">
+        {SUBJECTS.map((s) => (
+          <button
+            key={s.name}
+            type="button"
+            role="tab"
+            aria-selected={s.name === shown[0].name}
+            onClick={() => pick(s.name)}
+            className={cn(
+              'flex-1 rounded-[6px] px-2 py-1.5 text-[13px] font-medium transition-colors',
+              s.name === shown[0].name ? 'bg-white text-clay shadow-sm' : 'text-ink-3 hover:text-ink',
+            )}
+          >
+            {s.name}
+            <span className="ml-1 text-[11.5px] font-normal opacity-60">{s.tools.length}</span>
+          </button>
+        ))}
+      </div>
       {shown.map((s) => (
         <section key={s.name}>
           <ul className="flex flex-col gap-1">
