@@ -9,8 +9,9 @@ import type { Geo2dSpec, Geo3dSpec } from '@/lib/geometry'
 import { GraphToolModal } from './GraphToolModal'
 import { VarTableModal } from './VarTableModal'
 import { Geo2dModal, Geo3dModal } from './GeometryModal'
-import { CircuitModal, InclineModal, MotionModal, OxyModal, SignTableModal, StatsModal } from './MoreToolModals'
+import { ChemGraphModal, CircuitModal, ElectronModal, InclineModal, MotionModal, StructModal, OxyModal, SignTableModal, StatsModal } from './MoreToolModals'
 import type { InclineSpec, MotionSpec } from '@/lib/physics'
+import type { ChemGraphSpec, ElectronSpec, StructSpec } from '@/lib/chem'
 import type { SignTableSpec } from '@/lib/signTable'
 import type { OxySpec } from '@/lib/oxy'
 import type { StatsSpec } from '@/lib/stats'
@@ -51,5 +52,11 @@ export function ToolModal({
       return <MotionModal initial={initial as MotionSpec | null | undefined} {...common} />
     case 'incline':
       return <InclineModal initial={initial as InclineSpec | null | undefined} {...common} />
+    case 'electron':
+      return <ElectronModal initial={initial as ElectronSpec | null | undefined} {...common} />
+    case 'struct':
+      return <StructModal initial={initial as StructSpec | null | undefined} {...common} />
+    case 'chemgraph':
+      return <ChemGraphModal initial={initial as ChemGraphSpec | null | undefined} {...common} />
   }
 }

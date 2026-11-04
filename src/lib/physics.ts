@@ -59,7 +59,7 @@ export function renderMotionSvg(spec: MotionSpec, desc: string): { svg: string; 
   let b = ARROW
   b += `<path d="M${left} ${f1(y0)}H${right + 18}" stroke="#111" stroke-width="1.3" marker-end="url(#pharr)"/>`
   b += `<path d="M${left} ${bottom + 6}V${top - 16}" stroke="#111" stroke-width="1.3" marker-end="url(#pharr)"/>`
-  b += `<text x="${right + 20}" y="${f1(y0 + 18)}" ${FAM} font-size="14" font-style="italic" text-anchor="end">${esc(spec.tName)}</text>`
+  b += `<text x="${right + 20}" y="${f1(y0 - 8)}" ${FAM} font-size="14" font-style="italic" text-anchor="end">${esc(spec.tName)}</text>`
   b += `<text x="${left + 8}" y="${top - 10}" ${FAM} font-size="14" font-style="italic">${esc(spec.yName)}</text>`
   b += `<text x="${left - 6}" y="${f1(y0 + 15)}" ${FAM} font-size="13" text-anchor="end">O</text>`
   // vạch số: các giá trị tại điểm gãy (đúng số liệu đề), không thì chia đều

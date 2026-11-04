@@ -27,6 +27,9 @@ const TOOL_NAME: Record<ToolDoc['kind'], string> = {
   circuit: 'Mạch điện',
   motion: 'Đồ thị chuyển động',
   incline: 'Mặt phẳng nghiêng',
+  electron: 'Cấu hình electron',
+  struct: 'Công thức cấu tạo',
+  chemgraph: 'Đồ thị số mol',
 }
 const PLOT_ASK = 'Vẽ hình minh hoạ cho đề này'
 const PANEL_W = 340

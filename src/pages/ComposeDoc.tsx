@@ -41,6 +41,9 @@ const TOOL_DOC_IMAGE: Record<ToolKind, { width: number; alt: string }> = {
   circuit: { width: 360, alt: 'Mạch điện' },
   motion: { width: 320, alt: 'Đồ thị chuyển động' },
   incline: { width: 300, alt: 'Mặt phẳng nghiêng' },
+  electron: { width: 360, alt: 'Cấu hình electron' },
+  struct: { width: 280, alt: 'Công thức cấu tạo' },
+  chemgraph: { width: 320, alt: 'Đồ thị số mol' },
 }
 
 /** chỗ đặt đồ thị: thay ảnh cũ, hoặc chèn thành đoạn mới tại vị trí giữa hai khối */

@@ -13,6 +13,7 @@ import { OXY_HELP, type OxySpec } from '@/lib/oxy'
 import type { ChartKind, StatsSpec } from '@/lib/stats'
 import { CIRCUIT_HELP, type CircuitSpec } from '@/lib/circuit'
 import type { Dir, InclineSpec, MotionSpec } from '@/lib/physics'
+import type { ChemGraphSpec, ElectronSpec, StructSpec } from '@/lib/chem'
 import { Check, ToolShell, sectionTitle } from './ToolShell'
 
 type Props<S> = { initial?: S | null; submitLabel?: string; onClose: () => void; onInsert: (img: ToolImage) => void }
@@ -590,6 +591,151 @@ export function InclineModal({ initial, submitLabel, onClose, onInsert }: Props<
       inputsWidth={340}
       preview={preview}
       submitLabel={submitLabel ?? (initial ? 'Cập nhật hình' : 'Chèn hình')}
+      canSubmit={Boolean(preview) && !error}
+      onSubmit={() => preview && onInsert(preview)}
+      onClose={onClose}
+    />
+  )
+}
+
+/* ------------------------------------------------------------------ *
+ * Hoá học: cấu hình electron, công thức cấu tạo, đồ thị số mol
+ * ------------------------------------------------------------------ */
+
+export function ElectronModal({ initial, submitLabel, onClose, onInsert }: Props<ElectronSpec>) {
+  const [spec, setSpec] = useState<ElectronSpec>(initial ?? { element: 'Fe', valenceOnly: false })
+  const set = (p: Partial<ElectronSpec>) => setSpec((s) => ({ ...s, ...p }))
+  const doc = useMemo((): ToolDoc => ({ kind: 'electron', spec }), [spec])
+  const { preview, error } = useRender(doc)
+  const inputs = (
+    <>
+      <section>
+        <h3 className={sectionTitle}>Nguyên tố hoặc ion</h3>
+        <input className={cn(inputClass, 'h-9')} value={spec.element} onChange={(e) => set({ element: e.target.value })} aria-label="Nguyên tố" placeholder="Fe, 26, Fe3+, Cl-" />
+        <p className="mt-1.5 text-[12px] leading-snug text-ink-3">Kí hiệu (Fe), số hiệu (26) hoặc ion (Fe3+, Cl-). Có từ H đến Ba; đã tính Cr, Cu bán bão hoà.</p>
+        {error ? <p role="alert" className="mt-1.5 text-[12px] text-clay-deep">{error}</p> : null}
+      </section>
+      <section>
+        <Check checked={spec.valenceOnly} onChange={(valenceOnly) => set({ valenceOnly })}>Chỉ vẽ ô orbital lớp ngoài cùng</Check>
+      </section>
+    </>
+  )
+  return (
+    <ToolShell
+      title="Cấu hình electron"
+      hint="Dòng cấu hình và ô orbital, điền theo quy tắc Hund"
+      inputs={inputs}
+      inputsWidth={320}
+      preview={preview}
+      submitLabel={submitLabel ?? (initial ? 'Cập nhật hình' : 'Chèn hình')}
+      canSubmit={Boolean(preview) && !error}
+      onSubmit={() => preview && onInsert(preview)}
+      onClose={onClose}
+    />
+  )
+}
+
+const STRUCT_HELP: HelpGroups = [
+  {
+    group: 'Mạch chính',
+    items: [
+      { code: 'CH3-CH2-OH', what: 'Liên kết đơn: dấu gạch ngang' },
+      { code: 'CH2=CH-CH3', what: 'Liên kết đôi: dấu bằng' },
+      { code: 'CH≡C-CH3  hoặc  CH#C-CH3', what: 'Liên kết ba' },
+    ],
+  },
+  {
+    group: 'Nhánh',
+    items: [
+      { code: 'CH3-CH(CH3)-CH3', what: 'Nhánh trong ngoặc, vẽ dọc dưới nhóm' },
+      { code: 'CH3-C(CH3)(CH3)-CH3', what: 'Hai nhánh: một dưới, một trên' },
+      { code: 'CH3-C(=O)-OH', what: 'Nhánh nối bằng liên kết đôi' },
+      { code: 'CH3-CH(CH2-CH3)-CH3', what: 'Nhánh nhiều nhóm' },
+    ],
+  },
+]
+
+export function StructModal({ initial, submitLabel, onClose, onInsert }: Props<StructSpec>) {
+  const [spec, setSpec] = useState<StructSpec>(initial ?? { formula: 'CH3-CH(CH3)-CH2-CH(OH)-CH3' })
+  const doc = useMemo((): ToolDoc => ({ kind: 'struct', spec }), [spec])
+  const { preview, error } = useRender(doc)
+  const inputs = (
+    <TextBlock
+      title="Công thức"
+      help={STRUCT_HELP}
+      intro="Công thức cấu tạo thu gọn, mạch hở. Chữ số tự thành chỉ số dưới."
+      value={spec.formula}
+      onChange={(formula) => setSpec({ formula })}
+      rows={3}
+      errors={error ? [error] : []}
+      label="Công thức cấu tạo"
+    />
+  )
+  return (
+    <ToolShell
+      title="Công thức cấu tạo"
+      hint="Mạch hở có nhánh, liên kết đơn / đôi / ba"
+      inputs={inputs}
+      inputsWidth={360}
+      preview={preview}
+      submitLabel={submitLabel ?? (initial ? 'Cập nhật hình' : 'Chèn hình')}
+      canSubmit={Boolean(preview) && !error}
+      onSubmit={() => preview && onInsert(preview)}
+      onClose={onClose}
+    />
+  )
+}
+
+const CHEM_GRAPH_HELP: HelpGroups = [
+  {
+    group: 'Điểm',
+    items: [
+      { code: '(0; 0) (0,3; 0,3) (0,6; 0)', what: 'Điểm (x; y), nối gấp khúc; số thập phân dùng dấu phẩy' },
+      { code: 'Trục: n CO2, n↓', what: 'Chữ số sau chữ cái tự thành chỉ số dưới' },
+    ],
+  },
+]
+
+export function ChemGraphModal({ initial, submitLabel, onClose, onInsert }: Props<ChemGraphSpec>) {
+  const [spec, setSpec] = useState<ChemGraphSpec>(initial ?? { xName: 'n CO2', yName: 'n CaCO3', points: '(0; 0) (0,3; 0,3) (0,6; 0)', dashed: true })
+  const set = (p: Partial<ChemGraphSpec>) => setSpec((s) => ({ ...s, ...p }))
+  const doc = useMemo((): ToolDoc => ({ kind: 'chemgraph', spec }), [spec])
+  const { preview, error } = useRender(doc)
+  const inputs = (
+    <>
+      <TextBlock
+        title="Các điểm"
+        help={CHEM_GRAPH_HELP}
+        intro="Mỗi điểm (x; y), x tăng dần. Vd. sục CO₂ vào Ca(OH)₂: lên rồi xuống."
+        value={spec.points}
+        onChange={(points) => set({ points })}
+        rows={3}
+        errors={error ? [error] : []}
+        label="Các điểm của đồ thị"
+      />
+      <section className="grid grid-cols-2 gap-2">
+        <label className="text-[12.5px] text-ink-2">
+          Trục ngang
+          <input className={cn(inputClass, 'mt-1 h-9')} value={spec.xName} onChange={(e) => set({ xName: e.target.value })} />
+        </label>
+        <label className="text-[12.5px] text-ink-2">
+          Trục dọc
+          <input className={cn(inputClass, 'mt-1 h-9')} value={spec.yName} onChange={(e) => set({ yName: e.target.value })} />
+        </label>
+      </section>
+      <section>
+        <Check checked={spec.dashed} onChange={(dashed) => set({ dashed })}>Nét đứt chiếu xuống hai trục</Check>
+      </section>
+    </>
+  )
+  return (
+    <ToolShell
+      title="Đồ thị số mol"
+      hint="Kết tủa / khí theo lượng chất thêm vào; số trên trục lấy đúng các điểm đã gõ"
+      inputs={inputs}
+      inputsWidth={360}
+      preview={preview}
+      submitLabel={submitLabel ?? (initial ? 'Cập nhật đồ thị' : 'Chèn đồ thị')}
       canSubmit={Boolean(preview) && !error}
       onSubmit={() => preview && onInsert(preview)}
       onClose={onClose}
