@@ -54,10 +54,19 @@ export function listCommunityDocs(): Promise<CommunityRow[]> {
 }
 
 /** Các đề người đang đăng nhập đã xuất bản (cả đề công khai và đề chỉ có link), mới nhất trước. */
-export async function listMyPublished(): Promise<CommunityRow[]> {
+export async function listMyPublished(page?: { limit: number; offset: number }): Promise<CommunityRow[]> {
   const s = await currentSession()
   if (!s) return []
-  return rest<CommunityRow[]>(`/community_exams?select=${COLUMNS}&owner_id=eq.${s.user.id}&order=created_at.desc`, { token: s.access_token })
+  const range = page ? `&limit=${page.limit}&offset=${page.offset}` : ''
+  return rest<CommunityRow[]>(`/community_exams?select=${COLUMNS}&owner_id=eq.${s.user.id}&order=created_at.desc${range}`, { token: s.access_token })
+}
+
+/** Số đề đã xuất bản (chỉ tải cột id) — để chia trang mà không tải cả danh sách. */
+export async function countMyPublished(): Promise<number> {
+  const s = await currentSession()
+  if (!s) return 0
+  const ids = await rest<Array<{ id: string }>>(`/community_exams?select=id&owner_id=eq.${s.user.id}`, { token: s.access_token })
+  return ids.length
 }
 
 /** Nội dung đầy đủ của một đề đã đăng (khối ExamDoc), tải khi người dùng mở đề. */

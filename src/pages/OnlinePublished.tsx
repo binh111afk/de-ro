@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Pager, usePaged } from '@/components/Pager'
+import { Pager } from '@/components/Pager'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ArrowLeft, BarChart3, Check, Clock, Crown, Globe2, Link2, Lock, Sparkles, Trash2 } from 'lucide-react'
 import { CopyLink } from '@/components/CopyLink'
 import { dialog } from '@/components/Dialog'
 import { Badge, Button, EmptyState, SkeletonCard } from '@/components/ui'
 import { listAttempts, summarize, type Attempt, type ExamStats, type Student } from '@/lib/attempts'
-import { listMyPublished, setListed, unpublish, type CommunityRow } from '@/lib/community'
+import { countMyPublished, listMyPublished, setListed, unpublish, type CommunityRow } from '@/lib/community'
 import { cn } from '@/lib/cn'
 import { formatPoints } from '@/lib/math'
 import { shareUrl } from '@/lib/onlinePublish'
@@ -15,6 +15,7 @@ import { useOnline } from '@/store/online'
 
 const fmt = (n: number) => (Math.round(n * 10) / 10).toString().replace('.', ',')
 const mmss = (s: number) => `${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, '0')}`
+const PAGE = 12
 const BAND_LABEL = ['Dưới 5', '5 – dưới 6,5', '6,5 – dưới 8', 'Từ 8']
 const BAND_COLOR = ['bg-clay', 'bg-honey', 'bg-sage/60', 'bg-sage']
 
@@ -25,17 +26,25 @@ export function PublishedPanel() {
   const items = useOnline((s) => s.items)
   const updateItem = useOnline((s) => s.update)
   const [rows, setRows] = useState<CommunityRow[] | null>(null)
-  const paged = usePaged(rows ?? [], 12)
+  // tải theo trang: chỉ 12 đề và lượt làm bài của 12 đề đó
+  const [page, setPage] = useState(1)
+  const [total, setTotal] = useState(0)
+  const pages = Math.max(1, Math.ceil(total / PAGE))
   const [attempts, setAttempts] = useState<Attempt[]>([])
   const [error, setError] = useState<string | null>(null)
   const [busyId, setBusyId] = useState<string | null>(null)
   const userId = session?.user.id
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (p: number) => {
     setError(null)
     try {
-      const list = await listMyPublished()
+      const n = await countMyPublished()
+      const last = Math.max(1, Math.ceil(n / PAGE))
+      const cur = Math.min(p, last)
+      const list = await listMyPublished({ limit: PAGE, offset: (cur - 1) * PAGE })
       setAttempts(await listAttempts(list.map((r) => r.id)))
+      setTotal(n)
+      if (cur !== p) setPage(cur)
       setRows(list)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Không tải được danh sách, thử lại sau.')
@@ -44,8 +53,14 @@ export function PublishedPanel() {
   }, [])
 
   useEffect(() => {
-    if (userId) void load()
-  }, [userId, load])
+    if (userId) void load(page)
+  }, [userId, load, page])
+
+  const go = (p: number) => {
+    setRows(null)
+    setPage(p)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
 
   const stats = useMemo(() => {
     const by = new Map<string, Attempt[]>()
@@ -77,6 +92,7 @@ export function PublishedPanel() {
     try {
       await unpublish(row.id)
       setRows((rs) => rs?.filter((r) => r.id !== row.id) ?? null)
+      void load(page) // kéo đề của trang sau lên cho đủ trang
       for (const it of items) if (it.publishedId === row.id) updateItem(it.id, { publishedId: undefined, publishedListed: undefined })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Không gỡ được, thử lại sau.')
@@ -120,7 +136,7 @@ export function PublishedPanel() {
         />
       ) : (
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {paged.items.map((row, i) => (
+          {rows.map((row, i) => (
             <PublishedCard
               key={row.id}
               row={row}
@@ -136,7 +152,7 @@ export function PublishedPanel() {
           ))}
         </div>
       )}
-      <Pager {...paged} />
+      <Pager page={page} pages={pages} go={go} />
     </>
   )
 }
