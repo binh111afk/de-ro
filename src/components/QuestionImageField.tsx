@@ -1,5 +1,10 @@
-import { useRef } from 'react'
-import { ImagePlus, Trash2 } from 'lucide-react'
+import { useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
+import { ImagePlus, PencilRuler, Trash2, X } from 'lucide-react'
+import { ToolsPanel } from '@/examEditor/tools/ToolsPanel'
+import { ToolModal } from '@/examEditor/tools/ToolModal'
+import { parseToolJson, readToolDoc, type ToolImage } from '@/lib/toolSpec'
+import { svgToPng } from '@/lib/plot'
 import type { QuestionImage } from '@/data/types'
 import { cn } from '@/lib/cn'
 
@@ -27,6 +32,22 @@ export function QuestionImageField({
 }) {
   const input = useRef<HTMLInputElement>(null)
   const pos = image?.position ?? 'bottom'
+  // 'pick': chọn công cụ; 'edit': mở lại công cụ của ảnh đang có
+  const [tool, setTool] = useState<null | 'pick' | 'edit'>(null)
+  const editing = image?.plot ? parseToolJson(image.plot) : null
+  const applyTool = async (img: ToolImage) => {
+    setTool(null)
+    const src = await svgToPng(img.svg, img.width, img.height)
+    const doc = readToolDoc(img.svg)
+    onChange({
+      ...(image ?? {}),
+      src,
+      plot: doc ? JSON.stringify(doc) : undefined,
+      // ảnh mới: bề rộng theo cỡ hình (khung câu hỏi ~700px)
+      width: image?.width ?? Math.min(100, Math.max(30, Math.round((img.width / 700) * 100 / 5) * 5)),
+    })
+  }
+  const toolBtn = 'flex items-center justify-center gap-2 rounded-[8px] border border-dashed border-line-2 px-4 py-3 text-[13px] font-semibold text-ink-3 transition-colors hover:bg-sunken/60 hover:text-ink disabled:opacity-50'
   return (
     <div className="mt-3">
       <input
@@ -60,6 +81,16 @@ export function QuestionImageField({
                 </button>
               ))}
             </div>
+            {editing && (
+              <button
+                type="button"
+                onClick={() => setTool('edit')}
+                className="flex h-9 items-center gap-1.5 rounded-[6px] bg-white px-3 text-[12.5px] font-semibold text-ink-2 transition-colors hover:text-clay"
+              >
+                <PencilRuler className="size-4" />
+                Sửa hình
+              </button>
+            )}
             <button
               type="button"
               aria-label="Xoá ảnh"
@@ -85,16 +116,44 @@ export function QuestionImageField({
           </label>
         </div>
       ) : (
-        <button
-          type="button"
-          disabled={busy}
-          onClick={() => input.current?.click()}
-          className="flex w-full items-center justify-center gap-2 rounded-[8px] border border-dashed border-line-2 px-4 py-3 text-[13px] font-semibold text-ink-3 transition-colors hover:bg-sunken/60 hover:text-ink disabled:opacity-50"
-        >
-          <ImagePlus className="size-4" />
-          {busy ? 'Đang xử lý ảnh…' : 'Thêm ảnh cho câu hỏi (hoặc dán ảnh bằng Ctrl+V vào ô đề bài)'}
-        </button>
+        <div className="flex gap-2">
+          <button type="button" disabled={busy} onClick={() => input.current?.click()} className={cn(toolBtn, 'flex-1')}>
+            <ImagePlus className="size-4" />
+            {busy ? 'Đang xử lý ảnh…' : 'Thêm ảnh (hoặc Ctrl+V vào ô đề bài)'}
+          </button>
+          <button type="button" disabled={busy} onClick={() => setTool('pick')} className={toolBtn}>
+            <PencilRuler className="size-4" />
+            Vẽ bằng công cụ
+          </button>
+        </div>
       )}
+      {tool === 'edit' && editing &&
+        createPortal(
+          <ToolModal kind={editing.kind} initial={editing.spec} submitLabel="Cập nhật hình" onClose={() => setTool(null)} onInsert={(img) => void applyTool(img)} />,
+          document.body,
+        )}
+      {tool === 'pick' &&
+        createPortal(
+          <div className="fixed inset-0 z-[110] flex items-center justify-center bg-ink/30 p-4" onMouseDown={() => setTool(null)}>
+            <div
+              role="dialog"
+              aria-label="Chọn công cụ vẽ"
+              className="anim-pop flex max-h-[85vh] w-full max-w-[420px] flex-col overflow-hidden rounded-[8px] bg-surface shadow-float"
+              onMouseDown={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between border-b border-line px-4 py-3">
+                <h2 className="text-[15px] font-semibold text-ink">Vẽ bằng công cụ</h2>
+                <button type="button" aria-label="Đóng" onClick={() => setTool(null)} className="rounded p-1 text-ink-3 hover:bg-sunken hover:text-ink">
+                  <X className="size-4" />
+                </button>
+              </div>
+              <div className="overflow-y-auto px-3">
+                <ToolsPanel onInsertPlot={(img) => void applyTool(img)} />
+              </div>
+            </div>
+          </div>,
+          document.body,
+        )}
       {error ? <p className="mt-1.5 text-[12.5px] font-medium text-clay">{error}</p> : null}
     </div>
   )

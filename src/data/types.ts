@@ -25,6 +25,8 @@ export interface QuestionImage {
   /** bề rộng hiển thị, % của khung câu hỏi (thiếu = 60) */
   width?: number
   alt?: string
+  /** ảnh vẽ bằng tab Công cụ: cấu hình JSON {kind, spec} để mở lại sửa */
+  plot?: string
 }
 
 export interface Question {

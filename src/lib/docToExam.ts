@@ -17,11 +17,11 @@ function promptImage(...parts: Array<RichText | undefined>): QuestionImage | und
     if (!rt || typeof rt === 'string') continue
     const at = rt.findIndex((sp) => sp.image)
     if (at < 0) continue
-    const { src, alt, width } = rt[at].image!
+    const { src, alt, width, plot } = rt[at].image!
     const first = !rt.slice(0, at).some((sp) => sp.text.trim())
     // width trong trang đề là px; đề tương tác dùng % — quy theo bề ngang chữ trang A4 (~643px)
     const pct = width ? Math.min(100, Math.max(10, Math.round((width / 643) * 100))) : undefined
-    return { src, position: first ? 'top' : 'bottom', ...(alt ? { alt } : {}), ...(pct ? { width: pct } : {}) }
+    return { src, position: first ? 'top' : 'bottom', ...(alt ? { alt } : {}), ...(plot ? { plot } : {}), ...(pct ? { width: pct } : {}) }
   }
   return undefined
 }
