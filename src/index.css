@@ -571,6 +571,28 @@
     font-weight: 700;
   }
 
+  /* đề bài mở đầu bằng ảnh (class do leadImage.ts gắn): ảnh một dòng riêng phía
+     trên, nhãn "Câu N." trôi trái ở dòng dưới cùng chữ đề bài — giống bản Word */
+  .doc-content div.exam-lead-image::before {
+    content: none;
+  }
+  .doc-content div.exam-lead-image > .exam-image:first-of-type {
+    display: block;
+    width: fit-content;
+  }
+  .doc-content div.exam-lead-image > .exam-image:first-of-type::after {
+    float: left;
+    margin-right: 0.25em;
+    line-height: var(--doc-line-height, 1.5);
+    font-weight: 700;
+  }
+  .doc-content div[data-exam-node='examQuestionPrompt'].exam-lead-image > .exam-image:first-of-type::after {
+    content: 'Câu ' counter(exam-q) '. ';
+  }
+  .doc-content div[data-exam-node='examEssayPrompt'].exam-lead-image > .exam-image:first-of-type::after {
+    content: 'Bài ' counter(exam-essay) '. ';
+  }
+
   /* nhãn cột "Năm học:", "Môn:", "Ý" của khối thông tin / thang điểm */
   .doc-content div[data-exam-node='examMetaRow']::before {
     content: attr(data-label) ': ';
@@ -584,6 +606,11 @@
   .doc-content div[data-exam-node='examQuestionPrompt'],
   .doc-content div[data-exam-node='examEssayPrompt'] {
     text-align: justify;
+  }
+  /* câu đã chọn căn lề (trái/giữa/phải) thì đề bài theo đúng căn đó, như bản Word */
+  .doc-content div[data-exam-node='examQuestion'][style*='text-align'] > div[data-exam-node='examQuestionPrompt'],
+  .doc-content div[data-exam-node='examEssay'][style*='text-align'] > div[data-exam-node='examEssayPrompt'] {
+    text-align: inherit;
   }
   /* Câu trắc nghiệm: lời dẫn chiếm cả hàng, phương án chia 2 cột bằng grid.
      Dùng grid thay inline-block 50% để cột luôn đều và không bị đẩy xuống

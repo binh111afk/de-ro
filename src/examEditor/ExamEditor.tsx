@@ -31,6 +31,7 @@ import { EXAM_MARKS, EXAM_NODES, TEXT_CONTENT_NODES, BaseParagraphNode } from '.
 import { BLOCK_TEMPLATE_MIME } from './templates'
 import { createSearchPlugin } from './find'
 import { ChoiceLayoutExtension, choiceColsKey, measureChoiceColumns } from './choiceLayout'
+import { LeadImageExtension } from './leadImage'
 import { PaginationExtension, pageGapsKey, computePagePlan } from './pagination'
 
 /** map rỗng dùng chung — tránh tạo Map mới mỗi lượt đo. */
@@ -131,6 +132,7 @@ export function ExamEditor({ content, onChange, onReady, pageSetup, readOnly }: 
       BaseParagraphNode,
       createSearchPlugin(),
       ChoiceLayoutExtension,
+      LeadImageExtension,
       PaginationExtension,
       DeleteObjects,
     ],

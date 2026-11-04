@@ -270,6 +270,16 @@ function sideImage(text: RichText, pos: 'left' | 'right' | undefined) {
   return { pos, imgs, rest: spans.filter((s) => !imgs.includes(s as Span)) as RichText }
 }
 
+/** Ảnh đứng đầu đề bài (trước mọi chữ): tách ra đặt dòng riêng phía trên "Câu N." — khớp trình soạn */
+function leadImage(text: RichText) {
+  if (typeof text === 'string') return null
+  const spans = text as Array<Span | string>
+  const at = spans.findIndex((s) => (typeof s === 'string' ? s.trim() !== '' : !s.image && s.text.trim() !== ''))
+  if (at <= 0) return null
+  const imgs = spans.slice(0, at).filter((s): s is Span => typeof s !== 'string' && !!s.image && !!decodeImage(s.image.src))
+  return imgs.length ? { imgs, rest: spans.slice(at) as RichText } : null
+}
+
 /** Bảng 2 ô không viền: đề bài một bên, ảnh một bên. */
 function sideTable(pos: 'left' | 'right', textParas: Paragraph[], imgs: Span[]) {
   const px = Math.min(Math.max(...imgs.map((s) => s.image?.width ?? 0), 1) || 1, IMG_MAX_PX)
@@ -386,7 +396,9 @@ function blockToDocx(b: ExamBlock, ctx: Ctx): Out[] {
     case 'question': {
       ctx.q += 1
       const side = sideImage(b.text, b.imagePosition)
-      const headText = side ? side.rest : b.text
+      const lead = side ? null : leadImage(b.text)
+      const headText = side ? side.rest : lead ? lead.rest : b.text
+      const pre: Out[] = lead ? [para(lead.imgs.flatMap((s) => imageRun(s.image!)), { spacing: { before: 120 }, keepNext: true })] : []
       const headPara = para([new TextRun({ text: `Câu ${ctx.q}. `, bold: true }), ...runs(headText)], {
         alignment: justify(headText),
         spacing: { before: 120, after: 45 },
@@ -398,6 +410,7 @@ function blockToDocx(b: ExamBlock, ctx: Ctx): Out[] {
       if (b.kind === 'short') {
         const box = 28 * PX
         return [
+          ...pre,
           head,
           new Table({
             rows: [
@@ -414,7 +427,7 @@ function blockToDocx(b: ExamBlock, ctx: Ctx): Out[] {
           para([], { spacing: { after: 60 } }),
         ]
       }
-      if (!b.options.length) return [head]
+      if (!b.options.length) return [...pre, head]
       // đúng/sai: mỗi ý một dòng, nhãn "a)"; trắc nghiệm: 4/3/2/1 cột theo độ dài như trên màn hình, nhãn "A."
       const tf = b.kind === 'tf'
       const cols = tf ? 1 : estimateChoiceCols(b.options.map((o) => o.text))
@@ -424,19 +437,21 @@ function blockToDocx(b: ExamBlock, ctx: Ctx): Out[] {
       const rows = chunk(b.options, cols).map(
         (row) => new TableRow({ children: Array.from({ length: cols }, (_, i) => (row[i] ? cell(row[i]) : plainCell(w, []))) }),
       )
-      return [head, borderless(rows, Array(cols).fill(w), OPT_INDENT), para([], { spacing: { after: 30 } })]
+      return [...pre, head, borderless(rows, Array(cols).fill(w), OPT_INDENT), para([], { spacing: { after: 30 } })]
     }
 
     case 'essay': {
       ctx.essay += 1
       const side = sideImage(b.text, b.imagePosition)
-      const headText = side ? side.rest : b.text
+      const lead = side ? null : leadImage(b.text)
+      const headText = side ? side.rest : lead ? lead.rest : b.text
+      const pre: Out[] = lead ? [para(lead.imgs.flatMap((s) => imageRun(s.image!)), { spacing: { before: 120 }, keepNext: true })] : []
       const headPara = para([new TextRun({ text: `Bài ${ctx.essay}${b.score ? ` (${fmt(b.score)} điểm)` : ''}. `, bold: true }), ...runs(headText)], {
         alignment: justify(headText),
         spacing: { before: 120, after: 45 },
         ...fmtOpts(b.format),
       })
-      const out: Out[] = [side ? sideTable(side.pos, [headPara], side.imgs) : headPara]
+      const out: Out[] = [...pre, side ? sideTable(side.pos, [headPara], side.imgs) : headPara]
       for (const s of b.sub ?? []) out.push(para(runs(s), { indent: { left: OPT_INDENT }, spacing: { after: 45 } }))
       return out
     }
