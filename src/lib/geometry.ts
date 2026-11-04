@@ -30,6 +30,8 @@ export interface Geo2dSpec {
   circumcircle: boolean
   /** kí hiệu góc vuông, cạnh bằng nhau */
   marks: boolean
+  /** dựng thêm (xem geoConstruct.ts), mỗi dòng một lệnh */
+  extras?: string
 }
 
 export type Geo3dShape =
@@ -58,7 +60,20 @@ export interface Geo3dSpec {
   marks: boolean
   /** tỉ lệ chiều cao, 0.6–1.6 */
   tall: number
+  /** dựng thêm (xem geoConstruct.ts), mỗi dòng một lệnh */
+  extras?: string
 }
+
+import { construct as construct0 } from './geoConstruct'
+
+/** lỗi dựng thêm của lần vẽ gần nhất (modal hiện cho giáo viên) */
+let lastErrors: Array<{ line: number; msg: string }> = []
+const construct: typeof construct0 = (t, k) => {
+  const c = construct0(t, k)
+  lastErrors = c.errors
+  return c
+}
+type GeoImage = { svg: string; width: number; height: number; errors?: Array<{ line: number; msg: string }> }
 
 type P2 = [number, number]
 type P3 = [number, number, number]
@@ -234,12 +249,19 @@ function shape2d(shape: Geo2dShape): P2[] {
   }
 }
 
-export function renderGeo2dSvg(spec: Geo2dSpec, desc: string): { svg: string; width: number; height: number } {
+export function renderGeo2dSvg(spec: Geo2dSpec, desc: string): GeoImage {
+  lastErrors = []
+  return { ...renderGeo2d(spec, desc), errors: lastErrors }
+}
+
+function renderGeo2d(spec: Geo2dSpec, desc: string) {
   const pts = shape2d(spec.shape)
   const names = spec.names
   const parts: string[] = []
   const all: P2[] = [...pts]
   const center: P2 = mul(pts.reduce((s, p) => add(s, p), [0, 0] as P2), 1 / pts.length)
+  const known = new Map<string, number[]>()
+  const know = (n: string | undefined, p: P2) => n && !known.has(n) && known.set(n, p)
 
   if (spec.shape === 'circle') {
     const [o, a] = pts
@@ -247,6 +269,9 @@ export function renderGeo2dSvg(spec: Geo2dSpec, desc: string): { svg: string; wi
     parts.push(`<circle cx="${o[0]}" cy="${o[1]}" r="${f1(r)}" fill="none" stroke="${STROKE}" stroke-width="1.6"/>`)
     parts.push(seg(o, a, false, 1.3), dot(o), dot(a), label(o, names[0] ?? 'O', add(o, [-1, -1])), label(a, names[1] ?? '', o))
     all.push([o[0] - r, o[1] - r], [o[0] + r, o[1] + r])
+    know(names[0] ?? 'O', o)
+    know(names[1], a)
+    extras2d(spec.extras, known, o, parts, all)
     return frame(parts, all, desc)
   }
 
@@ -262,16 +287,19 @@ export function renderGeo2dSvg(spec: Geo2dSpec, desc: string): { svg: string; wi
     const r = len(sub(A, o))
     parts.push(`<circle cx="${f1(o[0])}" cy="${f1(o[1])}" r="${f1(r)}" fill="none" stroke="${STROKE}" stroke-width="1.4"/>`)
     parts.push(dot(o), label(o, names[3] ?? 'O', add(o, [0, -1]), 14))
+    know(names[3] ?? 'O', o)
     all.push([o[0] - r, o[1] - r], [o[0] + r, o[1] + r])
   }
   if (isTri && spec.altitude) {
     const h = foot(A, B, C)
     parts.push(seg(A, h, false, 1.3), dot(h), label(h, 'H', A))
+    know('H', h)
     if (spec.marks) parts.push(rightMark(h, A, C))
   }
   if (isTri && spec.median) {
     const m = mid(B, C)
     parts.push(seg(A, m, false, 1.3), dot(m), label(m, 'M', A))
+    know('M', m)
     if (spec.marks) parts.push(tick(B, m, 2), tick(m, C, 2))
   }
   if (!isTri && spec.diagonals) {
@@ -283,6 +311,7 @@ export function renderGeo2dSvg(spec: Geo2dSpec, desc: string): { svg: string; wi
       const t = ((p[0] - q[0]) * (q[1] - s[1]) - (p[1] - q[1]) * (q[0] - s[0])) / den
       const o: P2 = [p[0] + t * (r[0] - p[0]), p[1] + t * (r[1] - p[1])]
       parts.push(dot(o), label(o, 'O', add(o, [0, -1]), 14))
+      know('O', o)
     }
   }
   if (spec.marks) {
@@ -296,7 +325,24 @@ export function renderGeo2dSvg(spec: Geo2dSpec, desc: string): { svg: string; wi
     if (spec.shape === 'rhombus') poly.forEach((p, i) => parts.push(tick(p, poly[(i + 1) % 4])))
   }
   poly.forEach((p, i) => parts.push(label(p, names[i] ?? '', center)))
+  poly.forEach((p, i) => know(names[i], p))
+  extras2d(spec.extras, known, center, parts, all)
   return frame(parts, all, desc)
+}
+
+/** vẽ phần dựng thêm của hình phẳng */
+function extras2d(text: string | undefined, known: Map<string, number[]>, center: P2, parts: string[], all: P2[]) {
+  if (!text?.trim()) return
+  const c = construct(text, known)
+  const at = (n: string) => (known.get(n) ?? c.points.find((q) => q.name === n)?.p) as P2
+  for (const g of c.segs) parts.push(seg(at(g.a), at(g.b), g.dashed === true, 1.3))
+  for (const r of c.rights) parts.push(rightMark(at(r.at), at(r.u), at(r.v)))
+  c.equals.forEach((grp, k) => grp.forEach(([a, b]) => parts.push(tick(at(a), at(b), k + 1))))
+  for (const q of c.points) {
+    const p = q.p as P2
+    parts.push(dot(p), label(p, q.name, len(sub(p, center)) < 1 ? add(p, [0, 1]) : center, 14))
+    all.push(p)
+  }
 }
 
 /* ------------------------------------------------------------------ *
@@ -331,6 +377,8 @@ interface Solid {
   /** điểm phụ (chân đường cao, tâm đáy) để ghi tên */
   /** góc vuông: [đỉnh, hướng 1, hướng 2] */
   right: Array<[number, number, number]>
+  /** nhóm đoạn bằng nhau (dựng thêm) */
+  ticks?: Array<Array<[number, number]>>
 }
 
 function solid(spec: Geo3dSpec): Solid {
@@ -439,6 +487,29 @@ function onFace(p: P3, face: P3[]): boolean {
 
 function renderSolid(spec: Geo3dSpec, desc: string) {
   const s = solid(spec)
+  const names = [...spec.names]
+  // dựng thêm: điểm mới nối vào cuối danh sách đỉnh, đoạn mới thành đoạn phụ
+  const forced = new Map<string, boolean>()
+  const nRight = s.right.length
+  const nBase = s.pts.length
+  if (spec.extras?.trim()) {
+    const known = new Map<string, number[]>()
+    s.pts.forEach((p, i) => names[i] && !known.has(names[i]) && known.set(names[i], p))
+    const c = construct(spec.extras, known)
+    for (const q of c.points) {
+      s.pts.push(q.p as P3)
+      names[s.pts.length - 1] = q.name
+    }
+    const idx = (n: string) => names.indexOf(n)
+    for (const g of c.segs) {
+      const a = idx(g.a)
+      const b = idx(g.b)
+      s.extra.push([a, b])
+      if (g.dashed !== undefined) forced.set(`${a}-${b}`, g.dashed)
+    }
+    for (const r of c.rights) s.right.push([idx(r.at), idx(r.u), idx(r.v)])
+    s.ticks = c.equals.map((grp) => grp.map(([a, b]) => [idx(a), idx(b)] as [number, number]))
+  }
   const center = avg3(s.pts.slice(0, Math.max(3, s.faces.flat().reduce((m, i) => Math.max(m, i), 0) + 1)))
   // pháp tuyến hướng ra ngoài của từng mặt + mặt đó có nhìn thấy không
   const visible = s.faces.map((f) => {
@@ -463,14 +534,18 @@ function renderSolid(spec: Geo3dSpec, desc: string) {
   for (const e of edges.values()) parts.push(seg(P[e.a], P[e.b], !e.vis))
   for (const [a, b] of s.extra) {
     const onVisible = s.faces.some((f, fi) => visible[fi] && onFace(s.pts[a], f.map((i) => s.pts[i])) && onFace(s.pts[b], f.map((i) => s.pts[i])))
-    parts.push(seg(P[a], P[b], !onVisible, 1.3))
+    parts.push(seg(P[a], P[b], forced.get(`${a}-${b}`) ?? !onVisible, 1.3))
   }
-  if (spec.marks) for (const [at, u, v] of s.right) parts.push(rightMark(P[at], P[u], P[v], 9))
+  s.right.forEach(([at, u, v], k) => {
+    if (spec.marks || k >= nRight) parts.push(rightMark(P[at], P[u], P[v], 9))
+  })
+  s.ticks?.forEach((grp, k) => grp.forEach(([a, b]) => parts.push(tick(P[a], P[b], k + 1))))
 
   // tên đỉnh: chỉ những điểm đang dùng (điểm phụ như O, H chỉ ghi khi có đường đi qua)
   const used = new Set<number>()
   s.faces.flat().forEach((i) => used.add(i))
   s.extra.flat().forEach((i) => used.add(i))
+  for (let i = nBase; i < s.pts.length; i++) used.add(i) // điểm dựng thêm luôn ghi tên
   // nhãn đỉnh: thử 8 hướng quanh đỉnh, lấy chỗ cách xa mọi nét vẽ (và nhãn đã đặt) nhất
   const segs: Array<[P2, P2]> = [...[...edges.values()].map((e) => [P[e.a], P[e.b]] as [P2, P2]), ...s.extra.map(([a, b]) => [P[a], P[b]] as [P2, P2])]
   const placed: P2[] = []
@@ -491,7 +566,7 @@ function renderSolid(spec: Geo3dSpec, desc: string) {
       }
     }
     placed.push(best)
-    const name = spec.names[i] ?? ''
+    const name = names[i] ?? ''
     if (name) parts.push(`<text x="${f1(best[0])}" y="${f1(best[1] + 6)}" ${FONT} text-anchor="middle">${esc(name)}</text>`)
   })
   return frame(parts, P, desc)
@@ -542,7 +617,10 @@ function renderRound(spec: Geo3dSpec, desc: string) {
   return frame(parts, pts, desc)
 }
 
-export function renderGeo3dSvg(spec: Geo3dSpec, desc: string): { svg: string; width: number; height: number } {
-  if (spec.shape === 'cone' || spec.shape === 'cylinder' || spec.shape === 'sphere') return renderRound(spec, desc)
-  return renderSolid(spec, desc)
+export function renderGeo3dSvg(spec: Geo3dSpec, desc: string): GeoImage {
+  lastErrors = []
+  const isRound = spec.shape === 'cone' || spec.shape === 'cylinder' || spec.shape === 'sphere'
+  if (isRound && spec.extras?.trim()) lastErrors = [{ line: 0, msg: 'nón, trụ, cầu chưa dựng thêm được' }]
+  const img = isRound ? renderRound(spec, desc) : renderSolid(spec, desc)
+  return { ...img, errors: lastErrors }
 }

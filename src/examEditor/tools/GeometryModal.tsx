@@ -46,6 +46,7 @@ export function Geo2dModal({ initial, submitLabel, onClose, onInsert }: Props<Ge
         {isQuad2d(spec.shape) && <Check checked={spec.diagonals} onChange={(diagonals) => set({ diagonals })}>Hai đường chéo</Check>}
         <Check checked={spec.marks} onChange={(marks) => set({ marks })}>Kí hiệu góc vuông, cạnh bằng nhau</Check>
       </section>
+      <Extras value={spec.extras ?? ''} onChange={(extras) => set({ extras })} errors={preview.errors} example={'M = trung điểm BC\nAM\nI = trung điểm AM\nH = hình chiếu A lên BC\nAH đứt\nvuông H A C'} />
     </>
   )
   return (
@@ -84,6 +85,9 @@ export function Geo3dModal({ initial, submitLabel, onClose, onInsert }: Props<Ge
         {hasBase4(spec.shape) && <Check checked={spec.diagonals} onChange={(diagonals) => set({ diagonals })}>Đường chéo đáy AC, BD</Check>}
         <Check checked={spec.marks} onChange={(marks) => set({ marks })}>Kí hiệu góc vuông</Check>
       </section>
+      {!round && (
+        <Extras value={spec.extras ?? ''} onChange={(extras) => set({ extras })} errors={preview.errors} example={'M = trung điểm SC\nO = AC cắt BD\nH = hình chiếu A lên SB\nAM, SO, AH\nvuông H A S'} />
+      )}
       {spec.shape !== 'sphere' && spec.shape !== 'cube' && (
         <section>
           <h3 className={sectionTitle}>Chiều cao</h3>
@@ -143,6 +147,56 @@ function ShapePicker<T extends string>({
           </button>
         ))}
       </div>
+    </section>
+  )
+}
+
+const HELP: Array<[string, string]> = [
+  ['M = trung điểm SC', 'trung điểm'],
+  ['N = SB 1/3', 'điểm trên SB, SN = 1/3 SB'],
+  ['O = AC cắt BD', 'giao điểm hai đường'],
+  ['H = hình chiếu S lên (ABCD)', 'chân đường vuông góc xuống mặt / đường'],
+  ['G = trọng tâm ABC', 'trọng tâm'],
+  ['AM, MN', 'nối đoạn (thêm "đứt" / "liền" để ép nét)'],
+  ['vuông H S A', 'góc vuông tại H'],
+  ['bằng SM MC', 'đánh dấu đoạn bằng nhau'],
+]
+
+function Extras({ value, onChange, errors, example }: { value: string; onChange: (v: string) => void; errors?: Array<{ line: number; msg: string }>; example: string }) {
+  const [help, setHelp] = useState(false)
+  return (
+    <section>
+      <div className="flex items-baseline justify-between">
+        <h3 className={sectionTitle}>Dựng thêm</h3>
+        <button type="button" onClick={() => setHelp((h) => !h)} className="text-[12px] text-clay hover:underline">
+          {help ? 'Ẩn hướng dẫn' : 'Cách viết'}
+        </button>
+      </div>
+      {help && (
+        <ul className="mb-2 flex flex-col gap-1 rounded-[6px] bg-sunken p-2.5 text-[12px] text-ink-2">
+          {HELP.map(([code, what]) => (
+            <li key={code}>
+              <code className="font-mono text-ink">{code}</code> — {what}
+            </li>
+          ))}
+        </ul>
+      )}
+      <textarea
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        rows={5}
+        spellCheck={false}
+        placeholder={example}
+        aria-label="Dựng thêm điểm, đoạn"
+        className={cn(inputClass, 'w-full resize-y font-mono text-[13px] leading-[1.5]')}
+      />
+      {!!errors?.length && (
+        <ul className="mt-1.5 flex flex-col gap-0.5 text-[12px] text-clay-deep">
+          {errors.map((e, i) => (
+            <li key={i}>{e.line ? `Dòng ${e.line}: ` : ''}{e.msg}</li>
+          ))}
+        </ul>
+      )}
     </section>
   )
 }

@@ -19,6 +19,8 @@ export interface ToolImage {
   svg: string
   width: number
   height: number
+  /** lỗi nhập (dựng thêm hình học) theo dòng */
+  errors?: Array<{ line: number; msg: string }>
 }
 
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
