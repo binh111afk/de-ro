@@ -21,6 +21,8 @@ import {
   TableLayoutType,
   TableRow,
   TextRun,
+  Tab,
+  TabStopType,
   WidthType,
   type IParagraphOptions,
   type IRunOptions,
@@ -431,13 +433,23 @@ function blockToDocx(b: ExamBlock, ctx: Ctx): Out[] {
       // đúng/sai: mỗi ý một dòng, nhãn "a)"; trắc nghiệm: 4/3/2/1 cột theo độ dài như trên màn hình, nhãn "A."
       const tf = b.kind === 'tf'
       const cols = tf ? 1 : estimateChoiceCols(b.options.map((o) => o.text))
+      // xếp cột bằng điểm dừng tab (không dùng bảng): mở trong Word không hiện lưới / tay nắm bảng
       const w = Math.floor((CONTENT_W - OPT_INDENT) / cols)
-      const cell = (o: (typeof b.options)[number]) =>
-        plainCell(w, [para([new TextRun({ text: `${o.label}${tf ? ')' : '.'} `, bold: true }), ...runs(o.text)], fmtOpts(o.format))])
-      const rows = chunk(b.options, cols).map(
-        (row) => new TableRow({ children: Array.from({ length: cols }, (_, i) => (row[i] ? cell(row[i]) : plainCell(w, []))) }),
-      )
-      return [...pre, head, borderless(rows, Array(cols).fill(w), OPT_INDENT), para([], { spacing: { after: 30 } })]
+      const item = (o: (typeof b.options)[number]) => [new TextRun({ text: `${o.label}${tf ? ')' : '.'} `, bold: true }), ...runs(o.text)]
+      const lines = chunk(b.options, cols).map((row, r, all) => {
+        const last = r === all.length - 1
+        const spacing = { after: last ? 90 : 30 }
+        if (cols === 1) return para(item(row[0]), { ...fmtOpts(row[0].format), indent: { left: OPT_INDENT }, spacing })
+        return para(
+          row.flatMap((o, i) => (i ? [new TextRun({ children: [new Tab()] }), ...item(o)] : item(o))),
+          {
+            indent: { left: OPT_INDENT },
+            tabStops: Array.from({ length: cols - 1 }, (_, i) => ({ type: TabStopType.LEFT, position: OPT_INDENT + w * (i + 1) })),
+            spacing,
+          },
+        )
+      })
+      return [...pre, head, ...lines]
     }
 
     case 'essay': {
