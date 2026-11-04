@@ -220,7 +220,7 @@ export function autoVarTable(expr: string): VarTableSpec {
 }
 
 /** làm tròn toạ độ tìm được về số đẹp gần nhất (1/12 hoặc 1e-4) */
-function snap(x: number) {
+export function snap(x: number) {
   const q = Math.round(x * 12) / 12
   if (Math.abs(q - x) < 2e-3) return q
   // căn bậc hai: giữ đúng giá trị để niceNum nhận ra (√3, 2√2…)
@@ -349,7 +349,7 @@ export function renderVarTableSvg(spec: VarTableSpec, desc: string): { svg: stri
  * ------------------------------------------------------------------ */
 
 /** chữ gõ bàn phím → kí hiệu: oo/inf → ∞, sqrt3/can3 → √3, - → − */
-function fromKeys(t: string): string {
+export function fromKeys(t: string): string {
   return t
     .replace(/(sqrt|can)\(?(\d+)\)?/gi, '√$2')
     .replace(/oo|inf|vc/gi, '∞')
@@ -358,7 +358,7 @@ function fromKeys(t: string): string {
 }
 
 /** kí hiệu → chữ gõ (để hiện lại trong ô nhập) */
-function toKeys(t: string): string {
+export function toKeys(t: string): string {
   return t.replace(/∞/g, 'oo').replace(/−/g, '-').replace(/√(\d+)/g, 'sqrt$1')
 }
 

@@ -6,12 +6,18 @@
 import { readPlotSpec, renderPlotSvg, type PlotSpec } from './plot'
 import { renderVarTableSvg, type VarTableSpec } from './varTable'
 import { renderGeo2dSvg, renderGeo3dSvg, type Geo2dSpec, type Geo3dSpec } from './geometry'
+import { renderSignTableSvg, type SignTableSpec } from './signTable'
+import { renderOxySvg, type OxySpec } from './oxy'
+import { renderStatsSvg, type StatsSpec } from './stats'
 
 export type ToolDoc =
   | { kind: 'graph'; spec: PlotSpec }
   | { kind: 'vartable'; spec: VarTableSpec }
   | { kind: 'geo2d'; spec: Geo2dSpec }
   | { kind: 'geo3d'; spec: Geo3dSpec }
+  | { kind: 'signtable'; spec: SignTableSpec }
+  | { kind: 'oxy'; spec: OxySpec }
+  | { kind: 'stats'; spec: StatsSpec }
 
 export type ToolKind = ToolDoc['kind']
 
@@ -39,6 +45,12 @@ export function renderTool(doc: ToolDoc): ToolImage {
       return renderGeo2dSvg(doc.spec, toolDesc(doc))
     case 'geo3d':
       return renderGeo3dSvg(doc.spec, toolDesc(doc))
+    case 'signtable':
+      return renderSignTableSvg(doc.spec, toolDesc(doc))
+    case 'oxy':
+      return renderOxySvg(doc.spec, toolDesc(doc))
+    case 'stats':
+      return renderStatsSvg(doc.spec, toolDesc(doc))
   }
 }
 

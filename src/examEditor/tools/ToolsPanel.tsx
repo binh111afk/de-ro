@@ -4,7 +4,7 @@
  */
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
-import { Box, ChartSpline, Table2, Triangle } from 'lucide-react'
+import { Box, ChartColumn, ChartSpline, Grid3x3, SquarePlus, Table2, Triangle } from 'lucide-react'
 import type { ToolImage, ToolKind } from '@/lib/toolSpec'
 import { ToolModal } from './ToolModal'
 
@@ -16,6 +16,9 @@ const SUBJECTS: Array<{ name: string; tools: Array<{ id: ToolId; label: string; 
     tools: [
       { id: 'graph', label: 'Đồ thị hàm số', desc: 'Vẽ y = f(x), nhiều hàm trên một hệ trục', Icon: ChartSpline },
       { id: 'vartable', label: 'Bảng biến thiên', desc: 'Tự dựng từ hàm số, sửa tay từng ô', Icon: Table2 },
+      { id: 'signtable', label: 'Bảng xét dấu', desc: 'Tự tách nhân tử, tìm nghiệm; sửa tay từng ô', Icon: SquarePlus },
+      { id: 'oxy', label: 'Hệ trục Oxy', desc: 'Điểm, vectơ, đường thẳng, đường tròn, miền nghiệm', Icon: Grid3x3 },
+      { id: 'stats', label: 'Thống kê', desc: 'Biểu đồ cột, đường, quạt tròn, ghép nhóm; bảng số liệu', Icon: ChartColumn },
       { id: 'geo2d', label: 'Hình học phẳng', desc: 'Tam giác, tứ giác, đường tròn; đường cao, trung tuyến', Icon: Triangle },
       { id: 'geo3d', label: 'Hình học không gian', desc: 'Hình chóp, lăng trụ, hộp, nón, trụ, cầu; nét khuất đứt', Icon: Box },
     ],

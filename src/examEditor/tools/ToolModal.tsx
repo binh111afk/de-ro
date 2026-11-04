@@ -9,6 +9,10 @@ import type { Geo2dSpec, Geo3dSpec } from '@/lib/geometry'
 import { GraphToolModal } from './GraphToolModal'
 import { VarTableModal } from './VarTableModal'
 import { Geo2dModal, Geo3dModal } from './GeometryModal'
+import { OxyModal, SignTableModal, StatsModal } from './MoreToolModals'
+import type { SignTableSpec } from '@/lib/signTable'
+import type { OxySpec } from '@/lib/oxy'
+import type { StatsSpec } from '@/lib/stats'
 
 export function ToolModal({
   kind,
@@ -33,5 +37,11 @@ export function ToolModal({
       return <Geo2dModal initial={initial as Geo2dSpec | null | undefined} {...common} />
     case 'geo3d':
       return <Geo3dModal initial={initial as Geo3dSpec | null | undefined} {...common} />
+    case 'signtable':
+      return <SignTableModal initial={initial as SignTableSpec | null | undefined} {...common} />
+    case 'oxy':
+      return <OxyModal initial={initial as OxySpec | null | undefined} {...common} />
+    case 'stats':
+      return <StatsModal initial={initial as StatsSpec | null | undefined} {...common} />
   }
 }

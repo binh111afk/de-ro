@@ -35,6 +35,9 @@ const TOOL_DOC_IMAGE: Record<ToolKind, { width: number; alt: string }> = {
   vartable: { width: 460, alt: 'Bảng biến thiên' },
   geo2d: { width: 260, alt: 'Hình vẽ' },
   geo3d: { width: 260, alt: 'Hình vẽ' },
+  signtable: { width: 440, alt: 'Bảng xét dấu' },
+  oxy: { width: 280, alt: 'Hệ trục toạ độ' },
+  stats: { width: 380, alt: 'Biểu đồ' },
 }
 
 /** chỗ đặt đồ thị: thay ảnh cũ, hoặc chèn thành đoạn mới tại vị trí giữa hai khối */
