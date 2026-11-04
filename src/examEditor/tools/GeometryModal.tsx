@@ -3,6 +3,7 @@
  * đỉnh, bật các đường phụ; hình vẽ theo quy ước SGK (không gian: phép chiếu
  * song song, cạnh khuất nét đứt).
  */
+import { PickPreview } from './PickPreview'
 import { useMemo, useState } from 'react'
 import { cn } from '@/lib/cn'
 import { inputClass } from '@/components/ui'
@@ -52,11 +53,12 @@ export function Geo2dModal({ initial, submitLabel, onClose, onInsert }: Props<Ge
   return (
     <ToolShell
       title="Hình học phẳng"
-      hint="Chọn mẫu hình, đổi tên đỉnh, bật đường phụ cần dùng"
+      hint="Bấm lên cạnh để lấy điểm, kéo từ điểm này sang điểm khác để nối đoạn"
       inputs={inputs}
       preview={preview}
       submitLabel={submitLabel ?? (initial ? 'Cập nhật hình' : 'Chèn hình')}
       canSubmit
+      renderPreview={(img) => <PickPreview img={img} extras={spec.extras ?? ''} onExtras={(extras) => set({ extras })} />}
       onSubmit={() => onInsert(preview)}
       onClose={onClose}
     />
@@ -108,11 +110,12 @@ export function Geo3dModal({ initial, submitLabel, onClose, onInsert }: Props<Ge
   return (
     <ToolShell
       title="Hình học không gian"
-      hint="Hình biểu diễn theo phép chiếu song song, cạnh khuất vẽ nét đứt"
+      hint="Bấm lên cạnh để lấy điểm, kéo từ điểm này sang điểm khác để nối đoạn; nét khuất tự vẽ đứt"
       inputs={inputs}
       preview={preview}
       submitLabel={submitLabel ?? (initial ? 'Cập nhật hình' : 'Chèn hình')}
       canSubmit
+      renderPreview={round ? undefined : (img) => <PickPreview img={img} extras={spec.extras ?? ''} onExtras={(extras) => set({ extras })} />}
       onSubmit={() => onInsert(preview)}
       onClose={onClose}
     />

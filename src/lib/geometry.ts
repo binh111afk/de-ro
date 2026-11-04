@@ -68,12 +68,18 @@ import { construct as construct0 } from './geoConstruct'
 
 /** lỗi dựng thêm của lần vẽ gần nhất (modal hiện cho giáo viên) */
 let lastErrors: Array<{ line: number; msg: string }> = []
+/** điểm và đoạn đã vẽ (toạ độ viewBox) — để bấm/kéo trên ảnh xem trước */
+export interface GeoPick {
+  points: Array<{ name: string; x: number; y: number }>
+  segs: Array<{ a: string; b: string }>
+}
+let lastPick: GeoPick = { points: [], segs: [] }
 const construct: typeof construct0 = (t, k) => {
   const c = construct0(t, k)
   lastErrors = c.errors
   return c
 }
-type GeoImage = { svg: string; width: number; height: number; errors?: Array<{ line: number; msg: string }> }
+type GeoImage = { svg: string; width: number; height: number; errors?: Array<{ line: number; msg: string }>; pick?: GeoPick }
 
 type P2 = [number, number]
 type P3 = [number, number, number]
@@ -251,7 +257,8 @@ function shape2d(shape: Geo2dShape): P2[] {
 
 export function renderGeo2dSvg(spec: Geo2dSpec, desc: string): GeoImage {
   lastErrors = []
-  return { ...renderGeo2d(spec, desc), errors: lastErrors }
+  lastPick = { points: [], segs: [] }
+  return { ...renderGeo2d(spec, desc), errors: lastErrors, pick: lastPick }
 }
 
 function renderGeo2d(spec: Geo2dSpec, desc: string) {
@@ -262,6 +269,7 @@ function renderGeo2d(spec: Geo2dSpec, desc: string) {
   const center: P2 = mul(pts.reduce((s, p) => add(s, p), [0, 0] as P2), 1 / pts.length)
   const known = new Map<string, number[]>()
   const know = (n: string | undefined, p: P2) => n && !known.has(n) && known.set(n, p)
+  const pairs: Array<[string, string]> = []
 
   if (spec.shape === 'circle') {
     const [o, a] = pts
@@ -271,7 +279,8 @@ function renderGeo2d(spec: Geo2dSpec, desc: string) {
     all.push([o[0] - r, o[1] - r], [o[0] + r, o[1] + r])
     know(names[0] ?? 'O', o)
     know(names[1], a)
-    extras2d(spec.extras, known, o, parts, all)
+    if (names[1]) pairs.push([names[0] ?? 'O', names[1]])
+    extras2d(spec.extras, known, o, parts, all, pairs)
     return frame(parts, all, desc)
   }
 
@@ -294,16 +303,19 @@ function renderGeo2d(spec: Geo2dSpec, desc: string) {
     const h = foot(A, B, C)
     parts.push(seg(A, h, false, 1.3), dot(h), label(h, 'H', A))
     know('H', h)
+    pairs.push([names[0], 'H'])
     if (spec.marks) parts.push(rightMark(h, A, C))
   }
   if (isTri && spec.median) {
     const m = mid(B, C)
     parts.push(seg(A, m, false, 1.3), dot(m), label(m, 'M', A))
     know('M', m)
+    pairs.push([names[0], 'M'])
     if (spec.marks) parts.push(tick(B, m, 2), tick(m, C, 2))
   }
   if (!isTri && spec.diagonals) {
     parts.push(seg(poly[0], poly[2], false, 1.3), seg(poly[1], poly[3], false, 1.3))
+    pairs.push([names[0], names[2]], [names[1], names[3]])
     // giao điểm hai đường chéo
     const [p, q, r, s] = poly
     const den = (p[0] - r[0]) * (q[1] - s[1]) - (p[1] - r[1]) * (q[0] - s[0])
@@ -326,14 +338,20 @@ function renderGeo2d(spec: Geo2dSpec, desc: string) {
   }
   poly.forEach((p, i) => parts.push(label(p, names[i] ?? '', center)))
   poly.forEach((p, i) => know(names[i], p))
-  extras2d(spec.extras, known, center, parts, all)
+  poly.forEach((_, i) => pairs.push([names[i], names[(i + 1) % poly.length]]))
+  extras2d(spec.extras, known, center, parts, all, pairs)
   return frame(parts, all, desc)
 }
 
 /** vẽ phần dựng thêm của hình phẳng */
-function extras2d(text: string | undefined, known: Map<string, number[]>, center: P2, parts: string[], all: P2[]) {
-  if (!text?.trim()) return
-  const c = construct(text, known)
+function extras2d(text: string | undefined, known: Map<string, number[]>, center: P2, parts: string[], all: P2[], pairs: Array<[string, string]>) {
+  const c = construct(text ?? '', known)
+  const every = new Map(known)
+  c.points.forEach((q) => every.set(q.name, q.p))
+  lastPick = {
+    points: [...every].map(([name, p]) => ({ name, x: p[0], y: p[1] })),
+    segs: [...pairs, ...c.segs.map((g) => [g.a, g.b] as [string, string])].filter(([a, b]) => a && b && every.has(a) && every.has(b)).map(([a, b]) => ({ a, b })),
+  }
   const at = (n: string) => (known.get(n) ?? c.points.find((q) => q.name === n)?.p) as P2
   for (const g of c.segs) parts.push(seg(at(g.a), at(g.b), g.dashed === true, 1.3))
   for (const r of c.rights) parts.push(rightMark(at(r.at), at(r.u), at(r.v)))
@@ -530,6 +548,12 @@ function renderSolid(spec: Geo3dSpec, desc: string) {
     })
   })
   const P = s.pts.map(proj)
+  {
+    const pts = new Map<string, P2>()
+    s.pts.forEach((_, i) => names[i] && !pts.has(names[i]) && pts.set(names[i], P[i]))
+    const segs = [...edges.values()].map((e) => [e.a, e.b]).concat(s.extra).map(([a, b]) => ({ a: names[a], b: names[b] })).filter((g) => g.a && g.b)
+    lastPick = { points: [...pts].map(([name, p]) => ({ name, x: p[0], y: p[1] })), segs }
+  }
   const parts: string[] = []
   for (const e of edges.values()) parts.push(seg(P[e.a], P[e.b], !e.vis))
   for (const [a, b] of s.extra) {
@@ -619,8 +643,9 @@ function renderRound(spec: Geo3dSpec, desc: string) {
 
 export function renderGeo3dSvg(spec: Geo3dSpec, desc: string): GeoImage {
   lastErrors = []
+  lastPick = { points: [], segs: [] }
   const isRound = spec.shape === 'cone' || spec.shape === 'cylinder' || spec.shape === 'sphere'
   if (isRound && spec.extras?.trim()) lastErrors = [{ line: 0, msg: 'nón, trụ, cầu chưa dựng thêm được' }]
   const img = isRound ? renderRound(spec, desc) : renderSolid(spec, desc)
-  return { ...img, errors: lastErrors }
+  return { ...img, errors: lastErrors, pick: lastPick }
 }

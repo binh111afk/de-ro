@@ -21,6 +21,8 @@ export interface ToolImage {
   height: number
   /** lỗi nhập (dựng thêm hình học) theo dòng */
   errors?: Array<{ line: number; msg: string }>
+  /** điểm/đoạn bấm được (hình học) */
+  pick?: import('./geometry').GeoPick
 }
 
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
