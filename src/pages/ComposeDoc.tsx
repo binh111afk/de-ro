@@ -7,9 +7,9 @@
  *   ├───────────────────────────────────────────────────────────┤
  *   │ tab-strip: nhiều đề đang mở                             │
  *   ├────────┬───────────────────────────────┬─────────────────┤
- *   │  AI    │ ruler                         │ Mục lục         │
- *   │  dock  ├───────────────────────────────┤ Khối mẫu        │
- *   │ (trái) │ sân A4 — trang giấy thật      │ Tìm kiếm        │
+ *   │ Mục lục│ ruler                         │  AI dock        │
+ *   │ Khối   ├───────────────────────────────┤  (phải, như     │
+ *   │ Công cụ│ sân A4 — trang giấy thật      │   soạn slide)   │
  *   └────────┴───────────────────────────────┴─────────────────┘
  */
 import { dialog } from '@/components/Dialog'
@@ -868,19 +868,18 @@ export default function ComposeDoc() {
 
       {/* ---------- thân ---------- */}
       <div className="compose-body">
-        {/* AI dock (trái) */}
-        <AiDock open={aiOpen} onToggle={() => setAiOpen((v) => !v)} width={360}>
-          <AiPanel
-            onApplyBlocks={handleAiResult}
-            documentDigest={documentDigest}
-            contextSummary={
-              activeDoc
-                ? `đề đang soạn: "${activeDoc.title}", ${activeDoc.blocks.length} khối`
-                : undefined
-            }
-          />
-        </AiDock>
-
+        {/* mục lục / khối mẫu / công cụ (trái) */}
+        {viewport.w >= 768 && (
+            <NavPanel
+              doc={activeContent}
+              open={navOpen}
+              onOpenChange={setNavOpen}
+              onInsertTemplate={handleInsertTemplate}
+              onGoToBlock={handleGoToBlock}
+              onInsertPlot={(img) => void handleInsertPlot(img)}
+              side="left"
+            />
+        )}
         {/* sân soạn (giữa) */}
         <div className="compose-center">
           {findTab && editor && (
@@ -963,16 +962,19 @@ export default function ComposeDoc() {
             }}
           />
         )}
-        {viewport.w >= 768 && (
-            <NavPanel
-              doc={activeContent}
-              open={navOpen}
-              onOpenChange={setNavOpen}
-              onInsertTemplate={handleInsertTemplate}
-              onGoToBlock={handleGoToBlock}
-              onInsertPlot={(img) => void handleInsertPlot(img)}
-            />
-        )}
+        {/* AI dock (phải, như soạn slide) */}
+        <AiDock open={aiOpen} onToggle={() => setAiOpen((v) => !v)} width={360} side="right">
+          <AiPanel
+            onApplyBlocks={handleAiResult}
+            documentDigest={documentDigest}
+            contextSummary={
+              activeDoc
+                ? `đề đang soạn: "${activeDoc.title}", ${activeDoc.blocks.length} khối`
+                : undefined
+            }
+          />
+        </AiDock>
+
       </div>
         </>
       )}

@@ -4,7 +4,7 @@
  * ra bên trái thanh đó.
  */
 import { useMemo, useState } from 'react'
-import { Blocks, ChevronRight, ListTree, Wrench } from 'lucide-react'
+import { Blocks, ChevronLeft, ChevronRight, ListTree, Wrench } from 'lucide-react'
 import { ToolsPanel } from './tools/ToolsPanel'
 import type { PlotImage } from './tools/GraphToolModal'
 import type { JSONContent } from '@tiptap/core'
@@ -42,6 +42,7 @@ export function NavPanel({
   onInsertTemplate,
   onGoToBlock,
   onInsertPlot,
+  side = 'right',
 }: {
   doc: JSONContent
   /** panel đang mở hay chỉ còn thanh icon */
@@ -50,7 +51,10 @@ export function NavPanel({
   onInsertTemplate: (tpl: BlockTemplate) => void
   onGoToBlock: (index: number) => void
   onInsertPlot: (img: PlotImage) => void
+  /** cột đặt panel: soạn đề để bên trái (AI bên phải, như soạn slide) */
+  side?: 'left' | 'right'
 }) {
+  const left = side === 'left'
   // tab cuối cùng đã chọn: giữ nội dung trong lúc panel trượt đóng
   const [tab, setTab] = useState<PaneTab>('toc')
   const active = open ? tab : null
@@ -59,7 +63,7 @@ export function NavPanel({
   const toc = useMemo(() => buildTocFromDoc(doc), [doc])
 
   return (
-    <div className="relative flex min-h-0 shrink-0">
+    <div className={cn('relative flex min-h-0 shrink-0', left && 'flex-row-reverse')}>
       {/* nút thu panel kiểu Canva: viên thuốc bám mép trái panel */}
       <button
         type="button"
@@ -67,10 +71,10 @@ export function NavPanel({
         title="Đóng panel"
         tabIndex={active ? 0 : -1}
         onClick={() => onOpenChange(false)}
-        className="absolute top-1/2 z-30 flex h-12 w-5 translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-line bg-white text-ink-2 shadow-sm transition-[right,opacity] duration-200 ease-out hover:text-clay motion-reduce:transition-none"
-        style={{ right: 64 + (active ? PANEL_W : 0), opacity: active ? 1 : 0, pointerEvents: active ? 'auto' : 'none' }}
+        className={cn('absolute top-1/2 z-30 flex h-12 w-5 -translate-y-1/2 items-center justify-center rounded-full border border-line bg-white text-ink-2 shadow-sm transition-[left,right,opacity] duration-200 ease-out hover:text-clay motion-reduce:transition-none', left ? '-translate-x-1/2' : 'translate-x-1/2')}
+        style={{ [left ? 'left' : 'right']: 64 + (active ? PANEL_W : 0), opacity: active ? 1 : 0, pointerEvents: active ? 'auto' : 'none' }}
       >
-        <ChevronRight className="size-4" />
+        {left ? <ChevronLeft className="size-4" /> : <ChevronRight className="size-4" />}
       </button>
       {/* khung ngoài đổi bề rộng để panel trượt; khung trong giữ nguyên bề rộng nên nội dung không bị bóp */}
       <div
@@ -78,7 +82,7 @@ export function NavPanel({
         style={{ width: active ? PANEL_W : 0 }}
         inert={!active}
       >
-        <aside className="nav-panel h-full min-h-0 border-l border-line bg-surface" style={{ width: PANEL_W }} aria-label={TABS.find((t) => t.id === shown)?.label}>
+        <aside className={cn('nav-panel h-full min-h-0 border-line bg-surface', left ? 'border-r' : 'border-l')} style={{ width: PANEL_W }} aria-label={TABS.find((t) => t.id === shown)?.label}>
         {shown === 'toc' && (
           <div className="nav-body">
             {toc.length === 0 ? (
@@ -139,7 +143,7 @@ export function NavPanel({
           )}
         </aside>
       </div>
-      <nav aria-label="Bảng điều hướng" className="flex w-[64px] flex-col items-center gap-1 border-l border-line bg-surface py-2">
+      <nav aria-label="Bảng điều hướng" className={cn('flex w-[64px] flex-col items-center gap-1 border-line bg-surface py-2', left ? 'border-r' : 'border-l')}>
         {TABS.map(({ id, label, Icon }) => (
           <button
             key={id}
