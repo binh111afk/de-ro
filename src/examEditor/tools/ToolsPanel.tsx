@@ -7,6 +7,7 @@ import { createPortal } from 'react-dom'
 import { Box, ChartColumn, ChartSpline, Grid3x3, SquarePlus, Table2, Triangle, Zap } from 'lucide-react'
 import type { ToolImage, ToolKind } from '@/lib/toolSpec'
 import { ToolModal } from './ToolModal'
+import { Dropdown } from '../Dropdown'
 
 type ToolId = ToolKind
 
@@ -31,12 +32,34 @@ const SUBJECTS: Array<{ name: string; tools: Array<{ id: ToolId; label: string; 
 
 export function ToolsPanel({ disabled, onInsertPlot }: { disabled?: boolean; onInsertPlot: (img: ToolImage) => void }) {
   const [open, setOpen] = useState<ToolId | null>(null)
+  const [subject, setSubject] = useState(() => {
+    try {
+      return localStorage.getItem('tools.subject') ?? SUBJECTS[0].name
+    } catch {
+      return SUBJECTS[0].name
+    }
+  })
+  const pick = (v: string) => {
+    setSubject(v)
+    try {
+      localStorage.setItem('tools.subject', v)
+    } catch {
+      /* bỏ qua */
+    }
+  }
+  const shown = SUBJECTS.filter((s) => s.name === subject).length ? SUBJECTS.filter((s) => s.name === subject) : SUBJECTS.slice(0, 1)
 
   return (
-    <div className="flex flex-col gap-4 py-3">
-      {SUBJECTS.map((s) => (
+    <div className="flex flex-col gap-3 py-3">
+      <Dropdown
+        value={shown[0].name}
+        options={SUBJECTS.map((s) => ({ value: s.name, label: s.name }))}
+        onPick={pick}
+        ariaLabel="Chọn môn"
+        className="w-full"
+      />
+      {shown.map((s) => (
         <section key={s.name}>
-          <h3 className="mb-1.5 px-1 text-[12px] font-semibold uppercase tracking-[0.04em] text-ink-3">{s.name}</h3>
           <ul className="flex flex-col gap-1">
             {s.tools.map(({ id, label, desc, Icon }) => (
               <li key={id}>
