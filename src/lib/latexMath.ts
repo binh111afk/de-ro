@@ -175,6 +175,12 @@ class Parser {
         return [{ t: 'brackets', open, close: this.delim(), body }]
       }
       case 'right':
+      // lệnh cỡ chữ/khoảng trắng không có nghĩa trong công thức Word — bỏ qua
+      case 'displaystyle':
+      case 'textstyle':
+      case 'scriptstyle':
+      case 'limits':
+      case 'nolimits':
         return []
       case 'sum':
       case 'prod':
