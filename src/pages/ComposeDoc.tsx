@@ -39,6 +39,8 @@ const TOOL_DOC_IMAGE: Record<ToolKind, { width: number; alt: string }> = {
   oxy: { width: 280, alt: 'Hệ trục toạ độ' },
   stats: { width: 380, alt: 'Biểu đồ' },
   circuit: { width: 360, alt: 'Mạch điện' },
+  motion: { width: 320, alt: 'Đồ thị chuyển động' },
+  incline: { width: 300, alt: 'Mặt phẳng nghiêng' },
 }
 
 /** chỗ đặt đồ thị: thay ảnh cũ, hoặc chèn thành đoạn mới tại vị trí giữa hai khối */
@@ -948,13 +950,13 @@ export default function ComposeDoc() {
           editor={editor}
           context={activeDoc ? `đề "${activeDoc.title}"` : undefined}
           onInsertPlot={(img, after) => void handleInsertPlot(img, { after })}
-          onEditPlot={(spec, after) => setPlotEdit({ doc: { kind: 'graph', spec }, target: { after } })}
+          onEditPlot={(doc, after) => setPlotEdit({ doc, target: { after } })}
         />
         {plotEdit && (
           <ToolModal
             kind={plotEdit.doc.kind}
             initial={plotEdit.doc.spec}
-            submitLabel={'after' in plotEdit.target ? 'Chèn đồ thị' : undefined}
+            submitLabel={'after' in plotEdit.target ? 'Chèn hình' : undefined}
             onClose={() => setPlotEdit(null)}
             onInsert={(img) => {
               void handleInsertPlot(img, plotEdit.target)

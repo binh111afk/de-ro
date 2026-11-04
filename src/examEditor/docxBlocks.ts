@@ -398,7 +398,7 @@ function blockToDocx(b: ExamBlock, ctx: Ctx): Out[] {
       const side = sideImage(b.text, b.imagePosition)
       const lead = side ? null : leadImage(b.text)
       const headText = side ? side.rest : lead ? lead.rest : b.text
-      const pre: Out[] = lead ? [para(lead.imgs.flatMap((s) => imageRun(s.image!)), { spacing: { before: 120 }, keepNext: true })] : []
+      const pre: Out[] = lead ? [para(lead.imgs.flatMap((s) => imageRun(s.image!)), { spacing: { before: 120 }, keepNext: true, ...fmtOpts(b.format) })] : []
       const headPara = para([new TextRun({ text: `Câu ${ctx.q}. `, bold: true }), ...runs(headText)], {
         alignment: justify(headText),
         spacing: { before: 120, after: 45 },
@@ -445,7 +445,7 @@ function blockToDocx(b: ExamBlock, ctx: Ctx): Out[] {
       const side = sideImage(b.text, b.imagePosition)
       const lead = side ? null : leadImage(b.text)
       const headText = side ? side.rest : lead ? lead.rest : b.text
-      const pre: Out[] = lead ? [para(lead.imgs.flatMap((s) => imageRun(s.image!)), { spacing: { before: 120 }, keepNext: true })] : []
+      const pre: Out[] = lead ? [para(lead.imgs.flatMap((s) => imageRun(s.image!)), { spacing: { before: 120 }, keepNext: true, ...fmtOpts(b.format) })] : []
       const headPara = para([new TextRun({ text: `Bài ${ctx.essay}${b.score ? ` (${fmt(b.score)} điểm)` : ''}. `, bold: true }), ...runs(headText)], {
         alignment: justify(headText),
         spacing: { before: 120, after: 45 },

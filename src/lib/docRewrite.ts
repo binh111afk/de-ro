@@ -4,6 +4,8 @@
  */
 import { callLlm, extractJson } from './llm'
 import { PLOT_COLORS, autoYRange, parseExpr, type PlotSpec } from './plot'
+import { renderTool, type ToolDoc } from './toolSpec'
+import { autoSignTable } from './signTable'
 import { cleanRewrite } from './slideRewrite'
 
 export const DOC_REWRITE_PRESETS = [
@@ -62,12 +64,17 @@ export async function planPlot(text: string, context: string, signal?: AbortSign
     ],
     { signal, reasoningEffort: 'low' },
   )
-  let raw: { curves?: unknown; xMin?: unknown; xMax?: unknown; labels?: unknown; note?: unknown }
+  let raw: Record<string, unknown>
   try {
     raw = extractJson(res.content)
   } catch {
     throw new Error('AI trả về cấu hình đồ thị không đọc được, thử lại nhé.')
   }
+  const p = planFromRaw(raw)
+  return { spec: (p.doc as { spec: PlotSpec }).spec, note: p.note }
+}
+
+function planFromRaw(raw: Record<string, unknown>): ToolPlan {
   const note = typeof raw.note === 'string' ? raw.note.trim() : ''
   const exprs = (Array.isArray(raw.curves) ? raw.curves : [])
     .map((c) => (typeof c === 'string' ? c : typeof c === 'object' && c && 'expr' in c ? String((c as { expr: unknown }).expr) : ''))
@@ -88,17 +95,95 @@ export async function planPlot(text: string, context: string, signal?: AbortSign
   const [yMin, yMax] = autoYRange(fns, xMin, xMax)
   return {
     note,
-    spec: {
-      curves: exprs.map((expr, i) => ({ expr, color: PLOT_COLORS[i % PLOT_COLORS.length] })),
-      xMin,
-      xMax,
-      yMin,
-      yMax,
-      grid: true,
-      labels: raw.labels === true || exprs.length > 1,
+    doc: {
+      kind: 'graph',
+      spec: {
+        curves: exprs.map((expr, i) => ({ expr, color: PLOT_COLORS[i % PLOT_COLORS.length] })),
+        xMin,
+        xMax,
+        yMin,
+        yMax,
+        grid: true,
+        labels: raw.labels === true || exprs.length > 1,
+      },
     },
   }
 }
 
+/* ------------------------------------------------------------------ *
+ * "Vẽ hình minh hoạ": AI chọn công cụ hợp đề (đồ thị, bảng xét dấu, hệ trục Oxy,
+ * biểu đồ thống kê, mạch điện) và trả cấu hình dạng chữ; app tự vẽ.
+ * ------------------------------------------------------------------ */
+
+const TOOL_SYSTEM =
+  'Bạn đọc một đề bài tiếng Việt (Toán hoặc Vật lí) và chọn MỘT hình minh hoạ cần vẽ. Chỉ trả về MỘT object JSON, không giải thích. Các loại:\n' +
+  '1) Đồ thị hàm số: {"kind":"graph","curves":["x^2-2x"],"xMin":-2,"xMax":4,"note":""}\n' +
+  '2) Bảng xét dấu của một biểu thức: {"kind":"signtable","expr":"(x-1)(x+2)/(x-3)","note":""}\n' +
+  '3) Hệ trục Oxy (điểm, vectơ, đường thẳng, đường tròn, miền nghiệm hệ bất phương trình): {"kind":"oxy","xMin":-1,"xMax":5,"yMin":-1,"yMax":5,"items":"mỗi dòng một lệnh","note":""}. ' +
+  'Lệnh: "A(1; 2)", "M(2; 3) chiếu", "AB, BC", "vectơ AB", "vectơ u(2; 1)", "d: 2x - y + 1 = 0", "đường thẳng AB", "x = 2", "(P): y = x^2 - 2x", "đường tròn (I; 2)", "đường tròn (1; -2) 3", bất phương trình "x + y <= 4" (mỗi dòng một cái).\n' +
+  '4) Biểu đồ thống kê: {"kind":"stats","chart":"bar|line|pie|hist|table","title":"","xLabel":"","yLabel":"","data":"dòng 1: nhãn cách nhau bởi ;\nTên dãy: số; số; ..."}. Ghép nhóm dùng nhãn "[40; 50) [50; 60)".\n' +
+  '5) Mạch điện: {"kind":"circuit","text":"nguồn E = 12 V, r = 1 Ω\nR1=4Ω - (R2=6Ω // R3=3Ω)","note":""}. "-" nối tiếp, "//" song song, ngoặc gom cụm; linh kiện theo chữ đầu: R, Rb, Đ, A, V, K, C, L, E; "cầu(R1, R2, R3, R4, R5)" là mạch cầu; "@M" ghi tên điểm nút.\n' +
+  'Biểu thức dùng biến x, ^ cho luỹ thừa, sqrt(), ln, sin, cos; nhân ngầm được (2x). Hàm có tham số thì chọn giá trị minh hoạ và ghi trong note. ' +
+  'note chỉ để ghi giá trị tham số đã chọn hoặc lí do không vẽ được; TUYỆT ĐỐI không ghi lời giải hay đáp số. ' +
+  'Nếu đề không có gì để vẽ, trả {"kind":"none","note":"lí do ngắn"}.'
+
+export interface ToolPlan {
+  doc: ToolDoc
+  note: string
+}
+
+const num = (v: unknown, d: number) => (Number.isFinite(Number(v)) ? Number(v) : d)
+
+export async function planTool(text: string, context: string, signal?: AbortSignal): Promise<ToolPlan> {
+  const res = await callLlm(
+    [
+      { role: 'system', content: TOOL_SYSTEM },
+      { role: 'user', content: `${context ? `Ngữ cảnh: ${context}\n` : ''}Đề bài:\n${text}` },
+    ],
+    { signal, reasoningEffort: 'low' },
+  )
+  let raw: Record<string, unknown>
+  try {
+    raw = extractJson(res.content)
+  } catch {
+    throw new Error('AI trả về cấu hình hình vẽ không đọc được, thử lại nhé.')
+  }
+  const note = typeof raw.note === 'string' ? raw.note.trim() : ''
+  const str = (k: string) => (typeof raw[k] === 'string' ? (raw[k] as string) : '')
+  let doc: ToolDoc
+  switch (raw.kind) {
+    case 'graph':
+      return planFromRaw(raw)
+    case 'signtable':
+      doc = { kind: 'signtable', spec: autoSignTable(str('expr')) }
+      break
+    case 'oxy': {
+      const xMin = num(raw.xMin, -5)
+      const xMax = num(raw.xMax, 5)
+      const yMin = num(raw.yMin, -5)
+      const yMax = num(raw.yMax, 5)
+      if (!str('items').trim()) throw new Error(note || 'AI không đưa ra được hình trên hệ trục.')
+      doc = { kind: 'oxy', spec: { xMin, xMax: xMax > xMin ? xMax : xMin + 10, yMin, yMax: yMax > yMin ? yMax : yMin + 10, grid: false, numbers: true, items: str('items') } }
+      break
+    }
+    case 'stats': {
+      const chart = (['bar', 'line', 'pie', 'hist', 'table'] as const).find((c) => c === raw.chart) ?? 'bar'
+      if (!str('data').trim()) throw new Error(note || 'Không thấy số liệu để vẽ biểu đồ.')
+      doc = { kind: 'stats', spec: { chart, title: str('title'), xLabel: str('xLabel'), yLabel: str('yLabel'), values: true, data: str('data') } }
+      break
+    }
+    case 'circuit':
+      if (!str('text').trim()) throw new Error(note || 'Không đọc được mạch điện trong đề.')
+      doc = { kind: 'circuit', spec: { text: str('text'), values: true } }
+      break
+    default:
+      throw new Error(note || 'Không thấy gì để vẽ minh hoạ trong đoạn đã chọn.')
+  }
+  renderTool(doc) // vẽ thử: cấu hình sai thì báo ngay
+  return { doc, note }
+}
+
+
 /** câu yêu cầu tự gõ có phải là "vẽ đồ thị" không */
-export const wantsPlot = (ask: string) => /(vẽ|ve|minh hoạ|minh họa).*đồ thị|đồ thị.*(vẽ|minh hoạ|minh họa)/i.test(ask)
+export const wantsPlot = (ask: string) =>
+  /(vẽ|ve|minh hoạ|minh họa).*(đồ thị|hình|bảng xét dấu|biểu đồ|mạch|hệ trục|miền nghiệm)|(đồ thị|bảng xét dấu|biểu đồ|mạch điện).*(vẽ|minh hoạ|minh họa)/i.test(ask)

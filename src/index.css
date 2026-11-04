@@ -571,25 +571,18 @@
     font-weight: 700;
   }
 
-  /* đề bài mở đầu bằng ảnh (class do leadImage.ts gắn): ảnh một dòng riêng phía
-     trên, nhãn "Câu N." trôi trái ở dòng dưới cùng chữ đề bài — giống bản Word */
+  /* đề bài mở đầu bằng ảnh (leadImage.ts): ảnh dòng riêng phía trên, nhãn là widget
+     nằm cùng dòng chữ nên theo căn lề của câu — giống bản Word */
   .doc-content div.exam-lead-image::before {
     content: none;
   }
-  .doc-content div.exam-lead-image > .exam-image:first-of-type {
-    display: block;
-    width: fit-content;
-  }
-  .doc-content div.exam-lead-image > .exam-image:first-of-type::after {
-    float: left;
-    margin-right: 0.25em;
-    line-height: var(--doc-line-height, 1.5);
+  .doc-content .exam-lead-label {
     font-weight: 700;
   }
-  .doc-content div[data-exam-node='examQuestionPrompt'].exam-lead-image > .exam-image:first-of-type::after {
+  .doc-content .exam-lead-label-q::before {
     content: 'Câu ' counter(exam-q) '. ';
   }
-  .doc-content div[data-exam-node='examEssayPrompt'].exam-lead-image > .exam-image:first-of-type::after {
+  .doc-content .exam-lead-label-e::before {
     content: 'Bài ' counter(exam-essay) '. ';
   }
 

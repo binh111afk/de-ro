@@ -12,6 +12,7 @@ import { autoSignTable, parseSignTableText, signTableToText, type SignTableSpec 
 import { OXY_HELP, type OxySpec } from '@/lib/oxy'
 import type { ChartKind, StatsSpec } from '@/lib/stats'
 import { CIRCUIT_HELP, type CircuitSpec } from '@/lib/circuit'
+import type { Dir, InclineSpec, MotionSpec } from '@/lib/physics'
 import { Check, ToolShell, sectionTitle } from './ToolShell'
 
 type Props<S> = { initial?: S | null; submitLabel?: string; onClose: () => void; onInsert: (img: ToolImage) => void }
@@ -438,6 +439,155 @@ export function CircuitModal({ initial, submitLabel, onClose, onInsert }: Props<
       hint="Ký hiệu theo SGK; máy tự xếp các nhánh song song thành hình chữ nhật"
       inputs={inputs}
       inputsWidth={380}
+      preview={preview}
+      submitLabel={submitLabel ?? (initial ? 'Cập nhật hình' : 'Chèn hình')}
+      canSubmit={Boolean(preview) && !error}
+      onSubmit={() => preview && onInsert(preview)}
+      onClose={onClose}
+    />
+  )
+}
+
+/* ------------------------------------------------------------------ *
+ * Vật lí: đồ thị chuyển động, mặt phẳng nghiêng
+ * ------------------------------------------------------------------ */
+
+const MOTION_KINDS: Array<{ y: string; label: string; example: string }> = [
+  { y: 'v (m/s)', label: 'v – t', example: '(0; 0) (2; 4) (5; 4) (7; 0)' },
+  { y: 'x (m)', label: 'x – t', example: '(0; 10) (2; 20) (4; 20) (6; 0)' },
+  { y: 'a (m/s²)', label: 'a – t', example: '(0; 2) (3; 2) (3; 0) (6; 0)' },
+]
+const MOTION_HELP: HelpGroups = [
+  {
+    group: 'Điểm',
+    items: [
+      { code: '(0; 0) (2; 4)', what: 'Điểm (t; giá trị), nối gấp khúc theo thứ tự' },
+      { code: '(1,5; 3)', what: 'Số thập phân dùng dấu phẩy' },
+      { code: '(3; 2) (3; 0)', what: 'Hai điểm cùng t: đoạn thẳng đứng (đồ thị a – t)' },
+    ],
+  },
+]
+
+export function MotionModal({ initial, submitLabel, onClose, onInsert }: Props<MotionSpec>) {
+  const [spec, setSpec] = useState<MotionSpec>(initial ?? { yName: MOTION_KINDS[0].y, tName: 't (s)', points: MOTION_KINDS[0].example, dashed: true })
+  const set = (p: Partial<MotionSpec>) => setSpec((s) => ({ ...s, ...p }))
+  const doc = useMemo((): ToolDoc => ({ kind: 'motion', spec }), [spec])
+  const { preview, error } = useRender(doc)
+  const inputs = (
+    <>
+      <section>
+        <h3 className={sectionTitle}>Loại</h3>
+        <div className="flex flex-wrap gap-1.5">
+          {MOTION_KINDS.map((k) => (
+            <button
+              key={k.y}
+              type="button"
+              aria-pressed={spec.yName === k.y}
+              onClick={() => set({ yName: k.y, ...(MOTION_KINDS.some((x) => x.example === spec.points) ? { points: k.example } : {}) })}
+              className={cn(
+                'rounded-[6px] border px-2.5 py-1 text-[12.5px] transition-colors',
+                spec.yName === k.y ? 'border-clay bg-clay-tint font-medium text-clay' : 'border-line text-ink-2 hover:border-ink-4',
+              )}
+            >
+              {k.label}
+            </button>
+          ))}
+        </div>
+      </section>
+      <TextBlock
+        title="Các điểm"
+        help={MOTION_HELP}
+        intro="Mỗi điểm (t; giá trị), t tăng dần."
+        value={spec.points}
+        onChange={(points) => set({ points })}
+        rows={3}
+        errors={error ? [error] : []}
+        label="Các điểm của đồ thị"
+      />
+      <section className="grid grid-cols-2 gap-2">
+        <label className="text-[12.5px] text-ink-2">
+          Trục dọc
+          <input className={cn(inputClass, 'mt-1 h-9')} value={spec.yName} onChange={(e) => set({ yName: e.target.value })} />
+        </label>
+        <label className="text-[12.5px] text-ink-2">
+          Trục ngang
+          <input className={cn(inputClass, 'mt-1 h-9')} value={spec.tName} onChange={(e) => set({ tName: e.target.value })} />
+        </label>
+      </section>
+      <section>
+        <Check checked={spec.dashed} onChange={(dashed) => set({ dashed })}>Nét đứt chiếu xuống hai trục</Check>
+      </section>
+    </>
+  )
+  return (
+    <ToolShell
+      title="Đồ thị chuyển động"
+      hint="x – t, v – t, a – t gấp khúc; số trên trục lấy đúng các điểm đã gõ"
+      inputs={inputs}
+      inputsWidth={360}
+      preview={preview}
+      submitLabel={submitLabel ?? (initial ? 'Cập nhật đồ thị' : 'Chèn đồ thị')}
+      canSubmit={Boolean(preview) && !error}
+      onSubmit={() => preview && onInsert(preview)}
+      onClose={onClose}
+    />
+  )
+}
+
+const DIRS: Array<{ id: Dir; label: string }> = [
+  { id: 'none', label: 'Không' },
+  { id: 'up', label: 'Lên dốc' },
+  { id: 'down', label: 'Xuống dốc' },
+]
+
+function DirPick({ title, value, onChange }: { title: string; value: Dir; onChange: (d: Dir) => void }) {
+  return (
+    <div className="flex items-center gap-2 text-[12.5px] text-ink-2">
+      <span className="w-20">{title}</span>
+      {DIRS.map((d) => (
+        <button
+          key={d.id}
+          type="button"
+          aria-pressed={value === d.id}
+          onClick={() => onChange(d.id)}
+          className={cn('rounded-[6px] border px-2 py-0.5', value === d.id ? 'border-clay bg-clay-tint text-clay' : 'border-line hover:border-ink-4')}
+        >
+          {d.label}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+export function InclineModal({ initial, submitLabel, onClose, onInsert }: Props<InclineSpec>) {
+  const [spec, setSpec] = useState<InclineSpec>(initial ?? { angle: 30, P: true, N: true, fms: 'up', F: 'none', showAngle: true })
+  const set = (p: Partial<InclineSpec>) => setSpec((s) => ({ ...s, ...p }))
+  const doc = useMemo((): ToolDoc => ({ kind: 'incline', spec }), [spec])
+  const { preview, error } = useRender(doc)
+  const inputs = (
+    <>
+      <section>
+        <h3 className={sectionTitle}>Góc nghiêng: {spec.angle}°</h3>
+        <input type="range" min={10} max={60} step={5} value={spec.angle} onChange={(e) => set({ angle: Number(e.target.value) })} className="w-full accent-clay" aria-label="Góc nghiêng" />
+      </section>
+      <section className="space-y-2">
+        <h3 className={sectionTitle}>Lực</h3>
+        <Check checked={spec.P} onChange={(P) => set({ P })}>Trọng lực P</Check>
+        <Check checked={spec.N} onChange={(N) => set({ N })}>Phản lực N</Check>
+        <DirPick title="Ma sát Fms" value={spec.fms} onChange={(fms) => set({ fms })} />
+        <DirPick title="Lực kéo F" value={spec.F} onChange={(F) => set({ F })} />
+      </section>
+      <section>
+        <Check checked={spec.showAngle} onChange={(showAngle) => set({ showAngle })}>Ghi góc α</Check>
+      </section>
+    </>
+  )
+  return (
+    <ToolShell
+      title="Mặt phẳng nghiêng"
+      hint="Vật trên dốc và các lực tác dụng"
+      inputs={inputs}
+      inputsWidth={340}
       preview={preview}
       submitLabel={submitLabel ?? (initial ? 'Cập nhật hình' : 'Chèn hình')}
       canSubmit={Boolean(preview) && !error}

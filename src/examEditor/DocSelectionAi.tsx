@@ -7,15 +7,28 @@ import { createPortal } from 'react-dom'
 import type { Editor } from '@tiptap/core'
 import { TextSelection } from '@tiptap/pm/state'
 import { ChartSpline, Check, Copy, PencilRuler, RotateCcw, Sparkles, X } from 'lucide-react'
-import { DOC_REWRITE_PRESETS, planPlot, rewriteSelection, wantsPlot, type PlotPlan } from '@/lib/docRewrite'
-import { renderPlotSvg, svgDataUrl, type PlotSpec } from '@/lib/plot'
+import { DOC_REWRITE_PRESETS, planTool, rewriteSelection, wantsPlot, type ToolPlan } from '@/lib/docRewrite'
+import { svgDataUrl } from '@/lib/plot'
+import { renderTool, type ToolDoc } from '@/lib/toolSpec'
 import type { PlotImage } from './tools/GraphToolModal'
 
 type Range = { from: number; to: number; text: string }
 type Phase = 'pill' | 'ask' | 'busy' | 'result' | 'plot'
 
 const MIN_CHARS = 2
-const PLOT_ASK = 'Vẽ đồ thị minh hoạ cho đề này'
+const TOOL_NAME: Record<ToolDoc['kind'], string> = {
+  graph: 'Đồ thị',
+  vartable: 'Bảng biến thiên',
+  geo2d: 'Hình phẳng',
+  geo3d: 'Hình không gian',
+  signtable: 'Bảng xét dấu',
+  oxy: 'Hệ trục Oxy',
+  stats: 'Biểu đồ thống kê',
+  circuit: 'Mạch điện',
+  motion: 'Đồ thị chuyển động',
+  incline: 'Mặt phẳng nghiêng',
+}
+const PLOT_ASK = 'Vẽ hình minh hoạ cho đề này'
 const PANEL_W = 340
 
 export function DocSelectionAi({
@@ -29,7 +42,7 @@ export function DocSelectionAi({
   /** chèn đồ thị AI dựng thành đoạn mới tại `after` (ngay sau khối chứa đoạn chọn) */
   onInsertPlot?: (img: PlotImage, after: number) => void
   /** mở công cụ Đồ thị với cấu hình AI điền sẵn, chèn vào `after` */
-  onEditPlot?: (spec: PlotSpec, after: number) => void
+  onEditPlot?: (doc: ToolDoc, after: number) => void
 }) {
   const [range, setRange] = useState<Range | null>(null)
   const [pos, setPos] = useState<{ left: number; top: number; below: boolean } | null>(null)
@@ -39,7 +52,7 @@ export function DocSelectionAi({
   const [lastLabel, setLastLabel] = useState('')
   const [result, setResult] = useState('')
   const [error, setError] = useState<string | null>(null)
-  const [plan, setPlan] = useState<PlotPlan | null>(null)
+  const [plan, setPlan] = useState<ToolPlan | null>(null)
   const boxRef = useRef<HTMLDivElement>(null)
   const abortRef = useRef<AbortController | null>(null)
   // đang giữ chuột trong trang: chờ thả chuột mới hiện thanh (khỏi nhấp nháy khi kéo bôi đen)
@@ -174,11 +187,11 @@ export function DocSelectionAi({
     const ctrl = new AbortController()
     abortRef.current = ctrl
     setLastAsk(PLOT_ASK)
-    setLastLabel('Vẽ đồ thị')
+    setLastLabel('Vẽ hình')
     setPhase('busy')
     setError(null)
     try {
-      const p = await planPlot(range.text, context ?? '', ctrl.signal)
+      const p = await planTool(range.text, context ?? '', ctrl.signal)
       if (ctrl.signal.aborted) return
       setPlan(p)
       setPhase('plot')
@@ -217,7 +230,7 @@ export function DocSelectionAi({
   }
 
   if (!range || !pos) return null
-  const plotImg = phase === 'plot' && plan ? renderPlotSvg(plan.spec) : null
+  const plotImg = phase === 'plot' && plan ? renderTool(plan.doc) : null
 
   const keep = (e: React.MouseEvent) => {
     // giữ vùng chọn trong trang khi bấm nút (ô nhập thì cho focus bình thường)
@@ -251,9 +264,9 @@ export function DocSelectionAi({
             <>
               <div className="mb-1.5 flex items-center gap-1.5 text-[12px] font-semibold text-ink-3">
                 <ChartSpline className="size-3.5 text-clay" />
-                Đồ thị {plan.spec.curves.map((c) => `y = ${c.expr}`).join('; ')}
+                {plan.doc.kind === 'graph' ? `Đồ thị ${plan.doc.spec.curves.map((c) => `y = ${c.expr}`).join('; ')}` : TOOL_NAME[plan.doc.kind]}
               </div>
-              <img src={svgDataUrl(plotImg.svg)} alt="Xem trước đồ thị" onLoad={() => place(range)} className="mx-auto block max-h-[260px] max-w-full rounded-md border border-line bg-white" />
+              <img src={svgDataUrl(plotImg.svg)} alt="Xem trước hình" onLoad={() => place(range)} className="mx-auto block max-h-[260px] max-w-full rounded-md border border-line bg-white" />
               {plan.note && <p className="mt-1.5 text-[12px] leading-snug text-ink-3">{plan.note}</p>}
               <div className="mt-2 flex items-center gap-1.5">
                 <button
@@ -274,7 +287,7 @@ export function DocSelectionAi({
                     onClick={() => {
                       const at = afterPos()
                       if (at === null) return setError('Đoạn chữ đã thay đổi, bôi đen lại nhé.')
-                      onEditPlot(plan.spec, at)
+                      onEditPlot(plan.doc, at)
                       close()
                     }}
                     className="flex h-8 items-center gap-1 whitespace-nowrap rounded-md px-2.5 text-[12.5px] text-ink-2 hover:bg-paper-2"
@@ -353,7 +366,7 @@ export function DocSelectionAi({
                     onClick={() => void askPlot()}
                     className="flex items-center gap-1 rounded-full border border-clay/40 bg-clay-tint px-2.5 py-1 text-[12px] font-medium text-clay transition-colors hover:border-clay disabled:opacity-40"
                   >
-                    <ChartSpline className="size-3.5" /> Vẽ đồ thị
+                    <ChartSpline className="size-3.5" /> Vẽ hình minh hoạ
                   </button>
                 )}
                 {DOC_REWRITE_PRESETS.map((p) => (

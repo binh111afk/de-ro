@@ -16,7 +16,13 @@ export interface CircuitSpec {
 }
 
 type Kind = 'R' | 'Rb' | 'D' | 'A' | 'V' | 'K' | 'C' | 'L' | 'E'
-type Node = { t: 'el'; kind: Kind; name: string; value: string } | { t: 'ser' | 'par'; items: Node[] }
+type Node =
+  | { t: 'el'; kind: Kind; name: string; value: string }
+  | { t: 'ser' | 'par'; items: Node[] }
+  /** điểm nút có tên: "@M" */
+  | { t: 'pt'; name: string }
+  /** mạch cầu: R1, R2 nhánh trên (qua M), R3, R4 nhánh dưới (qua N), R5 nối M–N */
+  | { t: 'bridge'; items: Node[] }
 
 function kindOf(name: string): Kind {
   if (/^(Rb|biến)/i.test(name)) return 'Rb'
@@ -53,8 +59,33 @@ function parseExpr(src: string): Node {
       i++
       return n
     }
+    if (src[i] === '@') {
+      i++
+      let name = ''
+      while (i < src.length && /[\p{L}\d'’]/u.test(src[i])) name += src[i++]
+      if (!name) throw new Error('Sau "@" cần tên điểm, vd. @M')
+      return { t: 'pt', name }
+    }
+    const br = /^(cầu|cau)\s*\(/i.exec(src.slice(i))
+    if (br) {
+      i += br[0].length
+      const items: Node[] = []
+      for (;;) {
+        items.push(series())
+        ws()
+        if (src[i] === ',' || src[i] === ';') {
+          i++
+          continue
+        }
+        if (src[i] !== ')') throw new Error('Mạch cầu: thiếu dấu ")"')
+        i++
+        break
+      }
+      if (items.length !== 5) throw new Error('Mạch cầu cần đúng 5 phần: cầu(R1, R2, R3, R4, R5)')
+      return { t: 'bridge', items }
+    }
     let name = ''
-    while (i < src.length && !/[\s()=/]/.test(src[i]) && !isSerAt(i)) name += src[i++]
+    while (i < src.length && !/[\s()=/,;]/.test(src[i]) && !isSerAt(i)) name += src[i++]
     if (!name) throw new Error(i >= src.length ? 'Mạch đang bỏ dở ở cuối' : `Không đọc được chỗ "${src.slice(i, i + 6)}"`)
     let value = ''
     if (src[i] === '(') {
@@ -72,7 +103,7 @@ function parseExpr(src: string): Node {
       if (src[i] === '=') {
         i++
         const s = i
-        while (i < src.length && src[i] !== ')' && !src.startsWith('//', i) && !isSerAt(i)) i++
+        while (i < src.length && src[i] !== ')' && src[i] !== ',' && src[i] !== ';' && !src.startsWith('//', i) && !isSerAt(i)) i++
         value = src.slice(s, i)
       }
     }
@@ -169,10 +200,17 @@ interface Box {
   draw: (x: number, y: number) => string
 }
 
-function layout(n: Node, values: boolean): Box {
+const ptLabel = (name: string, x: number, y: number) =>
+  `<text x="${x}" y="${y}" ${FAM} font-size="15" font-style="italic" text-anchor="middle">${esc(name)}</text>`
+
+function layout(n: Node, values: boolean, bare = false): Box {
+  if (n.t === 'pt') {
+    return { w: 16, h: 50, a: 30, draw: (x, y) => line(x, y + 30, x + 16, y + 30) + dot(x + 8, y + 30) + ptLabel(n.name, x + 8, y + 18) }
+  }
+  if (n.t === 'bridge') return bridge(n.items, values)
   if (n.t === 'el') {
     // khoá: "đóng" chỉ để vẽ, không ghi ra
-    const val = values && n.kind !== 'K' ? n.value : ''
+    const val = values && !bare && n.kind !== 'K' ? n.value : ''
     const w = Math.max(64, tw(n.name, 16) + 24, tw(val, 13) + 16)
     const h = val ? 66 : 50
     const a = 30
@@ -190,7 +228,7 @@ function layout(n: Node, values: boolean): Box {
           line(cx + half, wy, x + w, wy) +
           symbol(n.kind, cx, wy, n.value) +
           // ampe kế / vôn kế tên trùng chữ trong vòng tròn thì khỏi ghi lại
-          (n.name === n.kind ? '' : nameSvg(n.name, cx, wy - top - 5)) +
+          (bare || n.name === n.kind ? '' : nameSvg(n.name, cx, wy - top - 5)) +
           (val ? `<text x="${cx}" y="${wy + 30}" ${FAM} font-size="13" text-anchor="middle">${esc(val)}</text>` : '')
         )
       },
@@ -248,7 +286,69 @@ function layout(n: Node, values: boolean): Box {
   }
 }
 
-const hasSource = (n: Node): boolean => (n.t === 'el' ? n.kind === 'E' : n.items.some(hasSource))
+/**
+ * Mạch cầu dạng hình chữ nhật (kiểu SGK): hai nhánh trên/dưới giữa hai thanh dọc,
+ * phần thứ năm dựng đứng nối điểm giữa M (trên) và N (dưới).
+ */
+function bridge(items: Node[], values: boolean): Box {
+  const [k1, k2, k3, k4] = items.slice(0, 4).map((k) => layout(k, values))
+  const mid = items[4]
+  // phần giữa: linh kiện đơn thì xoay đứng, ghi tên + giá trị bên phải
+  const midEl = mid.t === 'el' ? mid : null
+  const mb = layout(mid, values, !!midEl)
+  const pad = 20
+  // khe giữa hai cột đủ chỗ ghi tên + giá trị phần giữa bên phải nó
+  const midText = midEl ? Math.max(tw(midEl.name, 16), values ? tw(midEl.value, 13) : 0) : 0
+  const g = Math.max(40, 2 * (midText + 30))
+  const colL = Math.max(k1.w, k3.w)
+  const colR = Math.max(k2.w, k4.w)
+  const topA = Math.max(k1.a, k2.a)
+  const topH = topA + Math.max(k1.h - k1.a, k2.h - k2.a)
+  const span = mb.w + 12
+  const gapV = Math.max(16, span + 10 - (topH - topA) - Math.max(k3.a, k4.a))
+  const botY = topH + gapV
+  const botA = Math.max(k3.a, k4.a)
+  const h = botY + botA + Math.max(k3.h - k3.a, k4.h - k4.a)
+  const wT = topA
+  const wB = botY + botA
+  const a = (wT + wB) / 2
+  const W = colL + g + colR
+  return {
+    w: W + pad * 2,
+    h,
+    a,
+    draw: (x, y) => {
+      const l = x + pad
+      const r = l + W
+      const xm = l + colL + g / 2
+      let out = line(x, y + a, l, y + a) + line(r, y + a, r + pad, y + a)
+      out += line(l, y + wT, l, y + wB) + line(r, y + wT, r, y + wB)
+      const row = (left: Box, right: Box, wy: number) => {
+        const lx = l + (colL - left.w) / 2
+        const rx = l + colL + g + (colR - right.w) / 2
+        return (
+          line(l, wy, lx, wy) + left.draw(lx, wy - left.a) + line(lx + left.w, wy, rx, wy) + right.draw(rx, wy - right.a) + line(rx + right.w, wy, r, wy)
+        )
+      }
+      out += row(k1, k2, y + wT) + row(k3, k4, y + wB)
+      // nhánh giữa dựng đứng từ M xuống N
+      const cy = y + (wT + wB) / 2
+      const top = cy - mb.w / 2
+      out += line(xm, y + wT, xm, top) + line(xm, top + mb.w, xm, y + wB)
+      out += `<g transform="rotate(90 ${xm} ${cy})">${mb.draw(xm - mb.w / 2, cy - mb.a)}</g>`
+      if (midEl) {
+        const val = values && midEl.kind !== 'K' ? midEl.value : ''
+        if (midEl.name !== midEl.kind) out += nameSvg(midEl.name, xm + 30, cy + (val ? -2 : 5)).replace('text-anchor="middle"', 'text-anchor="start"')
+        if (val) out += `<text x="${xm + 22}" y="${cy + 16}" ${FAM} font-size="13">${esc(val)}</text>`
+      }
+      out += dot(xm, y + wT) + dot(xm, y + wB) + dot(l, y + a) + dot(r, y + a)
+      out += ptLabel('M', xm, y + wT - 10) + ptLabel('N', xm, y + wB + 20)
+      return out
+    },
+  }
+}
+
+const hasSource = (n: Node): boolean => (n.t === 'el' ? n.kind === 'E' : n.t === 'pt' ? false : n.items.some(hasSource))
 
 export function renderCircuitSvg(spec: CircuitSpec, desc: string): { svg: string; width: number; height: number } {
   let source: { name: string; label: string } | null = null
@@ -306,6 +406,8 @@ export const CIRCUIT_HELP: Array<{ group: string; items: Array<{ code: string; w
       { code: 'R1 - (R2 // R3)', what: 'Ngoặc để gom một cụm' },
       { code: '(R1 - R2) // (R3 - R4)', what: 'Hai nhánh, mỗi nhánh có hai điện trở' },
       { code: '(R2 // V)', what: 'Vôn kế mắc song song với R2' },
+      { code: 'cầu(R1, R2, R3, R4, R5)', what: 'Mạch cầu: R1–R2 trên, R3–R4 dưới, R5 nối M–N' },
+      { code: '@A - R1 - @B', what: 'Ghi tên điểm nút A, B trên dây' },
     ],
   },
   {

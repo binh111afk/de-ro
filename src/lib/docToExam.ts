@@ -6,11 +6,17 @@ import { formatTrueFalse, normalizeShort, parseTrueFalse } from '@/lib/grading'
  * Chữ của một đoạn rich text cho đề tương tác: giữ công thức `$…$`, đậm/nghiêng/gạch chân
  * thành **…** / *…* / __…__ (MathText vẽ lại). Đoạn có công thức không bọc dấu để khỏi vỡ công thức.
  */
-function toRich(rt: RichText | undefined): string {
+function toRich(rt: RichText | undefined, skip?: unknown): string {
   if (!rt) return ''
   if (typeof rt === 'string') return rt
   return rt
     .map((s) => {
+      if (s.image) {
+        if (s.image === skip) return ''
+        const { src, alt, width } = s.image
+        const pct = width ? Math.min(100, Math.max(10, Math.round((width / 643) * 100))) : 0
+        return `\n![${(alt ?? '').replace(/[\]|\n]/g, ' ')}${pct ? `|${pct}` : ''}](${src})\n`
+      }
       const has = (t: string) => s.marks?.some((m) => m.type === t)
       const core = s.text.trim()
       if (!core || s.text.includes('$') || !s.marks?.length) return s.text
@@ -37,9 +43,9 @@ function toPlain(rt: RichText | undefined): string {
 
 /**
  * Ảnh đầu tiên chèn trong đề bài: nằm trước mọi chữ thì xếp trên đề bài, còn lại xếp dưới.
- * Ảnh trong phương án chưa được hỗ trợ.
+ * Các ảnh còn lại (và ảnh trong phương án) đi vào chữ dạng `![alt|rộng%](src)` (xem `toRich`).
  */
-function promptImage(...parts: Array<RichText | undefined>): QuestionImage | undefined {
+function promptImage(...parts: Array<RichText | undefined>): (QuestionImage & { _from?: unknown }) | undefined {
   for (const rt of parts) {
     if (!rt || typeof rt === 'string') continue
     const at = rt.findIndex((sp) => sp.image)
@@ -48,9 +54,19 @@ function promptImage(...parts: Array<RichText | undefined>): QuestionImage | und
     const first = !rt.slice(0, at).some((sp) => sp.text.trim())
     // width trong trang đề là px; đề tương tác dùng % — quy theo bề ngang chữ trang A4 (~643px)
     const pct = width ? Math.min(100, Math.max(10, Math.round((width / 643) * 100))) : undefined
-    return { src, position: first ? 'top' : 'bottom', ...(alt ? { alt } : {}), ...(plot ? { plot } : {}), ...(pct ? { width: pct } : {}) }
+    return { src, _from: rt[at].image, position: first ? 'top' : 'bottom', ...(alt ? { alt } : {}), ...(plot ? { plot } : {}), ...(pct ? { width: pct } : {}) }
   }
   return undefined
+}
+
+/** Đề bài + ảnh chính; ảnh chính không lặp lại trong chữ. */
+function withImage(...parts: Array<RichText | undefined>): { prompt: string; image?: QuestionImage } {
+  const img = promptImage(...parts)
+  const prompt = parts.map((p) => toRich(p, img?._from).trim()).filter(Boolean).join('\n')
+  if (!img) return { prompt }
+  const { _from, ...image } = img
+  void _from
+  return { prompt, image }
 }
 
 /** Đáp án trắc nghiệm là chữ cái A–D ở đầu chuỗi, ví dụ "B" hoặc "B. 12 cm". */
@@ -143,10 +159,9 @@ export function docToExam(doc: ExamDoc, id: string): Exam {
     id: `${id}-m${i}`,
     number: ++counter,
     type: 'trac-nghiem',
-    prompt: toRich(b.text),
+    ...withImage(b.text),
     ...alignOf(b),
-    image: promptImage(b.text),
-    options: b.options.map((o) => ({ key: o.label, text: toRich(o.text) })),
+    options: b.options.map((o) => ({ key: o.label, text: toRich(o.text).trim() })),
     answer: mcqAnswer(b.no),
     explanation: explain.get(`c${b.no}`) || undefined,
     points: mcqPoints,
@@ -160,10 +175,9 @@ export function docToExam(doc: ExamDoc, id: string): Exam {
       id: `${id}-t${i}`,
       number: ++counter,
       type: 'dung-sai',
-      prompt: toRich(b.text),
+      ...withImage(b.text),
       ...alignOf(b),
-      image: promptImage(b.text),
-      options: b.options.map((o) => ({ key: o.label.toLowerCase(), text: toRich(o.text) })),
+      options: b.options.map((o) => ({ key: o.label.toLowerCase(), text: toRich(o.text).trim() })),
       answer: parsed ? formatTrueFalse(parsed) : undefined,
       explanation: explain.get(`c${b.no}`) || undefined,
       points: 1,
@@ -176,9 +190,8 @@ export function docToExam(doc: ExamDoc, id: string): Exam {
       id: `${id}-s${i}`,
       number: ++counter,
       type: 'tra-loi-ngan',
-      prompt: toRich(b.text),
+      ...withImage(b.text),
       ...alignOf(b),
-      image: promptImage(b.text),
       answer: raw ? normalizeShort(raw) : undefined,
       explanation: explain.get(`c${b.no}`) || undefined,
       points: shortPoints,

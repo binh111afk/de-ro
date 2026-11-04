@@ -22,6 +22,8 @@ export interface SignRow {
   signs: Array<'+' | '-'>
   /** tại các điểm giữa (dài xs.length - 2) */
   marks: StMark[]
+  /** tại hai đầu khi miền xác định bị chặn (vd. √x: "0" ở x = 0; ln x: "||") */
+  ends?: [StMark, StMark]
 }
 export interface SignTableSpec {
   /** nhãn x, gồm hai đầu (thường −∞, +∞) */
@@ -133,8 +135,52 @@ function roots(g: Fn): { zeros: number[]; poles: number[] } {
   return { zeros: uniq(zeros), poles: uniq(poles) }
 }
 
+/**
+ * Miền xác định một khoảng [lo, hi] (±∞ nếu không chặn). Miền gồm nhiều khoảng rời
+ * (vd. √(x²−1)) thì báo để giáo viên gõ tay.
+ */
+function domainOf(f: Fn): { lo: number; hi: number } {
+  const ok = (x: number) => Number.isFinite(f(x))
+  const h = 0.01
+  const n = Math.round((2 * L) / h)
+  let first = -1
+  let last = -1
+  let gap = 0
+  for (let k = 0; k <= n; k++) {
+    const x = -L + k * h
+    if (ok(x)) {
+      if (first < 0) first = k
+      else if (gap > 3) throw new Error('Miền xác định gồm nhiều khoảng rời nhau — gõ bảng bằng tay ở ô dưới')
+      last = k
+      gap = 0
+    } else if (first >= 0) gap++
+  }
+  if (first < 0) throw new Error('Biểu thức không xác định ở đâu cả trong [−30; 30]')
+  const edge = (bad: number, good: number) => {
+    for (let k = 0; k < 60; k++) {
+      const m = (bad + good) / 2
+      if (ok(m)) good = m
+      else bad = m
+    }
+    return snap(good)
+  }
+  return {
+    lo: first === 0 ? -Infinity : edge(-L + (first - 1) * h, -L + first * h),
+    hi: last === n ? Infinity : edge(-L + (last + 1) * h, -L + last * h),
+  }
+}
+
+/** dấu tại đầu mút miền: xác định và bằng 0 → "0"; không xác định → "||"; còn lại trống */
+const endMark = (g: Fn, x: number): StMark => {
+  if (!Number.isFinite(x)) return ''
+  const v = g(x)
+  return !Number.isFinite(v) ? '||' : Math.abs(v) < 1e-9 ? '0' : ''
+}
+
 export function autoSignTable(expr: string): SignTableSpec {
   const f = parseExpr(expr)
+  const { lo, hi } = domainOf(f)
+  const inside = (v: number) => v > lo + 1e-6 && v < hi - 1e-6
   const factors = splitFactors(expr)
   const parts = factors.length >= 2 ? factors.map((p) => ({ ...p, fn: parseExpr(p.src) })) : []
   const all = roots(f)
@@ -142,10 +188,11 @@ export function autoSignTable(expr: string): SignTableSpec {
   const pts = [...all.zeros, ...all.poles, ...per.flatMap((r) => [...r.zeros, ...r.poles])]
     .sort((a, b) => a - b)
     .filter((v, i, arr) => i === 0 || Math.abs(v - arr[i - 1]) > 1e-6)
+    .filter(inside)
   if (pts.length > 12) throw new Error('Quá nhiều điểm (hàm tuần hoàn?) — gõ bảng bằng tay ở ô dưới')
   const near = (list: number[], v: number) => list.some((u) => Math.abs(u - v) < 1e-6)
   const mids: number[] = []
-  const bounds = [-Infinity, ...pts, Infinity]
+  const bounds = [lo, ...pts, hi]
   for (let i = 0; i + 1 < bounds.length; i++) {
     const a = bounds[i]
     const b = bounds[i + 1]
@@ -156,16 +203,19 @@ export function autoSignTable(expr: string): SignTableSpec {
     if (!Number.isFinite(v)) throw new Error(`Biểu thức không xác định tại x = ${niceNum(x)} — gõ bảng bằng tay ở ô dưới`)
     return v >= 0 ? '+' : '-'
   }
-  const row = (label: string, g: Fn, r: { zeros: number[]; poles: number[] }): SignRow => ({
+  const bounded = Number.isFinite(lo) || Number.isFinite(hi)
+  const row = (label: string, g: Fn, r: { zeros: number[]; poles: number[] }, ends?: [StMark, StMark]): SignRow => ({
     label,
     signs: mids.map((m) => signOf(g, m)) as Array<'+' | '-'>,
     marks: pts.map((p) => (near(r.poles, p) ? '||' : near(r.zeros, p) ? '0' : '')),
+    ...(bounded ? { ends: ends ?? [endMark(g, lo), endMark(g, hi)] } : {}),
   })
   const rows: SignRow[] = parts.map((p, i) => row(prettyExpr(strip(p.src)), p.fn, per[i]))
   // hàng cuối: không xác định ở mọi nghiệm của nhân tử dưới mẫu
   const denZeros = parts.flatMap((p, i) => (p.den ? per[i].zeros : []))
   rows.push(row('f(x)', f, { zeros: all.zeros.filter((z) => !near(denZeros, z)), poles: [...all.poles, ...denZeros] }))
-  return { xs: ['−∞', ...pts.map(niceNum), '+∞'], rows }
+  const end = (v: number, inf: string) => (Number.isFinite(v) ? niceNum(v) : inf)
+  return { xs: [end(lo, '−∞'), ...pts.map(niceNum), end(hi, '+∞')], rows }
 }
 
 /* ------------------------------------------------------------------ *
@@ -176,10 +226,12 @@ export function signTableToText(spec: SignTableSpec): string {
   const lines = [`x: ${spec.xs.map((x) => toKeys(x)).join(' ')}`]
   for (const r of spec.rows) {
     const t: string[] = []
+    if (r.ends) t.push(r.ends[0] || '.')
     r.signs.forEach((s, i) => {
       t.push(s)
       if (i < r.marks.length) t.push(r.marks[i] || '.')
     })
+    if (r.ends) t.push(r.ends[1] || '.')
     lines.push(`${toKeys(r.label).replace(/−/g, '-')}: ${t.join(' ')}`)
   }
   return lines.join('\n')
@@ -201,8 +253,18 @@ export function parseSignTableText(text: string): SignTableSpec {
   const n = xr.vals.length
   if (n < 2) throw new Error('Dòng x cần ít nhất 2 giá trị')
   if (!rest.length) throw new Error('Thêm ít nhất một dòng dấu, vd. f(x): + 0 -')
+  const markOf = (v: string, name: string, at: number): StMark => {
+    if (!['0', '||', '.', '|'].includes(v)) throw new Error(`Dòng ${name}: kí hiệu thứ ${at} phải là 0, || hoặc . (trống)`)
+    return v === '0' ? '0' : v === '||' ? '||' : ''
+  }
   const rows = rest.map((r): SignRow => {
-    if (r.vals.length !== 2 * n - 3) throw new Error(`Dòng ${r.name} cần ${2 * n - 3} kí hiệu (dấu ${n - 1} khoảng xen ${n - 2} điểm), đang có ${r.vals.length}`)
+    // thêm hai kí hiệu ở hai đầu (miền bị chặn): 2n−1 kí hiệu
+    let ends: [StMark, StMark] | undefined
+    if (r.vals.length === 2 * n - 1) {
+      ends = [markOf(r.vals[0], r.name, 1), markOf(r.vals[r.vals.length - 1], r.name, r.vals.length)]
+      r = { ...r, vals: r.vals.slice(1, -1) }
+    }
+    if (r.vals.length !== 2 * n - 3) throw new Error(`Dòng ${r.name} cần ${2 * n - 3} kí hiệu (dấu ${n - 1} khoảng xen ${n - 2} điểm; thêm 2 kí hiệu hai đầu nếu miền bị chặn), đang có ${r.vals.length}`)
     const signs: Array<'+' | '-'> = []
     const marks: StMark[] = []
     r.vals.forEach((v, i) => {
@@ -214,7 +276,7 @@ export function parseSignTableText(text: string): SignTableSpec {
         marks.push(v === '0' ? '0' : v === '||' ? '||' : '')
       }
     })
-    return { label: prettyExpr(r.name), signs, marks }
+    return { label: prettyExpr(r.name), signs, marks, ...(ends ? { ends } : {}) }
   })
   return { xs: xr.vals.map(fromKeys), rows }
 }
@@ -246,8 +308,10 @@ export function renderSignTableSvg(spec: SignTableSpec, desc: string): { svg: st
     const r = ri + 1
     out.push(`<text x="${labelW / 2}" y="${mid(r)}" ${FONT} font-style="italic" text-anchor="middle">${esc(row.label)}</text>`)
     row.signs.forEach((s, i) => out.push(`<text x="${(px(i) + px(i + 1)) / 2}" y="${mid(r)}" ${FONT} text-anchor="middle">${s === '+' ? '+' : '−'}</text>`))
-    row.marks.forEach((m, k) => {
-      const x = px(k + 1)
+    const at: Array<[StMark, number]> = row.marks.map((m, k) => [m, k + 1])
+    if (row.ends) at.push([row.ends[0], 0], [row.ends[1], n - 1])
+    at.forEach(([m, k]) => {
+      const x = px(k)
       if (m === '0') out.push(`<text x="${x}" y="${mid(r)}" ${FONT} text-anchor="middle">0</text>`)
       if (m === '||') out.push(`<path d="M${x - 2} ${r * ROW_H}V${(r + 1) * ROW_H}M${x + 2} ${r * ROW_H}V${(r + 1) * ROW_H}" stroke="#222" stroke-width="1.2"/>`)
     })

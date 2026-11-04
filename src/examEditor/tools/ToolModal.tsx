@@ -9,7 +9,8 @@ import type { Geo2dSpec, Geo3dSpec } from '@/lib/geometry'
 import { GraphToolModal } from './GraphToolModal'
 import { VarTableModal } from './VarTableModal'
 import { Geo2dModal, Geo3dModal } from './GeometryModal'
-import { CircuitModal, OxyModal, SignTableModal, StatsModal } from './MoreToolModals'
+import { CircuitModal, InclineModal, MotionModal, OxyModal, SignTableModal, StatsModal } from './MoreToolModals'
+import type { InclineSpec, MotionSpec } from '@/lib/physics'
 import type { SignTableSpec } from '@/lib/signTable'
 import type { OxySpec } from '@/lib/oxy'
 import type { StatsSpec } from '@/lib/stats'
@@ -46,5 +47,9 @@ export function ToolModal({
       return <StatsModal initial={initial as StatsSpec | null | undefined} {...common} />
     case 'circuit':
       return <CircuitModal initial={initial as CircuitSpec | null | undefined} {...common} />
+    case 'motion':
+      return <MotionModal initial={initial as MotionSpec | null | undefined} {...common} />
+    case 'incline':
+      return <InclineModal initial={initial as InclineSpec | null | undefined} {...common} />
   }
 }

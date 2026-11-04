@@ -233,11 +233,21 @@ export function renderStatsSvg(spec: StatsSpec, desc: string): { svg: string; wi
     series.forEach((s, si) => {
       const pts = s.vals.map((v, i) => [left + i * slot + slot / 2, Y(v)])
       b += `<path d="M${pts.map((p) => `${f1(p[0])} ${f1(p[1])}`).join('L')}" fill="none" stroke="#222" stroke-width="1.6"${si % 2 ? ' stroke-dasharray="6 4"' : ''}/>`
-      pts.forEach((p, i) => {
-        b += mark(MARKS[si % MARKS.length], p[0], p[1])
-        if (spec.values) b += `<text x="${f1(p[0])}" y="${f1(p[1] - 9)}" ${FAM} font-size="13" text-anchor="middle">${fmt(s.vals[i])}</text>`
-      })
+      pts.forEach((p) => (b += mark(MARKS[si % MARKS.length], p[0], p[1])))
     })
+    // nhãn số: cùng một cột, xếp từ điểm cao xuống; nhãn sát nhãn trên thì đặt dưới điểm
+    if (spec.values)
+      cats.forEach((_, i) => {
+        const x = left + i * slot + slot / 2
+        const col = series.map((s) => ({ v: s.vals[i], y: Y(s.vals[i]) })).filter((p) => Number.isFinite(p.v)).sort((p, q) => p.y - q.y)
+        let prev = -Infinity
+        for (const p of col) {
+          let ty = p.y - 9
+          if (ty - prev < 14) ty = Math.max(p.y + 20, prev + 14)
+          b += `<text x="${f1(x)}" y="${f1(ty)}" ${FAM} font-size="13" text-anchor="middle">${fmt(p.v)}</text>`
+          prev = ty
+        }
+      })
   } else {
     const bw = Math.min(40, (slot - 16) / ns)
     series.forEach((s, si) => {
