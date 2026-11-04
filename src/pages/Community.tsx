@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { Pager, usePaged } from '@/components/Pager'
 import { Link, useNavigate } from 'react-router-dom'
 import { Clock, Grid2x2, List, MonitorPlay, Search, Sparkles, Upload, Users, X } from 'lucide-react'
 import { Badge, Button, EmptyState, inputClass, SkeletonCard } from '@/components/ui'
@@ -149,6 +150,7 @@ export default function Community() {
   }, [items, q, subject, grade, sort])
 
   const hasFilter = Boolean(q || subject || grade)
+  const paged = usePaged(results, 12, `${q}|${subject}|${grade}|${sort}|${view}`)
   const clearFilters = () => {
     setQ('')
     setSubject('')
@@ -239,17 +241,18 @@ export default function Community() {
         />
       ) : view === 'grid' ? (
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {results.map((it, i) => (
+          {paged.items.map((it, i) => (
             <ExamCard key={`${it.mine ? 'u' : 's'}-${it.id}`} item={it} index={i} busy={openingId === it.id} />
           ))}
         </div>
       ) : (
         <div className="overflow-hidden rounded-[6px] bg-surface shadow-[0_1px_2px_rgba(60,48,32,0.03)]">
-          {results.map((it) => (
+          {paged.items.map((it) => (
             <ExamRow key={`${it.mine ? 'u' : 's'}-${it.id}`} item={it} busy={openingId === it.id} />
           ))}
         </div>
       )}
+      <Pager {...paged} />
     </div>
   )
 }

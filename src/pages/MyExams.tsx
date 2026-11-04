@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Pager, usePaged } from '@/components/Pager'
 import { Link, useNavigate } from 'react-router-dom'
 import { Copy, FileText, FolderOpen, MoreHorizontal, MonitorPlay, Share2, Trash2 } from 'lucide-react'
 import { Badge, Button, EmptyState } from '@/components/ui'
@@ -10,6 +11,7 @@ import { cn } from '@/lib/cn'
 export default function MyExams() {
   const navigate = useNavigate()
   const myExams = useApp((s) => s.myExams)
+  const paged = usePaged(myExams, 12)
   const duplicateExam = useApp((s) => s.duplicateExam)
   const deleteExam = useApp((s) => s.deleteExam)
   const toggleShared = useApp((s) => s.toggleShared)
@@ -61,7 +63,7 @@ export default function MyExams() {
       </header>
 
       <div className="space-y-3">
-        {myExams.map((exam) => {
+        {paged.items.map((exam) => {
           const nq = exam.sections.reduce((n, s) => n + s.questions.length, 0)
           const target = confirmDelete === exam.id
           return (
@@ -196,6 +198,7 @@ export default function MyExams() {
           )
         })}
       </div>
+      <Pager {...paged} />
     </div>
   )
 }

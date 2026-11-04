@@ -1,4 +1,5 @@
 import { dialog } from '@/components/Dialog'
+import { Pager, usePaged } from '@/components/Pager'
 import { useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { Clock, History, MonitorPlay, Plus, Send, Sparkles, Trash2, Upload } from 'lucide-react'
@@ -20,6 +21,7 @@ export default function OnlineList() {
   const tab: Tab = params.get('tab') === 'published' ? 'published' : 'history'
   const setTab = (t: Tab) => setParams(t === 'published' ? { tab: t } : {}, { replace: true })
   const items = useOnline((s) => s.items)
+  const paged = usePaged(items, 12)
   const create = useOnline((s) => s.create)
   const remove = useOnline((s) => s.remove)
 
@@ -70,11 +72,12 @@ export default function OnlineList() {
         />
       ) : (
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {items.map((it, i) => (
+          {paged.items.map((it, i) => (
             <ItemCard key={it.id} item={it} index={i} onDelete={() => remove(it.id)} />
           ))}
         </div>
       )}
+      <Pager {...paged} />
     </div>
   )
 }

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Pager, usePaged } from '@/components/Pager'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ArrowLeft, BarChart3, Check, Clock, Crown, Globe2, Link2, Lock, Sparkles, Trash2 } from 'lucide-react'
 import { CopyLink } from '@/components/CopyLink'
@@ -24,6 +25,7 @@ export function PublishedPanel() {
   const items = useOnline((s) => s.items)
   const updateItem = useOnline((s) => s.update)
   const [rows, setRows] = useState<CommunityRow[] | null>(null)
+  const paged = usePaged(rows ?? [], 12)
   const [attempts, setAttempts] = useState<Attempt[]>([])
   const [error, setError] = useState<string | null>(null)
   const [busyId, setBusyId] = useState<string | null>(null)
@@ -118,7 +120,7 @@ export function PublishedPanel() {
         />
       ) : (
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {rows.map((row, i) => (
+          {paged.items.map((row, i) => (
             <PublishedCard
               key={row.id}
               row={row}
@@ -134,6 +136,7 @@ export function PublishedPanel() {
           ))}
         </div>
       )}
+      <Pager {...paged} />
     </>
   )
 }
