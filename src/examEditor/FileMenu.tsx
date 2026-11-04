@@ -139,7 +139,7 @@ export function FileMenu({ kind, onNew, onImport, onDownload, downloadHint, down
             onClick={() => fileRef.current?.click()}
           >
             <span className="file-menu__icon">
-              <IconTray />
+              <IconTray up />
             </span>
             <span className="file-menu__text">
               <span className="file-menu__label">Nhập file…</span>
@@ -157,7 +157,7 @@ export function FileMenu({ kind, onNew, onImport, onDownload, downloadHint, down
             onClick={runDownload}
           >
             <span className="file-menu__icon">
-              <IconTray up />
+              <IconTray />
             </span>
             <span className="file-menu__text">
               <span className="file-menu__label">Tải xuống file</span>
@@ -176,7 +176,7 @@ export function FileMenu({ kind, onNew, onImport, onDownload, downloadHint, down
                 extra.onClick()
               }}
             >
-              <span className="file-menu__icon">{extra.icon ?? <IconTray up />}</span>
+              <span className="file-menu__icon">{extra.icon ?? <IconTray />}</span>
               <span className="file-menu__text">
                 <span className="file-menu__label">{extra.label}</span>
                 <span className="file-menu__hint">{extra.hint}</span>
