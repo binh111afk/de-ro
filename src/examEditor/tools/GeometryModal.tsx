@@ -10,7 +10,7 @@ import { inputClass } from '@/components/ui'
 import { GEO2D_SHAPES, GEO3D_SHAPES, type Geo2dShape, type Geo2dSpec, type Geo3dShape, type Geo3dSpec } from '@/lib/geometry'
 import { renderTool, type ToolImage } from '@/lib/toolSpec'
 import { GEO_HELP } from '@/lib/geoConstruct'
-import { CircleHelp, X } from 'lucide-react'
+import { ChevronDown, CircleHelp, X } from 'lucide-react'
 import { Check, ToolShell, sectionTitle } from './ToolShell'
 
 const isTri2d = (s: Geo2dShape) => ['triangle', 'right-triangle', 'isosceles', 'equilateral', 'inscribed-triangle'].includes(s)
@@ -133,25 +133,55 @@ function ShapePicker<T extends string>({
   value: T
   onPick: (o: { id: T; label: string; names: string[] }) => void
 }) {
+  const [open, setOpen] = useState(false)
+  const [q, setQ] = useState('')
+  const cur = options.find((o) => o.id === value)
+  const norm = (t: string) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd').toLowerCase()
+  const list = q ? options.filter((o) => norm(o.label).includes(norm(q))) : options
   return (
     <section>
       <h3 className={sectionTitle}>Mẫu hình</h3>
-      <div className="flex flex-col gap-1">
-        {options.map((o) => (
-          <button
-            key={o.id}
-            type="button"
-            onClick={() => onPick(o)}
-            aria-pressed={value === o.id}
-            className={cn(
-              'rounded-[6px] px-2.5 py-1.5 text-left text-[13px] transition-colors',
-              value === o.id ? 'bg-clay-tint font-medium text-clay' : 'text-ink-2 hover:bg-sunken hover:text-ink',
-            )}
-          >
-            {o.label}
-          </button>
-        ))}
-      </div>
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        className="flex w-full items-center justify-between rounded-[6px] bg-clay-tint px-2.5 py-1.5 text-left text-[13px] font-medium text-clay"
+      >
+        <span className="truncate">{cur?.label ?? 'Chọn hình'}</span>
+        <ChevronDown className={cn('size-4 shrink-0 transition-transform', open && 'rotate-180')} />
+      </button>
+      {open && (
+        <div className="mt-1.5">
+          <input
+            autoFocus
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Tìm hình…"
+            className={cn(inputClass, 'mb-1 h-8 text-[13px]')}
+          />
+          <div className="flex max-h-56 flex-col gap-0.5 overflow-y-auto">
+            {list.map((o) => (
+              <button
+                key={o.id}
+                type="button"
+                onClick={() => {
+                  onPick(o)
+                  setOpen(false)
+                  setQ('')
+                }}
+                aria-pressed={value === o.id}
+                className={cn(
+                  'rounded-[6px] px-2.5 py-1.5 text-left text-[13px] transition-colors',
+                  value === o.id ? 'bg-clay-tint font-medium text-clay' : 'text-ink-2 hover:bg-sunken hover:text-ink',
+                )}
+              >
+                {o.label}
+              </button>
+            ))}
+            {!list.length && <p className="px-2.5 py-1.5 text-[12px] text-ink-3">Không có hình nào khớp</p>}
+          </div>
+        </div>
+      )}
     </section>
   )
 }
