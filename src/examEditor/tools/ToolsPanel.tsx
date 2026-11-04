@@ -51,7 +51,7 @@ export function ToolsPanel({ disabled, onInsertPlot }: { disabled?: boolean; onI
 
   return (
     <div className="flex flex-col gap-3 py-3">
-      <div role="tablist" aria-label="Chọn môn" className="flex gap-1 rounded-[8px] bg-paper-2 p-1">
+      <div role="tablist" aria-label="Chọn môn" className="flex flex-wrap gap-1.5">
         {SUBJECTS.map((s) => (
           <button
             key={s.name}
@@ -60,8 +60,8 @@ export function ToolsPanel({ disabled, onInsertPlot }: { disabled?: boolean; onI
             aria-selected={s.name === shown[0].name}
             onClick={() => pick(s.name)}
             className={cn(
-              'flex-1 rounded-[6px] px-2 py-1.5 text-[13px] font-medium transition-colors',
-              s.name === shown[0].name ? 'bg-white text-clay shadow-sm' : 'text-ink-3 hover:text-ink',
+              'rounded-full border px-3 py-1 text-[13px] font-medium transition-colors',
+              s.name === shown[0].name ? 'border-clay bg-clay-tint text-clay' : 'border-line bg-white text-ink-2 hover:border-ink-4',
             )}
           >
             {s.name}
