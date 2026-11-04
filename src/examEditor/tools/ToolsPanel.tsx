@@ -4,7 +4,7 @@
  */
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
-import { Box, ChartColumn, ChartSpline, Grid3x3, SquarePlus, Table2, Triangle } from 'lucide-react'
+import { Box, ChartColumn, ChartSpline, Grid3x3, SquarePlus, Table2, Triangle, Zap } from 'lucide-react'
 import type { ToolImage, ToolKind } from '@/lib/toolSpec'
 import { ToolModal } from './ToolModal'
 
@@ -22,6 +22,10 @@ const SUBJECTS: Array<{ name: string; tools: Array<{ id: ToolId; label: string; 
       { id: 'geo2d', label: 'Hình học phẳng', desc: 'Tam giác, tứ giác, đường tròn; đường cao, trung tuyến', Icon: Triangle },
       { id: 'geo3d', label: 'Hình học không gian', desc: 'Hình chóp, lăng trụ, hộp, nón, trụ, cầu; nét khuất đứt', Icon: Box },
     ],
+  },
+  {
+    name: 'Vật lí',
+    tools: [{ id: 'circuit', label: 'Mạch điện', desc: 'Gõ nối tiếp, song song; ký hiệu SGK, tự xếp nhánh', Icon: Zap }],
   },
 ]
 

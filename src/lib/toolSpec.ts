@@ -9,6 +9,7 @@ import { renderGeo2dSvg, renderGeo3dSvg, type Geo2dSpec, type Geo3dSpec } from '
 import { renderSignTableSvg, type SignTableSpec } from './signTable'
 import { renderOxySvg, type OxySpec } from './oxy'
 import { renderStatsSvg, type StatsSpec } from './stats'
+import { renderCircuitSvg, type CircuitSpec } from './circuit'
 
 export type ToolDoc =
   | { kind: 'graph'; spec: PlotSpec }
@@ -18,6 +19,7 @@ export type ToolDoc =
   | { kind: 'signtable'; spec: SignTableSpec }
   | { kind: 'oxy'; spec: OxySpec }
   | { kind: 'stats'; spec: StatsSpec }
+  | { kind: 'circuit'; spec: CircuitSpec }
 
 export type ToolKind = ToolDoc['kind']
 
@@ -51,6 +53,8 @@ export function renderTool(doc: ToolDoc): ToolImage {
       return renderOxySvg(doc.spec, toolDesc(doc))
     case 'stats':
       return renderStatsSvg(doc.spec, toolDesc(doc))
+    case 'circuit':
+      return renderCircuitSvg(doc.spec, toolDesc(doc))
   }
 }
 

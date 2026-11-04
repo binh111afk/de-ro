@@ -11,6 +11,7 @@ import { renderTool, type ToolDoc, type ToolImage } from '@/lib/toolSpec'
 import { autoSignTable, parseSignTableText, signTableToText, type SignTableSpec } from '@/lib/signTable'
 import { OXY_HELP, type OxySpec } from '@/lib/oxy'
 import type { ChartKind, StatsSpec } from '@/lib/stats'
+import { CIRCUIT_HELP, type CircuitSpec } from '@/lib/circuit'
 import { Check, ToolShell, sectionTitle } from './ToolShell'
 
 type Props<S> = { initial?: S | null; submitLabel?: string; onClose: () => void; onInsert: (img: ToolImage) => void }
@@ -393,6 +394,52 @@ export function StatsModal({ initial, submitLabel, onClose, onInsert }: Props<St
       inputsWidth={380}
       preview={preview}
       submitLabel={submitLabel ?? (initial ? 'Cập nhật biểu đồ' : 'Chèn biểu đồ')}
+      canSubmit={Boolean(preview) && !error}
+      onSubmit={() => preview && onInsert(preview)}
+      onClose={onClose}
+    />
+  )
+}
+
+/* ------------------------------------------------------------------ *
+ * Vật lí: mạch điện
+ * ------------------------------------------------------------------ */
+
+const CIRCUIT_DEFAULT: CircuitSpec = {
+  text: 'nguồn E = 12 V, r = 1 Ω\nK - A - R1=4Ω - (R2=6Ω // R3=3Ω // V) - Đ(6V-3W)',
+  values: true,
+}
+
+export function CircuitModal({ initial, submitLabel, onClose, onInsert }: Props<CircuitSpec>) {
+  const [spec, setSpec] = useState<CircuitSpec>(initial ?? CIRCUIT_DEFAULT)
+  const set = (p: Partial<CircuitSpec>) => setSpec((s) => ({ ...s, ...p }))
+  const doc = useMemo((): ToolDoc => ({ kind: 'circuit', spec }), [spec])
+  const { preview, error } = useRender(doc)
+  const inputs = (
+    <>
+      <TextBlock
+        title="Mạch"
+        help={CIRCUIT_HELP}
+        intro={'Nối tiếp "-", song song "//", ngoặc để gom cụm. Nguồn ghi một dòng riêng bắt đầu bằng "nguồn".'}
+        value={spec.text}
+        onChange={(text) => set({ text })}
+        rows={5}
+        errors={error ? [error] : []}
+        label="Mạch điện"
+      />
+      <section>
+        <Check checked={spec.values} onChange={(values) => set({ values })}>Ghi giá trị dưới linh kiện</Check>
+      </section>
+    </>
+  )
+  return (
+    <ToolShell
+      title="Mạch điện"
+      hint="Ký hiệu theo SGK; máy tự xếp các nhánh song song thành hình chữ nhật"
+      inputs={inputs}
+      inputsWidth={380}
+      preview={preview}
+      submitLabel={submitLabel ?? (initial ? 'Cập nhật hình' : 'Chèn hình')}
       canSubmit={Boolean(preview) && !error}
       onSubmit={() => preview && onInsert(preview)}
       onClose={onClose}

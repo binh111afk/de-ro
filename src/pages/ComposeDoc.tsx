@@ -38,6 +38,7 @@ const TOOL_DOC_IMAGE: Record<ToolKind, { width: number; alt: string }> = {
   signtable: { width: 440, alt: 'Bảng xét dấu' },
   oxy: { width: 280, alt: 'Hệ trục toạ độ' },
   stats: { width: 380, alt: 'Biểu đồ' },
+  circuit: { width: 360, alt: 'Mạch điện' },
 }
 
 /** chỗ đặt đồ thị: thay ảnh cũ, hoặc chèn thành đoạn mới tại vị trí giữa hai khối */
