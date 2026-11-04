@@ -9,6 +9,8 @@ import { cn } from '@/lib/cn'
 import { inputClass } from '@/components/ui'
 import { GEO2D_SHAPES, GEO3D_SHAPES, type Geo2dShape, type Geo2dSpec, type Geo3dShape, type Geo3dSpec } from '@/lib/geometry'
 import { renderTool, type ToolImage } from '@/lib/toolSpec'
+import { GEO_HELP } from '@/lib/geoConstruct'
+import { CircleHelp, X } from 'lucide-react'
 import { Check, ToolShell, sectionTitle } from './ToolShell'
 
 const isTri2d = (s: Geo2dShape) => ['triangle', 'right-triangle', 'isosceles', 'equilateral', 'inscribed-triangle'].includes(s)
@@ -154,36 +156,24 @@ function ShapePicker<T extends string>({
   )
 }
 
-const HELP: Array<[string, string]> = [
-  ['M = trung điểm SC', 'trung điểm'],
-  ['N = SB 1/3', 'điểm trên SB, SN = 1/3 SB'],
-  ['O = AC cắt BD', 'giao điểm hai đường'],
-  ['H = hình chiếu S lên (ABCD)', 'chân đường vuông góc xuống mặt / đường'],
-  ['G = trọng tâm ABC', 'trọng tâm'],
-  ['AM, MN', 'nối đoạn (thêm "đứt" / "liền" để ép nét)'],
-  ['vuông H S A', 'góc vuông tại H'],
-  ['bằng SM MC', 'đánh dấu đoạn bằng nhau'],
-]
-
 function Extras({ value, onChange, errors, example }: { value: string; onChange: (v: string) => void; errors?: Array<{ line: number; msg: string }>; example: string }) {
   const [help, setHelp] = useState(false)
   return (
-    <section>
-      <div className="flex items-baseline justify-between">
-        <h3 className={sectionTitle}>Dựng thêm</h3>
-        <button type="button" onClick={() => setHelp((h) => !h)} className="text-[12px] text-clay hover:underline">
-          {help ? 'Ẩn hướng dẫn' : 'Cách viết'}
+    <section className="relative">
+      <div className="mb-2 flex items-center gap-1.5">
+        <h3 className={cn(sectionTitle, 'mb-0')}>Dựng thêm</h3>
+        <button
+          type="button"
+          onClick={() => setHelp((h) => !h)}
+          aria-label="Các lệnh dựng hình"
+          aria-expanded={help}
+          title="Các lệnh dựng hình"
+          className={cn('flex size-5 items-center justify-center rounded-full transition-colors', help ? 'bg-clay text-white' : 'text-ink-3 hover:bg-sunken hover:text-clay')}
+        >
+          <CircleHelp className="size-4" />
         </button>
       </div>
-      {help && (
-        <ul className="mb-2 flex flex-col gap-1 rounded-[6px] bg-sunken p-2.5 text-[12px] text-ink-2">
-          {HELP.map(([code, what]) => (
-            <li key={code}>
-              <code className="font-mono text-ink">{code}</code> — {what}
-            </li>
-          ))}
-        </ul>
-      )}
+      {help && <GeoHelp onClose={() => setHelp(false)} />}
       <textarea
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -201,6 +191,35 @@ function Extras({ value, onChange, errors, example }: { value: string; onChange:
         </ul>
       )}
     </section>
+  )
+}
+
+/** bảng lệnh dựng hình, chia nhóm; mỗi lệnh một thẻ (mã lệnh + giải thích) */
+function GeoHelp({ onClose }: { onClose: () => void }) {
+  return (
+    <div className="mb-3 rounded-[8px] border border-line bg-surface p-3 shadow-sm">
+      <div className="mb-2 flex items-center justify-between">
+        <p className="text-[12.5px] text-ink-2">Mỗi dòng một lệnh. Bấm lên hình cũng tự ghi lệnh vào đây.</p>
+        <button type="button" onClick={onClose} aria-label="Đóng hướng dẫn" className="rounded p-0.5 text-ink-3 hover:bg-sunken hover:text-ink">
+          <X className="size-3.5" />
+        </button>
+      </div>
+      <div className="flex flex-col gap-3">
+        {GEO_HELP.map((g) => (
+          <div key={g.group}>
+            <h4 className="mb-1 text-[11.5px] font-semibold uppercase tracking-[0.04em] text-clay">{g.group}</h4>
+            <ul className="flex flex-col gap-1">
+              {g.items.map((it) => (
+                <li key={it.code} className="rounded-[6px] bg-sunken px-2.5 py-1.5">
+                  <code className="block font-mono text-[12.5px] text-ink">{it.code}</code>
+                  <span className="text-[11.5px] text-ink-3">{it.what}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
   )
 }
 

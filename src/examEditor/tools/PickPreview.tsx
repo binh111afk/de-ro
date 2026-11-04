@@ -31,9 +31,11 @@ export function PickPreview({ img, extras, onExtras }: { img: ToolImage; extras:
   const box = useRef<HTMLDivElement>(null)
   const [hover, setHover] = useState<Hit | null>(null)
   const [drag, setDrag] = useState<{ from: Hit; to: Pt } | null>(null)
+  /** menu khi bấm đúng một đỉnh tam giác: đường cao / trung tuyến / phân giác */
+  const [menu, setMenu] = useState<{ name: string; at: Pt } | null>(null)
   const vb = /viewBox="([-\d.]+) ([-\d.]+) ([-\d.]+) ([-\d.]+)"/.exec(img.svg)
   const [minX, minY, w, h] = vb ? vb.slice(1).map(Number) : [0, 0, img.width, img.height]
-  const pick = img.pick ?? { points: [], segs: [] }
+  const pick = img.pick ?? { points: [], segs: [], tris: [] as string[][] }
   // cỡ nét/chấm của lớp tương tác theo px màn hình
   const k0 = box.current ? w / box.current.getBoundingClientRect().width : w / 500
   const pts = new Map(pick.points.map((p) => [p.name, p]))
@@ -115,6 +117,7 @@ export function PickPreview({ img, extras, onExtras }: { img: ToolImage; extras:
           className="absolute inset-0 h-full w-full touch-none"
           style={{ cursor: hover ? 'crosshair' : 'default' }}
           onPointerDown={(e) => {
+            setMenu(null)
             const { p, k } = toVb(e)
             const hit = hitTest(p, k)
             if (!hit) return
@@ -132,6 +135,11 @@ export function PickPreview({ img, extras, onExtras }: { img: ToolImage; extras:
             const { p, k } = toVb(e)
             const moved = Math.hypot(p.x - drag.from.at.x, p.y - drag.from.at.y) > 12 * k
             const end = moved ? hitTest(p, k) : null
+            if (!moved && drag.from.kind === 'point' && pick.tris.some((t) => t.includes((drag.from as { name: string }).name))) {
+              setDrag(null)
+              setMenu({ name: drag.from.name, at: drag.from.at })
+              return
+            }
             const lines: string[] = []
             const a = ensurePoint(drag.from, lines)
             if (end) {
@@ -165,12 +173,89 @@ export function PickPreview({ img, extras, onExtras }: { img: ToolImage; extras:
             </g>
           )}
         </svg>
+        {menu && (
+          <VertexMenu
+            name={menu.name}
+            tris={pick.tris.filter((t) => t.includes(menu.name))}
+            single={pick.tris.length === 1}
+            used={used}
+            left={((menu.at.x - minX) / w) * 100}
+            top={((menu.at.y - minY) / h) * 100}
+            onPick={(line) => {
+              setMenu(null)
+              commit([line])
+            }}
+            onClose={() => setMenu(null)}
+          />
+        )}
       </div>
       {extras.trim() && (
         <button type="button" onClick={undo} className="flex items-center gap-1 text-[12px] text-clay hover:underline">
           <Undo2 className="size-3.5" /> Bỏ thao tác vừa rồi
         </button>
       )}
+    </div>
+  )
+}
+
+const KINDS: Array<{ cmd: string; label: string; prefer: string[] }> = [
+  { cmd: 'đường cao', label: 'Đường cao', prefer: ['H', 'K', 'E', 'F'] },
+  { cmd: 'trung tuyến', label: 'Trung tuyến', prefer: ['M', 'N', 'P', 'Q'] },
+  { cmd: 'phân giác', label: 'Phân giác', prefer: ['D', 'E', 'F', 'L'] },
+]
+
+function VertexMenu({
+  name,
+  tris,
+  single,
+  used,
+  left,
+  top,
+  onPick,
+  onClose,
+}: {
+  name: string
+  tris: string[][]
+  single: boolean
+  used: Set<string>
+  left: number
+  top: number
+  onPick: (line: string) => void
+  onClose: () => void
+}) {
+  const free = (prefer: string[]) => [...prefer, ...NAME_POOL].find((n) => !used.has(n)) ?? 'X'
+  return (
+    <div
+      role="menu"
+      className="absolute z-10 min-w-[190px] rounded-[8px] border border-line bg-surface p-1 text-[13px] shadow-float"
+      style={{ left: `${left}%`, top: `${top}%`, transform: `translate(${left > 60 ? '-100%' : '8px'}, 8px)` }}
+      onPointerDown={(e) => e.stopPropagation()}
+      onKeyDown={(e) => e.key === 'Escape' && onClose()}
+    >
+      <p className="px-2 pb-1 pt-0.5 text-[11.5px] font-semibold text-ink-3">Kẻ từ đỉnh {name}</p>
+      {tris.map((t) => (
+        <div key={t.join('')}>
+          {!single && <p className="px-2 pt-1 text-[11px] text-ink-4">trong tam giác {t.join('')}</p>}
+          {KINDS.map((k) => {
+            const n = free(k.prefer)
+            return (
+              <button
+                key={k.cmd}
+                type="button"
+                role="menuitem"
+                onClick={() => onPick(`${k.cmd} ${name}${n}${single ? '' : ` trong ${t.join('')}`}`)}
+                className="flex w-full items-center justify-between gap-3 rounded-[5px] px-2 py-1.5 text-left text-ink-2 hover:bg-clay-tint hover:text-clay"
+              >
+                {k.label}
+                <span className="font-serif italic text-ink-3">
+                  {name}
+                  {n}
+                </span>
+              </button>
+            )
+          })}
+        </div>
+      ))}
     </div>
   )
 }
