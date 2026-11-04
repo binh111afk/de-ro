@@ -70,7 +70,8 @@ import { construct as construct0 } from './geoConstruct'
 let lastErrors: Array<{ line: number; msg: string }> = []
 /** điểm và đoạn đã vẽ (toạ độ viewBox) — để bấm/kéo trên ảnh xem trước */
 export interface GeoPick {
-  points: Array<{ name: string; x: number; y: number }>
+  /** x, y: toạ độ viewBox; v: toạ độ thật (2D = x, y; 3D = toạ độ không gian) */
+  points: Array<{ name: string; x: number; y: number; v: number[] }>
   segs: Array<{ a: string; b: string }>
   /** tam giác (tên 3 đỉnh) để menu bấm đỉnh: đường cao, trung tuyến, phân giác */
   tris: string[][]
@@ -361,7 +362,7 @@ function extras2d(
   const every = new Map(known)
   c.points.forEach((q) => every.set(q.name, q.p))
   lastPick = {
-    points: [...every].filter(([name]) => !isHidden(name)).map(([name, p]) => ({ name, x: p[0], y: p[1] })),
+    points: [...every].filter(([name]) => !isHidden(name)).map(([name, p]) => ({ name, x: p[0], y: p[1], v: p })),
     segs: [...pairs, ...c.segs.map((g) => [g.a, g.b] as [string, string])]
       .filter(([a, b]) => a && b && !isHidden(a) && !isHidden(b) && every.has(a) && every.has(b))
       .map(([a, b]) => ({ a, b })),
@@ -583,7 +584,7 @@ function renderSolid(spec: Geo3dSpec, desc: string) {
     const segs = [...edges.values()].map((e) => [e.a, e.b]).concat(s.extra).map(([a, b]) => ({ a: names[a], b: names[b] })).filter((g) => g.a && g.b)
     const tris = s.faces.filter((f) => f.length === 3).map((f) => f.map((i) => names[i])).filter((t) => t.every(Boolean))
     lastPick = {
-      points: [...pts].filter(([name]) => !isHidden(name)).map(([name, p]) => ({ name, x: p[0], y: p[1] })),
+      points: [...pts].filter(([name]) => !isHidden(name)).map(([name, p]) => ({ name, x: p[0], y: p[1], v: s.pts[names.indexOf(name)] })),
       segs: segs.filter((g) => !isHidden(g.a) && !isHidden(g.b)),
       tris,
     }

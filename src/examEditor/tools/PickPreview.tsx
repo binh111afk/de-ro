@@ -12,7 +12,10 @@ import type { ToolImage } from '@/lib/toolSpec'
 
 type Pt = { x: number; y: number }
 /** chỗ bấm trúng: điểm có sẵn, hoặc điểm trên cạnh AB tại tỉ lệ t (tính từ A) */
-type Hit = { kind: 'point'; name: string; at: Pt } | { kind: 'edge'; a: string; b: string; t: number; at: Pt }
+/** special: chân đường cao / trung điểm / chân phân giác kẻ từ đỉnh đang kéo */
+type Special = 'alt' | 'mid' | 'bis'
+type Hit = { kind: 'point'; name: string; at: Pt } | { kind: 'edge'; a: string; b: string; t: number; at: Pt; special?: Special }
+const SPECIAL_LABEL: Record<Special, string> = { alt: 'đường cao', mid: 'trung tuyến', bis: 'phân giác' }
 
 const SNAPS: Array<[number, string]> = [
   [1 / 2, '1/2'],
@@ -48,7 +51,9 @@ export function PickPreview({ img, extras, onExtras }: { img: ToolImage; extras:
     return { p: { x: minX + (e.clientX - r.left) * k, y: minY + (e.clientY - r.top) * k }, k }
   }
 
-  const hitTest = (p: Pt, k: number): Hit | null => {
+  /** `from`: đỉnh đang kéo — cạnh sẽ hít thêm chân đường cao, trung điểm, chân phân giác */
+  const hitTest = (p: Pt, k: number, from?: Hit): Hit | null => {
+    const F = from?.kind === 'point' ? pts.get(from.name) : undefined
     let best: Hit | null = null
     let bd = 11 * k
     for (const q of pick.points) {
@@ -72,14 +77,39 @@ export function PickPreview({ img, extras, onExtras }: { img: ToolImage; extras:
       if (t <= 0.03 || t >= 0.97) continue
       const d = Math.hypot(A.x + ux * t - p.x, A.y + uy * t - p.y)
       if (d >= bd) continue
-      // hít vào tỉ lệ quen thuộc (trong ~14px), không thì làm tròn 0,1
       const len = Math.sqrt(L2)
-      const snap = SNAPS.find(([v]) => Math.abs(v - t) * len < 14 * k)
-      t = snap ? snap[0] : Math.min(0.9, Math.max(0.1, Math.round(t * 10) / 10))
+      // kéo từ đỉnh F (không nằm trên cạnh): ưu tiên chân đường cao, trung điểm, chân phân giác
+      let special: Special | undefined
+      if (F && F.name !== s.a && F.name !== s.b) {
+        const u = A.v.map((x, i) => B.v[i] - x)
+        const fa = F.v.map((x, i) => x - A.v[i])
+        const uu = u.reduce((acc, x) => acc + x * x, 0)
+        const dist = (a: number[], b: number[]) => Math.hypot(...a.map((x, i) => x - b[i]))
+        const fA = dist(F.v, A.v)
+        const fB = dist(F.v, B.v)
+        const cands: Array<[number, Special]> = [
+          [fa.reduce((acc, x, i) => acc + x * u[i], 0) / uu, 'alt'],
+          [0.5, 'mid'],
+          [fA / (fA + fB), 'bis'],
+        ]
+        const c = cands.filter(([v]) => v > 0.02 && v < 0.98).sort((x, y) => Math.abs(x[0] - t) - Math.abs(y[0] - t))[0]
+        if (c && Math.abs(c[0] - t) * len < 16 * k) {
+          t = c[0]
+          special = c[1]
+        }
+      }
+      if (!special) {
+        // hít vào tỉ lệ quen thuộc (trong ~14px), không thì làm tròn 0,1
+        const snap = SNAPS.find(([v]) => Math.abs(v - t) * len < 14 * k)
+        t = snap ? snap[0] : Math.min(0.9, Math.max(0.1, Math.round(t * 10) / 10))
+      }
       bd = d
       const at = { x: A.x + ux * t, y: A.y + uy * t }
       // ghi theo thứ tự đỉnh của hình: "SC", "SB 1/3" (không phải "CS", "BS 2/3")
-      best = order.get(s.a)! <= order.get(s.b)! ? { kind: 'edge', a: s.a, b: s.b, t, at } : { kind: 'edge', a: s.b, b: s.a, t: 1 - t, at }
+      best =
+        order.get(s.a)! <= order.get(s.b)!
+          ? { kind: 'edge', a: s.a, b: s.b, t, at, special }
+          : { kind: 'edge', a: s.b, b: s.a, t: 1 - t, at, special }
     }
     return best
   }
@@ -94,6 +124,21 @@ export function PickPreview({ img, extras, onExtras }: { img: ToolImage; extras:
     used.add(name)
     lines.push(Math.abs(hit.t - 1 / 2) < 1e-9 ? `${name} = trung điểm ${hit.a}${hit.b}` : `${name} = ${hit.a}${hit.b} ${ratioText(hit.t)}`)
     return name
+  }
+
+  /** kéo từ đỉnh v tới chân đặc biệt trên cạnh: ghi lệnh đường cao / trung tuyến / phân giác */
+  const special = (v: string, e: Extract<Hit, { kind: 'edge' }>, lines: string[]) => {
+    const kind = KINDS.find((x) => x.cmd === SPECIAL_LABEL[e.special!])!
+    const name = [...kind.prefer, ...NAME_POOL].find((n) => !used.has(n)) ?? 'X'
+    const tri = [v, e.a, e.b]
+    const known = pick.tris.find((t) => tri.every((x) => t.includes(x)))
+    if (known) {
+      // tam giác có sẵn trên hình (2D: tam giác mẫu không cần ghi "trong")
+      lines.push(`${kind.cmd} ${v}${name}${pick.tris.length === 1 ? '' : ` trong ${known.join('')}`}`)
+      return
+    }
+    // đỉnh và cạnh không cùng một mặt tam giác: vẫn dựng được, ghi rõ tam giác
+    lines.push(`${kind.cmd} ${v}${name} trong ${tri.join('')}`)
   }
 
   const commit = (lines: string[]) => {
@@ -126,21 +171,28 @@ export function PickPreview({ img, extras, onExtras }: { img: ToolImage; extras:
           }}
           onPointerMove={(e) => {
             const { p, k } = toVb(e)
-            const hit = hitTest(p, k)
+            const hit = hitTest(p, k, drag?.from)
             setHover(hit)
             if (drag) setDrag({ ...drag, to: hit?.at ?? p })
           }}
           onPointerUp={(e) => {
             if (!drag) return
+            setHover(null)
             const { p, k } = toVb(e)
             const moved = Math.hypot(p.x - drag.from.at.x, p.y - drag.from.at.y) > 12 * k
-            const end = moved ? hitTest(p, k) : null
+            const end = moved ? hitTest(p, k, drag.from) : null
             if (!moved && drag.from.kind === 'point' && pick.tris.some((t) => t.includes((drag.from as { name: string }).name))) {
               setDrag(null)
               setMenu({ name: drag.from.name, at: drag.from.at })
               return
             }
             const lines: string[] = []
+            if (drag.from.kind === 'point' && end?.kind === 'edge' && end.special) {
+              special(drag.from.name, end, lines)
+              setDrag(null)
+              commit(lines)
+              return
+            }
             const a = ensurePoint(drag.from, lines)
             if (end) {
               const b = ensurePoint(end, lines)
@@ -167,7 +219,7 @@ export function PickPreview({ img, extras, onExtras }: { img: ToolImage; extras:
               <circle cx={hover.at.x} cy={hover.at.y} r={5 * k0} fill="var(--color-clay)" fillOpacity={0.85} />
               {hover.kind === 'edge' && (
                 <text x={hover.at.x + 8 * k0} y={hover.at.y - 8 * k0} fontSize={12 * k0} fill="var(--color-clay)">
-                  {Math.abs(hover.t - 1 / 2) < 1e-9 ? `trung điểm ${hover.a}${hover.b}` : `${ratioText(hover.t)} ${hover.a}${hover.b} (từ ${hover.a})`}
+                  {hover.special ? `${SPECIAL_LABEL[hover.special]} từ ${drag?.from.kind === 'point' ? drag.from.name : ''}` : Math.abs(hover.t - 1 / 2) < 1e-9 ? `trung điểm ${hover.a}${hover.b}` : `${ratioText(hover.t)} ${hover.a}${hover.b} (từ ${hover.a})`}
                 </text>
               )}
             </g>
