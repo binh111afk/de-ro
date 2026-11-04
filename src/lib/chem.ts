@@ -127,12 +127,16 @@ export function renderElectronSvg(spec: ElectronSpec, desc: string) {
 }
 
 /* ------------------------------------------------------------------ *
- * Công thức cấu tạo thu gọn (mạch hở)
+ * Công thức cấu tạo (mạch hở + vòng): thu gọn hoặc khung
  * ------------------------------------------------------------------ */
 
 export interface StructSpec {
-  /** "CH3-CH(CH3)-CH2-OH", "CH2=CH-CH3", "CH≡C-CH3"; nhiều nhánh: "CH3-C(CH3)(CH3)-CH3" */
+  /** "CH3-CH(CH3)-CH2-OH", "CH2=CH-CH3", "C6H5-CH3"; nhiều nhánh: "CH3-C(CH3)(CH3)-CH3" */
   formula: string
+  /** thu gọn (mặc định) hoặc khung (zigzag, không ghi C, H) */
+  style?: 'condensed' | 'skeletal'
+  /** đánh số các C mạch chính 1, 2, 3… */
+  number?: boolean
 }
 
 type Grp = { text: string; bond: string; branches: Grp[][] }
@@ -173,56 +177,210 @@ function parseChain(src: string): Grp[] {
   return res
 }
 
+/** nhóm là vòng: C6H5 / benzen (thơm), vòng3…vòng6 / xiclo (no) */
+function ringOf(text: string): { n: number; aromatic: boolean } | null {
+  if (/^(C6H5|C6H4|benzen|Ph)$/i.test(text)) return { n: 6, aromatic: true }
+  const m = /^(?:vòng|vong|xiclo)(\d)$/i.exec(text)
+  if (m) {
+    const n = +m[1]
+    if (n < 3 || n > 8) throw new Error('Vòng từ 3 đến 8 cạnh')
+    return { n, aromatic: false }
+  }
+  return null
+}
+/** nhóm chỉ gồm C và H (CH3, CH2, CH, C): là đỉnh cacbon */
+const isCarbon = (t: string) => /^C(H\d?)?$/.test(t)
+
 const tw = (s: string) => s.replace(/\d/g, '').length * 11 + s.replace(/\D/g, '').length * 6.5
 
-function bondSvg(kind: string, x1: number, y1: number, x2: number, y2: number) {
+function bondSvg(kind: string, x1: number, y1: number, x2: number, y2: number, inner = 0) {
   const dx = x2 - x1
   const dy = y2 - y1
   const L = Math.hypot(dx, dy) || 1
   const [nx, ny] = [-dy / L, dx / L]
-  const ln = (o: number) => `<line x1="${f1(x1 + nx * o)}" y1="${f1(y1 + ny * o)}" x2="${f1(x2 + nx * o)}" y2="${f1(y2 + ny * o)}" stroke="#111" stroke-width="1.4"/>`
+  const ln = (o: number, shrink = 0) =>
+    `<line x1="${f1(x1 + nx * o + (dx / L) * shrink)}" y1="${f1(y1 + ny * o + (dy / L) * shrink)}" x2="${f1(x2 + nx * o - (dx / L) * shrink)}" y2="${f1(y2 + ny * o - (dy / L) * shrink)}" stroke="#111" stroke-width="1.4"/>`
+  // khung: nét đôi lệch vào trong (inner = ±1), nét chính giữ đúng chỗ
+  if (inner && kind === '=') return ln(0) + ln(5 * inner, 4)
+  if (inner && kind === '≡') return ln(0) + ln(4, 3) + ln(-4, 3)
   if (kind === '=') return ln(-2.5) + ln(2.5)
   if (kind === '≡') return ln(-4) + ln(0) + ln(4)
   return ln(0)
 }
 
-export function renderStructSvg(spec: StructSpec, desc: string) {
-  const main = parseChain(spec.formula)
+/** đa giác đều tâm (cx, cy) bán kính r, đỉnh đầu ở góc a0 */
+function polygon(n: number, cx: number, cy: number, r: number, a0: number): Array<[number, number]> {
+  return Array.from({ length: n }, (_, k) => {
+    const a = a0 + (2 * Math.PI * k) / n
+    return [cx + r * Math.cos(a), cy + r * Math.sin(a)] as [number, number]
+  })
+}
+function ringSvg(ring: { n: number; aromatic: boolean }, cx: number, cy: number, r: number, a0: number) {
+  const P = polygon(ring.n, cx, cy, r, a0)
+  let s = `<path d="M${P.map((p) => `${f1(p[0])} ${f1(p[1])}`).join('L')}Z" fill="none" stroke="#111" stroke-width="1.4"/>`
+  if (ring.aromatic) s += `<circle cx="${f1(cx)}" cy="${f1(cy)}" r="${f1(r * 0.58)}" fill="none" stroke="#111" stroke-width="1.2"/>`
+  return s
+}
+const numSvg = (n: number, x: number, y: number) => `<text x="${f1(x)}" y="${f1(y)}" ${FAM} font-size="11" fill="#555" text-anchor="middle">${n}</text>`
+
+/** Khung chữ nhật bao quanh các điểm đã vẽ — để tính khung SVG. */
+class Bounds {
+  x0 = Infinity
+  y0 = Infinity
+  x1 = -Infinity
+  y1 = -Infinity
+  add(x: number, y: number, r = 0) {
+    this.x0 = Math.min(this.x0, x - r)
+    this.y0 = Math.min(this.y0, y - r)
+    this.x1 = Math.max(this.x1, x + r)
+    this.y1 = Math.max(this.y1, y + r)
+  }
+}
+
+function finish(parts: string[], bb: Bounds, desc: string) {
+  const pad = 22
+  const W = Math.max(140, bb.x1 - bb.x0 + pad * 2)
+  const H = Math.max(60, bb.y1 - bb.y0 + pad * 2)
+  const body = `<g transform="translate(${f1(pad - bb.x0)} ${f1(pad - bb.y0)})">${parts.join('')}</g>`
+  return wrap(Math.round(W), Math.round(H), desc, body)
+}
+
+/* ---------- thu gọn ---------- */
+
+function renderCondensed(main: Grp[], number: boolean, desc: string) {
   const BOND = 26
   const ROW = 48
-  const nodes: string[] = []
-  let minY = 0
-  let maxY = 0
+  const R = 20
+  const parts: string[] = []
+  const bb = new Bounds()
+  const label = (t: string, x: number, y: number) => {
+    parts.push(`<text x="${f1(x)}" y="${f1(y + 6)}" ${FAM} font-size="17" text-anchor="middle">${formulaSvg(t)}</text>`)
+    bb.add(x - tw(t) / 2, y - 12)
+    bb.add(x + tw(t) / 2, y + 10)
+  }
   // nhánh dọc: luân phiên dưới / trên; nhánh của nhánh đi tiếp cùng chiều
   const drawVert = (grp: Grp[], cx: number, y0: number, dir: number) => {
     let y = y0
     for (const g of grp) {
+      const ring = ringOf(g.text)
+      if (ring) {
+        const cy = y + dir * (14 + R + 14)
+        parts.push(bondSvg(g.bond, cx, y + dir * 11, cx, cy - dir * R))
+        parts.push(ringSvg(ring, cx, cy, R, dir > 0 ? -Math.PI / 2 : Math.PI / 2))
+        bb.add(cx, cy, R)
+        return
+      }
       const ny = y + dir * ROW
-      nodes.push(bondSvg(g.bond, cx, y + dir * 11, cx, ny - dir * 13))
-      nodes.push(`<text x="${f1(cx)}" y="${f1(ny + 6)}" ${FAM} font-size="17" text-anchor="middle">${formulaSvg(g.text)}</text>`)
-      minY = Math.min(minY, ny)
-      maxY = Math.max(maxY, ny)
+      parts.push(bondSvg(g.bond, cx, y + dir * 11, cx, ny - dir * 13))
+      label(g.text, cx, ny)
       g.branches.forEach((b, k) => drawVert(b, cx + (k ? 40 : 0), ny, dir))
       y = ny
     }
   }
   let x = 0
+  let no = 0
   main.forEach((g, i) => {
-    const w = tw(g.text)
+    const ring = ringOf(g.text)
+    const w = ring ? 2 * R : tw(g.text)
     if (i) {
-      nodes.push(bondSvg(g.bond, x + 3, 0, x + BOND - 3, 0))
+      parts.push(bondSvg(g.bond, x + 3, 0, x + BOND - (ring ? 0 : 3), 0))
       x += BOND
     }
     const cx = x + w / 2
-    nodes.push(`<text x="${f1(cx)}" y="6" ${FAM} font-size="17" text-anchor="middle">${formulaSvg(g.text)}</text>`)
-    g.branches.forEach((b, k) => drawVert(b, cx, 0, k % 2 === 0 ? 1 : -1))
+    if (ring) {
+      // nối vào đỉnh trái (và ra đỉnh phải) của vòng
+      parts.push(ringSvg(ring, cx, 0, R, Math.PI))
+      bb.add(cx, 0, R)
+    } else {
+      label(g.text, cx, 0)
+      if (number && isCarbon(g.text)) {
+        no++
+        parts.push(numSvg(no, cx, -16))
+        bb.add(cx, -26)
+      }
+      g.branches.forEach((b, k) => drawVert(b, cx, 0, k % 2 === 0 ? 1 : -1))
+    }
     x += w
   })
-  const pad = 24
-  const W = Math.max(160, x + pad * 2)
-  const H = maxY - minY + 30 + pad * 2
-  const body = `<g transform="translate(${pad} ${f1(pad + 14 - minY)})">${nodes.join('')}</g>`
-  return wrap(W, H, desc, body)
+  return finish(parts, bb, desc)
+}
+
+/* ---------- khung (zigzag) ---------- */
+
+function renderSkeletal(main: Grp[], number: boolean, desc: string) {
+  const L = 30
+  const R = 20
+  const parts: string[] = []
+  const bb = new Bounds()
+  const text = (t: string, x: number, y: number) => {
+    // OH, Cl, NH2… ghi chữ; nền trắng che đầu nét
+    const w = tw(t) + 4
+    parts.push(`<rect x="${f1(x - w / 2)}" y="${f1(y - 10)}" width="${f1(w)}" height="20" fill="#fff"/>`)
+    parts.push(`<text x="${f1(x)}" y="${f1(y + 6)}" ${FAM} font-size="17" text-anchor="middle">${formulaSvg(t)}</text>`)
+    bb.add(x - w / 2, y - 10)
+    bb.add(x + w / 2, y + 10)
+  }
+  /** vẽ một mạch từ điểm p theo hướng góc a (zigzag ±30° quanh a). Trả về các đỉnh. */
+  const walk = (grp: Grp[], p: [number, number], a: number, startSide: number, numbered: boolean, anchored = false) => {
+    let cur = p
+    let side = startSide
+    let no = 0
+    const pending: string[] = []
+    grp.forEach((g, i) => {
+      const ring = ringOf(g.text)
+      const moves = i > 0 || anchored
+      // nhánh: bước đầu đi thẳng ra ngoài, sau đó mới gấp khúc
+      const dir = anchored && i === 0 ? a : a + side * (Math.PI / 6)
+      if (ring) {
+        // vòng đặt tiếp theo hướng mạch: đỉnh gắn = cur + bước, tâm lùi thêm R
+        const att: [number, number] = moves ? [cur[0] + L * Math.cos(dir), cur[1] + L * Math.sin(dir)] : cur
+        if (moves) pending.push(bondSvg(g.bond, cur[0], cur[1], att[0], att[1]))
+        const cx = att[0] + R * Math.cos(a)
+        const cy = att[1] + R * Math.sin(a)
+        pending.push(ringSvg(ring, cx, cy, R, a + Math.PI))
+        bb.add(cx, cy, R)
+        cur = [cx + R * Math.cos(a), cy + R * Math.sin(a)] // đi ra ở đỉnh đối diện
+        side = -side
+        return
+      }
+      const next: [number, number] = moves ? [cur[0] + L * Math.cos(dir), cur[1] + L * Math.sin(dir)] : cur
+      const carbon = isCarbon(g.text)
+      if (moves) {
+        const shrinkTo = carbon ? 0 : 10
+        const ux = (next[0] - cur[0]) / L
+        const uy = (next[1] - cur[1]) / L
+        // liên kết đôi trong khung: nét phụ lệch vào phía lõm
+        pending.push(bondSvg(g.bond, cur[0], cur[1], next[0] - ux * shrinkTo, next[1] - uy * shrinkTo, -side))
+      }
+      bb.add(next[0], next[1], 2)
+      if (!carbon) text(g.text, next[0], next[1])
+      else if (numbered) {
+        no++
+        // số đặt phía ngoài góc gấp: đỉnh nhô lên thì ghi trên, đỉnh trũng thì ghi dưới
+        // đỉnh có nhánh: nhánh chiếm phía ngoài nên số lùi vào trong góc, lệch sang phải
+        const high = (moves ? side < 0 : startSide > 0) !== g.branches.length > 0
+        const nx = next[0] + (g.branches.length ? 9 : 0)
+        const ny = next[1] + (high ? -9 : 18)
+        pending.push(numSvg(no, nx, ny))
+        bb.add(nx, ny, 6)
+      }
+      // nhánh: hướng ra phía lồi của đỉnh (vuông góc mạch), nhánh thứ hai phía còn lại
+      g.branches.forEach((b, k) => {
+        const outward = a + (Math.PI / 2) * (i === 0 ? 1 : side) * (k ? -1 : 1)
+        walk(b, next, outward, 1, false, true)
+      })
+      cur = next
+      if (moves) side = -side
+    })
+    parts.unshift(...pending)
+  }
+  walk(main, [0, 0], 0, -1, number)
+  return finish(parts, bb, desc)
+}
+
+export function renderStructSvg(spec: StructSpec, desc: string) {
+  const main = parseChain(spec.formula)
+  return spec.style === 'skeletal' ? renderSkeletal(main, !!spec.number, desc) : renderCondensed(main, !!spec.number, desc)
 }
 
 /* ------------------------------------------------------------------ *

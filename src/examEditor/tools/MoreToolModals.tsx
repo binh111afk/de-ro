@@ -653,28 +653,67 @@ const STRUCT_HELP: HelpGroups = [
       { code: 'CH3-CH(CH2-CH3)-CH3', what: 'Nhánh nhiều nhóm' },
     ],
   },
+  {
+    group: 'Vòng',
+    items: [
+      { code: 'C6H5-CH3', what: 'Vòng benzen (C6H5, C6H4, Ph hoặc benzen)' },
+      { code: 'vòng6-CH3', what: 'Vòng no 3–8 cạnh (vòng3 … vòng8, hoặc xiclo6)' },
+      { code: 'CH3-CH(C6H5)-CH3', what: 'Vòng làm nhánh' },
+    ],
+  },
 ]
 
 export function StructModal({ initial, submitLabel, onClose, onInsert }: Props<StructSpec>) {
-  const [spec, setSpec] = useState<StructSpec>(initial ?? { formula: 'CH3-CH(CH3)-CH2-CH(OH)-CH3' })
+  const [spec, setSpec] = useState<StructSpec>(initial ?? { formula: 'CH3-CH(CH3)-CH2-CH(OH)-CH3', style: 'condensed', number: false })
+  const set = (p: Partial<StructSpec>) => setSpec((s) => ({ ...s, ...p }))
   const doc = useMemo((): ToolDoc => ({ kind: 'struct', spec }), [spec])
   const { preview, error } = useRender(doc)
+  const style = spec.style ?? 'condensed'
   const inputs = (
-    <TextBlock
-      title="Công thức"
-      help={STRUCT_HELP}
-      intro="Công thức cấu tạo thu gọn, mạch hở. Chữ số tự thành chỉ số dưới."
-      value={spec.formula}
-      onChange={(formula) => setSpec({ formula })}
-      rows={3}
-      errors={error ? [error] : []}
-      label="Công thức cấu tạo"
-    />
+    <>
+      <section>
+        <h3 className={sectionTitle}>Kiểu vẽ</h3>
+        <div className="flex flex-wrap gap-1.5">
+          {(
+            [
+              ['condensed', 'Thu gọn'],
+              ['skeletal', 'Khung (zigzag)'],
+            ] as const
+          ).map(([id, label]) => (
+            <button
+              key={id}
+              type="button"
+              aria-pressed={style === id}
+              onClick={() => set({ style: id })}
+              className={cn(
+                'rounded-[6px] border px-2.5 py-1 text-[12.5px] transition-colors',
+                style === id ? 'border-clay bg-clay-tint font-medium text-clay' : 'border-line text-ink-2 hover:border-ink-4',
+              )}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </section>
+      <TextBlock
+        title="Công thức"
+        help={STRUCT_HELP}
+        intro="Gõ dạng thu gọn; chọn Khung để vẽ zigzag không ghi C, H. Vòng: C6H5 (benzen), vòng6, vòng5…"
+        value={spec.formula}
+        onChange={(formula) => set({ formula })}
+        rows={3}
+        errors={error ? [error] : []}
+        label="Công thức cấu tạo"
+      />
+      <section>
+        <Check checked={!!spec.number} onChange={(number) => set({ number })}>Đánh số các C mạch chính</Check>
+      </section>
+    </>
   )
   return (
     <ToolShell
       title="Công thức cấu tạo"
-      hint="Mạch hở có nhánh, liên kết đơn / đôi / ba"
+      hint="Thu gọn hoặc khung; nhánh, vòng, liên kết đơn / đôi / ba; đánh số mạch chính"
       inputs={inputs}
       inputsWidth={360}
       preview={preview}
