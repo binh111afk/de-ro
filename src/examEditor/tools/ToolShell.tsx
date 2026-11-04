@@ -20,6 +20,7 @@ export function ToolShell({
   onSubmit,
   onClose,
   inputsWidth = 340,
+  renderPreview,
 }: {
   title: string
   hint?: string
@@ -31,6 +32,8 @@ export function ToolShell({
   onSubmit: () => void
   onClose: () => void
   inputsWidth?: number
+  /** thay ảnh xem trước mặc định (vd. thêm tay nắm kéo) */
+  renderPreview?: (preview: ToolImage) => ReactNode
 }) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
@@ -78,7 +81,9 @@ export function ToolShell({
             {inputs}
           </div>
           <div className="flex h-[min(56vh,520px)] min-h-0 min-w-0 flex-1 items-center justify-center bg-paper-2 p-5 md:h-auto">
-            {preview ? (
+            {preview && renderPreview ? (
+              renderPreview(preview)
+            ) : preview ? (
               <img
                 src={svgDataUrl(preview.svg)}
                 alt="Xem trước"

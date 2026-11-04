@@ -32,6 +32,8 @@ export interface Geo2dSpec {
   marks: boolean
   /** dựng thêm (xem geoConstruct.ts), mỗi dòng một lệnh */
   extras?: string
+  /** đỉnh đã kéo: chỉ số đỉnh → độ lệch [dx, dy] (px) */
+  moved?: Record<string, number[]>
 }
 
 export type Geo3dShape =
@@ -62,6 +64,8 @@ export interface Geo3dSpec {
   tall: number
   /** dựng thêm (xem geoConstruct.ts), mỗi dòng một lệnh */
   extras?: string
+  /** đỉnh đã kéo: chỉ số đỉnh → độ lệch toạ độ thật [dx, dy, dz] */
+  moved?: Record<string, number[]>
 }
 
 import { construct as construct0 } from './geoConstruct'
@@ -73,7 +77,29 @@ const construct: typeof construct0 = (t, k) => {
   lastErrors = c.errors
   return c
 }
-type GeoImage = { svg: string; width: number; height: number; errors?: Array<{ line: number; msg: string }> }
+/** tay nắm kéo đỉnh: toạ độ trong viewBox; mode = cách đổi kéo màn hình ra độ lệch */
+export type GeoHandle = { i: number; x: number; y: number; mode: DragMode }
+export type DragMode = '2d' | 'base' | 'up' | 'height'
+let lastHandles: GeoHandle[] = []
+type GeoImage = { svg: string; width: number; height: number; errors?: Array<{ line: number; msg: string }>; handles?: GeoHandle[] }
+
+/** kéo trên màn hình (đơn vị viewBox) → độ lệch lưu vào `moved` */
+export function dragToOffset(mode: DragMode, sx: number, sy: number): number[] {
+  if (mode === '2d') return [sx, sy]
+  if (mode === 'height') return [0, 0, -sy / SCALE] // giữ chân đường cao (SA ⊥ đáy, chóp đều)
+  if (mode === 'up') return [sx / SCALE, 0, -sy / SCALE] // sang ngang + lên xuống
+  const dy = -sy / (SCALE * K * Math.sin(ANG)) // trượt trong mặt đáy
+  return [sx / SCALE - K * Math.cos(ANG) * dy, dy, 0]
+}
+const off = (moved: Record<string, number[]> | undefined, i: number) => moved?.[i]
+function mv2(p: P2, i: number, moved?: Record<string, number[]>): P2 {
+  const o = off(moved, i)
+  return o ? [p[0] + o[0], p[1] + o[1]] : p
+}
+function mv3(p: P3, i: number, moved?: Record<string, number[]>): P3 {
+  const o = off(moved, i)
+  return o ? [p[0] + o[0], p[1] + o[1], p[2] + o[2]] : p
+}
 
 type P2 = [number, number]
 type P3 = [number, number, number]
@@ -251,11 +277,17 @@ function shape2d(shape: Geo2dShape): P2[] {
 
 export function renderGeo2dSvg(spec: Geo2dSpec, desc: string): GeoImage {
   lastErrors = []
-  return { ...renderGeo2d(spec, desc), errors: lastErrors }
+  lastHandles = []
+  const img = renderGeo2d(spec, desc)
+  return { ...img, errors: lastErrors, handles: lastHandles }
 }
 
 function renderGeo2d(spec: Geo2dSpec, desc: string) {
-  const pts = shape2d(spec.shape)
+  const raw = shape2d(spec.shape)
+  // nội tiếp: điểm cuối là tâm mẫu, không kéo
+  const nDrag = spec.shape === 'inscribed-triangle' ? 3 : raw.length
+  const pts = raw.map((p, i) => (i < nDrag ? mv2(p, i, spec.moved) : p))
+  for (let i = 0; i < nDrag; i++) lastHandles.push({ i, x: pts[i][0], y: pts[i][1], mode: '2d' })
   const names = spec.names
   const parts: string[] = []
   const all: P2[] = [...pts]
@@ -379,10 +411,18 @@ interface Solid {
   right: Array<[number, number, number]>
   /** nhóm đoạn bằng nhau (dựng thêm) */
   ticks?: Array<Array<[number, number]>>
+  /** đỉnh kéo được và cách kéo */
+  drag?: Array<[number, DragMode]>
 }
 
 function solid(spec: Geo3dSpec): Solid {
   const h = 1.5 * spec.tall
+  const m = spec.moved
+  const s = solid0(spec, h, m)
+  return s
+}
+
+function solid0(spec: Geo3dSpec, h: number, m: Spec3Moved): Solid {
   switch (spec.shape) {
     case 'pyramid3':
     case 'pyramid3-sa':
@@ -398,14 +438,17 @@ function solid(spec: Geo3dSpec): Solid {
         B = at(-60)
         C = at(60)
       }
+      A = mv3(A, 1, m)
+      B = mv3(B, 2, m)
+      C = mv3(C, 3, m)
       const G = avg3([A, B, C])
-      const S: P3 = spec.shape === 'pyramid3-sa' ? [A[0], A[1], h] : spec.shape === 'pyramid3-regular' ? [G[0], G[1], h] : [0.95, 0.55, h]
+      const S: P3 = mv3(spec.shape === 'pyramid3-sa' ? [A[0], A[1], h] : spec.shape === 'pyramid3-regular' ? [G[0], G[1], h] : [0.95, 0.55, h], 0, m)
       const foot3: P3 = [S[0], S[1], 0]
       const pts = [S, A, B, C, foot3]
       const extra: Array<[number, number]> = spec.height && spec.shape !== 'pyramid3-sa' ? [[0, 4]] : []
       const right: Array<[number, number, number]> =
         spec.shape === 'pyramid3-sa' ? [[1, 0, 2], [1, 0, 3]] : spec.height ? [[4, 0, 2]] : []
-      return { pts, faces: [[1, 2, 3], [0, 1, 2], [0, 2, 3], [0, 3, 1]], extra, right }
+      return { pts, faces: [[1, 2, 3], [0, 1, 2], [0, 2, 3], [0, 3, 1]], extra, right, drag: [[0, spec.shape === 'pyramid3' ? 'up' : 'height'], [1, 'base'], [2, 'base'], [3, 'base']] }
     }
     case 'pyramid4':
     case 'pyramid4-sa':
@@ -414,37 +457,53 @@ function solid(spec: Geo3dSpec): Solid {
       const w = spec.shape === 'pyramid4' ? 1.6 : 1.5
       const dep = spec.shape === 'pyramid4' ? 1.5 : 1.5
       const sh = spec.shape === 'pyramid4' ? 0.45 : 0
-      const A: P3 = [0, 0, 0]
-      const B: P3 = [w, 0, 0]
-      const C: P3 = [w + sh, dep, 0]
-      const Dp: P3 = [sh, dep, 0]
-      const O = avg3([A, B, C, Dp])
-      const S: P3 = spec.shape === 'pyramid4-sa' ? [0, 0, h] : [O[0], O[1], h]
+      const A = mv3([0, 0, 0], 1, m)
+      const B = mv3([w, 0, 0], 2, m)
+      const C = mv3([w + sh, dep, 0], 3, m)
+      const Dp = mv3([sh, dep, 0], 4, m)
+      // O: giao hai đường chéo (đáy kéo lệch vẫn đúng tâm hình bình hành/hình thang)
+      const O = diagCross(A, B, C, Dp)
+      const S = mv3(spec.shape === 'pyramid4-sa' ? [A[0], A[1], h] : [O[0], O[1], h], 0, m)
       const pts = [S, A, B, C, Dp, O]
       const extra: Array<[number, number]> = []
       if (spec.diagonals) extra.push([1, 3], [2, 4])
       if (spec.height && spec.shape !== 'pyramid4-sa') extra.push([0, 5])
       const right: Array<[number, number, number]> =
         spec.shape === 'pyramid4-sa' ? [[1, 0, 2], [1, 0, 4]] : spec.height ? [[5, 0, 2]] : []
-      return { pts, faces: [[1, 2, 3, 4], [0, 1, 2], [0, 2, 3], [0, 3, 4], [0, 4, 1]], extra, right }
+      return {
+        pts,
+        faces: [[1, 2, 3, 4], [0, 1, 2], [0, 2, 3], [0, 3, 4], [0, 4, 1]],
+        extra,
+        right,
+        drag: [[0, spec.shape === 'pyramid4' ? 'up' : 'height'], [1, 'base'], [2, 'base'], [3, 'base'], [4, 'base']],
+      }
     }
     case 'tetrahedron': {
-      const A: P3 = [0, 0.9, 0]
-      const B: P3 = [0.75, 0, 0]
-      const C: P3 = [1.9, 0.9, 0]
-      const Dt: P3 = [0.95, 0.55, h]
-      return { pts: [A, B, C, Dt], faces: [[0, 1, 2], [3, 0, 1], [3, 1, 2], [3, 2, 0]], extra: [], right: [] }
+      const A = mv3([0, 0.9, 0], 0, m)
+      const B = mv3([0.75, 0, 0], 1, m)
+      const C = mv3([1.9, 0.9, 0], 2, m)
+      const Dt = mv3([0.95, 0.55, h], 3, m)
+      return {
+        pts: [A, B, C, Dt],
+        faces: [[0, 1, 2], [3, 0, 1], [3, 1, 2], [3, 2, 0]],
+        extra: [],
+        right: [],
+        drag: [[0, 'base'], [1, 'base'], [2, 'base'], [3, 'up']],
+      }
     }
     case 'prism3': {
-      const A: P3 = [0, 0.9, 0]
-      const B: P3 = [0.75, 0, 0]
-      const C: P3 = [1.9, 0.9, 0]
-      const up = (p: P3): P3 => [p[0], p[1], h]
+      const A = mv3([0, 0.9, 0], 0, m)
+      const B = mv3([0.75, 0, 0], 1, m)
+      const C = mv3([1.9, 0.9, 0], 2, m)
+      // kéo A' = dời cả mặt trên → lăng trụ xiên
+      const t = off(m, 3) ?? [0, 0, 0]
+      const up = (p: P3): P3 => [p[0] + t[0], p[1] + t[1], h + t[2]]
       return {
         pts: [A, B, C, up(A), up(B), up(C)],
         faces: [[0, 1, 2], [3, 4, 5], [0, 1, 4, 3], [1, 2, 5, 4], [2, 0, 3, 5]],
         extra: [],
-        right: spec.marks ? [[0, 3, 1]] : [],
+        right: spec.marks && !off(m, 3) ? [[0, 3, 1]] : [],
+        drag: [[0, 'base'], [1, 'base'], [2, 'base'], [3, 'up']],
       }
     }
     case 'box':
@@ -453,18 +512,36 @@ function solid(spec: Geo3dSpec): Solid {
       const dep = spec.shape === 'cube' ? 1.4 : 1.3
       const hh = spec.shape === 'cube' ? 1.4 : 1.1 * spec.tall
       const base: P3[] = [[0, 0, 0], [w, 0, 0], [w, dep, 0], [0, dep, 0]]
-      const top = base.map((p) => [p[0], p[1], hh] as P3)
+      const t = off(m, 4) ?? [0, 0, 0]
+      const top = base.map((p) => [p[0] + t[0], p[1] + t[1], hh + t[2]] as P3)
       const extra: Array<[number, number]> = spec.diagonals ? [[0, 2], [1, 3]] : []
       return {
         pts: [...base, ...top],
         faces: [[0, 1, 2, 3], [4, 5, 6, 7], [0, 1, 5, 4], [1, 2, 6, 5], [2, 3, 7, 6], [3, 0, 4, 7]],
         extra,
         right: [],
+        drag: [[4, 'up']],
       }
     }
     default:
       return { pts: [], faces: [], extra: [], right: [] }
   }
+}
+
+type Spec3Moved = Record<string, number[]> | undefined
+
+/** giao hai đường chéo AC, BD của tứ giác phẳng */
+function diagCross(A: P3, B: P3, C: P3, Dp: P3): P3 {
+  const u = sub3(C, A)
+  const v = sub3(Dp, B)
+  const w = sub3(B, A)
+  const uu = dot3(u, u)
+  const uv = dot3(u, v)
+  const vv = dot3(v, v)
+  const den = uu * vv - uv * uv
+  if (Math.abs(den) < 1e-12) return avg3([A, B, C, Dp])
+  const t = (dot3(w, u) * vv - dot3(w, v) * uv) / den
+  return [A[0] + u[0] * t, A[1] + u[1] * t, A[2] + u[2] * t]
 }
 
 /** p nằm trên mặt (đa giác lồi phẳng) không */
@@ -530,6 +607,7 @@ function renderSolid(spec: Geo3dSpec, desc: string) {
     })
   })
   const P = s.pts.map(proj)
+  for (const [i, mode] of s.drag ?? []) lastHandles.push({ i, x: P[i][0], y: P[i][1], mode })
   const parts: string[] = []
   for (const e of edges.values()) parts.push(seg(P[e.a], P[e.b], !e.vis))
   for (const [a, b] of s.extra) {
@@ -619,8 +697,9 @@ function renderRound(spec: Geo3dSpec, desc: string) {
 
 export function renderGeo3dSvg(spec: Geo3dSpec, desc: string): GeoImage {
   lastErrors = []
+  lastHandles = []
   const isRound = spec.shape === 'cone' || spec.shape === 'cylinder' || spec.shape === 'sphere'
   if (isRound && spec.extras?.trim()) lastErrors = [{ line: 0, msg: 'nón, trụ, cầu chưa dựng thêm được' }]
   const img = isRound ? renderRound(spec, desc) : renderSolid(spec, desc)
-  return { ...img, errors: lastErrors }
+  return { ...img, errors: lastErrors, handles: lastHandles }
 }
