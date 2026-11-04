@@ -2,6 +2,33 @@ import type { EssayBlock, ExamDoc, QuestionBlock, RichText } from '@/data/docTyp
 import type { Exam, Question, QuestionImage, Section, Subject } from '@/data/types'
 import { formatTrueFalse, normalizeShort, parseTrueFalse } from '@/lib/grading'
 
+/**
+ * Chữ của một đoạn rich text cho đề tương tác: giữ công thức `$…$`, đậm/nghiêng/gạch chân
+ * thành **…** / *…* / __…__ (MathText vẽ lại). Đoạn có công thức không bọc dấu để khỏi vỡ công thức.
+ */
+function toRich(rt: RichText | undefined): string {
+  if (!rt) return ''
+  if (typeof rt === 'string') return rt
+  return rt
+    .map((s) => {
+      const has = (t: string) => s.marks?.some((m) => m.type === t)
+      const core = s.text.trim()
+      if (!core || s.text.includes('$') || !s.marks?.length) return s.text
+      let w = core
+      if (has('italic')) w = `*${w}*`
+      if (has('bold')) w = `**${w}**`
+      if (has('underline')) w = `__${w}__`
+      return s.text.replace(core, w)
+    })
+    .join('')
+}
+
+const ALIGN = new Set(['center', 'right', 'justify'])
+const alignOf = (b: QuestionBlock | EssayBlock) => {
+  const a = (b as { format?: { align?: string } }).format?.align
+  return a && ALIGN.has(a) ? { align: a as 'center' | 'right' | 'justify' } : {}
+}
+
 /** Văn bản thuần của một đoạn rich text (bỏ định dạng, giữ công thức `$…$`). */
 function toPlain(rt: RichText | undefined): string {
   if (!rt) return ''
@@ -116,9 +143,10 @@ export function docToExam(doc: ExamDoc, id: string): Exam {
     id: `${id}-m${i}`,
     number: ++counter,
     type: 'trac-nghiem',
-    prompt: toPlain(b.text),
+    prompt: toRich(b.text),
+    ...alignOf(b),
     image: promptImage(b.text),
-    options: b.options.map((o) => ({ key: o.label, text: toPlain(o.text) })),
+    options: b.options.map((o) => ({ key: o.label, text: toRich(o.text) })),
     answer: mcqAnswer(b.no),
     explanation: explain.get(`c${b.no}`) || undefined,
     points: mcqPoints,
@@ -132,9 +160,10 @@ export function docToExam(doc: ExamDoc, id: string): Exam {
       id: `${id}-t${i}`,
       number: ++counter,
       type: 'dung-sai',
-      prompt: toPlain(b.text),
+      prompt: toRich(b.text),
+      ...alignOf(b),
       image: promptImage(b.text),
-      options: b.options.map((o) => ({ key: o.label.toLowerCase(), text: toPlain(o.text) })),
+      options: b.options.map((o) => ({ key: o.label.toLowerCase(), text: toRich(o.text) })),
       answer: parsed ? formatTrueFalse(parsed) : undefined,
       explanation: explain.get(`c${b.no}`) || undefined,
       points: 1,
@@ -147,7 +176,8 @@ export function docToExam(doc: ExamDoc, id: string): Exam {
       id: `${id}-s${i}`,
       number: ++counter,
       type: 'tra-loi-ngan',
-      prompt: toPlain(b.text),
+      prompt: toRich(b.text),
+      ...alignOf(b),
       image: promptImage(b.text),
       answer: raw ? normalizeShort(raw) : undefined,
       explanation: explain.get(`c${b.no}`) || undefined,
@@ -162,7 +192,8 @@ export function docToExam(doc: ExamDoc, id: string): Exam {
       id: `${id}-e${i}`,
       number: i + 1,
       type: 'tu-luan',
-      prompt: [toPlain(b.text), ...(b.sub ?? []).map(toPlain)].filter(Boolean).join('\n'),
+      prompt: [toRich(b.text), ...(b.sub ?? []).map(toRich)].filter(Boolean).join('\n'),
+      ...alignOf(b),
       image: promptImage(b.text, ...(b.sub ?? [])),
       points: b.score,
       solution: written ? written.split('\n') : answer ? [answer] : undefined,
@@ -184,15 +215,23 @@ export function docToExam(doc: ExamDoc, id: string): Exam {
   addSection('TRẢ LỜI NGẮN', shorts)
   addSection('TỰ LUẬN', essays)
 
+  // tên đề: tab còn tên mặc định thì lấy dòng tiêu đề trong trang
+  const heading = doc.blocks.find((b) => b.type === 'title')
+  const headTitle = heading && 'text' in heading ? toPlain(heading.text as RichText).trim() : ''
+  const title = (!doc.title.trim() || doc.title === 'Đề thi mới') && headTitle ? headTitle : doc.title
+  // thời gian: dòng "Thời gian … N phút" ghi trong trang thắng giá trị mặc định
+  const pageText = doc.blocks.flatMap((b) => ('text' in b && b.type !== 'question' && b.type !== 'essay' ? [toPlain(b.text as RichText)] : []))
+  const timeLine = pageText.map((t) => /thời gian[^\d]{0,30}(\d{1,3})\s*phút/i.exec(t)?.[1]).find(Boolean)
+
   return {
     id,
-    title: doc.title,
+    title,
     subject: doc.subject as Subject,
     grade: doc.grade,
     school: doc.unit,
     year: doc.schoolYear,
     term: doc.term,
-    durationMinutes: parseInt(doc.duration, 10) || 45,
+    durationMinutes: Number(timeLine) || parseInt(doc.duration, 10) || 45,
     interactive: true,
     sections,
     author: 'Giáo viên',

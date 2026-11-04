@@ -17,7 +17,7 @@ export function renderMath(input: string): string {
   let match: RegExpExecArray | null
 
   while ((match = token.exec(input)) !== null) {
-    if (match.index > cursor) out.push(escapeHtml(input.slice(cursor, match.index)))
+    if (match.index > cursor) out.push(inlineMarks(escapeHtml(input.slice(cursor, match.index))))
     const raw = match[0]
     const isDisplay = raw.startsWith('$$')
     const body = isDisplay ? raw.slice(2, -2) : raw.slice(1, -1)
@@ -32,8 +32,16 @@ export function renderMath(input: string): string {
     )
     cursor = match.index + raw.length
   }
-  if (cursor < input.length) out.push(escapeHtml(input.slice(cursor)))
+  if (cursor < input.length) out.push(inlineMarks(escapeHtml(input.slice(cursor))))
   return out.join('')
+}
+
+/** **đậm**, __gạch chân__, *nghiêng* (dấu sát chữ, không qua dòng) — chỉ ở phần chữ, không đụng công thức */
+function inlineMarks(html: string): string {
+  return html
+    .replace(/\*\*(?=\S)([^*\n]+?)(?<=\S)\*\*/g, '<strong>$1</strong>')
+    .replace(/__(?=\S)([^_\n]+?)(?<=\S)__/g, '<u>$1</u>')
+    .replace(/(^|[^*\w])\*(?=\S)([^*\n]+?)(?<=\S)\*(?![*\w])/g, '$1<em>$2</em>')
 }
 
 export function escapeHtml(s: string): string {

@@ -11,10 +11,11 @@ const DEFAULT_MAX_PX = 420
  * Đề bài của một câu kèm ảnh: ảnh trên / dưới đề bài (xếp dọc) hoặc bên trái / phải (cạnh đề bài; màn hẹp tự xếp dọc).
  * Ảnh không bao giờ phóng to quá kích thước gốc.
  */
-export function QuestionBody({ q, className }: { q: Pick<Question, 'prompt' | 'image'>; className?: string }) {
+export function QuestionBody({ q, className }: { q: Pick<Question, 'prompt' | 'image' | 'align'>; className?: string }) {
   const [natural, setNatural] = useState<number>()
   const img = q.image
-  const text = <MathText as="div">{q.prompt}</MathText>
+  // pre-line: giữ xuống dòng (vd. ý a), b) của tự luận)
+  const text = <MathText as="div" className="whitespace-pre-line" style={q.align ? { textAlign: q.align } : undefined}>{q.prompt}</MathText>
   if (!img?.src) return <div className={className}>{text}</div>
 
   const width = img.width ?? DEFAULT_WIDTH

@@ -34,6 +34,8 @@ export interface Question {
   number: number
   type: QuestionType
   prompt: string
+  /** căn lề đề bài lấy từ trang đề (thiếu = trái) */
+  align?: 'center' | 'right' | 'justify'
   image?: QuestionImage
   /** trắc nghiệm: phương án A–D; đúng/sai: các ý a) b) c) d) (key là chữ cái thường) */
   options?: Option[]
