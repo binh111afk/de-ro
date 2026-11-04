@@ -3,13 +3,11 @@
  * đỉnh, bật các đường phụ; hình vẽ theo quy ước SGK (không gian: phép chiếu
  * song song, cạnh khuất nét đứt).
  */
-import { useMemo, useRef, useState } from 'react'
-import { svgDataUrl } from '@/lib/plot'
+import { useMemo, useState } from 'react'
 import { cn } from '@/lib/cn'
 import { inputClass } from '@/components/ui'
-import { dragToOffset, GEO2D_SHAPES, GEO3D_SHAPES, type Geo2dShape, type Geo2dSpec, type Geo3dShape, type Geo3dSpec } from '@/lib/geometry'
+import { GEO2D_SHAPES, GEO3D_SHAPES, type Geo2dShape, type Geo2dSpec, type Geo3dShape, type Geo3dSpec } from '@/lib/geometry'
 import { renderTool, type ToolImage } from '@/lib/toolSpec'
-import type { GeoHandle } from '@/lib/geometry'
 import { Check, ToolShell, sectionTitle } from './ToolShell'
 
 const isTri2d = (s: Geo2dShape) => ['triangle', 'right-triangle', 'isosceles', 'equilateral', 'inscribed-triangle'].includes(s)
@@ -31,7 +29,7 @@ export function Geo2dModal({ initial, submitLabel, onClose, onInsert }: Props<Ge
       <ShapePicker
         options={GEO2D_SHAPES}
         value={spec.shape}
-        onPick={(o) => set({ shape: o.id, names: o.names, moved: undefined })}
+        onPick={(o) => set({ shape: o.id, names: o.names })}
       />
       <Names names={spec.names} onChange={(names) => set({ names })} />
       <section>
@@ -54,12 +52,11 @@ export function Geo2dModal({ initial, submitLabel, onClose, onInsert }: Props<Ge
   return (
     <ToolShell
       title="Hình học phẳng"
-      hint="Chọn mẫu hình, đổi tên đỉnh, bật đường phụ; kéo chấm tròn trên hình để đổi dáng"
+      hint="Chọn mẫu hình, đổi tên đỉnh, bật đường phụ cần dùng"
       inputs={inputs}
       preview={preview}
       submitLabel={submitLabel ?? (initial ? 'Cập nhật hình' : 'Chèn hình')}
       canSubmit
-      renderPreview={(img) => <DragPreview img={img} moved={spec.moved} onMove={(moved) => set({ moved })} />}
       onSubmit={() => onInsert(preview)}
       onClose={onClose}
     />
@@ -76,7 +73,7 @@ export function Geo3dModal({ initial, submitLabel, onClose, onInsert }: Props<Ge
 
   const inputs = (
     <>
-      <ShapePicker options={GEO3D_SHAPES} value={spec.shape} onPick={(o) => set({ shape: o.id, names: o.names, moved: undefined })} />
+      <ShapePicker options={GEO3D_SHAPES} value={spec.shape} onPick={(o) => set({ shape: o.id, names: o.names })} />
       <Names names={spec.names} onChange={(names) => set({ names })} />
       <section>
         <h3 className={sectionTitle}>Đường phụ</h3>
@@ -111,12 +108,11 @@ export function Geo3dModal({ initial, submitLabel, onClose, onInsert }: Props<Ge
   return (
     <ToolShell
       title="Hình học không gian"
-      hint="Phép chiếu song song, cạnh khuất nét đứt; kéo chấm tròn để đổi dáng (đỉnh trên: lên xuống, đáy: trượt trong mặt đáy)"
+      hint="Hình biểu diễn theo phép chiếu song song, cạnh khuất vẽ nét đứt"
       inputs={inputs}
       preview={preview}
       submitLabel={submitLabel ?? (initial ? 'Cập nhật hình' : 'Chèn hình')}
       canSubmit
-      renderPreview={(img) => <DragPreview img={img} moved={spec.moved} onMove={(moved) => set({ moved })} />}
       onSubmit={() => onInsert(preview)}
       onClose={onClose}
     />
@@ -221,51 +217,5 @@ function Names({ names, onChange }: { names: string[]; onChange: (names: string[
         ))}
       </div>
     </section>
-  )
-}
-
-/** ảnh xem trước + chấm tròn ở các đỉnh kéo được */
-function DragPreview({ img, moved, onMove }: { img: ToolImage; moved?: Record<string, number[]>; onMove: (m: Record<string, number[]> | undefined) => void }) {
-  const box = useRef<HTMLDivElement>(null)
-  const drag = useRef<{ i: number; x: number; y: number; k: number; base: number[]; mode: GeoHandle['mode'] } | null>(null)
-  const vb = /viewBox="([-\d.]+) ([-\d.]+) ([-\d.]+) ([-\d.]+)"/.exec(img.svg)
-  const [minX, minY, w, h] = vb ? vb.slice(1).map(Number) : [0, 0, img.width, img.height]
-  const handles = img.handles ?? []
-
-  const move = (e: React.PointerEvent) => {
-    const d = drag.current
-    if (!d) return
-    const delta = dragToOffset(d.mode, (e.clientX - d.x) * d.k, (e.clientY - d.y) * d.k)
-    onMove({ ...moved, [d.i]: d.base.map((v, j) => v + (delta[j] ?? 0)) })
-  }
-  return (
-    <div className="flex h-full w-full flex-col items-center justify-center gap-2">
-      <div ref={box} className="relative max-h-[calc(100%-28px)] max-w-full" style={{ aspectRatio: `${w} / ${h}` }}>
-        <img src={svgDataUrl(img.svg)} alt="Xem trước" draggable={false} className="block h-full max-h-full w-full rounded-[4px] border border-line bg-white object-contain" />
-        {handles.map((hd) => (
-          <span
-            key={hd.i}
-            role="slider"
-            aria-label={`Kéo đỉnh ${hd.i + 1}`}
-            aria-valuenow={0}
-            onPointerDown={(e) => {
-              e.preventDefault()
-              e.currentTarget.setPointerCapture(e.pointerId)
-              const r = box.current!.getBoundingClientRect()
-              drag.current = { i: hd.i, x: e.clientX, y: e.clientY, k: w / r.width, base: moved?.[hd.i] ?? [0, 0, 0], mode: hd.mode }
-            }}
-            onPointerMove={move}
-            onPointerUp={() => (drag.current = null)}
-            className="absolute size-3.5 -translate-x-1/2 -translate-y-1/2 cursor-grab touch-none rounded-full border-2 border-white bg-clay/70 shadow-sm hover:bg-clay active:cursor-grabbing"
-            style={{ left: `${((hd.x - minX) / w) * 100}%`, top: `${((hd.y - minY) / h) * 100}%` }}
-          />
-        ))}
-      </div>
-      {moved && Object.keys(moved).length > 0 && (
-        <button type="button" onClick={() => onMove(undefined)} className="text-[12px] text-clay hover:underline">
-          Đặt lại dáng hình
-        </button>
-      )}
-    </div>
   )
 }
