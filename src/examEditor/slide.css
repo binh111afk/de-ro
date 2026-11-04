@@ -3,6 +3,8 @@
 .slide-stage {
   position: relative;
   flex: 1;
+  /* container theo cả cao lẫn rộng: khung slide co theo chiều cao màn hình (laptop) */
+  container-type: size;
   min-width: 0;
   overflow: auto;
   padding: 26px 32px 36px;
@@ -11,7 +13,8 @@
 
 .slide-stage__inner {
   position: relative;
-  width: min(100%, 1000px);
+  /* vừa cả bề rộng lẫn bề cao vùng soạn (16:9), tối đa 1000px */
+  width: min(100%, 1000px, 100cqh * 16 / 9);
   margin: 0 auto;
 }
 
