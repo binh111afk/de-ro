@@ -19,7 +19,7 @@
 
 ## Chưa kiểm / còn lại
 
-1. Chưa mở file Word thật cho ảnh đầu căn phải (chỉ sửa code; nên chạy quy trình Word COM ở phiên 18).
+1. ~~File Word thật cho ảnh đầu căn phải~~ đã kiểm bằng Word COM: ảnh và "Câu N." cùng căn phải / giữa / trái, khớp web. Lưu ý: căn lề lưu ở nút `examQuestion`, không phải `examQuestionPrompt`. Tên file tải về có dấu nên header `X-Name` phải đổi sang ASCII.
 2. `planTool` chưa gọi thử với LLM thật. AI chưa chọn được 2 công cụ Lý mới.
 3. Vẫn chưa thử: công cụ mới ở **soạn slide**, học sinh làm bài với đề có ảnh, mở file xuất bằng LibreOffice.
 4. Bảng xét dấu: miền gồm nhiều khoảng (vd. `√(x²−1)`) vẫn phải gõ tay.
