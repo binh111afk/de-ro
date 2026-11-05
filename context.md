@@ -1,6 +1,6 @@
 # context.md — đề rõ (trình soạn đề thi)
 
-Bản đồ ngắn của dự án. **Chỉ đọc file này khi bắt đầu phiên**; các file khác mở khi việc đang làm cần tới (bảng "Đọc thêm khi nào" bên dưới). Cập nhật: 05/11/2026 (phiên 19).
+Bản đồ ngắn của dự án. **Chỉ đọc file này khi bắt đầu phiên**; các file khác mở khi việc đang làm cần tới (bảng "Đọc thêm khi nào" bên dưới). Cập nhật: 05/11/2026 (phiên 20).
 
 ## Dự án
 
@@ -9,12 +9,13 @@ Web app soạn đề thi tiếng Việt kiểu Word: React 19 + TypeScript + Vit
 - `/soan-de`: trình soạn chính (tab Bắt đầu tạo đề / slide). Soạn đề: AI bên **phải**; Mục lục / Khối mẫu / Công cụ bên **trái**. Soạn slide: AI bên phải.
 - Màn khác: Đề cộng đồng, Tạo đề online (lịch sử, đề đã xuất bản, kết quả), Đề của tôi, Thư viện, Chấm điểm, Quiz.
 - Tài khoản Supabase (`user_items`, `community_exams`, `exam_attempts`), file trên R2.
+- Chạy thật: Vercel https://de-ro-lac.vercel.app, push `main` là tự deploy. `api/*.ts` chỉ re-export handler `server/`; `server/guard.ts` chặn Origin lạ + giới hạn lượt.
 
 ## Nguyên tắc không được phá
 
 1. `ExamBlock` (`src/data/docTypes.ts`) là mô hình lưu bền vững; AI, thư viện, xuất Word, in đều đi qua nó. TipTap chỉ là lớp trình bày.
 2. Một editor TipTap liên tục; trang A4 chỉ là nền vẽ phía sau (`zoom` CSS, không `transform`).
-3. Key LLM ở server, gọi qua proxy `/api/llm`; không đưa key vào bundle.
+3. Key LLM ở server, gọi qua proxy `/api/llm`; không đưa key vào bundle. Client gọi API bằng `apiFetch` (gắn token đăng nhập).
 4. Giao diện tiếng Việt, bám Word / GenOffice.
 
 ## Lệnh
@@ -22,7 +23,7 @@ Web app soạn đề thi tiếng Việt kiểu Word: React 19 + TypeScript + Vit
 ```powershell
 npm run dev -- --port 5184 --host 127.0.0.1     # http://127.0.0.1:5184/soan-de (hoặc preview_start "dev")
 npx tsc -p tsconfig.app.json --noEmit           # KHÔNG dùng `tsc -p .` (không kiểm gì)
-npm run test:convert | test:export | test:docx | test:online | test:grading | test:markdown   # bộ hay dùng
+npm run test:convert | test:export | test:docx | test:online | test:grading | test:markdown | test:guard   # bộ hay dùng
 ```
 
 Danh sách đủ: `package.json` → `scripts`. `.env` cần `LLM_API_KEY` (mẫu `.env.example`).
@@ -34,11 +35,13 @@ Danh sách đủ: `package.json` → `scripts`. `.env` cần `LLM_API_KEY` (mẫ
 | Trình soạn đề | `src/pages/ComposeDoc.tsx`, `src/examEditor/` (schema, convert ExamBlock↔TipTap, Ribbon, FileMenu, AiPanel, DocSelectionAi) |
 | Xuất Word | `src/examEditor/docxBlocks.ts` (phương án A–D xếp bằng tab stop), test `scripts/test-docx.ts` |
 | Đề tương tác | `src/lib/docToExam.ts`, `src/lib/math.ts` (renderMath: `$…$`, `**đậm**`, ảnh `![alt\|rộng%](src)`) |
-| Công cụ vẽ | `src/lib/toolSpec.ts` (ToolDoc + renderTool), `src/examEditor/tools/` (ToolsPanel = SUBJECTS, ToolModal, MoreToolModals). Thư viện vẽ: `plot, varTable, geometry, signTable, oxy, stats, mathExtra` (Toán), `circuit, physics` (Lý), `chem` (Hoá) |
+| Công cụ vẽ | `src/lib/toolSpec.ts` (ToolDoc + renderTool), `src/examEditor/tools/` (ToolsPanel = SUBJECTS, ToolModal, MoreToolModals), `src/examEditor/toolImages.ts` (ảnh công cụ trong đề, đổi PNG). Thư viện vẽ: `plot, varTable, geometry, signTable, oxy, stats, mathExtra` (Toán), `circuit, physics` (Lý), `chem` (Hoá). AI dùng qua `FIGURE_GUIDE` + `toolFromRaw` (`src/lib/docRewrite.ts`) |
+| Bảng đáp án | `src/lib/answerKey.ts` (chia theo dạng câu, dùng cho trình soạn + Word) |
+| Kho câu hỏi | `src/data/bank.ts`, câu có hình `src/data/bankFigures.ts` (field `figure`), `src/examEditor/BankModal.tsx` |
 | Slide | `src/examEditor/SlideEditor.tsx`, `slide.css`; đồ hoạ `src/lib/graphics.ts` là file **sinh tự động** |
 | Danh sách có phân trang | `src/components/Pager.tsx` |
 
-**Thêm một công cụ vẽ** = 6 chỗ: `toolSpec.ts`, `ToolModal.tsx`, `ToolsPanel.tsx`, `MoreToolModals.tsx`, `ComposeDoc.tsx` (`TOOL_DOC_IMAGE`), `DocSelectionAi.tsx` (`TOOL_NAME`).
+**Thêm một công cụ vẽ** = 7 chỗ: `toolSpec.ts`, `ToolModal.tsx`, `ToolsPanel.tsx`, `MoreToolModals.tsx`, `toolImages.ts` (`TOOL_DOC_IMAGE`), `DocSelectionAi.tsx` (`TOOL_NAME`), `docRewrite.ts` (`FIGURE_GUIDE` + `toolFromRaw`, để AI dùng được).
 
 ## Bẫy hay gặp (chi tiết: docs/bai-hoc-va-loi.md)
 
@@ -47,12 +50,14 @@ Danh sách đủ: `package.json` → `scripts`. `.env` cần `LLM_API_KEY` (mẫ
 - `tsx` chạy file lẻ không hiểu alias `@/` → thử logic trong trình duyệt: `await import('/src/lib/x.ts')`.
 - Bấm trong trình duyệt theo ref của `find`, không theo toạ độ; khung trình duyệt hẹp thì thanh bên bị ẩn (resize 1366×768).
 - Căn lề câu hỏi lưu ở nút `examQuestion`, không phải `examQuestionPrompt`.
+- Import trong `server/`, `api/` phải có đuôi `.js` (Vercel ESM). Vercel: dùng CLI (`npx --no-install vercel …`), MCP không có quyền team; không `vercel deploy` từ máy (quá nhiều file).
 
 ## Đọc thêm khi nào
 
 | Khi làm | Mở |
 |---|---|
-| Tiếp việc phiên trước | [phiên 19](docs/handoff/phien-19.md) (mục "Còn lại" ở cuối) |
+| Tiếp việc phiên trước | [phiên 20](docs/handoff/phien-20.md) (mục "Còn lại" ở cuối) |
+| Deploy / biến môi trường / bảo vệ API | [phiên 20](docs/handoff/phien-20.md), mục "Vercel" |
 | Tìm phiên cũ theo chủ đề | [docs/handoff/README.md](docs/handoff/README.md) |
 | Công cụ vẽ (quy ước SGK, thử nhanh) | [phiên 17](docs/handoff/phien-17.md) |
 | Kiểm file Word thật (Word COM → PDF) | [phiên 18](docs/handoff/phien-18.md), mục "Cách kiểm tra file Word thật" |

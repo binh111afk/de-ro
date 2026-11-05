@@ -2,6 +2,7 @@
 
 Chỉ mở phiên liên quan đến việc đang làm. Mới nhất ở trên.
 
+- [phiên 20](phien-20.md): chuyển trang mượt (tải ngầm, hiệu ứng, khung chờ slide); AI soạn đề gọi 17 công cụ vẽ; kho câu hỏi có hình; bảng đáp án theo dạng câu; **deploy Vercel (CLI, import `.js`)**; chặn lạm dụng API (`server/guard.ts`)
 - [phiên 19](phien-19.md): ảnh trong phương án sang đề tương tác; ảnh đầu câu căn lề khớp Word; mạch cầu; xét dấu miền bị chặn; Hỏi AI vẽ mọi công cụ; Lý (chuyển động, mặt phẳng nghiêng); Hoá (electron, công thức cấu tạo, đồ thị mol); Toán (đường tròn lượng giác, cây xác suất, trục số, Ven); phân trang; xuất Word phương án bằng tab stop; slide vừa màn nhỏ
 - [phiên 18](phien-18.md): dựng hình bằng lệnh + bấm/kéo trên ảnh; bảng xét dấu, Oxy, thống kê; mạch điện; chip chọn môn; vẽ ảnh câu hỏi ở đề online; đề tương tác giữ định dạng; **cách kiểm file Word thật qua COM**
 - [phiên 17](phien-17.md): tab Công cụ (đồ thị, bảng biến thiên, hình phẳng/không gian), nhấp đúp sửa lại, Hỏi AI khi bôi đen; **công thức thêm công cụ, quy ước vẽ SGK**
