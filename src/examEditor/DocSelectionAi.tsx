@@ -33,6 +33,7 @@ const TOOL_NAME: Record<ToolDoc['kind'], string> = {
   trig: 'Đường tròn lượng giác',
   probtree: 'Sơ đồ cây xác suất',
   numberline: 'Trục số',
+  venn: 'Biểu đồ Ven',
 }
 const PLOT_ASK = 'Vẽ hình minh hoạ cho đề này'
 const PANEL_W = 340

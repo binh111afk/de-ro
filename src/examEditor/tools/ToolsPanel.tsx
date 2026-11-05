@@ -4,7 +4,7 @@
  */
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
-import { Box, ChartColumn, ChartSpline, Grid3x3, SquarePlus, Table2, Triangle, TriangleRight, Zap, ChartLine, Atom, Hexagon, FlaskConical, CircleDot, Network, MoveHorizontal } from 'lucide-react'
+import { Box, ChartColumn, ChartSpline, Grid3x3, SquarePlus, Table2, Triangle, TriangleRight, Zap, ChartLine, Atom, Hexagon, FlaskConical, CircleDot, Network, MoveHorizontal, Circle } from 'lucide-react'
 import type { ToolImage, ToolKind } from '@/lib/toolSpec'
 import { ToolModal } from './ToolModal'
 import { cn } from '@/lib/cn'
@@ -25,6 +25,7 @@ const SUBJECTS: Array<{ name: string; tools: Array<{ id: ToolId; label: string; 
       { id: 'trig', label: 'Đường tròn lượng giác', desc: 'Điểm ngọn cung, chiếu cos/sin, họ nghiệm α + kβ', Icon: CircleDot },
       { id: 'probtree', label: 'Sơ đồ cây xác suất', desc: 'Nhánh ghi xác suất, biến cố đối, tích cuối nhánh', Icon: Network },
       { id: 'numberline', label: 'Trục số', desc: 'Khoảng, đoạn, nửa khoảng; gạch phần bỏ đi', Icon: MoveHorizontal },
+      { id: 'venn', label: 'Biểu đồ Ven', desc: '2–3 tập; tô giao, hợp, hiệu, phần bù; số phần tử', Icon: Circle },
     ],
   },
   {

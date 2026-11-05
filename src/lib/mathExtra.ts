@@ -329,3 +329,159 @@ export function renderNumberLineSvg(spec: NumberLineSpec, desc: string) {
   })
   return wrap(W, 34 + rows.length * RH - 10, desc, b)
 }
+
+/* ------------------------------------------------------------------ *
+ * Biểu đồ Ven
+ * ------------------------------------------------------------------ */
+
+export interface VennSpec {
+  /** tên các tập, 2 hoặc 3: "A, B" / "A, B, C" */
+  sets: string
+  /** miền tô (để trống = không tô): "A ∩ B", "A ∪ B", "A \ B", "(A ∪ B)'", "A n B" … */
+  shade: string
+  /** số phần tử từng miền, mỗi dòng "A: 5" (chỉ A), "AB: 3" (A và B, không C), "ABC: 1", "ngoài: 4" */
+  counts: string
+  /** khung chữ nhật tập vũ trụ U */
+  universe: boolean
+}
+
+/** biểu thức tập → hàm kiểm tra một miền (mảng thuộc / không thuộc từng tập) */
+function setExpr(src: string, names: string[]): (inside: boolean[]) => boolean {
+  // "A n B" / "A u B" (chữ n, u thay ∩, ∪) đổi trước khi bỏ dấu cách
+  const s = src
+    .replace(/\s+n\s+|&/g, '∩')
+    .replace(/\s+u\s+|\|/g, '∪')
+    .replace(/\s+/g, '')
+    .replace(/\\|−|-/g, '\\')
+  let i = 0
+  type F = (m: boolean[]) => boolean
+  const atom = (): F => {
+    let f: F
+    if (s[i] === '(') {
+      i++
+      f = union()
+      if (s[i] !== ')') throw new Error('Thiếu dấu ")"')
+      i++
+    } else {
+      const m = /^[A-Za-z]\w*/.exec(s.slice(i))
+      if (!m) throw new Error(`Không đọc được miền tô ở "${s.slice(i, i + 5) || 'cuối'}"`)
+      const k = names.indexOf(m[0])
+      if (k < 0) {
+        if (m[0] === 'U') f = () => true
+        else throw new Error(`Không có tập "${m[0]}" (các tập: ${names.join(', ')})`)
+      } else f = (mm) => mm[k]
+      i += m[0].length
+    }
+    while (s[i] === "'" || s[i] === '’') {
+      const g = f
+      f = (mm) => !g(mm)
+      i++
+    }
+    return f
+  }
+  const inter = (): F => {
+    let f = atom()
+    while (s[i] === '∩' || s[i] === '\\') {
+      const op = s[i++]
+      const g = f
+      const h = atom()
+      f = op === '∩' ? (m) => g(m) && h(m) : (m) => g(m) && !h(m)
+    }
+    return f
+  }
+  function union(): F {
+    let f = inter()
+    while (s[i] === '∪') {
+      i++
+      const g = f
+      const h = inter()
+      f = (m) => g(m) || h(m)
+    }
+    return f
+  }
+  const f = union()
+  if (i < s.length) throw new Error(`Thừa "${s.slice(i)}" trong miền tô`)
+  return f
+}
+
+export function renderVennSvg(spec: VennSpec, desc: string) {
+  const names = spec.sets
+    .split(/[,;\s]+/)
+    .map((t) => t.trim())
+    .filter(Boolean)
+  if (names.length < 2 || names.length > 3) throw new Error('Gõ 2 hoặc 3 tên tập, vd. A, B, C')
+  const three = names.length === 3
+  const r = 78
+  const W = 360
+  const H = three ? 345 : 230
+  const cx = W / 2
+  const cy = three ? 175 : H / 2
+  const C: Array<[number, number]> = three
+    ? [
+        [cx - 46, cy - 30],
+        [cx + 46, cy - 30],
+        [cx, cy + 48],
+      ]
+    : [
+        [cx - 50, cy],
+        [cx + 50, cy],
+      ]
+  const ins = (x: number, y: number) => C.map(([a, b]) => (x - a) ** 2 + (y - b) ** 2 <= r * r)
+  const key = (m: boolean[]) => m.map((v, k) => (v ? names[k] : '')).join('') || 'ngoài'
+  const box = { x: 14, y: 14, w: W - 28, h: H - 28 }
+  // lấy mẫu lưới: điểm đại diện (tâm) mỗi miền để ghi số
+  const sum = new Map<string, [number, number, number]>()
+  for (let x = box.x + 4; x < box.x + box.w; x += 4)
+    for (let y = box.y + 4; y < box.y + box.h; y += 4) {
+      const k = key(ins(x, y))
+      const s = sum.get(k) ?? [0, 0, 0]
+      sum.set(k, [s[0] + x, s[1] + y, s[2] + 1])
+    }
+  let b = `<defs><pattern id="vnh" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="7" stroke="#555" stroke-width="1.6"/></pattern>`
+  C.forEach(([a, c], k) => (b += `<clipPath id="vc${k}"><circle cx="${a}" cy="${c}" r="${r}"/></clipPath>`))
+  b += `<mask id="vall" maskUnits="userSpaceOnUse"><rect x="0" y="0" width="${W}" height="${H}" fill="#fff"/></mask></defs>`
+  // tô: mỗi miền nguyên tử thoả biểu thức → giao các hình tròn "thuộc", trừ các hình tròn "không thuộc"
+  if (spec.shade.trim()) {
+    const f = setExpr(spec.shade, names)
+    const combos = Array.from({ length: 2 ** names.length }, (_, n) => names.map((_, k) => Boolean(n & (1 << k))))
+    combos.forEach((m, n) => {
+      if (!f(m)) return
+      const maskId = `vm${n}`
+      b += `<mask id="${maskId}" maskUnits="userSpaceOnUse"><rect x="0" y="0" width="${W}" height="${H}" fill="#fff"/>${C.map(([a, c], k) => (m[k] ? '' : `<circle cx="${a}" cy="${c}" r="${r}" fill="#000"/>`)).join('')}</mask>`
+      let shape = `<rect x="${box.x}" y="${box.y}" width="${box.w}" height="${box.h}" fill="url(#vnh)" mask="url(#${maskId})"/>`
+      m.forEach((v, k) => {
+        if (v) shape = `<g clip-path="url(#vc${k})">${shape}</g>`
+      })
+      b += shape
+    })
+  }
+  if (spec.universe) {
+    b += `<rect x="${box.x}" y="${box.y}" width="${box.w}" height="${box.h}" fill="none" stroke="#111" stroke-width="1.4"/>`
+    b += `<text x="${box.x + 8}" y="${box.y + 20}" ${FAM} font-size="16" font-style="italic">U</text>`
+  }
+  C.forEach(([a, c], k) => {
+    b += `<circle cx="${a}" cy="${c}" r="${r}" fill="none" stroke="#111" stroke-width="1.6"/>`
+    // tên tập ngoài vòng, phía xa tâm chung
+    const dx = a - cx
+    const dy = c - (three ? cy + 6 : cy)
+    const L = Math.hypot(dx, dy) || 1
+    const lx = a + (dx / L) * (r + 12)
+    const ly = c + (three ? (dy / L) * (r + 12) : -r - 6) + 5
+    b += `<text x="${f1(three ? lx : a + (k ? 40 : -40))}" y="${f1(three ? ly : ly)}" ${FAM} font-size="17" font-style="italic" text-anchor="middle">${esc(names[k])}</text>`
+  })
+  // số phần tử
+  for (const raw of spec.counts.split('\n')) {
+    const t = raw.trim()
+    if (!t) continue
+    const m = /^([^:]+):\s*(.+)$/.exec(t)
+    if (!m) throw new Error(`Dòng "${t}" cần dạng Miền: số, vd. AB: 3`)
+    let k = m[1].replace(/\s+|∩/g, '')
+    if (/^(ngoài|ngoai|U)$/i.test(k)) k = 'ngoài'
+    else k = names.filter((n) => k.includes(n)).join('')
+    const s = sum.get(k)
+    if (!s) throw new Error(`Không có miền "${m[1].trim()}"`)
+    const [x, y] = k === 'ngoài' ? [box.x + box.w - 22, box.y + box.h - 14] : [s[0] / s[2], s[1] / s[2]]
+    b += `<text x="${f1(x)}" y="${f1(y + 5)}" ${FAM} font-size="15" text-anchor="middle" paint-order="stroke" stroke="#fff" stroke-width="3">${esc(m[2].trim())}</text>`
+  }
+  return wrap(W, H, desc, b)
+}

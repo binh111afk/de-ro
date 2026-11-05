@@ -14,7 +14,7 @@ import type { ChartKind, StatsSpec } from '@/lib/stats'
 import { CIRCUIT_HELP, type CircuitSpec } from '@/lib/circuit'
 import type { Dir, InclineSpec, MotionSpec } from '@/lib/physics'
 import type { ChemGraphSpec, ElectronSpec, StructSpec } from '@/lib/chem'
-import type { NumberLineSpec, TreeSpec, TrigSpec } from '@/lib/mathExtra'
+import type { NumberLineSpec, TreeSpec, TrigSpec, VennSpec } from '@/lib/mathExtra'
 import { Check, ToolShell, sectionTitle } from './ToolShell'
 
 type Props<S> = { initial?: S | null; submitLabel?: string; onClose: () => void; onInsert: (img: ToolImage) => void }
@@ -952,6 +952,75 @@ export function NumberLineModal({ initial, submitLabel, onClose, onInsert }: Pro
       hint="Biểu diễn khoảng, đoạn, nửa khoảng như SGK lớp 10"
       inputs={inputs}
       inputsWidth={340}
+      preview={preview}
+      submitLabel={submitLabel ?? (initial ? 'Cập nhật hình' : 'Chèn hình')}
+      canSubmit={Boolean(preview) && !error}
+      onSubmit={() => preview && onInsert(preview)}
+      onClose={onClose}
+    />
+  )
+}
+
+const VENN_HELP: HelpGroups = [
+  {
+    group: 'Miền tô',
+    items: [
+      { code: 'A ∩ B   hoặc  A n B', what: 'Giao' },
+      { code: 'A ∪ B   hoặc  A u B', what: 'Hợp' },
+      { code: 'A \\ B   hoặc  A - B', what: 'Hiệu' },
+      { code: "A'   (A ∪ B)'", what: 'Phần bù trong U' },
+      { code: '(A ∪ B) ∩ C', what: 'Ngoặc để gom' },
+    ],
+  },
+  {
+    group: 'Số phần tử (mỗi dòng một miền)',
+    items: [
+      { code: 'A: 5', what: 'Chỉ thuộc A' },
+      { code: 'AB: 3', what: 'Thuộc A và B (không thuộc C)' },
+      { code: 'ABC: 1', what: 'Thuộc cả ba' },
+      { code: 'ngoài: 2', what: 'Ngoài mọi tập (trong U)' },
+    ],
+  },
+]
+
+export function VennModal({ initial, submitLabel, onClose, onInsert }: Props<VennSpec>) {
+  const [spec, setSpec] = useState<VennSpec>(initial ?? { sets: 'A, B', shade: 'A ∩ B', counts: '', universe: true })
+  const set = (p: Partial<VennSpec>) => setSpec((s) => ({ ...s, ...p }))
+  const doc = useMemo((): ToolDoc => ({ kind: 'venn', spec }), [spec])
+  const { preview, error } = useRender(doc)
+  const inputs = (
+    <>
+      <section className="grid grid-cols-2 gap-2">
+        <label className="text-[12.5px] text-ink-2">
+          Các tập (2 hoặc 3)
+          <input className={cn(inputClass, 'mt-1 h-9')} value={spec.sets} onChange={(e) => set({ sets: e.target.value })} placeholder="A, B, C" />
+        </label>
+        <label className="text-[12.5px] text-ink-2">
+          Miền tô
+          <input className={cn(inputClass, 'mt-1 h-9')} value={spec.shade} onChange={(e) => set({ shade: e.target.value })} placeholder="A ∩ B (trống: không tô)" />
+        </label>
+      </section>
+      <TextBlock
+        title="Số phần tử (tuỳ chọn)"
+        help={VENN_HELP}
+        intro="Mỗi dòng một miền, vd. A: 5 · AB: 3 · ngoài: 2. Để trống thì không ghi số."
+        value={spec.counts}
+        onChange={(counts) => set({ counts })}
+        rows={4}
+        errors={error ? [error] : []}
+        label="Số phần tử"
+      />
+      <section>
+        <Check checked={spec.universe} onChange={(universe) => set({ universe })}>Khung tập vũ trụ U</Check>
+      </section>
+    </>
+  )
+  return (
+    <ToolShell
+      title="Biểu đồ Ven"
+      hint="2 hoặc 3 tập; gạch miền giao, hợp, hiệu, phần bù; ghi số phần tử"
+      inputs={inputs}
+      inputsWidth={360}
       preview={preview}
       submitLabel={submitLabel ?? (initial ? 'Cập nhật hình' : 'Chèn hình')}
       canSubmit={Boolean(preview) && !error}

@@ -47,6 +47,7 @@ const TOOL_DOC_IMAGE: Record<ToolKind, { width: number; alt: string }> = {
   trig: { width: 260, alt: 'Đường tròn lượng giác' },
   probtree: { width: 380, alt: 'Sơ đồ cây' },
   numberline: { width: 400, alt: 'Trục số' },
+  venn: { width: 260, alt: 'Biểu đồ Ven' },
 }
 
 /** chỗ đặt đồ thị: thay ảnh cũ, hoặc chèn thành đoạn mới tại vị trí giữa hai khối */
