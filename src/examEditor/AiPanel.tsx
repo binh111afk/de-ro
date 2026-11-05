@@ -29,6 +29,7 @@ import { editSystemPrompt, looksLikeEdit, parseEditCommands, type SlideEditOp } 
 import { useSlidingThumb } from './useSlidingThumb'
 import { buildSourcePack, sourcePrompt, sourceRule, type SourcePack } from '@/lib/sources'
 import { cn } from '@/lib/cn'
+import { FIGURE_GUIDE } from '@/lib/docRewrite'
 import aiThinkingAnim from '@/assets/ai-assistant.svg'
 import { Markdown } from './markdown'
 import { IconClose, IconEnter, IconPaperclip, IconStop } from './icons'
@@ -595,6 +596,12 @@ function examSystemPrompt(documentDigest?: string): string {
     '- answerKey phải có đủ mọi câu question: nhiều lựa chọn = một chữ cái ("B"); đúng/sai = chuỗi Đ/S theo thứ tự ý a b c d, ví dụ "ĐSĐS"; trả lời ngắn = con số, dấu thập phân là dấu phẩy ("-1,5"). Đáp án tự luận để trong rubric.\n' +
     '- Kết thúc đề: answerKey (bảng đáp án trắc nghiệm) và/hoặc rubric (thang điểm tự luận).\n' +
     '- Công thức toán viết LaTeX trong $...$, không dùng ảnh cho công thức.\n' +
+    '- HÌNH VẼ: câu nào cần hình (đồ thị, bảng biến thiên, bảng xét dấu, hình học, biểu đồ số liệu, mạch điện, sơ đồ cây, …) ' +
+    'thì thêm field "figure" vào block question/essay/paragraph đó; app tự vẽ bằng công cụ và đặt hình ngay dưới khối. ' +
+    'Không mô tả hình bằng chữ kiểu "(hình vẽ bên)" mà không kèm figure. Hình phải khớp số liệu trong đề và không lộ đáp án. ' +
+    'Mỗi khối tối đa một figure; chỉ dùng khi đề thật sự cần hình. Các loại figure:\n' +
+    FIGURE_GUIDE +
+    '\n' +
     '- Tiếng Việt chuẩn, số liệu nhất quán, mọi câu phải có đáp án đúng.\n\n' +
     (documentDigest
       ? 'TÀI LIỆU HIỆN TẠI (mỗi dòng "[id] loại khối: nội dung rút gọn" — dùng đúng id khi patch):\n' +

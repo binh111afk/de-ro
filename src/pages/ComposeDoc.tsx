@@ -27,7 +27,27 @@ import { NavPanel } from '@/examEditor/NavPanel'
 import { DocSelectionAi } from '@/examEditor/DocSelectionAi'
 import { ToolModal } from '@/examEditor/tools/ToolModal'
 import { svgToPng } from '@/lib/plot'
-import { parseToolJson, readToolDoc, type ToolDoc, type ToolImage, type ToolKind } from '@/lib/toolSpec'
+import { parseToolJson, readToolDoc, renderTool, type ToolDoc, type ToolImage, type ToolKind } from '@/lib/toolSpec'
+import { svgDataUrl } from '@/lib/plot'
+import { toolFromRaw } from '@/lib/docRewrite'
+
+/** ảnh công cụ còn ở dạng SVG (AI vừa chèn) → PNG, giữ nguyên attr khác */
+async function pngifyToolImages(editor: Editor) {
+  const jobs: Array<{ pos: number; doc: ToolDoc }> = []
+  editor.state.doc.descendants((node, pos) => {
+    if (node.type.name !== 'image' || !String(node.attrs.src).startsWith('data:image/svg')) return
+    const doc = parseToolJson(node.attrs.plot)
+    if (doc) jobs.push({ pos, doc })
+  })
+  for (const { pos, doc } of jobs) {
+    const img = renderTool(doc)
+    const src = await svgToPng(img.svg, img.width, img.height).catch(() => null)
+    if (!src || editor.isDestroyed) continue
+    const node = editor.state.doc.nodeAt(pos)
+    if (node?.type.name === 'image' && String(node.attrs.src).startsWith('data:image/svg'))
+      editor.view.dispatch(editor.state.tr.setNodeMarkup(pos, undefined, { ...node.attrs, src }))
+  }
+}
 
 /** bề rộng mặc định (px) và chữ thay thế của ảnh công cụ trong trang đề */
 const TOOL_DOC_IMAGE: Record<ToolKind, { width: number; alt: string }> = {
@@ -148,6 +168,28 @@ const AI_BLOCK_TYPES = new Set([
 ])
 
 /** Chuẩn hoá block AI trả về: đúng loại + field tối thiểu, sai thì bỏ. */
+/**
+ * AI soạn đề gắn `figure` (cấu hình công cụ vẽ) vào khối cần hình → vẽ bằng công cụ,
+ * đặt thành đoạn ảnh căn giữa ngay dưới khối. Ảnh tạm là SVG; `pngifyToolImages` đổi sang PNG sau
+ * (xuất Word không đọc SVG). Hình nào cấu hình sai thì bỏ qua, đề vẫn chèn bình thường.
+ */
+function expandFigures(raw: unknown): unknown {
+  if (!Array.isArray(raw)) return raw
+  return raw.flatMap((item) => {
+    if (!item || typeof item !== 'object' || !('figure' in item)) return [item]
+    const { figure, ...block } = item as Record<string, unknown>
+    if (!figure || typeof figure !== 'object') return [block]
+    try {
+      const doc = toolFromRaw(figure as Record<string, unknown>)
+      const look = TOOL_DOC_IMAGE[doc.kind]
+      const image = { src: svgDataUrl(renderTool(doc).svg), alt: look.alt, width: look.width, plot: JSON.stringify(doc) }
+      return [block, { type: 'paragraph', text: [{ text: '', image }], format: { align: 'center' } }]
+    } catch {
+      return [block]
+    }
+  })
+}
+
 function sanitizeBlocks(raw: unknown): ExamBlock[] {
   if (!Array.isArray(raw)) return []
   // AI có lúc trả mảng trộn string + span; chuẩn hoá về Span[] để converter/export đọc được.
@@ -613,7 +655,9 @@ export default function ComposeDoc() {
       }
       if (!raw || typeof raw !== 'object') return undefined
 
-      const blocks = sanitizeBlocks(raw.blocks)
+      const blocks = sanitizeBlocks(expandFigures(raw.blocks))
+      if (blocks.some((b) => b.type === 'paragraph' && Array.isArray(b.text) && b.text.some((s) => s.image?.plot)))
+        setTimeout(() => void pngifyToolImages(editor), 0)
       const patches = sanitizePatches(raw.patch)
       const action =
         raw.action === 'append' || raw.action === 'patch' || raw.action === 'replace'
