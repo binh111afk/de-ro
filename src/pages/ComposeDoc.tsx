@@ -100,7 +100,28 @@ function restoreSession() {
 }
 
 // trình soạn slide (pptxgen, bố cục, trình chiếu…) chỉ tải khi mở tab slide
-const SlideEditor = lazy(() => import('@/examEditor/SlideEditor').then((m) => ({ default: m.SlideEditor })))
+const loadSlideEditor = () => import('@/examEditor/SlideEditor')
+const SlideEditor = lazy(() => loadSlideEditor().then((m) => ({ default: m.SlideEditor })))
+
+/** khung giữ chỗ lúc trình soạn slide chưa tải xong: có sẵn thanh ribbon + vùng slide mờ, không để trắng phía trên */
+function SlideEditorSkeleton() {
+  return (
+    <div className="flex min-h-0 flex-1 flex-col animate-pulse">
+      <div className="flex h-[34px] items-end gap-5 border-b border-line bg-paper px-4 pb-2">
+        {[44, 52, 40, 60, 48].map((w, i) => <div key={i} className="h-2.5 rounded bg-line" style={{ width: w }} />)}
+      </div>
+      <div className="flex h-[88px] items-center gap-3 border-b border-line bg-paper px-4">
+        {Array.from({ length: 9 }, (_, i) => <div key={i} className="size-12 rounded-lg bg-line/70" />)}
+      </div>
+      <div className="flex min-h-0 flex-1 gap-4 bg-canvas p-4">
+        <div className="hidden w-[180px] flex-col gap-3 md:flex">
+          {[0, 1, 2].map((i) => <div key={i} className="aspect-video rounded-md bg-line/60" />)}
+        </div>
+        <div className="flex flex-1 items-center justify-center"><div className="aspect-video w-full max-w-[880px] rounded-lg bg-line/50" /></div>
+      </div>
+    </div>
+  )
+}
 
 /** Hợp đồng AI trả về: thay cả đề / thêm cuối / sửa theo id khối. */
 interface AiExamEnvelope {
@@ -307,6 +328,11 @@ function nodeText(node: JSONContent): string {
 export default function ComposeDoc() {
   const navigate = useNavigate()
   const viewport = useViewportSize()
+  // tải sẵn trình soạn slide khi rảnh → bấm "Slide" là hiện ngay, không thấy khung chờ
+  useEffect(() => {
+    const t = setTimeout(() => loadSlideEditor().catch(() => {}), 800)
+    return () => clearTimeout(t)
+  }, [])
 
   const {
     tabs,
@@ -834,7 +860,7 @@ export default function ComposeDoc() {
       ) : activeDeck ? (
         /* ---------- tab slide: trình soạn trình chiếu dùng chung với /soan-slide ---------- */
         <div className="compose-body">
-          <Suspense fallback={<div className="flex flex-1 items-center justify-center text-[13px] text-ink-3">Đang tải trình soạn slide…</div>}>
+          <Suspense fallback={<SlideEditorSkeleton />}>
           <SlideEditor
             deck={activeDeck}
             updateDeck={(patch) => updateDeck(activeDeck.id, patch)}

@@ -9,20 +9,55 @@ import { startSync } from '@/lib/sync'
 import { useSession } from '@/lib/useSession'
 
 // mỗi trang một chunk riêng: học sinh mở link làm đề không phải tải trình soạn slide, đồ hoạ, xuất Word…
-const ComposeDoc = lazy(() => import('@/pages/ComposeDoc'))
-const Community = lazy(() => import('@/pages/Community'))
-const MyExams = lazy(() => import('@/pages/MyExams'))
-const MyDocs = lazy(() => import('@/pages/MyDocs'))
-const Library = lazy(() => import('@/pages/Library'))
-const Grading = lazy(() => import('@/pages/Grading'))
-const Quiz = lazy(() => import('@/pages/Quiz'))
-const OnlineList = lazy(() => import('@/pages/OnlineList'))
-const OnlineResults = lazy(() => import('@/pages/OnlinePublished'))
-const OnlineBuilder = lazy(() => import('@/pages/OnlineBuilder'))
-const OnlineOpen = lazy(() => import('@/pages/OnlineOpen'))
-const ExamView = lazy(() => import('@/pages/ExamView'))
-const Auth = lazy(() => import('@/pages/Auth'))
-const Profile = lazy(() => import('@/pages/Profile'))
+const pages = {
+  ComposeDoc: () => import('@/pages/ComposeDoc'),
+  Community: () => import('@/pages/Community'),
+  MyExams: () => import('@/pages/MyExams'),
+  MyDocs: () => import('@/pages/MyDocs'),
+  Library: () => import('@/pages/Library'),
+  Grading: () => import('@/pages/Grading'),
+  Quiz: () => import('@/pages/Quiz'),
+  OnlineList: () => import('@/pages/OnlineList'),
+  OnlineResults: () => import('@/pages/OnlinePublished'),
+  OnlineBuilder: () => import('@/pages/OnlineBuilder'),
+  OnlineOpen: () => import('@/pages/OnlineOpen'),
+  ExamView: () => import('@/pages/ExamView'),
+  Auth: () => import('@/pages/Auth'),
+  Profile: () => import('@/pages/Profile'),
+}
+const ComposeDoc = lazy(pages.ComposeDoc)
+const Community = lazy(pages.Community)
+const MyExams = lazy(pages.MyExams)
+const MyDocs = lazy(pages.MyDocs)
+const Library = lazy(pages.Library)
+const Grading = lazy(pages.Grading)
+const Quiz = lazy(pages.Quiz)
+const OnlineList = lazy(pages.OnlineList)
+const OnlineResults = lazy(pages.OnlineResults)
+const OnlineBuilder = lazy(pages.OnlineBuilder)
+const OnlineOpen = lazy(pages.OnlineOpen)
+const ExamView = lazy(pages.ExamView)
+const Auth = lazy(pages.Auth)
+const Profile = lazy(pages.Profile)
+
+/** Trang đầu hiện xong thì tải ngầm các trang còn lại (lần lượt, lúc trình duyệt rảnh)
+ *  → bấm sang trang khác không còn khựng / "Đang tải…". */
+function usePrefetchPages() {
+  useEffect(() => {
+    const idle = (cb: () => void) =>
+      'requestIdleCallback' in window ? window.requestIdleCallback(cb, { timeout: 3000 }) : setTimeout(cb, 1500)
+    const queue = Object.values(pages)
+    const next = () => {
+      const load = queue.shift()
+      if (load) load().catch(() => {}).finally(() => idle(next))
+    }
+    const t = setTimeout(() => idle(next), 1500)
+    return () => {
+      clearTimeout(t)
+      queue.length = 0
+    }
+  }, [])
+}
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -41,6 +76,7 @@ export default function App() {
   const { pathname } = useLocation()
   const fullscreen = FULLSCREEN_ROUTES.includes(pathname)
   const authPage = AUTH_ROUTES.includes(pathname)
+  usePrefetchPages()
 
   useEffect(() => {
     consumeAuthRedirect().catch(() => {})
@@ -68,6 +104,7 @@ export default function App() {
       {fullscreen ? null : <Header />}
       <main className={cn('flex-1', fullscreen && 'min-h-0 overflow-hidden')}>
         <Suspense fallback={<div className="flex h-full min-h-[50vh] items-center justify-center text-[13px] text-ink-3">Đang tải…</div>}>
+        <div key={pathname} className={cn('page-enter', fullscreen && 'h-full')}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/soan-de" element={<ComposeDoc />} />
@@ -90,6 +127,7 @@ export default function App() {
           <Route path="/ho-so" element={<Profile />} />
           <Route path="*" element={<Home />} />
         </Routes>
+        </div>
         </Suspense>
       </main>
       {fullscreen || authPage ? null : <Footer />}
