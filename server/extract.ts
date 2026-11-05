@@ -7,6 +7,7 @@ import type { IncomingMessage, ServerResponse } from 'node:http'
 import { extname } from 'node:path'
 import type { TextItem } from 'pdfjs-dist/types/src/display/api'
 import { json, readBody } from './http.js'
+import { guard } from './guard.js'
 
 const MAX_BYTES = 12 * 1024 * 1024
 const MAX_TEXT = 60_000
@@ -540,6 +541,7 @@ export async function handleExtractRequest(
   req: IncomingMessage,
   res: ServerResponse,
 ): Promise<void> {
+  if (!(await guard(req, res, 'extract'))) return
   if (req.method === 'OPTIONS') return json(res, 204, {})
   if (req.method !== 'POST') return json(res, 405, { error: 'Method not allowed' })
 

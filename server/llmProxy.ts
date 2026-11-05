@@ -18,6 +18,7 @@ import { isIP } from 'node:net'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { json, readBody } from './http.js'
+import { guard } from './guard.js'
 import { handleExtractRequest } from './extract.js'
 import { handleSearchRequest } from './searchProxy.js'
 import { handleImageRequest } from './imageProxy.js'
@@ -153,6 +154,7 @@ function writeRawLog(raw: string, parsed?: Record<string, unknown>) {
 
 /** Xử lý một lời gọi /api/llm. Luôn tự ghi response. */
 export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse): Promise<void> {
+  if (!(await guard(req, res, 'llm'))) return
   if (req.method === 'OPTIONS') return json(res, 204, {})
 
   try {

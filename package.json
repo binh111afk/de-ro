@@ -21,6 +21,7 @@
     "test:online-ai": "tsx --tsconfig tsconfig.app.json scripts/test-online-ai.ts",
     "test:online": "tsx --tsconfig tsconfig.app.json scripts/test-online-exam.ts",
     "test:docx": "tsx --tsconfig tsconfig.app.json scripts/test-docx.ts",
+    "test:guard": "tsx scripts/test-guard.ts",
     "test:slide-text": "tsx --tsconfig tsconfig.app.json scripts/test-slide-text.mjs",
     "test:slide-theme": "tsx --tsconfig tsconfig.app.json scripts/test-slide-theme.mjs",
     "test:slide-layout": "tsx --tsconfig tsconfig.app.json scripts/test-slide-layout.mjs",

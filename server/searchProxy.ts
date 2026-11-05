@@ -7,6 +7,7 @@
  */
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { json, readBody } from './http.js'
+import { guard } from './guard.js'
 
 export interface SearchResult {
   title: string
@@ -61,6 +62,7 @@ export async function handleSearchRequest(
   req: IncomingMessage,
   res: ServerResponse,
 ): Promise<void> {
+  if (!(await guard(req, res, 'search'))) return
   if (req.method === 'OPTIONS') return json(res, 204, {})
   if (req.method !== 'POST') return json(res, 405, { error: 'Method not allowed' })
 

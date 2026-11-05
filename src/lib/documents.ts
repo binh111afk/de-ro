@@ -2,6 +2,7 @@
  * Tài liệu tải lên của từng người dùng. Tệp nằm trên R2 (qua `/api/upload`), còn danh sách
  * nằm trong bảng `user_documents` của Supabase. RLS: chỉ chủ tài liệu đọc, thêm và xóa được.
  */
+import { apiFetch } from '@/lib/apiFetch'
 import { AuthError, currentSession } from '@/lib/auth'
 
 const BASE = import.meta.env.VITE_SUPABASE_URL as string
@@ -70,7 +71,7 @@ export async function uploadDocument(file: File, subject: string | null): Promis
   if (!DOC_TYPES[file.type]) throw new Error('Chỉ nhận tệp PDF hoặc Word (.docx).')
   if (file.size > MAX_DOC_MB * 1024 * 1024) throw new Error(`Tệp quá lớn (tối đa ${MAX_DOC_MB} MB).`)
 
-  const res = await fetch('/api/upload', {
+  const res = await apiFetch('/api/upload', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ dataUrl: await readAsDataUrl(file) }),

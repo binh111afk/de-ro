@@ -2,11 +2,12 @@
  * Ảnh người dùng đưa vào đi lên R2 qua server (`/api/upload`); deck chỉ giữ đường dẫn `/api/files/...`
  * thay vì base64 nặng trong localStorage. Ảnh cũ dạng data URL vẫn chạy bình thường.
  */
+import { apiFetch } from '@/lib/apiFetch'
 
 /** Đẩy data URL lên R2, trả về đường dẫn. Chuỗi không phải data URL thì giữ nguyên. */
 export async function uploadImage(src: string): Promise<string> {
   if (!src.startsWith('data:image/')) return src
-  const res = await fetch('/api/upload', {
+  const res = await apiFetch('/api/upload', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ dataUrl: src }),

@@ -16,6 +16,7 @@ import { homedir } from 'node:os'
 import path from 'node:path'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { json, readBody } from './http.js'
+import { guard } from './guard.js'
 
 const DEFAULT_BASE_URL = 'https://api.xkiro.com/v1'
 const DEFAULT_MODEL = 'sensenova/sensenova-u1.5-lite'
@@ -99,6 +100,7 @@ export async function handleImageRequest(
   req: IncomingMessage,
   res: ServerResponse,
 ): Promise<void> {
+  if (!(await guard(req, res, 'image'))) return
   if (req.method === 'OPTIONS') return json(res, 204, {})
   if (req.method !== 'POST') return json(res, 405, { error: 'Method not allowed' })
 

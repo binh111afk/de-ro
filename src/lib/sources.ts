@@ -5,6 +5,7 @@
  *   3. Kết quả search web (nếu đã cấu hình TAVILY_API_KEY)
  *   0. Không có nguồn — dùng kiến thức chung, phải cảnh báo.
  */
+import { apiFetch } from '@/lib/apiFetch'
 import type { ExamBlock, ExamDoc, RichText } from '@/data/docTypes'
 import { plainText } from '@/examEditor/convert'
 import { useDocStore } from '@/store/docs'
@@ -56,7 +57,7 @@ export async function extractAttachment(
   marks = false,
 ): Promise<{ text: string; kind?: string; slides?: string[]; images?: string[]; warning?: string }> {
   const data = await fileToBase64(file)
-  const res = await fetch('/api/extract', {
+  const res = await apiFetch('/api/extract', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ name: file.name, data, ...(marks ? { marks } : {}) }),
@@ -206,7 +207,7 @@ export function findSavedSources(prompt: string): SourceItem[] {
 /** Ưu tiên 3: search web qua proxy server. Chưa có key → trả rỗng + ghi chú. */
 export async function searchWeb(prompt: string): Promise<SearchFeed> {
   try {
-    const res = await fetch('/api/search', {
+    const res = await apiFetch('/api/search', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query: prompt.slice(0, 400) }),

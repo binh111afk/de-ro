@@ -10,6 +10,7 @@
 import { createHash, createHmac } from 'node:crypto'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { json, readBody } from './http.js'
+import { guard } from './guard.js'
 
 const MAX_BYTES = 8 * 1024 * 1024
 const MAX_DOC_BYTES = 20 * 1024 * 1024
@@ -76,6 +77,7 @@ async function r2Request(
 }
 
 export async function handleUploadRequest(req: IncomingMessage, res: ServerResponse): Promise<void> {
+  if (!(await guard(req, res, 'upload'))) return
   if (req.method === 'OPTIONS') return json(res, 204, {})
   if (req.method !== 'POST') return json(res, 405, { error: 'Method not allowed' })
 

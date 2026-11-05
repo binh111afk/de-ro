@@ -2,6 +2,7 @@
  * Client gọi LLM qua proxy nội bộ (/api/llm).
  * Key nằm ở server, không bao giờ xuất hiện trong bundle.
  */
+import { apiFetch } from '@/lib/apiFetch'
 export interface LlmMessage {
   role: 'system' | 'user' | 'assistant'
   content: string
@@ -24,7 +25,7 @@ export interface LlmOptions {
 const ENDPOINT = '/api/llm'
 
 export async function callLlm(messages: LlmMessage[], opts: LlmOptions = {}): Promise<LlmResult> {
-  const res = await fetch(ENDPOINT, {
+  const res = await apiFetch(ENDPOINT, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     signal: opts.signal,
