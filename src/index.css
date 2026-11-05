@@ -733,6 +733,16 @@
     vertical-align: middle;
     white-space: nowrap;
   }
+  /* cột đều nhau: cột nhãn cố định, các cột đáp án chia đều phần còn lại */
+  .doc-content div[data-exam-node='examAnswerKey'] table {
+    table-layout: fixed;
+  }
+  .doc-content div[data-exam-node='examAnswerKey'] tr > :first-child {
+    width: 5.5em;
+  }
+  .doc-content div[data-exam-node='examAnswerKey'] > p {
+    margin: 0.4rem 0 0.1rem;
+  }
   .doc-content table .selectedCell::after {
     content: '';
     position: absolute;

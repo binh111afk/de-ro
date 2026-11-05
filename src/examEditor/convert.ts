@@ -11,6 +11,7 @@
  */
 import type { JSONContent } from '@tiptap/core'
 import type { ExamBlock, FormatAttrs, Mark, MarkType, RichText, Span } from '@/data/docTypes'
+import { TF_PARTS, groupAnswers, gridRows, tfParts } from '../lib/answerKey'
 
 /* ------------------------------------------------------------------ *
  * Rich text helpers
@@ -361,8 +362,26 @@ export function tipTapToBlocks(doc: JSONContent): ExamBlock[] {
  * 'Câu'/'Đáp án'), nhưng VẪN đọc các ô dữ liệu phía sau trong dòng đó.
  */
 function answerKeyItems(node: JSONContent): Array<{ no: number; answer: RichText }> {
-  const table = (node.content ?? []).find((c) => c.type === 'table')
-  const rows = table?.content ?? []
+  const items: Array<{ no: number; answer: RichText }> = []
+  for (const table of (node.content ?? []).filter((c) => c.type === 'table')) {
+    const rows = table.content ?? []
+    const cellText = (c: JSONContent | undefined) => plainText(richOf(c)).trim()
+    // bảng đúng/sai: hàng đầu "Câu | a) | b) | c) | d)", mỗi hàng sau là một câu
+    if (/^a\)?$/i.test(cellText(rows[0]?.content?.[1]))) {
+      for (const r of rows.slice(1)) {
+        const cells = r.content ?? []
+        const no = cellText(cells[0])
+        if (/^\d+$/.test(no)) items.push({ no: Number(no), answer: cells.slice(1).map(cellText).join('') })
+      }
+      continue
+    }
+    items.push(...gridItems(rows))
+  }
+  return items
+}
+
+/** lưới "Câu / Đáp án" (hàng số câu, hàng đáp án xen kẽ) */
+function gridItems(rows: JSONContent[]): Array<{ no: number; answer: RichText }> {
   const items: Array<{ no: number; answer: RichText }> = []
   for (let i = 0; i + 1 < rows.length; i += 2) {
     const noCells = rows[i].content ?? []
@@ -565,37 +584,33 @@ export function blocksToTipTap(blocks: ExamBlock[]): JSONContent {
         break
 
       case 'answerKey': {
-        const rows: JSONContent[] = []
-        const cols = 10
-        for (let i = 0; i < b.items.length; i += cols) {
-          const slice = b.items.slice(i, i + cols)
-          rows.push({
-            type: 'tableRow',
-            content: [
-              { type: 'tableHeader', content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Câu' }] }] },
-              ...slice.map((it) => ({
-                type: 'tableCell',
-                content: [{ type: 'paragraph', content: [{ type: 'text', text: String(it.no) }] }],
-              })),
-            ],
-          })
-          rows.push({
-            type: 'tableRow',
-            content: [
-              { type: 'tableHeader', content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Đáp án' }] }] },
-              ...slice.map((it) => ({
-                type: 'tableCell',
-                content: [{ type: 'paragraph', content: richNodes(it.answer) }],
-              })),
-            ],
-          })
+        // mỗi dạng câu một bảng riêng (cột đều, hàng cuối đủ ô); nhiều dạng thì có nhãn nhỏ phía trên
+        const cell = (type: 'tableHeader' | 'tableCell', inline: JSONContent[]): JSONContent => ({
+          type,
+          content: [{ type: 'paragraph', content: inline.length ? inline : undefined }],
+        })
+        const txt = (s: string) => (s ? [{ type: 'text', text: s }] : [])
+        const parts: JSONContent[] = []
+        for (const g of groupAnswers(b.items)) {
+          if (g.label)
+            parts.push({ type: 'paragraph', content: [{ type: 'text', text: g.label, marks: [{ type: 'bold' }, { type: 'italic' }] }] })
+          const rows: JSONContent[] = []
+          if (g.kind === 'tf') {
+            rows.push({ type: 'tableRow', content: [cell('tableHeader', txt('Câu')), ...TF_PARTS.map((p) => cell('tableHeader', txt(p)))] })
+            for (const it of g.items)
+              rows.push({ type: 'tableRow', content: [cell('tableHeader', txt(String(it.no))), ...tfParts(it.answer).map((v) => cell('tableCell', txt(v)))] })
+          } else {
+            for (const row of gridRows(g.items).rows) {
+              rows.push({ type: 'tableRow', content: [cell('tableHeader', txt('Câu')), ...row.map((it) => cell('tableCell', txt(it ? String(it.no) : '')))] })
+              rows.push({ type: 'tableRow', content: [cell('tableHeader', txt('Đáp án')), ...row.map((it) => cell('tableCell', it ? richNodes(it.answer) : []))] })
+            }
+          }
+          parts.push({ type: 'table', content: rows })
         }
         content.push({
           type: 'examAnswerKey',
           attrs: { id: `ak${content.length}` },
-          content: rows.length
-            ? [{ type: 'table', content: rows }]
-            : [{ type: 'table', content: [] }],
+          content: parts.length ? parts : [{ type: 'table', content: [] }],
         })
         break
       }

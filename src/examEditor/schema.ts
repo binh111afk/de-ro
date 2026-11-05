@@ -641,7 +641,8 @@ export const DividerNode = Node.create({
 export const AnswerKeyNode = Node.create({
   name: 'examAnswerKey',
   group: 'block',
-  content: 'table',
+  // nhiều dạng câu: nhãn nhỏ (paragraph) + một bảng mỗi dạng; đề một dạng vẫn chỉ một bảng
+  content: '(paragraph | table)+',
   defining: true,
   addAttributes() {
     return { id: { default: null }, ...formatAttrs() }

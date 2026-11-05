@@ -33,6 +33,7 @@ import { latexToMath } from '@/lib/latexMath'
 import { toDataUrl } from '@/lib/mediaStore'
 import { estimateChoiceCols } from './choiceCols'
 import { splitRichLines } from './convert'
+import { TF_PARTS, groupAnswers, gridRows, tfParts } from '@/lib/answerKey'
 
 /** Các tuỳ chọn của `docx` đều readonly; ta dựng dần nên cần bản ghi được. */
 type Mut<T> = { -readonly [K in keyof T]: T[K] }
@@ -469,10 +470,8 @@ function blockToDocx(b: ExamBlock, ctx: Ctx): Out[] {
     }
 
     case 'answerKey': {
-      // lưới đều: cột nhãn rộng hơn, ô thiếu ở hàng cuối để trống (có viền) cho thẳng cột
-      const per = Math.min(10, b.items.length || 1)
+      // mỗi dạng câu một bảng (như trình soạn): lưới Câu / Đáp án cột đều, đúng/sai có cột a) b) c) d)
       const labelW = 1100
-      const w = Math.floor((CONTENT_W - labelW) / per)
       const cell = (children: ParagraphChild[], width: number, shade = false) =>
         new TableCell({
           width: { size: width, type: WidthType.DXA },
@@ -480,19 +479,44 @@ function blockToDocx(b: ExamBlock, ctx: Ctx): Out[] {
           shading: shade ? { type: ShadingType.CLEAR, color: 'auto', fill: 'F2F2F2' } : undefined,
           children: [para(children, { alignment: AlignmentType.CENTER })],
         })
-      const head = (text: string) => cell([new TextRun({ text, bold: true, size: 24 })], labelW, true)
-      const rows = chunk(b.items, per).flatMap((row) => {
-        const full = Array.from({ length: per }, (_, i) => row[i])
-        return [
-          new TableRow({ children: [head('Câu'), ...full.map((c) => cell(c ? [new TextRun({ text: String(c.no), size: 24 })] : [], w))] }),
-          new TableRow({ children: [head('Đáp án'), ...full.map((c) => cell(c ? runs(c.answer, { bold: true, size: 24 }) : [], w))] }),
-        ]
-      })
-      return [
-        para([], { spacing: { after: 60 } }),
-        new Table({ rows, width: { size: labelW + w * per, type: WidthType.DXA }, columnWidths: [labelW, ...Array(per).fill(w)], layout: TableLayoutType.FIXED }),
-        para([], { spacing: { after: 60 } }),
-      ]
+      const head = (text: string, width = labelW) => cell([new TextRun({ text, bold: true, size: 24 })], width, true)
+      const table = (rows: TableRow[], cols: number[]) =>
+        new Table({ rows, width: { size: cols.reduce((a, c) => a + c, 0), type: WidthType.DXA }, columnWidths: cols, layout: TableLayoutType.FIXED })
+      const out: Array<Paragraph | Table> = [para([], { spacing: { after: 60 } })]
+      for (const g of groupAnswers(b.items)) {
+        if (g.label) out.push(para([new TextRun({ text: g.label, bold: true, italics: true })], { spacing: { before: 120, after: 60 }, keepNext: true }))
+        if (g.kind === 'tf') {
+          const w = 1300
+          out.push(
+            table(
+              [
+                new TableRow({ children: [head('Câu'), ...TF_PARTS.map((p) => head(p, w))] }),
+                ...g.items.map(
+                  (it) =>
+                    new TableRow({
+                      children: [head(String(it.no)), ...tfParts(it.answer).map((v) => cell([new TextRun({ text: v, bold: true, size: 24 })], w))],
+                    }),
+                ),
+              ],
+              [labelW, ...TF_PARTS.map(() => w)],
+            ),
+          )
+        } else {
+          const { per, rows } = gridRows(g.items)
+          const w = Math.floor((CONTENT_W - labelW) / Math.max(per, 6))
+          out.push(
+            table(
+              rows.flatMap((row) => [
+                new TableRow({ children: [head('Câu'), ...row.map((c) => cell(c ? [new TextRun({ text: String(c.no), size: 24 })] : [], w))] }),
+                new TableRow({ children: [head('Đáp án'), ...row.map((c) => cell(c ? runs(c.answer, { bold: true, size: 24 }) : [], w))] }),
+              ]),
+              [labelW, ...Array(per).fill(w)],
+            ),
+          )
+        }
+      }
+      out.push(para([], { spacing: { after: 60 } }))
+      return out
     }
 
     case 'rubric': {
