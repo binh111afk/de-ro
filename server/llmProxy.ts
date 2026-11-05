@@ -17,10 +17,10 @@ import { randomUUID } from 'node:crypto'
 import { isIP } from 'node:net'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { json, readBody } from './http'
-import { handleExtractRequest } from './extract'
-import { handleSearchRequest } from './searchProxy'
-import { handleImageRequest } from './imageProxy'
+import { json, readBody } from './http.js'
+import { handleExtractRequest } from './extract.js'
+import { handleSearchRequest } from './searchProxy.js'
+import { handleImageRequest } from './imageProxy.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.resolve(__dirname, '..')

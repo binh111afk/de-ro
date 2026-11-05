@@ -6,7 +6,7 @@
  * `configured: false` để client bỏ qua bước search thay vì lỗi.
  */
 import type { IncomingMessage, ServerResponse } from 'node:http'
-import { json, readBody } from './http'
+import { json, readBody } from './http.js'
 
 export interface SearchResult {
   title: string

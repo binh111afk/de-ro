@@ -15,7 +15,7 @@ import { readFileSync } from 'node:fs'
 import { homedir } from 'node:os'
 import path from 'node:path'
 import type { IncomingMessage, ServerResponse } from 'node:http'
-import { json, readBody } from './http'
+import { json, readBody } from './http.js'
 
 const DEFAULT_BASE_URL = 'https://api.xkiro.com/v1'
 const DEFAULT_MODEL = 'sensenova/sensenova-u1.5-lite'

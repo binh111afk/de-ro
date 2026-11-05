@@ -9,7 +9,7 @@
  */
 import { createHash, createHmac } from 'node:crypto'
 import type { IncomingMessage, ServerResponse } from 'node:http'
-import { json, readBody } from './http'
+import { json, readBody } from './http.js'
 
 const MAX_BYTES = 8 * 1024 * 1024
 const MAX_DOC_BYTES = 20 * 1024 * 1024

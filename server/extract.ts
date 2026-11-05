@@ -6,7 +6,7 @@
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { extname } from 'node:path'
 import type { TextItem } from 'pdfjs-dist/types/src/display/api'
-import { json, readBody } from './http'
+import { json, readBody } from './http.js'
 
 const MAX_BYTES = 12 * 1024 * 1024
 const MAX_TEXT = 60_000
