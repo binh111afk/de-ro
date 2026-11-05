@@ -27,48 +27,8 @@ import { NavPanel } from '@/examEditor/NavPanel'
 import { DocSelectionAi } from '@/examEditor/DocSelectionAi'
 import { ToolModal } from '@/examEditor/tools/ToolModal'
 import { svgToPng } from '@/lib/plot'
-import { parseToolJson, readToolDoc, renderTool, type ToolDoc, type ToolImage, type ToolKind } from '@/lib/toolSpec'
-import { svgDataUrl } from '@/lib/plot'
-import { toolFromRaw } from '@/lib/docRewrite'
-
-/** ảnh công cụ còn ở dạng SVG (AI vừa chèn) → PNG, giữ nguyên attr khác */
-async function pngifyToolImages(editor: Editor) {
-  const jobs: Array<{ pos: number; doc: ToolDoc }> = []
-  editor.state.doc.descendants((node, pos) => {
-    if (node.type.name !== 'image' || !String(node.attrs.src).startsWith('data:image/svg')) return
-    const doc = parseToolJson(node.attrs.plot)
-    if (doc) jobs.push({ pos, doc })
-  })
-  for (const { pos, doc } of jobs) {
-    const img = renderTool(doc)
-    const src = await svgToPng(img.svg, img.width, img.height).catch(() => null)
-    if (!src || editor.isDestroyed) continue
-    const node = editor.state.doc.nodeAt(pos)
-    if (node?.type.name === 'image' && String(node.attrs.src).startsWith('data:image/svg'))
-      editor.view.dispatch(editor.state.tr.setNodeMarkup(pos, undefined, { ...node.attrs, src }))
-  }
-}
-
-/** bề rộng mặc định (px) và chữ thay thế của ảnh công cụ trong trang đề */
-const TOOL_DOC_IMAGE: Record<ToolKind, { width: number; alt: string }> = {
-  graph: { width: 300, alt: 'Đồ thị hàm số' },
-  vartable: { width: 460, alt: 'Bảng biến thiên' },
-  geo2d: { width: 260, alt: 'Hình vẽ' },
-  geo3d: { width: 260, alt: 'Hình vẽ' },
-  signtable: { width: 440, alt: 'Bảng xét dấu' },
-  oxy: { width: 280, alt: 'Hệ trục toạ độ' },
-  stats: { width: 380, alt: 'Biểu đồ' },
-  circuit: { width: 360, alt: 'Mạch điện' },
-  motion: { width: 320, alt: 'Đồ thị chuyển động' },
-  incline: { width: 300, alt: 'Mặt phẳng nghiêng' },
-  electron: { width: 360, alt: 'Cấu hình electron' },
-  struct: { width: 280, alt: 'Công thức cấu tạo' },
-  chemgraph: { width: 320, alt: 'Đồ thị số mol' },
-  trig: { width: 260, alt: 'Đường tròn lượng giác' },
-  probtree: { width: 380, alt: 'Sơ đồ cây' },
-  numberline: { width: 400, alt: 'Trục số' },
-  venn: { width: 260, alt: 'Biểu đồ Ven' },
-}
+import { parseToolJson, readToolDoc, type ToolDoc, type ToolImage } from '@/lib/toolSpec'
+import { TOOL_DOC_IMAGE, figureDoc, figureImageAttrs, pngifyToolImages } from '@/examEditor/toolImages'
 
 /** chỗ đặt đồ thị: thay ảnh cũ, hoặc chèn thành đoạn mới tại vị trí giữa hai khối */
 type PlotTarget = { replace: number } | { after: number }
@@ -178,15 +138,10 @@ function expandFigures(raw: unknown): unknown {
   return raw.flatMap((item) => {
     if (!item || typeof item !== 'object' || !('figure' in item)) return [item]
     const { figure, ...block } = item as Record<string, unknown>
-    if (!figure || typeof figure !== 'object') return [block]
-    try {
-      const doc = toolFromRaw(figure as Record<string, unknown>)
-      const look = TOOL_DOC_IMAGE[doc.kind]
-      const image = { src: svgDataUrl(renderTool(doc).svg), alt: look.alt, width: look.width, plot: JSON.stringify(doc) }
-      return [block, { type: 'paragraph', text: [{ text: '', image }], format: { align: 'center' } }]
-    } catch {
-      return [block]
-    }
+    const doc = figureDoc(figure)
+    if (!doc) return [block]
+    const { src, alt, width, plot } = figureImageAttrs(doc)
+    return [block, { type: 'paragraph', text: [{ text: '', image: { src, alt, width, plot } }], format: { align: 'center' } }]
   })
 }
 

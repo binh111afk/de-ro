@@ -1,4 +1,5 @@
 import type { Option, QuestionType, Subject } from './types'
+import { BANK_FIGURES } from './bankFigures'
 
 /**
  * One question template from the content bank.
@@ -20,6 +21,8 @@ export interface BankEntry {
   tags: string[]
   /** true when a number in the prompt can be swapped for a fresh variant */
   variable: boolean
+  /** hình từ công cụ vẽ, dạng cấu hình chữ ({kind, …} như AI trả); vẽ lại lúc hiển thị / chèn */
+  figure?: { kind: string; [key: string]: unknown }
 }
 
 export const BANK: BankEntry[] = [
@@ -2601,6 +2604,7 @@ export const BANK: BankEntry[] = [
     tags: ['bảo mật', 'virus'],
     variable: false,
   },
+  ...BANK_FIGURES,
 ]
 
 export const BANK_BY_SUBJECT: Record<string, BankEntry[]> = (() => {
@@ -2630,6 +2634,8 @@ export function pickQuestions(opts: {
     if (opts.grade && !b.grades.includes('all') && !b.grades.includes(opts.grade)) return false
     if (opts.type && b.type !== opts.type) return false
     if (avoid.has(b.id)) return false
+    // đề ghép tự động hiển thị ngoài trình soạn, chưa vẽ hình → bỏ câu có hình (đề bài nhắc "như hình")
+    if (b.figure) return false
     return true
   })
 

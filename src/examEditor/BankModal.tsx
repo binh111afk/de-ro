@@ -2,7 +2,7 @@
  * Kho câu hỏi trong trình soạn: danh sách card bên trái, chi tiết câu đang xem bên phải.
  * Tick checkbox để chọn; các câu đã chọn được chèn một lần tại con trỏ, theo thứ tự chọn.
  */
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { Editor } from '@tiptap/core'
 import { Search, X } from 'lucide-react'
 import { SiteSelect } from '@/components/SiteSelect'
@@ -14,6 +14,18 @@ import { cn } from '@/lib/cn'
 import { formatPoints } from '@/lib/math'
 import { bankSelectionTemplate } from './bankQuestions'
 import { insertBlockTemplate } from './templates'
+import { figureDoc, figureImageAttrs, pngifyToolImages } from './toolImages'
+
+/** ảnh hình vẽ của câu (vẽ một lần, nhớ lại theo id) */
+const figureCache = new Map<string, { src: string; alt: string } | null>()
+function figureOf(entry: BankEntry) {
+  if (!entry.figure) return null
+  if (!figureCache.has(entry.id)) {
+    const doc = figureDoc(entry.figure)
+    figureCache.set(entry.id, doc ? figureImageAttrs(doc) : null)
+  }
+  return figureCache.get(entry.id) ?? null
+}
 
 /** Số câu tối đa hiện trong danh sách; thu hẹp bộ lọc để xem thêm. */
 const LIST_LIMIT = 120
@@ -64,6 +76,7 @@ export function BankModal({ editor, onClose }: { editor: Editor; onClose: () => 
       .filter((b): b is BankEntry => Boolean(b))
     if (chosen.length === 0) return
     insertBlockTemplate(editor, bankSelectionTemplate(chosen))
+    if (chosen.some((b) => b.figure)) void pngifyToolImages(editor)
     onClose()
   }
 
@@ -131,11 +144,13 @@ export function BankModal({ editor, onClose }: { editor: Editor; onClose: () => 
                       <button
                         type="button"
                         onClick={() => setActiveId(b.id)}
-                        className="block w-full px-4 py-3.5 pr-12 text-left"
+                        className="flex w-full gap-3 px-4 py-3.5 pr-12 text-left"
                       >
+                        <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap gap-1.5">
                           <Badge tone="clay">{b.subject}</Badge>
                           <Badge tone="outline">{TYPE_LABEL[b.type]}</Badge>
+                          {b.figure ? <Badge tone="honey">Có hình</Badge> : null}
                         </div>
                         <div className="mt-2.5 line-clamp-2 text-[14.5px] leading-snug text-ink">
                           <MathText as="span">{b.prompt}</MathText>
@@ -143,6 +158,8 @@ export function BankModal({ editor, onClose }: { editor: Editor; onClose: () => 
                         <p className="mt-2 text-[12px] font-medium text-ink-3 tnum">
                           {b.grades.includes('all') ? 'Mọi lớp' : b.grades.join(', ')} · {formatPoints(b.points)}đ
                         </p>
+                        </div>
+                        {b.figure ? <FigureThumb entry={b} /> : null}
                       </button>
                       <Checkbox
                         checked={checked}
@@ -188,6 +205,7 @@ export function BankModal({ editor, onClose }: { editor: Editor; onClose: () => 
 /** Chi tiết một câu: đề bài, các phương án (đáp án đúng được tô), lời giải. */
 function QuestionDetail({ entry }: { entry: BankEntry }) {
   const choice = entry.type === 'trac-nghiem' && (entry.options?.length ?? 0) > 0
+  const figure = figureOf(entry)
   return (
     <div>
       <div className="flex flex-wrap gap-1.5">
@@ -199,6 +217,12 @@ function QuestionDetail({ entry }: { entry: BankEntry }) {
       <div className="mt-4 text-[16.5px] leading-relaxed text-ink">
         <MathText as="div">{entry.prompt}</MathText>
       </div>
+
+      {figure ? (
+        <div className="mt-4 flex justify-center rounded-[6px] border border-line-2 bg-white p-3">
+          <img src={figure.src} alt={figure.alt} className="max-h-[280px] max-w-full" />
+        </div>
+      ) : null}
 
       {choice ? (
         <ol className="mt-5 flex flex-col gap-2">
@@ -255,6 +279,25 @@ function QuestionDetail({ entry }: { entry: BankEntry }) {
       {entry.tags.length ? (
         <p className="mt-6 text-[12px] text-ink-4">{entry.tags.map((t) => `#${t}`).join('  ')}</p>
       ) : null}
+    </div>
+  )
+}
+
+/** hình nhỏ ở danh sách: chỉ vẽ khi dòng cuộn tới để danh sách dài không giật */
+function FigureThumb({ entry }: { entry: BankEntry }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [seen, setSeen] = useState(false)
+  useEffect(() => {
+    const el = ref.current
+    if (!el || seen) return
+    const io = new IntersectionObserver(([e]) => e.isIntersecting && setSeen(true), { rootMargin: '200px' })
+    io.observe(el)
+    return () => io.disconnect()
+  }, [seen])
+  const fig = seen ? figureOf(entry) : null
+  return (
+    <div ref={ref} className="flex size-[72px] shrink-0 items-center justify-center overflow-hidden rounded-[6px] border border-line-2 bg-white p-1">
+      {fig ? <img src={fig.src} alt={fig.alt} className="max-h-full max-w-full" /> : null}
     </div>
   )
 }

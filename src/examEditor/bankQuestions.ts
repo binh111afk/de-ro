@@ -5,6 +5,7 @@
 import type { JSONContent } from '@tiptap/core'
 import type { BankEntry } from '@/data/bank'
 import type { BlockTemplate } from './templates'
+import { figureDoc, figureParagraph } from './toolImages'
 
 const text = (s: string): JSONContent => ({ type: 'text', text: s })
 
@@ -39,6 +40,11 @@ export function bankSelectionTemplate(entries: BankEntry[]): BlockTemplate {
     group: 'Câu hỏi',
     label: 'Câu từ kho',
     desc: '',
-    build: () => entries.map(entryBlock),
+    // câu có hình: thêm đoạn ảnh căn giữa ngay dưới câu (ảnh SVG tạm, BankModal đổi sang PNG)
+    build: () =>
+      entries.flatMap((e, i) => {
+        const doc = figureDoc(e.figure)
+        return doc ? [entryBlock(e, i), figureParagraph(doc)] : [entryBlock(e, i)]
+      }),
   }
 }
