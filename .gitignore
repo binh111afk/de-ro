@@ -10,3 +10,6 @@ _ref/
 .env.*
 !.env.example
 eval-out/
+
+.vercel
+.env*
