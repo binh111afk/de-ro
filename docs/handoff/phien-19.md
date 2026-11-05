@@ -25,3 +25,21 @@
 4. Bảng xét dấu: miền gồm nhiều khoảng (vd. `√(x²−1)`) vẫn phải gõ tay.
 5. Ảnh inline trong đề tương tác chưa có ô chỉnh độ rộng ở tạo đề online (chỉ đọc `|rộng%`).
 6. Ý tưởng Lý tiếp: quang hình (thấu kính, gương).
+
+## Phần sau (cùng phiên, 04–05/11/2026)
+
+| Commit | Nội dung |
+|---|---|
+| `cf40340` | Soạn slide: `.slide-stage` là container `size`, khung slide rộng `min(100%, 1000px, 100cqh·16/9)` → vừa màn laptop |
+| `e8e23be` | Phân trang 12 card: `src/components/Pager.tsx` (`usePaged`, `Pager`) ở Đề cộng đồng, Lịch sử tạo đề online, Đề đã xuất bản, Đề của tôi |
+| `63dd185` | Đề đã xuất bản tải theo trang từ Supabase: `countMyPublished()` (chỉ cột id) + `listMyPublished({limit, offset})`; lượt làm bài chỉ của 12 đề đang xem. **Chưa thử với tài khoản thật** |
+| `065be19`, `8d01c2d` | Môn **Hoá** (`src/lib/chem.ts`): Cấu hình electron (ô orbital, Hund, ion, ngoại lệ Cr/Cu, Z ≤ 56), Công thức cấu tạo (thu gọn / khung zigzag, nhánh, vòng `C6H5` `vòng6`, đánh số mạch chính), Đồ thị số mol (dùng lại `renderMotionSvg`) |
+| `13cc494` | Xuất Word: phương án A–D xếp cột bằng **tab stop**, không còn bảng không viền (Word hết hiện lưới / tay nắm bảng). Test docx kiểm 3 tab stop cách 2440 |
+| `29aad5d` | Menu Tệp: Nhập file = mũi tên lên, Tải xuống = mũi tên xuống |
+| `1a9f1d2`, `d6ee7fc` | Toán (`src/lib/mathExtra.ts`): Đường tròn lượng giác (góc, họ nghiệm α + kβ, trục tan), Sơ đồ cây xác suất (thụt lề, `A'` gạch trên, tích cuối nhánh), Trục số (khoảng/∪/điểm rời, gạch phần bỏ hoặc tô đậm), Biểu đồ Ven (2–3 tập, tô theo biểu thức `(A ∪ B)' `, số phần tử từng miền) |
+
+Công cụ giờ có: Toán 11, Lý 3, Hoá 3. Đăng ký một công cụ mới = 6 chỗ: `toolSpec.ts` (kiểu + render), `ToolModal.tsx`, `ToolsPanel.tsx` (SUBJECTS), `MoreToolModals.tsx` (modal), `ComposeDoc.tsx` (`TOOL_DOC_IMAGE`), `DocSelectionAi.tsx` (`TOOL_NAME`).
+
+**Lỗi gặp thêm:** heredoc bash (kể cả `<<'EOF'`) qua công cụ Bash vẫn có lúc nuốt `\` → regex/chuỗi có `\` thì viết bằng Write/Edit rồi chạy script Python từ file. Tên file tải về có dấu tiếng Việt → header `X-Name` khi bắt file phải đổi sang ASCII.
+
+**Còn lại:** thử Đề đã xuất bản với tài khoản thật; AI (`planTool`) chưa biết các công cụ Hoá / Toán mới; số mạch chính chưa tự chọn theo IUPAC; Oxyz chưa làm.

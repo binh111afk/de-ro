@@ -1,150 +1,63 @@
 # context.md — đề rõ (trình soạn đề thi)
 
-Bản đồ dự án. Đọc file này trước, rồi mở file liên kết cần dùng. Lịch sử và chi tiết không để ở đây nữa, để tránh file quá dài.
+Bản đồ ngắn của dự án. **Chỉ đọc file này khi bắt đầu phiên**; các file khác mở khi việc đang làm cần tới (bảng "Đọc thêm khi nào" bên dưới). Cập nhật: 05/11/2026 (phiên 19).
 
-> Cập nhật lần cuối: **03/11/2026 (phiên 17)**.
+## Dự án
 
-## Đọc gì
+Web app soạn đề thi tiếng Việt kiểu Word: React 19 + TypeScript + Vite 6 + Tailwind v4 + TipTap 3. Thư mục `C:\Users\Lenovo\Desktop\workspace\dethinhbien`, nhánh `main`, remote `binh111afk/de-ro`.
 
-- **Sửa icon / đồ hoạ slide:** đọc mục "Quy trình tạo icon" trong [phiên 14](docs/handoff/phien-14.md) và mục "file nguồn icon không còn trong Downloads" ở [phiên 15](docs/handoff/phien-15.md), mục "Chèn / sửa icon" ở [phiên 16](docs/handoff/phien-16.md) (và "Hướng dẫn sửa icon" ở [phiên 13](docs/handoff/phien-13.md)) trước khi đụng vào — `src/lib/graphics.ts` là file sinh tự động, sửa ở `scripts/graphics-redraw.mjs` / `scripts/import-graphics.mjs`.
-- **Làm tiếp tab Công cụ (đồ thị, bảng biến thiên, hình học; Hỏi AI khi bôi đen):** đọc [phiên 17](docs/handoff/phien-17.md) — bản đồ file, công thức thêm công cụ mới, quy ước vẽ SGK, cách thử nhanh ít token.
-- **Công cụ mới (dựng hình, bảng xét dấu, Oxy, thống kê, mạch điện), đề tương tác, kiểm file Word thật:** đọc [phiên 18](docs/handoff/phien-18.md) — bản đồ file mới, cách mở file xuất bằng Word qua COM, lỗi heredoc/CRLF/tsconfig.
-- **Bàn giao gần nhất:** [phiên 19](docs/handoff/phien-19.md) (ảnh trong phương án sang đề tương tác; ảnh đầu câu căn phải/giữa khớp Word; mạch cầu + tên nút; bảng xét dấu miền bị chặn; nhãn biểu đồ đường; Hỏi AI vẽ mọi công cụ; Lý: đồ thị chuyển động, mặt phẳng nghiêng), [phiên 18](docs/handoff/phien-18.md) (dựng hình bằng lệnh + bấm/kéo trên ảnh; bảng xét dấu, Oxy miền nghiệm, thống kê; môn Lý: mạch điện; chip chọn môn; vẽ ảnh câu hỏi ở đề online; AI sang phải, công cụ sang trái; đề tương tác giữ định dạng/căn lề/tên đề/thời gian; xuất Word sửa \displaystyle và ảnh đứng đầu đề bài), [phiên 17](docs/handoff/phien-17.md) (cột phải soạn đề thành thanh icon dọc; tab Công cụ ở soạn đề + slide: đồ thị hàm số, bảng biến thiên, hình phẳng, hình không gian, nhấp đúp sửa lại; ảnh trang đề có tay nắm đổi cỡ; thanh nổi Hỏi AI khi bôi đen + Vẽ đồ thị dưới câu hỏi), [phiên 16](docs/handoff/phien-16.md) (kho đồ hoạ 718 → 1146 icon: Khen thưởng, Ký hiệu, Khung, Mũi tên, Trang trí, Tin, Văn học, Hoá, Lí, Nghệ thuật; TS2590 khi kho >1000 mục; chạy thử AI tạo slide 5 môn + sửa lộ `**`, lặp đồ hoạ, icon thẻ khớp nhầm), [phiên 15](docs/handoff/phien-15.md) (kho đồ hoạ 705 → 858: Địa lí/Lịch sử tách nhóm, 43 con vật SVG Repo, 30 icon cơ thể người, nhóm Hình động; trang trí slide theo bộ `decorKit`; file sheet gốc trong Downloads đã mất — xem cách chèn icon tạm; số token mỗi lần tạo), [phiên 14](docs/handoff/phien-14.md) (chọn nhiều phần tử + căn/giãn đều, hút khi đổi kích thước, hộp chữ co vừa chữ, AI dùng đồ hoạ ở 7 layout; kho đồ hoạ 572 → 705 icon + quy trình tạo icon), [phiên 13](docs/handoff/phien-13.md) (đề online: một nút Đăng, trang kết quả + bục top 3, thông tin học sinh không cần tài khoản; slide: khung ảnh, hoạ tiết, đường gióng + khoảng cách, tay nắm kiểu Canva, responsive, lazy-load, F5 giữ tab; vẽ lại icon), [phiên 12](docs/handoff/phien-12.md) (lưu theo tài khoản Supabase `user_items`; đề đã xuất bản cho học sinh + báo cáo kết quả; trợ lý AI trong tạo đề online có đính kèm file; hộp thoại, ô tích dùng chung), [phiên 11](docs/handoff/phien-11.md) (kiểm file .docx/.pptx bằng Word/PowerPoint/LibreOffice + sửa 3 lỗi xuất; nhập đề từ file Word/PDF/văn bản với đọc đáp án đánh dấu; ảnh trong câu hỏi: soạn, làm bài, xuất Word, nhập từ docx), [phiên 10](docs/handoff/phien-10.md) (tab Tạo đề online: lịch sử, trình tạo đề, cài đặt làm bài, đăng tuỳ chọn + link; xem lại bài có đáp án đúng/sai; lời giải ở cuối tài liệu), [phiên 9](docs/handoff/phien-9.md) (câu Đúng/Sai và Trả lời ngắn theo đề THPT 2025, `Tệp → Làm đề tương tác`, chấm điểm; nhánh `feat/dung-sai-tra-loi-ngan`), [phiên 8](docs/handoff/phien-8.md) (panel thư viện kiểu Canva, menu Lớp, thanh nổi, màu chủ đạo, 325 icon, ô chữ nhấp đúp; nhánh `feat/slide-panel-ui`), [phiên 7](docs/handoff/phien-7.md) (ribbon danh sách Word, thanh slide dưới đáy kiểu Canva, panel Thành phần/Icon/Mẫu/Tải lên, tab Thành phần), [phiên 6](docs/handoff/phien-6.md) (hồ sơ, kho câu hỏi, kho tài liệu), [phiên 5](docs/handoff/phien-5.md) (trang hồ sơ, đề cộng đồng, thanh tab), [phiên 4](docs/handoff/phien-4.md) (tài khoản Supabase, R2, email), [phiên 3](docs/handoff/phien-3.md) (trình soạn slide), [phiên 2](docs/handoff/phien-2.md) (AI sinh và sửa slide).
-- **Việc còn tồn đọng:** [docs/viec-con-lai.md](docs/viec-con-lai.md) (mục 5b là việc tiếp theo; gợi ý tiếp ở cuối phiên 11).
-- **Lỗi đã gặp và bài học:** [docs/bai-hoc-va-loi.md](docs/bai-hoc-va-loi.md).
-- **Lịch sử từng chặng** (mục 3.x, số mục ở các file này vẫn giữ nguyên): [docs/history/muc-3-lich-su.md](docs/history/muc-3-lich-su.md).
-- **Bản đồ file:** [docs/ban-do-file.md](docs/ban-do-file.md).
+- `/soan-de`: trình soạn chính (tab Bắt đầu tạo đề / slide). Soạn đề: AI bên **phải**; Mục lục / Khối mẫu / Công cụ bên **trái**. Soạn slide: AI bên phải.
+- Màn khác: Đề cộng đồng, Tạo đề online (lịch sử, đề đã xuất bản, kết quả), Đề của tôi, Thư viện, Chấm điểm, Quiz.
+- Tài khoản Supabase (`user_items`, `community_exams`, `exam_attempts`), file trên R2.
 
-## 0. Vị trí dự án
+## Nguyên tắc không được phá
 
-```
-C:\Users\Lenovo\Desktop\workspace\dethinhbien
-```
+1. `ExamBlock` (`src/data/docTypes.ts`) là mô hình lưu bền vững; AI, thư viện, xuất Word, in đều đi qua nó. TipTap chỉ là lớp trình bày.
+2. Một editor TipTap liên tục; trang A4 chỉ là nền vẽ phía sau (`zoom` CSS, không `transform`).
+3. Key LLM ở server, gọi qua proxy `/api/llm`; không đưa key vào bundle.
+4. Giao diện tiếng Việt, bám Word / GenOffice.
 
-> **Lưu ý:** dự án đã được **chuyển** từ thư mục phiên làm việc cũ
-> (`~\.minimax\sessions\mvs_198c7695ae8240c5a34b2d4862cc8661\workspace`) sang vị trí
-> trên ngày 22/10/2026. Bản cũ đã được đưa vào Recycle Bin (khôi phục được).
-> Từ giờ mọi lệnh `cd` / đường dẫn tương đối phải trỏ về thư mục mới.
->
-> Lệnh dev hiện tại (chạy ở cổng 5184 vì 5183 đã được dùng cho bản cũ):
->
-> ```powershell
-> cd C:\Users\Lenovo\Desktop\workspace\dethinhbien
-> npm run dev -- --port 5184 --host 127.0.0.1
-> ```
-
----
-
-## 1. Dự án là gì
-
-Ứng dụng web (React 19 + TypeScript + Vite 6 + Tailwind v4 + TipTap 3) giúp soạn đề
-thi tiếng Việt theo mô hình tài liệu Word. Trang **Soạn đề** (`/soan-de`) là trình
-soạn thảo chính: full-screen, ribbon nhiều tab, tab strip nhiều đề, dock AI bên phải (mục lục / khối mẫu / công cụ bên trái),
-nav pane (mục lục / khối mẫu / tìm kiếm) bên phải, sân giấy A4 thật ở giữa.
-
-**Trợ lý AI nằm ở đâu (quyết định của chủ dự án, không theo GenOffice):** ở
-trình soạn đề (`/soan-de`) panel AI ở cột **trái**; ở trình soạn slide panel AI ở
-cột **phải** (cột trái là danh sách thumbnail). `AiDock` nhận prop `side="left" |
-"right"` để đảo rail, viền panel và hướng nút thu gọn.
-
-Các màn khác: Đề thi của tôi, Thư viện, Cộng đồng, Chấm điểm, Quiz. Slide không có
-màn riêng — mọi tài liệu (đề/slide/bảng tính) được tạo và mở từ tab **Bắt đầu**
-trong `/soan-de`; `/soan-slide` chỉ redirect về đó.
-
-### Nguyên tắc bất di bất dịch của dự án
-
-1. **`ExamBlock` là mô hình lưu bền vững.** Mọi luồng (AI sinh đề, thư viện, xuất
-   Word, in A4) đều đi qua `ExamBlock`. TipTap chỉ là lớp trình bày bên trong.
-2. **Một editor TipTap liên tục.** Không clone/split editor theo từng trang, nếu
-   không con trỏ và undo/redo sẽ vỡ. Lớp giấy A4 chỉ là hình nền vẽ phía sau.
-3. **Không lộ credential.** API key của LLM nằm server-side, đi qua proxy
-   same-origin `/api/llm`. Không đưa key vào bundle hay checkpoint.
-4. **Tiếng Việt, bám GenOffice/Word** cho phần vỏ giao diện.
-
----
-
-## 2. Quyết định kiến trúc then chốt
-
-| Quyết định | Lý do |
-|---|---|
-| TipTap/ProseMirror thay editor cũ | Cần một editor duy nhất liên tục để phân trang không vỡ con trỏ |
-| Vẽ lớp giấy `.doc-paper` phía sau `.doc-flow` | Giữ 1 editor, vẫn có trang A4 thật có bóng đổ |
-| `ExamBlock` là cầu nối AI ↔ TipTap ↔ Word ↔ in | Không phá vỡ luồng cũ khi chuyển engine |
-| Store `compose` chỉ quản lý phiên nhiều tab; tài liệu đã lưu ở `useDocStore` | Tách "đang mở" khỏi "đã lưu" |
-| Khối mẫu định nghĩa 1 lần ở `src/examEditor/templates.ts` | Ribbon và NavPanel cùng đọc, không lệch dữ liệu |
-| `zoom` (CSS property) chứ không phải `transform: scale()` | `zoom` ảnh hưởng layout → thước kẻ và trang giấy luôn khớp nhau, container giữ đúng bề rộng (giống `.doc-zoom` của GenOffice) |
-| Trang A4: 21 × 29,7 cm, lề 2 cm, quy đổi theo 96 dpi | PAGE_W = 794px, PAGE_H = 1123px, MARGIN = 76px |
-| Auto-fit co **theo chiều rộng** khung nhìn, giới hạn 25%–130% | Word cũng vậy; bỏ giới hạn 50% cứng vì khi mở cả 2 panel trên màn hẹp thì trang biến mất |
-
----
-
-## 8. Lệnh
+## Lệnh
 
 ```powershell
-# dev (chạy trong thư mục dự án mới)
-cd C:\Users\Lenovo\Desktop\workspace\dethinhbien
-npm run dev -- --port 5184 --host 127.0.0.1
-
-# chạy tách rời (không bị giới hạn 1 giờ của task nền)
-Start-Process cmd.exe -ArgumentList '/c','npm run dev -- --port 5184 --host 127.0.0.1 > dev-server.log 2>&1' -WindowStyle Hidden
-
-# kiểm tra
-npx tsc -b --noEmit
-npm run build
-npm run test:convert    # 12/12 pass
-npm run test:markdown   # 14/14 pass (parser markdown của chat AI)
-npm run test:export     # 5/5 pass (đánh số + phương án 2 cột khi xuất Word)
-npm run test:layout     # 7/7 pass (chọn số cột phương án)
-npm run test:grading    # chấm điểm đề THPT 2025: nhiều lựa chọn, đúng/sai (0,1/0,25/0,5/1), trả lời ngắn (≤4 ký tự)
-npm run test:online     # đề tạo online: kiểm lỗi câu, xếp theo dạng, dựng đề, đề đăng (doc.online), đề từ trình soạn về bản nháp
-npm run test:docx       # xuất .docx thật: zip OOXML, mammoth đọc lại được, thứ tự câu, ảnh (trên/dưới/trái/phải)
-npm run test:sync       # đồng bộ lên tài khoản (máy chủ giả): kéo/gộp/đẩy/xoá, bản đệm người khác
-npm run test:attempts   # thống kê bài làm học sinh (top 3, điểm TB, phổ điểm)
-npm run test:online-ai  # chuẩn hoá câu hỏi AI trả về, xáo phương án, file đính kèm
-npm run test:parse      # nhập đề từ file: tách câu, đáp án cuối đề/đánh dấu (docx, PDF mẫu trong scripts/fixtures), ảnh
-npm run test:slide-text # 5/5 pass (chiều cao hộp chữ slide)
-npm run test:slide-theme # 4/4 pass (theme v2: normalize/tương phản/catalog)
-npm run test:slide-layout # 10/10 pass (layout v1+v2: 14 bố cục/quiz/tone)
-npm run test:slide-measure # 9 nhóm pass (đo chữ + fit 19 layout, bất biến không tràn)
-npm run test:slide-graphics # 21 nhóm pass (432 đồ hoạ catalog + 140 hoạ tiết: registry/search/recolor/layout/prompt)
-npm run test:image      # 3/3 pass (prompt tạo ảnh từ nội dung slide)
-npm run test:sources    # 4/4 pass (thang nguồn + myDocs)
-npm run test:extract    # 4/4 pass (trích docx/pdf/xlsx/csv/pptx)
+npm run dev -- --port 5184 --host 127.0.0.1     # http://127.0.0.1:5184/soan-de (hoặc preview_start "dev")
+npx tsc -p tsconfig.app.json --noEmit           # KHÔNG dùng `tsc -p .` (không kiểm gì)
+npm run test:convert | test:export | test:docx | test:online | test:grading | test:markdown   # bộ hay dùng
 ```
 
-**Cấu hình AI:** điền `LLM_API_KEY` vào `.env` ở gốc dự án (mẫu ở
-`.env.example`). `.env` đã bị gitignore. `npm run dev` tự mount `/api/llm`,
-`/api/extract`, `/api/search`, `/api/image`; bản production chạy
-`npx tsx server/llmProxy.ts` (tự nạp `.env`, mặc định cổng 8787). Search web
-(ưu tiên 3) cần thêm `TAVILY_API_KEY`; để trống thì app bỏ qua bước search và
-báo trong chat. Tạo ảnh dùng `IMAGE_BASE_URL`/`IMAGE_API_KEY`/`IMAGE_MODEL`
-(mặc định Xkiro + `sensenova/sensenova-u1.5-lite`); thiếu env thì server đọc
-provider Xkiro từ `~/.zcode/v2/provider_config.json` của máy.
+Danh sách đủ: `package.json` → `scripts`. `.env` cần `LLM_API_KEY` (mẫu `.env.example`).
 
-Route ứng dụng: `http://127.0.0.1:5184/soan-de`
+## Bản đồ nhanh
 
-**Lưu ý:** dev server chạy trong task nền của MCode sẽ bị dừng sau 1 giờ
-(`maxRunMs` 3600000). Nếu bị tắt giữa chừng — đây là hạn chế runtime, **không
-phải lỗi code**; kiểm tra `dev-server.log` rồi chạy lại bằng lệnh `Start-Process`
-ở trên.
-
----
-
-## 9. Ghi chú về bản quyền
-
-`_ref/genoffice/` là clone mã nguồn `https://github.com/genspark-ai/genoffice`
-(Apache-2.0). Các phần đã port sang dự án này:
-
-| File đích | Nguồn |
+| Vùng | File chính |
 |---|---|
-| `src/examEditor/icons.tsx` | `apps/docs/src/renderer/components/icons.tsx` |
-| `src/examEditor/icons.tsx` (`IconHome`) | `apps/shell/src/renderer/src/TabBar.tsx` → `HomeIcon` |
-| `src/examEditor/genoffice-tokens.css` | `packages/ui/src/tokens.css` + `apps/docs/src/renderer/styles.css` |
-| `src/examEditor/compose.css` | `apps/docs/src/renderer/styles.css` + `apps/shell/src/renderer/src/tabbar.css` |
+| Trình soạn đề | `src/pages/ComposeDoc.tsx`, `src/examEditor/` (schema, convert ExamBlock↔TipTap, Ribbon, FileMenu, AiPanel, DocSelectionAi) |
+| Xuất Word | `src/examEditor/docxBlocks.ts` (phương án A–D xếp bằng tab stop), test `scripts/test-docx.ts` |
+| Đề tương tác | `src/lib/docToExam.ts`, `src/lib/math.ts` (renderMath: `$…$`, `**đậm**`, ảnh `![alt\|rộng%](src)`) |
+| Công cụ vẽ | `src/lib/toolSpec.ts` (ToolDoc + renderTool), `src/examEditor/tools/` (ToolsPanel = SUBJECTS, ToolModal, MoreToolModals). Thư viện vẽ: `plot, varTable, geometry, signTable, oxy, stats, mathExtra` (Toán), `circuit, physics` (Lý), `chem` (Hoá) |
+| Slide | `src/examEditor/SlideEditor.tsx`, `slide.css`; đồ hoạ `src/lib/graphics.ts` là file **sinh tự động** |
+| Danh sách có phân trang | `src/components/Pager.tsx` |
 
-Ngoài ra, 3 icon loại tài liệu trong `src/components/docIcons.tsx` **không** port từ
-GenOffice — đó là file SVG do người dùn cung cấp, vẽ lại bằng React theo cùng
-nét. Logo chính + favicon cũng là file SVG do người dùn cung cấp.
+**Thêm một công cụ vẽ** = 6 chỗ: `toolSpec.ts`, `ToolModal.tsx`, `ToolsPanel.tsx`, `MoreToolModals.tsx`, `ComposeDoc.tsx` (`TOOL_DOC_IMAGE`), `DocSelectionAi.tsx` (`TOOL_NAME`).
 
-Apache-2.0 cho phép dùng lại kể cả thương mại, chỉ cần giữ phần thông báo bản
-quyền. File `icons.tsx` đã có ghi chú attribution ở đầu file.
+## Bẫy hay gặp (chi tiết: docs/bai-hoc-va-loi.md)
+
+- Code có `\` (regex) → viết bằng Write/Edit; heredoc bash/Python dễ nuốt `\`.
+- File CRLF: đổi `\r\n` → `\n` trước khi so chuỗi, ghi lại đúng kiểu xuống dòng.
+- `tsx` chạy file lẻ không hiểu alias `@/` → thử logic trong trình duyệt: `await import('/src/lib/x.ts')`.
+- Bấm trong trình duyệt theo ref của `find`, không theo toạ độ; khung trình duyệt hẹp thì thanh bên bị ẩn (resize 1366×768).
+- Căn lề câu hỏi lưu ở nút `examQuestion`, không phải `examQuestionPrompt`.
+
+## Đọc thêm khi nào
+
+| Khi làm | Mở |
+|---|---|
+| Tiếp việc phiên trước | [phiên 19](docs/handoff/phien-19.md) (mục "Còn lại" ở cuối) |
+| Tìm phiên cũ theo chủ đề | [docs/handoff/README.md](docs/handoff/README.md) |
+| Công cụ vẽ (quy ước SGK, thử nhanh) | [phiên 17](docs/handoff/phien-17.md) |
+| Kiểm file Word thật (Word COM → PDF) | [phiên 18](docs/handoff/phien-18.md), mục "Cách kiểm tra file Word thật" |
+| Icon / đồ hoạ slide | [phiên 14](docs/handoff/phien-14.md) "Quy trình tạo icon", [phiên 16](docs/handoff/phien-16.md) "Chèn / sửa icon" |
+| Chọn việc mới | [docs/viec-con-lai.md](docs/viec-con-lai.md) |
+| Không tìm thấy file | [docs/ban-do-file.md](docs/ban-do-file.md) |
+| Bản quyền phần port từ GenOffice (`_ref/genoffice`, Apache-2.0) | [docs/ban-quyen.md](docs/ban-quyen.md) |
+| Lịch sử các chặng cũ | [docs/history/muc-3-lich-su.md](docs/history/muc-3-lich-su.md) |
