@@ -11,6 +11,7 @@ import { renderOxySvg, type OxySpec } from './oxy'
 import { renderStatsSvg, type StatsSpec } from './stats'
 import { renderCircuitSvg, type CircuitSpec } from './circuit'
 import { renderInclineSvg, renderMotionSvg, type InclineSpec, type MotionSpec } from './physics'
+import { renderNumberLineSvg, renderTreeSvg, renderTrigSvg, type NumberLineSpec, type TreeSpec, type TrigSpec } from './mathExtra'
 import { renderChemGraphSvg, renderElectronSvg, renderStructSvg, type ChemGraphSpec, type ElectronSpec, type StructSpec } from './chem'
 
 export type ToolDoc =
@@ -27,6 +28,9 @@ export type ToolDoc =
   | { kind: 'electron'; spec: ElectronSpec }
   | { kind: 'struct'; spec: StructSpec }
   | { kind: 'chemgraph'; spec: ChemGraphSpec }
+  | { kind: 'trig'; spec: TrigSpec }
+  | { kind: 'probtree'; spec: TreeSpec }
+  | { kind: 'numberline'; spec: NumberLineSpec }
 
 export type ToolKind = ToolDoc['kind']
 
@@ -72,6 +76,12 @@ export function renderTool(doc: ToolDoc): ToolImage {
       return renderStructSvg(doc.spec, toolDesc(doc))
     case 'chemgraph':
       return renderChemGraphSvg(doc.spec, toolDesc(doc))
+    case 'trig':
+      return renderTrigSvg(doc.spec, toolDesc(doc))
+    case 'probtree':
+      return renderTreeSvg(doc.spec, toolDesc(doc))
+    case 'numberline':
+      return renderNumberLineSvg(doc.spec, toolDesc(doc))
   }
 }
 

@@ -9,6 +9,8 @@ import type { Geo2dSpec, Geo3dSpec } from '@/lib/geometry'
 import { GraphToolModal } from './GraphToolModal'
 import { VarTableModal } from './VarTableModal'
 import { Geo2dModal, Geo3dModal } from './GeometryModal'
+import { NumberLineModal, TreeModal, TrigModal } from './MoreToolModals'
+import type { NumberLineSpec, TreeSpec, TrigSpec } from '@/lib/mathExtra'
 import { ChemGraphModal, CircuitModal, ElectronModal, InclineModal, MotionModal, StructModal, OxyModal, SignTableModal, StatsModal } from './MoreToolModals'
 import type { InclineSpec, MotionSpec } from '@/lib/physics'
 import type { ChemGraphSpec, ElectronSpec, StructSpec } from '@/lib/chem'
@@ -58,5 +60,11 @@ export function ToolModal({
       return <StructModal initial={initial as StructSpec | null | undefined} {...common} />
     case 'chemgraph':
       return <ChemGraphModal initial={initial as ChemGraphSpec | null | undefined} {...common} />
+    case 'trig':
+      return <TrigModal initial={initial as TrigSpec | null | undefined} {...common} />
+    case 'probtree':
+      return <TreeModal initial={initial as TreeSpec | null | undefined} {...common} />
+    case 'numberline':
+      return <NumberLineModal initial={initial as NumberLineSpec | null | undefined} {...common} />
   }
 }

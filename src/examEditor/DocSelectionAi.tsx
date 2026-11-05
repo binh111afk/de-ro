@@ -30,6 +30,9 @@ const TOOL_NAME: Record<ToolDoc['kind'], string> = {
   electron: 'Cấu hình electron',
   struct: 'Công thức cấu tạo',
   chemgraph: 'Đồ thị số mol',
+  trig: 'Đường tròn lượng giác',
+  probtree: 'Sơ đồ cây xác suất',
+  numberline: 'Trục số',
 }
 const PLOT_ASK = 'Vẽ hình minh hoạ cho đề này'
 const PANEL_W = 340

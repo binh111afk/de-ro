@@ -14,6 +14,7 @@ import type { ChartKind, StatsSpec } from '@/lib/stats'
 import { CIRCUIT_HELP, type CircuitSpec } from '@/lib/circuit'
 import type { Dir, InclineSpec, MotionSpec } from '@/lib/physics'
 import type { ChemGraphSpec, ElectronSpec, StructSpec } from '@/lib/chem'
+import type { NumberLineSpec, TreeSpec, TrigSpec } from '@/lib/mathExtra'
 import { Check, ToolShell, sectionTitle } from './ToolShell'
 
 type Props<S> = { initial?: S | null; submitLabel?: string; onClose: () => void; onInsert: (img: ToolImage) => void }
@@ -775,6 +776,184 @@ export function ChemGraphModal({ initial, submitLabel, onClose, onInsert }: Prop
       inputsWidth={360}
       preview={preview}
       submitLabel={submitLabel ?? (initial ? 'Cập nhật đồ thị' : 'Chèn đồ thị')}
+      canSubmit={Boolean(preview) && !error}
+      onSubmit={() => preview && onInsert(preview)}
+      onClose={onClose}
+    />
+  )
+}
+
+/* ------------------------------------------------------------------ *
+ * Toán: đường tròn lượng giác, sơ đồ cây xác suất, trục số
+ * ------------------------------------------------------------------ */
+
+const TRIG_HELP: HelpGroups = [
+  {
+    group: 'Góc (mỗi dòng một góc)',
+    items: [
+      { code: 'π/6   -2π/3   5pi/4', what: 'Radian; gõ pi cũng được' },
+      { code: '150°  hoặc  150 độ', what: 'Độ' },
+    ],
+  },
+  {
+    group: 'Họ nghiệm',
+    items: [
+      { code: 'π/4 + kπ/2', what: 'Các điểm ngọn cung cách đều (ở đây 4 điểm)' },
+      { code: 'x = π/3 + k2π/3', what: 'Ghi "x =" ở đầu cũng được' },
+    ],
+  },
+]
+
+export function TrigModal({ initial, submitLabel, onClose, onInsert }: Props<TrigSpec>) {
+  const [spec, setSpec] = useState<TrigSpec>(initial ?? { angles: '2π/3', projections: true, tan: false })
+  const set = (p: Partial<TrigSpec>) => setSpec((s) => ({ ...s, ...p }))
+  const doc = useMemo((): ToolDoc => ({ kind: 'trig', spec }), [spec])
+  const { preview, error } = useRender(doc)
+  const inputs = (
+    <>
+      <TextBlock
+        title="Góc / họ nghiệm"
+        help={TRIG_HELP}
+        intro="Mỗi dòng một góc hoặc một họ nghiệm α + kβ."
+        value={spec.angles}
+        onChange={(angles) => set({ angles })}
+        rows={4}
+        errors={error ? [error] : []}
+        label="Các góc"
+      />
+      <section className="space-y-2">
+        <Check checked={spec.projections} onChange={(projections) => set({ projections })}>Nét đứt chiếu xuống trục cos, sin</Check>
+        <Check checked={spec.tan} onChange={(tan) => set({ tan })}>Vẽ trục tan</Check>
+      </section>
+    </>
+  )
+  return (
+    <ToolShell
+      title="Đường tròn lượng giác"
+      hint="Điểm ngọn cung, hình chiếu lên trục cos, sin; họ nghiệm thành các điểm"
+      inputs={inputs}
+      inputsWidth={340}
+      preview={preview}
+      submitLabel={submitLabel ?? (initial ? 'Cập nhật hình' : 'Chèn hình')}
+      canSubmit={Boolean(preview) && !error}
+      onSubmit={() => preview && onInsert(preview)}
+      onClose={onClose}
+    />
+  )
+}
+
+const TREE_HELP: HelpGroups = [
+  {
+    group: 'Nhánh',
+    items: [
+      { code: 'A: 0,3', what: 'Tên biến cố : xác suất (0,3 · 1/3 · 30%)' },
+      { code: "  B: 0,6", what: 'Thụt 2 dấu cách: nhánh con của dòng trên' },
+      { code: "A'  hoặc  ~A", what: 'Biến cố đối (vẽ gạch trên)' },
+    ],
+  },
+]
+
+export function TreeModal({ initial, submitLabel, onClose, onInsert }: Props<TreeSpec>) {
+  const [spec, setSpec] = useState<TreeSpec>(initial ?? { text: "A: 0,3\n  B: 0,6\n  B': 0,4\nA': 0,7\n  B: 0,2\n  B': 0,8", products: true })
+  const set = (p: Partial<TreeSpec>) => setSpec((s) => ({ ...s, ...p }))
+  const doc = useMemo((): ToolDoc => ({ kind: 'probtree', spec }), [spec])
+  const { preview, error } = useRender(doc)
+  const inputs = (
+    <>
+      <TextBlock
+        title="Các nhánh"
+        help={TREE_HELP}
+        intro="Mỗi dòng một nhánh; thụt 2 dấu cách để thành nhánh con."
+        value={spec.text}
+        onChange={(text) => set({ text })}
+        rows={7}
+        errors={error ? [error] : []}
+        label="Sơ đồ cây"
+      />
+      <section>
+        <Check checked={spec.products} onChange={(products) => set({ products })}>Ghi tích xác suất cuối mỗi nhánh</Check>
+      </section>
+    </>
+  )
+  return (
+    <ToolShell
+      title="Sơ đồ cây xác suất"
+      hint="Xác suất ghi trên nhánh; biến cố đối có gạch trên"
+      inputs={inputs}
+      inputsWidth={340}
+      preview={preview}
+      submitLabel={submitLabel ?? (initial ? 'Cập nhật hình' : 'Chèn hình')}
+      canSubmit={Boolean(preview) && !error}
+      onSubmit={() => preview && onInsert(preview)}
+      onClose={onClose}
+    />
+  )
+}
+
+const NUMLINE_HELP: HelpGroups = [
+  {
+    group: 'Tập (mỗi dòng một trục)',
+    items: [
+      { code: '(-2; 3]', what: 'Ngoặc tròn: không lấy đầu mút; ngoặc vuông: lấy' },
+      { code: '[1; +oo)   (-oo; 2)', what: 'Vô cực: oo, ∞ hoặc vc' },
+      { code: '(-oo; -1) ∪ [2; 5]', what: 'Hợp nhiều khoảng: ∪ hoặc U' },
+      { code: 'A = (-2; 3]', what: 'Ghi tên tập ở đầu trục' },
+      { code: '{3; 5}', what: 'Điểm rời' },
+    ],
+  },
+]
+
+export function NumberLineModal({ initial, submitLabel, onClose, onInsert }: Props<NumberLineSpec>) {
+  const [spec, setSpec] = useState<NumberLineSpec>(initial ?? { sets: 'A = (-2; 3]\nB = [1; +oo)', style: 'hatch' })
+  const set = (p: Partial<NumberLineSpec>) => setSpec((s) => ({ ...s, ...p }))
+  const doc = useMemo((): ToolDoc => ({ kind: 'numberline', spec }), [spec])
+  const { preview, error } = useRender(doc)
+  const inputs = (
+    <>
+      <section>
+        <h3 className={sectionTitle}>Cách biểu diễn</h3>
+        <div className="flex flex-wrap gap-1.5">
+          {(
+            [
+              ['hatch', 'Gạch phần bỏ đi'],
+              ['bold', 'Tô đậm phần giữ lại'],
+            ] as const
+          ).map(([id, label]) => (
+            <button
+              key={id}
+              type="button"
+              aria-pressed={spec.style === id}
+              onClick={() => set({ style: id })}
+              className={cn(
+                'rounded-[6px] border px-2.5 py-1 text-[12.5px] transition-colors',
+                spec.style === id ? 'border-clay bg-clay-tint font-medium text-clay' : 'border-line text-ink-2 hover:border-ink-4',
+              )}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </section>
+      <TextBlock
+        title="Các tập"
+        help={NUMLINE_HELP}
+        intro="Mỗi dòng một trục số; các trục dùng chung vị trí mốc để dễ so sánh giao, hợp."
+        value={spec.sets}
+        onChange={(sets) => set({ sets })}
+        rows={4}
+        errors={error ? [error] : []}
+        label="Các tập"
+      />
+    </>
+  )
+  return (
+    <ToolShell
+      title="Trục số"
+      hint="Biểu diễn khoảng, đoạn, nửa khoảng như SGK lớp 10"
+      inputs={inputs}
+      inputsWidth={340}
+      preview={preview}
+      submitLabel={submitLabel ?? (initial ? 'Cập nhật hình' : 'Chèn hình')}
       canSubmit={Boolean(preview) && !error}
       onSubmit={() => preview && onInsert(preview)}
       onClose={onClose}
