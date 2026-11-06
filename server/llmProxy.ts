@@ -29,7 +29,6 @@ const ROOT = path.resolve(__dirname, '..')
 
 const DEFAULT_BASE_URL = 'https://opencode.ai/inference/go/openai/v1'
 const DEFAULT_MODEL = 'deepseek-v4.1-flash'
-const DEFAULT_FALLBACK_MODEL = 'deepseek-v4.1-flash-free'
 const DEFAULT_XKIRO_MODEL = 'google/gemini-3.8-flash'
 const DEFAULT_XKIRO_FALLBACK_MODEL = 'google/gemini-3-flash'
 const DEFAULT_UPSTREAM_TIMEOUT_MS = 120_000
@@ -128,7 +127,11 @@ function providerConfig() {
   return {
     apiKey: process.env.LLM_API_KEY?.trim() ?? '',
     model: process.env.LLM_MODEL?.trim() || DEFAULT_MODEL,
-    fallbackModel: process.env.LLM_FALLBACK_MODEL?.trim() || DEFAULT_FALLBACK_MODEL,
+    // bản -free của opencode đã ngừng → không còn fallback opencode mặc định; dự phòng là Agnes
+    fallbackModel: process.env.LLM_FALLBACK_MODEL?.trim() || '',
+    agnesApiKey: process.env.AGNES_API_KEY?.trim() || '',
+    agnesBaseURL: assertAllowedUrl((process.env.AGNES_BASE_URL?.trim() || 'https://apihub.agnes-ai.com/v1').replace(/\/+$/, '')).toString().replace(/\/+$/, ''),
+    agnesModel: process.env.AGNES_MODEL?.trim() || 'agnes-3.0-flash',
     // ZCode provider config is the source of truth for local Xkiro fallback;
     // stale shell/.env keys must not shadow the currently selected provider key.
     xkiroApiKey: xkiro.apiKey || process.env.XKIRO_API_KEY?.trim() || '',
@@ -177,43 +180,51 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
     } catch (err) {
       return json(res, 500, { error: err instanceof Error ? err.message : String(err) })
     }
-    if (!prov.apiKey && !prov.xkiroApiKey) {
+    if (!prov.apiKey && !prov.xkiroApiKey && !prov.agnesApiKey) {
       return json(res, 500, {
-        error: 'Chưa cấu hình LLM_API_KEY hoặc XKIRO_API_KEY. Kiểm tra file .env/config provider.',
+        error: 'Chưa cấu hình LLM_API_KEY, AGNES_API_KEY hoặc XKIRO_API_KEY. Kiểm tra file .env/config provider.',
       })
     }
 
-    const model = body.model ?? prov.model
-    const models = [model, prov.fallbackModel].filter((value, index, all) => value && all.indexOf(value) === index)
+    // Thứ tự thử: opencode (model chính [+ LLM_FALLBACK_MODEL nếu đặt]) → Agnes → xkiro.
+    // `opencode` = gửi x-opencode-session + reasoning_effort (chỉ gateway opencode hiểu).
+    // `noMaxTokens`: Agnes từ chối max_tokens > 4096 (400) nhưng bỏ trống thì không cắt → không gửi.
+    type Target = { model: string; url: string; key: string; opencode: boolean; noMaxTokens?: boolean }
+    const targets: Target[] = []
+    // client chỉ định đúng model Agnes → gọi thẳng Agnes (thử/so chất lượng)
+    const wantsAgnes = !!prov.agnesApiKey && body.model === prov.agnesModel
+    if (prov.apiKey && !wantsAgnes) {
+      for (const m of [body.model ?? prov.model, prov.fallbackModel]) {
+        if (m && !targets.some((t) => t.model === m)) targets.push({ model: m, url: prov.endpoint.toString(), key: prov.apiKey, opencode: true })
+      }
+    }
+    if (prov.agnesApiKey) targets.push({ model: prov.agnesModel, url: `${prov.agnesBaseURL}/chat/completions`, key: prov.agnesApiKey, opencode: false, noMaxTokens: true })
+    if (prov.xkiroApiKey) {
+      for (const m of [prov.xkiroModel, DEFAULT_XKIRO_FALLBACK_MODEL]) {
+        targets.push({ model: m, url: `${prov.xkiroBaseURL}/chat/completions`, key: prov.xkiroApiKey, opencode: false })
+      }
+    }
 
-    let requestBody = JSON.stringify({
-      model,
-      messages: body.messages,
-      max_tokens: body.maxTokens ?? 32000,
-      ...(body.reasoningEffort ? { reasoning_effort: body.reasoningEffort } : {}),
-      ...(body.temperature !== undefined ? { temperature: body.temperature } : {}),
-    })
-
-    let lastErr: string | null = null
-    const allModels = prov.xkiroApiKey ? [...models, prov.xkiroModel, DEFAULT_XKIRO_FALLBACK_MODEL] : models
-    for (const [modelIndex, selectedModel] of allModels.entries()) {
-      const isXkiro = selectedModel === prov.xkiroModel || selectedModel === DEFAULT_XKIRO_FALLBACK_MODEL
+    const errs: string[] = []
+    for (const [modelIndex, target] of targets.entries()) {
+      const selectedModel = target.model
+      let lastErr: string | null = null
       let attemptBody = JSON.stringify({
         model: selectedModel,
         messages: body.messages,
-        max_tokens: body.maxTokens ?? 32000,
-        ...(!isXkiro && body.reasoningEffort ? { reasoning_effort: body.reasoningEffort } : {}),
+        ...(target.noMaxTokens ? {} : { max_tokens: body.maxTokens ?? 32000 }),
+        ...(target.opencode && body.reasoningEffort ? { reasoning_effort: body.reasoningEffort } : {}),
         ...(body.temperature !== undefined ? { temperature: body.temperature } : {}),
       })
       for (let attempt = 0; attempt < 2; attempt++) {
         let upstream: Response
         try {
-          upstream = await fetch(isXkiro ? `${prov.xkiroBaseURL}/chat/completions` : prov.endpoint, {
+          upstream = await fetch(target.url, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              Authorization: `Bearer ${isXkiro ? prov.xkiroApiKey : prov.apiKey}`,
-              ...(isXkiro ? {} : { 'x-opencode-session': SESSION_ID, 'User-Agent': 'de-ro/1.0' }),
+              Authorization: `Bearer ${target.key}`,
+              ...(target.opencode ? { 'x-opencode-session': SESSION_ID, 'User-Agent': 'de-ro/1.0' } : {}),
             },
             body: attemptBody,
             signal: AbortSignal.timeout(upstreamTimeoutMs()),
@@ -272,16 +283,18 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
           return json(res, 200, { content, reasoning, usage: data.usage ?? null, model: data.model ?? selectedModel, finishReason: choice?.finish_reason ?? 'unknown' })
         }
         lastErr = `${selectedModel}: empty content (finish_reason=${choice?.finish_reason ?? 'unknown'})`
-        if (attempt === 0 && !isXkiro) {
+        if (attempt === 0 && target.opencode) {
           const retryBody = JSON.parse(attemptBody) as Record<string, unknown>
           retryBody.reasoning_effort = 'medium'
           attemptBody = JSON.stringify(retryBody)
         }
       }
-      if (modelIndex < models.length - 1) await new Promise((r) => setTimeout(r, 500))
+      if (lastErr) errs.push(lastErr)
+      if (modelIndex < targets.length - 1) await new Promise((r) => setTimeout(r, 500))
     }
 
-    return json(res, 502, { error: `Các model AI đều không phản hồi. ${lastErr ?? ''}`.trim() })
+    // báo lỗi TỪNG model, không chỉ cái cuối (lỗi cuối hay là fallback phụ, che mất nguyên nhân thật)
+    return json(res, 502, { error: `Các model AI đều không phản hồi. ${errs.join(' · ')}`.trim() })
   } catch (err) {
     return json(res, 500, { error: err instanceof Error ? err.message : String(err) })
   }
