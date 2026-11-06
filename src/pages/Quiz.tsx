@@ -148,10 +148,13 @@ export default function Quiz() {
         saveStudent({ ...(loadStudent() ?? { className: '' }), name })
       }
       try {
+        // server chấm theo id câu của đề gốc
+        const byId = new Map(exam.sections.flatMap((s) => s.questions).map((q) => [q.id, q.srcId ?? q.id]))
+        const srcAnswers = Object.fromEntries(Object.entries(answers).map(([k, v]) => [byId.get(k) ?? k, v]))
         const graded = await submitAttempt({
           examId: exam.importedFrom!,
           name,
-          answers,
+          answers: srcAnswers,
           seconds: startedAt ? (result.at - startedAt) / 1000 : 0,
           className: info?.className,
           seat: info?.seat,

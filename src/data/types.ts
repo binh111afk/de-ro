@@ -30,6 +30,8 @@ export interface QuestionImage {
 }
 
 export interface Question {
+  /** id của câu trong đề gốc trên máy chủ (đề nhập về được đổi id): dùng khi nộp bài để server chấm đúng câu */
+  srcId?: string
   id: string
   number: number
   type: QuestionType

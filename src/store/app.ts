@@ -359,7 +359,9 @@ export const useApp = create<AppState>()(
 
       importExam: (exam) => {
         const existing = get().myExams.find((e) => e.importedFrom === exam.id)
-        if (existing) return existing.id
+        // bản nhập cũ chưa có srcId thì nhập lại, để nộp bài chấm đúng câu
+        if (existing && existing.sections.every((sec) => sec.questions.every((q) => q.srcId))) return existing.id
+        if (existing) set((s) => ({ myExams: s.myExams.filter((e) => e.id !== existing.id) }))
         const copy: Exam = {
           ...exam,
           id: uid(),
@@ -372,7 +374,7 @@ export const useApp = create<AppState>()(
           sections: exam.sections.map((sec) => ({
             ...sec,
             id: uid(),
-            questions: sec.questions.map((q) => ({ ...q, id: uid() })),
+            questions: sec.questions.map((q) => ({ ...q, srcId: q.srcId ?? q.id, id: uid() })),
           })),
         }
         set((s) => ({ myExams: [copy, ...s.myExams] }))
@@ -429,7 +431,10 @@ export const useApp = create<AppState>()(
                   ...e,
                   sections: e.sections.map((sec) => ({
                     ...sec,
-                    questions: sec.questions.map((q) => (key[q.id] ? { ...q, ...key[q.id] } : q)),
+                    questions: sec.questions.map((q) => {
+                      const k = key[q.srcId ?? q.id]
+                      return k ? { ...q, ...k } : q
+                    }),
                   })),
                 },
           ),
