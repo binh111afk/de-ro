@@ -13,6 +13,7 @@ import { OXY_HELP, type OxySpec } from '@/lib/oxy'
 import type { ChartKind, StatsSpec } from '@/lib/stats'
 import { CIRCUIT_HELP, type CircuitSpec } from '@/lib/circuit'
 import type { Dir, InclineSpec, MotionSpec } from '@/lib/physics'
+import { GAS_DEFAULT, type GasAxes, type GasSpec } from '@/lib/gas'
 import type { ChemGraphSpec, ElectronSpec, StructSpec } from '@/lib/chem'
 import type { NumberLineSpec, TreeSpec, TrigSpec, VennSpec } from '@/lib/mathExtra'
 import { Check, ToolShell, sectionTitle } from './ToolShell'
@@ -527,6 +528,125 @@ export function MotionModal({ initial, submitLabel, onClose, onInsert }: Props<M
       hint="x – t, v – t, a – t gấp khúc; số trên trục lấy đúng các điểm đã gõ"
       inputs={inputs}
       inputsWidth={360}
+      preview={preview}
+      submitLabel={submitLabel ?? (initial ? 'Cập nhật đồ thị' : 'Chèn đồ thị')}
+      canSubmit={Boolean(preview) && !error}
+      onSubmit={() => preview && onInsert(preview)}
+      onClose={onClose}
+    />
+  )
+}
+
+/* ------------------------------------------------------------------ *
+ * Vật lí 12: đồ thị trạng thái khí
+ * ------------------------------------------------------------------ */
+
+const GAS_AXES: Array<{ id: GasAxes; label: string; coord: string }> = [
+  { id: 'pV', label: 'p – V', coord: '(V; p)' },
+  { id: 'pT', label: 'p – T', coord: '(T; p)' },
+  { id: 'VT', label: 'V – T', coord: '(T; V)' },
+]
+const GAS_TICKS: Array<{ id: GasSpec['ticks']; label: string }> = [
+  { id: 'value', label: 'Số liệu' },
+  { id: 'symbol', label: 'p₁, V₁, T₁' },
+  { id: 'none', label: 'Không ghi' },
+]
+const GAS_HELP: HelpGroups = [
+  {
+    group: 'Trạng thái',
+    items: [
+      { code: '1: (1; 4)', what: 'Trạng thái 1, toạ độ (trục ngang; trục dọc)' },
+      { code: '(2,5; 3)', what: 'Số thập phân dùng dấu phẩy' },
+    ],
+  },
+  {
+    group: 'Quá trình',
+    items: [
+      { code: '1-2: đẳng nhiệt', what: 'p–V: cung hypebol (p·V như nhau); p–T, V–T: đoạn đứng' },
+      { code: '2-3: đẳng tích', what: 'p–V: đoạn đứng; p–T: đoạn trên đường qua O; V–T: đoạn ngang' },
+      { code: '3-1: đẳng áp', what: 'p–V, p–T: đoạn ngang; V–T: đoạn trên đường qua O' },
+      { code: '1-2', what: 'Bỏ trống loại: nối thẳng' },
+    ],
+  },
+]
+
+export function GasModal({ initial, submitLabel, onClose, onInsert }: Props<GasSpec>) {
+  const [spec, setSpec] = useState<GasSpec>(initial ?? GAS_DEFAULT)
+  const set = (p: Partial<GasSpec>) => setSpec((s) => ({ ...s, ...p }))
+  const doc = useMemo((): ToolDoc => ({ kind: 'gas', spec }), [spec])
+  const { preview, error } = useRender(doc)
+  const coord = GAS_AXES.find((a) => a.id === spec.axes)?.coord ?? '(V; p)'
+  const pill = (on: boolean) =>
+    cn('rounded-[6px] border px-2.5 py-1 text-[12.5px] transition-colors', on ? 'border-clay bg-clay-tint font-medium text-clay' : 'border-line text-ink-2 hover:border-ink-4')
+  const inputs = (
+    <>
+      <section>
+        <h3 className={sectionTitle}>Hệ trục</h3>
+        <div className="flex flex-wrap gap-1.5">
+          {GAS_AXES.map((a) => (
+            <button key={a.id} type="button" aria-pressed={spec.axes === a.id} onClick={() => set({ axes: a.id })} className={pill(spec.axes === a.id)}>
+              {a.label}
+            </button>
+          ))}
+        </div>
+      </section>
+      <TextBlock
+        title="Trạng thái"
+        help={GAS_HELP}
+        intro={`Mỗi dòng một trạng thái, toạ độ ${coord}.`}
+        value={spec.states}
+        onChange={(states) => set({ states })}
+        rows={3}
+        errors={error ? [error] : []}
+        label="Các trạng thái khí"
+      />
+      <TextBlock
+        title="Quá trình"
+        help={GAS_HELP}
+        errors={[]}
+        intro="Mỗi dòng một quá trình: đẳng nhiệt, đẳng tích, đẳng áp hoặc bỏ trống để nối thẳng."
+        value={spec.processes}
+        onChange={(processes) => set({ processes })}
+        rows={3}
+        label="Các quá trình"
+      />
+      <section className="grid grid-cols-3 gap-2">
+        {(
+          [
+            ['pUnit', 'Đơn vị p'],
+            ['vUnit', 'Đơn vị V'],
+            ['tUnit', 'Đơn vị T'],
+          ] as const
+        ).map(([k, label]) => (
+          <label key={k} className="text-[12.5px] text-ink-2">
+            {label}
+            <input className={cn(inputClass, 'mt-1 h-9')} value={spec[k]} onChange={(e) => set({ [k]: e.target.value })} />
+          </label>
+        ))}
+      </section>
+      <section>
+        <h3 className={sectionTitle}>Nhãn trên trục</h3>
+        <div className="flex flex-wrap gap-1.5">
+          {GAS_TICKS.map((t) => (
+            <button key={t.id} type="button" aria-pressed={spec.ticks === t.id} onClick={() => set({ ticks: t.id })} className={pill(spec.ticks === t.id)}>
+              {t.label}
+            </button>
+          ))}
+        </div>
+      </section>
+      <section className="space-y-1.5">
+        <Check checked={spec.dashed} onChange={(dashed) => set({ dashed })}>Nét đứt gióng xuống hai trục</Check>
+        <Check checked={spec.arrows} onChange={(arrows) => set({ arrows })}>Mũi tên chiều quá trình</Check>
+        <Check checked={spec.toOrigin} onChange={(toOrigin) => set({ toOrigin })}>Kéo dài nét đứt về gốc O (đường qua O)</Check>
+      </section>
+    </>
+  )
+  return (
+    <ToolShell
+      title="Đồ thị trạng thái khí"
+      hint="Tự vẽ đúng hình dạng từng quá trình; báo lỗi khi số liệu không khớp (vd. đẳng nhiệt mà p·V khác nhau)"
+      inputs={inputs}
+      inputsWidth={380}
       preview={preview}
       submitLabel={submitLabel ?? (initial ? 'Cập nhật đồ thị' : 'Chèn đồ thị')}
       canSubmit={Boolean(preview) && !error}

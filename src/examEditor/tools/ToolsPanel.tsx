@@ -4,7 +4,7 @@
  */
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
-import { Box, ChartColumn, ChartSpline, Grid3x3, SquarePlus, Table2, Triangle, TriangleRight, Zap, ChartLine, Atom, Hexagon, FlaskConical, CircleDot, Network, MoveHorizontal, Circle } from 'lucide-react'
+import { Box, ChartColumn, ChartSpline, Grid3x3, SquarePlus, Table2, Triangle, TriangleRight, Zap, ChartLine, Atom, Hexagon, FlaskConical, CircleDot, Network, MoveHorizontal, Circle, Thermometer } from 'lucide-react'
 import type { ToolImage, ToolKind } from '@/lib/toolSpec'
 import { ToolModal } from './ToolModal'
 import { cn } from '@/lib/cn'
@@ -34,6 +34,7 @@ const SUBJECTS: Array<{ name: string; tools: Array<{ id: ToolId; label: string; 
       { id: 'circuit', label: 'Mạch điện', desc: 'Gõ nối tiếp, song song, mạch cầu; ký hiệu SGK', Icon: Zap },
       { id: 'motion', label: 'Đồ thị chuyển động', desc: 'x – t, v – t, a – t gấp khúc theo các điểm', Icon: ChartLine },
       { id: 'incline', label: 'Mặt phẳng nghiêng', desc: 'Vật trên dốc, lực P, N, Fms, F', Icon: TriangleRight },
+      { id: 'gas', label: 'Đồ thị trạng thái khí', desc: 'p – V, p – T, V – T; đẳng nhiệt, đẳng tích, đẳng áp, chu trình', Icon: Thermometer },
     ],
   },
   {

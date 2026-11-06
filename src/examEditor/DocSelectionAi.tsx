@@ -27,6 +27,7 @@ const TOOL_NAME: Record<ToolDoc['kind'], string> = {
   circuit: 'Mạch điện',
   motion: 'Đồ thị chuyển động',
   incline: 'Mặt phẳng nghiêng',
+  gas: 'Đồ thị trạng thái khí',
   electron: 'Cấu hình electron',
   struct: 'Công thức cấu tạo',
   chemgraph: 'Đồ thị số mol',
