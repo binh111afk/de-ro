@@ -44,7 +44,7 @@
 3. Thông tin học sinh (tên, lớp, số thứ tự, thời gian) vẫn do trình duyệt gửi → muốn chặn mạo danh phải bắt học sinh đăng nhập.
 4. Đề làm nhiều lần: vẫn dò được đáp án trắc nghiệm bằng nộp lại (≤4 lần/câu); muốn kín thì bật "chỉ làm một lần". Danh sách lớp (`roster`) vẫn gửi kèm đề link.
 5. Hạn mức vẫn đếm trong bộ nhớ từng instance (Upstash / bảng Supabase nếu cần chặt).
-6. RLS các bảng khác (`community_exams`, `user_documents`) chưa nằm trong `supabase/migrations/`.
+6. ~~RLS các bảng khác~~ — đã chụp vào `supabase/migrations/20261106c_rls_snapshot.sql` (phiên 22).
 7. `gas`: chưa có trục °C (vạch −273); nhãn "(a)" đôi khi sát đường. `scene`: chưa có hình đồ vật (cây, người…, chỉ cần cho THCS); AI hay dùng `nhãn` thay `kích thước`; hướng dẫn "phóng to đoạn quá ngắn" chưa chạy lại kiểm.
-8. Prompt: bài thực tế đã mô hình hoá bằng công thức (đề THPT kiểu mới) không cần ép có hình — có thể thêm một câu vào prompt.
+8. ~~Prompt bài thực tế đã mô hình hoá~~ — đã thêm câu vào `AiPanel.tsx` (phiên 22).
 9. Đề THPT 2025+ (xem trên mapstudy.edu.vn): hình đồ thị Vật lí/Hoá thường có điểm + gióng nét đứt — `motion`/`chemgraph` đã có gióng, nên rà thêm.

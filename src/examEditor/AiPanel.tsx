@@ -609,6 +609,7 @@ function examSystemPrompt(documentDigest?: string): string {
     'Mỗi khối tối đa một figure. Đề thật luôn có nhiều câu đọc hình, nên CHỦ ĐỘNG ra câu có hình: ' +
     'đề Toán, Vật lí, Hoá học, Sinh học, Địa lí thì khoảng 25–35% số câu có figure (đề 12 câu trắc nghiệm → ít nhất 3–4 hình; câu tự luận về hàm số/hình học cũng nên có). ' +
     'Ưu tiên dạng "Cho hàm số $y=f(x)$ có đồ thị / bảng biến thiên / bảng xét dấu đạo hàm như hình" (học sinh phải đọc hình mới làm được), hình học phẳng/không gian, biểu đồ số liệu, mạch điện, đồ thị chuyển động. ' +
+    'Bài toán thực tế đã được mô hình hoá sẵn bằng công thức (ví dụ "lợi nhuận $P(x)=…$", "nhiệt độ $T(t)=…$") thì không cần ép có hình. ' +
     'Môn không có hình phù hợp (Văn, Sử, ngoại ngữ…) thì không cần figure. Các loại figure:\n' +
     FIGURE_GUIDE +
     '\n' +
