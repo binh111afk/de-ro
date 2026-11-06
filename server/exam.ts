@@ -7,6 +7,7 @@ import type { ExamDoc } from '../src/data/docTypes'
 import { docToExam } from '../src/lib/docToExam.js'
 import { guard } from './guard.js'
 import { json, readBody } from './http.js'
+import { getExamRow } from './examCache.js'
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
@@ -20,8 +21,7 @@ export async function handleExamRequest(req: IncomingMessage, res: ServerRespons
   try {
     const { id } = JSON.parse(await readBody(req, 4096)) as { id?: unknown }
     if (typeof id !== 'string' || !UUID.test(id)) return json(res, 400, { error: 'Link đề không hợp lệ.' })
-    const r = await fetch(`${base}/rest/v1/community_exams?id=eq.${id}&select=doc,listed`, { headers: { apikey: key, Authorization: `Bearer ${key}` } })
-    const [row] = r.ok ? ((await r.json()) as Array<{ doc: ExamDoc; listed: boolean }>) : []
+    const row = await getExamRow(base, key, id)
     if (!row?.doc) return json(res, 404, { error: 'Đề này không còn được xuất bản.' })
     if (row.listed) return json(res, 200, { doc: row.doc })
     const exam = docToExam(row.doc, id)

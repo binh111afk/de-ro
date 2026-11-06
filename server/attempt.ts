@@ -9,6 +9,7 @@ import { docToExam } from '../src/lib/docToExam.js'
 import { scoreQuestion } from '../src/lib/grading.js'
 import { guard, userFromToken } from './guard.js'
 import { json, readBody } from './http.js'
+import { getExamRow } from './examCache.js'
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const str = (v: unknown, max: number) => (typeof v === 'string' ? v.trim().slice(0, max) : '')
@@ -30,8 +31,7 @@ export async function handleAttemptRequest(req: IncomingMessage, res: ServerResp
     if (!UUID.test(examId) || !name) return json(res, 400, { error: 'Thiếu đề hoặc tên học sinh.' })
     const answers = (body.answers && typeof body.answers === 'object' ? body.answers : {}) as Record<string, unknown>
 
-    const r = await fetch(`${base}/rest/v1/community_exams?id=eq.${examId}&select=doc`, { headers })
-    const [row] = r.ok ? ((await r.json()) as Array<{ doc: ExamDoc }>) : []
+    const row = await getExamRow(base, key, examId)
     if (!row?.doc) return json(res, 404, { error: 'Không tìm thấy đề.' })
 
     const exam = docToExam(row.doc, examId)
@@ -68,9 +68,9 @@ export async function handleAttemptRequest(req: IncomingMessage, res: ServerResp
     })
     if (!ins.ok) return json(res, 502, { error: 'Không lưu được bài làm.' })
     // đề link gửi cho học sinh không kèm đáp án (api/exam): nộp xong mới trả điểm và đáp án để xem lại bài
-    const key: Record<string, { answer?: string; explanation?: string }> = {}
-    for (const q of questions) if (q.answer || q.explanation) key[q.id] = { answer: q.answer, explanation: q.explanation }
-    return json(res, 200, { score, max, key })
+    const answerKey: Record<string, { answer?: string; explanation?: string }> = {}
+    for (const q of questions) if (q.answer || q.explanation) answerKey[q.id] = { answer: q.answer, explanation: q.explanation }
+    return json(res, 200, { score, max, key: answerKey })
   } catch (err) {
     return json(res, 400, { error: err instanceof Error ? err.message : String(err) })
   }
