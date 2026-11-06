@@ -4,6 +4,7 @@
  *   (ghi bằng service role qua hàm `add_ai_usage`, cộng dồn nguyên tử).
  * - Khách: AI_GUEST_DAILY_TOKENS token / ngày theo IP, đếm trong bộ nhớ instance.
  * Không có SUPABASE_SERVICE_ROLE_KEY (máy dev) → không giới hạn người đăng nhập.
+ * Ngoại lệ từng tài khoản: bảng `ai_quota_overrides` (monthly_tokens null = không giới hạn).
  * Kiểm trước khi gọi AI (đã hết thì chặn), cộng sau khi có `usage` thật; một request có thể
  * vượt hạn mức một chút ở lần cuối — chấp nhận để khỏi phải đoán trước số token.
  */
@@ -34,9 +35,16 @@ export async function readQuota(userId: string | null, ip: string): Promise<Quot
   const s = supa()
   if (!s) return null
   try {
-    const r = await fetch(`${s.base}/rest/v1/ai_usage?user_id=eq.${encodeURIComponent(userId)}&month=eq.${month()}&select=tokens`, { headers: s.headers })
+    const uid = encodeURIComponent(userId)
+    const [ov, r] = await Promise.all([
+      fetch(`${s.base}/rest/v1/ai_quota_overrides?user_id=eq.${uid}&select=monthly_tokens`, { headers: s.headers }),
+      fetch(`${s.base}/rest/v1/ai_usage?user_id=eq.${uid}&month=eq.${month()}&select=tokens`, { headers: s.headers }),
+    ])
+    // ngoại lệ: monthly_tokens null = không giới hạn, số = hạn mức riêng
+    const override = ov.ok ? ((await ov.json()) as Array<{ monthly_tokens: number | null }>)[0] : undefined
+    if (override && override.monthly_tokens == null) return null
     const rows = r.ok ? ((await r.json()) as Array<{ tokens: number }>) : []
-    return { used: Number(rows[0]?.tokens ?? 0), limit: MONTHLY_LIMIT(), scope: 'month' }
+    return { used: Number(rows[0]?.tokens ?? 0), limit: override ? Number(override.monthly_tokens) : MONTHLY_LIMIT(), scope: 'month' }
   } catch {
     // Supabase lỗi thì không chặn người dùng (đếm lại khi cộng được)
     return { used: 0, limit: MONTHLY_LIMIT(), scope: 'month' }
