@@ -18,8 +18,9 @@ const LIMITS: Record<Api, [number, number]> = {
   upload: [20, 300],
   extract: [20, 200],
   search: [20, 200],
-  attempt: [30, 200],
-  exam: [60, 600],
+  // mở đề và nộp bài: cả lớp/cả trường thường đi chung một IP, và hai API này không gọi AI nên rẻ
+  attempt: [500, 500],
+  exam: [1000, 1000],
 }
 const WINDOW_MS = 10 * 60 * 1000
 
