@@ -151,8 +151,7 @@ export default function Quiz() {
         await submitAttempt({
           examId: exam.importedFrom!,
           name,
-          score: result.score,
-          max: result.total,
+          answers,
           seconds: startedAt ? (result.at - startedAt) / 1000 : 0,
           className: info?.className,
           seat: info?.seat,

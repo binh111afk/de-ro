@@ -1,0 +1,73 @@
+/**
+ * Nộp bài đề tương tác: server tự chấm theo đáp án trong đề đã xuất bản rồi mới ghi `exam_attempts`.
+ * Trình duyệt chỉ gửi bài làm (không gửi điểm) nên không thể tự khai điểm.
+ * Cần SUPABASE_SERVICE_ROLE_KEY (chỉ có ở server) vì bảng không còn cho trình duyệt ghi thẳng.
+ */
+import type { IncomingMessage, ServerResponse } from 'node:http'
+import type { ExamDoc } from '../src/data/docTypes'
+import { docToExam } from '../src/lib/docToExam.js'
+import { scoreQuestion } from '../src/lib/grading.js'
+import { guard, userFromToken } from './guard.js'
+import { json, readBody } from './http.js'
+
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+const str = (v: unknown, max: number) => (typeof v === 'string' ? v.trim().slice(0, max) : '')
+
+export async function handleAttemptRequest(req: IncomingMessage, res: ServerResponse): Promise<void> {
+  if (!(await guard(req, res, 'attempt'))) return
+  if (req.method === 'OPTIONS') return json(res, 204, {})
+  if (req.method !== 'POST') return json(res, 405, { error: 'Method not allowed' })
+
+  const base = (process.env.VITE_SUPABASE_URL ?? process.env.SUPABASE_URL ?? '').replace(/\/+$/, '')
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY ?? ''
+  if (!base || !key) return json(res, 503, { error: 'Máy chủ chưa cấu hình nộp bài.' })
+  const headers = { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' }
+
+  try {
+    const body = JSON.parse(await readBody(req, 256 * 1024)) as Record<string, unknown>
+    const examId = str(body.examId, 40)
+    const name = str(body.name, 60)
+    if (!UUID.test(examId) || !name) return json(res, 400, { error: 'Thiếu đề hoặc tên học sinh.' })
+    const answers = (body.answers && typeof body.answers === 'object' ? body.answers : {}) as Record<string, unknown>
+
+    const r = await fetch(`${base}/rest/v1/community_exams?id=eq.${examId}&select=doc`, { headers })
+    const [row] = r.ok ? ((await r.json()) as Array<{ doc: ExamDoc }>) : []
+    if (!row?.doc) return json(res, 404, { error: 'Không tìm thấy đề.' })
+
+    const questions = docToExam(row.doc, examId).sections.flatMap((s) => s.questions)
+    let score = 0
+    for (const q of questions) {
+      const given = answers[q.id]
+      score += scoreQuestion(q, typeof given === 'string' ? given.slice(0, 200) : undefined)
+    }
+    score = Math.round(score * 1000) / 1000
+    const max = Math.round(questions.reduce((n, q) => n + q.points, 0) * 1000) / 1000
+
+    const seat = Number(body.seat)
+    const device = str(body.deviceId, 64)
+    const ins = await fetch(`${base}/rest/v1/exam_attempts`, {
+      method: 'POST',
+      headers: { ...headers, Prefer: 'return=minimal' },
+      body: JSON.stringify({
+        exam_id: examId,
+        user_id: await userFromToken(req),
+        student_name: name,
+        score,
+        max_score: max,
+        duration_seconds: Math.max(0, Math.min(86400, Math.round(Number(body.seconds) || 0))),
+        device_id: device.length >= 8 ? device : null,
+        class_name: str(body.className, 30) || null,
+        seat_no: Number.isInteger(seat) && seat >= 1 && seat <= 999 ? seat : null,
+      }),
+    })
+    if (!ins.ok) return json(res, 502, { error: 'Không lưu được bài làm.' })
+    return json(res, 200, { score, max })
+  } catch (err) {
+    return json(res, 400, { error: err instanceof Error ? err.message : String(err) })
+  }
+}
+
+export function attemptMiddleware(req: IncomingMessage, res: ServerResponse, next: (err?: unknown) => void): void {
+  if (req.method !== 'POST' && req.method !== 'OPTIONS') return next()
+  handleAttemptRequest(req, res).catch((err: unknown) => json(res, 500, { error: String(err) }))
+}

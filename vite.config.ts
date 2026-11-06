@@ -7,6 +7,7 @@ import { extractMiddleware } from './server/extract'
 import { searchMiddleware } from './server/searchProxy'
 import { imageMiddleware } from './server/imageProxy'
 import { uploadMiddleware, fileMiddleware } from './server/r2'
+import { attemptMiddleware } from './server/attempt'
 
 // Nạp `.env` cho proxy. Không dùng `loadEnv` của Vite vì nó để process.env
 // thắng file — một biến LLM_API_KEY cũ trong shell sẽ đè key người dùng vừa
@@ -26,6 +27,7 @@ export default defineConfig({
         server.middlewares.use('/api/image', imageMiddleware)
         server.middlewares.use('/api/upload', uploadMiddleware)
         server.middlewares.use('/api/files', fileMiddleware)
+        server.middlewares.use('/api/attempt', attemptMiddleware)
       },
     },
   ],

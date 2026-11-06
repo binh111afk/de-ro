@@ -4,6 +4,7 @@
  */
 import { currentSession } from '@/lib/auth'
 import { rest } from '@/lib/documents'
+import { apiFetch } from '@/lib/apiFetch'
 
 export interface Attempt {
   id: string
@@ -81,21 +82,22 @@ export async function examGate(examId: string): Promise<{ listed: boolean; attem
 export const isRemoteExamId = (id: string | undefined): id is string =>
   Boolean(id && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id))
 
-/** Nộp bài. Có phiên đăng nhập thì gắn vào tài khoản. */
-export async function submitAttempt(a: { examId: string; name: string; score: number; max: number; seconds: number; className?: string; seat?: number }): Promise<void> {
-  const s = await currentSession()
-  const base = {
-    exam_id: a.examId,
-    student_name: a.name.trim().slice(0, 60),
-    score: a.score,
-    max_score: a.max,
-    duration_seconds: Math.max(0, Math.round(a.seconds)),
-  }
-  const send = (body: object) =>
-    rest('/exam_attempts', { method: 'POST', token: s?.access_token ?? import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY, prefer: 'return=minimal', body })
-  const extra = { device_id: deviceId(), class_name: a.className?.trim().slice(0, 30) || null, seat_no: a.seat ?? null }
-  // máy chủ chưa có cột mới thì vẫn gửi phần cũ, không mất bài
-  await send({ ...base, ...extra }).catch(() => send(base))
+/** Nộp bài: gửi bài làm (không gửi điểm), server tự chấm theo đáp án của đề rồi lưu. Có phiên đăng nhập thì gắn vào tài khoản. */
+export async function submitAttempt(a: { examId: string; name: string; answers: Record<string, string>; seconds: number; className?: string; seat?: number }): Promise<void> {
+  const res = await apiFetch('/api/attempt', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      examId: a.examId,
+      name: a.name.trim().slice(0, 60),
+      answers: a.answers,
+      seconds: Math.max(0, Math.round(a.seconds)),
+      deviceId: deviceId(),
+      className: a.className?.trim().slice(0, 30) || undefined,
+      seat: a.seat,
+    }),
+  })
+  if (!res.ok) throw new Error(`Nộp bài lỗi ${res.status}`)
 }
 
 /** Bài làm của các đề của bạn, mới nhất trước. */

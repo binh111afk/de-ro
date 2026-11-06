@@ -9,7 +9,7 @@
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { json } from './http.js'
 
-type Api = 'llm' | 'image' | 'upload' | 'extract' | 'search'
+type Api = 'llm' | 'image' | 'upload' | 'extract' | 'search' | 'attempt'
 
 /** số lượt mỗi cửa sổ 10 phút: [khách theo IP, người đã đăng nhập] */
 const LIMITS: Record<Api, [number, number]> = {
@@ -18,6 +18,7 @@ const LIMITS: Record<Api, [number, number]> = {
   upload: [20, 300],
   extract: [20, 200],
   search: [20, 200],
+  attempt: [30, 200],
 }
 const WINDOW_MS = 10 * 60 * 1000
 
@@ -58,7 +59,7 @@ function originAllowed(req: IncomingMessage): boolean {
 }
 
 /** id người dùng từ token Supabase (hỏi Supabase, nhớ 5 phút); token sai/hết hạn → null */
-async function userFromToken(req: IncomingMessage): Promise<string | null> {
+export async function userFromToken(req: IncomingMessage): Promise<string | null> {
   const token = header(req, 'authorization').replace(/^Bearer\s+/i, '').trim()
   if (!token) return null
   const cached = tokenCache.get(token)
