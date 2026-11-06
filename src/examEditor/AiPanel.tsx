@@ -568,6 +568,7 @@ function examSystemPrompt(documentDigest?: string): string {
     '- {"type":"bullets","items":["ý 1","ý 2"]}\n' +
     '- {"type":"grid","cols":2,"cells":["cột 1","cột 2"]}\n' +
     '- {"type":"question","no":1,"text":"Nội dung câu hỏi","options":[{"label":"A","text":"..."},{"label":"B","text":"..."},{"label":"C","text":"..."},{"label":"D","text":"..."}]}\n' +
+    '- Câu có hình: {"type":"question","no":5,"text":"Cho hàm số $y=f(x)$ có bảng biến thiên như hình bên dưới. Hàm số đạt cực đại tại","figure":{"kind":"vartable","expr":"x^3-3x+1","fname":"y"},"options":[…]}\n' +
     '- {"type":"question","kind":"tf","no":13,"text":"Lời dẫn của câu đúng/sai","options":[{"label":"a","text":"mệnh đề a"},{"label":"b","text":"mệnh đề b"},{"label":"c","text":"mệnh đề c"},{"label":"d","text":"mệnh đề d"}]}  (câu đúng/sai: đúng 4 ý a, b, c, d; nhãn chữ thường)\n' +
     '- {"type":"question","kind":"short","no":17,"text":"Nội dung câu hỏi","options":[]}  (câu trả lời ngắn: không có phương án; đáp án là MỘT SỐ, tối đa 4 ký tự kể cả dấu âm và dấu phẩy, ví dụ 12, -3,5, 0,25)\n' +
     '- {"type":"essay","no":1,"score":2,"text":"Nội dung","sub":["a) …","b) …"]}\n' +
@@ -586,7 +587,13 @@ function examSystemPrompt(documentDigest?: string): string {
     'phải "TÊN ĐỀ …\\nNăm học 20… – 20…\\nMôn: …\\nThời gian làm bài: …" (dòng cuối italic). ' +
     'Tên đề nằm ở dòng đầu cột phải; KHÔNG sinh thêm block title/meta trùng nội dung header.\n' +
     '- Chỉ dùng title/meta khi người dùng yêu cầu đề không có header (không ghi sở/trường). Sau header chỉ thêm student khi đề cần ô họ tên/số báo danh, rồi heading từng phần, ví dụ "PHẦN I. TRẮC NGHIỆM (3,0 điểm)".\n' +
-    '- Câu trắc nghiệm: block question, đúng 4 phương án A–D, đúng một đáp án, độ khó tăng dần, không trùng ý.\n' +
+    '- Câu trắc nghiệm: block question, đúng 4 phương án A–D, đúng một đáp án, không trùng ý. Phương án nhiễu phải là lỗi sai thường gặp (nhầm dấu, nhầm công thức, quên điều kiện), không bịa ngẫu nhiên.\n' +
+    '- ĐỘ KHÓ (ma trận 4 mức theo chuẩn kiểm tra đánh giá của Bộ GD&ĐT), trừ khi người dùng yêu cầu khác: ' +
+    'Nhận biết ~40% (nhớ định nghĩa, công thức, đọc trực tiếp từ hình/bảng), Thông hiểu ~30% (áp dụng một bước, tính toán đơn giản), ' +
+    'Vận dụng ~20% (phối hợp 2–3 bước, bài có tham số m, bài toán thực tế quen thuộc), Vận dụng cao ~10% (bài toán thực tế mới, tối ưu, biện luận nhiều trường hợp). ' +
+    'Ví dụ 12 câu trắc nghiệm: 5 NB, 4 TH, 2 VD, 1 VDC. Sắp xếp câu từ dễ đến khó trong mỗi phần. ' +
+    'Câu tự luận chia ý tăng dần: ý a) thông hiểu, ý b) vận dụng; câu cuối cùng của đề nên là vận dụng cao. ' +
+    'Câu VD/VDC phải thật sự cần suy luận nhiều bước, không chỉ thay số lớn hơn vào câu dễ.\n' +
     '- Câu tự luận: block essay có score, các ý a) b) trong sub.\n' +
     '- Đề trắc nghiệm theo định dạng tốt nghiệp THPT từ 2025 gồm ba phần: PHẦN I nhiều lựa chọn (question mặc định, A–D, 0,25 điểm/câu); ' +
     'PHẦN II đúng/sai (question kind "tf", mỗi câu 4 ý a) b) c) d), tối đa 1 điểm/câu: đúng 1 ý được 0,1; 2 ý 0,25; 3 ý 0,5; 4 ý 1 điểm); ' +
@@ -599,7 +606,10 @@ function examSystemPrompt(documentDigest?: string): string {
     '- HÌNH VẼ: câu nào cần hình (đồ thị, bảng biến thiên, bảng xét dấu, hình học, biểu đồ số liệu, mạch điện, sơ đồ cây, …) ' +
     'thì thêm field "figure" vào block question/essay/paragraph đó; app tự vẽ bằng công cụ và đặt hình ngay dưới khối. ' +
     'Không mô tả hình bằng chữ kiểu "(hình vẽ bên)" mà không kèm figure. Hình phải khớp số liệu trong đề và không lộ đáp án. ' +
-    'Mỗi khối tối đa một figure; chỉ dùng khi đề thật sự cần hình. Các loại figure:\n' +
+    'Mỗi khối tối đa một figure. Đề thật luôn có nhiều câu đọc hình, nên CHỦ ĐỘNG ra câu có hình: ' +
+    'đề Toán, Vật lí, Hoá học, Sinh học, Địa lí thì khoảng 25–35% số câu có figure (đề 12 câu trắc nghiệm → ít nhất 3–4 hình; câu tự luận về hàm số/hình học cũng nên có). ' +
+    'Ưu tiên dạng "Cho hàm số $y=f(x)$ có đồ thị / bảng biến thiên / bảng xét dấu đạo hàm như hình" (học sinh phải đọc hình mới làm được), hình học phẳng/không gian, biểu đồ số liệu, mạch điện, đồ thị chuyển động. ' +
+    'Môn không có hình phù hợp (Văn, Sử, ngoại ngữ…) thì không cần figure. Các loại figure:\n' +
     FIGURE_GUIDE +
     '\n' +
     '- Tiếng Việt chuẩn, số liệu nhất quán, mọi câu phải có đáp án đúng.\n\n' +
