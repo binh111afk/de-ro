@@ -83,7 +83,9 @@ export const isRemoteExamId = (id: string | undefined): id is string =>
   Boolean(id && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id))
 
 /** Nộp bài: gửi bài làm (không gửi điểm), server tự chấm theo đáp án của đề rồi lưu. Có phiên đăng nhập thì gắn vào tài khoản. */
-export async function submitAttempt(a: { examId: string; name: string; answers: Record<string, string>; seconds: number; className?: string; seat?: number }): Promise<void> {
+export interface GradeResult { score: number; max: number; key: Record<string, { answer?: string; explanation?: string }> }
+
+export async function submitAttempt(a: { examId: string; name: string; answers: Record<string, string>; seconds: number; className?: string; seat?: number }): Promise<GradeResult> {
   const res = await apiFetch('/api/attempt', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -98,6 +100,7 @@ export async function submitAttempt(a: { examId: string; name: string; answers: 
     }),
   })
   if (!res.ok) throw new Error(`Nộp bài lỗi ${res.status}`)
+  return (await res.json()) as GradeResult
 }
 
 /** Bài làm của các đề của bạn, mới nhất trước. */

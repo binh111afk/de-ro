@@ -148,7 +148,7 @@ export default function Quiz() {
         saveStudent({ ...(loadStudent() ?? { className: '' }), name })
       }
       try {
-        await submitAttempt({
+        const graded = await submitAttempt({
           examId: exam.importedFrom!,
           name,
           answers,
@@ -156,6 +156,7 @@ export default function Quiz() {
           className: info?.className,
           seat: info?.seat,
         })
+        useApp.getState().applyGrading(exam.id, graded.score, graded.max, graded.key ?? {})
         setSent('sent')
       } catch {
         setSent('failed')

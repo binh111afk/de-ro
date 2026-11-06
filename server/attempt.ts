@@ -67,8 +67,10 @@ export async function handleAttemptRequest(req: IncomingMessage, res: ServerResp
       }),
     })
     if (!ins.ok) return json(res, 502, { error: 'Không lưu được bài làm.' })
-    // không trả điểm: nộp lại nhiều lần để dò đáp án sẽ không thu được gì (màn hình tự hiện điểm của bài làm)
-    return json(res, 200, { ok: true })
+    // đề link gửi cho học sinh không kèm đáp án (api/exam): nộp xong mới trả điểm và đáp án để xem lại bài
+    const key: Record<string, { answer?: string; explanation?: string }> = {}
+    for (const q of questions) if (q.answer || q.explanation) key[q.id] = { answer: q.answer, explanation: q.explanation }
+    return json(res, 200, { score, max, key })
   } catch (err) {
     return json(res, 400, { error: err instanceof Error ? err.message : String(err) })
   }

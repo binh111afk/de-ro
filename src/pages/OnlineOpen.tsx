@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { AlertCircle, ArrowRight, CheckCircle2 } from 'lucide-react'
 import { Button, EmptyState, Field, inputClass, Spinner } from '@/components/ui'
 import { SiteSelect } from '@/components/SiteSelect'
-import { getCommunityDoc } from '@/lib/community'
+import { getStudentDoc } from '@/lib/community'
 import { docToExam } from '@/lib/docToExam'
 import { examGate, loadStudent, saveStudent, type StudentInfo } from '@/lib/attempts'
 import { useApp } from '@/store/app'
@@ -33,7 +33,7 @@ export default function OnlineOpen() {
   useEffect(() => {
     if (!id) return
     let alive = true
-    Promise.all([getCommunityDoc(id), examGate(id)])
+    Promise.all([getStudentDoc(id), examGate(id)])
       .then(([doc, gate]) => {
         if (!alive) return
         const e = docToExam(doc, id)

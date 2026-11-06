@@ -73,6 +73,8 @@ interface AppState {
   submitQuiz: () => void
   resetQuiz: () => void
   setQuizSubmitted: (v: boolean) => void
+  /** đề link không kèm đáp án: server chấm xong trả điểm + đáp án, gắn vào đề và kết quả */
+  applyGrading: (examId: string, score: number, total: number, key: Record<string, { answer?: string; explanation?: string }>) => void
 }
 
 const uid = () => Math.random().toString(36).slice(2, 10)
@@ -417,6 +419,22 @@ export const useApp = create<AppState>()(
         }),
 
       setQuizSubmitted: (v) => set({ quizSubmitted: v }),
+
+      applyGrading: (examId, score, total, key) =>
+        set((s) => ({
+          myExams: s.myExams.map((e) =>
+            e.id !== examId
+              ? e
+              : {
+                  ...e,
+                  sections: e.sections.map((sec) => ({
+                    ...sec,
+                    questions: sec.questions.map((q) => (key[q.id] ? { ...q, ...key[q.id] } : q)),
+                  })),
+                },
+          ),
+          lastResult: s.lastResult && s.lastResult.examId === examId ? { ...s.lastResult, score, total } : s.lastResult,
+        })),
     }),
     {
       name: 'dethinhbien-v1',

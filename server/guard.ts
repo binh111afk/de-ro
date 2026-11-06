@@ -9,7 +9,7 @@
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { json } from './http.js'
 
-type Api = 'llm' | 'image' | 'upload' | 'extract' | 'search' | 'attempt'
+type Api = 'llm' | 'image' | 'upload' | 'extract' | 'search' | 'attempt' | 'exam'
 
 /** số lượt mỗi cửa sổ 10 phút: [khách theo IP, người đã đăng nhập] */
 const LIMITS: Record<Api, [number, number]> = {
@@ -19,6 +19,7 @@ const LIMITS: Record<Api, [number, number]> = {
   extract: [20, 200],
   search: [20, 200],
   attempt: [30, 200],
+  exam: [60, 600],
 }
 const WINDOW_MS = 10 * 60 * 1000
 

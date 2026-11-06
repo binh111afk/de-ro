@@ -7,6 +7,7 @@ import type { ExamDoc } from '@/data/docTypes'
 import { questionCount, totalPoints } from '@/data/types'
 import { AuthError, currentSession } from '@/lib/auth'
 import { docToExam } from '@/lib/docToExam'
+import { apiFetch } from '@/lib/apiFetch'
 
 const BASE = import.meta.env.VITE_SUPABASE_URL as string
 const KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string
@@ -117,4 +118,12 @@ export async function unpublish(id: string): Promise<void> {
   const s = await currentSession()
   if (!s) throw new AuthError('Bạn cần đăng nhập.')
   await rest(`/community_exams?id=eq.${encodeURIComponent(id)}`, { method: 'DELETE', token: s.access_token, prefer: 'return=minimal' })
+}
+
+/** Đề cho học sinh mở bằng link: qua server, đề chỉ-link không kèm đáp án (xem server/exam.ts). */
+export async function getStudentDoc(id: string): Promise<ExamDoc> {
+  const res = await apiFetch('/api/exam', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) })
+  const data = (await res.json().catch(() => null)) as { doc?: ExamDoc; error?: string } | null
+  if (!res.ok || !data?.doc) throw new Error(data?.error ?? 'Đề này không còn được xuất bản.')
+  return data.doc
 }
