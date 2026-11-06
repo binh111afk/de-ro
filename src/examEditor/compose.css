@@ -3718,3 +3718,10 @@
     display: none !important;
   }
 }
+
+/* ảnh cuối đề bài câu hỏi (hình AI / kho): dòng riêng, căn giữa, trước phương án */
+div[data-exam-node='examQuestionPrompt'] > .exam-image:last-child,
+div[data-exam-node='examQuestionPrompt'] > .exam-image:has(+ .ProseMirror-separator) {
+  display: table;
+  margin: 4px auto 0;
+}

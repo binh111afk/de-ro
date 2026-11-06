@@ -283,6 +283,21 @@ function leadImage(text: RichText) {
   return imgs.length ? { imgs, rest: spans.slice(at) as RichText } : null
 }
 
+/** Ảnh đứng cuối đề bài (sau mọi chữ): tách ra đoạn riêng căn giữa, trước phương án — khớp trình soạn */
+function trailImage(text: RichText) {
+  if (typeof text === 'string') return null
+  const spans = text as Array<Span | string>
+  let at = spans.length
+  while (at > 0) {
+    const s = spans[at - 1]
+    if (typeof s === 'string' ? s.trim() !== '' : !s.image && s.text.trim() !== '') break
+    at--
+  }
+  if (at === 0 || at === spans.length) return null
+  const imgs = spans.slice(at).filter((s): s is Span => typeof s !== 'string' && !!s.image && !!decodeImage(s.image.src))
+  return imgs.length ? { imgs, rest: spans.slice(0, at) as RichText } : null
+}
+
 /** Bảng 2 ô không viền: đề bài một bên, ảnh một bên. */
 function sideTable(pos: 'left' | 'right', textParas: Paragraph[], imgs: Span[]) {
   const px = Math.min(Math.max(...imgs.map((s) => s.image?.width ?? 0), 1) || 1, IMG_MAX_PX)
@@ -400,7 +415,8 @@ function blockToDocx(b: ExamBlock, ctx: Ctx): Out[] {
       ctx.q += 1
       const side = sideImage(b.text, b.imagePosition)
       const lead = side ? null : leadImage(b.text)
-      const headText = side ? side.rest : lead ? lead.rest : b.text
+      const trail = side || lead ? null : trailImage(b.text)
+      const headText = side ? side.rest : lead ? lead.rest : trail ? trail.rest : b.text
       const pre: Out[] = lead ? [para(lead.imgs.flatMap((s) => imageRun(s.image!)), { spacing: { before: 120 }, keepNext: true, ...fmtOpts(b.format) })] : []
       const headPara = para([new TextRun({ text: `Câu ${ctx.q}. `, bold: true }), ...runs(headText)], {
         alignment: justify(headText),
@@ -408,6 +424,9 @@ function blockToDocx(b: ExamBlock, ctx: Ctx): Out[] {
         keepNext: true,
         ...fmtOpts(b.format),
       })
+      const trailParas = trail
+        ? [para(trail.imgs.flatMap((s) => imageRun(s.image!)), { alignment: AlignmentType.CENTER, spacing: { after: 45 }, keepNext: true })]
+        : []
       const head: Out = side ? sideTable(side.pos, [headPara], side.imgs) : headPara
       // trả lời ngắn: 4 ô trống điền đáp số
       if (b.kind === 'short') {
@@ -415,6 +434,7 @@ function blockToDocx(b: ExamBlock, ctx: Ctx): Out[] {
         return [
           ...pre,
           head,
+          ...trailParas,
           new Table({
             rows: [
               new TableRow({
@@ -430,7 +450,7 @@ function blockToDocx(b: ExamBlock, ctx: Ctx): Out[] {
           para([], { spacing: { after: 60 } }),
         ]
       }
-      if (!b.options.length) return [...pre, head]
+      if (!b.options.length) return [...pre, head, ...trailParas]
       // đúng/sai: mỗi ý một dòng, nhãn "a)"; trắc nghiệm: 4/3/2/1 cột theo độ dài như trên màn hình, nhãn "A."
       const tf = b.kind === 'tf'
       const cols = tf ? 1 : estimateChoiceCols(b.options.map((o) => o.text))
@@ -450,7 +470,7 @@ function blockToDocx(b: ExamBlock, ctx: Ctx): Out[] {
           },
         )
       })
-      return [...pre, head, ...lines]
+      return [...pre, head, ...trailParas, ...lines]
     }
 
     case 'essay': {

@@ -303,6 +303,7 @@ const EXPORT_CSS = `
   .grid { width: 100%; border: none; border-collapse: collapse; margin: 4px 0; }
   .grid td { border: none; vertical-align: top; padding: 0 6px 0 0; }
   .q { margin: 8px 0 3px; text-align: justify; }
+  .q > img:last-child { display: block; margin: 4px auto 0; }
   /* Phương án 2 cột bằng bảng: Word không hiểu flex, dùng bảng để file Word
      và bản in giống nhau. */
   .opts { margin: 0 0 4px 22px; }
