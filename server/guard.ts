@@ -35,13 +35,13 @@ const header = (req: IncomingMessage, name: string) => {
 const onVercel = !!process.env.VERCEL
 
 /** IP thật: trên Vercel lấy header do Vercel tự ghi (khách không giả được); máy dev lấy địa chỉ socket. */
-function clientIp(req: IncomingMessage): string {
+export function clientIp(req: IncomingMessage): string {
   if (onVercel) return header(req, 'x-vercel-forwarded-for').split(',')[0].trim() || header(req, 'x-real-ip') || req.socket?.remoteAddress || ''
   return req.socket?.remoteAddress || ''
 }
 
 /** chỉ miễn hạn mức khi chạy dev ở máy, không bao giờ trên Vercel */
-const isLocal = (ip: string) => !onVercel && (ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1')
+export const isLocal = (ip: string) => !onVercel && (ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1')
 
 /** Origin hợp lệ: cùng host với request, localhost, hoặc liệt kê trong ALLOWED_ORIGINS (cách nhau dấu phẩy) */
 function originAllowed(req: IncomingMessage): boolean {

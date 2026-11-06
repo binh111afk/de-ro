@@ -24,6 +24,20 @@ export interface LlmOptions {
 
 const ENDPOINT = '/api/llm'
 
+/** Hạn mức token AI server báo về (tháng với tài khoản, ngày với khách). */
+export interface AiQuota {
+  used: number
+  limit: number
+  scope: 'month' | 'day'
+}
+/** Lần báo gần nhất + sự kiện `ai-quota` để giao diện cập nhật. */
+export let lastAiQuota: AiQuota | null = null
+function reportQuota(q: unknown) {
+  if (!q || typeof q !== 'object' || typeof (q as AiQuota).limit !== 'number') return
+  lastAiQuota = q as AiQuota
+  if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent<AiQuota>('ai-quota', { detail: lastAiQuota }))
+}
+
 export async function callLlm(messages: LlmMessage[], opts: LlmOptions = {}): Promise<LlmResult> {
   const res = await apiFetch(ENDPOINT, {
     method: 'POST',
@@ -41,14 +55,16 @@ export async function callLlm(messages: LlmMessage[], opts: LlmOptions = {}): Pr
     const text = await res.text()
     let detail = text.slice(0, 500)
     try {
-      const parsed = JSON.parse(text) as { error?: string }
+      const parsed = JSON.parse(text) as { error?: string; quota?: unknown }
       if (parsed.error) detail = parsed.error
+      reportQuota(parsed.quota)
     } catch {
       /* giữ raw text */
     }
     throw new Error(detail)
   }
-  const data = (await res.json()) as LlmResult
+  const data = (await res.json()) as LlmResult & { quota?: unknown }
+  reportQuota(data.quota)
   if (!data.content?.trim()) {
     throw new Error(
       'AI không trả về nội dung (có thể do suy luận quá dài bị cắt). Hãy thử lại hoặc rút gọn yêu cầu.',

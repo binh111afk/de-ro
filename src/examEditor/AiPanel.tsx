@@ -9,7 +9,7 @@
  *   - composer là thẻ bo 16px, Enter gửi, Shift+Enter xuống dòng, Esc để dừng.
  */
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { callLlm, type LlmMessage } from '@/lib/llm'
+import { callLlm, lastAiQuota, type AiQuota, type LlmMessage } from '@/lib/llm'
 import {
   parseAiObject,
   parseDeckPlan,
@@ -623,6 +623,17 @@ function examSystemPrompt(documentDigest?: string): string {
   )
 }
 
+/** Hạn mức AI server báo về sau mỗi lần gọi (null khi chưa gọi lần nào hoặc không giới hạn). */
+function useAiQuota(): AiQuota | null {
+  const [q, setQ] = useState<AiQuota | null>(lastAiQuota)
+  useEffect(() => {
+    const on = (e: Event) => setQ((e as CustomEvent<AiQuota>).detail)
+    window.addEventListener('ai-quota', on)
+    return () => window.removeEventListener('ai-quota', on)
+  }, [])
+  return q
+}
+
 export function AiPanel({
   onApplyBlocks,
   onApplySlides,
@@ -665,6 +676,7 @@ export function AiPanel({
   const starters = mode === 'slide' ? SLIDE_STARTERS : STARTERS
   const [turns, setTurns] = useState<ChatTurn[]>([])
   const [input, setInput] = useState('')
+  const quota = useAiQuota()
   const [files, setFiles] = useState<Attachment[]>([])
   const [removingFiles, setRemovingFiles] = useState<string[]>([])
   const [busy, setBusy] = useState(false)
@@ -1333,6 +1345,14 @@ export function AiPanel({
               </div>
             ) : null}
             <span className="ai-input-spacer" />
+            {quota ? (
+              <span
+                className={cn('ai-quota', quota.used >= quota.limit * 0.9 && 'is-low')}
+                title={`Đã dùng ${quota.used.toLocaleString('vi-VN')} / ${quota.limit.toLocaleString('vi-VN')} token AI ${quota.scope === 'day' ? 'hôm nay' : 'tháng này'}`}
+              >
+                {Math.min(100, Math.round((quota.used / quota.limit) * 100))}% {quota.scope === 'day' ? 'hôm nay' : 'tháng này'}
+              </span>
+            ) : null}
             {busy ? (
               <button
                 type="button"

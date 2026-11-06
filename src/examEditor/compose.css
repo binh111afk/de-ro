@@ -1800,6 +1800,17 @@
     flex: 1;
   }
 
+  /* hạn mức token AI đã dùng (tháng / hôm nay) */
+  .ai-quota {
+    font-size: 11px;
+    color: var(--color-ink-muted, #8a8a8a);
+    margin-right: 8px;
+    white-space: nowrap;
+  }
+  .ai-quota.is-low {
+    color: var(--color-clay, #b4532a);
+  }
+
   /* chip tệp hiển thị lại trong lượt chat */
   .ai-msg-files {
     display: flex;

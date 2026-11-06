@@ -19,7 +19,8 @@ import { isIP } from 'node:net'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { json, readBody } from './http.js'
-import { guard } from './guard.js'
+import { clientIp, guard, isLocal, userFromToken } from './guard.js'
+import { addUsage, quotaMessage, readQuota } from './aiQuota.js'
 import { handleExtractRequest } from './extract.js'
 import { handleSearchRequest } from './searchProxy.js'
 import { handleImageRequest } from './imageProxy.js'
@@ -132,6 +133,10 @@ function providerConfig() {
     agnesApiKey: process.env.AGNES_API_KEY?.trim() || '',
     agnesBaseURL: assertAllowedUrl((process.env.AGNES_BASE_URL?.trim() || 'https://apihub.agnes-ai.com/v1').replace(/\/+$/, '')).toString().replace(/\/+$/, ''),
     agnesModel: process.env.AGNES_MODEL?.trim() || 'agnes-3.0-flash',
+    // Inception Mercury (dLLM), tương thích OpenAI
+    mercuryApiKey: process.env.MERCURY_API_KEY?.trim() || '',
+    mercuryBaseURL: assertAllowedUrl((process.env.MERCURY_BASE_URL?.trim() || 'https://api.inceptionlabs.ai/v1').replace(/\/+$/, '')).toString().replace(/\/+$/, ''),
+    mercuryModel: process.env.MERCURY_MODEL?.trim() || 'mercury-3',
     // ZCode provider config is the source of truth for local Xkiro fallback;
     // stale shell/.env keys must not shadow the currently selected provider key.
     xkiroApiKey: xkiro.apiKey || process.env.XKIRO_API_KEY?.trim() || '',
@@ -163,6 +168,12 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
   if (!(await guard(req, res, 'llm'))) return
   if (req.method === 'OPTIONS') return json(res, 204, {})
 
+  // hạn mức token theo tài khoản (tháng) / khách (ngày theo IP); máy dev không giới hạn
+  const ip = clientIp(req)
+  const userId = isLocal(ip) ? null : await userFromToken(req)
+  const quota = isLocal(ip) ? null : await readQuota(userId, ip)
+  if (quota && quota.used >= quota.limit) return json(res, 429, { error: quotaMessage(quota), quota })
+
   try {
     const raw = await readBody(req)
     const body = JSON.parse(raw) as {
@@ -180,24 +191,27 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
     } catch (err) {
       return json(res, 500, { error: err instanceof Error ? err.message : String(err) })
     }
-    if (!prov.apiKey && !prov.xkiroApiKey && !prov.agnesApiKey) {
+    if (!prov.apiKey && !prov.xkiroApiKey && !prov.agnesApiKey && !prov.mercuryApiKey) {
       return json(res, 500, {
-        error: 'Chưa cấu hình LLM_API_KEY, AGNES_API_KEY hoặc XKIRO_API_KEY. Kiểm tra file .env/config provider.',
+        error: 'Chưa cấu hình LLM_API_KEY, MERCURY_API_KEY, AGNES_API_KEY hoặc XKIRO_API_KEY. Kiểm tra file .env/config provider.',
       })
     }
 
-    // Thứ tự thử: opencode (model chính [+ LLM_FALLBACK_MODEL nếu đặt]) → Agnes → xkiro.
+    // Thứ tự thử: opencode (model chính [+ LLM_FALLBACK_MODEL nếu đặt]) → Mercury → Agnes → xkiro.
+    // Provider dự phòng nào không có key thì bỏ qua.
     // `opencode` = gửi x-opencode-session + reasoning_effort (chỉ gateway opencode hiểu).
     // `noMaxTokens`: Agnes từ chối max_tokens > 4096 (400) nhưng bỏ trống thì không cắt → không gửi.
     type Target = { model: string; url: string; key: string; opencode: boolean; noMaxTokens?: boolean }
     const targets: Target[] = []
-    // client chỉ định đúng model Agnes → gọi thẳng Agnes (thử/so chất lượng)
-    const wantsAgnes = !!prov.agnesApiKey && body.model === prov.agnesModel
-    if (prov.apiKey && !wantsAgnes) {
+    // client chỉ định đúng model dự phòng → bỏ qua opencode, gọi thẳng (thử/so chất lượng)
+    const wantsBackup =
+      (!!prov.agnesApiKey && body.model === prov.agnesModel) || (!!prov.mercuryApiKey && body.model === prov.mercuryModel)
+    if (prov.apiKey && !wantsBackup) {
       for (const m of [body.model ?? prov.model, prov.fallbackModel]) {
         if (m && !targets.some((t) => t.model === m)) targets.push({ model: m, url: prov.endpoint.toString(), key: prov.apiKey, opencode: true })
       }
     }
+    if (prov.mercuryApiKey) targets.push({ model: prov.mercuryModel, url: `${prov.mercuryBaseURL}/chat/completions`, key: prov.mercuryApiKey, opencode: false })
     if (prov.agnesApiKey) targets.push({ model: prov.agnesModel, url: `${prov.agnesBaseURL}/chat/completions`, key: prov.agnesApiKey, opencode: false, noMaxTokens: true })
     if (prov.xkiroApiKey) {
       for (const m of [prov.xkiroModel, DEFAULT_XKIRO_FALLBACK_MODEL]) {
@@ -280,7 +294,9 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
         writeRawLog(text, { _model: selectedModel, _attempt: attempt, finishReason: choice?.finish_reason, usage: data.usage, content, reasoning })
 
         if (content.trim()) {
-          return json(res, 200, { content, reasoning, usage: data.usage ?? null, model: data.model ?? selectedModel, finishReason: choice?.finish_reason ?? 'unknown' })
+          const spent = Number((data.usage as { total_tokens?: number } | undefined)?.total_tokens ?? 0)
+          const after = await addUsage(userId, ip, spent, quota)
+          return json(res, 200, { content, reasoning, usage: data.usage ?? null, model: data.model ?? selectedModel, finishReason: choice?.finish_reason ?? 'unknown', quota: after })
         }
         lastErr = `${selectedModel}: empty content (finish_reason=${choice?.finish_reason ?? 'unknown'})`
         if (attempt === 0 && target.opencode) {
