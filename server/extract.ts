@@ -25,10 +25,69 @@ export interface ExtractedFile {
   warning?: string
 }
 
+/**
+ * Quét khối XML `<tag ...>…</tag>` bằng indexOf (thời gian tuyến tính). Không dùng regex `[\s\S]*?`
+ * trên cả tệp: tệp cố tình thiếu thẻ đóng làm regex quét lại từ mọi vị trí (thời gian bình phương).
+ * Sau tên thẻ phải là khoảng trắng, `>` hoặc `/` (để `<w:r` không khớp `<w:rPr`).
+ */
+const tagEnd = (c: string | undefined) => c === ' ' || c === '>' || c === '/' || c === '\t' || c === '\n' || c === '\r'
+
+function* xmlBlocks(xml: string, tag: string): Generator<{ start: number; end: number; el: string; inner: string }> {
+  const open = `<${tag}`
+  const close = `</${tag}>`
+  let pos = 0
+  while (pos < xml.length) {
+    const i = xml.indexOf(open, pos)
+    if (i < 0) return
+    if (!tagEnd(xml[i + open.length])) { pos = i + open.length; continue }
+    const gt = xml.indexOf('>', i)
+    if (gt < 0) return
+    if (xml[gt - 1] === '/') { pos = gt + 1; continue } // thẻ tự đóng: không có nội dung
+    const j = xml.indexOf(close, gt)
+    if (j < 0) return
+    const end = j + close.length
+    yield { start: i, end, el: xml.slice(i, end), inner: xml.slice(gt + 1, j) }
+    pos = end
+  }
+}
+
+/** Thay từng khối `<tag>…</tag>` bằng kết quả của `fn` (tuyến tính). */
+function mapXmlBlocks(xml: string, tag: string, fn: (el: string, inner: string) => string): string {
+  let out = ''
+  let last = 0
+  for (const b of xmlBlocks(xml, tag)) {
+    out += xml.slice(last, b.start) + fn(b.el, b.inner)
+    last = b.end
+  }
+  return out + xml.slice(last)
+}
+
+/** Thẻ mở đầu tiên `<tag ...>` (chỉ phần trong `<…>`), để đọc thuộc tính bằng regex ngắn. */
+function openTag(xml: string, tag: string): string {
+  let pos = 0
+  for (;;) {
+    const i = xml.indexOf(`<${tag}`, pos)
+    if (i < 0) return ''
+    const gt = xml.indexOf('>', i)
+    if (gt < 0) return ''
+    if (tagEnd(xml[i + tag.length + 1])) return xml.slice(i, gt + 1)
+    pos = gt + 1
+  }
+}
+
+/** Giá trị thuộc tính trong một thẻ mở (thẻ ngắn, regex không lặp lồng). */
+const attr = (tag: string, name: string): string | undefined => {
+  const at = tag.indexOf(` ${name}="`) >= 0 ? tag.indexOf(` ${name}="`) : tag.search(new RegExp(`\s${name}="`))
+  if (at < 0) return undefined
+  const from = at + name.length + 3
+  const to = tag.indexOf('"', from)
+  return to < 0 ? undefined : tag.slice(from, to)
+}
+
 function clean(text: string): string {
   return text
     .replace(/\r/g, '')
-    .replace(/[ \t]+\n/g, '\n')
+    .split('\n').map((l) => l.replace(/[ \t]+$/, '')).join('\n')
     .replace(/\n{3,}/g, '\n\n')
     .replace(/[ \t]{2,}/g, ' ')
     .trim()
@@ -96,14 +155,18 @@ async function tokenizeImages(zip: import('jszip'), xmlIn: string): Promise<{ xm
   const relsFile = zip.file('word/_rels/document.xml.rels')
   if (!relsFile) return { xml: xmlIn, images: [] }
   const rels = new Map<string, string>()
-  for (const m of (await relsFile.async('string')).matchAll(/<Relationship\b[^>]*>/g)) {
+  const relsXml = await relsFile.async('string')
+  for (let at = relsXml.indexOf('<Relationship'); at >= 0; at = relsXml.indexOf('<Relationship', at + 1)) {
+    const gt = relsXml.indexOf('>', at)
+    if (gt < 0) break
+    const m = [relsXml.slice(at, gt + 1)]
     const id = m[0].match(/\bId="([^"]+)"/)?.[1]
     const target = m[0].match(/\bTarget="([^"]+)"/)?.[1]
     if (id && target && /\/image$/.test(m[0].match(/\bType="([^"]+)"/)?.[1] ?? '')) rels.set(id, target)
   }
   if (!rels.size) return { xml: xmlIn, images: [] }
   // mc:AlternateContent: giữ phần Choice (tránh đếm ảnh hai lần cùng phần Fallback VML)
-  const xml = xmlIn.replace(/<mc:AlternateContent\b[^>]*>[\s\S]*?<\/mc:AlternateContent>/g, (block) => block.match(/<mc:Choice\b[^>]*>([\s\S]*?)<\/mc:Choice>/)?.[1] ?? block)
+  const xml = mapXmlBlocks(xmlIn, 'mc:AlternateContent', (block) => xmlBlocks(block, 'mc:Choice').next().value?.inner ?? block)
   const images: string[] = []
   const byTarget = new Map<string, number>()
   let total = 0
@@ -134,15 +197,20 @@ async function tokenizeImages(zip: import('jszip'), xmlIn: string): Promise<{ xm
   }
   const parts: string[] = []
   let last = 0
-  for (const m of xml.matchAll(/<w:drawing\b(?:(?!<w:drawing\b)[\s\S])*?<\/w:drawing>|<w:pict\b(?:(?!<w:pict\b)[\s\S])*?<\/w:pict>/g)) {
-    parts.push(xml.slice(last, m.index))
-    last = m.index! + m[0].length
-    const el = m[0]
+  const found = [...xmlBlocks(xml, 'w:drawing'), ...xmlBlocks(xml, 'w:pict')].sort((a, b) => a.start - b.start)
+  for (const m of found) {
+    if (m.start < last) continue // khối lồng trong khối trước
+    parts.push(xml.slice(last, m.start))
+    last = m.end
+    const el = m.el
     if (el.includes('<w:txbxContent')) { parts.push(el); continue } // khung chữ: để mammoth đọc
-    const rid = el.match(/<a:blip\b[^>]*\br:embed="([^"]+)"/)?.[1] ?? el.match(/<v:imagedata\b[^>]*\br:id="([^"]+)"/)?.[1]
+    const rid = attr(openTag(el, 'a:blip'), 'r:embed') || attr(openTag(el, 'v:imagedata'), 'r:id')
     if (!rid) { parts.push(el); continue }
-    const ext = el.match(/<wp:extent\b[^>]*\bcx="(\d+)"[^>]*\bcy="(\d+)"/)
-    const pt = el.match(/width:([\d.]+)pt;\s*height:([\d.]+)pt/)
+    const extTag = openTag(el, 'wp:extent')
+    const cx = attr(extTag, 'cx')
+    const cy = attr(extTag, 'cy')
+    const ext = cx && cy && /^\d+$/.test(cx) && /^\d+$/.test(cy) ? [extTag, cx, cy] : null
+    const pt = (attr(openTag(el, 'v:shape'), 'style') ?? '').match(/width:([\d.]+)pt;\s*height:([\d.]+)pt/)
     const [w, h] = ext ? [Number(ext[1]), Number(ext[2])] : pt ? [Number(pt[1]) * 12700, Number(pt[2]) * 12700] : [Infinity, Infinity]
     // bỏ ảnh trang trí: cả hai cạnh nhỏ (icon) hoặc một cạnh mỏng như đường kẻ. Dải chữ cao ~13px nhưng rộng thì giữ.
     if (Math.max(w, h) < MIN_IMAGE_EMU || Math.min(w, h) < MIN_LINE_EMU) continue
@@ -164,18 +232,46 @@ async function prepareDocx(data: Buffer): Promise<{ data: Buffer; images: string
   const zip = await mod.default.loadAsync(data)
   const file = zip.file('word/document.xml')
   if (!file) return { data, images: [] }
-  const marked = (await file.async('string')).replace(/<w:r(?:\s[^>]*)?>[\s\S]*?<\/w:r>/g, (run) => {
-    const rPr = run.match(/<w:rPr>[\s\S]*?<\/w:rPr>/)?.[0] ?? ''
+  const marked = mapXmlBlocks(await file.async('string'), 'w:r', (run) => {
+    const rPr = xmlBlocks(run, 'w:rPr').next().value?.el ?? ''
     if (!rPr || !isEmphasised(rPr)) return run
-    return run.replace(/(<w:t(?:\s[^>]*)?>)([^<]*\S[^<]*)(<\/w:t>)/g, `$1${EMPH_ON}$2${EMPH_OFF}$3`)
+    return mapXmlBlocks(run, 'w:t', (t, inner) =>
+      /\S/.test(inner) && !inner.includes('<') ? `${t.slice(0, t.length - inner.length - 6)}${EMPH_ON}${inner}${EMPH_OFF}</w:t>` : t,
+    )
   })
   const { xml, images, warning } = await tokenizeImages(zip, marked)
   zip.file('word/document.xml', xml)
   return { data: await zip.generateAsync({ type: 'nodebuffer' }), images, warning }
 }
 
+/**
+ * Trình đọc XML của mammoth chậm theo bình phương khi tệp có rất nhiều thẻ mở không đóng
+ * (1 KB → hàng chục giây). Quét tuyến tính độ lồng thẻ của mọi phần XML trước khi đưa cho mammoth.
+ */
+const MAX_XML_DEPTH = 200
+async function assertSaneDocxXml(data: Buffer) {
+  const mod = await import('jszip')
+  const zip = await mod.default.loadAsync(data)
+  for (const name of Object.keys(zip.files)) {
+    if (!name.endsWith('.xml') && !name.endsWith('.rels')) continue
+    const xml = await zip.files[name].async('string')
+    let depth = 0
+    for (let i = xml.indexOf('<'); i >= 0; i = xml.indexOf('<', i + 1)) {
+      const c = xml[i + 1]
+      if (c === '?' || c === '!') continue
+      if (c === '/') { depth--; continue }
+      const gt = xml.indexOf('>', i)
+      if (gt < 0) throw new Error('Tệp Word hỏng.')
+      if (xml[gt - 1] !== '/') depth++
+      if (depth > MAX_XML_DEPTH) throw new Error('Tệp Word có cấu trúc bất thường, không đọc được.')
+      i = gt
+    }
+  }
+}
+
 async function extractDocx(data: Buffer, marks = false): Promise<{ text: string; images: string[]; warning?: string }> {
   const mammoth = await import('mammoth')
+  await assertSaneDocxXml(data)
   const prep = marks ? await prepareDocx(data) : { data, images: [] as string[], warning: undefined }
   const result = await mammoth.extractRawText({ buffer: prep.data })
   return { text: result.value, images: prep.images, warning: prep.warning }
@@ -469,7 +565,7 @@ async function extractPptxSlides(data: Buffer): Promise<string[]> {
     const xml = await entry.async('string')
     const lines = (xml.split(/<\/a:p>/) as string[])
       .map((chunk: string) =>
-        [...chunk.matchAll(/<a:t>([\s\S]*?)<\/a:t>/g)].map((m) => decodeXml(m[1])).join(''),
+        [...xmlBlocks(chunk, 'a:t')].map((m) => decodeXml(m.inner)).join(''),
       )
       .map((line: string) => line.trim())
       .filter(Boolean)

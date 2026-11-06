@@ -34,7 +34,15 @@ export async function handleAttemptRequest(req: IncomingMessage, res: ServerResp
     const [row] = r.ok ? ((await r.json()) as Array<{ doc: ExamDoc }>) : []
     if (!row?.doc) return json(res, 404, { error: 'Không tìm thấy đề.' })
 
-    const questions = docToExam(row.doc, examId).sections.flatMap((s) => s.questions)
+    const exam = docToExam(row.doc, examId)
+    const seat = Number(body.seat)
+    const device = str(body.deviceId, 64)
+    // đề "chỉ làm một lần": máy này đã nộp thì từ chối (trước đây chỉ chặn ở trình duyệt)
+    if (exam.settings?.oneAttempt && device.length >= 8) {
+      const dup = await fetch(`${base}/rest/v1/exam_attempts?exam_id=eq.${examId}&device_id=eq.${encodeURIComponent(device)}&select=id&limit=1`, { headers })
+      if (dup.ok && ((await dup.json()) as unknown[]).length) return json(res, 409, { error: 'Em đã nộp bài cho đề này rồi.' })
+    }
+    const questions = exam.sections.flatMap((s) => s.questions)
     let score = 0
     for (const q of questions) {
       const given = answers[q.id]
@@ -43,8 +51,6 @@ export async function handleAttemptRequest(req: IncomingMessage, res: ServerResp
     score = Math.round(score * 1000) / 1000
     const max = Math.round(questions.reduce((n, q) => n + q.points, 0) * 1000) / 1000
 
-    const seat = Number(body.seat)
-    const device = str(body.deviceId, 64)
     const ins = await fetch(`${base}/rest/v1/exam_attempts`, {
       method: 'POST',
       headers: { ...headers, Prefer: 'return=minimal' },
@@ -61,7 +67,8 @@ export async function handleAttemptRequest(req: IncomingMessage, res: ServerResp
       }),
     })
     if (!ins.ok) return json(res, 502, { error: 'Không lưu được bài làm.' })
-    return json(res, 200, { score, max })
+    // không trả điểm: nộp lại nhiều lần để dò đáp án sẽ không thu được gì (màn hình tự hiện điểm của bài làm)
+    return json(res, 200, { ok: true })
   } catch (err) {
     return json(res, 400, { error: err instanceof Error ? err.message : String(err) })
   }
