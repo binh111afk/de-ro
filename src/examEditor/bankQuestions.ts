@@ -5,7 +5,7 @@
 import type { JSONContent } from '@tiptap/core'
 import type { BankEntry } from '@/data/bank'
 import type { BlockTemplate } from './templates'
-import { figureDoc, figureParagraph } from './toolImages'
+import { figureDoc, figureImageAttrs, figureParagraph } from './toolImages'
 
 const text = (s: string): JSONContent => ({ type: 'text', text: s })
 
@@ -44,7 +44,14 @@ export function bankSelectionTemplate(entries: BankEntry[]): BlockTemplate {
     build: () =>
       entries.flatMap((e, i) => {
         const doc = figureDoc(e.figure)
-        return doc ? [entryBlock(e, i), figureParagraph(doc)] : [entryBlock(e, i)]
+        const block = entryBlock(e, i)
+        if (!doc) return [block]
+        // câu trắc nghiệm: ảnh vào cuối đề bài để nằm trước phương án A–D
+        if (block.type === 'examQuestion') {
+          block.content![0].content!.push({ type: 'image', attrs: figureImageAttrs(doc) })
+          return [block]
+        }
+        return [block, figureParagraph(doc)]
       }),
   }
 }

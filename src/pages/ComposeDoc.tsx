@@ -141,7 +141,13 @@ function expandFigures(raw: unknown): unknown {
     const doc = figureDoc(figure)
     if (!doc) return [block]
     const { src, alt, width, plot } = figureImageAttrs(doc)
-    return [block, { type: 'paragraph', text: [{ text: '', image: { src, alt, width, plot } }], format: { align: 'center' } }]
+    // câu trắc nghiệm: ảnh vào cuối đề bài (dòng riêng) để nằm TRƯỚC phương án A–D
+    if (block.type === 'question') {
+      const t = block.text
+      const spans = typeof t === 'string' ? [{ text: t }] : Array.isArray(t) ? t : []
+      return [{ ...block, text: [...spans, { text: '', image: { src, alt, width, plot } }] }]
+    }
+    return [block,{ type: 'paragraph', text: [{ text: '', image: { src, alt, width, plot } }], format: { align: 'center' } }]
   })
 }
 

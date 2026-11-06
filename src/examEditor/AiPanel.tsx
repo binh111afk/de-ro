@@ -604,7 +604,7 @@ function examSystemPrompt(documentDigest?: string): string {
     '- Kết thúc đề: answerKey (bảng đáp án trắc nghiệm) và/hoặc rubric (thang điểm tự luận).\n' +
     '- Công thức toán viết LaTeX trong $...$, không dùng ảnh cho công thức.\n' +
     '- HÌNH VẼ: câu nào cần hình (đồ thị, bảng biến thiên, bảng xét dấu, hình học, biểu đồ số liệu, mạch điện, sơ đồ cây, …) ' +
-    'thì thêm field "figure" vào block question/essay/paragraph đó; app tự vẽ bằng công cụ và đặt hình ngay dưới khối. ' +
+    'thì thêm field "figure" vào block question/essay/paragraph đó; app tự vẽ bằng công cụ và đặt hình ngay dưới đề bài (trước phương án A–D).' +
     'Không mô tả hình bằng chữ kiểu "(hình vẽ bên)" mà không kèm figure. Hình phải khớp số liệu trong đề và không lộ đáp án. ' +
     'Mỗi khối tối đa một figure. Đề thật luôn có nhiều câu đọc hình, nên CHỦ ĐỘNG ra câu có hình: ' +
     'đề Toán, Vật lí, Hoá học, Sinh học, Địa lí thì khoảng 25–35% số câu có figure (đề 12 câu trắc nghiệm → ít nhất 3–4 hình; câu tự luận về hàm số/hình học cũng nên có). ' +
