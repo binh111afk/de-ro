@@ -2,6 +2,7 @@
 
 Chỉ mở phiên liên quan đến việc đang làm. Mới nhất ở trên.
 
+- [phiên 21](phien-21.md): vá bảo mật theo Strix (XSS in đề/slide, IP/Origin, body, zip bomb, ReDoS); **server chấm điểm (`/api/attempt`), đề link giấu đáp án (`/api/exam`)**, `srcId`; thử tải 300 người; AI chia độ khó 4 mức + chủ động chèn hình; công cụ `gas` (đồ thị trạng thái khí) và `scene` (hình thực tế, ẩn khỏi ô Công cụ)
 - [phiên 20](phien-20.md): chuyển trang mượt (tải ngầm, hiệu ứng, khung chờ slide); AI soạn đề gọi 17 công cụ vẽ; kho câu hỏi có hình; bảng đáp án theo dạng câu; **deploy Vercel (CLI, import `.js`)**; chặn lạm dụng API (`server/guard.ts`)
 - [phiên 19](phien-19.md): ảnh trong phương án sang đề tương tác; ảnh đầu câu căn lề khớp Word; mạch cầu; xét dấu miền bị chặn; Hỏi AI vẽ mọi công cụ; Lý (chuyển động, mặt phẳng nghiêng); Hoá (electron, công thức cấu tạo, đồ thị mol); Toán (đường tròn lượng giác, cây xác suất, trục số, Ven); phân trang; xuất Word phương án bằng tab stop; slide vừa màn nhỏ
 - [phiên 18](phien-18.md): dựng hình bằng lệnh + bấm/kéo trên ảnh; bảng xét dấu, Oxy, thống kê; mạch điện; chip chọn môn; vẽ ảnh câu hỏi ở đề online; đề tương tác giữ định dạng; **cách kiểm file Word thật qua COM**

@@ -50,13 +50,15 @@ Danh sách đủ: `package.json` → `scripts`. `.env` cần `LLM_API_KEY` (mẫ
 - `tsx` chạy file lẻ không hiểu alias `@/` → thử logic trong trình duyệt: `await import('/src/lib/x.ts')`.
 - Bấm trong trình duyệt theo ref của `find`, không theo toạ độ; khung trình duyệt hẹp thì thanh bên bị ẩn (resize 1366×768).
 - Căn lề câu hỏi lưu ở nút `examQuestion`, không phải `examQuestionPrompt`.
+- Sau khi chạy Strix (Docker Linux) phải `npm install` lại, nếu không dev server thiếu `@rollup/rollup-win32-x64-msvc`. Regex với chữ có dấu không dùng ``.
 - Import trong `server/`, `api/` phải có đuôi `.js` (Vercel ESM). Vercel: dùng CLI (`npx --no-install vercel …`), MCP không có quyền team; không `vercel deploy` từ máy (quá nhiều file).
 
 ## Đọc thêm khi nào
 
 | Khi làm | Mở |
 |---|---|
-| Tiếp việc phiên trước | [phiên 20](docs/handoff/phien-20.md) (mục "Còn lại" ở cuối) |
+| Tiếp việc phiên trước | [phiên 21](docs/handoff/phien-21.md) (mục "Còn lại" ở cuối) |
+| Chấm điểm server, giấu đáp án đề link, bảo mật API, env Vercel/Supabase | [phiên 21](docs/handoff/phien-21.md), mục "Cấu hình ngoài code" và "Đã làm" |
 | Deploy / biến môi trường / bảo vệ API | [phiên 20](docs/handoff/phien-20.md), mục "Vercel" |
 | Tìm phiên cũ theo chủ đề | [docs/handoff/README.md](docs/handoff/README.md) |
 | Công cụ vẽ (quy ước SGK, thử nhanh) | [phiên 17](docs/handoff/phien-17.md) |
