@@ -11,7 +11,8 @@ import { VarTableModal } from './VarTableModal'
 import { Geo2dModal, Geo3dModal } from './GeometryModal'
 import { NumberLineModal, TreeModal, TrigModal, VennModal } from './MoreToolModals'
 import type { NumberLineSpec, TreeSpec, TrigSpec, VennSpec } from '@/lib/mathExtra'
-import { GasModal } from './MoreToolModals'
+import { GasModal, SceneModal } from './MoreToolModals'
+import type { SceneSpec } from '@/lib/scene'
 import type { GasSpec } from '@/lib/gas'
 import { ChemGraphModal, CircuitModal, ElectronModal, InclineModal, MotionModal, StructModal, OxyModal, SignTableModal, StatsModal } from './MoreToolModals'
 import type { InclineSpec, MotionSpec } from '@/lib/physics'
@@ -54,6 +55,8 @@ export function ToolModal({
       return <CircuitModal initial={initial as CircuitSpec | null | undefined} {...common} />
     case 'motion':
       return <MotionModal initial={initial as MotionSpec | null | undefined} {...common} />
+    case 'scene':
+      return <SceneModal initial={initial as SceneSpec | null | undefined} {...common} />
     case 'gas':
       return <GasModal initial={initial as GasSpec | null | undefined} {...common} />
     case 'incline':

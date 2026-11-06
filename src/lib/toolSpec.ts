@@ -13,6 +13,7 @@ import { renderCircuitSvg, type CircuitSpec } from './circuit'
 import { renderInclineSvg, renderMotionSvg, type InclineSpec, type MotionSpec } from './physics'
 import { renderNumberLineSvg, renderTreeSvg, renderTrigSvg, renderVennSvg, type NumberLineSpec, type TreeSpec, type TrigSpec, type VennSpec } from './mathExtra'
 import { renderGasSvg, type GasSpec } from './gas'
+import { renderSceneSvg, type SceneSpec } from './scene'
 import { renderChemGraphSvg, renderElectronSvg, renderStructSvg, type ChemGraphSpec, type ElectronSpec, type StructSpec } from './chem'
 
 export type ToolDoc =
@@ -27,6 +28,7 @@ export type ToolDoc =
   | { kind: 'motion'; spec: MotionSpec }
   | { kind: 'incline'; spec: InclineSpec }
   | { kind: 'gas'; spec: GasSpec }
+  | { kind: 'scene'; spec: SceneSpec }
   | { kind: 'electron'; spec: ElectronSpec }
   | { kind: 'struct'; spec: StructSpec }
   | { kind: 'chemgraph'; spec: ChemGraphSpec }
@@ -75,6 +77,8 @@ export function renderTool(doc: ToolDoc): ToolImage {
       return renderInclineSvg(doc.spec, toolDesc(doc))
     case 'gas':
       return renderGasSvg(doc.spec, toolDesc(doc))
+    case 'scene':
+      return renderSceneSvg(doc.spec, toolDesc(doc))
     case 'electron':
       return renderElectronSvg(doc.spec, toolDesc(doc))
     case 'struct':

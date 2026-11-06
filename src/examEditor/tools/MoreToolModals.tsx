@@ -14,6 +14,7 @@ import type { ChartKind, StatsSpec } from '@/lib/stats'
 import { CIRCUIT_HELP, type CircuitSpec } from '@/lib/circuit'
 import type { Dir, InclineSpec, MotionSpec } from '@/lib/physics'
 import { GAS_DEFAULT, type GasAxes, type GasSpec } from '@/lib/gas'
+import { SCENE_DEFAULT, SCENE_HELP, type SceneSpec } from '@/lib/scene'
 import type { ChemGraphSpec, ElectronSpec, StructSpec } from '@/lib/chem'
 import type { NumberLineSpec, TreeSpec, TrigSpec, VennSpec } from '@/lib/mathExtra'
 import { Check, ToolShell, sectionTitle } from './ToolShell'
@@ -649,6 +650,41 @@ export function GasModal({ initial, submitLabel, onClose, onInsert }: Props<GasS
       inputsWidth={380}
       preview={preview}
       submitLabel={submitLabel ?? (initial ? 'Cập nhật đồ thị' : 'Chèn đồ thị')}
+      canSubmit={Boolean(preview) && !error}
+      onSubmit={() => preview && onInsert(preview)}
+      onClose={onClose}
+    />
+  )
+}
+
+/* ------------------------------------------------------------------ *
+ * Toán: hình thực tế nét đơn có kích thước
+ * ------------------------------------------------------------------ */
+
+export function SceneModal({ initial, submitLabel, onClose, onInsert }: Props<SceneSpec>) {
+  const [spec, setSpec] = useState<SceneSpec>(initial ?? SCENE_DEFAULT)
+  const doc = useMemo((): ToolDoc => ({ kind: 'scene', spec }), [spec])
+  const { preview, error } = useRender(doc)
+  const inputs = (
+    <TextBlock
+      title="Hình vẽ"
+      help={SCENE_HELP}
+      intro="Khai báo điểm, rồi mỗi dòng một lệnh: đoạn, nét đứt, kích thước, góc, nhãn, mặt đất / tường."
+      value={spec.text}
+      onChange={(text) => setSpec({ text })}
+      rows={12}
+      errors={error ? [error] : []}
+      label="Lệnh vẽ hình"
+    />
+  )
+  return (
+    <ToolShell
+      title="Hình thực tế"
+      hint="Nét đen trắng như đề in; kích thước và nhãn tự đặt ra phía ngoài hình"
+      inputs={inputs}
+      inputsWidth={380}
+      preview={preview}
+      submitLabel={submitLabel ?? (initial ? 'Cập nhật hình' : 'Chèn hình')}
       canSubmit={Boolean(preview) && !error}
       onSubmit={() => preview && onInsert(preview)}
       onClose={onClose}

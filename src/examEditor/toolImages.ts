@@ -21,6 +21,7 @@ export const TOOL_DOC_IMAGE: Record<ToolKind, { width: number; alt: string }> = 
   motion: { width: 320, alt: 'Đồ thị chuyển động' },
   incline: { width: 300, alt: 'Mặt phẳng nghiêng' },
   gas: { width: 300, alt: 'Đồ thị trạng thái khí' },
+  scene: { width: 300, alt: 'Hình vẽ' },
   electron: { width: 360, alt: 'Cấu hình electron' },
   struct: { width: 280, alt: 'Công thức cấu tạo' },
   chemgraph: { width: 320, alt: 'Đồ thị số mol' },

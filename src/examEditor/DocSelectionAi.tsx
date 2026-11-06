@@ -28,6 +28,7 @@ const TOOL_NAME: Record<ToolDoc['kind'], string> = {
   motion: 'Đồ thị chuyển động',
   incline: 'Mặt phẳng nghiêng',
   gas: 'Đồ thị trạng thái khí',
+  scene: 'Hình thực tế',
   electron: 'Cấu hình electron',
   struct: 'Công thức cấu tạo',
   chemgraph: 'Đồ thị số mol',

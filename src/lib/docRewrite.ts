@@ -124,6 +124,7 @@ export const FIGURE_GUIDE =
   '4) Hệ trục Oxy (điểm, vectơ, đường thẳng, đường tròn, miền nghiệm): {"kind":"oxy","xMin":-1,"xMax":5,"yMin":-1,"yMax":5,"items":"mỗi dòng một lệnh"}. ' +
   'Lệnh: "A(1; 2)", "M(2; 3) chiếu", "AB, BC", "vectơ AB", "vectơ u(2; 1)", "d: 2x - y + 1 = 0", "đường thẳng AB", "x = 2", "(P): y = x^2 - 2x", "đường tròn (I; 2)", "đường tròn (1; -2) 3", "x + y <= 4".\n' +
   '5) Hình học phẳng: {"kind":"geo2d","shape":"triangle|right-triangle|isosceles|equilateral|square|rectangle|parallelogram|trapezoid|rhombus|circle|inscribed-triangle","names":["A","B","C"],"altitude":false,"median":false,"diagonals":false,"circumcircle":false}\n' +
+  '5b) Hình thực tế nét đơn (thang dựa tường, gấp giấy, đo chiều cao qua góc nhìn, mảnh vườn…): {"kind":"scene","text":"mỗi dòng một lệnh"}. Lệnh: "A(0; 0) B(4; 0) C(0; 3)" khai báo điểm (y hướng lên; tên bắt đầu _ thì ẩn nhãn, nối điểm ẩn bằng gạch: _G-_K); "AB, BC" đoạn; "ABCD" đa giác; "đứt MN" nét đứt; "kích thước AB \"15 cm\"" mũi tên kích thước; "góc ABC \"60°\"" cung góc tại B; "vuông ABC" góc vuông tại B; "nhãn AB \"?\"" chữ cạnh đoạn; "đất AB" / "tường AB" gạch chéo. Toạ độ gần đúng tỉ lệ số liệu đề, nhưng đoạn quá ngắn so với hình (chiều cao mắt 1,5 m bên khoảng cách 50 m…) thì vẽ to hơn tỉ lệ cho dễ nhìn; cạnh/góc đã biết dùng kích thước hoặc nhãn; cạnh cần tìm ghi \"?\" hoặc chữ, KHÔNG ghi đáp số.\n' +
   '6) Hình không gian: {"kind":"geo3d","shape":"pyramid3|pyramid3-sa|pyramid3-regular|pyramid4|pyramid4-sa|pyramid4-regular|tetrahedron|prism3|box|cube|cone|cylinder|sphere","names":["S","A","B","C","D"],"height":true,"diagonals":false}\n' +
   '7) Biểu đồ thống kê: {"kind":"stats","chart":"bar|line|pie|hist|table","title":"","xLabel":"","yLabel":"","data":"dòng 1: nhãn cách nhau bởi ;\\nTên dãy: số; số; ..."}. Ghép nhóm dùng nhãn "[40; 50) [50; 60)".\n' +
   '8) Đường tròn lượng giác: {"kind":"trig","angles":"mỗi dòng một góc, vd pi/3"}\n' +
@@ -254,6 +255,9 @@ export function toolFromRaw(raw: Record<string, unknown>): ToolDoc {
       break
     case 'motion':
       doc = { kind: 'motion', spec: { yName: str('yName') || 'v (m/s)', tName: str('tName') || 't (s)', points: need('points', 'Không thấy số liệu chuyển động.'), dashed: bool('dashed', true) } }
+      break
+    case 'scene':
+      doc = { kind: 'scene', spec: { text: need('text', 'Không thấy lệnh vẽ hình.') } }
       break
     case 'gas':
       doc = {
