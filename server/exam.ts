@@ -25,11 +25,15 @@ export async function handleExamRequest(req: IncomingMessage, res: ServerRespons
     if (!row?.doc) return json(res, 404, { error: 'Đề này không còn được xuất bản.' })
     if (row.listed) return json(res, 200, { doc: row.doc })
     const exam = docToExam(row.doc, id)
+    // giáo viên bật "hiện đúng/sai ngay khi chọn" thì trình duyệt cần đáp án: giữ nguyên
+    if (exam.settings?.instantFeedback) return json(res, 200, { doc: row.doc })
     const online = {
       ...exam,
       sections: exam.sections.map((sec) => ({
         ...sec,
-        questions: sec.questions.map(({ answer: _a, explanation: _e, ...q }) => q),
+        // chỉ giữ các trường học sinh được thấy (danh sách cho phép, không phải danh sách cấm):
+        // trường đáp án mới (như `solution` của tự luận) không thể lọt ra vì quên bỏ
+        questions: sec.questions.map(({ id: qid, number, type, prompt, align, image, options, points }) => ({ id: qid, number, type, prompt, align, image, options, points })),
       })),
     }
     return json(res, 200, { doc: { ...row.doc, blocks: [], online }, hidden: true })

@@ -43,8 +43,11 @@ export function renderMath(input: string): string {
 }
 
 function inlineImage(raw: string): string {
-  const m = /^!\[([^\]|]*)(?:\|(\d+))?\]\(([^)]+)\)$/.exec(raw)!
-  const w = m[2] ? `width:${m[2]}%;` : 'max-width:min(100%,420px);'
+  // token khớp ở trên cho phép mọi chữ sau "|": không khớp mẫu đầy đủ thì giữ nguyên chữ, không làm sập trang
+  const m = /^!\[([^\]|]*)(?:\|([^\]]*))?\]\(([^)]+)\)$/.exec(raw)
+  if (!m) return escapeHtml(raw)
+  const pct = Number.parseInt(m[2] ?? '', 10)
+  const w = pct >= 1 && pct <= 100 ? `width:${pct}%;` : 'max-width:min(100%,420px);'
   return `<img src="${escapeHtml(m[3])}" alt="${escapeHtml(m[1])}" loading="lazy" style="${w}height:auto;display:block;margin:6px 0;background:#fff;border-radius:6px">`
 }
 

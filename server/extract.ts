@@ -3,6 +3,7 @@
  * cho AI soạn đề. Chạy server-side: không phình bundle client, parser chỉ được
  * import khi thật sự có tệp.
  */
+import { inflateRawSync } from 'node:zlib'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { extname } from 'node:path'
 import type { TextItem } from 'pdfjs-dist/types/src/display/api'
@@ -587,8 +588,8 @@ async function extractPptxSlides(data: Buffer): Promise<string[]> {
  * hoặc tổng/mỗi mục khai báo giải nén quá lớn.
  */
 const ZIP_MAX_ENTRIES = 5000
-const ZIP_MAX_ENTRY = 80 * 1024 * 1024
-const ZIP_MAX_TOTAL = 200 * 1024 * 1024
+const ZIP_MAX_ENTRY = 50 * 1024 * 1024
+const ZIP_MAX_TOTAL = 100 * 1024 * 1024
 function assertSafeZip(buf: Buffer) {
   // tìm End Of Central Directory (0x06054b50) trong 64 KB cuối
   let eocd = -1
@@ -603,9 +604,27 @@ function assertSafeZip(buf: Buffer) {
   let total = 0
   for (let n = 0; n < count; n++) {
     if (off + 46 > buf.length || buf.readUInt32LE(off) !== 0x02014b50) throw new Error('Tệp hỏng hoặc không đúng định dạng.')
+    const method = buf.readUInt16LE(off + 10)
+    const csize = buf.readUInt32LE(off + 20)
     const size = buf.readUInt32LE(off + 24)
     if (size > ZIP_MAX_ENTRY) throw new Error('Tệp chứa thành phần quá lớn.')
-    total += size
+    // kích thước khai báo có thể là giả: giải nén thật với giới hạn đầu ra (zlib dừng ngay khi vượt)
+    const local = buf.readUInt32LE(off + 42)
+    if (local + 30 > buf.length || buf.readUInt32LE(local) !== 0x04034b50) throw new Error('Tệp hỏng hoặc không đúng định dạng.')
+    const start = local + 30 + buf.readUInt16LE(local + 26) + buf.readUInt16LE(local + 28)
+    const budget = Math.min(ZIP_MAX_ENTRY, ZIP_MAX_TOTAL - total)
+    let real = csize
+    if (method === 8) {
+      try {
+        // giải nén tối đa đúng số byte khai báo (+1): khai gian thì zlib dừng ngay, tốn rất ít
+        real = inflateRawSync(buf.subarray(start, start + csize), { maxOutputLength: Math.max(1, Math.min(budget, size + 1)) }).length
+        if (real > size) throw new RangeError('size')
+      } catch (err) {
+        if (err instanceof RangeError) throw new Error('Tệp giải nén ra quá lớn.')
+        throw new Error('Tệp hỏng hoặc không đúng định dạng.')
+      }
+    } else if (method !== 0) throw new Error('Tệp nén theo kiểu không hỗ trợ.')
+    total += Math.max(real, size)
     if (total > ZIP_MAX_TOTAL) throw new Error('Tệp giải nén ra quá lớn.')
     off += 46 + buf.readUInt16LE(off + 28) + buf.readUInt16LE(off + 30) + buf.readUInt16LE(off + 32)
   }

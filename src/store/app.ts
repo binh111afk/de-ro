@@ -74,7 +74,7 @@ interface AppState {
   resetQuiz: () => void
   setQuizSubmitted: (v: boolean) => void
   /** đề link không kèm đáp án: server chấm xong trả điểm + đáp án, gắn vào đề và kết quả */
-  applyGrading: (examId: string, score: number, total: number, key: Record<string, { answer?: string; explanation?: string }>) => void
+  applyGrading: (examId: string, score: number, total: number, key: Record<string, { answer?: string; explanation?: string; solution?: string[] }>) => void
 }
 
 const uid = () => Math.random().toString(36).slice(2, 10)

@@ -38,15 +38,24 @@ export async function handleAttemptRequest(req: IncomingMessage, res: ServerResp
     const seat = Number(body.seat)
     const device = str(body.deviceId, 64)
     // đề "chỉ làm một lần": máy này đã nộp thì từ chối (trước đây chỉ chặn ở trình duyệt)
-    if (exam.settings?.oneAttempt && device.length >= 8) {
+    if (exam.settings?.oneAttempt) {
+      if (device.length < 8) return json(res, 400, { error: 'Thiếu mã thiết bị.' })
       const dup = await fetch(`${base}/rest/v1/exam_attempts?exam_id=eq.${examId}&device_id=eq.${encodeURIComponent(device)}&select=id&limit=1`, { headers })
       if (dup.ok && ((await dup.json()) as unknown[]).length) return json(res, 409, { error: 'Em đã nộp bài cho đề này rồi.' })
     }
     const questions = exam.sections.flatMap((s) => s.questions)
     let score = 0
+    // đề cộng đồng / chỉ làm một lần / hiện đáp án ngay: trả đủ đáp án để xem lại bài.
+    // đề link làm nhiều lần: chỉ trả đáp án những câu đã làm đúng trọn (nộp bài trống không dò được đáp án)
+    const fullKey = row.listed || exam.settings?.oneAttempt || exam.settings?.instantFeedback
+    const answerKey: Record<string, { answer?: string; explanation?: string; solution?: string[] }> = {}
     for (const q of questions) {
       const given = answers[q.id]
-      score += scoreQuestion(q, typeof given === 'string' ? given.slice(0, 200) : undefined)
+      const got = scoreQuestion(q, typeof given === 'string' ? given.slice(0, 200) : undefined)
+      score += got
+      if (fullKey) {
+        if (q.answer || q.explanation || q.solution) answerKey[q.id] = { answer: q.answer, explanation: q.explanation, solution: q.solution }
+      } else if (q.points > 0 && got >= q.points) answerKey[q.id] = { answer: q.answer, explanation: q.explanation }
     }
     score = Math.round(score * 1000) / 1000
     const max = Math.round(questions.reduce((n, q) => n + q.points, 0) * 1000) / 1000
@@ -68,8 +77,6 @@ export async function handleAttemptRequest(req: IncomingMessage, res: ServerResp
     })
     if (!ins.ok) return json(res, 502, { error: 'Không lưu được bài làm.' })
     // đề link gửi cho học sinh không kèm đáp án (api/exam): nộp xong mới trả điểm và đáp án để xem lại bài
-    const answerKey: Record<string, { answer?: string; explanation?: string }> = {}
-    for (const q of questions) if (q.answer || q.explanation) answerKey[q.id] = { answer: q.answer, explanation: q.explanation }
     return json(res, 200, { score, max, key: answerKey })
   } catch (err) {
     return json(res, 400, { error: err instanceof Error ? err.message : String(err) })
