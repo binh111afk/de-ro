@@ -486,9 +486,39 @@ async function extractPptxSlides(data: Buffer): Promise<string[]> {
   return slides
 }
 
+/**
+ * Chặn "zip bomb": đọc central directory (không giải nén) và từ chối nếu quá nhiều mục
+ * hoặc tổng/mỗi mục khai báo giải nén quá lớn.
+ */
+const ZIP_MAX_ENTRIES = 5000
+const ZIP_MAX_ENTRY = 80 * 1024 * 1024
+const ZIP_MAX_TOTAL = 200 * 1024 * 1024
+function assertSafeZip(buf: Buffer) {
+  // tìm End Of Central Directory (0x06054b50) trong 64 KB cuối
+  let eocd = -1
+  for (let i = buf.length - 22; i >= Math.max(0, buf.length - 65557); i--) {
+    if (buf.readUInt32LE(i) === 0x06054b50) { eocd = i; break }
+  }
+  if (eocd < 0) throw new Error('Tệp hỏng hoặc không đúng định dạng.')
+  const count = buf.readUInt16LE(eocd + 10)
+  let off = buf.readUInt32LE(eocd + 16)
+  if (count === 0xffff || off === 0xffffffff) throw new Error('Tệp quá lớn hoặc không hỗ trợ (zip64).')
+  if (count > ZIP_MAX_ENTRIES) throw new Error('Tệp có quá nhiều thành phần.')
+  let total = 0
+  for (let n = 0; n < count; n++) {
+    if (off + 46 > buf.length || buf.readUInt32LE(off) !== 0x02014b50) throw new Error('Tệp hỏng hoặc không đúng định dạng.')
+    const size = buf.readUInt32LE(off + 24)
+    if (size > ZIP_MAX_ENTRY) throw new Error('Tệp chứa thành phần quá lớn.')
+    total += size
+    if (total > ZIP_MAX_TOTAL) throw new Error('Tệp giải nén ra quá lớn.')
+    off += 46 + buf.readUInt16LE(off + 28) + buf.readUInt16LE(off + 30) + buf.readUInt16LE(off + 32)
+  }
+}
+
 export async function extractFile(name: string, data: Buffer, marks = false): Promise<ExtractedFile> {
   const ext = extname(name).toLowerCase()
   try {
+    if (ext === '.docx' || ext === '.xlsx' || ext === '.pptx') assertSafeZip(data)
     if (ext === '.docx') {
       const doc = await extractDocx(data, marks)
       const cut = capped(doc.text)

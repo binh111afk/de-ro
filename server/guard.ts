@@ -29,24 +29,30 @@ const header = (req: IncomingMessage, name: string) => {
   return (Array.isArray(v) ? v[0] : v) ?? ''
 }
 
+const onVercel = !!process.env.VERCEL
+
+/** IP thật: trên Vercel lấy header do Vercel tự ghi (khách không giả được); máy dev lấy địa chỉ socket. */
 function clientIp(req: IncomingMessage): string {
-  return header(req, 'x-forwarded-for').split(',')[0].trim() || header(req, 'x-real-ip') || req.socket?.remoteAddress || ''
+  if (onVercel) return header(req, 'x-vercel-forwarded-for').split(',')[0].trim() || header(req, 'x-real-ip') || req.socket?.remoteAddress || ''
+  return req.socket?.remoteAddress || ''
 }
 
-const isLocal = (ip: string) => ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1'
+/** chỉ miễn hạn mức khi chạy dev ở máy, không bao giờ trên Vercel */
+const isLocal = (ip: string) => !onVercel && (ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1')
 
 /** Origin hợp lệ: cùng host với request, localhost, hoặc liệt kê trong ALLOWED_ORIGINS (cách nhau dấu phẩy) */
 function originAllowed(req: IncomingMessage): boolean {
   const origin = header(req, 'origin')
-  if (!origin) return true // không phải trình duyệt gọi chéo trang (curl, cùng trang GET…)
+  // trình duyệt luôn gửi Origin với POST; thiếu Origin trên Vercel → từ chối
+  if (!origin) return !onVercel || req.method === 'GET' || req.method === 'HEAD'
   let host: string
   try {
     host = new URL(origin).host
   } catch {
     return false
   }
-  if (host === header(req, 'x-forwarded-host') || host === header(req, 'host')) return true
-  if (/^(localhost|127\.0\.0\.1)(:\d+)?$/.test(host)) return true
+  if (host === header(req, 'host')) return true
+  if (!onVercel && /^(localhost|127\.0\.0\.1)(:\d+)?$/.test(host)) return true
   const extra = (process.env.ALLOWED_ORIGINS ?? '').split(',').map((s) => s.trim()).filter(Boolean)
   return extra.includes(origin)
 }

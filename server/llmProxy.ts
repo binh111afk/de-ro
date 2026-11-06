@@ -9,6 +9,7 @@
  * Dev: Vite mount `llmMiddleware` ở `/api/llm` (xem `vite.config.ts`).
  * Prod: `node server/llmProxy.ts` phục vụ API + static `dist/`.
  */
+import os from 'node:os'
 import { readFileSync, existsSync, writeFileSync, mkdirSync } from 'node:fs'
 import { homedir } from 'node:os'
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http'
@@ -139,8 +140,10 @@ function providerConfig() {
 
 /** Ghi log raw response của upstream để chẩn đoán khi model trả rỗng. */
 function writeRawLog(raw: string, parsed?: Record<string, unknown>) {
+  if (process.env.VERCEL) return // không ghi log trên bản thật
   try {
-    const logDir = path.join(ROOT, '.llmlog')
+    // để ngoài thư mục dự án: dev server không phục vụ được file này
+    const logDir = path.join(os.tmpdir(), 'dethinhbien-llmlog')
     if (!existsSync(logDir)) mkdirSync(logDir, { recursive: true })
     const stamp = Date.now()
     writeFileSync(

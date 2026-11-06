@@ -189,7 +189,13 @@ export function graphicMainColor(id: string | undefined): string {
 }
 
 /** SVG sẵn sàng nhúng: đổi màu nét và (tuỳ chọn) màu chủ đạo, ép phủ kín hộp chứa. */
-export function graphicMarkup(id: string, ink = GRAPHIC_INK, main?: string): string {
+/** màu từ JSON slide (có thể do người khác soạn): chỉ nhận dạng #rgb/#rrggbb/tên màu, sai thì dùng mặc định */
+const safeColor = (c: string | undefined, fallback?: string) =>
+  c && /^(#[0-9a-fA-F]{3,8}|[a-zA-Z]{3,20}|rgba?\([\d\s.,%]+\))$/.test(c.trim()) ? c.trim() : fallback
+
+export function graphicMarkup(id: string, inkIn = GRAPHIC_INK, mainIn?: string): string {
+  const ink = safeColor(inkIn, GRAPHIC_INK) as string
+  const main = safeColor(mainIn)
   const graphic = graphicById(id)
   if (!graphic) return ''
   let svg = graphic.svg.replace(/^<svg /, '<svg width="100%" height="100%" preserveAspectRatio="xMidYMid meet" ')

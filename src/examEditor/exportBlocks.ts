@@ -32,7 +32,12 @@ function sanitize(s: string): string {
 }
 
 function escapeHtml(s: string): string {
-  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;')
+}
+
+/** Giá trị CSS lấy từ JSON đề (có thể do người khác soạn): chỉ giữ ký tự an toàn, không thoát được khỏi style="". */
+function css(v: unknown): string {
+  return String(v).replace(/[^#\w\s.,%()\-]/g, '')
 }
 
 /** Rich text → HTML có mark (`<b>/<i>/<u>/<s>/<sub>/<sup>/<span style>`). */
@@ -65,7 +70,7 @@ function textToHtml(text: string): string {
 
 function spanToHtml(s: Span): string {
   if (s.image) {
-    const w = s.image.width ? ` width="${Math.round(s.image.width)}"` : ''
+    const w = s.image.width ? ` width="${css(Math.round(s.image.width))}"` : ''
     return `<img src="${s.image.src.replace(/"/g, '&quot;')}" alt="${escapeHtml(s.image.alt ?? '')}"${w} style="max-width:100%">`
   }
   let inner = textToHtml(s.text)
@@ -94,15 +99,15 @@ function spanToHtml(s: Span): string {
         break
       case 'highlight': {
         const c = (m.attrs?.color as string | undefined) ?? '#fff3a3'
-        inner = `<span style="background:${c}">${inner}</span>`
+        inner = `<span style="background:${css(c)}">${inner}</span>`
         break
       }
       case 'textStyle': {
         const a = m.attrs ?? {}
         const st: string[] = []
-        if (a.fontFamily) st.push(`font-family:${a.fontFamily}`)
-        if (a.fontSize) st.push(`font-size:${a.fontSize}`)
-        if (a.color) st.push(`color:${a.color}`)
+        if (a.fontFamily) st.push(`font-family:${css(a.fontFamily)}`)
+        if (a.fontSize) st.push(`font-size:${css(a.fontSize)}`)
+        if (a.color) st.push(`color:${css(a.color)}`)
         if (st.length) inner = `<span style="${st.join(';')}">${inner}</span>`
         break
       }
@@ -115,17 +120,17 @@ function spanToHtml(s: Span): string {
 function formatCss(f: FormatAttrs | undefined): string {
   if (!f) return ''
   const st: string[] = []
-  if (f.align) st.push(`text-align:${f.align}`)
-  if (f.lineHeight != null) st.push(`line-height:${f.lineHeight}`)
-  if (f.indentLeft != null) st.push(`margin-left:${f.indentLeft}px`)
-  if (f.indentFirstLine != null) st.push(`text-indent:${f.indentFirstLine}px`)
-  if (f.spaceBefore != null) st.push(`margin-top:${f.spaceBefore}px`)
-  if (f.spaceAfter != null) st.push(`margin-bottom:${f.spaceAfter}px`)
-  if (f.shading) st.push(`background-color:${f.shading}`)
+  if (f.align) st.push(`text-align:${css(f.align)}`)
+  if (f.lineHeight != null) st.push(`line-height:${css(f.lineHeight)}`)
+  if (f.indentLeft != null) st.push(`margin-left:${css(f.indentLeft)}px`)
+  if (f.indentFirstLine != null) st.push(`text-indent:${css(f.indentFirstLine)}px`)
+  if (f.spaceBefore != null) st.push(`margin-top:${css(f.spaceBefore)}px`)
+  if (f.spaceAfter != null) st.push(`margin-bottom:${css(f.spaceAfter)}px`)
+  if (f.shading) st.push(`background-color:${css(f.shading)}`)
   if (f.borders && f.borders !== 'none') {
     const w = '1px solid #000'
     if (f.borders === 'box') st.push(`border:${w}`)
-    else st.push(`border-${f.borders}:${w}`)
+    else st.push(`border-${css(f.borders)}:${w}`)
   }
   return st.length ? ` style="${st.join(';')}"` : ''
 }
@@ -177,7 +182,7 @@ function blockToHtml(b: ExamBlock, seq: BlockSeq): string {
       return `<${tag} class="bul"${formatCss(b.format)}>${b.items
         .map((i, n) => {
           const lv = b.levels?.[n] ?? 0
-          return `<li${lv ? ` style="margin-left:${lv * 24}px"` : ''}>${richToHtml(i)}</li>`
+          return `<li${lv ? ` style="margin-left:${css(lv * 24)}px"` : ''}>${richToHtml(i)}</li>`
         })
         .join('')}</${tag}>`
     }
@@ -186,7 +191,7 @@ function blockToHtml(b: ExamBlock, seq: BlockSeq): string {
       const width = Math.round(100 / (b.cols || 2))
       return (
         '<table class="grid"><tr>' +
-        b.cells.map((c) => `<td style="width:${width}%">${richToHtml(c)}</td>`).join('') +
+        b.cells.map((c) => `<td style="width:${css(width)}%">${richToHtml(c)}</td>`).join('') +
         '</tr></table>'
       )
     }
@@ -220,7 +225,7 @@ function blockToHtml(b: ExamBlock, seq: BlockSeq): string {
 
     case 'essay':
       return (
-        `<p class="q"${formatCss(b.format)}><b>Bài ${seq.essay}${b.score ? ` (${fmt(b.score)} điểm)` : ''}.</b> ${richToHtml(
+        `<p class="q"${formatCss(b.format)}><b>Bài ${seq.essay}${b.score ? ` (${escapeHtml(fmt(b.score))} điểm)` : ''}.</b> ${richToHtml(
           b.text,
         )}</p>` +
         (b.sub?.length
@@ -234,7 +239,7 @@ function blockToHtml(b: ExamBlock, seq: BlockSeq): string {
         '<table class="ak">' +
         rows
           .map((row) => {
-            const nos = row.map((c) => `<td>${c.no}</td>`).join('')
+            const nos = row.map((c) => `<td>${escapeHtml(String(c.no))}</td>`).join('')
             const ans = row.map((c) => `<td><b>${richToHtml(c.answer)}</b></td>`).join('')
             return `<tr><th>Câu</th>${nos}</tr><tr><th>Đáp án</th>${ans}</tr>`
           })

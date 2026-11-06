@@ -12,8 +12,18 @@ export function json(res: ServerResponse, code: number, body: unknown) {
   res.end(payload)
 }
 
-export async function readBody(req: IncomingMessage): Promise<string> {
+/** Đọc body, tối đa maxBytes (mặc định 20 MB); vượt → ném lỗi và ngắt kết nối. */
+export async function readBody(req: IncomingMessage, maxBytes = 20 * 1024 * 1024): Promise<string> {
+  if (Number(req.headers['content-length'] ?? 0) > maxBytes) throw new Error('Dữ liệu gửi lên quá lớn.')
   const chunks: Buffer[] = []
-  for await (const c of req) chunks.push(c as Buffer)
+  let size = 0
+  for await (const c of req) {
+    size += (c as Buffer).length
+    if (size > maxBytes) {
+      req.destroy()
+      throw new Error('Dữ liệu gửi lên quá lớn.')
+    }
+    chunks.push(c as Buffer)
+  }
   return Buffer.concat(chunks).toString('utf8')
 }
