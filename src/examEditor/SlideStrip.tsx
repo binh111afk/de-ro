@@ -169,17 +169,20 @@ export function SlideStrip({
   )
 }
 
-/** khe giữa hai slide: rộng để con trỏ dễ rơi vào, dấu + hiện khi di chuột vào giữa khe */
+/**
+ * khe giữa hai slide: rộng để con trỏ dễ rơi vào, dấu + hiện khi dừng chuột ở khe ~0,4 s
+ * (lướt qua thì không hiện); rời chuột thì ẩn ngay.
+ */
 function Gap({ enabled, onAdd }: { enabled: boolean; onAdd: () => void }) {
   return (
-    <div className="group/gap relative h-full w-4 shrink-0 transition-[width] duration-200 ease-out hover:w-14">
+    <div className="group/gap relative h-full w-4 shrink-0 transition-[width] duration-200 ease-out hover:w-14 hover:delay-[400ms]">
       {enabled && (
         <button
           type="button"
           onClick={onAdd}
           title="Thêm slide vào đây"
           aria-label="Thêm slide vào đây"
-          className="absolute left-1/2 top-1/2 flex size-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-clay text-white opacity-0 shadow transition-opacity group-hover/gap:opacity-100 focus-visible:opacity-100"
+          className="absolute left-1/2 top-1/2 flex size-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-clay text-white opacity-0 shadow transition-opacity group-hover/gap:opacity-100 group-hover/gap:delay-[400ms] focus-visible:opacity-100 focus-visible:delay-0"
         >
           <Plus className="size-3.5" />
         </button>
