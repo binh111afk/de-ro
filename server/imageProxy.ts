@@ -7,7 +7,8 @@
  * Model mặc định `sensenova/sensenova-u1.5-lite` (image generation, không phải
  * chat model).
  *
- * Cấu hình: `IMAGE_BASE_URL`, `IMAGE_API_KEY`, `IMAGE_MODEL` trong `.env`.
+ * Ưu tiên Agnes (`AGNES_API_KEY`, `AGNES_BASE_URL`, `AGNES_IMAGE_MODEL`), lỗi thì
+ * quay về Xkiro: `IMAGE_BASE_URL`, `IMAGE_API_KEY`, `IMAGE_MODEL` trong `.env`.
  * Không có env thì đọc provider Xkiro trong config ZCode của máy
  * (`~/.zcode/v2/provider_config.json`) — app chạy cục bộ, key không vào bundle.
  */
@@ -57,23 +58,46 @@ function xkiroFromZcode(): Partial<ImageConfig> {
   return {}
 }
 
-function resolveConfig(): ImageConfig {
+/**
+ * Thứ tự thử: Agnes (`AGNES_API_KEY`, trả ảnh ngay, ~12–17 s, chữ tiếng Việt
+ * đúng) → Xkiro/sensenova (job + poll). Provider thiếu key bị bỏ qua.
+ */
+function resolveConfigs(): ImageConfig[] {
+  const configs: ImageConfig[] = []
+  const agnesKey = process.env.AGNES_API_KEY?.trim()
+  if (agnesKey) {
+    configs.push({
+      baseUrl: (process.env.AGNES_BASE_URL?.trim() || 'https://apihub.agnes-ai.com/v1').replace(/\/+$/, ''),
+      apiKey: agnesKey,
+      model: process.env.AGNES_IMAGE_MODEL?.trim() || 'agnes-image-2.5-flash',
+    })
+  }
   const fallback = xkiroFromZcode()
-  return {
-    baseUrl: (process.env.IMAGE_BASE_URL || fallback.baseUrl || DEFAULT_BASE_URL).replace(/\/+$/, ''),
-    apiKey: process.env.IMAGE_API_KEY || fallback.apiKey || '',
-    model: process.env.IMAGE_MODEL || DEFAULT_MODEL,
+  const apiKey = process.env.IMAGE_API_KEY || fallback.apiKey || ''
+  if (apiKey) {
+    configs.push({
+      baseUrl: (process.env.IMAGE_BASE_URL || fallback.baseUrl || DEFAULT_BASE_URL).replace(/\/+$/, ''),
+      apiKey,
+      model: process.env.IMAGE_MODEL || DEFAULT_MODEL,
+    })
+  }
+  return configs
+}
+
+class ImageError extends Error {
+  constructor(public status: number, message: string) {
+    super(message)
   }
 }
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
-async function upstreamJson(url: string, init: RequestInit): Promise<{
+async function upstreamJson(url: string, init: RequestInit, timeoutMs = 15_000): Promise<{
   ok: boolean
   status: number
   body: Record<string, unknown>
 }> {
-  const res = await fetch(url, { ...init, signal: AbortSignal.timeout(15_000) })
+  const res = await fetch(url, { ...init, signal: AbortSignal.timeout(timeoutMs) })
   const body = (await res.json().catch(() => ({}))) as Record<string, unknown>
   return { ok: res.ok, status: res.status, body }
 }
@@ -96,6 +120,51 @@ async function imageToDataUrl(url: string): Promise<string> {
   return `data:${mime};base64,${buf.toString('base64')}`
 }
 
+type ImageItem = { url?: string; b64_json?: string }
+
+async function itemToDataUrl(item: ImageItem | undefined): Promise<string | null> {
+  if (item?.b64_json) return `data:image/png;base64,${item.b64_json}`
+  if (item?.url) return imageToDataUrl(item.url)
+  return null
+}
+
+/** Tạo một ảnh với một provider; ném ImageError nếu thất bại. */
+async function generate(config: ImageConfig, prompt: string): Promise<string> {
+  const headers = {
+    Authorization: `Bearer ${config.apiKey}`,
+    'Content-Type': 'application/json',
+  }
+  // Agnes trả ảnh ngay trong request này (~12–17 s) → chờ lâu hơn mặc định 15 s.
+  const start = await upstreamJson(
+    `${config.baseUrl}/images/generations`,
+    { method: 'POST', headers, body: JSON.stringify({ model: config.model, prompt, n: 1, size: '1024x1024' }) },
+    120_000,
+  )
+  if (!start.ok) throw new ImageError(502, upstreamError(start.status, start.body))
+
+  // Agnes trả ảnh ngay; Xkiro trả job id để poll.
+  const direct = await itemToDataUrl((start.body.data as ImageItem[] | undefined)?.[0])
+  if (direct) return direct
+
+  const jobId = typeof start.body.id === 'string' ? start.body.id : ''
+  if (!jobId) throw new ImageError(502, 'Dịch vụ ảnh không trả về job id')
+
+  const deadline = Date.now() + DEADLINE_MS
+  while (Date.now() < deadline) {
+    await sleep(POLL_MS)
+    const job = await upstreamJson(`${config.baseUrl}/images/generations/${encodeURIComponent(jobId)}`, { headers })
+    if (!job.ok) throw new ImageError(502, upstreamError(job.status, job.body))
+    const status = String(job.body.status ?? '')
+    if (status === 'failed' || status === 'error') throw new ImageError(502, upstreamError(job.status, job.body))
+    if (status === 'succeeded' || status === 'completed') {
+      const url = await itemToDataUrl((job.body.data as ImageItem[] | undefined)?.[0])
+      if (url) return url
+      throw new ImageError(502, 'Job ảnh xong nhưng không có dữ liệu ảnh')
+    }
+  }
+  throw new ImageError(504, 'Tạo ảnh quá lâu (quá 4 phút)')
+}
+
 export async function handleImageRequest(
   req: IncomingMessage,
   res: ServerResponse,
@@ -109,55 +178,21 @@ export async function handleImageRequest(
     const prompt = typeof body.prompt === 'string' ? body.prompt.trim().slice(0, MAX_PROMPT) : ''
     if (!prompt) return json(res, 400, { error: 'prompt là bắt buộc' })
 
-    const config = resolveConfig()
-    if (!config.apiKey) {
-      return json(res, 503, {
-        error: 'Chưa cấu hình IMAGE_API_KEY (hoặc chưa đăng nhập ZCode để dùng provider Xkiro).',
-      })
+    const configs = resolveConfigs()
+    if (!configs.length) {
+      return json(res, 503, { error: 'Chưa cấu hình AGNES_API_KEY hoặc IMAGE_API_KEY.' })
     }
-    const headers = {
-      Authorization: `Bearer ${config.apiKey}`,
-      'Content-Type': 'application/json',
-    }
-
-    const start = await upstreamJson(`${config.baseUrl}/images/generations`, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify({ model: config.model, prompt, n: 1, size: '1024x1024' }),
-    })
-    if (!start.ok) return json(res, 502, { error: upstreamError(start.status, start.body) })
-
-    // Một số gateway trả ảnh ngay; Xkiro trả job id để poll.
-    const direct = (start.body.data as Array<{ url?: string; b64_json?: string }> | undefined)?.[0]
-    if (direct?.b64_json) return json(res, 200, { dataUrl: `data:image/png;base64,${direct.b64_json}` })
-    if (direct?.url) return json(res, 200, { dataUrl: await imageToDataUrl(direct.url), model: config.model })
-
-    const jobId = typeof start.body.id === 'string' ? start.body.id : ''
-    if (!jobId) return json(res, 502, { error: 'Dịch vụ ảnh không trả về job id' })
-
-    const deadline = Date.now() + DEADLINE_MS
-    while (Date.now() < deadline) {
-      await sleep(POLL_MS)
-      const job = await upstreamJson(`${config.baseUrl}/images/generations/${encodeURIComponent(jobId)}`, {
-        headers,
-      })
-      if (!job.ok) return json(res, 502, { error: upstreamError(job.status, job.body) })
-      const status = String(job.body.status ?? '')
-      if (status === 'failed' || status === 'error') {
-        return json(res, 502, { error: upstreamError(job.status, job.body) })
-      }
-      if (status === 'succeeded' || status === 'completed') {
-        const item = (job.body.data as Array<{ url?: string; b64_json?: string }> | undefined)?.[0]
-        if (item?.b64_json) {
-          return json(res, 200, { dataUrl: `data:image/png;base64,${item.b64_json}`, model: config.model })
-        }
-        if (item?.url) {
-          return json(res, 200, { dataUrl: await imageToDataUrl(item.url), model: config.model })
-        }
-        return json(res, 502, { error: 'Job ảnh xong nhưng không có dữ liệu ảnh' })
+    const errors: string[] = []
+    let lastStatus = 502
+    for (const config of configs) {
+      try {
+        return json(res, 200, { dataUrl: await generate(config, prompt), model: config.model })
+      } catch (err) {
+        lastStatus = err instanceof ImageError ? err.status : 502
+        errors.push(`${config.model}: ${err instanceof Error ? err.message : String(err)}`)
       }
     }
-    return json(res, 504, { error: 'Tạo ảnh quá lâu (quá 4 phút)' })
+    return json(res, lastStatus, { error: errors.join(' | ') })
   } catch (err) {
     return json(res, 500, { error: err instanceof Error ? err.message : String(err) })
   }
