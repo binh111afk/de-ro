@@ -5,6 +5,7 @@
 import type { Question } from '@/data/types'
 import { TYPE_LABEL } from '@/data/types'
 import { formatTrueFalse, normalizeShort, parseTrueFalse } from '@/lib/grading'
+import { DIFFICULTY_RULE } from '@/lib/difficulty'
 import { extractJson } from '@/lib/llm'
 import { newQuestion, ONLINE_TYPES, type OnlineMeta } from '@/lib/onlineExam'
 
@@ -38,7 +39,9 @@ export function systemPrompt(meta: OnlineMeta, questions: Question[]): string {
     .join('\n')
   return (
     SYSTEM +
-    `\n\nĐề đang soạn: "${meta.title.trim() || 'chưa đặt tên'}" · môn ${meta.subject} · ${meta.grade}. ` +
+    '\n\n' +
+    DIFFICULTY_RULE +
+    `\nĐề đang soạn: "${meta.title.trim() || 'chưa đặt tên'}" · môn ${meta.subject} · ${meta.grade}. ` +
     (questions.length ? `Hiện có ${questions.length} câu (${counts}).\nCác câu gần nhất:\n${recent}` : 'Chưa có câu nào.')
   )
 }

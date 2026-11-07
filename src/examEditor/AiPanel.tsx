@@ -29,6 +29,7 @@ import { editSystemPrompt, looksLikeEdit, parseEditCommands, type SlideEditOp } 
 import { useSlidingThumb } from './useSlidingThumb'
 import { buildSourcePack, sourcePrompt, sourceRule, type SourcePack } from '@/lib/sources'
 import { cn } from '@/lib/cn'
+import { DIFFICULTY_RULE } from '@/lib/difficulty'
 import { FIGURE_GUIDE } from '@/lib/docRewrite'
 import aiThinkingAnim from '@/assets/ai-assistant.svg'
 import { Markdown } from './markdown'
@@ -588,12 +589,8 @@ function examSystemPrompt(documentDigest?: string): string {
     'Tên đề nằm ở dòng đầu cột phải; KHÔNG sinh thêm block title/meta trùng nội dung header.\n' +
     '- Chỉ dùng title/meta khi người dùng yêu cầu đề không có header (không ghi sở/trường). Sau header chỉ thêm student khi đề cần ô họ tên/số báo danh, rồi heading từng phần, ví dụ "PHẦN I. TRẮC NGHIỆM (3,0 điểm)".\n' +
     '- Câu trắc nghiệm: block question, đúng 4 phương án A–D, đúng một đáp án, không trùng ý. Phương án nhiễu phải là lỗi sai thường gặp (nhầm dấu, nhầm công thức, quên điều kiện), không bịa ngẫu nhiên.\n' +
-    '- ĐỘ KHÓ (ma trận 4 mức theo chuẩn kiểm tra đánh giá của Bộ GD&ĐT), trừ khi người dùng yêu cầu khác: ' +
-    'Nhận biết ~40% (nhớ định nghĩa, công thức, đọc trực tiếp từ hình/bảng), Thông hiểu ~30% (áp dụng một bước, tính toán đơn giản), ' +
-    'Vận dụng ~20% (phối hợp 2–3 bước, bài có tham số m, bài toán thực tế quen thuộc), Vận dụng cao ~10% (bài toán thực tế mới, tối ưu, biện luận nhiều trường hợp). ' +
-    'Ví dụ 12 câu trắc nghiệm: 5 NB, 4 TH, 2 VD, 1 VDC. Sắp xếp câu từ dễ đến khó trong mỗi phần. ' +
-    'Câu tự luận chia ý tăng dần: ý a) thông hiểu, ý b) vận dụng; câu cuối cùng của đề nên là vận dụng cao. ' +
-    'Câu VD/VDC phải thật sự cần suy luận nhiều bước, không chỉ thay số lớn hơn vào câu dễ.\n' +
+    '- ' +
+    DIFFICULTY_RULE +
     '- Câu tự luận: block essay có score, các ý a) b) trong sub.\n' +
     '- Đề trắc nghiệm theo định dạng tốt nghiệp THPT từ 2025 gồm ba phần: PHẦN I nhiều lựa chọn (question mặc định, A–D, 0,25 điểm/câu); ' +
     'PHẦN II đúng/sai (question kind "tf", mỗi câu 4 ý a) b) c) d), tối đa 1 điểm/câu: đúng 1 ý được 0,1; 2 ý 0,25; 3 ý 0,5; 4 ý 1 điểm); ' +
