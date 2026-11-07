@@ -21,6 +21,7 @@ import { fileURLToPath } from 'node:url'
 import { json, readBody } from './http.js'
 import { clientIp, guard, isLocal, userFromToken } from './guard.js'
 import { addUsage, quotaMessage, readQuota } from './aiQuota.js'
+import { callAnthropic } from './anthropic.js'
 import { handleExtractRequest } from './extract.js'
 import { handleSearchRequest } from './searchProxy.js'
 import { handleImageRequest } from './imageProxy.js'
@@ -128,11 +129,11 @@ function providerConfig() {
   return {
     apiKey: process.env.LLM_API_KEY?.trim() ?? '',
     model: process.env.LLM_MODEL?.trim() || DEFAULT_MODEL,
-    // bản -free của opencode đã ngừng → không còn fallback opencode mặc định; dự phòng là Agnes
+    // bản -free của opencode đã ngừng → không còn fallback opencode mặc định
     fallbackModel: process.env.LLM_FALLBACK_MODEL?.trim() || '',
-    agnesApiKey: process.env.AGNES_API_KEY?.trim() || '',
-    agnesBaseURL: assertAllowedUrl((process.env.AGNES_BASE_URL?.trim() || 'https://apihub.agnes-ai.com/v1').replace(/\/+$/, '')).toString().replace(/\/+$/, ''),
-    agnesModel: process.env.AGNES_MODEL?.trim() || 'agnes-3.0-flash',
+    // Claude (Anthropic API chính thức) — dự phòng cuối, gọi qua SDK (server/anthropic.ts)
+    anthropicApiKey: process.env.ANTHROPIC_API_KEY?.trim() || '',
+    anthropicModel: process.env.ANTHROPIC_MODEL?.trim() || 'claude-opus-5-5',
     // Inception Mercury (dLLM), tương thích OpenAI
     mercuryApiKey: process.env.MERCURY_API_KEY?.trim() || '',
     mercuryBaseURL: assertAllowedUrl((process.env.MERCURY_BASE_URL?.trim() || 'https://api.inceptionlabs.ai/v1').replace(/\/+$/, '')).toString().replace(/\/+$/, ''),
@@ -191,33 +192,33 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
     } catch (err) {
       return json(res, 500, { error: err instanceof Error ? err.message : String(err) })
     }
-    if (!prov.apiKey && !prov.xkiroApiKey && !prov.agnesApiKey && !prov.mercuryApiKey) {
+    if (!prov.apiKey && !prov.xkiroApiKey && !prov.anthropicApiKey && !prov.mercuryApiKey) {
       return json(res, 500, {
-        error: 'Chưa cấu hình LLM_API_KEY, MERCURY_API_KEY, AGNES_API_KEY hoặc XKIRO_API_KEY. Kiểm tra file .env/config provider.',
+        error: 'Chưa cấu hình LLM_API_KEY, MERCURY_API_KEY, XKIRO_API_KEY hoặc ANTHROPIC_API_KEY. Kiểm tra file .env/config provider.',
       })
     }
 
-    // Thứ tự thử: opencode (model chính [+ LLM_FALLBACK_MODEL nếu đặt]) → Mercury → Agnes → xkiro.
+    // Thứ tự thử: opencode (model chính [+ LLM_FALLBACK_MODEL nếu đặt]) → Mercury → xkiro → Claude (cuối cùng).
     // Provider dự phòng nào không có key thì bỏ qua.
     // `opencode` = gửi x-opencode-session + reasoning_effort (chỉ gateway opencode hiểu).
-    // `noMaxTokens`: Agnes từ chối max_tokens > 4096 (400) nhưng bỏ trống thì không cắt → không gửi.
-    type Target = { model: string; url: string; key: string; opencode: boolean; noMaxTokens?: boolean }
+    // `anthropic`: gọi Claude qua SDK (Messages API), không qua fetch kiểu OpenAI.
+    type Target = { model: string; url: string; key: string; opencode: boolean; anthropic?: boolean }
     const targets: Target[] = []
     // client chỉ định đúng model dự phòng → bỏ qua opencode, gọi thẳng (thử/so chất lượng)
     const wantsBackup =
-      (!!prov.agnesApiKey && body.model === prov.agnesModel) || (!!prov.mercuryApiKey && body.model === prov.mercuryModel)
+      (!!prov.anthropicApiKey && body.model === prov.anthropicModel) || (!!prov.mercuryApiKey && body.model === prov.mercuryModel)
     if (prov.apiKey && !wantsBackup) {
       for (const m of [body.model ?? prov.model, prov.fallbackModel]) {
         if (m && !targets.some((t) => t.model === m)) targets.push({ model: m, url: prov.endpoint.toString(), key: prov.apiKey, opencode: true })
       }
     }
     if (prov.mercuryApiKey) targets.push({ model: prov.mercuryModel, url: `${prov.mercuryBaseURL}/chat/completions`, key: prov.mercuryApiKey, opencode: false })
-    if (prov.agnesApiKey) targets.push({ model: prov.agnesModel, url: `${prov.agnesBaseURL}/chat/completions`, key: prov.agnesApiKey, opencode: false, noMaxTokens: true })
     if (prov.xkiroApiKey) {
       for (const m of [prov.xkiroModel, DEFAULT_XKIRO_FALLBACK_MODEL]) {
         targets.push({ model: m, url: `${prov.xkiroBaseURL}/chat/completions`, key: prov.xkiroApiKey, opencode: false })
       }
     }
+    if (prov.anthropicApiKey) targets.push({ model: prov.anthropicModel, url: '', key: prov.anthropicApiKey, opencode: false, anthropic: true })
     // model dự phòng được chỉ định → thử nó trước tiên
     if (wantsBackup) {
       const i = targets.findIndex((t) => t.model === body.model)
@@ -228,10 +229,32 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
     for (const [modelIndex, target] of targets.entries()) {
       const selectedModel = target.model
       let lastErr: string | null = null
+      if (target.anthropic) {
+        try {
+          const r = await callAnthropic({
+            apiKey: target.key,
+            model: selectedModel,
+            messages: body.messages,
+            maxTokens: body.maxTokens ?? 32000,
+            effort: 'medium',
+            signal: AbortSignal.timeout(upstreamTimeoutMs()),
+          })
+          if (r.content.trim()) {
+            writeRawLog(JSON.stringify(r), { _model: selectedModel, _attempt: 0, finishReason: r.finishReason, usage: r.usage, content: r.content })
+            const after = await addUsage(userId, ip, r.usage.total_tokens, quota)
+            return json(res, 200, { content: r.content, reasoning: '', usage: r.usage, model: r.model, finishReason: r.finishReason, quota: after })
+          }
+          errs.push(`${selectedModel}: empty content (finish_reason=${r.finishReason})`)
+        } catch (err) {
+          const timedOut = err instanceof Error && (err.name === 'TimeoutError' || err.name === 'AbortError')
+          errs.push(`${selectedModel}: ${timedOut ? `quá thời gian chờ ${Math.round(upstreamTimeoutMs() / 1000)}s` : err instanceof Error ? err.message.slice(0, 200) : String(err)}`)
+        }
+        continue
+      }
       let attemptBody = JSON.stringify({
         model: selectedModel,
         messages: body.messages,
-        ...(target.noMaxTokens ? {} : { max_tokens: body.maxTokens ?? 32000 }),
+        max_tokens: body.maxTokens ?? 32000,
         ...(target.opencode && body.reasoningEffort ? { reasoning_effort: body.reasoningEffort } : {}),
         ...(body.temperature !== undefined ? { temperature: body.temperature } : {}),
       })

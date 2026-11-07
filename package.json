@@ -45,6 +45,7 @@
     "test:extract": "tsx scripts/test-extract.mjs"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^1.6.0",
     "@fontsource-variable/jetbrains-mono": "^5.1.2",
     "@fontsource/be-vietnam-pro": "^5.3.0",
     "@phosphor-icons/react": "^2.1.10",
