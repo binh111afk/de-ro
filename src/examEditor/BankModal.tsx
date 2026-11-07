@@ -33,6 +33,48 @@ const LIST_LIMIT = 120
 
 const SUBJECT_OPTIONS = [{ value: '', label: 'Mọi môn' }, ...SUBJECTS.map((s) => ({ value: s, label: s }))]
 const GRADE_OPTIONS = [{ value: '', label: 'Mọi lớp' }, ...GRADES.map((g) => ({ value: g, label: g }))]
+/**
+ * Giải thích câu Đúng/Sai viết liền "a) … Đúng. b) … Sai." → tách từng ý, bóc
+ * kết luận cuối ý. Không thấy đủ a), b) theo thứ tự (ngoài công thức) thì trả null.
+ */
+function splitByItems(
+  text: string,
+  answer?: string,
+): { intro: string; items: Array<{ key: string; text: string; verdict?: 'Đúng' | 'Sai' }> } | null {
+  // vị trí "x) " (hoặc "x Đúng"/"x Sai") nằm ngoài $…$, đầu chuỗi hoặc sau khoảng trắng
+  const marks: Array<{ key: string; at: number; end: number }> = []
+  let inMath = false
+  const want = ['a', 'b', 'c', 'd']
+  for (let i = 0; i < text.length; i++) {
+    if (text[i] === '$' && text[i - 1] !== '\\') inMath = !inMath
+    if (inMath) continue
+    const key = want[marks.length]
+    if (!key || text[i] !== key || (i > 0 && !/\s/.test(text[i - 1]))) continue
+    if (text[i + 1] === ')') marks.push({ key, at: i, end: i + 2 })
+    else if (/^ (Đúng|Sai|Đ\s*:|S\s*:)/.test(text.slice(i + 1, i + 7))) marks.push({ key, at: i, end: i + 1 })
+  }
+  if (marks.length < 2) return null
+  // đáp án dạng "ĐSSĐ" → kết luận từng ý khi giải thích không ghi
+  const fromAnswer = [...(answer ?? '').replace(/[^ĐS]/g, '')]
+  const items = marks.map((m, k) => {
+    let t = text.slice(m.end, marks[k + 1]?.at ?? text.length).trim()
+    let verdict: 'Đúng' | 'Sai' | undefined
+    const head = /^(?:(Đúng|Sai)\s*[:.,;–-]?|(Đ|S)\s*:)\s*/.exec(t)
+    const tail = /[:.,;–-]?\s*(Đúng|Sai)\.?$/.exec(t)
+    if (head) {
+      verdict = head[1] ? (head[1] as 'Đúng' | 'Sai') : head[2] === 'Đ' ? 'Đúng' : 'Sai'
+      t = t.slice(head[0].length)
+    } else if (tail) {
+      verdict = tail[1] as 'Đúng' | 'Sai'
+      t = t.slice(0, tail.index).trim()
+    }
+    const a = fromAnswer[want.indexOf(m.key)]
+    if (!verdict && fromAnswer.length === 4 && a) verdict = a === 'Đ' ? 'Đúng' : 'Sai'
+    return { key: m.key, text: t, verdict }
+  })
+  return { intro: text.slice(0, marks[0].at).trim(), items }
+}
+
 const TYPE_OPTIONS: Array<{ value: QuestionType | ''; label: string }> = [
   { value: '', label: 'Mọi loại' },
   ...(Object.keys(TYPE_LABEL) as QuestionType[]).map((k) => ({ value: k, label: TYPE_LABEL[k] })),
@@ -322,9 +364,34 @@ function QuestionDetail({ entry }: { entry: BankEntry }) {
       {entry.explanation ? (
         <section className="mt-6">
           <h3 className="text-[13px] font-semibold text-ink-2">Giải thích</h3>
-          <div className="mt-2 text-[14.5px] leading-relaxed text-ink-2">
-            <MathText as="div">{entry.explanation}</MathText>
-          </div>
+          {(() => {
+            const parts = entry.type === 'dung-sai' ? splitByItems(entry.explanation, typeof entry.answer === 'string' ? entry.answer : undefined) : null
+            if (!parts) {
+              return (
+                <div className="mt-2 text-[14.5px] leading-relaxed text-ink-2">
+                  <MathText as="div">{entry.explanation}</MathText>
+                </div>
+              )
+            }
+            return (
+              <div className="mt-2 space-y-2">
+                {parts.intro ? (
+                  <div className="text-[14.5px] leading-relaxed text-ink-2">
+                    <MathText as="div">{parts.intro}</MathText>
+                  </div>
+                ) : null}
+                {parts.items.map((it) => (
+                  <div key={it.key} className="flex gap-3 rounded-[6px] border border-line px-3.5 py-2.5 text-[14.5px] leading-relaxed text-ink-2">
+                    <span className="shrink-0 font-semibold text-ink">{it.key})</span>
+                    <MathText as="div" className="min-w-0 flex-1">{it.text}</MathText>
+                    {it.verdict ? (
+                      <span className={cn('shrink-0 self-start text-[12.5px] font-semibold', it.verdict === 'Đúng' ? 'text-sage' : 'text-clay')}>{it.verdict}</span>
+                    ) : null}
+                  </div>
+                ))}
+              </div>
+            )
+          })()}
         </section>
       ) : null}
 
