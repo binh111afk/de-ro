@@ -1,6 +1,6 @@
 # context.md — đề rõ (trình soạn đề thi)
 
-Bản đồ ngắn của dự án. **Chỉ đọc file này khi bắt đầu phiên**; các file khác mở khi việc đang làm cần tới (bảng "Đọc thêm khi nào" bên dưới). Cập nhật: 07/11/2026 (phiên 23).
+Bản đồ ngắn của dự án. **Chỉ đọc file này khi bắt đầu phiên**; các file khác mở khi việc đang làm cần tới (bảng "Đọc thêm khi nào" bên dưới). Cập nhật: 07/11/2026 (phiên 24). **Đang ở nhánh `feat/trig-7-tinh-nang`, chưa merge — xem phiên 24.**
 
 ## Dự án
 
@@ -38,6 +38,7 @@ Danh sách đủ: `package.json` → `scripts`. `.env` cần `LLM_API_KEY` (mẫ
 | Đề tương tác | `src/lib/docToExam.ts`, `src/lib/math.ts` (renderMath: `$…$`, `**đậm**`, ảnh `![alt\|rộng%](src)`) |
 | Công cụ vẽ | `src/lib/toolSpec.ts` (ToolDoc + renderTool), `src/examEditor/tools/` (ToolsPanel = SUBJECTS, ToolModal, MoreToolModals), `src/examEditor/toolImages.ts` (ảnh công cụ trong đề, đổi PNG). Thư viện vẽ: `plot, varTable, geometry, signTable, oxy, stats, mathExtra` (Toán), `circuit, physics` (Lý), `chem` (Hoá). AI dùng qua `FIGURE_GUIDE` + `toolFromRaw` (`src/lib/docRewrite.ts`) |
 | Bảng đáp án | `src/lib/answerKey.ts` (chia theo dạng câu, dùng cho trình soạn + Word) |
+| Khung chương trình | `src/data/khungToan.json` (Toán 6–12 GDPT 2018, chưa nối vào prompt) |
 | Kho câu hỏi | `src/data/bank.ts` + `bankThpt.ts`/`bankThpt2.ts` (nạp lười), độ khó `bankLevel.ts`, câu có hình `src/data/bankFigures.ts` (field `figure`), `src/examEditor/BankModal.tsx` |
 | Slide | `src/examEditor/SlideEditor.tsx`, `slide.css`; đồ hoạ `src/lib/graphics.ts` là file **sinh tự động** |
 | Danh sách có phân trang | `src/components/Pager.tsx` |
@@ -58,7 +59,8 @@ Danh sách đủ: `package.json` → `scripts`. `.env` cần `LLM_API_KEY` (mẫ
 
 | Khi làm | Mở |
 |---|---|
-| Tiếp việc phiên trước | [phiên 23](docs/handoff/phien-23.md) (mục "Còn lại" ở cuối) |
+| Tiếp việc phiên trước | [phiên 24](docs/handoff/phien-24.md) (kiểm trig + 600 câu, khung chương trình, công cụ ghép nhóm) |
+| Khung chương trình các môn (chống AI ra đề vượt lớp): soạn prompt cho agent ngoài, kiểm file gửi về | [docs/khung-chuong-trinh.md](docs/khung-chuong-trinh.md) |
 | Soạn thêm câu cho kho câu hỏi | [scripts/bank/HUONG_DAN_SOAN.md](scripts/bank/HUONG_DAN_SOAN.md) |
 | Model AI, nhà cung cấp, hạn mức token, chi phí | [phiên 22](docs/handoff/phien-22.md), mục "So sánh nhà cung cấp" |
 | Chấm điểm server, giấu đáp án đề link, bảo mật API, env Vercel/Supabase | [phiên 21](docs/handoff/phien-21.md), mục "Cấu hình ngoài code" và "Đã làm" |
