@@ -145,6 +145,64 @@ export interface ChatTurn {
   planState?: 'pending' | 'approved' | 'cancelled'
   /** tiến trình sinh từng slide (chặng 26b) */
   progress?: { done: number; total: number; current?: string }
+  /** soạn đề: chỉ số bước đang chạy trong EXAM_STEPS (≥ length = xong hết) */
+  stepAt?: number
+  /** soạn đề: bước đang chạy thì lỗi/dừng */
+  stepFailed?: boolean
+  /** soạn đề: ghi chú ngắn cạnh từng bước (vd "3 nguồn") */
+  stepNotes?: Record<number, string>
+}
+
+/** các bước hiện trong khung chat khi AI soạn đề */
+const EXAM_STEPS = ['Đọc yêu cầu', 'Tìm nguồn tham khảo', 'Soạn nội dung đề', 'Kiểm tra và đưa vào đề']
+
+/** danh sách bước kiểu "đang làm / đã xong" — thay cho dòng chữ chạy khi soạn đề */
+function StepList({ at, failed, notes }: { at: number; failed?: boolean; notes?: Record<number, string> }) {
+  return (
+    <ol className="ai-steps" aria-label="Tiến trình soạn đề">
+      {EXAM_STEPS.map((label, i) => {
+        const state = i < at ? 'done' : i === at ? (failed ? 'failed' : 'active') : 'todo'
+        return (
+          <li key={label} className={`ai-step ai-step--${state}`}>
+            <span className="ai-step__icon" aria-hidden="true">
+              {state === 'done' ? '✓' : state === 'failed' ? '!' : state === 'active' ? <span className="ai-step__spin" /> : null}
+            </span>
+            <span className="ai-step__label">{label}</span>
+            {notes?.[i] ? <span className="ai-step__note">{notes[i]}</span> : null}
+          </li>
+        )
+      })}
+    </ol>
+  )
+}
+
+/** nút "Nguồn (n)" bấm mở danh sách nguồn + cảnh báo, thay cho dòng chữ lộ thiên dưới tin nhắn */
+function SourcesButton({ sources, note }: { sources?: string[]; note?: string }) {
+  const [open, setOpen] = useState(false)
+  const n = sources?.length ?? 0
+  return (
+    <div className="ai-sources">
+      <button type="button" className="ai-sources__btn" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
+        Nguồn{n ? ` (${n})` : ''}
+        {note ? <span className="ai-sources__dot" aria-label="có cảnh báo" /> : null}
+        <span className={cn('ai-sources__chev', open && 'is-open')} aria-hidden="true">▾</span>
+      </button>
+      {open ? (
+        <div className="ai-sources__panel">
+          {n ? (
+            <ul>
+              {sources!.map((s) => (
+                <li key={s}>{s}</li>
+              ))}
+            </ul>
+          ) : (
+            <p>Không dùng nguồn tham khảo.</p>
+          )}
+          {note ? <p className="ai-msg-source-note">{note}</p> : null}
+        </div>
+      ) : null}
+    </div>
+  )
 }
 
 const STARTERS = [
@@ -767,8 +825,11 @@ export function AiPanel({
     setTurns((t) => [
       ...t,
       userTurn,
-      { id: botId, role: 'assistant', text: '', pending: true, intent },
+      { id: botId, role: 'assistant', text: '', pending: true, intent, ...(intent === 'doc' && mode === 'exam' ? { stepAt: 1 } : {}) },
     ])
+    const examSteps = intent === 'doc' && mode === 'exam'
+    const patchTurn = (p: (turn: ChatTurn) => Partial<ChatTurn>) =>
+      setTurns((t) => t.map((turn) => (turn.id === botId ? { ...turn, ...p(turn) } : turn)))
     setInput('')
     setFiles([])
     setBusy(true)
@@ -798,6 +859,7 @@ export function AiPanel({
         ),
       )
     }
+    if (examSteps) patchTurn(() => ({ stepAt: 2, stepNotes: { 1: sourceNames.length ? `${sourceNames.length} nguồn` : 'không cần' } }))
     const sourceText = sourcePrompt(pack)
     const sourceBlock =
       intent === 'doc' && mode === 'exam'
@@ -853,6 +915,11 @@ export function AiPanel({
         // dàn ý kéo dài 30–60s (dễ vượt timeout proxy) mà không nội dung hơn.
         ...(mode === 'slide' ? { reasoningEffort: 'medium' as const } : {}),
       })
+      if (examSteps) {
+        patchTurn(() => ({ stepAt: 3 }))
+        // nhường một khung hình để bước "Kiểm tra" kịp hiện trước khi áp đề (việc áp chạy đồng bộ)
+        await new Promise((r) => setTimeout(r, 350))
+      }
       if (htmlMode) {
         const fenced = res.content.match(/```(?:html)?\s*([\s\S]*?)```/i)
         const html = (fenced ? fenced[1] : res.content)
@@ -953,7 +1020,21 @@ export function AiPanel({
         if (!summary && looksJson) console.warn('[AI] JSON không áp được:', res.content)
         setTurns((t) =>
           t.map((turn) =>
-            turn.id === botId ? { ...turn, text, pending: false } : turn,
+            turn.id === botId
+              ? {
+                  ...turn,
+                  text,
+                  pending: false,
+                  // chỉ có bước khi là lượt soạn đề; trả lời thường (không JSON) thì bỏ danh sách bước
+                  ...(turn.stepAt != null
+                    ? summary
+                      ? { stepAt: EXAM_STEPS.length }
+                      : looksJson
+                        ? { stepFailed: true }
+                        : { stepAt: undefined }
+                    : {}),
+                }
+              : turn,
           ),
         )
       }
@@ -966,6 +1047,7 @@ export function AiPanel({
                 ...turn,
                 text: turn.text || '',
                 pending: false,
+                ...(turn.stepAt != null ? { stepFailed: true } : {}),
                 error: aborted
                   ? 'Đã dừng.'
                   : (err as Error)?.message || 'Không gọi được AI.',
@@ -1194,8 +1276,9 @@ export function AiPanel({
                 turn.role === 'user' ? 'ai-msg-user' : 'ai-msg-assistant',
               )}
             >
+              {turn.stepAt != null ? <StepList at={turn.stepAt} failed={turn.stepFailed} notes={turn.stepNotes} /> : null}
               {turn.pending && !turn.text ? (
-                turn.progress ? (
+                turn.stepAt != null ? null : turn.progress ? (
                   <DeckProgress {...turn.progress} />
                 ) : (
                   <ThinkingLine mode={mode} intent={turn.intent} />
@@ -1226,16 +1309,7 @@ export function AiPanel({
                   ))}
                 </div>
               ) : null}
-              {turn.sources?.length || turn.sourceNote ? (
-                <div className="ai-msg-sources">
-                  {turn.sources?.length ? (
-                    <span>Nguồn: {turn.sources.join(' · ')}</span>
-                  ) : null}
-                  {turn.sourceNote ? (
-                    <span className="ai-msg-source-note">{turn.sourceNote}</span>
-                  ) : null}
-                </div>
-              ) : null}
+              {turn.sources?.length || turn.sourceNote ? <SourcesButton sources={turn.sources} note={turn.sourceNote} /> : null}
               {turn.error ? <div className="ai-msg-error">{turn.error}</div> : null}
             </div>
           ))
