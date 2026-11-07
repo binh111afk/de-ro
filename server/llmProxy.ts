@@ -218,6 +218,11 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
         targets.push({ model: m, url: `${prov.xkiroBaseURL}/chat/completions`, key: prov.xkiroApiKey, opencode: false })
       }
     }
+    // model dự phòng được chỉ định → thử nó trước tiên
+    if (wantsBackup) {
+      const i = targets.findIndex((t) => t.model === body.model)
+      if (i > 0) targets.unshift(...targets.splice(i, 1))
+    }
 
     const errs: string[] = []
     for (const [modelIndex, target] of targets.entries()) {
