@@ -1,6 +1,7 @@
 /**
  * Công cụ Toán bổ sung:
- * - Đường tròn lượng giác: các góc "π/6", "150°", "-2π/3"; họ nghiệm "π/4 + kπ/2".
+ * - Đường tròn lượng giác: góc "π/6", "150°", "-2π/3"; họ nghiệm "π/4 + kπ/2"; tô: [π/6 → 5π/6);
+ *   y = 1/2; x = -√2/2; nối tô: M N P; nối tô: họ; cung: M N "α"; M(1/2; √3/2); tuỳ chọn values, cot.
  * - Sơ đồ cây xác suất: thụt lề 2 dấu cách mỗi tầng, "A: 0,3"; "A'" hoặc "~A" là biến cố đối (gạch trên).
  * - Trục số: mỗi dòng một tập "(-2; 3]", "(-oo; -1) ∪ [2; 5]", "A = [1; +oo)".
  */
@@ -20,12 +21,16 @@ const num = (s: string) => Number(s.replace(',', '.'))
  * ------------------------------------------------------------------ */
 
 export interface TrigSpec {
-  /** mỗi dòng (hoặc dấu phẩy… không: dùng dòng) một góc hoặc một họ nghiệm */
+  /** mỗi dòng một lệnh: góc, họ nghiệm, tô:, nối:, cung:, y =, x =, M(x; y) */
   angles: string
   /** nét đứt chiếu xuống trục cos, sin */
   projections: boolean
   /** vẽ trục tan */
   tan: boolean
+  /** ghi giá trị cos, sin trên trục (chân hình chiếu) */
+  values?: boolean
+  /** vẽ trục cot (đường y = 1) */
+  cot?: boolean
 }
 
 /** "π/6", "-2π/3", "5pi/4", "150°", "2" (radian) → radian */
@@ -60,18 +65,156 @@ function anglesOf(line: string): Array<{ a: number; label: string; name?: string
 
 const prettyAngle = (s: string) => s.replace(/pi/gi, 'π').replace(/-/g, '−')
 
+/** bỏ dấu tiếng Việt để nhận diện từ khoá lệnh: "tô" → "to", "nối" → "noi", "họ" → "ho" */
+const deaccent = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D')
+
+/** số cho toạ độ / đường thẳng: "1/2", "√3/2", "sqrt(3)/2", "0,6", "-0.5" → số */
+function parseVal(t: string): number {
+  const s = t
+    .trim()
+    .replace(/−/g, '-')
+    .replace(/\s+/g, '')
+    .replace(/sqrt\s*\(\s*(\d+)\s*\)/i, '√$1')
+    .replace(/sqrt/i, '√')
+  const m = s.match(/^(-?)(.+)$/)
+  const sign = m && m[1] ? -1 : 1
+  const v = m ? m[2] : ''
+  const sq = v.match(/^√(\d+)(?:\/(\d+))?$/)
+  if (sq) return (sign * Math.sqrt(+sq[1])) / (sq[2] ? +sq[2] : 1)
+  const fr = v.match(/^(\d+)\/(\d+)$/)
+  if (fr) return (sign * +fr[1]) / +fr[2]
+  if (/^\d+(?:[.,]\d+)?$/.test(v)) return sign * num(v)
+  throw new Error(`Không đọc được số "${t.trim()}" — gõ vd. 1/2, √3/2, 0,5`)
+}
+
+/** giá trị "đẹp" trên trục: 0, ±1/2, ±√2/2, ±√3/2, ±1; số khác ghi gần đúng 2 chữ số thập phân */
+function prettyVal(v: number): string {
+  if (Math.abs(v) < 1e-6) return '0'
+  for (const [q, t] of [[1, '1'], [0.5, '1/2'], [Math.SQRT1_2, '√2/2'], [Math.sqrt(3) / 2, '√3/2']] as const)
+    if (Math.abs(Math.abs(v) - q) < 1e-6) return (v < 0 ? '−' : '') + t
+  const r = Math.round(Math.abs(v) * 100) / 100
+  return (v < 0 && r > 0 ? '−' : '') + String(r).replace('.', ',')
+}
+
 export function renderTrigSvg(spec: TrigSpec, desc: string) {
   const lines = spec.angles
     .split('\n')
     .map((l) => l.trim())
     .filter(Boolean)
   if (!lines.length) throw new Error('Gõ ít nhất một góc, vd. π/6')
-  const pts = lines.flatMap(anglesOf)
   const R = 110
   const cx = 170
   const cy = 160
-  const W = spec.tan ? 380 : 340
+  type Pt = { a: number; vx: number; vy: number; px: number; py: number; label?: string; name?: string }
+  const pts: Pt[] = [] // mọi điểm sẽ chấm: góc, họ nghiệm, theo toạ độ
+  const named = new Map<string, Pt>()
+  const fam: Pt[] = [] // điểm của các họ nghiệm (cho "nối: họ")
+  const shades: Array<{ a0: number; a1: number; la: boolean; lb: boolean }> = []
+  const rays: Array<{ axis: 'x' | 'y'; v: number }> = []
+  const polys: Array<{ names: string[] | null; fill: boolean; ln: number }> = []
+  const arcs: Array<{ m: string; n: string; label?: string; ln: number }> = []
+  const warns: Array<{ line: number; msg: string }> = []
+  // vế phải có π/pi/k/° → góc/họ nghiệm; còn lại là số → đường thẳng/toạ độ
+  const isAngleTxt = (t: string) => /[π°]|pi|\bk\b/i.test(t)
+
+  lines.forEach((line, i) => {
+    const ln = i + 1
+    const err = (msg: string): never => {
+      throw new Error(`Dòng ${ln} "${line}": ${msg}`)
+    }
+    const d = deaccent(line).toLowerCase().trim()
+    // nối: M N P / nối tô: M N P / nối (tô): họ
+    if (d.match(/^noi(\s+to)?\s*:/)) {
+      const fill = /^noi\s+to\s*:/.test(d)
+      // thân lệnh là phần sau dấu ":" đầu tiên (tránh so khớp chữ có dấu trong regex)
+      const body = line.slice(line.indexOf(':') + 1).trim()
+      const names = /^(ho)$/i.test(deaccent(body).trim()) ? null : body.split(/[\s,]+/).filter(Boolean)
+      if (names && !names.length) err('cần dạng nối: M N P (hoặc "nối: họ" để nối điểm họ nghiệm)')
+      polys.push({ names, fill, ln })
+      return
+    }
+    // cung: M N "nhãn"
+    if (d.match(/^cung\s*:/)) {
+      const body = line.replace(/^cung\s*:/i, '').trim()
+      const m = body.match(/^(\S+)\s+(\S+)(?:\s+"([^"]*)")?$/)
+      if (!m) err('cần dạng cung: M N (nhãn trong "…" tuỳ chọn)')
+      arcs.push({ m: m![1], n: m![2], label: m![3], ln })
+      return
+    }
+    // tô: [π/6 → 5π/6) — cung miền nghiệm ngược chiều kim đồng hồ
+    if (d.match(/^to\s*:/)) {
+      const m = d.match(/^to\s*:\s*([[(])?\s*(.+?)\s*(?:→|->|\bden\b)\s*(.+?)\s*([\])])?\s*$/)
+      if (!m) err('cần dạng tô: π/6 → 5π/6 (mũi tên →, -> hoặc "đến"; thêm [ ( ] ) ở hai đầu nếu cần)')
+      try {
+        shades.push({ a0: parseAngle(m![2]), a1: parseAngle(m![3]), la: m![1] ? m![1] === '[' : true, lb: m![4] ? m![4] === ']' : true })
+      } catch (e) {
+        err(e instanceof Error ? e.message : String(e))
+      }
+      return
+    }
+    // y = 1/2, x = -√2/2 — đường thẳng; vế phải là góc thì rơi xuống xử lí như cũ
+    if (d.match(/^[xy]\s*=/)) {
+      const axis = d[0] as 'x' | 'y'
+      const rhs = d.replace(/^[xy]\s*=\s*/, '').trim()
+      if (!isAngleTxt(rhs)) {
+        try {
+          const v = parseVal(rhs)
+          // ponytail: vẽ được trong khung mới vẽ — giá trị quá xa thì bỏ qua thay vì nới khung vô hạn
+          if ((axis === 'y' && Math.abs(v) <= 1.25) || (axis === 'x' && Math.abs(v) <= 1.35)) rays.push({ axis, v })
+          return
+        } catch {
+          err(`cần dạng ${axis} = 1/2 (chấp nhận √3/2, sqrt(3)/2, 0,5)`)
+        }
+      }
+      if (axis === 'y') err('cần dạng y = 1/2 — muốn vẽ góc/họ nghiệm thì bỏ "y =" đi')
+    }
+    // M(1/2; √3/2) — điểm theo toạ độ (cos; sin)
+    const cm = line.match(/^([A-Z][A-Za-z0-9']*)\s*\(\s*(.+?)\s*;\s*(.+?)\s*\)$/)
+    if (cm && !isAngleTxt(cm[2] + cm[3])) {
+      try {
+        const vx = parseVal(cm[2])
+        const vy = parseVal(cm[3])
+        if (Math.abs(Math.hypot(vx, vy) - 1) > 0.02) warns.push({ line: ln, msg: `điểm ${cm[1]} không nằm trên đường tròn đơn vị` })
+        const p: Pt = { a: Math.atan2(vy, vx), vx, vy, px: cx + R * vx, py: cy - R * vy, name: cm[1] }
+        pts.push(p)
+        named.set(cm[1], p)
+        return
+      } catch {
+        err(`toạ độ cần số, vd ${cm[1]}(1/2; √3/2)`)
+      }
+    }
+    // góc / họ nghiệm (cú pháp cũ)
+    try {
+      const items = anglesOf(line)
+      for (const it of items) {
+        const p: Pt = { a: it.a, vx: Math.cos(it.a), vy: Math.sin(it.a), px: cx + R * Math.cos(it.a), py: cy - R * Math.sin(it.a), label: it.label, name: it.name }
+        pts.push(p)
+        if (it.name) named.set(it.name, p)
+        if (items.length > 1) fam.push(p)
+      }
+    } catch (e) {
+      err(e instanceof Error ? e.message : String(e))
+    }
+  })
+
+  const W = spec.tan || spec.cot ? 380 : 340
   const H = 320
+  const pt = (n: string, ln: number): Pt => {
+    const p = named.get(n) ?? named.get(n.toUpperCase())
+    if (!p) throw new Error(`Dòng ${ln} "${lines[ln - 1]}": điểm "${n}" chưa khai báo — khai báo bằng ${n}: góc (vd ${n}: pi/3) hoặc ${n}(1/2; √3/2)`)
+    return p
+  }
+  // nhãn giá trị trên trục: gộp nhãn trùng theo giá trị; đường thẳng y = a/x = a cũng ghi nhãn ở đầu đường
+  const cosVals = new Map<string, { x: number; t: string }>()
+  const sinVals = new Map<string, { y: number; t: string }>()
+  if (spec.values)
+    for (const p of pts) {
+      const tx = prettyVal(p.vx)
+      if (!cosVals.has(tx)) cosVals.set(tx, { x: p.vx, t: tx })
+      const ty = prettyVal(p.vy)
+      if (!sinVals.has(ty)) sinVals.set(ty, { y: p.vy, t: ty })
+    }
+
   let b = ARROW
   b += `<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="#111" stroke-width="1.5"/>`
   b += `<path d="M${cx - R - 30} ${cy}H${cx + R + 32}" stroke="#111" stroke-width="1.2" marker-end="url(#mxarr)"/>`
@@ -86,29 +229,81 @@ export function renderTrigSvg(spec: TrigSpec, desc: string) {
     b += `<path d="M${cx + R} ${cy + R + 10}V${cy - R - 20}" stroke="#111" stroke-width="1.1" marker-end="url(#mxarr)"/>`
     b += `<text x="${cx + R + 6}" y="${cy - R - 12}" ${FAM} font-size="14" font-style="italic">tan</text>`
   }
+  if (spec.cot) {
+    // trục cot: đường ngang y = 1 (tiếp tuyến tại B), mũi tên sang phải
+    b += `<path d="M${cx - R - 2} ${cy - R}H${cx + R + 58}" stroke="#111" stroke-width="1.1" marker-end="url(#mxarr)"/>`
+    b += `<text x="${cx + R + 10}" y="${cy - R + 20}" ${FAM} font-size="14" font-style="italic">cot</text>`
+  }
+  // tô cung (miền nghiệm): cung đậm #c0392b ngược chiều kim đồng hồ + chấm đầu mút
+  let shadeDots = ''
+  for (const s of shades) {
+    const raw = s.a1 - s.a0
+    const sweep = ((raw % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI)
+    const dot = (a: number, filled: boolean) =>
+      `<circle cx="${f1(cx + R * Math.cos(a))}" cy="${f1(cy - R * Math.sin(a))}" r="4.5" fill="${filled ? '#c0392b' : '#fff'}" stroke="#c0392b" stroke-width="1.5"/>`
+    if (raw > 1e-9 && sweep < 1e-9) {
+      b += `<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="#c0392b" stroke-width="4"/>`
+    } else if (sweep > 1e-9) {
+      const a1 = s.a0 + sweep
+      const large = sweep > Math.PI ? 1 : 0
+      b += `<path d="M${f1(cx + R * Math.cos(s.a0))} ${f1(cy - R * Math.sin(s.a0))}A${R} ${R} 0 ${large} 0 ${f1(cx + R * Math.cos(a1))} ${f1(cy - R * Math.sin(a1))}" fill="none" stroke="#c0392b" stroke-width="4"/>`
+    }
+    shadeDots += dot(s.a0, s.la) + dot(s.a1, s.lb)
+  }
+  // đường thẳng y = a / x = a: nét liền mảnh xuyên qua đường tròn, chấm 2 giao điểm nếu |a| ≤ 1
+  for (const r of rays) {
+    const t = prettyVal(r.v)
+    if (r.axis === 'x') {
+      const X = cx + R * r.v
+      b += `<line x1="${f1(X)}" y1="${cy - R - 14}" x2="${f1(X)}" y2="${cy + R + 14}" stroke="#111" stroke-width="1"/>`
+      if (Math.abs(r.v) <= 1) {
+        const yy = R * Math.sqrt(1 - r.v * r.v)
+        b += `<circle cx="${f1(X)}" cy="${f1(cy - yy)}" r="2.5" fill="#111"/><circle cx="${f1(X)}" cy="${f1(cy + yy)}" r="2.5" fill="#111"/>`
+      }
+      cosVals.set(t, { x: r.v, t })
+    } else {
+      const Y = cy - R * r.v
+      b += `<line x1="${cx - R - 14}" y1="${f1(Y)}" x2="${cx + R + 14}" y2="${f1(Y)}" stroke="#111" stroke-width="1"/>`
+      if (Math.abs(r.v) <= 1) {
+        const xx = R * Math.sqrt(1 - r.v * r.v)
+        b += `<circle cx="${f1(cx - xx)}" cy="${f1(Y)}" r="2.5" fill="#111"/><circle cx="${f1(cx + xx)}" cy="${f1(Y)}" r="2.5" fill="#111"/>`
+      }
+      sinVals.set(t, { y: r.v, t })
+    }
+  }
+  // nối điểm thành đa giác (khép kín), "nối tô:" thêm nền nhạt
+  for (const pl of polys) {
+    const list = pl.names === null ? [...fam].sort((p, q) => p.a - q.a) : pl.names.map((n) => pt(n, pl.ln))
+    if (pl.names === null && !list.length) throw new Error(`Dòng ${pl.ln} "${lines[pl.ln - 1]}": không có họ nghiệm nào — thêm dòng vd π/4 + kπ/2`)
+    if (list.length < 2) throw new Error(`Dòng ${pl.ln} "${lines[pl.ln - 1]}": cần ít nhất 2 điểm để nối`)
+    b += `<path d="M${list.map((p) => `${f1(p.px)} ${f1(p.py)}`).join('L')}Z" fill="${pl.fill ? '#1f5fbf' : 'none'}" fill-opacity="0.08" stroke="#111" stroke-width="1.2"/>`
+  }
   const single = pts.length === 1
-  for (const { a, label: angleLabel, name } of pts) {
+  for (const { a, label: angleLabel, name, vx, vy, px: X, py: Y } of pts) {
     // điểm có tên: ghi tên ở điểm; một góc thì ghi số đo cạnh cung
     const label = name ?? angleLabel
     if (name && single && angleLabel) {
       const m = a / 2
       b += `<text x="${f1(cx + 44 * Math.cos(m))}" y="${f1(cy - 44 * Math.sin(m) + 5)}" ${FAM} font-size="13" text-anchor="middle">${esc(prettyAngle(angleLabel))}</text>`
     }
-    const x = cx + R * Math.cos(a)
-    const y = cy - R * Math.sin(a)
     if (spec.projections) {
-      b += `<path d="M${f1(x)} ${f1(y)}V${cy}M${f1(x)} ${f1(y)}H${cx}" stroke="#111" stroke-width="0.9" stroke-dasharray="4 3"/>`
+      b += `<path d="M${f1(X)} ${f1(Y)}V${cy}M${f1(X)} ${f1(Y)}H${cx}" stroke="#111" stroke-width="0.9" stroke-dasharray="4 3"/>`
     }
-    if (single || spec.tan) b += `<line x1="${cx}" y1="${cy}" x2="${f1(x)}" y2="${f1(y)}" stroke="#111" stroke-width="1.2"/>`
-    if (spec.tan && Math.abs(Math.cos(a)) > 0.15) {
-      const ty = cy - R * Math.tan(a)
+    if (single || spec.tan || spec.cot) b += `<line x1="${cx}" y1="${cy}" x2="${f1(X)}" y2="${f1(Y)}" stroke="#111" stroke-width="1.2"/>`
+    if (spec.tan && Math.abs(vx) > 0.15) {
+      const ty = cy - (R * vy) / vx
       if (Math.abs(ty - cy) < R + 10)
-        b += `<path d="M${f1(x)} ${f1(y)}L${cx + R} ${f1(ty)}" stroke="#111" stroke-width="0.9" stroke-dasharray="4 3"/><circle cx="${cx + R}" cy="${f1(ty)}" r="2.5" fill="#111"/>`
+        b += `<path d="M${f1(X)} ${f1(Y)}L${cx + R} ${f1(ty)}" stroke="#111" stroke-width="0.9" stroke-dasharray="4 3"/><circle cx="${cx + R}" cy="${f1(ty)}" r="2.5" fill="#111"/>`
     }
-    b += `<circle cx="${f1(x)}" cy="${f1(y)}" r="3.2" fill="#111"/>`
+    if (spec.cot && Math.abs(vy) > 0.15) {
+      const tx = cx + (R * vx) / vy
+      if (tx > cx - R - 2 && tx < cx + R + 58)
+        b += `<path d="M${f1(X)} ${f1(Y)}L${f1(tx)} ${cy - R}" stroke="#111" stroke-width="0.9" stroke-dasharray="4 3"/><circle cx="${f1(tx)}" cy="${cy - R}" r="2.5" fill="#111"/>`
+    }
+    b += `<circle cx="${f1(X)}" cy="${f1(Y)}" r="3.2" fill="#111"/>`
     if (label) {
-      const lx = x + 16 * Math.cos(a)
-      const ly = y - 16 * Math.sin(a) + 5
+      const lx = X + 16 * Math.cos(a)
+      const ly = Y - 16 * Math.sin(a) + 5
       b += `<text x="${f1(lx)}" y="${f1(ly)}" ${FAM} font-size="14" text-anchor="${Math.cos(a) > 0.2 ? 'start' : Math.cos(a) < -0.2 ? 'end' : 'middle'}">${esc(prettyAngle(label))}</text>`
     }
   }
@@ -121,7 +316,29 @@ export function renderTrigSvg(spec: TrigSpec, desc: string) {
     const ey = cy - r * Math.sin(a)
     b += `<path d="M${cx + r} ${cy}A${r} ${r} 0 ${large} ${a >= 0 ? 0 : 1} ${f1(ex)} ${f1(ey)}" fill="none" stroke="#111" stroke-width="1.1" marker-end="url(#mxarr)"/>`
   }
-  return wrap(W, H, desc, b)
+  // cung giữa hai điểm có tên: ngược chiều kim đồng hồ từ M tới N, mũi tên ở N
+  for (const c of arcs) {
+    const M = pt(c.m, c.ln)
+    const N = pt(c.n, c.ln)
+    const sweep = ((N.a - M.a) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI)
+    if (sweep > 1e-9) {
+      const a1 = M.a + sweep
+      const large = sweep > Math.PI ? 1 : 0
+      b += `<path d="M${f1(cx + R * Math.cos(M.a))} ${f1(cy - R * Math.sin(M.a))}A${R} ${R} 0 ${large} 0 ${f1(cx + R * Math.cos(a1))} ${f1(cy - R * Math.sin(a1))}" fill="none" stroke="#111" stroke-width="1.3" marker-end="url(#mxarr)"/>`
+    }
+    if (c.label) {
+      const mid = M.a + sweep / 2
+      const lx = cx + (R + 16) * Math.cos(mid)
+      const ly = cy - (R + 16) * Math.sin(mid) + 5
+      b += `<text x="${f1(lx)}" y="${f1(ly)}" ${FAM} font-size="14" text-anchor="${Math.cos(mid) > 0.2 ? 'start' : Math.cos(mid) < -0.2 ? 'end' : 'middle'}">${esc(c.label)}</text>`
+    }
+  }
+  b += shadeDots
+  // giá trị trên trục: cos dưới trục ngang, sin bên trái trục dọc
+  for (const [, v] of cosVals) b += `<text x="${f1(cx + R * v.x)}" y="${cy + 18}" ${FAM} font-size="13" text-anchor="middle" paint-order="stroke" stroke="#fff" stroke-width="3">${esc(v.t)}</text>`
+  for (const [, v] of sinVals) b += `<text x="${cx - 6}" y="${f1(cy - R * v.y + 5)}" ${FAM} font-size="13" text-anchor="end" paint-order="stroke" stroke="#fff" stroke-width="3">${esc(v.t)}</text>`
+  const img = wrap(W, H, desc, b)
+  return warns.length ? { ...img, errors: warns } : img
 }
 
 /* ------------------------------------------------------------------ *
