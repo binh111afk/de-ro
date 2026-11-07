@@ -1,0 +1,969 @@
+[
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "subject": "Lịch sử",
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Cuộc cách mạng công nghiệp lần thứ nhất bắt đầu ở nước nào?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Pháp"
+      },
+      {
+        "key": "B",
+        "text": "Mỹ"
+      },
+      {
+        "key": "C",
+        "text": "Anh"
+      },
+      {
+        "key": "D",
+        "text": "Đức"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Cách mạng công nghiệp lần thứ nhất bùng nổ ở Anh từ nửa sau thế kỉ XVIII.",
+    "tags": [
+      "cách mạng công nghiệp"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "subject": "Lịch sử",
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Nguyên nhân sâu xa dẫn đến cách mạng tư sản Anh (thế kỉ XVII) là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "vua giải tán Quốc hội"
+      },
+      {
+        "key": "B",
+        "text": "nạn đói kéo dài"
+      },
+      {
+        "key": "C",
+        "text": "sự can thiệp của nước ngoài"
+      },
+      {
+        "key": "D",
+        "text": "mâu thuẫn giữa giai cấp tư sản, dân chúng và chế độ phong kiến chuyên chế"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Chế độ phong kiến chuyên chế kìm hãm sự phát triển của chủ nghĩa tư bản, gây mâu thuẫn gay gắt — nguyên nhân sâu xa của cách mạng.",
+    "tags": [
+      "cách mạng tư sản"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "subject": "Lịch sử",
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Chiến tranh thế giới thứ nhất diễn ra trong những năm nào?",
+    "options": [
+      {
+        "key": "A",
+        "text": "1914 – 1919"
+      },
+      {
+        "key": "B",
+        "text": "1914 – 1918"
+      },
+      {
+        "key": "C",
+        "text": "1913 – 1917"
+      },
+      {
+        "key": "D",
+        "text": "1915 – 1918"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Chiến tranh thế giới thứ nhất nổ ra tháng 7/1914 và kết thúc 11/11/1918.",
+    "tags": [
+      "chiến tranh thế giới thứ nhất"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "subject": "Lịch sử",
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Cách mạng Tháng Mười Nga nổ ra năm nào?",
+    "options": [
+      {
+        "key": "A",
+        "text": "1905"
+      },
+      {
+        "key": "B",
+        "text": "1914"
+      },
+      {
+        "key": "C",
+        "text": "1919"
+      },
+      {
+        "key": "D",
+        "text": "1917"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Cách mạng Tháng Mười nổ ra ngày 7/11/1917 (25/10 theo lịch Nga cũ), khai sinh nhà nước công nông đầu tiên.",
+    "tags": [
+      "cách mạng Tháng Mười"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Lịch sử",
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Hội Việt Nam Cách mạng Thanh niên được thành lập vào tháng nào?",
+    "options": [
+      {
+        "key": "A",
+        "text": "6/1925"
+      },
+      {
+        "key": "B",
+        "text": "3/1929"
+      },
+      {
+        "key": "C",
+        "text": "11/1924"
+      },
+      {
+        "key": "D",
+        "text": "2/1930"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Nguyễn Ái Quốc thành lập Hội Việt Nam Cách mạng Thanh niên tháng 6/1925 tại Quảng Châu (Trung Quốc).",
+    "tags": [
+      "hội VN cách mạng thanh niên"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Lịch sử",
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Đảng Cộng sản Việt Nam chính thức ra đời vào:",
+    "options": [
+      {
+        "key": "A",
+        "text": "6/1925"
+      },
+      {
+        "key": "B",
+        "text": "5/1941"
+      },
+      {
+        "key": "C",
+        "text": "đầu năm 1930"
+      },
+      {
+        "key": "D",
+        "text": "2/1939"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Đảng Cộng sản Việt Nam ra đời đầu năm 1930 (3/2/1930) sau hội nghị hợp nhất ba tổ chức cộng sản.",
+    "tags": [
+      "đảng Cộng sản Việt Nam"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Lịch sử",
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Khởi nghĩa Bắc Sơn (Lạng Sơn) nổ ra vào:",
+    "options": [
+      {
+        "key": "A",
+        "text": "23/11/1940"
+      },
+      {
+        "key": "B",
+        "text": "27/9/1940"
+      },
+      {
+        "key": "C",
+        "text": "8/3/1945"
+      },
+      {
+        "key": "D",
+        "text": "13/3/1954"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Khởi nghĩa Bắc Sơn nổ ra ngày 27/9/1940 khi Nhật vào Lạng Sơn, thực dân Pháp bế tắc hoảng loạn.",
+    "tags": [
+      "khởi nghĩa 1940"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Lịch sử",
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Chiến dịch Biên giới thu – đông năm 1950 của Quân đội nhân dân Việt Nam được mở đầu bằng trận tiến công:",
+    "options": [
+      {
+        "key": "A",
+        "text": "chiến dịch Hòa Bình"
+      },
+      {
+        "key": "B",
+        "text": "chiến dịch Điện Biên Phủ"
+      },
+      {
+        "key": "C",
+        "text": "đường số 4"
+      },
+      {
+        "key": "D",
+        "text": "cứ điểm Đông Khê"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Chiến dịch Biên giới 1950 mở đầu bằng trận tiến công cứ điểm Đông Khê (16/9/1950).",
+    "tags": [
+      "kháng chiến chống Pháp"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Lịch sử",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Nghị quyết Hội nghị Trung ương lần thứ 15 (1/1959) của Ban Chấp hành Trung ương Đảng xác định:",
+    "options": [
+      {
+        "key": "A",
+        "text": "cách mạng Việt Nam chuyển sang giai đoạn mới: tiến lên cách mạng xã hội chủ nghĩa ở miền Bắc và đấu tranh giải phóng miền Nam"
+      },
+      {
+        "key": "B",
+        "text": "tạm ngừng đấu tranh ở miền Nam"
+      },
+      {
+        "key": "C",
+        "text": "chỉ tập trung xây dựng miền Bắc"
+      },
+      {
+        "key": "D",
+        "text": "giải quyết mâu thuẫn dân tộc bằng thương lượng với Pháp"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Nghị quyết TW 13 (1/1959) xác định hai nhiệm vụ chiến lược và đường lối cách mạng xã hội chủ nghĩa trên cả hai miền.",
+    "tags": [
+      "march 1959",
+      "đường lối"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Lịch sử",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Đại hội đại biểu toàn quốc lần thứ VI của Đảng (12/1986) được đánh dấu bằng:",
+    "options": [
+      {
+        "key": "A",
+        "text": "đưa quân vào Campuchia"
+      },
+      {
+        "key": "B",
+        "text": "tuyên bố dừng mọi hoạt động kinh tế"
+      },
+      {
+        "key": "C",
+        "text": "khởi xướng công cuộc đổi mới toàn diện đất nước"
+      },
+      {
+        "key": "D",
+        "text": "gia nhập ASEAN"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Đại hội VI (tháng 12/1986) khởi xướng đường lối đổi mới, đổi mới kinh tế làm trọng tâm.",
+    "tags": [
+      "đổi mới"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "subject": "Lịch sử",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Hiệp ước Vecxai (Versailles) được kí kết năm nào sau Chiến tranh thế giới thứ nhất?",
+    "options": [
+      {
+        "key": "A",
+        "text": "1918"
+      },
+      {
+        "key": "B",
+        "text": "1920"
+      },
+      {
+        "key": "C",
+        "text": "1921"
+      },
+      {
+        "key": "D",
+        "text": "1919"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Hiệp ước Vecxai kí kết ngày 28/6/1919, xử lý nước Đức bại trận và sắp xếp lại trật tự thế giới.",
+    "tags": [
+      "hiệp ước Vecxai"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "subject": "Lịch sử",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Chiến thắng Chi Lăng – Xương Giang của quân triều Lê xảy ra năm nào?",
+    "options": [
+      {
+        "key": "A",
+        "text": "1416"
+      },
+      {
+        "key": "B",
+        "text": "1425"
+      },
+      {
+        "key": "C",
+        "text": "1418"
+      },
+      {
+        "key": "D",
+        "text": "1427"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Tháng 9 – 10/1427, quân Lam Sơn tiêu diệt đội viện binh Minh tại Chi Lăng – Xương Giang, chuẩn bị cho trận quyết định.",
+    "tags": [
+      "khởi nghĩa Lam Sơn"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Lịch sử",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Mặt trận Việt Minh (Việt Nam độc lập đồng minh) được thành lập vào:",
+    "options": [
+      {
+        "key": "A",
+        "text": "19/5/1941"
+      },
+      {
+        "key": "B",
+        "text": "6/1925"
+      },
+      {
+        "key": "C",
+        "text": "3/2/1930"
+      },
+      {
+        "key": "D",
+        "text": "28/2/1944"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Mặt trận Việt Minh ra đời 19/5/1941 theo Nghị quyết Hội nghị Trung ương 8, tập hợp lực lượng toàn dân tộc.",
+    "tags": [
+      "mặt trận Việt Minh"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Lịch sử",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Hiệp định Giơnev (Genève) về chấm dứt chiến tranh, phục hồi hòa bình ở Đông Dương được kí kết vào:",
+    "options": [
+      {
+        "key": "A",
+        "text": "27/1/1973"
+      },
+      {
+        "key": "B",
+        "text": "8/3/1949"
+      },
+      {
+        "key": "C",
+        "text": "21/7/1954"
+      },
+      {
+        "key": "D",
+        "text": "6/3/1946"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Hiệp định Giơnev kí ngày 21/7/1954 sau chiến thắng Điện Biên Phủ.",
+    "tags": [
+      "hiệp định Giơnev"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Lịch sử",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Cuộc Tổng tiến công và nổi dậy xuân 1968 (Tết Mậu Thân) có ý nghĩa:",
+    "options": [
+      {
+        "key": "A",
+        "text": "kết thúc chiến tranh Việt Nam"
+      },
+      {
+        "key": "B",
+        "text": "buộc Mỹ \"phi Mĩ hóa\" chiến tranh, tạo cục diện mới trên chiến trường miền Nam"
+      },
+      {
+        "key": "C",
+        "text": "giải phóng hoàn toàn miền Nam"
+      },
+      {
+        "key": "D",
+        "text": "thắng lợi quân sự hoàn toàn của Mỹ"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Sau Tết Mậu Thân 1968, Mỹ buộc phải xuống thang chiến tranh, chấp nhận thương lượng ở Pari.",
+    "tags": [
+      "kháng chiến chống Mỹ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Lịch sử",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Tuyến chi viện chiến lược nổi tiếng nối miền Bắc với miền Nam trong kháng chiến chống Mỹ gọi là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "đường Hồ Chí Minh trên bộ (đường Trường Sơn)"
+      },
+      {
+        "key": "B",
+        "text": "quốc lộ 1A"
+      },
+      {
+        "key": "C",
+        "text": "đường sắt Bắc – Nam"
+      },
+      {
+        "key": "D",
+        "text": "đường Hàng Không Việt Nam"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Đường Trường Sơn (đường Hồ Chí Minh trên bộ) cùng đường Hồ Chí Minh trên biển là tuyến chi viện chiến lược.",
+    "tags": [
+      "kháng chiến chống Mỹ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Lịch sử",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Ngày 2/9/1945, Chủ tịch Hồ Chí Minh đọc bản Tuyên ngôn Độc lập. Ý nghĩa quan trọng nhất của văn bản này là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "chính thức tuyên bố với thế giới về việc khai sinh nước Việt Nam Dân chủ Cộng hòa, xác lập nền độc lập của dân tộc"
+      },
+      {
+        "key": "B",
+        "text": "tuyên bố kết thúc Chiến tranh thế giới thứ hai"
+      },
+      {
+        "key": "C",
+        "text": "tuyên bố thành lập Mặt trận Việt Minh"
+      },
+      {
+        "key": "D",
+        "text": "khai mạc cuộc bầu cử quốc hội đầu tiên"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Tuyên ngôn Độc lập tuyên bố với toàn thế giới quyền độc lập của dân tộc Việt Nam, khai sinh nhà nước mới.",
+    "tags": [
+      "Tuyên ngôn Độc lập"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Lịch sử",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Hiệp định Pari về chấm dứt chiến tranh, lập lại hòa bình ở Việt Nam (27/1/1973) có ý nghĩa:",
+    "options": [
+      {
+        "key": "A",
+        "text": "buộc Mỹ rút quân và chấm dứt mọi hoạt động quân sự trên toàn bộ lãnh thổ Việt Nam ngay lập tức"
+      },
+      {
+        "key": "B",
+        "text": "thống nhất đất nước ngay sau đó"
+      },
+      {
+        "key": "C",
+        "text": "dẫn đến việc Mỹ rút hết quân và chấm dứt can thiệp quân sự vào miền Nam, mở đường cho nhân dân miền Nam tự giải phóng"
+      },
+      {
+        "key": "D",
+        "text": "chia đôi đất nước vĩnh viễn"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Hiệp định Pari buộc Mỹ rút hết quân, chấm dứt can thiệp quân sự; tuy nhiên Mỹ vẫn gây khó khăn, miền Nam vẫn còn chính quyền Sài Gòn.",
+    "tags": [
+      "hiệp định Pari"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "subject": "Lịch sử",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Đại hội V Quốc tế Cộng sản (1924) đưa ra quan điểm quan trọng về cách mạng thuộc địa là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "cách mạng thuộc địa không quan trọng với cách mạng vô sản"
+      },
+      {
+        "key": "B",
+        "text": "cách mạng giải phóng dân tộc ở thuộc địa là bộ phận của cách mạng vô sản thế giới"
+      },
+      {
+        "key": "C",
+        "text": "cách mạng thuộc địa phải chờ cách mạng vô sản thắng lợi ở chính quốc"
+      },
+      {
+        "key": "D",
+        "text": "cách mạng thuộc địa chỉ dùng con đường cải cách"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Đại hội V khẳng định phong trào giải phóng dân tộc ở thuộc địa là bộ phận hợp thành của cách mạng vô sản thế giới.",
+    "tags": [
+      "quốc tế Cộng sản"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Lịch sử",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Cuộc Tổng tiến công và nổi dậy mùa xuân 1975 giải phóng hoàn toàn Sài Gòn vào ngày:",
+    "options": [
+      {
+        "key": "A",
+        "text": "26/3/1975"
+      },
+      {
+        "key": "B",
+        "text": "30/4/1975"
+      },
+      {
+        "key": "C",
+        "text": "13/3/1975"
+      },
+      {
+        "key": "D",
+        "text": "21/4/1975"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Ngày 30/4/1975, lá cờ cách mạng tung bay trên Dinh Độc Lập, giải phóng hoàn toàn miền Nam.",
+    "tags": [
+      "mùa xuân 1975"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Lịch sử",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Việt Nam chính thức trở thành thành viên thứ 150 của Tổ chức Thương mại Thế giới (WTO) vào:",
+    "options": [
+      {
+        "key": "A",
+        "text": "1995"
+      },
+      {
+        "key": "B",
+        "text": "2007"
+      },
+      {
+        "key": "C",
+        "text": "2012"
+      },
+      {
+        "key": "D",
+        "text": "2000"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Việt Nam gia nhập WTO ngày 11/1/2007, tạo cú hích cho hội nhập kinh tế quốc tế.",
+    "tags": [
+      "hội nhập quốc tế"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "subject": "Lịch sử",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Nguồn gốc chữ viết tượng hình của người Ai Cập cổ đại được khắc chủ yếu ở:",
+    "options": [
+      {
+        "key": "A",
+        "text": "trên da thú"
+      },
+      {
+        "key": "B",
+        "text": "trên giấy bản"
+      },
+      {
+        "key": "C",
+        "text": "trên vách đá và đền miếu, sau đó trên giấy papyrus"
+      },
+      {
+        "key": "D",
+        "text": "trên tre, nứa"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Người Ai Cập khắc chữ tượng hình trên vách đá, đền miếu, trên bia đá và giấy papyrus.",
+    "tags": [
+      "văn minh Ai Cập"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Lịch sử",
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Nghị quyết Hội nghị Trung ương 8 (5/1941) đánh dấu bước chuyển trọng yếu của cách mạng Việt Nam vì:",
+    "options": [
+      {
+        "key": "A",
+        "text": "tạm hoãn không chuẩn bị khởi nghĩa vũ trang"
+      },
+      {
+        "key": "B",
+        "text": "chuyển việc giải phóng dân tộc sang giải quyết mâu thuẫn giai cấp làm nhiệm vụ hàng đầu"
+      },
+      {
+        "key": "C",
+        "text": "đề ra không thành lập mặt trận đoàn kết dân tộc"
+      },
+      {
+        "key": "D",
+        "text": "đặt nhiệm vụ giải phóng dân tộc lên hàng đầu, thành lập Mặt trận Việt Minh, chuẩn bị cho khởi nghĩa vũ trang giành độc lập"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Nghị quyết TW 8 (5/1941) chuyển hướng chỉ đạo chiến lược: giải quyết mâu thuẫn dân tộc, thành lập Việt Minh, chuẩn bị khởi nghĩa.",
+    "tags": [
+      "nghị quyết TW 8"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "subject": "Lịch sử",
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Tác động chủ yếu của cuộc khủng hoảng kinh tế 1929 – 1933 đối với Đông Dương là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "Pháp trút gánh nặng khủng hoảng lên thuộc địa, tăng thuế, vơ vét bóc lột khiến đời sống nhân dân Đông Dương cực khổ, mâu thuẫn xã hội ngày càng gay gắt"
+      },
+      {
+        "key": "B",
+        "text": "kinh tế Đông Dương phát triển rực rỡ"
+      },
+      {
+        "key": "C",
+        "text": "Pháp trao trả độc lập cho Đông Dương"
+      },
+      {
+        "key": "D",
+        "text": "Mua bán trên thị trường Đông Dương trở nên dễ dàng hơn"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Khủng hoảng 1929 – 1933 khiến Pháp đẩy mạnh khai thác thuộc địa lần thứ hai, đời sống nhân dân Đông Dương hết sức cực khổ.",
+    "tags": [
+      "khủng hoảng kinh tế 1929–1933"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Lịch sử",
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Đọc tư liệu sau: \"Hỡi đồng bào cả nước! Tất cả mọi người đều sinh ra có quyền bình đẳng. Tạo hóa cho họ những quyền không ai có thể xâm phạm được; trong những quyền ấy, có quyền được sống, quyền tự do và quyền mưu cầu hạnh phúc. Lời bất hủ ấy ở trong bản Tuyên ngôn Độc lập năm 1776 của nước Mĩ. [...] Bản Tuyên ngôn Nhân quyền và Dân quyền của Cách mạng Pháp năm 1791 cũng nói: Người ta sinh ra tự do và bình đẳng về quyền lợi; và phải luôn luôn được tự do và bình đẳng về quyền lợi.\"\n\n(Trích Tuyên ngôn Độc lập đọc ngày 2/9/1945). Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Bản Tuyên ngôn Độc lập được tuyên đọc ngày 2/9/1945 tại Quảng trường Ba Đình, Hà Nội."
+      },
+      {
+        "key": "b",
+        "text": "Phần mở đầu của Tuyên ngôn trích dẫn Tuyên ngôn Độc lập của nước Mỹ (1776) và Tuyên ngôn Nhân quyền và Dân quyền của Pháp (1791)."
+      },
+      {
+        "key": "c",
+        "text": "Bản Tuyên ngôn mở đầu bằng việc liệt kê tội ác của thực dân Pháp."
+      },
+      {
+        "key": "d",
+        "text": "Bản Tuyên ngôn khẳng định dân tộc Việt Nam có quyền hưởng tự do và độc lập."
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) Đúng. b) Đúng. c) Sai: sau phần trích dẫn quyền con người mới là phần vạch tội ác thực dân Pháp. d) Đúng.",
+    "tags": [
+      "Tuyên ngôn Độc lập",
+      "tư liệu"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Lịch sử",
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Đọc tư liệu: \"Đại hội đại biểu toàn quốc lần thứ VI của Đảng (tháng 12 năm 1986) đã đề ra đường lối đổi mới toàn diện, coi đổi mới kinh tế là trọng tâm, đổi mới chính trị từng bước thận trọng và đúng lúc.\" (Bài trích).\n\nXét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Đại hội VI diễn ra vào tháng 12/1986, khởi xướng công cuộc đổi mới."
+      },
+      {
+        "key": "b",
+        "text": "Đại hội VI chỉ tập trung đổi mới văn hóa – xã hội, không đề cập đến kinh tế."
+      },
+      {
+        "key": "c",
+        "text": "Theo đường lối Đại hội VI, đổi mới chính trị được tiến hành trước, đổi mới kinh tế sau."
+      },
+      {
+        "key": "d",
+        "text": "Đại hội VII (6/1991) tiếp tục thực hiện đường lối đổi mới theo Cương lĩnh xây dựng đất nước trong thời kì quá độ lên chủ nghĩa xã hội."
+      }
+    ],
+    "answer": "ĐSSĐ",
+    "explanation": "a) Đúng. b) Sai: đổi mới kinh tế là trọng tâm. c) Sai: đổi mới kinh tế làm trọng tâm, đổi mới chính trị từng bước thận trọng. d) Đúng.",
+    "tags": [
+      "đổi mới",
+      "tư liệu"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "subject": "Lịch sử",
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Đọc tư liệu: \"Cách mạng vô sản ở các nước tư bản không thể thành công nếu không liên minh với phong trào giải phóng dân tộc ở thuộc địa.\" (Tinh thần Đại hội V Quốc tế Cộng sản, 1924).\n\nXét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Đại hội V Quốc tế Cộng sản diễn ra năm 1919 tại Mát-xcơ-va."
+      },
+      {
+        "key": "b",
+        "text": "Theo tinh thần tư liệu, cách mạng giải phóng dân tộc ở thuộc địa là bộ phận của cách mạng vô sản thế giới."
+      },
+      {
+        "key": "c",
+        "text": "Quốc tế Cộng sản xem nhẹ phong trào giải phóng dân tộc ở thuộc địa."
+      },
+      {
+        "key": "d",
+        "text": "Tinh thần Đại hội V đã tác động đến việc Nguyễn Ái Quốc lựa chọn con đường cách mạng vô sản để giải phóng dân tộc Việt Nam."
+      }
+    ],
+    "answer": "SĐSĐ",
+    "explanation": "a) Sai: Đại hội V diễn ra năm 1924 (Đại hội II năm 1920). b) Đúng. c) Sai: Quốc tế Cộng sản coi trọng phong trào thuộc địa. d) Đúng.",
+    "tags": [
+      "quốc tế Cộng sản",
+      "tư liệu"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "subject": "Lịch sử",
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Đọc tư liệu: \"Trong cuộc cách mạng công nghiệp lần thứ nhất, máy hơi nước do J. Watt hoàn thiện trở thành động lực mới thay thế sức người và súc vật, đưa nền sản xuất xã hội bước vào thời đại máy móc.\" (Bài trích).\n\nXét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Cách mạng công nghiệp lần thứ nhất bắt đầu từ nước Anh vào nửa sau thế kỉ XVIII."
+      },
+      {
+        "key": "b",
+        "text": "Máy hơi nước hoàn thiện của J. Watt là thành tựu tiêu biểu của cách mạng công nghiệp lần thứ nhất."
+      },
+      {
+        "key": "c",
+        "text": "Điện năng là nguồn động lực chủ yếu trong cách mạng công nghiệp lần thứ nhất."
+      },
+      {
+        "key": "d",
+        "text": "Cách mạng công nghiệp làm xuất hiện hai giai cấp mới là giai cấp tư sản và giai cấp vô sản, thúc đẩy đô thị hóa."
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) Đúng. b) Đúng. c) Sai: động lực chủ yếu là hơi nước (điện mới là của cách mạng lần thứ hai). d) Đúng.",
+    "tags": [
+      "cách mạng công nghiệp",
+      "tư liệu"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Lịch sử",
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Đọc tư liệu: \"Chiến dịch Điện Biên Phủ bắt đầu ngày 13/3/1954 và kết thúc với chiến thắng hoàn toàn ngày 7/5/1954, làm rung chuyển công luận thế giới.\" (Bài trích).\n\nXét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Chiến dịch Điện Biên Phủ bắt đầu diễn ra ngày 13/3/1954."
+      },
+      {
+        "key": "b",
+        "text": "Chiến dịch Điện Biên Phủ chỉ diễn ra trong hai đợt tiến công."
+      },
+      {
+        "key": "c",
+        "text": "Điện Biên Phủ là một chiến dịch quy mô nhỏ, chỉ diễn ra trong một đêm."
+      },
+      {
+        "key": "d",
+        "text": "Chiến thắng Điện Biên Phủ buộc Pháp phải kí Hiệp định Giơnev, chấm dứt chiến tranh xâm lược ở Đông Dương."
+      }
+    ],
+    "answer": "ĐSSĐ",
+    "explanation": "a) Đúng. b) Sai: chiến dịch diễn ra trong ba đợt tiến công (13/3, 30/3, 1/5). c) Sai: chiến dịch kéo dài 56 ngày đêm với quy mô lớn. d) Đúng.",
+    "tags": [
+      "Điện Biên Phủ",
+      "tư liệu"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Lịch sử",
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Đọc tư liệu: \"Hội nhập quốc tế là quá trình mở rộng quan hệ, thực hiện đa phương hóa, đa dạng hóa các mối quan hệ đối ngoại; Việt Nam chủ động và tích cực hội nhập, song giữ vững độc lập, tự chủ.\" (Bài trích).\n\nXét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Việt Nam gia nhập Hiệp hội các quốc gia Đông Nam Á (ASEAN) năm 1995."
+      },
+      {
+        "key": "b",
+        "text": "Việt Nam gia nhập Tổ chức Thương mại Thế giới (WTO) năm 2007."
+      },
+      {
+        "key": "c",
+        "text": "Hội nhập quốc tế đòi hỏi Việt Nam từ bỏ hoàn toàn chính sách độc lập, tự chủ."
+      },
+      {
+        "key": "d",
+        "text": "Hội nhập quốc tế giúp Việt Nam mở rộng quan hệ, thu hút đầu tư và tham gia phân công lao động quốc tế."
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) Đúng (28/7/1995). b) Đúng (11/1/2007). c) Sai: hội nhập trên cơ sở giữ vững độc lập, tự chủ. d) Đúng.",
+    "tags": [
+      "hội nhập quốc tế",
+      "tư liệu"
+    ]
+  }
+]

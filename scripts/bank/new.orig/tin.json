@@ -1,0 +1,656 @@
+[
+ {
+  "grades": [
+   "Lớp 10"
+  ],
+  "subject": "Tin học",
+  "type": "trac-nghiem",
+  "level": "NB",
+  "prompt": "Trong ngôn ngữ Python, kết quả của biểu thức len(\"Python\") là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "5"
+   },
+   {
+    "key": "B",
+    "text": "6"
+   },
+   {
+    "key": "C",
+    "text": "7"
+   },
+   {
+    "key": "D",
+    "text": "4"
+   }
+  ],
+  "answer": "B",
+  "explanation": "Chuỗi \"Python\" có 6 kí tự nên len trả về 6.",
+  "tags": [
+   "Python",
+   "xâu kí tự"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 10"
+  ],
+  "subject": "Tin học",
+  "type": "trac-nghiem",
+  "level": "NB",
+  "prompt": "Kiểu dữ liệu dùng để lưu số nguyên trong Python là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "int"
+   },
+   {
+    "key": "B",
+    "text": "str"
+   },
+   {
+    "key": "C",
+    "text": "bool"
+   },
+   {
+    "key": "D",
+    "text": "list"
+   }
+  ],
+  "answer": "A",
+  "explanation": "Kiểu int (integer) lưu số nguyên; float lưu số thực, str lưu xâu, bool lưu giá trị đúng/sai.",
+  "tags": [
+   "Python",
+   "kiểu dữ liệu"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Tin học",
+  "type": "trac-nghiem",
+  "level": "NB",
+  "prompt": "Trong SQL, câu lệnh dùng để truy vấn dữ liệu từ bảng Students là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "INSERT INTO Students"
+   },
+   {
+    "key": "B",
+    "text": "UPDATE Students"
+   },
+   {
+    "key": "C",
+    "text": "DELETE FROM Students"
+   },
+   {
+    "key": "D",
+    "text": "SELECT * FROM Students"
+   }
+  ],
+  "answer": "D",
+  "explanation": "SELECT là câu lệnh truy vấn dữ liệu; INSERT thêm, UPDATE sửa, DELETE xóa.",
+  "tags": [
+   "SQL",
+   "truy vấn"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Tin học",
+  "type": "trac-nghiem",
+  "level": "NB",
+  "prompt": "Thẻ HTML dùng để tạo liên kết siêu văn bản (siêu liên kết) tới một trang khác là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "<p>"
+   },
+   {
+    "key": "B",
+    "text": "<img>"
+   },
+   {
+    "key": "C",
+    "text": "<a>"
+   },
+   {
+    "key": "D",
+    "text": "<div>"
+   }
+  ],
+  "answer": "C",
+  "explanation": "Thẻ <a href=\"...\"> tạo liên kết; <p> đoạn văn, <img> ảnh, <div> khối nội dung.",
+  "tags": [
+   "HTML"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Tin học",
+  "type": "trac-nghiem",
+  "level": "NB",
+  "prompt": "Mỗi thiết bị tham gia mạng Internet đều cần có:",
+  "options": [
+   {
+    "key": "A",
+    "text": "tên miền riêng của mình"
+   },
+   {
+    "key": "B",
+    "text": "một địa chỉ IP duy nhất"
+   },
+   {
+    "key": "C",
+    "text": "một màu sắc riêng"
+   },
+   {
+    "key": "D",
+    "text": "một mật khẩu mặc định giống nhau"
+   }
+  ],
+  "answer": "B",
+  "explanation": "Địa chỉ IP (duy nhất trong mạng) giúp nhận diện và định tuyến dữ liệu tới đúng thiết bị.",
+  "tags": [
+   "mạng máy tính"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 10"
+  ],
+  "subject": "Tin học",
+  "type": "trac-nghiem",
+  "level": "TH",
+  "prompt": "Xét đoạn chương trình Python:\n\nfor i in range(3):\n    print(i)\n\nKết quả in ra màn hình là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "1 2 3 (mỗi số một dòng)"
+   },
+   {
+    "key": "B",
+    "text": "0 1 2 3 (mỗi số một dòng)"
+   },
+   {
+    "key": "C",
+    "text": "0 1 2 (mỗi số một dòng)"
+   },
+   {
+    "key": "D",
+    "text": "1 2 (mỗi số một dòng)"
+   }
+  ],
+  "answer": "C",
+  "explanation": "range(3) sinh các giá trị 0, 1, 2.",
+  "tags": [
+   "Python",
+   "vòng lặp"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Tin học",
+  "type": "trac-nghiem",
+  "level": "TH",
+  "prompt": "Trong câu truy vấn SQL, mệnh đề WHERE có vai trò:",
+  "options": [
+   {
+    "key": "A",
+    "text": "lọc các bản ghi thỏa mãn điều kiện"
+   },
+   {
+    "key": "B",
+    "text": "sắp xếp kết quả theo thứ tự"
+   },
+   {
+    "key": "C",
+    "text": "đếm số bản ghi"
+   },
+   {
+    "key": "D",
+    "text": "xóa bảng"
+   }
+  ],
+  "answer": "A",
+  "explanation": "WHERE đặt điều kiện để chọn bản ghi thỏa mãn; ORDER BY mới dùng để sắp xếp.",
+  "tags": [
+   "SQL"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Tin học",
+  "type": "trac-nghiem",
+  "level": "TH",
+  "prompt": "Trong CSS, khai báo color: red; có tác dụng:",
+  "options": [
+   {
+    "key": "A",
+    "text": "thay đổi kích thước chữ"
+   },
+   {
+    "key": "B",
+    "text": "căn lề đoạn văn"
+   },
+   {
+    "key": "C",
+    "text": "thêm khung viền"
+   },
+   {
+    "key": "D",
+    "text": "đổi màu chữ của phần tử"
+   }
+  ],
+  "answer": "D",
+  "explanation": "Thuộc tính color quy định màu chữ; font-size là kích thước, margin là lề, border là viền.",
+  "tags": [
+   "CSS"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 10"
+  ],
+  "subject": "Tin học",
+  "type": "trac-nghiem",
+  "level": "TH",
+  "prompt": "Trong Python, kết quả của biểu thức 7 // 2 là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "3,5"
+   },
+   {
+    "key": "B",
+    "text": "4"
+   },
+   {
+    "key": "C",
+    "text": "3"
+   },
+   {
+    "key": "D",
+    "text": "1"
+   }
+  ],
+  "answer": "C",
+  "explanation": "Phép chia nguyên // lấy phần nguyên của 7/2 = 3.",
+  "tags": [
+   "Python",
+   "toán tử"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Tin học",
+  "type": "trac-nghiem",
+  "level": "TH",
+  "prompt": "Mật khẩu an toàn nên có đặc điểm:",
+  "options": [
+   {
+    "key": "A",
+    "text": "dùng ngày sinh của mình để dễ nhớ"
+   },
+   {
+    "key": "B",
+    "text": "dài, kết hợp chữ hoa – chữ thường – số – kí tự đặc biệt, không dùng thông tin cá nhân"
+   },
+   {
+    "key": "C",
+    "text": "dùng chung một mật khẩu cho mọi tài khoản"
+   },
+   {
+    "key": "D",
+    "text": "dùng tên thật của mình"
+   }
+  ],
+  "answer": "B",
+  "explanation": "Mật khẩu mạnh phải dài, phức tạp, khó đoán và không chứa thông tin cá nhân.",
+  "tags": [
+   "an toàn số",
+   "mật khẩu"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 10"
+  ],
+  "subject": "Tin học",
+  "type": "trac-nghiem",
+  "level": "VD",
+  "prompt": "Trong Python, cho biến s = \"Tin hoc\". Giá trị của s[0] là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "\"T\""
+   },
+   {
+    "key": "B",
+    "text": "\"i\""
+   },
+   {
+    "key": "C",
+    "text": "\"Tin\""
+   },
+   {
+    "key": "D",
+    "text": "\"n\""
+   }
+  ],
+  "answer": "A",
+  "explanation": "Chỉ số kí tự trong xâu bắt đầu từ 0 nên s[0] là kí tự đầu tiên \"T\".",
+  "tags": [
+   "Python",
+   "xâu kí tự"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Tin học",
+  "type": "trac-nghiem",
+  "level": "VD",
+  "prompt": "Hàm COUNT(*) trong SQL dùng để:",
+  "options": [
+   {
+    "key": "A",
+    "text": "tính giá trị trung bình"
+   },
+   {
+    "key": "B",
+    "text": "tìm giá trị lớn nhất"
+   },
+   {
+    "key": "C",
+    "text": "tính tổng các giá trị"
+   },
+   {
+    "key": "D",
+    "text": "đếm số dòng (bản ghi) thỏa mãn điều kiện"
+   }
+  ],
+  "answer": "D",
+  "explanation": "COUNT(*) đếm số bản ghi trong bảng hoặc trong nhóm thỏa mãn điều kiện truy vấn.",
+  "tags": [
+   "SQL",
+   "hàm thống kê"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Tin học",
+  "type": "trac-nghiem",
+  "level": "VD",
+  "prompt": "Cặp thẻ <ul> ... </ul> kết hợp với <li> ... </li> trong HTML dùng để tạo:",
+  "options": [
+   {
+    "key": "A",
+    "text": "bảng dữ liệu"
+   },
+   {
+    "key": "B",
+    "text": "ảnh minh họa"
+   },
+   {
+    "key": "C",
+    "text": "danh sách không có thứ tự (gạch đầu dòng)"
+   },
+   {
+    "key": "D",
+    "text": "biểu mẫu nhập liệu"
+   }
+  ],
+  "answer": "C",
+  "explanation": "<ul> tạo danh sách gạch đầu dòng; <ol> tạo danh sách có đánh số.",
+  "tags": [
+   "HTML"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Tin học",
+  "type": "trac-nghiem",
+  "level": "VD",
+  "prompt": "Nhận định đúng về giao thức HTTPS so với HTTP là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "HTTP an toàn hơn HTTPS"
+   },
+   {
+    "key": "B",
+    "text": "HTTPS mã hóa dữ liệu trao đổi (TLS/SSL), bảo mật hơn HTTP"
+   },
+   {
+    "key": "C",
+    "text": "HTTPS không bảo mật và luôn chậm hơn"
+   },
+   {
+    "key": "D",
+    "text": "Hai giao thức hoàn toàn giống nhau"
+   }
+  ],
+  "answer": "B",
+  "explanation": "HTTPS sử dụng TLS/SSL để mã hóa dữ liệu truyền giữa trình duyệt và máy chủ.",
+  "tags": [
+   "mạng máy tính",
+   "an toàn số"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Tin học",
+  "type": "trac-nghiem",
+  "level": "VDC",
+  "prompt": "Xét đoạn chương trình Python:\n\ntotal = 0\nfor i in range(1, 5):\n    total += i\nprint(total)\n\nKết quả in ra là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "4"
+   },
+   {
+    "key": "B",
+    "text": "15"
+   },
+   {
+    "key": "C",
+    "text": "10"
+   },
+   {
+    "key": "D",
+    "text": "5"
+   }
+  ],
+  "answer": "C",
+  "explanation": "range(1, 5) cho 1, 2, 3, 4; tổng 1+2+3+4 = 10.",
+  "tags": [
+   "Python",
+   "vòng lặp"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Tin học",
+  "type": "trac-nghiem",
+  "level": "VDC",
+  "prompt": "Đoạn thuật toán tìm giá trị lớn nhất trong danh sách gồm n phần tử (duyệt từng phần tử, so sánh với giá trị lớn nhất hiện tại) cần thực hiện số phép so sánh ở mức:",
+  "options": [
+   {
+    "key": "A",
+    "text": "n – 1"
+   },
+   {
+    "key": "B",
+    "text": "n"
+   },
+   {
+    "key": "C",
+    "text": "n + 1"
+   },
+   {
+    "key": "D",
+    "text": "n²"
+   }
+  ],
+  "answer": "A",
+  "explanation": "Phần tử đầu tiên làm giá trị khởi tạo, còn n – 1 phần tử còn lại mỗi phần tử cần một phép so sánh.",
+  "tags": [
+   "thuật toán",
+   "hiệu quả"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 10"
+  ],
+  "subject": "Tin học",
+  "type": "dung-sai",
+  "level": "TH",
+  "prompt": "Xét đoạn chương trình Python sau:\n\nx = 10\ny = 3\nprint(x // y)\nprint(x % y)\n\nXét tính đúng sai của các khẳng định sau:",
+  "options": [
+   {
+    "key": "a",
+    "text": "Lệnh print(x // y) in ra giá trị 3."
+   },
+   {
+    "key": "b",
+    "text": "Lệnh print(x % y) in ra giá trị 1."
+   },
+   {
+    "key": "c",
+    "text": "Lệnh print(x / y) in ra giá trị 3."
+   },
+   {
+    "key": "d",
+    "text": "Nếu thay y = 0 thì lệnh print(x / y) vẫn thực hiện bình thường, không báo lỗi."
+   }
+  ],
+  "answer": "ĐĐSS",
+  "explanation": "a) Đúng: 10 // 3 = 3. b) Đúng: 10 % 3 = 1. c) Sai: 10 / 3 = 3,333... (số thực). d) Sai: chia cho 0 gây lỗi ZeroDivisionError.",
+  "tags": [
+   "Python",
+   "toán tử"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Tin học",
+  "type": "dung-sai",
+  "level": "TH",
+  "prompt": "Cho bảng CSDL Students(id, name, class, mark). Xét tính đúng sai của các khẳng định sau về câu lệnh SQL:",
+  "options": [
+   {
+    "key": "a",
+    "text": "SELECT name FROM Students WHERE mark > 8 trả về tên các học sinh có điểm lớn hơn 8."
+   },
+   {
+    "key": "b",
+    "text": "SELECT * FROM Students trả về tất cả các cột của tất cả các bản ghi."
+   },
+   {
+    "key": "c",
+    "text": "UPDATE Students SET mark = 10 WHERE id = 1 không thể thay đổi dữ liệu trong bảng."
+   },
+   {
+    "key": "d",
+    "text": "DELETE FROM Students (không có WHERE) xóa toàn bộ các bản ghi của bảng."
+   }
+  ],
+  "answer": "ĐĐSĐ",
+  "explanation": "a) Đúng. b) Đúng: dấu * đại diện cho tất cả các cột. c) Sai: UPDATE dùng để sửa dữ liệu, câu trên đổi điểm của học sinh id = 1 thành 10. d) Đúng: DELETE không kèm WHERE xóa toàn bộ các bản ghi của bảng.",
+  "tags": [
+   "SQL"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Tin học",
+  "type": "dung-sai",
+  "level": "VD",
+  "prompt": "Tình huống: Lan nhận được một email từ địa chỉ lạ, giả danh ngân hàng, yêu cầu cô nhấp vào đường dẫn và cung cấp mật khẩu để \"kiểm tra tài khoản\". Xét tính đúng sai của các khẳng định sau:",
+  "options": [
+   {
+    "key": "a",
+    "text": "Email này có khả năng cao là lừa đảo qua mạng (phishing)."
+   },
+   {
+    "key": "b",
+    "text": "Lan không nên nhấp vào đường dẫn hay cung cấp mật khẩu qua email."
+   },
+   {
+    "key": "c",
+    "text": "Cách xử lí tốt nhất là gửi ngay mật khẩu để kiểm tra theo yêu cầu."
+   },
+   {
+    "key": "d",
+    "text": "Lan nên báo cho người phụ trách (giáo viên, ngân hàng chính thức) và không chia sẻ thông tin cá nhân."
+   }
+  ],
+  "answer": "ĐĐSĐ",
+  "explanation": "a) Đúng: yêu cầu mật khẩu qua email là dấu hiệu lừa đảo điển hình. b) Đúng. c) Sai: tuyệt đối không cung cấp mật khẩu. d) Đúng.",
+  "tags": [
+   "an toàn số",
+   "lừa đảo"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Tin học",
+  "type": "dung-sai",
+  "level": "VDC",
+  "prompt": "Xét các phát biểu về HTML và CSS. Xét tính đúng sai của các khẳng định sau:",
+  "options": [
+   {
+    "key": "a",
+    "text": "Nội dung của thẻ <title> hiển thị trên thanh tiêu đề của trình duyệt (tab)."
+   },
+   {
+    "key": "b",
+    "text": "CSS chỉ có thể được viết trong một file .css riêng, không thể viết ngay trong file HTML."
+   },
+   {
+    "key": "c",
+    "text": "Thẻ <img> cần thuộc tính src để chỉ ra đường dẫn của ảnh."
+   },
+   {
+    "key": "d",
+    "text": "Mọi trang web trên Internet bắt buộc phải dùng cùng một kiểu chữ (font)."
+   }
+  ],
+  "answer": "ĐSĐS",
+  "explanation": "a) Đúng. b) Sai: CSS có thể viết inline, trong thẻ <style>, hoặc file .css riêng. c) Đúng. d) Sai: mỗi trang web có thể chọn font riêng.",
+  "tags": [
+   "HTML",
+   "CSS"
+  ]
+ }
+]

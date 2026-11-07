@@ -1,0 +1,711 @@
+[
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "trac-nghiem",
+  "level": "NB",
+  "prompt": "Cấu trúc phân tử ADN theo mô hình Watson – Crick là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "một mạch đơn thẳng"
+   },
+   {
+    "key": "B",
+    "text": "hai mạch xoắn kép"
+   },
+   {
+    "key": "C",
+    "text": "ba mạch xoắn"
+   },
+   {
+    "key": "D",
+    "text": "mạch đơn vòng"
+   }
+  ],
+  "answer": "B",
+  "explanation": "ADN gồm hai mạch polynuclêôtit xoắn quanh một trục chung (xoắn kép).",
+  "tags": [
+   "di truyền phân tử",
+   "cấu trúc ADN"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "trac-nghiem",
+  "level": "NB",
+  "prompt": "Trong phân tử ADN, mối quan hệ số lượng giữa các nuclêôtit là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "$A = G$"
+   },
+   {
+    "key": "B",
+    "text": "$A = X$"
+   },
+   {
+    "key": "C",
+    "text": "$A = T$ và $A + G = 50\\%$"
+   },
+   {
+    "key": "D",
+    "text": "$A + T = 80\\%$"
+   }
+  ],
+  "answer": "C",
+  "explanation": "Nguyên tắc bổ sung: $A$ bắt cặp với $T$, $G$ với $X$ nên $A=T$, $G=X$ và $A+G=T+X=50\\%$.",
+  "tags": [
+   "di truyền phân tử",
+   "nguyên tắc bổ sung"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "trac-nghiem",
+  "level": "NB",
+  "prompt": "Lai hai cây dị hợp $Aa\\times Aa$ (trội hoàn toàn), tỉ lệ kiểu hình ở F₂ là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "3 trội : 1 lặn"
+   },
+   {
+    "key": "B",
+    "text": "1 trội : 1 lặn"
+   },
+   {
+    "key": "C",
+    "text": "9 : 3 : 4"
+   },
+   {
+    "key": "D",
+    "text": "12 : 3 : 1"
+   }
+  ],
+  "answer": "A",
+  "explanation": "Quy luật phân li của Menđen: $Aa\\times Aa$ cho F₂ kiểu hình 3:1.",
+  "tags": [
+   "quy luật di truyền",
+   "phân li"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "trac-nghiem",
+  "level": "NB",
+  "prompt": "Trong tế bào sinh dưỡng, các gen được sắp xếp:",
+  "options": [
+   {
+    "key": "A",
+    "text": "chỉ trên các NST thường"
+   },
+   {
+    "key": "B",
+    "text": "chỉ trên NST giới tính"
+   },
+   {
+    "key": "C",
+    "text": "rải rác trong tế bào chất"
+   },
+   {
+    "key": "D",
+    "text": "thành các nhóm gen tương đồng nằm trên các NST trong nhân tế bào"
+   }
+  ],
+  "answer": "D",
+  "explanation": "Các gen nằm trên NST, phân bố thành từng nhóm gen tương đồng theo trình tự xác định.",
+  "tags": [
+   "di truyền phân tử",
+   "tổ chức gen"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "trac-nghiem",
+  "level": "TH",
+  "prompt": "Một gen có khối lượng phân tử số nucleôtít là 3000, trong đó số nucleôtít loại A là 600. Số nucleôtít loại G của gen là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "600"
+   },
+   {
+    "key": "B",
+    "text": "1500"
+   },
+   {
+    "key": "C",
+    "text": "900"
+   },
+   {
+    "key": "D",
+    "text": "1800"
+   }
+  ],
+  "answer": "C",
+  "explanation": "$A=T=600$ nên $A+T=1200$; $G=X=\\dfrac{3000-1200}{2}=900$.",
+  "tags": [
+   "di truyền phân tử",
+   "tính số nucleotit"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "trac-nghiem",
+  "level": "TH",
+  "prompt": "Lai hai cây $AaBb\\times AaBb$ (hai cặp gen phân li độc lập, trội hoàn toàn). Số kiểu gen ở F₂ là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "4"
+   },
+   {
+    "key": "B",
+    "text": "9"
+   },
+   {
+    "key": "C",
+    "text": "16"
+   },
+   {
+    "key": "D",
+    "text": "8"
+   }
+  ],
+  "answer": "B",
+  "explanation": "Mỗi cặp gen cho 3 kiểu gen; hai cặp độc lập cho $3\\times 3=9$ kiểu gen.",
+  "tags": [
+   "quy luật di truyền",
+   "phân li độc lập"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "trac-nghiem",
+  "level": "TH",
+  "prompt": "Trong một phả hệ, cặp cha mẹ đều bị bệnh vẫn sinh được con bình thường. Cách di truyền phù hợp nhất của bệnh là do gen:",
+  "options": [
+   {
+    "key": "A",
+    "text": "trội"
+   },
+   {
+    "key": "B",
+    "text": "lặn"
+   },
+   {
+    "key": "C",
+    "text": "lặn trên NST X"
+   },
+   {
+    "key": "D",
+    "text": "không thể xác định"
+   }
+  ],
+  "answer": "A",
+  "explanation": "Cha mẹ đều bệnh mà sinh con bình thường chứng tỏ alen bệnh là trội (con bình thường là đồng hợp lặn).",
+  "tags": [
+   "phả hệ"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "trac-nghiem",
+  "level": "TH",
+  "prompt": "Lai cây $Aa$ với cây $aa$ (trội hoàn toàn). Tỉ lệ đời con mang kiểu gen dị hợp là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "25%"
+   },
+   {
+    "key": "B",
+    "text": "75%"
+   },
+   {
+    "key": "C",
+    "text": "100%"
+   },
+   {
+    "key": "D",
+    "text": "50%"
+   }
+  ],
+  "answer": "D",
+  "explanation": "$Aa\\times aa$ cho kiểu gen $Aa:aa=1:1$, nên 50% con dị hợp.",
+  "tags": [
+   "quy luật di truyền"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "trac-nghiem",
+  "level": "VD",
+  "prompt": "Ở một loài thực vật, cặp tính trạng do hai cặp gen nằm trên cùng một cặp NST. F₁ có kiểu gen $\\dfrac{AB}{ab}$, trong quá trình giảm phân xảy ra hoán vị gen với tần số 20%. Cho F₁ lai phân tích, tỉ lệ kiểu hình giống F₁ ở đời con là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "10%"
+   },
+   {
+    "key": "B",
+    "text": "20%"
+   },
+   {
+    "key": "C",
+    "text": "40%"
+   },
+   {
+    "key": "D",
+    "text": "50%"
+   }
+  ],
+  "answer": "C",
+  "explanation": "Hoán vị 20% → giao tử $AB$ chiếm 40%; lai phân tích với $\\dfrac{ab}{ab}$ cho kiểu hình giống F₁ chiếm 40%.",
+  "tags": [
+   "hoán vị gen",
+   "lai phân tích"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "trac-nghiem",
+  "level": "VD",
+  "prompt": "Ở ruồi giấm, gen quy định màu mắt nằm trên NST X, alen $W$ (mắt đỏ) trội hoàn toàn so với $w$ (mắt trắng). Cho con cái $X^W X^w$ lai với con đực $X^wY$. Tỉ lệ con đực mắt trắng ở đời con là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "25%"
+   },
+   {
+    "key": "B",
+    "text": "50%"
+   },
+   {
+    "key": "C",
+    "text": "75%"
+   },
+   {
+    "key": "D",
+    "text": "100%"
+   }
+  ],
+  "answer": "B",
+  "explanation": "Con đực nhận $X^w$ từ mẹ (50%) và $Y$ từ bố: 50% con đực $X^wY$ mắt trắng.",
+  "tags": [
+   "liên kết giới tính"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "trac-nghiem",
+  "level": "VD",
+  "prompt": "Một quần thể sinh vật ở trạng thái cân bằng di truyền với tần số alen $A$ là $p=0{,}8$. Tỉ lệ kiểu gen dị hợp $Aa$ trong quần thể là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "0,32"
+   },
+   {
+    "key": "B",
+    "text": "0,64"
+   },
+   {
+    "key": "C",
+    "text": "0,04"
+   },
+   {
+    "key": "D",
+    "text": "0,16"
+   }
+  ],
+  "answer": "A",
+  "explanation": "Theo Hardy – Weinberg: $2pq=2\\cdot 0{,}8\\cdot 0{,}2=0{,}32$.",
+  "tags": [
+   "di truyền quần thể"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "trac-nghiem",
+  "level": "VD",
+  "prompt": "Trong một quần thể ở trạng thái cân bằng di truyền, tần số alen lặn $a$ là $q=0{,}1$. Tỉ lệ thể hiện kiểu hình lặn (kiểu gen $aa$) là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "10%"
+   },
+   {
+    "key": "B",
+    "text": "0,1%"
+   },
+   {
+    "key": "C",
+    "text": "20%"
+   },
+   {
+    "key": "D",
+    "text": "1%"
+   }
+  ],
+  "answer": "D",
+  "explanation": "$q^2=0{,}01=1\\%$.",
+  "tags": [
+   "di truyền quần thể"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "trac-nghiem",
+  "level": "VD",
+  "prompt": "Một gen có 3000 cặp nuclêôtit. Số nuclêôtit môi trường cần cung cấp khi gen này tự nhân đôi 2 lần là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "6000"
+   },
+   {
+    "key": "B",
+    "text": "12000"
+   },
+   {
+    "key": "C",
+    "text": "18000"
+   },
+   {
+    "key": "D",
+    "text": "24000"
+   }
+  ],
+  "answer": "C",
+  "explanation": "Một gen có 6000 nu; nhân đôi 2 lần tạo $2^2=4$ phân tử, cần thêm số nu bằng $(4-1)\\cdot 6000=18000$.",
+  "tags": [
+   "nhân đôi ADN"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "trac-nghiem",
+  "level": "VDC",
+  "prompt": "Một quần thể đang ở trạng thái cân bằng di truyền với tần số alen $A=0{,}6$. Chọn lọc loại bỏ hoàn toàn các cá thể có kiểu gen $aa$. Tần số alen $a$ trong quần thể ngay sau một thế hệ chọn lọc là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "0,43"
+   },
+   {
+    "key": "B",
+    "text": "0,29"
+   },
+   {
+    "key": "C",
+    "text": "0,50"
+   },
+   {
+    "key": "D",
+    "text": "0,14"
+   }
+  ],
+  "answer": "B",
+  "explanation": "Trước chọn lọc: $p^2=0{,}36$; $2pq=0{,}48$; $q^2=0{,}16$. Sau khi loại hết $aa$, quần thể còn $0{,}84$; tần số alen $a$ (chỉ còn trong dị hợp): $q'=\\dfrac{2pq}{2(p^2+2pq)}=\\dfrac{0{,}48}{1{,}68}\\approx 0{,}29$ (tức công thức $q'=\\dfrac{q}{1+q}$).",
+  "tags": [
+   "di truyền quần thể",
+   "chọn lọc tự nhiên"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "trac-nghiem",
+  "level": "VDC",
+  "prompt": "Một gen có 1800 nucleôtít, xảy ra đột biến thay thế một cặp nucleôtít loại $\\text{G}-\\text{X}$ bằng cặp loại $\\text{A}-\\text{T}$. Số lượng liên kết hiđrô trong gen thay đổi như thế nào?",
+  "options": [
+   {
+    "key": "A",
+    "text": "giảm 1 liên kết"
+   },
+   {
+    "key": "B",
+    "text": "tăng 1 liên kết"
+   },
+   {
+    "key": "C",
+    "text": "giảm 2 liên kết"
+   },
+   {
+    "key": "D",
+    "text": "không thay đổi"
+   }
+  ],
+  "answer": "A",
+  "explanation": "Cặp $\\text{G}-\\text{X}$ có 3 liên kết hiđrô, cặp $\\text{A}-\\text{T}$ có 2: giảm 1 liên kết hiđrô.",
+  "tags": [
+   "đột biến gen",
+   "liên kết hiđrô"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "dung-sai",
+  "level": "TH",
+  "prompt": "Xét các phát biểu về cấu trúc và đặc điểm của ADN. Xét tính đúng sai của các khẳng định sau:",
+  "options": [
+   {
+    "key": "a",
+    "text": "Hai mạch của ADN xoắn song song theo chiều ngược nhau."
+   },
+   {
+    "key": "b",
+    "text": "A liên kết với T bằng 3 liên kết hiđrô."
+   },
+   {
+    "key": "c",
+    "text": "ADN nhân đôi theo cơ chế bán bảo toàn."
+   },
+   {
+    "key": "d",
+    "text": "Số loại nuclêôtit của ARN là 5."
+   }
+  ],
+  "answer": "ĐSĐS",
+  "explanation": "a) Đúng: hai mạch có chiều ngược nhau (antiparallel). b) Sai: $A=T$ có 2 liên kết hiđrô ($G\\equiv X$ có 3). c) Đúng. d) Sai: ARN có 4 loại nuclêôtit (A, U, G, X).",
+  "tags": [
+   "di truyền phân tử",
+   "ARN"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "dung-sai",
+  "level": "VD",
+  "prompt": "Cho phép lai hai cây dị hợp về một cặp gen ($Aa\\times Aa$), tính trội hoàn toàn. Xét tính đúng sai của các khẳng định sau:",
+  "options": [
+   {
+    "key": "a",
+    "text": "Tỉ lệ kiểu gen ở F₂ là 1 AA : 2 Aa : 1 aa."
+   },
+   {
+    "key": "b",
+    "text": "Tỉ lệ kiểu hình ở F₂ là 3 trội : 1 lặn."
+   },
+   {
+    "key": "c",
+    "text": "Xác suất một cá thể F₂ dị hợp là 1/4."
+   },
+   {
+    "key": "d",
+    "text": "Tỉ lệ kiểu hình ở F₂ là 1 trội : 1 lặn."
+   }
+  ],
+  "answer": "ĐĐSS",
+  "explanation": "a) Đúng. b) Đúng. c) Sai: xác suất dị hợp là 1/2. d) Sai: tỉ lệ là 3:1.",
+  "tags": [
+   "quy luật di truyền"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "dung-sai",
+  "level": "VD",
+  "prompt": "Xét một phả hệ: cặp cha mẹ đều bình thường sinh ra một con trai bị bệnh; các con gái đều bình thường, trong quần thể bệnh này hiếm gặp. Xét tính đúng sai của các khẳng định sau (theo giả thuyết khả năng cao nhất):",
+  "options": [
+   {
+    "key": "a",
+    "text": "Bệnh do alen lặn trên NST thường quy định."
+   },
+   {
+    "key": "b",
+    "text": "Cả cha và mẹ đều mang alen bệnh ở trạng thái dị hợp."
+   },
+   {
+    "key": "c",
+    "text": "Các con gái bình thường chắc chắn không mang alen bệnh."
+   },
+   {
+    "key": "d",
+    "text": "Xác suất con kế tiếp (sinh từ cùng cặp cha mẹ) bị bệnh là 1/2."
+   }
+  ],
+  "answer": "ĐĐSS",
+  "explanation": "a) Đúng: bệnh lặn trên NST thường giải thích cha mẹ bình thường sinh con trai bệnh. b) Đúng. c) Sai: con gái bình thường có thể dị hợp mang alen bệnh. d) Sai: xác suất là 1/4.",
+  "tags": [
+   "phả hệ"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "dung-sai",
+  "level": "VDC",
+  "prompt": "Cấu trúc di truyền của một quần thể gồm 1000 cá thể được cho trong bảng bên dưới. Xét tính đúng sai của các khẳng định sau:",
+  "options": [
+   {
+    "key": "a",
+    "text": "Tần số alen $A$ của quần thể là 0,7."
+   },
+   {
+    "key": "b",
+    "text": "Tần số alen $a$ của quần thể là 0,2."
+   },
+   {
+    "key": "c",
+    "text": "Quần thể đang ở trạng thái cân bằng di truyền Hardy – Weinberg."
+   },
+   {
+    "key": "d",
+    "text": "Sau một thế hệ tự thụ phân li, tỉ lệ cá thể dị hợp giảm còn 42%."
+   }
+  ],
+  "answer": "ĐSĐS",
+  "explanation": "a) Đúng: $p=\\frac{2\\cdot 490+420}{2000}=0{,}7$. b) Sai: $q=1-0{,}7=0{,}3$. c) Đúng: $p^2=0{,}49$; $2pq=0{,}42$; $q^2=0{,}09$ khớp 490; 420; 90. d) Sai: tự thụ làm 420 cá thể Aa cho 210 cá thể Aa, tỉ lệ dị hợp còn 21%.",
+  "tags": [
+   "di truyền quần thể"
+  ],
+  "figure": {
+   "kind": "stats",
+   "chart": "table",
+   "title": "Cấu trúc di truyền của quần thể P",
+   "data": "AA; Aa; aa\nSố cá thể: 490; 420; 90"
+  }
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "tra-loi-ngan",
+  "level": "NB",
+  "prompt": "Một gen có khối lượng phân tử 1500 nucleôtít, trong đó nucleôtít loại A là 300. Số nucleôtít loại G của gen là bao nhiêu?",
+  "answer": "450",
+  "explanation": "$A=T=300$; $G=X=\\dfrac{1500-600}{2}=450$.",
+  "tags": [
+   "di truyền phân tử"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "tra-loi-ngan",
+  "level": "NB",
+  "prompt": "Lai hai cây dị hợp $Aa\\times Aa$ (trội hoàn toàn). Xác suất để một cá thể đời con có kiểu hình lặn là bao nhiêu phần trăm?",
+  "answer": "25",
+  "explanation": "$Aa\\times Aa$ cho $\\frac{1}{4}$ aa = 25%.",
+  "tags": [
+   "quy luật di truyền"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "tra-loi-ngan",
+  "level": "TH",
+  "prompt": "Một tế bào có cặp gen $AaBb$ nằm trên hai cặp NST khác nhau. Số loại giao tử mà tế bào này tạo ra (giảm phân bình thường) là bao nhiêu?",
+  "answer": "4",
+  "explanation": "Phân li độc lập: $2^2=4$ loại giao tử: AB, Ab, aB, ab.",
+  "tags": [
+   "phân li độc lập"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "tra-loi-ngan",
+  "level": "TH",
+  "prompt": "Một gen có 900 nucleôtít. Số axit amin trong chuỗi polipeptit do gen này mã hóa (không tính các codon kết thúc) là bao nhiêu?",
+  "answer": "150",
+  "explanation": "ARNm có 450 nu → 150 bộ ba → 150 axit amin.",
+  "tags": [
+   "mã di truyền",
+   "tính số axit amin"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "tra-loi-ngan",
+  "level": "VD",
+  "prompt": "Một quần thể ở trạng thái cân bằng di truyền có tỉ lệ kiểu gen $aa$ bằng 25%. Tỉ lệ kiểu gen dị hợp trong quần thể là bao nhiêu phần trăm?",
+  "answer": "50",
+  "explanation": "$q^2=0{,}25\\Rightarrow q=0{,}5$, $p=0{,}5$; $2pq=0{,}5=50\\%$.",
+  "tags": [
+   "di truyền quần thể"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "tra-loi-ngan",
+  "level": "VDC",
+  "prompt": "Một gen có 900 nucleôtít. Sau khi gen này nhân đôi 3 lần, tổng số nucleôtít từ môi trường cung cấp cho quá trình nhân đôi là bao nhiêu?",
+  "answer": "6300",
+  "explanation": "Sau 3 lần nhân đôi tạo $2^3=8$ phân tử; số nu bổ sung $=(8-1)\\cdot 900=6300$.",
+  "tags": [
+   "nhân đôi ADN"
+  ]
+ }
+]

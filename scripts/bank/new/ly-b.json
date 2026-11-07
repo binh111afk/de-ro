@@ -1,0 +1,843 @@
+[
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Một đoạn dây dẫn dài 20 cm mang dòng điện 5 A, đặt vuông góc với từ trường đều có cảm ứng từ 0,4 T. Độ lớn lực từ tác dụng lên đoạn dây là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "0,4 N"
+      },
+      {
+        "key": "B",
+        "text": "0,04 N"
+      },
+      {
+        "key": "C",
+        "text": "4 N"
+      },
+      {
+        "key": "D",
+        "text": "0,004 N"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$F=BIl=0{,}4\\cdot 5\\cdot 0{,}2=0{,}04$ N.",
+    "tags": [
+      "lực từ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Lực từ tác dụng lên một đoạn dây dẫn mang dòng điện đặt trong từ trường đều luôn:",
+    "options": [
+      {
+        "key": "A",
+        "text": "cùng phương với vectơ cảm ứng từ $\\vec{B}$"
+      },
+      {
+        "key": "B",
+        "text": "cùng phương với dòng điện"
+      },
+      {
+        "key": "C",
+        "text": "vuông góc với cả vectơ $\\vec{B}$ và dòng điện"
+      },
+      {
+        "key": "D",
+        "text": "ngược hướng vectơ $\\vec{B}$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Lực từ $\\vec{F}=I\\vec{l}\\times\\vec{B}$ luôn vuông góc với mặt phẳng chứa $\\vec{l}$ và $\\vec{B}$.",
+    "tags": [
+      "lực từ",
+      "hướng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Từ thông qua một khung dây phẳng có diện tích $S$, đặt trong từ trường đều $\\vec{B}$, pháp tuyến khung hợp với $\\vec{B}$ góc $\\alpha$, được tính theo công thức:",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\Phi=BS\\cos\\alpha$"
+      },
+      {
+        "key": "B",
+        "text": "$\\Phi=BS\\sin\\alpha$"
+      },
+      {
+        "key": "C",
+        "text": "$\\Phi=\\dfrac{B}{S}$"
+      },
+      {
+        "key": "D",
+        "text": "$\\Phi=BS\\tan\\alpha$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Từ thông qua diện tích $S$ là $\\Phi=\\vec{B}\\cdot\\vec{S}=BS\\cos\\alpha$.",
+    "tags": [
+      "từ thông"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Một khung dây phẳng diện tích 0,05 m² đặt trong từ trường đều 0,2 T, pháp tuyến của khung hợp với đường sức từ góc $30^{\\circ}$. Từ thông qua khung bằng:",
+    "options": [
+      {
+        "key": "A",
+        "text": "5 mWb"
+      },
+      {
+        "key": "B",
+        "text": "10 mWb"
+      },
+      {
+        "key": "C",
+        "text": "8,66 Wb"
+      },
+      {
+        "key": "D",
+        "text": "8,66 mWb"
+      }
+    ],
+    "answer": "D",
+    "explanation": "$\\Phi=BS\\cos\\alpha=0{,}2\\cdot 0{,}05\\cdot\\cos 30^{\\circ}=8{,}66\\cdot10^{-3}$ Wb $=8{,}66$ mWb.",
+    "tags": [
+      "từ thông"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Một cuộn dây gồm 100 vòng, từ thông qua mỗi vòng thay đổi 0,02 Wb trong khoảng thời gian 0,1 s. Suất điện động cảm ứng trong cuộn dây là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "2 V"
+      },
+      {
+        "key": "B",
+        "text": "20 V"
+      },
+      {
+        "key": "C",
+        "text": "200 V"
+      },
+      {
+        "key": "D",
+        "text": "0,2 V"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$E=N\\dfrac{\\Delta\\Phi}{\\Delta t}=100\\cdot\\dfrac{0{,}02}{0{,}1}=20$ V.",
+    "tags": [
+      "suất phản động cảm ứng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Một hạt mang điện tích $q=1{,}6\\cdot10^{-19}$ C, khối lượng $m=9{,}1\\cdot10^{-31}$ kg, chuyển động với vận tốc $2\\cdot10^{6}$ m/s vuông góc với từ trường đều $B=0{,}5$ mT. Bán kính quỹ đạo của hạt xấp xỉ:",
+    "options": [
+      {
+        "key": "A",
+        "text": "0,23 cm"
+      },
+      {
+        "key": "B",
+        "text": "23 cm"
+      },
+      {
+        "key": "C",
+        "text": "2,3 cm"
+      },
+      {
+        "key": "D",
+        "text": "11,4 cm"
+      }
+    ],
+    "answer": "C",
+    "explanation": "$r=\\dfrac{mv}{qB}=\\dfrac{9{,}1\\cdot10^{-31}\\cdot 2\\cdot10^{6}}{1{,}6\\cdot10^{-19}\\cdot 0{,}5\\cdot10^{-3}}\\approx 0{,}0228$ m $\\approx 2{,}3$ cm.",
+    "tags": [
+      "chuyển động của hạt tải điện"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Điện áp giữa hai cực của một máy phát điện xoay chiều một pha là $u=220\\sqrt{2}\\cos(100\\pi t)$ V (t tính bằng s). Tần số và giá trị hiệu dụng của điện áp là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "50 Hz và 220 V"
+      },
+      {
+        "key": "B",
+        "text": "100 Hz và 311 V"
+      },
+      {
+        "key": "C",
+        "text": "50 Hz và 311 V"
+      },
+      {
+        "key": "D",
+        "text": "60 Hz và 220 V"
+      }
+    ],
+    "answer": "A",
+    "explanation": "$f=\\dfrac{\\omega}{2\\pi}=\\dfrac{100\\pi}{2\\pi}=50$ Hz; $U=\\dfrac{U_0}{\\sqrt{2}}=220$ V.",
+    "tags": [
+      "dòng điện xoay chiều"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Một cuộn dây gồm 200 vòng, từ thông qua mỗi vòng tăng đều từ 0,004 Wb đến 0,012 Wb trong 0,05 s. Suất điện động cảm ứng trong cuộn dây là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "16 V"
+      },
+      {
+        "key": "B",
+        "text": "3,2 V"
+      },
+      {
+        "key": "C",
+        "text": "64 V"
+      },
+      {
+        "key": "D",
+        "text": "32 V"
+      }
+    ],
+    "answer": "D",
+    "explanation": "$E=N\\dfrac{\\Delta\\Phi}{\\Delta t}=200\\cdot\\dfrac{0{,}008}{0{,}05}=32$ V.",
+    "tags": [
+      "suất phản động cảm ứng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Một đoạn mạch RLC không phân nhánh có $R=30\\,\\Omega$, cuộn thuần cảm kháng $Z_L=40\\,\\Omega$, tụ có dung kháng $Z_C=10\\,\\Omega$, đặt dưới điện áp hiệu dụng 120 V. Cường độ hiệu dụng của dòng điện xấp xỉ:",
+    "options": [
+      {
+        "key": "A",
+        "text": "2,83 A"
+      },
+      {
+        "key": "B",
+        "text": "2,4 A"
+      },
+      {
+        "key": "C",
+        "text": "4 A"
+      },
+      {
+        "key": "D",
+        "text": "1,41 A"
+      }
+    ],
+    "answer": "A",
+    "explanation": "$Z=\\sqrt{R^2+(Z_L-Z_C)^2}=\\sqrt{900+900}=42{,}4\\,\\Omega$; $I=\\dfrac{U}{Z}=\\dfrac{120}{42{,}4}\\approx 2{,}83$ A.",
+    "tags": [
+      "mạch RLC",
+      "tổng trở"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Một mạch cộng hưởng gồm cuộn thuần $L=0{,}1$ H và tụ điện $C=10\\,\\mu\\text{F}$. Tần số cộng hưởng của mạch xấp xỉ:",
+    "options": [
+      {
+        "key": "A",
+        "text": "15,9 Hz"
+      },
+      {
+        "key": "B",
+        "text": "1000 Hz"
+      },
+      {
+        "key": "C",
+        "text": "159 Hz"
+      },
+      {
+        "key": "D",
+        "text": "318 Hz"
+      }
+    ],
+    "answer": "C",
+    "explanation": "$f_0=\\dfrac{1}{2\\pi\\sqrt{LC}}=\\dfrac{1}{2\\pi\\sqrt{0{,}1\\cdot 10^{-5}}}\\approx 159{,}2$ Hz.",
+    "tags": [
+      "cộng hưởng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Một máy tiêu thụ điện chạy dưới điện áp hiệu dụng 220 V, dòng điện hiệu dụng 2 A, hệ số công suất 0,8. Công suất tiêu thụ của máy là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "440 W"
+      },
+      {
+        "key": "B",
+        "text": "352 W"
+      },
+      {
+        "key": "C",
+        "text": "176 W"
+      },
+      {
+        "key": "D",
+        "text": "264 W"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$P=UI\\cos\\varphi=220\\cdot 2\\cdot 0{,}8=352$ W.",
+    "tags": [
+      "công suất"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Một thanh dẫn kim loại dài 0,4 m chuyển động với tốc độ 5 m/s theo phương vuông góc với chính thanh và vuông góc với từ trường đều $B=0{,}5$ T. Suất điện động cảm ứng trong thanh là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "10 V"
+      },
+      {
+        "key": "B",
+        "text": "0,1 V"
+      },
+      {
+        "key": "C",
+        "text": "0,5 V"
+      },
+      {
+        "key": "D",
+        "text": "1 V"
+      }
+    ],
+    "answer": "D",
+    "explanation": "$E=Blv=0{,}5\\cdot 0{,}4\\cdot 5=1$ V.",
+    "tags": [
+      "cảm ứng điện từ",
+      "thanh dẫn"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Một máy biến áp lí tưởng có cuộn sơ cấp 2200 vòng đặt dưới điện áp 220 V. Muốn cuộn thứ cấp nhận 12 V thì số vòng cuộn thứ cấp là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "120 vòng"
+      },
+      {
+        "key": "B",
+        "text": "2200 vòng"
+      },
+      {
+        "key": "C",
+        "text": "20 vòng"
+      },
+      {
+        "key": "D",
+        "text": "404 vòng"
+      }
+    ],
+    "answer": "A",
+    "explanation": "$\\dfrac{N_1}{N_2}=\\dfrac{U_1}{U_2}\\Rightarrow N_2=2200\\cdot\\dfrac{12}{220}=120$ vòng.",
+    "tags": [
+      "máy biến áp"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Mạch điện như hình bên dưới: nguồn có suất điện động $E=12$ V, điện trở trong $r=1\\,\\Omega$, điện trở $R_1=2\\,\\Omega$ nối tiếp với đoạn mạch gồm $R_2=3\\,\\Omega$ song song $R_3=6\\,\\Omega$. Cường độ dòng điện qua nguồn là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "1,2 A"
+      },
+      {
+        "key": "B",
+        "text": "2,4 A"
+      },
+      {
+        "key": "C",
+        "text": "4,8 A"
+      },
+      {
+        "key": "D",
+        "text": "3 A"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$R_{23}=\\dfrac{3\\cdot 6}{3+6}=2\\,\\Omega$; $R=2+2+1=5\\,\\Omega$; $I=\\dfrac{E}{R}=\\dfrac{12}{5}=2{,}4$ A.",
+    "tags": [
+      "mạch điện",
+      "định luật Ôm"
+    ],
+    "figure": {
+      "kind": "circuit",
+      "text": "nguồn E = 12 V, r = 1 Ω\nR1=2Ω - (R2=3Ω // R3=6Ω)"
+    }
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Một đoạn mạch gồm điện trở $R=20\\,\\Omega$, cuộn thuần và tụ điện nối tiếp đang ở trạng thái cộng hưởng với nguồn điện áp hiệu dụng 100 V. Công suất tiêu thụ của mạch là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "200 W"
+      },
+      {
+        "key": "B",
+        "text": "250 W"
+      },
+      {
+        "key": "C",
+        "text": "500 W"
+      },
+      {
+        "key": "D",
+        "text": "1000 W"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Khi cộng hưởng $Z=R$, $P=\\dfrac{U^2}{R}=\\dfrac{100^2}{20}=500$ W.",
+    "tags": [
+      "cộng hưởng",
+      "công suất"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Một cơ sở tiêu thụ điện với công suất $P=800$ W, công suất biểu kiến $S=1000$ VA ở điện áp 220 V. Khi lắp tụ bù để hệ số công suất bằng 1 (công suất tiêu thụ không đổi), dòng điện hiệu dụng trong đường dây trở thành:",
+    "options": [
+      {
+        "key": "A",
+        "text": "4,55 A"
+      },
+      {
+        "key": "B",
+        "text": "1,25 A"
+      },
+      {
+        "key": "C",
+        "text": "5,45 A"
+      },
+      {
+        "key": "D",
+        "text": "3,64 A"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Ban đầu $I=\\dfrac{S}{U}=\\dfrac{1000}{220}=4{,}55$ A; sau khi bù, $I=\\dfrac{P}{U}=\\dfrac{800}{220}=3{,}64$ A.",
+    "tags": [
+      "hệ số công suất"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Một thanh dẫn dài 0,5 m quay đều quanh một đầu trong mặt phẳng vuông góc với từ trường đều $B=0{,}4$ T, với tốc độ góc 100 rad/s. Suất điện động cảm ứng giữa hai đầu thanh là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "2,5 V"
+      },
+      {
+        "key": "B",
+        "text": "5 V"
+      },
+      {
+        "key": "C",
+        "text": "10 V"
+      },
+      {
+        "key": "D",
+        "text": "20 V"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$E=\\dfrac{1}{2}B\\omega l^2=\\dfrac{1}{2}\\cdot 0{,}4\\cdot 100\\cdot 0{,}25=5$ V.",
+    "tags": [
+      "thanh quay",
+      "cảm ứng điện từ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Khi truyền tải một công suất điện xác định trên cùng một đường dây, nếu tăng điện áp truyền đi lên 2 lần thì tổn hao công suất trên đường dây:",
+    "options": [
+      {
+        "key": "A",
+        "text": "giảm 2 lần"
+      },
+      {
+        "key": "B",
+        "text": "tăng 4 lần"
+      },
+      {
+        "key": "C",
+        "text": "giảm 4 lần"
+      },
+      {
+        "key": "D",
+        "text": "không đổi"
+      }
+    ],
+    "answer": "C",
+    "explanation": "$I=\\dfrac{P}{U}$ giảm 2 lần; tổn hao $P_{hao}=I^2R$ giảm 4 lần.",
+    "tags": [
+      "truyền tải điện"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Một khung dây phẳng quay đều quanh trục nằm trong mặt phẳng khung, vuông góc với từ trường đều, với tốc độ quay $\\omega$ không đổi. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Suất điện động cảm ứng trong khung biến thiên điều hòa theo thời gian."
+      },
+      {
+        "key": "b",
+        "text": "Khi mặt khung vuông góc với $\\vec{B}$, suất điện động cảm ứng đạt cực đại."
+      },
+      {
+        "key": "c",
+        "text": "Tần số của suất điện động cảm ứng bằng tần số quay của khung."
+      },
+      {
+        "key": "d",
+        "text": "Nếu tốc độ quay tăng gấp đôi thì giá trị cực đại của suất điện động cảm ứng tăng gấp đôi."
+      }
+    ],
+    "answer": "ĐSĐĐ",
+    "explanation": "a) Đúng: $e=E_0\\sin\\omega t$. b) Sai: khi mặt khung vuông góc $\\vec{B}$ thì từ thông cực đại nhưng biến thiên bằng 0, nên $e=0$; $e$ cực đại khi mặt khung song song $\\vec{B}$. c) Đúng. d) Đúng: $E_0=N\\Phi_0\\omega$ tỉ lệ với $\\omega$.",
+    "tags": [
+      "máy phát điện xoay chiều"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Một đoạn mạch RLC không phân nhánh gồm $R=40\\,\\Omega$, cuộn thuần có cảm kháng $30\\,\\Omega$ và tụ có dung kháng $80\\,\\Omega$, đặt dưới điện áp $u=200\\cos(100\\pi t)$ V như sơ đồ bên dưới. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Đoạn mạch có tính cảm kháng."
+      },
+      {
+        "key": "b",
+        "text": "Tổng trở của mạch xấp xỉ 64 $\\Omega$."
+      },
+      {
+        "key": "c",
+        "text": "Dòng điện trong mạch sớm pha hơn điện áp $u$."
+      },
+      {
+        "key": "d",
+        "text": "Công suất tiêu thụ của mạch xấp xỉ 195 W."
+      }
+    ],
+    "answer": "SĐĐĐ",
+    "explanation": "a) Sai: $Z_L<Z_C$ nên mạch có tính dung kháng. b) Đúng: $Z=\\sqrt{40^2+50^2}\\approx 64\\,\\Omega$. c) Đúng: mạch có tính dung kháng nên $i$ sớm pha hơn $u$. d) Đúng: $I=\\frac{200/\\sqrt{2}}{64}\\approx 2{,}21$ A, $P=I^2R\\approx 195$ W.",
+    "tags": [
+      "mạch RLC"
+    ],
+    "figure": {
+      "kind": "circuit",
+      "text": "nguồn u = 200cos(100πt) V\nR=40Ω - L - C"
+    }
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Mạch điện như hình bên dưới: nguồn có suất điện động $E=9$ V, điện trở trong $r=0{,}5\\,\\Omega$, điện trở $R_1=4\\,\\Omega$ nối tiếp với đoạn mạch gồm $R_2=12\\,\\Omega$ song song $R_3=4\\,\\Omega$. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Điện trở tương đương của phần mạch ngoài là 7 $\\Omega$."
+      },
+      {
+        "key": "b",
+        "text": "Cường độ dòng điện qua nguồn là 1,2 A."
+      },
+      {
+        "key": "c",
+        "text": "Cường độ dòng điện qua $R_3$ là 0,9 A."
+      },
+      {
+        "key": "d",
+        "text": "Công suất tiêu thụ trên $R_1$ là 5,76 W."
+      }
+    ],
+    "answer": "ĐĐĐĐ",
+    "explanation": "a) Đúng: $R_{23}=\frac{12cdot4}{16}=3,Omega$, mạch ngoài $4+3=7,Omega$. b) Đúng: $I=\frac{9}{7+0{,}5}=1{,}2$ A. c) Đúng: $U_{23}=1{,}2cdot3=3{,}6$ V, $I_3=0{,}9$ A. d) Đúng: $P_1=1{,}2^2cdot4=5{,}76$ W.",
+    "tags": [
+      "mạch điện",
+      "định luật Ôm"
+    ],
+    "figure": {
+      "kind": "circuit",
+      "text": "nguồn E = 9 V, r = 0.5 Ω\nR1=4Ω - (R2=12Ω // R3=4Ω)"
+    }
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Một trạm phát điện có công suất 100 kW, truyền tải điện lên một khu dân cư qua đường dây có điện trở $10\\,\\Omega$. Điện áp truyền đi là 10 kV, coi hệ số công suất bằng 1. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Dòng điện trong đường dây là 10 A."
+      },
+      {
+        "key": "b",
+        "text": "Tổn hao công suất trên đường dây là 1 kW, hiệu suất truyền tải đạt 99%."
+      },
+      {
+        "key": "c",
+        "text": "Nếu truyền cùng công suất ở điện áp 100 kV thì tổn hao công suất trên đường dây chỉ còn 10 W."
+      },
+      {
+        "key": "d",
+        "text": "Hiệu suất truyền tải ở 10 kV là 90%."
+      }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a) Đúng: $I=\\frac{100000}{10000}=10$ A. b) Đúng: $P_{hao}=10^2\\cdot 10=1000$ W $=1$ kW; hiệu suất $=\\frac{100-1}{100}=99\\%$. c) Đúng: $I=1$ A, $P_{hao}=1^2\\cdot 10=10$ W. d) Sai: hiệu suất là 99%, không phải 90%.",
+    "tags": [
+      "truyền tải điện"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "tra-loi-ngan",
+    "level": "NB",
+    "prompt": "Một đoạn dây dẫn dài 0,5 m mang dòng điện 4 A đặt vuông góc với từ trường đều $B=0{,}2$ T. Độ lớn lực từ tác dụng lên đoạn dây (tính theo niutơn, N) là bao nhiêu?",
+    "answer": "0,4",
+    "explanation": "$F=BIl=0{,}2\\cdot 4\\cdot 0{,}5=0{,}4$ N.",
+    "tags": [
+      "lực từ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "tra-loi-ngan",
+    "level": "NB",
+    "prompt": "Điện áp xoay chiều có biểu thức $u=311\\cos(100\\pi t)$ V. Giá trị hiệu dụng của điện áp xấp xỉ bao nhiêu vôn (V)?",
+    "answer": "220",
+    "explanation": "$U=\\dfrac{311}{\\sqrt{2}}\\approx 220$ V.",
+    "tags": [
+      "giá trị hiệu dụng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Một khung dây phẳng diện tích 0,02 m² đặt vuông góc với từ trường đều $B=0{,}5$ T. Từ thông qua khung bằng bao nhiêu milivet (mWb)?",
+    "answer": "10",
+    "explanation": "$\\Phi=BS=0{,}5\\cdot 0{,}02=0{,}01$ Wb $=10$ mWb.",
+    "tags": [
+      "từ thông"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Mạch điện như hình bên dưới: nguồn $E=9$ V, điện trở trong không đáng kể, hai điện trở $R_1=10\\,\\Omega$ và $R_2=10\\,\\Omega$ song song với nhau. Cường độ dòng điện qua nguồn (tính theo ampe, A) là bao nhiêu?",
+    "answer": "1,8",
+    "explanation": "$R_{12}=\\dfrac{10\\cdot 10}{20}=5\\,\\Omega$; $I=\\dfrac{9}{5}=1{,}8$ A.",
+    "tags": [
+      "mạch điện",
+      "định luật Ôm"
+    ],
+    "figure": {
+      "kind": "circuit",
+      "text": "nguồn E = 9 V\nR1=10Ω // R2=10Ω"
+    }
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Một mạch cộng hưởng gồm cuộn thuần $L=1$ H và tụ điện $C$ thay đổi được. Muốn mạch cộng hưởng ở tần số 50 Hz thì điện dung $C$ (làm tròn đến hàng phần mười, tính bằng microfarat, µF) phải là bao nhiêu?",
+    "answer": "10,1",
+    "explanation": "$C=\\dfrac{1}{4\\pi^2 f_0^2 L}=\\dfrac{1}{4\\pi^2\\cdot 2500}\\approx 1{,}013\\cdot10^{-5}$ F $\\approx 10{,}1\\,\\mu$F.",
+    "tags": [
+      "cộng hưởng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Một máy tiêu thụ điện có hệ số công suất 0,9, chạy dưới điện áp 220 V với dòng điện hiệu dụng 5 A. Công suất tiêu thụ của máy (tính bằng oát, W) là bao nhiêu?",
+    "answer": "990",
+    "explanation": "$P=UI\\cos\\varphi=220\\cdot 5\\cdot 0{,}9=990$ W.",
+    "tags": [
+      "công suất"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Một thanh dẫn dài 0,8 m quay đều quanh một đầu với tốc độ góc 40 rad/s trong từ trường đều $B=0{,}25$ T vuông góc với mặt phẳng quay. Suất điện động cảm ứng giữa hai đầu thanh (V) là bao nhiêu?",
+    "answer": "3,2",
+    "explanation": "$E=\\dfrac{1}{2}B\\omega l^2=\\dfrac{1}{2}\\cdot 0{,}25\\cdot 40\\cdot 0{,}64=3{,}2$ V.",
+    "tags": [
+      "thanh quay"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Một máy biến áp thực tế giảm thế từ 220 V xuống 22 V với hiệu suất 90%. Nếu tải ở thứ cấp tiêu thụ 180 W thì dòng điện sơ cấp (làm tròn đến hai chữ số thập phân, A) là bao nhiêu?",
+    "answer": "0,91",
+    "explanation": "$P_1=\\dfrac{180}{0{,}9}=200$ W; $I_1=\\dfrac{200}{220}\\approx 0{,}91$ A.",
+    "tags": [
+      "máy biến áp",
+      "hiệu suất"
+    ]
+  }
+]

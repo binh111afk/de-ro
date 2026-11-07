@@ -1,0 +1,325 @@
+[
+  {
+    "grades": ["Lớp 12"],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Họ nguyên hàm của hàm số $f(x)=3x^2-2x+1$ là:",
+    "options": [
+      {"key": "A", "text": "$3x^3-2x^2+x+C$"},
+      {"key": "B", "text": "$x^3-2x^2+x+C$"},
+      {"key": "C", "text": "$x^3-x^2+x+C$"},
+      {"key": "D", "text": "$6x-2+C$"}
+    ],
+    "answer": "C",
+    "explanation": "Áp dụng $\\int x^n\\,dx=\\frac{x^{n+1}}{n+1}+C$ với $n\\neq -1$: $\\int(3x^2-2x+1)\\,dx=x^3-x^2+x+C$. Phương án A không chia cho số mũ mới (giữ nguyên hệ số $3$ và $-2$), B quên chia bậc mới ở hạng tử $-2x$, D lấy đạo hàm thay vì nguyên hàm.",
+    "tags": ["nguyên hàm", "bảng nguyên hàm cơ bản"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Tính tích phân $\\int_0^2 (x^2+1)\\,dx$.",
+    "options": [
+      {"key": "A", "text": "$\\frac{8}{3}$"},
+      {"key": "B", "text": "$\\frac{10}{3}$"},
+      {"key": "C", "text": "$6$"},
+      {"key": "D", "text": "$\\frac{14}{3}$"}
+    ],
+    "answer": "D",
+    "explanation": "$\\int_0^2 (x^2+1)\\,dx=\\left[\\frac{x^3}{3}+x\\right]_0^2=\\frac{8}{3}+2=\\frac{14}{3}$. Phương án A quên phần $\\int_0^2 dx=2$.",
+    "tags": ["tích phân", "tính tích phân cơ bản"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Cho hàm số $y=x^3-3x$ có đồ thị như hình bên dưới. Diện tích hình phẳng giới hạn bởi đồ thị hàm số và trục hoành bằng bao nhiêu?",
+    "options": [
+      {"key": "A", "text": "$\\frac{9}{4}$"},
+      {"key": "B", "text": "$\\frac{9}{2}$"},
+      {"key": "C", "text": "$9$"},
+      {"key": "D", "text": "$0$"}
+    ],
+    "answer": "B",
+    "explanation": "Đồ thị cắt trục hoành tại $x=-\\sqrt{3}$, $x=0$, $x=\\sqrt{3}$, tạo thành hai phần đối xứng qua gốc tọa độ. Có $\\int_0^{\\sqrt3}(x^3-3x)\\,dx=\\left[\\frac{x^4}{4}-\\frac{3x^2}{2}\\right]_0^{\\sqrt3}=-\\frac{9}{4}$, nên mỗi phần có diện tích $\\frac{9}{4}$. Tổng $S=\\frac{9}{2}$. Phương án D do tính thẳng $\\int_{-\\sqrt3}^{\\sqrt3}$ mà không lấy trị tuyệt đối, nên bị triệt tiêu.",
+    "tags": ["diện tích hình phẳng", "đồ thị hàm bậc ba"],
+    "figure": {"kind": "graph", "curves": ["x^3-3x"], "xMin": -3, "xMax": 3}
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Một chất điểm chuyển động thẳng với vận tốc $v(t)=t^2-4t+3$ (m/s), $t\\ge 0$. Quãng đường chất điểm đi được từ thời điểm $t=0$ đến $t=4$ (giây) là bao nhiêu mét?",
+    "options": [
+      {"key": "A", "text": "$4$"},
+      {"key": "B", "text": "$\\frac{4}{3}$"},
+      {"key": "C", "text": "$\\frac{8}{3}$"},
+      {"key": "D", "text": "$8$"}
+    ],
+    "answer": "A",
+    "explanation": "$v(t)=0$ khi $t=1$ hoặc $t=3$, nên $v$ đổi dấu trên $[0;4]$. Quãng đường $s=\\int_0^4|v(t)|\\,dt=\\int_0^1 v\\,dt-\\int_1^3 v\\,dt+\\int_3^4 v\\,dt=\\frac{4}{3}+\\frac{4}{3}+\\frac{4}{3}=4$ m. Phương án B là độ dời $\\int_0^4 v\\,dt=\\frac{4}{3}$, không phải quãng đường.",
+    "tags": ["ứng dụng tích phân", "chuyển động v(t)", "quãng đường"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Cho parabol $(P)$ và đường thẳng $d$ có đồ thị như hình bên dưới. Diện tích hình phẳng giới hạn bởi $(P)$ và $d$ bằng:",
+    "options": [
+      {"key": "A", "text": "$\\frac{16}{3}$"},
+      {"key": "B", "text": "$\\frac{8}{3}$"},
+      {"key": "C", "text": "$\\frac{32}{3}$"},
+      {"key": "D", "text": "$\\frac{64}{3}$"}
+    ],
+    "answer": "C",
+    "explanation": "Hoành độ giao điểm: $x^2-2x=2x \\Leftrightarrow x=0$ hoặc $x=4$. Trên $[0;4]$ có $2x\\ge x^2-2x$. Vậy $S=\\int_0^4\\left(2x-x^2+2x\\right)dx=\\int_0^4(4x-x^2)\\,dx=\\left[2x^2-\\frac{x^3}{3}\\right]_0^4=\\frac{32}{3}$.",
+    "tags": ["diện tích hình phẳng", "parabol và đường thẳng"],
+    "figure": {"kind": "oxy", "xMin": -1, "xMax": 5, "yMin": -2, "yMax": 10, "items": "(P): y = x^2 - 2x\nd: y = 2x"}
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Gọi $V$ là thể tích khối tròn xoay sinh ra khi quay quanh trục $Ox$ hình phẳng giới hạn bởi đồ thị hàm số $y=\\sqrt{x}$, trục $Ox$ và đường thẳng $x=4$. Tính $V$.",
+    "options": [
+      {"key": "A", "text": "$4\\pi$"},
+      {"key": "B", "text": "$16\\pi$"},
+      {"key": "C", "text": "$\\frac{8\\pi}{3}$"},
+      {"key": "D", "text": "$8\\pi$"}
+    ],
+    "answer": "D",
+    "explanation": "$V=\\pi\\int_0^4 (\\sqrt{x})^2\\,dx=\\pi\\int_0^4 x\\,dx=\\pi\\left[\\frac{x^2}{2}\\right]_0^4=8\\pi$.",
+    "tags": ["thể tích khối tròn xoay", "quay quanh Ox"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Gọi $V$ là thể tích khối tròn xoay sinh ra khi quay quanh trục $Ox$ hình phẳng giới hạn bởi hai đường $y=x^2$ và $y=2x$. Tính $V$.",
+    "options": [
+      {"key": "A", "text": "$\\frac{32\\pi}{15}$"},
+      {"key": "B", "text": "$\\frac{64\\pi}{15}$"},
+      {"key": "C", "text": "$\\frac{16\\pi}{3}$"},
+      {"key": "D", "text": "$\\frac{64\\pi}{5}$"}
+    ],
+    "answer": "B",
+    "explanation": "Hoành độ giao điểm: $x^2=2x \\Leftrightarrow x=0$ hoặc $x=2$. Trên $[0;2]$ có $2x\\ge x^2$. Vậy $V=\\pi\\int_0^2\\left[(2x)^2-(x^2)^2\\right]dx=\\pi\\int_0^2(4x^2-x^4)\\,dx=\\pi\\left[\\frac{4x^3}{3}-\\frac{x^5}{5}\\right]_0^2=\\pi\\left(\\frac{32}{3}-\\frac{32}{5}\\right)=\\frac{64\\pi}{15}$.",
+    "tags": ["thể tích khối tròn xoay", "quay quanh Ox", "hai đường cong"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Cho hàm số $N(t)=\\frac{2t+1}{t+1}$ có đồ thị như hình bên dưới. Giá trị của $\\int_0^3 N(t)\\,dt$ bằng:",
+    "options": [
+      {"key": "A", "text": "$6-2\\ln 2$"},
+      {"key": "B", "text": "$6+2\\ln 2$"},
+      {"key": "C", "text": "$4-2\\ln 2$"},
+      {"key": "D", "text": "$6-\\ln 2$"}
+    ],
+    "answer": "A",
+    "explanation": "Ta có $\\frac{2t+1}{t+1}=2-\\frac{1}{t+1}$, nên $\\int_0^3 N(t)\\,dt=\\left[2t-\\ln(t+1)\\right]_0^3=6-\\ln 4=6-2\\ln 2$. Phương án B sai dấu khi lấy nguyên hàm của $\\frac{1}{t+1}$.",
+    "tags": ["tích phân", "hàm hữu tỉ", "logarit"],
+    "figure": {"kind": "graph", "curves": ["(2x+1)/(x+1)"], "xMin": 0, "xMax": 4}
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Cho hàm số $f(x)=3x^2-2x+1$. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {"key": "a", "text": "$F(x)=x^3-x^2+x$ là một nguyên hàm của $f(x)$ trên $\\mathbb{R}$."},
+      {"key": "b", "text": "$\\int_0^1 f(x)\\,dx=2$."},
+      {"key": "c", "text": "Nguyên hàm $F(x)$ của $f(x)$ thỏa $F(0)=2$ có $F(1)=3$."},
+      {"key": "d", "text": "$\\int_{-1}^{1} f(x)\\,dx=0$."}
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "a) Đúng: $F'(x)=3x^2-2x+1=f(x)$. b) Sai: $\\int_0^1 f(x)\\,dx=\\left[x^3-x^2+x\\right]_0^1=1$. c) Đúng: $F(x)=x^3-x^2+x+C$, $F(0)=C=2$ nên $F(1)=1-1+1+2=3$. d) Sai: $\\int_{-1}^1 f(x)\\,dx=\\left[x^3-x^2+x\\right]_{-1}^1=1-(-3)=4$.",
+    "tags": ["nguyên hàm", "tích phân"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Cho parabol $(P)$ và đường thẳng $d$ có đồ thị như hình bên dưới. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {"key": "a", "text": "Hoành độ giao điểm của $(P)$ và $d$ là $x=-2$ và $x=1$."},
+      {"key": "b", "text": "Diện tích hình phẳng giới hạn bởi $(P)$ và $d$ bằng $\\frac{9}{2}$."},
+      {"key": "c", "text": "Diện tích hình phẳng giới hạn bởi $(P)$ và $d$ bằng $\\frac{27}{2}$."},
+      {"key": "d", "text": "Khi quay hình phẳng giới hạn bởi $(P)$ và $d$ quanh trục $Ox$ thì thể tích khối tròn xoay là $\\frac{108\\pi}{5}$."}
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "Giải $-x^2+4=x+2 \\Leftrightarrow x^2+x-2=0$, được $x=-2$ hoặc $x=1$. Trên $[-2;1]$ có $-x^2+4\\ge x+2$. a) Đúng. b) $S=\\int_{-2}^{1}(-x^2-x+2)\\,dx=\\left[-\\frac{x^3}{3}-\\frac{x^2}{2}+2x\\right]_{-2}^{1}=\\frac{7}{6}+\\frac{10}{3}=\\frac{9}{2}$: đúng. c) Sai, vì diện tích là $\\frac{9}{2}$. d) $V=\\pi\\int_{-2}^{1}\\left[(-x^2+4)^2-(x+2)^2\\right]dx=\\pi\\int_{-2}^{1}(x^4-9x^2-4x+12)\\,dx=\\frac{108\\pi}{5}$: đúng.",
+    "tags": ["diện tích hình phẳng", "thể tích khối tròn xoay", "parabol và đường thẳng"],
+    "figure": {"kind": "oxy", "xMin": -3, "xMax": 3, "yMin": -6, "yMax": 5, "items": "(P): y = -x^2 + 4\nd: y = x + 2"}
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Một chất điểm chuyển động thẳng với vận tốc $v(t)=3t^2-6t+4$ (m/s), $t\\ge 0$, và tại $t=0$ đang ở gốc tọa độ trên đường thẳng. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {"key": "a", "text": "Gia tốc của chất điểm tại thời điểm $t$ là $a(t)=6t-6$ (m/s²)."},
+      {"key": "b", "text": "Vận tốc nhỏ nhất của chất điểm bằng $0$ m/s."},
+      {"key": "c", "text": "Quãng đường chất điểm đi được trong khoảng thời gian từ $t=0$ đến $t=2$ bằng $4$ m."},
+      {"key": "d", "text": "Quãng đường chất điểm đi được trong 3 giây đầu bằng $10$ m."}
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "a) Đúng: $a(t)=v'(t)=6t-6$. b) Sai: $v(t)=3(t-1)^2+1\\ge 1$, giá trị nhỏ nhất là $1$ tại $t=1$. c) Đúng: $v(t)>0$ nên quãng đường bằng $\\int_0^2 v\\,dt=\\left[t^3-3t^2+4t\\right]_0^2=4$ m. d) Sai: $\\int_0^3 v\\,dt=27-27+12=12$ m.",
+    "tags": ["chuyển động v(t)", "quãng đường", "gia tốc"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Lưu lượng nước chảy vào một bể tại thời điểm $t$ phút là $q(t)=t^2+2$ (lít/phút), với $0\\le t\\le 6$. Lúc đầu bể không có nước. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {"key": "a", "text": "Sau 6 phút, lượng nước chảy vào bể là 84 lít."},
+      {"key": "b", "text": "Tại thời điểm $t=3$ phút, lưu lượng nước là 11 lít/phút."},
+      {"key": "c", "text": "Lượng nước chảy vào bể trong khoảng từ phút thứ 3 đến phút thứ 6 là 60 lít."},
+      {"key": "d", "text": "Lưu lượng trung bình trên đoạn $[0;6]$ là 12 lít/phút."}
+    ],
+    "answer": "ĐĐSS",
+    "explanation": "a) Đúng: $\\int_0^6(t^2+2)\\,dt=\\left[\\frac{t^3}{3}+2t\\right]_0^6=72+12=84$ lít. b) Đúng: $q(3)=9+2=11$. c) Sai: $\\int_3^6 q\\,dt=\\left[\\frac{t^3}{3}+2t\\right]_3^6=84-15=69$ lít. d) Sai: lưu lượng trung bình là $\\frac{84}{6}=14$ lít/phút.",
+    "tags": ["ứng dụng tích phân", "lưu lượng", "tích phân"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Cho hàm số $f(x)=x^2-4x+3$ có bảng xét dấu như hình bên dưới. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {"key": "a", "text": "$f(x)\\le 0$ với mọi $x\\in[1;3]$."},
+      {"key": "b", "text": "$\\int_1^3 f(x)\\,dx=\\frac{4}{3}$."},
+      {"key": "c", "text": "Diện tích hình phẳng giới hạn bởi đồ thị $y=f(x)$, trục hoành và hai đường thẳng $x=1$, $x=3$ bằng $\\frac{4}{3}$."},
+      {"key": "d", "text": "$\\int_0^4 |f(x)|\\,dx=4$."}
+    ],
+    "answer": "ĐSĐĐ",
+    "explanation": "a) Đúng: theo bảng xét dấu, $f(x)<0$ trên $(1;3)$. b) Sai: $\\int_1^3 f(x)\\,dx=\\left[\\frac{x^3}{3}-2x^2+3x\\right]_1^3=-\\frac{4}{3}$. c) Đúng: diện tích bằng $\\left|\\int_1^3 f(x)\\,dx\\right|=\\frac{4}{3}$. d) Đúng: $\\int_0^4|f(x)|\\,dx=\\frac{4}{3}+\\frac{4}{3}+\\frac{4}{3}=4$.",
+    "tags": ["xét dấu", "diện tích hình phẳng", "tích phân có trị tuyệt đối"],
+    "figure": {"kind": "signtable", "expr": "(x-1)(x-3)"}
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Một biển quảng cáo hình phẳng trong mặt phẳng tọa độ $Oxy$ (đơn vị mét) được giới hạn bởi hai parabol $(P_1): y=4-x^2$ và $(P_2): y=x^2-2$. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {"key": "a", "text": "Hoành độ giao điểm của $(P_1)$ và $(P_2)$ là $x=-\\sqrt{3}$ và $x=\\sqrt{3}$."},
+      {"key": "b", "text": "Diện tích biển quảng cáo bằng $8\\sqrt{3}$ m²."},
+      {"key": "c", "text": "Nếu sơn biển với giá 200 000 đồng/m² thì chi phí sơn khoảng 2,5 triệu đồng."},
+      {"key": "d", "text": "Phần biển nằm phía dưới trục hoành có diện tích $\\frac{4\\sqrt{2}}{3}$ m²."}
+    ],
+    "answer": "ĐĐSS",
+    "explanation": "a) Đúng: $4-x^2=x^2-2 \\Leftrightarrow x^2=3$. b) Đúng: trên $[-\\sqrt3;\\sqrt3]$ có $(P_1)\\ge(P_2)$, nên $S=\\int_{-\\sqrt3}^{\\sqrt3}(6-2x^2)\\,dx=\\left[6x-\\frac{2x^3}{3}\\right]_{-\\sqrt3}^{\\sqrt3}=8\\sqrt3\\approx 13,86$ m². c) Sai: $8\\sqrt3\\cdot 200\\,000\\approx 2\\,771\\,000$ đồng, tức khoảng 2,8 triệu đồng. d) Sai: phần dưới trục hoành là $\\int_{-\\sqrt2}^{\\sqrt2}(2-x^2)\\,dx=\\frac{8\\sqrt2}{3}$ m².",
+    "tags": ["ứng dụng tích phân", "diện tích hình phẳng", "bài toán thực tế"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Số lượng (nghìn con) của một đàn sinh vật sau $t$ năm được mô hình hóa bởi $N(t)=\\frac{2t+3}{t+1}$, $t\\ge 0$. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {"key": "a", "text": "$N(0)=3$."},
+      {"key": "b", "text": "$N(t)\\ge 3$ với mọi $t\\ge 0$."},
+      {"key": "c", "text": "Hàm số $N(t)$ nghịch biến trên khoảng $(0;+\\infty)$."},
+      {"key": "d", "text": "$\\int_0^3 N(t)\\,dt=6+2\\ln 2$."}
+    ],
+    "answer": "ĐSĐĐ",
+    "explanation": "Ta có $N(t)=2+\\frac{1}{t+1}$. a) Đúng: $N(0)=3$. b) Sai: $N(t)$ giảm dần về 2, nên $N(t)<3$ với mọi $t>0$. c) Đúng: $N'(t)=-\\frac{1}{(t+1)^2}<0$. d) Đúng: $\\int_0^3\\left(2+\\frac{1}{t+1}\\right)dt=\\left[2t+\\ln(t+1)\\right]_0^3=6+\\ln 4=6+2\\ln 2$.",
+    "tags": ["ứng dụng đạo hàm và tích phân", "mô hình hàm phân thức", "đơn điệu"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "tra-loi-ngan",
+    "level": "NB",
+    "prompt": "Tính $\\int_1^3 2x\\,dx$.",
+    "answer": "8",
+    "explanation": "$\\int_1^3 2x\\,dx=\\left[x^2\\right]_1^3=9-1=8$.",
+    "tags": ["tích phân", "tính tích phân cơ bản"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Tính diện tích hình phẳng giới hạn bởi parabol $y=x^2-4$ và trục hoành (đơn vị diện tích). Kết quả làm tròn đến hàng phần mười.",
+    "answer": "10,7",
+    "explanation": "Parabol cắt trục hoành tại $x=\\pm 2$. $S=\\int_{-2}^{2}|x^2-4|\\,dx=2\\int_0^2(4-x^2)\\,dx=2\\left(8-\\frac{8}{3}\\right)=\\frac{32}{3}\\approx 10,7$.",
+    "tags": ["diện tích hình phẳng", "parabol"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Một chất điểm chuyển động thẳng với vận tốc $v(t)=3t^2-12t+9$ (m/s), $t\\ge 0$. Quãng đường chất điểm đi được trong 4 giây đầu tiên là bao nhiêu mét?",
+    "answer": "12",
+    "explanation": "$v(t)=0$ khi $t=1$ hoặc $t=3$. Có $\\int_0^1 v\\,dt=4$, $\\int_1^3 v\\,dt=-4$, $\\int_3^4 v\\,dt=4$. Quãng đường $=4+4+4=12$ m.",
+    "tags": ["chuyển động v(t)", "quãng đường"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Diện tích hình phẳng giới hạn bởi hai đồ thị $y=\\sqrt{x}$ và $y=x^2$ như hình bên dưới bằng bao nhiêu (đơn vị diện tích)? Kết quả làm tròn đến hàng phần trăm.",
+    "answer": "0,33",
+    "explanation": "Hoành độ giao điểm: $\\sqrt{x}=x^2 \\Leftrightarrow x=0$ hoặc $x=1$. Trên $[0;1]$ có $\\sqrt{x}\\ge x^2$. Vậy $S=\\int_0^1(\\sqrt{x}-x^2)\\,dx=\\frac{2}{3}-\\frac{1}{3}=\\frac{1}{3}\\approx 0,33$.",
+    "tags": ["diện tích hình phẳng", "căn thức"],
+    "figure": {"kind": "graph", "curves": ["sqrt(x)", "x^2"], "xMin": 0, "xMax": 1.5}
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Hình phẳng giới hạn bởi đồ thị hàm số $y=x+1$, trục $Ox$ và hai đường thẳng $x=0$, $x=2$ quay quanh trục $Ox$ tạo thành khối tròn xoay có thể tích $V=a\\pi$. Tìm $a$, làm tròn đến hàng phần trăm.",
+    "answer": "8,67",
+    "explanation": "$V=\\pi\\int_0^2(x+1)^2\\,dx=\\pi\\left[\\frac{(x+1)^3}{3}\\right]_0^2=\\frac{26\\pi}{3}$, suy ra $a=\\frac{26}{3}\\approx 8,67$.",
+    "tags": ["thể tích khối tròn xoay", "quay quanh Ox"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Tính $\\int_1^e \\frac{\\ln x}{x}\\,dx$. Viết kết quả dưới dạng số thập phân.",
+    "answer": "0,5",
+    "explanation": "Đặt $t=\\ln x$, suy ra $dt=\\frac{dx}{x}$. Đổi cận: $x=1\\Rightarrow t=0$, $x=e\\Rightarrow t=1$. Có $\\int_0^1 t\\,dt=\\frac{1}{2}=0,5$.",
+    "tags": ["tích phân", "đổi biến số", "logarit"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Một bể chứa ban đầu có 100 lít nước. Từ thời điểm $t=0$ (phút), nước chảy vào bể với tốc độ $6\\sqrt{t}$ (lít/phút) và đồng thời nước thoát ra khỏi bể với tốc độ $2t$ (lít/phút), với $0\\le t\\le 4$. Sau 4 phút, bể có bao nhiêu lít nước?",
+    "answer": "116",
+    "explanation": "Lượng nước thay đổi thêm là $\\int_0^4(6\\sqrt{t}-2t)\\,dt=\\left[4t^{3/2}-t^2\\right]_0^4=32-16=16$ lít. Tổng lượng nước: $100+16=116$ lít.",
+    "tags": ["ứng dụng tích phân", "lưu lượng", "căn thức"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Nồng độ của một loại thuốc trong máu (mg/L) sau $t$ giờ là $C(t)=\\frac{15t}{t^2+9}$, $t\\ge 0$. Nồng độ trung bình trong 3 giờ đầu (mg/L) là bao nhiêu? Kết quả làm tròn đến hàng phần trăm.",
+    "answer": "1,73",
+    "explanation": "$\\int_0^3 C(t)\\,dt=\\frac{15}{2}\\left[\\ln(t^2+9)\\right]_0^3=\\frac{15}{2}\\ln 2$. Nồng độ trung bình $=\\frac{1}{3}\\cdot\\frac{15}{2}\\ln 2=\\frac{5}{2}\\ln 2\\approx 1,73$.",
+    "tags": ["giá trị trung bình", "logarit", "bài toán thực tế"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Mặt cắt của một cổng có dạng parabol $y=6-\\frac{3}{8}x^2$ (đơn vị mét) với $-4\\le x\\le 4$, như hình bên dưới. Phần cổng nằm phía trên đường thẳng $y=3$ có diện tích bao nhiêu mét vuông? Kết quả làm tròn đến hàng phần mười.",
+    "answer": "11,3",
+    "explanation": "Hoành độ giao điểm: $6-\\frac{3}{8}x^2=3 \\Leftrightarrow x=\\pm 2\\sqrt{2}$. $S=\\int_{-2\\sqrt2}^{2\\sqrt2}\\left(3-\\frac{3}{8}x^2\\right)dx=2\\left[3x-\\frac{x^3}{8}\\right]_0^{2\\sqrt2}=2(6\\sqrt2-2\\sqrt2)=8\\sqrt2\\approx 11,3$.",
+    "tags": ["diện tích hình phẳng", "bài toán thực tế", "parabol"],
+    "figure": {"kind": "graph", "curves": ["6-3x^2/8", "3"], "xMin": -5, "xMax": 5}
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Cho hình phẳng giới hạn bởi đồ thị $y=\\sin x$, trục $Ox$ và hai đường thẳng $x=0$, $x=\\pi$ như hình bên dưới. Quay hình phẳng đó quanh trục $Ox$ ta được khối tròn xoay có thể tích $V$. Tính $V$, làm tròn đến hàng phần trăm.",
+    "answer": "4,93",
+    "explanation": "$V=\\pi\\int_0^\\pi\\sin^2x\\,dx=\\pi\\int_0^\\pi\\frac{1-\\cos 2x}{2}\\,dx=\\pi\\cdot\\frac{\\pi}{2}=\\frac{\\pi^2}{2}\\approx 4,93$.",
+    "tags": ["thể tích khối tròn xoay", "hàm lượng giác", "hạ bậc"],
+    "figure": {"kind": "graph", "curves": ["sin(x)"], "xMin": 0, "xMax": 3.5}
+  }
+]

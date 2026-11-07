@@ -1,0 +1,827 @@
+[
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Read the passage and choose the best answer.\n\nSmartphones have become an essential part of our daily lives. According to a recent survey, about 90% of young people in Viet Nam own a smartphone. These devices allow users to communicate with friends, study online, and even shop without leaving home. However, experts warn that spending too much time on smartphones can be harmful. Students who use their phones for more than five hours a day often find it difficult to concentrate in class. They may also suffer from eye strain and poor sleep quality. Therefore, many schools now encourage students to limit screen time and take part in outdoor activities. Parents are also advised to set clear rules about phone use at home. Used wisely, smartphones can be a wonderful learning tool instead of a distraction.\n\nWhat is the main idea of the passage?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Smartphones are dangerous devices that should be banned."
+      },
+      {
+        "key": "B",
+        "text": "Smartphones bring many benefits but should be used wisely."
+      },
+      {
+        "key": "C",
+        "text": "Students should never use smartphones."
+      },
+      {
+        "key": "D",
+        "text": "Schools have banned all smartphones."
+      }
+    ],
+    "answer": "B",
+    "explanation": "Bài nói về lợi ích của smartphone và lời khuyên dùng hợp lý ('Used wisely, smartphones can be a wonderful learning tool').",
+    "tags": [
+      "đọc hiểu",
+      "ý chính"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Read the passage and choose the best answer.\n\nSmartphones have become an essential part of our daily lives. According to a recent survey, about 90% of young people in Viet Nam own a smartphone. These devices allow users to communicate with friends, study online, and even shop without leaving home. However, experts warn that spending too much time on smartphones can be harmful. Students who use their phones for more than five hours a day often find it difficult to concentrate in class. They may also suffer from eye strain and poor sleep quality. Therefore, many schools now encourage students to limit screen time and take part in outdoor activities. Parents are also advised to set clear rules about phone use at home. Used wisely, smartphones can be a wonderful learning tool instead of a distraction.\n\nAccording to the survey, about 90% of young people in Viet Nam ___.",
+    "options": [
+      {
+        "key": "A",
+        "text": "own a smartphone"
+      },
+      {
+        "key": "B",
+        "text": "dislike smartphones"
+      },
+      {
+        "key": "C",
+        "text": "work in technology companies"
+      },
+      {
+        "key": "D",
+        "text": "study abroad"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Câu thứ hai của bài: 'about 90% of young people in Viet Nam own a smartphone'.",
+    "tags": [
+      "đọc hiểu",
+      "chi tiết"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Read the passage and choose the best answer.\n\nSmartphones have become an essential part of our daily lives. According to a recent survey, about 90% of young people in Viet Nam own a smartphone. These devices allow users to communicate with friends, study online, and even shop without leaving home. However, experts warn that spending too much time on smartphones can be harmful. Students who use their phones for more than five hours a day often find it difficult to concentrate in class. They may also suffer from eye strain and poor sleep quality. Therefore, many schools now encourage students to limit screen time and take part in outdoor activities. Parents are also advised to set clear rules about phone use at home. Used wisely, smartphones can be a wonderful learning tool instead of a distraction.\n\nThe word 'essential' in the passage is closest in meaning to ___.",
+    "options": [
+      {
+        "key": "A",
+        "text": "unnecessary"
+      },
+      {
+        "key": "B",
+        "text": "expensive"
+      },
+      {
+        "key": "C",
+        "text": "modern"
+      },
+      {
+        "key": "D",
+        "text": "very important"
+      }
+    ],
+    "answer": "D",
+    "explanation": "'Essential' nghĩa là rất cần thiết, rất quan trọng.",
+    "tags": [
+      "đọc hiểu",
+      "từ vựng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Read the passage and choose the best answer.\n\nSmartphones have become an essential part of our daily lives. According to a recent survey, about 90% of young people in Viet Nam own a smartphone. These devices allow users to communicate with friends, study online, and even shop without leaving home. However, experts warn that spending too much time on smartphones can be harmful. Students who use their phones for more than five hours a day often find it difficult to concentrate in class. They may also suffer from eye strain and poor sleep quality. Therefore, many schools now encourage students to limit screen time and take part in outdoor activities. Parents are also advised to set clear rules about phone use at home. Used wisely, smartphones can be a wonderful learning tool instead of a distraction.\n\nStudents who use their phones for more than five hours a day often ___.",
+    "options": [
+      {
+        "key": "A",
+        "text": "get better grades"
+      },
+      {
+        "key": "B",
+        "text": "concentrate better"
+      },
+      {
+        "key": "C",
+        "text": "find it hard to concentrate in class"
+      },
+      {
+        "key": "D",
+        "text": "sleep very well"
+      }
+    ],
+    "answer": "C",
+    "explanation": "'Students who use their phones for more than five hours a day often find it difficult to concentrate in class'.",
+    "tags": [
+      "đọc hiểu",
+      "chi tiết"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Read the passage and choose the best answer.\n\nSmartphones have become an essential part of our daily lives. According to a recent survey, about 90% of young people in Viet Nam own a smartphone. These devices allow users to communicate with friends, study online, and even shop without leaving home. However, experts warn that spending too much time on smartphones can be harmful. Students who use their phones for more than five hours a day often find it difficult to concentrate in class. They may also suffer from eye strain and poor sleep quality. Therefore, many schools now encourage students to limit screen time and take part in outdoor activities. Parents are also advised to set clear rules about phone use at home. Used wisely, smartphones can be a wonderful learning tool instead of a distraction.\n\nThe word 'They' in the passage refers to ___.",
+    "options": [
+      {
+        "key": "A",
+        "text": "experts"
+      },
+      {
+        "key": "B",
+        "text": "parents"
+      },
+      {
+        "key": "C",
+        "text": "schools"
+      },
+      {
+        "key": "D",
+        "text": "students"
+      }
+    ],
+    "answer": "D",
+    "explanation": "'They' thay thế cho 'students' vừa nhắc ở câu trước.",
+    "tags": [
+      "đọc hiểu",
+      "đại từ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Read the passage and choose the best answer.\n\nSmartphones have become an essential part of our daily lives. According to a recent survey, about 90% of young people in Viet Nam own a smartphone. These devices allow users to communicate with friends, study online, and even shop without leaving home. However, experts warn that spending too much time on smartphones can be harmful. Students who use their phones for more than five hours a day often find it difficult to concentrate in class. They may also suffer from eye strain and poor sleep quality. Therefore, many schools now encourage students to limit screen time and take part in outdoor activities. Parents are also advised to set clear rules about phone use at home. Used wisely, smartphones can be a wonderful learning tool instead of a distraction.\n\nWhich of the following is NOT mentioned as advice in the passage?",
+    "options": [
+      {
+        "key": "A",
+        "text": "limiting screen time"
+      },
+      {
+        "key": "B",
+        "text": "selling their smartphones"
+      },
+      {
+        "key": "C",
+        "text": "taking part in outdoor activities"
+      },
+      {
+        "key": "D",
+        "text": "setting rules about phone use"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Bài nêu: hạn chế thời gian màn hình, tham gia hoạt động ngoài trời, quy định dùng điện thoại; không nêu bán điện thoại.",
+    "tags": [
+      "đọc hiểu",
+      "chi tiết"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Read the passage and choose the best answer.\n\nSmartphones have become an essential part of our daily lives. According to a recent survey, about 90% of young people in Viet Nam own a smartphone. These devices allow users to communicate with friends, study online, and even shop without leaving home. However, experts warn that spending too much time on smartphones can be harmful. Students who use their phones for more than five hours a day often find it difficult to concentrate in class. They may also suffer from eye strain and poor sleep quality. Therefore, many schools now encourage students to limit screen time and take part in outdoor activities. Parents are also advised to set clear rules about phone use at home. Used wisely, smartphones can be a wonderful learning tool instead of a distraction.\n\nWhat can be inferred from the last sentence of the passage?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Smartphones are always harmful to students."
+      },
+      {
+        "key": "B",
+        "text": "With proper use, smartphones can support learning."
+      },
+      {
+        "key": "C",
+        "text": "Parents do not care about phone use."
+      },
+      {
+        "key": "D",
+        "text": "Outdoor activities are useless."
+      }
+    ],
+    "answer": "B",
+    "explanation": "'Used wisely, smartphones can be a wonderful learning tool instead of a distraction' — dùng đúng cách thì điện thoại hỗ trợ học tập.",
+    "tags": [
+      "đọc hiểu",
+      "suy luận"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Read the passage and choose the best answer.\n\nGoing green is becoming more popular in Viet Nam. Many families now bring their own bags to the market instead of using plastic ones. Supermarkets have started selling paper bags and encouraging customers to reuse them. In big cities, young people take part in campaigns to collect rubbish on beaches and plant trees in their neighbourhoods. These small actions help reduce pollution and protect the environment for future generations. Experts say that everyone can contribute to a greener planet by saving energy at home, recycling waste, and using public transport more often. Although one person's effort may seem small, millions of people doing the same thing can make a big difference.\n\nWhat is the main idea of the passage?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Plastic bags are cheap and convenient."
+      },
+      {
+        "key": "B",
+        "text": "Beaches in Viet Nam are very dirty."
+      },
+      {
+        "key": "C",
+        "text": "Small individual actions can help protect the environment."
+      },
+      {
+        "key": "D",
+        "text": "Public transport is expensive."
+      }
+    ],
+    "answer": "C",
+    "explanation": "Ý chính: những hành động nhỏ của mỗi người góp phần bảo vệ môi trường.",
+    "tags": [
+      "đọc hiểu",
+      "ý chính"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Read the passage and choose the best answer.\n\nGoing green is becoming more popular in Viet Nam. Many families now bring their own bags to the market instead of using plastic ones. Supermarkets have started selling paper bags and encouraging customers to reuse them. In big cities, young people take part in campaigns to collect rubbish on beaches and plant trees in their neighbourhoods. These small actions help reduce pollution and protect the environment for future generations. Experts say that everyone can contribute to a greener planet by saving energy at home, recycling waste, and using public transport more often. Although one person's effort may seem small, millions of people doing the same thing can make a big difference.\n\nMany families bring their own bags to the market in order to ___.",
+    "options": [
+      {
+        "key": "A",
+        "text": "save money"
+      },
+      {
+        "key": "B",
+        "text": "follow fashion"
+      },
+      {
+        "key": "C",
+        "text": "please supermarkets"
+      },
+      {
+        "key": "D",
+        "text": "reduce plastic waste"
+      }
+    ],
+    "answer": "D",
+    "explanation": "'instead of using plastic ones' — mang túi riêng để hạn chế túi ni-lông.",
+    "tags": [
+      "đọc hiểu",
+      "chi tiết"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Read the passage and choose the best answer.\n\nGoing green is becoming more popular in Viet Nam. Many families now bring their own bags to the market instead of using plastic ones. Supermarkets have started selling paper bags and encouraging customers to reuse them. In big cities, young people take part in campaigns to collect rubbish on beaches and plant trees in their neighbourhoods. These small actions help reduce pollution and protect the environment for future generations. Experts say that everyone can contribute to a greener planet by saving energy at home, recycling waste, and using public transport more often. Although one person's effort may seem small, millions of people doing the same thing can make a big difference.\n\nThe word 'campaigns' in the passage is closest in meaning to ___.",
+    "options": [
+      {
+        "key": "A",
+        "text": "organized activities"
+      },
+      {
+        "key": "B",
+        "text": "competitions"
+      },
+      {
+        "key": "C",
+        "text": "holidays"
+      },
+      {
+        "key": "D",
+        "text": "contracts"
+      }
+    ],
+    "answer": "A",
+    "explanation": "'Campaigns' là các hoạt động có tổ chức (chiến dịch).",
+    "tags": [
+      "đọc hiểu",
+      "từ vựng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Read the passage and choose the best answer.\n\nGoing green is becoming more popular in Viet Nam. Many families now bring their own bags to the market instead of using plastic ones. Supermarkets have started selling paper bags and encouraging customers to reuse them. In big cities, young people take part in campaigns to collect rubbish on beaches and plant trees in their neighbourhoods. These small actions help reduce pollution and protect the environment for future generations. Experts say that everyone can contribute to a greener planet by saving energy at home, recycling waste, and using public transport more often. Although one person's effort may seem small, millions of people doing the same thing can make a big difference.\n\nWhich of the following activities is NOT mentioned in the passage?",
+    "options": [
+      {
+        "key": "A",
+        "text": "building more factories"
+      },
+      {
+        "key": "B",
+        "text": "planting trees"
+      },
+      {
+        "key": "C",
+        "text": "collecting rubbish on beaches"
+      },
+      {
+        "key": "D",
+        "text": "saving energy at home"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Bài nêu trồng cây, dọn rác bãi biển, tiết kiệm điện; không nêu xây nhà máy.",
+    "tags": [
+      "đọc hiểu",
+      "chi tiết"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Read the passage and choose the best answer.\n\nGoing green is becoming more popular in Viet Nam. Many families now bring their own bags to the market instead of using plastic ones. Supermarkets have started selling paper bags and encouraging customers to reuse them. In big cities, young people take part in campaigns to collect rubbish on beaches and plant trees in their neighbourhoods. These small actions help reduce pollution and protect the environment for future generations. Experts say that everyone can contribute to a greener planet by saving energy at home, recycling waste, and using public transport more often. Although one person's effort may seem small, millions of people doing the same thing can make a big difference.\n\nThe phrase 'make a big difference' in the last sentence means ___.",
+    "options": [
+      {
+        "key": "A",
+        "text": "change nothing at all"
+      },
+      {
+        "key": "B",
+        "text": "have an argument"
+      },
+      {
+        "key": "C",
+        "text": "create an important positive change"
+      },
+      {
+        "key": "D",
+        "text": "spend a lot of money"
+      }
+    ],
+    "answer": "C",
+    "explanation": "'Make a difference' = tạo ra sự thay đổi tích cực, đáng kể.",
+    "tags": [
+      "đọc hiểu",
+      "từ vựng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Read the passage and choose the best answer.\n\nGoing green is becoming more popular in Viet Nam. Many families now bring their own bags to the market instead of using plastic ones. Supermarkets have started selling paper bags and encouraging customers to reuse them. In big cities, young people take part in campaigns to collect rubbish on beaches and plant trees in their neighbourhoods. These small actions help reduce pollution and protect the environment for future generations. Experts say that everyone can contribute to a greener planet by saving energy at home, recycling waste, and using public transport more often. Although one person's effort may seem small, millions of people doing the same thing can make a big difference.\n\nAccording to the passage, protecting the environment is ___.",
+    "options": [
+      {
+        "key": "A",
+        "text": "only the government's job"
+      },
+      {
+        "key": "B",
+        "text": "impossible for individuals"
+      },
+      {
+        "key": "C",
+        "text": "only for young people"
+      },
+      {
+        "key": "D",
+        "text": "everyone's responsibility"
+      }
+    ],
+    "answer": "D",
+    "explanation": "'Everyone can contribute to a greener planet' — trách nhiệm của tất cả mọi người.",
+    "tags": [
+      "đọc hiểu",
+      "suy luận"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Read the paragraph and choose the sentence that best fits the gap.\n\nCamping is a popular activity among young people. (1) ___. First, it helps them relax after stressful school days. Second, they can learn useful skills such as cooking and teamwork. Finally, camping trips create wonderful memories with friends.",
+    "options": [
+      {
+        "key": "A",
+        "text": "There are several reasons why camping is good for students."
+      },
+      {
+        "key": "B",
+        "text": "Camping is very expensive for families."
+      },
+      {
+        "key": "C",
+        "text": "Nobody enjoys camping these days."
+      },
+      {
+        "key": "D",
+        "text": "Camping is not allowed in Viet Nam."
+      }
+    ],
+    "answer": "A",
+    "explanation": "Câu dẫn giới thiệu 'First, Second, Finally' cần một câu khái quát về các lý do.",
+    "tags": [
+      "điền câu",
+      "liên kết đoạn"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Read the paragraph and choose the sentence that best fits the gap.\n\nMy neighbourhood has changed a lot in the last five years. (1) ___. There is also a new park where children play every afternoon. The streets are cleaner, and people seem happier.",
+    "options": [
+      {
+        "key": "A",
+        "text": "The park has been closed for years."
+      },
+      {
+        "key": "B",
+        "text": "A new shopping mall was built near the market last year."
+      },
+      {
+        "key": "C",
+        "text": "I dislike living in this neighbourhood."
+      },
+      {
+        "key": "D",
+        "text": "The roads are still very narrow."
+      }
+    ],
+    "answer": "B",
+    "explanation": "Câu điền phải nêu một sự thay đổi tích cực, phù hợp với nội dung đoạn.",
+    "tags": [
+      "điền câu",
+      "liên kết đoạn"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Read the paragraph and choose the sentence that best fits the gap.\n\nReading books brings many benefits. (1) ___. It also improves vocabulary and writing skills. Moreover, books help us understand other people and cultures.",
+    "options": [
+      {
+        "key": "A",
+        "text": "First of all, reading is a great way to gain knowledge."
+      },
+      {
+        "key": "B",
+        "text": "Books are heavy to carry."
+      },
+      {
+        "key": "C",
+        "text": "I never read books in my free time."
+      },
+      {
+        "key": "D",
+        "text": "Libraries are old buildings."
+      }
+    ],
+    "answer": "A",
+    "explanation": "Câu đầu của chuỗi lý do ('It also...', 'Moreover...') phải là lợi ích đầu tiên.",
+    "tags": [
+      "điền câu",
+      "liên kết đoạn"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Read the paragraph and choose the sentence that best fits the gap.\n\nLearning a foreign language takes time and patience. (1) ___. Listening to songs and watching films also make learning more enjoyable. With regular practice, anyone can make progress.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Languages are completely useless."
+      },
+      {
+        "key": "B",
+        "text": "You should stop learning immediately."
+      },
+      {
+        "key": "C",
+        "text": "Learners should practise speaking every day."
+      },
+      {
+        "key": "D",
+        "text": "Only young children can learn languages."
+      }
+    ],
+    "answer": "C",
+    "explanation": "Câu điền đưa ra lời khuyên học, dẫn vào các ví dụ 'Listening to songs...'.",
+    "tags": [
+      "điền câu",
+      "liên kết đoạn"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Read the paragraph and choose the sentence that best fits the gap.\n\nVolunteering is good for both the community and the volunteers themselves. (1) ___. They also learn new skills and make new friends. Many volunteers say the experience makes them more confident.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Volunteers help poor children, old people, and people with disabilities."
+      },
+      {
+        "key": "B",
+        "text": "Volunteers want to become rich quickly."
+      },
+      {
+        "key": "C",
+        "text": "Volunteering is banned in many schools."
+      },
+      {
+        "key": "D",
+        "text": "Volunteers never learn anything new."
+      }
+    ],
+    "answer": "A",
+    "explanation": "Câu điền nêu việc làm của tình nguyện viên, phù hợp 'They also learn new skills...'.",
+    "tags": [
+      "điền câu",
+      "liên kết đoạn"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Read the paragraph and choose the sentence that best fits the gap.\n\nRecycling paper saves trees and energy. (1) ___. In addition, recycling produces less rubbish in landfills. Schools can start recycling programmes to teach students this good habit.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Paper is no longer used today."
+      },
+      {
+        "key": "B",
+        "text": "Recycling is impossible at home."
+      },
+      {
+        "key": "C",
+        "text": "Trees are not important."
+      },
+      {
+        "key": "D",
+        "text": "Recycled paper is used to make boxes and notebooks."
+      }
+    ],
+    "answer": "D",
+    "explanation": "Câu điền nêu tác dụng của giấy tái chế, hợp nghĩa với chủ đề tiết kiệm cây.",
+    "tags": [
+      "điền câu",
+      "liên kết đoạn"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Choose the best option to complete the sentence.\n\nThe new library ___ to the public last month.",
+    "options": [
+      {
+        "key": "A",
+        "text": "was opened"
+      },
+      {
+        "key": "B",
+        "text": "opens"
+      },
+      {
+        "key": "C",
+        "text": "will open"
+      },
+      {
+        "key": "D",
+        "text": "is opening"
+      }
+    ],
+    "answer": "A",
+    "explanation": "'Last month' → quá khứ đơn, thư viện bị mở cho công chúng: câu bị động 'was opened'.",
+    "tags": [
+      "ngữ pháp",
+      "câu bị động"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Choose the best option to complete the sentence.\n\nIf I ___ more free time, I would learn to play the guitar.",
+    "options": [
+      {
+        "key": "A",
+        "text": "have"
+      },
+      {
+        "key": "B",
+        "text": "had"
+      },
+      {
+        "key": "C",
+        "text": "will have"
+      },
+      {
+        "key": "D",
+        "text": "am having"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Câu điều kiện loại 2: If + quá khứ đơn, would + động từ nguyên mẫu.",
+    "tags": [
+      "ngữ pháp",
+      "câu điều kiện"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Choose the best option to complete the sentence.\n\nShe is looking forward to ___ her grandparents next weekend.",
+    "options": [
+      {
+        "key": "A",
+        "text": "visit"
+      },
+      {
+        "key": "B",
+        "text": "visits"
+      },
+      {
+        "key": "C",
+        "text": "visiting"
+      },
+      {
+        "key": "D",
+        "text": "visited"
+      }
+    ],
+    "answer": "C",
+    "explanation": "'look forward to + V-ing' (gerund).",
+    "tags": [
+      "ngữ pháp",
+      "V-ing"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Choose the best option to complete the sentence.\n\nThe film was ___ interesting that we watched it twice.",
+    "options": [
+      {
+        "key": "A",
+        "text": "very"
+      },
+      {
+        "key": "B",
+        "text": "too"
+      },
+      {
+        "key": "C",
+        "text": "so"
+      },
+      {
+        "key": "D",
+        "text": "such"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Cấu trúc 'so + tính từ + that': quá ... đến nỗi ....",
+    "tags": [
+      "ngữ pháp",
+      "cấu trúc so–that"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Choose the best option to complete the sentence.\n\nNeither of the two answers ___ correct.",
+    "options": [
+      {
+        "key": "A",
+        "text": "are"
+      },
+      {
+        "key": "B",
+        "text": "were"
+      },
+      {
+        "key": "C",
+        "text": "is"
+      },
+      {
+        "key": "D",
+        "text": "have been"
+      }
+    ],
+    "answer": "C",
+    "explanation": "'Neither of ...' chủ ngữ số ít → động từ số ít 'is'.",
+    "tags": [
+      "ngữ pháp",
+      "sự hòa hợp"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Choose the best option to complete the sentence.\n\nThe man ___ lives next door is a famous artist.",
+    "options": [
+      {
+        "key": "A",
+        "text": "which"
+      },
+      {
+        "key": "B",
+        "text": "whom"
+      },
+      {
+        "key": "C",
+        "text": "whose"
+      },
+      {
+        "key": "D",
+        "text": "who"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Đại từ quan hệ 'who' thay cho người, làm chủ ngữ của mệnh đề quan hệ.",
+    "tags": [
+      "ngữ pháp",
+      "mệnh đề quan hệ"
+    ]
+  }
+]

@@ -1,6 +1,17 @@
 import type { Option, QuestionType, Subject } from './types'
 import { BANK_FIGURES } from './bankFigures'
 
+/** Kho đầy đủ: BANK + câu THPT (bankThpt.ts, bankThpt2.ts) tải sau để không nặng gói tải đầu trang. */
+let fullBank: Promise<BankEntry[]> | null = null
+export function loadFullBank(): Promise<BankEntry[]> {
+  fullBank ??= Promise.all([import('./bankThpt'), import('./bankThpt2')]).then(([a, b]) => [
+    ...BANK,
+    ...a.BANK_THPT,
+    ...b.BANK_THPT2,
+  ])
+  return fullBank
+}
+
 /**
  * One question template from the content bank.
  * The local "AI" draws from this pool to assemble exams.

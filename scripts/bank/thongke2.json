@@ -1,0 +1,340 @@
+[
+  {
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Có 8 bạn đăng kí tham gia 3 môn thi khác nhau là Toán, Vật lí và Hóa học. Mỗi môn do đúng một bạn phụ trách và mỗi bạn chỉ phụ trách tối đa một môn. Hỏi có bao nhiêu cách phân công?",
+    "options": [{"key":"A","text":"56"},{"key":"B","text":"168"},{"key":"C","text":"512"},{"key":"D","text":"336"}],
+    "answer": "D",
+    "explanation": "Mỗi môn ứng với một bạn khác nhau, thứ tự quan trọng nên đây là chỉnh hợp chập 3 của 8: $\\mathrm{A}_8^3=8\\cdot7\\cdot6=336$.",
+    "tags": ["chỉnh hợp", "bài đếm"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Lớp có 7 bạn nam và 5 bạn nữ. Cần chọn 4 bạn đi dự trại hè. Hỏi có bao nhiêu cách chọn sao cho trong 4 bạn được chọn có ít nhất một bạn nữ?",
+    "options": [{"key":"A","text":"35"},{"key":"B","text":"420"},{"key":"C","text":"460"},{"key":"D","text":"495"}],
+    "answer": "C",
+    "explanation": "Tổng số cách chọn 4 bạn từ 12 bạn là $\\mathrm{C}_{12}^4=495$. Số cách chọn 4 bạn toàn nam là $\\mathrm{C}_7^4=35$. Đáp số $495-35=460$.",
+    "tags": ["tổ hợp", "phần bù", "chọn nhóm có ràng buộc"]
+  },
+  {
+    "grades": ["Lớp 11"],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Gieo một con xúc xắc cân đối và đồng chất. Gọi $A$ là biến cố “số chấm xuất hiện là số chẵn” và $B$ là biến cố “số chấm xuất hiện không nhỏ hơn 4”. Tính xác suất của biến cố $A\\cup B$.",
+    "options": [{"key":"A","text":"$\\dfrac{2}{3}$"},{"key":"B","text":"$\\dfrac{1}{2}$"},{"key":"C","text":"$\\dfrac{5}{6}$"},{"key":"D","text":"$\\dfrac{1}{3}$"}],
+    "answer": "A",
+    "explanation": "$A=\\{2;4;6\\}$, $B=\\{4;5;6\\}$, $A\\cup B=\\{2;4;5;6\\}$. Vậy $P(A\\cup B)=\\dfrac{4}{6}=\\dfrac{2}{3}$.",
+    "tags": ["xác suất cổ điển", "biến cố hợp"]
+  },
+  {
+    "grades": ["Lớp 11"],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Cho $P(A)=0{,}3$, $P(B)=0{,}6$ và $P(A\\cap B)=0{,}18$. Tính $P(A\\cup B)$.",
+    "options": [{"key":"A","text":"0,72"},{"key":"B","text":"0,9"},{"key":"C","text":"0,18"},{"key":"D","text":"0,54"}],
+    "answer": "A",
+    "explanation": "Theo công thức cộng xác suất: $P(A\\cup B)=P(A)+P(B)-P(A\\cap B)=0{,}3+0{,}6-0{,}18=0{,}72$.",
+    "tags": ["biến cố hợp", "biến cố giao", "công thức cộng xác suất"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Biểu đồ bên dưới thống kê thời gian chờ (phút) của 40 khách hàng tại một quầy giao dịch. Tìm mốt của mẫu số liệu ghép nhóm (làm tròn đến hàng phần mười).",
+    "options": [{"key":"A","text":"31,8"},{"key":"B","text":"32,5"},{"key":"C","text":"30,0"},{"key":"D","text":"35,0"}],
+    "answer": "A",
+    "explanation": "Nhóm chứa mốt là [30; 35) vì có tần số lớn nhất 14. Mốt $M_o=30+\\dfrac{14-10}{(14-10)+(14-7)}\\cdot5=30+\\dfrac{20}{11}\\approx31{,}8$.",
+    "tags": ["mẫu số liệu ghép nhóm", "mốt"],
+    "figure": {"kind":"stats","chart":"hist","title":"Thời gian chờ của 40 khách hàng","xLabel":"Thời gian (phút)","yLabel":"Số khách hàng","data":"[20; 25) [25; 30) [30; 35) [35; 40) [40; 45)\nSố khách hàng: 6; 10; 14; 7; 3"}
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Sơ đồ cây bên dưới cho biết xác suất ngày mai có mưa và xác suất đường trong khu phố bị ngập trong từng trường hợp. Tính xác suất đường trong khu phố bị ngập vào ngày mai.",
+    "options": [{"key":"A","text":"0,24"},{"key":"B","text":"0,07"},{"key":"C","text":"0,80"},{"key":"D","text":"0,31"}],
+    "answer": "D",
+    "explanation": "$P(\\text{ngập})=0{,}3\\cdot0{,}8+0{,}7\\cdot0{,}1=0{,}24+0{,}07=0{,}31$.",
+    "tags": ["công thức xác suất toàn phần", "sơ đồ cây"],
+    "figure": {"kind":"probtree","text":"Mưa: 0,3\n  Ngập: 0,8\n  Không ngập: 0,2\nKhông mưa: 0,7\n  Ngập: 0,1\n  Không ngập: 0,9"}
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Bảng thống kê bên dưới cho biết kết quả kiểm tra kĩ năng của 50 học sinh khối 12, phân theo giới tính. Chọn ngẫu nhiên một học sinh trong số các em đạt yêu cầu. Tính xác suất em đó là nam (làm tròn đến hàng phần trăm).",
+    "options": [{"key":"A","text":"0,45"},{"key":"B","text":"0,55"},{"key":"C","text":"0,36"},{"key":"D","text":"0,60"}],
+    "answer": "B",
+    "explanation": "Số học sinh đạt yêu cầu là $18+15=33$, trong đó có 18 nam. Xác suất cần tìm là $\\dfrac{18}{33}\\approx0{,}55$.",
+    "tags": ["xác suất có điều kiện", "bảng số liệu"],
+    "figure": {"kind":"stats","chart":"table","title":"Kết quả kiểm tra kĩ năng của 50 học sinh","data":"Đạt; Không đạt\nNam: 18; 12\nNữ: 15; 5"}
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Một nhà máy nhận linh kiện từ ba nhà cung cấp X, Y, Z với tỉ lệ lần lượt là 40%, 35% và 25% tổng số linh kiện. Tỉ lệ linh kiện lỗi của X, Y, Z lần lượt là 2%, 4% và 5%. Lấy ngẫu nhiên một linh kiện và thấy linh kiện đó bị lỗi. Xác suất linh kiện đó do Z cung cấp là bao nhiêu (làm tròn đến hàng phần trăm)?",
+    "options": [{"key":"A","text":"0,40"},{"key":"B","text":"0,25"},{"key":"C","text":"0,36"},{"key":"D","text":"0,33"}],
+    "answer": "C",
+    "explanation": "$P(\\text{lỗi})=0{,}4\\cdot0{,}02+0{,}35\\cdot0{,}04+0{,}25\\cdot0{,}05=0{,}008+0{,}014+0{,}0125=0{,}0345$. Theo công thức Bayes, $P(\\text{Z}\\mid\\text{lỗi})=\\dfrac{0{,}0125}{0{,}0345}\\approx0{,}36$.",
+    "tags": ["công thức Bayes", "công thức xác suất toàn phần"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Trên mặt phẳng cho 8 điểm phân biệt, trong đó có đúng 4 điểm cùng nằm trên một đường thẳng và không có ba điểm nào khác thẳng hàng. Hỏi có bao nhiêu tam giác có ba đỉnh là ba trong số 8 điểm đã cho?",
+    "options": [{"key":"A","text":"56"},{"key":"B","text":"52"},{"key":"C","text":"48"},{"key":"D","text":"60"}],
+    "answer": "B",
+    "explanation": "Số bộ ba điểm bất kì là $\\mathrm{C}_8^3=56$. Có $\\mathrm{C}_4^3=4$ bộ ba điểm thẳng hàng (cùng nằm trên đường thẳng đã cho) không tạo thành tam giác. Số tam giác là $56-4=52$.",
+    "tags": ["tổ hợp", "phần bù", "hình học tổ hợp"]
+  },
+  {
+    "grades": ["Lớp 11"],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Chọn ngẫu nhiên đồng thời hai số khác nhau từ tập hợp {1; 2; 3; …; 10}. Tính xác suất để tổng hai số được chọn là một số chẵn.",
+    "options": [{"key":"A","text":"$\\dfrac{1}{2}$"},{"key":"B","text":"$\\dfrac{2}{9}$"},{"key":"C","text":"$\\dfrac{4}{9}$"},{"key":"D","text":"$\\dfrac{5}{9}$"}],
+    "answer": "C",
+    "explanation": "Tổng hai số chẵn khi hai số cùng tính chẵn lẻ. Số cách chọn hai số cùng chẵn hoặc cùng lẻ là $2\\cdot\\mathrm{C}_5^2=20$. Số cách chọn bất kì là $\\mathrm{C}_{10}^2=45$. Xác suất là $\\dfrac{20}{45}=\\dfrac{4}{9}$.",
+    "tags": ["xác suất cổ điển", "tổ hợp", "biến cố"]
+  },
+  {
+    "grades": ["Lớp 11"],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Trong một hộp có 4 viên bi đỏ, 3 viên bi xanh và 2 viên bi vàng có kích thước như nhau. Lấy ngẫu nhiên đồng thời 2 viên bi từ hộp. Xét tính đúng, sai của các khẳng định sau:",
+    "options": [
+      {"key":"a","text":"Số cách lấy 2 viên bi từ hộp là 36."},
+      {"key":"b","text":"Xác suất hai viên bi lấy ra cùng màu bằng $\\dfrac{5}{18}$."},
+      {"key":"c","text":"Xác suất lấy được ít nhất một viên bi đỏ bằng 0,6."},
+      {"key":"d","text":"Xác suất hai viên bi lấy ra khác màu bằng $\\dfrac{13}{18}$."}
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) Đúng: $\\mathrm{C}_9^2=36$. b) Đúng: số cách lấy cùng màu là $\\mathrm{C}_4^2+\\mathrm{C}_3^2+\\mathrm{C}_2^2=6+3+1=10$, nên xác suất là $\\dfrac{10}{36}=\\dfrac{5}{18}$. c) Sai: có $\\mathrm{C}_5^2=10$ cách lấy hai bi không đỏ, nên $P=1-\\dfrac{10}{36}=\\dfrac{13}{18}\\approx0{,}72$. d) Đúng: khác màu là phần bù của cùng màu, $P=1-\\dfrac{5}{18}=\\dfrac{13}{18}$.",
+    "tags": ["xác suất cổ điển", "biến cố đối", "tổ hợp"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Từ các chữ số 0, 1, 2, 3, 4, 5 lập các số tự nhiên gồm 4 chữ số đôi một khác nhau. Xét tính đúng, sai của các khẳng định sau:",
+    "options": [
+      {"key":"a","text":"Có 300 số được lập."},
+      {"key":"b","text":"Có 160 số chẵn được lập."},
+      {"key":"c","text":"Có 180 số lớn hơn 3000."},
+      {"key":"d","text":"Có 110 số chia hết cho 5."}
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "a) Đúng: có $6\\cdot5\\cdot4\\cdot3=360$ số, trừ $5\\cdot4\\cdot3=60$ số có chữ số 0 đứng đầu, còn $300$. b) Sai: số chẵn gồm tận cùng bằng 0 (60 số) và tận cùng bằng 2 hoặc 4 ($2\\cdot4\\cdot4\\cdot3=96$ số), tổng $156$. c) Đúng: chữ số đầu thuộc $\\{3;4;5\\}$ có 3 cách, ba chữ số còn lại $5\\cdot4\\cdot3=60$ cách, tổng $180$. d) Sai: tận cùng 0 có 60 số, tận cùng 5 có $4\\cdot4\\cdot3=48$ số, tổng $108$.",
+    "tags": ["chỉnh hợp", "số tự nhiên", "bài đếm có ràng buộc"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Biểu đồ bên dưới thống kê chiều cao của 30 học sinh một lớp. Xét tính đúng, sai của các khẳng định sau:",
+    "options": [
+      {"key":"a","text":"Chiều cao trung bình của 30 học sinh là 162,7 cm (làm tròn đến hàng phần mười)."},
+      {"key":"b","text":"Nhóm chứa trung vị của mẫu số liệu ghép nhóm này là [160; 165)."},
+      {"key":"c","text":"Khoảng biến thiên của mẫu số liệu ghép nhóm này là 20."},
+      {"key":"d","text":"Mốt của mẫu số liệu ghép nhóm này là 162,5 cm."}
+    ],
+    "answer": "ĐĐSS",
+    "explanation": "Giá trị đại diện: 152,5; 157,5; 162,5; 167,5; 172,5. a) Đúng: $\\bar x=\\dfrac{4880}{30}\\approx162{,}7$. b) Đúng: $n/2=15$ nằm giữa các cỡ tích lũy 10 và 20 nên nhóm chứa trung vị là [160; 165). c) Sai: khoảng biến thiên là $175-150=25$. d) Sai: $M_o=160+\\dfrac{10-7}{(10-7)+(10-6)}\\cdot5\\approx162{,}1$.",
+    "tags": ["mẫu số liệu ghép nhóm", "trung bình", "trung vị", "mốt", "khoảng biến thiên"],
+    "figure": {"kind":"stats","chart":"hist","title":"Chiều cao của 30 học sinh","xLabel":"Chiều cao (cm)","yLabel":"Số học sinh","data":"[150; 155) [155; 160) [160; 165) [165; 170) [170; 175)\nSố học sinh: 3; 7; 10; 6; 4"}
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Biểu đồ bên dưới thống kê thời gian đi từ nhà đến trường (phút) của học sinh hai lớp 12A và 12B, mỗi lớp 30 học sinh. Xét tính đúng, sai của các khẳng định sau:",
+    "options": [
+      {"key":"a","text":"Số trung bình của mẫu số liệu lớp 12A là 22 phút."},
+      {"key":"b","text":"Số trung bình của mẫu số liệu lớp 12B bằng 22 phút."},
+      {"key":"c","text":"Độ phân tán của lớp 12A lớn hơn lớp 12B nếu đo bằng độ lệch chuẩn."},
+      {"key":"d","text":"Khoảng tứ phân vị của lớp 12B lớn hơn khoảng tứ phân vị của lớp 12A."}
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "a) Đúng: $\\bar x_A=\\dfrac{4\\cdot5+8\\cdot15+12\\cdot25+5\\cdot35+1\\cdot45}{30}=22$. b) Sai: $\\bar x_B=\\dfrac{2\\cdot5+6\\cdot15+14\\cdot25+6\\cdot35+2\\cdot45}{30}=25$. c) Đúng: $s_A\\approx10{,}05$ và $s_B\\approx9{,}66$. d) Sai: $\\Delta_Q^A\\approx14{,}38$ và $\\Delta_Q^B\\approx11{,}67$.",
+    "tags": ["mẫu số liệu ghép nhóm", "so sánh độ phân tán", "độ lệch chuẩn", "khoảng tứ phân vị"],
+    "figure": {"kind":"stats","chart":"table","title":"Thời gian đi từ nhà đến trường của học sinh hai lớp","data":"[0; 10) [10; 20) [20; 30) [30; 40) [40; 50)\nLớp 12A: 4; 8; 12; 5; 1\nLớp 12B: 2; 6; 14; 6; 2"}
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Một nhà máy sản xuất sản phẩm bằng hai dây chuyền. Sơ đồ cây bên dưới cho biết tỉ lệ sản phẩm do mỗi dây chuyền sản xuất và tỉ lệ sản phẩm lỗi tương ứng. Chọn ngẫu nhiên một sản phẩm của nhà máy. Xét tính đúng, sai của các khẳng định sau:",
+    "options": [
+      {"key":"a","text":"Xác suất sản phẩm được chọn là sản phẩm lỗi bằng 0,038."},
+      {"key":"b","text":"Biết sản phẩm được chọn là sản phẩm lỗi, xác suất sản phẩm đó do dây chuyền 1 sản xuất là 0,53."},
+      {"key":"c","text":"Xác suất sản phẩm được chọn không bị lỗi bằng 0,962."},
+      {"key":"d","text":"Biết sản phẩm được chọn là sản phẩm lỗi, xác suất sản phẩm đó do dây chuyền 2 sản xuất là 0,4."}
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "a) Đúng: $P(\\text{lỗi})=0{,}6\\cdot0{,}03+0{,}4\\cdot0{,}05=0{,}038$. b) Sai: $P(\\text{DC1}\\mid\\text{lỗi})=\\dfrac{0{,}018}{0{,}038}\\approx0{,}47$. c) Đúng: $1-0{,}038=0{,}962$. d) Sai: $P(\\text{DC2}\\mid\\text{lỗi})=\\dfrac{0{,}02}{0{,}038}\\approx0{,}53$.",
+    "tags": ["công thức Bayes", "công thức xác suất toàn phần", "sơ đồ cây"],
+    "figure": {"kind":"probtree","text":"Dây chuyền 1: 0,6\n  Lỗi: 0,03\n  Không lỗi: 0,97\nDây chuyền 2: 0,4\n  Lỗi: 0,05\n  Không lỗi: 0,95"}
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Có 6 đội bóng tham gia một giải đấu. Xét tính đúng, sai của các khẳng định sau:",
+    "options": [
+      {"key":"a","text":"Nếu mỗi cặp đội gặp nhau đúng một trận thì có 15 trận đấu."},
+      {"key":"b","text":"Nếu mỗi cặp đội gặp nhau hai trận (lượt đi và lượt về) thì có 20 trận đấu."},
+      {"key":"c","text":"Có 120 cách chọn 3 đội trong 6 đội để lập ban tổ chức."},
+      {"key":"d","text":"Có 120 cách xếp thứ hạng nhất, nhì, ba (không có đồng hạng) cho 6 đội."}
+    ],
+    "answer": "ĐSSĐ",
+    "explanation": "a) Đúng: $\\mathrm{C}_6^2=15$. b) Sai: mỗi cặp có 2 trận nên $2\\cdot15=30$ trận. c) Sai: chọn 3 đội không phân biệt thứ tự là $\\mathrm{C}_6^3=20$ cách. d) Đúng: xếp thứ hạng có thứ tự nên $\\mathrm{A}_6^3=120$.",
+    "tags": ["tổ hợp", "chỉnh hợp", "phân biệt thứ tự"]
+  },
+  {
+    "grades": ["Lớp 11"],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Ba học sinh A, B, C làm bài kiểm tra độc lập với nhau. Xác suất đạt yêu cầu của A, B, C lần lượt là 0,6; 0,7 và 0,5. Xét tính đúng, sai của các khẳng định sau:",
+    "options": [
+      {"key":"a","text":"Xác suất cả ba học sinh đều đạt yêu cầu là 0,21."},
+      {"key":"b","text":"Xác suất có ít nhất một học sinh đạt yêu cầu là 0,94."},
+      {"key":"c","text":"Xác suất đúng hai học sinh đạt yêu cầu là 0,5."},
+      {"key":"d","text":"Xác suất chỉ học sinh B đạt yêu cầu là 0,21."}
+    ],
+    "answer": "ĐĐSS",
+    "explanation": "a) Đúng: $0{,}6\\cdot0{,}7\\cdot0{,}5=0{,}21$. b) Đúng: $1-0{,}4\\cdot0{,}3\\cdot0{,}5=0{,}94$. c) Sai: $0{,}6\\cdot0{,}7\\cdot0{,}5+0{,}6\\cdot0{,}3\\cdot0{,}5+0{,}4\\cdot0{,}7\\cdot0{,}5=0{,}21+0{,}09+0{,}14=0{,}44$. d) Sai: $0{,}4\\cdot0{,}7\\cdot0{,}5=0{,}14$.",
+    "tags": ["biến cố độc lập", "biến cố giao", "biến cố hợp"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Một bệnh có tỉ lệ mắc trong dân cư là 2%. Một xét nghiệm cho kết quả dương tính với người mắc bệnh với xác suất 0,9 và cho kết quả dương tính với người không mắc bệnh với xác suất 0,1. Chọn ngẫu nhiên một người và thực hiện hai lần xét nghiệm độc lập với nhau. Xét tính đúng, sai của các khẳng định sau:",
+    "options": [
+      {"key":"a","text":"Xác suất lần xét nghiệm thứ nhất cho kết quả dương tính là 0,116."},
+      {"key":"b","text":"Biết lần xét nghiệm thứ nhất cho kết quả dương tính, xác suất người đó mắc bệnh là 0,12."},
+      {"key":"c","text":"Biết cả hai lần xét nghiệm đều dương tính, xác suất người đó mắc bệnh là 0,5."},
+      {"key":"d","text":"Xác suất cả hai lần xét nghiệm đều âm tính là 0,79 (làm tròn đến hàng phần trăm)."}
+    ],
+    "answer": "ĐSSĐ",
+    "explanation": "a) Đúng: $0{,}02\\cdot0{,}9+0{,}98\\cdot0{,}1=0{,}116$. b) Sai: $P(\\text{bệnh}\\mid\\text{dương})=\\dfrac{0{,}018}{0{,}116}\\approx0{,}16$. c) Sai: $P(\\text{dương},\\text{dương})=0{,}02\\cdot0{,}81+0{,}98\\cdot0{,}01=0{,}026$, nên $P(\\text{bệnh}\\mid\\text{hai dương})=\\dfrac{0{,}0162}{0{,}026}\\approx0{,}62$. d) Đúng: $0{,}02\\cdot0{,}01+0{,}98\\cdot0{,}81=0{,}794\\approx0{,}79$.",
+    "tags": ["công thức Bayes", "biến cố độc lập", "công thức xác suất toàn phần"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Có 4 bạn nam và 4 bạn nữ ngồi quanh một bàn tròn (hai cách xếp được coi là giống nhau nếu có thể nhận được từ nhau bằng cách xoay bàn). Hỏi có bao nhiêu cách xếp sao cho nam và nữ ngồi xen kẽ nhau?",
+    "answer": "144",
+    "explanation": "Xếp 4 bạn nam quanh bàn tròn có $(4-1)!=6$ cách. Giữa các bạn nam có 4 chỗ trống, xếp 4 bạn nữ vào đó có $4!=24$ cách. Đáp số $6\\cdot24=144$.",
+    "tags": ["hoán vị vòng quanh", "xếp chỗ có ràng buộc"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Lớp có 5 bạn nam và 6 bạn nữ. Chọn một nhóm gồm 5 bạn, trong đó có đúng 2 bạn nam. Sau đó, trong nhóm vừa chọn, chọn một bạn làm nhóm trưởng và một bạn khác làm nhóm phó. Hỏi có bao nhiêu cách thực hiện?",
+    "answer": "4000",
+    "explanation": "Chọn 2 nam từ 5 nam: $\\mathrm{C}_5^2=10$ cách. Chọn 3 nữ từ 6 nữ: $\\mathrm{C}_6^3=20$ cách. Chọn nhóm trưởng và nhóm phó có thứ tự từ 5 bạn: $\\mathrm{A}_5^2=20$ cách. Đáp số $10\\cdot20\\cdot20=4000$.",
+    "tags": ["tổ hợp", "chỉnh hợp", "quy tắc nhân", "bài đếm có ràng buộc"]
+  },
+  {
+    "grades": ["Lớp 11"],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Rút ngẫu nhiên một lá bài từ bộ bài tú lơ khơ 52 lá. Tính xác suất lá bài rút ra là lá át hoặc là lá bài cơ (làm tròn đến hàng phần trăm, ghi đáp án dưới dạng số thập phân).",
+    "answer": "0,31",
+    "explanation": "Có 4 lá át, 13 lá cơ và 1 lá vừa át vừa cơ, nên số kết quả thuận lợi là $4+13-1=16$. Xác suất là $\\dfrac{16}{52}=\\dfrac{4}{13}\\approx0{,}31$.",
+    "tags": ["xác suất cổ điển", "biến cố hợp"]
+  },
+  {
+    "grades": ["Lớp 11"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Trong một hộp có 10 viên bi được đánh số từ 1 đến 10. Lấy ngẫu nhiên đồng thời 3 viên bi từ hộp. Tính xác suất cả 3 viên bi lấy ra đều mang số chẵn (làm tròn đến hàng phần trăm, ghi đáp án dưới dạng số thập phân).",
+    "answer": "0,08",
+    "explanation": "Số kết quả đồng khả năng là $\\mathrm{C}_{10}^3=120$. Số cách lấy 3 bi chẵn từ 5 bi chẵn là $\\mathrm{C}_5^3=10$. Xác suất là $\\dfrac{10}{120}=\\dfrac{1}{12}\\approx0{,}08$.",
+    "tags": ["xác suất cổ điển", "tổ hợp"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Biểu đồ bên dưới thống kê điểm đánh giá sản phẩm của 40 khách hàng. Tính trung vị của mẫu số liệu ghép nhóm này (làm tròn đến hàng phần mười, ghi đáp án dưới dạng số thập phân).",
+    "answer": "75,8",
+    "explanation": "$n=40$, cỡ mẫu $n/2=20$. Nhóm chứa trung vị là [70; 80) vì tần số tích lũy đến [60; 70) là 13 và đến [70; 80) là 25. Trung vị $M_e=70+\\dfrac{20-13}{12}\\cdot10\\approx75{,}8$.",
+    "tags": ["mẫu số liệu ghép nhóm", "trung vị"],
+    "figure": {"kind":"stats","chart":"hist","title":"Điểm đánh giá sản phẩm của 40 khách hàng","xLabel":"Điểm","yLabel":"Số khách hàng","data":"[50; 60) [60; 70) [70; 80) [80; 90) [90; 100)\nSố khách hàng: 5; 8; 12; 10; 5"}
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Một lô hàng có 10 sản phẩm, trong đó có 3 phế phẩm. Lấy ngẫu nhiên lần lượt, không hoàn lại, hai sản phẩm từ lô hàng. Biết sản phẩm lấy ra lần đầu là chính phẩm, tính xác suất sản phẩm lấy ra lần thứ hai là phế phẩm (làm tròn đến hàng phần trăm, ghi đáp án dưới dạng số thập phân).",
+    "answer": "0,33",
+    "explanation": "Sau khi lấy ra một chính phẩm, lô hàng còn 9 sản phẩm, trong đó có 3 phế phẩm. Xác suất cần tìm là $\\dfrac{3}{9}\\approx0{,}33$.",
+    "tags": ["xác suất có điều kiện", "lấy mẫu không hoàn lại"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Biểu đồ bên dưới thống kê số lần đi siêu thị trong một tháng của 25 khách hàng. Tính độ lệch chuẩn của mẫu số liệu ghép nhóm này (làm tròn đến hàng phần mười, ghi đáp án dưới dạng số thập phân).",
+    "answer": "4,5",
+    "explanation": "Giá trị đại diện: 2; 6; 10; 14; 18. Số trung bình $\\bar x\\approx10{,}16$. Phương sai $s^2\\approx19{,}81$. Độ lệch chuẩn $s=\\sqrt{19{,}81}\\approx4{,}45\\approx4{,}5$.",
+    "tags": ["mẫu số liệu ghép nhóm", "phương sai", "độ lệch chuẩn"],
+    "figure": {"kind":"stats","chart":"hist","title":"Số lần đi siêu thị trong một tháng","xLabel":"Số lần","yLabel":"Số khách hàng","data":"[0; 4) [4; 8) [8; 12) [12; 16) [16; 20)\nSố khách hàng: 2; 6; 9; 5; 3"}
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Sơ đồ cây bên dưới cho biết xác suất thời tiết của hai ngày liên tiếp ở một địa phương. Biết ngày mai trời nắng, tính xác suất hôm nay trời nắng (làm tròn đến hàng phần trăm, ghi đáp án dưới dạng số thập phân).",
+    "answer": "0,72",
+    "explanation": "$P(\\text{mai nắng})=0{,}6\\cdot0{,}7+0{,}4\\cdot0{,}4=0{,}42+0{,}16=0{,}58$. Theo công thức Bayes, $P(\\text{hôm nay nắng}\\mid\\text{mai nắng})=\\dfrac{0{,}42}{0{,}58}\\approx0{,}72$.",
+    "tags": ["công thức Bayes", "công thức xác suất toàn phần", "sơ đồ cây"],
+    "figure": {"kind":"probtree","text":"Hôm nay nắng: 0,6\n  Mai nắng: 0,7\n  Mai không nắng: 0,3\nHôm nay không nắng: 0,4\n  Mai nắng: 0,4\n  Mai không nắng: 0,6"}
+  },
+  {
+    "grades": ["Lớp 11"],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Gieo hai con xúc xắc cân đối và đồng chất. Tính xác suất để tổng số chấm xuất hiện trên hai con xúc xắc chia hết cho 3 (làm tròn đến hàng phần trăm, ghi đáp án dưới dạng số thập phân).",
+    "answer": "0,33",
+    "explanation": "Không gian mẫu có $6\\cdot6=36$ kết quả. Các tổng chia hết cho 3 là 3, 6, 9, 12 với số kết quả lần lượt là 2, 5, 4, 1, tổng 12. Xác suất là $\\dfrac{12}{36}=\\dfrac{1}{3}\\approx0{,}33$.",
+    "tags": ["xác suất cổ điển", "biến cố"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Từ các chữ số 1, 2, 3, 4, 5, 6 có thể lập được bao nhiêu số tự nhiên chẵn gồm 3 chữ số đôi một khác nhau?",
+    "answer": "60",
+    "explanation": "Chữ số hàng đơn vị thuộc {2; 4; 6} nên có 3 cách. Chữ số hàng trăm lấy từ 5 chữ số còn lại: 5 cách. Chữ số hàng chục lấy từ 4 chữ số còn lại: 4 cách. Đáp số $3\\cdot5\\cdot4=60$.",
+    "tags": ["chỉnh hợp", "số tự nhiên", "bài đếm có ràng buộc"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Có 9 học sinh cần chia thành 3 nhóm, mỗi nhóm 3 học sinh (các nhóm không phân biệt thứ tự). Hỏi có bao nhiêu cách chia?",
+    "answer": "280",
+    "explanation": "Chọn 3 học sinh vào nhóm thứ nhất: $\\mathrm{C}_9^3=84$ cách. Chọn 3 học sinh vào nhóm thứ hai từ 6 học sinh còn lại: $\\mathrm{C}_6^3=20$ cách. Nhóm cuối cùng là 3 học sinh còn lại. Vì các nhóm không phân biệt thứ tự nên chia cho $3!=6$: $\\dfrac{84\\cdot20}{6}=280$.",
+    "tags": ["tổ hợp", "chia nhóm", "bài đếm"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Một học sinh làm bài trắc nghiệm, mỗi câu có 4 phương án trả lời và chỉ một phương án đúng. Xác suất học sinh đó biết bài là 0,6. Nếu biết bài thì trả lời đúng chắc chắn; nếu không biết thì chọn ngẫu nhiên một phương án. Biết học sinh trả lời đúng một câu được chọn ngẫu nhiên, tính xác suất học sinh đó thực sự biết bài (làm tròn đến hàng phần trăm, ghi đáp án dưới dạng số thập phân).",
+    "answer": "0,86",
+    "explanation": "$P(\\text{đúng})=0{,}6\\cdot1+0{,}4\\cdot0{,}25=0{,}7$. Theo công thức Bayes, $P(\\text{biết}\\mid\\text{đúng})=\\dfrac{0{,}6}{0{,}7}\\approx0{,}86$.",
+    "tags": ["công thức Bayes", "công thức xác suất toàn phần", "sơ đồ cây"],
+    "figure": {"kind":"probtree","text":"Biết bài: 0,6\n  Đúng: 1\n  Sai: 0\nKhông biết bài: 0,4\n  Đúng: 0,25\n  Sai: 0,75"}
+  }
+]

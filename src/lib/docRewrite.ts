@@ -93,7 +93,10 @@ function planFromRaw(raw: Record<string, unknown>): ToolPlan {
   let xMax = Number(raw.xMax)
   if (!(Number.isFinite(xMin) && Number.isFinite(xMax) && xMin < xMax && xMax - xMin <= 200)) [xMin, xMax] = [-5, 5]
   const fns = exprs.map((e) => parseExpr(e))
-  const [yMin, yMax] = autoYRange(fns, xMin, xMax)
+  let [yMin, yMax] = autoYRange(fns, xMin, xMax)
+  // khung dọc ghi sẵn (vd câu trong kho) thì theo đó, để không bị nhánh dốc kéo dãn
+  const [y0, y1] = [Number(raw.yMin), Number(raw.yMax)]
+  if (raw.yMin != null && raw.yMax != null && Number.isFinite(y0) && Number.isFinite(y1) && y0 < y1) [yMin, yMax] = [y0, y1]
   return {
     note,
     doc: {

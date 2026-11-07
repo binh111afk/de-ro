@@ -1,0 +1,827 @@
+[
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Read the notice and choose the word that best fits the gap.\n\nNOTICE\nThe library will be closed ___ Monday, May 5th, for maintenance.",
+    "options": [
+      {
+        "key": "A",
+        "text": "on"
+      },
+      {
+        "key": "B",
+        "text": "at"
+      },
+      {
+        "key": "C",
+        "text": "in"
+      },
+      {
+        "key": "D",
+        "text": "from"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Dùng giới từ 'on' trước ngày trong tuần (on Monday).",
+    "tags": [
+      "điền từ",
+      "giới từ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Read the poster and choose the word that best fits the gap.\n\nGRAND OPENING!\nJoin us ___ Saturday for free samples and big discounts.",
+    "options": [
+      {
+        "key": "A",
+        "text": "in"
+      },
+      {
+        "key": "B",
+        "text": "on"
+      },
+      {
+        "key": "C",
+        "text": "at"
+      },
+      {
+        "key": "D",
+        "text": "to"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Dùng 'on' trước ngày trong tuần (on Saturday).",
+    "tags": [
+      "điền từ",
+      "giới từ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Read the notice and choose the word that best fits the gap.\n\nLOST AND FOUND\nA black wallet was found near the canteen. Please ___ the front desk if it is yours.",
+    "options": [
+      {
+        "key": "A",
+        "text": "contact to"
+      },
+      {
+        "key": "B",
+        "text": "contacting"
+      },
+      {
+        "key": "C",
+        "text": "contacts"
+      },
+      {
+        "key": "D",
+        "text": "contact"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Câu mệnh lệnh cần động từ nguyên mẫu 'contact'; 'contact' là ngoại động từ nên không dùng 'to'.",
+    "tags": [
+      "điền từ",
+      "động từ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Read the advertisement and choose the word that best fits the gap.\n\nMEGA SALE!\nAll shoes are 20% ___ this weekend only!",
+    "options": [
+      {
+        "key": "A",
+        "text": "on"
+      },
+      {
+        "key": "B",
+        "text": "out"
+      },
+      {
+        "key": "C",
+        "text": "off"
+      },
+      {
+        "key": "D",
+        "text": "up"
+      }
+    ],
+    "answer": "C",
+    "explanation": "'20% off' nghĩa là giảm giá 20%.",
+    "tags": [
+      "điền từ",
+      "từ vựng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Read the announcement and choose the word that best fits the gap.\n\nANNOUNCEMENT\nThe flight to Da Nang has been ___ due to bad weather.",
+    "options": [
+      {
+        "key": "A",
+        "text": "delayed"
+      },
+      {
+        "key": "B",
+        "text": "delaying"
+      },
+      {
+        "key": "C",
+        "text": "delay"
+      },
+      {
+        "key": "D",
+        "text": "delays"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Câu bị động 'has been + quá khứ phân từ' (has been delayed).",
+    "tags": [
+      "điền từ",
+      "câu bị động"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Read the job advertisement and choose the word that best fits the gap.\n\nJOB VACANCY\nWe are looking ___ an experienced receptionist to join our hotel team.",
+    "options": [
+      {
+        "key": "A",
+        "text": "at"
+      },
+      {
+        "key": "B",
+        "text": "for"
+      },
+      {
+        "key": "C",
+        "text": "after"
+      },
+      {
+        "key": "D",
+        "text": "up"
+      }
+    ],
+    "answer": "B",
+    "explanation": "'look for' nghĩa là tìm kiếm.",
+    "tags": [
+      "điền từ",
+      "cụm động từ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Read the notice and choose the word that best fits the gap.\n\nREMINDER\nAll students must ___ their ID cards at all times while on campus.",
+    "options": [
+      {
+        "key": "A",
+        "text": "put"
+      },
+      {
+        "key": "B",
+        "text": "bring"
+      },
+      {
+        "key": "C",
+        "text": "carry"
+      },
+      {
+        "key": "D",
+        "text": "hold"
+      }
+    ],
+    "answer": "C",
+    "explanation": "'carry' nghĩa là mang theo bên mình, phù hợp với ý 'mang theo thẻ căn cước mọi lúc'.",
+    "tags": [
+      "điền từ",
+      "từ vựng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Read the information and choose the word that best fits the gap.\n\nVISITOR INFORMATION\nThe museum is open daily ___ 8 a.m. to 5 p.m.",
+    "options": [
+      {
+        "key": "A",
+        "text": "at"
+      },
+      {
+        "key": "B",
+        "text": "in"
+      },
+      {
+        "key": "C",
+        "text": "from"
+      },
+      {
+        "key": "D",
+        "text": "since"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Cấu trúc 'from ... to ...' chỉ khoảng thời gian mở cửa.",
+    "tags": [
+      "điền từ",
+      "giới từ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Read the notice and choose the word that best fits the gap.\n\nCONCERT RULES\nPlease turn ___ your mobile phones before the performance begins.",
+    "options": [
+      {
+        "key": "A",
+        "text": "off"
+      },
+      {
+        "key": "B",
+        "text": "on"
+      },
+      {
+        "key": "C",
+        "text": "up"
+      },
+      {
+        "key": "D",
+        "text": "down"
+      }
+    ],
+    "answer": "A",
+    "explanation": "'turn off' nghĩa là tắt (điện thoại).",
+    "tags": [
+      "điền từ",
+      "cụm động từ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Read the notice and choose the word that best fits the gap.\n\nMEETING NOTICE\nThe staff meeting has been moved ___ 3 p.m. to 4 p.m. this Friday.",
+    "options": [
+      {
+        "key": "A",
+        "text": "since"
+      },
+      {
+        "key": "B",
+        "text": "from"
+      },
+      {
+        "key": "C",
+        "text": "at"
+      },
+      {
+        "key": "D",
+        "text": "in"
+      }
+    ],
+    "answer": "B",
+    "explanation": "'moved from ... to ...' nghĩa là dời từ ... sang ....",
+    "tags": [
+      "điền từ",
+      "giới từ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Read the advertisement and choose the word that best fits the gap.\n\nFOR RENT\nA fully ___ apartment with two bedrooms and a balcony, close to the city center.",
+    "options": [
+      {
+        "key": "A",
+        "text": "furnish"
+      },
+      {
+        "key": "B",
+        "text": "furnishing"
+      },
+      {
+        "key": "C",
+        "text": "furniture"
+      },
+      {
+        "key": "D",
+        "text": "furnished"
+      }
+    ],
+    "answer": "D",
+    "explanation": "'fully furnished' nghĩa là được trang bị nội thất đầy đủ (quá khứ phân từ làm tính từ).",
+    "tags": [
+      "điền từ",
+      "từ loại"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Read the advertisement and choose the word that best fits the gap.\n\nWIN A TRIP TO PHU QUOC!\nSimply ___ this form and drop it in the box before June 30.",
+    "options": [
+      {
+        "key": "A",
+        "text": "fill up"
+      },
+      {
+        "key": "B",
+        "text": "fill off"
+      },
+      {
+        "key": "C",
+        "text": "fill over"
+      },
+      {
+        "key": "D",
+        "text": "fill in"
+      }
+    ],
+    "answer": "D",
+    "explanation": "'fill in a form' nghĩa là điền vào mẫu đơn.",
+    "tags": [
+      "điền từ",
+      "cụm động từ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Read the weather bulletin and choose the word that best fits the gap.\n\nWEATHER WARNING\nHeavy rain ___ expected in central provinces tonight.",
+    "options": [
+      {
+        "key": "A",
+        "text": "is"
+      },
+      {
+        "key": "B",
+        "text": "are"
+      },
+      {
+        "key": "C",
+        "text": "be"
+      },
+      {
+        "key": "D",
+        "text": "been"
+      }
+    ],
+    "answer": "A",
+    "explanation": "'Heavy rain' là danh từ không đếm được, động từ số ít: 'is expected'.",
+    "tags": [
+      "điền từ",
+      "ngữ pháp"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Choose the correct order of the sentences to make a complete letter.\n\n(A) Dear Mr. Nam,\n(B) I am writing to apply for the sales assistant position advertised in yesterday's newspaper.\n(C) Thank you for your consideration. I look forward to hearing from you soon.\n(D) I have three years of experience in retail and good communication skills.",
+    "options": [
+      {
+        "key": "A",
+        "text": "A-B-D-C"
+      },
+      {
+        "key": "B",
+        "text": "A-B-C-D"
+      },
+      {
+        "key": "C",
+        "text": "B-A-D-C"
+      },
+      {
+        "key": "D",
+        "text": "A-D-B-C"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Thư xin việc: lời chào (A) → mục đích (B) → kinh nghiệm (D) → cảm ơn và kết thư (C).",
+    "tags": [
+      "sắp xếp câu",
+      "thư từ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Choose the correct order of the sentences to make a complete message.\n\n(A) Hi Mai,\n(B) I am having a birthday party at my house this Saturday at 7 p.m.\n(C) Let me know if you can come!\n(D) There will be music, food and games.",
+    "options": [
+      {
+        "key": "A",
+        "text": "A-D-B-C"
+      },
+      {
+        "key": "B",
+        "text": "A-B-D-C"
+      },
+      {
+        "key": "C",
+        "text": "B-A-C-D"
+      },
+      {
+        "key": "D",
+        "text": "A-C-B-D"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Tin nhắn mời: lời chào (A) → thông tin bữa tiệc (B) → chi tiết thêm (D) → mời xác nhận (C).",
+    "tags": [
+      "sắp xếp câu",
+      "tin nhắn"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Choose the correct order of the sentences to make a complete set of instructions.\n\n(A) First, boil 400 ml of water.\n(B) Next, put the noodles and the seasoning into a bowl.\n(C) Finally, stir well and enjoy your meal.\n(D) Then, pour the boiling water into the bowl and cover it for three minutes.",
+    "options": [
+      {
+        "key": "A",
+        "text": "A-B-C-D"
+      },
+      {
+        "key": "B",
+        "text": "B-A-D-C"
+      },
+      {
+        "key": "C",
+        "text": "A-B-D-C"
+      },
+      {
+        "key": "D",
+        "text": "A-D-B-C"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Trình tự chỉ dẫn: First (A) → Next (B) → Then (D) → Finally (C).",
+    "tags": [
+      "sắp xếp câu",
+      "chỉ dẫn"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Choose the correct order of the sentences to make a complete email.\n\n(A) Dear Ms. Hoa,\n(B) I would like to order ten desks for our new office.\n(C) Best regards, Minh.\n(D) Could you please send me a quotation for these products?",
+    "options": [
+      {
+        "key": "A",
+        "text": "A-B-C-D"
+      },
+      {
+        "key": "B",
+        "text": "A-D-B-C"
+      },
+      {
+        "key": "C",
+        "text": "B-A-D-C"
+      },
+      {
+        "key": "D",
+        "text": "A-B-D-C"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Email đặt hàng: chào (A) → yêu cầu (B) → hỏi thêm (D) → kết thư (C).",
+    "tags": [
+      "sắp xếp câu",
+      "email"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Choose the correct order of the sentences to make a complete set of contest instructions.\n\n(A) Attach a photo of your garden.\n(B) Send both documents to our office before June 30.\n(C) To enter the contest, fill in the entry form.\n(D) Winners will receive a cash prize of two million dong.",
+    "options": [
+      {
+        "key": "A",
+        "text": "A-C-B-D"
+      },
+      {
+        "key": "B",
+        "text": "C-A-B-D"
+      },
+      {
+        "key": "C",
+        "text": "C-B-A-D"
+      },
+      {
+        "key": "D",
+        "text": "A-B-C-D"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Các bước dự thi: bắt đầu bằng mục đích (C) → đính kèm ảnh (A) → gửi giấy tờ (B) → phần thưởng (D).",
+    "tags": [
+      "sắp xếp câu",
+      "hướng dẫn"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Choose the correct order of the sentences to make a complete email.\n\n(A) Thank you for your email.\n(B) However, we expect new stock to arrive next week.\n(C) I am sorry to inform you that the item you ordered is out of stock.\n(D) I will contact you as soon as it arrives.",
+    "options": [
+      {
+        "key": "A",
+        "text": "A-B-C-D"
+      },
+      {
+        "key": "B",
+        "text": "C-A-B-D"
+      },
+      {
+        "key": "C",
+        "text": "A-C-B-D"
+      },
+      {
+        "key": "D",
+        "text": "A-C-D-B"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Email phản hồi: cảm ơn (A) → thông tin xấu (C) → giải pháp 'however' (B) → cam kết (D).",
+    "tags": [
+      "sắp xếp câu",
+      "email"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Choose the correct order of the sentences to make a complete notice.\n\n(A) The school English club meets every Friday afternoon.\n(B) New members are always welcome.\n(C) For more information, please contact Miss Lan in room 12.\n(D) Members practise speaking through games and short plays.",
+    "options": [
+      {
+        "key": "A",
+        "text": "A-B-D-C"
+      },
+      {
+        "key": "B",
+        "text": "A-D-B-C"
+      },
+      {
+        "key": "C",
+        "text": "D-A-B-C"
+      },
+      {
+        "key": "D",
+        "text": "A-B-C-D"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Thông báo câu lạc bộ: hoạt động chung (A) → nội dung sinh hoạt (D) → mời tham gia (B) → thông tin liên hệ (C).",
+    "tags": [
+      "sắp xếp câu",
+      "thông báo"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Choose the correct order of the sentences to make a complete letter.\n\n(A) Dear Grandma,\n(B) How are you? I hope you are well.\n(C) I will visit you during the summer holiday.\n(D) I got high marks in all my subjects this term.",
+    "options": [
+      {
+        "key": "A",
+        "text": "A-B-C-D"
+      },
+      {
+        "key": "B",
+        "text": "A-D-B-C"
+      },
+      {
+        "key": "C",
+        "text": "A-B-D-C"
+      },
+      {
+        "key": "D",
+        "text": "B-A-D-C"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Thư cho bà: chào (A) → hỏi thăm (B) → báo tin tốt (D) → hẹn thăm (C).",
+    "tags": [
+      "sắp xếp câu",
+      "thư từ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Choose the correct order of the sentences to make a complete set of instructions.\n\n(A) Next, dig a hole about 30 cm deep.\n(B) First, choose a sunny spot in your garden.\n(C) Finally, water the tree every morning.\n(D) Then, put the young tree into the hole and cover its roots with soil.",
+    "options": [
+      {
+        "key": "A",
+        "text": "B-A-D-C"
+      },
+      {
+        "key": "B",
+        "text": "A-B-D-C"
+      },
+      {
+        "key": "C",
+        "text": "B-A-C-D"
+      },
+      {
+        "key": "D",
+        "text": "A-B-C-D"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Trình tự: First (B) → Next (A) → Then (D) → Finally (C).",
+    "tags": [
+      "sắp xếp câu",
+      "chỉ dẫn"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Choose the correct order of the sentences to make a complete email.\n\n(A) I would like to book two single rooms from July 1st to July 3rd.\n(B) Dear Sir or Madam,\n(C) Could you please confirm the price per night?\n(D) I look forward to your reply.",
+    "options": [
+      {
+        "key": "A",
+        "text": "A-B-C-D"
+      },
+      {
+        "key": "B",
+        "text": "B-A-D-C"
+      },
+      {
+        "key": "C",
+        "text": "B-C-A-D"
+      },
+      {
+        "key": "D",
+        "text": "B-A-C-D"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Email đặt phòng: chào (B) → yêu cầu (A) → hỏi giá (C) → mong hồi âm (D).",
+    "tags": [
+      "sắp xếp câu",
+      "email"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Choose the correct order of the sentences to make a complete set of instructions.\n\n(A) Next, add 200 ml of milk and some honey.\n(B) First, cut two bananas into small pieces.\n(C) Finally, serve it in a tall glass with ice.\n(D) Then, blend everything for one minute.",
+    "options": [
+      {
+        "key": "A",
+        "text": "B-D-A-C"
+      },
+      {
+        "key": "B",
+        "text": "B-A-C-D"
+      },
+      {
+        "key": "C",
+        "text": "B-A-D-C"
+      },
+      {
+        "key": "D",
+        "text": "A-B-D-C"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Trình tự: First (B) → Next (A) → Then (D) → Finally (C).",
+    "tags": [
+      "sắp xếp câu",
+      "chỉ dẫn"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Tiếng Anh",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Choose the correct order of the sentences to make a complete message.\n\n(A) Our group will meet at the school library at 3 p.m. tomorrow.\n(B) Hi Lan,\n(C) Please bring the report we discussed last week.\n(D) We need to finish our history project before Friday.",
+    "options": [
+      {
+        "key": "A",
+        "text": "B-D-A-C"
+      },
+      {
+        "key": "B",
+        "text": "B-A-C-D"
+      },
+      {
+        "key": "C",
+        "text": "A-B-D-C"
+      },
+      {
+        "key": "D",
+        "text": "B-A-D-C"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Tin nhắn nhóm: chào (B) → hẹn giờ địa điểm (A) → mục tiêu (D) → yêu cầu mang tài liệu (C).",
+    "tags": [
+      "sắp xếp câu",
+      "tin nhắn"
+    ]
+  }
+]

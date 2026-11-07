@@ -1,0 +1,867 @@
+[
+  {
+    "subject": "Vật lí",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Nhiệt lượng cần cung cấp để làm nóng chảy hoàn toàn 2 kg chất rắn ở nhiệt độ nóng chảy, biết nhiệt nóng chảy riêng của chất đó là $\\lambda = 1{,}8\\cdot10^5$ J/kg, bằng bao nhiêu?",
+    "options": [
+      {
+        "key": "A",
+        "text": "$9\\cdot10^4$ J"
+      },
+      {
+        "key": "B",
+        "text": "$2{,}5\\cdot10^5$ J"
+      },
+      {
+        "key": "C",
+        "text": "$3{,}6\\cdot10^5$ J"
+      },
+      {
+        "key": "D",
+        "text": "$1{,}8\\cdot10^5$ J"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Nhiệt lượng để nóng chảy hoàn toàn: $Q = \\lambda m = 1{,}8\\cdot10^5 \\cdot 2 = 3{,}6\\cdot10^5$ J. Phương án D là lấy đúng nhiệt nóng chảy riêng nhưng quên nhân với khối lượng.",
+    "tags": [
+      "nhiệt học",
+      "nóng chảy"
+    ]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Hình bên dưới biểu diễn hai trạng thái 1 và 2 của một lượng khí lí tưởng xác định trong hệ tọa độ p–V (p tính bằng atm, V tính bằng lít). Quá trình 1 → 2 là đẳng nhiệt. Biết khí ở trạng thái 1 có nhiệt độ $T_1 = 300$ K và $R = 0{,}082$ L·atm/(mol·K). Số mol khí trong bình là bao nhiêu?",
+    "options": [
+      {
+        "key": "A",
+        "text": "0,16 mol"
+      },
+      {
+        "key": "B",
+        "text": "0,016 mol"
+      },
+      {
+        "key": "C",
+        "text": "1,63 mol"
+      },
+      {
+        "key": "D",
+        "text": "0,33 mol"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Từ hình, trạng thái 1 có $p_1 = 4$ atm, $V_1 = 1$ L. Áp dụng $pV = nRT$: $n = \\dfrac{p_1V_1}{RT_1} = \\dfrac{4\\cdot1}{0{,}082\\cdot300} \\approx 0{,}16$ mol. Phương án B lệch dấu thập phân; C dùng nhầm $T = 30$ K; D dùng nhầm $T = 150$ K.",
+    "tags": [
+      "khí lí tưởng",
+      "phương trình trạng thái",
+      "đồ thị p–V"
+    ],
+    "figure": {
+      "kind": "gas",
+      "axes": "pV",
+      "states": "1: (1; 4)\n2: (4; 1)",
+      "processes": "1-2: đẳng nhiệt",
+      "ticks": "value"
+    }
+  },
+  {
+    "subject": "Vật lí",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Dòng điện thẳng, dài vô hạn có cường độ $I = 5$ A đặt trong chân không. Cảm ứng từ tại điểm M cách dây 10 cm có độ lớn bằng bao nhiêu? Lấy $\\mu_0 = 4\\pi\\cdot10^{-7}$ H/m.",
+    "options": [
+      {
+        "key": "A",
+        "text": "$2\\cdot10^{-5}$ T"
+      },
+      {
+        "key": "B",
+        "text": "$5\\cdot10^{-6}$ T"
+      },
+      {
+        "key": "C",
+        "text": "$10^{-6}$ T"
+      },
+      {
+        "key": "D",
+        "text": "$10^{-5}$ T"
+      }
+    ],
+    "answer": "D",
+    "explanation": "$B = \\dfrac{\\mu_0 I}{2\\pi r} = 2\\cdot10^{-7}\\cdot\\dfrac{5}{0{,}1} = 10^{-5}$ T. Phương án A dùng nhầm $r = 5$ cm (hoặc nhân thừa hệ số 2); B dùng công thức thiếu hệ số 2 ($\\mu_0 I/(4\\pi r)$); C quên chia cho $r$.",
+    "tags": [
+      "từ trường",
+      "dòng điện thẳng dài"
+    ]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Một bình kín chứa khí lí tưởng ở 27 °C với áp suất 1,2 atm. Đun nóng khí trong bình (thể tích không đổi) đến 127 °C, sau đó mở một van nhỏ để khí thoát ra ngoài ở nhiệt độ không đổi 127 °C cho đến khi áp suất trong bình còn 1,2 atm. Tỉ số giữa khối lượng khí còn lại trong bình và khối lượng khí ban đầu là bao nhiêu?",
+    "options": [
+      {
+        "key": "A",
+        "text": "0,50"
+      },
+      {
+        "key": "B",
+        "text": "0,75"
+      },
+      {
+        "key": "C",
+        "text": "0,80"
+      },
+      {
+        "key": "D",
+        "text": "1,33"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Đẳng tích từ 300 K đến 400 K: $p_2 = p_1\\dfrac{T_2}{T_1} = 1{,}2\\cdot\\dfrac{400}{300} = 1{,}6$ atm. Khi thoát khí ở thể tích và nhiệt độ không đổi, khối lượng khí tỉ lệ với áp suất, nên tỉ số cần tìm là $\\dfrac{1{,}2}{1{,}6} = 0{,}75$. Phương án D là nghịch đảo của đáp số; A và C do làm tròn hoặc tính sai bước đẳng tích.",
+    "tags": [
+      "khí lí tưởng",
+      "đẳng tích",
+      "đẳng nhiệt"
+    ]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Thả một miếng nhôm khối lượng 0,5 kg ở 120 °C vào 2 kg nước ở 20 °C, đựng trong một nhiệt lượng kế có nhiệt dung không đáng kể. Bỏ qua mất mát nhiệt ra môi trường. Biết nhiệt dung riêng của nhôm là 880 J/(kg·K) và của nước là 4200 J/(kg·K). Nhiệt độ cân bằng của hệ gần nhất với giá trị nào?",
+    "options": [
+      {
+        "key": "A",
+        "text": "25,0 °C"
+      },
+      {
+        "key": "B",
+        "text": "22,5 °C"
+      },
+      {
+        "key": "C",
+        "text": "30,0 °C"
+      },
+      {
+        "key": "D",
+        "text": "40,0 °C"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Phương trình cân bằng nhiệt: $m_1c_1(120 - t) = m_2c_2(t - 20)$ với $m_1c_1 = 440$ J/K và $m_2c_2 = 8400$ J/K. Suy ra $t \\approx 24{,}98\\,^\\circ$C, làm tròn thành 25,0 °C. Các phương án còn lại là kết quả khi bỏ sót một hệ số nhiệt dung hoặc nhầm dấu trong phương trình.",
+    "tags": [
+      "nhiệt lượng",
+      "phương trình cân bằng nhiệt"
+    ]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Hình bên dưới là đồ thị biểu diễn sự biến thiên của từ thông Φ qua một vòng dây dẫn kín, phẳng theo thời gian t. Độ lớn suất điện động cảm ứng xuất hiện trong vòng dây trong khoảng thời gian từ 0 đến 0,5 s là bao nhiêu?",
+    "options": [
+      {
+        "key": "A",
+        "text": "10 mV"
+      },
+      {
+        "key": "B",
+        "text": "5 mV"
+      },
+      {
+        "key": "C",
+        "text": "40 mV"
+      },
+      {
+        "key": "D",
+        "text": "20 mV"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Trong 0 → 0,5 s, từ thông tăng từ 0 đến 10 mWb = $10^{-2}$ Wb. Theo định luật Faraday: $|e| = \\dfrac{|\\Delta\\Phi|}{\\Delta t} = \\dfrac{10^{-2}}{0{,}5} = 0{,}02$ V = 20 mV. Phương án A bỏ qua $\\Delta t$; B dùng nhầm $\\Delta t = 2$ s; C dùng nhầm $\\Delta t = 0{,}25$ s.",
+    "tags": [
+      "cảm ứng điện từ",
+      "định luật Faraday",
+      "đồ thị Φ–t"
+    ],
+    "figure": {
+      "kind": "motion",
+      "yName": "Φ (mWb)",
+      "tName": "t (s)",
+      "points": "(0; 0) (0,5; 10) (1,0; 10) (1,5; 4)"
+    }
+  },
+  {
+    "subject": "Vật lí",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Chất phóng xạ có chu kì bán rã 8 ngày. Ban đầu một mẫu chất này có khối lượng 40 g. Sau 24 ngày, khối lượng chất phóng xạ còn lại trong mẫu là bao nhiêu?",
+    "options": [
+      {
+        "key": "A",
+        "text": "10 g"
+      },
+      {
+        "key": "B",
+        "text": "5 g"
+      },
+      {
+        "key": "C",
+        "text": "2,5 g"
+      },
+      {
+        "key": "D",
+        "text": "20 g"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Số chu kì bán rã: $24/8 = 3$. Khối lượng còn lại: $m = m_0\\cdot2^{-3} = 40/8 = 5$ g. Phương án A chỉ tính 2 chu kì; C tính 4 chu kì; D chỉ tính 1 chu kì.",
+    "tags": [
+      "hạt nhân",
+      "chu kì bán rã"
+    ]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Khí lí tưởng được nhốt trong một xi lanh thẳng đứng bởi một pit-tông có khối lượng 10 kg và diện tích 50 cm², khí nằm phía dưới pit-tông. Ban đầu chiều cao cột khí là 20 cm, nhiệt độ 300 K. Áp suất khí quyển $p_0 = 10^5$ Pa, bỏ qua ma sát, lấy $g = 10$ m/s². Nung nóng khí chậm đến khi pit-tông đi lên thêm 4 cm. Công do khí thực hiện trong quá trình này là bao nhiêu?",
+    "options": [
+      {
+        "key": "A",
+        "text": "20 J"
+      },
+      {
+        "key": "B",
+        "text": "2,4 J"
+      },
+      {
+        "key": "C",
+        "text": "24 J"
+      },
+      {
+        "key": "D",
+        "text": "4 J"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Pit-tông cân bằng nên áp suất khí không đổi: $p = p_0 + \\dfrac{mg}{S} = 10^5 + \\dfrac{10\\cdot10}{5\\cdot10^{-3}} = 1{,}2\\cdot10^5$ Pa. Độ tăng thể tích: $\\Delta V = S\\,\\Delta h = 5\\cdot10^{-3}\\cdot0{,}04 = 2\\cdot10^{-4}$ m³. Công: $A = p\\Delta V = 1{,}2\\cdot10^5\\cdot2\\cdot10^{-4} = 24$ J. Phương án A bỏ qua áp lực do pit-tông (chỉ dùng $p_0$).",
+    "tags": [
+      "khí lí tưởng",
+      "đẳng áp",
+      "công của khí"
+    ]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Một êlectron (điện tích $-1{,}6\\cdot10^{-19}$ C, khối lượng $9{,}1\\cdot10^{-31}$ kg) bay với vận tốc $2\\cdot10^6$ m/s vuông góc với các đường sức của một từ trường đều có cảm ứng từ $B = 0{,}01$ T. Bán kính quỹ đạo của êlectron gần nhất với giá trị nào?",
+    "options": [
+      {
+        "key": "A",
+        "text": "1,14 mm"
+      },
+      {
+        "key": "B",
+        "text": "1,14 cm"
+      },
+      {
+        "key": "C",
+        "text": "0,11 mm"
+      },
+      {
+        "key": "D",
+        "text": "11,4 mm"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Lực Lo-ren-xơ đóng vai trò lực hướng tâm: $|q|vB = \\dfrac{mv^2}{r}$, suy ra $r = \\dfrac{mv}{|q|B} = \\dfrac{9{,}1\\cdot10^{-31}\\cdot2\\cdot10^6}{1{,}6\\cdot10^{-19}\\cdot0{,}01} \\approx 1{,}14\\cdot10^{-3}$ m = 1,14 mm. Các phương án B, C, D là lỗi đổi đơn vị.",
+    "tags": [
+      "từ trường",
+      "lực Lo-ren-xơ",
+      "chuyển động trong từ trường"
+    ]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Cho mạch điện như hình bên dưới: nguồn điện có suất điện động E và điện trở trong r, cuộn cảm L có điện trở thuần không đáng kể. Sau khi đóng khóa K và dòng điện trong mạch đã ổn định, năng lượng từ trường tích trữ trong cuộn cảm bằng bao nhiêu?",
+    "options": [
+      {
+        "key": "A",
+        "text": "1,6 J"
+      },
+      {
+        "key": "B",
+        "text": "3,2 J"
+      },
+      {
+        "key": "C",
+        "text": "0,4 J"
+      },
+      {
+        "key": "D",
+        "text": "0,8 J"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Khi dòng điện ổn định, cuộn cảm không cản trở: $I = \\dfrac{E}{R + r} = \\dfrac{6}{2{,}5 + 0{,}5} = 2$ A. Năng lượng từ trường: $W = \\dfrac{1}{2}LI^2 = \\dfrac{1}{2}\\cdot0{,}4\\cdot2^2 = 0{,}8$ J. Phương án A quên hệ số $\\tfrac12$; C quên bình phương $I$; B do tính sai cường độ dòng điện.",
+    "tags": [
+      "cảm ứng điện từ",
+      "tự cảm",
+      "năng lượng từ trường"
+    ],
+    "figure": {
+      "kind": "circuit",
+      "text": "nguồn E = 6 V, r = 0.5 Ω\nK - L=0.4H - R=2.5Ω"
+    }
+  },
+  {
+    "subject": "Vật lí",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Hạt nhân $^{238}_{92}\\text{U}$ phân rã thành hạt nhân bền $^{206}_{82}\\text{Pb}$ sau một chuỗi các phóng xạ $\\alpha$ và $\\beta^-$ (bỏ qua các hạt nhân trung gian). Số lần phóng xạ $\\alpha$ và $\\beta^-$ lần lượt là bao nhiêu?",
+    "options": [
+      {
+        "key": "A",
+        "text": "6 lần α; 8 lần $\\beta^-$"
+      },
+      {
+        "key": "B",
+        "text": "8 lần α; 6 lần $\\beta^-$"
+      },
+      {
+        "key": "C",
+        "text": "8 lần α; 8 lần $\\beta^-$"
+      },
+      {
+        "key": "D",
+        "text": "6 lần α; 6 lần $\\beta^-$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Mỗi phóng xạ α giảm số khối 4 và số proton 2; mỗi phóng xạ $\\beta^-$ tăng số proton 1 và không đổi số khối. Từ số khối: $4x = 238 - 206 = 32$, suy ra $x = 8$. Từ số proton: $92 = 82 + 2x - y$, suy ra $y = 6$.",
+    "tags": [
+      "hạt nhân",
+      "phóng xạ α và β",
+      "định luật bảo toàn"
+    ]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Tia phóng xạ nào sau đây không bị lệch trong điện trường và trong từ trường?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Tia α"
+      },
+      {
+        "key": "B",
+        "text": "Tia $\\beta^-$"
+      },
+      {
+        "key": "C",
+        "text": "Tia $\\gamma$"
+      },
+      {
+        "key": "D",
+        "text": "Tia $\\beta^+$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Tia γ là sóng điện từ có bước sóng rất ngắn, không mang điện nên không bị lệch. Tia α, β⁻ và β⁺ đều mang điện nên bị lệch trong điện trường và từ trường.",
+    "tags": [
+      "hạt nhân",
+      "tia phóng xạ"
+    ]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Người ta cung cấp nhiệt lượng cho 0,5 kg nước đá ở $-10\\,^\\circ$C để biến nó thành nước ở $20\\,^\\circ$C. Biết nhiệt dung riêng của nước đá là 2100 J/(kg·K), của nước là 4200 J/(kg·K), nhiệt nóng chảy riêng của nước đá là $3{,}4\\cdot10^5$ J/kg. Bỏ qua mất mát nhiệt và nhiệt dung của bình chứa. Xét tính đúng/sai của các phát biểu sau.",
+    "options": [
+      {
+        "key": "a",
+        "text": "Nhiệt lượng cần để nước đá tăng nhiệt độ từ −10 °C đến 0 °C là 10 500 J."
+      },
+      {
+        "key": "b",
+        "text": "Nhiệt lượng cần để nóng chảy hoàn toàn nước đá ở 0 °C là $1{,}7\\cdot10^5$ J."
+      },
+      {
+        "key": "c",
+        "text": "Nhiệt lượng cần để nước tăng nhiệt độ từ 0 °C đến 20 °C là $2{,}1\\cdot10^4$ J."
+      },
+      {
+        "key": "d",
+        "text": "Tổng nhiệt lượng cần cung cấp là $2{,}225\\cdot10^5$ J."
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) Đúng: $Q_1 = 0{,}5\\cdot2100\\cdot10 = 10\\,500$ J. b) Đúng: $Q_2 = \\lambda m = 3{,}4\\cdot10^5\\cdot0{,}5 = 1{,}7\\cdot10^5$ J. c) Sai: $Q_3 = 0{,}5\\cdot4200\\cdot20 = 4{,}2\\cdot10^4$ J. d) Đúng: $Q = 10\\,500 + 170\\,000 + 42\\,000 = 222\\,500$ J $= 2{,}225\\cdot10^5$ J.",
+    "tags": [
+      "nhiệt học",
+      "nóng chảy",
+      "đồ thị t–Q"
+    ]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Hình bên dưới biểu diễn quá trình biến đổi trạng thái của một lượng khí lí tưởng xác định trong hệ tọa độ p–T (T tính bằng K, p tính bằng atm). Xét tính đúng/sai của các phát biểu sau.",
+    "options": [
+      {
+        "key": "a",
+        "text": "Quá trình 1 → 2 là quá trình đẳng tích."
+      },
+      {
+        "key": "b",
+        "text": "Thể tích của khí không đổi trong quá trình 2 → 3."
+      },
+      {
+        "key": "c",
+        "text": "Thể tích của khí ở trạng thái 3 lớn hơn thể tích ở trạng thái 1."
+      },
+      {
+        "key": "d",
+        "text": "Trong quá trình 1 → 2, khí không thực hiện công và nhận nhiệt lượng bằng độ biến thiên nội năng của khí."
+      }
+    ],
+    "answer": "ĐSĐĐ",
+    "explanation": "a) Đúng: $p$ tăng tỉ lệ với $T$ ($p/T = 1/300 = 2/600$) nên thể tích không đổi. b) Sai: quá trình 2 → 3 là đẳng nhiệt, áp suất giảm từ 2 atm xuống 1 atm nên thể tích tăng gấp đôi. c) Đúng: $V_3 = 2V_2 = 2V_1 > V_1$. d) Đúng: $\\Delta V = 0$ nên $A = 0$, theo nguyên lí I: $Q = \\Delta U$.",
+    "tags": [
+      "khí lí tưởng",
+      "đẳng tích",
+      "đẳng nhiệt",
+      "nguyên lí I"
+    ],
+    "figure": {
+      "kind": "gas",
+      "axes": "pT",
+      "states": "1: (300; 1)\n2: (600; 2)\n3: (600; 1)",
+      "processes": "1-2: đẳng tích\n2-3: đẳng nhiệt",
+      "ticks": "value"
+    }
+  },
+  {
+    "subject": "Vật lí",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Một đoạn dây dẫn thẳng dài 20 cm mang dòng điện 4 A, đặt vuông góc với các đường sức của một từ trường đều có cảm ứng từ $B = 0{,}25$ T. Xét tính đúng/sai của các phát biểu sau.",
+    "options": [
+      {
+        "key": "a",
+        "text": "Độ lớn lực từ tác dụng lên đoạn dây là 0,2 N."
+      },
+      {
+        "key": "b",
+        "text": "Nếu đoạn dây đặt song song với các đường sức từ thì lực từ có độ lớn cực đại 0,2 N."
+      },
+      {
+        "key": "c",
+        "text": "Nếu tăng cường độ dòng điện lên 2 lần và giảm chiều dài đoạn dây còn một nửa (vẫn vuông góc với B) thì lực từ tăng gấp đôi."
+      },
+      {
+        "key": "d",
+        "text": "Phương của lực từ vuông góc với cả đoạn dây và các đường sức từ."
+      }
+    ],
+    "answer": "ĐSSĐ",
+    "explanation": "a) Đúng: $F = BIl = 0{,}25\\cdot4\\cdot0{,}2 = 0{,}2$ N. b) Sai: khi song song, $F = 0$. c) Sai: $F \\propto Il$ không đổi khi $I$ tăng 2 lần và $l$ giảm một nửa. d) Đúng: lực từ vuông góc với mặt phẳng chứa dây và B.",
+    "tags": [
+      "từ trường",
+      "lực từ",
+      "lực Ampe"
+    ]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Một khung dây dẫn phẳng hình chữ nhật, diện tích $S = 0{,}02$ m², gồm $N = 100$ vòng dây, quay đều với tần số 50 vòng/s quanh một trục nằm trong mặt phẳng khung và vuông góc với các đường sức của một từ trường đều $B = 0{,}1$ T. Xét tính đúng/sai của các phát biểu sau.",
+    "options": [
+      {
+        "key": "a",
+        "text": "Từ thông cực đại qua một vòng dây là $2\\cdot10^{-3}$ Wb."
+      },
+      {
+        "key": "b",
+        "text": "Suất điện động cảm ứng cực đại trong khung là 62,8 V."
+      },
+      {
+        "key": "c",
+        "text": "Tần số của suất điện động cảm ứng là 100 Hz."
+      },
+      {
+        "key": "d",
+        "text": "Khi mặt phẳng khung vuông góc với đường sức từ thì suất điện động cảm ứng có độ lớn cực đại."
+      }
+    ],
+    "answer": "ĐĐSS",
+    "explanation": "a) Đúng: $\\Phi_0 = BS = 0{,}1\\cdot0{,}02 = 2\\cdot10^{-3}$ Wb. b) Đúng: $E_0 = NBS\\omega = 100\\cdot0{,}1\\cdot0{,}02\\cdot100\\pi \\approx 62{,}8$ V. c) Sai: tần số suất điện động bằng tần số quay, $f = 50$ Hz. d) Sai: khi mặt phẳng khung vuông góc với B, tốc độ biến thiên từ thông bằng 0 nên $e = 0$.",
+    "tags": [
+      "cảm ứng điện từ",
+      "khung dây quay",
+      "suất điện động xoay chiều"
+    ]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Đồ thị trong hình bên dưới biểu diễn số hạt nhân còn lại $N$ (đơn vị $10^8$ hạt) của một mẫu chất phóng xạ tại các thời điểm $t$. Xét tính đúng/sai của các phát biểu sau.",
+    "options": [
+      {
+        "key": "a",
+        "text": "Chu kì bán rã của chất phóng xạ là 4 ngày."
+      },
+      {
+        "key": "b",
+        "text": "Sau 8 ngày, số hạt nhân còn lại trong mẫu là $8\\cdot10^8$ hạt."
+      },
+      {
+        "key": "c",
+        "text": "Trong khoảng thời gian từ 4 ngày đến 8 ngày, số hạt nhân bị phân rã là $4\\cdot10^8$ hạt."
+      },
+      {
+        "key": "d",
+        "text": "Sau 12 ngày, số hạt nhân còn lại trong mẫu là $4\\cdot10^8$ hạt."
+      }
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "a) Đúng: $N$ giảm từ $16\\cdot10^8$ còn $8\\cdot10^8$ sau 4 ngày. b) Sai: sau 8 ngày $N = 4\\cdot10^8$ hạt. c) Đúng: $8\\cdot10^8 - 4\\cdot10^8 = 4\\cdot10^8$ hạt. d) Sai: sau 12 ngày $N = 2\\cdot10^8$ hạt.",
+    "tags": [
+      "hạt nhân",
+      "chu kì bán rã",
+      "đọc bảng số liệu"
+    ],
+    "figure": {
+      "kind": "stats",
+      "chart": "line",
+      "title": "Số hạt nhân còn lại theo thời gian",
+      "xLabel": "t (ngày)",
+      "yLabel": "N (10^8 hạt)",
+      "data": "0; 4; 8; 12\nN: 16; 8; 4; 2"
+    }
+  },
+  {
+    "subject": "Vật lí",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Một lượng khí lí tưởng xác định biến đổi qua hai quá trình như hình bên dưới (p tính bằng atm, V tính bằng lít). Biết khí ở trạng thái 1 có nhiệt độ $T_1 = 300$ K và $R = 0{,}082$ L·atm/(mol·K). Xét tính đúng/sai của các phát biểu sau.",
+    "options": [
+      {
+        "key": "a",
+        "text": "Nhiệt độ của khí ở trạng thái 2 bằng 300 K."
+      },
+      {
+        "key": "b",
+        "text": "Nhiệt độ của khí ở trạng thái 3 bằng 600 K."
+      },
+      {
+        "key": "c",
+        "text": "Trong quá trình 2 → 3, khí nhận công 405 J từ bên ngoài."
+      },
+      {
+        "key": "d",
+        "text": "Số mol khí trong bình khoảng 0,16 mol."
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) Đúng: quá trình 1 → 2 đẳng nhiệt vì $p_1V_1 = p_2V_2 = 4$ atm·L. b) Đúng: quá trình 2 → 3 đẳng áp nên $T_3/T_2 = V_3/V_2 = 2$. c) Sai: khí giãn nở và thực hiện công $A = p\\Delta V = 2\\cdot2 = 4$ L·atm $\\approx 405$ J, không nhận công. d) Đúng: $n = \\dfrac{4\\cdot1}{0{,}082\\cdot300} \\approx 0{,}16$ mol.",
+    "tags": [
+      "khí lí tưởng",
+      "đồ thị p–V",
+      "công của khí"
+    ],
+    "figure": {
+      "kind": "gas",
+      "axes": "pV",
+      "states": "1: (1; 4)\n2: (2; 2)\n3: (4; 2)",
+      "processes": "1-2: đẳng nhiệt\n2-3: đẳng áp",
+      "ticks": "value"
+    }
+  },
+  {
+    "subject": "Vật lí",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Một máy biến áp lí tưởng có cuộn sơ cấp 1000 vòng và cuộn thứ cấp 200 vòng. Đặt vào hai đầu cuộn sơ cấp điện áp xoay chiều hiệu dụng 220 V, nối hai đầu cuộn thứ cấp với điện trở $R = 10$ Ω. Xét tính đúng/sai của các phát biểu sau.",
+    "options": [
+      {
+        "key": "a",
+        "text": "Điện áp hiệu dụng ở hai đầu cuộn thứ cấp là 110 V."
+      },
+      {
+        "key": "b",
+        "text": "Cường độ dòng điện hiệu dụng trong cuộn thứ cấp là 4,4 A."
+      },
+      {
+        "key": "c",
+        "text": "Công suất ở cuộn sơ cấp lớn hơn công suất ở cuộn thứ cấp."
+      },
+      {
+        "key": "d",
+        "text": "Máy biến áp này là máy hạ áp."
+      }
+    ],
+    "answer": "SĐSĐ",
+    "explanation": "a) Sai: $U_2 = U_1 N_2/N_1 = 220\\cdot200/1000 = 44$ V. b) Đúng: $I_2 = U_2/R = 44/10 = 4{,}4$ A. c) Sai: máy biến áp lí tưởng có $P_1 = P_2$. d) Đúng: $N_2 < N_1$ nên điện áp giảm.",
+    "tags": [
+      "cảm ứng điện từ",
+      "máy biến áp"
+    ]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Một mẫu chất phóng xạ X có chu kì bán rã $T = 2$ ngày. Ban đầu mẫu có khối lượng 8 g, khối lượng mol của X là 200 g/mol, $N_A = 6{,}02\\cdot10^{23}$ mol⁻¹. Xét tính đúng/sai của các phát biểu sau.",
+    "options": [
+      {
+        "key": "a",
+        "text": "Sau 6 ngày, khối lượng chất X còn lại trong mẫu là 1 g."
+      },
+      {
+        "key": "b",
+        "text": "Hằng số phóng xạ của X là 0,693 ngày⁻¹."
+      },
+      {
+        "key": "c",
+        "text": "Độ phóng xạ ban đầu của mẫu khoảng $9{,}7\\cdot10^{16}$ Bq."
+      },
+      {
+        "key": "d",
+        "text": "Sau 4 ngày, số hạt nhân X còn lại trong mẫu là $1{,}2\\cdot10^{22}$ hạt."
+      }
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "a) Đúng: 6 ngày = 3 chu kì nên $m = 8/2^3 = 1$ g. b) Sai: $\\lambda = \\ln 2/T = 0{,}347$ ngày⁻¹ (0,693 là $\\ln 2$). c) Đúng: $N_0 = \\dfrac{8}{200}\\cdot6{,}02\\cdot10^{23} = 2{,}408\\cdot10^{22}$ hạt, $\\lambda = \\dfrac{\\ln2}{2\\cdot86400} \\approx 4{,}01\\cdot10^{-6}$ s⁻¹, $H_0 = \\lambda N_0 \\approx 9{,}7\\cdot10^{16}$ Bq. d) Sai: sau 4 ngày $N = N_0/4 \\approx 6{,}0\\cdot10^{21}$ hạt.",
+    "tags": [
+      "hạt nhân",
+      "độ phóng xạ",
+      "chu kì bán rã"
+    ]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "NB",
+    "prompt": "Tính nhiệt lượng cần cung cấp để đun nóng 0,5 kg nước từ 20 °C lên 40 °C. Biết nhiệt dung riêng của nước là 4200 J/(kg·K). Đáp số tính theo đơn vị kilôjun (kJ).",
+    "answer": "42",
+    "explanation": "$Q = mc\\Delta t = 0{,}5\\cdot4200\\cdot20 = 42\\,000$ J = 42 kJ.",
+    "tags": [
+      "nhiệt học",
+      "nhiệt lượng"
+    ]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "NB",
+    "prompt": "Một lượng khí lí tưởng có nhiệt độ 127 °C. Nhiệt độ tuyệt đối tương ứng của khí này là bao nhiêu kelvin?",
+    "answer": "400",
+    "explanation": "$T = t + 273 = 127 + 273 = 400$ K.",
+    "tags": [
+      "khí lí tưởng",
+      "nhiệt độ tuyệt đối"
+    ]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Một đoạn dây dẫn thẳng dài 0,5 m đặt vuông góc với đường sức của từ trường đều có cảm ứng từ $B = 0{,}2$ T. Dòng điện qua dây có cường độ 2 A. Tính độ lớn lực từ tác dụng lên đoạn dây, theo đơn vị niutơn (N).",
+    "answer": "0,2",
+    "explanation": "$F = BIl\\sin\\alpha = 0{,}2\\cdot2\\cdot0{,}5\\cdot1 = 0{,}2$ N.",
+    "tags": [
+      "từ trường",
+      "lực từ"
+    ]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Một thanh dẫn dài 40 cm chuyển động tịnh tiến với vận tốc 5 m/s, vuông góc với các đường sức của từ trường đều có cảm ứng từ 0,2 T. Thanh thuộc một mạch kín. Suất điện động cảm ứng xuất hiện trong thanh có độ lớn bằng bao nhiêu vôn (V)?",
+    "answer": "0,4",
+    "explanation": "$e = Blv = 0{,}2\\cdot0{,}4\\cdot5 = 0{,}4$ V.",
+    "tags": [
+      "cảm ứng điện từ",
+      "suất điện động cảm ứng"
+    ]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Một bình chứa 20 lít khí lí tưởng ở nhiệt độ 27 °C và áp suất 3 atm. Lấy $R = 0{,}082$ L·atm/(mol·K). Số mol khí trong bình là bao nhiêu mol? Làm tròn kết quả đến một chữ số thập phân.",
+    "answer": "2,4",
+    "explanation": "$n = \\dfrac{pV}{RT} = \\dfrac{3\\cdot20}{0{,}082\\cdot300} \\approx 2{,}44$ mol, làm tròn 2,4 mol.",
+    "tags": [
+      "khí lí tưởng",
+      "phương trình trạng thái"
+    ]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Hai chất phóng xạ A và B có chu kì bán rã lần lượt là 2 ngày và 4 ngày. Ban đầu số hạt nhân của hai chất bằng nhau. Sau bao nhiêu ngày thì tỉ số số hạt nhân còn lại $N_A/N_B$ bằng $\\dfrac{1}{4}$?",
+    "answer": "8",
+    "explanation": "$\\dfrac{N_A}{N_B} = \\dfrac{2^{-t/2}}{2^{-t/4}} = 2^{-t/4} = 2^{-2}$, suy ra $t = 8$ ngày.",
+    "tags": [
+      "hạt nhân",
+      "chu kì bán rã"
+    ]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Từ thông qua một vòng dây dẫn kín tăng đều từ 0 đến 0,04 Wb trong thời gian 0,02 s. Độ lớn suất điện động cảm ứng trung bình xuất hiện trong vòng dây là bao nhiêu vôn (V)?",
+    "answer": "2",
+    "explanation": "$|e_{tb}| = \\dfrac{\\Delta\\Phi}{\\Delta t} = \\dfrac{0{,}04}{0{,}02} = 2$ V.",
+    "tags": [
+      "cảm ứng điện từ",
+      "định luật Faraday"
+    ]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Một lượng khí lí tưởng xác định ở trạng thái 1 có áp suất 2 atm, thể tích 6 lít và nhiệt độ 300 K. Đưa khí sang trạng thái 2 có áp suất 3 atm và nhiệt độ 400 K. Thể tích của khí ở trạng thái 2 bằng bao nhiêu lít? Làm tròn kết quả đến một chữ số thập phân.",
+    "answer": "5,3",
+    "explanation": "$V_2 = \\dfrac{p_1V_1T_2}{p_2T_1} = \\dfrac{2\\cdot6\\cdot400}{3\\cdot300} \\approx 5{,}3$ lít.",
+    "tags": [
+      "khí lí tưởng",
+      "phương trình trạng thái"
+    ]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Một ống dây hình trụ dài 50 cm, gồm 1000 vòng dây, tiết diện ngang 10 cm². Trong ống dây, cường độ dòng điện tăng đều từ 0 đến 2 A trong thời gian 0,1 s. Lấy $\\mu_0 = 4\\pi\\cdot10^{-7}$ H/m và bỏ qua mọi hiện tượng khác. Độ lớn suất điện động tự cảm xuất hiện trong ống dây là bao nhiêu vôn (V)? Làm tròn đến hai chữ số thập phân.",
+    "answer": "0,05",
+    "explanation": "$L = \\dfrac{\\mu_0N^2S}{l} = \\dfrac{4\\pi\\cdot10^{-7}\\cdot10^6\\cdot10^{-3}}{0{,}5} \\approx 2{,}51\\cdot10^{-3}$ H. $|e_{tc}| = L\\dfrac{\\Delta I}{\\Delta t} = 2{,}51\\cdot10^{-3}\\cdot\\dfrac{2}{0{,}1} \\approx 0{,}05$ V.",
+    "tags": [
+      "cảm ứng điện từ",
+      "tự cảm",
+      "ống dây"
+    ]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Cho phản ứng hạt nhân: $^{2}_{1}\\text{H} + {}^{3}_{1}\\text{H} \\to {}^{4}_{2}\\text{He} + {}^{1}_{0}\\text{n}$. Biết khối lượng các hạt nhân: $m_D = 2{,}0141$ u, $m_T = 3{,}0160$ u, $m_{\\alpha} = 4{,}0026$ u, $m_n = 1{,}0087$ u; $1$ u $= 931{,}5$ MeV/c². Năng lượng tỏa ra trong một phản ứng là bao nhiêu MeV? Làm tròn đến một chữ số thập phân.",
+    "answer": "17,5",
+    "explanation": "$\\Delta m = (m_D + m_T) - (m_\\alpha + m_n) = 5{,}0301 - 5{,}0113 = 0{,}0188$ u. $E = \\Delta m\\cdot931{,}5 \\approx 17{,}5$ MeV.",
+    "tags": [
+      "hạt nhân",
+      "năng lượng phản ứng hạt nhân"
+    ]
+  }
+]

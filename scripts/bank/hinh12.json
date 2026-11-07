@@ -1,0 +1,390 @@
+[
+  {
+    "grades": ["Lớp 12"],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Trong không gian $Oxyz$, hình lập phương $ABCD.A'B'C'D'$ cạnh $2$ được đặt sao cho $A(0;0;0)$, $B(2;0;0)$, $D(0;2;0)$, $A'(0;0;2)$ (như hình bên dưới). Tọa độ đỉnh $C'$ là",
+    "options": [
+      {"key": "A", "text": "$(2;2;0)$"},
+      {"key": "B", "text": "$(2;2;2)$"},
+      {"key": "C", "text": "$(0;2;2)$"},
+      {"key": "D", "text": "$(2;0;2)$"}
+    ],
+    "answer": "B",
+    "explanation": "Đáy $ABCD$ là hình vuông cạnh $2$ nằm trong mặt phẳng $Oxy$ nên $C=(2;2;0)$. Vì $\\overrightarrow{CC'}=\\overrightarrow{AA'}=(0;0;2)$ nên $C'=(2;2;2)$.",
+    "tags": ["Tọa độ điểm", "Hình lập phương"],
+    "figure": {"kind": "geo3d", "shape": "cube", "names": ["A", "B", "C", "D", "A'", "B'", "C'", "D'"], "height": false, "diagonals": false}
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Trong không gian $Oxyz$, cho $\\vec{a}=(1;2;0)$ và $\\vec{b}=(0;1;3)$. Tọa độ của véc-tơ $[\\vec{a},\\vec{b}]$ là",
+    "options": [
+      {"key": "A", "text": "$(-6;3;1)$"},
+      {"key": "B", "text": "$(6;3;1)$"},
+      {"key": "C", "text": "$(2;3;1)$"},
+      {"key": "D", "text": "$(6;-3;1)$"}
+    ],
+    "answer": "D",
+    "explanation": "$[\\vec{a},\\vec{b}]=(2\\cdot 3-0\\cdot 1;\\ 0\\cdot 0-1\\cdot 3;\\ 1\\cdot 1-2\\cdot 0)=(6;-3;1)$.",
+    "tags": ["Tích có hướng", "Tọa độ véc-tơ"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Cho hình hộp chữ nhật $ABCD.A'B'C'D'$ có $AB=2$, $AD=4$, $AA'=4$. Diện tích mặt cầu ngoại tiếp hình hộp chữ nhật đã cho bằng",
+    "options": [
+      {"key": "A", "text": "$36\\pi$"},
+      {"key": "B", "text": "$12\\pi$"},
+      {"key": "C", "text": "$9\\pi$"},
+      {"key": "D", "text": "$18\\pi$"}
+    ],
+    "answer": "A",
+    "explanation": "Đường chéo hình hộp là $\\sqrt{2^2+4^2+4^2}=6$, nên bán kính mặt cầu ngoại tiếp $R=3$. Diện tích $S=4\\pi R^2=36\\pi$.",
+    "tags": ["Mặt cầu ngoại tiếp", "Hình hộp chữ nhật"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Cho hình chóp $S.ABCD$ có đáy $ABCD$ là hình vuông cạnh $2$, $SA\\perp(ABCD)$ và $SA=2$ (như hình bên dưới). Chọn hệ trục $Oxyz$ với $A$ là gốc tọa độ, $B\\in Ox$, $D\\in Oy$, $S\\in Oz$. Giá trị $\\sin$ của góc giữa đường thẳng $SC$ và mặt phẳng $(SAB)$ bằng",
+    "options": [
+      {"key": "A", "text": "$\\dfrac{\\sqrt6}{3}$"},
+      {"key": "B", "text": "$\\dfrac{\\sqrt2}{2}$"},
+      {"key": "C", "text": "$\\dfrac{\\sqrt3}{3}$"},
+      {"key": "D", "text": "$\\dfrac12$"}
+    ],
+    "answer": "C",
+    "explanation": "Ta có $S(0;0;2)$, $C(2;2;0)$ nên $\\overrightarrow{SC}=(2;2;-2)$. Mặt phẳng $(SAB)$ là $y=0$ có véc-tơ pháp tuyến $\\vec n=(0;1;0)$. Do đó $\\sin\\varphi=\\dfrac{|\\overrightarrow{SC}\\cdot\\vec n|}{|\\overrightarrow{SC}|\\,|\\vec n|}=\\dfrac{2}{2\\sqrt3}=\\dfrac{\\sqrt3}{3}$.",
+    "tags": ["Góc giữa đường thẳng và mặt phẳng", "Phương pháp tọa độ"],
+    "figure": {"kind": "geo3d", "shape": "pyramid4-sa", "names": ["S", "A", "B", "C", "D"], "height": false, "diagonals": false}
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Cho hình chóp tứ giác đều $S.ABCD$ có cạnh đáy bằng $6$ và chiều cao bằng $4$ (như hình bên dưới). Bán kính mặt cầu ngoại tiếp hình chóp bằng",
+    "options": [
+      {"key": "A", "text": "$4$"},
+      {"key": "B", "text": "$\\dfrac{17}{4}$"},
+      {"key": "C", "text": "$5$"},
+      {"key": "D", "text": "$\\dfrac{9}{2}$"}
+    ],
+    "answer": "B",
+    "explanation": "Tâm $I$ của mặt cầu nằm trên $SO$ với $SO=4$, $OA=\\dfrac{6\\sqrt2}{2}=3\\sqrt2$. Từ $IA=IS=R$ suy ra $R^2=OA^2+(4-R)^2=18+(4-R)^2$, do đó $8R=34$ và $R=\\dfrac{17}{4}$.",
+    "tags": ["Mặt cầu ngoại tiếp", "Chóp tứ giác đều"],
+    "figure": {"kind": "geo3d", "shape": "pyramid4-regular", "names": ["S", "A", "B", "C", "D", "O"], "height": true, "diagonals": false}
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Cho lăng trụ đứng $ABC.A'B'C'$ có đáy $ABC$ là tam giác đều cạnh $6$ và $AA'=4$. Bán kính mặt cầu ngoại tiếp lăng trụ bằng",
+    "options": [
+      {"key": "A", "text": "$2\\sqrt7$"},
+      {"key": "B", "text": "$2\\sqrt5$"},
+      {"key": "C", "text": "$5$"},
+      {"key": "D", "text": "$4$"}
+    ],
+    "answer": "D",
+    "explanation": "Tâm đường tròn ngoại tiếp đáy $G$ có $GA=\\dfrac{6}{\\sqrt3}=2\\sqrt3$. Tâm mặt cầu là trung điểm $O$ của đoạn nối hai tâm đáy, nên $R^2=GA^2+\\left(\\dfrac{AA'}{2}\\right)^2=12+4=16$, suy ra $R=4$.",
+    "tags": ["Mặt cầu ngoại tiếp", "Lăng trụ đứng"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Một cột ăng-ten thẳng đứng có đỉnh $T(0;0;4)$ trong hệ trục $Oxyz$ (đơn vị mét), chân cột trùng gốc $O$. Hai sợi cáp được căng từ $T$ xuống mặt đất tại hai điểm $A(3;0;0)$ và $B(0;4;0)$. Côsin của góc $\\widehat{ATB}$ bằng",
+    "options": [
+      {"key": "A", "text": "$\\dfrac{2\\sqrt2}{5}$"},
+      {"key": "B", "text": "$\\dfrac45$"},
+      {"key": "C", "text": "$\\dfrac{\\sqrt2}{2}$"},
+      {"key": "D", "text": "$\\dfrac35$"}
+    ],
+    "answer": "A",
+    "explanation": "Ta có $\\overrightarrow{TA}=(3;0;-4)$, $\\overrightarrow{TB}=(0;4;-4)$, $\\overrightarrow{TA}\\cdot\\overrightarrow{TB}=16$, $|\\overrightarrow{TA}|=5$, $|\\overrightarrow{TB}|=4\\sqrt2$. Vậy $\\cos\\widehat{ATB}=\\dfrac{16}{20\\sqrt2}=\\dfrac{2\\sqrt2}{5}$.",
+    "tags": ["Góc", "Bài toán thực tế", "Tích vô hướng"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Căn phòng có dạng hình hộp chữ nhật $ABCD.A'B'C'D'$ với $AB=6$ m, $AD=4$ m, $AA'=3$ m, đặt trong hệ trục $Oxyz$ sao cho $A$ trùng gốc $O$, $B\\in Ox$, $D\\in Oy$, $A'\\in Oz$. Một bóng đèn gắn ở tâm trần nhà là điểm $M$. Một tấm kính phẳng đi qua ba điểm $B$, $D$, $A'$ để ngăn phòng. Khoảng cách từ $M$ đến tấm kính bằng (đơn vị mét)",
+    "options": [
+      {"key": "A", "text": "$\\dfrac{6\\sqrt{29}}{29}$"},
+      {"key": "B", "text": "$\\dfrac{12}{29}$"},
+      {"key": "C", "text": "$\\dfrac{12\\sqrt{29}}{29}$"},
+      {"key": "D", "text": "$\\dfrac{4\\sqrt{29}}{29}$"}
+    ],
+    "answer": "C",
+    "explanation": "Tâm trần $M(3;2;3)$. Mặt phẳng $(BDA')$ có phương trình $\\dfrac{x}{6}+\\dfrac{y}{4}+\\dfrac{z}{3}=1$, tức $2x+3y+4z-12=0$. Khoảng cách $d=\\dfrac{|6+6+12-12|}{\\sqrt{29}}=\\dfrac{12}{\\sqrt{29}}=\\dfrac{12\\sqrt{29}}{29}$.",
+    "tags": ["Khoảng cách", "Bài toán thực tế", "Phương trình mặt phẳng"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Một giàn khung có dạng hình hộp chữ nhật $ABCD.A'B'C'D'$ với $AB=6$, $AD=4$, $AA'=3$ (đơn vị mét), đặt trong hệ trục $Oxyz$ sao cho $A(0;0;0)$, $B(6;0;0)$, $D(0;4;0)$, $A'(0;0;3)$ (như hình bên dưới). Hai thanh $AC'$ và $BD$ của giàn là hai đường thẳng chéo nhau. Khoảng cách giữa hai thanh bằng (đơn vị mét)",
+    "options": [
+      {"key": "A", "text": "$\\dfrac{6\\sqrt{77}}{77}$"},
+      {"key": "B", "text": "$\\dfrac{12\\sqrt{77}}{77}$"},
+      {"key": "C", "text": "$\\dfrac{24\\sqrt{77}}{77}$"},
+      {"key": "D", "text": "$\\dfrac{12\\sqrt{7}}{7}$"}
+    ],
+    "answer": "B",
+    "explanation": "Ta có $\\overrightarrow{AC'}=(6;4;3)$, $\\overrightarrow{BD}=(-6;4;0)$. Véc-tơ $\\vec n=[\\overrightarrow{AC'},\\overrightarrow{BD}]=(-12;-18;48)$, $|\\vec n|=6\\sqrt{77}$. Với $\\overrightarrow{AB}=(6;0;0)$: $d=\\dfrac{|\\overrightarrow{AB}\\cdot\\vec n|}{|\\vec n|}=\\dfrac{72}{6\\sqrt{77}}=\\dfrac{12\\sqrt{77}}{77}$.",
+    "tags": ["Khoảng cách giữa hai đường thẳng chéo nhau", "Bài toán thực tế", "Hình hộp chữ nhật"],
+    "figure": {"kind": "geo3d", "shape": "box", "names": ["A", "B", "C", "D", "A'", "B'", "C'", "D'"], "height": false, "diagonals": false}
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Trong không gian $Oxyz$, cho hình lập phương $ABCD.A'B'C'D'$ cạnh $2$ với $A(0;0;0)$, $B(2;0;0)$, $D(0;2;0)$, $A'(0;0;2)$. Mặt cầu $(S)$ ngoại tiếp hình lập phương có tâm $I$ (như hình bên dưới). Mặt phẳng $(AB'D')$ cắt $(S)$ theo một đường tròn có bán kính bằng",
+    "options": [
+      {"key": "A", "text": "$\\dfrac{2\\sqrt6}{3}$"},
+      {"key": "B", "text": "$\\dfrac{2\\sqrt3}{3}$"},
+      {"key": "C", "text": "$\\sqrt6$"},
+      {"key": "D", "text": "$\\dfrac{4\\sqrt3}{3}$"}
+    ],
+    "answer": "A",
+    "explanation": "Mặt cầu ngoại tiếp có tâm $I(1;1;1)$ và $R=\\sqrt3$. Với $B'(2;0;2)$, $D'(0;2;2)$, véc-tơ pháp tuyến của $(AB'D')$ là $\\overrightarrow{AB'}\\times\\overrightarrow{AD'}=(-4;-4;4)$, tức $(AB'D')$: $x+y-z=0$. Khoảng cách $d(I,(AB'D'))=\\dfrac{1}{\\sqrt3}$, nên $r=\\sqrt{3-\\dfrac13}=\\dfrac{2\\sqrt6}{3}$.",
+    "tags": ["Mặt cầu", "Giao tuyến", "Hình lập phương"],
+    "figure": {"kind": "geo3d", "shape": "sphere", "names": ["I"], "height": false, "diagonals": false}
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Trong không gian $Oxyz$, cho hình hộp chữ nhật $ABCD.A'B'C'D'$ có $A(0;0;0)$, $B(3;0;0)$, $D(0;4;0)$, $A'(0;0;2)$ (như hình bên dưới). Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {"key": "a", "text": "$AC'=\\sqrt{29}$."},
+      {"key": "b", "text": "Góc giữa $AC'$ và mặt phẳng $(ABCD)$ lớn hơn $30^\\circ$."},
+      {"key": "c", "text": "$AC'\\perp B'D'$."},
+      {"key": "d", "text": "Thể tích khối tứ diện $AB'C'D'$ bằng $4$."}
+    ],
+    "answer": "ĐSSĐ",
+    "explanation": "Ta có $C'(3;4;2)$, $B'(3;0;2)$, $D'(0;4;2)$. a) Đúng: $AC'=\\sqrt{9+16+4}=\\sqrt{29}$. b) Sai: $\\tan\\varphi=\\dfrac{CC'}{AC}=\\dfrac{2}{5}$, nên $\\varphi\\approx 21{,}8^\\circ$. c) Sai: $\\overrightarrow{AC'}\\cdot\\overrightarrow{B'D'}=(3;4;2)\\cdot(-3;4;0)=7\\neq 0$. d) Đúng: $\\det(\\overrightarrow{AB'},\\overrightarrow{AC'},\\overrightarrow{AD'})=24$ nên $V=\\dfrac{24}{6}=4$.",
+    "tags": ["Hình hộp chữ nhật", "Góc", "Thể tích"],
+    "figure": {"kind": "geo3d", "shape": "box", "names": ["A", "B", "C", "D", "A'", "B'", "C'", "D'"], "height": false, "diagonals": false}
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Một giàn khung có dạng tứ diện $ABCD$, đặt trong hệ trục $Oxyz$ (đơn vị mét) với $A(0;0;0)$, $B(4;0;0)$, $C(0;4;0)$, $D(0;0;3)$. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {"key": "a", "text": "$BC=4\\sqrt2$."},
+      {"key": "b", "text": "$\\widehat{BDC}=90^\\circ$."},
+      {"key": "c", "text": "Khoảng cách từ $D$ đến mặt phẳng $(ABC)$ bằng $3$."},
+      {"key": "d", "text": "Thể tích khối tứ diện $ABCD$ bằng $6$."}
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "a) Đúng: $BC=\\sqrt{16+16}=4\\sqrt2$. b) Sai: $\\overrightarrow{DB}\\cdot\\overrightarrow{DC}=(4;0;-3)\\cdot(0;4;-3)=9\\neq 0$. c) Đúng: mặt phẳng $(ABC)$ là $z=0$. d) Sai: $V=\\dfrac16\\cdot 4\\cdot 4\\cdot 3=8$.",
+    "tags": ["Tứ diện", "Khoảng cách", "Bài toán thực tế"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Cho hình chóp $S.ABC$ có $SA\\perp(ABC)$, tam giác $ABC$ vuông tại $B$, $AB=3$, $BC=4$, $SA=12$ (như hình bên dưới). Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {"key": "a", "text": "Bán kính mặt cầu ngoại tiếp hình chóp bằng $\\dfrac{13}{4}$."},
+      {"key": "b", "text": "Thể tích khối chóp $S.ABC$ bằng $24$."},
+      {"key": "c", "text": "Côsin của góc giữa $(SBC)$ và $(ABC)$ bằng $\\dfrac35$."},
+      {"key": "d", "text": "Diện tích mặt cầu ngoại tiếp hình chóp bằng $169\\pi$."}
+    ],
+    "answer": "SĐSĐ",
+    "explanation": "Vì $BC\\perp AB$ và $BC\\perp SA$ nên $BC\\perp SB$; cũng có $SA\\perp AC$. Do đó $A,B$ cùng nhìn $SC$ dưới góc vuông, $SC$ là đường kính mặt cầu ngoại tiếp với $SC=\\sqrt{12^2+3^2+4^2}=13$, $R=\\dfrac{13}{2}$. a) Sai. b) Đúng: $V=\\dfrac13\\cdot 6\\cdot 12=24$. c) Sai: góc giữa $(SBC)$ và $(ABC)$ là $\\widehat{SBA}$, có $\\cos\\widehat{SBA}=\\dfrac{AB}{SB}=\\dfrac{1}{\\sqrt{17}}$. d) Đúng: $4\\pi\\cdot\\dfrac{169}{4}=169\\pi$.",
+    "tags": ["Mặt cầu ngoại tiếp", "Khoảng cách", "Thể tích"],
+    "figure": {"kind": "geo3d", "shape": "pyramid3-sa", "names": ["S", "A", "B", "C"], "height": false, "diagonals": false}
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Một ăng-ten thẳng đứng $OT$ có chân $O$ trên mặt đất và đỉnh $T(0;0;10)$ trong hệ trục $Oxyz$ (đơn vị mét). Hai sợi cáp căng từ $T$ xuống mặt đất tại $P(6;0;0)$ và $Q(0;8;0)$. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {"key": "a", "text": "$TP=2\\sqrt{34}$."},
+      {"key": "b", "text": "Góc giữa sợi cáp $TP$ và mặt đất nhỏ hơn $60^\\circ$."},
+      {"key": "c", "text": "Góc $\\widehat{PTQ}$ là góc tù."},
+      {"key": "d", "text": "Khoảng cách từ $O$ đến mặt phẳng $(TPQ)$ bằng $\\dfrac{120}{\\sqrt{769}}$."}
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) Đúng: $\\overrightarrow{TP}=(6;0;-10)$, $TP=\\sqrt{136}=2\\sqrt{34}$. b) Đúng: góc $\\varphi$ giữa $TP$ và mặt đất có $\\tan\\varphi=\\dfrac{OT}{OP}=\\dfrac53<\\sqrt3$, nên $\\varphi\\approx 59{,}0^\\circ<60^\\circ$. c) Sai: $\\overrightarrow{TP}\\cdot\\overrightarrow{TQ}=(6;0;-10)\\cdot(0;8;-10)=100>0$ nên góc $\\widehat{PTQ}$ nhọn. d) Đúng: mặt phẳng $(TPQ)$ là $20x+15y+12z-120=0$, nên $d=\\dfrac{120}{\\sqrt{769}}$.",
+    "tags": ["Khoảng cách", "Góc", "Bài toán thực tế"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Trong không gian $Oxyz$ (đơn vị mét), hai sợi dây cáp được mô tả bởi hai đường thẳng: $d_1$ đi qua $A(1;0;0)$ với véc-tơ chỉ phương $\\vec u=(0;1;1)$, và $d_2$ đi qua $B(0;2;3)$ với véc-tơ chỉ phương $\\vec v=(1;0;2)$. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {"key": "a", "text": "Hai đường thẳng $d_1$ và $d_2$ không cắt nhau và không song song."},
+      {"key": "b", "text": "Côsin của góc giữa $d_1$ và $d_2$ bằng $\\dfrac{2}{\\sqrt{10}}$."},
+      {"key": "c", "text": "Khoảng cách giữa $d_1$ và $d_2$ bằng $\\dfrac{\\sqrt6}{2}$."},
+      {"key": "d", "text": "Mặt phẳng chứa $d_1$ và song song với $d_2$ có một véc-tơ pháp tuyến là $(1;2;-1)$."}
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "Ta có $\\vec u\\times\\vec v=(2;1;-1)$ và $\\overrightarrow{AB}=(-1;2;3)$. a) Đúng: $\\vec u,\\vec v$ không cùng phương, và hệ $1=s$, $t=2$, $t=3+2s$ vô nghiệm. b) Đúng: $\\cos\\varphi=\\dfrac{|\\vec u\\cdot\\vec v|}{|\\vec u|\\,|\\vec v|}=\\dfrac{2}{\\sqrt2\\sqrt5}=\\dfrac{2}{\\sqrt{10}}$. c) Đúng: $d=\\dfrac{|\\overrightarrow{AB}\\cdot(\\vec u\\times\\vec v)|}{|\\vec u\\times\\vec v|}=\\dfrac{3}{\\sqrt6}=\\dfrac{\\sqrt6}{2}$. d) Sai: véc-tơ pháp tuyến đúng là $(2;1;-1)$; còn $(1;2;-1)$ có $\\vec u\\cdot(1;2;-1)=1\\neq 0$ nên không vuông góc với $\\vec u$.",
+    "tags": ["Khoảng cách giữa hai đường thẳng chéo nhau", "Góc", "Bài toán thực tế"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Cho hình lập phương $ABCD.A'B'C'D'$ cạnh $2$ với $A(0;0;0)$, $B(2;0;0)$, $D(0;2;0)$, $A'(0;0;2)$. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {"key": "a", "text": "Trung điểm của đoạn $AC'$ có tọa độ $(1;1;1)$."},
+      {"key": "b", "text": "Tâm của mặt cầu ngoại tiếp hình lập phương là $I(1;1;1)$."},
+      {"key": "c", "text": "Bán kính mặt cầu ngoại tiếp hình lập phương bằng $2$."},
+      {"key": "d", "text": "Mặt phẳng $(A'BD)$ có phương trình $x+y+z-4=0$."}
+    ],
+    "answer": "ĐĐSS",
+    "explanation": "Ta có $C'(2;2;2)$ nên trung điểm $AC'$ là $(1;1;1)$: a) Đúng. Tâm mặt cầu ngoại tiếp là tâm của hình lập phương, $I(1;1;1)$: b) Đúng. Bán kính $R=IA=\\sqrt3\\neq 2$: c) Sai. Mặt phẳng $(A'BD)$ đi qua $(2;0;0)$, $(0;2;0)$, $(0;0;2)$ nên có phương trình $x+y+z-2=0$: d) Sai.",
+    "tags": ["Mặt cầu ngoại tiếp", "Tọa độ điểm", "Hình lập phương"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Mái một căn nhà gồm hai mặt phẳng $(\\alpha): x+2z-6=0$ và $(\\beta): -x+2z-6=0$ trong hệ trục $Oxyz$ (đơn vị mét; mặt đất là $Oxy$, trục $Oz$ thẳng đứng). Mặt cắt của mái theo mặt phẳng $xOz$ được cho như hình bên dưới. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {"key": "a", "text": "Điểm $(6;0;0)$ thuộc mặt phẳng $(\\beta)$."},
+      {"key": "b", "text": "Giao tuyến của $(\\alpha)$ và $(\\beta)$ song song với trục $Oy$."},
+      {"key": "c", "text": "Côsin của góc giữa $(\\alpha)$ và $(\\beta)$ bằng $\\dfrac35$."},
+      {"key": "d", "text": "Khoảng cách từ gốc $O$ đến $(\\alpha)$ bằng $3$."}
+    ],
+    "answer": "SĐĐS",
+    "explanation": "a) Sai: thay $(6;0;0)$ vào $(\\beta)$ được $-6-6=-12\\neq 0$. b) Đúng: $(\\alpha)\\cap(\\beta)$ là các điểm có $x=0$, $z=3$, nên có véc-tơ chỉ phương $(0;1;0)$. c) Đúng: $\\vec n_\\alpha=(1;0;2)$, $\\vec n_\\beta=(-1;0;2)$, $\\cos=\\dfrac{|-1+4|}{5}=\\dfrac35$. d) Sai: $d(O,(\\alpha))=\\dfrac{6}{\\sqrt5}\\approx 2{,}68\\neq 3$.",
+    "tags": ["Góc giữa hai mặt phẳng", "Khoảng cách", "Bài toán thực tế"],
+    "figure": {"kind": "scene", "text": "A(-6; 0) B(6; 0) C(0; 3)\nAB, AC, BC\nkích thước AB \"12 m\""}
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Cho tứ diện đều $ABCD$ với $A(0;0;0)$, $B(2;2;0)$, $C(2;0;2)$, $D(0;2;2)$ (đơn vị cm). Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {"key": "a", "text": "$AB=4$."},
+      {"key": "b", "text": "$\\widehat{BAC}=60^\\circ$."},
+      {"key": "c", "text": "Thể tích khối tứ diện $ABCD$ bằng $\\dfrac83$."},
+      {"key": "d", "text": "Khoảng cách từ $D$ đến mặt phẳng $(ABC)$ bằng $\\dfrac{2\\sqrt3}{3}$."}
+    ],
+    "answer": "SĐĐS",
+    "explanation": "a) Sai: $AB=\\sqrt{8}=2\\sqrt2$. b) Đúng: $\\cos\\widehat{BAC}=\\dfrac{\\overrightarrow{AB}\\cdot\\overrightarrow{AC}}{|\\overrightarrow{AB}|\\,|\\overrightarrow{AC}|}=\\dfrac{4}{8}=\\dfrac12$. c) Đúng: $\\det(\\overrightarrow{AB},\\overrightarrow{AC},\\overrightarrow{AD})=-16$ nên $V=\\dfrac{16}{6}=\\dfrac83$. d) Sai: mặt phẳng $(ABC)$ là $x-y-z=0$, nên $d(D,(ABC))=\\dfrac{|0-2-2|}{\\sqrt3}=\\dfrac{4\\sqrt3}{3}$.",
+    "tags": ["Tứ diện đều", "Thể tích", "Khoảng cách"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "tra-loi-ngan",
+    "level": "NB",
+    "prompt": "Trong không gian $Oxyz$, cho điểm $M(3;-4;12)$. Độ dài đoạn thẳng $OM$ bằng",
+    "answer": "13",
+    "explanation": "$OM=\\sqrt{3^2+(-4)^2+12^2}=\\sqrt{169}=13$.",
+    "tags": ["Độ dài véc-tơ"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Trong không gian $Oxyz$, cho $A(1;-1;2)$ và $B(3;1;0)$. Điểm $M$ thuộc đoạn $AB$ sao cho $\\overrightarrow{AM}=3\\overrightarrow{MB}$. Tổng $x_M+y_M+z_M$ bằng",
+    "answer": "3,5",
+    "explanation": "Từ $\\overrightarrow{AM}=3\\overrightarrow{MB}$ suy ra $M=\\dfrac{A+3B}{4}=\\left(\\dfrac52;\\dfrac12;\\dfrac12\\right)$, nên $x_M+y_M+z_M=\\dfrac72=3{,}5$.",
+    "tags": ["Tọa độ điểm chia đoạn"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Cho hình lập phương $ABCD.A'B'C'D'$ cạnh $4$ (như hình bên dưới). Khoảng cách từ $A$ đến mặt phẳng $(A'BD)$ bằng (làm tròn đến hàng phần trăm).",
+    "answer": "2,31",
+    "explanation": "Chọn $A(0;0;0)$, $B(4;0;0)$, $D(0;4;0)$, $A'(0;0;4)$. Mặt phẳng $(A'BD)$ là $x+y+z-4=0$, nên $d=\\dfrac{4}{\\sqrt3}=\\dfrac{4\\sqrt3}{3}\\approx 2{,}31$.",
+    "tags": ["Khoảng cách", "Hình lập phương"],
+    "figure": {"kind": "geo3d", "shape": "cube", "names": ["A", "B", "C", "D", "A'", "B'", "C'", "D'"], "height": false, "diagonals": false}
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Mặt cầu ngoại tiếp hình lập phương cạnh $6$ có bán kính bằng (làm tròn đến hàng phần mười).",
+    "answer": "5,2",
+    "explanation": "Đường chéo hình lập phương bằng $6\\sqrt3$, nên $R=\\dfrac{6\\sqrt3}{2}=3\\sqrt3\\approx 5{,}196$, làm tròn được $5{,}2$.",
+    "tags": ["Mặt cầu ngoại tiếp", "Hình lập phương"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Trong hệ trục $Oxyz$ (đơn vị mét), hình hộp chữ nhật $ABCD.A'B'C'D'$ có $AB=6$, $AD=4$, $AA'=3$ với $A$ trùng gốc $O$, $B\\in Ox$, $D\\in Oy$, $A'\\in Oz$. Góc giữa hai thanh $AC'$ và $BA'$ bằng bao nhiêu độ? (làm tròn đến hàng đơn vị)",
+    "answer": "59",
+    "explanation": "$\\overrightarrow{AC'}=(6;4;3)$, $\\overrightarrow{BA'}=(-6;0;3)$. Ta có $\\cos\\varphi=\\dfrac{|-36+0+9|}{\\sqrt{61}\\cdot\\sqrt{45}}=\\dfrac{27}{\\sqrt{2745}}\\approx 0{,}5154$, suy ra $\\varphi\\approx 58{,}98^\\circ$, làm tròn được $59$.",
+    "tags": ["Góc giữa hai đường thẳng", "Hình hộp chữ nhật"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Một cột ăng-ten thẳng đứng có chân tại gốc $O$ và đỉnh $T(0;0;15)$ (đơn vị mét). Một sợi cáp nối $T$ với điểm $A(9;12;0)$ trên mặt đất. Độ dài sợi cáp $TA$ bằng (mét, làm tròn đến hàng phần mười).",
+    "answer": "21,2",
+    "explanation": "$TA=\\sqrt{9^2+12^2+15^2}=\\sqrt{450}\\approx 21{,}21$, làm tròn được $21{,}2$.",
+    "tags": ["Độ dài véc-tơ", "Bài toán thực tế"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Căn phòng có dạng hình hộp chữ nhật $ABCD.A'B'C'D'$ với $AB=6$ m, $AD=4$ m, $AA'=3$ m, đặt trong hệ trục $Oxyz$ sao cho $A$ trùng gốc $O$, $B\\in Ox$, $D\\in Oy$, $A'\\in Oz$. Một tấm kính phẳng đi qua ba điểm $B$, $D$, $C'$. Khoảng cách từ $A'$ đến tấm kính bằng (mét, làm tròn đến hàng phần trăm).",
+    "answer": "4,46",
+    "explanation": "Ta có $\\overrightarrow{BD}=(-6;4;0)$, $\\overrightarrow{BC'}=(0;4;3)$, $\\overrightarrow{BD}\\times\\overrightarrow{BC'}=(12;18;-24)$, tỉ lệ với $(2;3;-4)$. Mặt kính: $2x+3y-4z-12=0$. Khoảng cách từ $A'(0;0;3)$: $d=\\dfrac{|-12-12|}{\\sqrt{29}}=\\dfrac{24}{\\sqrt{29}}\\approx 4{,}46$.",
+    "tags": ["Khoảng cách", "Bài toán thực tế", "Phương trình mặt phẳng"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Lều có dạng hình chóp $S.ABCD$, đáy $ABCD$ là hình chữ nhật với $AB=6$ m, $AD=8$ m; cột $SA$ vuông góc với mặt đất và $SA=6$ m (như hình bên dưới). Khoảng cách từ $A$ đến mặt mái $(SCD)$ bằng (mét, làm tròn đến hàng phần mười).",
+    "answer": "4,8",
+    "explanation": "Vì $CD\\perp AD$ và $CD\\perp SA$ nên $CD\\perp(SAD)$, do đó $(SCD)\\perp(SAD)$ theo giao tuyến $SD$. Kẻ $AH\\perp SD$ thì $AH\\perp(SCD)$ và $AH=\\dfrac{SA\\cdot AD}{\\sqrt{SA^2+AD^2}}=\\dfrac{6\\cdot 8}{10}=4{,}8$.",
+    "tags": ["Khoảng cách", "Bài toán thực tế", "Chóp"],
+    "figure": {"kind": "geo3d", "shape": "pyramid4-sa", "names": ["S", "A", "B", "C", "D"], "height": false, "diagonals": false}
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Một khối hộp chữ nhật có kích thước $6$ cm, $4$ cm, $3$ cm. Một con kiến đi từ đỉnh $A$ đến đỉnh $C'$ đối diện với $A$ qua khối hộp, và chỉ đi trên bề mặt khối hộp. Độ dài quãng đường ngắn nhất mà kiến có thể đi (cm, làm tròn đến hàng phần trăm) bằng",
+    "answer": "9,22",
+    "explanation": "Trải các mặt của hình hộp trên một mặt phẳng, ta được các độ dài $\\sqrt{(a+b)^2+c^2}$, $\\sqrt{(a+c)^2+b^2}$, $\\sqrt{(b+c)^2+a^2}$ với $a=6$, $b=4$, $c=3$. Giá trị nhỏ nhất là $\\sqrt{6^2+(4+3)^2}=\\sqrt{85}\\approx 9{,}22$.",
+    "tags": ["Bài toán thực tế", "Quãng đường ngắn nhất", "Hình hộp chữ nhật"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Tứ diện $OABC$ có $OA$, $OB$, $OC$ đôi một vuông góc, $OA=2$, $OB=3$, $OC=6$. Bán kính mặt cầu ngoại tiếp tứ diện bằng",
+    "answer": "3,5",
+    "explanation": "Mặt cầu ngoại tiếp tứ diện vuông có đường kính $\\sqrt{OA^2+OB^2+OC^2}=\\sqrt{4+9+36}=7$, nên $R=\\dfrac72=3{,}5$.",
+    "tags": ["Mặt cầu ngoại tiếp", "Tứ diện vuông"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Cho hình hộp chữ nhật $ABCD.A'B'C'D'$ có $AB=4$, $AD=3$, $AA'=m$ với $m>0$. Biết khoảng cách từ $A$ đến mặt phẳng $(A'BD)$ bằng $2$. Giá trị của $m$ (làm tròn đến hàng phần trăm) bằng",
+    "answer": "3,62",
+    "explanation": "Chọn $A(0;0;0)$, $B(4;0;0)$, $D(0;3;0)$, $A'(0;0;m)$. Mặt phẳng $(A'BD)$ là $\\dfrac{x}{4}+\\dfrac{y}{3}+\\dfrac{z}{m}=1$. Khoảng cách từ $A$ bằng $2$ nên $\\dfrac{1}{\\frac1{16}+\\frac19+\\frac1{m^2}}=4$, suy ra $\\dfrac{1}{m^2}=\\dfrac{11}{144}$, $m=\\dfrac{12}{\\sqrt{11}}\\approx 3{,}62$.",
+    "tags": ["Khoảng cách", "Phương trình mặt phẳng theo đoạn chắn", "Hình hộp chữ nhật"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Trong không gian $Oxyz$ (đơn vị mét), một cột ăng-ten đặt dọc theo đường thẳng $\\Delta$ có phương trình tham số $x=1+t$, $y=2+2t$, $z=3$. Một thiết bị thu đặt tại điểm $M(4;0;3)$. Khoảng cách từ $M$ đến cột ăng-ten bằng (làm tròn đến hàng phần trăm).",
+    "answer": "3,58",
+    "explanation": "$\\Delta$ đi qua $M_0(1;2;3)$ có véc-tơ chỉ phương $\\vec u=(1;2;0)$. Với $\\overrightarrow{M_0M}=(3;-2;0)$, ta có $[\\overrightarrow{M_0M},\\vec u]=(0;0;8)$. Vậy $d=\\dfrac{8}{\\sqrt5}\\approx 3{,}58$.",
+    "tags": ["Khoảng cách từ điểm đến đường thẳng", "Bài toán thực tế"]
+  }
+]

@@ -1,9 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, ArrowUpRight, Feather, Sparkles } from 'lucide-react'
 import { Button, Badge } from '@/components/ui'
 import { MathText } from '@/components/MathText'
-import { BANK } from '@/data/bank'
+import { BANK, loadFullBank } from '@/data/bank'
 import { COMMUNITY_EXAMS } from '@/data/community'
 import { SUBJECTS } from '@/data/types'
 
@@ -24,6 +24,10 @@ export default function Home() {
 
 function Hero() {
   const [prompt, setPrompt] = useState('')
+  const [bankCount, setBankCount] = useState(BANK.length)
+  useEffect(() => {
+    void loadFullBank().then((b) => setBankCount(b.length))
+  }, [])
   return (
     <section className="relative overflow-hidden">
       {/* soft ambient blobs — organic, not a tech grid */}
@@ -77,7 +81,7 @@ function Hero() {
 
           <div className="mt-12 flex flex-wrap items-center gap-x-9 gap-y-4">
             {[
-              [BANK.length.toLocaleString('vi-VN'), 'câu hỏi mẫu'],
+              [bankCount.toLocaleString('vi-VN'), 'câu hỏi mẫu'],
               [String(SUBJECTS.length), 'môn học'],
               [String(COMMUNITY_EXAMS.length), 'đề mẫu'],
               ['0 đ', 'chi phí'],

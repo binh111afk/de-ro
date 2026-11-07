@@ -1,0 +1,284 @@
+[
+  {
+    "grades": ["Lớp 12"],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Cho hai biến cố $A$ và $B$ với $P(A)=0{,}5$, $P(B)=0{,}4$ và $P(A\\cap B)=0{,}2$. Tính xác suất có điều kiện $P(B\\mid A)$.",
+    "options": [{"key":"A","text":"0,2"},{"key":"B","text":"0,4"},{"key":"C","text":"0,5"},{"key":"D","text":"0,8"}],
+    "answer": "B",
+    "explanation": "$P(B\\mid A)=\\dfrac{P(A\\cap B)}{P(A)}=\\dfrac{0{,}2}{0{,}5}=0{,}4$.",
+    "tags": ["xác suất có điều kiện", "công thức nhân xác suất"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Một tổ có 5 học sinh nam và 7 học sinh nữ. Có bao nhiêu cách chọn ra 2 học sinh nam và 3 học sinh nữ từ tổ đó?",
+    "options": [{"key":"A","text":"350"},{"key":"B","text":"210"},{"key":"C","text":"175"},{"key":"D","text":"420"}],
+    "answer": "A",
+    "explanation": "Chọn 2 nam từ 5 nam có $\\mathrm{C}_5^2=10$ cách; chọn 3 nữ từ 7 nữ có $\\mathrm{C}_7^3=35$ cách. Theo quy tắc nhân, số cách là $10\\cdot35=350$.",
+    "tags": ["tổ hợp", "quy tắc nhân", "chọn nhóm có ràng buộc"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Thời gian hoàn thành một bài kiểm tra của 30 học sinh được thống kê trong biểu đồ bên dưới. Tính thời gian hoàn thành trung bình của 30 học sinh (làm tròn đến hàng phần mười).",
+    "options": [{"key":"A","text":"22,5"},{"key":"B","text":"21,8"},{"key":"C","text":"23,0"},{"key":"D","text":"22,3"}],
+    "answer": "D",
+    "explanation": "Giá trị đại diện của các nhóm: 12,5; 17,5; 22,5; 27,5; 32,5. Số trung bình $\\bar x=\\dfrac{4\\cdot12{,}5+6\\cdot17{,}5+10\\cdot22{,}5+7\\cdot27{,}5+3\\cdot32{,}5}{30}=\\dfrac{670}{30}\\approx22{,}3$ phút.",
+    "tags": ["mẫu số liệu ghép nhóm", "số trung bình"],
+    "figure": {"kind":"stats","chart":"hist","title":"Thời gian hoàn thành bài kiểm tra","xLabel":"Thời gian (phút)","yLabel":"Số học sinh","data":"[10; 15) [15; 20) [20; 25) [25; 30) [30; 35)\nSố học sinh: 4; 6; 10; 7; 3"}
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Có hai hộp bi. Chọn ngẫu nhiên một hộp rồi lấy ngẫu nhiên một viên bi từ hộp đó. Sơ đồ cây bên dưới cho biết xác suất chọn mỗi hộp và xác suất lấy được bi mỗi màu trong từng hộp. Biết viên bi lấy ra có màu đỏ, tính xác suất viên bi đó được lấy từ hộp I (làm tròn đến hàng phần trăm).",
+    "options": [{"key":"A","text":"0,25"},{"key":"B","text":"0,40"},{"key":"C","text":"0,78"},{"key":"D","text":"0,22"}],
+    "answer": "D",
+    "explanation": "$P(\\text{Đỏ})=0{,}4\\cdot0{,}25+0{,}6\\cdot0{,}6=0{,}46$. Theo công thức Bayes, $P(\\text{Hộp I}\\mid\\text{Đỏ})=\\dfrac{0{,}4\\cdot0{,}25}{0{,}46}=\\dfrac{0{,}10}{0{,}46}\\approx0{,}22$.",
+    "tags": ["sơ đồ cây", "công thức xác suất toàn phần", "công thức Bayes"],
+    "figure": {"kind":"probtree","text":"Hộp I: 0,4\n  Xanh: 0,75\n  Đỏ: 0,25\nHộp II: 0,6\n  Xanh: 0,4\n  Đỏ: 0,6"}
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Ở một địa phương, 2% dân số mắc một bệnh A. Một xét nghiệm cho kết quả dương tính với người mắc bệnh với xác suất 0,9 và cho kết quả dương tính với người không mắc bệnh với xác suất 0,05. Chọn ngẫu nhiên một người và thấy kết quả xét nghiệm dương tính. Xác suất người đó thực sự mắc bệnh A là bao nhiêu (làm tròn đến hàng phần trăm)?",
+    "options": [{"key":"A","text":"0,02"},{"key":"B","text":"0,90"},{"key":"C","text":"0,27"},{"key":"D","text":"0,50"}],
+    "answer": "C",
+    "explanation": "$P(\\text{dương})=0{,}02\\cdot0{,}9+0{,}98\\cdot0{,}05=0{,}018+0{,}049=0{,}067$. Theo công thức Bayes, $P(\\text{mắc}\\mid\\text{dương})=\\dfrac{0{,}018}{0{,}067}\\approx0{,}27$.",
+    "tags": ["công thức Bayes", "công thức xác suất toàn phần"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Xếp 5 bạn An, Bình, Cường, Dũng, Em thành một hàng ngang. Có bao nhiêu cách xếp sao cho An và Bình không đứng cạnh nhau?",
+    "options": [{"key":"A","text":"48"},{"key":"B","text":"72"},{"key":"C","text":"24"},{"key":"D","text":"96"}],
+    "answer": "B",
+    "explanation": "Số cách xếp 5 bạn là $5!=120$. Số cách xếp mà An và Bình đứng cạnh nhau là $2\\cdot4!=48$ (coi hai bạn là một khối, hai bạn đổi chỗ cho nhau). Đáp số: $120-48=72$.",
+    "tags": ["hoán vị", "xếp chỗ có ràng buộc", "phần bù"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Biểu đồ bên dưới thống kê số giờ tự học trong tuần của 20 học sinh. Tính độ lệch chuẩn của mẫu số liệu ghép nhóm này (làm tròn đến hàng phần trăm).",
+    "options": [{"key":"A","text":"10,91"},{"key":"B","text":"119,00"},{"key":"C","text":"11,20"},{"key":"D","text":"10,50"}],
+    "answer": "A",
+    "explanation": "Giá trị đại diện: 5; 15; 25; 35; 45. Số trung bình $\\bar x=24$. Phương sai $s^2=\\dfrac{1}{20}\\left(2\\cdot19^2+5\\cdot9^2+8\\cdot1^2+3\\cdot11^2+2\\cdot21^2\\right)=\\dfrac{2380}{20}=119$. Độ lệch chuẩn $s=\\sqrt{119}\\approx10{,}91$.",
+    "tags": ["mẫu số liệu ghép nhóm", "phương sai", "độ lệch chuẩn"],
+    "figure": {"kind":"stats","chart":"hist","title":"Số giờ tự học trong tuần","xLabel":"Số giờ","yLabel":"Số học sinh","data":"[0; 10) [10; 20) [20; 30) [30; 40) [40; 50)\nSố học sinh: 2; 5; 8; 3; 2"}
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Một nhà máy có ba máy cùng sản xuất một loại sản phẩm. Máy I sản xuất 50% số sản phẩm, máy II sản xuất 30%, máy III sản xuất 20%. Tỉ lệ phế phẩm của ba máy lần lượt là 1%, 2% và 3%. Lấy ngẫu nhiên một sản phẩm và thấy là phế phẩm. Xác suất sản phẩm đó do máy II sản xuất là bao nhiêu (làm tròn đến hàng phần trăm)?",
+    "options": [{"key":"A","text":"0,30"},{"key":"B","text":"0,50"},{"key":"C","text":"0,35"},{"key":"D","text":"0,20"}],
+    "answer": "C",
+    "explanation": "$P(\\text{phế})=0{,}5\\cdot0{,}01+0{,}3\\cdot0{,}02+0{,}2\\cdot0{,}03=0{,}017$. Theo công thức Bayes, $P(\\text{máy II}\\mid\\text{phế})=\\dfrac{0{,}3\\cdot0{,}02}{0{,}017}=\\dfrac{0{,}006}{0{,}017}\\approx0{,}35$.",
+    "tags": ["công thức Bayes", "công thức xác suất toàn phần"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Trong một trường THPT, 60% học sinh là nữ. Tỉ lệ học sinh nữ biết bơi là 40%, tỉ lệ học sinh nam biết bơi là 70%. Chọn ngẫu nhiên một học sinh của trường. Xét tính đúng, sai của các khẳng định sau:",
+    "options": [
+      {"key":"a","text":"Xác suất chọn được học sinh biết bơi là 0,52."},
+      {"key":"b","text":"Biết học sinh được chọn biết bơi, xác suất em đó là nữ là 0,4."},
+      {"key":"c","text":"Xác suất chọn được học sinh vừa là nữ vừa biết bơi là 0,24."},
+      {"key":"d","text":"Biết học sinh được chọn không biết bơi, xác suất em đó là nam là 0,5."}
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "a) Đúng: $0{,}6\\cdot0{,}4+0{,}4\\cdot0{,}7=0{,}52$. b) Sai: $P(\\text{nữ}\\mid\\text{bơi})=\\dfrac{0{,}24}{0{,}52}\\approx0{,}46$. c) Đúng: $P(\\text{nữ}\\cap\\text{bơi})=0{,}6\\cdot0{,}4=0{,}24$. d) Sai: $P(\\text{nam}\\mid\\text{không bơi})=\\dfrac{0{,}4\\cdot0{,}3}{0{,}48}=0{,}25$.",
+    "tags": ["xác suất toàn phần", "xác suất có điều kiện"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Một hộp chứa 6 viên bi xanh và 4 viên bi đỏ có kích thước như nhau. Lấy lần lượt không hoàn lại hai viên bi từ hộp. Xét tính đúng, sai của các khẳng định sau:",
+    "options": [
+      {"key":"a","text":"Xác suất viên bi lấy ra lần thứ nhất màu xanh bằng 0,6."},
+      {"key":"b","text":"Biết viên bi lấy ra lần thứ nhất màu xanh, xác suất viên bi lấy ra lần thứ hai màu đỏ bằng $\\dfrac{4}{9}$."},
+      {"key":"c","text":"Xác suất hai viên bi lấy ra cùng màu bằng 0,45."},
+      {"key":"d","text":"Xác suất viên bi lấy ra lần thứ hai màu xanh bằng 0,5."}
+    ],
+    "answer": "ĐĐSS",
+    "explanation": "a) Đúng: $\\dfrac{6}{10}=0{,}6$. b) Đúng: sau khi lấy một bi xanh còn 9 bi, trong đó có 4 bi đỏ, nên xác suất bằng $\\dfrac49$. c) Sai: $P(\\text{cùng màu})=\\dfrac{6}{10}\\cdot\\dfrac59+\\dfrac{4}{10}\\cdot\\dfrac39=\\dfrac{42}{90}=\\dfrac{7}{15}\\approx0{,}47$. d) Sai: $P(\\text{lần 2 xanh})=\\dfrac{6}{10}\\cdot\\dfrac59+\\dfrac{4}{10}\\cdot\\dfrac69=0{,}6$.",
+    "tags": ["xác suất có điều kiện", "lấy bi không hoàn lại"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Có hai hộp bi. Chọn ngẫu nhiên một hộp theo tỉ lệ ghi ở nhánh thứ nhất của sơ đồ cây bên dưới, rồi lấy ngẫu nhiên một viên bi từ hộp đó. Xét tính đúng, sai của các khẳng định sau:",
+    "options": [
+      {"key":"a","text":"Xác suất lấy được viên bi màu xanh là 0,48."},
+      {"key":"b","text":"Biết viên bi lấy ra có màu đỏ, xác suất viên bi đó thuộc hộp I là 0,46 (làm tròn đến hàng phần trăm)."},
+      {"key":"c","text":"Xác suất lấy được viên bi màu đỏ là 0,5."},
+      {"key":"d","text":"Biết viên bi lấy ra có màu xanh, xác suất viên bi đó thuộc hộp II là 0,875."}
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) Đúng: $0{,}3\\cdot0{,}2+0{,}7\\cdot0{,}6=0{,}48$. b) Đúng: $P(\\text{đỏ})=0{,}3\\cdot0{,}8+0{,}7\\cdot0{,}4=0{,}52$, $P(\\text{I}\\mid\\text{đỏ})=\\dfrac{0{,}24}{0{,}52}\\approx0{,}46$. c) Sai: $P(\\text{đỏ})=0{,}52$. d) Đúng: $P(\\text{II}\\mid\\text{xanh})=\\dfrac{0{,}7\\cdot0{,}6}{0{,}48}=0{,}875$.",
+    "tags": ["sơ đồ cây", "công thức xác suất toàn phần", "công thức Bayes"],
+    "figure": {"kind":"probtree","text":"Hộp I: 0,3\n  Xanh: 0,2\n  Đỏ: 0,8\nHộp II: 0,7\n  Xanh: 0,6\n  Đỏ: 0,4"}
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Một tổ có 6 học sinh nam và 4 học sinh nữ. Chọn ngẫu nhiên 3 học sinh từ tổ để tham gia một hoạt động. Xét tính đúng, sai của các khẳng định sau:",
+    "options": [
+      {"key":"a","text":"Số cách chọn 3 học sinh từ 10 học sinh là 120."},
+      {"key":"b","text":"Số cách chọn 3 học sinh có đúng 1 học sinh nữ là 80."},
+      {"key":"c","text":"Số cách chọn 3 học sinh có ít nhất 1 học sinh nữ là 100."},
+      {"key":"d","text":"Số cách chọn 3 học sinh toàn nam là 20."}
+    ],
+    "answer": "ĐSĐĐ",
+    "explanation": "a) Đúng: $\\mathrm{C}_{10}^3=120$. b) Sai: $\\mathrm{C}_4^1\\cdot\\mathrm{C}_6^2=4\\cdot15=60$. c) Đúng: $120-\\mathrm{C}_6^3=120-20=100$ (trừ trường hợp toàn nam). d) Đúng: $\\mathrm{C}_6^3=20$.",
+    "tags": ["tổ hợp", "chọn nhóm có ràng buộc", "phần bù"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Xếp 4 bạn nam và 3 bạn nữ ngồi thành một hàng ngang gồm 7 ghế. Xét tính đúng, sai của các khẳng định sau:",
+    "options": [
+      {"key":"a","text":"Có 5040 cách xếp khác nhau."},
+      {"key":"b","text":"Có 1440 cách xếp sao cho 3 bạn nữ luôn ngồi cạnh nhau."},
+      {"key":"c","text":"Có 2880 cách xếp sao cho không có hai bạn nữ nào ngồi cạnh nhau."},
+      {"key":"d","text":"Có 1440 cách xếp sao cho bạn nam A và bạn nữ B ngồi cạnh nhau."}
+    ],
+    "answer": "ĐSSĐ",
+    "explanation": "a) Đúng: $7!=5040$. b) Sai: coi 3 bạn nữ là một khối, có $5!\\cdot3!=720$ cách. c) Sai: xếp 4 nam có $4!=24$ cách, tạo 5 khe trống, chọn 3 khe để xếp nữ có $\\mathrm{C}_5^3=10$ cách, xếp nữ có $3!=6$ cách; tổng $24\\cdot10\\cdot6=1440$. d) Đúng: coi A và B là một khối, có $2\\cdot6!=1440$ cách.",
+    "tags": ["hoán vị", "xếp chỗ có ràng buộc", "phần bù"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Biểu đồ bên dưới thống kê điểm kiểm tra (thang điểm 10) của 20 học sinh. Xét tính đúng, sai của các khẳng định sau:",
+    "options": [
+      {"key":"a","text":"Điểm trung bình của 20 học sinh là 4,6."},
+      {"key":"b","text":"Trung vị của mẫu số liệu ghép nhóm này là 4,8."},
+      {"key":"c","text":"Khoảng biến thiên của mẫu số liệu ghép nhóm này là 10."},
+      {"key":"d","text":"Độ lệch chuẩn của mẫu số liệu ghép nhóm này là 3,84."}
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "Giá trị đại diện: 1; 3; 5; 7; 9. a) Đúng: $\\bar x=\\dfrac{2\\cdot1+5\\cdot3+9\\cdot5+3\\cdot7+1\\cdot9}{20}=\\dfrac{92}{20}=4{,}6$. b) Sai: $n/2=10$ thuộc nhóm [4; 6), $M_e=4+\\dfrac{10-7}{9}\\cdot2\\approx4{,}67$. c) Đúng: $10-0=10$. d) Sai: phương sai là $s^2=3{,}84$, còn độ lệch chuẩn là $s=\\sqrt{3{,}84}\\approx1{,}96$.",
+    "tags": ["mẫu số liệu ghép nhóm", "trung bình", "trung vị", "phương sai"],
+    "figure": {"kind":"stats","chart":"hist","title":"Điểm kiểm tra của 20 học sinh","xLabel":"Điểm","yLabel":"Số học sinh","data":"[0; 2) [2; 4) [4; 6) [6; 8) [8; 10)\nSố học sinh: 2; 5; 9; 3; 1"}
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Trong một hộp có 5 viên bi đỏ và 3 viên bi xanh có kích thước như nhau. Lấy ngẫu nhiên đồng thời 3 viên bi từ hộp. Xét tính đúng, sai của các khẳng định sau:",
+    "options": [
+      {"key":"a","text":"Số cách lấy 3 viên bi từ hộp là 56."},
+      {"key":"b","text":"Xác suất lấy được đúng 2 viên bi đỏ là 0,45."},
+      {"key":"c","text":"Xác suất lấy được 3 viên bi cùng màu là $\\dfrac{11}{56}$."},
+      {"key":"d","text":"Xác suất lấy được ít nhất 1 viên bi xanh là $\\dfrac{23}{28}$."}
+    ],
+    "answer": "ĐSĐĐ",
+    "explanation": "a) Đúng: $\\mathrm{C}_8^3=56$. b) Sai: $\\dfrac{\\mathrm{C}_5^2\\cdot\\mathrm{C}_3^1}{56}=\\dfrac{30}{56}=\\dfrac{15}{28}\\approx0{,}54$. c) Đúng: $\\dfrac{\\mathrm{C}_5^3+\\mathrm{C}_3^3}{56}=\\dfrac{11}{56}$. d) Đúng: $1-\\dfrac{\\mathrm{C}_5^3}{56}=\\dfrac{46}{56}=\\dfrac{23}{28}$.",
+    "tags": ["tổ hợp", "xác suất cổ điển", "biến cố đối"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Cho $P(A)=0{,}6$ và $P(B\\mid A)=0{,}25$. Tính $P(A\\cap B)$. Ghi đáp án dưới dạng số thập phân.",
+    "answer": "0,15",
+    "explanation": "$P(A\\cap B)=P(A)\\cdot P(B\\mid A)=0{,}6\\cdot0{,}25=0{,}15$.",
+    "tags": ["xác suất có điều kiện", "công thức nhân xác suất"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Từ các chữ số 1, 2, 3, 4, 5, 6 có thể lập được bao nhiêu số tự nhiên gồm 3 chữ số đôi một khác nhau?",
+    "answer": "120",
+    "explanation": "Số cách lập là chỉnh hợp chập 3 của 6 phần tử: $A_6^3=6\\cdot5\\cdot4=120$.",
+    "tags": ["chỉnh hợp", "số tự nhiên"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Biểu đồ bên dưới thống kê số cuốn sách mỗi học sinh đọc trong một học kỳ của 40 học sinh. Tính khoảng tứ phân vị của mẫu số liệu ghép nhóm này (làm tròn đến hàng phần trăm, ghi đáp án dưới dạng số thập phân).",
+    "answer": "9,58",
+    "explanation": "$n=40$. Nhóm chứa $Q_1$ là [5; 10) vì cỡ mẫu $n/4=10$ nằm giữa 4 và 12: $Q_1=5+\\dfrac{10-4}{8}\\cdot5=8{,}75$. Nhóm chứa $Q_3$ là [15; 20) vì $3n/4=30$ nằm giữa 24 và 33: $Q_3=15+\\dfrac{30-24}{9}\\cdot5\\approx18{,}33$. Khoảng tứ phân vị $\\Delta_Q=18{,}33-8{,}75\\approx9{,}58$.",
+    "tags": ["mẫu số liệu ghép nhóm", "tứ phân vị", "khoảng tứ phân vị"],
+    "figure": {"kind":"stats","chart":"hist","title":"Số sách đọc trong học kỳ","xLabel":"Số cuốn sách","yLabel":"Số học sinh","data":"[0; 5) [5; 10) [10; 15) [15; 20) [20; 25)\nSố học sinh: 4; 8; 12; 9; 7"}
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Ở một trường, 30% học sinh chơi bóng đá. Trong số học sinh chơi bóng đá, 20% là nữ; trong số học sinh không chơi bóng đá, 50% là nữ. Chọn ngẫu nhiên một học sinh nữ của trường. Tính xác suất em đó chơi bóng đá (làm tròn đến hàng phần trăm, ghi đáp án dưới dạng số thập phân).",
+    "answer": "0,15",
+    "explanation": "$P(\\text{nữ})=0{,}3\\cdot0{,}2+0{,}7\\cdot0{,}5=0{,}41$. $P(\\text{bóng đá}\\mid\\text{nữ})=\\dfrac{0{,}3\\cdot0{,}2}{0{,}41}=\\dfrac{0{,}06}{0{,}41}\\approx0{,}15$.",
+    "tags": ["xác suất toàn phần", "xác suất có điều kiện"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Xếp 5 bạn An, Bình, Cường, Dũng, Em vào một dãy 5 ghế kê thành hàng ngang. Hỏi có bao nhiêu cách xếp sao cho An ngồi ghế đầu tiên và Bình không ngồi ghế cuối cùng?",
+    "answer": "18",
+    "explanation": "An ngồi ghế thứ nhất (1 cách). Bình chọn một trong ba ghế 2, 3, 4 (3 cách). Ba bạn còn lại xếp vào ba ghế còn trống (kể cả ghế cuối) có $3!=6$ cách. Đáp số $3\\cdot6=18$.",
+    "tags": ["hoán vị", "xếp chỗ có ràng buộc"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Gieo hai lần liên tiếp một con xúc xắc cân đối và đồng chất. Biết tổng số chấm xuất hiện trên hai lần gieo lớn hơn 8, tính xác suất để lần gieo thứ nhất xuất hiện mặt 6 chấm. Ghi đáp án dưới dạng số thập phân.",
+    "answer": "0,4",
+    "explanation": "Các kết quả có tổng lớn hơn 8: tổng 9 (4 cách), 10 (3 cách), 11 (2 cách), 12 (1 cách), tổng cộng 10 kết quả. Trong đó lần 1 ra mặt 6 là (6;3), (6;4), (6;5), (6;6): 4 kết quả. Xác suất cần tìm là $\\dfrac{4}{10}=0{,}4$.",
+    "tags": ["xác suất có điều kiện", "xác suất cổ điển"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Một lớp có 9 học sinh. Cần chọn một ban cán sự gồm 1 lớp trưởng, 1 lớp phó và 2 thư ký (hai thư ký có vai trò như nhau). Hỏi có bao nhiêu cách chọn ban cán sự?",
+    "answer": "1512",
+    "explanation": "Lớp trưởng: 9 cách; lớp phó: 8 cách; hai thư ký là một tổ hợp chập 2 của 7 học sinh còn lại: $\\mathrm{C}_7^2=21$ cách. Theo quy tắc nhân: $9\\cdot8\\cdot21=1512$.",
+    "tags": ["chỉnh hợp", "tổ hợp", "bài đếm"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Một xạ thủ bắn 3 viên đạn độc lập vào bia, xác suất bắn trúng mỗi viên là 0,8. Biết xạ thủ bắn trúng đúng 2 viên, tính xác suất viên đạn đầu tiên bắn trúng (làm tròn đến hàng phần trăm, ghi đáp án dưới dạng số thập phân).",
+    "answer": "0,67",
+    "explanation": "Có 3 kết quả trúng đúng 2 viên (TTK, TKT, KTT), mỗi kết quả có xác suất $0{,}8^2\\cdot0{,}2=0{,}128$; tổng $0{,}384$. Trong đó viên đầu trúng ở TTK và TKT, có tổng xác suất $0{,}256$. Xác suất cần tìm $=\\dfrac{0{,}256}{0{,}384}=\\dfrac23\\approx0{,}67$.",
+    "tags": ["xác suất có điều kiện", "sơ đồ cây", "lược đồ Bernoulli"]
+  },
+  {
+    "grades": ["Lớp 12"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Mỗi ngày bạn An chọn ngẫu nhiên một trong hai tuyến đường đến trường theo tỉ lệ ghi ở nhánh thứ nhất của sơ đồ cây bên dưới. Xác suất đến trường đúng giờ trên mỗi tuyến được ghi ở nhánh thứ hai. Tính xác suất ngày hôm đó An đến trường đúng giờ (ghi đáp án dưới dạng số thập phân).",
+    "answer": "0,82",
+    "explanation": "$P(\\text{đúng giờ})=0{,}6\\cdot0{,}9+0{,}4\\cdot0{,}7=0{,}54+0{,}28=0{,}82$.",
+    "tags": ["sơ đồ cây", "công thức xác suất toàn phần"],
+    "figure": {"kind":"probtree","text":"Tuyến A: 0,6\n  Đúng giờ: 0,9\n  Trễ: 0,1\nTuyến B: 0,4\n  Đúng giờ: 0,7\n  Trễ: 0,3"}
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Có bao nhiêu số tự nhiên gồm 4 chữ số đôi một khác nhau và chia hết cho 5?",
+    "answer": "952",
+    "explanation": "Gọi số là $\\overline{abcd}$ với $d\\in\\{0;5\\}$. Với $d=0$: chọn có thứ tự $a,b,c$ từ 9 chữ số $1,\\dots,9$: $A_9^3=504$ cách. Với $d=5$: $a$ có 8 cách (khác 0 và 5), $b,c$ chọn có thứ tự từ 8 chữ số còn lại: $A_8^2=56$ cách, nên có $8\\cdot56=448$ số. Đáp số $504+448=952$.",
+    "tags": ["chỉnh hợp", "số tự nhiên", "chia hết"]
+  }
+]

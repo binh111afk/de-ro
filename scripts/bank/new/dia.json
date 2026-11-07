@@ -1,0 +1,889 @@
+[
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Địa lí",
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Nước Việt Nam nằm ở vị trí nào trên bán đảo Đông Dương?",
+    "options": [
+      {
+        "key": "A",
+        "text": "rìa phía tây"
+      },
+      {
+        "key": "B",
+        "text": "trung tâm"
+      },
+      {
+        "key": "C",
+        "text": "rìa phía đông"
+      },
+      {
+        "key": "D",
+        "text": "rìa phía bắc"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Việt Nam nằm ở rìa phía đông bán đảo Đông Dương, gần trung tâm của khu vực Đông Nam Á.",
+    "tags": [
+      "vị trí địa lí"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Địa lí",
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Vị trí địa lí nước ta có ý nghĩa lớn nhất đối với:",
+    "options": [
+      {
+        "key": "A",
+        "text": "giao lưu kinh tế quốc tế trên đường biển và đường hàng không"
+      },
+      {
+        "key": "B",
+        "text": "cô lập hoàn toàn khỏi thế giới"
+      },
+      {
+        "key": "C",
+        "text": "không tiếp nhận ảnh hưởng của các quốc gia khác"
+      },
+      {
+        "key": "D",
+        "text": "làm giảm các hoạt động thương mại"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Vị trí trên trục giao thông quốc tế (biển, hàng không, đường bộ) giúp nước ta trở thành cửa ngõ giao lưu khu vực và thế giới.",
+    "tags": [
+      "vị trí địa lí"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Địa lí",
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Địa hình nước ta chủ yếu là đồi núi, chiếm khoảng bao nhiêu diện tích cả nước?",
+    "options": [
+      {
+        "key": "A",
+        "text": "1/2"
+      },
+      {
+        "key": "B",
+        "text": "2/3"
+      },
+      {
+        "key": "C",
+        "text": "4/5"
+      },
+      {
+        "key": "D",
+        "text": "3/4"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Đồi núi chiếm khoảng 3/4 diện tích, đồng bằng chỉ chiếm khoảng 1/4.",
+    "tags": [
+      "địa hình"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Địa lí",
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Đặc điểm nổi bật của khí hậu Việt Nam là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "ôn đới hải dương"
+      },
+      {
+        "key": "B",
+        "text": "nhiệt đới ẩm gió mùa"
+      },
+      {
+        "key": "C",
+        "text": "á nhiệt đới lục địa"
+      },
+      {
+        "key": "D",
+        "text": "xích đạo ẩm"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Khí hậu Việt Nam mang tính chất nhiệt đới, ẩm, gió mùa và phân hóa theo địa hình.",
+    "tags": [
+      "khí hậu"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Địa lí",
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Sông lớn nhất Đông Nam Á, đổ ra biển qua vùng Đồng bằng sông Cửu Long của nước ta là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "sông Hồng"
+      },
+      {
+        "key": "B",
+        "text": "sông Đồng Nai"
+      },
+      {
+        "key": "C",
+        "text": "sông Mã"
+      },
+      {
+        "key": "D",
+        "text": "sông Mê Kông"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Sông Mê Kông (phần chảy qua nước ta gọi là sông Cửu Long) là sông lớn nhất Đông Nam Á.",
+    "tags": [
+      "sông ngòi"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Địa lí",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Bảng số liệu bên dưới cho biết dân số Việt Nam qua các năm. Dân số năm 2022 so với năm 1975 đã tăng lên khoảng:",
+    "options": [
+      {
+        "key": "A",
+        "text": "1,5 lần"
+      },
+      {
+        "key": "B",
+        "text": "2,5 lần"
+      },
+      {
+        "key": "C",
+        "text": "2,1 lần"
+      },
+      {
+        "key": "D",
+        "text": "3,0 lần"
+      }
+    ],
+    "answer": "C",
+    "explanation": "$\\dfrac{100{,}3}{47{,}4}\\approx 2{,}1$ lần.",
+    "tags": [
+      "dân số",
+      "bảng số liệu"
+    ],
+    "figure": {
+      "kind": "stats",
+      "chart": "table",
+      "title": "Dân số Việt Nam qua các năm",
+      "data": "1975; 1989; 2002; 2009; 2022\nDân số (triệu người): 47,4; 64,4; 79,7; 85,8; 100,3"
+    }
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Địa lí",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Tỉ lệ dân số thành thị trong cơ cấu dân số nước ta hiện nay có xu hướng:",
+    "options": [
+      {
+        "key": "A",
+        "text": "tăng dần"
+      },
+      {
+        "key": "B",
+        "text": "giảm dần"
+      },
+      {
+        "key": "C",
+        "text": "không đổi"
+      },
+      {
+        "key": "D",
+        "text": "biến đổi thất thường"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Quá trình đô thị hóa làm tỉ lệ dân thành thị tăng dần qua các năm.",
+    "tags": [
+      "dân số",
+      "đô thị hóa"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Địa lí",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Biểu đồ bên dưới cho thấy cơ cấu GDP theo khu vực kinh tế năm 2022 (NLTS: nông – lâm – thủy sản; CN-XD: công nghiệp – xây dựng; Thuế: thuế sản phẩm trừ trợ cấp). Khu vực chiếm tỉ trọng lớn nhất là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "nông – lâm – thủy sản"
+      },
+      {
+        "key": "B",
+        "text": "dịch vụ"
+      },
+      {
+        "key": "C",
+        "text": "công nghiệp – xây dựng"
+      },
+      {
+        "key": "D",
+        "text": "thuế sản phẩm trừ trợ cấp"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Dịch vụ chiếm 41,3% — lớn nhất trong biểu đồ.",
+    "tags": [
+      "cơ cấu kinh tế",
+      "biểu đồ"
+    ],
+    "figure": {
+      "kind": "stats",
+      "chart": "bar",
+      "title": "Cơ cấu GDP theo khu vực kinh tế năm 2022",
+      "xLabel": "Khu vực",
+      "yLabel": "Tỉ trọng (%)",
+      "data": "NLTS; CN-XD; Dịch vụ; Thuế\nTỉ trọng (%): 11,9; 38,3; 41,3; 8,5"
+    }
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Địa lí",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Trung tâm công nghiệp lớn nhất của nước ta hiện nay là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "Đà Nẵng"
+      },
+      {
+        "key": "B",
+        "text": "Hải Phòng"
+      },
+      {
+        "key": "C",
+        "text": "Cần Thơ"
+      },
+      {
+        "key": "D",
+        "text": "TP. Hồ Chí Minh"
+      }
+    ],
+    "answer": "D",
+    "explanation": "TP. Hồ Chí Minh là trung tâm công nghiệp lớn nhất cả nước với nhiều ngành nghề và doanh nghiệp.",
+    "tags": [
+      "công nghiệp"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Địa lí",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Nhóm mặt hàng xuất khẩu chủ lực của Việt Nam hiện nay gồm:",
+    "options": [
+      {
+        "key": "A",
+        "text": "vàng, bạc"
+      },
+      {
+        "key": "B",
+        "text": "đồng, thiếc"
+      },
+      {
+        "key": "C",
+        "text": "gạo, dệt may, điện tử"
+      },
+      {
+        "key": "D",
+        "text": "đá quý thô"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Nhóm nông sản (gạo, cà phê...), dệt may, da giày, điện tử... là các mặt hàng xuất khẩu chủ lực.",
+    "tags": [
+      "xuất khẩu"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Địa lí",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Vịnh Hạ Long – Di sản thiên nhiên thế giới – thuộc tỉnh nào?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Quảng Ninh"
+      },
+      {
+        "key": "B",
+        "text": "Hải Phòng"
+      },
+      {
+        "key": "C",
+        "text": "Thừa Thiên – Huế"
+      },
+      {
+        "key": "D",
+        "text": "Khánh Hòa"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Vịnh Hạ Long thuộc tỉnh Quảng Ninh, được UNESCO công nhận Di sản thiên nhiên thế giới.",
+    "tags": [
+      "du lịch"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Địa lí",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Bão, lũ thường xuyên xảy ra ở các tỉnh miền Trung nước ta chủ yếu vì:",
+    "options": [
+      {
+        "key": "A",
+        "text": "vùng này quá xa biển"
+      },
+      {
+        "key": "B",
+        "text": "khí hậu ôn đới lạnh"
+      },
+      {
+        "key": "C",
+        "text": "địa hình bằng phẳng, rộng lớn"
+      },
+      {
+        "key": "D",
+        "text": "nằm trong đai bão Thái Bình Dương và địa hình hẹp ngang, nhiều dãy núi đón gió"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Miền Trung nằm trên đường di chuyển của bão từ biển Đông, địa hình hẹp ngang khiến thiên tai có mức độ dữ dội.",
+    "tags": [
+      "thiên tai"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Địa lí",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Biểu đồ đường bên dưới cho biết tốc độ tăng GDP Việt Nam một số năm gần đây (%). Năm có tốc độ tăng GDP cao nhất là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "2020"
+      },
+      {
+        "key": "B",
+        "text": "2022"
+      },
+      {
+        "key": "C",
+        "text": "2021"
+      },
+      {
+        "key": "D",
+        "text": "2019"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Năm 2022 đạt 8,02% — cao nhất trong biểu đồ (2020 chỉ 2,91%, 2021 2,58%).",
+    "tags": [
+      "kinh tế",
+      "biểu đồ đường"
+    ],
+    "figure": {
+      "kind": "stats",
+      "chart": "line",
+      "title": "Tốc độ tăng GDP Việt Nam (%)",
+      "xLabel": "Năm",
+      "yLabel": "Tốc độ tăng (%)",
+      "data": "2019; 2020; 2021; 2022\nTốc độ tăng (%): 7,02; 2,91; 2,58; 8,02"
+    }
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Địa lí",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Xu hướng chuyển dịch cơ cấu kinh tế của Việt Nam hiện nay là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "tỉ trọng nông – lâm – thủy sản tăng dần"
+      },
+      {
+        "key": "B",
+        "text": "tỉ trọng dịch vụ giảm dần"
+      },
+      {
+        "key": "C",
+        "text": "tỉ trọng nông – lâm – thủy sản giảm, dịch vụ và công nghiệp tăng"
+      },
+      {
+        "key": "D",
+        "text": "cơ cấu kinh tế giữ nguyên không đổi"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Công nghiệp hóa – hiện đại hóa làm giảm tỉ trọng nông nghiệp, tăng dịch vụ và công nghiệp.",
+    "tags": [
+      "cơ cấu kinh tế"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Địa lí",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Nguyên nhân chính làm tốc độ tăng dân số của Việt Nam chậm lại trong những năm gần đây là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "chiến tranh"
+      },
+      {
+        "key": "B",
+        "text": "dịch bệnh kéo dài"
+      },
+      {
+        "key": "C",
+        "text": "chính sách kế hoạch hóa gia đình và mức sống, trình độ dân trí nâng cao"
+      },
+      {
+        "key": "D",
+        "text": "di cư quốc tế quy mô lớn"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Chính sách kế hoạch hóa gia đình cùng với sự nâng cao mức sống, giáo dục làm tỉ suất sinh giảm.",
+    "tags": [
+      "dân số"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Địa lí",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Biểu đồ tròn bên dưới cho biết cơ cấu lao động theo khu vực kinh tế năm 2022. Khu vực chiếm tỉ trọng nhỏ nhất là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "nông – lâm – thủy sản"
+      },
+      {
+        "key": "B",
+        "text": "dịch vụ"
+      },
+      {
+        "key": "C",
+        "text": "công nghiệp – xây dựng"
+      },
+      {
+        "key": "D",
+        "text": "ba khu vực bằng nhau"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Lao động nông – lâm – thủy sản chiếm 27,4% — nhỏ nhất (dịch vụ 39,9%, công nghiệp – xây dựng 32,7%).",
+    "tags": [
+      "lao động",
+      "biểu đồ tròn"
+    ],
+    "figure": {
+      "kind": "stats",
+      "chart": "pie",
+      "title": "Cơ cấu lao động theo khu vực kinh tế năm 2022",
+      "data": "Nông-lâm-thủy sản; Công nghiệp-xây dựng; Dịch vụ\nTỉ lệ (%): 27,4; 32,7; 39,9"
+    }
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Địa lí",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Chiều dài tuyến đường sắt Bắc – Nam (Hà Nội – Sài Gòn) là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "172 km"
+      },
+      {
+        "key": "B",
+        "text": "726 km"
+      },
+      {
+        "key": "C",
+        "text": "1026 km"
+      },
+      {
+        "key": "D",
+        "text": "1726 km"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Đường sắt Bắc – Nam dài khoảng 1726 km, chiếm gần một nửa tổng chiều dài đường sắt cả nước.",
+    "tags": [
+      "giao thông"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Địa lí",
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Bảng số liệu bên dưới cho biết giá trị xuất khẩu của Việt Nam qua hai năm. Tốc độ tăng giá trị xuất khẩu năm 2022 so với 2021 (làm tròn một chữ số thập phân) là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "5,6%"
+      },
+      {
+        "key": "B",
+        "text": "10,6%"
+      },
+      {
+        "key": "C",
+        "text": "15,6%"
+      },
+      {
+        "key": "D",
+        "text": "20,6%"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$\\dfrac{371{,}85-336{,}3}{336{,}3}\\cdot 100\\%\\approx 10{,}6\\%$.",
+    "tags": [
+      "xuất khẩu",
+      "bảng số liệu"
+    ],
+    "figure": {
+      "kind": "stats",
+      "chart": "table",
+      "title": "Giá trị xuất khẩu của Việt Nam (tỉ USD)",
+      "data": "2021; 2022\nGiá trị xuất khẩu (tỉ USD): 336,3; 371,85"
+    }
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Địa lí",
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Đọc đoạn tư liệu: \"Việt Nam nằm ở rìa phía đông của bán đảo Đông Dương, gần trung tâm của khu vực Đông Nam Á; có bờ biển dài và nhiều cảng biển lớn, nằm trên trục giao thông quốc tế giữa Thái Bình Dương và Ấn Độ Dương.\" (Bài trích).\n\nXét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Nước ta nằm ở rìa phía đông của bán đảo Đông Dương."
+      },
+      {
+        "key": "b",
+        "text": "Nước ta không tiếp giáp với biển."
+      },
+      {
+        "key": "c",
+        "text": "Vị trí địa lí thuận lợi cho giao lưu kinh tế quốc tế."
+      },
+      {
+        "key": "d",
+        "text": "Vị trí địa lí làm nước ta hoàn toàn không chịu ảnh hưởng của thời tiết, khí hậu các quốc gia lân cận."
+      }
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "a) Đúng. b) Sai: bờ biển dài hơn 3260 km. c) Đúng: nằm trên trục giao thông quốc tế. d) Sai: nằm trong khu vực có gió mùa, chịu ảnh hưởng lớn của khí hậu khu vực.",
+    "tags": [
+      "vị trí địa lí",
+      "tư liệu"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Địa lí",
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Bảng số liệu bên dưới cho biết dân số Việt Nam qua các năm. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Dân số năm 2022 đã vượt 100 triệu người."
+      },
+      {
+        "key": "b",
+        "text": "Tốc độ tăng dân số các giai đoạn sau (2002 – 2022) nhanh hơn giai đoạn trước (1975 – 2002)."
+      },
+      {
+        "key": "c",
+        "text": "Nếu phân bố đều dân số năm 2022 trên diện tích 331,2 nghìn km² thì mật độ dân số khoảng 300 người/km²."
+      },
+      {
+        "key": "d",
+        "text": "Dân số năm 2022 hơn năm 1975 khoảng 2,1 lần."
+      }
+    ],
+    "answer": "ĐSĐĐ",
+    "explanation": "a) Đúng: 100,3 triệu. b) Sai: 1975–2002 tăng khoảng 32 triệu trong 27 năm, 2002–2022 tăng khoảng 21 triệu trong 20 năm. c) Đúng: $100{,}3cdot10^6/331{,}2cdot10^3approx303$ người/km², khoảng 300. d) Đúng: $100{,}3/47{,}4approx2{,}1$.",
+    "tags": [
+      "dân số",
+      "bảng số liệu"
+    ],
+    "figure": {
+      "kind": "stats",
+      "chart": "table",
+      "title": "Dân số Việt Nam qua các năm",
+      "data": "1975; 1989; 2002; 2009; 2022\nDân số (triệu người): 47,4; 64,4; 79,7; 85,8; 100,3"
+    }
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Địa lí",
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Đọc đoạn tư liệu: \"Khí hậu Việt Nam mang tính chất nhiệt đới ẩm gió mùa, nhiệt độ trung bình năm cao, lượng mưa lớn và phân hóa theo mùa, theo vùng.\" (Bài trích).\n\nXét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Nền nhiệt đới ẩm gió mùa là đặc điểm nổi bật của khí hậu nước ta."
+      },
+      {
+        "key": "b",
+        "text": "Nhiệt độ trung bình năm của cả nước trên 20°C."
+      },
+      {
+        "key": "c",
+        "text": "Cả nước không có mùa đông lạnh."
+      },
+      {
+        "key": "d",
+        "text": "Gió mùa có ảnh hưởng lớn đến thời tiết, khí hậu và sản xuất nông nghiệp."
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) Đúng. b) Đúng. c) Sai: miền Bắc có mùa đông lạnh do gió mùa Đông Bắc. d) Đúng.",
+    "tags": [
+      "khí hậu",
+      "tư liệu"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Địa lí",
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Biểu đồ bên dưới cho biết cơ cấu GDP theo khu vực kinh tế năm 2022 (NLTS: nông – lâm – thủy sản; CN-XD: công nghiệp – xây dựng; Thuế: thuế sản phẩm trừ trợ cấp). Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Khu vực dịch vụ chiếm tỉ trọng lớn nhất trong GDP."
+      },
+      {
+        "key": "b",
+        "text": "Khu vực công nghiệp – xây dựng chiếm 38,3% GDP."
+      },
+      {
+        "key": "c",
+        "text": "Khu vực nông – lâm – thủy sản chiếm hơn một nửa GDP."
+      },
+      {
+        "key": "d",
+        "text": "Cơ cấu kinh tế đang chuyển dịch theo hướng công nghiệp hóa – hiện đại hóa."
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) Đúng: 41,3%. b) Đúng. c) Sai: chỉ chiếm 11,9%. d) Đúng.",
+    "tags": [
+      "cơ cấu kinh tế",
+      "biểu đồ"
+    ],
+    "figure": {
+      "kind": "stats",
+      "chart": "bar",
+      "title": "Cơ cấu GDP theo khu vực kinh tế năm 2022",
+      "xLabel": "Khu vực",
+      "yLabel": "Tỉ trọng (%)",
+      "data": "NLTS; CN-XD; Dịch vụ; Thuế\nTỉ trọng (%): 11,9; 38,3; 41,3; 8,5"
+    }
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Địa lí",
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Đọc đoạn tư liệu: \"Biến đổi khí hậu làm mực nước biển dâng, thiên tai ngày càng dữ dội, ảnh hưởng nghiêm trọng đến các đồng bằng ven biển của Việt Nam.\" (Bài trích).\n\nXét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Biến đổi khí hậu ảnh hưởng lớn đến vùng đồng bằng ven biển và đồng bằng sông Cửu Long."
+      },
+      {
+        "key": "b",
+        "text": "Nguyên nhân chủ yếu của biến đổi khí hậu hiện nay là hoạt động tự nhiên thuần túy, không liên quan con người."
+      },
+      {
+        "key": "c",
+        "text": "Việt Nam nằm ngoài nhóm quốc gia bị ảnh hưởng nặng của biến đổi khí hậu."
+      },
+      {
+        "key": "d",
+        "text": "Cần giảm phát thải khí nhà kính, thích ứng và tăng cường hợp tác quốc tế để ứng phó."
+      }
+    ],
+    "answer": "ĐSSĐ",
+    "explanation": "a) Đúng. b) Sai: nguyên nhân chủ yếu là hoạt động phát thải khí nhà kính của con người. c) Sai: Việt Nam nằm trong nhóm bị ảnh hưởng nặng. d) Đúng.",
+    "tags": [
+      "biến đổi khí hậu",
+      "tư liệu"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Địa lí",
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Đọc đoạn tư liệu: \"Định hướng phát triển công nghiệp của Việt Nam là tăng tỉ trọng công nghiệp chế biến, chế tạo; hạn chế khai thác và xuất khẩu khoáng sản thô; phát triển kinh tế gắn với bảo vệ môi trường.\" (Bài trích).\n\nXét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Định hướng là tăng tỉ trọng công nghiệp chế biến, chế tạo."
+      },
+      {
+        "key": "b",
+        "text": "Định hướng là hạn chế khai thác và xuất khẩu khoáng sản thô."
+      },
+      {
+        "key": "c",
+        "text": "Công nghiệp không cần phát triển vì cần ưu tiên tuyệt đối nông nghiệp."
+      },
+      {
+        "key": "d",
+        "text": "Phát triển công nghiệp có thể không quan tâm đến vấn đề môi trường."
+      }
+    ],
+    "answer": "ĐĐSS",
+    "explanation": "a) Đúng. b) Đúng. c) Sai: công nghiệp là động lực quan trọng của nền kinh tế. d) Sai: phát triển kinh tế – công nghiệp phải gắn với bảo vệ môi trường.",
+    "tags": [
+      "công nghiệp hóa",
+      "tư liệu"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Địa lí",
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Dân số Việt Nam năm 2022 khoảng 100,3 triệu người với diện tích 331,2 nghìn km². Mật độ dân số trung bình, làm tròn đến hàng đơn vị, là bao nhiêu người/km²?",
+    "answer": "303",
+    "explanation": "$\\dfrac{100{,}3\\cdot 10^{6}}{331{,}2\\cdot 10^{3}}\\approx 303$ người/km².",
+    "tags": [
+      "dân số",
+      "tính toán"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Địa lí",
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Tỉ lệ dân số thành thị của Việt Nam năm 2022 là 38,1%. Vậy tỉ lệ dân số nông thôn là bao nhiêu phần trăm?",
+    "answer": "61,9",
+    "explanation": "$100\\%-38{,}1\\%=61{,}9\\%$.",
+    "tags": [
+      "dân số",
+      "tính toán"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Địa lí",
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Độ dài đường bờ biển của Việt Nam (làm tròn đến hàng chục kilômét) là bao nhiêu kilômét?",
+    "answer": "3260",
+    "explanation": "Bờ biển Việt Nam dài khoảng 3260 km.",
+    "tags": [
+      "vị trí địa lí"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Địa lí",
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Năm 2022, giá trị xuất khẩu của Việt Nam đạt 371,85 tỉ USD, nhập khẩu đạt 360,95 tỉ USD. Giá trị xuất siêu của Việt Nam (làm tròn một chữ số thập phân) là bao nhiêu tỉ USD?",
+    "answer": "10,9",
+    "explanation": "$371{,}85-360{,}95=10{,}9$ tỉ USD.",
+    "tags": [
+      "xuất nhập khẩu",
+      "tính toán"
+    ]
+  }
+]

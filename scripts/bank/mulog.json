@@ -1,0 +1,285 @@
+[
+  {
+    "grades": ["Lớp 11"],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Nghiệm của phương trình $2^{x-1}=8$ là",
+    "options": [{"key":"A","text":"$x=2$"},{"key":"B","text":"$x=3$"},{"key":"C","text":"$x=4$"},{"key":"D","text":"$x=5$"}],
+    "answer": "C",
+    "explanation": "Vì $8=2^3$ nên $2^{x-1}=2^3$, suy ra $x-1=3$, tức $x=4$.",
+    "tags": ["Mũ - Logarit", "phương trình mũ"]
+  },
+  {
+    "grades": ["Lớp 11"],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Ông An gửi tiết kiệm 100 triệu đồng với lãi suất 7% một năm, tiền lãi được nhập vào vốn sau mỗi năm (lãi kép). Sau đúng 3 năm, khi không rút lãi và không gửi thêm, tổng số tiền (gốc và lãi) ông An nhận được gần nhất với số nào sau đây?",
+    "options": [{"key":"A","text":"121,00 triệu đồng"},{"key":"B","text":"122,50 triệu đồng"},{"key":"C","text":"114,49 triệu đồng"},{"key":"D","text":"130,00 triệu đồng"}],
+    "answer": "B",
+    "explanation": "Số tiền sau $n$ năm là $100(1+0{,}07)^n$. Với $n=3$ ta có $100\\cdot1{,}07^3\\approx122{,}50$ triệu đồng. Phương án A là tính lãi đơn, C là chỉ tính đến năm thứ 2.",
+    "tags": ["Mũ - Logarit", "lãi suất kép"]
+  },
+  {
+    "grades": ["Lớp 11"],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Cho hàm số $y=x^3-3x+1$ có đồ thị $(C)$. Có bao nhiêu tiếp tuyến của $(C)$ đi qua điểm $A(0;3)$?",
+    "options": [{"key":"A","text":"1"},{"key":"B","text":"0"},{"key":"C","text":"2"},{"key":"D","text":"3"}],
+    "answer": "A",
+    "explanation": "Tiếp tuyến tại điểm có hoành độ $x_0$ là $y=(3x_0^2-3)(x-x_0)+x_0^3-3x_0+1$. Thay $x=0$, $y=3$ ta được $-2x_0^3+1=3$, tức $x_0^3=-1$, nên $x_0=-1$ là nghiệm duy nhất. Tiếp tuyến khi đó là $y=3$. Vậy chỉ có 1 tiếp tuyến.",
+    "tags": ["Đạo hàm", "tiếp tuyến"]
+  },
+  {
+    "grades": ["Lớp 11"],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Một rạp hát có 20 hàng ghế. Hàng đầu tiên có 15 ghế, mỗi hàng sau có nhiều hơn hàng liền trước 2 ghế. Tổng số ghế của rạp là",
+    "options": [{"key":"A","text":"620"},{"key":"B","text":"640"},{"key":"C","text":"710"},{"key":"D","text":"680"}],
+    "answer": "D",
+    "explanation": "Số ghế các hàng lập thành cấp số cộng có $u_1=15$, $d=2$, $n=20$. Tổng $S=\\frac{20}{2}(2\\cdot15+19\\cdot2)=680$.",
+    "tags": ["Cấp số cộng", "bài toán thực tế"]
+  },
+  {
+    "grades": ["Lớp 11"],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Ông Bình vay ngân hàng 500 triệu đồng với lãi suất 1% mỗi tháng. Ông trả nợ theo hình thức trả góp: mỗi tháng trả số tiền bằng nhau vào cuối tháng và trả hết nợ sau đúng 12 tháng. Số tiền ông Bình phải trả mỗi tháng gần nhất với số nào sau đây?",
+    "options": [{"key":"A","text":"44,42 triệu đồng"},{"key":"B","text":"41,67 triệu đồng"},{"key":"C","text":"45,00 triệu đồng"},{"key":"D","text":"46,11 triệu đồng"}],
+    "answer": "A",
+    "explanation": "Gọi $A=500$, $r=0{,}01$, $n=12$. Số tiền trả mỗi tháng là $m=\\frac{A\\,r(1+r)^n}{(1+r)^n-1}$. Có $(1{,}01)^{12}\\approx1{,}126825$ nên $m\\approx44{,}42$ triệu đồng. Phương án B là chia đều gốc mà bỏ qua tiền lãi.",
+    "tags": ["Cấp số nhân", "trả góp"]
+  },
+  {
+    "grades": ["Lớp 11"],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Cho hàm số $f(x)=2\\sin x+3$ có đồ thị như hình bên dưới, với $0\\le x\\le 2\\pi$. Số nghiệm của phương trình $f(x)=4$ trên đoạn $[0;2\\pi]$ là",
+    "options": [{"key":"A","text":"1"},{"key":"B","text":"2"},{"key":"C","text":"3"},{"key":"D","text":"4"}],
+    "answer": "B",
+    "explanation": "$f(x)=4\\Leftrightarrow\\sin x=\\frac12$. Trên $[0;2\\pi]$, phương trình có hai nghiệm $x=\\frac{\\pi}{6}$ và $x=\\frac{5\\pi}{6}$.",
+    "tags": ["Hàm lượng giác", "phương trình lượng giác"],
+    "figure": {"kind":"graph","curves":["2sin(x)+3"],"xMin":0,"xMax":6.3}
+  },
+  {
+    "grades": ["Lớp 11"],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Số lượng vi khuẩn trong một mẫu nuôi cấy sau $t$ giờ được mô hình bởi $N(t)=500\\cdot2^{\\frac{t}{3}}$ (con), với $t\\ge0$. Sau khoảng bao lâu (làm tròn đến hàng phần mười) thì số lượng vi khuẩn đạt ít nhất $10^6$ con?",
+    "options": [{"key":"A","text":"30,0 giờ"},{"key":"B","text":"10,9 giờ"},{"key":"C","text":"32,9 giờ"},{"key":"D","text":"36,0 giờ"}],
+    "answer": "C",
+    "explanation": "$500\\cdot2^{t/3}\\ge10^6\\Leftrightarrow2^{t/3}\\ge2000\\Leftrightarrow t\\ge3\\log_2 2000\\approx32{,}9$ giờ. Phương án B là lấy $\\log_2 2000$ mà quên nhân 3.",
+    "tags": ["Mũ - Logarit", "tăng trưởng"]
+  },
+  {
+    "grades": ["Lớp 11"],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Có bao nhiêu số nguyên thuộc tập nghiệm của bất phương trình $\\log_{\\frac12}(x^2-3x+2)\\ge\\log_{\\frac12}(x+4)$?",
+    "options": [{"key":"A","text":"2"},{"key":"B","text":"5"},{"key":"C","text":"4"},{"key":"D","text":"3"}],
+    "answer": "D",
+    "explanation": "Điều kiện: $x^2-3x+2>0$ và $x+4>0$, tức $x\\in(-4;1)\\cup(2;+\\infty)$. Vì cơ số $\\frac12<1$ nên bất phương trình tương đương $x^2-3x+2\\le x+4$, tức $2-\\sqrt6\\le x\\le2+\\sqrt6$. Giao các điều kiện được $x\\in[2-\\sqrt6;1)\\cup(2;2+\\sqrt6]$, xấp xỉ $[-0{,}45;1)\\cup(2;4{,}45]$. Các số nguyên là $0$, $3$, $4$.",
+    "tags": ["Mũ - Logarit", "bất phương trình logarit"]
+  },
+  {
+    "grades": ["Lớp 11"],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Cho hàm số $y=f(x)=x^3-3x^2$ có bảng biến thiên như hình bên dưới. Xét tính đúng sai của các ý sau:",
+    "options": [
+      {"key":"a","text":"$f'(x)=3x^2-6x$."},
+      {"key":"b","text":"Hàm số đồng biến trên khoảng $(2;+\\infty)$."},
+      {"key":"c","text":"Hàm số đạt cực đại tại $x=2$."},
+      {"key":"d","text":"Phương trình $f(x)=-1$ có ba nghiệm phân biệt."}
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) $f'(x)=3x^2-6x$: Đúng. b) $f'(x)=3x(x-2)>0$ khi $x>2$ hoặc $x<0$, nên hàm số đồng biến trên $(2;+\\infty)$: Đúng. c) $f'$ đổi dấu từ âm sang dương tại $x=2$ nên $x=2$ là điểm cực tiểu, không phải cực đại: Sai. d) Cực đại $f(0)=0$, cực tiểu $f(2)=-4$, đường thẳng $y=-1$ cắt đồ thị tại ba điểm phân biệt: Đúng.",
+    "tags": ["Đạo hàm", "khảo sát hàm số"],
+    "figure": {"kind":"vartable","expr":"x^3-3x^2","fname":"y"}
+  },
+  {
+    "grades": ["Lớp 11"],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Anh Nam có mức lương khởi điểm 8 triệu đồng mỗi tháng. Cứ sau 3 năm, lương tháng được tăng thêm 10% so với mức ngay trước đó (tăng vào đầu năm thứ 4, thứ 7, thứ 10, ...). Mức lương theo từng giai đoạn được cho trong hình bên dưới. Xét tính đúng sai của các ý sau:",
+    "options": [
+      {"key":"a","text":"Lương tháng của anh Nam trong năm thứ 4 là 8,8 triệu đồng."},
+      {"key":"b","text":"Lương tháng của anh Nam trong năm thứ 10 là 10,5 triệu đồng."},
+      {"key":"c","text":"Tổng số tiền lương anh Nam nhận được trong 6 năm đầu là 604,8 triệu đồng."},
+      {"key":"d","text":"Lương tháng của anh Nam trong năm thứ 7 là 9,6 triệu đồng."}
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "Lương các giai đoạn là 8; 8,8; 9,68; 10,648 triệu đồng mỗi tháng. a) Năm 4 thuộc giai đoạn 2 có lương 8,8: Đúng. b) Năm 10 có ba lần tăng, lương là $8\\cdot1{,}1^3=10{,}648$: Sai. c) $36\\cdot8+36\\cdot8{,}8=604{,}8$: Đúng. d) Năm 7 có lương $8\\cdot1{,}1^2=9{,}68$: Sai.",
+    "tags": ["Cấp số nhân", "bài toán thực tế"],
+    "figure": {"kind":"stats","chart":"bar","title":"Lương tháng theo giai đoạn","xLabel":"Giai đoạn","yLabel":"triệu đồng","data":"Năm 1-3; Năm 4-6; Năm 7-9; Năm 10-12\nLương: 8; 8,8; 9,68; 10,648"}
+  },
+  {
+    "grades": ["Lớp 11"],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Mực nước tại một bến cảng trong một chu kỳ thủy triều được mô tả bởi hàm số $h(x)=3\\cos x+5$ (mét), với $0\\le x\\le2\\pi$ và đồ thị như hình bên dưới. Xét tính đúng sai của các ý sau:",
+    "options": [
+      {"key":"a","text":"Giá trị lớn nhất của $h(x)$ trên $[0;2\\pi]$ bằng 7."},
+      {"key":"b","text":"Giá trị nhỏ nhất của $h(x)$ trên $[0;2\\pi]$ bằng 2."},
+      {"key":"c","text":"Phương trình $h(x)=5$ có ba nghiệm thuộc $[0;2\\pi]$."},
+      {"key":"d","text":"Hàm số $h(x)$ nghịch biến trên khoảng $(0;\\pi)$."}
+    ],
+    "answer": "SĐSĐ",
+    "explanation": "$h'(x)=-3\\sin x$. a) Giá trị lớn nhất là $8$ khi $\\cos x=1$: Sai. b) Giá trị nhỏ nhất là $2$ khi $x=\\pi$: Đúng. c) $h(x)=5\\Leftrightarrow\\cos x=0$, có hai nghiệm $x=\\frac{\\pi}{2}$, $x=\\frac{3\\pi}{2}$: Sai. d) $h'(x)<0$ trên $(0;\\pi)$ nên nghịch biến: Đúng.",
+    "tags": ["Hàm lượng giác", "ứng dụng thực tế"],
+    "figure": {"kind":"graph","curves":["3cos(x)+5"],"xMin":0,"xMax":6.3}
+  },
+  {
+    "grades": ["Lớp 11"],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Một chất điểm chuyển động thẳng có quãng đường $s(t)=t^3-6t^2+9t$ (mét), với $t\\ge0$ tính bằng giây. Đồ thị hàm vận tốc $v(t)=s'(t)$ trên đoạn $[0;4]$ được cho trong hình bên dưới. Xét tính đúng sai của các ý sau:",
+    "options": [
+      {"key":"a","text":"Vận tốc của chất điểm tại thời điểm $t=0$ bằng $-9$ m/s."},
+      {"key":"b","text":"Chất điểm đổi chiều chuyển động tại các thời điểm $t=1$ s và $t=3$ s."},
+      {"key":"c","text":"Gia tốc của chất điểm tại thời điểm $t=2$ s bằng 0."},
+      {"key":"d","text":"Vận tốc nhỏ nhất của chất điểm trên đoạn $[0;4]$ bằng $-2$ m/s."}
+    ],
+    "answer": "SĐĐS",
+    "explanation": "$v(t)=3t^2-12t+9=3(t-1)(t-3)$ và $a(t)=6t-12$. a) $v(0)=9$ m/s: Sai. b) $v$ đổi dấu qua $t=1$ và $t=3$: Đúng. c) $a(2)=0$: Đúng. d) Trên $[0;4]$, $v$ đạt nhỏ nhất tại $t=2$ với $v(2)=-3$ (còn $v(0)=v(4)=9$): Sai.",
+    "tags": ["Đạo hàm", "vận tốc tức thời"],
+    "figure": {"kind":"graph","curves":["3x^2-12x+9"],"xMin":0,"xMax":4}
+  },
+  {
+    "grades": ["Lớp 11"],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Xét phương trình $\\log_2(x+1)+\\log_2(x-1)=3$. Xét tính đúng sai của các ý sau:",
+    "options": [
+      {"key":"a","text":"Điều kiện xác định của phương trình là $x>1$."},
+      {"key":"b","text":"$x=-3$ là một nghiệm của phương trình."},
+      {"key":"c","text":"Phương trình có đúng một nghiệm."},
+      {"key":"d","text":"Nghiệm của phương trình thuộc khoảng $(2;4)$."}
+    ],
+    "answer": "ĐSĐĐ",
+    "explanation": "a) Cần $x+1>0$ và $x-1>0$, tức $x>1$: Đúng. b) Phương trình tương đương $(x+1)(x-1)=8$, tức $x^2=9$, $x=\\pm3$; $x=-3$ không thỏa điều kiện: Sai. c) Chỉ có $x=3$: Đúng. d) $3\\in(2;4)$: Đúng.",
+    "tags": ["Mũ - Logarit", "phương trình logarit"]
+  },
+  {
+    "grades": ["Lớp 11"],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Cho hàm số $y=\\frac{x+1}{x-1}$ có đồ thị $(C)$. Gọi $\\Delta$ là tiếp tuyến của $(C)$ tại điểm có hoành độ $x_0=3$. Xét tính đúng sai của các ý sau:",
+    "options": [
+      {"key":"a","text":"$y(3)=2$."},
+      {"key":"b","text":"Hệ số góc của $\\Delta$ bằng $\\frac12$."},
+      {"key":"c","text":"$\\Delta$ cắt trục hoành tại điểm có hoành độ bằng 6."},
+      {"key":"d","text":"Diện tích tam giác tạo bởi $\\Delta$ và hai trục tọa độ bằng $12{,}25$."}
+    ],
+    "answer": "ĐSSĐ",
+    "explanation": "$y'=\\frac{-2}{(x-1)^2}$ nên $y'(3)=-\\frac12$. a) $y(3)=\\frac{4}{2}=2$: Đúng. b) Hệ số góc là $-\\frac12$: Sai. $\\Delta: y=-\\frac12(x-3)+2=-\\frac12x+\\frac72$. c) Cho $y=0$ được $x=7$: Sai. d) Cho $x=0$ được $y=\\frac72$, diện tích $S=\\frac12\\cdot7\\cdot\\frac72=\\frac{49}{4}=12{,}25$: Đúng.",
+    "tags": ["Đạo hàm", "tiếp tuyến"]
+  },
+  {
+    "grades": ["Lớp 11"],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Dân số của một thành phố (đơn vị: triệu người) được mô hình bởi $P(t)=20\\cdot1{,}02^{t}$, trong đó $t$ là số năm kể từ năm 2020 (ứng với $t=0$). Xét tính đúng sai của các ý sau:",
+    "options": [
+      {"key":"a","text":"Dân số của thành phố năm 2020 là 20 triệu người."},
+      {"key":"b","text":"Dự báo dân số năm 2030 khoảng 24,4 triệu người."},
+      {"key":"c","text":"Tốc độ tăng dân số tại thời điểm $t=0$ khoảng 0,40 triệu người mỗi năm."},
+      {"key":"d","text":"Sau 20 năm kể từ năm 2020, dân số vượt 30 triệu người."}
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a) $P(0)=20$: Đúng. b) $P(10)=20\\cdot1{,}02^{10}\\approx24{,}38$: Đúng. c) $P'(t)=20\\ln1{,}02\\cdot1{,}02^t$ nên $P'(0)=20\\ln1{,}02\\approx0{,}396$: Đúng. d) $P(20)=20\\cdot1{,}02^{20}\\approx29{,}72<30$: Sai.",
+    "tags": ["Mũ - Logarit", "tăng trưởng dân số"]
+  },
+  {
+    "grades": ["Lớp 11"],
+    "type": "tra-loi-ngan",
+    "level": "NB",
+    "prompt": "Tính giá trị của biểu thức $\\log_2 24-\\log_2 3$.",
+    "answer": "3",
+    "explanation": "$\\log_2 24-\\log_2 3=\\log_2\\frac{24}{3}=\\log_2 8=3$.",
+    "tags": ["Mũ - Logarit", "tính giá trị biểu thức"]
+  },
+  {
+    "grades": ["Lớp 11"],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Cho hàm số $y=x^3-2x^2+5x$. Giá trị của đạo hàm $y'$ tại $x=1$ bằng bao nhiêu?",
+    "answer": "4",
+    "explanation": "$y'=3x^2-4x+5$ nên $y'(1)=3-4+5=4$.",
+    "tags": ["Đạo hàm"]
+  },
+  {
+    "grades": ["Lớp 11"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Một đu quay có bán kính 10 m, tâm cách mặt đất 12 m và quay đều. Cabin xuất phát từ vị trí thấp nhất. Gọi $\\alpha$ (radian) là góc quay của cabin kể từ vị trí thấp nhất, khi đó độ cao của cabin so với mặt đất là $h(\\alpha)=12-10\\cos\\alpha$ (mét), với $0\\le\\alpha\\le2\\pi$, có đồ thị như hình bên dưới. Khi cabin lần đầu tiên đạt độ cao 17 m thì $\\alpha$ bằng bao nhiêu radian? (Đáp số làm tròn đến hàng phần trăm.)",
+    "answer": "2,09",
+    "explanation": "$12-10\\cos\\alpha=17\\Leftrightarrow\\cos\\alpha=-\\frac12$. Nghiệm nhỏ nhất trên $[0;2\\pi]$ là $\\alpha=\\frac{2\\pi}{3}\\approx2{,}09$.",
+    "tags": ["Hàm lượng giác", "mô hình hóa"],
+    "figure": {"kind":"graph","curves":["12-10cos(x)"],"xMin":0,"xMax":6.3}
+  },
+  {
+    "grades": ["Lớp 11"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Gửi 200 triệu đồng vào ngân hàng với lãi suất 6% một năm, lãi kép hàng năm, không rút lãi và không gửi thêm. Sau ít nhất bao nhiêu năm thì tổng số tiền (gốc và lãi) vượt 300 triệu đồng? (Đáp số là số năm nguyên.)",
+    "answer": "7",
+    "explanation": "$200\\cdot1{,}06^n>300\\Leftrightarrow n>\\log_{1{,}06}1{,}5\\approx6{,}96$, nên $n=7$. Kiểm tra: $200\\cdot1{,}06^6\\approx283{,}7$ (chưa vượt), $200\\cdot1{,}06^7\\approx300{,}7$ (vượt).",
+    "tags": ["Mũ - Logarit", "lãi suất kép"]
+  },
+  {
+    "grades": ["Lớp 11"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Một quả bóng được thả rơi từ độ cao 10 m xuống sàn nhà. Sau mỗi lần chạm sàn, bóng nảy lên đến độ cao bằng $\\frac34$ độ cao ngay trước đó, và cứ thế nảy mãi cho đến khi dừng hẳn. Tổng quãng đường (mét) bóng đi được từ lúc thả đến khi bóng dừng hẳn là bao nhiêu?",
+    "answer": "70",
+    "explanation": "Quãng đường bằng $10+2\\left(7{,}5+7{,}5\\cdot\\frac34+7{,}5\\cdot\\left(\\frac34\\right)^2+\\cdots\\right)=10+2\\cdot\\frac{7{,}5}{1-\\frac34}=10+60=70$ m.",
+    "tags": ["Cấp số nhân", "bài toán thực tế"]
+  },
+  {
+    "grades": ["Lớp 11"],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Mực nước tại một cảng (mét) sau $t$ giờ, với $0\\le t\\le24$, được cho bởi $h(t)=4+3\\sin\\left(\\frac{\\pi t}{6}\\right)$. Trong 24 giờ kể từ $t=0$, có bao nhiêu thời điểm mà mực nước đạt đúng 5,5 m?",
+    "answer": "4",
+    "explanation": "$h(t)=5{,}5\\Leftrightarrow\\sin\\frac{\\pi t}{6}=\\frac12$. Với $0\\le\\frac{\\pi t}{6}\\le4\\pi$ thì $\\frac{\\pi t}{6}\\in\\left\\{\\frac{\\pi}{6},\\frac{5\\pi}{6},\\frac{13\\pi}{6},\\frac{17\\pi}{6}\\right\\}$, tức $t\\in\\{1;5;13;17\\}$. Có 4 thời điểm.",
+    "tags": ["Hàm lượng giác", "mô hình thủy triều"]
+  },
+  {
+    "grades": ["Lớp 11"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Doanh thu của một cửa hàng trong 4 quý đầu năm được cho trong hình bên dưới. Doanh thu mỗi quý đều tăng so với quý trước theo cùng một tỉ lệ. Dự báo doanh thu quý thứ 6 (triệu đồng, làm tròn đến hàng đơn vị) là bao nhiêu?",
+    "answer": "161",
+    "explanation": "Các doanh thu lập thành cấp số nhân có $u_1=100$, $q=1{,}1$. Vậy $u_6=100\\cdot1{,}1^5\\approx161{,}05\\approx161$.",
+    "tags": ["Cấp số nhân", "bài toán thực tế"],
+    "figure": {"kind":"stats","chart":"bar","title":"Doanh thu 4 quý đầu năm","xLabel":"Quý","yLabel":"triệu đồng","data":"Q1; Q2; Q3; Q4\nDoanh thu: 100; 110; 121; 133,1"}
+  },
+  {
+    "grades": ["Lớp 11"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Từ điểm $A$ trên mặt đất cách chân tháp $B$ một khoảng $AB=30$ m, người ta nhìn thấy đỉnh $C$ của tháp dưới góc nâng $40^\\circ$ so với phương nằm ngang (tam giác $ABC$ vuông tại $B$, hình vẽ minh họa). Chiều cao $BC$ của tháp (mét) làm tròn đến hàng phần mười là bao nhiêu?",
+    "answer": "25,2",
+    "explanation": "$BC=AB\\cdot\\tan40^\\circ=30\\cdot0{,}8391\\approx25{,}2$ m.",
+    "tags": ["Lượng giác", "bài toán thực tế"],
+    "figure": {"kind":"scene","text":"A(0; 0) B(5; 0) C(5; 4.2)\nAB, BC, CA\nvuông ABC\nkích thước AB \"30 m\""}
+  },
+  {
+    "grades": ["Lớp 11"],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Một cửa hàng nhập một loại sản phẩm với giá 50 nghìn đồng mỗi sản phẩm. Nếu bán với giá $p$ nghìn đồng mỗi sản phẩm (với $50\\le p\\le100$) thì số sản phẩm bán được là $Q(p)=600-6p$. Để lợi nhuận lớn nhất, giá bán $p$ (nghìn đồng) bằng bao nhiêu?",
+    "answer": "75",
+    "explanation": "Lợi nhuận $L(p)=(p-50)(600-6p)$, có $L'(p)=900-12p$. Giải $L'(p)=0$ được $p=75$. Khi đó $L(75)=25\\cdot150=3750$ nghìn đồng.",
+    "tags": ["Đạo hàm", "bài toán tối ưu"]
+  },
+  {
+    "grades": ["Lớp 11"],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Một khoản tiền gửi có lãi suất 5% một năm, lãi kép hàng năm. Số năm nguyên dương nhỏ nhất để số tiền gửi ban đầu tăng gấp đôi trở lên là bao nhiêu?",
+    "answer": "15",
+    "explanation": "Cần $1{,}05^n\\ge2\\Leftrightarrow n\\ge\\log_{1{,}05}2\\approx14{,}21$, nên $n=15$. Kiểm tra: $1{,}05^{14}\\approx1{,}98<2$ và $1{,}05^{15}\\approx2{,}08\\ge2$.",
+    "tags": ["Mũ - Logarit", "lãi suất kép"]
+  }
+]

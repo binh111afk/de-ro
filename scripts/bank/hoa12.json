@@ -1,0 +1,875 @@
+[
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Trong các chất sau, chất nào là ester?",
+    "options": [
+      {
+        "key": "A",
+        "text": "CH$_3$COOCH$_3$"
+      },
+      {
+        "key": "B",
+        "text": "CH$_3$COOH"
+      },
+      {
+        "key": "C",
+        "text": "CH$_3$OCH$_3$"
+      },
+      {
+        "key": "D",
+        "text": "C$_2$H$_5$OH"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Ester có nhóm –COO– liên kết trực tiếp với hai gốc hydrocarbon. CH$_3$COOCH$_3$ (methyl acetate) là ester. CH$_3$COOH là carboxylic acid, CH$_3$OCH$_3$ là ether, C$_2$H$_5$OH là alcohol.",
+    "tags": [
+      "Ester – lipid",
+      "nhận biết ester"
+    ]
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Amine nào sau đây là amine bậc hai?",
+    "options": [
+      {
+        "key": "A",
+        "text": "CH$_3$NH$_2$"
+      },
+      {
+        "key": "B",
+        "text": "CH$_3$NHCH$_3$"
+      },
+      {
+        "key": "C",
+        "text": "(CH$_3$)$_3$N"
+      },
+      {
+        "key": "D",
+        "text": "C$_6$H$_5$NH$_2$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Bậc của amine là số gốc hydrocarbon liên kết với nguyên tử N. CH$_3$NHCH$_3$ có hai gốc CH$_3$ nên là amine bậc hai. CH$_3$NH$_2$ và C$_6$H$_5$NH$_2$ là amine bậc một; (CH$_3$)$_3$N là amine bậc ba.",
+    "tags": [
+      "Amine",
+      "bậc của amine"
+    ]
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Polymer nào sau đây được điều chế bằng phản ứng trùng ngưng?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Polyethylene"
+      },
+      {
+        "key": "B",
+        "text": "Poly(vinyl chloride)"
+      },
+      {
+        "key": "C",
+        "text": "Nylon-6,6"
+      },
+      {
+        "key": "D",
+        "text": "Polystyrene"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Nylon-6,6 được tổng hợp từ hexamethylenediamine và adipic acid bằng phản ứng trùng ngưng, có giải phóng nước. Polyethylene, poly(vinyl chloride) và polystyrene được điều chế bằng phản ứng trùng hợp.",
+    "tags": [
+      "Polymer",
+      "trùng ngưng"
+    ]
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Dãy gồm các kim loại đều phản ứng mạnh với nước ở nhiệt độ thường là",
+    "options": [
+      {
+        "key": "A",
+        "text": "Mg, Al, Fe"
+      },
+      {
+        "key": "B",
+        "text": "Cu, Ag, Au"
+      },
+      {
+        "key": "C",
+        "text": "Zn, Pb, Sn"
+      },
+      {
+        "key": "D",
+        "text": "Na, K, Ca"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Na, K và Ca phản ứng với nước ở nhiệt độ thường giải phóng H$_2$. Mg chỉ phản ứng chậm với nước nóng; Al, Fe, Zn, Pb, Sn hầu như không phản ứng với nước ở nhiệt độ thường; Cu, Ag, Au không phản ứng.",
+    "tags": [
+      "Kim loại nhóm IA, IIA",
+      "tính chất hoá học"
+    ]
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Trong pin điện hoá Zn–Cu (pin Daniell), điện cực âm (anode) là điện cực nào và xảy ra quá trình nào?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Zn; bị oxi hoá: Zn → Zn$^{2+}$ + 2e"
+      },
+      {
+        "key": "B",
+        "text": "Cu; bị oxi hoá: Cu → Cu$^{2+}$ + 2e"
+      },
+      {
+        "key": "C",
+        "text": "Zn; bị khử: Zn$^{2+}$ + 2e → Zn"
+      },
+      {
+        "key": "D",
+        "text": "Cu; bị khử: Cu$^{2+}$ + 2e → Cu"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Thế điện cực chuẩn của Zn (−0,76 V) âm hơn của Cu (+0,34 V) nên Zn là cực âm và bị oxi hoá. Cu là cực dương, tại đó ion Cu$^{2+}$ bị khử thành Cu.",
+    "tags": [
+      "Pin điện – điện phân",
+      "pin điện hoá"
+    ]
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Điện phân dung dịch CuSO$_4$ với điện cực trơ. Ở catode xảy ra quá trình nào?",
+    "options": [
+      {
+        "key": "A",
+        "text": "2H$_2$O → 4H$^+$ + O$_2$ + 4e"
+      },
+      {
+        "key": "B",
+        "text": "Cu$^{2+}$ + 2e → Cu"
+      },
+      {
+        "key": "C",
+        "text": "2Cl$^-$ → Cl$_2$ + 2e"
+      },
+      {
+        "key": "D",
+        "text": "2H$_2$O + 2e → H$_2$ + 2OH$^-$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Ở catode xảy ra quá trình khử. Ion Cu$^{2+}$ có tính oxi hoá mạnh hơn H$_2$O nên bị khử trước: Cu$^{2+}$ + 2e → Cu. Phương án A xảy ra ở anode; phương án C không đúng vì dung dịch không chứa Cl$^-$.",
+    "tags": [
+      "Điện phân",
+      "catode"
+    ]
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Trong phức chất [Cu(NH$_3$)$_4$]$^{2+}$, ion trung tâm và số phối trí của nó lần lượt là",
+    "options": [
+      {
+        "key": "A",
+        "text": "Cu$^{2+}$; 2"
+      },
+      {
+        "key": "B",
+        "text": "NH$_3$; 4"
+      },
+      {
+        "key": "C",
+        "text": "Cu$^{2+}$; 4"
+      },
+      {
+        "key": "D",
+        "text": "Cu; 4"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Ion trung tâm là Cu$^{2+}$. Mỗi phân tử NH$_3$ là một phối tử cho một cặp electron tự do; có 4 phối tử nên số phối trí bằng 4.",
+    "tags": [
+      "Phức chất",
+      "số phối trí"
+    ]
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Thuỷ phân hoàn toàn 48,6 gam tinh bột thành glucose với hiệu suất 80%. Cho toàn bộ lượng glucose thu được tác dụng với lượng dư dung dịch AgNO$_3$/NH$_3$, đun nóng. Khối lượng Ag thu được là",
+    "options": [
+      {
+        "key": "A",
+        "text": "25,92 gam"
+      },
+      {
+        "key": "B",
+        "text": "38,88 gam"
+      },
+      {
+        "key": "C",
+        "text": "64,80 gam"
+      },
+      {
+        "key": "D",
+        "text": "51,84 gam"
+      }
+    ],
+    "answer": "D",
+    "explanation": "(C$_6$H$_{10}$O$_5$)$_n$ có M = 162, nên n tinh bột = 48,6 : 162 = 0,3 mol. Lượng glucose thu được là 0,3 × 0,8 = 0,24 mol. Mỗi glucose tạo 2Ag, suy ra n Ag = 0,48 mol và m Ag = 0,48 × 108 = 51,84 gam.",
+    "tags": [
+      "Carbohydrate",
+      "tinh bột",
+      "tráng bạc",
+      "hiệu suất"
+    ]
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Sục từ từ khí CO$_2$ vào dung dịch chứa 0,2 mol Ca(OH)$_2$. Đồ thị dưới đây biểu diễn số mol kết tủa theo số mol CO$_2$ đã dùng, như hình bên dưới. Khi số mol CO$_2$ là 0,3 mol, khối lượng kết tủa thu được là",
+    "options": [
+      {
+        "key": "A",
+        "text": "10 gam"
+      },
+      {
+        "key": "B",
+        "text": "5 gam"
+      },
+      {
+        "key": "C",
+        "text": "15 gam"
+      },
+      {
+        "key": "D",
+        "text": "20 gam"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Đến 0,2 mol CO$_2$, Ca(OH)$_2$ tạo 0,2 mol CaCO$_3$. CO$_2$ dư 0,1 mol hoà tan 0,1 mol CaCO$_3$ theo CaCO$_3$ + CO$_2$ + H$_2$O → Ca(HCO$_3$)$_2$. Kết tủa còn lại 0,1 mol, tương ứng 10 gam.",
+    "tags": [
+      "Kim loại kiềm thổ",
+      "CO$_2$ tác dụng kiềm",
+      "đồ thị"
+    ],
+    "figure": {
+      "kind": "chemgraph",
+      "xName": "n CO2",
+      "yName": "n↓",
+      "points": "(0; 0) (0,2; 0,2) (0,4; 0)"
+    }
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Cho hợp chất hữu cơ có cấu tạo như hình bên dưới. Oxi hoá hợp chất này bằng CuO đun nóng (vừa đủ), sản phẩm hữu cơ chính thu được là",
+    "options": [
+      {
+        "key": "A",
+        "text": "(CH$_3$)$_2$CH–COOH"
+      },
+      {
+        "key": "B",
+        "text": "(CH$_3$)$_2$CH–CHO"
+      },
+      {
+        "key": "C",
+        "text": "(CH$_3$)$_2$C=O"
+      },
+      {
+        "key": "D",
+        "text": "CH$_3$CH$_2$CH$_2$CHO"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Hợp chất là 2-methylpropan-1-ol, một alcohol bậc một. Alcohol bậc một bị CuO oxi hoá thành aldehyde: (CH$_3$)$_2$CH–CH$_2$OH → (CH$_3$)$_2$CH–CHO (2-methylpropanal). Phương án C là ketone chỉ tạo từ alcohol bậc hai; phương án A là acid do oxi hoá quá mức.",
+    "tags": [
+      "Alcohol",
+      "oxi hoá alcohol bậc một"
+    ],
+    "figure": {
+      "kind": "struct",
+      "formula": "CH3-CH(CH3)-CH2-OH"
+    }
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Đun nóng 17,6 gam ester X (CH$_3$COOC$_2$H$_5$) với 150 ml dung dịch NaOH 1M. Sau khi phản ứng xảy ra hoàn toàn, cô cạn dung dịch thu được m gam muối khan. Giá trị của m là",
+    "options": [
+      {
+        "key": "A",
+        "text": "16,4 gam"
+      },
+      {
+        "key": "B",
+        "text": "9,2 gam"
+      },
+      {
+        "key": "C",
+        "text": "12,3 gam"
+      },
+      {
+        "key": "D",
+        "text": "17,6 gam"
+      }
+    ],
+    "answer": "C",
+    "explanation": "n X = 17,6 : 88 = 0,2 mol; n NaOH = 0,15 mol, nên NaOH hết trước. CH$_3$COOC$_2$H$_5$ + NaOH → CH$_3$COONa + C$_2$H$_5$OH. Muối thu được là 0,15 mol CH$_3$COONa, m = 0,15 × 82 = 12,3 gam.",
+    "tags": [
+      "Ester",
+      "xà phòng hoá",
+      "chất dư"
+    ]
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Nhỏ từ từ dung dịch NaOH vào 200 ml dung dịch AlCl$_3$ 0,5M. Đồ thị dưới đây biểu diễn số mol kết tủa Al(OH)$_3$ theo số mol OH$^-$ đã dùng, như hình bên dưới. Số mol OH$^-$ cần dùng để thu được 3,9 gam kết tủa là",
+    "options": [
+      {
+        "key": "A",
+        "text": "0,15 mol"
+      },
+      {
+        "key": "B",
+        "text": "0,35 mol"
+      },
+      {
+        "key": "C",
+        "text": "0,45 mol"
+      },
+      {
+        "key": "D",
+        "text": "0,15 mol hoặc 0,35 mol"
+      }
+    ],
+    "answer": "D",
+    "explanation": "n Al$^{3+}$ = 0,2 × 0,5 = 0,1 mol. Kết tủa 3,9 gam tương ứng 0,05 mol Al(OH)$_3$. Trường hợp kết tủa chưa bị hoà tan: n OH$^-$ = 3 × 0,05 = 0,15 mol. Trường hợp đã hoà tan một phần: 0,3 mol OH$^-$ tạo 0,1 mol kết tủa, cần thêm 0,05 mol OH$^-$ để hoà tan 0,05 mol Al(OH)$_3$, tổng 0,35 mol.",
+    "tags": [
+      "Nhôm và hợp chất",
+      "đồ thị",
+      "hai nghiệm"
+    ],
+    "figure": {
+      "kind": "chemgraph",
+      "xName": "n OH-",
+      "yName": "n↓",
+      "points": "(0; 0) (0,3; 0,1) (0,4; 0)"
+    }
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Triolein có công thức (C$_{17}$H$_{33}$COO)$_3$C$_3$H$_5$. Xét các phát biểu sau về triolein:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Triolein là triester của glycerol với oleic acid."
+      },
+      {
+        "key": "b",
+        "text": "Thuỷ phân triolein trong môi trường acid thu được glycerol và muối sodium oleate."
+      },
+      {
+        "key": "c",
+        "text": "Triolein phản ứng với H$_2$ dư (xúc tác Ni, đun nóng) tạo thành tristearin."
+      },
+      {
+        "key": "d",
+        "text": "Phân tử khối của triolein là 882."
+      }
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "a Đúng: triolein là ester của glycerol với ba oleic acid. b Sai: thuỷ phân trong môi trường acid thu được oleic acid tự do, không phải muối sodium oleate. c Đúng: ba liên kết đôi C=C được cộng H$_2$ thành liên kết đơn, tạo tristearin. d Sai: triolein C$_{57}$H$_{104}$O$_6$ có M = 884.",
+    "tags": [
+      "Ester – lipid",
+      "chất béo"
+    ]
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Thí nghiệm: cho 0,1 mol mỗi kim loại Mg, Al, Zn, Fe lần lượt tác dụng hết với dung dịch HCl dư; thể tích khí H$_2$ (đktc) thu được như hình bên dưới. Xét các phát biểu sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Mg và Zn cùng thu được 2,24 lít khí H$_2$."
+      },
+      {
+        "key": "b",
+        "text": "Al cho thể tích khí H$_2$ lớn nhất trong bốn kim loại."
+      },
+      {
+        "key": "c",
+        "text": "Hoà tan 0,1 mol Al trong dung dịch HCl dư thu được 2,24 lít khí H$_2$."
+      },
+      {
+        "key": "d",
+        "text": "Khi hoà tan đồng thời 0,1 mol Mg và 0,1 mol Fe trong HCl dư, thể tích H$_2$ thu được là 3,36 lít."
+      }
+    ],
+    "answer": "ĐĐSS",
+    "explanation": "a Đúng: Mg + 2HCl → MgCl$_2$ + H$_2$ và Zn tương tự, mỗi kim loại 0,1 mol cho 0,1 mol H$_2$ = 2,24 lít. b Đúng: Al cho 0,15 mol H$_2$ = 3,36 lít, lớn nhất. c Sai: 0,1 mol Al cho 0,15 mol H$_2$ (3,36 lít). d Sai: 0,1 mol Mg và 0,1 mol Fe cho tổng 0,2 mol H$_2$ = 4,48 lít.",
+    "tags": [
+      "Kim loại nhóm IIA, IIIA",
+      "tính khử",
+      "bài toán khí H$_2$"
+    ],
+    "figure": {
+      "kind": "stats",
+      "chart": "bar",
+      "title": "Thể tích H2 (đktc) thu được",
+      "xLabel": "Kim loại",
+      "yLabel": "V (lít)",
+      "data": "Mg; Al; Zn; Fe\nThể tích H2 (L): 2,24; 3,36; 2,24; 2,24"
+    }
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Glycine (H$_2$N–CH$_2$–COOH) là amino acid đơn giản nhất. Xét các phát biểu sau về glycine:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Glycine là α-amino acid."
+      },
+      {
+        "key": "b",
+        "text": "Dung dịch glycine không làm đổi màu quỳ tím."
+      },
+      {
+        "key": "c",
+        "text": "0,1 mol glycine tác dụng vừa đủ với 0,2 mol NaOH."
+      },
+      {
+        "key": "d",
+        "text": "Đốt cháy hoàn toàn 7,5 gam glycine thu được 0,3 mol CO$_2$."
+      }
+    ],
+    "answer": "ĐĐSS",
+    "explanation": "a Đúng. b Đúng: glycine có một nhóm –NH$_2$ và một nhóm –COOH nên dung dịch gần như trung tính. c Sai: glycine tác dụng với NaOH theo tỉ lệ 1 : 1, 0,1 mol glycine chỉ cần 0,1 mol NaOH. d Sai: M = 75, 7,5 gam tương ứng 0,1 mol; 0,1 mol glycine có 2 nguyên tử C nên tạo 0,2 mol CO$_2$.",
+    "tags": [
+      "Amino acid",
+      "tính chất"
+    ]
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Điện phân 200 ml dung dịch X gồm CuSO$_4$ 0,1M và NaCl 0,5M với điện cực trơ, có màng ngăn, cường độ dòng điện không đổi 1,93 A. Coi hiệu suất 100%, bỏ qua sự hoà tan khí và bay hơi nước; F = 96500. Xét các phát biểu sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Sau 1000 giây, khối lượng Cu bám vào catode là 1,28 gam."
+      },
+      {
+        "key": "b",
+        "text": "Sau 1000 giây, thể tích khí Cl$_2$ thoát ra ở anode (đktc) là 0,224 lít."
+      },
+      {
+        "key": "c",
+        "text": "Sau 1000 giây, ở catode xảy ra quá trình khử ion Na$^+$."
+      },
+      {
+        "key": "d",
+        "text": "Sau 2000 giây, thể tích khí thoát ra ở anode (đktc) là 0,448 lít."
+      }
+    ],
+    "answer": "SĐSĐ",
+    "explanation": "Số mol electron: n e = 1,93 × 1000 / 96500 = 0,02 mol. a Sai: Cu$^{2+}$ bị khử trước, 0,02 mol e chỉ khử 0,01 mol Cu = 0,64 gam. b Đúng: 2Cl$^-$ → Cl$_2$ + 2e, 0,02 mol e cho 0,01 mol Cl$_2$ = 0,224 lít. c Sai: Na$^+$ không bị khử trong dung dịch nước. d Đúng: sau 2000 giây có 0,04 mol e, Cu$^{2+}$ (0,02 mol) đã bị khử hết; anode cho 0,02 mol Cl$_2$ = 0,448 lít (Cl$^-$ còn dư nên chưa có O$_2$).",
+    "tags": [
+      "Điện phân",
+      "CuSO$_4$ và NaCl",
+      "định luật Faraday"
+    ]
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "NB",
+    "prompt": "Cho các phát biểu sau về kim loại nhóm IA, IIA và hợp chất của chúng:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Kim loại kiềm thổ có tính khử mạnh hơn kim loại kiềm cùng chu kì."
+      },
+      {
+        "key": "b",
+        "text": "Nhôm bền trong không khí do có lớp màng Al$_2$O$_3$ bảo vệ bề mặt."
+      },
+      {
+        "key": "c",
+        "text": "Ca(OH)$_2$ ít tan trong nước."
+      },
+      {
+        "key": "d",
+        "text": "Dung dịch Na$_2$CO$_3$ có môi trường trung tính."
+      }
+    ],
+    "answer": "SĐĐS",
+    "explanation": "a Sai: trong cùng chu kì, kim loại nhóm IA có tính khử mạnh hơn nhóm IIA (Na mạnh hơn Mg). b Đúng: lớp Al$_2$O$_3$ bền, bảo vệ nhôm khỏi bị oxi hoá tiếp. c Đúng: Ca(OH)$_2$ là chất ít tan. d Sai: ion CO$_3^{2-}$ thuỷ phân tạo OH$^-$ nên dung dịch có môi trường kiềm (pH > 7).",
+    "tags": [
+      "Nhóm IA, IIA",
+      "nhôm",
+      "tính chất"
+    ]
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Cho hợp chất hữu cơ X có cấu tạo như hình bên dưới. Xét các phát biểu sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "X là alanine."
+      },
+      {
+        "key": "b",
+        "text": "Dung dịch X làm quỳ tím chuyển sang màu đỏ."
+      },
+      {
+        "key": "c",
+        "text": "X có thể trùng ngưng tạo polymer có cấu trúc (–NH–CH(CH$_3$)–CO–)$_n$."
+      },
+      {
+        "key": "d",
+        "text": "Khi ngưng tụ hoàn toàn 17,8 gam X, thu được tối đa 0,2 mol dipeptide."
+      }
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "a Đúng: H$_2$N–CH(CH$_3$)–COOH là alanine. b Sai: X có một nhóm –NH$_2$ và một nhóm –COOH nên trung tính, không đổi màu quỳ. c Đúng: trùng ngưng alanine tạo poly(alanine). d Sai: M = 89, 17,8 gam ứng với 0,2 mol X; hai phân tử X tạo một dipeptide, nên tối đa 0,1 mol dipeptide.",
+    "tags": [
+      "Amino acid",
+      "peptide",
+      "polymer"
+    ],
+    "figure": {
+      "kind": "struct",
+      "formula": "H2N-CH(CH3)-COOH"
+    }
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Xét các phát biểu sau về polymer:",
+    "options": [
+      {
+        "key": "a",
+        "text": "PVC được điều chế bằng phản ứng trùng hợp vinyl chloride."
+      },
+      {
+        "key": "b",
+        "text": "Nylon-6,6 được điều chế bằng phản ứng trùng hợp hexamethylenediamine với adipic acid."
+      },
+      {
+        "key": "c",
+        "text": "Cao su buna-S có chứa liên kết đôi C=C trong mạch polymer."
+      },
+      {
+        "key": "d",
+        "text": "Polymer PVC có phân tử khối 625 000 thì hệ số trùng hợp n = 10 000."
+      }
+    ],
+    "answer": "ĐSĐĐ",
+    "explanation": "a Đúng: CH$_2$=CHCl trùng hợp thành PVC. b Sai: nylon-6,6 được điều chế bằng phản ứng trùng ngưng, có tách nước. c Đúng: buna-S được tạo từ buta-1,3-diene và styrene, mạch còn chứa liên kết đôi. d Đúng: mắt xích C$_2$H$_3$Cl có M = 62,5, n = 625 000 : 62,5 = 10 000.",
+    "tags": [
+      "Polymer",
+      "trùng hợp – trùng ngưng",
+      "hệ số trùng hợp"
+    ]
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Cho nguyên tử sắt (Fe, Z = 26) như hình bên dưới. Xét các phát biểu sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Fe thuộc chu kì 4, nhóm VIIIB trong bảng tuần hoàn."
+      },
+      {
+        "key": "b",
+        "text": "Ion Fe$^{2+}$ có cấu hình electron [Ar]3d$^6$."
+      },
+      {
+        "key": "c",
+        "text": "Ion Fe$^{3+}$ có 6 electron ở phân lớp 3d."
+      },
+      {
+        "key": "d",
+        "text": "Hoà tan hoàn toàn 11,2 gam Fe trong dung dịch H$_2$SO$_4$ loãng dư, thu được dung dịch X; để oxi hoá hết Fe$^{2+}$ trong X cần vừa đủ 0,04 mol KMnO$_4$ trong môi trường H$_2$SO$_4$."
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a Đúng: cấu hình [Ar]3d$^6$4s$^2$ cho biết Fe ở chu kì 4, nhóm VIIIB. b Đúng: khi mất 2 electron 4s, Fe$^{2+}$ có [Ar]3d$^6$. c Sai: Fe$^{3+}$ là [Ar]3d$^5$, có 5 electron 3d. d Đúng: 0,2 mol Fe$^{2+}$ nhường 0,2 mol e; MnO$_4^-$ nhận 5e, cần 0,04 mol KMnO$_4$.",
+    "tags": [
+      "Cấu hình electron",
+      "Fe",
+      "chuẩn độ KMnO$_4$"
+    ],
+    "figure": {
+      "kind": "electron",
+      "element": "Fe"
+    }
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "NB",
+    "prompt": "Tính phân tử khối của saccharose (C$_{12}$H$_{22}$O$_{11}$). Biết nguyên tử khối: H = 1; C = 12; O = 16.",
+    "answer": "342",
+    "explanation": "M = 12 × 12 + 22 × 1 + 11 × 16 = 144 + 22 + 176 = 342.",
+    "tags": [
+      "Carbohydrate",
+      "phân tử khối"
+    ]
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Số amine bậc một có công thức phân tử C$_3$H$_9$N là bao nhiêu?",
+    "answer": "2",
+    "explanation": "Các amine bậc một C$_3$H$_9$N là CH$_3$CH$_2$CH$_2$NH$_2$ và (CH$_3$)$_2$CHNH$_2$. Đáp số là 2.",
+    "tags": [
+      "Amine",
+      "đồng phân"
+    ]
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Đun nóng 8,8 gam hợp chất hữu cơ có cấu tạo như hình bên dưới với 150 ml dung dịch NaOH 1M (dư). Sau khi phản ứng hoàn toàn, khối lượng muối thu được là bao nhiêu gam? Đáp số làm tròn đến chữ số thập phân thứ nhất.",
+    "answer": "8,2",
+    "explanation": "M = 88 nên n = 8,8 : 88 = 0,1 mol. Thuỷ phân tạo 0,1 mol CH$_3$COONa (M = 82), m = 8,2 gam. NaOH dư nên không ảnh hưởng đến khối lượng muối.",
+    "tags": [
+      "Ester",
+      "xà phòng hoá"
+    ],
+    "figure": {
+      "kind": "struct",
+      "formula": "CH3-COO-CH2-CH3"
+    }
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Xà phòng hoá hoàn toàn 44,5 gam tristearin (C$_{17}$H$_{35}$COO)$_3$C$_3$H$_5$ bằng dung dịch NaOH vừa đủ, hiệu suất phản ứng 90%. Khối lượng muối sodium stearate thu được là bao nhiêu gam? Đáp số làm tròn đến chữ số thập phân thứ nhất.",
+    "answer": "41,3",
+    "explanation": "M tristearin = 890, n = 44,5 : 890 = 0,05 mol. Thu được 0,15 mol C$_{17}$H$_{35}$COONa (M = 306), tương ứng 45,9 gam. Với hiệu suất 90%: m = 45,9 × 0,9 = 41,31 ≈ 41,3 gam.",
+    "tags": [
+      "Chất béo",
+      "xà phòng hoá",
+      "hiệu suất"
+    ]
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Điện phân nóng chảy Al$_2$O$_3$ với cường độ dòng điện không đổi 9,65 A trong 2000 giây, hiệu suất 80%. Khối lượng nhôm thu được là bao nhiêu gam? Biết F = 96500; làm tròn đến hai chữ số thập phân.",
+    "answer": "1,44",
+    "explanation": "n e = 9,65 × 2000 / 96500 = 0,2 mol. Al$^{3+}$ + 3e → Al nên n Al lí thuyết = 0,2 / 3 mol. Với hiệu suất 80%: m = 0,2/3 × 0,8 × 27 = 1,44 gam.",
+    "tags": [
+      "Điện phân",
+      "nhôm"
+    ]
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Hoà tan hoàn toàn 7,8 gam hỗn hợp gồm Mg và Al vào dung dịch HCl dư, thu được 8,96 lít khí H$_2$ (đktc). Phần trăm khối lượng của Mg trong hỗn hợp là bao nhiêu %? Đáp số làm tròn đến chữ số thập phân thứ nhất.",
+    "answer": "30,8",
+    "explanation": "Gọi n Mg = x, n Al = y. Ta có 24x + 27y = 7,8 và x + 1,5y = 0,4 (n H$_2$ = 8,96 : 22,4 = 0,4). Giải ra x = 0,1 và y = 0,2. %Mg = 2,4 / 7,8 × 100 ≈ 30,8%.",
+    "tags": [
+      "Kim loại",
+      "hỗn hợp",
+      "bảo toàn electron"
+    ]
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Đốt cháy hoàn toàn 5,9 gam một amine X đơn chức, mạch hở, no (không xét bậc), thu được CO$_2$, H$_2$O và N$_2$. Khối lượng H$_2$O thu được là bao nhiêu gam?",
+    "answer": "8,1",
+    "explanation": "Amine no đơn chức có công thức C$_n$H$_{2n+3}$N, M = 14n + 17 = 59 nên n = 3, X là C$_3$H$_9$N; n X = 0,1 mol. Đốt cháy: C$_3$H$_9$N + O$_2$ → 3CO$_2$ + 4,5H$_2$O + 0,5N$_2$, nên n H$_2$O = 0,45 mol, m = 8,1 gam.",
+    "tags": [
+      "Amine",
+      "đốt cháy"
+    ]
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Cho nguyên tử đồng (Cu) như hình bên dưới. Hoà tan hoàn toàn 6,4 gam Cu bằng dung dịch HNO$_3$ đặc, nóng, dư, chỉ thu được khí NO$_2$ duy nhất. Thể tích NO$_2$ (đktc) thu được là bao nhiêu lít?",
+    "answer": "4,48",
+    "explanation": "n Cu = 6,4 : 64 = 0,1 mol; Cu → Cu$^{2+}$ + 2e nên nhường 0,2 mol e. N$^{+5}$ + 1e → N$^{+4}$, do đó n NO$_2$ = 0,2 mol và V = 0,2 × 22,4 = 4,48 lít.",
+    "tags": [
+      "Kim loại tác dụng HNO$_3$",
+      "bảo toàn electron"
+    ],
+    "figure": {
+      "kind": "electron",
+      "element": "Cu"
+    }
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Lên men m gam glucose thành ethanol với hiệu suất 80%. Toàn bộ khí CO$_2$ sinh ra được hấp thụ hết vào dung dịch Ca(OH)$_2$ dư, thu được 40 gam kết tủa. Giá trị của m là bao nhiêu gam?",
+    "answer": "45",
+    "explanation": "n CaCO$_3$ = 0,4 mol nên n CO$_2$ = 0,4 mol. C$_6$H$_{12}$O$_6$ → 2CO$_2$ nên glucose phản ứng là 0,2 mol; với H = 80%, glucose ban đầu là 0,25 mol, m = 0,25 × 180 = 45 gam.",
+    "tags": [
+      "Carbohydrate",
+      "lên men",
+      "hiệu suất"
+    ]
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Xét pin điện hoá Zn–Ag ở điều kiện chuẩn, thế điện cực chuẩn của các cặp oxi hoá – khử cho như hình bên dưới. Khi khối lượng cực Zn giảm 6,5 gam (hiệu suất 100%), khối lượng Ag bám lên cực dương là bao nhiêu gam?",
+    "answer": "21,6",
+    "explanation": "n Zn = 6,5 : 65 = 0,1 mol, nhường 0,2 mol e. Ag$^+$ + e → Ag nên n Ag = 0,2 mol, m = 0,2 × 108 = 21,6 gam. (Suất điện động chuẩn của pin là 0,80 − (−0,76) = 1,56 V, không cần cho bài toán này.)",
+    "tags": [
+      "Pin điện",
+      "thế điện cực chuẩn",
+      "bảo toàn electron"
+    ],
+    "figure": {
+      "kind": "stats",
+      "chart": "bar",
+      "title": "Thế điện cực chuẩn E° (V)",
+      "xLabel": "Cặp oxi hoá – khử",
+      "yLabel": "E° (V)",
+      "data": "Zn; Fe; Cu; Ag\nE° (V): -0,76; -0,44; 0,34; 0,80"
+    }
+  }
+]

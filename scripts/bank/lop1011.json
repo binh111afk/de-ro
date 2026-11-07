@@ -1,0 +1,831 @@
+[
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Trong các mệnh đề sau, mệnh đề nào là mệnh đề sai?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Với mọi số thực $x$, $x^2 \\ge 0$."
+      },
+      {
+        "key": "B",
+        "text": "Có một số nguyên $n$ sao cho $n^2=2$."
+      },
+      {
+        "key": "C",
+        "text": "Phương trình $x^2-5x+6=0$ có nghiệm."
+      },
+      {
+        "key": "D",
+        "text": "$2+3=5$."
+      }
+    ],
+    "answer": "B",
+    "explanation": "Không có số nguyên nào có bình phương bằng 2 vì $\\sqrt{2}$ là số vô tỉ, nên mệnh đề B sai. Các mệnh đề A, C, D đúng ($x^2-5x+6=(x-2)(x-3)$ có nghiệm $x=2$, $x=3$).",
+    "tags": [
+      "Mệnh đề",
+      "Mệnh đề tồn tại"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Cho các tập hợp $A=\\{x\\in\\mathbb{Z}\\mid -3\\le x<4\\}$ và $B=\\{x\\in\\mathbb{N}\\mid x^2<10\\}$. Số phần tử của tập hợp $A\\setminus B$ là bao nhiêu?",
+    "options": [
+      {
+        "key": "A",
+        "text": "4"
+      },
+      {
+        "key": "B",
+        "text": "7"
+      },
+      {
+        "key": "C",
+        "text": "3"
+      },
+      {
+        "key": "D",
+        "text": "6"
+      }
+    ],
+    "answer": "C",
+    "explanation": "$A=\\{-3;-2;-1;0;1;2;3\\}$ và $B=\\{0;1;2;3\\}$ vì $x^2<10$ với $x\\in\\mathbb{N}$ khi và chỉ khi $x\\le 3$. Vậy $A\\setminus B=\\{-3;-2;-1\\}$ có 3 phần tử.",
+    "tags": [
+      "Tập hợp",
+      "Phép toán trên tập hợp"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Một cơ sở sản xuất hai loại sản phẩm X và Y. Mỗi sản phẩm X cần 2 kg nguyên liệu và 1 giờ máy; mỗi sản phẩm Y cần 1 kg nguyên liệu và 1 giờ máy. Cơ sở có tối đa 12 kg nguyên liệu và tối đa 8 giờ máy trong một ngày. Mỗi sản phẩm X lãi 4 triệu đồng, mỗi sản phẩm Y lãi 3 triệu đồng. Lợi nhuận lớn nhất trong một ngày là bao nhiêu triệu đồng?",
+    "options": [
+      {
+        "key": "A",
+        "text": "24"
+      },
+      {
+        "key": "B",
+        "text": "28"
+      },
+      {
+        "key": "C",
+        "text": "32"
+      },
+      {
+        "key": "D",
+        "text": "40"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Gọi $x$, $y$ là số sản phẩm X, Y ($x,y\\ge 0$). Ràng buộc: $2x+y\\le 12$ và $x+y\\le 8$; lợi nhuận $F=4x+3y$. Các đỉnh của miền nghiệm là $(0;0)$, $(6;0)$, $(4;4)$, $(0;8)$ với $F=0;\\,24;\\,28;\\,24$. Vậy lợi nhuận lớn nhất là 28 triệu đồng khi $x=4$, $y=4$.",
+    "tags": [
+      "Bất phương trình bậc nhất hai ẩn",
+      "Bài toán tối ưu"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Một quả bóng được đá lên từ mặt đất theo quỹ đạo parabol. Gọi $x$ (m) là khoảng cách theo phương ngang tính từ điểm đá và $h(x)=-\\dfrac{1}{2}x^2+3x$ (m) là độ cao của bóng, với $0\\le x\\le 6$; quỹ đạo được mô tả như hình bên dưới. Bóng ở độ cao không thấp hơn 4 m trên một đoạn theo phương ngang có độ dài bao nhiêu mét?",
+    "options": [
+      {
+        "key": "A",
+        "text": "1"
+      },
+      {
+        "key": "B",
+        "text": "2"
+      },
+      {
+        "key": "C",
+        "text": "3"
+      },
+      {
+        "key": "D",
+        "text": "4"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$h(x)\\ge 4 \\Leftrightarrow -\\dfrac12x^2+3x-4\\ge 0 \\Leftrightarrow x^2-6x+8\\le 0 \\Leftrightarrow 2\\le x\\le 4$. Độ dài đoạn đó là $4-2=2$ m.",
+    "tags": [
+      "Hàm số bậc hai",
+      "Parabol thực tế"
+    ],
+    "figure": {
+      "kind": "graph",
+      "curves": [
+        "-0.5x^2+3x"
+      ],
+      "xMin": 0,
+      "xMax": 6
+    }
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Để đo khoảng cách giữa hai điểm $B$ và $C$ nằm hai bên một hồ nước, người ta chọn điểm $A$ sao cho $AB=5$ m, $AC=8$ m và $\\widehat{BAC}=60^\\circ$. Khoảng cách $BC$ bằng bao nhiêu mét?",
+    "options": [
+      {
+        "key": "A",
+        "text": "7"
+      },
+      {
+        "key": "B",
+        "text": "$\\sqrt{129}$"
+      },
+      {
+        "key": "C",
+        "text": "6"
+      },
+      {
+        "key": "D",
+        "text": "49"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Theo định lí côsin: $BC^2=AB^2+AC^2-2\\cdot AB\\cdot AC\\cos 60^\\circ=25+64-40=49$, suy ra $BC=7$ m.",
+    "tags": [
+      "Hệ thức lượng trong tam giác",
+      "Ứng dụng đo đạc"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Cho tam giác $ABC$ có trọng tâm $G$. Khẳng định nào sau đây đúng?",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\overrightarrow{GA}+\\overrightarrow{GB}+\\overrightarrow{GC}=\\overrightarrow{AB}$"
+      },
+      {
+        "key": "B",
+        "text": "$\\overrightarrow{GA}+\\overrightarrow{GB}+\\overrightarrow{GC}=\\overrightarrow{BC}$"
+      },
+      {
+        "key": "C",
+        "text": "$\\overrightarrow{GA}+\\overrightarrow{GB}+\\overrightarrow{GC}=2\\overrightarrow{AG}$"
+      },
+      {
+        "key": "D",
+        "text": "$\\overrightarrow{GA}+\\overrightarrow{GB}+\\overrightarrow{GC}=\\overrightarrow{0}$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Vì $G$ là trọng tâm nên $\\overrightarrow{GA}+\\overrightarrow{GB}+\\overrightarrow{GC}=\\overrightarrow{0}$. Ba đáp án còn lại sai vì vế phải khác $\\overrightarrow{0}$ (các véc-tơ $\\overrightarrow{AB}$, $\\overrightarrow{BC}$, $2\\overrightarrow{AG}$ đều khác $\\overrightarrow{0}$).",
+    "tags": [
+      "Véc-tơ",
+      "Trọng tâm tam giác"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Trong mặt phẳng $Oxy$, đường tròn $(C)$ có tâm $I$ và đi qua điểm $M$ (vị trí như hình bên dưới). Phương trình tiếp tuyến của $(C)$ tại $M$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$x+y-7=0$"
+      },
+      {
+        "key": "B",
+        "text": "$x-y+1=0$"
+      },
+      {
+        "key": "C",
+        "text": "$x+y-5=0$"
+      },
+      {
+        "key": "D",
+        "text": "$x-y-1=0$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Tiếp tuyến tại $M$ vuông góc với bán kính $IM$. Ta có $\\overrightarrow{IM}=(2;2)$ nên tiếp tuyến nhận $(1;1)$ làm vectơ pháp tuyến và đi qua $M(3;4)$: $(x-3)+(y-4)=0$, tức $x+y-7=0$.",
+    "tags": [
+      "Đường tròn",
+      "Phương trình tiếp tuyến"
+    ],
+    "figure": {
+      "kind": "oxy",
+      "xMin": -1,
+      "xMax": 5,
+      "yMin": -1,
+      "yMax": 6,
+      "items": "I(1; 2)\nM(3; 4)"
+    }
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Một vật được ném lên từ độ cao 1 m so với mặt đất. Độ cao $h$ (m) của vật sau $t$ giây là $h(t)=-5t^2+20t+1$ với $t\\ge 0$ (đồ thị $h(t)$ như hình bên dưới). Xét tính đúng, sai của các khẳng định sau.",
+    "options": [
+      {
+        "key": "a",
+        "text": "Tại thời điểm ném $t=0$, vật ở độ cao 1 m."
+      },
+      {
+        "key": "b",
+        "text": "Độ cao lớn nhất mà vật đạt được là 20 m."
+      },
+      {
+        "key": "c",
+        "text": "Trong khoảng thời gian từ $t=1$ giây đến $t=3$ giây, vật ở độ cao không thấp hơn 16 m."
+      },
+      {
+        "key": "d",
+        "text": "Vật chạm đất đúng sau 4 giây kể từ lúc ném."
+      }
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "a) $h(0)=1$: Đúng. b) $h(t)=-5(t-2)^2+21$ nên độ cao lớn nhất là 21 m tại $t=2$: Sai. c) $h(t)-16=-5(t-1)(t-3)\\ge 0$ với $t\\in[1;3]$: Đúng. d) $h(4)=1\\ne 0$; nghiệm dương của $-5t^2+20t+1=0$ là $t=\\dfrac{20+\\sqrt{420}}{10}\\approx 4{,}05$ giây: Sai.",
+    "tags": [
+      "Hàm số bậc hai",
+      "Chuyển động ném"
+    ],
+    "figure": {
+      "kind": "graph",
+      "curves": [
+        "-5x^2+20x+1"
+      ],
+      "xMin": 0,
+      "xMax": 5
+    }
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Một mảnh vườn có dạng tam giác $ABC$ vuông tại $A$ như hình bên dưới, với $AB=4$ m và $AC=3$ m. Gọi $H$ là chân đường cao kẻ từ $A$ xuống cạnh $BC$. Xét tính đúng, sai của các khẳng định sau.",
+    "options": [
+      {
+        "key": "a",
+        "text": "Cạnh $BC$ dài 5 m."
+      },
+      {
+        "key": "b",
+        "text": "$\\sin B=\\dfrac35$."
+      },
+      {
+        "key": "c",
+        "text": "Diện tích mảnh vườn bằng 12 m$^2$."
+      },
+      {
+        "key": "d",
+        "text": "Đường cao $AH$ dài 2,4 m."
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) $BC=\\sqrt{4^2+3^2}=5$ m: Đúng. b) $\\sin B=\\dfrac{AC}{BC}=\\dfrac35$: Đúng. c) Diện tích bằng $\\dfrac12\\cdot 4\\cdot 3=6$ m$^2$, không phải 12 m$^2$: Sai. d) $AH=\\dfrac{AB\\cdot AC}{BC}=\\dfrac{12}{5}=2{,}4$ m: Đúng.",
+    "tags": [
+      "Hệ thức lượng trong tam giác",
+      "Ứng dụng thực tế"
+    ],
+    "figure": {
+      "kind": "scene",
+      "text": "A(0; 0) B(4; 0) C(0; 3)\nAB, BC, CA\nvuông BAC\nkích thước AB \"4 m\"\nkích thước AC \"3 m\""
+    }
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Trong mặt phẳng $Oxy$, cho ba điểm $A$, $B$, $C$ và đường thẳng $d$ như hình bên dưới. Xét tính đúng, sai của các khẳng định sau.",
+    "options": [
+      {
+        "key": "a",
+        "text": "Đường trung trực của đoạn $AB$ đi qua gốc tọa độ $O$."
+      },
+      {
+        "key": "b",
+        "text": "Phương trình đường thẳng $AB$ là $x+2y-3=0$."
+      },
+      {
+        "key": "c",
+        "text": "Khoảng cách từ $A$ đến đường thẳng $d$ bằng $2$."
+      },
+      {
+        "key": "d",
+        "text": "Điểm $C$ thuộc đường thẳng $d$."
+      }
+    ],
+    "answer": "SĐSĐ",
+    "explanation": "a) Trung điểm của $AB$ là $(1;1)$, $\\overrightarrow{AB}=(4;-2)$ nên trung trực có phương trình $2x-y-1=0$, không đi qua $O$: Sai. b) $\\overrightarrow{AB}=(4;-2)$ có vectơ pháp tuyến $(2;4)$; đường thẳng qua $A(-1;2)$ là $2(x+1)+4(y-2)=0$, tức $x+2y-3=0$: Đúng. c) $d(A,d)=\\dfrac{|-1-4+3|}{\\sqrt{1+4}}=\\dfrac{2}{\\sqrt5}\\ne 2$: Sai. d) Thay $C(-3;0)$ vào $d$: $-3-0+3=0$: Đúng.",
+    "tags": [
+      "Phương trình đường thẳng",
+      "Khoảng cách",
+      "Tọa độ trong mặt phẳng Oxy"
+    ],
+    "figure": {
+      "kind": "oxy",
+      "xMin": -4,
+      "xMax": 4,
+      "yMin": -1,
+      "yMax": 4,
+      "items": "A(-1; 2)\nB(3; 0)\nC(-3; 0)\nd: x - 2y + 3 = 0"
+    }
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Một biển quảng cáo có dạng phần mặt phẳng giới hạn bởi parabol $(P): y=-x^2+4$ và trục hoành (đơn vị: mét). Xét tính đúng, sai của các khẳng định sau.",
+    "options": [
+      {
+        "key": "a",
+        "text": "Đỉnh của $(P)$ là điểm $I(0;4)$."
+      },
+      {
+        "key": "b",
+        "text": "$(P)$ cắt trục hoành tại hai điểm cách nhau 4 m."
+      },
+      {
+        "key": "c",
+        "text": "Đường thẳng $y=x+2$ cắt $(P)$ tại hai điểm có tổng hoành độ bằng $0$."
+      },
+      {
+        "key": "d",
+        "text": "Hàm số $y=-x^2+4$ đồng biến trên khoảng $(0;+\\infty)$."
+      }
+    ],
+    "answer": "ĐĐSS",
+    "explanation": "a) Parabol có đỉnh $I(0;4)$: Đúng. b) Giao với trục hoành: $-x^2+4=0$ có hai nghiệm $x=\\pm 2$, cách nhau 4 m: Đúng. c) Hoành độ giao điểm thỏa $-x^2+4=x+2$ hay $x^2+x-2=0$, tức $x=1$ hoặc $x=-2$, tổng bằng $-1\\ne 0$: Sai. d) Hệ số $a=-1<0$ nên hàm số nghịch biến trên $(0;+\\infty)$: Sai.",
+    "tags": [
+      "Hàm số bậc hai",
+      "Parabol và đường thẳng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Trong mặt phẳng $Oxy$, cho elip $(E):\\dfrac{x^2}{25}+\\dfrac{y^2}{9}=1$ có hai tiêu điểm $F_1$, $F_2$. Gọi $M(x_M;y_M)$ là điểm thuộc $(E)$ có $x_M>0$ sao cho $\\widehat{F_1MF_2}=90^\\circ$. Tính $|y_M|$. Viết kết quả dưới dạng số thập phân (làm tròn đến hàng phần trăm nếu kết quả không nguyên).",
+    "answer": "2,25",
+    "explanation": "Ta có $a=5$, $b=3$, $c=\\sqrt{a^2-b^2}=4$. Góc $\\widehat{F_1MF_2}=90^\\circ$ khi và chỉ khi $M$ nằm trên đường tròn $x^2+y^2=c^2=16$. Thay $y^2=16-x^2$ vào (E): $\\dfrac{x^2}{25}+\\dfrac{16-x^2}{9}=1$, suy ra $x^2=\\dfrac{175}{16}$, do đó $y^2=\\dfrac{81}{16}$ và $|y_M|=\\dfrac94=2{,}25$.",
+    "tags": [
+      "Elip",
+      "Tiêu điểm",
+      "Đường tròn"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "NB",
+    "prompt": "Trong mặt phẳng $Oxy$, cho ba điểm $A(1;2)$, $B(3;-1)$, $C(-1;4)$. Biết $ABCD$ là hình bình hành, hãy tìm hoành độ của đỉnh $D$.",
+    "answer": "-3",
+    "explanation": "Hình bình hành $ABCD$ có $\\overrightarrow{AB}=\\overrightarrow{DC}$, suy ra $D=A+C-B=(-3;7)$. Hoành độ của $D$ là $-3$.",
+    "tags": [
+      "Véc-tơ",
+      "Tọa độ điểm"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Cho các số thực $x,y\\ge 0$ thỏa mãn $x+2y\\ge 4$ và $3x+y\\ge 6$. Giá trị nhỏ nhất của biểu thức $F=2x+3y$ bằng bao nhiêu? Viết kết quả dưới dạng số thập phân.",
+    "answer": "6,8",
+    "explanation": "Miền nghiệm có ba đỉnh là $(0;6)$, $(4;0)$ và $\\left(\\dfrac85;\\dfrac65\\right)$ (giao của hai đường thẳng $x+2y=4$ và $3x+y=6$). Giá trị $F$ tại các đỉnh lần lượt là $18$, $8$, $6{,}8$. Vì miền nghiệm không bị chặn về phía $F$ tăng nên $\\min F=6{,}8$.",
+    "tags": [
+      "Bất phương trình bậc nhất hai ẩn",
+      "Bài toán tối ưu"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Tìm $m$ để đỉnh của parabol $y=x^2-4x+m$ nằm trên trục hoành.",
+    "answer": "4",
+    "explanation": "Hoành độ đỉnh là $x=2$, tung độ đỉnh là $y=4-8+m=m-4$. Đỉnh nằm trên trục hoành khi $m-4=0$, tức $m=4$.",
+    "tags": [
+      "Hàm số bậc hai",
+      "Đỉnh parabol"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Giá trị của giới hạn $\\lim\\limits_{x\\to 2}\\dfrac{x^2-4}{x-2}$ bằng bao nhiêu?",
+    "options": [
+      {
+        "key": "A",
+        "text": "0"
+      },
+      {
+        "key": "B",
+        "text": "2"
+      },
+      {
+        "key": "C",
+        "text": "Không tồn tại"
+      },
+      {
+        "key": "D",
+        "text": "4"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Với $x\\ne 2$ ta có $\\dfrac{x^2-4}{x-2}=x+2$, nên giới hạn bằng $2+2=4$.",
+    "tags": [
+      "Giới hạn của hàm số"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Hàm số $f(x)=\\dfrac{(x-1)(x+2)}{x-3}$ liên tục trên từng khoảng xác định của nó. Dựa vào bảng xét dấu của $f(x)$ như hình bên dưới, tập nghiệm của bất phương trình $f(x)\\le 0$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$(-\\infty;-2]\\cup[1;3)$"
+      },
+      {
+        "key": "B",
+        "text": "$[-2;1]\\cup(3;+\\infty)$"
+      },
+      {
+        "key": "C",
+        "text": "$(-\\infty;-2)\\cup(1;3)$"
+      },
+      {
+        "key": "D",
+        "text": "$[-2;1]\\cup[3;+\\infty)$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Từ bảng xét dấu: $f(x)<0$ trên $(-\\infty;-2)\\cup(1;3)$; $f(x)=0$ khi $x=-2$ hoặc $x=1$; $f$ không xác định tại $x=3$. Vậy $f(x)\\le 0$ khi $x\\in(-\\infty;-2]\\cup[1;3)$.",
+    "tags": [
+      "Hàm số liên tục",
+      "Xét dấu biểu thức"
+    ],
+    "figure": {
+      "kind": "signtable",
+      "expr": "(x-1)(x+2)/(x-3)"
+    }
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Cho hình chóp $S.ABCD$ có đáy $ABCD$ là hình bình hành tâm $O$ (như hình bên dưới). Gọi $M$ là trung điểm của $SC$. Khẳng định nào sau đây đúng?",
+    "options": [
+      {
+        "key": "A",
+        "text": "$OM\\parallel (SCD)$"
+      },
+      {
+        "key": "B",
+        "text": "$OM\\parallel SB$"
+      },
+      {
+        "key": "C",
+        "text": "$OM\\parallel SA$"
+      },
+      {
+        "key": "D",
+        "text": "$OM\\parallel (SBC)$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Trong tam giác $SAC$, $O$ và $M$ lần lượt là trung điểm của $AC$ và $SC$ nên $OM$ là đường trung bình, suy ra $OM\\parallel SA$. Các khẳng định còn lại sai: $M$ thuộc $SC$ nên đường thẳng $OM$ cắt hai mặt phẳng $(SCD)$ và $(SBC)$ tại $M$; và $OM\\parallel SA$ nên không song song với $SB$.",
+    "tags": [
+      "Quan hệ song song trong không gian",
+      "Đường trung bình"
+    ],
+    "figure": {
+      "kind": "geo3d",
+      "shape": "pyramid4",
+      "names": [
+        "S",
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "height": false,
+      "diagonals": false
+    }
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Cho hàm số $y=f(x)=x^3-3x$ có đồ thị như hình bên dưới. Xét tính đúng, sai của các khẳng định sau.",
+    "options": [
+      {
+        "key": "a",
+        "text": "$\\lim\\limits_{x\\to 0}f(x)=1$."
+      },
+      {
+        "key": "b",
+        "text": "$\\lim\\limits_{x\\to 2}f(x)=2$."
+      },
+      {
+        "key": "c",
+        "text": "$\\lim\\limits_{x\\to 1}f(x)=2$."
+      },
+      {
+        "key": "d",
+        "text": "Hàm số $f(x)$ liên tục trên $\\mathbb{R}$."
+      }
+    ],
+    "answer": "SĐSĐ",
+    "explanation": "Hàm số $f(x)=x^3-3x$ là đa thức nên liên tục trên $\\mathbb{R}$, do đó $\\lim\\limits_{x\\to x_0}f(x)=f(x_0)$. Ta có $f(0)=0$, $f(2)=2$, $f(1)=-2$. Vậy a) Sai, b) Đúng, c) Sai, d) Đúng.",
+    "tags": [
+      "Giới hạn hàm số",
+      "Hàm số liên tục"
+    ],
+    "figure": {
+      "kind": "graph",
+      "curves": [
+        "x^3-3x"
+      ],
+      "xMin": -2,
+      "xMax": 2
+    }
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Cho hàm số $f(x)=\\dfrac{x^2-4}{x-2}$ khi $x>2$ và $f(x)=2x+m$ khi $x\\le 2$, với $m$ là tham số thực. Xét tính đúng, sai của các khẳng định sau.",
+    "options": [
+      {
+        "key": "a",
+        "text": "Hàm số liên tục tại $x=2$ khi $m=0$."
+      },
+      {
+        "key": "b",
+        "text": "$\\lim\\limits_{x\\to 2^+}f(x)=4$."
+      },
+      {
+        "key": "c",
+        "text": "Với $m=1$, hàm số liên tục tại $x=2$."
+      },
+      {
+        "key": "d",
+        "text": "Phương trình $f(x)=0$ có nghiệm thuộc khoảng $(2;+\\infty)$."
+      }
+    ],
+    "answer": "ĐĐSS",
+    "explanation": "Với $x>2$: $f(x)=x+2$ nên $\\lim\\limits_{x\\to2^+}f(x)=4$ (b đúng). Ta có $f(2)=4+m=\\lim\\limits_{x\\to2^-}f(x)$, còn $\\lim\\limits_{x\\to2^+}f(x)=4$; hàm số liên tục tại $2$ khi $4+m=4$, tức $m=0$ (a đúng; c sai vì với $m=1$ thì $f(2)=5\\ne 4$). Với $x>2$ thì $f(x)=x+2>4$ nên $f(x)=0$ không có nghiệm trong $(2;+\\infty)$ (d sai).",
+    "tags": [
+      "Hàm số liên tục",
+      "Tham số"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Xét hàm số $y=3\\sin x+4\\cos x$. Xét tính đúng, sai của các khẳng định sau.",
+    "options": [
+      {
+        "key": "a",
+        "text": "Hàm số có tập xác định là $\\mathbb{R}$ và tuần hoàn với chu kỳ $2\\pi$."
+      },
+      {
+        "key": "b",
+        "text": "Giá trị lớn nhất của hàm số bằng $5$."
+      },
+      {
+        "key": "c",
+        "text": "Khi $y=5$ thì $\\tan x=\\dfrac43$."
+      },
+      {
+        "key": "d",
+        "text": "Phương trình $y=0$ có nghiệm thuộc khoảng $(0;\\pi)$."
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "Viết $y=5\\sin(x+\\varphi)$ với $\\cos\\varphi=\\dfrac35$, $\\sin\\varphi=\\dfrac45$. Vì $-5\\le y\\le 5$ và hàm số tuần hoàn với chu kỳ $2\\pi$ nên a) và b) đúng. Đạt $y=5$ khi $\\sin x=\\dfrac35$, $\\cos x=\\dfrac45$, tức $\\tan x=\\dfrac34$, nên c) sai. Phương trình $y=0$ tương đương $\\tan x=-\\dfrac43$, có nghiệm $x=\\pi-\\arctan\\dfrac43\\in\\left(\\dfrac{\\pi}{2};\\pi\\right)\\subset(0;\\pi)$, nên d) đúng.",
+    "tags": [
+      "Hàm số lượng giác",
+      "Giá trị lớn nhất"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Cho tứ diện $ABCD$ có $M$, $N$, $P$ lần lượt là trung điểm của $AB$, $AC$, $AD$ (như hình bên dưới). Xét tính đúng, sai của các khẳng định sau.",
+    "options": [
+      {
+        "key": "a",
+        "text": "$MN\\parallel (BCD)$."
+      },
+      {
+        "key": "b",
+        "text": "$MN\\parallel BD$."
+      },
+      {
+        "key": "c",
+        "text": "$(MNP)\\parallel (BCD)$."
+      },
+      {
+        "key": "d",
+        "text": "$NP\\parallel (ABD)$."
+      }
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "a) $MN$ là đường trung bình của tam giác $ABC$ nên $MN\\parallel BC\\subset (BCD)$, và $MN\\not\\subset (BCD)$: Đúng. b) $MN\\parallel BC$, không song song với $BD$: Sai. c) $MN\\parallel BC$ và $MP\\parallel BD$ nên $(MNP)\\parallel (BCD)$: Đúng. d) $NP\\parallel CD$ mà $CD$ cắt $(ABD)$ tại $D$ nên $NP$ không song song với $(ABD)$: Sai.",
+    "tags": [
+      "Quan hệ song song trong không gian",
+      "Tứ diện"
+    ],
+    "figure": {
+      "kind": "geo3d",
+      "shape": "tetrahedron",
+      "names": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "height": false,
+      "diagonals": false
+    }
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Tính tổng các nghiệm thuộc khoảng $[0;2\\pi)$ của phương trình $\\sin x+\\cos x=1$. Viết kết quả dưới dạng số thập phân, làm tròn đến hàng phần trăm.",
+    "answer": "1,57",
+    "explanation": "Ta có $\\sin x+\\cos x=\\sqrt2\\sin\\left(x+\\dfrac{\\pi}{4}\\right)=1$ nên $\\sin\\left(x+\\dfrac{\\pi}{4}\\right)=\\dfrac{\\sqrt2}{2}$. Trên $[0;2\\pi)$ phương trình có hai nghiệm $x=0$ và $x=\\dfrac{\\pi}{2}$. Tổng bằng $\\dfrac{\\pi}{2}\\approx 1{,}57$.",
+    "tags": [
+      "Phương trình lượng giác"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Tính giới hạn $\\lim\\limits_{x\\to 2}\\dfrac{x^3-8}{x^2-4}$.",
+    "answer": "3",
+    "explanation": "Với $x\\ne 2$: $\\dfrac{x^3-8}{x^2-4}=\\dfrac{(x-2)(x^2+2x+4)}{(x-2)(x+2)}=\\dfrac{x^2+2x+4}{x+2}$. Giới hạn bằng $\\dfrac{12}{4}=3$.",
+    "tags": [
+      "Giới hạn của hàm số"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Biết $\\lim\\limits_{x\\to 1}\\dfrac{x^2+ax+b}{x-1}=5$, với $a$, $b$ là các hằng số. Tính $a+b$.",
+    "answer": "-1",
+    "explanation": "Vì mẫu dần về $0$ mà giới hạn hữu hạn nên tử phải có nghiệm $x=1$, tức $1+a+b=0$. Khi đó $x^2+ax+b=(x-1)(x+c)$ với $a=c-1$, $b=-c$; giới hạn bằng $1+c=5$, suy ra $c=4$, $a=3$, $b=-4$ và $a+b=-1$.",
+    "tags": [
+      "Giới hạn của hàm số",
+      "Tham số"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Phương trình $x^3-3x-1=0$ có ba nghiệm thực $x_1$, $x_2$, $x_3$. Tính $x_1^2+x_2^2+x_3^2$.",
+    "answer": "6",
+    "explanation": "Hàm $f(x)=x^3-3x-1$ liên tục trên $\\mathbb{R}$ và đổi dấu trên các khoảng $(-2;-1)$, $(-1;0)$, $(1;2)$ nên phương trình có ba nghiệm thực. Theo định lí Viète, $x_1+x_2+x_3=0$ và $x_1x_2+x_2x_3+x_3x_1=-3$. Do đó $x_1^2+x_2^2+x_3^2=(x_1+x_2+x_3)^2-2(x_1x_2+x_2x_3+x_3x_1)=6$.",
+    "tags": [
+      "Hàm số liên tục",
+      "Định lí Viète"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Tìm giá trị lớn nhất của hàm số $y=2\\sin x+\\cos x+1$. Viết kết quả dưới dạng số thập phân, làm tròn đến hàng phần trăm.",
+    "answer": "3,24",
+    "explanation": "Với biểu thức $a\\sin x+b\\cos x$ có giá trị lớn nhất $\\sqrt{a^2+b^2}$, ta có $\\max(2\\sin x+\\cos x)=\\sqrt5$. Suy ra $\\max y=\\sqrt5+1\\approx 3{,}24$.",
+    "tags": [
+      "Hàm số lượng giác",
+      "Giá trị lớn nhất"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Tìm số thực $a$ biết $\\lim\\limits_{x\\to 0}\\dfrac{\\sqrt{1+ax}-1}{x}=2$.",
+    "answer": "4",
+    "explanation": "Nhân liên hợp: $\\dfrac{\\sqrt{1+ax}-1}{x}=\\dfrac{a}{\\sqrt{1+ax}+1}$ với $x\\ne 0$. Giới hạn bằng $\\dfrac a2$, nên $\\dfrac a2=2$, suy ra $a=4$.",
+    "tags": [
+      "Giới hạn của hàm số",
+      "Tham số"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Cho hình chóp $S.ABCD$ có đáy $ABCD$ là hình bình hành, thể tích khối chóp bằng $81$ (như hình bên dưới). Mặt phẳng song song với $(ABCD)$ cắt các cạnh $SA$, $SB$, $SC$, $SD$ lần lượt tại $A'$, $B'$, $C'$, $D'$ sao cho $SA'=\\dfrac23SA$. Tính thể tích khối chóp $S.A'B'C'D'$.",
+    "answer": "24",
+    "explanation": "Mặt phẳng $(A'B'C'D')$ song song với đáy nên $\\dfrac{SA'}{SA}=\\dfrac{SB'}{SB}=\\dfrac{SC'}{SC}=\\dfrac{SD'}{SD}=\\dfrac23$, và $S.A'B'C'D'$ là ảnh của $S.ABCD$ qua phép vị tự tâm $S$ tỉ số $\\dfrac23$. Thể tích tỉ lệ với $\\left(\\dfrac23\\right)^3=\\dfrac{8}{27}$, nên $V=81\\cdot\\dfrac{8}{27}=24$.",
+    "tags": [
+      "Quan hệ song song trong không gian",
+      "Thể tích khối chóp"
+    ],
+    "figure": {
+      "kind": "geo3d",
+      "shape": "pyramid4",
+      "names": [
+        "S",
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "height": false,
+      "diagonals": false
+    }
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Cho hàm số $f(x)=\\dfrac{\\sqrt{x+3}-\\sqrt3}{x}$ khi $x\\ne 0$ và $f(0)=a$. Tìm $a$ để hàm số liên tục tại $x=0$. Viết kết quả dưới dạng số thập phân, làm tròn đến hàng phần trăm.",
+    "answer": "0,29",
+    "explanation": "Với $x\\ne 0$ ta có $\\dfrac{\\sqrt{x+3}-\\sqrt3}{x}=\\dfrac{1}{\\sqrt{x+3}+\\sqrt3}$, nên $\\lim\\limits_{x\\to 0}f(x)=\\dfrac{1}{2\\sqrt3}=\\dfrac{\\sqrt3}{6}\\approx 0{,}29$. Hàm số liên tục tại $0$ khi $a=\\dfrac{\\sqrt3}{6}\\approx 0{,}29$.",
+    "tags": [
+      "Hàm số liên tục",
+      "Giới hạn"
+    ]
+  }
+]

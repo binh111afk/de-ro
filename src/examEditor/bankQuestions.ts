@@ -12,13 +12,14 @@ const text = (s: string): JSONContent => ({ type: 'text', text: s })
 /** Một câu thành khối: trắc nghiệm có phương án → khối câu trắc nghiệm; còn lại → khối tự luận. */
 function entryBlock(entry: BankEntry, seq: number): JSONContent {
   const stamp = `${Date.now()}-${seq}`
-  if (entry.type === 'trac-nghiem' && entry.options?.length) {
+  const kind = entry.type === 'dung-sai' ? 'tf' : entry.type === 'tra-loi-ngan' ? 'short' : null
+  if (kind === 'short' || (entry.options?.length && (entry.type === 'trac-nghiem' || kind === 'tf'))) {
     return {
       type: 'examQuestion',
-      attrs: { id: `q${stamp}`, no: 1 },
+      attrs: { id: `q${stamp}`, no: 1, kind },
       content: [
         { type: 'examQuestionPrompt', attrs: { id: `qp${stamp}` }, content: [text(entry.prompt)] },
-        ...entry.options.map((o) => ({
+        ...(entry.options ?? []).map((o) => ({
           type: 'examOption',
           attrs: { id: `qo${stamp}-${o.key}`, label: o.key },
           content: [text(o.text)],

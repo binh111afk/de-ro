@@ -1,0 +1,739 @@
+[
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "NB",
+  "prompt": "Màu ngọn lửa khi đốt các muối của Na và K lần lượt là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "Na tím, K vàng"
+   },
+   {
+    "key": "B",
+    "text": "Na vàng, K tím nhạt"
+   },
+   {
+    "key": "C",
+    "text": "Na xanh, K đỏ"
+   },
+   {
+    "key": "D",
+    "text": "Na đỏ, K xanh"
+   }
+  ],
+  "answer": "B",
+  "explanation": "Na cho ngọn lửa màu vàng, K cho ngọn lửa màu tím nhạt (quan sát qua kính xanh cobalt).",
+  "tags": [
+   "kim loại kiềm",
+   "ngọn lửa"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "NB",
+  "prompt": "Sản phẩm của phản ứng canxi với nước là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "CaO và $\\text{H}_2$"
+   },
+   {
+    "key": "B",
+    "text": "$\\text{CaH}_2$"
+   },
+   {
+    "key": "C",
+    "text": "$\\text{Ca(OH)}_2$ và $\\text{H}_2$"
+   },
+   {
+    "key": "D",
+    "text": "$\\text{CaO}_2$ và $\\text{H}_2$"
+   }
+  ],
+  "answer": "C",
+  "explanation": "$\\text{Ca}+2\\text{H}_2\\text{O}\\to\\text{Ca(OH)}_2+\\text{H}_2\\uparrow$.",
+  "tags": [
+   "kim loại kiềm thổ"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "NB",
+  "prompt": "Màu đặc trưng của ion $\\text{Fe}^{2+}$ trong dung dịch là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "xanh lục"
+   },
+   {
+    "key": "B",
+    "text": "vàng nâu"
+   },
+   {
+    "key": "C",
+    "text": "xanh lam"
+   },
+   {
+    "key": "D",
+    "text": "tím"
+   }
+  ],
+  "answer": "A",
+  "explanation": "Dung dịch $\\text{Fe}^{2+}$ màu xanh lục nhạt; $\\text{Fe}^{3+}$ màu vàng nâu.",
+  "tags": [
+   "kim loại chuyển tiếp",
+   "màu ion"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "NB",
+  "prompt": "$\\text{Al}_2\\text{O}_3$ được xếp vào loại oxit:",
+  "options": [
+   {
+    "key": "A",
+    "text": "bazơ"
+   },
+   {
+    "key": "B",
+    "text": "axit"
+   },
+   {
+    "key": "C",
+    "text": "trung tính"
+   },
+   {
+    "key": "D",
+    "text": "lưỡng tính"
+   }
+  ],
+  "answer": "D",
+  "explanation": "$\\text{Al}_2\\text{O}_3$ phản ứng được với cả axit mạnh và kiềm mạnh: oxit lưỡng tính.",
+  "tags": [
+   "nhôm",
+   "oxit lưỡng tính"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "TH",
+  "prompt": "Sản phẩm khi cho sắt tác dụng với dung dịch HCl loãng (dư vừa đủ) là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "$\\text{FeCl}_3$"
+   },
+   {
+    "key": "B",
+    "text": "$\\text{FeCl}_2$"
+   },
+   {
+    "key": "C",
+    "text": "$\\text{Fe(OH)}_2$"
+   },
+   {
+    "key": "D",
+    "text": "$\\text{Fe}_2\\text{O}_3$"
+   }
+  ],
+  "answer": "B",
+  "explanation": "$\\text{Fe}+2\\text{HCl}\\to\\text{FeCl}_2+\\text{H}_2$; ion $\\text{H}^{+}$ chỉ oxi hóa được Fe đến $\\text{Fe}^{2+}$.",
+  "tags": [
+   "kim loại chuyển tiếp"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "TH",
+  "prompt": "Trong phản ứng $2\\text{Na}_2\\text{O}_2+2\\text{H}_2\\text{O}\\to 4\\text{NaOH}+\\text{O}_2$, vai trò của $\\text{Na}_2\\text{O}_2$ là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "chỉ là chất oxi hóa"
+   },
+   {
+    "key": "B",
+    "text": "chỉ là chất khử"
+   },
+   {
+    "key": "C",
+    "text": "vừa là chất oxi hóa vừa là chất khử"
+   },
+   {
+    "key": "D",
+    "text": "không tham gia phản ứng oxi hóa – khử"
+   }
+  ],
+  "answer": "C",
+  "explanation": "O trong $\\text{Na}_2\\text{O}_2$ có số oxi hóa $-1$, một phần tăng lên 0 (bị oxi hóa), một phần giảm xuống $-2$ (bị khử): tự oxi hóa – khử.",
+  "tags": [
+   "oxi hóa – khử"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "TH",
+  "prompt": "Cho từng nhỏ $\\text{NH}_3$ (dư) vào dung dịch $\\text{CuSO}_4$. Hiện tượng cuối cùng quan sát được là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "dung dịch xanh lam thẫm"
+   },
+   {
+    "key": "B",
+    "text": "kết tủa xanh lam"
+   },
+   {
+    "key": "C",
+    "text": "dung dịch vàng"
+   },
+   {
+    "key": "D",
+    "text": "kết tủa nâu đỏ"
+   }
+  ],
+  "answer": "A",
+  "explanation": "Ban đầu xuất hiện kết tủa $\\text{Cu(OH)}_2$, sau đó tan trong $\\text{NH}_3$ dư tạo phức $[\\text{Cu(NH}_3)_4]^{2+}$ màu xanh lam thẫm.",
+  "tags": [
+   "phức chất"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "TH",
+  "prompt": "Trong ion phức $[\\text{Fe(CN)}_6]^{3-}$, số phối trí và điện tích của phức lần lượt là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "6 và $+3$"
+   },
+   {
+    "key": "B",
+    "text": "4 và $-3$"
+   },
+   {
+    "key": "C",
+    "text": "6 và 0"
+   },
+   {
+    "key": "D",
+    "text": "6 và $-3$"
+   }
+  ],
+  "answer": "D",
+  "explanation": "Ion trung tâm $\\text{Fe}^{3+}$ liên kết với 6 phối tử $\\text{CN}^{-}$; điện tích phức $=+3+6(-1)=-3$.",
+  "tags": [
+   "phức chất",
+   "số phối trí"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "VD",
+  "prompt": "Cho 5,4 g Al tác dụng hoàn toàn với dung dịch NaOH (dư). Thể tích khí $\\text{H}_2$ (đktc) thu được là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "3,36 lít"
+   },
+   {
+    "key": "B",
+    "text": "6,72 lít"
+   },
+   {
+    "key": "C",
+    "text": "13,44 lít"
+   },
+   {
+    "key": "D",
+    "text": "4,48 lít"
+   }
+  ],
+  "answer": "B",
+  "explanation": "$2\\text{Al}+2\\text{NaOH}+2\\text{H}_2\\text{O}\\to 2\\text{NaAlO}_2+3\\text{H}_2$; $n_{\\text{Al}}=0{,}2$ mol → $n_{\\text{H}_2}=0{,}3$ mol $=6{,}72$ lít.",
+  "tags": [
+   "nhôm",
+   "amfoter"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "VD",
+  "prompt": "Cho 0,1 mol $\\text{FeCl}_3$ phản ứng hoàn toàn với dung dịch KI (dư vừa đủ). Khối lượng $\\text{I}_2$ thu được là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "6,35 g"
+   },
+   {
+    "key": "B",
+    "text": "25,4 g"
+   },
+   {
+    "key": "C",
+    "text": "12,7 g"
+   },
+   {
+    "key": "D",
+    "text": "3,18 g"
+   }
+  ],
+  "answer": "C",
+  "explanation": "$2\\text{Fe}^{3+}+2\\text{I}^{-}\\to 2\\text{Fe}^{2+}+\\text{I}_2$; $n_{\\text{I}_2}=0{,}05$ mol $=12{,}7$ g.",
+  "tags": [
+   "kim loại chuyển tiếp",
+   "oxi hóa – khử"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "VD",
+  "prompt": "Trong các kim loại sau, kim loại phản ứng được với nước nóng (không phản ứng với nước lạnh) là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "Mg"
+   },
+   {
+    "key": "B",
+    "text": "Al"
+   },
+   {
+    "key": "C",
+    "text": "Cu"
+   },
+   {
+    "key": "D",
+    "text": "Ag"
+   }
+  ],
+  "answer": "A",
+  "explanation": "Mg phản ứng chậm với nước nóng; Al bị lớp oxit bảo vệ (cần loại bỏ oxit); Cu, Ag không phản ứng với nước.",
+  "tags": [
+   "kim loại",
+   "hoạt động hóa học"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "VD",
+  "prompt": "Nung hoàn toàn 10 g $\\text{CaCO}_3$ tinh khiết (phản ứng phân hạch hoàn toàn). Khối lượng $\\text{CaO}$ thu được là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "2,8 g"
+   },
+   {
+    "key": "B",
+    "text": "8,4 g"
+   },
+   {
+    "key": "C",
+    "text": "11,2 g"
+   },
+   {
+    "key": "D",
+    "text": "5,6 g"
+   }
+  ],
+  "answer": "D",
+  "explanation": "$\\text{CaCO}_3\\to\\text{CaO}+\\text{CO}_2$; $n=0{,}1$ mol → $m_{\\text{CaO}}=0{,}1\\cdot 56=5{,}6$ g.",
+  "tags": [
+   "kim loại kiềm thổ"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "VDC",
+  "prompt": "Cho dung dịch chứa phức $[\\text{Ag(NH}_3)_2]^{+}$ phản ứng với dung dịch KI. Hiện tượng quan sát được là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "kết tủa trắng"
+   },
+   {
+    "key": "B",
+    "text": "kết tủa vàng"
+   },
+   {
+    "key": "C",
+    "text": "dung dịch xanh"
+   },
+   {
+    "key": "D",
+    "text": "không có hiện tượng"
+   }
+  ],
+  "answer": "B",
+  "explanation": "Ion $\\text{I}^{-}$ lấy $\\text{Ag}^{+}$ khỏi phức (vì $\\text{AgI}$ có độ tan cực nhỏ), sinh kết tủa $\\text{AgI}$ màu vàng.",
+  "tags": [
+   "phức chất",
+   "cân bằng"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "VDC",
+  "prompt": "Nung hoàn toàn 11,6 g $\\text{FeCO}_3$ trong không khí theo phản ứng $4\\text{FeCO}_3+\\text{O}_2\\to 2\\text{Fe}_2\\text{O}_3+4\\text{CO}_2$. Khối lượng $\\text{Fe}_2\\text{O}_3$ thu được là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "8 g"
+   },
+   {
+    "key": "B",
+    "text": "16 g"
+   },
+   {
+    "key": "C",
+    "text": "4 g"
+   },
+   {
+    "key": "D",
+    "text": "11,6 g"
+   }
+  ],
+  "answer": "A",
+  "explanation": "$M(\\text{FeCO}_3)=116$: $n=0{,}1$ mol → $n_{\\text{Fe}_2\\text{O}_3}=0{,}05$ mol $=8$ g.",
+  "tags": [
+   "kim loại chuyển tiếp",
+   "bảo toàn"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "VDC",
+  "prompt": "Hòa tan hoàn toàn 2,7 g Al trong dung dịch NaOH (dư). Thể tích khí $\\text{H}_2$ (đktc) sinh ra là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "1,68 lít"
+   },
+   {
+    "key": "B",
+    "text": "6,72 lít"
+   },
+   {
+    "key": "C",
+    "text": "3,36 lít"
+   },
+   {
+    "key": "D",
+    "text": "2,24 lít"
+   }
+  ],
+  "answer": "C",
+  "explanation": "$n_{\\text{Al}}=0{,}1$ mol → $n_{\\text{H}_2}=0{,}15$ mol $=3{,}36$ lít.",
+  "tags": [
+   "nhôm"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "VDC",
+  "prompt": "Hòa tan hoàn toàn 11,2 g Fe trong dung dịch $\\text{HNO}_3$ loãng (dư) thu sản phẩm khử là NO. Thể tích NO (đktc) sinh ra là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "2,24 lít"
+   },
+   {
+    "key": "B",
+    "text": "6,72 lít"
+   },
+   {
+    "key": "C",
+    "text": "8,96 lít"
+   },
+   {
+    "key": "D",
+    "text": "4,48 lít"
+   }
+  ],
+  "answer": "D",
+  "explanation": "$n_{\\text{Fe}}=0{,}2$ mol → $n_e=0{,}6$ mol; $\\text{NO}_3^{-}+4\\text{H}^{+}+3e\\to\\text{NO}+2\\text{H}_2\\text{O}$: $n_{\\text{NO}}=0{,}2$ mol $=4{,}48$ lít.",
+  "tags": [
+   "kim loại chuyển tiếp",
+   "oxi hóa – khử"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "dung-sai",
+  "level": "TH",
+  "prompt": "Xét các phát biểu về kim loại kiềm (nhóm IA). Xét tính đúng sai của các khẳng định sau:",
+  "options": [
+   {
+    "key": "a",
+    "text": "Tính khử của kim loại kiềm tăng dần từ Li đến Cs."
+   },
+   {
+    "key": "b",
+    "text": "Na cháy trong oxi tạo ra $\\text{Na}_2\\text{O}_2$."
+   },
+   {
+    "key": "c",
+    "text": "Kim loại kiềm được bảo quản trong nước để tránh oxi hóa."
+   },
+   {
+    "key": "d",
+    "text": "Li là kim loại có khối lượng riêng nhỏ nhất trong các kim loại."
+   }
+  ],
+  "answer": "ĐĐSĐ",
+  "explanation": "a) Đúng: bán kính nguyên tử tăng, dễ mất electron hơn. b) Đúng: $2\\text{Na}+\\text{O}_2\\to\\text{Na}_2\\text{O}_2$. c) Sai: phải bảo quản trong dầu hỏa vì kim loại kiềm phản ứng mãnh liệt với nước. d) Đúng: $\\rho_{\\text{Li}}\\approx 0{,}53$ g/cm³ là nhỏ nhất.",
+  "tags": [
+   "kim loại kiềm"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "dung-sai",
+  "level": "VD",
+  "prompt": "Xét các phát biểu về nhôm. Xét tính đúng sai của các khẳng định sau:",
+  "options": [
+   {
+    "key": "a",
+    "text": "Al không bị thụ động hóa bởi $\\text{HNO}_3$ đặc nguội."
+   },
+   {
+    "key": "b",
+    "text": "Al phản ứng với dung dịch NaOH dư sinh $\\text{H}_2$, trong đó Al đóng vai trò chất khử."
+   },
+   {
+    "key": "c",
+    "text": "$\\text{Al}_2\\text{O}_3$ chỉ phản ứng với dung dịch axit."
+   },
+   {
+    "key": "d",
+    "text": "Phản ứng nhiệt nhôm $2\\text{Al}+\\text{Fe}_2\\text{O}_3\\to\\text{Al}_2\\text{O}_3+2\\text{Fe}$ toả nhiệt lượng lớn, dùng để hàn ray."
+   }
+  ],
+  "answer": "SĐSĐ",
+  "explanation": "a) Sai: Al bị thụ động hóa bởi $\\text{HNO}_3$ đặc nguội và $\\text{H}_2\\text{SO}_4$ đặc nguội. b) Đúng: $2\\text{Al}+2\\text{NaOH}+2\\text{H}_2\\text{O}\\to 2\\text{NaAlO}_2+3\\text{H}_2$. c) Sai: $\\text{Al}_2\\text{O}_3$ lưỡng tính, phản ứng cả kiềm. d) Đúng.",
+  "tags": [
+   "nhôm"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Hoá học",
+  "type": "dung-sai",
+  "level": "VD",
+  "prompt": "Xét các phát biểu về kim loại chuyển tiếp và hợp chất phức. Xét tính đúng sai của các khẳng định sau:",
+  "options": [
+   {
+    "key": "a",
+    "text": "Số oxi hóa phổ biến của Fe trong hợp chất là $+2$ và $+3$."
+   },
+   {
+    "key": "b",
+    "text": "Dung dịch $\\text{FeCl}_3$ làm giấy quỳ tím chuyển xanh."
+   },
+   {
+    "key": "c",
+    "text": "Trong $[\\text{Cu(NH}_3)_4]\\text{SO}_4$, ion $\\text{NH}_3$ đóng vai trò phối tử."
+   },
+   {
+    "key": "d",
+    "text": "Hợp chất phức không tồn tại trong cơ thể sống."
+   }
+  ],
+  "answer": "ĐSĐS",
+  "explanation": "a) Đúng. b) Sai: $\\text{FeCl}_3$ thủy phân cho môi trường axit, quỳ hóa đỏ. c) Đúng: $\\text{NH}_3$ là phối tử, $\\text{Cu}^{2+}$ là ion trung tâm. d) Sai: hemoglobin (phức của Fe), diệp lục (phức của Mg)...",
+  "tags": [
+   "kim loại chuyển tiếp",
+   "phức chất"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "dung-sai",
+  "level": "VDC",
+  "prompt": "Hòa tan hoàn toàn 8,3 g hỗn hợp gồm Fe và Al trong dung dịch HCl (dư), thu được 5,6 lít $\\text{H}_2$ (đktc). Xét tính đúng sai của các khẳng định sau:",
+  "options": [
+   {
+    "key": "a",
+    "text": "Tổng số mol $\\text{H}_2$ là 0,25 mol."
+   },
+   {
+    "key": "b",
+    "text": "Hỗn hợp ban đầu không thể chỉ gồm Fe."
+   },
+   {
+    "key": "c",
+    "text": "Khối lượng Al trong hỗn hợp là 3,2 g."
+   },
+   {
+    "key": "d",
+    "text": "Hỗn hợp phản ứng tối đa với 0,5 mol HCl."
+   }
+  ],
+  "answer": "ĐĐSĐ",
+  "explanation": "a) Đúng: $n_{\\text{H}_2}=\\frac{5{,}6}{22{,}4}=0{,}25$ mol. b) Đúng: nếu chỉ Fe thì $n_{\\text{Fe}}=\\frac{8{,}3}{56}\\approx 0{,}148$ mol < 0,25 mol. c) Sai: giải hệ $56x+27y=8{,}3$; $x+1{,}5y=0{,}25$ cho $x=y=0{,}1$ mol → $m_{\\text{Al}}=2{,}7$ g. d) Đúng: $0{,}1\\cdot 2+0{,}1\\cdot 3=0{,}5$ mol.",
+  "tags": [
+   "hỗn hợp kim loại",
+   "bảo toàn electron"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "tra-loi-ngan",
+  "level": "NB",
+  "prompt": "Cho 4,6 g Na tác dụng hoàn toàn với nước. Thể tích khí $\\text{H}_2$ (đktc) thu được là bao nhiêu lít?",
+  "answer": "2,24",
+  "explanation": "$2\\text{Na}+2\\text{H}_2\\text{O}\\to 2\\text{NaOH}+\\text{H}_2$; $n_{\\text{Na}}=0{,}2$ mol → $n_{\\text{H}_2}=0{,}1$ mol $=2{,}24$ lít.",
+  "tags": [
+   "kim loại kiềm"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "tra-loi-ngan",
+  "level": "TH",
+  "prompt": "Cho 5,6 g Fe tác dụng hoàn toàn với dung dịch $\\text{CuSO}_4$ (dư). Khối lượng Cu thoát ra là bao nhiêu gam?",
+  "answer": "6,4",
+  "explanation": "$\\text{Fe}+\\text{Cu}^{2+}\\to\\text{Fe}^{2+}+\\text{Cu}$; $n_{\\text{Fe}}=0{,}1$ mol → $m_{\\text{Cu}}=6{,}4$ g.",
+  "tags": [
+   "kim loại chuyển tiếp"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Hoá học",
+  "type": "tra-loi-ngan",
+  "level": "TH",
+  "prompt": "Số phối trí của ion $\\text{Zn}^{2+}$ trong phức $[\\text{Zn(NH}_3)_4]^{2+}$ là bao nhiêu?",
+  "answer": "4",
+  "explanation": "Ion trung tâm $\\text{Zn}^{2+}$ liên kết với 4 phối tử $\\text{NH}_3$: số phối trí bằng 4.",
+  "tags": [
+   "phức chất"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "tra-loi-ngan",
+  "level": "VD",
+  "prompt": "Hòa tan hoàn toàn 5,4 g Al trong dung dịch HCl (dư). Thể tích khí $\\text{H}_2$ (đktc) thu được là bao nhiêu lít?",
+  "answer": "6,72",
+  "explanation": "$2\\text{Al}+6\\text{HCl}\\to 2\\text{AlCl}_3+3\\text{H}_2$; $n_{\\text{Al}}=0{,}2$ mol → $n_{\\text{H}_2}=0{,}3$ mol $=6{,}72$ lít.",
+  "tags": [
+   "nhôm"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "tra-loi-ngan",
+  "level": "VD",
+  "prompt": "Cho 10 g $\\text{CaCO}_3$ phản ứng hoàn toàn với dung dịch HCl (dư). Thể tích khí $\\text{CO}_2$ (đktc) thu được là bao nhiêu lít?",
+  "answer": "2,24",
+  "explanation": "$\\text{CaCO}_3+2\\text{HCl}\\to\\text{CaCl}_2+\\text{CO}_2+\\text{H}_2\\text{O}$; $n=0{,}1$ mol → $V=2{,}24$ lít.",
+  "tags": [
+   "kim loại kiềm thổ"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Hoá học",
+  "type": "tra-loi-ngan",
+  "level": "VDC",
+  "prompt": "Hòa tan bao nhiêu gam Fe vào dung dịch $\\text{HNO}_3$ loãng (dư) để thu được 0,15 mol khí NO (sản phẩm khử duy nhất)?",
+  "answer": "8,4",
+  "explanation": "$n_e=3n_{\\text{NO}}=0{,}45$ mol → $n_{\\text{Fe}}=\\frac{0{,}45}{3}=0{,}15$ mol → $m=8{,}4$ g.",
+  "tags": [
+   "kim loại chuyển tiếp",
+   "bảo toàn electron"
+  ]
+ }
+]

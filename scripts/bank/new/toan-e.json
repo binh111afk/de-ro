@@ -1,0 +1,734 @@
+[
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Số trung bình của mẫu số liệu $4;\\,6;\\,7;\\,9;\\,9$ là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "6"
+      },
+      {
+        "key": "B",
+        "text": "8"
+      },
+      {
+        "key": "C",
+        "text": "7"
+      },
+      {
+        "key": "D",
+        "text": "9"
+      }
+    ],
+    "answer": "C",
+    "explanation": "$\\overline{x}=\\frac{4+6+7+9+9}{5}=7$.",
+    "tags": [
+      "thống kê",
+      "số trung bình"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Mốt của mẫu số liệu $2;\\,3;\\,3;\\,5;\\,5;\\,5;\\,7$ là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "5"
+      },
+      {
+        "key": "B",
+        "text": "3"
+      },
+      {
+        "key": "C",
+        "text": "7"
+      },
+      {
+        "key": "D",
+        "text": "2"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Giá trị 5 xuất hiện 3 lần, nhiều nhất nên mốt là 5.",
+    "tags": [
+      "thống kê",
+      "mốt"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Trong một mẫu gồm 40 học sinh, có 8 học sinh thuộc nhóm $[30;40)$. Tần suất của nhóm này là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "0,4"
+      },
+      {
+        "key": "B",
+        "text": "0,2"
+      },
+      {
+        "key": "C",
+        "text": "0,8"
+      },
+      {
+        "key": "D",
+        "text": "0,25"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Tần suất $=\\frac{8}{40}=0{,}2$.",
+    "tags": [
+      "thống kê",
+      "tần suất"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Bảng thống kê tuổi của 50 người tham gia một câu lạc bộ như bên dưới. Số người có tuổi từ 30 trở lên là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "35"
+      },
+      {
+        "key": "B",
+        "text": "40"
+      },
+      {
+        "key": "C",
+        "text": "45"
+      },
+      {
+        "key": "D",
+        "text": "25"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Số người từ 30 tuổi trở lên $=15+20+5=40$.",
+    "tags": [
+      "thống kê",
+      "bảng tần suất"
+    ],
+    "figure": {
+      "kind": "stats",
+      "chart": "table",
+      "title": "Tuổi của 50 thành viên câu lạc bộ",
+      "data": "[20; 30) [30; 40) [40; 50) [50; 60)\nSố người: 10; 15; 20; 5"
+    }
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Mẫu số liệu ghép nhóm có bảng tần suất: nhóm $[0;10)$ có 5 phần tử, nhóm $[10;20)$ có 15 phần tử, nhóm $[20;30)$ có 20 phần tử, nhóm $[30;40)$ có 10 phần tử. Tứ phân vị thứ nhất của mẫu nằm trong nhóm nào?",
+    "options": [
+      {
+        "key": "A",
+        "text": "$[0;10)$"
+      },
+      {
+        "key": "B",
+        "text": "$[20;30)$"
+      },
+      {
+        "key": "C",
+        "text": "$[10;20)$"
+      },
+      {
+        "key": "D",
+        "text": "$[30;40)$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Với $n=50$, vị trí tứ phân vị thứ nhất là $\\frac{50}{4}=12{,}5$. Tần suất tích luỹ: nhóm $[0;10)$ chiếm 5, nhóm $[10;20)$ chiếm 20, nên giá trị thứ 12,5 thuộc nhóm $[10;20)$.",
+    "tags": [
+      "thống kê",
+      "tứ phân vị"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Phương sai của mẫu số liệu $1;\\,2;\\,3;\\,4;\\,5$ là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "5"
+      },
+      {
+        "key": "B",
+        "text": "4"
+      },
+      {
+        "key": "C",
+        "text": "$\\sqrt{2}$"
+      },
+      {
+        "key": "D",
+        "text": "2"
+      }
+    ],
+    "answer": "D",
+    "explanation": "$\\overline{x}=3$, $s^2=\\frac{(1-3)^2+(2-3)^2+(3-3)^2+(4-3)^2+(5-3)^2}{5}=\\frac{10}{5}=2$.",
+    "tags": [
+      "thống kê",
+      "phương sai"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Biểu đồ tần suất bên dưới cho biết thời gian làm bài của 50 học sinh (phút). Ước lượng số trung bình của mẫu bằng công thức nhóm (lấy giá trị đại diện là giá trị giữa của mỗi nhóm):",
+    "options": [
+      {
+        "key": "A",
+        "text": "54 phút"
+      },
+      {
+        "key": "B",
+        "text": "55 phút"
+      },
+      {
+        "key": "C",
+        "text": "53 phút"
+      },
+      {
+        "key": "D",
+        "text": "56 phút"
+      }
+    ],
+    "answer": "A",
+    "explanation": "$\\overline{x}=\\frac{35\\cdot 5+45\\cdot 10+55\\cdot 20+65\\cdot 15}{50}=\\frac{2700}{50}=54$ phút.",
+    "tags": [
+      "thống kê",
+      "mẫu ghép nhóm"
+    ],
+    "figure": {
+      "kind": "stats",
+      "chart": "hist",
+      "title": "Thời gian làm bài của 50 học sinh",
+      "xLabel": "Thời gian (phút)",
+      "yLabel": "Số học sinh",
+      "data": "[30; 40) [40; 50) [50; 60) [60; 70)\nSố học sinh: 5; 10; 20; 15"
+    }
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Cho hình chóp $S.ABC$ có đáy $ABC$ là tam giác vuông tại $B$ với $AB=BC=2$, cạnh bên $SA\\perp(ABC)$ và $SA=3$. Khoảng cách từ $A$ đến mặt phẳng $(SBC)$ bằng:",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\frac{\\sqrt{13}}{6}$"
+      },
+      {
+        "key": "B",
+        "text": "$\\frac{6\\sqrt{13}}{13}$"
+      },
+      {
+        "key": "C",
+        "text": "$\\frac{3\\sqrt{13}}{13}$"
+      },
+      {
+        "key": "D",
+        "text": "$\\frac{12}{13}$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Đặt hệ trục $A(0;0;0)$, $B(2;0;0)$, $C(2;2;0)$, $S(0;0;3)$. Mặt phẳng $(SBC)$ đi qua $B(2;0;0)$, $C(2;2;0)$, $S(0;0;3)$ có phương trình $3x+2z-6=0$, nên $d(A,(SBC))=\\frac{6}{\\sqrt{13}}=\\frac{6\\sqrt{13}}{13}$.",
+    "tags": [
+      "hình học không gian",
+      "khoảng cách"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Cho hình chóp $S.ABCD$ có đáy $ABCD$ là hình vuông cạnh $a$, $SA\\perp(ABCD)$ và $SA=a\\sqrt{2}$. Góc giữa đường thẳng $SC$ và mặt phẳng $(ABCD)$ bằng:",
+    "options": [
+      {
+        "key": "A",
+        "text": "$30^{\\circ}$"
+      },
+      {
+        "key": "B",
+        "text": "$60^{\\circ}$"
+      },
+      {
+        "key": "C",
+        "text": "$90^{\\circ}$"
+      },
+      {
+        "key": "D",
+        "text": "$45^{\\circ}$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Góc cần tìm là $\\widehat{SCA}$ với $\\tan\\widehat{SCA}=\\frac{SA}{AC}=\\frac{a\\sqrt{2}}{a\\sqrt{2}}=1$, nên góc bằng $45^{\\circ}$.",
+    "tags": [
+      "hình học không gian",
+      "góc"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Trong một khảo sát với cỡ mẫu $n=400$, người ta thu được tỉ lệ mẫu $f=0{,}5$. Với độ tin cậy 95% ($z_{0{,}975}=1{,}96$), biên lỗi của khoảng ước lượng cho tỉ lệ tổng thể xấp xỉ bằng:",
+    "options": [
+      {
+        "key": "A",
+        "text": "0,05"
+      },
+      {
+        "key": "B",
+        "text": "0,5"
+      },
+      {
+        "key": "C",
+        "text": "0,005"
+      },
+      {
+        "key": "D",
+        "text": "0,1"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Biên lỗi $=1{,}96\\sqrt{\\frac{f(1-f)}{n}}=1{,}96\\sqrt{\\frac{0{,}25}{400}}=1{,}96\\cdot 0{,}025=0{,}049\\approx 0{,}05$.",
+    "tags": [
+      "thống kê",
+      "ước lượng khoảng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Cho hình lập phương $ABCD.A'B'C'D'$ có cạnh 3. Khoảng cách giữa hai đường thẳng $AB$ và $C'D'$ bằng:",
+    "options": [
+      {
+        "key": "A",
+        "text": "3"
+      },
+      {
+        "key": "B",
+        "text": "$3\\sqrt{3}$"
+      },
+      {
+        "key": "C",
+        "text": "6"
+      },
+      {
+        "key": "D",
+        "text": "$3\\sqrt{2}$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "$AB\\parallel C'D'$ (cùng song song cạnh hình lập phương). Khoảng cách giữa hai đường song song bằng khoảng cách từ $A$ đến $C'D'$. Đặt hệ trục $A(0;0;0)$: các điểm của $C'D'$ có dạng $(t;3;3)$, khoảng cách tới $A$ là $\\sqrt{t^2+18}$ nhỏ nhất khi $t=0$, bằng $\\sqrt{18}=3\\sqrt{2}$.",
+    "tags": [
+      "hình học không gian",
+      "khoảng cách hai đường thẳng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Trong không gian $Oxyz$, cho mặt cầu $(S):\\,x^2+y^2+z^2-2x-4y+4=0$ và điểm $M(3;2;4)$. Khoảng cách từ $M$ đến mặt cầu $(S)$ bằng:",
+    "options": [
+      {
+        "key": "A",
+        "text": "$2\\sqrt{5}$"
+      },
+      {
+        "key": "B",
+        "text": "$2\\sqrt{5}+1$"
+      },
+      {
+        "key": "C",
+        "text": "$2\\sqrt{5}-1$"
+      },
+      {
+        "key": "D",
+        "text": "$\\sqrt{5}$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Tâm $I(1;2;0)$, $R=1$; $MI=\\sqrt{(3-1)^2+0+16}=2\\sqrt{5}>R$ nên $d=MI-R=2\\sqrt{5}-1$.",
+    "tags": [
+      "mặt cầu",
+      "khoảng cách"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Bảng thống kê bên dưới cho biết số giờ tự học trong một tuần của 40 học sinh. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Có 12 học sinh tự học từ 2 đến dưới 4 giờ."
+      },
+      {
+        "key": "b",
+        "text": "Nhóm chứa trung vị của mẫu là $[4;6)$."
+      },
+      {
+        "key": "c",
+        "text": "Số học sinh tự học dưới 4 giờ là 20."
+      },
+      {
+        "key": "d",
+        "text": "Giá trị trung bình ước lượng của mẫu bằng 4,2 giờ."
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) Đúng theo bảng. b) Đúng: tần suất tích luỹ tới $[4;6)$ là 18, giá trị thứ $\\frac{40}{2}=20$ nằm trong $[4;6)$. c) Sai: chỉ có $6+12=18$ học sinh. d) Đúng: $\\frac{1\\cdot 6+3\\cdot 12+5\\cdot 14+7\\cdot 8}{40}=\\frac{168}{40}=4{,}2$.",
+    "tags": [
+      "thống kê",
+      "mẫu ghép nhóm"
+    ],
+    "figure": {
+      "kind": "stats",
+      "chart": "table",
+      "title": "Số giờ tự học mỗi tuần của 40 học sinh",
+      "data": "[0; 2) [2; 4) [4; 6) [6; 8)\nSố học sinh: 6; 12; 14; 8"
+    }
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Cho hình chóp đều $S.ABC$ có đáy là tam giác đều cạnh 4 và chiều cao $SO=\\sqrt{6}$, như hình bên dưới ($O$ là trọng tâm đáy). Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Cạnh bên $SA=3\\sqrt{2}$."
+      },
+      {
+        "key": "b",
+        "text": "Góc giữa $SA$ và mặt đáy khoảng $35^{\\circ}$."
+      },
+      {
+        "key": "c",
+        "text": "Thể tích khối chóp bằng $8\\sqrt{2}$."
+      },
+      {
+        "key": "d",
+        "text": "Khoảng cách từ $O$ đến cạnh $BC$ bằng $\\frac{2\\sqrt{3}}{3}$."
+      }
+    ],
+    "answer": "SSSĐ",
+    "explanation": "Gọi $M$ là trung điểm $BC$: $AM=2sqrt{3}$, $OA=\frac{2}{3}AM=\frac{4sqrt{3}}{3}$, $OM=\frac{2sqrt{3}}{3}$. a) Sai: $SA^2=6+\frac{16}{3}=\frac{34}{3}$, $SAapprox3{,}37\ne3sqrt{2}$. b) Sai: $\tanwidehat{SAO}=\frac{sqrt{6}}{4sqrt{3}/3}approx1{,}06$, góc $approx46{,}7^{circ}$. c) Sai: $V=\frac{1}{3}cdot4sqrt{3}cdotsqrt{6}=4sqrt{2}$. d) Đúng: $d(O,BC)=OM=\frac{2sqrt{3}}{3}$.",
+    "tags": [
+      "hình học không gian",
+      "hình chóp đều"
+    ],
+    "figure": {
+      "kind": "geo3d",
+      "shape": "pyramid3-regular",
+      "names": [
+        "S",
+        "A",
+        "B",
+        "C"
+      ],
+      "height": true,
+      "diagonals": false
+    }
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Biểu đồ đường bên dưới cho biết doanh thu (triệu đồng) của một cửa hàng trong 5 tháng liên tiếp. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Doanh thu trung bình của 5 tháng bằng 24 triệu đồng."
+      },
+      {
+        "key": "b",
+        "text": "Số trung vị của mẫu là 25 triệu đồng."
+      },
+      {
+        "key": "c",
+        "text": "Phương sai của mẫu bằng 11."
+      },
+      {
+        "key": "d",
+        "text": "Tháng có doanh thu cao nhất là tháng thứ 4."
+      }
+    ],
+    "answer": "SĐSĐ",
+    "explanation": "a) Sai: $\\overline{x}=\\frac{20+25+22+30+28}{5}=25$. b) Đúng: mẫu sắp xếp $20;22;25;28;30$ có trung vị 25. c) Sai: $s^2=\\frac{25+0+9+25+9}{5}=\\frac{68}{5}=13{,}6$. d) Đúng: tháng 4 có doanh thu 30 triệu, lớn nhất.",
+    "tags": [
+      "thống kê",
+      "biểu đồ đường"
+    ],
+    "figure": {
+      "kind": "stats",
+      "chart": "line",
+      "title": "Doanh thu 5 tháng của cửa hàng",
+      "xLabel": "Tháng",
+      "yLabel": "Doanh thu (triệu đồng)",
+      "data": "Tháng 1; Tháng 2; Tháng 3; Tháng 4; Tháng 5\nDoanh thu (triệu đồng): 20; 25; 22; 30; 28"
+    }
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Trong không gian $Oxyz$, cho ba điểm $A(1;0;0)$, $B(0;2;0)$, $C(0;0;2)$ và mặt phẳng $(ABC):\\,2x+y+z-2=0$. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Khoảng cách từ $O$ đến $(ABC)$ bằng $\\frac{\\sqrt{6}}{3}$."
+      },
+      {
+        "key": "b",
+        "text": "Góc giữa $(ABC)$ và mặt phẳng $(Oxy)$ khoảng $24^{\\circ}$."
+      },
+      {
+        "key": "c",
+        "text": "Thể tích khối chóp $O.ABC$ bằng $\\frac{2}{3}$."
+      },
+      {
+        "key": "d",
+        "text": "Điểm $M(1;1;0)$ thuộc mặt phẳng $(ABC)$."
+      }
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "a) Đúng: $\\frac{|-2|}{\\sqrt{4+1+1}}=\\frac{2}{\\sqrt{6}}=\\frac{\\sqrt{6}}{3}$. b) Sai: $\\cos\\theta=\\frac{|\\vec{n}\\cdot\\vec{k}|}{|\\vec{n}|}=\\frac{1}{\\sqrt{6}}$ nên $\\theta\\approx 66^{\\circ}$. c) Đúng: $V=\\frac{1}{6}\\left|\\det\\right|=\\frac{1}{6}\\cdot 4=\\frac{2}{3}$. d) Sai: $2+1+0-2=1\\ne 0$.",
+    "tags": [
+      "hình học Oxyz",
+      "thể tích"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Bảng tần suất bên dưới ghi lại điểm bài kiểm tra Toán của 40 học sinh. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Nhóm chứa mốt của mẫu là $[8;10)$."
+      },
+      {
+        "key": "b",
+        "text": "Tỉ lệ học sinh đạt từ 8 điểm trở lên là 30%."
+      },
+      {
+        "key": "c",
+        "text": "Trung vị của mẫu thuộc nhóm $[6;8)$."
+      },
+      {
+        "key": "d",
+        "text": "Giá trị trung bình ước lượng của mẫu bằng 7,0."
+      }
+    ],
+    "answer": "SĐĐS",
+    "explanation": "a) Sai: nhóm $[6;8)$ có tần suất lớn nhất (20). b) Đúng: $\\frac{12}{40}=30\\%$. c) Đúng: tần suất tích luỹ tới $[6;8)$ là 28, giá trị thứ 20 nằm ở đây. d) Sai: $\\frac{5\\cdot 8+7\\cdot 20+9\\cdot 12}{40}=\\frac{288}{40}=7{,}2$.",
+    "tags": [
+      "thống kê",
+      "mẫu ghép nhóm"
+    ],
+    "figure": {
+      "kind": "stats",
+      "chart": "table",
+      "title": "Điểm kiểm tra Toán của 40 học sinh",
+      "data": "[4; 6) [6; 8) [8; 10)\nSố học sinh: 8; 20; 12"
+    }
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Cho hình chóp $S.ABCD$ có đáy $ABCD$ là hình vuông cạnh 2, $SA\\perp(ABCD)$, $SA=2$, như hình bên dưới. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Độ dài đường chéo $BD$ bằng $2\\sqrt{2}$."
+      },
+      {
+        "key": "b",
+        "text": "Góc giữa đường thẳng $SB$ và mặt đáy là góc $\\widehat{SBA}$."
+      },
+      {
+        "key": "c",
+        "text": "Khoảng cách từ $B$ đến mặt phẳng $(SAD)$ bằng $\\sqrt{2}$."
+      },
+      {
+        "key": "d",
+        "text": "Thể tích khối chóp bằng $\\frac{8}{3}$."
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) Đúng: $BD=2\\sqrt{2}$. b) Đúng: $AB\\perp(SA)$? Góc giữa $SB$ và $(ABCD)$ là góc giữa $SB$ và hình chiếu $BA$ của nó trên đáy, tức $\\widehat{SBA}$. c) Sai: $(SAD)$ chính là mặt phẳng $(Oxz)$ trong hệ trục đặt $A$ gốc; $d(B,(SAD))=AB=2$. d) Đúng: $V=\\frac{1}{3}\\cdot 2\\cdot 2\\cdot 2=\\frac{8}{3}$.",
+    "tags": [
+      "hình học không gian",
+      "hình chóp"
+    ],
+    "figure": {
+      "kind": "geo3d",
+      "shape": "pyramid4-sa",
+      "names": [
+        "S",
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "height": true,
+      "diagonals": false
+    }
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "NB",
+    "prompt": "Số trung bình cộng của mẫu số liệu $3;\\,5;\\,7;\\,9$ là bao nhiêu?",
+    "answer": "6",
+    "explanation": "$\\overline{x}=\\frac{3+5+7+9}{4}=6$.",
+    "tags": [
+      "thống kê"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "NB",
+    "prompt": "Khoảng biến thiên của mẫu số liệu $2;\\,5;\\,1;\\,8;\\,4$ là bao nhiêu?",
+    "answer": "7",
+    "explanation": "$R=x_{\\max}-x_{\\min}=8-1=7$.",
+    "tags": [
+      "thống kê",
+      "khoảng biến thiên"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Mẫu ghép nhóm có tần suất: nhóm $[10;20)$ có 10 phần tử, nhóm $[20;30)$ có 20 phần tử, nhóm $[30;40)$ có 20 phần tử. Tần suất của nhóm $[20;30)$ là bao nhiêu?",
+    "answer": "0,4",
+    "explanation": "Tổng số phần tử $=50$; tần suất $=\\frac{20}{50}=0{,}4$.",
+    "tags": [
+      "thống kê",
+      "tần suất"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Phương sai của mẫu số liệu $2;\\,4;\\,6;\\,8$ là bao nhiêu?",
+    "answer": "5",
+    "explanation": "$\\overline{x}=5$, $s^2=\\frac{9+1+1+9}{4}=5$.",
+    "tags": [
+      "thống kê",
+      "phương sai"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Cho hình lập phương $ABCD.A'B'C'D'$ cạnh 4. Khoảng cách từ $A'$ đến mặt phẳng $(AB'C')$ là $d$. Giá trị của $d^2$, làm tròn đến hàng phần trăm, là bao nhiêu?",
+    "answer": "8",
+    "explanation": "Chọn $A(0;0;0)$, $B'(4;0;4)$, $C'(4;4;4)$, $A'(0;0;4)$. Mặt phẳng $(AB'C')$ có VTPT $[\u000bec{AB'},\u000bec{AC'}]$ cùng phương $(1;0;-1)$, phương trình $x-z=0$. $d=\frac{|0-4|}{sqrt{2}}=2sqrt{2}$, $d^2=8$.",
+    "tags": [
+      "hình học không gian",
+      "khoảng cách"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Cho hình chóp $S.ABCD$ có đáy là hình vuông, $SA\\perp(ABCD)$, $AB=a$ và $SA=2a$. Góc giữa đường thẳng $SB$ và mặt phẳng $(ABCD)$ (làm tròn đến hàng độ) là bao nhiêu độ?",
+    "answer": "63",
+    "explanation": "Góc là $\\widehat{SBA}$, $\\tan\\widehat{SBA}=\\frac{SA}{AB}=2$ nên góc $\\approx 63{,}4^{\\circ}\\approx 63^{\\circ}$.",
+    "tags": [
+      "hình học không gian",
+      "góc"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Bảng tần suất ghép nhóm về thời gian chạy 100 m của 40 bạn học sinh: nhóm $[10;20)$ có 8 bạn, nhóm $[20;30)$ có 16 bạn, nhóm $[30;40)$ có 12 bạn, nhóm $[40;50)$ có 4 bạn. Trung vị ước lượng của mẫu (làm tròn đến hàng phần mười) là bao nhiêu giây?",
+    "answer": "27,5",
+    "explanation": "Giá trị thứ 20 thuộc nhóm $[20;30)$: $Me=20+\\frac{20-8}{16}\\cdot 10=20+7{,}5=27{,}5$ giây.",
+    "tags": [
+      "thống kê",
+      "trung vị mẫu ghép nhóm"
+    ]
+  }
+]

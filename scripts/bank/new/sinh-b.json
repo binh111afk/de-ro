@@ -1,0 +1,724 @@
+[
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Sinh học",
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Theo Đacuyn, ba yếu tố cơ bản của quá trình tiến hóa là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "đột biến gen, chọn lọc nhân tạo, lai tạo"
+      },
+      {
+        "key": "B",
+        "text": "chọn lọc tự nhiên, chọn lọc nhân tạo, đột biến"
+      },
+      {
+        "key": "C",
+        "text": "biến dị, di truyền, chọn lọc tự nhiên"
+      },
+      {
+        "key": "D",
+        "text": "trao đổi chất, sinh sản, sinh trưởng"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Biến dị cung cấp nguyên liệu, di truyền duy trì biến dị qua các thế hệ, chọn lọc tự nhiên định hướng sự biến đổi tần số alen.",
+    "tags": [
+      "tiến hóa",
+      "đặc trưng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Sinh học",
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Nhân tố tiến hóa làm biến đổi tần số alen một cách ngẫu nhiên, không định hướng trong quần thể (rõ rệt nhất ở quần thể nhỏ) là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "chọn lọc tự nhiên"
+      },
+      {
+        "key": "B",
+        "text": "các yếu tố ngẫu nhiên (phiêu bạt di truyền)"
+      },
+      {
+        "key": "C",
+        "text": "dòng gen"
+      },
+      {
+        "key": "D",
+        "text": "giao phối không ngẫu nhiên"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Đột biến xảy ra ngẫu nhiên, làm xuất hiện alen mới và biến đổi tần số alen một cách ngẫu nhiên.",
+    "tags": [
+      "tiến hóa",
+      "nguyên tố tiến hóa"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Sinh học",
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Sinh vật đứng đầu chuỗi thức ăn, tự tạo chất hữu cơ từ chất vô cơ là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "sinh vật sản xuất"
+      },
+      {
+        "key": "B",
+        "text": "sinh vật phân giải"
+      },
+      {
+        "key": "C",
+        "text": "động vật ăn thịt"
+      },
+      {
+        "key": "D",
+        "text": "sinh vật tiêu thụ bậc cao nhất"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Sinh vật sản xuất (cây xanh) quang hợp tạo chất hữu cơ, khởi đầu chuỗi thức ăn.",
+    "tags": [
+      "sinh thái",
+      "chuỗi thức ăn"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Sinh học",
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Sản phẩm của quá trình hô hấp tế bào hiếu khí là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\text{CO}_2$, $\\text{H}_2\\text{O}$ và ánh sáng"
+      },
+      {
+        "key": "B",
+        "text": "$\\text{CO}_2$ và $\\text{O}_2$"
+      },
+      {
+        "key": "C",
+        "text": "glucose và $\\text{CO}_2$"
+      },
+      {
+        "key": "D",
+        "text": "$\\text{CO}_2$, $\\text{H}_2\\text{O}$ và ATP"
+      }
+    ],
+    "answer": "D",
+    "explanation": "$\\text{C}_6\\text{H}_{12}\\text{O}_6+6\\text{O}_2\\to 6\\text{CO}_2+6\\text{H}_2\\text{O}+$ ATP.",
+    "tags": [
+      "sinh lí",
+      "hô hấp tế bào"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Sinh học",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Đặc điểm của mô hình sinh trưởng theo cấp số nhân (mô hình J) của quần thể là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "quần thể tăng chậm dần rồi ổn định"
+      },
+      {
+        "key": "B",
+        "text": "quần thể tăng nhanh với tốc độ không đổi trong điều kiện môi trường lí tưởng"
+      },
+      {
+        "key": "C",
+        "text": "kích thước quần thể không đổi theo thời gian"
+      },
+      {
+        "key": "D",
+        "text": "quần thể tăng đến sức chứa môi trường rồi dừng"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Mô hình J: $\\dfrac{dN}{dt}=rN$, tốc độ tăng tỉ lệ với kích thước quần thể, không bị giới hạn bởi môi trường.",
+    "tags": [
+      "sinh thái",
+      "mô hình tăng trưởng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Sinh học",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Điểm bù sáng của cây là cường độ ánh sáng mà tại đó:",
+    "options": [
+      {
+        "key": "A",
+        "text": "cường độ quang hợp bằng cường độ hô hấp"
+      },
+      {
+        "key": "B",
+        "text": "cường độ quang hợp lớn hơn cường độ hô hấp"
+      },
+      {
+        "key": "C",
+        "text": "cường độ quang hợp nhỏ hơn cường độ hô hấp"
+      },
+      {
+        "key": "D",
+        "text": "cây không thực hiện quang hợp"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Tại điểm bù sáng, lượng chất hữu cơ quang hợp tạo ra cân bằng với lượng bị tiêu tốn do hô hấp.",
+    "tags": [
+      "sinh lí thực vật",
+      "quang hợp"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Sinh học",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Hormone thực vật gây hiện tượng ưu thế đỉnh ngọn là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "etylen"
+      },
+      {
+        "key": "B",
+        "text": "giberellin"
+      },
+      {
+        "key": "C",
+        "text": "auxin"
+      },
+      {
+        "key": "D",
+        "text": "axit abscisic"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Auxin tập trung ở đỉnh ngọn ức chế sự phát triển của các chồi bên: ưu thế đỉnh ngọn.",
+    "tags": [
+      "sinh lí thực vật",
+      "hormone"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Sinh học",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Hormone làm giảm nồng độ glucose trong máu là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "glucagon"
+      },
+      {
+        "key": "B",
+        "text": "adrenalin"
+      },
+      {
+        "key": "C",
+        "text": "tiroxin"
+      },
+      {
+        "key": "D",
+        "text": "insulin"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Insulin (từ tuyến tụy) thúc đẩy tế bào hấp thu glucose, làm giảm đường huyết.",
+    "tags": [
+      "sinh lí động vật",
+      "nội tiết"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Sinh học",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Biểu đồ bên dưới cho biết năng lượng tích lũy qua các bậc dinh dưỡng đầu của một chuỗi thức ăn. Theo quy luật 10%, năng lượng tối đa mà bậc dinh dưỡng của rắn (bậc tiếp theo) nhận được là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "1000 kJ"
+      },
+      {
+        "key": "B",
+        "text": "100 kJ"
+      },
+      {
+        "key": "C",
+        "text": "1 kJ"
+      },
+      {
+        "key": "D",
+        "text": "10 kJ"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Năng lượng chuyển tiếp giữa hai bậc dinh dưỡng chỉ khoảng 10%: $100\\cdot 10\\%=10$ kJ.",
+    "tags": [
+      "sinh thái",
+      "năng lượng"
+    ],
+    "figure": {
+      "kind": "stats",
+      "chart": "bar",
+      "title": "Năng lượng tích lũy qua các bậc dinh dưỡng",
+      "xLabel": "Bậc dinh dưỡng",
+      "yLabel": "Năng lượng (kJ)",
+      "data": "Cỏ; Côn trùng; Ếch\nNăng lượng (kJ): 10000; 1000; 100"
+    }
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Sinh học",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Ở người, bệnh tiểu đường tuýp 1 xảy ra do cơ thể thiếu hormone:",
+    "options": [
+      {
+        "key": "A",
+        "text": "insulin"
+      },
+      {
+        "key": "B",
+        "text": "glucagon"
+      },
+      {
+        "key": "C",
+        "text": "insulin và glucagon"
+      },
+      {
+        "key": "D",
+        "text": "adrenalin"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Tiểu đường tuýp 1 do các tế bào β của đảo tụy bị phá hủy, không tổng hợp đủ insulin.",
+    "tags": [
+      "sinh lí động vật",
+      "bệnh"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Sinh học",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Cơ quan giữ vai trò trung tâm điều hòa thân nhiệt ở người là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "tủy sống"
+      },
+      {
+        "key": "B",
+        "text": "tiểu não"
+      },
+      {
+        "key": "C",
+        "text": "vùng dưới đồi"
+      },
+      {
+        "key": "D",
+        "text": "tuyến yên"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Vùng dưới đồi là trung tâm điều nhiệt, điều hòa quá trình sinh nhiệt và mất nhiệt.",
+    "tags": [
+      "sinh lí động vật",
+      "cân bằng nội môi"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Sinh học",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Trong một khu đất 400 m² có 200 cá thể của một loài cây. Mật độ cá thể của quần thể (cá thể/m²) là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "2"
+      },
+      {
+        "key": "B",
+        "text": "5"
+      },
+      {
+        "key": "C",
+        "text": "0,05"
+      },
+      {
+        "key": "D",
+        "text": "0,5"
+      }
+    ],
+    "answer": "D",
+    "explanation": "$\\dfrac{200}{400}=0{,}5$ cá thể/m².",
+    "tags": [
+      "sinh thái",
+      "mật độ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Sinh học",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Trong một giờ, lá cây quang hợp hấp thụ hết 0,06 mol $\\text{CO}_2$. Khối lượng glucose ($\\text{C}_6\\text{H}_{12}\\text{O}_6$, $M=180$) được tạo thành trong giờ đó là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "1,8 g"
+      },
+      {
+        "key": "B",
+        "text": "3,6 g"
+      },
+      {
+        "key": "C",
+        "text": "0,9 g"
+      },
+      {
+        "key": "D",
+        "text": "18 g"
+      }
+    ],
+    "answer": "A",
+    "explanation": "$6\\text{CO}_2\\to 1$ glucose: $n_{\\text{glucose}}=\\dfrac{0{,}06}{6}=0{,}01$ mol $=1{,}8$ g.",
+    "tags": [
+      "sinh lí thực vật",
+      "quang hợp"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Sinh học",
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Một alen bệnh lặn $b$ có tần số $q=0{,}02$ trong quần thể đang cân bằng di truyền. Tỉ lệ người mang alen bệnh (dị hợp) xấp xỉ là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "2,0%"
+      },
+      {
+        "key": "B",
+        "text": "0,04%"
+      },
+      {
+        "key": "C",
+        "text": "3,9%"
+      },
+      {
+        "key": "D",
+        "text": "39%"
+      }
+    ],
+    "answer": "C",
+    "explanation": "$2pq=2\\cdot 0{,}98\\cdot 0{,}02=0{,}0392\\approx 3{,}9\\%$.",
+    "tags": [
+      "di truyền quần thể"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Sinh học",
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Một quần thể sinh trưởng theo mô hình logistic với sức chứa môi trường $K=1000$ cá thể, tốc độ tăng trưởng riêng $r=0{,}1$ và hiện có $N=200$ cá thể. Tốc độ tăng của quần thể ($\\dfrac{dN}{dt}$, cá thể/đơn vị thời gian) là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "20"
+      },
+      {
+        "key": "B",
+        "text": "16"
+      },
+      {
+        "key": "C",
+        "text": "8"
+      },
+      {
+        "key": "D",
+        "text": "24"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$\\dfrac{dN}{dt}=rN\\left(1-\\dfrac{N}{K}\\right)=0{,}1\\cdot 200\\cdot 0{,}8=16$ cá thể/đơn vị thời gian.",
+    "tags": [
+      "sinh thái",
+      "mô hình logistical"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Sinh học",
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Xét các phát biểu về sinh lí thực vật. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Quang hợp diễn ra trong lục lạp."
+      },
+      {
+        "key": "b",
+        "text": "Giai đoạn sáng của quang hợp diễn ra ở màng thylakoid."
+      },
+      {
+        "key": "c",
+        "text": "Cây xanh chỉ thực hiện hô hấp vào ban đêm."
+      },
+      {
+        "key": "d",
+        "text": "Auxin thúc đẩy sự ra rễ ở cành giâm."
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) Đúng. b) Đúng. c) Sai: hô hấp diễn ra ngày và đêm ở mọi tế bào sống. d) Đúng: auxin kích thích sinh rễ.",
+    "tags": [
+      "sinh lí thực vật"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Sinh học",
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Xét chuỗi thức ăn: cỏ → châu chấu → ếch → rắn → diều hâu. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Cỏ là sinh vật sản xuất."
+      },
+      {
+        "key": "b",
+        "text": "Rắn là sinh vật tiêu thụ bậc 2."
+      },
+      {
+        "key": "c",
+        "text": "Sinh vật đứng đầu chuỗi thức ăn này là ếch."
+      },
+      {
+        "key": "d",
+        "text": "Lượng năng lượng tích lũy càng giảm khi lên các bậc dinh dưỡng cao."
+      }
+    ],
+    "answer": "ĐSSĐ",
+    "explanation": "a) Đúng. b) Sai: rắn là sinh vật tiêu thụ bậc 3. c) Sai: diều hâu là đỉnh chuỗi. d) Đúng theo quy luật 10%.",
+    "tags": [
+      "sinh thái",
+      "chuỗi thức ăn"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Sinh học",
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Xét các phát biểu về bài tiết và hô hấp ở người. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Thận lọc máu tạo nước tiểu nhờ quá trình lọc ở cầu thận."
+      },
+      {
+        "key": "b",
+        "text": "Tái hấp thu các chất có ích diễn ra chủ yếu ở ống thận."
+      },
+      {
+        "key": "c",
+        "text": "Nước tiểu của người khỏe mạnh bình thường có glucose."
+      },
+      {
+        "key": "d",
+        "text": "Hô hấp tế bào diễn ra chủ yếu trong ty thể."
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) Đúng. b) Đúng. c) Sai: glucose được tái hấp thu hết ở ống thận. d) Đúng: đường phân ở tế bào chất, còn chu trình Krebs và chuỗi truyền electron (tạo phần lớn ATP) diễn ra trong ti thể.",
+    "tags": [
+      "sinh lí động vật",
+      "bài tiết"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Sinh học",
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Ở một quần thể, alen $A$ trội hoàn toàn so với $a$; các cá thể $aa$ không thể sinh sản (chọn lọc chống tuyệt đối $aa$). Hiện $q=0{,}2$. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Chọn lọc tự nhiên làm tần số alen $a$ giảm dần qua các thế hệ."
+      },
+      {
+        "key": "b",
+        "text": "Tỉ lệ cá thể dị hợp $Aa$ hiện nay là 4%."
+      },
+      {
+        "key": "c",
+        "text": "Khi $q$ nhỏ, tần số alen $a$ giảm chậm vì alen $a$ được \"ẩn\" trong các cá thể dị hợp."
+      },
+      {
+        "key": "d",
+        "text": "Chọn lọc tự nhiên biến đổi thành phần kiểu gen chủ đạo một cách ngẫu nhiên, không định hướng."
+      }
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "a) Đúng. b) Sai: $2pq=2\\cdot 0{,}8\\cdot 0{,}2=0{,}32=32\\%$ (4% là tỉ lệ $aa=q^2$). c) Đúng. d) Sai: chọn lọc tự nhiên biến đổi kiểu gen chủ đạo có định hướng, làm quần thể thích nghi dần với môi trường.",
+    "tags": [
+      "tiến hóa",
+      "chọn lọc tự nhiên"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Sinh học",
+    "type": "tra-loi-ngan",
+    "level": "NB",
+    "prompt": "Phương trình tổng quát của hô hấp: $\\text{C}_6\\text{H}_{12}\\text{O}_6+6\\text{O}_2\\to 6\\text{CO}_2+6\\text{H}_2\\text{O}+$ ATP. Số mol $\\text{O}_2$ cần cho 0,5 mol glucose hô hấp hoàn toàn là bao nhiêu?",
+    "answer": "3",
+    "explanation": "Tỉ lệ 1 glucose : 6 $\\text{O}_2$: $0{,}5\\cdot 6=3$ mol.",
+    "tags": [
+      "sinh lí",
+      "hô hấp"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Sinh học",
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Trong một khu vực 0,3 ha có 120 cá thể chim. Mật độ quần thể (cá thể/ha) là bao nhiêu?",
+    "answer": "400",
+    "explanation": "$\\dfrac{120}{0{,}3}=400$ cá thể/ha.",
+    "tags": [
+      "sinh thái",
+      "mật độ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Sinh học",
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Trong một chuỗi thức ăn, bậc dinh dưỡng thứ nhất tích lũy 5000 kJ. Theo quy luật 10%, năng lượng tối đa bậc dinh dưỡng thứ ba nhận được là bao nhiêu kJ?",
+    "answer": "50",
+    "explanation": "Bậc 2 nhận 500 kJ, bậc 3 nhận 50 kJ.",
+    "tags": [
+      "sinh thái",
+      "năng lượng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Sinh học",
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Nồng độ glucose trong máu của một người là 100 mg/100 mL. Giá trị này tương đương bao nhiêu gam trên lít (g/L)?",
+    "answer": "1",
+    "explanation": "100 mg/100 mL = 1000 mg/L = 1 g/L.",
+    "tags": [
+      "sinh lí động vật"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Sinh học",
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Một cây quang hợp tạo ra 90 g glucose. Khối lượng $\\text{CO}_2$ cần hấp thụ ($\\text{C}=12$, $\\text{H}=1$, $\\text{O}=16$) là bao nhiêu gam?",
+    "answer": "132",
+    "explanation": "$n_{\\text{glucose}}=0{,}5$ mol → $n_{\\text{CO}_2}=3$ mol → $m=3\\cdot 44=132$ g.",
+    "tags": [
+      "sinh lí thực vật",
+      "quang hợp"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Sinh học",
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Quần thể sinh trưởng theo mô hình logistic với $K=800$, $r=0{,}2$, hiện có $N=400$ cá thể. Tốc độ tăng $\\dfrac{dN}{dt}$ (cá thể/đơn vị thời gian) là bao nhiêu?",
+    "answer": "40",
+    "explanation": "$\\dfrac{dN}{dt}=0{,}2\\cdot 400\\cdot\\left(1-\\dfrac{400}{800}\\right)=0{,}2\\cdot 400\\cdot 0{,}5=40$.",
+    "tags": [
+      "sinh thái",
+      "logistical"
+    ]
+  }
+]

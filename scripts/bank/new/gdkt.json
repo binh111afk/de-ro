@@ -1,0 +1,660 @@
+[
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "GDKT&PL",
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Tổng sản phẩm quốc nội (GDP) là tổng giá trị:",
+    "options": [
+      {
+        "key": "A",
+        "text": "tất cả tiền tệ đang lưu thông trong nước"
+      },
+      {
+        "key": "B",
+        "text": "dân số của một quốc gia"
+      },
+      {
+        "key": "C",
+        "text": "sản phẩm và dịch vụ cuối cùng được sản xuất trong phạm vi lãnh thổ một quốc gia trong một thời kì"
+      },
+      {
+        "key": "D",
+        "text": "thu ngân sách nhà nước trong năm"
+      }
+    ],
+    "answer": "C",
+    "explanation": "GDP đo tổng giá trị các sản phẩm và dịch vụ cuối cùng sản xuất trong lãnh thổ một quốc gia trong một thời kì nhất định.",
+    "tags": [
+      "kinh tế",
+      "GDP"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "GDKT&PL",
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Nộp thuế đối với công dân là một:",
+    "options": [
+      {
+        "key": "A",
+        "text": "nghĩa vụ bắt buộc theo pháp luật"
+      },
+      {
+        "key": "B",
+        "text": "quyền lợi có thể thực hiện hoặc không"
+      },
+      {
+        "key": "C",
+        "text": "món quà tình nguyện cho Nhà nước"
+      },
+      {
+        "key": "D",
+        "text": "hình phạt hành chính"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Nộp thuế là nghĩa vụ cơ bản của công dân quy định trong Hiến pháp và pháp luật thuế.",
+    "tags": [
+      "thuế",
+      "nghĩa vụ công dân"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "GDKT&PL",
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Văn bản có hiệu lực pháp lí cao nhất trong hệ thống pháp luật Việt Nam hiện nay là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "Bộ luật Dân sự"
+      },
+      {
+        "key": "B",
+        "text": "Bộ luật Lao động"
+      },
+      {
+        "key": "C",
+        "text": "Nghị quyết của Quốc hội"
+      },
+      {
+        "key": "D",
+        "text": "Hiến pháp năm 2013"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Hiến pháp là luật cơ bản có hiệu lực pháp lí cao nhất, mọi văn bản pháp luật khác phải phù hợp với Hiến pháp.",
+    "tags": [
+      "pháp luật",
+      "Hiến pháp"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "GDKT&PL",
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Bảo hiểm y tế bắt buộc theo Luật có đặc điểm:",
+    "options": [
+      {
+        "key": "A",
+        "text": "chỉ tự nguyện cho người có nhu cầu"
+      },
+      {
+        "key": "B",
+        "text": "bắt buộc tham gia đối với các đối tượng theo quy định của Luật"
+      },
+      {
+        "key": "C",
+        "text": "chỉ dành cho người thu nhập cao"
+      },
+      {
+        "key": "D",
+        "text": "không tồn tại trong thực tế"
+      }
+    ],
+    "answer": "B",
+    "explanation": "BHYT bắt buộc thực hiện theo nguyên tắc bắt buộc với các đối tượng quy định, nhằm chia sẻ rủi ro về sức khỏe.",
+    "tags": [
+      "bảo hiểm",
+      "kinh tế"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "GDKT&PL",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Chỉ số giá tiêu dùng (CPI) được dùng chủ yếu để đo lường:",
+    "options": [
+      {
+        "key": "A",
+        "text": "tổng sản phẩm quốc nội"
+      },
+      {
+        "key": "B",
+        "text": "mức lạm phát"
+      },
+      {
+        "key": "C",
+        "text": "tỉ lệ thất nghiệp"
+      },
+      {
+        "key": "D",
+        "text": "thu nhập bình quân"
+      }
+    ],
+    "answer": "B",
+    "explanation": "CPI phản ánh sự biến động của mức giá, qua đó đo lường lạm phát.",
+    "tags": [
+      "kinh tế",
+      "CPI"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "GDKT&PL",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Theo Hiến pháp năm 2013, học tập là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "chỉ là quyền của công dân"
+      },
+      {
+        "key": "B",
+        "text": "chỉ là nghĩa vụ của công dân"
+      },
+      {
+        "key": "C",
+        "text": "cả quyền và nghĩa vụ cơ bản của công dân"
+      },
+      {
+        "key": "D",
+        "text": "không liên quan đến công dân"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Hiến pháp quy định công dân có quyền và nghĩa vụ học tập.",
+    "tags": [
+      "quyền và nghĩa vụ công dân"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "GDKT&PL",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Công thức tính tốc độ tăng trưởng kinh tế (tỉ lệ phần trăm) là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\dfrac{GDP_t - GDP_{t-1}}{GDP_{t-1}}\\times 100\\%$"
+      },
+      {
+        "key": "B",
+        "text": "$\\dfrac{GDP_t + GDP_{t-1}}{GDP_{t-1}}\\times 100\\%$"
+      },
+      {
+        "key": "C",
+        "text": "tỉ lệ người thất nghiệp trong lực lượng lao động"
+      },
+      {
+        "key": "D",
+        "text": "tỉ lệ tăng chỉ số giá tiêu dùng"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Tốc độ tăng trưởng = phần trăm thay đổi GDP so với kì trước.",
+    "tags": [
+      "kinh tế",
+      "tăng trưởng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "GDKT&PL",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Công ty trách nhiệm hữu hạn hai thành viên trở lên có đặc điểm:",
+    "options": [
+      {
+        "key": "A",
+        "text": "thành viên chịu trách nhiệm vô hạn"
+      },
+      {
+        "key": "B",
+        "text": "thành viên không phải chịu bất kì trách nhiệm nào"
+      },
+      {
+        "key": "C",
+        "text": "chỉ cá nhân đại diện theo pháp luật chịu trách nhiệm"
+      },
+      {
+        "key": "D",
+        "text": "các thành viên chịu trách nhiệm về các khoản nợ trong phạm vi vốn góp"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Công ty TNHH: thành viên chịu trách nhiệm hữu hạn trong phạm vi số vốn đã góp.",
+    "tags": [
+      "kinh doanh",
+      "doanh nghiệp"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "GDKT&PL",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Tình huống: Cô T có thu nhập chịu thuế cá nhân 100 triệu đồng/năm. Giả sử mức giảm trừ gia cảnh cho bản thân là 132 triệu đồng/năm (11 triệu/tháng). Cô T:",
+    "options": [
+      {
+        "key": "A",
+        "text": "phải nộp thuế thu nhập cá nhân 5 triệu đồng"
+      },
+      {
+        "key": "B",
+        "text": "không phải nộp thuế thu nhập cá nhân vì thu nhập dưới mức giảm trừ gia cảnh"
+      },
+      {
+        "key": "C",
+        "text": "phải nộp 20% thu nhập làm thuế"
+      },
+      {
+        "key": "D",
+        "text": "phải nộp thuế theo biểu lũy tiến toàn bộ 100 triệu"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Thu nhập chịu thuế = thu nhập − giảm trừ = 100 − 132 < 0, nên không phải nộp thuế TNCN.",
+    "tags": [
+      "thuế",
+      "tình huống"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "GDKT&PL",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Theo pháp luật dân sự, người từ đủ 15 tuổi đến chưa đủ 18 tuổi:",
+    "options": [
+      {
+        "key": "A",
+        "text": "không thể xác lập bất kì giao dịch nào"
+      },
+      {
+        "key": "B",
+        "text": "tự mình xác lập, thực hiện giao dịch dân sự, trừ những giao dịch liên quan đến bất động sản, động sản đăng kí... phải được người đại diện theo pháp luật đồng ý"
+      },
+      {
+        "key": "C",
+        "text": "chỉ được giao dịch khi có cha mẹ kí thay"
+      },
+      {
+        "key": "D",
+        "text": "có đầy đủ năng lực hành vi dân sự như người đủ 18 tuổi"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Từ đủ 15 tuổi, người chưa thành niên tự giao dịch; một số giao dịch lớn cần sự đồng ý của người đại diện theo pháp luật.",
+    "tags": [
+      "pháp luật",
+      "năng lực hành vi"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "GDKT&PL",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Theo pháp luật hiện hành, tỉ lệ tiền lương mà người lao động phải đóng vào quỹ bảo hiểm xã hội bắt buộc (phần do người lao động đóng) là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "10% tiền lương"
+      },
+      {
+        "key": "B",
+        "text": "15% tiền lương"
+      },
+      {
+        "key": "C",
+        "text": "8% tiền lương"
+      },
+      {
+        "key": "D",
+        "text": "không cần đóng"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Người lao động đóng BHXH bắt buộc bằng 8% tiền lương tháng đóng BHXH.",
+    "tags": [
+      "bảo hiểm",
+      "kinh tế"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "GDKT&PL",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Lợi nhuận của một doanh nghiệp được tính bằng:",
+    "options": [
+      {
+        "key": "A",
+        "text": "doanh thu trừ chi phí"
+      },
+      {
+        "key": "B",
+        "text": "doanh thu cộng chi phí"
+      },
+      {
+        "key": "C",
+        "text": "chi phí trừ doanh thu"
+      },
+      {
+        "key": "D",
+        "text": "tổng số vốn ban đầu"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Lợi nhuận = doanh thu − chi phí (chi phí nguyên liệu, thuê mặt bằng, lương...).",
+    "tags": [
+      "kinh doanh",
+      "kế toán"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "GDKT&PL",
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Tình huống: Chú M xả rác không đúng nơi quy định tại khu phố và bị phát hiện. Cơ quan có thẩm quyền xử phạt vi phạm hành chính đối với hành vi này là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "Tòa án nhân dân"
+      },
+      {
+        "key": "B",
+        "text": "Viện kiểm sát nhân dân"
+      },
+      {
+        "key": "C",
+        "text": "Chính quyền địa phương (Ủy ban nhân dân cấp xã) và cơ quan chuyên môn có thẩm quyền"
+      },
+      {
+        "key": "D",
+        "text": "nhà trường nơi chú M từng học"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Xử phạt vi phạm hành chính thuộc thẩm quyền của UBND các cấp và cơ quan chuyên môn được giao; không thuộc Tòa án hay Viện kiểm sát.",
+    "tags": [
+      "pháp luật",
+      "xử phạt hành chính"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "GDKT&PL",
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Để nhãn hiệu của mình được pháp luật bảo hộ, doanh nghiệp cần:",
+    "options": [
+      {
+        "key": "A",
+        "text": "đăng kí sở hữu công nghiệp tại cơ quan có thẩm quyền (Cục Sở hữu trí tuệ)"
+      },
+      {
+        "key": "B",
+        "text": "không cần làm thủ tục gì cả"
+      },
+      {
+        "key": "C",
+        "text": "tự in nhãn và dán lên sản phẩm"
+      },
+      {
+        "key": "D",
+        "text": "hỏi ý kiến của bạn hàng"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Quyền sở hữu công nghiệp đối với nhãn hiệu được xác lập trên cơ sở quyết định cấp văn bằng bảo hộ sau khi đăng kí.",
+    "tags": [
+      "sở hữu trí tuệ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "GDKT&PL",
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Tình huống: Anh P vay ngân hàng 100 triệu đồng với lãi suất 12%/năm, vay trong 1 năm, trả cả gốc và lãi một lần. Tổng số tiền anh P phải trả là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "100 triệu đồng"
+      },
+      {
+        "key": "B",
+        "text": "120 triệu đồng"
+      },
+      {
+        "key": "C",
+        "text": "112 triệu đồng"
+      },
+      {
+        "key": "D",
+        "text": "108 triệu đồng"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Tiền lãi $=100\\cdot 12\\%=12$ triệu; tổng trả $=100+12=112$ triệu.",
+    "tags": [
+      "tín dụng",
+      "tình huống"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "GDKT&PL",
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "GDP thực tế (GDP thực) khác GDP danh nghĩa ở chỗ GDP thực tế:",
+    "options": [
+      {
+        "key": "A",
+        "text": "được tính theo giá hiện hành của năm tính GDP"
+      },
+      {
+        "key": "B",
+        "text": "là GDP của các doanh nghiệp nhà nước"
+      },
+      {
+        "key": "C",
+        "text": "chỉ tính sản phẩm nông nghiệp"
+      },
+      {
+        "key": "D",
+        "text": "được tính theo giá so sánh, loại trừ ảnh hưởng của biến động giá (lạm phát hoặc giảm phát)"
+      }
+    ],
+    "answer": "D",
+    "explanation": "GDP thực tế tính theo giá so sánh (giá năm gốc), phản ánh đúng mức tăng trưởng về khối lượng sản xuất.",
+    "tags": [
+      "kinh tế",
+      "GDP"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "GDKT&PL",
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Tình huống: Ông N có thu nhập chịu thuế cá nhân 20 triệu đồng/tháng. Giả sử mức giảm trừ gia cảnh cho bản thân người nộp thuế là 11 triệu đồng/tháng (chưa tính người phụ thuộc). Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Chỉ phần thu nhập trên 11 triệu đồng/tháng mới thuộc diện tính thuế thu nhập cá nhân."
+      },
+      {
+        "key": "b",
+        "text": "Thu nhập tính thuế (theo tháng) của ông N là 9 triệu đồng."
+      },
+      {
+        "key": "c",
+        "text": "Ông N không phải đóng bất kì loại thuế nào, kể cả khi mua hàng hóa có thuế giá trị gia tăng."
+      },
+      {
+        "key": "d",
+        "text": "Thuế thu nhập cá nhân áp dụng biểu thuế lũy tiến theo từng phần thu nhập."
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) Đúng: 11 triệu là mức giảm trừ, phần vượt mới tính thuế. b) Đúng: 20 − 11 = 9 triệu. c) Sai: khi mua hàng, ông N đã góp phần đóng thuế GTGT trong giá bán. d) Đúng.",
+    "tags": [
+      "thuế",
+      "tình huống"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "GDKT&PL",
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Tình huống: Bé D, 15 tuổi, viết bài về bảo vệ môi trường và được đăng trên trang báo điện tử. Một cơ quan yêu cầu gỡ bài nhưng không nêu lí do rõ ràng theo pháp luật. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Công dân có quyền tự do ngôn luận, tự do báo chí theo Hiến pháp năm 2013."
+      },
+      {
+        "key": "b",
+        "text": "Quyền tự do ngôn luận không bị giới hạn bởi bất kì quy định nào của pháp luật."
+      },
+      {
+        "key": "c",
+        "text": "Khi thực hiện quyền của mình, công dân vẫn phải tuân thủ pháp luật, không xâm phạm quyền và lợi ích hợp pháp của người khác."
+      },
+      {
+        "key": "d",
+        "text": "Bé D không có quyền khiếu nại đối với quyết định không đúng pháp luật."
+      }
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "a) Đúng. b) Sai: quyền tự do ngôn luận được thực hiện theo pháp luật, có giới hạn để bảo vệ quốc gia, danh dự, trật tự... c) Đúng. d) Sai: công dân có quyền khiếu nại.",
+    "tags": [
+      "quyền công dân",
+      "tình huống"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "GDKT&PL",
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Tình huống: Anh H mở tiệm bánh với chi phí nguyên liệu 30 triệu đồng/tháng, thuê mặt bằng 10 triệu đồng/tháng, tiền lương nhân viên 20 triệu đồng/tháng; doanh thu 80 triệu đồng/tháng. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Tổng chi phí của tiệm bánh mỗi tháng là 60 triệu đồng."
+      },
+      {
+        "key": "b",
+        "text": "Lợi nhuận của tiệm bánh mỗi tháng là 20 triệu đồng."
+      },
+      {
+        "key": "c",
+        "text": "Lợi nhuận được tính bằng doanh thu cộng chi phí."
+      },
+      {
+        "key": "d",
+        "text": "Nếu doanh thu chỉ còn 55 triệu đồng/tháng thì anh H bị thua lỗ."
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) Đúng: 30 + 10 + 20 = 60 triệu. b) Đúng: 80 − 60 = 20 triệu. c) Sai: lợi nhuận = doanh thu − chi phí. d) Đúng: 55 < 60 nên bị lỗ.",
+    "tags": [
+      "kinh doanh",
+      "tình huống"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "GDKT&PL",
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Tình huống: Anh P tham gia bảo hiểm xã hội bắt buộc, gặp tai nạn lao động phải điều trị 3 tháng. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Bảo hiểm xã hội bắt buộc là chế độ thực hiện theo Luật với các đối tượng quy định."
+      },
+      {
+        "key": "b",
+        "text": "Anh P có thể hưởng chế độ thai sản từ quỹ bảo hiểm xã hội trong trường hợp này."
+      },
+      {
+        "key": "c",
+        "text": "Anh P có thể hưởng chế độ tai nạn lao động theo quy định."
+      },
+      {
+        "key": "d",
+        "text": "Bảo hiểm y tế hoàn toàn thay thế được bảo hiểm xã hội."
+      }
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "a) Đúng. b) Sai: thai sản là chế độ khác, không áp dụng cho tai nạn lao động. c) Đúng. d) Sai: BHYT và BHXH là hai chế độ khác nhau, không thay thế nhau.",
+    "tags": [
+      "bảo hiểm",
+      "tình huống"
+    ]
+  }
+]

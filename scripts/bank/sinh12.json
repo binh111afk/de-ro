@@ -1,0 +1,860 @@
+[
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "trac-nghiem",
+  "level": "NB",
+  "prompt": "Dạng đột biến nào sau đây làm thay đổi số lượng nhiễm sắc thể trong tế bào?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Đột biến gen"
+   },
+   {
+    "key": "B",
+    "text": "Đột biến lệch bội"
+   },
+   {
+    "key": "C",
+    "text": "Đột biến đảo đoạn nhiễm sắc thể"
+   },
+   {
+    "key": "D",
+    "text": "Đột biến thay thế một cặp nuclêôtit"
+   }
+  ],
+  "answer": "B",
+  "explanation": "Đột biến lệch bội làm tăng hoặc giảm số lượng nhiễm sắc thể ở một hoặc một số cặp nhiễm sắc thể tương đồng, ví dụ thể ba hoặc thể một. Đột biến gen và đột biến đảo đoạn không làm thay đổi số lượng nhiễm sắc thể.",
+  "tags": [
+   "đột biến nhiễm sắc thể",
+   "lệch bội"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "trac-nghiem",
+  "level": "NB",
+  "prompt": "Nhân tố nào sau đây không làm thay đổi tần số alen của quần thể?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Đột biến gen"
+   },
+   {
+    "key": "B",
+    "text": "Di nhập gen"
+   },
+   {
+    "key": "C",
+    "text": "Chọn lọc tự nhiên"
+   },
+   {
+    "key": "D",
+    "text": "Giao phối ngẫu nhiên"
+   }
+  ],
+  "answer": "D",
+  "explanation": "Giao phối ngẫu nhiên chỉ tổ hợp lại các alen đã có trong quần thể, làm thay đổi tần số kiểu gen nhưng không làm thay đổi tần số alen. Đột biến, di nhập gen và chọn lọc tự nhiên đều có thể làm thay đổi tần số alen.",
+  "tags": [
+   "nhân tố tiến hoá",
+   "tần số alen"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "trac-nghiem",
+  "level": "NB",
+  "prompt": "Ở một loài, hai cặp gen A, a và B, b nằm trên hai cặp nhiễm sắc thể khác nhau, mỗi gen quy định một tính trạng và trội hoàn toàn. Phép lai $AaBb \\times aabb$ cho đời con có tỉ lệ kiểu hình A-B- là bao nhiêu?",
+  "options": [
+   {
+    "key": "A",
+    "text": "25%"
+   },
+   {
+    "key": "B",
+    "text": "50%"
+   },
+   {
+    "key": "C",
+    "text": "75%"
+   },
+   {
+    "key": "D",
+    "text": "12,5%"
+   }
+  ],
+  "answer": "A",
+  "explanation": "Phép lai $Aa \\times aa$ cho đời con mang A- với tỉ lệ $1/2$. Phép lai $Bb \\times bb$ cho B- với tỉ lệ $1/2$. Hai cặp gen phân li độc lập nên tỉ lệ A-B- là $1/2 \\times 1/2 = 1/4 = 25\\%$.",
+  "tags": [
+   "lai hai cặp tính trạng",
+   "phân li độc lập"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "trac-nghiem",
+  "level": "TH",
+  "prompt": "Ở ruồi giấm, hai gen A, a và B, b cùng nằm trên một cặp nhiễm sắc thể thường, khoảng cách giữa hai gen là 20 cM (tần số hoán vị gen f = 20%). Cho phép lai $\\frac{AB}{ab} \\times \\frac{AB}{ab}$, hoán vị gen xảy ra ở cả hai giới. Tỉ lệ kiểu gen $\\frac{AB}{AB}$ ở đời con là bao nhiêu?",
+  "options": [
+   {
+    "key": "A",
+    "text": "4%"
+   },
+   {
+    "key": "B",
+    "text": "9%"
+   },
+   {
+    "key": "C",
+    "text": "16%"
+   },
+   {
+    "key": "D",
+    "text": "25%"
+   }
+  ],
+  "answer": "C",
+  "explanation": "Cơ thể $\\frac{AB}{ab}$ với f = 20% cho giao tử AB = ab = 40%, Ab = aB = 10%. Tỉ lệ $\\frac{AB}{AB}$ ở đời con là 0,4 × 0,4 = 16%.",
+  "tags": [
+   "hoán vị gen",
+   "tần số hoán vị"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "trac-nghiem",
+  "level": "TH",
+  "prompt": "Ở đậu Hà Lan, hai cặp gen phân li độc lập và trội lặn hoàn toàn. Phép lai $AaBb \\times AaBb$ cho đời con có tỉ lệ kiểu hình là bao nhiêu?",
+  "options": [
+   {
+    "key": "A",
+    "text": "9 : 3 : 3 : 1"
+   },
+   {
+    "key": "B",
+    "text": "3 : 1"
+   },
+   {
+    "key": "C",
+    "text": "1 : 2 : 1"
+   },
+   {
+    "key": "D",
+    "text": "3 : 3 : 1 : 1"
+   }
+  ],
+  "answer": "A",
+  "explanation": "Phép lai $Aa \\times Aa$ cho tỉ lệ trội : lặn là 3 : 1; phép lai $Bb \\times Bb$ cũng cho 3 : 1. Tổ hợp hai cặp: (3 : 1)(3 : 1) = 9 : 3 : 3 : 1.",
+  "tags": [
+   "lai hai cặp tính trạng",
+   "phân li độc lập"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "trac-nghiem",
+  "level": "TH",
+  "prompt": "Ở người, bệnh M do một alen lặn nằm trên nhiễm sắc thể X, không có alen tương ứng trên Y. Người mẹ có kiểu gen $X^AX^a$ (bình thường nhưng mang gen bệnh) lấy chồng có kiểu gen $X^aY$ (bị bệnh M). Biết cặp vợ chồng này sinh một người con trai, xác suất để người con trai đó bị bệnh M là bao nhiêu?",
+  "options": [
+   {
+    "key": "A",
+    "text": "25%"
+   },
+   {
+    "key": "B",
+    "text": "12,5%"
+   },
+   {
+    "key": "C",
+    "text": "50%"
+   },
+   {
+    "key": "D",
+    "text": "100%"
+   }
+  ],
+  "answer": "C",
+  "explanation": "Con trai nhận Y từ bố và nhận X^A hoặc X^a từ mẹ với xác suất ngang nhau. Con trai bị bệnh có kiểu gen X^aY, xác suất 1/2 = 50%.",
+  "tags": [
+   "di truyền liên kết giới tính"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "trac-nghiem",
+  "level": "VD",
+  "prompt": "Một quần thể động vật ngẫu phối, đang ở trạng thái cân bằng di truyền, có tần số alen A = 0,6 và alen a = 0,4 (gen nằm trên nhiễm sắc thể thường). Tỉ lệ kiểu gen dị hợp Aa trong quần thể là bao nhiêu?",
+  "options": [
+   {
+    "key": "A",
+    "text": "0,16"
+   },
+   {
+    "key": "B",
+    "text": "0,36"
+   },
+   {
+    "key": "C",
+    "text": "0,24"
+   },
+   {
+    "key": "D",
+    "text": "0,48"
+   }
+  ],
+  "answer": "D",
+  "explanation": "Quần thể cân bằng có cấu trúc p²AA + 2pqAa + q²aa = 1. Tỉ lệ Aa = 2pq = 2 × 0,6 × 0,4 = 0,48.",
+  "tags": [
+   "Hardy–Weinberg",
+   "cấu trúc di truyền quần thể"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "trac-nghiem",
+  "level": "VD",
+  "prompt": "Ở một loài thực vật, quần thể ban đầu có cấu trúc di truyền như hình bên dưới. Cho các cá thể của quần thể tự thụ phấn bắt buộc qua một thế hệ. Tỉ lệ kiểu gen dị hợp Aa ở thế hệ F1 là bao nhiêu?",
+  "options": [
+   {
+    "key": "A",
+    "text": "50%"
+   },
+   {
+    "key": "B",
+    "text": "25%"
+   },
+   {
+    "key": "C",
+    "text": "12,5%"
+   },
+   {
+    "key": "D",
+    "text": "75%"
+   }
+  ],
+  "answer": "B",
+  "explanation": "Cá thể Aa tự thụ phấn cho Aa với tỉ lệ 1/2, nên Aa ở F1 = 50% × 1/2 = 25%. Cá thể AA và aa tự thụ phấn không tạo ra Aa.",
+  "tags": [
+   "tự thụ phấn",
+   "cấu trúc di truyền quần thể"
+  ],
+  "figure": {
+   "kind": "stats",
+   "chart": "table",
+   "title": "Cấu trúc di truyền của quần thể P",
+   "data": "AA; Aa; aa\nTỉ lệ (%): 25; 50; 25"
+  }
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "trac-nghiem",
+  "level": "VD",
+  "prompt": "Ở một loài, ba cặp gen A/a, B/b, D/d phân li độc lập và trội lặn hoàn toàn. Phép lai $AaBbDd \\times AaBbDd$ cho đời con. Tỉ lệ cá thể dị hợp về cả ba cặp gen (kiểu gen AaBbDd) là bao nhiêu?",
+  "options": [
+   {
+    "key": "A",
+    "text": "$\\frac{1}{16}$"
+   },
+   {
+    "key": "B",
+    "text": "$\\frac{1}{4}$"
+   },
+   {
+    "key": "C",
+    "text": "$\\frac{1}{8}$"
+   },
+   {
+    "key": "D",
+    "text": "$\\frac{1}{32}$"
+   }
+  ],
+  "answer": "C",
+  "explanation": "Mỗi cặp Aa × Aa cho kiểu gen Aa với tỉ lệ 1/2. Ba cặp gen phân li độc lập nên tỉ lệ AaBbDd = (1/2)³ = 1/8.",
+  "tags": [
+   "lai nhiều cặp tính trạng"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "trac-nghiem",
+  "level": "VD",
+  "prompt": "Ở một loài, hai gen A/a và B/b liên kết trên một cặp nhiễm sắc thể thường, tần số hoán vị gen là 20%. Cho cơ thể có kiểu gen $\\frac{AB}{ab}$ lai phân tích với cơ thể $\\frac{ab}{ab}$. Tỉ lệ cá thể con mang kiểu hình trội về cả hai tính trạng (A-B-) là bao nhiêu?",
+  "options": [
+   {
+    "key": "A",
+    "text": "40%"
+   },
+   {
+    "key": "B",
+    "text": "10%"
+   },
+   {
+    "key": "C",
+    "text": "50%"
+   },
+   {
+    "key": "D",
+    "text": "20%"
+   }
+  ],
+  "answer": "A",
+  "explanation": "Cơ thể $\\frac{ab}{ab}$ chỉ cho giao tử ab. Con mang kiểu hình A-B- phải nhận giao tử AB từ $\\frac{AB}{ab}$, chiếm (1 − f)/2 = (1 − 0,2)/2 = 40%.",
+  "tags": [
+   "hoán vị gen",
+   "lai phân tích"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "trac-nghiem",
+  "level": "VDC",
+  "prompt": "Ở một loài thực vật, hai cặp gen A/a và B/b phân li độc lập, trội lặn hoàn toàn. Kiểu gen có cả A và B quy định hoa đỏ; các kiểu gen còn lại quy định hoa trắng. Lấy ngẫu nhiên một cây hoa đỏ từ đời con của phép lai $AaBb \\times AaBb$. Xác suất để cây này có kiểu gen đồng hợp về cả hai cặp gen là bao nhiêu?",
+  "options": [
+   {
+    "key": "A",
+    "text": "$\\frac{1}{16}$"
+   },
+   {
+    "key": "B",
+    "text": "$\\frac{1}{9}$"
+   },
+   {
+    "key": "C",
+    "text": "$\\frac{1}{3}$"
+   },
+   {
+    "key": "D",
+    "text": "$\\frac{1}{4}$"
+   }
+  ],
+  "answer": "B",
+  "explanation": "Tỉ lệ hoa đỏ (A-B-) là 9/16. Tỉ lệ kiểu gen AABB là 1/16. Xác suất có điều kiện = (1/16) : (9/16) = 1/9.",
+  "tags": [
+   "xác suất có điều kiện",
+   "lai hai cặp tính trạng"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "trac-nghiem",
+  "level": "VDC",
+  "prompt": "Ở người, bệnh P do một alen lặn nằm trên nhiễm sắc thể thường quy định; alen trội tương ứng quy định người bình thường. Người vợ bình thường có em trai bị bệnh P, bố mẹ người vợ đều bình thường. Người chồng bình thường có em gái bị bệnh P, bố mẹ người chồng đều bình thường. Xác suất cặp vợ chồng này sinh một người con trai bị bệnh P là bao nhiêu?",
+  "options": [
+   {
+    "key": "A",
+    "text": "$\\frac{1}{9}$"
+   },
+   {
+    "key": "B",
+    "text": "$\\frac{1}{12}$"
+   },
+   {
+    "key": "C",
+    "text": "$\\frac{1}{36}$"
+   },
+   {
+    "key": "D",
+    "text": "$\\frac{1}{18}$"
+   }
+  ],
+  "answer": "D",
+  "explanation": "Người vợ bình thường, bố mẹ bình thường, có em trai bị bệnh nên bố mẹ đều dị hợp Aa; người vợ có kiểu gen AA : Aa = 1 : 2, xác suất mang alen bệnh là 2/3. Tương tự người chồng cũng có xác suất 2/3. Con bị bệnh (aa) = 2/3 × 2/3 × 1/4 = 1/9. Con trai bị bệnh = 1/9 × 1/2 = 1/18.",
+  "tags": [
+   "phả hệ",
+   "xác suất có điều kiện"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "tra-loi-ngan",
+  "level": "NB",
+  "prompt": "Một loài có bộ nhiễm sắc thể lưỡng bội 2n = 8. Trong tế bào sinh dưỡng của một thể ba nhiễm thuộc loài này, có bao nhiêu nhiễm sắc thể?",
+  "answer": "9",
+  "explanation": "Thể ba nhiễm có bộ nhiễm sắc thể 2n + 1 = 8 + 1 = 9.",
+  "tags": [
+   "lệch bội"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "tra-loi-ngan",
+  "level": "TH",
+  "prompt": "Ở một quần thể ngẫu phối, gen có hai alen A và a nằm trên nhiễm sắc thể thường. Số lượng cá thể của các kiểu gen được cho như hình bên dưới. Tần số alen a của quần thể là bao nhiêu? (Viết kết quả dạng số thập phân.)",
+  "answer": "0,3",
+  "explanation": "Tổng số alen = 2 × 1000 = 2000. Số alen a = 420 (từ Aa) + 2 × 90 (từ aa) = 600. Tần số a = 600 / 2000 = 0,3.",
+  "tags": [
+   "tần số alen",
+   "cấu trúc di truyền quần thể"
+  ],
+  "figure": {
+   "kind": "stats",
+   "chart": "table",
+   "title": "Số cá thể theo kiểu gen",
+   "data": "AA; Aa; aa\nSố cá thể: 490; 420; 90"
+  }
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "tra-loi-ngan",
+  "level": "VD",
+  "prompt": "Trong một quần thể cân bằng di truyền, gen gồm hai alen A (trội) và a (lặn) nằm trên nhiễm sắc thể thường. Tỉ lệ kiểu hình của quần thể được cho như hình bên dưới. Trong số các cá thể mang kiểu hình trội, tỉ lệ cá thể dị hợp Aa là bao nhiêu phần trăm? (Làm tròn đến một chữ số thập phân.)",
+  "answer": "33,3",
+  "explanation": "Kiểu hình lặn aa = 4% nên q² = 0,04, q = 0,2 và p = 0,8. Tỉ lệ Aa = 2pq = 0,32; tỉ lệ kiểu hình trội = 0,96. Tỉ lệ Aa trong số trội = 0,32 / 0,96 ≈ 33,3%.",
+  "tags": [
+   "Hardy–Weinberg",
+   "xác suất có điều kiện"
+  ],
+  "figure": {
+   "kind": "stats",
+   "chart": "pie",
+   "title": "Tỉ lệ kiểu hình của quần thể",
+   "data": "Trội; Lặn\nTỉ lệ (%): 96; 4"
+  }
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "tra-loi-ngan",
+  "level": "VD",
+  "prompt": "Ở một loài, ba cặp gen A/a, B/b, D/d phân li độc lập và trội lặn hoàn toàn. Phép lai $AaBbDd \\times AaBbDd$ cho đời con. Tỉ lệ cá thể mang kiểu hình A-bbD- là bao nhiêu phần trăm? (Làm tròn đến một chữ số thập phân.)",
+  "answer": "14,1",
+  "explanation": "Tỉ lệ A- = 3/4; bb = 1/4; D- = 3/4. Tỉ lệ A-bbD- = 3/4 × 1/4 × 3/4 = 9/64 ≈ 14,06%, làm tròn 14,1%.",
+  "tags": [
+   "lai nhiều cặp tính trạng"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "tra-loi-ngan",
+  "level": "VD",
+  "prompt": "Một quần thể động vật có 200 cá thể ở thời điểm ban đầu, tăng trưởng theo mô hình hàm số mũ không giới hạn. Mỗi năm, số sinh là 25% và số tử là 5% so với số cá thể đầu năm (không xét di cư, nhập cư). Sau 2 năm, quần thể có bao nhiêu cá thể?",
+  "answer": "288",
+  "explanation": "Tốc độ tăng trưởng mỗi năm r = 25% − 5% = 20%, nên N_t = N_0 × (1 + 0,2)^t. Sau 2 năm: N = 200 × 1,2² = 288 cá thể.",
+  "tags": [
+   "tăng trưởng quần thể"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "tra-loi-ngan",
+  "level": "VD",
+  "prompt": "Trong một chuỗi thức ăn gồm ba mắt xích: cỏ → sâu → chim. Năng lượng tích luỹ ở cỏ và sâu trong một năm được cho như hình bên dưới. Hiệu suất sinh thái giữa sâu và chim là 8%. Năng lượng tích luỹ ở chim trong một năm là bao nhiêu kJ?",
+  "answer": "96",
+  "explanation": "Năng lượng ở chim = năng lượng ở sâu × hiệu suất sinh thái = 1200 × 8% = 96 kJ.",
+  "tags": [
+   "dòng năng lượng",
+   "hệ sinh thái"
+  ],
+  "figure": {
+   "kind": "stats",
+   "chart": "bar",
+   "title": "Năng lượng tích luỹ trong một năm",
+   "xLabel": "Bậc dinh dưỡng",
+   "yLabel": "kJ",
+   "data": "Cỏ; Sâu\nNăng lượng (kJ): 10000; 1200"
+  }
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "tra-loi-ngan",
+  "level": "VD",
+  "prompt": "Ở một loài, hai gen A/a và B/b cùng nằm trên một cặp nhiễm sắc thể thường, tần số hoán vị gen là 20%. Cho phép lai $\\frac{AB}{ab} \\times \\frac{Ab}{aB}$, hoán vị xảy ra ở cả hai giới. Tỉ lệ cá thể con mang kiểu hình A-B- là bao nhiêu phần trăm?",
+  "answer": "54",
+  "explanation": "P(aa) = 0,5 × 0,5 = 0,25 (giao tử mang a chiếm 0,5 ở mỗi bên); P(bb) = 0,5 × 0,5 = 0,25; P(aabb) = 0,4 (ab từ cây AB/ab) × 0,1 (ab từ cây Ab/aB) = 0,04. P(A-B-) = 1 − 0,25 − 0,25 + 0,04 = 0,54 = 54%.",
+  "tags": [
+   "hoán vị gen"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "tra-loi-ngan",
+  "level": "VDC",
+  "prompt": "Ở người, bệnh M do một alen lặn nằm trên nhiễm sắc thể X quy định, không có alen tương ứng trên Y. Trong một quần thể cân bằng di truyền, số nam và số nữ bằng nhau, tỉ lệ người bị bệnh M ở nam và nữ được cho như hình bên dưới. Tỉ lệ người (cả nam và nữ) bị bệnh M trong quần thể là bao nhiêu phần trăm? (Viết kết quả dạng số thập phân.)",
+  "answer": "5,5",
+  "explanation": "Tỉ lệ nam bị bệnh = 10%, tỉ lệ nữ bị bệnh = 1%. Vì số nam bằng số nữ nên tỉ lệ chung = (10% + 1%) / 2 = 5,5%.",
+  "tags": [
+   "di truyền liên kết giới tính",
+   "quần thể"
+  ],
+  "figure": {
+   "kind": "stats",
+   "chart": "table",
+   "title": "Tỉ lệ người bị bệnh M",
+   "data": "Nam; Nữ\nTỉ lệ bị bệnh (%): 10; 1"
+  }
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "tra-loi-ngan",
+  "level": "VDC",
+  "prompt": "Ở người, bệnh M do một alen lặn nằm trên nhiễm sắc thể X quy định, không có alen tương ứng trên Y; alen trội tương ứng quy định bình thường. Người vợ bình thường có em trai bị bệnh M; bố và mẹ của người vợ đều bình thường. Người chồng bình thường. Xác suất cặp vợ chồng này sinh một người con gái mang alen bệnh M (dị hợp) là bao nhiêu phần trăm? (Viết kết quả dạng số thập phân.)",
+  "answer": "12,5",
+  "explanation": "Mẹ của người vợ mang X^A X^a, nên người vợ (bình thường) có xác suất 1/2 là dị hợp. Người chồng X^AY. Con gái mang alen bệnh = 1/2 (là con gái) × 1/2 (vợ dị hợp) × 1/2 (vợ truyền X^a) = 1/8 = 12,5%.",
+  "tags": [
+   "di truyền liên kết giới tính",
+   "xác suất có điều kiện"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "tra-loi-ngan",
+  "level": "VDC",
+  "prompt": "Ở một quần thể ngẫu phối, gen có hai alen A và a nằm trên nhiễm sắc thể thường. Ở thế hệ P, tần số alen a = 0,2. Các cá thể mang kiểu gen aa không có khả năng sinh sản (chọn lọc chống lại hoàn toàn thể đồng hợp lặn). Coi quần thể cân bằng di truyền ở mỗi thế hệ, không có đột biến và di nhập gen. Sau hai thế hệ chọn lọc, tần số alen a là bao nhiêu? (Làm tròn đến hai chữ số thập phân.)",
+  "answer": "0,14",
+  "explanation": "Mỗi thế hệ chọn lọc, q' = q / (1 + q), nên 1/q tăng thêm 1. Ta có 1/q₂ = 1/0,2 + 2 = 7, q₂ = 1/7 ≈ 0,14.",
+  "tags": [
+   "chọn lọc tự nhiên",
+   "tần số alen"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "dung-sai",
+  "level": "NB",
+  "prompt": "Đọc các nhận định sau về cơ chế di truyền và biến dị ở sinh vật nhân thực, xác định mỗi ý đúng (Đ) hay sai (S).",
+  "options": [
+   {
+    "key": "a",
+    "text": "Đột biến gen là biến đổi trong cấu trúc của gen, liên quan đến một hoặc một số cặp nuclêôtit."
+   },
+   {
+    "key": "b",
+    "text": "Đột biến gen luôn có hại cho thể đột biến vì làm thay đổi prôtêin tương ứng."
+   },
+   {
+    "key": "c",
+    "text": "Mã di truyền có tính thoái hoá, nghĩa là một bộ ba mã hoá cho nhiều loại axit amin."
+   },
+   {
+    "key": "d",
+    "text": "Mã di truyền có tính phổ biến, tức là hầu hết các loài sinh vật dùng chung một bộ mã di truyền."
+   }
+  ],
+  "answer": "ĐSSĐ",
+  "explanation": "a Đ: đột biến gen liên quan đến một hoặc một số cặp nuclêôtit. b S: nhiều đột biến gen trung tính hoặc có lợi. c S: tính thoái hoá là nhiều bộ ba cùng mã hoá một axit amin; mỗi bộ ba chỉ mã hoá một loại axit amin. d Đ: mã di truyền có tính phổ biến ở hầu hết các loài.",
+  "tags": [
+   "đột biến gen",
+   "mã di truyền"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "dung-sai",
+  "level": "TH",
+  "prompt": "Ở một loài động vật, hai gen A, a và B, b cùng nằm trên một cặp nhiễm sắc thể thường, trội lặn hoàn toàn; tần số hoán vị gen là 20% ở cả hai giới. Cho phép lai $\\frac{Ab}{aB} \\times \\frac{Ab}{aB}$. Xét các nhận định về đời con.",
+  "options": [
+   {
+    "key": "a",
+    "text": "Tỉ lệ kiểu hình A-B- ở đời con là 51%."
+   },
+   {
+    "key": "b",
+    "text": "Tỉ lệ kiểu hình aabb ở đời con là 4%."
+   },
+   {
+    "key": "c",
+    "text": "Tỉ lệ kiểu hình A-bb ở đời con là 24%."
+   },
+   {
+    "key": "d",
+    "text": "Đời con có 10 loại kiểu gen khác nhau."
+   }
+  ],
+  "answer": "ĐSĐĐ",
+  "explanation": "Mỗi cây cho giao tử Ab = aB = 40%, AB = ab = 10%. a Đ: aabb = 0,1 × 0,1 = 1%; A-bb = P(bb) − P(aabb) = 0,25 − 0,01 = 24%; A-B- = 1 − 0,01 − 0,24 − 0,24 = 51%. b S: aabb chỉ 1%. c Đ: A-bb = 24%. d Đ: 4 loại giao tử cho 10 loại kiểu gen khác nhau.",
+  "tags": [
+   "hoán vị gen",
+   "lai hai cặp tính trạng"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "dung-sai",
+  "level": "TH",
+  "prompt": "Ở một loài thực vật, gen A quy định hoa đỏ trội hoàn toàn so với a quy định hoa trắng, gen nằm trên nhiễm sắc thể thường. Khảo sát một quần thể gồm 100 cây có số lượng kiểu gen như hình bên dưới. Xét các nhận định sau.",
+  "options": [
+   {
+    "key": "a",
+    "text": "Tần số alen A của quần thể là 0,6."
+   },
+   {
+    "key": "b",
+    "text": "Quần thể này chưa đạt trạng thái cân bằng di truyền."
+   },
+   {
+    "key": "c",
+    "text": "Nếu cho quần thể tự thụ phấn bắt buộc qua một thế hệ, tỉ lệ cây dị hợp Aa ở thế hệ con là 24%."
+   },
+   {
+    "key": "d",
+    "text": "Nếu cho quần thể ngẫu phối qua một thế hệ, tỉ lệ cây hoa trắng ở thế hệ con là 36%."
+   }
+  ],
+  "answer": "ĐSĐS",
+  "explanation": "Tần số A = (2 × 36 + 48) / 200 = 0,6. Quần thể có 0,36 : 0,48 : 0,16 = 0,6² : 2 × 0,6 × 0,4 : 0,4², nên đã cân bằng (b S). Tự thụ phấn: Aa = 48% × 1/2 = 24% (c Đ). Ngẫu phối: hoa trắng = q² = 0,16, không phải 36% (d S).",
+  "tags": [
+   "Hardy–Weinberg",
+   "tự thụ phấn"
+  ],
+  "figure": {
+   "kind": "stats",
+   "chart": "table",
+   "title": "Số lượng cây theo kiểu gen",
+   "data": "AA; Aa; aa\nSố cây: 36; 48; 16"
+  }
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "dung-sai",
+  "level": "VD",
+  "prompt": "Ở người, bệnh M do một alen lặn nằm trên nhiễm sắc thể X quy định, không có alen tương ứng trên Y; alen trội tương ứng quy định bình thường. Người phụ nữ II là con gái của một người đàn ông bị bệnh M và một người mẹ bình thường. Người phụ nữ II lấy người đàn ông bình thường (không mang alen bệnh). Không xét đột biến mới. Xét các nhận định sau.",
+  "options": [
+   {
+    "key": "a",
+    "text": "Người phụ nữ II có kiểu gen đồng hợp tử về alen bình thường."
+   },
+   {
+    "key": "b",
+    "text": "Xác suất sinh con trai bị bệnh M của cặp vợ chồng này là 25%."
+   },
+   {
+    "key": "c",
+    "text": "Trong số các con gái của cặp vợ chồng này, tỉ lệ con gái mang alen bệnh là 50%."
+   },
+   {
+    "key": "d",
+    "text": "Xác suất sinh một đứa con bị bệnh M (không phân biệt giới tính) là 1/2."
+   }
+  ],
+  "answer": "SĐĐS",
+  "explanation": "Người phụ nữ II nhận X^a từ bố bị bệnh nên là X^AX^a, dị hợp (a S). Vợ X^AX^a × chồng X^AY: con trai bị bệnh = 1/2 (nhận X^a từ mẹ) × 1/2 = 1/4 (b Đ). Con gái có 1/2 là X^AX^a (c Đ). Xác suất sinh con bị bệnh không phân biệt giới = 1/4, không phải 1/2 (d S).",
+  "tags": [
+   "di truyền liên kết giới tính",
+   "phả hệ"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "dung-sai",
+  "level": "VD",
+  "prompt": "Ở một quần thể ngẫu phối, gen có hai alen A và a (A trội hoàn toàn) nằm trên nhiễm sắc thể thường. Thế hệ xuất phát (hợp tử) có cấu trúc 0,36 AA : 0,48 Aa : 0,16 aa. Các cá thể aa chết trước tuổi sinh sản nên không tham gia sinh sản. Xét các nhận định sau.",
+  "options": [
+   {
+    "key": "a",
+    "text": "Tần số alen a trong quần thể trước khi chọn lọc là 0,4."
+   },
+   {
+    "key": "b",
+    "text": "Sau chọn lọc, các cá thể trưởng thành có tỉ lệ kiểu gen AA : Aa = 3 : 4."
+   },
+   {
+    "key": "c",
+    "text": "Tần số alen a trong các giao tử do cá thể trưởng thành tạo ra là 3/7 (khoảng 0,43)."
+   },
+   {
+    "key": "d",
+    "text": "Nếu chọn lọc tiếp tục diễn ra qua hai thế hệ, tần số alen a giảm xuống còn 0,25."
+   }
+  ],
+  "answer": "ĐĐSS",
+  "explanation": "a Đ: q = 0,16 + 0,48/2 = 0,4. b Đ: sau khi aa chết, AA : Aa = 0,36 : 0,48 = 3 : 4. c S: giao tử a = (4/7) × 1/2 = 2/7 ≈ 0,29, không phải 3/7. d S: q₁ = 2/7, q₂ = q₁/(1 + q₁) = 2/9 ≈ 0,22, không phải 0,25.",
+  "tags": [
+   "chọn lọc tự nhiên",
+   "tần số alen"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "dung-sai",
+  "level": "VD",
+  "prompt": "Đồ thị dưới đây biểu diễn tốc độ tăng trưởng của một quần thể (trục y, cá thể/năm) theo kích thước quần thể (trục x, cá thể) như hình bên dưới. Quần thể tăng trưởng theo mô hình logistic dN/dt = rN(1 − N/K) với r = 0,5 và K = 1000 cá thể. Xét các nhận định sau.",
+  "options": [
+   {
+    "key": "a",
+    "text": "Khi kích thước quần thể là 200 cá thể, tốc độ tăng trưởng là 80 cá thể/năm."
+   },
+   {
+    "key": "b",
+    "text": "Tốc độ tăng trưởng đạt giá trị lớn nhất khi quần thể có 500 cá thể."
+   },
+   {
+    "key": "c",
+    "text": "Khi quần thể có 800 cá thể, tốc độ tăng trưởng là 200 cá thể/năm."
+   },
+   {
+    "key": "d",
+    "text": "Khi kích thước quần thể đạt K = 1000 cá thể, tốc độ tăng trưởng bằng 0."
+   }
+  ],
+  "answer": "ĐĐSĐ",
+  "explanation": "dN/dt = 0,5N(1 − N/1000). a Đ: N = 200 cho 0,5 × 200 × 0,8 = 80. b Đ: đạt cực đại tại N = K/2 = 500, khi đó 0,5 × 500 × 0,5 = 125. c S: N = 800 cho 0,5 × 800 × 0,2 = 80, không phải 200. d Đ: N = K cho dN/dt = 0.",
+  "tags": [
+   "tăng trưởng quần thể",
+   "logistic"
+  ],
+  "figure": {
+   "kind": "graph",
+   "curves": [
+    "x(1-x/1000)/2"
+   ],
+   "xMin": 0,
+   "xMax": 1000
+  }
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "dung-sai",
+  "level": "VDC",
+  "prompt": "Ở người, bệnh P do một gen lặn nằm trên nhiễm sắc thể thường quy định (alen trội tương ứng quy định bình thường). Trong một quần thể người đang cân bằng di truyền, tỉ lệ người bị bệnh P là 1/10 000. Xét các nhận định sau (lấy gần đúng khi cần).",
+  "options": [
+   {
+    "key": "a",
+    "text": "Tỉ lệ người mang kiểu gen dị hợp trong quần thể xấp xỉ 2%."
+   },
+   {
+    "key": "b",
+    "text": "Tần số alen bệnh trong quần thể là 0,1."
+   },
+   {
+    "key": "c",
+    "text": "Một cặp vợ chồng bình thường, không có quan hệ họ hàng, sinh con bị bệnh P với xác suất khoảng 0,01%."
+   },
+   {
+    "key": "d",
+    "text": "Người bình thường có em gái bị bệnh P thì xác suất người đó mang alen bệnh là 2/3."
+   }
+  ],
+  "answer": "ĐSĐĐ",
+  "explanation": "q² = 1/10 000 nên q = 0,01. a Đ: 2pq = 2 × 0,99 × 0,01 ≈ 0,0198. b S: q = 0,01, không phải 0,1. c Đ: mỗi người bình thường mang alen bệnh với xác suất ≈ 0,0198; sinh con bệnh = 0,0198² × 1/4 ≈ 0,0098%. d Đ: bố mẹ đều Aa nên người bình thường có tỉ lệ AA : Aa = 1 : 2, xác suất mang alen 2/3.",
+  "tags": [
+   "Hardy–Weinberg",
+   "xác suất có điều kiện"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Sinh học",
+  "type": "dung-sai",
+  "level": "VDC",
+  "prompt": "Ở một loài thực vật, lai hai dòng hoa hồng thuần chủng khác kiểu gen, thu được F1 toàn hoa đỏ. Cho F1 tự thụ phấn, thu được F2 có số lượng cây như hình bên dưới. Biết hai cặp gen phân li độc lập, kiểu gen A-B- quy định hoa đỏ; A-bb và aaB- quy định hoa hồng; aabb quy định hoa trắng. Xét các nhận định sau.",
+  "options": [
+   {
+    "key": "a",
+    "text": "F1 có kiểu gen dị hợp về cả hai cặp gen."
+   },
+   {
+    "key": "b",
+    "text": "Màu hoa do hai cặp gen không alen tương tác với nhau quy định."
+   },
+   {
+    "key": "c",
+    "text": "Tỉ lệ cây hoa hồng ở F2 là 50%."
+   },
+   {
+    "key": "d",
+    "text": "Cho cây hoa hồng có kiểu gen Aabb ở F2 tự thụ phấn, đời con có tỉ lệ cây hoa trắng là 1/4."
+   }
+  ],
+  "answer": "ĐĐSĐ",
+  "explanation": "a Đ: F1 đỏ là AaBb. b Đ: hai cặp gen không alen tương tác quy định màu hoa. c S: hoa hồng = 75/200 = 37,5%, không phải 50%. d Đ: Aabb tự thụ cho aabb (hoa trắng) với tỉ lệ 1/4 × 1 = 1/4.",
+  "tags": [
+   "tương tác gen",
+   "lai hai cặp tính trạng"
+  ],
+  "figure": {
+   "kind": "stats",
+   "chart": "bar",
+   "title": "Kiểu hình ở F2",
+   "xLabel": "Kiểu hình",
+   "yLabel": "Số cây",
+   "data": "Đỏ; Hồng; Trắng\nSố cây: 112; 75; 13"
+  }
+ }
+]

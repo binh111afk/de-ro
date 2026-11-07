@@ -1,0 +1,834 @@
+[
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Tính tích phân $\\int_1^2 (4x^3-2x)\\,dx$.",
+    "options": [
+      {
+        "key": "A",
+        "text": "6"
+      },
+      {
+        "key": "B",
+        "text": "9"
+      },
+      {
+        "key": "C",
+        "text": "12"
+      },
+      {
+        "key": "D",
+        "text": "18"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Một nguyên hàm của $4x^3-2x$ là $x^4-x^2$. Suy ra $\\int_1^2 (4x^3-2x)\\,dx=(2^4-2^2)-(1^4-1^2)=12-0=12$.",
+    "tags": [
+      "tích phân",
+      "tính tích phân cơ bản"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Họ nguyên hàm của hàm số $f(x)=\\sin 2x$ là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\frac{1}{2}\\cos 2x+C$"
+      },
+      {
+        "key": "B",
+        "text": "$-2\\cos 2x+C$"
+      },
+      {
+        "key": "C",
+        "text": "$2\\cos 2x+C$"
+      },
+      {
+        "key": "D",
+        "text": "$-\\frac{1}{2}\\cos 2x+C$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "$\\int \\sin 2x\\,dx=-\\dfrac{1}{2}\\cos 2x+C$, vì $\\left(-\\dfrac{1}{2}\\cos 2x\\right)'=\\sin 2x$.",
+    "tags": [
+      "nguyên hàm",
+      "hàm lượng giác"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Một chất điểm chuyển động thẳng có quãng đường $s(t)=t^3-6t^2+9t$ (m), với $t\\ge 0$ tính bằng giây. Vận tốc tức thời của chất điểm tại thời điểm $t=4$ s bằng bao nhiêu m/s?",
+    "options": [
+      {
+        "key": "A",
+        "text": "9"
+      },
+      {
+        "key": "B",
+        "text": "-3"
+      },
+      {
+        "key": "C",
+        "text": "15"
+      },
+      {
+        "key": "D",
+        "text": "0"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Vận tốc là đạo hàm của quãng đường: $v(t)=s'(t)=3t^2-12t+9$. Suy ra $v(4)=48-48+9=9$ m/s.",
+    "tags": [
+      "đạo hàm",
+      "vận tốc tức thời",
+      "chuyển động thẳng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Diện tích hình phẳng giới hạn bởi parabol $y=x^2$ và đường thẳng $y=2x$ như hình bên dưới bằng bao nhiêu?",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\frac{8}{3}$"
+      },
+      {
+        "key": "B",
+        "text": "2"
+      },
+      {
+        "key": "C",
+        "text": "$\\frac{1}{3}$"
+      },
+      {
+        "key": "D",
+        "text": "$\\frac{4}{3}$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Hoành độ giao điểm: $x^2=2x\\Leftrightarrow x=0$ hoặc $x=2$. Trên $[0;2]$ có $2x\\ge x^2$ nên $S=\\int_0^2 (2x-x^2)\\,dx=\\left[x^2-\\dfrac{x^3}{3}\\right]_0^2=4-\\dfrac{8}{3}=\\dfrac{4}{3}$.",
+    "tags": [
+      "diện tích hình phẳng",
+      "hai đường cong"
+    ],
+    "figure": {
+      "kind": "oxy",
+      "xMin": -1,
+      "xMax": 3,
+      "yMin": -1,
+      "yMax": 5,
+      "items": "(P): y = x^2\nd: y = 2x"
+    }
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Người ta xây một bể nước hình hộp chữ nhật không có nắp, đáy là hình vuông cạnh $x$ (m), chiều cao $h$ (m), thể tích bể bằng $54\\ \\text{m}^3$. Chi phí xây đáy là $400$ nghìn đồng/m$^2$, chi phí xây các mặt bên là $100$ nghìn đồng/m$^2$. Tổng chi phí nhỏ nhất để xây bể bằng bao nhiêu nghìn đồng?",
+    "options": [
+      {
+        "key": "A",
+        "text": "9720"
+      },
+      {
+        "key": "B",
+        "text": "10800"
+      },
+      {
+        "key": "C",
+        "text": "12600"
+      },
+      {
+        "key": "D",
+        "text": "7200"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Từ $x^2h=54$ suy ra $h=\\dfrac{54}{x^2}$. Tổng chi phí $C(x)=400x^2+100\\cdot 4xh=400x^2+\\dfrac{21600}{x}$ với $x>0$. Ta có $C'(x)=800x-\\dfrac{21600}{x^2}$, $C'(x)=0\\Leftrightarrow x^3=27\\Leftrightarrow x=3$. Lập bảng biến thiên, $C$ nhỏ nhất tại $x=3$: $C(3)=3600+7200=10800$ (nghìn đồng).",
+    "tags": [
+      "ứng dụng đạo hàm",
+      "tối ưu",
+      "chi phí làm bể"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Một nhà sản xuất có hàm cầu $p(q)=300-5q$ (nghìn đồng/sản phẩm), trong đó $q$ là số sản phẩm bán ra, $0\\le q\\le 60$. Doanh thu lớn nhất có thể đạt được là bao nhiêu nghìn đồng?",
+    "options": [
+      {
+        "key": "A",
+        "text": "9000"
+      },
+      {
+        "key": "B",
+        "text": "6000"
+      },
+      {
+        "key": "C",
+        "text": "4500"
+      },
+      {
+        "key": "D",
+        "text": "3000"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Doanh thu $R(q)=q\\cdot p(q)=300q-5q^2$. Ta có $R'(q)=300-10q$, $R'(q)=0\\Leftrightarrow q=30\\in[0;60]$. Lập bảng biến thiên, $R$ lớn nhất tại $q=30$: $R(30)=9000-4500=4500$ nghìn đồng.",
+    "tags": [
+      "ứng dụng đạo hàm",
+      "hàm cầu",
+      "doanh thu"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Hai đèn chiếu sáng $A$ và $B$ đặt cách nhau $6$ m trên cùng một đường thẳng (như hình bên dưới). Cường độ sáng của đèn $A$ là $8$, của đèn $B$ là $1$. Độ rọi tại một điểm $M$ trên đoạn $AB$ là tổng độ rọi do hai đèn gây ra, trong đó độ rọi do một đèn gây ra tại $M$ bằng cường độ sáng của đèn chia cho bình phương khoảng cách từ đèn đến $M$. Điểm $M$ cách $A$ bao nhiêu mét thì độ rọi tại $M$ nhỏ nhất?",
+    "options": [
+      {
+        "key": "A",
+        "text": "3"
+      },
+      {
+        "key": "B",
+        "text": "2"
+      },
+      {
+        "key": "C",
+        "text": "5"
+      },
+      {
+        "key": "D",
+        "text": "4"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Đặt $x=AM$ với $0<x<6$, khi đó $BM=6-x$ và độ rọi $E(x)=\\dfrac{8}{x^2}+\\dfrac{1}{(6-x)^2}$. Ta có $E'(x)=-\\dfrac{16}{x^3}+\\dfrac{2}{(6-x)^3}$. $E'(x)=0\\Leftrightarrow x^3=8(6-x)^3\\Leftrightarrow x=2(6-x)\\Leftrightarrow x=4$. $E$ giảm trên $(0;4)$ và tăng trên $(4;6)$ nên nhỏ nhất tại $x=4$, với $E(4)=\\dfrac{3}{4}$.",
+    "tags": [
+      "ứng dụng đạo hàm",
+      "tối ưu",
+      "độ rọi ánh sáng"
+    ],
+    "figure": {
+      "kind": "scene",
+      "text": "A(0; 0) B(6; 0)\nAB\nkích thước AB \"6 m\""
+    }
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Một vật thể có đáy là hình phẳng giới hạn bởi parabol $y=4-x^2$ và trục hoành. Cắt vật thể bởi mặt phẳng vuông góc với trục $Ox$ tại điểm có hoành độ $x$ ($-2\\le x\\le 2$), thiết diện thu được là một hình vuông có một cạnh nằm trên đáy. Thể tích của vật thể bằng bao nhiêu?",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\frac{256}{15}$"
+      },
+      {
+        "key": "B",
+        "text": "32"
+      },
+      {
+        "key": "C",
+        "text": "$\\frac{512}{15}$"
+      },
+      {
+        "key": "D",
+        "text": "$\\frac{64}{3}$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Cạnh hình vuông ở thiết diện có độ dài $4-x^2$, nên diện tích thiết diện $S(x)=(4-x^2)^2$. Thể tích $V=\\int_{-2}^{2}(4-x^2)^2\\,dx=\\int_{-2}^{2}(16-8x^2+x^4)\\,dx=\\dfrac{512}{15}$.",
+    "tags": [
+      "thể tích vật thể",
+      "thiết diện"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Tốc độ tăng dân số của một thành phố (nghìn người/năm) sau $t$ năm kể từ thời điểm $t=0$ được cho bởi $r(t)=\\dfrac{150}{t+3}$, $t\\ge 0$. Số dân tăng thêm của thành phố trong 9 năm đầu tiên (từ $t=0$ đến $t=9$) bằng bao nhiêu nghìn người?",
+    "options": [
+      {
+        "key": "A",
+        "text": "$150\\ln 4$"
+      },
+      {
+        "key": "B",
+        "text": "$150\\ln 12$"
+      },
+      {
+        "key": "C",
+        "text": "450"
+      },
+      {
+        "key": "D",
+        "text": "$150\\ln 3$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Số dân tăng thêm bằng $\\int_0^9 \\dfrac{150}{t+3}\\,dt=150\\left(\\ln 12-\\ln 3\\right)=150\\ln 4\\approx 207{,}9$ (nghìn người).",
+    "tags": [
+      "tốc độ thay đổi",
+      "ứng dụng tích phân",
+      "dân số"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Bạn An đứng tại điểm $A$ trên bờ một con sông thẳng, cần đến điểm $B$ ở bờ bên kia. Biết khoảng cách từ $B$ đến bờ sông là $0{,}8$ km và hình chiếu vuông góc của $B$ lên bờ cách $A$ một đoạn $1$ km. An chạy trên bờ với vận tốc $5$ km/h, bơi với vận tốc $3$ km/h. An chạy dọc bờ đến điểm $M$ rồi bơi thẳng đến $B$. Thời gian ngắn nhất để An đến $B$ bằng bao nhiêu phút?",
+    "options": [
+      {
+        "key": "A",
+        "text": "25,6"
+      },
+      {
+        "key": "B",
+        "text": "24,8"
+      },
+      {
+        "key": "C",
+        "text": "28,0"
+      },
+      {
+        "key": "D",
+        "text": "20,0"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Đặt $AM=x$ km, $0\\le x\\le 1$. Thời gian $T(x)=\\dfrac{x}{5}+\\dfrac{\\sqrt{(1-x)^2+0{,}64}}{3}$ (giờ). $T'(x)=\\dfrac{1}{5}-\\dfrac{1-x}{3\\sqrt{(1-x)^2+0{,}64}}=0\\Leftrightarrow x=0{,}4$. Khi đó $T(0{,}4)=0{,}08+\\dfrac{1}{3}\\approx 0{,}4133$ giờ $\\approx 24{,}8$ phút, nhỏ nhất (so với $T(0)\\approx 25{,}6$ phút và $T(1)=28$ phút).",
+    "tags": [
+      "ứng dụng đạo hàm",
+      "tối ưu",
+      "chạy-bơi"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Một cửa hàng bán một loại sản phẩm với hàm cầu $p(q)=80-q$ (nghìn đồng/sản phẩm), $0\\le q\\le 80$, trong đó $q$ là số sản phẩm bán được. Xét tính đúng, sai của các khẳng định sau.",
+    "options": [
+      {
+        "key": "a",
+        "text": "Doanh thu khi bán $q$ sản phẩm là $R(q)=80q-q^2$ (nghìn đồng)."
+      },
+      {
+        "key": "b",
+        "text": "Doanh thu tăng khi $q$ thuộc khoảng $(0;40)$."
+      },
+      {
+        "key": "c",
+        "text": "Doanh thu lớn nhất đạt được là $1800$ nghìn đồng."
+      },
+      {
+        "key": "d",
+        "text": "Khi bán $60$ sản phẩm thì doanh thu là $1200$ nghìn đồng."
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) Đúng: $R(q)=q(80-q)=80q-q^2$. b) Đúng: $R'(q)=80-2q>0$ với $q<40$. c) Sai: $R$ lớn nhất tại $q=40$, $R(40)=1600$ nghìn đồng. d) Đúng: $R(60)=60\\cdot 20=1200$.",
+    "tags": [
+      "hàm cầu",
+      "doanh thu",
+      "đạo hàm"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Một ô tô chuyển động thẳng với vận tốc $v(t)=6-2t$ (m/s), $t\\ge 0$ tính bằng giây. Xét tính đúng, sai của các khẳng định sau.",
+    "options": [
+      {
+        "key": "a",
+        "text": "Quãng đường ô tô đi được trong 3 giây đầu là 9 m."
+      },
+      {
+        "key": "b",
+        "text": "Tại thời điểm $t=0$, vận tốc của ô tô bằng 6 m/s."
+      },
+      {
+        "key": "c",
+        "text": "Ô tô dừng lại tại thời điểm $t=3$ giây."
+      },
+      {
+        "key": "d",
+        "text": "Quãng đường ô tô đi được trong 5 giây đầu là 25 m."
+      }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a) Đúng: $\\int_0^3(6-2t)\\,dt=9$. b) Đúng: $v(0)=6$. c) Đúng: $v(3)=0$. d) Sai: $v(t)<0$ khi $t>3$ nên quãng đường là $\\int_0^3(6-2t)\\,dt+\\int_3^5(2t-6)\\,dt=9+4=13$ m, không phải 25 m.",
+    "tags": [
+      "quãng đường",
+      "vận tốc",
+      "tích phân"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Cho parabol $(P): y=4-x^2$ và đường thẳng $d: y=x+2$ có đồ thị như hình bên dưới. Gọi $S$ là diện tích hình phẳng giới hạn bởi $(P)$ và $d$. Xét tính đúng, sai của các khẳng định sau.",
+    "options": [
+      {
+        "key": "a",
+        "text": "Hoành độ giao điểm của $(P)$ và $d$ là $x=-2$ và $x=1$."
+      },
+      {
+        "key": "b",
+        "text": "$S=\\dfrac{9}{2}$ (đơn vị diện tích)."
+      },
+      {
+        "key": "c",
+        "text": "Trên khoảng $(-2;1)$, parabol $(P)$ nằm phía dưới đường thẳng $d$."
+      },
+      {
+        "key": "d",
+        "text": "Phần diện tích của hình phẳng nằm bên phải trục $Oy$ bằng $3$."
+      }
+    ],
+    "answer": "ĐĐSS",
+    "explanation": "a) Đúng: $4-x^2=x+2\\Leftrightarrow x^2+x-2=0\\Leftrightarrow x=-2$ hoặc $x=1$. b) Đúng: $S=\\int_{-2}^{1}(2-x-x^2)\\,dx=\\dfrac{9}{2}$. c) Sai: tại $x=0$ thì $4>2$, parabol nằm phía trên $d$. d) Sai: phần bên phải $Oy$ có diện tích $\\int_0^1(2-x-x^2)\\,dx=\\dfrac{7}{6}$.",
+    "tags": [
+      "diện tích hình phẳng",
+      "parabol và đường thẳng"
+    ],
+    "figure": {
+      "kind": "oxy",
+      "xMin": -3,
+      "xMax": 2,
+      "yMin": -1,
+      "yMax": 5,
+      "items": "(P): y = 4 - x^2\nd: y = x + 2"
+    }
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Người ta làm một thùng tôn hình hộp chữ nhật không nắp, đáy là hình vuông cạnh $x$ (dm), chiều cao $h$ (dm). Tổng diện tích tôn dùng làm thùng (gồm đáy và bốn mặt bên) bằng $108$ dm$^2$; bỏ qua độ dày và mép nối. Xét tính đúng, sai của các khẳng định sau.",
+    "options": [
+      {
+        "key": "a",
+        "text": "$h=\\dfrac{108-x^2}{4x}$."
+      },
+      {
+        "key": "b",
+        "text": "Thể tích của thùng là $V(x)=\\dfrac{108x-x^3}{4}$ (dm$^3$)."
+      },
+      {
+        "key": "c",
+        "text": "Thể tích lớn nhất của thùng bằng $144$ dm$^3$."
+      },
+      {
+        "key": "d",
+        "text": "Thể tích của thùng lớn nhất khi cạnh đáy $x=6$ dm."
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) Đúng: $x^2+4xh=108$ nên $h=\\dfrac{108-x^2}{4x}$. b) Đúng: $V=x^2h=\\dfrac{108x-x^3}{4}$ với $0<x<\\sqrt{108}$. c) Sai: $V'(x)=\\dfrac{108-3x^2}{4}=0\\Leftrightarrow x=6$ và $V(6)=108$ dm$^3$. d) Đúng: $V'>0$ khi $x<6$ và $V'<0$ khi $x>6$ nên $V$ đạt lớn nhất tại $x=6$.",
+    "tags": [
+      "ứng dụng đạo hàm",
+      "thể tích",
+      "tối ưu",
+      "thùng tôn"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Cho hình phẳng $(H)$ giới hạn bởi parabol $(P): y=x^2$ (với $x\\ge 0$), đường thẳng $y=4$ và trục $Oy$, như hình bên dưới. Gọi $V_x$ và $V_y$ lần lượt là thể tích khối tròn xoay tạo thành khi quay $(H)$ quanh trục $Ox$ và quanh trục $Oy$. Xét tính đúng, sai của các khẳng định sau.",
+    "options": [
+      {
+        "key": "a",
+        "text": "$V_y=8\\pi$."
+      },
+      {
+        "key": "b",
+        "text": "$V_x=\\dfrac{128\\pi}{5}$."
+      },
+      {
+        "key": "c",
+        "text": "$V_y=16\\pi$."
+      },
+      {
+        "key": "d",
+        "text": "$V_x>3V_y$."
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) Đúng: khi quay quanh $Oy$, với mỗi $y\\in[0;4]$ thiết diện là đĩa bán kính $\\sqrt{y}$ nên $V_y=\\pi\\int_0^4 y\\,dy=8\\pi$. b) Đúng: quay quanh $Ox$ với $0\\le x\\le 2$ ta được vòng tròn bán kính ngoài $4$, bán kính trong $x^2$: $V_x=\\pi\\int_0^2(16-x^4)\\,dx=\\dfrac{128\\pi}{5}$. c) Sai: $V_y=8\\pi$. d) Đúng: $V_x=25{,}6\\pi>24\\pi=3V_y$.",
+    "tags": [
+      "thể tích khối tròn xoay",
+      "quay quanh Oy"
+    ],
+    "figure": {
+      "kind": "oxy",
+      "xMin": -1,
+      "xMax": 3,
+      "yMin": -1,
+      "yMax": 5,
+      "items": "(P): y = x^2\nd: y = 4"
+    }
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Cho hàm số $y=f(t)$ có đồ thị như hình bên dưới. Đặt $F(x)=\\displaystyle\\int_0^x f(t)\\,dt$. Xét tính đúng, sai của các khẳng định sau.",
+    "options": [
+      {
+        "key": "a",
+        "text": "$F$ đạt cực đại tại $x=-2$ và $F(-2)=\\dfrac{16}{3}$."
+      },
+      {
+        "key": "b",
+        "text": "$F$ đạt cực tiểu tại $x=-2$."
+      },
+      {
+        "key": "c",
+        "text": "Giá trị nhỏ nhất của $F$ trên đoạn $[0;3]$ bằng $-\\dfrac{16}{3}$."
+      },
+      {
+        "key": "d",
+        "text": "Phương trình $F(x)=0$ có đúng ba nghiệm thực phân biệt."
+      }
+    ],
+    "answer": "ĐSĐĐ",
+    "explanation": "Ta có $F'(x)=f(x)=x^2-4$ và $F(x)=\\dfrac{x^3}{3}-4x$. a) Đúng: $F'$ đổi dấu từ $+$ sang $-$ tại $x=-2$ và $F(-2)=\\dfrac{16}{3}$. b) Sai: $x=-2$ là điểm cực đại, không phải cực tiểu. c) Đúng: trên $[0;3]$ có $F(0)=0$, $F(2)=-\\dfrac{16}{3}$, $F(3)=-3$ nên giá trị nhỏ nhất là $-\\dfrac{16}{3}$. d) Đúng: $F(x)=x\\left(\\dfrac{x^2}{3}-4\\right)=0\\Leftrightarrow x=0$ hoặc $x=\\pm 2\\sqrt{3}$.",
+    "tags": [
+      "tích phân hàm số xác định bởi tích phân",
+      "cực trị",
+      "giá trị nhỏ nhất"
+    ],
+    "figure": {
+      "kind": "graph",
+      "curves": [
+        "x^2-4"
+      ],
+      "xMin": -3,
+      "xMax": 3
+    }
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Một chất điểm chuyển động thẳng có gia tốc $a(t)=6t-4$ (m/s$^2$), $t\\ge 0$ tính bằng giây. Tại thời điểm $t=0$, vận tốc của chất điểm bằng $2$ m/s và chất điểm ở gốc quãng đường $O$. Xét tính đúng, sai của các khẳng định sau.",
+    "options": [
+      {
+        "key": "a",
+        "text": "Vận tốc của chất điểm tại thời điểm $t=2$ s bằng $6$ m/s."
+      },
+      {
+        "key": "b",
+        "text": "Vận tốc nhỏ nhất của chất điểm đạt được tại $t=\\dfrac{2}{3}$ s."
+      },
+      {
+        "key": "c",
+        "text": "Quãng đường chất điểm đi được trong 2 giây đầu bằng $6$ m."
+      },
+      {
+        "key": "d",
+        "text": "Chất điểm dừng lại tại thời điểm $t=1$ s."
+      }
+    ],
+    "answer": "ĐĐSS",
+    "explanation": "Từ $v'(t)=a(t)$ và $v(0)=2$ suy ra $v(t)=3t^2-4t+2$, $s(t)=t^3-2t^2+2t$. a) Đúng: $v(2)=12-8+2=6$. b) Đúng: $v$ là tam thức bậc hai có hệ số $a=3>0$, đỉnh tại $t=\\dfrac{2}{3}$, nên $\\min v=v\\left(\\dfrac{2}{3}\\right)=\\dfrac{2}{3}$ m/s. c) Sai: $v(t)>0$ với mọi $t$ nên quãng đường là $s(2)=4$ m. d) Sai: $v(1)=1\\ne 0$.",
+    "tags": [
+      "gia tốc",
+      "vận tốc",
+      "quãng đường",
+      "tích phân"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Tốc độ phát triển của một quần thể (nghìn cá thể/năm) sau $t$ năm được mô hình bởi $r(t)=t\\,e^{-t}$, $t\\ge 0$. Xét tính đúng, sai của các khẳng định sau.",
+    "options": [
+      {
+        "key": "a",
+        "text": "Tốc độ phát triển lớn nhất đạt được tại $t=1$."
+      },
+      {
+        "key": "b",
+        "text": "Tốc độ phát triển lớn nhất bằng $1$ nghìn cá thể/năm."
+      },
+      {
+        "key": "c",
+        "text": "$\\displaystyle\\int_0^1 r(t)\\,dt=1-\\dfrac{2}{e}$."
+      },
+      {
+        "key": "d",
+        "text": "Số cá thể tăng thêm trong 2 năm đầu nhỏ hơn 1 nghìn cá thể."
+      }
+    ],
+    "answer": "ĐSĐĐ",
+    "explanation": "$r'(t)=e^{-t}(1-t)$, nên $r'(t)=0\\Leftrightarrow t=1$, $r$ đạt cực đại tại $t=1$ với $r(1)=\\dfrac{1}{e}\\approx 0{,}37$. a) Đúng. b) Sai: giá trị lớn nhất là $\\dfrac{1}{e}$. c) Đúng: $\\int_0^1 te^{-t}\\,dt=\\left[-(t+1)e^{-t}\\right]_0^1=1-\\dfrac{2}{e}$. d) Đúng: $\\int_0^2 te^{-t}\\,dt=1-\\dfrac{3}{e^2}\\approx 0{,}59<1$.",
+    "tags": [
+      "tốc độ thay đổi",
+      "cực trị",
+      "tích phân"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "NB",
+    "prompt": "Tính $\\displaystyle\\int_{-1}^{1}\\left(x^4+2x\\right)dx$. Viết kết quả dưới dạng số thập phân.",
+    "answer": "0,4",
+    "explanation": "$\\int_{-1}^{1}x^4\\,dx=\\dfrac{2}{5}$ và $\\int_{-1}^{1}2x\\,dx=0$ (hàm lẻ trên đoạn đối xứng). Vậy kết quả là $\\dfrac{2}{5}=0{,}4$.",
+    "tags": [
+      "tích phân",
+      "tính tích phân cơ bản"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Tính diện tích hình phẳng giới hạn bởi đồ thị hàm số $y=x^3$ và đường thẳng $y=x$ như hình bên dưới. Viết kết quả dưới dạng số thập phân.",
+    "answer": "0,5",
+    "explanation": "Hoành độ giao điểm: $x^3=x\\Leftrightarrow x\\in\\{-1;0;1\\}$. $S=\\int_{-1}^{0}(x^3-x)\\,dx+\\int_{0}^{1}(x-x^3)\\,dx=\\dfrac{1}{4}+\\dfrac{1}{4}=\\dfrac{1}{2}=0{,}5$.",
+    "tags": [
+      "diện tích hình phẳng",
+      "hai đường cong"
+    ],
+    "figure": {
+      "kind": "oxy",
+      "xMin": -2,
+      "xMax": 2,
+      "yMin": -2,
+      "yMax": 2,
+      "items": "(C): y = x^3\nd: y = x"
+    }
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Một chất điểm chuyển động thẳng có quãng đường $s(t)=2t^3-9t^2+12t$ (m), $t\\ge 0$ tính bằng giây. Tại thời điểm vận tốc triệt tiêu lần thứ hai, gia tốc của chất điểm bằng bao nhiêu m/s$^2$?",
+    "answer": "6",
+    "explanation": "$v(t)=s'(t)=6t^2-18t+12=6(t-1)(t-2)$, $v(t)=0$ tại $t=1$ và $t=2$. Gia tốc $a(t)=v'(t)=12t-18$, nên $a(2)=6$ m/s$^2$.",
+    "tags": [
+      "đạo hàm",
+      "vận tốc",
+      "gia tốc"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Một vật chuyển động thẳng với vận tốc $v(t)=2+6\\sqrt{t}$ (m/s), $t\\ge 0$ tính bằng giây. Quãng đường vật đi được trong 9 giây đầu tiên bằng bao nhiêu mét?",
+    "answer": "126",
+    "explanation": "$\\int_0^9 (2+6\\sqrt{t})\\,dt=\\left[2t+4t\\sqrt{t}\\right]_0^9=18+108=126$ m.",
+    "tags": [
+      "quãng đường",
+      "tích phân",
+      "căn thức"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Gọi $V$ là thể tích khối tròn xoay tạo thành khi quay quanh trục $Ox$ hình phẳng giới hạn bởi đồ thị hàm số $y=\\dfrac{1}{\\sqrt{x+1}}$, trục $Ox$ và hai đường thẳng $x=0$, $x=3$ (như hình bên dưới). Tính $V$, làm tròn kết quả đến hàng phần trăm.",
+    "answer": "4,36",
+    "explanation": "$V=\\pi\\int_0^3 \\dfrac{1}{x+1}\\,dx=\\pi\\ln 4\\approx 4{,}36$.",
+    "tags": [
+      "thể tích khối tròn xoay",
+      "quay quanh Ox"
+    ],
+    "figure": {
+      "kind": "graph",
+      "curves": [
+        "1/sqrt(x+1)"
+      ],
+      "xMin": 0,
+      "xMax": 4
+    }
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Số lượng vi khuẩn trong một mẫu nuôi cấy tăng với tốc độ $r(t)=400e^{\\frac{t}{2}}$ (con/giờ), $t\\ge 0$ tính bằng giờ. Số lượng vi khuẩn tăng thêm trong 2 giờ đầu là bao nhiêu con (làm tròn kết quả đến hàng đơn vị)?",
+    "answer": "1375",
+    "explanation": "$\\int_0^2 400e^{\\frac{t}{2}}\\,dt=800\\left(e-1\\right)\\approx 1374{,}6$, làm tròn thành $1375$ con.",
+    "tags": [
+      "tốc độ tăng trưởng",
+      "hàm mũ",
+      "tích phân"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Một chất điểm chuyển động thẳng với vận tốc $v(t)=t^2+t$ (m/s), $0\\le t\\le 3$. Vận tốc trung bình của chất điểm trên khoảng thời gian $[0;3]$ bằng bao nhiêu m/s?",
+    "answer": "4,5",
+    "explanation": "Vận tốc trung bình $\\bar v=\\dfrac{1}{3}\\int_0^3 (t^2+t)\\,dt=\\dfrac{1}{3}\\left(9+\\dfrac{9}{2}\\right)=\\dfrac{9}{2}=4{,}5$ m/s.",
+    "tags": [
+      "giá trị trung bình",
+      "vận tốc trung bình"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Cửa sổ Norman có dạng một hình chữ nhật ở phía dưới ghép với nửa hình tròn ở phía trên, đường kính nửa hình tròn trùng với cạnh trên của hình chữ nhật. Chu vi khung cửa sổ (gồm cạnh đáy, hai cạnh bên và cung tròn) bằng $10$ m. Gọi $x$ (m) là bán kính nửa hình tròn. Để diện tích cửa sổ lớn nhất, giá trị của $x$ bằng bao nhiêu mét (làm tròn kết quả đến hàng phần mười)?",
+    "answer": "1,4",
+    "explanation": "Gọi $h$ là chiều cao phần hình chữ nhật: $2x+2h+\\pi x=10$, suy ra $h=\\dfrac{10-(2+\\pi)x}{2}$. Diện tích $S(x)=2xh+\\dfrac{\\pi x^2}{2}=10x-\\left(2+\\dfrac{\\pi}{2}\\right)x^2$. $S'(x)=10-(4+\\pi)x=0\\Leftrightarrow x=\\dfrac{10}{4+\\pi}\\approx 1{,}40$ m. Đây là điểm cực đại duy nhất nên $S$ lớn nhất tại đó.",
+    "tags": [
+      "ứng dụng đạo hàm",
+      "tối ưu",
+      "cửa sổ Norman"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Tìm giá trị dương của tham số $a$ sao cho diện tích hình phẳng giới hạn bởi đồ thị hàm số $y=x^2-ax$ và trục hoành bằng $36$.",
+    "answer": "6",
+    "explanation": "Đồ thị cắt trục hoành tại $x=0$ và $x=a$, trên $(0;a)$ thì $x^2-ax\\le 0$. Diện tích $S=\\int_0^a (ax-x^2)\\,dx=\\dfrac{a^3}{2}-\\dfrac{a^3}{3}=\\dfrac{a^3}{6}$. Từ $\\dfrac{a^3}{6}=36$ suy ra $a^3=216$, $a=6$.",
+    "tags": [
+      "diện tích hình phẳng",
+      "tham số"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Trong mặt phẳng $Oxy$ cho điểm $A(0;4)$ và parabol $(P): y=x^2$ (như hình bên dưới). Điểm $M$ di chuyển trên $(P)$. Khoảng cách ngắn nhất từ $A$ đến $M$ bằng bao nhiêu (làm tròn kết quả đến hàng phần trăm)?",
+    "answer": "1,94",
+    "explanation": "Với $M(x;x^2)$, $AM^2=x^2+(x^2-4)^2$. Đặt $t=x^2\\ge 0$, $AM^2=g(t)=t^2-7t+16$, $g'(t)=2t-7=0\\Leftrightarrow t=\\dfrac{7}{2}$. Khi đó $g\\left(\\dfrac{7}{2}\\right)=\\dfrac{15}{4}$ nên $AM_{\\min}=\\sqrt{\\dfrac{15}{4}}\\approx 1{,}94$.",
+    "tags": [
+      "ứng dụng đạo hàm",
+      "khoảng cách ngắn nhất"
+    ],
+    "figure": {
+      "kind": "oxy",
+      "xMin": -3,
+      "xMax": 3,
+      "yMin": -1,
+      "yMax": 6,
+      "items": "A(0; 4)\n(P): y = x^2"
+    }
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Cho hàm số $y=\\dfrac{4}{x}$ có đồ thị $(C)$. Với $a>0$, tiếp tuyến của $(C)$ tại điểm có hoành độ $x=a$ cắt hai trục tọa độ tại hai điểm $P$ và $Q$. Khi $a$ thay đổi, diện tích tam giác $OPQ$ bằng bao nhiêu?",
+    "answer": "8",
+    "explanation": "$y'=-\\dfrac{4}{x^2}$. Tiếp tuyến tại $x=a$: $y=-\\dfrac{4}{a^2}(x-a)+\\dfrac{4}{a}$. Cắt $Ox$ tại $P(2a;0)$, cắt $Oy$ tại $Q\\left(0;\\dfrac{8}{a}\\right)$. Diện tích $S_{OPQ}=\\dfrac{1}{2}\\cdot 2a\\cdot\\dfrac{8}{a}=8$, không phụ thuộc $a$.",
+    "tags": [
+      "tiếp tuyến",
+      "diện tích tam giác",
+      "đạo hàm"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Một hình chữ nhật có cạnh đáy nằm trên trục $Ox$, đối xứng qua trục $Oy$, hai đỉnh phía trên nằm trên parabol $y=9-x^2$ (như hình bên dưới). Diện tích lớn nhất của hình chữ nhật bằng bao nhiêu (làm tròn kết quả đến hàng đơn vị)?",
+    "answer": "21",
+    "explanation": "Gọi $x$ ($0<x<3$) là hoành độ đỉnh phía trên bên phải, diện tích $S(x)=2x(9-x^2)=18x-2x^3$. $S'(x)=18-6x^2=0\\Leftrightarrow x=\\sqrt{3}$, $S(\\sqrt{3})=12\\sqrt{3}\\approx 20{,}78$, làm tròn thành $21$.",
+    "tags": [
+      "ứng dụng đạo hàm",
+      "tối ưu",
+      "hình chữ nhật nội tiếp"
+    ],
+    "figure": {
+      "kind": "graph",
+      "curves": [
+        "9-x^2"
+      ],
+      "xMin": -4,
+      "xMax": 4
+    }
+  }
+]

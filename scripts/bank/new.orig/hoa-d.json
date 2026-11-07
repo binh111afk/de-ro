@@ -1,0 +1,762 @@
+[
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "NB",
+  "prompt": "Phản ứng $\\text{CH}_4+\\text{Cl}_2\\xrightarrow{\\text{ánh sáng}}\\text{CH}_3\\text{Cl}+\\text{HCl}$ thuộc loại phản ứng:",
+  "options": [
+   {
+    "key": "A",
+    "text": "cộng"
+   },
+   {
+    "key": "B",
+    "text": "thế"
+   },
+   {
+    "key": "C",
+    "text": "trùng hợp"
+   },
+   {
+    "key": "D",
+    "text": "cháy"
+   }
+  ],
+  "answer": "B",
+  "explanation": "Một nguyên tử H trong metan bị thay bằng nguyên tử Cl: phản ứng thế.",
+  "tags": [
+   "ankan",
+   "phản ứng thế"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "NB",
+  "prompt": "Chất làm mất màu dung dịch brom trong $\\text{CCl}_4$ là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "$\\text{CH}_4$"
+   },
+   {
+    "key": "B",
+    "text": "$\\text{C}_3\\text{H}_8$"
+   },
+   {
+    "key": "C",
+    "text": "$\\text{C}_2\\text{H}_4$"
+   },
+   {
+    "key": "D",
+    "text": "$\\text{C}_6\\text{H}_6$"
+   }
+  ],
+  "answer": "C",
+  "explanation": "Etilen có liên kết đôi nên phản ứng cộng với $\\text{Br}_2$ làm mất màu dung dịch brom.",
+  "tags": [
+   "anken",
+   "phản ứng cộng"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "NB",
+  "prompt": "Nhóm chức đặc trưng của ancol là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "$-\\text{OH}$"
+   },
+   {
+    "key": "B",
+    "text": "$-\\text{CHO}$"
+   },
+   {
+    "key": "C",
+    "text": "$-\\text{COOH}$"
+   },
+   {
+    "key": "D",
+    "text": "$\\text{C}=\\text{C}$"
+   }
+  ],
+  "answer": "A",
+  "explanation": "Ancol chứa nhóm hydroxyl $-\\text{OH}$ nối với gốc hiđrocacbon.",
+  "tags": [
+   "ancol",
+   "nhóm chức"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "NB",
+  "prompt": "Anđehit fomic có công thức cấu tạo (như hình bên dưới):",
+  "options": [
+   {
+    "key": "A",
+    "text": "$\\text{CH}_3\\text{OH}$"
+   },
+   {
+    "key": "B",
+    "text": "$\\text{HCOOH}$"
+   },
+   {
+    "key": "C",
+    "text": "$\\text{CH}_3\\text{CHO}$"
+   },
+   {
+    "key": "D",
+    "text": "$\\text{HCHO}$"
+   }
+  ],
+  "answer": "D",
+  "explanation": "Anđehit fomic (fomanđehit) có công thức $\\text{HCHO}$, nhóm $-\\text{CHO}$ nối với nguyên tử H.",
+  "tags": [
+   "anđehit"
+  ],
+  "figure": {
+   "kind": "struct",
+   "formula": "HCHO"
+  }
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "NB",
+  "prompt": "Ancol $X$ có cấu tạo như hình bên dưới. Tên gọi của $X$ là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "propan-1-ol"
+   },
+   {
+    "key": "B",
+    "text": "propan-2-ol"
+   },
+   {
+    "key": "C",
+    "text": "propanal"
+   },
+   {
+    "key": "D",
+    "text": "axit propionic"
+   }
+  ],
+  "answer": "B",
+  "explanation": "Nhóm $-\\text{OH}$ gắn ở nguyên tử C số 2 của mạch 3 C: propan-2-ol.",
+  "tags": [
+   "ancol",
+   "tên gọi"
+  ],
+  "figure": {
+   "kind": "struct",
+   "formula": "CH3-CH(OH)-CH3"
+  }
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "TH",
+  "prompt": "Hiện tượng khi cho anđehit axetic tác dụng với dung dịch $\\text{AgNO}_3$ trong $\\text{NH}_3$ (dư), đun nóng là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "kết tủa đỏ gạch xuất hiện"
+   },
+   {
+    "key": "B",
+    "text": "dung dịch chuyển màu xanh"
+   },
+   {
+    "key": "C",
+    "text": "lớp bạc bám sáng thành ống nghiệm"
+   },
+   {
+    "key": "D",
+    "text": "sục bọt khí"
+   }
+  ],
+  "answer": "C",
+  "explanation": "$\\text{CH}_3\\text{CHO}$ khử $\\text{Ag}^{+}$ thành Ag kim loại bám sáng thành ống nghiệm: phản ứng tráng gương.",
+  "tags": [
+   "anđehit",
+   "tráng gương"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "TH",
+  "prompt": "Số đồng phân cấu tạo của hiđrocacbon có công thức phân tử $\\text{C}_4\\text{H}_{10}$ là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "2"
+   },
+   {
+    "key": "B",
+    "text": "3"
+   },
+   {
+    "key": "C",
+    "text": "4"
+   },
+   {
+    "key": "D",
+    "text": "5"
+   }
+  ],
+  "answer": "A",
+  "explanation": "Hai đồng phân: n-butane ($\\text{CH}_3\\text{CH}_2\\text{CH}_2\\text{CH}_3$) và isobutane ($\\text{(CH}_3)_2\\text{CHCH}_3$).",
+  "tags": [
+   "ankan",
+   "đồng phân"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "TH",
+  "prompt": "Phản ứng $\\text{C}_6\\text{H}_6+\\text{HNO}_3\\xrightarrow{\\text{H}_2\\text{SO}_4\\text{ đặc},\\,t^{\\circ}}\\text{C}_6\\text{H}_5\\text{NO}_2+\\text{H}_2\\text{O}$ thuộc loại phản ứng:",
+  "options": [
+   {
+    "key": "A",
+    "text": "cộng"
+   },
+   {
+    "key": "B",
+    "text": "trùng hợp"
+   },
+   {
+    "key": "C",
+    "text": "cháy"
+   },
+   {
+    "key": "D",
+    "text": "thế"
+   }
+  ],
+  "answer": "D",
+  "explanation": "Nhóm $-\\text{NO}_2$ thế cho một nguyên tử H trên vòng benzen: phản ứng thế (nitro hóa).",
+  "tags": [
+   "benzen",
+   "phản ứng thế"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "TH",
+  "prompt": "Chất làm mất màu dung dịch $\\text{KMnO}_4$ là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "benzen"
+   },
+   {
+    "key": "B",
+    "text": "metan"
+   },
+   {
+    "key": "C",
+    "text": "stiren ($\\text{C}_6\\text{H}_5-\\text{CH}=\\text{CH}_2$)"
+   },
+   {
+    "key": "D",
+    "text": "etan"
+   }
+  ],
+  "answer": "C",
+  "explanation": "Stiren có liên kết đôi ở nhánh, làm mất màu $\\text{KMnO}_4$; benzen rất bền, không phản ứng với $\\text{KMnO}_4$.",
+  "tags": [
+   "hiđrocacbon",
+   "anken"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "VD",
+  "prompt": "Đốt cháy hoàn toàn 5,6 lít metan (đktc). Thể tích khí $\\text{CO}_2$ thu được (đktc) là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "5,6 lít"
+   },
+   {
+    "key": "B",
+    "text": "11,2 lít"
+   },
+   {
+    "key": "C",
+    "text": "2,8 lít"
+   },
+   {
+    "key": "D",
+    "text": "4,48 lít"
+   }
+  ],
+  "answer": "A",
+  "explanation": "$\\text{CH}_4+2\\text{O}_2\\to\\text{CO}_2+2\\text{H}_2\\text{O}$; tỉ lệ 1:1 nên $V_{\\text{CO}_2}=5{,}6$ lít.",
+  "tags": [
+   "metan",
+   "đốt cháy"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "VD",
+  "prompt": "Oxi hóa 9,2 g ancol etylic bằng $\\text{CuO}$ đun nóng (hiệu suất 100%) thu etanal. Khối lượng etanal thu được là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "4,4 g"
+   },
+   {
+    "key": "B",
+    "text": "8,8 g"
+   },
+   {
+    "key": "C",
+    "text": "17,6 g"
+   },
+   {
+    "key": "D",
+    "text": "22 g"
+   }
+  ],
+  "answer": "B",
+  "explanation": "$n_{\\text{C}_2\\text{H}_5\\text{OH}}=0{,}2$ mol → $n_{\\text{CH}_3\\text{CHO}}=0{,}2$ mol; $m=0{,}2\\cdot 44=8{,}8$ g.",
+  "tags": [
+   "ancol",
+   "anđehit"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "VD",
+  "prompt": "Số đồng phân cấu tạo của $\\text{C}_5\\text{H}_{12}$ là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "3"
+   },
+   {
+    "key": "B",
+    "text": "2"
+   },
+   {
+    "key": "C",
+    "text": "4"
+   },
+   {
+    "key": "D",
+    "text": "5"
+   }
+  ],
+  "answer": "A",
+  "explanation": "Ba đồng phân: n-pentane, isopentane ($\\text{(CH}_3)_2\\text{CHCH}_2\\text{CH}_3$) và neopentane ($\\text{C(CH}_3)_4$).",
+  "tags": [
+   "ankan",
+   "đồng phân"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "VD",
+  "prompt": "Số ancol (đồng phân cấu tạo) có công thức phân tử $\\text{C}_3\\text{H}_8\\text{O}$ là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "1"
+   },
+   {
+    "key": "B",
+    "text": "3"
+   },
+   {
+    "key": "C",
+    "text": "4"
+   },
+   {
+    "key": "D",
+    "text": "2"
+   }
+  ],
+  "answer": "D",
+  "explanation": "Hai ancol: propan-1-ol và propan-2-ol (đimêtl ete không phải ancol).",
+  "tags": [
+   "ancol",
+   "đồng phân"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "VD",
+  "prompt": "pH của dung dịch $\\text{HCOOH}$ 0,1 M (với $K_a=2\\cdot10^{-4}$, coi hệ số hoạt động bằng 1, tính gần đúng) xấp xỉ:",
+  "options": [
+   {
+    "key": "A",
+    "text": "1,00"
+   },
+   {
+    "key": "B",
+    "text": "3,00"
+   },
+   {
+    "key": "C",
+    "text": "2,35"
+   },
+   {
+    "key": "D",
+    "text": "7,00"
+   }
+  ],
+  "answer": "C",
+  "explanation": "$[\\text{H}^{+}]\\approx\\sqrt{K_a C}=\\sqrt{2\\cdot10^{-4}\\cdot 0{,}1}\\approx 4{,}47\\cdot10^{-3}$ M; $\\text{pH}\\approx 2{,}35$.",
+  "tags": [
+   "axit",
+   "pH"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "VDC",
+  "prompt": "Đốt cháy hoàn toàn 5,6 lít hỗn hợp khí gồm etilen và metan (đktc) thu được 8,4 lít $\\text{CO}_2$ (đktc). Thành phần phần trăm theo thể tích của etilen trong hỗn hợp là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "25%"
+   },
+   {
+    "key": "B",
+    "text": "50%"
+   },
+   {
+    "key": "C",
+    "text": "75%"
+   },
+   {
+    "key": "D",
+    "text": "40%"
+   }
+  ],
+  "answer": "B",
+  "explanation": "Đặt $x+y=0{,}25$ (mol); $2x+y=0{,}375$ mol → $x=0{,}125$ mol: $\\frac{0{,}125}{0{,}25}=50\\%$.",
+  "tags": [
+   "hỗn hợp",
+   "đốt cháy"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "VDC",
+  "prompt": "Số ancol bậc một (đồng phân cấu tạo) có công thức phân tử $\\text{C}_4\\text{H}_{10}\\text{O}$ là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "1"
+   },
+   {
+    "key": "B",
+    "text": "3"
+   },
+   {
+    "key": "C",
+    "text": "4"
+   },
+   {
+    "key": "D",
+    "text": "2"
+   }
+  ],
+  "answer": "D",
+  "explanation": "Ancol bậc một: $\\text{CH}_3\\text{CH}_2\\text{CH}_2\\text{CH}_2\\text{OH}$ và $\\text{(CH}_3)_2\\text{CHCH}_2\\text{OH}$: 2 đồng phân.",
+  "tags": [
+   "ancol",
+   "đồng phân"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "dung-sai",
+  "level": "TH",
+  "prompt": "Xét các phát biểu về hiđrocacbon. Xét tính đúng sai của các khẳng định sau:",
+  "options": [
+   {
+    "key": "a",
+    "text": "Các ankan thoả mãn công thức tổng quát $\\text{C}_n\\text{H}_{2n+2}$."
+   },
+   {
+    "key": "b",
+    "text": "Các anken làm mất màu dung dịch brom."
+   },
+   {
+    "key": "c",
+    "text": "Benzen phản ứng cộng với $\\text{Br}_2$ một cách dễ dàng ở nhiệt độ thường."
+   },
+   {
+    "key": "d",
+    "text": "Phân tử axetilen có một liên kết $\\pi$."
+   }
+  ],
+  "answer": "ĐĐSS",
+  "explanation": "a) Đúng. b) Đúng: anken có liên kết đôi phản ứng cộng. c) Sai: benzen rất bền, chỉ phản ứng cộng trong điều kiện khắc nghiệt. d) Sai: axetilen có liên kết ba gồm 2 liên kết $\\pi$.",
+  "tags": [
+   "hiđrocacbon"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "dung-sai",
+  "level": "VD",
+  "prompt": "Cho chất hữu cơ $X$ có cấu tạo như hình bên dưới. Xét tính đúng sai của các khẳng định sau:",
+  "options": [
+   {
+    "key": "a",
+    "text": "$X$ vừa có liên kết đôi $\\text{C}=\\text{C}$ vừa có nhóm $-\\text{OH}$."
+   },
+   {
+    "key": "b",
+    "text": "$X$ không làm mất màu nước brom."
+   },
+   {
+    "key": "c",
+    "text": "$X$ phản ứng với kim loại Na sinh khí $\\text{H}_2$."
+   },
+   {
+    "key": "d",
+    "text": "$X$ không bị oxi hóa bởi $\\text{CuO}$ đun nóng."
+   }
+  ],
+  "answer": "ĐSĐS",
+  "explanation": "a) Đúng: $X$ là ancol allyl. b) Sai: liên kết đôi làm mất màu nước brom. c) Đúng: nhóm $-\\text{OH}$ phản ứng với Na. d) Sai: $X$ là ancol bậc một, oxi hóa bởi CuO cho anđehit.",
+  "tags": [
+   "ancol",
+   "anken"
+  ],
+  "figure": {
+   "kind": "struct",
+   "formula": "CH2=CH-CH2-OH"
+  }
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "dung-sai",
+  "level": "VD",
+  "prompt": "Xét các phát biểu về ancol, anđehit, axit. Xét tính đúng sai của các khẳng định sau:",
+  "options": [
+   {
+    "key": "a",
+    "text": "Các ancol no, đơn chức, mạch hở thoả mãn công thức tổng quát $\\text{C}_n\\text{H}_{2n}$."
+   },
+   {
+    "key": "b",
+    "text": "Axit fomic vừa có nhóm $-\\text{COOH}$ vừa có nhóm $-\\text{CHO}$."
+   },
+   {
+    "key": "c",
+    "text": "Mọi axit cacboxylic đều là axit mạnh."
+   },
+   {
+    "key": "d",
+    "text": "Etanol có thể điều chế từ etilen và nước với xúc tác $\\text{H}_3\\text{PO}_4$, gia nhiệt."
+   }
+  ],
+  "answer": "SĐSĐ",
+  "explanation": "a) Sai: công thức tổng quát là $\\text{C}_n\\text{H}_{2n+2}\\text{O}$ (hoặc $\\text{C}_n\\text{H}_{2n+1}\\text{OH}$). b) Đúng. c) Sai: axit cacboxylic là axit yếu. d) Đúng: phản ứng cộng nước vào etilen.",
+  "tags": [
+   "ancol",
+   "axit"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "dung-sai",
+  "level": "VDC",
+  "prompt": "Cho 4,4 g anđehit $X$ (no, đơn chức, mạch hở) phản ứng hoàn toàn với dung dịch $\\text{AgNO}_3$/$\\text{NH}_3$ (dư) thu 21,6 g Ag. Xét tính đúng sai của các khẳng định sau:",
+  "options": [
+   {
+    "key": "a",
+    "text": "$X$ là $\\text{CH}_3\\text{CHO}$."
+   },
+   {
+    "key": "b",
+    "text": "Số mol Ag sinh ra bằng số mol $X$ phản ứng."
+   },
+   {
+    "key": "c",
+    "text": "Phân tử $X$ có một liên kết $\\pi$ trong nhóm $\\text{C}=\\text{O}$."
+   },
+   {
+    "key": "d",
+    "text": "$X$ phản ứng được với dung dịch NaOH dư."
+   }
+  ],
+  "answer": "ĐSĐS",
+  "explanation": "a) Đúng: $n_{\\text{Ag}}=0{,}2$ mol → $n_X=0{,}1$ mol, $M_X=44$ → $\\text{CH}_3\\text{CHO}$. b) Sai: mỗi mol anđehit cho 2 mol Ag. c) Đúng. d) Sai: anđehit không phản ứng với NaOH.",
+  "tags": [
+   "anđehit",
+   "tráng gương"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "tra-loi-ngan",
+  "level": "NB",
+  "prompt": "Tỉ khối hơi của metan so với khí hiđro là bao nhiêu?",
+  "answer": "8",
+  "explanation": "$d_{\\text{H}_2}=\\dfrac{16}{2}=8$.",
+  "tags": [
+   "metan",
+   "tỉ khối"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "tra-loi-ngan",
+  "level": "TH",
+  "prompt": "Đốt cháy hoàn toàn 2,24 lít etan ($\\text{C}_2\\text{H}_6$, đktc). Thể tích khí $\\text{CO}_2$ thu được (đktc) là bao nhiêu lít?",
+  "answer": "4,48",
+  "explanation": "$\\text{C}_2\\text{H}_6+3{,}5\\text{O}_2\\to 2\\text{CO}_2+3\\text{H}_2\\text{O}$; $n=0{,}1$ mol → $V_{\\text{CO}_2}=0{,}2\\cdot 22{,}4=4{,}48$ lít.",
+  "tags": [
+   "etan",
+   "đốt cháy"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "tra-loi-ngan",
+  "level": "TH",
+  "prompt": "Cho 4,6 g ancol etylic phản ứng hoàn toàn với Na dư. Thể tích khí $\\text{H}_2$ (đktc) thu được là bao nhiêu lít?",
+  "answer": "1,12",
+  "explanation": "$2\\text{C}_2\\text{H}_5\\text{OH}+2\\text{Na}\\to 2\\text{C}_2\\text{H}_5\\text{ONa}+\\text{H}_2$; $n=0{,}1$ mol → $n_{\\text{H}_2}=0{,}05$ mol $=1{,}12$ lít.",
+  "tags": [
+   "ancol",
+   "kim loại Na"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "tra-loi-ngan",
+  "level": "VD",
+  "prompt": "Cho 0,05 mol anđehit axetic phản ứng hoàn toàn với dung dịch $\\text{AgNO}_3$/$\\text{NH}_3$ (dư). Khối lượng Ag thu được là bao nhiêu gam?",
+  "answer": "10,8",
+  "explanation": "$\\text{CH}_3\\text{CHO}+2\\text{Ag}^{+}\\to\\text{CH}_3\\text{COOH}+2\\text{Ag}$? (dưới dạng muối amoniacat); $n_{\\text{Ag}}=0{,}1$ mol $=10{,}8$ g.",
+  "tags": [
+   "anđehit",
+   "tráng gương"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "tra-loi-ngan",
+  "level": "VD",
+  "prompt": "pH của dung dịch axit axetic $\\text{CH}_3\\text{COOH}$ 0,1 M ($K_a=1{,}8\\cdot10^{-5}$), làm tròn đến hai chữ số thập phân, là bao nhiêu?",
+  "answer": "2,87",
+  "explanation": "$[\\text{H}^{+}]\\approx\\sqrt{1{,}8\\cdot10^{-5}\\cdot 0{,}1}\\approx 1{,}34\\cdot10^{-3}$ M; $\\text{pH}\\approx 2{,}87$.",
+  "tags": [
+   "axit",
+   "pH"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "tra-loi-ngan",
+  "level": "VDC",
+  "prompt": "Đốt cháy hoàn toàn 0,3 mol hỗn hợp gồm metanol và etanol thu được 0,45 mol $\\text{CO}_2$. Thành phần phần trăm theo số mol của metanol trong hỗn hợp là bao nhiêu?",
+  "answer": "50",
+  "explanation": "Đặt $x+y=0{,}3$; $x+2y=0{,}45$ → $x=0{,}15$, $y=0{,}15$: mỗi chất chiếm 50%.",
+  "tags": [
+   "hỗn hợp",
+   "đốt cháy"
+  ]
+ }
+]

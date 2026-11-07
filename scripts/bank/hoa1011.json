@@ -1,0 +1,809 @@
+[
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Nguyên tử Fe có số hiệu nguyên tử Z = 26. Cấu hình electron của Fe ở trạng thái cơ bản là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "[Ar]3d⁶4s²"
+      },
+      {
+        "key": "B",
+        "text": "[Ar]3d⁸"
+      },
+      {
+        "key": "C",
+        "text": "[Ar]3d⁴4s²"
+      },
+      {
+        "key": "D",
+        "text": "[Ar]3d⁵4s¹"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Fe có Z = 26, cấu hình đầy đủ 1s²2s²2p⁶3s²3p⁶3d⁶4s², viết gọn là [Ar]3d⁶4s². B và C sai số electron ở phân lớp 3d. D là cấu hình của Cr (Z = 24).",
+    "tags": [
+      "cấu tạo nguyên tử",
+      "cấu hình electron"
+    ]
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Nguyên tử X có tổng số hạt proton, nơtron và electron bằng 52, trong đó số hạt mang điện nhiều hơn số hạt không mang điện là 16. Vị trí của X trong bảng tuần hoàn là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "Chu kỳ 3, nhóm VA"
+      },
+      {
+        "key": "B",
+        "text": "Chu kỳ 2, nhóm VIIA"
+      },
+      {
+        "key": "C",
+        "text": "Chu kỳ 3, nhóm VIIA"
+      },
+      {
+        "key": "D",
+        "text": "Chu kỳ 4, nhóm VIIA"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Gọi Z là số proton, N là số nơtron: 2Z + N = 52 và 2Z − N = 16, suy ra Z = 17, N = 18, A = 35. Cấu hình 1s²2s²2p⁶3s²3p⁵ cho thấy X có 3 lớp electron (chu kỳ 3) và 7 electron hoá trị (nhóm VIIA). X là Cl.",
+    "tags": [
+      "bảng tuần hoàn",
+      "cấu tạo nguyên tử"
+    ]
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Cho phản ứng: Cu + HNO₃ → Cu(NO₃)₂ + NO + H₂O. Khi cân bằng phương trình với hệ số nguyên tối giản, tổng hệ số của tất cả các chất trong phương trình là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "18"
+      },
+      {
+        "key": "B",
+        "text": "20"
+      },
+      {
+        "key": "C",
+        "text": "22"
+      },
+      {
+        "key": "D",
+        "text": "24"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Cu nhường 2e (0 → +2), N nhận 3e (+5 → +2). Phương trình cân bằng: 3Cu + 8HNO₃ → 3Cu(NO₃)₂ + 2NO + 4H₂O. Tổng hệ số = 3 + 8 + 3 + 2 + 4 = 20.",
+    "tags": [
+      "phản ứng oxi hoá – khử",
+      "cân bằng phương trình"
+    ]
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Cân bằng phương trình: KMnO₄ + FeSO₄ + H₂SO₄ → K₂SO₄ + MnSO₄ + Fe₂(SO₄)₃ + H₂O. Với hệ số nguyên tối giản, tổng hệ số của các chất trong phương trình là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "30"
+      },
+      {
+        "key": "B",
+        "text": "34"
+      },
+      {
+        "key": "C",
+        "text": "36"
+      },
+      {
+        "key": "D",
+        "text": "40"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Mn: +7 → +2 (nhận 5e), Fe: +2 → +3 (nhường 1e). Cân bằng electron và nguyên tố: 2KMnO₄ + 10FeSO₄ + 8H₂SO₄ → K₂SO₄ + 2MnSO₄ + 5Fe₂(SO₄)₃ + 8H₂O. Tổng hệ số = 2 + 10 + 8 + 1 + 2 + 5 + 8 = 36.",
+    "tags": [
+      "phản ứng oxi hoá – khử",
+      "cân bằng phương trình"
+    ]
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "dung-sai",
+    "level": "NB",
+    "prompt": "Xét phản ứng: Fe + CuSO₄ → FeSO₄ + Cu. Với mỗi phát biểu sau, chọn Đ (đúng) hoặc S (sai):",
+    "options": [
+      {
+        "key": "a",
+        "text": "Fe là chất khử."
+      },
+      {
+        "key": "b",
+        "text": "Ion Cu²⁺ bị oxi hoá trong phản ứng."
+      },
+      {
+        "key": "c",
+        "text": "Quá trình Fe → Fe²⁺ + 2e là quá trình oxi hoá."
+      },
+      {
+        "key": "d",
+        "text": "Fe²⁺ là chất oxi hoá trong phản ứng này."
+      }
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "a) Đ: Fe nhường electron, số oxi hoá tăng từ 0 lên +2. b) S: Cu²⁺ nhận electron và bị khử thành Cu. c) Đ: quá trình nhường electron là oxi hoá. d) S: trong phản ứng này Fe²⁺ là sản phẩm, không nhận electron.",
+    "tags": [
+      "phản ứng oxi hoá – khử",
+      "số oxi hoá"
+    ]
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Hình bên dưới biểu diễn sơ đồ electron của nguyên tử Cl. Với mỗi phát biểu sau về liên kết trong NaCl và HCl, chọn Đ hoặc S:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Nguyên tử Cl có 7 electron ở lớp ngoài cùng."
+      },
+      {
+        "key": "b",
+        "text": "Trong HCl, cặp electron liên kết lệch về phía Cl nên liên kết là cộng hoá trị phân cực."
+      },
+      {
+        "key": "c",
+        "text": "Trong NaCl, nguyên tử Na nhường 1 electron cho Cl và hình thành liên kết ion."
+      },
+      {
+        "key": "d",
+        "text": "Liên kết trong phân tử Cl₂ là liên kết ion."
+      }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a) Đ: cấu hình 3s²3p⁵ có 7 electron lớp ngoài cùng. b) Đ: độ âm điện của Cl lớn hơn H nên cặp electron lệch về Cl. c) Đ: Na (độ âm điện nhỏ) nhường 1e cho Cl tạo ion Na⁺ và Cl⁻. d) S: Cl₂ có liên kết cộng hoá trị không phân cực vì hai nguyên tử giống nhau.",
+    "tags": [
+      "liên kết hoá học",
+      "cấu tạo nguyên tử"
+    ],
+    "figure": {
+      "kind": "electron",
+      "element": "Cl"
+    }
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Bảng dưới đây cho năng lượng liên kết trung bình. Xét phản ứng đốt cháy metan: CH₄(k) + 2O₂(k) → CO₂(k) + 2H₂O(k). Với mỗi phát biểu sau, chọn Đ hoặc S:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Biến thiên enthalpy chuẩn của phản ứng khoảng −706 kJ."
+      },
+      {
+        "key": "b",
+        "text": "Phản ứng toả nhiệt."
+      },
+      {
+        "key": "c",
+        "text": "Tổng năng lượng cần để phá vỡ liên kết ở các chất đầu là 3358 kJ."
+      },
+      {
+        "key": "d",
+        "text": "Phản ứng cần hấp thu 706 kJ để phá vỡ liên kết."
+      }
+    ],
+    "answer": "ĐĐSS",
+    "explanation": "ΔrH = Σ E(chất đầu) − Σ E(sản phẩm) = (4·414 + 2·498) − (2·745 + 4·467) = 2652 − 3358 = −706 kJ. a) Đ, b) Đ vì ΔrH < 0. c) S: chất đầu cần 2652 kJ, còn 3358 kJ là năng lượng giải phóng khi tạo liên kết ở sản phẩm. d) S: phản ứng giải phóng 706 kJ.",
+    "tags": [
+      "năng lượng hoá học",
+      "enthalpy",
+      "năng lượng liên kết"
+    ],
+    "figure": {
+      "kind": "stats",
+      "chart": "table",
+      "title": "Năng lượng liên kết trung bình",
+      "data": "C–H; O=O; C=O; O–H\nNăng lượng (kJ/mol): 414; 498; 745; 467"
+    }
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Hình bên dưới biểu diễn cấu hình electron của nguyên tử Cr (Z = 24) ở trạng thái cơ bản. Số electron độc thân trong nguyên tử Cr là bao nhiêu?",
+    "answer": "6",
+    "explanation": "Cấu hình Cr là [Ar]3d⁵4s¹. Phân lớp 3d⁵ có 5 electron độc thân (mỗi orbital một electron) và 4s¹ có 1 electron độc thân. Tổng cộng 6.",
+    "tags": [
+      "cấu tạo nguyên tử",
+      "cấu hình electron"
+    ],
+    "figure": {
+      "kind": "electron",
+      "element": "Cr"
+    }
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Cho năng lượng liên kết (kJ/mol): H–H 436; Cl–Cl 243; H–Cl 432. Tính biến thiên enthalpy chuẩn của phản ứng H₂(k) + Cl₂(k) → 2HCl(k), theo kJ/mol.",
+    "answer": "-185",
+    "explanation": "ΔrH = (436 + 243) − 2·432 = 679 − 864 = −185 kJ/mol.",
+    "tags": [
+      "năng lượng hoá học",
+      "enthalpy",
+      "năng lượng liên kết"
+    ]
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Hình bên dưới là đồ thị nồng độ chất X (mol/L) theo thời gian t (s) của một phản ứng có hệ số tỉ lượng của X bằng 1. Tốc độ trung bình của phản ứng trong khoảng từ t = 2 s đến t = 10 s là bao nhiêu mol/(L·s)? (Làm tròn đến hai chữ số thập phân.)",
+    "answer": "0,42",
+    "explanation": "Đọc đồ thị: C(2) = 5 mol/L và C(10) ≈ 1,667 mol/L. Tốc độ trung bình = (5 − 1,667) / (10 − 2) ≈ 0,4167, làm tròn thành 0,42 mol/(L·s).",
+    "tags": [
+      "tốc độ phản ứng",
+      "đồ thị nồng độ – thời gian"
+    ],
+    "figure": {
+      "kind": "graph",
+      "curves": [
+        "10/(1+0.5x)"
+      ],
+      "xMin": 0,
+      "xMax": 12
+    }
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Phát biểu nào sau đây đúng?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Dung dịch NH₃ làm quỳ tím chuyển sang màu đỏ."
+      },
+      {
+        "key": "B",
+        "text": "Khi đun nóng muối NH₄NO₂ thu được khí N₂."
+      },
+      {
+        "key": "C",
+        "text": "Liên kết trong phân tử NH₃ là liên kết ion."
+      },
+      {
+        "key": "D",
+        "text": "Phân tử NH₃ có dạng hình vuông phẳng."
+      }
+    ],
+    "answer": "B",
+    "explanation": "NH₄NO₂ → N₂ + 2H₂O khi đun nóng. A sai: dung dịch NH₃ làm quỳ tím chuyển xanh yếu. C sai: liên kết trong NH₃ là cộng hoá trị phân cực. D sai: NH₃ có dạng hình chóp tam giác.",
+    "tags": [
+      "nitrogen",
+      "ammonia"
+    ]
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Cho 12,8 g Cu tác dụng hoàn toàn với dung dịch H₂SO₄ đặc, nóng, dư. Khí SO₂ là sản phẩm khử duy nhất. Thể tích SO₂ thu được ở đkc (1 mol khí chiếm 24,79 L) là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "2,479 L"
+      },
+      {
+        "key": "B",
+        "text": "9,916 L"
+      },
+      {
+        "key": "C",
+        "text": "1,2395 L"
+      },
+      {
+        "key": "D",
+        "text": "4,958 L"
+      }
+    ],
+    "answer": "D",
+    "explanation": "n Cu = 12,8 / 64 = 0,2 mol. Cu nhường 2e, S(+6) nhận 2e thành S(+4), nên n SO₂ = 0,2 mol và V = 0,2 · 24,79 = 4,958 L. A ứng với 0,1 mol, B ứng với 0,4 mol, C ứng với 0,05 mol.",
+    "tags": [
+      "sulfur",
+      "phản ứng với H₂SO₄ đặc"
+    ]
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Cho 2-methylbut-1-ene (CH₂=C(CH₃)–CH₂–CH₃) tác dụng với HBr. Theo quy tắc Markovnikov, sản phẩm chính là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "1-bromo-2-methylbutane"
+      },
+      {
+        "key": "B",
+        "text": "1-bromobutane"
+      },
+      {
+        "key": "C",
+        "text": "2-bromobutane"
+      },
+      {
+        "key": "D",
+        "text": "2-bromo-2-methylbutane"
+      }
+    ],
+    "answer": "D",
+    "explanation": "H⁺ cộng vào C ít nhóm thế (CH₂=), Br⁻ cộng vào C bậc cao hơn (C số 2) nên tạo 2-bromo-2-methylbutane. A sai vì Br gắn sai vị trí. B và C sai vì mất một nguyên tử C của mạch.",
+    "tags": [
+      "hydrocarbon",
+      "alkene",
+      "quy tắc Markovnikov"
+    ]
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Phenol không phản ứng với dung dịch NaHCO₃ nhưng phản ứng được với dung dịch NaOH. Điều này chứng tỏ:",
+    "options": [
+      {
+        "key": "A",
+        "text": "Phenol có tính axit mạnh hơn H₂CO₃."
+      },
+      {
+        "key": "B",
+        "text": "Phenol có tính bazơ mạnh."
+      },
+      {
+        "key": "C",
+        "text": "Phenol có tính axit yếu hơn H₂CO₃ nhưng vẫn là axit, phản ứng được với bazơ mạnh."
+      },
+      {
+        "key": "D",
+        "text": "Phenol là chất trung tính."
+      }
+    ],
+    "answer": "C",
+    "explanation": "Phenol không đẩy được CO₂ khỏi NaHCO₃ nên tính axit yếu hơn H₂CO₃. Tuy vậy phenol vẫn có tính axit nên tác dụng với NaOH tạo C₆H₅ONa và H₂O. A sai vì phenol yếu hơn H₂CO₃. B và D sai.",
+    "tags": [
+      "phenol",
+      "tính axit"
+    ]
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Trộn 100 mL dung dịch HCl có pH = 1 với 100 mL dung dịch NaOH 0,02 M. Coi thể tích dung dịch sau khi trộn là 200 mL. pH của dung dịch thu được là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "1,40"
+      },
+      {
+        "key": "B",
+        "text": "1,00"
+      },
+      {
+        "key": "C",
+        "text": "2,00"
+      },
+      {
+        "key": "D",
+        "text": "12,60"
+      }
+    ],
+    "answer": "A",
+    "explanation": "n H⁺ = 0,1 · 0,1 = 0,01 mol; n OH⁻ = 0,02 · 0,1 = 0,002 mol. H⁺ dư = 0,008 mol, [H⁺] = 0,008 / 0,2 = 0,04 M, pH = −lg 0,04 ≈ 1,40.",
+    "tags": [
+      "cân bằng ion",
+      "pH"
+    ]
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Ở nhiệt độ không đổi, phản ứng H₂(k) + I₂(k) ⇌ 2HI(k) có Kc = 64. Cho 1 mol H₂ và 1 mol I₂ vào bình kín dung tích 1 L. Khi đạt cân bằng, số mol HI trong bình là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "0,80 mol"
+      },
+      {
+        "key": "B",
+        "text": "0,40 mol"
+      },
+      {
+        "key": "C",
+        "text": "1,20 mol"
+      },
+      {
+        "key": "D",
+        "text": "1,60 mol"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Gọi x là số mol H₂ phản ứng: [HI] = 2x, [H₂] = [I₂] = 1 − x. Kc = (2x)² / (1 − x)² = 64 nên 2x / (1 − x) = 8, suy ra x = 0,8 và n HI = 1,6 mol. A là giá trị của x, B và C là kết quả khi lập sai tỉ lệ.",
+    "tags": [
+      "cân bằng hoá học",
+      "hằng số cân bằng"
+    ]
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Hợp chất có công thức cấu tạo như hình bên dưới. Tên thay thế (IUPAC) của hợp chất là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "butan-1-ol"
+      },
+      {
+        "key": "B",
+        "text": "butan-2-ol"
+      },
+      {
+        "key": "C",
+        "text": "2-methylpropan-1-ol"
+      },
+      {
+        "key": "D",
+        "text": "2-methylpropan-2-ol"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Mạch chính có 4 nguyên tử C, nhóm –OH gắn vào C số 2 nên gọi là butan-2-ol. A sai vị trí nhóm –OH. C và D là alcohol có mạch chính 3 C với nhánh methyl.",
+    "tags": [
+      "alcohol",
+      "danh pháp"
+    ],
+    "figure": {
+      "kind": "struct",
+      "formula": "CH3-CH(OH)-CH2-CH3"
+    }
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Dung dịch CH₃COOH 0,1 M có Ka = 1,8·10⁻⁵ ở 25 °C. Bỏ qua sự phân li của nước. Với mỗi phát biểu sau, chọn Đ hoặc S:",
+    "options": [
+      {
+        "key": "a",
+        "text": "pH của dung dịch khoảng 2,87."
+      },
+      {
+        "key": "b",
+        "text": "Độ điện li α của CH₃COOH khoảng 1,34%."
+      },
+      {
+        "key": "c",
+        "text": "Thêm vài giọt dung dịch HCl thì cân bằng CH₃COOH ⇌ CH₃COO⁻ + H⁺ chuyển dịch theo chiều thuận."
+      },
+      {
+        "key": "d",
+        "text": "Pha loãng dung dịch 10 lần thì pH tăng đúng 1 đơn vị."
+      }
+    ],
+    "answer": "ĐĐSS",
+    "explanation": "[H⁺] = √(Ka·C) = √(1,8·10⁻⁶) ≈ 1,34·10⁻³ M, pH ≈ 2,87 và α = 1,34·10⁻³ / 0,1 ≈ 1,34%. c) S: thêm H⁺ làm cân bằng chuyển dịch theo chiều nghịch. d) S: sau khi pha loãng 10 lần, [H⁺] ≈ 4,24·10⁻⁴ M, pH ≈ 3,37, chỉ tăng khoảng 0,5 đơn vị.",
+    "tags": [
+      "cân bằng ion",
+      "pH",
+      "axit yếu"
+    ]
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Cho hai chất: ancol etylic (C₂H₅OH) và phenol (C₆H₅OH). Với mỗi phát biểu sau, chọn Đ hoặc S:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Phenol tác dụng được với dung dịch NaOH, còn ancol etylic thì không."
+      },
+      {
+        "key": "b",
+        "text": "Phenol tác dụng với dung dịch Br₂ tạo kết tủa trắng 2,4,6-tribromophenol."
+      },
+      {
+        "key": "c",
+        "text": "Ancol etylic có tính axit mạnh hơn phenol."
+      },
+      {
+        "key": "d",
+        "text": "Đốt cháy hoàn toàn 0,1 mol phenol thu được 0,6 mol CO₂."
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) Đ. b) Đ, đây là phản ứng đặc trưng nhận biết phenol. c) S: phenol có tính axit yếu còn ancol etylic gần như trung tính. d) Đ: C₆H₅OH có 6 nguyên tử C nên 0,1 mol cho 0,6 mol CO₂.",
+    "tags": [
+      "phenol",
+      "ancol",
+      "tính axit"
+    ]
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Xét các phát biểu về aldehyde, ketone và carboxylic acid. Với mỗi phát biểu sau, chọn Đ hoặc S:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Formaldehyde (HCHO) tham gia phản ứng tráng bạc."
+      },
+      {
+        "key": "b",
+        "text": "Cứ 1 mol HCHO tham gia phản ứng tráng bạc thu được 2 mol Ag."
+      },
+      {
+        "key": "c",
+        "text": "Nhiệt độ sôi của CH₃COOH thấp hơn nhiệt độ sôi của C₂H₅OH."
+      },
+      {
+        "key": "d",
+        "text": "Propanone (CH₃COCH₃) không có phản ứng tráng bạc."
+      }
+    ],
+    "answer": "ĐSSĐ",
+    "explanation": "a) Đ. b) S: HCHO → (NH₄)₂CO₃ + 4Ag, nên 1 mol HCHO tạo 4 mol Ag. c) S: CH₃COOH sôi ở khoảng 118 °C, cao hơn C₂H₅OH (khoảng 78 °C) do liên kết hydrogen bền hơn. d) Đ: xeton không bị oxi hoá bởi thuốc thử Tollens.",
+    "tags": [
+      "aldehyde",
+      "ketone",
+      "carboxylic acid"
+    ]
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Hình bên dưới là công thức cấu tạo của hợp chất hữu cơ X. Với mỗi phát biểu sau, chọn Đ hoặc S:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Tên thay thế của X là 2-methylbutane."
+      },
+      {
+        "key": "b",
+        "text": "Có ba đồng phân cấu tạo ứng với công thức phân tử của X."
+      },
+      {
+        "key": "c",
+        "text": "Khi thế một nguyên tử H của X bằng Cl (chiếu sáng, tỉ lệ 1 : 1), thu được tối đa 3 dẫn xuất monochloro."
+      },
+      {
+        "key": "d",
+        "text": "Trong phân tử X có một nguyên tử C bậc III."
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "X là C₅H₁₂ (2-methylbutane). a) Đ. b) Đ: pentane, 2-methylbutane và 2,2-dimethylpropane. c) S: có 4 dẫn xuất monochloro (1-chloro-2-methylbutane, 2-chloro-2-methylbutane, 2-chloro-3-methylbutane, 1-chloro-3-methylbutane). d) Đ: C số 2 liên kết với 3 nguyên tử C.",
+    "tags": [
+      "hydrocarbon",
+      "alkane",
+      "đồng phân"
+    ],
+    "figure": {
+      "kind": "struct",
+      "formula": "CH3-CH(CH3)-CH2-CH3"
+    }
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "NB",
+    "prompt": "Xét các phát biểu về nitrogen và hợp chất của nitrogen. Với mỗi phát biểu sau, chọn Đ hoặc S:",
+    "options": [
+      {
+        "key": "a",
+        "text": "NH₃ có tính bazơ yếu do nguyên tử N còn cặp electron tự do."
+      },
+      {
+        "key": "b",
+        "text": "Dung dịch NH₃ làm quỳ tím chuyển sang màu đỏ."
+      },
+      {
+        "key": "c",
+        "text": "Trong phân tử NH₃, nitrogen có số oxi hoá −3."
+      },
+      {
+        "key": "d",
+        "text": "Trong NH₄NO₃, hai nguyên tử nitrogen có số oxi hoá khác nhau."
+      }
+    ],
+    "answer": "ĐSĐĐ",
+    "explanation": "a) Đ. b) S: dung dịch NH₃ làm quỳ tím chuyển xanh yếu. c) Đ: H có số oxi hoá +1 nên N là −3. d) Đ: N trong NH₄⁺ là −3, N trong NO₃⁻ là +5.",
+    "tags": [
+      "nitrogen",
+      "ammonia",
+      "số oxi hoá"
+    ]
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Hình bên dưới là công thức cấu tạo của ancol etylic. Đốt cháy hoàn toàn 4,6 g ancol này cần bao nhiêu lít khí O₂ ở đkc (1 mol khí chiếm 24,79 L)? (Làm tròn đến một chữ số thập phân.)",
+    "answer": "7,4",
+    "explanation": "n C₂H₅OH = 4,6 / 46 = 0,1 mol. C₂H₅OH + 3O₂ → 2CO₂ + 3H₂O nên n O₂ = 0,3 mol, V = 0,3 · 24,79 = 7,437 ≈ 7,4 L.",
+    "tags": [
+      "alcohol",
+      "phản ứng cháy"
+    ],
+    "figure": {
+      "kind": "struct",
+      "formula": "CH3-CH2-OH"
+    }
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Hỗn hợp X gồm CH₃COOH và HCOOH có tổng khối lượng 7,5 g. Trung hoà hoàn toàn X cần vừa đủ 0,15 mol NaOH. Tính phần trăm khối lượng của CH₃COOH trong X (làm tròn đến số nguyên %).",
+    "answer": "34",
+    "explanation": "Gọi x, y lần lượt là số mol CH₃COOH và HCOOH: x + y = 0,15 và 60x + 46y = 7,5, suy ra x ≈ 0,0429 mol, m CH₃COOH ≈ 2,571 g, %CH₃COOH ≈ 34,3% ≈ 34%.",
+    "tags": [
+      "carboxylic acid",
+      "hỗn hợp",
+      "phản ứng trung hoà"
+    ]
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Hỗn hợp X gồm HCHO và CH₃CHO có tổng khối lượng 7,4 g, số mol hai chất bằng nhau. Cho X tác dụng hoàn toàn với lượng dư dung dịch AgNO₃ trong NH₃, đun nóng. Khối lượng Ag tạo thành là bao nhiêu gam? (Làm tròn đến một chữ số thập phân.)",
+    "answer": "64,8",
+    "explanation": "Đặt a là số mol mỗi chất: 30a + 44a = 7,4 nên a = 0,1 mol. HCHO tạo 4Ag, CH₃CHO tạo 2Ag, n Ag = 0,4 + 0,2 = 0,6 mol, m Ag = 0,6 · 108 = 64,8 g.",
+    "tags": [
+      "carbonyl",
+      "phản ứng tráng bạc",
+      "hỗn hợp"
+    ]
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Sục 0,3 mol khí NO₂ vào nước dư, xảy ra phản ứng 3NO₂ + H₂O → 2HNO₃ + NO. Thể tích khí NO thu được ở đkc (1 mol khí chiếm 24,79 L) là bao nhiêu lít? (Làm tròn đến một chữ số thập phân.)",
+    "answer": "2,5",
+    "explanation": "Theo phương trình, 3 mol NO₂ cho 1 mol NO, nên 0,3 mol NO₂ cho 0,1 mol NO. V = 0,1 · 24,79 = 2,479 ≈ 2,5 L.",
+    "tags": [
+      "nitrogen",
+      "oxide của nitrogen"
+    ]
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Đốt cháy hoàn toàn 0,1 mol hỗn hợp X gồm C₂H₆ và C₃H₈ thu được 0,36 mol H₂O. Phần trăm số mol C₃H₈ trong X là bao nhiêu? (Làm tròn đến số nguyên %.)",
+    "answer": "60",
+    "explanation": "Gọi a, b lần lượt là số mol C₂H₆ và C₃H₈: a + b = 0,1 và 3a + 4b = 0,36, suy ra b = 0,06 và a = 0,04. %C₃H₈ = 0,06 / 0,1 = 60%.",
+    "tags": [
+      "hydrocarbon",
+      "ankan",
+      "phản ứng cháy"
+    ]
+  },
+  {
+    "subject": "Hoá học",
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Cho 0,2 mol H₂S tác dụng với 0,15 mol SO₂ theo phương trình 2H₂S + SO₂ → 3S↓ + 2H₂O. Biết hiệu suất phản ứng là 80% (tính theo chất hết). Khối lượng S thu được là bao nhiêu gam? (Làm tròn đến hai chữ số thập phân.)",
+    "answer": "7,68",
+    "explanation": "SO₂ dư nên H₂S hết trước. Theo lý thuyết, 0,2 mol H₂S cho 0,3 mol S. Với hiệu suất 80%: n S = 0,3 · 0,8 = 0,24 mol, m S = 0,24 · 32 = 7,68 g.",
+    "tags": [
+      "sulfur",
+      "hiệu suất phản ứng"
+    ]
+  }
+]

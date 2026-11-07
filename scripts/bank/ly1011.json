@@ -1,0 +1,371 @@
+[
+  {
+    "subject": "Vật lí",
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Một vật được thả rơi tự do từ độ cao 80 m so với mặt đất. Lấy $g = 10$ m/s². Thời gian vật rơi đến khi chạm đất là",
+    "options": [{"key":"A","text":"2 s"},{"key":"B","text":"4 s"},{"key":"C","text":"8 s"},{"key":"D","text":"16 s"}],
+    "answer": "B",
+    "explanation": "Từ $h=\\frac{1}{2}gt^2$ suy ra $t=\\sqrt{\\frac{2h}{g}}=\\sqrt{\\frac{2\\cdot 80}{10}}=4$ s.",
+    "tags": ["Động học", "Rơi tự do"]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Đồ thị vận tốc – thời gian của một chất điểm chuyển động thẳng như hình bên dưới. Quãng đường chất điểm đi được trong 7 s đầu là",
+    "options": [{"key":"A","text":"12 m"},{"key":"B","text":"16 m"},{"key":"C","text":"20 m"},{"key":"D","text":"24 m"}],
+    "answer": "C",
+    "explanation": "Quãng đường bằng diện tích phần dưới đồ thị $v$–$t$: $\\frac{1}{2}\\cdot 2\\cdot 4+3\\cdot 4+\\frac{1}{2}\\cdot 2\\cdot 4=4+12+4=20$ m.",
+    "tags": ["Động học", "Đồ thị v–t"],
+    "figure": {"kind":"motion","yName":"v (m/s)","tName":"t (s)","points":"(0; 0) (2; 4) (5; 4) (7; 0)"}
+  },
+  {
+    "subject": "Vật lí",
+    "grades": ["Lớp 10"],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Đồ thị vận tốc – thời gian của một xe chuyển động thẳng nhanh dần đều từ trạng thái đứng yên như hình bên dưới. Gia tốc của xe (m/s²) là bao nhiêu?",
+    "answer": "2",
+    "explanation": "Gia tốc là độ dốc của đồ thị $v$–$t$: $a=\\frac{\\Delta v}{\\Delta t}=\\frac{10-0}{5-0}=2$ m/s².",
+    "tags": ["Động học", "Chuyển động thẳng biến đổi đều"],
+    "figure": {"kind":"motion","yName":"v (m/s)","tName":"t (s)","points":"(0; 0) (5; 10)"}
+  },
+  {
+    "subject": "Vật lí",
+    "grades": ["Lớp 10"],
+    "type": "dung-sai",
+    "level": "NB",
+    "prompt": "Cho các phát biểu về định luật Newton và lực ma sát. Với mỗi ý, chọn Đúng (Đ) hoặc Sai (S).",
+    "options": [
+      {"key":"a","text":"Lực và phản lực luôn cùng độ lớn, cùng phương, ngược chiều và đặt vào hai vật khác nhau."},
+      {"key":"b","text":"Khối lượng là đại lượng đặc trưng cho mức quán tính của vật."},
+      {"key":"c","text":"Một vật chịu tác dụng của các lực cân bằng thì luôn đứng yên."},
+      {"key":"d","text":"Lực ma sát nghỉ tác dụng lên vật đứng yên luôn có độ lớn bằng 0."}
+    ],
+    "answer": "ĐĐSS",
+    "explanation": "a) Đúng: đó là nội dung định luật III Newton. b) Đúng: khối lượng là số đo mức quán tính. c) Sai: vật chịu lực cân bằng có thể đứng yên hoặc chuyển động thẳng đều. d) Sai: lực ma sát nghỉ có độ lớn bằng lực đẩy/kéo ngoài và có thể khác 0 khi vật đứng yên.",
+    "tags": ["Định luật Newton", "Lực ma sát"]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Một vật nhỏ trượt không ma sát từ đỉnh xuống chân một mặt phẳng nghiêng có góc $30^\\circ$ so với phương ngang như hình bên dưới. Chiều dài mặt phẳng nghiêng là 20 m, vận tốc đầu bằng 0. Lấy $g = 10$ m/s². Thời gian vật trượt hết mặt phẳng nghiêng là",
+    "options": [{"key":"A","text":"2,83 s"},{"key":"B","text":"2,00 s"},{"key":"C","text":"4,00 s"},{"key":"D","text":"5,66 s"}],
+    "answer": "A",
+    "explanation": "Gia tốc $a=g\\sin 30^\\circ=5$ m/s². Từ $s=\\frac{1}{2}at^2$: $t=\\sqrt{\\frac{2s}{a}}=\\sqrt{\\frac{40}{5}}=2\\sqrt{2}\\approx 2{,}83$ s.",
+    "tags": ["Mặt phẳng nghiêng", "Động lực học"],
+    "figure": {"kind":"incline","angle":30,"fms":"none","F":"none"}
+  },
+  {
+    "subject": "Vật lí",
+    "grades": ["Lớp 10"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Một vật khối lượng 2 kg trượt xuống mặt phẳng nghiêng góc $30^\\circ$ so với phương ngang như hình bên dưới; hệ số ma sát trượt giữa vật và mặt phẳng nghiêng là 0,2. Lấy $g = 10$ m/s². Gia tốc của vật (m/s²) làm tròn đến hai chữ số thập phân là bao nhiêu?",
+    "answer": "3,27",
+    "explanation": "Định luật II Newton theo phương dốc: $mg\\sin\\alpha-\\mu mg\\cos\\alpha=ma$, suy ra $a=g(\\sin\\alpha-\\mu\\cos\\alpha)=10(0{,}5-0{,}2\\cdot 0{,}866)\\approx 3{,}27$ m/s².",
+    "tags": ["Mặt phẳng nghiêng", "Ma sát trượt"],
+    "figure": {"kind":"incline","angle":30,"fms":"up","F":"none"}
+  },
+  {
+    "subject": "Vật lí",
+    "grades": ["Lớp 10"],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Một cần cẩu nâng đều vật khối lượng 200 kg lên cao 10 m trong thời gian 20 s. Lấy $g = 10$ m/s². Xét các phát biểu sau. Với mỗi ý, chọn Đúng (Đ) hoặc Sai (S).",
+    "options": [
+      {"key":"a","text":"Công của trọng lực tác dụng lên vật trong quá trình nâng là $-20$ kJ."},
+      {"key":"b","text":"Công suất trung bình của lực nâng là 1 kW."},
+      {"key":"c","text":"Nếu thời gian nâng là 40 s thì công suất trung bình của lực nâng là 2 kW."},
+      {"key":"d","text":"Nếu hiệu suất của động cơ cần cẩu là 80% thì công toàn phần động cơ tiêu thụ là 25 kJ."}
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) Đúng: $A_P=-mgh=-200\\cdot 10\\cdot 10=-20\\,000$ J. b) Đúng: lực nâng đều bằng trọng lực nên $A=20$ kJ, $P=\\frac{A}{t}=1000$ W. c) Sai: khi $t=40$ s thì $P=\\frac{20\\,000}{40}=500$ W = 0,5 kW. d) Đúng: $A_{\\text{tp}}=\\frac{A_{\\text{ích}}}{H}=\\frac{20}{0{,}8}=25$ kJ.",
+    "tags": ["Công", "Công suất", "Hiệu suất"]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": ["Lớp 10"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Một vật nhỏ được thả rơi tự do từ độ cao 45 m so với mặt đất, bỏ qua sức cản không khí. Lấy $g = 10$ m/s², mốc thế năng tại mặt đất. Khi động năng bằng hai lần thế năng, tốc độ của vật (m/s) làm tròn đến một chữ số thập phân là bao nhiêu?",
+    "answer": "24,5",
+    "explanation": "Cơ năng bảo toàn: $mgH=mgh+W_đ=3mgh$ nên $h=15$ m. Khi đó $v=\\sqrt{2g(H-h)}=\\sqrt{600}\\approx 24{,}5$ m/s.",
+    "tags": ["Cơ năng", "Bảo toàn cơ năng"]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Một viên đạn khối lượng 10 g bay theo phương ngang với tốc độ 500 m/s, cắm vào một bao cát khối lượng 1,99 kg đang đứng yên trên mặt phẳng ngang nhẵn và nằm gọn trong bao cát. Bỏ qua khối lượng cát bị bắn ra. Tốc độ của hệ ngay sau va chạm là",
+    "options": [{"key":"A","text":"0,25 m/s"},{"key":"B","text":"5 m/s"},{"key":"C","text":"25 m/s"},{"key":"D","text":"2,5 m/s"}],
+    "answer": "D",
+    "explanation": "Bảo toàn động lượng: $mv=(m+M)v'$, suy ra $v'=\\frac{0{,}01\\cdot 500}{2}=2{,}5$ m/s.",
+    "tags": ["Động lượng", "Va chạm mềm"]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": ["Lớp 10"],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Vật $m_1 = 2$ kg chuyển động trên mặt phẳng ngang nhẵn với tốc độ 4 m/s, va chạm đàn hồi xuyên tâm với vật $m_2 = 1$ kg đang đứng yên. Sau va chạm, $m_2$ trượt lên mặt phẳng nghiêng nhẵn góc $30^\\circ$ so với phương ngang như hình bên dưới. Lấy $g = 10$ m/s². Quãng đường lớn nhất $m_2$ đi lên được trên mặt phẳng nghiêng (m), làm tròn đến hai chữ số thập phân, là bao nhiêu?",
+    "answer": "2,84",
+    "explanation": "Va chạm đàn hồi: $v_2'=\\frac{2m_1}{m_1+m_2}v_1=\\frac{16}{3}$ m/s. Bảo toàn cơ năng trên dốc nhẵn: $s=\\frac{v_2'^2}{2g\\sin 30^\\circ}=\\frac{256/9}{10}\\approx 2{,}84$ m.",
+    "tags": ["Động lượng", "Va chạm đàn hồi", "Mặt phẳng nghiêng"],
+    "figure": {"kind":"incline","angle":30,"fms":"none","F":"none"}
+  },
+  {
+    "subject": "Vật lí",
+    "grades": ["Lớp 10"],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Một vật được ném ngang từ độ cao 20 m so với mặt đất với tốc độ đầu 10 m/s. Bỏ qua sức cản không khí, lấy $g = 10$ m/s². Xét các phát biểu sau. Với mỗi ý, chọn Đúng (Đ) hoặc Sai (S).",
+    "options": [
+      {"key":"a","text":"Thời gian chuyển động của vật là 4 s."},
+      {"key":"b","text":"Tầm ném xa của vật là 20 m."},
+      {"key":"c","text":"Tốc độ của vật khi chạm đất là 20 m/s."},
+      {"key":"d","text":"Khi chạm đất, vectơ vận tốc hợp với phương ngang một góc xấp xỉ $63{,}4^\\circ$."}
+    ],
+    "answer": "SĐSĐ",
+    "explanation": "a) Sai: $t=\\sqrt{\\frac{2h}{g}}=2$ s. b) Đúng: $L=v_0t=20$ m. c) Sai: $v_y=gt=20$ m/s, $v=\\sqrt{10^2+20^2}=\\sqrt{500}\\approx 22{,}4$ m/s. d) Đúng: $\\tan\\alpha=\\frac{v_y}{v_0}=2$, $\\alpha\\approx 63{,}4^\\circ$.",
+    "tags": ["Chuyển động ném ngang"]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Hai vật có khối lượng $m_1 = 3$ kg và $m_2 = 2$ kg được treo ở hai đầu một sợi dây nhẹ, không giãn, vắt qua ròng rọc nhẹ; bỏ qua ma sát, $m_1$ đi xuống. Lấy $g = 10$ m/s². Lực căng của dây là",
+    "options": [{"key":"A","text":"24 N"},{"key":"B","text":"12 N"},{"key":"C","text":"30 N"},{"key":"D","text":"18 N"}],
+    "answer": "A",
+    "explanation": "Gia tốc $a=\\frac{(m_1-m_2)g}{m_1+m_2}=2$ m/s². Với vật $m_2$: $T-m_2g=m_2a$, suy ra $T=m_2(g+a)=24$ N.",
+    "tags": ["Động lực học", "Hệ vật – ròng rọc"]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": ["Lớp 10"],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Một thùng hàng khối lượng 20 kg được kéo đều trên sàn nhà nằm ngang bằng lực $F = 50$ N theo phương ngang, thùng đi được quãng đường 10 m. Xét các phát biểu sau. Với mỗi ý, chọn Đúng (Đ) hoặc Sai (S).",
+    "options": [
+      {"key":"a","text":"Công của lực kéo $F$ bằng 500 J."},
+      {"key":"b","text":"Công của lực ma sát bằng $+500$ J."},
+      {"key":"c","text":"Công của trọng lực bằng 2000 J."},
+      {"key":"d","text":"Tổng công của các lực tác dụng lên thùng bằng 0."}
+    ],
+    "answer": "ĐSSĐ",
+    "explanation": "a) Đúng: $A=Fs=50\\cdot 10=500$ J. b) Sai: ma sát cản chuyển động nên công âm, $-500$ J. c) Sai: trọng lực vuông góc với phương chuyển động nên công bằng 0. d) Đúng: thùng chuyển động đều nên động năng không đổi, tổng công bằng 0.",
+    "tags": ["Công", "Lực ma sát"]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": ["Lớp 10"],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Một viên đạn khối lượng 2 kg đang bay theo phương ngang với tốc độ 10 m/s thì nổ thành hai mảnh có khối lượng bằng nhau. Mảnh thứ nhất bay thẳng đứng xuống dưới với tốc độ 20 m/s; bỏ qua trọng lực trong thời gian nổ. Tốc độ của mảnh thứ hai ngay sau khi nổ (m/s), làm tròn đến một chữ số thập phân, là bao nhiêu?",
+    "answer": "28,3",
+    "explanation": "Bảo toàn động lượng: $\\vec p_2=\\vec p-\\vec p_1$ với $p=20$ kg·m/s (phương ngang) và $p_1=20$ kg·m/s (thẳng đứng). Suy ra $p_2=\\sqrt{20^2+20^2}\\approx 28{,}3$ kg·m/s; khối lượng mảnh là 1 kg nên $v_2\\approx 28{,}3$ m/s.",
+    "tags": ["Động lượng", "Nổ"]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": ["Lớp 11"],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Một vật dao động điều hoà theo phương trình $x=5\\cos(4\\pi t)$ (cm), $t$ tính bằng giây. Chu kỳ dao động của vật là",
+    "options": [{"key":"A","text":"$4\\pi$ s"},{"key":"B","text":"2 s"},{"key":"C","text":"0,5 s"},{"key":"D","text":"0,25 s"}],
+    "answer": "C",
+    "explanation": "Tần số góc $\\omega=4\\pi$ rad/s, nên $T=\\frac{2\\pi}{\\omega}=0{,}5$ s.",
+    "tags": ["Dao động điều hoà", "Chu kỳ"]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": ["Lớp 11"],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Đồ thị li độ – thời gian của một vật dao động điều hoà như hình bên dưới ($x$ tính bằng cm, $t$ tính bằng s). Biên độ và chu kỳ dao động của vật lần lượt là",
+    "options": [{"key":"A","text":"$A = 2$ cm; $T = 4$ s"},{"key":"B","text":"$A = 4$ cm; $T = 4$ s"},{"key":"C","text":"$A = 8$ cm; $T = 4$ s"},{"key":"D","text":"$A = 4$ cm; $T = 2$ s"}],
+    "answer": "B",
+    "explanation": "Từ đồ thị, biên độ $A=4$ cm. Trên đoạn $[0; 8]$ s có hai chu kỳ đầy đủ nên $T=4$ s.",
+    "tags": ["Dao động điều hoà", "Đồ thị li độ–thời gian"],
+    "figure": {"kind":"graph","curves":["4*cos(1.5708*x)"],"xMin":0,"xMax":8}
+  },
+  {
+    "subject": "Vật lí",
+    "grades": ["Lớp 11"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Một con lắc lò xo gồm vật nhỏ khối lượng 0,4 kg và lò xo có độ cứng $k = 100$ N/m, dao động điều hoà với biên độ $A = 5$ cm. Khi động năng bằng 3 lần thế năng, tốc độ của vật (m/s) làm tròn đến hai chữ số thập phân là bao nhiêu?",
+    "answer": "0,68",
+    "explanation": "$\\omega=\\sqrt{\\frac{k}{m}}=5\\sqrt{10}$ rad/s. Khi $W_đ=3W_t$ thì $|x|=\\frac{A}{2}$, nên $v=\\omega\\sqrt{A^2-x^2}=\\omega A\\frac{\\sqrt{3}}{2}\\approx 0{,}68$ m/s.",
+    "tags": ["Con lắc lò xo", "Năng lượng dao động"]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": ["Lớp 11"],
+    "type": "tra-loi-ngan",
+    "level": "NB",
+    "prompt": "Một sóng cơ có tần số 50 Hz lan truyền trong một môi trường với tốc độ 4 m/s. Bước sóng của sóng (m) là bao nhiêu?",
+    "answer": "0,08",
+    "explanation": "$\\lambda=\\frac{v}{f}=\\frac{4}{50}=0{,}08$ m.",
+    "tags": ["Sóng cơ", "Bước sóng"]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": ["Lớp 11"],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Một sợi dây đàn hồi dài 60 cm, hai đầu cố định, đang có sóng dừng. Trên dây quan sát được 4 nút sóng (kể cả hai nút ở hai đầu dây). Bước sóng trên dây là",
+    "options": [{"key":"A","text":"20 cm"},{"key":"B","text":"30 cm"},{"key":"C","text":"40 cm"},{"key":"D","text":"60 cm"}],
+    "answer": "C",
+    "explanation": "4 nút tương ứng 3 bó sóng: $L=3\\cdot\\frac{\\lambda}{2}$, suy ra $\\lambda=\\frac{2L}{3}=40$ cm.",
+    "tags": ["Sóng dừng"]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": ["Lớp 11"],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Trên mặt nước, hai nguồn sóng kết hợp $S_1$, $S_2$ dao động cùng pha, cùng tần số, cách nhau $S_1S_2 = 16$ cm, tạo ra sóng có bước sóng $\\lambda = 4$ cm. Xét các phát biểu sau. Với mỗi ý, chọn Đúng (Đ) hoặc Sai (S).",
+    "options": [
+      {"key":"a","text":"Trên đoạn $S_1S_2$ có 9 điểm dao động với biên độ cực đại, kể cả hai nguồn."},
+      {"key":"b","text":"Trên đoạn $S_1S_2$, không kể hai nguồn, có 8 điểm dao động với biên độ cực đại."},
+      {"key":"c","text":"Điểm $M$ cách $S_1$ là 10 cm và cách $S_2$ là 6 cm nằm trên một cực tiểu giao thoa."},
+      {"key":"d","text":"Nếu tăng tần số dao động của hai nguồn thì số điểm cực đại trên đoạn $S_1S_2$ tăng."}
+    ],
+    "answer": "ĐSSĐ",
+    "explanation": "Cực đại: $d_1-d_2=k\\lambda$ với $|k\\lambda|\\le S_1S_2$, tức $|k|\\le 4$. a) Đúng: có 9 giá trị $k$ (kể cả $k=\\pm 4$ tại hai nguồn). b) Sai: không kể nguồn còn 7 điểm. c) Sai: $d_1-d_2=4=1\\cdot\\lambda$ nên M nằm trên cực đại. d) Đúng: tăng tần số thì $\\lambda$ giảm, $|k|$ tối đa tăng nên số cực đại tăng.",
+    "tags": ["Giao thoa sóng"]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": ["Lớp 11"],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Một điện tích điểm $q = 2\\cdot 10^{-6}$ C đặt tại điểm có cường độ điện trường $E = 5000$ V/m. Độ lớn lực điện tác dụng lên điện tích là",
+    "options": [{"key":"A","text":"0,1 N"},{"key":"B","text":"0,001 N"},{"key":"C","text":"10 N"},{"key":"D","text":"0,01 N"}],
+    "answer": "D",
+    "explanation": "$F=|q|E=2\\cdot 10^{-6}\\cdot 5000=10^{-2}$ N.",
+    "tags": ["Điện trường", "Lực điện"]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": ["Lớp 11"],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Điện trường đều có cường độ $E = 2000$ V/m. Hai điểm M, N nằm trên cùng một đường sức, cách nhau 5 cm. Hiệu điện thế giữa M và N có độ lớn là",
+    "options": [{"key":"A","text":"100 V"},{"key":"B","text":"40 V"},{"key":"C","text":"400 V"},{"key":"D","text":"10 V"}],
+    "answer": "A",
+    "explanation": "$U=Ed=2000\\cdot 0{,}05=100$ V.",
+    "tags": ["Điện trường đều", "Hiệu điện thế"]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": ["Lớp 11"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Một electron (khối lượng $m=9{,}1\\cdot 10^{-31}$ kg, điện tích $|e|=1{,}6\\cdot 10^{-19}$ C) đi từ trạng thái nghỉ, được tăng tốc bởi hiệu điện thế $U = 100$ V. Tốc độ của electron sau khi được tăng tốc, tính theo đơn vị $10^6$ m/s và làm tròn đến hai chữ số thập phân, là bao nhiêu?",
+    "answer": "5,93",
+    "explanation": "Định lí động năng: $\\frac{1}{2}mv^2=|e|U$, suy ra $v=\\sqrt{\\frac{2|e|U}{m}}\\approx 5{,}93\\cdot 10^6$ m/s.",
+    "tags": ["Điện trường", "Chuyển động của hạt trong điện trường"]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": ["Lớp 11"],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Một tụ điện phẳng không khí có điện dung $C = 2$ μF được nối với nguồn điện có hiệu điện thế $U = 12$ V. Sau đó ngắt tụ khỏi nguồn rồi tăng khoảng cách giữa hai bản tụ lên gấp đôi. Xét các phát biểu sau. Với mỗi ý, chọn Đúng (Đ) hoặc Sai (S).",
+    "options": [
+      {"key":"a","text":"Điện tích của tụ khi còn nối với nguồn là 24 μC."},
+      {"key":"b","text":"Sau khi ngắt khỏi nguồn, điện tích của tụ giảm còn một nửa khi tăng khoảng cách hai bản."},
+      {"key":"c","text":"Điện dung của tụ sau khi tăng khoảng cách là 1 μF."},
+      {"key":"d","text":"Hiệu điện thế giữa hai bản tụ sau khi tăng khoảng cách là 24 V."}
+    ],
+    "answer": "ĐSĐĐ",
+    "explanation": "a) Đúng: $Q=CU=24$ μC. b) Sai: sau khi ngắt nguồn, điện tích không đổi. c) Đúng: $C=\\frac{\\varepsilon S}{4\\pi kd}$ tỉ lệ nghịch với $d$ nên $C'=1$ μF. d) Đúng: $U'=\\frac{Q}{C'}=24$ V.",
+    "tags": ["Tụ điện"]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": ["Lớp 11"],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Cho mạch điện như hình bên dưới. Cường độ dòng điện chạy trong mạch chính là",
+    "options": [{"key":"A","text":"1 A"},{"key":"B","text":"2 A"},{"key":"C","text":"2,4 A"},{"key":"D","text":"12 A"}],
+    "answer": "B",
+    "explanation": "Định luật Ôm toàn mạch: $I=\\frac{E}{R+r}=\\frac{12}{5+1}=2$ A.",
+    "tags": ["Định luật Ôm toàn mạch", "Mạch điện"],
+    "figure": {"kind":"circuit","text":"nguồn E = 12 V, r = 1 Ω\nR = 5 Ω"}
+  },
+  {
+    "subject": "Vật lí",
+    "grades": ["Lớp 11"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Cho mạch điện như hình bên dưới. Cường độ dòng điện qua điện trở $R_1$ (A) làm tròn đến hai chữ số thập phân là bao nhiêu?",
+    "answer": "1,71",
+    "explanation": "$R_{23}=\\frac{6\\cdot 3}{6+3}=2\\ \\Omega$, $I=\\frac{E}{R_1+R_{23}+r}=\\frac{12}{7}\\approx 1{,}71$ A; đây cũng là cường độ qua $R_1$ vì $R_1$ nối tiếp với cụm song song.",
+    "tags": ["Mạch điện hỗn hợp", "Định luật Ôm"],
+    "figure": {"kind":"circuit","text":"nguồn E = 12 V, r = 1 Ω\nR1=4Ω - (R2=6Ω // R3=3Ω)"}
+  },
+  {
+    "subject": "Vật lí",
+    "grades": ["Lớp 11"],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Cho mạch điện như hình bên dưới. Xét các phát biểu sau. Với mỗi ý, chọn Đúng (Đ) hoặc Sai (S).",
+    "options": [
+      {"key":"a","text":"Cường độ dòng điện trong mạch chính là 1,8 A."},
+      {"key":"b","text":"Hiệu điện thế giữa hai đầu mạch ngoài là 7,2 V."},
+      {"key":"c","text":"Cường độ dòng điện qua $R_2$ là 0,6 A."},
+      {"key":"d","text":"Công suất tỏa nhiệt trên $R_3$ là 2,16 W."}
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "$R_N=R_1+\\frac{R_2R_3}{R_2+R_3}=2+2=4\\ \\Omega$, $I=\\frac{9}{4+1}=1{,}8$ A. a) Đúng. b) Đúng: $U_N=IR_N=7{,}2$ V. c) Sai: $U_{23}=1{,}8\\cdot 2=3{,}6$ V nên $I_2=\\frac{3{,}6}{3}=1{,}2$ A. d) Đúng: $I_3=\\frac{3{,}6}{6}=0{,}6$ A, $P_3=3{,}6\\cdot 0{,}6=2{,}16$ W.",
+    "tags": ["Mạch điện hỗn hợp", "Công suất điện"],
+    "figure": {"kind":"circuit","text":"nguồn E = 9 V, r = 1 Ω\nR1=2Ω - (R2=3Ω // R3=6Ω)"}
+  },
+  {
+    "subject": "Vật lí",
+    "grades": ["Lớp 11"],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Một nguồn điện có suất điện động $E = 12$ V, điện trở trong $r = 2\\ \\Omega$ mắc nối tiếp với một biến trở $R$ và một bóng đèn ghi 6 V – 6 W. Điều chỉnh biến trở để đèn sáng bình thường. Giá trị của biến trở khi đó là",
+    "options": [{"key":"A","text":"2 Ω"},{"key":"B","text":"6 Ω"},{"key":"C","text":"8 Ω"},{"key":"D","text":"4 Ω"}],
+    "answer": "D",
+    "explanation": "Đèn sáng bình thường: $I=\\frac{P}{U}=1$ A và $R_đ=\\frac{U^2}{P}=6\\ \\Omega$. Định luật Ôm toàn mạch: $I=\\frac{E}{R_đ+R+r}$ nên $R=\\frac{E}{I}-R_đ-r=12-6-2=4\\ \\Omega$.",
+    "tags": ["Định luật Ôm toàn mạch", "Công suất định mức"]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": ["Lớp 11"],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Một con lắc lò xo gồm vật nhỏ khối lượng 0,5 kg và lò xo có độ cứng $k = 200$ N/m dao động điều hoà trên trục Ox. Khi vật đi qua vị trí có li độ $x = 3$ cm thì tốc độ của vật là 0,4 m/s. Biên độ dao động của vật (cm), làm tròn đến hai chữ số thập phân, là bao nhiêu?",
+    "answer": "3,61",
+    "explanation": "$\\omega=\\sqrt{\\frac{k}{m}}=20$ rad/s. $A=\\sqrt{x^2+\\frac{v^2}{\\omega^2}}=\\sqrt{3^2+2^2}\\approx 3{,}61$ cm.",
+    "tags": ["Con lắc lò xo", "Hệ thức độc lập thời gian"]
+  },
+  {
+    "subject": "Vật lí",
+    "grades": ["Lớp 11"],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Hai điểm M, N nằm trên cùng một đường sức của điện trường đều có cường độ $E = 500$ V/m, $MN = 8$ cm; M gần bản dương hơn N. Xét các phát biểu sau. Với mỗi ý, chọn Đúng (Đ) hoặc Sai (S).",
+    "options": [
+      {"key":"a","text":"Hiệu điện thế giữa M và N là $U_{MN}=40$ V."},
+      {"key":"b","text":"Công của lực điện khi proton di chuyển từ M đến N là $6{,}4\\cdot 10^{-18}$ J."},
+      {"key":"c","text":"Công của lực điện khi electron di chuyển từ M đến N là $+6{,}4\\cdot 10^{-18}$ J."},
+      {"key":"d","text":"Cường độ điện trường tại N bằng 500 V/m."}
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "$U_{MN}=Ed=500\\cdot 0{,}08=40$ V. a) Đúng. b) Đúng: $A=qU_{MN}=1{,}6\\cdot 10^{-19}\\cdot 40=6{,}4\\cdot 10^{-18}$ J. c) Sai: với electron $A=-|e|U_{MN}<0$. d) Đúng: điện trường đều có cường độ không đổi.",
+    "tags": ["Điện trường đều", "Công của lực điện"]
+  }
+]

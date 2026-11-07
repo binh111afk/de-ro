@@ -8,7 +8,8 @@ import { Search, X } from 'lucide-react'
 import { SiteSelect } from '@/components/SiteSelect'
 import { MathText } from '@/components/MathText'
 import { Badge, Button, Checkbox, inputClass } from '@/components/ui'
-import { BANK, type BankEntry } from '@/data/bank'
+import { BANK, loadFullBank, type BankEntry } from '@/data/bank'
+import { LEVEL_LABEL, levelOf, type BankLevel } from '@/data/bankLevel'
 import { GRADES, SUBJECTS, TYPE_LABEL, type QuestionType } from '@/data/types'
 import { cn } from '@/lib/cn'
 import { formatPoints } from '@/lib/math'
@@ -36,15 +37,35 @@ const TYPE_OPTIONS: Array<{ value: QuestionType | ''; label: string }> = [
   { value: '', label: 'Mọi loại' },
   ...(Object.keys(TYPE_LABEL) as QuestionType[]).map((k) => ({ value: k, label: TYPE_LABEL[k] })),
 ]
+const LEVEL_OPTIONS: Array<{ value: BankLevel | ''; label: string }> = [
+  { value: '', label: 'Mọi độ khó' },
+  ...(Object.keys(LEVEL_LABEL) as BankLevel[]).map((k) => ({ value: k, label: LEVEL_LABEL[k] })),
+]
+const LEVEL_TONE = { de: 'sage', tb: 'honey', kho: 'clay' } as const
+
+function LevelChip({ entry }: { entry: BankEntry }) {
+  const lv = levelOf(entry)
+  return <Badge tone={LEVEL_TONE[lv]}>{LEVEL_LABEL[lv]}</Badge>
+}
 
 export function BankModal({ editor, onClose }: { editor: Editor; onClose: () => void }) {
   const [q, setQ] = useState('')
   const [subject, setSubject] = useState('')
   const [grade, setGrade] = useState('')
   const [type, setType] = useState<QuestionType | ''>('')
+  const [level, setLevel] = useState<BankLevel | ''>('')
   const [activeId, setActiveId] = useState<string | null>(null)
   // thứ tự chọn được giữ nguyên khi chèn
   const [selected, setSelected] = useState<string[]>([])
+  const [bank, setBank] = useState<BankEntry[]>(BANK)
+
+  useEffect(() => {
+    let alive = true
+    void loadFullBank().then((b) => alive && setBank(b))
+    return () => {
+      alive = false
+    }
+  }, [])
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -56,14 +77,15 @@ export function BankModal({ editor, onClose }: { editor: Editor; onClose: () => 
 
   const results = useMemo(() => {
     const needle = q.trim().toLowerCase()
-    return BANK.filter((b) => {
+    return bank.filter((b) => {
       if (subject && b.subject !== subject) return false
       if (grade && !b.grades.includes(grade) && !b.grades.includes('all')) return false
       if (type && b.type !== type) return false
+      if (level && levelOf(b) !== level) return false
       if (!needle) return true
       return b.prompt.toLowerCase().includes(needle) || b.tags.some((t) => t.includes(needle))
     })
-  }, [q, subject, grade, type])
+  }, [bank, q, subject, grade, type, level])
 
   const shown = results.find((b) => b.id === activeId) ?? results[0] ?? null
 
@@ -72,7 +94,7 @@ export function BankModal({ editor, onClose }: { editor: Editor; onClose: () => 
 
   const insert = () => {
     const chosen = selected
-      .map((id) => BANK.find((b) => b.id === id))
+      .map((id) => bank.find((b) => b.id === id))
       .filter((b): b is BankEntry => Boolean(b))
     if (chosen.length === 0) return
     insertBlockTemplate(editor, bankSelectionTemplate(chosen))
@@ -122,6 +144,7 @@ export function BankModal({ editor, onClose }: { editor: Editor; onClose: () => 
           <SiteSelect value={subject} options={SUBJECT_OPTIONS} onChange={setSubject} label="Lọc theo môn" className="w-[150px]" />
           <SiteSelect value={grade} options={GRADE_OPTIONS} onChange={setGrade} label="Lọc theo lớp" className="w-[130px]" />
           <SiteSelect value={type} options={TYPE_OPTIONS} onChange={setType} label="Lọc theo loại" className="w-[160px]" />
+          <SiteSelect value={level} options={LEVEL_OPTIONS} onChange={setLevel} label="Lọc theo độ khó" className="w-[140px]" />
         </div>
 
         <div className="grid min-h-0 flex-1 border-t border-line md:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
@@ -150,6 +173,7 @@ export function BankModal({ editor, onClose }: { editor: Editor; onClose: () => 
                         <div className="flex flex-wrap gap-1.5">
                           <Badge tone="clay">{b.subject}</Badge>
                           <Badge tone="outline">{TYPE_LABEL[b.type]}</Badge>
+                          <LevelChip entry={b} />
                           {b.figure ? <Badge tone="honey">Có hình</Badge> : null}
                         </div>
                         <div className="mt-2.5 line-clamp-2 text-[14.5px] leading-snug text-ink">
@@ -211,7 +235,8 @@ function QuestionDetail({ entry }: { entry: BankEntry }) {
       <div className="flex flex-wrap gap-1.5">
         <Badge tone="clay">{entry.subject}</Badge>
         <Badge tone="outline">{TYPE_LABEL[entry.type]}</Badge>
-        <Badge tone="honey">{formatPoints(entry.points)}đ</Badge>
+        <LevelChip entry={entry} />
+        <Badge tone="outline">{formatPoints(entry.points)}đ</Badge>
       </div>
 
       <div className="mt-4 text-[16.5px] leading-relaxed text-ink">
@@ -252,6 +277,33 @@ function QuestionDetail({ entry }: { entry: BankEntry }) {
             )
           })}
         </ol>
+      ) : null}
+
+      {entry.type === 'dung-sai' && entry.options?.length ? (
+        <ol className="mt-5 flex flex-col gap-2">
+          {entry.options.map((o, i) => {
+            const v = entry.answer?.[i]
+            return (
+              <li key={o.key} className="flex items-start gap-3 rounded-[6px] border border-line-2 px-4 py-3 text-[14.5px] text-ink-2">
+                <span className="shrink-0 pt-0.5 font-semibold text-ink-3">{o.key})</span>
+                <span className="pt-0.5">
+                  <MathText as="span">{o.text}</MathText>
+                </span>
+                {v ? (
+                  <span className={cn('ml-auto shrink-0 pt-0.5 text-[12px] font-semibold', v === 'Đ' ? 'text-sage' : 'text-clay')}>
+                    {v === 'Đ' ? 'Đúng' : 'Sai'}
+                  </span>
+                ) : null}
+              </li>
+            )
+          })}
+        </ol>
+      ) : null}
+
+      {entry.type === 'tra-loi-ngan' && entry.answer ? (
+        <p className="mt-5 rounded-[6px] border border-sage/40 bg-sage-soft px-4 py-3 text-[14.5px] text-ink">
+          Đáp án: <span className="font-semibold">{entry.answer}</span>
+        </p>
       ) : null}
 
       {entry.solution?.length ? (

@@ -9,6 +9,7 @@ export type Subject =
   | 'Lịch sử'
   | 'Địa lí'
   | 'Tin học'
+  | 'GDKT&PL'
 
 export type QuestionType = 'trac-nghiem' | 'dung-sai' | 'tra-loi-ngan' | 'tu-luan' | 'tu-luan-dong'
 
@@ -106,6 +107,7 @@ export const SUBJECTS: Subject[] = [
   'Lịch sử',
   'Địa lí',
   'Tin học',
+  'GDKT&PL',
 ]
 
 export const GRADES = [

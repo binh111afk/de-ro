@@ -1,0 +1,737 @@
+[
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Hoá học",
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Trong một pin galvani đang hoạt động, quá trình oxi hóa xảy ra tại:",
+    "options": [
+      {
+        "key": "A",
+        "text": "cực dương"
+      },
+      {
+        "key": "B",
+        "text": "cực bất kì"
+      },
+      {
+        "key": "C",
+        "text": "cực âm"
+      },
+      {
+        "key": "D",
+        "text": "cực trung tính"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Ở pin galvani, cực âm (anot) là nơi xảy ra quá trình oxi hóa; electron sinh ra đi qua dây dẫn ngoài đến cực dương.",
+    "tags": [
+      "pin điện phân",
+      "pin galvani"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Hoá học",
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Kim loại có tính dẫn điện tốt nhất là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "Cu"
+      },
+      {
+        "key": "B",
+        "text": "Ag"
+      },
+      {
+        "key": "C",
+        "text": "Al"
+      },
+      {
+        "key": "D",
+        "text": "Fe"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Bạc (Ag) là kim loại dẫn điện tốt nhất, sau đó đến Cu, Au, Al.",
+    "tags": [
+      "kim loại",
+      "tính chất"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Hoá học",
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Đinh sắt bị gỉ trong môi trường không khí ẩm là hiện tượng:",
+    "options": [
+      {
+        "key": "A",
+        "text": "ăn mòn điện hóa"
+      },
+      {
+        "key": "B",
+        "text": "ăn mòn hóa học"
+      },
+      {
+        "key": "C",
+        "text": "ăn mòn cơ học"
+      },
+      {
+        "key": "D",
+        "text": "không bị ăn mòn"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Trong không khí ẩm, sắt tạo thành pin điện hóa với nước và oxy, bị ăn mòn điện hóa.",
+    "tags": [
+      "ăn mòn kim loại"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Hoá học",
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Trong các kim loại sau, kim loại phản ứng được với dung dịch axit HCl loãng giải phóng $\\text{H}_2$ là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "Cu"
+      },
+      {
+        "key": "B",
+        "text": "Ag"
+      },
+      {
+        "key": "C",
+        "text": "Hg"
+      },
+      {
+        "key": "D",
+        "text": "Zn"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Zn đứng trước H trong dãy hoạt động hóa học nên tác dụng với axit loãng giải phóng hydro.",
+    "tags": [
+      "dãy hoạt động hóa học"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Hoá học",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Cho pin điện hóa Zn–Cu gồm điện cực Zn nhúng trong dung dịch $\\text{ZnSO}_4$ và điện cực Cu nhúng trong dung dịch $\\text{CuSO}_4$. Biết $E^{\\circ}(\\text{Zn}^{2+}/\\text{Zn})=-0{,}76$ V và $E^{\\circ}(\\text{Cu}^{2+}/\\text{Cu})=+0{,}34$ V. Suất điện động chuẩn của pin là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "0,42 V"
+      },
+      {
+        "key": "B",
+        "text": "0,76 V"
+      },
+      {
+        "key": "C",
+        "text": "1,10 V"
+      },
+      {
+        "key": "D",
+        "text": "1,52 V"
+      }
+    ],
+    "answer": "C",
+    "explanation": "$E_{\\text{pin}}^{\\circ}=E_{\\text{cực dương}}^{\\circ}-E_{\\text{cực âm}}^{\\circ}=0{,}34-(-0{,}76)=1{,}10$ V.",
+    "tags": [
+      "pin galvani",
+      "suất điện động"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Hoá học",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Điện phân dung dịch $\\text{CuSO}_4$ (điện cực trơ) với hiệu suất 100%. Sản phẩm sinh ra ở catot là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\text{H}_2$"
+      },
+      {
+        "key": "B",
+        "text": "Cu"
+      },
+      {
+        "key": "C",
+        "text": "$\\text{O}_2$"
+      },
+      {
+        "key": "D",
+        "text": "Na"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Ion $\\text{Cu}^{2+}$ bị khử ở catot: $\\text{Cu}^{2+}+2e\\to\\text{Cu}$, kim loại bám vào catot.",
+    "tags": [
+      "điện phân"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Hoá học",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Điện phân dung dịch $\\text{AgNO}_3$ với dòng điện 2 A trong 965 giây (điện cực trơ, hiệu suất 100%). Khối lượng bạc thoát ra ở catot là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "2,16 g"
+      },
+      {
+        "key": "B",
+        "text": "1,08 g"
+      },
+      {
+        "key": "C",
+        "text": "4,32 g"
+      },
+      {
+        "key": "D",
+        "text": "0,54 g"
+      }
+    ],
+    "answer": "A",
+    "explanation": "$Q=2\\cdot 965=1930$ C, $n_e=\\dfrac{1930}{96500}=0{,}02$ mol; $\\text{Ag}^{+}+e\\to\\text{Ag}$: $m=0{,}02\\cdot 108=2{,}16$ g.",
+    "tags": [
+      "định luật Faraday"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Hoá học",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Phương pháp bảo vệ kim loại sắt tốt nhất trong các cách sau (khi sắt có thể bị trầy xước) là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "tráng thiếc"
+      },
+      {
+        "key": "B",
+        "text": "tráng đồng"
+      },
+      {
+        "key": "C",
+        "text": "sơn dầu"
+      },
+      {
+        "key": "D",
+        "text": "tráng kẽm"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Kẽm hoạt động mạnh hơn sắt, bị oxi hóa thay sắt (bảo vệ catot) ngay cả khi lớp mạ bị trầy xước.",
+    "tags": [
+      "bảo vệ kim loại"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Hoá học",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Điện phân nóng chảy $\\text{Al}_2\\text{O}_3$ (thêm cryolit) để điều chế nhôm. Để điều chế 5,4 g Al, lượng electron đi qua (tính bằng culông, với $F=96500$ C/mol) là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "19300 C"
+      },
+      {
+        "key": "B",
+        "text": "57900 C"
+      },
+      {
+        "key": "C",
+        "text": "28950 C"
+      },
+      {
+        "key": "D",
+        "text": "96500 C"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$n_{\\text{Al}}=\\dfrac{5{,}4}{27}=0{,}2$ mol; $\\text{Al}^{3+}+3e\\to\\text{Al}$: $n_e=0{,}6$ mol; $Q=0{,}6\\cdot 96500=57900$ C.",
+    "tags": [
+      "điều chế nhôm",
+      "định luật Faraday"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Hoá học",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Trong pin Zn–Cu đang hoạt động, chiều chuyển động của electron trong mạch ngoài là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "từ cực Cu sang cực Zn"
+      },
+      {
+        "key": "B",
+        "text": "qua dung dịch muối"
+      },
+      {
+        "key": "C",
+        "text": "từ cực Zn sang cực Cu"
+      },
+      {
+        "key": "D",
+        "text": "không có electron chuyển động"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Zn bị oxi hóa ở cực âm sinh electron; electron đi qua dây dẫn ngoài từ Zn đến Cu.",
+    "tags": [
+      "pin galvani"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Hoá học",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Điện phân dung dịch NaCl bão hòa (có màng ngăn, điện cực trơ) trong công nghiệp clo – kiềm. Sản phẩm ở anot là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\text{Cl}_2$"
+      },
+      {
+        "key": "B",
+        "text": "$\\text{H}_2$"
+      },
+      {
+        "key": "C",
+        "text": "$\\text{O}_2$"
+      },
+      {
+        "key": "D",
+        "text": "NaOH"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Ion $\\text{Cl}^{-}$ bị oxi hóa ở anot: $2\\text{Cl}^{-}-2e\\to\\text{Cl}_2$.",
+    "tags": [
+      "điện phân",
+      "clo – kiềm"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Hoá học",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Đinh sắt mạ kẽm bị trầy xước lộ ra lớp sắt nhưng sắt vẫn không bị ăn mòn nhanh vì:",
+    "options": [
+      {
+        "key": "A",
+        "text": "kẽm là kim loại trơ"
+      },
+      {
+        "key": "B",
+        "text": "sắt bị thụ động hóa"
+      },
+      {
+        "key": "C",
+        "text": "lớp kẽm cách li hoàn toàn và vĩnh viễn"
+      },
+      {
+        "key": "D",
+        "text": "kẽm hoạt động mạnh hơn sắt nên bị oxi hóa thay sắt"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Kẽm và sắt tạo thành pin với kẽm là cực âm (anot) bị oxi hóa, bảo vệ sắt — kiểu bảo vệ bằng kim loại hoạt động mạnh hơn.",
+    "tags": [
+      "ăn mòn",
+      "bảo vệ kim loại"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Hoá học",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Điện phân dung dịch $\\text{CuSO}_4$ (điện cực trơ, hiệu suất 100%) với 0,08 mol electron. Khối lượng Cu thoát ra ở catot là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "1,28 g"
+      },
+      {
+        "key": "B",
+        "text": "2,56 g"
+      },
+      {
+        "key": "C",
+        "text": "3,2 g"
+      },
+      {
+        "key": "D",
+        "text": "6,4 g"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$\\text{Cu}^{2+}+2e\\to\\text{Cu}$: $n_{\\text{Cu}}=0{,}04$ mol, $m=0{,}04\\cdot 64=2{,}56$ g.",
+    "tags": [
+      "định luật Faraday"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Hoá học",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Chất điện phân trong pin khô (pin Leclanché) là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\text{H}_2\\text{SO}_4$ đặc"
+      },
+      {
+        "key": "B",
+        "text": "$\\text{CuSO}_4$"
+      },
+      {
+        "key": "C",
+        "text": "$\\text{NH}_4\\text{Cl}$ (dạng hồ)"
+      },
+      {
+        "key": "D",
+        "text": "$\\text{NaCl}$ rắn khan"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Pin khô dùng dung dịch $\\text{NH}_4\\text{Cl}$ ở dạng pasty làm chất điện phân, vỏ kẽm là cực âm.",
+    "tags": [
+      "pin khô"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Hoá học",
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Điện phân (điện cực trơ) dung dịch chứa đồng thời 0,1 mol $\\text{Ag}^{+}$ và 0,1 mol $\\text{Cu}^{2+}$ với lượng electron 0,15 mol. Khối lượng kim loại thoát ra ở catot là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "12,4 g"
+      },
+      {
+        "key": "B",
+        "text": "10,8 g"
+      },
+      {
+        "key": "C",
+        "text": "6,4 g"
+      },
+      {
+        "key": "D",
+        "text": "13,6 g"
+      }
+    ],
+    "answer": "A",
+    "explanation": "$\\text{Ag}^{+}$ khử trước (0,1 mol e), còn 0,05 mol e cho $\\text{Cu}^{2+}$: $n_{\\text{Cu}}=0{,}025$ mol. $m=10{,}8+0{,}025\\cdot 64=12{,}4$ g.",
+    "tags": [
+      "điện phân",
+      "trình tự khử"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Hoá học",
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Điện phân 200 mL dung dịch $\\text{AgNO}_3$ 0,1 M (điện cực trơ) với cường độ dòng điện 2 A trong 20,1 phút. Thể tích khí $\\text{H}_2$ (đktc) sinh ra ở catot là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "0,112 lít"
+      },
+      {
+        "key": "B",
+        "text": "0,028 lít"
+      },
+      {
+        "key": "C",
+        "text": "0,056 lít"
+      },
+      {
+        "key": "D",
+        "text": "0,448 lít"
+      }
+    ],
+    "answer": "C",
+    "explanation": "$Q=2\\cdot 1206\\approx 2412$ C, $n_e\\approx 0{,}025$ mol; $\\text{Ag}^{+}=0{,}02$ mol hết trước (0,02 mol e), còn 0,005 mol e điện phân nước: $n_{\\text{H}_2}=0{,}0025$ mol $=0{,}056$ lít.",
+    "tags": [
+      "điện phân",
+      "hiệu suất"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Hoá học",
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Xét pin galvani gồm hai điện cực Zn và Cu cắm trong dung dịch $\\text{H}_2\\text{SO}_4$ loãng, hai cực nối với nhau bằng dây dẫn. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Zn là cực âm, bị oxi hóa."
+      },
+      {
+        "key": "b",
+        "text": "Electron trong dây dẫn ngoài di chuyển từ cực Cu sang cực Zn."
+      },
+      {
+        "key": "c",
+        "text": "Bọt khí $\\text{H}_2$ xuất hiện ở điện cực Zn."
+      },
+      {
+        "key": "d",
+        "text": "Ở cực dương (Cu) diễn ra quá trình khử."
+      }
+    ],
+    "answer": "ĐSSĐ",
+    "explanation": "a) Đúng: Zn hoạt động hơn nên là cực âm, bị oxi hóa. b) Sai: electron đi từ Zn (cực âm) sang Cu. c) Sai: khí $\\text{H}_2$ thoát ra ở điện cực Cu (cực dương). d) Đúng: $2\\text{H}^{+}+2e\\to\\text{H}_2$ là quá trình khử.",
+    "tags": [
+      "pin galvani"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Hoá học",
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Điện phân 200 mL dung dịch $\\text{AgNO}_3$ 0,1 M (điện cực trơ) với dòng điện 0,965 A trong 1000 giây, hiệu suất 100%. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Khối lượng Ag thoát ra ở catot là 1,08 g."
+      },
+      {
+        "key": "b",
+        "text": "Sau khi điện phân, dung dịch còn 0,02 mol $\\text{Ag}^{+}$."
+      },
+      {
+        "key": "c",
+        "text": "Ở anot sinh ra khí $\\text{O}_2$ với thể tích 0,056 lít (đktc)."
+      },
+      {
+        "key": "d",
+        "text": "Sau khi điện phân, pH dung dịch tăng."
+      }
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "a) Đúng: $n_e=\\frac{965}{96500}=0{,}01$ mol, $m_{\\text{Ag}}=1{,}08$ g. b) Sai: còn $0{,}02-0{,}01=0{,}01$ mol $\\text{Ag}^{+}$. c) Đúng: $4\\text{OH}^{-}-4e\\to\\text{O}_2+2\\text{H}_2\\text{O}$, $n_{\\text{O}_2}=0{,}0025$ mol $=0{,}056$ lít. d) Sai: dung dịch sinh ra $\\text{HNO}_3$ nên pH giảm.",
+    "tags": [
+      "điện phân",
+      "định luật Faraday"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Hoá học",
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "So sánh sự ăn mòn của cột thép đặt trong nước biển và cột thép đặt trong đất ẩm (cùng điều kiện khác). Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Cột thép trong nước biển ăn mòn nhanh hơn do độ dẫn điện của môi trường cao."
+      },
+      {
+        "key": "b",
+        "text": "Trong quá trình ăn mòn, Fe bị oxi hóa thành $\\text{Fe}^{2+}$."
+      },
+      {
+        "key": "c",
+        "text": "Oxy bị khử tại các vùng làm anot của bề mặt kim loại."
+      },
+      {
+        "key": "d",
+        "text": "Bọc chì (Pb) quanh thép giúp bảo vệ thép tốt hơn so với bọc kẽm."
+      }
+    ],
+    "answer": "ĐĐSS",
+    "explanation": "a) Đúng. b) Đúng: Fe là cực âm bị oxi hóa. c) Sai: oxy bị khử ở cực dương (catot). d) Sai: Pb hoạt động yếu hơn Fe nên làm Fe trở thành cực âm, tăng tốc ăn mòn; kẽm mới bảo vệ sắt.",
+    "tags": [
+      "ăn mòn kim loại"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Hoá học",
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Điện phân nóng chảy $\\text{Al}_2\\text{O}_3$ với dòng điện 100000 A trong 1 giờ (điện cực than, hiệu suất 100%, $F=96500$ C/mol). Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Để tạo ra 1 mol Al cần 3 mol electron."
+      },
+      {
+        "key": "b",
+        "text": "Trong 1 giờ thu được xấp xỉ 33,6 kg nhôm."
+      },
+      {
+        "key": "c",
+        "text": "Điện cực than ở anot không bị tiêu hao trong quá trình điện phân."
+      },
+      {
+        "key": "d",
+        "text": "Có thể thay điện cực than bằng điện cực sắt để tiết kiệm chi phí mà không ảnh hưởng sản phẩm."
+      }
+    ],
+    "answer": "ĐĐSS",
+    "explanation": "a) Đúng. b) Đúng: $n_e=\\frac{3{,}6\\cdot10^{8}}{96500}\\approx 3731$ mol, $n_{\\text{Al}}\\approx 1244$ mol $\\approx 33{,}6$ kg. c) Sai: anot than bị cháy bởi $\\text{O}_2$ sinh ra. d) Sai: sắt sẽ bị oxi hóa ở anot, làm bẩn và thay đổi sản phẩm.",
+    "tags": [
+      "điều chế nhôm",
+      "điện phân"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Hoá học",
+    "type": "tra-loi-ngan",
+    "level": "NB",
+    "prompt": "Điện phân dung dịch $\\text{AgNO}_3$ (điện cực trơ) với lượng điện 9650 C. Khối lượng Ag thoát ra ở catot là bao nhiêu gam?",
+    "answer": "10,8",
+    "explanation": "$n_e=\\frac{9650}{96500}=0{,}1$ mol; $m_{\\text{Ag}}=0{,}1\\cdot 108=10{,}8$ g.",
+    "tags": [
+      "định luật Faraday"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Hoá học",
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Pin Zn–Cu có suất điện động 1,1 V được nối với điện trở ngoài 2 $\\Omega$ (bỏ qua điện trở trong). Cường độ dòng điện trong mạch (A) là bao nhiêu?",
+    "answer": "0,55",
+    "explanation": "$I=\\dfrac{E}{R}=\\dfrac{1{,}1}{2}=0{,}55$ A.",
+    "tags": [
+      "pin galvani"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Hoá học",
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Điện phân dung dịch $\\text{CuSO}_4$ (điện cực trơ) với 0,05 mol electron. Khối lượng Cu thoát ra ở catot là bao nhiêu gam?",
+    "answer": "3,2",
+    "explanation": "$n_{\\text{Cu}}=\\frac{0{,}05}{2}=0{,}025$ mol; $m=0{,}025\\cdot 64=3{,}2$ g.",
+    "tags": [
+      "định luật Faraday"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Hoá học",
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Điện phân dung dịch NaCl loãng (điện cực trơ) với 0,1 mol electron. Thể tích khí $\\text{H}_2$ (đktc) sinh ra ở catot là bao nhiêu lít?",
+    "answer": "1,12",
+    "explanation": "$2\\text{H}^{+}+2e\\to\\text{H}_2$: $n_{\\text{H}_2}=0{,}05$ mol; $V=1{,}12$ lít.",
+    "tags": [
+      "điện phân"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Hoá học",
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Điện phân nóng chảy $\\text{Al}_2\\text{O}_3$ thu được 1,8 g Al. Lượng điện cần dùng, làm tròn đến hàng phần mười (kiloCoulomb), là bao nhiêu?",
+    "answer": "19,3",
+    "explanation": "$n_{\\text{Al}}=\\frac{1{,}8}{27}=\\frac{1}{15}$ mol; $n_e=0{,}2$ mol; $Q=0{,}2\\cdot 96500=19300$ C $=19{,}3$ kC.",
+    "tags": [
+      "điều chế nhôm"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Hoá học",
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Điện phân (điện cực trơ) dung dịch chứa 0,04 mol $\\text{Ag}^{+}$ và 0,06 mol $\\text{Cu}^{2+}$ với lượng electron 0,08 mol. Khối lượng kim loại thoát ra ở catot là bao nhiêu gam?",
+    "answer": "5,6",
+    "explanation": "$\\text{Ag}^{+}$ khử trước (0,04 mol e), còn 0,04 mol e cho $\\text{Cu}^{2+}$: $n_{\\text{Cu}}=0{,}02$ mol. $m=0{,}04\\cdot 108+0{,}02\\cdot 64=4{,}32+1{,}28=5{,}6$ g.",
+    "tags": [
+      "điện phân",
+      "trình tự khử"
+    ]
+  }
+]

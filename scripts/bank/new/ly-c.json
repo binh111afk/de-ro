@@ -1,0 +1,833 @@
+[
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Hạt $\\alpha$ chính là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "hạt proton $^1_1\\text{H}$"
+      },
+      {
+        "key": "B",
+        "text": "hạt nhân heli $^4_2\\text{He}$"
+      },
+      {
+        "key": "C",
+        "text": "hạt electron $^0_{-1}e$"
+      },
+      {
+        "key": "D",
+        "text": "hạt nơtron $^1_0n$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Hạt $\\alpha$ là hạt nhân heli gồm 2 proton và 2 nơtron, kí hiệu $^4_2\\text{He}$.",
+    "tags": [
+      "phóng xạ",
+      "hạt α"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Khi một hạt nhân phóng xạ phát ra tia $\\beta^-$, hạt được phát ra là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "hạt $\\alpha$"
+      },
+      {
+        "key": "B",
+        "text": "hạt proton"
+      },
+      {
+        "key": "C",
+        "text": "electron"
+      },
+      {
+        "key": "D",
+        "text": "photon $\\gamma$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Phóng xạ $\\beta^-$ là quá trình hạt nhân phát ra electron ($^0_{-1}e$) do một nơtron chuyển thành proton.",
+    "tags": [
+      "phóng xạ β"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Đơn vị đo hoạt độ phóng xạ trong hệ SI là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "becquerel (Bq)"
+      },
+      {
+        "key": "B",
+        "text": "jun (J)"
+      },
+      {
+        "key": "C",
+        "text": "gray (Gy)"
+      },
+      {
+        "key": "D",
+        "text": "sievert (Sv)"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Hoạt độ phóng xạ là số hạt phân rã trong một giây, đơn vị becquerel (1 Bq = 1 phân rã/giây).",
+    "tags": [
+      "hoạt độ phóng xạ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Định luật phóng xạ cho biết hoạt độ của chất phóng xạ sau thời gian $t$ là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "$H=H_0\\left(\\dfrac{1}{2}\\right)^{\\frac{2t}{T}}$"
+      },
+      {
+        "key": "B",
+        "text": "$H=H_0\\cdot 2^{\\frac{t}{T}}$"
+      },
+      {
+        "key": "C",
+        "text": "$H=H_0\\cdot 2^{-\\frac{T}{t}}$"
+      },
+      {
+        "key": "D",
+        "text": "$H=H_0\\left(\\dfrac{1}{2}\\right)^{\\frac{t}{T}}$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Hoạt độ giảm theo hàm mũ với chu kì bán rã $T$: $H=H_0\\left(\\frac{1}{2}\\right)^{t/T}$.",
+    "tags": [
+      "định luật phóng xạ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Một mẫu chất phóng xạ ban đầu có 8000 hạt nhân chưa phân rã, chu kì bán rã 10 ngày. Sau 30 ngày, số hạt nhân chưa phân rã còn lại là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "2000"
+      },
+      {
+        "key": "B",
+        "text": "4000"
+      },
+      {
+        "key": "C",
+        "text": "1000"
+      },
+      {
+        "key": "D",
+        "text": "500"
+      }
+    ],
+    "answer": "C",
+    "explanation": "30 ngày $=3T$ nên còn lại $8000\\cdot\\left(\\frac{1}{2}\\right)^3=1000$ hạt nhân.",
+    "tags": [
+      "định luật phóng xạ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Một chất phóng xạ có chu kì bán rã 8 ngày. Sau 24 ngày, khối lượng chất phóng xạ còn lại chiếm:",
+    "options": [
+      {
+        "key": "A",
+        "text": "25%"
+      },
+      {
+        "key": "B",
+        "text": "12,5%"
+      },
+      {
+        "key": "C",
+        "text": "6,25%"
+      },
+      {
+        "key": "D",
+        "text": "50%"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$24=3\\cdot 8$ nên còn lại $\\left(\\frac{1}{2}\\right)^3=\\frac{1}{8}=12{,}5\\%$.",
+    "tags": [
+      "định luật phóng xạ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Trong chuỗi phóng xạ $^{238}_{92}\\text{U}\\to\\,^{206}_{82}\\text{Pb}+x\\,^{4}_{2}\\text{He}+y\\,^{0}_{-1}e$, số hạt $\\alpha$ và số hạt $\\beta^-$ phát ra lần lượt là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "8 và 6"
+      },
+      {
+        "key": "B",
+        "text": "6 và 8"
+      },
+      {
+        "key": "C",
+        "text": "10 và 4"
+      },
+      {
+        "key": "D",
+        "text": "4 và 10"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Bảo toàn số khối: $238=206+4x\\Rightarrow x=8$. Bảo toàn điện tích: $92=82+2x-y\\Rightarrow y=6$.",
+    "tags": [
+      "chuỗi phóng xạ",
+      "bảo toàn"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Năng lượng liên kết riêng của một hạt nhân được định nghĩa là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "năng lượng liên kết nhân với số nuclon $A$"
+      },
+      {
+        "key": "B",
+        "text": "số nuclon chia năng lượng liên kết"
+      },
+      {
+        "key": "C",
+        "text": "năng lượng liên kết chia số nuclon $A$"
+      },
+      {
+        "key": "D",
+        "text": "căn bậc hai của tích năng lượng liên kết và số nuclon"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Năng lượng liên kết riêng $=\\dfrac{E_{lk}}{A}$, đặc trưng cho độ bền vững của hạt nhân.",
+    "tags": [
+      "năng lượng liên kết"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Một mẫu chất phóng xạ có khối lượng ban đầu 80 g, chu kì bán rã 5 ngày. Sau 15 ngày, khối lượng chất phóng xạ còn lại là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "20 g"
+      },
+      {
+        "key": "B",
+        "text": "10 g"
+      },
+      {
+        "key": "C",
+        "text": "5 g"
+      },
+      {
+        "key": "D",
+        "text": "40 g"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$15=3\\cdot 5$ nên $m=80\\cdot\\left(\\frac{1}{2}\\right)^3=10$ g.",
+    "tags": [
+      "định luật phóng xạ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Một chất phóng xạ có hoạt độ ban đầu $4\\cdot10^{5}$ Bq và chu kì bán rã 2 giờ. Hoạt độ của chất phóng xạ sau 6 giờ là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "$2\\cdot10^{5}$ Bq"
+      },
+      {
+        "key": "B",
+        "text": "$1\\cdot10^{5}$ Bq"
+      },
+      {
+        "key": "C",
+        "text": "$2{,}5\\cdot10^{5}$ Bq"
+      },
+      {
+        "key": "D",
+        "text": "$5\\cdot10^{4}$ Bq"
+      }
+    ],
+    "answer": "D",
+    "explanation": "$H=H_0\\left(\\frac{1}{2}\\right)^{t/T}=4\\cdot10^{5}\\cdot\\frac{1}{8}=5\\cdot10^{4}$ Bq.",
+    "tags": [
+      "hoạt độ phóng xạ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Trong một phản ứng hạt nhân, độ hụt khối là $\\Delta m=0{,}2\\,u$ (với $1\\,u=931{,}5$ MeV/c²). Năng lượng toả ra của phản ứng là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "186,3 MeV"
+      },
+      {
+        "key": "B",
+        "text": "18,63 MeV"
+      },
+      {
+        "key": "C",
+        "text": "1,863 MeV"
+      },
+      {
+        "key": "D",
+        "text": "372,6 MeV"
+      }
+    ],
+    "answer": "A",
+    "explanation": "$E=\\Delta m c^2=0{,}2\\cdot 931{,}5=186{,}3$ MeV.",
+    "tags": [
+      "năng lượng liên kết"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Một mẫu chất phóng xạ ban đầu có $2{,}4\\cdot10^{20}$ hạt nhân. Sau 3 chu kì bán rã, số hạt nhân chưa phân rã là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "$6\\cdot10^{19}$"
+      },
+      {
+        "key": "B",
+        "text": "$1{,}2\\cdot10^{20}$"
+      },
+      {
+        "key": "C",
+        "text": "$3\\cdot10^{19}$"
+      },
+      {
+        "key": "D",
+        "text": "$4{,}8\\cdot10^{20}$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Sau 3 chu kì còn $\\frac{1}{8}$ số hạt: $2{,}4\\cdot10^{20}:8=3\\cdot10^{19}$ hạt nhân.",
+    "tags": [
+      "định luật phóng xạ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Khi một hạt nhân phóng xạ phát ra một hạt $\\beta^-$, số khối $A$ của hạt nhân con so với hạt nhân cha:",
+    "options": [
+      {
+        "key": "A",
+        "text": "tăng 1"
+      },
+      {
+        "key": "B",
+        "text": "giảm 1"
+      },
+      {
+        "key": "C",
+        "text": "giảm 4"
+      },
+      {
+        "key": "D",
+        "text": "không đổi"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Phân rã $\\beta^-$: $^{A}_{Z}X\\to\\,^{A}_{Z+1}Y+^{0}_{-1}e$; số khối không đổi, số hiệu nguyên tử tăng 1.",
+    "tags": [
+      "phóng xạ β"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Phương pháp định tuổi bằng cacbon $^{14}C$ (chu kì bán rã 5730 năm): một cổ vật chỉ còn 25% lượng $^{14}C$ so với khi mới. Tuổi của cổ vật là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "5730 năm"
+      },
+      {
+        "key": "B",
+        "text": "11460 năm"
+      },
+      {
+        "key": "C",
+        "text": "17190 năm"
+      },
+      {
+        "key": "D",
+        "text": "2865 năm"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Còn 25% $=\\left(\\frac{1}{2}\\right)^2$ nên $t=2T=11460$ năm.",
+    "tags": [
+      "định tuổi",
+      "thực tế"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Trong phản ứng $^{14}_{7}\\text{N}+\\,^{4}_{2}\\text{He}\\to\\,^{17}_{8}\\text{O}+X$, hạt $X$ là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "$^1_0n$"
+      },
+      {
+        "key": "B",
+        "text": "$^4_2\\text{He}$"
+      },
+      {
+        "key": "C",
+        "text": "$^1_1\\text{H}$"
+      },
+      {
+        "key": "D",
+        "text": "$^0_{-1}e$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Bảo toàn: $14+4=17+A_X\\Rightarrow A_X=1$; $7+2=8+Z_X\\Rightarrow Z_X=1$. Vậy $X$ là proton $^1_1\\text{H}$.",
+    "tags": [
+      "phản ứng hạt nhân",
+      "bảo toàn"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Phản ứng $^7_3\\text{Li}+^1_1\\text{H}\\to 2\\,^4_2\\text{He}$ có độ hụt khối $\\Delta m=0{,}018\\,u$. Năng lượng toả ra của phản ứng xấp xỉ:",
+    "options": [
+      {
+        "key": "A",
+        "text": "8,4 MeV"
+      },
+      {
+        "key": "B",
+        "text": "16,8 MeV"
+      },
+      {
+        "key": "C",
+        "text": "33,6 MeV"
+      },
+      {
+        "key": "D",
+        "text": "1,7 MeV"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$E=0{,}018\\cdot 931{,}5\\approx 16{,}8$ MeV.",
+    "tags": [
+      "năng lượng phản ứng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Hoạt độ của một mẫu phóng xạ giảm từ 8 mCi xuống 0,5 mCi với chu kì bán rã 6 giờ. Thời gian giảm đó là:",
+    "options": [
+      {
+        "key": "A",
+        "text": "24 h"
+      },
+      {
+        "key": "B",
+        "text": "12 h"
+      },
+      {
+        "key": "C",
+        "text": "48 h"
+      },
+      {
+        "key": "D",
+        "text": "6 h"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Tỉ số $\\frac{8}{0{,}5}=16=2^4$ nên $t=4T=24$ h.",
+    "tags": [
+      "hoạt độ phóng xạ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Hạt nhân $^{56}_{26}\\text{Fe}$ có số nơtron bằng:",
+    "options": [
+      {
+        "key": "A",
+        "text": "26"
+      },
+      {
+        "key": "B",
+        "text": "56"
+      },
+      {
+        "key": "C",
+        "text": "82"
+      },
+      {
+        "key": "D",
+        "text": "30"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Số nơtron $=A-Z=56-26=30$.",
+    "tags": [
+      "cấu tạo hạt nhân"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Một chất phóng xạ $X$ có chu kì bán rã $T=12$ ngày, ban đầu mẫu chứa $4{,}8\\cdot10^{10}$ hạt nhân. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Sau 24 ngày, mẫu còn $1{,}2\\cdot10^{10}$ hạt nhân."
+      },
+      {
+        "key": "b",
+        "text": "Hoạt độ của chất phóng xạ không đổi theo thời gian."
+      },
+      {
+        "key": "c",
+        "text": "Sau 36 ngày, mẫu còn $6\\cdot10^{9}$ hạt nhân."
+      },
+      {
+        "key": "d",
+        "text": "Mỗi lần phân rã $\\beta^-$ thì tổng số hạt nhân của chất đó tăng thêm 1."
+      }
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "a) Đúng: $24=2T$ nên còn $\\frac{1}{4}\\cdot 4{,}8\\cdot10^{10}=1{,}2\\cdot10^{10}$. b) Sai: hoạt độ tỉ lệ nghịch với số hạt chưa phân rã nên giảm dần. c) Đúng: $36=3T$ còn $\\frac{1}{8}\\cdot 4{,}8\\cdot10^{10}=6\\cdot10^{9}$. d) Sai: phân rã $\\beta^-$ biến một hạt nhân cha thành hạt nhân con, tổng số hạt nhân không tăng.",
+    "tags": [
+      "định luật phóng xạ",
+      "hoạt độ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Xét phản ứng hạt nhân $^{235}_{92}\\text{U}+\\,^{1}_{0}n\\to\\,^{140}_{54}\\text{Xe}+\\,^{94}_{38}\\text{Sr}+k\\,^{1}_{0}n$. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Giá trị của $k$ bằng 3."
+      },
+      {
+        "key": "b",
+        "text": "Đây là phản ứng phân hạch."
+      },
+      {
+        "key": "c",
+        "text": "Tổng số nuclon trước và sau phản ứng được bảo toàn."
+      },
+      {
+        "key": "d",
+        "text": "Phản ứng toả năng lượng vì tổng khối lượng các hạt sau phản ứng lớn hơn trước."
+      }
+    ],
+    "answer": "SĐĐS",
+    "explanation": "a) Sai: bảo toàn số khối $235+1=140+94+k\\Rightarrow k=2$. b) Đúng: hạt nhân nặng vỡ thành hai hạt nhân nhẹ hơn. c) Đúng: số khối bảo toàn trong phản ứng hạt nhân. d) Sai: phản ứng toả năng lượng khi khối lượng sau phản ứng nhỏ hơn trước (độ hụt khối dương).",
+    "tags": [
+      "phản ứng phân hạch"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Bảng số liệu bên dưới cho biết hoạt độ $H$ của một mẫu chất phóng xạ đo được tại các thời điểm khác nhau. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Chu kì bán rã của chất phóng xạ là 12 ngày."
+      },
+      {
+        "key": "b",
+        "text": "Hoạt độ ban đầu của mẫu là 800 Bq."
+      },
+      {
+        "key": "c",
+        "text": "Sau 48 ngày, hoạt độ của mẫu là 25 Bq."
+      },
+      {
+        "key": "d",
+        "text": "Sau 6 ngày, hoạt độ của mẫu là 400 Bq."
+      }
+    ],
+    "answer": "ĐĐSS",
+    "explanation": "a) Đúng: hoạt độ giảm một nửa sau mỗi 12 ngày. b) Đúng: tại $t=0$, $H=800$ Bq. c) Sai: sau 48 ngày ($4T$), $H=800/16=50$ Bq. d) Sai: sau 6 ngày ($\\frac{T}{2}$), $H=800\\cdot 2^{-0{,}5}\\approx 566$ Bq.",
+    "tags": [
+      "hoạt độ phóng xạ",
+      "bảng số liệu"
+    ],
+    "figure": {
+      "kind": "stats",
+      "chart": "line",
+      "title": "Hoạt độ của mẫu chất phóng xạ theo thời gian",
+      "xLabel": "t (ngày)",
+      "yLabel": "H (Bq)",
+      "data": "0; 12; 24; 36\nH (Bq): 800; 400; 200; 100"
+    }
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Trong y học, đồng vị phóng xạ $^{24}Na$ (chu kì bán rã 15 giờ) được dùng với hoạt độ ban đầu 20 mCi cho một lần chụp. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Sau 30 giờ, hoạt độ của đồng vị còn 5 mCi."
+      },
+      {
+        "key": "b",
+        "text": "Để hoạt độ còn lại ít nhất 2,5 mCi thì phải sử dụng trong vòng 30 giờ."
+      },
+      {
+        "key": "c",
+        "text": "Trong 45 giờ, số hạt phân rã chiếm 87,5% số hạt ban đầu."
+      },
+      {
+        "key": "d",
+        "text": "Phóng xạ $\\beta^+$ phát ra electron."
+      }
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "a) Đúng: $30=2T$ nên $H=20\\cdot\\frac{1}{4}=5$ mCi. b) Sai: $H\\ge 2{,}5$ khi $t\\le 3T=45$ giờ. c) Đúng: $45=3T$ còn $\\frac{1}{8}$, phân rã $\\frac{7}{8}=87{,}5\\%$. d) Sai: $\\beta^+$ phát ra positron (hạt electron dương).",
+    "tags": [
+      "hoạt độ",
+      "y học"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "tra-loi-ngan",
+    "level": "NB",
+    "prompt": "Hạt nhân $^{35}_{17}\\text{Cl}$ có bao nhiêu nơtron?",
+    "answer": "18",
+    "explanation": "Số nơtron $=A-Z=35-17=18$.",
+    "tags": [
+      "cấu tạo hạt nhân"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "tra-loi-ngan",
+    "level": "NB",
+    "prompt": "Sau 4 chu kì bán rã, khối lượng chất phóng xạ còn lại chiếm bao nhiêu phần trăm khối lượng ban đầu?",
+    "answer": "6,25",
+    "explanation": "Còn $\\left(\\frac{1}{2}\\right)^4=\\frac{1}{16}=6{,}25\\%$.",
+    "tags": [
+      "định luật phóng xạ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Một mẫu chất phóng xạ có khối lượng ban đầu 32 g, chu kì bán rã 3 ngày. Sau 12 ngày, khối lượng chất phóng xạ còn lại bao nhiêu gam?",
+    "answer": "2",
+    "explanation": "$12=4T$ nên còn $32\\cdot\\frac{1}{16}=2$ g.",
+    "tags": [
+      "định luật phóng xạ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Một mẫu có $6{,}4\\cdot10^{10}$ hạt nhân chất phóng xạ. Sau 2 chu kì bán rã, số hạt nhân chưa phân rã là $a\\cdot10^{10}$. Giá trị của $a$ là bao nhiêu?",
+    "answer": "1,6",
+    "explanation": "Còn $\\frac{1}{4}\\cdot 6{,}4\\cdot10^{10}=1{,}6\\cdot10^{10}$ hạt nhân.",
+    "tags": [
+      "định luật phóng xạ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Một phản ứng hạt nhân có độ hụt khối $\\Delta m=0{,}02\\,u$ (với $1\\,u=931{,}5$ MeV/c²). Năng lượng toả ra, làm tròn đến hàng phần mười (MeV), là bao nhiêu?",
+    "answer": "18,6",
+    "explanation": "$E=0{,}02\\cdot 931{,}5=18{,}63\\approx 18{,}6$ MeV.",
+    "tags": [
+      "năng lượng phản ứng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Một chất phóng xạ có hoạt độ ban đầu $3{,}2\\cdot10^{6}$ Bq và chu kì bán rã 6 ngày. Sau 18 ngày, hoạt độ của mẫu là $a\\cdot10^{5}$ Bq. Giá trị của $a$ là bao nhiêu?",
+    "answer": "4",
+    "explanation": "$18=3T$: $H=3{,}2\\cdot10^{6}\\cdot\\frac{1}{8}=4\\cdot10^{5}$ Bq.",
+    "tags": [
+      "hoạt độ phóng xạ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Một mẫu gỗ cổ chỉ còn 12,5% lượng cacbon $^{14}C$ so với gỗ mới ($T=5730$ năm). Tuổi của mẫu gỗ, làm tròn đến hàng phần mười (nghìn năm), là bao nhiêu?",
+    "answer": "17,2",
+    "explanation": "Còn $\\frac{1}{8}=2^{-3}$ nên $t=3T=17190$ năm $=17{,}2$ nghìn năm.",
+    "tags": [
+      "định tuổi"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "subject": "Vật lí",
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Phản ứng $^2_1\\text{H}+\\,^2_1\\text{H}\\to\\,^3_2\\text{He}+\\,^1_0n$ có độ hụt khối $\\Delta m=0{,}0035\\,u$. Năng lượng toả ra, làm tròn đến hàng phần mười (MeV), là bao nhiêu?",
+    "answer": "3,3",
+    "explanation": "$E=0{,}0035\\cdot 931{,}5\\approx 3{,}26\\approx 3{,}3$ MeV.",
+    "tags": [
+      "phản ứng nhiệt hạch"
+    ]
+  }
+]

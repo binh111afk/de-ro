@@ -1,0 +1,779 @@
+[
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Cho hình chóp $S.ABCD$ có đáy $ABCD$ là hình vuông cạnh $a$, cạnh bên $SA$ vuông góc với mặt phẳng $(ABCD)$ và $SA=a\\sqrt{2}$ (như hình bên dưới). Góc giữa đường thẳng $SC$ và mặt phẳng $(ABCD)$ bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$45^\\circ$"
+      },
+      {
+        "key": "B",
+        "text": "$30^\\circ$"
+      },
+      {
+        "key": "C",
+        "text": "$60^\\circ$"
+      },
+      {
+        "key": "D",
+        "text": "$90^\\circ$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Vì $SA\\perp(ABCD)$ nên $AC$ là hình chiếu của $SC$ lên $(ABCD)$, góc cần tìm là $\\widehat{SCA}$. Ta có $AC=a\\sqrt2$ và $\\tan\\widehat{SCA}=\\dfrac{SA}{AC}=\\dfrac{a\\sqrt2}{a\\sqrt2}=1$, suy ra $\\widehat{SCA}=45^\\circ$.",
+    "tags": [
+      "quan hệ vuông góc",
+      "góc giữa đường thẳng và mặt phẳng",
+      "hình chóp"
+    ],
+    "figure": {
+      "kind": "geo3d",
+      "shape": "pyramid4-sa",
+      "names": [
+        "S",
+        "A",
+        "B",
+        "C",
+        "D",
+        "O"
+      ],
+      "height": false,
+      "diagonals": false
+    }
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "NB",
+    "prompt": "Cho hình lập phương $ABCD.A'B'C'D'$ có cạnh bằng $3$ cm (như hình bên dưới). Độ dài đoạn thẳng $AC'$ bằng bao nhiêu centimét? Kết quả làm tròn đến hàng phần mười.",
+    "answer": "5,2",
+    "explanation": "$AC'^2=AB^2+AD^2+AA'^2=27$ nên $AC'=3\\sqrt3\\approx 5{,}196$, làm tròn được $5{,}2$.",
+    "tags": [
+      "quan hệ vuông góc",
+      "đường chéo hình lập phương"
+    ],
+    "figure": {
+      "kind": "geo3d",
+      "shape": "cube",
+      "names": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "A'",
+        "B'",
+        "C'",
+        "D'"
+      ],
+      "height": false,
+      "diagonals": false
+    }
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "NB",
+    "prompt": "Cho hình lăng trụ đứng $ABC.A'B'C'$ có đáy $ABC$ là tam giác vuông tại $A$. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$AA'\\perp AB$"
+      },
+      {
+        "key": "b",
+        "text": "$(ABC)\\perp(ABB'A')$"
+      },
+      {
+        "key": "c",
+        "text": "$AC'\\perp BC$"
+      },
+      {
+        "key": "d",
+        "text": "$A'B'\\perp(ACC'A')$"
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) Đúng, vì lăng trụ đứng có $AA'\\perp(ABC)$ nên $AA'\\perp AB$. b) Đúng, vì $(ABB'A')$ chứa $AA'\\perp(ABC)$ nên hai mặt phẳng vuông góc. c) Sai: $\\overrightarrow{AC'}\\cdot\\overrightarrow{BC}=AC^2\\neq 0$ (ví dụ $AB=AC=AA'=1$ cho tích bằng $1$). d) Đúng, vì $A'B'\\perp A'C'$ và $A'B'\\perp AA'$ nên $A'B'\\perp(ACC'A')$.",
+    "tags": [
+      "quan hệ vuông góc",
+      "lăng trụ đứng"
+    ],
+    "figure": null
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Cho hình chóp $S.ABC$ có $SA\\perp(ABC)$, tam giác $ABC$ vuông tại $B$ với $AB=3$, $BC=4$ và $SA=6$ (như hình bên dưới). Khoảng cách từ điểm $A$ đến mặt phẳng $(SBC)$ bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\dfrac{3\\sqrt5}{5}$"
+      },
+      {
+        "key": "B",
+        "text": "$\\dfrac{6\\sqrt2}{5}$"
+      },
+      {
+        "key": "C",
+        "text": "$\\dfrac{12\\sqrt5}{5}$"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{6\\sqrt5}{5}$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Ta có $BC\\perp AB$ và $BC\\perp SA$ nên $BC\\perp(SAB)$, suy ra $(SBC)\\perp(SAB)$ theo giao tuyến $SB$. Kẻ $AH\\perp SB$ thì $AH\\perp(SBC)$. Trong tam giác vuông $SAB$ có $SB=\\sqrt{SA^2+AB^2}=3\\sqrt5$, nên $AH=\\dfrac{SA\\cdot AB}{SB}=\\dfrac{18}{3\\sqrt5}=\\dfrac{6\\sqrt5}{5}$.",
+    "tags": [
+      "khoảng cách",
+      "từ điểm đến mặt phẳng",
+      "hình chóp"
+    ],
+    "figure": {
+      "kind": "geo3d",
+      "shape": "pyramid3-sa",
+      "names": [
+        "S",
+        "A",
+        "B",
+        "C"
+      ],
+      "height": false,
+      "diagonals": false
+    }
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Cho hình chóp $S.ABC$ có đáy $ABC$ là tam giác đều cạnh $6$ cm, cạnh bên $SA$ vuông góc với mặt phẳng $(ABC)$ và $SA=4$ cm. Thể tích khối chóp $S.ABC$ bằng bao nhiêu centimét khối? Kết quả làm tròn đến hàng phần mười.",
+    "answer": "20,8",
+    "explanation": "$S_{ABC}=\\dfrac{6^2\\sqrt3}{4}=9\\sqrt3$. Thể tích $V=\\dfrac13\\cdot 9\\sqrt3\\cdot 4=12\\sqrt3\\approx 20{,}78$, làm tròn được $20{,}8$.",
+    "tags": [
+      "thể tích",
+      "khối chóp"
+    ],
+    "figure": null
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Một bể nước có dạng hình lăng trụ đứng, đáy là tam giác vuông với hai cạnh góc vuông bằng $3$ m và $4$ m, chiều cao của bể bằng $2{,}5$ m. Thể tích tối đa mà bể có thể chứa được là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$15\\ \\text{m}^3$"
+      },
+      {
+        "key": "B",
+        "text": "$30\\ \\text{m}^3$"
+      },
+      {
+        "key": "C",
+        "text": "$7{,}5\\ \\text{m}^3$"
+      },
+      {
+        "key": "D",
+        "text": "$12\\ \\text{m}^3$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Diện tích đáy $S=\\dfrac12\\cdot3\\cdot4=6\\ \\text{m}^2$, thể tích $V=S\\cdot h=6\\cdot 2{,}5=15\\ \\text{m}^3$.",
+    "tags": [
+      "thể tích",
+      "lăng trụ",
+      "bài thực tế"
+    ],
+    "figure": null
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Cho hình chóp $S.ABCD$ có đáy $ABCD$ là hình vuông cạnh $a$, cạnh bên $SA$ vuông góc với mặt phẳng $(ABCD)$ và $SA=a\\sqrt2$. Gọi $\\varphi$ là số đo góc nhị diện $[S,BC,A]$. Khẳng định nào đúng?",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\tan\\varphi=\\dfrac{\\sqrt2}{2}$"
+      },
+      {
+        "key": "B",
+        "text": "$\\varphi=45^\\circ$"
+      },
+      {
+        "key": "C",
+        "text": "$\\varphi=60^\\circ$"
+      },
+      {
+        "key": "D",
+        "text": "$\\tan\\varphi=\\sqrt2$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Ta có $BC\\perp AB$ và $BC\\perp SA$ nên $BC\\perp(SAB)$, do đó $BC\\perp SB$. Góc nhị diện $[S,BC,A]$ có số đo bằng $\\widehat{SBA}$. Trong tam giác vuông $SAB$: $\\tan\\widehat{SBA}=\\dfrac{SA}{AB}=\\dfrac{a\\sqrt2}{a}=\\sqrt2$.",
+    "tags": [
+      "góc nhị diện",
+      "hình chóp"
+    ],
+    "figure": null
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Cho hình hộp chữ nhật $ABCD.A'B'C'D'$ có $AB=2$, $AD=2$, $AA'=4$ (như hình bên dưới). Gọi $M$ là trung điểm của $CC'$. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$AC'=2\\sqrt6$"
+      },
+      {
+        "key": "b",
+        "text": "Góc giữa $AM$ và $(ABCD)$ bằng $45^\\circ$"
+      },
+      {
+        "key": "c",
+        "text": "Khoảng cách từ $A$ đến mặt phẳng $(A'BD)$ bằng $\\dfrac43$"
+      },
+      {
+        "key": "d",
+        "text": "Thể tích khối tứ diện $AA'BD$ bằng $\\dfrac83$"
+      }
+    ],
+    "answer": "ĐSĐĐ",
+    "explanation": "Chọn hệ tọa độ $A(0;0;0)$, $B(2;0;0)$, $D(0;2;0)$, $A'(0;0;4)$, $C'(2;2;4)$, $M(2;2;2)$. a) Đúng: $AC'=\\sqrt{4+4+16}=2\\sqrt6$. b) Sai: $\\overrightarrow{AM}=(2;2;2)$, hình chiếu có độ dài $2\\sqrt2$ nên $\\tan\\alpha=\\dfrac{2}{2\\sqrt2}=\\dfrac{\\sqrt2}{2}$, không phải $45^\\circ$. c) Đúng: $(A'BD)$ có phương trình $2x+2y+z-4=0$, khoảng cách từ $A$ là $\\dfrac{4}{3}$. d) Đúng: $V=\\dfrac16\\left|\\overrightarrow{AA'}\\cdot(\\overrightarrow{AB}\\times\\overrightarrow{AD})\\right|=\\dfrac16\\cdot 16=\\dfrac83$.",
+    "tags": [
+      "véc-tơ",
+      "khoảng cách",
+      "góc",
+      "hình hộp chữ nhật"
+    ],
+    "figure": {
+      "kind": "geo3d",
+      "shape": "box",
+      "names": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "A'",
+        "B'",
+        "C'",
+        "D'"
+      ],
+      "height": false,
+      "diagonals": false
+    }
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Cho hình chóp $S.ABC$ có đáy $ABC$ là tam giác đều cạnh $4$ cm, $SA\\perp(ABC)$ và góc giữa mặt phẳng $(SBC)$ với mặt phẳng $(ABC)$ bằng $30^\\circ$. Khoảng cách từ $A$ đến mặt phẳng $(SBC)$ bằng bao nhiêu centimét? Kết quả làm tròn đến hàng phần mười.",
+    "answer": "1,7",
+    "explanation": "Gọi $M$ là trung điểm $BC$, $AM=2\\sqrt3$. Vì $BC\\perp(SAM)$ nên góc giữa $(SBC)$ và $(ABC)$ là $\\widehat{SMA}=30^\\circ$, suy ra $SA=AM\\tan30^\\circ=2$ và $SM=\\sqrt{SA^2+AM^2}=4$. Kẻ $AH\\perp SM$ thì $AH\\perp(SBC)$, nên $AH=\\dfrac{SA\\cdot AM}{SM}=\\dfrac{2\\cdot2\\sqrt3}{4}=\\sqrt3\\approx1{,}73$, làm tròn được $1{,}7$.",
+    "tags": [
+      "khoảng cách",
+      "góc nhị diện",
+      "hình chóp"
+    ],
+    "figure": null
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Cho hình lập phương $ABCD.A'B'C'D'$ có cạnh bằng $6$ cm. Khoảng cách giữa hai đường thẳng $AB'$ và $BC'$ bằng bao nhiêu centimét? Kết quả làm tròn đến hàng phần mười.",
+    "answer": "3,5",
+    "explanation": "Chọn hệ tọa độ $A(0;0;0)$, $B(6;0;0)$, $D(0;6;0)$, $A'(0;0;6)$. Khi đó $\\overrightarrow{AB'}=(6;0;6)$, $\\overrightarrow{BC'}=(0;6;6)$, và $\\vec n=(1;1;-1)$ vuông góc cả hai. Khoảng cách $d=\\dfrac{|\\overrightarrow{AB}\\cdot\\vec n|}{|\\vec n|}=\\dfrac{6}{\\sqrt3}=2\\sqrt3\\approx 3{,}46$, làm tròn được $3{,}5$.",
+    "tags": [
+      "khoảng cách giữa hai đường thẳng chéo nhau",
+      "hình lập phương"
+    ],
+    "figure": null
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Cho hình hộp $ABCD.A'B'C'D'$. Gọi $G$ là trọng tâm tam giác $A'BD$. Biết $\\overrightarrow{AG}=k\\,\\overrightarrow{AC'}$, giá trị của $k$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\dfrac12$"
+      },
+      {
+        "key": "B",
+        "text": "$\\dfrac13$"
+      },
+      {
+        "key": "C",
+        "text": "$\\dfrac23$"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac14$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Vì $G$ là trọng tâm tam giác $A'BD$ nên $\\overrightarrow{AG}=\\dfrac13\\left(\\overrightarrow{AA'}+\\overrightarrow{AB}+\\overrightarrow{AD}\\right)$. Theo quy tắc hình hộp, $\\overrightarrow{AC'}=\\overrightarrow{AB}+\\overrightarrow{AD}+\\overrightarrow{AA'}$. Do đó $\\overrightarrow{AG}=\\dfrac13\\overrightarrow{AC'}$, suy ra $k=\\dfrac13$.",
+    "tags": [
+      "véc-tơ trong không gian",
+      "trọng tâm"
+    ],
+    "figure": null
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Một chiếc lều có dạng hình chóp tứ giác đều $S.ABCD$, đáy là hình vuông cạnh $2$ m, các cạnh bên đều dài $3$ m (như hình bên dưới). Chiều cao $SO$ của lều bằng bao nhiêu mét? Kết quả làm tròn đến hàng phần trăm.",
+    "answer": "2,65",
+    "explanation": "$AC=2\\sqrt2$ nên $OA=\\sqrt2$. Trong tam giác vuông $SOA$: $SO=\\sqrt{SA^2-OA^2}=\\sqrt{9-2}=\\sqrt7\\approx 2{,}6458$, làm tròn được $2{,}65$.",
+    "tags": [
+      "bài thực tế",
+      "chóp tứ giác đều"
+    ],
+    "figure": {
+      "kind": "geo3d",
+      "shape": "pyramid4-regular",
+      "names": [
+        "S",
+        "A",
+        "B",
+        "C",
+        "D",
+        "O"
+      ],
+      "height": true,
+      "diagonals": false
+    }
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Cho hình chóp $S.ABC$ có $SA\\perp(ABC)$, tam giác $ABC$ vuông cân tại $B$ và $SA=2AB$. Biết khoảng cách từ $A$ đến mặt phẳng $(SBC)$ bằng $2$ cm. Thể tích khối chóp $S.ABC$ bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\dfrac{10\\sqrt5}{3}\\ \\text{cm}^3$"
+      },
+      {
+        "key": "B",
+        "text": "$\\dfrac{5\\sqrt5}{3}\\ \\text{cm}^3$"
+      },
+      {
+        "key": "C",
+        "text": "$5\\sqrt5\\ \\text{cm}^3$"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{5\\sqrt5}{6}\\ \\text{cm}^3$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Đặt $AB=BC=x$, $SA=2x$. Vì $BC\\perp AB$ và $BC\\perp SA$ nên $BC\\perp(SAB)$; khoảng cách từ $A$ đến $(SBC)$ là $AH$ với $H$ là hình chiếu của $A$ lên $SB$: $AH=\\dfrac{SA\\cdot AB}{SB}=\\dfrac{2x^2}{x\\sqrt5}=\\dfrac{2x}{\\sqrt5}$. Từ $\\dfrac{2x}{\\sqrt5}=2$ suy ra $x=\\sqrt5$, $SA=2\\sqrt5$. Thể tích $V=\\dfrac13\\cdot\\dfrac{x^2}{2}\\cdot SA=\\dfrac13\\cdot\\dfrac52\\cdot2\\sqrt5=\\dfrac{5\\sqrt5}{3}$.",
+    "tags": [
+      "thể tích",
+      "khoảng cách",
+      "hình chóp"
+    ],
+    "figure": null
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Cho hình chóp đều $S.ABC$ có cạnh đáy bằng $6$ và cạnh bên bằng $5$; $O$ là tâm tam giác $ABC$ (như hình bên dưới). Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$SO=\\sqrt{13}$"
+      },
+      {
+        "key": "b",
+        "text": "Côsin của góc giữa $SA$ và $(ABC)$ bằng $\\dfrac{\\sqrt3}{5}$"
+      },
+      {
+        "key": "c",
+        "text": "Khoảng cách từ $O$ đến mặt phẳng $(SBC)$ bằng $\\dfrac{\\sqrt{39}}{4}$"
+      },
+      {
+        "key": "d",
+        "text": "Côsin của góc giữa $(SBC)$ và $(ABC)$ bằng $\\dfrac{\\sqrt3}{4}$"
+      }
+    ],
+    "answer": "ĐSĐĐ",
+    "explanation": "$OA=\\dfrac{6}{\\sqrt3}=2\\sqrt3$ nên $SO=\\sqrt{25-12}=\\sqrt{13}$: a) Đúng. b) Sai: $\\cos\\widehat{SAO}=\\dfrac{OA}{SA}=\\dfrac{2\\sqrt3}{5}$. Gọi $M$ là trung điểm $BC$: $OM=\\sqrt3$, $SM=\\sqrt{SB^2-BM^2}=4$. c) Đúng: $d(O,(SBC))=\\dfrac{SO\\cdot OM}{SM}=\\dfrac{\\sqrt{13}\\cdot\\sqrt3}{4}=\\dfrac{\\sqrt{39}}{4}$. d) Đúng: góc giữa $(SBC)$ và $(ABC)$ là $\\widehat{SMO}$, có $\\cos\\widehat{SMO}=\\dfrac{OM}{SM}=\\dfrac{\\sqrt3}{4}$.",
+    "tags": [
+      "khoảng cách",
+      "góc",
+      "hình chóp đều"
+    ],
+    "figure": {
+      "kind": "geo3d",
+      "shape": "pyramid3-regular",
+      "names": [
+        "S",
+        "A",
+        "B",
+        "C",
+        "O"
+      ],
+      "height": true,
+      "diagonals": false
+    }
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Cho hình hộp chữ nhật $ABCD.A'B'C'D'$ có $AB=2$, $AD=3$, $AA'=6$. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$AC'=7$"
+      },
+      {
+        "key": "b",
+        "text": "$\\overrightarrow{AC'}\\perp\\overrightarrow{BD'}$"
+      },
+      {
+        "key": "c",
+        "text": "$\\cos\\left(\\overrightarrow{AC'},\\overrightarrow{AB}\\right)=\\dfrac27$"
+      },
+      {
+        "key": "d",
+        "text": "$\\overrightarrow{AC'}\\cdot\\overrightarrow{AD}=6$"
+      }
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "Chọn $\\overrightarrow{AB},\\overrightarrow{AD},\\overrightarrow{AA'}$ làm cơ sở vuông góc đôi một với tọa độ $\\overrightarrow{AC'}=(2;3;6)$, $\\overrightarrow{BD'}=(-2;3;6)$, $\\overrightarrow{AB}=(2;0;0)$, $\\overrightarrow{AD}=(0;3;0)$. a) Đúng: $|\\overrightarrow{AC'}|=\\sqrt{4+9+36}=7$. b) Sai: $\\overrightarrow{AC'}\\cdot\\overrightarrow{BD'}=-4+9+36=41\\neq0$. c) Đúng: $\\cos=\\dfrac{4}{7\\cdot2}=\\dfrac27$. d) Sai: $\\overrightarrow{AC'}\\cdot\\overrightarrow{AD}=9$.",
+    "tags": [
+      "véc-tơ trong không gian",
+      "tích vô hướng"
+    ],
+    "figure": null
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Mái của một chiếc lều có dạng hình chóp tứ giác đều $S.ABCD$ với đáy là hình vuông cạnh $4$ m, các cạnh bên dài $4$ m; $O$ là tâm đáy (như hình bên dưới). Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Chiều cao $SO=2\\sqrt3$ m"
+      },
+      {
+        "key": "b",
+        "text": "Góc giữa cạnh bên $SA$ và mặt đáy bằng $45^\\circ$"
+      },
+      {
+        "key": "c",
+        "text": "Côsin của góc giữa mặt bên $(SAB)$ và mặt đáy bằng $\\dfrac{2}{\\sqrt3}$"
+      },
+      {
+        "key": "d",
+        "text": "Diện tích xung quanh của lều bằng $16\\sqrt3$ m$^2$"
+      }
+    ],
+    "answer": "SĐSĐ",
+    "explanation": "$OA=2\\sqrt2$, $SO=\\sqrt{16-8}=2\\sqrt2$. a) Sai, $SO=2\\sqrt2$. b) Đúng: tam giác $SOA$ vuông cân tại $O$ nên góc $\\widehat{SAO}=45^\\circ$. c) Sai: gọi $M$ là trung điểm $AB$, $OM=2$, $SM=\\sqrt{SO^2+OM^2}=2\\sqrt3$, $\\cos\\widehat{SMO}=\\dfrac{OM}{SM}=\\dfrac{1}{\\sqrt3}$. d) Đúng: $S_{xq}=4\\cdot\\dfrac12\\cdot4\\cdot2\\sqrt3=16\\sqrt3$ m$^2$.",
+    "tags": [
+      "bài thực tế",
+      "chóp tứ giác đều",
+      "góc"
+    ],
+    "figure": {
+      "kind": "geo3d",
+      "shape": "pyramid4-regular",
+      "names": [
+        "S",
+        "A",
+        "B",
+        "C",
+        "D",
+        "O"
+      ],
+      "height": true,
+      "diagonals": false
+    }
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Cho hình chóp $S.ABCD$ có đáy $ABCD$ là hình vuông cạnh $a$, cạnh bên $SA$ vuông góc với mặt phẳng đáy và $SA=a$ (như hình bên dưới). Số đo góc nhị diện $[B,SC,D]$ bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$60^\\circ$"
+      },
+      {
+        "key": "B",
+        "text": "$90^\\circ$"
+      },
+      {
+        "key": "C",
+        "text": "$120^\\circ$"
+      },
+      {
+        "key": "D",
+        "text": "$\\arccos\\dfrac13$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Chọn $a=1$ và tọa độ $A(0;0;0)$, $B(1;0;0)$, $D(0;1;0)$, $C(1;1;0)$, $S(0;0;1)$. Hạ $BI\\perp SC$ và $DI\\perp SC$ với cùng chân $I=\\left(\\tfrac23;\\tfrac23;\\tfrac13\\right)$ (đối xứng qua mặt $SAC$). Khi đó $\\overrightarrow{IB}=\\left(\\tfrac13;-\\tfrac23;-\\tfrac13\\right)$, $\\overrightarrow{ID}=\\left(-\\tfrac23;\\tfrac13;-\\tfrac13\\right)$, $\\cos\\widehat{BID}=\\dfrac{-\\frac13}{\\frac23}=-\\dfrac12$. Vậy góc nhị diện bằng $120^\\circ$. Kết quả không phụ thuộc $a$.",
+    "tags": [
+      "góc nhị diện",
+      "hình chóp"
+    ],
+    "figure": {
+      "kind": "geo3d",
+      "shape": "pyramid4-sa",
+      "names": [
+        "S",
+        "A",
+        "B",
+        "C",
+        "D",
+        "O"
+      ],
+      "height": false,
+      "diagonals": false
+    }
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Cho hình chóp $S.ABCD$ có đáy $ABCD$ là hình vuông cạnh $3$ cm, cạnh bên $SA$ vuông góc với mặt phẳng đáy và $SA=4$ cm (như hình bên dưới). Khoảng cách giữa hai đường thẳng $BD$ và $SC$ bằng bao nhiêu centimét? Kết quả làm tròn đến hàng phần trăm.",
+    "answer": "1,46",
+    "explanation": "Chọn $A(0;0;0)$, $B(3;0;0)$, $D(0;3;0)$, $C(3;3;0)$, $S(0;0;4)$. Vectơ $\\vec n=(2;2;3)$ vuông góc cả $BD$ và $SC$. Với $\\overrightarrow{BS}=(-3;0;4)$: $d=\\dfrac{|\\overrightarrow{BS}\\cdot\\vec n|}{|\\vec n|}=\\dfrac{6}{\\sqrt{17}}\\approx1{,}455$, làm tròn được $1{,}46$.",
+    "tags": [
+      "khoảng cách giữa hai đường thẳng chéo nhau",
+      "phương pháp tọa độ"
+    ],
+    "figure": {
+      "kind": "geo3d",
+      "shape": "pyramid4-sa",
+      "names": [
+        "S",
+        "A",
+        "B",
+        "C",
+        "D",
+        "O"
+      ],
+      "height": false,
+      "diagonals": false
+    }
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Cho tứ diện $ABCD$ có $AB=4$, $CD=6$, khoảng cách giữa hai đường thẳng $AB$ và $CD$ bằng $2$, góc giữa hai đường thẳng $AB$ và $CD$ bằng $60^\\circ$. Thể tích khối tứ diện $ABCD$ bằng bao nhiêu? Kết quả làm tròn đến hàng phần mười.",
+    "answer": "6,9",
+    "explanation": "Thể tích tứ diện: $V=\\dfrac16\\cdot AB\\cdot CD\\cdot d(AB,CD)\\cdot\\sin\\varphi$ với $\\varphi$ là góc giữa $AB$ và $CD$. Do đó $V=\\dfrac16\\cdot4\\cdot6\\cdot2\\cdot\\dfrac{\\sqrt3}{2}=4\\sqrt3\\approx6{,}93$, làm tròn được $6{,}9$.",
+    "tags": [
+      "thể tích",
+      "tứ diện",
+      "khoảng cách giữa hai đường thẳng chéo nhau"
+    ],
+    "figure": null
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Người ta làm một bể nước có nắp dạng hình hộp chữ nhật, đáy là hình vuông cạnh $x$ (m), chiều cao $h$ (m), thể tích bể bằng $32\\ \\text{m}^3$. Để tổng diện tích toàn phần của bể nhỏ nhất thì $x$ bằng bao nhiêu mét? Kết quả làm tròn đến hàng phần mười.",
+    "answer": "3,2",
+    "explanation": "Từ $x^2h=32$ suy ra $h=\\dfrac{32}{x^2}$. Diện tích toàn phần $S_{tp}=2x^2+4xh=2x^2+\\dfrac{128}{x}$. Ta có $S'=4x-\\dfrac{128}{x^2}=0\\Leftrightarrow x^3=32$, suy ra $x=2\\sqrt[3]{4}\\approx3{,}17$, làm tròn được $3{,}2$.",
+    "tags": [
+      "ứng dụng đạo hàm",
+      "bài thực tế",
+      "hình hộp chữ nhật"
+    ],
+    "figure": null
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Cho hình chóp $S.ABC$ có $SA\\perp(ABC)$, tam giác $ABC$ vuông tại $C$ với $AC=3$, $BC=4$ và $SA=4$. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$BC\\perp(SAB)$"
+      },
+      {
+        "key": "b",
+        "text": "Khoảng cách từ $A$ đến mặt phẳng $(SBC)$ bằng $\\dfrac{12}{5}$"
+      },
+      {
+        "key": "c",
+        "text": "Khoảng cách giữa hai đường thẳng $SB$ và $AC$ bằng $2\\sqrt2$"
+      },
+      {
+        "key": "d",
+        "text": "$\\tan$ của góc giữa $(SBC)$ và $(ABC)$ bằng $\\dfrac45$"
+      }
+    ],
+    "answer": "SĐĐS",
+    "explanation": "Chọn $C(0;0;0)$, $A(3;0;0)$, $B(0;4;0)$, $S(3;0;4)$. a) Sai: $BC\\perp AC$ và $BC\\perp SA$ nên $BC\\perp(SAC)$, nhưng $BC$ không vuông góc $AB$ (tam giác $ABC$ không vuông tại $B$) nên không vuông góc $(SAB)$. b) Đúng: $BC\\perp(SAC)$ nên $(SBC)\\perp(SAC)$ theo $SC$; kẻ $AH\\perp SC$ thì $d=AH=\\dfrac{SA\\cdot AC}{SC}=\\dfrac{12}{5}$ với $SC=5$. c) Đúng: $\\vec n=(0;1;1)$ vuông góc $\\overrightarrow{AC}$ và $\\overrightarrow{SB}$, nên $d=\\dfrac{|\\overrightarrow{CB}\\cdot\\vec n|}{|\\vec n|}=\\dfrac{4}{\\sqrt2}=2\\sqrt2$. d) Sai: vì $BC\\perp AC$ và $BC\\perp SC$, góc nhị diện có tang bằng $\\dfrac{SA}{AC}=\\dfrac43$.",
+    "tags": [
+      "khoảng cách",
+      "góc nhị diện",
+      "hình chóp"
+    ],
+    "figure": null
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Cho lăng trụ đứng $ABC.A'B'C'$ có đáy $ABC$ là tam giác vuông cân tại $A$, $AB=AC=x$, $AA'=2x$. Biết khoảng cách từ $A$ đến mặt phẳng $(A'BC)$ bằng $2$. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$x=3$"
+      },
+      {
+        "key": "b",
+        "text": "Thể tích khối lăng trụ $ABC.A'B'C'$ bằng $27$"
+      },
+      {
+        "key": "c",
+        "text": "Khoảng cách từ $B$ đến mặt phẳng $(AA'C)$ bằng $6$"
+      },
+      {
+        "key": "d",
+        "text": "Khoảng cách từ $A'$ đến mặt phẳng $(ABC)$ bằng $3$"
+      }
+    ],
+    "answer": "ĐĐSS",
+    "explanation": "Chọn $A(0;0;0)$, $B(x;0;0)$, $C(0;x;0)$, $A'(0;0;2x)$. Mặt phẳng $(A'BC)$ có phương trình $2X+2Y+Z=2x$, nên $d(A,(A'BC))=\\dfrac{2x}{3}=2$, suy ra $x=3$. a) Đúng. b) Đúng: $V=\\dfrac12\\cdot3\\cdot3\\cdot6=27$. c) Sai: $(AA'C)$ là mặt phẳng $x=0$ nên $d(B,(AA'C))=x=3$. d) Sai: $d(A',(ABC))=AA'=6$.",
+    "tags": [
+      "khoảng cách",
+      "lăng trụ đứng",
+      "thể tích"
+    ],
+    "figure": null
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Cho hình hộp chữ nhật $ABCD.A'B'C'D'$ có $AB=3$, $AD=4$, $AA'=12$. Góc giữa đường thẳng $AC'$ và mặt phẳng $(ABCD)$ bằng bao nhiêu độ? Kết quả làm tròn đến hàng đơn vị.",
+    "answer": "67",
+    "explanation": "Hình chiếu của $AC'$ lên $(ABCD)$ là $AC$ với $AC=\\sqrt{3^2+4^2}=5$. Góc cần tìm là $\\widehat{C'AC}$ với $\\tan\\widehat{C'AC}=\\dfrac{CC'}{AC}=\\dfrac{12}{5}$, suy ra $\\widehat{C'AC}\\approx67{,}38^\\circ$, làm tròn được $67$.",
+    "tags": [
+      "góc giữa đường thẳng và mặt phẳng",
+      "hình hộp chữ nhật"
+    ],
+    "figure": null
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Cho hình chóp $S.ABCD$ có đáy $ABCD$ là hình vuông cạnh $a$, $SA\\perp(ABCD)$ và $SA=a$. Gọi $\\alpha$ là góc giữa đường thẳng $SC$ và mặt phẳng $(SBD)$. Giá trị $\\sin\\alpha$ bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\dfrac{\\sqrt3}{3}$"
+      },
+      {
+        "key": "B",
+        "text": "$\\dfrac23$"
+      },
+      {
+        "key": "C",
+        "text": "$\\dfrac13$"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{\\sqrt2}{3}$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Chọn $a=1$, $A(0;0;0)$, $B(1;0;0)$, $D(0;1;0)$, $C(1;1;0)$, $S(0;0;1)$. Mặt phẳng $(SBD)$ có phương trình $x+y+z-1=0$, vectơ pháp tuyến $\\vec n=(1;1;1)$. Với $\\overrightarrow{SC}=(1;1;-1)$: $\\sin\\alpha=\\dfrac{|\\vec n\\cdot\\overrightarrow{SC}|}{|\\vec n|\\,|\\overrightarrow{SC}|}=\\dfrac{1}{3}$.",
+    "tags": [
+      "góc giữa đường thẳng và mặt phẳng",
+      "phương pháp tọa độ"
+    ],
+    "figure": null
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Cho hình lăng trụ đứng $ABC.A'B'C'$ có đáy $ABC$ là tam giác đều cạnh $2$. Biết khoảng cách từ $A$ đến mặt phẳng $(A'BC)$ bằng $\\dfrac{\\sqrt6}{2}$. Thể tích khối lăng trụ $ABC.A'B'C'$ bằng bao nhiêu?",
+    "answer": "3",
+    "explanation": "Gọi $M$ là trung điểm $BC$, $AM=\\sqrt3$. Vì $BC\\perp(AA'M)$ nên $d(A,(A'BC))=AH$ với $H$ là hình chiếu của $A$ lên $A'M$. Đặt $AA'=h$: $AH=\\dfrac{h\\sqrt3}{\\sqrt{h^2+3}}=\\dfrac{\\sqrt6}{2}$, suy ra $h^2=3$, $h=\\sqrt3$. Thể tích $V=S_{ABC}\\cdot h=\\sqrt3\\cdot\\sqrt3=3$.",
+    "tags": [
+      "thể tích",
+      "lăng trụ đứng",
+      "khoảng cách"
+    ],
+    "figure": null
+  }
+]

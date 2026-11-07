@@ -1,0 +1,696 @@
+[
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Trong không gian $Oxyz$, cho $\\vec{a}=(1;-2;3)$ và $\\vec{b}=(2;1;-1)$. Tích vô hướng $\\vec{a}\\cdot\\vec{b}$ bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$5$"
+      },
+      {
+        "key": "B",
+        "text": "$-3$"
+      },
+      {
+        "key": "C",
+        "text": "$3$"
+      },
+      {
+        "key": "D",
+        "text": "$-5$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$\\vec{a}\\cdot\\vec{b}=1\\cdot 2+(-2)\\cdot 1+3\\cdot(-1)=2-2-3=-3$.",
+    "tags": [
+      "Tọa độ véc-tơ",
+      "Tích vô hướng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Trong không gian $Oxyz$, khoảng cách từ điểm $M(1;2;-1)$ đến mặt phẳng $(P): 2x-y+2z-5=0$ bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\dfrac{7}{9}$"
+      },
+      {
+        "key": "B",
+        "text": "$\\dfrac{1}{3}$"
+      },
+      {
+        "key": "C",
+        "text": "$\\dfrac{7}{3}$"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{5}{3}$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "$d(M,(P))=\\dfrac{|2\\cdot 1-2+2\\cdot(-1)-5|}{\\sqrt{2^2+(-1)^2+2^2}}=\\dfrac{|-7|}{3}=\\dfrac{7}{3}$.",
+    "tags": [
+      "Khoảng cách",
+      "Mặt phẳng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Trong không gian $Oxyz$, mặt phẳng $(\\alpha)$ đi qua điểm $M(1;2;3)$ và song song với giá của hai vectơ $\\vec{a}=(1;0;2)$, $\\vec{b}=(0;1;-1)$. Phương trình của $(\\alpha)$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$2x-y-z-3=0$"
+      },
+      {
+        "key": "B",
+        "text": "$x+2y+3z-12=0$"
+      },
+      {
+        "key": "C",
+        "text": "$2x+y+z-7=0$"
+      },
+      {
+        "key": "D",
+        "text": "$2x-y-z+3=0$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "$\\vec{n}=[\\vec{a},\\vec{b}]=(-2;1;1)$ là véc-tơ pháp tuyến của $(\\alpha)$. Phương trình: $-2(x-1)+(y-2)+(z-3)=0\\Leftrightarrow 2x-y-z+3=0$.",
+    "tags": [
+      "Phương trình mặt phẳng",
+      "Tích có hướng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Trong không gian $Oxyz$, cho mặt cầu $(S):(x-1)^2+(y+2)^2+(z-3)^2=16$ có tâm $I$ như hình bên dưới, và mặt phẳng $(P): x+2y-2z+1=0$. Bán kính đường tròn giao tuyến của $(P)$ và $(S)$ bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\dfrac{4\\sqrt{5}}{3}$"
+      },
+      {
+        "key": "B",
+        "text": "$\\dfrac{8\\sqrt{5}}{3}$"
+      },
+      {
+        "key": "C",
+        "text": "$\\dfrac{4\\sqrt{3}}{3}$"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{2\\sqrt{5}}{3}$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "$I(1;-2;3)$, $R=4$. $d(I,(P))=\\dfrac{|1-4-6+1|}{3}=\\dfrac{8}{3}$. Bán kính đường tròn: $r=\\sqrt{R^2-d^2}=\\sqrt{16-\\dfrac{64}{9}}=\\dfrac{4\\sqrt{5}}{3}$.",
+    "tags": [
+      "Mặt cầu",
+      "Giao tuyến"
+    ],
+    "figure": {
+      "kind": "geo3d",
+      "shape": "sphere",
+      "names": [
+        "I"
+      ],
+      "height": false,
+      "diagonals": false
+    }
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Trong không gian $Oxyz$, cho hai mặt phẳng $(\\alpha): x+y+z-1=0$ và $(\\beta): x-y+2z=0$. Côsin của góc giữa $(\\alpha)$ và $(\\beta)$ bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\dfrac{2}{3}$"
+      },
+      {
+        "key": "B",
+        "text": "$\\dfrac{\\sqrt{2}}{3}$"
+      },
+      {
+        "key": "C",
+        "text": "$\\dfrac{\\sqrt{3}}{3}$"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{1}{3}$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$\\cos\\varphi=\\dfrac{|1\\cdot 1+1\\cdot(-1)+1\\cdot 2|}{\\sqrt{3}\\cdot\\sqrt{6}}=\\dfrac{2}{\\sqrt{18}}=\\dfrac{\\sqrt{2}}{3}$.",
+    "tags": [
+      "Góc giữa hai mặt phẳng",
+      "Mặt phẳng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Trong không gian $Oxyz$ (đơn vị km), drone $A$ bay theo phương trình $\\vec{r}_A(t)=(1+2t;\\,3-t;\\,2+2t)$ và drone $B$ bay theo $\\vec{r}_B(t)=(4-t;\\,1+t;\\,5-2t)$, với $t\\ge 0$ là thời gian tính bằng giờ. Khoảng cách nhỏ nhất giữa hai drone trong quá trình bay bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\sqrt{\\dfrac{29}{13}}$ km"
+      },
+      {
+        "key": "B",
+        "text": "$\\dfrac{\\sqrt{13}}{29}$ km"
+      },
+      {
+        "key": "C",
+        "text": "$\\sqrt{\\dfrac{13}{29}}$ km"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{13}{29}$ km"
+      }
+    ],
+    "answer": "C",
+    "explanation": "$\\overrightarrow{AB}(t)=\\vec{r}_B(t)-\\vec{r}_A(t)=(3-3t;\\,2t-2;\\,3-4t)$, nên $AB^2(t)=29t^2-50t+22$. Hàm này đạt giá trị nhỏ nhất tại $t=\\dfrac{25}{29}$ (thỏa $t\\ge 0$), với $AB^2=\\dfrac{13}{29}$. Vậy khoảng cách nhỏ nhất là $\\sqrt{\\dfrac{13}{29}}$ km.",
+    "tags": [
+      "Khoảng cách",
+      "Bài toán thực tế",
+      "Véc-tơ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Trong không gian $Oxyz$, cho mặt cầu $(S): x^2+y^2+z^2-2x+4y-6z+5=0$. Mặt phẳng song song với $(Q): 2x-2y+z-1=0$ và tiếp xúc với $(S)$ có phương trình là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$2x-2y+z-9=0$"
+      },
+      {
+        "key": "B",
+        "text": "$2x-2y+z+9=0$"
+      },
+      {
+        "key": "C",
+        "text": "$2x-2y+z-18=0$"
+      },
+      {
+        "key": "D",
+        "text": "$2x-2y+z=0$ hoặc $2x-2y+z-18=0$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "$(S)$ có tâm $I(1;-2;3)$ và $R=3$. Mặt phẳng cần tìm có dạng $2x-2y+z+D=0$, với $\\dfrac{|2\\cdot 1-2\\cdot(-2)+3+D|}{3}=3\\Leftrightarrow |9+D|=9\\Leftrightarrow D=0$ hoặc $D=-18$.",
+    "tags": [
+      "Mặt cầu",
+      "Tiếp xúc"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Trong không gian $Oxyz$, đường thẳng $d$ có phương trình tham số $x=1+2t$, $y=-t$, $z=3+2t$, và mặt phẳng $(P): x+2y-2z+1=0$. Sin của góc giữa $d$ và $(P)$ bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\dfrac{4}{9}$"
+      },
+      {
+        "key": "B",
+        "text": "$\\dfrac{5}{9}$"
+      },
+      {
+        "key": "C",
+        "text": "$\\dfrac{2}{3}$"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{\\sqrt{5}}{3}$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "$\\vec{u}=(2;-1;2)$ là véc-tơ chỉ phương của $d$, $\\vec{n}=(1;2;-2)$ là véc-tơ pháp tuyến của $(P)$. $\\sin\\varphi=\\dfrac{|\\vec{u}\\cdot\\vec{n}|}{|\\vec{u}|\\cdot|\\vec{n}|}=\\dfrac{|-4|}{3\\cdot 3}=\\dfrac{4}{9}$.",
+    "tags": [
+      "Góc giữa đường thẳng và mặt phẳng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Trong không gian $Oxyz$, cho bốn điểm $A(1;0;0)$, $B(0;2;0)$, $C(0;0;3)$, $D(1;1;1)$. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$\\overrightarrow{AB}=(-1;2;0)$."
+      },
+      {
+        "key": "b",
+        "text": "$|\\overrightarrow{AC}|=10$."
+      },
+      {
+        "key": "c",
+        "text": "$\\overrightarrow{AB}\\cdot\\overrightarrow{AC}=-1$."
+      },
+      {
+        "key": "d",
+        "text": "Thể tích khối tứ diện $ABCD$ bằng $\\dfrac{5}{6}$."
+      }
+    ],
+    "answer": "ĐSSĐ",
+    "explanation": "a) Đúng: $\\overrightarrow{AB}=(-1;2;0)$. b) Sai: $\\overrightarrow{AC}=(-1;0;3)$ nên $|\\overrightarrow{AC}|=\\sqrt{10}$. c) Sai: $\\overrightarrow{AB}\\cdot\\overrightarrow{AC}=1+0+0=1$. d) Đúng: $\\overrightarrow{AB}\\times\\overrightarrow{AC}=(6;3;2)$, $\\overrightarrow{AD}=(0;1;1)$, nên $V=\\dfrac{|6\\cdot 0+3\\cdot 1+2\\cdot 1|}{6}=\\dfrac{5}{6}$.",
+    "tags": [
+      "Tọa độ véc-tơ",
+      "Tích vô hướng",
+      "Thể tích"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Trong không gian $Oxyz$ (đơn vị km), một drone xuất phát từ điểm $M(3;0;5)$ và bay theo đường thẳng $d$ có phương trình tham số $x=3+t$, $y=t$, $z=5-2t$ ($t\\ge 0$ tính bằng giờ). Trạm rađa đặt tại gốc tọa độ $O$. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Điểm $M$ thuộc mặt phẳng $(Oxz)$."
+      },
+      {
+        "key": "b",
+        "text": "Khi $t$ tăng thì độ cao $z$ của drone tăng."
+      },
+      {
+        "key": "c",
+        "text": "Khoảng cách từ $O$ đến đường thẳng $d$ lớn hơn $5$ km."
+      },
+      {
+        "key": "d",
+        "text": "Đường thẳng $d$ đi qua điểm $N(4;1;3)$."
+      }
+    ],
+    "answer": "ĐSĐĐ",
+    "explanation": "a) Đúng: $M$ có $y=0$. b) Sai: $z=5-2t$ giảm khi $t$ tăng. c) Đúng: với $\\overrightarrow{OM}=(3;0;5)$ và $\\vec{u}=(1;1;-2)$, $\\overrightarrow{OM}\\times\\vec{u}=(-5;11;3)$ nên $d(O,d)=\\dfrac{\\sqrt{155}}{\\sqrt{6}}\\approx 5{,}08>5$. d) Đúng: với $t=1$ thì điểm thuộc $d$ là $(4;1;3)$.",
+    "tags": [
+      "Đường thẳng",
+      "Khoảng cách",
+      "Bài toán thực tế"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Trong không gian $Oxyz$, cho mặt cầu $(S): x^2+y^2+z^2-4x+2y-2z-3=0$ và mặt phẳng $(P): x+y+z-4=0$. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Tâm của $(S)$ là $I(2;-1;1)$."
+      },
+      {
+        "key": "b",
+        "text": "Bán kính của $(S)$ bằng $3$."
+      },
+      {
+        "key": "c",
+        "text": "$(P)$ cắt $(S)$ theo một đường tròn có bán kính bằng $3$."
+      },
+      {
+        "key": "d",
+        "text": "Khoảng cách từ $I$ đến $(P)$ bằng $\\dfrac{2\\sqrt{3}}{3}$."
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "$(S)$ viết lại là $(x-2)^2+(y+1)^2+(z-1)^2=9$ nên $I(2;-1;1)$, $R=3$: a) Đúng, b) Đúng. c) Sai: $d(I,(P))=\\dfrac{|2-1+1-4|}{\\sqrt{3}}=\\dfrac{2\\sqrt{3}}{3}$, bán kính đường tròn là $r=\\sqrt{9-\\dfrac{4}{3}}=\\sqrt{\\dfrac{23}{3}}\\neq 3$. d) Đúng.",
+    "tags": [
+      "Mặt cầu",
+      "Khoảng cách"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Cho hình hộp chữ nhật $ABCD.A'B'C'D'$ như hình bên dưới, với $A(0;0;0)$, $B(2;0;0)$, $D(0;3;0)$, $A'(0;0;4)$. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$AC'=\\sqrt{29}$."
+      },
+      {
+        "key": "b",
+        "text": "Góc giữa $AC'$ và mặt phẳng $(ABCD)$ lớn hơn $45^\\circ$."
+      },
+      {
+        "key": "c",
+        "text": "$B'D'$ vuông góc với $AC'$."
+      },
+      {
+        "key": "d",
+        "text": "Khoảng cách từ $C$ đến mặt phẳng $(AB'D')$ bằng $\\dfrac{24}{\\sqrt{61}}$."
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "Ta có $C(2;3;0)$, $C'(2;3;4)$, $B'(2;0;4)$, $D'(0;3;4)$. a) Đúng: $\\overrightarrow{AC'}=(2;3;4)$, $AC'=\\sqrt{29}$. b) Đúng: $\\sin\\varphi=\\dfrac{4}{\\sqrt{29}}\\approx 0{,}743$, $\\varphi\\approx 47{,}97^\\circ$. c) Sai: $\\overrightarrow{B'D'}\\cdot\\overrightarrow{AC'}=(-2;3;0)\\cdot(2;3;4)=5\\neq 0$. d) Đúng: mặt phẳng $(AB'D')$ là $6x+4y-3z=0$, nên $d(C,(AB'D'))=\\dfrac{|12+12|}{\\sqrt{61}}=\\dfrac{24}{\\sqrt{61}}$.",
+    "tags": [
+      "Hình hộp chữ nhật",
+      "Góc",
+      "Khoảng cách"
+    ],
+    "figure": {
+      "kind": "geo3d",
+      "shape": "box",
+      "names": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "A'",
+        "B'",
+        "C'",
+        "D'"
+      ],
+      "height": false,
+      "diagonals": false
+    }
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Trong không gian $Oxyz$, cho mặt cầu $(S): (x-2)^2+(y-1)^2+(z-3)^2=4$ có tâm $I$ như hình bên dưới, và đường thẳng $d: x=1+t$, $y=2-t$, $z=3+2t$. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$d$ cắt $(S)$ tại hai điểm phân biệt."
+      },
+      {
+        "key": "b",
+        "text": "Điểm $(2;1;4)$ thuộc $d$."
+      },
+      {
+        "key": "c",
+        "text": "Khoảng cách từ $I$ đến $d$ bằng $\\dfrac{2\\sqrt{3}}{3}$."
+      },
+      {
+        "key": "d",
+        "text": "Độ dài dây cung giao bởi $d$ và $(S)$ bằng $2\\sqrt{6}$."
+      }
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "Thay $(1+t;\\,2-t;\\,3+2t)$ vào $(S)$ được $6t^2-4t-2=0$, có hai nghiệm $t=1$ và $t=-\\dfrac{1}{3}$. a) Đúng. b) Sai: với $t=1$ thì $z=5\\neq 4$. c) Đúng: $\\overrightarrow{IM_0}=(-1;1;0)$ với $M_0(1;2;3)\\in d$, $\\vec{u}=(1;-1;2)$, $\\overrightarrow{IM_0}\\times\\vec{u}=(2;2;0)$, nên $d(I,d)=\\dfrac{2\\sqrt{2}}{\\sqrt{6}}=\\dfrac{2\\sqrt{3}}{3}$. d) Sai: dây cung bằng $2\\sqrt{R^2-d^2}=2\\sqrt{\\dfrac{8}{3}}=\\dfrac{4\\sqrt{6}}{3}\\neq 2\\sqrt{6}$.",
+    "tags": [
+      "Mặt cầu",
+      "Đường thẳng",
+      "Dây cung"
+    ],
+    "figure": {
+      "kind": "geo3d",
+      "shape": "sphere",
+      "names": [
+        "I"
+      ],
+      "height": false,
+      "diagonals": false
+    }
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Trong không gian $Oxyz$, cho mặt phẳng $(P): x-y+z-2=0$ và điểm $M(x;y;z)$ thuộc $(P)$. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Giá trị nhỏ nhất của $OM$ bằng $\\dfrac{2\\sqrt{3}}{3}$."
+      },
+      {
+        "key": "b",
+        "text": "Tồn tại điểm $M\\in(P)$ sao cho $OM=2$."
+      },
+      {
+        "key": "c",
+        "text": "Điểm $M_0\\left(\\dfrac{2}{3};-\\dfrac{2}{3};\\dfrac{2}{3}\\right)$ là điểm thuộc $(P)$ gần $O$ nhất."
+      },
+      {
+        "key": "d",
+        "text": "Khi $M$ thuộc giao tuyến của $(P)$ và $(Oxy)$ thì $OM$ nhỏ nhất bằng $1$."
+      }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a) Đúng: $d(O,(P))=\\dfrac{|-2|}{\\sqrt{3}}=\\dfrac{2\\sqrt{3}}{3}$. b) Đúng, vì $OM$ nhận mọi giá trị từ $\\dfrac{2\\sqrt{3}}{3}$ trở lên. c) Đúng: $M_0$ là hình chiếu vuông góc của $O$ lên $(P)$, $\\overrightarrow{OM_0}=\\dfrac{2}{3}(1;-1;1)$ và $M_0\\in(P)$. d) Sai: với $z=0$ thì $y=x-2$, $OM^2=x^2+(x-2)^2\\ge 2$, nên $OM_{\\min}=\\sqrt{2}$.",
+    "tags": [
+      "Khoảng cách",
+      "Cực trị hình học"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Cho hình chóp $S.ABCD$ có đáy $ABCD$ là hình vuông, với $A(0;0;0)$, $B(2;0;0)$, $C(2;2;0)$, $D(0;2;0)$, $S(1;1;3)$, như hình bên dưới. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$SA=SB$."
+      },
+      {
+        "key": "b",
+        "text": "Thể tích khối chóp $S.ABCD$ bằng $4$."
+      },
+      {
+        "key": "c",
+        "text": "Góc giữa $SA$ và mặt phẳng $(ABCD)$ nhỏ hơn $60^\\circ$."
+      },
+      {
+        "key": "d",
+        "text": "Khoảng cách từ $A$ đến mặt phẳng $(SBC)$ bằng $2$."
+      }
+    ],
+    "answer": "ĐĐSS",
+    "explanation": "a) Đúng: $SA=SB=\\sqrt{11}$. b) Đúng: $S_{ABCD}=4$, chiều cao $h=3$, nên $V=\\dfrac{1}{3}\\cdot 4\\cdot 3=4$. c) Sai: $\\tan\\varphi=\\dfrac{3}{\\sqrt{2}}$, $\\varphi\\approx 64{,}76^\\circ>60^\\circ$. d) Sai: mặt phẳng $(SBC)$ là $3x+z-6=0$, nên $d(A,(SBC))=\\dfrac{6}{\\sqrt{10}}=\\dfrac{3\\sqrt{10}}{5}\\approx 1{,}90\\neq 2$.",
+    "tags": [
+      "Hình chóp",
+      "Thể tích",
+      "Khoảng cách",
+      "Góc"
+    ],
+    "figure": {
+      "kind": "geo3d",
+      "shape": "pyramid4",
+      "names": [
+        "S",
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "height": false,
+      "diagonals": false
+    }
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Trong không gian $Oxyz$, cho tứ diện $ABCD$ như hình bên dưới, với $A(1;2;3)$, $B(3;0;1)$, $C(-1;4;2)$, $D(0;0;0)$. Tổng $x_G+y_G+z_G$ của trọng tâm $G$ của tam giác $ABC$ bằng",
+    "answer": "5",
+    "explanation": "$G=\\left(\\dfrac{1+3-1}{3};\\dfrac{2+0+4}{3};\\dfrac{3+1+2}{3}\\right)=(1;2;2)$, nên $x_G+y_G+z_G=5$.",
+    "tags": [
+      "Tọa độ trọng tâm"
+    ],
+    "figure": {
+      "kind": "geo3d",
+      "shape": "tetrahedron",
+      "names": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "height": false,
+      "diagonals": false
+    }
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "NB",
+    "prompt": "Trong không gian $Oxyz$, cho vectơ $\\vec{u}=2\\vec{i}-3\\vec{j}+6\\vec{k}$. Độ dài của $\\vec{u}$ bằng",
+    "answer": "7",
+    "explanation": "$|\\vec{u}|=\\sqrt{2^2+(-3)^2+6^2}=\\sqrt{49}=7$.",
+    "tags": [
+      "Độ dài véc-tơ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Trong không gian $Oxyz$, cho điểm $A(2;-1;3)$. Gọi $M$ là điểm đối xứng với $A$ qua mặt phẳng $(Oxy)$. Tính $x_M+y_M+z_M$.",
+    "answer": "-2",
+    "explanation": "$M(2;-1;-3)$, nên $x_M+y_M+z_M=2-1-3=-2$.",
+    "tags": [
+      "Điểm đối xứng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Trong không gian $Oxyz$, mặt phẳng $(\\alpha)$ cắt các trục $Ox$, $Oy$, $Oz$ lần lượt tại $A(1;0;0)$, $B(0;2;0)$, $C(0;0;3)$. Khoảng cách từ gốc $O$ đến $(\\alpha)$ bằng (đơn vị độ dài, làm tròn đến hàng phần trăm).",
+    "answer": "0,86",
+    "explanation": "$(\\alpha)$: $6x+3y+2z-6=0$, nên $d(O,(\\alpha))=\\dfrac{6}{\\sqrt{49}}=\\dfrac{6}{7}\\approx 0{,}86$.",
+    "tags": [
+      "Phương trình mặt phẳng theo đoạn chắn",
+      "Khoảng cách"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Hai drone cùng bay trong không gian $Oxyz$ (đơn vị km). Drone thứ nhất có vị trí $\\vec{r}_1(t)=(2+3t;\\,1-t;\\,4)$, drone thứ hai có vị trí $\\vec{r}_2(t)=(5-t;\\,3+t;\\,2+t)$, với $t\\ge 0$ là thời gian tính bằng phút. Thời điểm $t$ (phút) mà khoảng cách giữa hai drone nhỏ nhất là (làm tròn đến hàng phần trăm).",
+    "answer": "0,48",
+    "explanation": "$\\vec{r}_2(t)-\\vec{r}_1(t)=(3-4t;\\,2+2t;\\,t-2)$, bình phương độ dài là $f(t)=21t^2-20t+17$. Hàm $f$ đạt giá trị nhỏ nhất tại $t=\\dfrac{10}{21}\\approx 0{,}48$.",
+    "tags": [
+      "Bài toán thực tế",
+      "Khoảng cách"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Trong không gian $Oxyz$, cho mặt cầu $(S): (x-1)^2+(y-2)^2+(z+1)^2=25$ có tâm $I$ như hình bên dưới, và mặt phẳng $(P): x+2y+2z-1=0$. Bán kính đường tròn giao tuyến của $(S)$ và $(P)$ bằng (làm tròn đến hàng phần trăm).",
+    "answer": "4,96",
+    "explanation": "$d(I,(P))=\\dfrac{|1+4-2-1|}{3}=\\dfrac{2}{3}$, nên $r=\\sqrt{25-\\dfrac{4}{9}}=\\dfrac{\\sqrt{221}}{3}\\approx 4{,}96$.",
+    "tags": [
+      "Mặt cầu",
+      "Giao tuyến"
+    ],
+    "figure": {
+      "kind": "geo3d",
+      "shape": "sphere",
+      "names": [
+        "I"
+      ],
+      "height": false,
+      "diagonals": false
+    }
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Trong không gian $Oxyz$, đường thẳng $d_1$ có vectơ chỉ phương $(1;m;1)$ và đường thẳng $d_2$ có vectơ chỉ phương $(m;1;1)$. Biết góc giữa $d_1$ và $d_2$ bằng $60^\\circ$. Tổng tất cả các giá trị thực của $m$ thỏa mãn điều kiện trên bằng",
+    "answer": "2",
+    "explanation": "$\\cos 60^\\circ=\\dfrac{|2m+1|}{m^2+2}=\\dfrac{1}{2}\\Leftrightarrow 2|2m+1|=m^2+2$. Trường hợp $2m+1\\ge 0$: $m^2-4m=0$, $m\\in\\{0;4\\}$. Trường hợp $2m+1<0$: $m^2+4m+4=0$, $m=-2$. Tổng: $0+4-2=2$.",
+    "tags": [
+      "Góc giữa hai đường thẳng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Trên bản đồ tọa độ $Oxy$ (đơn vị km), trạm rađa đặt tại gốc $O$. Đường bay thẳng của một máy bay đi qua hai điểm $A(0;12)$ và $B(9;0)$ như hình bên dưới. Khoảng cách ngắn nhất từ trạm rađa $O$ đến đường bay (km) là (làm tròn đến hàng phần mười).",
+    "answer": "7,2",
+    "explanation": "Đường bay $AB$: $\\dfrac{x}{9}+\\dfrac{y}{12}=1\\Leftrightarrow 4x+3y-36=0$, nên $d(O,AB)=\\dfrac{36}{5}=7{,}2$.",
+    "tags": [
+      "Bài toán thực tế",
+      "Khoảng cách"
+    ],
+    "figure": {
+      "kind": "scene",
+      "text": "O(0; 0) A(0; 12) B(9; 0)\nOA, OB, AB\nvuông AOB\nkích thước OA \"12 km\""
+    }
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Khinh khí cầu bay đều trong không gian $Oxyz$ theo đường thẳng $d$: $x=1+2t$, $y=3+t$, $z=2+t$ (đơn vị km, $t\\ge 0$ tính bằng phút). Trạm thu sóng đặt tại $A(4;5;4)$. Thời điểm $t$ (phút) khinh khí cầu gần trạm $A$ nhất là (làm tròn đến hàng phần trăm).",
+    "answer": "1,67",
+    "explanation": "Với $M(t)\\in d$, $\\overrightarrow{AM}(t)=(2t-3;\\,t-2;\\,t-2)$, nên $f(t)=AM^2=6t^2-20t+17$. Hàm $f$ đạt giá trị nhỏ nhất tại $t=\\dfrac{5}{3}\\approx 1{,}67$.",
+    "tags": [
+      "Bài toán thực tế",
+      "Khoảng cách nhỏ nhất"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Trong không gian $Oxyz$, cho hai điểm $A(1;2;3)$ và $B(4;-2;-1)$. Điểm $M$ thay đổi trên mặt phẳng $(Oxy)$. Giá trị nhỏ nhất của $MA+MB$ bằng (làm tròn đến hàng phần trăm).",
+    "answer": "6,40",
+    "explanation": "$A$ và $B$ nằm khác phía đối với $(Oxy)$ nên $MA+MB\\ge AB$, dấu bằng xảy ra khi $M$ là giao điểm của đoạn $AB$ với $(Oxy)$. Ta có $AB=\\sqrt{3^2+4^2+4^2}=\\sqrt{41}\\approx 6{,}40$.",
+    "tags": [
+      "Cực trị hình học",
+      "Bài toán thực tế"
+    ]
+  }
+]

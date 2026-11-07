@@ -1,0 +1,745 @@
+[
+ {
+  "grades": [
+   "Lớp 10"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "NB",
+  "prompt": "Cấu hình electron của nguyên tử Na ($Z=11$) như hình bên dưới cho thấy lớp electron ngoài cùng có bao nhiêu electron hóa trị?",
+  "options": [
+   {
+    "key": "A",
+    "text": "2"
+   },
+   {
+    "key": "B",
+    "text": "3"
+   },
+   {
+    "key": "C",
+    "text": "1"
+   },
+   {
+    "key": "D",
+    "text": "11"
+   }
+  ],
+  "answer": "C",
+  "explanation": "Na có cấu hình $1s^22s^22p^63s^1$: lớp ngoài cùng (lớp 3) chỉ có 1 electron hóa trị.",
+  "tags": [
+   "cấu tạo nguyên tử"
+  ],
+  "figure": {
+   "kind": "electron",
+   "element": "Na"
+  }
+ },
+ {
+  "grades": [
+   "Lớp 10"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "NB",
+  "prompt": "Số oxi hóa của nguyên tố sulfur trong phân tử $\\text{H}_2\\text{SO}_4$ là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "+4"
+   },
+   {
+    "key": "B",
+    "text": "+6"
+   },
+   {
+    "key": "C",
+    "text": "$-2$"
+   },
+   {
+    "key": "D",
+    "text": "+2"
+   }
+  ],
+  "answer": "B",
+  "explanation": "$2(+1)+x+4(-2)=0\\Rightarrow x=+6$.",
+  "tags": [
+   "số oxi hóa"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 10"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "NB",
+  "prompt": "Trong phản ứng oxi hóa – khử, chất khử là chất:",
+  "options": [
+   {
+    "key": "A",
+    "text": "cho electron"
+   },
+   {
+    "key": "B",
+    "text": "nhận electron"
+   },
+   {
+    "key": "C",
+    "text": "nhận proton"
+   },
+   {
+    "key": "D",
+    "text": "cho proton"
+   }
+  ],
+  "answer": "A",
+  "explanation": "Chất khử nhường electron, bị oxi hóa, làm số oxi hóa tăng.",
+  "tags": [
+   "oxi hóa – khử"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "NB",
+  "prompt": "Khi tăng nhiệt độ của hệ phản ứng (các yếu tố khác không đổi), tốc độ phản ứng thường:",
+  "options": [
+   {
+    "key": "A",
+    "text": "giảm đi"
+   },
+   {
+    "key": "B",
+    "text": "không thay đổi"
+   },
+   {
+    "key": "C",
+    "text": "giảm dần về 0"
+   },
+   {
+    "key": "D",
+    "text": "tăng lên"
+   }
+  ],
+  "answer": "D",
+  "explanation": "Nhiệt độ tăng làm các hạt chuyển động nhanh hơn, số va chạm hiệu quả tăng nên tốc độ phản ứng tăng.",
+  "tags": [
+   "tốc độ phản ứng"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 10"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "TH",
+  "prompt": "Hệ số của $\\text{O}_2$ trong phản ứng đốt cháy propane: $\\text{C}_3\\text{H}_8+?\\text{O}_2\\to 3\\text{CO}_2+4\\text{H}_2\\text{O}$ là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "3"
+   },
+   {
+    "key": "B",
+    "text": "5"
+   },
+   {
+    "key": "C",
+    "text": "4"
+   },
+   {
+    "key": "D",
+    "text": "10"
+   }
+  ],
+  "answer": "B",
+  "explanation": "Bảo toàn nguyên tử O: cần 3·2 + 4 = 10 nguyên tử O, tức 5 phân tử $\\text{O}_2$.",
+  "tags": [
+   "cân bằng phương trình"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 10"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "TH",
+  "prompt": "Số oxi hóa của nguyên tố nitrogen trong hai ion $\\text{NH}_4^{+}$ và $\\text{NO}_3^{-}$ (của muối $\\text{NH}_4\\text{NO}_3$) lần lượt là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "+3 và $-5$"
+   },
+   {
+    "key": "B",
+    "text": "$-3$ và +3"
+   },
+   {
+    "key": "C",
+    "text": "$-3$ và +5"
+   },
+   {
+    "key": "D",
+    "text": "+3 và +5"
+   }
+  ],
+  "answer": "C",
+  "explanation": "Trong $\\text{NH}_4^{+}$: $x+4=+1\\Rightarrow x=-3$; trong $\\text{NO}_3^{-}$: $x+3(-2)=-1\\Rightarrow x=+5$.",
+  "tags": [
+   "số oxi hóa"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "TH",
+  "prompt": "Xúc tác được dùng trong quá trình tổng hợp $\\text{NH}_3$ từ $\\text{N}_2$ và $\\text{H}_2$ (phương pháp Haber – Bosch) là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "Cu"
+   },
+   {
+    "key": "B",
+    "text": "Ni"
+   },
+   {
+    "key": "C",
+    "text": "Pt"
+   },
+   {
+    "key": "D",
+    "text": "Fe"
+   }
+  ],
+  "answer": "D",
+  "explanation": "Tổng hợp $\\text{NH}_3$ công nghiệp dùng xúc tác sắt (Fe) ở khoảng 400–500 °C, áp suất cao.",
+  "tags": [
+   "cân bằng hóa học",
+   "thực tế"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 10"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "TH",
+  "prompt": "Sục dần khí $\\text{CO}_2$ vào dung dịch $\\text{Ca(OH)}_2$, đồ thị khối lượng kết tủa theo lượng $\\text{CO}_2$ như hình bên dưới. Tổng thể tích $\\text{CO}_2$ (đktc) cần sục để kết tủa tan hết hoàn toàn là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "4,48 lít"
+   },
+   {
+    "key": "B",
+    "text": "8,96 lít"
+   },
+   {
+    "key": "C",
+    "text": "2,24 lít"
+   },
+   {
+    "key": "D",
+    "text": "11,2 lít"
+   }
+  ],
+  "answer": "B",
+  "explanation": "Kết tủa tan hết khi sục tổng cộng 0,4 mol $\\text{CO}_2$ (nhìn từ đồ thị, điểm cuối $n_{\\text{CO}_2}=0{,}4$): $V=0{,}4\\cdot 22{,}4=8{,}96$ lít.",
+  "tags": [
+   "đồ thị phản ứng"
+  ],
+  "figure": {
+   "kind": "chemgraph",
+   "xName": "n CO2",
+   "yName": "m↓ (g)",
+   "points": "(0; 0) (0,2; 20) (0,4; 0)"
+  }
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "VD",
+  "prompt": "Nồng độ của chất A giảm từ 0,3 M xuống 0,1 M trong 20 giây. Tốc độ trung bình của phản ứng là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "0,01 mol/(L·s)"
+   },
+   {
+    "key": "B",
+    "text": "0,005 mol/(L·s)"
+   },
+   {
+    "key": "C",
+    "text": "0,02 mol/(L·s)"
+   },
+   {
+    "key": "D",
+    "text": "0,05 mol/(L·s)"
+   }
+  ],
+  "answer": "A",
+  "explanation": "$\\overline{v}=\\dfrac{|\\Delta C|}{\\Delta t}=\\dfrac{0{,}3-0{,}1}{20}=0{,}01$ mol/(L·s).",
+  "tags": [
+   "tốc độ phản ứng"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "VD",
+  "prompt": "Cho 1 mol $\\text{N}_2$ và 3 mol $\\text{H}_2$ phản ứng trong bình kín 20 lít theo phản ứng $\\text{N}_2+3\\text{H}_2\\rightleftharpoons 2\\text{NH}_3$. Tại cân bằng còn 0,6 mol $\\text{N}_2$. Số mol $\\text{NH}_3$ tại cân bằng là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "0,4 mol"
+   },
+   {
+    "key": "B",
+    "text": "1,2 mol"
+   },
+   {
+    "key": "C",
+    "text": "0,8 mol"
+   },
+   {
+    "key": "D",
+    "text": "0,6 mol"
+   }
+  ],
+  "answer": "C",
+  "explanation": "$\\text{N}_2$ phản ứng 0,4 mol → $\\text{NH}_3$ tạo thành $0{,}4\\cdot 2=0{,}8$ mol.",
+  "tags": [
+   "cân bằng hóa học"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 10"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "VD",
+  "prompt": "Hòa tan 20 g NaCl vào 80 g nước. Nồng độ phần trăm của dung dịch thu được là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "20%"
+   },
+   {
+    "key": "B",
+    "text": "25%"
+   },
+   {
+    "key": "C",
+    "text": "15%"
+   },
+   {
+    "key": "D",
+    "text": "30%"
+   }
+  ],
+  "answer": "A",
+  "explanation": "$C\\% =\\dfrac{20}{20+80}\\cdot 100\\%=20\\%$.",
+  "tags": [
+   "nồng độ phần trăm"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 10"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "VD",
+  "prompt": "Pha loãng 100 mL dung dịch $\\text{H}_2\\text{SO}_4$ 2 M bằng nước thành 500 mL dung dịch. Nồng độ mol của dung dịch mới là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "0,5 M"
+   },
+   {
+    "key": "B",
+    "text": "1,0 M"
+   },
+   {
+    "key": "C",
+    "text": "0,2 M"
+   },
+   {
+    "key": "D",
+    "text": "0,4 M"
+   }
+  ],
+  "answer": "D",
+  "explanation": "$C_1V_1=C_2V_2\\Rightarrow C_2=\\dfrac{2\\cdot 100}{500}=0{,}4$ M.",
+  "tags": [
+   "pha loãng"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "VDC",
+  "prompt": "Nung 20 g $\\text{CaCO}_3$ tinh khiết, thu được 3,36 lít $\\text{CO}_2$ (đktc). Khối lượng chất rắn sau phản ứng là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "11,2 g"
+   },
+   {
+    "key": "B",
+    "text": "14,0 g"
+   },
+   {
+    "key": "C",
+    "text": "13,4 g"
+   },
+   {
+    "key": "D",
+    "text": "15,6 g"
+   }
+  ],
+  "answer": "C",
+  "explanation": "$n_{\\text{CO}_2}=0{,}15$ mol → phản ứng 0,15 mol $\\text{CaCO}_3$, mất $0{,}15\\cdot 44=6{,}6$ g: chất rắn còn $20-6{,}6=13{,}4$ g.",
+  "tags": [
+   "bài toán N–S"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "VDC",
+  "prompt": "Khử hoàn toàn 11,6 g $\\text{Fe}_3\\text{O}_4$ bằng CO theo phản ứng $\\text{Fe}_3\\text{O}_4+4\\text{CO}\\to 3\\text{Fe}+4\\text{CO}_2$. Thể tích CO (đktc) cần dùng là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "4,48 lít"
+   },
+   {
+    "key": "B",
+    "text": "8,96 lít"
+   },
+   {
+    "key": "C",
+    "text": "2,24 lít"
+   },
+   {
+    "key": "D",
+    "text": "6,72 lít"
+   }
+  ],
+  "answer": "A",
+  "explanation": "$n_{\\text{Fe}_3\\text{O}_4}=0{,}05$ mol → $n_{\\text{CO}}=0{,}2$ mol $=4{,}48$ lít.",
+  "tags": [
+   "oxi hóa – khử"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "VDC",
+  "prompt": "Phản ứng $A+B\\rightleftharpoons C$ tại nhiệt độ xác định có hằng số cân bằng $K=4$. Ban đầu $[A]=[B]=2$ M. Nồng độ của $C$ tại cân bằng (M) là:",
+  "options": [
+   {
+    "key": "A",
+    "text": "2,00"
+   },
+   {
+    "key": "B",
+    "text": "1,50"
+   },
+   {
+    "key": "C",
+    "text": "0,67"
+   },
+   {
+    "key": "D",
+    "text": "1,33"
+   }
+  ],
+  "answer": "D",
+  "explanation": "$\\dfrac{[C]^2}{(2-x)^2}=4\\Rightarrow\\dfrac{x}{2-x}=2\\Rightarrow x=\\dfrac{4}{3}\\approx 1{,}33$ M.",
+  "tags": [
+   "cân bằng hóa học"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "trac-nghiem",
+  "level": "VDC",
+  "prompt": "Phản ứng có tốc độ $v=k[A][B]$. Nếu tăng nồng độ $[A]$ lên 2 lần và $[B]$ lên 3 lần thì tốc độ phản ứng tăng lên:",
+  "options": [
+   {
+    "key": "A",
+    "text": "3 lần"
+   },
+   {
+    "key": "B",
+    "text": "6 lần"
+   },
+   {
+    "key": "C",
+    "text": "5 lần"
+   },
+   {
+    "key": "D",
+    "text": "12 lần"
+   }
+  ],
+  "answer": "B",
+  "explanation": "$v'=k(2[A])(3[B])=6k[A][B]=6v$.",
+  "tags": [
+   "tốc độ phản ứng"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 10"
+  ],
+  "subject": "Hoá học",
+  "type": "dung-sai",
+  "level": "TH",
+  "prompt": "Xét các phát biểu về cấu tạo nguyên tử. Xét tính đúng sai của các khẳng định sau:",
+  "options": [
+   {
+    "key": "a",
+    "text": "Proton mang điện tích dương."
+   },
+   {
+    "key": "b",
+    "text": "Trong nguyên tử trung hòa điện, số electron nhiều hơn số proton."
+   },
+   {
+    "key": "c",
+    "text": "Khối lượng của nguyên tử tập trung chủ yếu ở lớp vỏ electron."
+   },
+   {
+    "key": "d",
+    "text": "Các nguyên tử của cùng một nguyên tố hóa học có cùng số proton."
+   }
+  ],
+  "answer": "ĐSSĐ",
+  "explanation": "a) Đúng. b) Sai: số electron bằng số proton. c) Sai: khối lượng tập trung ở hạt nhân. d) Đúng.",
+  "tags": [
+   "cấu tạo nguyên tử"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 10"
+  ],
+  "subject": "Hoá học",
+  "type": "dung-sai",
+  "level": "VD",
+  "prompt": "Sục dần 0,2 mol $\\text{CO}_2$ vào bình chứa 0,2 mol $\\text{Ca(OH)}_2$ (dung dịch). Đồ thị khối lượng kết tủa theo lượng $\\text{CO}_2$ như hình bên dưới. Xét tính đúng sai của các khẳng định sau:",
+  "options": [
+   {
+    "key": "a",
+    "text": "Ban đầu, $\\text{CO}_2$ phản ứng tạo kết tủa $\\text{CaCO}_3$."
+   },
+   {
+    "key": "b",
+    "text": "Khi sục được 0,1 mol $\\text{CO}_2$, khối lượng kết tủa là 10 g."
+   },
+   {
+    "key": "c",
+    "text": "Khối lượng kết tủa cực đại là 0,3 mol $\\text{CaCO}_3$."
+   },
+   {
+    "key": "d",
+    "text": "Nếu sục tiếp đến tổng cộng 0,4 mol $\\text{CO}_2$ thì kết tủa tan hết."
+   }
+  ],
+  "answer": "ĐĐSĐ",
+  "explanation": "a) Đúng. b) Đúng: pha 1 tỉ lệ 1:1, kết tủa 0,1 mol = 10 g. c) Sai: cực đại 0,2 mol = 20 g. d) Đúng: pha 2 cần thêm đúng 0,2 mol $\\text{CO}_2$ để tan hết $\\text{CaCO}_3$.",
+  "tags": [
+   "đồ thị phản ứng"
+  ],
+  "figure": {
+   "kind": "chemgraph",
+   "xName": "n CO2",
+   "yName": "n↓ (mol)",
+   "points": "(0; 0) (0,1; 0,1) (0,2; 0,2)"
+  }
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "dung-sai",
+  "level": "VD",
+  "prompt": "Xét phản ứng thuận nghịch $2\\text{SO}_2+\\text{O}_2\\rightleftharpoons 2\\text{SO}_3$ với $\\Delta H<0$. Xét tính đúng sai của các khẳng định sau:",
+  "options": [
+   {
+    "key": "a",
+    "text": "Tăng nhiệt độ làm cân bằng dịch chuyển theo chiều thuận."
+   },
+   {
+    "key": "b",
+    "text": "Tăng áp suất làm cân bằng dịch chuyển theo chiều thuận."
+   },
+   {
+    "key": "c",
+    "text": "Xúc tác không làm dịch chuyển cân bằng."
+   },
+   {
+    "key": "d",
+    "text": "Tăng nồng độ $\\text{O}_2$ làm tốc độ phản ứng thuận giảm."
+   }
+  ],
+  "answer": "SĐĐS",
+  "explanation": "a) Sai: phản ứng thuận toả nhiệt, tăng nhiệt độ cân bằng dịch chuyển ngược chiều. b) Đúng: chiều thuận giảm số mol khí. c) Đúng. d) Sai: tăng nồng độ chất phản ứng làm tốc độ thuận tăng.",
+  "tags": [
+   "cân bằng hóa học",
+   "nguyên lí Le Chatelier"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Hoá học",
+  "type": "dung-sai",
+  "level": "VDC",
+  "prompt": "Cho 6,72 lít $\\text{H}_2$ (đktc) phản ứng với lượng $\\text{N}_2$ dư trong bình kín theo phản ứng $\\text{N}_2+3\\text{H}_2\\rightleftharpoons 2\\text{NH}_3$, hiệu suất 50% theo $\\text{H}_2$. Xét tính đúng sai của các khẳng định sau:",
+  "options": [
+   {
+    "key": "a",
+    "text": "Lượng $\\text{H}_2$ phản ứng là 0,15 mol."
+   },
+   {
+    "key": "b",
+    "text": "Lượng $\\text{NH}_3$ thu được là 0,1 mol."
+   },
+   {
+    "key": "c",
+    "text": "Khối lượng $\\text{NH}_3$ thu được là 3,4 g."
+   },
+   {
+    "key": "d",
+    "text": "Nếu hiệu suất chỉ đạt 25% thì lượng $\\text{NH}_3$ thu được tăng gấp đôi so với trường hợp trên."
+   }
+  ],
+  "answer": "ĐĐSS",
+  "explanation": "a) Đúng: $n_{\\text{H}_2}=0{,}3$ mol, phản ứng 50% → 0,15 mol. b) Đúng: $n_{\\text{NH}_3}=\\frac{2}{3}\\cdot 0{,}15=0{,}1$ mol. c) Sai: $m=0{,}1\\cdot 17=1{,}7$ g. d) Sai: hiệu suất giảm một nửa thì $\\text{NH}_3$ cũng giảm một nửa (còn 0,05 mol).",
+  "tags": [
+   "hiệu suất",
+   "cân bằng"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Hoá học",
+  "type": "tra-loi-ngan",
+  "level": "NB",
+  "prompt": "Số oxi hóa của nguyên tố chromium trong $\\text{K}_2\\text{Cr}_2\\text{O}_7$ là bao nhiêu?",
+  "answer": "6",
+  "explanation": "$2(+1)+2x+7(-2)=0\\Rightarrow x=+6$.",
+  "tags": [
+   "số oxi hóa"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 10"
+  ],
+  "subject": "Hoá học",
+  "type": "tra-loi-ngan",
+  "level": "TH",
+  "prompt": "Cân bằng phản ứng: $\\text{Fe}_2\\text{O}_3+?\\text{CO}\\to 2\\text{Fe}+3\\text{CO}_2$. Hệ số của CO là bao nhiêu?",
+  "answer": "3",
+  "explanation": "Bảo toàn O và C: cần 3 CO cho 3 O trong $\\text{Fe}_2\\text{O}_3$.",
+  "tags": [
+   "cân bằng phương trình"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "tra-loi-ngan",
+  "level": "TH",
+  "prompt": "Nồng độ chất A giảm từ 0,8 M xuống 0,4 M trong 40 giây. Tốc độ trung bình của phản ứng là bao nhiêu mol/(L·s)?",
+  "answer": "0,01",
+  "explanation": "$\\overline{v}=\\dfrac{0{,}4}{40}=0{,}01$ mol/(L·s).",
+  "tags": [
+   "tốc độ phản ứng"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 10"
+  ],
+  "subject": "Hoá học",
+  "type": "tra-loi-ngan",
+  "level": "VD",
+  "prompt": "Pha loãng 250 mL dung dịch HCl 1 M để được dung dịch 0,25 M. Thể tích dung dịch sau khi pha loãng là bao nhiêu mililít?",
+  "answer": "1000",
+  "explanation": "$C_1V_1=C_2V_2\\Rightarrow V_2=\\dfrac{1\\cdot 250}{0{,}25}=1000$ mL.",
+  "tags": [
+   "pha loãng"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 12"
+  ],
+  "subject": "Hoá học",
+  "type": "tra-loi-ngan",
+  "level": "VD",
+  "prompt": "Nung 25 g $\\text{CaCO}_3$, thu được 4,48 lít $\\text{CO}_2$ (đktc). Khối lượng $\\text{CaO}$ thu được là bao nhiêu gam?",
+  "answer": "11,2",
+  "explanation": "$n_{\\text{CO}_2}=0{,}2$ mol → $n_{\\text{CaO}}=0{,}2$ mol → $m=11{,}2$ g.",
+  "tags": [
+   "bài toán N–S"
+  ]
+ },
+ {
+  "grades": [
+   "Lớp 11"
+  ],
+  "subject": "Hoá học",
+  "type": "tra-loi-ngan",
+  "level": "VDC",
+  "prompt": "Phản ứng $A\\rightleftharpoons B$ có hằng số cân bằng $K=9$ ở một nhiệt độ xác định. Ban đầu chỉ có $[A]=0{,}4$ M. Nồng độ của $B$ tại cân bằng (M) là bao nhiêu?",
+  "answer": "0,3",
+  "explanation": "$\\dfrac{x}{0{,}4-x}=3\\Rightarrow x=0{,}3$ M.",
+  "tags": [
+   "cân bằng hóa học"
+  ]
+ }
+]
