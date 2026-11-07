@@ -134,10 +134,12 @@ async function generate(config: ImageConfig, prompt: string): Promise<string> {
     Authorization: `Bearer ${config.apiKey}`,
     'Content-Type': 'application/json',
   }
+  // Agnes đôi khi tự viết chữ tiếng Trung (đã gặp khi thử ảnh thí nghiệm) → luôn dặn chữ tiếng Việt.
+  const fullPrompt = `${prompt}\n\nMọi chữ xuất hiện trong ảnh phải viết bằng tiếng Việt có dấu chính xác; không dùng chữ Trung, Nhật, Hàn.`
   // Agnes trả ảnh ngay trong request này (~12–17 s) → chờ lâu hơn mặc định 15 s.
   const start = await upstreamJson(
     `${config.baseUrl}/images/generations`,
-    { method: 'POST', headers, body: JSON.stringify({ model: config.model, prompt, n: 1, size: '1024x1024' }) },
+    { method: 'POST', headers, body: JSON.stringify({ model: config.model, prompt: fullPrompt, n: 1, size: '1024x1024' }) },
     120_000,
   )
   if (!start.ok) throw new ImageError(502, upstreamError(start.status, start.body))
