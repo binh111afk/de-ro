@@ -36,10 +36,12 @@ export function SiteSelect<K extends string>({
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setOpen(false)
     }
-    document.addEventListener('mousedown', onDown)
+    // capture: vẫn nhận được khi khung chứa (vd BankModal) chặn mousedown bằng stopPropagation,
+    // nếu không thì mở ô khác mà ô cũ không đóng
+    document.addEventListener('mousedown', onDown, true)
     document.addEventListener('keydown', onKey)
     return () => {
-      document.removeEventListener('mousedown', onDown)
+      document.removeEventListener('mousedown', onDown, true)
       document.removeEventListener('keydown', onKey)
     }
   }, [open])
