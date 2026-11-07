@@ -222,7 +222,9 @@ export async function searchWeb(prompt: string): Promise<SearchFeed> {
       | null
     if (!res.ok) throw new Error(data?.error || `Search lỗi (${res.status}).`)
     if (!data?.configured) {
-      return { items: [], note: data?.message || 'Chưa cấu hình tìm kiếm web.' }
+      // Thiếu key là chuyện cấu hình của dev → không báo cho người dùng.
+      if (data?.message) console.info('[search]', data.message)
+      return { items: [] }
     }
     if (data.error && !(data.results?.length)) {
       return { items: [], note: `Search lỗi: ${data.error}` }

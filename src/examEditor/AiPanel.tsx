@@ -948,9 +948,9 @@ export function AiPanel({
         const text =
           summary ??
           (looksJson
-            ? '⚠️ AI trả về JSON nhưng chưa áp được vào đề (JSON có thể bị cắt cụt hoặc sai cấu trúc). Thử lại, hoặc yêu cầu ngắn hơn. JSON gốc:\n\n' +
-              res.content
+            ? '⚠️ AI soạn đề bị lỗi định dạng nên chưa đưa vào được. Bạn bấm gửi lại giúp mình, hoặc yêu cầu ngắn hơn (ít câu hơn).'
             : res.content)
+        if (!summary && looksJson) console.warn('[AI] JSON không áp được:', res.content)
         setTurns((t) =>
           t.map((turn) =>
             turn.id === botId ? { ...turn, text, pending: false } : turn,
