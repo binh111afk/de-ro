@@ -1,0 +1,692 @@
+[
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Cho $P(A \\cap B)=0{,}2$ và $P(B)=0{,}5$. Khi đó $P(A \\mid B)$ bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$0{,}1$"
+      },
+      {
+        "key": "B",
+        "text": "$0{,}4$"
+      },
+      {
+        "key": "C",
+        "text": "$0{,}3$"
+      },
+      {
+        "key": "D",
+        "text": "$0{,}7$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$P(A \\mid B)=\\dfrac{P(A \\cap B)}{P(B)}=\\dfrac{0{,}2}{0{,}5}=0{,}4$.",
+    "tags": [
+      "xác suất",
+      "có điều kiện"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Công thức nhân xác suất được viết là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$P(A \\cap B)=P(A)+P(B)$"
+      },
+      {
+        "key": "B",
+        "text": "$P(A \\cap B)=P(A) \\cdot P(B)$ với mọi $A$, $B$"
+      },
+      {
+        "key": "C",
+        "text": "$P(A \\cap B)=P(B) \\cdot P(A \\mid B)$"
+      },
+      {
+        "key": "D",
+        "text": "$P(A \\cap B)=P(A)-P(B)$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Định nghĩa xác suất có điều kiện cho $P(A \\cap B)=P(B) \\cdot P(A \\mid B)$ (và $=P(A) \\cdot P(B \\mid A)$).",
+    "tags": [
+      "xác suất",
+      "quy tắc nhân"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Có hai hộp bi: hộp I có 3 bi đỏ, 2 bi xanh; hộp II có 1 bi đỏ, 4 bi xanh. Chọn ngẫu nhiên một hộp (xác suất bằng nhau) rồi bốc một bi (sơ đồ cây như hình). Xác suất bốc được bi đỏ là",
+    "figure": {
+      "kind": "probtree",
+      "text": "Hộp I: 0,5\n  Đỏ: 0,6\n  Xanh: 0,4\nHộp II: 0,5\n  Đỏ: 0,2\n  Xanh: 0,8"
+    },
+    "options": [
+      {
+        "key": "A",
+        "text": "$0{,}4$"
+      },
+      {
+        "key": "B",
+        "text": "$0{,}3$"
+      },
+      {
+        "key": "C",
+        "text": "$0{,}5$"
+      },
+      {
+        "key": "D",
+        "text": "$0{,}6$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Công thức xác suất toàn phần: $P=0{,}5 \\cdot 0{,}6+0{,}5 \\cdot 0{,}2=0{,}4$.",
+    "tags": [
+      "xác suất",
+      "toàn phần"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Cho $P(A)=0{,}6$ và $P(B \\mid A)=0{,}5$. Khi đó $P(A \\cap B)$ bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$0{,}8$"
+      },
+      {
+        "key": "B",
+        "text": "$0{,}12$"
+      },
+      {
+        "key": "C",
+        "text": "$0{,}2$"
+      },
+      {
+        "key": "D",
+        "text": "$0{,}3$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "$P(A \\cap B)=P(A) \\cdot P(B \\mid A)=0{,}6 \\cdot 0{,}5=0{,}3$.",
+    "tags": [
+      "xác suất",
+      "quy tắc nhân"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Hai nhà máy I và II cung cấp lần lượt 80% và 20% số sản phẩm cho một cửa hàng. Tỉ lệ sản phẩm lỗi của nhà máy I là 2%, của nhà máy II là 5%. Chọn ngẫu nhiên một sản phẩm lỗi, xác suất sản phẩm đó do nhà máy I sản xuất là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\dfrac{8}{13}$"
+      },
+      {
+        "key": "B",
+        "text": "$\\dfrac{2}{13}$"
+      },
+      {
+        "key": "C",
+        "text": "$\\dfrac{5}{13}$"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{1}{2}$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "$P(\\text{lỗi})=0{,}8 \\cdot 0{,}02+0{,}2 \\cdot 0{,}05=0{,}026$; $P(I \\mid \\text{lỗi})=\\dfrac{0{,}016}{0{,}026}=\\dfrac{8}{13}$.",
+    "tags": [
+      "xác suất",
+      "Bayes"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Gieo một xúc xắc sáu mặt đồng chất. Gọi $A$ là biến cố \"mặt xuất hiện số chẵn\", $B$ là biến cố \"mặt xuất hiện số lớn hơn 3\". Xác suất $P(A \\mid B)$ bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\dfrac{1}{2}$"
+      },
+      {
+        "key": "B",
+        "text": "$\\dfrac{1}{3}$"
+      },
+      {
+        "key": "C",
+        "text": "$\\dfrac{2}{3}$"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{1}{6}$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "$A \\cap B=\\{4;6\\}$, $B=\\{4;5;6\\}$ nên $P(A \\mid B)=\\dfrac{2}{3}$.",
+    "tags": [
+      "xác suất",
+      "có điều kiện"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Một bệnh hiếm gặp ở 1% dân số. Xét nghiệm cho kết quả dương với 95% người có bệnh và 5% người không có bệnh (sơ đồ cây như hình). Xác suất một người được chọn ngẫu nhiên cho kết quả dương là",
+    "figure": {
+      "kind": "probtree",
+      "text": "Bệnh: 0,01\n  Dương: 0,95\n  Âm: 0,05\nKhông bệnh: 0,99\n  Dương: 0,1\n  Âm: 0,9"
+    },
+    "options": [
+      {
+        "key": "A",
+        "text": "$0{,}01$"
+      },
+      {
+        "key": "B",
+        "text": "$0{,}0595$"
+      },
+      {
+        "key": "C",
+        "text": "$0{,}095$"
+      },
+      {
+        "key": "D",
+        "text": "$0{,}059$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "$P=0{,}01 \\cdot 0{,}95+0{,}99 \\cdot 0{,}05=0{,}0095+0{,}0495=0{,}059$.",
+    "tags": [
+      "xác suất",
+      "toàn phần"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Mẫu số liệu ghép nhóm có các nhóm $[20;30)$, $[30;40)$, $[40;50)$. Khoảng biến thiên của mẫu là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$30$"
+      },
+      {
+        "key": "B",
+        "text": "$20$"
+      },
+      {
+        "key": "C",
+        "text": "$10$"
+      },
+      {
+        "key": "D",
+        "text": "$40$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "$R=50-20=30$.",
+    "tags": [
+      "thống kê",
+      "khoảng biến thiên"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Mẫu ghép nhóm: $[10;20)$ có tần số 6, $[20;30)$ có tần số 10, $[30;40)$ có tần số 4 ($n=20$). Khoảng tứ phân vị của mẫu (làm tròn đến hàng phần trăm) là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$4{,}67$"
+      },
+      {
+        "key": "B",
+        "text": "$10{,}67$"
+      },
+      {
+        "key": "C",
+        "text": "$8{,}33$"
+      },
+      {
+        "key": "D",
+        "text": "$6{,}67$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Tần số tích luỹ: $6;16;20$. $Q_1=10+\\dfrac{5-0}{6} \\cdot 10=\\dfrac{55}{3} \\approx 18{,}33$; $Q_3=20+\\dfrac{15-6}{10} \\cdot 10=29$; $\\Delta_Q=29-\\dfrac{55}{3}=\\dfrac{32}{3} \\approx 10{,}67$.",
+    "tags": [
+      "thống kê",
+      "tứ phân vị ghép nhóm"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Trung tâm kiểu của nhóm $[25;35)$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$25$"
+      },
+      {
+        "key": "B",
+        "text": "$30$"
+      },
+      {
+        "key": "C",
+        "text": "$35$"
+      },
+      {
+        "key": "D",
+        "text": "$32{,}5$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Trung tâm kiểu $=\\dfrac{25+35}{2}=30$.",
+    "tags": [
+      "thống kê",
+      "trung tâm kiểu"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Mẫu ghép nhóm: nhóm $[0;10)$ có tần số 2 (trung tâm kiểu 5), nhóm $[10;20)$ có tần số 3 (trung tâm kiểu 15). Phương sai của mẫu là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$18$"
+      },
+      {
+        "key": "B",
+        "text": "$11$"
+      },
+      {
+        "key": "C",
+        "text": "$24$"
+      },
+      {
+        "key": "D",
+        "text": "$20$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "$\\bar{x}=11$; $s^2=\\dfrac{2(5-11)^2+3(15-11)^2}{5}=\\dfrac{72+48}{5}=24$.",
+    "tags": [
+      "thống kê",
+      "phương sai ghép nhóm"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Mẫu ghép nhóm (như hình): nhóm $[5;15)$ tần số 4, nhóm $[15;25)$ tần số 6. Độ lệch chuẩn của mẫu (làm tròn đến hàng phần trăm) là",
+    "figure": {
+      "kind": "stats",
+      "chart": "hist",
+      "title": "Mẫu số liệu ghép nhóm",
+      "xLabel": "Giá trị",
+      "yLabel": "Tần số",
+      "data": "[5; 15) [15; 25)\nTần số: 4; 6"
+    },
+    "options": [
+      {
+        "key": "A",
+        "text": "$5{,}76$"
+      },
+      {
+        "key": "B",
+        "text": "$4{,}90$"
+      },
+      {
+        "key": "C",
+        "text": "$24{,}00$"
+      },
+      {
+        "key": "D",
+        "text": "$2{,}45$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$\\bar{x}=16$; $s^2=\\dfrac{4(10-16)^2+6(20-16)^2}{10}=24$; $s=\\sqrt{24} \\approx 4{,}90$.",
+    "tags": [
+      "thống kê",
+      "độ lệch chuẩn"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Một hộp có 2 bi đỏ và 3 bi xanh. Bốc lần lượt 2 bi không hoàn lại. Gọi $A$ là biến cố \"bi thứ nhất màu đỏ\", $B$ là biến cố \"bi thứ hai màu đỏ\". Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$P(A \\cap B)=\\dfrac{1}{10}$"
+      },
+      {
+        "key": "b",
+        "text": "$P(B \\mid A)=\\dfrac{1}{4}$"
+      },
+      {
+        "key": "c",
+        "text": "$P(B)=\\dfrac{1}{10}$"
+      },
+      {
+        "key": "d",
+        "text": "$A$ và $B$ là hai biến cố độc lập"
+      }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a) $\\dfrac{2}{5} \\cdot \\dfrac{1}{4}=\\dfrac{1}{10}$ — đúng. b) Đúng. c) $P(B)=\\dfrac{C_2^2}{C_5^2}=\\dfrac{1}{10}$ — đúng. d) Rút không hoàn lại nên phụ thuộc — sai.",
+    "tags": [
+      "xác suất",
+      "có điều kiện"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Trong một trường, 60% học sinh là nữ; 30% nữ và 50% nam thích môn Toán. Chọn ngẫu nhiên một học sinh. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Xác suất học sinh đó là nữ bằng 0,6"
+      },
+      {
+        "key": "b",
+        "text": "Xác suất học sinh đó thích Toán bằng 0,4"
+      },
+      {
+        "key": "c",
+        "text": "Biết học sinh đó thích Toán, xác suất là nữ bằng $\\dfrac{9}{19}$"
+      },
+      {
+        "key": "d",
+        "text": "Xác suất học sinh thích Toán biết học sinh đó là nữ bằng 0,5"
+      }
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "a) Đúng. b) $P=0{,}6 \\cdot 0{,}3+0{,}4 \\cdot 0{,}5=0{,}38 \\ne 0{,}4$ — sai. c) $\\dfrac{0{,}18}{0{,}38}=\\dfrac{9}{19}$ — đúng. d) Là 0,3 — sai.",
+    "tags": [
+      "xác suất",
+      "Bayes"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Một bệnh xuất hiện ở 2% dân số. Xét nghiệm dương tính với 90% người có bệnh và 10% người không có bệnh. Chọn ngẫu nhiên một người. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$P(\\text{bệnh})=0{,}02$"
+      },
+      {
+        "key": "b",
+        "text": "$P(\\text{dương})=0{,}116$"
+      },
+      {
+        "key": "c",
+        "text": "$P(\\text{bệnh} \\mid \\text{dương}) \\approx 0{,}155$"
+      },
+      {
+        "key": "d",
+        "text": "$P(\\text{bệnh} \\mid \\text{dương})>0{,}5$"
+      }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a) Đúng. b) $0{,}02 \\cdot 0{,}9+0{,}98 \\cdot 0{,}1=0{,}116$ — đúng. c) $\\dfrac{0{,}018}{0{,}116} \\approx 0{,}155$ — đúng. d) $0{,}155<0{,}5$ — sai.",
+    "tags": [
+      "xác suất",
+      "Bayes"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Lớp 10A có 40 học sinh: 24 em chơi bóng đá; trong 24 em đó có 18 em thích môn thể thao. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Xác suất chọn được em chơi bóng đá là 0,6"
+      },
+      {
+        "key": "b",
+        "text": "$P(\\text{đá bóng} \\cap \\text{thích})=0{,}45$"
+      },
+      {
+        "key": "c",
+        "text": "$P(\\text{thích} \\mid \\text{đá bóng})=0{,}6$"
+      },
+      {
+        "key": "d",
+        "text": "$P(\\text{thích} \\mid \\text{đá bóng})=0{,}75$"
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) $\\dfrac{24}{40}=0{,}6$ — đúng. b) $\\dfrac{18}{40}=0{,}45$ — đúng. c) $\\dfrac{18}{24}=0{,}75 \\ne 0{,}6$ — sai. d) Đúng.",
+    "tags": [
+      "xác suất",
+      "có điều kiện"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Mẫu số liệu ghép nhóm: nhóm $[10;20)$ tần số 5, nhóm $[20;30)$ tần số 10, nhóm $[30;40)$ tần số 5 ($n=20$). Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Trung tâm kiểu của nhóm thứ hai là 25"
+      },
+      {
+        "key": "b",
+        "text": "Trung vị của mẫu là 25"
+      },
+      {
+        "key": "c",
+        "text": "Mốt của mẫu là 25"
+      },
+      {
+        "key": "d",
+        "text": "Khoảng biến thiên của mẫu là 20"
+      }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a) Đúng. b) Vị trí 10–11 rơi vào nhóm $[20;30)$: $20+\\dfrac{10-5}{10} \\cdot 10=25$ — đúng. c) Nhóm có tần số lớn nhất $[20;30)$: mốt $=25$ — đúng. d) $R=40-10=30 \\ne 20$ — sai.",
+    "tags": [
+      "thống kê",
+      "mẫu ghép nhóm"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Mẫu ghép nhóm: nhóm $[0;4)$ tần số 3 (trung tâm kiểu 2), nhóm $[4;8)$ tần số 5 (trung tâm kiểu 6). Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Số trung bình của mẫu là 4,5"
+      },
+      {
+        "key": "b",
+        "text": "Phương sai của mẫu là 3,75"
+      },
+      {
+        "key": "c",
+        "text": "Độ lệch chuẩn của mẫu khoảng 3,75"
+      },
+      {
+        "key": "d",
+        "text": "Độ lệch chuẩn của mẫu khoảng 1,94"
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) $\\dfrac{3 \\cdot 2+5 \\cdot 6}{8}=4{,}5$ — đúng. b) $\\dfrac{3(2-4{,}5)^2+5(6-4{,}5)^2}{8}=3{,}75$ — đúng. c) Độ lệch chuẩn là $\\sqrt{3{,}75} \\approx 1{,}94$, không phải 3,75 — sai. d) Đúng.",
+    "tags": [
+      "thống kê",
+      "độ lệch chuẩn"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Cho $P(A \\cap B)=0{,}12$ và $P(B)=0{,}3$. Tính $P(A \\mid B)$.",
+    "answer": "0,4",
+    "explanation": "$P(A \\mid B)=\\dfrac{0{,}12}{0{,}3}=0{,}4$.",
+    "tags": [
+      "xác suất",
+      "có điều kiện"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Hộp I có 4 bi đỏ, 1 bi xanh; hộp II có 1 bi đỏ, 4 bi xanh. Chọn ngẫu nhiên một hộp rồi bốc một bi. Tính xác suất bốc được bi đỏ.",
+    "answer": "0,5",
+    "explanation": "$P=\\dfrac{1}{2} \\cdot \\dfrac{4}{5}+\\dfrac{1}{2} \\cdot \\dfrac{1}{5}=0{,}5$.",
+    "tags": [
+      "xác suất",
+      "toàn phần"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Quay lại bài toán hai hộp (hộp I: 4 đỏ 1 xanh; hộp II: 1 đỏ 4 xanh, chọn hộp ngẫu nhiên). Biết bi bốc được màu đỏ. Tính xác suất bi đó thuộc hộp I.",
+    "answer": "0,8",
+    "explanation": "$P(I \\mid \\text{đỏ})=\\dfrac{0{,}5 \\cdot 0{,}8}{0{,}5}=0{,}8$.",
+    "tags": [
+      "xác suất",
+      "Bayes"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Cho $A$, $B$ độc lập với $P(A)=0{,}5$, $P(B)=0{,}4$. Tính $P(A \\cup B)$.",
+    "answer": "0,7",
+    "explanation": "$P(A \\cup B)=0{,}5+0{,}4-0{,}5 \\cdot 0{,}4=0{,}7$.",
+    "tags": [
+      "xác suất",
+      "biến cố độc lập"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Mẫu ghép nhóm có các nhóm $[15;25)$, $[25;35)$, $[35;45)$. Tính khoảng biến thiên của mẫu.",
+    "answer": "30",
+    "explanation": "$R=45-15=30$.",
+    "tags": [
+      "thống kê",
+      "khoảng biến thiên"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Mẫu ghép nhóm: nhóm $[0;5)$ tần số 2 (trung tâm kiểu 2,5), nhóm $[5;10)$ tần số 6 (trung tâm kiểu 7,5). Tính phương sai của mẫu (làm tròn đến hàng phần trăm).",
+    "answer": "4,69",
+    "explanation": "$\\bar{x}=6{,}25$; $s^2=\\dfrac{2(2{,}5-6{,}25)^2+6(7{,}5-6{,}25)^2}{8}=\\dfrac{37{,}5}{8} \\approx 4{,}69$.",
+    "tags": [
+      "thống kê",
+      "phương sai ghép nhóm"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Một mẫu số liệu có $Q_1=12$ và $Q_3=24$. Tính khoảng tứ phân vị của mẫu.",
+    "answer": "12",
+    "explanation": "$\\Delta_Q=Q_3-Q_1=12$.",
+    "tags": [
+      "thống kê",
+      "khoảng tứ phân vị"
+    ]
+  }
+]

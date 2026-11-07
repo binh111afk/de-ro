@@ -1,0 +1,719 @@
+[
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Số đo $90^\\circ$ đổi ra radian bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\dfrac{\\pi}{3}$"
+      },
+      {
+        "key": "B",
+        "text": "$\\dfrac{\\pi}{2}$"
+      },
+      {
+        "key": "C",
+        "text": "$\\pi$"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{\\pi}{4}$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$90^\\circ=90 \\cdot \\dfrac{\\pi}{180}=\\dfrac{\\pi}{2}$.",
+    "tags": [
+      "lượng giác",
+      "đơn vị góc"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Giá trị của $\\sin \\dfrac{\\pi}{6}$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\dfrac{1}{2}$"
+      },
+      {
+        "key": "B",
+        "text": "$\\dfrac{\\sqrt{3}}{2}$"
+      },
+      {
+        "key": "C",
+        "text": "$\\dfrac{\\sqrt{2}}{2}$"
+      },
+      {
+        "key": "D",
+        "text": "$1$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "$\\sin \\dfrac{\\pi}{6}=\\sin 30^\\circ=\\dfrac{1}{2}$.",
+    "tags": [
+      "lượng giác",
+      "giá trị lượng giác"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Trong các góc sau, góc nào cùng tia đầu và tia cuối với góc $-135^\\circ$?",
+    "options": [
+      {
+        "key": "A",
+        "text": "$45^\\circ$"
+      },
+      {
+        "key": "B",
+        "text": "$135^\\circ$"
+      },
+      {
+        "key": "C",
+        "text": "$225^\\circ$"
+      },
+      {
+        "key": "D",
+        "text": "$315^\\circ$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "$-135^\\circ+360^\\circ=225^\\circ$.",
+    "tags": [
+      "lượng giác",
+      "góc cùng tia"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Với mọi góc $\\alpha$, ta có $\\cos(\\pi-\\alpha)$ bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\cos \\alpha$"
+      },
+      {
+        "key": "B",
+        "text": "$\\sin \\alpha$"
+      },
+      {
+        "key": "C",
+        "text": "$-\\sin \\alpha$"
+      },
+      {
+        "key": "D",
+        "text": "$-\\cos \\alpha$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Công thức góc bù: $\\cos(\\pi-\\alpha)=-\\cos \\alpha$.",
+    "tags": [
+      "lượng giác",
+      "công thức lượng giác"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Điểm $M$ trên đường tròn lượng giác ứng với góc $\\dfrac{\\pi}{3}$ (như hình). Tung độ của $M$ là",
+    "figure": {
+      "kind": "trig",
+      "angles": "M: pi/3",
+      "projections": true,
+      "tan": false,
+      "values": false,
+      "cot": false
+    },
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\dfrac{1}{2}$"
+      },
+      {
+        "key": "B",
+        "text": "$\\dfrac{\\sqrt{2}}{2}$"
+      },
+      {
+        "key": "C",
+        "text": "$\\dfrac{\\sqrt{3}}{2}$"
+      },
+      {
+        "key": "D",
+        "text": "$1$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Tung độ của điểm trên đường tròn lượng giác ứng với góc $\\alpha$ là $\\sin \\alpha=\\dfrac{\\sqrt{3}}{2}$.",
+    "tags": [
+      "lượng giác",
+      "đường tròn lượng giác"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Cho $\\sin \\alpha=\\dfrac{3}{5}$ với $0<\\alpha<\\dfrac{\\pi}{2}$. Giá trị của $\\sin 2\\alpha$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\dfrac{12}{25}$"
+      },
+      {
+        "key": "B",
+        "text": "$\\dfrac{24}{25}$"
+      },
+      {
+        "key": "C",
+        "text": "$\\dfrac{6}{25}$"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{9}{25}$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$\\cos \\alpha=\\dfrac{4}{5}$ nên $\\sin 2\\alpha=2 \\cdot \\dfrac{3}{5} \\cdot \\dfrac{4}{5}=\\dfrac{24}{25}$.",
+    "tags": [
+      "lượng giác",
+      "công thức nhân đôi"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Tập giá trị của hàm số $y=2\\sin x+1$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$[-1;3]$"
+      },
+      {
+        "key": "B",
+        "text": "$[-2;2]$"
+      },
+      {
+        "key": "C",
+        "text": "$[0;3]$"
+      },
+      {
+        "key": "D",
+        "text": "$[-3;1]$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "$-1 \\le \\sin x \\le 1$ nên $-1 \\le 2\\sin x+1 \\le 3$.",
+    "tags": [
+      "lượng giác",
+      "hàm số lượng giác"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Cho $\\tan \\alpha=\\dfrac{1}{2}$, $\\tan \\beta=\\dfrac{1}{3}$ với $\\alpha, \\beta$ là các góc nhọn. Khi đó $\\alpha+\\beta$ bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$30^\\circ$"
+      },
+      {
+        "key": "B",
+        "text": "$60^\\circ$"
+      },
+      {
+        "key": "C",
+        "text": "$90^\\circ$"
+      },
+      {
+        "key": "D",
+        "text": "$45^\\circ$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "$\\tan(\\alpha+\\beta)=\\dfrac{\\frac{1}{2}+\\frac{1}{3}}{1-\\frac{1}{6}}=\\dfrac{\\frac{5}{6}}{\\frac{5}{6}}=1$ nên $\\alpha+\\beta=45^\\circ$.",
+    "tags": [
+      "lượng giác",
+      "công thức cộng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Với mọi góc $\\alpha$, ta có $\\sin\\left(\\dfrac{\\pi}{2}+\\alpha\\right)$ bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\sin \\alpha$"
+      },
+      {
+        "key": "B",
+        "text": "$-\\cos \\alpha$"
+      },
+      {
+        "key": "C",
+        "text": "$\\cos \\alpha$"
+      },
+      {
+        "key": "D",
+        "text": "$-\\sin \\alpha$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Công thức góc phụ: $\\sin\\left(\\dfrac{\\pi}{2}+\\alpha\\right)=\\cos \\alpha$.",
+    "tags": [
+      "lượng giác",
+      "công thức lượng giác"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Chu kì của hàm số $y=\\cos 2x$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$2\\pi$"
+      },
+      {
+        "key": "B",
+        "text": "$\\pi$"
+      },
+      {
+        "key": "C",
+        "text": "$\\dfrac{\\pi}{2}$"
+      },
+      {
+        "key": "D",
+        "text": "$4\\pi$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Hàm $y=\\cos bx$ có chu kì $T=\\dfrac{2\\pi}{|b|}=\\pi$.",
+    "tags": [
+      "lượng giác",
+      "chu kì"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Điểm $M$ trên đường tròn lượng giác ứng với góc $150^\\circ$ (như hình). Hoành độ của $M$ là",
+    "figure": {
+      "kind": "trig",
+      "angles": "M: 150°",
+      "projections": true,
+      "tan": false,
+      "values": false,
+      "cot": false
+    },
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\dfrac{1}{2}$"
+      },
+      {
+        "key": "B",
+        "text": "$\\dfrac{\\sqrt{3}}{2}$"
+      },
+      {
+        "key": "C",
+        "text": "$-\\dfrac{1}{2}$"
+      },
+      {
+        "key": "D",
+        "text": "$-\\dfrac{\\sqrt{3}}{2}$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Hoành độ của $M$ là $\\cos 150^\\circ=-\\cos 30^\\circ=-\\dfrac{\\sqrt{3}}{2}$.",
+    "tags": [
+      "lượng giác",
+      "đường tròn lượng giác"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Cho $\\sin \\alpha+\\cos \\alpha=\\sqrt{2}$. Giá trị của $\\sin \\alpha \\cos \\alpha$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\dfrac{1}{4}$"
+      },
+      {
+        "key": "B",
+        "text": "$\\dfrac{\\sqrt{2}}{2}$"
+      },
+      {
+        "key": "C",
+        "text": "$\\dfrac{1}{2}$"
+      },
+      {
+        "key": "D",
+        "text": "$1$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Bình phương hai vế: $1+2\\sin \\alpha \\cos \\alpha=2$ nên $\\sin \\alpha \\cos \\alpha=\\dfrac{1}{2}$.",
+    "tags": [
+      "lượng giác",
+      "hệ thức lượng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Điểm $M$ ứng với góc $\\dfrac{\\pi}{4}$ trên đường tròn lượng giác (như hình). Xét tính đúng sai:",
+    "figure": {
+      "kind": "trig",
+      "angles": "M: pi/4",
+      "projections": true,
+      "tan": false,
+      "values": false,
+      "cot": false
+    },
+    "options": [
+      {
+        "key": "a",
+        "text": "$\\sin \\dfrac{\\pi}{4}=\\dfrac{\\sqrt{2}}{2}$"
+      },
+      {
+        "key": "b",
+        "text": "$\\cos \\dfrac{\\pi}{4}=\\dfrac{1}{2}$"
+      },
+      {
+        "key": "c",
+        "text": "$\\tan \\dfrac{\\pi}{4}=1$"
+      },
+      {
+        "key": "d",
+        "text": "$M$ nằm trên cung phần tư thứ nhất"
+      }
+    ],
+    "answer": "ĐSĐĐ",
+    "explanation": "a) Đúng. b) $\\cos \\dfrac{\\pi}{4}=\\dfrac{\\sqrt{2}}{2}$ — sai. c) Đúng. d) $\\dfrac{\\pi}{4}$ nằm giữa $0$ và $\\dfrac{\\pi}{2}$ — đúng.",
+    "tags": [
+      "lượng giác",
+      "đường tròn lượng giác"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Xét tính đúng sai về các công thức lượng giác:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$\\sin(\\alpha+\\beta)=\\sin \\alpha \\cos \\beta+\\cos \\alpha \\sin \\beta$"
+      },
+      {
+        "key": "b",
+        "text": "$\\cos 2\\alpha=1-2\\sin^2 \\alpha$"
+      },
+      {
+        "key": "c",
+        "text": "$\\sin 2\\alpha=2\\sin \\alpha$"
+      },
+      {
+        "key": "d",
+        "text": "$\\tan 2\\alpha=\\dfrac{2\\tan \\alpha}{1-\\tan^2 \\alpha}$"
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) Đúng. b) Đúng. c) Đúng là $\\sin 2\\alpha=2\\sin \\alpha \\cos \\alpha$ — sai. d) Đúng.",
+    "tags": [
+      "lượng giác",
+      "công thức lượng giác"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Cho hàm số $y=\\sin x$ với $x \\in [0;2\\pi]$ (đồ thị như hình). Xét tính đúng sai:",
+    "figure": {
+      "kind": "graph",
+      "curves": [
+        "sin(x)"
+      ],
+      "xMin": 0,
+      "xMax": 6.3,
+      "yMin": -1.5,
+      "yMax": 1.5,
+      "labels": true
+    },
+    "options": [
+      {
+        "key": "a",
+        "text": "$y=0$ tại $x=0$, $x=\\pi$, $x=2\\pi$"
+      },
+      {
+        "key": "b",
+        "text": "$y=1$ tại $x=\\dfrac{\\pi}{2}$"
+      },
+      {
+        "key": "c",
+        "text": "$y=-1$ tại $x=\\dfrac{3\\pi}{2}$"
+      },
+      {
+        "key": "d",
+        "text": "$y>0$ trên khoảng $\\left(\\dfrac{\\pi}{2};\\dfrac{3\\pi}{2}\\right)$"
+      }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a), b), c) Đúng theo đồ thị. d) Trên $(\\pi;\\dfrac{3\\pi}{2})$ thì $\\sin x<0$ — sai.",
+    "tags": [
+      "lượng giác",
+      "đồ thị"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Xét tính đúng sai về đơn vị đo góc:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$60^\\circ=\\dfrac{\\pi}{3}$ rad"
+      },
+      {
+        "key": "b",
+        "text": "$\\dfrac{\\pi}{4}$ rad $=45^\\circ$"
+      },
+      {
+        "key": "c",
+        "text": "$30^\\circ=\\dfrac{\\pi}{3}$ rad"
+      },
+      {
+        "key": "d",
+        "text": "$150^\\circ=\\dfrac{5\\pi}{6}$ rad"
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) Đúng. b) Đúng. c) $30^\\circ=\\dfrac{\\pi}{6}$ rad — sai. d) Đúng.",
+    "tags": [
+      "lượng giác",
+      "đơn vị góc"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Cho $\\sin \\alpha=-\\dfrac{2}{3}$ với $\\pi<\\alpha<\\dfrac{3\\pi}{2}$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$\\alpha$ là góc phần tư thứ ba"
+      },
+      {
+        "key": "b",
+        "text": "$\\cos \\alpha=-\\dfrac{\\sqrt{5}}{3}$"
+      },
+      {
+        "key": "c",
+        "text": "$\\tan \\alpha=-\\dfrac{2\\sqrt{5}}{5}$"
+      },
+      {
+        "key": "d",
+        "text": "$\\sin 2\\alpha=\\dfrac{4\\sqrt{5}}{9}$"
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) $\\pi<\\alpha<\\dfrac{3\\pi}{2}$ — đúng. b) $\\cos \\alpha=-\\sqrt{1-\\dfrac{4}{9}}=-\\dfrac{\\sqrt{5}}{3}$ (âm ở phần tư III) — đúng. c) $\\tan \\alpha=\\dfrac{-2/3}{-\\sqrt{5}/3}=\\dfrac{2\\sqrt{5}}{5}>0$ — sai. d) $2 \\cdot \\left(-\\dfrac{2}{3}\\right)\\left(-\\dfrac{\\sqrt{5}}{3}\\right)=\\dfrac{4\\sqrt{5}}{9}$ — đúng.",
+    "tags": [
+      "lượng giác",
+      "hệ thức lượng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Xét họ nghiệm $\\dfrac{\\pi}{3}+k\\dfrac{\\pi}{3}$ với $k \\in \\mathbb{Z}$ trên đường tròn lượng giác (điểm được nối thành lục giác như hình). Xét tính đúng sai:",
+    "figure": {
+      "kind": "trig",
+      "angles": "pi/3 + kpi/3\nnối tô: họ",
+      "projections": false,
+      "tan": false,
+      "values": false,
+      "cot": false
+    },
+    "options": [
+      {
+        "key": "a",
+        "text": "Họ gồm 6 điểm trên đường tròn lượng giác"
+      },
+      {
+        "key": "b",
+        "text": "Điểm ứng với $k=0$ ứng với góc $\\dfrac{\\pi}{3}$"
+      },
+      {
+        "key": "c",
+        "text": "Cả 6 điểm có cùng hoành độ"
+      },
+      {
+        "key": "d",
+        "text": "Sáu điểm tạo thành một lục giác đều"
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) Bước $\\dfrac{\\pi}{3}$ chia hết $2\\pi$ thành 6 điểm — đúng. b) Đúng. c) Hoành độ là các giá trị $\\dfrac{1}{2},-\\dfrac{1}{2},-1,-\\dfrac{1}{2},\\dfrac{1}{2},1$ — sai. d) Sáu điểm cách đều nhau trên đường tròn — đúng.",
+    "tags": [
+      "lượng giác",
+      "họ nghiệm"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Tính giá trị của biểu thức $\\sin^2 10^\\circ+\\cos^2 10^\\circ$.",
+    "answer": "1",
+    "explanation": "Theo hệ thức lượng cơ bản, tổng luôn bằng 1.",
+    "tags": [
+      "lượng giác",
+      "hệ thức lượng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Cho $\\sin \\alpha=\\dfrac{1}{3}$ với $0<\\alpha<\\dfrac{\\pi}{2}$. Tính $\\cos \\alpha$ (làm tròn đến hàng phần trăm).",
+    "answer": "0,94",
+    "explanation": "$\\cos \\alpha=\\sqrt{1-\\dfrac{1}{9}}=\\dfrac{2\\sqrt{2}}{3} \\approx 0{,}94$.",
+    "tags": [
+      "lượng giác",
+      "hệ thức lượng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Tính chu kì của hàm số $y=\\sin(\\pi x)$.",
+    "answer": "2",
+    "explanation": "Chu kì $T=\\dfrac{2\\pi}{\\pi}=2$.",
+    "tags": [
+      "lượng giác",
+      "chu kì"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Tính $\\tan \\dfrac{\\pi}{6}$ (làm tròn đến hàng phần trăm).",
+    "answer": "0,58",
+    "explanation": "$\\tan \\dfrac{\\pi}{6}=\\dfrac{\\sqrt{3}}{3} \\approx 0{,}58$.",
+    "tags": [
+      "lượng giác",
+      "giá trị lượng giác"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Tính $\\sin 105^\\circ$ (làm tròn đến hàng phần trăm).",
+    "answer": "0,97",
+    "explanation": "$\\sin 105^\\circ=\\sin(60^\\circ+45^\\circ)=\\dfrac{\\sqrt{6}+\\sqrt{2}}{4} \\approx 0{,}97$.",
+    "tags": [
+      "lượng giác",
+      "công thức cộng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Cho $\\sin \\alpha \\cos \\alpha=-\\dfrac{3}{8}$. Tính $(\\sin \\alpha+\\cos \\alpha)^2$.",
+    "answer": "0,25",
+    "explanation": "$(\\sin \\alpha+\\cos \\alpha)^2=1+2\\sin \\alpha \\cos \\alpha=1-\\dfrac{3}{4}=\\dfrac{1}{4}=0{,}25$.",
+    "tags": [
+      "lượng giác",
+      "hệ thức lượng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Cho $\\sin \\alpha=\\dfrac{2}{5}$ với $0<\\alpha<\\dfrac{\\pi}{2}$. Tính $\\sin 2\\alpha$ (làm tròn đến hàng phần trăm).",
+    "answer": "0,73",
+    "explanation": "$\\cos \\alpha=\\dfrac{\\sqrt{21}}{5}$; $\\sin 2\\alpha=2 \\cdot \\dfrac{2}{5} \\cdot \\dfrac{\\sqrt{21}}{5}=\\dfrac{4\\sqrt{21}}{25} \\approx 0{,}73$.",
+    "tags": [
+      "lượng giác",
+      "công thức nhân đôi"
+    ]
+  }
+]

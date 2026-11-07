@@ -1,0 +1,719 @@
+[
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Đạo hàm của hàm số $y=x^3-3x$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$x^2-3$"
+      },
+      {
+        "key": "B",
+        "text": "$3x^2-3$"
+      },
+      {
+        "key": "C",
+        "text": "$3x^2+3$"
+      },
+      {
+        "key": "D",
+        "text": "$x^2+3$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$y'=3x^2-3$.",
+    "tags": [
+      "đạo hàm",
+      "đơn điệu"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Hàm số $y=2x^2+1$ nghịch biến trên khoảng nào?",
+    "options": [
+      {
+        "key": "A",
+        "text": "$(0;+\\infty)$"
+      },
+      {
+        "key": "B",
+        "text": "$\\mathbb{R}$"
+      },
+      {
+        "key": "C",
+        "text": "$(-\\infty;0)$"
+      },
+      {
+        "key": "D",
+        "text": "$(-\\infty;+\\infty)$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "$y'=4x<0 \\Leftrightarrow x<0$.",
+    "tags": [
+      "đơn điệu",
+      "parabol"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Hoành độ điểm cực tiểu của hàm số $y=x^3-3x^2+1$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$0$"
+      },
+      {
+        "key": "B",
+        "text": "$1$"
+      },
+      {
+        "key": "C",
+        "text": "$-2$"
+      },
+      {
+        "key": "D",
+        "text": "$2$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "$y'=3x^2-6x=0 \\Leftrightarrow x=0, x=2$; $y'$ đổi dấu từ $-$ sang $+$ tại $x=2$ nên cực tiểu tại $x=2$.",
+    "tags": [
+      "cực trị",
+      "hàm bậc ba"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Bảng biến thiên của hàm số $y=f(x)$ như hình. Hàm số có bao nhiêu điểm cực trị?",
+    "figure": {
+      "kind": "vartable",
+      "expr": "x^3-3x+1",
+      "fname": "y"
+    },
+    "options": [
+      {
+        "key": "A",
+        "text": "$1$"
+      },
+      {
+        "key": "B",
+        "text": "$2$"
+      },
+      {
+        "key": "C",
+        "text": "$3$"
+      },
+      {
+        "key": "D",
+        "text": "$0$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Hàm bậc ba với $y'$ đổi dấu hai lần nên có 1 cực đại và 1 cực tiểu: 2 điểm cực trị.",
+    "tags": [
+      "cực trị",
+      "bảng biến thiên"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Đồ thị hàm số $y=f'(x)$ như hình. Hàm số $y=f(x)$ đồng biến trên khoảng nào?",
+    "figure": {
+      "kind": "graph",
+      "curves": [
+        "x^2-4x+3"
+      ],
+      "xMin": -1,
+      "xMax": 5,
+      "yMin": -2,
+      "yMax": 4,
+      "labels": true
+    },
+    "options": [
+      {
+        "key": "A",
+        "text": "$(1;3)$"
+      },
+      {
+        "key": "B",
+        "text": "$(-\\infty;2)$"
+      },
+      {
+        "key": "C",
+        "text": "$(3;+\\infty)$"
+      },
+      {
+        "key": "D",
+        "text": "$(0;4)$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Trên $(3;+\\infty)$ có $f'(x)>0$ nên $f$ đồng biến.",
+    "tags": [
+      "đơn điệu",
+      "đồ thị đạo hàm"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Giá trị cực tiểu của hàm số $y=x^3+3x^2-9x+2$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$-3$"
+      },
+      {
+        "key": "B",
+        "text": "$-1$"
+      },
+      {
+        "key": "C",
+        "text": "$2$"
+      },
+      {
+        "key": "D",
+        "text": "$1$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "$y'=3x^2+6x-9=0 \\Leftrightarrow x=-3, x=1$; cực tiểu tại $x=1$: $y(1)=1+3-9+2=-3$.",
+    "tags": [
+      "cực trị",
+      "giá trị cực trị"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Giá trị cực đại của hàm số $y=-x^3+3x$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$-2$"
+      },
+      {
+        "key": "B",
+        "text": "$1$"
+      },
+      {
+        "key": "C",
+        "text": "$3$"
+      },
+      {
+        "key": "D",
+        "text": "$2$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "$y'=-3x^2+3=0 \\Leftrightarrow x=\\pm 1$; cực đại tại $x=1$: $y(1)=-1+3=2$.",
+    "tags": [
+      "cực trị",
+      "giá trị cực trị"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Hàm số $y=x^3-3mx^2+3(m^2-1)x+2$ có cực trị khi",
+    "options": [
+      {
+        "key": "A",
+        "text": "$m \\ge 1$"
+      },
+      {
+        "key": "B",
+        "text": "với mọi $m$"
+      },
+      {
+        "key": "C",
+        "text": "$m>0$"
+      },
+      {
+        "key": "D",
+        "text": "$m<1$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$y'=3x^2-6mx+3(m^2-1)$ có $\\Delta=36m^2-36(m^2-1)=36>0$ với mọi $m$ nên luôn có 2 nghiệm phân biệt: luôn có cực trị.",
+    "tags": [
+      "cực trị",
+      "tham số"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Hàm số $y=x^4-2x^2$ có bao nhiêu điểm cực trị?",
+    "options": [
+      {
+        "key": "A",
+        "text": "$1$"
+      },
+      {
+        "key": "B",
+        "text": "$2$"
+      },
+      {
+        "key": "C",
+        "text": "$4$"
+      },
+      {
+        "key": "D",
+        "text": "$3$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "$y'=4x^3-4x=4x(x-1)(x+1)=0 \\Leftrightarrow x \\in \\{-1;0;1\\}$: 3 điểm.",
+    "tags": [
+      "cực trị",
+      "hàm trùng phương"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Bảng biến thiên của $y=f(x)$ cho thấy $f$ tăng trên $(-\\infty;1)$ và giảm trên $(1;+\\infty)$. Khẳng định nào đúng?",
+    "options": [
+      {
+        "key": "A",
+        "text": "$f$ có cực đại tại $x=1$"
+      },
+      {
+        "key": "B",
+        "text": "$f$ có cực tiểu tại $x=1$"
+      },
+      {
+        "key": "C",
+        "text": "$f$ không có cực trị"
+      },
+      {
+        "key": "D",
+        "text": "$f$ có hai điểm cực trị"
+      }
+    ],
+    "answer": "A",
+    "explanation": "$y'$ đổi dấu từ $+$ sang $-$ qua $x=1$: cực đại.",
+    "tags": [
+      "cực trị",
+      "bảng biến thiên"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Đồ thị hàm số $y=f'(x)$ như hình. Hàm số $y=f(x)$ nghịch biến trên khoảng nào?",
+    "figure": {
+      "kind": "graph",
+      "curves": [
+        "-x^2+4"
+      ],
+      "xMin": -4,
+      "xMax": 4,
+      "yMin": -6,
+      "yMax": 6,
+      "labels": true
+    },
+    "options": [
+      {
+        "key": "A",
+        "text": "$(-2;2)$"
+      },
+      {
+        "key": "B",
+        "text": "$(0;+\\infty)$"
+      },
+      {
+        "key": "C",
+        "text": "không tồn tại"
+      },
+      {
+        "key": "D",
+        "text": "$(-\\infty;-2)$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Với $x<-2$ có $f'(x)<0$ nên $f$ nghịch biến trên $(-\\infty;-2)$.",
+    "tags": [
+      "đơn điệu",
+      "đồ thị đạo hàm"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Có bao nhiêu giá trị nguyên của $m$ thuộc đoạn $[-3;3]$ để hàm số $y=x^3+mx+1$ không có cực trị?",
+    "options": [
+      {
+        "key": "A",
+        "text": "$3$"
+      },
+      {
+        "key": "B",
+        "text": "$5$"
+      },
+      {
+        "key": "C",
+        "text": "$4$"
+      },
+      {
+        "key": "D",
+        "text": "$2$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Không có cực trị khi $y'=3x^2+m \\ge 0$ với mọi $x \\Leftrightarrow m \\ge 0$: $m \\in \\{0;1;2;3\\}$: 4 giá trị.",
+    "tags": [
+      "cực trị",
+      "tham số"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Cho hàm số $y=x^3-3x$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$y'=3x^2-3$"
+      },
+      {
+        "key": "b",
+        "text": "Hàm số đồng biến trên $(1;+\\infty)$"
+      },
+      {
+        "key": "c",
+        "text": "Hàm số có cực đại tại $x=-1$"
+      },
+      {
+        "key": "d",
+        "text": "Giá trị cực đại của hàm số bằng $-2$"
+      }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a) Đúng. b) $y'>0$ khi $|x|>1$ — đúng. c) $y'$ đổi dấu $+ \\to -$ tại $x=-1$ — đúng. d) Giá trị cực đại $y(-1)=2 \\ne -2$ — sai.",
+    "tags": [
+      "cực trị",
+      "hàm bậc ba"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Cho hàm số $y=x^3-12x+1$ có bảng biến thiên như hình. Xét tính đúng sai:",
+    "figure": {
+      "kind": "vartable",
+      "expr": "x^3-12x+1",
+      "fname": "y"
+    },
+    "options": [
+      {
+        "key": "a",
+        "text": "$y'=3x^2-12$"
+      },
+      {
+        "key": "b",
+        "text": "Hàm số có cực đại tại $x=-2$"
+      },
+      {
+        "key": "c",
+        "text": "Giá trị cực đại bằng 17"
+      },
+      {
+        "key": "d",
+        "text": "Hàm số đồng biến trên $(-2;2)$"
+      }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a) Đúng. b) Đúng. c) $y(-2)=-8+24+1=17$ — đúng. d) Trên $(-2;2)$ hàm nghịch biến — sai.",
+    "tags": [
+      "cực trị",
+      "bảng biến thiên"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Đồ thị hàm $y=f'(x)$ như hình (parabol cắt $Ox$ tại $x=1$ và $x=3$, hướng lên). Xét tính đúng sai:",
+    "figure": {
+      "kind": "graph",
+      "curves": [
+        "x^2-4x+3"
+      ],
+      "xMin": -1,
+      "xMax": 5,
+      "yMin": -2,
+      "yMax": 4,
+      "labels": true
+    },
+    "options": [
+      {
+        "key": "a",
+        "text": "$f'(x)=0$ tại $x=1$ và $x=3$"
+      },
+      {
+        "key": "b",
+        "text": "$f$ đồng biến trên $(1;3)$"
+      },
+      {
+        "key": "c",
+        "text": "$f$ có cực tiểu tại $x=3$"
+      },
+      {
+        "key": "d",
+        "text": "$f$ có đúng 2 điểm cực trị"
+      }
+    ],
+    "answer": "ĐSĐĐ",
+    "explanation": "a) Đúng. b) Trên $(1;3)$ có $f'<0$ nên $f$ nghịch biến — sai. c) $y'$ đổi dấu $- \\to +$ tại $x=3$ — đúng. d) Đúng.",
+    "tags": [
+      "cực trị",
+      "đồ thị đạo hàm"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Cho hàm số $y=(x-1)^3+2$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$y'=3(x-1)^2$"
+      },
+      {
+        "key": "b",
+        "text": "$y' \\ge 0$ với mọi $x$"
+      },
+      {
+        "key": "c",
+        "text": "Hàm số đồng biến trên $\\mathbb{R}$"
+      },
+      {
+        "key": "d",
+        "text": "Hàm số có cực trị"
+      }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a), b), c) Đúng. d) $y'$ không đổi dấu nên không có cực trị — sai.",
+    "tags": [
+      "đơn điệu",
+      "hàm bậc ba"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Cho hàm số $y=x^4-4x^2+5$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$y'=4x^3-8x=0$ tại $x=0$ và $x=\\pm \\sqrt{2}$"
+      },
+      {
+        "key": "b",
+        "text": "Hàm số có 3 điểm cực trị"
+      },
+      {
+        "key": "c",
+        "text": "Giá trị cực tiểu của hàm số bằng 5"
+      },
+      {
+        "key": "d",
+        "text": "$y(0)=5$ là giá trị cực tiểu"
+      }
+    ],
+    "answer": "ĐĐSS",
+    "explanation": "a) Đúng. b) Đúng. c) Giá trị cực tiểu tại $x=\\pm \\sqrt{2}$ bằng $4-8+5=1 \\ne 5$ — sai. d) $y'$ đổi dấu từ $+$ sang $-$ qua $x=0$ nên $y(0)=5$ là giá trị cực đại, không phải cực tiểu — sai.",
+    "tags": [
+      "cực trị",
+      "hàm trùng phương"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Bảng biến thiên của hàm số $y=f(x)$: hàm tăng trên $(-\\infty;-1)$, giảm trên $(-1;2)$, tăng trên $(2;+\\infty)$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Hàm số tăng trên $(-\\infty;-1)$ và $(2;+\\infty)$"
+      },
+      {
+        "key": "b",
+        "text": "$f(-1)$ là giá trị cực tiểu"
+      },
+      {
+        "key": "c",
+        "text": "Hàm số giảm trên $(-1;2)$"
+      },
+      {
+        "key": "d",
+        "text": "$f(2)$ là giá trị cực đại"
+      }
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "a) Đúng. b) $f(-1)$ là giá trị cực đại — sai. c) Đúng. d) $f(2)$ là giá trị cực tiểu — sai.",
+    "tags": [
+      "cực trị",
+      "bảng biến thiên"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Tính hoành độ điểm cực tiểu của hàm số $y=x^3-3x^2$.",
+    "answer": "2",
+    "explanation": "$y'=3x^2-6x=0 \\Leftrightarrow x=0, x=2$; cực tiểu tại $x=2$.",
+    "tags": [
+      "cực trị",
+      "hàm bậc ba"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Có bao nhiêu giá trị nguyên của $m$ thuộc đoạn $[-5;5]$ để hàm số $y=x^3+mx+2$ có cực trị?",
+    "answer": "5",
+    "explanation": "Có cực trị khi $m<0$: $m \\in \\{-5;-4;-3;-2;-1\\}$: 5 giá trị.",
+    "tags": [
+      "cực trị",
+      "tham số"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Tính giá trị cực đại của hàm số $y=2x^3-6x$.",
+    "answer": "4",
+    "explanation": "$y'=6x^2-6=0 \\Leftrightarrow x=\\pm 1$; cực đại tại $x=-1$: $y(-1)=-2+6=4$.",
+    "tags": [
+      "cực trị",
+      "giá trị cực trị"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Hàm số $y=x^2+6x$ nghịch biến trên $(-\\infty;x_0)$. Tìm $x_0$.",
+    "answer": "-3",
+    "explanation": "Hoành độ đỉnh $x_0=-\\dfrac{6}{2}=-3$.",
+    "tags": [
+      "đơn điệu",
+      "parabol"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Hàm số $y=-x^4+2x^2$ có bao nhiêu điểm cực trị?",
+    "answer": "3",
+    "explanation": "$y'=-4x^3+4x=0 \\Leftrightarrow x \\in \\{-1;0;1\\}$: 3 điểm.",
+    "tags": [
+      "cực trị",
+      "hàm trùng phương"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Tính giá trị cực tiểu của hàm số $y=x^3-3x^2+3$.",
+    "answer": "-1",
+    "explanation": "Cực tiểu tại $x=2$: $y(2)=8-12+3=-1$.",
+    "tags": [
+      "cực trị",
+      "giá trị cực trị"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Có bao nhiêu giá trị nguyên của $a$ thuộc đoạn $[-4;4]$ để hàm số $y=x^4+ax^2$ có 3 điểm cực trị?",
+    "answer": "4",
+    "explanation": "Có 3 điểm cực trị khi $a<0$: $a \\in \\{-4;-3;-2;-1\\}$: 4 giá trị.",
+    "tags": [
+      "cực trị",
+      "tham số"
+    ]
+  }
+]

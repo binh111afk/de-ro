@@ -1,0 +1,341 @@
+[
+  {
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Hai vectơ được gọi là bằng nhau khi",
+    "options": [
+      { "key": "A", "text": "có cùng điểm đầu" },
+      { "key": "B", "text": "có cùng độ dài" },
+      { "key": "C", "text": "cùng hướng và cùng độ dài" },
+      { "key": "D", "text": "cùng phương" }
+    ],
+    "answer": "C",
+    "explanation": "Theo định nghĩa, $\\vec{a}=\\vec{b}$ khi chúng cùng hướng và cùng độ dài.",
+    "tags": ["vectơ", "khái niệm"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Cho vectơ $\\vec{u}=(2;-1)$. Độ dài của $\\vec{u}$ là",
+    "options": [
+      { "key": "A", "text": "$3$" },
+      { "key": "B", "text": "$\\sqrt{5}$" },
+      { "key": "C", "text": "$\\sqrt{3}$" },
+      { "key": "D", "text": "$5$" }
+    ],
+    "answer": "B",
+    "explanation": "$|\\vec{u}|=\\sqrt{2^2+(-1)^2}=\\sqrt{5}$.",
+    "tags": ["vectơ", "độ dài vectơ"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Cho hai điểm $A(1;2)$, $B(4;6)$ (như hình). Toạ độ vectơ $\\overrightarrow{AB}$ là",
+    "figure": { "kind": "oxy", "xMin": -1, "xMax": 5, "yMin": -1, "yMax": 7, "grid": true, "items": "A(1; 2)\nB(4; 6)" },
+    "options": [
+      { "key": "A", "text": "$(3;4)$" },
+      { "key": "B", "text": "$(4;3)$" },
+      { "key": "C", "text": "$(-3;-4)$" },
+      { "key": "D", "text": "$(5;8)$" }
+    ],
+    "answer": "A",
+    "explanation": "$\\overrightarrow{AB}=(4-1;6-2)=(3;4)$.",
+    "tags": ["vectơ", "toạ độ vectơ"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Cho $\\vec{u}=(3;-2)$, $\\vec{v}=(-1;4)$. Toạ độ vectơ $\\vec{u}+\\vec{v}$ là",
+    "options": [
+      { "key": "A", "text": "$(4;-6)$" },
+      { "key": "B", "text": "$(2;2)$" },
+      { "key": "C", "text": "$(2;-6)$" },
+      { "key": "D", "text": "$(-4;6)$" }
+    ],
+    "answer": "B",
+    "explanation": "$\\vec{u}+\\vec{v}=(3-1;-2+4)=(2;2)$.",
+    "tags": ["vectơ", "tổng vectơ"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Cho $\\vec{u}=(2;3)$, $\\vec{v}=(1;-2)$. Tích vô hướng $\\vec{u} \\cdot \\vec{v}$ bằng",
+    "options": [
+      { "key": "A", "text": "$8$" },
+      { "key": "B", "text": "$1$" },
+      { "key": "C", "text": "$4$" },
+      { "key": "D", "text": "$-4$" }
+    ],
+    "answer": "D",
+    "explanation": "$\\vec{u} \\cdot \\vec{v}=2 \\cdot 1+3 \\cdot (-2)=2-6=-4$.",
+    "tags": ["vectơ", "tích vô hướng"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Cho tam giác $ABC$ (như hình) với $A(1;1)$, $B(3;5)$. Toạ độ trung điểm $M$ của $AB$ là",
+    "figure": { "kind": "geo2d", "shape": "triangle", "names": ["A", "B", "C"], "extras": "M = trung điểm AB" },
+    "options": [
+      { "key": "A", "text": "$(4;6)$" },
+      { "key": "B", "text": "$(2;3)$" },
+      { "key": "C", "text": "$(3;2)$" },
+      { "key": "D", "text": "$(2;-3)$" }
+    ],
+    "answer": "B",
+    "explanation": "$M=\\left(\\dfrac{1+3}{2};\\dfrac{1+5}{2}\\right)=(2;3)$.",
+    "tags": ["vectơ", "trung điểm"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Tam giác $ABC$ (như hình) có $A(1;1)$, $B(4;1)$, $C(1;5)$ và trọng tâm $G$. Tung độ của $G$ là",
+    "figure": { "kind": "geo2d", "shape": "triangle", "names": ["A", "B", "C"], "extras": "G = trọng tâm ABC" },
+    "options": [
+      { "key": "A", "text": "$\\dfrac{7}{3}$" },
+      { "key": "B", "text": "$2$" },
+      { "key": "C", "text": "$3$" },
+      { "key": "D", "text": "$\\dfrac{5}{3}$" }
+    ],
+    "answer": "A",
+    "explanation": "Tung độ trọng tâm $=\\dfrac{1+1+5}{3}=\\dfrac{7}{3}$.",
+    "tags": ["vectơ", "trọng tâm"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Một vật chịu lực $\\vec{F}=(3;4)$ (N) và di chuyển 5 m theo phương của $\\vec{F}$. Công của lực $\\vec{F}$ (jun) là",
+    "options": [
+      { "key": "A", "text": "$20$" },
+      { "key": "B", "text": "$25$" },
+      { "key": "C", "text": "$35$" },
+      { "key": "D", "text": "$5$" }
+    ],
+    "answer": "B",
+    "explanation": "$|\\vec{F}|=\\sqrt{9+16}=5$ (N), $W=|\\vec{F}| \\cdot d=5 \\cdot 5=25$ (J).",
+    "tags": ["vectơ", "công của lực"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Cho ba điểm $A$, $B$, $C$ với $\\overrightarrow{AB}=(2;3)$, $\\overrightarrow{BC}=(1;-1)$. Toạ độ vectơ $\\overrightarrow{AC}$ là",
+    "options": [
+      { "key": "A", "text": "$(1;4)$" },
+      { "key": "B", "text": "$(2;2)$" },
+      { "key": "C", "text": "$(3;2)$" },
+      { "key": "D", "text": "$(-1;2)$" }
+    ],
+    "answer": "C",
+    "explanation": "$\\overrightarrow{AC}=\\overrightarrow{AB}+\\overrightarrow{BC}=(2+1;3-1)=(3;2)$.",
+    "tags": ["vectơ", "tổng vectơ"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Cho $\\vec{u}=(2;m)$, $\\vec{v}=(3;-4)$. Giá trị của $m$ để $\\vec{u}$ vuông góc với $\\vec{v}$ là",
+    "options": [
+      { "key": "A", "text": "$\\dfrac{4}{3}$" },
+      { "key": "B", "text": "$\\dfrac{2}{3}$" },
+      { "key": "C", "text": "$-\\dfrac{3}{2}$" },
+      { "key": "D", "text": "$\\dfrac{3}{2}$" }
+    ],
+    "answer": "D",
+    "explanation": "$\\vec{u} \\cdot \\vec{v}=6-4m=0 \\Leftrightarrow m=\\dfrac{3}{2}$.",
+    "tags": ["vectơ", "vuông góc"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Cho hai vectơ $\\vec{u}$, $\\vec{v}$ có độ dài lần lượt là $2$ và $3$, góc giữa chúng bằng $60^\\circ$. Tích vô hướng $\\vec{u} \\cdot \\vec{v}$ bằng",
+    "options": [
+      { "key": "A", "text": "$3$" },
+      { "key": "B", "text": "$6$" },
+      { "key": "C", "text": "$\\sqrt{3}$" },
+      { "key": "D", "text": "$2$" }
+    ],
+    "answer": "A",
+    "explanation": "$\\vec{u} \\cdot \\vec{v}=|\\vec{u}||\\vec{v}|\\cos 60^\\circ=2 \\cdot 3 \\cdot \\dfrac{1}{2}=3$.",
+    "tags": ["vectơ", "tích vô hướng"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Cho tam giác $ABC$ với $A(1;1)$, $B(3;2)$, $C(m;5)$. Giá trị của $m$ để tam giác $ABC$ vuông tại $B$ là",
+    "options": [
+      { "key": "A", "text": "$\\dfrac{2}{3}$" },
+      { "key": "B", "text": "$1$" },
+      { "key": "C", "text": "$\\dfrac{3}{2}$" },
+      { "key": "D", "text": "$2$" }
+    ],
+    "answer": "C",
+    "explanation": "$\\overrightarrow{BA}=(-2;-1)$, $\\overrightarrow{BC}=(m-3;3)$. Vuông tại $B$: $-2(m-3)-3=0 \\Leftrightarrow m=\\dfrac{3}{2}$.",
+    "tags": ["vectơ", "vuông góc"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Cho $\\vec{u}=(2;-3)$, $\\vec{v}=(-4;6)$. Xét tính đúng sai:",
+    "options": [
+      { "key": "a", "text": "$\\vec{u}$ và $\\vec{v}$ cùng hướng" },
+      { "key": "b", "text": "$|\\vec{u}|=\\sqrt{13}$" },
+      { "key": "c", "text": "$\\vec{u} \\cdot \\vec{v}=10$" },
+      { "key": "d", "text": "$\\vec{u}+\\vec{v}=(-2;3)$" }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) $\\vec{v}=-2\\vec{u}$ nên cùng hướng — đúng. b) $\\sqrt{4+9}=\\sqrt{13}$ — đúng. c) $2(-4)+(-3)(6)=-8-18=-26 \\ne 10$ — sai. d) $(2-4;-3+6)=(-2;3)$ — đúng.",
+    "tags": ["vectơ", "phép toán vectơ"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Tam giác $ABC$ (vẽ như hình) có $A(1;2)$, $B(5;2)$, $C(2;6)$. Xét tính đúng sai:",
+    "figure": { "kind": "geo2d", "shape": "triangle", "names": ["A", "B", "C"] },
+    "options": [
+      { "key": "a", "text": "$\\overrightarrow{AB}=(4;0)$" },
+      { "key": "b", "text": "$|\\overrightarrow{AC}|=5$" },
+      { "key": "c", "text": "Trọng tâm của tam giác là $G\\left(\\dfrac{8}{3};\\dfrac{10}{3}\\right)$" },
+      { "key": "d", "text": "Tam giác $ABC$ vuông tại $B$" }
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "a) $(5-1;2-2)=(4;0)$ — đúng. b) $\\overrightarrow{AC}=(1;4)$ nên $|\\overrightarrow{AC}|=\\sqrt{17} \\ne 5$ — sai. c) $\\left(\\dfrac{1+5+2}{3};\\dfrac{2+2+6}{3}\\right)=\\left(\\dfrac{8}{3};\\dfrac{10}{3}\\right)$ — đúng. d) $\\overrightarrow{BA} \\cdot \\overrightarrow{BC}=(-4;0) \\cdot (-3;4)=12 \\ne 0$ — sai.",
+    "tags": ["vectơ", "toạ độ vectơ"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Cho $\\vec{u}=(1;\\sqrt{3})$ và $\\vec{v}=(\\sqrt{3};1)$. Xét tính đúng sai:",
+    "options": [
+      { "key": "a", "text": "$|\\vec{u}|=2$" },
+      { "key": "b", "text": "$\\vec{u} \\cdot \\vec{v}=2\\sqrt{3}$" },
+      { "key": "c", "text": "Góc giữa $\\vec{u}$ và $\\vec{v}$ bằng $60^\\circ$" },
+      { "key": "d", "text": "$\\cos(\\vec{u},\\vec{v})=\\dfrac{\\sqrt{3}}{2}$" }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) $\\sqrt{1+3}=2$ — đúng. b) $\\sqrt{3}+\\sqrt{3}=2\\sqrt{3}$ — đúng. c) $\\cos=\\dfrac{2\\sqrt{3}}{2 \\cdot 2}=\\dfrac{\\sqrt{3}}{2}$ nên góc $30^\\circ$ — sai. d) Đúng.",
+    "tags": ["vectơ", "góc giữa hai vectơ"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Cho $A(2;3)$, $B(-4;1)$ (như hình) và $M$ là trung điểm của $AB$. Xét tính đúng sai:",
+    "figure": { "kind": "oxy", "xMin": -5, "yMin": -1, "xMax": 3, "yMax": 4, "grid": true, "items": "A(2; 3)\nB(-4; 1)" },
+    "options": [
+      { "key": "a", "text": "$M(-1;2)$" },
+      { "key": "b", "text": "$\\overrightarrow{AM}=\\overrightarrow{MB}$" },
+      { "key": "c", "text": "$|\\overrightarrow{AB}|=2\\sqrt{10}$" },
+      { "key": "d", "text": "$|\\overrightarrow{AB}|=40$" }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a) $\\left(\\dfrac{2-4}{2};\\dfrac{3+1}{2}\\right)=(-1;2)$ — đúng. b) Tính chất trung điểm — đúng. c) $\\overrightarrow{AB}=(-6;-2)$, $|\\overrightarrow{AB}|=\\sqrt{40}=2\\sqrt{10}$ — đúng. d) Độ dài là $\\sqrt{40}$, không phải 40 — sai.",
+    "tags": ["vectơ", "trung điểm"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Một vật chịu đồng thời hai lực $\\vec{F_1}=(3;4)$ và $\\vec{F_2}=(4;-3)$ (N). Xét tính đúng sai:",
+    "options": [
+      { "key": "a", "text": "Hợp lực $\\vec{F}=\\vec{F_1}+\\vec{F_2}=(7;1)$" },
+      { "key": "b", "text": "$|\\vec{F}|=5\\sqrt{2}$ (N)" },
+      { "key": "c", "text": "$\\vec{F_1}$ vuông góc với $\\vec{F_2}$" },
+      { "key": "d", "text": "Công của hợp lực khi vật dịch chuyển 2 m theo phương $\\vec{F}$ là 10 J" }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a) $(3+4;4-3)=(7;1)$ — đúng. b) $\\sqrt{49+1}=\\sqrt{50}=5\\sqrt{2}$ — đúng. c) $3 \\cdot 4+4 \\cdot (-3)=0$ — đúng. d) $W=|\\vec{F}| \\cdot 2=10\\sqrt{2} \\approx 14{,}1$ J $\\ne 10$ J — sai.",
+    "tags": ["vectơ", "công của lực"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Cho tam giác $ABC$ (vẽ như hình) với $A(1;0)$, $B(3;4)$, $C(-1;2)$. Xét tính đúng sai:",
+    "figure": { "kind": "geo2d", "shape": "triangle", "names": ["A", "B", "C"] },
+    "options": [
+      { "key": "a", "text": "$\\overrightarrow{AB}=(2;4)$" },
+      { "key": "b", "text": "$|\\overrightarrow{BC}|=20$" },
+      { "key": "c", "text": "Trọng tâm của tam giác là $G(1;2)$" },
+      { "key": "d", "text": "$\\overrightarrow{AB}$ vuông góc với $\\overrightarrow{AC}$" }
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "a) $(3-1;4-0)=(2;4)$ — đúng. b) $\\overrightarrow{BC}=(-4;-2)$, $|\\overrightarrow{BC}|=\\sqrt{20}=2\\sqrt{5} \\ne 20$ — sai. c) $\\left(\\dfrac{1+3-1}{3};\\dfrac{0+4+2}{3}\\right)=(1;2)$ — đúng. d) $\\overrightarrow{AC}=(-2;2)$, tích vô hướng $2(-2)+4(2)=4 \\ne 0$ — sai.",
+    "tags": ["vectơ", "toạ độ vectơ"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Cho $A(1;2)$, $B(4;6)$. Tính độ dài đoạn $AB$.",
+    "answer": "5",
+    "explanation": "$AB=\\sqrt{3^2+4^2}=5$.",
+    "tags": ["vectơ", "độ dài vectơ"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Cho $\\vec{u}=(m+1;3)$, $\\vec{v}=(2;m)$. Tìm $m$ để $\\vec{u}$ vuông góc với $\\vec{v}$.",
+    "answer": "-0,4",
+    "explanation": "$\\vec{u} \\cdot \\vec{v}=2(m+1)+3m=5m+2=0 \\Leftrightarrow m=-\\dfrac{2}{5}=-0{,}4$.",
+    "tags": ["vectơ", "vuông góc"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Cho hai vectơ có độ dài lần lượt là 4 và 5, góc giữa chúng bằng $120^\\circ$. Tính tích vô hướng của hai vectơ đó.",
+    "answer": "-10",
+    "explanation": "Tích vô hướng $=4 \\cdot 5 \\cdot \\cos 120^\\circ=20 \\cdot \\left(-\\dfrac{1}{2}\\right)=-10$.",
+    "tags": ["vectơ", "tích vô hướng"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Cho $A(2;-1)$, $B(8;5)$. Tính tung độ của trung điểm $M$ của đoạn $AB$.",
+    "answer": "2",
+    "explanation": "Tung độ $M=\\dfrac{-1+5}{2}=2$.",
+    "tags": ["vectơ", "trung điểm"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Một vật chịu lực $\\vec{F}=(5;12)$ (N) và di chuyển 2 m theo phương của $\\vec{F}$. Tính công của lực (jun).",
+    "answer": "26",
+    "explanation": "$|\\vec{F}|=\\sqrt{25+144}=13$, $W=13 \\cdot 2=26$ J.",
+    "tags": ["vectơ", "công của lực"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Tam giác $ABC$ có $A(1;0)$, $B(0;3)$, $C(-4;1)$. Tính diện tích tam giác $ABC$.",
+    "answer": "7",
+    "explanation": "$\\overrightarrow{AB}=(-1;3)$, $\\overrightarrow{AC}=(-5;1)$, diện tích $=\\dfrac{|(-1)(1)-3(-5)|}{2}=\\dfrac{14}{2}=7$.",
+    "tags": ["vectơ", "diện tích tam giác"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Cho $\\vec{u}=(3;4)$, $\\vec{v}=(1;-2)$. Tính $|\\vec{u}-\\vec{v}|^2$.",
+    "answer": "40",
+    "explanation": "$\\vec{u}-\\vec{v}=(2;6)$ nên $|\\vec{u}-\\vec{v}|^2=4+36=40$.",
+    "tags": ["vectơ", "độ dài vectơ"]
+  }
+]

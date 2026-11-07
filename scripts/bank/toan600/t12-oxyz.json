@@ -1,0 +1,686 @@
+[
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Cho $A(1;2;3)$, $B(4;6;3)$. Toạ độ vectơ $\\overrightarrow{AB}$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$(3;4;6)$"
+      },
+      {
+        "key": "B",
+        "text": "$(3;4;0)$"
+      },
+      {
+        "key": "C",
+        "text": "$(-3;-4;0)$"
+      },
+      {
+        "key": "D",
+        "text": "$(5;8;6)$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$\\overrightarrow{AB}=(4-1;6-2;3-3)=(3;4;0)$.",
+    "tags": [
+      "Oxyz",
+      "vectơ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Độ dài của vectơ $\\vec{u}=(2;-2;1)$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$9$"
+      },
+      {
+        "key": "B",
+        "text": "$5$"
+      },
+      {
+        "key": "C",
+        "text": "$3$"
+      },
+      {
+        "key": "D",
+        "text": "$\\sqrt{5}$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "$|\\vec{u}|=\\sqrt{4+4+1}=3$.",
+    "tags": [
+      "Oxyz",
+      "độ dài vectơ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Cho $A(1;0;2)$, $B(3;2;4)$. Độ dài đoạn $AB$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$2\\sqrt{3}$"
+      },
+      {
+        "key": "B",
+        "text": "$2\\sqrt{2}$"
+      },
+      {
+        "key": "C",
+        "text": "$6$"
+      },
+      {
+        "key": "D",
+        "text": "$2\\sqrt{6}$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "$AB=\\sqrt{2^2+2^2+2^2}=\\sqrt{12}=2\\sqrt{3}$.",
+    "tags": [
+      "Oxyz",
+      "khoảng cách"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Tìm $m$ để $\\vec{u}=(1;2;m)$ vuông góc với $\\vec{v}=(2;-1;1)$.",
+    "options": [
+      {
+        "key": "A",
+        "text": "$m=2$"
+      },
+      {
+        "key": "B",
+        "text": "$m=-2$"
+      },
+      {
+        "key": "C",
+        "text": "$m=1$"
+      },
+      {
+        "key": "D",
+        "text": "$m=0$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "$\\vec{u} \\cdot \\vec{v}=2-2+m=0 \\Leftrightarrow m=0$.",
+    "tags": [
+      "Oxyz",
+      "vuông góc"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Phương trình mặt phẳng đi qua $A(1;0;0)$ và có vectơ pháp tuyến $\\vec{n}=(2;1;-1)$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$2x+y-z=0$"
+      },
+      {
+        "key": "B",
+        "text": "$2x+y-z+2=0$"
+      },
+      {
+        "key": "C",
+        "text": "$2x+y-z-2=0$"
+      },
+      {
+        "key": "D",
+        "text": "$x+y-z-1=0$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "$2(x-1)+y-z=0 \\Leftrightarrow 2x+y-z-2=0$.",
+    "tags": [
+      "Oxyz",
+      "mặt phẳng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Khoảng cách từ điểm $A(1;2;1)$ đến mặt phẳng $(P): 2x-y+2z-6=0$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\dfrac{4}{3}$"
+      },
+      {
+        "key": "B",
+        "text": "$\\dfrac{2}{3}$"
+      },
+      {
+        "key": "C",
+        "text": "$2$"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{2}{3}$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "$d=\\dfrac{|2-2+2-6|}{\\sqrt{4+1+4}}=\\dfrac{4}{3}$.",
+    "tags": [
+      "Oxyz",
+      "khoảng cách"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Đường thẳng đi qua $A(1;1;0)$ và có vectơ chỉ phương $\\vec{u}=(1;1;1)$ có phương trình tham số",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\begin{cases}x=1-t \\\\ y=1-t \\\\ z=t\\end{cases}$"
+      },
+      {
+        "key": "B",
+        "text": "$\\begin{cases}x=1+t \\\\ y=1+t \\\\ z=t\\end{cases}$"
+      },
+      {
+        "key": "C",
+        "text": "$\\begin{cases}x=t \\\\ y=t \\\\ z=t\\end{cases}$"
+      },
+      {
+        "key": "D",
+        "text": "$\\begin{cases}x=1+t \\\\ y=1-t \\\\ z=t\\end{cases}$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Điểm đầu $A(1;1;0)$, vectơ chỉ phương $(1;1;1)$.",
+    "tags": [
+      "Oxyz",
+      "đường thẳng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Góc giữa hai mặt phẳng $(P): x+y-1=0$ và $(Q): z=0$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$30^\\circ$"
+      },
+      {
+        "key": "B",
+        "text": "$45^\\circ$"
+      },
+      {
+        "key": "C",
+        "text": "$60^\\circ$"
+      },
+      {
+        "key": "D",
+        "text": "$90^\\circ$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "$\\vec{n_P} \\cdot \\vec{n_Q}=(1;1;0) \\cdot (0;0;1)=0$ nên hai mặt phẳng vuông góc.",
+    "tags": [
+      "Oxyz",
+      "góc"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Cosin của góc giữa hai vectơ $\\vec{u}=(1;1;0)$ và $\\vec{v}=(0;1;1)$ bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\dfrac{1}{2}$"
+      },
+      {
+        "key": "B",
+        "text": "$0$"
+      },
+      {
+        "key": "C",
+        "text": "$\\dfrac{\\sqrt{2}}{2}$"
+      },
+      {
+        "key": "D",
+        "text": "$1$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "$\\cos=\\dfrac{1}{\\sqrt{2} \\cdot \\sqrt{2}}=\\dfrac{1}{2}$ (góc $60^\\circ$).",
+    "tags": [
+      "Oxyz",
+      "góc"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Phương trình mặt phẳng $(Oxy)$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$z=0$"
+      },
+      {
+        "key": "B",
+        "text": "$x=0$"
+      },
+      {
+        "key": "C",
+        "text": "$y=0$"
+      },
+      {
+        "key": "D",
+        "text": "$x+y=0$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Mặt phẳng chứa $Ox$ và $Oy$ có phương trình $z=0$.",
+    "tags": [
+      "Oxyz",
+      "mặt phẳng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Tích có hướng $\\vec{u} \\times \\vec{v}$ với $\\vec{u}=(1;0;0)$, $\\vec{v}=(0;1;0)$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$(0;0;-1)$"
+      },
+      {
+        "key": "B",
+        "text": "$(0;0;1)$"
+      },
+      {
+        "key": "C",
+        "text": "$(1;1;0)$"
+      },
+      {
+        "key": "D",
+        "text": "$(1;1;1)$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Theo quy tắc bàn tay phải, $\\vec{i} \\times \\vec{j}=\\vec{k}$.",
+    "tags": [
+      "Oxyz",
+      "tích có hướng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Khoảng cách từ gốc toạ độ $O$ đến mặt phẳng $(P): x+2y-2z+4=0$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$4$"
+      },
+      {
+        "key": "B",
+        "text": "$\\dfrac{4}{3}$"
+      },
+      {
+        "key": "C",
+        "text": "$1$"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{2}{3}$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$d=\\dfrac{|4|}{\\sqrt{1+4+4}}=\\dfrac{4}{3}$.",
+    "tags": [
+      "Oxyz",
+      "khoảng cách"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Cho $A(1;2;0)$, $B(3;4;2)$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$\\overrightarrow{AB}=(2;2;2)$"
+      },
+      {
+        "key": "b",
+        "text": "$|\\overrightarrow{AB}|=2\\sqrt{3}$"
+      },
+      {
+        "key": "c",
+        "text": "Trung điểm của $AB$ là $M(2;3;1)$"
+      },
+      {
+        "key": "d",
+        "text": "$|\\overrightarrow{AB}|=12$"
+      }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a) Đúng. b) $\\sqrt{12}=2\\sqrt{3}$ — đúng. c) Đúng. d) Độ dài là $\\sqrt{12}$ — sai.",
+    "tags": [
+      "Oxyz",
+      "vectơ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Cho mặt phẳng $(P): 2x-y+2z-4=0$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Một vectơ pháp tuyến của $(P)$ là $\\vec{n}=(2;-1;2)$"
+      },
+      {
+        "key": "b",
+        "text": "$(P)$ cắt trục $Oz$ tại điểm $(0;0;4)$"
+      },
+      {
+        "key": "c",
+        "text": "$(P)$ đi qua gốc toạ độ $O$"
+      },
+      {
+        "key": "d",
+        "text": "Khoảng cách từ $O$ đến $(P)$ bằng $\\dfrac{4}{3}$"
+      }
+    ],
+    "answer": "ĐSSĐ",
+    "explanation": "a) Đúng. b) Cắt $Oz$ tại $(0;0;2)$ — sai. c) $-4 \\ne 0$ — sai. d) $\\dfrac{4}{3}$ — đúng.",
+    "tags": [
+      "Oxyz",
+      "mặt phẳng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Cho đường thẳng $d: \\begin{cases}x=1+t \\\\ y=2-t \\\\ z=3+2t\\end{cases}$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$d$ đi qua điểm $A(1;2;3)$"
+      },
+      {
+        "key": "b",
+        "text": "Một vectơ chỉ phương của $d$ là $(1;-1;2)$"
+      },
+      {
+        "key": "c",
+        "text": "$d$ đi qua điểm $(2;1;4)$"
+      },
+      {
+        "key": "d",
+        "text": "$d$ song song với mặt phẳng $(Oxy)$"
+      }
+    ],
+    "answer": "ĐĐSS",
+    "explanation": "a) Đúng ($t=0$). b) Đúng. c) Với $t=1$: điểm $(2;1;5) \\ne (2;1;4)$ — sai. d) Vectơ chỉ phương có thành phần $z \\ne 0$ nên không song song $(Oxy)$ — sai.",
+    "tags": [
+      "Oxyz",
+      "đường thẳng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Xét tính đúng sai về các khái niệm vuông góc trong không gian:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Nếu $\\vec{n}$ là vectơ pháp tuyến của $(P)$ thì $\\vec{n}$ vuông góc với $(P)$"
+      },
+      {
+        "key": "b",
+        "text": "$\\vec{u}$ vuông góc $\\vec{v}$ khi và chỉ khi $\\vec{u} \\cdot \\vec{v}=0$"
+      },
+      {
+        "key": "c",
+        "text": "Hai mặt phẳng vuông góc khi tích vô hướng hai pháp tuyến bằng 0"
+      },
+      {
+        "key": "d",
+        "text": "$|\\vec{u}-\\vec{v}|=|\\vec{u}|-|\\vec{v}|$ với mọi $\\vec{u}, \\vec{v}$"
+      }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a), b), c) Đúng. d) Sai (bất đẳng thức tam giác cho phép đảo ngược chiều).",
+    "tags": [
+      "Oxyz",
+      "vuông góc"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Trong không gian với hệ toạ độ, cho $A(0;0;0)$, $B(3;0;0)$, $C(0;4;0)$, $S(0;0;3)$ (như hình minh hoạ chóp $S.ABC$). Xét tính đúng sai:",
+    "figure": {
+      "kind": "geo3d",
+      "shape": "pyramid3",
+      "names": [
+        "S",
+        "A",
+        "B",
+        "C"
+      ]
+    },
+    "options": [
+      {
+        "key": "a",
+        "text": "Một vectơ pháp tuyến của $(ABC)$ là $(0;0;1)$"
+      },
+      {
+        "key": "b",
+        "text": "$SB=9$"
+      },
+      {
+        "key": "c",
+        "text": "Khoảng cách từ $S$ đến $BC$ bằng $AB=3$"
+      },
+      {
+        "key": "d",
+        "text": "Thể tích khối chóp $S.ABC$ bằng 12"
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) Đúng. b) $SB=\\sqrt{9+9}=3\\sqrt{2} \\ne 9$ — sai. c) $BC \\perp (SAB)$ nên $d(S,BC)=d(A,BC)=AB=3$ — đúng. d) $V=\\dfrac{1}{3} \\cdot 6 \\cdot 3=6 \\ne 12$ — sai.",
+    "tags": [
+      "Oxyz",
+      "hình chóp"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Cho vectơ $\\vec{u}=(2;2;1)$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$\\cos(\\vec{u},\\overrightarrow{Oz})=\\dfrac{1}{3}$"
+      },
+      {
+        "key": "b",
+        "text": "Góc giữa $\\vec{u}$ và trục $Oz$ bằng $19{,}5^\\circ$"
+      },
+      {
+        "key": "c",
+        "text": "Góc giữa $\\vec{u}$ và $(Oxy)$ khoảng $19{,}5^\\circ$"
+      },
+      {
+        "key": "d",
+        "text": "Góc giữa $\\vec{u}$ và $(Oxy)$ bằng $70{,}5^\\circ$"
+      }
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "a) $\\dfrac{1}{3}$ — đúng. b) Góc với $Oz$ $=\\arccos \\dfrac{1}{3} \\approx 70{,}5^\\circ$ — sai. c) Góc với $(Oxy)$ $=\\arcsin \\dfrac{1}{3} \\approx 19{,}5^\\circ$ — đúng. d) Sai.",
+    "tags": [
+      "Oxyz",
+      "góc"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Cho $A(1;2;3)$, $B(4;6;3)$. Tính độ dài đoạn $AB$.",
+    "answer": "5",
+    "explanation": "$AB=\\sqrt{3^2+4^2}=5$.",
+    "tags": [
+      "Oxyz",
+      "khoảng cách"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Tính khoảng cách từ điểm $A(1;2;1)$ đến mặt phẳng $(P): x+2y+2z-4=0$.",
+    "answer": "1",
+    "explanation": "$d=\\dfrac{|1+4+2-4|}{\\sqrt{1+4+4}}=\\dfrac{3}{3}=1$.",
+    "tags": [
+      "Oxyz",
+      "khoảng cách"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Tìm $m$ để $\\vec{u}=(m;1;2)$ vuông góc với $\\vec{v}=(2;-2;m)$.",
+    "answer": "0,5",
+    "explanation": "$2m-2+2m=0 \\Leftrightarrow m=\\dfrac{1}{2}=0{,}5$.",
+    "tags": [
+      "Oxyz",
+      "vuông góc"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Cho $A(0;1;1)$, $B(2;3;1)$. Gọi $M$ là trung điểm $AB$. Tính tung độ của $M$.",
+    "answer": "2",
+    "explanation": "Tung độ $M=\\dfrac{1+3}{2}=2$.",
+    "tags": [
+      "Oxyz",
+      "trung điểm"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Tính cosin của góc giữa $\\vec{u}=(1;-1;2)$ và $\\vec{v}=(2;1;0)$ (làm tròn đến hàng phần trăm).",
+    "answer": "0,18",
+    "explanation": "$\\cos=\\dfrac{2-1}{\\sqrt{6} \\cdot \\sqrt{5}}=\\dfrac{1}{\\sqrt{30}} \\approx 0{,}18$.",
+    "tags": [
+      "Oxyz",
+      "góc"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Tính khoảng cách từ điểm $S(0;0;3)$ đến mặt phẳng $(ABC)$ với $A(1;0;0)$, $B(0;2;0)$, $C(0;0;0)$.",
+    "answer": "3",
+    "explanation": "$(ABC)$ là mặt phẳng $z=0$ nên khoảng cách bằng tung độ $z$ của $S$, bằng 3.",
+    "tags": [
+      "Oxyz",
+      "khoảng cách"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Tính thể tích khối tứ diện $OABC$ với $A(2;0;0)$, $B(0;3;0)$, $C(0;0;4)$.",
+    "answer": "4",
+    "explanation": "Ba cạnh $OA$, $OB$, $OC$ đôi một vuông góc: $V=\\dfrac{1}{6} \\cdot 2 \\cdot 3 \\cdot 4=4$.",
+    "tags": [
+      "Oxyz",
+      "thể tích"
+    ]
+  }
+]

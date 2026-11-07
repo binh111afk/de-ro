@@ -1,0 +1,698 @@
+[
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Giá trị của $\\log_2 8$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$2$"
+      },
+      {
+        "key": "B",
+        "text": "$4$"
+      },
+      {
+        "key": "C",
+        "text": "$3$"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{1}{3}$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "$\\log_2 8=3$ vì $2^3=8$.",
+    "tags": [
+      "mũ logarit",
+      "logarit"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Giá trị của $2^{-2}$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\dfrac{1}{4}$"
+      },
+      {
+        "key": "B",
+        "text": "$-4$"
+      },
+      {
+        "key": "C",
+        "text": "$4$"
+      },
+      {
+        "key": "D",
+        "text": "$-\\dfrac{1}{4}$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "$2^{-2}=\\dfrac{1}{2^2}=\\dfrac{1}{4}$.",
+    "tags": [
+      "mũ logarit",
+      "lũy thừa"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Tính $\\log_3 27+\\log_3 9$.",
+    "options": [
+      {
+        "key": "A",
+        "text": "$6$"
+      },
+      {
+        "key": "B",
+        "text": "$5$"
+      },
+      {
+        "key": "C",
+        "text": "$4$"
+      },
+      {
+        "key": "D",
+        "text": "$9$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$\\log_3 27=3$, $\\log_3 9=2$ nên tổng bằng $5$.",
+    "tags": [
+      "mũ logarit",
+      "phép tính logarit"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Nghiệm của phương trình $5^{x+1}=25$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$x=2$"
+      },
+      {
+        "key": "B",
+        "text": "$x=0$"
+      },
+      {
+        "key": "C",
+        "text": "$x=-1$"
+      },
+      {
+        "key": "D",
+        "text": "$x=1$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "$5^{x+1}=5^2 \\Leftrightarrow x+1=2 \\Leftrightarrow x=1$.",
+    "tags": [
+      "mũ logarit",
+      "phương trình mũ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Độ pH của một dung dịch được tính bằng $pH=-\\log[H^+]$. Một dung dịch có nồng độ $[H^+]=10^{-3}$ (mol/lít) có pH bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$7$"
+      },
+      {
+        "key": "B",
+        "text": "$3$"
+      },
+      {
+        "key": "C",
+        "text": "$-3$"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{1}{3}$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$pH=-\\log 10^{-3}=3$.",
+    "tags": [
+      "mũ logarit",
+      "bài toán thực tế"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Độ lớn của một trận động đất được tính theo công thức $M=\\log\\dfrac{A}{A_0}$. Một trận động đất có biên độ gấp 1000 lần biên độ chuẩn thì độ lớn là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$3$"
+      },
+      {
+        "key": "B",
+        "text": "$1000$"
+      },
+      {
+        "key": "C",
+        "text": "$2$"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{1}{3}$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "$M=\\log 1000=3$.",
+    "tags": [
+      "mũ logarit",
+      "bài toán thực tế"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Cho hàm số $y=2^x$ có đồ thị như hình. Giá trị của $\\lim\\limits_{x \\to -\\infty}2^x$ là",
+    "figure": {
+      "kind": "graph",
+      "curves": [
+        "2^x"
+      ],
+      "xMin": -4,
+      "xMax": 3,
+      "yMin": -1,
+      "yMax": 9,
+      "labels": true
+    },
+    "options": [
+      {
+        "key": "A",
+        "text": "$+\\infty$"
+      },
+      {
+        "key": "B",
+        "text": "$1$"
+      },
+      {
+        "key": "C",
+        "text": "$0$"
+      },
+      {
+        "key": "D",
+        "text": "$-\\infty$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Khi $x \\to -\\infty$ thì $2^x \\to 0$.",
+    "tags": [
+      "mũ logarit",
+      "hàm số mũ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Tập nghiệm của bất phương trình $\\log_2(x-1)<3$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$(-\\infty;9)$"
+      },
+      {
+        "key": "B",
+        "text": "$(1;9)$"
+      },
+      {
+        "key": "C",
+        "text": "$(2;8)$"
+      },
+      {
+        "key": "D",
+        "text": "$(0;9)$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Điều kiện $x>1$. $\\log_2(x-1)<3 \\Leftrightarrow x-1<8 \\Leftrightarrow x<9$. Vậy $1<x<9$.",
+    "tags": [
+      "mũ logarit",
+      "bất phương trình logarit"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Tính $\\log 500-\\log 5$.",
+    "options": [
+      {
+        "key": "A",
+        "text": "$2$"
+      },
+      {
+        "key": "B",
+        "text": "$100$"
+      },
+      {
+        "key": "C",
+        "text": "$3$"
+      },
+      {
+        "key": "D",
+        "text": "$\\log 495$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "$\\log \\dfrac{500}{5}=\\log 100=2$.",
+    "tags": [
+      "mũ logarit",
+      "phép tính logarit"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Tập xác định của hàm số $y=\\log_2 x$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\mathbb{R}$"
+      },
+      {
+        "key": "B",
+        "text": "$[0;+\\infty)$"
+      },
+      {
+        "key": "C",
+        "text": "$(-\\infty;0)$"
+      },
+      {
+        "key": "D",
+        "text": "$(0;+\\infty)$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Logarit chỉ xác định với biểu thức trong dấu log dương.",
+    "tags": [
+      "mũ logarit",
+      "hàm số logarit"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Một chất phóng xạ có chu kì bán rã 5 ngày. Ban đầu có 100 mg. Sau 15 ngày, khối lượng chất phóng xạ còn lại là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$50$ mg"
+      },
+      {
+        "key": "B",
+        "text": "$33{,}3$ mg"
+      },
+      {
+        "key": "C",
+        "text": "$12{,}5$ mg"
+      },
+      {
+        "key": "D",
+        "text": "$25$ mg"
+      }
+    ],
+    "answer": "C",
+    "explanation": "15 ngày là 3 chu kì bán rã: $100 \\cdot \\left(\\dfrac{1}{2}\\right)^3=12{,}5$ mg.",
+    "tags": [
+      "mũ logarit",
+      "bài toán thực tế"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Nghiệm của phương trình $4^x-2^{x+1}-8=0$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$x=1$"
+      },
+      {
+        "key": "B",
+        "text": "$x=3$"
+      },
+      {
+        "key": "C",
+        "text": "$x=-1$"
+      },
+      {
+        "key": "D",
+        "text": "$x=2$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Đặt $t=2^x>0$: $t^2-2t-8=0 \\Leftrightarrow t=4$ (nhận) nên $x=2$.",
+    "tags": [
+      "mũ logarit",
+      "phương trình mũ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Xét tính đúng sai về lũy thừa và logarit:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$3^0=1$"
+      },
+      {
+        "key": "b",
+        "text": "$\\log_5 125=3$"
+      },
+      {
+        "key": "c",
+        "text": "$\\log_2 \\dfrac{1}{8}=-3$"
+      },
+      {
+        "key": "d",
+        "text": "$\\ln e=2$"
+      }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a) Đúng. b) $5^3=125$ — đúng. c) $2^{-3}=\\dfrac{1}{8}$ — đúng. d) $\\ln e=1$ — sai.",
+    "tags": [
+      "mũ logarit",
+      "phép tính"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Xét tính đúng sai về các phép tính logarit:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$\\log 2+\\log 5=1$"
+      },
+      {
+        "key": "b",
+        "text": "$\\log 4=2\\log 2$"
+      },
+      {
+        "key": "c",
+        "text": "$\\log 6=\\log 2+\\log 3$"
+      },
+      {
+        "key": "d",
+        "text": "$\\log 9=3\\log 3$"
+      }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a) $\\log 10=1$ — đúng. b) Đúng. c) Đúng. d) $\\log 9=2\\log 3$ — sai.",
+    "tags": [
+      "mũ logarit",
+      "phép tính logarit"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Cho hàm số $y=\\left(\\dfrac{1}{2}\\right)^x$ có đồ thị như hình. Xét tính đúng sai:",
+    "figure": {
+      "kind": "graph",
+      "curves": [
+        "(1/2)^x"
+      ],
+      "xMin": -3,
+      "xMax": 4,
+      "yMin": -1,
+      "yMax": 9,
+      "labels": true
+    },
+    "options": [
+      {
+        "key": "a",
+        "text": "Hàm số nghịch biến trên $\\mathbb{R}$"
+      },
+      {
+        "key": "b",
+        "text": "Đồ thị đi qua điểm $(1;0)$"
+      },
+      {
+        "key": "c",
+        "text": "Tập giá trị của hàm số là $(0;+\\infty)$"
+      },
+      {
+        "key": "d",
+        "text": "$\\lim\\limits_{x \\to +\\infty}y=+\\infty$"
+      }
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "a) Cơ số $\\dfrac{1}{2} \\in (0;1)$ nên nghịch biến — đúng. b) Đồ thị đi qua $(0;1)$, không qua $(1;0)$ — sai. c) Đúng. d) Khi $x \\to +\\infty$ thì $y \\to 0$ — sai.",
+    "tags": [
+      "mũ logarit",
+      "hàm số mũ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Xét bất phương trình $2^x>16$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Tập nghiệm là $x>4$"
+      },
+      {
+        "key": "b",
+        "text": "$x=5$ là một nghiệm"
+      },
+      {
+        "key": "c",
+        "text": "$x=4$ là một nghiệm"
+      },
+      {
+        "key": "d",
+        "text": "Tập nghiệm là $(4;+\\infty)$"
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) $2^x>2^4 \\Leftrightarrow x>4$ — đúng. b) $2^5=32>16$ — đúng. c) $2^4=16$ không lớn hơn 16 — sai. d) Đúng.",
+    "tags": [
+      "mũ logarit",
+      "bất phương trình mũ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Xét phương trình $9^x-4 \\cdot 3^x+3=0$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Đặt $t=3^x$ với $t>0$ thì được $t^2-4t+3=0$"
+      },
+      {
+        "key": "b",
+        "text": "Có $t=1$ hoặc $t=3$"
+      },
+      {
+        "key": "c",
+        "text": "Nghiệm của phương trình là $x=0$ hoặc $x=1$"
+      },
+      {
+        "key": "d",
+        "text": "$x=2$ là một nghiệm"
+      }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a) Đúng. b) $t^2-4t+3=0 \\Leftrightarrow t=1, t=3$ — đúng. c) $t=1 \\Rightarrow x=0$; $t=3 \\Rightarrow x=1$ — đúng. d) $9^2-4 \\cdot 9+3=48 \\ne 0$ — sai.",
+    "tags": [
+      "mũ logarit",
+      "phương trình mũ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Chất phóng xạ I-131 có chu kì bán rã 8 ngày. Ban đầu có 80 mg. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Sau 8 ngày còn 40 mg"
+      },
+      {
+        "key": "b",
+        "text": "Sau 16 ngày còn 20 mg"
+      },
+      {
+        "key": "c",
+        "text": "Sau 24 ngày còn 5 mg"
+      },
+      {
+        "key": "d",
+        "text": "Sau 24 ngày còn 10 mg"
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) Đúng (1 chu kì). b) Đúng (2 chu kì). c) 24 ngày là 3 chu kì: $80 \\cdot \\dfrac{1}{8}=10$ mg $\\ne 5$ — sai. d) Đúng.",
+    "tags": [
+      "mũ logarit",
+      "bài toán thực tế"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Tính $\\log_2 64$.",
+    "answer": "6",
+    "explanation": "$2^6=64$.",
+    "tags": [
+      "mũ logarit",
+      "logarit"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Tìm nghiệm của phương trình $3^x=12$ (làm tròn đến hàng phần trăm).",
+    "answer": "2,26",
+    "explanation": "$x=\\log_3 12=\\dfrac{\\ln 12}{\\ln 3} \\approx 2{,}26$.",
+    "tags": [
+      "mũ logarit",
+      "phương trình mũ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Một dung dịch có nồng độ $[H^+]=10^{-5{,}5}$ (mol/lít). Tính pH của dung dịch.",
+    "answer": "5,5",
+    "explanation": "$pH=-\\log 10^{-5{,}5}=5{,}5$.",
+    "tags": [
+      "mũ logarit",
+      "bài toán thực tế"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Tính $\\log 25+\\log 4$.",
+    "answer": "2",
+    "explanation": "$\\log(25 \\cdot 4)=\\log 100=2$.",
+    "tags": [
+      "mũ logarit",
+      "phép tính logarit"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Vay 100 triệu đồng với lãi kép $10\\%$/năm. Sau ít nhất bao nhiêu năm (làm tròn đến hàng đơn vị) số nợ vượt quá 133 triệu đồng?",
+    "answer": "3",
+    "explanation": "$100 \\cdot 1{,}1^3=133{,}1>133$; với $n=2$: $121<133$. Vậy cần 3 năm.",
+    "tags": [
+      "mũ logarit",
+      "lãi kép"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Tìm nghiệm nguyên lớn nhất của bất phương trình $\\left(\\dfrac{1}{3}\\right)^x>27$.",
+    "answer": "-4",
+    "explanation": "$3^{-x}>3^3 \\Leftrightarrow -x>3 \\Leftrightarrow x<-3$. Nghiệm nguyên lớn nhất là $-4$.",
+    "tags": [
+      "mũ logarit",
+      "bất phương trình mũ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Nước chanh có nồng độ $[H^+]=10^{-2{,}3}$ (mol/lít). Tính pH của nước chanh.",
+    "answer": "2,3",
+    "explanation": "$pH=-\\log 10^{-2{,}3}=2{,}3$.",
+    "tags": [
+      "mũ logarit",
+      "bài toán thực tế"
+    ]
+  }
+]
