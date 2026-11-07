@@ -1,6 +1,6 @@
 # context.md — đề rõ (trình soạn đề thi)
 
-Bản đồ ngắn của dự án. **Chỉ đọc file này khi bắt đầu phiên**; các file khác mở khi việc đang làm cần tới (bảng "Đọc thêm khi nào" bên dưới). Cập nhật: 05/11/2026 (phiên 20).
+Bản đồ ngắn của dự án. **Chỉ đọc file này khi bắt đầu phiên**; các file khác mở khi việc đang làm cần tới (bảng "Đọc thêm khi nào" bên dưới). Cập nhật: 07/11/2026 (phiên 22).
 
 ## Dự án
 
@@ -8,7 +8,8 @@ Web app soạn đề thi tiếng Việt kiểu Word: React 19 + TypeScript + Vit
 
 - `/soan-de`: trình soạn chính (tab Bắt đầu tạo đề / slide). Soạn đề: AI bên **phải**; Mục lục / Khối mẫu / Công cụ bên **trái**. Soạn slide: AI bên phải.
 - Màn khác: Đề cộng đồng, Tạo đề online (lịch sử, đề đã xuất bản, kết quả), Đề của tôi, Thư viện, Chấm điểm, Quiz.
-- Tài khoản Supabase (`user_items`, `community_exams`, `exam_attempts`), file trên R2.
+- Tài khoản Supabase (`user_items`, `community_exams`, `exam_attempts`, `ai_usage`), file trên R2.
+- AI: `server/llmProxy.ts` thử opencode (`LLM_*`) → Mercury 3 (`MERCURY_*`) → Agnes (`AGNES_*`, đang tắt) → xkiro. Hạn mức token `server/aiQuota.ts`: tài khoản 150k/tháng, khách 30k/ngày, ngoại lệ ở bảng `ai_quota_overrides`.
 - Chạy thật: Vercel https://de-ro-lac.vercel.app, push `main` là tự deploy. `api/*.ts` chỉ re-export handler `server/`; `server/guard.ts` chặn Origin lạ + giới hạn lượt.
 
 ## Nguyên tắc không được phá
@@ -57,7 +58,8 @@ Danh sách đủ: `package.json` → `scripts`. `.env` cần `LLM_API_KEY` (mẫ
 
 | Khi làm | Mở |
 |---|---|
-| Tiếp việc phiên trước | [phiên 21](docs/handoff/phien-21.md) (mục "Còn lại" ở cuối) |
+| Tiếp việc phiên trước | [phiên 22](docs/handoff/phien-22.md) (mục "Còn lại" ở cuối) |
+| Model AI, nhà cung cấp, hạn mức token, chi phí | [phiên 22](docs/handoff/phien-22.md), mục "So sánh nhà cung cấp" |
 | Chấm điểm server, giấu đáp án đề link, bảo mật API, env Vercel/Supabase | [phiên 21](docs/handoff/phien-21.md), mục "Cấu hình ngoài code" và "Đã làm" |
 | Deploy / biến môi trường / bảo vệ API | [phiên 20](docs/handoff/phien-20.md), mục "Vercel" |
 | Tìm phiên cũ theo chủ đề | [docs/handoff/README.md](docs/handoff/README.md) |
