@@ -62,6 +62,8 @@ export interface Geo3dSpec {
   tall: number
   /** dựng thêm (xem geoConstruct.ts), mỗi dòng một lệnh */
   extras?: string
+  /** vẽ mặt cầu ngoại tiếp khối (tâm = trọng tâm các đỉnh, đúng với hộp, lập phương, lăng trụ/chóp đều) */
+  circumsphere?: boolean
 }
 
 import { construct as construct0 } from './geoConstruct'
@@ -594,6 +596,13 @@ function renderSolid(spec: Geo3dSpec, desc: string) {
   for (const f of fills) {
     const d = f.map((n, k) => `${k ? 'L' : 'M'}${f1(P[idxOf(n)][0])} ${f1(P[idxOf(n)][1])}`).join('') + 'Z'
     parts.push(`<path d="${d}" fill="${FILL}" fill-opacity="0.1" stroke="none"/>`)
+  }
+  if (spec.circumsphere) {
+    // đường viền cầu bao trọn các đỉnh (phép chiếu xiên không giữ tròn → lấy bán kính theo hình chiếu)
+    const c = proj(avg3(s.pts.slice(0, nBase)))
+    const r = Math.max(...P.slice(0, nBase).map((p) => len(sub(p, c)))) + 4
+    parts.push(`<circle cx="${f1(c[0])}" cy="${f1(c[1])}" r="${f1(r)}" fill="none" stroke="${STROKE}" stroke-width="1.4"/>`, ellipse(c, r, r * 0.3, true))
+    P.push([c[0] - r, c[1] - r], [c[0] + r, c[1] + r])
   }
   for (const e of edges.values()) parts.push(seg(P[e.a], P[e.b], !e.vis))
   for (const [a, b] of s.extra) {

@@ -183,6 +183,21 @@ export interface PlotSpec {
   grid: boolean
   /** ghi nhãn y = f(x) cạnh đường cong */
   labels: boolean
+  /** điểm đặt tên, mỗi dòng "M(0; 0)" (thêm "chiếu" để kẻ nét đứt xuống trục) */
+  points?: string
+}
+
+/** "M(0; 0) chiếu" → điểm; dòng sai bị bỏ qua */
+export function parsePlotPoints(text: string | undefined): Array<{ name: string; x: number; y: number; proj: boolean }> {
+  const out: Array<{ name: string; x: number; y: number; proj: boolean }> = []
+  for (const line of (text ?? '').split(/\n|;\s*(?=[A-Z])/)) {
+    const m = /^\s*([A-Z][A-Za-z0-9']*)\s*\(\s*(-?[\d.,]+)\s*;\s*(-?[\d.,]+)\s*\)\s*(chiếu)?/i.exec(line.replace(/−/g, '-'))
+    if (!m) continue
+    const x = Number(m[2].replace(',', '.'))
+    const y = Number(m[3].replace(',', '.'))
+    if (Number.isFinite(x) && Number.isFinite(y)) out.push({ name: m[1], x, y, proj: !!m[4] })
+  }
+  return out
 }
 
 export const PLOT_COLORS = ['#1f5fbf', '#c0392b', '#2e7d32', '#8e44ad']
@@ -391,6 +406,25 @@ export function renderPlotSvg(spec: PlotSpec): { svg: string; width: number; hei
       out.push(`<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" ${font} fill="${c.color}" font-style="italic" text-anchor="end">y = ${esc(c.expr.trim())}</text>`)
     }
   })
+
+  // điểm đặt tên: "M(0; 0)", thêm "chiếu" để kẻ nét đứt xuống hai trục
+  for (const p of parsePlotPoints(spec.points)) {
+    if (p.x < xMin || p.x > xMax || p.y < yMin || p.y > yMax) continue
+    const [px, py] = [sx(p.x), sy(p.y)]
+    if (p.proj) out.push(`<path d="M${px.toFixed(1)} ${py.toFixed(1)}V${Y0.toFixed(1)}M${px.toFixed(1)} ${py.toFixed(1)}H${X0.toFixed(1)}" stroke="#222" stroke-width="1" stroke-dasharray="4 3" fill="none"/>`)
+    out.push(`<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="3.6" fill="#111"/>`)
+    // nằm trên đường cong ở đáy lõm (cực tiểu) thì ghi tên phía dưới, kẻo đè lên nét
+    let below = py < 40
+    try {
+      const f = parseExpr(spec.curves[0]?.expr ?? '')
+      const h = (xMax - xMin) / 200
+      if (Math.abs(f(p.x) - p.y) < (yMax - yMin) / 50 && f(p.x - h) > p.y && f(p.x + h) > p.y) below = sy(p.y) < H - 30
+    } catch {
+      /* không có đường cong */
+    }
+    const right = px < W - 40
+    out.push(`<text x="${(px + (right ? 8 : -8)).toFixed(1)}" y="${(py + (below ? 20 : -8)).toFixed(1)}" ${font} font-style="italic" font-weight="bold" text-anchor="${right ? 'start' : 'end'}">${esc(p.name)}</text>`)
+  }
 
   const svg =
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">` +

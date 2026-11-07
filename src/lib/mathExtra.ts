@@ -40,7 +40,10 @@ export function parseAngle(raw: string): number {
 }
 
 /** một dòng → các điểm (radian) cùng nhãn hiển thị */
-function anglesOf(line: string): Array<{ a: number; label: string }> {
+function anglesOf(line: string): Array<{ a: number; label: string; name?: string }> {
+  // "M: π/3" → điểm tên M biểu diễn góc π/3
+  const named = /^([A-Z][A-Za-z0-9']*)\s*:\s*(.+)$/.exec(line.trim())
+  if (named) return anglesOf(named[2]).map((p, k) => ({ ...p, name: k === 0 ? named[1] : undefined }))
   const t = line.replace(/^x\s*=\s*/i, '').trim()
   // họ nghiệm: α + kβ (k ∈ Z)
   const fam = /^(.*?)\s*\+\s*k\s*(.*?)(?:\s*,?\s*\(?k\s*∈\s*[ZℤR]\)?)?$/i.exec(t)
@@ -84,7 +87,13 @@ export function renderTrigSvg(spec: TrigSpec, desc: string) {
     b += `<text x="${cx + R + 6}" y="${cy - R - 12}" ${FAM} font-size="14" font-style="italic">tan</text>`
   }
   const single = pts.length === 1
-  for (const { a, label } of pts) {
+  for (const { a, label: angleLabel, name } of pts) {
+    // điểm có tên: ghi tên ở điểm; một góc thì ghi số đo cạnh cung
+    const label = name ?? angleLabel
+    if (name && single && angleLabel) {
+      const m = a / 2
+      b += `<text x="${f1(cx + 44 * Math.cos(m))}" y="${f1(cy - 44 * Math.sin(m) + 5)}" ${FAM} font-size="13" text-anchor="middle">${esc(prettyAngle(angleLabel))}</text>`
+    }
     const x = cx + R * Math.cos(a)
     const y = cy - R * Math.sin(a)
     if (spec.projections) {

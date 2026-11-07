@@ -144,7 +144,7 @@ export const BANK_FIGURES: BankEntry[] = [
     grades: ['Lớp 11'],
     type: 'trac-nghiem',
     prompt: 'Điểm $M$ trên đường tròn lượng giác biểu diễn góc $\\dfrac{\\pi}{3}$ (như hình). Tung độ của điểm $M$ là:',
-    figure: { kind: 'trig', angles: 'pi/3' },
+    figure: { kind: 'trig', angles: 'M: pi/3' },
     options: [
       { key: 'A', text: '$\\dfrac{1}{2}$' },
       { key: 'B', text: '$\\dfrac{\\sqrt{3}}{2}$' },

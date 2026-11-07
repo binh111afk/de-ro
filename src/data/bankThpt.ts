@@ -1974,7 +1974,8 @@ export const BANK_THPT: BankEntry[] = [
         "x^3-3x^2"
       ],
       "xMin": -1,
-      "xMax": 4
+      "xMax": 4,
+      "points": "M(0; 0)\nN(2; -4) chiếu"
     }
   },
   {
@@ -2477,12 +2478,12 @@ export const BANK_THPT: BankEntry[] = [
     "variable": false,
     "figure": {
       "kind": "geo3d",
-      "shape": "sphere",
-      "names": [
-        "I"
-      ],
+      "shape": "cube",
+      "names": ["A", "B", "C", "D", "A'", "B'", "C'", "D'"],
       "height": false,
-      "diagonals": false
+      "diagonals": false,
+      "circumsphere": true,
+      "extras": "I = trung điểm AC'\nđứt AC'"
     }
   },
   {
@@ -6040,7 +6041,7 @@ export const BANK_THPT: BankEntry[] = [
     "variable": false,
     "figure": {
       "kind": "scene",
-      "text": "A(0; 0) B(6; 0)\nAB\nkích thước AB \"6 m\""
+      "text": "A(0; 0) M(2.5; 0) B(6; 0)\nAB\nkích thước AB \"6 m\""
     }
   },
   {
@@ -7354,7 +7355,8 @@ export const BANK_THPT: BankEntry[] = [
         "D"
       ],
       "height": false,
-      "diagonals": false
+      "diagonals": true,
+      "extras": "O = AC cắt BD\nM = trung điểm SC\nOM"
     }
   },
   {
@@ -10974,7 +10976,8 @@ export const BANK_THPT: BankEntry[] = [
         "D"
       ],
       "height": false,
-      "diagonals": false
+      "diagonals": false,
+      "extras": "G = trọng tâm ABC"
     }
   },
   {
