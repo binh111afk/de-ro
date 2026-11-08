@@ -15,6 +15,7 @@ import { renderNumberLineSvg, renderTreeSvg, renderTrigSvg, renderVennSvg, type 
 import { renderGasSvg, type GasSpec } from './gas'
 import { renderSceneSvg, type SceneSpec } from './scene'
 import { renderChemGraphSvg, renderElectronSvg, renderStructSvg, type ChemGraphSpec, type ElectronSpec, type StructSpec } from './chem'
+import { renderGroupedSvg, type GroupedSpec } from './grouped'
 
 export type ToolDoc =
   | { kind: 'graph'; spec: PlotSpec }
@@ -36,6 +37,7 @@ export type ToolDoc =
   | { kind: 'probtree'; spec: TreeSpec }
   | { kind: 'numberline'; spec: NumberLineSpec }
   | { kind: 'venn'; spec: VennSpec }
+  | { kind: 'grouped'; spec: GroupedSpec }
 
 export type ToolKind = ToolDoc['kind']
 
@@ -93,6 +95,8 @@ export function renderTool(doc: ToolDoc): ToolImage {
       return renderNumberLineSvg(doc.spec, toolDesc(doc))
     case 'venn':
       return renderVennSvg(doc.spec, toolDesc(doc))
+    case 'grouped':
+      return renderGroupedSvg(doc.spec, toolDesc(doc))
   }
 }
 

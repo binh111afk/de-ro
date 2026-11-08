@@ -442,11 +442,10 @@
       },
       {
         "key": "d",
-        "text": "$AA'$ vuông góc với $(ABCD)$"
+        "text": "$A'B'$ song song với $(ABCD)$"
       }
     ],
     "answer": "ĐĐSĐ",
-    "explanation": "a) $AB \\parallel A'B'$ — đúng. b) $AC \\parallel A'C'$ — đúng. c) $AB'$ và $D'C$ cắt nhau tại trung điểm (hai đường chéo của mặt phẳng (BCC'B')... $AB'$ không cùng mặt với $D'C$; thực tế chúng chéo nhau — sai. d) Đúng.",
     "tags": [
       "hình học không gian",
       "song song"
@@ -482,7 +481,7 @@
       },
       {
         "key": "c",
-        "text": "$SO$ vuông góc với $(ABCD)$"
+        "text": "$SO$ song song với $(ABCD)$"
       },
       {
         "key": "d",
@@ -490,7 +489,6 @@
       }
     ],
     "answer": "ĐĐSĐ",
-    "explanation": "a) Đúng. b) Đường chéo hình bình hành cắt nhau tại trung điểm — đúng. c) Chóp với đáy hình bình hành bất kì không đảm bảo $SO \\perp$ đáy — sai. d) $AB \\parallel CD \\subset (SCD)$ — đúng.",
     "tags": [
       "hình học không gian",
       "giao tuyến"
@@ -550,11 +548,10 @@
       },
       {
         "key": "d",
-        "text": "$AM$ vuông góc với $MN$"
+        "text": "$AM$ song song với $(SBC)$"
       }
     ],
     "answer": "ĐĐĐS",
-    "explanation": "a) Định lí trung bình — đúng. b) Đúng theo tính chất song song. c) Đúng. d) Không có dữ kiện để khẳng định — sai.",
     "tags": [
       "hình học không gian",
       "tính chất song song"
@@ -574,11 +571,11 @@
       },
       {
         "key": "b",
-        "text": "$BD$ vuông góc với $B'D'$"
+        "text": "$BD$ cắt $B'D'$"
       },
       {
         "key": "c",
-        "text": "$AC$ vuông góc với $BD$"
+        "text": "$AC$ và $BD$ cắt nhau tại $O$"
       },
       {
         "key": "d",
@@ -586,7 +583,6 @@
       }
     ],
     "answer": "ĐSĐĐ",
-    "explanation": "a) Đúng. b) $BD \\parallel B'D'$ — sai. c) Hai đường chéo hình vuông vuông góc — đúng. d) Đúng.",
     "tags": [
       "hình học không gian",
       "hình lập phương"
@@ -630,9 +626,9 @@
     ],
     "type": "tra-loi-ngan",
     "level": "NB",
-    "prompt": "Trong hình lập phương $ABCD.A'B'C'D'$, mặt phẳng nào song song với mặt $(ABCD)$?",
+    "prompt": "Trong hình lập phương $ABCD.A'B'C'D'$, có bao nhiêu mặt của hình lập phương song song với mặt $(ABCD)$?",
     "answer": "1",
-    "explanation": "Chỉ có mặt $(A'B'C'D')$ song song với $(ABCD)$.",
+    "explanation": "Chỉ có mặt $(A'B'C'D')$.",
     "tags": [
       "hình học không gian",
       "song song"
@@ -643,8 +639,8 @@
       "Lớp 11"
     ],
     "type": "tra-loi-ngan",
-    "level": "TH",
-    "prompt": "Một hình lập phương có bao nhiêu mặt phẳng?",
+    "level": "NB",
+    "prompt": "Hình lập phương có bao nhiêu mặt?",
     "answer": "6",
     "explanation": "Hình lập phương có 6 mặt, mỗi mặt nằm trong một mặt phẳng.",
     "tags": [
@@ -658,9 +654,9 @@
     ],
     "type": "tra-loi-ngan",
     "level": "VD",
-    "prompt": "Một mặt phẳng cắt cả bốn cạnh bên $SA$, $SB$, $SC$, $SD$ của hình chóp $S.ABCD$ tại bốn điểm phân biệt. Thiết diện tạo thành là một tứ giác. Tính số cạnh của thiết diện.",
+    "prompt": "Mặt phẳng đi qua trung điểm của $SA$ và song song với $(ABCD)$ cắt hình chóp $S.ABCD$. Thiết diện tạo thành có bao nhiêu cạnh?",
     "answer": "4",
-    "explanation": "Thiết diện là tứ giác nên có 4 cạnh.",
+    "explanation": "Mặt phẳng cắt bốn cạnh bên tại trung điểm, thiết diện là tứ giác (4 cạnh).",
     "tags": [
       "hình học không gian",
       "thiết diện"
@@ -700,9 +696,9 @@
     ],
     "type": "tra-loi-ngan",
     "level": "VDC",
-    "prompt": "Hình lập phương $ABCD.A'B'C'D'$ có cạnh bằng 2. Tính khoảng cách giữa hai đường thẳng song song $AB$ và $C'D'$.",
-    "answer": "2",
-    "explanation": "$AB$ nằm trong $(ABCD)$, $C'D'$ nằm trong $(A'B'C'D')$ song song với $(ABCD)$ nên khoảng cách bằng chiều cao khối lập phương, bằng 2.",
+    "prompt": "Hình lập phương $ABCD.A'B'C'D'$ có cạnh bằng 2. Tính khoảng cách giữa hai đường thẳng song song $AB$ và $C'D'$ (làm tròn đến hàng phần trăm).",
+    "answer": "2,83",
+    "explanation": "$AB$ và $C'D'$ cùng nằm trong mặt chéo $ABC'D'$ (hình chữ nhật), khoảng cách bằng $BC'=2\\sqrt{2}\\approx 2{,}83$.",
     "tags": [
       "hình học không gian",
       "khoảng cách"
@@ -713,10 +709,10 @@
       "Lớp 11"
     ],
     "type": "tra-loi-ngan",
-    "level": "VDC",
-    "prompt": "Hình chóp $S.ABC$ có $SA \\perp (ABC)$, tam giác $ABC$ vuông tại $A$ với $AB=3$, $AC=4$. Tính khoảng cách từ $S$ đến đường thẳng $BC$.",
-    "answer": "2,4",
-    "explanation": "$BC=5$; vì $BC \\perp AB$ nên $BC \\perp (SAB)$, suy ra $d(S,BC)=d(A,BC)=\\dfrac{AB \\cdot AC}{BC}=\\dfrac{12}{5}=2{,}4$.",
+    "level": "VD",
+    "prompt": "Cho hình chóp $S.ABCD$ có đáy là hình bình hành, $CD=8$. Gọi $M$, $N$ lần lượt là trung điểm của $SA$, $SB$. Tính độ dài $MN$.",
+    "answer": "4",
+    "explanation": "$MN$ là đường trung bình của tam giác $SAB$ nên $MN=\\dfrac{AB}{2}=\\dfrac{CD}{2}=4$.",
     "tags": [
       "hình học không gian",
       "khoảng cách"

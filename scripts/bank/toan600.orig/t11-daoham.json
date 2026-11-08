@@ -1,0 +1,713 @@
+[
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Đạo hàm của hàm số $y=x^3$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$3x$"
+      },
+      {
+        "key": "B",
+        "text": "$3x^2$"
+      },
+      {
+        "key": "C",
+        "text": "$x^2$"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{x^4}{4}$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Công thức $(x^n)'=nx^{n-1}$ với $n=3$.",
+    "tags": [
+      "đạo hàm",
+      "quy tắc tính đạo hàm"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Đạo hàm của hàm số $y=5x+2$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$5$"
+      },
+      {
+        "key": "B",
+        "text": "$7$"
+      },
+      {
+        "key": "C",
+        "text": "$2$"
+      },
+      {
+        "key": "D",
+        "text": "$5x$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "$y'=5$.",
+    "tags": [
+      "đạo hàm",
+      "quy tắc tính đạo hàm"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Cho $y=x^2-3x$. Giá trị $y'(2)$ bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$-2$"
+      },
+      {
+        "key": "B",
+        "text": "$-1$"
+      },
+      {
+        "key": "C",
+        "text": "$1$"
+      },
+      {
+        "key": "D",
+        "text": "$4$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "$y'=2x-3$ nên $y'(2)=1$.",
+    "tags": [
+      "đạo hàm",
+      "giá trị đạo hàm"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Đạo hàm của hàm số $y=\\sin x$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\tan x$"
+      },
+      {
+        "key": "B",
+        "text": "$-\\cos x$"
+      },
+      {
+        "key": "C",
+        "text": "$\\sin x$"
+      },
+      {
+        "key": "D",
+        "text": "$\\cos x$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "$(\\sin x)'=\\cos x$.",
+    "tags": [
+      "đạo hàm",
+      "lượng giác"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Phương trình tiếp tuyến của đồ thị $y=x^2$ tại điểm có hoành độ $x_0=1$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$y=x-1$"
+      },
+      {
+        "key": "B",
+        "text": "$y=2x-1$"
+      },
+      {
+        "key": "C",
+        "text": "$y=2x+1$"
+      },
+      {
+        "key": "D",
+        "text": "$y=x+2$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$y'(1)=2$, tiếp điểm $(1;1)$: $y=2(x-1)+1=2x-1$.",
+    "tags": [
+      "đạo hàm",
+      "tiếp tuyến"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Đồ thị $y=x^2$ và tiếp tuyến tại điểm $A(1;1)$ như hình. Hệ số góc của tiếp tuyến là",
+    "figure": {
+      "kind": "graph",
+      "curves": [
+        "x^2",
+        "2x-1"
+      ],
+      "xMin": -2,
+      "xMax": 4,
+      "yMin": -2,
+      "yMax": 8,
+      "labels": true,
+      "points": "A(1; 1)"
+    },
+    "options": [
+      {
+        "key": "A",
+        "text": "$1$"
+      },
+      {
+        "key": "B",
+        "text": "$-2$"
+      },
+      {
+        "key": "C",
+        "text": "$2$"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{1}{2}$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Hệ số góc tiếp tuyến tại $x_0$ bằng $y'(x_0)=2x_0=2$.",
+    "tags": [
+      "đạo hàm",
+      "tiếp tuyến"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Một vật chuyển động với quãng đường $s(t)=t^2+3t$ (m), $t$ tính bằng giây. Vận tốc của vật tại thời điểm $t=2$ s là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$7$ m/s"
+      },
+      {
+        "key": "B",
+        "text": "$10$ m/s"
+      },
+      {
+        "key": "C",
+        "text": "$4$ m/s"
+      },
+      {
+        "key": "D",
+        "text": "$5$ m/s"
+      }
+    ],
+    "answer": "A",
+    "explanation": "$v(t)=s'(t)=2t+3$ nên $v(2)=7$ m/s.",
+    "tags": [
+      "đạo hàm",
+      "vận tốc"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Cho hàm số $y=\\dfrac{2x+1}{x-1}$. Giá trị $y'(2)$ bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$3$"
+      },
+      {
+        "key": "B",
+        "text": "$-\\dfrac{1}{3}$"
+      },
+      {
+        "key": "C",
+        "text": "$\\dfrac{1}{3}$"
+      },
+      {
+        "key": "D",
+        "text": "$-3$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "$y'=\\dfrac{2(x-1)-(2x+1)}{(x-1)^2}=\\dfrac{-3}{(x-1)^2}$ nên $y'(2)=-3$.",
+    "tags": [
+      "đạo hàm",
+      "hàm phân thức"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Đạo hàm của hàm số $y=\\cos x$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\cos x$"
+      },
+      {
+        "key": "B",
+        "text": "$-\\sin x$"
+      },
+      {
+        "key": "C",
+        "text": "$\\sin x$"
+      },
+      {
+        "key": "D",
+        "text": "$-\\cos x$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$(\\cos x)'=-\\sin x$.",
+    "tags": [
+      "đạo hàm",
+      "lượng giác"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Đạo hàm của hàm số $y=\\sqrt{x}$ với $x>0$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\dfrac{1}{\\sqrt{x}}$"
+      },
+      {
+        "key": "B",
+        "text": "$2\\sqrt{x}$"
+      },
+      {
+        "key": "C",
+        "text": "$\\dfrac{1}{2\\sqrt{x}}$"
+      },
+      {
+        "key": "D",
+        "text": "$\\sqrt{x}$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "$y=\\dfrac{1}{2}x^{\\frac{1}{2}}$ nên $y'=\\dfrac{1}{2} \\cdot \\dfrac{1}{2}x^{-\\frac{1}{2}}=\\dfrac{1}{2\\sqrt{x}}$.",
+    "tags": [
+      "đạo hàm",
+      "căn thức"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Một vật chuyển động với quãng đường $s(t)=2t^3$ (m). Gia tốc của vật tại thời điểm $t=1$ s là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$6$ m/s$^2$"
+      },
+      {
+        "key": "B",
+        "text": "$12$ m/s$^2$"
+      },
+      {
+        "key": "C",
+        "text": "$2$ m/s$^2$"
+      },
+      {
+        "key": "D",
+        "text": "$24$ m/s$^2$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$v=6t^2$, gia tốc $a=v'=12t$ nên $a(1)=12$ m/s$^2$.",
+    "tags": [
+      "đạo hàm",
+      "gia tốc"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Có bao nhiêu tiếp tuyến của đồ thị $y=x^3-3x$ song song với đường thẳng $d: y=9x+1$?",
+    "options": [
+      {
+        "key": "A",
+        "text": "$2$"
+      },
+      {
+        "key": "B",
+        "text": "$1$"
+      },
+      {
+        "key": "C",
+        "text": "$3$"
+      },
+      {
+        "key": "D",
+        "text": "$0$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "$y'=3x^2-3=9 \\Leftrightarrow x^2=4 \\Leftrightarrow x=\\pm 2$: 2 tiếp tuyến.",
+    "tags": [
+      "đạo hàm",
+      "tiếp tuyến"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Cho hàm số $y=x^2-4x+3$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$y'=2x-4$"
+      },
+      {
+        "key": "b",
+        "text": "$y'(0)=-4$"
+      },
+      {
+        "key": "c",
+        "text": "$y'=0$ tại $x=2$"
+      },
+      {
+        "key": "d",
+        "text": "$y'(1)=-3$"
+      }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a) Đúng. b) $-4$ — đúng. c) $2x-4=0 \\Leftrightarrow x=2$ — đúng. d) $y'(1)=-2 \\ne -3$ — sai.",
+    "tags": [
+      "đạo hàm",
+      "quy tắc tính đạo hàm"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Xét tiếp tuyến của đồ thị $y=\\sqrt{x}$ tại $x_0=4$ (hình vẽ). Xét tính đúng sai:",
+    "figure": {
+      "kind": "graph",
+      "curves": [
+        "sqrt(x)"
+      ],
+      "xMin": 0,
+      "xMax": 9,
+      "yMin": -1,
+      "yMax": 4,
+      "labels": true,
+      "points": "A(4; 2)"
+    },
+    "options": [
+      {
+        "key": "a",
+        "text": "$y'(4)=\\dfrac{1}{4}$"
+      },
+      {
+        "key": "b",
+        "text": "Tiếp điểm là $(2;4)$"
+      },
+      {
+        "key": "c",
+        "text": "Phương trình tiếp tuyến là $y=\\dfrac{x}{4}+1$"
+      },
+      {
+        "key": "d",
+        "text": "Hệ số góc của tiếp tuyến là 2"
+      }
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "a) $y'=\\dfrac{1}{2\\sqrt{x}}$, $y'(4)=\\dfrac{1}{4}$ — đúng. b) Tiếp điểm $(4;2)$ — sai. c) $y=\\dfrac{1}{4}(x-4)+2=\\dfrac{x}{4}+1$ — đúng. d) Hệ số góc $\\dfrac{1}{4}$ — sai.",
+    "tags": [
+      "đạo hàm",
+      "tiếp tuyến"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Một vật chuyển động với quãng đường $s(t)=-5t^2+20t$ (m), $t$ tính bằng giây. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Vận tốc $v(t)=-10t+20$ (m/s)"
+      },
+      {
+        "key": "b",
+        "text": "Vận tốc bằng 0 tại $t=3$ s"
+      },
+      {
+        "key": "c",
+        "text": "Gia tốc của vật là $-10$ m/s$^2$"
+      },
+      {
+        "key": "d",
+        "text": "$v(3)=20$ m/s"
+      }
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "a) Đúng. b) $v=0 \\Leftrightarrow t=2$ s — sai. c) $a=v'=-10$ — đúng. d) $v(3)=10 \\ne 20$ — sai.",
+    "tags": [
+      "đạo hàm",
+      "vận tốc"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Xét tính đúng sai về các quy tắc đạo hàm (với $u, v$ là các hàm số khả vi, $c$ hằng số):",
+    "options": [
+      {
+        "key": "a",
+        "text": "$(uv)'=u'v'$"
+      },
+      {
+        "key": "b",
+        "text": "$(u+v)'=u'+v'$"
+      },
+      {
+        "key": "c",
+        "text": "$\\left(\\dfrac{u}{v}\\right)'=\\dfrac{u'v-uv'}{v^2}$ với $v \\ne 0$"
+      },
+      {
+        "key": "d",
+        "text": "$(cu)'=cu'$"
+      }
+    ],
+    "answer": "SĐĐĐ",
+    "explanation": "a) Sai, đúng là $(uv)'=u'v+uv'$. b) Đúng. c) Đúng. d) Đúng.",
+    "tags": [
+      "đạo hàm",
+      "quy tắc đạo hàm"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Cho hàm số $y=x^3-3x^2$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$y'=3x^2-6x$"
+      },
+      {
+        "key": "b",
+        "text": "$y'=0$ tại $x=0$ và $x=-2$"
+      },
+      {
+        "key": "c",
+        "text": "Đạo hàm cấp hai $y''=6x-6$"
+      },
+      {
+        "key": "d",
+        "text": "$y''(0)=6$"
+      }
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "a) Đúng. b) $3x^2-6x=0 \\Leftrightarrow x=0$ hoặc $x=2$ — sai. c) Đúng. d) $y''(0)=-6 \\ne 6$ — sai.",
+    "tags": [
+      "đạo hàm",
+      "đạo hàm cấp hai"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Xét tiếp tuyến của đồ thị $y=x^3$ tại điểm có hoành độ $x_0=1$ (hình vẽ). Xét tính đúng sai:",
+    "figure": {
+      "kind": "graph",
+      "curves": [
+        "x^3"
+      ],
+      "xMin": -2,
+      "xMax": 3,
+      "yMin": -3,
+      "yMax": 9,
+      "labels": true,
+      "points": "A(1; 1)"
+    },
+    "options": [
+      {
+        "key": "a",
+        "text": "Tiếp điểm là $(1;1)$"
+      },
+      {
+        "key": "b",
+        "text": "$y'(1)=3$"
+      },
+      {
+        "key": "c",
+        "text": "Phương trình tiếp tuyến là $y=3x+2$"
+      },
+      {
+        "key": "d",
+        "text": "Tiếp tuyến cắt trục $Ox$ tại điểm có hoành độ $\\dfrac{2}{3}$"
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) Đúng. b) $3x^2=3$ — đúng. c) $y=3(x-1)+1=3x-2 \\ne 3x+2$ — sai. d) $3x-2=0 \\Leftrightarrow x=\\dfrac{2}{3}$ — đúng.",
+    "tags": [
+      "đạo hàm",
+      "tiếp tuyến"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Cho $y=x^4-2x$. Tính $y'(1)$.",
+    "answer": "2",
+    "explanation": "$y'=4x^3-2$ nên $y'(1)=2$.",
+    "tags": [
+      "đạo hàm",
+      "giá trị đạo hàm"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Cho $y=x\\cos x$. Tính $y'\\left(\\dfrac{\\pi}{2}\\right)$ (làm tròn đến hàng phần mười).",
+    "answer": "-1,6",
+    "explanation": "$y'=\\cos x-x\\sin x$ nên $y'\\left(\\dfrac{\\pi}{2}\\right)=0-\\dfrac{\\pi}{2} \\approx -1{,}6$.",
+    "tags": [
+      "đạo hàm",
+      "tích"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Vật chuyển động với quãng đường $s(t)=3t^2$ (m). Tính vận tốc tại $t=2$ s.",
+    "answer": "12",
+    "explanation": "$v=6t$ nên $v(2)=12$ m/s.",
+    "tags": [
+      "đạo hàm",
+      "vận tốc"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Cho $y=2^x$. Tính $y'(0)$ (làm tròn đến hàng phần trăm).",
+    "answer": "0,69",
+    "explanation": "$y'=2^x \\ln 2$ nên $y'(0)=\\ln 2 \\approx 0{,}69$.",
+    "tags": [
+      "đạo hàm",
+      "hàm mũ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Tính hệ số góc của tiếp tuyến với đồ thị $y=\\ln x$ tại điểm có hoành độ $x_0=1$.",
+    "answer": "1",
+    "explanation": "$y'=\\dfrac{1}{x}$ nên hệ số góc là $1$.",
+    "tags": [
+      "đạo hàm",
+      "tiếp tuyến"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Tiếp tuyến của $y=x^3+ax$ tại $x=1$ là $y=5x+b$. Tính $a+b$.",
+    "answer": "0",
+    "explanation": "$y'(1)=3+a=5 \\Rightarrow a=2$; tiếp điểm $(1;3)$: $3=5+b \\Rightarrow b=-2$. Vậy $a+b=0$.",
+    "tags": [
+      "đạo hàm",
+      "tiếp tuyến"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Vật chuyển động với quãng đường $s(t)=t^3-6t^2+9t$ (m). Vận tốc của vật có bao nhiêu thời điểm (t > 0) bằng 0?",
+    "answer": "2",
+    "explanation": "$v=3t^2-12t+9=0 \\Leftrightarrow t=1$ hoặc $t=3$: 2 thời điểm.",
+    "tags": [
+      "đạo hàm",
+      "vận tốc"
+    ]
+  }
+]

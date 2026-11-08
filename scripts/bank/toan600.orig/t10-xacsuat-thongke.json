@@ -1,0 +1,700 @@
+[
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Gieo một đồng xu đồng chất hai lần liên tiếp. Xác suất để cả hai lần đều ra mặt ngửa là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\dfrac{1}{2}$"
+      },
+      {
+        "key": "B",
+        "text": "$\\dfrac{1}{4}$"
+      },
+      {
+        "key": "C",
+        "text": "$\\dfrac{1}{8}$"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{3}{4}$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Không gian mẫu có 4 kết quả đồng khả năng, chỉ có 1 kết quả (ngửa, ngửa): $P=\\dfrac{1}{4}$.",
+    "tags": [
+      "xác suất",
+      "cổ điển"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Trung vị của dãy số $3;\\ 5;\\ 7;\\ 8;\\ 12$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$5$"
+      },
+      {
+        "key": "B",
+        "text": "$6$"
+      },
+      {
+        "key": "C",
+        "text": "$7$"
+      },
+      {
+        "key": "D",
+        "text": "$8$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Dãy đã sắp xếp có 5 số, trung vị là số giữa: $7$.",
+    "tags": [
+      "thống kê",
+      "trung vị"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Gieo một xúc xắc sáu mặt đồng chất. Xác suất để mặt xuất hiện là số chẵn là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\dfrac{1}{2}$"
+      },
+      {
+        "key": "B",
+        "text": "$\\dfrac{1}{3}$"
+      },
+      {
+        "key": "C",
+        "text": "$\\dfrac{1}{6}$"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{2}{3}$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Số chẵn là $\\{2;4;6\\}$: 3 kết quả trên 6 nên $P=\\dfrac{1}{2}$.",
+    "tags": [
+      "xác suất",
+      "cổ điển"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Mốt của dãy số $2;\\ 3;\\ 3;\\ 5;\\ 5;\\ 5;\\ 7$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$3$"
+      },
+      {
+        "key": "B",
+        "text": "$5$"
+      },
+      {
+        "key": "C",
+        "text": "$7$"
+      },
+      {
+        "key": "D",
+        "text": "$15$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Số $5$ xuất hiện 3 lần, nhiều nhất trong dãy.",
+    "tags": [
+      "thống kê",
+      "mốt"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Một túi có 4 bi đỏ và 6 bi xanh cùng kích thước. Bốc ngẫu nhiên một bi. Xác suất bốc được bi đỏ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\dfrac{1}{5}$"
+      },
+      {
+        "key": "B",
+        "text": "$\\dfrac{3}{5}$"
+      },
+      {
+        "key": "C",
+        "text": "$\\dfrac{2}{5}$"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{4}{5}$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "$P=\\dfrac{4}{10}=\\dfrac{2}{5}$.",
+    "tags": [
+      "xác suất",
+      "cổ điển"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Gieo hai xúc xắc sáu mặt đồng chất. Xác suất để tổng số chấm bằng 8 là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\dfrac{1}{6}$"
+      },
+      {
+        "key": "B",
+        "text": "$\\dfrac{7}{36}$"
+      },
+      {
+        "key": "C",
+        "text": "$\\dfrac{1}{9}$"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{5}{36}$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Có 5 cặp $(2;6),(3;5),(4;4),(5;3),(6;2)$ trên 36 kết quả: $P=\\dfrac{5}{36}$.",
+    "tags": [
+      "xác suất",
+      "cổ điển"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Bảng thống kê số bài kiểm tra đạt từng loại của 10 học sinh như hình. Số trung bình của dãy điểm (làm tròn đến hàng phần mười) là",
+    "figure": {
+      "kind": "stats",
+      "chart": "bar",
+      "title": "Điểm kiểm tra của 10 học sinh",
+      "xLabel": "Điểm",
+      "yLabel": "Số học sinh",
+      "data": "5; 6; 7; 8; 9; 10\nSố học sinh: 1; 2; 3; 2; 1; 1"
+    },
+    "options": [
+      {
+        "key": "A",
+        "text": "$7{,}3$"
+      },
+      {
+        "key": "B",
+        "text": "$7$"
+      },
+      {
+        "key": "C",
+        "text": "$7{,}5$"
+      },
+      {
+        "key": "D",
+        "text": "$8$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "$\\bar{x}=\\dfrac{5 \\cdot 1+6 \\cdot 2+7 \\cdot 3+8 \\cdot 2+9+10}{10}=\\dfrac{73}{10}=7{,}3$.",
+    "tags": [
+      "thống kê",
+      "số trung bình"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Phương sai của dãy số $2;\\ 4;\\ 6;\\ 8$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$4$"
+      },
+      {
+        "key": "B",
+        "text": "$25$"
+      },
+      {
+        "key": "C",
+        "text": "$5$"
+      },
+      {
+        "key": "D",
+        "text": "$2{,}5$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Số trung bình $5$; $s^2=\\dfrac{9+1+1+9}{4}=5$.",
+    "tags": [
+      "thống kê",
+      "phương sai"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Cho dãy số $1;\\ 2;\\ 3;\\ 4;\\ 5;\\ 6;\\ 7;\\ 8$. Tứ phân vị thứ ba của dãy là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$2{,}5$"
+      },
+      {
+        "key": "B",
+        "text": "$6{,}5$"
+      },
+      {
+        "key": "C",
+        "text": "$5$"
+      },
+      {
+        "key": "D",
+        "text": "$8$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$n=8$ chia hết cho 4: $Q_1=\\dfrac{2+3}{2}=2{,}5$, $Q_3=\\dfrac{6+7}{2}=6{,}5$.",
+    "tags": [
+      "thống kê",
+      "tứ phân vị"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Một hộp có 3 bi trắng và 4 bi đen cùng kích thước. Bốc ngẫu nhiên đồng thời 2 bi. Xác suất để bốc được 2 bi đen là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\dfrac{4}{7}$"
+      },
+      {
+        "key": "B",
+        "text": "$\\dfrac{1}{7}$"
+      },
+      {
+        "key": "C",
+        "text": "$\\dfrac{3}{7}$"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{2}{7}$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "$P=\\dfrac{C_4^2}{C_7^2}=\\dfrac{6}{21}=\\dfrac{2}{7}$.",
+    "tags": [
+      "xác suất",
+      "tổ hợp"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Khoảng biến thiên của dãy số $3;\\ 7;\\ 2;\\ 9;\\ 5$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$7$"
+      },
+      {
+        "key": "B",
+        "text": "$9$"
+      },
+      {
+        "key": "C",
+        "text": "$11$"
+      },
+      {
+        "key": "D",
+        "text": "$2$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "$R=x_{\\max}-x_{\\min}=9-2=7$.",
+    "tags": [
+      "thống kê",
+      "khoảng biến thiên"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Bốc ngẫu nhiên đồng thời 2 lá từ 5 lá thẻ đánh số $1;2;3;4;5$. Xác suất để tổng hai số trên hai lá là số chẵn là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\dfrac{1}{5}$"
+      },
+      {
+        "key": "B",
+        "text": "$\\dfrac{2}{5}$"
+      },
+      {
+        "key": "C",
+        "text": "$\\dfrac{3}{5}$"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{4}{5}$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Tổng chẵn khi hai số cùng tính chẵn lẻ: $C_2^2+C_3^2=1+3=4$ trên $C_5^2=10$ cách: $P=\\dfrac{2}{5}$.",
+    "tags": [
+      "xác suất",
+      "tổ hợp"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Gieo một xúc xắc sáu mặt đồng chất một lần. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Không gian mẫu là $\\{1;2;3;4;5;6\\}$"
+      },
+      {
+        "key": "b",
+        "text": "Xác suất ra mặt là số nguyên tố bằng $\\dfrac{1}{2}$"
+      },
+      {
+        "key": "c",
+        "text": "Xác suất ra mặt có số chấm lớn hơn 4 bằng $\\dfrac{1}{3}$"
+      },
+      {
+        "key": "d",
+        "text": "Xác suất ra mặt là số lẻ bằng $\\dfrac{1}{3}$"
+      }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a) Đúng. b) Số nguyên tố $\\{2;3;5\\}$: $\\dfrac{3}{6}=\\dfrac{1}{2}$ — đúng. c) $\\{5;6\\}$: $\\dfrac{2}{6}=\\dfrac{1}{3}$ — đúng. d) Số lẻ $\\{1;3;5\\}$: xác suất $\\dfrac{1}{2} \\ne \\dfrac{1}{3}$ — sai.",
+    "tags": [
+      "xác suất",
+      "cổ điển"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Số cuốn sách mượn trong tháng của 10 bạn được ghi lại: $1;\\ 2;\\ 2;\\ 3;\\ 3;\\ 3;\\ 4;\\ 4;\\ 5;\\ 5$ (biểu đồ như hình). Xét tính đúng sai:",
+    "figure": {
+      "kind": "stats",
+      "chart": "bar",
+      "title": "Số sách mượn của 10 bạn",
+      "xLabel": "Số sách",
+      "yLabel": "Số bạn",
+      "data": "1; 2; 3; 4; 5\nSố bạn: 1; 2; 3; 2; 2"
+    },
+    "options": [
+      {
+        "key": "a",
+        "text": "Mốt của dãy là 3"
+      },
+      {
+        "key": "b",
+        "text": "Số trung bình của dãy là 3"
+      },
+      {
+        "key": "c",
+        "text": "Trung vị của dãy là 3"
+      },
+      {
+        "key": "d",
+        "text": "Khoảng biến thiên của dãy là 4"
+      }
+    ],
+    "answer": "ĐSĐĐ",
+    "explanation": "a) Số 3 xuất hiện 3 lần — đúng. b) $\\bar{x}=\\dfrac{32}{10}=3{,}2 \\ne 3$ — sai. c) Hai số giữa là $3;3$ nên trung vị $3$ — đúng. d) $5-1=4$ — đúng.",
+    "tags": [
+      "thống kê",
+      "số đặc trưng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Cho dãy số $1;\\ 2;\\ 3;\\ 4$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Số trung bình là $2{,}5$"
+      },
+      {
+        "key": "b",
+        "text": "Phương sai là $1{,}25$"
+      },
+      {
+        "key": "c",
+        "text": "Độ lệch chuẩn là $1{,}25$"
+      },
+      {
+        "key": "d",
+        "text": "Khoảng biến thiên là $3$"
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) $\\dfrac{10}{4}=2{,}5$ — đúng. b) $s^2=\\dfrac{2{,}25+0{,}25+0{,}25+2{,}25}{4}=1{,}25$ — đúng. c) $s=\\sqrt{1{,}25} \\approx 1{,}12 \\ne 1{,}25$ — sai. d) $4-1=3$ — đúng.",
+    "tags": [
+      "thống kê",
+      "phương sai"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Một hộp có 2 bi trắng và 3 bi đen cùng kích thước. Bốc ngẫu nhiên 2 bi (không hoàn lại). Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Không gian mẫu có 10 phần tử"
+      },
+      {
+        "key": "b",
+        "text": "Xác suất bốc được 2 bi trắng bằng $\\dfrac{1}{10}$"
+      },
+      {
+        "key": "c",
+        "text": "Xác suất bốc được 2 bi đen bằng $\\dfrac{3}{5}$"
+      },
+      {
+        "key": "d",
+        "text": "Xác suất bốc được 1 trắng và 1 đen bằng $\\dfrac{3}{5}$"
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) $C_5^2=10$ — đúng. b) $\\dfrac{C_2^2}{C_5^2}=\\dfrac{1}{10}$ — đúng. c) $\\dfrac{C_3^2}{C_5^2}=\\dfrac{3}{10} \\ne \\dfrac{3}{5}$ — sai. d) $\\dfrac{2 \\cdot 3}{10}=\\dfrac{6}{10}=\\dfrac{3}{5}$ — đúng.",
+    "tags": [
+      "xác suất",
+      "tổ hợp"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Thời gian (phút) 8 bạn hoàn thành một bài tập: $10;\\ 20;\\ 25;\\ 25;\\ 30;\\ 35;\\ 40;\\ 55$ (biểu đồ như hình). Xét tính đúng sai:",
+    "figure": {
+      "kind": "stats",
+      "chart": "bar",
+      "title": "Thời gian làm bài của 8 bạn",
+      "xLabel": "Thời gian (phút)",
+      "yLabel": "Số bạn",
+      "data": "10; 20; 25; 30; 35; 40; 55\nSố bạn: 1; 1; 2; 1; 1; 1; 1"
+    },
+    "options": [
+      {
+        "key": "a",
+        "text": "Mốt của dãy là 25"
+      },
+      {
+        "key": "b",
+        "text": "Trung vị của dãy là $27{,}5$"
+      },
+      {
+        "key": "c",
+        "text": "Số trung bình của dãy là $27{,}5$"
+      },
+      {
+        "key": "d",
+        "text": "Khoảng biến thiên của dãy là 45"
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) 25 xuất hiện 2 lần — đúng. b) Hai số giữa $25;30$: trung vị $27{,}5$ — đúng. c) $\\bar{x}=\\dfrac{240}{8}=30 \\ne 27{,}5$ — sai. d) $55-10=45$ — đúng.",
+    "tags": [
+      "thống kê",
+      "số đặc trưng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Cho dãy số $4;\\ 7;\\ 2;\\ 9;\\ 5$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Dãy sắp xếp tăng dần là $2;\\ 4;\\ 5;\\ 7;\\ 9$"
+      },
+      {
+        "key": "b",
+        "text": "Trung vị của dãy là 5"
+      },
+      {
+        "key": "c",
+        "text": "Trung vị của dãy là $\\dfrac{4+5}{2}$"
+      },
+      {
+        "key": "d",
+        "text": "Mốt của dãy là 2"
+      }
+    ],
+    "answer": "ĐĐSS",
+    "explanation": "a) Đúng. b) Dãy có 5 số, số giữa là 5 — đúng. c) Trung vị là một giá trị của dãy, không phải trung bình hai số — sai. d) Mọi giá trị xuất hiện một lần nên dãy không có mốt — sai.",
+    "tags": [
+      "thống kê",
+      "trung vị"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Gieo hai xúc xắc sáu mặt đồng chất. Có bao nhiêu kết quả để tổng số chấm bằng 8?",
+    "answer": "5",
+    "explanation": "Các cặp: $(2;6),(3;5),(4;4),(5;3),(6;2)$ — 5 kết quả.",
+    "tags": [
+      "xác suất",
+      "cổ điển"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Tính phương sai của dãy số $3;\\ 5;\\ 7;\\ 9;\\ 11$.",
+    "answer": "8",
+    "explanation": "$\\bar{x}=7$; $s^2=\\dfrac{16+4+0+4+16}{5}=8$.",
+    "tags": [
+      "thống kê",
+      "phương sai"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Một túi có 3 bi đỏ và 7 bi xanh cùng kích thước. Bốc ngẫu nhiên một bi. Tính xác suất bốc được bi đỏ (viết dưới dạng số thập phân).",
+    "answer": "0,3",
+    "explanation": "$P=\\dfrac{3}{10}=0{,}3$.",
+    "tags": [
+      "xác suất",
+      "cổ điển"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Tính trung vị của dãy số $2;\\ 4;\\ 6;\\ 8;\\ 10;\\ 12$.",
+    "answer": "7",
+    "explanation": "Hai số giữa là $6;8$ nên trung vị $=\\dfrac{6+8}{2}=7$.",
+    "tags": [
+      "thống kê",
+      "trung vị"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Gieo hai đồng xu đồng chất. Tính xác suất để có ít nhất một mặt ngửa (viết dưới dạng số thập phân).",
+    "answer": "0,75",
+    "explanation": "Biến cố đối: không có mặt ngửa nào có xác suất $\\dfrac{1}{4}$, nên $P=1-\\dfrac{1}{4}=\\dfrac{3}{4}=0{,}75$.",
+    "tags": [
+      "xác suất",
+      "biến cố đối"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Tính độ lệch chuẩn (làm tròn đến hàng phần trăm) của dãy số $2;\\ 4;\\ 4;\\ 6;\\ 9$.",
+    "answer": "2,37",
+    "explanation": "$\\bar{x}=5$; $s^2=\\dfrac{9+1+1+1+16}{5}=5{,}6$; $s=\\sqrt{5{,}6} \\approx 2{,}37$.",
+    "tags": [
+      "thống kê",
+      "độ lệch chuẩn"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Chọn ngẫu nhiên 2 học sinh từ nhóm gồm 3 nam và 4 nữ. Có bao nhiêu cách chọn để được đúng 1 nam và 1 nữ?",
+    "answer": "12",
+    "explanation": "Chọn 1 nam (3 cách) và 1 nữ (4 cách): $3 \\cdot 4=12$.",
+    "tags": [
+      "xác suất",
+      "quy tắc nhân"
+    ]
+  }
+]

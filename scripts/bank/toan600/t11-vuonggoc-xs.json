@@ -136,7 +136,7 @@
     "prompt": "Hình chóp $S.ABCD$ (như hình) có đáy là hình vuông cạnh 4, $SA \\perp (ABCD)$, $SA=3$. Thể tích khối chóp là",
     "figure": {
       "kind": "geo3d",
-      "shape": "pyramid4",
+      "shape": "pyramid4-sa",
       "names": [
         "S",
         "A",
@@ -208,7 +208,7 @@
     ],
     "type": "trac-nghiem",
     "level": "VD",
-    "prompt": "Hình chóp $S.ABCD$ có đáy hình vuông cạnh 4, $SA \\perp (ABCD)$. Khoảng cách từ $S$ đến đường thẳng $BD$ là",
+    "prompt": "Hình chóp $S.ABCD$ có đáy hình vuông cạnh 4, $SA \\perp (ABCD)$, $SA=2$. Khoảng cách từ $S$ đến đường thẳng $BD$ là",
     "options": [
       {
         "key": "A",
@@ -227,8 +227,8 @@
         "text": "$\\sqrt{10}$"
       }
     ],
-    "answer": "A",
-    "explanation": "$SA \\perp đáy$ nên $d(S,BD)=d(A,BD)=\\dfrac{4}{\\sqrt{2}}=2\\sqrt{2}$.",
+    "answer": "C",
+    "explanation": "Gọi $O$ là tâm đáy. $BD \\perp (SAC)$ nên $d(S,BD)=SO=\\sqrt{SA^2+AO^2}=\\sqrt{4+8}=2\\sqrt{3}$.",
     "tags": [
       "hình học không gian",
       "khoảng cách"
@@ -368,14 +368,15 @@
     ],
     "type": "trac-nghiem",
     "level": "VDC",
-    "prompt": "Bảng tần số chiều cao (cm) của 20 học sinh như hình. Tứ phân vị loại ba của mẫu số liệu ghép nhóm là",
+    "prompt": "Bảng tần số thời gian tự học (giờ/tuần) của 20 học sinh như hình. Tứ phân vị thứ ba của mẫu số liệu ghép nhóm là",
     "figure": {
-      "kind": "stats",
-      "chart": "hist",
-      "title": "Chiều cao của 20 học sinh",
-      "xLabel": "Chiều cao (cm)",
-      "yLabel": "Số học sinh",
-      "data": "[5; 7) [7; 9) [9; 11) [11; 13)\nSố học sinh: 4; 8; 6; 2"
+      "kind": "grouped",
+      "groups": "[5; 7): 4\n[7; 9): 8\n[9; 11): 6\n[11; 13): 2",
+      "label": "Thời gian (giờ)",
+      "freqLabel": "Số học sinh",
+      "view": "htable",
+      "polygon": false,
+      "extras": ""
     },
     "options": [
       {
@@ -443,7 +444,7 @@
     "prompt": "Hình chóp $S.ABCD$ có đáy là hình vuông cạnh 2, $SA \\perp (ABCD)$, $SA=2$ (như hình). Xét tính đúng sai:",
     "figure": {
       "kind": "geo3d",
-      "shape": "pyramid4",
+      "shape": "pyramid4-sa",
       "names": [
         "S",
         "A",
@@ -581,12 +582,13 @@
     "level": "VD",
     "prompt": "Cân nặng (kg) của 20 học sinh được lập thành bảng tần số ghép nhóm như hình. Xét tính đúng sai:",
     "figure": {
-      "kind": "stats",
-      "chart": "hist",
-      "title": "Cân nặng của 20 học sinh",
-      "xLabel": "Cân nặng (kg)",
-      "yLabel": "Số học sinh",
-      "data": "[40; 45) [45; 50) [50; 55) [55; 60)\nSố học sinh: 5; 8; 5; 2"
+      "kind": "grouped",
+      "groups": "[40; 45): 5\n[45; 50): 8\n[50; 55): 5\n[55; 60): 2",
+      "label": "Cân nặng (kg)",
+      "freqLabel": "Số học sinh",
+      "view": "htable",
+      "polygon": false,
+      "extras": ""
     },
     "options": [
       {
@@ -661,9 +663,9 @@
     ],
     "type": "tra-loi-ngan",
     "level": "VDC",
-    "prompt": "Hình chóp $S.ABC$ có $SA \\perp (ABC)$, tam giác $ABC$ đều cạnh 4, $SA=2\\sqrt{3}$. Tính độ dài đường cao $SO$ với $O$ là tâm đáy (làm tròn đến hàng phần trăm).",
-    "answer": "2,58",
-    "explanation": "$R=\\dfrac{4}{\\sqrt{3}}$; $SO=\\sqrt{12-\\dfrac{16}{3}}=\\sqrt{\\dfrac{20}{3}} \\approx 2{,}58$.",
+    "prompt": "Hình chóp $S.ABC$ có $SA \\perp (ABC)$, tam giác $ABC$ đều cạnh 4, $SA=2\\sqrt{3}$. Tính khoảng cách từ $S$ đến đường thẳng $BC$ (làm tròn đến hàng phần mười).",
+    "answer": "4,9",
+    "explanation": "Gọi $H$ là trung điểm $BC$: $AH=2\\sqrt{3}$, $BC \\perp (SAH)$ nên $d(S,BC)=SH=\\sqrt{12+12}=2\\sqrt{6}\\approx 4{,}9$.",
     "tags": [
       "hình học không gian",
       "đường cao"

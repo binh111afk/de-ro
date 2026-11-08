@@ -1,340 +1,721 @@
 [
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "trac-nghiem",
     "level": "TH",
     "prompt": "Tập nghiệm của bất phương trình $2x-4>0$ là",
     "options": [
-      { "key": "A", "text": "$[2;+\\infty)$" },
-      { "key": "B", "text": "$(-\\infty;2)$" },
-      { "key": "C", "text": "$(2;+\\infty)$" },
-      { "key": "D", "text": "$(-\\infty;2]$" }
+      {
+        "key": "A",
+        "text": "$[2;+\\infty)$"
+      },
+      {
+        "key": "B",
+        "text": "$(-\\infty;2)$"
+      },
+      {
+        "key": "C",
+        "text": "$(2;+\\infty)$"
+      },
+      {
+        "key": "D",
+        "text": "$(-\\infty;2]$"
+      }
     ],
     "answer": "C",
     "explanation": "$2x-4>0 \\Leftrightarrow x>2$, dấu bất đẳng thức ngiêng nên không lấy đầu mút: $(2;+\\infty)$.",
-    "tags": ["bất phương trình", "bậc nhất một ẩn"]
+    "tags": [
+      "bất phương trình",
+      "bậc nhất một ẩn"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "trac-nghiem",
     "level": "NB",
     "prompt": "Tập nghiệm của bất phương trình $-3x+6 \\ge 0$ là",
     "options": [
-      { "key": "A", "text": "$(-\\infty;2)$" },
-      { "key": "B", "text": "$(-\\infty;2]$" },
-      { "key": "C", "text": "$(2;+\\infty)$" },
-      { "key": "D", "text": "$[2;+\\infty)$" }
+      {
+        "key": "A",
+        "text": "$(-\\infty;2)$"
+      },
+      {
+        "key": "B",
+        "text": "$(-\\infty;2]$"
+      },
+      {
+        "key": "C",
+        "text": "$(2;+\\infty)$"
+      },
+      {
+        "key": "D",
+        "text": "$[2;+\\infty)$"
+      }
     ],
     "answer": "B",
     "explanation": "$-3x+6 \\ge 0 \\Leftrightarrow -3x \\ge -6 \\Leftrightarrow x \\le 2$ (đổi chiều khi chia số âm): $(-\\infty;2]$.",
-    "tags": ["bất phương trình", "bậc nhất một ẩn"]
+    "tags": [
+      "bất phương trình",
+      "bậc nhất một ẩn"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "trac-nghiem",
     "level": "TH",
     "prompt": "Tập nghiệm của hệ $\\begin{cases} x>1 \\\\ x \\le 4 \\end{cases}$ là",
     "options": [
-      { "key": "A", "text": "$(1;4)$" },
-      { "key": "B", "text": "$[1;4]$" },
-      { "key": "C", "text": "$(-1;4]$" },
-      { "key": "D", "text": "$(1;4]$" }
+      {
+        "key": "A",
+        "text": "$(1;4)$"
+      },
+      {
+        "key": "B",
+        "text": "$[1;4]$"
+      },
+      {
+        "key": "C",
+        "text": "$(-1;4]$"
+      },
+      {
+        "key": "D",
+        "text": "$(1;4]$"
+      }
     ],
     "answer": "D",
     "explanation": "Giao của $(1;+\\infty)$ và $(-\\infty;4]$ là $(1;4]$.",
-    "tags": ["hệ bất phương trình", "một ẩn"]
+    "tags": [
+      "hệ bất phương trình",
+      "một ẩn"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "trac-nghiem",
     "level": "TH",
     "prompt": "Miền nghiệm của bất phương trình $y \\ge x+1$ là",
     "options": [
-      { "key": "A", "text": "nửa mặt phẳng bờ là đường thẳng $y=x+1$, không kể bờ, chứa gốc toạ độ" },
-      { "key": "B", "text": "nửa mặt phẳng bờ là đường thẳng $y=x+1$, kể cả bờ, không chứa gốc toạ độ" },
-      { "key": "C", "text": "nửa mặt phẳng bờ là đường thẳng $y=x+1$, không kể bờ, không chứa gốc toạ độ" },
-      { "key": "D", "text": "nửa mặt phẳng bờ là đường thẳng $y=x+1$, kể cả bờ, chứa gốc toạ độ" }
+      {
+        "key": "A",
+        "text": "nửa mặt phẳng bờ là đường thẳng $y=x+1$, không kể bờ, chứa gốc toạ độ"
+      },
+      {
+        "key": "B",
+        "text": "nửa mặt phẳng bờ là đường thẳng $y=x+1$, kể cả bờ, không chứa gốc toạ độ"
+      },
+      {
+        "key": "C",
+        "text": "nửa mặt phẳng bờ là đường thẳng $y=x+1$, không kể bờ, không chứa gốc toạ độ"
+      },
+      {
+        "key": "D",
+        "text": "nửa mặt phẳng bờ là đường thẳng $y=x+1$, kể cả bờ, chứa gốc toạ độ"
+      }
     ],
     "answer": "B",
     "explanation": "$y \\ge x+1$ kể cả bờ; gốc toạ độ $O(0;0)$ có $0 \\ge 1$ sai nên miền không chứa $O$.",
-    "tags": ["bất phương trình", "miền nghiệm hai ẩn"]
+    "tags": [
+      "bất phương trình",
+      "miền nghiệm hai ẩn"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "trac-nghiem",
     "level": "VD",
     "prompt": "Trong các điểm sau, điểm nào thuộc miền nghiệm của hệ $\\begin{cases} x+2y \\le 4 \\\\ x \\ge 0 \\\\ y \\ge 0 \\end{cases}$ (vẽ như hình)?",
-    "figure": { "kind": "oxy", "xMin": -1, "xMax": 4, "yMin": -1, "yMax": 4, "grid": true, "items": "x + 2y = 4\nx = 0\ny = 0" },
+    "figure": {
+      "kind": "oxy",
+      "xMin": -1,
+      "xMax": 4,
+      "yMin": -1,
+      "yMax": 4,
+      "grid": true,
+      "items": "x + 2y = 4\nx = 0\ny = 0"
+    },
     "options": [
-      { "key": "A", "text": "$(0;2)$" },
-      { "key": "B", "text": "$(2;2)$" },
-      { "key": "C", "text": "$(3;1)$" },
-      { "key": "D", "text": "$(1;2)$" }
+      {
+        "key": "A",
+        "text": "$(0;2)$"
+      },
+      {
+        "key": "B",
+        "text": "$(2;2)$"
+      },
+      {
+        "key": "C",
+        "text": "$(3;1)$"
+      },
+      {
+        "key": "D",
+        "text": "$(1;2)$"
+      }
     ],
     "answer": "A",
     "explanation": "$(0;2)$: $0+2 \\cdot 2=4 \\le 4$ thoả. $(2;2)$, $(3;1)$, $(1;2)$ đều cho $x+2y>4$ nên loại.",
-    "tags": ["hệ bất phương trình", "miền nghiệm"]
+    "tags": [
+      "hệ bất phương trình",
+      "miền nghiệm"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "trac-nghiem",
     "level": "VD",
     "prompt": "Trên miền $\\begin{cases} x \\ge 0 \\\\ y \\ge 0 \\\\ x+y \\le 5 \\end{cases}$ (vẽ như hình), giá trị lớn nhất của hàm $f(x;y)=2x+3y$ là",
-    "figure": { "kind": "oxy", "xMin": -1, "xMax": 6, "yMin": -1, "yMax": 6, "grid": true, "items": "x + y = 5\nx = 0\ny = 0" },
+    "figure": {
+      "kind": "oxy",
+      "xMin": -1,
+      "xMax": 6,
+      "yMin": -1,
+      "yMax": 6,
+      "grid": true,
+      "items": "x + y = 5\nx = 0\ny = 0"
+    },
     "options": [
-      { "key": "A", "text": "$10$" },
-      { "key": "B", "text": "$15$" },
-      { "key": "C", "text": "$18$" },
-      { "key": "D", "text": "$12$" }
+      {
+        "key": "A",
+        "text": "$10$"
+      },
+      {
+        "key": "B",
+        "text": "$15$"
+      },
+      {
+        "key": "C",
+        "text": "$18$"
+      },
+      {
+        "key": "D",
+        "text": "$12$"
+      }
     ],
     "answer": "B",
     "explanation": "Đỉnh miền: $(0;0)$, $(5;0)$, $(0;5)$. $f(5;0)=10$, $f(0;5)=15$ nên GTLN $=15$ tại $(0;5)$.",
-    "tags": ["bất phương trình", "bài toán tối ưu"]
+    "tags": [
+      "bất phương trình",
+      "bài toán tối ưu"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "trac-nghiem",
     "level": "VD",
     "prompt": "Miền nghiệm của hệ $\\begin{cases} x+y \\le 6 \\\\ x \\ge 1 \\\\ y \\ge 1 \\end{cases}$ là một tam giác. Diện tích tam giác đó là",
     "options": [
-      { "key": "A", "text": "$6$" },
-      { "key": "B", "text": "$9$" },
-      { "key": "C", "text": "$16$" },
-      { "key": "D", "text": "$8$" }
+      {
+        "key": "A",
+        "text": "$6$"
+      },
+      {
+        "key": "B",
+        "text": "$9$"
+      },
+      {
+        "key": "C",
+        "text": "$16$"
+      },
+      {
+        "key": "D",
+        "text": "$8$"
+      }
     ],
     "answer": "D",
     "explanation": "Tam giác có ba đỉnh $(1;1)$, $(5;1)$, $(1;5)$, hai cạnh góc vuông đều dài 4 nên diện tích $\\dfrac{4 \\cdot 4}{2}=8$.",
-    "tags": ["hệ bất phương trình", "miền nghiệm"]
+    "tags": [
+      "hệ bất phương trình",
+      "miền nghiệm"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "trac-nghiem",
     "level": "VDC",
     "prompt": "Một xưởng sản xuất bàn và ghế. Mỗi chiếc bàn cần 2 giờ máy A và 1 giờ máy B; mỗi chiếc ghế cần 1 giờ máy A và 3 giờ máy B. Máy A hoạt động tối đa 12 giờ, máy B tối đa 15 giờ. Lợi nhuận 3 triệu đồng cho mỗi bàn, 4 triệu đồng cho mỗi ghế. Lợi nhuận lớn nhất (triệu đồng) là",
     "options": [
-      { "key": "A", "text": "$20$" },
-      { "key": "B", "text": "$25$" },
-      { "key": "C", "text": "$27$" },
-      { "key": "D", "text": "$28$" }
+      {
+        "key": "A",
+        "text": "$20$"
+      },
+      {
+        "key": "B",
+        "text": "$25$"
+      },
+      {
+        "key": "C",
+        "text": "$27$"
+      },
+      {
+        "key": "D",
+        "text": "$28$"
+      }
     ],
     "answer": "C",
     "explanation": "Ràng buộc: $2x+y \\le 12$, $x+3y \\le 15$, $x,y \\ge 0$. Đỉnh đặc biệt: giao hai đường là $x=4{,}2$, $y=3{,}6$ với lợi nhuận $3(4{,}2)+4(3{,}6)=27$. So sánh $(6;0)$: $18$; $(0;5)$: $20$. Vậy tối đa $27$.",
-    "tags": ["bất phương trình", "bài toán tối ưu"]
+    "tags": [
+      "bất phương trình",
+      "bài toán tối ưu"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "trac-nghiem",
     "level": "TH",
-    "prompt": "Tập nghiệm của bất phương trình $|2x-1|<5$ là",
+    "prompt": "Tập nghiệm của hệ $\\begin{cases} 2x+4>0 \\\\ x-3<0 \\end{cases}$ là",
     "options": [
-      { "key": "A", "text": "$(-3;2)$" },
-      { "key": "B", "text": "$(-2;3]$" },
-      { "key": "C", "text": "$(-2;3)$" },
-      { "key": "D", "text": "$[-2;3)$" }
+      {
+        "key": "A",
+        "text": "$(-3;2)$"
+      },
+      {
+        "key": "B",
+        "text": "$(-2;3]$"
+      },
+      {
+        "key": "C",
+        "text": "$(-2;3)$"
+      },
+      {
+        "key": "D",
+        "text": "$[-2;3)$"
+      }
     ],
     "answer": "C",
-    "explanation": "$-5<2x-1<5 \\Leftrightarrow -4<2x<6 \\Leftrightarrow -2<x<3$.",
-    "tags": ["bất phương trình", "giá trị tuyệt đối"]
+    "explanation": "$x>-2$ và $x<3$.",
+    "tags": [
+      "bất phương trình",
+      "giá trị tuyệt đối"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "trac-nghiem",
     "level": "TH",
     "prompt": "Tập nghiệm của hệ $\\begin{cases} x+1 \\ge 0 \\\\ 2-x>0 \\end{cases}$ là",
     "options": [
-      { "key": "A", "text": "$[-1;2)$" },
-      { "key": "B", "text": "$(-1;2)$" },
-      { "key": "C", "text": "$[-1;2]$" },
-      { "key": "D", "text": "$(-1;2]$" }
+      {
+        "key": "A",
+        "text": "$[-1;2)$"
+      },
+      {
+        "key": "B",
+        "text": "$(-1;2)$"
+      },
+      {
+        "key": "C",
+        "text": "$[-1;2]$"
+      },
+      {
+        "key": "D",
+        "text": "$(-1;2]$"
+      }
     ],
     "answer": "A",
     "explanation": "$x \\ge -1$ và $x<2$ nên $-1 \\le x<2$: $[-1;2)$.",
-    "tags": ["hệ bất phương trình", "một ẩn"]
+    "tags": [
+      "hệ bất phương trình",
+      "một ẩn"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "trac-nghiem",
     "level": "VD",
     "prompt": "Cho đường thẳng $d: 2x+y=4$ (vẽ như hình). Điểm $M(1;1)$ nằm ở đâu?",
-    "figure": { "kind": "oxy", "xMin": -1, "xMax": 4, "yMin": -1, "yMax": 5, "grid": true, "items": "d: 2x + y = 4\nM(1; 1)" },
+    "figure": {
+      "kind": "oxy",
+      "xMin": -1,
+      "xMax": 4,
+      "yMin": -1,
+      "yMax": 5,
+      "grid": true,
+      "items": "d: 2x + y = 4\nM(1; 1)"
+    },
     "options": [
-      { "key": "A", "text": "thuộc miền $2x+y<4$" },
-      { "key": "B", "text": "thuộc miền $2x+y>4$" },
-      { "key": "C", "text": "thuộc đường thẳng $d$" },
-      { "key": "D", "text": "không thuộc miền nào vì $d$ không chia mặt phẳng" }
+      {
+        "key": "A",
+        "text": "thuộc miền $2x+y<4$"
+      },
+      {
+        "key": "B",
+        "text": "thuộc miền $2x+y>4$"
+      },
+      {
+        "key": "C",
+        "text": "thuộc đường thẳng $d$"
+      },
+      {
+        "key": "D",
+        "text": "không thuộc miền nào vì $d$ không chia mặt phẳng"
+      }
     ],
     "answer": "A",
     "explanation": "Thay $M(1;1)$: $2 \\cdot 1+1=3<4$ nên $M$ thuộc nửa mặt phẳng $2x+y<4$.",
-    "tags": ["bất phương trình", "miền nghiệm hai ẩn"]
+    "tags": [
+      "bất phương trình",
+      "miền nghiệm hai ẩn"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "trac-nghiem",
     "level": "VDC",
     "prompt": "Với giá trị nào của $m$ thì bất phương trình $(m-1)x>m-1$ có tập nghiệm $T=(1;+\\infty)$?",
     "options": [
-      { "key": "A", "text": "$m<1$" },
-      { "key": "B", "text": "$m \\le 1$" },
-      { "key": "C", "text": "$m \\ge 1$" },
-      { "key": "D", "text": "$m>1$" }
+      {
+        "key": "A",
+        "text": "$m<1$"
+      },
+      {
+        "key": "B",
+        "text": "$m \\le 1$"
+      },
+      {
+        "key": "C",
+        "text": "$m \\ge 1$"
+      },
+      {
+        "key": "D",
+        "text": "$m>1$"
+      }
     ],
     "answer": "D",
     "explanation": "Để tập nghiệm là $(1;+\\infty)$ phải chia hai vế cho $m-1>0$ mà không đổi chiều: $m>1$. Khi đó $(m-1)x>m-1 \\Leftrightarrow x>1$.",
-    "tags": ["bất phương trình", "tham số"]
+    "tags": [
+      "bất phương trình",
+      "tham số"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "dung-sai",
     "level": "TH",
     "prompt": "Cho bất phương trình $3x-6<0$. Xét tính đúng sai:",
     "options": [
-      { "key": "a", "text": "$x=1$ là một nghiệm của bất phương trình" },
-      { "key": "b", "text": "$x=2$ là một nghiệm của bất phương trình" },
-      { "key": "c", "text": "Tập nghiệm của bất phương trình là $(-\\infty;2)$" },
-      { "key": "d", "text": "$x=2{,}5$ là một nghiệm của bất phương trình" }
+      {
+        "key": "a",
+        "text": "$x=1$ là một nghiệm của bất phương trình"
+      },
+      {
+        "key": "b",
+        "text": "$x=2$ là một nghiệm của bất phương trình"
+      },
+      {
+        "key": "c",
+        "text": "Tập nghiệm của bất phương trình là $(-\\infty;2)$"
+      },
+      {
+        "key": "d",
+        "text": "$x=2{,}5$ là một nghiệm của bất phương trình"
+      }
     ],
     "answer": "ĐSĐS",
     "explanation": "a) $3-6=-3<0$ — đúng. b) $3 \\cdot 2-6=0$, cần $<0$ — sai. c) $3x<6 \\Leftrightarrow x<2$ — đúng. d) $3(2{,}5)-6=1{,}5>0$ — sai.",
-    "tags": ["bất phương trình", "bậc nhất một ẩn"]
+    "tags": [
+      "bất phương trình",
+      "bậc nhất một ẩn"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "dung-sai",
     "level": "VD",
     "prompt": "Xét hệ bất phương trình $\\begin{cases} x+y \\le 4 \\\\ x \\ge 0 \\\\ y \\ge 0 \\end{cases}$ với miền nghiệm vẽ như hình. Xét tính đúng sai:",
-    "figure": { "kind": "oxy", "xMin": -1, "xMax": 5, "yMin": -1, "yMax": 5, "grid": true, "items": "x + y = 4\nx = 0\ny = 0" },
+    "figure": {
+      "kind": "oxy",
+      "xMin": -1,
+      "xMax": 5,
+      "yMin": -1,
+      "yMax": 5,
+      "grid": true,
+      "items": "x + y = 4\nx = 0\ny = 0"
+    },
     "options": [
-      { "key": "a", "text": "Điểm $(1;1)$ thuộc miền nghiệm" },
-      { "key": "b", "text": "Điểm $(3;2)$ thuộc miền nghiệm" },
-      { "key": "c", "text": "Miền nghiệm là tam giác có ba đỉnh $(0;0)$, $(4;0)$, $(0;4)$" },
-      { "key": "d", "text": "Điểm $(4;0)$ thuộc miền nghiệm" }
+      {
+        "key": "a",
+        "text": "Điểm $(1;1)$ thuộc miền nghiệm"
+      },
+      {
+        "key": "b",
+        "text": "Điểm $(3;2)$ thuộc miền nghiệm"
+      },
+      {
+        "key": "c",
+        "text": "Miền nghiệm là tam giác có ba đỉnh $(0;0)$, $(4;0)$, $(0;4)$"
+      },
+      {
+        "key": "d",
+        "text": "Điểm $(4;0)$ thuộc miền nghiệm"
+      }
     ],
     "answer": "ĐSĐĐ",
     "explanation": "a) $1+1=2 \\le 4$ — đúng. b) $3+2=5>4$ — sai. c) Ba đỉnh là giao từng cặp đường thẳng — đúng. d) $4+0=4 \\le 4$ — đúng.",
-    "tags": ["hệ bất phương trình", "miền nghiệm"]
+    "tags": [
+      "hệ bất phương trình",
+      "miền nghiệm"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "dung-sai",
     "level": "VD",
     "prompt": "Xét bất phương trình $2x+3y \\le 12$ với $x \\ge 0$, $y \\ge 0$. Xét tính đúng sai:",
     "options": [
-      { "key": "a", "text": "Điểm $(0;4)$ thuộc miền nghiệm" },
-      { "key": "b", "text": "Điểm $(6;0)$ thuộc miền nghiệm" },
-      { "key": "c", "text": "Điểm $(3;3)$ thuộc miền nghiệm" },
-      { "key": "d", "text": "Điểm $(1;2)$ không thuộc miền nghiệm" }
+      {
+        "key": "a",
+        "text": "Điểm $(0;4)$ thuộc miền nghiệm"
+      },
+      {
+        "key": "b",
+        "text": "Điểm $(6;0)$ thuộc miền nghiệm"
+      },
+      {
+        "key": "c",
+        "text": "Điểm $(3;3)$ thuộc miền nghiệm"
+      },
+      {
+        "key": "d",
+        "text": "Điểm $(1;2)$ không thuộc miền nghiệm"
+      }
     ],
     "answer": "ĐĐSS",
     "explanation": "a) $0+12=12 \\le 12$ — đúng. b) $12+0=12 \\le 12$ — đúng. c) $6+9=15>12$ — sai. d) $2+6=8 \\le 12$ nên $(1;2)$ thuộc miền — sai.",
-    "tags": ["bất phương trình", "miền nghiệm hai ẩn"]
+    "tags": [
+      "bất phương trình",
+      "miền nghiệm hai ẩn"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "dung-sai",
     "level": "TH",
-    "prompt": "Cho bất phương trình $|x+1| \\le 3$. Xét tính đúng sai:",
+    "prompt": "Cho hệ bất phương trình $\\begin{cases} x+4 \\ge 0 \\\\ x-2 \\le 0 \\end{cases}$. Xét tính đúng sai:",
     "options": [
-      { "key": "a", "text": "$x=2$ là một nghiệm" },
-      { "key": "b", "text": "$x=-5$ là một nghiệm" },
-      { "key": "c", "text": "Tập nghiệm là $[-4;2]$" },
-      { "key": "d", "text": "Tập nghiệm là $(-4;2)$" }
+      {
+        "key": "a",
+        "text": "$x=2$ là một nghiệm"
+      },
+      {
+        "key": "b",
+        "text": "$x=-5$ là một nghiệm"
+      },
+      {
+        "key": "c",
+        "text": "Tập nghiệm là $[-4;2]$"
+      },
+      {
+        "key": "d",
+        "text": "Tập nghiệm là $(-4;2)$"
+      }
     ],
     "answer": "ĐSĐS",
-    "explanation": "a) $|2+1|=3 \\le 3$ — đúng. b) $|-5+1|=4>3$ — sai. c) $-3 \\le x+1 \\le 3 \\Leftrightarrow -4 \\le x \\le 2$ — đúng. d) Đầu mút thuộc tập nghiệm nên không phải khoảng mở — sai.",
-    "tags": ["bất phương trình", "giá trị tuyệt đối"]
+    "explanation": "Tập nghiệm $[-4;2]$: a) đúng, b) sai, c) đúng, d) sai.",
+    "tags": [
+      "bất phương trình",
+      "giá trị tuyệt đối"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "dung-sai",
     "level": "VDC",
     "prompt": "Xét bài toán: tìm GTLN của $f(x;y)=x+y$ trên miền $\\begin{cases} x+2y \\le 8 \\\\ 2x+y \\le 10 \\\\ x \\ge 0 \\\\ y \\ge 0 \\end{cases}$ (vẽ như hình). Xét tính đúng sai:",
-    "figure": { "kind": "oxy", "xMin": -1, "xMax": 6, "yMin": -1, "yMax": 5, "grid": true, "items": "x + 2y = 8\n2x + y = 10\nx = 0\ny = 0" },
+    "figure": {
+      "kind": "oxy",
+      "xMin": -1,
+      "xMax": 6,
+      "yMin": -1,
+      "yMax": 5,
+      "grid": true,
+      "items": "x + 2y = 8\n2x + y = 10\nx = 0\ny = 0"
+    },
     "options": [
-      { "key": "a", "text": "GTLN của $f$ trên miền bằng 6" },
-      { "key": "b", "text": "GTLN đạt được tại điểm $(4;2)$" },
-      { "key": "c", "text": "$f(0;4)=5$" },
-      { "key": "d", "text": "Điểm $(5;0)$ thuộc miền nghiệm" }
+      {
+        "key": "a",
+        "text": "GTLN của $f$ trên miền bằng 6"
+      },
+      {
+        "key": "b",
+        "text": "GTLN đạt được tại điểm $(4;2)$"
+      },
+      {
+        "key": "c",
+        "text": "$f(0;4)=5$"
+      },
+      {
+        "key": "d",
+        "text": "Điểm $(5;0)$ thuộc miền nghiệm"
+      }
     ],
     "answer": "ĐĐSĐ",
     "explanation": "Đỉnh miền: $(0;0)$, $(0;4)$, $(4;2)$ (giao hai đường thẳng), $(5;0)$. a) $f(4;2)=6$ lớn nhất — đúng. b) Đúng. c) $f(0;4)=4 \\ne 5$ — sai. d) $2 \\cdot 5+0=10 \\le 10$, $5+0=5 \\le 8$ — đúng.",
-    "tags": ["bất phương trình", "bài toán tối ưu"]
+    "tags": [
+      "bất phương trình",
+      "bài toán tối ưu"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "dung-sai",
     "level": "VD",
     "prompt": "Xét hệ bất phương trình $\\begin{cases} 3x+2y \\le 6 \\\\ x \\ge 0 \\\\ y \\ge 0 \\end{cases}$. Xét tính đúng sai:",
     "options": [
-      { "key": "a", "text": "Điểm $(0;3)$ thuộc miền nghiệm" },
-      { "key": "b", "text": "Điểm $(2;0)$ không thuộc miền nghiệm" },
-      { "key": "c", "text": "Điểm $(1;2)$ thuộc miền nghiệm" },
-      { "key": "d", "text": "Điểm $(0;0)$ thuộc miền nghiệm" }
+      {
+        "key": "a",
+        "text": "Điểm $(0;3)$ thuộc miền nghiệm"
+      },
+      {
+        "key": "b",
+        "text": "Điểm $(2;0)$ không thuộc miền nghiệm"
+      },
+      {
+        "key": "c",
+        "text": "Điểm $(1;2)$ thuộc miền nghiệm"
+      },
+      {
+        "key": "d",
+        "text": "Điểm $(0;0)$ thuộc miền nghiệm"
+      }
     ],
     "answer": "ĐSSĐ",
     "explanation": "a) $0+6=6 \\le 6$ — đúng. b) $6+0=6 \\le 6$ nên $(2;0)$ thuộc miền — sai. c) $3+4=7>6$ — sai. d) $0 \\le 6$ — đúng.",
-    "tags": ["hệ bất phương trình", "miền nghiệm"]
+    "tags": [
+      "hệ bất phương trình",
+      "miền nghiệm"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "tra-loi-ngan",
     "level": "VD",
     "prompt": "Tìm nghiệm lớn nhất của bất phương trình $5-2x \\ge 1$.",
     "answer": "2",
     "explanation": "$5-2x \\ge 1 \\Leftrightarrow -2x \\ge -4 \\Leftrightarrow x \\le 2$. Nghiệm lớn nhất là $2$.",
-    "tags": ["bất phương trình", "bậc nhất một ẩn"]
+    "tags": [
+      "bất phương trình",
+      "bậc nhất một ẩn"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "tra-loi-ngan",
     "level": "VDC",
     "prompt": "Tìm GTLN của $f(x;y)=4x+3y$ trên miền $\\begin{cases} x+y \\le 5 \\\\ x \\ge 0 \\\\ y \\ge 0 \\end{cases}$.",
     "answer": "20",
     "explanation": "Đỉnh miền: $(0;0)$, $(5;0)$, $(0;5)$. $f(5;0)=20$, $f(0;5)=15$. GTLN $=20$.",
-    "tags": ["bất phương trình", "bài toán tối ưu"]
+    "tags": [
+      "bất phương trình",
+      "bài toán tối ưu"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "tra-loi-ngan",
     "level": "VD",
     "prompt": "Miền nghiệm của hệ $\\begin{cases} x+y \\le 6 \\\\ x \\ge 0 \\\\ y \\ge 0 \\end{cases}$ là một tam giác. Tính diện tích tam giác đó.",
     "answer": "18",
     "explanation": "Tam giác đỉnh $(0;0)$, $(6;0)$, $(0;6)$ có diện tích $\\dfrac{6 \\cdot 6}{2}=18$.",
-    "tags": ["hệ bất phương trình", "miền nghiệm"]
+    "tags": [
+      "hệ bất phương trình",
+      "miền nghiệm"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "tra-loi-ngan",
     "level": "TH",
-    "prompt": "Bất phương trình $|3x-1|<8$ có bao nhiêu nghiệm nguyên?",
+    "prompt": "Hệ bất phương trình $\\begin{cases} 3x+7>0 \\\\ 3x-9<0 \\end{cases}$ có bao nhiêu nghiệm nguyên?",
     "answer": "5",
-    "explanation": "$-8<3x-1<8 \\Leftrightarrow -\\dfrac{7}{3}<x<3$ nên $x \\in \\{-2;-1;0;1;2\\}$: 5 nghiệm.",
-    "tags": ["bất phương trình", "giá trị tuyệt đối"]
+    "explanation": "$-\\dfrac{7}{3}<x<3$: các số nguyên $-2;-1;0;1;2$.",
+    "tags": [
+      "bất phương trình",
+      "giá trị tuyệt đối"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "tra-loi-ngan",
     "level": "VDC",
     "prompt": "Miền nghiệm của hệ $\\begin{cases} x+y \\le 5 \\\\ x \\ge 0 \\\\ y \\ge 0 \\end{cases}$ chứa bao nhiêu điểm có toạ độ nguyên?",
     "answer": "21",
     "explanation": "Với $x=0;1;\\ldots;5$ thì $y$ chạy từ $0$ đến $5-x$: $(6)+(5)+(4)+(3)+(2)+(1)=21$ điểm.",
-    "tags": ["hệ bất phương trình", "đếm điểm"]
+    "tags": [
+      "hệ bất phương trình",
+      "đếm điểm"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "tra-loi-ngan",
     "level": "VD",
     "prompt": "Tìm GTLN của $f(x;y)=2x+y$ trên miền $\\begin{cases} x+y \\le 4 \\\\ x \\le 3 \\\\ x \\ge 0 \\\\ y \\ge 0 \\end{cases}$.",
     "answer": "7",
     "explanation": "Đỉnh miền: $(0;0)$, $(3;0)$, $(3;1)$, $(0;4)$. $f(3;1)=7$ lớn nhất.",
-    "tags": ["bất phương trình", "bài toán tối ưu"]
+    "tags": [
+      "bất phương trình",
+      "bài toán tối ưu"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "tra-loi-ngan",
     "level": "VDC",
     "prompt": "Tìm GTLN của $f(x;y)=3x+2y$ trên miền $\\begin{cases} x+y \\le 5 \\\\ 2x+y \\le 8 \\\\ x \\ge 0 \\\\ y \\ge 0 \\end{cases}$.",
     "answer": "13",
     "explanation": "Đỉnh miền: $(0;0)$, $(0;5)$, $(3;2)$ (giao hai đường), $(4;0)$. $f(3;2)=13$ lớn nhất.",
-    "tags": ["bất phương trình", "bài toán tối ưu"]
+    "tags": [
+      "bất phương trình",
+      "bài toán tối ưu"
+    ]
   }
 ]

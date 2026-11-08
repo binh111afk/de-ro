@@ -204,7 +204,7 @@
     "prompt": "Một bệnh hiếm gặp ở 1% dân số. Xét nghiệm cho kết quả dương với 95% người có bệnh và 5% người không có bệnh (sơ đồ cây như hình). Xác suất một người được chọn ngẫu nhiên cho kết quả dương là",
     "figure": {
       "kind": "probtree",
-      "text": "Bệnh: 0,01\n  Dương: 0,95\n  Âm: 0,05\nKhông bệnh: 0,99\n  Dương: 0,1\n  Âm: 0,9"
+      "text": "Bệnh: 0,01\n  Dương: 0,95\n  Âm: 0,05\nKhông bệnh: 0,99\n  Dương: 0,05\n  Âm: 0,95"
     },
     "options": [
       {
@@ -301,7 +301,7 @@
     ],
     "type": "trac-nghiem",
     "level": "NB",
-    "prompt": "Trung tâm kiểu của nhóm $[25;35)$ là",
+    "prompt": "Giá trị đại diện của nhóm $[25;35)$ là",
     "options": [
       {
         "key": "A",
@@ -321,7 +321,7 @@
       }
     ],
     "answer": "B",
-    "explanation": "Trung tâm kiểu $=\\dfrac{25+35}{2}=30$.",
+    "explanation": "Giá trị đại diện $=\\dfrac{25+35}{2}=30$.",
     "tags": [
       "thống kê",
       "trung tâm kiểu"
@@ -333,7 +333,7 @@
     ],
     "type": "trac-nghiem",
     "level": "VD",
-    "prompt": "Mẫu ghép nhóm: nhóm $[0;10)$ có tần số 2 (trung tâm kiểu 5), nhóm $[10;20)$ có tần số 3 (trung tâm kiểu 15). Phương sai của mẫu là",
+    "prompt": "Mẫu ghép nhóm: nhóm $[0;10)$ có tần số 2 (giá trị đại diện 5), nhóm $[10;20)$ có tần số 3 (giá trị đại diện 15). Phương sai của mẫu là",
     "options": [
       {
         "key": "A",
@@ -367,12 +367,13 @@
     "level": "VDC",
     "prompt": "Mẫu ghép nhóm (như hình): nhóm $[5;15)$ tần số 4, nhóm $[15;25)$ tần số 6. Độ lệch chuẩn của mẫu (làm tròn đến hàng phần trăm) là",
     "figure": {
-      "kind": "stats",
-      "chart": "hist",
-      "title": "Mẫu số liệu ghép nhóm",
-      "xLabel": "Giá trị",
-      "yLabel": "Tần số",
-      "data": "[5; 15) [15; 25)\nTần số: 4; 6"
+      "kind": "grouped",
+      "groups": "[5; 15): 4\n[15; 25): 6",
+      "label": "Nhóm",
+      "freqLabel": "Tần số",
+      "view": "htable",
+      "polygon": false,
+      "extras": ""
     },
     "options": [
       {
@@ -424,8 +425,8 @@
         "text": "$A$ và $B$ là hai biến cố độc lập"
       }
     ],
-    "answer": "ĐĐĐS",
-    "explanation": "a) $\\dfrac{2}{5} \\cdot \\dfrac{1}{4}=\\dfrac{1}{10}$ — đúng. b) Đúng. c) $P(B)=\\dfrac{C_2^2}{C_5^2}=\\dfrac{1}{10}$ — đúng. d) Rút không hoàn lại nên phụ thuộc — sai.",
+    "answer": "ĐĐSS",
+    "explanation": "a) $\\dfrac{2}{5}\\cdot\\dfrac{1}{4}=\\dfrac{1}{10}$ — đúng. b) Đúng. c) $P(B)=\\dfrac{1}{10}+\\dfrac{3}{5}\\cdot\\dfrac{2}{4}=\\dfrac{2}{5}$ — sai. d) $P(B\\mid A)\\ne P(B)$ — sai.",
     "tags": [
       "xác suất",
       "có điều kiện"
@@ -565,7 +566,7 @@
     ],
     "type": "dung-sai",
     "level": "VDC",
-    "prompt": "Mẫu ghép nhóm: nhóm $[0;4)$ tần số 3 (trung tâm kiểu 2), nhóm $[4;8)$ tần số 5 (trung tâm kiểu 6). Xét tính đúng sai:",
+    "prompt": "Mẫu ghép nhóm: nhóm $[0;4)$ tần số 3 (giá trị đại diện 2), nhóm $[4;8)$ tần số 5 (giá trị đại diện 6). Xét tính đúng sai:",
     "options": [
       {
         "key": "a",
@@ -667,7 +668,7 @@
     ],
     "type": "tra-loi-ngan",
     "level": "VDC",
-    "prompt": "Mẫu ghép nhóm: nhóm $[0;5)$ tần số 2 (trung tâm kiểu 2,5), nhóm $[5;10)$ tần số 6 (trung tâm kiểu 7,5). Tính phương sai của mẫu (làm tròn đến hàng phần trăm).",
+    "prompt": "Mẫu ghép nhóm: nhóm $[0;5)$ tần số 2 (giá trị đại diện 2,5), nhóm $[5;10)$ tần số 6 (giá trị đại diện 7,5). Tính phương sai của mẫu (làm tròn đến hàng phần trăm).",
     "answer": "4,69",
     "explanation": "$\\bar{x}=6{,}25$; $s^2=\\dfrac{2(2{,}5-6{,}25)^2+6(7{,}5-6{,}25)^2}{8}=\\dfrac{37{,}5}{8} \\approx 4{,}69$.",
     "tags": [

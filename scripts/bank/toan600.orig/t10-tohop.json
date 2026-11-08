@@ -1,0 +1,691 @@
+[
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Giá trị của $A_5^2$ (chỉnh hợp chập 2 của 5 phần tử) là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$10$"
+      },
+      {
+        "key": "B",
+        "text": "$15$"
+      },
+      {
+        "key": "C",
+        "text": "$20$"
+      },
+      {
+        "key": "D",
+        "text": "$25$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "$A_5^2=5 \\cdot 4=20$.",
+    "tags": [
+      "tohop",
+      "chỉnh hợp"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Giá trị của $C_5^3$ (tổ hợp chập 3 của 5 phần tử) là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$20$"
+      },
+      {
+        "key": "B",
+        "text": "$10$"
+      },
+      {
+        "key": "C",
+        "text": "$5$"
+      },
+      {
+        "key": "D",
+        "text": "$8$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$C_5^3=\\dfrac{5 \\cdot 4 \\cdot 3}{3!}=10$.",
+    "tags": [
+      "tohop",
+      "tổ hợp"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Giá trị của $4! \\cdot 3!$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$144$"
+      },
+      {
+        "key": "B",
+        "text": "$72$"
+      },
+      {
+        "key": "C",
+        "text": "$120$"
+      },
+      {
+        "key": "D",
+        "text": "$288$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "$4!=24$, $3!=6$ nên tích bằng $144$.",
+    "tags": [
+      "tohop",
+      "giai thừa"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Có bao nhiêu cách xếp 5 học sinh thành một hàng ngang để chụp ảnh?",
+    "options": [
+      {
+        "key": "A",
+        "text": "$25$"
+      },
+      {
+        "key": "B",
+        "text": "$60$"
+      },
+      {
+        "key": "C",
+        "text": "$24$"
+      },
+      {
+        "key": "D",
+        "text": "$120$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Số hoán vị của 5 phần tử: $5!=120$.",
+    "tags": [
+      "tohop",
+      "hoán vị"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Lớp học có 10 nam và 8 nữ. Có bao nhiêu cách chọn 2 em đi trực nhật sao cho có 1 nam và 1 nữ?",
+    "options": [
+      {
+        "key": "A",
+        "text": "$40$"
+      },
+      {
+        "key": "B",
+        "text": "$80$"
+      },
+      {
+        "key": "C",
+        "text": "$90$"
+      },
+      {
+        "key": "D",
+        "text": "$160$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Chọn 1 nam (10 cách) và 1 nữ (8 cách): $10 \\cdot 8=80$.",
+    "tags": [
+      "tohop",
+      "quy tắc nhân"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Một túi có 3 bi xanh, 2 bi đỏ cùng kích thước. Lấy ngẫu nhiên lần lượt 2 bi không hoàn lại (sơ đồ cây như hình). Xác suất để lấy được bi xanh ở lần thứ nhất và bi đỏ ở lần thứ hai là",
+    "figure": {
+      "kind": "probtree",
+      "text": "Xanh: 0,6\n  Đỏ: 0,5\n  Xanh: 0,5\nĐỏ: 0,4\n  Xanh: 0,75\n  Đỏ: 0,25"
+    },
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\dfrac{3}{10}$"
+      },
+      {
+        "key": "B",
+        "text": "$\\dfrac{2}{5}$"
+      },
+      {
+        "key": "C",
+        "text": "$\\dfrac{3}{5}$"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{1}{4}$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "$P=\\dfrac{3}{5} \\cdot \\dfrac{2}{4}=\\dfrac{6}{20}=\\dfrac{3}{10}$.",
+    "tags": [
+      "tohop",
+      "quy tắc nhân"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Sắp xếp các chữ cái $T$, $O$, $A$, $N$ theo một thứ tự bất kì để được một chuỗi kí tự. Có bao nhiêu chuỗi kí tự khác nhau?",
+    "options": [
+      {
+        "key": "A",
+        "text": "$12$"
+      },
+      {
+        "key": "B",
+        "text": "$16$"
+      },
+      {
+        "key": "C",
+        "text": "$24$"
+      },
+      {
+        "key": "D",
+        "text": "$32$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Hoán vị 4 chữ cái khác nhau: $4!=24$.",
+    "tags": [
+      "tohop",
+      "hoán vị"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Hệ số của $x^2$ trong khai triển $(x+2)^5$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$40$"
+      },
+      {
+        "key": "B",
+        "text": "$16$"
+      },
+      {
+        "key": "C",
+        "text": "$10$"
+      },
+      {
+        "key": "D",
+        "text": "$80$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Số hạng chứa $x^2$: $C_5^2 x^2 \\cdot 2^3=10 \\cdot 8x^2$ nên hệ số là $80$.",
+    "tags": [
+      "tohop",
+      "nhị thức Newton"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Trên đường tròn cho 5 điểm phân biệt (như hình). Có bao nhiêu dây cung nối hai trong năm điểm đó?",
+    "figure": {
+      "kind": "geo2d",
+      "shape": "circle",
+      "names": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E"
+      ]
+    },
+    "options": [
+      {
+        "key": "A",
+        "text": "$5$"
+      },
+      {
+        "key": "B",
+        "text": "$8$"
+      },
+      {
+        "key": "C",
+        "text": "$10$"
+      },
+      {
+        "key": "D",
+        "text": "$20$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Mỗi dây cung ứng một cách chọn 2 điểm: $C_5^2=10$.",
+    "tags": [
+      "tohop",
+      "tổ hợp"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Chọn ngẫu nhiên 3 học sinh từ nhóm gồm 4 nam và 5 nữ. Số cách chọn sao cho nhóm có ít nhất một nữ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$64$"
+      },
+      {
+        "key": "B",
+        "text": "$76$"
+      },
+      {
+        "key": "C",
+        "text": "$80$"
+      },
+      {
+        "key": "D",
+        "text": "$84$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Tổng cách chọn 3 em từ 9 em: $C_9^3=84$. Cách chọn toàn nam: $C_4^3=4$. Số cách có ít nhất một nữ: $84-4=80$.",
+    "tags": [
+      "tohop",
+      "tổ hợp"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Một mật khẩu gồm 4 kí tự khác nhau được tạo từ 26 chữ cái in hoa. Số mật khẩu có thể tạo là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$26^4$"
+      },
+      {
+        "key": "B",
+        "text": "$358\\,800$"
+      },
+      {
+        "key": "C",
+        "text": "$14\\,950$"
+      },
+      {
+        "key": "D",
+        "text": "$456\\,976$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$A_{26}^4=26 \\cdot 25 \\cdot 24 \\cdot 23=358\\,800$.",
+    "tags": [
+      "tohop",
+      "chỉnh hợp"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Xếp 3 nam và 3 nữ thành một hàng ngang sao cho nam, nữ xen kẽ nhau. Có bao nhiêu cách xếp?",
+    "options": [
+      {
+        "key": "A",
+        "text": "$72$"
+      },
+      {
+        "key": "B",
+        "text": "$144$"
+      },
+      {
+        "key": "C",
+        "text": "$36$"
+      },
+      {
+        "key": "D",
+        "text": "$720$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Hai kiểu Nam-Nữ hoặc Nữ-Nam: $2 \\cdot 3! \\cdot 3! = 2 \\cdot 36 = 72$.",
+    "tags": [
+      "tohop",
+      "hoán vị"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Xét tính đúng sai về giá trị các biểu thức tổ hợp:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$5!=120$"
+      },
+      {
+        "key": "b",
+        "text": "$A_4^3=24$"
+      },
+      {
+        "key": "c",
+        "text": "$C_6^4=15$"
+      },
+      {
+        "key": "d",
+        "text": "$A_4^4=12$"
+      }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a) $5!=120$ — đúng. b) $4 \\cdot 3 \\cdot 2=24$ — đúng. c) $C_6^4=C_6^2=15$ — đúng. d) $A_4^4=4!=24 \\ne 12$ — sai.",
+    "tags": [
+      "tohop",
+      "chỉnh hợp"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Từ các chữ số $1;2;3;4;5$ lập số có ba chữ số (chữ số có thể lặp lại hoặc không tùy từng ý). Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Số có ba chữ số đôi một khác nhau là 60"
+      },
+      {
+        "key": "b",
+        "text": "Số có ba chữ số (chữ số được lặp) là 125"
+      },
+      {
+        "key": "c",
+        "text": "Số chẵn có ba chữ số đôi một khác nhau là 30"
+      },
+      {
+        "key": "d",
+        "text": "Số lẻ có ba chữ số đôi một khác nhau là 36"
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) $5 \\cdot 4 \\cdot 3=60$ — đúng. b) $5^3=125$ — đúng. c) Chữ số cuối là 2 hoặc 4: $2 \\cdot 4 \\cdot 3=24 \\ne 30$ — sai. d) Chữ số cuối là 1, 3 hoặc 5: $3 \\cdot 4 \\cdot 3=36$ — đúng.",
+    "tags": [
+      "tohop",
+      "quy tắc nhân"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Gieo một xúc xắc sáu mặt hai lần liên tiếp. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Không gian mẫu có 36 phần tử"
+      },
+      {
+        "key": "b",
+        "text": "Xác suất để tổng số chấm bằng 7 là $\\dfrac{1}{6}$"
+      },
+      {
+        "key": "c",
+        "text": "Xác suất để hai mặt giống nhau là $\\dfrac{1}{12}$"
+      },
+      {
+        "key": "d",
+        "text": "Xác suất để tổng số chấm lớn hơn 10 là $\\dfrac{1}{9}$"
+      }
+    ],
+    "answer": "ĐĐSS",
+    "explanation": "a) $6^2=36$ — đúng. b) Có 6 cặp cho tổng 7 nên $\\dfrac{6}{36}=\\dfrac{1}{6}$ — đúng. c) Có 6 cặp giống nhau nên xác suất $\\dfrac{6}{36}=\\dfrac{1}{6} \\ne \\dfrac{1}{12}$ — sai. d) Có 3 cặp $(5;6),(6;5),(6;6)$ nên xác suất $\\dfrac{3}{36}=\\dfrac{1}{12} \\ne \\dfrac{1}{9}$ — sai.",
+    "tags": [
+      "tohop",
+      "xác suất"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Xét khai triển $(x+1)^4$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Khai triển có 5 số hạng"
+      },
+      {
+        "key": "b",
+        "text": "Hệ số của $x^2$ là 6"
+      },
+      {
+        "key": "c",
+        "text": "Hệ số của $x^3$ là 4"
+      },
+      {
+        "key": "d",
+        "text": "Hệ số của $x$ là 1"
+      }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a) $n+1=5$ — đúng. b) $C_4^2=6$ — đúng. c) $C_4^3=4$ — đúng. d) $C_4^1=4 \\ne 1$ — sai.",
+    "tags": [
+      "tohop",
+      "nhị thức Newton"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Đội bóng của lớp có 11 học sinh, trong đó có 1 thủ quân. Chọn ngẫu nhiên 5 em vào sân. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Số cách chọn không ràng buộc là 562"
+      },
+      {
+        "key": "b",
+        "text": "Số cách chọn sao cho thủ quân có mặt là 210"
+      },
+      {
+        "key": "c",
+        "text": "Số cách chọn sao cho thủ quân không có mặt là 252"
+      },
+      {
+        "key": "d",
+        "text": "Số cách chọn sao cho thủ quân có mặt bằng nửa số cách chọn không ràng buộc, tức 231"
+      }
+    ],
+    "answer": "SĐĐS",
+    "explanation": "a) $C_{11}^5=462 \\ne 562$ — sai. b) $C_{10}^4=210$ — đúng. c) $C_{10}^5=252$ — đúng. d) $\\dfrac{462}{2}=231 \\ne 210$ — sai.",
+    "tags": [
+      "tohop",
+      "tổ hợp"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Lớp có 25 học sinh, cần chọn ban cán sự gồm lớp trưởng, lớp phó học tập và lớp phó văn thể (mỗi chức vụ một em, mỗi em giữ nhiều nhất một chức). Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Số cách chọn 3 em không phân biệt chức vụ là 2300"
+      },
+      {
+        "key": "b",
+        "text": "Số cách chọn có phân biệt chức vụ là 13800"
+      },
+      {
+        "key": "c",
+        "text": "$A_{25}^3=\\dfrac{25 \\cdot 24 \\cdot 23}{6}$"
+      },
+      {
+        "key": "d",
+        "text": "$C_{25}^3=\\dfrac{25 \\cdot 24 \\cdot 23}{6}$"
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) $C_{25}^3=2300$ — đúng. b) $A_{25}^3=25 \\cdot 24 \\cdot 23=13800$ — đúng. c) $A_{25}^3=25 \\cdot 24 \\cdot 23$, chia cho 6 là $C_{25}^3$ — sai. d) Đúng.",
+    "tags": [
+      "tohop",
+      "chỉnh hợp"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Một lớp có 12 học sinh. Có bao nhiêu cách chọn 2 em làm trực nhật?",
+    "answer": "66",
+    "explanation": "$C_{12}^2=\\dfrac{12 \\cdot 11}{2}=66$.",
+    "tags": [
+      "tohop",
+      "tổ hợp"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Có bao nhiêu cách xếp 4 cuốn sách khác nhau lên một kệ hàng ngang?",
+    "answer": "24",
+    "explanation": "$4!=24$ cách.",
+    "tags": [
+      "tohop",
+      "hoán vị"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Một hộp có 5 bi trắng và 3 bi đen cùng kích thước. Lấy ngẫu nhiên 2 bi. Có bao nhiêu cách lấy?",
+    "answer": "28",
+    "explanation": "$C_8^2=\\dfrac{8 \\cdot 7}{2}=28$.",
+    "tags": [
+      "tohop",
+      "tổ hợp"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Tính $3!+2!$.",
+    "answer": "8",
+    "explanation": "$3!=6$, $2!=2$ nên tổng bằng 8.",
+    "tags": [
+      "tohop",
+      "giai thừa"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Tính hệ số của $x^3$ trong khai triển $(x+1)^5$.",
+    "answer": "10",
+    "explanation": "Hệ số là $C_5^3=10$.",
+    "tags": [
+      "tohop",
+      "nhị thức Newton"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Sáu người bắt tay nhau, mỗi cặp bắt đúng một lần. Có bao nhiêu cái bắt tay?",
+    "answer": "15",
+    "explanation": "$C_6^2=\\dfrac{6 \\cdot 5}{2}=15$.",
+    "tags": [
+      "tohop",
+      "tổ hợp"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Xếp 5 sinh viên vào 5 phòng khác nhau, mỗi phòng một sinh viên. Có bao nhiêu cách xếp?",
+    "answer": "120",
+    "explanation": "$5!=120$ cách.",
+    "tags": [
+      "tohop",
+      "hoán vị"
+    ]
+  }
+]

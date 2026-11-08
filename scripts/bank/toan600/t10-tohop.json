@@ -265,18 +265,7 @@
     ],
     "type": "trac-nghiem",
     "level": "TH",
-    "prompt": "Trên đường tròn cho 5 điểm phân biệt (như hình). Có bao nhiêu dây cung nối hai trong năm điểm đó?",
-    "figure": {
-      "kind": "geo2d",
-      "shape": "circle",
-      "names": [
-        "A",
-        "B",
-        "C",
-        "D",
-        "E"
-      ]
-    },
+    "prompt": "Trên đường tròn cho 5 điểm phân biệt. Có bao nhiêu dây cung nối hai trong năm điểm đó?",
     "options": [
       {
         "key": "A",

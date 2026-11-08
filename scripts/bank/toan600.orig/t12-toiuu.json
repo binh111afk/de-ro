@@ -1,0 +1,692 @@
+[
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Một cửa hàng có doanh thu $R(q)=50q$ (nghìn đồng) khi bán $q$ sản phẩm. Giá bán mỗi sản phẩm là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$100$ nghìn đồng"
+      },
+      {
+        "key": "B",
+        "text": "$50$ nghìn đồng"
+      },
+      {
+        "key": "C",
+        "text": "$25$ nghìn đồng"
+      },
+      {
+        "key": "D",
+        "text": "$5$ nghìn đồng"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Doanh thu tuyến tính $R=50q$ cho thấy mỗi sản phẩm được bán với giá 50 nghìn đồng.",
+    "tags": [
+      "tối ưu",
+      "kinh tế"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Chi phí sản xuất $x$ sản phẩm là $C(x)=2x+100$ (nghìn đồng). Chi phí cố định (không phụ thuộc số sản phẩm) là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$2$ nghìn đồng"
+      },
+      {
+        "key": "B",
+        "text": "$102$ nghìn đồng"
+      },
+      {
+        "key": "C",
+        "text": "$100$ nghìn đồng"
+      },
+      {
+        "key": "D",
+        "text": "$50$ nghìn đồng"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Khi $x=0$ thì $C=100$: chi phí cố định là 100 nghìn đồng.",
+    "tags": [
+      "tối ưu",
+      "kinh tế"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Doanh thu $R=40q$, chi phí $C=2q^2+10q+20$ (triệu đồng). Lợi nhuận lớn nhất đạt được khi sản xuất $q$ bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$5$ sản phẩm"
+      },
+      {
+        "key": "B",
+        "text": "$10$ sản phẩm"
+      },
+      {
+        "key": "C",
+        "text": "$15$ sản phẩm"
+      },
+      {
+        "key": "D",
+        "text": "$7{,}5$ sản phẩm"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Lợi nhuận $P=40q-(2q^2+10q+20)=-2q^2+30q-20$, đỉnh $q=7{,}5$.",
+    "tags": [
+      "tối ưu",
+      "kinh tế"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Từ một tấm bìa vuông cạnh 20 cm, cắt ở bốn góc các hình vuông cạnh $x$ (cm) rồi gập lại thành hộp không nắp (như hình). Để thể tích hộp lớn nhất thì $x$ bằng",
+    "figure": {
+      "kind": "scene",
+      "text": "A(0; 0) B(20; 0) C(20; 20) D(0; 20)\nAB, BC, CD, DA\nkích thước AB \"20 cm\"\nnhãn BC \"?\""
+    },
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\dfrac{10}{3}$ cm"
+      },
+      {
+        "key": "B",
+        "text": "$5$ cm"
+      },
+      {
+        "key": "C",
+        "text": "$4$ cm"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{20}{3}$ cm"
+      }
+    ],
+    "answer": "A",
+    "explanation": "$V=x(20-2x)^2$; $V'=400-800x+12x^2=0 \\Leftrightarrow x=\\dfrac{10}{3}$ (nhận) hoặc $x=10$ (loại).",
+    "tags": [
+      "tối ưu",
+      "thể tích"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Một bồn nước hình trụ có thể tích $32\\pi$ m³, chiều cao 2 m (cắt dọc như hình). Bán kính đáy của bồn là",
+    "figure": {
+      "kind": "scene",
+      "text": "A(0; 0) B(8; 0) C(8; 2) D(0; 2)\nAB, BC, CD, DA\nkích thước AB \"8 m\"\nkích thước BC \"2 m\""
+    },
+    "options": [
+      {
+        "key": "A",
+        "text": "$2$ m"
+      },
+      {
+        "key": "B",
+        "text": "$8$ m"
+      },
+      {
+        "key": "C",
+        "text": "$4$ m"
+      },
+      {
+        "key": "D",
+        "text": "$16$ m"
+      }
+    ],
+    "answer": "C",
+    "explanation": "$\\pi r^2 \\cdot 2=32\\pi \\Rightarrow r^2=16 \\Rightarrow r=4$ m.",
+    "tags": [
+      "tối ưu",
+      "hình học"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Một xe tải đi quãng đường 200 km với tốc độ không đổi $v$ (km/h). Chi phí xăng mỗi giờ là $0{,}01v^2+4$ (nghìn đồng). Tốc độ $v$ để tổng chi phí xăng nhỏ nhất là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$10$ km/h"
+      },
+      {
+        "key": "B",
+        "text": "$40$ km/h"
+      },
+      {
+        "key": "C",
+        "text": "$20$ km/h"
+      },
+      {
+        "key": "D",
+        "text": "$50$ km/h"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Tổng chi phí $F(v)=\\left(0{,}01v^2+4\\right)\\dfrac{200}{v}=2v+\\dfrac{800}{v} \\ge 2\\sqrt{1600}=80$, dấu bằng khi $v=20$.",
+    "tags": [
+      "tối ưu",
+      "quãng đường"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Sản lượng thu hoạch (tấn) sau $t$ tháng nuôi là $P(t)=5t-\\dfrac{t^2}{4}$. Sản lượng lớn nhất đạt sau",
+    "options": [
+      {
+        "key": "A",
+        "text": "$5$ tháng"
+      },
+      {
+        "key": "B",
+        "text": "$10$ tháng"
+      },
+      {
+        "key": "C",
+        "text": "$20$ tháng"
+      },
+      {
+        "key": "D",
+        "text": "$8$ tháng"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$P'(t)=5-\\dfrac{t}{2}=0 \\Leftrightarrow t=10$.",
+    "tags": [
+      "tối ưu",
+      "bài toán thực tế"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Cầu về sản phẩm theo giá $p$ (nghìn đồng) là $q=200-2p$. Doanh thu lớn nhất (nghìn đồng) là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$2500$"
+      },
+      {
+        "key": "B",
+        "text": "$10\\,000$"
+      },
+      {
+        "key": "C",
+        "text": "$5000$"
+      },
+      {
+        "key": "D",
+        "text": "$4000$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "$R=p(200-2p)=-2p^2+200p$ đạt max tại $p=50$: $R=5000$ nghìn đồng.",
+    "tags": [
+      "tối ưu",
+      "kinh tế"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Chi phí sản xuất $x$ tấn sản phẩm là $C(x)=x^3-6x^2+15x$ (triệu đồng), giá bán 15 triệu/tấn. Lợi nhuận lớn nhất khi sản xuất",
+    "options": [
+      {
+        "key": "A",
+        "text": "$2$ tấn"
+      },
+      {
+        "key": "B",
+        "text": "$4$ tấn"
+      },
+      {
+        "key": "C",
+        "text": "$6$ tấn"
+      },
+      {
+        "key": "D",
+        "text": "$3$ tấn"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Lợi nhuận $P=15x-C(x)=-x^3+6x^2$; $P'=3x(4-x)=0 \\Leftrightarrow x=4$ (trong miền $x>0$).",
+    "tags": [
+      "tối ưu",
+      "kinh tế"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Một ô tô đi 120 km trong 2 giờ. Tốc độ trung bình của ô tô là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$60$ km/h"
+      },
+      {
+        "key": "B",
+        "text": "$50$ km/h"
+      },
+      {
+        "key": "C",
+        "text": "$70$ km/h"
+      },
+      {
+        "key": "D",
+        "text": "$240$ km/h"
+      }
+    ],
+    "answer": "A",
+    "explanation": "$v=\\dfrac{120}{2}=60$ km/h.",
+    "tags": [
+      "tối ưu",
+      "quãng đường"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Rào quanh một khu vườn chữ nhật với chu vi 200 m. Diện tích lớn nhất của khu vườn là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$1600$ m$^2$"
+      },
+      {
+        "key": "B",
+        "text": "$1875$ m$^2$"
+      },
+      {
+        "key": "C",
+        "text": "$2000$ m$^2$"
+      },
+      {
+        "key": "D",
+        "text": "$2500$ m$^2$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Diện tích lớn nhất khi vườn là hình vuông cạnh 50 m: $S=2500$ m$^2$.",
+    "tags": [
+      "tối ưu",
+      "hình học"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Chi phí sản xuất $x$ sản phẩm là $C(x)=0{,}01x^2+40x+4000$ (nghìn đồng). Chi phí trung bình $\\dfrac{C(x)}{x}$ đạt nhỏ nhất khi $x$ bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$200$ sản phẩm"
+      },
+      {
+        "key": "B",
+        "text": "$2000$ sản phẩm"
+      },
+      {
+        "key": "C",
+        "text": "$632$ sản phẩm"
+      },
+      {
+        "key": "D",
+        "text": "$400$ sản phẩm"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$\\dfrac{C(x)}{x}=0{,}01x+40+\\dfrac{4000}{x} \\ge 40+2\\sqrt{40}$, dấu bằng khi $0{,}01x=\\dfrac{4000}{x} \\Leftrightarrow x=2000$.",
+    "tags": [
+      "tối ưu",
+      "kinh tế"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Doanh thu khi bán $q$ sản phẩm là $R(q)=120q-q^2$ (triệu đồng). Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Giá bán để bán được $q$ sản phẩm là $p=120-q$ (triệu đồng)"
+      },
+      {
+        "key": "b",
+        "text": "Doanh thu lớn nhất khi $q=60$"
+      },
+      {
+        "key": "c",
+        "text": "Doanh thu lớn nhất bằng 3600 triệu đồng"
+      },
+      {
+        "key": "d",
+        "text": "$R(100)=3000$ triệu đồng"
+      }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a) $R=pq \\Rightarrow p=120-q$ — đúng. b) Đỉnh $q=60$ — đúng. c) $R(60)=3600$ — đúng. d) $R(100)=12000-10000=2000$ — sai.",
+    "tags": [
+      "tối ưu",
+      "kinh tế"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Từ tấm bìa vuông cạnh 24 cm cắt bốn góc các hình vuông cạnh $x$ (cm) rồi gập thành hộp không nắp (hình minh hoạ tấm bìa). Xét tính đúng sai:",
+    "figure": {
+      "kind": "scene",
+      "text": "A(0; 0) B(24; 0) C(24; 24) D(0; 24)\nAB, BC, CD, DA\nkích thước AB \"24 cm\""
+    },
+    "options": [
+      {
+        "key": "a",
+        "text": "Thể tích hộp là $V(x)=x(24-2x)^2$"
+      },
+      {
+        "key": "b",
+        "text": "$x$ nhận giá trị trong khoảng $(0;12)$"
+      },
+      {
+        "key": "c",
+        "text": "$V(x)$ tăng trên $(0;12)$"
+      },
+      {
+        "key": "d",
+        "text": "$V(2)=800$ cm$^3$"
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) Đúng. b) Đúng. c) $V$ tăng rồi giảm trên $(0;12)$ — sai. d) $V(2)=2 \\cdot 20^2=800$ — đúng.",
+    "tags": [
+      "tối ưu",
+      "thể tích"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Chi phí sản xuất $q$ sản phẩm là $C(q)=q^2+20q+100$ (nghìn đồng), mỗi sản phẩm bán 60 nghìn đồng. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Lợi nhuận $P(q)=-q^2+40q-100$"
+      },
+      {
+        "key": "b",
+        "text": "Lợi nhuận lớn nhất khi $q=40$"
+      },
+      {
+        "key": "c",
+        "text": "Lợi nhuận lớn nhất bằng 300 nghìn đồng"
+      },
+      {
+        "key": "d",
+        "text": "Lợi nhuận bằng 0 khi $q=20$"
+      }
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "a) $P=60q-C(q)$ — đúng. b) Đỉnh $q=20$ — sai. c) $P(20)=-400+800-100=300$ — đúng. d) $P(20)=300 \\ne 0$ — sai.",
+    "tags": [
+      "tối ưu",
+      "kinh tế"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Xét tính đúng sai về công thức thể tích:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Hộp chữ nhật có thể tích $V=(a+b+c)^3$"
+      },
+      {
+        "key": "b",
+        "text": "Khối trụ có thể tích $V=\\pi r^2 h$"
+      },
+      {
+        "key": "c",
+        "text": "Khối cầu có thể tích $V=\\dfrac{4}{3}\\pi r^3$"
+      },
+      {
+        "key": "d",
+        "text": "Khối nón có thể tích $V=\\dfrac{1}{3}\\pi r^2 h$"
+      }
+    ],
+    "answer": "SĐĐĐ",
+    "explanation": "a) Sai, đúng là $V=abc$. b), c), d) Đúng.",
+    "tags": [
+      "tối ưu",
+      "hình học"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Kéo một vật bằng lực $F=50$ N theo phương chuyển động với tốc độ $v$ (m/s). Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Nếu $v=2$ m/s thì trong 10 s lực sinh công 1000 J"
+      },
+      {
+        "key": "b",
+        "text": "Công suất khi $v=2$ m/s là 500 W"
+      },
+      {
+        "key": "c",
+        "text": "Nếu tốc độ tăng gấp đôi thì công suất tăng gấp đôi"
+      },
+      {
+        "key": "d",
+        "text": "Công suất được đo bằng jun"
+      }
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "a) $W=F \\cdot s=50 \\cdot 20=1000$ J — đúng. b) $P=Fv=100$ W $\\ne 500$ — sai. c) $P=Fv$ tỉ lệ $v$ — đúng. d) Công suất đo bằng watt — sai.",
+    "tags": [
+      "tối ưu",
+      "vật lí"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Một xe đi từ $A$ qua $B$ đến $C$ (như hình): đoạn $AB=60$ km với tốc độ 80 km/h, đoạn $BC=30$ km với tốc độ 40 km/h. Xét tính đúng sai:",
+    "figure": {
+      "kind": "scene",
+      "text": "A(0; 0) B(60; 0) C(90; 0)\nAB, BC\nkích thước AB \"60 km\"\nkích thước BC \"30 km\""
+    },
+    "options": [
+      {
+        "key": "a",
+        "text": "Thời gian đi $AB$ là 0,75 h"
+      },
+      {
+        "key": "b",
+        "text": "Thời gian đi $BC$ là 0,75 h"
+      },
+      {
+        "key": "c",
+        "text": "Tốc độ trung bình trên cả đoạn là 90 km/h"
+      },
+      {
+        "key": "d",
+        "text": "Tổng thời gian là 1,5 h"
+      }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a) $\\dfrac{60}{80}=0{,}75$ — đúng. b) $\\dfrac{30}{40}=0{,}75$ — đúng. c) Tốc độ trung bình $=\\dfrac{90}{1{,}5}=60$ km/h $\\ne 90$ — sai. d) Đúng.",
+    "tags": [
+      "tối ưu",
+      "quãng đường"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Doanh thu khi bán $q$ sản phẩm là $R(q)=-q^2+40q$ (triệu đồng). Tính $q$ để doanh thu lớn nhất.",
+    "answer": "20",
+    "explanation": "Đỉnh parabol $q=\\dfrac{40}{2}=20$.",
+    "tags": [
+      "tối ưu",
+      "kinh tế"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Tổng chi phí xăng khi đi 200 km với tốc độ $v$ (km/h) là $F(v)=2v+\\dfrac{800}{v}$ (nghìn đồng). Tính chi phí nhỏ nhất.",
+    "answer": "80",
+    "explanation": "$F \\ge 2\\sqrt{2v \\cdot \\frac{800}{v}}=80$ khi $v=20$.",
+    "tags": [
+      "tối ưu",
+      "quãng đường"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Chi phí $C(x)=2x+100$ (nghìn đồng), giá bán 12 nghìn đồng/sản phẩm. Cần bán bao nhiêu sản phẩm để hòa vốn?",
+    "answer": "10",
+    "explanation": "$12x=2x+100 \\Leftrightarrow x=10$.",
+    "tags": [
+      "tối ưu",
+      "kinh tế"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Rào chu vi 120 m quanh vườn chữ nhật. Tính diện tích lớn nhất của vườn (m²).",
+    "answer": "900",
+    "explanation": "Diện tích lớn nhất khi hình vuông cạnh 30 m: $900$ m$^2$.",
+    "tags": [
+      "tối ưu",
+      "hình học"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Bồn nước hình trụ có thể tích $64\\pi$ m³ và chiều cao 4 m. Tính bán kính đáy (m).",
+    "answer": "4",
+    "explanation": "$\\pi r^2 \\cdot 4=64\\pi \\Rightarrow r=4$ m.",
+    "tags": [
+      "tối ưu",
+      "hình học"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Lợi nhuận khi sản xuất $x$ sản phẩm là $P(x)=-2x^2+80x-300$ (nghìn đồng). Tính lợi nhuận lớn nhất.",
+    "answer": "500",
+    "explanation": "Đỉnh $x=20$: $P(20)=-800+1600-300=500$ nghìn đồng.",
+    "tags": [
+      "tối ưu",
+      "kinh tế"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Một xe đi $\\dfrac{3}{4}$ quãng đường với tốc độ 60 km/h và $\\dfrac{1}{4}$ quãng đường còn lại với tốc độ 40 km/h. Tính tốc độ trung bình (làm tròn đến hàng phần mười).",
+    "answer": "53,3",
+    "explanation": "Đưa về quãng đường 4 đơn vị: thời gian $\\dfrac{3}{60}+\\dfrac{1}{40}=\\dfrac{3}{40}$ h, tốc độ trung bình $=\\dfrac{4}{\\frac{3}{40}}=\\dfrac{160}{3} \\approx 53{,}3$ km/h.",
+    "tags": [
+      "tối ưu",
+      "quãng đường"
+    ]
+  }
+]

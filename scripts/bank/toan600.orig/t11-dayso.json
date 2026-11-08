@@ -1,0 +1,692 @@
+[
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Dãy số $2;\\ 5;\\ 8;\\ 11;\\ \\ldots$ là một cấp số cộng với công sai",
+    "options": [
+      {
+        "key": "A",
+        "text": "$2$"
+      },
+      {
+        "key": "B",
+        "text": "$3$"
+      },
+      {
+        "key": "C",
+        "text": "$4$"
+      },
+      {
+        "key": "D",
+        "text": "$5$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Hiệu hai số hạng liên tiếp đều bằng $3$.",
+    "tags": [
+      "dãy số",
+      "cấp số cộng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Dãy số $3;\\ 6;\\ 12;\\ 24;\\ \\ldots$ là một cấp số nhân với công bội",
+    "options": [
+      {
+        "key": "A",
+        "text": "$3$"
+      },
+      {
+        "key": "B",
+        "text": "$4$"
+      },
+      {
+        "key": "C",
+        "text": "$2$"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{1}{2}$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Thương hai số hạng liên tiếp đều bằng $2$.",
+    "tags": [
+      "dãy số",
+      "cấp số nhân"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Cấp số cộng có $u_1=3$, công sai $d=4$. Số hạng $u_{10}$ bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$39$"
+      },
+      {
+        "key": "B",
+        "text": "$43$"
+      },
+      {
+        "key": "C",
+        "text": "$36$"
+      },
+      {
+        "key": "D",
+        "text": "$40$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "$u_{10}=3+9 \\cdot 4=39$.",
+    "tags": [
+      "dãy số",
+      "cấp số cộng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Cấp số nhân có $u_1=5$, công bội $q=3$. Số hạng $u_4$ bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$45$"
+      },
+      {
+        "key": "B",
+        "text": "$60$"
+      },
+      {
+        "key": "C",
+        "text": "$15$"
+      },
+      {
+        "key": "D",
+        "text": "$135$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "$u_4=5 \\cdot 3^3=135$.",
+    "tags": [
+      "dãy số",
+      "cấp số nhân"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Tính tổng 100 số tự nhiên chẵn đầu tiên: $2+4+6+\\cdots+200$.",
+    "options": [
+      {
+        "key": "A",
+        "text": "$5\\,050$"
+      },
+      {
+        "key": "B",
+        "text": "$10\\,100$"
+      },
+      {
+        "key": "C",
+        "text": "$20\\,200$"
+      },
+      {
+        "key": "D",
+        "text": "$10\\,000$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "CSC 100 số hạng với $u_1=2$, $u_{100}=200$: $S=\\dfrac{100(2+200)}{2}=10\\,100$.",
+    "tags": [
+      "dãy số",
+      "tổng cấp số cộng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Cấp số cộng có $u_5=11$ và $u_{10}=21$. Số hạng đầu $u_1$ bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$1$"
+      },
+      {
+        "key": "B",
+        "text": "$2$"
+      },
+      {
+        "key": "C",
+        "text": "$3$"
+      },
+      {
+        "key": "D",
+        "text": "$5$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "$5d=21-11=10 \\Rightarrow d=2$; $u_1=11-4 \\cdot 2=3$.",
+    "tags": [
+      "dãy số",
+      "cấp số cộng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Số cây trồng mới mỗi năm của một xã (biểu đồ như hình) tăng theo cấp số cộng. Dự đoán số cây trồng mới năm 2026 là",
+    "figure": {
+      "kind": "stats",
+      "chart": "line",
+      "title": "Số cây trồng mới theo năm",
+      "xLabel": "Năm",
+      "yLabel": "Số cây",
+      "data": "2020; 2021; 2022; 2023; 2024\nSố cây: 100; 150; 200; 250; 300"
+    },
+    "options": [
+      {
+        "key": "A",
+        "text": "$350$"
+      },
+      {
+        "key": "B",
+        "text": "$300$"
+      },
+      {
+        "key": "C",
+        "text": "$450$"
+      },
+      {
+        "key": "D",
+        "text": "$400$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Công sai $50$; năm 2026 là số hạng sau 2024 thêm 2 bậc: $300+2 \\cdot 50=400$.",
+    "tags": [
+      "dãy số",
+      "bài toán thực tế"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Một người gửi 10 triệu đồng vào ngân hàng với lãi suất kép $8\\%$/năm (tiền lãi nhập vốn mỗi năm). Sau 5 năm, người đó nhận được (làm tròn đến hàng phần trăm triệu đồng)",
+    "options": [
+      {
+        "key": "A",
+        "text": "$14{,}00$ triệu"
+      },
+      {
+        "key": "B",
+        "text": "$14{,}69$ triệu"
+      },
+      {
+        "key": "C",
+        "text": "$15{,}00$ triệu"
+      },
+      {
+        "key": "D",
+        "text": "$13{,}68$ triệu"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Số tiền $=10 \\cdot 1{,}08^5 \\approx 14{,}69$ triệu đồng.",
+    "tags": [
+      "dãy số",
+      "lãi kép"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Cấp số nhân có $u_3=12$ và $u_5=48$ với các số hạng dương. Công bội $q$ bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$2$"
+      },
+      {
+        "key": "B",
+        "text": "$4$"
+      },
+      {
+        "key": "C",
+        "text": "$\\dfrac{1}{2}$"
+      },
+      {
+        "key": "D",
+        "text": "$3$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "$q^2=\\dfrac{u_5}{u_3}=4$ nên $q=2$ (dương).",
+    "tags": [
+      "dãy số",
+      "cấp số nhân"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Trong các dãy số sau, dãy nào là cấp số cộng?",
+    "options": [
+      {
+        "key": "A",
+        "text": "$1;\\ 4;\\ 9;\\ 16$"
+      },
+      {
+        "key": "B",
+        "text": "$2;\\ 4;\\ 8;\\ 16$"
+      },
+      {
+        "key": "C",
+        "text": "$3;\\ 7;\\ 11;\\ 15$"
+      },
+      {
+        "key": "D",
+        "text": "$1;\\ 1;\\ 2;\\ 3$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Dãy $3;7;11;15$ có hiệu hai số hạng liên tiếp đều bằng $4$.",
+    "tags": [
+      "dãy số",
+      "cấp số cộng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Tính tổng 20 số lẻ đầu tiên: $1+3+5+\\cdots+39$.",
+    "options": [
+      {
+        "key": "A",
+        "text": "$200$"
+      },
+      {
+        "key": "B",
+        "text": "$360$"
+      },
+      {
+        "key": "C",
+        "text": "$400$"
+      },
+      {
+        "key": "D",
+        "text": "$420$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Tổng $n$ số lẻ đầu tiên bằng $n^2=400$.",
+    "tags": [
+      "dãy số",
+      "tổng cấp số cộng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Một vi khuẩn nhân đôi số lượng sau mỗi 20 phút. Ban đầu có 500 con. Sau 2 giờ, số vi khuẩn là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$3\\,000$"
+      },
+      {
+        "key": "B",
+        "text": "$8\\,000$"
+      },
+      {
+        "key": "C",
+        "text": "$16\\,000$"
+      },
+      {
+        "key": "D",
+        "text": "$32\\,000$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "2 giờ có 6 chu kì nhân đôi: $500 \\cdot 2^6=32\\,000$.",
+    "tags": [
+      "dãy số",
+      "tăng trưởng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Xét cấp số cộng $5;\\ 9;\\ 13;\\ \\ldots$ Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Công sai $d=4$"
+      },
+      {
+        "key": "b",
+        "text": "$u_{10}=41$"
+      },
+      {
+        "key": "c",
+        "text": "$u_{20}=81$"
+      },
+      {
+        "key": "d",
+        "text": "Tổng 10 số hạng đầu bằng 250"
+      }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a) Đúng. b) $5+9 \\cdot 4=41$ — đúng. c) $5+19 \\cdot 4=81$ — đúng. d) $S_{10}=\\dfrac{10(5+41)}{2}=230 \\ne 250$ — sai.",
+    "tags": [
+      "dãy số",
+      "cấp số cộng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Xét cấp số nhân $2;\\ 6;\\ 18;\\ \\ldots$ Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Công bội $q=3$"
+      },
+      {
+        "key": "b",
+        "text": "$u_5=162$"
+      },
+      {
+        "key": "c",
+        "text": "$u_6=324$"
+      },
+      {
+        "key": "d",
+        "text": "Tổng 5 số hạng đầu bằng 242"
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) Đúng. b) $2 \\cdot 3^4=162$ — đúng. c) $u_6=2 \\cdot 3^5=486 \\ne 324$ — sai. d) $2+6+18+54+162=242$ — đúng.",
+    "tags": [
+      "dãy số",
+      "cấp số nhân"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Một người gửi 20 triệu đồng với lãi suất đơn $6\\%$/năm trong 3 năm (không nhập lãi). Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Tiền lãi mỗi năm là 1,2 triệu đồng"
+      },
+      {
+        "key": "b",
+        "text": "Tổng tiền lãi sau 3 năm là 3,6 triệu đồng"
+      },
+      {
+        "key": "c",
+        "text": "Tổng số tiền nhận được cuối kì là 23,6 triệu đồng"
+      },
+      {
+        "key": "d",
+        "text": "Tiền lãi năm thứ ba nhiều hơn tiền lãi năm thứ nhất"
+      }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a) $20 \\cdot 6\\%=1{,}2$ — đúng. b) $3 \\cdot 1{,}2=3{,}6$ — đúng. c) $20+3{,}6=23{,}6$ — đúng. d) Lãi đơn không đổi theo năm — sai.",
+    "tags": [
+      "dãy số",
+      "lãi suất"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Xét cấp số cộng có $u_1=-3$, công sai $d=5$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$u_5=17$"
+      },
+      {
+        "key": "b",
+        "text": "$u_{50}=250$"
+      },
+      {
+        "key": "c",
+        "text": "Dãy số là dãy tăng"
+      },
+      {
+        "key": "d",
+        "text": "$u_{100}=492$"
+      }
+    ],
+    "answer": "ĐSĐĐ",
+    "explanation": "a) $-3+4 \\cdot 5=17$ — đúng. b) $-3+49 \\cdot 5=242 \\ne 250$ — sai. c) $d=5>0$ — đúng. d) $-3+99 \\cdot 5=492$ — đúng.",
+    "tags": [
+      "dãy số",
+      "cấp số cộng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Một người gửi 50 triệu đồng với lãi suất kép $10\\%$/năm (lãi nhập vốn mỗi năm). Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Sau 1 năm nhận được 55 triệu đồng"
+      },
+      {
+        "key": "b",
+        "text": "Sau 2 năm nhận được 60,5 triệu đồng"
+      },
+      {
+        "key": "c",
+        "text": "Sau 3 năm nhận được 66 triệu đồng"
+      },
+      {
+        "key": "d",
+        "text": "Tiền lãi của năm thứ hai là 5,5 triệu đồng"
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) $50 \\cdot 1{,}1=55$ — đúng. b) $55 \\cdot 1{,}1=60{,}5$ — đúng. c) $60{,}5 \\cdot 1{,}1=66{,}55 \\ne 66$ — sai. d) $60{,}5-55=5{,}5$ — đúng.",
+    "tags": [
+      "dãy số",
+      "lãi kép"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Nhiệt độ lúc 6 giờ sáng mỗi ngày trong một tuần: $24;\\ 25;\\ 25;\\ 26;\\ 27;\\ 27;\\ 28$ (biểu đồ như hình). Xét tính đúng sai:",
+    "figure": {
+      "kind": "stats",
+      "chart": "line",
+      "title": "Nhiệt độ 6 giờ sáng trong tuần",
+      "xLabel": "Ngày",
+      "yLabel": "Nhiệt độ (°C)",
+      "data": "Hai; Ba; Tư; Năm; Sáu; Bảy; CN\nNhiệt độ: 24; 25; 25; 26; 27; 27; 28"
+    },
+    "options": [
+      {
+        "key": "a",
+        "text": "Dãy nhiệt độ là một cấp số cộng"
+      },
+      {
+        "key": "b",
+        "text": "Trung vị của dãy là 26"
+      },
+      {
+        "key": "c",
+        "text": "Mốt của dãy là 25"
+      },
+      {
+        "key": "d",
+        "text": "Số trung bình của dãy là 26"
+      }
+    ],
+    "answer": "SĐSĐ",
+    "explanation": "a) Hiệu các số hạng liên tiếp không bằng nhau ($1;0;1;1;0;1$) — sai. b) Số giữa của 7 số là 26 — đúng. c) Cả 25 và 27 đều xuất hiện 2 lần nên dãy có hai mốt — sai. d) $\\dfrac{182}{7}=26$ — đúng.",
+    "tags": [
+      "dãy số",
+      "thống kê"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Cấp số cộng có $u_1=2$, công sai $d=6$. Tính $u_8$.",
+    "answer": "44",
+    "explanation": "$u_8=2+7 \\cdot 6=44$.",
+    "tags": [
+      "dãy số",
+      "cấp số cộng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Cấp số nhân có $u_2=6$ và $u_5=48$ với các số hạng dương. Tính $u_7$.",
+    "answer": "192",
+    "explanation": "$q^3=\\dfrac{48}{6}=8 \\Rightarrow q=2$; $u_1=3$; $u_7=3 \\cdot 2^6=192$.",
+    "tags": [
+      "dãy số",
+      "cấp số nhân"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Tính tổng 30 số lẻ đầu tiên: $1+3+5+\\cdots+59$.",
+    "answer": "900",
+    "explanation": "Tổng $n$ số lẻ đầu tiên bằng $n^2=30^2=900$.",
+    "tags": [
+      "dãy số",
+      "tổng cấp số cộng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Cấp số nhân có $u_1=81$, công bội $q=\\dfrac{1}{3}$. Tính $u_4$.",
+    "answer": "3",
+    "explanation": "$u_4=81 \\cdot \\left(\\dfrac{1}{3}\\right)^3=81 \\cdot \\dfrac{1}{27}=3$.",
+    "tags": [
+      "dãy số",
+      "cấp số nhân"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Gửi tiền với lãi kép $5\\%$/năm. Sau ít nhất bao nhiêu năm (làm tròn đến hàng đơn vị) số tiền gấp đôi số tiền ban đầu?",
+    "answer": "14",
+    "explanation": "$1{,}05^n \\ge 2 \\Leftrightarrow n \\ge \\dfrac{\\ln 2}{\\ln 1{,}05} \\approx 14{,}2$ nên cần 14 năm.",
+    "tags": [
+      "dãy số",
+      "lãi kép"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Cấp số cộng $(u_n)$ có $u_1+u_{20}=30$. Tính $S_{20}$.",
+    "answer": "300",
+    "explanation": "$S_{20}=\\dfrac{20(u_1+u_{20})}{2}=10 \\cdot 30=300$.",
+    "tags": [
+      "dãy số",
+      "tổng cấp số cộng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Ba số dương lập thành cấp số nhân, có tổng bằng 21 và tích bằng 216. Tìm số lớn nhất trong ba số đó.",
+    "answer": "12",
+    "explanation": "Gọi ba số $\\dfrac{a}{r}; a; ar$: tích $a^3=216 \\Rightarrow a=6$; tổng $\\dfrac{6}{r}+6+6r=21 \\Rightarrow 2r^2-5r+2=0 \\Rightarrow r=2$. Ba số $3;6;12$, số lớn nhất $12$.",
+    "tags": [
+      "dãy số",
+      "cấp số nhân"
+    ]
+  }
+]

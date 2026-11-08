@@ -36,6 +36,7 @@ const TOOL_NAME: Record<ToolDoc['kind'], string> = {
   probtree: 'Sơ đồ cây xác suất',
   numberline: 'Trục số',
   venn: 'Biểu đồ Ven',
+  grouped: 'Bảng ghép nhóm',
 }
 const PLOT_ASK = 'Vẽ hình minh hoạ cho đề này'
 const PANEL_W = 340

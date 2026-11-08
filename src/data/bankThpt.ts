@@ -2143,42 +2143,6 @@ export const BANK_THPT: BankEntry[] = [
     "variable": false
   },
   {
-    "id": "thpt-hinh12-03",
-    "subject": "Toán",
-    "grades": [
-      "Lớp 12"
-    ],
-    "type": "trac-nghiem",
-    "prompt": "Cho hình hộp chữ nhật $ABCD.A'B'C'D'$ có $AB=2$, $AD=4$, $AA'=4$. Diện tích mặt cầu ngoại tiếp hình hộp chữ nhật đã cho bằng",
-    "options": [
-      {
-        "key": "A",
-        "text": "$36\\pi$"
-      },
-      {
-        "key": "B",
-        "text": "$12\\pi$"
-      },
-      {
-        "key": "C",
-        "text": "$9\\pi$"
-      },
-      {
-        "key": "D",
-        "text": "$18\\pi$"
-      }
-    ],
-    "answer": "A",
-    "explanation": "Đường chéo hình hộp là $\\sqrt{2^2+4^2+4^2}=6$, nên bán kính mặt cầu ngoại tiếp $R=3$. Diện tích $S=4\\pi R^2=36\\pi$.",
-    "points": 0.25,
-    "tags": [
-      "Mặt cầu ngoại tiếp",
-      "Hình hộp chữ nhật",
-      "TH"
-    ],
-    "variable": false
-  },
-  {
     "id": "thpt-hinh12-04",
     "subject": "Toán",
     "grades": [
@@ -2226,92 +2190,6 @@ export const BANK_THPT: BankEntry[] = [
       "height": false,
       "diagonals": false
     }
-  },
-  {
-    "id": "thpt-hinh12-05",
-    "subject": "Toán",
-    "grades": [
-      "Lớp 12"
-    ],
-    "type": "trac-nghiem",
-    "prompt": "Cho hình chóp tứ giác đều $S.ABCD$ có cạnh đáy bằng $6$ và chiều cao bằng $4$ (như hình bên dưới). Bán kính mặt cầu ngoại tiếp hình chóp bằng",
-    "options": [
-      {
-        "key": "A",
-        "text": "$4$"
-      },
-      {
-        "key": "B",
-        "text": "$\\dfrac{17}{4}$"
-      },
-      {
-        "key": "C",
-        "text": "$5$"
-      },
-      {
-        "key": "D",
-        "text": "$\\dfrac{9}{2}$"
-      }
-    ],
-    "answer": "B",
-    "explanation": "Tâm $I$ của mặt cầu nằm trên $SO$ với $SO=4$, $OA=\\dfrac{6\\sqrt2}{2}=3\\sqrt2$. Từ $IA=IS=R$ suy ra $R^2=OA^2+(4-R)^2=18+(4-R)^2$, do đó $8R=34$ và $R=\\dfrac{17}{4}$.",
-    "points": 0.25,
-    "tags": [
-      "Mặt cầu ngoại tiếp",
-      "Chóp tứ giác đều",
-      "VD"
-    ],
-    "variable": false,
-    "figure": {
-      "kind": "geo3d",
-      "shape": "pyramid4-regular",
-      "names": [
-        "S",
-        "A",
-        "B",
-        "C",
-        "D",
-        "O"
-      ],
-      "height": true,
-      "diagonals": false
-    }
-  },
-  {
-    "id": "thpt-hinh12-06",
-    "subject": "Toán",
-    "grades": [
-      "Lớp 12"
-    ],
-    "type": "trac-nghiem",
-    "prompt": "Cho lăng trụ đứng $ABC.A'B'C'$ có đáy $ABC$ là tam giác đều cạnh $6$ và $AA'=4$. Bán kính mặt cầu ngoại tiếp lăng trụ bằng",
-    "options": [
-      {
-        "key": "A",
-        "text": "$2\\sqrt7$"
-      },
-      {
-        "key": "B",
-        "text": "$2\\sqrt5$"
-      },
-      {
-        "key": "C",
-        "text": "$5$"
-      },
-      {
-        "key": "D",
-        "text": "$4$"
-      }
-    ],
-    "answer": "D",
-    "explanation": "Tâm đường tròn ngoại tiếp đáy $G$ có $GA=\\dfrac{6}{\\sqrt3}=2\\sqrt3$. Tâm mặt cầu là trung điểm $O$ của đoạn nối hai tâm đáy, nên $R^2=GA^2+\\left(\\dfrac{AA'}{2}\\right)^2=12+4=16$, suy ra $R=4$.",
-    "points": 0.25,
-    "tags": [
-      "Mặt cầu ngoại tiếp",
-      "Lăng trụ đứng",
-      "VD"
-    ],
-    "variable": false
   },
   {
     "id": "thpt-hinh12-07",
@@ -2441,52 +2319,6 @@ export const BANK_THPT: BankEntry[] = [
     }
   },
   {
-    "id": "thpt-hinh12-10",
-    "subject": "Toán",
-    "grades": [
-      "Lớp 12"
-    ],
-    "type": "trac-nghiem",
-    "prompt": "Trong không gian $Oxyz$, cho hình lập phương $ABCD.A'B'C'D'$ cạnh $2$ với $A(0;0;0)$, $B(2;0;0)$, $D(0;2;0)$, $A'(0;0;2)$. Mặt cầu $(S)$ ngoại tiếp hình lập phương có tâm $I$ (như hình bên dưới). Mặt phẳng $(AB'D')$ cắt $(S)$ theo một đường tròn có bán kính bằng",
-    "options": [
-      {
-        "key": "A",
-        "text": "$\\dfrac{2\\sqrt6}{3}$"
-      },
-      {
-        "key": "B",
-        "text": "$\\dfrac{2\\sqrt3}{3}$"
-      },
-      {
-        "key": "C",
-        "text": "$\\sqrt6$"
-      },
-      {
-        "key": "D",
-        "text": "$\\dfrac{4\\sqrt3}{3}$"
-      }
-    ],
-    "answer": "A",
-    "explanation": "Mặt cầu ngoại tiếp có tâm $I(1;1;1)$ và $R=\\sqrt3$. Với $B'(2;0;2)$, $D'(0;2;2)$, véc-tơ pháp tuyến của $(AB'D')$ là $\\overrightarrow{AB'}\\times\\overrightarrow{AD'}=(-4;-4;4)$, tức $(AB'D')$: $x+y-z=0$. Khoảng cách $d(I,(AB'D'))=\\dfrac{1}{\\sqrt3}$, nên $r=\\sqrt{3-\\dfrac13}=\\dfrac{2\\sqrt6}{3}$.",
-    "points": 0.25,
-    "tags": [
-      "Mặt cầu",
-      "Giao tuyến",
-      "Hình lập phương",
-      "VDC"
-    ],
-    "variable": false,
-    "figure": {
-      "kind": "geo3d",
-      "shape": "cube",
-      "names": ["A", "B", "C", "D", "A'", "B'", "C'", "D'"],
-      "height": false,
-      "diagonals": false,
-      "circumsphere": true,
-      "extras": "I = trung điểm AC'\nđứt AC'"
-    }
-  },
-  {
     "id": "thpt-hinh12-11",
     "subject": "Toán",
     "grades": [
@@ -2577,55 +2409,6 @@ export const BANK_THPT: BankEntry[] = [
     "variable": false
   },
   {
-    "id": "thpt-hinh12-13",
-    "subject": "Toán",
-    "grades": [
-      "Lớp 12"
-    ],
-    "type": "dung-sai",
-    "prompt": "Cho hình chóp $S.ABC$ có $SA\\perp(ABC)$, tam giác $ABC$ vuông tại $B$, $AB=3$, $BC=4$, $SA=12$ (như hình bên dưới). Xét tính đúng sai của các khẳng định sau:",
-    "options": [
-      {
-        "key": "a",
-        "text": "Bán kính mặt cầu ngoại tiếp hình chóp bằng $\\dfrac{13}{4}$."
-      },
-      {
-        "key": "b",
-        "text": "Thể tích khối chóp $S.ABC$ bằng $24$."
-      },
-      {
-        "key": "c",
-        "text": "Côsin của góc giữa $(SBC)$ và $(ABC)$ bằng $\\dfrac35$."
-      },
-      {
-        "key": "d",
-        "text": "Diện tích mặt cầu ngoại tiếp hình chóp bằng $169\\pi$."
-      }
-    ],
-    "answer": "SĐSĐ",
-    "explanation": "Vì $BC\\perp AB$ và $BC\\perp SA$ nên $BC\\perp SB$; cũng có $SA\\perp AC$. Do đó $A,B$ cùng nhìn $SC$ dưới góc vuông, $SC$ là đường kính mặt cầu ngoại tiếp với $SC=\\sqrt{12^2+3^2+4^2}=13$, $R=\\dfrac{13}{2}$. a) Sai. b) Đúng: $V=\\dfrac13\\cdot 6\\cdot 12=24$. c) Sai: góc giữa $(SBC)$ và $(ABC)$ là $\\widehat{SBA}$, có $\\cos\\widehat{SBA}=\\dfrac{AB}{SB}=\\dfrac{1}{\\sqrt{17}}$. d) Đúng: $4\\pi\\cdot\\dfrac{169}{4}=169\\pi$.",
-    "points": 1,
-    "tags": [
-      "Mặt cầu ngoại tiếp",
-      "Khoảng cách",
-      "Thể tích",
-      "VD"
-    ],
-    "variable": false,
-    "figure": {
-      "kind": "geo3d",
-      "shape": "pyramid3-sa",
-      "names": [
-        "S",
-        "A",
-        "B",
-        "C"
-      ],
-      "height": false,
-      "diagonals": false
-    }
-  },
-  {
     "id": "thpt-hinh12-14",
     "subject": "Toán",
     "grades": [
@@ -2696,43 +2479,6 @@ export const BANK_THPT: BankEntry[] = [
       "Góc",
       "Bài toán thực tế",
       "VDC"
-    ],
-    "variable": false
-  },
-  {
-    "id": "thpt-hinh12-16",
-    "subject": "Toán",
-    "grades": [
-      "Lớp 12"
-    ],
-    "type": "dung-sai",
-    "prompt": "Cho hình lập phương $ABCD.A'B'C'D'$ cạnh $2$ với $A(0;0;0)$, $B(2;0;0)$, $D(0;2;0)$, $A'(0;0;2)$. Xét tính đúng sai của các khẳng định sau:",
-    "options": [
-      {
-        "key": "a",
-        "text": "Trung điểm của đoạn $AC'$ có tọa độ $(1;1;1)$."
-      },
-      {
-        "key": "b",
-        "text": "Tâm của mặt cầu ngoại tiếp hình lập phương là $I(1;1;1)$."
-      },
-      {
-        "key": "c",
-        "text": "Bán kính mặt cầu ngoại tiếp hình lập phương bằng $2$."
-      },
-      {
-        "key": "d",
-        "text": "Mặt phẳng $(A'BD)$ có phương trình $x+y+z-4=0$."
-      }
-    ],
-    "answer": "ĐĐSS",
-    "explanation": "Ta có $C'(2;2;2)$ nên trung điểm $AC'$ là $(1;1;1)$: a) Đúng. Tâm mặt cầu ngoại tiếp là tâm của hình lập phương, $I(1;1;1)$: b) Đúng. Bán kính $R=IA=\\sqrt3\\neq 2$: c) Sai. Mặt phẳng $(A'BD)$ đi qua $(2;0;0)$, $(0;2;0)$, $(0;0;2)$ nên có phương trình $x+y+z-2=0$: d) Sai.",
-    "points": 1,
-    "tags": [
-      "Mặt cầu ngoại tiếp",
-      "Tọa độ điểm",
-      "Hình lập phương",
-      "TH"
     ],
     "variable": false
   },
@@ -2883,24 +2629,6 @@ export const BANK_THPT: BankEntry[] = [
     }
   },
   {
-    "id": "thpt-hinh12-22",
-    "subject": "Toán",
-    "grades": [
-      "Lớp 12"
-    ],
-    "type": "tra-loi-ngan",
-    "prompt": "Mặt cầu ngoại tiếp hình lập phương cạnh $6$ có bán kính bằng (làm tròn đến hàng phần mười).",
-    "answer": "5,2",
-    "explanation": "Đường chéo hình lập phương bằng $6\\sqrt3$, nên $R=\\dfrac{6\\sqrt3}{2}=3\\sqrt3\\approx 5{,}196$, làm tròn được $5{,}2$.",
-    "points": 0.5,
-    "tags": [
-      "Mặt cầu ngoại tiếp",
-      "Hình lập phương",
-      "TH"
-    ],
-    "variable": false
-  },
-  {
     "id": "thpt-hinh12-23",
     "subject": "Toán",
     "grades": [
@@ -3002,24 +2730,6 @@ export const BANK_THPT: BankEntry[] = [
       "Bài toán thực tế",
       "Quãng đường ngắn nhất",
       "Hình hộp chữ nhật",
-      "VDC"
-    ],
-    "variable": false
-  },
-  {
-    "id": "thpt-hinh12-28",
-    "subject": "Toán",
-    "grades": [
-      "Lớp 12"
-    ],
-    "type": "tra-loi-ngan",
-    "prompt": "Tứ diện $OABC$ có $OA$, $OB$, $OC$ đôi một vuông góc, $OA=2$, $OB=3$, $OC=6$. Bán kính mặt cầu ngoại tiếp tứ diện bằng",
-    "answer": "3,5",
-    "explanation": "Mặt cầu ngoại tiếp tứ diện vuông có đường kính $\\sqrt{OA^2+OB^2+OC^2}=\\sqrt{4+9+36}=7$, nên $R=\\dfrac72=3{,}5$.",
-    "points": 0.5,
-    "tags": [
-      "Mặt cầu ngoại tiếp",
-      "Tứ diện vuông",
       "VDC"
     ],
     "variable": false
@@ -12282,12 +11992,13 @@ export const BANK_THPT: BankEntry[] = [
     ],
     "variable": false,
     "figure": {
-      "kind": "stats",
-      "chart": "hist",
-      "title": "Thời gian chờ của 40 khách hàng",
-      "xLabel": "Thời gian (phút)",
-      "yLabel": "Số khách hàng",
-      "data": "[20; 25) [25; 30) [30; 35) [35; 40) [40; 45)\nSố khách hàng: 6; 10; 14; 7; 3"
+      "kind": "grouped",
+      "groups": "[20; 25): 6\n[25; 30): 10\n[30; 35): 14\n[35; 40): 7\n[40; 45): 3",
+      "label": "Thời gian (phút)",
+      "freqLabel": "Số khách hàng",
+      "view": "hist",
+      "polygon": false,
+      "extras": ""
     }
   },
   {
@@ -12595,12 +12306,13 @@ export const BANK_THPT: BankEntry[] = [
     ],
     "variable": false,
     "figure": {
-      "kind": "stats",
-      "chart": "hist",
-      "title": "Chiều cao của 30 học sinh",
-      "xLabel": "Chiều cao (cm)",
-      "yLabel": "Số học sinh",
-      "data": "[150; 155) [155; 160) [160; 165) [165; 170) [170; 175)\nSố học sinh: 3; 7; 10; 6; 4"
+      "kind": "grouped",
+      "groups": "[150; 155): 3\n[155; 160): 7\n[160; 165): 10\n[165; 170): 6\n[170; 175): 4",
+      "label": "Chiều cao (cm)",
+      "freqLabel": "Số học sinh",
+      "view": "hist",
+      "polygon": false,
+      "extras": ""
     }
   },
   {
@@ -12891,12 +12603,13 @@ export const BANK_THPT: BankEntry[] = [
     ],
     "variable": false,
     "figure": {
-      "kind": "stats",
-      "chart": "hist",
-      "title": "Điểm đánh giá sản phẩm của 40 khách hàng",
-      "xLabel": "Điểm",
-      "yLabel": "Số khách hàng",
-      "data": "[50; 60) [60; 70) [70; 80) [80; 90) [90; 100)\nSố khách hàng: 5; 8; 12; 10; 5"
+      "kind": "grouped",
+      "groups": "[50; 60): 5\n[60; 70): 8\n[70; 80): 12\n[80; 90): 10\n[90; 100): 5",
+      "label": "Điểm",
+      "freqLabel": "Số khách hàng",
+      "view": "hist",
+      "polygon": false,
+      "extras": ""
     }
   },
   {
@@ -12936,12 +12649,13 @@ export const BANK_THPT: BankEntry[] = [
     ],
     "variable": false,
     "figure": {
-      "kind": "stats",
-      "chart": "hist",
-      "title": "Số lần đi siêu thị trong một tháng",
-      "xLabel": "Số lần",
-      "yLabel": "Số khách hàng",
-      "data": "[0; 4) [4; 8) [8; 12) [12; 16) [16; 20)\nSố khách hàng: 2; 6; 9; 5; 3"
+      "kind": "grouped",
+      "groups": "[0; 4): 2\n[4; 8): 6\n[8; 12): 9\n[12; 16): 5\n[16; 20): 3",
+      "label": "Số lần",
+      "freqLabel": "Số khách hàng",
+      "view": "hist",
+      "polygon": false,
+      "extras": ""
     }
   },
   {
@@ -13951,12 +13665,13 @@ export const BANK_THPT: BankEntry[] = [
     ],
     "variable": false,
     "figure": {
-      "kind": "stats",
-      "chart": "hist",
-      "title": "Thời gian hoàn thành bài kiểm tra",
-      "xLabel": "Thời gian (phút)",
-      "yLabel": "Số học sinh",
-      "data": "[10; 15) [15; 20) [20; 25) [25; 30) [30; 35)\nSố học sinh: 4; 6; 10; 7; 3"
+      "kind": "grouped",
+      "groups": "[10; 15): 4\n[15; 20): 6\n[20; 25): 10\n[25; 30): 7\n[30; 35): 3",
+      "label": "Thời gian (phút)",
+      "freqLabel": "Số học sinh",
+      "view": "hist",
+      "polygon": false,
+      "extras": ""
     }
   },
   {
@@ -14110,12 +13825,13 @@ export const BANK_THPT: BankEntry[] = [
     ],
     "variable": false,
     "figure": {
-      "kind": "stats",
-      "chart": "hist",
-      "title": "Số giờ tự học trong tuần",
-      "xLabel": "Số giờ",
-      "yLabel": "Số học sinh",
-      "data": "[0; 10) [10; 20) [20; 30) [30; 40) [40; 50)\nSố học sinh: 2; 5; 8; 3; 2"
+      "kind": "grouped",
+      "groups": "[0; 10): 2\n[10; 20): 5\n[20; 30): 8\n[30; 40): 3\n[40; 50): 2",
+      "label": "Số giờ",
+      "freqLabel": "Số học sinh",
+      "view": "hist",
+      "polygon": false,
+      "extras": ""
     }
   },
   {
@@ -14379,12 +14095,13 @@ export const BANK_THPT: BankEntry[] = [
     ],
     "variable": false,
     "figure": {
-      "kind": "stats",
-      "chart": "hist",
-      "title": "Điểm kiểm tra của 20 học sinh",
-      "xLabel": "Điểm",
-      "yLabel": "Số học sinh",
-      "data": "[0; 2) [2; 4) [4; 6) [6; 8) [8; 10)\nSố học sinh: 2; 5; 9; 3; 1"
+      "kind": "grouped",
+      "groups": "[0; 2): 2\n[2; 4): 5\n[4; 6): 9\n[6; 8): 3\n[8; 10): 1",
+      "label": "Điểm",
+      "freqLabel": "Số học sinh",
+      "view": "hist",
+      "polygon": false,
+      "extras": ""
     }
   },
   {
@@ -14479,12 +14196,13 @@ export const BANK_THPT: BankEntry[] = [
     ],
     "variable": false,
     "figure": {
-      "kind": "stats",
-      "chart": "hist",
-      "title": "Số sách đọc trong học kỳ",
-      "xLabel": "Số cuốn sách",
-      "yLabel": "Số học sinh",
-      "data": "[0; 5) [5; 10) [10; 15) [15; 20) [20; 25)\nSố học sinh: 4; 8; 12; 9; 7"
+      "kind": "grouped",
+      "groups": "[0; 5): 4\n[5; 10): 8\n[10; 15): 12\n[15; 20): 9\n[20; 25): 7",
+      "label": "Số cuốn sách",
+      "freqLabel": "Số học sinh",
+      "view": "hist",
+      "polygon": false,
+      "extras": ""
     }
   },
   {

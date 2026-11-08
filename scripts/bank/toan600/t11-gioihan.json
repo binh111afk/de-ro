@@ -526,8 +526,8 @@
         "text": "Hàm số không liên tục tại $x=0$"
       }
     ],
-    "answer": "ĐĐSĐ",
-    "explanation": "a) Đúng. b) Đúng vì là hàm đa thức. c) $(-1)^2=1 \\ne -1$ — sai. d) Hàm đa thức liên tục trên $\\mathbb{R}$ — sai.",
+    "answer": "ĐĐSS",
+    "explanation": "a), b) Đúng. c) $\\lim_{x\\to-1}x^2=1$ — sai. d) $y=x^2$ liên tục trên $\\mathbb{R}$, kể cả tại $x=0$ — sai.",
     "tags": [
       "giới hạn",
       "liên tục"

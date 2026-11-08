@@ -1,0 +1,717 @@
+[
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Phương trình mặt cầu tâm $I(1;2;3)$, bán kính $2$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$(x+1)^2+(y+2)^2+(z+3)^2=4$"
+      },
+      {
+        "key": "B",
+        "text": "$(x-1)^2+(y-2)^2+(z-3)^2=2$"
+      },
+      {
+        "key": "C",
+        "text": "$(x-1)^2+(y-2)^2+(z-3)^2=4$"
+      },
+      {
+        "key": "D",
+        "text": "$(x-1)^2+(y-2)^2+(z-3)^2=9$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Dạng chính tắc với tâm $I$ và $R^2=4$.",
+    "tags": [
+      "mặt cầu",
+      "phương trình"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Mặt cầu $x^2+y^2+z^2=9$ có tâm và bán kính",
+    "options": [
+      {
+        "key": "A",
+        "text": "$I(0;0;0)$, $R=9$"
+      },
+      {
+        "key": "B",
+        "text": "$I(0;0;0)$, $R=3$"
+      },
+      {
+        "key": "C",
+        "text": "$I(1;1;1)$, $R=3$"
+      },
+      {
+        "key": "D",
+        "text": "$I(0;0;0)$, $R=9$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Tâm $O$, $R=\\sqrt{9}=3$.",
+    "tags": [
+      "mặt cầu",
+      "phương trình"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Mặt cầu $(x+1)^2+(y-2)^2+z^2=16$ có bán kính",
+    "options": [
+      {
+        "key": "A",
+        "text": "$16$"
+      },
+      {
+        "key": "B",
+        "text": "$\\sqrt{5}$"
+      },
+      {
+        "key": "C",
+        "text": "$8$"
+      },
+      {
+        "key": "D",
+        "text": "$4$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "$R=\\sqrt{16}=4$.",
+    "tags": [
+      "mặt cầu",
+      "phương trình"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Mặt cầu $(S)$ có tâm $I(0;0;1)$, bán kính $3$. Mặt phẳng $(\\alpha): z=3$ cắt $(S)$ theo",
+    "options": [
+      {
+        "key": "A",
+        "text": "không giao nhau"
+      },
+      {
+        "key": "B",
+        "text": "một điểm (tiếp xúc)"
+      },
+      {
+        "key": "C",
+        "text": "một đường tròn"
+      },
+      {
+        "key": "D",
+        "text": "cả mặt phẳng"
+      }
+    ],
+    "answer": "C",
+    "explanation": "$d(I,\\alpha)=2<3=R$ nên cắt theo đường tròn bán kính $\\sqrt{9-4}=\\sqrt{5}$.",
+    "tags": [
+      "mặt cầu",
+      "vị trí tương đối"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Bán kính mặt cầu ngoại tiếp khối lập phương cạnh 2 (như hình) là",
+    "figure": {
+      "kind": "geo3d",
+      "shape": "cube",
+      "names": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "A'",
+        "B'",
+        "C'",
+        "D'"
+      ],
+      "circumsphere": true
+    },
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\sqrt{2}$"
+      },
+      {
+        "key": "B",
+        "text": "$\\sqrt{3}$"
+      },
+      {
+        "key": "C",
+        "text": "$2$"
+      },
+      {
+        "key": "D",
+        "text": "$\\sqrt{6}$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Bán kính bằng nửa đường chéo lập phương $=\\dfrac{2\\sqrt{3}}{2}=\\sqrt{3}$.",
+    "tags": [
+      "mặt cầu",
+      "ngoại tiếp"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Một trạm ra-đa đặt tại gốc toạ độ có vùng quét là mặt cầu bán kính 100 km. Máy bay ở vị trí $M(60;0;80)$ (km). Khoảng cách từ máy bay đến trạm là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$100$ km"
+      },
+      {
+        "key": "B",
+        "text": "$140$ km"
+      },
+      {
+        "key": "C",
+        "text": "$60$ km"
+      },
+      {
+        "key": "D",
+        "text": "$80$ km"
+      }
+    ],
+    "answer": "A",
+    "explanation": "$OM=\\sqrt{3600+6400}=100$ km: máy bay đang trên biên vùng quét.",
+    "tags": [
+      "mặt cầu",
+      "bài toán thực tế"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Đường tròn giao của mặt cầu $x^2+y^2+z^2=25$ và mặt phẳng $z=3$ có bán kính",
+    "options": [
+      {
+        "key": "A",
+        "text": "$5$"
+      },
+      {
+        "key": "B",
+        "text": "$3$"
+      },
+      {
+        "key": "C",
+        "text": "$4$"
+      },
+      {
+        "key": "D",
+        "text": "$\\sqrt{34}$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "$r=\\sqrt{R^2-d^2}=\\sqrt{25-9}=4$.",
+    "tags": [
+      "mặt cầu",
+      "giao tuyến"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Mặt cầu đi qua bốn điểm $O(0;0;0)$, $A(2;0;0)$, $B(0;2;0)$, $C(0;0;2)$ (như hình) có bán kính bằng",
+    "figure": {
+      "kind": "geo3d",
+      "shape": "pyramid3",
+      "names": [
+        "O",
+        "A",
+        "B",
+        "C"
+      ],
+      "circumsphere": true
+    },
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\sqrt{3}$"
+      },
+      {
+        "key": "B",
+        "text": "$\\sqrt{2}$"
+      },
+      {
+        "key": "C",
+        "text": "$2$"
+      },
+      {
+        "key": "D",
+        "text": "$3$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Tâm là $I(1;1;1)$, $R=|OI|=\\sqrt{3}$.",
+    "tags": [
+      "mặt cầu",
+      "ngoại tiếp"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Hai mặt cầu $(S_1): x^2+y^2+z^2=4$ và $(S_2): (x-3)^2+y^2+z^2=4$ có",
+    "options": [
+      {
+        "key": "A",
+        "text": "không giao nhau"
+      },
+      {
+        "key": "B",
+        "text": "giao nhau theo một đường tròn"
+      },
+      {
+        "key": "C",
+        "text": "tiếp xúc ngoài"
+      },
+      {
+        "key": "D",
+        "text": "trùng nhau"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Hai tâm cách nhau 3, $R_1+R_2=4>3$ và $|R_1-R_2|=0<3$ nên giao nhau theo đường tròn.",
+    "tags": [
+      "mặt cầu",
+      "vị trí tương đối"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Tâm của mọi mặt cầu đi qua hai điểm $A(1;0;0)$ và $B(-1;0;0)$ nằm trên",
+    "options": [
+      {
+        "key": "A",
+        "text": "mặt phẳng $x=0$"
+      },
+      {
+        "key": "B",
+        "text": "trục $Ox$"
+      },
+      {
+        "key": "C",
+        "text": "mặt phẳng $y=0$"
+      },
+      {
+        "key": "D",
+        "text": "mặt phẳng $z=0$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Tâm phải cách đều $A$ và $B$ nên nằm trên mặt phẳng trung trực $x=0$.",
+    "tags": [
+      "mặt cầu",
+      "quỹ tích"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Coi Trái Đất là hình cầu bán kính 6400 km. Một vệ tinh cách mặt đất 1600 km. Khoảng cách từ vệ tinh đến tâm Trái Đất là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$1600$ km"
+      },
+      {
+        "key": "B",
+        "text": "$4800$ km"
+      },
+      {
+        "key": "C",
+        "text": "$6400$ km"
+      },
+      {
+        "key": "D",
+        "text": "$8000$ km"
+      }
+    ],
+    "answer": "D",
+    "explanation": "$6400+1600=8000$ km.",
+    "tags": [
+      "mặt cầu",
+      "bài toán thực tế"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Thể tích phần nằm trong mặt cầu $x^2+y^2+z^2 \\le 9$ và phía trên mặt phẳng $z=2$ (làm tròn đến hàng phần trăm) là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$16{,}76$"
+      },
+      {
+        "key": "B",
+        "text": "$113{,}10$"
+      },
+      {
+        "key": "C",
+        "text": "$29{,}32$"
+      },
+      {
+        "key": "D",
+        "text": "$58{,}64$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Chỏm cầu với $h=3-2=1$... tính lại: phần trên $z=2$ có chiều cao $h=R-2=1$: $V=\\dfrac{\\pi h^2(3R-h)}{3}=\\dfrac{28\\pi}{3} \\approx 29{,}32$.",
+    "tags": [
+      "mặt cầu",
+      "thể tích"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Cho mặt cầu $(S): (x-2)^2+y^2+(z+1)^2=9$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Tâm của $(S)$ là $I(2;0;-1)$"
+      },
+      {
+        "key": "b",
+        "text": "Bán kính của $(S)$ là 3"
+      },
+      {
+        "key": "c",
+        "text": "$(S)$ đi qua gốc toạ độ $O$"
+      },
+      {
+        "key": "d",
+        "text": "$(S)$ cắt mặt phẳng $(Oxy)$ theo đường tròn bán kính $\\sqrt{8}$"
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a), b) Đúng. c) $|OI|=\\sqrt{5} \\ne 3$ — sai. d) $d(I,Oxy)=1$, bán kính đường tròn $\\sqrt{9-1}=\\sqrt{8}$ — đúng.",
+    "tags": [
+      "mặt cầu",
+      "vị trí tương đối"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Mặt cầu $(S)$ đi qua bốn điểm $O(0;0;0)$, $A(2;0;0)$, $B(0;2;0)$, $C(0;0;2)$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Tâm của $(S)$ là $I(1;1;1)$"
+      },
+      {
+        "key": "b",
+        "text": "$R^2=3$"
+      },
+      {
+        "key": "c",
+        "text": "Phương trình $(S)$ là $x^2+y^2+z^2-2x-2y-2z=0$"
+      },
+      {
+        "key": "d",
+        "text": "$(S)$ đi qua điểm $(3;0;0)$"
+      }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a), b), c) Đúng. d) Thay $(3;0;0)$: $9-6=3 \\ne 0$ — sai.",
+    "tags": [
+      "mặt cầu",
+      "phương trình"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Một drone xuất phát từ trạm $O(0;0;0)$ và đang ở vị trí $M(300;400;0)$ (m). Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Khoảng cách từ drone đến trạm là 500 m"
+      },
+      {
+        "key": "b",
+        "text": "Drone nằm trong vùng quét bán kính 400 m của trạm"
+      },
+      {
+        "key": "c",
+        "text": "Drone nằm trong vùng quét bán kính 600 m của trạm"
+      },
+      {
+        "key": "d",
+        "text": "Drone đang bay ở độ cao 400 m"
+      }
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "a) $OM=\\sqrt{90000+160000}=500$ — đúng. b) $500>400$ — sai. c) Đúng. d) Toạ độ $z=0$ nên độ cao 0 m — sai.",
+    "tags": [
+      "mặt cầu",
+      "bài toán thực tế"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Xét vị trí tương đối giữa mặt phẳng $(\\alpha)$ và mặt cầu $(S)$ tâm $I$ bán kính $R$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Nếu $d(I,\\alpha)>R$ thì $(\\alpha)$ không cắt $(S)$"
+      },
+      {
+        "key": "b",
+        "text": "Nếu $d(I,\\alpha)=R$ thì $(\\alpha)$ tiếp xúc $(S)$"
+      },
+      {
+        "key": "c",
+        "text": "Nếu $d(I,\\alpha)<R$ thì $(\\alpha)$ cắt $(S)$ theo một đường tròn"
+      },
+      {
+        "key": "d",
+        "text": "Nếu $d(I,\\alpha)=0$ thì $(\\alpha)$ không cắt $(S)$"
+      }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a), b), c) Đúng. d) $d=0$ nghĩa là $(\\alpha)$ qua tâm, cắt $(S)$ theo đường tròn lớn — sai.",
+    "tags": [
+      "mặt cầu",
+      "vị trí tương đối"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Mặt cầu ngoại tiếp khối hộp chữ nhật $ABCD.A'B'C'D'$ với $AB=2$, $AD=4$, $AA'=4$ (như hình). Xét tính đúng sai:",
+    "figure": {
+      "kind": "geo3d",
+      "shape": "box",
+      "names": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "A'",
+        "B'",
+        "C'",
+        "D'"
+      ],
+      "circumsphere": true
+    },
+    "options": [
+      {
+        "key": "a",
+        "text": "Bán kính mặt cầu bằng $3$"
+      },
+      {
+        "key": "b",
+        "text": "Tâm mặt cầu là giao điểm của hai đường chéo hộp"
+      },
+      {
+        "key": "c",
+        "text": "Thể tích khối hộp bằng 16"
+      },
+      {
+        "key": "d",
+        "text": "$R^2=8$"
+      }
+    ],
+    "answer": "ĐĐSS",
+    "explanation": "a) $R=\\dfrac{\\sqrt{4+16+16}}{2}=\\dfrac{6}{2}=3$ — đúng. b) Đúng. c) $V=2 \\cdot 4 \\cdot 4=32 \\ne 16$ — sai. d) $R^2=9 \\ne 8$ — sai.",
+    "tags": [
+      "mặt cầu",
+      "ngoại tiếp"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Cho mặt cầu $(S): x^2+y^2+z^2-2x-4y+4=0$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Tâm của $(S)$ là $I(1;2;0)$"
+      },
+      {
+        "key": "b",
+        "text": "Bán kính của $(S)$ là 1"
+      },
+      {
+        "key": "c",
+        "text": "$(S)$ tiếp xúc với mặt phẳng $(Oxy)$"
+      },
+      {
+        "key": "d",
+        "text": "$(S)$ tiếp xúc với mặt phẳng $(Oyz)$"
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) Đúng. b) $R^2=1+4-4=1$ — đúng. c) $d(I,Oxy)=2>1$: không giao — sai. d) $d(I,Oyz)=1=R$ — đúng.",
+    "tags": [
+      "mặt cầu",
+      "vị trí tương đối"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Mặt cầu đi qua $O(0;0;0)$, $A(3;0;0)$, $B(0;4;0)$, $C(0;0;12)$. Tính bán kính mặt cầu.",
+    "answer": "6,5",
+    "explanation": "Tâm $I(1{,}5;2;6)$, $R=|OI|=\\sqrt{2{,}25+4+36}=6{,}5$.",
+    "tags": [
+      "mặt cầu",
+      "ngoại tiếp"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Tính bán kính đường tròn giao của mặt cầu $x^2+y^2+z^2=50$ và mặt phẳng $x+y+z=8$ (làm tròn đến hàng phần trăm).",
+    "answer": "5,35",
+    "explanation": "$d=\\dfrac{8}{\\sqrt{3}}$; $r=\\sqrt{50-\\dfrac{64}{3}}=\\sqrt{\\dfrac{86}{3}} \\approx 5{,}35$.",
+    "tags": [
+      "mặt cầu",
+      "giao tuyến"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Tính thể tích (làm tròn đến hàng phần trăm) của chỏm cầu bán kính 3 cắt bởi mặt phẳng cách tâm 2 đơn vị.",
+    "answer": "8,38",
+    "explanation": "$h=3-2=1$; $V=\\dfrac{\\pi h^2(3R-h)}{3}=\\dfrac{8\\pi}{3} \\approx 8{,}38$.",
+    "tags": [
+      "mặt cầu",
+      "thể tích"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Tính độ dài vectơ $\\overrightarrow{OM}$ với $M(2;-1;2)$.",
+    "answer": "3",
+    "explanation": "$|OM|=\\sqrt{4+1+4}=3$.",
+    "tags": [
+      "Oxyz",
+      "độ dài vectơ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Trái Đất có bán kính 6400 km. Vệ tinh cách mặt đất 600 km. Tính khoảng cách từ vệ tinh đến tâm Trái Đất (km).",
+    "answer": "7000",
+    "explanation": "$6400+600=7000$ km.",
+    "tags": [
+      "mặt cầu",
+      "bài toán thực tế"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Hai mặt cầu có bán kính lần lượt 5 và 3, hai tâm cách nhau 4. Tính bán kính đường tròn giao của hai mặt cầu.",
+    "answer": "3",
+    "explanation": "Khoảng cách từ tâm cầu lớn đến mặt phẳng giao: $x=\\dfrac{R_1^2-R_2^2+d^2}{2d}=\\dfrac{25-9+16}{8}=4$; bán kính đường tròn giao $r=\\sqrt{25-16}=3$.",
+    "tags": [
+      "mặt cầu",
+      "giao tuyến"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Tính bán kính mặt cầu ngoại tiếp tứ diện đều cạnh 6 (làm tròn đến hàng phần trăm).",
+    "answer": "3,67",
+    "explanation": "$R=\\dfrac{6\\sqrt{6}}{4}=\\dfrac{3\\sqrt{6}}{2} \\approx 3{,}67$.",
+    "tags": [
+      "mặt cầu",
+      "ngoại tiếp"
+    ]
+  }
+]

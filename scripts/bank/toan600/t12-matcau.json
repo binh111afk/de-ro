@@ -133,53 +133,6 @@
     ],
     "type": "trac-nghiem",
     "level": "VD",
-    "prompt": "Bán kính mặt cầu ngoại tiếp khối lập phương cạnh 2 (như hình) là",
-    "figure": {
-      "kind": "geo3d",
-      "shape": "cube",
-      "names": [
-        "A",
-        "B",
-        "C",
-        "D",
-        "A'",
-        "B'",
-        "C'",
-        "D'"
-      ],
-      "circumsphere": true
-    },
-    "options": [
-      {
-        "key": "A",
-        "text": "$\\sqrt{2}$"
-      },
-      {
-        "key": "B",
-        "text": "$\\sqrt{3}$"
-      },
-      {
-        "key": "C",
-        "text": "$2$"
-      },
-      {
-        "key": "D",
-        "text": "$\\sqrt{6}$"
-      }
-    ],
-    "answer": "B",
-    "explanation": "Bán kính bằng nửa đường chéo lập phương $=\\dfrac{2\\sqrt{3}}{2}=\\sqrt{3}$.",
-    "tags": [
-      "mặt cầu",
-      "ngoại tiếp"
-    ]
-  },
-  {
-    "grades": [
-      "Lớp 12"
-    ],
-    "type": "trac-nghiem",
-    "level": "VD",
     "prompt": "Một trạm ra-đa đặt tại gốc toạ độ có vùng quét là mặt cầu bán kính 100 km. Máy bay ở vị trí $M(60;0;80)$ (km). Khoảng cách từ máy bay đến trạm là",
     "options": [
       {
@@ -244,18 +197,7 @@
     ],
     "type": "trac-nghiem",
     "level": "VDC",
-    "prompt": "Mặt cầu đi qua bốn điểm $O(0;0;0)$, $A(2;0;0)$, $B(0;2;0)$, $C(0;0;2)$ (như hình) có bán kính bằng",
-    "figure": {
-      "kind": "geo3d",
-      "shape": "pyramid3",
-      "names": [
-        "O",
-        "A",
-        "B",
-        "C"
-      ],
-      "circumsphere": true
-    },
+    "prompt": "Mặt cầu đi qua bốn điểm $O(0;0;0)$, $A(2;0;0)$, $B(0;2;0)$, $C(0;0;2)$ có bán kính bằng",
     "options": [
       {
         "key": "A",
@@ -395,7 +337,7 @@
       },
       {
         "key": "C",
-        "text": "$29{,}32$"
+        "text": "$8{,}38$"
       },
       {
         "key": "D",
@@ -403,7 +345,7 @@
       }
     ],
     "answer": "C",
-    "explanation": "Chỏm cầu với $h=3-2=1$... tính lại: phần trên $z=2$ có chiều cao $h=R-2=1$: $V=\\dfrac{\\pi h^2(3R-h)}{3}=\\dfrac{28\\pi}{3} \\approx 29{,}32$.",
+    "explanation": "Chỏm cầu cao $h=3-2=1$: $V=\\pi\\int_2^3(9-z^2)\\,dz=\\pi\\left(9-\\dfrac{19}{3}\\right)=\\dfrac{8\\pi}{3}\\approx 8{,}38$.",
     "tags": [
       "mặt cầu",
       "thể tích"
@@ -543,53 +485,6 @@
     ],
     "type": "dung-sai",
     "level": "VD",
-    "prompt": "Mặt cầu ngoại tiếp khối hộp chữ nhật $ABCD.A'B'C'D'$ với $AB=2$, $AD=4$, $AA'=4$ (như hình). Xét tính đúng sai:",
-    "figure": {
-      "kind": "geo3d",
-      "shape": "box",
-      "names": [
-        "A",
-        "B",
-        "C",
-        "D",
-        "A'",
-        "B'",
-        "C'",
-        "D'"
-      ],
-      "circumsphere": true
-    },
-    "options": [
-      {
-        "key": "a",
-        "text": "Bán kính mặt cầu bằng $3$"
-      },
-      {
-        "key": "b",
-        "text": "Tâm mặt cầu là giao điểm của hai đường chéo hộp"
-      },
-      {
-        "key": "c",
-        "text": "Thể tích khối hộp bằng 16"
-      },
-      {
-        "key": "d",
-        "text": "$R^2=8$"
-      }
-    ],
-    "answer": "ĐĐSS",
-    "explanation": "a) $R=\\dfrac{\\sqrt{4+16+16}}{2}=\\dfrac{6}{2}=3$ — đúng. b) Đúng. c) $V=2 \\cdot 4 \\cdot 4=32 \\ne 16$ — sai. d) $R^2=9 \\ne 8$ — sai.",
-    "tags": [
-      "mặt cầu",
-      "ngoại tiếp"
-    ]
-  },
-  {
-    "grades": [
-      "Lớp 12"
-    ],
-    "type": "dung-sai",
-    "level": "VD",
     "prompt": "Cho mặt cầu $(S): x^2+y^2+z^2-2x-4y+4=0$. Xét tính đúng sai:",
     "options": [
       {
@@ -698,20 +593,6 @@
     "tags": [
       "mặt cầu",
       "giao tuyến"
-    ]
-  },
-  {
-    "grades": [
-      "Lớp 12"
-    ],
-    "type": "tra-loi-ngan",
-    "level": "VDC",
-    "prompt": "Tính bán kính mặt cầu ngoại tiếp tứ diện đều cạnh 6 (làm tròn đến hàng phần trăm).",
-    "answer": "3,67",
-    "explanation": "$R=\\dfrac{6\\sqrt{6}}{4}=\\dfrac{3\\sqrt{6}}{2} \\approx 3{,}67$.",
-    "tags": [
-      "mặt cầu",
-      "ngoại tiếp"
     ]
   }
 ]

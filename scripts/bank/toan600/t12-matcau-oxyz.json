@@ -1,0 +1,300 @@
+[
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Mặt cầu $(x-2)^2+(y+1)^2+z^2=25$ có tâm và bán kính lần lượt là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$I(2;1;0)$, $R=5$"
+      },
+      {
+        "key": "B",
+        "text": "$I(-2;1;0)$, $R=25$"
+      },
+      {
+        "key": "C",
+        "text": "$I(2;-1;0)$, $R=5$"
+      },
+      {
+        "key": "D",
+        "text": "$I(2;-1;0)$, $R=25$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Dạng chính tắc $(x-a)^2+(y-b)^2+(z-c)^2=R^2$ cho tâm $I(2;-1;0)$ và $R=\\sqrt{25}=5$.",
+    "tags": [
+      "mặt cầu",
+      "phương trình"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Phương trình mặt cầu tâm $I(1;-2;3)$ và bán kính $4$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$(x+1)^2+(y-2)^2+(z+3)^2=16$"
+      },
+      {
+        "key": "B",
+        "text": "$(x-1)^2+(y+2)^2+(z-3)^2=16$"
+      },
+      {
+        "key": "C",
+        "text": "$(x-1)^2+(y+2)^2+(z-3)^2=4$"
+      },
+      {
+        "key": "D",
+        "text": "$(x+1)^2+(y-2)^2+(z+3)^2=4$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Phương trình mặt cầu: $(x-1)^2+(y+2)^2+(z-3)^2=4^2=16$.",
+    "tags": [
+      "mặt cầu",
+      "phương trình"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Viết phương trình mặt cầu tâm $I(2;1;-1)$ và đi qua điểm $A(4;3;1)$.",
+    "options": [
+      {
+        "key": "A",
+        "text": "$(x-2)^2+(y-1)^2+(z+1)^2=8$"
+      },
+      {
+        "key": "B",
+        "text": "$(x-2)^2+(y-1)^2+(z+1)^2=12$"
+      },
+      {
+        "key": "C",
+        "text": "$(x+2)^2+(y+1)^2+(z-1)^2=12$"
+      },
+      {
+        "key": "D",
+        "text": "$(x-2)^2+(y-1)^2+(z+1)^2=24$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$R=IA=\\sqrt{(4-2)^2+(3-1)^2+(1+1)^2}=\\sqrt{12}$ nên $R^2=12$: $(x-2)^2+(y-1)^2+(z+1)^2=12$.",
+    "tags": [
+      "mặt cầu",
+      "đi qua điểm"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Cho hai điểm $A(1;0;2)$, $B(3;-2;4)$. Phương trình mặt cầu có đường kính $AB$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$(x-2)^2+(y+1)^2+(z-3)^2=12$"
+      },
+      {
+        "key": "B",
+        "text": "$(x-2)^2+(y+1)^2+(z-3)^2=6$"
+      },
+      {
+        "key": "C",
+        "text": "$(x-2)^2+(y+1)^2+(z-3)^2=3$"
+      },
+      {
+        "key": "D",
+        "text": "$(x-1)^2+y^2+(z-2)^2=3$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Tâm là trung điểm $AB$: $I(2;-1;3)$; $R=\\dfrac{AB}{2}=\\dfrac{\\sqrt{4+4+4}}{2}=\\sqrt{3}$ nên $R^2=3$.",
+    "tags": [
+      "mặt cầu",
+      "đường kính"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "NB",
+    "prompt": "Cho mặt cầu $(S): x^2+y^2+z^2-2x+4y-6z-11=0$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Tâm của $(S)$ là $I(1;-2;3)$"
+      },
+      {
+        "key": "b",
+        "text": "Bán kính của $(S)$ là $5$"
+      },
+      {
+        "key": "c",
+        "text": "Bán kính của $(S)$ là $25$"
+      },
+      {
+        "key": "d",
+        "text": "$(S)$ đi qua gốc toạ độ $O(0;0;0)$"
+      }
+    ],
+    "answer": "ĐĐSS",
+    "explanation": "a) $I(1;-2;3)$ — đúng. b) $R^2=1+4+9+11=25$ nên $R=5$ — đúng. c) Bán kính là $\\sqrt{25}=5$, không phải 25 — sai. d) Thay $O$: $-11 \\ne 0$ — sai.",
+    "tags": [
+      "mặt cầu",
+      "tâm và bán kính"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Cho mặt cầu $(S)$ có tâm $I(0;2;0)$ và đi qua điểm $M(1;0;\\sqrt{3})$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$R^2=8$"
+      },
+      {
+        "key": "b",
+        "text": "Phương trình của $(S)$ là $x^2+(y-2)^2+z^2=8$"
+      },
+      {
+        "key": "c",
+        "text": "$R=4$"
+      },
+      {
+        "key": "d",
+        "text": "$(S)$ cắt mặt phẳng $(Oxz)$ theo một đường tròn"
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) $IM^2=1+4+3=8$ — đúng. b) Đúng. c) $R=\\sqrt{8}=2\\sqrt{2} \\ne 4$ — sai. d) $d(I,(Oxz))=|y_I|=2<\\sqrt{8}=R$ nên cắt theo đường tròn — đúng.",
+    "tags": [
+      "mặt cầu",
+      "vị trí tương đối"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Cho mặt cầu $(S): x^2+y^2+z^2-4x+2y-4=0$ và mặt phẳng $(P): x+2y-2z+3=0$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Tâm của $(S)$ là $I(2;-1;0)$"
+      },
+      {
+        "key": "b",
+        "text": "Bán kính của $(S)$ là $3$"
+      },
+      {
+        "key": "c",
+        "text": "$(P)$ cắt $(S)$ theo đường tròn bán kính $2\\sqrt{2}$"
+      },
+      {
+        "key": "d",
+        "text": "$(P)$ tiếp xúc với $(S)$"
+      }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a) Đúng. b) $R^2=4+1+4=9$ nên $R=3$ — đúng. c) $d(I,(P))=\\dfrac{|2-2+3|}{3}=1$, bán kính đường tròn $\\sqrt{9-1}=\\sqrt{8}=2\\sqrt{2}$ — đúng. d) $1<3$ nên cắt, không tiếp xúc — sai.",
+    "tags": [
+      "mặt cầu",
+      "mặt phẳng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Một trạm kiểm soát đặt tại gốc toạ độ $O(0;0;0)$ (đơn vị: km), vùng phủ sóng là hình cầu bán kính 10 km. Có ba drone ở $A(6;4;6)$, $B(6;6;2)$, $C(9;5;2)$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Drone $A$ nằm trong vùng phủ sóng của trạm"
+      },
+      {
+        "key": "b",
+        "text": "Drone $B$ nằm ngoài vùng phủ sóng của trạm"
+      },
+      {
+        "key": "c",
+        "text": "Drone $C$ nằm ngoài vùng phủ sóng của trạm"
+      },
+      {
+        "key": "d",
+        "text": "Khoảng cách từ $O$ đến $A$ lớn hơn khoảng cách từ $O$ đến $B$"
+      }
+    ],
+    "answer": "ĐSĐĐ",
+    "explanation": "$OA=\\sqrt{88}\\approx 9{,}38<10$: a) đúng. $OB=\\sqrt{76}\\approx 8{,}72<10$, $B$ trong vùng phủ sóng: b) sai. $OC=\\sqrt{110}>10$: c) đúng. $OA>OB$: d) đúng.",
+    "tags": [
+      "mặt cầu",
+      "bài toán thực tế"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "NB",
+    "prompt": "Mặt cầu $(S): x^2+y^2+z^2-6x+8y=0$ có bán kính bằng",
+    "answer": "5",
+    "explanation": "Tâm $(3;-4;0)$; $R^2=9+16=25$ nên $R=5$.",
+    "tags": [
+      "mặt cầu",
+      "phương trình"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Mặt cầu $(S)$ có tâm $I(0;2;1)$ và đi qua hai điểm $A(1;0;0)$, $B(-1;0;0)$. Tính $R^2$.",
+    "answer": "6",
+    "explanation": "$R^2=IA^2=1+4+1=6$ (tâm cách đều $A$ và $B$).",
+    "tags": [
+      "mặt cầu",
+      "phương trình"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Mặt cầu $(S)$ đi qua bốn điểm $O(0;0;0)$, $A(2;0;0)$, $B(0;4;0)$, $C(0;0;6)$ với $O$ là gốc toạ độ. Tính $R^2$.",
+    "answer": "14",
+    "explanation": "Tâm $I$ cách đều $O, A, B, C$: $I(1;2;3)$ (trung điểm của từng đoạn trên trục); $R^2=1+4+9=14$.",
+    "tags": [
+      "mặt cầu",
+      "đi qua bốn điểm"
+    ]
+  }
+]

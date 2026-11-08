@@ -1,0 +1,714 @@
+[
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Đường thẳng $a$ vuông góc với mặt phẳng $(P)$ khi $a$ vuông góc với",
+    "options": [
+      {
+        "key": "A",
+        "text": "một đường thẳng bất kì của $(P)$"
+      },
+      {
+        "key": "B",
+        "text": "hai đường thẳng song song của $(P)$"
+      },
+      {
+        "key": "C",
+        "text": "hai đường thẳng cắt nhau nằm trong $(P)$"
+      },
+      {
+        "key": "D",
+        "text": "mọi mặt phẳng chứa $a$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Theo định lí: $a \\perp (P)$ khi $a$ vuông góc với hai đường thẳng cắt nhau trong $(P)$.",
+    "tags": [
+      "hình học không gian",
+      "vuông góc"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Cho hình chóp $S.ABC$ có $SA \\perp (ABC)$. Khẳng định nào sau đây đúng?",
+    "options": [
+      {
+        "key": "A",
+        "text": "$SA \\perp BC$"
+      },
+      {
+        "key": "B",
+        "text": "$SA$ cắt $BC$"
+      },
+      {
+        "key": "C",
+        "text": "$SA$ song song $BC$"
+      },
+      {
+        "key": "D",
+        "text": "$SA$ vuông góc $AB$ nhưng không vuông góc $AC$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "$SA \\perp (ABC)$ nên $SA$ vuông góc với mọi đường thẳng trong $(ABC)$, kể cả $BC$.",
+    "tags": [
+      "hình học không gian",
+      "vuông góc"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Trong hình lập phương $ABCD.A'B'C'D'$, góc giữa đường thẳng $A'C'$ và mặt phẳng $(ABCD)$ bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$45^\\circ$"
+      },
+      {
+        "key": "B",
+        "text": "$0^\\circ$"
+      },
+      {
+        "key": "C",
+        "text": "$90^\\circ$"
+      },
+      {
+        "key": "D",
+        "text": "$30^\\circ$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$A'C' \\parallel AC \\subset (ABCD)$ nên góc giữa chúng bằng $0^\\circ$.",
+    "tags": [
+      "hình học không gian",
+      "góc"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Hình chóp đều $S.ABC$ có $SA=SB=SC=5$, tam giác $ABC$ đều cạnh 6. Độ dài đường cao $SO$ (chân cao là tâm đáy) là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$4$"
+      },
+      {
+        "key": "B",
+        "text": "$\\sqrt{37}$"
+      },
+      {
+        "key": "C",
+        "text": "$\\sqrt{13}$"
+      },
+      {
+        "key": "D",
+        "text": "$3$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Bán kính đường tròn ngoại tiếp tam giác đều $R=\\dfrac{6}{\\sqrt{3}}=2\\sqrt{3}$; $SO=\\sqrt{25-12}=\\sqrt{13}$.",
+    "tags": [
+      "hình học không gian",
+      "đường cao"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Hình chóp $S.ABCD$ (như hình) có đáy là hình vuông cạnh 4, $SA \\perp (ABCD)$, $SA=3$. Thể tích khối chóp là",
+    "figure": {
+      "kind": "geo3d",
+      "shape": "pyramid4",
+      "names": [
+        "S",
+        "A",
+        "B",
+        "C",
+        "D"
+      ]
+    },
+    "options": [
+      {
+        "key": "A",
+        "text": "$12$"
+      },
+      {
+        "key": "B",
+        "text": "$24$"
+      },
+      {
+        "key": "C",
+        "text": "$16$"
+      },
+      {
+        "key": "D",
+        "text": "$8$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "$V=\\dfrac{1}{3} \\cdot 4^2 \\cdot 3=16$.",
+    "tags": [
+      "hình học không gian",
+      "thể tích"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Hình chóp $S.ABCD$ có đáy hình vuông cạnh 4, $SA \\perp (ABCD)$, $SA=3$. Góc giữa $SB$ và $(ABCD)$ (làm tròn đến hàng phần mười độ) bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$45{,}0^\\circ$"
+      },
+      {
+        "key": "B",
+        "text": "$53{,}1^\\circ$"
+      },
+      {
+        "key": "C",
+        "text": "$60{,}0^\\circ$"
+      },
+      {
+        "key": "D",
+        "text": "$36{,}9^\\circ$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Góc giữa $SB$ và đáy là $\\widehat{SBA}$ với $\\tan \\widehat{SBA}=\\dfrac{SA}{AB}=\\dfrac{3}{4}$ nên góc $\\approx 36{,}9^\\circ$.",
+    "tags": [
+      "hình học không gian",
+      "góc"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Hình chóp $S.ABCD$ có đáy hình vuông cạnh 4, $SA \\perp (ABCD)$. Khoảng cách từ $S$ đến đường thẳng $BD$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$2\\sqrt{2}$"
+      },
+      {
+        "key": "B",
+        "text": "$4$"
+      },
+      {
+        "key": "C",
+        "text": "$2\\sqrt{3}$"
+      },
+      {
+        "key": "D",
+        "text": "$\\sqrt{10}$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "$SA \\perp đáy$ nên $d(S,BD)=d(A,BD)=\\dfrac{4}{\\sqrt{2}}=2\\sqrt{2}$.",
+    "tags": [
+      "hình học không gian",
+      "khoảng cách"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Hình chóp $S.ABC$ có $SA \\perp (ABC)$, tam giác $ABC$ vuông tại $A$ với $AB=3$, $AC=4$, $SA=5$. Thể tích khối chóp $S.ABC$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$20$"
+      },
+      {
+        "key": "B",
+        "text": "$10$"
+      },
+      {
+        "key": "C",
+        "text": "$30$"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{10}{3}$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$S_{ABC}=\\dfrac{3 \\cdot 4}{2}=6$; $V=\\dfrac{1}{3} \\cdot 6 \\cdot 5=10$.",
+    "tags": [
+      "hình học không gian",
+      "thể tích"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Cho hai biến cố $A$, $B$ với $P(A)=0{,}5$, $P(B)=0{,}4$, $P(A \\cap B)=0{,}2$. Khi đó $P(A \\cup B)$ bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$0{,}9$"
+      },
+      {
+        "key": "B",
+        "text": "$0{,}3$"
+      },
+      {
+        "key": "C",
+        "text": "$0{,}7$"
+      },
+      {
+        "key": "D",
+        "text": "$0{,}1$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "$P(A \\cup B)=0{,}5+0{,}4-0{,}2=0{,}7$.",
+    "tags": [
+      "xác suất",
+      "biến cố hợp"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Gieo một xúc xắc sáu mặt đồng chất. Gọi $A$ là biến cố \"mặt xuất hiện là số chẵn\", $B$ là biến cố \"mặt xuất hiện chia hết cho 3\". Xác suất của biến cố $A \\cup B$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\dfrac{1}{2}$"
+      },
+      {
+        "key": "B",
+        "text": "$\\dfrac{2}{3}$"
+      },
+      {
+        "key": "C",
+        "text": "$\\dfrac{5}{6}$"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{1}{3}$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$A=\\{2;4;6\\}$, $B=\\{3;6\\}$, $A \\cup B=\\{2;3;4;6\\}$ nên $P=\\dfrac{4}{6}=\\dfrac{2}{3}$.",
+    "tags": [
+      "xác suất",
+      "biến cố hợp"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Một hộp có 3 bi đỏ và 4 bi xanh cùng kích thước. Lấy lần lượt 2 bi không hoàn lại. Xác suất để cả hai bi đều màu đỏ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\dfrac{9}{49}$"
+      },
+      {
+        "key": "B",
+        "text": "$\\dfrac{3}{7}$"
+      },
+      {
+        "key": "C",
+        "text": "$\\dfrac{2}{7}$"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{1}{7}$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "$P=\\dfrac{3}{7} \\cdot \\dfrac{2}{6}=\\dfrac{6}{42}=\\dfrac{1}{7}$.",
+    "tags": [
+      "xác suất",
+      "quy tắc nhân"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Bảng tần số chiều cao (cm) của 20 học sinh như hình. Tứ phân vị loại ba của mẫu số liệu ghép nhóm là",
+    "figure": {
+      "kind": "stats",
+      "chart": "hist",
+      "title": "Chiều cao của 20 học sinh",
+      "xLabel": "Chiều cao (cm)",
+      "yLabel": "Số học sinh",
+      "data": "[5; 7) [7; 9) [9; 11) [11; 13)\nSố học sinh: 4; 8; 6; 2"
+    },
+    "options": [
+      {
+        "key": "A",
+        "text": "$9{,}5$"
+      },
+      {
+        "key": "B",
+        "text": "$10{,}5$"
+      },
+      {
+        "key": "C",
+        "text": "$10$"
+      },
+      {
+        "key": "D",
+        "text": "$9$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "$Q_3$ ở vị trí $\\dfrac{3 \\cdot 20}{4}=15$. Tần số tích luỹ: $4;12;18$ nên $Q_3$ thuộc nhóm $[9;11)$: $Q_3=9+\\dfrac{15-12}{6} \\cdot 2=10$.",
+    "tags": [
+      "thống kê",
+      "tứ phân vị ghép nhóm"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Hình chóp $S.ABC$ có $SA \\perp (ABC)$, tam giác $ABC$ vuông tại $B$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$SA \\perp AB$"
+      },
+      {
+        "key": "b",
+        "text": "$SA \\perp BC$"
+      },
+      {
+        "key": "c",
+        "text": "$BC \\perp (SAB)$"
+      },
+      {
+        "key": "d",
+        "text": "$BC \\perp SC$"
+      }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a) Đúng. b) Đúng. c) $BC \\perp AB$ (vuông tại $B$) và $BC \\perp SA$ nên $BC \\perp (SAB)$ — đúng. d) Từ $BC \\perp (SAB)$ chỉ suy ra $BC \\perp SB$, không suy ra $BC \\perp SC$ — sai.",
+    "tags": [
+      "hình học không gian",
+      "vuông góc"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Hình chóp $S.ABCD$ có đáy là hình vuông cạnh 2, $SA \\perp (ABCD)$, $SA=2$ (như hình). Xét tính đúng sai:",
+    "figure": {
+      "kind": "geo3d",
+      "shape": "pyramid4",
+      "names": [
+        "S",
+        "A",
+        "B",
+        "C",
+        "D"
+      ]
+    },
+    "options": [
+      {
+        "key": "a",
+        "text": "$SB=2\\sqrt{2}$"
+      },
+      {
+        "key": "b",
+        "text": "$AC$ vuông góc $BD$"
+      },
+      {
+        "key": "c",
+        "text": "Khoảng cách từ $S$ đến $AC$ bằng 0"
+      },
+      {
+        "key": "d",
+        "text": "Góc giữa $SD$ và $(ABCD)$ bằng $45^\\circ$"
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) $SB^2=SA^2+AB^2=8$ — đúng. b) Hai đường chéo hình vuông — đúng. c) $SA \\perp AC$ và $A \\in AC$ nên khoảng cách bằng $SA=2 \\ne 0$ — sai. d) $\\tan \\widehat{SDA}=\\dfrac{SA}{AD}=1$ — đúng.",
+    "tags": [
+      "hình học không gian",
+      "góc và khoảng cách"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Xét tính đúng sai về thể tích:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Thể tích khối chóp bằng $\\dfrac{1}{3}$ diện tích đáy nhân chiều cao"
+      },
+      {
+        "key": "b",
+        "text": "Thể tích khối lập phương cạnh $a$ là $a^3$"
+      },
+      {
+        "key": "c",
+        "text": "Thể tích khối lăng trụ bằng diện tích đáy nhân chiều cao"
+      },
+      {
+        "key": "d",
+        "text": "Hình chóp đều có đáy là hình vuông cạnh 2, chiều cao 3 có thể tích bằng 12"
+      }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a), b), c) Đúng. d) $V=\\dfrac{1}{3} \\cdot 4 \\cdot 3=4 \\ne 12$ — sai.",
+    "tags": [
+      "hình học không gian",
+      "thể tích"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Hình chóp $S.ABCD$ có đáy là hình vuông cạnh 4, $SA \\perp (ABCD)$, $SA=3$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$BD=8$"
+      },
+      {
+        "key": "b",
+        "text": "$SC=\\sqrt{41}$"
+      },
+      {
+        "key": "c",
+        "text": "Khoảng cách từ $S$ đến $(ABCD)$ bằng 3"
+      },
+      {
+        "key": "d",
+        "text": "Thể tích khối chóp bằng 12"
+      }
+    ],
+    "answer": "SĐĐS",
+    "explanation": "a) $BD=4\\sqrt{2} \\ne 8$ — sai. b) $SC^2=SA^2+AC^2=9+32=41$ — đúng. c) Đúng. d) $V=\\dfrac{1}{3} \\cdot 16 \\cdot 3=16 \\ne 12$ — sai.",
+    "tags": [
+      "hình học không gian",
+      "khoảng cách"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Gieo một xúc xắc sáu mặt đồng chất. Gọi $A$ là biến cố \"ra mặt 6 chấm\", $B$ là biến cố \"ra mặt số lẻ\". Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$P(A)=\\dfrac{1}{6}$"
+      },
+      {
+        "key": "b",
+        "text": "$A$ và $B$ là hai biến cố xung khắc"
+      },
+      {
+        "key": "c",
+        "text": "$P(A \\cup B)=\\dfrac{2}{3}$"
+      },
+      {
+        "key": "d",
+        "text": "$P(A \\cap B)=\\dfrac{1}{6}$"
+      }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a) Đúng. b) Không thể đồng thời ra 6 và số lẻ — đúng. c) $\\dfrac{1}{6}+\\dfrac{1}{2}=\\dfrac{2}{3}$ — đúng. d) $A \\cap B=\\varnothing$ nên $P=0$ — sai.",
+    "tags": [
+      "xác suất",
+      "biến cố xung khắc"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Cân nặng (kg) của 20 học sinh được lập thành bảng tần số ghép nhóm như hình. Xét tính đúng sai:",
+    "figure": {
+      "kind": "stats",
+      "chart": "hist",
+      "title": "Cân nặng của 20 học sinh",
+      "xLabel": "Cân nặng (kg)",
+      "yLabel": "Số học sinh",
+      "data": "[40; 45) [45; 50) [50; 55) [55; 60)\nSố học sinh: 5; 8; 5; 2"
+    },
+    "options": [
+      {
+        "key": "a",
+        "text": "Cỡ mẫu $n=20$"
+      },
+      {
+        "key": "b",
+        "text": "Nhóm chứa trung vị là $[45;50)$"
+      },
+      {
+        "key": "c",
+        "text": "Mốt của mẫu số liệu là 45"
+      },
+      {
+        "key": "d",
+        "text": "Tần số của nhóm $[50;55)$ là 5"
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) $5+8+5+2=20$ — đúng. b) Trung vị ở vị trí thứ 10, 11; tần số tích luỹ $5;13$ nên thuộc nhóm $[45;50)$ — đúng. c) Nhóm $[45;50)$ có tần số lớn nhất, mốt $=45+\\dfrac{8-5}{(8-5)+(8-5)} \\cdot 5=47{,}5 \\ne 45$ — sai. d) Đúng.",
+    "tags": [
+      "thống kê",
+      "mẫu ghép nhóm"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Hình chóp đều $S.ABC$ có $SA=6$, tam giác $ABC$ đều cạnh 6. Tính độ dài đường cao $SO$ (làm tròn đến hàng phần mười).",
+    "answer": "4,9",
+    "explanation": "$R=\\dfrac{6}{\\sqrt{3}}=2\\sqrt{3}$; $SO=\\sqrt{36-12}=\\sqrt{24} \\approx 4{,}9$.",
+    "tags": [
+      "hình học không gian",
+      "đường cao"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Hình chóp $S.ABCD$ có đáy hình vuông cạnh 2, $SA \\perp (ABCD)$, $SA=2$. Tính thể tích khối chóp (làm tròn đến hàng phần trăm).",
+    "answer": "2,67",
+    "explanation": "$V=\\dfrac{1}{3} \\cdot 4 \\cdot 2=\\dfrac{8}{3} \\approx 2{,}67$.",
+    "tags": [
+      "hình học không gian",
+      "thể tích"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Tính khoảng cách từ đỉnh $A$ của hình lập phương $ABCD.A'B'C'D'$ cạnh 3 đến mặt phẳng $(A'B'C'D')$.",
+    "answer": "3",
+    "explanation": "$A$ cách đều mặt đối diện một khoảng bằng cạnh lập phương: 3.",
+    "tags": [
+      "hình học không gian",
+      "khoảng cách"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Hình chóp $S.ABC$ có $SA \\perp (ABC)$, tam giác $ABC$ đều cạnh 4, $SA=2\\sqrt{3}$. Tính độ dài đường cao $SO$ với $O$ là tâm đáy (làm tròn đến hàng phần trăm).",
+    "answer": "2,58",
+    "explanation": "$R=\\dfrac{4}{\\sqrt{3}}$; $SO=\\sqrt{12-\\dfrac{16}{3}}=\\sqrt{\\dfrac{20}{3}} \\approx 2{,}58$.",
+    "tags": [
+      "hình học không gian",
+      "đường cao"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Một hộp có 2 bi đỏ và 3 bi xanh cùng kích thước. Bốc ngẫu nhiên đồng thời 2 bi. Tính xác suất bốc được 1 bi đỏ và 1 bi xanh (viết dưới dạng số thập phân).",
+    "answer": "0,6",
+    "explanation": "$P=\\dfrac{2 \\cdot 3}{C_5^2}=\\dfrac{6}{10}=0{,}6$.",
+    "tags": [
+      "xác suất",
+      "tổ hợp"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Cho hai biến cố độc lập $A$, $B$ với $P(A)=0{,}3$, $P(B)=0{,}5$. Tính $P(A \\cap B)$.",
+    "answer": "0,15",
+    "explanation": "Biến cố độc lập: $P(A \\cap B)=0{,}3 \\cdot 0{,}5=0{,}15$.",
+    "tags": [
+      "xác suất",
+      "biến cố độc lập"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Gieo hai xúc xắc sáu mặt đồng chất. Tính xác suất để có ít nhất một xúc xắc ra mặt 6 chấm (làm tròn đến hàng phần trăm).",
+    "answer": "0,31",
+    "explanation": "Biến cố đối: không có mặt 6 nào, xác suất $\\left(\\dfrac{5}{6}\\right)^2=\\dfrac{25}{36}$. Vậy $P=1-\\dfrac{25}{36}=\\dfrac{11}{36} \\approx 0{,}31$.",
+    "tags": [
+      "xác suất",
+      "biến cố đối"
+    ]
+  }
+]

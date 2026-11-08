@@ -10,6 +10,7 @@
  */
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { callLlm, lastAiQuota, type AiQuota, type LlmMessage } from '@/lib/llm'
+import { khungPromptFor } from '@/lib/khungPrompt'
 import {
   parseAiObject,
   parseDeckPlan,
@@ -861,9 +862,17 @@ export function AiPanel({
     }
     if (examSteps) patchTurn(() => ({ stepAt: 2, stepNotes: { 1: sourceNames.length ? `${sourceNames.length} nguồn` : 'không cần' } }))
     const sourceText = sourcePrompt(pack)
+    // khung chương trình Toán: đoán lớp/chương từ yêu cầu; lượt nối tiếp ("thêm 2 câu") thì lấy từ các lượt trước và đầu đề
+    let khungBlock = ''
+    if (intent === 'doc' && mode === 'exam') {
+      const prev = turns.filter((t) => t.role === 'user').slice(-3).map((t) => t.text).reverse()
+      khungBlock =
+        (await khungPromptFor(text)) ||
+        (await khungPromptFor([text, ...prev, contextSummary ?? '', (documentDigest ?? '').slice(0, 800)].join('\n')))
+    }
     const sourceBlock =
       intent === 'doc' && mode === 'exam'
-        ? `\n\n${sourceRule(pack)}${sourceText ? `\n\n${sourceText}` : ''}`
+        ? `\n\n${sourceRule(pack)}${sourceText ? `\n\n${sourceText}` : ''}${khungBlock ? `\n\n${khungBlock}` : ''}`
         : ''
 
     const history = historyOf(turns)

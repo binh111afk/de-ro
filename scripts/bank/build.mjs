@@ -4,7 +4,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 const [dir, out, exportName = 'BANK_THPT'] = process.argv.slice(2)
-const KINDS = new Set(['graph', 'vartable', 'signtable', 'oxy', 'geo3d', 'scene', 'stats', 'probtree', 'geo2d', 'trig', 'numberline', 'venn', 'circuit', 'motion', 'incline', 'gas', 'electron', 'struct', 'chemgraph'])
+const KINDS = new Set(['graph', 'vartable', 'signtable', 'oxy', 'geo3d', 'scene', 'stats', 'grouped', 'probtree', 'geo2d', 'trig', 'numberline', 'venn', 'circuit', 'motion', 'incline', 'gas', 'electron', 'struct', 'chemgraph'])
 const SUBJECTS = new Set(['Toán', 'Vật lí', 'Hoá học', 'Sinh học', 'Tiếng Anh', 'Lịch sử', 'Địa lí', 'Tin học', 'GDKT&PL'])
 const TYPES = new Set(['trac-nghiem', 'dung-sai', 'tra-loi-ngan', 'tu-luan'])
 const POINTS = { 'trac-nghiem': 0.25, 'dung-sai': 1, 'tra-loi-ngan': 0.5, 'tu-luan': 1 }

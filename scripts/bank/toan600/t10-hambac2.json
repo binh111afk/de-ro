@@ -1,340 +1,725 @@
 [
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "trac-nghiem",
     "level": "NB",
     "prompt": "Trong các hàm số sau, hàm số nào là hàm bậc hai?",
     "options": [
-      { "key": "A", "text": "$y=2x^2+3x+1$" },
-      { "key": "B", "text": "$y=3x+1$" },
-      { "key": "C", "text": "$y=x^3+x^2$" },
-      { "key": "D", "text": "$y=\\dfrac{x+1}{x}$" }
+      {
+        "key": "A",
+        "text": "$y=2x^2+3x+1$"
+      },
+      {
+        "key": "B",
+        "text": "$y=3x+1$"
+      },
+      {
+        "key": "C",
+        "text": "$y=x^3+x^2$"
+      },
+      {
+        "key": "D",
+        "text": "$y=\\dfrac{x+1}{x}$"
+      }
     ],
     "answer": "A",
     "explanation": "Hàm bậc hai có dạng $y=ax^2+bx+c$ với $a \\ne 0$. Chỉ hàm ở phương án A thoả.",
-    "tags": ["hàm bậc hai", "nhận biết"]
+    "tags": [
+      "hàm bậc hai",
+      "nhận biết"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "trac-nghiem",
     "level": "NB",
     "prompt": "Đỉnh của parabol $y=(x-2)^2-3$ là",
     "options": [
-      { "key": "A", "text": "$(-2;-3)$" },
-      { "key": "B", "text": "$(2;3)$" },
-      { "key": "C", "text": "$(2;-3)$" },
-      { "key": "D", "text": "$(-2;3)$" }
+      {
+        "key": "A",
+        "text": "$(-2;-3)$"
+      },
+      {
+        "key": "B",
+        "text": "$(2;3)$"
+      },
+      {
+        "key": "C",
+        "text": "$(2;-3)$"
+      },
+      {
+        "key": "D",
+        "text": "$(-2;3)$"
+      }
     ],
     "answer": "C",
     "explanation": "Dạng chính tắc $y=a(x-h)^2+k$ có đỉnh $(h;k)=(2;-3)$.",
-    "tags": ["hàm bậc hai", "đỉnh parabol"]
+    "tags": [
+      "hàm bậc hai",
+      "đỉnh parabol"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "trac-nghiem",
     "level": "TH",
     "prompt": "Trục đối xứng của parabol $y=x^2-4x+3$ là",
     "options": [
-      { "key": "A", "text": "$x=-2$" },
-      { "key": "B", "text": "$x=2$" },
-      { "key": "C", "text": "$x=4$" },
-      { "key": "D", "text": "$x=-4$" }
+      {
+        "key": "A",
+        "text": "$x=-2$"
+      },
+      {
+        "key": "B",
+        "text": "$x=2$"
+      },
+      {
+        "key": "C",
+        "text": "$x=4$"
+      },
+      {
+        "key": "D",
+        "text": "$x=-4$"
+      }
     ],
     "answer": "B",
     "explanation": "Trục đối xứng $x=-\\dfrac{b}{2a}=-\\dfrac{-4}{2}=2$.",
-    "tags": ["hàm bậc hai", "trục đối xứng"]
+    "tags": [
+      "hàm bậc hai",
+      "trục đối xứng"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "trac-nghiem",
     "level": "TH",
     "prompt": "Giá trị lớn nhất của hàm số $y=-x^2+2x+3$ là",
-    "figure": { "kind": "graph", "curves": ["-x^2+2x+3"], "xMin": -2, "xMax": 4, "yMin": -2, "yMax": 6, "labels": true },
+    "figure": {
+      "kind": "graph",
+      "curves": [
+        "-x^2+2x+3"
+      ],
+      "xMin": -2,
+      "xMax": 4,
+      "yMin": -2,
+      "yMax": 6,
+      "labels": true
+    },
     "options": [
-      { "key": "A", "text": "$3$" },
-      { "key": "B", "text": "$5$" },
-      { "key": "C", "text": "$2$" },
-      { "key": "D", "text": "$4$" }
+      {
+        "key": "A",
+        "text": "$3$"
+      },
+      {
+        "key": "B",
+        "text": "$5$"
+      },
+      {
+        "key": "C",
+        "text": "$2$"
+      },
+      {
+        "key": "D",
+        "text": "$4$"
+      }
     ],
     "answer": "D",
     "explanation": "Đỉnh tại $x=-\\dfrac{2}{2(-1)}=1$, $y=-1+2+3=4$. Parabol hướng xuống nên GTLN $=4$.",
-    "tags": ["hàm bậc hai", "giá trị lớn nhất"]
+    "tags": [
+      "hàm bậc hai",
+      "giá trị lớn nhất"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "trac-nghiem",
     "level": "VD",
     "prompt": "Parabol trong hình đi qua hai điểm $A(-1;0)$, $B(3;0)$ và có dạng $y=ax^2+bx+c$ với $a=1$. Phương trình của parabol đó là",
-    "figure": { "kind": "graph", "curves": ["x^2-2x-3"], "xMin": -3, "xMax": 5, "yMin": -6, "yMax": 6, "labels": true, "points": "A(-1; 0)\nB(3; 0)" },
+    "figure": {
+      "kind": "graph",
+      "curves": [
+        "x^2-2x-3"
+      ],
+      "xMin": -3,
+      "xMax": 5,
+      "yMin": -6,
+      "yMax": 6,
+      "labels": true,
+      "points": "A(-1; 0)\nB(3; 0)"
+    },
     "options": [
-      { "key": "A", "text": "$y=x^2-2x-3$" },
-      { "key": "B", "text": "$y=x^2+2x-3$" },
-      { "key": "C", "text": "$y=x^2-2x+3$" },
-      { "key": "D", "text": "$y=-x^2-2x+3$" }
+      {
+        "key": "A",
+        "text": "$y=x^2-2x-3$"
+      },
+      {
+        "key": "B",
+        "text": "$y=x^2+2x-3$"
+      },
+      {
+        "key": "C",
+        "text": "$y=x^2-2x+3$"
+      },
+      {
+        "key": "D",
+        "text": "$y=-x^2-2x+3$"
+      }
     ],
     "answer": "A",
     "explanation": "$y=x^2+bx+c$ qua $(-1;0)$, $(3;0)$ nên $y=(x+1)(x-3)=x^2-2x-3$.",
-    "tags": ["hàm bậc hai", "xác định phương trình"]
+    "tags": [
+      "hàm bậc hai",
+      "xác định phương trình"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "trac-nghiem",
     "level": "VD",
     "prompt": "Tập nghiệm của bất phương trình $x^2-5x+6>0$ là",
     "options": [
-      { "key": "A", "text": "$(1;2)$" },
-      { "key": "B", "text": "$(-\\infty;2)$" },
-      { "key": "C", "text": "$(1;+\\infty)$" },
-      { "key": "D", "text": "$(-\\infty;1) \\cup (2;+\\infty)$" }
+      {
+        "key": "A",
+        "text": "$(1;2)$"
+      },
+      {
+        "key": "B",
+        "text": "$(-\\infty;2)$"
+      },
+      {
+        "key": "C",
+        "text": "$(1;+\\infty)$"
+      },
+      {
+        "key": "D",
+        "text": "$(-\\infty;2) \\cup (3;+\\infty)$"
+      }
     ],
     "answer": "D",
-    "explanation": "$x^2-5x+6=(x-1)(x-2)>0 \\Leftrightarrow x<1$ hoặc $x>2$.",
-    "tags": ["hàm bậc hai", "bất phương trình bậc hai"]
+    "explanation": "$x^2-5x+6=(x-2)(x-3)>0 \\Leftrightarrow x<2$ hoặc $x>3$.",
+    "tags": [
+      "hàm bậc hai",
+      "bất phương trình bậc hai"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "trac-nghiem",
     "level": "VD",
     "prompt": "Tập nghiệm của bất phương trình $x^2-2x-3 \\le 0$ là",
     "options": [
-      { "key": "A", "text": "$[-1;3]$" },
-      { "key": "B", "text": "$(-1;3)$" },
-      { "key": "C", "text": "$(-\\infty;-1] \\cup [3;+\\infty)$" },
-      { "key": "D", "text": "$[-3;1]$" }
+      {
+        "key": "A",
+        "text": "$[-1;3]$"
+      },
+      {
+        "key": "B",
+        "text": "$(-1;3)$"
+      },
+      {
+        "key": "C",
+        "text": "$(-\\infty;-1] \\cup [3;+\\infty)$"
+      },
+      {
+        "key": "D",
+        "text": "$[-3;1]$"
+      }
     ],
     "answer": "A",
     "explanation": "$x^2-2x-3=(x+1)(x-3) \\le 0 \\Leftrightarrow -1 \\le x \\le 3$.",
-    "tags": ["hàm bậc hai", "bất phương trình bậc hai"]
+    "tags": [
+      "hàm bậc hai",
+      "bất phương trình bậc hai"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "trac-nghiem",
     "level": "VDC",
     "prompt": "Với giá trị nào của $m$ thì phương trình $x^2-2x+m=0$ có hai nghiệm phân biệt?",
     "options": [
-      { "key": "A", "text": "$m \\ge 1$" },
-      { "key": "B", "text": "$m<1$" },
-      { "key": "C", "text": "$m \\le 1$" },
-      { "key": "D", "text": "$m>1$" }
+      {
+        "key": "A",
+        "text": "$m \\ge 1$"
+      },
+      {
+        "key": "B",
+        "text": "$m<1$"
+      },
+      {
+        "key": "C",
+        "text": "$m \\le 1$"
+      },
+      {
+        "key": "D",
+        "text": "$m>1$"
+      }
     ],
     "answer": "B",
     "explanation": "$\\Delta=4-4m>0 \\Leftrightarrow m<1$.",
-    "tags": ["phương trình bậc hai", "tham số"]
+    "tags": [
+      "phương trình bậc hai",
+      "tham số"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "trac-nghiem",
     "level": "TH",
     "prompt": "Đỉnh của parabol $y=2x^2+4x-1$ là",
     "options": [
-      { "key": "A", "text": "$(1;3)$" },
-      { "key": "B", "text": "$(-1;3)$" },
-      { "key": "C", "text": "$(-1;-3)$" },
-      { "key": "D", "text": "$(1;-3)$" }
+      {
+        "key": "A",
+        "text": "$(1;3)$"
+      },
+      {
+        "key": "B",
+        "text": "$(-1;3)$"
+      },
+      {
+        "key": "C",
+        "text": "$(-1;-3)$"
+      },
+      {
+        "key": "D",
+        "text": "$(1;-3)$"
+      }
     ],
     "answer": "C",
     "explanation": "$x=-\\dfrac{4}{2 \\cdot 2}=-1$, $y=2-4-1=-3$.",
-    "tags": ["hàm bậc hai", "đỉnh parabol"]
+    "tags": [
+      "hàm bậc hai",
+      "đỉnh parabol"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "trac-nghiem",
     "level": "TH",
     "prompt": "Tập nghiệm của bất phương trình $x^2+2x+5>0$ là",
     "options": [
-      { "key": "A", "text": "$\\mathbb{R}$" },
-      { "key": "B", "text": "$\\varnothing$" },
-      { "key": "C", "text": "$[-1;+\\infty)$" },
-      { "key": "D", "text": "$(-\\infty;-1]$" }
+      {
+        "key": "A",
+        "text": "$\\mathbb{R}$"
+      },
+      {
+        "key": "B",
+        "text": "$\\varnothing$"
+      },
+      {
+        "key": "C",
+        "text": "$[-1;+\\infty)$"
+      },
+      {
+        "key": "D",
+        "text": "$(-\\infty;-1]$"
+      }
     ],
     "answer": "A",
     "explanation": "$x^2+2x+5=(x+1)^2+4>0$ với mọi $x$.",
-    "tags": ["hàm bậc hai", "bất phương trình bậc hai"]
+    "tags": [
+      "hàm bậc hai",
+      "bất phương trình bậc hai"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "trac-nghiem",
     "level": "VD",
     "prompt": "Với giá trị nào của $m$ thì đường thẳng $y=x+m$ cắt parabol $y=x^2$ tại hai điểm phân biệt?",
     "options": [
-      { "key": "A", "text": "$m \\ge -\\dfrac{1}{4}$" },
-      { "key": "B", "text": "$m<-\\dfrac{1}{4}$" },
-      { "key": "C", "text": "$m>-\\dfrac{1}{4}$" },
-      { "key": "D", "text": "$m \\le -\\dfrac{1}{4}$" }
+      {
+        "key": "A",
+        "text": "$m \\ge -\\dfrac{1}{4}$"
+      },
+      {
+        "key": "B",
+        "text": "$m<-\\dfrac{1}{4}$"
+      },
+      {
+        "key": "C",
+        "text": "$m>-\\dfrac{1}{4}$"
+      },
+      {
+        "key": "D",
+        "text": "$m \\le -\\dfrac{1}{4}$"
+      }
     ],
     "answer": "C",
     "explanation": "Phương trình hoành độ giao điểm $x^2-x-m=0$ có $\\Delta=1+4m>0 \\Leftrightarrow m>-\\dfrac{1}{4}$.",
-    "tags": ["hàm bậc hai", "giao điểm"]
+    "tags": [
+      "hàm bậc hai",
+      "giao điểm"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "trac-nghiem",
     "level": "VDC",
     "prompt": "Giá trị lớn nhất của hàm số $y=-x^2+4x$ trên đoạn $[0;3]$ là",
     "options": [
-      { "key": "A", "text": "$3$" },
-      { "key": "B", "text": "$4$" },
-      { "key": "C", "text": "$5$" },
-      { "key": "D", "text": "$9$" }
+      {
+        "key": "A",
+        "text": "$3$"
+      },
+      {
+        "key": "B",
+        "text": "$4$"
+      },
+      {
+        "key": "C",
+        "text": "$5$"
+      },
+      {
+        "key": "D",
+        "text": "$9$"
+      }
     ],
     "answer": "B",
     "explanation": "Đỉnh $x=2 \\in [0;3]$ với $y=4$; so sánh $f(0)=0$, $f(3)=3$. GTLN $=4$.",
-    "tags": ["hàm bậc hai", "giá trị lớn nhất trên đoạn"]
+    "tags": [
+      "hàm bậc hai",
+      "giá trị lớn nhất trên đoạn"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "dung-sai",
     "level": "TH",
     "prompt": "Cho parabol $(P): y=x^2-6x+8$ (đồ thị như hình). Xét tính đúng sai:",
-    "figure": { "kind": "graph", "curves": ["x^2-6x+8"], "xMin": -1, "xMax": 7, "yMin": -3, "yMax": 8, "labels": true },
+    "figure": {
+      "kind": "graph",
+      "curves": [
+        "x^2-6x+8"
+      ],
+      "xMin": -1,
+      "xMax": 7,
+      "yMin": -3,
+      "yMax": 8,
+      "labels": true
+    },
     "options": [
-      { "key": "a", "text": "Đỉnh của $(P)$ là $I(3;-1)$" },
-      { "key": "b", "text": "Trục đối xứng của $(P)$ là $x=3$" },
-      { "key": "c", "text": "$(P)$ cắt trục $Ox$ tại hai điểm phân biệt" },
-      { "key": "d", "text": "$(P)$ có giá trị lớn nhất bằng $-1$" }
+      {
+        "key": "a",
+        "text": "Đỉnh của $(P)$ là $I(3;-1)$"
+      },
+      {
+        "key": "b",
+        "text": "Trục đối xứng của $(P)$ là $x=3$"
+      },
+      {
+        "key": "c",
+        "text": "$(P)$ cắt trục $Ox$ tại hai điểm phân biệt"
+      },
+      {
+        "key": "d",
+        "text": "$(P)$ có giá trị lớn nhất bằng $-1$"
+      }
     ],
     "answer": "ĐĐĐS",
     "explanation": "a) $x=3$, $y=9-18+8=-1$ — đúng. b) $x=-\\dfrac{-6}{2}=3$ — đúng. c) $\\Delta=36-32=4>0$ — đúng. d) Parabol hướng lên nên có giá trị nhỏ nhất $-1$, không có GTLN — sai.",
-    "tags": ["hàm bậc hai", "khảo sát parabol"]
+    "tags": [
+      "hàm bậc hai",
+      "khảo sát parabol"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "dung-sai",
     "level": "VD",
     "prompt": "Cho hàm số $f(x)=x^2-4x$ có bảng xét dấu như hình. Xét tính đúng sai:",
-    "figure": { "kind": "signtable", "expr": "x^2-4x" },
+    "figure": {
+      "kind": "signtable",
+      "expr": "x^2-4x"
+    },
     "options": [
-      { "key": "a", "text": "$f(x)>0$ trên khoảng $(-\\infty;0)$" },
-      { "key": "b", "text": "$f(x)<0$ trên khoảng $(0;4)$" },
-      { "key": "c", "text": "$f(x)=0$ tại $x=0$ và $x=-4$" },
-      { "key": "d", "text": "$f(-1)=5$" }
+      {
+        "key": "a",
+        "text": "$f(x)>0$ trên khoảng $(-\\infty;0)$"
+      },
+      {
+        "key": "b",
+        "text": "$f(x)<0$ trên khoảng $(0;4)$"
+      },
+      {
+        "key": "c",
+        "text": "$f(x)=0$ tại $x=0$ và $x=-4$"
+      },
+      {
+        "key": "d",
+        "text": "$f(-1)=5$"
+      }
     ],
     "answer": "ĐĐSĐ",
     "explanation": "a) Bảng xét dấu cho $f(x)>0$ khi $x<0$ — đúng. b) $f(x)<0$ khi $0<x<4$ — đúng. c) Nghiệm là $x=0$ và $x=4$, không phải $-4$ — sai. d) $f(-1)=1+4=5$ — đúng.",
-    "tags": ["hàm bậc hai", "bảng xét dấu"]
+    "tags": [
+      "hàm bậc hai",
+      "bảng xét dấu"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "dung-sai",
     "level": "TH",
     "prompt": "Xét bất phương trình $x^2-x-2 \\ge 0$. Xét tính đúng sai:",
     "options": [
-      { "key": "a", "text": "$x=2$ là một nghiệm" },
-      { "key": "b", "text": "$x=0$ là một nghiệm" },
-      { "key": "c", "text": "Tập nghiệm là $(-\\infty;-1] \\cup [2;+\\infty)$" },
-      { "key": "d", "text": "$x=-1$ là một nghiệm" }
+      {
+        "key": "a",
+        "text": "$x=2$ là một nghiệm"
+      },
+      {
+        "key": "b",
+        "text": "$x=0$ là một nghiệm"
+      },
+      {
+        "key": "c",
+        "text": "Tập nghiệm là $(-\\infty;-1] \\cup [2;+\\infty)$"
+      },
+      {
+        "key": "d",
+        "text": "$x=-1$ là một nghiệm"
+      }
     ],
     "answer": "ĐSĐĐ",
     "explanation": "a) $4-2-2=0 \\ge 0$ — đúng. b) $-2 \\ge 0$ sai — sai. c) $(x-2)(x+1) \\ge 0 \\Leftrightarrow x \\le -1$ hoặc $x \\ge 2$ — đúng. d) $1+1-2=0 \\ge 0$ — đúng.",
-    "tags": ["hàm bậc hai", "bất phương trình bậc hai"]
+    "tags": [
+      "hàm bậc hai",
+      "bất phương trình bậc hai"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "dung-sai",
     "level": "VD",
     "prompt": "Xét phương trình $x^4-5x^2+4=0$. Xét tính đúng sai:",
     "options": [
-      { "key": "a", "text": "Đặt $t=x^2$ với điều kiện $t \\ge 0$ thì phương trình trở thành $t^2-5t+4=0$" },
-      { "key": "b", "text": "Phương trình có đúng hai nghiệm phân biệt" },
-      { "key": "c", "text": "$x=1$ là một nghiệm" },
-      { "key": "d", "text": "$x=-4$ là một nghiệm" }
+      {
+        "key": "a",
+        "text": "Đặt $t=x^2$ với điều kiện $t \\ge 0$ thì phương trình trở thành $t^2-5t+4=0$"
+      },
+      {
+        "key": "b",
+        "text": "Phương trình có đúng hai nghiệm phân biệt"
+      },
+      {
+        "key": "c",
+        "text": "$x=1$ là một nghiệm"
+      },
+      {
+        "key": "d",
+        "text": "$x=-4$ là một nghiệm"
+      }
     ],
     "answer": "ĐSĐS",
     "explanation": "a) Đúng. b) $t=1$ hoặc $t=4$ cho $x=\\pm 1, \\pm 2$: 4 nghiệm — sai. c) $1-5+4=0$ — đúng. d) $256-80+4 \\ne 0$ — sai.",
-    "tags": ["phương trình bậc hai", "trùng phương"]
+    "tags": [
+      "phương trình bậc hai",
+      "trùng phương"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "dung-sai",
     "level": "VD",
     "prompt": "Một quả bóng được ném lên cao, độ cao $h$ (mét) theo thời gian $t$ (giây) là $h(t)=-5t^2+20t+1$ (đồ thị như hình). Xét tính đúng sai:",
-    "figure": { "kind": "graph", "curves": ["-5x^2+20x+1"], "xMin": 0, "xMax": 4.2, "yMin": -2, "yMax": 23, "labels": true },
+    "figure": {
+      "kind": "graph",
+      "curves": [
+        "-5x^2+20x+1"
+      ],
+      "xMin": 0,
+      "xMax": 4.2,
+      "yMin": -2,
+      "yMax": 23,
+      "labels": true
+    },
     "options": [
-      { "key": "a", "text": "Độ cao lúc bắt đầu ném là 1 m" },
-      { "key": "b", "text": "Bóng chạm đất sau đúng 2 giây" },
-      { "key": "c", "text": "Độ cao lớn nhất đạt được là 21 m" },
-      { "key": "d", "text": "Bóng chạm đất sau khoảng 4,05 giây" }
+      {
+        "key": "a",
+        "text": "Độ cao lúc bắt đầu ném là 1 m"
+      },
+      {
+        "key": "b",
+        "text": "Bóng chạm đất sau đúng 2 giây"
+      },
+      {
+        "key": "c",
+        "text": "Độ cao lớn nhất đạt được là 21 m"
+      },
+      {
+        "key": "d",
+        "text": "Bóng chạm đất sau khoảng 4,05 giây"
+      }
     ],
     "answer": "ĐSĐĐ",
     "explanation": "a) $h(0)=1$ — đúng. b) $h(2)=21>0$, bóng chưa chạm đất — sai. c) Đỉnh tại $t=2$: $h(2)=21$ — đúng. d) $-5t^2+20t+1=0 \\Leftrightarrow t=\\dfrac{20+\\sqrt{420}}{10} \\approx 4{,}05$ — đúng.",
-    "tags": ["hàm bậc hai", "bài toán thực tế"]
+    "tags": [
+      "hàm bậc hai",
+      "bài toán thực tế"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "dung-sai",
     "level": "VDC",
     "prompt": "Cho parabol $(P): y=x^2+2x+m$. Xét tính đúng sai:",
     "options": [
-      { "key": "a", "text": "Nếu $m=3$ thì $(P)$ cắt trục $Ox$ tại hai điểm phân biệt" },
-      { "key": "b", "text": "Nếu $m=0$ thì $(P)$ cắt trục $Ox$ tại hai điểm phân biệt" },
-      { "key": "c", "text": "Nếu $m=1$ thì $(P)$ tiếp xúc trục $Ox$" },
-      { "key": "d", "text": "Nếu $m=-1$ thì phương trình $x^2+2x+m=0$ có hai nghiệm trái dấu" }
+      {
+        "key": "a",
+        "text": "Nếu $m=3$ thì $(P)$ cắt trục $Ox$ tại hai điểm phân biệt"
+      },
+      {
+        "key": "b",
+        "text": "Nếu $m=0$ thì $(P)$ cắt trục $Ox$ tại hai điểm phân biệt"
+      },
+      {
+        "key": "c",
+        "text": "Nếu $m=1$ thì $(P)$ tiếp xúc trục $Ox$"
+      },
+      {
+        "key": "d",
+        "text": "Nếu $m=-1$ thì phương trình $x^2+2x+m=0$ có hai nghiệm trái dấu"
+      }
     ],
     "answer": "SĐĐĐ",
     "explanation": "a) $\\Delta=4-12<0$ nên không cắt — sai. b) $x^2+2x=0 \\Leftrightarrow x=0$ hoặc $x=-2$ — đúng. c) $\\Delta=4-4=0$ — đúng. d) Tích hai nghiệm $m=-1<0$ nên trái dấu — đúng.",
-    "tags": ["hàm bậc hai", "tham số"]
+    "tags": [
+      "hàm bậc hai",
+      "tham số"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "tra-loi-ngan",
     "level": "VD",
     "prompt": "Tìm giá trị nhỏ nhất của hàm số $y=x^2-4x+5$.",
     "answer": "1",
     "explanation": "$y=(x-2)^2+1 \\ge 1$, dấu bằng khi $x=2$. GTNN $=1$.",
-    "tags": ["hàm bậc hai", "giá trị nhỏ nhất"]
+    "tags": [
+      "hàm bậc hai",
+      "giá trị nhỏ nhất"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "tra-loi-ngan",
     "level": "VDC",
     "prompt": "Có bao nhiêu giá trị nguyên của $m$ thuộc đoạn $[-5;5]$ để phương trình $x^2-2x+m=0$ vô nghiệm?",
     "answer": "4",
     "explanation": "Vô nghiệm khi $\\Delta=4-4m<0 \\Leftrightarrow m>1$: $m \\in \\{2;3;4;5\\}$: 4 giá trị.",
-    "tags": ["phương trình bậc hai", "tham số"]
+    "tags": [
+      "phương trình bậc hai",
+      "tham số"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "tra-loi-ngan",
     "level": "VD",
     "prompt": "Cho parabol $y=-x^2+2x$. Tính tổng hoành độ và tung độ của đỉnh parabol.",
     "answer": "2",
     "explanation": "Đỉnh $I(1;1)$ nên tổng là $1+1=2$.",
-    "tags": ["hàm bậc hai", "đỉnh parabol"]
+    "tags": [
+      "hàm bậc hai",
+      "đỉnh parabol"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "tra-loi-ngan",
     "level": "TH",
     "prompt": "Bất phương trình $x^2 \\le 9$ có bao nhiêu nghiệm nguyên?",
     "answer": "7",
     "explanation": "$-3 \\le x \\le 3$ nên $x \\in \\{-3;-2;-1;0;1;2;3\\}$: 7 nghiệm.",
-    "tags": ["hàm bậc hai", "bất phương trình bậc hai"]
+    "tags": [
+      "hàm bậc hai",
+      "bất phương trình bậc hai"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "tra-loi-ngan",
     "level": "VD",
     "prompt": "Đường thẳng $y=2x+1$ cắt parabol $y=x^2$ tại hai điểm. Tính hoành độ giao điểm có hoành độ dương (làm tròn đến hàng phần mười).",
     "answer": "2,4",
     "explanation": "$x^2-2x-1=0 \\Leftrightarrow x=1 \\pm \\sqrt{2}$. Nghiệm dương $1+\\sqrt{2} \\approx 2{,}4$.",
-    "tags": ["hàm bậc hai", "giao điểm"]
+    "tags": [
+      "hàm bậc hai",
+      "giao điểm"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "tra-loi-ngan",
     "level": "VDC",
     "prompt": "Tìm GTLN của hàm số $y=-x^2+6x-5$ trên đoạn $[0;4]$.",
     "answer": "4",
     "explanation": "Đỉnh $x=3 \\in [0;4]$ với $y=-9+18-5=4$; so $y(4)=3$. GTLN $=4$.",
-    "tags": ["hàm bậc hai", "giá trị lớn nhất trên đoạn"]
+    "tags": [
+      "hàm bậc hai",
+      "giá trị lớn nhất trên đoạn"
+    ]
   },
   {
-    "grades": ["Lớp 10"],
+    "grades": [
+      "Lớp 10"
+    ],
     "type": "tra-loi-ngan",
     "level": "VDC",
     "prompt": "Có bao nhiêu giá trị nguyên của $m$ để hàm số $y=x^2+(m-1)x+1$ dương với mọi $x$?",
     "answer": "3",
     "explanation": "Cần $\\Delta=(m-1)^2-4<0 \\Leftrightarrow -1<m<3$: $m \\in \\{0;1;2\\}$: 3 giá trị.",
-    "tags": ["hàm bậc hai", "tham số"]
+    "tags": [
+      "hàm bậc hai",
+      "tham số"
+    ]
   }
 ]
