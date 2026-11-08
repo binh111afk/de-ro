@@ -1,0 +1,457 @@
+{
+  "mon": "Khoa học tự nhiên",
+  "pham_vi_luot": "lớp 6–7",
+  "nguon": [
+    "Chương trình GDPT 2018 môn Khoa học tự nhiên, Thông tư 32/2018/TT-BGDĐT (sửa đổi bởi Thông tư 13/2022)",
+    "SGK Khoa học tự nhiên 6, 7 — Kết nối tri thức (mục lục từ loigiaihay.com, vietjack.com)"
+  ],
+  "muc_luc_da_tra": [
+    "Lớp 6 – KNTT – Chương I. Mở đầu về Khoa học tự nhiên (Bài 1–8: giới thiệu KHTN; an toàn phòng thực hành; kính lúp; kính hiển vi quang học; đo chiều dài, khối lượng, thời gian, nhiệt độ)",
+    "Lớp 6 – KNTT – Chương II. Chất quanh ta (Bài 9–11: sự đa dạng của chất; các thể của chất và sự chuyển thể; oxygen, không khí)",
+    "Lớp 6 – KNTT – Chương III. Một số vật liệu, nguyên liệu, nhiên liệu, lương thực – thực phẩm thông dụng (Bài 12–15)",
+    "Lớp 6 – KNTT – Chương IV. Hỗn hợp. Tách chất ra khỏi hỗn hợp (Bài 16–17)",
+    "Lớp 6 – KNTT – Chương V. Tế bào (Bài 18–21)",
+    "Lớp 6 – KNTT – Chương VI. Từ tế bào đến cơ thể (Bài 22–24)",
+    "Lớp 6 – KNTT – Chương VII. Đa dạng thế giới sống (Bài 25–39)",
+    "Lớp 6 – KNTT – Chương VIII. Lực trong đời sống (Bài 40–45)",
+    "Lớp 6 – KNTT – Chương IX. Năng lượng (Bài 46–51)",
+    "Lớp 6 – KNTT – Chương X. Trái Đất và bầu trời (Bài 52–55)",
+    "Lớp 7 – KNTT – Chương 1. Nguyên tử. Sơ lược về bảng tuần hoàn các nguyên tố hoá học (Bài 2–4)",
+    "Lớp 7 – KNTT – Chương 2. Phân tử. Liên kết hoá học (Bài 5–7)",
+    "Lớp 7 – KNTT – Chương 3. Tốc độ (Bài 8–11)",
+    "Lớp 7 – KNTT – Chương 4. Âm thanh (Bài 12–14)",
+    "Lớp 7 – KNTT – Chương 5. Ánh sáng (Bài 15–17)",
+    "Lớp 7 – KNTT – Chương 6. Từ (Bài 18–20)",
+    "Lớp 7 – KNTT – Chương 7. Trao đổi chất và chuyển hoá năng lượng ở sinh vật (Bài 21–32)",
+    "Lớp 7 – KNTT – Chương 8. Cảm ứng ở sinh vật (Bài 33–35)",
+    "Lớp 7 – KNTT – Chương 9. Sinh trưởng và phát triển ở sinh vật (Bài 36–38)",
+    "Lớp 7 – KNTT – Chương 10. Sinh sản ở sinh vật (Bài 39–42)"
+  ],
+  "lop": [
+    {
+      "lop": 6,
+      "chuong": [
+        {
+          "id": "khtn6-mo-dau-khtn-do-luong",
+          "ten": "Mở đầu KHTN: an toàn thực hành, kính lúp, kính hiển vi, đo các đại lượng",
+          "hoc_ky": 1,
+          "mach": "Mở đầu",
+          "ten_theo_sach": { "KNTT": "Chương I. Mở đầu về Khoa học tự nhiên (Bài 1–8)", "CTST": "Chủ đề giới thiệu KHTN và phương pháp nghiên cứu", "CD": "Chủ đề khám phá thế giới tự nhiên" },
+          "thuat_ngu": ["kính lúp (magnifying glass)", "kính hiển vi quang học (optical microscope)", "nhiệt kế (thermometer)", "pan cân", "thước đo"],
+          "cong_thuc": ["Đơn vị SI: mét (m), kilogam (kg), giây (s), độ C", "Đơn vị bội/ước: km, cm, mm; tấn, yến, lạng, gam; phút, giờ"],
+          "thi_nghiem": ["Sử dụng kính lúp quan sát vật nhỏ", "Sử dụng kính hiển vi quang học", "Đo nhiệt độ bằng nhiệt kế; đo khối lượng bằng cân"],
+          "yeu_cau_can_dat": ["Nêu giới hạn của giác quan khi quan sát và dùng công cụ thay thế", "Quy tắc an toàn trong phòng thực hành", "Đọc chỉ số và ghi kết quả đo chiều dài, khối lượng, thời gian, nhiệt độ với đơn vị và sai số hợp lí"],
+          "kien_thuc_duoc_dung": ["Toán 6: số tự nhiên, phân số, số thập phân (đọc chỉ số đo)"],
+          "chua_duoc_dung": ["Sai số tuyệt đối/tương đối, chữ số có nghĩa (Toán 10 và đại học)", "Cấu tạo quang học chi tiết của kính hiển vi, độ phóng đại tính bằng số lần (chỉ ở mức nhận biết)", "Hệ đơn vị cgs, hệ đơn vị cũ (nặng riêng bằng kG/l)"],
+          "dang_bai_dien_hinh": ["Đổi đơn vị đo độ dài, khối lượng, thời gian, nhiệt độ", "Đọc kết quả đo trên thước/nhiệt kế/cân", "Nhận biết dụng cụ và quy tắc an toàn phòng thực hành"],
+          "luu_y_ra_de": "Kết quả đo ghi kèm đơn vị; tránh số lẻ quá nhiều chữ số thập phân."
+        },
+        {
+          "id": "khtn6-chat-quanh-ta",
+          "ten": "Chất quanh ta: sự đa dạng của chất, các thể của chất, oxygen và không khí",
+          "hoc_ky": 1,
+          "mach": "Hoá",
+          "ten_theo_sach": { "KNTT": "Chương II. Chất quanh ta (Bài 9–11)", "CTST": "Chủ đề vật chất quanh ta", "CD": "Chủ đề vật chất xung quanh ta" },
+          "thuat_ngu": ["oxygen (khí oxy)", "carbon dioxide (khí cacbonic)", "nhiệt độ nóng chảy (melting point)", "nhiệt độ sôi (boiling point)", "tan (soluble)"],
+          "cong_thuc": ["Kí hiệu: O₂, CO₂, H₂O (dùng làm quen, chưa yêu cầu phản ứng)"],
+          "thi_nghiem": ["Quan sát sự nóng chảy của nến, sự bay hơi của nước", "Thử tính tan của muối, đường", "Để que đóm cháy rực trong bình khí oxy"],
+          "yeu_cau_can_dat": ["Phân biệt chất theo tính chất (trạng thái, màu sắc, độ tan, nhiệt độ nóng chảy, sôi)", "Mô tả ba thể của chất và sự chuyển thể (tan, đông đặc, bay hơi, ngưng tụ, thăng hoa)", "Nêu thành phần chính của không khí, vai trò của oxygen với sự sống và cách thu oxygen trong phòng thí nghiệm"],
+          "kien_thuc_duoc_dung": ["Toán 6: phân số, phần trăm (thành phần không khí)"],
+          "chua_duoc_dung": ["Sơ đồ phân tử chi tiết, phân biệt khí oxygen với khí oxi theo từ vựng cũ (dùng oxygen/khí oxy)", "Phản ứng hoá học có kí hiệu phương trình (lớp 8)", "Điều chế oxygen bằng cách đun KClO3/MnO2 chi tiết (chỉ nhận biết)"],
+          "dang_bai_dien_hinh": ["Xác định trạng thái/sự chuyển thể theo bảng nhiệt độ nóng chảy, sôi", "Nhận định đúng sai về tính chất của chất", "Thành phần không khí theo phần trăm"],
+          "luu_y_ra_de": "Chưa dùng thuật ngữ 'phân tử' làm khái niệm chính (phân tử học ở lớp 7)."
+        },
+        {
+          "id": "khtn6-vat-lieu-nhien-lieu-luong-thuc",
+          "ten": "Vật liệu, nguyên liệu, nhiên liệu, lương thực – thực phẩm thông dụng",
+          "hoc_ky": 1,
+          "mach": "Hoá",
+          "ten_theo_sach": { "KNTT": "Chương III (Bài 12–15)", "CTST": "Chủ đề vật liệu và nhiên liệu trong đời sống", "CD": "Chủ đề các chất trong đời sống" },
+          "thuat_ngu": ["polyethylene (PE)", "polyvinyl chloride (PVC)", "nhiên liệu hoá thạch (fossil fuel)"],
+          "cong_thuc": ["Kí hiệu một số nhựa: PE, PVC, PET trên sản phẩm"],
+          "thi_nghiem": ["So sánh tính chất gốm sứ, thuỷ tinh, kim loại, nhựa", "Quan sát nguồn gốc nguyên liệu tự nhiên (bông, tre, đá)"],
+          "yeu_cau_can_dat": ["Phân loại vật liệu theo nguồn gốc, tính chất và ứng dụng; chọn vật liệu phù hợp cho mục đích sử dụng", "Phân biệt nguyên liệu tự nhiên và tổng hợp; nhiên liệu hoá thạch và nhiên liệu sinh học", "Nêu vai trò của lương thực – thực phẩm, các chất dinh dưỡng chính"],
+          "kien_thuc_duoc_dung": ["Toán 6: phần trăm (thành phần chất)"],
+          "chua_duoc_dung": ["Cấu trúc phân tử polymer (lớp 9)", "Nhiệt trị của nhiên liệu (tính toán bằng kJ — chỉ ở mức nêu)"],
+          "dang_bai_dien_hinh": ["Ghép vật liệu – tính chất – ứng dụng", "Câu hỏi lựa chọn nhiên liệu/đóng gói theo tình huống"],
+          "luu_y_ra_de": "Không yêu cầu công thức hoá học của polymer, dầu mỏ."
+        },
+        {
+          "id": "khtn6-hon-hop-tach-chat",
+          "ten": "Hỗn hợp và các phương pháp tách chất khỏi hỗn hợp",
+          "hoc_ky": 1,
+          "mach": "Hoá",
+          "ten_theo_sach": { "KNTT": "Chương IV (Bài 16–17)", "CTST": "Chủ đề hỗn hợp và tách chất", "CD": "Chủ đề hỗn hợp" },
+          "thuat_ngu": ["lọc (filtration)", "bốc hơi (evaporation)", "chưng cất (distillation)", "hòa tan (dissolution)", "chiết (extraction)"],
+          "cong_thuc": [],
+          "thi_nghiem": ["Lọc hỗn hợp nước + cát", "Bốc hơi nước biển lấy muối", "Tách sắt khỏi hỗn hợp bằng nam châm", "Lắng, rửa muối"],
+          "yeu_cau_can_dat": ["Phân biệt hỗn hợp với chất thuần khiết", "Nêu nguyên tắc và chọn phương pháp tách chất phù hợp (lọc, bay hơi, chưng cất, dùng nam châm, chiết...)", "Vận dụng tách chất trong thực tiễn (làm muối, lọc nước)"],
+          "kien_thuc_duoc_dung": ["Toán 6: phần trăm khối lượng nội dung (mức nêu)"],
+          "chua_duoc_dung": ["Chiết xuất phân đoạn dầu mỏ (chỉ nêu ở lớp 9)", "Chromatography (sắc kí)", "Định nghĩa hỗn hợp đồng nhất/không đồng nhất chi tiết (mức gợi ý, không làm khái niệm chính)"],
+          "dang_bai_dien_hinh": ["Chọn phương pháp tách cho hỗn hợp cho trước", "Trình tự các bước tách muối khỏi nước biển"],
+          "luu_y_ra_de": "Không yêu cầu tính toán thành phần hỗn hợp bằng kí hiệu hoá học."
+        },
+        {
+          "id": "khtn6-te-bao",
+          "ten": "Tế bào — đơn vị cơ bản của sự sống",
+          "hoc_ky": 2,
+          "mach": "Sinh",
+          "ten_theo_sach": { "KNTT": "Chương V (Bài 18–21)", "CTST": "Chủ đề tế bào", "CD": "Chủ đề tế bào — đơn vị cấu tạo và hoạt động sống" },
+          "thuat_ngu": ["tế bào (cell)", "màng tế bào (cell membrane)", "nhân (nucleus)", "DNA", "lục lạp (chloroplast)"],
+          "cong_thuc": [],
+          "thi_nghiem": ["Quan sát tế bào hành, tế bào lá rêu bằng kính hiển vi", "Quan sát tế bào trứng cá/ tế bào bên trong miệng"],
+          "yeu_cau_can_dat": ["Nêu vai trò của kính hiển vi và mô tả cấu tạo cơ bản của tế bào (màng, chất tế bào, nhân)", "So sánh tế bào động vật và tế bào thực vật", "Nêu sự lớn lên và sinh sản của tế bào (phân chia tế bào)"],
+          "kien_thuc_duoc_dung": ["Kỹ năng dùng kính hiển vi ở chương Mở đầu"],
+          "chua_duoc_dung": ["Cơ chế phân bào (mitosis) chi tiết từng kỳ", "Chức năng từng bào quan nhỏ (ti thể, ribosome) ở mức phân tử", "Chu trình tế bào"],
+          "dang_bai_dien_hinh": ["Ghép bộ phận tế bào với chức năng", "So sánh tế bào động vật – thực vật"],
+          "luu_y_ra_de": "Hình vẽ tế bào dùng trong đề không ghi nhãn sẵn nếu đề yêu cầu ghi nhãn."
+        },
+        {
+          "id": "khtn6-tu-te-bao-den-co-the",
+          "ten": "Từ tế bào đến cơ thể sinh vật",
+          "hoc_ky": 2,
+          "mach": "Sinh",
+          "ten_theo_sach": { "KNTT": "Chương VI (Bài 22–24)", "CTST": "Chủ đề từ tế bào đến cơ thể", "CD": "Chủ đề cơ thể sinh vật" },
+          "thuat_ngu": ["tế bào (cell)", "mô (tissue)", "cơ quan (organ)", "hệ cơ quan (organ system)"],
+          "cong_thuc": [],
+          "thi_nghiem": ["Quan sát và mô tả cơ thể đơn bào (trùng shoes), cơ thể đa bào"],
+          "yeu_cau_can_dat": ["Trình bày được mối quan hệ tế bào – mô – cơ quan – cơ thể", "So sánh cơ thể đơn bào và đa bào về cách thực hiện các chức năng sống", "Mô tả sự phân hoá chức năng giữa các mô ở sinh vật đa bào"],
+          "kien_thuc_duoc_dung": ["Kiến thức tế bào ở chương V"],
+          "chua_duoc_dung": ["Hệ cơ quan người chi tiết (cơ thể người ở lớp 8)", "Phân loại mô động vật/thực vật chi tiết theo hình thái học"],
+          "dang_bai_dien_hinh": ["Sắp xếp thứ tự tổ chức: tế bào → mô → cơ quan → cơ thể", "Nhận định đúng sai về chức năng của mô/cơ quan"],
+          "luu_y_ra_de": "Không trộn nội dung cơ thể người lớp 8 vào đề lớp 6."
+        },
+        {
+          "id": "khtn6-da-dang-the-gioi-song",
+          "ten": "Đa dạng thế giới sống: phân loại sinh vật, vi khuẩn, virus, nấm, thực vật, động vật, đa dạng sinh học",
+          "hoc_ky": 2,
+          "mach": "Sinh",
+          "ten_theo_sach": { "KNTT": "Chương VII (Bài 25–39)", "CTST": "Chủ đề thế giới sống đa dạng", "CD": "Chủ đề đa dạng sinh học" },
+          "thuat_ngu": ["vi khuẩn (bacteria)", "virus", "nấm (fungi)", "khoá lưỡng phân (dichotomous key)", "đa dạng sinh học (biodiversity)"],
+          "cong_thuc": [],
+          "thi_nghiem": ["Làm sữa chua và quan sát vi khuẩn", "Quan sát nấm men, nấm mốc", "Quan sát, phân biệt các nhóm thực vật, động vật ngoài thiên nhiên"],
+          "yeu_cau_can_dat": ["Sử dụng khoá lưỡng phân để phân loại sinh vật", "Nêu đặc điểm chính và vai trò của vi khuẩn, virus, nguyên sinh vật, nấm", "Phân biệt các nhóm thực vật, các nhóm động vật theo đặc điểm cấu tạo", "Nêu khái niệm và ý nghĩa của đa dạng sinh học, biện pháp bảo tồn"],
+          "kien_thuc_duoc_dung": ["Toán 6: phép chia, phân loại theo tính chất"],
+          "chua_duoc_dung": ["Phân loại học theo 5/6 giới chi tiết với danh pháp Latin kép đầy đủ (chỉ nêu mức khái niệm)", "Di truyền học vi khuẩn (lớp 9)", "Hệ thống phát sinh chủng loại (đại học)"],
+          "dang_bai_dien_hinh": ["Dùng khoá lưỡng phân để xác định tên sinh vật theo bảng mô tả", "Ghép nhóm sinh vật với đặc điểm", "Sắp xếp cấp độ phân loại"],
+          "luu_y_ra_de": "Không dùng danh pháp khoa học Latinh phức tạp ngoài ví dụ cơ bản."
+        },
+        {
+          "id": "khtn6-luc-trong-doi-song",
+          "ten": "Lực trong đời sống",
+          "hoc_ky": 2,
+          "mach": "Lý",
+          "ten_theo_sach": { "KNTT": "Chương VIII (Bài 40–45)", "CTST": "Chủ đề lực và sự biến dạng", "CD": "Chủ đề lực trong đời sống" },
+          "thuat_ngu": ["lực (force)", "trọng lượng (weight)", "lực hấp dẫn (gravity)", "lực ma sát (friction force)", "lực đàn hồi (elastic force)"],
+          "cong_thuc": ["Đơn vị lực: niutơn (N)", "Độ lớn của lực làm lò xo biến dạng tỉ lệ với độ biến dạng (nêu định tính)"],
+          "thi_nghiem": ["Kéo lực kế đo lực", "Thí nghiệm biến dạng lò xo", "Quan sát lực ma sát khi kéo vật trên mặt bàn"],
+          "yeu_cau_can_dat": ["Nêu lực là tác động gây biến dạng hoặc thay đổi chuyển động; biểu diễn lực bằng vectơ (mũi tên)", "Mô tả trọng lượng, lực hấp dẫn; phân biệt khối lượng và trọng lượng", "Nêu tác dụng của lực ma sát, lực cản của nước và cách tăng/giảm"],
+          "kien_thuc_duoc_dung": ["Toán 6: phép tính số tự nhiên, phân số (tính bằng niutơn, đọc lực kế)"],
+          "chua_duoc_dung": ["Công thức F = mg (lớp 10)", "Phân tích lực theo hợp/vectơ, ba định luật Newton (lớp 10)", "Hệ số ma sát (lớp 10)"],
+          "dang_bai_dien_hinh": ["Đọc chỉ số lực kế", "Nhận diện loại lực trong tình huống, tăng/giảm ma sát", "Phân biệt khối lượng (kg) và trọng lượng (N)"],
+          "luu_y_ra_de": "Không dùng kí hiệu vectơ tổng quát; chưa dùng cụm 'hợp lực' với phép toán vectơ."
+        },
+        {
+          "id": "khtn6-nang-luong",
+          "ten": "Năng lượng và sự chuyển hoá năng lượng",
+          "hoc_ky": 2,
+          "mach": "Lý",
+          "ten_theo_sach": { "KNTT": "Chương IX (Bài 46–51)", "CTST": "Chủ đề năng lượng và sự chuyển hóa", "CD": "Chủ đề năng lượng" },
+          "thuat_ngu": ["năng lượng (energy)", "năng lượng tái tạo (renewable energy)", "năng lượng hao phí (wasted energy)", "điện năng (electrical energy)"],
+          "cong_thuc": ["Đơn vị năng lượng: joule (J), kilôwatt giờ (kWh) — mức làm quen"],
+          "thi_nghiem": ["Thí nghiệm chuyển hoá năng lượng: quả nặng, pin – bóng đèn, nến đốt"],
+          "yeu_cau_can_dat": ["Nêu năng lượng là khả năng thực hiện công; kể tên các dạng năng lượng (nhiệt, quang, hoá, cơ, điện, hạt nhân)", "Mô tả sự truyền và chuyển hoá năng lượng giữa các dạng; nêu năng lượng hao phí", "Phân biệt nguồn năng lượng tái tạo và không tái tạo; biện pháp tiết kiệm năng lượng"],
+          "kien_thuc_duoc_dung": ["Toán 6: phép tính phần trăm (hiệu suất nội dung ở mức nêu)"],
+          "chua_duoc_dung": ["Công thức động năng W = mv²/2, thế năng W = mgh (lớp 9)", "Định luật bảo toàn năng lượng dưới dạng phương trình (lớp 9)", "Hiệu suất tính bằng công thức % (lớp 8, lớp 9)"],
+          "dang_bai_dien_hinh": ["Chuỗi chuyển hoá năng lượng trong một thiết bị", "Phân loại nguồn năng lượng tái tạo/không tái tạo", "Nêu biện pháp tiết kiệm điện"],
+          "luu_y_ra_de": "Chưa tính toán bằng công thức năng lượng cụ thể."
+        },
+        {
+          "id": "khtn6-trai-dat-bau-troi",
+          "ten": "Trái Đất và bầu trời: Mặt Trời, Mặt Trăng, Hệ Mặt Trời, Ngân Hà",
+          "hoc_ky": 2,
+          "mach": "Trái Đất và bầu trời",
+          "ten_theo_sach": { "KNTT": "Chương X (Bài 52–55)", "CTST": "Chủ đề Trái Đất và bầu trời", "CD": "Chủ đề bầu trời và Trái Đất" },
+          "thuat_ngu": ["thiên thể (celestial body)", "Hệ Mặt Trời (Solar System)", "Ngân Hà (Milky Way)", "sao chổi (comet)"],
+          "cong_thuc": [],
+          "thi_nghiem": ["Mô hình chuyển động tự quay của Trái Đất, pha của Mặt Trăng"],
+          "yeu_cau_can_dat": ["Mô tả chuyển động biểu kiến của Mặt Trời và chuyển động tự quay của Trái Đất; nêu hệ quả (ngày – đêm)", "Mô tả Mặt Trăng và chu kì pha trăng; nêu hiện tượng nhật thực/nguyệt thực ở mức khái quát", "Nêu thành phần của Hệ Mặt Trời và vị trí của Hệ Mặt Trời trong Ngân Hà"],
+          "kien_thuc_duoc_dung": ["Toán 6: chia, ước lượng (chu kì 24 giờ, 27–29 ngày, 365 ngày)"],
+          "chua_duoc_dung": ["Bán trục lớn, định luật Kepler (thiên văn nâng cao)", "Phép tính tính ngày lạc quyển, dương lịch chi tiết", "Tia vũ trụ, vật chất tối"],
+          "dang_bai_dien_hinh": ["Sắp xếp các thiên thể theo cấp độ (Trái Đất → Hệ Mặt Trời → Ngân Hà)", "Giải thích ngày – đêm theo mô hình Trái Đất tự quay", "Nhận định đúng sai về pha Mặt Trăng"],
+          "luu_y_ra_de": "Không hỏi số liệu độ dài chính xác tới từng ngày/giờ của chu kì pha trăng theo nhiều cách tính khác nhau."
+        }
+      ],
+      "chuyen_de": [],
+      "ghi_chu_chua_chac": [
+        "Mục lục lớp 6 lấy theo KNTT (10 chương, 55 bài) từ loigiaihay; CTST/CD có phân bố chương khác (ví dụ CTST có chủ đề phân tử ở lớp 6) — ten_theo_sach ghi theo chương trình, chưa đối chiếu tên bài từng sách",
+        "Thời điểm dạy từng chương trong học kì 1/học kì 2 có thể khác nhau giữa các trường; đề giữa/cuối kì chỉ nên ghi phạm vi theo thứ tự sách KNTT",
+        "Một số sách cũ còn dùng 'oxi' — SGK KNTT dùng 'oxygen/khí oxy'"
+      ]
+    },
+    {
+      "lop": 7,
+      "chuong": [
+        {
+          "id": "khtn7-nguyen-tu-bang-tuan-hoan",
+          "ten": "Nguyên tử. Sơ lược về bảng tuần hoàn các nguyên tố hoá học",
+          "hoc_ky": 1,
+          "mach": "Hoá",
+          "ten_theo_sach": { "KNTT": "Chương 1 (Bài 2–4)", "CTST": "Chương nguyên tử và bảng tuần hoàn", "CD": "Chương nguyên tử – bảng tuần hoàn" },
+          "thuat_ngu": ["nguyên tử (atom)", "nguyên tố hoá học (chemical element)", "proton (proton)", "neutron", "electron", "sodium (natri)", "oxygen (oxy)", "hydrogen (hydro)"],
+          "cong_thuc": ["Kí hiệu hoá học: H, O, C, N, Na, Fe, Cu, Al, S... (26 nguyên tố SGK nêu)", "Số hiệu nguyên tử Z = số proton", "Kí hiệu hạt: p, n, e"],
+          "thi_nghiem": ["Mô hình nguyên tử (bảng/quỹ đạo)", "Thí nghiệm lấy ví dụ tính dẫn điện, từ tính của các nguyên tố"],
+          "yeu_cau_can_dat": ["Mô tả cấu tạo nguyên tử (nhân chứa proton, neutron; electron chuyển động quanh nhân)", "Nêu khái niệm nguyên tố hoá học; đọc được vị trí nguyên tố trong bảng tuần hoàn (nhóm, chu kì)", "Tra bảng tuần hoàn để biết kí hiệu, tên, số hiệu nguyên tử, nguyên tử khối"],
+          "kien_thuc_duoc_dung": ["Toán 7: số hữu tỉ, số nguyên âm (điện tích, số hạt)"],
+          "chua_duoc_dung": ["Mô hình lượng tử, obitan (đại học)", "Cấu hình electron chi tiết theo lớp (chỉ nêu tới lớp electron ngoài cùng)", "Đồng vị và tính nguyên tử khối trung bình (lớp 8)"],
+          "dang_bai_dien_hinh": ["Tính số proton, neutron, electron theo Z và A", "Đọc bảng tuần hoàn tìm nguyên tố theo nhóm/chu kì", "So sánh tính chất nguyên tố cùng nhóm (tính kim loại)"],
+          "luu_y_ra_de": "Danh pháp tiếng Việt dùng 'natri, kali' song song với sodium, potassium; ra đề theo SGK."
+        },
+        {
+          "id": "khtn7-phan-tu-lien-ket-hoa-hoc",
+          "ten": "Phân tử. Liên kết hoá học. Hoá trị và công thức hoá học",
+          "hoc_ky": 1,
+          "mach": "Hoá",
+          "ten_theo_sach": { "KNTT": "Chương 2 (Bài 5–7)", "CTST": "Chương phân tử, hợp chất và công thức hoá học", "CD": "Chương phân tử và công thức hoá học" },
+          "thuat_ngu": ["phân tử (molecule)", "đơn chất (simple substance)", "hợp chất (compound)", "liên kết cộng hoá trị (covalent bond)", "hoá trị (valence)"],
+          "cong_thuc": ["CTHH: H₂O, CO₂, O₂, N₂, NaCl, HCl, CH₄...", "Quy tắc hoá trị: I·a = II·b (hoá trị × số nguyên tử bằng nhau)"],
+          "thi_nghiem": ["Mô hình ghép phân tử nước, phân tử oxygen"],
+          "yeu_cau_can_dat": ["Phân biệt đơn chất và hợp chất; nêu ý nghĩa liên kết hoá học", "Xác định hoá trị của nguyên tố trong hợp chất; lập công thức hoá học theo quy tắc hoá trị", "Nêu ý nghĩa của công thức hoá học"],
+          "kien_thuc_duoc_dung": ["Toán 7: phân số, tỉ lệ, tìm hai số khi biết tổng/tỉ (lập CTHH)"],
+          "chua_duoc_dung": ["Liên kết ion, liên kết kim loại ở mức chi tiết cơ chế (chỉ nêu tên)", "Mol và phương trình hoá học (lớp 8)", "Công thức cấu tạo hữu cơ (lớp 9)"],
+          "dang_bai_dien_hinh": ["Lập CTHH theo hoá trị", "Phân loại đơn chất/hợp chất theo CTHH", "Tìm hoá trị nguyên tố trong hợp chất cho trước"],
+          "luu_y_ra_de": "Chưa dùng thuật ngữ 'chỉ số nguyên tử' với bài toán tính phân tử khối (phân tử khối ở lớp 8)."
+        },
+        {
+          "id": "khtn7-toc-do-chuyen-dong",
+          "ten": "Tốc độ: chuyển động cơ, đo tốc độ, đồ thị quãng đường – thời gian, an toàn giao thông",
+          "hoc_ky": 1,
+          "mach": "Lý",
+          "ten_theo_sach": { "KNTT": "Chương 3 (Bài 8–11)", "CTST": "Chương chuyển động và tốc độ", "CD": "Chương tốc độ" },
+          "thuat_ngu": ["chuyển động cơ (mechanical motion)", "tốc độ (speed)", "quãng đường (distance)", "đồ thị quãng đường – thời gian (distance-time graph)"],
+          "cong_thuc": ["v = s/t; s = v·t; t = s/v", "Đơn vị: m/s; 1 m/s = 3,6 km/h; 1 km/h = 1/3,6 m/s"],
+          "thi_nghiem": ["Đo tốc độ trung bình bằng thước và đồng hồ bấm giây", "Phân tích đồ thị s–t"],
+          "yeu_cau_can_dat": ["Nhận biết chuyển động cơ, chọn vật mốc; tính tốc độ trung bình", "Đọc, vẽ đồ thị quãng đường – thời gian của chuyển động đều; so sánh tốc độ qua đồ thị", "Vận dụng tính tốc độ trong an toàn giao thông (khoảng cách an toàn, phanh xe)"],
+          "kien_thuc_duoc_dung": ["Toán 7: đại lượng tỉ lệ thuận (s với t khi v không đổi), tính theo tỉ lệ, đồ thị hàm y = ax"],
+          "chua_duoc_dung": ["Tốc độ tức thời với chuyển động biến đổi chi tiết, gia tốc (lớp 10)", "Chuyển động trên các đoạn: chỉ tính tốc độ trung bình cả đoạn theo s/t, không lấy trung bình cộng tốc độ từng đoạn", "Vật lí sóng, chuyển động tròn (lớp sau)"],
+          "dang_bai_dien_hinh": ["Tính s, v, t theo công thức và đổi đơn vị m/s ↔ km/h", "Đọc đồ thị s–t xác định tốc độ từng đoạn", "Bài toán đi – về, gặp nhau ở mức hai chuyển động đều"],
+          "luu_y_ra_de": "Không ra bài chuyển động không đều yêu cầu tính tốc độ tức thời; tốc độ trung bình luôn theo tổng quãng đường/tổng thời gian."
+        },
+        {
+          "id": "khtn7-am-thanh",
+          "ten": "Âm thanh: sóng âm, độ to, độ cao, phản xạ âm và ô nhiễm tiếng ồn",
+          "hoc_ky": 2,
+          "mach": "Lý",
+          "ten_theo_sach": { "KNTT": "Chương 4 (Bài 12–14)", "CTST": "Chương âm thanh", "CD": "Chương âm thanh" },
+          "thuat_ngu": ["sóng âm (sound wave)", "tần số (frequency)", "độ cao của âm (pitch)", "độ to của âm (loudness)", "phản xạ âm (sound reflection)", "đềcibê (dB)"],
+          "cong_thuc": ["Đơn vị đo mức tiếng ồn: đêxiben (dB)", "Tốc độ truyền âm trong không khí khoảng 340 m/s (20°C) — số liệu cho sẵn"],
+          "thi_nghiem": ["Âng-ten phát âm, cộng hưởng hai ngã tư", "Quan sát dao động của dây đàn"],
+          "yeu_cau_can_dat": ["Mô tả âm là sóng cơ truyền trong môi trường vật chất, không truyền được trong chân không", "Nêu mối liên hệ tần số – độ cao, biên độ – độ to", "Mô tả phản xạ âm (tiếng vọng, siêu âm) và ứng dụng; nêu ô nhiễm tiếng ồn và biện pháp giảm"],
+          "kien_thuc_duoc_dung": ["Toán 7: tỉ lệ nghịch (tần số – chu kì, mức nêu)"],
+          "chua_duoc_dung": ["Công thức sóng v = λf chi tiết (lớp 9/vật lí sóng)", "Phân tích phổ âm, cường độ âm theo logarit (đại học)"],
+          "dang_bai_dien_hinh": ["So sánh hai âm về độ to, độ cao theo thông số", "Ứng dụng phản xạ âm (sonar, siêu âm) theo mô tả", "Nhận định môi trường truyền âm"],
+          "luu_y_ra_de": "Cho sẵn tốc độ truyền âm nếu bài tính toán; không yêu cầu ghi nhớ công thức sóng."
+        },
+        {
+          "id": "khtn7-anh-sang-phan-xa",
+          "ten": "Ánh sáng: tia sáng, phản xạ ánh sáng, ảnh qua gương phẳng",
+          "hoc_ky": 2,
+          "mach": "Lý",
+          "ten_theo_sach": { "KNTT": "Chương 5 (Bài 15–17)", "CTST": "Chương ánh sáng", "CD": "Chương ánh sáng" },
+          "thuat_ngu": ["tia sáng (light ray)", "vùng tối (shadow)", "phản xạ ánh sáng (reflection)", "góc phản xạ (angle of reflection)", "gương phẳng (plane mirror)"],
+          "cong_thuc": ["Định luật phản xạ: góc phản xạ = góc tới (i = r)", "Tốc độ ánh sáng trong chân không: 300 000 km/s (c = 3×10⁸ m/s)"],
+          "thi_nghiem": ["Chùm sáng tia hẹp và gương phẳng, thước đo góc", "Bóng nửa tối, bóng tối", "Ảnh ảo qua gương phẳng"],
+          "yeu_cau_can_dat": ["Nêu ánh sáng là sóng mang năng lượng; mô tả tia sáng và vùng tối", "Phát biểu định luật phản xạ ánh sáng; vẽ tia tới, tia phản xạ", "Mô tả tính chất ảnh của vật qua gương phẳng (ảnh ảo, ngược chiều, bằng vật)"],
+          "kien_thuc_duoc_dung": ["Toán 7: hai góc đối đỉnh, tam giác (chứng minh tính chất ảnh qua gương phẳng)"],
+          "chua_duoc_dung": ["Khúc xạ ánh sáng, thấu kính, mắt (lớp 9)", "Gương cầu, tiêu điểm (lớp 9)", "Sóng điện từ, phổ ánh sáng chi tiết (chỉ nêu ánh sáng trắng gồm nhiều màu ở mức gợi ý)"],
+          "dang_bai_dien_hinh": ["Vẽ tia phản xạ theo định luật", "Tính góc giữa tia tới và gương/tia phản xạ", "Nhận định tính chất ảnh qua gương phẳng"],
+          "luu_y_ra_de": "Không ra bài khúc xạ hoặc tán sắc (lớp 9); phép chia đường trung bình trong đề phải ra số đẹp."
+        },
+        {
+          "id": "khtn7-tu-nam-cham",
+          "ten": "Từ: nam châm, từ trường, nam châm điện",
+          "hoc_ky": 2,
+          "mach": "Lý",
+          "ten_theo_sach": { "KNTT": "Chương 6 (Bài 18–20)", "CTST": "Chương từ trường", "CD": "Chương từ" },
+          "thuat_ngu": ["nam châm (magnet)", "cực nam châm (magnetic pole)", "từ trường (magnetic field)", "nam châm điện (electromagnet)"],
+          "cong_thuc": [],
+          "thi_nghiem": ["Nam châm hút các vật bằng sắt; kim nam châm chỉ hướng", "Cực cùng đẩy nhau, cực khác hút nhau", "Làm nam châm điện bằng dây quấn và pin"],
+          "yeu_cau_can_dat": ["Nêu tính chất của nam châm (hai cực, hút vật bằng sắt); mô tả từ trường xung quanh nam châm bằng đường sức từ ở mức sơ giản", "Vận dụng tính đẩy – hút giữa hai cực nam châm", "Mô tả cách chế tạo nam châm điện và nêu ưu điểm (bật/tắt, thay đổi lực từ)"],
+          "kien_thuc_duoc_dung": ["Toán 7: trực quan hình học cho mô hình đường sức"],
+          "chua_duoc_dung": ["Điện từ học: cảm ứng điện từ, dòng điện cảm ứng (lớp 9 chủ đề điện – điện từ)", "Công thức lực từ F = BIL (đại học)"],
+          "dang_bai_dien_hinh": ["Xác định cực nam châm theo tương tác", "Tình huống ứng dụng nam châm điện (chuông, cần cẩu)", "Nhận định vật liệu bị nam châm hút"],
+          "luu_y_ra_de": "Không ra bài cảm ứng điện từ (thuộc lớp 9)."
+        },
+        {
+          "id": "khtn7-trao-doi-chat-nang-luong",
+          "ten": "Trao đổi chất và chuyển hoá năng lượng ở sinh vật (quang hợp, hô hấp, dinh dưỡng)",
+          "hoc_ky": 2,
+          "mach": "Sinh",
+          "ten_theo_sach": { "KNTT": "Chương 7 (Bài 21–32)", "CTST": "Chương trao đổi chất và chuyển hóa năng lượng", "CD": "Chương chuyển hóa vật chất và năng lượng ở sinh vật" },
+          "thuat_ngu": ["quang hợp (photosynthesis)", "hô hấp tế bào (cellular respiration)", "chlorophyll (chất diệp lục)", "thoát hơi nước (transpiration)", "dinh dưỡng (nutrition)"],
+          "cong_thuc": ["Từ khoá phản ứng quang hợp: CO₂ + H₂O + ánh sáng → chất hữu cơ (glucose) + O₂ (nêu bằng từ ngữ, chưa viết PTHH)"],
+          "thi_nghiem": ["Chứng minh quang hợp: phơi cây trong cốc nước vôi trong, thử khí oxy", "Chứng minh hô hấp: hạt nảy mầm trong bình kín", "Thí nghiệm thân vận chuyển nước (lá cà chua trong mực)"],
+          "yeu_cau_can_dat": ["Khái quát trao đổi chất và chuyển hoá năng lượng; mô tả quá trình quang hợp và các yếu tố ảnh hưởng", "Mô tả hô hấp tế bào và so sánh quang hợp – hô hấp", "Mô tả trao đổi khí, vai trò của nước và chất dinh dưỡng, trao đổi nước ở thực vật và động vật"],
+          "kien_thuc_duoc_dung": ["Toán 7: tỉ lệ, đồ thị (yếu tố ảnh hưởng quang hợp)"],
+          "chua_duoc_dung": ["Phương trình hoá học của quang hợp, chu trình Calvin (lớp 9 và đại học)", "Glycolysis, chu trình Krebs (đại học)", "Enzyme và cơ chế xúc tác chi tiết (mức nêu)"],
+          "dang_bai_dien_hinh": ["So sánh quang hợp và hô hấp theo bảng", "Xác định yếu tố hạn chế quang hợp theo đồ thị", "Giải thích thí nghiệm chứng minh quang hợp/hô hấp"],
+          "luu_y_ra_de": "Không yêu cầu viết phương trình hoá học (lớp 8 mới học)."
+        },
+        {
+          "id": "khtn7-cam-ung-o-sinh-vat",
+          "ten": "Cảm ứng ở sinh vật và tập tính ở động vật",
+          "hoc_ky": 2,
+          "mach": "Sinh",
+          "ten_theo_sach": { "KNTT": "Chương 8 (Bài 33–35)", "CTST": "Chương cảm ứng", "CD": "Chương cảm ứng ở sinh vật" },
+          "thuat_ngu": ["cảm ứng (irritability)", "tập tính (behavior)", "hướng động (tropism)", "hướng sáng (phototropism)"],
+          "cong_thuc": [],
+          "thi_nghiem": ["Thí nghiệm cây con quay về phía sáng", "Quan sát tập tính của kiến, cá"],
+          "yeu_cau_can_dat": ["Nêu khái niệm cảm ứng; kể các hình thức phản ứng của thực vật, động vật với kích thích", "Mô tả một số tập tính bẩm sinh và tập tính học được ở động vật", "Nêu ứng dụng hiện tượng cảm ứng vào sản xuất"],
+          "kien_thuc_duoc_dung": ["Toán 7: lập luận nếu – thì trong suy luận khoa học"],
+          "chua_duoc_dung": ["Hệ thần kinh, phản xạ có điều kiện Pavlov (lớp 8 – cơ thể người)", "Hoóc-môn sinh trưởng chi tiết (auxin) ở mức phân tử"],
+          "dang_bai_dien_hinh": ["Phân loại tập tính bẩm sinh/học được theo mô tả", "Dự đoán hướng phát triển của cây theo nguồn sáng"],
+          "luu_y_ra_de": "Không dùng thuật ngữ phản xạ không điều kiện/có điều kiện (lớp 8)."
+        },
+        {
+          "id": "khtn7-sinh-truong-phat-trien",
+          "ten": "Sinh trưởng và phát triển ở sinh vật",
+          "hoc_ky": 2,
+          "mach": "Sinh",
+          "ten_theo_sach": { "KNTT": "Chương 9 (Bài 36–38)", "CTST": "Chương sinh trưởng và phát triển", "CD": "Chương sinh trưởng và phát triển ở sinh vật" },
+          "thuat_ngu": ["sinh trưởng (growth)", "phát triển (development)", "giâm cành (cutting)", "ghép (grafting)"],
+          "cong_thuc": [],
+          "thi_nghiem": ["Đo chiều dài cây con theo thời gian và vẽ đồ thị sinh trưởng", "Thực hành giâm cành, chiết cành"],
+          "yeu_cau_can_dat": ["Phân biệt sinh trưởng và phát triển; nêu yếu tố ảnh hưởng", "Mô tả một số biện pháp kĩ thuật thúc đẩy/điều khiển sinh trưởng (bón phân, chiếu sáng, dùng chất điều hoà ở mức nêu)", "Vận dụng vào trồng trọt, chăn nuôi"],
+          "kien_thuc_duoc_dung": ["Toán 7: đọc đồ thị theo trục toạ độ"],
+          "chua_duoc_dung": ["Hoóc-môn sinh trưởng chi tiết, gen điều khiển sinh trưởng (lớp 9, đại học)", "Đường cong sinh trưởng hình chữ S với mô hình toán"],
+          "dang_bai_dien_hinh": ["Đọc đồ thị sinh trưởng và rút kết luận", "Chọn biện pháp kĩ thuật cho mục đích trồng trọt"],
+          "luu_y_ra_de": "Tránh trộn nội dung sinh sản (chương sau) vào câu hỏi sinh trưởng."
+        },
+        {
+          "id": "khtn7-sinh-san-o-sinh-vat",
+          "ten": "Sinh sản ở sinh vật: vô tính, hữu tính và điều khiển sinh sản",
+          "hoc_ky": 2,
+          "mach": "Sinh",
+          "ten_theo_sach": { "KNTT": "Chương 10 (Bài 39–42)", "CTST": "Chương sinh sản ở sinh vật", "CD": "Chương sinh sản ở sinh vật" },
+          "thuat_ngu": ["sinh sản vô tính (asexual reproduction)", "sinh sản hữu tính (sexual reproduction)", "giao tử (gamete)", "thụ tinh (fertilization)", "hoa (flower)"],
+          "cong_thuc": [],
+          "thi_nghiem": ["Nhân giống bằng giâm, chiết, ghép; nuôi cấy mô ở mức nêu", "Quan sát cấu tạo hoa"],
+          "yeu_cau_can_dat": ["So sánh sinh sản vô tính và hữu tính (đặc điểm, ưu – nhược điểm)", "Mô tả sinh sản vô tính ở vi sinh vật, thực vật, động vật; các biện pháp kĩ thuật nhân giống", "Mô tả cấu tạo hoa và quá trình thụ phấn, thụ tinh ở thực vật; nêu yếu tố ảnh hưởng và biện pháp điều khiển sinh sản"],
+          "kien_thuc_duoc_dung": ["Toán 7: nhân đôi theo cấp số nhân ở mức nêu (sinh sản phân chia)"],
+          "chua_duoc_dung": ["Giảm phân, di truyền nhiễm sắc thể (lớp 9)", "Thụ tinh trong – ngoài với chi tiết phôi học", "Công nghệ tế bào, clone ở mức phân tử"],
+          "dang_bai_dien_hinh": ["Phân loại hình thức sinh sản theo ví dụ", "Ghép bộ phận hoa với chức năng", "Chọn phương pháp nhân giống cho cây trồng"],
+          "luu_y_ra_de": "Không trộn nội dung di truyền học và giảm phân (lớp 9)."
+        }
+      ],
+      "chuyen_de": [],
+      "ghi_chu_chua_chac": [
+        "Mục lục lớp 7 lấy theo KNTT (10 chương, 42 bài) từ vietjack/loigiaihay; CTST/CD khác cách gộp chương (ví dụ CTST ghép 'Ánh sáng' và 'Từ' chung học kì) — ten_theo_sach ghi theo chương trình, chưa đối chiếu tên bài từng sách",
+        "Ánh sáng lớp 7 KNTT chỉ gồm tia sáng, vùng tối, phản xạ, gương phẳng; khúc xạ và thấu kính ở lớp 9 (tránh nhầm với CTST có thể đưa khúc xạ vào lớp 7)",
+        "Tỉ lệ mach trong đề KHTN (Lý/Hoá/Sinh) không có quy định toàn quốc; cấu trúc đề ghi theo dạng phổ biến, mỗi trường/Sở có thể khác"
+      ]
+    }
+  ],
+  "cau_truc_de": [
+    {
+      "loai": "Đề kiểm tra giữa học kì 1 môn KHTN lớp 6",
+      "lop": 6,
+      "thoi_gian_phut": 60,
+      "phan": [
+        { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 8, "diem_moi_cau": 0.5, "tong_diem": 4 },
+        { "ten": "Phần II. Tự luận", "so_cau": 4, "diem_moi_cau": 1.5, "tong_diem": 6 }
+      ],
+      "pham_vi": ["khtn6-mo-dau-khtn-do-luong", "khtn6-chat-quanh-ta", "khtn6-vat-lieu-nhien-lieu-luong-thuc", "khtn6-hon-hop-tach-chat"],
+      "ti_le_muc_do": "NB 50%, TH 30%, VD 20%",
+      "ti_le_mach": "Mở đầu + Hoá: toàn bộ phạm vi (lớp 6 học kì 1 chưa có chương Lý/Sinh theo KNTT)"
+    },
+    {
+      "loai": "Đề kiểm tra cuối học kì 1 môn KHTN lớp 6",
+      "lop": 6,
+      "thoi_gian_phut": 90,
+      "phan": [
+        { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 12, "diem_moi_cau": 0.5, "tong_diem": 6 },
+        { "ten": "Phần II. Trắc nghiệm đúng/sai", "so_cau": 2, "diem_moi_cau": 1, "tong_diem": 2 },
+        { "ten": "Phần III. Tự luận", "so_cau": 4, "diem_moi_cau": 1.5, "tong_diem": 6 }
+      ],
+      "pham_vi": ["khtn6-mo-dau-khtn-do-luong", "khtn6-chat-quanh-ta", "khtn6-vat-lieu-nhien-lieu-luong-thuc", "khtn6-hon-hop-tach-chat", "khtn6-te-bao"],
+      "ti_le_muc_do": "NB 40%, TH 40%, VD 20%",
+      "ti_le_mach": "Hoá 60%, Sinh 40% (tuỳ tiến độ; có trường không kịp chương V)"
+    },
+    {
+      "loai": "Đề kiểm tra giữa học kì 2 môn KHTN lớp 6",
+      "lop": 6,
+      "thoi_gian_phut": 60,
+      "phan": [
+        { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 8, "diem_moi_cau": 0.5, "tong_diem": 4 },
+        { "ten": "Phần II. Tự luận", "so_cau": 4, "diem_moi_cau": 1.5, "tong_diem": 6 }
+      ],
+      "pham_vi": ["khtn6-tu-te-bao-den-co-the", "khtn6-da-dang-the-gioi-song", "khtn6-luc-trong-doi-song", "khtn6-nang-luong", "khtn6-trai-dat-bau-troi"],
+      "ti_le_muc_do": "NB 50%, TH 30%, VD 20%",
+      "ti_le_mach": "Sinh 40%, Lý 40%, Trái Đất và bầu trời 20%"
+    },
+    {
+      "loai": "Đề kiểm tra cuối học kì 2 môn KHTN lớp 6",
+      "lop": 6,
+      "thoi_gian_phut": 90,
+      "phan": [
+        { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 12, "diem_moi_cau": 0.5, "tong_diem": 6 },
+        { "ten": "Phần II. Trắc nghiệm đúng/sai", "so_cau": 2, "diem_moi_cau": 1, "tong_diem": 2 },
+        { "ten": "Phần III. Tự luận", "so_cau": 4, "diem_moi_cau": 1.5, "tong_diem": 6 }
+      ],
+      "pham_vi": ["khtn6-tu-te-bao-den-co-the", "khtn6-da-dang-the-gioi-song", "khtn6-luc-trong-doi-song", "khtn6-nang-luong", "khtn6-trai-dat-bau-troi"],
+      "ti_le_muc_do": "NB 40%, TH 40%, VD 20%",
+      "ti_le_mach": "Lý 40%, Sinh 40%, Trái Đất và bầu trời 20%"
+    },
+    {
+      "loai": "Đề kiểm tra giữa học kì 1 môn KHTN lớp 7",
+      "lop": 7,
+      "thoi_gian_phut": 60,
+      "phan": [
+        { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 8, "diem_moi_cau": 0.5, "tong_diem": 4 },
+        { "ten": "Phần II. Tự luận", "so_cau": 4, "diem_moi_cau": 1.5, "tong_diem": 6 }
+      ],
+      "pham_vi": ["khtn7-nguyen-tu-bang-tuan-hoan", "khtn7-phan-tu-lien-ket-hoa-hoc", "khtn7-toc-do-chuyen-dong", "khtn7-am-thanh", "khtn7-anh-sang-phan-xa"],
+      "ti_le_muc_do": "NB 40%, TH 40%, VD 20%",
+      "ti_le_mach": "Hoá 40%, Lý 60%"
+    },
+    {
+      "loai": "Đề kiểm tra cuối học kì 1 môn KHTN lớp 7",
+      "lop": 7,
+      "thoi_gian_phut": 90,
+      "phan": [
+        { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 12, "diem_moi_cau": 0.5, "tong_diem": 6 },
+        { "ten": "Phần II. Trắc nghiệm đúng/sai", "so_cau": 2, "diem_moi_cau": 1, "tong_diem": 2 },
+        { "ten": "Phần III. Tự luận", "so_cau": 4, "diem_moi_cau": 1.5, "tong_diem": 6 }
+      ],
+      "pham_vi": ["khtn7-nguyen-tu-bang-tuan-hoan", "khtn7-phan-tu-lien-ket-hoa-hoc", "khtn7-toc-do-chuyen-dong", "khtn7-am-thanh", "khtn7-anh-sang-phan-xa"],
+      "ti_le_muc_do": "NB 40%, TH 40%, VD 20%",
+      "ti_le_mach": "Lý 60%, Hoá 40%"
+    },
+    {
+      "loai": "Đề kiểm tra giữa học kì 2 môn KHTN lớp 7",
+      "lop": 7,
+      "thoi_gian_phut": 60,
+      "phan": [
+        { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 8, "diem_moi_cau": 0.5, "tong_diem": 4 },
+        { "ten": "Phần II. Tự luận", "so_cau": 4, "diem_moi_cau": 1.5, "tong_diem": 6 }
+      ],
+      "pham_vi": ["khtn7-tu-nam-cham", "khtn7-trao-doi-chat-nang-luong", "khtn7-cam-ung-o-sinh-vat", "khtn7-sinh-truong-phat-trien", "khtn7-sinh-san-o-sinh-vat"],
+      "ti_le_muc_do": "NB 50%, TH 30%, VD 20%",
+      "ti_le_mach": "Lý 20%, Sinh 80%"
+    },
+    {
+      "loai": "Đề kiểm tra cuối học kì 2 môn KHTN lớp 7",
+      "lop": 7,
+      "thoi_gian_phut": 90,
+      "phan": [
+        { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 12, "diem_moi_cau": 0.5, "tong_diem": 6 },
+        { "ten": "Phần II. Trắc nghiệm đúng/sai", "so_cau": 2, "diem_moi_cau": 1, "tong_diem": 2 },
+        { "ten": "Phần III. Tự luận", "so_cau": 4, "diem_moi_cau": 1.5, "tong_diem": 6 }
+      ],
+      "pham_vi": ["khtn7-tu-nam-cham", "khtn7-trao-doi-chat-nang-luong", "khtn7-cam-ung-o-sinh-vat", "khtn7-sinh-truong-phat-trien", "khtn7-sinh-san-o-sinh-vat"],
+      "ti_le_muc_do": "NB 40%, TH 40%, VD 20%",
+      "ti_le_mach": "Sinh 80%, Lý 20%"
+    }
+  ],
+  "phien_ban": 1
+}
