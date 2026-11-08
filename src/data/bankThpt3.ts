@@ -14546,7 +14546,349 @@ export const BANK_THPT3: BankEntry[] = [
     "variable": false
   },
   {
-    "id": "thpt-t12-matcau-01",
+    "id": "thpt-t12-matcau-oxyz-01",
+    "subject": "Toán",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "prompt": "Mặt cầu $(x-2)^2+(y+1)^2+z^2=25$ có tâm và bán kính lần lượt là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$I(2;1;0)$, $R=5$"
+      },
+      {
+        "key": "B",
+        "text": "$I(-2;1;0)$, $R=25$"
+      },
+      {
+        "key": "C",
+        "text": "$I(2;-1;0)$, $R=5$"
+      },
+      {
+        "key": "D",
+        "text": "$I(2;-1;0)$, $R=25$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Dạng chính tắc $(x-a)^2+(y-b)^2+(z-c)^2=R^2$ cho tâm $I(2;-1;0)$ và $R=\\sqrt{25}=5$.",
+    "points": 0.25,
+    "tags": [
+      "mặt cầu",
+      "phương trình",
+      "NB"
+    ],
+    "variable": false
+  },
+  {
+    "id": "thpt-t12-matcau-oxyz-02",
+    "subject": "Toán",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "prompt": "Phương trình mặt cầu tâm $I(1;-2;3)$ và bán kính $4$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$(x+1)^2+(y-2)^2+(z+3)^2=16$"
+      },
+      {
+        "key": "B",
+        "text": "$(x-1)^2+(y+2)^2+(z-3)^2=16$"
+      },
+      {
+        "key": "C",
+        "text": "$(x-1)^2+(y+2)^2+(z-3)^2=4$"
+      },
+      {
+        "key": "D",
+        "text": "$(x+1)^2+(y-2)^2+(z+3)^2=4$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Phương trình mặt cầu: $(x-1)^2+(y+2)^2+(z-3)^2=4^2=16$.",
+    "points": 0.25,
+    "tags": [
+      "mặt cầu",
+      "phương trình",
+      "TH"
+    ],
+    "variable": false
+  },
+  {
+    "id": "thpt-t12-matcau-oxyz-03",
+    "subject": "Toán",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "prompt": "Viết phương trình mặt cầu tâm $I(2;1;-1)$ và đi qua điểm $A(4;3;1)$.",
+    "options": [
+      {
+        "key": "A",
+        "text": "$(x-2)^2+(y-1)^2+(z+1)^2=8$"
+      },
+      {
+        "key": "B",
+        "text": "$(x-2)^2+(y-1)^2+(z+1)^2=12$"
+      },
+      {
+        "key": "C",
+        "text": "$(x+2)^2+(y+1)^2+(z-1)^2=12$"
+      },
+      {
+        "key": "D",
+        "text": "$(x-2)^2+(y-1)^2+(z+1)^2=24$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$R=IA=\\sqrt{(4-2)^2+(3-1)^2+(1+1)^2}=\\sqrt{12}$ nên $R^2=12$: $(x-2)^2+(y-1)^2+(z+1)^2=12$.",
+    "points": 0.25,
+    "tags": [
+      "mặt cầu",
+      "đi qua điểm",
+      "VD"
+    ],
+    "variable": false
+  },
+  {
+    "id": "thpt-t12-matcau-oxyz-04",
+    "subject": "Toán",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "prompt": "Cho hai điểm $A(1;0;2)$, $B(3;-2;4)$. Phương trình mặt cầu có đường kính $AB$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$(x-2)^2+(y+1)^2+(z-3)^2=12$"
+      },
+      {
+        "key": "B",
+        "text": "$(x-2)^2+(y+1)^2+(z-3)^2=6$"
+      },
+      {
+        "key": "C",
+        "text": "$(x-2)^2+(y+1)^2+(z-3)^2=3$"
+      },
+      {
+        "key": "D",
+        "text": "$(x-1)^2+y^2+(z-2)^2=3$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Tâm là trung điểm $AB$: $I(2;-1;3)$; $R=\\dfrac{AB}{2}=\\dfrac{\\sqrt{4+4+4}}{2}=\\sqrt{3}$ nên $R^2=3$.",
+    "points": 0.25,
+    "tags": [
+      "mặt cầu",
+      "đường kính",
+      "TH"
+    ],
+    "variable": false
+  },
+  {
+    "id": "thpt-t12-matcau-oxyz-05",
+    "subject": "Toán",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "prompt": "Cho mặt cầu $(S): x^2+y^2+z^2-2x+4y-6z-11=0$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Tâm của $(S)$ là $I(1;-2;3)$"
+      },
+      {
+        "key": "b",
+        "text": "Bán kính của $(S)$ là $5$"
+      },
+      {
+        "key": "c",
+        "text": "Bán kính của $(S)$ là $25$"
+      },
+      {
+        "key": "d",
+        "text": "$(S)$ đi qua gốc toạ độ $O(0;0;0)$"
+      }
+    ],
+    "answer": "ĐĐSS",
+    "explanation": "a) $I(1;-2;3)$ — đúng. b) $R^2=1+4+9+11=25$ nên $R=5$ — đúng. c) Bán kính là $\\sqrt{25}=5$, không phải 25 — sai. d) Thay $O$: $-11 \\ne 0$ — sai.",
+    "points": 1,
+    "tags": [
+      "mặt cầu",
+      "tâm và bán kính",
+      "NB"
+    ],
+    "variable": false
+  },
+  {
+    "id": "thpt-t12-matcau-oxyz-06",
+    "subject": "Toán",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "prompt": "Cho mặt cầu $(S)$ có tâm $I(0;2;0)$ và đi qua điểm $M(1;0;\\sqrt{3})$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$R^2=8$"
+      },
+      {
+        "key": "b",
+        "text": "Phương trình của $(S)$ là $x^2+(y-2)^2+z^2=8$"
+      },
+      {
+        "key": "c",
+        "text": "$R=4$"
+      },
+      {
+        "key": "d",
+        "text": "$(S)$ cắt mặt phẳng $(Oxz)$ theo một đường tròn"
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) $IM^2=1+4+3=8$ — đúng. b) Đúng. c) $R=\\sqrt{8}=2\\sqrt{2} \\ne 4$ — sai. d) $d(I,(Oxz))=|y_I|=2<\\sqrt{8}=R$ nên cắt theo đường tròn — đúng.",
+    "points": 1,
+    "tags": [
+      "mặt cầu",
+      "vị trí tương đối",
+      "TH"
+    ],
+    "variable": false
+  },
+  {
+    "id": "thpt-t12-matcau-oxyz-07",
+    "subject": "Toán",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "prompt": "Cho mặt cầu $(S): x^2+y^2+z^2-4x+2y-4=0$ và mặt phẳng $(P): x+2y-2z+3=0$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Tâm của $(S)$ là $I(2;-1;0)$"
+      },
+      {
+        "key": "b",
+        "text": "Bán kính của $(S)$ là $3$"
+      },
+      {
+        "key": "c",
+        "text": "$(P)$ cắt $(S)$ theo đường tròn bán kính $2\\sqrt{2}$"
+      },
+      {
+        "key": "d",
+        "text": "$(P)$ tiếp xúc với $(S)$"
+      }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a) Đúng. b) $R^2=4+1+4=9$ nên $R=3$ — đúng. c) $d(I,(P))=\\dfrac{|2-2+3|}{3}=1$, bán kính đường tròn $\\sqrt{9-1}=\\sqrt{8}=2\\sqrt{2}$ — đúng. d) $1<3$ nên cắt, không tiếp xúc — sai.",
+    "points": 1,
+    "tags": [
+      "mặt cầu",
+      "mặt phẳng",
+      "VD"
+    ],
+    "variable": false
+  },
+  {
+    "id": "thpt-t12-matcau-oxyz-08",
+    "subject": "Toán",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "prompt": "Một trạm kiểm soát đặt tại gốc toạ độ $O(0;0;0)$ (đơn vị: km), vùng phủ sóng là hình cầu bán kính 10 km. Có ba drone ở $A(6;4;6)$, $B(6;6;2)$, $C(9;5;2)$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Drone $A$ nằm trong vùng phủ sóng của trạm"
+      },
+      {
+        "key": "b",
+        "text": "Drone $B$ nằm ngoài vùng phủ sóng của trạm"
+      },
+      {
+        "key": "c",
+        "text": "Drone $C$ nằm ngoài vùng phủ sóng của trạm"
+      },
+      {
+        "key": "d",
+        "text": "Khoảng cách từ $O$ đến $A$ lớn hơn khoảng cách từ $O$ đến $B$"
+      }
+    ],
+    "answer": "ĐSĐĐ",
+    "explanation": "$OA=\\sqrt{88}\\approx 9{,}38<10$: a) đúng. $OB=\\sqrt{76}\\approx 8{,}72<10$, $B$ trong vùng phủ sóng: b) sai. $OC=\\sqrt{110}>10$: c) đúng. $OA>OB$: d) đúng.",
+    "points": 1,
+    "tags": [
+      "mặt cầu",
+      "bài toán thực tế",
+      "VDC"
+    ],
+    "variable": false
+  },
+  {
+    "id": "thpt-t12-matcau-oxyz-09",
+    "subject": "Toán",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "prompt": "Mặt cầu $(S): x^2+y^2+z^2-6x+8y=0$ có bán kính bằng",
+    "answer": "5",
+    "explanation": "Tâm $(3;-4;0)$; $R^2=9+16=25$ nên $R=5$.",
+    "points": 0.5,
+    "tags": [
+      "mặt cầu",
+      "phương trình",
+      "NB"
+    ],
+    "variable": false
+  },
+  {
+    "id": "thpt-t12-matcau-oxyz-10",
+    "subject": "Toán",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "prompt": "Mặt cầu $(S)$ có tâm $I(0;2;1)$ và đi qua hai điểm $A(1;0;0)$, $B(-1;0;0)$. Tính $R^2$.",
+    "answer": "6",
+    "explanation": "$R^2=IA^2=1+4+1=6$ (tâm cách đều $A$ và $B$).",
+    "points": 0.5,
+    "tags": [
+      "mặt cầu",
+      "phương trình",
+      "TH"
+    ],
+    "variable": false
+  },
+  {
+    "id": "thpt-t12-matcau-oxyz-11",
+    "subject": "Toán",
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "prompt": "Mặt cầu $(S)$ đi qua bốn điểm $O(0;0;0)$, $A(2;0;0)$, $B(0;4;0)$, $C(0;0;6)$ với $O$ là gốc toạ độ. Tính $R^2$.",
+    "answer": "14",
+    "explanation": "Tâm $I$ cách đều $O, A, B, C$: $I(1;2;3)$ (trung điểm của từng đoạn trên trục); $R^2=1+4+9=14$.",
+    "points": 0.5,
+    "tags": [
+      "mặt cầu",
+      "đi qua bốn điểm",
+      "VDC"
+    ],
+    "variable": false
+  },
+  {
+    "id": "thpt-t12-matcau-12",
     "subject": "Toán",
     "grades": [
       "Lớp 12"
@@ -14582,7 +14924,7 @@ export const BANK_THPT3: BankEntry[] = [
     "variable": false
   },
   {
-    "id": "thpt-t12-matcau-02",
+    "id": "thpt-t12-matcau-13",
     "subject": "Toán",
     "grades": [
       "Lớp 12"
@@ -14618,7 +14960,7 @@ export const BANK_THPT3: BankEntry[] = [
     "variable": false
   },
   {
-    "id": "thpt-t12-matcau-03",
+    "id": "thpt-t12-matcau-14",
     "subject": "Toán",
     "grades": [
       "Lớp 12"
@@ -14654,7 +14996,7 @@ export const BANK_THPT3: BankEntry[] = [
     "variable": false
   },
   {
-    "id": "thpt-t12-matcau-04",
+    "id": "thpt-t12-matcau-15",
     "subject": "Toán",
     "grades": [
       "Lớp 12"
@@ -14690,7 +15032,7 @@ export const BANK_THPT3: BankEntry[] = [
     "variable": false
   },
   {
-    "id": "thpt-t12-matcau-05",
+    "id": "thpt-t12-matcau-16",
     "subject": "Toán",
     "grades": [
       "Lớp 12"
@@ -14726,7 +15068,7 @@ export const BANK_THPT3: BankEntry[] = [
     "variable": false
   },
   {
-    "id": "thpt-t12-matcau-06",
+    "id": "thpt-t12-matcau-17",
     "subject": "Toán",
     "grades": [
       "Lớp 12"
@@ -14762,7 +15104,7 @@ export const BANK_THPT3: BankEntry[] = [
     "variable": false
   },
   {
-    "id": "thpt-t12-matcau-07",
+    "id": "thpt-t12-matcau-18",
     "subject": "Toán",
     "grades": [
       "Lớp 12"
@@ -14798,7 +15140,7 @@ export const BANK_THPT3: BankEntry[] = [
     "variable": false
   },
   {
-    "id": "thpt-t12-matcau-08",
+    "id": "thpt-t12-matcau-19",
     "subject": "Toán",
     "grades": [
       "Lớp 12"
@@ -14834,7 +15176,7 @@ export const BANK_THPT3: BankEntry[] = [
     "variable": false
   },
   {
-    "id": "thpt-t12-matcau-09",
+    "id": "thpt-t12-matcau-20",
     "subject": "Toán",
     "grades": [
       "Lớp 12"
@@ -14870,7 +15212,7 @@ export const BANK_THPT3: BankEntry[] = [
     "variable": false
   },
   {
-    "id": "thpt-t12-matcau-10",
+    "id": "thpt-t12-matcau-21",
     "subject": "Toán",
     "grades": [
       "Lớp 12"
@@ -14906,7 +15248,7 @@ export const BANK_THPT3: BankEntry[] = [
     "variable": false
   },
   {
-    "id": "thpt-t12-matcau-11",
+    "id": "thpt-t12-matcau-22",
     "subject": "Toán",
     "grades": [
       "Lớp 12"
@@ -14942,7 +15284,7 @@ export const BANK_THPT3: BankEntry[] = [
     "variable": false
   },
   {
-    "id": "thpt-t12-matcau-12",
+    "id": "thpt-t12-matcau-23",
     "subject": "Toán",
     "grades": [
       "Lớp 12"
@@ -14978,7 +15320,7 @@ export const BANK_THPT3: BankEntry[] = [
     "variable": false
   },
   {
-    "id": "thpt-t12-matcau-13",
+    "id": "thpt-t12-matcau-24",
     "subject": "Toán",
     "grades": [
       "Lớp 12"
@@ -15014,7 +15356,7 @@ export const BANK_THPT3: BankEntry[] = [
     "variable": false
   },
   {
-    "id": "thpt-t12-matcau-14",
+    "id": "thpt-t12-matcau-25",
     "subject": "Toán",
     "grades": [
       "Lớp 12"
@@ -15050,7 +15392,7 @@ export const BANK_THPT3: BankEntry[] = [
     "variable": false
   },
   {
-    "id": "thpt-t12-matcau-15",
+    "id": "thpt-t12-matcau-26",
     "subject": "Toán",
     "grades": [
       "Lớp 12"
@@ -15086,7 +15428,7 @@ export const BANK_THPT3: BankEntry[] = [
     "variable": false
   },
   {
-    "id": "thpt-t12-matcau-16",
+    "id": "thpt-t12-matcau-27",
     "subject": "Toán",
     "grades": [
       "Lớp 12"
@@ -15122,7 +15464,7 @@ export const BANK_THPT3: BankEntry[] = [
     "variable": false
   },
   {
-    "id": "thpt-t12-matcau-17",
+    "id": "thpt-t12-matcau-28",
     "subject": "Toán",
     "grades": [
       "Lớp 12"
@@ -15140,7 +15482,7 @@ export const BANK_THPT3: BankEntry[] = [
     "variable": false
   },
   {
-    "id": "thpt-t12-matcau-18",
+    "id": "thpt-t12-matcau-29",
     "subject": "Toán",
     "grades": [
       "Lớp 12"
@@ -15158,7 +15500,7 @@ export const BANK_THPT3: BankEntry[] = [
     "variable": false
   },
   {
-    "id": "thpt-t12-matcau-19",
+    "id": "thpt-t12-matcau-30",
     "subject": "Toán",
     "grades": [
       "Lớp 12"
@@ -15176,7 +15518,7 @@ export const BANK_THPT3: BankEntry[] = [
     "variable": false
   },
   {
-    "id": "thpt-t12-matcau-20",
+    "id": "thpt-t12-matcau-31",
     "subject": "Toán",
     "grades": [
       "Lớp 12"
@@ -15194,7 +15536,7 @@ export const BANK_THPT3: BankEntry[] = [
     "variable": false
   },
   {
-    "id": "thpt-t12-matcau-21",
+    "id": "thpt-t12-matcau-32",
     "subject": "Toán",
     "grades": [
       "Lớp 12"
@@ -15212,7 +15554,7 @@ export const BANK_THPT3: BankEntry[] = [
     "variable": false
   },
   {
-    "id": "thpt-t12-matcau-22",
+    "id": "thpt-t12-matcau-33",
     "subject": "Toán",
     "grades": [
       "Lớp 12"
@@ -17368,31 +17710,31 @@ export const BANK_THPT3: BankEntry[] = [
       "Lớp 12"
     ],
     "type": "dung-sai",
-    "prompt": "Xét tính đúng sai về công thức thể tích:",
+    "prompt": "Chi phí để sản xuất $x$ sản phẩm ($x>0$) là $C(x)=2x^2+80x+400$ (nghìn đồng). Chi phí trung bình để sản xuất mỗi sản phẩm là $f(x)=\\dfrac{C(x)}{x}$. Xét tính đúng sai:",
     "options": [
       {
         "key": "a",
-        "text": "Hộp chữ nhật có thể tích $V=(a+b+c)^3$"
+        "text": "$f(x)=2x+80+\\dfrac{400}{x}$"
       },
       {
         "key": "b",
-        "text": "Khối trụ có thể tích $V=\\pi r^2 h$"
+        "text": "$f'(x)=2-\\dfrac{400}{x^2}$"
       },
       {
         "key": "c",
-        "text": "Khối cầu có thể tích $V=\\dfrac{4}{3}\\pi r^3$"
+        "text": "$f(x)$ nhỏ nhất khi $x=10\\sqrt{2}$"
       },
       {
         "key": "d",
-        "text": "Khối nón có thể tích $V=\\dfrac{1}{3}\\pi r^2 h$"
+        "text": "Giá trị nhỏ nhất của $f(x)$ là 160 nghìn đồng"
       }
     ],
-    "answer": "SĐĐĐ",
-    "explanation": "a) Sai, đúng là $V=abc$. b), c), d) Đúng.",
+    "answer": "ĐĐĐS",
+    "explanation": "a) Chia cả tử và mẫu cho $x$ — đúng. b) Đạo hàm từng số hạng — đúng. c) $f'(x)=0 \\Leftrightarrow x^2=200 \\Leftrightarrow x=10\\sqrt{2}$ (vì $x>0$), và $f''(x)>0$ — đúng. d) $f(10\\sqrt{2})=20\\sqrt{2}+80+20\\sqrt{2}=80+40\\sqrt{2} \\approx 136{,}57 \\ne 160$ — sai.",
     "points": 1,
     "tags": [
       "tối ưu",
-      "hình học",
+      "chi phí trung bình",
       "TH"
     ],
     "variable": false
@@ -17404,31 +17746,31 @@ export const BANK_THPT3: BankEntry[] = [
       "Lớp 12"
     ],
     "type": "dung-sai",
-    "prompt": "Kéo một vật bằng lực $F=50$ N theo phương chuyển động với tốc độ $v$ (m/s). Xét tính đúng sai:",
+    "prompt": "Một hộp không nắp có đáy là hình vuông cạnh $x$ (m) và chiều cao $h$ (m), thể tích $32\\ m^3$. Chi phí làm hộp tỉ lệ với diện tích toàn phần $S$ của hộp (đáy + 4 mặt bên). Gọi $S(x)$ là diện tích toàn phần theo cạnh đáy $x$. Xét tính đúng sai:",
     "options": [
       {
         "key": "a",
-        "text": "Nếu $v=2$ m/s thì trong 10 s lực sinh công 1000 J"
+        "text": "Chiều cao $h=\\dfrac{32}{x^2}$"
       },
       {
         "key": "b",
-        "text": "Công suất khi $v=2$ m/s là 500 W"
+        "text": "$S(x)=x^2+\\dfrac{128}{x}$ với $x>0$"
       },
       {
         "key": "c",
-        "text": "Nếu tốc độ tăng gấp đôi thì công suất tăng gấp đôi"
+        "text": "$S(x)$ nhỏ nhất khi $x=8$"
       },
       {
         "key": "d",
-        "text": "Công suất được đo bằng jun"
+        "text": "Diện tích toàn phần nhỏ nhất là $48\\ m^2$"
       }
     ],
-    "answer": "ĐSĐS",
-    "explanation": "a) $W=F \\cdot s=50 \\cdot 20=1000$ J — đúng. b) $P=Fv=100$ W $\\ne 500$ — sai. c) $P=Fv$ tỉ lệ $v$ — đúng. d) Công suất đo bằng watt — sai.",
+    "answer": "ĐĐSĐ",
+    "explanation": "a) $x^2h=32$ — đúng. b) $S=x^2+4xh=x^2+\\dfrac{128}{x}$ — đúng. c) $S'(x)=2x-\\dfrac{128}{x^2}=0 \\Leftrightarrow x^3=64 \\Leftrightarrow x=4$ (và $S''>0$), không phải 8 — sai. d) $S(4)=16+32=48$ — đúng.",
     "points": 1,
     "tags": [
       "tối ưu",
-      "vật lí",
+      "thể tích",
       "VDC"
     ],
     "variable": false

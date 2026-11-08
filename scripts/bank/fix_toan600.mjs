@@ -74,6 +74,19 @@ const del = [['t12-matcau', 5], ['t12-matcau', 17], ['t12-matcau', 25]]
 delete q('t12-matcau', 8).figure
 q('t12-matcau', 8).prompt = q('t12-matcau', 8).prompt.replace(' (như hình)', '')
 
+// ---- Câu soạn bù (scripts/bank/bu, agent soạn, Claude kiểm) ----
+// 2 câu tối ưu thay t12-toiuu #16, #17 (không phải bài tối ưu)
+{
+  const bu = JSON.parse(fs.readFileSync('bu/t12-toiuu-them.json', 'utf8'))
+  bu[1].answer = 'ĐĐSĐ' // S(4) = 16 + 32 = 48 nên d đúng
+  bu[1].explanation = bu[1].explanation.replace(/d\)[^]*$/, 'd) $S(4)=16+32=48$ — đúng.')
+  get('t12-toiuu')[15] = bu[0]
+  get('t12-toiuu')[16] = bu[1]
+}
+// lô t12-matcau-oxyz: drone B nằm đúng trên mặt cầu → đổi toạ độ cho rõ
+set('t12-matcau-oxyz', 8, { prompt: q('t12-matcau-oxyz', 8).prompt.replace('$B(8;6;0)$', '$B(6;6;2)$'), answer: 'ĐSĐĐ', explanation: '$OA=\\sqrt{88}\\approx 9{,}38<10$: a) đúng. $OB=\\sqrt{76}\\approx 8{,}72<10$, $B$ trong vùng phủ sóng: b) sai. $OC=\\sqrt{110}>10$: c) đúng. $OA>OB$: d) đúng.' })
+set('t12-matcau-oxyz', 4, { level: 'TH' })
+
 // ---- Chung ----
 for (const x of get('t12-xacsuat-thongke')) for (const k of ['prompt', 'explanation']) if (x[k]) x[k] = x[k].replace(/trung tâm kiểu/g, 'giá trị đại diện').replace(/Trung tâm kiểu/g, 'Giá trị đại diện')
 for (const x of get('t12-xacsuat-thongke')) for (const o of x.options ?? []) o.text = o.text.replace(/trung tâm kiểu/g, 'giá trị đại diện')
