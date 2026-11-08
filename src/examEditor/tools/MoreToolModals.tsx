@@ -349,6 +349,7 @@ const STATS_HELP: HelpGroups = [
 export function StatsModal({ initial, submitLabel, onClose, onInsert }: Props<StatsSpec>) {
   const [spec, setSpec] = useState<StatsSpec>(initial ?? { chart: 'bar', title: '', xLabel: '', yLabel: '', values: true, data: CHARTS[0].example })
   const set = (p: Partial<StatsSpec>) => setSpec((s) => ({ ...s, ...p }))
+  const [move, setMove] = useState(false)
   const doc = useMemo((): ToolDoc => ({ kind: 'stats', spec }), [spec])
   const { preview, error } = useRender(doc)
   const field = (k: 'title' | 'xLabel' | 'yLabel', label: string, ph: string) => (
@@ -416,6 +417,21 @@ export function StatsModal({ initial, submitLabel, onClose, onInsert }: Props<St
       canSubmit={Boolean(preview) && !error}
       onSubmit={() => preview && onInsert(preview)}
       onClose={onClose}
+      renderPreview={(img) =>
+        spec.chart === 'table' ? (
+          // bảng số liệu không có nhãn kéo được → xem thường
+          <img src={svgDataUrl(img.svg)} alt="Xem trước" className="max-h-full max-w-full rounded-[4px] border border-line bg-white object-contain" />
+        ) : (
+          <LabelPreview
+            img={img}
+            labelPos={spec.labelPos}
+            onChange={(labelPos) => set({ labelPos })}
+            move={move}
+            onToggle={() => setMove((v) => !v)}
+            fallback={<img src={svgDataUrl(img.svg)} alt="Xem trước" className="max-h-full max-w-full rounded-[4px] border border-line bg-white object-contain" />}
+          />
+        )
+      }
     />
   )
 }
