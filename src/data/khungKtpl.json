@@ -1,0 +1,1831 @@
+{
+  "mon": "Giáo dục kinh tế và pháp luật",
+  "lop": [
+    {
+      "lop": 10,
+      "chuong": [
+        {
+          "id": "ktpl10-nen-kinh-te-chu-the",
+          "ten": "Nền kinh tế và các chủ thể của nền kinh tế",
+          "hoc_ky": 1,
+          "mach": "Kinh tế",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 1 (Bài 1–2)",
+            "CTST": "Chủ đề nền kinh tế và các chủ thể của nền kinh tế",
+            "CD": "Chủ đề nền kinh tế và các chủ thể của nền kinh tế"
+          },
+          "khai_niem": [
+            "nền kinh tế",
+            "người sản xuất – kinh doanh",
+            "người tiêu dùng",
+            "Nhà nước"
+          ],
+          "can_cu_phap_ly": [
+            {
+              "van_ban": "Hiến pháp nước CHXHCN Việt Nam",
+              "so_hieu": "2013",
+              "noi_dung": "Nền kinh tế Việt Nam là nền kinh tế thị trường định hướng xã hội chủ nghĩa với nhiều hình thức sở hữu",
+              "hieu_luc": "Còn hiệu lực",
+              "sgk_dan": "Phần em hiểu"
+            }
+          ],
+          "yeu_cau_can_dat": [
+            "Nêu nội dung các hoạt động kinh tế cơ bản (sản xuất, phân phối, trao đổi, tiêu dùng)",
+            "Trình bày vai trò của các chủ thể: người sản xuất – kinh doanh, người tiêu dùng, Nhà nước",
+            "Phân tích quan hệ giữa các chủ thể trong nền kinh tế thị trường định hướng XHCN"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Toán 10: thống kê số liệu kinh tế"
+          ],
+          "chua_duoc_dung": [
+            "Các mô hình kinh tế học vi mô/vĩ mô theo trường phái (đại học)",
+            "GDP, chỉ số giá cả chi tiết (lớp 12)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Xác định chủ thể trong tình huống kinh tế",
+            "Sơ đồ quan hệ giữa các chủ thể của nền kinh tế"
+          ],
+          "luu_y_ra_de": "Không dùng thuật ngữ kinh tế học vi mô chuyên sâu ngoài SGK."
+        },
+        {
+          "id": "ktpl10-thi-truong-co-che",
+          "ten": "Thị trường và cơ chế thị trường",
+          "hoc_ky": 1,
+          "mach": "Kinh tế",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 2 (Bài 3–4)",
+            "CTST": "Chủ đề thị trường và cơ chế thị trường",
+            "CD": "Chủ đề thị trường và cơ chế thị trường"
+          },
+          "khai_niem": [
+            "thị trường",
+            "cung – cầu",
+            "giá cả",
+            "cạnh tranh",
+            "cơ chế thị trường"
+          ],
+          "can_cu_phap_ly": [
+            {
+              "van_ban": "Luật Giá",
+              "so_hieu": "16/2023/QH15",
+              "noi_dung": "Cơ chế giá thị trường; Nhà nước bình ổn giá khi cần",
+              "hieu_luc": "Có hiệu lực từ 01/01/2024 (thay luật 2002)",
+              "sgk_dan": "Phần em hiểu"
+            }
+          ],
+          "yeu_cau_can_dat": [
+            "Nêu khái niệm, phân loại thị trường và vai trò của thị trường",
+            "Trình bày quy luật cung – cầu, cạnh tranh trong cơ chế thị trường",
+            "Nêu ưu điểm và hạn chế của cơ chế thị trường; vai trò điều tiết của Nhà nước"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Toán 10: đọc đồ thị hàm số (đường cung – cầu)"
+          ],
+          "chua_duoc_dung": [
+            "Điểm cân bằng thị trường với hàm cung – cầu đại số (đại học)",
+            "Độc quyền, độc quyền nhóm chi tiết (chỉ nêu qua luật cạnh tranh)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc đồ thị cung – cầu theo tình huống",
+            "Xử lí tình huống biến động giá (cơn bão làm tăng giá rau)"
+          ],
+          "luu_y_ra_de": "Chỉ phân tích định tính theo SGK; không tính hàm cung cầu đại số."
+        },
+        {
+          "id": "ktpl10-ngan-sach-nha-nuoc-thue",
+          "ten": "Ngân sách nhà nước và thuế",
+          "hoc_ky": 1,
+          "mach": "Kinh tế",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 3 (Bài 5–6)",
+            "CTST": "Chủ đề ngân sách nhà nước và thuế",
+            "CD": "Chủ đề ngân sách nhà nước và thuế"
+          },
+          "khai_niem": [
+            "ngân sách nhà nước",
+            "thuế",
+            "thuế thu nhập cá nhân",
+            "nghĩa vụ nộp thuế"
+          ],
+          "can_cu_phap_ly": [
+            {
+              "van_ban": "Luật Thuế thu nhập cá nhân",
+              "so_hieu": "04/2007/QH12",
+              "noi_dung": "Đối tượng nộp thuế, mức giảm trừ gia cảnh",
+              "hieu_luc": "Còn hiệu lực (được sửa đổi nhiều lần, mới nhất Luật sửa đổi 2025; mức giảm trừ cập nhật theo nghị quyết)",
+              "sgk_dan": "Phần em hiểu"
+            },
+            {
+              "van_ban": "Luật Ngân sách nhà nước",
+              "so_hieu": "83/2015/QH13",
+              "noi_dung": "Nguyên tắc lập, chấp hành, quyết toán ngân sách",
+              "hieu_luc": "Còn hiệu lực",
+              "sgk_dan": "Phần em hiểu"
+            }
+          ],
+          "yeu_cau_can_dat": [
+            "Nêu khái niệm, vai trò của ngân sách nhà nước; các nguồn thu và khoản chi chính",
+            "Trình bày khái niệm thuế, đặc điểm và vai trò của thuế; nghĩa vụ nộp thuế của công dân",
+            "Nêu ý thức chấp hành pháp luật về thuế của công dân"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Toán 10: phần trăm (tính thuế TNCN theo bậc, mức nêu đơn giản)"
+          ],
+          "chua_duoc_dung": [
+            "Biểu thuế lũy tiến từng bậc chi tiết với giảm trừ cập nhật theo nghị quyết từng năm (chỉ ra đề với mức giảm trừ ghi rõ nguồn)",
+            "Thuế giá trị gia tăng khấu trừ chi tiết (chỉ nêu)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Phân loại nguồn thu/chi ngân sách theo ví dụ",
+            "Tình huống ý thức chấp hành nghĩa vụ thuế"
+          ],
+          "luu_y_ra_de": "Mức giảm trừ gia cảnh thay đổi theo thời gian (10–11 triệu đồng/tháng): khi tính toán phải nêu rõ mức áp dụng và thời điểm."
+        },
+        {
+          "id": "ktpl10-kinh-te-vn-hoi-nhap",
+          "ten": "Kinh tế của Việt Nam trong bối cảnh hội nhập và cạnh tranh quốc tế",
+          "hoc_ky": 1,
+          "mach": "Kinh tế",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 4 (Bài 7)",
+            "CTST": "Chủ đề kinh tế Việt Nam trong hội nhập quốc tế",
+            "CD": "Chủ đề kinh tế Việt Nam trong bối cảnh hội nhập"
+          },
+          "khai_niem": [
+            "hội nhập kinh tế quốc tế",
+            "cạnh tranh quốc tế",
+            "cơ hội",
+            "thách thức"
+          ],
+          "can_cu_phap_ly": [
+            {
+              "van_ban": "Nghị quyết 05-NQ/TW",
+              "so_hieu": "2022",
+              "noi_dung": "Định hướng hội nhập kinh tế quốc tế toàn diện, sâu rộng",
+              "hieu_luc": "Còn hiệu lực",
+              "sgk_dan": "Phần em hiểu"
+            }
+          ],
+          "yeu_cau_can_dat": [
+            "Nêu đặc điểm nền kinh tế Việt Nam trong bối cảnh hội nhập",
+            "Phân tích cơ hội và thách thức đối với người lao động, doanh nghiệp",
+            "Trình bày phương hướng nâng cao năng lực cạnh tranh quốc gia và yêu cầu với công dân"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Địa lí 10: thành tựu kinh tế Việt Nam"
+          ],
+          "chua_duoc_dung": [
+            "Cam kết trong các hiệp định thương mại tự do (CPTPP, EVFTA) chi tiết theo điều khoản (chỉ nêu)",
+            "Chuỗi cung ứng toàn cầu chi tiết (đại học)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Phân loại cơ hội/thách thức theo ví dụ",
+            "Trình bày phương hướng cho người học trước hội nhập"
+          ],
+          "luu_y_ra_de": "Ví dụ hiệp định nên quen thuộc (WTO, CPTPP, EVFTA, RCEP) và không đòi hỏi điều khoản cụ thể."
+        },
+        {
+          "id": "ktpl10-phap-luat-dan-su",
+          "ten": "Pháp luật dân sự: năng lực dân sự, hôn nhân của công dân",
+          "hoc_ky": 2,
+          "mach": "Pháp luật",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 5 (Bài 8–9)",
+            "CTST": "Chủ đề một số vấn đề pháp luật dân sự",
+            "CD": "Chủ đề pháp luật dân sự cơ bản"
+          },
+          "khai_niem": [
+            "năng lực pháp luật dân sự",
+            "năng lực hành vi dân sự",
+            "hôn nhân",
+            "kết hôn trái pháp luật"
+          ],
+          "can_cu_phap_ly": [
+            {
+              "van_ban": "Bộ luật Dân sự",
+              "so_hieu": "91/2015/QH13",
+              "noi_dung": "Năng lực pháp luật dân sự, năng lực hành vi dân sự của cá nhân (Điều 16–22)",
+              "hieu_luc": "Còn hiệu lực",
+              "sgk_dan": "Trọng tâm bài 8"
+            },
+            {
+              "van_ban": "Luật Hôn nhân và gia đình",
+              "so_hieu": "52/2014/QH13",
+              "noi_dung": "Điều kiện kết hôn (tuổi, tự nguyện); cấm kết hôn giữa người cùng huyết thống, tảo hôn",
+              "hieu_luc": "Còn hiệu lực (được sửa đổi 2022, 2024; có dự thảo thay thế — theo dõi)",
+              "sgk_dan": "Trọng tâm bài 9"
+            },
+            {
+              "van_ban": "Luật Trẻ em",
+              "so_hieu": "102/2016/QH13",
+              "noi_dung": "Bảo vệ trẻ em khỏi tảo hôn, xâm hại",
+              "hieu_luc": "Còn hiệu lực",
+              "sgk_dan": "Phần em hiểu"
+            }
+          ],
+          "yeu_cau_can_dat": [
+            "Trình bày khái niệm, thời điểm phát sinh và chấm dứt năng lực pháp luật dân sự; phân loại năng lực hành vi dân sự (đầy đủ, mất NLHVD, hạn chế)",
+            "Xác định năng lực hành vi dân sự của cá nhân theo độ tuổi",
+            "Nêu điều kiện kết hôn, các hành vi bị cấm; hậu quả của kết hôn trái pháp luật (tảo hôn, cưỡng ép)",
+            "Thái độ và cách ứng xử phù hợp pháp luật trong quan hệ hôn nhân"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Toán 10: lập luận nếu – thì"
+          ],
+          "chua_duoc_dung": [
+            "Thừa kế, di chúc chi tiết (KTPL 11)",
+            "Hậu quả pháp lí chi tiết từng trường hợp phá sản hôn nhân (chỉ trình bày khái quát)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Xác định loại năng lực hành vi dân sự theo độ tuổi trong tình huống",
+            "Nhận diện hành vi kết hôn trái pháp luật và hậu quả",
+            "Xử lí tình huống bị ép kết hôn"
+          ],
+          "luu_y_ra_de": "Độ tuổi kết hôn: nam từ đủ 20, nữ từ đủ 16 theo Luật HNGĐ 2014 (dự thảo sửa đổi có thể thay đổi — theo dõi); tuổi chịu trách nhiệm hình sự 16 (12–15 với tội rất nghiêm trọng/đặc biệt nghiêm trọng theo BLHS sửa đổi 2025 có hiệu lực 01/10/2025) — cập nhật khi gộp."
+        },
+        {
+          "id": "ktpl10-hang-hoa-dich-vu-tieu-dung",
+          "ten": "Pháp luật về cạnh tranh, quảng cáo và tiêu dùng",
+          "hoc_ky": 2,
+          "mach": "Pháp luật",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 6 (Bài 10–11)",
+            "CTST": "Chủ đề pháp luật về hàng hóa, dịch vụ và tiêu dùng",
+            "CD": "Chủ đề pháp luật về hàng hóa, dịch vụ và tiêu dùng"
+          },
+          "khai_niem": [
+            "cạnh tranh không lành mạnh",
+            "quảng cáo",
+            "người tiêu dùng",
+            "hàng hóa, dịch vụ"
+          ],
+          "can_cu_phap_ly": [
+            {
+              "van_ban": "Luật Cạnh tranh",
+              "so_hieu": "23/2018/QH14",
+              "noi_dung": "Cấm hành vi cạnh tranh không lành mạnh (lừa dối, gây nhầm lẫn, phí phạm quảng cáo...)",
+              "hieu_luc": "Còn hiệu lực",
+              "sgk_dan": "Bài 10"
+            },
+            {
+              "van_ban": "Luật Quảng cáo",
+              "so_hieu": "21/2012/QH13",
+              "noi_dung": "Các hành vi bị cấm trong hoạt động quảng cáo",
+              "hieu_luc": "Còn hiệu lực (có dự thảo Luật Quảng cáo thay thế — theo dõi)",
+              "sgk_dan": "Bài 11"
+            },
+            {
+              "van_ban": "Luật Bảo vệ quyền lợi người tiêu dùng",
+              "so_hieu": "19/2023/QH15",
+              "noi_dung": "Quyền của người tiêu dùng, trách nhiệm tổ chức kinh doanh",
+              "hieu_luc": "Có hiệu lực từ 01/7/2024 (thay luật 2010)",
+              "sgk_dan": "Phần em hiểu"
+            }
+          ],
+          "yeu_cau_can_dat": [
+            "Nhận biết hành vi cạnh tranh không lành mạnh trong kinh doanh",
+            "Nêu các hành vi bị cấm khi quảng cáo (quảng cáo sai sự thật, đồ uống có cồn, sản phẩm với trẻ em...)",
+            "Trình bày quyền của người tiêu dùng và cách bảo vệ quyền lợi khi mua hàng kém chất lượng"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Toán 10: đọc bảng, phân tích tình huống"
+          ],
+          "chua_duoc_dung": [
+            "Điều khoản xử phạt vi phạm hành chính với mức tiền cụ thể theo nghị định (chỉ nêu nguyên tắc)",
+            "Đấu thầu, trợ giá (ngoài chương trình)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Nhận diện hành vi cạnh tranh không lành mạnh/quảng cáo sai sự thật trong tình huống",
+            "Tình huống mua hàng online kém chất lượng — chọn cách khiếu nại"
+          ],
+          "luu_y_ra_de": "Luật Quảng cáo có dự thảo thay thế; kiểm tra hiệu lực khi gộp."
+        },
+        {
+          "id": "ktpl10-phap-luat-lao-dong",
+          "ten": "Pháp luật lao động: việc làm, bảo hộ lao động, thời giờ làm việc – nghỉ ngơi, an toàn lao động",
+          "hoc_ky": 2,
+          "mach": "Pháp luật",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 7 (Bài 12–13)",
+            "CTST": "Chủ đề pháp luật lao động",
+            "CD": "Chủ đề pháp luật về lao động"
+          },
+          "khai_niem": [
+            "hợp đồng lao động",
+            "bảo hộ lao động",
+            "thời giờ làm việc",
+            "thời giờ nghỉ ngơi",
+            "an toàn lao động"
+          ],
+          "can_cu_phap_ly": [
+            {
+              "van_ban": "Luật Lao động",
+              "so_hieu": "45/2019/QH14",
+              "noi_dung": "Hợp đồng lao động; thời giờ làm việc bình thường không quá 8 giờ/ngày, 48 giờ/tuần; độ tuổi lao động",
+              "hieu_luc": "Còn hiệu lực (được sửa đổi bởi Luật 2022 về tuổi nghỉ hưu)",
+              "sgk_dan": "Bài 12–13"
+            },
+            {
+              "van_ban": "Luật An toàn, vệ sinh lao động",
+              "so_hieu": "84/2015/QH13",
+              "noi_dung": "Bảo hộ lao động, chi phí BHLĐ",
+              "hieu_luc": "Còn hiệu lực",
+              "sgk_dan": "Bài 13"
+            }
+          ],
+          "yeu_cau_can_dat": [
+            "Trình bày quyền được bảo đảm việc làm, tự do lựa chọn nghề nghiệp; hỗ trợ thị trường lao động",
+            "Nêu quyền được bảo hộ lao động và trách nhiệm của người sử dụng lao động",
+            "Trình bày quy định về thời giờ làm việc, nghỉ ngơi, an toàn lao động và ý thức chấp hành"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Toán 10: tính theo tỉ lệ (lương theo giờ)"
+          ],
+          "chua_duoc_dung": [
+            "Tranh chấp lao động chi tiết, đình công theo thủ tục (KTPL 12 chỉ nêu)",
+            "Luật Công đoàn, bảo hiểm chi tiết (lớp 12)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Nhận diện vi phạm thời giờ làm việc/bảo hộ trong tình huống xưởng sản xuất",
+            "Chọn hợp đồng/khoản trợ cấp phù hợp trong tình huống mất việc"
+          ],
+          "luu_y_ra_de": "Lương tối thiểu vùng thay đổi theo nghị quyết — khi tính toán phải nêu mức áp dụng và thời điểm."
+        },
+        {
+          "id": "ktpl10-hien-phap-quyen-con-nguoi-cong-dan",
+          "ten": "Hiến pháp: quyền con người, quyền công dân, quyền tự do ngôn luận – tiếp cận thông tin – lập hội, quyền chính trị; bộ máy nhà nước",
+          "hoc_ky": 2,
+          "mach": "Pháp luật",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 8 (Bài 14–18)",
+            "CTST": "Chủ đề pháp luật về Hiến pháp",
+            "CD": "Chủ đề Hiến pháp nước CHXHCN Việt Nam"
+          },
+          "khai_niem": [
+            "Hiến pháp",
+            "quyền con người",
+            "quyền công dân",
+            "tự do ngôn luận",
+            "quyền tiếp cận thông tin",
+            "quyền lập hội",
+            "quyền bầu cử, ứng cử"
+          ],
+          "can_cu_phap_ly": [
+            {
+              "van_ban": "Hiến pháp nước CHXHCN Việt Nam",
+              "so_hieu": "2013",
+              "noi_dung": "Chương II: quyền con người, quyền và nghĩa vụ cơ bản của công dân (Điều 14–49); cơ cấu Nhà nước (Chương IV–VIII)",
+              "hieu_luc": "Còn hiệu lực (năm 2025 có dự thảo sửa đổi Hiến pháp — theo dõi)",
+              "sgk_dan": "Trọng tâm cả chủ đề"
+            },
+            {
+              "van_ban": "Luật Trưng cầu ý dân",
+              "so_hieu": "96/2015/QH13",
+              "noi_dung": "Công dân tham gia trưng cầu ý dân",
+              "hieu_luc": "Còn hiệu lực",
+              "sgk_dan": "Bài 16"
+            },
+            {
+              "van_ban": "Luật Tiếp cận thông tin",
+              "so_hieu": "104/2016/QH13",
+              "noi_dung": "Nguyên tắc, quyền tiếp cận thông tin của công dân",
+              "hieu_luc": "Còn hiệu lực",
+              "sgk_dan": "Bài 15"
+            }
+          ],
+          "yeu_cau_can_dat": [
+            "Nêu nội dung cơ bản của Hiến pháp về quyền con người, quyền công dân; phân biệt quyền con người với quyền công dân",
+            "Trình bày quyền tự do ngôn luận, tiếp cận thông tin, lập hội và giới hạn theo pháp luật",
+            "Trình bày quyền bầu cử, ứng cử và tham gia quản lí nhà nước, xã hội",
+            "Trình bày cơ cấu tổ chức, nguyên tắc hoạt động của Nhà nước và hệ thống chính trị (Quốc hội, Chủ tịch nước, Chính phủ, Tòa án, Viện kiểm sát...)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "GDCD 6: công dân nước CHXHCN Việt Nam",
+            "Lịch sử 10: truyền thống xây dựng nhà nước"
+          ],
+          "chua_duoc_dung": [
+            "Cơ chế kiện hiến pháp, xem xét tính hợp hiến của văn bản chi tiết (đại học)",
+            "Nghị quyết Quốc hội chuyên kỹ thuật theo từng kỳ họp"
+          ],
+          "dang_bai_dien_hinh": [
+            "Nhận diện quyền công dân trong tình huống (bầu cử Hội đồng nhân dân, gửi kiến nghị)",
+            "Sắp xếp cơ cấu bộ máy nhà nước theo sơ đồ",
+            "Tình huống sử dụng quyền ngôn luận trên mạng đúng pháp luật"
+          ],
+          "luu_y_ra_de": "Năm 2025 có chủ trương sửa đổi Hiến pháp 2013 và sắp xếp bộ máy (bỏ cấp huyện, hợp nhất các cơ quan) — ra đề tránh chi tiết tổ chức từng cơ quan tại thời điểm chuyển đổi; nêu nguồn văn bản khi dẫn tên cơ quan mới."
+        }
+      ],
+      "chuyen_de": [
+        "Chuyên đề học tập Giáo dục Kinh tế và Pháp luật 10"
+      ],
+      "ghi_chu_chua_chac": [
+        "SGK KTPL 10 KNTT in lần đầu 18 bài; một số lần tái bản gộp Bài 14–16 thành Bài 14–15 — khi gộp cần đối chiếu bản SGK đang dùng ở trường",
+        "Luật Giá 2023, Luật BVQLNTD 2023, dự thảo sửa đổi Hiến pháp 2025, dự thảo Luật HNGĐ thay thế: các thay đổi pháp luật sau khi SGK in — ra đề theo luật hiện hành hoặc tránh chi tiết trực thuộc luật cụ thể",
+        "Tuổi chịu trách nhiệm hình sự theo BLHS sửa đổi 2025 (hiệu lực 01/10/2025): từ đủ 16 chịu trách nhiệm về mọi tội phạm; 12–16 chỉ với tội rất nghiêm trọng/đặc biệt nghiêm trọng theo quy định"
+      ]
+    },
+    {
+      "lop": 11,
+      "chuong": [
+        {
+          "id": "ktpl11-canh-tranh-cung-cau",
+          "ten": "Cạnh tranh, cung – cầu trong nền kinh tế thị trường",
+          "hoc_ky": 1,
+          "mach": "Kinh tế",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 1 (Bài 1–2)",
+            "CTST": "Chủ đề cạnh tranh, cung – cầu",
+            "CD": "Chủ đề cạnh tranh và cung – cầu"
+          },
+          "khai_niem": [
+            "cạnh tranh lành mạnh",
+            "cung",
+            "cầu",
+            "giá cả thị trường"
+          ],
+          "can_cu_phap_ly": [
+            {
+              "van_ban": "Luật Cạnh tranh",
+              "so_hieu": "23/2018/QH14",
+              "noi_dung": "Khuyến khích cạnh tranh lành mạnh, bảo vệ lợi ích doanh nghiệp và người tiêu dùng",
+              "hieu_luc": "Còn hiệu lực",
+              "sgk_dan": "Bài 1"
+            }
+          ],
+          "yeu_cau_can_dat": [
+            "Trình bày vai trò của cạnh tranh; đặc điểm cạnh tranh lành mạnh và không lành mạnh",
+            "Trình bày quy luật cung – cầu tác động đến giá cả",
+            "Phân tích và vận dụng quy luật cung – cầu, cạnh tranh vào tình huống kinh tế thực tế"
+          ],
+          "kien_thuc_duoc_dung": [
+            "KTPL 10: thị trường, cơ chế thị trường",
+            "Toán 10–11: đọc đồ thị"
+          ],
+          "chua_duoc_dung": [
+            "Đường cung – cầu với phương trình đại số (đại học)",
+            "Cạnh tranh độc quyền, độc quyền nhóm chi tiết (đại học)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Tình huống giá cả biến động — phân tích theo quy luật cung cầu",
+            "Nhận diện hành vi cạnh tranh lành mạnh/không lành mạnh"
+          ],
+          "luu_y_ra_de": "Chỉ phân tích theo chiều hướng biến động, không tính điểm cân bằng."
+        },
+        {
+          "id": "ktpl11-lam-phat-that-nghiep",
+          "ten": "Lạm phát, thất nghiệp",
+          "hoc_ky": 1,
+          "mach": "Kinh tế",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 2 (Bài 3–4)",
+            "CTST": "Chủ đề lạm phát và thất nghiệp",
+            "CD": "Chủ đề lạm phát, thất nghiệp"
+          },
+          "khai_niem": [
+            "lạm phát",
+            "thất nghiệp",
+            "tỉ lệ lạm phát",
+            "tỉ lệ thất nghiệp"
+          ],
+          "can_cu_phap_ly": [],
+          "yeu_cau_can_dat": [
+            "Nêu khái niệm lạm phát, các loại lạm phát (vừa phải, phi mã, siêu lạm phát) và hậu quả",
+            "Nêu khái niệm thất nghiệp, các loại thất nghiệp; tình hình thất nghiệp thanh niên",
+            "Trình bày giải pháp chống lạm phát, giảm thất nghiệp; phương hướng của người học"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Toán 11: phần trăm, dãy số liệu thống kê"
+          ],
+          "chua_duoc_dung": [
+            "Lí thuyết tiền tệ, công cụ chính sách tiền tệ của ngân hàng trung ương (đại học)",
+            "Chỉ số CPI chi tiết theo rổ hàng hóa (chỉ nêu)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Tính tỉ lệ lạm phát/thất nghiệp theo số liệu cho trước",
+            "Phân loại loại lạm phát theo mức độ",
+            "Nhận xét chính sách theo tình huống"
+          ],
+          "luu_y_ra_de": "Số liệu lạm phát, thất nghiệp phải ghi năm và nguồn (Tổng cục Thống kê, Ngân hàng Thế giới)."
+        },
+        {
+          "id": "ktpl11-thi-truong-lao-dong-kinh-doanh",
+          "ten": "Thị trường lao động, ý tưởng kinh doanh và năng lực người kinh doanh",
+          "hoc_ky": 1,
+          "mach": "Kinh tế",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 3 (Bài 5–6)",
+            "CTST": "Chủ đề thị trường lao động và khởi nghiệp",
+            "CD": "Chủ đề thị trường lao động và việc làm"
+          },
+          "khai_niem": [
+            "thị trường lao động",
+            "ý tưởng kinh doanh",
+            "cơ hội kinh doanh",
+            "năng lực kinh doanh"
+          ],
+          "can_cu_phap_ly": [
+            {
+              "van_ban": "Luật Doanh nghiệp",
+              "so_hieu": "59/2020/QH14",
+              "noi_dung": "Quyền tự do kinh doanh, thành lập doanh nghiệp",
+              "hieu_luc": "Còn hiệu lực",
+              "sgk_dan": "Bài 6"
+            }
+          ],
+          "yeu_cau_can_dat": [
+            "Trình bày đặc điểm thị trường lao động và các yếu tố ảnh hưởng",
+            "Nêu vai trò của thị trường lao động với người lao động, người sử dụng lao động và Nhà nước",
+            "Trình bày ý tưởng kinh doanh và các năng lực cần thiết của người kinh doanh; đánh giá ý tưởng kinh doanh đơn giản"
+          ],
+          "kien_thuc_duoc_dung": [
+            "KTPL 10: pháp luật lao động",
+            "Toán 11: thống kê"
+          ],
+          "chua_duoc_dung": [
+            "Kế hoạch kinh doanh đầy đủ theo mô hình doanh nghiệp (canvas) chi tiết",
+            "Tài chính khởi nghiệp, gọi vốn (ngoài chương trình)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đánh giá ý tưởng kinh doanh theo tiêu chí",
+            "Phân tích tình huống chọn nghề theo thị trường lao động"
+          ],
+          "luu_y_ra_de": "Không cổ xúy nghỉ học để kinh doanh; gắn với học tập và chuẩn bị năng lực."
+        },
+        {
+          "id": "ktpl11-dao-duc-kinh-doanh-nguoi-tieu-dung",
+          "ten": "Đạo đức của người kinh doanh đối với người tiêu dùng",
+          "hoc_ky": 2,
+          "mach": "Kinh tế",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 4 (Bài 7)",
+            "CTST": "Chủ đề đạo đức kinh doanh",
+            "CD": "Chủ đề đạo đức kinh doanh"
+          },
+          "khai_niem": [
+            "đạo đức kinh doanh",
+            "trách nhiệm với người tiêu dùng"
+          ],
+          "can_cu_phap_ly": [
+            {
+              "van_ban": "Luật Bảo vệ quyền lợi người tiêu dùng",
+              "so_hieu": "19/2023/QH15",
+              "noi_dung": "Trách nhiệm của tổ chức, cá nhân kinh doanh đối với người tiêu dùng",
+              "hieu_luc": "Có hiệu lực từ 01/7/2024",
+              "sgk_dan": "Phần em hiểu"
+            }
+          ],
+          "yeu_cau_can_dat": [
+            "Nêu khái niệm và yêu cầu của đạo đức kinh doanh đối với người tiêu dùng",
+            "Phân tích biểu hiện của người kinh doanh có/không đạo đức",
+            "Có ý thức và hành vi tiêu dùng thông minh, ủng hộ kinh doanh có đạo đức"
+          ],
+          "kien_thuc_duoc_dung": [
+            "KTPL 10: pháp luật về hàng hóa, dịch vụ, tiêu dùng"
+          ],
+          "chua_duoc_dung": [
+            "Trách nhiệm xã hội doanh nghiệp (CSR) chi tiết (lớp 12)",
+            "Kinh tế học hành vi (đại học)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Nhận diện hành vi kinh doanh có/không đạo đức trong tình huống",
+            "Tình huống phát hiện hàng giả — lựa chọn cách xử lí của người tiêu dùng và trách nhiệm người bán"
+          ],
+          "luu_y_ra_de": "Không dùng tên doanh nghiệp thật để phán xét trong ví dụ."
+        },
+        {
+          "id": "ktpl11-dao-duc-phap-luat-kinh-doanh",
+          "ten": "Đạo đức và pháp luật trong kinh doanh",
+          "hoc_ky": 2,
+          "mach": "Pháp luật",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 5 (Bài 8)",
+            "CTST": "Chủ đề đạo đức và pháp luật trong kinh doanh",
+            "CD": "Chủ đề đạo đức và pháp luật trong kinh doanh"
+          },
+          "khai_niem": [
+            "đạo đức kinh doanh",
+            "pháp luật kinh doanh",
+            "kinh doanh",
+            "kinh doanh trái pháp luật"
+          ],
+          "can_cu_phap_ly": [
+            {
+              "van_ban": "Luật Doanh nghiệp",
+              "so_hieu": "59/2020/QH14",
+              "noi_dung": "Quyền tự do kinh doanh, đăng kí doanh nghiệp, trách nhiệm doanh nghiệp",
+              "hieu_luc": "Còn hiệu lực",
+              "sgk_dan": "Bài 8"
+            },
+            {
+              "van_ban": "Nghị định 109/2013/NĐ-CP (sửa đổi bởi Nghị định 80/2021/NĐ-CP)",
+              "noi_dung": "Kinh doanh thương mại đa cấp",
+              "hieu_luc": "Còn hiệu lực",
+              "sgk_dan": "Phần em hiểu"
+            }
+          ],
+          "yeu_cau_can_dat": [
+            "Nêu khái niệm kinh doanh, vai trò của đạo đức và pháp luật trong kinh doanh",
+            "Nhận biết các hành vi kinh doanh trái pháp luật (bán hàng giả, gian lận, đa cấp biến tướng, trốn thuế)",
+            "Phân tích trách nhiệm của người kinh doanh; ý thức chấp hành pháp luật trong kinh doanh"
+          ],
+          "kien_thuc_duoc_dung": [
+            "KTPL 11: đạo đức kinh doanh với người tiêu dùng",
+            "KTPL 10: thuế, cạnh tranh"
+          ],
+          "chua_duoc_dung": [
+            "Hình phạt chi tiết theo từng điều luật các nghị định (chỉ nêu mức nguyên tắc)",
+            "Luật cạnh tranh quốc tế chống bán phá giá (đại học)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Nhận diện vi phạm pháp luật trong kinh doanh theo tình huống",
+            "Đề xuất giải pháp cho doanh nghiệp kinh doanh đúng pháp luật"
+          ],
+          "luu_y_ra_de": "Không lấy tên doanh nghiệp/gian lận thật đang điều tra làm ví dụ."
+        },
+        {
+          "id": "ktpl11-phap-luat-hop-dong",
+          "ten": "Pháp luật về hợp đồng: khái niệm chung và kí kết hợp đồng",
+          "hoc_ky": 2,
+          "mach": "Pháp luật",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 6 (Bài 9–10)",
+            "CTST": "Chương hợp đồng",
+            "CD": "Chương hợp đồng"
+          },
+          "khai_niem": [
+            "hợp đồng",
+            "điểm giao kết hợp đồng",
+            "chào hàng",
+            "chấp nhận chào hàng",
+            "hợp đồng điện tử"
+          ],
+          "can_cu_phap_ly": [
+            {
+              "van_ban": "Bộ luật Dân sự",
+              "so_hieu": "91/2015/QH13",
+              "noi_dung": "Hình thức, hiệu lực, giao kết hợp đồng (Điều 386–427)",
+              "hieu_luc": "Còn hiệu lực",
+              "sgk_dan": "Bài 9–10"
+            },
+            {
+              "van_ban": "Luật Giao dịch điện tử",
+              "so_hieu": "20/2023/QH15",
+              "noi_dung": "Giao dịch, hợp đồng điện tử",
+              "hieu_luc": "Có hiệu lực từ 01/7/2024 (thay luật 2005)",
+              "sgk_dan": "Phần em hiểu"
+            }
+          ],
+          "yeu_cau_can_dat": [
+            "Nêu khái niệm, hình thức, chủ thể và nội dung của hợp đồng; ví dụ hợp đồng dân sự, lao động, mua bán",
+            "Trình bày điểm giao kết hợp đồng, quy trình chào hàng – chấp nhận chào hàng",
+            "Nhận biết hợp đồng điện tử; nhận diện hợp đồng vô hiệu và hậu quả trong tình huống"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Toán 10: lập luận điều kiện nếu – thì",
+            "KTPL 10: năng lực hành vi dân sự"
+          ],
+          "chua_duoc_dung": [
+            "Các loại hợp đồng đặc thù (thuê mua, ủy quyền, vi bằng) chi tiết (lớp 10 nâng cao)",
+            "Hợp đồng thương mại quốc tế theo CISG (lớp 12)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Xác định thời điểm giao kết hợp đồng trong tình huống mua online",
+            "Nhận diện hợp đồng vô hiệu (giả, thiếu năng lực) và hậu quả",
+            "Viết nội dung chính của hợp đồng đơn giản"
+          ],
+          "luu_y_ra_de": "Hợp đồng điện tử hiệu lực theo Luật GDĐT 2023; dự thảo Luật HNGĐ thay thế không làm thay đổi điều kiện giao kết hợp đồng dân sự thông thường."
+        },
+        {
+          "id": "ktpl11-binh-dang-dan-toc",
+          "ten": "Pháp luật về quyền bình đẳng giữa các dân tộc",
+          "hoc_ky": 2,
+          "mach": "Pháp luật",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 7 (Bài 11)",
+            "CTST": "Chủ đề pháp luật về bình đẳng các dân tộc",
+            "CD": "Chủ đề bình đẳng giữa các dân tộc"
+          },
+          "khai_niem": [
+            "bình đẳng dân tộc",
+            "phân biệt đối xử",
+            "quyền tự quyết dân tộc ở mức nêu"
+          ],
+          "can_cu_phap_ly": [
+            {
+              "van_ban": "Hiến pháp nước CHXHCN Việt Nam",
+              "so_hieu": "2013",
+              "noi_dung": "Các dân tộc bình đẳng; cấm mọi hành vi phân biệt, kỳ thị",
+              "hieu_luc": "Còn hiệu lực",
+              "sgk_dan": "Trọng tâm bài"
+            },
+            {
+              "van_ban": "Nghị định 57/2017/NĐ-CP",
+              "noi_dung": "Xử phạt hành chính trong lĩnh vực bình đẳng giới (tham chiếu hành vi kỳ thị)",
+              "hieu_luc": "Còn hiệu lực",
+              "sgk_dan": "Phần em hiểu"
+            }
+          ],
+          "yeu_cau_can_dat": [
+            "Nêu nội dung quyền bình đẳng giữa các dân tộc theo Hiến pháp",
+            "Nhận biết hành vi vi phạm quyền bình đẳng dân tộc",
+            "Có thái độ và hành vi tôn trọng, bình đẳng với các dân tộc"
+          ],
+          "kien_thuc_duoc_dung": [
+            "GDCD 8: tôn trọng đa dạng các dân tộc",
+            "Lịch sử 9–10: chính sách dân tộc"
+          ],
+          "chua_duoc_dung": [
+            "Chính sách ưu đãi vùng dân tộc thiểu số chi tiết theo chương trình mục tiêu quốc gia (chỉ nêu)",
+            "Quyền tự quyết và luật quốc tế về dân tộc bản địa (đại học)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Nhận diện hành vi phân biệt đối xử dân tộc trong tình huống",
+            "Đề xuất hoạt động đoàn kết các dân tộc trong lớp/trường"
+          ],
+          "luu_y_ra_de": "Không dùng định kiến ngôn ngữ/văn hóa dân tộc thiểu số trong ví dụ."
+        },
+        {
+          "id": "ktpl11-phap-luat-bao-ve-moi-truong",
+          "ten": "Pháp luật về bảo vệ môi trường: nghĩa vụ, bảo vệ các thành phần, chống ô nhiễm",
+          "hoc_ky": 2,
+          "mach": "Pháp luật",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 8 (Bài 12–14)",
+            "CTST": "Chương pháp luật môi trường",
+            "CD": "Chương pháp luật môi trường"
+          },
+          "khai_niem": [
+            "môi trường",
+            "ô nhiễm môi trường",
+            "suy thoái môi trường",
+            "sự cố môi trường",
+            "giảm nhẹ – thích ứng biến đổi khí hậu"
+          ],
+          "can_cu_phap_ly": [
+            {
+              "van_ban": "Luật Bảo vệ môi trường",
+              "so_hieu": "72/2020/QH14",
+              "noi_dung": "Nghĩa vụ bảo vệ môi trường; phân loại rác; trách nhiệm mở rộng của nhà sản xuất",
+              "hieu_luc": "Còn hiệu lực (có hiệu lực 01/01/2022)",
+              "sgk_dan": "Bài 12–14"
+            },
+            {
+              "van_ban": "Luật Tài nguyên nước",
+              "so_hieu": "28/2023/QH15",
+              "noi_dung": "Bảo vệ nguồn nước",
+              "hieu_luc": "Có hiệu lực từ 01/7/2024 (thay luật 2012)",
+              "sgk_dan": "Bài 13"
+            },
+            {
+              "van_ban": "Luật Tài nguyên khoáng sản",
+              "so_hieu": "60/2024/QH15",
+              "noi_dung": "Quản lí, bảo vệ khoáng sản",
+              "hieu_luc": "Có hiệu lực từ 01/7/2025 (thay luật 2010)",
+              "sgk_dan": "Bài 13"
+            },
+            {
+              "van_ban": "Luật Bảo vệ và phát triển rừng (sửa đổi liên quan)",
+              "so_hieu": "16/2017/QH14",
+              "noi_dung": "Bảo vệ rừng",
+              "hieu_luc": "Còn hiệu lực",
+              "sgk_dan": "Bài 13"
+            }
+          ],
+          "yeu_cau_can_dat": [
+            "Trình bày nghĩa vụ bảo vệ môi trường của cơ quan, tổ chức, cá nhân",
+            "Trình bày quy định về bảo vệ các thành phần môi trường: nước, đất, không khí, rừng",
+            "Nêu trách nhiệm phòng, chống và khắc phục ô nhiễm, suy thoái, sự cố môi trường; xử lí các hành vi vi phạm"
+          ],
+          "kien_thuc_duoc_dung": [
+            "KTPL 10: Hiến pháp về môi trường",
+            "KHTN 8–9: ô nhiễm môi trường",
+            "GDCD 8: bảo vệ môi trường"
+          ],
+          "chua_duoc_dung": [
+            "Chuẩn kĩ thuật môi trường QCVN chi tiết theo từng ngành",
+            "Trách nhiệm pháp lí xuyên biên giới (luật quốc tế lớp 12)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Nhận diện hành vi vi phạm pháp luật môi trường trong tình huống (xả thải, đốt rơm rạ)",
+            "Đề xuất giải pháp khắc phục sự cố môi trường",
+            "Phân loại trách nhiệm của các chủ thể"
+          ],
+          "luu_y_ra_de": "Cập nhật Luật Tài nguyên nước 2023 và Luật Khoáng sản 2024 (SGK in trước khi các luật này có hiệu lực); ra đề theo luật hiện hành."
+        },
+        {
+          "id": "ktpl11-quyen-nghia-vu-dan-su",
+          "ten": "Quyền và nghĩa vụ công dân trong quan hệ dân sự: đất đai, đời sống riêng tư, tín ngưỡng, cư trú, chỗ ở",
+          "hoc_ky": 2,
+          "mach": "Pháp luật",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 9 (Bài 15–18)",
+            "CTST": "Chương một số vấn đề pháp luật dân sự",
+            "CD": "Chương quyền và nghĩa vụ công dân trong quan hệ dân sự"
+          },
+          "khai_niem": [
+            "quyền sở hữu",
+            "quyền thừa kế",
+            "đất đai",
+            "đời sống riêng tư",
+            "bí mật cá nhân",
+            "tự do tín ngưỡng, tôn giáo",
+            "quyền cư trú",
+            "chỗ ở"
+          ],
+          "can_cu_phap_ly": [
+            {
+              "van_ban": "Hiến pháp nước CHXHCN Việt Nam",
+              "so_hieu": "2013",
+              "noi_dung": "Quyền sở hữu, thừa kế; đời sống riêng tư; tín ngưỡng tôn giáo; cư trú; chỗ ở (Điều 19–26)",
+              "hieu_luc": "Còn hiệu lực",
+              "sgk_dan": "Trọng tâm cả chủ đề"
+            },
+            {
+              "van_ban": "Luật Đất đai",
+              "so_hieu": "31/2024/QH15",
+              "noi_dung": "Quyền và nghĩa vụ của người sử dụng đất; thu hồi đất, bồi thường",
+              "hieu_luc": "Có hiệu lực từ 01/8/2024 (thay luật 2013)",
+              "sgk_dan": "Bài 15"
+            },
+            {
+              "van_ban": "Luật Cư trú",
+              "so_hieu": "68/2020/QH14",
+              "noi_dung": "Cư trú tự nguyện, sổ tạm trú được bỏ, đăng kí nơi ở bằng mã định danh",
+              "hieu_luc": "Còn hiệu lực",
+              "sgk_dan": "Bài 17"
+            },
+            {
+              "van_ban": "Bộ luật Dân sự",
+              "so_hieu": "91/2015/QH13",
+              "noi_dung": "Quyền sở hữu, thừa kế; quyền đời sống riêng tư",
+              "hieu_luc": "Còn hiệu lực",
+              "sgk_dan": "Bài 15–16, 18"
+            },
+            {
+              "van_ban": "Luật Tín ngưỡng, tôn giáo",
+              "so_hieu": "29/2016/QH14",
+              "noi_dung": "Quyền tự do tín ngưỡng, tôn giáo",
+              "hieu_luc": "Còn hiệu lực",
+              "sgk_dan": "Bài 17"
+            }
+          ],
+          "yeu_cau_can_dat": [
+            "Trình bày quyền sở hữu, thừa kế và giải quyết tranh chấp đất đai theo pháp luật hiện hành",
+            "Trình bày quyền bất khả xâm phạm đời sống riêng tư, bí mật cá nhân, gia đình và quyền bảo hộ danh dự",
+            "Trình bày quyền tự do tín ngưỡng, tôn giáo, cư trú, chỗ ở và giới hạn theo pháp luật",
+            "Vận dụng để tôn trọng quyền của người khác và bảo vệ quyền của bản thân"
+          ],
+          "kien_thuc_duoc_dung": [
+            "KTPL 10: năng lực dân sự, Hiến pháp",
+            "GDCD 8: tôn trọng đa dạng"
+          ],
+          "chua_duoc_dung": [
+            "Sổ đỏ/sổ hồng chi tiết theo Luật Đất đai 2024 và nghị định (chỉ nêu quyền sử dụng đất là giới hạn quyền), Thủ tục cấp căn cước theo Luật Căn cước 2023 (chỉ nêu)",
+            "Bồi thường thiệt hại phi tài sản theo công thức chi tiết (chỉ nêu khái quát)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Tình huống bị phát tán hình ảnh riêng tư — chọn cách xử lí theo pháp luật",
+            "Tình huống tranh chấp đất đai — nhận diện quyền và cách giải quyết",
+            "Nhận diện hành vi vi phạm tự do tín ngưỡng"
+          ],
+          "luu_y_ra_de": "Luật Đất đai 2024 và Luật Căn cước 2023: SGK in trước — ra đề theo pháp luật hiện hành; địa giới hành chính sau sáp nhập 2025 ghi theo quy định hiện hành."
+        }
+      ],
+      "chuyen_de": [
+        "Chuyên đề học tập Giáo dục Kinh tế và Pháp luật 11"
+      ],
+      "ghi_chu_chua_chac": [
+        "SGK KTPL 11 KNTT in lần đầu 18 bài theo 9 chủ đề (đối chiếu vietjack); một số bản gộp Bài 15–18 khác chút — đối chiếu SGK dùng ở trường",
+        "Luật Đất đai 2024, Luật Tài nguyên nước 2023, Luật Khoáng sản 2024, Luật GDĐT 2023: SGK in trước — ra đề theo luật hiện hành",
+        "Bộ luật Hình sự sửa đổi 2025 (Luật 90/2025/QH15) có hiệu lực 01/10/2025 thay BLHS 2015 — các câu trích dẫn hình sự phải cập nhật"
+      ]
+    },
+    {
+      "lop": 12,
+      "chuong": [
+        {
+          "id": "ktpl12-tang-truong-phat-trien-kinh-te",
+          "ten": "Tăng trưởng và phát triển kinh tế",
+          "hoc_ky": 1,
+          "mach": "Kinh tế",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 1 (Bài 1)",
+            "CTST": "Chủ đề tăng trưởng và phát triển kinh tế",
+            "CD": "Chủ đề tăng trưởng kinh tế và phát triển bền vững"
+          },
+          "khai_niem": [
+            "tăng trưởng kinh tế",
+            "phát triển kinh tế",
+            "chỉ số GDP",
+            "phát triển bền vững"
+          ],
+          "can_cu_phap_ly": [
+            {
+              "van_ban": "Nghị quyết 39-NQ/TW",
+              "so_hieu": "2023",
+              "noi_dung": "Nâng cao hiệu lực, hiệu quả thực thi pháp luật trong lĩnh vực kinh tế",
+              "hieu_luc": "Còn hiệu lực",
+              "sgk_dan": "Phần em hiểu"
+            }
+          ],
+          "yeu_cau_can_dat": [
+            "Nêu khái niệm tăng trưởng kinh tế, phát triển kinh tế; chỉ số GDP",
+            "Phân biệt tăng trưởng với phát triển kinh tế; nêu ý nghĩa của tăng trưởng",
+            "Trình bày nội dung phát triển bền vững (kinh tế – xã hội – môi trường) và các tiêu chí cơ bản"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Toán 12: phần trăm, tỉ số, thống kê",
+            "KTPL 10–11: thị trường, hội nhập"
+          ],
+          "chua_duoc_dung": [
+            "Cách tính GDP theo ba phương pháp chi tiết (đại học)",
+            "Chỉ số phát triển con người HDI chi tiết theo báo cáo quốc tế (chỉ nêu)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Tính tăng trưởng theo số liệu GDP hai năm",
+            "Phân loại mục tiêu phát triển bền vững theo ba trụ cột"
+          ],
+          "luu_y_ra_de": "Số liệu GDP ghi năm và nguồn (Tổng cục Thống kê); tránh so sánh phán xét giữa các quốc gia."
+        },
+        {
+          "id": "ktpl12-hoi-nhap-kinh-te-quoc-te",
+          "ten": "Hội nhập kinh tế quốc tế",
+          "hoc_ky": 1,
+          "mach": "Kinh tế",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 2 (Bài 2)",
+            "CTST": "Chủ đề hội nhập kinh tế quốc tế",
+            "CD": "Chủ đề hội nhập kinh tế quốc tế"
+          },
+          "khai_niem": [
+            "hội nhập kinh tế quốc tế",
+            "chủ quyền quốc gia",
+            "giải phóng thương mại"
+          ],
+          "can_cu_phap_ly": [
+            {
+              "van_ban": "Nghị quyết 05-NQ/TW",
+              "so_hieu": "2022",
+              "noi_dung": "Hội nhập kinh tế toàn diện, sâu rộng, thực chất, hiệu quả",
+              "hieu_luc": "Còn hiệu lực",
+              "sgk_dan": "Phần em hiểu"
+            }
+          ],
+          "yeu_cau_can_dat": [
+            "Nêu khái niệm, đặc điểm và lợi ích – thách thức của hội nhập kinh tế quốc tế",
+            "Trình bày chính sách hội nhập kinh tế của Việt Nam",
+            "Trình bày phương hướng cho người học trong quá trình hội nhập"
+          ],
+          "kien_thuc_duoc_dung": [
+            "KTPL 10: kinh tế Việt Nam trong hội nhập",
+            "KTPL 11: cạnh tranh, thị trường"
+          ],
+          "chua_duoc_dung": [
+            "Cơ chế WTO tranh chấp chi tiết, đàm phán FTA từng chương (chỉ nêu)",
+            "Đầu tư trực tiếp nước ngoài theo mô hình kinh tế lượng (đại học)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Phân loại cơ hội/thách thức của hội nhập",
+            "Trình bày phương hướng thích ứng hội nhập cho học sinh"
+          ],
+          "luu_y_ra_de": "Không hỏi cam kết mở cửa theo từng hiệp định cụ thể."
+        },
+        {
+          "id": "ktpl12-bao-hiem-an-sinh-xa-hoi",
+          "ten": "Bảo hiểm và an sinh xã hội",
+          "hoc_ky": 2,
+          "mach": "Kinh tế",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 3 (Bài 3–4)",
+            "CTST": "Chủ đề bảo hiểm và an sinh xã hội",
+            "CD": "Chủ đề bảo hiểm xã hội, an sinh xã hội"
+          },
+          "khai_niem": [
+            "bảo hiểm xã hội",
+            "bảo hiểm y tế",
+            "bảo hiểm thất nghiệp",
+            "an sinh xã hội",
+            "trợ cấp"
+          ],
+          "can_cu_phap_ly": [
+            {
+              "van_ban": "Luật Bảo hiểm xã hội",
+              "so_hieu": "41/2024/QH15",
+              "noi_dung": "BHXH bắt buộc, tự nguyện; quyền hưởng BHXH",
+              "hieu_luc": "Có hiệu lực từ 01/7/2025 (thay luật 2014)",
+              "sgk_dan": "Bài 3"
+            },
+            {
+              "van_ban": "Luật Việc làm",
+              "so_hieu": "38/2013/QH13",
+              "noi_dung": "Bảo hiểm thất nghiệp",
+              "hieu_luc": "Còn hiệu lực",
+              "sgk_dan": "Bài 3"
+            },
+            {
+              "van_ban": "Nghị định 95/2023/NĐ-CP",
+              "noi_dung": "Bảo hiểm y tế",
+              "hieu_luc": "Còn hiệu lực (sửa đổi các nghị định trước)",
+              "sgk_dan": "Phần em hiểu"
+            }
+          ],
+          "yeu_cau_can_dat": [
+            "Nêu khái niệm, đặc điểm, vai trò của BHXH; phân biệt BHXH bắt buộc và tự nguyện",
+            "Nêu khái niệm, vai trò của BHYT và trách nhiệm tham gia",
+            "Trình bày BHTN và nội dung an sinh xã hội; ý thức tham gia đóng góp"
+          ],
+          "kien_thuc_duoc_dung": [
+            "KTPL 10: pháp luật lao động",
+            "Toán 12: phần trăm đóng góp theo mức lương (mức nêu)"
+          ],
+          "chua_duoc_dung": [
+            "Mức đóng, mức hưởng chi tiết theo điều luật từng loại (thay đổi theo nghị định — ghi mức áp dụng nếu tính)",
+            "Hệ thống an sinh quốc gia chi tiết theo chiến lược (chỉ nêu)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Phân loại BHXH/BHYT/BHTN theo tình huống",
+            "Tình huống mất việc — nhận diện quyền hưởng BHTN",
+            "Nhận xét ý nghĩa tham gia BHYT học sinh"
+          ],
+          "luu_y_ra_de": "Luật BHXH 2024 hiệu lực 01/7/2025 thay luật 2014 — SGK in trước; ra đề theo luật hiện hành."
+        },
+        {
+          "id": "ktpl12-lap-ke-hoach-kinh-doanh",
+          "ten": "Lập kế hoạch kinh doanh",
+          "hoc_ky": 2,
+          "mach": "Kinh tế",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 4 (Bài 5)",
+            "CTST": "Chủ đề lập kế hoạch kinh doanh",
+            "CD": "Chủ đề kinh doanh"
+          },
+          "khai_niem": [
+            "kế hoạch kinh doanh",
+            "vốn",
+            "mục tiêu kinh doanh",
+            "thị trường mục tiêu"
+          ],
+          "can_cu_phap_ly": [
+            {
+              "van_ban": "Luật Doanh nghiệp",
+              "so_hieu": "59/2020/QH14",
+              "noi_dung": "Đăng kí doanh nghiệp, loại hình doanh nghiệp",
+              "hieu_luc": "Còn hiệu lực",
+              "sgk_dan": "Bài 5"
+            }
+          ],
+          "yeu_cau_can_dat": [
+            "Nêu khái niệm, vai trò của kế hoạch kinh doanh",
+            "Trình bày các bước lập kế hoạch kinh doanh đơn giản",
+            "Lập kế hoạch kinh doanh đơn giản cho ý tưởng khởi nghiệp và đánh giá"
+          ],
+          "kien_thuc_duoc_dung": [
+            "KTPL 11: ý tưởng kinh doanh, năng lực người kinh doanh",
+            "Toán 12: doanh thu – chi phí – lợi nhuận theo phương trình"
+          ],
+          "chua_duoc_dung": [
+            "Mô hình kinh doanh lean startup, phân tích SWOT chi tiết theo mô hình tư vấn (chỉ gợi ý)",
+            "Thuế doanh nghiệp chi tiết (chỉ nêu nghĩa vụ)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Lập kế hoạch kinh doanh đơn giản theo mẫu",
+            "Nhận xét kế hoạch kinh doanh của bạn theo tiêu chí"
+          ],
+          "luu_y_ra_de": "Không dùng tên thương hiệu thật trong đề; số liệu tài chính hợp lí quy mô nhỏ."
+        },
+        {
+          "id": "ktpl12-tnxh-doanh-nghiep",
+          "ten": "Trách nhiệm xã hội của doanh nghiệp",
+          "hoc_ky": 2,
+          "mach": "Kinh tế",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 5 (Bài 6)",
+            "CTST": "Chủ đề trách nhiệm xã hội của doanh nghiệp",
+            "CD": "Chủ đề trách nhiệm xã hội của doanh nghiệp"
+          },
+          "khai_niem": [
+            "trách nhiệm xã hội của doanh nghiệp (CSR)",
+            "phát triển bền vững",
+            "ESG (mức nêu)"
+          ],
+          "can_cu_phap_ly": [
+            {
+              "van_ban": "Luật Doanh nghiệp",
+              "so_hieu": "59/2020/QH14",
+              "noi_dung": "Doanh nghiệp có trách nhiệm với người lao động, khách hàng, cộng đồng, môi trường",
+              "hieu_luc": "Còn hiệu lực",
+              "sgk_dan": "Bài 6"
+            }
+          ],
+          "yeu_cau_can_dat": [
+            "Nêu khái niệm, nội dung trách nhiệm xã hội của doanh nghiệp",
+            "Phân tích lợi ích của việc thực hiện trách nhiệm xã hội đối với doanh nghiệp",
+            "Trình bày trách nhiệm xã hội của doanh nghiệp Việt Nam trong thực tiễn"
+          ],
+          "kien_thuc_duoc_dung": [
+            "KTPL 11: đạo đức kinh doanh",
+            "KTPL 12: phát triển bền vững"
+          ],
+          "chua_duoc_dung": [
+            "Báo cáo phát triển bền vững theo chuẩn quốc tế GRI/ESG chi tiết (chỉ nêu)",
+            "Kinh tế học trách nhiệm xã hội (đại học)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đánh giá hoạt động CSR của doanh nghiệp theo mô tả",
+            "Đề xuất hoạt động trách nhiệm xã hội cho doanh nghiệp nhỏ"
+          ],
+          "luu_y_ra_de": "Ví dụ doanh nghiệp dùng mô tả tổng quát; tránh quảng cáo/phán xét thương hiệu thật."
+        },
+        {
+          "id": "ktpl12-quan-li-thu-chi-gia-dinh",
+          "ten": "Quản lí thu, chi trong gia đình",
+          "hoc_ky": 2,
+          "mach": "Kinh tế",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 6 (Bài 7)",
+            "CTST": "Chủ đề quản lí thu chi trong gia đình",
+            "CD": "Chủ đề quản lí thu chi trong gia đình"
+          },
+          "khai_niem": [
+            "thu nhập gia đình",
+            "chi tiêu gia đình",
+            "ngân sách gia đình",
+            "tiết kiệm"
+          ],
+          "can_cu_phap_ly": [
+            {
+              "van_ban": "Luật Hôn nhân và gia đình",
+              "so_hieu": "52/2014/QH13",
+              "noi_dung": "Chế độ tài sản của vợ chồng; thỏa thuận tài sản",
+              "hieu_luc": "Còn hiệu lực (sửa đổi 2022, 2024)",
+              "sgk_dan": "Phần em hiểu"
+            }
+          ],
+          "yeu_cau_can_dat": [
+            "Trình bày các khoản thu, chi trong gia đình và nguyên tắc quản lí",
+            "Lập và thực hiện kế hoạch thu chi hợp lí, tiết kiệm",
+            "Nêu biện pháp tăng thu, giảm chi và xử lí khi vượt ngân sách"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Toán 12: lập bảng thu – chi, phần trăm",
+            "GDCD 8: lập kế hoạch chi tiêu"
+          ],
+          "chua_duoc_dung": [
+            "Đầu tư tài chính chi tiết theo loại hình (chỉ nêu liên hệ Bài đầu tư ở các sách khác)",
+            "Vay nợ tín chấp chi tiết theo lãi suất (chỉ nêu rủi ro)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Lập bảng thu chi gia đình với khoản thu cho trước",
+            "Nhận xét kế hoạch chi tiêu gia đình trong tình huống"
+          ],
+          "luu_y_ra_de": "Số liệu thu chi hợp lí với mặt bằng thu nhập; không gắn với nghề cụ thể gây so sánh."
+        },
+        {
+          "id": "ktpl12-quyen-nghia-vu-kinh-te",
+          "ten": "Quyền và nghĩa vụ của công dân về kinh doanh, nộp thuế; sở hữu tài sản",
+          "hoc_ky": 2,
+          "mach": "Pháp luật",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 7 (Bài 8–9)",
+            "CTST": "Chương quyền và nghĩa vụ công dân về kinh tế",
+            "CD": "Chương quyền và nghĩa vụ về kinh tế"
+          },
+          "khai_niem": [
+            "quyền kinh doanh",
+            "nghĩa vụ nộp thuế",
+            "quyền sở hữu",
+            "tài sản",
+            "tôn trọng tài sản người khác"
+          ],
+          "can_cu_phap_ly": [
+            {
+              "van_ban": "Hiến pháp nước CHXHCN Việt Nam",
+              "so_hieu": "2013",
+              "noi_dung": "Quyền tự do kinh doanh; nghĩa vụ nộp thuế; quyền sở hữu hợp pháp được bảo vệ",
+              "hieu_luc": "Còn hiệu lực",
+              "sgk_dan": "Trọng tâm"
+            },
+            {
+              "van_ban": "Luật Thuế thu nhập cá nhân",
+              "so_hieu": "04/2007/QH12 (sửa đổi, bổ sung; mới nhất 2025)",
+              "noi_dung": "Nghĩa vụ nộp thuế TNCN",
+              "hieu_luc": "Còn hiệu lực",
+              "sgk_dan": "Bài 8"
+            },
+            {
+              "van_ban": "Luật Đất đai",
+              "so_hieu": "31/2024/QH15",
+              "noi_dung": "Quyền sở hữu đất đai toàn dân do Nhà nước đại diện; quyền sử dụng đất",
+              "hieu_luc": "Hiệu lực 01/8/2024",
+              "sgk_dan": "Bài 9"
+            },
+            {
+              "van_ban": "Bộ luật Dân sự",
+              "so_hieu": "91/2015/QH13",
+              "noi_dung": "Quyền sở hữu, các quyền khác đối với tài sản",
+              "hieu_luc": "Còn hiệu lực",
+              "sgk_dan": "Bài 9"
+            }
+          ],
+          "yeu_cau_can_dat": [
+            "Trình bày quyền kinh doanh và nghĩa vụ nộp thuế của công dân",
+            "Trình bày quyền sở hữu tài sản hợp pháp và nghĩa vụ tôn trọng tài sản của người khác",
+            "Vận dụng xử lí tình huống liên quan đến sở hữu, thuế"
+          ],
+          "kien_thuc_duoc_dung": [
+            "KTPL 10: thuế, Hiến pháp",
+            "KTPL 11: hợp đồng, sở hữu"
+          ],
+          "chua_duoc_dung": [
+            "Xử phạt trốn thuế chi tiết theo nghị định và BLHS (chỉ nêu khái quát)",
+            "Đất đai public ownership chi tiết theo luật và nghị định (chỉ nêu nguyên tắc)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Tình huống kinh doanh online không đăng kí — nhận diện nghĩa vụ",
+            "Nhận diện hành vi xâm phạm tài sản và cách bảo vệ quyền"
+          ],
+          "luu_y_ra_de": "Mức giảm trừ, biểu thuế thay đổi theo thời gian — nêu nguồn và thời điểm khi tính toán."
+        },
+        {
+          "id": "ktpl12-quyen-nghia-vu-van-hoa-xa-hoi",
+          "ten": "Quyền và nghĩa vụ công dân trong hôn nhân – gia đình, học tập, sức khỏe, di sản – môi trường",
+          "hoc_ky": 2,
+          "mach": "Pháp luật",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 8 (Bài 10–13)",
+            "CTST": "Chương quyền và nghĩa vụ công dân về văn hóa, xã hội",
+            "CD": "Chương quyền và nghĩa vụ về văn hóa, xã hội"
+          },
+          "khai_niem": [
+            "quyền và nghĩa vụ trong hôn nhân và gia đình",
+            "quyền học tập",
+            "quyền chăm sóc sức khỏe",
+            "BHYT",
+            "di sản văn hóa",
+            "môi trường"
+          ],
+          "can_cu_phap_ly": [
+            {
+              "van_ban": "Luật Hôn nhân và gia đình",
+              "so_hieu": "52/2014/QH13",
+              "noi_dung": "Quyền và nghĩa vụ vợ chồng, cha mẹ – con",
+              "hieu_luc": "Còn hiệu lực (sửa đổi 2022, 2024)",
+              "sgk_dan": "Bài 10"
+            },
+            {
+              "van_ban": "Luật Giáo dục",
+              "so_hieu": "43/2019/QH14",
+              "noi_dung": "Quyền học tập, nghĩa vụ học tập phổ thông",
+              "hieu_luc": "Còn hiệu lực",
+              "sgk_dan": "Bài 11"
+            },
+            {
+              "van_ban": "Luật Khám bệnh, chữa bệnh",
+              "so_hieu": "15/2023/QH15",
+              "noi_dung": "Quyền được khám chữa bệnh, BHYT",
+              "hieu_luc": "Có hiệu lực từ 01/01/2024 (thay luật 2009)",
+              "sgk_dan": "Bài 12"
+            },
+            {
+              "van_ban": "Luật Bảo vệ môi trường",
+              "so_hieu": "72/2020/QH14",
+              "noi_dung": "Nghĩa vụ bảo vệ môi trường, di sản",
+              "hieu_luc": "Còn hiệu lực",
+              "sgk_dan": "Bài 13"
+            },
+            {
+              "van_ban": "Luật Di sản văn hóa",
+              "so_hieu": "28/2001/QH10 (sửa đổi 2024)",
+              "noi_dung": "Bảo vệ di sản văn hóa",
+              "hieu_luc": "Còn hiệu lực",
+              "sgk_dan": "Bài 13"
+            }
+          ],
+          "yeu_cau_can_dat": [
+            "Trình bày quyền, nghĩa vụ của công dân trong hôn nhân và gia đình; nhận diện hôn nhân trẻ em, bạo lực gia đình",
+            "Trình bày quyền, nghĩa vụ trong học tập; quyền trong chăm sóc sức khỏe, BHYT",
+            "Trình bày nghĩa vụ bảo vệ di sản văn hóa, môi trường, tài nguyên",
+            "Vận dụng xử lí tình huống thực hiện quyền – nghĩa vụ"
+          ],
+          "kien_thuc_duoc_dung": [
+            "KTPL 10: Hiến pháp, năng lực dân sự",
+            "GDCD 7–9: kĩ năng sống"
+          ],
+          "chua_duoc_dung": [
+            "Cơ chế khiếu nại – tố tụng chi tiết theo từng luật (chỉ nêu quyền khiếu nại)",
+            "Quyền tác giả, quyền liên quan (chuyên đề/lớp 10 nâng cao)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Tình huống học sinh bỏ học — nhận diện nghĩa vụ học tập",
+            "Tình huống khám chữa bệnh không BHYT — nhận diện quyền và cách xử lí",
+            "Nhận diện hành vi xâm hại di sản, môi trường"
+          ],
+          "luu_y_ra_de": "Luật Khám bệnh chữa bệnh 2023 và Luật Di sản sửa đổi 2024: SGK in trước — ra đề theo luật hiện hành."
+        },
+        {
+          "id": "ktpl12-luat-quoc-te",
+          "ten": "Một số vấn đề cơ bản của luật quốc tế: pháp luật quốc tế, WTO – hợp đồng thương mại quốc tế, công pháp quốc tế về dân cư – lãnh thổ – chủ quyền",
+          "hoc_ky": 2,
+          "mach": "Pháp luật",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 9 (Bài 14–16)",
+            "CTST": "Chương luật quốc tế",
+            "CD": "Chương luật quốc tế"
+          },
+          "khai_niem": [
+            "luật quốc tế",
+            "chủ thể luật quốc tế",
+            "điều ước quốc tế",
+            "WTO",
+            "hợp đồng thương mại quốc tế",
+            "chủ quyền quốc gia",
+            "lãnh thổ"
+          ],
+          "can_cu_phap_ly": [
+            {
+              "van_ban": "Hiến pháp nước CHXHCN Việt Nam",
+              "so_hieu": "2013",
+              "noi_dung": "Nghĩa vụ tuân thủ điều ước quốc tế mà Việt Nam là thành viên",
+              "hieu_luc": "Còn hiệu lực",
+              "sgk_dan": "Bài 14"
+            },
+            {
+              "van_ban": "Luật Điều ước quốc tế",
+              "so_hieu": "108/2016/QH13",
+              "noi_dung": "Kí kết, gia nhập, thực hiện điều ước quốc tế",
+              "hieu_luc": "Còn hiệu lực",
+              "sgk_dan": "Bài 14"
+            },
+            {
+              "van_ban": "Công ước Viên về luật điều ước quốc tế",
+              "so_hieu": "1969 (Việt Nam gia nhập 2001)",
+              "noi_dung": "Nguyên tắc cơ bản về điều ước quốc tế",
+              "hieu_luc": "Việt Nam là thành viên",
+              "sgk_dan": "Bài 14"
+            },
+            {
+              "van_ban": "Hiến chương Liên Hợp Quốc",
+              "so_hieu": "1945",
+              "noi_dung": "Nguyên tắc bình đẳng chủ quyền, giải quyết tranh chấp hòa bình",
+              "hieu_luc": "Việt Nam là thành viên",
+              "sgk_dan": "Bài 16"
+            }
+          ],
+          "yeu_cau_can_dat": [
+            "Nêu khái niệm, đặc điểm của luật quốc tế và chủ thể luật quốc tế",
+            "Trình bày nguyên tắc cơ bản của WTO và những vấn đề cơ bản về hợp đồng thương mại quốc tế",
+            "Trình bày công pháp quốc tế về dân cư, lãnh thổ và chủ quyền quốc gia; ý thức bảo vệ chủ quyền"
+          ],
+          "kien_thuc_duoc_dung": [
+            "KTPL 12: hội nhập kinh tế",
+            "KTPL 10: Hiến pháp",
+            "Lịch sử 9–12: Liên Hợp Quốc"
+          ],
+          "chua_duoc_dung": [
+            "Giải quyết tranh chấp tại cơ quan trọng tài quốc tế chi tiết (đại học)",
+            "Biển cả, đặc quyền kinh tế chi tiết theo UNCLOS từng vùng (chỉ nêu ở mức khái niệm theo SGK)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Phân biệt luật quốc tế – luật quốc gia theo ví dụ",
+            "Nhận diện nguyên tắc WTO trong tình huống thương mại",
+            "Nhận định về chủ quyền và hòa giải theo luật quốc tế"
+          ],
+          "luu_y_ra_de": "Các câu về Biển Đông theo lập trường chính thức của Việt Nam và công ước UNCLOS 1982; tránh tranh luận chính trị."
+        }
+      ],
+      "chuyen_de": [
+        "Chuyên đề học tập Giáo dục Kinh tế và Pháp luật 12"
+      ],
+      "ghi_chu_chua_chac": [
+        "SGK KTPL 12 KNTT gồm 16 bài theo 9 chủ đề (đối chiếu loigiaihay)",
+        "Luật BHXH 2024 (hiệu lực 01/7/2025), Luật Khám bệnh chữa bệnh 2023, Luật Đất đai 2024, Luật Cư trú 2020, BLHS sửa đổi 2025: SGK in trước — ra đề theo luật hiện hành",
+        "Đề tốt nghiệp GDKT&PL 2025 gồm 22 câu (12 TN + 4 ĐS + 6 TLN), 90 phút — cấu trúc các năm sau theo dõi công bố của Bộ"
+      ]
+    }
+  ],
+  "cau_truc_de": [
+    {
+      "loai": "Đề kiểm tra giữa học kì 1 môn GDKT&PL lớp 10",
+      "lop": 10,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I. Trắc nghiệm nhiều lựa chọn",
+          "so_cau": 8,
+          "diem_moi_cau": 0.5,
+          "tong_diem": 4
+        },
+        {
+          "ten": "Phần II. Tự luận (tình huống)",
+          "so_cau": 3,
+          "diem_moi_cau": 2,
+          "tong_diem": 6
+        }
+      ],
+      "pham_vi": [
+        "ktpl10-nen-kinh-te-chu-the",
+        "ktpl10-thi-truong-co-che",
+        "ktpl10-ngan-sach-nha-nuoc-thue"
+      ],
+      "ti_le_muc_do": "NB 40%, TH 40%, VD 20%"
+    },
+    {
+      "loai": "Đề kiểm tra cuối học kì 1 môn GDKT&PL lớp 10",
+      "lop": 10,
+      "thoi_gian_phut": 60,
+      "phan": [
+        {
+          "ten": "Phần I. Trắc nghiệm nhiều lựa chọn",
+          "so_cau": 10,
+          "diem_moi_cau": 0.5,
+          "tong_diem": 5
+        },
+        {
+          "ten": "Phần II. Trắc nghiệm đúng/sai",
+          "so_cau": 1,
+          "diem_moi_cau": 1,
+          "tong_diem": 1
+        },
+        {
+          "ten": "Phần III. Tự luận (tình huống)",
+          "so_cau": 2,
+          "diem_moi_cau": 2,
+          "tong_diem": 4
+        }
+      ],
+      "pham_vi": [
+        "ktpl10-nen-kinh-te-chu-the",
+        "ktpl10-thi-truong-co-che",
+        "ktpl10-ngan-sach-nha-nuoc-thue",
+        "ktpl10-kinh-te-vn-hoi-nhap",
+        "ktpl10-phap-luat-dan-su"
+      ],
+      "ti_le_muc_do": "NB 40%, TH 40%, VD 20%"
+    },
+    {
+      "loai": "Đề kiểm tra giữa học kì 2 môn GDKT&PL lớp 10",
+      "lop": 10,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I. Trắc nghiệm nhiều lựa chọn",
+          "so_cau": 8,
+          "diem_moi_cau": 0.5,
+          "tong_diem": 4
+        },
+        {
+          "ten": "Phần II. Tự luận (tình huống)",
+          "so_cau": 3,
+          "diem_moi_cau": 2,
+          "tong_diem": 6
+        }
+      ],
+      "pham_vi": [
+        "ktpl10-hang-hoa-dich-vu-tieu-dung",
+        "ktpl10-phap-luat-lao-dong",
+        "ktpl10-hien-phap-quyen-con-nguoi-cong-dan"
+      ],
+      "ti_le_muc_do": "NB 40%, TH 40%, VD 20%"
+    },
+    {
+      "loai": "Đề kiểm tra cuối học kì 2 môn GDKT&PL lớp 10",
+      "lop": 10,
+      "thoi_gian_phut": 60,
+      "phan": [
+        {
+          "ten": "Phần I. Trắc nghiệm nhiều lựa chọn",
+          "so_cau": 10,
+          "diem_moi_cau": 0.5,
+          "tong_diem": 5
+        },
+        {
+          "ten": "Phần II. Trắc nghiệm đúng/sai",
+          "so_cau": 1,
+          "diem_moi_cau": 1,
+          "tong_diem": 1
+        },
+        {
+          "ten": "Phần III. Tự luận (tình huống)",
+          "so_cau": 2,
+          "diem_moi_cau": 2,
+          "tong_diem": 4
+        }
+      ],
+      "pham_vi": [
+        "ktpl10-hang-hoa-dich-vu-tieu-dung",
+        "ktpl10-phap-luat-lao-dong",
+        "ktpl10-hien-phap-quyen-con-nguoi-cong-dan"
+      ],
+      "ti_le_muc_do": "NB 40%, TH 40%, VD 20%"
+    },
+    {
+      "loai": "Đề kiểm tra giữa học kì 1 môn GDKT&PL lớp 11",
+      "lop": 11,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I. Trắc nghiệm nhiều lựa chọn",
+          "so_cau": 8,
+          "diem_moi_cau": 0.5,
+          "tong_diem": 4
+        },
+        {
+          "ten": "Phần II. Tự luận (tình huống)",
+          "so_cau": 3,
+          "diem_moi_cau": 2,
+          "tong_diem": 6
+        }
+      ],
+      "pham_vi": [
+        "ktpl11-canh-tranh-cung-cau",
+        "ktpl11-lam-phat-that-nghiep",
+        "ktpl11-thi-truong-lao-dong-kinh-doanh",
+        "ktpl11-dao-duc-kinh-doanh-nguoi-tieu-dung"
+      ],
+      "ti_le_muc_do": "NB 40%, TH 40%, VD 20%"
+    },
+    {
+      "loai": "Đề kiểm tra cuối học kì 1 môn GDKT&PL lớp 11",
+      "lop": 11,
+      "thoi_gian_phut": 60,
+      "phan": [
+        {
+          "ten": "Phần I. Trắc nghiệm nhiều lựa chọn",
+          "so_cau": 10,
+          "diem_moi_cau": 0.5,
+          "tong_diem": 5
+        },
+        {
+          "ten": "Phần II. Trắc nghiệm đúng/sai",
+          "so_cau": 1,
+          "diem_moi_cau": 1,
+          "tong_diem": 1
+        },
+        {
+          "ten": "Phần III. Tự luận (tình huống)",
+          "so_cau": 2,
+          "diem_moi_cau": 2,
+          "tong_diem": 4
+        }
+      ],
+      "pham_vi": [
+        "ktpl11-canh-tranh-cung-cau",
+        "ktpl11-lam-phat-that-nghiep",
+        "ktpl11-thi-truong-lao-dong-kinh-doanh",
+        "ktpl11-dao-duc-kinh-doanh-nguoi-tieu-dung",
+        "ktpl11-dao-duc-phap-luat-kinh-doanh",
+        "ktpl11-phap-luat-hop-dong"
+      ],
+      "ti_le_muc_do": "NB 40%, TH 40%, VD 20%"
+    },
+    {
+      "loai": "Đề kiểm tra giữa học kì 2 môn GDKT&PL lớp 11",
+      "lop": 11,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I. Trắc nghiệm nhiều lựa chọn",
+          "so_cau": 8,
+          "diem_moi_cau": 0.5,
+          "tong_diem": 4
+        },
+        {
+          "ten": "Phần II. Tự luận (tình huống)",
+          "so_cau": 3,
+          "diem_moi_cau": 2,
+          "tong_diem": 6
+        }
+      ],
+      "pham_vi": [
+        "ktpl11-binh-dang-dan-toc",
+        "ktpl11-phap-luat-bao-ve-moi-truong",
+        "ktpl11-quyen-nghia-vu-dan-su"
+      ],
+      "ti_le_muc_do": "NB 40%, TH 40%, VD 20%"
+    },
+    {
+      "loai": "Đề kiểm tra cuối học kì 2 môn GDKT&PL lớp 11",
+      "lop": 11,
+      "thoi_gian_phut": 60,
+      "phan": [
+        {
+          "ten": "Phần I. Trắc nghiệm nhiều lựa chọn",
+          "so_cau": 10,
+          "diem_moi_cau": 0.5,
+          "tong_diem": 5
+        },
+        {
+          "ten": "Phần II. Trắc nghiệm đúng/sai",
+          "so_cau": 1,
+          "diem_moi_cau": 1,
+          "tong_diem": 1
+        },
+        {
+          "ten": "Phần III. Tự luận (tình huống)",
+          "so_cau": 2,
+          "diem_moi_cau": 2,
+          "tong_diem": 4
+        }
+      ],
+      "pham_vi": [
+        "ktpl11-binh-dang-dan-toc",
+        "ktpl11-phap-luat-bao-ve-moi-truong",
+        "ktpl11-quyen-nghia-vu-dan-su"
+      ],
+      "ti_le_muc_do": "NB 40%, TH 40%, VD 20%"
+    },
+    {
+      "loai": "Đề kiểm tra giữa học kì 1 môn GDKT&PL lớp 12",
+      "lop": 12,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I. Trắc nghiệm nhiều lựa chọn",
+          "so_cau": 8,
+          "diem_moi_cau": 0.5,
+          "tong_diem": 4
+        },
+        {
+          "ten": "Phần II. Tự luận (tình huống)",
+          "so_cau": 3,
+          "diem_moi_cau": 2,
+          "tong_diem": 6
+        }
+      ],
+      "pham_vi": [
+        "ktpl12-tang-truong-phat-trien-kinh-te",
+        "ktpl12-hoi-nhap-kinh-te-quoc-te",
+        "ktpl12-bao-hiem-an-sinh-xa-hoi"
+      ],
+      "ti_le_muc_do": "NB 40%, TH 40%, VD 20%"
+    },
+    {
+      "loai": "Đề kiểm tra cuối học kì 1 môn GDKT&PL lớp 12",
+      "lop": 12,
+      "thoi_gian_phut": 60,
+      "phan": [
+        {
+          "ten": "Phần I. Trắc nghiệm nhiều lựa chọn",
+          "so_cau": 10,
+          "diem_moi_cau": 0.5,
+          "tong_diem": 5
+        },
+        {
+          "ten": "Phần II. Trắc nghiệm đúng/sai",
+          "so_cau": 1,
+          "diem_moi_cau": 1,
+          "tong_diem": 1
+        },
+        {
+          "ten": "Phần III. Tự luận (tình huống)",
+          "so_cau": 2,
+          "diem_moi_cau": 2,
+          "tong_diem": 4
+        }
+      ],
+      "pham_vi": [
+        "ktpl12-tang-truong-phat-trien-kinh-te",
+        "ktpl12-hoi-nhap-kinh-te-quoc-te",
+        "ktpl12-bao-hiem-an-sinh-xa-hoi",
+        "ktpl12-lap-ke-hoach-kinh-doanh",
+        "ktpl12-tnxh-doanh-nghiep",
+        "ktpl12-quan-li-thu-chi-gia-dinh"
+      ],
+      "ti_le_muc_do": "NB 40%, TH 40%, VD 20%"
+    },
+    {
+      "loai": "Đề kiểm tra giữa học kì 2 môn GDKT&PL lớp 12",
+      "lop": 12,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I. Trắc nghiệm nhiều lựa chọn",
+          "so_cau": 8,
+          "diem_moi_cau": 0.5,
+          "tong_diem": 4
+        },
+        {
+          "ten": "Phần II. Tự luận (tình huống)",
+          "so_cau": 3,
+          "diem_moi_cau": 2,
+          "tong_diem": 6
+        }
+      ],
+      "pham_vi": [
+        "ktpl12-lap-ke-hoach-kinh-doanh",
+        "ktpl12-tnxh-doanh-nghiep",
+        "ktpl12-quan-li-thu-chi-gia-dinh",
+        "ktpl12-quyen-nghia-vu-kinh-te",
+        "ktpl12-quyen-nghia-vu-van-hoa-xa-hoi",
+        "ktpl12-luat-quoc-te"
+      ],
+      "ti_le_muc_do": "NB 40%, TH 40%, VD 20%"
+    },
+    {
+      "loai": "Đề kiểm tra cuối học kì 2 môn GDKT&PL lớp 12",
+      "lop": 12,
+      "thoi_gian_phut": 60,
+      "phan": [
+        {
+          "ten": "Phần I. Trắc nghiệm nhiều lựa chọn",
+          "so_cau": 10,
+          "diem_moi_cau": 0.5,
+          "tong_diem": 5
+        },
+        {
+          "ten": "Phần II. Trắc nghiệm đúng/sai",
+          "so_cau": 1,
+          "diem_moi_cau": 1,
+          "tong_diem": 1
+        },
+        {
+          "ten": "Phần III. Tự luận (tình huống)",
+          "so_cau": 2,
+          "diem_moi_cau": 2,
+          "tong_diem": 4
+        }
+      ],
+      "pham_vi": [
+        "ktpl12-quyen-nghia-vu-kinh-te",
+        "ktpl12-quyen-nghia-vu-van-hoa-xa-hoi",
+        "ktpl12-luat-quoc-te"
+      ],
+      "ti_le_muc_do": "NB 40%, TH 40%, VD 20%"
+    },
+    {
+      "loai": "Đề thi tốt nghiệp THPT môn Giáo dục Kinh tế và Pháp luật (từ năm 2025)",
+      "lop": 12,
+      "thoi_gian_phut": 90,
+      "phan": [
+        {
+          "ten": "Phần I. Trắc nghiệm nhiều lựa chọn",
+          "so_cau": 12,
+          "mo_ta": "4 lựa chọn A–D, chọn 1 đáp án; 0,25 điểm/câu",
+          "diem_moi_cau": 0.25,
+          "tong_diem": 3
+        },
+        {
+          "ten": "Phần II. Trắc nghiệm đúng/sai",
+          "so_cau": 4,
+          "mo_ta": "Mỗi câu 4 ý a)–d); mỗi ý 0,1 điểm",
+          "diem_moi_cau": 1,
+          "tong_diem": 4
+        },
+        {
+          "ten": "Phần III. Trả lời ngắn",
+          "so_cau": 6,
+          "mo_ta": "Điền số; mỗi câu 0,5 điểm",
+          "diem_moi_cau": 0.5,
+          "tong_diem": 3
+        }
+      ],
+      "pham_vi": [
+        "ktpl12-tang-truong-phat-trien-kinh-te",
+        "ktpl12-hoi-nhap-kinh-te-quoc-te",
+        "ktpl12-bao-hiem-an-sinh-xa-hoi",
+        "ktpl12-lap-ke-hoach-kinh-doanh",
+        "ktpl12-tnxh-doanh-nghiep",
+        "ktpl12-quan-li-thu-chi-gia-dinh",
+        "ktpl12-quyen-nghia-vu-kinh-te",
+        "ktpl12-quyen-nghia-vu-van-hoa-xa-hoi",
+        "ktpl12-luat-quoc-te"
+      ],
+      "ti_le_muc_do": "NB 40%, TH 40%, VD 20%",
+      "ghi_chu": "Đề 2025 gồm 22 câu; trọng tâm mở rộng từ chương trình lớp 12, có liên hệ kiến thức lớp 10–11 — cập nhật cấu trúc các năm sau theo công bố của Bộ"
+    }
+  ],
+  "muc_luc_da_tra": [
+    "Lớp 10 – KNTT – Chủ đề 1. Nền kinh tế và các chủ thể của nền kinh tế (Bài 1–2)",
+    "Lớp 10 – KNTT – Chủ đề 2. Thị trường và cơ chế thị trường (Bài 3–4)",
+    "Lớp 10 – KNTT – Chủ đề 3. Ngân sách nhà nước và thuế (Bài 5–6)",
+    "Lớp 10 – KNTT – Chủ đề 4. Kinh tế của Việt Nam trong bối cảnh hội nhập và cạnh tranh quốc tế (Bài 7)",
+    "Lớp 10 – KNTT – Chủ đề 5. Một số vấn đề pháp luật dân sự (Bài 8–9)",
+    "Lớp 10 – KNTT – Chủ đề 6. Một số vấn đề pháp luật về hàng hóa, dịch vụ và tiêu dùng (Bài 10–11)",
+    "Lớp 10 – KNTT – Chủ đề 7. Một số vấn đề pháp luật về lao động (Bài 12–13)",
+    "Lớp 10 – KNTT – Chủ đề 8. Một số vấn đề pháp luật về hiến pháp (Bài 14–18)",
+    "Lớp 11 – KNTT – Chủ đề 1. Cạnh tranh, cung – cầu trong nền kinh tế thị trường (Bài 1–2)",
+    "Lớp 11 – KNTT – Chủ đề 2. Lạm phát, thất nghiệp (Bài 3–4)",
+    "Lớp 11 – KNTT – Chủ đề 3. Thị trường lao động và việc làm; ý tưởng kinh doanh (Bài 5–6)",
+    "Lớp 11 – KNTT – Chủ đề 4. Đạo đức của người kinh doanh đối với người tiêu dùng (Bài 7)",
+    "Lớp 11 – KNTT – Chủ đề 5. Đạo đức và pháp luật trong kinh doanh (Bài 8)",
+    "Lớp 11 – KNTT – Chủ đề 6. Pháp luật về hợp đồng (Bài 9–10)",
+    "Lớp 11 – KNTT – Chủ đề 7. Pháp luật về quyền bình đẳng giữa các dân tộc (Bài 11)",
+    "Lớp 11 – KNTT – Chủ đề 8. Một số vấn đề pháp luật về bảo vệ môi trường (Bài 12–14)",
+    "Lớp 11 – KNTT – Chủ đề 9. Pháp luật về quyền và nghĩa vụ công dân trong một số quan hệ dân sự (Bài 15–18)",
+    "Lớp 12 – KNTT – Chủ đề 1. Tăng trưởng và phát triển kinh tế (Bài 1)",
+    "Lớp 12 – KNTT – Chủ đề 2. Hội nhập kinh tế quốc tế (Bài 2)",
+    "Lớp 12 – KNTT – Chủ đề 3. Bảo hiểm và an sinh xã hội (Bài 3–4)",
+    "Lớp 12 – KNTT – Chủ đề 4. Lập kế hoạch kinh doanh (Bài 5)",
+    "Lớp 12 – KNTT – Chủ đề 5. Trách nhiệm xã hội của doanh nghiệp (Bài 6)",
+    "Lớp 12 – KNTT – Chủ đề 6. Quản lí thu, chi trong gia đình (Bài 7)",
+    "Lớp 12 – KNTT – Chủ đề 7. Một số quyền và nghĩa vụ của công dân về kinh tế (Bài 8–9)",
+    "Lớp 12 – KNTT – Chủ đề 8. Quyền và nghĩa vụ của công dân về văn hóa, xã hội (Bài 10–13)",
+    "Lớp 12 – KNTT – Chủ đề 9. Một số vấn đề cơ bản của luật quốc tế (Bài 14–16)"
+  ],
+  "nguon": [
+    "Chương trình GDPT 2018 môn Giáo dục Kinh tế và Pháp luật, Thông tư 32/2018/TT-BGDĐT (sửa đổi bởi Thông tư 13/2022)",
+    "SGK Giáo dục Kinh tế và Pháp luật 10, 11, 12 — Kết nối tri thức (mục lục từ vietjack.com, loigiaihay.com)",
+    "Cơ sở dữ liệu quốc gia về văn bản pháp luật (vbpl.vn) — tra tình trạng hiệu lực văn bản"
+  ],
+  "phien_ban": "Claude ghép 08/11/2026 từ nhánh feat/khung-chuong-trinh: nguyên bản agent."
+}

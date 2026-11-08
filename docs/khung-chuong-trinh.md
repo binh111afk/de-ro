@@ -174,8 +174,69 @@ Sau đó in riêng `yeu_cau_can_dat`, `chua_duoc_dung`, `luu_y_ra_de` của mọ
 
 ---
 
-## C. Đã có
+## C. Bản đồ môn theo cấp học và cách chia file
+
+### C1. Cấp nào có môn nào (GDPT 2018)
+
+| Cấp | Môn có ra đề viết | Ghi chú |
+|---|---|---|
+| Tiểu học 1–3 | Toán, Tiếng Việt, Tự nhiên và Xã hội, Đạo đức; Tiếng Anh từ lớp 3; Tin học và Công nghệ từ lớp 3 | Đánh giá theo TT 27/2020, đề 3 mức (Mức 1/2/3), không dùng NB/TH/VD |
+| Tiểu học 4–5 | Toán, Tiếng Việt, Tiếng Anh, Khoa học, Lịch sử và Địa lí, Tin học và Công nghệ, Đạo đức | Như trên |
+| THCS 6–9 | Toán, Ngữ văn, Tiếng Anh, **KHTN** (gộp Lý/Hoá/Sinh), **Lịch sử và Địa lí** (gộp 2 phân môn), GDCD, Công nghệ, Tin học | Đề định kỳ theo TT 22/2021 |
+| THPT 10–12 | Bắt buộc: Toán, Ngữ văn, Tiếng Anh, Lịch sử. Lựa chọn: Lý, Hoá, Sinh, Địa, Kinh tế và Pháp luật, Tin học (2 định hướng ICT/CS), Công nghệ (2 định hướng Công nghiệp/Nông nghiệp) | Đề tốt nghiệp 2025. Văn tự luận; Anh 40 câu; các môn khác 3 phần TN / Đúng-Sai / Trả lời ngắn (ghi đúng số câu trong `cau_truc_de` từng file) |
+
+Không làm khung cho: Âm nhạc, Mỹ thuật, Giáo dục thể chất, Hoạt động trải nghiệm, Giáo dục quốc phòng và an ninh (gần như không ra đề viết trên web).
+
+### C2. Chia file như thế nào
+Nguyên tắc: **mỗi file một môn hoặc một phân môn, kéo dài qua nhiều cấp nếu nội dung nối tiếp nhau.** Môn gộp ở THCS thì tách theo phân môn và ghép lại lúc soạn đề.
+
+| File | Gồm | Ghi chú |
+|---|---|---|
+| `khungToan.json` | Toán 6–12 | id `t<lớp>-…` |
+| `khungLy.json` | Vật lí 10–12 | trường riêng `cong_thuc` |
+| `khungHoa.json` | Hoá học 10–12 | `chat_va_phan_ung`, `cong_thuc`; danh pháp IUPAC |
+| `khungSinh.json` | Sinh học 10–12 | `thuat_ngu`, `qua_trinh_va_co_che`, `cong_thuc` |
+| `khungKhtn.json` | KHTN 6–9 | mỗi chương có `mach` (Lý/Hoá/Sinh/Trái Đất và bầu trời) |
+| `khungVan.json` | Ngữ văn 6–12 | chương = nhóm thể loại; `van_ban_trong_sach` (để TRÁNH dùng làm ngữ liệu); `yeu_cau_can_dat` chia doc/viet/noi_nghe; có đề vào lớp 10 |
+| `khungAnh.json` | Tiếng Anh 6–12 | chương = UNIT của Global Success; id `anh<lớp>-u<nn>`; bảng `tien_trinh_ngu_phap` |
+| `khungSu.json` | Lớp 6–9: **phân môn Lịch sử** của môn Lịch sử và Địa lí; lớp 10–12: Lịch sử | `su_kien_moc`, `nhan_vat`, `khai_niem`; chủ đề chung có `mach: "chủ đề chung"` |
+| `khungDia.json` | Lớp 6–9: **phân môn Địa lí**; lớp 10–12: Địa lí | `so_lieu_moc` (có năm + nguồn), `dia_danh`, bảng `ky_nang_tinh_toan`; lưu ý sáp nhập tỉnh 2025 |
+| `khungTin.json` | Tin học 6–12 | `mach` (A–G), `dinh_huong` (chung/ICT/CS) lớp 10–12; `phan_mem_ngon_ngu`; bảng `tien_trinh_lap_trinh` |
+| `khungGdcd.json` / `khungKtpl.json` | GDCD 6–9 / Kinh tế và Pháp luật 10–12 | `can_cu_phap_ly` có `hieu_luc` |
+| `khungCongNghe.json` | Công nghệ 6–12 | lớp 10–12 có `dinh_huong` (Công nghiệp/Nông nghiệp); lớp 9 có `mo_dun` |
+| `khungToanTieuHoc.json`, `khungTiengViet.json`, `khungTieuHocKhac.json` | Tiểu học | `cap`, `danh_gia` (TT 27/2020); file khác có `mon` ở từng lớp |
+| `khungTieuHoc.json` (hoặc tách theo môn) | các môn tiểu học | làm sau cùng; chưa có prompt |
+
+Prompt mẫu cho từng môn: dùng A1 + A2. Các prompt đầy đủ đã đưa cho người dùng (Lý, Hoá, Sinh, Văn, Anh, Tin, Sử, Địa) có thêm các trường riêng ghi ở bảng trên. Viết prompt mới thì giữ đúng tên trường đó.
+
+### C3. Nối vào prompt AI trong web (ĐÃ LÀM 08/11/2026: src/lib/khungPrompt.ts, kiểm bằng `npx tsx scripts/check-khung.ts`)
+- Từ yêu cầu của giáo viên (hoặc ô chọn trong AiPanel), xác định **môn + lớp + phạm vi** (chương cụ thể, hoặc loại đề "giữa kỳ 1"…). Ánh xạ môn → file:
+  - THCS "Khoa học tự nhiên" → `khungKhtn`; THCS "Lịch sử và Địa lí" → **cả** `khungSu` (lớp 6–9) **và** `khungDia` (lớp 6–9), ghép theo tỉ lệ điểm phân môn ghi trong `cau_truc_de`; THCS "GDCD" và THPT "Kinh tế và Pháp luật" → `khungGdcdKtpl`.
+  - THPT Tin/Công nghệ: hỏi hoặc suy ra định hướng, chỉ lấy chương `dinh_huong` = "chung" + định hướng đó.
+  - Tiểu học: dùng file tiểu học; đề theo 3 mức, không dùng NB/TH/VD.
+- Chỉ cắt các chương trong phạm vi: `ten`, `yeu_cau_can_dat`, `kien_thuc_duoc_dung` (hoặc trường tương ứng), `chua_duoc_dung`, `dang_bai_dien_hinh`, `luu_y_ra_de`, cộng các trường riêng ngắn (công thức, mốc, số liệu). Bỏ `ten_theo_sach` trừ khi giáo viên nêu bộ sách. Thêm mục `cau_truc_de` phù hợp. Mục tiêu 300–3.000 token.
+- Câu dặn trong prompt: "Chỉ dùng kiến thức trong khung dưới đây; tuyệt đối không dùng mục ‘chưa được dùng’." Với Văn thêm: "Ngữ liệu phải ngoài sách giáo khoa, không dùng các văn bản trong `van_ban_trong_sach`."
+- Môn chưa có file khung: soạn như hiện nay (không chèn gì), không chặn.
+- Nạp file bằng `import()` động theo môn để không làm nặng bundle.
+
+---
+
+## D. Đã có
 
 | Môn | File | Trạng thái |
 |---|---|---|
-| Toán 6–12 | `src/data/khungToan.json` | Đã kiểm 07/11/2026. Chưa nối vào prompt (xem phiên 24 mục 3) |
+| Toán 6–12 | `src/data/khungToan.json` | Đã kiểm 07/11/2026 |
+| Lý, Hoá, Sinh 10–12 | `khungLy.json`, `khungHoa.json`, `khungSinh.json` | Đã kiểm 08/11/2026, sửa vài lỗi (xem `phien_ban` trong file) |
+| Ngữ văn 6–12 | `khungVan.json` | Đã kiểm 08/11/2026, không có lỗi lớn |
+| Lịch sử 6–12 | `khungSu.json` | Đã kiểm 08/11/2026. Lớp 11: Claude đã thay một chủ đề sai bằng "Quá trình giành độc lập dân tộc của các quốc gia Đông Nam Á" |
+| Tin học 6–12 | `khungTin.json` | Đã kiểm. Lớp 11–12 làm lại 08/11/2026 (nhánh feat/khung-chuong-trinh); HTML/CSS lớp 12 Claude chuyển về phần chung. Tỉ lệ chung/riêng đề TN chưa đối chiếu |
+| Tiếng Anh 6–12 | `khungAnh.json` | Đã ghép 08/11/2026: lớp 6 bản cũ, 7–12 agent làm lại. Trường riêng `chu_de/tu_vung/ngu_phap`; `ten`, `yeu_cau_can_dat` do Claude suy ra |
+| KHTN 6–9 | `khungKhtn.json` | Đã ghép 08/11/2026 (10/10/8/14 chương) |
+| GDCD 6–9, KTPL 10–12 | `khungGdcd.json`, `khungKtpl.json` | Đã ghép 08/11/2026. Lưu ý Hiến pháp có thể sửa đổi 2025 |
+| Tiểu học 1–5 | `khungToanTieuHoc.json`, `khungTiengViet.json`, `khungAnh.json` (lớp 3–5), `khungTieuHocKhac.json` | Đã ghép 08/11/2026 từ khung_C…G. File "khác" gồm Khoa học, LS&ĐL, Tin học, Công nghệ, TN&XH, Đạo đức, lọc theo trường `mon` của từng lớp; phần này chưa có `cau_truc_de` |
+| Địa lí 6–12 | `khungDia.json` | Đã ghép 08/11/2026. Chia theo chủ đề lớn; lớp 6–7 vài chủ đề chưa tra số bài |
+| Công nghệ 6–12 | `khungCongNghe.json` | Đã ghép 08/11/2026 từ khung_A, khung_B (bản gốc ở scripts/khung/ban-goc/) |
+
+Lý do các file nháp thiếu: agent ngoài không tra được mục lục SGK hoặc văn bản chương trình nên tự dừng. Khi giao lại thì chia nhỏ (mỗi lần 1–2 lớp hoặc 1 môn) và yêu cầu tra mục lục từng bộ sách trước.
+
+Đã nối tất cả file vào prompt AI soạn đề (src/lib/khungPrompt.ts): đoán môn + lớp + chương/học kỳ từ yêu cầu, nạp lười đúng file. Thêm môn mới: thêm 1 dòng vào SUBJECTS và 1 loader trong F.

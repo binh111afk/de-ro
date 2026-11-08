@@ -1,0 +1,112 @@
+{
+  "mon": "Công nghệ",
+  "pham_vi_luot": "lớp 6–9",
+  "nguon": [
+    "Chương trình GDPT 2018 môn Công nghệ, Thông tư 32/2018/TT-BGDĐT (sửa đổi bởi Thông tư 13/2022)",
+    "SGK Công nghệ 6, 7, 8, 9 — Kết nối tri thức (mục lục từ vietjack.com, công văn 7991/KGDTH-GDTrH)",
+    "Công văn 7991/KGDTH-GDTrH — phân phối chương trình môn Công nghệ 6–9"
+  ],
+  "muc_luc_da_tra": [
+    "Lớp 6 – KNTT – Chủ đề 1. Công nghệ và vai trò của công nghệ (Bài 1–2: công nghệ trong cuộc sống; vai trò của công nghệ trong đời sống xã hội)",
+    "Lớp 6 – KNTT – Chủ đề 2. Gia đình (Bài 3–8: gia đình với các hoạt động công nghệ; chăm sóc cây xanh; nuôi thú cưng; vật liệu trong gia đình; đồ dùng trong gia đình; chi tiêu trong gia đình)",
+    "Lớp 6 – KNTT – Chủ đề 3. Kĩ thuật và phát triển kĩ thuật (Bài 9–11: kĩ thuật trong sản xuất; phát triển kĩ thuật; dự án kĩ thuật: đèn học)",
+    "Lớp 7 – KNTT – Chủ đề 1. Công nghệ và vai trò của công nghệ (Bài 1–2: lĩnh vực kinh tế – kĩ thuật; công nghệ trong sản xuất nông nghiệp)",
+    "Lớp 7 – KNTT – Chủ đề 2. Gia đình (Bài 3–5: vật liệu với năng lượng mặt trời; năng lượng trong gia đình; trang trí nội thất)",
+    "Lớp 7 – KNTT – Chủ đề 3. Kĩ thuật và phát triển kĩ thuật (Bài 6–10: mô hình kĩ thuật; mô hình kĩ thuật trong sản xuất nông nghiệp; sơ đồ kĩ thuật; đọc sơ đồ kĩ thuật; dự án kĩ thuật: lắp ghép mô hình kĩ thuật)",
+    "Lớp 8 – KNTT – Chủ đề 1. Công nghệ và vai trò của công nghệ (Bài 1–2: công nghệ với môi trường tự nhiên – xã hội; công nghệ, kĩ thuật và công nghệ trong sản xuất nông nghiệp)",
+    "Lớp 8 – KNTT – Chủ đề 2. Vật liệu và thay đổi vật liệu (Bài 3–6: chất dẻo; xi măng – bê tông; vật liệu mới; biến đổi vật liệu)",
+    "Lớp 8 – KNTT – Chủ đề 3. Nội thất gia đình (Bài 7–8: nội thất trong ngôi nhà của em; trang trí nội thất)",
+    "Lớp 8 – KNTT – Chủ đề 4. Điện trong gia đình (Bài 9–11: mạng điện trong gia đình; thiết bị điện trong gia đình; an toàn điện)",
+    "Lớp 9 – KNTT – Chủ đề 1. Công nghệ với thế giới nghề nghiệp (Bài 1–2: các nghề nghiệp trong lĩnh vực công nghệ; phương pháp lựa chọn nghề nghiệp phù hợp)",
+    "Lớp 9 – KNTT – Chủ đề 2. Mô đun nghề nghiệp (mỗi trường chọn 1 mô đun theo SGK in: Mô đun Công nghệ chế biến lương thực, thực phẩm hoặc Mô đun Công nghệ phát triển nông nghiệp; số bài đối chiếu SGK in)"
+  ],
+  "lop": [
+    {
+      "lop": 6,
+      "chuong": [
+        { "id": "cn6-cong-nghe-va-vai-tro", "ten": "Công nghệ và vai trò của công nghệ", "hoc_ky": 1, "mach": "Công nghệ và vai trò của công nghệ", "ten_theo_sach": { "KNTT": "Chủ đề 1 (Bài 1–2)", "CTST": "Chủ đề công nghệ và vai trò của công nghệ", "CD": "Chủ đề công nghệ và vai trò của công nghệ" }, "thuat_ngu_ki_hieu": ["công nghệ (technology)"], "cong_thuc": [], "quy_trinh": [], "yeu_cau_can_dat": ["Nêu khái niệm công nghệ qua ví dụ trong cuộc sống", "Trình bày vai trò của công nghệ đối với cá nhân, gia đình, xã hội"], "kien_thuc_duoc_dung": ["Tin học 6: công nghệ số"], "chua_duoc_dung": ["Cách mạng công nghiệp 4.0 chi tiết (lớp 10 định hướng công nghiệp)"], "dang_bai_dien_hinh": ["Nhận biết công nghệ trong tình huống", "Nêu vai trò công nghệ theo ví dụ"], "luu_y_ra_de": "Ví dụ công nghệ cập nhật theo thời gian, tránh thiết bị lỗi thời." },
+        { "id": "cn6-gia-dinh", "ten": "Gia đình: hoạt động công nghệ, cây xanh, thú cưng, vật liệu, đồ dùng, chi tiêu", "hoc_ky": 1, "mach": "Gia đình", "ten_theo_sach": { "KNTT": "Chủ đề 2 (Bài 3–8)", "CTST": "Chủ đề gia đình", "CD": "Chủ đề gia đình" }, "thuat_ngu_ki_hieu": ["vật liệu tự nhiên", "vật liệu nhân tạo", "thú cưng (pet)"], "cong_thuc": ["Lập bảng kế hoạch chi tiêu gia đình (mức nêu)"], "quy_trinh": ["Quy trình chăm sóc cây xanh trong gia đình", "Quy trình chăm sóc thú cưng"], "yeu_cau_can_dat": ["Nêu các hoạt động công nghệ của gia đình và cách tổ chức", "Trình bày cách chăm sóc cây xanh, thú cưng trong gia đình", "Nhận biết vật liệu, đồ dùng trong gia đình và cách sử dụng an toàn", "Lập kế hoạch chi tiêu của gia đình hợp lí"], "kien_thuc_duoc_dung": ["KHTN 6: vật liệu, lương thực – thực phẩm"], "chua_duoc_dung": ["Loại vật liệu polymer chi tiết (lớp 8)", "Chi phí y tế thú cưng chuyên sâu (ngoài chương trình)"], "dang_bai_dien_hinh": ["Tình huống chọn vật liệu, đồ dùng cho gia đình", "Lập kế hoạch chi tiêu theo khoản cho trước", "Trình tự chăm sóc cây xanh/thú cưng"], "luu_y_ra_de": "Không dùng hình ảnh vật nuôi xung đột an toàn thực phẩm." },
+        { "id": "cn6-ki-thuat-phat-trien-ki-thuat", "ten": "Kĩ thuật và phát triển kĩ thuật; dự án kĩ thuật: đèn học", "hoc_ky": 2, "mach": "Kĩ thuật và phát triển kĩ thuật", "ten_theo_sach": { "KNTT": "Chủ đề 3 (Bài 9–11)", "CTST": "Chủ đề kĩ thuật và phát triển kĩ thuật", "CD": "Chủ đề kĩ thuật và phát triển kĩ thuật" }, "thuat_ngu_ki_hieu": ["kĩ thuật", "dự án kĩ thuật", "sơ đồ kĩ thuật"], "cong_thuc": [], "quy_trinh": ["Các bước thực hiện dự án kĩ thuật: xác định nhu cầu – ý tưởng – thiết kế – chế tạo – đánh giá"], "yeu_cau_can_dat": ["Nhận biết kĩ thuật trong sản xuất và đời sống", "Trình bày sự phát triển của kĩ thuật qua các thời kì", "Thực hiện dự án kĩ thuật đèn học theo quy trình"], "kien_thuc_duoc_dung": ["KHTN 6: điện (mạch đèn ở mức nhận biết)"], "chua_duoc_dung": ["Mạch điện chi tiết, trở kháng (lớp 8)", "Công nghệ chế tạo chi tiết (lớp 10–12)"], "dang_bai_dien_hinh": ["Sắp xếp các bước dự án kĩ thuật đúng thứ tự", "Nhận xét sản phẩm đèn học theo tiêu chí"], "luu_y_ra_de": "Dự án chỉ dùng nguồn pin, an toàn điện cho học sinh lớp 6." }
+      ],
+      "chuyen_de": [],
+      "ghi_chu_chua_chac": ["Mục lục lớp 6 KNTT gồm 11 bài theo 3 chủ đề; CTST/CD gộp chủ đề khác nhẹ — ten_theo_sach ghi mức chủ đề", "Số bài mỗi chủ đề đối chiếu SGK in"]
+    },
+    {
+      "lop": 7,
+      "chuong": [
+        { "id": "cn7-cong-nghe-va-vai-tro", "ten": "Công nghệ và vai trò của công nghệ: lĩnh vực kinh tế – kĩ thuật, công nghệ trong sản xuất nông nghiệp", "hoc_ky": 1, "mach": "Công nghệ và vai trò của công nghệ", "ten_theo_sach": { "KNTT": "Chủ đề 1 (Bài 1–2)", "CTST": "Chủ đề công nghệ và vai trò của công nghệ", "CD": "Chủ đề công nghệ và vai trò của công nghệ" }, "thuat_ngu_ki_hieu": ["lĩnh vực kinh tế – kĩ thuật"], "cong_thuc": [], "quy_trinh": [], "yeu_cau_can_dat": ["Nêu tên một số lĩnh vực kinh tế – kĩ thuật", "Trình bày vai trò của công nghệ trong sản xuất nông nghiệp"], "kien_thuc_duoc_dung": ["Công nghệ 6: khái niệm công nghệ"], "chua_duoc_dung": ["Công nghệ sinh học hiện đại chi tiết (lớp 10–12)", "Nông nghiệp công nghệ cao chi tiết (lớp 11–12)"], "dang_bai_dien_hinh": ["Ghép lĩnh vực với hoạt động công nghệ", "Nêu vai trò công nghệ nông nghiệp theo ví dụ"], "luu_y_ra_de": "Không dùng mô hình canh tác chuyên sâu (lớp 11)." },
+        { "id": "cn7-gia-dinh-nang-luong-noi-that", "ten": "Gia đình: vật liệu với năng lượng mặt trời, năng lượng trong gia đình, trang trí nội thất", "hoc_ky": 1, "mach": "Gia đình", "ten_theo_sach": { "KNTT": "Chủ đề 2 (Bài 3–5)", "CTST": "Chủ đề gia đình", "CD": "Chủ đề gia đình" }, "thuat_ngu_ki_hieu": ["năng lượng mặt trời", "bình tích nóng", "tấm pin năng lượng mặt trời"], "cong_thuc": [], "quy_trinh": ["Quy trình lắp đặt, sử dụng bình năng lượng mặt trời ở mức nêu"], "yeu_cau_can_dat": ["Nêu nguyên lí thu nhận năng lượng mặt trời qua vật liệu", "Trình bày các nguồn năng lượng trong gia đình (điện, gas, năng lượng mặt trời) và cách sử dụng an toàn, tiết kiệm", "Trình bày nguyên tắc trang trí nội thất harmonize với không gian"],
+          "kien_thuc_duoc_dung": ["KHTN 6–7: năng lượng, ánh sáng"], "chua_duoc_dung": ["Pin quang điện chi tiết theo công nghệ silic (lớp 10–12)", "Mạch điện chi tiết (lớp 8)"],
+          "dang_bai_dien_hinh": ["Chọn thiết bị tiết kiệm năng lượng theo tình huống", "Nhận xét cách trang trí nội thất theo nguyên tắc"], "luu_y_ra_de": "Không hướng dẫn tự lắp đặt hệ thống điện mặt trời; chỉ nêu nhờ thợ có chuyên môn." },
+        { "id": "cn7-mo-hinh-ki-thuat", "ten": "Kĩ thuật và phát triển kĩ thuật: mô hình kĩ thuật, sơ đồ kĩ thuật, dự án lắp ghép mô hình", "hoc_ky": 2, "mach": "Kĩ thuật và phát triển kĩ thuật", "ten_theo_sach": { "KNTT": "Chủ đề 3 (Bài 6–10)", "CTST": "Chủ đề kĩ thuật và phát triển kĩ thuật", "CD": "Chủ đề kĩ thuật và phát triển kĩ thuật" }, "thuat_ngu_ki_hieu": ["mô hình kĩ thuật", "sơ đồ kĩ thuật", "bản vẽ kĩ thuật"], "cong_thuc": ["Tỉ lệ bản vẽ (nêu khái niệm)"], "quy_trinh": ["Đọc sơ đồ kĩ thuật", "Quy trình lắp ghép mô hình kĩ thuật"], "yeu_cau_can_dat": ["Nêu khái niệm, vai trò của mô hình kĩ thuật", "Nhận biết kí hiệu trên sơ đồ kĩ thuật; đọc được sơ đồ kĩ thuật đơn giản", "Thực hiện dự án lắp ghép mô hình kĩ thuật theo sơ đồ"],
+          "kien_thuc_duoc_dung": ["Công nghệ 6: dự án kĩ thuật đèn học", "Toán 7: hình học (tỉ lệ)"], "chua_duoc_dung": ["Bản vẽ chi tiết theo tiêu chuẩn TCVN kí hiệu đầy đủ (lớp 10–12)", "CAD phần mềm vẽ kĩ thuật (lớp 10)"],
+          "dang_bai_dien_hinh": ["Đọc sơ đồ kĩ thuật nhận biết bộ phận", "Sắp xếp bước lắp ghép mô hình theo sơ đồ"], "luu_y_ra_de": "Không yêu cầu vẽ bản vẽ theo TCVN đầy đủ." }
+      ],
+      "chuyen_de": [],
+      "ghi_chu_chua_chac": ["Mục lục lớp 7 KNTT gồm 10 bài theo 3 chủ đề; số bài từng chủ đề đối chiếu SGK in", "CTST/CD khác nhẹ — ten_theo_sach mức chủ đề"]
+    },
+    {
+      "lop": 8,
+      "chuong": [
+        { "id": "cn8-cong-nghe-va-vai-tro", "ten": "Công nghệ và vai trò của công nghệ: công nghệ với môi trường, công nghệ trong sản xuất nông nghiệp", "hoc_ky": 1, "mach": "Công nghệ và vai trò của công nghệ", "ten_theo_sach": { "KNTT": "Chủ đề 1 (Bài 1–2)", "CTST": "Chủ đề công nghệ và vai trò của công nghệ", "CD": "Chủ đề công nghệ và vai trò của công nghệ" }, "thuat_ngu_ki_hieu": ["công nghệ xanh"], "cong_thuc": [], "quy_trinh": [], "yeu_cau_can_dat": ["Nêu tác động của công nghệ tới môi trường tự nhiên và xã hội", "Trình bày vai trò công nghệ, kĩ thuật trong sản xuất nông nghiệp"], "kien_thuc_duoc_dung": ["Công nghệ 6–7: khái niệm công nghệ", "KHTN 8: môi trường"], "chua_duoc_dung": ["Nông nghiệp thông minh, IoT nông nghiệp chi tiết (lớp 11–12)"], "dang_bai_dien_hinh": ["Nhận xét tác động tích cực/tiêu cực của công nghệ theo tình huống"], "luu_y_ra_de": "Ví dụ cập nhật, tránh công nghệ lỗi thời." },
+        { "id": "cn8-vat-lieu-va-thay-doi-vat-lieu", "ten": "Vật liệu và thay đổi vật liệu: chất dẻo, xi măng – bê tông, vật liệu mới, biến đổi vật liệu", "hoc_ky": 1, "mach": "Vật liệu và thay đổi vật liệu", "ten_theo_sach": { "KNTT": "Chủ đề 2 (Bài 3–6)", "CTST": "Chủ đề vật liệu và thay đổi vật liệu", "CD": "Chủ đề vật liệu và thay đổi vật liệu" }, "thuat_ngu_ki_hieu": ["chất dẻo (plastic)", "polymer", "xi măng poóc lăng (Portland cement)", "bê tông cốt thép", "vật liệu mới (smart materials)"], "cong_thuc": [], "quy_trinh": ["Quy trình sản xuất xi măng poóc lăng (đá vôi + đất sét → nghiền, nung, nghiền mịn)", "Các cách biến đổi vật liệu (nhiệt, hoá, cơ)"], "yeu_cau_can_dat": ["Nêu tính chất, ứng dụng của chất dẻo; hậu quả rác thải nhựa", "Trình bày thành phần, ứng dụng xi măng – bê tông", "Nhận biết một số vật liệu mới và ứng dụng", "Trình bày các cách biến đổi vật liệu làm thay đổi tính chất"],
+          "kien_thuc_duoc_dung": ["KHTN 8: chất, polymer ở mức nêu", "GDCD 8: bảo vệ môi trường"], "chua_duoc_dung": ["Hoá học polymer chi tiết (KHTN 9)", "Công nghệ vật liệu nano nâng cao (đại học)"],
+          "dang_bai_dien_hinh": ["Ghép vật liệu với tính chất, ứng dụng", "Trình tự sản xuất xi măng theo sơ đồ", "Nhận diện cách biến đổi vật liệu theo ví dụ"], "luu_y_ra_de": "Không yêu cầu phương trình hoá học sản xuất xi măng." },
+        { "id": "cn8-noi-that-dien-gia-dinh", "ten": "Nội thất gia đình; điện trong gia đình: mạng điện, thiết bị điện, an toàn điện", "hoc_ky": 2, "mach": "Điện trong gia đình", "ten_theo_sach": { "KNTT": "Chủ đề 3–4 (Bài 7–11)", "CTST": "Chủ đề nội thất gia đình; chủ đề điện trong gia đình", "CD": "Chủ đề nội thất; chủ đề điện trong gia đình" }, "thuat_ngu_ki_hieu": ["mạng điện gia đình", "cầu dao", "aptômát (at)", "ổ cắm điện", "dây dẫn", "công tắc"], "cong_thuc": [], "quy_trinh": ["Quy trình lắp đặt mạng điện trong gia đình (sơ đồ: aptômát → dây dẫn → thiết bị)", "Các bước sử dụng thiết bị điện an toàn"], "yeu_cau_can_dat": ["Nêu nội thất cơ bản của các phòng trong nhà", "Trình bày nguyên tắc trang trí nội thất", "Mô tả mạng điện trong gia đình, nhận biết thiết bị điện thông dụng", "Trình bày biện pháp an toàn điện và xử lí khi có sự cố (cháy, giật)"],
+          "kien_thuc_duoc_dung": ["KHTN 8 chương Điện: mạch điện đơn giản"], "chua_duoc_dung": ["Sơ đồ mạng điện ba pha chi tiết (lớp 10 định hướng công nghiệp)", "Định luật Ohm tính toán (lớp 9)"],
+          "dang_bai_dien_hinh": ["Nhận diện thiết bị điện trong sơ đồ mạng điện nhà", "Tình huống dò điện/diết cháy — lựa chọn cách xử lí an toàn", "Trình bày nguyên tắc trang trí phòng ngủ/học"], "luu_y_ra_de": "Nhấn mạnh không tự sửa điện khi chưa tắt aptômát." }
+      ],
+      "chuyen_de": [],
+      "ghi_chu_chua_chac": ["Mục lục lớp 8 KNTT gồm 11 bài theo 4 chủ đề; số bài đối chiếu SGK in", "CTST/CD khác nhẹ — ten_theo_sach mức chủ đề"]
+    },
+    {
+      "lop": 9,
+      "chuong": [
+        { "id": "cn9-cong-nghe-voi-the-gioi-nghe-nghiep", "ten": "Công nghệ với thế giới nghề nghiệp", "hoc_ky": 1, "mach": "Công nghệ và vai trò của công nghệ", "ten_theo_sach": { "KNTT": "Chủ đề 1 (Bài 1–2)", "CTST": "Chủ đề công nghệ với thế giới nghề nghiệp", "CD": "Chủ đề công nghệ với thế giới nghề nghiệp" }, "thuat_ngu_ki_hieu": ["nghề nghiệp lĩnh vực công nghệ"], "cong_thuc": [], "quy_trinh": ["Phương pháp lựa chọn nghề nghiệp phù hợp"], "yeu_cau_can_dat": ["Kể tên các nhóm nghề nghiệp trong lĩnh vực công nghệ", "Trình bày phương pháp lựa chọn nghề nghiệp phù hợp với bản thân"], "kien_thuc_duoc_dung": ["GDCD 9: hướng nghiệp", "Công nghệ 6–8"], "chua_duoc_dung": ["Chuẩn kỹ năng nghề quốc gia chi tiết (ngoài chương trình)"], "dang_bai_dien_hinh": ["Ghép nghề với năng lực", "Trình bày định hướng nghề theo gợi ý"], "luu_y_ra_de": "Không phân biệt cao thấp giữa các nghề." },
+        { "id": "cn9-mo-dun-nghe-nghiep", "ten": "Mô đun nghề nghiệp (chọn 1 theo SGK in: Công nghệ chế biến lương thực, thực phẩm hoặc Công nghệ phát triển nông nghiệp)", "hoc_ky": 2, "mach": "Công nghệ và vai trò của công nghệ", "mo_dun": "Mô đun 1. Công nghệ chế biến lương thực, thực phẩm (một số trường chọn); hoặc Mô đun 2. Công nghệ phát triển nông nghiệp — mô đun bắt buộc/tự chọn theo điều kiện trường lớp và SGK in", "ten_theo_sach": { "KNTT": "Chủ đề 2. Mô đun nghề nghiệp (số bài đối chiếu SGK in)", "CTST": "Mô đun nghề nghiệp theo SGV CTST", "CD": "Mô đun nghề nghiệp theo SGV Cánh Diều" }, "thuat_ngu_ki_hieu": ["chế biến lương thực", "thực phẩm", "giống cây trồng", "thổ canh"], "cong_thuc": [], "quy_trinh": ["Quy trình chế biến gạo (xát, trắng hoá, luyện trắng, theo KNTT)", "Quy trình chế biến mì ăn liền/nước giải khát ở mức nêu", "Quy trình sản xuất rau an toàn (nếu học mô đun nông nghiệp)"], "yeu_cau_can_dat": ["Trình bày quy trình công nghệ chế biến một sản phẩm lương thực, thực phẩm (hoặc công nghệ phát triển nông nghiệp) theo SGK", "Vận dụng các bước chế biến/nông nghiệp vào thực tế gia đình"], "kien_thuc_duoc_dung": ["KHTN 8: chất dinh dưỡng", "Công nghệ 6: chăm sóc cây xanh"],
+          "chua_duoc_dung": ["Công nghệ thực phẩm sau phổ thông (vi sinh, bảo quản nâng cao)", "Kĩ thuật trồng trọt chi tiết (lớp 10 định hướng nông nghiệp)"],
+          "dang_bai_dien_hinh": ["Sắp xếp các bước quy trình chế biến theo thứ tự", "Trình bày quy trình sản xuất một sản phẩm theo sơ đồ"],
+          "luu_y_ra_de": "SGK KNTT in các mô đun khác nhau theo lần in (chế biến lương thực – thực phẩm / phát triển nông nghiệp) — cần đối chiếu SGK đang dùng khi gộp" }
+      ],
+      "chuyen_de": [],
+      "ghi_chu_chua_chac": ["Lớp 9 KNTT: Chủ đề 1 (2 bài) + Mô đun nghề nghiệp; danh sách mô đun theo SGK in — nhiều nguồn nêu Mô đun 1 Công nghệ chế biến lương thực, thực phẩm và Mô đun 2 Công nghệ phát triển nông nghiệp; cần đối chiếu SGK khi gộp"]
+    }
+  ],
+  "cau_truc_de": [
+    { "loai": "Đề kiểm tra cuối học kì 1 môn Công nghệ lớp 6", "lop": 6, "thoi_gian_phut": 45, "phan": [
+      { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 8, "diem_moi_cau": 0.5, "tong_diem": 4 },
+      { "ten": "Phần II. Tự luận", "so_cau": 3, "diem_moi_cau": 2, "tong_diem": 6 } ],
+      "pham_vi": ["cn6-cong-nghe-va-vai-tro", "cn6-gia-dinh"], "ti_le_muc_do": "NB 50%, TH 30%, VD 20%" },
+    { "loai": "Đề kiểm tra cuối học kì 2 môn Công nghệ lớp 6", "lop": 6, "thoi_gian_phut": 45, "phan": [
+      { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 8, "diem_moi_cau": 0.5, "tong_diem": 4 },
+      { "ten": "Phần II. Tự luận", "so_cau": 3, "diem_moi_cau": 2, "tong_diem": 6 } ],
+      "pham_vi": ["cn6-ki-thuat-phat-trien-ki-thuat"], "ti_le_muc_do": "NB 50%, TH 30%, VD 20%" },
+    { "loai": "Đề kiểm tra cuối học kì 1 môn Công nghệ lớp 7", "lop": 7, "thoi_gian_phut": 45, "phan": [
+      { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 8, "diem_moi_cau": 0.5, "tong_diem": 4 },
+      { "ten": "Phần II. Tự luận", "so_cau": 3, "diem_moi_cau": 2, "tong_diem": 6 } ],
+      "pham_vi": ["cn7-cong-nghe-va-vai-tro", "cn7-gia-dinh-nang-luong-noi-that"], "ti_le_muc_do": "NB 50%, TH 30%, VD 20%" },
+    { "loai": "Đề kiểm tra cuối học kì 2 môn Công nghệ lớp 7", "lop": 7, "thoi_gian_phut": 45, "phan": [
+      { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 8, "diem_moi_cau": 0.5, "tong_diem": 4 },
+      { "ten": "Phần II. Tự luận", "so_cau": 3, "diem_moi_cau": 2, "tong_diem": 6 } ],
+      "pham_vi": ["cn7-mo-hinh-ki-thuat"], "ti_le_muc_do": "NB 50%, TH 30%, VD 20%" },
+    { "loai": "Đề kiểm tra cuối học kì 1 môn Công nghệ lớp 8", "lop": 8, "thoi_gian_phut": 45, "phan": [
+      { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 8, "diem_moi_cau": 0.5, "tong_diem": 4 },
+      { "ten": "Phần II. Tự luận", "so_cau": 3, "diem_moi_cau": 2, "tong_diem": 6 } ],
+      "pham_vi": ["cn8-cong-nghe-va-vai-tro", "cn8-vat-lieu-va-thay-doi-vat-lieu", "cn8-noi-that-dien-gia-dinh"], "ti_le_muc_do": "NB 50%, TH 30%, VD 20%" },
+    { "loai": "Đề kiểm tra cuối học kì 2 môn Công nghệ lớp 8", "lop": 8, "thoi_gian_phut": 45, "phan": [
+      { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 8, "diem_moi_cau": 0.5, "tong_diem": 4 },
+      { "ten": "Phần II. Tự luận", "so_cau": 3, "diem_moi_cau": 2, "tong_diem": 6 } ],
+      "pham_vi": ["cn8-noi-that-dien-gia-dinh"], "ti_le_muc_do": "NB 50%, TH 30%, VD 20%" },
+    { "loai": "Đề kiểm tra cuối học kì 1 môn Công nghệ lớp 9", "lop": 9, "thoi_gian_phut": 45, "phan": [
+      { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 8, "diem_moi_cau": 0.5, "tong_diem": 4 },
+      { "ten": "Phần II. Tự luận", "so_cau": 3, "diem_moi_cau": 2, "tong_diem": 6 } ],
+      "pham_vi": ["cn9-cong-nghe-voi-the-gioi-nghe-nghiep", "cn9-mo-dun-nghe-nghiep"], "ti_le_muc_do": "NB 50%, TH 30%, VD 20%",
+      "ghi_chu": "Phạm vi theo mô đun trường chọn" },
+    { "loai": "Đề kiểm tra cuối học kì 2 môn Công nghệ lớp 9", "lop": 9, "thoi_gian_phut": 45, "phan": [
+      { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 8, "diem_moi_cau": 0.5, "tong_diem": 4 },
+      { "ten": "Phần II. Tự luận", "so_cau": 3, "diem_moi_cau": 2, "tong_diem": 6 } ],
+      "pham_vi": ["cn9-mo-dun-nghe-nghiep"], "ti_le_muc_do": "NB 50%, TH 30%, VD 20%",
+      "ghi_chu": "Phạm vi theo mô đun trường chọn" }
+  ],
+  "phien_ban": 1
+}

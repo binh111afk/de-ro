@@ -1,0 +1,3055 @@
+{
+  "mon": "Tiếng Việt",
+  "cap": "Tiểu học",
+  "danh_gia": "Thông tư 27/2020: đề 3 mức (Mức 1/2/3), không dùng NB/TH/VD",
+  "sach_chinh": "Kết nối tri thức với cuộc sống",
+  "muc_luc_da_tra": [
+    {
+      "lop": 1,
+      "muc_luc": [
+        "Tập 1: Chào em vào lớp 1 (Nội dung 1-5, Luyện tập)",
+        "Tập 1: Bài 1-5: A, a; B, b, dấu huyền; C, c, dấu sắc; E, e, Ê, ê; Ôn tập và kể chuyện",
+        "Tập 1: Bài 6-10: O, o, dấu hỏi; Ô, ô, dấu ngã; D, d, Đ, đ; Ơ, ơ, dấu nặng; Ôn tập và kể chuyện",
+        "Tập 1: Bài 11-15: I, i, K, k; H, h, L, l; U, u, Ư, ư; Ch, ch, Kh, kh; Ôn tập và kể chuyện",
+        "Tập 1: Bài 16-20: M, m, N, n; G, g, Gi, gi; Gh, gh, Nh, nh; Ng, ng, Ngh, ngh; Ôn tập và kể chuyện",
+        "Tập 1: Bài 21-25: R, r, S, s; T, t, Tr, tr; Th, th, ia; ua, ưa; Ôn tập và kể chuyện",
+        "Tập 1: Bài 26-30: Ph, ph, Qu, qu; V, v, X, x; Y, y; Luyện tập chính tả; Ôn tập và kể chuyện",
+        "Tập 1: Bài 31-35: an, ăn, ân; on, ôn, ơn; en, ên, in, un; am, ăm, âm; Ôn tập và kể chuyện",
+        "Tập 1: Bài 36-40: om, ôm, ơm; em, êm, im, um; ai, ay, ây; oi, ôi, ơi; Ôn tập và kể chuyện",
+        "Tập 1: Bài 41-45: ui, ưi; ao, eo; au, âu, êu; iu, ưu; Ôn tập và kể chuyện",
+        "Tập 1: Bài 46-50: ac, ăc, âc; oc, ôc, uc, ưc; at, ăt, ât; ot, ôt, ơt; Ôn tập và kể chuyện",
+        "Tập 1: Bài 51-55: et, êt, it; ut, ưt; ap, ăp, âp; op, ôp, ơp; Ôn tập và kể chuyện",
+        "Tập 1: Bài 56-60: ep, êp, ip, up; anh, ênh, inh; ach, êch, ich; ang, ăng, âng; Ôn tập và kể chuyện",
+        "Tập 1: Bài 61-65: ong, ông, ung, ưng; iêc, iên, iếp; iêng, iêm, yên; iêt, iêu, yêu; Ôn tập và kể chuyện",
+        "Tập 1: Bài 66-70: uôi, uôm; uôc, uôt; uôn, uông; ươi, ươu; Ôn tập và kể chuyện",
+        "Tập 1: Bài 71-75: ươc, ươt; ươm, ươp; ươn, ương; oa, oe; Ôn tập và kể chuyện",
+        "Tập 1: Bài 76-80: oan, oăn, oat, oăt; oai, uê, uy; uân, uât; uyên, uyêt; Ôn tập và kể chuyện",
+        "Tập 1: Bài 81-83: Ôn tập học kì 1",
+        "Tập 2: Chủ điểm 1. Tôi và các bạn: Bài 1 Tôi là học sinh lớp 1; Bài 2 Đôi tai xấu xí; Bài 3 Bạn của gió; Bài 4 Giải thưởng tình bạn; Bài 5 Sinh nhật của voi con; Ôn tập",
+        "Tập 2: Chủ điểm 2. Mái ấm gia đình: Bài 1 Nụ hôn trên bàn tay; Bài 2 Làm anh; Bài 3 Cả nhà đi chơi núi; Bài 4 Quạt cho bà ngủ; Bài 5 Bữa cơm gia đình; Bài 6 Ngôi nhà; Ôn tập",
+        "Tập 2: Chủ điểm 3. Mái trường mến yêu: Bài 1 Tôi đi học; Bài 2 Đi học; Bài 3 Hoa yêu thương; Bài 4 Cây bàng và lớp học; Bài 5 Bác trống trường; Bài 6 Giờ ra chơi; Ôn tập",
+        "Tập 2: Chủ điểm 4. Điều em cần biết: Bài 1 Rửa tay trước khi ăn; Bài 2 Lời chào; Bài 3 Khi mẹ vắng nhà; Bài 4 Nếu không may bị lạc; Bài 5 Đèn giao thông; Ôn tập",
+        "Tập 2: Chủ điểm 5. Bài học từ cuộc sống: Bài 1 Kiến và chim bồ câu; Bài 2 Câu chuyện của rễ; Bài 3 Câu hỏi của Sói; Bài 4 Chú bé chăn cừu; Bài 5 Tiếng vọng của núi; Ôn tập",
+        "Tập 2: Chủ điểm 6. Thiên nhiên kì thú: Bài 1 Loài chim của biển cả; Bài 2 Bảy sắc cầu vồng; Bài 3 Chúa tể rừng xanh; Bài 4 Cuộc thi tài năng rừng xanh; Bài 5 Cây liễu dẻo dai; Ôn tập",
+        "Tập 2: Chủ điểm 7. Thế giới trong mắt em: Bài 1 Tia nắng đi đâu?; Bài 2 Trong giấc mơ buổi sáng; Bài 3 Ngày mới bắt đầu; Bài 4 Hỏi mẹ; Bài 5 Những cánh cò; Bài 6 Buổi trưa hè; Bài 7 Hoa phượng; Ôn tập",
+        "Tập 2: Chủ điểm 8. Đất nước và con người: Bài 1 Cậu bé thông minh; Bài 2 Lính cứu hoả; Bài 3 Lớn lên bạn làm gì?; Bài 4 Ruộng bậc thang ở Sa Pa; Bài 5 Nhớ ơn; Bài 6 Du lịch biển Việt Nam; Ôn tập",
+        "Tập 2: Ôn tập và đánh giá: Bài 1-3 Ôn tập, Đánh giá cuối năm học"
+      ],
+      "nguon": "https://kenhgiaovien.com/tai-lieu/giao-tieng-viet-1-ket-noi-tri-thuc-du-ca-nam ; https://sytu.vn/sach/sach-giao-khoa-sgk-tieng-viet-1-tap-lop-2-ket-noi-tri-thuc-s23.html"
+    },
+    {
+      "lop": 2,
+      "muc_luc": [
+        "Tập 1: Chủ điểm 1. Em lớn lên từng ngày: Bài 1 Tôi là học sinh lớp 2; Bài 2 Ngày hôm qua đâu rồi?; Bài 3 Niềm vui của Bi và Bống; Bài 4 Làm việc thật là vui; Bài 5 Em có xinh không?; Bài 6 Một giờ học; Bài 7 Cây xấu hổ; Bài 8 Cầu thủ dự bị",
+        "Tập 1: Chủ điểm 2. Đi học vui sao: Bài 9 Cô giáo lớp em; Bài 10 Thời khóa biểu; Bài 11 Cái trống trường em; Bài 12 Danh sách học sinh; Bài 13 Yêu lắm trường ơi!; Bài 14 Em học vẽ; Bài 15 Cuốn sách của em; Bài 16 Khi trang sách mở ra",
+        "Tập 1: Ôn tập giữa học kì 1",
+        "Tập 1: Chủ điểm 3. Niềm vui tuổi thơ: Bài 17 Gọi bạn; Bài 18 Tớ nhớ cậu; Bài 19 Chữ A và những người bạn; Bài 20 Nhím nâu kết bạn; Bài 21 Thả diều; Bài 22 Tớ là lê-gô; Bài 23 Rồng rắn lên mây; Bài 24 Nặn đồ chơi",
+        "Tập 1: Chủ điểm 4. Mái ấm gia đình: Bài 25 Sự tích hoa tỉ muội; Bài 26 Em mang về yêu thương; Bài 27 Mẹ; Bài 28 Trò chơi của bố; Bài 29 Cánh cửa nhớ bà; Bài 30 Thương ông; Bài 31 Ánh sáng của yêu thương; Bài 32 Chơi chong chóng",
+        "Tập 1: Ôn tập và Đánh giá cuối học kì 1",
+        "Tập 2: Chủ điểm 5. Vẻ đẹp quanh em: Bài 1 Chuyện bốn mùa; Bài 2 Mùa nước nổi; Bài 3 Họa mi hót; Bài 4 Tết đến rồi; Bài 5 Giọt nước và biển lớn; Bài 6 Mùa vàng; Bài 7 Hạt thóc; Bài 8 Lũy tre",
+        "Tập 2: Chủ điểm 6. Hành tinh xanh của em: Bài 9 Vè chim; Bài 10 Khủng long; Bài 11 Sự tích cây thì là; Bài 12 Bờ tre đón khách; Bài 13 Tiếng chổi tre; Bài 14 Cỏ non cười rồi; Bài 15 Những con sao biển; Bài 16 Tạm biệt cánh cam",
+        "Tập 2: Ôn tập giữa học kì 2",
+        "Tập 2: Chủ điểm 7. Giao tiếp và kết nối: Bài 17 Những cách chào độc đáo; Bài 18 Thư viện biết đi; Bài 19 Cảm ơn anh hà mã; Bài 20 Từ chú bồ câu đến in-tơ-nét",
+        "Tập 2: Chủ điểm 8. Con người Việt Nam: Bài 21 Mai An Tiêm; Bài 22 Thư gửi bố ngoài đảo; Bài 23 Bóp nát quả cam; Bài 24 Chiếc rễ đa tròn",
+        "Tập 2: Chủ điểm 9. Việt Nam quê hương em: Bài 25 Đất nước chúng mình; Bài 26 Trên các miền đất nước; Bài 27 Chuyện quả bầu; Bài 28 Khám phá đáy biển ở Trường Sa; Bài 29 Hồ Gươm; Bài 30 Cánh đồng quê em",
+        "Tập 2: Ôn tập và đánh giá cuối học kì 2"
+      ],
+      "nguon": "https://thuviendethi.org/phan-phoi-chuong-trinh-tieng-viet-lop-2-sach-ket-noi-tri-thuc-34839/ ; https://m.loigiaihay.com/tieng-viet-2-tap-2-e22514.html"
+    },
+    {
+      "lop": 3,
+      "muc_luc": [
+        "Tập 1: Chủ điểm 1. Những trải nghiệm thú vị: Bài 1 Ngày gặp lại; Bài 2 Về thăm quê; Bài 3 Cánh rừng trong nắng; Bài 4 Lần đầu ra biển; Bài 5 Nhật kí tập bơi; Bài 6 Tập nấu ăn; Bài 7 Mùa hè lấp lánh; Bài 8 Tạm biệt mùa hè",
+        "Tập 1: Chủ điểm 2. Cổng trường rộng mở: Bài 9 Đi học vui sao; Bài 10 Con đường đến trường; Bài 11 Lời giải toán đặc biệt; Bài 12 Bài tập làm văn; Bài 13 Bàn tay cô giáo; Bài 14 Cuộc họp của chữ viết; Bài 15 Thư viện; Bài 16 Ngày em vào Đội",
+        "Tập 1: Ôn tập giữa học kì 1",
+        "Tập 1: Chủ điểm 3. Mái nhà yêu thương: Bài 17 Ngưỡng cửa; Bài 18 Món quà đặc biệt; Bài 19 Khi cả nhà bé tí; Bài 20 Trò chuyện cùng mẹ; Bài 21 Tia nắng bé nhỏ; Bài 22 Để cháu nắm tay ông; Bài 23 Tôi yêu em tôi; Bài 24 Bạn nhỏ trong nhà",
+        "Tập 1: Chủ điểm 4. Cộng đồng gắn bó: Bài 25 Những bậc đá chạm mây; Bài 26 Đi tìm mặt trời; Bài 27 Những chiếc áo ấm; Bài 28 Con đường của bé; Bài 29 Ngôi nhà trong cỏ; Bài 30 Những ngọn hải đăng; Bài 31 Người làm đồ chơi; Bài 32 Cây bút thần",
+        "Tập 1: Ôn tập và đánh giá cuối học kì 1",
+        "Tập 2: Chủ điểm 5. Những sắc màu thiên nhiên: Bài 1 Bầu trời; Bài 2 Mưa; Bài 3 Cóc kiện Trời; Bài 4 Những cái tên đáng yêu; Bài 5 Ngày hội rừng xanh; Bài 6 Cây gạo; Bài 7 Mặt trời xanh của tôi; Bài 8 Bầy voi rừng Trường Sơn",
+        "Tập 2: Chủ điểm 6. Bài học từ cuộc sống: Bài 9 Lời kêu gọi toàn dân tập thể dục; Bài 10 Quả hồng của thỏ con; Bài 11 Chuyện bên cửa sổ; Bài 12 Tay trái và tay phải; Bài 13 Mèo đi câu cá; Bài 14 Học nghề; Bài 15 Ngày như thế nào là đẹp?; Bài 16 A lô, tớ đây",
+        "Tập 2: Ôn tập giữa học kì 2",
+        "Tập 2: Chủ điểm 7. Đất nước ngàn năm: Bài 17 Đất nước là gì?; Bài 18 Núi quê tôi; Bài 19 Sông Hương; Bài 20 Tiếng nước mình; Bài 21 Nhà rông; Bài 22 Sự tích ông Đùng, bà Đùng; Bài 23 Hai Bà Trưng; Bài 24 Cùng Bác qua suối",
+        "Tập 2: Chủ điểm 8. Trái Đất của chúng mình: Bài 25 Ngọn lửa Ô-lim-pích; Bài 26 Rô-bốt ở quanh ta; Bài 27 Thư của ông Trái Đất gửi các bạn nhỏ; Bài 28 Những điều nhỏ tớ làm cho Trái Đất; Bài 29 Bác sĩ Y-éc-xanh; Bài 30 Một mái nhà chung",
+        "Tập 2: Ôn tập và Đánh giá cuối học kì 2"
+      ],
+      "nguon": "https://tailieumoi.vn/bai-viet/21996/giai-sgk-tieng-viet-lop-3-ket-noi-tri-thuc-giai-tieng-viet-lop-3-giai-bai-tap-tieng-viet-lop-3-tap-1-tap-2-hoc-tot-tieng-viet-lop-3-tieng-viet-lop-3-kntt ; https://ihoc.vn/sgk/lop-3/tieng-viet-lop-3/sach-giao-khoa-tieng-viet-lop-3-tap-2-ket-noi-tri-thuc.html"
+    },
+    {
+      "lop": 4,
+      "muc_luc": [
+        "Tập 1: Chủ điểm 1. Mỗi người một vẻ: Bài 1 Điều kì diệu; Bài 2 Thi nhạc; Bài 3 Anh em sinh đôi; Bài 4 Công chúa và người dẫn chuyện; Bài 5 Thằn lằn xanh và tắc kè; Bài 6 Nghệ sĩ trống; Bài 7 Những bức chân dung; Bài 8 Đò ngang",
+        "Tập 1: Chủ điểm 2. Trải nghiệm và khám phá: Bài 9 Bầu trời trong quả trứng; Bài 10 Tiếng nói của cỏ cây; Bài 11 Tập làm văn; Bài 12 Nhà phát minh 6 tuổi; Bài 13 Con vẹt xanh; Bài 14 Chân trời cuối phố; Bài 15 Gặt chữ trên non; Bài 16 Trước ngày xa quê",
+        "Tập 1: Ôn tập và Đánh giá giữa học kì I",
+        "Tập 1: Chủ điểm 3. Niềm vui sáng tạo: Bài 17 Vẽ màu; Bài 18 Đồng cỏ nở hoa; Bài 19 Thanh âm của núi; Bài 20 Bầu trời mùa thu; Bài 21 Làm thỏ con bằng giấy; Bài 22 Bức tường có nhiều phép lạ; Bài 23 Bét-tô-ven và Bản xô-nát Ánh trăng; Bài 24 Người tìm đường lên các vì sao",
+        "Tập 1: Chủ điểm 4. Chắp cánh ước mơ: Bài 25 Bay cùng ước mơ; Bài 26 Con trai người làm vườn; Bài 27 Nếu em có một khu vườn; Bài 28 Bốn mùa mơ ước; Bài 29 Ở vương quốc tương lai; Bài 30 Cánh chim nhỏ; Bài 31 Nếu chúng mình có phép lạ; Bài 32 Anh Ba",
+        "Tập 1: Ôn tập và Đánh giá cuối học kì I",
+        "Tập 2: Chủ điểm 5. Sống để yêu thương: Bài 1 Hải Thượng Lãn Ông; Bài 2 Vệt phấn trên mặt bàn; Bài 3 Ông Bụt đã đến; Bài 4 Quả ngọt cuối mùa; Bài 5 Tờ báo tường của tôi; Bài 6 Tiếng ru; Bài 7 Con muốn làm một cái cây; Bài 8 Trên khóm tre đầu ngõ",
+        "Tập 2: Chủ điểm 6. Uống nước nhớ nguồn: Bài 9 Sự tích con rồng cháu tiên; Bài 10 Cảm xúc Trường Sa; Bài 11 Sáng tháng Năm; Bài 12 Chàng trai làng Phù Ủng; Bài 13 Vườn của ông tôi; Bài 14 Trong lời mẹ hát; Bài 15 Người thầy đầu tiên của bố tôi; Bài 16 Ngựa biên phòng",
+        "Tập 2: Ôn tập và đánh giá giữa học kì 2",
+        "Tập 2: Chủ điểm 7. Quê hương trong tôi: Bài 17 Cây đa quê hương; Bài 18 Bước mùa xuân; Bài 19 Đi hội chùa Hương; Bài 20 Chiều ngoại ô; Bài 21 Những cánh buồm; Bài 22 Cái cầu; Bài 23 Đường đi Sa Pa; Bài 24 Quê ngoại",
+        "Tập 2: Chủ điểm 8. Vì một thế giới bình yên: Bài 25 Khu bảo tồn động vật hoang dã Ngô-rông-gô-rô; Bài 26 Ngôi nhà của yêu thương; Bài 27 Băng tan; Bài 28 Chuyến du lịch thú vị; Bài 29 Lễ hội ở Nhật Bản; Bài 30 Ngày hội",
+        "Tập 2: Ôn tập và đánh giá cuối năm học"
+      ],
+      "nguon": "https://timdapan.com/sach-giao-khoa/tieng-viet-4-tap-mot-2 ; https://tailieumoi.vn/bai-viet/84919/giai-sgk-tieng-viet-lop-4-ket-noi-tri-thuc-giai-bai-tap-tieng-viet-lop-4-ket-noi-tri-thuc-tap-1-tap-2-hay-chi-tiet"
+    },
+    {
+      "lop": 5,
+      "muc_luc": [
+        "Tập 1: Chủ điểm 1. Thế giới tuổi thơ: Bài 1 Thanh âm của gió; Bài 2 Cánh đồng hoa; Bài 3 Tuổi ngựa; Bài 4 Bến sông tuổi thơ; Bài 5 Tiếng hát nảy mầm; Bài 6 Ngôi sao sân cỏ; Bài 7 Bộ sưu tập độc đáo; Bài 8 Hành tinh kì lạ",
+        "Tập 1: Chủ điểm 2. Thiên nhiên kì thú: Bài 9 Trước cổng trời; Bài 10 Kì diệu rừng xanh; Bài 11 Hang Sơn Đoòng - những điều kì thú; Bài 12 Những hòn đảo trên Vịnh Hạ Long; Bài 13 Mầm non; Bài 14 Những ngọn núi nóng rẫy; Bài 15 Bài ca về mặt trời; Bài 16 Xin chào, Xa-ha-ra",
+        "Tập 1: Ôn tập và Đánh giá giữa học kì I",
+        "Tập 1: Chủ điểm 3. Trên con đường học tập: Bài 17 Thư gửi các học sinh; Bài 18 Tấm gương tự học; Bài 19 Trải nghiệm để sáng tạo; Bài 20 Khổ luyện thành tài; Bài 21 Thế giới trong trang sách; Bài 22 Từ những câu chuyện ấu thơ; Bài 23 Giới thiệu sách Dế Mèn phiêu lưu kí; Bài 24 Tinh thần học tập của nhà Phi-lít",
+        "Tập 1: Chủ điểm 4. Nghệ thuật muôn màu: Bài 25 Tiếng đàn ba-la-lai-ca trên sông Đà; Bài 26 Trí tưởng tượng phong phú; Bài 27 Tranh làng Hồ; Bài 28 Tập hát quan họ; Bài 29 Phim hoạt hình Chú ốc sên bay; Bài 30 Nghệ thuật múa ba lê; Bài 31 Một ngôi chùa độc đáo; Bài 32 Sự tích chú Tễu",
+        "Tập 1: Ôn tập và đánh giá cuối học kì I",
+        "Tập 2: Chủ điểm 5. Vẻ đẹp cuộc sống: Bài 1 Tiếng hát của người đá; Bài 2 Khúc hát ru những em bé lớn trên lưng mẹ; Bài 3 Hạt gạo làng ta; Bài 4 Hộp quà màu thiên thanh; Bài 5 Giỏ hoa tháng Năm; Bài 6 Thư của bố; Bài 7 Đoàn thuyền đánh cá; Bài 8 Khu rừng của Mát",
+        "Tập 2: Chủ điểm 6. Hương sắc trăm miền: Bài 9 Hội thổi cơm thi ở Đồng Vân; Bài 10 Những búp chè trên cây cổ thụ; Bài 11 Hương cốm mùa thu; Bài 12 Vũ điệu trên nền thổ cẩm; Bài 13 Đàn t-rưng - tiếng ca đại ngàn; Bài 14 Đường quê Đồng Tháp Mười; Bài 15 Xuồng ba lá quê tôi; Bài 16 Về thăm Đất Mũi",
+        "Tập 2: Ôn tập và Đánh giá giữa học kì II",
+        "Tập 2: Chủ điểm 7. Tiếp bước cha ông: Bài 17 Nghìn năm văn hiến; Bài 18 Người thầy của muôn đời; Bài 19 Danh y Tuệ Tĩnh; Bài 20 Cụ Đồ Chiểu; Bài 21 Anh hùng Lao động Trần Đại Nghĩa; Bài 22 Bộ đội về làng; Bài 23 Về ngôi nhà đang xây; Bài 24 Việt Nam quê hương ta",
+        "Tập 2: Chủ điểm 8. Thế giới của chúng ta: Bài 25 Bài ca Trái Đất; Bài 26 Những con hạc giấy; Bài 27 Một người hùng thầm lặng; Bài 28 Giờ Trái Đất; Bài 29 Điện thoại di động; Bài 30 Thành phố thông minh Mát-xđa",
+        "Tập 2: Ôn tập và Đánh giá cuối năm học"
+      ],
+      "nguon": "https://kenhgiaovien.com/tai-lieu/ppct-tieng-viet-5-ket-noi-tri-thuc"
+    }
+  ],
+  "lop": [
+    {
+      "chuong": [
+        {
+          "cac_bai": [
+            "Nội dung 1. Làm quen với trường lớp, bạn bè",
+            "Nội dung 2. Làm quen với đồ dùng học tập",
+            "Nội dung 3. Làm quen với tư thế đọc, viết, nói, nghe",
+            "Nội dung 4. Làm quen với các nét viết cơ bản, các chữ số và dấu thanh",
+            "Nội dung 5. Làm quen với bảng chữ cái",
+            "Luyện tập"
+          ],
+          "chua_duoc_dung": [
+            "Đọc, viết âm, vần, tiếng, từ (Bài 1-80)",
+            "Đọc trơn văn bản; viết chính tả"
+          ],
+          "dang_bai_dien_hinh": [
+            "Nhận biết chữ cái, chữ số",
+            "Nói về trường lớp, bạn bè, đồ dùng học tập"
+          ],
+          "hoc_ky": 1,
+          "id": "tv1-chao-em-vao-lop-1",
+          "kien_thuc_duoc_dung": [
+            "Vốn từ và kĩ năng giao tiếp của trẻ trước khi vào lớp 1"
+          ],
+          "luu_y_ra_de": "Đây là phần làm quen, không ra đề kiểm tra định kì; chỉ dùng để đánh giá thường xuyên bằng quan sát.",
+          "ten": "Chào em vào lớp 1",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chào em vào lớp 1"
+          },
+          "van_ban_trong_sach": [],
+          "yeu_cau_can_dat": [
+            "Đọc: Nhận biết được một số nét viết cơ bản, các chữ số và bảng chữ cái tiếng Việt",
+            "Viết: Viết được các nét viết cơ bản và một số chữ số",
+            "Nói và nghe: Giới thiệu được tên mình, trường lớp, bạn bè; nói được câu đơn giản về đồ dùng học tập"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Bài 1-5: A, a; B, b, dấu huyền; C, c, dấu sắc; E, e, Ê, ê; Ôn tập và kể chuyện",
+            "Bài 6-10: O, o, dấu hỏi; Ô, ô, dấu ngã; D, d, Đ, đ; Ơ, ơ, dấu nặng; Ôn tập và kể chuyện",
+            "Bài 11-15: I, i, K, k; H, h, L, l; U, u, Ư, ư; Ch, ch, Kh, kh; Ôn tập và kể chuyện",
+            "Bài 16-20: M, m, N, n; G, g, Gi, gi; Gh, gh, Nh, nh; Ng, ng, Ngh, ngh; Ôn tập và kể chuyện",
+            "Bài 21-25: R, r, S, s; T, t, Tr, tr; Th, th, ia; ua, ưa; Ôn tập và kể chuyện",
+            "Bài 26-30: Ph, ph, Qu, qu; V, v, X, x; Y, y; Luyện tập chính tả; Ôn tập và kể chuyện"
+          ],
+          "chua_duoc_dung": [
+            "Các vần (Bài 31-80)",
+            "Đọc trơn câu, đoạn văn; viết chính tả đoạn văn"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc âm, tiếng, từ có âm và dấu thanh đã học",
+            "Viết chữ cái, tiếng, từ theo mẫu",
+            "Nghe và kể lại câu chuyện ngắn"
+          ],
+          "hoc_ky": 1,
+          "id": "tv1-hoc-am-va-chu-cai",
+          "kien_thuc_duoc_dung": [
+            "Bảng chữ cái (Chào em vào lớp 1)",
+            "Các nét viết cơ bản"
+          ],
+          "luu_y_ra_de": "Đề kiểm tra chỉ dùng âm, vần đã học tới thời điểm kiểm tra; tuyệt đối không ra vần chưa học.",
+          "ten": "Học âm, chữ cái và dấu thanh",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Bài 1-30: Học âm, chữ cái và dấu thanh"
+          },
+          "van_ban_trong_sach": [
+            "Búp bê và dế mèn",
+            "Đàn kiến con ngoan ngoãn",
+            "Con quạ thông minh",
+            "Cô chủ không biết quý tình bạn",
+            "Chó sói và cừu non",
+            "Kiến và dế mèn"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng các âm, chữ cái và dấu thanh đã học; đọc được tiếng, từ đơn giản",
+            "Viết: Viết đúng các chữ cái, dấu thanh; viết được tiếng, từ đơn giản",
+            "Nói và nghe: Nghe và kể lại được câu chuyện ngắn đã nghe"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Bài 31-35: an, ăn, ân; on, ôn, ơn; en, ên, in, un; am, ăm, âm; Ôn tập và kể chuyện",
+            "Bài 36-40: om, ôm, ơm; em, êm, im, um; ai, ay, ây; oi, ôi, ơi; Ôn tập và kể chuyện",
+            "Bài 41-45: ui, ưi; ao, eo; au, âu, êu; iu, ưu; Ôn tập và kể chuyện",
+            "Bài 46-50: ac, ăc, âc; oc, ôc, uc, ưc; at, ăt, ât; ot, ôt, ơt; Ôn tập và kể chuyện",
+            "Bài 51-55: et, êt, it; ut, ưt; ap, ăp, âp; op, ôp, ơp; Ôn tập và kể chuyện",
+            "Bài 56-60: ep, êp, ip, up; anh, ênh, inh; ach, êch, ich; ang, ăng, âng; Ôn tập và kể chuyện",
+            "Bài 61-65: ong, ông, ung, ưng; iêc, iên, iếp; iêng, iêm, yên; iêt, iêu, yêu; Ôn tập và kể chuyện",
+            "Bài 66-70: uôi, uôm; uôc, uôt; uôn, uông; ươi, ươu; Ôn tập và kể chuyện",
+            "Bài 71-75: ươc, ươt; ươm, ươp; ươn, ương; oa, oe; Ôn tập và kể chuyện",
+            "Bài 76-80: oan, oăn, oat, oăt; oai, uê, uy; uân, uât; uyên, uyêt; Ôn tập và kể chuyện"
+          ],
+          "chua_duoc_dung": [
+            "Đọc hiểu văn bản dài, trả lời câu hỏi đọc hiểu (tập 2)",
+            "Viết đoạn văn; chính tả đoạn văn dài"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc vần, tiếng, từ, câu có vần đã học",
+            "Nghe-viết câu, đoạn ngắn",
+            "Đọc trơn đoạn văn ngắn và trả lời câu hỏi đơn giản"
+          ],
+          "hoc_ky": 1,
+          "id": "tv1-hoc-van",
+          "kien_thuc_duoc_dung": [
+            "Âm, chữ cái và dấu thanh (Bài 1-30)"
+          ],
+          "luu_y_ra_de": "Bài 23, 24 đã xuất hiện vần ia, ua, ưa trong khi học âm th; ranh giới âm - vần ở Bài 30/31 là theo giai đoạn chính của sách.",
+          "ten": "Học vần",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Bài 31-80: Học vần"
+          },
+          "van_ban_trong_sach": [
+            "Gà nâu và vịt xám",
+            "Hai người bạn và con gấu",
+            "Sự tích hoa cúc trắng"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng các vần đã học; đọc trơn được câu, đoạn ngắn",
+            "Viết: Viết đúng các vần, tiếng, từ, câu ngắn; nghe-viết được câu, đoạn ngắn",
+            "Nói và nghe: Nghe và kể lại được câu chuyện ngắn đã nghe"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Bài 81. Ôn tập",
+            "Bài 82. Ôn tập",
+            "Bài 83. Ôn tập"
+          ],
+          "chua_duoc_dung": [
+            "Văn bản đọc hiểu theo chủ điểm (tập 2)",
+            "Viết đoạn văn"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đề ôn tập tổng hợp học kì 1: đọc âm, vần, tiếng, từ, câu; nghe-viết; kể chuyện"
+          ],
+          "hoc_ky": 1,
+          "id": "tv1-on-tap-hoc-ki-1",
+          "kien_thuc_duoc_dung": [
+            "Toàn bộ âm, vần đã học (Bài 1-80)"
+          ],
+          "luu_y_ra_de": "Phạm vi đề kiểm tra cuối học kì 1 là toàn bộ tập 1; không ra nội dung tập 2.",
+          "ten": "Ôn tập học kì 1",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Ôn tập học kì 1"
+          },
+          "van_ban_trong_sach": [],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, đọc trơn được các âm, vần, tiếng, từ, câu đã học trong học kì 1",
+            "Viết: Viết đúng các âm, vần, tiếng, từ đã học; nghe-viết được câu, đoạn ngắn",
+            "Nói và nghe: Kể lại được câu chuyện ngắn đã nghe"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Bài 1. Tôi là học sinh lớp 1",
+            "Bài 2. Đôi tai xấu xí",
+            "Bài 3. Bạn của gió",
+            "Bài 4. Giải thưởng tình bạn",
+            "Bài 5. Sinh nhật của voi con",
+            "Ôn tập"
+          ],
+          "chua_duoc_dung": [
+            "Luyện từ và câu ở mức lớp 2 (từ chỉ sự vật, hoạt động; câu giới thiệu, câu nêu hoạt động)",
+            "Viết đoạn văn; đọc hiểu văn bản dài"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc hiểu: đọc văn bản trong sách rồi trả lời câu hỏi về nhân vật, sự việc",
+            "Chính tả: nghe-viết đoạn ngắn",
+            "Viết câu giới thiệu về bản thân, bạn bè"
+          ],
+          "hoc_ky": 2,
+          "id": "tv1-toi-va-cac-ban",
+          "kien_thuc_duoc_dung": [
+            "Đọc trơn câu, đoạn ngắn; viết tiếng, từ, câu (tập 1)"
+          ],
+          "luu_y_ra_de": "Văn bản đọc hiểu trong đề nên lấy trong chủ điểm hoặc văn bản mới cùng chủ điểm, độ dài tương đương văn bản trong sách.",
+          "ten": "Tôi và các bạn",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chủ điểm 1. Tôi và các bạn"
+          },
+          "van_ban_trong_sach": [
+            "Tôi là học sinh lớp 1",
+            "Đôi tai xấu xí",
+            "Bạn của gió",
+            "Giải thưởng tình bạn",
+            "Sinh nhật của voi con"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản trong chủ điểm; trả lời được câu hỏi về nhân vật, sự việc trong văn bản",
+            "Viết: Viết đúng chính tả từ, câu trong văn bản; viết được câu giới thiệu về bản thân, bạn bè",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe; nói về bạn bè bằng câu đơn giản"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Bài 1. Nụ hôn trên bàn tay",
+            "Bài 2. Làm anh",
+            "Bài 3. Cả nhà đi chơi núi",
+            "Bài 4. Quạt cho bà ngủ",
+            "Bài 5. Bữa cơm gia đình",
+            "Bài 6. Ngôi nhà",
+            "Ôn tập"
+          ],
+          "chua_duoc_dung": [
+            "Luyện từ và câu ở mức lớp 2",
+            "Viết đoạn văn; đọc hiểu văn bản dài"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc hiểu: đọc văn bản trong sách rồi trả lời câu hỏi",
+            "Chính tả: nghe-viết đoạn ngắn",
+            "Viết câu kể về việc làm của người thân"
+          ],
+          "hoc_ky": 2,
+          "id": "tv1-mai-am-gia-dinh",
+          "kien_thuc_duoc_dung": [
+            "Đọc hiểu văn bản ngắn; viết câu (Chủ điểm 1)"
+          ],
+          "luu_y_ra_de": "Ưu tiên văn bản về tình cảm gia đình; câu hỏi đọc hiểu chỉ hỏi chi tiết có trong văn bản.",
+          "ten": "Mái ấm gia đình",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chủ điểm 2. Mái ấm gia đình"
+          },
+          "van_ban_trong_sach": [
+            "Nụ hôn trên bàn tay",
+            "Làm anh",
+            "Cả nhà đi chơi núi",
+            "Quạt cho bà ngủ",
+            "Bữa cơm gia đình",
+            "Ngôi nhà"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản trong chủ điểm; trả lời được câu hỏi về nhân vật, sự việc trong văn bản",
+            "Viết: Viết đúng chính tả từ, câu trong văn bản; viết được câu kể về việc làm của người thân",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe; nói về gia đình bằng câu đơn giản"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Bài 1. Tôi đi học",
+            "Bài 2. Đi học",
+            "Bài 3. Hoa yêu thương",
+            "Bài 4. Cây bàng và lớp học",
+            "Bài 5. Bác trống trường",
+            "Bài 6. Giờ ra chơi",
+            "Ôn tập"
+          ],
+          "chua_duoc_dung": [
+            "Luyện từ và câu ở mức lớp 2",
+            "Viết đoạn văn; đọc hiểu văn bản dài"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc hiểu: đọc văn bản trong sách rồi trả lời câu hỏi",
+            "Chính tả: nghe-viết đoạn ngắn",
+            "Viết câu kể về trường lớp"
+          ],
+          "hoc_ky": 2,
+          "id": "tv1-mai-truong-men-yeu",
+          "kien_thuc_duoc_dung": [
+            "Đọc hiểu văn bản ngắn; viết câu (Chủ điểm 1, 2)"
+          ],
+          "luu_y_ra_de": "Văn bản thơ trong chủ điểm (Đi học, Giờ ra chơi) chỉ dùng để đọc thành tiếng, không ra câu hỏi phân tích thơ.",
+          "ten": "Mái trường mến yêu",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chủ điểm 3. Mái trường mến yêu"
+          },
+          "van_ban_trong_sach": [
+            "Tôi đi học",
+            "Đi học",
+            "Hoa yêu thương",
+            "Cây bàng và lớp học",
+            "Bác trống trường",
+            "Giờ ra chơi"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản trong chủ điểm; trả lời được câu hỏi về nhân vật, sự việc trong văn bản",
+            "Viết: Viết đúng chính tả từ, câu trong văn bản; viết được câu kể về trường lớp",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe; nói về trường lớp bằng câu đơn giản"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Bài 1. Rửa tay trước khi ăn",
+            "Bài 2. Lời chào",
+            "Bài 3. Khi mẹ vắng nhà",
+            "Bài 4. Nếu không may bị lạc",
+            "Bài 5. Đèn giao thông",
+            "Ôn tập"
+          ],
+          "chua_duoc_dung": [
+            "Luyện từ và câu ở mức lớp 2",
+            "Viết đoạn văn; đọc hiểu văn bản dài"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc hiểu: đọc văn bản trong sách rồi trả lời câu hỏi",
+            "Chính tả: nghe-viết đoạn ngắn",
+            "Viết câu về việc làm đúng trong tình huống thường ngày"
+          ],
+          "hoc_ky": 2,
+          "id": "tv1-dieu-em-can-biet",
+          "kien_thuc_duoc_dung": [
+            "Đọc hiểu văn bản ngắn; viết câu (Chủ điểm 1-3)"
+          ],
+          "luu_y_ra_de": "Câu hỏi đọc hiểu gắn với kĩ năng sống (vệ sinh, an toàn, ứng xử); không ra câu hỏi suy luận vượt quá nội dung văn bản.",
+          "ten": "Điều em cần biết",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chủ điểm 4. Điều em cần biết"
+          },
+          "van_ban_trong_sach": [
+            "Rửa tay trước khi ăn",
+            "Lời chào",
+            "Khi mẹ vắng nhà",
+            "Nếu không may bị lạc",
+            "Đèn giao thông"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản trong chủ điểm; trả lời được câu hỏi về nội dung văn bản",
+            "Viết: Viết đúng chính tả từ, câu trong văn bản; viết được câu về việc làm đúng trong tình huống thường ngày",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe; nói được cách ứng xử đúng trong tình huống quen thuộc"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Bài 1. Kiến và chim bồ câu",
+            "Bài 2. Câu chuyện của rễ",
+            "Bài 3. Câu hỏi của Sói",
+            "Bài 4. Chú bé chăn cừu",
+            "Bài 5. Tiếng vọng của núi",
+            "Ôn tập"
+          ],
+          "chua_duoc_dung": [
+            "Luyện từ và câu ở mức lớp 2",
+            "Viết đoạn văn; đọc hiểu văn bản dài"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc hiểu: đọc truyện ngụ ngôn trong sách rồi trả lời câu hỏi về nhân vật và bài học",
+            "Chính tả: nghe-viết đoạn ngắn",
+            "Viết câu nêu bài học rút ra từ câu chuyện"
+          ],
+          "hoc_ky": 2,
+          "id": "tv1-bai-hoc-tu-cuoc-song",
+          "kien_thuc_duoc_dung": [
+            "Đọc hiểu văn bản ngắn; viết câu (Chủ điểm 1-4)"
+          ],
+          "luu_y_ra_de": "Truyện ngụ ngôn chỉ hỏi bài học rút ra ở mức đơn giản, gắn với một chi tiết trong truyện; không yêu cầu phân tích nhân vật.",
+          "ten": "Bài học từ cuộc sống",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chủ điểm 5. Bài học từ cuộc sống"
+          },
+          "van_ban_trong_sach": [
+            "Kiến và chim bồ câu",
+            "Câu chuyện của rễ",
+            "Câu hỏi của Sói",
+            "Chú bé chăn cừu",
+            "Tiếng vọng của núi"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng truyện trong chủ điểm; trả lời được câu hỏi về nhân vật, sự việc và bài học của truyện",
+            "Viết: Viết đúng chính tả từ, câu trong văn bản; viết được câu nêu bài học rút ra từ câu chuyện",
+            "Nói và nghe: Kể lại được truyện đã đọc, đã nghe; nói được bài học của truyện bằng câu đơn giản"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Bài 1. Loài chim của biển cả",
+            "Bài 2. Bảy sắc cầu vồng",
+            "Bài 3. Chúa tể rừng xanh",
+            "Bài 4. Cuộc thi tài năng rừng xanh",
+            "Bài 5. Cây liễu dẻo dai",
+            "Ôn tập"
+          ],
+          "chua_duoc_dung": [
+            "Luyện từ và câu ở mức lớp 2",
+            "Viết đoạn văn; đọc hiểu văn bản dài"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc hiểu: đọc văn bản trong sách rồi trả lời câu hỏi",
+            "Chính tả: nghe-viết đoạn ngắn",
+            "Viết câu tả cảnh vật, con vật"
+          ],
+          "hoc_ky": 2,
+          "id": "tv1-thien-nhien-ki-thu",
+          "kien_thuc_duoc_dung": [
+            "Đọc hiểu văn bản ngắn; viết câu (Chủ điểm 1-5)"
+          ],
+          "luu_y_ra_de": "Văn bản thông tin về thiên nhiên chỉ hỏi chi tiết có trong văn bản; không ra câu hỏi kiến thức khoa học ngoài sách.",
+          "ten": "Thiên nhiên kì thú",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chủ điểm 6. Thiên nhiên kì thú"
+          },
+          "van_ban_trong_sach": [
+            "Loài chim của biển cả",
+            "Bảy sắc cầu vồng",
+            "Chúa tể rừng xanh",
+            "Cuộc thi tài năng rừng xanh",
+            "Cây liễu dẻo dai"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản trong chủ điểm; trả lời được câu hỏi về nội dung văn bản",
+            "Viết: Viết đúng chính tả từ, câu trong văn bản; viết được câu tả cảnh vật, con vật",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe; nói về thiên nhiên bằng câu đơn giản"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Bài 1. Tia nắng đi đâu?",
+            "Bài 2. Trong giấc mơ buổi sáng",
+            "Bài 3. Ngày mới bắt đầu",
+            "Bài 4. Hỏi mẹ",
+            "Bài 5. Những cánh cò",
+            "Bài 6. Buổi trưa hè",
+            "Bài 7. Hoa phượng",
+            "Ôn tập"
+          ],
+          "chua_duoc_dung": [
+            "Luyện từ và câu ở mức lớp 2",
+            "Viết đoạn văn; đọc hiểu văn bản dài"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc hiểu: đọc văn bản trong sách rồi trả lời câu hỏi",
+            "Chính tả: nghe-viết đoạn ngắn",
+            "Viết câu tả cảnh vật theo cảm nhận"
+          ],
+          "hoc_ky": 2,
+          "id": "tv1-the-gioi-trong-mat-em",
+          "kien_thuc_duoc_dung": [
+            "Đọc hiểu văn bản ngắn; viết câu (Chủ điểm 1-6)"
+          ],
+          "luu_y_ra_de": "Văn bản thơ trong chủ điểm chỉ dùng để đọc thành tiếng và cảm nhận; không ra câu hỏi phân tích biện pháp tu từ.",
+          "ten": "Thế giới trong mắt em",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chủ điểm 7. Thế giới trong mắt em"
+          },
+          "van_ban_trong_sach": [
+            "Tia nắng đi đâu?",
+            "Trong giấc mơ buổi sáng",
+            "Ngày mới bắt đầu",
+            "Hỏi mẹ",
+            "Những cánh cò",
+            "Buổi trưa hè",
+            "Hoa phượng"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản trong chủ điểm; trả lời được câu hỏi về nội dung văn bản",
+            "Viết: Viết đúng chính tả từ, câu trong văn bản; viết được câu tả cảnh vật theo cảm nhận",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe; nói về thế giới xung quanh bằng câu đơn giản"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Bài 1. Cậu bé thông minh",
+            "Bài 2. Lính cứu hoả",
+            "Bài 3. Lớn lên bạn làm gì?",
+            "Bài 4. Ruộng bậc thang ở Sa Pa",
+            "Bài 5. Nhớ ơn",
+            "Bài 6. Du lịch biển Việt Nam",
+            "Ôn tập"
+          ],
+          "chua_duoc_dung": [
+            "Luyện từ và câu ở mức lớp 2",
+            "Viết đoạn văn; đọc hiểu văn bản dài"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc hiểu: đọc văn bản trong sách rồi trả lời câu hỏi",
+            "Chính tả: nghe-viết đoạn ngắn",
+            "Viết câu về đất nước, con người Việt Nam"
+          ],
+          "hoc_ky": 2,
+          "id": "tv1-dat-nuoc-va-con-nguoi",
+          "kien_thuc_duoc_dung": [
+            "Đọc hiểu văn bản ngắn; viết câu (Chủ điểm 1-7)"
+          ],
+          "luu_y_ra_de": "Văn bản về đất nước, con người chỉ hỏi chi tiết có trong văn bản; không ra câu hỏi kiến thức lịch sử, địa lí ngoài sách.",
+          "ten": "Đất nước và con người",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chủ điểm 8. Đất nước và con người"
+          },
+          "van_ban_trong_sach": [
+            "Cậu bé thông minh",
+            "Lính cứu hoả",
+            "Lớn lên bạn làm gì?",
+            "Ruộng bậc thang ở Sa Pa",
+            "Nhớ ơn",
+            "Du lịch biển Việt Nam"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản trong chủ điểm; trả lời được câu hỏi về nội dung văn bản",
+            "Viết: Viết đúng chính tả từ, câu trong văn bản; viết được câu về đất nước, con người Việt Nam",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe; nói về đất nước, quê hương bằng câu đơn giản"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Bài 1. Ôn tập",
+            "Bài 2. Ôn tập",
+            "Bài 3. Ôn tập",
+            "Đánh giá cuối năm học"
+          ],
+          "chua_duoc_dung": [
+            "Luyện từ và câu ở mức lớp 2",
+            "Viết đoạn văn"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đề ôn tập tổng hợp cuối năm: đọc văn bản rồi trả lời câu hỏi; nghe-viết; viết câu"
+          ],
+          "hoc_ky": 2,
+          "id": "tv1-on-tap-cuoi-nam",
+          "kien_thuc_duoc_dung": [
+            "Toàn bộ âm, vần và 8 chủ điểm tập 2"
+          ],
+          "luu_y_ra_de": "Phạm vi đề kiểm tra cuối năm là toàn bộ chương trình lớp 1; văn bản đọc hiểu trong đề lấy trong các chủ điểm đã học hoặc văn bản mới cùng chủ điểm.",
+          "ten": "Ôn tập cuối năm",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Ôn tập và đánh giá cuối năm học"
+          },
+          "van_ban_trong_sach": [],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản đã học trong năm; trả lời được câu hỏi về nội dung văn bản",
+            "Viết: Viết đúng chính tả từ, câu; viết được câu theo yêu cầu",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe"
+          ]
+        }
+      ],
+      "ghi_chu_chua_chac": [
+        "Bài 2 chủ điểm 4: một số nguồn ghi Lời chào, giáo án ghi Lời chào đi trước - đã dùng Lời chào theo mục lục SGK.",
+        "Tên chủ điểm 5: một số nguồn ghi Học từ cuộc sống - đã dùng Bài học từ cuộc sống theo mục lục SGK và giáo án.",
+        "Bài 23, 24 đã xuất hiện vần ia, ua, ưa trong khi học âm th; việc tách Bài 1-30 (âm, chữ cái, dấu thanh) và Bài 31-80 (vần) là cách chia theo giai đoạn chính của sách, không phải ranh giới tuyệt đối.",
+        "Tên các truyện kể ở Bài 50, 55, 60, 65, 70, 75, 80 chưa tra được - trường van_ban_trong_sach của chương Học vần chỉ ghi 3 truyện đã xác nhận (Bài 35, 40, 45).",
+        "Tên chương và tên bài bộ Chân trời sáng tạo, Cánh diều chưa tra, đã ghi (đối chiếu mục lục)."
+      ],
+      "lop": 1
+    },
+    {
+      "chuong": [
+        {
+          "cac_bai": [
+            "Bài 1. Tôi là học sinh lớp 2",
+            "Bài 2. Ngày hôm qua đâu rồi?",
+            "Bài 3. Niềm vui của Bi và Bống",
+            "Bài 4. Làm việc thật là vui",
+            "Bài 5. Em có xinh không?",
+            "Bài 6. Một giờ học",
+            "Bài 7. Cây xấu hổ",
+            "Bài 8. Cầu thủ dự bị"
+          ],
+          "chua_duoc_dung": [
+            "Câu ghép, câu cảm, câu cầu khiến (lớp 3-5)",
+            "Viết bài văn; viết đoạn văn dài trên 5 câu",
+            "Đọc hiểu văn bản dài trên 200 chữ"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc hiểu: đọc văn bản trong sách rồi trả lời 3-4 câu hỏi",
+            "Chính tả: nghe-viết đoạn 30-40 chữ",
+            "Luyện từ và câu: tìm từ chỉ sự vật, hoạt động; câu giới thiệu",
+            "Viết: viết đoạn văn 3-4 câu giới thiệu bản thân, kể việc làm"
+          ],
+          "hoc_ky": 1,
+          "id": "tv2-em-lon-len-tung-ngay",
+          "kien_thuc_duoc_dung": [
+            "Đọc trơn, viết câu (lớp 1)",
+            "Bảng chữ cái, chữ hoa"
+          ],
+          "luu_y_ra_de": "Lớp 2 bắt đầu viết đoạn văn và luyện từ và câu; đề nên có cả 4 phần: đọc hiểu, chính tả, luyện từ và câu, viết đoạn.",
+          "ten": "Em lớn lên từng ngày",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chủ điểm 1. Em lớn lên từng ngày"
+          },
+          "van_ban_trong_sach": [
+            "Tôi là học sinh lớp 2",
+            "Ngày hôm qua đâu rồi?",
+            "Niềm vui của Bi và Bống",
+            "Làm việc thật là vui",
+            "Em có xinh không?",
+            "Một giờ học",
+            "Cây xấu hổ",
+            "Cầu thủ dự bị"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản trong chủ điểm; trả lời được câu hỏi về nhân vật, sự việc, cảm xúc trong văn bản",
+            "Viết: Viết đúng chữ hoa A, Ă, Â, B, C; nghe-viết đúng đoạn văn ngắn; viết được đoạn văn 3-4 câu giới thiệu bản thân, kể việc làm",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe; giới thiệu được bản thân trước lớp"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Bài 9. Cô giáo lớp em",
+            "Bài 10. Thời khóa biểu",
+            "Bài 11. Cái trống trường em",
+            "Bài 12. Danh sách học sinh",
+            "Bài 13. Yêu lắm trường ơi!",
+            "Bài 14. Em học vẽ",
+            "Bài 15. Cuốn sách của em",
+            "Bài 16. Khi trang sách mở ra"
+          ],
+          "chua_duoc_dung": [
+            "Câu ghép, câu cảm, câu cầu khiến (lớp 3-5)",
+            "Viết bài văn; viết đoạn văn dài trên 5 câu",
+            "Đọc hiểu văn bản dài trên 200 chữ"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc hiểu: đọc văn bản trong sách rồi trả lời câu hỏi",
+            "Chính tả: nghe-viết đoạn 30-40 chữ",
+            "Luyện từ và câu: từ chỉ sự vật, hoạt động, đặc điểm; câu nêu hoạt động, câu nêu đặc điểm; dấu chấm, dấu chấm hỏi",
+            "Viết: viết thời gian biểu, lập danh sách; viết đoạn văn tả đồ dùng học tập"
+          ],
+          "hoc_ky": 1,
+          "id": "tv2-di-hoc-vui-sao",
+          "kien_thuc_duoc_dung": [
+            "Đọc hiểu văn bản ngắn; viết đoạn 3-4 câu (Chủ điểm 1)",
+            "Chữ hoa; bảng chữ cái"
+          ],
+          "luu_y_ra_de": "Chủ điểm này có nhiều văn bản dạng danh sách, thời khóa biểu; đề đọc hiểu có thể dùng văn bản thông tin ngắn dạng danh sách.",
+          "ten": "Đi học vui sao",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chủ điểm 2. Đi học vui sao"
+          },
+          "van_ban_trong_sach": [
+            "Cô giáo lớp em",
+            "Thời khóa biểu",
+            "Cái trống trường em",
+            "Danh sách học sinh",
+            "Yêu lắm trường ơi!",
+            "Em học vẽ",
+            "Cuốn sách của em",
+            "Khi trang sách mở ra"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản trong chủ điểm; trả lời được câu hỏi về nội dung văn bản; đọc được văn bản dạng danh sách, thời khóa biểu",
+            "Viết: Viết đúng chữ hoa D, Đ, E, Ê, G; nghe-viết đúng đoạn văn ngắn; viết được thời gian biểu, danh sách và đoạn văn tả đồ dùng học tập",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe; giới thiệu được ngôi trường, đồ dùng học tập của em"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Ôn tập giữa học kì 1"
+          ],
+          "chua_duoc_dung": [
+            "Nội dung chủ điểm 3, 4 (học sau tuần ôn tập)",
+            "Câu ghép, câu cảm, câu cầu khiến (lớp 3-5)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đề ôn tập tổng hợp: đọc hiểu văn bản trong chủ điểm 1, 2; nghe-viết; luyện từ và câu; viết đoạn"
+          ],
+          "hoc_ky": 1,
+          "id": "tv2-on-tap-giua-hoc-ki-1",
+          "kien_thuc_duoc_dung": [
+            "Chủ điểm 1, 2"
+          ],
+          "luu_y_ra_de": "Phạm vi ôn tập giữa học kì 1 là chủ điểm 1 và 2; không ra nội dung chủ điểm 3, 4.",
+          "ten": "Ôn tập giữa học kì 1",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Ôn tập giữa học kì 1"
+          },
+          "van_ban_trong_sach": [],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản đã học trong chủ điểm 1, 2; trả lời được câu hỏi về nội dung văn bản",
+            "Viết: Viết đúng chữ hoa và chính tả đã học; viết được đoạn văn 3-4 câu",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Bài 17. Gọi bạn",
+            "Bài 18. Tớ nhớ cậu",
+            "Bài 19. Chữ A và những người bạn",
+            "Bài 20. Nhím nâu kết bạn",
+            "Bài 21. Thả diều",
+            "Bài 22. Tớ là lê-gô",
+            "Bài 23. Rồng rắn lên mây",
+            "Bài 24. Nặn đồ chơi"
+          ],
+          "chua_duoc_dung": [
+            "Câu ghép, câu cảm, câu cầu khiến (lớp 3-5)",
+            "Viết bài văn; viết đoạn văn dài trên 5 câu",
+            "Đọc hiểu văn bản dài trên 200 chữ"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc hiểu: đọc văn bản trong sách rồi trả lời câu hỏi",
+            "Chính tả: nghe-viết đoạn 30-40 chữ",
+            "Luyện từ và câu: từ chỉ đặc điểm, hoạt động; câu nêu hoạt động, câu nêu đặc điểm; dấu chấm, dấu chấm hỏi, dấu chấm than, dấu phẩy",
+            "Viết: viết đoạn văn kể về hoạt động cùng bạn, tả đồ chơi"
+          ],
+          "hoc_ky": 1,
+          "id": "tv2-niem-vui-tuoi-tho",
+          "kien_thuc_duoc_dung": [
+            "Đọc hiểu văn bản ngắn; viết đoạn 3-4 câu (Chủ điểm 1, 2)",
+            "Từ chỉ sự vật, hoạt động, đặc điểm; câu giới thiệu, câu nêu hoạt động"
+          ],
+          "luu_y_ra_de": "Chủ điểm về tình bạn và trò chơi; câu hỏi đọc hiểu nên hỏi về cảm xúc, tình cảm bạn bè ở mức nhận biết.",
+          "ten": "Niềm vui tuổi thơ",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chủ điểm 3. Niềm vui tuổi thơ"
+          },
+          "van_ban_trong_sach": [
+            "Gọi bạn",
+            "Tớ nhớ cậu",
+            "Chữ A và những người bạn",
+            "Nhím nâu kết bạn",
+            "Thả diều",
+            "Tớ là lê-gô",
+            "Rồng rắn lên mây",
+            "Nặn đồ chơi"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản trong chủ điểm; trả lời được câu hỏi về nhân vật, sự việc, cảm xúc trong văn bản",
+            "Viết: Viết đúng chữ hoa H, I, K, L, M; nghe-viết đúng đoạn văn ngắn; viết được đoạn văn kể về hoạt động cùng bạn, tả đồ chơi",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe; nói về niềm vui của em bằng câu đầy đủ"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Bài 25. Sự tích hoa tỉ muội",
+            "Bài 26. Em mang về yêu thương",
+            "Bài 27. Mẹ",
+            "Bài 28. Trò chơi của bố",
+            "Bài 29. Cánh cửa nhớ bà",
+            "Bài 30. Thương ông",
+            "Bài 31. Ánh sáng của yêu thương",
+            "Bài 32. Chơi chong chóng"
+          ],
+          "chua_duoc_dung": [
+            "Câu ghép, câu cảm, câu cầu khiến (lớp 3-5)",
+            "Viết bài văn; viết đoạn văn dài trên 5 câu",
+            "Đọc hiểu văn bản dài trên 200 chữ"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc hiểu: đọc văn bản trong sách rồi trả lời câu hỏi",
+            "Chính tả: nghe-viết đoạn 30-40 chữ",
+            "Luyện từ và câu: từ chỉ tình cảm gia đình; câu nêu hoạt động, câu nêu đặc điểm; dấu chấm, dấu chấm hỏi, dấu chấm than, dấu phẩy",
+            "Viết: viết đoạn văn thể hiện tình cảm với người thân, kể việc đã làm cùng người thân"
+          ],
+          "hoc_ky": 1,
+          "id": "tv2-mai-am-gia-dinh",
+          "kien_thuc_duoc_dung": [
+            "Đọc hiểu văn bản ngắn; viết đoạn 3-4 câu (Chủ điểm 1-3)",
+            "Từ chỉ sự vật, hoạt động, đặc điểm; các loại câu đã học"
+          ],
+          "luu_y_ra_de": "Chủ điểm về tình cảm gia đình; đề viết đoạn nên cho đề mở về người thân, tránh đề yêu cầu kể chuyện dài.",
+          "ten": "Mái ấm gia đình",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chủ điểm 4. Mái ấm gia đình"
+          },
+          "van_ban_trong_sach": [
+            "Sự tích hoa tỉ muội",
+            "Em mang về yêu thương",
+            "Mẹ",
+            "Trò chơi của bố",
+            "Cánh cửa nhớ bà",
+            "Thương ông",
+            "Ánh sáng của yêu thương",
+            "Chơi chong chóng"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản trong chủ điểm; trả lời được câu hỏi về nhân vật, sự việc, tình cảm trong văn bản",
+            "Viết: Viết đúng chữ hoa N, O, Ô, Ơ, P; nghe-viết đúng đoạn văn ngắn; viết được đoạn văn thể hiện tình cảm với người thân, kể việc đã làm cùng người thân",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe; nói về người thân bằng câu đầy đủ"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Ôn tập và Đánh giá cuối học kì 1"
+          ],
+          "chua_duoc_dung": [
+            "Nội dung học kì 2 (chủ điểm 5-9)",
+            "Câu ghép, câu cảm, câu cầu khiến (lớp 3-5)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đề kiểm tra cuối học kì 1: đọc hiểu văn bản trong chủ điểm 1-4; nghe-viết; luyện từ và câu; viết đoạn"
+          ],
+          "hoc_ky": 1,
+          "id": "tv2-on-tap-cuoi-hoc-ki-1",
+          "kien_thuc_duoc_dung": [
+            "Chủ điểm 1-4"
+          ],
+          "luu_y_ra_de": "Phạm vi đề kiểm tra cuối học kì 1 là toàn bộ chủ điểm 1-4; không ra nội dung học kì 2.",
+          "ten": "Ôn tập cuối học kì 1",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Ôn tập và Đánh giá cuối học kì 1"
+          },
+          "van_ban_trong_sach": [],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản đã học trong học kì 1; trả lời được câu hỏi về nội dung văn bản",
+            "Viết: Viết đúng chữ hoa và chính tả đã học; viết được đoạn văn 3-4 câu",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Bài 1. Chuyện bốn mùa",
+            "Bài 2. Mùa nước nổi",
+            "Bài 3. Họa mi hót",
+            "Bài 4. Tết đến rồi",
+            "Bài 5. Giọt nước và biển lớn",
+            "Bài 6. Mùa vàng",
+            "Bài 7. Hạt thóc",
+            "Bài 8. Lũy tre"
+          ],
+          "chua_duoc_dung": [
+            "Câu ghép, câu cảm, câu cầu khiến (lớp 3-5)",
+            "Viết bài văn; viết đoạn văn dài trên 5 câu",
+            "Đọc hiểu văn bản dài trên 200 chữ"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc hiểu: đọc văn bản trong sách rồi trả lời câu hỏi",
+            "Chính tả: nghe-viết đoạn 30-40 chữ",
+            "Luyện từ và câu: từ chỉ sự vật, đặc điểm; câu nêu đặc điểm; dấu chấm, dấu chấm hỏi, dấu chấm than",
+            "Viết: viết đoạn văn tả cảnh vật, mùa trong năm"
+          ],
+          "hoc_ky": 2,
+          "id": "tv2-ve-dep-quanh-em",
+          "kien_thuc_duoc_dung": [
+            "Đọc hiểu văn bản ngắn; viết đoạn 3-4 câu (học kì 1)",
+            "Từ chỉ sự vật, hoạt động, đặc điểm; các loại câu đã học"
+          ],
+          "luu_y_ra_de": "Văn bản về thiên nhiên, mùa trong năm; câu hỏi đọc hiểu chỉ hỏi chi tiết có trong văn bản.",
+          "ten": "Vẻ đẹp quanh em",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chủ điểm 5. Vẻ đẹp quanh em"
+          },
+          "van_ban_trong_sach": [
+            "Chuyện bốn mùa",
+            "Mùa nước nổi",
+            "Họa mi hót",
+            "Tết đến rồi",
+            "Giọt nước và biển lớn",
+            "Mùa vàng",
+            "Hạt thóc",
+            "Lũy tre"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản trong chủ điểm; trả lời được câu hỏi về nội dung văn bản",
+            "Viết: Viết đúng chữ hoa Q, R, S, T; nghe-viết đúng đoạn văn ngắn; viết được đoạn văn tả cảnh vật, mùa trong năm",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe; nói về vẻ đẹp thiên nhiên bằng câu đầy đủ"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Bài 9. Vè chim",
+            "Bài 10. Khủng long",
+            "Bài 11. Sự tích cây thì là",
+            "Bài 12. Bờ tre đón khách",
+            "Bài 13. Tiếng chổi tre",
+            "Bài 14. Cỏ non cười rồi",
+            "Bài 15. Những con sao biển",
+            "Bài 16. Tạm biệt cánh cam"
+          ],
+          "chua_duoc_dung": [
+            "Câu ghép, câu cảm, câu cầu khiến (lớp 3-5)",
+            "Viết bài văn; viết đoạn văn dài trên 5 câu",
+            "Đọc hiểu văn bản dài trên 200 chữ"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc hiểu: đọc văn bản trong sách rồi trả lời câu hỏi",
+            "Chính tả: nghe-viết đoạn 30-40 chữ",
+            "Luyện từ và câu: từ chỉ sự vật, hoạt động, đặc điểm; câu nêu hoạt động, câu nêu đặc điểm",
+            "Viết: viết đoạn văn tả con vật, cây cối"
+          ],
+          "hoc_ky": 2,
+          "id": "tv2-hanh-tinh-xanh-cua-em",
+          "kien_thuc_duoc_dung": [
+            "Đọc hiểu văn bản ngắn; viết đoạn 3-4 câu (Chủ điểm 1-5)",
+            "Từ chỉ sự vật, hoạt động, đặc điểm; các loại câu đã học"
+          ],
+          "luu_y_ra_de": "Văn bản về động vật, thực vật và bảo vệ môi trường; không ra câu hỏi kiến thức khoa học ngoài sách.",
+          "ten": "Hành tinh xanh của em",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chủ điểm 6. Hành tinh xanh của em"
+          },
+          "van_ban_trong_sach": [
+            "Vè chim",
+            "Khủng long",
+            "Sự tích cây thì là",
+            "Bờ tre đón khách",
+            "Tiếng chổi tre",
+            "Cỏ non cười rồi",
+            "Những con sao biển",
+            "Tạm biệt cánh cam"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản trong chủ điểm; trả lời được câu hỏi về nội dung văn bản",
+            "Viết: Viết đúng chữ hoa U, Ư, V, X, Y; nghe-viết đúng đoạn văn ngắn; viết được đoạn văn tả con vật, cây cối",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe; nói về việc bảo vệ môi trường bằng câu đầy đủ"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Ôn tập giữa học kì 2"
+          ],
+          "chua_duoc_dung": [
+            "Nội dung chủ điểm 7, 8, 9 (học sau tuần ôn tập)",
+            "Câu ghép, câu cảm, câu cầu khiến (lớp 3-5)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đề ôn tập tổng hợp: đọc hiểu văn bản trong chủ điểm 5, 6; nghe-viết; luyện từ và câu; viết đoạn"
+          ],
+          "hoc_ky": 2,
+          "id": "tv2-on-tap-giua-hoc-ki-2",
+          "kien_thuc_duoc_dung": [
+            "Chủ điểm 5, 6"
+          ],
+          "luu_y_ra_de": "Phạm vi ôn tập giữa học kì 2 là chủ điểm 5 và 6; không ra nội dung chủ điểm 7, 8, 9.",
+          "ten": "Ôn tập giữa học kì 2",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Ôn tập giữa học kì 2"
+          },
+          "van_ban_trong_sach": [],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản đã học trong chủ điểm 5, 6; trả lời được câu hỏi về nội dung văn bản",
+            "Viết: Viết đúng chữ hoa và chính tả đã học; viết được đoạn văn 3-4 câu",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Bài 17. Những cách chào độc đáo",
+            "Bài 18. Thư viện biết đi",
+            "Bài 19. Cảm ơn anh hà mã",
+            "Bài 20. Từ chú bồ câu đến in-tơ-nét"
+          ],
+          "chua_duoc_dung": [
+            "Câu ghép, câu cảm, câu cầu khiến (lớp 3-5)",
+            "Viết bài văn; viết đoạn văn dài trên 5 câu",
+            "Đọc hiểu văn bản dài trên 200 chữ"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc hiểu: đọc văn bản trong sách rồi trả lời câu hỏi",
+            "Chính tả: nghe-viết đoạn 30-40 chữ",
+            "Luyện từ và câu: từ chỉ sự vật, hoạt động; câu nêu hoạt động",
+            "Viết: viết đoạn văn kể về cách giao tiếp, giới thiệu thư viện"
+          ],
+          "hoc_ky": 2,
+          "id": "tv2-giao-tiep-va-ket-noi",
+          "kien_thuc_duoc_dung": [
+            "Đọc hiểu văn bản ngắn; viết đoạn 3-4 câu (Chủ điểm 1-6)",
+            "Từ chỉ sự vật, hoạt động, đặc điểm; các loại câu đã học"
+          ],
+          "luu_y_ra_de": "Chủ điểm chỉ có 4 bài; đề kiểm tra nên kết hợp với chủ điểm 8, 9 khi ra đề cuối năm.",
+          "ten": "Giao tiếp và kết nối",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chủ điểm 7. Giao tiếp và kết nối"
+          },
+          "van_ban_trong_sach": [
+            "Những cách chào độc đáo",
+            "Thư viện biết đi",
+            "Cảm ơn anh hà mã",
+            "Từ chú bồ câu đến in-tơ-nét"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản trong chủ điểm; trả lời được câu hỏi về nội dung văn bản",
+            "Viết: Viết đúng chữ hoa kiểu 2 (A, M); nghe-viết đúng đoạn văn ngắn; viết được đoạn văn kể về cách giao tiếp, giới thiệu thư viện",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe; nói lời chào, lời cảm ơn đúng tình huống"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Bài 21. Mai An Tiêm",
+            "Bài 22. Thư gửi bố ngoài đảo",
+            "Bài 23. Bóp nát quả cam",
+            "Bài 24. Chiếc rễ đa tròn"
+          ],
+          "chua_duoc_dung": [
+            "Câu ghép, câu cảm, câu cầu khiến (lớp 3-5)",
+            "Viết bài văn; viết đoạn văn dài trên 5 câu",
+            "Đọc hiểu văn bản dài trên 200 chữ"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc hiểu: đọc truyện lịch sử, truyện cổ trong sách rồi trả lời câu hỏi",
+            "Chính tả: nghe-viết đoạn 30-40 chữ",
+            "Luyện từ và câu: từ chỉ sự vật, hoạt động; câu nêu hoạt động",
+            "Viết: viết đoạn văn kể về nhân vật lịch sử, người anh hùng"
+          ],
+          "hoc_ky": 2,
+          "id": "tv2-con-nguoi-viet-nam",
+          "kien_thuc_duoc_dung": [
+            "Đọc hiểu văn bản ngắn; viết đoạn 3-4 câu (Chủ điểm 1-7)",
+            "Từ chỉ sự vật, hoạt động, đặc điểm; các loại câu đã học"
+          ],
+          "luu_y_ra_de": "Truyện lịch sử chỉ hỏi chi tiết có trong truyện; không ra câu hỏi kiến thức lịch sử ngoài sách.",
+          "ten": "Con người Việt Nam",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chủ điểm 8. Con người Việt Nam"
+          },
+          "van_ban_trong_sach": [
+            "Mai An Tiêm",
+            "Thư gửi bố ngoài đảo",
+            "Bóp nát quả cam",
+            "Chiếc rễ đa tròn"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản trong chủ điểm; trả lời được câu hỏi về nhân vật, sự việc trong văn bản",
+            "Viết: Viết đúng chữ hoa kiểu 2 (N, Q); nghe-viết đúng đoạn văn ngắn; viết được đoạn văn kể về nhân vật",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe; nói về nhân vật em yêu thích bằng câu đầy đủ"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Bài 25. Đất nước chúng mình",
+            "Bài 26. Trên các miền đất nước",
+            "Bài 27. Chuyện quả bầu",
+            "Bài 28. Khám phá đáy biển ở Trường Sa",
+            "Bài 29. Hồ Gươm",
+            "Bài 30. Cánh đồng quê em"
+          ],
+          "chua_duoc_dung": [
+            "Câu ghép, câu cảm, câu cầu khiến (lớp 3-5)",
+            "Viết bài văn; viết đoạn văn dài trên 5 câu",
+            "Đọc hiểu văn bản dài trên 200 chữ"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc hiểu: đọc văn bản trong sách rồi trả lời câu hỏi",
+            "Chính tả: nghe-viết đoạn 30-40 chữ",
+            "Luyện từ và câu: từ chỉ sự vật, đặc điểm; câu nêu đặc điểm",
+            "Viết: viết đoạn văn tả cảnh đẹp quê hương, đất nước"
+          ],
+          "hoc_ky": 2,
+          "id": "tv2-viet-nam-que-huong-em",
+          "kien_thuc_duoc_dung": [
+            "Đọc hiểu văn bản ngắn; viết đoạn 3-4 câu (Chủ điểm 1-8)",
+            "Từ chỉ sự vật, hoạt động, đặc điểm; các loại câu đã học"
+          ],
+          "luu_y_ra_de": "Văn bản về quê hương, đất nước; câu hỏi đọc hiểu chỉ hỏi chi tiết có trong văn bản.",
+          "ten": "Việt Nam quê hương em",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chủ điểm 9. Việt Nam quê hương em"
+          },
+          "van_ban_trong_sach": [
+            "Đất nước chúng mình",
+            "Trên các miền đất nước",
+            "Chuyện quả bầu",
+            "Khám phá đáy biển ở Trường Sa",
+            "Hồ Gươm",
+            "Cánh đồng quê em"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản trong chủ điểm; trả lời được câu hỏi về nội dung văn bản",
+            "Viết: Viết đúng chữ hoa kiểu 2 (Q, V); nghe-viết đúng đoạn văn ngắn; viết được đoạn văn tả cảnh đẹp quê hương, đất nước",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe; nói về quê hương, đất nước em bằng câu đầy đủ"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Ôn tập và đánh giá cuối học kì 2"
+          ],
+          "chua_duoc_dung": [
+            "Câu ghép, câu cảm, câu cầu khiến (lớp 3-5)",
+            "Viết bài văn"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đề kiểm tra cuối năm: đọc hiểu văn bản trong chủ điểm 5-9; nghe-viết; luyện từ và câu; viết đoạn"
+          ],
+          "hoc_ky": 2,
+          "id": "tv2-on-tap-cuoi-hoc-ki-2",
+          "kien_thuc_duoc_dung": [
+            "Chủ điểm 5-9"
+          ],
+          "luu_y_ra_de": "Phạm vi đề kiểm tra cuối năm là toàn bộ chương trình lớp 2; văn bản đọc hiểu trong đề lấy trong các chủ điểm đã học hoặc văn bản mới cùng chủ điểm.",
+          "ten": "Ôn tập cuối học kì 2",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Ôn tập và đánh giá cuối học kì 2"
+          },
+          "van_ban_trong_sach": [],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản đã học trong năm; trả lời được câu hỏi về nội dung văn bản",
+            "Viết: Viết đúng chữ hoa và chính tả đã học; viết được đoạn văn 3-4 câu",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe"
+          ]
+        }
+      ],
+      "ghi_chu_chua_chac": [
+        "Tên chủ điểm 9: một số nguồn ghi Việt Nam quê hương tôi - đã dùng Việt Nam quê hương em theo mục lục SGK tập 2 và loigiaihay.",
+        "SGV tập 2 trên một số trang đăng nhầm mục lục tập 1 - đã dùng phân phối chương trình và loigiaihay cho tập 2.",
+        "Tên chương và tên bài bộ Chân trời sáng tạo, Cánh diều chưa tra, đã ghi (đối chiếu mục lục)."
+      ],
+      "lop": 2
+    },
+    {
+      "chuong": [
+        {
+          "cac_bai": [
+            "Bài 1. Ngày gặp lại",
+            "Bài 2. Về thăm quê",
+            "Bài 3. Cánh rừng trong nắng",
+            "Bài 4. Lần đầu ra biển",
+            "Bài 5. Nhật kí tập bơi",
+            "Bài 6. Tập nấu ăn",
+            "Bài 7. Mùa hè lấp lánh",
+            "Bài 8. Tạm biệt mùa hè"
+          ],
+          "chua_duoc_dung": [
+            "Biện pháp so sánh, nhân hóa ở mức phân tích (học trong chủ điểm 5, 6)",
+            "Câu ghép (lớp 4-5)",
+            "Viết bài văn; viết đoạn văn dài trên 7 câu"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc hiểu: đọc văn bản trong sách rồi trả lời câu hỏi, tìm ý chính của đoạn",
+            "Chính tả: nghe-viết đoạn 50-60 chữ",
+            "Luyện từ và câu: từ chỉ sự vật, hoạt động, đặc điểm; câu nêu hoạt động, câu nêu đặc điểm",
+            "Viết: viết đoạn văn 5-7 câu kể lại hoạt động, trải nghiệm"
+          ],
+          "hoc_ky": 1,
+          "id": "tv3-nhung-trai-nghiem-thu-vi",
+          "kien_thuc_duoc_dung": [
+            "Đọc hiểu văn bản ngắn; viết đoạn 3-4 câu (lớp 2)",
+            "Từ chỉ sự vật, hoạt động, đặc điểm; các loại câu đã học"
+          ],
+          "luu_y_ra_de": "Lớp 3 bắt đầu viết đoạn văn 5-7 câu; đề viết đoạn nên cho đề mở về trải nghiệm, hoạt động quen thuộc.",
+          "ten": "Những trải nghiệm thú vị",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chủ điểm 1. Những trải nghiệm thú vị"
+          },
+          "van_ban_trong_sach": [
+            "Ngày gặp lại",
+            "Về thăm quê",
+            "Cánh rừng trong nắng",
+            "Lần đầu ra biển",
+            "Nhật kí tập bơi",
+            "Tập nấu ăn",
+            "Mùa hè lấp lánh",
+            "Tạm biệt mùa hè"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản trong chủ điểm; trả lời được câu hỏi về nhân vật, sự việc, cảm xúc; tìm được ý chính của đoạn văn",
+            "Viết: Viết đúng chữ hoa; nghe-viết đúng đoạn văn; viết được đoạn văn 5-7 câu kể lại hoạt động, trải nghiệm",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe; trao đổi được về trải nghiệm của em"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Bài 9. Đi học vui sao",
+            "Bài 10. Con đường đến trường",
+            "Bài 11. Lời giải toán đặc biệt",
+            "Bài 12. Bài tập làm văn",
+            "Bài 13. Bàn tay cô giáo",
+            "Bài 14. Cuộc họp của chữ viết",
+            "Bài 15. Thư viện",
+            "Bài 16. Ngày em vào Đội"
+          ],
+          "chua_duoc_dung": [
+            "Biện pháp so sánh, nhân hóa ở mức phân tích (học trong chủ điểm 5, 6)",
+            "Câu ghép (lớp 4-5)",
+            "Viết bài văn; viết đoạn văn dài trên 7 câu"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc hiểu: đọc văn bản trong sách rồi trả lời câu hỏi",
+            "Chính tả: nghe-viết đoạn 50-60 chữ",
+            "Luyện từ và câu: từ chỉ sự vật, hoạt động, đặc điểm; câu nêu hoạt động, câu nêu đặc điểm",
+            "Viết: viết đoạn văn 5-7 câu kể về trường lớp, thầy cô, bạn bè"
+          ],
+          "hoc_ky": 1,
+          "id": "tv3-cong-truong-rong-mo",
+          "kien_thuc_duoc_dung": [
+            "Đọc hiểu văn bản ngắn; viết đoạn 5-7 câu (Chủ điểm 1)",
+            "Từ chỉ sự vật, hoạt động, đặc điểm; các loại câu đã học"
+          ],
+          "luu_y_ra_de": "Văn bản thơ trong chủ điểm (Đi học vui sao, Bàn tay cô giáo) chỉ dùng để đọc thành tiếng và cảm nhận; không ra câu hỏi phân tích thơ.",
+          "ten": "Cổng trường rộng mở",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chủ điểm 2. Cổng trường rộng mở"
+          },
+          "van_ban_trong_sach": [
+            "Đi học vui sao",
+            "Con đường đến trường",
+            "Lời giải toán đặc biệt",
+            "Bài tập làm văn",
+            "Bàn tay cô giáo",
+            "Cuộc họp của chữ viết",
+            "Thư viện",
+            "Ngày em vào Đội"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản trong chủ điểm; trả lời được câu hỏi về nội dung văn bản; tìm được ý chính của đoạn văn",
+            "Viết: Viết đúng chữ hoa; nghe-viết đúng đoạn văn; viết được đoạn văn 5-7 câu kể về trường lớp, thầy cô, bạn bè",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe; trao đổi được về trường lớp của em"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Ôn tập giữa học kì 1"
+          ],
+          "chua_duoc_dung": [
+            "Nội dung chủ điểm 3, 4 (học sau tuần ôn tập)",
+            "Biện pháp so sánh, nhân hóa ở mức phân tích"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đề ôn tập tổng hợp: đọc hiểu văn bản trong chủ điểm 1, 2; nghe-viết; luyện từ và câu; viết đoạn"
+          ],
+          "hoc_ky": 1,
+          "id": "tv3-on-tap-giua-hoc-ki-1",
+          "kien_thuc_duoc_dung": [
+            "Chủ điểm 1, 2"
+          ],
+          "luu_y_ra_de": "Phạm vi ôn tập giữa học kì 1 là chủ điểm 1 và 2; không ra nội dung chủ điểm 3, 4.",
+          "ten": "Ôn tập giữa học kì 1",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Ôn tập giữa học kì 1"
+          },
+          "van_ban_trong_sach": [],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản đã học trong chủ điểm 1, 2; trả lời được câu hỏi về nội dung văn bản",
+            "Viết: Viết đúng chính tả đã học; viết được đoạn văn 5-7 câu",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Bài 17. Ngưỡng cửa",
+            "Bài 18. Món quà đặc biệt",
+            "Bài 19. Khi cả nhà bé tí",
+            "Bài 20. Trò chuyện cùng mẹ",
+            "Bài 21. Tia nắng bé nhỏ",
+            "Bài 22. Để cháu nắm tay ông",
+            "Bài 23. Tôi yêu em tôi",
+            "Bài 24. Bạn nhỏ trong nhà"
+          ],
+          "chua_duoc_dung": [
+            "Biện pháp so sánh, nhân hóa ở mức phân tích (học trong chủ điểm 5, 6)",
+            "Câu ghép (lớp 4-5)",
+            "Viết bài văn; viết đoạn văn dài trên 7 câu"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc hiểu: đọc văn bản trong sách rồi trả lời câu hỏi",
+            "Chính tả: nghe-viết đoạn 50-60 chữ",
+            "Luyện từ và câu: từ chỉ sự vật, hoạt động, đặc điểm; câu nêu hoạt động, câu nêu đặc điểm",
+            "Viết: viết đoạn văn 5-7 câu kể về gia đình, người thân"
+          ],
+          "hoc_ky": 1,
+          "id": "tv3-mai-nha-yeu-thuong",
+          "kien_thuc_duoc_dung": [
+            "Đọc hiểu văn bản ngắn; viết đoạn 5-7 câu (Chủ điểm 1, 2)",
+            "Từ chỉ sự vật, hoạt động, đặc điểm; các loại câu đã học"
+          ],
+          "luu_y_ra_de": "Chủ điểm về tình cảm gia đình; đề viết đoạn nên cho đề mở về người thân, tránh đề yêu cầu kể chuyện dài.",
+          "ten": "Mái nhà yêu thương",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chủ điểm 3. Mái nhà yêu thương"
+          },
+          "van_ban_trong_sach": [
+            "Ngưỡng cửa",
+            "Món quà đặc biệt",
+            "Khi cả nhà bé tí",
+            "Trò chuyện cùng mẹ",
+            "Tia nắng bé nhỏ",
+            "Để cháu nắm tay ông",
+            "Tôi yêu em tôi",
+            "Bạn nhỏ trong nhà"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản trong chủ điểm; trả lời được câu hỏi về nhân vật, sự việc, tình cảm trong văn bản",
+            "Viết: Viết đúng chữ hoa; nghe-viết đúng đoạn văn; viết được đoạn văn 5-7 câu kể về gia đình, người thân",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe; trao đổi được về gia đình của em"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Bài 25. Những bậc đá chạm mây",
+            "Bài 26. Đi tìm mặt trời",
+            "Bài 27. Những chiếc áo ấm",
+            "Bài 28. Con đường của bé",
+            "Bài 29. Ngôi nhà trong cỏ",
+            "Bài 30. Những ngọn hải đăng",
+            "Bài 31. Người làm đồ chơi",
+            "Bài 32. Cây bút thần"
+          ],
+          "chua_duoc_dung": [
+            "Biện pháp so sánh, nhân hóa ở mức phân tích (học trong chủ điểm 5, 6)",
+            "Câu ghép (lớp 4-5)",
+            "Viết bài văn; viết đoạn văn dài trên 7 câu"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc hiểu: đọc văn bản trong sách rồi trả lời câu hỏi",
+            "Chính tả: nghe-viết đoạn 50-60 chữ",
+            "Luyện từ và câu: từ chỉ sự vật, hoạt động, đặc điểm; câu nêu hoạt động, câu nêu đặc điểm",
+            "Viết: viết đoạn văn 5-7 câu kể về cộng đồng, việc làm tốt"
+          ],
+          "hoc_ky": 1,
+          "id": "tv3-cong-dong-gan-bo",
+          "kien_thuc_duoc_dung": [
+            "Đọc hiểu văn bản ngắn; viết đoạn 5-7 câu (Chủ điểm 1-3)",
+            "Từ chỉ sự vật, hoạt động, đặc điểm; các loại câu đã học"
+          ],
+          "luu_y_ra_de": "Văn bản về cộng đồng, nghề nghiệp; câu hỏi đọc hiểu chỉ hỏi chi tiết có trong văn bản.",
+          "ten": "Cộng đồng gắn bó",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chủ điểm 4. Cộng đồng gắn bó"
+          },
+          "van_ban_trong_sach": [
+            "Những bậc đá chạm mây",
+            "Đi tìm mặt trời",
+            "Những chiếc áo ấm",
+            "Con đường của bé",
+            "Ngôi nhà trong cỏ",
+            "Những ngọn hải đăng",
+            "Người làm đồ chơi",
+            "Cây bút thần"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản trong chủ điểm; trả lời được câu hỏi về nội dung văn bản",
+            "Viết: Viết đúng chữ hoa; nghe-viết đúng đoạn văn; viết được đoạn văn 5-7 câu kể về cộng đồng, việc làm tốt",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe; trao đổi được về cộng đồng xung quanh em"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Ôn tập và đánh giá cuối học kì 1"
+          ],
+          "chua_duoc_dung": [
+            "Nội dung học kì 2 (chủ điểm 5-8)",
+            "Biện pháp so sánh, nhân hóa ở mức phân tích"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đề kiểm tra cuối học kì 1: đọc hiểu văn bản trong chủ điểm 1-4; nghe-viết; luyện từ và câu; viết đoạn"
+          ],
+          "hoc_ky": 1,
+          "id": "tv3-on-tap-cuoi-hoc-ki-1",
+          "kien_thuc_duoc_dung": [
+            "Chủ điểm 1-4"
+          ],
+          "luu_y_ra_de": "Phạm vi đề kiểm tra cuối học kì 1 là toàn bộ chủ điểm 1-4; không ra nội dung học kì 2.",
+          "ten": "Ôn tập cuối học kì 1",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Ôn tập và đánh giá cuối học kì 1"
+          },
+          "van_ban_trong_sach": [],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản đã học trong học kì 1; trả lời được câu hỏi về nội dung văn bản",
+            "Viết: Viết đúng chính tả đã học; viết được đoạn văn 5-7 câu",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Bài 1. Bầu trời",
+            "Bài 2. Mưa",
+            "Bài 3. Cóc kiện Trời",
+            "Bài 4. Những cái tên đáng yêu",
+            "Bài 5. Ngày hội rừng xanh",
+            "Bài 6. Cây gạo",
+            "Bài 7. Mặt trời xanh của tôi",
+            "Bài 8. Bầy voi rừng Trường Sơn"
+          ],
+          "chua_duoc_dung": [
+            "Câu ghép (lớp 4-5)",
+            "Viết bài văn; viết đoạn văn dài trên 7 câu",
+            "Đọc hiểu văn bản dài trên 300 chữ"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc hiểu: đọc văn bản trong sách rồi trả lời câu hỏi, tìm hình ảnh so sánh, nhân hóa",
+            "Chính tả: nghe-viết đoạn 50-60 chữ",
+            "Luyện từ và câu: tìm từ ngữ so sánh, nhân hóa; từ chỉ sự vật, hoạt động, đặc điểm",
+            "Viết: viết đoạn văn 5-7 câu nêu tình cảm, cảm xúc về cảnh vật"
+          ],
+          "hoc_ky": 2,
+          "id": "tv3-nhung-sac-mau-thien-nhien",
+          "kien_thuc_duoc_dung": [
+            "Đọc hiểu văn bản ngắn; viết đoạn 5-7 câu (học kì 1)",
+            "Từ chỉ sự vật, hoạt động, đặc điểm; các loại câu đã học"
+          ],
+          "luu_y_ra_de": "Chủ điểm này bắt đầu học biện pháp so sánh, nhân hóa ở mức nhận biết; đề chỉ hỏi tìm hình ảnh so sánh, nhân hóa có trong văn bản, không yêu cầu phân tích tác dụng.",
+          "ten": "Những sắc màu thiên nhiên",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chủ điểm 5. Những sắc màu thiên nhiên"
+          },
+          "van_ban_trong_sach": [
+            "Bầu trời",
+            "Mưa",
+            "Cóc kiện Trời",
+            "Những cái tên đáng yêu",
+            "Ngày hội rừng xanh",
+            "Cây gạo",
+            "Mặt trời xanh của tôi",
+            "Bầy voi rừng Trường Sơn"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản trong chủ điểm; trả lời được câu hỏi về nội dung văn bản; nhận biết được hình ảnh so sánh, nhân hóa trong văn bản",
+            "Viết: Viết đúng chữ hoa; nghe-viết đúng đoạn văn; viết được đoạn văn 5-7 câu nêu tình cảm, cảm xúc về cảnh vật",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe; trao đổi được về thiên nhiên"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Bài 9. Lời kêu gọi toàn dân tập thể dục",
+            "Bài 10. Quả hồng của thỏ con",
+            "Bài 11. Chuyện bên cửa sổ",
+            "Bài 12. Tay trái và tay phải",
+            "Bài 13. Mèo đi câu cá",
+            "Bài 14. Học nghề",
+            "Bài 15. Ngày như thế nào là đẹp?",
+            "Bài 16. A lô, tớ đây"
+          ],
+          "chua_duoc_dung": [
+            "Câu ghép (lớp 4-5)",
+            "Viết bài văn; viết đoạn văn dài trên 7 câu",
+            "Đọc hiểu văn bản dài trên 300 chữ"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc hiểu: đọc văn bản trong sách rồi trả lời câu hỏi",
+            "Chính tả: nghe-viết đoạn 50-60 chữ",
+            "Luyện từ và câu: tìm từ ngữ so sánh, nhân hóa; từ chỉ sự vật, hoạt động, đặc điểm",
+            "Viết: viết đoạn văn 5-7 câu nêu lí do thích hoặc không thích một nhân vật; viết thư điện tử"
+          ],
+          "hoc_ky": 2,
+          "id": "tv3-bai-hoc-tu-cuoc-song",
+          "kien_thuc_duoc_dung": [
+            "Đọc hiểu văn bản ngắn; viết đoạn 5-7 câu (Chủ điểm 1-5)",
+            "Biện pháp so sánh, nhân hóa ở mức nhận biết"
+          ],
+          "luu_y_ra_de": "Đề viết đoạn nêu lí do thích hoặc không thích nhân vật nên cho văn bản đã học; không ra đề yêu cầu phân tích nhân vật.",
+          "ten": "Bài học từ cuộc sống",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chủ điểm 6. Bài học từ cuộc sống"
+          },
+          "van_ban_trong_sach": [
+            "Lời kêu gọi toàn dân tập thể dục",
+            "Quả hồng của thỏ con",
+            "Chuyện bên cửa sổ",
+            "Tay trái và tay phải",
+            "Mèo đi câu cá",
+            "Học nghề",
+            "Ngày như thế nào là đẹp?",
+            "A lô, tớ đây"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản trong chủ điểm; trả lời được câu hỏi về nhân vật, sự việc và bài học của văn bản",
+            "Viết: Viết đúng chữ hoa; nghe-viết đúng đoạn văn; viết được đoạn văn 5-7 câu nêu lí do thích hoặc không thích một nhân vật; viết được thư điện tử ngắn",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe; trao đổi được về bài học rút ra từ câu chuyện"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Ôn tập giữa học kì 2"
+          ],
+          "chua_duoc_dung": [
+            "Nội dung chủ điểm 7, 8 (học sau tuần ôn tập)",
+            "Câu ghép (lớp 4-5)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đề ôn tập tổng hợp: đọc hiểu văn bản trong chủ điểm 5, 6; nghe-viết; luyện từ và câu; viết đoạn"
+          ],
+          "hoc_ky": 2,
+          "id": "tv3-on-tap-giua-hoc-ki-2",
+          "kien_thuc_duoc_dung": [
+            "Chủ điểm 5, 6"
+          ],
+          "luu_y_ra_de": "Phạm vi ôn tập giữa học kì 2 là chủ điểm 5 và 6; không ra nội dung chủ điểm 7, 8.",
+          "ten": "Ôn tập giữa học kì 2",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Ôn tập giữa học kì 2"
+          },
+          "van_ban_trong_sach": [],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản đã học trong chủ điểm 5, 6; trả lời được câu hỏi về nội dung văn bản",
+            "Viết: Viết đúng chính tả đã học; viết được đoạn văn 5-7 câu",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Bài 17. Đất nước là gì?",
+            "Bài 18. Núi quê tôi",
+            "Bài 19. Sông Hương",
+            "Bài 20. Tiếng nước mình",
+            "Bài 21. Nhà rông",
+            "Bài 22. Sự tích ông Đùng, bà Đùng",
+            "Bài 23. Hai Bà Trưng",
+            "Bài 24. Cùng Bác qua suối"
+          ],
+          "chua_duoc_dung": [
+            "Câu ghép (lớp 4-5)",
+            "Viết bài văn; viết đoạn văn dài trên 7 câu",
+            "Đọc hiểu văn bản dài trên 300 chữ"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc hiểu: đọc văn bản trong sách rồi trả lời câu hỏi",
+            "Chính tả: nghe-viết đoạn 50-60 chữ",
+            "Luyện từ và câu: tìm từ ngữ so sánh, nhân hóa; từ chỉ sự vật, hoạt động, đặc điểm",
+            "Viết: viết đoạn văn 5-7 câu nêu tình cảm, cảm xúc về quê hương, đất nước"
+          ],
+          "hoc_ky": 2,
+          "id": "tv3-dat-nuoc-ngan-nam",
+          "kien_thuc_duoc_dung": [
+            "Đọc hiểu văn bản ngắn; viết đoạn 5-7 câu (Chủ điểm 1-6)",
+            "Biện pháp so sánh, nhân hóa ở mức nhận biết"
+          ],
+          "luu_y_ra_de": "Văn bản lịch sử, địa lí chỉ hỏi chi tiết có trong văn bản; không ra câu hỏi kiến thức lịch sử, địa lí ngoài sách.",
+          "ten": "Đất nước ngàn năm",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chủ điểm 7. Đất nước ngàn năm"
+          },
+          "van_ban_trong_sach": [
+            "Đất nước là gì?",
+            "Núi quê tôi",
+            "Sông Hương",
+            "Tiếng nước mình",
+            "Nhà rông",
+            "Sự tích ông Đùng, bà Đùng",
+            "Hai Bà Trưng",
+            "Cùng Bác qua suối"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản trong chủ điểm; trả lời được câu hỏi về nội dung văn bản",
+            "Viết: Viết đúng chữ hoa; nghe-viết đúng đoạn văn; viết được đoạn văn 5-7 câu nêu tình cảm, cảm xúc về quê hương, đất nước",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe; trao đổi được về quê hương, đất nước"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Bài 25. Ngọn lửa Ô-lim-pích",
+            "Bài 26. Rô-bốt ở quanh ta",
+            "Bài 27. Thư của ông Trái Đất gửi các bạn nhỏ",
+            "Bài 28. Những điều nhỏ tớ làm cho Trái Đất",
+            "Bài 29. Bác sĩ Y-éc-xanh",
+            "Bài 30. Một mái nhà chung"
+          ],
+          "chua_duoc_dung": [
+            "Câu ghép (lớp 4-5)",
+            "Viết bài văn; viết đoạn văn dài trên 7 câu",
+            "Đọc hiểu văn bản dài trên 300 chữ"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc hiểu: đọc văn bản trong sách rồi trả lời câu hỏi",
+            "Chính tả: nghe-viết đoạn 50-60 chữ",
+            "Luyện từ và câu: tìm từ ngữ so sánh, nhân hóa; từ chỉ sự vật, hoạt động, đặc điểm",
+            "Viết: viết đoạn văn 5-7 câu kể việc làm góp phần bảo vệ môi trường; viết bản tin ngắn"
+          ],
+          "hoc_ky": 2,
+          "id": "tv3-trai-dat-cua-chung-minh",
+          "kien_thuc_duoc_dung": [
+            "Đọc hiểu văn bản ngắn; viết đoạn 5-7 câu (Chủ điểm 1-7)",
+            "Biện pháp so sánh, nhân hóa ở mức nhận biết"
+          ],
+          "luu_y_ra_de": "Chủ điểm chỉ có 6 bài; đề kiểm tra cuối năm nên kết hợp với chủ điểm 7 khi ra đề.",
+          "ten": "Trái Đất của chúng mình",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chủ điểm 8. Trái Đất của chúng mình"
+          },
+          "van_ban_trong_sach": [
+            "Ngọn lửa Ô-lim-pích",
+            "Rô-bốt ở quanh ta",
+            "Thư của ông Trái Đất gửi các bạn nhỏ",
+            "Những điều nhỏ tớ làm cho Trái Đất",
+            "Bác sĩ Y-éc-xanh",
+            "Một mái nhà chung"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản trong chủ điểm; trả lời được câu hỏi về nội dung văn bản",
+            "Viết: Viết đúng chữ hoa; nghe-viết đúng đoạn văn; viết được đoạn văn 5-7 câu kể việc làm góp phần bảo vệ môi trường; viết được bản tin ngắn",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe; trao đổi được về việc bảo vệ môi trường"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Ôn tập cuối học kì 2",
+            "Đánh giá cuối học kì 2"
+          ],
+          "chua_duoc_dung": [
+            "Câu ghép (lớp 4-5)",
+            "Viết bài văn"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đề kiểm tra cuối năm: đọc hiểu văn bản trong chủ điểm 5-8; nghe-viết; luyện từ và câu; viết đoạn"
+          ],
+          "hoc_ky": 2,
+          "id": "tv3-on-tap-cuoi-hoc-ki-2",
+          "kien_thuc_duoc_dung": [
+            "Chủ điểm 5-8"
+          ],
+          "luu_y_ra_de": "Phạm vi đề kiểm tra cuối năm là toàn bộ chương trình lớp 3; văn bản đọc hiểu trong đề lấy trong các chủ điểm đã học hoặc văn bản mới cùng chủ điểm.",
+          "ten": "Ôn tập cuối học kì 2",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Ôn tập và Đánh giá cuối học kì 2"
+          },
+          "van_ban_trong_sach": [],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản đã học trong năm; trả lời được câu hỏi về nội dung văn bản; nhận biết được hình ảnh so sánh, nhân hóa",
+            "Viết: Viết đúng chính tả đã học; viết được đoạn văn 5-7 câu",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe"
+          ]
+        }
+      ],
+      "ghi_chu_chua_chac": [
+        "Tập 2 có 30 bài (Bài 30: Một mái nhà chung) theo mục lục SGK tập 2; một số trang giải SGK ghi 29 bài vì thiếu Bài 30.",
+        "Bài 11 tập 2: một số nguồn ghi nhầm Chuyện bên của sổ - đã dùng Chuyện bên cửa sổ.",
+        "Tên chương và tên bài bộ Chân trời sáng tạo, Cánh diều chưa tra, đã ghi (đối chiếu mục lục)."
+      ],
+      "lop": 3
+    },
+    {
+      "chuong": [
+        {
+          "cac_bai": [
+            "Bài 1. Điều kì diệu",
+            "Bài 2. Thi nhạc",
+            "Bài 3. Anh em sinh đôi",
+            "Bài 4. Công chúa và người dẫn chuyện",
+            "Bài 5. Thằn lằn xanh và tắc kè",
+            "Bài 6. Nghệ sĩ trống",
+            "Bài 7. Những bức chân dung",
+            "Bài 8. Đò ngang"
+          ],
+          "chua_duoc_dung": [
+            "Câu cảm, câu cầu khiến ở mức vận dụng sâu (lớp 5)",
+            "Động từ, tính từ ở mức phân loại nâng cao (chủ điểm 2)",
+            "Viết bài văn dài; viết thư (học kì 2)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc hiểu: đọc văn bản trong sách rồi trả lời câu hỏi, tìm ý chính, tóm tắt đoạn",
+            "Chính tả: nghe-viết đoạn 60-70 chữ",
+            "Luyện từ và câu: danh từ; từ chỉ sự vật, hoạt động, đặc điểm",
+            "Viết: viết đoạn văn nêu ý kiến, tả người"
+          ],
+          "hoc_ky": 1,
+          "id": "tv4-moi-nguoi-mot-ve",
+          "kien_thuc_duoc_dung": [
+            "Đọc hiểu văn bản; viết đoạn 5-7 câu (lớp 3)",
+            "Biện pháp so sánh, nhân hóa ở mức nhận biết"
+          ],
+          "luu_y_ra_de": "Lớp 4 bắt đầu học từ loại (danh từ, động từ, tính từ) và viết đoạn văn nêu ý kiến; đề luyện từ và câu chỉ hỏi nhận biết, phân loại ở mức đơn giản.",
+          "ten": "Mỗi người một vẻ",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chủ điểm 1. Mỗi người một vẻ"
+          },
+          "van_ban_trong_sach": [
+            "Điều kì diệu",
+            "Thi nhạc",
+            "Anh em sinh đôi",
+            "Công chúa và người dẫn chuyện",
+            "Thằn lằn xanh và tắc kè",
+            "Nghệ sĩ trống",
+            "Những bức chân dung",
+            "Đò ngang"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản trong chủ điểm; trả lời được câu hỏi về nhân vật, sự việc; tìm được ý chính của đoạn văn",
+            "Viết: Nhận biết được danh từ; viết được đoạn văn nêu ý kiến, tả người",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe; trao đổi được ý kiến về bạn bè, thầy cô"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Bài 9. Bầu trời trong quả trứng",
+            "Bài 10. Tiếng nói của cỏ cây",
+            "Bài 11. Tập làm văn",
+            "Bài 12. Nhà phát minh 6 tuổi",
+            "Bài 13. Con vẹt xanh",
+            "Bài 14. Chân trời cuối phố",
+            "Bài 15. Gặt chữ trên non",
+            "Bài 16. Trước ngày xa quê"
+          ],
+          "chua_duoc_dung": [
+            "Câu cảm, câu cầu khiến ở mức vận dụng sâu (lớp 5)",
+            "Viết bài văn dài; viết thư (học kì 2)",
+            "Đọc hiểu văn bản dài trên 400 chữ"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc hiểu: đọc văn bản trong sách rồi trả lời câu hỏi",
+            "Chính tả: nghe-viết đoạn 60-70 chữ",
+            "Luyện từ và câu: động từ; từ chỉ sự vật, hoạt động, đặc điểm",
+            "Viết: viết đoạn văn kể lại câu chuyện, tả cảnh"
+          ],
+          "hoc_ky": 1,
+          "id": "tv4-trai-nghiem-va-kham-pha",
+          "kien_thuc_duoc_dung": [
+            "Danh từ (Chủ điểm 1)",
+            "Đọc hiểu văn bản; viết đoạn 5-7 câu (lớp 3)"
+          ],
+          "luu_y_ra_de": "Bài 11 Tập làm văn là bài hướng dẫn cách làm văn, không phải văn bản đọc; đề không ra câu hỏi đọc hiểu cho bài này.",
+          "ten": "Trải nghiệm và khám phá",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chủ điểm 2. Trải nghiệm và khám phá"
+          },
+          "van_ban_trong_sach": [
+            "Bầu trời trong quả trứng",
+            "Tiếng nói của cỏ cây",
+            "Nhà phát minh 6 tuổi",
+            "Con vẹt xanh",
+            "Chân trời cuối phố",
+            "Gặt chữ trên non",
+            "Trước ngày xa quê"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản trong chủ điểm; trả lời được câu hỏi về nội dung văn bản; tìm được ý chính của đoạn văn",
+            "Viết: Nhận biết được động từ; viết được đoạn văn kể lại câu chuyện, tả cảnh",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe; trao đổi được về trải nghiệm, khám phá của em"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Ôn tập và Đánh giá giữa học kì I"
+          ],
+          "chua_duoc_dung": [
+            "Nội dung chủ điểm 3, 4 (học sau tuần ôn tập)",
+            "Tính từ ở mức phân loại nâng cao (chủ điểm 3)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đề kiểm tra giữa học kì 1: đọc hiểu văn bản trong chủ điểm 1, 2; nghe-viết; luyện từ và câu; viết đoạn"
+          ],
+          "hoc_ky": 1,
+          "id": "tv4-on-tap-giua-hoc-ki-1",
+          "kien_thuc_duoc_dung": [
+            "Chủ điểm 1, 2"
+          ],
+          "luu_y_ra_de": "Phạm vi đề kiểm tra giữa học kì 1 là chủ điểm 1 và 2; không ra nội dung chủ điểm 3, 4.",
+          "ten": "Ôn tập giữa học kì 1",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Ôn tập và Đánh giá giữa học kì I"
+          },
+          "van_ban_trong_sach": [],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản đã học trong chủ điểm 1, 2; trả lời được câu hỏi về nội dung văn bản",
+            "Viết: Nhận biết được danh từ, động từ; viết được đoạn văn",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Bài 17. Vẽ màu",
+            "Bài 18. Đồng cỏ nở hoa",
+            "Bài 19. Thanh âm của núi",
+            "Bài 20. Bầu trời mùa thu",
+            "Bài 21. Làm thỏ con bằng giấy",
+            "Bài 22. Bức tường có nhiều phép lạ",
+            "Bài 23. Bét-tô-ven và Bản xô-nát Ánh trăng",
+            "Bài 24. Người tìm đường lên các vì sao"
+          ],
+          "chua_duoc_dung": [
+            "Câu cảm, câu cầu khiến ở mức vận dụng sâu (lớp 5)",
+            "Viết bài văn dài; viết thư (học kì 2)",
+            "Đọc hiểu văn bản dài trên 400 chữ"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc hiểu: đọc văn bản trong sách rồi trả lời câu hỏi",
+            "Chính tả: nghe-viết đoạn 60-70 chữ",
+            "Luyện từ và câu: tính từ; từ chỉ sự vật, hoạt động, đặc điểm",
+            "Viết: viết đoạn văn tả cảnh, tả đồ vật; viết theo các bước làm đồ thủ công"
+          ],
+          "hoc_ky": 1,
+          "id": "tv4-niem-vui-sang-tao",
+          "kien_thuc_duoc_dung": [
+            "Danh từ, động từ (Chủ điểm 1, 2)",
+            "Đọc hiểu văn bản; viết đoạn (lớp 3)"
+          ],
+          "luu_y_ra_de": "Bài 21, 22 là văn bản hướng dẫn làm đồ thủ công; đề viết đoạn có thể yêu cầu viết theo các bước, không yêu cầu kể chuyện.",
+          "ten": "Niềm vui sáng tạo",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chủ điểm 3. Niềm vui sáng tạo"
+          },
+          "van_ban_trong_sach": [
+            "Vẽ màu",
+            "Đồng cỏ nở hoa",
+            "Thanh âm của núi",
+            "Bầu trời mùa thu",
+            "Làm thỏ con bằng giấy",
+            "Bức tường có nhiều phép lạ",
+            "Bét-tô-ven và Bản xô-nát Ánh trăng",
+            "Người tìm đường lên các vì sao"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản trong chủ điểm; trả lời được câu hỏi về nội dung văn bản",
+            "Viết: Nhận biết được tính từ; viết được đoạn văn tả cảnh, tả đồ vật; viết được đoạn văn theo các bước làm đồ thủ công",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe; trao đổi được về sáng tạo, nghệ thuật"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Bài 25. Bay cùng ước mơ",
+            "Bài 26. Con trai người làm vườn",
+            "Bài 27. Nếu em có một khu vườn",
+            "Bài 28. Bốn mùa mơ ước",
+            "Bài 29. Ở vương quốc tương lai",
+            "Bài 30. Cánh chim nhỏ",
+            "Bài 31. Nếu chúng mình có phép lạ",
+            "Bài 32. Anh Ba"
+          ],
+          "chua_duoc_dung": [
+            "Câu cảm, câu cầu khiến ở mức vận dụng sâu (lớp 5)",
+            "Viết bài văn dài; viết thư (học kì 2)",
+            "Đọc hiểu văn bản dài trên 400 chữ"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc hiểu: đọc văn bản trong sách rồi trả lời câu hỏi",
+            "Chính tả: nghe-viết đoạn 60-70 chữ",
+            "Luyện từ và câu: câu ước, câu điều kiện; từ chỉ sự vật, hoạt động, đặc điểm",
+            "Viết: viết đoạn văn nêu ước mơ có lí do"
+          ],
+          "hoc_ky": 1,
+          "id": "tv4-chap-canh-uoc-mo",
+          "kien_thuc_duoc_dung": [
+            "Danh từ, động từ, tính từ (Chủ điểm 1-3)",
+            "Đọc hiểu văn bản; viết đoạn (lớp 3)"
+          ],
+          "luu_y_ra_de": "Câu ước, câu điều kiện chỉ hỏi ở mức nhận biết; đề viết đoạn nêu ước mơ cần có lí do, không chỉ một câu muốn trở thành.",
+          "ten": "Chắp cánh ước mơ",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chủ điểm 4. Chắp cánh ước mơ"
+          },
+          "van_ban_trong_sach": [
+            "Bay cùng ước mơ",
+            "Con trai người làm vườn",
+            "Nếu em có một khu vườn",
+            "Bốn mùa mơ ước",
+            "Ở vương quốc tương lai",
+            "Cánh chim nhỏ",
+            "Nếu chúng mình có phép lạ",
+            "Anh Ba"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản trong chủ điểm; trả lời được câu hỏi về nội dung văn bản",
+            "Viết: Nhận biết được câu ước, câu điều kiện; viết được đoạn văn nêu ước mơ có lí do",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe; trao đổi được về ước mơ của em"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Ôn tập và Đánh giá cuối học kì I"
+          ],
+          "chua_duoc_dung": [
+            "Nội dung học kì 2 (chủ điểm 5-8)",
+            "Viết bài văn dài; viết thư"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đề kiểm tra cuối học kì 1: đọc hiểu văn bản trong chủ điểm 1-4; nghe-viết; luyện từ và câu; viết đoạn"
+          ],
+          "hoc_ky": 1,
+          "id": "tv4-on-tap-cuoi-hoc-ki-1",
+          "kien_thuc_duoc_dung": [
+            "Chủ điểm 1-4"
+          ],
+          "luu_y_ra_de": "Phạm vi đề kiểm tra cuối học kì 1 là toàn bộ chủ điểm 1-4; không ra nội dung học kì 2.",
+          "ten": "Ôn tập cuối học kì 1",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Ôn tập và Đánh giá cuối học kì I"
+          },
+          "van_ban_trong_sach": [],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản đã học trong học kì 1; trả lời được câu hỏi về nội dung văn bản",
+            "Viết: Nhận biết được danh từ, động từ, tính từ; viết được đoạn văn",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Bài 1. Hải Thượng Lãn Ông",
+            "Bài 2. Vệt phấn trên mặt bàn",
+            "Bài 3. Ông Bụt đã đến",
+            "Bài 4. Quả ngọt cuối mùa",
+            "Bài 5. Tờ báo tường của tôi",
+            "Bài 6. Tiếng ru",
+            "Bài 7. Con muốn làm một cái cây",
+            "Bài 8. Trên khóm tre đầu ngõ"
+          ],
+          "chua_duoc_dung": [
+            "Câu ghép (lớp 5)",
+            "Viết bài văn dài; viết thư ở mức hoàn chỉnh",
+            "Đọc hiểu văn bản dài trên 400 chữ"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc hiểu: đọc văn bản trong sách rồi trả lời câu hỏi",
+            "Chính tả: nghe-viết đoạn 60-70 chữ",
+            "Luyện từ và câu: danh từ, động từ, tính từ; câu kể, câu hỏi",
+            "Viết: viết đoạn văn thể hiện tình cảm với người thân; viết báo tường"
+          ],
+          "hoc_ky": 2,
+          "id": "tv4-song-de-yeu-thuong",
+          "kien_thuc_duoc_dung": [
+            "Danh từ, động từ, tính từ (học kì 1)",
+            "Đọc hiểu văn bản; viết đoạn (học kì 1)"
+          ],
+          "luu_y_ra_de": "Văn bản về tình cảm gia đình, lòng tốt; đề viết đoạn nên cho đề mở, tránh đề yêu cầu kể chuyện dài.",
+          "ten": "Sống để yêu thương",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chủ điểm 5. Sống để yêu thương"
+          },
+          "van_ban_trong_sach": [
+            "Hải Thượng Lãn Ông",
+            "Vệt phấn trên mặt bàn",
+            "Ông Bụt đã đến",
+            "Quả ngọt cuối mùa",
+            "Tờ báo tường của tôi",
+            "Tiếng ru",
+            "Con muốn làm một cái cây",
+            "Trên khóm tre đầu ngõ"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản trong chủ điểm; trả lời được câu hỏi về nhân vật, sự việc, tình cảm trong văn bản",
+            "Viết: Viết được đoạn văn thể hiện tình cảm với người thân; viết được tờ báo tường ngắn",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe; trao đổi được về tình cảm gia đình, lòng tốt"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Bài 9. Sự tích con rồng cháu tiên",
+            "Bài 10. Cảm xúc Trường Sa",
+            "Bài 11. Sáng tháng Năm",
+            "Bài 12. Chàng trai làng Phù Ủng",
+            "Bài 13. Vườn của ông tôi",
+            "Bài 14. Trong lời mẹ hát",
+            "Bài 15. Người thầy đầu tiên của bố tôi",
+            "Bài 16. Ngựa biên phòng"
+          ],
+          "chua_duoc_dung": [
+            "Câu ghép (lớp 5)",
+            "Viết bài văn dài; viết thư ở mức hoàn chỉnh",
+            "Đọc hiểu văn bản dài trên 400 chữ"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc hiểu: đọc văn bản trong sách rồi trả lời câu hỏi",
+            "Chính tả: nghe-viết đoạn 60-70 chữ",
+            "Luyện từ và câu: danh từ, động từ, tính từ; câu kể, câu hỏi",
+            "Viết: viết đoạn văn nêu cảm xúc về quê hương, biển đảo"
+          ],
+          "hoc_ky": 2,
+          "id": "tv4-uong-nuoc-nho-nguon",
+          "kien_thuc_duoc_dung": [
+            "Danh từ, động từ, tính từ (học kì 1)",
+            "Đọc hiểu văn bản; viết đoạn (học kì 1)"
+          ],
+          "luu_y_ra_de": "Văn bản lịch sử, biển đảo cần giữ đúng sự thật đã học (Hoàng Sa, Trường Sa là của Việt Nam); không thêm tình tiết bịa.",
+          "ten": "Uống nước nhớ nguồn",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chủ điểm 6. Uống nước nhớ nguồn"
+          },
+          "van_ban_trong_sach": [
+            "Sự tích con rồng cháu tiên",
+            "Cảm xúc Trường Sa",
+            "Sáng tháng Năm",
+            "Chàng trai làng Phù Ủng",
+            "Vườn của ông tôi",
+            "Trong lời mẹ hát",
+            "Người thầy đầu tiên của bố tôi",
+            "Ngựa biên phòng"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản trong chủ điểm; trả lời được câu hỏi về nội dung văn bản",
+            "Viết: Viết được đoạn văn nêu cảm xúc về quê hương, biển đảo, người đi trước",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe; trao đổi được về truyền thống uống nước nhớ nguồn"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Ôn tập và đánh giá giữa học kì 2"
+          ],
+          "chua_duoc_dung": [
+            "Nội dung chủ điểm 7, 8 (học sau tuần ôn tập)",
+            "Câu ghép (lớp 5)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đề kiểm tra giữa học kì 2: đọc hiểu văn bản trong chủ điểm 5, 6; nghe-viết; luyện từ và câu; viết đoạn"
+          ],
+          "hoc_ky": 2,
+          "id": "tv4-on-tap-giua-hoc-ki-2",
+          "kien_thuc_duoc_dung": [
+            "Chủ điểm 5, 6"
+          ],
+          "luu_y_ra_de": "Phạm vi đề kiểm tra giữa học kì 2 là chủ điểm 5 và 6; không ra nội dung chủ điểm 7, 8.",
+          "ten": "Ôn tập giữa học kì 2",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Ôn tập và đánh giá giữa học kì 2"
+          },
+          "van_ban_trong_sach": [],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản đã học trong chủ điểm 5, 6; trả lời được câu hỏi về nội dung văn bản",
+            "Viết: Nhận biết được danh từ, động từ, tính từ; viết được đoạn văn",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Bài 17. Cây đa quê hương",
+            "Bài 18. Bước mùa xuân",
+            "Bài 19. Đi hội chùa Hương",
+            "Bài 20. Chiều ngoại ô",
+            "Bài 21. Những cánh buồm",
+            "Bài 22. Cái cầu",
+            "Bài 23. Đường đi Sa Pa",
+            "Bài 24. Quê ngoại"
+          ],
+          "chua_duoc_dung": [
+            "Câu ghép (lớp 5)",
+            "Viết bài văn dài; viết thư ở mức hoàn chỉnh",
+            "Đọc hiểu văn bản dài trên 400 chữ"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc hiểu: đọc văn bản trong sách rồi trả lời câu hỏi",
+            "Chính tả: nghe-viết đoạn 60-70 chữ",
+            "Luyện từ và câu: danh từ, động từ, tính từ; câu kể, câu hỏi",
+            "Viết: viết đoạn văn tả cảnh quê hương"
+          ],
+          "hoc_ky": 2,
+          "id": "tv4-que-huong-trong-toi",
+          "kien_thuc_duoc_dung": [
+            "Danh từ, động từ, tính từ (học kì 1)",
+            "Đọc hiểu văn bản; viết đoạn (học kì 1)"
+          ],
+          "luu_y_ra_de": "Văn bản tả cảnh quê hương; đề viết đoạn tả cảnh nên cho địa điểm cụ thể, quen thuộc.",
+          "ten": "Quê hương trong tôi",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chủ điểm 7. Quê hương trong tôi"
+          },
+          "van_ban_trong_sach": [
+            "Cây đa quê hương",
+            "Bước mùa xuân",
+            "Đi hội chùa Hương",
+            "Chiều ngoại ô",
+            "Những cánh buồm",
+            "Cái cầu",
+            "Đường đi Sa Pa",
+            "Quê ngoại"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản trong chủ điểm; trả lời được câu hỏi về nội dung văn bản",
+            "Viết: Viết được đoạn văn tả cảnh quê hương có thời gian, màu sắc, âm thanh và cảm xúc",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe; trao đổi được về quê hương của em"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Bài 25. Khu bảo tồn động vật hoang dã Ngô-rông-gô-rô",
+            "Bài 26. Ngôi nhà của yêu thương",
+            "Bài 27. Băng tan",
+            "Bài 28. Chuyến du lịch thú vị",
+            "Bài 29. Lễ hội ở Nhật Bản",
+            "Bài 30. Ngày hội"
+          ],
+          "chua_duoc_dung": [
+            "Câu ghép (lớp 5)",
+            "Viết bài văn dài; viết thư ở mức hoàn chỉnh",
+            "Đọc hiểu văn bản dài trên 400 chữ"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc hiểu: đọc văn bản trong sách rồi trả lời câu hỏi",
+            "Chính tả: nghe-viết đoạn 60-70 chữ",
+            "Luyện từ và câu: danh từ, động từ, tính từ; câu kể, câu hỏi",
+            "Viết: viết đoạn văn nêu ý kiến về bảo vệ môi trường, hòa bình"
+          ],
+          "hoc_ky": 2,
+          "id": "tv4-vi-mot-the-gioi-binh-yen",
+          "kien_thuc_duoc_dung": [
+            "Danh từ, động từ, tính từ (học kì 1)",
+            "Đọc hiểu văn bản; viết đoạn (học kì 1)"
+          ],
+          "luu_y_ra_de": "Chủ điểm chỉ có 6 bài; đề kiểm tra cuối năm nên kết hợp với chủ điểm 7 khi ra đề.",
+          "ten": "Vì một thế giới bình yên",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chủ điểm 8. Vì một thế giới bình yên"
+          },
+          "van_ban_trong_sach": [
+            "Khu bảo tồn động vật hoang dã Ngô-rông-gô-rô",
+            "Ngôi nhà của yêu thương",
+            "Băng tan",
+            "Chuyến du lịch thú vị",
+            "Lễ hội ở Nhật Bản",
+            "Ngày hội"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản trong chủ điểm; trả lời được câu hỏi về nội dung văn bản",
+            "Viết: Viết được đoạn văn nêu ý kiến về bảo vệ môi trường, hòa bình",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe; trao đổi được về việc làm cho thế giới tốt đẹp hơn"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Ôn tập và đánh giá cuối năm học"
+          ],
+          "chua_duoc_dung": [
+            "Câu ghép (lớp 5)",
+            "Viết bài văn dài"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đề kiểm tra cuối năm: đọc hiểu văn bản trong chủ điểm 5-8; nghe-viết; luyện từ và câu; viết đoạn"
+          ],
+          "hoc_ky": 2,
+          "id": "tv4-on-tap-cuoi-nam",
+          "kien_thuc_duoc_dung": [
+            "Chủ điểm 5-8"
+          ],
+          "luu_y_ra_de": "Phạm vi đề kiểm tra cuối năm là toàn bộ chương trình lớp 4; văn bản đọc hiểu trong đề lấy trong các chủ điểm đã học hoặc văn bản mới cùng chủ điểm.",
+          "ten": "Ôn tập cuối năm",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Ôn tập và đánh giá cuối năm học"
+          },
+          "van_ban_trong_sach": [],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản đã học trong năm; trả lời được câu hỏi về nội dung văn bản",
+            "Viết: Nhận biết được danh từ, động từ, tính từ; viết được đoạn văn",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe"
+          ]
+        }
+      ],
+      "ghi_chu_chua_chac": [
+        "Tên chủ điểm 8: một số trang ghi Vì một thế giới hòa bình - đã dùng Vì một thế giới bình yên theo mục lục SGK.",
+        "Bài 1 tập 1: một số trang ghi Điều diệu kì - đã dùng Điều kì diệu theo mục lục SGK.",
+        "Tên chương và tên bài bộ Chân trời sáng tạo, Cánh diều chưa tra, đã ghi (đối chiếu mục lục)."
+      ],
+      "lop": 4
+    },
+    {
+      "chuong": [
+        {
+          "cac_bai": [
+            "Bài 1. Thanh âm của gió",
+            "Bài 2. Cánh đồng hoa",
+            "Bài 3. Tuổi ngựa",
+            "Bài 4. Bến sông tuổi thơ",
+            "Bài 5. Tiếng hát nảy mầm",
+            "Bài 6. Ngôi sao sân cỏ",
+            "Bài 7. Bộ sưu tập độc đáo",
+            "Bài 8. Hành tinh kì lạ"
+          ],
+          "chua_duoc_dung": [
+            "Câu ghép ở mức phân tích, liên kết câu (chủ điểm 5, 6)",
+            "Bài văn tả người, tả phong cảnh (chủ điểm 2, 5)",
+            "Viết bài văn kể chuyện ở mức hoàn chỉnh"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc hiểu: đọc văn bản trong sách rồi trả lời câu hỏi, tìm ý chính",
+            "Chính tả: nghe-viết đoạn 70-80 chữ",
+            "Luyện từ và câu: danh từ, động từ, tính từ; đại từ",
+            "Viết: tìm hiểu cách viết bài văn kể chuyện sáng tạo; lập dàn ý; viết báo cáo công việc"
+          ],
+          "hoc_ky": 1,
+          "id": "tv5-the-gioi-tuoi-tho",
+          "kien_thuc_duoc_dung": [
+            "Danh từ, động từ, tính từ (lớp 4)",
+            "Đọc hiểu văn bản; viết đoạn (lớp 4)"
+          ],
+          "luu_y_ra_de": "Lớp 5 bắt đầu viết bài văn kể chuyện sáng tạo và báo cáo công việc; đề kiểm tra chỉ hỏi ở mức tìm hiểu, lập dàn ý, không yêu cầu viết trọn bài văn dài.",
+          "ten": "Thế giới tuổi thơ",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chủ điểm 1. Thế giới tuổi thơ"
+          },
+          "van_ban_trong_sach": [
+            "Thanh âm của gió",
+            "Cánh đồng hoa",
+            "Tuổi ngựa",
+            "Bến sông tuổi thơ",
+            "Tiếng hát nảy mầm",
+            "Ngôi sao sân cỏ",
+            "Bộ sưu tập độc đáo",
+            "Hành tinh kì lạ"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản trong chủ điểm; trả lời được câu hỏi về nội dung văn bản; tìm được ý chính của đoạn văn",
+            "Viết: Nhận biết được đại từ; tìm hiểu được cách viết bài văn kể chuyện sáng tạo; lập được dàn ý; viết được báo cáo công việc",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe; giới thiệu được điểm vui chơi lí thú dành cho trẻ em"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Bài 9. Trước cổng trời",
+            "Bài 10. Kì diệu rừng xanh",
+            "Bài 11. Hang Sơn Đoòng - những điều kì thú",
+            "Bài 12. Những hòn đảo trên Vịnh Hạ Long",
+            "Bài 13. Mầm non",
+            "Bài 14. Những ngọn núi nóng rẫy",
+            "Bài 15. Bài ca về mặt trời",
+            "Bài 16. Xin chào, Xa-ha-ra"
+          ],
+          "chua_duoc_dung": [
+            "Câu ghép ở mức phân tích, liên kết câu (chủ điểm 5, 6)",
+            "Bài văn tả người (chủ điểm 5)",
+            "Viết bài văn tả phong cảnh ở mức hoàn chỉnh"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc hiểu: đọc văn bản trong sách rồi trả lời câu hỏi",
+            "Chính tả: nghe-viết đoạn 70-80 chữ",
+            "Luyện từ và câu: từ đồng nghĩa; từ đa nghĩa",
+            "Viết: tìm hiểu cách viết bài văn tả phong cảnh; viết mở bài, kết bài; viết đoạn văn tả phong cảnh"
+          ],
+          "hoc_ky": 1,
+          "id": "tv5-thien-nhien-ki-thu",
+          "kien_thuc_duoc_dung": [
+            "Đại từ (Chủ điểm 1)",
+            "Đọc hiểu văn bản; viết đoạn (lớp 4)"
+          ],
+          "luu_y_ra_de": "Từ đồng nghĩa, từ đa nghĩa chỉ hỏi ở mức nhận biết, tìm từ đồng nghĩa với từ cho trước; không yêu cầu giải thích nghĩa từ.",
+          "ten": "Thiên nhiên kì thú",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chủ điểm 2. Thiên nhiên kì thú"
+          },
+          "van_ban_trong_sach": [
+            "Trước cổng trời",
+            "Kì diệu rừng xanh",
+            "Hang Sơn Đoòng - những điều kì thú",
+            "Những hòn đảo trên Vịnh Hạ Long",
+            "Mầm non",
+            "Những ngọn núi nóng rẫy",
+            "Bài ca về mặt trời",
+            "Xin chào, Xa-ha-ra"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản trong chủ điểm; trả lời được câu hỏi về nội dung văn bản",
+            "Viết: Nhận biết được từ đồng nghĩa, từ đa nghĩa; tìm hiểu được cách viết bài văn tả phong cảnh; viết được đoạn văn tả phong cảnh",
+            "Nói và nghe: Thảo luận được về việc bảo tồn động vật hoang dã; giới thiệu được cảnh đẹp thiên nhiên"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Ôn tập và Đánh giá giữa học kì I"
+          ],
+          "chua_duoc_dung": [
+            "Nội dung chủ điểm 3, 4 (học sau tuần ôn tập)",
+            "Bài văn tả phong cảnh ở mức hoàn chỉnh"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đề kiểm tra giữa học kì 1: đọc hiểu văn bản trong chủ điểm 1, 2; nghe-viết; luyện từ và câu; viết đoạn"
+          ],
+          "hoc_ky": 1,
+          "id": "tv5-on-tap-giua-hoc-ki-1",
+          "kien_thuc_duoc_dung": [
+            "Chủ điểm 1, 2"
+          ],
+          "luu_y_ra_de": "Phạm vi đề kiểm tra giữa học kì 1 là chủ điểm 1 và 2; không ra nội dung chủ điểm 3, 4.",
+          "ten": "Ôn tập giữa học kì 1",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Ôn tập và Đánh giá giữa học kì I"
+          },
+          "van_ban_trong_sach": [],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản đã học trong chủ điểm 1, 2; trả lời được câu hỏi về nội dung văn bản",
+            "Viết: Nhận biết được đại từ, từ đồng nghĩa, từ đa nghĩa; viết được đoạn văn",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Bài 17. Thư gửi các học sinh",
+            "Bài 18. Tấm gương tự học",
+            "Bài 19. Trải nghiệm để sáng tạo",
+            "Bài 20. Khổ luyện thành tài",
+            "Bài 21. Thế giới trong trang sách",
+            "Bài 22. Từ những câu chuyện ấu thơ",
+            "Bài 23. Giới thiệu sách Dế Mèn phiêu lưu kí",
+            "Bài 24. Tinh thần học tập của nhà Phi-lít"
+          ],
+          "chua_duoc_dung": [
+            "Câu ghép ở mức phân tích, liên kết câu (chủ điểm 5, 6)",
+            "Bài văn tả người (chủ điểm 5)",
+            "Viết bài văn ở mức hoàn chỉnh"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc hiểu: đọc văn bản trong sách rồi trả lời câu hỏi",
+            "Chính tả: nghe-viết đoạn 70-80 chữ",
+            "Luyện từ và câu: sử dụng từ điển; dấu gạch ngang",
+            "Viết: viết đoạn văn giới thiệu nhân vật trong một cuốn sách; viết đoạn văn thể hiện tình cảm, cảm xúc về một câu chuyện"
+          ],
+          "hoc_ky": 1,
+          "id": "tv5-tren-con-duong-hoc-tap",
+          "kien_thuc_duoc_dung": [
+            "Đại từ, từ đồng nghĩa, từ đa nghĩa (Chủ điểm 1, 2)",
+            "Đọc hiểu văn bản; viết đoạn (lớp 4)"
+          ],
+          "luu_y_ra_de": "Dấu gạch ngang chỉ hỏi ở mức nhận biết công dụng; không yêu cầu phân tích dấu câu trong văn bản dài.",
+          "ten": "Trên con đường học tập",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chủ điểm 3. Trên con đường học tập"
+          },
+          "van_ban_trong_sach": [
+            "Thư gửi các học sinh",
+            "Tấm gương tự học",
+            "Trải nghiệm để sáng tạo",
+            "Khổ luyện thành tài",
+            "Thế giới trong trang sách",
+            "Từ những câu chuyện ấu thơ",
+            "Giới thiệu sách Dế Mèn phiêu lưu kí",
+            "Tinh thần học tập của nhà Phi-lít"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản trong chủ điểm; trả lời được câu hỏi về nội dung văn bản",
+            "Viết: Biết sử dụng từ điển; nhận biết được dấu gạch ngang; viết được đoạn văn giới thiệu nhân vật trong một cuốn sách; viết được đoạn văn thể hiện tình cảm, cảm xúc về một câu chuyện",
+            "Nói và nghe: Giới thiệu được cuốn sách em yêu thích; trao đổi được về lợi ích của tự học"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Bài 25. Tiếng đàn ba-la-lai-ca trên sông Đà",
+            "Bài 26. Trí tưởng tượng phong phú",
+            "Bài 27. Tranh làng Hồ",
+            "Bài 28. Tập hát quan họ",
+            "Bài 29. Phim hoạt hình Chú ốc sên bay",
+            "Bài 30. Nghệ thuật múa ba lê",
+            "Bài 31. Một ngôi chùa độc đáo",
+            "Bài 32. Sự tích chú Tễu"
+          ],
+          "chua_duoc_dung": [
+            "Câu ghép ở mức phân tích, liên kết câu (chủ điểm 5, 6)",
+            "Bài văn tả người (chủ điểm 5)",
+            "Viết bài văn ở mức hoàn chỉnh"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc hiểu: đọc văn bản trong sách rồi trả lời câu hỏi",
+            "Chính tả: nghe-viết đoạn 70-80 chữ",
+            "Luyện từ và câu: biện pháp điệp từ, điệp ngữ; kết từ",
+            "Viết: viết đoạn văn thể hiện tình cảm, cảm xúc về một bài thơ; viết đoạn văn giới thiệu nhân vật trong một bộ phim hoạt hình"
+          ],
+          "hoc_ky": 1,
+          "id": "tv5-nghe-thuat-muon-mau",
+          "kien_thuc_duoc_dung": [
+            "Dấu gạch ngang; sử dụng từ điển (Chủ điểm 3)",
+            "Đọc hiểu văn bản; viết đoạn (lớp 4)"
+          ],
+          "luu_y_ra_de": "Biện pháp điệp từ, điệp ngữ chỉ hỏi ở mức nhận biết trong văn bản thơ; kết từ chỉ hỏi ở mức nhận biết.",
+          "ten": "Nghệ thuật muôn màu",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chủ điểm 4. Nghệ thuật muôn màu"
+          },
+          "van_ban_trong_sach": [
+            "Tiếng đàn ba-la-lai-ca trên sông Đà",
+            "Trí tưởng tượng phong phú",
+            "Tranh làng Hồ",
+            "Tập hát quan họ",
+            "Phim hoạt hình Chú ốc sên bay",
+            "Nghệ thuật múa ba lê",
+            "Một ngôi chùa độc đáo",
+            "Sự tích chú Tễu"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản trong chủ điểm; trả lời được câu hỏi về nội dung văn bản",
+            "Viết: Nhận biết được biện pháp điệp từ, điệp ngữ và kết từ; viết được đoạn văn thể hiện tình cảm, cảm xúc về một bài thơ; viết được đoạn văn giới thiệu nhân vật trong một bộ phim hoạt hình",
+            "Nói và nghe: Giới thiệu được chương trình nghệ thuật, bộ phim em yêu thích"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Ôn tập và đánh giá cuối học kì I"
+          ],
+          "chua_duoc_dung": [
+            "Nội dung học kì 2 (chủ điểm 5-8)",
+            "Câu ghép ở mức phân tích, liên kết câu"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đề kiểm tra cuối học kì 1: đọc hiểu văn bản trong chủ điểm 1-4; nghe-viết; luyện từ và câu; viết đoạn"
+          ],
+          "hoc_ky": 1,
+          "id": "tv5-on-tap-cuoi-hoc-ki-1",
+          "kien_thuc_duoc_dung": [
+            "Chủ điểm 1-4"
+          ],
+          "luu_y_ra_de": "Phạm vi đề kiểm tra cuối học kì 1 là toàn bộ chủ điểm 1-4; không ra nội dung học kì 2.",
+          "ten": "Ôn tập cuối học kì 1",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Ôn tập và đánh giá cuối học kì I"
+          },
+          "van_ban_trong_sach": [],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản đã học trong học kì 1; trả lời được câu hỏi về nội dung văn bản",
+            "Viết: Nhận biết được đại từ, từ đồng nghĩa, từ đa nghĩa, dấu gạch ngang, điệp từ, điệp ngữ, kết từ; viết được đoạn văn",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Bài 1. Tiếng hát của người đá",
+            "Bài 2. Khúc hát ru những em bé lớn trên lưng mẹ",
+            "Bài 3. Hạt gạo làng ta",
+            "Bài 4. Hộp quà màu thiên thanh",
+            "Bài 5. Giỏ hoa tháng Năm",
+            "Bài 6. Thư của bố",
+            "Bài 7. Đoàn thuyền đánh cá",
+            "Bài 8. Khu rừng của Mát"
+          ],
+          "chua_duoc_dung": [
+            "Liên kết câu bằng cách lặp từ ngữ, từ ngữ nối, từ ngữ thay thế (chủ điểm 6)",
+            "Đoạn văn nêu ý kiến tán thành, phản đối (chủ điểm 7, 8)",
+            "Viết bài văn tả người ở mức hoàn chỉnh"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc hiểu: đọc văn bản trong sách rồi trả lời câu hỏi",
+            "Chính tả: nghe-viết đoạn 70-80 chữ",
+            "Luyện từ và câu: câu đơn và câu ghép; cách nối các vế câu ghép",
+            "Viết: tìm hiểu cách viết bài văn tả người; viết mở bài, kết bài; viết đoạn văn tả người"
+          ],
+          "hoc_ky": 2,
+          "id": "tv5-ve-dep-cuoc-song",
+          "kien_thuc_duoc_dung": [
+            "Đại từ, từ đồng nghĩa, từ đa nghĩa, dấu gạch ngang, điệp từ, điệp ngữ, kết từ (học kì 1)",
+            "Đọc hiểu văn bản; viết đoạn (lớp 4)"
+          ],
+          "luu_y_ra_de": "Câu ghép chỉ hỏi ở mức nhận biết câu đơn, câu ghép và cách nối các vế câu; không yêu cầu phân tích cấu tạo câu ghép phức tạp.",
+          "ten": "Vẻ đẹp cuộc sống",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chủ điểm 5. Vẻ đẹp cuộc sống"
+          },
+          "van_ban_trong_sach": [
+            "Tiếng hát của người đá",
+            "Khúc hát ru những em bé lớn trên lưng mẹ",
+            "Hạt gạo làng ta",
+            "Hộp quà màu thiên thanh",
+            "Giỏ hoa tháng Năm",
+            "Thư của bố",
+            "Đoàn thuyền đánh cá",
+            "Khu rừng của Mát"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản trong chủ điểm; trả lời được câu hỏi về nội dung văn bản",
+            "Viết: Nhận biết được câu đơn và câu ghép, cách nối các vế câu ghép; tìm hiểu được cách viết bài văn tả người; viết được đoạn văn tả người",
+            "Nói và nghe: Trao đổi được về nét đẹp học đường; nêu được ý kiến khác biệt một cách lịch sự"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Bài 9. Hội thổi cơm thi ở Đồng Vân",
+            "Bài 10. Những búp chè trên cây cổ thụ",
+            "Bài 11. Hương cốm mùa thu",
+            "Bài 12. Vũ điệu trên nền thổ cẩm",
+            "Bài 13. Đàn t-rưng - tiếng ca đại ngàn",
+            "Bài 14. Đường quê Đồng Tháp Mười",
+            "Bài 15. Xuồng ba lá quê tôi",
+            "Bài 16. Về thăm Đất Mũi"
+          ],
+          "chua_duoc_dung": [
+            "Đoạn văn nêu ý kiến tán thành, phản đối (chủ điểm 7, 8)",
+            "Viết bài văn tả phong cảnh ở mức hoàn chỉnh",
+            "Đọc hiểu văn bản dài trên 500 chữ"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc hiểu: đọc văn bản trong sách rồi trả lời câu hỏi",
+            "Chính tả: nghe-viết đoạn 70-80 chữ",
+            "Luyện từ và câu: liên kết câu bằng cách lặp từ ngữ, từ ngữ nối, từ ngữ thay thế",
+            "Viết: viết đoạn văn thể hiện tình cảm, cảm xúc về một sự việc; viết chương trình hoạt động"
+          ],
+          "hoc_ky": 2,
+          "id": "tv5-huong-sac-tram-mien",
+          "kien_thuc_duoc_dung": [
+            "Câu đơn, câu ghép (Chủ điểm 5)",
+            "Đọc hiểu văn bản; viết đoạn (học kì 1)"
+          ],
+          "luu_y_ra_de": "Liên kết câu chỉ hỏi ở mức nhận biết cách liên kết trong đoạn văn ngắn; không yêu cầu phân tích liên kết trong văn bản dài.",
+          "ten": "Hương sắc trăm miền",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chủ điểm 6. Hương sắc trăm miền"
+          },
+          "van_ban_trong_sach": [
+            "Hội thổi cơm thi ở Đồng Vân",
+            "Những búp chè trên cây cổ thụ",
+            "Hương cốm mùa thu",
+            "Vũ điệu trên nền thổ cẩm",
+            "Đàn t-rưng - tiếng ca đại ngàn",
+            "Đường quê Đồng Tháp Mười",
+            "Xuồng ba lá quê tôi",
+            "Về thăm Đất Mũi"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản trong chủ điểm; trả lời được câu hỏi về nội dung văn bản",
+            "Viết: Nhận biết được liên kết câu bằng cách lặp từ ngữ, từ ngữ nối, từ ngữ thay thế; viết được đoạn văn thể hiện tình cảm, cảm xúc về một sự việc; viết được chương trình hoạt động",
+            "Nói và nghe: Giới thiệu được địa điểm tham quan, du lịch; giới thiệu được sản vật địa phương"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Ôn tập và Đánh giá giữa học kì II"
+          ],
+          "chua_duoc_dung": [
+            "Nội dung chủ điểm 7, 8 (học sau tuần ôn tập)",
+            "Đoạn văn nêu ý kiến tán thành, phản đối"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đề kiểm tra giữa học kì 2: đọc hiểu văn bản trong chủ điểm 5, 6; nghe-viết; luyện từ và câu; viết đoạn"
+          ],
+          "hoc_ky": 2,
+          "id": "tv5-on-tap-giua-hoc-ki-2",
+          "kien_thuc_duoc_dung": [
+            "Chủ điểm 5, 6"
+          ],
+          "luu_y_ra_de": "Phạm vi đề kiểm tra giữa học kì 2 là chủ điểm 5 và 6; không ra nội dung chủ điểm 7, 8.",
+          "ten": "Ôn tập giữa học kì 2",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Ôn tập và Đánh giá giữa học kì II"
+          },
+          "van_ban_trong_sach": [],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản đã học trong chủ điểm 5, 6; trả lời được câu hỏi về nội dung văn bản",
+            "Viết: Nhận biết được câu đơn, câu ghép và liên kết câu; viết được đoạn văn",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Bài 17. Nghìn năm văn hiến",
+            "Bài 18. Người thầy của muôn đời",
+            "Bài 19. Danh y Tuệ Tĩnh",
+            "Bài 20. Cụ Đồ Chiểu",
+            "Bài 21. Anh hùng Lao động Trần Đại Nghĩa",
+            "Bài 22. Bộ đội về làng",
+            "Bài 23. Về ngôi nhà đang xây",
+            "Bài 24. Việt Nam quê hương ta"
+          ],
+          "chua_duoc_dung": [
+            "Đoạn văn nêu ý kiến phản đối (chủ điểm 8)",
+            "Viết bài văn tả phong cảnh ở mức hoàn chỉnh",
+            "Đọc hiểu văn bản dài trên 500 chữ"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc hiểu: đọc văn bản trong sách rồi trả lời câu hỏi",
+            "Chính tả: nghe-viết đoạn 70-80 chữ",
+            "Luyện từ và câu: đại từ, kết từ, từ đồng nghĩa, từ đa nghĩa, câu ghép",
+            "Viết: viết đoạn văn nêu ý kiến tán thành một sự việc, hiện tượng; luyện viết bài văn tả phong cảnh"
+          ],
+          "hoc_ky": 2,
+          "id": "tv5-tiep-buoc-cha-ong",
+          "kien_thuc_duoc_dung": [
+            "Câu đơn, câu ghép; liên kết câu (Chủ điểm 5, 6)",
+            "Đọc hiểu văn bản; viết đoạn (học kì 1)"
+          ],
+          "luu_y_ra_de": "Đoạn văn nêu ý kiến tán thành cần có lí lẽ và dẫn chứng đơn giản từ văn bản đã học; không yêu cầu tranh luận phức tạp.",
+          "ten": "Tiếp bước cha ông",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chủ điểm 7. Tiếp bước cha ông"
+          },
+          "van_ban_trong_sach": [
+            "Nghìn năm văn hiến",
+            "Người thầy của muôn đời",
+            "Danh y Tuệ Tĩnh",
+            "Cụ Đồ Chiểu",
+            "Anh hùng Lao động Trần Đại Nghĩa",
+            "Bộ đội về làng",
+            "Về ngôi nhà đang xây",
+            "Việt Nam quê hương ta"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản trong chủ điểm; trả lời được câu hỏi về nội dung văn bản",
+            "Viết: Viết được đoạn văn nêu ý kiến tán thành một sự việc, hiện tượng; luyện viết được bài văn tả phong cảnh",
+            "Nói và nghe: Trao đổi được về đền ơn đáp nghĩa; giới thiệu được di tích lịch sử"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Bài 25. Bài ca Trái Đất",
+            "Bài 26. Những con hạc giấy",
+            "Bài 27. Một người hùng thầm lặng",
+            "Bài 28. Giờ Trái Đất",
+            "Bài 29. Điện thoại di động",
+            "Bài 30. Thành phố thông minh Mát-xđa"
+          ],
+          "chua_duoc_dung": [
+            "Viết bài văn ở mức hoàn chỉnh của THCS",
+            "Đọc hiểu văn bản dài trên 500 chữ"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc hiểu: đọc văn bản trong sách rồi trả lời câu hỏi",
+            "Chính tả: nghe-viết đoạn 70-80 chữ",
+            "Luyện từ và câu: cách viết tên người và tên địa lí; dấu gạch ngang; liên kết câu",
+            "Viết: viết đoạn văn nêu ý kiến phản đối một sự việc, hiện tượng"
+          ],
+          "hoc_ky": 2,
+          "id": "tv5-the-gioi-cua-chung-ta",
+          "kien_thuc_duoc_dung": [
+            "Câu đơn, câu ghép; liên kết câu (Chủ điểm 5, 6)",
+            "Đoạn văn nêu ý kiến tán thành (Chủ điểm 7)"
+          ],
+          "luu_y_ra_de": "Chủ điểm chỉ có 6 bài; đề kiểm tra cuối năm nên kết hợp với chủ điểm 7 khi ra đề.",
+          "ten": "Thế giới của chúng ta",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Chủ điểm 8. Thế giới của chúng ta"
+          },
+          "van_ban_trong_sach": [
+            "Bài ca Trái Đất",
+            "Những con hạc giấy",
+            "Một người hùng thầm lặng",
+            "Giờ Trái Đất",
+            "Điện thoại di động",
+            "Thành phố thông minh Mát-xđa"
+          ],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản trong chủ điểm; trả lời được câu hỏi về nội dung văn bản",
+            "Viết: Viết đúng tên người và tên địa lí; viết được đoạn văn nêu ý kiến phản đối một sự việc, hiện tượng",
+            "Nói và nghe: Trao đổi được về trải nghiệm ngày hè; nêu được ý kiến phản đối một cách lịch sự"
+          ]
+        },
+        {
+          "cac_bai": [
+            "Ôn tập và Đánh giá cuối năm học"
+          ],
+          "chua_duoc_dung": [
+            "Kiến thức Tiếng Việt lớp 6 (từ Hán Việt, câu ghép phức tạp)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đề kiểm tra cuối năm: đọc hiểu văn bản trong chủ điểm 5-8; nghe-viết; luyện từ và câu; viết đoạn"
+          ],
+          "hoc_ky": 2,
+          "id": "tv5-on-tap-cuoi-nam",
+          "kien_thuc_duoc_dung": [
+            "Chủ điểm 5-8"
+          ],
+          "luu_y_ra_de": "Phạm vi đề kiểm tra cuối năm là toàn bộ chương trình lớp 5; đây là đề cuối cấp tiểu học, cần bao quát đủ các mạch: đọc hiểu, chính tả, luyện từ và câu, viết đoạn.",
+          "ten": "Ôn tập cuối năm",
+          "ten_theo_sach": {
+            "CD": "(đối chiếu mục lục)",
+            "CTST": "(đối chiếu mục lục)",
+            "KNTT": "Ôn tập và Đánh giá cuối năm học"
+          },
+          "van_ban_trong_sach": [],
+          "yeu_cau_can_dat": [
+            "Đọc: Đọc đúng, rõ ràng văn bản đã học trong năm; trả lời được câu hỏi về nội dung văn bản",
+            "Viết: Nhận biết được câu đơn, câu ghép và liên kết câu; viết được đoạn văn nêu ý kiến",
+            "Nói và nghe: Kể lại được câu chuyện đã đọc, đã nghe; trao đổi được ý kiến"
+          ]
+        }
+      ],
+      "ghi_chu_chua_chac": [
+        "Bài 9 tập 1: một số phân phối chương trình ghi nhầm Đọc trước cổng trời (nhãn phân môn lọt vào tên bài) - đã dùng Trước cổng trời.",
+        "Bài 22 tập 1: một số phân phối chương trình ghi Từ những câu chuyện ấy thơ - đã dùng Từ những câu chuyện ấu thơ.",
+        "Tên chương và tên bài bộ Chân trời sáng tạo, Cánh diều chưa tra, đã ghi (đối chiếu mục lục)."
+      ],
+      "lop": 5
+    }
+  ],
+  "cau_truc_de": [
+    {
+      "ten": "Đề kiểm tra cuối học kì 1 lớp 1",
+      "lop": 1,
+      "thoi_gian_phut": 40,
+      "pham_vi": [
+        "tv1-chao-em-vao-lop-1",
+        "tv1-hoc-am-va-chu-cai",
+        "tv1-hoc-van",
+        "tv1-on-tap-hoc-ki-1"
+      ],
+      "cau_truc": "3 mức theo Thông tư 27/2020/TT-BGDĐT: Mức 1 (nhận biết, nhắc lại hoặc mô tả được nội dung đã học); Mức 2 (kết nối, sắp xếp được một số nội dung đã học để giải quyết vấn đề); Mức 3 (vận dụng được các nội dung đã học để giải quyết một số vấn đề mới hoặc đưa ra những phản hồi hợp lí trong học tập và trong cuộc sống). Đề gồm đọc hiểu, chính tả (nghe-viết), luyện từ và câu, viết đoạn; thời gian 40 phút."
+    },
+    {
+      "ten": "Đề kiểm tra cuối năm lớp 1",
+      "lop": 1,
+      "thoi_gian_phut": 40,
+      "pham_vi": [
+        "tv1-chao-em-vao-lop-1",
+        "tv1-hoc-am-va-chu-cai",
+        "tv1-hoc-van",
+        "tv1-on-tap-hoc-ki-1",
+        "tv1-toi-va-cac-ban",
+        "tv1-mai-am-gia-dinh",
+        "tv1-mai-truong-men-yeu",
+        "tv1-dieu-em-can-biet",
+        "tv1-bai-hoc-tu-cuoc-song",
+        "tv1-thien-nhien-ki-thu",
+        "tv1-the-gioi-trong-mat-em",
+        "tv1-dat-nuoc-va-con-nguoi",
+        "tv1-on-tap-cuoi-nam"
+      ],
+      "cau_truc": "3 mức theo Thông tư 27/2020/TT-BGDĐT: Mức 1 (nhận biết, nhắc lại hoặc mô tả được nội dung đã học); Mức 2 (kết nối, sắp xếp được một số nội dung đã học để giải quyết vấn đề); Mức 3 (vận dụng được các nội dung đã học để giải quyết một số vấn đề mới hoặc đưa ra những phản hồi hợp lí trong học tập và trong cuộc sống). Đề gồm đọc hiểu, chính tả (nghe-viết), luyện từ và câu, viết đoạn; thời gian 40 phút."
+    },
+    {
+      "ten": "Đề kiểm tra cuối học kì 1 lớp 2",
+      "lop": 2,
+      "thoi_gian_phut": 40,
+      "pham_vi": [
+        "tv2-em-lon-len-tung-ngay",
+        "tv2-di-hoc-vui-sao",
+        "tv2-on-tap-giua-hoc-ki-1",
+        "tv2-niem-vui-tuoi-tho",
+        "tv2-mai-am-gia-dinh",
+        "tv2-on-tap-cuoi-hoc-ki-1"
+      ],
+      "cau_truc": "3 mức theo Thông tư 27/2020/TT-BGDĐT: Mức 1 (nhận biết, nhắc lại hoặc mô tả được nội dung đã học); Mức 2 (kết nối, sắp xếp được một số nội dung đã học để giải quyết vấn đề); Mức 3 (vận dụng được các nội dung đã học để giải quyết một số vấn đề mới hoặc đưa ra những phản hồi hợp lí trong học tập và trong cuộc sống). Đề gồm đọc hiểu, chính tả (nghe-viết), luyện từ và câu, viết đoạn; thời gian 40 phút."
+    },
+    {
+      "ten": "Đề kiểm tra cuối năm lớp 2",
+      "lop": 2,
+      "thoi_gian_phut": 40,
+      "pham_vi": [
+        "tv2-em-lon-len-tung-ngay",
+        "tv2-di-hoc-vui-sao",
+        "tv2-on-tap-giua-hoc-ki-1",
+        "tv2-niem-vui-tuoi-tho",
+        "tv2-mai-am-gia-dinh",
+        "tv2-on-tap-cuoi-hoc-ki-1",
+        "tv2-ve-dep-quanh-em",
+        "tv2-hanh-tinh-xanh-cua-em",
+        "tv2-on-tap-giua-hoc-ki-2",
+        "tv2-giao-tiep-va-ket-noi",
+        "tv2-con-nguoi-viet-nam",
+        "tv2-viet-nam-que-huong-em",
+        "tv2-on-tap-cuoi-hoc-ki-2"
+      ],
+      "cau_truc": "3 mức theo Thông tư 27/2020/TT-BGDĐT: Mức 1 (nhận biết, nhắc lại hoặc mô tả được nội dung đã học); Mức 2 (kết nối, sắp xếp được một số nội dung đã học để giải quyết vấn đề); Mức 3 (vận dụng được các nội dung đã học để giải quyết một số vấn đề mới hoặc đưa ra những phản hồi hợp lí trong học tập và trong cuộc sống). Đề gồm đọc hiểu, chính tả (nghe-viết), luyện từ và câu, viết đoạn; thời gian 40 phút."
+    },
+    {
+      "ten": "Đề kiểm tra cuối học kì 1 lớp 3",
+      "lop": 3,
+      "thoi_gian_phut": 40,
+      "pham_vi": [
+        "tv3-nhung-trai-nghiem-thu-vi",
+        "tv3-cong-truong-rong-mo",
+        "tv3-on-tap-giua-hoc-ki-1",
+        "tv3-mai-nha-yeu-thuong",
+        "tv3-cong-dong-gan-bo",
+        "tv3-on-tap-cuoi-hoc-ki-1"
+      ],
+      "cau_truc": "3 mức theo Thông tư 27/2020/TT-BGDĐT: Mức 1 (nhận biết, nhắc lại hoặc mô tả được nội dung đã học); Mức 2 (kết nối, sắp xếp được một số nội dung đã học để giải quyết vấn đề); Mức 3 (vận dụng được các nội dung đã học để giải quyết một số vấn đề mới hoặc đưa ra những phản hồi hợp lí trong học tập và trong cuộc sống). Đề gồm đọc hiểu, chính tả (nghe-viết), luyện từ và câu, viết đoạn; thời gian 40 phút."
+    },
+    {
+      "ten": "Đề kiểm tra cuối năm lớp 3",
+      "lop": 3,
+      "thoi_gian_phut": 40,
+      "pham_vi": [
+        "tv3-nhung-trai-nghiem-thu-vi",
+        "tv3-cong-truong-rong-mo",
+        "tv3-on-tap-giua-hoc-ki-1",
+        "tv3-mai-nha-yeu-thuong",
+        "tv3-cong-dong-gan-bo",
+        "tv3-on-tap-cuoi-hoc-ki-1",
+        "tv3-nhung-sac-mau-thien-nhien",
+        "tv3-bai-hoc-tu-cuoc-song",
+        "tv3-on-tap-giua-hoc-ki-2",
+        "tv3-dat-nuoc-ngan-nam",
+        "tv3-trai-dat-cua-chung-minh",
+        "tv3-on-tap-cuoi-hoc-ki-2"
+      ],
+      "cau_truc": "3 mức theo Thông tư 27/2020/TT-BGDĐT: Mức 1 (nhận biết, nhắc lại hoặc mô tả được nội dung đã học); Mức 2 (kết nối, sắp xếp được một số nội dung đã học để giải quyết vấn đề); Mức 3 (vận dụng được các nội dung đã học để giải quyết một số vấn đề mới hoặc đưa ra những phản hồi hợp lí trong học tập và trong cuộc sống). Đề gồm đọc hiểu, chính tả (nghe-viết), luyện từ và câu, viết đoạn; thời gian 40 phút."
+    },
+    {
+      "ten": "Đề kiểm tra giữa học kì 1 lớp 4",
+      "lop": 4,
+      "thoi_gian_phut": 40,
+      "pham_vi": [
+        "tv4-moi-nguoi-mot-ve",
+        "tv4-trai-nghiem-va-kham-pha"
+      ],
+      "cau_truc": "3 mức theo Thông tư 27/2020/TT-BGDĐT: Mức 1 (nhận biết, nhắc lại hoặc mô tả được nội dung đã học); Mức 2 (kết nối, sắp xếp được một số nội dung đã học để giải quyết vấn đề); Mức 3 (vận dụng được các nội dung đã học để giải quyết một số vấn đề mới hoặc đưa ra những phản hồi hợp lí trong học tập và trong cuộc sống). Đề gồm đọc hiểu, chính tả (nghe-viết), luyện từ và câu, viết đoạn; thời gian 40 phút. Phạm vi giữa kì là ước lượng theo phân phối chương trình, nhà trường có thể dịch chuyển."
+    },
+    {
+      "ten": "Đề kiểm tra cuối học kì 1 lớp 4",
+      "lop": 4,
+      "thoi_gian_phut": 40,
+      "pham_vi": [
+        "tv4-moi-nguoi-mot-ve",
+        "tv4-trai-nghiem-va-kham-pha",
+        "tv4-on-tap-giua-hoc-ki-1",
+        "tv4-niem-vui-sang-tao",
+        "tv4-chap-canh-uoc-mo",
+        "tv4-on-tap-cuoi-hoc-ki-1"
+      ],
+      "cau_truc": "3 mức theo Thông tư 27/2020/TT-BGDĐT: Mức 1 (nhận biết, nhắc lại hoặc mô tả được nội dung đã học); Mức 2 (kết nối, sắp xếp được một số nội dung đã học để giải quyết vấn đề); Mức 3 (vận dụng được các nội dung đã học để giải quyết một số vấn đề mới hoặc đưa ra những phản hồi hợp lí trong học tập và trong cuộc sống). Đề gồm đọc hiểu, chính tả (nghe-viết), luyện từ và câu, viết đoạn; thời gian 40 phút."
+    },
+    {
+      "ten": "Đề kiểm tra giữa học kì 2 lớp 4",
+      "lop": 4,
+      "thoi_gian_phut": 40,
+      "pham_vi": [
+        "tv4-song-de-yeu-thuong",
+        "tv4-uong-nuoc-nho-nguon"
+      ],
+      "cau_truc": "3 mức theo Thông tư 27/2020/TT-BGDĐT: Mức 1 (nhận biết, nhắc lại hoặc mô tả được nội dung đã học); Mức 2 (kết nối, sắp xếp được một số nội dung đã học để giải quyết vấn đề); Mức 3 (vận dụng được các nội dung đã học để giải quyết một số vấn đề mới hoặc đưa ra những phản hồi hợp lí trong học tập và trong cuộc sống). Đề gồm đọc hiểu, chính tả (nghe-viết), luyện từ và câu, viết đoạn; thời gian 40 phút. Phạm vi giữa kì là ước lượng theo phân phối chương trình, nhà trường có thể dịch chuyển."
+    },
+    {
+      "ten": "Đề kiểm tra cuối năm lớp 4",
+      "lop": 4,
+      "thoi_gian_phut": 40,
+      "pham_vi": [
+        "tv4-moi-nguoi-mot-ve",
+        "tv4-trai-nghiem-va-kham-pha",
+        "tv4-on-tap-giua-hoc-ki-1",
+        "tv4-niem-vui-sang-tao",
+        "tv4-chap-canh-uoc-mo",
+        "tv4-on-tap-cuoi-hoc-ki-1",
+        "tv4-song-de-yeu-thuong",
+        "tv4-uong-nuoc-nho-nguon",
+        "tv4-on-tap-giua-hoc-ki-2",
+        "tv4-que-huong-trong-toi",
+        "tv4-vi-mot-the-gioi-binh-yen",
+        "tv4-on-tap-cuoi-nam"
+      ],
+      "cau_truc": "3 mức theo Thông tư 27/2020/TT-BGDĐT: Mức 1 (nhận biết, nhắc lại hoặc mô tả được nội dung đã học); Mức 2 (kết nối, sắp xếp được một số nội dung đã học để giải quyết vấn đề); Mức 3 (vận dụng được các nội dung đã học để giải quyết một số vấn đề mới hoặc đưa ra những phản hồi hợp lí trong học tập và trong cuộc sống). Đề gồm đọc hiểu, chính tả (nghe-viết), luyện từ và câu, viết đoạn; thời gian 40 phút."
+    },
+    {
+      "ten": "Đề kiểm tra giữa học kì 1 lớp 5",
+      "lop": 5,
+      "thoi_gian_phut": 40,
+      "pham_vi": [
+        "tv5-the-gioi-tuoi-tho",
+        "tv5-thien-nhien-ki-thu"
+      ],
+      "cau_truc": "3 mức theo Thông tư 27/2020/TT-BGDĐT: Mức 1 (nhận biết, nhắc lại hoặc mô tả được nội dung đã học); Mức 2 (kết nối, sắp xếp được một số nội dung đã học để giải quyết vấn đề); Mức 3 (vận dụng được các nội dung đã học để giải quyết một số vấn đề mới hoặc đưa ra những phản hồi hợp lí trong học tập và trong cuộc sống). Đề gồm đọc hiểu, chính tả (nghe-viết), luyện từ và câu, viết đoạn; thời gian 40 phút. Phạm vi giữa kì là ước lượng theo phân phối chương trình, nhà trường có thể dịch chuyển."
+    },
+    {
+      "ten": "Đề kiểm tra cuối học kì 1 lớp 5",
+      "lop": 5,
+      "thoi_gian_phut": 40,
+      "pham_vi": [
+        "tv5-the-gioi-tuoi-tho",
+        "tv5-thien-nhien-ki-thu",
+        "tv5-on-tap-giua-hoc-ki-1",
+        "tv5-tren-con-duong-hoc-tap",
+        "tv5-nghe-thuat-muon-mau",
+        "tv5-on-tap-cuoi-hoc-ki-1"
+      ],
+      "cau_truc": "3 mức theo Thông tư 27/2020/TT-BGDĐT: Mức 1 (nhận biết, nhắc lại hoặc mô tả được nội dung đã học); Mức 2 (kết nối, sắp xếp được một số nội dung đã học để giải quyết vấn đề); Mức 3 (vận dụng được các nội dung đã học để giải quyết một số vấn đề mới hoặc đưa ra những phản hồi hợp lí trong học tập và trong cuộc sống). Đề gồm đọc hiểu, chính tả (nghe-viết), luyện từ và câu, viết đoạn; thời gian 40 phút."
+    },
+    {
+      "ten": "Đề kiểm tra giữa học kì 2 lớp 5",
+      "lop": 5,
+      "thoi_gian_phut": 40,
+      "pham_vi": [
+        "tv5-ve-dep-cuoc-song",
+        "tv5-huong-sac-tram-mien"
+      ],
+      "cau_truc": "3 mức theo Thông tư 27/2020/TT-BGDĐT: Mức 1 (nhận biết, nhắc lại hoặc mô tả được nội dung đã học); Mức 2 (kết nối, sắp xếp được một số nội dung đã học để giải quyết vấn đề); Mức 3 (vận dụng được các nội dung đã học để giải quyết một số vấn đề mới hoặc đưa ra những phản hồi hợp lí trong học tập và trong cuộc sống). Đề gồm đọc hiểu, chính tả (nghe-viết), luyện từ và câu, viết đoạn; thời gian 40 phút. Phạm vi giữa kì là ước lượng theo phân phối chương trình, nhà trường có thể dịch chuyển."
+    },
+    {
+      "ten": "Đề kiểm tra cuối năm lớp 5",
+      "lop": 5,
+      "thoi_gian_phut": 40,
+      "pham_vi": [
+        "tv5-the-gioi-tuoi-tho",
+        "tv5-thien-nhien-ki-thu",
+        "tv5-on-tap-giua-hoc-ki-1",
+        "tv5-tren-con-duong-hoc-tap",
+        "tv5-nghe-thuat-muon-mau",
+        "tv5-on-tap-cuoi-hoc-ki-1",
+        "tv5-ve-dep-cuoc-song",
+        "tv5-huong-sac-tram-mien",
+        "tv5-on-tap-giua-hoc-ki-2",
+        "tv5-tiep-buoc-cha-ong",
+        "tv5-the-gioi-cua-chung-ta",
+        "tv5-on-tap-cuoi-nam"
+      ],
+      "cau_truc": "3 mức theo Thông tư 27/2020/TT-BGDĐT: Mức 1 (nhận biết, nhắc lại hoặc mô tả được nội dung đã học); Mức 2 (kết nối, sắp xếp được một số nội dung đã học để giải quyết vấn đề); Mức 3 (vận dụng được các nội dung đã học để giải quyết một số vấn đề mới hoặc đưa ra những phản hồi hợp lí trong học tập và trong cuộc sống). Đề gồm đọc hiểu, chính tả (nghe-viết), luyện từ và câu, viết đoạn; thời gian 40 phút."
+    }
+  ],
+  "phien_ban": "Claude ghép 08/11/2026: khung_D."
+}

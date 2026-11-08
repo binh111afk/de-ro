@@ -1,0 +1,2606 @@
+{
+  "mon": "Tin học",
+  "nguon": [
+    "Chương trình giáo dục phổ thông môn Tin học (Ban hành kèm theo Thông tư số 32/2018/TT-BGDĐT và sửa đổi tại Thông tư số 13/2022/TT-BGDĐT)",
+    "Sách giáo khoa Tin học 6, 7, 8, 9, 10, 11, 12 - Bộ Kết nối tri thức với cuộc sống (NXB Giáo dục Việt Nam)",
+    "Sách giáo khoa Tin học 6, 7, 8, 9, 10, 11, 12 - Bộ Chân trời sáng tạo (NXB Giáo dục Việt Nam)",
+    "Sách giáo khoa Tin học 6, 7, 8, 9, 10, 11, 12 - Bộ Cánh diều (NXB Đại học Sư phạm)",
+    "Thông tư số 22/2021/TT-BGDĐT về đánh giá học sinh THCS và THPT",
+    "Quyết định số 764/QĐ-BGDĐT về Cấu trúc định dạng đề thi tốt nghiệp THPT từ năm 2025 môn Tin học"
+  ],
+  "lop": [
+    {
+      "lop": 6,
+      "chuong": [
+        {
+          "id": "tin6-thong-tin-du-lieu",
+          "ten": "Thông tin và dữ liệu, biểu diễn dữ liệu trong máy tính",
+          "hoc_ky": 1,
+          "mach": "A",
+          "dinh_huong": "chung",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 1: Máy tính và cộng đồng - Thông tin và dữ liệu",
+            "CTST": "Chủ đề 1: Máy tính và cộng đồng - Máy tính và thông tin",
+            "CD": "Chủ đề A: Máy tính và cộng đồng - Thông tin và biểu diễn thông tin"
+          },
+          "yeu_cau_can_dat": [
+            "Phân biệt được thông tin và dữ liệu, vật mang tin; nêu được ví dụ minh họa.",
+            "Trình bày được tầm quan trọng của thông tin trong đời sống.",
+            "Giải thích được máy tính xử lý dữ liệu để tạo ra thông tin; nêu được các bước cơ bản trong quá trình xử lý thông tin.",
+            "Biết được dữ liệu trong máy tính được biểu diễn dưới dạng dãy bit (0 và 1); nêu được các đơn vị đo dung lượng dữ liệu (B, KB, MB, GB, TB)."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Khái niệm thông tin, dữ liệu, vật mang tin.",
+            "Sơ đồ xử lý thông tin: Đầu vào (Input) -> Xử lý (Processing) -> Đầu ra (Output) và Lưu trữ.",
+            "Khái niệm bit (0 hoặc 1), dãy bit.",
+            "Bảng đổi đơn vị dữ liệu: $1\text{ KB} = 1024\text{ B}$, $1\text{ MB} = 1024\text{ KB}$, $1\text{ GB} = 1024\text{ MB}$, $1\text{ TB} = 1024\text{ GB}$ (hoặc xấp xỉ 1000 theo SGK)."
+          ],
+          "phan_mem_ngon_ngu": [
+            "Không dùng phần mềm cụ thể. Dùng hình ảnh minh họa cơ bản của hệ thống máy tính."
+          ],
+          "lenh_va_cau_truc": [
+            "Không có câu lệnh hay lập trình."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG quy đổi số nhị phân sang thập phân và ngược lại bằng phép chia/nhân 2 (học ở Lớp 10 định hướng CS).",
+            "CHƯA DÙNG mã hóa ký hiệu ASCII hay Unicode chi tiết (học ở Lớp 10).",
+            "CHƯA DÙNG ngôn ngữ lập trình Pascal của chương trình cũ 2006."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài phân biệt đâu là thông tin, đâu là dữ liệu, đâu là vật mang tin trong các tình huống thực tế.",
+            "Dạng bài đổi đơn vị dung lượng nhớ (ví dụ: một thẻ nhớ 8GB chứa được bao nhiêu bài hát 4MB).",
+            "Dạng bài xác định các bước trong quá trình xử lý thông tin của máy tính hoặc con người."
+          ],
+          "luu_y_ra_de": "Chương trình 2018 phân biệt rõ ba khái niệm: Thông tin (ý nghĩa), Dữ liệu (chữ viết, số, hình ảnh, âm thanh ghi trên vật mang tin) và Vật mang tin (giấy, thẻ nhớ, đĩa cứng). Tránh nhầm lẫn dùng từ 'thông tin' thay cho 'dữ liệu'."
+        },
+        {
+          "id": "sinh6-mang-may-tinh-internet",
+          "ten": "Mạng máy tính và Internet",
+          "hoc_ky": 1,
+          "mach": "B",
+          "dinh_huong": "chung",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 2: Mạng máy tính và Internet",
+            "CTST": "Chủ đề 2: Mạng máy tính và Internet",
+            "CD": "Chủ đề B: Mạng máy tính và Internet"
+          },
+          "yeu_cau_can_dat": [
+            "Nêu được khái niệm mạng máy tính, các thành phần chủ yếu của mạng máy tính (thiết bị đầu cuối, thiết bị kết nối, phần mềm mạng).",
+            "Nêu được lợi ích của mạng máy tính trong chia sẻ tài nguyên (dữ liệu, thiết bị phần cứng).",
+            "Nêu được khái niệm Internet và một số đặc điểm, lợi ích của Internet."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Khái niệm mạng có dây, mạng không dây (Wi-Fi).",
+            "Các thiết bị mạng cơ bản: Switch, Router, Modem, cáp mạng, vỉ mạng.",
+            "Lợi ích chia sẻ tệp tin, dùng chung máy in."
+          ],
+          "phan_mem_ngon_ngu": [
+            "Trình duyệt web cơ bản (Chrome, Edge, Cốc Cốc) để truy cập Internet."
+          ],
+          "lenh_va_cau_truc": [
+            "Không có câu lệnh lập trình."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG khái niệm địa chỉ IP, MAC, mô hình OSI hay TCP/IP (học ở Lớp 11).",
+            "CHƯA DÙNG kiến thức cấu hình mạng hay bấm dây mạng LAN.",
+            "CHƯA DÙNG thuật ngữ mạng WAN, MAN, LAN phân loại phức tạp kiểu cũ."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài phân loại thiết bị đầu cuối và thiết bị kết nối mạng.",
+            "Dạng bài chọn nhận định đúng/sai về lợi ích của mạng máy tính và Internet.",
+            "Dạng bài phân biệt mạng có dây và mạng không dây."
+          ],
+          "luu_y_ra_de": "Không hỏi học sinh về các giao thức mạng như HTTP, HTTPS, TCP, IP ở lớp 6. Chỉ kiểm tra nhận thức khái quát về khái niệm và lợi ích."
+        },
+        {
+          "id": "tin6-luu-tru-tim-kiem-trao-doi-thong-tin",
+          "ten": "Tổ chức lưu trữ, tìm kiếm và trao đổi thông tin",
+          "hoc_ky": 1,
+          "mach": "C",
+          "dinh_huong": "chung",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 3: Tổ chức lưu trữ, tìm kiếm và trao đổi thông tin",
+            "CTST": "Chủ đề 3: Tổ chức lưu trữ, tìm kiếm và trao đổi thông tin",
+            "CD": "Chủ đề C: Tổ chức lưu trữ, tìm kiếm và trao đổi thông tin"
+          },
+          "yeu_cau_can_dat": [
+            "Giải thích được tổ chức thông tin trong máy tính theo hình cây (tệp và thư mục).",
+            "Thực hiện được các thao tác cơ bản với thư mục và tệp: tạo mới, đổi tên, sao chép, di chuyển, xóa.",
+            "Sử dụng được máy tìm kiếm (Search engine) để tìm kiếm thông tin bằng từ khóa trên Internet.",
+            "Sử dụng được thư điện tử (Email) để gửi và nhận thư có tệp đính kèm."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Khái niệm tệp (file), thư mục (folder), thư mục mẹ, thư mục con, đường dẫn.",
+            "Tìm kiếm bằng từ khóa trong dấu ngoặc kép `\"...\"`.",
+            "Cấu trúc địa chỉ email (`tentai-khoan@domain`), hộp thư đến, hộp thư đi, tệp đính kèm."
+          ],
+          "phan_mem_ngon_ngu": [
+            "Hệ điều hành Windows (File Explorer).",
+            "Trình duyệt Web, Máy tìm kiếm Google Search.",
+            "Dịch vụ thư điện tử (Gmail hoặc Outlook)."
+          ],
+          "lenh_va_cau_truc": [
+            "Các phím tắt cơ bản: Ctrl+C, Ctrl+V, Ctrl+X, Delete, F2."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG thao tác quản lý dữ liệu trên dịch vụ lưu trữ đám mây nâng cao (Google Drive, OneDrive - học ở Lớp 7, 9, 10).",
+            "CHƯA DÙNG phép toán logic AND, OR, NOT nâng cao khi tìm kiếm từ khóa (học ở lớp trên).",
+            "CHƯA DÙNG tìm kiếm bằng hình ảnh hoặc giọng nói nâng cao."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài đọc sơ đồ cây thư mục và chỉ ra đường dẫn tới tệp/thư mục.",
+            "Dạng bài lựa chọn từ khóa tìm kiếm hiệu quả nhất cho một yêu cầu thực tế.",
+            "Dạng bài xác định các thành phần của một địa chỉ email hợp lệ.",
+            "Dạng bài mô tả các bước gửi thư điện tử kèm tệp đính kèm."
+          ],
+          "luu_y_ra_de": "Câu hỏi thực hành thao tác trên Windows/Gmail cần dùng các thuật ngữ tiếng Việt chuẩn hóa theo SGK (ví dụ: thư mục thay cho folder, tệp thay cho file)."
+        },
+        {
+          "id": "tin6-dao-duc-phap-luat-van-hoa-so",
+          "ten": "Đạo đức, pháp luật và văn hóa trong môi trường số",
+          "hoc_ky": 2,
+          "mach": "D",
+          "dinh_huong": "chung",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 4: Đạo đức, pháp luật và văn hóa trong môi trường số",
+            "CTST": "Chủ đề 4: Đạo đức, pháp luật và văn hóa trong môi trường số",
+            "CD": "Chủ đề D: Đạo đức, pháp luật và văn hóa trong môi trường số"
+          },
+          "yeu_cau_can_dat": [
+            "Nêu được một số tác động tiêu cực của Internet đối với sức khỏe thể chất và tinh thần khi sử dụng quá đà.",
+            "Biết được một số nguy cơ trên Internet như bị lừa đảo, bắt nạt trên mạng, nhiễm phần mềm độc hại (virus).",
+            "Trình bày được một số quy tắc an toàn, ứng xử lịch sự và văn hóa khi giao tiếp trên mạng.",
+            "Nêu được tầm quan trọng của việc bảo vệ thông tin cá nhân và mật khẩu."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Khái niệm mật khẩu mạnh (độ dài, gồm chữ hoa, chữ thường, số, ký tự đặc biệt).",
+            "Tác hại của việc nghiện game, chia sẻ thông tin cá nhân tùy tiện.",
+            "Khái niệm virus máy tính ở mức nhận biết cơ bản."
+          ],
+          "phan_mem_ngon_ngu": [
+            "Không sử dụng phần mềm cụ thể."
+          ],
+          "lenh_va_cau_truc": [
+            "Không có."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG các điều khoản chi tiết của Luật An ninh mạng 2018 (học ở Lớp 10, 11).",
+            "CHƯA DÙNG phân loại sâu virus, trojan, spyware, ransomware (học ở Lớp 9, 12).",
+            "CHƯA DÙNG các phương pháp mã hóa mật khẩu, chữ ký số."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài đánh giá độ an toàn của các mật khẩu mẫu (chọn mật khẩu nào mạnh nhất).",
+            "Dạng bài xử lý tình huống khi nhận được tin nhắn lạ yêu cầu cung cấp thông tin cá nhân hoặc mã OTP.",
+            "Dạng bài phân biệt hành vi lịch sự/văn hóa vs hành vi thiếu văn hóa trên mạng xã hội."
+          ],
+          "luu_y_ra_de": "Tập trung vào tình huống giáo dục hành vi an toàn và văn hóa cho lứa tuổi học sinh lớp 6."
+        },
+        {
+          "id": "tin6-soan-thao-trinh-chieu",
+          "ten": "Soạn thảo văn bản và Trình chiếu cơ bản",
+          "hoc_ky": 2,
+          "mach": "E",
+          "dinh_huong": "chung",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 5: Ứng dụng tin học - Soạn thảo văn bản & Trình chiếu",
+            "CTST": "Chủ đề 5: Ứng dụng tin học - Soạn thảo văn bản & Trình chiếu",
+            "CD": "Chủ đề E: Ứng dụng tin học - Soạn thảo văn bản & Trình chiếu cơ bản"
+          },
+          "yeu_cau_can_dat": [
+            "Thực hiện được các thao tác định dạng văn bản: định dạng ký tự (phông chữ, cỡ chữ, kiểu chữ, màu chữ), định dạng đoạn văn bản (căn lề, khoảng cách dòng/đoạn).",
+            "Chèn được bảng (Table) và hình ảnh (Picture) vào văn bản.",
+            "Tạo được bài trình chiếu đơn giản gồm một số trang chiếu; chèn được văn bản, hình ảnh vào trang chiếu.",
+            "Sử dụng được các mẫu định dạng (Template) và hiệu ứng chuyển trang (Transition) đơn giản."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Khái niệm phông chữ Unicode (Times New Roman, Arial...), gõ tiếng Việt kiểu Telex hoặc VNI.",
+            "Chèn bảng: Số cột, số hàng, gộp ô cơ bản.",
+            "Khái niệm trang chiếu (slide), khung văn bản (text box).",
+            "Hiệu ứng chuyển trang chiếu (Transition)."
+          ],
+          "phan_mem_ngon_ngu": [
+            "MS Word / Google Docs / LibreOffice Writer (Soạn thảo).",
+            "MS PowerPoint / Google Slides / LibreOffice Impress (Trình chiếu)."
+          ],
+          "lenh_va_cau_truc": [
+            "Thao tác trên dải lệnh (Ribbon): Home, Insert, Page Layout, Transitions."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG tính năng trộn thư (Mail Merge), tạo mục tự động, ngắt phần (Section break) trong Word (học ở Lớp 10 ICT).",
+            "CHƯA DÙNG hiệu ứng đối tượng (Animation) phức tạp, sơ đồ tư duy (Mindmap) trong phần mềm trình chiếu chuyên sâu.",
+            "CHƯA DÙNG phần mềm biên tập video hay thiết kế đồ họa vector (học ở Lớp 8, 9, 10)."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài nhận biết nút lệnh định dạng văn bản (Bold, Italic, Underline, Align Left/Center/Right...).",
+            "Dạng bài sắp xếp các bước chèn hình ảnh/bảng vào văn bản hoặc bài trình chiếu.",
+            "Dạng bài phân biệt hiệu ứng chuyển trang chiếu (Transition) với định dạng nội dung trang chiếu."
+          ],
+          "luu_y_ra_de": "Đề thi dùng biểu tượng nút lệnh phổ biến trong dải lệnh (Ribbon) của MS Office hoặc LibreOffice theo SGK."
+        },
+        {
+          "id": "tin6-thuat-toan-co-ban",
+          "ten": "Thuật toán và mô tả thuật toán bằng sơ đồ khối",
+          "hoc_ky": 2,
+          "mach": "F",
+          "dinh_huong": "chung",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 6: Giải quyết vấn đề với sự trợ giúp của máy tính - Thuật toán",
+            "CTST": "Chủ đề 6: Giải quyết vấn đề với sự trợ giúp của máy tính - Giải thuật",
+            "CD": "Chủ đề F: Giải quyết vấn đề với sự trợ giúp của máy tính - Thuật toán"
+          },
+          "yeu_cau_can_dat": [
+            "Nêu được khái niệm thuật toán, các tính chất cơ bản của thuật toán (tính dừng, tính xác định, tính đúng đắn).",
+            "Mô tả được thuật toán bằng ngôn ngữ tự nhiên và sơ đồ khối.",
+            "Nhận biết được 3 cấu trúc điều khiển cơ bản trong thuật toán: Cấu trúc tuần tự, Cấu trúc rẽ nhánh (Đúng/Sai), Cấu trúc lặp.",
+            "Thực hiện mô phỏng chạy tay thuật toán với dữ liệu đầu vào cụ thể."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Các hình vạch chuẩn trong sơ đồ khối: Hình o-val (Bắt đầu/Kết thúc), Hình chữ nhật (Thao tác/Tính toán), Hình thoi (Điều kiện kiểm tra), Hình bình hành (Vào/Ra dữ liệu), Mũi tên (Hướng thực hiện).",
+            "Cấu trúc rẽ nhánh dạng thiếu và dạng đủ.",
+            "Cấu trúc lặp với số lần biết trước hoặc lặp kiểm tra điều kiện."
+          ],
+          "phan_mem_ngon_ngu": [
+            "Chưa viết code bằng ngôn ngữ lập trình. Chỉ dùng Ngôn ngữ tự nhiên và Sơ đồ khối."
+          ],
+          "lenh_va_cau_truc": [
+            "Sơ đồ khối 3 cấu trúc: Tuần tự, Rẽ nhánh, Lặp."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG bất kỳ ngôn ngữ lập trình nào như Scratch (Lớp 8), Python (Lớp 9/10) hay Pascal (chương trình cũ).",
+            "CHƯA DÙNG các thuật toán tìm kiếm nhị phân, thuật toán sắp xếp phức tạp (học ở Lớp 7).",
+            "CHƯA DÙNG biến mảng, con trỏ, hàm tự định nghĩa."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài đọc sơ đồ khối và cho biết kết quả đầu ra với giá trị đầu vào cho trước.",
+            "Dạng bài điền biểu tượng sơ đồ khối (Hình thoi, Hình chữ nhật...) thích hợp vào ô trống.",
+            "Dạng bài chuyển đổi mô tả thuật toán từ ngôn ngữ tự nhiên sang sơ đồ khối.",
+            "Dạng bài xác định cấu trúc điều khiển (Tuần tự, Rẽ nhánh hay Lặp) được dùng trong một sơ đồ khối cụ thể."
+          ],
+          "luu_y_ra_de": "Ở Lớp 6 tuyệt đối KHÔNG cho học sinh viết mã lập trình (code). Chỉ đánh giá năng lực tư duy thuật toán thông qua Ngôn ngữ tự nhiên và Sơ đồ khối (Flowchart)."
+        }
+      ],
+      "chuyen_de": [],
+      "ghi_chu_chua_chac": []
+    },
+    {
+      "lop": 7,
+      "chuong": [
+        {
+          "id": "tin7-thiet-bi-he-dieu-hanh",
+          "ten": "Thiết bị vào - ra, Cấu trúc máy tính, Hệ điều hành và Phần mềm ứng dụng",
+          "hoc_ky": 1,
+          "mach": "A",
+          "dinh_huong": "chung",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 1: Máy tính và cộng đồng - Thiết bị vào ra và Hệ điều hành",
+            "CTST": "Chủ đề 1: Máy tính và cộng đồng - Thiết bị máy tính",
+            "CD": "Chủ đề A: Máy tính và cộng đồng - Thiết bị vào ra và Phần mềm"
+          },
+          "yeu_cau_can_dat": [
+            "Phân biệt được thiết bị vào (Input device: bàn phím, chuột, máy quét, camera...) và thiết bị ra (Output device: màn hình, máy in, loa, máy chiếu...).",
+            "Trình bày được vai trò của Hệ điều hành trong quản lý phần cứng, phần mềm và cung cấp giao diện người dùng.",
+            "Phân biệt được Hệ điều hành (Windows, Linux, macOS, Android, iOS) với Phần mềm ứng dụng (Word, Excel, trình duyệt, game...).",
+            "Biết cách thao tác an toàn với các thiết bị vào - ra và cổng kết nối (USB, HDMI, VGA, Audio)."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Cấu trúc Von Neumann cơ bản: Bộ xử lý trung tâm (CPU), Bộ nhớ trong (RAM, ROM), Bộ nhớ ngoài (ổ cứng, USB), Thiết bị vào/ra.",
+            "Phân biệt HĐH máy tính và HĐH thiết bị di động.",
+            "Tệp thực thi `.exe`, đuôi tệp phổ biến (`.docx`, `.xlsx`, `.pdf`, `.png`)."
+          ],
+          "phan_mem_ngon_ngu": [
+            "Giao diện Hệ điều hành Windows/Android/iOS."
+          ],
+          "lenh_va_cau_truc": [
+            "Không có lập trình."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG câu lệnh điều khiển hệ điều hành dạng dòng lệnh (Command Prompt/Terminal/Linux shell - học ở Lớp 11).",
+            "CHƯA DÙNG thuật ngữ quản lý tiến trình (Process), ngắt (Interrupt), quản lý bộ nhớ ảo (Virtual Memory).",
+            "CHƯA DÙNG kiến thức lắp ráp máy tính chuyên sâu."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài phân loại danh sách các thiết bị thành Thiết bị vào hay Thiết bị ra.",
+            "Dạng bài ghép nối tên phần mềm với loại phần mềm tương ứng (Hệ điều hành hay Phần mềm ứng dụng).",
+            "Dạng bài nhận biết các cổng kết nối phổ biến (USB, HDMI, Audio) qua hình ảnh."
+          ],
+          "luu_y_ra_de": "Nhấn mạnh vai trò 'cầu nối' của hệ điều hành giữa người dùng/phần mềm ứng dụng với phần cứng máy tính."
+        },
+        {
+          "id": "tin7-mang-xa-hoi-trao-doi-thong-tin",
+          "ten": "Mạng xã hội và trao đổi thông tin trên Internet",
+          "hoc_ky": 1,
+          "mach": "B",
+          "dinh_huong": "chung",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 2: Mạng máy tính và Internet - Mạng xã hội",
+            "CTST": "Chủ đề 2: Mạng máy tính và Internet - Mạng xã hội",
+            "CD": "Chủ đề B: Mạng máy tính và Internet - Mạng xã hội"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được khái niệm và tính chất của Mạng xã hội (Social Network).",
+            "Nêu được một số kênh trao đổi thông tin phổ biến trên Internet (thư điện tử, diễn đàn, mạng xã hội, ứng dụng nhắn tin tức thời).",
+            "Sử dụng được một số chức năng cơ bản của mạng xã hội (tạo tài khoản, chia sẻ thông tin, kết bạn, bình luận, nhắn tin).",
+            "Nêu được ưu điểm và hạn chế của mạng xã hội."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Các tính năng chính của mạng xã hội: Trang cá nhân, bảng tin (Newsfeed), kết bạn, chia sẻ bài viết, tương tác (Thích, Bình luận, Chia sẻ).",
+            "Quyền riêng tư đăng bài (Công khai, Bạn bè, Chỉ mình tôi)."
+          ],
+          "phan_mem_ngon_ngu": [
+            "Giao diện Mạng xã hội minh họa (Facebook, Zalo, YouTube hoặc mạng xã hội học tập)."
+          ],
+          "lenh_va_cau_truc": [
+            "Không có."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG kỹ thuật thiết lập mạng xã hội doanh nghiệp hay tiếp thị số (Digital Marketing).",
+            "CHƯA DÙNG thuật ngữ thuật toán phân phối nội dung AI của mạng xã hội (học ở Lớp 12)."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài chọn nhận định đúng về vai trò và ảnh hưởng của mạng xã hội.",
+            "Dạng bài xử lý tình huống cài đặt chế độ quyền riêng tư thích hợp khi đăng thông tin.",
+            "Dạng bài so sánh sự khác nhau giữa gửi thư điện tử và đăng bài trên mạng xã hội."
+          ],
+          "luu_y_ra_de": "Đề kiểm tra tập trung vào nhận thức sử dụng mạng xã hội thông minh, an toàn và có văn hóa."
+        },
+        {
+          "id": "tin7-van-hoa-ung-xu-tren-mang",
+          "ten": "Văn hóa ứng dụng và Bản quyền thông tin trên mạng",
+          "hoc_ky": 1,
+          "mach": "D",
+          "dinh_huong": "chung",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 4: Đạo đức, pháp luật và văn hóa trong môi trường số",
+            "CTST": "Chủ đề 4: Đạo đức, pháp luật và văn hóa trong môi trường số",
+            "CD": "Chủ đề D: Đạo đức, pháp luật và văn hóa trong môi trường số"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được khái niệm bản quyền tác giả đối với sản phẩm số (văn bản, hình ảnh, phần mềm, video).",
+            "Giải thích được tầm quan trọng của việc tôn trọng bản quyền và trích dẫn nguồn khi sử dụng dữ liệu của người khác.",
+            "Nêu được các quy tắc ứng dụng văn hóa, tôn trọng pháp luật khi tham gia mạng xã hội và môi trường số.",
+            "Nhận biết được một số hành vi vi phạm bản quyền và hậu quả của việc vi phạm."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Khái niệm bản quyền (Copyright), tác giả, quyền tác giả.",
+            "Cách trích dẫn tài liệu tham khảo cơ bản (Tác giả, Tên tài liệu, Nguồn link).",
+            "Phần mềm miễn phí (Freeware), phần mềm nguồn mở (Open source) vs Phần mềm thương mại (Commercial)."
+          ],
+          "phan_mem_ngon_ngu": [
+            "Không."
+          ],
+          "lenh_va_cau_truc": [
+            "Không."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG các giấy phép bản quyền chi tiết kiểu Creative Commons (CC-BY, CC-NC... - học ở Lớp 9/10).",
+            "CHƯA DÙNG các khung xử phạt hành chính theo Nghị định pháp luật cụ thể."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài xác định hành vi nào là vi phạm bản quyền (ví dụ: sao chép tranh ảnh trên mạng về làm sản phẩm của mình mà không ghi nguồn).",
+            "Dạng bài chọn mẫu trích dẫn nguồn hợp lệ.",
+            "Dạng bài phân biệt phần mềm thương mại và phần mềm miễn phí."
+          ],
+          "luu_y_ra_de": "Gắn liền bài tập với thực tế học tập của học sinh như làm bài trình chiếu, viết báo tường có tìm kiếm tư liệu trên Internet."
+        },
+        {
+          "id": "tin7-bang-tinh-dien-tu",
+          "ten": "Ứng dụng tin học - Bảng tính điện tử cơ bản",
+          "hoc_ky": 2,
+          "mach": "E",
+          "dinh_huong": "chung",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 5: Ứng dụng tin học - Bảng tính điện tử",
+            "CTST": "Chủ đề 5: Ứng dụng tin học - Bảng tính điện tử",
+            "CD": "Chủ đề E: Ứng dụng tin học - Bảng tính điện tử"
+          },
+          "yeu_cau_can_dat": [
+            "Mô tả được màn hình làm việc của phần mềm bảng tính: Cột (Column), Hàng (Row), Ô (Cell), Khối (Range), Thanh công thức (Formula bar).",
+            "Thực hiện được các thao tác nhập dữ liệu, định dạng bảng tính (căn lề, phông chữ, tô màu nền, kẻ đường biên, định dạng số/ngày).",
+            "Sử dụng được công thức chứa phép toán (+, -, *, /, ^) và địa chỉ ô/khối.",
+            "Sử dụng được các hàm tính toán cơ bản: `SUM`, `AVERAGE`, `MAX`, `MIN`, `COUNT`.",
+            "Thực hiện được các thao tác sắp xếp dữ liệu (Sort) và lọc dữ liệu cơ bản (Filter).",
+            "Tạo được các dạng biểu đồ đơn giản (Biểu đồ cột, Biểu đồ đường, Biểu đồ hình quạt) để minh họa dữ liệu."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Khái niệm địa chỉ ô (ví dụ `A1`), địa chỉ khối (ví dụ `A1:B10`).",
+            "Địa chỉ tương đối (ví dụ `A1`) trong sao chép công thức.",
+            "Các hàm: `=SUM(danh_sach)`, `=AVERAGE(danh_sach)`, `=MAX(danh_sach)`, `=MIN(danh_sach)`, `=COUNT(danh_sach)`.",
+            "Sắp xếp tăng dần (Ascending) / giảm dần (Descending).",
+            "Biểu đồ cột (Column chart), đường (Line chart), tròn (Pie chart)."
+          ],
+          "phan_mem_ngon_ngu": [
+            "MS Excel / Google Sheets / LibreOffice Calc."
+          ],
+          "lenh_va_cau_truc": [
+            "Cú pháp công thức bắt đầu bằng dấu `=`.",
+            "Thao tác dải lệnh Data (Sort, Filter), Insert (Charts)."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG Địa chỉ tuyệt đối (chứa dấu `$`, ví dụ `$A$1`, `A$1`) - HỌC Ở LỚP 8.",
+            "CHƯA DÙNG các hàm điều kiện `IF`, `COUNTIF`, `SUMIF`, `VLOOKUP`, `HLOOKUP` - HỌC Ô LỚP 8/9/10.",
+            "CHƯA DÙNG bảng Pivot Table hay phân tích dữ liệu chuyên sâu."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài đọc công thức bảng tính và tính kết quả (ví dụ: cho giá trị tại A1=5, A2=10, tính `=SUM(A1:A2)*2`).",
+            "Dạng bài cho biết kết quả khi sao chép công thức chứa địa chỉ tương đối sang ô khác.",
+            "Dạng bài lựa chọn dạng biểu đồ thích hợp để biểu diễn dữ liệu (ví dụ: cơ cấu % chọn biểu đồ hình quạt).",
+            "Dạng bài nhận biết nút lệnh sắp xếp và lọc dữ liệu."
+          ],
+          "luu_y_ra_de": "Đây là bài kiểm tra cốt lõi Lớp 7. Tuyệt đối KHÔNG ra dấu `$` (địa chỉ tuyệt đối) vì đây là kiến thức sẽ học ở Lớp 8. Tất cả công thức sao chép đều dùng Địa chỉ tương đối."
+        },
+        {
+          "id": "tin7-trinh-chieu-da-phuong-tien",
+          "ten": "Ứng dụng tin học - Phần mềm trình chiếu nâng cao",
+          "hoc_ky": 2,
+          "mach": "E",
+          "dinh_huong": "chung",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 5: Ứng dụng tin học - Bài trình chiếu",
+            "CTST": "Chủ đề 5: Ứng dụng tin học - Phần mềm trình chiếu",
+            "CD": "Chủ đề E: Ứng dụng tin học - Trình chiếu nâng cao"
+          },
+          "yeu_cau_can_dat": [
+            "Sử dụng được hiệu ứng đối tượng (Animation) cho văn bản, hình ảnh trên trang chiếu.",
+            "Biết áp dụng các hiệu ứng chuyển trang và hiệu ứng xuất hiện hợp lý, không làm mất tập trung người nghe.",
+            "Tạo được các đường liên kết (Hyperlink) giữa các trang chiếu hoặc liên kết tới trang web/tệp tin ngoài.",
+            "Trình bày được bài trình chiếu hoàn chỉnh trước lớp có kết hợp công cụ bổ trợ."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Các nhóm hiệu ứng Animation: Entrance (Xuất hiện), Emphasis (Nhấn mạnh), Exit (Thoát), Motion Paths (Đường di chuyển).",
+            "Cài đặt thời gian hiệu ứng (Start On Click, With Previous, After Previous).",
+            "Tạo nút bấm liên kết (Action Button) và Hyperlink."
+          ],
+          "phan_mem_ngon_ngu": [
+            "MS PowerPoint / Google Slides."
+          ],
+          "lenh_va_cau_truc": [
+            "Dải lệnh Animations, Slide Show, Insert Hyperlink."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG phần mềm làm video chuyên nghiệp như Premiere, CapCut (học ở Lớp 8/9).",
+            "CHƯA DÙNG kỹ thuật thiết kế giao diện VBA tương tác phức tạp."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài phân biệt hiệu ứng chuyển trang (Transition) và hiệu ứng xuất hiện đối tượng (Animation).",
+            "Dạng bài nhận biết các nhóm hiệu ứng Animation (Entrance, Exit...).",
+            "Dạng bài quy trình tạo liên kết Hyperlink tới một slide khác trong cùng bài trình chiếu."
+          ],
+          "luu_y_ra_de": "Phân biệt rõ ràng giữa Transition (áp dụng cho cả slide) và Animation (áp dụng cho từng đối tượng trên slide)."
+        },
+        {
+          "id": "tin7-thuat-toan-tim-kiem-sap-xep",
+          "ten": "Thuật toán tìm kiếm và Thuật toán sắp xếp",
+          "hoc_ky": 2,
+          "mach": "F",
+          "dinh_huong": "chung",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 6: Giải quyết vấn đề với sự trợ giúp của máy tính - Thuật toán tìm kiếm và sắp xếp",
+            "CTST": "Chủ đề 6: Giải quyết vấn đề với sự trợ giúp của máy tính - Thuật toán tìm kiếm, sắp xếp",
+            "CD": "Chủ đề F: Giải quyết vấn đề với sự trợ giúp của máy tính - Thuật toán tìm kiếm và sắp xếp"
+          },
+          "yeu_cau_can_dat": [
+            "Mô tả được thuật toán Tìm kiếm tuần tự (Sequential Search) và Thuật toán Tìm kiếm nhị phân (Binary Search) bằng ngôn ngữ tự nhiên hoặc sơ đồ khối.",
+            "Giải thích được điều kiện bắt buộc để áp dụng thuật toán tìm kiếm nhị phân (danh sách đã được sắp xếp).",
+            "Mô tả được thuật toán Sắp xếp nổi bọt (Bubble Sort) và Thuật toán Sắp xếp chọn (Selection Sort) bằng ngôn ngữ tự nhiên.",
+            "Thực hiện mô phỏng từng bước (chạy tay) thuật toán tìm kiếm và sắp xếp với danh sách dữ liệu nhỏ (5-8 phần tử)."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Ý tưởng Tìm kiếm tuần tự: Đối chiếu lần lượt từng phần tử từ đầu đến cuối.",
+            "Ý tưởng Tìm kiếm nhị phân: So sánh giá trị cần tìm với giá trị ở giữa danh sách, thu hẹp nửa khoảng tìm kiếm.",
+            "Ý tưởng Sắp xếp nổi bọt: So sánh cặp phần tử kề nhau, đổi chỗ nếu sai thứ tự.",
+            "Ý tưởng Sắp xếp chọn: Tìm phần tử nhỏ nhất/lớn nhất đặt vào vị trí đầu tiên, lặp lại cho các vị trí tiếp theo."
+          ],
+          "phan_mem_ngon_ngu": [
+            "Mô tả bằng Ngôn ngữ tự nhiên, Bảng theo dõi từng bước, hoặc Sơ đồ khối."
+          ],
+          "lenh_va_cau_truc": [
+            "Các bước thuật toán theo thuật ngữ tiếng Việt mô tả."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG mã lập trình Python hay Scratch để cài đặt các thuật toán này (Scratch học ở Lớp 8, Python học ở Lớp 10).",
+            "CHƯA DÙNG các thuật toán sắp xếp nâng cao như Quicksort, Mergesort, Heapsort (học ở Lớp 11 CS).",
+            "CHƯA DÙNG độ phức tạp thuật toán ký hiệu Big-O ($O(n), O(n \\log n)$)."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài cho danh sách $[3, 7, 10, 15, 20]$, mô tả từng bước tìm kiếm giá trị $15$ bằng Thuật toán tìm kiếm nhị phân.",
+            "Dạng bài so sánh số lần so sánh/đổi chỗ giữa tìm kiếm tuần tự và tìm kiếm nhị phân.",
+            "Dạng bài cho dãy số ban đầu, vẽ trạng thái dãy số sau lượt sắp xếp thứ nhất/thứ hai của Thuật toán Sắp xếp nổi bọt.",
+            "Dạng bài xác định điều kiện áp dụng thuật toán tìm kiếm nhị phân."
+          ],
+          "luu_y_ra_de": "Chỉ kiểm tra khả năng tư duy mô phỏng thuật toán bằng tay (trace/dry run). Tuyệt đối KHÔNG yêu cầu viết mã lệnh lập trình."
+        }
+      ],
+      "chuyen_de": [],
+      "ghi_chu_chua_chac": []
+    },
+    {
+      "lop": 8,
+      "chuong": [
+        {
+          "id": "tin8-lich-su-may-tinh-du-lieu",
+          "ten": "Lịch sử phát triển máy tính và Dữ liệu trong thế giới số",
+          "hoc_ky": 1,
+          "mach": "A",
+          "dinh_huong": "chung",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 1: Máy tính và cộng đồng - Lịch sử phát triển máy tính",
+            "CTST": "Chủ đề 1: Máy tính và cộng đồng - Lịch sử máy tính",
+            "CD": "Chủ đề A: Máy tính và cộng đồng - Lịch sử phát triển máy tính"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được tóm tắt lịch sử phát triển của máy tính qua 5 thế hệ (đèn điện tử chân không, bóng bán dẫn, mạch tích hợp IC, vi xử lý VLSI, trí tuệ nhân tạo).",
+            "Nêu được xu hướng phát triển của máy tính (nhỏ gọn hơn, tốc độ nhanh hơn, dung lượng lưu trữ lớn hơn, tiêu thụ ít điện năng hơn, thông minh hơn).",
+            "Giải thích được sự khác nhau giữa dữ liệu số hóa và thông tin."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Đặc điểm cốt lõi của 5 thế hệ máy tính.",
+            "Các máy tính mốc lịch sử: ENIAC, UNIVAC, máy tính cá nhân PC.",
+            "Số hóa thông tin: Chuyển thông tin thực (chữ, ảnh, âm thanh) thành dữ liệu số (dãy bit)."
+          ],
+          "phan_mem_ngon_ngu": [
+            "Không."
+          ],
+          "lenh_va_cau_truc": [
+            "Không."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG thuật toán mã hóa lấy mẫu âm thanh (Sampling rate), tần số lấy mẫu (học ở Lớp 10 CS).",
+            "CHƯA DÙNG kiến thức kiến trúc máy tính nâng cao (đường truyền bus, cache L1/L2/L3)."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài nối thế hệ máy tính với linh kiện điện tử tương ứng (Ví dụ: Thế hệ 1 -> Đèn điện tử chân không).",
+            "Dạng bài chọn nhận định đúng về xu hướng phát triển của máy tính trong tương lai.",
+            "Dạng bài phân tích ví dụ về quá trình số hóa dữ liệu trong thực tế."
+          ],
+          "luu_y_ra_de": "Tập trung kiểm tra nhận thức lịch sử và linh kiện đặc trưng của từng thế hệ máy tính, không bắt học sinh học thuộc năm chính xác của từng phát minh."
+        },
+        {
+          "id": "tin8-mang-may-tinh-internet",
+          "ten": "Thực hành mạng máy tính và Internet",
+          "hoc_ky": 1,
+          "mach": "B",
+          "dinh_huong": "chung",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 2: Mạng máy tính và Internet",
+            "CTST": "Chủ đề 2: Mạng máy tính và Internet",
+            "CD": "Chủ đề B: Mạng máy tính và Internet"
+          },
+          "yeu_cau_can_dat": [
+            "Nêu được khái niệm địa chỉ MAC và địa chỉ IP ở mức nhận biết cơ bản.",
+            "Sử dụng được các dịch vụ trao đổi thông tin và chia sẻ dữ liệu trực tuyến (Google Drive, OneDrive, Dropbox).",
+            "Thực hiện được việc quản lý thư mục, tệp trên đám mây và phân quyền chia sẻ (Chỉ xem, Nhận xét, Chỉnh sửa)."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Khái niệm điện toán đám mây (Cloud computing).",
+            "Quyền truy cập tệp/thư mục chia sẻ trực tuyến.",
+            "Khái niệm cơ bản về IP công cộng và IP nội bộ."
+          ],
+          "phan_mem_ngon_ngu": [
+            "Trình duyệt web, Google Drive / OneDrive."
+          ],
+          "lenh_va_cau_truc": [
+            "Không."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG tính toán chia mạng con (Subnet mask, CIDR - học ở Lớp 11).",
+            "CHƯA DÙNG các lệnh kiểm tra mạng Command Prompt như `ping`, `ipconfig`, `tracert` (học ở Lớp 11)."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài xử lý tình huống phân quyền chia sẻ tệp Google Drive để đảm bảo an toàn thông tin.",
+            "Dạng bài phân biệt lưu trữ cục bộ (trên ổ cứng) và lưu trữ đám mây.",
+            "Dạng bài nêu các bước chia sẻ thư mục trên điện toán đám mây."
+          ],
+          "luu_y_ra_de": "Chú trọng các bài tập tình huống thực tế về chia sẻ tài liệu học tập nhóm trên Google Drive/OneDrive."
+        },
+        {
+          "id": "tin8-dao-duc-phap-luat-van-hoa-so",
+          "ten": "Đạo đức, pháp luật và văn hóa trong môi trường số",
+          "hoc_ky": 1,
+          "mach": "D",
+          "dinh_huong": "chung",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 4: Đạo đức, pháp luật và văn hóa trong môi trường số",
+            "CTST": "Chủ đề 4: Đạo đức, pháp luật và văn hóa trong môi trường số",
+            "CD": "Chủ đề D: Đạo đức, pháp luật và văn hóa trong môi trường số"
+          },
+          "yeu_cau_can_dat": [
+            "Biết được một số tác hại của việc quay phim, chụp ảnh, ghi âm và phát tán thông tin cá nhân khi chưa được sự đồng ý.",
+            "Nêu được một số quy định pháp luật cơ bản về bảo vệ thông tin riêng tư và sở hữu trí tuệ trên môi trường số.",
+            "Biết cách ứng xử khi gặp các thông tin xấu, độc, tin giả (Fake news) trên mạng."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Nhận diện tin giả, tin giật gân (Clickbait).",
+            "Quyền bảo vệ hình ảnh cá nhân.",
+            "Các biện pháp phòng tránh nguy cơ lừa đảo trực tuyến."
+          ],
+          "phan_mem_ngon_ngu": [
+            "Không."
+          ],
+          "lenh_va_cau_truc": [
+            "Không."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG các quy định xử phạt hình sự chuyên sâu.",
+            "CHƯA DÙNG kỹ thuật phân tích mã độc hay điều tra số (Digital forensics)."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài phân tích tình huống đăng ảnh người khác lên mạng xã hội kèm lời bình phẩm tiêu cực.",
+            "Dạng bài nhận biết dấu hiệu của tin giả (Fake news) trên mạng xã hội.",
+            "Dạng bài đưa ra cách xử lý phù hợp khi phát hiện một vụ việc bắt nạt trên mạng."
+          ],
+          "luu_y_ra_de": "Tăng cường câu hỏi tình huống thực tế giáo dục học sinh có tinh thần trách nhiệm trên môi trường số."
+        },
+        {
+          "id": "tin8-ung-dung-tin-hoc-do-hoa",
+          "ten": "Ứng dụng tin học - Địa chỉ tuyệt đối Bảng tính & Thiết kế đồ họa / Làm video",
+          "hoc_ky": 2,
+          "mach": "E",
+          "dinh_huong": "chung",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 5: Ứng dụng tin học - Bảng tính nâng cao & Đồ họa Inkscape",
+            "CTST": "Chủ đề 5: Ứng dụng tin học - Bảng tính & Xử lý ảnh GIMP",
+            "CD": "Chủ đề E: Ứng dụng tin học - Địa chỉ tuyệt đối Bảng tính & Phần mềm chỉnh sửa ảnh/video"
+          },
+          "yeu_cau_can_dat": [
+            "Phân biệt được Địa chỉ tương đối (ví dụ `A1`), Địa chỉ tuyệt đối (ví dụ `$A$1`) và Địa chỉ hỗn hợp (ví dụ `A$1`, `$A1`) trong bảng tính điện tử.",
+            "Sử dụng được địa chỉ tuyệt đối trong các bài toán sao chép công thức (tính tỉ lệ %, đổi tỷ giá...); sử dụng được hàm điều kiện `IF` cơ bản.",
+            "Sử dụng được phần mềm thiết kế đồ họa vector (Inkscape) hoặc phần mềm xử lý ảnh (GIMP) hoặc phần mềm dựng video ngắn để tạo sản phẩm truyền thông."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Ký hiệu dấu `$` cố định cột/hàng trong địa chỉ ô.",
+            "Hàm điều kiện `=IF(Dieu_kien, Gia_tri_Dung, Gia_tri_Sai)`.",
+            "Khái niệm ảnh đồ họa vector vs ảnh đồ họa lưới (Bitmap/Raster).",
+            "Các công cụ đồ họa cơ bản: Vẽ hình dạng (Shape), chỉnh sửa nút điểm (Node), đổ màu, làm việc với lớp (Layer)."
+          ],
+          "phan_mem_ngon_ngu": [
+            "Bảng tính: MS Excel / Google Sheets.",
+            "Đồ họa / Video: Inkscape (KNTT) / GIMP (CTST) / CapCut / Movie Maker (CD) tùy bộ sách."
+          ],
+          "lenh_va_cau_truc": [
+            "Cú pháp địa chỉ `$A$1`, `A$1`, `$A1`.",
+            "Cú pháp `=IF(...)`."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG các hàm tìm kiếm `VLOOKUP`, `HLOOKUP` (học ở Lớp 9/10).",
+            "CHƯA DÙNG các hàm điều kiện phức hợp `AND`, `OR` lồng trong hàm `IF` quá 3 cấp.",
+            "CHƯA DÙNG các kỹ thuật dựng đồ họa 3D hay kỹ xảo hiệu ứng chuyên nghiệp."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài cho bảng dữ liệu, viết công thức tính thuế hoặc tỷ giá có sử dụng địa chỉ tuyệt đối `$B$1`.",
+            "Dạng bài cho biết công thức `=A2*$B$1` tại ô `C2`, xác định công thức nhận được khi sao chép xuống ô `C3`.",
+            "Dạng bài đọc cú pháp hàm `=IF(A2>=5, \"Đạt\", \"KĐạt\")` và cho biết kết quả.",
+            "Dạng bài phân biệt đặc điểm của đồ họa Vector và đồ họa Raster."
+          ],
+          "luu_y_ra_de": "Phần Bảng tính lớp 8 BẮT BUỘC kiểm tra kiến thức về Địa chỉ tuyệt đối (`$`) và Hàm `IF`. Đây là điểm khác biệt lớn nhất so với Bảng tính lớp 7."
+        },
+        {
+          "id": "tin8-lap-trinh-truc-quan-scratch",
+          "ten": "Giải quyết vấn đề với sự trợ giúp của máy tính - Lập trình trực quan Scratch",
+          "hoc_ky": 2,
+          "mach": "F",
+          "dinh_huong": "chung",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 6: Giải quyết vấn đề với sự trợ giúp của máy tính - Lập trình trực quan Scratch",
+            "CTST": "Chủ đề 6: Giải quyết vấn đề với sự trợ giúp của máy tính - Lập trình Scratch",
+            "CD": "Chủ đề F: Giải quyết vấn đề với sự trợ giúp của máy tính - Lập trình trực quan"
+          },
+          "yeu_cau_can_dat": [
+            "Hiểu được môi trường lập trình trực quan Scratch: Nhân vật (Sprite), Sân khấu (Stage), Kịch bản (Script), Khối lệnh (Block).",
+            "Tạo và sử dụng được Biến số (Variable) để lưu trữ dữ liệu trong chương trình.",
+            "Sử dụng được các khối lệnh điều khiển rẽ nhánh: `nếu ... thì` (if...then), `nếu ... thì ... nếu không thì` (if...then...else).",
+            "Sử dụng được các khối lệnh lặp: `lặp ... lần` (repeat n), `lặp lại cho đến khi` (repeat until), `liên tục` (forever).",
+            "Sử dụng được các phép toán số học, phép so sánh và phép toán logic (`và`, `hoặc`, `không`).",
+            "Xây dựng được kịch bản trò chơi hoặc mô phỏng đơn giản."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Tạo biến số, gán giá trị biến (`đặt [biến] thành ...`, `thay đổi [biến] một lượng ...`).",
+            "Nhập dữ liệu từ bàn phím (`hỏi ... và chờ`, khối `câu trả lời`).",
+            "Khối lệnh cảm biến (Sensing) chạm nhân vật, chạm màu.",
+            "Khối lệnh âm thanh (Sound) và bút vẽ (Pen) cơ bản."
+          ],
+          "phan_mem_ngon_ngu": [
+            "Ngôn ngữ lập trình trực quan Scratch 3.0."
+          ],
+          "lenh_va_cau_truc": [
+            "Các nhóm khối lệnh Scratch: Motion, Looks, Sound, Events, Control, Sensing, Operators, Variables."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG Danh sách (List/Array) trong Scratch (Học ở Lớp 9).",
+            "CHƯA DÙNG Khối lệnh tự định nghĩa (My Blocks / Hàm có tham số - Học ở Lớp 9).",
+            "CHƯA DÙNG bất kỳ ngôn ngữ lập trình bằng văn bản (Text-based) như Python, C++, Pascal."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài đọc đoạn khối lệnh Scratch và cho biết giá trị của biến số sau khi chạy xong.",
+            "Dạng bài chọn khối lệnh thích hợp điền vào chỗ trống để nhân vật di chuyển theo hình vuông/hình tròn.",
+            "Dạng bài phát hiện lỗi sai làm chương trình Scratch chạy lặp vô tận hoặc tính sai kết quả.",
+            "Dạng bài ghép nối kịch bản bài toán với đoạn khối lệnh Scratch tương ứng."
+          ],
+          "luu_y_ra_de": "Ở Lớp 8 toàn bộ câu hỏi lập trình đều thể hiện dưới dạng các khối lệnh đồ họa của Scratch 3.0. Không dùng ngôn ngữ lập trình văn bản."
+        }
+      ],
+      "chuyen_de": [],
+      "ghi_chu_chua_chac": []
+    },
+    {
+      "lop": 9,
+      "chuong": [
+        {
+          "id": "tin9-may-tinh-va-xa-hoi",
+          "ten": "Máy tính và xã hội loài người",
+          "hoc_ky": 1,
+          "mach": "A",
+          "dinh_huong": "chung",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 1: Máy tính và cộng đồng - Xã hội tri thức",
+            "CTST": "Chủ đề 1: Máy tính và cộng đồng - Máy tính và xã hội",
+            "CD": "Chủ đề A: Máy tính và cộng đồng - Tác động của tin học"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được sự phát triển của công nghệ thông tin đã thay đổi xã hội loài người như thế nào (Chính phủ điện tử, Đô thị thông minh, Thương mại điện tử, Y tế/Giáo dục thông minh).",
+            "Nêu được khái niệm Xã hội tri thức và Kinh tế tri thức.",
+            "Phân tích được tác động tích cực và mặt trái của công nghệ số đối với cuộc sống con người."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Các thuật ngữ: Chuyển đổi số, Chính quyền số, Dịch vụ công trực tuyến.",
+            "Ứng dụng công nghệ thông tin trong các ngành nghề."
+          ],
+          "phan_mem_ngon_ngu": [
+            "Không."
+          ],
+          "lenh_va_cau_truc": [
+            "Không."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG các mô hình Trí tuệ nhân tạo (AI) học sâu (Deep learning), Machine learning chi tiết (học ở Lớp 12).",
+            "CHƯA DÙNG thuật ngữ công nghệ Blockchain, IoT chuyên sâu."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài lựa chọn nhận định đúng về vai trò của chuyển đổi số trong đời sống.",
+            "Dạng bài phân tích tình huống lợi ích của việc sử dụng dịch vụ công trực tuyến thay cho nộp hồ sơ giấy."
+          ],
+          "luu_y_ra_de": "Tập trung kiểm tra nhận thức khái quát về chuyển đổi số và tác động xã hội."
+        },
+        {
+          "id": "tin9-mang-may-tinh-dich-vu-web",
+          "ten": "Mạng máy tính và Các dịch vụ trên Internet",
+          "hoc_ky": 1,
+          "mach": "B",
+          "dinh_huong": "chung",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 2: Mạng máy tính và Internet - Dịch vụ mạng",
+            "CTST": "Chủ đề 2: Mạng máy tính và Internet - Dịch vụ Internet",
+            "CD": "Chủ đề B: Mạng máy tính và Internet - Dịch vụ mạng"
+          },
+          "yeu_cau_can_dat": [
+            "Phân biệt được dịch vụ World Wide Web (WWW) với Internet.",
+            "Trình bày được khái niệm tên miền (Domain name), địa chỉ trang web (URL) và dịch vụ tra cứu thông tin.",
+            "Sử dụng được một số dịch vụ trực tuyến phổ biến: Lưu trữ đám mây, làm bài tập trực tuyến, tìm kiếm nâng cao."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Cấu trúc URL (`https://www.domain.com/path`).",
+            "Các đuôi tên miền quốc gia (`.vn`) và tên miền dùng chung (`.com`, `.edu`, `.gov`, `.org`)."
+          ],
+          "phan_mem_ngon_ngu": [
+            "Trình duyệt web."
+          ],
+          "lenh_va_cau_truc": [
+            "Không."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG lập trình trang web HTML/CSS (học ở Lớp 11/12 ICT).",
+            "CHƯA DÙNG các giao thức truyền tải dữ liệu hệ thống như FTP, SSH, DNS chi tiết."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài phân tích các thành phần của một địa chỉ URL.",
+            "Dạng bài ghép nối đuôi tên miền (`.edu`, `.gov`, `.com`) với loại tổ chức tương ứng.",
+            "Dạng bài phân biệt giữa Internet (hạ tầng mạng) và WWW (dịch vụ trên Internet)."
+          ],
+          "luu_y_ra_de": "Tránh ra câu hỏi lập trình mã HTML/CSS vì nội dung này dành riêng cho định hướng ICT ở bậc THPT."
+        },
+        {
+          "id": "tin9-dao-duc-phap-luat-van-hoa-so",
+          "ten": "Đạo đức, pháp luật và văn hóa trong môi trường số",
+          "hoc_ky": 1,
+          "mach": "D",
+          "dinh_huong": "chung",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 4: Đạo đức, pháp luật và văn hóa trong môi trường số",
+            "CTST": "Chủ đề 4: Đạo đức, pháp luật và văn hóa trong môi trường số",
+            "CD": "Chủ đề D: Đạo đức, pháp luật và văn hóa trong môi trường số"
+          },
+          "yeu_cau_can_dat": [
+            "Hiểu được tác hại của vi phạm phần mềm độc hại, phần mềm giả mạo.",
+            "Nêu được các biện pháp phòng chống vi phạm pháp luật và phòng chống lây nhiễm phần mềm độc hại cho máy tính.",
+            "Biết tôn trọng sở hữu trí tuệ, chấp hành các điều khoản sử dụng khi cài đặt phần mềm."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Phần mềm diệt virus.",
+            "Bản quyền phần mềm (License), mã khóa kích hoạt (Product key).",
+            "Cập nhật bản vá an ninh hệ điều hành."
+          ],
+          "phan_mem_ngon_ngu": [
+            "Phần mềm diệt virus (Windows Defender, Kaspersky...)."
+          ],
+          "lenh_va_cau_truc": [
+            "Không."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG kỹ thuật tấn công từ chối dịch vụ (DDoS), tấn công Man-in-the-middle.",
+            "CHƯA DÙNG các phương pháp tường lửa (Firewall) cấu hình chuyên sâu."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài chọn các biện pháp an toàn để bảo vệ máy tính khỏi phần mềm độc hại.",
+            "Dạng bài xử lý tình huống khi nhận được email có tệp đính kèm lạ nghi ngờ chứa mã độc."
+          ],
+          "luu_y_ra_de": "Chú trọng kỹ năng phòng chống phần mềm độc hại và an toàn dữ liệu cá nhân."
+        },
+        {
+          "id": "tin9-ung-dung-tin-hoc-da-phuong-tien",
+          "ten": "Ứng dụng tin học - Làm trang web đơn giản hoặc Biên tập phần mềm đa phương tiện",
+          "hoc_ky": 2,
+          "mach": "E",
+          "dinh_huong": "chung",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 5: Ứng dụng tin học - Phần mềm phần mềm sơ đồ tư duy & Trình chiếu nâng cao",
+            "CTST": "Chủ đề 5: Ứng dụng tin học - Biên tập video & Tạo bài trình chiếu",
+            "CD": "Chủ đề E: Ứng dụng tin học - Tạo trang web bằng phần mềm trực quan (Mobirise/Google Sites)"
+          },
+          "yeu_cau_can_dat": [
+            "Tạo được sơ đồ tư duy (Mindmap) bằng phần mềm hoặc công cụ trực tuyến để hệ thống hóa kiến thức.",
+            "Tạo được trang web đơn giản bằng phần mềm trực quan (Google Sites / Mobirise / WordPress dạng kéo thả) hoặc làm video clip truyền thông.",
+            "Sử dụng bài trình chiếu kết hợp đa phương tiện (âm thanh, video, sơ đồ) để báo cáo dự án."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Nguyên lý kéo thả tạo trang web trực quan.",
+            "Cấu trúc sơ đồ tư duy: Chủ đề chính, nhánh chính, nhánh phụ.",
+            "Các định dạng video (`.mp4`), âm thanh (`.mp3`)."
+          ],
+          "phan_mem_ngon_ngu": [
+            "Phần mềm Sơ đồ tư duy (MindManager, XMind, Canva).",
+            "Phần mềm tạo web kéo thả (Google Sites / Mobirise) hoặc Phần mềm biên tập video (CapCut / Movie Maker)."
+          ],
+          "lenh_va_cau_truc": [
+            "Thao tác kéo thả trên phần mềm ứng dụng."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG mã lệnh viết tay HTML, CSS, JavaScript (học ở Lớp 11/12 ICT).",
+            "CHƯA DÙNG phần mềm biên tập âm thanh đồ họa chuyên nghiệp (Adobe Premiere, Audition)."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài sắp xếp các bước tạo sơ đồ tư duy cho một chủ đề học tập.",
+            "Dạng bài lựa chọn công cụ kéo thả phù hợp để tạo một trang web cá nhân/lớp học trên Google Sites.",
+            "Dạng bài nhận biết các thành phần của một trang web (Thanh menu, Trang chủ, Trang liên kết)."
+          ],
+          "luu_y_ra_de": "SGK Lớp 9 dùng công cụ kéo thả trực quan (như Google Sites) để làm web, KHÔNG bắt học sinh gõ mã lệnh HTML/CSS."
+        },
+        {
+          "id": "tin9-lap-trinh-giai-quyet-van-de",
+          "ten": "Giải quyết vấn đề với sự trợ giúp của máy tính - Lập trình trực quan Scratch nâng cao hoặc Python cơ bản",
+          "hoc_ky": 2,
+          "mach": "F",
+          "dinh_huong": "chung",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 6: Giải quyết vấn đề với sự trợ giúp của máy tính - Lập trình Scratch nâng cao (Danh sách & Hàm)",
+            "CTST": "Chủ đề 6: Giải quyết vấn đề với sự trợ giúp của máy tính - Thuật toán và Lập trình Scratch",
+            "CD": "Chủ đề F: Giải quyết vấn đề với sự trợ giúp của máy tính - Lập trình giải quyết bài toán"
+          },
+          "yeu_cau_can_dat": [
+            "Sử dụng được biến Danh sách (List/Array) trong lập trình trực quan Scratch để quản lý tập hợp dữ liệu.",
+            "Tạo và gọi được Khối lệnh tự định nghĩa (My Blocks / Hàm đơn giản) trong Scratch.",
+            "Áp dụng được thuật toán tìm kiếm và sắp xếp đã học ở Lớp 7 để cài đặt trên phần mềm lập trình trực quan Scratch.",
+            "Phân tích và giải quyết được một bài toán hoàn chỉnh qua các bước: Xác định Input/Output -> Xây dựng thuật toán -> Cài đặt chương trình -> Kiểm thử (Test)."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Các khối lệnh Danh sách trong Scratch: `thêm ... vào [danh sách]`, `xóa số ... của [danh sách]`, `chèn ... tại vị trí ...`, `kích thước của [danh sách]`.",
+            "Tạo khối lệnh mới (My Blocks) không có hoặc có tham số đầu vào.",
+            "Chạy kiểm thử với nhiều bộ dữ liệu (Test cases)."
+          ],
+          "phan_mem_ngon_ngu": [
+            "Scratch 3.0 (Bộ KNTT/CTST) hoặc giới thiệu ngôn ngữ Python sơ lược (ở một số bộ sách)."
+          ],
+          "lenh_va_cau_truc": [
+            "Các thao tác làm việc với List và My Blocks trong Scratch."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG cấu trúc lập trình Python phức tạp dạng mảng 2 chiều, ma trận, đọc/ghi tệp tin (học ở Lớp 10/11).",
+            "CHƯA DÙNG lập trình hướng đối tượng OOP (học ở THPT)."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài đọc kịch bản Scratch có sử dụng Danh sách (List) và cho biết kết quả danh sách sau khi thực hiện lệnh.",
+            "Dạng bài phát hiện lỗi trong khối lệnh tự định nghĩa (My Blocks).",
+            "Dạng bài cho bài toán tính tổng các số trong danh sách thỏa mãn điều kiện, chọn các khối lệnh Scratch đúng để hoàn thành chương trình."
+          ],
+          "luu_y_ra_de": "Chương trình Lớp 9 phát triển nâng cao từ Scratch Lớp 8 bằng cách bổ sung biến kiểu **Danh sách (List)** và **Khối lệnh tự định nghĩa (Hàm)**."
+        },
+        {
+          "id": "tin9-huong-nghiep-tin-hoc",
+          "ten": "Hướng nghiệp với tin học",
+          "hoc_ky": 2,
+          "mach": "G",
+          "dinh_huong": "chung",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 7: Hướng nghiệp với tin học - Tin học và các ngành nghề",
+            "CTST": "Chủ đề 7: Hướng nghiệp với tin học - Nghề nghiệp trong kỷ nguyên số",
+            "CD": "Chủ đề G: Hướng nghiệp với tin học - Nghề nghiệp Tin học"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được một số nghề nghiệp thuộc lĩnh vực Công nghệ thông tin và Tin học (Lập trình viên, Thiết kế đồ họa, Quản trị mạng, Chuyên gia an toàn thông tin...).",
+            "Nêu được vai trò của ứng dụng Tin học trong các nghề nghiệp phổ biến của xã hội.",
+            "Nhận biết được năng lực và sở thích của bản thân liên quan đến ứng dụng Tin học."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Tên gọi và mô tả công việc của các ngành nghề Tin học.",
+            "Kỹ năng số cơ bản cần thiết cho lao động trong tương lai."
+          ],
+          "phan_mem_ngon_ngu": [
+            "Không."
+          ],
+          "lenh_va_cau_truc": [
+            "Không."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG thông tin phân luồng đại học/học viện chi tiết của Lớp 12."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài ghép nối tên nghề nghiệp Tin học với mô tả công việc tương ứng.",
+            "Dạng bài lựa chọn các kỹ năng tin học cần có cho một nghề nghiệp cụ thể trong xã hội."
+          ],
+          "luu_y_ra_de": "Câu hỏi nhẹ nhàng mang tính nhận thức và định hướng sở thích nghề nghiệp học sinh."
+        }
+      ],
+      "chuyen_de": [],
+      "ghi_chu_chua_chac": []
+    },
+    {
+      "lop": 10,
+      "chuong": [
+        {
+          "id": "tin10-may-tinh-va-xa-hoi-tri-thuc",
+          "ten": "Máy tính và xã hội tri thức",
+          "hoc_ky": 1,
+          "mach": "A",
+          "dinh_huong": "chung",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 1: Máy tính và xã hội tri thức",
+            "CTST": "Chủ đề 1: Máy tính và xã hội tri thức",
+            "CD": "Chủ đề A: Máy tính và xã hội tri thức"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được các thành tựu nổi bật của Tin học và Công nghệ thông tin.",
+            "Giải thích được các khái niệm: Tin học, Thiết bị thông minh (Smart devices), Internet của vạn vật (IoT).",
+            "Trình bày được vai trò của máy tính trong Xã hội tri thức và Kinh tế tri thức."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Khái niệm hệ thống thông minh, cảm biến (Sensor) trong IoT.",
+            "Sự khác biệt giữa máy tính vạn năng và thiết bị thông minh."
+          ],
+          "phan_mem_ngon_ngu": [
+            "Không."
+          ],
+          "lenh_va_cau_truc": [
+            "Không."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG thuật toán học máy (Machine Learning) hay mạng thần kinh nhân tạo (Neural Network - Lớp 12).",
+            "CHƯA DÙNG lập trình nhúng phần cứng IoT."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài phân biệt thiết bị thông minh với thiết bị gia dụng truyền thống.",
+            "Dạng bài chọn nhận định đúng về vai trò của IoT trong nhà thông minh (Smart home)."
+          ],
+          "luu_y_ra_de": "Chủ đề chung cho cả 2 định hướng ICT và CS."
+        },
+        {
+          "id": "tin10-mang-may-tinh-internet",
+          "ten": "Mạng máy tính và Internet",
+          "hoc_ky": 1,
+          "mach": "B",
+          "dinh_huong": "chung",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 2: Mạng máy tính và Internet",
+            "CTST": "Chủ đề 2: Mạng máy tính và Internet",
+            "CD": "Chủ đề B: Mạng máy tính và Internet"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được bản chất của Internet là mạng toàn cầu sử dụng bộ giao thức TCP/IP.",
+            "Phân biệt được điện toán đám mây (Cloud computing) và lưu trữ cục bộ; nêu được các dịch vụ điện toán đám mây phổ biến (IaaS, PaaS, SaaS ở mức nhận biết).",
+            "Giải thích được khái niệm IoT và các ứng dụng thực tế."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Dịch vụ đám mây (SaaS: Gmail, Google Drive; IaaS/PaaS khái quát).",
+            "Kết nối mạng không dây 4G/5G, Wi-Fi."
+          ],
+          "phan_mem_ngon_ngu": [
+            "Trình duyệt web, ứng dụng đám mây."
+          ],
+          "lenh_va_cau_truc": [
+            "Không."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG các câu lệnh cấu hình Router, Switch, IP tĩnh/động (Lớp 11).",
+            "CHƯA DÙNG lập trình truyền nhận dữ liệu Socket."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài phân biệt ưu nhược điểm của Điện toán đám mây so với Lưu trữ truyền thống.",
+            "Dạng bài xác định dịch vụ SaaS trong các ứng dụng hay dùng."
+          ],
+          "luu_y_ra_de": "Kiểm tra kiến thức khái niệm hiện đại về Điện toán đám mây và IoT."
+        },
+        {
+          "id": "tin10-dao-duc-phap-luat-van-hoa-so",
+          "ten": "Đạo đức, pháp luật và văn hóa trong môi trường số",
+          "hoc_ky": 1,
+          "mach": "D",
+          "dinh_huong": "chung",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 3: Đạo đức, pháp luật và văn hóa trong môi trường số",
+            "CTST": "Chủ đề 3: Đạo đức, pháp luật và văn hóa trong môi trường số",
+            "CD": "Chủ đề D: Đạo đức, pháp luật và văn hóa trong môi trường số"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được một số điều khoản cơ bản của Luật An ninh mạng và Luật Sở hữu trí tuệ liên quan đến sử dụng sản phẩm số.",
+            "Phân tích được các hành vi vi phạm pháp luật trên môi trường số (chia sẻ thông tin sai sự thật, xúc phạm danh dự người khác, vi phạm bản quyền phần mềm).",
+            "Nêu được khái niệm Bản quyền và Giấy phép bản quyền mã nguồn mở (Creative Commons, GNU GPL)."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Các ký hiệu Giấy phép Creative Commons (CC BY, CC NC, CC ND, CC SA).",
+            "Phần mềm nguồn mở (Open Source) và Phần mềm thương mại (Proprietary)."
+          ],
+          "phan_mem_ngon_ngu": [
+            "Không."
+          ],
+          "lenh_va_cau_truc": [
+            "Không."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG các kỹ thuật tấn công mã độc chuyên sâu.",
+            "CHƯA DÙNG khung xử phạt tiền cụ thể theo nghị định mới nhất (chỉ hỏi quy định hành vi)."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài đọc biểu tượng giấy phép Creative Commons (ví dụ: CC BY-NC) và cho biết người dùng được phép làm gì.",
+            "Dạng bài phân tích tình huống vi phạm Luật An ninh mạng khi chia sẻ bài viết sai sự thật trên Facebook."
+          ],
+          "luu_y_ra_de": "Nhiều câu hỏi trắc nghiệm hay ra về phân biệt Giấy phép bản quyền mã nguồn mở và Quyền tác giả."
+        },
+        {
+          "id": "tin10-bieu-dien-du-lieu-log-cs",
+          "ten": "Khoa học máy tính - Biểu diễn dữ liệu và Phép toán logic",
+          "hoc_ky": 1,
+          "mach": "F",
+          "dinh_huong": "CS",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 4 (CS): Biểu diễn dữ liệu và Phép toán logic",
+            "CTST": "Chủ đề 4 (CS): Biểu diễn thông tin trong máy tính",
+            "CD": "Chủ đề F (CS): Biểu diễn dữ liệu và Logic máy tính"
+          },
+          "yeu_cau_can_dat": [
+            "Thực hiện được việc chuyển đổi số nguyên không dấu và có dấu giữa hệ thập phân (Base-10), hệ nhị phân (Base-2) và hệ thập lục phân Hex (Base-16).",
+            "Mô tả được cách biểu diễn số thực (dấu phẩy động), văn bản (bảng mã ASCII, Unicode UTF-8), hình ảnh và âm thanh trong máy tính.",
+            "Hiểu và tính được giá trị của các phép toán logic cơ bản: `AND`, `OR`, `NOT`, `XOR` và vẽ được bảng giá trị logic (Truth table)."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Số nhị phân, Hexa (`0-9, A-F`).",
+            "Chuyển đổi $10 \\leftrightarrow 2 \\leftrightarrow 16$.",
+            "Bảng giá trị logic `AND`, `OR`, `NOT`, `XOR`.",
+            "Biểu diễn số nguyên có dấu bằng Mã bù 2 (Two's complement)."
+          ],
+          "phan_mem_ngon_ngu": [
+            "Không."
+          ],
+          "lenh_va_cau_truc": [
+            "Các phép toán logic: AND ($\\land$), OR ($\\lor$), NOT ($\neg$), XOR ($\\oplus$)."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG thiết kế mạch logic số phức tạp (Cổng NAND, NOR, mạch cộng đầy đủ Full Adder - học ở Đại học).",
+            "CHƯA DÙNG lập trình Python thao tác bitwise (`&`, `|`, `^`, `~`) ở bài tập quá nâng cao."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài chuyển đổi số $45_{10}$ sang hệ nhị phân và hệ Hexa.",
+            "Dạng bài tính giá trị biểu thức logic $A \text{ AND } (\text{NOT } B)$ với $A=\text{True}, B=\text{False}$.",
+            "Dạng bài xác định số byte cần thiết để lưu trữ một xâu ký tự Unicode UTF-8."
+          ],
+          "luu_y_ra_de": "CHỦ ĐỀ NÀY CHỈ DÀNH CHO HỌC SINH CHỌN ĐỊNH HƯỚNG KHOA HỌC MÁY TÍNH (CS). Học sinh ICT không học chương này."
+        },
+        {
+          "id": "tin10-do-hoa-inkscape-gimp-ict",
+          "ten": "Tin học ứng dụng - Thiết kế đồ họa vector và Chỉnh sửa ảnh",
+          "hoc_ky": 1,
+          "mach": "E",
+          "dinh_huong": "ICT",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 4 (ICT): Phần mềm thiết kế đồ họa Inkscape & GIMP",
+            "CTST": "Chủ đề 4 (ICT): Đồ họa vector Inkscape & Chỉnh sửa ảnh GIMP",
+            "CD": "Chủ đề E (ICT): Thiết kế đồ họa và Chỉnh sửa ảnh"
+          },
+          "yeu_cau_can_dat": [
+            "Sử dụng thành thạo phần mềm thiết kế đồ họa vector (Inkscape) để tạo các sản phẩm biểu logo, banner, poster.",
+            "Thực hiện được các thao tác với đối tượng đồ họa: vẽ hình, chỉnh sửa đường cong Bezier, biến đổi hình dạng (Union, Difference, Intersection).",
+            "Sử dụng phần mềm chỉnh sửa ảnh (GIMP) để cắt ảnh, điều chỉnh màu sắc, độ sáng, tẩy xóa chi tiết thừa, quản lý lớp ảnh (Layers) và tách nền."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Công cụ vẽ đường Bezier (Pen tool).",
+            "Các phép toán hình học đồ họa vector: 合 (Union), 差 (Difference), 交 (Intersection).",
+            "Chế độ hòa trộn lớp (Blending mode), vùng chọn (Selection tool) trong GIMP."
+          ],
+          "phan_mem_ngon_ngu": [
+            "Inkscape (Vẽ đồ họa Vector) và GIMP (Chỉnh sửa ảnh Raster)."
+          ],
+          "lenh_va_cau_truc": [
+            "Các menu Path (Inkscape), Layer, Select, Colors (GIMP)."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG các phần mềm thương mại Photoshop/Illustrator nếu SGK không sử dụng.",
+            "CHƯA DÙNG kỹ thuật dựng hình 3D hay hoạt hình 2D (Animation)."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài xác định phép toán đồ họa vector (Union hay Difference) để tạo ra hình phẳng cho trước.",
+            "Dạng bài sắp xếp các bước cắt tách nền đối tượng trong GIMP bằng Layer Mask.",
+            "Dạng bài phân biệt công cụ vẽ đường thẳng và công cụ chỉnh sửa nút điểm Node Tool trong Inkscape."
+          ],
+          "luu_y_ra_de": "CHỦ ĐỀ NÀY CHỈ DÀNH CHO HỌC SINH CHỌN ĐỊNH HƯỚNG TIN HỌC ỨNG DỤNG (ICT). Đề bài tập trung vào quy trình sử dụng phần mềm Inkscape và GIMP."
+        },
+        {
+          "id": "tin10-lap-trinh-python-co-ban",
+          "ten": "Giải quyết vấn đề với sự trợ giúp của máy tính - Lập trình Python cơ bản",
+          "hoc_ky": 2,
+          "mach": "F",
+          "dinh_huong": "chung",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 5: Giải quyết vấn đề với sự trợ giúp của máy tính - Lập trình Python",
+            "CTST": "Chủ đề 5: Giải quyết vấn đề với sự trợ giúp của máy tính - Lập trình Python cơ bản",
+            "CD": "Chủ đề F: Giải quyết vấn đề với sự trợ giúp của máy tính - Lập trình Python"
+          },
+          "yeu_cau_can_dat": [
+            "Viết và thực thi được chương trình Python đơn giản trên môi trường lập trình (IDLE / Thonny / PyCharm).",
+            "Sử dụng đúng các kiểu dữ liệu cơ bản: số nguyên (`int`), số thực (`float`), xâu ký tự (`str`), kiểu logic (`bool`).",
+            "Sử dụng các phép toán số học (`+`, `-`, `*`, `/`, `//`, `%`, `**`), phép so sánh (`==`, `!=`, `>`, `<`, `>=`, `<=`) và phép toán logic (`and`, `or`, `not`).",
+            "Sử dụng câu lệnh nhập dữ liệu `input()` và xuất dữ liệu `print()`; thực hiện ép kiểu dữ liệu (`int()`, `float()`, `str()`).",
+            "Sử dụng cấu trúc rẽ nhánh `if`, `if...else`, `if...elif...else`.",
+            "Sử dụng cấu trúc lặp với số lần biết trước `for i in range(...)` và lặp với điều kiện `while`.",
+            "Sử dụng kiểu dữ liệu danh sách (`list`) cơ bản (khởi tạo, truy cập phần tử qua chỉ số, duyệt danh sách, các phương thức `append()`, `len()`).",
+            "Sử dụng kiểu xâu ký tự (`str`) cơ bản (truy cập ký tự, duyệt xâu, độ dài `len()`, phép nối xâu `+`)."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Biến và quy tắc đặt tên biến trong Python.",
+            "Cú pháp thụt lề (Indentation) bắt buộc của Python.",
+            "Cú pháp `range(start, stop, step)`.",
+            "Các phương thức List: `append()`, `clear()`, `insert()`, `remove()`, `pop()`ở mức cơ bản.",
+            "Kiểm thử và tìm lỗi sai cú pháp (SyntaxError), lỗi khi chạy (RuntimeError)."
+          ],
+          "phan_mem_ngon_ngu": [
+            "Ngôn ngữ lập trình Python 3.x (Môi trường IDLE, Thonny hoặc Anaconda/Jupyter)."
+          ],
+          "lenh_va_cau_truc": [
+            "Các lệnh Python: `print()`, `input()`, `int()`, `float()`, `str()`, `len()`, `range()`, `if`, `elif`, `else`, `for`, `while`, `break`, `continue`, `append()`."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG Hàm tự định nghĩa với từ khóa `def` và `return` - HỌC Ở LỚP 11.",
+            "CHƯA DÙNG Đọc/Ghi tệp tin (`open()`, `read()`, `write()`) - HỌC Ở LỚP 11.",
+            "CHƯA DÙNG Kiểu dữ liệu Từ điển (`dict`), Tập hợp (`set`), Tuple (`tuple`) nâng cao - HỌC Ở LỚP 11 CS.",
+            "CHƯA DÙNG Thư viện nâng cao như `math`, `random`, `numpy`, `pandas` (trừ một số hàm `math.sqrt` nếu SGK giới thiệu).",
+            "CHƯA DÙNG Ngôn ngữ Pascal hay C++."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài đọc đoạn mã Python và dự đoán kết quả in ra màn hình của lệnh `print()`.",
+            "Dạng bài tìm lỗi sai cú pháp (như thiếu dấu hai chấm `:`, thụt lề sai, quên ép kiểu `int(input())`).",
+            "Dạng bài viết đoạn mã ngắn tính tổng các số chẵn từ 1 đến N bằng vòng lặp `for` hoặc `while`.",
+            "Dạng bài cho danh sách `A = [2, 5, 8, 3]`, tính giá trị các phần tử sau khi thực hiện lệnh `A.append(10)` hoặc `for x in A:`."
+          ],
+          "luu_y_ra_de": "ĐÂY LÀ CHƯƠNG LẬP TRÌNH QUAN TRỌNG NHẤT LỚP 10. Tuyệt đối KHÔNG ra câu hỏi có hàm `def` hay đọc tệp tin `.txt` vì các nội dung này thuộc chương trình Lớp 11."
+        },
+        {
+          "id": "tin10-huong-nghiep-tin-hoc",
+          "ten": "Hướng nghiệp với tin học",
+          "hoc_ky": 2,
+          "mach": "G",
+          "dinh_huong": "chung",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 6: Hướng nghiệp với tin học",
+            "CTST": "Chủ đề 6: Hướng nghiệp với tin học",
+            "CD": "Chủ đề G: Hướng nghiệp với tin học"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được các nhóm nghề nghiệp chính trong lĩnh vực Tin học và Công nghệ thông tin.",
+            "Phân tích được yêu cầu kiến thức, kỹ năng và thái độ đối với người làm việc trong kỷ nguyên số.",
+            "Đánh giá được khả năng thích ứng của bản thân với các định hướng học tập Tin học ứng dụng (ICT) hoặc Khoa học máy tính (CS)."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Sự khác biệt giữa định hướng ICT (hướng ứng dụng, dịch vụ, thiết kế) và CS (hướng thuật toán, phát triển phần mềm, trí tuệ nhân tạo)."
+          ],
+          "phan_mem_ngon_ngu": [
+            "Không."
+          ],
+          "lenh_va_cau_truc": [
+            "Không."
+          ],
+          "chua_duoc_dung": [
+            "Không có kiến thức bị cấm đặc thù."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài lựa chọn định hướng học tập (ICT hay CS) phù hợp với nguyện vọng nghề nghiệp của học sinh (ví dụ: muốn làm Lập trình viên AI -> chọn CS; muốn làm Thiết kế đồ họa/Marketing -> chọn ICT)."
+          ],
+          "luu_y_ra_de": "Tích hợp tư vấn lựa chọn môn học lựa chọn và định hướng nghề nghiệp THPT."
+        }
+      ],
+      "chuyen_de": [
+        "Chuyên đề 10.1 (ICT): Thực hành sử dụng phần mềm ảnh và làm video",
+        "Chuyên đề 10.2 (CS): Dữ liệu mảng cấu trúc và Lập trình giải quyết bài toán thực tế",
+        "Chuyên đề 10.3: Robot giáo dục và Lập trình điều khiển robot"
+      ],
+      "ghi_chu_chua_chac": [
+        "Bộ sách Cánh Diều thiết kế thứ tự bài học Python có giới thiệu hàm math sớm hơn một chút nhưng phần Hàm tự định nghĩa def vẫn để ở lớp 11."
+      ]
+    },
+    {
+      "lop": 11,
+      "chuong": [
+        {
+          "id": "tin11-he-dieu-hanh-phan-cung-phan-mem",
+          "ten": "Hệ điều hành, Phần cứng và Phần mềm máy tính",
+          "hoc_ky": 1,
+          "mach": "A",
+          "dinh_huong": "chung",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 1: Máy tính và xã hội - Hệ điều hành và Phần mềm",
+            "CTST": "Chủ đề 1: Máy tính và xã hội - Hệ điều hành và Phần cứng",
+            "CD": "Chủ đề A: Máy tính và xã hội - Hệ thống máy tính"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được lịch sử phát triển của Hệ điều hành (từ xử lý theo lô đến hệ điều hành đa nhiệm, thời gian thực, di động).",
+            "Phân tích được vai trò của Hệ điều hành trong quản lý tệp, quản trị tiến trình (Process) và bộ nhớ.",
+            "Trình bày được các thông số kỹ thuật cốt lõi của phần cứng máy tính: CPU (tốc độ xung nhịp GHz, số nhân/luồng), RAM (dung lượng GB, bus), Ổ cứng (SSD/HDD, tốc độ đọc ghi)."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Các thông số kỹ thuật CPU (Intel Core i5/i7/i9, AMD Ryzen), RAM DDR4/DDR5, SSD NVMe.",
+            "Khái niệm Tiến trình (Process) và Quản lý bộ nhớ."
+          ],
+          "phan_mem_ngon_ngu": [
+            "Công cụ Task Manager trên Windows / Activity Monitor trên macOS."
+          ],
+          "lenh_va_cau_truc": [
+            "Các phím tắt hệ thống: Ctrl+Shift+Esc."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG kiến thức lập trình hệ điều hành (Kernel, System calls) chuyên sâu."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài đọc thông số cấu hình một chiếc máy tính được rao bán và tư vấn lựa chọn máy tính cho nhu cầu đồ họa/lập trình.",
+            "Dạng bài đọc cửa sổ Task Manager và xác định ứng dụng đang chiếm nhiều tài nguyên RAM/CPU nhất."
+          ],
+          "luu_y_ra_de": "Chủ đề chung cho cả 2 định hướng."
+        },
+        {
+          "id": "tin11-mang-may-tinh-internet",
+          "ten": "Mạng máy tính và Giao thức mạng",
+          "hoc_ky": 1,
+          "mach": "B",
+          "dinh_huong": "chung",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 2: Mạng máy tính và Internet",
+            "CTST": "Chủ đề 2: Mạng máy tính và Internet",
+            "CD": "Chủ đề B: Mạng máy tính và Internet"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được chức năng của các thiết bị mạng: Access Point, Modem, Switch, Router.",
+            "Giải thích được nguyên lý hoạt động của địa chỉ IP (IPv4, IPv6) và Tên miền (DNS).",
+            "Sử dụng được các lệnh kiểm tra kết nối mạng cơ bản trên dòng lệnh (Command Prompt): `ping`, `ipconfig`."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Cấu trúc IPv4 (4 octet, ví dụ `192.168.1.1`).",
+            "Vai trò máy chủ DNS chuyển đổi tên miền thành địa chỉ IP.",
+            "Lệnh `ping <địa chỉ IP/Domain>`, `ipconfig /all`."
+          ],
+          "phan_mem_ngon_ngu": [
+            "Cửa sổ dòng lệnh Command Prompt (cmd) trên Windows."
+          ],
+          "lenh_va_cau_truc": [
+            "Lệnh `ping`, `ipconfig`."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG cấu trúc chi tiết 7 tầng mô hình OSI.",
+            "CHƯA DÙNG lập trình bắt gói tin Wireshark."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài đọc kết quả trả về của lệnh `ping google.com` và kết luận về trạng thái kết nối Internet.",
+            "Dạng bài phân biệt địa chỉ IP hợp lệ và không hợp lệ.",
+            "Dạng bài sơ đồ kết nối mạng gia đình với Modem, Router Wi-Fi và Switch."
+          ],
+          "luu_y_ra_de": "Gắn liền với thực hành thao tác lệnh `ipconfig` và `ping` kiểm tra mạng thực tế."
+        },
+        {
+          "id": "tin11-dao-duc-phap-luat-van-hoa-so",
+          "ten": "Đạo đức, pháp luật và văn hóa trong môi trường số",
+          "hoc_ky": 1,
+          "mach": "D",
+          "dinh_huong": "chung",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 3: Đạo đức, pháp luật và văn hóa trong môi trường số",
+            "CTST": "Chủ đề 3: Đạo đức, pháp luật và văn hóa trong môi trường số",
+            "CD": "Chủ đề D: Đạo đức, pháp luật và văn hóa trong môi trường số"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được các quy định về an toàn thông tin cá nhân và bảo mật dữ liệu.",
+            "Phân tích được rủi ro của lừa đảo qua mạng (Phishing), phần mềm gián điệp (Spyware), phần mềm tống tiền (Ransomware).",
+            "Nêu được các biện pháp bảo vệ dữ liệu cá nhân: xác thực 2 yếu tố (2FA), mã hóa dữ liệu, sử dụng VPN."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Cơ chế xác thực 2 lớp OTP / Authenticator app.",
+            "Tấn công giả mạo Phishing qua email/tin nhắn."
+          ],
+          "phan_mem_ngon_ngu": [
+            "Ứng dụng Authenticator, Trình duyệt."
+          ],
+          "lenh_va_cau_truc": [
+            "Không."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG các thuật toán mã hóa bất đối xứng RSA, AES chuyên sâu."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài nhận diện đường link lừa đảo Phishing giả mạo ngân hàng.",
+            "Dạng bài xử lý tình huống bật tính năng xác thực 2 bước (2FA) để bảo vệ tài khoản Google/Facebook."
+          ],
+          "luu_y_ra_de": "Trọng tâm là kỹ năng bảo vệ an toàn thông tin cá nhân."
+        },
+        {
+          "id": "tin11-csdl-sql-cs",
+          "ten": "Khoa học máy tính - Cơ sở dữ liệu và Hệ quản trị CSDL (SQL)",
+          "hoc_ky": 1,
+          "mach": "F",
+          "dinh_huong": "CS",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 4 (CS): Cơ sở dữ liệu và Hệ quản trị CSDL",
+            "CTST": "Chủ đề 4 (CS): Cơ sở dữ liệu quan hệ và SQL",
+            "CD": "Chủ đề F (CS): Cơ sở dữ liệu quan hệ và Ngôn ngữ SQL"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được khái niệm Cơ sở dữ liệu (CSDL), Hệ quản trị CSDL (DBMS) và Hệ CSDL quan hệ.",
+            "Mô tả được các khái niệm trong mô hình dữ liệu quan hệ: Bảng (Table), Hàng/Bản ghi (Record/Row), Cột/Trường (Field/Column), Khóa chính (Primary Key), Khóa ngoại (Foreign Key).",
+            "Hiểu và viết được các câu lệnh SQL truy vấn dữ liệu cơ bản: `SELECT ... FROM ... WHERE ... ORDER BY ...`.",
+            "Viết được câu lệnh SQL cập nhật dữ liệu: `INSERT INTO`, `UPDATE`, `DELETE`.",
+            "Tạo được liên kết giữa các bảng trong CSDL quan hệ (Khóa chính - Khóa ngoại)."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Các kiểu dữ liệu trong SQL: `INT`, `VARCHAR`, `DATE`, `FLOAT`.",
+            "Các điều kiện `WHERE` với phép toán `=`, `!=`, `>`, `<`, `LIKE`, `AND`, `OR`.",
+            "Khái niệm toàn vẹn dữ liệu, khóa chính không được rỗng (NOT NULL) và không trùng lặp."
+          ],
+          "phan_mem_ngon_ngu": [
+            "Hệ quản trị CSDL MySQL / MariaDB / MS Access / SQLite (sử dụng phần mềm HeidiSQL hoặc phpMyAdmin theo SGK)."
+          ],
+          "lenh_va_cau_truc": [
+            "Các lệnh SQL: `SELECT`, `FROM`, `WHERE`, `ORDER BY`, `INSERT INTO`, `UPDATE`, `DELETE`, `CREATE TABLE`, `PRIMARY KEY`, `FOREIGN KEY`."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG các câu lệnh SQL nâng cao như nhóm dữ liệu `GROUP BY`, `HAVING`, phép nối bảng phức tạp `INNER JOIN`, `LEFT JOIN` lồng 3-4 bảng (nếu SGK không đề cập).",
+            "CHƯA DÙNG Thủ tục lưu trữ (Stored Procedure), Trigger, Transaction trong SQL."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài đọc yêu cầu bài toán (ví dụ: Tìm học sinh lớp 11A có điểm Tin học >= 8.0) và viết câu lệnh truy vấn `SELECT` tương ứng.",
+            "Dạng bài xác định Khóa chính (Primary Key) thích hợp cho một bảng dữ liệu (ví dụ: `MaHS`).",
+            "Dạng bài đọc bảng dữ liệu và cho biết kết quả trả về của một câu lệnh SQL `SELECT ... WHERE ...`.",
+            "Dạng bài phát hiện lỗi sai trong câu lệnh SQL `INSERT INTO` hoặc `UPDATE`."
+          ],
+          "luu_y_ra_de": "CHỦ ĐỀ CỐT LÕI CỦA ĐỊNH HƯỚNG CS LỚP 11. Đề thi tập trung đánh giá khả năng hiểu mô hình CSDL quan hệ và viết câu lệnh SQL cơ bản."
+        },
+        {
+          "id": "tin11-lap-trinh-python-nang-cao-cs",
+          "ten": "Khoa học máy tính - Lập trình Python nâng cao (Hàm, Tệp & Thuật toán)",
+          "hoc_ky": 2,
+          "mach": "F",
+          "dinh_huong": "CS",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 5 (CS): Lập trình giải quyết bài toán với Python nâng cao",
+            "CTST": "Chủ đề 5 (CS): Thuật toán và Lập trình Python nâng cao",
+            "CD": "Chủ đề F (CS): Thuật toán và Lập trình Python"
+          },
+          "yeu_cau_can_dat": [
+            "Tạo và sử dụng được Hàm tự định nghĩa với từ khóa `def`, tham số đầu vào và giá trị trả về `return` trong Python.",
+            "Hiểu và phân biệt được Biến cục bộ (Local variable) và Biến toàn cục (Global variable).",
+            "Đọc và ghi được dữ liệu từ tệp văn bản (`.txt`) bằng các hàm `open()`, `readline()`, `readlines()`, `write()`, `close()` hoặc cấu trúc `with open(...) as f:`.",
+            "Viết được chương trình Python cài đặt các thuật toán tìm kiếm và sắp xếp cơ bản (Tìm kiếm tuần tự, Tìm kiếm nhị phân, Sắp xếp nổi bọt, Sắp xếp chọn) trên mảng/danh sách.",
+            "Sử dụng được các phương thức xử lý xâu ký tự nâng cao (`split()`, `join()`, `strip()`, `find()`, `replace()`)."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Cú pháp hàm `def ten_ham(tham_so): ... return gia_tri`.",
+            "Thao tác đọc tệp từng dòng, tách xâu thành danh sách số bằng `split()`.",
+            "Xử lý danh sách 2 chiều (ma trận cơ bản) `A[i][j]`.",
+            "Bắt lỗi ngoại lệ cơ bản `try...except` khi mở tệp."
+          ],
+          "phan_mem_ngon_ngu": [
+            "Ngôn ngữ lập trình Python 3.x."
+          ],
+          "lenh_va_cau_truc": [
+            "Các lệnh: `def`, `return`, `global`, `open()`, `read()`, `readline()`, `write()`, `with`, `split()`, `join()`, `strip()`, `replace()`."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG Lập trình hướng đối tượng OOP (`class`, `self`, `__init__` - HỌC Ô LỚP 12 CS).",
+            "CHƯA DÙNG Đệ quy phức tạp hay Quy hoạch động nâng cao.",
+            "CHƯA DÙNG các cấu trúc dữ liệu Nút, Cây, Đồ thị."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài đọc đoạn chương trình Python có định nghĩa hàm `def` và cho biết giá trị trả về khi gọi hàm.",
+            "Dạng bài viết đoạn mã đọc các số nguyên từ tệp `INPUT.TXT`, tính tổng và ghi kết quả vào tệp `OUTPUT.TXT`.",
+            "Dạng bài hoàn thiện chương trình cài đặt thuật toán Tìm kiếm nhị phân bằng Python.",
+            "Dạng bài phân biệt biến cục bộ và biến toàn cục trong Python."
+          ],
+          "luu_y_ra_de": "Chương này chính thức đưa **Hàm tự định nghĩa (`def`)** và **Đọc/Ghi tệp văn bản** vào Python. Tránh kiểm tra các thuật toán quá khó ngoài phạm vi SGK."
+        },
+        {
+          "id": "tin11-ung-dung-phan-mem-ict",
+          "ten": "Tin học ứng dụng - Phần mềm chỉnh sửa video & Phần mềm tạo trang web",
+          "hoc_ky": 1,
+          "mach": "E",
+          "dinh_huong": "ICT",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 4 (ICT): Thực hành phần mềm tạo trang web & Chỉnh sửa video",
+            "CTST": "Chủ đề 4 (ICT): Biên tập phim và Tạo trang web",
+            "CD": "Chủ đề E (ICT): Phần mềm ứng dụng nâng cao"
+          },
+          "yeu_cau_can_dat": [
+            "Sử dụng được phần mềm biên tập phim/video (CapCut / Movie Maker / Shotcut) để cắt ghép video, chèn âm thanh, thêm hiệu ứng chữ và chuyển cảnh.",
+            "Sử dụng được phần mềm tạo trang web trực quan (HTML/CSS kéo thả hoặc Google Sites / Mobirise) để xây dựng trang web cho CLB hoặc môn học."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Timeline làm video, các dòng (Track) video, audio, chữ.",
+            "Xuất video chuẩn MP4, 1080p.",
+            "Cấu hình giao diện web, chèn menu, chèn form liên hệ."
+          ],
+          "phan_mem_ngon_ngu": [
+            "CapCut / Shotcut / Movie Maker (Biên tập Video).",
+            "Google Sites / Mobirise / Phần mềm làm web kéo thả."
+          ],
+          "lenh_va_cau_truc": [
+            "Thao tác trên giao diện phần mềm."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG mã hóa JavaScript tương tác động phức tạp.",
+            "CHƯA DÙNG phần mềm dựng phim 3D kỹ xảo điện ảnh VFX."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài sắp xếp các bước biên tập một video ngắn từ các tệp ảnh và clip thô.",
+            "Dạng bài quy trình xuất bản trang web lên Internet từ phần mềm tạo web trực quan."
+          ],
+          "luu_y_ra_de": "DÀNH RIÊNG CHO ĐỊNH HƯỚNG ICT LỚP 11."
+        },
+        {
+          "id": "tin11-huong-nghiep-tin-hoc",
+          "ten": "Hướng nghiệp với tin học",
+          "hoc_ky": 2,
+          "mach": "G",
+          "dinh_huong": "chung",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 6: Hướng nghiệp với tin học",
+            "CTST": "Chủ đề 6: Hướng nghiệp với tin học",
+            "CD": "Chủ đề G: Hướng nghiệp với tin học"
+          },
+          "yeu_cau_can_dat": [
+            "Tìm hiểu thông tin về các trường đào tạo ngành Công nghệ thông tin, Khoa học máy tính, An toàn thông tin.",
+            "Xác định được các chứng chỉ tin học quốc tế phổ biến (MOS, IC3, CCNA, AWS...)."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Các nhóm ngành đào tạo bậc Đại học/Cao đẳng về IT."
+          ],
+          "phan_mem_ngon_ngu": [
+            "Không."
+          ],
+          "lenh_va_cau_truc": [
+            "Không."
+          ],
+          "chua_duoc_dung": [
+            "Không."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài ghép nối tên chứng chỉ tin học quốc tế với nội dung kiến thức đánh giá."
+          ],
+          "luu_y_ra_de": "Mang tính chất tìm hiểu định hướng nghề nghiệp."
+        }
+      ],
+      "chuyen_de": [
+        "Chuyên đề 11.1 (ICT): Thực hành phần mềm xử lý ảnh và thiết kế truyền thông nâng cao",
+        "Chuyên đề 11.2 (CS): Thiết lập CSDL và Lập trình kết nối CSDL với Python",
+        "Chuyên đề 11.3: Nguồn mở và Ứng dụng phần mềm tự do"
+      ],
+      "ghi_chu_chua_chac": [
+        "Bộ sách Kết nối tri thức dùng phần mềm HeidiSQL kết hợp MySQL cho định hướng CS Lớp 11."
+      ]
+    },
+    {
+      "lop": 12,
+      "chuong": [
+        {
+          "id": "tin12-tri-tue-nhan-tao-iot",
+          "ten": "Trí tuệ nhân tạo (AI), IoT và Mạng máy tính thế hệ mới",
+          "hoc_ky": 1,
+          "mach": "A",
+          "dinh_huong": "chung",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 1: Máy tính và xã hội - Giới thiệu Trí tuệ nhân tạo",
+            "CTST": "Chủ đề 1: Máy tính và xã hội - Trí tuệ nhân tạo và IoT",
+            "CD": "Chủ đề A: Máy tính và xã hội - Trí tuệ nhân tạo"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được khái niệm Trí tuệ nhân tạo (AI), phân biệt được AI yếu (Narrow AI) và AI mạnh (General AI); nêu được một số ứng dụng tiêu biểu của AI (nhận dạng khuôn mặt, dịch tự động, trợ lý ảo, xe tự lái, ChatGPT/Generative AI).",
+            "Nêu được khái niệm Học máy (Machine Learning) và Học sâu (Deep Learning) ở mức độ đại cương.",
+            "Phân tích được những cảnh báo về nguy cơ và đạo đức khi phát triển Trí tuệ nhân tạo (mất việc làm, vi phạm quyền riêng tư, thiên vị dữ liệu).",
+            "Trình bày được khái niệm IoT nâng cao và xu hướng phát triển mạng 5G/6G."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Khái niệm AI tạo sinh (Generative AI), Mô hình ngôn ngữ lớn (LLM).",
+            "Ứng dụng thực tế của Chatbot AI trong học tập và công việc.",
+            "Đạo đức AI (AI Ethics)."
+          ],
+          "phan_mem_ngon_ngu": [
+            "Các công cụ AI trực tuyến (ChatGPT, Google Gemini, Copilot) ở mức trải nghiệm ứng dụng."
+          ],
+          "lenh_va_cau_truc": [
+            "Không có lập trình mô hình AI."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG toán cao cấp lập trình mạng nơ-ron (TensorFlow, PyTorch, giải thuật lan truyền ngược Backpropagation).",
+            "CHƯA DÙNG các công thức đại số tuyến tính ma trận đại học."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài chọn nhận định đúng về đặc điểm của Trí tuệ nhân tạo hẹp (Narrow AI).",
+            "Dạng bài phân tích một tình huống vi phạm đạo đức khi sử dụng công cụ AI (ví dụ: dùng AI viết toàn bộ bài luận nộp cho thầy cô mà không tự tư duy).",
+            "Dạng bài phân biệt giữa Học máy (Machine Learning) và lập trình truyền thống dựa trên luật."
+          ],
+          "luu_y_ra_de": "Chủ đề chung bắt buộc cho cả học sinh ICT và CS Lớp 12. Nội dung cập nhật các thành tựu AI mới nhất theo SGK GDPT 2018."
+        },
+        {
+          "id": "tin12-an-toan-bao-mat-thong-tin",
+          "ten": "Bảo mật thông tin và An toàn mạng",
+          "hoc_ky": 1,
+          "mach": "B",
+          "dinh_huong": "chung",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 2: Mạng máy tính và Internet - An toàn thông tin",
+            "CTST": "Chủ đề 2: Mạng máy tính và Internet - Bảo mật dữ liệu",
+            "CD": "Chủ đề B: Mạng máy tính và Internet - An toàn không gian mạng"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được các nguyên lý bảo mật thông tin cơ bản (Tính bảo mật - Confidentiality, Tính toàn vẹn - Integrity, Tính sẵn sàng - Availability - mô hình CIA).",
+            "Giải thích được khái niệm Mã hóa dữ liệu (Mã hóa đối xứng và Mã hóa bất đối xứng) ở mức độ nguyên lý.",
+            "Trình bày được vai trò của Chữ ký số (Digital signature) và Chứng thư số (Digital certificate) trong giao dịch điện tử."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Mô hình CIA trong an toàn thông tin.",
+            "Nguyên lý khóa công khai (Public key) và khóa bí mật (Private key).",
+            "Các giao thức bảo mật trang web (`https://`)."
+          ],
+          "phan_mem_ngon_ngu": [
+            "Công cụ chữ ký số cá nhân, trình duyệt bảo mật."
+          ],
+          "lenh_va_cau_truc": [
+            "Không."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG chứng minh toán học định lý Fermat hay mã hóa RSA chi tiết đại học.",
+            "CHƯA DÙNG kỹ thuật tấn công bẻ khóa mật mã (Cryptanalysis)."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài ghép nối các mục tiêu của mô hình CIA (Bảo mật, Toàn vẹn, Sẵn sàng) với mô tả tương ứng.",
+            "Dạng bài phân tích nguyên lý hoạt động của Chữ ký số khi gửi tài liệu điện tử.",
+            "Dạng bài phân biệt Mã hóa đối xứng (dùng 1 khóa) và Mã hóa bất đối xứng (dùng cặp khóa)."
+          ],
+          "luu_y_ra_de": "Chủ đề chung cho cả 2 định hướng."
+        },
+        {
+          "id": "tin12-dao-duc-phap-luat-van-hoa-so",
+          "ten": "Đạo đức, pháp luật và văn hóa trong môi trường số",
+          "hoc_ky": 1,
+          "mach": "D",
+          "dinh_huong": "chung",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 3: Đạo đức, pháp luật và văn hóa trong môi trường số",
+            "CTST": "Chủ đề 3: Đạo đức, pháp luật và văn hóa trong môi trường số",
+            "CD": "Chủ đề D: Đạo đức, pháp luật và văn hóa trong môi trường số"
+          },
+          "yeu_cau_can_dat": [
+            "Phân tích được trách nhiệm pháp lý và đạo đức của công dân số trong kỷ nguyên Trí tuệ nhân tạo.",
+            "Biết cách phòng tránh và đấu tranh với các hành vi xâm phạm quyền riêng tư, gian lận thương mại số và thao túng thông tin trên không gian mạng."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Quy tắc ứng xử công dân số.",
+            "Trách nhiệm bảo vệ dữ liệu cá nhân theo quy định nhà nước."
+          ],
+          "phan_mem_ngon_ngu": [
+            "Không."
+          ],
+          "lenh_va_cau_truc": [
+            "Không."
+          ],
+          "chua_duoc_dung": [
+            "Không."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài xử lý tình huống đạo đức liên quan đến việc tạo và phát tán hình ảnh/video giả mạo Deepfake."
+          ],
+          "luu_y_ra_de": "Tích hợp giáo dục công dân số kỷ nguyên AI."
+        },
+        {
+          "id": "tin12-thiet-ke-web-html-css-ict",
+          "ten": "Tin học ứng dụng - Thiết kế trang web với HTML và CSS",
+          "hoc_ky": 2,
+          "mach": "E",
+          "dinh_huong": "ICT",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 4 (ICT): Thiết kế trang web với HTML và CSS",
+            "CTST": "Chủ đề 4 (ICT): Tạo trang web bằng HTML và CSS",
+            "CD": "Chủ đề E (ICT): Thiết kế và tạo trang web"
+          },
+          "yeu_cau_can_dat": [
+            "Hiểu được cấu trúc cơ bản của một tài liệu HTML (`<!DOCTYPE html>`, `<html>`, `<head>`, `<body>`).",
+            "Sử dụng được các thẻ HTML cơ bản để định dạng nội dung: Thẻ tiêu đề (`<h1>` đến `<h6>`), thẻ đoạn văn (`<p>`), thẻ tạo danh sách (`<ul>`, `<ol>`, `<li>`), thẻ tạo liên kết (`<a>`), thẻ chèn ảnh (`<img>`), thẻ chèn bảng (`<table>`, `<tr>`, `<td>`, `<th>`).",
+            "Sử dụng được Ngôn ngữ định kiểu biểu mẫu CSS (Cascading Style Sheets) để định dạng giao diện trang web (màu sắc `color`, `background-color`, phông chữ `font-family`, cỡ chữ `font-size`, lề `margin`, `padding`).",
+            "Biết cách nhúng CSS vào trang web (Inline CSS, Internal CSS trong thẻ `<style>`, External CSS tệp `.css`).",
+            "Xây dựng được một trang web hoàn chỉnh có giao diện đẹp mắt và có liên kết giữa các trang."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Cú pháp thẻ mở và thẻ đóng trong HTML.",
+            "Thuộc tính của thẻ: `href` trong `<a>`, `src` và `alt` trong `<img>`.",
+            "Bộ chọn CSS (CSS Selectors): Bộ chọn thẻ, Bộ chọn lớp (Class `.name`), Bộ chọn định danh (ID `#name`).",
+            "Mô hình hộp (Box model) cơ bản trong CSS."
+          ],
+          "phan_mem_ngon_ngu": [
+            "Ngôn ngữ đánh dấu HTML5, Ngôn ngữ CSS3.",
+            "Trình chỉnh sửa văn bản mã nguồn: VS Code / Notepad++ / Sublime Text."
+          ],
+          "lenh_va_cau_truc": [
+            "Các thẻ HTML: `html`, `head`, `body`, `title`, `h1-h6`, `p`, `a`, `img`, `table`, `tr`, `td`, `th`, `ul`, `ol`, `li`, `div`, `span`, `style`, `link`.",
+            "Các thuộc tính CSS: `color`, `background-color`, `font-size`, `font-family`, `text-align`, `width`, `height`, `margin`, `padding`, `border`."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG lập trình kịch bản JavaScript tương tác động (trừ một số hiệu ứng đơn giản nếu SGK giới thiệu).",
+            "CHƯA DÙNG các Framework CSS phức tạp như Bootstrap, TailwindCSS.",
+            "CHƯA DÙNG lập trình Backend (PHP, Node.js, Python Flask) kết nối CSDL."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài đọc đoạn mã HTML và chọn kết quả hiển thị tương ứng trên trình duyệt web.",
+            "Dạng bài phát hiện lỗi sai trong cú pháp thẻ HTML (như quên thẻ đóng `</p>`, gõ sai tên thuộc tính `src`).",
+            "Dạng bài viết đoạn mã CSS để đổi màu chữ tiêu đề `<h1>` thành màu đỏ và căn giữa.",
+            "Dạng bài ghép nối mã thẻ HTML với chức năng tạo bảng/tạo liên kết tương ứng."
+          ],
+          "luu_y_ra_de": "CHỦ ĐỀ TRỌNG TÂM DÀNH RIÊNG CHO ĐỊNH HƯỚNG TIN HỌC ỨNG DỤNG (ICT) LỚP 12. Kiểm tra trực tiếp khả năng đọc hiểu và viết mã HTML/CSS."
+        },
+        {
+          "id": "tin12-lap-trinh-huong-doi-tuong-oop-cs",
+          "ten": "Khoa học máy tính - Lập trình hướng đối tượng (OOP) và Thuật toán nâng cao với Python",
+          "hoc_ky": 2,
+          "mach": "F",
+          "dinh_huong": "CS",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 4 (CS): Lập trình hướng đối tượng và Giải quyết bài toán",
+            "CTST": "Chủ đề 4 (CS): Lập trình hướng đối tượng (OOP) trong Python",
+            "CD": "Chủ đề F (CS): Thuật toán nâng cao và Lập trình hướng đối tượng"
+          },
+          "yeu_cau_can_dat": [
+            "Hiểu được các khái niệm cơ bản của Lập trình hướng đối tượng (OOP): Lớp (Class), Đối tượng (Object), Thuộc tính (Attribute), Phương thức (Method).",
+            "Khai báo được lớp trong Python với từ khóa `class`, phương thức khởi tạo `__init__(self, ...)` và tham số `self`.",
+            "Tạo được đối tượng từ lớp và truy cập thuộc tính, gọi phương thức của đối tượng.",
+            "Hiểu được tính kế thừa (Inheritance) cơ bản giữa các lớp trong Python.",
+            "Áp dụng được một số thuật toán nâng cao hoặc cấu trúc dữ liệu nâng cao (Độ phức tạp thuật toán Big-O khái quát, kỹ thuật duyệt/quy hoạch động đơn giản) để giải quyết bài toán thực tế."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Cú pháp khai báo Class trong Python:",
+            "```python\nclass HocSinh:\n    def __init__(self, ten, diem):\n        self.ten = ten\n        self.diem = diem\n    def xuat(self):\n        print(self.ten, self.diem)\n```",
+            "Khái niệm Độ phức tạp thời gian thuật toán (Big-O: $O(1), O(n), O(n^2)$)."
+          ],
+          "phan_mem_ngon_ngu": [
+            "Ngôn ngữ lập trình Python 3.x (IDLE / PyCharm / VS Code)."
+          ],
+          "lenh_va_cau_truc": [
+            "Các từ khóa: `class`, `def`, `self`, `__init__`, `super()`."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG các tính chất OOP nâng cao như Đa hình (Polymorphism) phức tạp, Lớp trừu tượng (Abstract Class), Interface.",
+            "CHƯA DÙNG C++ hay Java (trừ khi SGK minh họa bổ sung)."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài đọc đoạn mã khai báo lớp Python và cho biết kết quả khi khởi tạo đối tượng và gọi phương thức.",
+            "Dạng bài hoàn thiện phương thức `__init__` hoặc phương thức tính điểm trung bình cho lớp `HocSinh`.",
+            "Dạng bài xác định độ phức tạp thời gian $O(n)$ hay $O(n^2)$ của một đoạn vòng lặp Python cho trước."
+          ],
+          "luu_y_ra_de": "CHỦ ĐỀ TRỌNG TÂM DÀNH RIÊNG CHO ĐỊNH HƯỚNG KHOA HỌC MÁY TÍNH (CS) LỚP 12. Kiểm tra năng lực lập trình OOP cơ bản bằng Python."
+        },
+        {
+          "id": "tin12-huong-nghiep-tin-hoc",
+          "ten": "Hướng nghiệp với tin học",
+          "hoc_ky": 2,
+          "mach": "G",
+          "dinh_huong": "chung",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 5: Hướng nghiệp với tin học",
+            "CTST": "Chủ đề 5: Hướng nghiệp với tin học",
+            "CD": "Chủ đề G: Hướng nghiệp với tin học"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được bức tranh tổng quan về thị trường lao động ngành CNTT và các ngành công nghệ mới (Khoa học dữ liệu, AI, An ninh mạng, Vi mạch bán dẫn).",
+            "Lập được kế hoạch học tập cá nhân phục vụ tuyển sinh Đại học/Cao đẳng và phát triển nghề nghiệp trong tương lai."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Định hướng tuyển sinh THPT môn Tin học."
+          ],
+          "phan_mem_ngon_ngu": [
+            "Không."
+          ],
+          "lenh_va_cau_truc": [
+            "Không."
+          ],
+          "chua_duoc_dung": [
+            "Không."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài lựa chọn các kỹ năng công nghệ cốt lõi cần chuẩn bị khi bước vào thị trường lao động kỷ nguyên AI."
+          ],
+          "luu_y_ra_de": "Mang tính chất hướng nghiệp tổng kết cấp THPT."
+        }
+      ],
+      "chuyen_de": [
+        "Chuyên đề 12.1 (ICT): Thực hành thiết kế trang web nâng cao với CSS và Responsive",
+        "Chuyên đề 12.2 (CS): Thực hành lập trình giải quyết bài toán thuật toán nâng cao và Mô phỏng",
+        "Chuyên đề 12.3: Học máy đại cương và Ứng dụng Trí tuệ nhân tạo"
+      ],
+      "ghi_chu_chua_chac": [
+        "Đề thi Tốt nghiệp THPT từ năm 2025 có cấu trúc tách riêng phần lựa chọn ICT và CS ở Phần II và Phần III."
+      ]
+    }
+  ],
+  "tien_trinh_lap_trinh": [
+    {
+      "noi_dung": "Khái niệm thuật toán, sơ đồ khối (Flowchart)",
+      "lop": 6,
+      "id": "tin6-thuat-toan-co-ban",
+      "ngon_ngu": "Ngôn ngữ tự nhiên & Sơ đồ khối",
+      "ghi_chu": "Chưa lập trình bằng máy tính, chỉ vẽ sơ đồ khối và mô tả các cấu trúc Tuần tự, Rẽ nhánh, Lặp."
+    },
+    {
+      "noi_dung": "Thuật toán tìm kiếm tuần tự, tìm kiếm nhị phân, sắp xếp nổi bọt, sắp xếp chọn",
+      "lop": 7,
+      "id": "tin7-thuat-toan-tim-kiem-sap-xep",
+      "ngon_ngu": "Ngôn ngữ tự nhiên & Mô phỏng chạy tay",
+      "ghi_chu": "Chưa viết code, mô phỏng chạy tay trên dãy số nhỏ."
+    },
+    {
+      "noi_dung": "Lập trình trực quan Scratch: Biến, Rẽ nhánh, Vòng lặp",
+      "lop": 8,
+      "id": "tin8-lap-trinh-truc-quan-scratch",
+      "ngon_ngu": "Scratch 3.0",
+      "ghi_chu": "Bắt đầu lập trình trên máy tính bằng kéo thả khối lệnh. Chưa có List, chưa có Hàm."
+    },
+    {
+      "noi_dung": "Lập trình trực quan Scratch nâng cao: Biến Danh sách (List), Khối tự định nghĩa (Hàm)",
+      "lop": 9,
+      "id": "tin9-lap-trinh-giai-quyet-van-de",
+      "ngon_ngu": "Scratch 3.0",
+      "ghi_chu": "Cài đặt thuật toán tìm kiếm/sắp xếp bằng Scratch có sử dụng Danh sách và Hàm tự tạo."
+    },
+    {
+      "noi_dung": "Lập trình Python cơ bản: Kiểu dữ liệu, if, for, while, list cơ bản, str",
+      "lop": 10,
+      "id": "tin10-lap-trinh-python-co-ban",
+      "ngon_ngu": "Python 3.x",
+      "ghi_chu": "Bắt đầu lập trình ngôn ngữ văn bản (Text-based). CHƯA học hàm def, CHƯA đọc ghi tệp."
+    },
+    {
+      "noi_dung": "Truy vấn dữ liệu và Hệ quản trị CSDL quan hệ với SQL",
+      "lop": 11,
+      "id": "tin11-csdl-sql-cs",
+      "ngon_ngu": "SQL (MySQL/MariaDB/SQLite)",
+      "ghi_chu": "Định hướng CS: Viết các câu lệnh SELECT, INSERT, UPDATE, DELETE."
+    },
+    {
+      "noi_dung": "Lập trình Python nâng cao: Hàm tự định nghĩa (def), Đọc/Ghi tệp (.txt), Cài đặt Thuật toán",
+      "lop": 11,
+      "id": "tin11-lap-trinh-python-nang-cao-cs",
+      "ngon_ngu": "Python 3.x",
+      "ghi_chu": "Định hướng CS: Viết hàm def, thao tác tệp tin open/read/write, cài đặt thuật toán bằng Python."
+    },
+    {
+      "noi_dung": "Ngôn ngữ đánh dấu trang web HTML5 và Ngôn ngữ định kiểu CSS3",
+      "lop": 12,
+      "id": "tin12-thiet-ke-web-html-css-ict",
+      "ngon_ngu": "HTML5 & CSS3",
+      "ghi_chu": "Định hướng ICT: Viết mã tạo trang web tĩnh, căn chỉnh giao diện web."
+    },
+    {
+      "noi_dung": "Lập trình hướng đối tượng (OOP): Class, Object, __init__, self, Thuật toán nâng cao",
+      "lop": 12,
+      "id": "tin12-lap-trinh-huong-doi-tuong-oop-cs",
+      "ngon_ngu": "Python 3.x",
+      "ghi_chu": "Định hướng CS: Lập trình OOP với Python (Lớp và Đối tượng), đánh giá độ phức tạp thuật toán Big-O."
+    }
+  ],
+  "cau_truc_de": [
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 6,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 12,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 2,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Tự luận / Thực hành mô tả",
+          "so_cau": 2,
+          "diem_moi_cau": 2.5
+        }
+      ],
+      "pham_vi": [
+        "tin6-thong-tin-du-lieu",
+        "sinh6-mang-may-tinh-internet"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 1",
+      "lop": 6,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 12,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 2,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Tự luận / Thực hành mô tả",
+          "so_cau": 2,
+          "diem_moi_cau": 2.5
+        }
+      ],
+      "pham_vi": [
+        "tin6-thong-tin-du-lieu",
+        "sinh6-mang-may-tinh-internet",
+        "tin6-luu-tru-tim-kiem-trao-doi-thong-tin"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 2",
+      "lop": 6,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 12,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 2,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Tự luận / Thực hành mô tả",
+          "so_cau": 2,
+          "diem_moi_cau": 2.5
+        }
+      ],
+      "pham_vi": [
+        "tin6-dao-duc-phap-luat-van-hoa-so",
+        "tin6-soan-thao-trinh-chieu"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 2",
+      "lop": 6,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 12,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 2,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Tự luận / Thực hành mô tả",
+          "so_cau": 2,
+          "diem_moi_cau": 2.5
+        }
+      ],
+      "pham_vi": [
+        "tin6-soan-thao-trinh-chieu",
+        "tin6-thuat-toan-co-ban"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 7,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 12,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 2,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Tự luận / Thực hành",
+          "so_cau": 2,
+          "diem_moi_cau": 2.5
+        }
+      ],
+      "pham_vi": [
+        "tin7-thiet-bi-he-dieu-hanh",
+        "tin7-mang-xa-hoi-trao-doi-thong-tin"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 1",
+      "lop": 7,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 12,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 2,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Tự luận / Thực hành",
+          "so_cau": 2,
+          "diem_moi_cau": 2.5
+        }
+      ],
+      "pham_vi": [
+        "tin7-thiet-bi-he-dieu-hanh",
+        "tin7-mang-xa-hoi-trao-doi-thong-tin",
+        "tin7-van-hoa-ung-xu-tren-mang"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 2",
+      "lop": 7,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 12,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 2,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Tự luận / Thực hành",
+          "so_cau": 2,
+          "diem_moi_cau": 2.5
+        }
+      ],
+      "pham_vi": [
+        "tin7-bang-tinh-dien-tu"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 2",
+      "lop": 7,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 12,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 2,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Tự luận / Thực hành",
+          "so_cau": 2,
+          "diem_moi_cau": 2.5
+        }
+      ],
+      "pham_vi": [
+        "tin7-bang-tinh-dien-tu",
+        "tin7-trinh-chieu-da-phuong-tien",
+        "tin7-thuat-toan-tim-kiem-sap-xep"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 8,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 12,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 2,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Tự luận / Thực hành",
+          "so_cau": 2,
+          "diem_moi_cau": 2.5
+        }
+      ],
+      "pham_vi": [
+        "tin8-lich-su-may-tinh-du-lieu",
+        "tin8-mang-may-tinh-internet"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 1",
+      "lop": 8,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 12,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 2,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Tự luận / Thực hành",
+          "so_cau": 2,
+          "diem_moi_cau": 2.5
+        }
+      ],
+      "pham_vi": [
+        "tin8-lich-su-may-tinh-du-lieu",
+        "tin8-mang-may-tinh-internet",
+        "tin8-dao-duc-phap-luat-van-hoa-so"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 2",
+      "lop": 8,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 12,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 2,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Tự luận / Thực hành",
+          "so_cau": 2,
+          "diem_moi_cau": 2.5
+        }
+      ],
+      "pham_vi": [
+        "tin8-ung-dung-tin-hoc-do-hoa"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 2",
+      "lop": 8,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 12,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 2,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Tự luận / Thực hành",
+          "so_cau": 2,
+          "diem_moi_cau": 2.5
+        }
+      ],
+      "pham_vi": [
+        "tin8-ung-dung-tin-hoc-do-hoa",
+        "tin8-lap-trinh-truc-quan-scratch"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 9,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 12,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 2,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Tự luận / Thực hành",
+          "so_cau": 2,
+          "diem_moi_cau": 2.5
+        }
+      ],
+      "pham_vi": [
+        "tin9-may-tinh-va-xa-hoi",
+        "tin9-mang-may-tinh-dich-vu-web"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 1",
+      "lop": 9,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 12,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 2,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Tự luận / Thực hành",
+          "so_cau": 2,
+          "diem_moi_cau": 2.5
+        }
+      ],
+      "pham_vi": [
+        "tin9-may-tinh-va-xa-hoi",
+        "tin9-mang-may-tinh-dich-vu-web",
+        "tin9-dao-duc-phap-luat-van-hoa-so"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 2",
+      "lop": 9,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 12,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 2,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Tự luận / Thực hành",
+          "so_cau": 2,
+          "diem_moi_cau": 2.5
+        }
+      ],
+      "pham_vi": [
+        "tin9-ung-dung-tin-hoc-da-phuong-tien"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 2",
+      "lop": 9,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 12,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 2,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Tự luận / Thực hành",
+          "so_cau": 2,
+          "diem_moi_cau": 2.5
+        }
+      ],
+      "pham_vi": [
+        "tin9-ung-dung-tin-hoc-da-phuong-tien",
+        "tin9-lap-trinh-giai-quyet-van-de",
+        "tin9-huong-nghiep-tin-hoc"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 10,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Trắc nghiệm trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25
+        }
+      ],
+      "pham_vi": [
+        "tin10-may-tinh-va-xa-hoi-tri-thuc",
+        "tin10-mang-may-tinh-internet",
+        "tin10-dao-duc-phap-luat-van-hoa-so"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 1",
+      "lop": 10,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Trắc nghiệm trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25
+        }
+      ],
+      "pham_vi": [
+        "tin10-may-tinh-va-xa-hoi-tri-thuc",
+        "tin10-bieu-dien-du-lieu-log-cs",
+        "tin10-do-hoa-inkscape-gimp-ict"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 2",
+      "lop": 10,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Trắc nghiệm trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25
+        }
+      ],
+      "pham_vi": [
+        "tin10-lap-trinh-python-co-ban"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 2",
+      "lop": 10,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Trắc nghiệm trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25
+        }
+      ],
+      "pham_vi": [
+        "tin10-lap-trinh-python-co-ban",
+        "tin10-huong-nghiep-tin-hoc"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 11,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Trắc nghiệm trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25
+        }
+      ],
+      "pham_vi": [
+        "tin11-he-dieu-hanh-phan-cung-phan-mem",
+        "tin11-mang-may-tinh-internet"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 1",
+      "lop": 11,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Trắc nghiệm trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25
+        }
+      ],
+      "pham_vi": [
+        "tin11-dao-duc-phap-luat-van-hoa-so",
+        "tin11-csdl-sql-cs",
+        "tin11-ung-dung-phan-mem-ict"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 2",
+      "lop": 11,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Trắc nghiệm trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25
+        }
+      ],
+      "pham_vi": [
+        "tin11-lap-trinh-python-nang-cao-cs",
+        "tin11-ung-dung-phan-mem-ict"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 2",
+      "lop": 11,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Trắc nghiệm trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25
+        }
+      ],
+      "pham_vi": [
+        "tin11-lap-trinh-python-nang-cao-cs",
+        "tin11-huong-nghiep-tin-hoc"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 12,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Trắc nghiệm trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25
+        }
+      ],
+      "pham_vi": [
+        "tin12-tri-tue-nhan-tao-iot",
+        "tin12-an-toan-bao-mat-thong-tin"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 1",
+      "lop": 12,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Trắc nghiệm trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25
+        }
+      ],
+      "pham_vi": [
+        "tin12-tri-tue-nhan-tao-iot",
+        "tin12-an-toan-bao-mat-thong-tin",
+        "tin12-dao-duc-phap-luat-van-hoa-so"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 2",
+      "lop": 12,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Trắc nghiệm trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25
+        }
+      ],
+      "pham_vi": [
+        "tin12-thiet-ke-web-html-css-ict",
+        "tin12-lap-trinh-huong-doi-tuong-oop-cs"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 2",
+      "lop": 12,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Trắc nghiệm trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25
+        }
+      ],
+      "pham_vi": [
+        "tin12-thiet-ke-web-html-css-ict",
+        "tin12-lap-trinh-huong-doi-tuong-oop-cs",
+        "tin12-huong-nghiep-tin-hoc"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Thi tốt nghiệp THPT 2025",
+      "lop": 12,
+      "thoi_gian_phut": 50,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm lựa chọn 4 đáp án (Phần chung cả ICT và CS)",
+          "so_cau": 24,
+          "diem_moi_cau": 0.25,
+          "mo_ta": "Mỗi câu chọn 1 đáp án đúng duy nhất trong 4 phương án (A, B, C, D). Nội dung thuộc các chủ đề chung A, B, D. Tổng 6.0 điểm."
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai (Phần riêng theo định hướng ICT hoặc CS)",
+          "so_cau": 4,
+          "diem_moi_cau": 1.0,
+          "mo_ta": "Gồm 4 câu hỏi trắc nghiệm Đúng/Sai. Thí sinh chọn theo Định hướng Tin học ứng dụng (ICT) hoặc Định hướng Khoa học máy tính (CS). Mỗi câu gồm 4 ý (a, b, c, d). Điểm từng câu: đúng 1 ý = 0.1đ; đúng 2 ý = 0.25đ; đúng 3 ý = 0.5đ; đúng cả 4 ý = 1.0đ. Tổng 4.0 điểm."
+        }
+      ],
+      "pham_vi": [
+        "tin12-tri-tue-nhan-tao-iot",
+        "tin12-an-toan-bao-mat-thong-tin",
+        "tin12-dao-duc-phap-luat-van-hoa-so",
+        "tin12-thiet-ke-web-html-css-ict",
+        "tin12-lap-trinh-huong-doi-tuong-oop-cs"
+      ],
+      "ti_le_muc_do": "30% Nhận biết - 40% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao (Bám sát Cấu trúc định dạng đề thi Tốt nghiệp THPT từ năm 2025 của Bộ GD&ĐT)"
+    }
+  ]
+}

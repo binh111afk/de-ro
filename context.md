@@ -18,6 +18,7 @@ Web app soạn đề thi tiếng Việt kiểu Word: React 19 + TypeScript + Vit
 2. Một editor TipTap liên tục; trang A4 chỉ là nền vẽ phía sau (`zoom` CSS, không `transform`).
 3. Key LLM ở server, gọi qua proxy `/api/llm`; không đưa key vào bundle. Client gọi API bằng `apiFetch` (gắn token đăng nhập).
 4. Giao diện tiếng Việt, bám Word / GenOffice.
+5. KHÔNG ghi đường dẫn tuyệt đối ra ngoài dự án (`C:/Users/.../Downloads/...`, worktree, scratchpad) vào code hay script. Người dùng gửi file từ Downloads thì chép vào dự án trước (icon: `scripts/nguon-icon/`, khung chương trình: `scripts/khung/ban-goc/`), rồi đọc bằng đường dẫn tương đối (`new URL('./…', import.meta.url)`).
 
 ## Lệnh
 

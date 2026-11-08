@@ -1,0 +1,725 @@
+{
+  "mon": "Giáo dục công dân (lớp 6–9) / Giáo dục kinh tế và pháp luật (lớp 10–12)",
+  "trang_thai": "BẢN NHÁP. Tên chủ đề đã đối chiếu một phần qua nguồn tra cứu. Phần nội dung chi tiết, mục lục đầy đủ của ba bộ sách và tình trạng hiệu lực của từng điều luật cần kiểm tra trước khi dùng cho prompt. Các mục đánh dấu 'chưa xác minh' không nên đưa vào đề.",
+  "nguon": [
+    "Thông tư 32/2018/TT-BGDĐT (Chương trình GDPT 2018), phần môn Giáo dục công dân và môn Giáo dục kinh tế và pháp luật; chưa tải được bản đầy đủ để đối chiếu từng yêu cầu cần đạt",
+    "Thông tư 13/2022/TT-BGDĐT sửa đổi Thông tư 32/2018",
+    "Thông tư 22/2021/TT-BGDĐT về đánh giá học sinh (đã dùng để xác định lớp nào áp dụng)",
+    "Quyết định 4068/QĐ-BGDĐT ngày 28/11/2023 (phương án thi tốt nghiệp THPT từ 2025) và cấu trúc đề thi tốt nghiệp THPT 2025 qua các báo đưa tin",
+    "Luật Trật tự, an toàn giao thông đường bộ 36/2024/QH15; Luật Đường bộ 35/2024/QH15; Luật Đất đai 31/2024/QH15; Luật Xử lý vi phạm hành chính 56/2024/QH15 (qua tài liệu giới thiệu của Bộ Tư pháp và các báo)",
+    "Nghị quyết 202/2025/QH15 (12/6/2025) về sắp xếp đơn vị hành chính và bỏ cấp huyện; Nghị định 151/2025/NĐ-CP và 226/2025/NĐ-CP (qua bài báo khoa học tra cứu được)",
+    "Mục lục SGK KNTT, CTST, CD: đối chiếu rời rạc qua trang ôn tập, chưa đủ để chốt tên bài"
+  ],
+  "thay_doi_phap_luat": [
+    {
+      "noi_dung": "Luật Giao thông đường bộ 2008 (23/2008/QH12) hết hiệu lực từ 01/01/2025, thay bằng Luật Trật tự, an toàn giao thông đường bộ 2024 (36/2024/QH15) và Luật Đường bộ 2024 (35/2024/QH15).",
+      "anh_huong": "Sách cũ hoặc đề cũ dẫn Luật Giao thông đường bộ 2008 là sai. Dùng luật 2024 khi ra đề về an toàn giao thông.",
+      "da_xac_minh": true
+    },
+    {
+      "noi_dung": "Luật Thủ đô 2012 hết hiệu lực từ 01/01/2025, thay bằng Luật Thủ đô 2024.",
+      "anh_huong": "Chỉ cần lưu ý nếu đề có nội dung về Hà Nội hoặc thủ đô.",
+      "da_xac_minh": true
+    },
+    {
+      "noi_dung": "Luật Đất đai 2024 (31/2024/QH15, ngày 18/01/2024) có hiệu lực từ 01/01/2025.",
+      "anh_huong": "Mọi căn cứ về đất đai trong sách hoặc đề cũ cần đối chiếu với luật này.",
+      "da_xac_minh": true
+    },
+    {
+      "noi_dung": "Từ 01/7/2025 chính quyền địa phương vận hành hai cấp (tỉnh và xã), bãi bỏ cấp huyện theo Nghị quyết 202/2025/QH15 (12/6/2025).",
+      "anh_huong": "Sách cũ nói về ba cấp chính quyền địa phương (tỉnh, huyện, xã). Không ra đề yêu cầu chức năng của Hội đồng nhân dân cấp huyện hay Ủy ban nhân dân cấp huyện.",
+      "da_xac_minh": true
+    },
+    {
+      "noi_dung": "Luật Xử lý vi phạm hành chính 2024 (56/2024/QH15) có hiệu lực từ 01/01/2025, có một số khoản chuyển tiếp.",
+      "anh_huong": "Mức phạt và thủ tục xử phạt trong sách cũ có thể đã đổi. Không dùng số liệu mức phạt cụ thể nếu chưa kiểm tra.",
+      "da_xac_minh": true
+    },
+    {
+      "noi_dung": "Luật Giáo dục sửa đổi 2025 có sửa đổi Điều 6 về hệ thống giáo dục quốc dân (được nêu trong nguồn tra cứu).",
+      "anh_huong": "Chưa xác minh chi tiết điều khoản nào có liên quan đến chương trình GDCD. Cần kiểm tra trước khi ra đề về hệ thống giáo dục.",
+      "da_xac_minh": false
+    },
+    {
+      "noi_dung": "Các văn bản khác cần kiểm tra hiệu lực: Hiến pháp (bản sửa đổi gần nhất), Bộ luật Dân sự, Bộ luật Hình sự (có sửa đổi mới), Bộ luật Lao động, Luật Hôn nhân và gia đình 2014, Luật Đầu tư 2020, Luật Thuế các loại.",
+      "anh_huong": "Chưa xác minh tình trạng hiệu lực tính đến thời điểm hiện tại.",
+      "da_xac_minh": false
+    }
+  ],
+  "lop": [
+    {
+      "lop": 6,
+      "mon_lop": "Giáo dục công dân",
+      "chuong": [
+        {
+          "id": "gdcd6-tu-hao-truyen-thong-gia-dinh",
+          "ten": "Tự hào về truyền thống gia đình, dòng họ",
+          "hoc_ky": 1,
+          "mach": "Đạo đức",
+          "ten_theo_sach": { "KNTT": "chưa xác minh", "CTST": "chưa xác minh", "CD": "chưa xác minh" },
+          "yeu_cau_can_dat": [
+            "Nêu được truyền thống gia đình, dòng họ và ý nghĩa của truyền thống đó đối với bản thân (theo chủ đề yêu nước của chương trình lớp 6, đã đối chiếu tên chủ đề qua bảng tổng hợp).",
+            "Thể hiện được sự tự hào và trách nhiệm giữ gìn truyền thống gia đình trong hành vi cụ thể."
+          ],
+          "khai_niem": ["truyền thống gia đình", "dòng họ", "tự hào"],
+          "can_cu_phap_ly": [],
+          "kien_thuc_duoc_dung": ["Nội quy và vai trò của gia đình trong đời sống học sinh (kiến thức đời sống, chưa cần văn bản pháp luật)."],
+          "chua_duoc_dung": [
+            "Truyền thống dân tộc và lịch sử dân tộc: học ở lớp 8.",
+            "Lí tưởng sống và định hướng nghề nghiệp: học ở lớp 9.",
+            "Quyền và nghĩa vụ công dân theo Hiến pháp: không thuộc chương trình lớp 6."
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc tình huống học sinh kể về truyền thống gia đình và chọn hành vi thể hiện sự tự hào đúng",
+            "Nhận biết hành vi giữ gìn hoặc không giữ gìn truyền thống trong tình huống đời sống"
+          ],
+          "luu_y_ra_de": "Chỉ hỏi về hành vi và nhận thức, không hỏi định nghĩa pháp lý về gia đình."
+        },
+        {
+          "id": "gdcd6-yeu-thuong-con-nguoi",
+          "ten": "Yêu thương con người (nhân ái)",
+          "hoc_ky": 2,
+          "mach": "Đạo đức",
+          "ten_theo_sach": { "KNTT": "chưa xác minh", "CTST": "chưa xác minh", "CD": "chưa xác minh" },
+          "yeu_cau_can_dat": [
+            "Nêu được biểu hiện của lòng yêu thương con người trong cuộc sống hằng ngày (theo mạch nhân ái lớp 6, đã đối chiếu tên chủ đề qua bảng tổng hợp).",
+            "Thể hiện được sự quan tâm, giúp đỡ người khác trong tình huống cụ thể."
+          ],
+          "khai_niem": ["nhân ái", "yêu thương con người", "giúp đỡ"],
+          "can_cu_phap_ly": [],
+          "kien_thuc_duoc_dung": ["Các quan hệ bạn bè, thầy cô, người thân trong nhà trường và gia đình."],
+          "chua_duoc_dung": [
+            "Bình đẳng và quyền con người theo pháp luật: không thuộc lớp 6.",
+            "Lòng nhân ái ở tầm chính sách xã hội: học ở lớp 8 trở lên."
+          ],
+          "dang_bai_dien_hinh": [
+            "Chọn hành vi thể hiện nhân ái trong tình huống có người gặp khó khăn",
+            "Nhận diện hành vi thiếu nhân ái trong tình huống cho trước"
+          ],
+          "luu_y_ra_de": "Tránh đưa ví dụ về luật hình sự hoặc xử phạt. Tình huống nên phù hợp học sinh lớp 6."
+        }
+      ],
+      "chuyen_de": [],
+      "ghi_chu_chua_chac": [
+        "Lớp 6 chỉ có 2 chương đã xác định tên theo bảng tổng hợp. Mạch Kĩ năng sống và Kinh tế của lớp 6 chưa xác minh.",
+        "Tên chủ đề ở ba bộ sách KNTT, CTST, CD chưa đối chiếu được; cần tra mục lục từng bộ."
+      ]
+    },
+    {
+      "lop": 7,
+      "mon_lop": "Giáo dục công dân",
+      "chuong": [
+        {
+          "id": "gdcd7-tu-hao-que-huong",
+          "ten": "Tự hào về truyền thống quê hương",
+          "hoc_ky": 1,
+          "mach": "Đạo đức",
+          "ten_theo_sach": { "KNTT": "chưa xác minh", "CTST": "chưa xác minh", "CD": "chưa xác minh" },
+          "yeu_cau_can_dat": [
+            "Nêu được truyền thống quê hương và ý nghĩa của truyền thống đó (theo mạch yêu nước lớp 7, đã đối chiếu tên chủ đề qua bảng tổng hợp).",
+            "Thể hiện được trách nhiệm góp phần giữ gìn truyền thống quê hương."
+          ],
+          "khai_niem": ["truyền thống quê hương", "tự hào", "trách nhiệm"],
+          "can_cu_phap_ly": [],
+          "kien_thuc_duoc_dung": ["Truyền thống gia đình, dòng họ (lớp 6)."],
+          "chua_duoc_dung": [
+            "Truyền thống dân tộc Việt Nam: học ở lớp 8.",
+            "Lí tưởng sống: học ở lớp 9.",
+            "Văn bản pháp luật về quản lí địa phương: không thuộc chương này."
+          ],
+          "dang_bai_dien_hinh": [
+            "Chọn hành vi thể hiện tự hào về quê hương trong tình huống cho trước",
+            "Nêu việc làm cụ thể để giữ gìn truyền thống quê hương"
+          ],
+          "luu_y_ra_de": "Dùng ví dụ phổ biến ở nhiều địa phương, tránh chi tiết riêng của một tỉnh nếu đề không xác định tỉnh."
+        }
+      ],
+      "chuyen_de": [],
+      "ghi_chu_chua_chac": [
+        "Mạch Nhân ái, Kinh tế, Pháp luật và Kĩ năng sống của lớp 7 chưa xác minh tên chủ đề. Không đưa vào đề cho đến khi bổ sung.",
+        "Nguồn tra cứu có nhắc 'tham gia hoạt động kinh tế xã hội' và 'kế hoạch phát triển bản thân' là yêu cầu cấp 2, nhưng chưa rõ lớp nào; cần kiểm tra."
+      ]
+    },
+    {
+      "lop": 8,
+      "mon_lop": "Giáo dục công dân",
+      "chuong": [
+        {
+          "id": "gdcd8-tu-hao-truyen-thong-dan-toc",
+          "ten": "Tự hào về truyền thống dân tộc Việt Nam",
+          "hoc_ky": 1,
+          "mach": "Đạo đức",
+          "ten_theo_sach": { "KNTT": "chưa xác minh", "CTST": "chưa xác minh", "CD": "chưa xác minh" },
+          "yeu_cau_can_dat": [
+            "Nêu được một số truyền thống tiêu biểu của dân tộc Việt Nam (theo mạch yêu nước lớp 8, đã đối chiếu qua bảng tổng hợp).",
+            "Thể hiện được sự tự hào và trách nhiệm giữ gìn truyền thống dân tộc trong hành vi cụ thể."
+          ],
+          "khai_niem": ["truyền thống dân tộc", "tự hào dân tộc", "trách nhiệm công dân"],
+          "can_cu_phap_ly": [],
+          "kien_thuc_duoc_dung": ["Truyền thống gia đình và quê hương (lớp 6–7)."],
+          "chua_duoc_dung": [
+            "Lí tưởng sống và định hướng nghề nghiệp: học ở lớp 9.",
+            "Quyền và nghĩa vụ công dân theo Hiến pháp ở mức chi tiết: chưa xác minh lớp học."
+          ],
+          "dang_bai_dien_hinh": [
+            "Nhận diện truyền thống dân tộc qua tình huống hoặc hình ảnh cho trước",
+            "Chọn hành vi thể hiện trách nhiệm giữ gìn truyền thống dân tộc"
+          ],
+          "luu_y_ra_de": "Không đưa câu hỏi về lịch sử chi tiết (năm, sự kiện). Tập trung vào giá trị và hành vi."
+        }
+      ],
+      "chuyen_de": [],
+      "ghi_chu_chua_chac": [
+        "Lớp 8: chỉ xác định được chủ đề yêu nước. Các mạch nhân ái, kinh tế, pháp luật chưa xác minh.",
+        "Tên chủ đề và thứ tự học kì cần tra mục lục ba bộ sách."
+      ]
+    },
+    {
+      "lop": 9,
+      "mon_lop": "Giáo dục công dân",
+      "chuong": [
+        {
+          "id": "gdcd9-song-co-li-tuong",
+          "ten": "Sống có lí tưởng",
+          "hoc_ky": 1,
+          "mach": "Đạo đức",
+          "ten_theo_sach": { "KNTT": "chưa xác minh", "CTST": "chưa xác minh", "CD": "chưa xác minh" },
+          "yeu_cau_can_dat": [
+            "Nêu được ý nghĩa của lí tưởng sống và biểu hiện của lí tưởng sống trong cuộc sống hằng ngày (theo mạch yêu nước lớp 9, đã đối chiếu qua bảng tổng hợp).",
+            "Xác định được mục tiêu và kế hoạch rèn luyện bản thân phù hợp lứa tuổi."
+          ],
+          "khai_niem": ["lí tưởng sống", "mục tiêu", "kế hoạch phát triển bản thân"],
+          "can_cu_phap_ly": [],
+          "kien_thuc_duoc_dung": ["Truyền thống dân tộc (lớp 8)."],
+          "chua_duoc_dung": [
+            "Quyền bầu cử và ứng cử ở mức chi tiết: chưa xác minh lớp học.",
+            "Nội dung giáo dục kinh tế và pháp luật lớp 10 trở lên."
+          ],
+          "dang_bai_dien_hinh": [
+            "Chọn lí tưởng sống phù hợp với tình huống của học sinh",
+            "Xây dựng hoặc đánh giá một kế hoạch phát triển bản thân đơn giản"
+          ],
+          "luu_y_ra_de": "Tránh hỏi về văn bản pháp luật. Đề nên gắn với tình huống đời sống và định hướng nghề nghiệp."
+        }
+      ],
+      "chuyen_de": [],
+      "ghi_chu_chua_chac": [
+        "Lớp 9 chỉ có một chương đã xác định tên. Mạch Kinh tế và Pháp luật của lớp 9 chưa xác minh.",
+        "Nguồn có nhắc 'định hướng vào vấn đề gì' ở lớp 9, nhưng nội dung chi tiết chưa tra được."
+      ]
+    },
+    {
+      "lop": 10,
+      "mon_lop": "Giáo dục kinh tế và pháp luật",
+      "chuong": [
+        {
+          "id": "ktpl10-thi-truong-co-che",
+          "ten": "Thị trường và cơ chế thị trường",
+          "hoc_ky": 1,
+          "mach": "Kinh tế",
+          "ten_theo_sach": { "KNTT": "chưa xác minh", "CTST": "chưa xác minh", "CD": "chưa xác minh" },
+          "yeu_cau_can_dat": [
+            "Nêu được khái niệm thị trường và các chủ thể tham gia thị trường.",
+            "Trình bày được cơ chế thị trường ở mức cơ bản (cung, cầu, giá cả)."
+          ],
+          "khai_niem": ["thị trường", "cơ chế thị trường", "cung", "cầu", "giá cả"],
+          "can_cu_phap_ly": [],
+          "kien_thuc_duoc_dung": ["Kiến thức kinh tế đời sống; đồ thị cung cầu đơn giản (kiến thức Toán lớp 9 về hàm số bậc nhất ở mức nhận biết)."],
+          "chua_duoc_dung": [
+            "Cạnh tranh và cung cầu chi tiết: lớp 11.",
+            "Đường cầu co giãn và công thức tính độ co giãn: THPT nâng cao hoặc đại học, không dùng ở lớp 10.",
+            "Mô hình kinh tế vĩ mô (GDP, lạm phát chi tiết): lớp 12 hoặc đại học."
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc đồ thị cung cầu và xác định giá cân bằng ở mức định tính",
+            "Phân biệt chủ thể thị trường trong tình huống mua bán"
+          ],
+          "luu_y_ra_de": "Không dùng hàm số phức tạp. Đề tập trung vào khái niệm và tình huống."
+        },
+        {
+          "id": "ktpl10-he-thong-phap-luat",
+          "ten": "Hệ thống pháp luật và văn bản pháp luật Việt Nam",
+          "hoc_ky": 2,
+          "mach": "Pháp luật",
+          "ten_theo_sach": { "KNTT": "Bài 12 (tên bài đã xác định)", "CTST": "chưa xác minh", "CD": "chưa xác minh" },
+          "yeu_cau_can_dat": [
+            "Nêu được khái niệm hệ thống pháp luật và các loại văn bản pháp luật Việt Nam.",
+            "Phân biệt được hiệu lực pháp lí giữa các loại văn bản theo luật hiện hành."
+          ],
+          "khai_niem": ["hệ thống pháp luật", "văn bản quy phạm pháp luật", "hiệu lực pháp lí"],
+          "can_cu_phap_ly": [
+            {
+              "van_ban": "Luật Ban hành văn bản quy phạm pháp luật",
+              "so_hieu": "chưa xác minh số hiệu và lần sửa đổi gần nhất",
+              "noi_dung": "Quy định các loại văn bản quy phạm pháp luật và thẩm quyền ban hành",
+              "hieu_luc": "chưa xác minh",
+              "sgk_dan": "chưa xác minh"
+            }
+          ],
+          "kien_thuc_duoc_dung": ["Cấp chính quyền địa phương: tỉnh và xã (từ 01/7/2025); sách cũ dùng ba cấp, cần cập nhật."],
+          "chua_duoc_dung": [
+            "Nguyên tắc áp dụng pháp luật theo thời gian và không gian chi tiết: chưa thuộc chương này.",
+            "Cấp huyện trong thẩm quyền ban hành văn bản: không dùng vì đã bỏ từ 01/7/2025.",
+            "Phân tích lập pháp chuyên sâu: THPT chuyên đề hoặc đại học."
+          ],
+          "dang_bai_dien_hinh": [
+            "Xếp thứ tự hiệu lực pháp lí của các loại văn bản cho trước",
+            "Xác định cơ quan có thẩm quyền ban hành văn bản trong tình huống"
+          ],
+          "luu_y_ra_de": "Đây là chương dễ dẫn đến đề sai vì ghi cấp chính quyền cũ. Kiểm tra kỹ thẩm quyền ban hành trước khi ra đề."
+        }
+      ],
+      "chuyen_de": ["Lớp 10 có 1 chuyên đề học tập (tên cần tra)"],
+      "ghi_chu_chua_chac": [
+        "Nội dung về ngân sách nhà nước và thuế được nhắc trong phân phối chương trình tham khảo, nhưng chưa xác định rõ lớp và chương.",
+        "Lớp 10 KNTT, CTST và CD có tên bài khác nhau; chỉ đối chiếu được tên của bộ KNTT."
+      ]
+    },
+    {
+      "lop": 11,
+      "mon_lop": "Giáo dục kinh tế và pháp luật",
+      "chuong": [
+        {
+          "id": "ktpl11-canh-tranh-cung-cau",
+          "ten": "Cạnh tranh, cung cầu trong kinh tế thị trường",
+          "hoc_ky": 1,
+          "mach": "Kinh tế",
+          "ten_theo_sach": { "KNTT": "chưa xác minh", "CTST": "chưa xác minh", "CD": "chưa xác minh" },
+          "yeu_cau_can_dat": [
+            "Nêu được khái niệm cạnh tranh và vai trò của cạnh tranh trong kinh tế thị trường.",
+            "Phân tích được tác động của cung cầu đến giá cả ở mức định tính."
+          ],
+          "khai_niem": ["cạnh tranh", "cung", "cầu", "kinh tế thị trường"],
+          "can_cu_phap_ly": [],
+          "kien_thuc_duoc_dung": ["Thị trường và cơ chế thị trường (lớp 10)."],
+          "chua_duoc_dung": [
+            "Tăng trưởng và phát triển kinh tế: lớp 12.",
+            "Hội nhập kinh tế quốc tế: lớp 12.",
+            "Luật Cạnh tranh và xử phạt vi phạm cạnh tranh chi tiết: chưa xác minh lớp học và văn bản."
+          ],
+          "dang_bai_dien_hinh": [
+            "Xác định hành vi cạnh tranh lành mạnh và không lành mạnh trong tình huống",
+            "Phân tích tác động của thay đổi cung hoặc cầu đến giá cả"
+          ],
+          "luu_y_ra_de": "Tránh đưa mức phạt hay điều luật cụ thể. Nếu cần dẫn luật, kiểm tra tình trạng hiệu lực trước."
+        },
+        {
+          "id": "ktpl11-dao-duc-kinh-doanh",
+          "ten": "Đạo đức kinh doanh",
+          "hoc_ky": 2,
+          "mach": "Kinh tế",
+          "ten_theo_sach": { "KNTT": "Chủ đề Đạo đức kinh doanh (tên đã xác định)", "CTST": "chưa xác minh", "CD": "chưa xác minh" },
+          "yeu_cau_can_dat": [
+            "Nêu được khái niệm đạo đức kinh doanh và các biểu hiện của đạo đức kinh doanh.",
+            "Nhận biết được hành vi kinh doanh trái đạo đức trong tình huống cụ thể."
+          ],
+          "khai_niem": ["đạo đức kinh doanh", "trách nhiệm xã hội của doanh nghiệp", "trung thực"],
+          "can_cu_phap_ly": [],
+          "kien_thuc_duoc_dung": ["Cạnh tranh và cung cầu (lớp 11)."],
+          "chua_duoc_dung": [
+            "Pháp luật kinh doanh chi tiết: cần kiểm tra Luật Doanh nghiệp và Luật Cạnh tranh hiện hành.",
+            "Quản trị doanh nghiệp theo mô hình phức tạp: THPT chuyên đề hoặc đại học."
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc tình huống doanh nghiệp và xác định hành vi đúng đạo đức",
+            "Nêu lợi ích của đạo đức kinh doanh đối với doanh nghiệp và xã hội"
+          ],
+          "luu_y_ra_de": "Tình huống phải thực tế, không dẫn số liệu doanh nghiệp cụ thể."
+        }
+      ],
+      "chuyen_de": ["Lớp 11 có 1 chuyên đề học tập (tên cần tra)"],
+      "ghi_chu_chua_chac": [
+        "Nội dung các đường lối chính sách lớn của Đảng và Nhà nước được nhắc là nội dung lớp 11 nhưng chưa tra được tên chương.",
+        "Các chủ đề khác của lớp 11 chưa đủ để đưa vào JSON."
+      ]
+    },
+    {
+      "lop": 12,
+      "mon_lop": "Giáo dục kinh tế và pháp luật",
+      "chuong": [
+        {
+          "id": "ktpl12-tang-truong-phat-trien",
+          "ten": "Tăng trưởng và phát triển kinh tế",
+          "hoc_ky": 1,
+          "mach": "Kinh tế",
+          "ten_theo_sach": { "KNTT": "chưa xác minh", "CTST": "chưa xác minh", "CD": "chưa xác minh" },
+          "yeu_cau_can_dat": [
+            "Phân biệt được tăng trưởng kinh tế và phát triển kinh tế.",
+            "Nêu được vai trò của tăng trưởng kinh tế đối với đời sống xã hội."
+          ],
+          "khai_niem": ["tăng trưởng kinh tế", "phát triển kinh tế", "chỉ số phát triển con người"],
+          "can_cu_phap_ly": [],
+          "kien_thuc_duoc_dung": ["Thị trường, cung cầu, cạnh tranh (lớp 10–11)."],
+          "chua_duoc_dung": [
+            "Công thức GDP và tính tăng trưởng chi tiết: chưa xác minh mức yêu cầu của chương trình, nên tránh.",
+            "Mô hình kinh tế vĩ mô phức tạp: đại học."
+          ],
+          "dang_bai_dien_hinh": [
+            "Phân biệt tăng trưởng và phát triển qua ví dụ cho trước",
+            "Đọc bảng số liệu và nhận xét xu hướng ở mức định tính"
+          ],
+          "luu_y_ra_de": "Số liệu trong đề nên là số liệu minh họa, tránh số liệu thống kê thực tế có thể đã cập nhật."
+        },
+        {
+          "id": "ktpl12-hoi-nhap-kinh-te",
+          "ten": "Hội nhập kinh tế quốc tế",
+          "hoc_ky": 1,
+          "mach": "Kinh tế",
+          "ten_theo_sach": { "KNTT": "chưa xác minh", "CTST": "chưa xác minh", "CD": "chưa xác minh" },
+          "yeu_cau_can_dat": [
+            "Nêu được khái niệm hội nhập kinh tế quốc tế và các hình thức hội nhập.",
+            "Nêu được cơ hội và thách thức của hội nhập đối với Việt Nam."
+          ],
+          "khai_niem": ["hội nhập kinh tế quốc tế", "tự do thương mại", "toàn cầu hoá"],
+          "can_cu_phap_ly": [],
+          "kien_thuc_duoc_dung": ["Cạnh tranh và tăng trưởng kinh tế (lớp 11–12)."],
+          "chua_duoc_dung": [
+            "Tên và số hiệu cụ thể các hiệp định thương mại: cần kiểm tra trước khi ra đề.",
+            "Pháp luật thương mại quốc tế chi tiết: đại học."
+          ],
+          "dang_bai_dien_hinh": [
+            "Nhận diện cơ hội hoặc thách thức của hội nhập trong tình huống cho trước",
+            "Nêu biện pháp của doanh nghiệp để thích ứng với hội nhập"
+          ],
+          "luu_y_ra_de": "Tên hiệp định và số liệu thương mại thay đổi nhanh, tránh đưa vào đề."
+        },
+        {
+          "id": "ktpl12-bao-hiem-an-sinh",
+          "ten": "Bảo hiểm và an sinh xã hội",
+          "hoc_ky": 2,
+          "mach": "Kinh tế",
+          "ten_theo_sach": { "KNTT": "chưa xác minh", "CTST": "chưa xác minh", "CD": "chưa xác minh" },
+          "yeu_cau_can_dat": [
+            "Nêu được khái niệm bảo hiểm và an sinh xã hội.",
+            "Nêu được các loại bảo hiểm cơ bản: bảo hiểm xã hội, bảo hiểm y tế, bảo hiểm thất nghiệp."
+          ],
+          "khai_niem": ["bảo hiểm", "an sinh xã hội", "bảo hiểm xã hội", "bảo hiểm y tế"],
+          "can_cu_phap_ly": [
+            {
+              "van_ban": "Luật Bảo hiểm xã hội",
+              "so_hieu": "chưa xác minh số hiệu và lần sửa đổi gần nhất",
+              "noi_dung": "Quy định các loại bảo hiểm xã hội và đối tượng tham gia",
+              "hieu_luc": "chưa xác minh",
+              "sgk_dan": "chưa xác minh"
+            }
+          ],
+          "kien_thuc_duoc_dung": ["Quyền lợi người lao động (kiến thức lớp 10–11)."],
+          "chua_duoc_dung": [
+            "Mức đóng và mức hưởng cụ thể theo tỉ lệ phần trăm: cần kiểm tra văn bản hiện hành trước khi ra đề.",
+            "Quy định về tuổi nghỉ hưu cụ thể: đã thay đổi theo lộ trình, cần kiểm tra."
+          ],
+          "dang_bai_dien_hinh": [
+            "Xác định loại bảo hiểm phù hợp với tình huống cho trước",
+            "Nêu quyền lợi cơ bản của người tham gia bảo hiểm"
+          ],
+          "luu_y_ra_de": "Không ra câu hỏi về mức đóng, mức hưởng hay tuổi nghỉ hưu nếu chưa kiểm tra lộ trình và văn bản hiện hành."
+        },
+        {
+          "id": "ktpl12-hon-nhan-gia-dinh",
+          "ten": "Quyền và nghĩa vụ của công dân trong hôn nhân và gia đình",
+          "hoc_ky": 2,
+          "mach": "Pháp luật",
+          "ten_theo_sach": { "KNTT": "Bài 10 (tên bài đã xác định)", "CTST": "chưa xác minh", "CD": "chưa xác minh" },
+          "yeu_cau_can_dat": [
+            "Nêu được các quyền và nghĩa vụ cơ bản của vợ chồng và các thành viên trong gia đình.",
+            "Nhận biết được hành vi vi phạm quyền trong hôn nhân và gia đình."
+          ],
+          "khai_niem": ["hôn nhân", "gia đình", "quyền và nghĩa vụ của vợ chồng", "bình đẳng giới"],
+          "can_cu_phap_ly": [
+            {
+              "van_ban": "Luật Hôn nhân và gia đình",
+              "so_hieu": "52/2014/QH13",
+              "noi_dung": "Quy định quyền và nghĩa vụ của vợ chồng, chế độ tài sản và quan hệ gia đình",
+              "hieu_luc": "còn hiệu lực từ 01/01/2015 (chưa xác minh có sửa đổi sau đó)",
+              "sgk_dan": "chưa xác minh"
+            }
+          ],
+          "kien_thuc_duoc_dung": ["Quyền bình đẳng của công dân (lớp 11)."],
+          "chua_duoc_dung": [
+            "Thủ tục ly hôn và thẩm quyền toà án chi tiết: thuộc luật tố tụng, không thuộc chương này.",
+            "Điều kiện kết hôn cụ thể (tuổi kết hôn, đăng ký): cần kiểm tra điều luật hiện hành trước khi ra đề.",
+            "Pháp luật dân sự về tài sản chi tiết: THPT chuyên đề hoặc đại học."
+          ],
+          "dang_bai_dien_hinh": [
+            "Xác định hành vi vi phạm quyền trong hôn nhân và gia đình qua tình huống",
+            "Nhận diện quyền và nghĩa vụ của vợ chồng trong tình huống cho trước"
+          ],
+          "luu_y_ra_de": "Tránh đưa độ tuổi kết hôn hay thủ tục đăng ký nếu chưa kiểm tra điều luật hiện hành."
+        },
+        {
+          "id": "ktpl12-binh-dang-giao-duc",
+          "ten": "Quyền bình đẳng trong giáo dục (CẦN XÁC MINH TÊN BÀI)",
+          "hoc_ky": 2,
+          "mach": "Pháp luật",
+          "ten_theo_sach": { "KNTT": "chưa xác minh", "CTST": "chưa xác minh", "CD": "chưa xác minh" },
+          "yeu_cau_can_dat": [
+            "Nêu được quyền bình đẳng trong học tập của công dân (đối chiếu với nội dung đã thấy trong nguồn ôn tập; chưa tra được văn bản chương trình)."
+          ],
+          "khai_niem": ["bình đẳng", "cơ hội học tập", "phân biệt đối xử"],
+          "can_cu_phap_ly": [
+            {
+              "van_ban": "Luật Giáo dục",
+              "so_hieu": "chưa xác minh (Luật Giáo dục 2019 và bản sửa đổi 2025)",
+              "noi_dung": "Quy định quyền và nghĩa vụ của người học, cần kiểm tra điều khoản cụ thể",
+              "hieu_luc": "chưa xác minh",
+              "sgk_dan": "chưa xác minh"
+            }
+          ],
+          "kien_thuc_duoc_dung": ["Quyền và nghĩa vụ công dân trong hôn nhân và gia đình (lớp 12)."],
+          "chua_duoc_dung": [
+            "Quyền học tập bậc đại học và chế độ học bổng: chưa xác minh.",
+            "Quy định tuyển sinh chi tiết: thuộc văn bản khác."
+          ],
+          "dang_bai_dien_hinh": [
+            "Xác định trường hợp phân biệt đối xử trong giáo dục qua tình huống"
+          ],
+          "luu_y_ra_de": "Chương chưa đủ thông tin để soạn. Không ra đề cho đến khi tra được tên bài và điều luật."
+        }
+      ],
+      "chuyen_de": [
+        "Lớp 12 có 2 chuyên đề học tập (tên cần tra)"
+      ],
+      "ghi_chu_chua_chac": [
+        "Nguồn tra cứu có nhắc lớp 12 học pháp luật, nhưng các chủ đề kinh tế (tăng trưởng, hội nhập, bảo hiểm) lại thuộc lớp 12. Cần kiểm tra lại phân bổ chủ đề giữa các lớp.",
+        "Mạch pháp luật lớp 12 còn các chủ đề chưa tra được, ví dụ pháp luật về lao động, thuế hoặc đầu tư."
+      ]
+    }
+  ],
+  "cau_truc_de": [
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 6,
+      "thoi_gian_phut": 45,
+      "phan": [],
+      "pham_vi": ["gdcd6-tu-hao-truyen-thong-gia-dinh"],
+      "ti_le_muc_do": "chưa xác minh (đề định kỳ không có quy định toàn quốc)"
+    },
+    {
+      "loai": "Cuối kỳ 1",
+      "lop": 6,
+      "thoi_gian_phut": 45,
+      "phan": [],
+      "pham_vi": ["gdcd6-tu-hao-truyen-thong-gia-dinh"],
+      "ti_le_muc_do": "chưa xác minh"
+    },
+    {
+      "loai": "Giữa kỳ 2",
+      "lop": 6,
+      "thoi_gian_phut": 45,
+      "phan": [],
+      "pham_vi": ["gdcd6-yeu-thuong-con-nguoi"],
+      "ti_le_muc_do": "chưa xác minh"
+    },
+    {
+      "loai": "Cuối kỳ 2",
+      "lop": 6,
+      "thoi_gian_phut": 45,
+      "phan": [],
+      "pham_vi": ["gdcd6-yeu-thuong-con-nguoi"],
+      "ti_le_muc_do": "chưa xác minh"
+    },
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 7,
+      "thoi_gian_phut": 45,
+      "phan": [],
+      "pham_vi": ["gdcd7-tu-hao-que-huong"],
+      "ti_le_muc_do": "chưa xác minh"
+    },
+    {
+      "loai": "Cuối kỳ 1",
+      "lop": 7,
+      "thoi_gian_phut": 45,
+      "phan": [],
+      "pham_vi": ["gdcd7-tu-hao-que-huong"],
+      "ti_le_muc_do": "chưa xác minh"
+    },
+    {
+      "loai": "Giữa kỳ 2",
+      "lop": 7,
+      "thoi_gian_phut": 45,
+      "phan": [],
+      "pham_vi": [],
+      "ti_le_muc_do": "chưa xác minh (chưa có chương đủ thông tin cho học kì II)"
+    },
+    {
+      "loai": "Cuối kỳ 2",
+      "lop": 7,
+      "thoi_gian_phut": 45,
+      "phan": [],
+      "pham_vi": [],
+      "ti_le_muc_do": "chưa xác minh"
+    },
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 8,
+      "thoi_gian_phut": 45,
+      "phan": [],
+      "pham_vi": ["gdcd8-tu-hao-truyen-thong-dan-toc"],
+      "ti_le_muc_do": "chưa xác minh"
+    },
+    {
+      "loai": "Cuối kỳ 1",
+      "lop": 8,
+      "thoi_gian_phut": 45,
+      "phan": [],
+      "pham_vi": ["gdcd8-tu-hao-truyen-thong-dan-toc"],
+      "ti_le_muc_do": "chưa xác minh"
+    },
+    {
+      "loai": "Giữa kỳ 2",
+      "lop": 8,
+      "thoi_gian_phut": 45,
+      "phan": [],
+      "pham_vi": [],
+      "ti_le_muc_do": "chưa xác minh"
+    },
+    {
+      "loai": "Cuối kỳ 2",
+      "lop": 8,
+      "thoi_gian_phut": 45,
+      "phan": [],
+      "pham_vi": [],
+      "ti_le_muc_do": "chưa xác minh"
+    },
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 9,
+      "thoi_gian_phut": 45,
+      "phan": [],
+      "pham_vi": ["gdcd9-song-co-li-tuong"],
+      "ti_le_muc_do": "chưa xác minh"
+    },
+    {
+      "loai": "Cuối kỳ 1",
+      "lop": 9,
+      "thoi_gian_phut": 45,
+      "phan": [],
+      "pham_vi": ["gdcd9-song-co-li-tuong"],
+      "ti_le_muc_do": "chưa xác minh"
+    },
+    {
+      "loai": "Giữa kỳ 2",
+      "lop": 9,
+      "thoi_gian_phut": 45,
+      "phan": [],
+      "pham_vi": [],
+      "ti_le_muc_do": "chưa xác minh"
+    },
+    {
+      "loai": "Cuối kỳ 2",
+      "lop": 9,
+      "thoi_gian_phut": 45,
+      "phan": [],
+      "pham_vi": [],
+      "ti_le_muc_do": "chưa xác minh"
+    },
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 10,
+      "thoi_gian_phut": 45,
+      "phan": [],
+      "pham_vi": ["ktpl10-thi-truong-co-che"],
+      "ti_le_muc_do": "chưa xác minh"
+    },
+    {
+      "loai": "Cuối kỳ 1",
+      "lop": 10,
+      "thoi_gian_phut": 45,
+      "phan": [],
+      "pham_vi": ["ktpl10-thi-truong-co-che"],
+      "ti_le_muc_do": "chưa xác minh"
+    },
+    {
+      "loai": "Giữa kỳ 2",
+      "lop": 10,
+      "thoi_gian_phut": 45,
+      "phan": [],
+      "pham_vi": ["ktpl10-he-thong-phap-luat"],
+      "ti_le_muc_do": "chưa xác minh"
+    },
+    {
+      "loai": "Cuối kỳ 2",
+      "lop": 10,
+      "thoi_gian_phut": 45,
+      "phan": [],
+      "pham_vi": ["ktpl10-he-thong-phap-luat"],
+      "ti_le_muc_do": "chưa xác minh"
+    },
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 11,
+      "thoi_gian_phut": 45,
+      "phan": [],
+      "pham_vi": ["ktpl11-canh-tranh-cung-cau"],
+      "ti_le_muc_do": "chưa xác minh"
+    },
+    {
+      "loai": "Cuối kỳ 1",
+      "lop": 11,
+      "thoi_gian_phut": 45,
+      "phan": [],
+      "pham_vi": ["ktpl11-canh-tranh-cung-cau"],
+      "ti_le_muc_do": "chưa xác minh"
+    },
+    {
+      "loai": "Giữa kỳ 2",
+      "lop": 11,
+      "thoi_gian_phut": 45,
+      "phan": [],
+      "pham_vi": ["ktpl11-dao-duc-kinh-doanh"],
+      "ti_le_muc_do": "chưa xác minh"
+    },
+    {
+      "loai": "Cuối kỳ 2",
+      "lop": 11,
+      "thoi_gian_phut": 45,
+      "phan": [],
+      "pham_vi": ["ktpl11-dao-duc-kinh-doanh"],
+      "ti_le_muc_do": "chưa xác minh"
+    },
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 12,
+      "thoi_gian_phut": 45,
+      "phan": [],
+      "pham_vi": ["ktpl12-tang-truong-phat-trien"],
+      "ti_le_muc_do": "chưa xác minh"
+    },
+    {
+      "loai": "Cuối kỳ 1",
+      "lop": 12,
+      "thoi_gian_phut": 45,
+      "phan": [],
+      "pham_vi": ["ktpl12-tang-truong-phat-trien", "ktpl12-hoi-nhap-kinh-te"],
+      "ti_le_muc_do": "chưa xác minh"
+    },
+    {
+      "loai": "Giữa kỳ 2",
+      "lop": 12,
+      "thoi_gian_phut": 45,
+      "phan": [],
+      "pham_vi": ["ktpl12-bao-hiem-an-sinh", "ktpl12-hon-nhan-gia-dinh"],
+      "ti_le_muc_do": "chưa xác minh"
+    },
+    {
+      "loai": "Cuối kỳ 2",
+      "lop": 12,
+      "thoi_gian_phut": 50,
+      "phan": [
+        { "ten": "Phần 1: trắc nghiệm nhiều lựa chọn (4 phương án, chọn 1)", "so_cau": 24, "diem_moi_cau": 0.25 },
+        { "ten": "Phần 2: chưa xác minh (đề tốt nghiệp THPT 2025)", "so_cau": null, "diem_moi_cau": null }
+      ],
+      "pham_vi": ["ktpl12-tang-truong-phat-trien", "ktpl12-hoi-nhap-kinh-te", "ktpl12-bao-hiem-an-sinh", "ktpl12-hon-nhan-gia-dinh"],
+      "ti_le_muc_do": "chưa xác minh",
+      "ghi_chu_chua_chac": "Cấu trúc đề thi tốt nghiệp THPT 2025 môn GDKT&PL theo tài liệu tra cứu: 2 phần, phần 1 gồm 24 câu, mỗi câu 0,25 điểm, thời gian 50 phút. Phần 2 chưa xác minh. Đề tốt nghiệp là đề chung cấp quốc gia, không phải đề kiểm tra định kỳ."
+    }
+  ],
+  "ghi_chu_chua_chac": [
+    "Hầu hết tên chủ đề ở ba bộ sách chưa đối chiếu được. Chỉ mục KNTT lớp 10 và 12 được xác nhận qua trang ôn tập.",
+    "Lớp 6–9 GDCD: mạch yêu nước được xác nhận qua bảng tổng hợp. Các mạch nhân ái, kinh tế, pháp luật và kĩ năng sống chỉ xác nhận được một phần.",
+    "Chưa tra được văn bản chương trình gốc (Thông tư 32/2018 phần GDCD và GDKT&PL) để chép yêu cầu cần đạt chính xác từng ý.",
+    "Mục can_cu_phap_ly chỉ điền khi đã có căn cứ. Các luật khác cần tra trên Cơ sở dữ liệu quốc gia về văn bản pháp luật trước khi dùng."
+  ]
+}

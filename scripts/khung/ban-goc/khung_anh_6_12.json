@@ -1,0 +1,519 @@
+{
+  "mon": "Tiếng Anh",
+  "sach": "Global Success",
+  "nguon": [
+    "Chương trình giáo dục phổ thông môn Tiếng Anh ban hành kèm Thông tư 32/2018/TT-BGDĐT",
+    "Sách giáo khoa Tiếng Anh 6, 7, 8, 9, 10, 11, 12 - Bộ Global Success (NXB Giáo dục Việt Nam)",
+    "Khung năng lực ngoại ngữ 6 bậc dùng cho Việt Nam (KNLNNVN - Thông tư 01/2014/TT-BGDĐT)",
+    "Thông tư 22/2021/TT-BGDĐT về đánh giá học sinh THCS và THPT",
+    "Cấu trúc định dạng đề thi Tốt nghiệp THPT từ năm 2025 môn Tiếng Anh (Bộ Giáo dục và Đào tạo)",
+    "Cấu trúc đề thi tuyển sinh vào lớp 10 THPT môn Tiếng Anh từ năm 2025 của Sở GD&ĐT Hà Nội và TP. Hồ Chí Minh"
+  ],
+  "lop": [
+    {
+      "lop": 6,
+      "bac_nang_luc": "A1",
+      "chuong": [
+        {
+          "id": "anh6-u01",
+          "ten": "Unit 1: My New School",
+          "hoc_ky": 1,
+          "chu_de": "School life, subjects, equipment",
+          "tu_vung": ["calculator", "compass", "rubber", "pencil sharpener", "textbook", "uniform", "boarding school", "activity", "play football", "do homework"],
+          "ngu_phap": ["Present simple", "Adverbs of frequency (always, usually, often, sometimes, rarely, never)"],
+          "phat_am": ["Sounds /ɑː/ and /ʌ/"],
+          "ky_nang": {
+            "doc": "Đọc hiểu đoạn văn ngắn 80-100 từ về trường học mới.",
+            "nghe": "Nghe đoạn hội thoại ngắn về đồ dùng học tập và hoạt động trường học.",
+            "noi": "Nói về trường học, môn học yêu thích và thời khóa biểu.",
+            "viet": "Viết đoạn văn ngắn 40-50 từ tả trường học của em."
+          },
+          "ngu_phap_da_hoc_truoc": ["Personal pronouns", "Verb to be (am/is/are)"],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG Present continuous (học ở Unit 3)",
+            "CHƯA DÙNG Comparative adjectives (học ở Unit 4)",
+            "CHƯA DÙNG Past simple (học ở Unit 8)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Chọn từ có phần gạch chân phát âm khác (/ɑː/ vs /ʌ/)",
+            "Chọn đáp án đúng (Hiện tại đơn & Trạng từ chỉ tần suất)",
+            "Đọc bài văn ngắn chọn True/False",
+            "Viết lại câu hoàn chỉnh dùng từ gợi ý"
+          ],
+          "luu_y_ra_de": "Dùng câu ngắn, từ vựng chuẩn A1 đơn giản. Tuyệt đối không đưa các thì quá khứ hay tương lai vào bài đọc/câu hỏi."
+        },
+        {
+          "id": "anh6-u02",
+          "ten": "Unit 2: My Home",
+          "hoc_ky": 1,
+          "chu_de": "Types of houses, rooms, furniture",
+          "tu_vung": ["country house", "town house", "villa", "stilt house", "apartment", "living room", "bedroom", "hallway", "chest of drawers", "dishwasher"],
+          "ngu_phap": ["Possessive case ('s)", "Prepositions of place (in, on, at, under, behind, next to, in front of, between)"],
+          "phat_am": ["Final sounds /s/, /z/ and /ɪz/"],
+          "ky_nang": {
+            "doc": "Đọc bài tả ngôi nhà hoặc căn phòng 80-100 từ.",
+            "nghe": "Nghe nhận diện vị trí đồ đạc trong nhà.",
+            "noi": "Miêu tả căn phòng và ngôi nhà mơ ước.",
+            "viet": "Viết đoạn văn 40-50 từ miêu tả phòng ngủ."
+          },
+          "ngu_phap_da_hoc_truoc": ["Present simple", "There is / There are"],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG Possessive pronouns (mine, yours... - học ở Unit 9)",
+            "CHƯA DÙNG Present continuous (học ở Unit 3)",
+            "CHƯA DÙNG Modals must/mustn't (học ở Unit 5)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Phân biệt phát âm đuôi -s/-es (/s/, /z/, /ɪz/)",
+            "Điền giới từ chỉ vị trí vào chỗ trống",
+            "Đọc hiểu điền từ (Cloze test)"
+          ],
+          "luu_y_ra_de": "Tập trung phân biệt rõ 3 quy tắc phát âm đuôi -s/-es."
+        },
+        {
+          "id": "anh6-u03",
+          "ten": "Unit 3: My Friends",
+          "hoc_ky": 1,
+          "chu_de": "Body parts, appearance, personality",
+          "tu_vung": ["chubby", "blonde hair", "round face", "straight nose", "kind", "clever", "friendly", "hard-working", "patient", "talkative"],
+          "ngu_phap": ["Present continuous for action happening now", "Adjectives for personality and appearance"],
+          "phat_am": ["Sounds /b/ and /p/"],
+          "ky_nang": {
+            "doc": "Đọc bài viết 80-100 từ tả tính cách và ngoại hình bạn bè.",
+            "nghe": "Nghe mô tả để nhận diện người.",
+            "noi": "Mô tả ngoại hình và tính cách bạn thân.",
+            "viet": "Viết đoạn văn 40-50 từ miêu tả người bạn thân."
+          },
+          "ngu_phap_da_hoc_truoc": ["Present simple", "Have / Has got"],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG Present continuous for future arrangements (lớp 7 Unit 10)",
+            "CHƯA DÙNG Comparative adjectives (học ở Unit 4)",
+            "CHƯA DÙNG Past simple (học ở Unit 8)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Phát âm phụ âm /b/ và /p/",
+            "Chia động từ thì Hiện tại tiếp diễn",
+            "Chọn tính từ tả tính cách phù hợp ngữ cảnh"
+          ],
+          "luu_y_ra_de": "Thì Hiện tại tiếp diễn chỉ dùng cho hành động đang diễn ra ngay tại thời điểm nói."
+        },
+        {
+          "id": "anh6-u04",
+          "ten": "Unit 4: My Neighbourhood",
+          "hoc_ky": 1,
+          "chu_de": "Places in neighbourhood, directions",
+          "tu_vung": ["art gallery", "square", "suburb", "cathedral", "railway station", "historic", "convenient", "noisy", "peaceful", "polluted"],
+          "ngu_phap": ["Comparative adjectives (Short adjectives: -er than)"],
+          "phat_am": ["Sounds /iː/ and /ɪ/"],
+          "ky_nang": {
+            "doc": "Đọc bài giới thiệu khu phố/xóm làng 80-100 từ.",
+            "nghe": "Nghe hướng dẫn chỉ đường trên sơ đồ.",
+            "noi": "Hỏi và chỉ đường, so sánh các điểm đến.",
+            "viet": "Viết đoạn văn 40-50 từ so sánh nơi em sống với nơi khác."
+          },
+          "ngu_phap_da_hoc_truoc": ["Present simple", "Prepositions of place"],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG Comparative long adjectives (lớp 7 Unit 4 / lớp 8)",
+            "CHƯA DÙNG Superlative adjectives (học ở Unit 9 & 12)",
+            "CHƯA DÙNG Comparison as...as (lớp 7 Unit 4)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Phân biệt âm /iː/ và /ɪ/",
+            "Viết dạng so sánh hơn của tính từ ngắn (faster, cleaner, busier...)",
+            "Hoàn thành câu hỏi đường"
+          ],
+          "luu_y_ra_de": "Chỉ dùng tính từ ngắn (1 âm tiết hoặc 2 âm tiết kết thúc bằng -y) trong dạng so sánh hơn."
+        },
+        {
+          "id": "anh6-u05",
+          "ten": "Unit 5: Natural Wonders of the World",
+          "hoc_ky": 1,
+          "chu_de": "Geography, natural wonders, travel gear",
+          "tu_vung": ["mountain", "waterfall", "desert", "cave", "island", "valley", "plaster", "sleeping bag", "backpack", "suncream"],
+          "ngu_phap": ["Countable and uncountable nouns", "Must and Mustn't for obligation/prohibition"],
+          "phat_am": ["Sounds /t/ and /d/"],
+          "ky_nang": {
+            "doc": "Đọc hiểu bài viết 80-100 từ về danh thắng thiên nhiên.",
+            "nghe": "Nghe hướng dẫn chuẩn bị đồ đi dã ngoại.",
+            "noi": "Thảo luận đồ dùng và quy định khi đi tham quan.",
+            "viet": "Viết đoạn văn 40-50 từ liệt kê quy định chuyến đi."
+          },
+          "ngu_phap_da_hoc_truoc": ["Present simple", "There is / There are"],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG Superlative adjectives (học ở Unit 9)",
+            "CHƯA DÙNG Conditional type 1 (học ở Unit 11)",
+            "CHƯA DÙNG Past simple (học ở Unit 8)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Phát âm /t/ vs /d/",
+            "Phân biệt danh từ đếm được và không đếm được (some, any, many, much)",
+            "Điền Must / Mustn't vào câu quy tắc"
+          ],
+          "luu_y_ra_de": "Tránh dùng so sánh nhất ở Unit này dù bài đọc có nhắc đến danh thắng nổi tiếng."
+        },
+        {
+          "id": "anh6-u06",
+          "ten": "Unit 6: Our Tet Holiday",
+          "hoc_ky": 1,
+          "chu_de": "Tet traditions, preparations, wishes",
+          "tu_vung": ["peach blossom", "apricot blossom", "lucky money", "firework", "gather", "clean", "decorate", "first footer", "wish"],
+          "ngu_phap": ["Should / Shouldn't for advice", "Will for intentions and promises at Tet"],
+          "phat_am": ["Sounds /s/ and /ʃ/"],
+          "ky_nang": {
+            "doc": "Đọc bài văn 80-100 từ về phong tục ngày Tết.",
+            "nghe": "Nghe kế hoạch chuẩn bị Tết của gia đình.",
+            "noi": "Nói về những việc nên/không nên làm dịp Tết.",
+            "viet": "Viết đoạn văn 40-50 từ về việc em sẽ làm dịp Tết."
+          },
+          "ngu_phap_da_hoc_truoc": ["Present simple", "Must / Mustn't"],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG Future simple with Will for general predictions (học ở Unit 10)",
+            "CHƯA DÙNG Past simple (học ở Unit 8)",
+            "CHƯA DÙNG Conditional type 1 (học ở Unit 11)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Phân biệt âm /s/ và /ʃ/",
+            "Điền Should / Shouldn't cho lời khuyên",
+            "Viết câu dùng Will biểu thị lời hứa/dự định ngày Tết"
+          ],
+          "luu_y_ra_de": "Phân biệt Should (lời khuyên) với Must (bắt buộc) đã học ở Unit 5."
+        },
+        {
+          "id": "anh6-u07",
+          "ten": "Unit 7: Television",
+          "hoc_ky": 2,
+          "chu_de": "TV programmes, channels, media",
+          "tu_vung": ["documentary", "animated film", "game show", "comedy", "educational programme", "talent show", "viewer", "channel", "remote control"],
+          "ngu_phap": ["Wh-questions (Who, What, Where, When, Why, How)", "Conjunctions (and, but, so, because, although)"],
+          "phat_am": ["Sounds /θ/ and /ð/"],
+          "ky_nang": {
+            "doc": "Đọc lịch phát sóng TV hoặc bài giới thiệu chương trình 80-100 từ.",
+            "nghe": "Nghe phỏng vấn về thói quen xem TV.",
+            "noi": "Hỏi đáp về chương trình truyền hình yêu thích.",
+            "viet": "Viết đoạn văn 40-50 từ tả chương trình TV yêu thích."
+          },
+          "ngu_phap_da_hoc_truoc": ["Present simple", "Adverbs of frequency"],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG Past simple (học ở Unit 8)",
+            "CHƯA DÙNG Passive voice (lớp 7 Unit 6)",
+            "CHƯA DÙNG Relative clauses (lớp 9 Unit 7)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Phát âm /θ/ vs /ð/",
+            "Đặt câu hỏi Wh- cho từ gạch chân",
+            "Nối câu dùng liên từ (and, but, so, because, although)"
+          ],
+          "luu_y_ra_de": "Đảm bảo học sinh dùng đúng liên từ chỉ nguyên nhân/kết quả/nhượng bộ."
+        },
+        {
+          "id": "anh6-u08",
+          "ten": "Unit 8: Sports and Games",
+          "hoc_ky": 2,
+          "chu_de": "Sports, equipment, games",
+          "tu_vung": ["badminton", "table tennis", "karate", "aerobics", "goggles", "racket", "skateboard", "stadium", "gym", "equipment"],
+          "ngu_phap": ["Past simple (regular & common irregular verbs)", "Imperatives (Mệnh lệnh thức)"],
+          "phat_am": ["Sounds /e/ and /æ/"],
+          "ky_nang": {
+            "doc": "Đọc tiểu sử ngắn 80-100 từ của vận động viên.",
+            "nghe": "Nghe đoạn hội thoại về trải nghiệm chơi thể thao.",
+            "noi": "Kể về môn thể thao đã chơi hoặc xem.",
+            "viet": "Viết đoạn văn 40-50 từ kể về môn thể thao đã tham gia."
+          },
+          "ngu_phap_da_hoc_truoc": ["Present simple", "Can / Cannot"],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG Past continuous (lớp 8 Unit 9)",
+            "CHƯA DÙNG Present perfect (lớp 7 Unit 3 / lớp 9 Unit 5)",
+            "CHƯA DÙNG Used to (lớp 7 Unit 7)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Phân biệt âm /e/ và /æ/",
+            "Chia động từ Quá khứ đơn (V-ed và V2 bất quy tắc cơ bản)",
+            "Viết câu mệnh lệnh hướng dẫn chơi trò chơi"
+          ],
+          "luu_y_ra_de": "Đây là bài ĐẦU TIÊN học Quá khứ đơn. Chỉ dùng các động từ bất quy tắc rất phổ biến (go-went, do-did, see-saw, have-had, play-played)."
+        },
+        {
+          "id": "anh6-u09",
+          "ten": "Unit 9: Cities of the World",
+          "hoc_ky": 2,
+          "chu_de": "World cities, landmarks, continents",
+          "tu_vung": ["capital", "continent", "landmark", "palace", "tower", "postcard", "crowded", "modern", "ancient", "peaceful"],
+          "ngu_phap": ["Possessive pronouns (mine, yours, his, hers, ours, theirs)", "Superlative adjectives (Short adjectives: the -est)"],
+          "phat_am": ["Sounds /əʊ/ and /aɪ/"],
+          "ky_nang": {
+            "doc": "Đọc bưu thiếp du lịch 80-100 từ về một thành phố.",
+            "nghe": "Nghe mô tả chuyến du lịch thành phố.",
+            "noi": "So sánh các thành phố lớn trên thế giới.",
+            "viet": "Viết bưu thiếp 40-50 từ kể về kỳ nghỉ ở một thành phố."
+          },
+          "ngu_phap_da_hoc_truoc": ["Comparative short adjectives (Unit 4)", "Possessive adjectives (my, your...)"],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG Superlative long adjectives (học ở Unit 12)",
+            "CHƯA DÙNG Present perfect for experience (lớp 8/9)",
+            "CHƯA DÙNG Relative pronouns (lớp 9)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Phát âm /əʊ/ vs /aɪ/",
+            "Thay thế đại từ sở hữu vào câu",
+            "Viết dạng so sánh nhất của tính từ ngắn"
+          ],
+          "luu_y_ra_de": "Phân biệt kỹ đại từ sở hữu (mine, yours) với tính từ sở hữu (my, your)."
+        },
+        {
+          "id": "anh6-u10",
+          "ten": "Unit 10: Our Houses in the Future",
+          "hoc_ky": 2,
+          "chu_de": "Future houses, smart appliances",
+          "tu_vung": ["solar energy", "UFO", "smart fridge", "automatic washing machine", "robot helper", "space station", "skyscraper", "eco-friendly"],
+          "ngu_phap": ["Future simple with Will / Won't for predictions", "Might / Might not for future possibility"],
+          "phat_am": ["Sounds /dr/ and /tr/"],
+          "ky_nang": {
+            "doc": "Đọc hiểu bài viết 80-100 từ về nhà thông minh tương lai.",
+            "nghe": "Nghe phỏng vấn về ước mơ ngôi nhà tương lai.",
+            "noi": "Mô tả ngôi nhà tương lai và thiết bị thông minh.",
+            "viet": "Viết đoạn văn 40-50 từ tả ngôi nhà tương lai của em."
+          },
+          "ngu_phap_da_hoc_truoc": ["Present simple", "Will for Tet promises (Unit 6)"],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG Be going to (lớp 10 Unit 2)",
+            "CHƯA DÙNG Future continuous (lớp 7 Unit 10)",
+            "CHƯA DÙNG Conditional type 1 (học ở Unit 11)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Phát âm cụm phụ âm /dr/ vs /tr/",
+            "Chia động từ Tương lai đơn (Will/Won't)",
+            "Điền Might / Might not chỉ khả năng có thể xảy ra"
+          ],
+          "luu_y_ra_de": "Dùng Will cho dự đoán tương lai nói chung và Might cho khả năng chưa chắc chắn."
+        },
+        {
+          "id": "anh6-u11",
+          "ten": "Unit 11: Our Greener World",
+          "hoc_ky": 2,
+          "chu_de": "3Rs, recycling, environmental protection",
+          "tu_vung": ["reduce", "reuse", "recycle", "rubbish", "plastic bag", "container", "environment", "pollute", "footprint", "refillable"],
+          "ngu_phap": ["Conditional sentences type 1 (If + Present simple, S + will + V)"],
+          "phat_am": ["Sounds /ɑː/ and /æ/"],
+          "ky_nang": {
+            "doc": "Đọc bài viết 80-100 từ về quy tắc 3R và lối sống xanh.",
+            "nghe": "Nghe lời khuyên bảo vệ môi trường trường học.",
+            "noi": "Thảo luận các biện pháp giúp môi trường xanh hơn.",
+            "viet": "Viết đoạn văn 40-50 từ về việc làm bảo vệ môi trường."
+          },
+          "ngu_phap_da_hoc_truoc": ["Present simple", "Will / Won't", "Should / Shouldn't"],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG Conditional type 2 (lớp 9 Unit 10)",
+            "CHƯA DÙNG Passive voice (lớp 7 Unit 6)",
+            "CHƯA DÙNG Unless (lớp 8/9)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Phát âm /ɑː/ vs /æ/",
+            "Chia động từ câu điều kiện loại 1 (If-clause và Main clause)",
+            "Nối 2 vế tạo thành câu điều kiện loại 1 hoàn chỉnh"
+          ],
+          "luu_y_ra_de": "Câu điều kiện loại 1 chỉ gồm cấu trúc chuẩn: If + S + V(s/es), S + will + V."
+        },
+        {
+          "id": "anh6-u12",
+          "ten": "Unit 12: Robots",
+          "hoc_ky": 2,
+          "chu_de": "Robot types and capabilities",
+          "tu_vung": ["home robot", "teacher robot", "worker robot", "doctor robot", "space robot", "guard", "recognise", "make tea", "repair"],
+          "ngu_phap": ["Superlative adjectives (Long adjectives: the most + adj)", "Could for ability in the past"],
+          "phat_am": ["Sounds /ɔɪ/ and /aʊ/"],
+          "ky_nang": {
+            "doc": "Đọc bài giới thiệu 80-100 từ về triển lãm robot.",
+            "nghe": "Nghe đoạn hội thoại về khả năng của robot.",
+            "noi": "Nói về loại robot em muốn có và công dụng.",
+            "viet": "Viết đoạn văn 40-50 từ tả robot trong tương lai."
+          },
+          "ngu_phap_da_hoc_truoc": ["Can / Could for ability", "Superlative short adjectives (Unit 9)"],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG Be able to (lớp 8 Unit 11)",
+            "CHƯA DÙNG Passive voice (lớp 7 Unit 6)",
+            "CHƯA DÙNG Relative pronouns who/which (lớp 9)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Phát âm nguyên âm đôi /ɔɪ/ vs /aʊ/",
+            "Viết dạng so sánh nhất của tính từ dài",
+            "Dùng Can (hiện tại) và Could (quá khứ) chỉ khả năng"
+          ],
+          "luu_y_ra_de": "Phân biệt so sánh nhất tính từ dài (the most expensive...) với tính từ ngắn (the smartest...)."
+        }
+      ],
+      "ghi_chu_chua_chac": []
+    },
+    {
+      "lop": 8,
+      "bac_nang_luc": "A2",
+      "chuong": [
+        {
+          "id": "anh8-u01",
+          "ten": "Unit 1: Leisure Time",
+          "hoc_ky": 1,
+          "chu_de": "Leisure activities, hobbies and relaxation",
+          "tu_vung": ["craft kit", "bead", "hanging out", "knitting", "puzzle", "DIY project", "message board", "relaxing", "satisfied", "socialise"],
+          "ngu_phap": ["Verbs of liking / disliking + gerunds (V-ing) or to-infinitives (like, prefer, adore, detest, fancy...)"],
+          "phat_am": ["Sounds /ʊ/ and /uː/"],
+          "ky_nang": {
+            "doc": "Đọc hiểu bài viết 120-150 từ về hoạt động giải trí của giới trẻ.",
+            "nghe": "Nghe bài phỏng vấn thói quen rảnh rỗi.",
+            "noi": "Hỏi đáp về sở thích và các dự án DIY.",
+            "viet": "Viết đoạn văn 80-100 từ mô tả hoạt động giải trí yêu thích."
+          },
+          "ngu_phap_da_hoc_truoc": ["Present simple", "Verbs of liking + V-ing (lớp 7 Unit 1)"],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG Past continuous (học ở Unit 9)",
+            "CHƯA DÙNG Reported speech (học ở Unit 11)",
+            "CHƯA DÙNG Relative clauses (lớp 9 Unit 7)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Phát âm /ʊ/ vs /uː/",
+            "Chia dạng đúng của động từ sau động từ chỉ sở thích (V-ing hoặc To-V)",
+            "Đọc điền từ / Đọc hiểu trả lời câu hỏi"
+          ],
+          "luu_y_ra_de": "Chú ý phân biệt các động từ CHỈ đi với V-ing (fancy, detest, avoid) và động từ đi được cả V-ing lẫn To-V (like, love, prefer)."
+        },
+        {
+          "id": "anh8-u02",
+          "ten": "Unit 2: Life in the Countryside",
+          "hoc_ky": 1,
+          "chu_de": "Rural life, agriculture and nature",
+          "tu_vung": ["harvest time", "combine harvester", "paddy field", "cattle", "herd", "vast", "hospitable", "peaceful", "well-trained", "load"],
+          "ngu_phap": ["Comparative adverbs (Short and long adverbs: faster, more comfortably, more skillfully)"],
+          "phat_am": ["Sounds /ə/ and /ɪ/"],
+          "ky_nang": {
+            "doc": "Đọc bài viết 120-150 từ về cuộc sống nông thôn ngày mùa.",
+            "nghe": "Nghe chia sẻ trải nghiệm mùa vụ của bạn nhỏ ở quê.",
+            "noi": "So sánh cuộc sống nông thôn và thành thị.",
+            "viet": "Viết đoạn văn 80-100 từ mô tả chuyến đi về quê hoặc vùng nông thôn."
+          },
+          "ngu_phap_da_hoc_truoc": ["Comparative adjectives (lớp 6 Unit 4 & lớp 7)"],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG Double comparatives (lớp 9 Unit 2)",
+            "CHƯA DÙNG Past continuous (học ở Unit 9)",
+            "CHƯA DÙNG Conditional type 2 (lớp 9 Unit 10)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Phát âm /ə/ vs /ɪ/",
+            "Chia dạng so sánh hơn của trạng từ (early -> earlier, fast -> faster, fluently -> more fluently)",
+            "Viết lại câu dùng trạng từ so sánh hơn"
+          ],
+          "luu_y_ra_de": "Đảm bảo học sinh không nhầm lẫn giữa so sánh hơn của tính từ và trạng từ."
+        }
+      ],
+      "ghi_chu_chua_chac": []
+    },
+    {
+      "lop": 10,
+      "bac_nang_luc": "B1",
+      "chuong": [
+        {
+          "id": "anh10-u01",
+          "ten": "Unit 1: Family Life",
+          "hoc_ky": 1,
+          "chu_de": "Family routines, household chores, family bonds",
+          "tu_vung": ["chores", "heavy lifting", "breadwinner", "homemaker", "groceries", "divide", "gratitude", "strengthen", "bond", "responsibility"],
+          "ngu_phap": ["Present simple vs Present continuous"],
+          "phat_am": ["Consonant blends /br/, /kr/ and /tr/"],
+          "ky_nang": {
+            "doc": "Đọc hiểu bài báo 150-180 từ về phân công việc nhà trong gia đình hiện đại.",
+            "nghe": "Nghe chia sẻ về lợi ích của việc chia sẻ việc nhà.",
+            "noi": "Thảo luận về vai trò và trách nhiệm của các thành viên gia đình.",
+            "viet": "Viết đoạn văn 100-120 từ về thói quen sinh hoạt gia đình."
+          },
+          "ngu_phap_da_hoc_truoc": ["Present simple", "Present continuous (THCS)"],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG Past continuous (học ở Unit 4)",
+            "CHƯA DÙNG Passive voice (học ở Unit 2 & Unit 6)",
+            "CHƯA DÙNG Present perfect vs Past simple (học ở Unit 5)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Nhận diện cụm phụ âm /br/, /kr/, /tr/",
+            "Chia động từ phân biệt Hiện tại đơn và Hiện tại tiếp diễn theo ngữ cảnh",
+            "Đọc điền từ đoạn văn (Cloze test) chủ đề gia đình",
+            "Viết đoạn văn 100-120 từ về việc nhà"
+          ],
+          "luu_y_ra_de": "Yêu cầu ngữ liệu mang tính học thuật nhẹ, cấu trúc phức vừa phải bậc B1."
+        }
+      ],
+      "ghi_chu_chua_chac": []
+    }
+  ],
+  "tien_trinh_ngu_phap": [
+    {"cau_truc": "Present simple", "lop": 6, "unit": "anh6-u01", "ghi_chu": "Lần đầu dạy động từ thường & adverbs of frequency."},
+    {"cau_truc": "Possessive case ('s)", "lop": 6, "unit": "anh6-u02", "ghi_chu": "Dạy sở hữu cách."},
+    {"cau_truc": "Present continuous (now)", "lop": 6, "unit": "anh6-u03", "ghi_chu": "Dạy hành động đang xảy ra tại thời điểm nói."},
+    {"cau_truc": "Comparative adjectives (short)", "lop": 6, "unit": "anh6-u04", "ghi_chu": "Dạy so sánh hơn của tính từ ngắn (-er than)."},
+    {"cau_truc": "Must / Mustn't", "lop": 6, "unit": "anh6-u05", "ghi_chu": "Dạy quy tắc và sự bắt buộc/cấm đoán."},
+    {"cau_truc": "Should / Shouldn't", "lop": 6, "unit": "anh6-u06", "ghi_chu": "Dạy lời khuyên."},
+    {"cau_truc": "Past simple", "lop": 6, "unit": "anh6-u08", "ghi_chu": "Lần đầu dạy Quá khứ đơn (động từ quy tắc & bất quy tắc cơ bản); ôn mở rộng ở Lớp 7 Unit 3 & Lớp 10 Unit 4."},
+    {"cau_truc": "Superlative adjectives (short)", "lop": 6, "unit": "anh6-u09", "ghi_chu": "Dạy so sánh nhất tính từ ngắn."},
+    {"cau_truc": "Will / Won't (future simple)", "lop": 6, "unit": "anh6-u10", "ghi_chu": "Dạy dự đoán tương lai."},
+    {"cau_truc": "Conditional type 1", "lop": 6, "unit": "anh6-u11", "ghi_chu": "Lần đầu dạy câu điều kiện loại 1 cơ bản; mở rộng ở Lớp 9 Unit 3 & Lớp 10 Unit 10."},
+    {"cau_truc": "Superlative adjectives (long)", "lop": 6, "unit": "anh6-u12", "ghi_chu": "Dạy so sánh nhất tính từ dài (the most...)."},
+    {"cau_truc": "Verbs of liking + V-ing", "lop": 7, "unit": "anh7-u01", "ghi_chu": "Dạy động từ sở thích + V-ing; mở rộng + to-infinitive ở Lớp 8 Unit 1."},
+    {"cau_truc": "Simple sentences (S-V-O)", "lop": 7, "unit": "anh7-u02", "ghi_chu": "Dạy cấu trúc câu đơn."},
+    {"cau_truc": "Comparison (as...as, the same as, different from)", "lop": 7, "unit": "anh7-u04", "ghi_chu": "Dạy so sánh bằng và khác nhau."},
+    {"cau_truc": "Passive voice (present simple)", "lop": 7, "unit": "anh7-u06", "ghi_chu": "Lần đầu dạy bị động hiện tại đơn; bị động với modals ở Lớp 10 Unit 6; bị động nâng cao ở Lớp 12 Unit 3."},
+    {"cau_truc": "Used to + V", "lop": 7, "unit": "anh7-u07", "ghi_chu": "Dạy thói quen quá khứ; ôn lại ở Lớp 9 Unit 4."},
+    {"cau_truc": "Connectors (although, despite, however)", "lop": 7, "unit": "anh7-u08", "ghi_chu": "Dạy liên từ chỉ nhượng bộ; mở rộng ở Lớp 9 Unit 11 & Lớp 12 Unit 7."},
+    {"cau_truc": "Comparative adverbs", "lop": 8, "unit": "anh8-u02", "ghi_chu": "Dạy so sánh hơn của trạng từ."},
+    {"cau_truc": "Question words + to-infinitive", "lop": 8, "unit": "anh8-u03", "ghi_chu": "Dạy từ hỏi + to-V ở Lớp 8 Unit 3 & Lớp 9 Unit 1."},
+    {"cau_truc": "Complex sentences with adverb clauses of time", "lop": 8, "unit": "anh8-u07", "ghi_chu": "Dạy mệnh đề trạng ngữ chỉ thời gian (when, while, before, after, until...)."},
+    {"cau_truc": "Past continuous", "lop": 8, "unit": "anh8-u09", "ghi_chu": "Lần đầu dạy Quá khứ tiếp diễn; kết hợp Quá khứ đơn ở Lớp 10 Unit 4 & Lớp 12 Unit 1."},
+    {"cau_truc": "Reported speech (statements & questions)", "lop": 8, "unit": "anh8-u11", "ghi_chu": "Dạy câu tường thuật ở Lớp 8 Unit 11-12; tường thuật với reporting verbs ở Lớp 10 Unit 9 & Lớp 11 Unit 9."},
+    {"cau_truc": "Double comparatives (The more... the more...)", "lop": 9, "unit": "anh9-u02", "ghi_chu": "Dạy so sánh kép ở Lớp 9 Unit 2 & Lớp 12 Unit 4."},
+    {"cau_truc": "Wish + Past simple", "lop": 9, "unit": "anh9-u04", "ghi_chu": "Dạy câu ước ở hiện tại ở Lớp 9 Unit 4."},
+    {"cau_truc": "Present perfect", "lop": 9, "unit": "anh9-u05", "ghi_chu": "Lần đầu dạy chính thức thì Hiện tại hoàn thành (for, since, already, yet); so sánh Quá khứ đơn ở Lớp 10 Unit 5."},
+    {"cau_truc": "Defining & Non-defining relative clauses", "lop": 9, "unit": "anh9-u07", "ghi_chu": "Dạy mệnh đề quan hệ xác định ở Lớp 9 Unit 7, không xác định ở Unit 9; ôn tập & rút gọn ở Lớp 10 Unit 8, Lớp 11 Unit 6, Lớp 12 Unit 5."},
+    {"cau_truc": "Conditional type 2", "lop": 9, "unit": "anh9-u10", "ghi_chu": "Dạy điều kiện loại 2 ở Lớp 9 Unit 10; ôn lại ở Lớp 10 Unit 10 & Lớp 12 Unit 8."},
+    {"cau_truc": "Be going to vs Will", "lop": 10, "unit": "anh10-u02", "ghi_chu": "Phân biệt tương lai gần và tương lai đơn ở Lớp 10 Unit 2."},
+    {"cau_truc": "To-infinitive vs Bare infinitive", "lop": 10, "unit": "anh10-u03", "ghi_chu": "Phân biệt động từ nguyên mẫu có to và không to ở Lớp 10 Unit 3."},
+    {"cau_truc": "Gerunds & Participle clauses (Perfect & Reduced)", "lop": 11, "unit": "anh11-u04", "ghi_chu": "Dạy phân từ hoàn thành & danh động từ hoàn thành ở Lớp 11 Unit 4/5 và Lớp 12 Unit 5."},
+    {"cau_truc": "Linking verbs & Stative verbs", "lop": 11, "unit": "anh11-u03", "ghi_chu": "Dạy động từ nối ở Lớp 11 Unit 3."},
+    {"cau_truc": "Causative structures (have/get sth done)", "lop": 12, "unit": "anh12-u03", "ghi_chu": "Dạy cấu trúc thể nhờ bảo / sai khiến ở Lớp 12 Unit 3."},
+    {"cau_truc": "Inversion with negative adverbials", "lop": 12, "unit": "anh12-u10", "ghi_chu": "Dạy đảo ngữ ở Lớp 12 Unit 10."}
+  ],
+  "cau_truc_de": [
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 8,
+      "thoi_gian_phut": 60,
+      "phan": [
+        {"ten": "Pronunciation & Stress", "so_cau": 4, "dang": "Phát âm âm /ʊ/, /uː/, /ə/, /ɪ/ và Trọng âm đuôi -ion, -ity"},
+        {"ten": "Vocabulary & Grammar", "so_cau": 12, "dang": "Trắc nghiệm chọn đáp án đúng: Verbs of liking + V-ing/To-V, Comparative adverbs, Question words + to-V"},
+        {"ten": "Word Formation & Error Correction", "so_cau": 4, "dang": "Dạng đúng của từ và tìm lỗi sai trong câu"},
+        {"ten": "Reading Comprehension", "so_cau": 10, "dang": "1 bài điền từ (5 câu) và 1 bài đọc hiểu trả lời câu hỏi (5 câu)"},
+        {"ten": "Writing", "so_cau": 5, "dang": "Viết lại câu không đổi nghĩa và viết đoạn văn 80-100 từ"}
+      ],
+      "pham_vi": ["anh8-u01", "anh8-u02", "anh8-u03"],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Tuyển sinh vào lớp 10 THPT",
+      "lop": 9,
+      "thoi_gian_phut": 60,
+      "phan": [
+        {"ten": "Phát âm và Trọng âm", "so_cau": 4, "dang": "Trắc nghiệm chọn từ có phát âm / trọng âm khác"},
+        {"ten": "Ngữ pháp và Từ vựng", "so_cau": 12, "dang": "Trắc nghiệm hoàn thành câu bám sát chương trình lớp 9 (Phrasal verbs, Double comparatives, Wish, Present perfect, Relative clauses...)"},
+        {"ten": "Giao tiếp xã hội", "so_cau": 2, "dang": "Chọn đáp án đáp lời tình huống giao tiếp"},
+        {"ten": "Đọc hiểu", "so_cau": 12, "dang": "1 bài đọc điền từ vào chỗ trống (Cloze test - 5 câu) và 1 bài đọc hiểu trả lời câu hỏi (7 câu)"},
+        {"ten": "Viết", "so_cau": 10, "dang": "Viết lại câu biến đổi cấu trúc (5 câu) và Sắp xếp câu/Viết đoạn văn theo chủ đề (5 câu)"}
+      ],
+      "pham_vi": ["anh9-u01", "anh9-u02", "anh9-u03", "anh9-u04", "anh9-u05", "anh9-u06", "anh9-u07", "anh9-u08", "anh9-u09", "anh9-u10", "anh9-u11", "anh9-u12"],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Thi tốt nghiệp THPT 2025",
+      "lop": 12,
+      "thoi_gian_phut": 50,
+      "phan": [
+        {"ten": "Phần I: Trắc nghiệm lựa chọn 4 đáp án", "so_cau": 18, "dang": "Trắc nghiệm phát âm, trọng âm, từ vựng, ngữ pháp, tình huống giao tiếp, sắp xếp câu hội thoại/đoạn văn"},
+        {"ten": "Phần II: Đúng / Sai", "so_cau": 4, "dang": "Bài đọc chọn Đúng/Sai cho từng ý khẳng định"},
+        {"ten": "Phần III: Trắc nghiệm dạng điền từ vào bài đọc / thông báo", "so_cau": 18, "dang": "Đọc điền từ vào tờ rơi/thông báo/quảng cáo và bài đọc điền từ hoàn chỉnh đoạn văn"}
+      ],
+      "pham_vi": ["anh10-u01", "anh11-u01", "anh12-u01", "anh12-u02", "anh12-u03", "anh12-u04", "anh12-u05", "anh12-u06", "anh12-u07", "anh12-u08", "anh12-u09", "anh12-u10"],
+      "ti_le_muc_do": "30% Nhận biết - 40% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    }
+  ]
+}

@@ -1,0 +1,1413 @@
+{
+  "mon": "Sinh học",
+  "nguon": [
+    "Chương trình giáo dục phổ thông môn Sinh học (Ban hành kèm theo Thông tư số 32/2018/TT-BGDĐT và sửa đổi, bổ sung tại Thông tư số 13/2022/TT-BGDĐT)",
+    "Sách giáo khoa Sinh học 10, 11, 12 - Bộ Kết nối tri thức với cuộc sống (NXB Giáo dục Việt Nam)",
+    "Sách giáo khoa Sinh học 10, 11, 12 - Bộ Chân trời sáng tạo (NXB Giáo dục Việt Nam)",
+    "Sách giáo khoa Sinh học 10, 11, 12 - Bộ Cánh diều (NXB Đại học Sư phạm)",
+    "Thông tư số 22/2021/TT-BGDĐT về đánh giá học sinh THCS và học sinh THPT",
+    "Quyết định số 764/QĐ-BGDĐT về Cấu trúc định dạng đề thi tốt nghiệp THPT từ năm 2025 môn Sinh học"
+  ],
+  "lop": [
+    {
+      "lop": 10,
+      "chuong": [
+        {
+          "id": "sinh10-mo-dau",
+          "ten": "Mở đầu và các cấp độ tổ chức của thế giới sống",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Mở đầu & Cấp độ tổ chức của thế giới sống",
+            "CTST": "Mở đầu & Các cấp độ tổ chức của thế giới sống",
+            "CD": "Giới thiệu chương trình môn Sinh học và Các cấp tổ chức của thế giới sống"
+          },
+          "yeu_cau_can_dat": [
+            "Nêu được đối tượng, các lĩnh vực nghiên cứu, mục tiêu và vai trò của Sinh học trong đời sống và phát triển bền vững.",
+            "Trình bày được các phương pháp nghiên cứu và học tập môn Sinh học (quan sát, thực nghiệm, thực địa...); các kỹ năng tiến trình.",
+            "Phân tích được các cấp độ tổ chức sống (tế bào, cơ thể, quần thể, quần xã - hệ sinh thái, sinh quyển); nêu được đặc điểm chung của các cấp tổ chức sống (hệ thống mở và tự điều chỉnh, liên tục cải biến, tổ chức theo nguyên tắc thứ bậc)."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Khái niệm các cấp độ tổ chức sống cơ bản (tế bào là đơn vị cơ sở).",
+            "Khái niệm hệ thống mở, tự điều chỉnh.",
+            "Công cụ Toán học: Kỹ năng đọc bảng số liệu, biểu đồ mô tả sự tăng trưởng dân số hoặc sinh khối ở mức cơ bản."
+          ],
+          "thuat_ngu": [
+            "cấp độ tổ chức sống",
+            "hệ thống mở",
+            "tự điều chỉnh",
+            "nguyên tắc thứ bậc",
+            "phát triển bền vững",
+            "đạo đức sinh học"
+          ],
+          "qua_trinh_va_co_che": [
+            "Sơ đồ thứ bậc tổ chức sống từ phân tử -> tế bào -> cơ thể -> quần thể -> quần xã -> hệ sinh thái -> sinh quyển.",
+            "Cơ chế tự điều chỉnh của hệ thống sống (ví dụ: điều hòa cân bằng môi trường trong cơ thể ở mức sơ lược)."
+          ],
+          "cong_thuc": [
+            "Không có công thức tính toán phức tạp ở chương này."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG hệ thống phân loại 5 giới chi tiết của chương trình 2006 (Giới Khởi sinh, Nguyên sinh, Nấm, Thực vật, Động vật đã được giảm tải/rút gọn theo hướng tiếp cận các cấp độ tổ chức).",
+            "CHƯA DÙNG kiến thức di truyền phân tử DNA, RNA (học ở chương Thành phần hóa học và lớp 12).",
+            "CHƯA DÙNG khái niệm chi tiết về hệ sinh thái và chuỗi thức ăn (học ở lớp 12 Sinh thái học)."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài chọn nhận định đúng/sai về vai trò của môn Sinh học và đạo đức sinh học.",
+            "Dạng bài sắp xếp các cấp độ tổ chức sống theo nguyên tắc thứ bậc từ thấp đến cao.",
+            "Dạng bài phân tích tình huống thực tế về sự mất cân bằng sinh thái hoặc vi phạm đạo đức sinh học (như nhân bản vô tính người)."
+          ],
+          "luu_y_ra_de": "Chương trình 2018 nhấn mạnh Đạo đức sinh học (Bioethics) và Phát triển bền vững. Không bắt học sinh học thuộc lòng tên các nhà khoa học hay mốc lịch sử phát triển ngành sinh học."
+        },
+        {
+          "id": "sinh10-thanh-phan-hoa-hoc-te-bao",
+          "ten": "Thành phần hóa học của tế bào",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Thành phần hóa học của tế bào",
+            "CTST": "Thành phần hóa học của tế bào",
+            "CD": "Thành phần hóa học của tế bào"
+          },
+          "yeu_cau_can_dat": [
+            "Mô tả được vai trò của nước đối với tế bào và cơ thể (dung môi, môi trường phản ứng, điều hòa nhiệt độ).",
+            "Trình bày được cấu trúc và vai trò của các đại phân tử sinh học: carbohydrate (monosaccharide, disaccharide, polysaccharide), lipid (triglyceride, phospholipid, steroid), protein (4 bậc cấu trúc, chức năng), nucleic acid (DNA và RNA).",
+            "Tiến hành được các thí nghiệm nhận biết các thành phần hóa học trong tế bào (tinh bột, đường giảm, protein, lipid)."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Công thức cấu tạo chung dạng sơ đồ của glucose, amino acid, nucleotide.",
+            "Liên kết hydrogen, liên kết peptide, liên kết phosphodiester, liên kết glycosidic (ở mức nhận biết tên liên kết).",
+            "Công cụ Toán học: Tính phần trăm khối lượng, phép cộng trừ cơ bản."
+          ],
+          "thuat_ngu": [
+            "carbohydrate",
+            "lipid",
+            "protein",
+            "nucleic acid",
+            "DNA",
+            "RNA",
+            "nucleotide",
+            "amino acid",
+            "monosaccharide",
+            "disaccharide",
+            "polysaccharide",
+            "phospholipid",
+            "steroid",
+            "biến tính protein"
+          ],
+          "qua_trinh_va_co_che": [
+            "Cơ chế hình thành liên kết peptide giải phóng nước.",
+            "Cơ chế biến tính của protein dưới tác động của nhiệt độ, pH.",
+            "Cấu trúc không gian 3D của DNA (xoắn đôi song song ngược chiều 5'->3' và 3'->5') và RNA."
+          ],
+          "cong_thuc": [
+            "ĐƯỢC DÙNG: Tính số lượng nucleotide mỗi loại theo nguyên tắc bổ sung ($A = T$, $G = C$; $N = 2A + 2G$).",
+            "KHÔNG DÙNG: Các dạng bài tập tính toán DNA siêu phức tạp của chương trình 2006 (như tính số liên kết hydrogen $H = 2A + 3G$, chiều dài $L = \frac{N}{2} \times 3.4\text{ Å}$, số chu kỳ xoắn $C = \frac{N}{20}$, số liên kết phosphodiester $2N - 2$...). Chương trình 2018 đã LOẠI BỎ bài tập tính toán kích thước DNA."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG cơ chế tái bản DNA, phiên mã, dịch mã (học ở lớp 12).",
+            "CHƯA DÙNG các công thức bài tập DNA nâng cao kiểu 2006.",
+            "CHƯA DÙNG khái niệm chi tiết về operon Lac hay điều hòa biểu hiện gene (lớp 12)."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài phân biệt cấu trúc và chức năng giữa DNA và RNA, giữa các loại carbohydrate.",
+            "Dạng bài thực hành: Phân tích kết quả thí nghiệm nhận biết đường giảm (thuốc thử Benedict), tinh bột (Iodine), protein (Biuret).",
+            "Dạng bài ứng dụng thực tế: Giải thích vì sao ăn nhiều mỡ động vật dễ xơ vữa động mạch; giải thích hiện tượng thịt bò tái bị đổi màu."
+          ],
+          "luu_y_ra_de": "Dùng đúng thuật ngữ SGK mới: 'gene' thay 'gen', 'nucleotide' thay 'nu', 'amino acid' thay 'axit amin', 'DNA/RNA' thay 'ADN/ARN'. Tuyệt đối không ra dạng bài tập tính toán chiều dài, khối lượng phân tử DNA."
+        },
+        {
+          "id": "sinh10-cau-truc-te-bao",
+          "ten": "Cấu trúc tế bào",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Cấu trúc tế bào",
+            "CTST": "Cấu trúc tế bào",
+            "CD": "Cấu trúc tế bào"
+          },
+          "yeu_cau_can_dat": [
+            "Mô tả được cấu trúc và chức năng của tế bào nhân sơ (vi khuẩn: thành tế bào, màng sinh chất, tế bào chất, vùng nhân, vỏ nhầy, roi, lông).",
+            "Phân tích được cấu trúc và chức năng của các bào quan trong tế bào nhân thực (nhân, lưới nội chất, bộ máy Golgi, lysosome, không bào, ti thể, lục lạp, ribosome, trung thể, khung xương tế bào).",
+            "So sánh được tế bào nhân sơ với tế bào nhân thực; tế bào thực vật với tế bào động vật.",
+            "Thực hành quan sát tế bào nhân sơ và tế bào nhân thực dưới kính hiển vi."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Cấu trúc màng sinh chất theo mô hình khảm động (khảm phospholipid và protein).",
+            "Chức năng biến đổi, đóng gói và vận chuyển sản phẩm của bộ máy Golgi.",
+            "Sự phối hợp hoạt động giữa các bào quan trong con đường tiết protein (Ribosome -> Lưới nội chất hạt -> Bộ máy Golgi -> Màng sinh chất)."
+          ],
+          "thuat_ngu": [
+            "tế bào nhân sơ",
+            "tế bào nhân thực",
+            "bào quan",
+            "màng sinh chất",
+            "mô hình khảm động",
+            "phospholipid",
+            "peptidoglycan",
+            "lưới nội chất hạt/trơn",
+            "bộ máy Golgi",
+            "ti thể",
+            "lục lạp",
+            "lysosome",
+            "peroxysome"
+          ],
+          "qua_trinh_va_co_che": [
+            "Con đường tổng hợp và xuất khẩu protein ra ngoài tế bào.",
+            "Sự biến đổi hình dạng tế bào nhờ khung xương tế bào."
+          ],
+          "cong_thuc": [
+            "Không có công thức tính toán ở chương này."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG chuỗi truyền electron hô hấp phân tử chi tiết (học ở chương Chuyển hóa năng lượng).",
+            "CHƯA DÙNG pha sáng, pha tối quang hợp chi tiết (học ở chương Chuyển hóa năng lượng).",
+            "CHƯA DÙNG cơ chế phân bào nguyên phân, giảm phân (học ở chương Chu kì tế bào)."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài nối hoặc ghép cặp bào quan với chức năng tương ứng.",
+            "Dạng bài đọc sơ đồ màng sinh chất, xác định vị trí của protein xuyên màng, kênh ion, glycoprotein.",
+            "Dạng bài thực tế: Phân tích cơ chế tác động của kháng sinh penicillin lên sự tổng hợp thành peptidoglycan của vi khuẩn."
+          ],
+          "luu_y_ra_de": "Dùng thuật ngữ 'tế bào nhân sơ' (prokaryote) và 'tế bào nhân thực' (eukaryote). Nhấn mạnh tính thống nhất và sự phối hợp giữa các bào quan thay vì chỉ học thuộc lòng cấu tạo rời rạc."
+        },
+        {
+          "id": "sinh10-trao-doi-chat-chuyen-hoa-nang-luong",
+          "ten": "Trao đổi chất và chuyển hóa năng lượng ở tế bào",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Trao đổi chất qua màng sinh chất và chuyển hóa năng lượng ở tế bào",
+            "CTST": "Trao đổi chất và chuyển hóa năng lượng ở tế bào",
+            "CD": "Trao đổi chất và chuyển hóa năng lượng ở tế bào"
+          },
+          "yeu_cau_can_dat": [
+            "Phân biệt được các hình thức vận chuyển các chất qua màng sinh chất: vận chuyển thụ động (khuếch tán đơn giản, khuếch tán tăng cường, thẩm thấu), vận chuyển chủ động, xuất bào và nhập bào.",
+            "Trình bày được khái niệm năng lượng, các dạng năng lượng trong tế bào (thế năng, động năng, ATP) và sự chuyển hóa năng lượng.",
+            "Phân tích được cấu trúc, cơ chế tác động và vai trò của enzyme đối với quá trình chuyển hóa vật chất; các yếu tố ảnh hưởng đến hoạt tính enzyme (nhiệt độ, pH, nồng độ cơ chất, nồng độ enzyme, chất chế định).",
+            "Trình bày được tổng quan về quá trình hô hấp tế bào (đường phân, oxy hóa pyruvate và chu trình Krebs, chuỗi truyền electron); phân giải hiếu khí và lên men.",
+            "Trình bày được tổng quan về quá trình quang hợp (pha sáng và pha tối/chu trình Calvin); vai trò của quang hợp."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Khái niệm môi trường ưu trương, nhược trương, đẳng trương; hiện tượng co nguyên sinh và phản co nguyên sinh.",
+            "Phương trình tổng quát của Hô hấp tế bào ($C_6H_{12}O_6 + 6O_2 \rightarrow 6CO_2 + 6H_2O + \text{ATP}$) và Quang hợp ($6CO_2 + 6H_2O \rightarrow C_6H_{12}O_6 + 6O_2$).",
+            "Công cụ Toán học: Đọc đồ thị ảnh hưởng của nhiệt độ/pH đến hoạt tính enzyme."
+          ],
+          "thuat_ngu": [
+            "vận chuyển thụ động",
+            "vận chuyển chủ động",
+            "thẩm thấu",
+            "co nguyên sinh",
+            "ATP",
+            "enzyme",
+            "trung tâm hoạt động",
+            "cơ chất",
+            "đường phân",
+            "chu trình Krebs",
+            "chuỗi truyền electron",
+            "quang hợp",
+            "chu trình Calvin",
+            "pha sáng",
+            "pha tối"
+          ],
+          "qua_trinh_va_co_che": [
+            "Cơ chế thẩm thấu và biến đổi hình dạng tế bào trong các môi trường có nồng độ chất tan khác nhau.",
+            "Cơ chế tác động của enzyme (mô hình chìa khóa - ổ khóa / khớp tương ứng).",
+            "Các giai đoạn của hô hấp tế bào: Đường phân (tế bào chất) -> Chu trình Krebs (chất nền ti thể) -> Chuỗi truyền electron (màng trong ti thể).",
+            "Pha sáng (màng thylakoid) quang phân phân tử nước và tổng hợp ATP, NADPH -> Pha tối (chất nền stroma) cố định $CO_2$ bằng chu trình Calvin."
+          ],
+          "cong_thuc": [
+            "ĐƯỢC DÙNG: Tính số phân tử ATP tạo ra từ 1 phân tử glucose (khoảng 30-32 ATP theo SGK mới, không bắt buộc nhớ con số 38 ATP tuyệt đối kiểu cũ).",
+            "KHÔNG DÙNG: Bài tập tính toán số đo quang hợp/hô hấp phức tạp mang tính đánh đố."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG chi tiết các con đường quang hợp $C_3, C_4, CAM$ và trao đổi chất ở mức độ cơ thể (học ở Sinh học 11).",
+            "CHƯA DÙNG chi tiết các phản ứng hóa học trung gian của chu trình Krebs hay Calvin (không bắt nhớ tên các chất trung gian như RuBP, PGA, G3P một cách quá chi tiết trừ các chất cốt lõi trong SGK)."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài thí nghiệm co và phản co nguyên sinh ở tế bào hành tím/lá cây.",
+            "Dạng bài đồ thị phân tích ảnh hưởng của nhiệt độ, pH, nồng độ cơ chất đến tốc độ phản ứng enzyme.",
+            "Dạng bài bảng so sánh hô hấp hiếu khí và lên men (lên men lactic, lên men ethanol).",
+            "Dạng bài ứng dụng thực tế: Vì sao muối dưa cải lại bị sụt khối lượng ban đầu; tại sao bảo quản thực phẩm trong tủ lạnh làm chậm hư hỏng."
+          ],
+          "luu_y_ra_de": "Số lượng ATP tạo ra trong hô hấp hiếu khí SGK mới ghi khoảng 30-32 ATP (thay vì cố định 38 ATP như SGK 2006). Cần chú ý điểm này khi ra câu hỏi trắc nghiệm."
+        },
+        {
+          "id": "sinh10-thong-tin-te-bao-chu-ki-te-bao",
+          "ten": "Thông tin tế bào, chu kì tế bào và phân bào",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Thông tin tế bào và Chu kì tế bào, phân bào",
+            "CTST": "Thông tin tế bào và Chu kì tế bào, phân bào",
+            "CD": "Thông tin tế bào và Chu kì tế bào, phân bào"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được khái niệm thông tin tế bào và các quá trình truyền thông tin giữa các tế bào (tiếp nhận -> truyền tin -> đáp ứng).",
+            "Trình bày được khái niệm chu kì tế bào, các giai đoạn của kỳ trung gian ($G_1, S, G_2$) và điểm kiểm soát ($checkpoints$).",
+            "Mô tả được các kỳ của nguyên phân và giảm phân (giảm phân I và giảm phân II); nêu được ý nghĩa sinh học của nguyên phân và giảm phân.",
+            "Phân biệt được nguyên phân và giảm phân.",
+            "Trình bày được bệnh ung thư và cách phòng tránh ung thư."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Bộ nhiễm sắc thể lưỡng bội $2n$ và đơn bội $n$.",
+            "Trạng thái NST đơn, NST kép, chromatid, tâm động qua các kỳ phân bào.",
+            "Hiện tượng trao đổi đoạn (tiếp hợp và trao đổi chéo) ở kỳ đầu giảm phân I tạo ra biến dị tổ hợp.",
+            "Công cụ Toán học: Phép tính nhân lũy thừa $2^k$ (với $k$ là số lần nguyên phân)."
+          ],
+          "thuat_ngu": [
+            "thông tin tế bào",
+            "thụ thể",
+            "truyền tín hiệu",
+            "chu kì tế bào",
+            "kỳ trung gian",
+            "điểm kiểm soát",
+            "nguyên phân",
+            "giảm phân",
+            "chromatid",
+            "tâm động",
+            "bộ NST",
+            "ung thư",
+            "khối u lành tính/ác tính"
+          ],
+          "qua_trinh_va_co_che": [
+            "Truyền tin tế bào: Thụ thể màng/nội bào tiếp nhận tín hiệu -> Chuỗi truyền tín hiệu -> Đáp ứng tế bào (bật/tắt gene, hoạt hóa enzyme).",
+            "Diễn biến NST qua 4 kỳ của Nguyên phân (kỳ đầu, kỳ giữa, kỳ sau, kỳ cuối).",
+            "Diễn biến NST qua Giảm phân I và Giảm phân II; sự phân phân ly độc lập và trao đổi chéo."
+          ],
+          "cong_thuc": [
+            "ĐƯỢC DÙNG: Tính số tế bào con tạo thành từ $a$ tế bào ban đầu qua $k$ lần nguyên phân ($N_{tb} = a \times 2^k$); tính số NST, chromatid, tâm động trong một tế bào ở các kỳ nguyên phân/giảm phân.",
+            "KHÔNG DÙNG: Các dạng bài tập công thức phân bào siêu phức tạp của chương trình 2006 (như tính số nguyên liệu môi trường cung cấp cho giảm phân qua nhiều thế hệ tế bào sinh dục sơ khai, tính số loại giao tử khi có $n$ cặp NST xảy ra trao đổi chéo tại nhiều điểm...)."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG các quy luật di truyền Mendellian hay hoán vị gene di truyền quần thể (học ở lớp 12).",
+            "CHƯA DÙNG bài tập tính số lượng giao tử phức tạp có trao đổi chéo nhiều điểm kiểu 2006."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài đọc hình vẽ nhận biết các kỳ của nguyên phân/giảm phân và xác định trạng thái NST ($2n$ kép, $2n$ đơn, $4n$ đơn, $n$ kép...).",
+            "Dạng bài bảng phân biệt số lượng NST, chromatid, tâm động ở từng kỳ phân bào.",
+            "Dạng bài tính số tế bào con tạo ra sau nguyên phân.",
+            "Dạng bài vận dụng thực tế: Cơ chế gây bệnh ung thư do đột biến hỏng điểm kiểm soát chu kỳ tế bào; các tác nhân môi trường gây ung thư."
+          ],
+          "luu_y_ra_de": "Chương trình 2018 bổ sung phần Truyền thông tin tế bào (Cell signaling) và Điểm kiểm soát chu kỳ tế bào (Checkpoints). Ra đề cần chú ý tích hợp phần này, tránh chỉ tập trung vào đếm NST nguyên phân/giảm phân."
+        },
+        {
+          "id": "sinh10-vi-sinh-vat",
+          "ten": "Vi sinh vật và ứng dụng",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Vi sinh vật và ứng dụng",
+            "CTST": "Vi sinh vật và ứng dụng",
+            "CD": "Vi sinh vật và ứng dụng"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được khái niệm vi sinh vật và các kiểu dinh dưỡng ở vi sinh vật (quang tự dưỡng, hóa tự dưỡng, quang dị dưỡng, hóa dị dưỡng).",
+            "Trình bày được các phương pháp nghiên cứu vi sinh vật (phân lập, quan sát, nuôi cấy, định danh).",
+            "Phân tích được quá trình sinh trưởng của quần thể vi khuẩn trong nuôi cấy liên tục và không liên tục (4 pha: tiềm phát, lũy thừa, cân bằng, suy vong).",
+            "Nêu được các hình thức sinh sản ở vi sinh vật (phân đôi, nảy chồi, bào tử).",
+            "Nêu được các yếu tố ảnh hưởng đến sinh trưởng của vi sinh vật (nhiệt độ, độ ẩm, pH, chất hóa học...).",
+            "Trình bày được một số ứng dụng của vi sinh vật trong đời sống và sản xuất (lên men rau quả, làm sữa chua, sản xuất kháng sinh, phân bón sinh học...)."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Phương trình cơ bản lên men ethanol và lên men lactic.",
+            "Thời gian thế hệ ($g$) và tốc độ sinh trưởng.",
+            "Công cụ Toán học: Công thức tính số lượng tế bào vi khuẩn trong nuôi cấy không liên tục $N_t = N_0 \times 2^n$ (với $n = t/g$)."
+          ],
+          "thuat_ngu": [
+            "vi sinh vật",
+            "quang tự dưỡng",
+            "hóa tự dưỡng",
+            "quang dị dưỡng",
+            "hóa dị dưỡng",
+            "thời gian thế hệ",
+            "nuôi cấy liên tục/không liên tục",
+            "lên men lactic",
+            "lên men ethanol",
+            "chất kháng sinh",
+            "chất diệt khuẩn"
+          ],
+          "qua_trinh_va_co_che": [
+            "Đường cong sinh trưởng của quần thể vi khuẩn trong nuôi cấy không liên tục (4 pha).",
+            "Cơ chế tác động của các chất diệt khuẩn/ức chế sinh trưởng (cồn, phenol, chất tẩy rửa)."
+          ],
+          "cong_thuc": [
+            "ĐƯỢC DÙNG: Công thức tính số tế bào sau thời gian $t$: $N_t = N_0 \times 2^{t/g}$.",
+            "KHÔNG DÙNG: Các bài tập toán vi sinh vật tính toán phức tạp bài toán pha trộn."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG cấu trúc và cơ chế nhân lên của virus (học riêng ở chương Virus).",
+            "CHƯA DÙNG kiến thức công nghệ tái tổ hợp gene ở vi khuẩn (học ở lớp 12)."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài đọc đồ thị 4 pha sinh trưởng của vi khuẩn.",
+            "Dạng bài tính số lượng tế bào vi khuẩn tạo ra sau một khoảng thời gian.",
+            "Dạng bài thực hành làm sữa chua, muối dưa chua, làm giấm.",
+            "Dạng bài ứng dụng: Lựa chọn nồng độ cồn sát khuẩn 70 độ thay vì 90 độ; giải thích vì sao dưa muối chua bảo quản được lâu."
+          ],
+          "luu_y_ra_de": "Chú ý phân biệt 4 kiểu dinh dưỡng dựa trên nguồn năng lượng (ánh sáng / hóa học) và nguồn carbon ($CO_2$ / chất hữu cơ)."
+        },
+        {
+          "id": "sinh10-virus",
+          "ten": "Virus và ứng dụng",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Virus và ứng dụng",
+            "CTST": "Virus và ứng dụng",
+            "CD": "Virus và ứng dụng"
+          },
+          "yeu_cau_can_dat": [
+            "Mô tả được đặc điểm cấu tạo chung của virus (lõi nucleic acid, vỏ capsid, vỏ ngoài nếu có).",
+            "Trình bày được các giai đoạn trong chu trình nhân lên của virus trong tế bào chủ (hấp phụ -> xâm nhập -> tổng hợp -> lắp ráp -> giải phóng).",
+            "Phân biệt được chu trình tan và chu trình tiềm tan.",
+            "Trình bày được cơ chế gây bệnh của virus và các con đường lây truyền bệnh do virus ở người, động vật, thực vật.",
+            "Nêu được các phương pháp phòng chống bệnh do virus (vaccine, lối sống an toàn); vai trò của virus trong công nghệ sinh học và y học (chế tạo vaccine, làm thể truyền)."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Khái niệm virus là dạng sống chưa có cấu tạo tế bào, kí sinh nội bào bắt buộc.",
+            "Cấu trúc bacteriophage (phage), virus cúm, HIV, SARS-CoV-2.",
+            "Khái niệm vaccine mRNA và vaccine truyền thống."
+          ],
+          "thuat_ngu": [
+            "virus",
+            "capsid",
+            "capsomer",
+            "vỏ ngoài",
+            "bacteriophage",
+            "chu trình tan",
+            "chu trình tiềm tan",
+            "kí sinh nội bào bắt buộc",
+            "vaccine",
+            "thể truyền"
+          ],
+          "qua_trinh_va_co_che": [
+            "Chu trình nhân lên 5 bước của virus.",
+            "Cơ chế chuyển đổi giữa chu trình tiềm tan sang chu trình tan.",
+            "Cơ chế phòng thủ của hệ miễn dịch chống virus (ở mức cơ bản)."
+          ],
+          "cong_thuc": [
+            "Không có công thức tính toán ở chương này."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG chi tiết đáp ứng miễn dịch đặc hiệu tế bào T, B (học ở Sinh học 11 - Cân bằng nội môi và Miễn dịch).",
+            "CHƯA DÙNG quy trình kỹ thuật di truyền chi tiết dùng virus làm thể truyền (lớp 12)."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài sắp xếp đúng thứ tự 5 giai đoạn nhân lên của virus.",
+            "Dạng bài phân biệt chu trình tan và tiềm tan.",
+            "Dạng bài thực tế: Phân tích cơ chế lây nhiễm và biện pháp phòng chống dịch bệnh HIV, Cúm, COVID-19, Đốt xuất huyết.",
+            "Dạng bài so sánh virus với vi khuẩn."
+          ],
+          "luu_y_ra_de": "Nội dung virus bổ sung kiến thức về các dòng virus mới (SARS-CoV-2) và công nghệ vaccine thế hệ mới (vaccine mRNA). Ra đề nên cập nhật tính thời sự."
+        }
+      ],
+      "chuyen_de": [
+        "Chuyên đề 10.1: Công nghệ tế bào và một số thành tựu",
+        "Chuyên đề 10.2: Công nghệ enzym và ứng dụng",
+        "Chuyên đề 10.3: Công nghệ sinh học trong xử lý ô nhiễm môi trường"
+      ],
+      "ghi_chu_chua_chac": [
+        "Bộ sách Cánh Diều xếp nội dung Thử nghiệm enzyme và Vi sinh vật có một số bài thực hành tách riêng."
+      ]
+    },
+    {
+      "lop": 11,
+      "chuong": [
+        {
+          "id": "sinh11-trao-doi-chat-chuyen-hoa-nang-luong",
+          "ten": "Trao đổi chất và chuyển hóa năng lượng ở sinh vật",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Trao đổi chất và chuyển hóa năng lượng ở sinh vật",
+            "CTST": "Trao đổi chất và chuyển hóa năng lượng ở sinh vật",
+            "CD": "Trao đổi chất và chuyển hóa năng lượng ở sinh vật"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được vai trò của trao đổi chất và chuyển hóa năng lượng đối với sinh vật.",
+            "Trình bày được quá trình trao đổi nước và khoáng ở thực vật (hấp thụ ở rễ, vận chuyển trong mạch gỗ/mạch rây, thoát hơi nước ở lá). Phân tích được vai trò của thoát hơi nước và sự đóng mở khí khổng.",
+            "Trình bày được quá trình quang hợp ở thực vật: hệ sắc tố, pha sáng và pha tối (phân biệt các nhóm thực vật $C_3, C_4, CAM$). Phân tích được các nhân tố ảnh hưởng đến quang hợp.",
+            "Trình bày được quá trình hô hấp ở thực vật: các con đường hô hấp (hiếu khí, phân giải kị khí), các nhân tố ảnh hưởng.",
+            "Trình bày được dinh dưỡng và tiêu hóa ở động vật (tiêu hóa nội bào, ngoại bào; tiêu hóa ở động vật đơn bào, động vật có túi tiêu hóa, động vật có ống tiêu hóa).",
+            "Trình bày được hô hấp ở động vật (trao đổi khí qua bề mặt cơ thể, hệ thống ống khí, mang, phổi).",
+            "Trình bày được vận chuyển các chất ở động vật (hệ tuần hoàn hở, hệ tuần hoàn kín: đơn và kép; cấu tạo tim và hệ mạch; huyết áp, vận tốc máu).",
+            "Trình bày được quá trình bài tiết và cân bằng nội môi ở động vật (vai trò của thận, gan trong điều hòa áp suất thẩm thấu, pH, đường huyết; hệ miễn dịch chống bệnh tật)."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Cơ chế dòng lực đẩy (áp suất rễ, lực hút do thoát hơi nước, lực liên kết giữa các phân tử nước).",
+            "So sánh điểm bù ánh sáng, điểm bão hòa ánh sáng, điểm bù $CO_2$.",
+            "Chu kỳ hoạt động của tim (kỳ co tâm nhĩ, co tâm thất, giãn chung).",
+            "Cơ chế điều hòa ngược âm tính (Negative feedback) trong cân bằng nội môi.",
+            "Công cụ Toán học: Đọc nhịp tim, đo huyết áp, đọc đồ thị sinh lý thực vật."
+          ],
+          "thuat_ngu": [
+            "mạch gỗ",
+            "mạch rây",
+            "thoát hơi nước",
+            "khí khổng",
+            "thực vật C3",
+            "thực vật C4",
+            "thực vật CAM",
+            "điểm bù ánh sáng",
+            "tiêu hóa nội bào/ngoại bào",
+            "ống tiêu hóa",
+            "tuần hoàn hở/kín",
+            "tâm nhĩ",
+            "tâm thất",
+            "huyết áp",
+            "cân bằng nội môi",
+            "kháng nguyên",
+            "kháng thể"
+          ],
+          "qua_trinh_va_co_che": [
+            "Cơ chế đóng mở khí khổng phụ thuộc hàm lượng nước và ánh sáng.",
+            "Con đường cố định $CO_2$ ở thực vật $C_3$ (Calvin), $C_4$ (lục lạp tế bào mô dậu và bao bó mạch), $CAM$ (cố định $CO_2$ ban đêm).",
+            "Sự biến đổi huyết áp và vận tốc máu trong hệ mạch (động mạch -> mao mạch -> tĩnh mạch).",
+            "Cơ chế điều hòa lượng đường trong máu của hormone Insulin và Glucagon."
+          ],
+          "cong_thuc": [
+            "ĐƯỢC DÙNG: Phép tính nhịp tim đơn giản (ví dụ: chu kỳ tim 0,8s -> nhịp tim 75 lần/phút).",
+            "KHÔNG DÙNG: Các dạng bài tập tính toán quang hợp/hô hấp phức tạp không có trong SGK."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG di truyền các tính trạng năng suất thực vật (lớp 12).",
+            "CHƯA DÙNG các chi tiết hóa học sâu vượt quá SGK."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài so sánh đặc điểm quang hợp giữa 3 nhóm thực vật $C_3, C_4, CAM$.",
+            "Dạng bài đọc đồ thị biểu diễn sự thay đổi huyết áp, vận tốc máu và tổng diện tích cắt ngang của hệ mạch.",
+            "Dạng bài phân tích sơ đồ cơ chế điều hòa cân bằng nội môi (đường huyết, áp suất thẩm thấu).",
+            "Dạng bài thí nghiệm: Thí nghiệm chứng minh sự thoát hơi nước ở lá; thí nghiệm phát hiện hô hấp ở hạt nổ mầm.",
+            "Dạng bài thực tế: Giải thích vì sao bón phân quá liều làm cây bị héo; vì sao ăn mặn dễ bị cao huyết áp."
+          ],
+          "luu_y_ra_de": "Chương trình 2018 tích hợp toàn bộ sinh lý thực vật và động vật thành một chủ đề lớn 'Trao đổi chất và chuyển hóa năng lượng ở sinh vật'. Chú ý mối liên hệ giữa dinh dưỡng - hô hấp - tuần hoàn - bài tiết."
+        },
+        {
+          "id": "sinh11-cam-ung",
+          "ten": "Cảm ứng ở sinh vật",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Cảm ứng ở sinh vật",
+            "CTST": "Cảm ứng ở sinh vật",
+            "CD": "Cảm ứng ở sinh vật"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được khái niệm cảm ứng và vai trò của cảm ứng đối với sinh vật.",
+            "Trình bày được các hình thức cảm ứng ở thực vật: hướng động (hướng sáng, hướng trọng lực, hướng hóa, hướng nước, hướng tiếp xúc) và ứng động (ứng động sinh trưởng, ứng động không sinh trưởng).",
+            "Trình bày được cảm ứng ở động vật: các hình thức cảm ứng (cung phản xạ, phản xạ không điều kiện và phản xạ có điều kiện); cấu tạo và hoạt động của hệ thần kinh (lưới, chuỗi hạt, ống).",
+            "Mô tả được điện thế nghỉ và điện thế hoạt động; cơ chế lan truyền xung thần kinh trên sợi thần kinh và qua synapse.",
+            "Trình bày được khái niệm tập tính ở động vật; phân loại tập tính (bẩm sinh, học được); các hình thức học tập ở động vật và một số ứng dụng tập tính."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Vai trò của Auxin trong cơ chế hướng động của cây.",
+            "Cấu trúc một synapse hóa học (chùy synapse, màng trước, khe synapse, màng sau, chất trung gian hóa học).",
+            "Các hình thức học tập: quen nén, in vết, điều kiện hóa đáp ứng, điều kiện hóa hành động, học ngầm, học giải quyết vấn đề."
+          ],
+          "thuat_ngu": [
+            "cảm ứng",
+            "hướng động",
+            "ứng động",
+            "cung phản xạ",
+            "thụ thể",
+            "điện thế nghỉ",
+            "điện thế hoạt động",
+            "synapse",
+            "chất trung gian hóa học",
+            "tập tính bẩm sinh",
+            "tập tính học được",
+            "in vết"
+          ],
+          "qua_trinh_va_co_che": [
+            "Cơ chế hướng sáng: Auxin phân bố không đều (tập trung ở phía tối) làm tế bào phía tối sinh trưởng kéo dài nhanh hơn.",
+            "Cơ chế hình thành điện thế hoạt động (mất phân cực -> đảo cực -> tái phân cực) do sự đóng mở các kênh $Na^+$ và $K^+$.",
+            "Quá trình truyền tin qua synapse hóa học do dòng ion $Ca^{2+}$ đi vào chùy synapse làm vỡ bóng chứa chất trung gian hóa học."
+          ],
+          "cong_thuc": [
+            "ĐƯỢC DÙNG: Tính vận tốc lan truyền xung thần kinh đơn giản.",
+            "KHÔNG DÙNG: Bài tập lý thuyết vật lý điện sinh học phức tạp."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG di truyền tập tính (lớp 12).",
+            "CHƯA DÙNG cơ chế sinh hóa chi tiết của các chất ma túy ngoài phạm vi SGK."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài phân biệt hướng động và ứng động ở thực vật.",
+            "Dạng bài đọc đồ thị biểu diễn biến thiên điện thế hoạt động (xác định giai đoạn mất phân cực, đảo cực, tái phân cực).",
+            "Dạng bài sơ đồ cung phản xạ và cấu tạo synapse.",
+            "Dạng bài ứng dụng thực tế: Giải thích hiện tượng bắt mồi của cây khí sinh/cây nắp ấm; ứng dụng tập tính trong huấn luyện động vật và bảo vệ mùa màng."
+          ],
+          "luu_y_ra_de": "Tập tính động vật theo SGK 2018 đưa nhiều ví dụ thực tiễn về ứng dụng trong đời sống và chăn nuôi. Ra đề cần lồng ghép các tình huống thực tế."
+        },
+        {
+          "id": "sinh11-sinh-truong-phat-trien",
+          "ten": "Sinh trưởng và phát triển ở sinh vật",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Sinh trưởng và phát triển ở sinh vật",
+            "CTST": "Sinh trưởng và phát triển ở sinh vật",
+            "CD": "Sinh trưởng và phát triển ở sinh vật"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được khái niệm sinh trưởng, phát triển và mối quan hệ giữa sinh trưởng và phát triển.",
+            "Trình bày được sinh trưởng và phát triển ở thực vật: mô phân sinh (ngọn, bên, lóng); sinh trưởng sơ cấp và sinh trưởng thứ cấp; các hormone thực vật (kích thích: auxin, gibberellin, cytokinin; ức chế: abscisic acid, ethylene); hiện tượng quang chu kì và florigen.",
+            "Trình bày được sinh trưởng và phát triển ở động vật: các giai đoạn phát triển (phôi và sau phôi); các hình thức phát triển (không qua biến thái, qua biến thái hoàn toàn, qua biến thái không hoàn toàn).",
+            "Phân tích được các nhân tố ảnh hưởng đến sinh trưởng và phát triển ở sinh vật (di truyền, hormone, thức ăn, nhiệt độ, ánh sáng...).",
+            "Trình bày được ứng dụng kiến thức sinh trưởng và phát triển trong trồng trọt, chăn nuôi và chăm sóc sức khỏe con người."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Khái niệm mô phân sinh ngọn và mô phân sinh bên (tạo vòng gỗ hàng năm).",
+            "Tác động của hormone bướm/sâu bọ (Juvenile và Ecdysone) và hormone người (GH, Thyroxine, Estrogen, Testosterone).",
+            "Hiện tượng nảy mầm, ra hoa."
+          ],
+          "thuat_ngu": [
+            "sinh trưởng",
+            "phát triển",
+            "mô phân sinh sơ cấp/thứ cấp",
+            "sinh trưởng sơ cấp/thứ cấp",
+            "hormone thực vật",
+            "quang chu kì",
+            "florigen",
+            "biến thái hoàn toàn/không hoàn toàn",
+            "Juvenile",
+            "Ecdysone",
+            "GH",
+            "Thyroxine"
+          ],
+          "qua_trinh_va_co_che": [
+            "Cơ chế tác động tương quan giữa các hormone thực vật (ví dụ: tỉ lệ Auxin/Cytokinin quyết định sự phân hóa mầm chồi/rễ).",
+            "Cơ chế lột xác và biến thái ở sâu bọ dưới sự điều hòa của Ecdysone và Juvenile."
+          ],
+          "cong_thuc": [
+            "Không có công thức tính toán ở chương này."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG di truyền sự sinh trưởng và đột biến gene quy định chiều cao (lớp 12).",
+            "CHƯA DÙNG ứng dụng công nghệ tế bào tạo giống cây trồng (đã học chuyên đề 10 hoặc lớp 12)."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài so sánh phát triển qua biến thái hoàn toàn và biến thái không hoàn toàn (cho ví dụ bướm, ruồi, muỗi vs châu chấu, gián).",
+            "Dạng bài phân biệt vai trò của các loại hormone thực vật.",
+            "Dạng bài đọc sơ đồ vòng đời của sinh vật.",
+            "Dạng bài thực tế: Vì sao bẻ ngọn cây làm cây đâm nhiều cành ngang; vì sao ngâm quả xanh với quả chín (khí ethylene) làm quả mau chín."
+          ],
+          "luu_y_ra_de": "Phần biến thái ở động vật rất hay ra trong đề thi. Cần nắm rõ điểm khác nhau cốt lõi giữa biến thái hoàn toàn (con non khác hoàn toàn con trưởng thành) và không hoàn toàn (con non gần giống con trưởng thành, qua nhiều lần lột xác)."
+        },
+        {
+          "id": "sinh11-sinh-san",
+          "ten": "Sinh sản ở sinh vật",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Sinh sản ở sinh vật",
+            "CTST": "Sinh sản ở sinh vật",
+            "CD": "Sinh sản ở sinh vật"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được khái niệm sinh sản và các hình thức sinh sản (sinh sản vô tính, sinh sản hữu tính).",
+            "Trình bày được sinh sản ở thực vật: các hình thức sinh sản vô tính (sinh dưỡng); quá trình sinh sản hữu tính (sự hình thành hạt phấn, túi phôi, thụ tinh kép, sự hình thành hạt và quả).",
+            "Trình bày được sinh sản ở động vật: các hình thức sinh sản vô tính (phân đôi, nảy chồi, phân mảnh, trinh sinh); các hình thức sinh sản hữu tính (thụ tinh ngoài, thụ tinh trong; đẻ trứng, đẻ con).",
+            "Phân tích được quá trình sinh tinh, sinh trứng và sự điều hòa sinh sản ở động vật (vai trò của các hormone FSH, LH, Estrogen, Progesterone, Testosterone).",
+            "Trình bày được các biện pháp sinh sản có kế hoạch và công nghệ hỗ trợ sinh sản (thụ tinh trong ống nghiệm - IVF, thụ tinh nhân tạo)."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Cơ chế thụ tinh kép ở thực vật có hoa: 1 giao tử đực ($n$) + tế bào trứng ($n$) -> hợp tử ($2n$); 1 giao tử đực ($n$) + nhân phụ ($2n$) -> nhân nội nhũ ($3n$).",
+            "Chu kì kinh nguyệt ở người và cơ chế điều hòa ngược hormone sinh dục."
+          ],
+          "thuat_ngu": [
+            "sinh sản vô tính",
+            "sinh sản hữu tính",
+            "sinh dưỡng",
+            "thụ tinh kép",
+            "hạt phấn",
+            "túi phôi",
+            "nội nhũ",
+            "trinh sinh",
+            "thụ tinh trong/ngoài",
+            "FSH",
+            "LH",
+            "thụ tinh trong ống nghiệm (IVF)"
+          ],
+          "qua_trinh_va_co_che": [
+            "Quá trình hình thành hạt phấn (từ tế bào mẹ hạt phấn $2n$ -> 4 bào tử đơn bội $n$ -> 4 hạt phấn) và túi phôi.",
+            "Cơ chế thụ tinh kép ở thực vật hạt kín.",
+            "Sự điều hòa hoạt động của buồng trứng và tử cung trong chu kỳ kinh nguyệt."
+          ],
+          "cong_thuc": [
+            "ĐƯỢC DÙNG: Tính số bộ NST của hợp tử ($2n$) và nội nhũ ($3n$) ở thực vật.",
+            "KHÔNG DÙNG: Các bài tập đếm giao tử di truyền phức tạp (lớp 12)."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG quy luật di truyền liên kết giới tính hay di truyền y học (học ở lớp 12).",
+            "CHƯA DÙNG các kỹ thuật nhân bản vô tính ở mức độ di truyền phân tử (lớp 12)."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài sơ đồ quá trình thụ tinh kép ở thực vật có hoa và xác định bộ NST của từng thành phần.",
+            "Dạng bài đọc đồ thị nồng độ hormone FSH, LH, Estrogen, Progesterone trong chu kỳ kinh nguyệt.",
+            "Dạng bài so sánh ưu nhược điểm của sinh sản vô tính và sinh sản hữu tính.",
+            "Dạng bài thực tế: Ứng dụng giâm, chiết, ghép cành trong nông nghiệp; các biện pháp tránh thai an toàn."
+          ],
+          "luu_y_ra_de": "Chú ý đặc điểm Thụ tinh kép (Double fertilization) chỉ có ở thực vật hạt kín. Phân biệt rõ nguồn gốc $2n$ của hợp tử và $3n$ của nội nhũ."
+        },
+        {
+          "id": "sinh11-co-the-la-he-thong-mo",
+          "ten": "Mối quan hệ giữa các quá trình sinh lý và cơ thể là một hệ thống mở, tự điều chỉnh",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Mối quan hệ giữa các quá trình sinh lý trong cơ thể sinh vật và cơ thể là một hệ thống mở, tự điều chỉnh",
+            "CTST": "Mối quan hệ giữa các quá trình sinh lý trong cơ thể sinh vật",
+            "CD": "Cơ thể sinh vật là một hệ thống mở và tự điều chỉnh"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được mối quan hệ khăng khít giữa các quá trình sinh lý trong cơ thể sinh vật (trao đổi chất, cảm ứng, sinh trưởng, phát triển và sinh sản).",
+            "Chứng minh được cơ thể sinh vật là một hệ thống mở (thường xuyên trao đổi vật chất và năng lượng với môi trường) và có khả năng tự điều chỉnh (duy trì cân bằng động nội môi)."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Tổng hợp kiến thức toàn bộ chương trình Sinh học 11 về cơ thể thực vật và động vật.",
+            "Khái niệm hệ thống mở và tự điều chỉnh đã giới thiệu từ lớp 10."
+          ],
+          "thuat_ngu": [
+            "hệ thống mở",
+            "tự điều chỉnh",
+            "cân bằng động",
+            "tích hợp sinh lý"
+          ],
+          "qua_trinh_va_co_che": [
+            "Sơ đồ tích hợp các hệ cơ quan (Tiêu hóa, Hô hấp, Tuần hoàn, Bài tiết, Thần kinh, Nội tiết) trong đáp ứng chung của cơ thể."
+          ],
+          "cong_thuc": [
+            "Không có công thức."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG kiến thức di truyền quần thể, sinh thái học quần xã (lớp 12)."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài phân tích sơ đồ mối quan hệ giữa các hệ cơ quan trong cơ thể người khi vận động mạnh.",
+            "Dạng bài luận/trắc nghiệm giải thích vì sao cơ thể sinh vật được coi là một hệ thống mở tự điều chỉnh."
+          ],
+          "luu_y_ra_de": "Chương này mang tính tổng kết khái quát toàn bộ Sinh học 11. Đề thi giữa kỳ 2 / cuối kỳ 2 nên có 1-2 câu tích hợp liên chương này."
+        }
+      ],
+      "chuyen_de": [
+        "Chuyên đề 11.1: Biến đổi khí hậu và sinh thái học phục hồi",
+        "Chuyên đề 11.2: Tập tính ở động vật",
+        "Chuyên đề 11.3: Một số ngành nghề liên quan đến sinh học cơ thể"
+      ],
+      "ghi_chu_chua_chac": [
+        "Thứ tự bài học về Hệ tuần hoàn và Hệ hô hấp có thể đảo lại chút ít giữa sách KNTT và Cánh Diều nhưng nằm cùng trong chủ đề Trao đổi chất."
+      ]
+    },
+    {
+      "lop": 12,
+      "chuong": [
+        {
+          "id": "sinh12-di-truyen-phan-tu-te-bao",
+          "ten": "Di truyền học phân tử và di truyền học tế bào",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Di truyền học phân tử và di truyền học tế bào",
+            "CTST": "Di truyền học phân tử và di truyền học tế bào",
+            "CD": "Di truyền học phân tử và di truyền học tế bào"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được cấu trúc và chức năng của gene; mã di truyền (đặc điểm: tính liên tục, tính thoái hóa, tính phổ biến, tính đặc hiệu).",
+            "Mô tả được cơ chế tái bản DNA (vai trò của các enzyme DNA polymerase, primase, helicase, ligase; chiều tổng hợp 5'->3'; nguyên tắc bổ sung và bán bảo tồn).",
+            "Mô tả được cơ chế phiên mã (tạo mRNA, tRNA, rRNA) và dịch mã (các giai đoạn: mở đầu, kéo dài, kết thúc; vai trò của ribosome, codon, anticodon).",
+            "Trình bày được cơ chế điều hòa biểu hiện gene ở sinh vật nhân sơ qua mô hình Operon Lac (vùng khởi động P, vùng vận hành O, các gene cấu trúc Z, Y, A; gene điều hòa R và chất cảm ứng lactose).",
+            "Mô tả được cấu trúc siêu hiển vi của nhiễm sắc thể (nucleosome: 8 histone + 147 cặp nucleotide -> sợi cơ bản 10nm -> sợi truyền nhiễm/sợi nhiễm sắc 30nm -> cấu trúc siêu xoắn 300nm -> chromatid 700nm).",
+            "Trình bày được các dạng đột biến gene (thay thế, thêm, mất cặp nucleotide) và đột biến nhiễm sắc thể (lệch bội, đa bội; mất đoạn, lặp đoạn, đảo đoạn, chuyển đoạn); nguyên nhân và hậu quả."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Bảng mã di truyền (mã mở đầu AUG, các mã kết thúc UAA, UAG, UGA).",
+            "Khái niệm intron và exon ở gene sinh vật nhân thực.",
+            "Công cụ Toán học: Quy tắc xác suất cơ bản, tính số amino acid trong chuỗi polypeptide."
+          ],
+          "thuat_ngu": [
+            "gene",
+            "mã di truyền",
+            "tái bản DNA",
+            "phiên mã",
+            "dịch mã",
+            "codon",
+            "anticodon",
+            "operon Lac",
+            "repressor protein",
+            "nucleosome",
+            "chromatid",
+            "đột biến gene",
+            "đột biến NST",
+            "lệch bội",
+            "đa bội"
+          ],
+          "qua_trinh_va_co_che": [
+            "Quá trình tái bản DNA: Helicase tháo xoắn -> Enzime tổng hợp đoạn mồi RNA -> DNA polymerase tổng hợp mạch liên tục (3'->5' khuôn) và mạch ngắt quãng Okazaki (5'->3' khuôn) -> Ligase nối.",
+            "Quá trình phiên mã: RNA polymerase bám vào promoter -> tổng hợp mạch RNA theo chiều 5'->3'.",
+            "Cơ chế hoạt động của Operon Lac khi môi trường có lactose và không có lactose.",
+            "Cơ chế phát sinh đột biến lệch bội ($2n+1, 2n-1$) do sự không phân ly của cặp NST trong giảm phân."
+          ],
+          "cong_thuc": [
+            "ĐƯỢC DÙNG: Tính số bộ ba mã hóa $= N_{mRNA} / 3$; tính số amino acid trong chuỗi polypeptide hoàn chỉnh $= (N_{mRNA} / 3) - 2$; xác định dạng đột biến điểm.",
+            "KHÔNG DÙNG: Các bài tập toán cồng kềnh lập hệ phương trình $A, T, G, C$ qua nhiều lần tái bản, bài tập đếm liên kết hydrogen phức tạp của chương trình 2006. SGK 2018 tập trung vào bản chất sinh học."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG các công thức tính tần số hoán vị gene phức tạp (học ở chương Quy luật di truyền).",
+            "CHƯA DÙNG phương trình Hardy-Weinberg (học ở chương Di truyền quần thể).",
+            "CHƯA DÙNG bài tập di truyền cồng kềnh kiểu cũ 2006."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài đọc trình tự nucleotide trên mạch khuôn DNA -> suy ra đoạn mRNA và chuỗi amino acid tương ứng.",
+            "Dạng bài phân tích sơ đồ Operon Lac (xác định trạng thái bật/tắt khi có/không có lactose hoặc khi gene R, vùng O bị đột biến).",
+            "Dạng bài nhận diện dạng đột biến NST qua hình vẽ bộ NST hoặc sơ đồ liên kết gene.",
+            "Dạng bài thực tế: Tác hại của chất độc màu da cam/dioxin hay tia UV gây đột biến; ứng dụng đột biến đa bội trong tạo giống cây trồng không hạt (dưa hấu $3n$)."
+          ],
+          "luu_y_ra_de": "Dùng chuẩn thuật ngữ: 'gene' (thay gen), 'nucleotide' (thay nu), 'operon Lac' (thay ôperon Lac). Chương trình 2018 KHÔNG kiểm tra các bài tập tính toán số lượng phân tử DNA/RNA dạng hệ phương trình đại số."
+        },
+        {
+          "id": "sinh12-quy-luat-di-truyen",
+          "ten": "Quy luật di truyền",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Quy luật di truyền Mendellian và mở rộng",
+            "CTST": "Các quy luật di truyền",
+            "CD": "Quy luật di truyền"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được phương pháp nghiên cứu di truyền của Mendel; phát biểu được quy luật phân ly và quy luật phân ly độc lập.",
+            "Giải thích được cơ chế di truyền liên kết gene hoàn toàn và hoán vị gene (Morgan); tính được tần số hoán vị gene ($f$).",
+            "Trình bày được cơ chế di truyền liên kết với giới tính (NST giới tính XX, XY, XO...) và di truyền ngoài nhân (di truyền theo dòng mẹ/ti thể, lục lạp).",
+            "Trình bày được mối quan hệ giữa kiểu gene, môi trường và kiểu hình (mức phản ứng, sự mềm dẻo kiểu hình/thường biến)."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Ký hiệu quy ước kiểu gene: $\frac{AB}{ab}$, $\frac{Ab}{aB}$, $X^A X^a$, $X^A Y$.",
+            "Tỉ lệ phân ly kiểu hình kinh điển: $3:1$, $1:2:1$, $9:3:3:1$, $1:1:1:1$, $1:1$.",
+            "Công cụ Toán học: Quy tắc nhân xác suất ($P(A \\cap B) = P(A) \times P(B)$ cho các sự kiện độc lập) và quy tắc cộng xác suất (cho các sự kiện xung đột). Học sinh đã học xác suất ở Toán 10 và 11."
+          ],
+          "thuat_ngu": [
+            "allele",
+            "kiểu gene",
+            "kiểu hình",
+            "đồng hợp",
+            "dị hợp",
+            "lặn",
+            "trội",
+            "phân ly độc lập",
+            "liên kết gene",
+            "hoán vị gene",
+            "tần số hoán vị gene",
+            "di truyền liên kết giới tính",
+            "di truyền ngoài nhân",
+            "mức phản ứng"
+          ],
+          "qua_trinh_va_co_che": [
+            "Cơ chế phân ly độc lập của các cặp allele nằm trên các cặp NST tương đồng khác nhau trong giảm phân.",
+            "Cơ chế trao đổi chéo giữa 2 trong 4 chromatid khác nguồn gốc của cặp NST tương đồng ở kỳ đầu giảm phân I dẫn đến hoán vị gene.",
+            "Cơ chế di truyền tế bào chất: Hợp tử nhận tế bào chất chủ yếu từ trứng của mẹ."
+          ],
+          "cong_thuc": [
+            "ĐƯỢC DÙNG: Công thức tính tần số hoán vị gene $f = \frac{\text{Số cá thể hoán vị}}{\text{Tổng số cá thể}} \times 100\\%$ (với $f \\le 50\\%$); quy tắc tích số tỉ lệ giao tử; phép tính xác suất di truyền đơn giản.",
+            "KHÔNG DÙNG: Các dạng bài tập lai 4-5 cặp tính trạng tương tác phức tạp, bài toán di truyền số lượng cồng kềnh của chương trình cũ 2006."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG công thức định luật Hardy-Weinberg (học ở chương Di truyền quần thể).",
+            "CHƯA DÙNG các bài tập phả hệ di truyền người nâng cao (học ở chương Di truyền người)."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài xác định tỉ lệ giao tử, tỉ lệ kiểu gene và kiểu hình của phép lai 1-2 cặp tính trạng.",
+            "Dạng bài tính tần số hoán vị gene $f$ từ kết quả phép lai phân tích.",
+            "Dạng bài phân biệt đặc điểm di truyền liên kết giới tính (di truyền chéo, di truyền thẳng) và di truyền ngoài nhân (100% con giống mẹ).",
+            "Dạng bài thực tế: Hiện tượng thường biến ở cây hoa cẩm tú cầu đổi màu theo pH của đất; ứng dụng mức phản ứng trong chăn nuôi, trồng trọt."
+          ],
+          "luu_y_ra_de": "Cách viết kiểu gene dùng thuật ngữ 'allele' (thay alelen/alen). Bắt buộc áp dụng công cụ xác suất toán học lớp 11 để giải các bài tập di truyền, nhưng mức độ bài tập phải vừa phải, phục vụ mục tiêu đánh giá năng lực sinh học."
+        },
+        {
+          "id": "sinh12-di-truyen-quan-the-nguoi",
+          "ten": "Di truyền học quần thể và di truyền học người",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Di truyền học quần thể và Di truyền học người",
+            "CTST": "Di truyền học quần thể và Di truyền học người",
+            "CD": "Di truyền học quần thể và Di truyền học người"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được các đặc trưng di truyền của quần thể (tần số allele, tần số kiểu gene).",
+            "Nêu được cấu trúc di truyền của quần thể tự thụ phấn và giao phối gần.",
+            "Phát biểu được định luật Hardy-Weinberg về trạng thái cân bằng di truyền của quần thể giao phối ngẫu nhiên; nêu điều kiện nghiệm đúng và ý nghĩa.",
+            "Trình bày được các phương pháp nghiên cứu di truyền người (phân tích phả hệ, di truyền tế bào).",
+            "Mô tả được một số bệnh, tật di truyền ở người (Hội chứng Down, Turner, Klinefelter; bệnh Phenylketonuria, mù màu, máu khó đông) và liệu pháp gene, tư vấn di truyền."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Công thức tần số allele $p(A) = D + \frac{H}{2}$, $q(a) = R + \frac{H}{2}$.",
+            "Phương trình cân bằng Hardy-Weinberg: $p^2 AA + 2pq Aa + q^2 aa = 1$ (với $p + q = 1$).",
+            "Ký hiệu phả hệ: Hình tròn (nữ), hình vuông (nam), tô đen (bị bệnh), không tô (bình thường).",
+            "Công cụ Toán học: Giải phương trình bậc hai, căn bậc hai, xác suất kết hợp."
+          ],
+          "thuat_ngu": [
+            "tần số allele",
+            "tần số kiểu gene",
+            "quần thể tự thụ phấn",
+            "giao phối gần",
+            "quần thể giao phối ngẫu nhiên",
+            "định luật Hardy-Weinberg",
+            "cân bằng di truyền",
+            "phân tích phả hệ",
+            "liệu pháp gene",
+            "tư vấn di truyền"
+          ],
+          "qua_trinh_va_co_che": [
+            "Sự biến đổi cấu trúc di truyền qua các thế hệ tự thụ phấn: Tỉ lệ thể dị hợp $Aa$ giảm dần theo công thức $\\left(\frac{1}{2}\right)^n$, tỉ lệ thể đồng hợp $AA$ và $aa$ tăng dần.",
+            "Cơ chế duy trì tần số allele không đổi qua các thế hệ ở quần thể giao phối ngẫu nhiên khi đạt cân bằng."
+          ],
+          "cong_thuc": [
+            "ĐƯỢC DÙNG: Phương trình Hardy-Weinberg $p^2 + 2pq + q^2 = 1$; tính tần số allele $p = \\sqrt{p^2}$, $q = \\sqrt{q^2}$ khi quần thể cân bằng; tính cấu trúc quần thể tự thụ phấn sau $n$ thế hệ.",
+            "KHÔNG DÙNG: Các bài tập di truyền quần thể bội số allele 3-4 allele cực khó hoặc phả hệ kết hợp hoán vị gene 3 gia đình đánh đố của chương trình cũ 2006."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG tác động của các nhân tố tiến hóa (biến động di truyền, di - nhập gene...) làm mất cân bằng quần thể (học ở chương Tiến hóa)."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài tính tần số allele $p, q$ và kiểm tra quần thể có đạt cân bằng Hardy-Weinberg hay không.",
+            "Dạng bài xác định cấu trúc di truyền của quần thể tự thụ phấn qua $n$ thế hệ.",
+            "Dạng bài đọc sơ đồ phả hệ (xác định bệnh do gene trội/lặn, nằm trên NST thường hay NST giới tính X; tính xác suất sinh con bị bệnh của cặp vợ chồng).",
+            "Dạng bài thực tế: Hậu quả di truyền của kết hôn gần (huyết thống); ứng dụng sàng lọc trước sinh và tư vấn di truyền."
+          ],
+          "luu_y_ra_de": "Bài tập Phả hệ di truyền người chỉ ra ở mức độ 1-2 tính trạng rõ ràng, không ghép lồng quá nhiều điều kiện đánh đố triệt tiêu tư duy sinh học."
+        },
+        {
+          "id": "sinh12-ung-dung-di-truyen-giong",
+          "ten": "Ứng dụng di truyền học và Công nghệ sinh học trong chọn tạo giống",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Ứng dụng di truyền học trong chọn tạo giống",
+            "CTST": "Ứng dụng di truyền học và công nghệ sinh học",
+            "CD": "Ứng dụng di truyền học"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được các phương pháp tạo giống vật nuôi, cây trồng dựa trên nguồn biến dị tổ hợp (lai hữu tính, ưu thế lai).",
+            "Trình bày được phương pháp gây đột biến nhân tạo trong chọn tạo giống.",
+            "Trình bày được các thành tựu và quy trình ứng dụng công nghệ tế bào (nuôi cấy hạt phấn, dung hợp tế bào trần pomato, vi nhân giống, nhân bản vô tính ở động vật).",
+            "Trình bày được thành tựu và quy trình ứng dụng công nghệ gene (tạo sinh vật biến đổi gene - GMO, chuyển gene bằng plasmid/virus)."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Khái niệm ưu thế lai (Heterosis) và giải thích bằng giả thuyết siêu trội ($Aa > AA, aa$).",
+            "Các bước chuyển gene: Tạo DNA tái tổ hợp (cắt bằng restriction enzyme, nối bằng ligase) -> Đưa DNA tái tổ hợp vào tế bào nhận -> Phân lập dòng tế bào chứa DNA tái tổ hợp.",
+            "Sinh vật biến đổi gene (GMO)."
+          ],
+          "thuat_ngu": [
+            "ưu thế lai",
+            "giả thuyết siêu trội",
+            "gây đột biến nhân tạo",
+            "công nghệ tế bào",
+            "dung hợp tế bào trần",
+            "nuôi cấy mô",
+            "công nghệ gene",
+            "DNA tái tổ hợp",
+            "plasmid",
+            "enzyme cắt hạn chế (restriction enzyme)",
+            "sinh vật biến đổi gene (GMO)"
+          ],
+          "qua_trinh_va_co_che": [
+            "Quy trình tạo giống bằng công nghệ gene (ví dụ: tạo lúa Vàng chứa beta-carotene, tạo vi khuẩn E.coli sản xuất insulin người).",
+            "Quy trình dung hợp tế bào trần tạo cây lai khác loài (Pomato = Potato + Tomato)."
+          ],
+          "cong_thuc": [
+            "Không có công thức tính toán."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG các chi tiết kỹ thuật PCR hay giải trình tự gene thế hệ mới vượt quá mức độ phổ thông."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài ghép nối phương pháp tạo giống với sản phẩm/thành tựu tương ứng.",
+            "Dạng bài sắp xếp các bước trong quy trình tạo DNA tái tổ hợp hoặc quy trình nhân bản vô tính cừu Dolly.",
+            "Dạng bài phân biệt ưu nhược điểm của các phương pháp nhân giống vô tính và hữu tính.",
+            "Dạng bài thảo luận thực tế: Lợi ích và nguy cơ rủi ro của thực phẩm biến đổi gene (GMO) đối với sức khỏe và môi trường."
+          ],
+          "luu_y_ra_de": "Chương trình 2018 chú trọng các công nghệ hiện đại như CRISPR/Cas9 (ở mức giới thiệu), công nghệ gene và các vấn đề an toàn sinh học."
+        },
+        {
+          "id": "sinh12-tien-hoa",
+          "ten": "Bằng chứng và các học thuyết tiến hóa",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Bằng chứng và các học thuyết tiến hóa",
+            "CTST": "Bằng chứng và các học thuyết tiến hóa",
+            "CD": "Bằng chứng và các học thuyết tiến hóa"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được các bằng chứng tiến hóa: bằng chứng giải phẫu so sánh (cơ quan tương đồng, cơ quan thoái hóa, cơ quan tương tự), bằng chứng phôi sinh học, bằng chứng sinh học phân tử và tế bào.",
+            "Tóm tắt được học thuyết tiến hóa Lamarck và học thuyết Tiến hóa Darwin (chọn lọc tự nhiên).",
+            "Trình bày được Học thuyết tiến hóa tổng hợp hiện đại: khái niệm tiến hóa nhỏ và tiến hóa lớn; các nhân tố tiến hóa (đột biến, di - nhập gene, chọn lọc tự nhiên, yếu tố ngẫu nhiên/biến động di truyền, giao phối không ngẫu nhiên).",
+            "Giải thích được quá trình hình thành loài mới (khái niệm loài, các cơ chế cách ly sinh sản: trước hợp tử và sau hợp tử; hình thành loài khác khu địa lý và cùng khu địa lý).",
+            "Trình bày được nguồn gốc sự sống trên Trái Đất (tiến hóa hóa học, tiến hóa tiền sinh học, tiến hóa sinh học) và sự phát triển của thế giới sống qua các đại địa chất."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Phân biệt cơ quan tương đồng (cùng nguồn gốc, khác chức năng) và cơ quan tương tự (khác nguồn gốc, cùng chức năng).",
+            "Phân tích vai trò của từng nhân tố tiến hóa đối với tần số allele và thành phần kiểu gene của quần thể.",
+            "Bảng các đại địa chất: Thái cổ, Nguyên sinh, Cổ sinh, Trung sinh, Tân sinh (và các sinh vật điển hình)."
+          ],
+          "thuat_ngu": [
+            "cơ quan tương đồng",
+            "cơ quan tương tự",
+            "cơ quan thoái hóa",
+            "chọn lọc tự nhiên",
+            "tiến hóa nhỏ/lớn",
+            "nhân tố tiến hóa",
+            "di - nhập gene",
+            "yếu tố ngẫu nhiên (phiêu bạt di truyền)",
+            "cách ly sinh sản",
+            "cách ly trước/sau hợp tử",
+            "các đại địa chất"
+          ],
+          "qua_trinh_va_co_che": [
+            "Cơ chế tác động của Chọn lọc tự nhiên: Phân hóa khả năng sống sót và sinh sản của các cá thể có kiểu gene khác nhau -> giữ lại kiểu hình có lợi.",
+            "Cơ chế hình thành loài bằng con đường lai xa và đa bội hóa (phổ biến ở thực vật).",
+            "Các bước của tiến hóa hóa học từ các chất vô cơ đơn giản -> chất hữu cơ đơn giản -> đại phân tử -> coacervate/tế bào sơ khai."
+          ],
+          "cong_thuc": [
+            "ĐƯỢC DÙNG: Tính sự thay đổi tần số allele do chọn lọc tự nhiên hoặc biến động di truyền ở mức cơ bản.",
+            "KHÔNG DÙNG: Các dạng bài tập toán tiến hóa tính số generation loại bỏ hoàn toàn gene lặn cồng kềnh kiểu cũ."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG các chi tiết phân loại học động vật cổ sinh quá chi tiết ngoài SGK."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài phân biệt cơ quan tương đồng vs cơ quan tương tự.",
+            "Dạng bài bảng so sánh tác động của 5 nhân tố tiến hóa (nhân tố nào làm thay đổi tần số allele, nhân tố nào chỉ làm thay đổi thành phần kiểu gene, nhân tố nào quy định chiều hướng tiến hóa).",
+            "Dạng bài đọc cây tiến hóa (phylogenetic tree) xác định mối quan hệ họ hàng giữa các loài.",
+            "Dạng bài phân biệt các hình thức cách ly sinh sản (cách ly tập tính, sinh thái, cơ học, thời gian...)."
+          ],
+          "luu_y_ra_de": "Nội dung Tiến hóa được sắp xếp lại gọn gàng. Nhấn mạnh vào học thuyết tiến hóa tổng hợp hiện đại và các nhân tố tiến hóa, giảm bớt các câu hỏi học thuộc lòng mốc thời gian đại địa chất."
+        },
+        {
+          "id": "sinh12-sinh-thai-hoc-moi-truong",
+          "ten": "Sinh thái học và Môi trường",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Sinh thái học và Môi trường",
+            "CTST": "Sinh thái học và Môi trường",
+            "CD": "Sinh thái học và Môi trường"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được khái niệm môi trường sống và các nhân tố sinh thái (vô sinh, hữu sinh); giới hạn sinh thái và ổ sinh thái.",
+            "Trình bày được đặc trưng của quần thể sinh vật: kích thước quần thể, mật độ, tỉ lệ giới tính, nhóm tuổi, kiểu phân bố (đồng đều, ngẫu nhiên, theo nhóm), sự tăng trưởng (theo tiềm năng sinh học hình chữ J và thực tế hình chữ S).",
+            "Trình bày được đặc trưng của quần xã sinh vật: độ đa dạng, loài đặc trưng, loài ưu thế; mối quan hệ giữa các loài (hỗ trợ: cộng sinh, hợp tác, hội sinh; đối kháng: cạnh tranh, ký sinh, vật ăn thịt - mồi, ức chế - cảm nhiễm); diễn thế sinh thái (nguyên sinh, thứ sinh).",
+            "Trình bày được cấu trúc của hệ sinh thái (thành phần vô sinh, hữu sinh: sinh vật sản xuất, sinh vật tiêu thụ, sinh vật phân giải); chuỗi thức ăn (khởi đầu bằng SV sản xuất hoặc SV phân giải) và lưới thức ăn; tháp sinh thái.",
+            "Trình bày được chu trình sinh địa hóa (chu trình carbon, nitrogen, nước) và dòng năng lượng trong hệ sinh thái (hiệu suất sinh thái); khái niệm sinh quyển.",
+            "Trình bày được các vấn đề môi trường toàn cầu (biến đổi khí hậu, suy giảm đa dạng sinh học) và các biện pháp bảo vệ môi trường, phát triển bền vững."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Đồ thị đường cong tăng trưởng quần thể hình chữ J và hình chữ S.",
+            "Tính hiệu suất sinh thái giữa các bậc dinh dưỡng: $ef = \frac{E_{n+1}}{E_n} \times 100\\%$.",
+            "Sơ đồ chu trình Nitrogen và biến đổi khí hậu.",
+            "Công cụ Toán học: Đọc đồ thị sinh thái, tính tỉ lệ phần trăm năng lượng chuyển tiếp."
+          ],
+          "thuat_ngu": [
+            "nhân tố sinh thái",
+            "giới hạn sinh thái",
+            "ổ sinh thái",
+            "quần thể",
+            "mật độ",
+            "kiểu phân bố",
+            "tăng trưởng chữ J/S",
+            "quần xã",
+            "loài ưu thế",
+            "loài đặc trưng",
+            "diễn thế sinh thái",
+            "hệ sinh thái",
+            "chuỗi thức ăn",
+            "lưới thức ăn",
+            "bậc dinh dưỡng",
+            "tháp sinh thái",
+            "chu trình sinh địa hóa",
+            "hiệu suất sinh thái",
+            "sinh quyển"
+          ],
+          "qua_trinh_va_co_che": [
+            "Diễn biến của diễn thế sinh thái thứ sinh (từ quần xã ban đầu -> bị hủy hoại -> quần xã biến đổi -> quần xã đỉnh cực/hồi phục).",
+            "Dòng năng lượng một chiều trong hệ sinh thái (từ Mặt Trời -> SV sản xuất -> SV tiêu thụ các cấp -> phát tán nhiệt ra môi trường).",
+            "Chu trình tuần hoàn carbon và nitrogen trong sinh quyển."
+          ],
+          "cong_thuc": [
+            "ĐƯỢC DÙNG: Tính kích thước quần thể theo phương pháp bắt - đánh dấu - thả lại: $N = \frac{M \times n}{m}$; tính hiệu suất sinh thái $ef = \frac{E_{n+1}}{E_n} \times 100\\%$; tính năng lượng còn lại ở bậc dinh dưỡng cao hơn.",
+            "KHÔNG DÙNG: Các bài tập lưới thức ăn đánh đố lập phương trình quá dài."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG các kiến thức địa lý tự nhiên sâu ngoài phạm vi tích hợp sinh thái."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài đọc sơ đồ lưới thức ăn, xác định các chuỗi thức ăn, bậc dinh dưỡng và mắt xích chung.",
+            "Dạng bài tính hiệu suất sinh thái và năng lượng thất thoát qua các bậc dinh dưỡng.",
+            "Dạng bài phân biệt mối quan hệ giữa các loài trong quần xã (cho ví dụ cụ thể như hải quỳ - dã dượi, vi khuẩn cố định đạm - rễ cây họ Đậu).",
+            "Dạng bài đọc đồ thị giới hạn sinh thái (xác định khoảng thuận lợi, khoảng chống chịu, điểm gây chết).",
+            "Dạng bài thực tế: Tác động của rác thải nhựa, hiện tượng hiệu ứng nhà kính và các giải pháp bảo vệ đa dạng sinh học."
+          ],
+          "luu_y_ra_de": "Phần Sinh thái học tập trung vào ứng dụng thực tiễn bảo vệ môi trường, biến đổi khí hậu và nông nghiệp sinh thái. Đề thi THPT 2025 rất hay khai thác các bài tập đọc bảng số liệu/đồ thị sinh thái."
+        }
+      ],
+      "chuyen_de": [
+        "Chuyên đề 12.1: Sinh học phân tử và Công nghệ gene ứng dụng",
+        "Chuyên đề 12.2: Kiểm soát sinh học và ứng dụng",
+        "Chuyên đề 12.3: Dự án Sinh học trong bảo tồn đa dạng sinh học"
+      ],
+      "ghi_chu_chua_chac": [
+        "Sách Chân trời sáng tạo gộp phần Di truyền quần thể và Di truyền người thành một chủ đề bài viết lớn."
+      ]
+    }
+  ],
+  "cau_truc_de": [
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 10,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Trắc nghiệm trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25
+        }
+      ],
+      "pham_vi": [
+        "sinh10-mo-dau",
+        "sinh10-thanh-phan-hoa-hoc-te-bao",
+        "sinh10-cau-truc-te-bao"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 1",
+      "lop": 10,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Trắc nghiệm trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25
+        }
+      ],
+      "pham_vi": [
+        "sinh10-mo-dau",
+        "sinh10-thanh-phan-hoa-hoc-te-bao",
+        "sinh10-cau-truc-te-bao",
+        "sinh10-trao-doi-chat-chuyen-hoa-nang-luong"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 2",
+      "lop": 10,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Trắc nghiệm trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25
+        }
+      ],
+      "pham_vi": [
+        "sinh10-thong-tin-te-bao-chu-ki-te-bao",
+        "sinh10-vi-sinh-vat"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 2",
+      "lop": 10,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Trắc nghiệm trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25
+        }
+      ],
+      "pham_vi": [
+        "sinh10-thong-tin-te-bao-chu-ki-te-bao",
+        "sinh10-vi-sinh-vat",
+        "sinh10-virus"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 11,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Trắc nghiệm trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25
+        }
+      ],
+      "pham_vi": [
+        "sinh11-trao-doi-chat-chuyen-hoa-nang-luong"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 1",
+      "lop": 11,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Trắc nghiệm trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25
+        }
+      ],
+      "pham_vi": [
+        "sinh11-trao-doi-chat-chuyen-hoa-nang-luong"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 2",
+      "lop": 11,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Trắc nghiệm trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25
+        }
+      ],
+      "pham_vi": [
+        "sinh11-cam-ung",
+        "sinh11-sinh-truong-phat-trien"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 2",
+      "lop": 11,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Trắc nghiệm trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25
+        }
+      ],
+      "pham_vi": [
+        "sinh11-cam-ung",
+        "sinh11-sinh-truong-phat-trien",
+        "sinh11-sinh-san",
+        "sinh11-co-the-la-he-thong-mo"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 12,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Trắc nghiệm trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25
+        }
+      ],
+      "pham_vi": [
+        "sinh12-di-truyen-phan-tu-te-bao",
+        "sinh12-quy-luat-di-truyen"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 1",
+      "lop": 12,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Trắc nghiệm trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25
+        }
+      ],
+      "pham_vi": [
+        "sinh12-di-truyen-phan-tu-te-bao",
+        "sinh12-quy-luat-di-truyen",
+        "sinh12-di-truyen-quan-the-nguoi"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 2",
+      "lop": 12,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Trắc nghiệm trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25
+        }
+      ],
+      "pham_vi": [
+        "sinh12-ung-dung-di-truyen-giong",
+        "sinh12-tien-hoa"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 2",
+      "lop": 12,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Trắc nghiệm trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25
+        }
+      ],
+      "pham_vi": [
+        "sinh12-ung-dung-di-truyen-giong",
+        "sinh12-tien-hoa",
+        "sinh12-sinh-thai-hoc-moi-truong"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Thi tốt nghiệp THPT 2025",
+      "lop": 12,
+      "thoi_gian_phut": 50,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm lựa chọn 4 đáp án",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25,
+          "mo_ta": "Mỗi câu chọn 1 đáp án đúng duy nhất. Tổng 4.5 điểm."
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "diem_moi_cau": 1.0,
+          "mo_ta": "Mỗi câu gồm 4 ý (a, b, c, d), thí sinh chọn Đúng hoặc Sai cho mỗi ý. Điểm: đúng 1 ý = 0.1đ; đúng 2 ý = 0.25đ; đúng 3 ý = 0.5đ; đúng cả 4 ý = 1.0đ. Tổng 4.0 điểm."
+        },
+        {
+          "ten": "Phần III: Trắc nghiệm trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25,
+          "mo_ta": "Thí sinh tự điền đáp án số hoặc từ ngắn vào ô trả lời. Tổng 1.5 điểm."
+        }
+      ],
+      "pham_vi": [
+        "sinh12-di-truyen-phan-tu-te-bao",
+        "sinh12-quy-luat-di-truyen",
+        "sinh12-di-truyen-quan-the-nguoi",
+        "sinh12-ung-dung-di-truyen-giong",
+        "sinh12-tien-hoa",
+        "sinh12-sinh-thai-hoc-moi-truong"
+      ],
+      "ti_le_muc_do": "30% Nhận biết - 40% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao (bám sát cấu trúc đề minh họa Bộ GD&ĐT 2025)"
+    }
+  ]
+}

@@ -1,0 +1,487 @@
+{
+  "cap": "Tiểu học",
+  "trang_thai": "BẢN NHÁP. Phần đánh giá, thời điểm kiểm tra và khung Toán đã đối chiếu ở mức tra cứu được. Phần Tiếng Việt, Tiếng Anh, Khoa học, Lịch sử và Địa lí, Tin học và Công nghệ chưa có nội dung chương; chỉ có khung để điền. Các mục 'chưa xác minh' không dùng cho đề thi.",
+  "nguon": [
+    "Thông tư 27/2020/TT-BGDĐT ban hành Quy định đánh giá học sinh tiểu học (qua các bài báo và văn bản trường tra cứu; chưa đọc được bản đầy đủ)",
+    "Thông tư 32/2018/TT-BGDĐT (Chương trình GDPT 2018), phần cấp tiểu học; chưa tải được đoạn yêu cầu cần đạt chi tiết từng lớp",
+    "Kế hoạch kiểm tra định kì của một số trường tiểu học (Ninh Bình, Đồng Nai, Hà Nội, Đông Triều, Quảng Nam) để tham khảo thời lượng và cấu trúc đề; không phải quy định chung",
+    "Hướng dẫn ra đề Toán lớp 1 theo Thông tư 27 trên một trang tài liệu (tỉ lệ mức tham khảo, không phải quy định)",
+    "Mục lục SGK tiểu học ba bộ KNTT, CTST, CD: chưa đối chiếu đầy đủ",
+    "Tiếng Anh: đối chiếu với bộ Global Success qua tài liệu ôn tập, chưa xem trực tiếp mục lục"
+  ],
+  "danh_gia": {
+    "van_ban": "Thông tư 27/2020/TT-BGDĐT",
+    "muc_do": [
+      { "muc": 1, "mo_ta": "Nhận biết và thực hiện các yêu cầu đơn giản, trực tiếp theo kiến thức, kĩ năng đã học. Tỉ lệ tham khảo khoảng 50%." },
+      { "muc": 2, "mo_ta": "Thực hiện các yêu cầu có kết nối một số kiến thức, kĩ năng đã học. Tỉ lệ tham khảo khoảng 30%." },
+      { "muc": 3, "mo_ta": "Vận dụng các nội dung đã học để giải quyết vấn đề mới hoặc đưa ra phản hồi hợp lí trong học tập và đời sống. Tỉ lệ tham khảo khoảng 20%." }
+    ],
+    "thang_diem": "Thang điểm 10. Theo bài báo tra cứu được, Thông tư 27 không còn quy định cấm cho điểm 0 như Thông tư 30/2014; cần kiểm tra lại văn bản gốc về điểm thập phân.",
+    "thoi_diem_kiem_tra": "Kiểm tra định kì giữa học kì I (tuần 10), cuối học kì I (tuần 18), giữa học kì II (tuần 27) và cuối năm học (tuần 35). Các trường tiểu học thường kiểm tra môn Toán và Tiếng Việt ở cuối học kì I và cuối năm; các môn khác theo kế hoạch của từng trường."
+  },
+  "mon_khong_kiem_tra_dinh_ky": [
+    "Đạo đức (đánh giá bằng nhận xét)",
+    "Tự nhiên và Xã hội (lớp 1–3, đánh giá bằng nhận xét)",
+    "Âm nhạc",
+    "Mĩ thuật",
+    "Giáo dục thể chất",
+    "Hoạt động trải nghiệm",
+    "Lưu ý: danh sách này dựa trên quy định chung của Thông tư 27; cần kiểm tra lại văn bản gốc trước khi dùng"
+  ],
+  "mon": [
+    {
+      "mon": "Toán",
+      "lop": [
+        {
+          "lop": 1,
+          "chuong": [
+            {
+              "id": "th-toan1-so-va-phep-tinh",
+              "ten": "Số và phép tính trong phạm vi 10, 20, 100",
+              "hoc_ky": "1–2",
+              "ten_theo_sach": { "KNTT": "chưa xác minh", "CTST": "chưa xác minh", "CD": "chưa xác minh" },
+              "yeu_cau_can_dat": [
+                "Đếm, đọc, viết các số trong phạm vi đã học; nhận biết thứ tự các số.",
+                "Thực hiện được phép cộng, phép trừ trong phạm vi đã học bằng cách đếm hoặc tính nhẩm đơn giản."
+              ],
+              "pham_vi": "Số đến 100 (cuối lớp 1). Cộng, trừ trong phạm vi 20 có thể có nhớ; cần kiểm tra mức chính xác của chương trình. Không dùng phép nhân, chia trong đề lớp 1.",
+              "kien_thuc_duoc_dung": ["Đếm đồ vật và hình vẽ", "So sánh số đơn giản"],
+              "chua_duoc_dung": [
+                "Phép nhân và phép chia: học từ lớp 2.",
+                "Phân số, số thập phân: lớp 3 trở lên (phân số) và lớp 5 (số thập phân).",
+                "Đơn vị đo khối lượng và dung tích (kilôgam, lít): lớp 2 trở lên."
+              ],
+              "dang_bai_dien_hinh": [
+                "Điền số còn thiếu vào dãy số",
+                "Tính phép cộng, trừ bằng hình vẽ hoặc que tính",
+                "Đọc tranh và viết phép tính phù hợp"
+              ],
+              "luu_y_ra_de": "Câu hỏi dùng tranh và hình ảnh quen thuộc. Số lớn và phép tính khó để lớp 2."
+            }
+          ],
+          "ghi_chu_chua_chac": ["Ba bộ sách có thể sắp xếp mạch số khác nhau; cần đối chiếu mục lục để đặt tên chương chính xác."]
+        },
+        {
+          "lop": 2,
+          "chuong": [
+            {
+              "id": "th-toan2-phep-cong-tru-nhan-chia-co-ban",
+              "ten": "Phép cộng, trừ có nhớ trong phạm vi 100; phép nhân, phép chia cơ bản",
+              "hoc_ky": "1–2",
+              "ten_theo_sach": { "KNTT": "chưa xác minh", "CTST": "chưa xác minh", "CD": "chưa xác minh" },
+              "yeu_cau_can_dat": [
+                "Thực hiện được phép cộng, trừ có nhớ trong phạm vi 100.",
+                "Nhận biết và thực hiện được phép nhân, phép chia trong bảng nhân 2, 3, 4, 5 (cần kiểm tra danh sách bảng đã học)."
+              ],
+              "pham_vi": "Số trong phạm vi 100. Bảng nhân và chia 2, 3, 4, 5. Đơn vị đo độ dài: đề-xi-mét, mét, xăng-ti-mét (cần kiểm tra).",
+              "kien_thuc_duoc_dung": ["Phép cộng, trừ trong phạm vi 20 (lớp 1)"],
+              "chua_duoc_dung": [
+                "Phạm vi 1000 (lớp 3).",
+                "Bảng nhân và chia 6, 7, 8, 9 (lớp 3).",
+                "Phân số (lớp 3)."
+              ],
+              "dang_bai_dien_hinh": [
+                "Đặt tính và tính cộng, trừ có nhớ",
+                "Giải bài toán có lời văn một bước với phép nhân hoặc phép chia",
+                "Đọc hình và điền phép tính"
+              ],
+              "luu_y_ra_de": "Bài toán có lời văn ngắn, tối đa một hoặc hai bước tính."
+            }
+          ],
+          "ghi_chu_chua_chac": ["Danh sách bảng nhân, chia lớp 2 cần đối chiếu từng bộ sách."]
+        },
+        {
+          "lop": 3,
+          "chuong": [
+            {
+              "id": "th-toan3-so-den-1000-va-bang-nhan-chia",
+              "ten": "Số trong phạm vi 1000; bảng nhân, bảng chia 6–9",
+              "hoc_ky": "1–2",
+              "ten_theo_sach": { "KNTT": "chưa xác minh", "CTST": "chưa xác minh", "CD": "chưa xác minh" },
+              "yeu_cau_can_dat": [
+                "Đọc, viết, so sánh các số trong phạm vi 1000.",
+                "Thực hiện phép nhân, phép chia trong bảng 6, 7, 8, 9 và các phép tính đơn giản bằng bảng nhân đã học."
+              ],
+              "pham_vi": "Số đến 1000. Bảng nhân và chia 6–9 (theo chương trình lớp 3). Giới thiệu phân số đơn giản (cần đối chiếu mức yêu cầu).",
+              "kien_thuc_duoc_dung": ["Phép cộng, trừ có nhớ phạm vi 100 (lớp 2)", "Bảng nhân và chia 2–5 (lớp 2)"],
+              "chua_duoc_dung": [
+                "Số đến 100 000 (lớp 4).",
+                "Phép tính với số thập phân (lớp 5).",
+                "Tỉ số phần trăm (lớp 5)."
+              ],
+              "dang_bai_dien_hinh": [
+                "Đọc viết và so sánh số có ba chữ số",
+                "Tính nhân, chia trong bảng 6–9",
+                "Giải bài toán có lời văn hai bước"
+              ],
+              "luu_y_ra_de": "Tránh phép tính nhiều bước vượt chương trình lớp 3."
+            }
+          ],
+          "ghi_chu_chua_chac": ["Mức phân số và chu vi, diện tích hình chữ nhật cần kiểm tra lại mục lục."]
+        },
+        {
+          "lop": 4,
+          "chuong": [
+            {
+              "id": "th-toan4-so-den-lop-trieu",
+              "ten": "Số đến lớp triệu; bốn phép tính với số lớn; phân số",
+              "hoc_ky": "1–2",
+              "ten_theo_sach": { "KNTT": "chưa xác minh", "CTST": "chưa xác minh", "CD": "chưa xác minh" },
+              "yeu_cau_can_dat": [
+                "Đọc, viết và so sánh số đến lớp triệu.",
+                "Thực hiện bốn phép tính với số có nhiều chữ số và nhận biết phân số đơn giản."
+              ],
+              "pham_vi": "Số đến lớp triệu. Phân số trong phạm vi đơn giản. Không dùng số thập phân.",
+              "kien_thuc_duoc_dung": ["Số đến 1000 và phép nhân, chia bảng (lớp 3)"],
+              "chua_duoc_dung": [
+                "Số thập phân (lớp 5).",
+                "Tỉ số phần trăm (lớp 5).",
+                "Phương trình và biểu thức chứa chữ phức tạp (lớp 5 hoặc THCS)."
+              ],
+              "dang_bai_dien_hinh": [
+                "Đọc viết số có nhiều chữ số",
+                "Rút gọn và so sánh phân số đơn giản",
+                "Tính giá trị biểu thức số"
+              ],
+              "luu_y_ra_de": "Số trong đề không quá dài; ghi số bằng chữ số để học sinh đọc được."
+            }
+          ],
+          "ghi_chu_chua_chac": ["Mức yêu cầu về phân số và góc cần đối chiếu lại yêu cầu cần đạt."]
+        },
+        {
+          "lop": 5,
+          "chuong": [
+            {
+              "id": "th-toan5-so-thap-phan-ti-so-phan-tram",
+              "ten": "Số thập phân; các phép tính với số thập phân; tỉ số phần trăm",
+              "hoc_ky": "1–2",
+              "ten_theo_sach": { "KNTT": "chưa xác minh", "CTST": "chưa xác minh", "CD": "chưa xác minh" },
+              "yeu_cau_can_dat": [
+                "Đọc, viết, so sánh và thực hiện bốn phép tính với số thập phân.",
+                "Nhận biết tỉ số phần trăm và giải bài toán đơn giản về tỉ số phần trăm."
+              ],
+              "pham_vi": "Số thập phân đến hai hoặc ba chữ số thập phân. Tỉ số phần trăm ở mức bài toán đơn giản. Không dùng số âm.",
+              "kien_thuc_duoc_dung": ["Phân số và bốn phép tính với số tự nhiên (lớp 4)"],
+              "chua_duoc_dung": [
+                "Số âm và phương trình (THCS).",
+                "Tỉ lệ thức và tỉ lệ phức tạp (THCS).",
+                "Công thức diện tích hình tròn đầy đủ: cần đối chiếu mức yêu cầu lớp 5."
+              ],
+              "dang_bai_dien_hinh": [
+                "Đặt tính và tính với số thập phân",
+                "Chuyển đổi giữa số thập phân và tỉ số phần trăm",
+                "Giải bài toán thực tế về giá cả hoặc tỉ lệ đơn giản"
+              ],
+              "luu_y_ra_de": "Tránh bài toán nhiều bước về phần trăm lãi suất hoặc thuế vì dễ vượt mức yêu cầu."
+            }
+          ],
+          "ghi_chu_chua_chac": ["Danh mục hình học lớp 5 (hình tròn, hình hộp) chưa đối chiếu được."]
+        }
+      ],
+      "cau_truc_de": [
+        {
+          "loai": "Cuối học kì I",
+          "lop": 1,
+          "thoi_gian_phut": 40,
+          "phan": [{ "ten": "Tham khảo: 12 câu gồm trắc nghiệm và tự luận", "so_cau": 12, "diem": 10 }],
+          "ti_le_muc": { "Mức 1": "khoảng 50%", "Mức 2": "khoảng 30%", "Mức 3": "khoảng 20%" },
+          "pham_vi": ["th-toan1-so-va-phep-tinh"],
+          "ghi_chu": "Số liệu lấy từ tài liệu hướng dẫn ra đề của một trang tài liệu, không phải quy định chính thức."
+        },
+        {
+          "loai": "Cuối năm học",
+          "lop": 1,
+          "thoi_gian_phut": 40,
+          "phan": [],
+          "ti_le_muc": { "Mức 1": "chưa xác minh", "Mức 2": "chưa xác minh", "Mức 3": "chưa xác minh" },
+          "pham_vi": ["th-toan1-so-va-phep-tinh"],
+          "ghi_chu": "Chưa tra được cấu trúc cuối năm."
+        },
+        {
+          "loai": "Cuối học kì I",
+          "lop": 2,
+          "thoi_gian_phut": 40,
+          "phan": [],
+          "ti_le_muc": { "Mức 1": "chưa xác minh", "Mức 2": "chưa xác minh", "Mức 3": "chưa xác minh" },
+          "pham_vi": ["th-toan2-phep-cong-tru-nhan-chia-co-ban"],
+          "ghi_chu": "Thời lượng 40 phút là ước lượng từ kế hoạch một trường; chưa đối chiếu quy định."
+        },
+        {
+          "loai": "Cuối năm học",
+          "lop": 2,
+          "thoi_gian_phut": 40,
+          "phan": [],
+          "ti_le_muc": { "Mức 1": "chưa xác minh", "Mức 2": "chưa xác minh", "Mức 3": "chưa xác minh" },
+          "pham_vi": ["th-toan2-phep-cong-tru-nhan-chia-co-ban"],
+          "ghi_chu": "Chưa tra được cấu trúc."
+        },
+        {
+          "loai": "Cuối học kì I",
+          "lop": 3,
+          "thoi_gian_phut": 40,
+          "phan": [],
+          "ti_le_muc": { "Mức 1": "chưa xác minh", "Mức 2": "chưa xác minh", "Mức 3": "chưa xác minh" },
+          "pham_vi": ["th-toan3-so-den-1000-va-bang-nhan-chia"],
+          "ghi_chu": "Chưa tra được cấu trúc."
+        },
+        {
+          "loai": "Cuối năm học",
+          "lop": 3,
+          "thoi_gian_phut": 40,
+          "phan": [],
+          "ti_le_muc": { "Mức 1": "chưa xác minh", "Mức 2": "chưa xác minh", "Mức 3": "chưa xác minh" },
+          "pham_vi": ["th-toan3-so-den-1000-va-bang-nhan-chia"],
+          "ghi_chu": "Chưa tra được cấu trúc."
+        },
+        {
+          "loai": "Cuối học kì I",
+          "lop": 4,
+          "thoi_gian_phut": 40,
+          "phan": [],
+          "ti_le_muc": { "Mức 1": "chưa xác minh", "Mức 2": "chưa xác minh", "Mức 3": "chưa xác minh" },
+          "pham_vi": ["th-toan4-so-den-lop-trieu"],
+          "ghi_chu": "Chưa tra được cấu trúc."
+        },
+        {
+          "loai": "Cuối năm học",
+          "lop": 4,
+          "thoi_gian_phut": 40,
+          "phan": [],
+          "ti_le_muc": { "Mức 1": "chưa xác minh", "Mức 2": "chưa xác minh", "Mức 3": "chưa xác minh" },
+          "pham_vi": ["th-toan4-so-den-lop-trieu"],
+          "ghi_chu": "Chưa tra được cấu trúc."
+        },
+        {
+          "loai": "Cuối học kì I",
+          "lop": 5,
+          "thoi_gian_phut": 40,
+          "phan": [],
+          "ti_le_muc": { "Mức 1": "chưa xác minh", "Mức 2": "chưa xác minh", "Mức 3": "chưa xác minh" },
+          "pham_vi": ["th-toan5-so-thap-phan-ti-so-phan-tram"],
+          "ghi_chu": "Chưa tra được cấu trúc."
+        },
+        {
+          "loai": "Cuối năm học",
+          "lop": 5,
+          "thoi_gian_phut": 40,
+          "phan": [],
+          "ti_le_muc": { "Mức 1": "chưa xác minh", "Mức 2": "chưa xác minh", "Mức 3": "chưa xác minh" },
+          "pham_vi": ["th-toan5-so-thap-phan-ti-so-phan-tram"],
+          "ghi_chu": "Chưa tra được cấu trúc."
+        }
+      ]
+    },
+    {
+      "mon": "Tiếng Việt",
+      "lop": [
+        {
+          "lop": 1,
+          "chuong": [
+            {
+              "id": "th-tiengviet1-chua-co-noi-dung",
+              "ten": "CHƯA CÓ NỘI DUNG CHI TIẾT",
+              "hoc_ky": "1–2",
+              "ten_theo_sach": { "KNTT": "chưa xác minh", "CTST": "chưa xác minh", "CD": "chưa xác minh" },
+              "doc": [],
+              "viet": [],
+              "noi_nghe": [],
+              "kien_thuc_tieng_viet": [],
+              "kieu_bai_viet": [],
+              "chua_duoc_dung": [],
+              "dang_bai_dien_hinh": [],
+              "luu_y_ra_de": "Chưa đủ thông tin để soạn."
+            }
+          ],
+          "ghi_chu_chua_chac": ["Cần tra mục lục và yêu cầu cần đạt Tiếng Việt lớp 1."]
+        },
+        {
+          "lop": 2,
+          "chuong": [
+            {
+              "id": "th-tiengviet2-chua-co-noi-dung",
+              "ten": "CHƯA CÓ NỘI DUNG CHI TIẾT",
+              "hoc_ky": "1–2",
+              "ten_theo_sach": { "KNTT": "chưa xác minh", "CTST": "chưa xác minh", "CD": "chưa xác minh" },
+              "doc": [],
+              "viet": [],
+              "noi_nghe": [],
+              "kien_thuc_tieng_viet": [],
+              "kieu_bai_viet": [],
+              "chua_duoc_dung": [],
+              "dang_bai_dien_hinh": [],
+              "luu_y_ra_de": "Chưa đủ thông tin để soạn."
+            }
+          ],
+          "ghi_chu_chua_chac": ["Thời lượng kiểm tra lớp 2 (đọc hiểu 30 phút, chính tả 15 phút, tập làm văn 25 phút) lấy từ kế hoạch một trường; chưa đối chiếu quy định."]
+        },
+        {
+          "lop": 3,
+          "chuong": [
+            {
+              "id": "th-tiengviet3-chua-co-noi-dung",
+              "ten": "CHƯA CÓ NỘI DUNG CHI TIẾT",
+              "hoc_ky": "1–2",
+              "ten_theo_sach": { "KNTT": "chưa xác minh", "CTST": "chưa xác minh", "CD": "chưa xác minh" },
+              "doc": [],
+              "viet": [],
+              "noi_nghe": [],
+              "kien_thuc_tieng_viet": [],
+              "kieu_bai_viet": [],
+              "chua_duoc_dung": [],
+              "dang_bai_dien_hinh": [],
+              "luu_y_ra_de": "Chưa đủ thông tin để soạn."
+            }
+          ],
+          "ghi_chu_chua_chac": ["Tiếng Việt lớp 3 có bộ Cánh diều có cấu trúc bài học riêng (đọc, viết, nói và nghe luân phiên); cần đối chiếu."]
+        },
+        {
+          "lop": 4,
+          "chuong": [
+            {
+              "id": "th-tiengviet4-chua-co-noi-dung",
+              "ten": "CHƯA CÓ NỘI DUNG CHI TIẾT",
+              "hoc_ky": "1–2",
+              "ten_theo_sach": { "KNTT": "chưa xác minh", "CTST": "chưa xác minh", "CD": "chưa xác minh" },
+              "doc": [],
+              "viet": [],
+              "noi_nghe": [],
+              "kien_thuc_tieng_viet": [],
+              "kieu_bai_viet": [],
+              "chua_duoc_dung": [],
+              "dang_bai_dien_hinh": [],
+              "luu_y_ra_de": "Chưa đủ thông tin để soạn."
+            }
+          ],
+          "ghi_chu_chua_chac": ["Thời lượng kiểm tra lớp 4 và 5 (đọc hiểu kết hợp từ và câu, tập làm văn: 60 phút) lấy từ kế hoạch một trường; chưa đối chiếu quy định."]
+        },
+        {
+          "lop": 5,
+          "chuong": [
+            {
+              "id": "th-tiengviet5-chua-co-noi-dung",
+              "ten": "CHƯA CÓ NỘI DUNG CHI TIẾT",
+              "hoc_ky": "1–2",
+              "ten_theo_sach": { "KNTT": "chưa xác minh", "CTST": "chưa xác minh", "CD": "chưa xác minh" },
+              "doc": [],
+              "viet": [],
+              "noi_nghe": [],
+              "kien_thuc_tieng_viet": [],
+              "kieu_bai_viet": [],
+              "chua_duoc_dung": [],
+              "dang_bai_dien_hinh": [],
+              "luu_y_ra_de": "Chưa đủ thông tin để soạn."
+            }
+          ],
+          "ghi_chu_chua_chac": ["Cần tra kĩ yêu cầu về đọc hiểu và kiểu bài viết lớp 5."]
+        }
+      ],
+      "cau_truc_de": [
+        {
+          "loai": "Cuối học kì I",
+          "lop": 2,
+          "thoi_gian_phut": 70,
+          "phan": [
+            { "ten": "Đọc hiểu, kết hợp từ và câu", "so_cau": null, "diem": null, "thoi_gian_phut": 30 },
+            { "ten": "Chính tả", "so_cau": null, "diem": null, "thoi_gian_phut": 15 },
+            { "ten": "Tập làm văn", "so_cau": null, "diem": null, "thoi_gian_phut": 25 }
+          ],
+          "ti_le_muc": { "Mức 1": "chưa xác minh", "Mức 2": "chưa xác minh", "Mức 3": "chưa xác minh" },
+          "pham_vi": [],
+          "ghi_chu": "Cấu trúc và thời gian lấy từ kế hoạch một trường tiểu học ở Ninh Bình (học kì I, năm học 2025–2026), không phải quy định chung."
+        },
+        {
+          "loai": "Cuối học kì I",
+          "lop": 3,
+          "thoi_gian_phut": 70,
+          "phan": [
+            { "ten": "Đọc hiểu, kết hợp từ và câu", "so_cau": null, "diem": null, "thoi_gian_phut": 30 },
+            { "ten": "Chính tả", "so_cau": null, "diem": null, "thoi_gian_phut": 15 },
+            { "ten": "Tập làm văn", "so_cau": null, "diem": null, "thoi_gian_phut": 25 }
+          ],
+          "ti_le_muc": { "Mức 1": "chưa xác minh", "Mức 2": "chưa xác minh", "Mức 3": "chưa xác minh" },
+          "pham_vi": [],
+          "ghi_chu": "Như lớp 2; cấu trúc lấy từ kế hoạch một trường."
+        },
+        {
+          "loai": "Cuối học kì I",
+          "lop": 1,
+          "thoi_gian_phut": 40,
+          "phan": [],
+          "ti_le_muc": { "Mức 1": "chưa xác minh", "Mức 2": "chưa xác minh", "Mức 3": "chưa xác minh" },
+          "pham_vi": [],
+          "ghi_chu": "Thời lượng 40 phút lấy từ kế hoạch một trường."
+        },
+        {
+          "loai": "Cuối học kì I",
+          "lop": 4,
+          "thoi_gian_phut": 60,
+          "phan": [],
+          "ti_le_muc": { "Mức 1": "chưa xác minh", "Mức 2": "chưa xác minh", "Mức 3": "chưa xác minh" },
+          "pham_vi": [],
+          "ghi_chu": "Thời lượng 60 phút (đọc hiểu, từ và câu, tập làm văn) lấy từ kế hoạch một trường."
+        },
+        {
+          "loai": "Cuối học kì I",
+          "lop": 5,
+          "thoi_gian_phut": 60,
+          "phan": [],
+          "ti_le_muc": { "Mức 1": "chưa xác minh", "Mức 2": "chưa xác minh", "Mức 3": "chưa xác minh" },
+          "pham_vi": [],
+          "ghi_chu": "Như lớp 4."
+        }
+      ]
+    },
+    {
+      "mon": "Tiếng Anh",
+      "lop": [
+        { "lop": 3, "chuong": [{ "id": "th-tienganh3-chua-co-noi-dung", "ten": "CHƯA CÓ NỘI DUNG CHI TIẾT (Global Success, mỗi Unit là một chương)", "hoc_ky": "1–2", "ten_theo_sach": { "KNTT": "Global Success (đã xác định bộ)", "CTST": "không áp dụng", "CD": "không áp dụng" }, "tu_vung": [], "mau_cau": [], "phat_am": [], "yeu_cau_can_dat": [], "chua_duoc_dung": [], "dang_bai_dien_hinh": [], "luu_y_ra_de": "Chưa đủ thông tin để soạn." }], "ghi_chu_chua_chac": ["Cần tra danh sách Unit lớp 3 Global Success."] },
+        { "lop": 4, "chuong": [{ "id": "th-tienganh4-chua-co-noi-dung", "ten": "CHƯA CÓ NỘI DUNG CHI TIẾT (Global Success, mỗi Unit là một chương)", "hoc_ky": "1–2", "ten_theo_sach": { "KNTT": "Global Success (đã xác định bộ)", "CTST": "không áp dụng", "CD": "không áp dụng" }, "tu_vung": [], "mau_cau": [], "phat_am": [], "yeu_cau_can_dat": [], "chua_duoc_dung": [], "dang_bai_dien_hinh": [], "luu_y_ra_de": "Chưa đủ thông tin để soạn." }], "ghi_chu_chua_chac": ["Cần tra danh sách Unit lớp 4 Global Success."] },
+        { "lop": 5, "chuong": [{ "id": "th-tienganh5-chua-co-noi-dung", "ten": "CHƯA CÓ NỘI DUNG CHI TIẾT (Global Success, mỗi Unit là một chương)", "hoc_ky": "1–2", "ten_theo_sach": { "KNTT": "Global Success (đã xác định bộ)", "CTST": "không áp dụng", "CD": "không áp dụng" }, "tu_vung": [], "mau_cau": [], "phat_am": [], "yeu_cau_can_dat": [], "chua_duoc_dung": [], "dang_bai_dien_hinh": [], "luu_y_ra_de": "Chưa đủ thông tin để soạn." }], "ghi_chu_chua_chac": ["Lớp 5 kiểm tra cuối năm có thể theo định dạng đề đánh giá năng lực tiếng Anh bậc 1 (Quyết định 1479/QĐ-BGDĐT); cần xác minh."] }
+      ],
+      "cau_truc_de": [
+        { "loai": "Kiểm tra kỹ năng nghe, nói, đọc, viết", "lop": 3, "thoi_gian_phut": null, "phan": [], "ti_le_muc": { "Mức 1": "chưa xác minh", "Mức 2": "chưa xác minh", "Mức 3": "chưa xác minh" }, "pham_vi": [], "ghi_chu": "Theo Công văn 3032/BGDĐT-GDTH (lớp 3, 4) qua kế hoạch một trường; chưa đọc văn bản gốc." },
+        { "loai": "Kiểm tra kỹ năng nghe, nói, đọc, viết", "lop": 4, "thoi_gian_phut": null, "phan": [], "ti_le_muc": { "Mức 1": "chưa xác minh", "Mức 2": "chưa xác minh", "Mức 3": "chưa xác minh" }, "pham_vi": [], "ghi_chu": "Như lớp 3." },
+        { "loai": "Kiểm tra kỹ năng nghe, nói, đọc, viết", "lop": 5, "thoi_gian_phut": null, "phan": [], "ti_le_muc": { "Mức 1": "chưa xác minh", "Mức 2": "chưa xác minh", "Mức 3": "chưa xác minh" }, "pham_vi": [], "ghi_chu": "Cuối năm có thể theo Quyết định 1479/QĐ-BGDĐT; cần xác minh." }
+      ]
+    },
+    {
+      "mon": "Khoa học",
+      "lop": [
+        { "lop": 4, "chuong": [{ "id": "th-khoahoc4-chua-co-noi-dung", "ten": "CHƯA CÓ NỘI DUNG CHI TIẾT", "hoc_ky": "1–2", "ten_theo_sach": { "KNTT": "chưa xác minh", "CTST": "chưa xác minh", "CD": "chưa xác minh" }, "yeu_cau_can_dat": [], "chua_duoc_dung": [], "dang_bai_dien_hinh": [], "luu_y_ra_de": "Chưa đủ thông tin để soạn." }], "ghi_chu_chua_chac": ["Cần tra mục lục và yêu cầu cần đạt Khoa học lớp 4."] },
+        { "lop": 5, "chuong": [{ "id": "th-khoahoc5-chua-co-noi-dung", "ten": "CHƯA CÓ NỘI DUNG CHI TIẾT", "hoc_ky": "1–2", "ten_theo_sach": { "KNTT": "chưa xác minh", "CTST": "chưa xác minh", "CD": "chưa xác minh" }, "yeu_cau_can_dat": [], "chua_duoc_dung": [], "dang_bai_dien_hinh": [], "luu_y_ra_de": "Chưa đủ thông tin để soạn." }], "ghi_chu_chua_chac": ["Cần tra mục lục và yêu cầu cần đạt Khoa học lớp 5."] }
+      ],
+      "cau_truc_de": [
+        { "loai": "Cuối học kì I", "lop": 4, "thoi_gian_phut": null, "phan": [], "ti_le_muc": { "Mức 1": "chưa xác minh", "Mức 2": "chưa xác minh", "Mức 3": "chưa xác minh" }, "pham_vi": [], "ghi_chu": "Thời điểm theo kế hoạch trường; chưa có quy định." },
+        { "loai": "Cuối năm học", "lop": 5, "thoi_gian_phut": null, "phan": [], "ti_le_muc": { "Mức 1": "chưa xác minh", "Mức 2": "chưa xác minh", "Mức 3": "chưa xác minh" }, "pham_vi": [], "ghi_chu": "Chưa tra được cấu trúc." }
+      ]
+    },
+    {
+      "mon": "Lịch sử và Địa lí",
+      "lop": [
+        { "lop": 4, "chuong": [{ "id": "th-lsdl4-chua-co-noi-dung", "ten": "CHƯA CÓ NỘI DUNG CHI TIẾT", "hoc_ky": "1–2", "ten_theo_sach": { "KNTT": "chưa xác minh", "CTST": "chưa xác minh", "CD": "chưa xác minh" }, "yeu_cau_can_dat": [], "chua_duoc_dung": [], "dang_bai_dien_hinh": [], "luu_y_ra_de": "Chưa đủ thông tin để soạn." }], "ghi_chu_chua_chac": ["Cần tra mục lục và yêu cầu cần đạt Lịch sử và Địa lí lớp 4."] },
+        { "lop": 5, "chuong": [{ "id": "th-lsdl5-chua-co-noi-dung", "ten": "CHƯA CÓ NỘI DUNG CHI TIẾT", "hoc_ky": "1–2", "ten_theo_sach": { "KNTT": "chưa xác minh", "CTST": "chưa xác minh", "CD": "chưa xác minh" }, "yeu_cau_can_dat": [], "chua_duoc_dung": [], "dang_bai_dien_hinh": [], "luu_y_ra_de": "Chưa đủ thông tin để soạn." }], "ghi_chu_chua_chac": ["Cần tra mục lục và yêu cầu cần đạt Lịch sử và Địa lí lớp 5."] }
+      ],
+      "cau_truc_de": [
+        { "loai": "Cuối học kì I", "lop": 4, "thoi_gian_phut": null, "phan": [], "ti_le_muc": { "Mức 1": "chưa xác minh", "Mức 2": "chưa xác minh", "Mức 3": "chưa xác minh" }, "pham_vi": [], "ghi_chu": "Chưa có quy định." },
+        { "loai": "Cuối năm học", "lop": 5, "thoi_gian_phut": null, "phan": [], "ti_le_muc": { "Mức 1": "chưa xác minh", "Mức 2": "chưa xác minh", "Mức 3": "chưa xác minh" }, "pham_vi": [], "ghi_chu": "Chưa có quy định." }
+      ]
+    },
+    {
+      "mon": "Tin học và Công nghệ",
+      "lop": [
+        { "lop": 3, "chuong": [{ "id": "th-tinhoc-cn3-chua-co-noi-dung", "ten": "CHƯA CÓ NỘI DUNG CHI TIẾT (hai phân môn: Tin học và Công nghệ)", "hoc_ky": "1–2", "ten_theo_sach": { "KNTT": "chưa xác minh", "CTST": "chưa xác minh", "CD": "chưa xác minh" }, "yeu_cau_can_dat": [], "chua_duoc_dung": [], "dang_bai_dien_hinh": [], "luu_y_ra_de": "Chưa đủ thông tin để soạn." }], "ghi_chu_chua_chac": ["Tin học và Công nghệ lớp 3 được kiểm tra theo kế hoạch trường, cần tra quy định."] },
+        { "lop": 4, "chuong": [{ "id": "th-tinhoc-cn4-chua-co-noi-dung", "ten": "CHƯA CÓ NỘI DUNG CHI TIẾT (hai phân môn: Tin học và Công nghệ)", "hoc_ky": "1–2", "ten_theo_sach": { "KNTT": "chưa xác minh", "CTST": "chưa xác minh", "CD": "chưa xác minh" }, "yeu_cau_can_dat": [], "chua_duoc_dung": [], "dang_bai_dien_hinh": [], "luu_y_ra_de": "Chưa đủ thông tin để soạn." }], "ghi_chu_chua_chac": [] },
+        { "lop": 5, "chuong": [{ "id": "th-tinhoc-cn5-chua-co-noi-dung", "ten": "CHƯA CÓ NỘI DUNG CHI TIẾT (hai phân môn: Tin học và Công nghệ)", "hoc_ky": "1–2", "ten_theo_sach": { "KNTT": "chưa xác minh", "CTST": "chưa xác minh", "CD": "chưa xác minh" }, "yeu_cau_can_dat": [], "chua_duoc_dung": [], "dang_bai_dien_hinh": [], "luu_y_ra_de": "Chưa đủ thông tin để soạn." }], "ghi_chu_chua_chac": [] }
+      ],
+      "cau_truc_de": [
+        { "loai": "Cuối học kì I", "lop": 3, "thoi_gian_phut": null, "phan": [], "ti_le_muc": { "Mức 1": "chưa xác minh", "Mức 2": "chưa xác minh", "Mức 3": "chưa xác minh" }, "pham_vi": [], "ghi_chu": "Trong kế hoạch một trường, Tin học và Công nghệ lớp 3 được kiểm tra; chưa có quy định chung." }
+      ]
+    }
+  ],
+  "ghi_chu_chua_chac": [
+    "Chỉ môn Toán có chương nội dung tương đối đầy đủ. Các môn còn lại chỉ có khung, chưa soạn nội dung chương.",
+    "Thời gian kiểm tra và cấu trúc đề phần lớn lấy từ kế hoạch của một số trường, không phải quy định chung. Cần đối chiếu với văn bản hướng dẫn của Sở hoặc Phòng GDĐT.",
+    "Chưa xác định được chính xác mức điểm, tỉ lệ mức, và cách cho điểm 0 hay điểm thập phân theo Thông tư 27 gốc.",
+    "Danh sách môn kiểm tra định kì và môn đánh giá bằng nhận xét cần đối chiếu lại với Thông tư 27, đặc biệt Tin học và Công nghệ lớp 3–5."
+  ]
+}

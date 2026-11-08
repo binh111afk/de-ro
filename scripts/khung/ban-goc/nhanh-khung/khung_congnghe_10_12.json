@@ -1,0 +1,102 @@
+{
+  "mon": "Công nghệ",
+  "pham_vi_luot": "lớp 10–12 (hai định hướng Công nghiệp và Nông nghiệp)",
+  "nguon": [
+    "Chương trình GDPT 2018 môn Công nghệ, Thông tư 32/2018/TT-BGDĐT (sửa đổi bởi Thông tư 13/2022)",
+    "SGK Công nghệ 10, 11, 12 — Kết nối tri thức: định hướng Công nghiệp (Thiết kế và công nghệ 10; Công nghệ cơ khí 11; Công nghệ Điện – Điện tử 12) và định hướng Nông nghiệp (Công nghệ trồng trọt 10; Công nghệ chăn nuôi 11; Công nghệ lâm nghiệp 12, Công nghệ thuỷ sản 12)",
+    "Công văn 7991/KGDTH-GDTrH — phân phối chương trình Công nghệ 10–12"
+  ],
+  "muc_luc_da_tra": [
+    "Lớp 10 – KNTT – Định hướng Công nghiệp – SGK Thiết kế và công nghệ (Bài 1–21: hệ thống kĩ thuật; công nghệ phổ biến; một số công nghệ mới; cách mạng công nghiệp; thiết kế kĩ thuật...)",
+    "Lớp 10 – KNTT – Định hướng Nông nghiệp – SGK Công nghệ trồng trọt (Chương I. Giới thiệu chung về trồng trọt; Chương II. Đất trồng; Chương III. Phân bón; Chương IV. Công nghệ giống cây trồng; ...)",
+    "Lớp 11 – KNTT – Định hướng Công nghiệp – SGK Công nghệ cơ khí (các chương cơ khí chế tạo, gồm ngành nghề cơ khí chế tạo, sản phẩm, vật liệu, quy trình gia công...)",
+    "Lớp 11 – KNTT – Định hướng Nông nghiệp – SGK Công nghệ chăn nuôi (Chương I. Giới thiệu chung về chăn nuôi; Chương II. Công nghệ giống vật nuôi; Chương III–VI: thức ăn, nuôi dưỡng, bảo vệ môi trường chăn nuôi...)",
+    "Lớp 12 – KNTT – Định hướng Công nghiệp – SGK Công nghệ Điện – Điện tử (tổng quan kĩ thuật điện; nguồn điện, mạng điện; điện tử cơ bản; ứng dụng...)",
+    "Lớp 12 – KNTT – Định hướng Nông nghiệp – SGK Công nghệ lâm nghiệp (Chương 1. Giới thiệu chung về lâm nghiệp; các chương lâm nghiệp cơ bản) và SGK Công nghệ thuỷ sản"
+  ],
+  "lop": [
+    {
+      "lop": 10,
+      "chuong": [
+        { "id": "cn10cn-thiet-ke-va-cong-nghe", "ten": "Thiết kế và công nghệ: hệ thống kĩ thuật, công nghệ phổ biến, công nghệ mới, thiết kế kĩ thuật", "hoc_ky": 1, "mach": "Công nghiệp", "dinh_huong": "Công nghiệp", "ten_theo_sach": { "KNTT": "SGK Thiết kế và công nghệ (Bài 1–21)", "CTST": "SGK Thiết kế và công nghệ", "CD": "SGK Thiết kế và công nghệ" }, "thuat_ngu_ki_hieu": ["hệ thống kĩ thuật", "sơ đồ khối", "cách mạng công nghiệp", "bản vẽ kĩ thuật"], "cong_thuc": [], "quy_trinh": ["Quy trình thiết kế kĩ thuật: xác định nhu cầu → ý tưởng → lựa chọn phương án → chế tạo → thử nghiệm → đánh giá"], "yeu_cau_can_dat": ["Trình bày khái niệm, đặc điểm của hệ thống kĩ thuật", "Nêu một số công nghệ phổ biến, công nghệ mới và các cuộc cách mạng công nghiệp", "Trình bày phương pháp, phương tiện hỗ trợ thiết kế kĩ thuật; thực hành thiết kế một sản phẩm kĩ thuật đơn giản"], "kien_thuc_duoc_dung": ["Công nghệ 6–9: dự án kĩ thuật, mô hình kĩ thuật", "Tin học 10: công nghệ số"], "chua_duoc_dung": ["Công nghệ in 3D chi tiết theo máy (chỉ nêu)", "IoT, AI trong công nghiệp chi tiết (lớp 11–12)"], "dang_bai_dien_hinh": ["Nhận diện hệ thống kĩ thuật qua sơ đồ khối", "Sắp xếp các bước thiết kế kĩ thuật", "Trình bày tác động của cách mạng công nghiệp"], "luu_y_ra_de": "Không dùng thuật ngữ kĩ thuật nâng cao ngoài SGK." },
+        { "id": "cn10nn-trong-trot", "ten": "Công nghệ trồng trọt: đất trồng, phân bón, giống cây trồng", "hoc_ky": 1, "mach": "Nông nghiệp", "dinh_huong": "Nông nghiệp", "ten_theo_sach": { "KNTT": "SGK Công nghệ trồng trọt (Chương I–V trở đi)", "CTST": "SGK Công nghệ trồng trọt", "CD": "SGK Công nghệ trồng trọt" }, "thuat_ngu_ki_hieu": ["đất trồng", "pH đất", "phân bón", "giống cây trồng", "thổ canh"], "cong_thuc": ["Lượng phân bón tính theo % nguyên tố dinh dưỡng trong phân", "Công thức NPK trên bao bì phân"], "quy_trinh": ["Quy trình cải tạo đất trồng", "Quy trình bón phân (bón lót, bón thúc)", "Quy trình chọn tạo giống bằng chọn lọc, lai giống ở mức nêu"], "yeu_cau_can_dat": ["Trình bày vai trò và thành phần của đất trồng; các biện pháp cải tạo, nâng cao độ phì", "Trình bày vai trò và loại phân bón; kĩ thuật bón phân", "Trình bày vai trò của giống và các công nghệ tạo giống cây trồng"],
+          "kien_thuc_duoc_dung": ["Toán 10: phần trăm, tỉ lệ", "KHTN 7: nguyên tố hoá học, phân tử"],
+          "chua_duoc_dung": ["Chuyển gen chi tiết, công nghệ tế bào (lớp 11–12)", "Sinh hoá đất nâng cao (đại học)"],
+          "dang_bai_dien_hinh": ["Tính lượng phân bón theo % nguyên tố", "Xác định biện pháp cải tạo đất theo mô tả", "So sánh phương pháp chọn giống"], "luu_y_ra_de": "Không dùng danh pháp hoá học phân bón phức tạp ngoài SGK." }
+      ],
+      "chuyen_de": ["Chuyên đề học tập Công nghệ 10"],
+      "ghi_chu_chua_chac": [
+        "Định hướng công nghiệp lớp 10 KNTT là SGK 'Thiết kế và công nghệ' (Bài 1–21), không phải kĩ thuật điện/cơ khí/ô tô — đối chiếu SGK in khi gộp",
+        "Định hướng nông nghiệp lớp 10 KNTT là SGK 'Công nghệ trồng trọt' (chỉ trồng trọt; chăn nuôi ở lớp 11)"
+      ]
+    },
+    {
+      "lop": 11,
+      "chuong": [
+        { "id": "cn11cn-co-khi-che-tao", "ten": "Công nghệ cơ khí: ngành nghề, sản phẩm, vật liệu, quy trình gia công cơ khí", "hoc_ky": 1, "mach": "Công nghiệp", "dinh_huong": "Công nghiệp", "ten_theo_sach": { "KNTT": "SGK Công nghệ cơ khí (các chương cơ khí chế tạo)", "CTST": "SGK Công nghệ cơ khí", "CD": "SGK Công nghệ cơ khí" }, "thuat_ngu_ki_hieu": ["cơ khí chế tạo", "thép", "gang", "hợp kim", "gia công cắt gọt", "hàn", "chế tạo khuôn"], "cong_thuc": ["Thành phần % carbon trong thép, gang"], "quy_trinh": ["Quy trình gia công cơ khí: chuẩn bị vật liệu → gia công → lắp ráp → kiểm tra"], "yeu_cau_can_dat": ["Nêu ngành nghề trong lĩnh vực cơ khí chế tạo", "Trình bày vật liệu kim loại (thép, gang) và phương pháp gia công cơ khí", "Trình bày quy trình sản xuất một sản phẩm cơ khí đơn giản"],
+          "kien_thuc_duoc_dung": ["KHTN 9: kim loại", "Toán 10–11: hình học không gian"], "chua_duoc_dung": ["CNC, gia công chính xác nano (chỉ nêu)", "Cơ khí lực học tính toán nâng cao (đại học)"],
+          "dang_bai_dien_hinh": ["Ghép vật liệu với ứng dụng cơ khí", "Sắp xếp quy trình gia công theo thứ tự", "Nhận diện máy móc theo chức năng"], "luu_y_ra_de": "Không dùng kí hiệu bản vẽ TCVN nâng cao." },
+        { "id": "cn11nn-chan-nuoi", "ten": "Công nghệ chăn nuôi: giống vật nuôi, thức ăn, nuôi dưỡng, môi trường chăn nuôi", "hoc_ky": 1, "mach": "Nông nghiệp", "dinh_huong": "Nông nghiệp", "ten_theo_sach": { "KNTT": "SGK Công nghệ chăn nuôi (Chương I–VI)", "CTST": "SGK Công nghệ chăn nuôi", "CD": "SGK Công nghệ chăn nuôi" }, "thuat_ngu_ki_hieu": ["giống vật nuôi", "tỉ suất sinh sản", "protein thô", "chuồng trại", "biogas"], "cong_thuc": ["Tính nhu cầu protein thô theo trọng lượng vật nuôi", "Tính năng suất sữa/trứng theo số liệu cho trước"], "quy_trinh": ["Quy trình chọn giống vật nuôi", "Quy trình phối trộn thức ăn chăn nuôi", "Quy trình xử lí chất thải chăn nuôi bằng biogas"], "yeu_cau_can_dat": ["Trình bày vai trò, triển vọng chăn nuôi; các loại vật nuôi", "Trình bày công nghệ giống vật nuôi (chọn lọc, lai) và thức ăn chăn nuôi", "Trình bày kĩ thuật nuôi dưỡng và bảo vệ môi trường chăn nuôi"],
+          "kien_thuc_duoc_dung": ["KHTN 7–8: dinh dưỡng, môi trường", "Toán 11: phần trăm, thống kê"], "chua_duoc_dung": ["Công nghệ gen vật nuôi chi tiết (lớp 12/chuyên đề)", "Y học thú y chi tiết về bệnh (chỉ nêu)"],
+          "dang_bai_dien_hinh": ["Tính lượng thức ăn theo yêu cầu protein", "Phân loại thức ăn theo nguồn gốc", "Trình bày biện pháp xử lí chất thải chăn nuôi"], "luu_y_ra_de": "Không dùng tên thuốc thú y cụ thể với liều lượng." }
+      ],
+      "chuyen_de": ["Chuyên đề học tập Công nghệ 11"],
+      "ghi_chu_chua_chac": [
+        "Định hướng công nghiệp lớp 11 KNTT là SGK 'Công nghệ cơ khí' (không phải kĩ thuật điện — kĩ thuật điện ở lớp 12 Điện-Điện tử)",
+        "Định hướng nông nghiệp lớp 11 KNTT là SGK 'Công nghệ chăn nuôi' (Chương I–VI)"
+      ]
+    },
+    {
+      "lop": 12,
+      "chuong": [
+        { "id": "cn12cn-dien-dien-tu", "ten": "Công nghệ Điện – Điện tử: kĩ thuật điện, nguồn điện, mạng điện, điện tử cơ bản", "hoc_ky": 1, "mach": "Công nghiệp", "dinh_huong": "Công nghiệp", "ten_theo_sach": { "KNTT": "SGK Công nghệ Điện – Điện tử (các chương)", "CTST": "SGK Công nghệ Điện – Điện tử", "CD": "SGK Công nghệ Điện – Điện tử" }, "thuat_ngu_ki_hieu": ["nguồn điện", "mạng điện", "điôt (diode)", "transistor", "mạch điện tử", "tai nghe"], "cong_thuc": ["Định luật Ohm revisión (I = U/R)", "Công suất P = UI"], "quy_trinh": ["Quy trình lắp ráp một mạch điện tử đơn giản"], "yeu_cau_can_dat": ["Trình bày tổng quan kĩ thuật điện; nguồn điện và mạng điện", "Trình bày kĩ thuật điện tử cơ bản (linh kiện, mạch điện tử)", "Trình bày ứng dụng của điện – điện tử trong đời sống và sản xuất"],
+          "kien_thuc_duoc_dung": ["Vật lí 11: dòng điện, mạch điện", "Công nghệ 8: điện trong gia đình"], "chua_duoc_dung": ["Vi mạch tích hợp chi tiết theo công nghệ bán dẫn (đại học)", "Lập trình nhúng (ngoài chương trình bắt buộc)"],
+          "dang_bai_dien_hinh": ["Đọc sơ đồ mạch điện tử nhận biết linh kiện", "Tính I, U theo định luật Ohm trong mạch", "Ghép ứng dụng với thiết bị điện tử"], "luu_y_ra_de": "Không yêu cầu thiết kế mạch phức tạp; mạch đơn giản theo SGK." },
+        { "id": "cn12nn-lam-nghiep-thuy-san", "ten": "Công nghệ lâm nghiệp và Công nghệ thuỷ sản", "hoc_ky": 2, "mach": "Nông nghiệp", "dinh_huong": "Nông nghiệp", "ten_theo_sach": { "KNTT": "SGK Công nghệ lâm nghiệp (Chương 1 trở đi) và SGK Công nghệ thuỷ sản", "CTST": "SGK Công nghệ lâm nghiệp; SGK Công nghệ thuỷ sản", "CD": "SGK Công nghệ lâm nghiệp; SGK Công nghệ thuỷ sản" }, "thuat_ngu_ki_hieu": ["lâm nghiệp", "khai thác rừng", "trồng rừng", "aquaculture (nuôi trồng thuỷ sản)", "đầm nuôi", "thuỷ sản nước mặn"], "cong_thuc": ["Năng suất thuỷ sản = Sản lượng/Diện tích mặt nước"], "quy_trinh": ["Quy trình gây trồng rừng (chọn giống, trồng, chăm sóc, bảo vệ)", "Quy trình nuôi tôm/cá ở mức nêu (chọn ao, mật độ, thức ăn, quản lí nước)"], "yeu_cau_can_dat": ["Trình bày vai trò, triển vọng của lâm nghiệp; các hoạt động lâm nghiệp cơ bản", "Trình bày công nghệ nuôi trồng thuỷ sản nước ngọt, nước mặn", "Nêu biện pháp phát triển lâm nghiệp – thuỷ sản bền vững"],
+          "kien_thuc_duoc_dung": ["KHTN 8: sinh vật và môi trường", "Địa lí 9: lâm nghiệp – thuỷ sản Việt Nam"],
+          "chua_duoc_dung": ["Công nghệ sinh học thuỷ sản chi tiết (chuyên đề)", "Trồng rừng đặc sản theo kỹ thuật từng loài nâng cao (chỉ nêu)"],
+          "dang_bai_dien_hinh": ["Sắp xếp các bước quy trình nuôi thuỷ sản", "Nhận định biện pháp lâm nghiệp theo tình huống", "Tính năng suất thuỷ sản theo số liệu"], "luu_y_ra_de": "Không dùng tên thuốc hoá học nuôi thuỷ sản cụ thể với liều lượng." }
+      ],
+      "chuyen_de": ["Chuyên đề học tập Công nghệ 12"],
+      "ghi_chu_chua_chac": [
+        "Định hướng công nghiệp lớp 12 KNTT là SGK 'Công nghệ Điện – Điện tử'",
+        "Định hướng nông nghiệp lớp 12 KNTT gồm 2 SGK riêng: 'Công nghệ lâm nghiệp' và 'Công nghệ thuỷ sản' — mỗi trường chọn một sách theo điều kiện địa phương",
+        "Đề tốt nghiệp Công nghệ 2025 theo định hướng công nghiệp (SGK Điện – Điện tử) — cần đối chiếu công bố của Bộ"
+      ]
+    }
+  ],
+  "cau_truc_de": [
+    { "loai": "Đề kiểm tra cuối học kì 1 môn Công nghệ lớp 10 (định hướng Công nghiệp)", "lop": 10, "dinh_huong": "Công nghiệp", "thoi_gian_phut": 45, "phan": [
+      { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 8, "diem_moi_cau": 0.5, "tong_diem": 4 },
+      { "ten": "Phần II. Tự luận", "so_cau": 3, "diem_moi_cau": 2, "tong_diem": 6 } ],
+      "pham_vi": ["cn10cn-thiet-ke-va-cong-nghe"], "ti_le_muc_do": "NB 50%, TH 30%, VD 20%" },
+    { "loai": "Đề kiểm tra cuối học kì 1 môn Công nghệ lớp 10 (định hướng Nông nghiệp)", "lop": 10, "dinh_huong": "Nông nghiệp", "thoi_gian_phut": 45, "phan": [
+      { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 8, "diem_moi_cau": 0.5, "tong_diem": 4 },
+      { "ten": "Phần II. Tự luận", "so_cau": 3, "diem_moi_cau": 2, "tong_diem": 6 } ],
+      "pham_vi": ["cn10nn-trong-trot"], "ti_le_muc_do": "NB 50%, TH 30%, VD 20%" },
+    { "loai": "Đề kiểm tra cuối học kì 1 môn Công nghệ lớp 11 (định hướng Công nghiệp)", "lop": 11, "dinh_huong": "Công nghiệp", "thoi_gian_phut": 45, "phan": [
+      { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 8, "diem_moi_cau": 0.5, "tong_diem": 4 },
+      { "ten": "Phần II. Tự luận", "so_cau": 3, "diem_moi_cau": 2, "tong_diem": 6 } ],
+      "pham_vi": ["cn11cn-co-khi-che-tao"], "ti_le_muc_do": "NB 50%, TH 30%, VD 20%" },
+    { "loai": "Đề kiểm tra cuối học kì 1 môn Công nghệ lớp 11 (định hướng Nông nghiệp)", "lop": 11, "dinh_huong": "Nông nghiệp", "thoi_gian_phut": 45, "phan": [
+      { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 8, "diem_moi_cau": 0.5, "tong_diem": 4 },
+      { "ten": "Phần II. Tự luận", "so_cau": 3, "diem_moi_cau": 2, "tong_diem": 6 } ],
+      "pham_vi": ["cn11nn-chan-nuoi"], "ti_le_muc_do": "NB 50%, TH 30%, VD 20%" },
+    { "loai": "Đề kiểm tra cuối học kì 1 môn Công nghệ lớp 12 (định hướng Công nghiệp)", "lop": 12, "dinh_huong": "Công nghiệp", "thoi_gian_phut": 45, "phan": [
+      { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 8, "diem_moi_cau": 0.5, "tong_diem": 4 },
+      { "ten": "Phần II. Tự luận", "so_cau": 3, "diem_moi_cau": 2, "tong_diem": 6 } ],
+      "pham_vi": ["cn12cn-dien-dien-tu"], "ti_le_muc_do": "NB 50%, TH 30%, VD 20%" },
+    { "loai": "Đề kiểm tra cuối học kì 1 môn Công nghệ lớp 12 (định hướng Nông nghiệp)", "lop": 12, "dinh_huong": "Nông nghiệp", "thoi_gian_phut": 45, "phan": [
+      { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 8, "diem_moi_cau": 0.5, "tong_diem": 4 },
+      { "ten": "Phần II. Tự luận", "so_cau": 3, "diem_moi_cau": 2, "tong_diem": 6 } ],
+      "pham_vi": ["cn12nn-lam-nghiep-thuy-san"], "ti_le_muc_do": "NB 50%, TH 30%, VD 20%" },
+    { "loai": "Đề thi tốt nghiệp THPT môn Công nghệ (từ năm 2025, định hướng Công nghiệp)", "lop": 12, "dinh_huong": "Công nghiệp", "thoi_gian_phut": 90, "phan": [
+      { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 12, "mo_ta": "0,25 điểm/câu", "diem_moi_cau": 0.25, "tong_diem": 3 },
+      { "ten": "Phần II. Trắc nghiệm đúng/sai", "so_cau": 4, "mo_ta": "Mỗi ý 0,1 điểm", "diem_moi_cau": 1, "tong_diem": 4 },
+      { "ten": "Phần III. Trả lời ngắn", "so_cau": 6, "mo_ta": "0,5 điểm/câu", "diem_moi_cau": 0.5, "tong_diem": 3 } ],
+      "pham_vi": ["cn12cn-dien-dien-tu"],
+      "ti_le_muc_do": "NB 40%, TH 40%, VD 20%",
+      "ghi_chu": "Đề 2025 môn Công nghệ theo định hướng công nghiệp (Điện – Điện tử); cần đối chiếu công bố của Bộ các năm sau" }
+  ],
+  "phien_ban": 1
+}

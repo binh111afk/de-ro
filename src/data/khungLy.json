@@ -1,0 +1,1113 @@
+{
+  "mon": "Vật lí",
+  "nguon": [
+    "Thông tư 32/2018/TT-BGDĐT ban hành Chương trình GDPT môn Vật lí",
+    "Thông tư 13/2022/TT-BGDĐT sửa đổi, bổ sung một số nội dung Chương trình GDPT 2018",
+    "Thông tư 22/2021/TT-BGDĐT quy định về đánh giá học sinh trung học cơ sở và trung học phổ thông",
+    "Quyết định 764/QĐ-BGDĐT năm 2023 về Cấu trúc định dạng đề thi tốt nghiệp THPT từ năm 2025",
+    "SGK Vật lí 10, 11, 12 bộ Kết nối tri thức với cuộc sống (NXB Giáo dục Việt Nam)",
+    "SGK Vật lí 10, 11, 12 bộ Chân trời sáng tạo (NXB Giáo dục Việt Nam)",
+    "SGK Vật lí 10, 11, 12 bộ Cánh diều (NXB Đại học Sư phạm)"
+  ],
+  "lop": [
+    {
+      "lop": 10,
+      "chuong": [
+        {
+          "id": "ly10-mo-dau-an-toan",
+          "ten": "Mở đầu và An toàn trong nghiên cứu Vật lí",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương I. Mở đầu",
+            "CTST": "Chương 1. Mở đầu",
+            "CD": "Chủ đề 1. Mở đầu"
+          },
+          "yeu_cau_can_dat": [
+            "Nêu được đối tượng, mục tiêu, phương pháp nghiên cứu Vật lí (phương pháp thực nghiệm và phương pháp mô hình)",
+            "Nêu được các quy tắc an toàn khi làm việc trong phòng thí nghiệm Vật lí",
+            "Phân tích được các loại sai số trong đo đạc vật lí: sai số dụng cụ, sai số hệ thống, sai số ngẫu nhiên",
+            "Tính được giá trị trung bình, sai số tuyệt đối, sai số tương đối và viết đúng kết quả đo $A = \\bar{A} \\pm \\Delta A$ với số chữ số có nghĩa phù hợp"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Các phép tính số học cơ bản, quy tắc làm tròn số",
+            "Làm quen với các dụng cụ đo độ dài (thước kẹp, thước micromet), đo thời gian (đồng hồ hiện số, cổng quang điện)",
+            "Toán lớp 10: Số gần đúng và sai số (Toán 10 HK1)"
+          ],
+          "cong_thuc": [
+            "Giá trị trung bình: $\\bar{A} = \\frac{A_1 + A_2 + ... + A_n}{n}$",
+            "Sai số ngẫu nhiên trung bình: $\\Delta \\bar{A} = \\frac{\\Delta A_1 + \\Delta A_2 + ... + \\Delta A_n}{n}$",
+            "Sai số tuyệt đối: $\\Delta A = \\Delta \\bar{A} + \\Delta A_{dc}$",
+            "Sai số tương đối: $\\delta A = \\frac{\\Delta A}{\\bar{A}} \\times 100\\%$",
+            "Kết quả đo: $A = \\bar{A} \\pm \\Delta A$"
+          ],
+          "chua_duoc_dung": [
+            "Chưa dùng đạo hàm để tính sai số gián tiếp hàm nhiều biến (Toán 11 HK2)",
+            "Chưa dùng các khái niệm véc-tơ, lực, gia tốc (học ở các chương sau Lớp 10)",
+            "Chưa dùng khái niệm chuyển động tròn, năng lượng (chương sau)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Xác định quy tắc an toàn đúng/sai khi dùng nguồn điện, laser, hóa chất trong phòng thí nghiệm",
+            "Tính sai số tuyệt đối, sai số tương đối từ bảng số liệu đo thực nghiệm (đo đường kính viên bi, đo thời gian rơi)",
+            "Xác định số chữ số có nghĩa và viết kết quả đo đúng quy chuẩn",
+            "Thí nghiệm thực hành: Sử dụng cổng quang điện và đồng hồ đo thời gian hiện số để đo thời gian chắn cổng quang"
+          ],
+          "luu_y_ra_de": "GDPT 2018 đưa nội dung An toàn và Sai số đo đạc thành một chủ đề bài học chính thức ngay đầu lớp 10. Đề thi bắt buộc có dạng bài tính sai số và đọc số đo trên thước kẹp/cổng quang."
+        },
+        {
+          "id": "ly10-dong-hoc",
+          "ten": "Động học (Mô tả chuyển động)",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương II. Động học",
+            "CTST": "Chương 2. Mô tả chuyển động & Chương 3. Biến đổi chuyển động",
+            "CD": "Chủ đề 2. Mô tả chuyển động & Chủ đề 3. Chuyển động biến đổi"
+          },
+          "yeu_cau_can_dat": [
+            "Phân biệt được quãng đường đi được ($s$) và độ dịch chuyển ($\\vec{d}$)",
+            "Định nghĩa được tốc độ trung bình, tốc độ tức thời, vận tốc trung bình và vận tốc tức thời; lập công thức tổng hợp vận tốc $\\vec{v} = \\vec{v}_{12} + \\vec{v}_{23}$",
+            "Vẽ và đọc được đồ thị độ dịch chuyển - thời gian ($d-t$) và đồ thị vận tốc - thời gian ($v-t$)",
+            "Định nghĩa được gia tốc $a = \\frac{\\Delta v}{\\Delta t}$ (đơn vị m/s²), phân biệt chuyển động nhanh dần và chậm dần",
+            "Lập được các phương trình chuyển động thẳng biến đổi đều, chuyển động rơi tự do và chuyển động ném ngang/ném xiên",
+            "Thực hiện thí nghiệm đo tốc độ và đo gia tốc rơi tự do"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Toán 10 HK1: Hệ tọa độ Oxy, vectơ phẳng, phép cộng vectơ (quy tắc 3 điểm, hình bình hành), giải phương trình bậc hai, lượng giác góc nhọn 0°-180°",
+            "Hằng số gia tốc trọng trường $g = 9.8 \\text{ m/s}^2$ hoặc $10 \\text{ m/s}^2$ (theo đề bài)"
+          ],
+          "cong_thuc": [
+            "Tốc độ trung bình: $v_{tb} = \\frac{s}{t}$; Vận tốc trung bình: $\\vec{v}_{tb} = \\frac{\\vec{d}}{\\Delta t}$",
+            "Công thức cộng vận tốc: $\\vec{v}_{13} = \\vec{v}_{12} + \\vec{v}_{23}$",
+            "Gia tốc: $a = \\frac{v - v_0}{t - t_0}$ (SI: m/s²)",
+            "Vận tốc chuyển động thẳng biến đổi đều: $v = v_0 + at$",
+            "Độ dịch chuyển thẳng biến đổi đều: $d = v_0 t + \\frac{1}{2} a t^2$",
+            "Công thức liên hệ không thời gian: $v^2 - v_0^2 = 2ad$",
+            "Rơi tự do ($v_0 = 0$): $v = gt$, $h = \\frac{1}{2} gt^2$, $v^2 = 2gh$",
+            "Ném ngang: Tầm xa $L = v_0 \\sqrt{\\frac{2h}{g}}$, Quỹ đạo $y = \\frac{g}{2 v_0^2} x^2$"
+          ],
+          "chua_duoc_dung": [
+            "Chưa dùng ĐẠO HÀM $v(t) = x'(t), a(t) = v'(t)$ (Đạo hàm học ở HK2 Lớp 11 Toán)",
+            "Chưa dùng Tích phân để tính quãng đường từ đồ thị vận tốc tổng quát (Toán 12 HK2)",
+            "Chưa dùng các Định luật Newton, Lực ma sát, Lực căng dây để giải thích nguyên nhân chuyển động (học ở chương Động lực học)",
+            "Chưa dùng Công và Năng lượng (Chương Năng lượng)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Tính tốc độ trung bình và vận tốc trung bình trong chuyển động đổi chiều",
+            "Xác định vận tốc, độ dịch chuyển, gia tốc từ đồ thị $d-t$ và đồ thị $v-t$",
+            "Bài toán chuyển động thẳng biến đổi đều (tìm $v, d, a, t$, khoảng cách giữa hai xe)",
+            "Bài toán rơi tự do và bài toán ném ngang (tính thời gian rơi, vận tốc chạm đất, tầm xa)",
+            "Bài toán thực tế: Tính khoảng cách an toàn giữa hai xe ô tô khi phanh gấp",
+            "Thí nghiệm thực hành: Đo gia tốc rơi tự do bằng cổng quang điện và vật rơi tự do"
+          ],
+          "luu_y_ra_de": "GDPT 2018 nhấn mạnh phân biệt khái niệm 'Tốc độ' (đại số vô hướng $s/t$) và 'Vận tốc' (đại lượng vectơ $d/t$). Đồ thị dùng trục tung là Độ dịch chuyển $d$ thay vì tọa độ $x$ như SGK 2006. Tuyệt đối không dùng bài toán yêu cầu đạo hàm hàm $x(t)$ phức tạp."
+        },
+        {
+          "id": "ly10-dong-luc-hoc",
+          "ten": "Động lực học (Lực và Các định luật Newton)",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương III. Động lực học",
+            "CTST": "Chương 4. Ba định luật Newton. Một số lực trong thực tiễn",
+            "CD": "Chủ đề 4. Lực và chuyển động"
+          },
+          "yeu_cau_can_dat": [
+            "Nêu được khái niệm lực, tổng hợp lực và phân tích lực theo các phương vuông góc",
+            "Phát biểu và viết được biểu thức 3 định luật Newton: Định luật I (quán tính), Định luật II ($\\vec{F} = m\\vec{a}$), Định luật III (lực và phản lực)",
+            "Mô tả được các đặc điểm và viết công thức của các lực cơ bản: Trọng lực ($P = mg$), Lực ma sát trượt ($F_{ms} = \\mu N$), Lực căng dây, Lực cản và lực nâng của chất lưu",
+            "Vận dụng ba định luật Newton và các công thức lực để giải bài toán chuyển động của vật trên mặt phẳng nằm ngang, mặt phẳng nghiêng, hệ vật nối dây"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Hình học phẳng, chiếu vectơ lên các trục tọa độ vuông góc $Ox, Oy$",
+            "Vectơ lực, các phép toán vectơ, định lý Pythagoras, hệ phương trình bậc nhất 2 ẩn",
+            "Các công thức động học chuyển động thẳng biến đổi đều (Chương Động học)"
+          ],
+          "cong_thuc": [
+            "Định luật II Newton: $\\vec{a} = \\frac{\\sum \\vec{F}}{m} \\Rightarrow \\sum \\vec{F} = m\\vec{a}$ (SI: N)",
+            "Định luật III Newton: $\\vec{F}_{AB} = -\\vec{F}_{BA}$",
+            "Trọng lực: $\\vec{P} = m\\vec{g} \\Rightarrow P = mg$",
+            "Lực ma sát trượt: $F_{ms} = \\mu N$ (với $\\mu$ là hệ số ma sát trượt, $N$ là áp lực)",
+            "Lực cản chất lưu: $F_c = k v$ hoặc $F_c = k v^2$ (dạng đơn giản)"
+          ],
+          "chua_duoc_dung": [
+            "Chưa dùng Động lượng và Định luật bảo toàn động lượng (Chương Động lượng)",
+            "Chưa dùng Công, Động năng, Thế năng (Chương Năng lượng)",
+            "Chưa dùng Lực hướng tâm trong chuyển động tròn đều (Chương Chuyển động tròn)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Tổng hợp và phân tích một lực thành hai lực thành phần vuông góc",
+            "Bài toán vật chuyển động trên mặt phẳng ngang chịu tác dụng của lực kéo xiên góc $\\alpha$",
+            "Bài toán vật trượt trên mặt phẳng nghiêng góc $\\alpha$ (có ma sát hoặc không ma sát)",
+            "Bài toán hệ hai vật nối với nhau bằng dây nhẹ không giãn qua sợi dây/ròng rọc",
+            "Bài toán thực tế: Khảo sát chuyển động rơi của người nhảy dù chịu lực cản không khí",
+            "Thí nghiệm thực hành: Tìm mối liên hệ giữa gia tốc $a$, lực tác dụng $F$ và khối lượng $m$ bằng xe lăn và cổng quang"
+          ],
+          "luu_y_ra_de": "Chương trình GDPT 2018 bổ sung nội dung 'Lực cản và lực nâng của chất lưu' (không khí/nước) và hiện tượng tốc độ giới hạn (terminal velocity) khi vật rơi trong chất lưu. Moment lực và điều kiện cân bằng của vật rắn thuộc chương Động lực học (theo chương trình), không phải chương Biến dạng."
+        },
+        {
+          "id": "ly10-nang-luong-cong",
+          "ten": "Năng lượng, Công và Công suất",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương IV. Năng lượng, công, công suất",
+            "CTST": "Chương 5. Năng lượng. Công cơ học",
+            "CD": "Chủ đề 5. Năng lượng"
+          },
+          "yeu_cau_can_dat": [
+            "Phát biểu được định nghĩa và biểu thức tính công cơ học $A = F s \\cos s$, phân biệt công phát động ($A > 0$), công cản ($A < 0$) và công bằng 0",
+            "Định nghĩa được công suất $P = \\frac{A}{t} = F v$, đơn vị Oát (W) và Mã lực (HP)",
+            "Định nghĩa được động năng $W_đ = \\frac{1}{2} m v^2$ và thế năng trọng trường $W_t = mgh$; phát biểu được định lý động năng $\\Delta W_đ = A$",
+            "Viết được biểu thức cơ năng $W = W_đ + W_t$; phát biểu và vận dụng Định luật bảo toàn cơ năng trong trường hợp bỏ qua ma sát",
+            "Định nghĩa được hiệu suất $H = \\frac{A_{ích}}{A_{tp}} \\times 100\\%$ hoặc $H = \\frac{P_{ích}}{P_{tp}} \\times 100\\%$"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Cơ học Newton, chuyển động biến đổi đều, lực trượt, trọng lực",
+            "Đồ thị lực - độ dịch chuyển (diện tích dưới đồ thị $F-s$ là công)",
+            "Giải phương trình bảo toàn cơ năng"
+          ],
+          "cong_thuc": [
+            "Công cơ học: $A = F s \\cos \\alpha$ (SI: Jun - J, $1\\text{ J} = 1\\text{ N}\\cdot\\text{m}$)",
+            "Công suất: $P = \\frac{A}{t} = F v \\cos \\alpha$ (SI: Oát - W)",
+            "Động năng: $W_đ = \\frac{1}{2} m v^2$",
+            "Định lý động năng: $W_{đ2} - W_{đ1} = A_{tổng}$",
+            "Thế năng trọng trường: $W_t = mgh$ (chọn mốc thế năng)",
+            "Cơ năng: $W = W_đ + W_t = \\frac{1}{2} m v^2 + mgh$",
+            "Bảo toàn cơ năng (khi chỉ chịu lực thế): $W_1 = W_2 = \\text{const}$",
+            "Biến thiên cơ năng do lực cản/ma sát: $W_2 - W_1 = A_{fc}$",
+            "Hiệu suất: $H = \\frac{W_{có ích}}{W_{toàn phần}} = \\frac{P_{ích}}{P_{tp}}$"
+          ],
+          "chua_duoc_dung": [
+            "Chưa dùng Động lượng và Định luật bảo toàn động lượng trong va chạm (Chương Động lượng)",
+            "Chưa dùng Nội năng và Định luật I Nhiệt động lực học (Chương Vật lí nhiệt Lớp 12!)",
+            "Chưa dùng Điện năng, Công suất điện (Chương Dòng điện Lớp 11)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Tính công của lực kéo, lực ma sát, trọng lực khi vật di chuyển trên đường nằm ngang hoặc dốc",
+            "Tính công suất trung bình và công suất tức thời của động cơ xe ô tô, cần cẩu",
+            "Tính vận tốc, độ cao của vật bằng Định luật bảo toàn cơ năng (vật rơi, vật trượt không ma sát, con lắc đơn góc nhỏ)",
+            "Tính vận tốc hoặc độ cao khi cơ năng bị hao phí do lực ma sát",
+            "Bài toán thực tế: Tính hiệu suất của máy nâng hàng, tính mức tiêu thụ năng lượng của thiết bị cơ khí",
+            "Thí nghiệm thực hành: Khảo sát sự chuyển hóa động năng và thế năng của con lắc đơn hoặc xe lăn trên máng nghiêng"
+          ],
+          "luu_y_ra_de": "Chương trình 2018 đưa khái niệm 'Hiệu suất' năng lượng và đánh giá hao phí năng lượng thành mục bắt buộc trọng tâm. Không cho bài toán va chạm mềm/đàn hồi giải bằng cơ năng mà chưa học động lượng."
+        },
+        {
+          "id": "ly10-dong-luong",
+          "ten": "Động lượng và Bảo toàn động lượng",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương V. Động lượng",
+            "CTST": "Chương 6. Động lượng",
+            "CD": "Chủ đề 6. Động lượng"
+          },
+          "yeu_cau_can_dat": [
+            "Định nghĩa được động lượng $\\vec{p} = m\u000bec{v}$ (đơn vị kg·m/s hoặc N·s) và xung lượng của lực $\\Delta \\vec{p} = \\vec{F} \\Delta t$",
+            "Phát biểu và viết được hệ thức Định luật bảo toàn động lượng cho hệ kín (hệ cô lập): $\\vec{p}_{trước} = \\vec{p}_{sau}$",
+            "Phân biệt được va chạm đàn hồi (bảo toàn cả động lượng và động năng) và va chạm mềm (chỉ bảo toàn động lượng)",
+            "Vận dụng định luật bảo toàn động lượng giải bài toán chuyển động bằng phản lực (tên lửa, đạn nổ) và bài toán va chạm giữa hai vật"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Vectơ động lượng, phép cộng vectơ, chiếu vectơ lên trục tọa độ",
+            "Động năng $W_đ = \\frac{1}{2} m v^2$ và Bảo toàn cơ năng",
+            "Hệ phương trình bảo toàn động lượng và bảo toàn động năng"
+          ],
+          "cong_thuc": [
+            "Động lượng: $\\vec{p} = m\u000bec{v}$ (SI: kg·m/s)",
+            "Xung lượng của lực: $\\Delta \\vec{p} = \\vec{p}_2 - \\vec{p}_1 = \\vec{F} \\Delta t$",
+            "Bảo toàn động lượng hệ kín: $m_1 \\vec{v}_1 + m_2 \\vec{v}_2 = m_1 \\vec{v}'_1 + m_2 \\vec{v}'_2$",
+            "Va chạm mềm (hai vật dính vào nhau): $v' = \\frac{m_1 v_1 + m_2 v_2}{m_1 + m_2}$",
+            "Bắn súng / Phản lực: $m_{súng} \\vec{v}_{súng} + m_{đạn} \\vec{v}_{đạn} = \\vec{0}$"
+          ],
+          "chua_duoc_dung": [
+            "Chưa dùng Chuyển động tròn đều (Chương Chuyển động tròn)",
+            "Chưa dùng thuyết tương đối Einstein $p = \\gamma m v$ (Vật lí lượng tử/hạt nhân 12)",
+            "Chưa dùng mô hình động học phân tử khí (Khí lý tưởng Lớp 12)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Tính xung lượng của lực và lực trung bình tác dụng trong khoảng thời gian ngắn (vợt đập bóng bi-a, bóng đá)",
+            "Bài toán đạn nổ thành 2 mảnh bay theo các hướng",
+            "Bài toán va chạm mềm (xe gòng hứng cát, hai hòn bi dính nhau)",
+            "Bài toán va chạm đàn hồi trực diện giữa hai quả cầu",
+            "Bài toán thực tế: Nguyên tắc hoạt động chuyển động bằng phản lực của tên lửa đẩy, mực nước đẩy thuyền",
+            "Thí nghiệm thực hành: Khảo sát va chạm bằng đệm không khí và cổng quang điện"
+          ],
+          "luu_y_ra_de": "Chú ý phân biệt rõ trường hợp va chạm đàn hồi (bảo toàn động năng) và va chạm mềm (động năng giảm, chuyển thành nhiệt). Đơn vị xung lượng $N \\cdot s$ tương đương với $kg \\cdot m/s$."
+        },
+        {
+          "id": "ly10-chuyen-dong-tron",
+          "ten": "Chuyển động tròn",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương VI. Chuyển động tròn đều",
+            "CTST": "Chương 7. Chuyển động tròn",
+            "CD": "Chủ đề 7. Chuyển động tròn và biến dạng (phần Chuyển động tròn)"
+          },
+          "yeu_cau_can_dat": [
+            "Định nghĩa được đơn vị góc Radian (rad); mô tả chuyển động tròn qua góc quay $\\Delta \\alpha$, tốc độ góc $\\omega = \\frac{\\Delta \\alpha}{\\Delta t}$ (rad/s)",
+            "Viết được mối liên hệ giữa tốc độ $v$, tốc độ góc $\\omega$ và bán kính quỹ đạo $r$: $v = \\omega r$",
+            "Giải thích được gia tốc hướng tâm $a_{ht} = \\frac{v^2}{r} = \\omega^2 r$ và lực hướng tâm $F_{ht} = m a_{ht}$ trong chuyển động tròn đều",
+            "Phân tích được lực hướng tâm đóng vai trò bởi các lực cơ bản (lực hấp dẫn, lực ma sát nghỉ, lực căng dây, phản lực mặt đường)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Đơn vị đo góc rad ($180^\\circ = \\pi \\text{ rad}$)",
+            "Các định luật Newton, véc-tơ lực và lực hướng tâm",
+            "Động học chuyển động tròn"
+          ],
+          "cong_thuc": [
+            "Tốc độ góc: $\\omega = \\frac{\\Delta \\alpha}{\\Delta t}$ (SI: rad/s)",
+            "Chu kỳ: $T = \\frac{2\\pi}{\\omega}$ (s); Tần số: $f = \\frac{1}{T}$ (Hz)",
+            "Liên hệ tốc độ dài và tốc độ góc: $v = \\omega r$",
+            "Gia tốc hướng tâm: $a_{ht} = \\frac{v^2}{r} = \\omega^2 r$ (SI: m/s²)",
+            "Lực hướng tâm: $F_{ht} = m a_{ht} = m \\frac{v^2}{r} = m \\omega^2 r$ (SI: N)"
+          ],
+          "chua_duoc_dung": [
+            "Chưa dùng Dao động điều hòa $x = A \\cos(\\omega t + \\varphi)$ (Lớp 11 HK1!)",
+            "Chưa dùng Đạo hàm góc quay $\\omega = \\alpha'(t)$ (Toán 11)",
+            "Chưa dùng Chuyển động vệ tinh trong trường hấp dẫn dùng công thức trường hấp dẫn nâng cao (Chuyên đề 11)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Chuyển đổi giữa độ và radian; tính tốc độ góc, chu kỳ, tần số của kim đồng hồ, đĩa quay",
+            "Tính gia tốc hướng tâm và lực hướng tâm tác dụng lên xe qua cầu vồng, vệ tinh quay quanh Trái Đất",
+            "Bài toán xe ô tô chạy qua khúc ngoặt có góc nghiêng hoặc ma sát nghỉ đóng vai trò lực hướng tâm",
+            "Bài toán vật buộc vào dây quay trong mặt phẳng nằm ngang (con lắc nón)",
+            "Bài toán thực tế: Xác định tốc độ an toàn tối đa cho xe ô tô khi vào khúc ngoặt nguy hiểm"
+          ],
+          "luu_y_ra_de": "Chương trình 2018 định nghĩa rõ đơn vị Radian và giới thiệu chuyển động tròn thông qua tốc độ góc $\\omega$. Không nhầm lẫn với phương trình dao động điều hòa của Lớp 11."
+        },
+        {
+          "id": "ly10-bien-dang-vat-ran-ap-suat",
+          "ten": "Biến dạng của vật rắn, Momen lực và Áp suất",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương VII. Biến dạng của vật rắn. Áp suất",
+            "CTST": "Chương 8. Biến dạng của vật rắn (kết hợp Momen lực)",
+            "CD": "Chủ đề 7. Chuyển động tròn và biến dạng (phần Biến dạng vật rắn & Áp suất)"
+          },
+          "yeu_cau_can_dat": [
+            "Mô tả được moment lực $M = F d$ và ngẫu lực; phát biểu và vận dụng Quy tắc moment lực cho vật rắn có trục quay cố định (điều kiện cân bằng $M_{thuận} = M_{ngược}$)",
+            "Xác định được trọng tâm của vật rắn phẳng bằng thực nghiệm",
+            "Mô tả được biến dạng kéo và biến dạng nén; phát biểu và vận dụng Định luật Hooke cho lò xo $F_{đh} = k |\\Delta l|$",
+            "Phân biệt được ứng suất kéo/nén $\\sigma = \\frac{F}{S}$ và độ biến dạng tương đối $\\frac{|\\Delta l|}{l_0}$",
+            "Định nghĩa được khối lượng riêng $\\rho = \\frac{m}{V}$, áp suất $p = \\frac{F}{S}$ và áp suất chất lưu $p = p_0 + \\rho g h$"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Điều kiện cân bằng tổng lực $\\sum \\vec{F} = \\vec{0}$ và tổng moment $\\sum M = 0$",
+            "Cánh tay đòn $d$ (khoảng cách từ trục quay đến giá của lực)",
+            "Định luật Hooke cho biến dạng đàn hồi lò xo"
+          ],
+          "cong_thuc": [
+            "Moment lực: $M = F d$ (SI: N·m, với $d$ là cánh tay đòn)",
+            "Quy tắc moment lực: $\\sum M_{cùng chiều} = \\sum M_{ngược chiều}$",
+            "Moment ngẫu lực: $M = F d$ (với $d$ là khoảng cách giữa 2 giá của ngẫu lực)",
+            "Định luật Hooke: $F_{đh} = k |\\Delta l|$ (SI: N/m)",
+            "Ứng suất: $\\sigma = \\frac{F}{S}$ (Pa hoặc N/m²)",
+            "Khối lượng riêng: $\\rho = \\frac{m}{V}$ (SI: kg/m³)",
+            "Áp suất: $p = \\frac{F}{S}$ (SI: Pa hoặc N/m², $1\\text{ Pa} = 1\\text{ N/m}^2$)",
+            "Áp suất tĩnh chất lưu: $p = p_0 + \\rho g h$"
+          ],
+          "chua_duoc_dung": [
+            "Chưa dùng Phương trình trạng thái khí lý tưởng $pV = nRT$ (Vật lí nhiệt Lớp 12!)",
+            "Chưa dùng Dao động điều hòa của con lắc lò xo $T = 2\\pi \\sqrt{m/k}$ (Lớp 11 HK1!)",
+            "Chưa dùng Định luật Archimedes nâng cao phức tạp chất lưu động (bỏ bớt)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Bài toán bập bênh, bẩy nâng vật, đòn đòn gánh tìm lực tác dụng dùng Quy tắc Moment lực",
+            "Bài toán tìm lực độ dãn của lò xo treo thẳng đứng hoặc nén ngang bằng Định luật Hooke",
+            "Tính khối lượng riêng và độ chênh lệch áp suất ở các độ sâu khác nhau dưới lòng chất lỏng",
+            "Bài toán thực tế: Tính lực kéo cần thiết của van đập thủy điện, lực tác dụng lên đĩa đệm khớp xương",
+            "Thí nghiệm thực hành: Khảo sát mối liên hệ giữa lực đàn hồi $F_{đh}$ và độ biến dạng $\\Delta l$ của lò xo"
+          ],
+          "luu_y_ra_de": "Chương trình GDPT 2018 đưa phần Áp suất chất lưu và Khối lượng riêng tích hợp vào cuối Lớp 10. Phần Biến dạng vật rắn nhấn mạnh thí nghiệm khảo sát định luật Hooke."
+        }
+      ],
+      "chuyen_de": [
+        "Chuyên đề 1: Vật lí trong một số ngành nghề",
+        "Chuyên đề 2: Trái Đất và bầu trời",
+        "Chuyên đề 3: Vật lí với giáo dục về bảo vệ môi trường"
+      ],
+      "ghi_chu_chua_chac": []
+    },
+    {
+      "lop": 11,
+      "chuong": [
+        {
+          "id": "ly11-dao-dong",
+          "ten": "Dao động",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương I. Dao động",
+            "CTST": "Chương 1. Dao động",
+            "CD": "Chủ đề 1. Dao động"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được dao động cơ, dao động tuần hoàn, dao động tự do và dao động điều hòa",
+            "Nắm vững các đại lượng đặc trưng của DĐĐH: Biên độ $A$, chu kỳ $T$, tần số $f$, tần số góc $\\omega$, pha dao động $(\\omega t + \\varphi)$, pha ban đầu $\\varphi$, độ lệch pha",
+            "Viết và mô tả được phương trình ly độ $x = A \\cos(\\omega t + \\varphi)$, phương trình vận tốc $v = -\\omega A \\sin(\\omega t + \\varphi)$, phương trình gia tốc $a = -\\omega^2 x$",
+            "Nắm vững mối quan hệ về pha: $v$ sớm pha $\\pi/2$ so với $x$, $a$ ngược pha với $x$",
+            "Phân tích được sự biến thiên và chuyển hóa năng lượng trong DĐĐH (Động năng $W_đ$, Thế năng $W_t$, Cơ năng $W = W_đ + W_t = \\frac{1}{2} m \\omega^2 A^2$)",
+            "Mô tả được đặc điểm của Dao động tắt dần, Dao động cưỡng bức, Dao động duy trì và Hiện tượng cộng hưởng (điều kiện $f = f_0$)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Toán 11 HK1: Hàm số lượng giác $y = \\cos x, y = \\sin x$, góc lượng giác, đơn vị Radian, đường tròn lượng giác",
+            "Đồ thị li độ - thời gian ($x-t$), vận tốc - thời gian ($v-t$)",
+            "Vectơ quay Fresnel biểu diễn dao động điều hòa"
+          ],
+          "cong_thuc": [
+            "Phương trình li độ: $x = A \\cos(\\omega t + \\varphi)$ (SI: m hoặc cm)",
+            "Phương trình vận tốc: $v = x' = -\\omega A \\sin(\\omega t + \\varphi) = \\omega A \\cos(\\omega t + \\varphi + \\pi/2)$ (SI: m/s hoặc cm/s)",
+            "Phương trình gia tốc: $a = v' = -\\omega^2 A \\cos(\\omega t + \\varphi) = -\\omega^2 x$ (SI: m/s²)",
+            "Tốc độ cực đại: $v_{max} = \\omega A$; Gia tốc cực đại: $a_{max} = \\omega^2 A$",
+            "Công thức độc lập thời gian: $A^2 = x^2 + \\frac{v^2}{\\omega^2} = \\frac{a^2}{\\omega^4} + \\frac{v^2}{\\omega^2}$",
+            "Động năng: $W_đ = \\frac{1}{2} m v^2 = \\frac{1}{2} m \\omega^2 A^2 \\sin^2(\\omega t + \\varphi)$",
+            "Thế năng: $W_t = \\frac{1}{2} m \\omega^2 x^2 = \\frac{1}{2} m \\omega^2 A^2 \\cos^2(\\omega t + \\varphi)$",
+            "Cơ năng: $W = W_đ + W_t = \\frac{1}{2} m \\omega^2 A^2 = \\text{const}$"
+          ],
+          "chua_duoc_dung": [
+            "Chưa dùng ĐẠO HÀM để tự chứng minh $v(t) = x'(t)$ (vì Toán 11 HK1 chưa học Đạo hàm! Đạo hàm học ở HK2. SGK Vật lí 11 giới thiệu phương trình vận tốc và gia tốc thừa nhận thông qua đồ thị hoặc bổ đề)",
+            "Chưa dùng Số phức để tổng hợp dao động (GDPT 2018 loại bỏ phương pháp bấm máy tính số phức để tổng hợp dao động)",
+            "Chưa dùng Mạch dao động LC (đã cắt bỏ bớt)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Xác định $A, \\omega, T, f, \\varphi$, li độ $x$, vận tốc $v$, gia tốc $a$ tại thời điểm $t$ từ phương trình dao động",
+            "Sử dụng đường tròn lượng giác tìm thời gian ngắn nhất vật đi từ $x_1$ đến $x_2$, quãng đường đi được",
+            "Xác định li độ, vận tốc khi biết động năng bằng $n$ lần thế năng ($W_đ = n W_t$)",
+            "Đọc đồ thị li độ - thời gian $x-t$ để lập phương trình dao động điều hòa",
+            "Bài toán thực tế: Hiện tượng cộng hưởng làm sập cầu, rung lắc xe ô tô khi qua gờ giảm tốc",
+            "Thí nghiệm thực hành: Sử dụng con lắc đơn hoặc con lắc lò xo và đồng hồ hiện số để đo chu kỳ dao động $T$ và tính $g$ hoặc $k$"
+          ],
+          "luu_y_ra_de": "LƯU Ý QUAN TRỌNG GDPT 2018: Chương Dao động cơ đã chuyển từ Lớp 12 (chương trình cũ 2006) xuống LỚP 11 HỌC KỲ 1. Học sinh học chương này ở HK1 Lớp 11 khi CHƯA HỌC ĐẠO HÀM trong môn Toán. Do đó tuyệt đối không ra bài tập yêu cầu lấy đạo hàm hàm lượng giác phức tạp."
+        },
+        {
+          "id": "ly11-song",
+          "ten": "Sóng (Sóng cơ, Sóng âm và Sóng ánh sáng)",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương II. Sóng",
+            "CTST": "Chương 2. Sóng",
+            "CD": "Chủ đề 2. Sóng"
+          },
+          "yeu_cau_can_dat": [
+            "Mô tả được sự hình thành và truyền sóng cơ; phân biệt sóng ngang (phương dao động vuông góc phương truyền) và sóng dọc (phương dao động trùng phương truyền)",
+            "Nắm vững các đại lượng đặc trưng của sóng: Biên độ $A$, chu kỳ $T$, tần số $f$, bước sóng $\\lambda = v T = \\frac{v}{f}$, tốc độ truyền sóng $v$, cường độ sóng $I$",
+            "Mô tả được Hiện tượng phản xạ sóng, Khúc xạ sóng, Nhiễu xạ sóng và Giao thoa sóng",
+            "Viết và giải thích được điều kiện cực đại ($d_2 - d_1 = k\\lambda$) và cực tiểu ($d_2 - d_1 = (k + 1/2)\\lambda$) giao thoa",
+            "Giải thích hiện tượng Sóng dừng trên dây; xác định vị trí bụng sóng và nút sóng; điều kiện sóng dừng trên dây 2 đầu cố định ($L = k \\frac{\\lambda}{2}$) và 1 đầu cố định 1 đầu tự do ($L = (2k+1)\\frac{\\lambda}{4}$)",
+            "Mô tả được bản chất sóng của ánh sáng; mô tả thí nghiệm giao thoa ánh sáng khe Young; xác định vị trí vân sáng ($x_s = k \\frac{\\lambda D}{a}$), vân tối ($x_t = (k + 1/2) \\frac{\\lambda D}{a}$) và khoảng vân $i = \\frac{\\lambda D}{a}$"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Phương trình sóng điều hòa $u = A \\cos(\\omega t - \\frac{2\\pi x}{\\lambda})$, độ lệch pha $\\Delta \\varphi = \\frac{2\\pi x}{\\lambda}$",
+            "Thang sóng điện từ (từ sóng vô tuyến, hồng ngoại, ánh sáng nhìn thấy $380-760\\text{ nm}$, tử ngoại, tia X, tia gamma)",
+            "Công thức giao thoa sóng cơ và giao thoa ánh sáng khe Young"
+          ],
+          "cong_thuc": [
+            "Bước sóng: $\\lambda = v T = \\frac{v}{f}$ (SI: m)",
+            "Độ lệch pha giữa 2 điểm trên phương truyền sóng: $\\Delta \\varphi = \\frac{2\\pi d}{\\lambda}$",
+            "Giao thoa sóng cơ: Cực đại $d_2 - d_1 = k \\lambda$; Cực tiểu $d_2 - d_1 = (k + 1/2) \\lambda$ ($k \\in \\mathbb{Z}$)",
+            "Sóng dừng 2 đầu cố định: $L = k \\frac{\\lambda}{2}$ ($k$ là số bụng sóng)",
+            "Sóng dừng 1 đầu cố định, 1 đầu tự do: $L = (2k + 1) \\frac{\\lambda}{4}$",
+            "Khoảng vân giao thoa ánh sáng: $i = \\frac{\\lambda D}{a}$ (SI: m hoặc mm)",
+            "Vị trí vân sáng: $x_s = k i = k \\frac{\\lambda D}{a}$; Vị trí vân tối: $x_t = (k + 1/2) i = (k + 1/2) \\frac{\\lambda D}{a}$"
+          ],
+          "chua_duoc_dung": [
+            "Chưa dùng Quang điện ngoài và Thuyết lượng tử ánh sáng Photon $E = hf$ (Vật lí 12 / Chuyên đề 12)",
+            "Chưa dùng Tán sắc ánh sáng nâng cao qua lăng kính bằng công thức góc lệch lăng kính 11 cũ (đã giảm tải)",
+            "Chưa dùng Mạch dao động phát sóng điện từ LC (Chuyên đề 11)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Tính bước sóng, chu kỳ, tần số, tốc độ truyền sóng từ phương trình sóng hoặc đồ thị hình dạng sóng",
+            "Bài toán xác định số điểm cực đại, cực tiểu giao thoa trên đoạn thẳng nối 2 nguồn cơ",
+            "Bài toán sóng dừng trên dây tìm chiều dài dây, tần số góc, khoảng cách giữa các nút/bụng",
+            "Bài toán giao thoa ánh sáng đơn sắc Young: tính khoảng vân $i$, vị trí vân sáng thứ $k$, vị trí vân tối",
+            "Bài toán thực tế: Đo bước sóng ánh sáng bằng thí nghiệm giao thoa laser, giải thích hiện tượng âm vang trong phòng họp",
+            "Thí nghiệm thực hành: Quan sát hiện tượng sóng dừng trên dây và đo tốc độ truyền âm trong không khí bằng ống cộng hưởng"
+          ],
+          "luu_y_ra_de": "ĐẶC BIỆT LƯU Ý GDPT 2018: Đã HỢP NHẤT 'Sóng cơ', 'Sóng âm' và 'Sóng ánh sáng' thành MỘT CHƯƠNG DUY NHẤT gọi là CHƯƠNG SÓNG ở Lớp 11 (trước đây Sóng cơ và Sóng ánh sáng nằm ở Lớp 12). Học sinh học giao thoa ánh sáng và sóng dừng ngay ở Lớp 11!"
+        },
+        {
+          "id": "ly11-dien-truong",
+          "ten": "Điện trường",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương III. Điện trường",
+            "CTST": "Chương 3. Điện trường",
+            "CD": "Chủ đề 3. Điện trường"
+          },
+          "yeu_cau_can_dat": [
+            "Phát biểu được Định luật Coulomb về lực tương tác giữa hai điện tích điểm đặt trong chân không/điện môi $F = k \\frac{|q_1 q_2|}{\\varepsilon r^2}$",
+            "Định nghĩa được điện trường, cường độ điện trường $\\vec{E} = \\frac{\\vec{F}}{q}$; tính cường độ điện trường do điện tích điểm gây ra $E = k \\frac{|q|}{\\varepsilon r^2}$ và nguyên lý chồng chất điện trường",
+            "Nêu được đường sức điện và đặc điểm của điện trường đều giữa hai bản tụ điện phẳng ($E = \\frac{U}{d}$)",
+            "Định nghĩa được thế năng điện $W_M = q V_M$, điện thế $V$ và hiệu điện thế $U_{MN} = V_M - V_N = \\frac{A_{MN}}{q}$",
+            "Mô tả được cấu tạo, hoạt động của Tụ điện, định nghĩa điện dung $C = \\frac{Q}{U}$ (đơn vị Phara - F); tính năng lượng điện trường tích trữ trong tụ điện $W = \\frac{1}{2} C U^2$"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Vectơ cường độ điện trường $\\vec{E}$, quy tắc cộng vectơ điện trường",
+            "Công của lực điện trường $A = q E d$ (không phụ thuộc dạng đường đi)",
+            "Công thức tụ điện ghép nối tiếp, song song"
+          ],
+          "cong_thuc": [
+            "Định luật Coulomb: $F = k \\frac{|q_1 q_2|}{\\varepsilon r^2}$ ($k = 9 \\times 10^9 \\text{ N}\\cdot\\text{m}^2/\\text{C}^2$, SI: N)",
+            "Cường độ điện trường: $\\vec{E} = \\frac{\\vec{F}}{q} \\Rightarrow E = k \\frac{|q|}{\\varepsilon r^2}$ (SI: V/m)",
+            "Nguyên lý chồng chất điện trường: $\\vec{E} = \\vec{E}_1 + \\vec{E}_2 + ...$",
+            "Liên hệ giữa $E$ và $U$ trong điện trường đều: $E = \\frac{U}{d}$",
+            "Hiệu điện thế: $U_{MN} = V_M - V_N = \\frac{A_{MN}}{q}$ (SI: V)",
+            "Điện dung tụ điện: $C = \\frac{Q}{U}$ (SI: F - Phara)",
+            "Năng lượng điện trường của tụ điện: $W = \\frac{1}{2} C U^2 = \\frac{1}{2} \\frac{Q^2}{C} = \\frac{1}{2} Q U$ (SI: J)"
+          ],
+          "chua_duoc_dung": [
+            "Chưa dùng Từ trường, Lực Lorentz (chuyển sang Lớp 12 trong GDPT 2018!)",
+            "Chưa dùng Dòng điện cảm ứng, Định luật Faraday (Lớp 12)",
+            "Chưa dùng Đạo hàm $E = -\\frac{dV}{dx}$"
+          ],
+          "dang_bai_dien_hinh": [
+            "Tính lực tương tác Coulomb giữa các điện tích điểm đặt trên đường thẳng hoặc tại các đỉnh tam giác/hình vuông",
+            "Tính cường độ điện trường tổng hợp tại một điểm do nhiều điện tích điểm gây ra",
+            "Bài toán chuyển động của hạt mang điện (electron, proton) trong điện trường đều giữa hai bản kim loại phẳng",
+            "Tính công của lực điện, hiệu điện thế và điện thế tại một điểm",
+            "Tính điện dung, điện tích, năng lượng của tụ điện khi tích điện hoặc khi ghép nối tiếp/song song",
+            "Bài toán thực tế: Ứng dụng tụ điện trong máy khử rung tim y tế, màn hình cảm ứng điện dung"
+          ],
+          "luu_y_ra_de": "GDPT 2018 định nghĩa Điện thế $V$ và Thế năng điện $W = qV$ rõ ràng dựa trên công của lực điện trường. Không nhầm lẫn với từ trường học ở Lớp 12."
+        },
+        {
+          "id": "ly11-dong-dien-khong-doi",
+          "ten": "Dòng điện không đổi và Mạch điện",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương IV. Dòng điện không đổi. Mạch điện",
+            "CTST": "Chương 4. Dòng điện không đổi",
+            "CD": "Chủ đề 4. Dòng điện không đổi"
+          },
+          "yeu_cau_can_dat": [
+            "Định nghĩa được dòng điện, cường độ dòng điện $I = \\frac{\\Delta q}{\\Delta t}$ (đơn vị Ampe - A) và tốc độ trôi của hạt mang điện $I = n S v e$",
+            "Định nghĩa được điện trở $R = \\rho \\frac{l}{S}$ (đơn vị Ôm - $\\Omega$) và phát biểu Định luật Ohm cho đoạn mạch $I = \\frac{U}{R}$",
+            "Mô tả được Nguồn điện, Suất điện động $\\mathcal{E} = \\frac{A}{q}$ (đơn vị Vôn - V) và điện trở trong $r$ của nguồn điện",
+            "Phát biểu và vận dụng Định luật Ohm cho toàn mạch $I = \\frac{\\mathcal{E}}{R_{ngoài} + r}$; tính hiệu điện thế hai đầu nguồn điện $U = \\mathcal{E} - I r$",
+            "Tính được công và công suất của nguồn điện ($A_{ng} = \\mathcal{E} I t, P_{ng} = \\mathcal{E} I$), công và công suất tiêu thụ của đoạn mạch ($A = U I t, P = U I = I^2 R$), hiệu suất của nguồn điện $H = \\frac{U}{ \\mathcal{E} }$"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Đoạn mạch nối tiếp, song song, mạch cầu cân bằng",
+            "Đại số giải hệ phương trình bậc nhất, bậc hai tìm điện trở cực đại/công suất cực đại (Bất đẳng thức Cauchy/AM-GM)",
+            "Sử dụng ampe kế, vôn kế, đồng hồ đo điện đa năng VOM"
+          ],
+          "cong_thuc": [
+            "Cường độ dòng điện: $I = \\frac{\\Delta q}{\\Delta t} = n S v e$ (SI: A)",
+            "Định luật Ohm cho đoạn mạch: $I = \\frac{U}{R} \\Rightarrow U = I R$",
+            "Điện trở dây dẫn: $R = \\rho \\frac{l}{S}$ (SI: $\\Omega$)",
+            "Suất điện động nguồn điện: $\\mathcal{E} = \\frac{A}{q}$ (SI: V)",
+            "Định luật Ohm cho toàn mạch: $I = \\frac{\\mathcal{E}}{R_{N} + r}$",
+            "Hiệu điện thế mạch ngoài: $U_N = \\mathcal{E} - I r = I R_N$",
+            "Công và công suất nguồn điện: $A_{ng} = \\mathcal{E} I t$, $P_{ng} = \\mathcal{E} I$",
+            "Công suất tiêu thụ mạch ngoài: $P_N = U I = I^2 R_N = \\frac{U^2}{R_N}$",
+            "Định luật Joule - Lenz: $Q = I^2 R t$",
+            "Hiệu suất nguồn điện: $H = \\frac{U_N}{\\mathcal{E}} = \\frac{R_N}{R_N + r} \\times 100\\%$"
+          ],
+          "chua_duoc_dung": [
+            "Chưa dùng Dòng điện xoay chiều AC (chuyển sang Lớp 12 trong GDPT 2018!)",
+            "Chưa dùng Hiện tượng cảm ứng điện từ, cuộn cảm $L$ (Lớp 12)",
+            "Chưa dùng Dòng điện trong các môi trường chất điện phân/chất bán dẫn phức tạp (chương trình 2006 có, GDPT 2018 đã giảm tải hầu hết bài tập định lượng Fara-đây)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Tính điện trở tương đương và cường độ dòng điện trong mạch gồm các điện trở ghép nối tiếp, song song, hỗn hợp",
+            "Áp dụng định luật Ohm cho toàn mạch tìm $I, U, R$, suất điện động $\\mathcal{E}$ và điện trở trong $r$",
+            "Bài toán tìm $R_N$ để công suất tiêu thụ mạch ngoài đạt giá trị cực đại $P_{max}$ (dùng BĐT Cauchy)",
+            "Bài toán tính điện năng tiêu thụ, tiền điện, hiệu suất của bộ nguồn điện",
+            "Bài toán thực tế: Ghép các ăc-quy/pin mặt trời thành bộ nguồn cung cấp điện cho thiết bị gia đình",
+            "Thí nghiệm thực hành: Đo suất điện động $\\mathcal{E}$ và điện trở trong $r$ của pin điện hóa bằng vôn kế và ampe kế"
+          ],
+          "luu_y_ra_de": "GDPT 2018 bổ sung công thức tốc độ trôi của electron $I = nSve$. Dòng điện trong các môi trường (bán dẫn, chất điện phân) giảm tải chỉ còn nêu bản chất chất dẫn điện, không ra bài tập định lượng Fara-đây nặng nề như cũ."
+        }
+      ],
+      "chuyen_de": [
+        "Chuyên đề 1: Trường hấp dẫn",
+        "Chuyên đề 2: Truyền thông thông tin bằng sóng điện từ",
+        "Chuyên đề 3: Mở đầu về điện tử học"
+      ],
+      "ghi_chu_chua_chac": []
+    },
+    {
+      "lop": 12,
+      "chuong": [
+        {
+          "id": "ly12-vat-li-nhiet",
+          "ten": "Vật lí nhiệt",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương I. Vật lí nhiệt",
+            "CTST": "Chương 1. Vật lí nhiệt",
+            "CD": "Chủ đề 1. Vật lí nhiệt"
+          },
+          "yeu_cau_can_dat": [
+            "Mô tả được mô hình động học phân tử chất khí, chất lỏng, chất rắn và sự chuyển thể (nóng chảy, hóa hơi, ngưng tụ, đông đặc)",
+            "Định nghĩa được Nhiệt độ, Thang nhiệt độ Xen-xi-út ($^\\circ\\text{C}$) và Thang nhiệt độ Kenvin (K): $T \\text{ (K)} = t \\text{ (}^\\circ\\text{C)} + 273.15$; giải thích nguyên tắc đo nhiệt độ bằng nhiệt kế",
+            "Mô tả được khái niệm Nội năng $U$, sự thay đổi nội năng bằng cách thực hiện công ($A$) và truyền nhiệt ($Q$); phát biểu và vận dụng Định luật I của Nhiệt động lực học ($\\Delta U = Q + A$)",
+            "Định nghĩa và vận dụng công thức Nhiệt dung riêng $c = \\frac{Q}{m \\Delta T}$ (SI: J/kg·K), Nhiệt nóng chảy riêng $\\lambda = \\frac{Q}{m}$ (J/kg), Nhiệt hóa hơi riêng $L = \\frac{Q}{m}$ (J/kg)",
+            "Thực hiện thí nghiệm đo nhiệt dung riêng của nước, đo nhiệt nóng chảy riêng của băng đá hoặc nhiệt hóa hơi riêng của nước"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Quy ước dấu Định luật I Nhiệt động lực học ($Q > 0$: nhận nhiệt, $Q < 0$: tỏa nhiệt; $A > 0$: nhận công, $A < 0$: thực hiện công)",
+            "Phương trình cân bằng nhiệt: $Q_{tỏa} = Q_{thu}$",
+            "Toán 12: Đồ thị đường cong nóng chảy/hóa hơi theo thời gian"
+          ],
+          "cong_thuc": [
+            "Chuyển đổi nhiệt độ: $T \\text{ (K)} = t \\text{ (}^\\circ\\text{C)} + 273.15$",
+            "Định luật I Nhiệt động lực học: $\\Delta U = Q + A$ (SI: J)",
+            "Công của chất khí nở đồng đều: $A = -p \\Delta V$",
+            "Nhiệt lượng truyền/thu vào: $Q = m c \\Delta T = m c (T_2 - T_1)$ (SI: J)",
+            "Nhiệt nóng chảy: $Q = \\lambda m$ (SI: J, với $\\lambda$ là J/kg)",
+            "Nhiệt hóa hơi: $Q = L m$ (SI: J, với $L$ là J/kg)",
+            "Phương trình cân bằng nhiệt: $\\sum Q_{tỏa} = \\sum Q_{thu}$"
+          ],
+          "chua_duoc_dung": [
+            "Chưa dùng Phương trình trạng thái khí lý tưởng $pV = nRT$ (học ở Chương Khí lý tưởng tiếp theo)",
+            "Chưa dùng Động năng trung bình phân tử $W_đ = \\frac{3}{2} k T$ (Chương Khí lý tưởng)",
+            "Chưa dùng Chu trình Carnot, động cơ nhiệt nâng cao (đã giảm tải)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Tính biến thiên nội năng $\\Delta U$ của hệ áp dụng Định luật I Nhiệt động lực học với quy ước dấu",
+            "Bài toán tính nhiệt lượng trao đổi, nhiệt độ cân bằng của hệ gồm nhiều chất lỏng/kim loại pha trộn",
+            "Bài toán tính khối lượng đá tan chảy hoặc khối lượng nước hóa hơi khi cung cấp nhiệt lượng",
+            "Đọc đồ thị nhiệt độ - thời gian trong quá trình chuyển thể để tìm nhiệt dung riêng, nhiệt nóng chảy riêng",
+            "Bài toán thực tế: Tính năng lượng cần thiết để đun sôi nước bằng bếp điện, hiệu suất ấm đun nước",
+            "Thí nghiệm thực hành: Xác định nhiệt dung riêng của nước hoặc nhiệt nóng chảy riêng của nước đá bằng nhiệt lượng kế"
+          ],
+          "luu_y_ra_de": "ĐẶC BIỆT LƯU Ý GDPT 2018: Phần Nhiệt học (Vật lí nhiệt) trước đây nằm ở Lớp 10 (chương trình cũ 2006) nay đã được CHUYỂN HOÀN TOÀN LÊN LỚP 12 HỌC KỲ 1! Bổ sung khái niệm Thang nhiệt độ Kenvin, Nhiệt dung riêng, Nhiệt nóng chảy riêng, Nhiệt hóa hơi riêng làm bài tập thực nghiệm chính."
+        },
+        {
+          "id": "ly12-khi-ly-tuong",
+          "ten": "Khí lý tưởng",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương II. Khí lý tưởng",
+            "CTST": "Chương 2. Khí lý tưởng",
+            "CD": "Chủ đề 2. Khí lý tưởng"
+          },
+          "yeu_cau_can_dat": [
+            "Mô tả được mô hình Khí lý tưởng (các phân tử coi là chất điểm, chỉ tương tác khi va chạm đàn hồi)",
+            "Nêu được mô hình động học phân tử chất khí: các phân tử chuyển động hỗn loạn không ngừng, gây ra áp suất khí lên thành bình $p = \\frac{1}{3} \\mu m v^2 = \\frac{2}{3} n_0 W_{đtb}$",
+            "Phát biểu và vận dụng Định luật Boyle (quá trình đẳng nhiệt: $p V = \\text{const}$), Định luật Charles (quá trình đẳng áp: $\\frac{V}{T} = \\text{const}$) và Đẳng tích ($\\frac{p}{T} = \\text{const}$)",
+            "Lập và vận dụng Phương trình trạng thái khí lý tưởng $\\frac{p_1 V_1}{T_1} = \\frac{p_2 V_2}{T_2}$ và Phương trình Clapeyron - Mendeleev $p V = n R T = \\frac{m}{M} R T$",
+            "Giải thích được ý nghĩa động năng trung bình của phân tử khí tỉ lệ thuận với nhiệt độ tuyệt đối: $W_{đtb} = \\frac{3}{2} k T$ ($k = 1.38 \\times 10^{-23} \\text{ J/K}$)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Thang nhiệt độ Kelvin $T = t + 273.15$, Đơn vị áp suất ($1\\text{ atm} = 1.013 \\times 10^5\\text{ Pa} = 760\\text{ mmHg}$)",
+            "Số mol $n = \\frac{m}{M} = \\frac{N}{N_A}$, Hằng số khí $R = 8.31 \\text{ J/mol}\\cdot\\text{K}$, Hằng số Avogadro $N_A = 6.022 \\times 10^{23} \\text{ mol}^{-1}$",
+            "Vẽ và đọc đồ thị các đẳng quá trình trong các hệ tọa độ $(p,V), (p,T), (V,T)$"
+          ],
+          "cong_thuc": [
+            "Định luật Boyle (Đẳng nhiệt, $T = \\text{const}$): $p_1 V_1 = p_2 V_2$",
+            "Định luật Charles (Đẳng áp, $p = \\text{const}$): $\\frac{V_1}{T_1} = \\frac{V_2}{T_2}$",
+            "Đẳng tích ($V = \\text{const}$): $\\frac{p_1}{T_1} = \\frac{p_2}{T_2}$",
+            "Phương trình trạng thái khí lý tưởng: $\\frac{p_1 V_1}{T_1} = \\frac{p_2 V_2}{T_2}$",
+            "Phương trình Clapeyron - Mendeleev: $p V = n R T = \\frac{m}{M} R T$",
+            "Áp suất khí theo động học phân tử: $p = \\frac{1}{3} \\rho \\overline{v^2} = \\frac{2}{3} N_0 W_{đtb}$",
+            "Động năng trung bình phân tử: $W_{đtb} = \\frac{3}{2} k T$ ($k = \\frac{R}{N_A} = 1.38 \\times 10^{-23} \\text{ J/K}$)"
+          ],
+          "chua_duoc_dung": [
+            "Chưa dùng Từ trường và Cảm ứng điện từ (học ở học kỳ 2 Lớp 12!)",
+            "Chưa dùng Vật lí hạt nhân (HK2 Lớp 12)",
+            "Chưa dùng các bài toán chu trình khí phức tạp vượt quá yêu cầu GDPT 2018"
+          ],
+          "dang_bai_dien_hinh": [
+            "Bài toán biến đổi trạng thái khí qua các đẳng quá trình (tìm $p, V, T$ còn thiếu)",
+            "Bài toán tính khối lượng khí $m$, số phân tử khí $N$, áp suất khí $p$ dùng phương trình Clapeyron - Mendeleev",
+            "Chuyển đổi đồ thị các đẳng quá trình giữa các hệ tọa độ $(p,V), (V,T), (p,T)$",
+            "Tính động năng trung bình phân tử khí và căn bậc hai của trung bình bình phương tốc độ phân tử $\\sqrt{\\overline{v^2}}$",
+            "Bài toán thực tế: Tính áp suất lốp xe ô tô khi nhiệt độ tăng cao khi chạy đường dài, áp suất bình chứa khí oxy y tế",
+            "Thí nghiệm thực hành: Khảo sát định luật Boyle bằng xilanh chia độ và áp kế"
+          ],
+          "luu_y_ra_de": "Chương Khí lý tưởng được chuyển từ Lớp 10 cũ lên LỚP 12 HỌC KỲ 1. Bổ sung biểu thức áp suất khí theo mô hình động học phân tử và mối liên hệ giữa động năng phân tử với nhiệt độ $W_{đtb} = \frac{3}{2}kT$."
+        },
+        {
+          "id": "ly12-tu-truong-cam-ung-dien-tu",
+          "ten": "Từ trường và Cảm ứng điện từ",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương III. Từ trường",
+            "CTST": "Chương 3. Từ trường",
+            "CD": "Chủ đề 3. Từ trường"
+          },
+          "yeu_cau_can_dat": [
+            "Mô tả được từ trường, đường sức từ, cảm ứng từ $\\vec{B}$ (đơn vị Tét-la - T); xác định hướng của đường sức từ xung quanh dòng điện thẳng, dòng điện tròn, ống dây (quy tắc bàn tay phải)",
+            "Viết và xác định hướng của Lực từ tác dụng lên đoạn dây dẫn mang dòng điện đặt trong từ trường đều $\\vec{F} = I \\vec{L} \\times \\vec{B} \\Rightarrow F = B I L \\sin \\theta$ (quy tắc bàn tay trái)",
+            "Định nghĩa được Từ thông $\\Phi = B S \\cos \\alpha$ (đơn vị Ve-be - Wb); mô tả Hiện tượng cảm ứng điện từ và xác định chiều dòng điện cảm ứng theo Định luật Lenz",
+            "Phát biểu và vận dụng Định luật Faraday về cảm ứng điện từ: Suất điện động cảm ứng $e_{cư} = -\\frac{\\Delta \\Phi}{\\Delta t}$",
+            "Giải thích nguyên tắc tạo ra Dòng điện xoay chiều (nguyên tắc cảm ứng điện từ quay khung dây trong từ trường) và các đại lượng đặc trưng của dòng điện xoay chiều ($i = I_0 \\cos(\\omega t + \\varphi)$, giá trị hiệu dụng $I = \\frac{I_0}{\\sqrt{2}}, U = \\frac{U_0}{\\sqrt{2}}$)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Vectơ cảm ứng từ $\\vec{B}$, vectơ lực từ $\\vec{F}$, Quy tắc bàn tay trái, bàn tay phải",
+            "Suất điện động cảm ứng $e_{cư}$, Từ thông $\\Phi$",
+            "Đại lượng hiệu dụng của Dòng điện xoay chiều: $U = \\frac{U_0}{\\sqrt{2}}, I = \\frac{I_0}{\\sqrt{2}}$"
+          ],
+          "cong_thuc": [
+            "Lực từ tác dụng lên đoạn dây mang dòng điện: $F = B I L \\sin \\theta$ (SI: N)",
+            "Cảm ứng từ dây dẫn thẳng dài: $B = 2 \\times 10^{-7} \\frac{I}{r}$; Khung tròn: $B = 2\\pi \\times 10^{-7} N \\frac{I}{R}$; Ống dây: $B = 4\\pi \\times 10^{-7} n I$",
+            "Từ thông: $\\Phi = B S \\cos \\alpha$ (SI: Ve-be - Wb, với $\\alpha = (\\vec{n}, \\vec{B})$)",
+            "Định luật Faraday (Suất điện động cảm ứng): $e_{cư} = -\\frac{\\Delta \\Phi}{\\Delta t} = -N \\frac{\\Delta \\Phi}{\\Delta t}$ (SI: V)",
+            "Suất điện động xoay chiều đơn giản: $e = E_0 \\sin(\\omega t) = \\omega N B S \\sin(\\omega t)$",
+            "Cường độ và điện áp hiệu dụng dòng điện xoay chiều: $I = \\frac{I_0}{\\sqrt{2}}$, $U = \\frac{U_0}{\\sqrt{2}}$"
+          ],
+          "chua_duoc_dung": [
+            "Chưa dùng Giải mạch điện xoay chiều RLC nối tiếp phức tạp, phương pháp giản đồ Fre-nen RLC, hiện tượng cộng hưởng điện RLC (LƯU Ý: GDPT 2018 ĐÃ LOẠI BỎ bài tập tính toán mạch RLC phức tạp khỏi chương trình bắt buộc Lớp 12! Phần này chuyển sang Chuyên đề học tập 12)",
+            "Chưa dùng Mạch dao động LC phức tạp (đã cắt bỏ bớt)",
+            "Chưa dùng Số phức để giải mạch xoay chiều"
+          ],
+          "dang_bai_dien_hinh": [
+            "Xác định hướng của véc-tơ lực từ, véc-tơ cảm ứng từ bằng quy tắc bàn tay trái, bàn tay phải",
+            "Tính lực từ tác dụng lên đoạn dây dẫn thẳng đặt trong từ trường đều",
+            "Tính từ thông qua khung dây và tính độ lớn suất điện động cảm ứng $e_{cư}$ khi từ trường thay đổi",
+            "Xác định chiều dòng điện cảm ứng trong khung dây chuyển động vào/ra khỏi từ trường (Định luật Lenz)",
+            "Bài toán tính giá trị cực đại, giá trị hiệu dụng, tần số, chu kỳ của dòng điện xoay chiều đơn giản",
+            "Bài toán thực tế: Nguyên lý hoạt động của bếp từ, phanh từ tính trên xe điện, máy phát điện gió",
+            "Thí nghiệm thực hành: Quan sát đường sức từ của nam châm bằng từ phổ (mạt sắt) và khảo sát hiện tượng cảm ứng điện từ bằng cuộn dây và nam châm"
+          ],
+          "luu_y_ra_de": "ĐẶC BIỆT LƯU Ý GDPT 2018: Chương 'Từ trường' và 'Cảm ứng điện từ' (trước đây ở Lớp 11) nay CHUYỂN LÊN LỚP 12 HỌC KỲ 2! Ngoài ra, bài tập Dòng điện xoay chiều RLC phức tạp (cộng hưởng RLC, cực trị RLC) ĐÃ BỎ HOÀN TOÀN khỏi phần bắt buộc Lớp 12, chỉ học khái niệm đại cương DĐXC và giá trị hiệu dụng."
+        },
+        {
+          "id": "ly12-vat-li-hat-nhan",
+          "ten": "Vật lí hạt nhân và An toàn bức xạ",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương IV. Vật lí hạt nhân",
+            "CTST": "Chương 4. Vật lí hạt nhân",
+            "CD": "Chủ đề 4. Vật lí hạt nhân"
+          },
+          "yeu_cau_can_dat": [
+            "Mô tả được cấu tạo hạt nhân ký hiệu $_Z^A X$: gồm $Z$ proton và $(A - Z)$ neutron; khái niệm đồng vị; đơn vị khối lượng nguyên tử $u$ ($1u \\approx 931.5 \\text{ MeV/c}^2$)",
+            "Viết được công thức tính độ hẫng khối $\\Delta m = [Z m_p + (A-Z)m_n] - m_{hn}$, Năng lượng liên kết $E_{lk} = \\Delta m c^2$ và Năng lượng liên kết riêng $E_{lkr} = \\frac{E_{lk}}{A}$ (đánh giá độ bền vững hạt nhân)",
+            "Viết và cân bằng phản ứng hạt nhân theo định luật bảo toàn điện tích $Z$ và bảo toàn số nucleôn $A$; tính năng lượng tỏa ra hoặc thu vào của phản ứng $\\Delta E = (m_{trước} - m_{sau}) c^2$",
+            "Mô tả được hiện tượng Phóng xạ (phóng xạ $\\alpha, \\beta^-, \\beta^+, \\gamma$); phát biểu Định luật phóng xạ $N(t) = N_0 2^{-t/T} = N_0 e^{-\\lambda t}$",
+            "Định nghĩa được Độ phóng xạ $H$ (đơn vị Béc-ke-rel - Bq, $1\\text{ Bq} = 1\\text{ phân rã/giây}$) và $H = \\lambda N$",
+            "Nêu được các nguồn bức xạ, tác hại của bức xạ ion hóa và các nguyên tắc An toàn bức xạ (khoảng cách, thời gian, che chắn)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Các định luật bảo toàn số khối $A$, điện tích $Z$, bảo toàn năng lượng toàn phần",
+            "Hàm số mũ $2^{-x}, e^{-x}$ và logarit tự nhiên $\\ln 2 \\approx 0.693$ (Toán 11 HK2)",
+            "Đơn vị năng lượng Mega-electronvôn ($1\\text{ MeV} = 1.6 \\times 10^{-13}\\text{ J}$)"
+          ],
+          "cong_thuc": [
+            "Độ hẫng khối: $\\Delta m = Z m_p + (A-Z) m_n - m_{hn}$ (SI: u)",
+            "Năng lượng liên kết: $E_{lk} = \\Delta m c^2$ (SI: MeV hoặc J)",
+            "Năng lượng liên kết riêng: $E_{lkr} = \\frac{E_{lk}}{A}$ (SI: MeV/nucleon)",
+            "Năng lượng phản ứng hạt nhân: $\\Delta E = (m_{trước} - m_{sau}) c^2 = (m_{X_1} + m_{X_2} - m_{X_3} - m_{X_4}) c^2$",
+            "Hằng số phóng xạ: $\\lambda = \\frac{\\ln 2}{T} \\approx \\frac{0.693}{T}$ (SI: s⁻¹)",
+            "Định luật phóng xạ (số hạt): $N(t) = N_0 2^{-t/T} = N_0 e^{-\\lambda t}$",
+            "Định luật phóng xạ (khối lượng): $m(t) = m_0 2^{-t/T} = m_0 e^{-\\lambda t}$",
+            "Độ phóng xạ: $H(t) = \\lambda N(t) = H_0 2^{-t/T}$ (SI: Bq, $1\\text{ Bq} = 1\\text{ phân rã/s}$)"
+          ],
+          "chua_duoc_dung": [
+            "Chưa dùng Số phức (GDPT 2018 loại bỏ hoàn toàn Số phức!)",
+            "Chưa dùng Quang điện ngoài, thuyết lượng tử photon Einstein, mẫu nguyên tử Bohr (các phần này chuyển sang Chuyên đề học tập 12 Vật lí lượng tử)",
+            "Chưa dùng phản ứng phân hạch/nhiệt hạch nâng cao tính toán quá tải"
+          ],
+          "dang_bai_dien_hinh": [
+            "Tính độ hẫng khối, năng lượng liên kết và năng lượng liên kết riêng để so sánh độ bền vững giữa các hạt nhân",
+            "Cân bằng phương trình phản ứng hạt nhân và tính năng lượng tỏa ra/thu vào của phản ứng hạt nhân",
+            "Bài toán định luật phóng xạ tính khối lượng còn lại, số hạt còn lại, độ phóng xạ $H$ sau khoảng thời gian $t$",
+            "Xác định tuổi của cổ vật / mẫu đá bằng phương pháp định tuổi phóng xạ cacbon-14 hoặc urani",
+            "Bài toán thực tế: Tính liều lượng chiếu phóng xạ an toàn trong y tế (xạ trị ung thư), quy tắc an toàn bức xạ phòng hộ",
+            "Bài tập trắc nghiệm nhận biết các biển báo cảnh báo an toàn bức xạ ion hóa"
+          ],
+          "luu_y_ra_de": "GDPT 2018 giữ phần Vật lí hạt nhân ở Lớp 12 HK2, bổ sung quy định về Đơn vị độ phóng xạ Becquerel (Bq) và chủ đề An toàn bức xạ hạt nhân trong thực tiễn. Loại bỏ phần Lượng tử ánh sáng (quang điện ngoài, mẫu Bohr) khỏi phần bắt buộc, đưa vào Chuyên đề."
+        }
+      ],
+      "chuyen_de": [
+        "Chuyên đề 1: Dòng điện xoay chiều",
+        "Chuyên đề 2: Một số ứng dụng vật lí trong chẩn đoán y học",
+        "Chuyên đề 3: Vật lí lượng tử"
+      ],
+      "ghi_chu_chua_chac": [
+        "Mức độ dòng điện xoay chiều trong phần bắt buộc lớp 12 (chỉ khái niệm, giá trị hiệu dụng) cần đối chiếu thêm SGK."
+      ]
+    }
+  ],
+  "cau_truc_de": [
+    {
+      "loai": "Đề thi Tốt nghiệp THPT môn Vật lí (từ năm 2025 theo Bộ GD&ĐT)",
+      "lop": 12,
+      "thoi_gian_phut": 50,
+      "phan": [
+        {
+          "ten": "Phần I. Trắc nghiệm nhiều lựa chọn (4 lựa chọn)",
+          "so_cau": 18,
+          "mo_ta": "Gồm 18 câu hỏi trắc nghiệm truyền thống 4 lựa chọn (A, B, C, D). Mỗi câu trả lời đúng được 0,25 điểm.",
+          "diem_moi_cau": 0.25,
+          "tong_diem": 4.5
+        },
+        {
+          "ten": "Phần II. Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "mo_ta": "Gồm 4 câu hỏi, mỗi câu có 4 lệnh hỏi a), b), c), d) chọn Đúng hoặc Sai. Cách tính điểm cho 1 câu: Đúng 1 ý = 0,1đ; Đúng 2 ý = 0,25đ; Đúng 3 ý = 0,5đ; Đúng 4 ý = 1,0đ.",
+          "cach_tinh_diem": "1 ý = 0.1đ, 2 ý = 0.25đ, 3 ý = 0.5đ, 4 ý = 1.0đ",
+          "tong_diem": 4
+        },
+        {
+          "ten": "Phần III. Trắc nghiệm Trả lời ngắn",
+          "so_cau": 6,
+          "mo_ta": "Gồm 6 câu hỏi điền kết quả số (tối đa 4 ký tự kể cả dấu âm và dấu phẩy thập phân). Mỗi câu trả lời đúng được 0,25 điểm.",
+          "diem_moi_cau": 0.25,
+          "tong_diem": 1.5
+        }
+      ],
+      "pham_vis": "Chủ yếu kiến thức Vật lí Lớp 12 (~80-85%), kết hợp kiến thức liên quan Lớp 11 (~15%) và Lớp 10 (bổ trợ).",
+      "ti_le_muc_do": "Nhận biết: ~40%, Thông hiểu: ~30%, Vận dụng / Vận dụng cao: ~30%"
+    },
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 10,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I. Trắc nghiệm nhiều lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 4.5
+        },
+        {
+          "ten": "Phần II. Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "cach_tinh_diem": "1 ý = 0.1đ, 2 ý = 0.25đ, 3 ý = 0.5đ, 4 ý = 1.0đ",
+          "tong_diem": 4
+        },
+        {
+          "ten": "Phần III. Trắc nghiệm Trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 1.5
+        }
+      ],
+      "pham_vi": [
+        "ly10-mo-dau-an-toan",
+        "ly10-dong-hoc"
+      ],
+      "ti_le_muc_do": "Nhận biết: 40%, Thông hiểu: 30%, Vận dụng: 20%, Vận dụng cao: 10%"
+    },
+    {
+      "loai": "Cuối kỳ 1",
+      "lop": 10,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I. Trắc nghiệm nhiều lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 4.5
+        },
+        {
+          "ten": "Phần II. Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "cach_tinh_diem": "1 ý = 0.1đ, 2 ý = 0.25đ, 3 ý = 0.5đ, 4 ý = 1.0đ",
+          "tong_diem": 4
+        },
+        {
+          "ten": "Phần III. Trắc nghiệm Trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 1.5
+        }
+      ],
+      "pham_vi": [
+        "ly10-mo-dau-an-toan",
+        "ly10-dong-hoc",
+        "ly10-dong-luc-hoc"
+      ],
+      "ti_le_muc_do": "Nhận biết: 40%, Thông hiểu: 30%, Vận dụng: 20%, Vận dụng cao: 10%"
+    },
+    {
+      "loai": "Giữa kỳ 2",
+      "lop": 10,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I. Trắc nghiệm nhiều lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 4.5
+        },
+        {
+          "ten": "Phần II. Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "cach_tinh_diem": "1 ý = 0.1đ, 2 ý = 0.25đ, 3 ý = 0.5đ, 4 ý = 1.0đ",
+          "tong_diem": 4
+        },
+        {
+          "ten": "Phần III. Trắc nghiệm Trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 1.5
+        }
+      ],
+      "pham_vi": [
+        "ly10-nang-luong-cong",
+        "ly10-dong-luong"
+      ],
+      "ti_le_muc_do": "Nhận biết: 40%, Thông hiểu: 30%, Vận dụng: 20%, Vận dụng cao: 10%"
+    },
+    {
+      "loai": "Cuối kỳ 2",
+      "lop": 10,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I. Trắc nghiệm nhiều lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 4.5
+        },
+        {
+          "ten": "Phần II. Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "cach_tinh_diem": "1 ý = 0.1đ, 2 ý = 0.25đ, 3 ý = 0.5đ, 4 ý = 1.0đ",
+          "tong_diem": 4
+        },
+        {
+          "ten": "Phần III. Trắc nghiệm Trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 1.5
+        }
+      ],
+      "pham_vi": [
+        "ly10-nang-luong-cong",
+        "ly10-dong-luong",
+        "ly10-chuyen-dong-tron",
+        "ly10-bien-dang-vat-ran-ap-suat"
+      ],
+      "ti_le_muc_do": "Nhận biết: 40%, Thông hiểu: 30%, Vận dụng: 20%, Vận dụng cao: 10%"
+    },
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 11,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I. Trắc nghiệm nhiều lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 4.5
+        },
+        {
+          "ten": "Phần II. Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "cach_tinh_diem": "1 ý = 0.1đ, 2 ý = 0.25đ, 3 ý = 0.5đ, 4 ý = 1.0đ",
+          "tong_diem": 4
+        },
+        {
+          "ten": "Phần III. Trắc nghiệm Trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 1.5
+        }
+      ],
+      "pham_vi": [
+        "ly11-dao-dong"
+      ],
+      "ti_le_muc_do": "Nhận biết: 40%, Thông hiểu: 30%, Vận dụng: 20%, Vận dụng cao: 10%"
+    },
+    {
+      "loai": "Cuối kỳ 1",
+      "lop": 11,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I. Trắc nghiệm nhiều lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 4.5
+        },
+        {
+          "ten": "Phần II. Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "cach_tinh_diem": "1 ý = 0.1đ, 2 ý = 0.25đ, 3 ý = 0.5đ, 4 ý = 1.0đ",
+          "tong_diem": 4
+        },
+        {
+          "ten": "Phần III. Trắc nghiệm Trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 1.5
+        }
+      ],
+      "pham_vi": [
+        "ly11-dao-dong",
+        "ly11-song"
+      ],
+      "ti_le_muc_do": "Nhận biết: 40%, Thông hiểu: 30%, Vận dụng: 20%, Vận dụng cao: 10%"
+    },
+    {
+      "loai": "Giữa kỳ 2",
+      "lop": 11,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I. Trắc nghiệm nhiều lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 4.5
+        },
+        {
+          "ten": "Phần II. Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "cach_tinh_diem": "1 ý = 0.1đ, 2 ý = 0.25đ, 3 ý = 0.5đ, 4 ý = 1.0đ",
+          "tong_diem": 4
+        },
+        {
+          "ten": "Phần III. Trắc nghiệm Trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 1.5
+        }
+      ],
+      "pham_vi": [
+        "ly11-dien-truong"
+      ],
+      "ti_le_muc_do": "Nhận biết: 40%, Thông hiểu: 30%, Vận dụng: 20%, Vận dụng cao: 10%"
+    },
+    {
+      "loai": "Cuối kỳ 2",
+      "lop": 11,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I. Trắc nghiệm nhiều lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 4.5
+        },
+        {
+          "ten": "Phần II. Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "cach_tinh_diem": "1 ý = 0.1đ, 2 ý = 0.25đ, 3 ý = 0.5đ, 4 ý = 1.0đ",
+          "tong_diem": 4
+        },
+        {
+          "ten": "Phần III. Trắc nghiệm Trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 1.5
+        }
+      ],
+      "pham_vi": [
+        "ly11-dien-truong",
+        "ly11-dong-dien-khong-doi"
+      ],
+      "ti_le_muc_do": "Nhận biết: 40%, Thông hiểu: 30%, Vận dụng: 20%, Vận dụng cao: 10%"
+    },
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 12,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I. Trắc nghiệm nhiều lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 4.5
+        },
+        {
+          "ten": "Phần II. Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "cach_tinh_diem": "1 ý = 0.1đ, 2 ý = 0.25đ, 3 ý = 0.5đ, 4 ý = 1.0đ",
+          "tong_diem": 4
+        },
+        {
+          "ten": "Phần III. Trắc nghiệm Trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 1.5
+        }
+      ],
+      "pham_vi": [
+        "ly12-vat-li-nhiet"
+      ],
+      "ti_le_muc_do": "Nhận biết: 40%, Thông hiểu: 30%, Vận dụng: 20%, Vận dụng cao: 10%"
+    },
+    {
+      "loai": "Cuối kỳ 1",
+      "lop": 12,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I. Trắc nghiệm nhiều lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 4.5
+        },
+        {
+          "ten": "Phần II. Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "cach_tinh_diem": "1 ý = 0.1đ, 2 ý = 0.25đ, 3 ý = 0.5đ, 4 ý = 1.0đ",
+          "tong_diem": 4
+        },
+        {
+          "ten": "Phần III. Trắc nghiệm Trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 1.5
+        }
+      ],
+      "pham_vi": [
+        "ly12-vat-li-nhiet",
+        "ly12-khi-ly-tuong"
+      ],
+      "ti_le_muc_do": "Nhận biết: 40%, Thông hiểu: 30%, Vận dụng: 20%, Vận dụng cao: 10%"
+    },
+    {
+      "loai": "Giữa kỳ 2",
+      "lop": 12,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I. Trắc nghiệm nhiều lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 4.5
+        },
+        {
+          "ten": "Phần II. Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "cach_tinh_diem": "1 ý = 0.1đ, 2 ý = 0.25đ, 3 ý = 0.5đ, 4 ý = 1.0đ",
+          "tong_diem": 4
+        },
+        {
+          "ten": "Phần III. Trắc nghiệm Trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 1.5
+        }
+      ],
+      "pham_vi": [
+        "ly12-tu-truong-cam-ung-dien-tu"
+      ],
+      "ti_le_muc_do": "Nhận biết: 40%, Thông hiểu: 30%, Vận dụng: 20%, Vận dụng cao: 10%"
+    },
+    {
+      "loai": "Cuối kỳ 2",
+      "lop": 12,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I. Trắc nghiệm nhiều lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 4.5
+        },
+        {
+          "ten": "Phần II. Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "cach_tinh_diem": "1 ý = 0.1đ, 2 ý = 0.25đ, 3 ý = 0.5đ, 4 ý = 1.0đ",
+          "tong_diem": 4
+        },
+        {
+          "ten": "Phần III. Trắc nghiệm Trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 1.5
+        }
+      ],
+      "pham_vi": [
+        "ly12-tu-truong-cam-ung-dien-tu",
+        "ly12-vat-li-hat-nhan"
+      ],
+      "ti_le_muc_do": "Nhận biết: 40%, Thông hiểu: 30%, Vận dụng: 20%, Vận dụng cao: 10%"
+    }
+  ],
+  "phien_ban": "Claude rà soát 08/11/2026: đổi id ly10-dong-hoc; moment lực thuộc Động lực học; sửa tên chuyên đề lớp 12."
+}

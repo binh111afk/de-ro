@@ -6,8 +6,8 @@
  * (đối chiếu bằng mắt). Thêm/sửa icon: sửa dòng tương ứng rồi chạy lại
  * `node scripts/import-graphics.mjs`.
  */
-export const SHEET_100 = 'C:/Users/Lenovo/Downloads/100 icon giáo dục bổ sung · SVG.svg'
-export const SHEET_PROG = 'C:/Users/Lenovo/Downloads/20 ngôn ngữ lập trình · pastel SVG.svg'
+export const SHEET_100 = new URL('./nguon-icon/100 icon giáo dục bổ sung · SVG.svg', import.meta.url)
+export const SHEET_PROG = new URL('./nguon-icon/20 ngôn ngữ lập trình · pastel SVG.svg', import.meta.url)
 
 export const ICONS_100 = [
   // Tin học
@@ -124,7 +124,7 @@ export const ICONS_100 = [
   ['life-hop-so-cuu', 'Hộp sơ cứu', 'life', 'hop so cuu y te cap cuu suc khoe'],
 ]
 
-export const SHEET_NEW = 'C:/Users/Lenovo/Downloads/100 icon giáo dục mới · SVG.svg'
+export const SHEET_NEW = new URL('./nguon-icon/100 icon giáo dục mới · SVG.svg', import.meta.url)
 
 export const ICONS_NEW = [
   ['math-que-tinh', 'Que tính', 'math', 'que tinh dem so tieu hoc cong tru'],
@@ -256,7 +256,7 @@ export const ICONS_PROG = [
  * Đợt 4 (01/11/2026): "100 icon giáo dục · contact sheet 10×10.svg" — sheet có sẵn id trong <g id>.
  * 18 id trùng icon cũ (hình vẽ khác) được thêm hậu tố `-2`. Nhóm `nav-*` xếp vào 'frame'/'arrow'.
  */
-export const SHEET_DOT4 = 'C:/Users/Lenovo/Downloads/100 icon giáo dục · contact sheet 10×10.svg'
+export const SHEET_DOT4 = new URL('./nguon-icon/100 icon giáo dục · contact sheet 10×10.svg', import.meta.url)
 
 export const ICONS_DOT4 = [
   // Toán

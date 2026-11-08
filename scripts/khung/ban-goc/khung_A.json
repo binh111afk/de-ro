@@ -1,0 +1,839 @@
+{
+  "mon": "Công nghệ",
+  "pham_vi": "lớp 6 - lớp 9",
+  "sach_chinh": "Kết nối tri thức với cuộc sống",
+  "muc_luc_da_tra": [
+    {
+      "lop": 6,
+      "nguon": "https://ihoc.vn/sgk/lop-6/cong-nghe-lop-6/sach-giao-khoa-cong-nghe-lop-6-ket-noi-tri-thuc-voi-cuoc-song.html",
+      "muc_luc": [
+        "Chương I. Nhà ở: Bài 1. Khái quát về nhà ở, Bài 2. Xây dựng nhà ở, Bài 3. Ngôi nhà thông minh, Ôn tập Chương I",
+        "Chương II. Bảo quản và chế biến thực phẩm: Bài 4. Thực phẩm và dinh dưỡng, Bài 5. Phương pháp bảo quản và chế biến thực phẩm, Bài 6. Dự án: Bữa ăn kết nối yêu thương, Ôn tập Chương II",
+        "Chương III. Trang phục và thời trang: Bài 7. Trang phục trong đời sống, Bài 8. Sử dụng và bảo quản trang phục, Bài 9. Thời trang, Ôn tập Chương III",
+        "Chương IV. Đồ dùng điện trong gia đình: Bài 10. Khái quát về đồ dùng điện trong gia đình, Bài 11. Đèn điện, Bài 12. Nồi cơm điện, Bài 13. Bếp hồng ngoại, Bài 14. Dự án: An toàn và tiết kiệm điện trong gia đình, Ôn tập Chương IV"
+      ]
+    },
+    {
+      "lop": 7,
+      "nguon": "https://tailieumoi.vn/bai-viet/24723/ly-thuyet-cong-nghe-lop-7-ket-noi-tri-thuc-kien-thuc-trong-tam-cong-nghe-lop-7-ket-noi-tri-thuc",
+      "muc_luc": [
+        "Chương 1. Trồng trọt: Bài 1. Giới thiệu về trồng trọt, Bài 2. Làm đất trồng cây, Bài 3. Gieo trồng, chăm sóc và phòng trừ sâu, bệnh cho cây trồng, Bài 4. Thu hoạch sản phẩm trồng trọt, Bài 5. Nhân giống vô tính cây trồng, Bài 6. Dự án trồng rau an toàn, Ôn tập Chương I",
+        "Chương 2. Lâm nghiệp: Bài 7. Giới thiệu về rừng, Bài 8. Trồng, chăm sóc và bảo vệ rừng, Ôn tập Chương II",
+        "Chương 3. Chăn nuôi: Bài 9. Giới thiệu về chăn nuôi, Bài 10. Nuôi dưỡng và chăm sóc vật nuôi, Bài 11. Phòng và trị bệnh cho vật nuôi, Bài 12. Chăn nuôi gà thịt trong nông hộ, Bài 13. Thực hành: Lập kế hoạch nuôi vật nuôi trong gia đình, Ôn tập Chương III",
+        "Chương 4. Thủy sản: Bài 14. Giới thiệu về thủy sản, Bài 15. Nuôi cá ao, Bài 16. Thực hành: Lập kế hoạch nuôi cá cảnh, Ôn tập Chương IV"
+      ]
+    },
+    {
+      "lop": 8,
+      "nguon": "https://timdapan.com/sach-giao-khoa/cong-nghe-8-2",
+      "muc_luc": [
+        "Chương I. Vẽ kĩ thuật: Bài 1. Một số tiêu chuẩn trình bày bản vẽ kĩ thuật, Bài 2. Hình chiếu vuông góc, Bài 3. Bản vẽ chi tiết, Bài 4. Bản vẽ lắp, Bài 5. Bản vẽ nhà, Ôn tập Chương I",
+        "Chương II. Cơ khí: Bài 6. Vật liệu cơ khí, Bài 7. Truyền và biến đổi chuyển động, Bài 8. Gia công cơ khí bằng tay, Bài 9. Ngành nghề trong lĩnh vực cơ khí, Bài 10. Dự án: Gia công chi tiết bằng dụng cụ cầm tay, Ôn tập Chương II",
+        "Chương III. An toàn điện: Bài 11. Tai nạn điện, Bài 12. Biện pháp an toàn điện, Bài 13. Sơ cứu người bị tai nạn điện, Ôn tập Chương III",
+        "Chương IV. Kĩ thuật điện: Bài 14. Khái quát về mạch điện, Bài 15. Cảm biến và mô đun cảm biến, Bài 16. Mạch điện điều khiển sử dụng mô đun cảm biến, Bài 17. Ngành nghề trong lĩnh vực kĩ thuật điện, Ôn tập Chương IV",
+        "Chương V. Thiết kế kĩ thuật: Bài 18. Giới thiệu về thiết kế kĩ thuật, Bài 19. Các bước cơ bản trong thiết kế kĩ thuật, Bài 20. Dự án: Thiết kế hệ thống tưới cây tự động, Ôn tập Chương V"
+      ]
+    },
+    {
+      "lop": 9,
+      "nguon": "https://m.loigiaihay.com/cong-nghe-9-c170.html",
+      "muc_luc": [
+        "Mô đun Định hướng nghề nghiệp: Bài 1. Nghề nghiệp trong lĩnh vực kĩ thuật và công nghệ, Bài 2. Cơ cấu hệ thống giáo dục quốc dân, Bài 3. Thị trường lao động kĩ thuật, công nghệ tại Việt Nam, Bài 4. Quy trình lựa chọn nghề nghiệp, Bài 5. Dự án: Tự đánh giá mức độ phù hợp của bản thân với một số ngành nghề thuộc lĩnh vực kĩ thuật, công nghệ",
+        "Mô đun Chế biến thực phẩm - Chương 1. Dinh dưỡng và thực phẩm: Bài 1. Thành phần dinh dưỡng trong thực phẩm, Bài 2. Lựa chọn và bảo quản thực phẩm, Bài 3. Một số ngành nghề liên quan đến chế biến thực phẩm, Ôn tập chương 1",
+        "Mô đun Chế biến thực phẩm - Chương 2. Tổ chức và chế biến món ăn: Bài 4. An toàn lao động và an toàn vệ sinh thực phẩm, Bài 5. Dự án: Tính toán chi phí bữa ăn theo thực đơn, Bài 6. Chế biến thực phẩm có sử dụng nhiệt, Bài 7. Chế biến thực phẩm không sử dụng nhiệt, Ôn tập chương 2",
+        "Mô đun Lắp đặt mạng điện trong nhà: Bài 1. Thiết bị đóng cắt và lấy điện trong gia đình, Bài 2. Dụng cụ đo điện cơ bản, Bài 3. Thiết kế mạng điện trong nhà, Bài 4. Vật liệu, thiết bị và dụng cụ dùng cho lắp đặt mạng điện trong nhà, Bài 5. Tính toán chi phí mạng điện trong nhà, Bài 6. Thực hành: Lắp đặt mạng điện trong nhà, Bài 7. Một số ngành nghề liên quan đến lắp đặt mạng điện trong nhà",
+        "Mô đun Trồng cây ăn quả: Bài 1. Giới thiệu chung về cây ăn quả, Bài 2. Nhân giống vô tính cây ăn quả, Bài 3. Kĩ thuật trồng và chăm sóc cây ăn quả có múi, Bài 4. Kĩ thuật trồng và chăm sóc cây nhãn, Bài 5. Kĩ thuật trồng và chăm sóc cây xoài, Bài 6. Kĩ thuật trồng và chăm sóc cây sầu riêng, Bài 7. Kĩ thuật trồng và chăm sóc cây chuối"
+      ]
+    }
+  ],
+  "lop": [
+    {
+      "lop": 6,
+      "chuong": [
+        {
+          "id": "cn6-nha-o",
+          "ten": "Nhà ở",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương I. Nhà ở",
+            "CTST": "Chương 1. Nhà ở",
+            "CD": "Chủ đề 1. Nhà ở"
+          },
+          "cac_bai": [
+            "Bài 1. Khái quát về nhà ở",
+            "Bài 2. Xây dựng nhà ở",
+            "Bài 3. Ngôi nhà thông minh",
+            "Ôn tập Chương I"
+          ],
+          "yeu_cau_can_dat": [
+            "Nêu được vai trò và đặc điểm chung của nhà ở",
+            "Nhận biết được một số kiến trúc nhà ở đặc trưng ở Việt Nam",
+            "Kể được tên một số vật liệu phổ biến dùng trong xây dựng nhà ở",
+            "Mô tả được một số bước chính trong xây dựng nhà ở",
+            "Mô tả và nhận diện được những đặc điểm của ngôi nhà thông minh",
+            "Nêu được một số biện pháp sử dụng năng lượng trong gia đình tiết kiệm, hiệu quả"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Kiến thức Khoa học tự nhiên 6 về một số vật liệu thông dụng",
+            "Hiểu biết đời sống về nhà ở và các đồ dùng trong gia đình"
+          ],
+          "chua_duoc_dung": [
+            "Kiến thức về đồ dùng điện trong gia đình: cấu tạo, nguyên lí làm việc của đèn điện, nồi cơm điện, bếp hồng ngoại (Chương IV lớp 6)",
+            "Kiến thức về mạch điện, an toàn điện và sơ cứu tai nạn điện (Công nghệ 8 Chương III, IV)",
+            "Kiến thức về lắp đặt mạng điện trong nhà (Công nghệ 9)",
+            "Kiến thức về bản vẽ nhà (Công nghệ 8 Chương I)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Trắc nghiệm nhận biết vai trò, đặc điểm chung của nhà ở và các kiểu kiến trúc nhà ở Việt Nam",
+            "Tự luận mô tả các bước chính xây dựng một ngôi nhà",
+            "Bài tập tình huống: nhận diện đặc điểm ngôi nhà thông minh; đề xuất biện pháp tiết kiệm năng lượng trong gia đình"
+          ],
+          "luu_y_ra_de": "Chỉ ra ở mức nhận biết và mô tả; không yêu cầu vẽ bản vẽ nhà hay tính toán kết cấu, chi phí xây dựng. Không ra kiến thức về đồ dùng điện và mạch điện (chưa học)."
+        },
+        {
+          "id": "cn6-bao-quan-che-bien-thuc-pham",
+          "ten": "Bảo quản và chế biến thực phẩm",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương II. Bảo quản và chế biến thực phẩm",
+            "CTST": "Chương 2. Bảo quản và chế biến thực phẩm",
+            "CD": "Chủ đề 2. Bảo quản và chế biến thực phẩm"
+          },
+          "cac_bai": [
+            "Bài 4. Thực phẩm và dinh dưỡng",
+            "Bài 5. Phương pháp bảo quản và chế biến thực phẩm",
+            "Bài 6. Dự án: Bữa ăn kết nối yêu thương",
+            "Ôn tập Chương II"
+          ],
+          "yeu_cau_can_dat": [
+            "Nêu được vai trò của thực phẩm đối với cơ thể con người",
+            "Nhận biết được các nhóm chất dinh dưỡng chính trong thực phẩm (chất bột đường, chất đạm, chất béo, vitamin, chất khoáng, chất xơ, nước)",
+            "Trình bày được vai trò của các nhóm thực phẩm và lựa chọn được thực phẩm phù hợp",
+            "Trình bày được một số phương pháp bảo quản thực phẩm phổ biến",
+            "Trình bày được một số phương pháp chế biến thực phẩm phổ biến",
+            "Lựa chọn và chế biến được món ăn không sử dụng nhiệt",
+            "Nêu được những vấn đề cơ bản về vệ sinh an toàn thực phẩm"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Kiến thức Khoa học tự nhiên 6 về dinh dưỡng và sức khỏe",
+            "Kiến thức Chương I lớp 6 về nhà ở (khu vực bếp ăn trong gia đình)"
+          ],
+          "chua_duoc_dung": [
+            "Kiến thức chế biến thực phẩm có sử dụng nhiệt ở mức kĩ thuật chuyên sâu và tính chi phí bữa ăn theo thực đơn (Công nghệ 9 mô đun Chế biến thực phẩm)",
+            "Kiến thức về thành phần dinh dưỡng định lượng và nhu cầu dinh dưỡng theo lứa tuổi",
+            "Kiến thức về vi sinh vật gây hư hỏng thực phẩm ở mức chuyên sâu"
+          ],
+          "dang_bai_dien_hinh": [
+            "Trắc nghiệm phân loại thực phẩm theo nhóm chất dinh dưỡng",
+            "Tự luận trình bày phương pháp bảo quản, chế biến thực phẩm",
+            "Bài tập tình huống: lựa chọn thực phẩm cho bữa ăn gia đình; xây dựng thực đơn đơn giản; xử lí tình huống mất an toàn vệ sinh thực phẩm"
+          ],
+          "luu_y_ra_de": "Dự án Bài 6 chỉ ra ở mức trình bày ý tưởng và lập kế hoạch bữa ăn, không yêu cầu nấu món ăn có sử dụng nhiệt trong bài kiểm tra viết. Không ra tính toán năng lượng khẩu phần."
+        },
+        {
+          "id": "cn6-trang-phuc-thoi-trang",
+          "ten": "Trang phục và thời trang",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương III. Trang phục và thời trang",
+            "CTST": "Chương 3. Trang phục và thời trang",
+            "CD": "Chủ đề 3. Trang phục và thời trang"
+          },
+          "cac_bai": [
+            "Bài 7. Trang phục trong đời sống",
+            "Bài 8. Sử dụng và bảo quản trang phục",
+            "Bài 9. Thời trang",
+            "Ôn tập Chương III"
+          ],
+          "yeu_cau_can_dat": [
+            "Nêu được vai trò và sự đa dạng của trang phục trong đời sống",
+            "Nhận biết được một số loại vải thông dụng dùng để may trang phục",
+            "Trình bày được cách sử dụng và bảo quản một số loại trang phục thông dụng",
+            "Trình bày được những kiến thức cơ bản về thời trang và nhận ra xu hướng thời trang",
+            "Lựa chọn được trang phục phù hợp với đặc điểm, sở thích của bản thân, tính chất công việc và điều kiện gia đình"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Kiến thức Chương II lớp 6 về lựa chọn phù hợp (lựa chọn thực phẩm)",
+            "Hiểu biết đời sống về trang phục hằng ngày"
+          ],
+          "chua_duoc_dung": [
+            "Kiến thức cắt may: đo, vẽ, cắt vải và may trang phục (mô đun Cắt may, Công nghệ 9 bộ Chân trời sáng tạo)",
+            "Kiến thức về bản vẽ cắt may",
+            "Kiến thức về công nghệ dệt may và sản xuất vải ở mức chuyên sâu"
+          ],
+          "dang_bai_dien_hinh": [
+            "Trắc nghiệm nhận biết các loại vải thông dụng và đặc điểm của chúng",
+            "Tự luận trình bày cách sử dụng, bảo quản trang phục",
+            "Bài tập tình huống: lựa chọn trang phục phù hợp với hoàn cảnh, thời tiết, lứa tuổi"
+          ],
+          "luu_y_ra_de": "Chỉ ra ở mức nhận biết, lựa chọn và bảo quản; không yêu cầu may vá hay vẽ mẫu trang phục. Không ra kiến thức về sợi vải ở mức cấu tạo hóa học."
+        },
+        {
+          "id": "cn6-do-dung-dien-trong-gia-dinh",
+          "ten": "Đồ dùng điện trong gia đình",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương IV. Đồ dùng điện trong gia đình",
+            "CTST": "Chương 4. Đồ dùng điện trong gia đình",
+            "CD": "Chủ đề 4. Đồ dùng điện trong gia đình"
+          },
+          "cac_bai": [
+            "Bài 10. Khái quát về đồ dùng điện trong gia đình",
+            "Bài 11. Đèn điện",
+            "Bài 12. Nồi cơm điện",
+            "Bài 13. Bếp hồng ngoại",
+            "Bài 14. Dự án: An toàn và tiết kiệm điện trong gia đình",
+            "Ôn tập Chương IV"
+          ],
+          "yeu_cau_can_dat": [
+            "Nêu được khái niệm và phân loại đồ dùng điện trong gia đình",
+            "Trình bày được cấu tạo, nguyên lí làm việc, thông số kĩ thuật và công dụng của đèn điện, nồi cơm điện, bếp hồng ngoại",
+            "Sử dụng được đồ dùng điện trong gia đình đúng cách, an toàn và tiết kiệm",
+            "Lựa chọn được đồ dùng điện tiết kiệm năng lượng, phù hợp với điều kiện gia đình",
+            "Đề xuất được biện pháp an toàn và tiết kiệm điện trong gia đình"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Kiến thức Khoa học tự nhiên 6, 7 về năng lượng điện và tác dụng của dòng điện",
+            "Kiến thức Chương I lớp 6 về sử dụng năng lượng tiết kiệm trong gia đình"
+          ],
+          "chua_duoc_dung": [
+            "Kiến thức về mạch điện, cảm biến và mô đun cảm biến (Công nghệ 8 Chương IV)",
+            "Kiến thức về tai nạn điện, biện pháp an toàn điện và sơ cứu người bị tai nạn điện (Công nghệ 8 Chương III)",
+            "Kiến thức về lắp đặt, thiết kế mạng điện trong nhà và tính toán chi phí (Công nghệ 9)",
+            "Kiến thức về quạt điện, máy giặt, điều hòa không khí (chỉ có trong bộ Cánh diều, không có trong KNTT lớp 6)",
+            "Tính toán điện năng tiêu thụ và tiền điện ở mức công thức phức tạp"
+          ],
+          "dang_bai_dien_hinh": [
+            "Trắc nghiệm nhận biết phân loại đồ dùng điện và thông số kĩ thuật (công suất, điện áp định mức)",
+            "Tự luận mô tả nguyên lí làm việc của đèn điện, nồi cơm điện, bếp hồng ngoại",
+            "Bài tập tình huống: sử dụng đồ dùng điện an toàn, tiết kiệm; lựa chọn đồ dùng điện phù hợp"
+          ],
+          "luu_y_ra_de": "Chỉ ra nguyên lí làm việc ở mức mô tả định tính, không yêu cầu sơ đồ mạch điện chi tiết hay tính toán điện năng tiêu thụ. Không ra kiến thức an toàn điện chuyên sâu và sơ cứu (lớp 8)."
+        }
+      ],
+      "ghi_chu_chua_chac": [
+        "Ranh giới học kì (Chương I, II học kì 1; Chương III, IV học kì 2) theo phân phối chương trình phổ biến; một số trường có thể dịch chuyển 1-2 tuần.",
+        "Tên các bài trong Chương 2 bộ Cánh diều chưa tra đủ, đã ghi theo tên chủ đề chung."
+      ]
+    },
+    {
+      "lop": 7,
+      "chuong": [
+        {
+          "id": "cn7-trong-trot",
+          "ten": "Trồng trọt",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương 1. Trồng trọt",
+            "CTST": "Chương 1. Mở đầu về trồng trọt; Chương 2. Trồng và chăm sóc cây trồng",
+            "CD": "(đối chiếu mục lục)"
+          },
+          "cac_bai": [
+            "Bài 1. Giới thiệu về trồng trọt",
+            "Bài 2. Làm đất trồng cây",
+            "Bài 3. Gieo trồng, chăm sóc và phòng trừ sâu, bệnh cho cây trồng",
+            "Bài 4. Thu hoạch sản phẩm trồng trọt",
+            "Bài 5. Nhân giống vô tính cây trồng",
+            "Bài 6. Dự án trồng rau an toàn",
+            "Ôn tập Chương I"
+          ],
+          "yeu_cau_can_dat": [
+            "Nêu được vai trò của trồng trọt đối với đời sống và sản xuất",
+            "Trình bày được quy trình trồng trọt: làm đất, gieo trồng, chăm sóc, phòng trừ sâu bệnh, thu hoạch",
+            "Trình bày được các phương pháp nhân giống vô tính cây trồng (giâm cành, chiết cành, ghép cành)",
+            "Lập được kế hoạch và thực hiện được dự án trồng rau an toàn"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Kiến thức Khoa học tự nhiên 6, 7 về thực vật, đất trồng và sinh trưởng của cây",
+            "Kiến thức Công nghệ 6 Chương II về bảo quản và chế biến thực phẩm (thu hoạch, bảo quản sản phẩm)"
+          ],
+          "chua_duoc_dung": [
+            "Kiến thức kĩ thuật trồng và chăm sóc từng loại cây ăn quả cụ thể (Công nghệ 9 mô đun Trồng cây ăn quả)",
+            "Kiến thức về nông nghiệp công nghệ cao, nông nghiệp 4.0 và cảm biến trong trồng trọt (Công nghệ 9 bộ Chân trời sáng tạo, Công nghệ 10-12)",
+            "Kiến thức về nhân giống hữu tính và chọn giống cây trồng ở mức chuyên sâu"
+          ],
+          "dang_bai_dien_hinh": [
+            "Trắc nghiệm nhận biết các bước trong quy trình trồng trọt",
+            "Tự luận trình bày quy trình làm đất, gieo trồng, chăm sóc cây trồng",
+            "Bài tập tình huống: lựa chọn phương pháp nhân giống vô tính phù hợp; lập kế hoạch trồng rau an toàn"
+          ],
+          "luu_y_ra_de": "Chỉ ra ở mức quy trình chung; không yêu cầu kĩ thuật trồng từng loại cây cụ thể. Bài dự án chỉ ra ở mức lập kế hoạch, không yêu cầu số liệu thực nghiệm."
+        },
+        {
+          "id": "cn7-lam-nghiep",
+          "ten": "Lâm nghiệp",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương 2. Lâm nghiệp",
+            "CTST": "Chương 3. Trồng, chăm sóc và bảo vệ rừng",
+            "CD": "(đối chiếu mục lục)"
+          },
+          "cac_bai": [
+            "Bài 7. Giới thiệu về rừng",
+            "Bài 8. Trồng, chăm sóc và bảo vệ rừng",
+            "Ôn tập Chương II"
+          ],
+          "yeu_cau_can_dat": [
+            "Nêu được vai trò của rừng đối với đời sống, sản xuất và môi trường",
+            "Nhận biết được các loại rừng ở Việt Nam (rừng phòng hộ, rừng đặc dụng, rừng sản xuất)",
+            "Trình bày được quy trình trồng, chăm sóc và bảo vệ rừng"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Kiến thức Chương 1 lớp 7 về quy trình trồng trọt (làm đất, gieo trồng, chăm sóc)",
+            "Kiến thức Khoa học tự nhiên 7 về hệ sinh thái và đa dạng sinh học"
+          ],
+          "chua_duoc_dung": [
+            "Kiến thức quản lí, khai thác rừng và lâm nghiệp chuyên sâu",
+            "Kiến thức về cây lâm nghiệp cụ thể từng loài",
+            "Kiến thức về lâm nghiệp công nghệ cao"
+          ],
+          "dang_bai_dien_hinh": [
+            "Trắc nghiệm nhận biết vai trò của rừng và các loại rừng",
+            "Tự luận trình bày quy trình trồng, chăm sóc và bảo vệ rừng",
+            "Bài tập tình huống: đề xuất biện pháp bảo vệ rừng ở địa phương"
+          ],
+          "luu_y_ra_de": "Chương ngắn (2 bài); đề kiểm tra thường gộp với Chương 1. Không ra kiến thức lâm sinh chuyên sâu."
+        },
+        {
+          "id": "cn7-chan-nuoi",
+          "ten": "Chăn nuôi",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương 3. Chăn nuôi",
+            "CTST": "Chương 4. Mở đầu về chăn nuôi; Chương 5. Nuôi dưỡng, chăm sóc và phòng, trị bệnh cho vật nuôi",
+            "CD": "(đối chiếu mục lục)"
+          },
+          "cac_bai": [
+            "Bài 9. Giới thiệu về chăn nuôi",
+            "Bài 10. Nuôi dưỡng và chăm sóc vật nuôi",
+            "Bài 11. Phòng và trị bệnh cho vật nuôi",
+            "Bài 12. Chăn nuôi gà thịt trong nông hộ",
+            "Bài 13. Thực hành: Lập kế hoạch nuôi vật nuôi trong gia đình",
+            "Ôn tập Chương III"
+          ],
+          "yeu_cau_can_dat": [
+            "Nêu được vai trò của chăn nuôi đối với đời sống và sản xuất",
+            "Trình bày được kĩ thuật nuôi dưỡng và chăm sóc vật nuôi (thức ăn, chuồng trại, vệ sinh)",
+            "Trình bày được một số biện pháp phòng và trị bệnh cho vật nuôi",
+            "Trình bày được kĩ thuật chăn nuôi gà thịt trong nông hộ",
+            "Lập được kế hoạch nuôi vật nuôi trong gia đình"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Kiến thức Khoa học tự nhiên 7 về động vật và dinh dưỡng động vật",
+            "Kiến thức Chương 1 lớp 7 về quy trình sản xuất nông nghiệp"
+          ],
+          "chua_duoc_dung": [
+            "Kiến thức thú y chuyên sâu: chẩn đoán và điều trị bệnh cụ thể cho từng loài vật nuôi",
+            "Kiến thức chăn nuôi công nghiệp quy mô lớn và công nghệ chăn nuôi hiện đại",
+            "Kiến thức về giống vật nuôi và chọn giống ở mức chuyên sâu"
+          ],
+          "dang_bai_dien_hinh": [
+            "Trắc nghiệm nhận biết vai trò chăn nuôi và các biện pháp phòng bệnh",
+            "Tự luận trình bày kĩ thuật nuôi dưỡng, chăm sóc vật nuôi; kĩ thuật chăn nuôi gà thịt",
+            "Bài tập tình huống: lập kế hoạch nuôi vật nuôi trong gia đình; xử lí tình huống vật nuôi bị bệnh"
+          ],
+          "luu_y_ra_de": "Chỉ ra ở mức kĩ thuật chung và chăn nuôi gà thịt; không yêu cầu kĩ thuật chăn nuôi từng loài khác hay kiến thức thú y chuyên sâu."
+        },
+        {
+          "id": "cn7-thuy-san",
+          "ten": "Thủy sản",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương 4. Thủy sản",
+            "CTST": "Chương 6. Nuôi thủy sản",
+            "CD": "(đối chiếu mục lục)"
+          },
+          "cac_bai": [
+            "Bài 14. Giới thiệu về thủy sản",
+            "Bài 15. Nuôi cá ao",
+            "Bài 16. Thực hành: Lập kế hoạch nuôi cá cảnh",
+            "Ôn tập Chương IV"
+          ],
+          "yeu_cau_can_dat": [
+            "Nêu được vai trò của thủy sản đối với đời sống và sản xuất",
+            "Trình bày được kĩ thuật nuôi cá ao (chuẩn bị ao, thả giống, chăm sóc, thu hoạch)",
+            "Lập được kế hoạch nuôi cá cảnh"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Kiến thức Chương 3 lớp 7 về kĩ thuật chăn nuôi (nuôi dưỡng, chăm sóc, phòng bệnh)",
+            "Kiến thức Khoa học tự nhiên 7 về môi trường nước và sinh vật thủy sinh"
+          ],
+          "chua_duoc_dung": [
+            "Kiến thức nuôi thủy sản thương phẩm quy mô lớn và công nghệ nuôi thủy sản hiện đại",
+            "Kiến thức về bệnh thủy sản ở mức chuyên sâu",
+            "Kiến thức về chế biến và bảo quản thủy sản (Công nghệ 9 mô đun Chế biến thực phẩm)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Trắc nghiệm nhận biết vai trò thủy sản và các bước nuôi cá ao",
+            "Tự luận trình bày kĩ thuật nuôi cá ao",
+            "Bài tập tình huống: lập kế hoạch nuôi cá cảnh"
+          ],
+          "luu_y_ra_de": "Chương ngắn (3 bài); đề kiểm tra thường gộp với Chương 3. Không ra kiến thức nuôi trồng thủy sản chuyên sâu."
+        }
+      ],
+      "ghi_chu_chua_chac": [
+        "Tên chương và tên bài bộ Cánh diều chưa tra đủ, đã ghi '(đối chiếu mục lục)'.",
+        "Ranh giới học kì (Chương 1, 2 học kì 1; Chương 3, 4 học kì 2) theo phân phối chương trình phổ biến, cần đối chiếu với nhà trường."
+      ]
+    },
+    {
+      "lop": 8,
+      "chuong": [
+        {
+          "id": "cn8-ve-ki-thuat",
+          "ten": "Vẽ kĩ thuật",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương I. Vẽ kĩ thuật",
+            "CTST": "Chương 1. Vẽ kĩ thuật",
+            "CD": "Chủ đề 1. Vẽ kĩ thuật"
+          },
+          "cac_bai": [
+            "Bài 1. Một số tiêu chuẩn trình bày bản vẽ kĩ thuật",
+            "Bài 2. Hình chiếu vuông góc",
+            "Bài 3. Bản vẽ chi tiết",
+            "Bài 4. Bản vẽ lắp",
+            "Bài 5. Bản vẽ nhà",
+            "Ôn tập Chương I"
+          ],
+          "yeu_cau_can_dat": [
+            "Trình bày được một số tiêu chuẩn trình bày bản vẽ kĩ thuật (khổ giấy, tỉ lệ, loại nét vẽ, chữ viết)",
+            "Đọc được bản vẽ hình chiếu vuông góc của vật thể đơn giản",
+            "Đọc được bản vẽ chi tiết, bản vẽ lắp và bản vẽ nhà đơn giản",
+            "Vẽ được hình chiếu vuông góc của vật thể đơn giản và ghi được kích thước"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Kiến thức Toán 7, 8 về hình học không gian (hình hộp, hình lăng trụ, hình chóp)",
+            "Kiến thức Công nghệ 6 Chương I về nhà ở (đọc bản vẽ nhà)"
+          ],
+          "chua_duoc_dung": [
+            "Kiến thức vẽ bằng phần mềm CAD và thiết kế kĩ thuật chuyên sâu (Công nghệ 10-12)",
+            "Kiến thức hình chiếu phối cảnh và hình cắt, mặt cắt phức tạp",
+            "Kiến thức bản vẽ xây dựng chi tiết (mặt bằng, mặt cắt, mặt đứng đầy đủ)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Trắc nghiệm nhận biết các tiêu chuẩn trình bày bản vẽ (khổ giấy, tỉ lệ, nét vẽ)",
+            "Bài tập đọc bản vẽ: xác định hình chiếu, đọc kích thước trên bản vẽ chi tiết, bản vẽ lắp, bản vẽ nhà",
+            "Bài tập vẽ hình chiếu vuông góc của vật thể đơn giản"
+          ],
+          "luu_y_ra_de": "Phần vẽ hình chiếu chỉ ra ở mức vật thể đơn giản; không yêu cầu vẽ chi tiết phức tạp hay dùng phần mềm CAD. Bài tập đọc bản vẽ phải kèm hình vẽ trong đề."
+        },
+        {
+          "id": "cn8-co-khi",
+          "ten": "Cơ khí",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương II. Cơ khí",
+            "CTST": "Chương 2. Cơ khí",
+            "CD": "Chủ đề 2. Cơ khí"
+          },
+          "cac_bai": [
+            "Bài 6. Vật liệu cơ khí",
+            "Bài 7. Truyền và biến đổi chuyển động",
+            "Bài 8. Gia công cơ khí bằng tay",
+            "Bài 9. Ngành nghề trong lĩnh vực cơ khí",
+            "Bài 10. Dự án: Gia công chi tiết bằng dụng cụ cầm tay",
+            "Ôn tập Chương II"
+          ],
+          "yeu_cau_can_dat": [
+            "Nêu được tính chất cơ bản và phạm vi sử dụng của một số vật liệu cơ khí thông dụng (kim loại, hợp kim, chất dẻo)",
+            "Trình bày được một số phương pháp truyền và biến đổi chuyển động (truyền động đai, bánh răng, trục vít, tay quay - con trượt)",
+            "Trình bày được quy trình và thực hiện được một số thao tác gia công cơ khí bằng tay (đo, vạch dấu, cưa, đục, dũa, khoan)",
+            "Kể được tên một số ngành nghề trong lĩnh vực cơ khí",
+            "Vận dụng được kiến thức để gia công một chi tiết đơn giản bằng dụng cụ cầm tay"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Kiến thức Khoa học tự nhiên 7, 8 về tính chất của kim loại và chuyển động cơ học",
+            "Kiến thức Chương I lớp 8 về đọc bản vẽ chi tiết (đọc bản vẽ trước khi gia công)"
+          ],
+          "chua_duoc_dung": [
+            "Kiến thức gia công bằng máy (tiện, phay, bào) và công nghệ CAD/CAM",
+            "Kiến thức về vật liệu mới (vật liệu composite, vật liệu nano)",
+            "Kiến thức về động cơ và máy móc phức tạp"
+          ],
+          "dang_bai_dien_hinh": [
+            "Trắc nghiệm nhận biết tính chất vật liệu cơ khí và các phương pháp truyền động",
+            "Tự luận trình bày quy trình gia công cơ khí bằng tay",
+            "Bài tập tình huống: lựa chọn vật liệu và dụng cụ gia công phù hợp; tính tỉ số truyền đơn giản"
+          ],
+          "luu_y_ra_de": "Tính tỉ số truyền chỉ ra ở mức đơn giản (bánh răng, đai). Không ra gia công bằng máy và kiến thức vật liệu ở mức cấu tạo kim loại học."
+        },
+        {
+          "id": "cn8-an-toan-dien",
+          "ten": "An toàn điện",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương III. An toàn điện",
+            "CTST": "Chương 3. An toàn điện",
+            "CD": "Chủ đề 3. An toàn điện"
+          },
+          "cac_bai": [
+            "Bài 11. Tai nạn điện",
+            "Bài 12. Biện pháp an toàn điện",
+            "Bài 13. Sơ cứu người bị tai nạn điện",
+            "Ôn tập Chương III"
+          ],
+          "yeu_cau_can_dat": [
+            "Nêu được nguyên nhân gây ra tai nạn điện",
+            "Trình bày được các biện pháp an toàn điện trong gia đình và trong sản xuất",
+            "Trình bày và thực hiện được các bước sơ cứu người bị tai nạn điện"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Kiến thức Khoa học tự nhiên 8 về tác dụng của dòng điện đối với cơ thể người",
+            "Kiến thức Công nghệ 6 Chương IV về sử dụng đồ dùng điện an toàn"
+          ],
+          "chua_duoc_dung": [
+            "Kiến thức về mạch điện điều khiển và lắp đặt mạng điện (Công nghệ 8 Chương IV, Công nghệ 9)",
+            "Kiến thức về điện 3 pha và an toàn điện trong công nghiệp",
+            "Kiến thức y tế chuyên sâu về cấp cứu (chỉ sơ cứu cơ bản: tách nạn nhân khỏi nguồn điện, hô hấp nhân tạo, gọi cấp cứu)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Trắc nghiệm nhận biết nguyên nhân tai nạn điện và biện pháp an toàn điện",
+            "Tự luận trình bày các bước sơ cứu người bị tai nạn điện",
+            "Bài tập tình huống: xử lí tình huống mất an toàn điện trong gia đình"
+          ],
+          "luu_y_ra_de": "Chương ngắn (3 bài), thường gộp với Chương IV khi ra đề. Sơ cứu chỉ ra ở mức các bước thực hiện, không ra kiến thức y khoa chuyên sâu."
+        },
+        {
+          "id": "cn8-ki-thuat-dien",
+          "ten": "Kĩ thuật điện",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương IV. Kĩ thuật điện",
+            "CTST": "Chương 4. Kĩ thuật điện",
+            "CD": "Chủ đề 4. Kĩ thuật điện"
+          },
+          "cac_bai": [
+            "Bài 14. Khái quát về mạch điện",
+            "Bài 15. Cảm biến và mô đun cảm biến",
+            "Bài 16. Mạch điện điều khiển sử dụng mô đun cảm biến",
+            "Bài 17. Ngành nghề trong lĩnh vực kĩ thuật điện",
+            "Ôn tập Chương IV"
+          ],
+          "yeu_cau_can_dat": [
+            "Trình bày được khái niệm, cấu tạo và nguyên lí hoạt động của mạch điện",
+            "Nêu được vai trò, phân loại và nguyên lí hoạt động của cảm biến và mô đun cảm biến (cảm biến ánh sáng, nhiệt độ, độ ẩm)",
+            "Lắp được mạch điện điều khiển đơn giản sử dụng mô đun cảm biến",
+            "Kể được tên một số ngành nghề trong lĩnh vực kĩ thuật điện"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Kiến thức Khoa học tự nhiên 8 về mạch điện, cường độ dòng điện, hiệu điện thế",
+            "Kiến thức Chương III lớp 8 về an toàn điện",
+            "Kiến thức Chương I lớp 8 về đọc bản vẽ (sơ đồ mạch điện)"
+          ],
+          "chua_duoc_dung": [
+            "Kiến thức lập trình vi điều khiển và IoT",
+            "Kiến thức mạch điện xoay chiều 3 pha và máy điện",
+            "Kiến thức thiết kế và lắp đặt mạng điện trong nhà (Công nghệ 9)",
+            "Kiến thức về cảm biến chuyên sâu (cảm biến siêu âm, cảm biến khí gas)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Trắc nghiệm nhận biết các thành phần mạch điện và loại cảm biến",
+            "Tự luận mô tả nguyên lí hoạt động của mạch điện điều khiển sử dụng mô đun cảm biến",
+            "Bài tập tình huống: lựa chọn cảm biến phù hợp; mô tả hoạt động của mạch điện điều khiển trong hệ thống tưới cây, bật đèn tự động"
+          ],
+          "luu_y_ra_de": "Chỉ ra ở mức mô tả nguyên lí và lắp mạch đơn giản theo sơ đồ cho sẵn; không yêu cầu thiết kế mạch mới hay lập trình. Không ra tính toán mạch điện phức tạp."
+        },
+        {
+          "id": "cn8-thiet-ke-ki-thuat",
+          "ten": "Thiết kế kĩ thuật",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương V. Thiết kế kĩ thuật",
+            "CTST": "Chương 5. Thiết kế kĩ thuật",
+            "CD": "Chủ đề 5. Thiết kế kĩ thuật"
+          },
+          "cac_bai": [
+            "Bài 18. Giới thiệu về thiết kế kĩ thuật",
+            "Bài 19. Các bước cơ bản trong thiết kế kĩ thuật",
+            "Bài 20. Dự án: Thiết kế hệ thống tưới cây tự động",
+            "Ôn tập Chương V"
+          ],
+          "yeu_cau_can_dat": [
+            "Trình bày được khái niệm thiết kế kĩ thuật và vai trò của thiết kế kĩ thuật",
+            "Trình bày được các bước cơ bản trong thiết kế kĩ thuật (xác định vấn đề, tìm hiểu, đề xuất giải pháp, chế tạo mẫu, đánh giá, cải tiến)",
+            "Vận dụng được quy trình thiết kế kĩ thuật để thiết kế hệ thống tưới cây tự động"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Kiến thức Chương I lớp 8 về bản vẽ kĩ thuật (vẽ phác thảo sản phẩm)",
+            "Kiến thức Chương IV lớp 8 về mạch điện điều khiển sử dụng mô đun cảm biến (hệ thống tưới tự động)",
+            "Kiến thức Chương 1 lớp 7 về trồng trọt (nhu cầu nước của cây)"
+          ],
+          "chua_duoc_dung": [
+            "Kiến thức thiết kế kĩ thuật chuyên sâu và thiết kế trên máy tính CAD (Công nghệ 10-12)",
+            "Kiến thức lập trình điều khiển tự động",
+            "Kiến thức về hệ thống tưới công nghiệp"
+          ],
+          "dang_bai_dien_hinh": [
+            "Trắc nghiệm nhận biết các bước trong quy trình thiết kế kĩ thuật",
+            "Tự luận trình bày các bước thiết kế một sản phẩm đơn giản",
+            "Bài tập tình huống: đề xuất giải pháp thiết kế hệ thống tưới cây tự động theo các bước"
+          ],
+          "luu_y_ra_de": "Dự án chỉ ra ở mức trình bày quy trình thiết kế và phác thảo giải pháp, không yêu cầu chế tạo sản phẩm thật trong bài kiểm tra viết."
+        }
+      ],
+      "ghi_chu_chua_chac": [
+        "Tên chương bộ CTST và Cánh diều ghi theo chủ đề chung của chương trình (Vẽ kĩ thuật, Cơ khí, An toàn điện, Kĩ thuật điện, Thiết kế kĩ thuật); tên bài cụ thể từng bộ cần đối chiếu mục lục.",
+        "Ranh giới học kì (Chương I, II học kì 1; Chương III, IV, V học kì 2) theo phân phối chương trình phổ biến."
+      ]
+    },
+    {
+      "lop": 9,
+      "chuong": [
+        {
+          "id": "cn9-dinh-huong-nghe-nghiep",
+          "ten": "Định hướng nghề nghiệp",
+          "mo_dun": "Định hướng nghề nghiệp",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Công nghệ 9. Định hướng nghề nghiệp",
+            "CTST": "Chủ đề 1. Nghề nghiệp trong lĩnh vực kĩ thuật, công nghệ; Chủ đề 2. Giáo dục kĩ thuật, công nghệ trong hệ thống giáo dục quốc dân; Chủ đề 3. Thị trường lao động kĩ thuật, công nghệ tại Việt Nam; Chủ đề 4. Lựa chọn nghề nghiệp trong lĩnh vực kĩ thuật, công nghệ",
+            "CD": "Bài 1. Ngành nghề trong lĩnh vực kĩ thuật, công nghệ; Bài 2. Giáo dục kĩ thuật, công nghệ trong hệ thống giáo dục quốc dân; Bài 3. Thị trường lao động kĩ thuật, công nghệ tại Việt Nam; Bài 4. Lí thuyết cơ bản về lựa chọn nghề nghiệp; Bài 5. Lựa chọn nghề nghiệp trong lĩnh vực kĩ thuật, công nghệ"
+          },
+          "cac_bai": [
+            "Bài 1. Nghề nghiệp trong lĩnh vực kĩ thuật và công nghệ",
+            "Bài 2. Cơ cấu hệ thống giáo dục quốc dân",
+            "Bài 3. Thị trường lao động kĩ thuật, công nghệ tại Việt Nam",
+            "Bài 4. Quy trình lựa chọn nghề nghiệp",
+            "Bài 5. Dự án: Tự đánh giá mức độ phù hợp của bản thân với một số ngành nghề thuộc lĩnh vực kĩ thuật, công nghệ"
+          ],
+          "yeu_cau_can_dat": [
+            "Nêu được vai trò và đặc điểm của nghề nghiệp trong lĩnh vực kĩ thuật và công nghệ",
+            "Trình bày được cơ cấu hệ thống giáo dục quốc dân và các con đường học tập sau trung học cơ sở",
+            "Nêu được đặc điểm thị trường lao động kĩ thuật, công nghệ tại Việt Nam",
+            "Vận dụng được quy trình lựa chọn nghề nghiệp (tìm hiểu bản thân, tìm hiểu nghề, ra quyết định)",
+            "Tự đánh giá được mức độ phù hợp của bản thân với một số ngành nghề thuộc lĩnh vực kĩ thuật, công nghệ"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Kiến thức Công nghệ 6-8 về các lĩnh vực kĩ thuật, công nghệ (nhà ở, nông nghiệp, cơ khí, điện, thiết kế)",
+            "Kiến thức Giáo dục công dân 9 về quyền và nghĩa vụ học tập, lựa chọn nghề nghiệp"
+          ],
+          "chua_duoc_dung": [
+            "Kiến thức chuyên môn của từng mô đun trải nghiệm nghề nghiệp (học sinh chỉ học 1 mô đun do nhà trường chọn)",
+            "Kiến thức hướng nghiệp chuyên sâu bậc trung học phổ thông",
+            "Thông tin tuyển sinh, tuyển dụng cụ thể từng năm (chỉ dùng số liệu minh họa trong sách)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Trắc nghiệm nhận biết các ngành nghề kĩ thuật, công nghệ và cơ cấu hệ thống giáo dục quốc dân",
+            "Tự luận trình bày quy trình lựa chọn nghề nghiệp",
+            "Bài tập tình huống: tự đánh giá mức độ phù hợp của bản thân với một ngành nghề; tư vấn lựa chọn con đường học tập sau lớp 9"
+          ],
+          "luu_y_ra_de": "Mô đun bắt buộc của lớp 9. Nội dung mang tính định hướng, không ra số liệu thị trường lao động chi tiết ngoài sách. Dự án Bài 5 chỉ ra ở mức tự đánh giá, không chấm đúng/sai sở thích cá nhân."
+        },
+        {
+          "id": "cn9-che-bien-thuc-pham",
+          "ten": "Chế biến thực phẩm",
+          "mo_dun": "Chế biến thực phẩm",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Công nghệ 9. Trải nghiệm nghề nghiệp. Mô đun Chế biến thực phẩm",
+            "CTST": "(CTST không có mô đun này; CTST có mô đun Cắt may và Nông nghiệp 4.0)",
+            "CD": "Chủ đề 1. Chất dinh dưỡng và an toàn trong chế biến thực phẩm; Chủ đề 2. Thực hành chế biến thực phẩm; Chủ đề 3. Ngành nghề liên quan đến chế biến thực phẩm"
+          },
+          "cac_bai": [
+            "Bài 1. Thành phần dinh dưỡng trong thực phẩm",
+            "Bài 2. Lựa chọn và bảo quản thực phẩm",
+            "Bài 3. Một số ngành nghề liên quan đến chế biến thực phẩm",
+            "Bài 4. An toàn lao động và an toàn vệ sinh thực phẩm",
+            "Bài 5. Dự án: Tính toán chi phí bữa ăn theo thực đơn",
+            "Bài 6. Chế biến thực phẩm có sử dụng nhiệt",
+            "Bài 7. Chế biến thực phẩm không sử dụng nhiệt"
+          ],
+          "yeu_cau_can_dat": [
+            "Trình bày được thành phần dinh dưỡng trong thực phẩm và vai trò của từng chất dinh dưỡng",
+            "Lựa chọn và bảo quản được thực phẩm",
+            "Kể được tên một số ngành nghề liên quan đến chế biến thực phẩm",
+            "Trình bày được các yêu cầu an toàn lao động và an toàn vệ sinh thực phẩm trong chế biến",
+            "Tính được chi phí bữa ăn theo thực đơn",
+            "Chế biến được một số món ăn có sử dụng nhiệt và không sử dụng nhiệt"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Kiến thức Công nghệ 6 Chương II về thực phẩm, dinh dưỡng và phương pháp bảo quản, chế biến thực phẩm",
+            "Kiến thức Khoa học tự nhiên 6-8 về dinh dưỡng và vệ sinh an toàn thực phẩm"
+          ],
+          "chua_duoc_dung": [
+            "Kiến thức chế biến thực phẩm công nghiệp và công nghệ thực phẩm chuyên sâu (trung học phổ thông, cao đẳng)",
+            "Kiến thức về dinh dưỡng lâm sàng và bệnh học dinh dưỡng",
+            "Kiến thức của các mô đun khác (Lắp đặt mạng điện, Trồng cây ăn quả) nếu nhà trường không chọn mô đun này"
+          ],
+          "dang_bai_dien_hinh": [
+            "Trắc nghiệm nhận biết thành phần dinh dưỡng và nguyên tắc an toàn vệ sinh thực phẩm",
+            "Tự luận trình bày quy trình chế biến món ăn có/không sử dụng nhiệt",
+            "Bài tập tình huống: tính chi phí bữa ăn theo thực đơn; lựa chọn và bảo quản thực phẩm; xử lí tình huống mất an toàn vệ sinh thực phẩm"
+          ],
+          "luu_y_ra_de": "Mô đun trải nghiệm nghề nghiệp do nhà trường lựa chọn (1 trong 3 mô đun). Sách gồm 2 chương (Chương 1. Dinh dưỡng và thực phẩm; Chương 2. Tổ chức và chế biến món ăn). Bài thực hành chế biến chỉ ra ở mức mô tả quy trình trong bài kiểm tra viết, không yêu cầu nấu ăn thật."
+        },
+        {
+          "id": "cn9-lap-dat-mang-dien-trong-nha",
+          "ten": "Lắp đặt mạng điện trong nhà",
+          "mo_dun": "Lắp đặt mạng điện trong nhà",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Công nghệ 9. Trải nghiệm nghề nghiệp. Mô đun Lắp đặt mạng điện trong nhà",
+            "CTST": "Chủ đề 1. Thiết bị đóng cắt và lấy điện trong gia đình; Chủ đề 2. Dụng cụ đo điện cơ bản; Chủ đề 3. Thiết kế mạng điện trong nhà; Chủ đề 4. Thiết bị, vật liệu, dụng cụ dùng cho lắp đặt mạng điện trong nhà; Chủ đề 5. Tính toán chi phí cho mạng điện trong nhà đơn giản; Chủ đề 6. Thực hành lắp đặt mạng điện trong nhà; Chủ đề 7. Một số ngành nghề liên quan đến lắp đặt mạng điện trong nhà",
+            "CD": "Bài 1. Thiết bị đóng cắt và lấy điện trong gia đình; Bài 3. Thiết kế mạng điện trong nhà; Bài 4. Thiết bị, vật liệu, dụng cụ dùng cho lắp đặt mạng điện trong nhà; Bài 5. Tính toán chi phí cho mạng điện trong nhà; Bài 6. Thực hành lắp đặt mạng điện trong nhà; Bài 7. Một số ngành nghề liên quan đến lắp đặt mạng điện trong nhà"
+          },
+          "cac_bai": [
+            "Bài 1. Thiết bị đóng cắt và lấy điện trong gia đình",
+            "Bài 2. Dụng cụ đo điện cơ bản",
+            "Bài 3. Thiết kế mạng điện trong nhà",
+            "Bài 4. Vật liệu, thiết bị và dụng cụ dùng cho lắp đặt mạng điện trong nhà",
+            "Bài 5. Tính toán chi phí mạng điện trong nhà",
+            "Bài 6. Thực hành: Lắp đặt mạng điện trong nhà",
+            "Bài 7. Một số ngành nghề liên quan đến lắp đặt mạng điện trong nhà"
+          ],
+          "yeu_cau_can_dat": [
+            "Mô tả được chức năng, cấu tạo và thông số kĩ thuật của thiết bị đóng cắt và lấy điện trong gia đình (cầu dao, aptomat, ổ cắm, phích cắm)",
+            "Sử dụng được dụng cụ đo điện cơ bản (đồng hồ vạn năng) để đo điện áp, cường độ dòng điện, điện trở",
+            "Thiết kế được mạng điện trong nhà đơn giản",
+            "Tính được chi phí lắp đặt mạng điện trong nhà",
+            "Lắp đặt được mạng điện trong nhà đơn giản đảm bảo an toàn điện",
+            "Kể được tên một số ngành nghề liên quan đến lắp đặt mạng điện trong nhà"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Kiến thức Công nghệ 8 Chương III về an toàn điện và sơ cứu tai nạn điện",
+            "Kiến thức Công nghệ 8 Chương IV về mạch điện và cảm biến",
+            "Kiến thức Công nghệ 6 Chương IV về đồ dùng điện trong gia đình",
+            "Kiến thức Khoa học tự nhiên 8 về mạch điện"
+          ],
+          "chua_duoc_dung": [
+            "Kiến thức về mạng điện 3 pha và lắp đặt điện công nghiệp",
+            "Kiến thức về thiết kế mạng điện cho nhà cao tầng, công trình lớn",
+            "Kiến thức của các mô đun khác (Trồng cây ăn quả, Chế biến thực phẩm) nếu nhà trường không chọn mô đun này"
+          ],
+          "dang_bai_dien_hinh": [
+            "Trắc nghiệm nhận biết thiết bị đóng cắt, dụng cụ đo điện và thông số kĩ thuật",
+            "Tự luận trình bày quy trình thiết kế và lắp đặt mạng điện trong nhà",
+            "Bài tập tình huống: tính chi phí lắp đặt mạng điện; đọc sơ đồ mạng điện trong nhà đơn giản; xử lí tình huống mất an toàn điện"
+          ],
+          "luu_y_ra_de": "Mô đun trải nghiệm nghề nghiệp do nhà trường lựa chọn. Bài thực hành lắp đặt chỉ ra ở mức mô tả quy trình và đọc sơ đồ trong bài kiểm tra viết; tuyệt đối không ra bài yêu cầu học sinh thao tác với điện lưới thật trong đề kiểm tra."
+        },
+        {
+          "id": "cn9-trong-cay-an-qua",
+          "ten": "Trồng cây ăn quả",
+          "mo_dun": "Trồng cây ăn quả",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Công nghệ 9. Trải nghiệm nghề nghiệp. Mô đun Trồng cây ăn quả",
+            "CTST": "(CTST không có mô đun này; CTST có mô đun Nông nghiệp 4.0)",
+            "CD": "Chủ đề 1. Giới thiệu chung về cây ăn quả; Chủ đề 2. Các phương pháp nhân giống vô tính một số loại cây ăn quả phổ biến; Chủ đề 3. Kĩ thuật trồng và chăm sóc một số loại cây ăn quả phổ biến; Chủ đề 4. Ngành nghề liên quan đến trồng cây hoa quả"
+          },
+          "cac_bai": [
+            "Bài 1. Giới thiệu chung về cây ăn quả",
+            "Bài 2. Nhân giống vô tính cây ăn quả",
+            "Bài 3. Kĩ thuật trồng và chăm sóc cây ăn quả có múi",
+            "Bài 4. Kĩ thuật trồng và chăm sóc cây nhãn",
+            "Bài 5. Kĩ thuật trồng và chăm sóc cây xoài",
+            "Bài 6. Kĩ thuật trồng và chăm sóc cây sầu riêng",
+            "Bài 7. Kĩ thuật trồng và chăm sóc cây chuối"
+          ],
+          "yeu_cau_can_dat": [
+            "Trình bày được đặc điểm chung của cây ăn quả và vai trò của nghề trồng cây ăn quả",
+            "Trình bày được các phương pháp nhân giống vô tính cây ăn quả (giâm cành, chiết cành, ghép cành)",
+            "Trình bày được kĩ thuật trồng và chăm sóc một số loại cây ăn quả phổ biến (cây ăn quả có múi, nhãn, xoài, sầu riêng, chuối)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Kiến thức Công nghệ 7 Chương 1 về quy trình trồng trọt và nhân giống vô tính cây trồng",
+            "Kiến thức Khoa học tự nhiên 7 về sinh trưởng và phát triển của thực vật"
+          ],
+          "chua_duoc_dung": [
+            "Kiến thức kĩ thuật trồng cây ăn quả khác ngoài 5 loại trong sách (thanh long, vải, chôm chôm chỉ có trong bộ Cánh diều)",
+            "Kiến thức về bệnh hại cây ăn quả ở mức chẩn đoán, điều trị chuyên sâu",
+            "Kiến thức về trồng cây ăn quả công nghệ cao và nông nghiệp 4.0",
+            "Kiến thức của các mô đun khác nếu nhà trường không chọn mô đun này"
+          ],
+          "dang_bai_dien_hinh": [
+            "Trắc nghiệm nhận biết đặc điểm cây ăn quả và phương pháp nhân giống vô tính",
+            "Tự luận trình bày kĩ thuật trồng và chăm sóc một loại cây ăn quả cụ thể",
+            "Bài tập tình huống: lựa chọn phương pháp nhân giống phù hợp; đề xuất biện pháp chăm sóc cây ăn quả theo mùa vụ"
+          ],
+          "luu_y_ra_de": "Mô đun trải nghiệm nghề nghiệp do nhà trường lựa chọn. Chỉ ra kĩ thuật của 5 loại cây trong sách KNTT (có múi, nhãn, xoài, sầu riêng, chuối); không ra cây thanh long, vải, chôm chôm (chỉ có trong bộ Cánh diều)."
+        }
+      ],
+      "ghi_chu_chua_chac": [
+        "Lớp 9 không có chương chung cả năm: gồm mô đun bắt buộc Định hướng nghề nghiệp và 1 mô đun trải nghiệm do nhà trường chọn trong 3 mô đun (Chế biến thực phẩm, Lắp đặt mạng điện trong nhà, Trồng cây ăn quả); khung này liệt kê đủ 4 mô đun KNTT.",
+        "Mô đun Định hướng nghề nghiệp xếp học kì 1 và mô đun trải nghiệm xếp học kì 2 theo cách tổ chức phổ biến; một số trường có thể tổ chức khác.",
+        "CTST không có mô đun Chế biến thực phẩm và Trồng cây ăn quả (thay bằng Cắt may, Nông nghiệp 4.0); CD có đủ 4 mô đun tương ứng nhưng tên bài khác."
+      ]
+    }
+  ],
+  "cau_truc_de": [
+    {
+      "ten": "Đề kiểm tra giữa học kì 1 lớp 6",
+      "lop": 6,
+      "thoi_gian_phut": 45,
+      "pham_vi": ["cn6-nha-o", "cn6-bao-quan-che-bien-thuc-pham"],
+      "cau_truc": "Trắc nghiệm khách quan 40% (8 câu) + tự luận 60% (3 câu). Mức độ: nhận biết 40%, thông hiểu 30%, vận dụng 30%. Giữa học kì 1 thường chỉ ra tới Chương I và đầu Chương II (Bài 4)."
+    },
+    {
+      "ten": "Đề kiểm tra cuối học kì 1 lớp 6",
+      "lop": 6,
+      "thoi_gian_phut": 45,
+      "pham_vi": ["cn6-nha-o", "cn6-bao-quan-che-bien-thuc-pham"],
+      "cau_truc": "Trắc nghiệm khách quan 40% (8 câu) + tự luận 60% (3 câu). Mức độ: nhận biết 40%, thông hiểu 30%, vận dụng 30%."
+    },
+    {
+      "ten": "Đề kiểm tra cuối học kì 2 lớp 6",
+      "lop": 6,
+      "thoi_gian_phut": 45,
+      "pham_vi": ["cn6-trang-phuc-thoi-trang", "cn6-do-dung-dien-trong-gia-dinh"],
+      "cau_truc": "Trắc nghiệm khách quan 40% (8 câu) + tự luận 60% (3 câu). Mức độ: nhận biết 40%, thông hiểu 30%, vận dụng 30%. Trọng tâm học kì 2, có thể lồng 1-2 câu ôn tập học kì 1."
+    },
+    {
+      "ten": "Đề kiểm tra giữa học kì 1 lớp 7",
+      "lop": 7,
+      "thoi_gian_phut": 45,
+      "pham_vi": ["cn7-trong-trot"],
+      "cau_truc": "Trắc nghiệm khách quan 40% (8 câu) + tự luận 60% (3 câu). Mức độ: nhận biết 40%, thông hiểu 30%, vận dụng 30%."
+    },
+    {
+      "ten": "Đề kiểm tra cuối học kì 1 lớp 7",
+      "lop": 7,
+      "thoi_gian_phut": 45,
+      "pham_vi": ["cn7-trong-trot", "cn7-lam-nghiep"],
+      "cau_truc": "Trắc nghiệm khách quan 40% (8 câu) + tự luận 60% (3 câu). Mức độ: nhận biết 40%, thông hiểu 30%, vận dụng 30%."
+    },
+    {
+      "ten": "Đề kiểm tra cuối học kì 2 lớp 7",
+      "lop": 7,
+      "thoi_gian_phut": 45,
+      "pham_vi": ["cn7-chan-nuoi", "cn7-thuy-san"],
+      "cau_truc": "Trắc nghiệm khách quan 40% (8 câu) + tự luận 60% (3 câu). Mức độ: nhận biết 40%, thông hiểu 30%, vận dụng 30%. Trọng tâm học kì 2, có thể lồng 1-2 câu ôn tập học kì 1."
+    },
+    {
+      "ten": "Đề kiểm tra giữa học kì 1 lớp 8",
+      "lop": 8,
+      "thoi_gian_phut": 45,
+      "pham_vi": ["cn8-ve-ki-thuat"],
+      "cau_truc": "Trắc nghiệm khách quan 40% (8 câu) + tự luận 60% (3 câu). Mức độ: nhận biết 40%, thông hiểu 30%, vận dụng 30%. Bài tập vẽ hình chiếu và đọc bản vẽ phải kèm hình vẽ trong đề."
+    },
+    {
+      "ten": "Đề kiểm tra cuối học kì 1 lớp 8",
+      "lop": 8,
+      "thoi_gian_phut": 45,
+      "pham_vi": ["cn8-ve-ki-thuat", "cn8-co-khi"],
+      "cau_truc": "Trắc nghiệm khách quan 40% (8 câu) + tự luận 60% (3 câu). Mức độ: nhận biết 40%, thông hiểu 30%, vận dụng 30%. Bài tập vẽ hình chiếu và đọc bản vẽ phải kèm hình vẽ trong đề."
+    },
+    {
+      "ten": "Đề kiểm tra cuối học kì 2 lớp 8",
+      "lop": 8,
+      "thoi_gian_phut": 45,
+      "pham_vi": ["cn8-an-toan-dien", "cn8-ki-thuat-dien", "cn8-thiet-ke-ki-thuat"],
+      "cau_truc": "Trắc nghiệm khách quan 40% (8 câu) + tự luận 60% (3 câu). Mức độ: nhận biết 40%, thông hiểu 30%, vận dụng 30%. Trọng tâm học kì 2, có thể lồng 1-2 câu ôn tập học kì 1."
+    },
+    {
+      "ten": "Đề kiểm tra cuối học kì 1 lớp 9",
+      "lop": 9,
+      "thoi_gian_phut": 45,
+      "pham_vi": ["cn9-dinh-huong-nghe-nghiep"],
+      "cau_truc": "Trắc nghiệm khách quan 40% (8 câu) + tự luận 60% (3 câu). Mức độ: nhận biết 40%, thông hiểu 30%, vận dụng 30%."
+    },
+    {
+      "ten": "Đề kiểm tra cuối học kì 2 lớp 9",
+      "lop": 9,
+      "thoi_gian_phut": 45,
+      "pham_vi": ["cn9-che-bien-thuc-pham", "cn9-lap-dat-mang-dien-trong-nha", "cn9-trong-cay-an-qua"],
+      "cau_truc": "Trắc nghiệm khách quan 40% (8 câu) + tự luận 60% (3 câu). Mức độ: nhận biết 40%, thông hiểu 30%, vận dụng 30%. Nhà trường chỉ chọn 1 trong 3 mô đun trải nghiệm; khi ra đề chỉ lấy mô đun mà trường đã dạy."
+    }
+  ]
+}

@@ -11,7 +11,7 @@
 import { readFileSync } from 'node:fs'
 import { bboxOf } from './lib/svg-bbox.mjs'
 
-export const SHEET_DECOR = 'C:/Users/Lenovo/Downloads/B.svg'
+export const SHEET_DECOR = new URL('./nguon-icon/B.svg', import.meta.url)
 
 const O = 'ornament'
 export const ICONS_DECOR = [
@@ -181,7 +181,7 @@ export function importDecor(sheet = SHEET_DECOR, names = ICONS_DECOR) {
 }
 
 /** Đợt 2: 60 hoạ tiết nét tay (lưới 10×6, ô 360) — cùng cách gom theo ô như B.svg, tên theo thứ tự đọc. */
-export const SHEET_DECOR2 = 'C:/Users/Lenovo/Downloads/60 hoạ tiết bài giảng · nét tay 3px.svg'
+export const SHEET_DECOR2 = new URL('./nguon-icon/60 hoạ tiết bài giảng · nét tay 3px.svg', import.meta.url)
 export const ICONS_DECOR2 = [
   // nét vẽ tay nhấn mạnh
   ['orn-mui-ten-cong-trai', 'Mũi tên cong trái', O, 'mui ten cong ve tay nhan manh'],

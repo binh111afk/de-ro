@@ -1,0 +1,2114 @@
+{
+  "mon": "Toán",
+  "nguon": [
+    "Thông tư 32/2018/TT-BGDĐT ban hành Chương trình Giáo dục phổ thông môn Toán",
+    "Thông tư 13/2022/TT-BGDĐT sửa đổi, bổ sung một số nội dung trong Chương trình GDPT 2018",
+    "Thông tư 22/2021/TT-BGDĐT quy định về đánh giá học sinh trung học cơ sở và trung học phổ thông",
+    "Quyết định số 764/QĐ-BGDĐT năm 2023 về Cấu trúc định dạng đề thi tốt nghiệp THPT từ năm 2025",
+    "SGK Toán 6, 7, 8, 9, 10, 11, 12 bộ Kết nối tri thức với cuộc sống (NXB Giáo dục Việt Nam)",
+    "SGK Toán 6, 7, 8, 9, 10, 11, 12 bộ Chân trời sáng tạo (NXB Giáo dục Việt Nam)",
+    "SGK Toán 6, 7, 8, 9, 10, 11, 12 bộ Cánh diều (NXB Đại học Sư phạm)"
+  ],
+  "lop": [
+    {
+      "lop": 6,
+      "chuong": [
+        {
+          "id": "t6-so-tu-nhien",
+          "ten": "Tập hợp các số tự nhiên và tính chia hết",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương I. Tập hợp các số tự nhiên & Chương II. Tính chia hết trong tập hợp các số tự nhiên",
+            "CTST": "Chương 1. Số tự nhiên",
+            "CD": "Chương I. Số tự nhiên"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được tập hợp, phần tử của tập hợp; sử dụng được các ký hiệu thuộc, không thuộc, tập con",
+            "Thực hiện được các phép tính cộng, trừ, nhân, chia, nâng lên lũy thừa với số mũ tự nhiên",
+            "Vận dụng được các tính chất giao hoán, kết hợp, phân phối trong tính nhẩm, tính nhanh",
+            "Nhận biết được tính chia hết, dấu hiệu chia hết cho 2, 3, 5, 9",
+            "Nhận biết được số nguyên tố, hợp số; phân tích được một số tự nhiên ra thừa số nguyên tố",
+            "Xác định được ước chung, bội chung, ƯCLN, BCNN và vận dụng giải bài toán thực tế"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Số tự nhiên, phép tính lũy thừa cơ số tự nhiên",
+            "Thứ tự thực hiện phép tính, quy tắc ngoặc",
+            "Ước chung lớn nhất, bội chung nhỏ nhất"
+          ],
+          "chua_duoc_dung": [
+            "Số nguyên âm, số đối (chưa học ở chương này)",
+            "Số hữu tỉ, phân số, số thập phân",
+            "Biến số đại số, phương trình chứa ẩn x theo phong cách THPT"
+          ],
+          "dang_bai_dien_hinh": [
+            "Viết tập hợp, xác định phần tử thuộc/không thuộc tập hợp",
+            "Tính giá trị biểu thức chứa lũy thừa và thứ tự phép tính",
+            "Tìm x trong đẳng thức cơ bản",
+            "Bài toán thực tế ứng dụng ƯCLN (chia quà, chia nhóm) hoặc BCNN (lịch gặp nhau, chu kỳ)"
+          ],
+          "luu_y_ra_de": "Không cho bài toán ra nghiệm là số âm hoặc số thập phân. Chỉ giải bài tìm x ở dạng điền số còn thiếu."
+        },
+        {
+          "id": "t6-so-nguyen",
+          "ten": "Số nguyên",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương III. Số nguyên",
+            "CTST": "Chương 2. Số nguyên",
+            "CD": "Chương II. Số nguyên"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được số nguyên âm, số nguyên dương, tập hợp Z các số nguyên, số đối của một số nguyên",
+            "Biểu diễn được số nguyên trên trục số, so sánh được hai số nguyên",
+            "Thực hiện được các phép tính cộng, trừ, nhân, chia hết trong tập hợp số nguyên",
+            "Vận dụng được quy tắc dấu ngoặc và các tính chất phép toán để tính nhẩm, tính hợp lý",
+            "Giải quyết được một số bài toán thực tế liên quan đến số nguyên (nhiệt độ, độ cao, tài chính lời/lỗ)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Tập hợp số nguyên Z, biểu diễn số nguyên trên trục số",
+            "Quy tắc dấu ngoặc, quy tắc chuyển tế cơ bản",
+            "Bội và ước của một số nguyên"
+          ],
+          "chua_duoc_dung": [
+            "Giá trị tuyệt đối (chương trình 2018 giảm tải khái niệm dấu || ở lớp 6, chuyển sâu sang lớp 7)",
+            "Phép chia có dư trong Z hoặc phân số âm",
+            "Căn bậc hai, số vô tỉ"
+          ],
+          "dang_bai_dien_hinh": [
+            "Biểu diễn các số nguyên trên trục số và so sánh số nguyên",
+            "Tính giá trị biểu thức số nguyên áp dụng quy tắc bỏ ngoặc và tính nhanh",
+            "Tìm x trong đẳng thức số nguyên",
+            "Bài toán thực tế về chênh lệch nhiệt độ, độ cao so với mực nước biển, cân đối thu chi"
+          ],
+          "luu_y_ra_de": "Chương trình 2018 hạn chế khai thác sâu ký hiệu giá trị tuyệt đối ở lớp 6. Phép chia trong Z chỉ xét phép chia hết."
+        },
+        {
+          "id": "t6-hinh-hoc-truc-quan-6",
+          "ten": "Hình học trực quan - Các hình phẳng trong thực tiễn",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương IV. Một số hình phẳng trong thực tiễn",
+            "CTST": "Chương 3. Hình học trực quan - Các hình phẳng trong thực tiễn",
+            "CD": "Chương III. Hình học trực quan - Các hình phẳng trong thực tiễn"
+          },
+          "yeu_cau_can_dat": [
+            "Mô tả được một số yếu tố cơ bản (cạnh, góc, đường chéo) của tam giác đều, hình vuông, lục giác đều, hình chữ nhật, hình bình hành, hình thoi, hình thang cân",
+            "Vẽ được hình vuông, hình chữ nhật, tam giác đều, hình thoi bằng dụng cụ học tập (thước, compa, ke)",
+            "Tính được chu vi và diện tích của hình vuông, hình chữ nhật, hình tam giác, hình hình hành, hình thoi, hình thang",
+            "Giải quyết được một số bài toán thực tế liên quan đến tính chu vi và diện tích các hình phẳng đã học"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Công thức chu vi, diện tích các hình phẳng cơ bản",
+            "Nhận biết các yếu tố hình học bằng trực quan và dụng cụ đo"
+          ],
+          "chua_duoc_dung": [
+            "Chứng minh hình học bằng suy luận lôgíc (đường trung trực, góc đối đỉnh, tam giác bằng nhau)",
+            "Định lý Định lí Pitago để tính độ dài cạnh",
+            "Công thức diện tích hình tròn (chuyển sang phần Phân số/Số thập phân ở học kỳ 2)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Nhận dạng hình phẳng và chỉ ra các yếu tố (đáy, chiều cao, đường chéo)",
+            "Vẽ tam giác đều, hình vuông, hình thoi bằng thước và compa",
+            "Tính chu vi, diện tích hình phức hợp ghép từ các hình cơ bản",
+            "Bài toán thực tế tính chi phí lát gạch sàn nhà, làm hàng rào khu vườn"
+          ],
+          "luu_y_ra_de": "Chỉ yêu cầu vẽ hình và nhận biết trực quan/tính toán diện tích chu vi, tuyệt đối không ra bài tập suy luận chứng minh hình học."
+        },
+        {
+          "id": "t6-tinh-doi-xung",
+          "ten": "Tính đối xứng của hình phẳng",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương V. Tính đối xứng của hình phẳng trong tự nhiên",
+            "CTST": "Chương 4. Một số hình phẳng có tính đối xứng",
+            "CD": "Chương III (phần Đối xứng)"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được trục đối xứng và tâm đối xứng của một hình phẳng",
+            "Nhận biết được những hình có trục đối xứng, những hình có tâm đối xứng trong thực tiễn (biển báo giao thông, lá cây, hoa văn, kiến trúc)",
+            "Gấp hình hoặc gấp giấy để xác định trục đối xứng và tâm đối xứng"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Khái niệm hình có trục đối xứng, hình có tâm đối xứng"
+          ],
+          "chua_duoc_dung": [
+            "Tọa độ của điểm đối xứng trên mặt phẳng Oxy",
+            "Phép biến hình, phép đối xứng trục, đối xứng tâm bằng công thức hình học 11"
+          ],
+          "dang_bai_dien_hinh": [
+            "Xác định hình nào trong các hình cho trước có trục đối xứng hoặc tâm đối xứng",
+            "Vẽ thêm phần còn thiếu của một hình để thu được hình có trục/tâm đối xứng",
+            "Bài toán thực tế nhận biết tính đối xứng trong nét chữ, biểu trưng, hoa văn kiến trúc"
+          ],
+          "luu_y_ra_de": "Chủ yếu ra dạng bài trắc nghiệm nhận biết hoặc vẽ hình trực quan."
+        },
+        {
+          "id": "t6-phan-so",
+          "ten": "Phân số",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương VI. Phân số",
+            "CTST": "Chương 5. Phân số",
+            "CD": "Chương IV. Phân số"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được phân số với tử số và mẫu số là các số nguyên ($a/b$ với $a, b \\in \\mathbb{Z}, b \\neq 0$)",
+            "Nhận biết được hai phân số bằng nhau, quy tắc rút gọn phân số, quy đồng mẫu số nhiều phân số",
+            "So sánh được hai phân số",
+            "Thực hiện được các phép tính cộng, trừ, nhân, chia phân số; vận dụng tính chất để tính hợp lý",
+            "Giải quyết được hai bài toán cơ bản về phân số: Tìm giá trị phân số của một số cho trước; Tìm một số biết giá trị phân số của số đó"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Phân số với tử và mẫu là số nguyên",
+            "Các phép tính phân số, quy tắc dấu ngoặc",
+            "Hai bài toán cơ bản về phân số"
+          ],
+          "chua_duoc_dung": [
+            "Số vô tỉ, căn bậc hai",
+            "Hỗn số (chương trình 2018 giảm tải việc biến đổi phức tạp hỗn số)",
+            "Phân thức đại số chứa ẩn x ở mẫu"
+          ],
+          "dang_bai_dien_hinh": [
+            "Rút gọn phân số và so sánh hai phân số",
+            "Tính giá trị biểu thức phân số (kết hợp tính nhanh)",
+            "Tìm x chứa phép tính phân số",
+            "Bài toán thực tế về hai bài toán cơ bản phân số (tính số lượng học sinh, lượng hàng hoá)"
+          ],
+          "luu_y_ra_de": "Phân số lớp 6 đã mở rộng tử và mẫu là số nguyên (có thể âm). Hạn chế các bài toán biến đổi dãy phân số quy luật quá phức tạp."
+        },
+        {
+          "id": "t6-so-thap-phan",
+          "ten": "Số thập phân và Tỉ số phần trăm",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương VII. Số thập phân",
+            "CTST": "Chương 6. Số thập phân",
+            "CD": "Chương V. Số thập phân"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được số thập phân âm, số đối của số thập phân",
+            "Thực hiện được các phép tính cộng, trừ, nhân, chia số thập phân",
+            "Làm tròn được số thập phân và ước lượng kết quả phép tính",
+            "Nhận biết được tỉ số và tỉ số phần trăm của hai đại lượng",
+            "Giải bài toán thực tế liên quan đến tỉ số phần trăm (tính lãi suất, giảm giá, tỉ lệ thành phần)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Số thập phân dương và âm",
+            "Phép tính số thập phân, quy tắc làm tròn",
+            "Tỉ số phần trăm và các bài toán thực tế"
+          ],
+          "chua_duoc_dung": [
+            "Số vô tỉ, số thập phân vô hạn không tuần hoàn",
+            "Công thức lãi kép nâng cao của lớp 11/12",
+            "Tỉ lệ thức (chuyển sang lớp 7)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Tính giá trị biểu thức số thập phân",
+            "Làm tròn số thập phân đến hàng cho trước và ước lượng tích/thương",
+            "Tính tỉ số phần trăm của hai số",
+            "Bài toán thực tế tính tiền sau khi giảm giá, tính tiền thuế VAT, tính nồng độ dung dịch"
+          ],
+          "luu_y_ra_de": "Các bài toán thực tế về phần trăm phải gắn với bối cảnh đời sống gần gũi."
+        },
+        {
+          "id": "t6-hinh-hoc-phang-co-ban",
+          "ten": "Những hình học cơ bản (Điểm, đường thẳng, góc)",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương VIII. Những hình học cơ bản",
+            "CTST": "Chương 8. Hình học phẳng - Các hình học cơ bản",
+            "CD": "Chương VI. Hình học phẳng - Các hình học cơ bản"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được các quan hệ điểm thuộc/không thuộc đường thẳng; hai đường thẳng cắt nhau, song song; ba điểm thẳng hàng",
+            "Nhận biết được điểm nằm giữa hai điểm, trung điểm của đoạn thẳng",
+            "Nhận biết được khái niệm góc, điểm trong của góc, góc vuông, góc nhọn, góc tù, góc bẹt",
+            "Đo được độ dài đoạn thẳng và số đo góc bằng thước đo",
+            "Tính được độ dài đoạn thẳng đơn giản (dựa vào điểm nằm giữa hoặc trung điểm)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Khái niệm điểm, đường thẳng, tia, đoạn thẳng, độ dài đoạn thẳng",
+            "Góc và số đo góc (từ 0 đến 180 độ)",
+            "Trung điểm của đoạn thẳng"
+          ],
+          "chua_duoc_dung": [
+            "Hai góc đối đỉnh, hai góc kề bù (học ở lớp 7)",
+            "Tia phân giác của một góc (chuyển sang lớp 7 trong GDPT 2018)",
+            "Chứng minh hình học phức tạp"
+          ],
+          "dang_bai_dien_hinh": [
+            "Vẽ hình theo mô tả bằng lời (điểm thuộc đường thẳng, 3 điểm thẳng hàng)",
+            "Tính độ dài đoạn thẳng khi biết điểm nằm giữa hoặc trung điểm",
+            "Đọc số đo góc và phân loại góc nhọn, vuông, tù, bẹt",
+            "Bài toán thực tế đo khoảng cách hoặc góc nghiêng đơn giản bằng dụng cụ"
+          ],
+          "luu_y_ra_de": "Chú ý trong GDPT 2018: Khái niệm 'Tia phân giác của góc' đã được chuyển lên lớp 7, lớp 6 không làm bài tập tính góc bằng tia phân giác."
+        },
+        {
+          "id": "t6-thong-ke-xac-suat",
+          "ten": "Một số yếu tố Thống kê và Xác suất",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương IX. Dữ liệu và biểu đồ xác suất",
+            "CTST": "Chương 7. Một số yếu tố thống kê và xác suất",
+            "CD": "Chương IV & VII. Thống kê và xác suất"
+          },
+          "yeu_cau_can_dat": [
+            "Thu thập, phân loại, biểu diễn dữ liệu theo các tiêu chí cho trước vào bảng số liệu",
+            "Đọc và vẽ được biểu đồ tranh, biểu đồ cột, biểu đồ cột kép",
+            "Nhận biết được khả năng xảy ra của một sự kiện: chắc chắn, có thể, không thể",
+            "Tính được xác suất thực nghiệm của một sự kiện trong một số trò chơi đơn giản (tung đồng xu, gieo xúc xắc, chọn ngẫu nhiên)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Bảng số liệu ban đầu, biểu đồ tranh, biểu đồ cột, biểu đồ cột kép",
+            "Xác suất thực nghiệm = (Số lần sự kiện xảy ra) / (Tổng số lần thực nghiệm)"
+          ],
+          "chua_duoc_dung": [
+            "Biểu đồ hình quạt tròn, biểu đồ đoạn thẳng (học ở lớp 7)",
+            "Xác suất lý thuyết/cổ điển (học ở lớp 10)",
+            "Số trung bình cộng, mốt, trung vị của thống kê (học ở lớp 7/10)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc dữ liệu từ biểu đồ cột kép và trả lời các câu hỏi so sánh",
+            "Vẽ biểu đồ cột biểu diễn bảng số liệu cho trước",
+            "Tính xác suất thực nghiệm từ bảng kết quả gieo xúc xắc/tung đồng xu",
+            "Bài toán thực tế phân tích số lượng học sinh giỏi, tình hình thời tiết"
+          ],
+          "luu_y_ra_de": "Chỉ yêu cầu Xác suất thực nghiệm, không dùng công thức xác suất cổ điển (tỉ số kết quả thuận lợi / tổng số kết quả)."
+        }
+      ],
+      "chuyen_de": [],
+      "ghi_chu_chua_chac": []
+    },
+    {
+      "lop": 7,
+      "chuong": [
+        {
+          "id": "t7-so-huu-ti",
+          "ten": "Số hữu tỉ",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương I. Số hữu tỉ",
+            "CTST": "Chương 1. Số hữu tỉ",
+            "CD": "Chương I. Số hữu tỉ"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được số hữu tỉ và tập hợp Q các số hữu tỉ; số đối của một số hữu tỉ",
+            "Biểu diễn được số hữu tỉ trên trục số; so sánh được hai số hữu tỉ",
+            "Thực hiện được các phép tính cộng, trừ, nhân, chia số hữu tỉ; tính lũy thừa với số mũ tự nhiên của số hữu tỉ",
+            "Vận dụng quy tắc dấu ngoặc, quy tắc chuyển tế để tính nhanh, tính hợp lý",
+            "Giải bài toán thực tế liên quan đến các phép tính số hữu tỉ"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Tập hợp số hữu tỉ Q, trục số hữu tỉ",
+            "Các phép tính lũy thừa số mũ tự nhiên: tích/thương hai lũy thừa cùng cơ số, lũy thừa của lũy thừa",
+            "Thứ tự thực hiện phép tính và chuyển tế"
+          ],
+          "chua_duoc_dung": [
+            "Số thực R, số vô tỉ, căn bậc hai số học",
+            "Lũy thừa với số mũ nguyên âm hoặc số hữu tỉ (học ở THPT)",
+            "Hằng đẳng thức đại số"
+          ],
+          "dang_bai_dien_hinh": [
+            "Biểu diễn số hữu tỉ trên trục số và so sánh hai số hữu tỉ",
+            "Tính giá trị biểu thức số hữu tỉ bằng cách hợp lý",
+            "Tìm x trong đẳng thức số hữu tỉ",
+            "Bài toán thực tế về mức tiêu thụ nhiên liệu, quản lý thu chi, độ cao"
+          ],
+          "luu_y_ra_de": "Không dùng các biểu thức lũy thừa phức tạp chứa số mũ nguyên âm."
+        },
+        {
+          "id": "t7-so-thuc",
+          "ten": "Số thực, Căn bậc hai số học và Giá trị tuyệt đối",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương II. Số thực",
+            "CTST": "Chương 2. Số thực",
+            "CD": "Chương II. Số thực"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được số thập phân hữu hạn và số thập phân vô hạn tuần hoàn",
+            "Nhận biết được số vô tỉ, số thực và tập hợp R các số thực; giá trị tuyệt đối của một số thực",
+            "Nhận biết được căn bậc hai số học của một số thực không âm (dùng ký hiệu sqrt)",
+            "Thực hiện được tính giá trị căn bậc hai số học của các số chính phương",
+            "Làm tròn số thực và ước lượng kết quả tính toán với độ chính xác cho trước"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Ký hiệu căn bậc hai số học $\\sqrt{a}$ ($a \\ge 0$)",
+            "Giá trị tuyệt đối $|x|$ của số thực",
+            "Số thực R, so sánh hai số thực"
+          ],
+          "chua_duoc_dung": [
+            "Các phép biến đổi căn thức đại số ($\\sqrt{A^2} = |A|$, trục căn thức ở mẫu, đưa thừa số vào/ra ngoài dấu căn - học ở lớp 9)",
+            "Căn bậc hai của một biểu thức chứa ẩn x",
+            "Căn bậc ba"
+          ],
+          "dang_bai_dien_hinh": [
+            "Viết phân số dưới dạng số thập phân hữu hạn/vô hạn tuần hoàn",
+            "Tính giá trị căn bậc hai số học của số cho trước (ví dụ $\\sqrt{25}, \\sqrt{0.81}$)",
+            "Giải bài toán tìm x chứa dấu giá trị tuyệt đối đơn giản (ví dụ $|x - 1| = 3$)",
+            "Bài toán thực tế về độ dài cạnh hình vuông khi biết diện tích (dùng căn bậc hai)"
+          ],
+          "luu_y_ra_de": "Lớp 7 chỉ nhận biết căn bậc hai số học của SỐ KHÔNG ÂM cụ thể, không làm bài tập chứa căn thức đại số $\\sqrt{x-1}$ hay biến đổi biểu thức chứa căn."
+        },
+        {
+          "id": "t7-goc-va-duong-thang-song-song",
+          "ten": "Góc và đường thẳng song song",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương III. Góc và đường thẳng song song",
+            "CTST": "Chương 4. Góc và đường thẳng song song",
+            "CD": "Chương IV. Góc. Đường thẳng song song"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được hai góc đối đỉnh, hai góc kề bù và tính chất của chúng",
+            "Nhận biết được tia phân giác của một góc và cách vẽ tia phân giác bằng thước/compa",
+            "Nhận biết được các góc ở vị trí so le trong, đồng vị, trong cùng phía",
+            "Nắm vững dấu hiệu nhận biết hai đường thẳng song song; Tiên đề Euclid về đường thẳng song song",
+            "Mô tả được tính chất của hai đường thẳng song song (hai góc so le trong bằng nhau, hai góc đồng vị bằng nhau)",
+            "Nhận biết định lý, giả thiết, kết luận và bước đầu tập chứng minh định lý đơn giản"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Tính chất 2 góc đối đỉnh, 2 góc kề bù, tia phân giác",
+            "Dấu hiệu và tính chất 2 đường thẳng song song"
+          ],
+          "chua_duoc_dung": [
+            "Tam giác bằng nhau (chương tiếp theo)",
+            "Vectơ song song, phương trình đường thẳng Oxy",
+            "Tổng các góc trong một đa giác"
+          ],
+          "dang_bai_dien_hinh": [
+            "Tính số đo góc dựa vào hai góc kề bù, đối đỉnh, tia phân giác",
+            "Chứng minh hai đường thẳng song song dựa vào góc so le trong/đồng vị bằng nhau",
+            "Tính số đo các góc còn lại khi biết một cặp đường thẳng song song bị cắt bởi đường thứ ba",
+            "Bài toán thực tế kiểm tra độ song song của khung cửa, bậc cầu thang"
+          ],
+          "luu_y_ra_de": "Tia phân giác đã chuyển chính thức xuống học ở chương này (lớp 7). Bài tập yêu cầu tính số đo góc và chứng minh song song cơ bản."
+        },
+        {
+          "id": "t7-tam-giac-bang-nhau",
+          "ten": "Tam giác bằng nhau",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương IV. Tam giác bằng nhau",
+            "CTST": "Chương 8. Tam giác bằng nhau",
+            "CD": "Chương V. Tam giác bằng nhau"
+          },
+          "yeu_cau_can_dat": [
+            "Giải thích được định lý tổng ba góc trong một tam giác bằng 180 độ",
+            "Nhận biết được hai tam giác bằng nhau và các đỉnh, cạnh, góc tương ứng",
+            "Giải thích được các trường hợp bằng nhau của hai tam giác: c.c.c (cạnh-cạnh-cạnh), c.g.c (cạnh-góc-cạnh), g.c.g (góc-cạnh-góc)",
+            "Giải thích được các trường hợp bằng nhau của tam giác vuông (cạnh góc vuông - cạnh góc vuông, cạnh góc vuông - góc nhọn, cạnh huyền - góc nhọn, cạnh huyền - cạnh góc vuông)",
+            "Nhận biết được tam giác cân, tam giác đều và tính chất về góc/cạnh của chúng"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Tổng 3 góc tam giác, góc ngoài tam giác",
+            "Các trường hợp bằng nhau của tam giác thường và tam giác vuông",
+            "Tính chất tam giác cân, tam giác đều"
+          ],
+          "chua_duoc_dung": [
+            "Định lý Định lí Pitago (chuyển sang Lớp 8 trong chương trình 2018!)",
+            "Các đường đồng quy trong tam giác (học ở HK2 lớp 7)",
+            "Tam giác đồng dạng (học ở lớp 8)",
+            "Tỉ số lượng giác sin, cos (lớp 9)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Tính số đo góc còn thiếu trong tam giác",
+            "Chứng minh hai tam giác bằng nhau (c.c.c, c.g.c, g.c.g)",
+            "Chứng minh hai đoạn thẳng bằng nhau, hai góc bằng nhau, hai đường thẳng vuông góc",
+            "Bài toán thực tế đo khoảng cách giữa hai điểm không đến được bằng tam giác bằng nhau"
+          ],
+          "luu_y_ra_de": "LƯU Ý QUAN TRỌNG GDPT 2018: Định lý Định lí Pitago đã chuyển lên LỚP 8. Tuyệt đối không cho học sinh lớp 7 dùng Định lí Pitago để tính cạnh tam giác vuông!"
+        },
+        {
+          "id": "t7-thong-ke",
+          "ten": "Một số yếu tố Thống kê",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương V. Thu thập và biểu diễn dữ liệu",
+            "CTST": "Chương 5. Một số yếu tố thống kê",
+            "CD": "Chương III. Một số yếu tố thống kê"
+          },
+          "yeu_cau_can_dat": [
+            "Thu thập, phân loại dữ liệu theo các tiêu chí",
+            "Đọc và biểu diễn dữ liệu vào Biểu đồ hình quạt tròn và Biểu đồ đoạn thẳng",
+            "Chuyển đổi dữ liệu giữa các dạng biểu diễn (bảng số liệu, biểu đồ quạt, biểu đồ đoạn thẳng)",
+            "Phân tích dữ liệu từ biểu đồ để rút ra nhận xét, dự báo, xu hướng"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Biểu đồ hình quạt tròn (tỉ lệ phần trăm)",
+            "Biểu đồ đoạn thẳng (xu hướng thay đổi theo thời gian)"
+          ],
+          "chua_duoc_dung": [
+            "Các số đặc trưng: Trung bình cộng, Trung vị, Mốt của mẫu số liệu (học ở lớp 10/12)",
+            "Tần số ghép nhóm"
+          ],
+          "dang_bai_dien_hinh": [
+            "Phân tích dữ liệu từ biểu đồ hình quạt tròn để tính số lượng thực tế",
+            "Đọc biểu đồ đoạn thẳng để nhận xét sự tăng/giảm qua các năm",
+            "Vẽ biểu đồ đoạn thẳng từ bảng số liệu chuỗi thời gian",
+            "Bài toán thực tế biểu diễn doanh thu cửa hàng, nhiệt độ các tháng"
+          ],
+          "luu_y_ra_de": "Lớp 7 học 2 loại biểu đồ mới: Biểu đồ hình quạt tròn và Biểu đồ đoạn thẳng."
+        },
+        {
+          "id": "t7-tieu-thuc-ti-le-thuc",
+          "ten": "Tỉ lệ thức và Đại lượng tỉ lệ",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương VI. Tỉ lệ thức và đại lượng tỉ lệ",
+            "CTST": "Chương 6. Tỉ lệ thức và đại lượng tỉ lệ",
+            "CD": "Chương VI. Tỉ lệ thức và đại lượng tỉ lệ"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được tỉ lệ thức và các tính chất của tỉ lệ thức ($a/b = c/d \\Rightarrow ad = bc$)",
+            "Nắm vững tính chất của dãy tỉ số bằng nhau ($a/b = c/d = (a+c)/(b+d)$)",
+            "Nhận biết được hai đại lượng tỉ lệ thuận, đại lượng tỉ lệ nghịch; xác định được hệ số tỉ lệ",
+            "Giải bài toán thực tế về đại lượng tỉ lệ thuận, tỉ lệ nghịch (chia phần tỉ lệ, bài toán năng suất, thời gian - vận tốc)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Tỉ lệ thức, tính chất dãy tỉ số bằng nhau",
+            "Công thức tỉ lệ thuận $y = kx$, tỉ lệ nghịch $y = a/x$"
+          ],
+          "chua_duoc_dung": [
+            "Hàm số bậc nhất $y = ax + b$ (học ở lớp 8)",
+            "Phương trình bậc nhất một ẩn"
+          ],
+          "dang_bai_dien_hinh": [
+            "Tìm x, y trong tỉ lệ thức hoặc dãy tỉ số bằng nhau",
+            "Chia một số thành các phần tỉ lệ với các số cho trước",
+            "Bài toán thực tế đại lượng tỉ lệ thuận (chu vi và bán kính, khối lượng và thể tích)",
+            "Bài toán thực tế đại lượng tỉ lệ nghịch (số công nhân và thời gian hoàn thành, vận tốc và thời gian trên cùng quãng đường)"
+          ],
+          "luu_y_ra_de": "Chú ý trình bày bài toán chia tỉ lệ theo đúng tính chất dãy tỉ số bằng nhau."
+        },
+        {
+          "id": "t7-bieu-thuc-dai-so-da-thuc",
+          "ten": "Biểu thức đại số và Đa thức một biến",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương VII. Biểu thức đại số và đa thức một biến",
+            "CTST": "Chương 7. Biểu thức đại số và đa thức một biến",
+            "CD": "Chương VII. Biểu thức đại số và đa thức một biến"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được biểu thức đại số, biến số, giá trị của biểu thức đại số",
+            "Nhận biết được đơn thức một biến, đa thức một biến; chỉ ra được bậc, hệ số cao nhất, hệ số tự do của đa thức một biến",
+            "Xác định được nghiệm của đa thức một biến (kiểm tra một số có phải là nghiệm hay không)",
+            "Thực hiện được các phép tính cộng, trừ, nhân đa thức một biến; phép chia đa thức một biến (chia đa thức cho đơn thức hoặc chia hai đa thức đã sắp xếp)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Đa thức một biến $P(x)$, sắp xếp đa thức theo số mũ giảm/tăng",
+            "Cộng, trừ, nhân, chia đa thức một biến",
+            "Khái niệm nghiệm của đa thức"
+          ],
+          "chua_duoc_dung": [
+            "7 Hằng đẳng thức đáng nhớ (học ở lớp 8)",
+            "Đa thức nhiều biến (học ở lớp 8)",
+            "Phân tích đa thức thành nhân tử bằng hằng đẳng thức",
+            "Công thức nghiệm phương trình bậc hai"
+          ],
+          "dang_bai_dien_hinh": [
+            "Tính giá trị của biểu thức đại số tại giá trị cho trước của biến",
+            "Thu gọn, sắp xếp đa thức và xác định bậc, hệ số",
+            "Cộng, trừ, nhân đa thức một biến; Chia đa thức một biến đặt phép tính dọc",
+            "Kiểm tra xem $x = a$ có là nghiệm của đa thức hay không"
+          ],
+          "luu_y_ra_de": "Chỉ dừng ở đa thức MỘT BIẾN. Chưa dùng hằng đẳng thức đáng nhớ."
+        },
+        {
+          "id": "t7-quan-he-giua-cac-yeu-to-trong-tam-giac",
+          "ten": "Quan hệ giữa các yếu tố trong tam giác và Các đường đồng quy",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương IX. Quan hệ giữa các yếu tố trong một tam giác",
+            "CTST": "Chương 8 (phần Quan hệ các yếu tố và Đường đồng quy)",
+            "CD": "Chương VII (phần Tam giác)"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được quan hệ giữa góc và cạnh đối diện trong tam giác (góc lớn hơn đối diện cạnh lớn hơn)",
+            "Nhận biết được quan hệ giữa đường vuông góc và đường xiên; bất đẳng thức tam giác ($|b-c| < a < b+c$)",
+            "Nhận biết được khái niệm và tính chất đồng quy của 3 đường trung tuyến (trọng tâm $2/3$), 3 đường phân giác (tâm đường tròn nội tiếp), 3 đường trung trực (tâm đường tròn ngoại tiếp), 3 đường cao (trực tâm)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Quan hệ cạnh-góc, đường vuông góc-đường xiên, bất đẳng thức tam giác",
+            "Tính chất 4 loại đường đồng quy trong tam giác"
+          ],
+          "chua_duoc_dung": [
+            "Đường trung bình của tam giác (học ở lớp 8)",
+            "Định lý Thalès (lớp 8)",
+            "Đường tròn ngoại tiếp/nội tiếp dưới dạng bán kính R, r tính toán số học (lớp 9)"
+          ],
+          "dang_bai_dien_hinh": [
+            "So sánh các cạnh hoặc các góc trong một tam giác",
+            "Kiểm tra xem bộ ba độ dài có thể là 3 cạnh của tam giác hay không",
+            "Sử dụng tính chất trọng tâm (tỉ lệ $2/3$) để tính độ dài đoạn thẳng",
+            "Chứng minh điểm cách đều 3 đỉnh (tâm trung trực) hoặc cách đều 3 cạnh (tâm phân giác)"
+          ],
+          "luu_y_ra_de": "Tập trung vào tính chất hình học suy luận và ứng dụng tính độ dài dựa trên tỉ lệ trọng tâm."
+        },
+        {
+          "id": "t7-hinh-hoc-truc-quan-7",
+          "ten": "Hình học trực quan - Các hình khối trong thực tiễn",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương X. Một số hình khối trong thực tiễn",
+            "CTST": "Chương 3 (Hình khối)",
+            "CD": "Chương III (Hình khối)"
+          },
+          "yeu_cau_can_dat": [
+            "Mô tả được các yếu tố cơ bản (đỉnh, cạnh, mặt bên, mặt đáy) của hình hộp chữ nhật, hình lập phương, hình lăng trụ đứng tam giác, hình lăng trụ đứng tứ giác",
+            "Tính được diện tích xung quanh và thể tích của hình hộp chữ nhật, hình lập phương",
+            "Tính được diện tích xung quanh và thể tích của hình lăng trụ đứng tam giác, hình lăng trụ đứng tứ giác",
+            "Giải quyết được một số bài toán thực tế liên quan đến thể tích và diện tích xung quanh của các hình khối trên"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Công thức $S_{xq} = C_{đáy} \\cdot h$, $V = S_{đáy} \\cdot h$ cho lăng trụ đứng tam giác, tứ giác, hình hộp chữ nhật"
+          ],
+          "chua_duoc_dung": [
+            "Hình chóp tam giác đều, hình chóp tứ giác đều (học ở lớp 8)",
+            "Hình trụ, hình nón, hình cầu (học ở lớp 9)",
+            "Góc và khoảng cách không gian bằng công thức 11/12"
+          ],
+          "dang_bai_dien_hinh": [
+            "Tính diện tích xung quanh, thể tích hình lăng trụ đứng tam giác/tứ giác",
+            "Bài toán thực tế tính lượng nước trong bể, sơn các mặt xung quanh một lăng kính hoặc căn phòng",
+            "Tạo lập mô hình hình lăng trụ đứng từ lưới phát họa"
+          ],
+          "luu_y_ra_de": "Bài toán thực tế cần chú ý xác định đúng diện tích đáy (tam giác hoặc tứ giác) và chiều cao lăng trụ."
+        },
+        {
+          "id": "t7-xac-suat",
+          "ten": "Một số yếu tố Xác suất",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương VIII. Làm quen với biến cố và xác suất của biến cố",
+            "CTST": "Chương 9. Một số yếu tố xác suất",
+            "CD": "Chương V. Một số yếu tố xác suất"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được các khái niệm: Biến cố, biến cố chắc chắn, biến cố không thể, biến cố ngẫu nhiên",
+            "Nhận biết được xác suất của biến cố ngẫu nhiên trong một số trò chơi đơn giản (đồng khả năng)",
+            "Tính được xác suất của biến cố trong các trò chơi đơn giản: gieo xúc xắc 6 mặt, rút thẻ từ hộp, quay la bàn"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Khái niệm biến cố ngẫu nhiên, chắc chắn, không thể",
+            "Tính xác suất trong trường hợp các kết quả có khả năng xảy ra như nhau = (Số kết quả thuận lợi) / (Tổng số kết quả có thể)"
+          ],
+          "chua_duoc_dung": [
+            "Quy tắc cộng, quy tắc nhân xác suất (lớp 11)",
+            "Tổ hợp, chỉnh hợp để đếm không gian mẫu (lớp 10)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Phân loại các biến cố cho trước là chắc chắn, không thể hay ngẫu nhiên",
+            "Tính xác suất của biến cố 'rút được tấm thẻ ghi số nguyên tố' từ hộp",
+            "Tính xác suất xuất hiện mặt có số chấm chia hết cho 3 khi gieo xúc xắc",
+            "Bài toán thực tế chọn ngẫu nhiên học sinh trong danh sách"
+          ],
+          "luu_y_ra_de": "Chỉ dùng cho các trò chơi đơn giản có số kết quả có thể xảy ra ít và đồng khả năng."
+        }
+      ],
+      "chuyen_de": [],
+      "ghi_chu_chua_chac": []
+    },
+    {
+      "lop": 8,
+      "chuong": [
+        {
+          "id": "t8-da-thuc-nhieu-bien",
+          "ten": "Đa thức nhiều biến",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương I. Đa thức",
+            "CTST": "Chương 1. Biểu thức đại số",
+            "CD": "Chương I. Đa thức nhiều biến"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được đơn thức, đa thức nhiều biến; chỉ ra được các hạng tử, bậc của đơn thức, bậc của đa thức nhiều biến",
+            "Thực hiện được các phép tính cộng, trừ đa thức nhiều biến",
+            "Thực hiện được phép nhân đơn thức với đa thức, nhân đa thức với đa thức",
+            "Thực hiện được phép chia hết một đơn thức cho một đơn thức, chia hết một đa thức cho một đơn thức"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Đơn thức, đa thức nhiều biến (x, y, z...)",
+            "Cộng, trừ, nhân đa thức nhiều biến, chia đa thức cho đơn thức"
+          ],
+          "chua_duoc_dung": [
+            "7 Hằng đẳng thức đáng nhớ (học ở chương sau)",
+            "Phân thức đại số chứa x, y ở mẫu",
+            "Chia đa thức nhiều biến cho đa thức nhiều biến"
+          ],
+          "dang_bai_dien_hinh": [
+            "Thu gọn đơn thức, đa thức nhiều biến và tìm bậc",
+            "Thực hiện phép tính nhân đa thức $(2x+y)(x-3y)$",
+            "Tính giá trị biểu thức nhiều biến tại giá trị x, y cho trước",
+            "Bài toán thực tế biểu diễn diện tích, thể tích hình khối dưới dạng đa thức nhiều biến"
+          ],
+          "luu_y_ra_de": "Phép chia đa thức ở chương này chỉ dừng lại ở phép chia đa thức cho đơn thức."
+        },
+        {
+          "id": "t8-hang-dang-thuc",
+          "ten": "Hằng đẳng thức đáng nhớ và Ứng dụng",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương II. Hằng đẳng thức đáng nhớ và ứng dụng",
+            "CTST": "Chương 1 (Phần Hằng đẳng thức và Phân tích đa thức thành nhân tử)",
+            "CD": "Chương I (Phần Hằng đẳng thức)"
+          },
+          "yeu_cau_can_dat": [
+            "Mô tả và ghi nhớ 7 hằng đẳng thức đáng nhớ: Bình phương của một tổng/hiệu, Hiệu hai bình phương, Lập phương của một tổng/hiệu, Tổng/Hiệu hai lập phương",
+            "Vận dụng hằng đẳng thức để tính nhanh, thu gọn biểu thức",
+            "Phân tích đa thức thành nhân tử bằng các phương pháp: Đặt nhân tử chung, Dùng hằng đẳng thức, Nhóm hạng tử",
+            "Vận dụng phân tích đa thức thành nhân tử để tìm x, tính nhanh giá trị biểu thức"
+          ],
+          "kien_thuc_duoc_dung": [
+            "7 hằng đẳng thức đáng nhớ",
+            "Các phương pháp phân tích đa thức thành nhân tử cơ bản"
+          ],
+          "chua_duoc_dung": [
+            "Phương trình bậc hai một ẩn và công thức nghiệm $\\Delta$ (lớp 9)",
+            "Nghiệm phức, căn bậc hai số học đại số"
+          ],
+          "dang_bai_dien_hinh": [
+            "Khai triển hằng đẳng thức hoặc viết biểu thức dưới dạng bình phương/lập phương",
+            "Phân tích đa thức thành nhân tử: $x^2 - 4y^2$, $x^3 - 3x^2 + 3x - 1$",
+            "Tìm x thỏa mãn $P(x) = 0$ thông qua đưa về dạng tích",
+            "Bài toán thực tế tính nhanh diện tích phần còn lại của mảnh vườn hình vuông bị cắt"
+          ],
+          "luu_y_ra_de": "Tập trung giải bài tìm x bằng cách đưa về phương trình tích."
+        },
+        {
+          "id": "t8-phan-thuc",
+          "ten": "Phân thức đại số",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương VI. Phân thức đại số (KNTT đặt ở HK2, CTST/CD đặt ở HK1)",
+            "CTST": "Chương 2. Phân thức đại số",
+            "CD": "Chương II. Phân thức đại số"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được khái niệm phân thức đại số, hai phân thức bằng nhau, điều kiện xác định và giá trị của phân thức đại số",
+            "Mô tả được tính chất cơ bản của phân thức đại số, quy tắc rút gọn và quy đồng mẫu thức nhiều phân thức",
+            "Thực hiện được các phép tính cộng, trừ, nhân, chia các phân thức đại số",
+            "Giải quyết được một số bài toán thực tế chứa biểu thức phân thức (vận tốc trung bình, năng suất lao động)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Phân thức đại số $A/B$ ($B \\neq 0$), phân tích mẫu thành nhân tử để tìm ĐKXĐ",
+            "Phép tính phân thức đại số"
+          ],
+          "chua_duoc_dung": [
+            "Căn bậc hai, biểu thức chứa căn ở mẫu",
+            "Phương trình chứa ẩn ở mẫu dẫn đến phương trình bậc hai (lớp 9)",
+            "Đạo hàm, tiệm cận"
+          ],
+          "dang_bai_dien_hinh": [
+            "Tìm điều kiện xác định của phân thức đại số",
+            "Rút gọn biểu thức phân thức phức hợp và tính giá trị tại $x$ cho trước",
+            "Thực hiện phép tính cộng, trừ, nhân, chia phân thức",
+            "Bài toán thực tế lập biểu thức phân thức tính thời gian đi ngược dòng/xuôi dòng, thời gian hoàn thành công việc"
+          ],
+          "luu_y_ra_de": "Chỉ ra các bài tập rút gọn phân thức mà mẫu số phân tích được thành nhân tử bằng hằng đẳng thức/đặt nhân tử chung lớp 8. Không cho ra phương trình chứa ẩn ở mẫu bậc 2."
+        },
+        {
+          "id": "t8-tu-giac",
+          "ten": "Tứ giác",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương III. Tứ giác",
+            "CTST": "Chương 3. Biểu diễn dữ liệu và Tứ giác",
+            "CD": "Chương V. Tam giác. Tứ giác"
+          },
+          "yeu_cau_can_dat": [
+            "Mô tả được định lý về tổng các góc trong một tứ giác bằng 360 độ",
+            "Giải thích được định nghĩa, tính chất và dấu hiệu nhận biết của: Hình thang, Hình thang cân, Hình bình hành, Hình thoi, Hình chữ nhật, Hình vuông",
+            "Vận dụng tính chất và dấu hiệu nhận biết các hình tứ giác để chứng minh hai đoạn thẳng bằng nhau, hai góc bằng nhau, hai đường thẳng song song/vuông góc",
+            "Giải bài toán thực tế liên quan đến tứ giác (khung kệ, thiết kế kiến trúc)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Tính chất và dấu hiệu nhận biết của 6 loại hình tứ giác đặc biệt",
+            "Tổng các góc trong tứ giác bằng $360^\\circ$"
+          ],
+          "chua_duoc_dung": [
+            "Tứ giác nội tiếp đường tròn (lớp 9)",
+            "Định lý Thalès, tam giác đồng dạng (học ở học kỳ 2 hoặc chương sau)",
+            "Tọa độ phẳng Oxy"
+          ],
+          "dang_bai_dien_hinh": [
+            "Tính số đo góc còn thiếu trong tứ giác",
+            "Chứng minh một tứ giác là hình bình hành, hình chữ nhật, hình thoi, hình vuông hoặc hình thang cân",
+            "Chứng minh ba điểm thẳng hàng, đường thẳng đi qua trung điểm",
+            "Bài toán thực tế kiểm tra khung xếp gấp của chiếc thang, cánh cửa sắt"
+          ],
+          "luu_y_ra_de": "Yêu cầu học sinh nắm vững các dấu hiệu nhận biết hình tứ giác để chứng minh hình học."
+        },
+        {
+          "id": "t8-dinh-ly-thales-va-tam-giac-dong-dang",
+          "ten": "Định lý Thalès và Tam giác đồng dạng",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương IV. Định lí Thalès & Chương IX. Tam giác đồng dạng",
+            "CTST": "Chương 7. Định lí Thalès & Chương 8. Tam giác đồng dạng",
+            "CD": "Chương VIII. Tam giác đồng dạng. Hình đồng dạng"
+          },
+          "yeu_cau_can_dat": [
+            "Giải thích được Định lý Thalès (thuận và đảo) trong tam giác; tính độ dài đoạn thẳng bằng tỉ lệ Thalès",
+            "Giải thích được tính chất đường trung bình của tam giác (song song cạnh đáy và bằng nửa cạnh đáy)",
+            "Giải thích được tính chất đường phân giác trong và ngoài của tam giác (tỉ lệ hai đoạn thẳng trên cạnh đối diện)",
+            "Nhận biết hai tam giác đồng dạng và định nghĩa tỉ số đồng dạng $k$",
+            "Giải thích các trường hợp đồng dạng của hai tam giác (c.c.c, c.g.c, g.c.g) và hai tam giác vuông",
+            "Giải thích Định lý Định lí Pitago (thuận và đảo) trong tam giác vuông và ứng dụng tính độ dài cạnh"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Định lý Thalès, đường trung bình, tính chất đường phân giác",
+            "Tam giác đồng dạng và tỉ số diện tích ($k^2$)",
+            "Định lý Định lí Pitago ($a^2 + b^2 = c^2$)"
+          ],
+          "chua_duoc_dung": [
+            "Tỉ số lượng giác sin, cos, tan, cot (lớp 9)",
+            "Hệ thức lượng trong tam giác vuông $b^2 = ab', h^2 = b'c'$ (lớp 9)",
+            "Góc ở tâm, góc nội tiếp đường tròn (lớp 9)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Tính độ dài đoạn thẳng bằng định lý Thalès hoặc đường trung bình",
+            "Chứng minh hai tam giác đồng dạng và suy ra đẳng thức tích $AB \\cdot CD = AC \\cdot BD$",
+            "Tính độ dài cạnh trong tam giác vuông sử dụng Định lý Định lí Pitago",
+            "Bài toán thực tế đo chiều cao tòa nhà, cây cối bằng bóng nắng hoặc gương soi (tam giác đồng dạng)"
+          ],
+          "luu_y_ra_de": "Định lý Định lí Pitago nằm chính thức ở Lớp 8 trong GDPT 2018. Học sinh được dùng Định lí Pitago và tam giác đồng dạng để tính độ dài."
+        },
+        {
+          "id": "t8-phuong-trinh-bac-nhat-va-ham-so",
+          "ten": "Hàm số bậc nhất và Phương trình bậc nhất một ẩn",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương VII. Hàm số và đồ thị & Chương VIII. Phương trình bậc nhất một ẩn",
+            "CTST": "Chương 5. Hàm số và đồ thị & Chương 6. Phương trình bậc nhất một ẩn",
+            "CD": "Chương III. Hàm số và đồ thị & Chương IV. Phương trình bậc nhất một ẩn"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được khái niệm hàm số, tập xác định, giá trị của hàm số, đồ thị hàm số",
+            "Nhận biết được hàm số bậc nhất $y = ax + b$ ($a \\neq 0$), tính chất đồng biến/n nghịch biến",
+            "Vẽ được đồ thị hàm số bậc nhất $y = ax + b$; nhận biết được hệ số góc $a$ và ý nghĩa nghiêng của đường thẳng; hai đường thẳng song song/cắt nhau",
+            "Nhận biết được phương trình bậc nhất một ẩn $ax + b = 0$ ($a \\neq 0$) và cách giải",
+            "Giải bài toán bằng cách lập phương trình bậc nhất một ẩn"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Hàm số $y = f(x)$, hàm số bậc nhất $y = ax + b$",
+            "Phương trình bậc nhất 1 ẩn $ax + b = 0$",
+            "Giải bài toán bằng cách lập phương trình bậc nhất"
+          ],
+          "chua_duoc_dung": [
+            "Phương trình bậc hai, hệ hai phương trình bậc nhất hai ẩn (lớp 9)",
+            "Đạo hàm, tiếp tuyến của đồ thị hàm số (lớp 11)",
+            "Bất phương trình bậc nhất một ẩn (chuyển sang lớp 9 trong GDPT 2018!)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Vẽ đồ thị hàm số bậc nhất và xác định giao điểm với các trục tọa độ",
+            "Tìm tham số m để hai đường thẳng song song hoặc cắt nhau",
+            "Giải phương trình bậc nhất một ẩn và phương trình đưa được về dạng $ax + b = 0$",
+            "Bài toán thực tế lập phương trình bậc nhất (bài toán chuyển động, bài toán cước phí taxi, bài toán năng suất)"
+          ],
+          "luu_y_ra_de": "LƯU Ý GDPT 2018: Bất phương trình bậc nhất một ẩn đã được chuyển lên LỚP 9. Lớp 8 chỉ giải Phương trình bậc nhất một ẩn."
+        },
+        {
+          "id": "t8-hinh-hoc-truc-quan-8",
+          "ten": "Hình học trực quan - Hình chóp tam giác đều và Hình chóp tứ giác đều",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương V. Hình học trực quan (Hình chóp)",
+            "CTST": "Chương 4. Hình học trực quan (Hình chóp)",
+            "CD": "Chương IV. Hình học trực quan (Hình chóp)"
+          },
+          "yeu_cau_can_dat": [
+            "Mô tả được các yếu tố cơ bản (đỉnh, cạnh bên, mặt bên, mặt đáy, chiều cao, trung đoạn) của hình chóp tam giác đều và hình chóp tứ giác đều",
+            "Tính được diện tích xung quanh và thể tích của hình chóp tam giác đều và hình chóp tứ giác đều ($S_{xq} = 1/2 \\cdot C_{đáy} \\cdot d$, $V = 1/3 \\cdot S_{đáy} \\cdot h$)",
+            "Giải bài toán thực tế liên quan đến diện tích xung quanh và thể tích của hai hình chóp đều trên (ví dụ: tính lượng sơn phủ kim tự tháp, làm lều trại)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Công thức $S_{xq}$ và $V$ của hình chóp tam giác đều, hình chóp tứ giác đều",
+            "Định lý Định lí Pitago trong tam giác vuông chứa trung đoạn và chiều cao"
+          ],
+          "chua_duoc_dung": [
+            "Hình trụ, hình nón, hình cầu (lớp 9)",
+            "Góc giữa đường thẳng và mặt phẳng, góc giữa hai mặt phẳng (lớp 11)",
+            "Hình chóp cụt"
+          ],
+          "dang_bai_dien_hinh": [
+            "Tính diện tích xung quanh, diện tích toàn phần của hình chóp tam giác đều/tứ giác đều",
+            "Tính thể tích hình chóp khi biết chiều cao và cạnh đáy",
+            "Sử dụng Định lí Pitago tính trung đoạn khi biết chiều cao và cạnh đáy",
+            "Bài toán thực tế tính chi phí vải bạt làm lều hình chóp tứ giác đều"
+          ],
+          "luu_y_ra_de": "Chỉ xét hình chóp ĐỀU (đáy là tam giác đều hoặc hình vuông)."
+        },
+        {
+          "id": "t8-thong-ke-xac-suat-8",
+          "ten": "Một số yếu tố Thống kê và Xác suất",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương V. Dữ liệu và biểu đồ & Chương X. Một số yếu tố xác suất",
+            "CTST": "Chương 3 (Dữ liệu) & Chương 9. Một số yếu tố xác suất",
+            "CD": "Chương VI. Một số yếu tố thống kê và xác suất"
+          },
+          "yeu_cau_can_dat": [
+            "Lựa chọn được dạng biểu đồ thích hợp (cột kép, hình quạt tròn, đoạn thẳng) để biểu diễn dữ liệu",
+            "Phân tích dữ liệu, nhận biết mối liên hệ giữa các dữ liệu và biểu diễn dữ liệu hợp lý",
+            "Nhận biết được xác suất của biến cố bằng tỉ số giữa số kết quả thuận lợi và số kết quả có thể xảy ra trong các mô hình xác suất đơn giản",
+            "Tính xác suất thực nghiệm của biến cố trong thực hành"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Phân tích bảng dữ liệu và lựa chọn biểu đồ phù hợp",
+            "Xác suất lý thuyết đơn giản dựa trên mô hình đồng khả năng"
+          ],
+          "chua_duoc_dung": [
+            "Đại số tổ hợp (chỉnh hợp, tổ hợp)",
+            "Xác suất có điều kiện (lớp 12)",
+            "Bảng tần số ghép nhóm"
+          ],
+          "dang_bai_dien_hinh": [
+            "Lựa chọn biểu đồ thích hợp cho bảng dữ liệu cho trước và giải thích lý do",
+            "Phát hiện dữ liệu không hợp lý trong bảng/biểu đồ",
+            "Tính xác suất đồng khả năng rút 1 viên bi trong túi chứa bi nhiều màu",
+            "Bài toán thực tế dự đoán số lượng sản phẩm lỗi dựa trên xác suất"
+          ],
+          "luu_y_ra_de": "Yêu cầu kết hợp giữa phân tích dữ liệu thống kê và tính xác suất biến cố đơn giản."
+        }
+      ],
+      "chuyen_de": [],
+      "ghi_chu_chua_chac": []
+    },
+    {
+      "lop": 9,
+      "chuong": [
+        {
+          "id": "t9-he-phuong-trinh-bac-nhat",
+          "ten": "Phương trình và Hệ hai phương trình bậc nhất hai ẩn",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương I. Phương trình và hệ hai phương trình bậc nhất hai ẩn",
+            "CTST": "Chương 1. Phương trình và hệ hai phương trình bậc nhất hai ẩn",
+            "CD": "Chương I. Phương trình và hệ hai phương trình bậc nhất hai ẩn"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được phương trình bậc nhất hai ẩn $ax + by = c$ và nghiệm của nó; biểu diễn tập nghiệm trên mặt phẳng tọa độ",
+            "Nhận biết được hệ hai phương trình bậc nhất hai ẩn",
+            "Giải được hệ hai phương trình bậc nhất hai ẩn bằng phương pháp thế và phương pháp cộng đại số",
+            "Sử dụng máy tính cầm tay để tìm nghiệm của hệ hai phương trình bậc nhất hai ẩn",
+            "Giải được bài toán thực tế bằng cách lập hệ hai phương trình bậc nhất hai ẩn"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Phương trình bậc nhất 2 ẩn, Hệ 2 phương trình bậc nhất 2 ẩn",
+            "Phương pháp thế, phương pháp cộng đại số",
+            "Giải bài toán bằng cách lập hệ phương trình"
+          ],
+          "chua_duoc_dung": [
+            "Hệ phương trình bậc nhất 3 ẩn (học ở Chuyên đề 10)",
+            "Định lý Cramer (dùng ma trận)",
+            "Phương trình bậc hai nhiều ẩn"
+          ],
+          "dang_bai_dien_hinh": [
+            "Giải hệ hai phương trình bậc nhất hai ẩn bằng phương pháp thế hoặc cộng đại số",
+            "Tìm tham số m để hệ phương trình có nghiệm duy nhất, vô nghiệm hoặc vô số nghiệm",
+            "Bài toán thực tế lập hệ phương trình: bài toán toán chung làm riêng, chuyển động ngược chiều/cùng chiều, bài toán pha trộn nồng độ, mua bán hàng hoá"
+          ],
+          "luu_y_ra_de": "Tập trung khai thác bài toán giải bài toán bằng cách lập hệ phương trình bậc nhất hai ẩn sát thực tế."
+        },
+        {
+          "id": "t9-bat-phuong-trinh-bac-nhat",
+          "ten": "Bất phương trình bậc nhất một ẩn",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương II. Bất phương trình bậc nhất một ẩn",
+            "CTST": "Chương 2. Bất đẳng thức. Bất phương trình bậc nhất một ẩn",
+            "CD": "Chương II. Bất đẳng thức. Bất phương trình bậc nhất một ẩn"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được bất đẳng thức và các tính chất cơ bản (tính chất liên hệ giữa thứ tự và phép cộng, phép nhân)",
+            "Nhận biết được bất phương trình bậc nhất một ẩn $ax + b > 0$ (hoặc $<, \\le, \\ge$) với $a \\neq 0$",
+            "Giải được bất phương trình bậc nhất một ẩn và biểu diễn tập nghiệm trên trục số",
+            "Giải được một số bài toán thực tế gắn với bất phương trình bậc nhất một ẩn"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Tính chất bất đẳng thức, cộng/nhân hai vế với số dương/âm",
+            "Quy tắc chuyển tế và quy tắc nhân để giải bất phương trình bậc nhất",
+            "Biểu diễn tập nghiệm trên trục số"
+          ],
+          "chua_duoc_dung": [
+            "Bất phương trình bậc hai một ẩn (học ở lớp 10)",
+            "Bất phương trình chứa ẩn ở mẫu bậc hai",
+            "Bất phương trình mũ, lôgarit (lớp 11)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Chứng minh bất đẳng thức đơn giản dùng tính chất thứ tự",
+            "Giải bất phương trình bậc nhất một ẩn và biểu diễn tập nghiệm trên trục số",
+            "Tìm điều kiện của x để biểu thức nhận giá trị dương/âm",
+            "Bài toán thực tế lập bất phương trình chọn gói cước điện thoại, lựa chọn phương án thuê xe chi phí thấp hơn"
+          ],
+          "luu_y_ra_de": "LƯU Ý GDPT 2018: Bất phương trình bậc nhất một ẩn học ở LỚP 9 (trước đây học ở lớp 8)."
+        },
+        {
+          "id": "t9-can-bac-hai-can-bac-ba",
+          "ten": "Căn bậc hai và Căn bậc ba",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương III. Căn bậc hai và căn bậc ba",
+            "CTST": "Chương 3. Căn bậc hai và căn bậc ba",
+            "CD": "Chương III. Căn bậc hai và căn bậc ba"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được căn bậc hai số học và căn bậc ba của một số thực",
+            "Nhận biết và vận dụng tính chất $\\sqrt{A^2} = |A|$; các phép biến đổi: Khai căn một tích/thương, Đưa thừa số ra ngoài/vào trong dấu căn, Trục căn thức ở mẫu, Quy đồng mẫu thức chứa căn",
+            "Rút gọn biểu thức đại số chứa căn bậc hai",
+            "Giải được phương trình đơn giản chứa căn bậc hai (dạng $\\sqrt{A} = B$ hoặc $\\sqrt{A} = \\sqrt{B}$)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Hằng đẳng thức $\\sqrt{A^2} = |A|$",
+            "Các phép biến đổi căn thức đại số",
+            "Căn bậc ba và tính chất"
+          ],
+          "chua_duoc_dung": [
+            "Căn bậc n tổng quát, lũy thừa mũ số thực (lớp 11)",
+            "Số phức $i^2 = -1$",
+            "Đạo hàm của hàm chứa căn"
+          ],
+          "dang_bai_dien_hinh": [
+            "Tính giá trị biểu thức số chứa căn bậc hai, căn bậc ba",
+            "Rút gọn biểu thức chứa biến $x$ và căn bậc hai $\\sqrt{x}$",
+            "Giải phương trình chứa căn bậc hai dạng $\\sqrt{f(x)} = g(x)$",
+            "Bài toán thực tế tính độ dài quãng đường quan sát từ đỉnh tháp (dùng công thức chứa căn)"
+          ],
+          "luu_y_ra_de": "Bài toán rút gọn biểu thức chứa căn cần cho điều kiện $x \\ge 0$ và mẫu khác 0 rõ ràng."
+        },
+        {
+          "id": "t9-he-thuc-luong-tam-giac-vuong",
+          "ten": "Hệ thức lượng trong tam giác vuông",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương IV. Hệ thức lượng trong tam giác vuông",
+            "CTST": "Chương 4. Hệ thức lượng trong tam giác vuông",
+            "CD": "Chương IV. Hệ thức lượng trong tam giác vuông"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được các tỉ số lượng giác của góc nhọn: $\\sin, \\cos, \\tan, \\cot$",
+            "Giải thích được mối quan hệ giữa tỉ số lượng giác của hai góc phụ nhau",
+            "Sử dụng máy tính cầm tay để tính tỉ số lượng giác của góc nhọn và tìm góc khi biết tỉ số lượng giác",
+            "Giải thích được các hệ thức giữa cạnh và góc trong tam giác vuông ($b = a \\cdot \\sin B, b = c \\cdot \\tan B,...$)",
+            "Giải tam giác vuông và vận dụng vào giải bài toán thực tế (đo chiều cao, khoảng cách, góc nghiêng)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Định nghĩa sin, cos, tan, cot của góc nhọn ($0^\\circ < \\alpha < 90^\\circ$)",
+            "Các hệ thức lượng trong tam giác vuông: $b^2 = a \\cdot b', h^2 = b'c', ah = bc, 1/h^2 = 1/b^2 + 1/c^2$",
+            "Giải tam giác vuông"
+          ],
+          "chua_duoc_dung": [
+            "Giá trị lượng giác của góc tù $90^\\circ < \\alpha \\le 180^\\circ$ (lớp 10)",
+            "Định lý Sin, Định lý Cosin cho tam giác thường (lớp 10)",
+            "Công thức cộng lượng giác, hàm số lượng giác (lớp 11)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Tính tỉ số lượng giác của góc nhọn trong tam giác vuông cho trước cạnh",
+            "Tính cạnh và góc trong tam giác vuông (giải tam giác vuông)",
+            "Tính chiều cao ngọn tháp, chiều rộng con sông dựa vào góc nâng/góc hạ",
+            "Bài toán thực tế tính độ dốc con đường, độ dài đường lên dốc"
+          ],
+          "luu_y_ra_de": "Chỉ áp dụng tỉ số lượng giác cho GÓC NHỌN trong tam giác vuông."
+        },
+        {
+          "id": "t9-duong-tron-co-ban",
+          "ten": "Đường tròn và Tiếp tuyến của đường tròn",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương V. Đường tròn",
+            "CTST": "Chương 5. Đường tròn",
+            "CD": "Chương V. Đường tròn"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được đường tròn, sự xác định đường tròn, tính chất đối xứng của đường tròn",
+            "Mô tả được mối quan hệ đường kính và dây của đường tròn, khoảng cách từ tâm đến dây",
+            "Nhận biết được vị trí tương đối của đường thẳng và đường tròn (cắt nhau, tiếp xúc, không giao nhau)",
+            "Giải thích được khái niệm tiếp tuyến của đường tròn, tính chất và dấu hiệu nhận biết tiếp tuyến",
+            "Giải thích được tính chất của hai tiếp tuyến cắt nhau (tia phân giác, đoạn thẳng bằng nhau)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Quan hệ đường kính - dây cung, khoảng cách tâm - dây",
+            "Dấu hiệu nhận biết tiếp tuyến (vuông góc tại bán kính)",
+            "Tính chất hai tiếp tuyến cắt nhau"
+          ],
+          "chua_duoc_dung": [
+            "Góc nội tiếp, góc tạo bởi tiếp tuyến và dây cung, tứ giác nội tiếp (học ở học kỳ 2)",
+            "Phương trình đường tròn trong mặt phẳng Oxy (lớp 10)",
+            "Vị trí tương đối của hai đường tròn (GDPT 2018 đã giảm tải phần lớn bài tập vị trí 2 đường tròn)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Tính bán kính, độ dài dây cung dựa vào quan hệ vuông góc giữa đường kính và dây",
+            "Chứng minh một đường thẳng là tiếp tuyến của đường tròn",
+            "Sử dụng tính chất hai tiếp tuyến cắt nhau để chứng minh các đoạn thẳng bằng nhau, góc bằng nhau",
+            "Bài toán thực tế thiết kế ròng rọc, đai truyền động tiếp xúc vòng tròn"
+          ],
+          "luu_y_ra_de": "GDPT 2018 giảm tải các bài tập phức tạp về hai đường tròn cắt nhau/tiếp xúc nhau, tập trung vào đường thẳng và đường tròn."
+        },
+        {
+          "id": "t9-phuong-trinh-bac-hai-va-vi-et",
+          "ten": "Phương trình bậc hai một ẩn và Hệ thức Vi-ét",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương VI. Phương trình bậc hai một ẩn",
+            "CTST": "Chương 6. Phương trình bậc hai một ẩn",
+            "CD": "Chương VI. Phương trình bậc hai một ẩn"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được phương trình bậc hai một ẩn $ax^2 + bx + c = 0$ ($a \\neq 0$)",
+            "Giải được phương trình bậc hai một ẩn bằng công thức nghiệm (hoặc công thức nghiệm thu gọn)",
+            "Vận dụng Hệ thức Vi-ét ($x_1 + x_2 = -b/a, x_1 x_2 = c/a$) để tính nhẩm nghiệm, tìm hai số biết tổng và tích, tính giá trị biểu thức đối xứng giữa hai nghiệm",
+            "Giải được bài toán thực tế bằng cách lập phương trình bậc hai một ẩn"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Biệt thức $\\Delta = b^2 - 4ac$ (hoặc $\\Delta'$)",
+            "Công thức nghiệm phương trình bậc hai",
+            "Hệ thức Vi-ét và ứng dụng"
+          ],
+          "chua_duoc_dung": [
+            "Hàm số $y = ax^2 + bx + c$ đầy đủ dạng bậc hai (lớp 9 chỉ xét hàm đơn giản $y = ax^2$, đồ thị parabol đầy đủ đỉnh/trục đối xứng học kĩ ở lớp 10)",
+            "Tam thức bậc hai và dấu tam thức bậc hai (lớp 10)",
+            "Nghiệm phức khi $\\Delta < 0$"
+          ],
+          "dang_bai_dien_hinh": [
+            "Giải phương trình bậc hai một ẩn bằng công thức nghiệm",
+            "Sử dụng hệ thức Vi-ét tìm điều kiện tham số m để phương trình có hai nghiệm thỏa mãn biểu thức cho trước",
+            "Tìm hai số khi biết tổng và tích của chúng",
+            "Bài toán thực tế lập phương trình bậc hai: diện tích hình chữ nhật tăng giảm, bài toán vật rơi tự do, chuyển động"
+          ],
+          "luu_y_ra_de": "Khi $\\Delta < 0$ kết luận phương trình vô nghiệm (trong tập số thực)."
+        },
+        {
+          "id": "t9-thong-ke-tan-so",
+          "ten": "Tần số và Tần số tương đối",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương VII. Bảng tần số và tần số tương đối",
+            "CTST": "Chương 7. Tần số và tần số tương đối",
+            "CD": "Chương VII. Một số yếu tố thống kê"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được tần số và tần số tương đối của một giá trị trong mẫu dữ liệu",
+            "Lập được bảng tần số, bảng tần số tương đối (dạng 1 biến và dạng 2 biến)",
+            "Vẽ được biểu đồ tần số, biểu đồ tần số tương đối (dạng biểu đồ cột hoặc biểu đồ đoạn thẳng)",
+            "Nhận biết được mối liên hệ giữa tần số tương đối và xác suất thực nghiệm",
+            "Giải thích và phân tích dữ liệu thống kê từ bảng và biểu đồ tần số"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Khái niệm tần số $n_i$ và tần số tương đối $f_i = (n_i / N) \\cdot 100\\%",
+            "Bảng tần số, bảng tần số tương đối 1 biến và 2 biến",
+            "Biểu đồ cột/đoạn thẳng tần số"
+          ],
+          "chua_duoc_dung": [
+            "Mẫu số liệu ghép nhóm (khoảng ghép nhóm) (lớp 12)",
+            "Phương sai, độ lệch chuẩn (lớp 10/12)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Lập bảng tần số và bảng tần số tương đối từ mẫu số liệu cho trước",
+            "Vẽ biểu đồ tần số tương đối dạng biểu đồ cột",
+            "Đọc biểu đồ tần số 2 biến để so sánh hai nhóm dữ liệu",
+            "Bài toán thực tế phân tích điều tra thị trường, kết quả học tập"
+          ],
+          "luu_y_ra_de": "Tập trung vào tần số và tần số tương đối của dữ liệu không ghép nhóm."
+        },
+        {
+          "id": "t9-goc-voi-duong-tron-tu-giac-noi-tiep",
+          "ten": "Góc với đường tròn, Tứ giác nội tiếp và Độ dài, Diện tích hình tròn",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương VIII. Góc ở tâm, góc nội tiếp và Tứ giác nội tiếp",
+            "CTST": "Chương 8. Tứ giác nội tiếp và Độ dài, diện tích hình tròn",
+            "CD": "Chương VIII. Đường tròn (phần Góc và Tứ giác nội tiếp)"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được góc ở tâm, góc nội tiếp và tính chất của chúng (số đo góc nội tiếp bằng nửa số đo góc ở tâm cùng chắn một cung)",
+            "Giải thích được khái niệm tứ giác nội tiếp đường tròn",
+            "Nắm vững tính chất và các dấu hiệu nhận biết tứ giác nội tiếp (tổng hai góc đối bằng 180 độ, hai đỉnh kề nhìn cạnh dưới góc bằng nhau, góc ngoài bằng góc đối trong)",
+            "Tính được độ dài cung tròn, diện tích hình tròn, diện tích hình quạt tròn và hình vành khăn"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Góc ở tâm, góc nội tiếp",
+            "Tứ giác nội tiếp và 4 dấu hiệu nhận biết cơ bản",
+            "Công thức $l = \\frac{\\pi R n}{180}$, $S_{q} = \\frac{\\pi R^2 n}{360}$"
+          ],
+          "chua_duoc_dung": [
+            "Góc tạo bởi tia tiếp tuyến và dây cung (GDPT 2018 giảm tải bớt tên gọi riêng, đưa về góc nội tiếp/góc ở tâm)",
+            "Phương trình đường tròn Oxy",
+            "Phép vị tự, phép quay"
+          ],
+          "dang_bai_dien_hinh": [
+            "Tính số đo góc nội tiếp, góc ở tâm chắn cùng một cung",
+            "Chứng minh tứ giác nội tiếp đường tròn",
+            "Tính độ dài cung tròn và diện tích hình quạt tròn",
+            "Bài toán thực tế tính diện tích cỏ phủ bởi vòi phun nước xoay tròn"
+          ],
+          "luu_y_ra_de": "Chứng minh tứ giác nội tiếp là bài toán hình học trọng tâm của học kỳ 2 lớp 9."
+        },
+        {
+          "id": "t9-hinh-hoc-truc-quan-9",
+          "ten": "Hình học trực quan - Hình trụ, Hình nón, Hình cầu",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương IX. Hình trụ, hình nón, hình cầu",
+            "CTST": "Chương 9. Hình học trực quan (Hình khối tròn xoay)",
+            "CD": "Chương IX. Hình khối tròn xoay trong thực tiễn"
+          },
+          "yeu_cau_can_dat": [
+            "Mô tả được các yếu tố cơ bản (đáy, bán kính, chiều cao, đường sinh) của hình trụ, hình nón, hình cầu",
+            "Tính được diện tích xung quanh, diện tích toàn phần và thể tích của hình trụ ($S_{xq} = 2\\pi rh, V = \\pi r^2 h$)",
+            "Tính được diện tích xung quanh, diện tích toàn phần và thể tích của hình nón ($S_{xq} = \\pi rl, V = 1/3 \\pi r^2 h$)",
+            "Tính được diện tích mặt cầu và thể tích hình cầu ($S = 4\\pi R^2, V = 4/3 \\pi R^3$)",
+            "Giải bài toán thực tế liên quan đến thể tích và diện tích của các hình khối tròn xoay"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Công thức diện tích xung quanh và thể tích của hình trụ, hình nón, hình cầu",
+            "Mối liên hệ $l^2 = r^2 + h^2$ trong hình nón"
+          ],
+          "chua_duoc_dung": [
+            "Phương trình mặt cầu trong không gian Oxyz (lớp 12)",
+            "Tích phân tính thể tích khối tròn xoay (lớp 12)",
+            "Hình nón nón cụt"
+          ],
+          "dang_bai_dien_hinh": [
+            "Tính diện tích xung quanh và thể tích hình trụ/hình nón/hình cầu khi biết các kích thước",
+            "Bài toán kết hợp hình khối (ví dụ: bồn chứa gồm hình trụ và 2 nửa hình cầu)",
+            "Bài toán thực tế tính lượng sơn bao phủ bồn nước, tính dung tích nón bảo hiểm/bể chứa",
+            "Tính bán kính mặt cầu khi biết thể tích"
+          ],
+          "luu_y_ra_de": "Chú ý đơn vị đo và yêu cầu làm tròn số theo hằng số $\\pi \\approx 3.14$ hoặc giữ nguyên $\\pi$."
+        },
+        {
+          "id": "t9-xac-suat-9",
+          "ten": "Một số yếu tố Xác suất (Mô hình xác suất và Sơ đồ cây)",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương X. Xác suất của biến cố",
+            "CTST": "Chương 10. Xác suất của biến cố",
+            "CD": "Chương X. Một số yếu tố xác suất"
+          },
+          "yeu_cau_can_dat": [
+            "Xác định được không gian mẫu và số kết quả có thể xảy ra trong một số thí nghiệm đơn giản bằng phương pháp liệt kê hoặc vẽ Sơ đồ hình cây",
+            "Tính được xác suất của biến cố bằng tỉ số giữa số kết quả thuận lợi cho biến cố và tổng số kết quả có thể xảy ra",
+            "Giải các bài toán xác suất thực tế đơn giản (ví dụ: lấy 2 viên bi lần lượt, sinh con trai/gái, quay hai bàn quay)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Sơ đồ hình cây để liệt kê không gian mẫu",
+            "Tính xác suất đồng khả năng bằng tỉ số liệt kê"
+          ],
+          "chua_duoc_dung": [
+            "Công thức tổ hợp $C_n^k$, chỉnh hợp $A_n^k$ (lớp 10)",
+            "Quy tắc cộng và nhân xác suất (lớp 11)",
+            "Xác suất có điều kiện (lớp 12)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Vẽ sơ đồ cây liệt kê các khả năng khi gieo 2 đồng xu hoặc tung 2 con xúc xắc",
+            "Tính xác suất của biến cố 'tổng số chấm trên 2 con xúc xắc bằng 7' bằng sơ đồ cây/bảng liệt kê",
+            "Bài toán thực tế tính xác suất chọn ngẫu nhiên hai bạn cùng giới tính",
+            "So sánh xác suất của các biến cố khác nhau"
+          ],
+          "luu_y_ra_de": "Khuyến khích học sinh dùng sơ đồ hình cây hoặc bảng liệt kê 2 chiều để tránh bỏ sót kết quả."
+        }
+      ],
+      "chuyen_de": [],
+      "ghi_chu_chua_chac": []
+    },
+    {
+      "lop": 10,
+      "chuong": [
+        {
+          "id": "t10-menh-de-tap-hop",
+          "ten": "Mệnh đề và Tập hợp",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương I. Mệnh đề và tập hợp",
+            "CTST": "Chương 1. Mệnh đề và tập hợp",
+            "CD": "Chương I. Mệnh đề toán học. Tập hợp"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được mệnh đề toán học, mệnh đề phủ định, mệnh đề kéo theo ($P \\Rightarrow Q$), mệnh đề đảo, mệnh đề tương đương ($P \\Leftrightarrow Q$)",
+            "Nhận biết được điều kiện cần, điều kiện đủ, điều kiện cần và đủ",
+            "Sử dụng đúng các ký hiệu $\\forall$ (với mọi) và $\\exists$ (tồn tại); biết phủ định mệnh đề chứa $\\forall, \\exists$",
+            "Nhận biết được tập hợp, tập hợp con, hai tập hợp bằng nhau; thực hiện được các phép toán trên tập hợp: Giao, Hợp, Hiệu của hai tập hợp, Phần bù",
+            "Sử dụng được biểu đồ Venn để giải bài toán thực tế liên quan đến tập hợp"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Ký hiệu mệnh đề, logic toán học cơ bản",
+            "Các tập hợp số $\\mathbb{N}, \\mathbb{Z}, \\mathbb{Q}, \\mathbb{R}$, các khoảng, đoạn, nửa khoảng trên $\\mathbb{R}$",
+            "Các phép toán tập hợp $\\cap, \\cup, \\setminus, C_A B$"
+          ],
+          "chua_duoc_dung": [
+            "Số phức (đã bớt khỏi GDPT 2018)",
+            "Đại số tổ hợp (học ở HK2 lớp 10)",
+            "Phép chứng minh phản chứng nâng cao"
+          ],
+          "dang_bai_dien_hinh": [
+            "Xét tính đúng/sai của mệnh đề và viết mệnh đề phủ định",
+            "Phát biểu định lý dưới dạng 'điều kiện cần' hoặc 'điều kiện đủ'",
+            "Thực hiện các phép toán giao, hợp, hiệu trên các khoảng, đoạn của tập số thực R",
+            "Bài toán thực tế dùng biểu đồ Venn tính số học sinh giỏi các môn"
+          ],
+          "luu_y_ra_de": "Tập trung các bài toán biểu diễn phép toán tập hợp trên trục số thực R."
+        },
+        {
+          "id": "t10-bat-phuong-trinh-he-bat-phuong-trinh-bac-nhat-hai-an",
+          "ten": "Bất phương trình và Hệ bất phương trình bậc nhất hai ẩn",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương II. Bất phương trình và hệ bất phương trình bậc nhất hai ẩn",
+            "CTST": "Chương 2. Bất phương trình và hệ bất phương trình bậc nhất hai ẩn",
+            "CD": "Chương II. Bất phương trình và hệ bất phương trình bậc nhất hai ẩn"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được bất phương trình bậc nhất hai ẩn $ax + by \\le c$ (hoặc $<, >, \\ge$)",
+            "Biểu diễn được miền nghiệm của bất phương trình bậc nhất hai ẩn trên mặt phẳng tọa độ Oxy",
+            "Nhận biết được hệ bất phương trình bậc nhất hai ẩn và biểu diễn miền nghiệm của hệ trên mặt phẳng tọa độ Oxy (miền đa giác)",
+            "Vận dụng giải bài toán quy hoạch tuyến tính thực tế: Tìm giá trị lớn nhất, giá trị nhỏ nhất của biểu thức mục tiêu $F(x,y) = ax + by$ trên một miền đa giác"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Biểu diễn miền nghiệm phẳng Oxy (nửa mặt phẳng gạch bỏ)",
+            "Tính giá trị biểu thức $F(x,y)$ tại các đỉnh của miền đa giác nghiệm"
+          ],
+          "chua_duoc_dung": [
+            "Bất phương trình bậc hai hai ẩn (đường conic)",
+            "Đạo hàm, bài toán tối ưu phi tuyến"
+          ],
+          "dang_bai_dien_hinh": [
+            "Xác định điểm $(x_0, y_0)$ có thuộc miền nghiệm của bất phương trình/hệ bất phương trình hay không",
+            "Biểu diễn miền nghiệm của hệ bất phương trình trên mặt phẳng Oxy",
+            "Tìm giá trị lớn nhất / nhỏ nhất của $F(x, y) = ax + by$ trên miền nghiệm đa giác",
+            "Bài toán thực tế tối ưu hóa lợi nhuận sản xuất, lập kế hoạch dinh dưỡng chi phí thấp nhất"
+          ],
+          "luu_y_ra_de": "Bài toán quy hoạch tuyến tính là bài toán thực tế trọng tâm của lớp 10."
+        },
+        {
+          "id": "t10-ham-so-bac-hai",
+          "ten": "Hàm số bậc hai và Bất phương trình bậc hai một ẩn",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương VI. Hàm số, đồ thị và ứng dụng (KNTT học HK2) / CTST & CD học HK1",
+            "CTST": "Chương 3. Hàm số bậc hai và đồ thị",
+            "CD": "Chương III. Hàm số bậc hai và đồ thị"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được khái niệm hàm số, tập xác định, tập giá trị, tính đồng biến/nghịch biến của hàm số trên một khoảng",
+            "Nhận biết được hàm số bậc hai $y = ax^2 + bx + c$ ($a \\neq 0$); xác định được đỉnh, trục đối xứng, khoảng đồng biến, nghịch biến",
+            "Vẽ được parabol đồ thị hàm số bậc hai $y = ax^2 + bx + c$",
+            "Nhận biết được tam thức bậc hai và xét dấu của tam thức bậc hai $f(x) = ax^2 + bx + c$",
+            "Giải được bất phương trình bậc hai một ẩn $ax^2 + bx + c > 0$ (hoặc $<, \\le, \\ge$)",
+            "Vận dụng hàm số và bất phương trình bậc hai giải bài toán thực tế (tầm bay vật ném, diện tích tối đại)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Đỉnh parabol $I(-b/(2a), -\\Delta/(4a))$, trục đối xứng $x = -b/(2a)$",
+            "Định lý về dấu của tam thức bậc hai",
+            "Giải bất phương trình bậc hai một ẩn"
+          ],
+          "chua_duoc_dung": [
+            "Đạo hàm để khảo sát sự biến thiên (lớp 11/12)",
+            "Cực trị hàm số theo định nghĩa đạo hàm",
+            "Tích phân tính diện tích hình parabol"
+          ],
+          "dang_bai_dien_hinh": [
+            "Khảo sát sự biến thiên và vẽ đồ thị hàm số bậc hai (parabol)",
+            "Xét dấu tam thức bậc hai và giải bất phương trình bậc hai một ẩn",
+            "Tìm điều kiện tham số m để phương trình/bất phương trình bậc hai nghiệm đúng với mọi x",
+            "Bài toán thực tế tìm độ cao cực đại của quỹ đạo đạn/quả bóng, tối ưu hóa kích thước cổng hình parabol"
+          ],
+          "luu_y_ra_de": "Khảo sát hàm số bậc hai ở lớp 10 hoàn toàn lập bảng biến thiên dựa vào tọa độ đỉnh và hệ số $a$, không dùng đạo hàm."
+        },
+        {
+          "id": "t10-he-thuc-luong-trong-tam-giac",
+          "ten": "Giá trị lượng giác của một góc từ 0 đến 180 độ và Hệ thức lượng trong tam giác",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương III. Giá trị lượng giác của một góc từ 0° đến 180° và hệ thức lượng trong tam giác",
+            "CTST": "Chương 4. Hệ thức lượng trong tam giác",
+            "CD": "Chương IV. Hệ thức lượng trong tam giác. Vectơ"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được giá trị lượng giác $\\sin, \\cos, \\tan, \\cot$ của một góc $\\alpha$ với $0^\\circ \\le \\alpha \\le 180^\\circ$ trên nửa đường tròn đơn vị",
+            "Nắm vững các quan hệ lượng giác của hai góc bù nhau, phụ nhau",
+            "Giải thích được Định lý Cosin ($a^2 = b^2 + c^2 - 2bc \\cos A$) và Định lý Sin ($a/\\sin A = b/\\sin B = c/\\sin C = 2R$)",
+            "Nắm vững các công thức tính diện tích tam giác ($S = 1/2 ab \\sin C = abc/(4R) = r \\cdot p = \\sqrt{p(p-a)(p-b)(p-c)}$)",
+            "Giải tam giác và vận dụng vào giải các bài toán đo đạc thực tế"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Nửa đường tròn đơn vị, giá trị lượng giác góc từ 0° đến 180°",
+            "Định lý Cosin, Định lý Sin, Công thức Heron tính diện tích",
+            "Giải tam giác thường"
+          ],
+          "chua_duoc_dung": [
+            "Góc lượng giác tổng quát (âm hoặc $>180^\\circ$), đơn vị Radian (lớp 11)",
+            "Công thức cộng, công thức nhân đôi lượng giác (lớp 11)",
+            "Hàm số lượng giác $y = \\sin x, y = \\cos x$ (lớp 11)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Tính giá trị lượng giác của góc tù, góc phụ/bù",
+            "Tính cạnh và góc còn lại của tam giác bằng Định lý Sin, Định lý Cosin",
+            "Tính bán kính đường tròn ngoại tiếp R, nội tiếp r và diện tích tam giác",
+            "Bài toán thực tế đo khoảng cách giữa hai điểm ngắm qua chướng ngại vật, đo chiều cao ngọn núi"
+          ],
+          "luu_y_ra_de": "Lớp 10 chỉ xét góc trong khoảng $[0^\\circ, 180^\\circ]$ dùng đơn vị ĐỘ (°), chưa học đơn vị Radian."
+        },
+        {
+          "id": "t10-vector",
+          "ten": "Vectơ và Các phép toán Vectơ",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương IV. Vectơ",
+            "CTST": "Chương 5. Vectơ",
+            "CD": "Chương IV (phần Vectơ)"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được khái niệm vectơ, độ dài vectơ, vectơ-không, hai vectơ cùng phương, cùng hướng, bằng nhau, đối nhau",
+            "Thực hiện được phép cộng, phép trừ hai vectơ (quy tắc 3 điểm, quy tắc hình bình hành)",
+            "Thực hiện được phép nhân vectơ với một số và tính chất; điều kiện hai vectơ cùng phương, ba điểm thẳng hàng",
+            "Nhận biết được Tích vô hướng của hai vectơ ($\\vec{a} \\cdot \\vec{b} = |\\vec{a}| |\\vec{b}| \\cos(\\vec{a}, \\vec{b})$) và các tính chất",
+            "Vận dụng vectơ giải bài toán hình học và bài toán vật lý (tổng hợp lực, vận tốc)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Quy tắc 3 điểm, quy tắc hình bình hành, quy tắc trung điểm, trọng tâm",
+            "Tích vô hướng hai vectơ, góc giữa hai vectơ"
+          ],
+          "chua_duoc_dung": [
+            "Tọa độ vectơ Oxy (chuyển sang học kỳ 2)",
+            "Tích có hướng của hai vectơ (lớp 12 Oxyz)",
+            "Vectơ trong không gian 3D (lớp 12)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Chứng minh đẳng thức vectơ dùng quy tắc 3 điểm, quy tắc hình bình hành",
+            "Biểu diễn một vectơ theo hai vectơ không cùng phương",
+            "Tính tích vô hướng của hai vectơ và góc giữa hai vectơ trong hình hình học",
+            "Bài toán thực tế vật lý tính hợp lực tác dụng lên vật, công sinh bởi lực"
+          ],
+          "luu_y_ra_de": "Chương này thuần túy hình học vectơ không tọa độ (đối tượng hình học tự do)."
+        },
+        {
+          "id": "t10-thong-ke-10",
+          "ten": "Một số yếu tố Thống kê (Số đặc trưng đo xu thế trung tâm và độ rủi ro)",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương V. Các số đặc trưng đo xu thế trung tâm và độ co rủi ro...",
+            "CTST": "Chương 6. Thống kê",
+            "CD": "Chương V. Một số yếu tố thống kê"
+          },
+          "yeu_cau_can_dat": [
+            "Tính được các số đặc trưng đo xu thế trung tâm cho mẫu số liệu không ghép nhóm: Số trung bình, Trung vị (Median), Tứ phân vị ($Q_1, Q_2, Q_3$), Mốt (Mode)",
+            "Tính được các số đặc trưng đo độ phân tán (độ rủi ro) cho mẫu số liệu không ghép nhóm: Khoảng biến thiên ($R$), Khoảng tứ phân vị ($\\Delta_Q = Q_3 - Q_1$), Phương sai ($s^2$), Độ lệch chuẩn ($s$)",
+            "Giải thích ý nghĩa của các số đặc trưng trong bối cảnh thực tế (đánh giá độ ổn định, mức độ rủi ro đầu tư, độ lệch trình độ)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Các số đặc trưng đo xu thế trung tâm và độ phân tán của mẫu số liệu KHÔNG GHÉP NHÓM"
+          ],
+          "chua_duoc_dung": [
+            "Mẫu số liệu ghép nhóm (lớp 12)",
+            "Phân phân phối chuẩn, đường cong Gauss"
+          ],
+          "dang_bai_dien_hinh": [
+            "Tính số trung bình, trung vị, các tứ phân vị $Q_1, Q_2, Q_3$ của mẫu điểm số",
+            "Tính phương sai và độ lệch chuẩn của hai mẫu số liệu và so sánh độ ổn định",
+            "Nhận biết giá trị bất thường (outlier) dùng khoảng tứ phân vị",
+            "Bài toán thực tế đánh giá mức độ rủi ro của hai cổ phiếu dựa trên độ lệch chuẩn"
+          ],
+          "luu_y_ra_de": "Tất cả các số liệu ở lớp 10 đều là MẪU SỐ LIỆU KHÔNG GHÉP NHÓM (danh sách từng số riêng lẻ)."
+        },
+        {
+          "id": "t10-dai-so-to-hop",
+          "ten": "Đại số tổ hợp",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương VIII. Đại số tổ hợp",
+            "CTST": "Chương 8. Đại số tổ hợp",
+            "CD": "Chương VIII. Đại số tổ hợp"
+          },
+          "yeu_cau_can_dat": [
+            "Vận dụng được Quy tắc cộng và Quy tắc nhân trong các bài toán đếm đơn giản",
+            "Sử dụng được Sơ đồ hình cây trong các bài toán đếm",
+            "Nhận biết được Hoán vị ($P_n = n!$), Chỉnh hợp ($A_n^k$), Tổ hợp ($C_n^k$); tính giá trị của chúng bằng máy tính cầm tay",
+            "Vận dụng hoán vị, chỉnh hợp, tổ hợp vào các bài toán đếm thực tế (chọn người, xếp hàng, lập số)",
+            "Khai triển được Nhị thức Newton $(a+b)^n$ với số mũ nhỏ $n = 4$ hoặc $n = 5$"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Quy tắc cộng, quy tắc nhân",
+            "Công thức hoán vị $P_n$, chỉnh hợp $A_n^k$, tổ hợp $C_n^k$",
+            "Công thức Nhị thức Newton cho $n = 4, 5$"
+          ],
+          "chua_duoc_dung": [
+            "Nhị thức Newton tổng quát số mũ $n$ bất kỳ với ký hiệu $\\sum$ (lớp 11 cũ, GDPT 2018 hạn chế ở lớp 10 với $n=4,5$)",
+            "Cấp số cộng, cấp số nhân",
+            "Xác suất có điều kiện"
+          ],
+          "dang_bai_dien_hinh": [
+            "Bài toán đếm lập các số tự nhiên thỏa mãn điều kiện từ các chữ số",
+            "Tính số cách chọn ban cán sự lớp, số cách chọn đội cầu thủ (chỉnh hợp vs tổ hợp)",
+            "Khai triển $(x + 2)^4$ hoặc $(2x - 1)^5$ bằng nhị thức Newton",
+            "Bài toán thực tế đếm số đường đi, số cách xếp chỗ ngồi trong rạp chiếu phim"
+          ],
+          "luu_y_ra_de": "Nhị thức Newton ở Lớp 10 chỉ xét số mũ $n=4$ hoặc $n=5$ (tối đa $n=5$)."
+        },
+        {
+          "id": "t10-xac-suat-10",
+          "ten": "Tính xác suất theo Định nghĩa Cổ điển",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương IX. Tính xác suất theo định nghĩa cổ điển",
+            "CTST": "Chương 10. Xác suất",
+            "CD": "Chương VI. Một số yếu tố xác suất"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được không gian mẫu $\\Omega$, biến cố $A$, biến cố đối $\\overline{A}$",
+            "Tính xác suất của biến cố theo định nghĩa cổ điển: $P(A) = \\frac{n(A)}{n(\\Omega)}$",
+            "Sử dụng đại số tổ hợp (quy tắc đếm, $A_n^k, C_n^k$) để xác định số phần tử của không gian mẫu $n(\\Omega)$ và số kết quả thuận lợi $n(A)$",
+            "Vận dụng tính chất $P(\\overline{A}) = 1 - P(A)$ để tính xác suất biến cố đối"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Định nghĩa cổ điển của xác suất, không gian mẫu",
+            "Công thức biến cố đối $P(\\overline{A}) = 1 - P(A)$",
+            "Đại số tổ hợp $C_n^k, A_n^k$ để đếm"
+          ],
+          "chua_duoc_dung": [
+            "Quy tắc cộng xác suất $P(A \\cup B)$, quy tắc nhân xác suất $P(AB)$ cho 2 biến cố độc lập (học ở lớp 11!)",
+            "Xác suất có điều kiện $P(A|B)$ (lớp 12)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Tính xác suất chọn ngẫu nhiên 3 học sinh từ 30 học sinh sao cho có cả nam và nữ",
+            "Tính xác suất rút được 2 lá bài cùng màu từ bộ bài 52 lá",
+            "Sử dụng biến cố đối tính xác suất 'có ít nhất một sản phẩm tốt'",
+            "Bài toán thực tế tính xác suất trúng thưởng xổ số đơn giản"
+          ],
+          "luu_y_ra_de": "Tất cả bài tập xác suất lớp 10 đều tính theo công thức $P(A) = n(A)/n(\\Omega)$ bằng cách đếm số phần tử."
+        },
+        {
+          "id": "t10-phuong-phap-toa-do-trong-mat-phang",
+          "ten": "Phương pháp tọa độ trong mặt phẳng (Oxy)",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương IX. Phương pháp tọa độ trong mặt phẳng",
+            "CTST": "Chương 9. Phương pháp tọa độ trong mặt phẳng",
+            "CD": "Chương VII. Phương pháp tọa độ trong mặt phẳng"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được tọa độ của điểm, tọa độ của vectơ đối với hệ trục Oxy; tính độ dài vectơ, tích vô hướng, góc giữa 2 vectơ theo tọa độ",
+            "Lập được phương trình tổng quát và phương trình tham số của đường thẳng khi biết các yếu tố",
+            "Tính được góc giữa hai đường thẳng, khoảng cách từ một điểm đến một đường thẳng",
+            "Lập được phương trình đường tròn khi biết tâm và bán kính (hoặc đi qua các điểm); lập phương trình tiếp tuyến của đường tròn tại 1 điểm",
+            "Nhận biết được phương trình chính tắc của ba đường Conic: Elip ($x^2/a^2 + y^2/b^2 = 1$), Hypebol ($x^2/a^2 - y^2/b^2 = 1$), Parabol ($y^2 = 2px$); chỉ ra tiêu điểm, tiêu cự"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Tọa độ vectơ, tọa độ điểm trong Oxy",
+            "Vectơ pháp tuyến $\\vec{n}$, vectơ chỉ phương $\\vec{u}$, PTTQ, PTTS của đường thẳng",
+            "Phương trình đường tròn $(x-a)^2 + (y-b)^2 = R^2$",
+            "Phương trình chính tắc của Elip, Hypebol, Parabol"
+          ],
+          "chua_duoc_dung": [
+            "Hệ tọa độ Oxyz trong không gian 3D (lớp 12)",
+            "Đường chuẩn, tâm sai tổng quát của Conic (chuyển sang Chuyên đề học tập)",
+            "Đạo hàm tìm tiếp tuyến"
+          ],
+          "dang_bai_dien_hinh": [
+            "Viết phương trình đường thẳng đi qua 2 điểm hoặc đi qua 1 điểm và vuông góc/song song với đường thẳng khác",
+            "Tính khoảng cách từ điểm đến đường thẳng và tính góc giữa hai đường thẳng",
+            "Viết phương trình đường tròn ngoại tiếp tam giác hoặc tiếp xúc đường thẳng",
+            "Xác định tọa độ tiêu điểm, độ dài các trục của Elip/Hypebol/Parabol từ phương trình chính tắc",
+            "Bài toán thực tế thiết kế vòm cầu Elip, chảo thu sóng Parabol"
+          ],
+          "luu_y_ra_de": "Phương trình ba đường Conic ở phần bắt buộc chỉ xét dạng PHƯƠNG TRÌNH CHÍNH TẮC."
+        }
+      ],
+      "chuyen_de": [
+        "Chuyên đề 1: Hệ phương trình bậc nhất ba ẩn",
+        "Chuyên đề 2: Phương pháp sai phân và Ứng dụng quy hoạch tuyến tính",
+        "Chuyên đề 3: Ba đường Conic và ứng dụng"
+      ],
+      "ghi_chu_chua_chac": []
+    },
+    {
+      "lop": 11,
+      "chuong": [
+        {
+          "id": "t11-ham-so-luong-giac-phuong-trinh-luong-giac",
+          "ten": "Hàm số lượng giác và Phương trình lượng giác",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương I. Hàm số lượng giác và phương trình lượng giác",
+            "CTST": "Chương 1. Hàm số lượng giác và phương trình lượng giác",
+            "CD": "Chương I. Hàm số lượng giác và phương trình lượng giác"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được khái niệm góc lượng giác, đơn vị Radian, độ dài cung tròn $l = R \\alpha$",
+            "Mô tả được các giá trị lượng giác của góc lượng giác bất kỳ trên đường tròn lượng giác",
+            "Nắm vững các công thức lượng giác cơ bản: Công thức cộng, Công thức nhân đôi, Công thức biến đổi tích thành tổng và tổng thành tích",
+            "Mô tả được tập xác định, tập giá trị, tính tuần hoàn, chu kỳ, tính chẵn/lẻ và đồ thị của các hàm số lượng giác $y = \\sin x, y = \\cos x, y = \\tan x, y = \\cot x$",
+            "Giải được các phương trình lượng giác cơ bản: $\\sin x = m, \\cos x = m, \\tan x = m, \\cot x = m$ (dùng radian hoặc độ)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Đường tròn lượng giác, đơn vị Radian",
+            "Các bộ công thức biến đổi lượng giác",
+            "Đồ thị và tính tuần hoàn hàm lượng giác",
+            "Nghiệm phương trình lượng giác cơ bản $x = \\alpha + k2\\pi,...$"
+          ],
+          "chua_duoc_dung": [
+            "Đạo hàm của hàm số lượng giác (học ở HK2 lớp 11)",
+            "Số phức dưới dạng lượng giác",
+            "Phương trình lượng giác quy về bậc hai (GDPT 2018 giảm tải các dạng biến đổi phương trình lượng giác quá phức tạp)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Rút gọn biểu thức lượng giác sử dụng công thức cộng, nhân đôi, biến đổi tổng thành tích",
+            "Tìm tập xác định, giá trị lớn nhất/nhỏ nhất của hàm số lượng giác đơn giản",
+            "Giải phương trình lượng giác cơ bản và phương trình dạng $\\sin f(x) = \\sin g(x)$",
+            "Bài toán thực tế mô phỏng chiều cao mực nước biển, gia tốc dao động điều hòa theo thời gian"
+          ],
+          "luu_y_ra_de": "GDPT 2018 tập trung trọng tâm vào PHƯƠNG TRÌNH LƯỢNG GIÁC CƠ BẢN. Không ra các phương trình lượng giác nâng cao biến đổi quá dài."
+        },
+        {
+          "id": "t11-day-so-cap-so-cong-cap-so-nhan",
+          "ten": "Dãy số, Cấp số cộng và Cấp số nhân",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương II. Dãy số. Cấp số cộng và cấp số nhân",
+            "CTST": "Chương 2. Dãy số. Cấp số cộng và cấp số nhân",
+            "CD": "Chương II. Dãy số. Cấp số cộng và cấp số nhân"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được dãy số hữu hạn, dãy số vô hạn; mô tả dãy số bằng công thức số hạng tổng quát hoặc quy tắc truy hồi; xét tính tăng, giảm, bị chặn của dãy số",
+            "Nhận biết được Cấp số cộng (CSC), xác định được công thức số hạng tổng quát $u_n = u_1 + (n-1)d$ và công thức tính tổng $n$ số hạng đầu $S_n = \\frac{n(u_1 + u_n)}{2}$",
+            "Nhận biết được Cấp số nhân (CSN), xác định được công thức số hạng tổng quát $u_n = u_1 \\cdot q^{n-1}$ và công thức tính tổng $n$ số hạng đầu $S_n = \\frac{u_1 (1 - q^n)}{1 - q}$ ($q \\neq 1$)",
+            "Vận dụng CSC và CSN giải các bài toán thực tế (tính tiền gửi tiết kiệm, bài toán tăng trưởng dân số, bài toán xếp ghế trong khán phòng)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Công thức số hạng tổng quát và tổng $S_n$ của CSC và CSN",
+            "Tính chất các số hạng kề nhau trong CSC ($u_k = \\frac{u_{k-1}+u_{k+1}}{2}$) và CSN ($u_k^2 = u_{k-1} u_{k+1}$)"
+          ],
+          "chua_duoc_dung": [
+            "Giới hạn của dãy số $\\lim u_n$ (học ở chương sau)",
+            "Tổng của cấp số nhân lùi vô hạn (học ở chương Giới hạn)",
+            "Công thức lãi suất phức tạp với tích phân"
+          ],
+          "dang_bai_dien_hinh": [
+            "Xét tính tăng, giảm, bị chặn của dãy số cho trước",
+            "Tìm công sai $d$, số hạng đầu $u_1$ và tính tổng $S_n$ của Cấp số cộng",
+            "Tìm công bội $q$, số hạng tổng quát và giải phương trình chứa các số hạng Cấp số nhân",
+            "Bài toán thực tế tính tổng số tiền tích lũy tiết kiệm hàng tháng, tính số hàng gạch trong bức tường"
+          ],
+          "luu_y_ra_de": "Tập trung áp dụng trực tiếp công thức CSC, CSN vào bài toán thực tế tài chính đời sống."
+        },
+        {
+          "id": "t11-gioi-han-ham-so-lien-tuc",
+          "ten": "Giới hạn và Hàm số liên tục",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương III. Giới hạn. Hàm số liên tục",
+            "CTST": "Chương 3. Giới hạn. Hàm số liên tục",
+            "CD": "Chương III. Giới hạn. Hàm số liên tục"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được khái niệm giới hạn của dãy số $\\lim u_n = L$, giới hạn hữu hạn và vô hạn",
+            "Tính được giới hạn của một số dãy số đơn giản (dùng các định lý về giới hạn và tổng cấp số nhân lùi vô hạn $S = \\frac{u_1}{1-q}$)",
+            "Nhận biết được giới hạn của hàm số $\\lim_{x \\to x_0} f(x)$, $\\lim_{x \\to \\pm \\infty} f(x)$, giới hạn một bên $\\lim_{x \\to x_0^+} f(x), \\lim_{x \\to x_0^-} f(x)$",
+            "Tính được giới hạn hàm số dạng vô định $0/0$ (bằng cách khử dạng vô định, phân tích nhân tử, nhân lượng liên hợp)",
+            "Nhận biết được khái niệm hàm số liên tục tại một điểm $x_0$ (khi $\\lim_{x \\to x_0} f(x) = f(x_0)$) và hàm số liên tục trên một khoảng",
+            "Vận dụng Định lý giá trị trung gian để chứng minh phương trình có nghiệm"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Các quy tắc tính giới hạn dãy số và giới hạn hàm số",
+            "Khử dạng vô định $0/0$ bằng nhân lượng liên hợp hoặc phân tích đa thức thành nhân tử",
+            "Định lý giá trị trung gian: $f(a) f(b) < 0 \\Rightarrow f(x)=0$ có nghiệm trong $(a,b)$"
+          ],
+          "chua_duoc_dung": [
+            "Quy tắc L'Hôpital dùng đạo hàm để tính giới hạn (GDPT 2018 chưa học đạo hàm ở chương này!)",
+            "Đường tiệm cận của đồ thị hàm số (chuyển sang lớp 12)",
+            "Khai triển Taylor, Maclaurin"
+          ],
+          "dang_bai_dien_hinh": [
+            "Tính giới hạn dãy số dạng phân thức $\\lim \\frac{an^2+bn}{cn^2+dn+e}$",
+            "Tính giới hạn hàm số dạng vô định $0/0$ có chứa căn thức",
+            "Xét tính liên tục của hàm số cho bởi nhiều công thức tại điểm $x_0$",
+            "Chứng minh phương trình $f(x) = 0$ có ít nhất 1 nghiệm trong khoảng $(a,b)$"
+          ],
+          "luu_y_ra_de": "TÍNH GIỚI HẠN TUYỆT ĐỐI KHÔNG DÙNG ĐẠO HÀM (Quy tắc L'Hôpital) vì học sinh chưa được học đạo hàm ở học kỳ 1 lớp 11."
+        },
+        {
+          "id": "t11-duong-thang-mat-phang-khong-gian",
+          "ten": "Đường thẳng và Mặt phẳng trong không gian. Quan hệ Song song",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương IV. Đường thẳng và mặt phẳng trong không gian. Quan hệ song song",
+            "CTST": "Chương 4. Đường thẳng và mặt phẳng trong không gian. Quan hệ song song",
+            "CD": "Chương IV. Đường thẳng và mặt phẳng trong không gian. Quan hệ song song"
+          },
+          "yeu_cau_can_dat": [
+            "Mô tả được các tính chất thừa nhận của hình học không gian (đi qua 3 điểm không thẳng hàng, chứa đường thẳng...)",
+            "Xác định được giao tuyến của hai mặt phẳng, giao điểm của đường thẳng và mặt phẳng, thiết diện của hình chóp cắt bởi mặt phẳng",
+            "Nhận biết vị trí tương đối của hai đường thẳng trong không gian (chéo nhau, cắt nhau, song song, trùng nhau)",
+            "Giải thích được điều kiện đường thẳng song song với mặt phẳng ($d // (P)$) và tính chất",
+            "Giải thích được điều kiện hai mặt phẳng song song ($(P) // (Q)$) và tính chất (Định lý Thalès trong không gian)",
+            "Nhận biết được Phép chiếu song song, hình biểu diễn của một hình không gian trên mặt phẳng"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Các định lý về giao tuyến, đường thẳng song song đường thẳng, đường thẳng song song mặt phẳng, 2 mặt phẳng song song",
+            "Hình chóp, hình lăng trụ, hình hộp",
+            "Phép chiếu song song"
+          ],
+          "chua_duoc_dung": [
+            "Quan hệ vuông góc trong không gian (đường vuông góc mặt, góc, khoảng cách - học ở HK2 lớp 11)",
+            "Vectơ trong không gian, hệ tọa độ Oxyz (lớp 12)",
+            "Tích có hướng"
+          ],
+          "dang_bai_dien_hinh": [
+            "Tìm giao tuyến của hai mặt phẳng và giao điểm của đường thẳng với mặt phẳng",
+            "Xác định thiết diện của hình chóp/lăng trụ khi cắt bởi mặt phẳng",
+            "Chứng minh đường thẳng song song với mặt phẳng hoặc hai mặt phẳng song song",
+            "Bài toán thực tế mô tả hình chiếu song song của ngôi nhà, bóng mặt trời"
+          ],
+          "luu_y_ra_de": "Chỉ dùng quan hệ SONG SONG và quan hệ thuộc/giao điểm trong không gian. Chưa dùng góc hay vuông góc."
+        },
+        {
+          "id": "t11-quan-he-vuong-goc-khong-gian",
+          "ten": "Quan hệ Vuông góc trong không gian",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương VII. Quan hệ vuông góc trong không gian",
+            "CTST": "Chương 8. Quan hệ vuông góc trong không gian",
+            "CD": "Chương VII. Quan hệ vuông góc trong không gian"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được góc giữa hai đường thẳng trong không gian; hai đường thẳng vuông góc",
+            "Giải thích được điều kiện đường thẳng vuông góc với mặt phẳng ($d \\perp (P)$) và Định lý ba đường vuông góc",
+            "Nhận biết được Phép chiếu vuông góc; xác định được góc giữa đường thẳng và mặt phẳng",
+            "Giải thích được điều kiện hai mặt phẳng vuông góc ($(P) \\perp (Q)$) và tính chất (góc giữa hai mặt phẳng, góc phẳng nhị diện)",
+            "Mô tả và tính được Khoảng cách trong không gian: từ một điểm đến một đường thẳng/mặt phẳng; giữa hai đường thẳng song song, đường và mặt song song, hai mặt song song; khoảng cách giữa hai đường thẳng chéo nhau",
+            "Mô tả được các hình khối: Hình lăng trụ đứng, hình hộp chữ nhật, hình lập phương, hình chóp đều, hình chóp cụt đều"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Các định lý vuông góc trong không gian, phép chiếu vuông góc",
+            "Tính góc (góc giữa 2 đường thẳng, đường và mặt, 2 mặt phẳng)",
+            "Tính khoảng cách (khoảng cách điểm-mặt, khoảng cách 2 đường chéo nhau)",
+            "Định lý Định lí Pitago và tỉ số đồng dạng áp dụng trong các mặt cắt"
+          ],
+          "chua_duoc_dung": [
+            "Tọa độ Oxyz (lớp 12)",
+            "Tích có hướng của 2 vectơ để tính khoảng cách (lớp 12)",
+            "Tích phân tính thể tích"
+          ],
+          "dang_bai_dien_hinh": [
+            "Chứng minh đường thẳng vuông góc với mặt phẳng ($d \\perp (P)$) hoặc chứng minh hai mặt phẳng vuông góc",
+            "Tính góc giữa đường thẳng và mặt phẳng, tính góc phẳng nhị diện (góc giữa 2 mặt phẳng)",
+            "Tính khoảng cách từ một điểm đến mặt phẳng (dùng phương pháp thể tích hoặc đường vuông góc chung)",
+            "Tính khoảng cách giữa hai đường thẳng chéo nhau trong hình chóp/lăng trụ",
+            "Bài toán thực tế tính góc dốc của mái nhà, khoảng cách giữa các dây cáp treo"
+          ],
+          "luu_y_ra_de": "Đây là nội dung trọng tâm và khó nhất của hình học 11. Các bài toán tính góc và khoảng cách giải hoàn toàn bằng phương pháp hình học tổng hợp (không dùng tọa độ Oxyz)."
+        },
+        {
+          "id": "t11-ham-so-mu-va-logarit",
+          "ten": "Hàm số mũ và Hàm số lôgarit",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương VI. Hàm số mũ và hàm số lôgarit",
+            "CTST": "Chương 6. Hàm số mũ và hàm số lôgarit",
+            "CD": "Chương V. Hàm số mũ và hàm số lôgarit"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được lũy thừa với số mũ hữu tỉ, số mũ thực và các tính chất phép tính lũy thừa",
+            "Nhận biết được lôgarit cơ số $a$ ($a > 0, a \\neq 1$) của số dương; nắm vững các tính chất lôgarit, công thức đổi cơ số",
+            "Mô tả được tập xác định, tập giá trị, tính đơn điệu và đồ thị của Hàm số mũ $y = a^x$ và Hàm số lôgarit $y = \\log_a x$",
+            "Giải được phương trình và bất phương trình mũ, lôgarit cơ bản (dạng $a^x = b, \\log_a x = b, a^{f(x)} = a^{g(x)}$)",
+            "Vận dụng hàm số mũ và lôgarit vào bài toán thực tế (tăng trưởng dân số, lãi kép ngân hàng, độ pH, độ lớn trận động đất theo độ Richter, độ ồn Decibel)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Định nghĩa và tính chất của lũy thừa, lôgarit (log, ln)",
+            "Đồ thị và tính đồng biến/nghịch biến của hàm mũ và logarit",
+            "Phương pháp giải phương trình, bất phương trình mũ và lôgarit cơ bản"
+          ],
+          "chua_duoc_dung": [
+            "Đạo hàm của hàm mũ và lôgarit $(a^x)', (\\ln x)'$ (học ở chương Đạo hàm tiếp theo)",
+            "Tích phân hàm mũ, logarit (lớp 12)",
+            "Số phức"
+          ],
+          "dang_bai_dien_hinh": [
+            "Biến đổi và tính giá trị biểu thức chứa lũy thừa, lôgarit",
+            "Tìm tập xác định của hàm số lôgarit $y = \\log_a f(x)$",
+            "Giải phương trình và bất phương trình mũ, lôgarit (đưa về cùng cơ số hoặc đặt ẩn phụ đơn giản)",
+            "Bài toán thực tế tính số tiền nhận được sau n năm gửi tiết kiệm lãi kép $A = P(1+r)^n$, tính thời gian phân rã chất phóng xạ"
+          ],
+          "luu_y_ra_de": "Bài tập chú ý điều kiện xác định của lôgarit (cơ số $a > 0, a \\neq 1$ và biểu thức dưới dấu logarit $> 0$)."
+        },
+        {
+          "id": "t11-dao-ham",
+          "ten": "Đạo hàm và Ý nghĩa của Đạo hàm",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương IX. Đạo hàm",
+            "CTST": "Chương 7. Đạo hàm",
+            "CD": "Chương VII. Đạo hàm"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được khái niệm đạo hàm tại một điểm theo định nghĩa $\\lim_{\\Delta x \\to 0} \\frac{\\Delta y}{\\Delta x}$",
+            "Nắm vững ý nghĩa hình học của đạo hàm: $f'(x_0)$ là hệ số góc của tiếp tuyến của đồ thị hàm số tại điểm $(x_0, f(x_0))$; Viết được phương trình tiếp tuyến $y = f'(x_0)(x - x_0) + f(x_0)$",
+            "Nắm vững ý nghĩa vật lý của đạo hàm: vận tốc tức thời $v(t) = s'(t)$, gia tốc tức thời $a(t) = v'(t) = s''(t)$",
+            "Nắm vững các quy tắc tính đạo hàm của tổng, hiệu, tích, thương các hàm số và đạo hàm của hàm hợp",
+            "Tính được đạo hàm của các hàm số sơ cấp cơ bản: hàm đa thức, hàm căn thức $\\sqrt{x}$, hàm lượng giác ($\\sin x, \\cos x, \\tan x, \\cot x$), hàm mũ $a^x, e^x$, hàm lôgarit $\\log_a x, \\ln x$",
+            "Tính được Đạo hàm cấp hai $f''(x)$"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Công thức tính đạo hàm các hàm sơ cấp cơ bản và hàm hợp",
+            "Phương trình tiếp tuyến tại 1 điểm",
+            "Ý nghĩa vật lý $v(t) = s'(t), a(t) = s''(t)$"
+          ],
+          "chua_duoc_dung": [
+            "Ứng dụng đạo hàm khảo sát tính đơn điệu, cực trị, GTLN-GTNN, đồ thị hàm số (chuyển sang Lớp 12!)",
+            "Nguyên hàm và tích phân (lớp 12)",
+            "Đường tiệm cận"
+          ],
+          "dang_bai_dien_hinh": [
+            "Tính đạo hàm cấp 1, cấp 2 của các hàm số đa thức, lượng giác, mũ, lôgarit",
+            "Viết phương trình tiếp tuyến của đồ thị hàm số tại Một điểm cho trước",
+            "Tính vận tốc tức thời, gia tốc tức thời của vật chuyển động có phương trình quãng đường $s(t)$",
+            "Giải phương trình/bất phương trình chứa đạo hàm $f'(x) = 0$ hoặc $f'(x) > 0$"
+          ],
+          "luu_y_ra_de": "LƯU Ý GDPT 2018: Lớp 11 chỉ học KỸ THUẬT TÍNH ĐẠO HÀM và TIẾP TUYẾN TẠI MỘT ĐIỂM. Các ứng dụng xét đồng biến/nghịch biến, cực trị, vẽ đồ thị hàm số đã chuyển hoàn toàn lên LỚP 12."
+        },
+        {
+          "id": "t11-xac-suat-11",
+          "ten": "Một số yếu tố Xác suất (Quy tắc Cộng và Quy tắc Nhân xác suất)",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương V. Các quy tắc tính xác suất",
+            "CTST": "Chương 9. Quy tắc tính xác suất",
+            "CD": "Chương V. Một số yếu tố xác suất"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được khái niệm biến cố hợp, biến cố giao, hai biến cố xung khắc, hai biến cố độc lập",
+            "Nắm vững và vận dụng Quy tắc cộng xác suất cho hai biến cố xung khắc: $P(A \\cup B) = P(A) + P(B)$",
+            "Nắm vững và vận dụng Quy tắc nhân xác suất cho hai biến cố độc lập: $P(AB) = P(A) \\cdot P(B)$",
+            "Tính xác suất của biến cố trong các bài toán thực tế kết hợp quy tắc cộng và quy tắc nhân xác suất (bắn súng độc lập, hai máy hoạt động độc lập, xác suất thi đỗ)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Các khái niệm biến cố hợp, giao, xung khắc, độc lập",
+            "Công thức cộng $P(A \\cup B) = P(A) + P(B)$ (khi A, B xung khắc)",
+            "Công thức nhân $P(A \\cap B) = P(A) \\cdot P(B)$ (khi A, B độc lập)"
+          ],
+          "chua_duoc_dung": [
+            "Công thức cộng tổng quát $P(A \\cup B) = P(A) + P(B) - P(AB)$ (GDPT 2018 giảm tải bớt)",
+            "Xác suất có điều kiện $P(A|B)$, công thức xác suất toàn phần, công thức Bayes (lớp 12)",
+            "Biến ngẫu nhiên rời rạc, phân phối xác suất (chuyên đề 12)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Xét xem hai biến cố cho trước có xung khắc hay độc lập với nhau hay không",
+            "Tính xác suất để ít nhất một trong hai vận động viên bắn trúng bia (dùng biến cố độc lập)",
+            "Tính xác suất hai máy hoạt động bình thường độc lập",
+            "Bài toán thực tế xác suất thành công của dự án kết hợp các công đoạn"
+          ],
+          "luu_y_ra_de": "Tập trung áp dụng quy tắc nhân xác suất cho 2 biến cố độc lập."
+        }
+      ],
+      "chuyen_de": [
+        "Chuyên đề 1: Phép dời hình và Phép đồng dạng trong mặt phẳng",
+        "Chuyên đề 2: Dự án học tập về tài chính: Lãi suất, dư nợ và bài toán đầu tư",
+        "Chuyên đề 3: Một số yếu tố hình học phẳng và vẽ kỹ thuật"
+      ],
+      "ghi_chu_chua_chac": []
+    },
+    {
+      "lop": 12,
+      "chuong": [
+        {
+          "id": "t12-ung-dung-dao-ham-khao-sat-ham-so",
+          "ten": "Ứng dụng Đạo hàm để Khảo sát và Vẽ đồ thị hàm số",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương I. Ứng dụng đạo hàm để khảo sát và vẽ đồ thị hàm số",
+            "CTST": "Chương 1. Ứng dụng đạo hàm để khảo sát và vẽ đồ thị hàm số",
+            "CD": "Chương I. Ứng dụng đạo hàm để khảo sát và vẽ đồ thị hàm số"
+          },
+          "yeu_cau_can_dat": [
+            "Xét tính đơn điệu (đồng biến, nghịch biến) của hàm số dựa vào dấu của đạo hàm cấp một $f'(x)$",
+            "Xác định được cực trị (cực đại, cực tiểu) của hàm số dựa vào bảng biến thiên hoặc dấu $f'(x)$",
+            "Tìm được giá trị lớn nhất (GTLN) và giá trị nhỏ nhất (GTNN) của hàm số trên một đoạn $[a, b]$ hoặc trên một tập xác định",
+            "Xác định được đường tiệm cận đứng, tiệm cận ngang và đường tiệm cận xiên của đồ thị hàm số",
+            "Khảo sát sự biến thiên và vẽ đồ thị của 3 dòng hàm số chính GDPT 2018: Hàm bậc ba $y = ax^3 + bx^2 + cx + d$, Hàm nhất biến $y = \\frac{ax+b}{cx+d}$, Hàm hữu tỉ $y = \\frac{ax^2+bx+c}{px+q}$",
+            "Vận dụng đạo hàm giải bài toán tối ưu trong thực tế (tối ưu hóa chi phí, thể tích hộp, doanh thu)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Đạo hàm $f'(x)$, bảng biến thiên, quy tắc tìm GTLN-GTNN",
+            "Đường tiệm cận đứng $x = x_0$, tiệm cận ngang $y = y_0$, tiệm cận xiên $y = ax + b$",
+            "Vẽ đồ thị 3 hàm số chuẩn GDPT 2018: bậc ba, bậc nhất/bậc nhất, bậc hai/bậc nhất"
+          ],
+          "chua_duoc_dung": [
+            "Hàm số trùng phương $y = ax^4 + bx^2 + c$ (LƯU Ý: GDPT 2018 ĐÃ BỎ hàm trùng phương khỏi chương trình bắt buộc lớp 12!)",
+            "Số phức",
+            "Tích phân, nguyên hàm (học ở HK2 lớp 12)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Xét tính đồng biến/nghịch biến và tìm các điểm cực trị của hàm số",
+            "Tìm giá trị lớn nhất, giá trị nhỏ nhất của hàm số trên đoạn $[a,b]$",
+            "Tìm đường tiệm cận đứng, ngang, tiệm cận xiên của đồ thị hàm số $y = \\frac{x^2 - x + 1}{x - 1}$",
+            "Nhận dạng đồ thị hàm số và xác định dấu của các hệ số $a, b, c, d$",
+            "Bài toán thực tế tìm kích thước chiếc hộp hình chữ nhật để thể tích lớn nhất với chi phí nguyên liệu cố định"
+          ],
+          "luu_y_ra_de": "ĐẶC BIỆT LƯU Ý GDPT 2018 LỚP 12: Đã loại bỏ hoàn toàn Hàm số trùng phương $y=ax^4+bx^2+c$. Thay vào đó là Hàm hữu tỉ bậc hai trên bậc nhất $y = \\frac{ax^2+bx+c}{px+q}$ và tiệm cận xiên!"
+        },
+        {
+          "id": "t12-vector-toa-do-khong-gian",
+          "ten": "Vectơ và Hệ tọa độ trong không gian (Oxyz)",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương II. Vectơ và hệ tọa độ trong không gian",
+            "CTST": "Chương 2. Vectơ và hệ tọa độ trong không gian",
+            "CD": "Chương II. Vectơ và hệ tọa độ trong không gian"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được vectơ trong không gian, các phép toán vectơ (cộng, trừ, nhân với một số, tích vô hướng) và tính chất",
+            "Giải thích được quy tắc hình hộp, quy tắc trung điểm, trọng tâm trong không gian",
+            "Nhận biết được hệ trục tọa độ $Oxyz$ trong không gian; tọa độ của điểm và tọa độ của vectơ",
+            "Thực hiện các phép toán tọa độ vectơ: cộng, trừ, nhân vectơ với một số, tích vô hướng của hai vectơ, độ dài vectơ, khoảng cách giữa hai điểm, góc giữa hai vectơ",
+            "Vận dụng hệ tọa độ Oxyz giải bài toán thực tế (mô hình hóa chuyển động của máy bay, vị trí vệ tinh)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Quy tắc hình hộp $\\vec{AB} + \\vec{AD} + \\vec{AA'} = \\vec{AC'}$",
+            "Tọa độ $Oxyz$, biểu thức tọa độ của cộng, trừ, nhân với số, tích vô hướng",
+            "Độ dài vectơ $|\\vec{u}| = \\sqrt{x^2+y^2+z^2}$, khoảng cách $d(A,B)$"
+          ],
+          "chua_duoc_dung": [
+            "Phương trình mặt phẳng, đường thẳng, mặt cầu (chuyển sang HK2 lớp 12)",
+            "Tích có hướng $[\\vec{u}, \\vec{v}]$ (GDPT 2018 hạn chế sử dụng chính thức tích có hướng ở SGK cơ bản, chủ yếu tính bằng tích vô hướng và hệ tọa độ)",
+            "Số phức"
+          ],
+          "dang_bai_dien_hinh": [
+            "Biểu diễn vectơ trong không gian qua quy tắc hình hộp",
+            "Tìm tọa độ của điểm, tọa độ vectơ $\\vec{AB}$ và trung điểm đoạn thẳng, trọng tâm tam giác",
+            "Tính tích vô hướng, độ dài vectơ và góc giữa hai vectơ trong Oxyz",
+            "Bài toán thực tế xác định tọa độ rada phát sóng, đường bay máy bay trong không gian 3D"
+          ],
+          "luu_y_ra_de": "Học kỳ 1 lớp 12 chỉ học phần VECTƠ VÀ TỌA ĐỘ TRONG KHÔNG GIAN, chưa học viết phương trình mặt phẳng/đường thẳng."
+        },
+        {
+          "id": "t12-cac-so-dac-trung-do-do-phan-tan-mau-ghep-nhom",
+          "ten": "Các số đặc trưng đo độ phân tán cho Mẫu số liệu ghép nhóm",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương III. Các số đặc trưng đo độ phân tán cho mẫu số liệu ghép nhóm",
+            "CTST": "Chương 3. Các số đặc trưng đo độ phân tán cho mẫu số liệu ghép nhóm",
+            "CD": "Chương III. Các số đặc trưng đo độ phân tán của mẫu số liệu ghép nhóm"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được mẫu số liệu ghép nhóm (chia nhóm theo các khoảng nhóm $[a_i, a_{i+1})$)",
+            "Tính được Khoảng biến thiên $R$ và Khoảng tứ phân vị $\\Delta_Q = Q_3 - Q_1$ của mẫu số liệu ghép nhóm",
+            "Tính được Phương sai $s^2$ và Độ lệch chuẩn $s$ của mẫu số liệu ghép nhóm",
+            "Giải thích ý nghĩa và vai trò của các số đặc trưng đo độ phân tán trong các tình huống thực tế (đánh giá mức độ đồng đều của sản phẩm, mức độ rủi ro trong tài chính)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Công thức xác định nhóm chứa $Q_1, Q_3$ và công thức tính $Q_1, Q_3$ ghép nhóm",
+            "Công thức tính giá trị đại diện $x_i = \\frac{a_i + a_{i+1}}{2}$, số trung bình $\\bar{x}$, phương sai $s^2$ ghép nhóm"
+          ],
+          "chua_duoc_dung": [
+            "Phân phối xác suất liên tục Gauss (đường cong chuẩn)",
+            "Kiểm định giả thuyết thống kê (bậc đại học)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Xác định khoảng biến thiên và khoảng tứ phân vị cho bảng mẫu số liệu ghép nhóm cho trước",
+            "Tính phương sai và độ lệch chuẩn của bảng phân bố tần số ghép nhóm",
+            "So sánh độ rủi ro hoặc mức độ phân tán của hai mẫu số liệu ghép nhóm",
+            "Bài toán thực tế đánh giá độ đồng đều tuổi thọ bóng đèn, thu nhập người lao động"
+          ],
+          "luu_y_ra_de": "Tất cả các bài tập thống kê lớp 12 đều thực hiện trên MẪU SỐ LIỆU GHẾP NHÓM."
+        },
+        {
+          "id": "t12-nguyen-ham-tich-phan",
+          "ten": "Nguyên hàm và Tích phân",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương IV. Nguyên hàm và tích phân",
+            "CTST": "Chương 4. Nguyên hàm. Tích phân",
+            "CD": "Chương IV. Nguyên hàm. Tích phân"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được khái niệm Nguyên hàm của một hàm số; nắm vững các tính chất cơ bản của nguyên hàm",
+            "Tra cứu và vận dụng Bảng nguyên hàm của các hàm số sơ cấp cơ bản (hàm lũy thừa, hàm $1/x$, hàm mũ $e^x, a^x$, hàm lượng giác $\\sin x, \\cos x, 1/\\cos^2 x, 1/\\sin^2 x$)",
+            "Tính nguyên hàm bằng phương pháp đổi biến số và phương pháp nguyên hàm từng phần đơn giản",
+            "Nhận biết được khái niệm Tích phân, công thức Newton - Leibniz $\\int_a^b f(x)dx = F(b) - F(a)$; nắm vững các tính chất của tích phân",
+            "Tính tích phân bằng phương pháp đổi biến số và tích phân từng phần",
+            "Vận dụng tích phân để tính Diện tích hình phẳng giới hạn bởi các đường đồ thị hàm số",
+            "Vận dụng tích phân để tính Thể tích khối tròn xoay xoay quanh trục $Ox$",
+            "Giải bài toán thực tế áp dụng tích phân (tính quãng đường từ vận tốc $s = \\int v(t)dt$, công sinh ra, lượng chất tích lũy)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Bảng nguyên hàm cơ bản, công thức Newton - Leibniz",
+            "Phương pháp đổi biến $u = u(x)$, nguyên hàm/tích phân từng phần $\\int u dv = uv - \\int v du$",
+            "Công thức diện tích $S = \\int_a^b |f(x) - g(x)| dx$, thể tích $V = \\pi \\int_a^b f^2(x) dx$"
+          ],
+          "chua_duoc_dung": [
+            "Số phức (GDPT 2018 loại bỏ hoàn toàn chủ đề Số phức khỏi Lớp 12)",
+            "Tích phân bội, tích phân đường (bậc đại học)",
+            "Tích phân suy rộng"
+          ],
+          "dang_bai_dien_hinh": [
+            "Tìm họ nguyên hàm $F(x)$ của hàm số cho trước thỏa mãn điều kiện $F(x_0) = C$",
+            "Tính tích phân xác định dòn bằng bảng nguyên hàm hoặc phương pháp đổi biến/từng phần",
+            "Tính diện tích hình phẳng giới hạn bởi 2 đường $y = f(x)$ và $y = g(x)$",
+            "Tính thể tích khối tròn xoay tạo thành khi quay hình phẳng quanh trục Ox",
+            "Bài toán thực tế tính quãng đường xe ô tô đi được từ khi phanh đến khi dừng lại"
+          ],
+          "luu_y_ra_de": "ĐẶC BIỆT LƯU Ý GDPT 2018: Tuyệt đối KHÔNG có phần SỐ PHỨC sau chương Tích phân (chương trình cũ 2006 có chương Số phức ở cuối lớp 12, chương trình 2018 đã cắt bỏ hoàn toàn số phức!)."
+        },
+        {
+          "id": "t12-phuong-trinh-mat-phang-duong-thang-mat-cau",
+          "ten": "Phương trình Mặt phẳng, Đường thẳng và Mặt cầu trong không gian (Oxyz)",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương V. Phương trình mặt phẳng, đường thẳng, mặt cầu",
+            "CTST": "Chương 5. Phương trình mặt phẳng, đường thẳng, mặt cầu trong không gian",
+            "CD": "Chương V. Phương trình mặt phẳng, đường thẳng, mặt cầu"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được vectơ pháp tuyến $\\vec{n}$ của mặt phẳng; Viết được Phương trình tổng quát của mặt phẳng $Ax + By + Cz + D = 0$",
+            "Tính được Khoảng cách từ một điểm đến một mặt phẳng; Góc giữa hai mặt phẳng",
+            "Nhận biết được vectơ chỉ phương $\\vec{u}$ của đường thẳng; Viết được Phương trình tham số và Phương trình chính tắc của đường thẳng trong không gian",
+            "Xét vị trí tương đối giữa hai đường thẳng, giữa đường thẳng và mặt phẳng, giữa hai mặt phẳng",
+            "Tính được Góc giữa hai đường thẳng, Góc giữa đường thẳng và mặt phẳng",
+            "Viết được Phương trình chính tắc của Mặt cầu $(x-a)^2 + (y-b)^2 + (z-c)^2 = R^2$; xác định tâm và bán kính mặt cầu",
+            "Vận dụng phương pháp tọa độ Oxyz giải bài toán không gian thực tế (thiết kế nhà xe, vị trí phát sóng trạm BTS)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Phương trình tổng quát mặt phẳng, PTTS/PTCT của đường thẳng, PT mặt cầu",
+            "Công thức khoảng cách $d(M, (P))$, các công thức góc (dùng cos, sin)",
+            "Tọa độ hình chiếu vuông góc, điểm đối xứng"
+          ],
+          "chua_duoc_dung": [
+            "Số phức",
+            "Tích có hướng nâng cao trong hình học giải tích phức tạp",
+            "Các bài toán cực trị Oxyz quá đánh đố hình học thuần túy"
+          ],
+          "dang_bai_dien_hinh": [
+            "Viết phương trình mặt phẳng đi qua 1 điểm và vuông góc với đường thẳng, hoặc qua 3 điểm",
+            "Viết phương trình đường thẳng đi qua điểm M và song song/vuông góc với mặt phẳng",
+            "Tính khoảng cách từ điểm đến mặt phẳng và tìm tọa độ hình chiếu của điểm lên mặt phẳng/đường thẳng",
+            "Viết phương trình mặt cầu có tâm I và tiếp xúc với mặt phẳng (P)",
+            "Bài toán thực tế mô phỏng mặt phẳng mái nhà, tia laser định vị"
+          ],
+          "luu_y_ra_de": "Tập trung viết phương trình mặt phẳng, đường thẳng, mặt cầu và tính góc, khoảng cách cơ bản đến vận dụng."
+        },
+        {
+          "id": "t12-xac-suat-co-dieu-kien",
+          "ten": "Xác suất có điều kiện và Công thức Xác suất Toàn phần",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương VI. Xác suất có điều kiện",
+            "CTST": "Chương 6. Xác suất có điều kiện",
+            "CD": "Chương VI. Xác suất có điều kiện"
+          },
+          "yeu_cau_can_dat": [
+            "Nhận biết được khái niệm Xác suất có điều kiện $P(A|B) = \\frac{P(AB)}{P(B)}$ ($P(B) > 0$)",
+            "Vận dụng Công thức nhân xác suất $P(AB) = P(B) \\cdot P(A|B)$",
+            "Giải thích và vận dụng Công thức xác suất toàn phần: $P(A) = P(B) \\cdot P(A|B) + P(\\overline{B}) \\cdot P(A|\\overline{B})$",
+            "Giải thích và vận dụng Công thức Bayes: $P(B_i | A) = \\frac{P(B_i) \\cdot P(A | B_i)}{P(A)}$",
+            "Vận dụng công thức xác suất toàn phần và Bayes vào bài toán thực tế (xét nghiệm y tế sàng lọc bệnh, kiểm tra chất lượng sản phẩm từ các nhà máy, bài toán ra quyết định)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Khái niệm xác suất có điều kiện $P(A|B)$",
+            "Công thức nhân xác suất tổng quát",
+            "Công thức xác suất toàn phần và Công thức Bayes"
+          ],
+          "chua_duoc_dung": [
+            "Số phức",
+            "Xích Markov nâng cao",
+            "Phân phối xác suất Poisson"
+          ],
+          "dang_bai_dien_hinh": [
+            "Tính xác suất có điều kiện $P(A|B)$ từ bảng số liệu thống kê hoặc từ mô hình sơ đồ hình cây",
+            "Tính xác suất một người bị mắc bệnh khi kết quả xét nghiệm là dương tính (Bài toán xét nghiệm Y tế dùng công thức Bayes)",
+            "Tính xác suất một sản phẩm lấy ra ngẫu nhiên từ kho là phế phẩm (dùng Công thức xác suất toàn phần từ 2-3 nhà máy)",
+            "Bài toán thực tế về chẩn đoán y khoa, đánh giá độ tin cậy của thiết bị báo cháy"
+          ],
+          "luu_y_ra_de": "Xác suất có điều kiện, Công thức xác suất toàn phần và Bayes là nội dung MỚI hoàn toàn của GDPT 2018 ở Lớp 12."
+        }
+      ],
+      "chuyen_de": [
+        "Chuyên đề 1: Biến ngẫu nhiên rời rạc. Các số đặc trưng của biến ngẫu nhiên rời rạc",
+        "Chuyên đề 2: Ứng dụng toán học trong giải quyết một số bài toán thực tế (Kinh tế, Tài chính, Vật lý, Sinh học)",
+        "Chuyên đề 3: Phép chiếu song song và Phép chiếu xuyên tâm. Vẽ kĩ thuật"
+      ],
+      "ghi_chu_chua_chac": []
+    }
+  ],
+  "cau_truc_de": [
+    {
+      "loai": "Đề thi Tốt nghiệp THPT môn Toán (từ năm 2025)",
+      "lop": 12,
+      "thoi_gian_phut": 90,
+      "phan": [
+        {
+          "ten": "Phần I. Trắc nghiệm nhiều lựa chọn",
+          "so_cau": 12,
+          "mo_ta": "Mỗi câu có 4 lựa chọn (A, B, C, D), chọn 01 đáp án đúng. 0,25 điểm/câu.",
+          "diem_moi_cau": 0.25,
+          "tong_diem": 3.0
+        },
+        {
+          "ten": "Phần II. Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "mo_ta": "Mỗi câu có 4 ý a), b), c), d). Thí sinh chọn Đúng hoặc Sai cho mỗi ý. Điểm tính theo số ý đúng trong 1 câu: Đúng 1 ý = 0,1đ; Đúng 2 ý = 0,25đ; Đúng 3 ý = 0,5đ; Đúng 4 ý = 1,0đ.",
+          "cach_tinh_diem": "1 ý = 0.1đ, 2 ý = 0.25đ, 3 ý = 0.5đ, 4 ý = 1.0đ",
+          "tong_diem": 4.0
+        },
+        {
+          "ten": "Phần III. Trắc nghiệm Trả lời ngắn",
+          "so_cau": 6,
+          "mo_ta": "Thí sinh tô đáp án số (tối đa 4 ký tự: dấu âm, chữ số, dấu phẩy thập phân). 0,5 điểm/câu.",
+          "diem_moi_cau": 0.5,
+          "tong_diem": 3.0
+        }
+      ],
+      "pham_vi": "Chủ yếu kiến thức Lớp 12 (~75-80%), kết hợp Lớp 11 (~15-20%) và Lớp 10 (~5%) theo định hướng GDPT 2018.",
+      "ti_le_muc_do": "Nhận biết: ~30%, Thông hiểu: ~40%, Vận dụng / Vận dụng cao: ~30%"
+    },
+    {
+      "loai": "Đề kiểm tra Giữa kỳ 1 / Cuối kỳ 1 / Giữa kỳ 2 / Cuối kỳ 2 (THCS: Lớp 6, 7, 8, 9)",
+      "lop": [
+        6,
+        7,
+        8,
+        9
+      ],
+      "thoi_gian_phut": 90,
+      "phan": [
+        {
+          "ten": "Phần 1. Trắc nghiệm khách quan (Nhiều lựa chọn)",
+          "so_cau": 12,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 3.0
+        },
+        {
+          "ten": "Phần 2. Tự luận",
+          "so_cau": 4,
+          "mo_ta": "Gồm các bài tập tính toán, đại số, hình học suy luận và 01 bài toán thực tế.",
+          "tong_diem": 7.0
+        }
+      ],
+      "pham_vi": "Theo ma trận kiến thức các chương đã học tính đến thời điểm kiểm tra của học kỳ đó.",
+      "ti_le_muc_do": "Nhận biết: 40%, Thông hiểu: 30%, Vận dụng: 20%, Vận dụng cao: 10% (Theo Công văn 3175/BGDĐT-GDTrH hướng dẫn ma trận đề kiểm tra)"
+    },
+    {
+      "loai": "Đề kiểm tra Giữa kỳ 1 / Cuối kỳ 1 / Giữa kỳ 2 / Cuối kỳ 2 (THPT: Lớp 10, 11, 12 định kỳ)",
+      "lop": [
+        10,
+        11,
+        12
+      ],
+      "thoi_gian_phut": 90,
+      "phan": [
+        {
+          "ten": "Cấu trúc 1 (Áp dụng cấu trúc định dạng Bộ 2025): Phần I (12 câu TN 4 lựa chọn = 3đ) + Phần II (4 câu Đúng/Sai = 4đ) + Phần III (6 câu Trả lời ngắn = 3đ)",
+          "tong_diem": 10.0
+        },
+        {
+          "ten": "Cấu trúc 2 (Kết hợp TN & TL phổ biến tại nhiều Sở GD&ĐT): 70% Trắc nghiệm (7 điểm) + 30% Tự luận (3 điểm)",
+          "tong_diem": 10.0
+        }
+      ],
+      "pham_vi": "Các chương thuộc phạm vi học kỳ tương ứng của từng lớp.",
+      "ti_le_muc_do": "Nhận biết: 40%, Thông hiểu: 30%, Vận dụng: 20%, Vận dụng cao: 10%"
+    }
+  ]
+}

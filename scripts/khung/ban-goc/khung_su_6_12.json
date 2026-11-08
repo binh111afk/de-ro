@@ -1,0 +1,2955 @@
+{
+  "mon": "Lịch sử",
+  "nguon": [
+    "Chương trình giáo dục phổ thông môn Lịch sử và Địa lí cấp THCS (Ban hành kèm theo Thông tư số 32/2018/TT-BGDĐT)",
+    "Chương trình giáo dục phổ thông môn Lịch sử cấp THPT (Ban hành kèm theo Thông tư số 32/2018/TT-BGDĐT và sửa đổi, bổ sung tại Thông tư số 13/2022/TT-BGDĐT)",
+    "Sách giáo khoa Lịch sử và Địa lí 6, 7, 8, 9 (phân môn Lịch sử) - Bộ Kết nối tri thức với cuộc sống, Chân trời sáng tạo, Cánh diều (NXB Giáo dục Việt Nam, NXB Đại học Sư phạm)",
+    "Sách giáo khoa Lịch sử 10, 11, 12 - Bộ Kết nối tri thức với cuộc sống, Chân trời sáng tạo, Cánh diều (NXB Giáo dục Việt Nam, NXB Đại học Sư phạm)",
+    "Thông tư số 22/2021/TT-BGDĐT về đánh giá học sinh THCS và THPT",
+    "Quyết định số 764/QĐ-BGDĐT về Cấu trúc định dạng đề thi tốt nghiệp THPT từ năm 2025 môn Lịch sử"
+  ],
+  "lop": [
+    {
+      "lop": 6,
+      "chuong": [
+        {
+          "id": "su6-vi-sao-can-hoc-lich-su",
+          "ten": "Vì sao cần học Lịch sử?",
+          "hoc_ky": 1,
+          "mach": "Lịch sử thế giới",
+          "ten_theo_sach": {
+            "KNTT": "Chương 1: Vì sao cần học lịch sử?",
+            "CTST": "Chương 1: Vì sao cần học lịch sử?",
+            "CD": "Chương 1: Vì sao cần học lịch sử?"
+          },
+          "yeu_cau_can_dat": [
+            "Nêu được khái niệm Lịch sử và Môn Lịch sử.",
+            "Giải thích được vì sao cần phải học Lịch sử.",
+            "Phân biệt được các nguồn tư liệu lịch sử: tư liệu truyền miệng, tư liệu hiện vật, tư liệu chữ viết, tư liệu gốc.",
+            "Biết cách tính thời gian trong lịch sử: Thập kỷ, thế kỷ, thiên niên kỷ, Công lịch (tCN, sCN), Âm lịch."
+          ],
+          "pham_vi_thoi_gian": "Từ nguồn gốc thời gian lịch sử đến hiện tại (Khái niệm thời gian và tư liệu)",
+          "su_kien_moc": [
+            "Năm 1 – Năm bắt đầu của Công lịch (Kỷ nguyên Công nguyên)",
+            "1 thập kỷ = 10 năm, 1 thế kỷ = 100 năm, 1 thiên niên kỷ = 1000 năm",
+            "Trước Công nguyên (tCN) – Thời gian tính lùi về trước năm 1",
+            "Sau Công nguyên (sCN) – Thời gian tính tiến từ năm 1 trở đi"
+          ],
+          "nhan_vat": [],
+          "khai_niem": [
+            "Lịch sử",
+            "Tư liệu gốc",
+            "Tư liệu hiện vật",
+            "Tư liệu chữ viết",
+            "Tư liệu truyền miệng",
+            "Công lịch",
+            "Âm lịch"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Khái niệm lịch sử là những gì đã xảy ra trong quá khứ.",
+            "4 loại tư liệu lịch sử cơ bản.",
+            "Cách quy đổi năm sang thế kỷ và thiên niên kỷ (ví dụ: năm 938 thuộc thế kỷ X, thiên niên kỷ I)."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG kiến thức lý luận Sử học nâng cao và Sử học liên ngành (học ở Lớp 10 Chủ đề 1).",
+            "CHƯA DÙNG các niên đại và triều đại lịch sử cụ thể của Việt Nam và thế giới (học ở các chương sau).",
+            "CHƯA DÙNG các khái niệm phân loại tư liệu và phương pháp luận của chương trình cũ (chương trình 2006)."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài nhận biết và phân loại các loại nguồn tư liệu lịch sử qua hình ảnh hoặc đoạn trích.",
+            "Dạng bài tính toán chuyển đổi niên đại: quy đổi từ năm sang thế kỷ/thiên niên kỷ hoặc tính khoảng cách thời gian so với hiện tại.",
+            "Dạng bài giải thích ý nghĩa của việc học Lịch sử dựa trên tình huống thực tiễn."
+          ],
+          "luu_y_ra_de": "Hạn chế ra câu hỏi học thuộc lòng khái niệm suông. Ưu tiên bài tập quy đổi mốc thời gian và nhận biết loại tư liệu qua hình ảnh/hiện vật thực tế."
+        },
+        {
+          "id": "su6-xa-hoi-nguyen-thuy",
+          "ten": "Xã hội nguyên thủy",
+          "hoc_ky": 1,
+          "mach": "Lịch sử thế giới",
+          "ten_theo_sach": {
+            "KNTT": "Chương 2: Xã hội nguyên thủy",
+            "CTST": "Chương 2: Xã hội nguyên thủy",
+            "CD": "Chương 2: Xã hội nguyên thủy"
+          },
+          "yeu_cau_can_dat": [
+            "Mô tả được quá trình tiến hóa từ Vượn người thành Người tinh khôn trên thế giới và ở Việt Nam.",
+            "Trình bày được những nét chính về đời sống vật chất, tinh thần và tổ chức xã hội của người nguyên thủy (Thị tộc, Bộ lạc).",
+            "Giải thích được nguyên nhân tan rã của xã hội nguyên thủy khi công cụ kim loại xuất hiện và sự phân hóa giai cấp."
+          ],
+          "pham_vi_thoi_gian": "Khoảng 4 triệu năm trước đến khoảng thế kỷ II TCN",
+          "su_kien_moc": [
+            "Khoảng 4 triệu năm trước – Bắt đầu xuất hiện Vượn người",
+            "Khoảng 150.000 năm trước – Xuất hiện Người tinh khôn (Người hiện đại)",
+            "Khoảng 4.000 năm TCN – Phát hiện và sử dụng công cụ kim loại (đồng đỏ, đồng thau, sắt)",
+            "Khoảng vài chục vạn năm trước – Dấu vết Người tối cổ ở Việt Nam (Thẩm Khuyên, Thẩm Hai, Núi Đọ)"
+          ],
+          "nhan_vat": [],
+          "khai_niem": [
+            "Vượn người",
+            "Người tối cổ",
+            "Người tinh khôn",
+            "Thị tộc",
+            "Bộ lạc",
+            "Công cụ kim loại",
+            "Tư hữu"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Các giai đoạn tiến hóa: Vượn người -> Người tối cổ -> Người tinh khôn.",
+            "Đời sống người nguyên thủy: hái lượm, săn bắt, trồng trọt, chăn nuôi, phát minh ra lửa.",
+            "Sự xuất hiện công cụ kim loại dẫn tới sản phẩm thừa, tư hữu và phân hóa giàu nghèo."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG phân loại tên gọi sinh học loài người chi tiết như Australopithecus, Homo habilis (chỉ dùng Vượn người, Người tối cổ, Người tinh khôn).",
+            "CHƯA DÙNG các phân tích sâu về hình thái kinh tế - xã hội Cộng sản nguyên thủy theo triết học Marxist nâng cao (chương trình 2006).",
+            "CHƯA DÙNG sự ra đời của nhà nước phong kiến hay nhà nước cổ đại (học ở Chương 3 & 5 Lớp 6)."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài so sánh đặc điểm Người tối cổ và Người tinh khôn (về cấu tạo cơ thể, công cụ lao động, tổ chức xã hội).",
+            "Dạng bài quan sát hình ảnh công cụ đá/đồ đồng để rút ra nhận xét về sự chuyển biến trong sản xuất.",
+            "Dạng bài giải thích mối quan hệ nguyên nhân - kết quả giữa phát minh công cụ kim loại và sự tan rã của xã hội nguyên thủy."
+          ],
+          "luu_y_ra_de": "Tập trung kiểm tra tư duy so sánh và nhận biết sự phát triển của công cụ lao động qua hình ảnh minh họa trong SGK."
+        },
+        {
+          "id": "su6-van-minh-co-dai",
+          "ten": "Xã hội cổ đại và Các nền văn minh cổ đại",
+          "hoc_ky": 1,
+          "mach": "Lịch sử thế giới",
+          "ten_theo_sach": {
+            "KNTT": "Chương 3: Xã hội cổ đại",
+            "CTST": "Chương 3: Xã hội cổ đại",
+            "CD": "Chương 3: Xã hội cổ đại"
+          },
+          "yeu_cau_can_dat": [
+            "Nêu được điều kiện tự nhiên và sự hình thành các quốc gia cổ đại Phương Đông (Ai Cập, Lưỡng Hà, Ấn Độ, Trung Quốc) và Phương Tây (Hy Lạp, La Mã).",
+            "Mô tả được cơ cấu xã hội và thể chế chính trị (Quân chủ chuyên chế phương Đông vs Dân chủ cổ đại phương Tây).",
+            "Nêu được những thành tựu văn hóa tiêu biểu của các quốc gia cổ đại và giá trị của chúng đối với văn minh nhân loại."
+          ],
+          "pham_vi_thoi_gian": "Khoảng thiên niên kỷ IV TCN đến thế kỷ V (năm 476)",
+          "su_kien_moc": [
+            "Khoảng cuối thiên niên kỷ IV TCN – Hình thành nhà nước cổ đại Ai Cập và Lưỡng Hà",
+            "Khoảng giữa thiên niên kỷ III TCN – Hình thành nhà nước cổ đại Ấn Độ (lưu vực sông Ấn)",
+            "Khoảng thế kỷ XXI TCN – Hình thành nhà nước cổ đại Trung Quốc (triều Hạ)",
+            "Khoảng thế kỷ VIII TCN – Hình thành các thành邦 Hy Lạp cổ đại",
+            "Năm 476 – Đế quốc La Mã Tây Âu sụp đổ, kết thúc thời kỳ cổ đại phương Tây"
+          ],
+          "nhan_vat": [
+            "Hăm-mu-ra-bi",
+            "Tần Thủy Hoàng",
+            "A-lex-an-đơ Đại đế",
+            "Xê-zar"
+          ],
+          "khai_niem": [
+            "Quân chủ chuyên chế",
+            "Dân chủ chủ nô",
+            "Thành邦 (Polis)",
+            "Chữ tượng hình",
+            "Chữ cái ghi âm (A, B, C)",
+            "Kim tự tháp"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Điều kiện tự nhiên: Lưu vực các dòng sông lớn (phương Đông) vs Ven biển, đảo, đồi núi (phương Tây).",
+            "Thành tựu văn hóa: Chữ viết, lịch pháp, kiến trúc (Kim tự tháp, Vạn Lý Trường Thành, Đấu trường Cô-li-zê), toán học, triết học."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG khái niệm 'Khái quát văn minh phương Đông và phương Tây' tổng hợp ở mức độ chuyên sâu (học ở Lớp 10 Chủ đề 2).",
+            "CHƯA DÙNG các diễn biến chiến tranh cụ thể của phương Tây cổ đại như Chiến tranh Ba Tư hay Chiến tranh Punic (chương trình cũ 2006 đã giảm tải).",
+            "CHƯA DÙNG tình hình Tây Âu thời phong kiến trung đại (học ở Lớp 7)."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài so sánh điều kiện tự nhiên và thể chế chính trị giữa các quốc gia cổ đại phương Đông và phương Tây.",
+            "Dạng bài khai thác hình ảnh các công trình kiến trúc cổ đại (Kim tự tháp, Đấu trường La Mã) để đánh giá tài năng và lao động của con người thời cổ đại.",
+            "Dạng bài nối thành tựu văn hóa tiêu biểu với quốc gia cổ đại tương ứng."
+          ],
+          "luu_y_ra_de": "Chú trọng câu hỏi khai thác thành tựu văn hóa còn giá trị đến ngày nay (như hệ chữ cái Hy Lạp - La Mã, hệ số 0-9 của Ấn Độ, lịch pháp)."
+        },
+        {
+          "id": "su6-dong-nam-a-co-dai",
+          "ten": "Đông Nam Á từ những thế kỷ tiếp giáp Công nguyên đến thế kỷ X",
+          "hoc_ky": 2,
+          "mach": "Lịch sử khu vực",
+          "ten_theo_sach": {
+            "KNTT": "Chương 4: Đông Nam Á từ những thế kỷ tiếp giáp Công nguyên đến thế kỷ X",
+            "CTST": "Chương 4: Đông Nam Á từ những thế kỷ tiếp giáp Công nguyên đến thế kỷ X",
+            "CD": "Chương 4: Đông Nam Á từ những thế kỷ tiếp giáp Công nguyên đến thế kỷ X"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được vị trí địa lý và điều kiện tự nhiên của khu vực Đông Nam Á.",
+            "Trình bày được quá trình xuất hiện và phát triển của các quốc gia sơ kỳ và phong kiến ở Đông Nam Á từ đầu Công nguyên đến thế kỷ X.",
+            "Nêu được những ảnh hưởng của văn hóa Ấn Độ, Trung Quốc đến văn hóa Đông Nam Á."
+          ],
+          "pham_vi_thoi_gian": "Khoảng thế kỷ I TCN đến thế kỷ X",
+          "su_kien_moc": [
+            "Khoảng thế kỷ I đến thế kỷ VII – Sự xuất hiện của các quốc gia sơ kỳ ĐNÁ (Phù Nam, Chăm-pa, các quốc gia trên bán đảo Mã Lai)",
+            "Khoảng thế kỷ VII đến thế kỷ X – Hình thành các quốc gia phong kiến hình thành (Sri Vi-jay-a, Pu-gan, Dva-ra-va-ti)"
+          ],
+          "nhan_vat": [],
+          "khai_niem": [
+            "Quốc gia sơ kỳ",
+            "Quốc gia phong kiến",
+            "Giao lưu văn hóa",
+            "Ấn Độ hóa"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Vị trí cầu nối địa lý, gió mùa.",
+            "Sự tiếp thu chữ Phạn, Phật giáo, Ấn Độ giáo, kiến trúc đền tháp Ấn Độ."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG giai đoạn phát triển thịnh vượng của các quốc gia Đông Nam Á từ thế kỷ X đến thế kỷ XVI (học ở Lớp 7).",
+            "CHƯA DÙNG khái niệm Văn minh Đông Nam Á tổng hợp chuyên sâu (học ở Lớp 10 Chủ đề 4).",
+            "CHƯA DÙNG thời kỳ ĐNÁ trở thành thuộc địa của thực dân phương Tây (học ở Lớp 8)."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài đọc bản đồ/lược đồ xác định vị trí các quốc gia sơ kỳ Đông Nam Á.",
+            "Dạng bài phân tích những biểu hiện tiếp thu văn hóa Ấn Độ, Trung Quốc của các dân tộc Đông Nam Á.",
+            "Dạng bài so sánh điều kiện tự nhiên của khu vực Đông Nam Á với khu vực Địa Trung Hải.",
+            "Dạng bài giải thích vì sao nông nghiệp lúa nước trở thành nền tảng kinh tế cốt lõi của cư dân Đông Nam Á cổ đại."
+          ],
+          "luu_y_ra_de": "Tập trung kiểm tra nhận thức về tính đa dạng và giao lưu văn hóa của khu vực ĐNÁ."
+        },
+        {
+          "id": "su6-viet-nam-co-bac-thuoc",
+          "ten": "Việt Nam từ thế kỷ VII TCN đến thế kỷ X",
+          "hoc_ky": 2,
+          "mach": "Lịch sử Việt Nam",
+          "ten_theo_sach": {
+            "KNTT": "Chương 5: Việt Nam từ thế kỷ VII TCN đến thế kỷ X",
+            "CTST": "Chương 5: Việt Nam từ thế kỷ VII TCN đến thế kỷ X",
+            "CD": "Chương 5: Việt Nam từ thế kỷ VII TCN đến thế kỷ X"
+          },
+          "yeu_cau_can_dat": [
+            "Nêu được sự thành lập, tổ chức nhà nước và đời sống vật chất, tinh thần của cư dân Văn Lang, Âu Lạc, Chăm-pa, Phù Nam.",
+            "Mô tả được chính sách cai trị của các triều đại phong kiến phương Bắc và sự chuyển biến kinh tế, văn hóa, xã hội nước ta thời Bắc thuộc.",
+            "Trình bày được các cuộc khởi nghĩa lớn giành độc lập dân tộc (Hai Bà Trưng, Bà Triệu, Lý Bì, Mai Thúc Loan, Phùng Hưng).",
+            "Nêu được ý nghĩa lịch sử của cuộc đấu tranh giành lại độc lập dân tộc của Khúc Thừa Dụ, Ngô Quyền và chiến thắng Bạch Đằng năm 938."
+          ],
+          "pham_vi_thoi_gian": "Thế kỷ VII TCN đến năm 938",
+          "su_kien_moc": [
+            "Khoảng thế kỷ VII TCN – Nhà nước Văn Lang ra đời",
+            "Năm 208 TCN – Nhà nước Âu Lạc ra đời (Thục Phán An Dương Vương)",
+            "Năm 179 TCN – Triệu Đà xâm lược Âu Lạc, bắt đầu thời kỳ Bắc thuộc",
+            "Năm 40 – Khởi nghĩa Hai Bà Trưng phất cờ khởi nghĩa tại Hát Môn",
+            "Năm 248 – Khởi nghĩa Bà Triệu",
+            "Năm 542–544 – Lý Bì khởi nghĩa, thành lập nước Vạn Xuân (544)",
+            "Năm 713–722 – Khởi nghĩa Mai Thúc Loan",
+            "Năm 776–791 – Khởi nghĩa Phùng Hưng",
+            "Năm 905 – Khúc Thừa Dụ giành quyền tự chủ",
+            "Năm 938 – Ngô Quyền đánh tan quân Nam Hán trên sông Bạch Đằng, chấm dứt hơn 1000 năm Bắc thuộc"
+          ],
+          "nhan_vat": [
+            "Hùng Vương",
+            "An Dương Vương",
+            "Hai Bà Trưng",
+            "Bà Triệu",
+            "Lý Bì",
+            "Mai Thúc Loan",
+            "Phùng Hưng",
+            "Khúc Thừa Dụ",
+            "Ngô Quyền"
+          ],
+          "khai_niem": [
+            "Văn Lang",
+            "Âu Lạc",
+            "Bắc thuộc",
+            "Chính sách đồng hóa",
+            "Quyền tự chủ",
+            "Độc lập dân tộc"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Tổ chức nhà nước Hùng Vương - An Dương Vương (Lạc tướng, Lạc hầu, Bồ chính).",
+            "Chính sách bóc lột cống nộp, đồng hóa văn hóa của phong kiến phương Bắc.",
+            "Sức sống bền bỉ của văn hóa Việt (giữ gìn tiếng Việt, phong tục tập quán).",
+            "Kế sách cắm cọc gỗ trên sông Bạch Đằng của Ngô Quyền."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG diễn biến lịch sử các triều đại phong kiến độc lập thời Đinh, Tiền Lê, Lý, Trần (học ở Lớp 7).",
+            "CHƯA DÙNG khái niệm 'Văn minh Đại Việt' tổng hợp (học ở Lớp 10 Chủ đề 5).",
+            "CHƯA DÙNG các sự kiện khởi nghĩa chống Pháp hay chống Mỹ (học ở Lớp 8, 9, 12)."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài lập bảng hệ thống các cuộc khởi nghĩa lớn trong thời Bắc thuộc (thời gian, người lãnh đạo, kết quả).",
+            "Dạng bài khai thác tư liệu/lược đồ trận chiến Bạch Đằng năm 938 và phân tích ý nghĩa lịch sử mốc mở đầu thời kỳ độc lập tự chủ lâu dài.",
+            "Dạng bài giải thích nguyên nhân vì sao nhân dân ta giữ gìn được bản sắc văn hóa dân tộc qua hơn 10 thế kỷ Bắc thuộc."
+          ],
+          "luu_y_ra_de": "ĐÂY LÀ CHƯƠNG LỊCH SỬ VIỆT NAM TRỌNG TÂM LỚP 6. Kiểm tra nguyên nhân thắng lợi và ý nghĩa bước ngoặt của chiến thắng Bạch Đằng 938."
+        },
+        {
+          "id": "su6-chu-de-chung-do-thi",
+          "ten": "Chủ đề chung: Đô thị - Lịch sử và hiện tại (hoặc Các cuộc phát kiến địa lí)",
+          "hoc_ky": 2,
+          "mach": "chủ đề chung",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề chung 1: Các cuộc phát kiến địa lí",
+            "CTST": "Chủ đề chung 1: Đô thị: Lịch sử và hiện tại",
+            "CD": "Chủ đề chung 1: Các cuộc phát kiến địa lí"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được điều kiện ra đời và vai trò của các đô thị cổ đại.",
+            "Nêu được ví dụ về một số đô thị tiêu biểu thời cổ đại."
+          ],
+          "pham_vi_thoi_gian": "Thời cổ đại đến trung đại",
+          "su_kien_moc": [
+            "Thiên niên kỷ IV TCN – Sự xuất hiện các đô thị cổ đại đầu tiên ở Lưỡng Hà, Ai Cập"
+          ],
+          "nhan_vat": [],
+          "khai_niem": [
+            "Đô thị cổ đại",
+            "Thành phố gia đình",
+            "Trung tâm thương mại"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Vừa mang tính chất Lịch sử vừa mang tính chất Địa lí tích hợp."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG kiến thức về đô thị thời trung đại Tây Âu (học ở Lớp 7) hoặc đô thị thời hiện đại (học ở Lớp 9).",
+            "CHƯA DÙNG các lý thuyết quy hoạch không gian đô thị chuyên ngành địa lý nâng cao cấp THPT.",
+            "CHƯA DÙNG các nội dung phân tích kinh tế thương nghiệp trung đại."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài mô tả điều kiện hình thành và vai trò của đô thị cổ đại đối với sự phát triển kinh tế - văn hóa.",
+            "Dạng bài quan sát sơ đồ/bản đồ đô thị cổ đại (như Ba-by-lon, A-ten) và rút ra nhận xét.",
+            "Dạng bài liên hệ vai trò của đô thị cổ đại với các đô thị hiện đại."
+          ],
+          "luu_y_ra_de": "Ghi rõ sự khác biệt giữa các bộ sách (KNTT/CD xếp Phát kiến địa lý thành chủ đề chung, CTST xếp Đô thị)."
+        }
+      ],
+      "chuyen_de": [],
+      "ghi_chu_chua_chac": [
+        "Về chủ đề chung Lớp 6: Bộ KNTT và Cánh Diều đưa 'Các cuộc phát kiến địa lí' thành Chủ đề chung 1, trong khi Bộ CTST đưa 'Đô thị: Lịch sử và hiện tại'."
+      ]
+    },
+    {
+      "lop": 7,
+      "chuong": [
+        {
+          "id": "su7-tay-au-trung-dai",
+          "ten": "Tây Âu từ thế kỷ V đến thế kỷ XVI",
+          "hoc_ky": 1,
+          "mach": "Lịch sử thế giới",
+          "ten_theo_sach": {
+            "KNTT": "Chương 1: Tây Âu từ thế kỷ V đến thế kỷ XVI",
+            "CTST": "Chương 1: Tây Âu từ thế kỷ V đến thế kỷ XVI",
+            "CD": "Chương 1: Tây Âu từ thế kỷ V đến thế kỷ XVI"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được quá trình hình thành xã hội phong kiến ở Tây Âu (lãnh địa phong kiến, lãnh chủ và nông nô).",
+            "Nêu được sự ra đời và vai trò của thành thị trung đại.",
+            "Trình bày được các cuộc phát kiến địa lí lớn (Cơ-lông-bơ, Ma-ghen-lan...) và hệ quả của chúng.",
+            "Nêu được nội dung và ý nghĩa của phong trào Văn hóa Phục hưng và Cải cách tôn giáo."
+          ],
+          "pham_vi_thoi_gian": "Thế kỷ V đến thế kỷ XVI",
+          "su_kien_moc": [
+            "Năm 476 – Các tộc người Giéc-man lật đổ Đế quốc La Mã, xã hội phong kiến Tây Âu bắt đầu hình thành",
+            "Năm 1492 – C. Cô-lông-bơ phát kiến ra châu Mỹ",
+            "Năm 1519–1522 – Đoàn thuyền của Ma-ghen-lan thực hiện chuyến đi vòng quanh thế giới đầu tiên",
+            "Thế kỷ XIV–XVI – Phong trào Văn hóa Phục hưng ở Tây Âu",
+            "Thế kỷ XVI – Phong trào Cải cách tôn giáo (M. Lu-thơ, J. Can-văng)"
+          ],
+          "nhan_vat": [
+            "Cô-lông-bơ",
+            "Ma-ghen-lan",
+            "Đa Vin-xi",
+            "M. Lu-thơ",
+            "Can-văng"
+          ],
+          "khai_niem": [
+            "Lãnh địa phong kiến",
+            "Lãnh chủ",
+            "Nông nô",
+            "Thành thị trung đại",
+            "Phát kiến địa lí",
+            "Văn hóa Phục hưng",
+            "Cải cách tôn giáo"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Đặc điểm nền kinh tế tự cung tự cấp trong lãnh địa.",
+            "Thành thị trung đại là 'những bông hoa tươi thắm nhất của thời trung đại'.",
+            "Tác động 2 mặt của phát kiến địa lý (mở rộng thị trường vs cướp bóc thuộc địa, buôn bán nô lệ)."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG các cuộc Cách mạng tư sản Tây Âu thế kỷ XVII-XVIII như Cách mạng tư sản Anh, Pháp (học ở Lớp 8).",
+            "CHƯA DÙNG phong trào Triết học Ánh sáng thế kỷ XVIII.",
+            "CHƯA DÙNG các cuộc chiến tranh thế giới thế kỷ XX (học ở Lớp 8, 9)."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài so sánh nền kinh tế lãnh địa phong kiến với kinh tế thành thị trung đại.",
+            "Dạng bài đọc lược đồ đường đi của các cuộc phát kiến địa lí lớn.",
+            "Dạng bài phân tích tác động của phong trào Văn hóa Phục hưng đối với xã hội Tây Âu."
+          ],
+          "luu_y_ra_de": "Tập trung khai thác các phát kiến địa lý và ý nghĩa bứt phá của phong trào Văn hóa Phục hưng."
+        },
+        {
+          "id": "su7-trung-quoc-an-do-trung-dai",
+          "ten": "Trung Quốc và Ấn Độ thời trung đại",
+          "hoc_ky": 1,
+          "mach": "Lịch sử thế giới",
+          "ten_theo_sach": {
+            "KNTT": "Chương 2: Trung Quốc và Ấn Độ thời trung đại",
+            "CTST": "Chương 2: Trung Quốc và Ấn Độ thời trung đại",
+            "CD": "Chương 2: Trung Quốc và Ấn Độ thời trung đại"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được sự phát triển kinh tế, chính trị, xã hội Trung Quốc qua các triều đại Đường, Song, Nguyên, Minh, Thanh.",
+            "Giới thiệu được những thành tựu văn hóa chủ yếu của Trung Quốc thời trung đại (tư tưởng, văn học, kiến trúc, phát minh kỹ thuật).",
+            "Trình bày được khái quát các triều đại phong kiến Ấn Độ (Gúp-ta, Đê-li, Mô-gôn) và những thành tựu văn hóa tiêu biểu."
+          ],
+          "pham_vi_thoi_gian": "Thế kỷ IV đến thế kỷ XIX",
+          "su_kien_moc": [
+            "Năm 618–907 – Triều đại nhà Đường ở Trung Quốc (thời kỳ thịnh vượng)",
+            "Năm 1368–1644 – Triều đại nhà Minh ở Trung Quốc",
+            "Năm 1644–1911 – Triều đại nhà Thanh (triều đại phong kiến cuối cùng Trung Quốc)",
+            "Năm 319–550 – Vương triều Gúp-ta ở Ấn Độ",
+            "Năm 1526–1707 – Vương triều Mô-gôn ở Ấn Độ"
+          ],
+          "nhan_vat": [
+            "Đường Thái Tông",
+            "A-cơ-ba"
+          ],
+          "khai_niem": [
+            "Chế độ khoa cử",
+            "Tứ đại phát minh",
+            "Nho giáo",
+            "Phật giáo",
+            "Hồi giáo",
+            "Đền Lăng Ta-ja Ma-han"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Tứ đại phát minh Trung Quốc: Giấy in, Kỹ thuật in, La bàn, Thuốc súng.",
+            "Các công trình: Cố Cung (Tử Cấm Thành), Lăng Ta-ja Ma-han."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG Cuộc cách mạng Tân Hợi 1911 ở Trung Quốc (học ở Lớp 8).",
+            "CHƯA DÙNG phong trào giải phóng dân tộc Ấn Độ chống thực dân Anh thế kỷ XIX-XX (học ở Lớp 8, 9).",
+            "CHƯA DÙNG các cuộc chiến tranh thay đổi triều đại chi tiết của chương trình 2006."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài lập bảng thống kê thành tựu văn hóa của Trung Quốc và Ấn Độ thời trung đại.",
+            "Dạng bài đánh giá ảnh hưởng của Nho giáo đối với bộ máy quản lý nhà nước phong kiến Trung Quốc."
+          ],
+          "luu_y_ra_de": "Tránh đi sâu vào các cuộc chiến tranh thay đổi triều đại vụn vặt, chỉ tập trung vào sự phát triển đỉnh cao và thành tựu văn hóa."
+        },
+        {
+          "id": "su7-dong-nam-a-trung-dai",
+          "ten": "Đông Nam Á từ thế kỷ X đến thế kỷ XVI",
+          "hoc_ky": 1,
+          "mach": "Lịch sử khu vực",
+          "ten_theo_sach": {
+            "KNTT": "Chương 3: Đông Nam Á từ thế kỷ X đến thế kỷ XVI",
+            "CTST": "Chương 3: Đông Nam Á từ thế kỷ X đến thế kỷ XVI",
+            "CD": "Chương 3: Đông Nam Á từ thế kỷ X đến thế kỷ XVI"
+          },
+          "yeu_cau_can_dat": [
+            "Mô tả được sự phát triển của các quốc gia Đông Nam Á từ thế kỷ X đến thế kỷ XVI (thời kỳ phát triển thịnh vượng).",
+            "Trình bày được những thành tựu văn hóa tiêu biểu của Đông Nam Á thời kỳ này."
+          ],
+          "pham_vi_thoi_gian": "Thế kỷ X đến thế kỷ XVI",
+          "su_kien_moc": [
+            "Thế kỷ IX–XV – Thời kỳ hoàng kim của Đế quốc Ảng-co (Campuchia)",
+            "Thế kỷ XIV – Vương quốc Lan Xạng (Lào) được thành lập",
+            "Thế kỷ XIII–XVI – Sự hình thành và phát triển của các quốc gia Hồi giáo ở ĐNÁ (Ma-lắc-ca)"
+          ],
+          "nhan_vat": [
+            "Phạ Ngừm"
+          ],
+          "khai_niem": [
+            "Ăng-co Vat",
+            "Ăng-co Thom",
+            "Thạt Luổng",
+            "Văn hóa Hồi giáo ĐNÁ"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Sự phát triển nông nghiệp lúa nước, thương mại đường biển.",
+            "Các công trình kiến trúc Phật giáo và Ấn Độ giáo nổi tiếng."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG quá trình thực dân phương Tây xâm lược các nước ĐNÁ từ thế kỷ XVI đến thế kỷ XIX (học ở Lớp 8).",
+            "CHƯA DÙNG phong trào giải phóng dân tộc ĐNÁ giữa 2 cuộc chiến tranh thế giới (học ở Lớp 9).",
+            "CHƯA DÙNG sự ra đời tổ chức ASEAN năm 1967 (học ở Lớp 9 & Lớp 12 Chủ đề 2)."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài chứng minh thế kỷ X đến thế kỷ XVI là thời kỳ phát triển thịnh vượng của các quốc gia Đông Nam Á.",
+            "Dạng bài khai thác vẻ đẹp và giá trị nghệ thuật của quần thể kiến trúc Ăng-co Vat."
+          ],
+          "luu_y_ra_de": "Tập trung kiểm tra giai đoạn phát triển hoàng kim của khu vực."
+        },
+        {
+          "id": "su7-viet-nam-thoi-ngop-le-so",
+          "ten": "Việt Nam từ thế kỷ X đến đầu thế kỷ XVI",
+          "hoc_ky": 2,
+          "mach": "Lịch sử Việt Nam",
+          "ten_theo_sach": {
+            "KNTT": "Chương 4: Việt Nam từ thế kỷ X đến đầu thế kỷ XVI",
+            "CTST": "Chương 4: Việt Nam từ thế kỷ X đến đầu thế kỷ XVI",
+            "CD": "Chương 4: Việt Nam từ thế kỷ X đến đầu thế kỷ XVI"
+          },
+          "yeu_cau_can_dat": [
+            "Mô tả được quá trình củng cố độc lập, xây dựng bộ máy nhà nước và phát triển kinh tế, văn hóa qua các thời Đinh - Tiền Lê, Lý, Trần, Hồ, Lê sơ.",
+            "Trình bày được diễn biến chính và ý nghĩa lịch sử của các cuộc kháng chiến chống ngoại xâm: Kháng chiến chống Tống (thời Tiền Lê và thời Lý), Kháng chiến chống Mông - Nguyên (thời Trần), Kháng chiến chống Minh (thời Hồ và khởi nghĩa Lam Sơn).",
+            "Đánh giá được vai trò của các anh hùng dân tộc (Ngô Quyền, Đinh Bộ Lĩnh, Lê Hoàn, Lý Thường Kiệt, Trần Hưng Đạo, Lê Lợi, Nguyễn Trãi)."
+          ],
+          "pham_vi_thoi_gian": "Năm 938 đến đầu thế kỷ XVI (năm 1527)",
+          "su_kien_moc": [
+            "Năm 968 – Đinh Bộ Lĩnh dẹp 12 quân sứ, đặt tên nước là Đại Cồ Việt",
+            "Năm 981 – Lê Hoàn đánh tan quân xâm lược Tống trên sông Bạch Đằng",
+            "Năm 1010 – Lý Thái Tổ dời đô về Thăng Long",
+            "Năm 1075–1077 – Kháng chiến chống Tống thời Lý (Lý Thường Kiệt tiến công sang đất Tống và phòng tuyến sông Như Nguyệt)",
+            "Năm 1258, 1285, 1287–1288 – Ba lần kháng chiến chống quân xâm lược Mông - Nguyên thời Trần (Chiến thắng Bạch Đằng 1288)",
+            "Năm 1400 – Hồ Quý Ly lập ra nhà Hồ, tiến hành cải cách",
+            "Năm 1407–1427 – Thống trị của nhà Minh và Cuộc khởi nghĩa Lam Sơn (1418–1427)",
+            "Năm 1427 – Chiến thắng Chi Lăng - Xương Giang, giải phóng đất nước",
+            "Năm 1483 – Bộ luật Hồng Đức (Quốc triều hình luật) ban hành thời Lê Thánh Tông"
+          ],
+          "nhan_vat": [
+            "Đinh Bộ Lĩnh",
+            "Lê Hoàn",
+            "Lý Thái Tổ",
+            "Lý Thường Kiệt",
+            "Trần Hưng Đạo",
+            "Trần Nhân Tông",
+            "Hồ Quý Ly",
+            "Lê Lợi",
+            "Nguyễn Trãi",
+            "Lê Thánh Tông"
+          ],
+          "khai_niem": [
+            "Đại Cồ Việt",
+            "Đại Việt",
+            "Nam quốc sơn hà",
+            "Vườn không nhà trống",
+            "Bạch Đằng 1288",
+            "Bình Ngô đại cáo",
+            "Bộ luật Hồng Đức"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Nghệ thuật quân sự: 'Tiên phát chế nhân' của Lý Thường Kiệt, 'Vườn không nhà trống' thời Trần, chiến thuật phục kích Chi Lăng - Xương Giang.",
+            "Tác phẩm: Bài thơ thần 'Nam quốc sơn hà', 'Hịch tướng sĩ', 'Bình Ngô đại cáo'.",
+            "Cải cách bộ máy hành chính thời Lê Thánh Tông (đỉnh cao quân chủ chuyên chế)."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG nội dung suy yếu nhà Lê sơ, xung đột Nam - Bắc triều, Trịnh - Nguyễn phân tranh (học ở Lớp 8).",
+            "CHƯA DÙNG Phong trào Tây Sơn và các chiến thắng Rạch Gầm - Xoài Mút, Ngọc Hồi - Đống Đa (học ở Lớp 8).",
+            "CHƯA DÙNG nhà Nguyễn và cuộc kháng chiến chống thực dân Pháp (học ở Lớp 8)."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài phân tích nghệ thuật quân sự độc đáo trong bài thơ thần Nam quốc sơn hà / Kháng chiến chống Mông Nguyên / Khởi nghĩa Lam Sơn.",
+            "Dạng bài so sánh nguyên nhân thắng lợi của các cuộc kháng chiến chống ngoại xâm thời Lý, Trần, Lê sơ.",
+            "Dạng bài đọc đoạn trích Bình Ngô đại cáo / Hịch tướng sĩ và trả lời câu hỏi tìm hiểu nội dung, tinh thần yêu nước."
+          ],
+          "luu_y_ra_de": "ĐÂY LÀ CHƯƠNG LỊCH SỬ VIỆT NAM ĐẶC BIỆT QUAN TRỌNG LỚP 7. Tập trung ra các câu hỏi khai thác tư liệu lịch sử (thơ, văn, hịch, cáo) và phân tích bài học lịch sử dựng nước đi đôi với giữ nước."
+        },
+        {
+          "id": "su7-chu-de-chung-phat-kien-dia-li",
+          "ten": "Chủ đề chung: Các cuộc phát kiến địa lí (hoặc Đô thị thời trung đại)",
+          "hoc_ky": 2,
+          "mach": "chủ đề chung",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề chung 2: Đô thị: Lịch sử và hiện tại",
+            "CTST": "Chủ đề chung 2: Các cuộc phát kiến địa lí",
+            "CD": "Chủ đề chung 2: Đô thị: Lịch sử và hiện tại"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được lịch sử hình thành và phát triển của các đô thị thời trung đại.",
+            "Phân tích được vai trò của đô thị đối với sự phát triển kinh tế - xã hội."
+          ],
+          "pham_vi_thoi_gian": "Thế kỷ V đến thế kỷ XVI",
+          "su_kien_moc": [
+            "Thế kỷ XI – Các thành thị trung đại Tây Âu ra đời"
+          ],
+          "nhan_vat": [],
+          "khai_niem": [
+            "Đô thị trung đại",
+            "Thương cảng",
+            "Hội chợ"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Tích hợp kiến thức Sử - Địa về không gian không khí đô thị."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG các cuộc phát kiến không gian vũ trụ thời hiện đại.",
+            "CHƯA DÙNG kiến thức bản đồ và địa lý tự nhiên lớp trên.",
+            "CHƯA DÙNG nội dung phân tích chi tiết con đường tơ lụa thời cổ đại."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài đánh giá tác động của đô thị trung đại đối với sự tan rã của chế độ phong kiến Tây Âu.",
+            "Dạng bài đọc lược đồ các tuyến đường thương mại đường biển kết nối đô thị trung đại.",
+            "Dạng bài phân tích mối quan hệ giữa sự phát triển thương nghiệp đô thị với phong trào Văn hóa Phục hưng."
+          ],
+          "luu_y_ra_de": "Ghi nhận sự linh hoạt giữa hai chủ đề chung tích hợp trong SGK Lớp 7."
+        }
+      ],
+      "chuyen_de": [],
+      "ghi_chu_chua_chac": []
+    },
+    {
+      "lop": 8,
+      "chuong": [
+        {
+          "id": "su8-cach-mang-tu-san-cong-nghiep",
+          "ten": "Các cuộc cách mạng tư sản và Cách mạng công nghiệp",
+          "hoc_ky": 1,
+          "mach": "Lịch sử thế giới",
+          "ten_theo_sach": {
+            "KNTT": "Chương 1: Châu Âu và Bắc Mỹ từ giữa thế kỷ XVI đến thế kỷ XIX",
+            "CTST": "Chương 1: Châu Âu và Bắc Mỹ từ giữa thế kỷ XVI đến thế kỷ XIX",
+            "CD": "Chương 1: Châu Âu và Bắc Mỹ từ giữa thế kỷ XVI đến thế kỷ XIX"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được nguyên nhân, diễn biến chính, tính chất và ý nghĩa lịch sử của các cuộc cách mạng tư sản tiêu biểu (Cách mạng tư sản Anh, Chiến tranh giành độc lập của 13 bang thuộc địa Anh ở Bắc Mỹ, Cách mạng tư sản Pháp).",
+            "Trình bày được những thành tựu cơ bản của cuộc Cách mạng công nghiệp (bắt đầu ở Anh) và tác động của nó đối với sản xuất và đời sống xã hội."
+          ],
+          "pham_vi_thoi_gian": "Từ giữa thế kỷ XVI đến giữa thế kỷ XIX",
+          "su_kien_moc": [
+            "Năm 1642–1688 – Cách mạng tư sản Anh",
+            "Năm 1775–1783 – Chiến tranh giành độc lập của 13 bang thuộc địa Anh ở Bắc Mỹ (Tuyên ngôn Độc lập 1776)",
+            "Năm 1789–1794 – Cách mạng tư sản Pháp (Tuyên ngôn Nhân quyền và Dân quyền 1789)",
+            "Từ những năm 60 thế kỷ XVIII – Cách mạng công nghiệp bắt đầu ở Anh (Giêm Oát phát minh ra máy hơi nước 1784)"
+          ],
+          "nhan_vat": [
+            "Cơ-rom-ouen",
+            "G. Oa-sinh-tơn",
+            "T. Giép-phơ-sơn",
+            "Rô-be-xpi-e",
+            "Giêm Oát"
+          ],
+          "khai_niem": [
+            "Cách mạng tư sản",
+            "Quân chủ lập hiến",
+            "Cộng hòa",
+            "Tuyên ngôn độc lập",
+            "Cách mạng công nghiệp",
+            "Máy hơi nước",
+            "Giai cấp tư sản",
+            "Giai cấp vô sản"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Ý nghĩa các bản Tuyên ngôn Độc lập Mỹ 1776 và Tuyên ngôn Nhân quyền Pháp 1789.",
+            "Tác động của máy hơi nước: chuyển từ lao động thủ công sang lao động bằng máy móc, sự ra đời 2 giai cấp Tư sản và Vô sản."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG Cách mạng công nghiệp lần thứ 3 (máy tính, Internet) và lần thứ 4 (AI, 4.0) (học ở Lớp 10 Chủ đề 3).",
+            "CHƯA DÙNG các học thuyết Chủ nghĩa xã hội khoa học Mác - Ăng-ghen chi tiết.",
+            "CHƯA DÙNG Chiến tranh thế giới thứ nhất 1914–1918 (học ở Chương 4 Lớp 8)."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài so sánh nguyên nhân, lực lượng tham gia, tính chất của Cách mạng tư sản Mỹ và Cách mạng tư sản Pháp.",
+            "Dạng bài đọc đoạn trích Tuyên ngôn Độc lập Mỹ (1776) / Tuyên ngôn Nhân quyền Pháp (1789) và liên hệ đến Tuyên ngôn Độc lập nước VN 1945.",
+            "Dạng bài phân tích tác động 2 mặt (tích cực và tiêu cực) của Cách mạng công nghiệp đối với xã hội loài người."
+          ],
+          "luu_y_ra_de": "Tập trung ra câu hỏi khai thác tư liệu Tuyên ngôn 1776 và 1789, liên hệ với Tuyên ngôn Độc lập 1945 của Chủ tịch Hồ Chí Minh."
+        },
+        {
+          "id": "su8-dong-nam-a-the-ky-16-19",
+          "ten": "Đông Nam Á từ thế kỷ XVI đến thế kỷ XIX",
+          "hoc_ky": 1,
+          "mach": "Lịch sử khu vực",
+          "ten_theo_sach": {
+            "KNTT": "Chương 2: Đông Nam Á từ thế kỷ XVI đến thế kỷ XIX",
+            "CTST": "Chương 2: Đông Nam Á từ thế kỷ XVI đến thế kỷ XIX",
+            "CD": "Chương 2: Đông Nam Á từ thế kỷ XVI đến thế kỷ XIX"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được quá trình xâm nhập của tư bản phương Tây vào các nước Đông Nam Á từ thế kỷ XVI đến thế kỷ XIX.",
+            "Mô tả được tình hình chính trị, kinh tế, xã hội, văn hóa của các nước ĐNÁ dưới sự cai trị của chủ nghĩa thực dân.",
+            "Trình bày được phong trào đấu tranh chống thực dân của nhân dân các nước ĐNÁ."
+          ],
+          "pham_vi_thoi_gian": "Thế kỷ XVI đến thế kỷ XIX",
+          "su_kien_moc": [
+            "Năm 1511 – Bồ Đào Nha đánh chiếm Ma-lắc-ca (sự mở đầu xâm lược phương Tây ở ĐNÁ)",
+            "Cuối thế kỷ XIX – Hầu hết các nước ĐNÁ (trừ Xiêm) đã trở thành thuộc địa của thực dân phương Tây"
+          ],
+          "nhan_vat": [
+            "Hô-xê Ri-zan",
+            "A-phi-nô-ga-xka"
+          ],
+          "khai_niem": [
+            "Chủ nghĩa thực dân",
+            "Thực dân phương Tây",
+            "Thuộc địa",
+            "Nửa phong kiến"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Chính sách chia để trị, bóc lột kinh tế thuộc địa của Pháp, Anh, Hà Lan, Tây Ban Nha.",
+            "Ngoại lệ của Xiêm (Thái Lan) giữ được độc lập nhờ chính sách cải cách ngoại giao khôn khéo."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG phong trào giải phóng dân tộc ĐNÁ giữa 2 cuộc chiến tranh thế giới (học ở Lớp 9).",
+            "CHƯA DÙNG sự ra đời tổ chức ASEAN năm 1967 (học ở Lớp 9 & Lớp 12 Chủ đề 2).",
+            "CHƯA DÙNG quá trình giành độc lập của ĐNÁ sau năm 1945."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài lập bảng thống kê các nước ĐNÁ và tên nước thực dân xâm lược tương ứng.",
+            "Dạng bài giải thích vì sao Xiêm là nước duy nhất ở ĐNÁ không trở thành thuộc địa của thực dân phương Tây."
+          ],
+          "luu_y_ra_de": "Nhấn mạnh tác động của ách cai trị thực dân và nguyên nhân Xiêm giữ được độc lập."
+        },
+        {
+          "id": "su8-viet-nam-the-ky-16-18",
+          "ten": "Việt Nam từ thế kỷ XVI đến thế kỷ XVIII",
+          "hoc_ky": 1,
+          "mach": "Lịch sử Việt Nam",
+          "ten_theo_sach": {
+            "KNTT": "Chương 3: Việt Nam từ thế kỷ XVI đến thế kỷ XVIII",
+            "CTST": "Chương 3: Việt Nam từ thế kỷ XVI đến thế kỷ XVIII",
+            "CD": "Chương 3: Việt Nam từ thế kỷ XVI đến thế kỷ XVIII"
+          },
+          "yeu_cau_can_dat": [
+            "Giải thích được nguyên nhân dẫn đến sự suy yếu của nhà Lê sơ và cục diện Nam - Bắc triều, Trịnh - Nguyễn phân tranh (sông Gianh).",
+            "Mô tả được quá trình thực thi chủ quyền đối với quần đảo Hoàng Sa và quần đảo Trường Sa của chúa Nguyễn (Hội Hoàng Sa, Bắc Hải).",
+            "Trình bày được diễn biến chính và ý nghĩa lịch sử của Phong trào Tây Sơn (đánh tan 5 vạn quân Xiêm - Rạch Gầm - Xoài Mút 1785, đánh tan 29 vạn quân Thanh - Ngọc Hồi - Đống Đa 1789).",
+            "Nêu được những chuyển biến về kinh tế, văn hóa, nghệ thuật thời kỳ này."
+          ],
+          "pham_vi_thoi_gian": "Thế kỷ XVI đến thế kỷ XVIII (năm 1802)",
+          "su_kien_moc": [
+            "Năm 1527 – Mạc Đăng Dung lập ra nhà Mạc",
+            "Năm 1533–1592 – Chiến tranh Nam - Bắc triều",
+            "Năm 1627–1672 – Chiến tranh Trịnh - Nguyễn (lấy sông Gianh làm ranh giới chia cắt Đàng Ngoài - Đàng Trong)",
+            "Năm 1771 – Khởi nghĩa Tây Sơn bùng nổ tại Tây Sơn thượng đạo",
+            "Năm 1785 – Chiến thắng Rạch Gầm - Xoài Mút (đánh tan 5 vạn quân Xiêm)",
+            "Năm 1789 – Chiến thắng Ngọc Hồi - Đống Đa (đánh tan 29 vạn quân Thanh)"
+          ],
+          "nhan_vat": [
+            "Mạc Đăng Dung",
+            "Nguyễn Hoàng",
+            "Nguyễn Nhạc",
+            "Nguyễn Huệ (Quang Trung)",
+            "Nguyễn Ánh"
+          ],
+          "khai_niem": [
+            "Nam - Bắc triều",
+            "Trịnh - Nguyễn phân tranh",
+            "Đàng Ngoài",
+            "Đàng Trong",
+            "Sông Gianh",
+            "Đội Hoàng Sa",
+            "Đội Bắc Hải",
+            "Rạch Gầm - Xoài Mút",
+            "Ngọc Hồi - Đống Đa"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Công lao của chúa Nguyễn trong việc mở mang bờ cõi về phía Nam và xác lập chủ quyền biển đảo (Hoàng Sa, Trường Sa).",
+            "Thiên tài quân sự của Quang Trung - Nguyễn Huệ (thần tốc, táo bạo, bất ngờ).",
+            "Sự phát triển của đô thị thương cảng: Hội An, Phố Hiến, Thăng Long."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG sự thành lập nhà Nguyễn năm 1802 và cuộc kháng chiến chống Pháp 1858–1884 (học ở Chương 5 Lớp 8).",
+            "CHƯA DÙNG nội dung chi tiết các mốc khẳng định chủ quyền Biển Đông nâng cao Lớp 11 (Chủ đề 3).",
+            "CHƯA DÙNG các phong trào yêu nước đầu thế kỷ XX (Phan Bội Châu, Phan Châu Trinh)."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài khai thác tư liệu lịch sử về Đội Hoàng Sa dưới thời chúa Nguyễn để chứng minh quá trình xác lập chủ quyền biển đảo của Việt Nam.",
+            "Dạng bài phân tích nghệ thuật quân sự thần tốc của Nguyễn Huệ trong trận Ngọc Hồi - Đống Đa 1789.",
+            "Dạng bài so sánh nguyên nhân, quy mô và ý nghĩa của chiến thắng Rạch Gầm - Xoài Mút (1785) với chiến thắng Ngọc Hồi - Đống Đa (1789)."
+          ],
+          "luu_y_ra_de": "ĐÂY LÀ CHƯƠNG LỊCH SỬ VIỆT NAM RẤT QUAN TRỌNG LỚP 8. Nhấn mạnh bằng chứng lịch sử chủ quyền Hoàng Sa - Trường Sa và công lao vĩ đại của phong trào Tây Sơn."
+        },
+        {
+          "id": "su8-the-gioi-cuoi-19-dau-20",
+          "ten": "Châu Âu và Thế giới từ cuối thế kỷ XIX đến đầu thế kỷ XX",
+          "hoc_ky": 2,
+          "mach": "Lịch sử thế giới",
+          "ten_theo_sach": {
+            "KNTT": "Chương 4: Châu Âu và thế giới từ cuối thế kỷ XIX đến đầu thế kỷ XX",
+            "CTST": "Chương 4: Châu Âu và thế giới từ cuối thế kỷ XIX đến đầu thế kỷ XX",
+            "CD": "Chương 4: Châu Âu và thế giới từ cuối thế kỷ XIX đến đầu thế kỷ XX"
+          },
+          "yeu_cau_can_dat": [
+            "Mô tả được những chuyển biến lớn của chủ nghĩa tư bản sang giai đoạn Chủ nghĩa đế quốc (sự xuất hiện các độc quyền, tranh giành thuộc địa).",
+            "Trình bày được nguyên nhân, diễn biến chính và kết cục của Chiến tranh thế giới thứ nhất (1914–1918).",
+            "Trình bày được nguyên nhân, diễn biến chính và ý nghĩa lịch sử của Cách mạng tháng Mười Nga năm 1917."
+          ],
+          "pham_vi_thoi_gian": "Cuối thế kỷ XIX đến năm 1918 (năm 1917)",
+          "su_kien_moc": [
+            "Cuối thế kỷ XIX – Đầu thế kỷ XX – Chủ nghĩa tư bản chuyển sang giai đoạn Chủ nghĩa đế quốc",
+            "Năm 1914–1918 – Chiến tranh thế giới thứ nhất",
+            "Tháng 3/1917 – Cách mạng tháng Hai ở Nga (lật đổ chế độ Nga hoàng)",
+            "Ngày 7/11/1917 (25/10 theo lịch Nga) – Cách mạng tháng Mười Nga giành thắng lợi"
+          ],
+          "nhan_vat": [
+            "V.I. Lê-nin"
+          ],
+          "khai_niem": [
+            "Chủ nghĩa đế quốc",
+            "Tổ chức độc quyền (Tơ-rớt, Cát-ten, Xanh-đi-ca)",
+            "Chiến tranh đế quốc phi nghĩa",
+            "Cách mạng tháng Mười",
+            "Chính quyền Xô viết"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Bản chất phi nghĩa của Chiến tranh thế giới thứ nhất.",
+            "Ý nghĩa mở ra kỷ nguyên mới của Cách mạng tháng Mười Nga."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG Trật tự thế giới Véc-xai - Oa-sinh-tơn giữa hai cuộc chiến tranh (học ở Lớp 9).",
+            "CHƯA DÙNG Chiến tranh thế giới thứ hai 1939–1945 (học ở Lớp 9).",
+            "CHƯA DÙNG nội dung Liên Xô xây dựng CNXH 1921–1941."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài phân biệt tính chất phi nghĩa của Chiến tranh thế giới thứ nhất với tính chất chính nghĩa của Cách mạng tháng Mười Nga.",
+            "Dạng bài đọc biểu đồ/số liệu về hậu quả thương vong và thiệt hại kinh tế của Chiến tranh thế giới thứ nhất."
+          ],
+          "luu_y_ra_de": "Tập trung kiểm tra nguyên nhân cốt lõi dẫn đến Chiến tranh thế giới thứ nhất và ý nghĩa lịch sử của Cách mạng tháng Mười Nga."
+        },
+        {
+          "id": "su8-viet-nam-the-ky-19-dau-20",
+          "ten": "Việt Nam từ thế kỷ XIX đến đầu thế kỷ XX",
+          "hoc_ky": 2,
+          "mach": "Lịch sử Việt Nam",
+          "ten_theo_sach": {
+            "KNTT": "Chương 5: Việt Nam từ thế kỷ XIX đến đầu thế kỷ XX",
+            "CTST": "Chương 5: Việt Nam từ thế kỷ XIX đến đầu thế kỷ XX",
+            "CD": "Chương 5: Việt Nam từ thế kỷ XIX đến đầu thế kỷ XX"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được quá trình nhà Nguyễn thành lập và các chính sách quản lý đất nước (thời Gia Long, Minh Mạng, Thiệu Trị, Tự Đức).",
+            "Trình bày được quá trình thực dân Pháp xâm lược Việt Nam (1858–1884) và cuộc đấu tranh chống xâm lược của nhân dân ta (Trương Định, Nguyễn Trung Trực, Kháng chiến ở Nam Kỳ, Bắc Kỳ).",
+            "Mô tả được Phong trào Cần Vương (1885–1896) và Cuộc khởi nghĩa Yên Thế (1884–1913).",
+            "Trình bày được những chuyển biến về kinh tế, xã hội Việt Nam đầu thế kỷ XX dưới tác động của cuộc khai thác thuộc địa lần thứ nhất của Pháp và các xu hướng cứu nước mới (Phan Bội Châu, Phan Châu Trinh)."
+          ],
+          "pham_vi_thoi_gian": "Năm 1802 đến năm 1918",
+          "su_kien_moc": [
+            "Năm 1802 – Nguyễn Ánh lên ngôi hoàng đế, lập ra nhà Nguyễn (Gia Long)",
+            "Năm 1831–1832 – Cải cách hành chính của vua Minh Mạng (chia cả nước thành 31 tỉnh)",
+            "Ngày 1/9/1858 – Thực dân Pháp nổ súng tấn công đà Nẵng, mở đầu cuộc xâm lược Việt Nam",
+            "Năm 1862 – Hiệp ước Nhâm Tuất (nhượng 3 tỉnh Đông Nam Kỳ cho Pháp)",
+            "Năm 1883 – Hiệp ước Hác-măng & Năm 1884 – Hiệp ước Pa-tơ-nốt (Việt Nam trở thành nước thuộc địa nửa phong kiến)",
+            "Năm 1885–1896 – Phong trào Cần Vương (Chiếu Cần Vương 13/7/1885 của vua Hàm Nghi, khởi nghĩa Hương Khê 1885–1896)",
+            "Năm 1884–1913 – Khởi nghĩa Yên Thế do Hoàng Hoa Thám lãnh đạo",
+            "Năm 1905–1908 – Phong trào Đông Du của Phan Bội Châu",
+            "Năm 1906–1908 – Phong trào Duy Tân của Phan Châu Trinh",
+            "Ngày 5/6/1911 – Nguyễn Tất Thành ra đi tìm đường cứu nước tại bến cảng Nhà Rồng"
+          ],
+          "nhan_vat": [
+            "Gia Long",
+            "Minh Mạng",
+            "Trương Định",
+            "Nguyễn Trung Trực",
+            "Hàm Nghi",
+            "Tôn Thất Thuyết",
+            "Phan Đình Phùng",
+            "Hoàng Hoa Thám",
+            "Phan Bội Châu",
+            "Phan Châu Trinh",
+            "Nguyễn Tất Thành"
+          ],
+          "khai_niem": [
+            "Nhà Nguyễn",
+            "Cải cách Minh Mạng",
+            "Nam Kỳ lục tỉnh",
+            "Chiếu Cần Vương",
+            "Phong trào Cần Vương",
+            "Khai thác thuộc địa",
+            "Xu hướng bạo động",
+            "Xu hướng cải cách"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Tinh thần chiến đấu kiên cường chống Pháp của nhân dân ta dù nhà Nguyễn đầu hàng.",
+            "Sự thất bại của các phong trào cứu nước theo phong kiến và dân chủ tư sản đặt ra yêu cầu tìm con đường cứu nước mới.",
+            "Ý nghĩa mốc sự kiện ngày 5/6/1911 của Nguyễn Tất Thành."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG các hoạt động của Nguyễn Ái Quốc ở Pháp, Liên Xô, Trung Quốc những năm 1919-1930 (học ở Lớp 9).",
+            "CHƯA DÙNG sự thành lập Đảng Cộng sản Việt Nam 1930 và Cách mạng tháng Tám 1945 (học ở Lớp 9).",
+            "CHƯA DÙNG Cuộc kháng chiến chống Pháp 1945–1954 và chống Mỹ 1954–1975."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài so sánh xu hướng cứu nước của Phan Bội Châu (bạo động) và Phan Châu Trinh (cải cách).",
+            "Dạng bài đọc đoạn trích Chiếu Cần Vương / trích lời tuyên bố của Nguyễn Trung Trực ('Bao giờ người Tây nhổ hết cỏ nước Nam...') để phân tích tinh thần yêu nước.",
+            "Dạng bài lập bảng hệ thống các giai đoạn kháng chiến chống Pháp từ 1858 đến 1918."
+          ],
+          "luu_y_ra_de": "ĐÂY LÀ CHƯƠNG LỊCH SỬ VIỆT NAM CẬN ĐẠI CỐT LÕI LỚP 8. Đề thi tập trung đánh giá nguyên nhân thất bại của phong trào Cần Vương và bối cảnh Nguyễn Tất Thành ra đi tìm đường cứu nước."
+        },
+        {
+          "id": "su8-chu-de-chung-bien-dong",
+          "ten": "Chủ đề chung: Bảo vệ chủ quyền, các quyền và lợi ích hợp pháp của Việt Nam ở Biển Đông",
+          "hoc_ky": 2,
+          "mach": "chủ đề chung",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề chung 2: Bảo vệ chủ quyền, các quyền và lợi ích hợp pháp của Việt Nam ở Biển Đông",
+            "CTST": "Chủ đề chung 2: Văn minh châu thổ sông Hồng và sông Cửu Long",
+            "CD": "Chủ đề chung 2: Bảo vệ chủ quyền, các quyền và lợi ích hợp pháp của Việt Nam ở Biển Đông"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được vị trí chiến lược của Biển Đông và các đảo, quần đảo của Việt Nam.",
+            "Nêu được quá trình xác lập và bảo vệ chủ quyền biển đảo của Việt Nam trong lịch sử."
+          ],
+          "pham_vi_thoi_gian": "Lịch sử Việt Nam từ truyền thống đến hiện đại",
+          "su_kien_moc": [
+            "Thế kỷ XVII – Chúa Nguyễn thành lập Đội Hoàng Sa và Đội Bắc Hải"
+          ],
+          "nhan_vat": [],
+          "khai_niem": [
+            "Biển Đông",
+            "Hoàng Sa",
+            "Trường Sa",
+            "Chủ quyền biển đảo",
+            "UNCLOS 1982"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Tích hợp kiến thức địa lý biển đảo và lịch sử thực thi chủ quyền."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG các văn bản pháp lý quốc tế UNCLOS 1982 nâng cao (học ở Lớp 11 Chủ đề 3).",
+            "CHƯA DÙNG các chiến dịch quân sự giải phóng các đảo thuộc Trường Sa năm 1975 (học ở Lớp 9/12).",
+            "CHƯA DÙNG nội dung tranh chấp ngoại giao Biển Đông thời hiện đại."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài khai thác bản đồ Biển Đông và tài liệu lịch sử để khẳng định chủ quyền của Việt Nam đối với hai quần đảo Hoàng Sa và Trường Sa.",
+            "Dạng bài lập sơ đồ các mốc lịch sử thực thi chủ quyền biển đảo của Việt Nam từ thời chúa Nguyễn đến nay.",
+            "Dạng bài phân tích vai trò của Biển Đông đối với an ninh quốc phòng và phát triển kinh tế biển Việt Nam."
+          ],
+          "luu_y_ra_de": "Ghi nhận sự khác biệt chủ đề chung giữa các bộ SGK Lớp 8."
+        }
+      ],
+      "chuyen_de": [],
+      "ghi_chu_chua_chac": []
+    },
+    {
+      "lop": 9,
+      "chuong": [
+        {
+          "id": "su9-the-gioi-1918-1945",
+          "ten": "Thế giới từ năm 1918 đến năm 1945",
+          "hoc_ky": 1,
+          "mach": "Lịch sử thế giới",
+          "ten_theo_sach": {
+            "KNTT": "Chương 1: Thế giới từ năm 1918 đến năm 1945",
+            "CTST": "Chương 1: Thế giới từ năm 1918 đến năm 1945",
+            "CD": "Chương 1: Thế giới từ năm 1918 đến năm 1945"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được những nét chính về tình hình thế giới giữa hai cuộc chiến tranh thế giới (1918–1939): Trật tự Véc-xai - Oa-sinh-tơn, Cuộc khủng hoảng kinh tế thế giới 1929–1933 và sự xuất hiện của chủ nghĩa phát xít.",
+            "Trình bày được nguyên nhân, các giai đoạn phát triển chính và kết cục của Chiến tranh thế giới thứ hai (1939–1945).",
+            "Phân tích được tác động của kết cục Chiến tranh thế giới thứ hai đối với cục diện thế giới."
+          ],
+          "pham_vi_thoi_gian": "Năm 1918 đến năm 1945",
+          "su_kien_moc": [
+            "Năm 1919–1922 – Trật tự thế giới Véc-xai - Oa-sinh-tơn được thiết lập",
+            "Năm 1929–1933 – Cuộc khủng hoảng kinh tế thế giới đại suy thoái",
+            "Năm 1933 – Hi-tle lên làm Thủ tướng Đức, chủ nghĩa phát xít cầm quyền",
+            "Ngày 1/9/1939 – Đức tấn công Ba Lan, Chiến tranh thế giới thứ hai bùng nổ",
+            "Ngày 22/6/1941 – Đức tấn công Liên Xô",
+            "Ngày 7/12/1941 – Nhật Bản tấn công Trân Châu Cảng, Mỹ tham chiến",
+            "Ngày 9/5/1945 – Phát xít Đức ký hiệp định hàng hàng không điều kiện (Ngày Chiến thắng)",
+            "Ngày 15/8/1945 – Phát xít Nhật đầu hàng không điều kiện, Chiến tranh thế giới thứ hai kết thúc"
+          ],
+          "nhan_vat": [
+            "Hi-tle",
+            "Mu-xô-li-ni",
+            "Ru-zơ-ven",
+            "Xta-lin",
+            "Sơ-chinh"
+          ],
+          "khai_niem": [
+            "Trật tự Véc-xai - Oa-sinh-tơn",
+            "Đại suy thoái 1929-1933",
+            "Chủ nghĩa phát xít",
+            "Phe Trục",
+            "Phe Đồng minh",
+            "Chiến tranh thế giới thứ hai"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Vai trò quyết định tiêu diệt chủ nghĩa phát xít của Liên Xô và các lực lượng Đồng minh.",
+            "Thời cơ thuận lợi cho Cách mạng tháng Tám năm 1945 ở Việt Nam khi Nhật đầu hàng."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG Trật tự thế giới hai cực I-an-ta và Chiến tranh Lạnh (học ở Chương 3 Lớp 9 & Lớp 12 Chủ đề 1).",
+            "CHƯA DÙNG sự sụp đổ của Liên Xô và Đông Âu năm 1991 (học ở Lớp 9/11/12).",
+            "CHƯA DÙNG xu thế đa cực hiện đại."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài so sánh nguyên nhân và hậu quả của Chiến tranh thế giới thứ nhất (1914–1918) và Chiến tranh thế giới thứ hai (1939–1945).",
+            "Dạng bài phân tích ảnh hưởng của sự kiện Nhật Bản đầu hàng Đồng minh (8/1945) đối với thời cơ tổng khởi nghĩa ở Việt Nam."
+          ],
+          "luu_y_ra_de": "Tập trung ra câu hỏi đánh giá kết cục Chiến tranh thế giới thứ hai và mối liên hệ thời cơ cách mạng Việt Nam."
+        },
+        {
+          "id": "su9-viet-nam-1918-1945",
+          "ten": "Việt Nam từ năm 1918 đến năm 1945",
+          "hoc_ky": 1,
+          "mach": "Lịch sử Việt Nam",
+          "ten_theo_sach": {
+            "KNTT": "Chương 2: Việt Nam từ năm 1918 đến năm 1945",
+            "CTST": "Chương 2: Việt Nam từ năm 1918 đến năm 1945",
+            "CD": "Chương 2: Việt Nam từ năm 1918 đến năm 1945"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được những chuyển biến về kinh tế, xã hội Việt Nam sau Chương trình khai thác thuộc địa lần thứ hai của Pháp (1919–1929).",
+            "Trình bày được hoạt động cứu nước của Nguyễn Ái Quốc từ năm 1919 đến năm 1930 và sự thành lập Đảng Cộng sản Việt Nam (1/1930).",
+            "Mô tả được Phong trào cách mạng 1930–1931 (Xô viết Nghệ - Tĩnh), Cuộc vận động Dân chủ 1936–1939 và Phong trào giải phóng dân tộc 1939–1945.",
+            "Trình bày được diễn biến chính, nguyên nhân thắng lợi và ý nghĩa lịch sử của Cách mạng tháng Tám năm 1945 (Bác Hồ đọc Tuyên ngôn Độc lập 2/9/1945)."
+          ],
+          "pham_vi_thoi_gian": "Năm 1918 đến ngày 2/9/1945",
+          "su_kien_moc": [
+            "Năm 1919–1929 – Cuộc khai thác thuộc địa lần thứ hai của Pháp",
+            "Tháng 7/1920 – Nguyễn Ái Quốc đọc Luận cương của Lê-nin về vấn đề dân tộc và thuộc địa",
+            "Năm 1925 – Thành lập Hội Việt Nam Cách mạng Thanh niên",
+            "Từ 6/1 đến 7/2/1930 – Hội nghị hợp nhất các tổ chức cộng sản tại Cửu Long (Hương Cảng, Trung Quốc), thành lập Đảng Cộng sản Việt Nam",
+            "Năm 1930–1931 – Phong trào cách mạng 1930–1931 đỉnh cao là Xô viết Nghệ - Tĩnh",
+            "Tháng 5/1941 – Hội nghị Trung ương 8 thành lập Mặt trận Việt Minh",
+            "Ngày 22/12/1944 – Thành lập Đội Việt Nam Tuyên truyền Giải phóng quân",
+            "Ngày 9/3/1945 – Nhật đảo chính Pháp",
+            "Từ 14 đến 28/8/1945 – Tổng khởi nghĩa giành chính quyền trên cả nước",
+            "Ngày 2/9/1945 – Chủ tịch Hồ Chí Minh đọc Tuyên ngôn Độc lập tại Quảng trường Ba Đình, khai sinh nước Việt Nam Dân chủ Cộng hòa"
+          ],
+          "nhan_vat": [
+            "Nguyễn Ái Quốc (Hồ Chí Minh)",
+            "Trần Phú",
+            "Lê Hồng Phong",
+            "Hà Huy Tập",
+            "Nguyễn Văn Cừ",
+            "Võ Nguyên Giáp"
+          ],
+          "khai_niem": [
+            "Khai thác thuộc địa lần hai",
+            "Đảng Cộng sản Việt Nam",
+            "Xô viết Nghệ - Tĩnh",
+            "Mặt trận Việt Minh",
+            "Tổng khởi nghĩa",
+            "Tuyên ngôn Độc lập",
+            "Việt Nam Dân chủ Cộng hòa"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Công lao to lớn của Nguyễn Ái Quốc trong việc tìm ra con đường cứu nước cách mạng vô sản và thành lập Đảng.",
+            "Sự chuẩn bị 15 năm (1930-1945) qua các phong trào tập dượt cho Cách mạng tháng Tám.",
+            "Ý nghĩa thời đại của Tuyên ngôn Độc lập 2/9/1945."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG Cuộc kháng chiến chống Pháp 1945–1954 (học ở Chương 4 Lớp 9).",
+            "CHƯA DÙNG Cuộc kháng chiến chống Mỹ 1954–1975 (học ở Chương 4 Lớp 9).",
+            "CHƯA DÙNG chi tiết nội dung đường lối Đổi mới năm 1986 (học ở Chương 5 Lớp 9)."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài đọc đoạn trích Tuyên ngôn Độc lập 2/9/1945 và trả lời các câu hỏi về giá trị pháp lý, giá trị nhân văn và ý nghĩa lịch sử.",
+            "Dạng bài so sánh Luận cương chính trị (10/1930) với Cương lĩnh chính trị đầu tiên (2/1930) của Đảng.",
+            "Dạng bài phân tích bài học kinh nghiệm về chớp thời cơ trong Cách mạng tháng Tám năm 1945."
+          ],
+          "luu_y_ra_de": "ĐÂY LÀ CHƯƠNG LỊCH SỬ VIỆT NAM TRỌNG TÂM BẮT BUỘC LỚP 9. Tập trung kiểm tra vai trò Nguyễn Ái Quốc, tính chất Cách mạng tháng Tám và Tuyên ngôn Độc lập."
+        },
+        {
+          "id": "su9-the-gioi-1945-nay",
+          "ten": "Thế giới từ năm 1945 đến nay",
+          "hoc_ky": 2,
+          "mach": "Lịch sử thế giới",
+          "ten_theo_sach": {
+            "KNTT": "Chương 3: Thế giới từ năm 1945 đến nay",
+            "CTST": "Chương 3: Thế giới từ năm 1945 đến nay",
+            "CD": "Chương 3: Thế giới từ năm 1945 đến nay"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được sự hình thành Trật tự thế giới hai cực I-an-ta và Chiến tranh Lạnh (1947–1989).",
+            "Trình bày được quá trình phong trào giải phóng dân tộc ở Á, Phi, Mỹ La-tinh và sự sụp đổ của hệ thống thuộc địa.",
+            "Nêu được sự phát triển của các trung tâm kinh tế (Mỹ, Tây Âu, Nhật Bản) và sự thành lập, phát triển của Liên minh châu Âu (EU), ASEAN.",
+            "Nêu được xu thế phát triển của thế giới sau Chiến tranh Lạnh và cuộc Cách mạng khoa học - công nghệ."
+          ],
+          "pham_vi_thoi_gian": "Năm 1945 đến nay",
+          "su_kien_moc": [
+            "Tháng 2/1945 – Hội nghị I-an-ta (Yalta)",
+            "Tháng 10/1945 – Thành lập Tổ chức Liên Hợp Quốc (UN)",
+            "Năm 1947–1989 – Chiến tranh Lạnh giữa hai phe TBCN (Mỹ) và XHCN (Liên Xô)",
+            "Năm 1949 – Thành lập nước Cộng hòa Nhân dân Trung Hoa",
+            "Năm 1967 – Thành lập Hiệp hội các quốc gia Đông Nam Á (ASEAN)",
+            "Năm 1989–1991 – Chiến tranh Lạnh kết thúc, sụp đổ chế độ XHCN ở Liên Xô và Đông Âu",
+            "Năm 1993 – Đổi tên Cộng đồng châu Âu thành Liên minh châu Âu (EU)"
+          ],
+          "nhan_vat": [
+            "Nê-ru",
+            "Phi-đen Ca-xtơ-rô",
+            "Man-đê-la"
+          ],
+          "khai_niem": [
+            "Trật tự hai cực I-an-ta",
+            "Liên Hợp Quốc",
+            "Chiến tranh Lạnh",
+            "Phong trào giải phóng dân tộc",
+            "ASEAN",
+            "EU",
+            "Toàn cầu hóa"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Các nguyên tắc hoạt động cốt lõi của Liên Hợp Quốc.",
+            "Xu thế đa cực, hợp tác và phát triển sau Chiến tranh Lạnh."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG nội dung chi tiết Lịch sử ASEAN chuyên sâu (học ở Lớp 12 Chủ đề 2).",
+            "CHƯA DÙNG phân tích chuyên sâu về Trật tự thế giới đa cực (học ở Lớp 12 Chủ đề 1).",
+            "CHƯA DÙNG các trận đánh trong Chiến tranh Lạnh ngoài phạm vi tổng quát."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài đọc bảng số liệu về sự tăng trưởng kinh tế của Mỹ, Tây Âu, Nhật Bản sau Chiến tranh thế giới thứ hai.",
+            "Dạng bài phân tích tác động của cuộc Cách mạng khoa học - công nghệ đối với đời sống con người và cơ hội/thách thức cho Việt Nam."
+          ],
+          "luu_y_ra_de": "Tập trung câu hỏi về xu thế toàn cầu hóa và bài học liên hệ phát triển đất nước."
+        },
+        {
+          "id": "su9-viet-nam-1945-1975",
+          "ten": "Việt Nam từ năm 1945 đến năm 1975",
+          "hoc_ky": 2,
+          "mach": "Lịch sử Việt Nam",
+          "ten_theo_sach": {
+            "KNTT": "Chương 4: Việt Nam từ năm 1945 đến năm 1975",
+            "CTST": "Chương 4: Việt Nam từ năm 1945 đến năm 1975",
+            "CD": "Chương 4: Việt Nam từ năm 1945 đến năm 1975"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được cuộc đấu tranh bảo vệ chính quyền cách mạng (1945–1946).",
+            "Trình bày được diễn biến chính, nguyên nhân thắng lợi và ý nghĩa lịch sử của Cuộc kháng chiến chống Pháp (1945–1954), đỉnh cao là Chiến thắng Điện Biên Phủ 1954 và Hiệp định Giơ-ne-vơ.",
+            "Trình bày được diễn biến chính, nguyên nhân thắng lợi và ý nghĩa lịch sử của Cuộc kháng chiến chống Mỹ, cứu nước (1954–1975): Đánh bại các chiến lược chiến tranh của Mỹ (Chiến tranh đơn phương, Chiến tranh đặc biệt, Chiến tranh cục bộ, Việt Nam hóa chiến tranh), Hiệp định Pa-ri 1973 và Tổng tiến công Xuân 1975 (Chiến dịch Hồ Chí Minh)."
+          ],
+          "pham_vi_thoi_gian": "Năm 1945 đến ngày 30/4/1975",
+          "su_kien_moc": [
+            "Ngày 19/12/1946 – Chủ tịch Hồ Chí Minh ra Lời kêu gọi toàn quốc kháng chiến",
+            "Thu - Đông 1947 – Chiến dịch Việt Bắc thu - đông",
+            "Thu - Đông 1950 – Chiến dịch Biên giới thu - đông",
+            "Từ 13/3 đến 7/5/1954 – Chiến dịch Điện Biên Phủ (56 ngày đêm 'lừng lẫy năm châu, chấn động địa cầu')",
+            "Ngày 21/7/1954 – Ký kết Hiệp định Giơ-ne-vơ về chấm dứt chiến tranh, lập lại hòa bình ở Đông Dương",
+            "Năm 1959–1960 – Phong trào 'Đồng khởi' ở miền Nam",
+            "Năm 1961–1965 – Đánh bại chiến lược 'Chiến tranh đặc biệt' của Mỹ",
+            "Năm 1965–1968 – Đánh bại chiến lược 'Chiến tranh cục bộ' (Tết Mậu Thân 1968)",
+            "Năm 1969–1972 – Đánh bại chiến lược 'Việt Nam hóa chiến tranh' và Trận Điện Biên Phủ trên không (12/1972)",
+            "Ngày 27/1/1973 – Ký kết Hiệp định Pa-ri về chấm dứt chiến tranh, lập lại hòa bình ở Việt Nam",
+            "Từ 4/3 đến 30/4/1975 – Tổng tiến công và nổi dậy Xuân 1975 (Chiến dịch Tây Nguyên, Huế - Đà Nẵng, Chiến dịch Hồ Chí Minh giải phóng hoàn toàn miền Nam 30/4/1975)"
+          ],
+          "nhan_vat": [
+            "Hồ Chí Minh",
+            "Võ Nguyên Giáp",
+            "Nguyễn Thị Định",
+            "Bùi Quang Thận"
+          ],
+          "khai_niem": [
+            "Lời kêu gọi toàn quốc kháng chiến",
+            "Điện Biên Phủ 1954",
+            "Hiệp định Giơ-ne-vơ",
+            "Đồng khởi",
+            "Chiến tranh đặc biệt",
+            "Chiến tranh cục bộ",
+            "Việt Nam hóa chiến tranh",
+            "Hiệp định Pa-ri 1973",
+            "Chiến dịch Hồ Chí Minh"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Đường lối kháng chiến toàn dân, toàn diện, trường kỳ, tự lực cánh sinh.",
+            "Ý nghĩa lịch sử lật đổ ách thống trị của chủ nghĩa thực dân cũ (Pháp) và chủ nghĩa thực dân mới (Mỹ), giải phóng hoàn toàn miền Nam, thống nhất đất nước."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG các chi tiết diễn biến từng trận đánh nhỏ ngoài SGK.",
+            "CHƯA DÙNG mốc lịch sử Đổi mới 1986 và thành tựu hiện nay (học ở Chương 5 Lớp 9 & Lớp 12 Chủ đề 4).",
+            "CHƯA DÙNG các chủ đề ngoại giao Cây tre nâng cao Lớp 12."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài so sánh điểm giống và khác nhau giữa Hiệp định Giơ-ne-vơ (1954) và Hiệp định Pa-ri (1973).",
+            "Dạng bài phân biệt các chiến lược chiến tranh của Mỹ ở miền Nam Việt Nam (Đặc biệt, Cục bộ, Việt Nam hóa).",
+            "Dạng bài đọc tư liệu trích Lời kêu gọi toàn quốc kháng chiến 1946 / Quyết tâm thư Chiến dịch Hồ Chí Minh và trả lời câu hỏi.",
+            "Dạng bài phân tích nguyên nhân thắng lợi quan trọng nhất của cuộc kháng chiến chống Mỹ cứu nước."
+          ],
+          "luu_y_ra_de": "ĐÂY LÀ CHƯƠNG LỊCH SỬ VIỆT NAM HIỆN ĐẠI BẮT BUỘC VÀ QUAN TRỌNG NHẤT LỚP 9. Trọng tâm ra đề vào Điện Biên Phủ 1954, Hiệp định Pa-ri 1973 và Chiến dịch Hồ Chí Minh 1975."
+        },
+        {
+          "id": "su9-viet-nam-1975-nay",
+          "ten": "Việt Nam từ năm 1975 đến nay",
+          "hoc_ky": 2,
+          "mach": "Lịch sử Việt Nam",
+          "ten_theo_sach": {
+            "KNTT": "Chương 5: Việt Nam từ năm 1975 đến nay",
+            "CTST": "Chương 5: Việt Nam từ năm 1975 đến nay",
+            "CD": "Chương 5: Việt Nam từ năm 1975 đến nay"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được quá trình hoàn thành thống nhất đất nước về mặt nhà nước (1975–1976).",
+            "Trình bày được cuộc đấu tranh bảo vệ biên giới Tây Nam và biên giới phía Bắc (1978–1979).",
+            "Trình bày được bối cảnh, nội dung đường lối Đổi mới của Đảng (Đại hội VI năm 1986) và những thành tựu to lớn của Công cuộc Đổi mới từ năm 1986 đến nay."
+          ],
+          "pham_vi_thoi_gian": "Năm 1975 đến nay",
+          "su_kien_moc": [
+            "Ngày 25/4/1976 – Tổng tuyển cử bầu Quốc hội khóa VI chung trong cả nước",
+            "Tháng 7/1976 – Quốc hội quyết định đổi tên nước thành Cộng hòa Xã hội Chủ nghĩa Việt Nam",
+            "Tháng 1/1979 – Thắng lợi cuộc chiến tranh bảo vệ biên giới Tây Nam, giúp nhân dân Campuchia thoát khỏi họa diệt chủng Khmer Đỏ",
+            "Tháng 2/1979 – Chiến tranh bảo vệ biên giới phía Bắc bùng nổ",
+            "Tháng 12/1986 – Đại hội VI của Đảng đề ra đường lối Đổi mới toàn diện đất nước",
+            "Năm 1995 – Việt Nam bình thường hóa quan hệ với Mỹ và gia nhập ASEAN"
+          ],
+          "nhan_vat": [
+            "Trường Chinh",
+            "Nguyễn Văn Linh"
+          ],
+          "khai_niem": [
+            "Thống nhất nhà nước",
+            "Cộng hòa Xã hội Chủ nghĩa Việt Nam",
+            "Bảo vệ biên giới",
+            "Công cuộc Đổi mới",
+            "Đại hội VI (1986)",
+            "Kinh tế thị trường định hướng XHCN"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Ý nghĩa chuyển đổi từ nền kinh tế bao cấp sang kinh tế thị trường định hướng XHCN.",
+            "Thành tựu Đổi mới đưa Việt Nam thoát khỏi khủng hoảng kinh tế - xã hội, nâng cao vị thế quốc tế."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG nội dung Công cuộc Đổi mới nâng cao Lớp 12 (Chủ đề 4).",
+            "CHƯA DÙNG Lịch sử đối ngoại hiện đại nâng cao Lớp 12 (Chủ đề 5).",
+            "CHƯA DÙNG Chuyên đề Hồ Chí Minh nâng cao Lớp 12 (Chủ đề 6)."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài so sánh nền kinh tế Việt Nam trước và sau đường lối Đổi mới năm 1986.",
+            "Dạng bài phân tích ý nghĩa của việc hoàn thành thống nhất đất nước về mặt nhà nước (1975–1976)."
+          ],
+          "luu_y_ra_de": "Tập trung câu hỏi về bối cảnh và ý nghĩa bước ngoặt của Đại hội VI (1986)."
+        },
+        {
+          "id": "su9-chu-de-chung-do-thi-bien-dong",
+          "ten": "Chủ đề chung: Đô thị: Lịch sử và hiện tại / Văn minh sông Hồng và sông Cửu Long",
+          "hoc_ky": 2,
+          "mach": "chủ đề chung",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề chung: Văn minh châu thổ sông Hồng và sông Cửu Long",
+            "CTST": "Chủ đề chung: Đô thị: Lịch sử và hiện tại",
+            "CD": "Chủ đề chung: Văn minh châu thổ sông Hồng và sông Cửu Long"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được quá trình hình thành và phát triển của các văn minh châu thổ sông lớn ở Việt Nam.",
+            "Phân tích được mối quan hệ giữa con người với môi trường tự nhiên trong lịch sử."
+          ],
+          "pham_vi_thoi_gian": "Lịch sử Việt Nam từ cổ đại đến hiện đại",
+          "su_kien_moc": [],
+          "nhan_vat": [],
+          "khai_niem": [
+            "Văn minh châu thổ",
+            "Sông Hồng",
+            "Sông Cửu Long",
+            "Đô thị hóa"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Tích hợp kiến thức Sử - Địa cấp THCS."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG các quy hoạch không gian vùng kinh tế hiện đại.",
+            "CHƯA DÙNG các phân tích sinh thái nông nghiệp chuyên sâu.",
+            "CHƯA DÙNG các nội dung lịch sử thế giới không liên quan."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài đánh giá vai trò của các dòng sông lớn (sông Hồng, sông Cửu Long) đối với sự hình thành và phát triển văn minh dân tộc.",
+            "Dạng bài so sánh đặc điểm văn minh châu thổ sông Hồng và văn minh châu thổ sông Cửu Long.",
+            "Dạng bài phân tích bài học ứng xử với thiên nhiên, lũ lụt và biến đổi khí hậu ở vùng châu thổ qua các thời kỳ lịch sử."
+          ],
+          "luu_y_ra_de": "Tổng kết mảng chủ đề chung tích hợp Lớp 9."
+        }
+      ],
+      "chuyen_de": [],
+      "ghi_chu_chua_chac": []
+    },
+    {
+      "lop": 10,
+      "chuong": [
+        {
+          "id": "su10-lich-su-va-su-hoc",
+          "ten": "Chủ đề 1: Lịch sử và Sử học",
+          "hoc_ky": 1,
+          "mach": "Lịch sử thế giới",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 1: Lịch sử và Sử học",
+            "CTST": "Chủ đề 1: Lịch sử và Sử học",
+            "CD": "Chủ đề 1: Lịch sử và Sử học"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được đối tượng, chức năng, nhiệm vụ và nguyên tắc cơ bản của Sử học (khách quan, trung thực, tiến bộ).",
+            "Giải thích được mối quan hệ giữa Sử học với các ngành khoa học xã hội - nhân văn và khoa học tự nhiên - công nghệ.",
+            "Phân tích được vai trò của Sử học đối với công tác bảo tồn, phát huy giá trị di sản văn hóa, di sản thiên nhiên và sự phát triển du lịch."
+          ],
+          "pham_vi_thoi_gian": "Tổng quan lý luận Sử học và hiện tại",
+          "su_kien_moc": [],
+          "nhan_vat": [
+            "Hê-rô-đốt (Cha đẻ của Sử học)",
+            "Tư Mã Thiên (Tác giả Sử ký)"
+          ],
+          "khai_niem": [
+            "Sử học",
+            "Hiện thực lịch sử",
+            "Nhận thức lịch sử",
+            "Nguyên tắc khách quan",
+            "Tư liệu lịch sử",
+            "Di sản văn hóa",
+            "Du lịch lịch sử"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Phân biệt Hiện thực lịch sử (khách quan, độc lập) và Nhận thức lịch sử (chủ quan, phụ thuộc tri thức con người).",
+            "Sử học liên ngành kết hợp Sử học với Địa lý, Văn học, Khảo cổ học, Công nghệ số.",
+            "Di sản là nguồn tư liệu quý giá của Sử học; Sử học cung cấp tri thức để bảo tồn di sản và phát triển du lịch."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG kiến thức phân tích sâu Triết học Sử học cấp Đại học.",
+            "CHƯA DÙNG nội dung lịch sử cụ thể của các thời kỳ chưa học ở các chủ đề sau.",
+            "CHƯA DÙNG các phương pháp phân tích di sản kỹ thuật cao vượt quá trình độ THPT."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài phân biệt giữa Hiện thực lịch sử và Nhận thức lịch sử qua các ví dụ/tình huống thực tế.",
+            "Dạng bài phân tích mối quan hệ tương hỗ giữa bảo tồn di sản văn hóa với phát triển ngành du lịch dựa trên một di sản cụ thể (như Cố đô Huế, Hoàng thành Thăng Long).",
+            "Dạng bài giải thích nguyên tắc khách quan, trung thực khi nghiên cứu lịch sử."
+          ],
+          "luu_y_ra_de": "ĐÂY LÀ CHỦ ĐỀ LÝ LUẬN MỚI CỦA CHƯƠNG TRÌNH 2018. Ưu tiên câu hỏi tình huống thực tế về di sản và du lịch."
+        },
+        {
+          "id": "su10-van-minh-the-gioi-co-trung-dai",
+          "ten": "Chủ đề 2: Một số nền văn minh thế giới thời cổ - trung đại",
+          "hoc_ky": 1,
+          "mach": "Lịch sử thế giới",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 2: Một số nền văn minh thế giới thời cổ - trung đại",
+            "CTST": "Chủ đề 2: Một số nền văn minh thế giới thời cổ - trung đại",
+            "CD": "Chủ đề 2: Một số nền văn minh thế giới thời cổ - trung đại"
+          },
+          "yeu_cau_can_dat": [
+            "Giải thích được khái niệm Văn minh, phân biệt được Văn minh và Văn hóa.",
+            "Trình bày được cơ sở hình thành và các thành tựu tiêu biểu của các nền văn minh phương Đông thời cổ - trung đại (Ai Cập, Lưỡng Hà, Ấn Độ, Trung Hoa).",
+            "Trình bày được cơ sở hình thành và các thành tựu tiêu biểu của các nền văn minh phương Tây thời cổ - trung đại (Hy Lạp - La Mã, Văn minh Tây Âu thời Phục hưng).",
+            "Phân tích được ý nghĩa và giá trị của các thành tựu văn minh đối với lịch sử nhân loại."
+          ],
+          "pham_vi_thoi_gian": "Từ thiên niên kỷ IV TCN đến thế kỷ XVI",
+          "su_kien_moc": [
+            "Thiên niên kỷ IV TCN – Văn minh Ai Cập và Lưỡng Hà ra đời",
+            "Thiên niên kỷ III TCN – Văn minh Ấn Độ (lưu vực sông Ấn) ra đời",
+            "Thế kỷ XXI TCN – Văn minh Trung Hoa ra đời (nhà Hạ)",
+            "Thế kỷ VIII TCN – Văn minh Hy Lạp cổ đại hình thành",
+            "Thế kỷ XIV–XVI – Văn minh Tây Âu thời Phục hưng"
+          ],
+          "nhan_vat": [
+            "Hăm-mu-ra-bi",
+            "Tần Thủy Hoàng",
+            "Thích Ca Mâu Ni",
+            "Platon",
+            "A-ristot",
+            "Đa Vin-xi"
+          ],
+          "khai_niem": [
+            "Văn hóa",
+            "Văn minh",
+            "Chữ tượng hình",
+            "Chữ cái Phê-ni-xi",
+            "Thành邦",
+            "Nho giáo",
+            "Phật giáo",
+            "Kiến trúc Phục hưng"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Sự khác biệt giữa Văn hóa (toàn bộ giá trị vật chất và tinh thần do con người sáng tạo) và Văn minh (trạng thái phát triển cao của văn hóa, có nhà nước, chữ viết, đô thị).",
+            "Đặc điểm văn minh sông nước/nông nghiệp phương Đông vs văn minh thương mại/biển phương Tây."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG các sự kiện chính trị chiến tranh chi tiết của Lớp 6 (vì ở Lớp 10 chỉ tiếp cận dưới góc độ Chủ đề Văn minh).",
+            "CHƯA DÙNG Cách mạng công nghiệp thế kỷ XVIII (học ở Chủ đề 3).",
+            "CHƯA DÙNG lịch sử các cuộc phát kiến địa lý (học ở Lớp 7)."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài so sánh khái niệm Văn hóa và Văn minh.",
+            "Dạng bài lập bảng tổng hợp các thành tựu tiêu biểu của văn minh phương Đông và phương Tây cổ - trung đại.",
+            "Dạng bài đọc tư liệu/hình ảnh (như Kim tự tháp, Đấu trường Cô-li-zê, Bảng luật Hăm-mu-ra-bi) và đánh giá giá trị lịch sử."
+          ],
+          "luu_y_ra_de": "Chương trình 2018 chuyển từ dạy Lịch sử sự kiện (ở Lớp 6) sang dạy **Lịch sử Văn minh** (ở Lớp 10). Không hỏi lại các mốc chiến tranh mà kiểm tra về thành tựu và giá trị văn minh."
+        },
+        {
+          "id": "su10-cach-mang-cong-nghiep",
+          "ten": "Chủ đề 3: Các cuộc cách mạng công nghiệp trong lịch sử thế giới",
+          "hoc_ky": 1,
+          "mach": "Lịch sử thế giới",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 3: Các cuộc cách mạng công nghiệp trong lịch sử thế giới",
+            "CTST": "Chủ đề 3: Các cuộc cách mạng công nghiệp trong lịch sử thế giới",
+            "CD": "Chủ đề 3: Các cuộc cách mạng công nghiệp trong lịch sử thế giới"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được những thành tựu cơ bản của Cách mạng công nghiệp lần thứ nhất (máy hơi nước, dệt, luyện kim) và lần thứ hai (điện, động cơ đốt trong, hóa chất).",
+            "Trình bày được những thành tựu cơ bản của Cách mạng công nghiệp lần thứ ba (máy tính, tự động hóa, Internet) và lần thứ tư (AI, Big Data, IoT, Robot).",
+            "Phân tích được tác động của các cuộc cách mạng công nghiệp đối với kinh tế, xã hội, văn hóa và môi trường."
+          ],
+          "pham_vi_thoi_gian": "Từ giữa thế kỷ XVIII đến nay",
+          "su_kien_moc": [
+            "Từ những năm 60 thế kỷ XVIII – Cách mạng công nghiệp lần thứ nhất (Anh)",
+            "Năm 1784 – Giêm Oát phát minh máy hơi nước thương mại",
+            "Từ nửa sau thế kỷ XIX đến đầu thế kỷ XX – Cách mạng công nghiệp lần thứ hai (Mỹ, Đức)",
+            "Năm 1879 – Et-đi-sơn phát minh ra bóng đèn điện",
+            "Từ những năm 40 thế kỷ XX – Cách mạng công nghiệp lần thứ ba (Cách mạng KH-CN)",
+            "Năm 1946 – Máy tính điện tử ENIAC ra đời",
+            "Từ đầu thế kỷ XXI – Cách mạng công nghiệp lần thứ tư (Cách mạng 4.0)"
+          ],
+          "nhan_vat": [
+            "Giêm Oát",
+            "Et-đi-sơn",
+            "Hen-ri Pho",
+            "Bơ-nơ Li (Internet)"
+          ],
+          "khai_niem": [
+            "Cách mạng công nghiệp 1.0",
+            "Cách mạng công nghiệp 2.0",
+            "Cách mạng công nghiệp 3.0",
+            "Cách mạng công nghiệp 4.0",
+            "Động cơ đốt trong",
+            "Tự động hóa",
+            "Trí tuệ nhân tạo (AI)",
+            "Internet vạn vật (IoT)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Hệ thống hóa 4 cuộc cách mạng công nghiệp.",
+            "Tác động tích cực (tăng năng suất, kết nối toàn cầu) và tiêu cực (ô nhiễm môi trường, thất nghiệp công nghệ, phân hóa giàu nghèo)."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG các công thức kỹ thuật chuyên sâu hay thuật toán lập trình máy tính.",
+            "CHƯA DÙNG chi tiết chiến tranh thương mại Mỹ - Trung.",
+            "CHƯA DÙNG các sự kiện chính trị phong kiến trung đại."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài lập bảng so sánh 4 cuộc cách mạng công nghiệp (bối cảnh, phát minh cốt lõi, tác động).",
+            "Dạng bài phân tích cơ hội và thách thức đối với thanh niên Việt Nam trong kỷ nguyên Cách mạng công nghiệp 4.0.",
+            "Dạng bài khai thác biểu đồ về sự tăng trưởng năng suất lao động qua các thời kỳ cách mạng công nghiệp."
+          ],
+          "luu_y_ra_de": "CHỦ ĐỀ MỚI RẤT HAY TRONG CHƯƠNG TRÌNH 2018. Kết nối chặt chẽ lịch sử với thực tiễn phát triển công nghệ hiện đại."
+        },
+        {
+          "id": "su10-van-minh-dong-nam-a",
+          "ten": "Chủ đề 4: Văn minh Đông Nam Á thời cổ - trung đại",
+          "hoc_ky": 2,
+          "mach": "Lịch sử khu vực",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 4: Văn minh Đông Nam Á thời cổ - trung đại",
+            "CTST": "Chủ đề 4: Văn minh Đông Nam Á thời cổ - trung đại",
+            "CD": "Chủ đề 4: Văn minh Đông Nam Á thời cổ - trung đại"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được cơ sở hình thành nền văn minh Đông Nam Á (điện kiện tự nhiên, dân cư, kinh tế lúa nước, giao lưu văn hóa).",
+            "Trình bày được các thành tựu tiêu biểu của văn minh ĐNÁ trên các lĩnh vực: Tín ngưỡng - Tôn giáo, Chữ viết - Văn học, Kiến trúc - Điêu khắc.",
+            "Phân tích được tính đa dạng và bản sắc riêng của văn minh Đông Nam Á."
+          ],
+          "pham_vi_thoi_gian": "Từ đầu Công nguyên đến thế kỷ XVI",
+          "su_kien_moc": [
+            "Thế kỷ I đến thế kỷ VII – Sự hình thành các quốc gia sơ kỳ mang dấu ấn văn minh ĐNÁ",
+            "Thế kỷ X đến thế kỷ XVI – Đỉnh cao của các công trình kiến trúc văn minh ĐNÁ (Ăng-co Vat, Borobudur)"
+          ],
+          "nhan_vat": [],
+          "khai_niem": [
+            "Văn minh Đông Nam Á",
+            "Nông nghiệp lúa nước",
+            "Tín ngưỡng vạn vật hữu linh",
+            "Tháp Chàm",
+            "Quần thể Borobudur",
+            "Ăng-co Vat"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Sự hòa quyện giữa tín ngưỡng bản địa (thờ cúng tổ tiên, vạn vật hữu linh) với các tôn giáo ngoại nhập (Phật giáo, Ấn Độ giáo, Hồi giáo).",
+            "Bản sắc chung 'Thống nhất trong đa dạng' của khu vực ĐNÁ."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG nội dung ASEAN thời hiện đại (học ở Lớp 12 Chủ đề 2).",
+            "CHƯA DÙNG các sự kiện xâm lược của thực dân phương Tây (học ở Lớp 8).",
+            "CHƯA DÙNG lịch sử phong trào giải phóng dân tộc ĐNÁ (học ở Lớp 9)."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài chứng minh tính 'Thống nhất trong đa dạng' của văn minh Đông Nam Á.",
+            "Dạng bài quan sát hình ảnh kiến trúc Borobudur/Ăng-co Vat/Tháp Chàm và nhận xét sự giao thoa văn hóa."
+          ],
+          "luu_y_ra_de": "Tập trung đánh giá nét độc đáo của bản sắc văn hóa ĐNÁ."
+        },
+        {
+          "id": "su10-van-minh-tren-dat-nuoc-viet-nam",
+          "ten": "Chủ đề 5: Một số nền văn minh trên đất nước Việt Nam (trước năm 1858)",
+          "hoc_ky": 2,
+          "mach": "Lịch sử Việt Nam",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 5: Một số nền văn minh trên đất nước Việt Nam (trước năm 1858)",
+            "CTST": "Chủ đề 5: Một số nền văn minh trên đất nước Việt Nam (trước năm 1858)",
+            "CD": "Chủ đề 5: Một số nền văn minh trên đất nước Việt Nam (trước năm 1858)"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được cơ sở hình thành và thành tựu tiêu biểu của các nền văn minh cổ trên đất nước Việt Nam: Văn minh Văn Lang - Âu Lạc (Văn hóa Đông Sơn), Văn minh Chăm-pa (Văn hóa Sa Huỳnh), Văn minh Phù Nam (Văn hóa Óc Eo).",
+            "Trình bày được cơ sở hình thành, các giai đoạn phát triển và thành tựu tiêu biểu của Văn minh Đại Việt.",
+            "Phân tích được ý nghĩa và bài học lịch sử của các nền văn minh đối với sự nghiệp xây dựng và bảo vệ Tổ quốc hiện nay."
+          ],
+          "pham_vi_thoi_gian": "Từ thiên niên kỷ I TCN đến năm 1858",
+          "su_kien_moc": [
+            "Khoảng thế kỷ VII TCN – Văn minh Văn Lang - Âu Lạc ra đời (Trống đồng Đông Sơn)",
+            "Thế kỷ II – Văn minh Chăm-pa ra đời",
+            "Thế kỷ I – Văn minh Phù Nam ra đời (Di tích Óc Eo)",
+            "Năm 1010 – Lý Thái Tổ dời đô về Thăng Long, mở đầu giai đoạn phát triển rực rỡ của Văn minh Đại Việt",
+            "Năm 1483 – Ban hành Quốc triều hình luật (Luật Hồng Đức) – đỉnh cao văn minh pháp luật Đại Việt"
+          ],
+          "nhan_vat": [
+            "Hùng Vương",
+            "An Dương Vương",
+            "Lý Thái Tổ",
+            "Lý Thường Kiệt",
+            "Trần Hưng Đạo",
+            "Lê Thánh Tông",
+            "Nguyễn Trãi"
+          ],
+          "khai_niem": [
+            "Văn minh Văn Lang - Âu Lạc",
+            "Văn hóa Đông Sơn",
+            "Trống đồng Đông Sơn",
+            "Văn minh Chăm-pa",
+            "Văn hóa Sa Huỳnh",
+            "Văn minh Phù Nam",
+            "Văn hóa Óc Eo",
+            "Văn minh Đại Việt",
+            "Thăng Long"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Hệ thống hóa toàn bộ các nền văn minh từng tồn tại trên lãnh thổ Việt Nam.",
+            "Văn minh Đại Việt là sự kế thừa văn minh Văn Lang - Âu Lạc và được bổ sung, phát triển rực rỡ qua các triều đại phong kiến độc lập."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG các cuộc kháng chiến chống Pháp - Mỹ thời cận hiện đại (học ở Lớp 12).",
+            "CHƯA DÙNG các mốc thời gian chi tiết của từng cuộc chiến tranh phong kiến (vì trọng tâm Lớp 10 là Văn minh).",
+            "CHƯA DÙNG nội dung công cuộc Đổi mới 1986 đến nay."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài so sánh cơ sở hình thành và đặc điểm của ba nền văn minh cổ: Văn Lang - Âu Lạc, Chăm-pa và Phù Nam.",
+            "Dạng bài đọc đoạn trích/hình ảnh Trống đồng Đông Sơn / Văn Miếu - Quốc Tử Giám và phân tích giá trị biểu tượng của Văn minh Đại Việt.",
+            "Dạng bài chứng minh Văn minh Đại Việt thể hiện sức sống bền bỉ và khả năng tiếp thu, sáng tạo của dân tộc Việt Nam."
+          ],
+          "luu_y_ra_de": "ĐÂY LÀ CHỦ ĐỀ LỊCH SỬ VIỆT NAM TRỌNG TÂM LỚP 10. Đề thi tập trung đánh giá thành tựu Văn minh Đại Việt và giá trị di sản."
+        },
+        {
+          "id": "su10-cong-dong-cac-dan-toc-viet-nam",
+          "ten": "Chủ đề 6: Cộng đồng các dân tộc Việt Nam",
+          "hoc_ky": 2,
+          "mach": "Lịch sử Việt Nam",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 6: Cộng đồng các dân tộc Việt Nam",
+            "CTST": "Chủ đề 6: Cộng đồng các dân tộc Việt Nam",
+            "CD": "Chủ đề 6: Cộng đồng các dân tộc Việt Nam"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được thành phần dân tộc theo ngữ hệ và đa dạng văn hóa của cộng đồng 54 dân tộc Việt Nam.",
+            "Mô tả được đời sống vật chất và tinh thần đặc sắc của các dân tộc.",
+            "Trình bày được lịch sử hình thành và phát triển của khối đại đoàn kết toàn dân tộc Việt Nam.",
+            "Phân tích được vai trò và tầm quan trọng của đại đoàn kết dân tộc trong sự nghiệp dựng nước và giữ nước."
+          ],
+          "pham_vi_thoi_gian": "Lịch sử Việt Nam từ truyền thống đến nay",
+          "su_kien_moc": [
+            "Ngày 18/11/1930 – Thành lập Hội phản đế đồng minh (Ngày truyền thống Mặt trận Tổ quốc Việt Nam)"
+          ],
+          "nhan_vat": [
+            "Hồ Chí Minh (với tư tưởng Đại đoàn kết dân tộc)"
+          ],
+          "khai_niem": [
+            "Cộng đồng 54 dân tộc",
+            "Ngữ hệ",
+            "Đời sống vật chất - tinh thần",
+            "Khối đại đoàn kết toàn dân tộc",
+            "Mặt trận Dân tộc thống nhất"
+          ],
+          "kien_thuc_duoc_dung": [
+            "54 dân tộc anh em cùng chung sống trên đất nước Việt Nam.",
+            "Tư tưởng Hồ Chí Minh: 'Đoàn kết, đoàn kết, đại đoàn kết. Thành công, thành công, đại thành công'."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG kiến thức Dân tộc học/Nhân học chuyên sâu trình độ Đại học.",
+            "CHƯA DÙNG các vấn đề xung đột dân tộc ở các nước khác trên thế giới.",
+            "CHƯA DÙNG các chính sách quản lý dân tộc thời phong kiến chưa có trong SGK."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài phân tích vai trò của khối đại đoàn kết toàn dân tộc trong các cuộc chiến tranh bảo vệ Tổ quốc.",
+            "Dạng bài lập bảng phân loại 54 dân tộc Việt Nam theo các nhóm ngữ hệ chính.",
+            "Dạng bài khai thác hình ảnh/tư liệu về đời sống vật chất và tinh thần đặc sắc của các dân tộc thiểu số.",
+            "Dạng bài liên hệ thực tiễn về chính sách dân tộc của Đảng và Nhà nước Việt Nam hiện nay."
+          ],
+          "luu_y_ra_de": "Chủ đề có tính giáo dục lòng tự hào và tinh thần đoàn kết dân tộc cao."
+        }
+      ],
+      "chuyen_de": [
+        "Chuyên đề 10.1: Các lĩnh vực của Sử học",
+        "Chuyên đề 10.2: Đổi mới sáng tạo và bảo tồn di sản văn hóa",
+        "Chuyên đề 10.3: Nhà nước và pháp luật trong lịch sử Việt Nam"
+      ],
+      "ghi_chu_chua_chac": []
+    },
+    {
+      "lop": 11,
+      "chuong": [
+        {
+          "id": "su11-lich-su-chu-nghia-xa-hoi",
+          "ten": "Chủ đề 1: Lịch sử chủ nghĩa xã hội",
+          "hoc_ky": 1,
+          "mach": "Lịch sử thế giới",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 1: Lịch sử chủ nghĩa xã hội",
+            "CTST": "Chủ đề 1: Lịch sử chủ nghĩa xã hội",
+            "CD": "Chủ đề 1: Lịch sử chủ nghĩa xã hội"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được sự phát triển của Chủ nghĩa xã hội từ sau Cách mạng tháng Mười Nga năm 1917 đến trước năm 1945.",
+            "Mô tả được sự mở rộng của CNXH từ sau Chiến tranh thế giới thứ hai (ở Đông Âu, châu Á, Mỹ La-tinh) thành hệ thống thế giới.",
+            "Giải thích được nguyên nhân khủng hoảng và sụp đổ của mô hình CNXH ở Liên Xô và Đông Âu.",
+            "Trình bày được công cuộc cải cách, mở cửa ở Trung Quốc và công cuộc Đổi mới ở Việt Nam, khẳng định sức sống của CNXH hiện đại."
+          ],
+          "pham_vi_thoi_gian": "Từ năm 1917 đến nay",
+          "su_kien_moc": [
+            "Năm 1917 – Cách mạng tháng Mười Nga thành công, nhà nước Xô viết thành lập",
+            "Năm 1922 – Liên bang Cộng hòa Xã hội Chủ nghĩa Xô viết (Liên Xô) thành lập",
+            "Năm 1945–1949 – Hệ thống xã hội chủ nghĩa hình thành ở Đông Âu và châu Á (Trung Quốc 1949)",
+            "Năm 1959 – Nước Cộng hòa Cu-ba ra đời, mở đầu CNXH ở Mỹ La-tinh",
+            "Năm 1978 – Trung Quốc bắt đầu công cuộc Cải cách mở cửa (Đặng Tiểu Bình)",
+            "Năm 1986 – Việt Nam bắt đầu công cuộc Đổi mới (Đại hội VI)",
+            "Năm 1991 – Liên Xô sụp đổ, hệ thống XHCN theo mô hình Xô viết tan rã"
+          ],
+          "nhan_vat": [
+            "V.I. Lê-nin",
+            "Xta-lin",
+            "Đặng Tiểu Bình",
+            "Phi-đen Ca-xtơ-rô"
+          ],
+          "khai_niem": [
+            "Chủ nghĩa xã hội",
+            "Hệ thống XHCN thế giới",
+            "Mô hình Xô viết",
+            "Trật tự hai cực",
+            "Cải cách mở cửa",
+            "Công cuộc Đổi mới",
+            "CNXH mang đặc sắc Trung Quốc"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Quá trình phát triển từ 'một nước' (Liên Xô) -> 'hệ thống thế giới' -> 'khủng hoảng, thoái trào' -> 'cải cách, đổi mới thành công'.",
+            "Nét nổi bật của Cải cách mở cửa Trung Quốc và Đổi mới Việt Nam."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG nội dung chi tiết đường lối Đổi mới Việt Nam của Lớp 12 (Chủ đề 4).",
+            "CHƯA DÙNG các văn kiện Đại hội Đảng nâng cao ngoài phạm vi SGK.",
+            "CHƯA DÙNG các mốc lịch sử chiến tranh Việt Nam 1945–1975."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài lập trục thời gian các mốc phát triển của Chủ nghĩa xã hội từ năm 1917 đến nay.",
+            "Dạng bài phân tích nguyên nhân chủ quan và khách quan dẫn đến sự sụp đổ của mô hình CNXH ở Liên Xô.",
+            "Dạng bài đánh giá ý nghĩa của thành tựu Cải cách mở cửa ở Trung Quốc đối với sự phát triển của CNXH hiện đại."
+          ],
+          "luu_y_ra_de": "ĐÂY LÀ CHỦ ĐỀ CHUYÊN SÂU LỊCH SỬ THẾ GIỚI LỚP 11. Đề thi tập trung bài học rút ra từ sự sụp đổ ở Liên Xô và thành công của Đổi mới."
+        },
+        {
+          "id": "su11-chu-nghia-tu-ban",
+          "ten": "Chủ đề 2: Chủ nghĩa tư bản và sự phát triển của chủ nghĩa tư bản",
+          "hoc_ky": 1,
+          "mach": "Lịch sử thế giới",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 2: Chủ nghĩa tư bản và sự phát triển của chủ nghĩa tư bản",
+            "CTST": "Chủ đề 2: Chủ nghĩa tư bản và sự phát triển của chủ nghĩa tư bản",
+            "CD": "Chủ đề 2: Chủ nghĩa tư bản và sự phát triển của chủ nghĩa tư bản"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được sự xác lập của Chủ nghĩa tư bản ở châu Âu và Bắc Mỹ.",
+            "Mô tả được quá trình phát triển của CNTB từ tự do cạnh tranh sang độc quyền (cuối thế kỷ XIX - đầu thế kỷ XX).",
+            "Trình bày được tiềm năng và thách thức của Chủ nghĩa tư bản hiện đại (từ sau Chiến tranh thế giới thứ hai đến nay)."
+          ],
+          "pham_vi_thoi_gian": "Thế kỷ XVI đến nay",
+          "su_kien_moc": [
+            "Thế kỷ XVI–XVIII – CNTB xác lập ở Tây Âu và Bắc Mỹ qua các cuộc cách mạng tư sản",
+            "Cuối thế kỷ XIX – Đầu thế kỷ XX – CNTB chuyển sang giai đoạn độc quyền (Chủ nghĩa đế quốc)",
+            "Từ sau năm 1945 đến nay – Sự phát triển của CNTB hiện đại"
+          ],
+          "nhan_vat": [],
+          "khai_niem": [
+            "Chủ nghĩa tư bản",
+            "Tự do cạnh tranh",
+            "CNTB độc quyền",
+            "Tổ chức độc quyền",
+            "CNTB hiện đại",
+            "Toàn cầu hóa kinh tế"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Tiềm năng CNTB hiện đại: vốn, KH-CN, kinh nghiệm quản lý, khả năng điều chỉnh thích ứng.",
+            "Thách thức: bấp bênh kinh tế, mâu thuẫn xã hội, khủng hoảng tài chính, phân hóa giàu nghèo."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG kiến thức Kinh tế chính trị Mác - Lênin nâng cao quá phức tạp.",
+            "CHƯA DÙNG các phân tích tài chính chứng khoán chuyên sâu.",
+            "CHƯA DÙNG lịch sử các cuộc cách mạng tư sản Anh, Pháp chi tiết của Lớp 8."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài phân tích tiềm năng và thách thức của Chủ nghĩa tư bản hiện đại.",
+            "Dạng bài so sánh đặc điểm của CNTB giai đoạn tự do cạnh tranh và giai đoạn độc quyền."
+          ],
+          "luu_y_ra_de": "Tập trung đánh giá đa chiều về tiềm năng và hạn chế của CNTB hiện đại."
+        },
+        {
+          "id": "su11-bien-dong-chu-quyen",
+          "ten": "Chủ đề 3: Lịch sử tranh chấp và chủ quyền trên Biển Đông",
+          "hoc_ky": 1,
+          "mach": "Lịch sử Việt Nam",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 3: Lịch sử tranh chấp và chủ quyền trên Biển Đông",
+            "CTST": "Chủ đề 3: Lịch sử tranh chấp và chủ quyền trên Biển Đông",
+            "CD": "Chủ đề 3: Lịch sử tranh chấp và chủ quyền trên Biển Đông"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được vị trí chiến lược của Biển Đông về kinh tế, chính trị, an ninh quốc phòng đối với khu vực và Việt Nam.",
+            "Trình bày được lịch sử quá trình xác lập, thực thi chủ quyền của Việt Nam đối với quần đảo Hoàng Sa và quần đảo Trường Sa qua các thời kỳ lịch sử (chúa Nguyễn, nhà Tây Sơn, nhà Nguyễn, thời Pháp thuộc, chính quyền VNCH, nhà nước CHXHCN Việt Nam).",
+            "Trình bày được các chứng cứ lịch sử và cơ sở pháp lý (Công ước Liên Hợp Quốc về Luật Biển 1982 - UNCLOS) khẳng định chủ quyền của Việt Nam.",
+            "Phân tích được chủ trương của Việt Nam trong việc giải quyết các tranh chấp ở Biển Đông bằng biện pháp hòa bình."
+          ],
+          "pham_vi_thoi_gian": "Từ thời phong kiến đến nay",
+          "su_kien_moc": [
+            "Thế kỷ XVII – Chúa Nguyễn thành lập Đội Hoàng Sa và Đội Bắc Hải thực thi chủ quyền",
+            "Năm 1816 – Vua Gia Long chính thức tái khẳng định và cắm cờ chủ quyền tại Hoàng Sa",
+            "Năm 1836 – Vua Minh Mạng cho dựng bia, cắm mốc, đo đạc hải trình và vẽ bản đồ Hoàng Sa",
+            "Năm 1982 – Công ước Liên Hợp Quốc về Luật Biển (UNCLOS 1982) được thông qua",
+            "Năm 2002 – Tuyên bố về ứng xử của các bên ở Biển Đông (DOC) được ký kết giữa ASEAN và Trung Quốc",
+            "Năm 2012 – Quốc hội Việt Nam thông qua Luật Biển Việt Nam"
+          ],
+          "nhan_vat": [
+            "Nguyễn Hoàng",
+            "Gia Long",
+            "Minh Mạng"
+          ],
+          "khai_niem": [
+            "Biển Đông",
+            "Hoàng Sa",
+            "Trường Sa",
+            "Đội Hoàng Sa",
+            "Chủ quyền quốc gia",
+            "UNCLOS 1982",
+            "Luật Biển Việt Nam 2012",
+            "DOC",
+            "COC"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Việt Nam là nhà nước đầu tiên khai phá, chiếm hữu và thực thi chủ quyền liên tục, hòa bình đối với Hoàng Sa và Trường Sa.",
+            "Tư liệu Châu bản nhà Nguyễn, Đại Nam thực lục, bản đồ cổ phương Tây minh chứng chủ quyền.",
+            "Giải quyết hòa bình trên cơ sở luật pháp quốc tế (UNCLOS 1982)."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG các chi tiết quân sự nhạy cảm chưa được công bố chính thức.",
+            "CHƯA DÙNG các vụ việc tranh chấp tài nguyên cụ thể ngoài phạm vi SGK.",
+            "CHƯA DÙNG lịch sử các vùng biển ngoài khu vực Biển Đông."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài đọc tư liệu lịch sử (Châu bản nhà Nguyễn / Bản đồ cổ An Nam đại bình đồ) và nêu chứng cứ khẳng định chủ quyền.",
+            "Dạng bài phân tích chủ trương giải quyết tranh chấp Biển Đông bằng biện pháp hòa bình của Đảng và Nhà nước ta dựa trên UNCLOS 1982.",
+            "Dạng bài đánh giá vị trí chiến lược của Biển Đông đối với phát triển kinh tế biển Việt Nam."
+          ],
+          "luu_y_ra_de": "ĐÂY LÀ CHỦ ĐỀ CHỦ QUYỀN BIỂN ĐẢO RẤT QUAN TRỌNG LỚP 11. Câu hỏi đòi hỏi học sinh nắm vững các bằng chứng lịch sử và cơ sở pháp lý quốc tế."
+        },
+        {
+          "id": "su11-chien-tranh-bao-ve-to-quoc-truoc-1945",
+          "ten": "Chủ đề 4: Các cuộc chiến tranh bảo vệ Tổ quốc trong lịch sử Việt Nam (trước năm 1945)",
+          "hoc_ky": 2,
+          "mach": "Lịch sử Việt Nam",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 4: Các cuộc chiến tranh bảo vệ Tổ quốc trong lịch sử Việt Nam (trước năm 1945)",
+            "CTST": "Chủ đề 4: Các cuộc chiến tranh bảo vệ Tổ quốc trong lịch sử Việt Nam (trước năm 1945)",
+            "CD": "Chủ đề 4: Các cuộc chiến tranh bảo vệ Tổ quốc trong lịch sử Việt Nam (trước năm 1945)"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được vị trí chiến lược của Việt Nam và khái quát các cuộc chiến tranh bảo vệ Tổ quốc tiêu biểu (chống Tống, Mông - Nguyên, Minh, Xiêm, Thanh, Pháp).",
+            "Phân tích được nguyên nhân thắng lợi và bài học lịch sử của các cuộc kháng chiến thành công.",
+            "Giải thích được nguyên nhân thất bại của một số cuộc kháng chiến chống ngoại xâm (kháng chiến chống Triệu Đà của An Dương Vương, chống Minh của nhà Hồ, chống Pháp của nhà Nguyễn).",
+            "Rút ra các bài học lịch sử về quy tụ khối đại đoàn kết, nghệ thuật quân sự, 'khoan thư sức dân' để ứng dụng trong sự nghiệp bảo vệ Tổ quốc hiện nay."
+          ],
+          "pham_vi_thoi_gian": "Từ thế kỷ III TCN đến năm 1945",
+          "su_kien_moc": [
+            "Năm 179 TCN – An Dương Vương thất thủ trước Triệu Đà (bài học mất cảnh giác)",
+            "Năm 981 – Kháng chiến chống Tống thời Tiền Lê",
+            "Năm 1075–1077 – Kháng chiến chống Tống thời Lý",
+            "Năm 1258, 1285, 1287–1288 – Ba lần kháng chiến chống Mông - Nguyên thời Trần",
+            "Năm 1406–1407 – Kháng chiến chống Minh của nhà Hồ thất bại (bài học 'không khoan thư sức dân')",
+            "Năm 1418–1427 – Khởi nghĩa Lam Sơn đánh tan quân Minh",
+            "Năm 1785 – Trận Rạch Gầm - Xoài Mút đánh tan quân Xiêm",
+            "Năm 1789 – Trận Ngọc Hồi - Đống Đa đánh tan quân Thanh",
+            "Năm 1858–1884 – Kháng chiến chống Pháp của nhà Nguyễn thất bại"
+          ],
+          "nhan_vat": [
+            "Lý Thường Kiệt",
+            "Trần Hưng Đạo",
+            "Hồ Quý Ly",
+            "Lê Lợi",
+            "Quang Trung"
+          ],
+          "khai_niem": [
+            "Chiến tranh bảo vệ Tổ quốc",
+            "Chiến tranh chính nghĩa",
+            "Nghệ thuật quân sự",
+            "Khoan thư sức dân",
+            "Chiến tranh nhân dân",
+            "Đoàn kết toàn dân"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Hệ thống hóa toàn bộ các cuộc chiến tranh giữ nước trong lịch sử truyền thống.",
+            "So sánh nguyên nhân thành công (lòng dân, đoàn kết, nghệ thuật quân sự) và nguyên nhân thất bại (chia rẽ, sai lầm đường lối, mất cảnh giác)."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG các chiến dịch kháng chiến chống Pháp và chống Mỹ giai đoạn 1945–1975 (học ở Lớp 12 Chủ đề 3).",
+            "CHƯA DÙNG cuộc chiến tranh bảo vệ biên giới Tây Nam và phía Bắc 1978–1979 (học ở Lớp 12).",
+            "CHƯA DÙNG các sự kiện ngoại giao thời hiện đại."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài so sánh nguyên nhân thắng lợi của cuộc kháng chiến chống Mông - Nguyên thời Trần với nguyên nhân thất bại của cuộc kháng chiến chống Minh thời nhà Hồ.",
+            "Dạng bài phân tích bài học 'Khoan thư sức dân để làm kế sâu rễ bền gốc' của Trần Hưng Đạo.",
+            "Dạng bài đọc đoạn trích lịch sử và rút ra bài học kinh nghiệm về nghệ thuật quân sự hoặc xây dựng khối đại đoàn kết."
+          ],
+          "luu_y_ra_de": "ĐÂY LÀ CHỦ ĐỀ KHÁNG CHÍNH TRỌNG TÂM LỚP 11. Đề thi tập trung kiểm tra khả năng phân tích bài học lịch sử rút ra cho hiện tại."
+        },
+        {
+          "id": "su11-cai-cach-trong-lich-su-viet-nam",
+          "ten": "Chủ đề 5: Một số cuộc cải cách lớn trong lịch sử Việt Nam (trước năm 1858)",
+          "hoc_ky": 2,
+          "mach": "Lịch sử Việt Nam",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 5: Một số cuộc cải cách lớn trong lịch sử Việt Nam (trước năm 1858)",
+            "CTST": "Chủ đề 5: Một số cuộc cải cách lớn trong lịch sử Việt Nam (trước năm 1858)",
+            "CD": "Chủ đề 5: Một số cuộc cải cách lớn trong lịch sử Việt Nam (trước năm 1858)"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được bối cảnh, nội dung và kết quả của Cải cách Hồ Quý Ly (cuối thế kỷ XIV - đầu thế kỷ XV).",
+            "Trình bày được bối cảnh, nội dung và kết quả của Cải cách Lê Thánh Tông (nửa sau thế kỷ XV).",
+            "Trình bày được bối cảnh, nội dung và kết quả của Cải cách Minh Mạng (nửa đầu thế kỷ XIX).",
+            "Phân tích được ý nghĩa và rút ra bài học kinh nghiệm cho công cuộc cải cách, đổi mới đất nước hiện nay."
+          ],
+          "pham_vi_thoi_gian": "Cuối thế kỷ XIV đến nửa đầu thế kỷ XIX",
+          "su_kien_moc": [
+            "Cuối thế kỷ XIV – Hồ Quý Ly tiến hành cải cách (phát hành tiền giấy Thông bảo hội钞, hạn điền, hạn nô)",
+            "Nửa sau thế kỷ XV (1460–1497) – Cuộc cải cách toàn diện của vua Lê Thánh Tông (chia 13 đạo thừa tuyên, ban hành luật Hồng Đức)",
+            "Năm 1831–1832 – Cuộc cải cách hành chính của vua Minh Mạng (chia cả nước thành 31 tỉnh, thành lập Viện Cơ mật, Nội các)"
+          ],
+          "nhan_vat": [
+            "Hồ Quý Ly",
+            "Lê Thánh Tông",
+            "Minh Mạng"
+          ],
+          "khai_niem": [
+            "Cải cách",
+            "Tiền giấy Thông bảo",
+            "Hạn điền - Hạn nô",
+            "Đạo thừa tuyên",
+            "Luật Hồng Đức",
+            "Đơn vị hành chính Tỉnh",
+            "Viện Cơ mật"
+          ],
+          "kien_thuc_duoc_dung": [
+            "So sánh 3 cuộc cải cách lớn.",
+            "Cải cách Lê Thánh Tông và Minh Mạng có giá trị hoàn thiện bộ máy nhà nước quân chủ trung ương tập quyền cao độ.",
+            "Cải cách Hồ Quý Ly mang tính tiến bộ nhưng thất bại vì không tranh thủ được lòng dân."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG nội dung Công cuộc Đổi mới từ 1986 đến nay (học ở Lớp 12 Chủ đề 4).",
+            "CHƯA DÙNG các đề xuất cải cách chưa được thực thi trong lịch sử (như của Nguyễn Trường Tộ).",
+            "CHƯA DÙNG cải cách thể chế kinh tế hiện đại."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài lập bảng so sánh bối cảnh, nội dung và ý nghĩa của 3 cuộc cải cách: Hồ Quý Ly, Lê Thánh Tông, Minh Mạng.",
+            "Dạng bài phân tích lý do cải cách của Hồ Quý Ly có nhiều điểm táo bạo tiến bộ nhưng lại thất bại.",
+            "Dạng bài rút ra bài học kinh nghiệm từ các cuộc cải cách lịch sử đối với công cuộc đổi mới, cải cách hành chính ở Việt Nam hiện nay."
+          ],
+          "luu_y_ra_de": "CHỦ ĐỀ CẢI CÁCH MỚI TRONG GDPT 2018. Đề thi tập trung đánh giá tư duy so sánh và bài học cải cách."
+        },
+        {
+          "id": "su11-lich-su-doi-ngoai-viet-nam",
+          "ten": "Chủ đề 6: Lịch sử đối ngoại của Việt Nam thời trung đại",
+          "hoc_ky": 2,
+          "mach": "Lịch sử Việt Nam",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 6: Lịch sử đối ngoại của Việt Nam thời trung đại",
+            "CTST": "Chủ đề 6: Lịch sử đối ngoại của Việt Nam thời trung đại",
+            "CD": "Chủ đề 6: Lịch sử đối ngoại của Việt Nam thời trung đại"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được nguyên tắc, hình thức và đặc điểm đối ngoại của các triều đại phong kiến Việt Nam (mềm dẻo, linh hoạt, 'định đô dẹp loạn', kiên quyết bảo vệ chủ quyền).",
+            "Mô tả được các hoạt động đối ngoại tiêu biểu (nghi lễ triều công, sứ thần, ứng xử sau chiến thắng).",
+            "Phân tích được truyền thống và bài học lịch sử của ngoại giao Việt Nam thời trung đại."
+          ],
+          "pham_vi_thoi_gian": "Thế kỷ X đến thế kỷ XIX (trước 1858)",
+          "su_kien_moc": [
+            "Năm 1077 – Lý Thường Kiệt chủ động giảng hòa với nhà Tống trên sông Như Nguyệt",
+            "Năm 1288 – Nhà Trần trải thảm đỏ đưa tù binh Mông - Nguyên về nước sau chiến thắng Bạch Đằng",
+            "Năm 1427 – Lê Lợi, Nguyễn Trãi cấp thuyền, ngựa, lương thảo cho quân Minh rút về nước sau chiến thắng Xương Giang",
+            "Năm 1789 – Quang Trung chủ động thiết lập quan hệ ngoại giao hòa hiếu với nhà Thanh"
+          ],
+          "nhan_vat": [
+            "Lý Thường Kiệt",
+            "Trần Hưng Đạo",
+            "Nguyễn Trãi",
+            "Quang Trung"
+          ],
+          "khai_niem": [
+            "Đối ngoại phong kiến",
+            "Ngoại giao tâm công",
+            "Hòa hiếu",
+            "Triều công",
+            "Mềm dẻo kiên quyết"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Triết lý ngoại giao 'Hòa hiếu', 'Mềm nắn rắn buông', 'Dịch trạm cấp lương', vừa giữ vững chủ quyền vừa giữ thể diện cho nước lớn.",
+            "Ngoại giao 'Tâm công' (đánh vào lòng người) của Nguyễn Trãi."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG Đối ngoại Việt Nam thời hiện đại 1945–nay và Ngoại giao Cây tre (học ở Lớp 12 Chủ đề 5).",
+            "CHƯA DÙNG quan hệ đối ngoại của nhà Nguyễn với Pháp thời kỳ suy vong.",
+            "CHƯA DÙNG các hiệp định quốc tế thời hiện đại như Giơ-ne-vơ hay Pa-ri."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài phân tích nét độc đáo trong tư tưởng ngoại giao 'lấy chí nhân thay cường bạo' của Nguyễn Trãi.",
+            "Dạng bài rút ra bài học lịch sử đối ngoại thời trung đại vận dụng vào đường lối ngoại giao hiện nay."
+          ],
+          "luu_y_ra_de": "Chủ đề mới chú trọng khai thác triết lý ngoại giao truyền thống của dân tộc."
+        }
+      ],
+      "chuyen_de": [
+        "Chuyên đề 11.1: Lịch sử nghệ thuật quân sự Việt Nam",
+        "Chuyên đề 11.2: Chiến tranh bảo vệ Tổ quốc và chiến tranh giải phóng dân tộc trong lịch sử Việt Nam",
+        "Chuyên đề 11.3: Danh nhân trong lịch sử Việt Nam"
+      ],
+      "ghi_chu_chua_chac": []
+    },
+    {
+      "lop": 12,
+      "chuong": [
+        {
+          "id": "su12-the-gioi-trong-va-sau-chien-tranh-lanh",
+          "ten": "Chủ đề 1: Thế giới trong và sau Chiến tranh lạnh",
+          "hoc_ky": 1,
+          "mach": "Lịch sử thế giới",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 1: Thế giới trong và sau Chiến tranh lạnh",
+            "CTST": "Chủ đề 1: Thế giới trong và sau Chiến tranh lạnh",
+            "CD": "Chủ đề 1: Thế giới trong và sau Chiến tranh lạnh"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được sự hình thành, phát triển và sụp đổ của Trật tự thế giới hai cực I-an-ta (Yalta).",
+            "Mô tả được nguyên nhân, biểu hiện và tác động của Chiến tranh lạnh.",
+            "Phân tích được sự hình thành và xu thế phát triển của Trật tự thế giới đa cực sau Chiến tranh lạnh.",
+            "Nêu được các xu thế phát triển chính của thế giới hiện nay (hòa bình, hợp tác, phát triển, toàn cầu hóa, đối thoại thay cho đối đầu)."
+          ],
+          "pham_vi_thoi_gian": "Từ năm 1945 đến nay",
+          "su_kien_moc": [
+            "Tháng 2/1945 – Hội nghị I-an-ta (đặt nền móng cho Trật tự 2 cực)",
+            "Năm 1947 – Thông điệp Trơ-man (bắt đầu Chiến tranh lạnh)",
+            "Năm 1949 – Thành lập Tổ chức Hiệp ước Bắc Đại Tây Dương (NATO)",
+            "Năm 1955 – Thành lập Tổ chức Hiệp ước Vác-xơ-va",
+            "Tháng 12/1989 – Cuộc gặp không chính thức tại Ban-ta (Malta), Mỹ và Liên Xô tuyên bố chấm dứt Chiến tranh lạnh",
+            "Tháng 12/1991 – Liên Xô sụp đổ, Trật tự 2 cực I-an-ta hoàn toàn sụp đổ",
+            "Đầu thế kỷ XXI đến nay – Định hình Trật tự thế giới đa cực"
+          ],
+          "nhan_vat": [
+            "Ru-zơ-ven",
+            "Xta-lin",
+            "Sơ-chinh",
+            "Trơ-man",
+            "Góc-ba-chốp",
+            "Bu-xơ (bố)"
+          ],
+          "khai_niem": [
+            "Trật tự 2 cực I-an-ta",
+            "Chiến tranh lạnh",
+            "NATO",
+            "Vác-xơ-va",
+            "Trật tự đa cực",
+            "Toàn cầu hóa",
+            "Cực (trong quan hệ quốc tế)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Bản chất Chiến tranh lạnh: đối đầu gay gắt trên các lĩnh vực (chính trị, quân sự, kinh tế) trừ xung đột quân sự trực tiếp giữa 2 siêu cường Mỹ - Liên Xô.",
+            "Xu thế đa cực: Mỹ giảm sút vị thế tương đối, sự vươn lên của Trung Quốc, EU, Nhật Bản, Nga, Ấn Độ."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG kiến thức quân sự vũ khí hạt nhân chuyên sâu ngoài phạm vi SGK.",
+            "CHƯA DÙNG các diễn biến chiến tranh cục bộ nhỏ trong Chiến tranh Lạnh đã giảm tải.",
+            "CHƯA DÙNG lịch sử thế giới giữa hai cuộc chiến tranh 1918–1939 (đã học ở Lớp 9)."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài so sánh Trật tự hai cực I-an-ta với Trật tự thế giới đa cực hiện nay.",
+            "Dạng bài đọc tư liệu trích Tuyên bố Malta 1989 / Văn kiện Liên Hợp Quốc và trả lời câu hỏi.",
+            "Dạng bài phân tích tác động của xu thế đa cực đối với cơ hội và thách thức của Việt Nam."
+          ],
+          "luu_y_ra_de": "ĐÂY LÀ CHỦ ĐỀ LỊCH SỬ THẾ GIỚI CỐT LÕI LỚP 12. Trọng tâm vào nguyên nhân kết thúc Chiến tranh lạnh và xu thế đa cực."
+        },
+        {
+          "id": "su12-asean-lich-su",
+          "ten": "Chủ đề 2: ASEAN: Những chặng đường lịch sử",
+          "hoc_ky": 1,
+          "mach": "Lịch sử khu vực",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 2: ASEAN: Những chặng đường lịch sử",
+            "CTST": "Chủ đề 2: ASEAN: Những chặng đường lịch sử",
+            "CD": "Chủ đề 2: ASEAN: Những chặng đường lịch sử"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được bối cảnh lịch sử, mục tiêu và quá trình thành lập của Hiệp hội các quốc gia Đông Nam Á (ASEAN).",
+            "Mô tả được các giai đoạn phát triển chính của ASEAN (từ ASEAN 5 -> ASEAN 10; từ hợp tác lỏng lẻo -> Cộng đồng ASEAN).",
+            "Trình bày được mục tiêu và 3 trụ cột của Cộng đồng ASEAN (Cộng đồng Chính trị - An ninh, Cộng đồng Kinh tế, Cộng đồng Văn hóa - Xã hội).",
+            "Phân tích được vị thế, triển vọng của ASEAN và quá trình hội nhập, đóng góp của Việt Nam trong ASEAN."
+          ],
+          "pham_vi_thoi_gian": "Năm 1967 đến nay",
+          "su_kien_moc": [
+            "Ngày 8/8/1967 – Tuyên bố Băng Cốc thành lập ASEAN (5 nước sáng lập: In-đô-nê-xi-a, Ma-lai-xi-a, Phi-lip-pin, Xinh-ga-po, Thái Lan)",
+            "Năm 1976 – Ký Hiệp ước Thân thiện và Hợp tác ở Đông Nam Á (Hiệp ước Ba-li)",
+            "Ngày 28/7/1995 – Việt Nam chính thức trở thành thành viên thứ 7 của ASEAN",
+            "Năm 1999 – ASEAN kết nạp Cam-pu-chia, hoàn thành ý tưởng ASEAN 10",
+            "Năm 2007 – Ký Hiến chương ASEAN",
+            "Ngày 31/12/2015 – Chính thức thành lập Cộng đồng ASEAN (AC)"
+          ],
+          "nhan_vat": [],
+          "khai_niem": [
+            "ASEAN",
+            "Tuyên bố Băng Cốc 1967",
+            "Hiệp ước Ba-li 1976",
+            "ASEAN 10",
+            "Hiến chương ASEAN",
+            "Cộng đồng ASEAN (AC)",
+            "Phương cách ASEAN (ASEAN Way)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Nguyên tắc hoạt động của ASEAN: đồng thuận, không can thiệp vào công việc nội bộ của nhau.",
+            "3 trụ cột Cộng đồng ASEAN: APSC, AEC, ASCC.",
+            "Ý nghĩa việc Việt Nam gia nhập ASEAN năm 1995 đối với phá thế bao vây cấm vận."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG các nội dung phân tích kinh tế vi mô của các nước thành viên ASEAN.",
+            "CHƯA DÙNG lịch sử các tổ chức khu vực khác ngoài ĐNÁ (như EU, NATO) trừ phần so sánh nhẹ.",
+            "CHƯA DÙNG giai đoạn Đông Nam Á cổ - trung đại (đã học ở Lớp 6, 7, 10)."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài lập trục thời gian các mốc kết nạp thành viên của ASEAN từ 1967 đến 1999.",
+            "Dạng bài phân tích vai trò và đóng góp của Việt Nam trong ASEAN từ khi gia nhập năm 1995 đến nay.",
+            "Dạng bài đọc tư liệu Hiến chương ASEAN và nêu các nguyên tắc hoạt động cơ bản."
+          ],
+          "luu_y_ra_de": "ĐÂY LÀ CHỦ ĐỀ KHU VỰC TRỌNG TÂM LỚP 12. Câu hỏi bám sát 3 trụ cột Cộng đồng ASEAN và vai trò của Việt Nam."
+        },
+        {
+          "id": "su12-cach-mang-thang-tam-va-chien-tranh-giai-phong",
+          "ten": "Chủ đề 3: Cách mạng tháng Tám năm 1945, chiến tranh giải phóng dân tộc và chiến tranh bảo vệ Tổ quốc trong lịch sử Việt Nam (từ năm 1945 đến nay)",
+          "hoc_ky": 1,
+          "mach": "Lịch sử Việt Nam",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 3: Cách mạng tháng Tám năm 1945, chiến tranh giải phóng dân tộc và chiến tranh bảo vệ Tổ quốc trong lịch sử Việt Nam (từ năm 1945 đến nay)",
+            "CTST": "Chủ đề 3: Cách mạng tháng Tám năm 1945, chiến tranh giải phóng dân tộc và chiến tranh bảo vệ Tổ quốc trong lịch sử Việt Nam (từ năm 1945 đến nay)",
+            "CD": "Chủ đề 3: Cách mạng tháng Tám năm 1945, chiến tranh giải phóng dân tộc và chiến tranh bảo vệ Tổ quốc trong lịch sử Việt Nam (từ năm 1945 đến nay)"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được bối cảnh, diễn biến chính, nguyên nhân thắng lợi và ý nghĩa lịch sử của Cách mạng tháng Tám năm 1945.",
+            "Trình bày được các giai đoạn phát triển chính, diễn biến chiến dịch tiêu biểu, nguyên nhân thắng lợi và ý nghĩa lịch sử của Cuộc kháng chiến chống Pháp (1945–1954) và Cuộc kháng chiến chống Mỹ, cứu nước (1954–1975).",
+            "Trình bày được bối cảnh, diễn biến chính và ý nghĩa của Cuộc chiến tranh bảo vệ biên giới Tây Nam và biên giới phía Bắc (1978–1979).",
+            "Đánh giá được bài học lịch sử về sức mạnh đại đoàn kết, đường lối chiến tranh nhân dân, nghệ thuật quân sự và kết hợp sức mạnh dân tộc với sức mạnh thời đại."
+          ],
+          "pham_vi_thoi_gian": "Năm 1945 đến nay",
+          "su_kien_moc": [
+            "Ngày 19/8/1945 – Khởi nghĩa giành chính quyền thắng lợi ở Hà Nội (Cách mạng tháng Tám)",
+            "Ngày 2/9/1945 – Khai sinh nước Việt Nam Dân chủ Cộng hòa",
+            "Ngày 19/12/1946 – Toàn quốc kháng chiến chống Pháp bùng nổ",
+            "Năm 1954 (13/3 - 7/5) – Chiến thắng Điện Biên Phủ",
+            "Năm 1968 – Tổng tiến công và nổi dậy Tết Mậu Thân",
+            "Năm 1972 (12/1972) – Trận 'Điện Biên Phủ trên không'",
+            "Ngày 27/1/1973 – Ký Hiệp định Pa-ri",
+            "Ngày 30/4/1975 – Chiến dịch Hồ Chí Minh toàn thắng, giải phóng hoàn toàn miền Nam",
+            "Năm 1978–1979 – Thắng lợi chiến tranh bảo vệ biên giới Tây Nam và phía Bắc"
+          ],
+          "nhan_vat": [
+            "Hồ Chí Minh",
+            "Võ Nguyên Giáp",
+            "Nguyễn Chí Thanh",
+            "Lê Duẩn"
+          ],
+          "khai_niem": [
+            "Cách mạng tháng Tám",
+            "Chiến tranh giải phóng dân tộc",
+            "Chiến tranh bảo vệ Tổ quốc",
+            "Chiến tranh nhân dân",
+            "Điện Biên Phủ",
+            "Chiến dịch Hồ Chí Minh",
+            "Hiệp định Pa-ri 1973"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Nâng cao tổng hợp toàn bộ các cuộc chiến tranh giải phóng và bảo vệ Tổ quốc từ năm 1945 đến nay dưới sự lãnh đạo của Đảng.",
+            "Phân tích chiều sâu bài học lịch sử rút ra cho sự nghiệp củng cố quốc phòng hiện nay."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG các chi tiết chiến dịch quá chi tiết ở mức độ quân sự thuần túy.",
+            "CHƯA DÙNG các diễn biến khởi nghĩa phong kiến thời trung đại (đã học ở Lớp 7, 11).",
+            "CHƯA DÙNG các nội dung kinh tế bao cấp hậu chiến ngoài bối cảnh dẫn đến Đổi mới."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài so sánh điểm giống và khác nhau giữa Cuộc kháng chiến chống Pháp (1945–1954) và Cuộc kháng chiến chống Mỹ (1954–1975).",
+            "Dạng bài đọc tư liệu Tuyên ngôn Độc lập / Lời kêu gọi / Nghị quyết Đảng và trả lời câu hỏi phân tích.",
+            "Dạng bài chứng minh đường lối 'Chiến tranh nhân dân, toàn dân, toàn diện' là nhân tố quyết định mọi thắng lợi.",
+            "Dạng bài phân tích ý nghĩa lịch sử của mốc sự kiện ngày 30/4/1975."
+          ],
+          "luu_y_ra_de": "ĐÂY LÀ CHỦ ĐỀ NÒNG CỐT QUAN TRỌNG NHẤT CỦA TOÀN BỘ CHƯƠNG TRÌNH LỊCH SỬ 12. Chiếm tỷ lệ điểm cao nhất trong các đề thi."
+        },
+        {
+          "id": "su12-cong-cuoc-doi-moi-1986-nay",
+          "ten": "Chủ đề 4: Công cuộc Đổi mới ở Việt Nam từ năm 1986 đến nay",
+          "hoc_ky": 2,
+          "mach": "Lịch sử Việt Nam",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 4: Công cuộc Đổi mới ở Việt Nam từ năm 1986 đến nay",
+            "CTST": "Chủ đề 4: Công cuộc Đổi mới ở Việt Nam từ năm 1986 đến nay",
+            "CD": "Chủ đề 4: Công cuộc Đổi mới ở Việt Nam từ năm 1986 đến nay"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được bối cảnh lịch sử và nội dung cốt lõi của đường lối Đổi mới đất nước do Đảng khởi xướng từ Đại hội VI (12/1986).",
+            "Trình bày được những thành tựu to lớn, có ý nghĩa lịch sử của Công cuộc Đổi mới trên các lĩnh vực: kinh tế, chính trị, văn hóa, xã hội, quốc phòng an ninh và đối ngoại.",
+            "Phân tích được ý nghĩa lịch sử, bài học kinh nghiệm của Công cuộc Đổi mới và tầm quan trọng của việc tiếp tục kiên định đường lối Đổi mới hiện nay."
+          ],
+          "pham_vi_thoi_gian": "Năm 1986 đến nay",
+          "su_kien_moc": [
+            "Tháng 12/1986 – Đại hội đại biểu toàn quốc lần thứ VI của Đảng khởi xướng đường lối Đổi mới toàn diện",
+            "Năm 1991 – Đại hội VII thông qua Cương lĩnh xây dựng đất nước trong thời kỳ quá độ lên CNXH",
+            "Năm 2007 – Việt Nam chính thức gia nhập Tổ chức Thương mại Thế giới (WTO)",
+            "Năm 2013 – Thông qua Hiến pháp nước CHXHCN Việt Nam năm 2013"
+          ],
+          "nhan_vat": [
+            "Trường Chinh",
+            "Nguyễn Văn Linh",
+            "Đỗ Mười",
+            "Lê Khả Phiêu",
+            "Nông Đức Mạnh",
+            "Nguyễn Phú Trọng"
+          ],
+          "khai_niem": [
+            "Công cuộc Đổi mới",
+            "Đại hội VI (1986)",
+            "Kinh tế thị trường định hướng XHCN",
+            "Hội nhập quốc tế",
+            "Cương lĩnh 1991",
+            "Công nghiệp hóa - Hiện đại hóa"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Đổi mới không phải là thay đổi mục tiêu CNXH mà là làm cho CNXH được nhận thức đúng đắn và xây dựng hiệu quả hơn.",
+            "Chuyển từ cơ chế tập trung bao cấp sang kinh tế thị trường định hướng XHCN.",
+            "Thành tựu: Đất nước ra khỏi khủng hoảng, quy mô kinh tế tăng trưởng, đời sống nhân dân cải thiện."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG các số liệu thống kê GDP cập nhật ngoài SGK nếu không cho sẵn trong đề thi.",
+            "CHƯA DÙNG các văn kiện đại hội chuyên ngành quá chi tiết.",
+            "CHƯA DÙNG nội dung các chiến dịch quân sự giải phóng thời kỳ 1945–1975."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài phân tích bối cảnh lịch sử dẫn đến quyết định Đổi mới tại Đại hội VI (12/1986).",
+            "Dạng bài đọc biểu đồ/bảng số liệu về tăng trưởng kinh tế, giảm nghèo của Việt Nam giai đoạn 1986–nay và rút ra nhận xét.",
+            "Dạng bài chứng minh: 'Đổi mới là một quá trình vừa làm vừa rút kinh nghiệm, kiên định mục tiêu độc lập dân tộc và CNXH'."
+          ],
+          "luu_y_ra_de": "ĐÂY LÀ CHỦ ĐỀ LỊCH SỬ VIỆT NAM HIỆN ĐẠI CỰC KỲ QUAN TRỌNG LỚP 12. Tập trung kiểm tra bản chất kinh tế thị trường định hướng XHCN và thành tựu Đổi mới."
+        },
+        {
+          "id": "su12-doi-ngoai-viet-nam-hien-dai",
+          "ten": "Chủ đề 5: Lịch sử đối ngoại của Việt Nam thời hiện đại (từ năm 1945 đến nay)",
+          "hoc_ky": 2,
+          "mach": "Lịch sử Việt Nam",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 5: Lịch sử đối ngoại của Việt Nam thời hiện đại (từ năm 1945 đến nay)",
+            "CTST": "Chủ đề 5: Lịch sử đối ngoại của Việt Nam thời hiện đại (từ năm 1945 đến nay)",
+            "CD": "Chủ đề 5: Lịch sử đối ngoại của Việt Nam thời hiện đại (từ năm 1945 đến nay)"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được các giai đoạn phát triển chính của ngoại giao Việt Nam thời hiện đại (1945–1954, 1954–1975, 1975–1986, 1986–nay).",
+            "Trình bày được đường lối đối ngoại độc lập, tự chủ, hòa bình, hữu nghị, hợp tác và phát triển, đa dạng hóa, đa phương hóa quan hệ quốc tế.",
+            "Phân tích được bản sắc và nghệ thuật ngoại giao 'Cây tre Việt Nam' (gốc vững, thân chắc, cành uyển chuyển).",
+            "Đánh giá được đóng góp của công tác đối ngoại đối với sự nghiệp xây dựng và bảo vệ Tổ quốc."
+          ],
+          "pham_vi_thoi_gian": "Năm 1945 đến nay",
+          "su_kien_moc": [
+            "Năm 1945–1946 – Ngoại giao mềm dẻo 'Hòa để tiến' của Chủ tịch Hồ Chí Minh (Hiệp định Sơ bộ 6/3/1946, Tạm ước 14/9/1946)",
+            "Năm 1954 – Đấu tranh ngoại giao tại Hiệp định Giơ-ne-vơ",
+            "Năm 1973 – Đấu tranh ngoại giao tại Hiệp định Pa-ri",
+            "Năm 1977 – Việt Nam trở thành thành viên thứ 149 của Liên Hợp Quốc",
+            "Năm 1995 – Bình thường hóa quan hệ ngoại giao Việt - Mỹ và gia nhập ASEAN",
+            "Năm 2021 – Hội nghị Đối ngoại toàn quốc đưa ra trường phái ngoại giao 'Cây tre Việt Nam'"
+          ],
+          "nhan_vat": [
+            "Hồ Chí Minh (Người sáng lập nền ngoại giao hiện đại Việt Nam)",
+            "Phạm Văn Đồng",
+            "Nguyễn Thị Bình",
+            "Nguyễn Cơ Thạch"
+          ],
+          "khai_niem": [
+            "Đối ngoại hiện đại",
+            "Độc lập tự chủ",
+            "Đa dạng hóa - Đa phương hóa",
+            "Ngoại giao Cây tre Việt Nam",
+            "Đối tác chiến lược toàn diện",
+            "Ngoại giao tâm công hiện đại"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Trường phái ngoại giao 'Cây tre Việt Nam': Thấm đượm tâm hồn, cốt cách và khí thái của dân tộc Việt Nam (gốc vững, thân chắc, cành uyển chuyển).",
+            "Thành tựu ngoại giao: Việt Nam đã thiết lập quan hệ Đối tác chiến lược toàn diện với tất cả các nước Ủy viên Thường trực Hội đồng Bảo an Liên Hợp Quốc."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG các văn bản thỏa thuận ngoại giao song phương chuyên biệt chưa đưa vào SGK.",
+            "CHƯA DÙNG lịch sử ngoại giao phong kiến trung đại (đã học ở Lớp 11 Chủ đề 6).",
+            "CHƯA DÙNG các tranh chấp biên giới quốc tế ngoài phạm vi bài học."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài phân tích hình ảnh biểu tượng và bản sắc của đường lối ngoại giao 'Cây tre Việt Nam'.",
+            "Dạng bài đọc tư liệu trích Tuyên bố ngoại giao / Bài phát biểu tại Hội nghị Đối ngoại và trả lời câu hỏi.",
+            "Dạng bài lập bảng thống kê các mốc phát triển đối ngoại Việt Nam từ năm 1945 đến nay."
+          ],
+          "luu_y_ra_de": "CHỦ ĐỀ ĐỐI NGOẠI HIỆN ĐẠI MỚI VÀ RẤT HOT LỚP 12. Kiểm tra trọng tâm về bản sắc Ngoại giao Cây tre và thành tựu đa phương hóa."
+        },
+        {
+          "id": "su12-ho-chi-minh-trong-lich-su-viet-nam",
+          "ten": "Chủ đề 6: Hồ Chí Minh trong lịch sử Việt Nam",
+          "hoc_ky": 2,
+          "mach": "Lịch sử Việt Nam",
+          "ten_theo_sach": {
+            "KNTT": "Chủ đề 6: Hồ Chí Minh trong lịch sử Việt Nam",
+            "CTST": "Chủ đề 6: Hồ Chí Minh trong lịch sử Việt Nam",
+            "CD": "Chủ đề 6: Hồ Chí Minh trong lịch sử Việt Nam"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được cuộc đời, sự nghiệp cách mạng vĩ đại của Chủ tịch Hồ Chí Minh.",
+            "Trình bày được những đóng góp to lớn của Hồ Chí Minh đối với cách mạng Việt Nam và phong trào cách mạng thế giới.",
+            "Phân tích được những nội dung cốt lõi của Tư tưởng Hồ Chí Minh (độc lập dân tộc gắn liền với CNXH, đại đoàn kết dân tộc, quyền con người...).",
+            "Đánh giá được di sản Hồ Chí Minh và việc học tập, làm theo tư tưởng, đạo đức, phong cách Hồ Chí Minh hiện nay."
+          ],
+          "pham_vi_thoi_gian": "Năm 1890 đến năm 1969 và giá trị di sản hiện nay",
+          "su_kien_moc": [
+            "Ngày 19/5/1890 – Ngày sinh Chủ tịch Hồ Chí Minh (Nguyễn Sinh Cung)",
+            "Ngày 5/6/1911 – Nguyễn Tất Thành rời bến cảng Nhà Rồng ra đi tìm đường cứu nước",
+            "Tháng 12/1920 – Nguyễn Ái Quốc tham dự Đại hội Tua, trở thành người cộng sản Việt Nam đầu tiên",
+            "Ngày 3/2/1930 – Chủ tịch Hồ Chí Minh thành lập Đảng Cộng sản Việt Nam",
+            "Ngày 28/1/1941 – Nguyễn Ái Quốc về nước sau 30 năm hoạt động ở nước ngoài",
+            "Ngày 2/9/1945 – อ่าน Tuyên ngôn Độc lập khai sinh nước Việt Nam Dân chủ Cộng hòa",
+            "Ngày 2/9/1969 – Chủ tịch Hồ Chí Minh qua đời, để lại Di chúc lịch sử",
+            "Năm 1987 – UNESCO ra Nghị quyết vinh danh Chủ tịch Hồ Chí Minh là 'Anh hùng giải phóng dân tộc, Nhà văn hóa kiệt xuất của Việt Nam'"
+          ],
+          "nhan_vat": [
+            "Chủ tịch Hồ Chí Minh"
+          ],
+          "khai_niem": [
+            "Tư tưởng Hồ Chí Minh",
+            "Anh hùng giải phóng dân tộc",
+            "Nhà văn hóa kiệt xuất",
+            "Di chúc Hồ Chí Minh",
+            "Học tập và làm theo tấm gương Bác"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Hệ thống hóa toàn bộ hành trình sự nghiệp và di sản tư tưởng của Chủ tịch Hồ Chí Minh.",
+            "Nghị quyết vinh danh của UNESCO năm 1987."
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG các nghiên cứu tiểu sử chuyên sâu ngoài phạm vi chương trình GDPT 2018.",
+            "CHƯA DÙNG các tranh luận sử học chưa có sự thống nhất.",
+            "CHƯA DÙNG kiến thức lịch sử các quốc gia không liên quan đến hành trình của Bác."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dạng bài lập bảng thống kê các mốc sự kiện quan trọng nhất trong cuộc đời hoạt động cách mạng của Chủ tịch Hồ Chí Minh.",
+            "Dạng bài đọc tư liệu Di chúc của Bác / Tuyên ngôn Độc lập và phân tích giá trị tư tưởng độc lập tự do.",
+            "Dạng bài viết đoạn văn cảm nhận và liên hệ bản thân về việc học tập tấm gương đạo đức Hồ Chí Minh."
+          ],
+          "luu_y_ra_de": "ĐÂY LÀ CHỦ ĐỀ TỔNG KẾT VẬN DỤNG CAO LỚP 12. Câu hỏi bám sát Nghị quyết UNESCO 1987 và di sản tư tưởng Bác Hồ."
+        }
+      ],
+      "chuyen_de": [
+        "Chuyên đề 12.1: Lịch sử quan hệ quốc tế thời hiện đại",
+        "Chuyên đề 12.2: Nhà nước Việt Nam trong lịch sử",
+        "Chuyên đề 12.3: Danh nhân lịch sử Việt Nam thời hiện đại"
+      ],
+      "ghi_chu_chua_chac": []
+    }
+  ],
+  "cau_truc_de": [
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 6,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần Trắc nghiệm 4 lựa chọn (Phân môn Lịch sử)",
+          "so_cau": 8,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần Tự luận (Phân môn Lịch sử)",
+          "so_cau": 2,
+          "diem_moi_cau": 1.5
+        }
+      ],
+      "pham_vi": [
+        "su6-vi-sao-can-hoc-lich-su",
+        "su6-xa-hoi-nguyen-thuy"
+      ],
+      "ti_le_muc_do": "Môn Lịch sử và Địa lí (Sử chiếm 50% = 5.0 điểm): 40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 1",
+      "lop": 6,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần Trắc nghiệm 4 lựa chọn (Phân môn Lịch sử)",
+          "so_cau": 8,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần Tự luận (Phân môn Lịch sử)",
+          "so_cau": 2,
+          "diem_moi_cau": 1.5
+        }
+      ],
+      "pham_vi": [
+        "su6-vi-sao-can-hoc-lich-su",
+        "su6-xa-hoi-nguyen-thuy",
+        "su6-van-minh-co-dai"
+      ],
+      "ti_le_muc_do": "Môn Lịch sử và Địa lí (Sử chiếm 50% = 5.0 điểm): 40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 2",
+      "lop": 6,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần Trắc nghiệm 4 lựa chọn (Phân môn Lịch sử)",
+          "so_cau": 8,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần Tự luận (Phân môn Lịch sử)",
+          "so_cau": 2,
+          "diem_moi_cau": 1.5
+        }
+      ],
+      "pham_vi": [
+        "su6-dong-nam-a-co-dai",
+        "su6-viet-nam-co-bac-thuoc"
+      ],
+      "ti_le_muc_do": "Môn Lịch sử và Địa lí (Sử chiếm 50% = 5.0 điểm): 40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 2",
+      "lop": 6,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần Trắc nghiệm 4 lựa chọn (Phân môn Lịch sử)",
+          "so_cau": 8,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần Tự luận (Phân môn Lịch sử)",
+          "so_cau": 2,
+          "diem_moi_cau": 1.5
+        }
+      ],
+      "pham_vi": [
+        "su6-viet-nam-co-bac-thuoc",
+        "su6-chu-de-chung-do-thi"
+      ],
+      "ti_le_muc_do": "Môn Lịch sử và Địa lí (Sử chiếm 50% = 5.0 điểm): 40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 7,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần Trắc nghiệm 4 lựa chọn (Phân môn Lịch sử)",
+          "so_cau": 8,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần Tự luận (Phân môn Lịch sử)",
+          "so_cau": 2,
+          "diem_moi_cau": 1.5
+        }
+      ],
+      "pham_vi": [
+        "su7-tay-au-trung-dai",
+        "su7-trung-quoc-an-do-trung-dai"
+      ],
+      "ti_le_muc_do": "Môn Lịch sử và Địa lí (Sử chiếm 50% = 5.0 điểm): 40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 1",
+      "lop": 7,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần Trắc nghiệm 4 lựa chọn (Phân môn Lịch sử)",
+          "so_cau": 8,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần Tự luận (Phân môn Lịch sử)",
+          "so_cau": 2,
+          "diem_moi_cau": 1.5
+        }
+      ],
+      "pham_vi": [
+        "su7-tay-au-trung-dai",
+        "su7-trung-quoc-an-do-trung-dai",
+        "su7-dong-nam-a-trung-dai"
+      ],
+      "ti_le_muc_do": "Môn Lịch sử và Địa lí (Sử chiếm 50% = 5.0 điểm): 40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 2",
+      "lop": 7,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần Trắc nghiệm 4 lựa chọn (Phân môn Lịch sử)",
+          "so_cau": 8,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần Tự luận (Phân môn Lịch sử)",
+          "so_cau": 2,
+          "diem_moi_cau": 1.5
+        }
+      ],
+      "pham_vi": [
+        "su7-viet-nam-thoi-ngop-le-so"
+      ],
+      "ti_le_muc_do": "Môn Lịch sử và Địa lí (Sử chiếm 50% = 5.0 điểm): 40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 2",
+      "lop": 7,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần Trắc nghiệm 4 lựa chọn (Phân môn Lịch sử)",
+          "so_cau": 8,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần Tự luận (Phân môn Lịch sử)",
+          "so_cau": 2,
+          "diem_moi_cau": 1.5
+        }
+      ],
+      "pham_vi": [
+        "su7-viet-nam-thoi-ngop-le-so",
+        "su7-chu-de-chung-phat-kien-dia-li"
+      ],
+      "ti_le_muc_do": "Môn Lịch sử và Địa lí (Sử chiếm 50% = 5.0 điểm): 40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 8,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần Trắc nghiệm 4 lựa chọn (Phân môn Lịch sử)",
+          "so_cau": 8,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần Tự luận (Phân môn Lịch sử)",
+          "so_cau": 2,
+          "diem_moi_cau": 1.5
+        }
+      ],
+      "pham_vi": [
+        "su8-cach-mang-tu-san-cong-nghiep",
+        "su8-dong-nam-a-the-ky-16-19"
+      ],
+      "ti_le_muc_do": "Môn Lịch sử và Địa lí (Sử chiếm 50% = 5.0 điểm): 40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 1",
+      "lop": 8,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần Trắc nghiệm 4 lựa chọn (Phân môn Lịch sử)",
+          "so_cau": 8,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần Tự luận (Phân môn Lịch sử)",
+          "so_cau": 2,
+          "diem_moi_cau": 1.5
+        }
+      ],
+      "pham_vi": [
+        "su8-cach-mang-tu-san-cong-nghiep",
+        "su8-dong-nam-a-the-ky-16-19",
+        "su8-viet-nam-the-ky-16-18"
+      ],
+      "ti_le_muc_do": "Môn Lịch sử và Địa lí (Sử chiếm 50% = 5.0 điểm): 40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 2",
+      "lop": 8,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần Trắc nghiệm 4 lựa chọn (Phân môn Lịch sử)",
+          "so_cau": 8,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần Tự luận (Phân môn Lịch sử)",
+          "so_cau": 2,
+          "diem_moi_cau": 1.5
+        }
+      ],
+      "pham_vi": [
+        "su8-the-gioi-cuoi-19-dau-20",
+        "su8-viet-nam-the-ky-19-dau-20"
+      ],
+      "ti_le_muc_do": "Môn Lịch sử và Địa lí (Sử chiếm 50% = 5.0 điểm): 40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 2",
+      "lop": 8,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần Trắc nghiệm 4 lựa chọn (Phân môn Lịch sử)",
+          "so_cau": 8,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần Tự luận (Phân môn Lịch sử)",
+          "so_cau": 2,
+          "diem_moi_cau": 1.5
+        }
+      ],
+      "pham_vi": [
+        "su8-viet-nam-the-ky-19-dau-20",
+        "su8-chu-de-chung-bien-dong"
+      ],
+      "ti_le_muc_do": "Môn Lịch sử và Địa lí (Sử chiếm 50% = 5.0 điểm): 40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 9,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần Trắc nghiệm 4 lựa chọn (Phân môn Lịch sử)",
+          "so_cau": 8,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần Tự luận (Phân môn Lịch sử)",
+          "so_cau": 2,
+          "diem_moi_cau": 1.5
+        }
+      ],
+      "pham_vi": [
+        "su9-the-gioi-1918-1945",
+        "su9-viet-nam-1918-1945"
+      ],
+      "ti_le_muc_do": "Môn Lịch sử và Địa lí (Sử chiếm 50% = 5.0 điểm): 40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 1",
+      "lop": 9,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần Trắc nghiệm 4 lựa chọn (Phân môn Lịch sử)",
+          "so_cau": 8,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần Tự luận (Phân môn Lịch sử)",
+          "so_cau": 2,
+          "diem_moi_cau": 1.5
+        }
+      ],
+      "pham_vi": [
+        "su9-the-gioi-1918-1945",
+        "su9-viet-nam-1918-1945"
+      ],
+      "ti_le_muc_do": "Môn Lịch sử và Địa lí (Sử chiếm 50% = 5.0 điểm): 40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 2",
+      "lop": 9,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần Trắc nghiệm 4 lựa chọn (Phân môn Lịch sử)",
+          "so_cau": 8,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần Tự luận (Phân môn Lịch sử)",
+          "so_cau": 2,
+          "diem_moi_cau": 1.5
+        }
+      ],
+      "pham_vi": [
+        "su9-the-gioi-1945-nay",
+        "su9-viet-nam-1945-1975"
+      ],
+      "ti_le_muc_do": "Môn Lịch sử và Địa lí (Sử chiếm 50% = 5.0 điểm): 40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 2",
+      "lop": 9,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần Trắc nghiệm 4 lựa chọn (Phân môn Lịch sử)",
+          "so_cau": 8,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần Tự luận (Phân môn Lịch sử)",
+          "so_cau": 2,
+          "diem_moi_cau": 1.5
+        }
+      ],
+      "pham_vi": [
+        "su9-viet-nam-1945-1975",
+        "su9-viet-nam-1975-nay",
+        "su9-chu-de-chung-do-thi-bien-dong"
+      ],
+      "ti_le_muc_do": "Môn Lịch sử và Địa lí (Sử chiếm 50% = 5.0 điểm): 40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 10,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Trắc nghiệm trả lời ngắn / Tự luận",
+          "so_cau": 2,
+          "diem_moi_cau": 0.75
+        }
+      ],
+      "pham_vi": [
+        "su10-lich-su-va-su-hoc",
+        "su10-van-minh-the-gioi-co-trung-dai"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 1",
+      "lop": 10,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Trắc nghiệm trả lời ngắn / Tự luận",
+          "so_cau": 2,
+          "diem_moi_cau": 0.75
+        }
+      ],
+      "pham_vi": [
+        "su10-lich-su-va-su-hoc",
+        "su10-van-minh-the-gioi-co-trung-dai",
+        "su10-cach-mang-cong-nghiep"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 2",
+      "lop": 10,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Trắc nghiệm trả lời ngắn / Tự luận",
+          "so_cau": 2,
+          "diem_moi_cau": 0.75
+        }
+      ],
+      "pham_vi": [
+        "su10-van-minh-dong-nam-a",
+        "su10-van-minh-tren-dat-nuoc-viet-nam"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 2",
+      "lop": 10,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Trắc nghiệm trả lời ngắn / Tự luận",
+          "so_cau": 2,
+          "diem_moi_cau": 0.75
+        }
+      ],
+      "pham_vi": [
+        "su10-van-minh-tren-dat-nuoc-viet-nam",
+        "su10-cong-dong-cac-dan-toc-viet-nam"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 11,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Trắc nghiệm trả lời ngắn / Tự luận",
+          "so_cau": 2,
+          "diem_moi_cau": 0.75
+        }
+      ],
+      "pham_vi": [
+        "su11-lich-su-chu-nghia-xa-hoi",
+        "su11-chu-nghia-tu-ban"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 1",
+      "lop": 11,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Trắc nghiệm trả lời ngắn / Tự luận",
+          "so_cau": 2,
+          "diem_moi_cau": 0.75
+        }
+      ],
+      "pham_vi": [
+        "su11-lich-su-chu-nghia-xa-hoi",
+        "su11-chu-nghia-tu-ban",
+        "su11-bien-dong-chu-quyen"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 2",
+      "lop": 11,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Trắc nghiệm trả lời ngắn / Tự luận",
+          "so_cau": 2,
+          "diem_moi_cau": 0.75
+        }
+      ],
+      "pham_vi": [
+        "su11-chien-tranh-bao-ve-to-quoc-truoc-1945",
+        "su11-cai-cach-trong-lich-su-viet-nam"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 2",
+      "lop": 11,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Trắc nghiệm trả lời ngắn / Tự luận",
+          "so_cau": 2,
+          "diem_moi_cau": 0.75
+        }
+      ],
+      "pham_vi": [
+        "su11-cai-cach-trong-lich-su-viet-nam",
+        "su11-lich-su-doi-ngoai-viet-nam"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 12,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Trắc nghiệm trả lời ngắn / Tự luận",
+          "so_cau": 2,
+          "diem_moi_cau": 0.75
+        }
+      ],
+      "pham_vi": [
+        "su12-the-gioi-trong-va-sau-chien-tranh-lanh",
+        "su12-asean-lich-su"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 1",
+      "lop": 12,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Trắc nghiệm trả lời ngắn / Tự luận",
+          "so_cau": 2,
+          "diem_moi_cau": 0.75
+        }
+      ],
+      "pham_vi": [
+        "su12-the-gioi-trong-va-sau-chien-tranh-lanh",
+        "su12-asean-lich-su",
+        "su12-cach-mang-thang-tam-va-chien-tranh-giai-phong"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 2",
+      "lop": 12,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Trắc nghiệm trả lời ngắn / Tự luận",
+          "so_cau": 2,
+          "diem_moi_cau": 0.75
+        }
+      ],
+      "pham_vi": [
+        "su12-cach-mang-thang-tam-va-chien-tranh-giai-phong",
+        "su12-cong-cuoc-doi-moi-1986-nay"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 2",
+      "lop": 12,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm 4 lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "diem_moi_cau": 1.0
+        },
+        {
+          "ten": "Phần III: Trắc nghiệm trả lời ngắn / Tự luận",
+          "so_cau": 2,
+          "diem_moi_cau": 0.75
+        }
+      ],
+      "pham_vi": [
+        "su12-cong-cuoc-doi-moi-1986-nay",
+        "su12-doi-ngoai-viet-nam-hien-dai",
+        "su12-ho-chi-minh-trong-lich-su-viet-nam"
+      ],
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Thi tốt nghiệp THPT 2025",
+      "lop": 12,
+      "thoi_gian_phut": 50,
+      "phan": [
+        {
+          "ten": "Phần I: Trắc nghiệm lựa chọn 4 đáp án",
+          "so_cau": 24,
+          "diem_moi_cau": 0.25,
+          "mo_ta": "Mỗi câu thí sinh chọn 1 phương án đúng duy nhất trong 4 đáp án (A, B, C, D). Mỗi câu đúng được 0.25 điểm. Tổng 6.0 điểm."
+        },
+        {
+          "ten": "Phần II: Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "diem_moi_cau": 1.0,
+          "mo_ta": "Mỗi câu hỏi có 4 ý (a, b, c, d). Thí sinh chọn Đúng hoặc Sai cho mỗi ý. Cách tính điểm: Đúng 1 ý = 0.1 điểm; Đúng 2 ý = 0.25 điểm; Đúng 3 ý = 0.5 điểm; Đúng cả 4 ý = 1.0 điểm. Tổng 4.0 điểm."
+        }
+      ],
+      "pham_vi": [
+        "su12-the-gioi-trong-va-sau-chien-tranh-lanh",
+        "su12-asean-lich-su",
+        "su12-cach-mang-thang-tam-va-chien-tranh-giai-phong",
+        "su12-cong-cuoc-doi-moi-1986-nay",
+        "su12-doi-ngoai-viet-nam-hien-dai",
+        "su12-ho-chi-minh-trong-lich-su-viet-nam"
+      ],
+      "ti_le_muc_do": "30% Nhận biết - 40% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao (Quyết định số 764/QĐ-BGDĐT của Bộ GD&ĐT)"
+    }
+  ]
+}

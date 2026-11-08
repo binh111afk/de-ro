@@ -1,0 +1,1420 @@
+{
+  "mon": "Hoá học",
+  "nguon": [
+    "Thông tư 32/2018/TT-BGDĐT ban hành Chương trình Giáo dục phổ thông môn Hoá học",
+    "Thông tư 13/2022/TT-BGDĐT sửa đổi, bổ sung Chương trình Giáo dục phổ thông 2018",
+    "Thông tư 22/2021/TT-BGDĐT quy định về đánh giá học sinh trung học cơ sở và trung học phổ thông",
+    "Quyết định 764/QĐ-BGDĐT năm 2023 về Cấu trúc định dạng đề thi tốt nghiệp THPT từ năm 2025",
+    "SGK Hoá học 10, 11, 12 bộ Kết nối tri thức với cuộc sống (NXB Giáo dục Việt Nam)",
+    "SGK Hoá học 10, 11, 12 bộ Chân trời sáng tạo (NXB Giáo dục Việt Nam)",
+    "SGK Hoá học 10, 11, 12 bộ Cánh diều (NXB Đại học Sư phạm)"
+  ],
+  "lop": [
+    {
+      "lop": 10,
+      "chuong": [
+        {
+          "id": "hoa10-cau-tao-nguyen-tu",
+          "ten": "Cấu tạo nguyên tử",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương 1. Cấu tạo nguyên tử",
+            "CTST": "Chương 1. Cấu tạo nguyên tử",
+            "CD": "Chủ đề 1. Thành phần nguyên tử"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được thành phần của nguyên tử (proton, neutron, electron), điện tích và khối lượng của các hạt",
+            "Định nghĩa được nguyên tố hoá học, số hiệu nguyên tử (Z), số khối (A), ký hiệu nguyên tử và đồng vị",
+            "Tính được nguyên tử khối trung bình của nguyên tố có nhiều đồng vị",
+            "Mô tả được mô hình nguyên tử của Rutherford - Bohr và mô hình hiện đại (orbital nguyên tử AO: s, p, d, f)",
+            "Viết được cấu hình electron nguyên tử theo ô orbital và dạng thu gọn cho Z từ 1 đến 20 (từ hydrogen đến calcium)",
+            "Dự đoán được tính chất hoá học cơ bản (kim loại, phi kim, khí hiếm) dựa vào số electron lớp ngoài cùng"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Khái niệm nguyên tử, phân tử từ KHTN THCS",
+            "Danh pháp IUPAC cho tên nguyên tố: Hydrogen, Helium, Lithium, Beryllium, Boron, Carbon, Nitrogen, Oxygen, Fluorine, Neon, Sodium, Magnesium, Aluminium, Silicon, Phosphorus, Sulfur, Chlorine, Argon, Potassium, Calcium",
+            "Số hiệu nguyên tử Z = số p = số e; Số khối A = Z + N",
+            "Toán 10: Phép tính phần trăm và giải hệ phương trình 2 ẩn"
+          ],
+          "chat_va_phan_ung": [
+            "Các hạt cơ bản: proton (p), neutron (n), electron (e)",
+            "Các nguyên tố 20 chu kỳ đầu (Z=1 đến Z=20)",
+            "Không học phản ứng hạt nhân hay sự phân rã phóng xạ trong phần bắt buộc"
+          ],
+          "cong_thuc": [
+            "Khối lượng nguyên tử trung bình: $\\bar{A} = \\frac{A_1 x + A_2 y + ...}{100}$",
+            "Số khối $A = Z + N$",
+            "Điện tích hạt nhân = $+Z$, Số electron = $Z$"
+          ],
+          "chua_duoc_dung": [
+            "Chưa dùng khái niệm Bảng tuần hoàn, chu kỳ, nhóm (chương 2 Lớp 10)",
+            "Chưa dùng khái niệm liên kết ion, liên kết cộng hoá trị (chương 3 Lớp 10)",
+            "Chưa dùng khái niệm Số oxi hoá và Phản ứng oxi hoá - khử (chương 4 Lớp 10)",
+            "Chưa dùng tên gọi cũ tiếng Việt như 'natri', 'kali', 'clo', 'cacbon', 'oxi' (chương trình GDPT 2018 quy định bắt buộc dùng danh pháp IUPAC tiếng Anh)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Bài toán tìm số hạt (p, n, e) trong nguyên tử hoặc ion khi biết tổng số hạt và hiệu số hạt",
+            "Tính nguyên tử khối trung bình và phần trăm số nguyên tử / phần trăm khối lượng của từng đồng vị",
+            "Viết cấu hình electron nguyên tử/ion và biểu diễn theo ô AO, xác định số electron độc thân",
+            "Bài toán gắn thực tế: Xác định tỷ lệ đồng vị bền Carbon-12 và Carbon-13 trong các mẫu vật liệu sinh học",
+            "Thí nghiệm thực hành: Mô phỏng mô hình orbital nguyên tử s, p bằng phần mềm học tập hoặc mô hình không gian"
+          ],
+          "luu_y_ra_de": "Chương trình 2018 sử dụng danh pháp IUPAC (tiếng Anh) cho tên nguyên tố (Sodium thay cho Natri, Potassium thay cho Kali, Sulfur thay cho Lưu huỳnh,...). Bổ sung khái niệm mô hình hiện đại orbital nguyên tử (AO) và ô orbital. Không dùng tên cũ."
+        },
+        {
+          "id": "hoa10-bang-tuan-hoan",
+          "ten": "Bảng tuần hoàn các nguyên tố hoá học",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương 2. Bảng tuần hoàn các nguyên tố hoá học và định luật tuần hoàn",
+            "CTST": "Chương 2. Bảng tuần hoàn các nguyên tố hoá học",
+            "CD": "Chủ đề 2. Bảng tuần hoàn các nguyên tố hoá học"
+          },
+          "yeu_cau_can_dat": [
+            "Giải thích được nguyên tắc sắp xếp các nguyên tố trong bảng tuần hoàn (theo chiều tăng dần của điện tích hạt nhân)",
+            "Mô tả được cấu tạo bảng tuần hoàn: ô nguyên tố, chu kỳ (1-7), nhóm (IA đến VIIIA, IB đến VIIIB), phân loại nguyên tố s, p, d, f",
+            "Giải thích được sự biến đổi tuần hoàn tính chất của các nguyên tố trong một chu kỳ và nhóm A: bán kính nguyên tử, độ âm điện, tính kim loại - phi kim",
+            "Giải thích được sự biến đổi tính acid/base của các oxide và hydroxide theo chu kỳ và nhóm A",
+            "Phát biểu được định luật tuần hoàn và vận dụng mối quan hệ giữa vị trí nguyên tố trong bảng tuần hoàn với cấu hình electron và tính chất"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Cấu hình electron nguyên tử (Chương 1)",
+            "Quy luật bán kính nguyên tử, độ âm điện (thang Pauling), tính kim loại/phi kim",
+            "Danh pháp IUPAC cho oxide và hydroxide (vd: Sodium hydroxide, Aluminium hydroxide, Sulfuric acid...)"
+          ],
+          "chat_va_phan_ung": [
+            "Oxide và hydroxide của nguyên tố chu kỳ 2 và chu kỳ 3 (vd: $Na_2O, MgO, Al_2O_3, SiO_2, P_2O_5, SO_3, Cl_2O_7$; $NaOH, Mg(OH)_2, Al(OH)_3, H_2SiO_3, H_3PO_4, H_2SO_4, HClO_4$)",
+            "So sánh tính acid/base của các oxide và hydroxide"
+          ],
+          "cong_thuc": [
+            "Số thứ tự ô = Z",
+            "Số thứ tự chu kỳ = Số lớp electron",
+            "Số thứ tự nhóm A = Số electron lớp ngoài cùng (trừ He)"
+          ],
+          "chua_duoc_dung": [
+            "Chưa dùng khái niệm Liên kết hoá học (chương 3 Lớp 10)",
+            "Chưa dùng Số oxi hoá và cân bằng phản ứng oxi hoá - khử (chương 4 Lớp 10)",
+            "Chưa dùng Năng lượng liên kết và Biến thiên enthalpy (chương 5 Lớp 10)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Xác định vị trí (ô, chu kỳ, nhóm) của nguyên tố trong bảng tuần hoàn từ cấu hình electron và ngược lại",
+            "So sánh bán kính nguyên tử, độ âm điện, tính kim loại/phi kim của các nguyên tố thuộc cùng chu kỳ hoặc cùng nhóm A",
+            "So sánh tính acid/base của dãy các oxide và hydroxide tương ứng trong chu kỳ 3",
+            "Bài toán xác định công thức oxide cao nhất, hợp chất khí với hydrogen để tìm tên nguyên tố",
+            "Bài toán thực tế: Tìm hiểu ứng dụng của các nguyên tố nhóm khí hiếm (Helium, Argon) và kim loại kiềm trong công nghiệp",
+            "Thí nghiệm thực hành: Khảo sát phản ứng của Sodium và Magnesium với nước để so sánh tính kim loại"
+          ],
+          "luu_y_ra_de": "GDPT 2018 nhấn mạnh việc giải thích xu hướng biến đổi bán kính nguyên tử và độ âm điện dựa trên lực hút tĩnh điện giữa hạt nhân và electron. Không bắt học sinh học thuộc lòng giá trị độ âm điện cụ thể."
+        },
+        {
+          "id": "hoa10-lien-ket-hoa-hoc",
+          "ten": "Liên kết hoá học",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương 3. Liên kết hoá học",
+            "CTST": "Chương 3. Liên kết hoá học",
+            "CD": "Chủ đề 3. Liên kết hoá học"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được quy tắc octet (bát tử) khi hình thành liên kết hoá học",
+            "Trình bày được sự hình thành liên kết ion (sự cho-nhận electron giữa kim loại điển hình và phi kim điển hình), viết công thức ion và công thức tinh thể ion đơn giản ($NaCl, MgO$)",
+            "Giải thích được sự hình thành liên kết cộng hoá trị (không cực, có cực) thông qua cặp electron dùng chung; viết công thức electron, công thức Lewis và công thức cấu tạo của một số phân tử ($H_2, Cl_2, N_2, HCl, H_2O, NH_3, CO_2, CH_4$)",
+            "Phân loại liên kết dựa trên hiệu độ âm điện ($\\Delta \\chi$)",
+            "Trình bày được bản chất của liên kết hydrogen và tương tác van der Waals; giải thích ảnh hưởng của chúng đến nhiệt độ sôi, nhiệt độ nóng chảy của các chất ($H_2O, HF, NH_3, C_2H_5OH$)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Cấu hình electron nguyên tử và vị trí trong Bảng tuần hoàn (Chương 1, 2)",
+            "Độ âm điện $\\chi$, quy tắc Octet",
+            "Ký hiệu công thức Lewis (dùng dấu chấm biểu diễn electron lớp ngoài cùng)",
+            "Liên kết hydrogen ($X-H ... Y$ với X, Y là F, O, N)"
+          ],
+          "chat_va_phan_ung": [
+            "Hợp chất ion: $NaCl, KCl, CaCl_2, MgO, Al_2O_3$",
+            "Hợp chất cộng hoá trị: $H_2, N_2, O_2, Cl_2, HCl, H_2O, NH_3, CO_2, CH_4$",
+            "Chất có liên kết hydrogen: $H_2O, HF, NH_3, C_2H_5OH$"
+          ],
+          "cong_thuc": [
+            "Hiệu độ âm điện $\\Delta \\chi = |\\chi_A - \\chi_B|$",
+            "$\\Delta \\chi < 0.4$: Liên kết cộng hoá trị không cực",
+            "$0.4 \\le \\Delta \\chi < 1.7$: Liên kết cộng hoá trị có cực",
+            "$\\Delta \\chi \\ge 1.7$: Liên kết ion (quy ước tương đối)"
+          ],
+          "chua_duoc_dung": [
+            "Chưa dùng khái niệm Lai hoá orbital ($sp, sp^2, sp^3$) - khái niệm lai hoá đã được loại bỏ khỏi chương trình bắt buộc Lớp 10, chỉ học ở Chuyên đề học tập 10!",
+            "Chưa dùng Số oxi hoá (chương 4 Lớp 10)",
+            "Chưa dùng Biến thiên enthalpy phản ứng và năng lượng liên kết $E_b$ (chương 5 Lớp 10)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Biểu diễn sự hình thành ion và liên kết ion trong các phân tử muối/oxide đơn giản",
+            "Viết công thức electron, công thức Lewis và công thức cấu tạo của các phân tử cộng hoá trị đơn giản theo quy tắc octet",
+            "Dự đoán loại liên kết (ion, CHT không cực, CHT có cực) dựa trên hiệu độ âm điện",
+            "Giải thích vì sao nước $H_2O$ có nhiệt độ sôi cao bất thường so với $H_2S$ nhờ liên kết hydrogen",
+            "Bài toán thực tế: Giải thích vì sao đá vôi $CaCO_3$ hoặc muối ăn $NaCl$ cứng và có nhiệt độ nóng chảy rất cao",
+            "Thí nghiệm thực hành: So sánh tính dẫn điện của dung dịch $NaCl$, dung dịch đường $C_{12}H_{22}O_{11}$ và nước cất"
+          ],
+          "luu_y_ra_de": "GDPT 2018 BỔ SUNG nội dung 'Liên kết hydrogen' và 'Tương tác van der Waals' ngay ở Lớp 10. LOẠI BỎ hoàn toàn khái niệm Lai hóa orbital nguyên tử ($sp, sp^2, sp^3$) và Thuyết VSEPR khỏi phần bắt buộc (đưa vào Chuyên đề 10). Tuyệt đối không ra câu hỏi lai hóa trong đề kiểm tra đại trà."
+        },
+        {
+          "id": "hoa10-phan-ung-oxi-hoa-khu",
+          "ten": "Phản ứng oxi hoá – khử",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương 4. Phản ứng oxi hoá - khử",
+            "CTST": "Chương 4. Phản ứng oxi hoá - khử",
+            "CD": "Chủ đề 4. Phản ứng oxi hoá - khử"
+          },
+          "yeu_cau_can_dat": [
+            "Xác định được số oxi hoá của các nguyên tố trong đơn chất, hợp chất và ion",
+            "Nêu được khái niệm chất khử (chất bị oxi hoá), chất oxi hoá (chất bị khử), quá trình oxi hoá (sự oxi hoá), quá trình khử (sự khử)",
+            "Định nghĩa được phản ứng oxi hoá - khử là phản ứng hoá học có sự thay đổi số oxi hoá của nguyên tố (có sự chuyển electron)",
+            "Cân bằng được phản ứng oxi hoá - khử bằng phương pháp thăng bằng electron (cho cả phản ứng đơn giản và phản ứng có hệ số biến thiên)",
+            "Mô tả được ý nghĩa và ứng dụng của phản ứng oxi hoá - khử trong thực tiễn (đốt cháy nhiên liệu, sản xuất kim loại, sự ăn mòn, lõi pin...)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Quy tắc xác định số oxi hoá (4 quy tắc chuẩn IUPAC)",
+            "Phương pháp thăng bằng electron (Tổng e cho = Tổng e nhận)",
+            "Các phản ứng đơn chất tác dụng với oxygen, acid, muối"
+          ],
+          "chat_va_phan_ung": [
+            "Các chất oxi hoá phổ biến: $KMnO_4, K_2Cr_2O_7, HNO_3, H_2SO_4 \\text{ đặc}, Cl_2, O_2$",
+            "Các chất khử phổ biến: Kim loại ($Mg, Fe, Zn, Cu$), $C, CO, H_2, SO_2, KI$",
+            "Phản ứng oxi hoá - khử trong tự nhiên và công nghiệp: Phản ứng cháy của methane $CH_4$, phản ứng gỉ sắt $Fe$, luyện kim $Fe_2O_3 + CO$"
+          ],
+          "cong_thuc": [
+            "Tổng số oxi hoá trong phân tử = 0; trong ion đa nguyên tử = điện tích ion",
+            "Định luật bảo toàn electron: $n_{e\\text{ cho}} = n_{e\\text{ nhận}} \\Rightarrow \\sum (n_{\\text{chất khử}} \\times \\Delta SOH_{\\text{tăng}}) = \\sum (n_{\\text{chất oxi hoá}} \\times \\Delta SOH_{\\text{giảm}})$"
+          ],
+          "chua_duoc_dung": [
+            "Chưa dùng Biến thiên enthalpy phản ứng $\\Delta_r H^\\circ_{298}$ (chương 5 Lớp 10)",
+            "Chưa dùng Tốc độ phản ứng $v$ và hằng số tốc độ $k$ (chương 6 Lớp 10)",
+            "Chưa dùng Thế điện cực chuẩn và Pin điện Galvani (Lớp 12!)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Xác định số oxi hoá của các nguyên tố trong các chất và ion phức tạp ($KMnO_4, K_2Cr_2O_7, NH_4NO_3, Fe_3O_4$)",
+            "Xác định chất oxi hoá, chất khử, quá trình oxi hoá, quá trình khử trong một phản ứng cụ thể",
+            "Cân bằng phản ứng oxi hoá - khử bằng phương pháp thăng bằng electron (phản ứng tự oxi hoá - khử, phản ứng có môi trường $H_2SO_4, HNO_3$)",
+            "Bài toán tính toán theo phương trình phản ứng oxi hoá - khử sử dụng Định luật bảo toàn electron",
+            "Bài toán thực tế: Phân tích vai trò phản ứng oxi hoá - khử trong thiết bị đo nồng độ cồn qua hơi thở (dùng $K_2Cr_2O_7$), sự gỉ của công trình thép",
+            "Thí nghiệm thực hành: Thực hiện phản ứng giữa dung dịch $FeSO_4$ với dung dịch $KMnO_4$ trong môi trường $H_2SO_4$ loãng"
+          ],
+          "luu_y_ra_de": "Chương trình 2018 sử dụng thuật ngữ 'chất bị oxi hóa' (chất khử) và 'chất bị khử' (chất oxi hóa). Cân bằng phản ứng oxi hóa - khử là kỹ năng cốt lõi bắt buộc đối với học sinh Lớp 10."
+        },
+        {
+          "id": "hoa10-nang-luong-hoa-hoc",
+          "ten": "Năng lượng hoá học",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương 5. Năng lượng hoá học",
+            "CTST": "Chương 5. Năng lượng hoá học",
+            "CD": "Chủ đề 5. Năng lượng hoá học"
+          },
+          "yeu_cau_can_dat": [
+            "Phân biệt được phản ứng tỏa nhiệt (exothermic reaction, $\\Delta_r H < 0$) và phản ứng thu nhiệt (endothermic reaction, $\\Delta_r H > 0$)",
+            "Định nghĩa được biến thiên enthalpy chuẩn của phản ứng ($\\Delta_r H^\\circ_{298}$) và enthalpy tạo thành chuẩn ($\\Delta_f H^\\circ_{298}$)",
+            "Nêu được điều kiện chuẩn: áp suất 1 bar (đối với chất khí), nồng độ $1\\text{ mol/L}$ (đối với chất tan) và nhiệt độ thường chọn $298\\text{ K}$ ($25^\\circ\\text{C}$)",
+            "Tính được biến thiên enthalpy chuẩn của phản ứng dựa vào enthalpy tạo thành chuẩn: $\\Delta_r H^\\circ_{298} = \\sum \\Delta_f H^\\circ_{298} (sp) - \\sum \\Delta_f H^\\circ_{298} (cd)$",
+            "Tính được biến thiên enthalpy chuẩn của phản ứng dựa vào năng lượng liên kết ($E_b$) cho phản ứng ở thể khí: $\\Delta_r H^\\circ_{298} = \\sum E_b (cd) - \\sum E_b (sp)$"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Khái niệm liên kết hoá học, năng lượng liên kết $E_b$ (Chương 3)",
+            "Phản ứng cháy, phản ứng nhiệt phân",
+            "Áp suất chuẩn $1\\text{ bar}$ (thay cho $1\\text{ atm}$ cũ), $1\\text{ bar} = 10^5\\text{ Pa}$"
+          ],
+          "chat_va_phan_ung": [
+            "Các phản ứng đốt cháy nhiên liệu: Cháy methane $CH_4$, propane $C_3H_8$, butane $C_4H_10$, ethanol $C_2H_5OH$",
+            "Các phản ứng nhiệt phân thu nhiệt: Nhiệt phân $CaCO_3, Cu(OH)_2, KNO_3$",
+            "Các chất đơn chất ở trạng thái bền vững có $\\Delta_f H^\\circ_{298} = 0$ ($O_2(g), N_2(g), C(s, graphite), Fe(s)$)"
+          ],
+          "cong_thuc": [
+            "Tính theo Enthalpy tạo thành: $\\Delta_r H^\\circ_{298} = \\sum \\Delta_f H^\\circ_{298} (sản phẩm) - \\sum \\Delta_f H^\\circ_{298} (chất đầu)$ (SI: kJ)",
+            "Tính theo Năng lượng liên kết (chỉ cho thể khí): $\\Delta_r H^\\circ_{298} = \\sum E_b (chất đầu) - \\sum E_b (sản phẩm)$ (SI: kJ)"
+          ],
+          "chua_duoc_dung": [
+            "Chưa dùng Tốc độ phản ứng $v$ và Hằng số tốc độ $k$ (chương 6 Lớp 10)",
+            "Chưa dùng Hằng số cân bằng $K_c$ (chương 1 Lớp 11)",
+            "Chưa dùng các bài toán Nhiệt động lực học đại học (Entropy $S$, Năng lượng tự do Gibbs $G$)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Xác định phản ứng tỏa nhiệt hay thu nhiệt dựa vào dấu của $\\Delta_r H^\\circ_{298}$ hoặc hiện tượng thực tế",
+            "Tính $\\Delta_r H^\\circ_{298}$ của phản ứng từ bảng giá trị enthalpy tạo thành chuẩn $\\Delta_f H^\\circ_{298}$ của các chất",
+            "Tính $\\Delta_r H^\\circ_{298}$ của phản ứng thể khí từ bảng giá trị năng lượng liên kết $E_b$",
+            "Bài toán tính lượng nhiệt tỏa ra hoặc thu vào khi đốt cháy một khối lượng nhiên liệu (gas LPG, than đá, cồn)",
+            "Bài toán thực tế: So sánh hiệu quả năng lượng giữa xăng sinh học E5 và xăng RON 95, ứng dụng túi chườm nóng/chườm lạnh y tế",
+            "Thí nghiệm thực hành: Đo lượng nhiệt tỏa ra của phản ứng trung hòa giữa dung dịch $HCl$ và dung dịch $NaOH$ bằng nhiệt lượng kế đơn giản"
+          ],
+          "luu_y_ra_de": "LƯU Ý QUAN TRỌNG GDPT 2018: Đây là CHƯƠNG MỚI HOÀN TOÀN được đưa vào môn Hoá học Lớp 10 (chương trình cũ 2006 không có). Điều kiện chuẩn dùng áp suất $1\\text{ bar}$ (chứ không dùng $1\\text{ atm}$). Công thức tính theo $E_b$ chỉ áp dụng cho tất cả các chất ở THỂ KHÍ."
+        },
+        {
+          "id": "hoa10-toc-do-phan-ung",
+          "ten": "Tốc độ phản ứng hoá học",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương 6. Tốc độ phản ứng hoá học",
+            "CTST": "Chương 6. Tốc độ phản ứng hoá học",
+            "CD": "Chủ đề 6. Tốc độ phản ứng hoá học"
+          },
+          "yeu_cau_can_dat": [
+            "Định nghĩa được tốc độ phản ứng hoá học và tốc độ trung bình của phản ứng ($v_{tb} = -\\frac{1}{a} \\frac{\\Delta C_A}{\\Delta t}$)",
+            "Viết được biểu thức định luật khối lượng tác dụng (Law of Mass Action) cho phản ứng đơn giản: $v = k C_A^a C_B^b$; giải thích ý nghĩa hằng số tốc độ phản ứng $k$",
+            "Nêu được và giải thích ảnh hưởng của các yếu tố đến tốc độ phản ứng: nồng độ, áp suất, diện tích bề mặt tiếp xúc, nhiệt độ (hệ số nhiệt độ Van't Hoff $\\gamma$) và chất xúc tác",
+            "Vận dụng kiến thức tốc độ phản ứng để giải thích các hiện tượng thực tiễn trong đời sống, sản xuất và bảo quản thực phẩm"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Nồng độ mol (C = n/V, mol/L), khoảng thời gian $\\Delta t$ (s hoặc phút)",
+            "Hệ số nhiệt độ Van't Hoff $\\gamma$"
+          ],
+          "chat_va_phan_ung": [
+            "Các phản ứng minh họa: $2H_2O_2 \\xrightarrow{MnO_2} 2H_2O + O_2$; $Zn + 2HCl \\rightarrow ZnCl_2 + H_2$; $Na_2S_2O_3 + H_2SO_4 \\rightarrow Na_2SO_4 + S \\downarrow + SO_2 + H_2O$",
+            "Chất xúc tác phổ biến: $MnO_2, Fe, Pt$"
+          ],
+          "cong_thuc": [
+            "Tốc độ trung bình: $v_{tb} = -\\frac{1}{a} \\frac{\\Delta C_A}{\\Delta t} = \\frac{1}{c} \\frac{\\Delta C_C}{\\Delta t}$ (SI: mol/(L·s) hoặc mol/(L·phút))",
+            "Định luật khối lượng tác dụng: $v = k \\cdot C_A^a \\cdot C_B^b$ (với phản ứng đơn giản $aA + bB \\rightarrow cC + dD$)",
+            "Hệ số nhiệt độ Van't Hoff: $\\frac{v_{T_2}}{v_{T_1}} = \\gamma^{\\frac{T_2 - T_1}{10}}$"
+          ],
+          "chua_duoc_dung": [
+            "Chưa dùng Khái niệm Phản ứng thuận nghịch và Hằng số cân bằng $K_c$ (chương 1 Lớp 11)",
+            "Chưa dùng Đạo hàm để tính tốc độ tức thời $v = -\\frac{dC}{dt}$ (Toán 11 HK2)",
+            "Chưa dùng Phương trình Arrhenius nâng cao $k = A e^{-E_a/RT}$ (nằm trong Chuyên đề 10)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Tính tốc độ trung bình của phản ứng theo sự thay đổi nồng độ chất tham gia hoặc sản phẩm trong khoảng thời gian $\\Delta t$",
+            "Tính tốc độ phản ứng khi thay đổi nồng độ các chất đầu áp dụng Định luật khối lượng tác dụng",
+            "Tính tốc độ phản ứng hoặc thời gian phản ứng khi thay đổi nhiệt độ sử dụng hệ số Van't Hoff $\\gamma$",
+            "Giải thích các biện pháp thực tế làm tăng/giảm tốc độ phản ứng (dùng nồi áp suất, chẻ nhỏ củi, bảo quản thức ăn trong tủ lạnh, dùng chất bảo quản)",
+            "Bài toán thực tế: Đánh giá nguy cơ cháy nổ bụi mịn (bụi than, bụi bột mì) do diện tích bề mặt tiếp xúc cực lớn",
+            "Thí nghiệm thực hành: Khảo sát ảnh hưởng của nồng độ và nhiệt độ đến tốc độ phản ứng giữa dung dịch $Na_2S_2O_3$ và dung dịch $H_2SO_4$"
+          ],
+          "luu_y_ra_de": "Chương Tốc độ phản ứng trong GDPT 2018 đưa Định luật khối lượng tác dụng $v = k C_A^a C_B^b$ và Hệ số nhiệt độ Van't Hoff $\\gamma$ thành nội dung bắt buộc trọng tâm của Lớp 10."
+        },
+        {
+          "id": "hoa10-halogen",
+          "ten": "Nguyên tố nhóm VIIA (Halogen)",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương 7. Nguyên tố nhóm VIIA (Halogen)",
+            "CTST": "Chương 7. Nguyên tố nhóm VIIA (Halogen)",
+            "CD": "Chủ đề 7. Nguyên tố nhóm VIIA (Halogen)"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được vị trí, cấu hình electron lớp ngoài cùng ($ns^2 np^5$) và trạng thái tự nhiên của các halogen (Fluorine, Chlorine, Bromine, Iodine)",
+            "Mô tả được sự biến đổi tính chất vật lí (trạng thái, màu sắc, nhiệt độ sôi) và tính chất hoá học (tính oxi hoá giảm dần từ F2 đến I2) của đơn chất halogen",
+            "Viết được các phương trình hoá học minh hoạ tính chất hoá học của halogen với hydrogen, kim loại, nước, dung dịch base ($NaOH$)",
+            "Trình bày được tính chất của hydrohalic acid ($HF, HCl, HBr, HI$) và sự biến đổi tính acid (tăng dần từ HF đến HI); phân biệt ion halide ($F^-, Cl^-, Br^-, I^-$) bằng dung dịch $AgNO_3$",
+            "Nêu được ứng dụng của đơn chất halogen, muối halide và một số hợp chất chứa oxygen của chlorine (nước Javel, chlor lime $CaOCl_2$)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Danh pháp IUPAC: Fluorine ($F_2$), Chlorine ($Cl_2$), Bromine ($Br_2$), Iodine ($I_2$); Hydrofluoric acid ($HF$), Hydrochloric acid ($HCl$), Hydrobromic acid ($HBr$), Hydroiodic acid ($HI$); Silver nitrate ($AgNO_3$)",
+            "Số oxi hoá và cân bằng phản ứng oxi hoá - khử (Chương 4)",
+            "Biến thiên enthalpy $\\Delta_r H^\\circ_{298}$ (Chương 5)"
+          ],
+          "chat_va_phan_ung": [
+            "Đơn chất: $F_2, Cl_2, Br_2, I_2$",
+            "Hợp chất: $HF, HCl, HBr, HI, NaCl, NaBr, NaI, AgNO_3, NaOH, CaOCl_2$, Nước Javel ($NaCl + NaClO + H_2O$)",
+            "Phản ứng tiêu biểu: $Cl_2 + 2NaOH \\rightarrow NaCl + NaClO + H_2O$; $Cl_2 + H_2O \\rightleftharpoons HCl + HClO$; $Ag^+ + X^- \\rightarrow AgX \\downarrow$ (với $X = Cl, Br, I$)"
+          ],
+          "cong_thuc": [
+            "Các phép tính stoichiometric theo phương trình phản ứng",
+            "Tính nồng độ dung dịch muối halide, nồng độ % và nồng độ mol"
+          ],
+          "chua_duoc_dung": [
+            "Chưa dùng Chương Oxygen - Sulfur (LƯU Ý QUAN TRỌNG: Chương Oxygen - Sulfur đã được LOẠI BỎ khỏi chương trình Hoá học THPT 2018 bắt buộc!)",
+            "Chưa dùng Thuyết Brønsted - Lowry và pH (Lớp 11)",
+            "Chưa dùng Thế điện cực chuẩn của cặp $X_2/2X^-$ (Lớp 12)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Hoàn thành các phương trình hoá học biểu diễn tính chất hoá học và chuỗi chuyển hoá của các halogen",
+            "Nhận biết các dung dịch muối halide ($NaF, NaCl, NaBr, NaI$) bằng dung dịch $AgNO_3$",
+            "Bài toán tính khối lượng sản phẩm, nồng độ dung dịch sau phản ứng halogen tác dụng với kim loại hoặc dung dịch base",
+            "So sánh tính oxi hoá của các halogen ($F_2 > Cl_2 > Br_2 > I_2$) và tính acid của hydrohalic acid ($HF < HCl < HBr < HI$)",
+            "Bài toán thực tế: Ứng dụng muối iodized ($KI/KIO_3$) phòng bệnh bướu cổ, tác dụng diệt khuẩn của nước Javel và cloramin B trong xử lý nước lũ lụt",
+            "Thí nghiệm thực hành: Điều chế và thu khí chlorine trong phòng thí nghiệm ($KMnO_4 + HCl\\text{ đặc}$), thử tính tẩy màu của khí chlorine ẩm"
+          ],
+          "luu_y_ra_de": "ĐẶC BIỆT LƯU Ý GDPT 2018: Chương Oxygen - Sulfur (O2, O3, S, SO2, H2SO4) trong SGK 2006 ĐÃ BỎ KHỎI LỚP 10. Lớp 10 GDPT 2018 CHỈ HỌC NHÓM HALOGEN (Group VIIA). Tên gọi hydrohalic acid dùng tiếng Anh chuẩn: Hydrochloric acid thay cho axit clohiđric."
+        }
+      ],
+      "chuyen_de": [
+        "Chuyên đề 1: Cơ sở hoá học (Cấu trúc electron nâng cao và công thức Lewis)",
+        "Chuyên đề 2: Hoá học trong việc phòng chống cháy nổ",
+        "Chuyên đề 3: Vẽ cấu trúc phân tử bằng phần mềm hoá học"
+      ],
+      "ghi_chu_chua_chac": []
+    },
+    {
+      "lop": 11,
+      "chuong": [
+        {
+          "id": "hoa11-can-bang-hoa-hoc",
+          "ten": "Cân bằng hoá học",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương 1. Cân bằng hoá học",
+            "CTST": "Chương 1. Cân bằng hoá học",
+            "CD": "Chủ đề 1. Cân bằng hoá học"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được khái niệm phản ứng một chiều, phản ứng thuận nghịch và trạng thái cân bằng hoá học (cân bằng động)",
+            "Viết được biểu thức hằng số cân bằng $K_c$ cho phản ứng thuận nghịch ($aA + bB \\rightleftharpoons cC + dD \\Rightarrow K_c = \\frac{[C]^c [D]^d}{[A]^a [B]^b}$)",
+            "Phát biểu được nguyên lý chuyển dịch cân bằng Le Chatelier và giải thích ảnh hưởng của nồng độ, áp suất, nhiệt độ đến sự chuyển dịch cân bằng",
+            "Trình bày được sự điện li, chất điện li mạnh, chất điện li yếu; khái niệm acid, base theo thuyết Brønsted - Lowry",
+            "Khái niệm pH và ý nghĩa của pH trong đời sống, y học; tính pH của dung dịch acid mạnh, base mạnh đơn nấc"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Định luật khối lượng tác dụng và tốc độ phản ứng (Lớp 10 Chương 6)",
+            "Biến thiên enthalpy $\\Delta_r H^\\circ_{298}$ (để xác định phản ứng tỏa hay thu nhiệt)",
+            "Thuyết Brønsted - Lowry: Acid là chất cho proton ($H^+$), Base là chất nhận proton ($H^+$)",
+            "Khái niệm pH: $pH = -\\log[H^+]$, $[H^+][OH^-] = 10^{-14}$ ở $25^circ\\text{C}$",
+            "Toán 11 HK2: Phép tính logarit thập phân $\\log_{10}$ (Lưu ý: Hoá học lớp 11 học pH ở HK1, Toán 11 học Logarit ở HK2, nên trong môn Hoá giáo viên giới thiệu quy ước tính $pH = -\\log[H^+]$ bằng bấm máy tính Casio)"
+          ],
+          "chat_va_phan_ung": [
+            "Phản ứng tổng hợp ammonia: $N_2(g) + 3H_2(g) \\rightleftharpoons 2NH_3(g) \\quad \\Delta_r H^\\circ_{298} < 0$",
+            "Phản ứng sản xuất $SO_3$: $2SO_2(g) + O_2(g) \\rightleftharpoons 2SO_3(g)$",
+            "Acid mạnh: $HCl, HNO_3, H_2SO_4$; Base mạnh: $NaOH, KOH, Ba(OH)_2$",
+            "Acid yếu: $CH_3COOH, H_2CO_3$; Base yếu: $NH_3$"
+          ],
+          "cong_thuc": [
+            "Hằng số cân bằng: $K_c = \\frac{[C]^c [D]^d}{[A]^a [B]^b}$ (các nồng độ ở trạng thái cân bằng)",
+            "Tích số ion của nước: $K_w = [H^+][OH^-] = 10^{-14}$ (ở $25^\\circ\\text{C}$)",
+            "Công thức pH: $pH = -\\log[H^+] \\Rightarrow [H^+] = 10^{-pH}$",
+            "Liên hệ $pH$ và $pOH$: $pH + pOH = 14$"
+          ],
+          "chua_duoc_dung": [
+            "Chưa dùng Chuẩn độ acid - base nâng cao dung dịch đệm (phần này giảm tải bài tập tính toán đệm phức tạp)",
+            "Chưa dùng Tích số tan $K_{sp}$ của chất ít tan (nằm trong Chuyên đề 11)",
+            "Chưa dùng Khái niệm Hợp chất hữu cơ (chương 3 Lớp 11)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Viết biểu thức $K_c$ và tính giá trị $K_c$ hoặc nồng độ các chất ở trạng thái cân bằng",
+            "Dự đoán chiều chuyển dịch cân bằng hoá học khi thay đổi nồng độ, áp suất, nhiệt độ theo Nguyên lý Le Chatelier",
+            "Xác định chất là acid, base, lưỡng tính theo thuyết Brønsted - Lowry trong các phản ứng cho-nhận $H^+$",
+            "Tính pH của dung dịch acid mạnh ($HCl, HNO_3$) hoặc base mạnh ($NaOH, KOH$) và bài toán trộn lẫn dung dịch acid/base",
+            "Bài toán thực tế: Ứng dụng điều chỉnh pH đất trong nông nghiệp (bón vôi cải tạo đất chua), pH của máu và nước giải khát",
+            "Thí nghiệm thực hành: Chuẩn độ dung dịch $HCl$ bằng dung dịch chuẩn $NaOH$ với chỉ thị phenolphthalein; đo pH bằng giấy pH và pH meter"
+          ],
+          "luu_y_ra_de": "LƯU Ý QUAN TRỌNG GDPT 2018: Định nghĩa Acid - Base bắt buộc dùng THUYẾT BRØNSTED - LOWRY (không dùng định nghĩa Arrhenius cũ). Bổ sung khái niệm và bài tập tính Hằng số cân bằng $K_c$. Học sinh bấm máy tính để tính $pH = -\\log[H^+]$."
+        },
+        {
+          "id": "hoa11-nitrogen-phosphorus",
+          "ten": "Nitrogen và Phosphorus",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương 2. Nitrogen - Sulfur (gồm phần Nitrogen & HNO3)",
+            "CTST": "Chương 2. Nitrogen và Sulfur",
+            "CD": "Chủ đề 2. Nitrogen và Sulfur"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được trạng thái tự nhiên, tính chất vật lí và tính chất hoá học của đơn chất Nitrogen ($N_2$) (tính kém hoạt động ở nhiệt độ thường, tính khử và tính oxi hoá ở nhiệt độ cao)",
+            "Mô tả được tính chất của Ammonia ($NH_3$) (tính base yếu, tính khử) và muối ammonium; quá trình sản xuất $NH_3$ trong công nghiệp (quy trình Haber - Bosch)",
+            "Trình bày được tính chất của Nitric acid ($HNO_3$) (tính acid mạnh, tính oxi hoá mạnh) và ứng dụng; chu trình nitrogen trong tự nhiên và hiện tượng phú dưỡng (eutrophication)",
+            "Trình bày được ứng dụng của Sulfur ($S$), Sulfur dioxide ($SO_2$) và Sulfuric acid ($H_2SO_4$) (tính acid mạnh, tính oxi hoá mạnh của $H_2SO_4$ đặc, tính hút nước); quy trình tiếp xúc sản xuất $H_2SO_4$",
+            "Nêu được thành phần, tác dụng và cách sử dụng các loại phân bón hoá học (phân đạm, phân lân, phân kali)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Danh pháp IUPAC: Nitrogen ($N_2$), Ammonia ($NH_3$), Nitric acid ($HNO_3$), Ammonium chloride ($NH_4Cl$), Sulfur ($S$), Sulfur dioxide ($SO_2$), Sulfuric acid ($H_2SO_4$)",
+            "Cân bằng phản ứng oxi hoá - khử (Lớp 10)",
+            "Cân bằng hoá học và Nguyên lý Le Chatelier (Chương 1 Lớp 11)"
+          ],
+          "chat_va_phan_ung": [
+            "Đơn chất và hợp chất: $N_2, NH_3, NH_4^+, NO, NO_2, HNO_3, S, SO_2, SO_3, H_2SO_4$, các loại phân bón ($NH_4NO_3, (NH_2)_2CO, Ca(H_2PO_4)_2, KCl$)",
+            "Phản ứng oxi hoá $HNO_3$ đặc/loãng với kim loại: $Cu + 4HNO_3 \\text{ đặc} \\rightarrow Cu(NO_3)_2 + 2NO_2 + 2H_2O$",
+            "Phản ứng $H_2SO_4$ đặc với kim loại/phi kim: $Cu + 2H_2SO_4 \\text{ đặc} \\xrightarrow{t^\\circ} CuSO_4 + SO_2 + 2H_2O$"
+          ],
+          "cong_thuc": [
+            "Tính toán độ dinh dưỡng của phân bón: $\\%N$ (phân đạm), $\\%P_2O_5$ (phân lân), $\\%K_2O$ (phân kali)",
+            "Các phép tính nồng độ % và nồng độ mol, toán tăng giảm khối lượng"
+          ],
+          "chua_duoc_dung": [
+            "Chưa dùng bài toán HNO3/H2SO4 đặc tạo hỗn hợp nhiều sản phẩm khử phức tạp m_muối = m_KL + 62n_e... (chương trình 2018 ĐÃ GIẢM TẢI các bài toán kim loại tác dụng với HNO3 quá tải)",
+            "Chưa dùng Thuyết điện li, pH và Hằng số phân li acid/base Ka, Kb (Chương 1 Lớp 11 - phần Ka, Kb nằm trong Chuyên đề 11)",
+            "Chưa dùng Hợp chất hữu cơ chứa Nitrogen như Amine, Amino acid (Lớp 12 Chương 3)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Viết các phương trình hoá học chứng minh tính chất hoá học của $NH_3, HNO_3, SO_2, H_2SO_4 \\text{ đặc}$",
+            "Bài toán tính khối lượng sản phẩm, thể tích khí thoát ra khi cho kim loại tác dụng với dung dịch $HNO_3$ hoặc $H_2SO_4$ đặc ở mức độ cơ bản",
+            "Tính độ dinh dưỡng (% khối lượng $N, P_2O_5, K_2O$) của các mẫu phân bón hoá học thương mại",
+            "Giải thích các hiện tượng thực tế: Mưa acid (do $SO_2, NO_x$), hiện tượng phú dưỡng (tảo nở hoa) ở hồ ao do dư thừa nitrate và phosphate",
+            "Bài toán thực tế: Ứng dụng quy trình Haber-Bosch và các điều kiện tối ưu nhiệt độ, áp suất, xúc tác để tăng hiệu suất sản xuất $NH_3$",
+            "Thí nghiệm thực hành: Nhận biết ion ammonium ($NH_4^+$) bằng dung dịch $NaOH$, nhận biết ion sulfate ($SO_4^{2-}$) bằng dung dịch $BaCl_2$"
+          ],
+          "luu_y_ra_de": "ĐẶC BIỆT LƯU Ý GDPT 2018: Đã GỘP phần Sulfur và Sulfuric acid (từ Lớp 10 cũ) vào chung CHƯƠNG NITROGEN - SULFUR ở LỚP 11. Bổ sung nội dung thực tế về Hiện tượng phú dưỡng (eutrophication) và phân bón hoá học. Giảm tải tối đa bài toán HNO3 đánh đố."
+        },
+        {
+          "id": "hoa11-dai-cuong-huu-co",
+          "ten": "Đại cương về hoá học hữu cơ",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương 3. Đại cương về hoá học hữu cơ",
+            "CTST": "Chương 3. Đại cương về hoá học hữu cơ",
+            "CD": "Chủ đề 3. Đại cương về hoá học hữu cơ"
+          },
+          "yeu_cau_can_dat": [
+            "Nêu được khái niệm hợp chất hữu cơ, hoá học hữu cơ; đặc điểm cấu tạo phân tử hợp chất hữu cơ (liên kết cộng hoá trị, mạch carbon thẳng, nhánh, vòng)",
+            "Phân loại hợp chất hữu cơ (hydrocarbon và dẫn xuất hydrocarbon) và nhóm chức (functional group: $-OH, -CHO, -COOH, -COO-, -NH_2...$)",
+            "Trình bày được các phương pháp tách chiết và tinh chế hợp chất hữu cơ: chưng cất (distillation), chiết (extraction), kết tinh (crystallization)",
+            "Sử dụng được phổ khối lượng (MS) để xác định phân tử khối ($M$); sử dụng phổ hồng ngoại (IR) để xác định sự có mặt của các nhóm chức đặc trưng",
+            "Lập được công thức đơn giản nhất và công thức phân tử của hợp chất hữu cơ từ kết quả phân tích nguyên tố và phổ MS/IR",
+            "Trình bày được khái niệm đồng phân (đồng phân cấu tạo: mạch C, vị trí nhóm chức, nhóm chức) và đồng đẳng"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Định luật bảo toàn khối lượng, phân tích nguyên tố C, H, O, N",
+            "Phổ khối lượng MS: Tín hiệu $m/z$ của ion phân tử $[M^+]$ cho biết phân tử khối $M$",
+            "Phổ hồng ngoại IR: Các số sóng hấp thu đặc trưng (vd: $O-H$ từ $3200-3650\\text{ cm}^{-1}$, $C=O$ từ $1650-1750\\text{ cm}^{-1}$)",
+            "Công thức tính $C_n H_m O_x N_t$"
+          ],
+          "chat_va_phan_ung": [
+            "Các hợp chất hữu cơ đơn giản: $CH_4, C_2H_6, C_2H_4, C_2H_2, C_6H_6, CH_3OH, C_2H_5OH, CH_3COOH$",
+            "Phản ứng đốt cháy hoàn toàn hợp chất hữu cơ: $C_x H_y O_z + (x + y/4 - z/2)O_2 \\rightarrow xCO_2 + y/2 H_2O$"
+          ],
+          "cong_thuc": [
+            "Công thức đơn giản nhất $C_a H_b O_c$: $a : b : c = \\frac{\\%C}{12} : \\frac{\\%H}{1} : \\frac{\\%O}{16} = \\frac{n_C}{1} : \\frac{n_H}{1} : \\frac{n_O}{1}$",
+            "Công thức phân tử $(C_a H_b O_c)_n = M$ (với $M$ tìm từ phổ MS)",
+            "Độ bất bão hoà $k = \\frac{2C + 2 + N - H - Halogen}{2}$"
+          ],
+          "chua_duoc_dung": [
+            "Chưa dùng Danh pháp IUPAC chi tiết của Hydrocarbon và Dẫn xuất (học ở các chương sau)",
+            "Chưa dùng Cơ chế phản ứng hữu cơ (nằm trong Chuyên đề 12)",
+            "Chưa dùng Đồng phân hình học cis-trans / Z-E nâng cao"
+          ],
+          "dang_bai_dien_hinh": [
+            "Xác định phân tử khối $M$ của hợp chất hữu cơ dựa vào pic ion phân tử $[M^+]$ trên phổ MS",
+            "Dự đoán các nhóm chức trong phân tử dựa vào các tín hiệu hấp thụ đặc trưng trên phổ IR",
+            "Lập công thức đơn giản nhất và công thức phân tử từ phần trăm khối lượng các nguyên tố hoặc sản phẩm cháy $CO_2, H_2O$",
+            "Viết các đồng phân cấu tạo (đồng phân mạch C, đồng phân vị trí nhóm chức) của chất hữu cơ có công thức phân tử cho trước",
+            "Bài toán thực tế: Ứng dụng phương pháp chưng cất trong nấu rượu dân gian, tinh chế tinh dầu sả/bưởi bằng phương pháp chiết/chưng cất lôi cuốn hơi nước",
+            "Thí nghiệm thực hành: Thực hiện tách chất màu từ lá cây/củ nghệ bằng phương pháp chiết phẳng hoặc chiết lỏng-lỏng"
+          ],
+          "luu_y_ra_de": "ĐẶC BIỆT LƯU Ý GDPT 2018: Đã BỔ SUNG hai công cụ hiện đại là Phổ khối lượng (MS) để tìm $M$ và Phổ hồng ngoại (IR) để xác định nhóm chức vào chương trình bắt buộc Lớp 11. Đề thi bắt buộc có dạng bài đọc tín hiệu từ phổ MS và IR."
+        },
+        {
+          "id": "hoa11-hydrocarbon",
+          "ten": "Hydrocarbon",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương 4. Hydrocarbon",
+            "CTST": "Chương 4. Hydrocarbon",
+            "CD": "Chủ đề 4. Hydrocarbon"
+          },
+          "yeu_cau_can_dat": [
+            "Gọi tên được các hydrocarbon theo danh pháp IUPAC: Alkane, Alkene, Alkyne, Arene (benzene, toluene, naphthalene)",
+            "Trình bày được đặc điểm cấu tạo, tính chất vật lí, tính chất hoá học đặc trưng của Alkane (phản ứng thế halogen, phản ứng cracking, phản ứng reforming, phản ứng cháy)",
+            "Trình bày được tính chất hoá học của Alkene và Alkyne (phản ứng cộng $H_2, Br_2, HX, H_2O$ theo quy tắc Markovnikov; phản ứng trùng hợp alkene; phản ứng thế của alk-1-yne với $AgNO_3/NH_3$; phản ứng oxi hoá)",
+            "Trình bày được tính chất hoá học của Arene (phản ứng thế nhân thơm $Br_2, HNO_3$ theo quy tắc thế vào vòng benzene; phản ứng thế nhánh; phản ứng oxi hoá nhánh $CH_3$ bằng $KMnO_4$)",
+            "Nêu được ứng dụng của các hydrocarbon, nguồn hydrocarbon tự nhiên (khí mỏ dầu, dầu mỏ, than đá) và vấn đề ô nhiễm môi trường do sử dụng nhiên liệu hoá thạch"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Danh pháp IUPAC tiếng Anh: Methane, Ethane, Propane, Butane, Pentane...; Ethene (Ethylene), Propene, Ethyne (Acetylene), Propyne; Benzene, Toluene",
+            "Quy tắc cộng Markovnikov (sản phẩm chính: H cộng vào C có nhiều H hơn, X cộng vào C có ít H hơn)",
+            "Quy tắc thế vào vòng benzene (nhóm alkyl hướng thế ortho/para)"
+          ],
+          "chat_va_phan_ung": [
+            "Alkane ($C_n H_{2n+2}$), Alkene ($C_n H_{2n}$), Alkyne ($C_n H_{2n-2}$), Arene ($C_6H_6, C_7H_8$)",
+            "Phản ứng tiêu biểu: $CH_4 + Cl_2 \\xrightarrow{h\\nu} CH_3Cl + HCl$; $CH_2=CH_2 + Br_2 \\rightarrow CH_2Br-CH_2Br$; $CH \\equiv CH + 2AgNO_3 + 2NH_3 \\rightarrow CAg \\equiv CAg \\downarrow + 2NH_4NO_3$; $C_6H_6 + Br_2 \\xrightarrow{Fe, t^\\circ} C_6H_5Br + HBr$"
+          ],
+          "cong_thuc": [
+            "Công thức chung: Alkane $C_n H_{2n+2}$ ($n \\ge 1$), Alkene $C_n H_{2n}$ ($n \\ge 2$), Alkyne $C_n H_{2n-2}$ ($n \\ge 2$), Arene $C_n H_{2n-6}$ ($n \\ge 6$)",
+            "Phản ứng cháy: Alkane cho $n_{H_2O} > n_{CO_2} \\Rightarrow n_{alkane} = n_{H_2O} - n_{CO_2}$; Alkene cho $n_{H_2O} = n_{CO_2}$; Alkyne cho $n_{CO_2} > n_{H_2O} \\Rightarrow n_{alkyne} = n_{CO_2} - n_{H_2O}$"
+          ],
+          "chua_duoc_dung": [
+            "Chưa dùng Dẫn xuất halogen, Alcohol, Phenol (chương 5 Lớp 11)",
+            "Chưa dùng Aldehyde, Carboxylic acid (chương 6 Lớp 11)",
+            "Chưa dùng Polymer (Lớp 12)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Gọi tên IUPAC và viết công thức cấu tạo của các đồng phân hydrocarbon",
+            "Viết phương trình hoá học xác định sản phẩm chính, sản phẩm phụ theo quy tắc Markovnikov hoặc quy tắc thế vòng benzene",
+            "Bài toán đốt cháy hỗn hợp hydrocarbon tìm công thức phân tử và phần trăm thể tích/khối lượng",
+            "Nhận biết các khí mất màu dung dịch $Br_2$ ($alkene, alkyne$) và khí tạo kết tủa vàng với $AgNO_3/NH_3$ ($alk-1-yne$)",
+            "Bài toán thực tế: Chỉ số octane của xăng, khí gas LPG ($propane + butane$), hiện tượng hiệu ứng nhà kính và mưa acid từ việc đốt cháy nhiên liệu hoá thạch",
+            "Thí nghiệm thực hành: Điều chế và thử tính chất của ethylene ($C_2H_4$) từ ethanol hoặc acetylene ($C_2H_2$) từ $CaC_2$"
+          ],
+          "luu_y_ra_de": "Bắt buộc dùng danh pháp IUPAC tiếng Anh: Ethene (thay cho etilen), Ethyne (thay cho axetilen), Propene, Propane. Quy tắc Markovnikov được giải thích dựa trên độ bền tương đối của carbocation trung gian."
+        },
+        {
+          "id": "hoa11-dan-xuat-halogen-alcohol-phenol",
+          "ten": "Dẫn xuất halogen – Alcohol – Phenol",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương 5. Dẫn xuất halogen - Alcohol - Phenol",
+            "CTST": "Chương 5. Dẫn xuất halogen - Alcohol - Phenol",
+            "CD": "Chủ đề 5. Dẫn xuất halogen - Alcohol - Phenol"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được khái niệm, danh pháp IUPAC, tính chất vật lí và tính chất hoá học của Dẫn xuất halogen (phản ứng thế nhóm $-OH$, phản ứng tách $HX$ theo quy tắc Zaitsev - Xaytsev)",
+            "Trình bày được cấu tạo, liên kết hydrogen liên phân tử, tính chất hoá học của Alcohol (phản ứng với $Na$, phản ứng thế $-OH$ tạo ether/alkene, phản ứng oxi hoá không hoàn toàn bậc I, II bằng $CuO$, phản ứng cháy)",
+            "Trình bày được đặc điểm cấu tạo, tính chất hoá học của Phenol (tính acid yếu tác dụng với $NaOH$, phản ứng thế vào vòng benzene tác dụng với dung dịch $Br_2$ tạo kết tủa trắng $2,4,6$-tribromophenol và tác dụng với $HNO_3$ đặc)",
+            "So sánh tính acid của phenol với alcohol và acid vô cơ; nêu ứng dụng và độc tính của phenol, alcohol (methanol, ethanol, glycerol)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Danh pháp IUPAC: Methanol, Ethanol, Propan-1-ol, Propan-2-ol, Ethylene glycol (Ethane-1,2-diol), Glycerol (Propane-1,2,3-triol), Phenol, Chloromethane, Bromoethane",
+            "Quy tắc tách Zaitsev (sản phẩm chính: X tách cùng H ở C bên cạnh có ít H hơn)",
+            "Liên kết hydrogen giữa các phân tử alcohol làm tăng nhiệt độ sôi"
+          ],
+          "chat_va_phan_ung": [
+            "Haloalkane: $CH_3Cl, C_2H_5Br, CH_2=CH-Cl$",
+            "Alcohol: $CH_3OH, C_2H_5OH, C_3H_7OH, C_2H_4(OH)_2, C_3H_5(OH)_3$",
+            "Phenol: $C_6H_5OH$",
+            "Phản ứng tiêu biểu: $C_2H_5OH + Na \\rightarrow C_2H_5ONa + 1/2 H_2$; $C_2H_5OH \\xrightarrow{H_2SO_4, 170^\\circ\\text{C}} C_2H_4 + H_2O$; $CH_3CH_2OH + CuO \\xrightarrow{t^\\circ} CH_3CHO + Cu + H_2O$; $C_6H_5OH + 3Br_2 \\rightarrow C_6H_2Br_3OH \\downarrow + 3HBr$"
+          ],
+          "cong_thuc": [
+            "Độ cồn (Độ rượu): $V_{ethanol} / V_{dung dịch} \\times 100^\\circ$",
+            "Phản ứng thế Na với Alcohol $n$ nấc: $n_{H_2} = \frac{n}{2} n_{alcohol}$",
+            "Alcohol đa chức có 2 nhóm $-OH$ kề nhau tác dụng với $Cu(OH)_2$ tạo dung dịch xanh lam thẫm"
+          ],
+          "chua_duoc_dung": [
+            "Chưa dùng Hợp chất Carbonyl (Aldehyde, Ketone) và Carboxylic acid (Chương 6 Lớp 11)",
+            "Chưa dùng Ester, Lipid, Xà phòng (Lớp 12 Chương 1)",
+            "Chưa dùng Phản ứng trùng hợp dẫn xuất halogen tạo polymer PVC, Teflon (Lớp 12 Chương 4)",
+            "Chưa dùng Phản ứng thế nhân thơm aniline (Lớp 12 Chương 3)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Gọi tên IUPAC và phân biệt bậc của alcohol (bậc I, II, III), bậc của dẫn xuất halogen",
+            "Viết phương trình phản ứng tách $HX$ theo quy tắc Zaitsev và phản ứng tách nước tạo alkene/ether",
+            "Nhận biết alcohol đa chức có nhóm $-OH$ kề nhau ($glycerol, ethylene glycol$) bằng $Cu(OH)_2$ ở nhiệt độ phòng",
+            "Nhận biết phenol bằng dung dịch $Br_2$ (kết tủa trắng) hoặc dung dịch $FeCl_3$ (màu tím)",
+            "Bài toán thực tế: Tính độ cồn, lượng cồn trong máu khi lái xe (nồng độ ethanol), tác hại gây mù/tử vong của methanol giả alcohol",
+            "Thí nghiệm thực hành: Phản ứng của ethanol với sodium ($Na$), phản ứng oxi hoá ethanol bằng $CuO$ nung nóng, phản ứng phenol tác dụng với nước bromine"
+          ],
+          "luu_y_ra_de": "Dùng tên IUPAC tiếng Anh chuẩn: Methanol, Ethanol, Glycerol (hoặc Propane-1,2,3-triol), Phenol. Nhấn mạnh tác dụng của liên kết hydrogen lên nhiệt độ sôi ($nhiệt độ sôi: Alcohol > Dẫn xuất halogen$)."
+        },
+        {
+          "id": "hoa11-carbonyl-carboxylic-acid",
+          "ten": "Hợp chất carbonyl – Carboxylic acid",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương 6. Hợp chất carbonyl - Carboxylic acid",
+            "CTST": "Chương 6. Hợp chất carbonyl - Carboxylic acid",
+            "CD": "Chủ đề 6. Hợp chất carbonyl - Carboxylic acid"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được khái niệm, đặc điểm liên kết đôi $C=O$, danh pháp IUPAC của Aldehyde và Ketone (hợp chất carbonyl)",
+            "Trình bày được tính chất hoá học của hợp chất carbonyl: phản ứng khử bằng $NaBH_4$ hoặc $LiAlH_4$ tạo alcohol; phản ứng oxi hoá aldehyde bởi thuốc thử Tollens ($AgNO_3/NH_3$) tạo tráng bạc và bởi $Cu(OH)_2/NaOH$ nung nóng tạo kết tủa đỏ gạch $Cu_2O$; phản ứng tạo iodoform của hợp chất có nhóm $CH_3C=O$",
+            "Trình bày được khái niệm, cấu tạo, liên kết hydrogen, tính chất hoá học của Carboxylic acid (tính acid yếu đổi màu quỳ đỏ, tác dụng với kim loại, base, basic oxide, muối carbonate) và phản ứng ester hoá",
+            "Nêu được ứng dụng thực tiễn của formaldehyde (formalin), acetaldehyde, acetone, acetic acid (dấm ăn)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Danh pháp IUPAC: Formaldehyde (Methanal), Acetaldehyde (Ethanal), Acetone (Propanone), Formic acid (Methanoic acid), Acetic acid (Ethanoic acid)",
+            "Thuốc thử Tollens: Dung dịch $AgNO_3$ trong $NH_3$ dư chứa ion phức $[Ag(NH_3)_2]^+$",
+            "Phản ứng Iodoform ($I_2 + NaOH$)"
+          ],
+          "chat_va_phan_ung": [
+            "Aldehyde: $HCHO, CH_3CHO, C_2H_5CHO$",
+            "Ketone: $CH_3COCH_3$",
+            "Carboxylic acid: $HCOOH, CH_3COOH, C_2H_5COOH, (COOH)_2$",
+            "Phản ứng tráng bạc: $RCHO + 2[Ag(NH_3)_2]OH \\xrightarrow{t^\\circ} RCOONH_4 + 2Ag \\downarrow + 3NH_3 + H_2O$",
+            "Phản ứng ester hoá: $RCOOH + R'OH \\rightleftharpoons RCOOR' + H_2O$ ($H_2SO_4 \\text{ đặc}, t^\\circ$)"
+          ],
+          "cong_thuc": [
+            "Aldehyde đơn chức $RCHO$ tráng bạc cho $n_{Ag} = 2 n_{RCHO}$ (riêng $HCHO$ cho $n_{Ag} = 4 n_{HCHO}$)",
+            "Phản ứng carboxylic acid tác dụng với $Na_2CO_3/NaHCO_3$ giải phóng $CO_2$: $n_{COOH} = n_{HCO_3^-} = 2 n_{CO_3^{2-}} = 2 n_{CO_2}$"
+          ],
+          "chua_duoc_dung": [
+            "Chưa dùng Khái niệm Ester, Lipid, Xà phòng và Phản ứng thuỷ phân ester (Lớp 12 Chương 1)",
+            "Chưa dùng Amine, Amino acid, Carbohydrate (Lớp 12 Chương 2, 3)",
+            "Chưa dùng Phản ứng trùng ngưng tạo tơ polyamide, polyester (Lớp 12 Chương 4)",
+            "Chưa dùng Phương trình Arrhenius và cơ chế phản ứng hữu cơ (Chuyên đề 12)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Gọi tên IUPAC của các aldehyde, ketone, carboxylic acid và viết công thức cấu tạo đồng phân",
+            "Phân biệt aldehyde và ketone bằng phản ứng tráng bạc ($AgNO_3/NH_3$) hoặc phản ứng với $Cu(OH)_2/NaOH$ đun nóng",
+            "Bài toán phản ứng tráng bạc của hỗn hợp aldehyde tìm công thức phân tử và khối lượng bạc tạo thành",
+            "Bài toán tính hiệu suất phản ứng ester hoá giữa acetic acid và ethanol",
+            "Bài toán thực tế: Hàm lượng acetic acid trong giấm ăn (3-5%), ngâm xác mẫu vật sinh học bằng formalin ($37-40\\% HCHO$), ứng dụng tẩy rửa sơn móng tay của acetone",
+            "Thí nghiệm thực hành: Thực hiện phản ứng tráng bạc của acetaldehyde, phản ứng ester hoá tạo ethyl acetate có mùi thơm đặc trưng"
+          ],
+          "luu_y_ra_de": "GDPT 2018 sử dụng tên gọi Hợp chất carbonyl cho nhóm Aldehyde & Ketone. Bổ sung phản ứng tạo Iodoform ($I_2 + NaOH$) để nhận biết nhóm $CH_3CO-$. Bắt buộc dùng danh pháp IUPAC: Formaldehyde, Acetaldehyde, Acetic acid."
+        }
+      ],
+      "chuyen_de": [
+        "Chuyên đề 1: Phân bón hoá học",
+        "Chuyên đề 2: Trải nghiệm, thực hành hoá học hữu cơ (Tách chiết và tinh chế hợp chất thiên nhiên)",
+        "Chuyên đề 3: Hoá học và bảo vệ môi trường"
+      ],
+      "ghi_chu_chua_chac": []
+    },
+    {
+      "lop": 12,
+      "chuong": [
+        {
+          "id": "hoa12-ester-lipid-xa-phong",
+          "ten": "Ester – Lipid. Xà phòng và chất giặt rửa",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương 1. Ester - Lipid. Xà phòng và chất giặt rửa",
+            "CTST": "Chương 1. Ester - Lipid. Xà phòng và chất giặt rửa",
+            "CD": "Chủ đề 1. Ester - Lipid. Xà phòng và chất giặt rửa"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được khái niệm, đặc điểm cấu tạo phân tử, danh pháp IUPAC và tính chất vật lí của Ester",
+            "Trình bày được tính chất hoá học của ester: phản ứng thủy phân trong môi trường acid (thuận nghịch) và môi trường base (phản ứng xà phòng hoá một chiều)",
+            "Trình bày được khái niệm lipid, chất béo (triglyceride), công thức cấu tạo của các acid béo phổ biến (palmitic acid, stearic acid, oleic acid, linoleic acid)",
+            "Trình bày được tính chất hoá học của chất béo: phản ứng thủy phân, xà phòng hoá, phản ứng hydrogen hoá chất béo lỏng (thành chất béo rắn), phản ứng oxi hoá chất béo bởi oxygen không khí (hiện tượng ôi thiu)",
+            "Trình bày được khái niệm xà phòng, chất giặt rửa tổng hợp; cơ chế tẩy rửa của xà phòng và chất giặt rửa"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Danh pháp Ester: Tên gốc alkyl/aryl $R'$ + tên gốc carboxylate $RCOO^-$ (vd: Ethyl acetate, Methyl methacrylate, Vinyl acetate, Phenyl acetate)",
+            "Các acid béo: Palmitic acid ($C_{15}H_{31}COOH$), Stearic acid ($C_{17}H_{35}COOH$), Oleic acid ($C_{17}H_{33}COOH$), Linoleic acid ($C_{17}H_{31}COOH$)",
+            "Triglyceride $(RCOO)_3C_3H_5$"
+          ],
+          "chat_va_phan_ung": [
+            "Ester: $HCOOCH_3, CH_3COOC_2H_5, CH_2=CH-COOCH_3, CH_3COOCH=CH_2, CH_3COOC_6H_5$",
+            "Chất béo: Tristearin $(C_{17}H_{35}COO)_3C_3H_5$, Triolein $(C_{17}H_{33}COO)_3C_3H_5$, Tripalmitin $(C_{15}H_{31}COO)_3C_3H_5$",
+            "Phản ứng xà phòng hoá: $(RCOO)_3C_3H_5 + 3NaOH \\xrightarrow{t^\\circ} 3RCOONa + C_3H_5(OH)_3$",
+            "Phản ứng hydrogen hoá triolein: Triolein (lỏng) $+ 3H_2 \\xrightarrow{Ni, t^\\circ, p}$ Tristearin (rắn)"
+          ],
+          "cong_thuc": [
+            "Bảo toàn khối lượng phản ứng xà phòng hoá ester đơn chức: $m_{ester} + m_{NaOH} = m_{muối} + m_{alcohol}$",
+            "Xà phòng hoá chất béo: $n_{NaOH} = 3 n_{cb} = 3 n_{glycerol}$"
+          ],
+          "chua_duoc_dung": [
+            "Chưa dùng Carbohydrate (Chương 2 Lớp 12)",
+            "Chưa dùng Amine, Amino acid, Peptide, Protein (Chương 3 Lớp 12)",
+            "Chưa dùng Bài toán thuỷ phân hỗn hợp ester phức tạp đánh đố cũ"
+          ],
+          "dang_bai_dien_hinh": [
+            "Gọi tên IUPAC và viết công thức cấu tạo các đồng phân ester đơn chức $C_n H_{2n} O_2$",
+            "Viết phương trình phản ứng thủy phân ester trong môi trường acid và base (xà phòng hoá), chú ý trường hợp ester của phenol và ester vinyl",
+            "Bài toán tính khối lượng muối, khối lượng glycerol hoặc NaOH tiêu tốn trong phản ứng xà phòng hoá chất béo/ester",
+            "Bài toán tính chỉ số xà phòng hoá hoặc lượng $H_2$ cần thiết để chuyển chất béo lỏng thành chất béo rắn (bơ nhân tạo margarine)",
+            "Bài toán thực tế: So sánh ưu nhược điểm của xà phòng và chất giặt rửa tổng hợp khi dùng trong nước cứng (chứa $Ca^{2+}, Mg^{2+}$), quy trình sản xuất xà phòng thủ công từ dầu ăn thải",
+            "Thí nghiệm thực hành: Điều chế ester (ethyl acetate) từ ethanol và acetic acid; thực hiện phản ứng xà phòng hoá chất béo bằng dung dịch $NaOH$"
+          ],
+          "luu_y_ra_de": "Chương trình 2018 sử dụng tên acid béo và ester chuẩn IUPAC (tiếng Anh): Palmitic acid, Stearic acid, Oleic acid, Ethyl acetate. Đề thi tập trung vào ứng dụng thực tế xà phòng hoá, chuyển hoá chất béo lỏng thành bơ nhân tạo."
+        },
+        {
+          "id": "hoa12-carbohydrate",
+          "ten": "Carbohydrate",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương 2. Carbohydrate",
+            "CTST": "Chương 2. Carbohydrate",
+            "CD": "Chủ đề 2. Carbohydrate"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được khái niệm, phân loại carbohydrate (monosaccharide: Glucose, Fructose; disaccharide: Saccharose, Maltose; polysaccharide: Tinh bột, Cellulose)",
+            "Trình bày được dạng cấu tạo mạch mở và mạch vòng của Glucose và Fructose; tính chất hoá học của Glucose (tính chất của polyalcohol với $Cu(OH)_2$, tính chất aldehyde tráng bạc, phản ứng lên men rượu)",
+            "Trình bày được cấu tạo và tính chất hoá học của Saccharose (phản ứng với $Cu(OH)_2$, phản ứng thủy phân tạo glucose và fructose)",
+            "Trình bày được cấu tạo và tính chất hoá học của Tinh bột (phản ứng thủy phân, phản ứng màu với iodine) và Cellulose (phản ứng thủy phân, phản ứng với $HNO_3$ đặc tạo cellulose trinitrate, phản ứng tan trong nước Schweitzer)",
+            "Nêu được ứng dụng và vai trò của carbohydrate trong đời sống, dinh dưỡng và sản xuất công nghiệp"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Danh pháp IUPAC: Glucose, Fructose, Saccharose (Sucrose), Maltose, Starch (Tinh bột), Cellulose",
+            "Công thức phân tử: Glucose/Fructose ($C_6H_{12}O_6$), Saccharose/Maltose ($C_{12}H_{22}O_{11}$), Tinh bột/Cellulose ($(C_6H_{10}O_5)_n$)",
+            "Phản ứng tráng bạc ($AgNO_3/NH_3$) và phản ứng với $Cu(OH)_2$"
+          ],
+          "chat_va_phan_ung": [
+            "Các carbohydrate: Glucose, Fructose, Saccharose, Maltose, Tinh bột, Cellulose",
+            "Phản ứng lên men glucose: $C_6H_{12}O_6 \\xrightarrow{men} 2C_2H_5OH + 2CO_2 \\uparrow$",
+            "Phản ứng tạo cellulose trinitrate: $[C_6H_7O_2(OH)_3]_n + 3nHNO_3 \\xrightarrow{H_2SO_4 \\text{ đặc}, t^\\circ} [C_6H_7O_2(ONO_2)_3]_n + 3nH_2O$"
+          ],
+          "cong_thuc": [
+            "Phản ứng tráng bạc Glucose: $n_{Ag} = 2 n_{glucose}$",
+            "Lên men rượu: $n_{C_2H_5OH} = 2 n_{glucose} \\times H\\%$, $n_{CO_2} = 2 n_{glucose} \\times H\\%$",
+            "Thủy phân Saccharose: $1\\text{ mol Saccharose} \\rightarrow 1\\text{ mol Glucose} + 1\\text{ mol Fructose}$"
+          ],
+          "chua_duoc_dung": [
+            "Chưa dùng Hợp chất chứa nitrogen (Amine, Amino acid, Peptide, Protein - Lớp 12 Chương 3)",
+            "Chưa dùng Polymer tổng hợp và các loại tơ hoá học (Lớp 12 Chương 4)",
+            "Chưa dùng Pin điện và thế điện cực chuẩn (Lớp 12 Chương 5)",
+            "Chưa dùng Các công thức cấu trúc hình học không gian stereochemistry nâng cao"
+          ],
+          "dang_bai_dien_hinh": [
+            "Phân biệt các carbohydrate (glucose, fructose, saccharose, tinh bột, cellulose) bằng các phản ứng hoá học đặc trưng",
+            "Bài toán tính lượng bạc $Ag$ thu được hoặc khối lượng alcohol $C_2H_5OH$ tạo thành từ phản ứng lên men glucose/thủy phân tinh bột có tính hiệu suất $H\\%$",
+            "Bài toán tính khối lượng $HNO_3$ và khối lượng cellulose trinitrate thu được trong phản ứng sản xuất thuốc súng không khói",
+            "So sánh đặc điểm cấu tạo mạch và khả năng phản ứng tráng bạc giữa glucose, fructose, saccharose và maltose",
+            "Bài toán thực tế: Chu trình quang hợp của cây xanh tạo tinh bột, ứng dụng truyền dung dịch dịch truyền glucose $5\\%$ cho người bệnh, sản xuất tơ visco/tơ acetate từ cellulose",
+            "Thí nghiệm thực hành: Phản ứng của glucose với $Cu(OH)_2$ và phản ứng tráng bạc; phản ứng màu của hồ tinh bột với dung dịch iodine"
+          ],
+          "luu_y_ra_de": "Dùng danh pháp IUPAC tiếng Anh chuẩn: Glucose, Fructose, Saccharose (Sucrose), Cellulose. Fructose trong môi trường kiềm chuyển hóa thành Glucose nên cũng có phản ứng tráng bạc."
+        },
+        {
+          "id": "hoa12-hop-chat-chua-nitrogen",
+          "ten": "Hợp chất chứa nitrogen (Amine – Amino acid – Peptide – Protein)",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương 3. Hợp chất chứa nitrogen",
+            "CTST": "Chương 3. Hợp chất chứa nitrogen",
+            "CD": "Chủ đề 3. Hợp chất chứa nitrogen"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được khái niệm, phân loại, bậc amine, danh pháp IUPAC và tính chất vật lí của Amine (Methylamine, Ethylamine, Aniline)",
+            "Trình bày được tính chất hoá học của amine: tính base (đổi màu quỳ tím/phenolphthalein trừ aniline, tác dụng với acid), phản ứng thế vào vòng benzene của aniline tác dụng với dung dịch $Br_2$ tạo kết tủa trắng $2,4,6$-tribromoaniline",
+            "Trình bày được khái niệm, cấu tạo ion lưỡng cực, tính chất amphoteric (lưỡng tính) của Amino acid (Glycine, Alanine, Valine, Glutamic acid, Lysine); phản ứng trùng ngưng tạo polymer/peptide",
+            "Trình bày được khái niệm peptide, liên kết peptide ($-CO-NH-$), phân loại; tính chất hoá học của peptide: phản ứng thủy phân (acid, base, enzyme) và phản ứng màu biuret với $Cu(OH)_2/NaOH$ (từ tripeptide trở lên)",
+            "Trình bày được khái niệm, cấu tạo, tính chất của Protein (sự đông tụ bởi nhiệt/acid/base/muối kim loại nặng, phản ứng màu biuret và phản ứng với $HNO_3$ đặc); khái niệm enzyme và vai trò xúc tác sinh học"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Danh pháp Amine: Methylamine, Dimethylamine, Trimethylamine, Ethylamine, Aniline (Benzenamine)",
+            "Ký hiệu 5 amino acid phổ biến: Glycine (Gly), Alanine (Ala), Valine (Val), Glutamic acid (Glu), Lysine (Lys)",
+            "Liên kết peptide $-CO-NH-$"
+          ],
+          "chat_va_phan_ung": [
+            "Amine: $CH_3NH_2, (CH_3)_2NH, (CH_3)_3N, C_2H_5NH_2, C_6H_5NH_2$",
+            "Amino acid: $H_2N-CH_2-COOH$ (Gly), $CH_3-CH(NH_2)-COOH$ (Ala)...",
+            "Peptide: Gly-Ala, Gly-Ala-Val...",
+            "Phản ứng thế aniline với nước bromine: $C_6H_5NH_2 + 3Br_2 \\rightarrow C_6H_2Br_3NH_2 \\downarrow + 3HBr$",
+            "Phản ứng màu biuret: Peptide từ tripeptide trở lên tác dụng với $Cu(OH)_2/NaOH$ tạo dung dịch màu tím đặc trưng"
+          ],
+          "cong_thuc": [
+            "Tính chất lưỡng tính amino acid đơn $H_2N-R-COOH$: Tác dụng $HCl$ theo tỉ lệ $1:1$, tác dụng $NaOH$ theo tỉ lệ $1:1$",
+            "Thủy phân hoàn toàn $n$-peptide: $n$-peptide $+ (n-1)H_2O \\xrightarrow{H^+, t^\\circ} n \\text{ amino acid}$",
+            "Thủy phân $n$-peptide trong $NaOH$: $n$-peptide $+ n NaOH \\rightarrow \\text{Muối} + H_2O$"
+          ],
+          "chua_duoc_dung": [
+            "Chưa dùng Polymer tổng hợp (Chương 4 Lớp 12)",
+            "Chưa dùng Pin điện và Điện phân (Chương 5 Lớp 12)",
+            "Chưa dùng Bài toán thủy phân peptide quy đổi đếm mắt xích đánh đố cực trị nặng nề cũ (chương trình 2018 loại bỏ bài toán peptide quy đổi quá phức tạp)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Gọi tên IUPAC, xác định bậc của amine (bậc I, II, III) và viết công thức cấu tạo đồng phân",
+            "So sánh tính base của các amine: $Amine \\text{ béo} > Ammonia (NH_3) > Aniline (amine \\text{ thơm})$",
+            "Nhận biết aniline bằng dung dịch nước bromine (kết tủa trắng $2,4,6$-tribromoaniline)",
+            "Xác định điểm đẳng điện hoặc môi trường pH (quỳ tím đổi màu) của các amino acid ($Gly, Ala, Val$ trung tính; $Glu$ acid; $Lys$ base)",
+            "Bài toán tính khối lượng muối thu được khi cho amino acid/amine tác dụng với dung dịch $HCl$ hoặc $NaOH$",
+            "Bài toán thực tế: Khử mùi tanh của cá (do các amine $CH_3NH_2, (CH_3)_3N$) bằng giấm ăn hoặc chanh, hiện tượng đông tụ protein khi nấu canh cua/trứng nướng",
+            "Thí nghiệm thực hành: Phản ứng aniline với dung dịch $HCl$ và $Br_2$; Phản ứng màu biuret của peptide/lòng trắng trứng ($ovalbumin$) với $Cu(OH)_2$"
+          ],
+          "luu_y_ra_de": "Dùng danh pháp IUPAC tiếng Anh chuẩn: Methylamine, Ethylamine, Aniline, Glycine, Alanine, Glutamic acid. Loại bỏ bài toán tính toán peptide phức tạp quy đổi toán học đánh đố."
+        },
+        {
+          "id": "hoa12-polymer",
+          "ten": "Polymer",
+          "hoc_ky": 1,
+          "ten_theo_sach": {
+            "KNTT": "Chương 4. Polymer",
+            "CTST": "Chương 4. Polymer",
+            "CD": "Chủ đề 4. Polymer"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được khái niệm polymer, mắt xích (monomer unit), hệ số trùng hợp ($n$), phân loại (polymer thiên nhiên, tổng hợp, bán tổng hợp/nhân tạo)",
+            "Trình bày được đặc điểm cấu tạo mạch polymer (mạch không phân nhánh, phân nhánh, mạng không gian); tính chất vật lí chung của polymer",
+            "Trình bày được hai phương pháp tổng hợp polymer: phản ứng trùng hợp (polymerization) và phản ứng trùng ngưng (polycondensation)",
+            "Mô tả được thành phần, tính chất, ứng dụng của Chất dẻo (PE, PP, PVC, PS, PMM, teflon); Cao su (cao su thiên nhiên, cao su buna, cao su buna-S, cao su buna-N, sự lưu hoá cao su); Tơ (tơ thiên nhiên, tơ hoá học: tơ visco, tơ acetate, tơ nylon-6,6, tơ capron, tơ nitron/olon); Keo dán",
+            "Nêu được tác động của việc sử dụng vật liệu polymer (rác thải nhựa) đến môi trường và các giải pháp tái chế, phát triển nhựa sinh học phân hủy"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Danh pháp Polymer: Polyethylene (PE), Poly(vinyl chloride) (PVC), Polypropylene (PP), Polystyrene (PS), Poly(methyl methacrylate) (PMM), Teflon, Capron, Nylon-6,6",
+            "Mắt xích monomer",
+            "Phản ứng trùng hợp alkene/dien và phản ứng trùng ngưng dicarboxylic acid + diamine/diol"
+          ],
+          "chat_va_phan_ung": [
+            "Các polymer: PE, PP, PVC, PS, Plexiglas, Teflon, Cao su Buna, Cao su thiên nhiên (isoprene), Tơ nylon-6,6, Tơ capron, Tơ nitron (olon), Tơ visco",
+            "Trùng hợp ethylene: $n CH_2=CH_2 \\xrightarrow{t^\\circ, p, xt} -(CH_2-CH_2)_n-$",
+            "Trùng ngưng nylon-6,6: $n H_2N-(CH_2)_6-NH_2 + n HOOC-(CH_2)_4-COOH \\xrightarrow{t^\\circ, p, xt} -(HN-(CH_2)_6-NH-OC-(CH_2)_4-CO)_n- + 2n H_2O$"
+          ],
+          "cong_thuc": [
+            "Phân tử khối polymer: $M_{polymer} = n \\times M_{mắt xích}$",
+            "Tính hệ số trùng hợp $n = \\frac{M_{polymer}}{M_{mắt xích}}$"
+          ],
+          "chua_duoc_dung": [
+            "Chưa dùng Pin điện và Điện phân (Lớp 12 Chương 5)",
+            "Chưa dùng Đại cương kim loại và Phức chất (Lớp 12 Chương 6, 7, 8)",
+            "Chưa dùng Cơ chế phản ứng trùng hợp radical / cation / anion (Chuyên đề 12)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Xác định công thức monomer, công thức mắt xích và tên gọi của các polymer tương ứng",
+            "Phân loại polymer theo nguồn gốc (thiên nhiên, tổng hợp, nhân tạo/bán tổng hợp) và theo phản ứng tổng hợp (trùng hợp, trùng ngưng)",
+            "Tính hệ số trùng hợp (độ trùng hợp $n$) từ phân tử khối trung bình của polymer và ngược lại",
+            "Bài toán tính khối lượng monomer cần dùng để tổng hợp một lượng polymer với hiệu suất phản ứng $H\\%$",
+            "Bài toán thực tế: Phân loại ký hiệu các loại nhựa tái chế (PETE 1, HDPE 2, PVC 3, LDPE 4, PP 5, PS 6), tác hại ô nhiễm rác thải nhựa đại dương và giải pháp phân hủy sinh học (nhựa PLA)",
+            "Thí nghiệm thực hành: Khảo sát tính chất của vật liệu polymer (tính cháy, tính tan trong dung môi hữu cơ) của PE, PVC, tơ tằm, tơ nylon"
+          ],
+          "luu_y_ra_de": "Dùng danh pháp IUPAC tiếng Anh chuẩn: Polyethylene (PE), Poly(vinyl chloride) (PVC), Nylon-6,6. Nhấn mạnh tác hại ô nhiễm nhựa (microplastics) và xu hướng dùng polymer phân hủy sinh học."
+        },
+        {
+          "id": "hoa12-pin-dien-va-dien-phan",
+          "ten": "Pin điện và Điện phân",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương 5. Pin điện và điện phân",
+            "CTST": "Chương 5. Pin điện và điện phân",
+            "CD": "Chủ đề 5. Pin điện và điện phân"
+          },
+          "yeu_cau_can_dat": [
+            "Mô tả được cấu tạo và nguyên tắc hoạt động của Pin Galvani (pin Daniell - Jacobi $Zn-Cu$); xác định cathode (cực dương: xảy ra sự khử) và anode (cực âm: xảy ra sự oxi hoá) trong pin",
+            "Định nghĩa được thế điện cực chuẩn ($E^\\circ$, đơn vị Vôn - V) của cặp redox $M^{n+}/M$; quy ước thế điện cực chuẩn của cực hydrogen chuẩn bằng $0.00\\text{ V}$",
+            "Tính được sức điện động chuẩn của pin điện hóa: $E^\\circ_{pin} = E^\\circ_{cathode} - E^\\circ_{anode} = E^\\circ_{(+)} - E^\\circ_{(-)}$",
+            "Giải thích được nguyên tắc hoạt động của Ắc quy (lead-acid battery) và Pin nhiên liệu (hydrogen fuel cell)",
+            "Trình bày được bản chất của quá trình Điện phân dung dịch và điện phân nóng chảy; xác định sản phẩm tại cathode và anode trong quá trình điện phân dung dịch các chất ($NaCl, CuSO_4, AgNO_3...$)",
+            "Tính được lượng chất thu được ở các điện cực theo định luật Faraday ($m = \\frac{A I t}{n F}$)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Phản ứng oxi hoá - khử và thăng bằng electron (Lớp 10 Chương 4)",
+            "Bảng giá trị thế điện cực chuẩn $E^\\circ$ của một số cặp oxi hoá - khử ($K^+/K, Zn^{2+}/Zn, Fe^{2+}/Fe, 2H^+/H_2, Cu^{2+}/Cu, Ag^+/Ag, Cl_2/2Cl^-$)",
+            "Hằng số Faraday $F = 96500\\text{ C/mol}$"
+          ],
+          "chat_va_phan_ung": [
+            "Pin Galvani Zn - Cu: $Zn + Cu^{2+} \\rightarrow Zn^{2+} + Cu$",
+            "Điện phân dung dịch $CuSO_4$ cực trơ: $2CuSO_4 + 2H_2O \\xrightarrow{đpdd} 2Cu \\downarrow (cathode) + O_2 \\uparrow (anode) + 2H_2SO_4$",
+            "Điện phân dung dịch $NaCl$ có màng ngăn: $2NaCl + 2H_2O \\xrightarrow{đpdd, mn} 2NaOH + Cl_2 \\uparrow + H_2 \\uparrow$",
+            "Điện phân $Al_2O_3$ nóng chảy (sản xuất aluminium): $2Al_2O_3 \\xrightarrow{đpnc, cryolite} 4Al + 3O_2 \\uparrow$"
+          ],
+          "cong_thuc": [
+            "Sức điện động chuẩn của pin: $E^\\circ_{pin} = E^\\circ_{oxy-khử (phải)} - E^\\circ_{oxy-khử (trái)} = E^\\circ_{(+)} - E^\\circ_{(-)}$",
+            "Công thức Faraday: $m = \\frac{A \\cdot I \\cdot t}{n \\cdot F}$ (với $F = 96500\\text{ C/mol}$, $m$ tính bằng g, $I$ tính bằng A, $t$ tính bằng s)",
+            "Số mol electron trao đổi ở điện cực: $n_e = \\frac{I \\cdot t}{F}$"
+          ],
+          "chua_duoc_dung": [
+            "Chưa dùng Kim loại chuyển tiếp dãy thứ nhất và Phức chất (Lớp 12 Chương 8)",
+            "Chưa dùng Phương trình Nernst tính thế điện cực trong điều kiện không chuẩn (Chuyên đề 12)",
+            "Chưa dùng Các bài toán điện phân dung dịch phức tạp đánh đố đồ thị cực trị quá tải cũ"
+          ],
+          "dang_bai_dien_hinh": [
+            "Xác định các bán phản ứng tại cực anode, cathode và tính sức điện động chuẩn $E^\\circ_{pin}$ của pin Galvani từ bảng thế điện cực chuẩn",
+            "Viết các phương trình hoá học ở điện cực khi điện phân nóng chảy hoặc điện phân dung dịch muối có cực trơ",
+            "Tính khối lượng kim loại bám vào cathode hoặc thể tích khí thoát ra ở anode dùng Định luật Faraday hoặc bảo toàn electron",
+            "Bài toán điện phân dung dịch chứa hỗn hợp hai muối ($CuSO_4$ và $NaCl$)",
+            "Bài toán thực tế: Nguyên lý hoạt động của pin Li-ion trong điện thoại/xe điện, công nghệ mạ điện kim loại (mạ vàng, mạ chrome) chống gỉ",
+            "Thí nghiệm thực hành: Lắp ráp pin điện hoá Zn - Cu đơn giản từ quả chanh/cam hoặc củ khoai tây; thực hành điện phân dung dịch $CuSO_4$ với điện cực graphite"
+          ],
+          "luu_y_ra_de": "LƯU Ý QUAN TRỌNG GDPT 2018: Đã BỔ SUNG khái niệm Thế điện cực chuẩn $E^\\circ$ và Pin điện hóa Galvani vào phần bắt buộc Lớp 12. Định nghĩa rõ Cathode là cực xảy ra sự khử, Anode là cực xảy ra sự oxi hóa. Công thức Faraday được áp dụng trực tiếp."
+        },
+        {
+          "id": "hoa12-dai-cuong-kim-loai",
+          "ten": "Đại cương về kim loại",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương 6. Đại cương về kim loại",
+            "CTST": "Chương 6. Đại cương về kim loại",
+            "CD": "Chủ đề 6. Đại cương về kim loại"
+          },
+          "yeu_cau_can_dat": [
+            "Mô tả được vị trí của kim loại trong bảng tuần hoàn; đặc điểm cấu tạo nguyên tử kim loại và liên kết kim loại (mạng tinh thể kim loại + electron tự do)",
+            "Giải thích được các tính chất vật lí chung của kim loại (tính dẻo, tính dẫn điện, tính dẫn nhiệt, có ánh kim) dựa trên sự chuyển động của các electron tự do",
+            "Trình bày được tính chất hoá học chung của kim loại (tính khử: tác dụng với phi kim $O_2, Cl_2, S$, tác dụng với acid $HCl, H_2SO_4, HNO_3$, tác dụng với nước, tác dụng với dung dịch muối)",
+            "Nêu được dãy thế điện cực chuẩn của kim loại và dự đoán chiều của phản ứng giữa các cặp oxi hoá - khử theo quy tắc $\\alpha$ (hoặc so sánh $E^\\circ$)",
+            "Trình bày được khái niệm hợp kim (alloy) và ứng dụng; các phương pháp tách và tái chế kim loại (phương pháp nhiệt luyện, thủy luyện, điện luyện)",
+            "Mô tả được hiện tượng ăn mòn kim loại (ăn mòn hoá học và ăn mòn điện hoá); giải thích cơ chế ăn mòn điện hoá và các biện pháp bảo vệ kim loại khỏi bị ăn mòn (phương pháp phủ bề mặt, phương pháp điện hoá / catôt bảo vệ)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Dãy thế điện cực chuẩn ($E^\\circ$ tăng dần từ $K^+$ đến $Ag^+$)",
+            "Quy tắc $\\alpha$: Chất oxi hoá mạnh hơn + Chất khử mạnh hơn $\\rightarrow$ Chất oxi hoá yếu hơn + Chất khử yếu hơn",
+            "Cơ chế ăn mòn điện hoá (hình thành cặp cực pin điện hoá ngắn mạch)"
+          ],
+          "chat_va_phan_ung": [
+            "Các kim loại: $Na, K, Mg, Al, Fe, Zn, Cu, Ag, Au$",
+            "Các hợp kim quan trọng: Thép ($Fe-C$), Gang, Duralumin ($Al-Cu-Mg$), Đồng thau ($Cu-Zn$)",
+            "Phản ứng thuỷ luyện: $Fe + CuSO_4 \\rightarrow FeSO_4 + Cu \\downarrow$",
+            "Phản ứng nhiệt luyện: $Fe_2O_3 + 3CO \\xrightarrow{t^\\circ} 2Fe + 3CO_2 \\uparrow$"
+          ],
+          "cong_thuc": [
+            "Các phép tính bảo toàn electron, tăng giảm khối lượng thanh kim loại khi nhúng vào dung dịch muối: $\\Delta m = m_{\\text{bám vào}} - m_{\\text{tan ra}}$"
+          ],
+          "chua_duoc_dung": [
+            "Chưa dùng Tính chất chi tiết của Kim loại kiềm/kiềm thổ nhóm IA, IIA (Lớp 12 Chương 7)",
+            "Chưa dùng Phức chất và Kim loại chuyển tiếp dãy 3d (Lớp 12 Chương 8)",
+            "Chưa dùng Các phản ứng nhiệt kim phức tạp tính hiệu suất nâng cao quá tải cũ"
+          ],
+          "dang_bai_dien_hinh": [
+            "Viết phương trình hoá học biểu diễn tính chất hoá học của kim loại và dự đoán chiều phản ứng dựa vào dãy thế điện cực chuẩn (Quy tắc $\\alpha$)",
+            "Bài toán nhúng thanh kim loại ($Fe, Zn, Mg$) vào dung dịch muối ($CuSO_4, AgNO_3$) tính độ tăng/giảm khối lượng thanh kim loại và nồng độ dung dịch",
+            "Phân biệt ăn mòn hoá học và ăn mòn điện hoá trong các trường hợp cụ thể (vd: vỏ tàu biển thép gắn khối zinc, đinh sắt tiếp xúc với dây đồng trong không khí ẩm)",
+            "Bài toán tính khối lượng quặng, hiệu suất thu hồi kim loại bằng phương pháp nhiệt luyện/điện luyện",
+            "Bài toán thực tế: Giải thích vì sao vỏ tàu biển bằng thép được gắn các tấm zinc ($Zn$) để chống ăn mòn (phương pháp điện hoá), ứng dụng của nhôm duralumin trong vỏ máy bay",
+            "Thí nghiệm thực hành: Khảo sát hiện tượng ăn mòn điện hoá của đinh thép khi tiếp xúc với dây đồng trong dung dịch chất điện li ($NaCl$)"
+          ],
+          "luu_y_ra_de": "Dự đoán chiều phản ứng giữa các cặp redox dựa trên Bảng thế điện cực chuẩn $E^\\circ$ thay cho dãy hoạt động hoá học cũ. Bổ sung nội dung tái chế kim loại và bảo vệ môi trường."
+        },
+        {
+          "id": "hoa12-nguyen-to-nhom-ia-iia",
+          "ten": "Nguyên tố nhóm IA và nhóm IIA",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương 7. Nguyên tố nhóm IA và nhóm IIA",
+            "CTST": "Chương 7. Nguyên tố nhóm IA và nhóm IIA",
+            "CD": "Chủ đề 7. Nguyên tố nhóm IA và nhóm IIA"
+          },
+          "yeu_cau_can_dat": [
+            "Trình bày được vị trí, cấu hình electron lớp ngoài cùng ($ns^1$ của nhóm IA, $ns^2$ của nhóm IIA), tính chất vật lí và xu hướng biến đổi tính chất hoá học (tính khử tăng dần từ trên xuống dưới trong nhóm)",
+            "Viết được phương trình phản ứng của kim loại nhóm IA ($Na, K$) và nhóm IIA ($Mg, Ca, Ba$) với $O_2$, nước, acid",
+            "Trình bày được tính chất, ứng dụng của các hợp chất quan trọng nhóm IA ($NaOH, Na_2CO_3, NaHCO_3, NaCl$) và nhóm IIA ($CaO, Ca(OH)_2, CaCO_3, CaSO_4$)",
+            "Định nghĩa được Nước cứng (hard water, chứa nhiều ion $Ca^{2+}, Mg^{2+}$), phân loại nước cứng (tạm thời, vĩnh cửu, toàn phần), tác hại của nước cứng và các phương pháp làm mềm nước cứng (phương pháp kết tủa, phương pháp trao đổi ion)",
+            "Thử màu lửa (flame test) để nhận biết ion kim loại kiềm ($Na^+$ cho lửa màu vàng, $K^+$ cho lửa màu tím) và kiềm thổ ($Ca^{2+}$ màu đỏ cam, $Ba^{2+}$ màu xanh lá mạ)"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Danh pháp IUPAC: Sodium, Potassium, Magnesium, Calcium, Barium; Sodium hydroxide, Sodium carbonate, Sodium hydrogencarbonate, Calcium carbonate, Calcium sulfate",
+            "Nước cứng tạm thời ($Ca(HCO_3)_2, Mg(HCO_3)_2$), nước cứng vĩnh cửu ($CaCl_2, MgCl_2, CaSO_4, MgSO_4$)",
+            "Phương pháp đun sôi hoặc dùng $Na_2CO_3, Ca(OH)_2$ vừa đủ để làm mềm nước cứng"
+          ],
+          "chat_va_phan_ung": [
+            "Kim loại nhóm IA: $Na, K$; nhóm IIA: $Mg, Ca, Ba$",
+            "Hợp chất: $NaOH, Na_2CO_3, NaHCO_3, CaO, Ca(OH)_2, CaCO_3, CaSO_4 \\cdot 2H_2O$ (thạch cao)",
+            "Phản ứng đun sôi nước cứng tạm thời: $Ca(HCO_3)_2 \\xrightarrow{t^\\circ} CaCO_3 \\downarrow + CO_2 \\uparrow + H_2O$",
+            "Phản ứng làm mềm nước cứng dùng soda: $Ca^{2+} + CO_3^{2-} \\rightarrow CaCO_3 \\downarrow$"
+          ],
+          "cong_thuc": [
+            "Nhiệt phân $NaHCO_3$: $2NaHCO_3 \\xrightarrow{t^\\circ} Na_2CO_3 + CO_2 \\uparrow + H_2O$",
+            "Tính khối lượng $Na_2CO_3$ hoặc $Ca(OH)_2$ cần dùng để làm mềm một thể tích nước cứng"
+          ],
+          "chua_duoc_dung": [
+            "Chưa dùng Kim loại chuyển tiếp dãy thứ nhất (Fe, Cu, Cr, Mn) và Phức chất (Lớp 12 Chương 8)",
+            "Chưa dùng Thuyết trường tinh thể phức chất (Chuyên đề 12)",
+            "Chưa dùng Phản ứng thuỷ luyện kim loại nhóm IA, IIA (kim loại kiềm/kiềm thổ KHÔNG thể thuỷ luyện hay nhiệt luyện mà bắt buộc điện phân nóng chảy)"
+          ],
+          "dang_bai_dien_hinh": [
+            "Viết các phương trình hoá học thực hiện chuỗi chuyển hoá của hợp chất sodium, calcium",
+            "Phân loại các loại nước cứng (tạm thời, vĩnh cửu, toàn phần) và lựa chọn hóa chất thích hợp để làm mềm từng loại nước cứng",
+            "Bài toán tính khối lượng $CaCO_3$ kết tủa hoặc thể tích $CO_2$ thu được khi sục $CO_2$ vào dung dịch $Ca(OH)_2$ hoặc đun sôi nước cứng",
+            "Nhận biết các hợp chất kim loại kiềm, kiềm thổ bằng phản ứng thử màu lửa hoặc dùng hoá chất ($CO_3^{2-}, SO_4^{2-}$)",
+            "Bài toán thực tế: Giải thích hiện tượng đóng cặn ở đáy ấm đun nước, sự hình thành thạch nhũ trong hang động đá vôi, ứng dụng của thạch cao ($CaSO_4$) trong bó bột gãy xương và đúc tượng",
+            "Thí nghiệm thực hành: Thực hiện thí nghiệm thử màu lửa của muối Sodium ($Na^+$) và Potassium ($K^+$); thí nghiệm làm mềm nước cứng tạm thời bằng cách đun sôi"
+          ],
+          "luu_y_ra_de": "Dùng danh pháp IUPAC: Sodium hydrogencarbonate (thay cho natri hiđrocacbonat). Bổ sung phương pháp nhận biết ion kim loại kiềm/kiềm thổ bằng Thử màu lửa (flame test)."
+        },
+        {
+          "id": "hoa12-kim-loai-chuyen-tiep-va-phuc-chat",
+          "ten": "Sơ lược về kim loại chuyển tiếp dãy thứ nhất và Phức chất",
+          "hoc_ky": 2,
+          "ten_theo_sach": {
+            "KNTT": "Chương 8. Sơ lược về kim loại chuyển tiếp dãy thứ nhất và Phức chất",
+            "CTST": "Chương 8. Sơ lược về kim loại chuyển tiếp dãy thứ nhất và Phức chất",
+            "CD": "Chủ đề 8. Sơ lược về kim loại chuyển tiếp dãy thứ nhất và Phức chất"
+          },
+          "yeu_cau_can_dat": [
+            "Nêu được vị trí của các kim loại chuyển tiếp dãy thứ nhất trong bảng tuần hoàn (từ $Sc$ đến $Cu$, thuộc nhóm IB đến VIIIB chu kỳ 4); cấu hình electron nguyên tử dạng $[Ar] 3d^{1-10} 4s^{1-2}$; đặc điểm có nhiều số oxi hoá",
+            "Trình bày được tính chất vật lí và hoá học đặc trưng của Iron ($Fe$) và Copper ($Cu$) cùng hợp chất của chúng ($Fe^{2+}, Fe^{3+}, Cu^{2+}$); màu sắc đặc trưng của các ion kim loại chuyển tiếp trong dung dịch",
+            "Trình bày được khái niệm Phức chất (complex compound); phân biệt nguyên tử trung tâm (central atom / ion), phối tử (ligand: $H_2O, NH_3, Cl^-, OH^-...$), số phối trí (coordination number)",
+            "Dạng hình học đơn giản của phức chất (bát diện, vuông phẳng, tứ diện); viết công thức và gọi tên phức chất đơn giản theo IUPAC (vd: $[Cu(NH_3)_4]^{2+}$ màu xanh lam thẫm, $[Fe(H_2O)_6]^{3+}$, $[Fe(CN)_6]^{3-}$)",
+            "Mô tả được sự hình thành phức chất aquo, phức chất ammine của $Cu^{2+}, Ni^{2+}, Ag^+$ và phản ứng thế phối tử; ứng dụng của phức chất trong y học (thuốc chống ung thư cisplatin), phân tích hoá học và đời sống"
+          ],
+          "kien_thuc_duoc_dung": [
+            "Danh pháp IUPAC cho phức chất: Cation phức / Anion phức / Phức trung hòa",
+            "Nguyên tử trung tâm: ion kim loại chuyển tiếp ($Fe^{2+}, Fe^{3+}, Cu^{2+}, Ni^{2+}, Ag^+$)",
+            "Phối tử (ligand): $H_2O$ (aqua), $NH_3$ (ammine), $Cl^-$ (chlorido), $OH^-$ (hydroxido), $CN^-$ (cyanido)",
+            "Phản ứng thế phối tử (ligand exchange): sự thay đổi màu sắc dung dịch khi thay đổi phối tử"
+          ],
+          "chat_va_phan_ung": [
+            "Kim loại chuyển tiếp: $Fe, Cu, Cr, Mn, Ni, Ag$",
+            "Phức chất: $[Cu(NH_3)_4(H_2O)_2]^{2+}$, $[Cu(NH_3)_4]^{2+}$, $[Fe(H_2O)_6]^{3+}$, $[Ag(NH_3)_2]^+$, $[Fe(CN)_6]^{4-}$, Cisplatin $[Pt(NH_3)_2Cl_2]$",
+            "Phản ứng tạo phức ammine của copper: $Cu(OH)_2 + 4NH_3 \\rightarrow [Cu(NH_3)_4](OH)_2$ (dung dịch màu xanh lam thẫm)",
+            "Phản ứng thế phối tử: $[Cu(H_2O)_6]^{2+} \\text{ (xanh nhạt)} + 4Cl^- \\rightleftharpoons [CuCl_4]^{2-} \\text{ (vàng/xanh lá)} + 6H_2O$"
+          ],
+          "cong_thuc": [
+            "Xác định điện tích ion trung tâm = Điện tích phức - Tổng điện tích các phối tử",
+            "Số phối trí = Số liên kết phối cho giữa các phối tử và nguyên tử trung tâm"
+          ],
+          "chua_duoc_dung": [
+            "Chưa dùng Thuyết trường tinh thể (Crystal Field Theory) và thuyết orbital phân tử (MO) đại học",
+            "Chưa dùng Các bài toán tính hằng số bền phức chất $K_b$ nâng cao (Chuyên đề 12)",
+            "Chưa dùng Danh pháp phức chất IUPAC quá phức tạp nhiều cầu nối/nhiều nhân"
+          ],
+          "dang_bai_dien_hinh": [
+            "Xác định nguyên tử trung tâm, phối tử, số phối trí và điện tích của phức chất từ công thức cho trước",
+            "Gọi tên hoặc viết công thức của các phức chất đơn giản theo quy tắc danh pháp IUPAC",
+            "Giải thích sự thay đổi màu sắc của dung dịch khi xảy ra phản ứng thế phối tử (vd: thêm $NH_3$ đặc vào dung dịch $CuSO_4$)",
+            "Bài toán tính khối lượng sản phẩm hoặc nồng độ phức chất trong phản ứng tạo phức",
+            "Bài toán thực tế: Vai trò của phức chất Heme (chứa $Fe^{2+}$) trong hemoglobin vận chuyển oxygen trong máu, phức chất Chlorophyll (chứa $Mg^{2+}$) trong diệp lục cây xanh, thuốc chống ung thư Cisplatin",
+            "Thí nghiệm thực hành: Điều chế phức chất $[Cu(NH_3)_4]^{2+}$ bằng cách cho dung dịch $NH_3$ dư tác dụng với $Cu(OH)_2$ hoặc dung dịch $CuSO_4$; thí nghiệm thế phối tử của $Fe^{3+}$ với $SCN^-$ tạo phức $[Fe(SCN)]^{2+}$ màu đỏ máu"
+          ],
+          "luu_y_ra_de": "ĐẶC BIỆT LƯU Ý GDPT 2018: Đây là CHƯƠNG MỚI HOÀN TOÀN lần đầu tiên được đưa vào chương trình Hoá học phổ thông bắt buộc Lớp 12. Tập trung vào khái niệm nguyên tử trung tâm, phối tử, số phối trí, phản ứng tạo phức ammine/aquo và ứng dụng thực tế. Không ra bài tập lý thuyết trường tinh thể vượt quá SGK."
+        }
+      ],
+      "chuyen_de": [
+        "Chuyên đề 1: Cơ chế phản ứng hữu cơ",
+        "Chuyên đề 2: Trải nghiệm, thực hành hoá học (Tạo phức, điện hoá)",
+        "Chuyên đề 3: Hoá học trong phát triển kinh tế và bảo vệ môi trường"
+      ],
+      "ghi_chu_chua_chac": []
+    }
+  ],
+  "cau_truc_de": [
+    {
+      "loai": "Đề thi Tốt nghiệp THPT môn Hoá học (từ năm 2025 theo Bộ GD&ĐT)",
+      "lop": 12,
+      "thoi_gian_phut": 50,
+      "phan": [
+        {
+          "ten": "Phần I. Trắc nghiệm nhiều lựa chọn (4 lựa chọn)",
+          "so_cau": 18,
+          "mo_ta": "Gồm 18 câu hỏi trắc nghiệm truyền thống 4 lựa chọn (A, B, C, D). Mỗi câu trả lời đúng được 0,25 điểm.",
+          "diem_moi_cau": 0.25,
+          "tong_diem": 4.5
+        },
+        {
+          "ten": "Phần II. Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "mo_ta": "Gồm 4 câu hỏi, mỗi câu có 4 lệnh hỏi a), b), c), d) chọn Đúng hoặc Sai. Cách tính điểm cho 1 câu: Đúng 1 ý = 0,1đ; Đúng 2 ý = 0,25đ; Đúng 3 ý = 0,5đ; Đúng 4 ý = 1,0đ.",
+          "cach_tinh_diem": "1 ý = 0.1đ, 2 ý = 0.25đ, 3 ý = 0.5đ, 4 ý = 1.0đ",
+          "tong_diem": 4.0
+        },
+        {
+          "ten": "Phần III. Trắc nghiệm Trả lời ngắn",
+          "so_cau": 6,
+          "mo_ta": "Gồm 6 câu hỏi điền kết quả số (tối đa 4 ký tự kể cả dấu âm và dấu phẩy thập phân). Mỗi câu trả lời đúng được 0,25 điểm.",
+          "diem_moi_cau": 0.25,
+          "tong_diem": 1.5
+        }
+      ],
+      "pham_vis": "Chủ yếu kiến thức Hoá học Lớp 12 (~80-85%), kết hợp kiến thức liên quan Lớp 11 (~15%) và Lớp 10 (bổ trợ).",
+      "ti_le_muc_do": "Nhận biết: ~40%, Thông hiểu: ~30%, Vận dụng / Vận dụng cao: ~30%"
+    },
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 10,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I. Trắc nghiệm nhiều lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 4.5
+        },
+        {
+          "ten": "Phần II. Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "cach_tinh_diem": "1 ý = 0.1đ, 2 ý = 0.25đ, 3 ý = 0.5đ, 4 ý = 1.0đ",
+          "tong_diem": 4.0
+        },
+        {
+          "ten": "Phần III. Trắc nghiệm Trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 1.5
+        }
+      ],
+      "pham_vi": [
+        "hoa10-cau-tao-nguyen-tu",
+        "hoa10-bang-tuan-hoan"
+      ],
+      "ti_le_muc_do": "Nhận biết: 40%, Thông hiểu: 30%, Vận dụng: 20%, Vận dụng cao: 10%"
+    },
+    {
+      "loai": "Cuối kỳ 1",
+      "lop": 10,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I. Trắc nghiệm nhiều lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 4.5
+        },
+        {
+          "ten": "Phần II. Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "cach_tinh_diem": "1 ý = 0.1đ, 2 ý = 0.25đ, 3 ý = 0.5đ, 4 ý = 1.0đ",
+          "tong_diem": 4.0
+        },
+        {
+          "ten": "Phần III. Trắc nghiệm Trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 1.5
+        }
+      ],
+      "pham_vi": [
+        "hoa10-cau-tao-nguyen-tu",
+        "hoa10-bang-tuan-hoan",
+        "hoa10-lien-ket-hoa-hoc"
+      ],
+      "ti_le_muc_do": "Nhận biết: 40%, Thông hiểu: 30%, Vận dụng: 20%, Vận dụng cao: 10%"
+    },
+    {
+      "loai": "Giữa kỳ 2",
+      "lop": 10,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I. Trắc nghiệm nhiều lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 4.5
+        },
+        {
+          "ten": "Phần II. Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "cach_tinh_diem": "1 ý = 0.1đ, 2 ý = 0.25đ, 3 ý = 0.5đ, 4 ý = 1.0đ",
+          "tong_diem": 4.0
+        },
+        {
+          "ten": "Phần III. Trắc nghiệm Trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 1.5
+        }
+      ],
+      "pham_vi": [
+        "hoa10-phan-ung-oxi-hoa-khu",
+        "hoa10-nang-luong-hoa-hoc"
+      ],
+      "ti_le_muc_do": "Nhận biết: 40%, Thông hiểu: 30%, Vận dụng: 20%, Vận dụng cao: 10%"
+    },
+    {
+      "loai": "Cuối kỳ 2",
+      "lop": 10,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I. Trắc nghiệm nhiều lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 4.5
+        },
+        {
+          "ten": "Phần II. Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "cach_tinh_diem": "1 ý = 0.1đ, 2 ý = 0.25đ, 3 ý = 0.5đ, 4 ý = 1.0đ",
+          "tong_diem": 4.0
+        },
+        {
+          "ten": "Phần III. Trắc nghiệm Trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 1.5
+        }
+      ],
+      "pham_vi": [
+        "hoa10-nang-luong-hoa-hoc",
+        "hoa10-toc-do-phan-ung",
+        "hoa10-halogen"
+      ],
+      "ti_le_muc_do": "Nhận biết: 40%, Thông hiểu: 30%, Vận dụng: 20%, Vận dụng cao: 10%"
+    },
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 11,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I. Trắc nghiệm nhiều lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 4.5
+        },
+        {
+          "ten": "Phần II. Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "cach_tinh_diem": "1 ý = 0.1đ, 2 ý = 0.25đ, 3 ý = 0.5đ, 4 ý = 1.0đ",
+          "tong_diem": 4.0
+        },
+        {
+          "ten": "Phần III. Trắc nghiệm Trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 1.5
+        }
+      ],
+      "pham_vi": [
+        "hoa11-can-bang-hoa-hoc",
+        "hoa11-nitrogen-phosphorus"
+      ],
+      "ti_le_muc_do": "Nhận biết: 40%, Thông hiểu: 30%, Vận dụng: 20%, Vận dụng cao: 10%"
+    },
+    {
+      "loai": "Cuối kỳ 1",
+      "lop": 11,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I. Trắc nghiệm nhiều lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 4.5
+        },
+        {
+          "ten": "Phần II. Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "cach_tinh_diem": "1 ý = 0.1đ, 2 ý = 0.25đ, 3 ý = 0.5đ, 4 ý = 1.0đ",
+          "tong_diem": 4.0
+        },
+        {
+          "ten": "Phần III. Trắc nghiệm Trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 1.5
+        }
+      ],
+      "pham_vi": [
+        "hoa11-can-bang-hoa-hoc",
+        "hoa11-nitrogen-phosphorus",
+        "hoa11-dai-cuong-huu-co"
+      ],
+      "ti_le_muc_do": "Nhận biết: 40%, Thông hiểu: 30%, Vận dụng: 20%, Vận dụng cao: 10%"
+    },
+    {
+      "loai": "Giữa kỳ 2",
+      "lop": 11,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I. Trắc nghiệm nhiều lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 4.5
+        },
+        {
+          "ten": "Phần II. Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "cach_tinh_diem": "1 ý = 0.1đ, 2 ý = 0.25đ, 3 ý = 0.5đ, 4 ý = 1.0đ",
+          "tong_diem": 4.0
+        },
+        {
+          "ten": "Phần III. Trắc nghiệm Trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 1.5
+        }
+      ],
+      "pham_vi": [
+        "hoa11-hydrocarbon",
+        "hoa11-dan-xuat-halogen-alcohol-phenol"
+      ],
+      "ti_le_muc_do": "Nhận biết: 40%, Thông hiểu: 30%, Vận dụng: 20%, Vận dụng cao: 10%"
+    },
+    {
+      "loai": "Cuối kỳ 2",
+      "lop": 11,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I. Trắc nghiệm nhiều lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 4.5
+        },
+        {
+          "ten": "Phần II. Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "cach_tinh_diem": "1 ý = 0.1đ, 2 ý = 0.25đ, 3 ý = 0.5đ, 4 ý = 1.0đ",
+          "tong_diem": 4.0
+        },
+        {
+          "ten": "Phần III. Trắc nghiệm Trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 1.5
+        }
+      ],
+      "pham_vi": [
+        "hoa11-hydrocarbon",
+        "hoa11-dan-xuat-halogen-alcohol-phenol",
+        "hoa11-carbonyl-carboxylic-acid"
+      ],
+      "ti_le_muc_do": "Nhận biết: 40%, Thông hiểu: 30%, Vận dụng: 20%, Vận dụng cao: 10%"
+    },
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 12,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I. Trắc nghiệm nhiều lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 4.5
+        },
+        {
+          "ten": "Phần II. Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "cach_tinh_diem": "1 ý = 0.1đ, 2 ý = 0.25đ, 3 ý = 0.5đ, 4 ý = 1.0đ",
+          "tong_diem": 4.0
+        },
+        {
+          "ten": "Phần III. Trắc nghiệm Trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 1.5
+        }
+      ],
+      "pham_vi": [
+        "hoa12-ester-lipid-xa-phong",
+        "hoa12-carbohydrate"
+      ],
+      "ti_le_muc_do": "Nhận biết: 40%, Thông hiểu: 30%, Vận dụng: 20%, Vận dụng cao: 10%"
+    },
+    {
+      "loai": "Cuối kỳ 1",
+      "lop": 12,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I. Trắc nghiệm nhiều lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 4.5
+        },
+        {
+          "ten": "Phần II. Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "cach_tinh_diem": "1 ý = 0.1đ, 2 ý = 0.25đ, 3 ý = 0.5đ, 4 ý = 1.0đ",
+          "tong_diem": 4.0
+        },
+        {
+          "ten": "Phần III. Trắc nghiệm Trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 1.5
+        }
+      ],
+      "pham_vi": [
+        "hoa12-ester-lipid-xa-phong",
+        "hoa12-carbohydrate",
+        "hoa12-hop-chat-chua-nitrogen",
+        "hoa12-polymer"
+      ],
+      "ti_le_muc_do": "Nhận biết: 40%, Thông hiểu: 30%, Vận dụng: 20%, Vận dụng cao: 10%"
+    },
+    {
+      "loai": "Giữa kỳ 2",
+      "lop": 12,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I. Trắc nghiệm nhiều lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 4.5
+        },
+        {
+          "ten": "Phần II. Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "cach_tinh_diem": "1 ý = 0.1đ, 2 ý = 0.25đ, 3 ý = 0.5đ, 4 ý = 1.0đ",
+          "tong_diem": 4.0
+        },
+        {
+          "ten": "Phần III. Trắc nghiệm Trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 1.5
+        }
+      ],
+      "pham_vi": [
+        "hoa12-pin-dien-va-dien-phan",
+        "hoa12-dai-cuong-kim-loai"
+      ],
+      "ti_le_muc_do": "Nhận biết: 40%, Thông hiểu: 30%, Vận dụng: 20%, Vận dụng cao: 10%"
+    },
+    {
+      "loai": "Cuối kỳ 2",
+      "lop": 12,
+      "thoi_gian_phut": 45,
+      "phan": [
+        {
+          "ten": "Phần I. Trắc nghiệm nhiều lựa chọn",
+          "so_cau": 18,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 4.5
+        },
+        {
+          "ten": "Phần II. Trắc nghiệm Đúng/Sai",
+          "so_cau": 4,
+          "cach_tinh_diem": "1 ý = 0.1đ, 2 ý = 0.25đ, 3 ý = 0.5đ, 4 ý = 1.0đ",
+          "tong_diem": 4.0
+        },
+        {
+          "ten": "Phần III. Trắc nghiệm Trả lời ngắn",
+          "so_cau": 6,
+          "diem_moi_cau": 0.25,
+          "tong_diem": 1.5
+        }
+      ],
+      "pham_vi": [
+        "hoa12-pin-dien-va-dien-phan",
+        "hoa12-dai-cuong-kim-loai",
+        "hoa12-nguyen-to-nhom-ia-iia",
+        "hoa12-kim-loai-chuyen-tiep-va-phuc-chat"
+      ],
+      "ti_le_muc_do": "Nhận biết: 40%, Thông hiểu: 30%, Vận dụng: 20%, Vận dụng cao: 10%"
+    }
+  ]
+}

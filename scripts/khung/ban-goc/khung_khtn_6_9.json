@@ -1,0 +1,829 @@
+{
+  "mon": "Khoa học tự nhiên",
+  "trang_thai": "BẢN NHÁP – các mục đánh dấu trong ghi_chu_chua_chac cần đối chiếu với mục lục SGK và văn bản chương trình trước khi dùng cho prompt",
+  "nguon": [
+    "Thông tư 32/2018/TT-BGDĐT ban hành Chương trình giáo dục phổ thông 2018 (chương trình môn Khoa học tự nhiên, lớp 6–9)",
+    "Thông tư 13/2022/TT-BGDĐT sửa đổi, bổ sung một số điều của Thông tư 32/2018",
+    "Thông tư 22/2021/TT-BGDĐT về đánh giá học sinh tiểu học, THCS, THPT",
+    "Công văn 1496/BGDĐT-GDTrH (2022) hướng dẫn triển khai chương trình giáo dục trung học năm học 2022–2023",
+    "Mục lục SGK KHTN 6–9 bộ Kết nối tri thức với cuộc sống (KNTT), Chân trời sáng tạo (CTST), Cánh diều (CD) – đối chiếu một phần, chưa đầy đủ",
+    "Đề minh hoạ tuyển sinh lớp 10 môn KHTN Sở GDĐT Ninh Bình 2024–2025 (trắc nghiệm, 60 phút, kiến thức chủ yếu lớp 9)",
+    "Ma trận, đặc tả đề kiểm tra một số trường THCS (Quảng Nam, Đà Nẵng, Đăk Lăk, Lâm Đồng, Bắc Giang…) – chỉ dùng tham khảo, không phải quy định chung"
+  ],
+  "lop": [
+    {
+      "lop": 6,
+      "chuong": [
+        {
+          "id": "khtn6-mo-dau",
+          "ten": "Mở đầu: phương pháp và kĩ năng học tập môn KHTN",
+          "hoc_ky": 1,
+          "mach": "Mở đầu",
+          "ten_theo_sach": { "KNTT": "Mở đầu", "CTST": "Mở đầu", "CD": "Mở đầu" },
+          "yeu_cau_can_dat": [
+            "Nêu được khái niệm KHTN và vai trò của KHTN trong đời sống.",
+            "Nêu được các bước trong phương pháp tìm hiểu tự nhiên: quan sát và đặt câu hỏi, hình thành giả thuyết, lập và thực hiện kế hoạch kiểm tra, kết luận.",
+            "Sử dụng được một số dụng cụ đo (thước, cân, đồng hồ, nhiệt kế) và nêu quy tắc an toàn trong phòng thực hành."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Đơn vị đo và cách đổi đơn vị thập phân (Toán lớp 5–6)."
+          ],
+          "thuat_ngu": ["phương pháp tìm hiểu tự nhiên", "giả thuyết", "sai số", "kết quả đo"],
+          "cong_thuc": [],
+          "thi_nghiem": ["Thực hành đo độ dài, khối lượng, thời gian bằng dụng cụ đo phổ biến", "Quan sát bằng kính lúp và kính hiển vi quang học"],
+          "chua_duoc_dung": [
+            "Khái niệm nguyên tử, phân tử, tế bào: học ở các chủ đề sau trong lớp 6–7, không dùng ở phần mở đầu.",
+            "Tính toán sai số theo công thức phức tạp (THPT): chỉ đo và so sánh kết quả đơn giản ở lớp 6."
+          ],
+          "dang_bai_dien_hinh": [
+            "Chọn dụng cụ đo phù hợp với đại lượng cần đo",
+            "Sắp xếp đúng thứ tự các bước tìm hiểu tự nhiên",
+            "Nhận biết hành vi đúng/sai khi làm thí nghiệm trong phòng thực hành"
+          ],
+          "luu_y_ra_de": "Câu hỏi nên đặt trong bối cảnh thực hành hoặc đời sống, không dùng định nghĩa thuần tuý. Tránh đưa khái niệm hoá học, sinh học nâng cao vào phần này."
+        },
+        {
+          "id": "khtn6-chat-hon-hop-tach-chat",
+          "ten": "Chất và sự đa dạng của chất: hỗn hợp, dung dịch, tách chất",
+          "hoc_ky": 1,
+          "mach": "Hoá",
+          "ten_theo_sach": { "KNTT": "Chất và sự đa dạng của chất", "CTST": "Chất và sự đa dạng của chất (chương tương ứng)", "CD": "Chất tinh khiết và hỗn hợp; Dung dịch; Tách chất ra khỏi hỗn hợp" },
+          "yeu_cau_can_dat": [
+            "Phân biệt được chất tinh khiết và hỗn hợp; nêu được ví dụ.",
+            "Nêu được một số phương pháp tách chất đơn giản: lọc, cô cạn, chiết, nam châm, bay hơi.",
+            "Nêu được khái niệm dung dịch, dung môi, chất tan ở mức mô tả, không tính nồng độ."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Tính chất vật lí cơ bản: thể rắn, lỏng, khí; khối lượng, thể tích (lớp 6)."
+          ],
+          "thuat_ngu": ["chất tinh khiết", "hỗn hợp", "dung dịch", "dung môi", "chất tan", "lọc", "cô cạn"],
+          "cong_thuc": [],
+          "thi_nghiem": ["Tách muối ra khỏi hỗn hợp muối và cát bằng hoà tan, lọc, cô cạn", "Dùng nam châm tách hỗn hợp bột sắt và lưu huỳnh"],
+          "chua_duoc_dung": [
+            "Nồng độ phần trăm, nồng độ mol (lớp 8, 9 và THPT): không dùng ở lớp 6.",
+            "Định nghĩa nguyên tố, hợp chất, phân tử theo nguyên tử khối (lớp 7).",
+            "Ký hiệu hoá học dạng IUPAC đầy đủ (ví dụ sodium chloride): lớp 6 chỉ dùng tên thông thường trong sách."
+          ],
+          "dang_bai_dien_hinh": [
+            "Phân loại chất vào tinh khiết hoặc hỗn hợp từ danh sách",
+            "Chọn phương pháp tách phù hợp với tính chất khác nhau của các chất",
+            "Đọc hình mô tả dụng cụ thí nghiệm lọc, cô cạn"
+          ],
+          "luu_y_ra_de": "Tránh tính toán nồng độ. Câu hỏi về tách chất nên gắn với tình huống thực tế (nước sông, nước biển)."
+        },
+        {
+          "id": "khtn6-te-bao",
+          "ten": "Tế bào – đơn vị cơ bản của sự sống",
+          "hoc_ky": 1,
+          "mach": "Sinh",
+          "ten_theo_sach": { "KNTT": "Tế bào (chương tương ứng)", "CTST": "Tế bào (chương tương ứng)", "CD": "Tế bào (chương tương ứng)" },
+          "yeu_cau_can_dat": [
+            "Mô tả được cấu tạo chung của tế bào: màng sinh chất, chất tế bào, nhân (hoặc vùng nhân).",
+            "Phân biệt được tế bào thực vật và tế bào động vật qua quan sát hình ảnh hoặc tiêu bản.",
+            "Nêu được tế bào là đơn vị cơ bản cấu tạo nên sinh vật."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Kính hiển vi quang học và cách quan sát tiêu bản (đã học trong chương mở đầu)."
+          ],
+          "thuat_ngu": ["tế bào", "màng sinh chất", "chất tế bào", "nhân tế bào", "lục lạp", "vách tế bào", "không bào"],
+          "cong_thuc": [],
+          "thi_nghiem": ["Quan sát tế bào biểu bì vảy hành hoặc tế bào thịt quả cà chua bằng kính hiển vi"],
+          "chua_duoc_dung": [
+            "ADN, gene, nhiễm sắc thể: học ở lớp 9, không dùng ở lớp 6.",
+            "Chi tiết cấu trúc màng phospholipid và quá trình vận chuyển qua màng: THPT.",
+            "Quá trình phân bào nguyên phân, giảm phân: THPT (lớp 9 chỉ nói sơ lược)."
+          ],
+          "dang_bai_dien_hinh": [
+            "Nhận diện các thành phần tế bào trên hình vẽ",
+            "So sánh tế bào thực vật và tế bào động vật",
+            "Dự đoán chức năng của thành phần tế bào từ đặc điểm cấu tạo"
+          ],
+          "luu_y_ra_de": "Dùng hình vẽ tế bào có chú thích để hỏi. Không yêu cầu học sinh vẽ sơ đồ phức tạp."
+        },
+        {
+          "id": "khtn6-luc",
+          "ten": "Lực: tác dụng của lực, lực hấp dẫn, lực đàn hồi, lực ma sát",
+          "hoc_ky": 2,
+          "mach": "Lý",
+          "ten_theo_sach": { "KNTT": "Lực (chương tương ứng)", "CTST": "Lực (chương tương ứng)", "CD": "Lực (chương tương ứng)" },
+          "yeu_cau_can_dat": [
+            "Nêu được lực là đại lượng vectơ, đặc trưng bởi độ lớn, phương và chiều; đơn vị newton (N).",
+            "Mô tả được tác dụng của lực: làm thay đổi tốc độ, hình dạng của vật.",
+            "Nêu được trọng lực, lực hấp dẫn, lực đàn hồi, lực ma sát và cho ví dụ ở mức định tính."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Phép đo khối lượng và đơn vị kilôgam (chương mở đầu lớp 6).",
+            "Số thập phân và phép nhân chia cơ bản (Toán lớp 6)."
+          ],
+          "thuat_ngu": ["lực", "trọng lực", "lực hấp dẫn", "lực đàn hồi", "lực ma sát", "newton (N)"],
+          "cong_thuc": ["P = m.g (trọng lượng, lớp 6 chỉ dùng g ≈ 10 m/s² khi cần)"],
+          "thi_nghiem": ["Đo lực bằng lực kế lò xo", "Thí nghiệm kéo vật trên mặt phẳng để so sánh ma sát"],
+          "chua_duoc_dung": [
+            "Định luật Newton (lớp 8 và lớp 10): không dùng ở lớp 6.",
+            "Tổng hợp lực bằng quy tắc hình bình hành: THPT.",
+            "Áp suất, moment lực: lớp 8 (khối lượng riêng, áp suất, moment lực), không dùng ở lớp 6."
+          ],
+          "dang_bai_dien_hinh": [
+            "Xác định tác dụng của lực trong tình huống đời sống",
+            "Đọc số chỉ lực kế và tính trọng lượng",
+            "Nêu loại lực xuất hiện trong ví dụ cho trước"
+          ],
+          "luu_y_ra_de": "Chỉ dùng công thức P = m.g khi đề yêu cầu tính trọng lượng. Không đưa công thức tổng hợp lực."
+        },
+        {
+          "id": "khtn6-da-dang-the-gioi-song",
+          "ten": "Đa dạng thế giới sống: vi khuẩn, nấm, thực vật, động vật",
+          "hoc_ky": 2,
+          "mach": "Sinh",
+          "ten_theo_sach": { "KNTT": "Đa dạng thế giới sống (chương tương ứng)", "CTST": "Đa dạng thế giới sống (chương tương ứng)", "CD": "Chủ đề 8. Đa dạng thế giới sống" },
+          "yeu_cau_can_dat": [
+            "Nêu được các nhóm sinh vật chính trong thế giới sống: vi khuẩn, nấm, thực vật, động vật.",
+            "Nêu được vai trò của thực vật trong đời sống và tự nhiên (cung cấp oxygen, thức ăn, điều hoà khí hậu).",
+            "Phân biệt động vật có xương sống và không xương sống qua đặc điểm hình thái."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Tế bào và cấu tạo tế bào (chủ đề trước trong lớp 6)."
+          ],
+          "thuat_ngu": ["vi khuẩn", "nấm", "thực vật", "động vật", "động vật có xương sống", "động vật không xương sống"],
+          "cong_thuc": [],
+          "thi_nghiem": ["Quan sát mẫu rêu, dương xỉ, hạt kín", "Quan sát nấm men hoặc nấm mốc dưới kính hiển vi"],
+          "chua_duoc_dung": [
+            "Phân loại theo hệ thống phát sinh, giới, ngành chi tiết: lớp 7 và THPT.",
+            "Quang hợp và hô hấp tế bào với phương trình hoá học: lớp 7 đến THPT (lớp 6 chỉ mô tả hiện tượng).",
+            "Di truyền và biến dị: lớp 9."
+          ],
+          "dang_bai_dien_hinh": [
+            "Phân nhóm sinh vật theo đặc điểm cho trước",
+            "Nêu vai trò của thực vật trong tình huống thực tế",
+            "Đọc bảng so sánh động vật có xương sống và không xương sống"
+          ],
+          "luu_y_ra_de": "Không đưa tên khoa học kép hoặc tên ngành chi tiết ngoài sách giáo khoa."
+        },
+        {
+          "id": "khtn6-trai-dat-bau-troi",
+          "ten": "Trái Đất và bầu trời: Mặt Trăng, Hệ Mặt Trời, Ngân Hà",
+          "hoc_ky": 2,
+          "mach": "Trái Đất và bầu trời",
+          "ten_theo_sach": { "KNTT": "Trái Đất và bầu trời (chương tương ứng)", "CTST": "Trái Đất và bầu trời (chương tương ứng)", "CD": "Hệ Mặt Trời và Ngân Hà; Các hình dạng nhìn thấy của Mặt Trăng" },
+          "yeu_cau_can_dat": [
+            "Mô tả được các hình dạng nhìn thấy của Mặt Trăng và giải thích bằng sự chuyển động quanh Trái Đất.",
+            "Nêu được các thành viên chính của Hệ Mặt Trời: Mặt Trời, các hành tinh, vệ tinh, sao chổi, tiểu hành tinh.",
+            "Nêu được khái niệm Ngân Hà và vị trí của Hệ Mặt Trời trong đó."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Chuyển động tròn và chu kì ở mức đơn giản (Toán lớp 6)."
+          ],
+          "thuat_ngu": ["Hệ Mặt Trời", "hành tinh", "vệ tinh", "sao chổi", "tiểu hành tinh", "Ngân Hà", "Mặt Trăng"],
+          "cong_thuc": [],
+          "thi_nghiem": ["Mô phỏng hình dạng Mặt Trăng bằng quả bóng và đèn pin"],
+          "chua_duoc_dung": [
+            "Định luật vạn vật hấp dẫn (THPT): lớp 6 chỉ mô tả.",
+            "Nguyên nhân nhật thực, nguyệt thực chi tiết bằng hình học: lớp 6 chỉ nêu hiện tượng.",
+            "Lực hấp dẫn định lượng giữa các thiên thể: THPT."
+          ],
+          "dang_bai_dien_hinh": [
+            "Nối hình dạng Mặt Trăng với vị trí tương đối với Trái Đất và Mặt Trời",
+            "Sắp xếp các thiên thể theo mức độ lớn hoặc khoảng cách",
+            "Đọc sơ đồ Hệ Mặt Trời và xác định vị trí các hành tinh"
+          ],
+          "luu_y_ra_de": "Hình ảnh minh hoạ Hệ Mặt Trời nên lấy từ SGK. Tránh số liệu khoảng cách, khối lượng chi tiết."
+        }
+      ],
+      "ghi_chu_chua_chac": [
+        "Lớp 6 Hoá: chương 'Chất và sự đa dạng' có thể tách thành nhiều bài hơn; nên đối chiếu từng bộ sách.",
+        "Thứ tự chủ đề trong học kì 1 và 2 của lớp 6 khác nhau giữa ba bộ sách; đã gom theo mạch, học kì đặt theo bộ CD tạm thời.",
+        "Có thể còn chủ đề về không khí, oxygen và năng lượng nhiệt ở lớp 6 chưa liệt kê; cần đối chiếu mục lục."
+      ]
+    },
+    {
+      "lop": 7,
+      "chuong": [
+        {
+          "id": "khtn7-nguyen-tu-nguyen-to-phan-tu",
+          "ten": "Nguyên tử, nguyên tố hoá học, phân tử",
+          "hoc_ky": 1,
+          "mach": "Hoá",
+          "ten_theo_sach": { "KNTT": "Chương tương ứng (cần đối chiếu)", "CTST": "Chương tương ứng (cần đối chiếu)", "CD": "Chương tương ứng (cần đối chiếu)" },
+          "yeu_cau_can_dat": [
+            "Nêu được cấu tạo nguyên tử gồm hạt nhân (proton, neutron) và vỏ (electron) ở mức đơn giản.",
+            "Nêu được khái niệm nguyên tố hoá học, kí hiệu hoá học và tính được khối lượng phân tử theo đơn vị amu.",
+            "Nêu được khái niệm phân tử và phân biệt đơn chất với hợp chất."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Hỗn hợp, chất tinh khiết, tách chất (lớp 6).",
+            "Phép cộng số nguyên và nhân số nguyên (Toán lớp 6)."
+          ],
+          "thuat_ngu": ["nguyên tử", "proton", "neutron", "electron", "nguyên tố hoá học", "kí hiệu hoá học", "phân tử", "đơn chất", "hợp chất", "amu (đơn vị khối lượng nguyên tử)"],
+          "cong_thuc": ["Khối lượng phân tử = tổng nguyên tử khối các nguyên tử trong phân tử (amu)"],
+          "thi_nghiem": ["Mô phỏng hoặc hình vẽ cấu tạo nguyên tử helium, oxygen"],
+          "chua_duoc_dung": [
+            "Mol, thể tích mol, tính theo phương trình hoá học: lớp 8.",
+            "Cấu hình electron, bảng tuần hoàn chi tiết: lớp 8–9 và THPT.",
+            "Liên kết ion và liên kết cộng hoá trị ở mức phân tích: lớp 8 và THPT."
+          ],
+          "dang_bai_dien_hinh": [
+            "Xác định số proton, neutron, electron từ dữ kiện cho trước",
+            "Tính khối lượng phân tử từ công thức hoá học",
+            "Phân loại chất đã cho thành đơn chất hoặc hợp chất"
+          ],
+          "luu_y_ra_de": "Dùng đơn vị amu đúng với SGK. Không đưa mol hoặc nồng độ vào câu hỏi lớp 7."
+        },
+        {
+          "id": "khtn7-am-thanh",
+          "ten": "Âm thanh và cuộc sống",
+          "hoc_ky": 1,
+          "mach": "Lý",
+          "ten_theo_sach": { "KNTT": "Âm thanh (chương tương ứng)", "CTST": "Âm thanh (chương tương ứng)", "CD": "Âm thanh (chương tương ứng)" },
+          "yeu_cau_can_dat": [
+            "Nêu được nguồn âm là vật dao động; mô tả được truyền âm qua các môi trường rắn, lỏng, khí.",
+            "Nêu được tần số, biên độ của âm và đơn vị hertz (Hz).",
+            "Nêu được tác hại của tiếng ồn và biện pháp giảm ô nhiễm tiếng ồn."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Lực và tác dụng của lực (lớp 6).",
+            "Đơn vị tần số và chu kì ở mức đơn giản (Toán lớp 6–7)."
+          ],
+          "thuat_ngu": ["nguồn âm", "dao động", "tần số", "biên độ", "hertz (Hz)", "tiếng ồn", "truyền âm"],
+          "cong_thuc": ["f = 1/T (tần số và chu kì, lớp 7 chỉ dùng ở mức định tính hoặc tính đơn giản)"],
+          "thi_nghiem": ["Thí nghiệm quả cầu bấc chạm vào dây đàn để cho thấy vật dao động phát âm", "Thí nghiệm nghe tiếng chuông trong chân không (mô tả)"],
+          "chua_duoc_dung": [
+            "Sóng âm và phương trình sóng (lớp 9 và THPT): chỉ mô tả hiện tượng ở lớp 7.",
+            "Cường độ âm tính bằng decibel (THCS mức nâng cao, THPT): không dùng ở lớp 7.",
+            "Phản xạ âm và tiếng vang chi tiết tính toán: THPT."
+          ],
+          "dang_bai_dien_hinh": [
+            "Nêu nguồn âm trong tình huống đời sống",
+            "So sánh tần số của hai âm từ đồ thị hoặc mô tả",
+            "Đề xuất biện pháp giảm tiếng ồn cho một tình huống cụ thể"
+          ],
+          "luu_y_ra_de": "Thay vì hỏi công thức, nên hỏi định tính và đọc hình dao động. Tránh câu hỏi về sóng âm lan truyền bằng phương trình."
+        },
+        {
+          "id": "khtn7-lop7-vat-song",
+          "ten": "Chủ đề Sinh học lớp 7 (CẦN XÁC MINH TÊN THEO MỤC LỤC)",
+          "hoc_ky": 2,
+          "mach": "Sinh",
+          "ten_theo_sach": { "KNTT": "chưa xác minh", "CTST": "chưa xác minh", "CD": "chưa xác minh" },
+          "yeu_cau_can_dat": [
+            "Chưa đầy đủ: cần chép lại từ văn bản chương trình lớp 7 mạch Vật sống."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Tế bào và đa dạng thế giới sống (lớp 6)."
+          ],
+          "thuat_ngu": [],
+          "cong_thuc": [],
+          "thi_nghiem": [],
+          "chua_duoc_dung": [
+            "Di truyền học và gene: lớp 9.",
+            "Sinh thái học (quần thể, quần xã, hệ sinh thái): lớp 8 theo bộ CD, cần đối chiếu.",
+            "Quang hợp, hô hấp tế bào bằng phương trình: chưa học đến khi có mục lục xác nhận."
+          ],
+          "dang_bai_dien_hinh": [],
+          "luu_y_ra_de": "Chưa đủ thông tin để soạn. Không dùng chương này làm nguồn cho đề cho đến khi bổ sung."
+        },
+        {
+          "id": "khtn7-lop7-trai-dat",
+          "ten": "Chủ đề Trái Đất và bầu trời lớp 7 (CẦN XÁC MINH TÊN THEO MỤC LỤC)",
+          "hoc_ky": 2,
+          "mach": "Trái Đất và bầu trời",
+          "ten_theo_sach": { "KNTT": "chưa xác minh", "CTST": "chưa xác minh", "CD": "chưa xác minh" },
+          "yeu_cau_can_dat": [
+            "Chưa đầy đủ: cần chép lại từ văn bản chương trình lớp 7 mạch Trái Đất và bầu trời."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Hệ Mặt Trời, Mặt Trăng (lớp 6)."
+          ],
+          "thuat_ngu": [],
+          "cong_thuc": [],
+          "thi_nghiem": [],
+          "chua_duoc_dung": [
+            "Định luật vạn vật hấp dẫn: THPT.",
+            "Thuyết tiến hoá các thiên thể chi tiết: THPT."
+          ],
+          "dang_bai_dien_hinh": [],
+          "luu_y_ra_de": "Chưa đủ thông tin để soạn."
+        }
+      ],
+      "ghi_chu_chua_chac": [
+        "Lớp 7 chỉ có 2 chương đã xác định chắc (Nguyên tử–nguyên tố–phân tử; Âm thanh). Chủ đề Sinh và Trái Đất của lớp 7 cần tra mục lục ba bộ sách.",
+        "Lớp 7 Lý còn có các chủ đề khác (ví dụ tốc độ, ánh sáng, nhiệt); chưa liệt kê vì chưa đối chiếu được."
+      ]
+    },
+    {
+      "lop": 8,
+      "chuong": [
+        {
+          "id": "khtn8-phan-ung-hoa-hoc",
+          "ten": "Phản ứng hoá học",
+          "hoc_ky": 1,
+          "mach": "Hoá",
+          "ten_theo_sach": { "KNTT": "Chương I. Phản ứng hoá học", "CTST": "Chủ đề 1. Phản ứng hoá học", "CD": "Phần 1. Chất và sự biến đổi về chất (chương tương ứng)" },
+          "yeu_cau_can_dat": [
+            "Phân biệt được biến đổi vật lí và biến đổi hoá học; nêu được dấu hiệu nhận biết phản ứng hoá học.",
+            "Viết và cân bằng được phương trình hoá học đơn giản; nêu ý nghĩa của phương trình.",
+            "Nêu được định luật bảo toàn khối lượng và vận dụng vào tính khối lượng chất."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Nguyên tử, nguyên tố, phân tử, khối lượng phân tử (lớp 7).",
+            "Tỉ lệ thức và phương trình bậc nhất một ẩn (Toán lớp 8)."
+          ],
+          "thuat_ngu": ["biến đổi vật lí", "biến đổi hoá học", "phản ứng hoá học", "chất phản ứng", "sản phẩm", "định luật bảo toàn khối lượng", "phương trình hoá học"],
+          "cong_thuc": ["m_A + m_B = m_C + m_D (định luật bảo toàn khối lượng)"],
+          "thi_nghiem": ["Đốt cháy magnesium trong không khí và cân khối lượng trước và sau phản ứng", "Phản ứng giữa dung dịch sodium hydroxide và copper(II) sulfate"],
+          "chua_duoc_dung": [
+            "Mol và tính theo phương trình hoá học (lớp 8 chương sau, không dùng trong bài đầu chương): cần đối chiếu từng bộ sách.",
+            "Phản ứng oxi hoá khử và số oxi hoá: THPT.",
+            "Cân bằng phương trình ion rút gọn: THPT."
+          ],
+          "dang_bai_dien_hinh": [
+            "Phân loại hiện tượng là biến đổi vật lí hay hoá học",
+            "Cân bằng phương trình hoá học đơn giản",
+            "Tính khối lượng một chất từ định luật bảo toàn khối lượng"
+          ],
+          "luu_y_ra_de": "Danh pháp chất dùng theo SGK (ví dụ sodium hydroxide, copper(II) sulfate). Không dùng tên cũ kiểu natri hydroxit trong đề mới."
+        },
+        {
+          "id": "khtn8-acid-base-muoi",
+          "ten": "Acid, base, muối và thang pH",
+          "hoc_ky": 2,
+          "mach": "Hoá",
+          "ten_theo_sach": { "KNTT": "Chương tương ứng (cần đối chiếu)", "CTST": "Chủ đề tương ứng (cần đối chiếu)", "CD": "Chương tương ứng (cần đối chiếu)" },
+          "yeu_cau_can_dat": [
+            "Nêu được tính chất hoá học chung của acid, base và muối ở mức đơn giản.",
+            "Dùng bảng tính tan để xác định một hydroxide là kiềm hay base không tan.",
+            "Nêu được ý nghĩa thang pH và nhận biết môi trường acid, trung tính, base bằng chất chỉ thị."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Phương trình hoá học và cân bằng (đầu lớp 8).",
+            "Tính chất dung dịch, dung môi, chất tan (lớp 6)."
+          ],
+          "thuat_ngu": ["acid", "base", "kiềm", "muối", "chất chỉ thị", "thang pH", "bảng tính tan"],
+          "cong_thuc": [],
+          "thi_nghiem": ["Thử màu quỳ tím với dung dịch acid và base", "Phản ứng giữa acid và base tạo muối"],
+          "chua_duoc_dung": [
+            "Tính pH từ nồng độ ion H⁺: THPT.",
+            "Phương trình ion thu gọn và tích số tan: THPT.",
+            "Nồng độ mol của dung dịch acid, base: lớp 8 cuối năm hoặc lớp 9 (cần đối chiếu từng bộ)."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dự đoán màu chất chỉ thị trong dung dịch cho trước",
+            "Viết phương trình acid tác dụng với base tạo muối",
+            "Tra bảng tính tan để phân loại hydroxide"
+          ],
+          "luu_y_ra_de": "Đề chỉ hỏi định tính pH, không tính giá trị pH từ nồng độ."
+        },
+        {
+          "id": "khtn8-khoi-luong-rieng-ap-suat",
+          "ten": "Khối lượng riêng, áp suất và moment lực",
+          "hoc_ky": 1,
+          "mach": "Lý",
+          "ten_theo_sach": { "KNTT": "Chương tương ứng (cần đối chiếu)", "CTST": "Chủ đề 3. Khối lượng riêng, áp suất và moment lực", "CD": "Chương tương ứng (cần đối chiếu)" },
+          "yeu_cau_can_dat": [
+            "Nêu được khái niệm khối lượng riêng và tính được khối lượng riêng từ khối lượng và thể tích.",
+            "Nêu được áp suất và tính được áp suất chất lỏng ở độ sâu h.",
+            "Nêu được moment lực và điều kiện cân bằng của vật có trục quay (định tính)."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Lực, trọng lượng và đơn vị newton (lớp 6).",
+            "Đơn vị đo thể tích và khối lượng, đổi đơn vị (lớp 6)."
+          ],
+          "thuat_ngu": ["khối lượng riêng", "áp suất", "áp suất chất lỏng", "moment lực", "trục quay", "pascal (Pa)"],
+          "cong_thuc": [
+            "D = m / V (khối lượng riêng)",
+            "p = F / S (áp suất)",
+            "p = d.h hoặc p = D.g.h (áp suất chất lỏng, lớp 8 chỉ dùng khi sách yêu cầu)",
+            "M = F.d (moment lực, d là cánh tay đòn)"
+          ],
+          "thi_nghiem": ["Đo khối lượng riêng của vật rắn bằng cân và bình chia độ", "Thí nghiệm áp suất chất lỏng tăng theo độ sâu"],
+          "chua_duoc_dung": [
+            "Áp suất khí quyển tính theo công thức đầy đủ: cần đối chiếu.",
+            "Định luật Archimedes tính lực đẩy định lượng: lớp 8 cuối hoặc lớp 9 tuỳ bộ sách.",
+            "Momen quán tính, phương trình động lực học: THPT."
+          ],
+          "dang_bai_dien_hinh": [
+            "Tính khối lượng riêng từ số liệu đo",
+            "Tính áp suất của vật đặt trên mặt phẳng",
+            "Xác định vị trí cánh tay đòn để cân bằng đòn bẩy (định tính)"
+          ],
+          "luu_y_ra_de": "Tránh dùng đơn vị kg/m³ và g/cm³ lẫn lộn; đề nên ghi rõ đơn vị."
+        },
+        {
+          "id": "khtn8-dien",
+          "ten": "Điện: dòng điện, hiệu điện thế, mạch điện, định luật Ohm",
+          "hoc_ky": 2,
+          "mach": "Lý",
+          "ten_theo_sach": { "KNTT": "Bài 25. Thực hành đo cường độ dòng điện và hiệu điện thế (và các bài liên quan)", "CTST": "Chủ đề 4. Điện", "CD": "Chương tương ứng (cần đối chiếu)" },
+          "yeu_cau_can_dat": [
+            "Đo được cường độ dòng điện bằng ampe kế và hiệu điện thế bằng vôn kế trong mạch điện đơn giản.",
+            "Nêu được định luật Ohm và tính được điện trở từ số liệu đo.",
+            "Nêu được cách mắc nối tiếp, song song và so sánh đặc điểm của hai cách mắc."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Tỉ lệ thuận giữa hai đại lượng (Toán lớp 7).",
+            "Phép tính với số thập phân và đơn vị đo (Toán lớp 6–7)."
+          ],
+          "thuat_ngu": ["dòng điện", "cường độ dòng điện", "hiệu điện thế", "điện trở", "ampe (A)", "vôn (V)", "ôm (Ω)", "mắc nối tiếp", "mắc song song"],
+          "cong_thuc": ["I = U / R (định luật Ohm)"],
+          "thi_nghiem": ["Đo cường độ dòng điện và hiệu điện thế trong mạch nối tiếp và song song", "Vẽ sơ đồ mạch điện bằng kí hiệu SGK"],
+          "chua_duoc_dung": [
+            "Định luật Ohm cho đoạn mạch có nhiều điện trở phức tạp: lớp 9.",
+            "Công và công suất điện: lớp 9.",
+            "Điện trở suất và các yếu tố ảnh hưởng định lượng: lớp 9."
+          ],
+          "dang_bai_dien_hinh": [
+            "Đọc số chỉ ampe kế và vôn kế trên hình",
+            "Tính điện trở từ I và U",
+            "So sánh cường độ dòng điện trong các nhánh mạch song song (định tính)"
+          ],
+          "luu_y_ra_de": "Hình mạch điện nên dùng kí hiệu SGK. Không dùng công thức công suất trong đề lớp 8."
+        },
+        {
+          "id": "khtn8-nang-luong-nhiet",
+          "ten": "Năng lượng nhiệt và nội năng: sự truyền nhiệt, sự nở vì nhiệt",
+          "hoc_ky": 2,
+          "mach": "Lý",
+          "ten_theo_sach": { "KNTT": "Chương tương ứng (cần đối chiếu)", "CTST": "Bài 26–28 (Năng lượng nhiệt và nội năng; Sự truyền nhiệt; Sự nở vì nhiệt)", "CD": "Chương tương ứng (cần đối chiếu)" },
+          "yeu_cau_can_dat": [
+            "Nêu được nội năng và năng lượng nhiệt; nêu được cách làm thay đổi nội năng.",
+            "Nêu được ba hình thức truyền nhiệt: dẫn nhiệt, đối lưu, bức xạ nhiệt.",
+            "Nêu được sự nở vì nhiệt của chất rắn, lỏng, khí và ứng dụng."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Các thể của chất và sự chuyển thể (lớp 6)."
+          ],
+          "thuat_ngu": ["nội năng", "năng lượng nhiệt", "dẫn nhiệt", "đối lưu", "bức xạ nhiệt", "sự nở vì nhiệt"],
+          "cong_thuc": [],
+          "thi_nghiem": ["Thí nghiệm dẫn nhiệt bằng thanh kim loại có gắn sáp", "Thí nghiệm đối lưu bằng nước có thuốc tím"],
+          "chua_duoc_dung": [
+            "Nhiệt lượng Q = m.c.Δt và nhiệt dung riêng: lớp 9 (cần đối chiếu từng bộ sách).",
+            "Định luật bảo toàn năng lượng dạng định lượng: THPT.",
+            "Nhiệt độ theo thang Kelvin và công thức đổi thang: chỉ nêu khi sách có yêu cầu."
+          ],
+          "dang_bai_dien_hinh": [
+            "Phân loại hình thức truyền nhiệt trong tình huống thực tế",
+            "Giải thích hiện tượng nở vì nhiệt của vật",
+            "Đọc đồ thị nhiệt độ theo thời gian (định tính)"
+          ],
+          "luu_y_ra_de": "Tránh tính nhiệt lượng nếu sách của học sinh chưa có công thức Q = m.c.Δt."
+        },
+        {
+          "id": "khtn8-sinh-thai",
+          "ten": "Sinh thái học: quần thể, quần xã, hệ sinh thái, cân bằng tự nhiên",
+          "hoc_ky": 2,
+          "mach": "Sinh",
+          "ten_theo_sach": { "KNTT": "Chương tương ứng (cần đối chiếu)", "CTST": "Chương tương ứng (cần đối chiếu)", "CD": "Bài 39–43 (Quần thể; Quần xã; Hệ sinh thái; Cân bằng tự nhiên; Sinh quyển)" },
+          "yeu_cau_can_dat": [
+            "Nêu được khái niệm quần thể sinh vật và các đặc trưng cơ bản (mật độ, tỉ lệ giới tính, nhóm tuổi).",
+            "Nêu được khái niệm quần xã và hệ sinh thái; phân biệt thành phần vô sinh và hữu sinh.",
+            "Nêu được ý nghĩa của cân bằng tự nhiên và tác động của con người đến môi trường."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Tế bào, đa dạng thế giới sống (lớp 6).",
+            "Lưới thức ăn và chuỗi thức ăn (lớp 6–7, cần đối chiếu)."
+          ],
+          "thuat_ngu": ["quần thể", "quần xã", "hệ sinh thái", "mật độ", "nhóm tuổi", "cân bằng tự nhiên", "sinh quyển"],
+          "cong_thuc": [],
+          "thi_nghiem": ["Khảo sát đa dạng sinh vật trong một khu vực đơn giản"],
+          "chua_duoc_dung": [
+            "Mô hình tăng trưởng quần thể bằng phương trình: THPT.",
+            "Chu trình sinh địa hoá chi tiết (carbon, nitrogen) với phương trình: THPT.",
+            "Di truyền quần thể và tần số allele: THPT."
+          ],
+          "dang_bai_dien_hinh": [
+            "Tính mật độ cá thể từ số liệu khảo sát",
+            "Phân tích sơ đồ lưới thức ăn và nêu hệ quả khi loài bị suy giảm",
+            "Đề xuất biện pháp bảo vệ môi trường trong một tình huống thực tế"
+          ],
+          "luu_y_ra_de": "Ở bộ CD, chương này nằm trong lớp 8; ở bộ khác có thể để lớp khác. Cần thống nhất lớp trước khi soạn đề."
+        }
+      ],
+      "ghi_chu_chua_chac": [
+        "Lớp 8 CD có chương sinh thái (bài 39–43). Vị trí chương này ở lớp 8 hay lớp 9 theo văn bản chương trình cần xác minh.",
+        "Tên chương Hoá (acid, base, muối) và chương Lý khác của bộ KNTT chưa đối chiếu được chi tiết; ghi 'cần đối chiếu'.",
+        "Chưa có công thức nhiệt lượng ở các chương lớp 8 chắc chắn; nếu chương trình không có, cần bỏ khỏi thông tin công thức."
+      ]
+    },
+    {
+      "lop": 9,
+      "chuong": [
+        {
+          "id": "khtn9-kim-loai",
+          "ten": "Kim loại: tính chất, dãy hoạt động hoá học, sự ăn mòn",
+          "hoc_ky": 1,
+          "mach": "Hoá",
+          "ten_theo_sach": { "KNTT": "Chương tương ứng (cần đối chiếu)", "CTST": "Chương tương ứng (cần đối chiếu)", "CD": "Chương tương ứng (cần đối chiếu)" },
+          "yeu_cau_can_dat": [
+            "Nêu được tính chất vật lí và tính chất hoá học chung của kim loại.",
+            "Dựa vào dãy hoạt động hoá học để dự đoán phản ứng của kim loại với acid và muối.",
+            "Nêu được nguyên nhân và biện pháp chống ăn mòn kim loại."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Phản ứng hoá học và phương trình (lớp 8).",
+            "Acid, base, muối (lớp 8)."
+          ],
+          "thuat_ngu": ["kim loại", "dãy hoạt động hoá học", "ăn mòn kim loại", "phản ứng thế"],
+          "cong_thuc": [],
+          "thi_nghiem": ["Cho kim loại tác dụng với dung dịch acid và quan sát hiện tượng", "Thí nghiệm sắt bị ăn mòn trong điều kiện có nước và oxygen"],
+          "chua_duoc_dung": [
+            "Điện phân nóng chảy và điện phân dung dịch chi tiết: THPT.",
+            "Tính khối lượng kim loại tan theo phương trình kèm mol: cần đối chiếu sách lớp 9.",
+            "Thế điện cực chuẩn: THPT."
+          ],
+          "dang_bai_dien_hinh": [
+            "Dự đoán phản ứng dựa vào dãy hoạt động",
+            "Giải thích hiện tượng ăn mòn kim loại trong đời sống",
+            "Viết phương trình kim loại tác dụng với acid"
+          ],
+          "luu_y_ra_de": "Danh pháp kim loại theo SGK mới, ví dụ iron, copper, aluminium."
+        },
+        {
+          "id": "khtn9-hop-chat-huu-co",
+          "ten": "Hợp chất hữu cơ: hydrocarbon, ethanol, acetic acid, lipid, glucose",
+          "hoc_ky": 1,
+          "mach": "Hoá",
+          "ten_theo_sach": { "KNTT": "Chương tương ứng (cần đối chiếu)", "CTST": "Chương tương ứng (cần đối chiếu)", "CD": "Chương tương ứng (cần đối chiếu)" },
+          "yeu_cau_can_dat": [
+            "Nêu được đặc điểm chung của hợp chất hữu cơ và phân loại hydrocarbon đơn giản.",
+            "Nêu được tính chất và ứng dụng của ethanol và acetic acid.",
+            "Nêu được vai trò của lipid, glucose và protein đối với cơ thể (định tính)."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Đơn chất, hợp chất, phân tử (lớp 7).",
+            "Acid và base (lớp 8)."
+          ],
+          "thuat_ngu": ["hợp chất hữu cơ", "hydrocarbon", "ethanol", "acetic acid", "lipid", "glucose", "protein"],
+          "cong_thuc": ["Công thức phân tử và công thức cấu tạo dạng đơn giản (CH₄, C₂H₆O, C₂H₄O₂)"],
+          "thi_nghiem": ["Phản ứng ethanol với sodium", "Phản ứng acetic acid với base hoặc muối carbonate"],
+          "chua_duoc_dung": [
+            "Danh pháp IUPAC đầy đủ cho hydrocarbon mạch dài: THPT.",
+            "Phản ứng trùng hợp, phản ứng este hoá chi tiết: THPT.",
+            "Cấu trúc không gian của glucose và protein: THPT."
+          ],
+          "dang_bai_dien_hinh": [
+            "Phân loại hợp chất hữu cơ và vô cơ từ danh sách cho trước",
+            "Viết công thức phân tử từ mô hình hoặc mô tả",
+            "Nêu ứng dụng của ethanol và acetic acid trong đời sống"
+          ],
+          "luu_y_ra_de": "Đề chỉ hỏi định tính về cấu tạo và tính chất ở mức sách. Không đưa phản ứng cộng hoặc este hoá nâng cao."
+        },
+        {
+          "id": "khtn9-nang-luong-voi-cuoc-song",
+          "ten": "Năng lượng với cuộc sống: năng lượng Trái Đất, năng lượng hoá thạch, cơ năng, công và công suất",
+          "hoc_ky": 1,
+          "mach": "Lý",
+          "ten_theo_sach": { "KNTT": "Chương tương ứng (cần đối chiếu)", "CTST": "Chương tương ứng (cần đối chiếu)", "CD": "Chương tương ứng (cần đối chiếu)" },
+          "yeu_cau_can_dat": [
+            "Nêu được khái niệm cơ năng và phân tích chuyển hoá năng lượng trong một số trường hợp đơn giản.",
+            "Tính được công và công suất trong một số trường hợp đơn giản.",
+            "Nêu được nguồn gốc năng lượng Trái Đất và các dạng năng lượng hoá thạch; liên hệ với vấn đề môi trường."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Lực, trọng lượng và đơn vị newton (lớp 6).",
+            "Đơn vị đo quãng đường và thời gian (lớp 6–7)."
+          ],
+          "thuat_ngu": ["cơ năng", "động năng", "thế năng", "công", "công suất", "năng lượng hoá thạch", "joule (J)", "watt (W)"],
+          "cong_thuc": ["A = F.s (công cơ học)", "P = A / t (công suất)", "W = m.g.h (thế năng trọng trường, lớp 9 chỉ mức đơn giản)"],
+          "thi_nghiem": ["Thả vật từ độ cao khác nhau để so sánh thế năng và động năng"],
+          "chua_duoc_dung": [
+            "Định luật bảo toàn cơ năng dạng định lượng cho dao động: THPT.",
+            "Hiệu suất của máy cơ đơn giản tính chi tiết: cần đối chiếu sách lớp 9.",
+            "Công thức động năng ½mv² vận dụng trong bài toán phức tạp: THPT."
+          ],
+          "dang_bai_dien_hinh": [
+            "Tính công và công suất của một lực kéo vật",
+            "Phân tích chuyển hoá năng lượng khi vật rơi hoặc đi lên",
+            "Nêu nguồn năng lượng và tác động môi trường của năng lượng hoá thạch"
+          ],
+          "luu_y_ra_de": "Dùng đơn vị J và W đúng SGK. Không dùng công thức năng lượng dao động hay công thức THPT."
+        },
+        {
+          "id": "khtn9-di-truyen",
+          "ten": "Di truyền và biến dị: gene, DNA, nhiễm sắc thể, di truyền Mendel",
+          "hoc_ky": 2,
+          "mach": "Sinh",
+          "ten_theo_sach": { "KNTT": "Chương tương ứng (cần đối chiếu)", "CTST": "Chương tương ứng (cần đối chiếu)", "CD": "Chương tương ứng (cần đối chiếu)" },
+          "yeu_cau_can_dat": [
+            "Nêu được khái niệm gene, DNA và nhiễm sắc thể ở mức đơn giản.",
+            "Nêu được các quy luật di truyền Mendel ở mức định tính và giải bài tập lai một cặp tính trạng đơn giản.",
+            "Nêu được khái niệm biến dị và phân biệt biến dị di truyền với biến dị không di truyền."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Tế bào và cấu trúc nhân tế bào (lớp 6).",
+            "Tỉ lệ và xác suất đơn giản (Toán lớp 9)."
+          ],
+          "thuat_ngu": ["gene", "DNA", "nhiễm sắc thể", "kiểu gene", "kiểu hình", "allele", "biến dị"],
+          "cong_thuc": [],
+          "thi_nghiem": ["Mô phỏng phép lai một cặp tính trạng bằng hạt đậu hoặc thẻ bài"],
+          "chua_duoc_dung": [
+            "Cấu trúc hoá học của DNA và quá trình tái bản chi tiết: THPT.",
+            "Di truyền liên kết, hoán vị gene: THPT.",
+            "Di truyền quần thể và định luật Hardy–Weinberg: THPT."
+          ],
+          "dang_bai_dien_hinh": [
+            "Viết kiểu gene và kiểu hình từ sơ đồ lai đơn giản",
+            "Phân biệt biến dị di truyền và không di truyền qua ví dụ",
+            "Nhận diện nhiễm sắc thể và gene trên sơ đồ"
+          ],
+          "luu_y_ra_de": "Tên gene, DNA dùng theo SGK mới (ví dụ DNA viết hoa). Không dùng ký hiệu phức tạp ngoài SGK."
+        },
+        {
+          "id": "khtn9-trai-dat-bau-troi-lop9",
+          "ten": "Trái Đất và bầu trời ở lớp 9 (CẦN XÁC MINH TÊN THEO MỤC LỤC)",
+          "hoc_ky": 2,
+          "mach": "Trái Đất và bầu trời",
+          "ten_theo_sach": { "KNTT": "chưa xác minh", "CTST": "chưa xác minh", "CD": "chưa xác minh" },
+          "yeu_cau_can_dat": [
+            "Chưa đầy đủ: cần chép lại từ văn bản chương trình lớp 9 mạch Trái Đất và bầu trời."
+          ],
+          "kien_thuc_duoc_dung": [
+            "Hệ Mặt Trời và Ngân Hà (lớp 6)."
+          ],
+          "thuat_ngu": [],
+          "cong_thuc": [],
+          "thi_nghiem": [],
+          "chua_duoc_dung": [
+            "Thuyết tương đối và vũ trụ học: THPT.",
+            "Phương trình chuyển động của vệ tinh: THPT."
+          ],
+          "dang_bai_dien_hinh": [],
+          "luu_y_ra_de": "Chưa đủ thông tin để soạn."
+        }
+      ],
+      "ghi_chu_chua_chac": [
+        "Lớp 9 Hoá, Lý, Sinh có chương trình khá chắc; các tên chương ở ba bộ sách chưa đối chiếu được chi tiết.",
+        "Chương Trái Đất và bầu trời lớp 9 cần tra mục lục.",
+        "Đề thi vào lớp 10 (Ninh Bình 2024–2025) trọng tâm lớp 9, trắc nghiệm 60 phút; các tỉnh khác có thể khác."
+      ]
+    }
+  ],
+  "cau_truc_de": [
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 6,
+      "thoi_gian_phut": 60,
+      "phan": [],
+      "ti_le_mach": { "Mở đầu": null, "Hoá": null, "Sinh": null, "Lý": null, "Trái Đất và bầu trời": null },
+      "pham_vi": ["khtn6-mo-dau", "khtn6-chat-hon-hop-tach-chat", "khtn6-te-bao"],
+      "ti_le_mach_ghi_chu": "Chưa có quy định toàn quốc. Một số đề trường THCS ghi nội dung nửa đầu học kì 1 là khoảng 20% điểm, nhưng chưa đủ để khuyến nghị tỉ lệ mạch.",
+      "ti_le_muc_do": "Tham khảo chung: nhận biết khoảng 40%, thông hiểu 30%, vận dụng 20%, vận dụng cao 10%. Đây là mức phổ biến trong đề trường, không phải quy định."
+    },
+    {
+      "loai": "Cuối kỳ 1",
+      "lop": 6,
+      "thoi_gian_phut": 90,
+      "phan": [],
+      "ti_le_mach": { "Mở đầu": null, "Hoá": null, "Sinh": null, "Lý": null, "Trái Đất và bầu trời": null },
+      "pham_vi": ["khtn6-mo-dau", "khtn6-chat-hon-hop-tach-chat", "khtn6-te-bao"],
+      "ti_le_mach_ghi_chu": "Các đề trường cho thấy học kì 1 lớp 6 thường nặng về Sinh, sau đó đến Hoá và Lý, nhưng chưa xác định được tỉ lệ chính thức.",
+      "ti_le_muc_do": "Tham khảo chung như giữa kỳ 1."
+    },
+    {
+      "loai": "Giữa kỳ 2",
+      "lop": 6,
+      "thoi_gian_phut": 90,
+      "phan": [],
+      "ti_le_mach": { "Mở đầu": null, "Hoá": null, "Sinh": null, "Lý": null, "Trái Đất và bầu trời": null },
+      "pham_vi": ["khtn6-luc", "khtn6-da-dang-the-gioi-song"],
+      "ti_le_mach_ghi_chu": "Một đề giữa kỳ II lớp 6 trong kho tài liệu gồm hai chủ đề Đa dạng thế giới sống và Lực. Đây chỉ là một ví dụ trường học.",
+      "ti_le_muc_do": "Tham khảo chung như trên."
+    },
+    {
+      "loai": "Cuối kỳ 2",
+      "lop": 6,
+      "thoi_gian_phut": 90,
+      "phan": [],
+      "ti_le_mach": { "Mở đầu": null, "Hoá": null, "Sinh": null, "Lý": null, "Trái Đất và bầu trời": null },
+      "pham_vi": ["khtn6-luc", "khtn6-da-dang-the-gioi-song", "khtn6-trai-dat-bau-troi"],
+      "ti_le_mach_ghi_chu": "Chưa có quy định chính thức.",
+      "ti_le_muc_do": "Tham khảo chung như trên."
+    },
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 7,
+      "thoi_gian_phut": 90,
+      "phan": [],
+      "ti_le_mach": { "Hoá": null, "Lý": null, "Sinh": null, "Trái Đất và bầu trời": null },
+      "pham_vi": ["khtn7-nguyen-tu-nguyen-to-phan-tu", "khtn7-am-thanh"],
+      "ti_le_mach_ghi_chu": "Một đề giữa kỳ I lớp 7 trong kho tài liệu có phần mạch Hoá và Lý; chưa đủ cơ sở để khuyến nghị tỉ lệ.",
+      "ti_le_muc_do": "Đề trường thường có trắc nghiệm 40–50% và tự luận 50–60%; mức độ tham khảo như trên."
+    },
+    {
+      "loai": "Cuối kỳ 1",
+      "lop": 7,
+      "thoi_gian_phut": 90,
+      "phan": [],
+      "ti_le_mach": { "Hoá": null, "Lý": null, "Sinh": null, "Trái Đất và bầu trời": null },
+      "pham_vi": ["khtn7-nguyen-tu-nguyen-to-phan-tu", "khtn7-am-thanh"],
+      "ti_le_mach_ghi_chu": "Một đề cuối kỳ I lớp 7 từ kho tài liệu ghi nội dung cuối học kì I là chủ đề Âm thanh.",
+      "ti_le_muc_do": "Tham khảo chung như trên."
+    },
+    {
+      "loai": "Giữa kỳ 2",
+      "lop": 7,
+      "thoi_gian_phut": 90,
+      "phan": [],
+      "ti_le_mach": { "Hoá": null, "Lý": null, "Sinh": null, "Trái Đất và bầu trời": null },
+      "pham_vi": ["khtn7-lop7-vat-song", "khtn7-lop7-trai-dat"],
+      "ti_le_mach_ghi_chu": "Chưa đủ thông tin: chương lớp 7 học kì II chưa xác minh.",
+      "ti_le_muc_do": "Tham khảo chung như trên."
+    },
+    {
+      "loai": "Cuối kỳ 2",
+      "lop": 7,
+      "thoi_gian_phut": 90,
+      "phan": [],
+      "ti_le_mach": { "Hoá": null, "Lý": null, "Sinh": null, "Trái Đất và bầu trời": null },
+      "pham_vi": ["khtn7-lop7-vat-song", "khtn7-lop7-trai-dat"],
+      "ti_le_mach_ghi_chu": "Chưa đủ thông tin.",
+      "ti_le_muc_do": "Tham khảo chung như trên."
+    },
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 8,
+      "thoi_gian_phut": 60,
+      "phan": [],
+      "ti_le_mach": { "Hoá": null, "Lý": null, "Sinh": null },
+      "pham_vi": ["khtn8-phan-ung-hoa-hoc", "khtn8-khoi-luong-rieng-ap-suat"],
+      "ti_le_mach_ghi_chu": "Chưa có quy định chính thức. Một đề trường lớp 8 có tỉ lệ 3 mạch Hoá, Lý, Sinh, nhưng chưa rõ tỉ lệ.",
+      "ti_le_muc_do": "Đề trường lớp 8 hay dùng mức độ 40% nhận biết, 30% thông hiểu, 20% vận dụng, 10% vận dụng cao."
+    },
+    {
+      "loai": "Cuối kỳ 1",
+      "lop": 8,
+      "thoi_gian_phut": 90,
+      "phan": [],
+      "ti_le_mach": { "Hoá": null, "Lý": null, "Sinh": null },
+      "pham_vi": ["khtn8-phan-ung-hoa-hoc", "khtn8-khoi-luong-rieng-ap-suat"],
+      "ti_le_mach_ghi_chu": "Một đề trường có cấu trúc đề cuối kì I lớp 8 gồm Mở đầu, Hoá, Lý, Sinh.",
+      "ti_le_muc_do": "Tham khảo chung như trên."
+    },
+    {
+      "loai": "Giữa kỳ 2",
+      "lop": 8,
+      "thoi_gian_phut": 60,
+      "phan": [],
+      "ti_le_mach": { "Hoá": null, "Lý": null, "Sinh": null },
+      "pham_vi": ["khtn8-acid-base-muoi", "khtn8-dien"],
+      "ti_le_mach_ghi_chu": "Chưa có quy định chính thức.",
+      "ti_le_muc_do": "Tham khảo chung như trên."
+    },
+    {
+      "loai": "Cuối kỳ 2",
+      "lop": 8,
+      "thoi_gian_phut": 90,
+      "phan": [],
+      "ti_le_mach": { "Hoá": null, "Lý": null, "Sinh": null },
+      "pham_vi": ["khtn8-acid-base-muoi", "khtn8-dien", "khtn8-nang-luong-nhiet", "khtn8-sinh-thai"],
+      "ti_le_mach_ghi_chu": "Chưa có quy định chính thức. Các đề cuối kì II lớp 8 trong kho tài liệu có cấu trúc 2 phần hoặc 4 phần.",
+      "ti_le_muc_do": "Tham khảo chung như trên."
+    },
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 9,
+      "thoi_gian_phut": 60,
+      "phan": [],
+      "ti_le_mach": { "Hoá": null, "Lý": null, "Sinh": null, "Trái Đất và bầu trời": null },
+      "pham_vi": ["khtn9-hop-chat-huu-co", "khtn9-nang-luong-voi-cuoc-song"],
+      "ti_le_mach_ghi_chu": "Một đề giữa kỳ I lớp 9 từ kho tài liệu có phạm vi hợp chất hữu cơ (Hoá) và năng lượng với cuộc sống (Lý).",
+      "ti_le_muc_do": "Tham khảo chung như trên."
+    },
+    {
+      "loai": "Cuối kỳ 1",
+      "lop": 9,
+      "thoi_gian_phut": 60,
+      "phan": [],
+      "ti_le_mach": { "Hoá": null, "Lý": null, "Sinh": null, "Trái Đất và bầu trời": null },
+      "pham_vi": ["khtn9-kim-loai", "khtn9-hop-chat-huu-co", "khtn9-nang-luong-voi-cuoc-song"],
+      "ti_le_mach_ghi_chu": "Một đề trường cuối kì I lớp 9 có kiểm tra kiến thức hết phân môn Hoá, sau đó đến Lý.",
+      "ti_le_muc_do": "Tham khảo chung như trên."
+    },
+    {
+      "loai": "Giữa kỳ 2",
+      "lop": 9,
+      "thoi_gian_phut": 60,
+      "phan": [],
+      "ti_le_mach": { "Hoá": null, "Lý": null, "Sinh": null, "Trái Đất và bầu trời": null },
+      "pham_vi": ["khtn9-di-truyen"],
+      "ti_le_mach_ghi_chu": "Chưa đủ thông tin về nội dung giữa học kì II lớp 9.",
+      "ti_le_muc_do": "Tham khảo chung như trên."
+    },
+    {
+      "loai": "Cuối kỳ 2",
+      "lop": 9,
+      "thoi_gian_phut": 60,
+      "phan": [
+        { "ten": "Trắc nghiệm (đề tuyển sinh Ninh Bình 2024–2025 tham khảo)", "so_cau": null, "diem_moi_cau": null }
+      ],
+      "ti_le_mach": { "Hoá": null, "Lý": null, "Sinh": null, "Trái Đất và bầu trời": null },
+      "pham_vi": ["khtn9-kim-loai", "khtn9-hop-chat-huu-co", "khtn9-nang-luong-voi-cuoc-song", "khtn9-di-truyen", "khtn9-trai-dat-bau-troi-lop9"],
+      "ti_le_mach_ghi_chu": "Đề tuyển sinh lớp 10 tham khảo: 60 phút, trắc nghiệm, trọng tâm lớp 9. Đây không phải đề cuối kì; chỉ dùng làm mẫu cấu trúc.",
+      "ti_le_muc_do": "Chưa xác định được tỉ lệ mức độ từ nguồn đã tra."
+    }
+  ],
+  "ghi_chu_chua_chac": [
+    "Nhiều mục ti_le_mach và số câu của cau_truc_de còn null vì chưa tra được quy định hoặc đề mẫu chính thức.",
+    "Thông tin về kí hiệu SGK, tên chương và học kì lấy từ một số mục lục đã tra, chưa đối chiếu hết ba bộ sách.",
+    "Công văn 7991 được nhắc trong nhiều tài liệu trường học về ma trận, đặc tả đề; chưa xác minh nội dung nên chưa đưa vào nguồn chính thức.",
+    "Lớp 7 mạch Sinh và mạch Trái Đất và bầu trời, lớp 9 mạch Trái Đất và bầu trời: chưa có tên chương chắc chắn."
+  ]
+}

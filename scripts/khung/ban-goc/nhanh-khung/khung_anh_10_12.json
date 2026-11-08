@@ -1,0 +1,215 @@
+{
+  "mon": "Tiếng Anh",
+  "pham_vi_luot": "lớp 10–12 (bộ Global Success, 10 unit mỗi lớp)",
+  "nguon": [
+    "Chương trình GDPT 2018 môn Tiếng Anh, Thông tư 32/2018/TT-BGDĐT (sửa đổi bởi Thông tư 13/2022)",
+    "SGK Tiếng Anh 10, 11, 12 Global Success (mục lục từ sachmem.net, loigiaihay.com, vietjack.com)",
+    "Đề tốt nghiệp THPT môn Tiếng Anh từ năm 2025 (40 câu trắc nghiệm, 60 phút)"
+  ],
+  "muc_luc_da_tra": [
+    "Lớp 10 – KNTT (Global Success) – Unit 1. Family life",
+    "Lớp 10 – KNTT – Unit 2. Humans and the environment",
+    "Lớp 10 – KNTT – Unit 3. Music",
+    "Lớp 10 – KNTT – Unit 4. For a better community",
+    "Lớp 10 – KNTT – Unit 5. Inventions",
+    "Lớp 10 – KNTT – Unit 6. Gender equality",
+    "Lớp 10 – KNTT – Unit 7. Viet Nam and international organisations",
+    "Lớp 10 – KNTT – Unit 8. New ways to learn",
+    "Lớp 10 – KNTT – Unit 9. Protecting the environment",
+    "Lớp 10 – KNTT – Unit 10. Ecotourism",
+    "Lớp 11 – KNTT (Global Success) – Unit 1. A long and healthy life",
+    "Lớp 11 – KNTT – Unit 2. The generation gap",
+    "Lớp 11 – KNTT – Unit 3. Cities of the future",
+    "Lớp 11 – KNTT – Unit 4. ASEAN and Viet Nam",
+    "Lớp 11 – KNTT – Unit 5. Global warming",
+    "Lớp 11 – KNTT – Unit 6. Preserving our heritage",
+    "Lớp 11 – KNTT – Unit 7. Education options for school leavers",
+    "Lớp 11 – KNTT – Unit 8. New ways to learn",
+    "Lớp 11 – KNTT – Unit 9. Social issues",
+    "Lớp 11 – KNTT – Unit 10. The ecosystem",
+    "Lớp 12 – KNTT (Global Success) – Unit 1. Life stories we admire",
+    "Lớp 12 – KNTT – Unit 2. A multicultural world",
+    "Lớp 12 – KNTT – Unit 3. Green living",
+    "Lớp 12 – KNTT – Unit 4. Urbanisation",
+    "Lớp 12 – KNTT – Unit 5. The world of work",
+    "Lớp 12 – KNTT – Unit 6. Artificial intelligence",
+    "Lớp 12 – KNTT – Unit 7. Social issues",
+    "Lớp 12 – KNTT – Unit 8. Wildlife conservation",
+    "Lớp 12 – KNTT – Unit 9. The world of occupations",
+    "Lớp 12 – KNTT – Unit 10. Lifelong learning"
+  ],
+  "lop": [
+    {
+      "lop": 10,
+      "chuong": [
+        { "id": "anh10-u01", "chu_de": "Family life (đời sống gia đình)", "tu_vung": ["household chore", "breadwinner", "homemaker", "split the chores", "finance", "responsible", "bond", "support"], "ngu_phap": "Present simple vs present continuous", "phat_am": "Trọng âm từ 2 âm tiết", "ky_nang": { "doc": "Bài về chia sẻ việc nhà", "nghe": "Băng về gia đình hiện đại", "noi": "Trình bày công việc gia đình", "viet": "Đoạn về vai trò các thành viên" }, "chua_duoc_dung": ["Relative clauses đầy đủ — lớp 10 Unit 8", "Reported speech nâng cao — lớp 11", "Inversion — lớp 12"] },
+        { "id": "anh10-u02", "chu_de": "Humans and the environment (con người và môi trường)", "tu_vung": ["carbon footprint", "climate change", "eco-friendly", "landfill", "emission", "sustainable", "preserve", "contaminate"], "ngu_phap": "Present perfect vs past simple", "phat_am": "/e/ và /ɪ/", "ky_nang": { "doc": "Bài về tác động con người lên môi trường", "nghe": "Băng về biến đổi khí hậu", "noi": "Trình bày thói quen xanh", "viet": "Đoạn về giảm rác thải nhựa" }, "chua_duoc_dung": ["Reported speech nâng cao — lớp 11", "Inversion — lớp 12", "Modal perfect — lớp 12"] },
+        { "id": "anh10-u03", "chu_de": "Music (âm nhạc)", "tu_vung": ["genre", "melody", "lyrics", "instrumental", "chart", "release", "fan base", "concert"], "ngu_phap": "Past simple vs past continuous (while, when)", "phat_am": "/s/ và /ʃ/", "ky_nang": { "doc": "Bài về ngành công nghiệp âm nhạc", "nghe": "Băng phỏng vấn ca sĩ", "noi": "Trình bày thể loại nhạc yêu thích", "viet": "Đoạn về một buổi hòa nhạc" }, "chua_duoc_dung": ["Relative clauses đầy đủ — lớp 10 Unit 8", "Inversion — lớp 12", "Conditional type 3 — lớp 11"] },
+        { "id": "anh10-u04", "chu_de": "For a better community (vì một cộng đồng tốt đẹp hơn)", "tu_vung": ["volunteer", "donation", "disadvantaged", "charity", "sponsor", "raise funds", "community-based", "benefit"], "ngu_phap": "Gerunds and to-infinitives sau động từ (stop, remember, try, want, hope...)", "phat_am": "Gerund /ɪŋ/ phát âm", "ky_nang": { "doc": "Bài về hoạt động tình nguyện", "nghe": "Băng chiến dịch cộng đồng", "noi": "Trình bày ý tưởng hoạt động tình nguyện", "viet": "Đoạn về hoạt động thiện nguyện" }, "chua_duoc_dung": ["Reported speech — lớp 11", "Modal perfect — lớp 12", "Inversion — lớp 12"] },
+        { "id": "anh10-u05", "chu_de": "Inventions (sáng chế)", "tu_vung": ["invention", "device", "breakthrough", "patent", "experiment", "innovation", "artificial", "practical"], "ngu_phap": "The future: will, going to và thì hiện tại kế hoạch (planned future)", "phat_am": "Trọng âm từ 3 âm tiết", "ky_nang": { "doc": "Bài về phát minh thay đổi thế giới", "nghe": "Băng về sáng chế", "noi": "Trình bày phát minh quan trọng", "viet": "Đoạn về một sáng chế" }, "chua_duoc_dung": ["Future perfect/continuous — lớp 11", "Modal perfect — lớp 12", "Inversion — lớp 12"] },
+        { "id": "anh10-u06", "chu_de": "Gender equality (bình đẳng giới)", "tu_vung": ["gender equality", "discrimination", "domestic violence", "equal pay", "empowerment", "stereotype", "right", "opportunity"], "ngu_phap": "Passive voice với modal verbs (should be done, must be given)", "phat_am": "/dʒ/ và /j/", "ky_nang": { "doc": "Bài về bình đẳng giới", "nghe": "Băng về quyền phụ nữ", "noi": "Trình bày quan điểm bình đẳng giới", "viet": "Đoạn về bình đẳng giới trong gia đình" }, "chua_duoc_dung": ["Reported speech — lớp 11", "Conditional type 3 — lớp 11", "Inversion — lớp 12"] },
+        { "id": "anh10-u07", "chu_de": "Viet Nam and international organisations (Việt Nam và các tổ chức quốc tế)", "tu_vung": ["organisation", "membership", "diplomatic relations", "economy", "peacekeeping", "cooperation", "treaty", "summit"], "ngu_phap": "Relative clauses (defining): who, which, that, where", "phat_am": "Trọng âm từ có đuôi -ation", "ky_nang": { "doc": "Bài về Liên Hợp Quốc và ASEAN", "nghe": "Băng về hợp tác quốc tế", "noi": "Giới thiệu một tổ chức quốc tế", "viet": "Đoạn về Việt Nam và ASEAN" }, "chua_duoc_dung": ["Non-defining relative clauses — lớp 10 Unit 8 nâng cao/11", "Conditional type 3 — lớp 11", "Inversion — lớp 12"] },
+        { "id": "anh10-u08", "chu_de": "New ways to learn (cách học mới)", "tu_vung": ["online learning", "distance education", "blended learning", "self-study", "digital", "interactive", "access", "motivation"], "ngu_phap": "Defining và non-defining relative clauses (who, whom, which, that, whose, where)", "phat_am": "/ən/ với đuôi -ion", "ky_nang": { "doc": "Bài về học online", "nghe": "Băng về nền tảng học trực tuyến", "noi": "Trình bày cách học hiệu quả", "viet": "Đoạn về lợi ích học trực tuyến" }, "chua_duoc_dung": ["Reduced relative clauses — lớp 11", "Conditional type 3 — lớp 11", "Inversion — lớp 12"] },
+        { "id": "anh10-u09", "chu_de": "Protecting the environment (bảo vệ môi trường)", "tu_vung": ["endangered species", "habitat loss", "poaching", "conservation", "campaign", "wildlife reserve", "extinct", "biodiversity"], "ngu_phap": "Conditional sentences revisión (type 1, 2, ở mức type 3 làm quen)", "phat_am": "/ɪ/ và /iː/", "ky_nang": { "doc": "Bài về bảo tồn thiên nhiên", "nghe": "Băng về vườn quốc gia", "noi": "Trình bày biện pháp bảo vệ động vật hoang dã", "viet": "Đoạn về bảo vệ môi trường" }, "chua_duoc_dung": ["Conditional type 3 đầy đủ — lớp 11", "Reported speech — lớp 11", "Inversion — lớp 12"] },
+        { "id": "anh10-u10", "chu_de": "Ecotourism (du lịch sinh thái)", "tu_vung": ["ecotourism", "responsible travel", "nature-based", "souvenir", "local community", "sustainable tourism", "campsite", "trekking"], "ngu_phap": "The future: future simple, future continuous ở mức làm quen, planned future", "phat_am": "/tʃ/ và /ʃ/", "ky_nang": { "doc": "Bài về du lịch sinh thái", "nghe": "Băng giới thiệu điểm du lịch", "noi": "Trình bày chuyến du lịch xanh", "viet": "Đoạn về du lịch sinh thái" }, "chua_duoc_dung": ["Future perfect — lớp 11", "Inversion — lớp 12", "Modal perfect — lớp 12"] }
+      ],
+      "chuyen_de": ["Chuyên đề học tập Tiếng Anh 10"],
+      "ghi_chu_chua_chac": [
+        "ngu_phap theo bản đồ ngữ pháp GS 10 phổ biến trong tài liệu dạy học (U1 present tenses, U2 present perfect vs past simple, U3 past continuous, U4 gerund/to-inf, U6 passive with modals, U8 relative clauses) — cần đối chiếu SGK in",
+        "SGK lớp 10 GS có thể được thay bằng bộ mới từ năm học 2025–2026 — cần kiểm tra danh mục SGK hiện hành khi gộp"
+      ]
+    },
+    {
+      "lop": 11,
+      "chuong": [
+        { "id": "anh11-u01", "chu_de": "A long and healthy life (cuộc sống khoẻ mạnh và trường thọ)", "tu_vung": ["life expectancy", "balanced diet", "fitness", "immune system", "chronic disease", "junk food", "workout", "longevity"], "ngu_phap": "Past simple vs present perfect (revisión nâng cao)", "phat_am": "Trọng âm từ có đuôi -ity", "ky_nang": { "doc": "Bài về tuổi thọ và lối sống", "nghe": "Băng về sức khoẻ cộng đồng", "noi": "Trình bày thói quen sống khoẻ", "viet": "Đoạn về chế độ sống khoẻ" }, "chua_duoc_dung": ["Conditional type 3 — lớp 11", "Inversion — lớp 12", "Modal perfect — lớp 12"] },
+        { "id": "anh11-u02", "chu_de": "The generation gap (khoảng cách thế hệ)", "tu_vung": ["generation gap", "extended family", "nuclear family", "conflict", "viewpoint", "obey", "impose", "respect"], "ngu_phap": "Modal verbs: must, have to, should (nghĩa vụ, lời khuyên trong gia đình)", "phat_am": "/æ/ và /e/", "ky_nang": { "doc": "Bài về mâu thuẫn thế hệ", "nghe": "Băng tranh luận gia đình", "noi": "Trình bày quan điểm với bố mẹ", "viet": "Đoạn về khoảng cách thế hệ" }, "chua_duoc_dung": ["Conditional type 3 — lớp 11", "Inversion — lớp 12", "Reported speech nâng cao — lớp 11"] },
+        { "id": "anh11-u03", "chu_de": "Cities of the future (thành phố tương lai)", "tu_vung": ["smart city", "infrastructure", "renewable", "autonomous vehicle", "urban planning", "solar panel", "congestion", "sensor"], "ngu_phap": "The future: future simple, future continuous và future perfect ở mức làm quen", "phat_am": "Trọng âm từ ghép (smart city)", "ky_nang": { "doc": "Bài về thành phố thông minh", "nghe": "Băng dự đoán đô thị tương lai", "noi": "Mô tả thành phố trong mơ", "viet": "Đoạn về thành phố thông minh" }, "chua_duoc_dung": ["Inversion — lớp 12", "Modal perfect — lớp 12", "Relative clauses rút gọn nâng cao — lớp 11"] },
+        { "id": "anh11-u04", "chu_de": "ASEAN and Viet Nam (ASEAN và Việt Nam)", "tu_vung": ["ASEAN", "member state", "cooperation", "summit", "charter", "region", "diplomacy", "cultural exchange"], "ngu_phap": "Passive voice revisión (câu bị động các thì); articles với tên tổ chức", "phat_am": "/p/ và /b/", "ky_nang": { "doc": "Bài về ASEAN", "nghe": "Băng về hợp tác khu vực", "noi": "Giới thiệu vai trò Việt Nam trong ASEAN", "viet": "Đoạn về hợp tác Việt Nam – ASEAN" }, "chua_duoc_dung": ["Conditional type 3 — lớp 11", "Inversion — lớp 12", "Reported speech — lớp 11"] },
+        { "id": "anh11-u05", "chu_de": "Global warming (nóng lên toàn cầu)", "tu_vung": ["global warming", "greenhouse gas", "emission", "melting ice", "sea level rise", "fossil fuel", "carbon dioxide", "consequence"], "ngu_phap": "Conditional sentences revisión (type 1, 2) và giới thiệu type 3", "phat_am": "/ɑː/ và /ɔː/", "ky_nang": { "doc": "Bài về biến đổi khí hậu", "nghe": "Băng về hậu quả nóng lên", "noi": "Trình bày giải pháp giảm phát thải", "viet": "Đoạn về chống nóng lên toàn cầu" }, "chua_duoc_dung": ["Inversion — lớp 12", "Modal perfect — lớp 12", "Reported speech — lớp 11"] },
+        { "id": "anh11-u06", "chu_de": "Preserving our heritage (bảo tồn di sản)", "tu_vung": ["heritage site", "monument", "restoration", "cultural identity", "artifact", "archaeological", "preservation", "UNESCO"], "ngu_phap": "Gerund và to-infinitive revisión nâng cao (verb patterns)", "phat_am": "/ɜː/ và /ə/", "ky_nang": { "doc": "Bài về di sản văn hoá", "nghe": "Băng về di sản thế giới", "noi": "Giới thiệu di sản cần bảo tồn", "viet": "Đoạn về bảo tồn di sản" }, "chua_duoc_dung": ["Inversion — lớp 12", "Modal perfect — lớp 12", "Conditional type 3 — lớp 11"] },
+        { "id": "anh11-u07", "chu_de": "Education options for school leavers (lựa chọn giáo dục sau phổ thông)", "tu_vung": ["school leaver", "university", "vocational training", "admission", "major", "scholarship", "gap year", "qualification"], "ngu_phap": "Phrasal verbs và complex sentences với mệnh đề danh ngữ? — dùng cấu trúc hope/plan/intend + to V, consider + V-ing", "phat_am": "/ɑː/ và /æ/", "ky_nang": { "doc": "Bài về lựa chọn sau tốt nghiệp", "nghe": "Băng tư vấn hướng nghiệp", "noi": "Trình bày kế hoạch sau lớp 12", "viet": "Đoạn về định hướng sau tốt nghiệp" }, "chua_duoc_dung": ["Inversion — lớp 12", "Modal perfect — lớp 12", "Conditional type 3 — lớp 11"] },
+        { "id": "anh11-u08", "chu_de": "New ways to learn (cách học mới)", "tu_vung": ["e-learning", "blended", "self-paced", "online course", "artificial intelligence", "adaptive", "assessment", "interactive"], "ngu_phap": "Relative clauses đầy đủ: defining, non-defining và rút gọn (reduced relative clauses)", "phat_am": "Trọng âm từ 4 âm tiết", "ky_nang": { "doc": "Bài về xu hướng giáo dục", "nghe": "Băng về công nghệ học tập", "noi": "Trình bày lợi ích học online", "viet": "Đoạn về phương pháp học mới" }, "chua_duoc_dung": ["Inversion — lớp 12", "Modal perfect — lớp 12", "Reported speech với Wh- — lớp 11"] },
+        { "id": "anh11-u09", "chu_de": "Social issues (vấn đề xã hội)", "tu_vung": ["social issue", "poverty", "crime", "obesity", "peer pressure", "cyberbullying", "raise awareness", "tackle"], "ngu_phap": "Reported speech: statements, questions, commands với backshift thì", "phat_am": "/ɪə/ và /eə/", "ky_nang": { "doc": "Bài về các vấn đề xã hội", "nghe": "Băng phỏng vấn về áp lực xã hội", "noi": "Trình bày một vấn đề xã hội và giải pháp", "viet": "Đoạn về vấn đề xã hội giới trẻ" }, "chua_duoc_dung": ["Inversion — lớp 12", "Modal perfect — lớp 12", "Conditional type 3 — lớp 11"] },
+        { "id": "anh11-u10", "chu_de": "The ecosystem (hệ sinh thái)", "tu_vung": ["ecosystem", "food chain", "habitat", "conservation", "endangered", "biodiversity", "pollution", "restore"], "ngu_phap": "Articles revisión nâng cao; cấu trúc because of/due to + danh từ", "phat_am": "/pr/, /pl/, /gr/ (cluster)", "ky_nang": { "doc": "Bài về hệ sinh thái", "nghe": "Băng về bảo tồn sinh vật", "noi": "Trình bày về một hệ sinh thái", "viet": "Đoạn về cân bằng hệ sinh thái" }, "chua_duoc_dung": ["Inversion — lớp 12", "Modal perfect — lớp 12", "Conditional type 3 — lớp 11"] }
+      ],
+      "chuyen_de": ["Chuyên đề học tập Tiếng Anh 11"],
+      "ghi_chu_chua_chac": [
+        "ngu_phap theo bản đồ GS 11 phổ biến (U1 present perfect vs past simple, U2 modals, U3 future forms, U4 passive, U9 reported speech) — cần đối chiếu SGK in",
+        "SGK lớp 11 GS có thể thay bằng bộ mới — cần kiểm tra danh mục SGK hiện hành khi gộp"
+      ]
+    },
+    {
+      "lop": 12,
+      "chuong": [
+        { "id": "anh12-u01", "chu_de": "Life stories we admire (cuộc đời đáng ngưỡng mộ)", "tu_vung": ["role model", "achievement", "determination", "overcome", "inspiration", "dedication", "charitable", "legacy"], "ngu_phap": "Past simple vs past perfect; từ chỉ tính cách", "phat_am": "Trọng âm từ có đuôi -ate", "ky_nang": { "doc": "Bài về nhân vật có tầm ảnh hưởng", "nghe": "Băng kể về danh nhân", "noi": "Kể về người truyền cảm hứng", "viet": "Đoạn về tấm gương đáng học tập" }, "chua_duoc_dung": ["Inversion — Unit sau/lớp 12", "Modal perfect — Unit sau", "Conditional mixed — mức làm quen"] },
+        { "id": "anh12-u02", "chu_de": "A multicultural world (thế giới đa văn hoá)", "tu_vung": ["multicultural", "diversity", "immigrant", "assimilate", "cultural identity", "tolerance", "global citizen", "custom"], "ngu_phap": "Articles revisión (the/zero article với danh từ chỉ nhóm người, quốc tịch)", "phat_am": "/ʃ/ và /tʃ/", "ky_nang": { "doc": "Bài về xã hội đa văn hoá", "nghe": "Băng về hội nhập văn hoá", "noi": "Trình bày trải nghiệm đa văn hoá", "viet": "Đoạn về sống trong xã hội đa văn hoá" }, "chua_duoc_dung": ["Inversion — Unit sau/lớp 12", "Modal perfect — Unit sau", "Conditional mixed — mức làm quen"] },
+        { "id": "anh12-u03", "chu_de": "Green living (sống xanh)", "tu_vung": ["green living", "zero-waste", "renewable energy", "consumption", "compost", "carbon-neutral", "upcycle", "ecosystem"], "ngu_phap": "Conditional sentences revisión (type 1, 2, 3) và mixed conditionals ở mức làm quen", "phat_am": "/iː/ và /ɪ/", "ky_nang": { "doc": "Bài về lối sống xanh", "nghe": "Băng về phong cách sống bền vững", "noi": "Trình bày giải pháp sống xanh", "viet": "Đoạn về giảm tác động môi trường" }, "chua_duoc_dung": ["Inversion — Unit sau", "Modal perfect — Unit sau", "Relative clauses rút gọn nâng cao — mức làm quen"] },
+        { "id": "anh12-u04", "chu_de": "Urbanisation (đô thị hoá)", "tu_vung": ["urbanisation", "migrate", "overpopulation", "housing", "slum", "amenity", "infrastructure", "rural-urban"], "ngu_phap": "Passive voice mọi thì; passive with reporting verbs (It is said that...)", "phat_am": "/ʒ/ và /dʒ/", "ky_nang": { "doc": "Bài về đô thị hoá", "nghe": "Băng về vấn đề đô thị", "noi": "Trình bày tác động đô thị hoá", "viet": "Đoạn về đô thị hoá ở Việt Nam" }, "chua_duoc_dung": ["Inversion — Unit sau", "Modal perfect — Unit sau", "Conditional mixed — mức làm quen"] },
+        { "id": "anh12-u05", "chu_de": "The world of work (thế giới việc làm)", "tu_vung": ["employment", "employee", "employer", "work-life balance", "remote work", "shift", "promotion", "resign"], "ngu_phap": "Relative clauses revisión; cấu trúc câu phức trong thư xin việc/đơn ứng tuyển", "phat_am": "Trọng âm từ có đuôi -ee, -er, -or", "ky_nang": { "doc": "Bài về xu hướng việc làm", "nghe": "Băng phỏng vấn xin việc", "noi": "Trình bày kỹ năng cần cho công việc tương lai", "viet": "Đoạn về môi trường làm việc lý tưởng" }, "chua_duoc_dung": ["Inversion — Unit sau", "Modal perfect — Unit sau", "Conditional mixed — mức làm quen"] },
+        { "id": "anh12-u06", "chu_de": "Artificial intelligence (trí tuệ nhân tạo)", "tu_vung": ["artificial intelligence", "algorithm", "automation", "machine learning", "chatbot", "privacy", "bias", "breakthrough"], "ngu_phap": "Reported speech mọi loại (statements, questions, commands) revisión nâng cao", "phat_am": "Trọng âm từ 3 âm tiết (artificial)", "ky_nang": { "doc": "Bài về AI trong đời sống", "nghe": "Băng về tác động của AI", "noi": "Trình bày quan điểm về AI", "viet": "Đoạn về ứng dụng AI" }, "chua_duoc_dung": ["Inversion — Unit sau", "Modal perfect — Unit sau", "Conditional mixed — mức làm quen"] },
+        { "id": "anh12-u07", "chu_de": "Social issues (vấn đề xã hội)", "tu_vung": ["social issue", "unemployment", "peer pressure", "cyberbullying", "substance abuse", "poverty", "fundraising", "advocate"], "ngu_phap": "Gerund và to-infinitive revisión; verb patterns nâng cao (admit doing, promise to do)", "phat_am": "/pl/, /pr/ và /br/", "ky_nang": { "doc": "Bài về vấn đề xã hội hot", "nghe": "Băng tranh luận xã hội", "noi": "Trình bày vấn đề và giải pháp", "viet": "Đoạn về giải pháp vấn đề xã hội" }, "chua_duoc_dung": ["Inversion — Unit sau", "Modal perfect — Unit sau", "Conditional mixed — mức làm quen"] },
+        { "id": "anh12-u08", "chu_de": "Wildlife conservation (bảo tồn động vật hoang dã)", "tu_vung": ["wildlife conservation", "poaching", "habitat destruction", "ivory", "rehabilitation", "anti-trafficking", "biodiversity", "sanctuary"], "ngu_phap": "Modal verbs of deduction (must be, can't be, might be) — mức làm quen", "phat_am": "/aɪ/ và /ɪ/", "ky_nang": { "doc": "Bài về bảo tồn loài", "nghe": "Băng về vườn thú/sanctuary", "noi": "Trình bày biện pháp bảo tồn", "viet": "Đoạn về bảo vệ động vật hoang dã" }, "chua_duoc_dung": ["Inversion — Unit sau", "Modal perfect — Unit sau", "Conditional mixed — mức làm quen"] },
+        { "id": "anh12-u09", "chu_de": "The world of occupations (các nghề nghiệp)", "tu_vung": ["occupation", "freelancer", "vocation", "soft skill", "internship", "colleague", "deadline", "career path"], "ngu_phap": "Relative clauses revisión với whom, whose; reduced relative clauses ở mức làm quen", "phat_am": "/k/ và /g/", "ky_nang": { "doc": "Bài về nghề nghiệp tương lai", "nghe": "Băng hướng nghiệp", "noi": "Trình bày nghề mơ ước", "viet": "Đoạn về chuẩn bị cho nghề nghiệp" }, "chua_duoc_dung": ["Inversion — Unit sau", "Modal perfect — Unit sau", "Conditional mixed — mức làm quen"] },
+        { "id": "anh12-u10", "chu_de": "Lifelong learning (học tập suốt đời)", "tu_vung": ["lifelong learning", "self-improvement", "curiosity", "skill set", "adaptability", "reskill", "upskill", "motivation"], "ngu_phap": "Inversion (Never have I..., Not only... nhưng chỉ ở mức làm quen) và modal perfect (should have done, must have done) — mức làm quen", "phat_am": "Ngữ điệu bài phát biểu ngắn", "ky_nang": { "doc": "Bài về học suốt đời", "nghe": "Băng về kỹ năng tự học", "noi": "Trình bày kế hoạch học tập", "viet": "Đoạn về ý nghĩa học tập suốt đời" }, "chua_duoc_dung": ["Cấu trúc học thuật phục vụ đại học — ngoài chương trình phổ thông", "Điều kiện hỗn hợp phức tạp — ngoài chương trình", "Câu bị động với Reporting verbs nâng cao — mức làm quen"] }
+      ],
+      "chuyen_de": ["Chuyên đề học tập Tiếng Anh 12"],
+      "ghi_chu_chua_chac": [
+        "ngu_phap theo bản đồ GS 12 phổ biến (U1 past perfect revisión, U4 passive mọi thì, U6 reported speech, U9 relative clauses, U10 inversion/modal perfect làm quen) — cần đối chiếu SGK in",
+        "Đề tốt nghiệp 2025 là đề đầu theo GDPT 2018; các năm sau cấu trúc có thể điều chỉnh — cần theo dõi công bố của Bộ"
+      ]
+    }
+  ],
+  "cau_truc_de": [
+    {
+      "loai": "Đề kiểm tra giữa học kì 1 môn Tiếng Anh lớp 10",
+      "lop": 10,
+      "thoi_gian_phut": 60,
+      "phan": [
+        { "ten": "Phần I. Listening", "so_cau": 6, "diem_moi_cau": 0.5, "tong_diem": 3 },
+        { "ten": "Phần II. Pronunciation", "so_cau": 4, "diem_moi_cau": 0.25, "tong_diem": 1 },
+        { "ten": "Phần III. Vocabulary and grammar", "so_cau": 8, "diem_moi_cau": 0.25, "tong_diem": 2 },
+        { "ten": "Phần IV. Reading", "so_cau": 6, "diem_moi_cau": 0.25, "tong_diem": 1.5 },
+        { "ten": "Phần V. Writing", "so_cau": 5, "diem_moi_cau": 0.5, "tong_diem": 2.5 }
+      ],
+      "pham_vi": ["anh10-u01", "anh10-u02", "anh10-u03", "anh10-u04", "anh10-u05"],
+      "ti_le_muc_do": "NB 30%, TH 40%, VD 30%"
+    },
+    {
+      "loai": "Đề kiểm tra cuối học kì 1 môn Tiếng Anh lớp 10",
+      "lop": 10,
+      "thoi_gian_phut": 60,
+      "phan": [
+        { "ten": "Phần I. Listening", "so_cau": 6, "diem_moi_cau": 0.5, "tong_diem": 3 },
+        { "ten": "Phần II. Pronunciation", "so_cau": 4, "diem_moi_cau": 0.25, "tong_diem": 1 },
+        { "ten": "Phần III. Vocabulary and grammar", "so_cau": 8, "diem_moi_cau": 0.25, "tong_diem": 2 },
+        { "ten": "Phần IV. Reading", "so_cau": 6, "diem_moi_cau": 0.25, "tong_diem": 1.5 },
+        { "ten": "Phần V. Writing", "so_cau": 5, "diem_moi_cau": 0.5, "tong_diem": 2.5 }
+      ],
+      "pham_vi": ["anh10-u01", "anh10-u02", "anh10-u03", "anh10-u04", "anh10-u05", "anh10-u06"],
+      "ti_le_muc_do": "NB 30%, TH 40%, VD 30%"
+    },
+    {
+      "loai": "Đề kiểm tra cuối học kì 2 môn Tiếng Anh lớp 10",
+      "lop": 10,
+      "thoi_gian_phut": 60,
+      "phan": [
+        { "ten": "Phần I. Listening", "so_cau": 6, "diem_moi_cau": 0.5, "tong_diem": 3 },
+        { "ten": "Phần II. Pronunciation", "so_cau": 4, "diem_moi_cau": 0.25, "tong_diem": 1 },
+        { "ten": "Phần III. Vocabulary and grammar", "so_cau": 8, "diem_moi_cau": 0.25, "tong_diem": 2 },
+        { "ten": "Phần IV. Reading", "so_cau": 6, "diem_moi_cau": 0.25, "tong_diem": 1.5 },
+        { "ten": "Phần V. Writing", "so_cau": 5, "diem_moi_cau": 0.5, "tong_diem": 2.5 }
+      ],
+      "pham_vi": ["anh10-u07", "anh10-u08", "anh10-u09", "anh10-u10"],
+      "ti_le_muc_do": "NB 30%, TH 40%, VD 30%"
+    },
+    {
+      "loai": "Đề kiểm tra cuối học kì 1 môn Tiếng Anh lớp 11",
+      "lop": 11,
+      "thoi_gian_phut": 60,
+      "phan": [
+        { "ten": "Phần I. Listening", "so_cau": 6, "diem_moi_cau": 0.5, "tong_diem": 3 },
+        { "ten": "Phần II. Pronunciation", "so_cau": 4, "diem_moi_cau": 0.25, "tong_diem": 1 },
+        { "ten": "Phần III. Vocabulary and grammar", "so_cau": 8, "diem_moi_cau": 0.25, "tong_diem": 2 },
+        { "ten": "Phần IV. Reading", "so_cau": 6, "diem_moi_cau": 0.25, "tong_diem": 1.5 },
+        { "ten": "Phần V. Writing", "so_cau": 5, "diem_moi_cau": 0.5, "tong_diem": 2.5 }
+      ],
+      "pham_vi": ["anh11-u01", "anh11-u02", "anh11-u03", "anh11-u04", "anh11-u05", "anh11-u06"],
+      "ti_le_muc_do": "NB 30%, TH 40%, VD 30%"
+    },
+    {
+      "loai": "Đề kiểm tra cuối học kì 2 môn Tiếng Anh lớp 11",
+      "lop": 11,
+      "thoi_gian_phut": 60,
+      "phan": [
+        { "ten": "Phần I. Listening", "so_cau": 6, "diem_moi_cau": 0.5, "tong_diem": 3 },
+        { "ten": "Phần II. Pronunciation", "so_cau": 4, "diem_moi_cau": 0.25, "tong_diem": 1 },
+        { "ten": "Phần III. Vocabulary and grammar", "so_cau": 8, "diem_moi_cau": 0.25, "tong_diem": 2 },
+        { "ten": "Phần IV. Reading", "so_cau": 6, "diem_moi_cau": 0.25, "tong_diem": 1.5 },
+        { "ten": "Phần V. Writing", "so_cau": 5, "diem_moi_cau": 0.5, "tong_diem": 2.5 }
+      ],
+      "pham_vi": ["anh11-u07", "anh11-u08", "anh11-u09", "anh11-u10"],
+      "ti_le_muc_do": "NB 30%, TH 40%, VD 30%"
+    },
+    {
+      "loai": "Đề kiểm tra cuối học kì 1 môn Tiếng Anh lớp 12",
+      "lop": 12,
+      "thoi_gian_phut": 60,
+      "phan": [
+        { "ten": "Phần I. Listening", "so_cau": 6, "diem_moi_cau": 0.5, "tong_diem": 3 },
+        { "ten": "Phần II. Pronunciation", "so_cau": 4, "diem_moi_cau": 0.25, "tong_diem": 1 },
+        { "ten": "Phần III. Vocabulary and grammar", "so_cau": 8, "diem_moi_cau": 0.25, "tong_diem": 2 },
+        { "ten": "Phần IV. Reading", "so_cau": 6, "diem_moi_cau": 0.25, "tong_diem": 1.5 },
+        { "ten": "Phần V. Writing", "so_cau": 5, "diem_moi_cau": 0.5, "tong_diem": 2.5 }
+      ],
+      "pham_vi": ["anh12-u01", "anh12-u02", "anh12-u03", "anh12-u04", "anh12-u05", "anh12-u06"],
+      "ti_le_muc_do": "NB 30%, TH 40%, VD 30%"
+    },
+    {
+      "loai": "Đề kiểm tra cuối học kì 2 môn Tiếng Anh lớp 12",
+      "lop": 12,
+      "thoi_gian_phut": 60,
+      "phan": [
+        { "ten": "Phần I. Listening", "so_cau": 6, "diem_moi_cau": 0.5, "tong_diem": 3 },
+        { "ten": "Phần II. Pronunciation", "so_cau": 4, "diem_moi_cau": 0.25, "tong_diem": 1 },
+        { "ten": "Phần III. Vocabulary and grammar", "so_cau": 8, "diem_moi_cau": 0.25, "tong_diem": 2 },
+        { "ten": "Phần IV. Reading", "so_cau": 6, "diem_moi_cau": 0.25, "tong_diem": 1.5 },
+        { "ten": "Phần V. Writing", "so_cau": 5, "diem_moi_cau": 0.5, "tong_diem": 2.5 }
+      ],
+      "pham_vi": ["anh12-u07", "anh12-u08", "anh12-u09", "anh12-u10"],
+      "ti_le_muc_do": "NB 30%, TH 40%, VD 30%"
+    },
+    {
+      "loai": "Đề thi tốt nghiệp THPT môn Tiếng Anh (từ năm 2025)",
+      "lop": 12,
+      "thoi_gian_phut": 60,
+      "phan": [
+        { "ten": "Phần trắc nghiệm 40 câu", "so_cau": 40, "mo_ta": "Câu 1–8: phát âm, trọng âm; câu 9–24: từ vựng, ngữ pháp, giao tiếp; câu 25–32: đọc hiểu (2 đoạn); câu 33–40: đọc điền từ + sắp xếp hội thoại; mỗi câu 0,25 điểm", "diem_moi_cau": 0.25, "tong_diem": 10 }
+      ],
+      "pham_vi": ["anh12-u01", "anh12-u02", "anh12-u03", "anh12-u04", "anh12-u05", "anh12-u06", "anh12-u07", "anh12-u08", "anh12-u09", "anh12-u10"],
+      "ti_le_muc_do": "NB 30%, TH 40%, VD 30%",
+      "ghi_chu": "Đề 2025 toàn trắc nghiệm 40 câu × 0,25 điểm, 60 phút; không có phần viết — cần theo dõi điều chỉnh của Bộ các năm sau"
+    }
+  ],
+  "phien_ban": 1
+}

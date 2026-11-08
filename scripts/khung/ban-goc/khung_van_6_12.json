@@ -1,0 +1,2388 @@
+{
+  "mon": "Ngữ văn",
+  "nguon": [
+    "Chương trình giáo dục phổ thông môn Ngữ văn (Ban hành kèm theo Thông tư số 32/2018/TT-BGDĐT và sửa đổi, bổ sung tại Thông tư số 13/2022/TT-BGDĐT)",
+    "Bộ Sách giáo khoa Ngữ văn lớp 6, 7, 8, 9, 10, 11, 12 hiện hành: Kết nối tri thức với cuộc sống (KNTT), Chân trời sáng tạo (CTST), Cánh diều (CD)",
+    "Thông tư 22/2021/TT-BGDĐT về đánh giá học sinh THCS và THPT",
+    "Công văn 3175/BGDĐT-GDTrH về đổi mới phương pháp dạy học và kiểm tra, đánh giá môn Ngữ văn",
+    "Đề thi minh họa và Đề thi chính thức Tốt nghiệp THPT từ năm 2025 môn Ngữ văn (Bộ Giáo dục và Đào tạo)",
+    "Cấu trúc đề thi tuyển sinh vào lớp 10 THPT môn Ngữ văn năm 2025-2026 của các Sở GD&ĐT (Hà Nội, TP. Hồ Chí Minh, Đà Nẵng, v.v.)"
+  ],
+  "lop": [
+    {
+      "lop": 6,
+      "chuong": [
+        {
+          "id": "van6-truyen-truyen-thuyet-co-tich",
+          "ten": "Truyện truyền thuyết và truyện cổ tích",
+          "hoc_ky": 1,
+          "the_loai": "Truyện dân gian",
+          "ten_theo_sach": {
+            "KNTT": "Bài 1: Tôi và các bạn / Bài 6: Chuyện kể về những người anh hùng",
+            "CTST": "Bài 1: Lắng nghe lịch sử nước mình / Bài 2: Miền cổ tích",
+            "CD": "Bài 1: Truyện truyền thuyết và cổ tích"
+          },
+          "yeu_cau_can_dat": {
+            "doc": [
+              "Nhận biết được các chi tiết tiêu biểu, đề tài, câu chuyện, nhân vật trong văn bản truyền thuyết và cổ tích.",
+              "Nhận biết được cốt truyện đơn tuyến, lời người kể chuyện ngôi thứ ba và lời nhân vật.",
+              "Nêu được ấn tượng chung về văn bản; nhận biết được chủ đề, bài học và ý nghĩa của truyện."
+            ],
+            "viet": [
+              "Viết được bài văn kể lại một truyện truyền thuyết hoặc truyện cổ tích đã học/đã đọc."
+            ],
+            "noi_nghe": [
+              "Kể lại được một truyện truyền thuyết hoặc cổ tích bằng lời văn của bản thân."
+            ]
+          },
+          "kien_thuc_van_hoc": [
+            "Khái niệm truyền thuyết, cổ tích",
+            "Cốt truyện đơn tuyến, nhân vật truyền thuyết/cổ tích",
+            "Yếu tố hoang đường, kì ảo",
+            "Lời người kể chuyện ngôi thứ ba, lời nhân vật"
+          ],
+          "kien_thuc_tieng_viet": [
+            "Từ đơn và từ phức (từ ghép, từ láy)",
+            "Nghĩa của từ ngữ, cách tra từ điển",
+            "Biện pháp tu từ: So sánh, Nhân hóa"
+          ],
+          "van_ban_trong_sach": [
+            "Thánh Gióng – Dân gian",
+            "Sự tích Hồ Gươm – Dân gian",
+            "Sọ Dừa – Dân gian",
+            "Thạch Sanh – Dân gian",
+            "Em bé thông minh – Dân gian",
+            "Bánh chưng, bánh giầy – Dân gian"
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG bài văn nghị luận phân tích nhân vật hay tác phẩm văn học (lớp 6 chỉ kể lại truyện).",
+            "CHƯA DÙNG khái niệm điểm nhìn nghệ thuật, người kể chuyện toàn trí / hạn tri (chỉ gọi chung là ngôi kể thứ ba).",
+            "CHƯA DÙNG các biện pháp tu từ: Hoán dụ, Ẩn dụ nâng cao, Nói giảm nói tránh, Nói quá (lớp 6 HK2 và lớp 7 mới học).",
+            "CHƯA DÙNG dạng đề bắt buộc phân tích ý nghĩa nhân vật theo thao tác lập luận nghị luận."
+          ],
+          "dang_cau_hoi_doc_hieu": [
+            "Xác định thể loại và ngôi kể của đoạn trích/văn bản.",
+            "Chỉ ra các chi tiết kỳ ảo, hoang đường và nêu tác dụng của chúng.",
+            "Tóm tắt cốt truyện hoặc liệt kê các sự việc chính trong đoạn trích.",
+            "Xác định biện pháp tu từ (so sánh/nhân hóa) và phân tích tác dụng thẩm mỹ.",
+            "Rút ra bài học cuộc sống hoặc thông điệp mà câu chuyện muốn gửi gắm."
+          ],
+          "de_viet_dien_hinh": [
+            "Viết bài văn (khoảng 400 - 500 chữ) kể lại một truyện cổ tích/truyền thuyết bằng lời của em.",
+            "Viết bài văn (khoảng 400 chữ) đóng vai một nhân vật trong truyện cổ tích để kể lại câu chuyện."
+          ],
+          "luu_y_ra_de": "Không dùng các văn bản truyền thuyết/cổ tích quen thuộc trong SGK (như Thánh Gióng, Thạch Sanh) làm ngữ liệu đọc hiểu. Phải chọn ngữ liệu truyền thuyết/cổ tích ngoài SGK. Đề viết không yêu cầu nghị luận phân tích mà chỉ yêu cầu kể lại."
+        },
+        {
+          "id": "van6-tho-luc-bat",
+          "ten": "Thơ lục bát",
+          "hoc_ky": 1,
+          "the_loai": "Thơ",
+          "ten_theo_sach": {
+            "KNTT": "Bài 2: Gõ cửa trái tim",
+            "CTST": "Bài 3: Vẻ đẹp quê hương",
+            "CD": "Bài 2: Thơ lục bát"
+          },
+          "yeu_cau_can_dat": {
+            "doc": [
+              "Nhận biết được thể thơ lục bát: số tiếng, số dòng, vần, nhịp, thanh điệu trong cặp câu lục bát và lục bát biến thể.",
+              "Nhận biết và bước đầu phân tích được tác dụng của các từ láy, biện pháp tu từ ẩn dụ trong bài thơ.",
+              "Nêu được cảm xúc, suy nghĩ về bài thơ; nhận biết được vẻ đẹp tâm hồn con người qua thơ lục bát."
+            ],
+            "viet": [
+              "Tập làm thơ lục bát (bài ngắn 4-8 câu).",
+              "Viết đoạn văn (khoảng 150 - 200 chữ) ghi lại cảm nghĩ về một bài thơ lục bát."
+            ],
+            "noi_nghe": [
+              "Trình bày ý kiến, cảm nghĩ về một bài thơ lục bát."
+            ]
+          },
+          "kien_thuc_van_hoc": [
+            "Đặc điểm thể thơ lục bát (câu lục 6 tiếng, câu bát 8 tiếng, hiệp vần, nhịp 2/2/2, 4/4, 2/4...)",
+            "Lục bát biến thể",
+            "Hình ảnh thơ, cảm xúc chủ đạo"
+          ],
+          "kien_thuc_tieng_viet": [
+            "Biện pháp tu từ: Ẩn dụ (ẩn dụ hình thức, cách thức, phẩm chất, cảm giác)",
+            "Từ láy và tác dụng gợi hình, gợi cảm trong thơ lục bát"
+          ],
+          "van_ban_trong_sach": [
+            "Ca dao về quê hương đất nước – Dân ca",
+            "Việt Nam quê hương ta – Nguyễn Đình Thi",
+            "Hoa bìm – Nguyễn Đức Mậu",
+            "Chuyện cổ tích về loài người – Xuân Quỳnh"
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG bài văn phân tích một bài thơ (lớp 6 chỉ yêu cầu viết ĐOẠN VĂN ghi cảm nghĩ).",
+            "CHƯA DÙNG thuật ngữ 'chủ thể trữ tình' (lớp 10 mới học).",
+            "CHƯA DÙNG các thể thơ 4 chữ, 5 chữ, 7 chữ, thơ tự do (học ở các bài sau và lớp 7-8)."
+          ],
+          "dang_cau_hoi_doc_hieu": [
+            "Xác định thể thơ, cách gieo vần và ngắt nhịp của đoạn thơ/bài thơ lục bát.",
+            "Chỉ ra từ láy được sử dụng và nêu hiệu quả nghệ thuật.",
+            "Phân tích tác dụng của biện pháp tu từ ẩn dụ trong câu thơ.",
+            "Nêu cảm xúc chủ đạo của tác giả thể hiện qua bài thơ.",
+            "Nêu bài học/thông điệp rút ra từ bài thơ."
+          ],
+          "de_viet_dien_hinh": [
+            "Viết đoạn văn (khoảng 150 - 200 chữ) ghi lại cảm nghĩ của em về một bài thơ lục bát (ngữ liệu ngoài SGK).",
+            "Tập làm một bài thơ lục bát (4 - 8 dòng) về chủ đề tình cảm gia đình hoặc quê hương."
+          ],
+          "luu_y_ra_de": "Đề phần viết chỉ yêu cầu ĐOẠN VĂN (150-200 chữ) ghi lại cảm nghĩ, không ra đề BÀI VĂN phân tích tác phẩm."
+        },
+        {
+          "id": "van6-truyen-dong-thoai-va-hoi-ky",
+          "ten": "Truyện đồng thoại và Hồi ký / Ký",
+          "hoc_ky": 1,
+          "the_loai": "Truyện & Ký",
+          "ten_theo_sach": {
+            "KNTT": "Bài 3: Yêu thương và chia sẻ / Bài 4: Quê hương yêu dấu",
+            "CTST": "Bài 4: Những trải nghiệm trong đời",
+            "CD": "Bài 3: Ký / Truyện đồng thoại"
+          },
+          "yeu_cau_can_dat": {
+            "doc": [
+              "Nhận biết được đặc điểm truyện đồng thoại: nhân vật là loài vật được nhân hóa, nét tính cách sinh động.",
+              "Nhận biết được đặc điểm của hồi ký/ký: tính xác thực của sự việc, ngôi kể thứ nhất.",
+              "Hiểu được bài học ứng xử, tình yêu thương con người và tự nhiên qua văn bản."
+            ],
+            "viet": [
+              "Viết bài văn kể lại một trải nghiệm của bản thân (dùng ngôi thứ nhất)."
+            ],
+            "noi_nghe": [
+              "Kể lại một trải nghiệm cá nhân đáng nhớ."
+            ]
+          },
+          "kien_thuc_van_hoc": [
+            "Đặc điểm truyện đồng thoại (nhân hóa loài vật có tính cách con người)",
+            "Đặc điểm ký / hồi ký (người kể chuyện ngôi thứ nhất, tính xác thực)",
+            "Cốt truyện, nhân vật, bài học bài học đời sống"
+          ],
+          "kien_thuc_tieng_viet": [
+            "Cụm từ: Cụm danh từ, cụm động từ, cụm tính từ",
+            "Mở rộng thành phần chính của câu bằng cụm từ"
+          ],
+          "van_ban_trong_sach": [
+            "Bài học đường đời đầu tiên – Tô Hoài",
+            "Giọt sương đêm – Trần Đức Tiến",
+            "Thương nhớ mười hai (trích) – Vũ Bằng",
+            "Trong lòng mẹ – Nguyên Hồng"
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG các thuật ngữ triết lý sâu sắc hoặc nghị luận văn học.",
+            "CHƯA DÙNG thể loại bút ký, tản văn nâng cao (lớp 7-8 học).",
+            "CHƯA DÙNG câu ghép, các thành phần biệt lập."
+          ],
+          "dang_cau_hoi_doc_hieu": [
+            "Xác định thể loại và ngôi kể của đoạn trích.",
+            "Tìm các chi tiết miêu tả ngoại hình/hành động của nhân vật loài vật trong truyện đồng thoại.",
+            "Phân tích tác dụng của việc mở rộng thành phần câu bằng cụm từ.",
+            "Nêu bài học ứng xử mà câu chuyện gợi ra cho bản thân."
+          ],
+          "de_viet_dien_hinh": [
+            "Viết bài văn (khoảng 400 - 500 chữ) kể lại một trải nghiệm sâu sắc của em khiến em trưởng thành hơn.",
+            "Viết bài văn kể lại một kỉ niệm đáng nhớ với người thân hoặc bạn bè."
+          ],
+          "luu_y_ra_de": "Ngữ liệu truyện đồng thoại phải có tính giáo dục nhẹ nhàng, gần gũi với lứa tuổi 11-12."
+        },
+        {
+          "id": "van6-van-ban-nghi-luan",
+          "ten": "Văn bản nghị luận (Nghị luận xã hội đơn giản)",
+          "hoc_ky": 2,
+          "the_loai": "Văn bản nghị luận",
+          "ten_theo_sach": {
+            "KNTT": "Bài 8: Khác biệt và gần gũi",
+            "CTST": "Bài 8: Góc nhìn cuộc sống",
+            "CD": "Bài 7: Văn bản nghị luận"
+          },
+          "yeu_cau_can_dat": {
+            "doc": [
+              "Nhận biết được ý kiến, lý lẽ, bằng chứng trong văn bản nghị luận xã hội đơn giản.",
+              "Nhận biết được mục đích và quan điểm của người viết.",
+              "Liên hệ vấn đề đặt ra trong văn bản với thực tế cuộc sống."
+            ],
+            "viet": [
+              "Viết bài văn trình bày ý kiến về một hiện tượng đời sống (hiện tượng gần gũi với lứa tuổi học sinh)."
+            ],
+            "noi_nghe": [
+              "Trình bày ý kiến về một vấn đề đời sống."
+            ]
+          },
+          "kien_thuc_van_hoc": [
+            "Khái niệm văn bản nghị luận",
+            "Ý kiến (luận điểm chính), Lý lẽ, Bằng chứng (dẫn chứng)"
+          ],
+          "kien_thuc_tieng_viet": [
+            "Từ Hán Việt (yếu tố Hán Việt thông dụng)",
+            "Từ ngữ địa phương và từ ngữ tầng lớp xã hội",
+            "Văn bản và đoạn văn (chủ đề, sự liên kết)"
+          ],
+          "van_ban_trong_sach": [
+            "Xem người ta kìa! – Lạc Thanh",
+            "Hai biển hồ – Dân gian",
+            "Tại sao nên có thú cưng? – Thuỳ Hương",
+            "Bức tranh của em gái tôi – Thạch Lam (kết hợp)"
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG khái niệm Nghị luận văn học (lớp 6 CHƯA học nghị luận văn học).",
+            "CHƯA DÙNG các thao tác lập luận phức tạp như bác bỏ, so sánh đối chiếu nâng cao, quy nạp/diễn dịch chuyên sâu.",
+            "CHƯA DÙNG thuật ngữ luận đề, luận điểm phân cấp (lớp 8 mới phân biệt rõ)."
+          ],
+          "dang_cau_hoi_doc_hieu": [
+            "Xác định ý kiến chính (luận điểm) của người viết trong đoạn văn/văn bản.",
+            "Chỉ ra lý lẽ và bằng chứng được tác giả sử dụng để làm sáng tỏ ý kiến.",
+            "Giải thích nghĩa của từ Hán Việt xuất hiện trong văn bản.",
+            "Em có đồng ý với ý kiến của tác giả không? Vì sao?"
+          ],
+          "de_viet_dien_hinh": [
+            "Viết bài văn (khoảng 400 chữ) trình bày ý kiến của em về hiện tượng học sinh sử dụng điện thoại thông minh quá nhiều.",
+            "Viết bài văn trình bày ý kiến về tầm quan trọng của sự tự tin trong học tập."
+          ],
+          "luu_y_ra_de": "Chỉ ra đề nghị luận xã hội về các hiện tượng gần gũi với học sinh THCS (lớp 6). Tuyệt đối không ra đề nghị luận văn học."
+        },
+        {
+          "id": "van6-van-ban-thong-tin",
+          "ten": "Văn bản thông tin (Thuật lại một sự việc / sự kiện)",
+          "hoc_ky": 2,
+          "the_loai": "Văn bản thông tin",
+          "ten_theo_sach": {
+            "KNTT": "Bài 9: Trái Đất - ngôi nhà chung",
+            "CTST": "Bài 9: Những kinh nghiệm quý báu",
+            "CD": "Bài 8: Văn bản thông tin"
+          },
+          "yeu_cau_can_dat": {
+            "doc": [
+              "Nhận biết được các thông tin chính, chi tiết trong văn bản thông tin.",
+              "Nhận biết được cách sắp xếp thông tin theo trật tự thời gian hoặc nguyên nhân - kết quả.",
+              "Nhận biết tác dụng của phương tiện phi ngôn ngữ (hình ảnh, số liệu, sơ đồ)."
+            ],
+            "viet": [
+              "Viết văn bản thuyết minh thuật lại một sự kiện (lễ hội, hội thao, chuyến tham quan...)."
+            ],
+            "noi_nghe": [
+              "Tóm tắt văn bản thông tin và thuyết minh thuật lại một sự việc."
+            ]
+          },
+          "kien_thuc_van_hoc": [
+            "Đặc điểm văn bản thông tin",
+            "Cấu trúc văn bản thuật lại sự việc (sa-pô, các bước/mốc thời gian, kết quả)"
+          ],
+          "kien_thuc_tieng_viet": [
+            "Dấu câu: Dấu phẩy, dấu chấm phẩy, dấu ngoặc đơn, dấu gạch ngang, dấu chấm hỏi",
+            "Phương tiện phi ngôn ngữ trong văn bản"
+          ],
+          "van_ban_trong_sach": [
+            "Trái Đất - Mẹ của muôn loài – Trịnh Xuân Thuận",
+            "Hang Én – Hà My",
+            "Lễ hội Cồng chiêng Tây Nguyên – Tổng hợp"
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG thuyết minh quy trình/hướng dẫn trò chơi (lớp 7).",
+            "CHƯA DÙNG thuyết minh giải thích hiện tượng tự nhiên (lớp 8).",
+            "CHƯA DÙNG thuật ngữ văn bản đa phương thức phức hợp."
+          ],
+          "dang_cau_hoi_doc_hieu": [
+            "Xác định thông tin chính và sa-pô của văn bản.",
+            "Tóm tắt các sự việc theo trật tự thời gian trong văn bản.",
+            "Nêu công dụng của dấu gạch ngang/ngoặc đơn trong đoạn văn.",
+            "Chỉ ra phương tiện phi ngôn ngữ (hình ảnh/số liệu) và giải thích tác dụng."
+          ],
+          "de_viet_dien_hinh": [
+            "Viết bài văn thuyết minh (khoảng 400 chữ) thuật lại một lễ hội truyền thống hoặc một hội thao tại trường em.",
+            "Viết văn bản thuật lại chuyến tham quan một di tích lịch sử/danh lam thắng cảnh."
+          ],
+          "luu_y_ra_de": "Ngữ liệu đọc hiểu phải có cấu trúc rõ ràng, kèm số liệu hoặc hình ảnh minh họa."
+        }
+      ],
+      "chuyen_de": [],
+      "ghi_chu_chua_chac": [
+        "Thứ tự sắp xếp các bài thơ lục bát và truyền thuyết/cổ tích giữa bộ KNTT và CTST có sự đảo ngược học kỳ nhỏ nhưng cùng nội dung kiến thức."
+      ]
+    },
+    {
+      "lop": 7,
+      "chuong": [
+        {
+          "id": "van7-truyen-ngan-va-tieu-thuyet-thieu-nhi",
+          "ten": "Truyện ngắn và Truyện khoa học viễn tưởng",
+          "hoc_ky": 1,
+          "the_loai": "Truyện",
+          "ten_theo_sach": {
+            "KNTT": "Bài 1: Bầu trời tuổi thơ / Bài 3: Nối tri thức với cuộc sống",
+            "CTST": "Bài 1: Tiếng nói của vạn vật / Bài 3: Những góc nhìn văn học",
+            "CD": "Bài 1: Truyện ngắn và tiểu thuyết"
+          },
+          "yeu_cau_can_dat": {
+            "doc": [
+              "Nhận biết được đề tài, chi tiết tiêu biểu, nhân vật và mối quan hệ giữa các nhân vật.",
+              "Nhận biết và phân tích được tác dụng của việc thay đổi ngôi kể, điểm nhìn.",
+              "Hiểu được đặc điểm của truyện khoa học viễn tưởng: không gian tưởng tượng, công nghệ tương lai, yếu tố kì ảo logic."
+            ],
+            "viet": [
+              "Viết bài văn kể lại một sự việc có thật liên quan đến nhân vật hoặc sự kiện lịch sử.",
+              "Viết bài văn biểu cảm về con người hoặc sự việc."
+            ],
+            "noi_nghe": [
+              "Trình bày ý kiến về một vấn đề suy ngẫm từ tác phẩm."
+            ]
+          },
+          "kien_thuc_van_hoc": [
+            "Cốt truyện, nhân vật, chi tiết tiêu biểu",
+            "Ngôi kể (thứ nhất, thứ ba) và sự thay đổi người kể chuyện",
+            "Đặc điểm truyện khoa học viễn tưởng"
+          ],
+          "kien_thuc_tieng_viet": [
+            "Phó từ và chức năng của phó từ",
+            "Số từ và các loại số từ",
+            "Mở rộng trạng ngữ của câu bằng cụm từ"
+          ],
+          "van_ban_trong_sach": [
+            "Bầy chim chìa vôi – Nguyễn Quang Thiều",
+            "Đi lấy mật – Đoàn Giỏi",
+            "Cuộc chạm trán trên đại dương – Giu-lơ Véc-nơ",
+            "Bắt sấu rừng U Minh Hạ – Sơn Nam"
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG bài văn nghị luận phân tích tác phẩm truyện (lớp 7 chưa viết nghị luận phân tích tác phẩm truyện, lớp 8 mới học).",
+            "CHƯA DÙNG khái niệm điểm nhìn hạn tri/toàn trí chuyên sâu (lớp 11 mới học).",
+            "CHƯA DÙNG các biện pháp tu từ như chơi chữ, điệp thanh (lớp 9)."
+          ],
+          "dang_cau_hoi_doc_hieu": [
+            "Xác định đề tài, ngôi kể và nhân vật chính của đoạn trích.",
+            "Tìm và phân tích ý nghĩa của một chi tiết nghệ thuật tiêu biểu.",
+            "Chỉ ra phó từ/số từ trong câu và giải thích ý nghĩa.",
+            "Phân tích tác dụng của việc mở rộng trạng ngữ trong câu.",
+            "Nêu nhận xét về tính cách nhân vật dựa trên hành động, lời nói."
+          ],
+          "de_viet_dien_hinh": [
+            "Viết bài văn (khoảng 400 - 500 chữ) kể lại một sự việc có thật liên quan đến một nhân vật lịch sử mà em ngưỡng mộ.",
+            "Viết bài văn thể hiện cảm xúc của em về một người thân yêu trong gia đình."
+          ],
+          "luu_y_ra_de": "Phần viết của Lớp 7 HK1 là Văn biểu cảm hoặc Văn kể chuyện lịch sử, CHƯA ra đề phân tích tác phẩm truyện."
+        },
+        {
+          "id": "van7-tho-4-chu-5-chu-va-tho-tru-tinh",
+          "ten": "Thơ 4 chữ, 5 chữ và Thơ trữ tình",
+          "hoc_ky": 1,
+          "the_loai": "Thơ",
+          "ten_theo_sach": {
+            "KNTT": "Bài 2: Khúc nhạc tâm hồn",
+            "CTST": "Bài 2: Bài học cuộc sống",
+            "CD": "Bài 2: Thơ bốn chữ, năm chữ"
+          },
+          "yeu_cau_can_dat": {
+            "doc": [
+              "Nhận biết được thể thơ 4 chữ, 5 chữ: vần chân, vần lưng, vần liền, vần cách, nhịp thơ linh hoạt.",
+              "Nhận biết được tình cảm, cảm xúc của người viết thể hiện qua ngôn ngữ thơ.",
+              "Phân tích được tác dụng của các biện pháp tu từ điệp ngữ, nói giảm nói tránh, nói quá."
+            ],
+            "viet": [
+              "Tập làm bài thơ bốn chữ hoặc năm chữ.",
+              "Viết đoạn văn (khoảng 150 - 200 chữ) ghi lại cảm xúc sau khi đọc một bài thơ bốn chữ hoặc năm chữ."
+            ],
+            "noi_nghe": [
+              "Trình bày cảm xúc về một bài thơ bốn chữ hoặc năm chữ."
+            ]
+          },
+          "kien_thuc_van_hoc": [
+            "Thể thơ 4 chữ, 5 chữ (số tiếng, cách vần, ngắt nhịp)",
+            "Hình ảnh thơ, vần chân/vần lưng, vần liền/vần cách",
+            "Cảm xúc trữ tình"
+          ],
+          "kien_thuc_tieng_viet": [
+            "Biện pháp tu từ: Điệp ngữ (điệp từ, điệp cụm từ, điệp cấu trúc)",
+            "Biện pháp tu từ: Nói quá, Nói giảm nói tránh"
+          ],
+          "van_ban_trong_sach": [
+            "Đồng dao mùa xuân – Nguyễn Khoa Điềm",
+            "Gặp lá cơm nếp – Thanh Thảo",
+            "Sang thu – Hữu Thỉnh",
+            "Ông đồ – Vũ Đình Liên"
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG bài văn phân tích một bài thơ (lớp 7 chỉ viết ĐOẠN VĂN ghi cảm xúc).",
+            "CHƯA DÙNG khái niệm chủ thể trữ tình (lớp 10).",
+            "CHƯA DÙNG thể thơ 6 chữ, 7 chữ, 8 chữ (lớp 8-9 mới học)."
+          ],
+          "dang_cau_hoi_doc_hieu": [
+            "Xác định thể thơ (4 chữ hay 5 chữ) và chỉ ra vần, nhịp của đoạn thơ.",
+            "Tìm biện pháp tu từ (nói quá / nói giảm nói tránh / điệp ngữ) và nêu tác dụng.",
+            "Nêu cảm xúc, tâm trạng của tác giả bộc lộ qua bài thơ.",
+            "Rút ra thông điệp ý nghĩa nhất với em từ bài thơ."
+          ],
+          "de_viet_dien_hinh": [
+            "Viết đoạn văn (khoảng 150 - 200 chữ) ghi lại cảm xúc của em sau khi đọc bài thơ 4 chữ hoặc 5 chữ (ngữ liệu ngoài SGK).",
+            "Tập làm một bài thơ 4 chữ hoặc 5 chữ (gồm 3-4 khổ) về thiên nhiên hoặc thầy cô."
+          ],
+          "luu_y_ra_de": "Phần viết câu 2 chỉ yêu cầu viết ĐOẠN VĂN cảm xúc, không ra đề BÀI VĂN."
+        },
+        {
+          "id": "van7-tuc-ngu-va-van-ban-nghi-luan",
+          "ten": "Tục ngữ và Văn bản nghị luận",
+          "hoc_ky": 2,
+          "the_loai": "Văn bản nghị luận & Tục ngữ",
+          "ten_theo_sach": {
+            "KNTT": "Bài 6: Bài học cuộc sống / Bài 7: Thế giới viễn tưởng",
+            "CTST": "Bài 5: Tục ngữ và danh ngôn / Bài 8: Góc nhìn cuộc sống",
+            "CD": "Bài 5: Tục ngữ / Bài 6: Văn bản nghị luận"
+          },
+          "yeu_cau_can_dat": {
+            "doc": [
+              "Nhận biết được đặc điểm tục ngữ: ngắn gọn, có vần nhịp, đúc kết kinh nghiệm.",
+              "Nhận biết được ý kiến, lý lẽ, bằng chứng trong văn bản nghị luận xã hội và nghị luận văn học đơn giản.",
+              "Phân biệt được lý lẽ khách quan và suy nghĩ cá nhân của người viết."
+            ],
+            "viet": [
+              "Viết bài văn nghị luận về một vấn đề trong đời sống (trình bày ý kiến tán thành hoặc phản đối)."
+            ],
+            "noi_nghe": [
+              "Thảo luận nhóm về một vấn đề đời sống."
+            ]
+          },
+          "kien_thuc_van_hoc": [
+            "Đặc điểm thể loại tục ngữ",
+            "Luận điểm, lý lẽ, bằng chứng trong văn bản nghị luận"
+          ],
+          "kien_thuc_tieng_viet": [
+            "Thuật ngữ và đặc điểm của thuật ngữ",
+            "Nghĩa của từ trong ngữ cảnh",
+            "Rút gọn câu và câu đặc biệt"
+          ],
+          "van_ban_trong_sach": [
+            "Tục ngữ về thiên nhiên và lao động sản xuất – Dân gian",
+            "Tục ngữ về con người và xã hội – Dân gian",
+            "Đức tính đơn giản của Bác Hồ – Phạm Văn Đồng",
+            "Tinh thần yêu nước của nhân dân ta – Hồ Chí Minh"
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG bài văn phân tích tác phẩm văn học (lớp 8 mới học phân tích truyện/thơ).",
+            "CHƯA DÙNG các thành phần biệt lập phức tạp.",
+            "CHƯA DÙNG khái niệm câu ghép và liên kết đoạn nâng cao (lớp 8-9)."
+          ],
+          "dang_cau_hoi_doc_hieu": [
+            "Xác định bài học đúc kết trong câu tục ngữ.",
+            "Chỉ ra ý kiến, lý lẽ và bằng chứng chính trong đoạn văn nghị luận.",
+            "Xác định câu rút gọn/câu đặc biệt và giải thích tác dụng.",
+            "Phân biệt thuật ngữ với từ ngữ thông thường trong đoạn văn."
+          ],
+          "de_viet_dien_hinh": [
+            "Viết bài văn (khoảng 400 - 500 chữ) trình bày ý kiến tán thành của em về việc học sinh tham gia các hoạt động thiện nguyện.",
+            "Viết bài văn nghị luận bày tỏ quan điểm phản đối hành vi bắt nạt học đường."
+          ],
+          "luu_y_ra_de": "Đề nghị luận lớp 7 tập trung vào Nghị luận xã hội (tán thành hay phản đối một quan điểm/hiện tượng)."
+        },
+        {
+          "id": "van7-van-ban-thuyet-minh-quy-trinh",
+          "ten": "Văn bản thuyết minh (Quy trình / Hướng dẫn hoạt động)",
+          "hoc_ky": 2,
+          "the_loai": "Văn bản thông tin",
+          "ten_theo_sach": {
+            "KNTT": "Bài 9: Trang sách mở ra thế giới",
+            "CTST": "Bài 7: Những kinh nghiệm quý báu",
+            "CD": "Bài 8: Văn bản thông tin"
+          },
+          "yeu_cau_can_dat": {
+            "doc": [
+              "Nhận biết được đặc điểm văn bản thuyết minh về một quy trình hoặc hướng dẫn trò chơi/hoạt động.",
+              "Hiểu được tác dụng của việc sử dụng cước chú, tài liệu tham khảo.",
+              "Nhận biết thông tin được trình bày qua kênh chữ và kênh hình."
+            ],
+            "viet": [
+              "Viết văn bản thuyết minh về một quy trình (hướng dẫn cách làm một sản phẩm hoặc các bước thực hiện một trò chơi/hoạt động)."
+            ],
+            "noi_nghe": [
+              "Giải thích quy trình thực hiện một hoạt động hoặc luật lệ một trò chơi."
+            ]
+          },
+          "kien_thuc_van_hoc": [
+            "Cấu trúc văn bản quy trình (Mục đích, Chuẩn bị, Các bước thực hiện, Yêu cầu thành phẩm)"
+          ],
+          "kien_thuc_tieng_viet": [
+            "Cước chú và cách dùng cước chú",
+            "Tài liệu tham khảo và cách trích dẫn đơn giản",
+            "Phương tiện phi ngôn ngữ (hình ảnh minh họa các bước)"
+          ],
+          "van_ban_trong_sach": [
+            "Cách gọt củ hoa thủy tiên – Vũ Khiêu",
+            "Trò chơi kéo co – Tổng hợp",
+            "Phương pháp đọc sách hiệu quả – Tổng hợp"
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG thuyết minh giải thích hiện tượng tự nhiên (lớp 8).",
+            "CHƯA DÙNG thuyết minh về danh lam thắng cảnh phức hợp (lớp 8-9).",
+            "CHƯA DÙNG trích dẫn tài liệu tham khảo theo chuẩn APA/IEEE phức tạp (lớp 11)."
+          ],
+          "dang_cau_hoi_doc_hieu": [
+            "Xác định mục đích chính và đối tượng thuyết minh của văn bản.",
+            "Liệt kê các bước trong quy trình được thuyết minh.",
+            "Chỉ ra vai trò của cước chú trong đoạn văn.",
+            "Phân tích tác dụng của hình ảnh/sơ đồ minh họa các bước."
+          ],
+          "de_viet_dien_hinh": [
+            "Viết bài văn thuyết minh (khoảng 400 - 500 chữ) hướng dẫn quy trình làm một món ăn đơn giản hoặc một đồ dùng học tập tái chế.",
+            "Viết bài văn thuyết minh hướng dẫn luật chơi và cách tổ chức một trò chơi dân gian."
+          ],
+          "luu_y_ra_de": "Đề yêu cầu rõ các bước quy trình mạch lạc, rõ ràng."
+        }
+      ],
+      "chuyen_de": [],
+      "ghi_chu_chua_chac": [
+        "Văn bản tục ngữ được xếp ở HK1 hay HK2 có sự khác nhau nhỏ giữa sách Chân trời sáng tạo và Cánh diều."
+      ]
+    },
+    {
+      "lop": 8,
+      "chuong": [
+        {
+          "id": "van8-truyen-ngan-hien-dai-va-truyen-cuoi",
+          "ten": "Truyện ngắn hiện đại, Truyện lịch sử và Truyện cười",
+          "hoc_ky": 1,
+          "the_loai": "Truyện",
+          "ten_theo_sach": {
+            "KNTT": "Bài 1: Câu chuyện của lịch sử / Bài 6: Thế giới viễn tưởng",
+            "CTST": "Bài 1: Những gương mặt thân yêu / Bài 6: Chân dung cuộc sống",
+            "CD": "Bài 1: Truyện ngắn / Bài 6: Truyện cười"
+          },
+          "yeu_cau_can_dat": {
+            "doc": [
+              "Nhận biết và phân tích được cốt truyện đơn tuyến và đa tuyến.",
+              "Nhận biết được nhân vật, lời người kể chuyện ngôi thứ nhất và ngôi thứ ba hạn tri/toàn trí bước đầu.",
+              "Nhận biết được bối cảnh lịch sử, văn hóa được phản ánh trong truyện; đặc điểm tiếng cười trong truyện cười."
+            ],
+            "viet": [
+              "Viết bài văn kể lại một chuyến đi hoặc một hoạt động xã hội có để lại ấn tượng sâu sắc.",
+              "Viết bài văn phân tích một tác phẩm truyện (cốt truyện, nhân vật)."
+            ],
+            "noi_nghe": [
+              "Trình bày ý kiến về một tác phẩm truyện hoặc một sự việc xã hội."
+            ]
+          },
+          "kien_thuc_van_hoc": [
+            "Cốt truyện đơn tuyến và đa tuyến",
+            "Nhân vật chính, nhân vật phụ, bối cảnh không gian - thời gian",
+            "Đặc điểm truyện lịch sử, truyện cười (tiếng cười trào phúng, mỉa mai)"
+          ],
+          "kien_thuc_tieng_viet": [
+            "Từ ngữ địa phương và biệt ngữ xã hội",
+            "Sắc thái nghĩa của từ ngữ và việc lựa chọn từ ngữ",
+            "Trợ từ, Thán từ và công dụng"
+          ],
+          "van_ban_trong_sach": [
+            "Tôi đi học – Thanh Tịnh",
+            "Gió lạnh đầu mùa – Thạch Lam",
+            "Lá cờ thêu sáu chữ vàng (trích) – Nguyễn Huy Tưởng",
+            "Lão Hạc – Nam Cao",
+            "May không đi giày – Truyện cười dân gian"
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG khái niệm điểm nhìn trần thuật tự do, dòng hồi tưởng phức hợp (lớp 11-12).",
+            "CHƯA DÙNG bài văn nghị luận so sánh hai tác phẩm truyện (lớp 11-12 mới học).",
+            "CHƯA DÙNG các thành phần biệt lập nâng cao hay câu ghép nhiều tầng bậc."
+          ],
+          "dang_cau_hoi_doc_hieu": [
+            "Xác định cốt truyện (đơn tuyến hay đa tuyến) và ngôi kể của câu chuyện.",
+            "Phân tích tính cách nhân vật thể hiện qua cử chỉ, lời nói và suy nghĩ.",
+            "Tìm trợ từ/thán từ trong đoạn trích và phân tích sắc thái biểu cảm.",
+            "Chỉ ra từ ngữ địa phương/biệt ngữ xã hội và giải thích tác dụng.",
+            "Rút ra ý nghĩa bài học hoặc bản chất của tiếng cười trào phúng."
+          ],
+          "de_viet_dien_hinh": [
+            "Viết bài văn (khoảng 500 chữ) phân tích nhân vật trong một truyện ngắn (ngữ liệu ngoài SGK).",
+            "Viết bài văn kể lại một chuyến đi trải nghiệm hoặc hoạt động thiện nguyện đáng nhớ của em."
+          ],
+          "luu_y_ra_de": "Từ Lớp 8 bắt đầu xuất hiện kiểu bài 'Nghị luận phân tích một tác phẩm truyện/nhân vật truyện'."
+        },
+        {
+          "id": "van8-tho-6-chu-7-chu-va-tho-doan-truong",
+          "ten": "Thơ 6 chữ, 7 chữ và Thơ tự do",
+          "hoc_ky": 1,
+          "the_loai": "Thơ",
+          "ten_theo_sach": {
+            "KNTT": "Bài 2: Vẻ đẹp cổ điển / Bài 4: Tiếng nói của tình yêu",
+            "CTST": "Bài 2: Những bài thơ về quê hương",
+            "CD": "Bài 2: Thơ sáu chữ, bảy chữ"
+          },
+          "yeu_cau_can_dat": {
+            "doc": [
+              "Nhận biết và phân tích được đặc điểm thể thơ 6 chữ, 7 chữ: số tiếng, vần, nhịp, bố cục.",
+              "Nhận biết được nét độc đáo của bài thơ qua từ ngữ, hình ảnh, các biện pháp tu từ (đảo ngữ, câu hỏi tu từ).",
+              "Tình cảm, cảm xúc của chủ thể trữ tình bộc lộ trong bài thơ."
+            ],
+            "viet": [
+              "Tập làm bài thơ sáu chữ hoặc bảy chữ.",
+              "Viết bài văn phân tích một bài thơ (thơ 6 chữ, 7 chữ hoặc thơ tự do)."
+            ],
+            "noi_nghe": [
+              "Thảo luận về một bài thơ 6 chữ, 7 chữ."
+            ]
+          },
+          "kien_thuc_van_hoc": [
+            "Thể thơ 6 chữ, 7 chữ, thơ tự do",
+            "Bố cục bài thơ, nhịp thơ, gieo vần (vần chân, vần lưng)",
+            "Hình ảnh thơ, cảm xúc chủ đạo"
+          ],
+          "kien_thuc_tieng_viet": [
+            "Biện pháp tu từ: Đảo ngữ, Câu hỏi tu từ",
+            "Từ láy và tác dụng gợi hình, gợi cảm nâng cao"
+          ],
+          "van_ban_trong_sach": [
+            "Nắng mới – Lưu Trọng Lư",
+            "Đồng chí – Chính Hữu",
+            "Quê hương – Tế Hanh",
+            "Bếp lửa – Bằng Việt"
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG thuật ngữ thơ tượng trưng, thơ siêu thực (lớp 11 mới học).",
+            "CHƯA DÙNG khái niệm 'chủ thể trữ tình' phân mảnh (lớp 10-11).",
+            "CHƯA DÙNG bài văn nghị luận so sánh 2 bài thơ."
+          ],
+          "dang_cau_hoi_doc_hieu": [
+            "Xác định thể thơ (6 chữ/7 chữ), cách gieo vần và ngắt nhịp.",
+            "Phân tích tác dụng của biện pháp tu từ đảo ngữ hoặc câu hỏi tu từ.",
+            "Phân tích nét đặc sắc của một hình ảnh thơ nổi bật.",
+            "Nêu cảm xúc chủ đạo của tác giả thể hiện qua đoạn thơ."
+          ],
+          "de_viet_dien_hinh": [
+            "Viết bài văn (khoảng 500 chữ) phân tích một bài thơ 6 chữ hoặc 7 chữ (ngữ liệu ngoài SGK).",
+            "Tập làm một bài thơ 7 chữ (gồm 3-4 khổ) thể hiện tình yêu thiên nhiên/gia đình."
+          ],
+          "luu_y_ra_de": "Từ Lớp 8, yêu cầu viết bài thơ/phân tích bài thơ đã thành BÀI VĂN hoàn chỉnh (chứ không chỉ dừng ở đoạn cảm xúc như lớp 6, 7)."
+        },
+        {
+          "id": "van8-van-ban-nghi-luan",
+          "ten": "Văn bản nghị luận (Nghị luận xã hội & Phân tích văn học)",
+          "hoc_ky": 2,
+          "the_loai": "Văn bản nghị luận",
+          "ten_theo_sach": {
+            "KNTT": "Bài 7: Yêu thương và hi vọng / Bài 8: Nhà văn và tác phẩm",
+            "CTST": "Bài 4: Sức mạnh của lời nói / Bài 8: Vấn đề xã hội",
+            "CD": "Bài 4: Văn bản nghị luận"
+          },
+          "yeu_cau_can_dat": {
+            "doc": [
+              "Nhận biết được luận điểm, lý lẽ, bằng chứng tiêu biểu trong văn bản nghị luận.",
+              "Mối quan hệ giữa luận điểm, lý lẽ và bằng chứng; phân biệt luận điểm chính và luận điểm phụ.",
+              "Nhận biết được mục đích nghị luận và quan điểm của người viết."
+            ],
+            "viet": [
+              "Viết bài văn nghị luận về một vấn đề đời sống (nghị luận xã hội).",
+              "Viết bài văn phân tích một tác phẩm văn học (truyện hoặc thơ)."
+            ],
+            "noi_nghe": [
+              "Trình bày ý kiến về một vấn đề xã hội hoặc một tác phẩm nghệ thuật."
+            ]
+          },
+          "kien_thuc_van_hoc": [
+            "Mối quan hệ giữa luận đề, luận điểm, lý lẽ, bằng chứng",
+            "Nghị luận văn học (phân tích nhân vật, cốt truyện, chủ đề, hình ảnh thơ)"
+          ],
+          "kien_thuc_tieng_viet": [
+            "Thành phần biệt lập: Tình thái, Cảm thán, Gọi - đáp, Phụ chú",
+            "Câu khẳng định, câu phủ định, câu cảm thán, câu cầu khiến"
+          ],
+          "van_ban_trong_sach": [
+            "Hịch tướng sĩ – Trần Quốc Tuấn",
+            "Nước Đại Việt ta – Nguyễn Trãi",
+            "Chiếu dời đô – Lý Công Uẩn",
+            "Bàn về đọc sách – Chu Quang Tiềm"
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG thao tác lập luận bác bỏ chuyên sâu, so sánh đối chiếu văn học nâng cao (lớp 11).",
+            "CHƯA DÙNG khái niệm 'nghị luận về hai ý kiến trái chiều' (lớp 12)."
+          ],
+          "dang_cau_hoi_doc_hieu": [
+            "Xác định luận đề và các luận điểm chính trong văn bản nghị luận.",
+            "Chỉ ra lý lẽ và dẫn chứng được dùng để chứng minh cho luận điểm.",
+            "Tìm thành phần biệt lập (tình thái/phụ chú...) trong câu và nêu tác dụng.",
+            "Phân tích tính thuyết phục của bài văn nghị luận."
+          ],
+          "de_viet_dien_hinh": [
+            "Viết bài văn (khoảng 500 - 600 chữ) nghị luận về tầm quan trọng của việc tự học đối với học sinh.",
+            "Viết bài văn nghị luận phân tích nhân vật người cha trong một câu chuyện ngắn (ngữ liệu ngoài SGK)."
+          ],
+          "luu_y_ra_de": "Phần viết văn nghị luận xã hội hoặc văn học có độ dài chuẩn khoảng 500 - 600 chữ."
+        },
+        {
+          "id": "van8-van-ban-thuyet-minh-hien-tuong-tu-nhien",
+          "ten": "Văn bản thuyết minh (Giải thích hiện tượng tự nhiên)",
+          "hoc_ky": 2,
+          "the_loai": "Văn bản thông tin",
+          "ten_theo_sach": {
+            "KNTT": "Bài 9: Hướng về nguồn cội",
+            "CTST": "Bài 9: Âm thanh của tự nhiên",
+            "CD": "Bài 8: Văn bản thông tin"
+          },
+          "yeu_cau_can_dat": {
+            "doc": [
+              "Nhận biết được cấu trúc văn bản thuyết minh giải thích một hiện tượng tự nhiên (nguyên nhân, diễn biến, kết quả).",
+              "Hiểu được cách trình bày thông tin theo trật tự thời gian, quan hệ nguyên nhân - kết quả.",
+              "Phân tích hiệu quả của phương tiện phi ngôn ngữ (hình ảnh, biểu đồ, sơ đồ)."
+            ],
+            "viet": [
+              "Viết bài văn thuyết minh giải thích một hiện tượng tự nhiên.",
+              "Viết bài văn giới thiệu một cuốn sách hoặc danh lam thắng cảnh."
+            ],
+            "noi_nghe": [
+              "Thuyết minh giải thích một hiện tượng tự nhiên hoặc giới thiệu danh lam thắng cảnh."
+            ]
+          },
+          "kien_thuc_van_hoc": [
+            "Cấu trúc văn bản thuyết minh hiện tượng tự nhiên"
+          ],
+          "kien_thuc_tieng_viet": [
+            "Câu đơn và câu ghép",
+            "Các kiểu câu ghép (câu ghép đẳng lập, câu ghép chính phụ)",
+            "Cách nối các vế câu ghép (dùng từ nối, dùng dấu câu)"
+          ],
+          "van_ban_trong_sach": [
+            "Sao băng là gì? – Tổng hợp",
+            "Mưa băng tuyết – Tổng hợp",
+            "Vịnh Hạ Long – Tổng hợp",
+            "Khám phá Sơn Đoòng – Tổng hợp"
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG văn bản thuyết minh lồng ghép miêu tả, biểu cảm phức tạp (lớp 9).",
+            "CHƯA DÙNG thuyết minh về một tác phẩm nghệ thuật/phim ảnh (lớp 10)."
+          ],
+          "dang_cau_hoi_doc_hieu": [
+            "Xác định hiện tượng tự nhiên được giải thích trong văn bản.",
+            "Tóm tắt các nguyên nhân và diễn biến của hiện tượng tự nhiên đó.",
+            "Chỉ ra câu ghép trong đoạn văn và xác định quan hệ giữa các vế câu.",
+            "Phân tích tác dụng của sơ đồ/hình ảnh minh họa trong bài."
+          ],
+          "de_viet_dien_hinh": [
+            "Viết bài văn (khoảng 500 chữ) thuyết minh giải thích nguyên nhân và tác hại của hiện tượng Triều cường / Bão lũ.",
+            "Viết bài văn giới thiệu một danh lam thắng cảnh ở quê hương em."
+          ],
+          "luu_y_ra_de": "Chỉ chọn ngữ liệu thuyết minh giải thích hiện tượng tự nhiên có tính khoa học, chuẩn xác."
+        }
+      ],
+      "chuyen_de": [],
+      "ghi_chu_chua_chac": [
+        "Văn bản Hịch tướng sĩ, Nước Đại Việt ta chuyển sang lớp 8 ở GDPT 2018 (chương trình 2006 xếp ở lớp 8 HK2 nhưng cách tiếp cận khác hẳn)."
+      ]
+    },
+    {
+      "lop": 9,
+      "chuong": [
+        {
+          "id": "van9-truyen-truyen-ky-va-truyen-tho-nom",
+          "ten": "Truyện truyền kỳ và Truyện thơ Nôm",
+          "hoc_ky": 1,
+          "the_loai": "Truyện trung đại",
+          "ten_theo_sach": {
+            "KNTT": "Bài 1: Thế giới kì ảo / Bài 3: Khát vọng tự do",
+            "CTST": "Bài 1: Thương nhớ quê hương / Bài 3: Yếu tố kì ảo",
+            "CD": "Bài 1: Truyện truyền kỳ và truyện thơ Nôm"
+          },
+          "yeu_cau_can_dat": {
+            "doc": [
+              "Nhận biết và phân tích được các yếu tố kỳ ảo trong truyện truyền kỳ; vai trò của yếu tố kỳ ảo đối với cốt truyện và chủ đề.",
+              "Nhận biết được đặc điểm truyện thơ Nôm: cốt truyện, nhân vật, ngôn ngữ bác học và bình dân, giá trị nhân đạo.",
+              "Phân tích tâm trạng nhân vật qua hình tượng nghệ thuật và ngôn ngữ miêu tả nội tâm."
+            ],
+            "viet": [
+              "Viết bài văn nghị luận phân tích một tác phẩm truyện (truyện truyền kỳ / truyện thơ Nôm)."
+            ],
+            "noi_nghe": [
+              "Trình bày ý kiến về một vấn đề xã hội gợi ra từ tác phẩm văn học trung đại."
+            ]
+          },
+          "kien_thuc_van_hoc": [
+            "Đặc điểm truyện truyền kỳ (thực - ảo kết hợp)",
+            "Đặc điểm truyện thơ Nôm (thể lục bát/song thất lục bát, cốt truyện, nhân vật)",
+            "Giá trị nhân đạo và giá trị phản ánh xã hội"
+          ],
+          "kien_thuc_tieng_viet": [
+            "Biện pháp tu từ: Chơi chữ, Điệp thanh, Điệp vần",
+            "Từ Hán Việt nâng cao, sự phát triển của từ vựng tiếng Việt",
+            "Điển tích, điển cố"
+          ],
+          "van_ban_trong_sach": [
+            "Chuyện người con gái Nam Xương – Nguyễn Dữ",
+            "Chuyện cũ trong phủ chúa Trịnh – Phạm Đình Hổ",
+            "Chị em Thúy Kiều (trích Truyện Kiều) – Nguyễn Du",
+            "Kiều ở lầu Ngưng Bích (trích Truyện Kiều) – Nguyễn Du",
+            "Lục Vân Tiên cứu Kiều Nguyệt Nga – Nguyễn Đình Chiểu"
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG khái niệm lý luận văn học phức tạp như 'tính chỉnh thể', 'thi pháp học', 'điểm nhìn trần thuật tự do' (lớp 10-12).",
+            "CHƯA DÙNG bài văn nghị luận so sánh 2 tác phẩm trung đại (lớp 11)."
+          ],
+          "dang_cau_hoi_doc_hieu": [
+            "Chỉ ra các chi tiết kỳ ảo trong đoạn trích và nêu tác dụng nghệ thuật.",
+            "Phân tích tâm trạng của nhân vật qua ngôn ngữ miêu tả nội tâm.",
+            "Xác định và giải thích ý nghĩa của điển tích, điển cố hoặc từ Hán Việt.",
+            "Phân tích biện pháp tu từ chơi chữ / điệp thanh / điệp vần.",
+            "Nêu cảm nhận về giá trị nhân đạo của tác phẩm."
+          ],
+          "de_viet_dien_hinh": [
+            "Viết bài văn (khoảng 600 chữ) phân tích nhân vật Vũ Nương trong 'Chuyện người con gái Nam Xương' hoặc nhân vật trong một truyện truyền kỳ (ngữ liệu ngoài SGK).",
+            "Viết bài văn phân tích giá trị tố cáo xã hội qua một đoạn trích truyện thơ Nôm ngoài SGK."
+          ],
+          "luu_y_ra_de": "Từ năm 2025 (thi vào lớp 10), BẮT BUỘC dùng ngữ liệu ngoài SGK cho bài kiểm tra. Không lấy trích đoạn Truyện Kiều hay Chuyện người con gái Nam Xương trong SGK làm đề thi."
+        },
+        {
+          "id": "van9-tho-tam-chu-va-tho-doan-truong",
+          "ten": "Thơ 8 chữ và Thơ tự do hiện đại",
+          "hoc_ky": 1,
+          "the_loai": "Thơ",
+          "ten_theo_sach": {
+            "KNTT": "Bài 2: Những khoảng lặng tâm hồn",
+            "CTST": "Bài 2: Hồn thơ đất Việt",
+            "CD": "Bài 2: Thơ tám chữ và thơ tự do"
+          },
+          "yeu_cau_can_dat": {
+            "doc": [
+              "Nhận biết và phân tích được đặc điểm thể thơ 8 chữ (gieo vần, ngắt nhịp linh hoạt).",
+              "Phân tích được mạch cảm xúc, hình ảnh thơ, ngôn ngữ thơ tự do hiện đại.",
+              "Hiểu được các chuyển biến tâm trạng, suy ngẫm triết lý nhẹ nhàng trong thơ hiện đại."
+            ],
+            "viet": [
+              "Làm một bài thơ 8 chữ.",
+              "Viết bài văn phân tích một bài thơ / đoạn thơ 8 chữ hoặc thơ tự do."
+            ],
+            "noi_nghe": [
+              "Trình bày bài phát biểu cảm nghĩ về một bài thơ hiện đại."
+            ]
+          },
+          "kien_thuc_van_hoc": [
+            "Thể thơ 8 chữ (cách ngắt nhịp 3/5, 3/3/2, gieo vần chân/vần cách)",
+            "Thơ tự do hiện đại, mạch cảm xúc, hình ảnh biểu tượng",
+            "Cảm xúc trữ tình và cảm hứng chủ đạo"
+          ],
+          "kien_thuc_tieng_viet": [
+            "Biến đổi câu: Mở rộng câu, rút gọn câu, biến đổi trật tự từ",
+            "Biện pháp tu từ: Điệp từ, điệp ngữ, Ẩn dụ chuyển đổi cảm giác"
+          ],
+          "van_ban_trong_sach": [
+            "Mùa xuân nho nhỏ – Thanh Hải",
+            "Viếng lăng Bác – Viễn Phương",
+            "Sang thu – Hữu Thỉnh",
+            "Bếp lửa – Bằng Việt",
+            "Ánh trăng – Nguyễn Duy"
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG khái niệm 'chủ thể trữ tình' chuyên sâu (lớp 10 mới dùng).",
+            "CHƯA DÙNG thơ tượng trưng, thơ siêu thực (lớp 11).",
+            "CHƯA DÙNG bài văn nghị luận so sánh hai bài thơ."
+          ],
+          "dang_cau_hoi_doc_hieu": [
+            "Xác định thể thơ (8 chữ / tự do) và phân tích mạch cảm xúc của đoạn thơ.",
+            "Phân tích tác dụng của biện pháp tu từ ẩn dụ chuyển đổi cảm giác.",
+            "Nêu ý nghĩa của các hình ảnh biểu tượng trong bài thơ.",
+            "Phân tích tác dụng của việc thay đổi trật tự từ trong câu thơ."
+          ],
+          "de_viet_dien_hinh": [
+            "Viết bài văn (khoảng 600 chữ) phân tích một bài thơ 8 chữ hoặc thơ tự do viết về tình cảm gia đình / quê hương (ngữ liệu ngoài SGK).",
+            "Tập làm bài thơ 8 chữ (gồm 3 khổ) bày tỏ cảm xúc về tuổi học trò."
+          ],
+          "luu_y_ra_de": "Phân tích thơ ở Lớp 9 yêu cầu phân tích cả nội dung cảm xúc lẫn hình thức nghệ thuật (nhịp, vần, BPTT)."
+        },
+        {
+          "id": "van9-kich-ban-van-hoc-va-truyen-ngan-hien-dai",
+          "ten": "Kịch bản văn học (Bi kịch / Hài kịch) và Truyện ngắn hiện đại",
+          "hoc_ky": 2,
+          "the_loai": "Kịch & Truyện",
+          "ten_theo_sach": {
+            "KNTT": "Bài 6: Khát vọng hòa bình / Bài 7: Cuộc sống xung quanh",
+            "CTST": "Bài 6: Khái quát kịch bản / Bài 7: Sức mạnh con người",
+            "CD": "Bài 6: Kịch bản văn học / Bài 7: Truyện ngắn hiện đại"
+          },
+          "yeu_cau_can_dat": {
+            "doc": [
+              "Nhận biết được xung đột kịch, hành động kịch, lời thoại (đối thoại, độc thoại, độc thoại nội tâm), tính cách nhân vật kịch.",
+              "Nhận biết và phân tích được điểm nhìn trần thuật, nghệ thuật khắc họa nhân vật trong truyện ngắn hiện đại.",
+              "Hiểu được tư tưởng, triết lý nhân sinh gửi gắm trong kịch bản và truyện ngắn."
+            ],
+            "viet": [
+              "Viết bài văn nghị luận về một vấn đề cần giải quyết (con người trong mối quan hệ với xã hội/tự nhiên).",
+              "Viết bài văn phân tích một đoạn trích kịch hoặc một tác phẩm truyện ngắn."
+            ],
+            "noi_nghe": [
+              "Thảo luận về một xung đột trong cuộc sống gợi ra từ kịch/truyện."
+            ]
+          },
+          "kien_thuc_van_hoc": [
+            "Khái niệm kịch bản văn học, xung đột kịch, đối thoại, độc thoại, chỉ dẫn sân khấu",
+            "Truyện ngắn hiện đại, độc thoại nội tâm, điểm nhìn trần thuật"
+          ],
+          "kien_thuc_tieng_viet": [
+            "Lỗi logic, lỗi quan hệ từ và cách sửa lỗi diễn đạt",
+            "Nghĩa của câu và mục đích nói (hành động nói)"
+          ],
+          "van_ban_trong_sach": [
+            "Vũ Như Tô (trích Vĩnh biệt Cửu Trùng Đài) – Nguyễn Huy Tưởng",
+            "Lặng lẽ Sa Pa – Thành Long",
+            "Làng – Kim Lân",
+            "Chiếc lược ngà – Nguyễn Quang Sáng"
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG bi kịch cổ điển phương Tây phức tạp (lớp 11).",
+            "CHƯA DÙNG bài văn nghị luận so sánh 2 tác phẩm kịch/truyện."
+          ],
+          "dang_cau_hoi_doc_hieu": [
+            "Xác định xung đột kịch chính trong đoạn trích kịch.",
+            "Phân biệt lời đối thoại, độc thoại và chỉ dẫn sân khấu.",
+            "Phân tích diễn biến tâm trạng của nhân vật qua độc thoại nội tâm.",
+            "Chỉ ra lỗi logic/quan hệ từ trong câu và nêu cách sửa."
+          ],
+          "de_viet_dien_hinh": [
+            "Viết bài văn (khoảng 600 chữ) phân tích nhân vật trong một truyện ngắn hiện đại (ngữ liệu ngoài SGK).",
+            "Viết bài văn nghị luận trình bày giải pháp cho vấn đề ô nhiễm môi trường tại địa phương em."
+          ],
+          "luu_y_ra_de": "Đề kiểm tra kịch phải chọn đoạn trích kịch ngắn gọn, có xung đột rõ ràng."
+        },
+        {
+          "id": "van9-van-ban-nghi-luan-va-thuyet-minh-tiet-che",
+          "ten": "Văn bản nghị luận xã hội và Văn bản thuyết minh lồng ghép miêu tả, biểu cảm",
+          "hoc_ky": 2,
+          "the_loai": "Văn bản nghị luận & Thuyết minh",
+          "ten_theo_sach": {
+            "KNTT": "Bài 8: Điểm nhìn cuộc sống / Bài 9: Khám phá di sản",
+            "CTST": "Bài 8: Vấn đề xã hội / Bài 9: Văn bản thông tin",
+            "CD": "Bài 8: Văn bản nghị luận / Bài 9: Văn bản thuyết minh"
+          },
+          "yeu_cau_can_dat": {
+            "doc": [
+              "Nhận biết được luận đề, hệ thống luận điểm, lý lẽ và bằng chứng sắc bén trong văn bản nghị luận xã hội.",
+              "Nhận biết được cấu trúc văn bản thuyết minh danh lam thắng cảnh / sản phẩm văn hóa có lồng ghép yếu tố miêu tả, biểu cảm.",
+              "Đánh giá tính đúng đắn, thuyết phục của các ý kiến."
+            ],
+            "viet": [
+              "Viết bài văn nghị luận về một vấn đề xã hội (có đưa ra giải pháp giải quyết).",
+              "Viết bài văn thuyết minh về một danh lam thắng cảnh hoặc di tích lịch sử (có kết hợp yếu tố miêu tả, biểu cảm)."
+            ],
+            "noi_nghe": [
+              "Trình bày ý kiến về một vấn đề xã hội và thuyết minh giới thiệu danh thắng."
+            ]
+          },
+          "kien_thuc_van_hoc": [
+            "Sự kết hợp giữa thuyết minh với miêu tả, biểu cảm",
+            "Nghị luận xã hội có đề xuất giải pháp"
+          ],
+          "kien_thuc_tieng_viet": [
+            "Liên kết câu và liên kết đoạn văn (phép lặp, phép thế, phép nối, phép liên tưởng)",
+            "Trích dẫn trực tiếp và trích dẫn gián tiếp"
+          ],
+          "van_ban_trong_sach": [
+            "Chuẩn bị hành trang vào thế kỷ mới – Vũ Khoan",
+            "Tiếng nói của văn nghệ – Nguyễn Đình Thi",
+            "Danh thắng Tràng An – Tổng hợp",
+            "Yêu và đồng cảm – Phong Tử Nam"
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG bài văn nghị luận so sánh hai ý kiến/vấn đề phức tạp (lớp 11-12).",
+            "CHƯA DÙNG các chuẩn trích dẫn tài liệu tham khảo khoa học nghiêm ngặt (lớp 11)."
+          ],
+          "dang_cau_hoi_doc_hieu": [
+            "Xác định luận đề và phương pháp lập luận của tác giả.",
+            "Chỉ ra phép liên kết câu/đoạn văn được sử dụng trong đoạn trích.",
+            "Phân tích tác dụng của việc lồng ghép yếu tố miêu tả/biểu cảm trong văn bản thuyết minh.",
+            "Chỉ ra cách trích dẫn (trực tiếp hay gián tiếp) trong văn bản."
+          ],
+          "de_viet_dien_hinh": [
+            "Viết bài văn (khoảng 600 chữ) nghị luận về vấn đề ứng xử trên mạng xã hội của giới trẻ hiện nay và đề xuất giải pháp.",
+            "Viết bài văn thuyết minh (có sử dụng miêu tả, biểu cảm) giới thiệu một di tích lịch sử tại địa phương em."
+          ],
+          "luu_y_ra_de": "Lớp 9 là năm cuối cấp THCS, đề thi kiểm tra khả năng tích hợp kiến thức và ngữ liệu BẮT BUỘC ngoài SGK theo định hướng thi vào 10."
+        }
+      ],
+      "chuyen_de": [],
+      "ghi_chu_chua_chac": [
+        "Đề thi tuyển sinh vào lớp 10 môn Ngữ văn từ năm 2025 của các tỉnh/thành phố áp dụng 100% ngữ liệu ngoài SGK theo Thông tư 22 và Công văn 3175."
+      ]
+    },
+    {
+      "lop": 10,
+      "chuong": [
+        {
+          "id": "van10-than-thoai-va-su-thi",
+          "ten": "Thần thoại và Sử thi",
+          "hoc_ky": 1,
+          "the_loai": "Truyện dân gian & Sử thi",
+          "ten_theo_sach": {
+            "KNTT": "Bài 1: Sức hấp dẫn của truyện kể",
+            "CTST": "Bài 1: Tạo lập thế giới (Thần thoại)",
+            "CD": "Bài 1: Thần thoại và sử thi"
+          },
+          "yeu_cau_can_dat": {
+            "doc": [
+              "Nhận biết và phân tích được không gian, thời gian hoang đường/cổ sơ trong thần thoại và sử thi.",
+              "Phân tích được cốt truyện, nhân vật anh hùng sử thi, lời người kể chuyện, hình tượng nghệ thuật và giá trị nhân văn.",
+              "Nhận biết được các yếu tố văn hóa, niềm tin của cộng đồng thời cổ đại."
+            ],
+            "viet": [
+              "Viết bài văn nghị luận phân tích, đánh giá một tác phẩm truyện (thần thoại / sử thi)."
+            ],
+            "noi_nghe": [
+              "Giới thiệu, đánh giá về nội dung và nghệ thuật của một tác phẩm truyện."
+            ]
+          },
+          "kien_thuc_van_hoc": [
+            "Đặc điểm thần thoại (không gian vũ trụ, thời gian phiếm định, nhân vật thần)",
+            "Đặc điểm sử thi (anh hùng dân tộc, quy mô hoành tráng, ngôn ngữ trùng điệp, so sánh phóng đại)",
+            "Giá trị văn hóa, cộng đồng"
+          ],
+          "kien_thuc_tieng_viet": [
+            "Dấu câu: Công dụng dấu chấm phẩy, dấu ngoặc đơn, dấu gạch ngang trong chú thích",
+            "Từ Hán Việt và các lỗi dùng từ Hán Việt thường gặp"
+          ],
+          "van_ban_trong_sach": [
+            "Thần Trụ Trời – Dân gian",
+            "Prô-mê-tê và loài người – Thần thoại Hy Lạp",
+            "Đăm Săn chiến thắng Mtao Mxây (trích Đăm Săn) – Sử thi Ê-đê",
+            "Ơ-đi-xê (trích Chiếc thuyền ngoài xa / Hô-me-rơ) – Sử thi Hy Lạp"
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG bài văn nghị luận SO SÁNH ĐÁNH GIÁ hai tác phẩm văn học (lớp 11 mới học).",
+            "CHƯA DÙNG các thuật ngữ lý luận hiện đại như 'dòng ý thức', 'bi kịch phi lý' (lớp 11-12).",
+            "CHƯA DÙNG báo cáo nghiên cứu khoa học chuẩn chỉnh (lớp 11)."
+          ],
+          "dang_cau_hoi_doc_hieu": [
+            "Phân tích đặc điểm không gian và thời gian trong đoạn trích thần thoại/sử thi.",
+            "Phân tích vẻ đẹp của nhân vật anh hùng sử thi qua lời nói và hành động.",
+            "Chỉ ra biện pháp tu từ so sánh phóng đại đặc trưng của sử thi và nêu tác dụng.",
+            "Nhận diện lỗi dùng từ Hán Việt trong câu và nêu cách sửa."
+          ],
+          "de_viet_dien_hinh": [
+            "Viết bài văn (khoảng 600 - 700 chữ) phân tích, đánh giá nội dung và nghệ thuật của một câu chuyện thần thoại (ngữ liệu ngoài SGK).",
+            "Viết bài văn phân tích hình tượng nhân vật người anh hùng trong một đoạn trích sử thi ngoài SGK."
+          ],
+          "luu_y_ra_de": "Ở cấp THPT (lớp 10), kiểu bài viết đã nâng cấp thành 'Nghị luận phân tích, đánh giá một tác phẩm truyện' (đánh giá cả chủ đề lẫn nét đặc sắc nghệ thuật)."
+        },
+        {
+          "id": "van10-tho-tru-tinh-va-trung-dai",
+          "ten": "Thơ trữ tình (Thơ Đường luật & Thơ tự do)",
+          "hoc_ky": 1,
+          "the_loai": "Thơ",
+          "ten_theo_sach": {
+            "KNTT": "Bài 2: Vẻ đẹp của thơ ca",
+            "CTST": "Bài 2: Sống với ký ức tuổi thơ",
+            "CD": "Bài 2: Thơ Đường luật và thơ tự do"
+          },
+          "yeu_cau_can_dat": {
+            "doc": [
+              "Nhận biết và phân tích được chủ thể trữ tình, nhân vật trữ tình trong bài thơ.",
+              "Nhận biết niêm, luật, đối, vần trong thơ Đường luật (thất ngôn bát cú, thất ngôn tứ tuyệt).",
+              "Phân tích cảm xúc chủ đạo, hình ảnh thơ, không gian - thời gian nghệ thuật."
+            ],
+            "viet": [
+              "Viết bài văn nghị luận phân tích, đánh giá một bài thơ / tác phẩm thơ."
+            ],
+            "noi_nghe": [
+              "Trình bày ý kiến đánh giá về một bài thơ."
+            ]
+          },
+          "kien_thuc_van_hoc": [
+            "Chủ thể trữ tình (người bộc lộ cảm xúc trong thơ)",
+            "Đặc điểm thơ Đường luật (bố cục Đề - Thực - Luận - Kết, niêm, luật, đối thanh)",
+            "Thơ tự do, cấu trúc bài thơ, cảm xúc chủ đạo"
+          ],
+          "kien_thuc_tieng_viet": [
+            "Lỗi dùng từ, lỗi trật tự từ và cách sửa",
+            "Các biện pháp tu từ trong thơ và hiệu quả nghệ thuật"
+          ],
+          "van_ban_trong_sach": [
+            "Cảm hoài – Đặng Dung",
+            "Thu điếu – Nguyễn Khuyến",
+            "Tự tình II – Hồ Xuân Hương",
+            "Tỏ lòng – Phạm Ngũ Lão",
+            "Tây Tiến – Quang Dũng (đọc hiểu bổ trợ)"
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG thơ tượng trưng, thơ siêu thực (lớp 11).",
+            "CHƯA DÙNG bài văn nghị luận so sánh 2 bài thơ (lớp 11-12).",
+            "CHƯA DÙNG các khái niệm mờ đục ngôn từ."
+          ],
+          "dang_cau_hoi_doc_hieu": [
+            "Xác định chủ thể trữ tình và cảm xúc chủ đạo của bài thơ.",
+            "Phân tích quy định niêm, luật, đối trong câu thơ Đường luật.",
+            "Phân tích tác dụng của hình ảnh nghệ thuật độc đáo trong bài thơ.",
+            "Chỉ ra lỗi trật tự từ trong câu và nêu cách sửa."
+          ],
+          "de_viet_dien_hinh": [
+            "Viết bài văn (khoảng 600 - 700 chữ) phân tích, đánh giá chủ đề và những nét đặc sắc nghệ thuật của một bài thơ thất ngôn bát cú Đường luật (ngữ liệu ngoài SGK).",
+            "Viết bài văn phân tích bài thơ tự do viết về quê hương."
+          ],
+          "luu_y_ra_de": "Phần viết yêu cầu BÀI VĂN NGHỊ LUẬN PHÂN TÍCH ĐÁNH GIÁ MỘT BÀI THƠ (hoàn chỉnh 3 phần, có dẫn chứng, phân tích sâu nghệ thuật)."
+        },
+        {
+          "id": "van10-van-ban-nghi-luan",
+          "ten": "Văn bản nghị luận (Nghị luận xã hội & Nghị luận văn học thời trung đại/hiện đại)",
+          "hoc_ky": 2,
+          "the_loai": "Văn bản nghị luận",
+          "ten_theo_sach": {
+            "KNTT": "Bài 6: Hiền tài là nguyên khí quốc gia",
+            "CTST": "Bài 5: Nghệ thuật truyền cảm hứng / Bài 6: Bài học cuộc sống",
+            "CD": "Bài 4: Văn bản nghị luận trung đại / Bài 5: Văn bản nghị luận"
+          },
+          "yeu_cau_can_dat": {
+            "doc": [
+              "Nhận biết và phân tích được luận đề, hệ thống luận điểm, lý lẽ, bằng chứng.",
+              "Phân tích các thao tác lập luận (chứng minh, giải thích, phân tích) và tính thuyết phục của văn bản nghị luận.",
+              "Nhận biết quan điểm, thái độ của tác giả đối với vấn đề xã hội hoặc văn học."
+            ],
+            "viet": [
+              "Viết bài văn nghị luận về một vấn đề xã hội (trình bày quan điểm cá nhân).",
+              "Viết bài văn nghị luận thuyết phục người khác từ bỏ một thói quen hoặc quan niệm."
+            ],
+            "noi_nghe": [
+              "Thuyết trình về một vấn đề xã hội có sử dụng kết hợp phương tiện phi ngôn ngữ."
+            ]
+          },
+          "kien_thuc_van_hoc": [
+            "Cấu trúc lập luận chặt chẽ trong văn bản nghị luận trung đại và hiện đại",
+            "Tính thuyết phục của văn bản nghị luận"
+          ],
+          "kien_thuc_tieng_viet": [
+            "Biện pháp chêm phụ và tác dụng",
+            "Biện pháp lặp cú pháp và tác dụng",
+            "Cách trích dẫn tài liệu tham khảo đơn giản"
+          ],
+          "van_ban_trong_sach": [
+            "Bình Ngô đại cáo – Nguyễn Trãi",
+            "Hiền tài là nguyên khí quốc gia – Thân Nhân Trung",
+            "Yêu và đồng cảm – Phong Tử Nam",
+            "Chữ bầu lên nhà thơ – Lê Đạt"
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG thao tác bác bỏ nâng cao hay so sánh đối chiếu hai luận điểm trái chiều (lớp 11-12).",
+            "CHƯA DÙNG báo cáo nghiên cứu khoa học chính thức (lớp 11)."
+          ],
+          "dang_cau_hoi_doc_hieu": [
+            "Xác định luận đề và phân tích cấu trúc luận điểm của văn bản.",
+            "Chỉ ra thao tác lập luận chính được tác giả sử dụng.",
+            "Tìm thành phần chêm phụ / lặp cú pháp và nêu hiệu quả diễn đạt.",
+            "Nhận xét về tính thuyết phục của lý lẽ và bằng chứng."
+          ],
+          "de_viet_dien_hinh": [
+            "Viết bài văn (khoảng 600 chữ) nghị luận thuyết phục người thân/bạn bè từ bỏ thói quen thức khuya, dùng điện thoại quá độ.",
+            "Viết bài văn nghị luận về tinh thần trách nhiệm của thanh niên đối với di sản văn hóa."
+          ],
+          "luu_y_ra_de": "Đề nghị luận lớp 10 chú trọng đến tính thuyết phục và khả năng tác động đến nhận thức người đọc."
+        },
+        {
+          "id": "van10-van-ban-thuyet-minh-va-nhat-dung",
+          "ten": "Văn bản thông tin / Văn bản thuyết minh tổng hợp",
+          "hoc_ky": 2,
+          "the_loai": "Văn bản thông tin",
+          "ten_theo_sach": {
+            "KNTT": "Bài 8: Thế giới đa dạng / Bài 9: Hành trang tri thức",
+            "CTST": "Bài 7: Tự nhiên và con người / Bài 8: Văn bản thông tin",
+            "CD": "Bài 7: Văn bản thông tin"
+          },
+          "yeu_cau_can_dat": {
+            "doc": [
+              "Nhận biết được mục đích, cấu trúc, phương tiện phi ngôn ngữ trong văn bản thuyết minh giới thiệu di tích, danh thắng, sản phẩm nghệ thuật.",
+              "Đánh giá tính chính xác, khách quan của các thông tin được cung cấp.",
+              "Phân tích sự kết hợp giữa kênh chữ và kênh hình."
+            ],
+            "viet": [
+              "Viết văn bản thuyết minh về một vấn đề / di sản văn hóa / tác phẩm nghệ thuật / quy trình có sử dụng sơ đồ, hình ảnh."
+            ],
+            "noi_nghe": [
+              "Giới thiệu một di sản văn hóa hoặc một quy trình sản xuất truyền thống."
+            ]
+          },
+          "kien_thuc_van_hoc": [
+            "Văn bản thông tin đa phương thức"
+          ],
+          "kien_thuc_tieng_viet": [
+            "Phương tiện phi ngôn ngữ (biểu đồ, hình ảnh, infographic)",
+            "Cách dẫn trực tiếp và gián tiếp trong văn bản thông tin"
+          ],
+          "van_ban_trong_sach": [
+            "Nghệ thuật múa rối nước – Tổng hợp",
+            "Văn miếu Quốc Tử Giám – Tổng hợp",
+            "Trang phục truyền thống Việt Nam – Tổng hợp"
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG báo cáo nghiên cứu khoa học có trích dẫn chuẩn APA/IEEE (lớp 11).",
+            "CHƯA DÙNG thư trao đổi công việc / bài phát biểu trang trọng (lớp 12)."
+          ],
+          "dang_cau_hoi_doc_hieu": [
+            "Xác định đối tượng thuyết minh và mục đích của văn bản.",
+            "Phân tích hiệu quả biểu đạt của phương tiện phi ngôn ngữ (infographic/hình ảnh).",
+            "Phân biệt lời dẫn trực tiếp và lời dẫn gián tiếp trong đoạn văn.",
+            "Đánh giá tính tin cậy của thông tin trong văn bản."
+          ],
+          "de_viet_dien_hinh": [
+            "Viết văn bản thuyết minh (khoảng 600 chữ) giới thiệu một di sản văn hóa phi vật thể của Việt Nam (có chèn hình ảnh/sơ đồ minh họa).",
+            "Viết văn bản thuyết minh giới thiệu một tác phẩm hội họa hoặc kiến trúc nổi tiếng."
+          ],
+          "luu_y_ra_de": "Văn bản thuyết minh lớp 10 khuyến khích học sinh kết hợp phương tiện phi ngôn ngữ."
+        }
+      ],
+      "chuyen_de": [
+        "Chuyên đề 10.1: Tập nghiên cứu và viết báo cáo về một vấn đề văn học dân gian",
+        "Chuyên đề 10.2: Sân khấu hóa tác phẩm văn học",
+        "Chuyên đề 10.3: Đọc, viết và giới thiệu một tập thơ, một tập truyện ngắn hoặc một tiểu thuyết"
+      ],
+      "ghi_chu_chua_chac": [
+        "Phần Chuyên đề học tập (35 tiết/năm) dành cho học sinh tự chọn, không nằm trong phần kiểm tra đánh giá định kỳ chung."
+      ]
+    },
+    {
+      "lop": 11,
+      "chuong": [
+        {
+          "id": "van11-truyen-tho-nom-va-truyen-ngan-hien-dai",
+          "ten": "Truyện thơ Nôm và Truyện ngắn hiện đại",
+          "hoc_ky": 1,
+          "the_loai": "Truyện",
+          "ten_theo_sach": {
+            "KNTT": "Bài 1: Câu chuyện truyền kỳ và truyện thơ Nôm / Bài 3: Cấu trúc của văn bản truyện",
+            "CTST": "Bài 1: Thông điệp từ quá khứ / Bài 3: Khát vọng sống",
+            "CD": "Bài 1: Truyện ngắn hiện đại / Bài 3: Truyện thơ Nôm"
+          },
+          "yeu_cau_can_dat": {
+            "doc": [
+              "Nhận biết và phân tích được điểm nhìn trần thuật (điểm nhìn người kể chuyện ngôi thứ nhất, ngôi thứ ba hạn tri/toàn trí), sự di chuyển điểm nhìn.",
+              "Phân tích được nhân vật tâm lý, lời thoại nội tâm, lời nửa trực tiếp.",
+              "Đánh giá giá trị tư tưởng và nét đặc sắc nghệ thuật của tác phẩm truyện."
+            ],
+            "viet": [
+              "Viết bài văn nghị luận phân tích một tác phẩm truyện (phân tích cốt truyện, nhân vật, điểm nhìn trần thuật)."
+            ],
+            "noi_nghe": [
+              "Trình bày ý kiến đánh giá về một tác phẩm truyện."
+            ]
+          },
+          "kien_thuc_van_hoc": [
+            "Điểm nhìn trần thuật (điểm nhìn toàn trí, hạn tri, điểm nhìn nhân vật, di chuyển điểm nhìn)",
+            "Lời trần thuật, lời nửa trực tiếp, độc thoại nội tâm",
+            "Tâm lý nhân vật phức hợp"
+          ],
+          "kien_thuc_tieng_viet": [
+            "Biện pháp tu từ: Lặp cấu trúc, Chêm phụ",
+            "Lỗi về từ ngữ và trật tự từ trong câu và cách sửa"
+          ],
+          "van_ban_trong_sach": [
+            "Trao duyên (trích Truyện Kiều) – Nguyễn Du",
+            "Chí Phèo – Nam Cao",
+            "Hai đứa trẻ – Thạch Lam",
+            "Chữ người tử tù – Nguyễn Tuân"
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG bài văn nghị luận SO SÁNH, ĐÁNH GIÁ HAI TÁC PHẨM VĂN HỌC (học ở HK2 lớp 11).",
+            "CHƯA DÙNG các lý thuyết dòng ý thức, văn học phi lý (lớp 12)."
+          ],
+          "dang_cau_hoi_doc_hieu": [
+            "Phân tích sự di chuyển điểm nhìn trần thuật trong đoạn trích.",
+            "Chỉ ra lời nửa trực tiếp hoặc độc thoại nội tâm và nêu tác dụng thể hiện tâm lý nhân vật.",
+            "Phân tích hiệu quả nghệ thuật của biện pháp tu từ lặp cấu trúc.",
+            "Đánh giá giá trị nhân đạo/tư tưởng của đoạn trích."
+          ],
+          "de_viet_dien_hinh": [
+            "Viết bài văn (khoảng 700 - 800 chữ) phân tích điểm nhìn trần thuật và nghệ thuật khắc họa tâm lý nhân vật trong một truyện ngắn hiện đại (ngữ liệu ngoài SGK).",
+            "Viết bài văn nghị luận phân tích một trích đoạn truyện thơ Nôm ngoài SGK."
+          ],
+          "luu_y_ra_de": "Đề Lớp 11 đòi hỏi phân tích sâu kĩ thuật trần thuật (điểm nhìn, lời nửa trực tiếp)."
+        },
+        {
+          "id": "van11-tho-su-tru-tinh-va-tho-tu-do",
+          "ten": "Thơ tượng trưng, Thơ trữ tình hiện đại",
+          "hoc_ky": 1,
+          "the_loai": "Thơ",
+          "ten_theo_sach": {
+            "KNTT": "Bài 2: Cấu trúc của văn bản thơ",
+            "CTST": "Bài 2: Những tâm hồn lãng mạn",
+            "CD": "Bài 2: Thơ trữ tình hiện đại"
+          },
+          "yeu_cau_can_dat": {
+            "doc": [
+              "Nhận biết và phân tích được cấu trúc bài thơ, yếu tố tượng trưng trong thơ (hình ảnh đa nghĩa, sự hòa quyện giác quan).",
+              "Phân tích được sự kết hợp giữa tính trữ tình và ngôn từ giàu nhạc tính.",
+              "Cảm nhận sâu sắc tâm trạng, suy tư của chủ thể trữ tình."
+            ],
+            "viet": [
+              "Viết bài văn nghị luận về một bài thơ / đoạn thơ hoặc một khía cạnh nội dung/nghệ thuật của bài thơ."
+            ],
+            "noi_nghe": [
+              "Giới thiệu một bài thơ tự do/tượng trưng."
+            ]
+          },
+          "kien_thuc_van_hoc": [
+            "Yếu tố tượng trưng trong thơ (hình ảnh biểu tượng, sự tương giao giác quan)",
+            "Nhạc tính trong thơ, cấu trúc không gian - thời gian cảm xúc"
+          ],
+          "kien_thuc_tieng_viet": [
+            "Ngôn ngữ nói và ngôn ngữ viết (đặc điểm, ranh giới, lỗi thường gặp)",
+            "Lỗi dùng từ Hán Việt và từ ngữ địa phương"
+          ],
+          "van_ban_trong_sach": [
+            "Tràng giang – Huy Cận",
+            "Đây thôn Vĩ Dạ – Hàn Mặc Tử",
+            "Tôi yêu em – A. Pu-xkin",
+            "Bài thơ số 28 – R. Ta-gor"
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG trường ca hiện đại phức hợp (lớp 12).",
+            "CHƯA DÙNG bài văn nghị luận so sánh 2 bài thơ (học HK2 lớp 11)."
+          ],
+          "dang_cau_hoi_doc_hieu": [
+            "Phân tích yếu tố tượng trưng và hình ảnh đa nghĩa trong bài thơ.",
+            "Phân tích sự tương giao giữa các giác quan (thị giác, thính giác, khứu giác) trong thơ.",
+            "Phân biệt đặc điểm ngôn ngữ nói và ngôn ngữ viết qua đoạn trích.",
+            "Nêu nhận xét về cảm xúc chủ đạo và tư tưởng nghệ thuật của tác giả."
+          ],
+          "de_viet_dien_hinh": [
+            "Viết bài văn (khoảng 700 chữ) phân tích yếu tố tượng trưng và nét đặc sắc nghệ thuật của bài thơ (ngữ liệu ngoài SGK).",
+            "Viết bài văn nghị luận phân tích bài thơ lãng mạn Việt Nam giai đoạn 1930 - 1945 ngoài SGK."
+          ],
+          "luu_y_ra_de": "Ngữ liệu thơ Lớp 11 chú trọng thơ Mới lãng mạn và thơ tượng trưng."
+        },
+        {
+          "id": "van11-bi-kich-va-truyen-hien-thuc",
+          "ten": "Bi kịch và Truyện hiện thực / Tiểu thuyết",
+          "hoc_ky": 2,
+          "the_loai": "Bi kịch & Tiểu thuyết",
+          "ten_theo_sach": {
+            "KNTT": "Bài 6: Sống với kí ức / Bài 7: Khát vọng tự do",
+            "CTST": "Bài 5: Bi kịch cuộc đời / Bài 6: Bức tranh xã hội",
+            "CD": "Bài 5: Bi kịch / Bài 6: Tiểu thuyết hiện thực"
+          },
+          "yeu_cau_can_dat": {
+            "doc": [
+              "Nhận biết và phân tích được xung đột bi kịch, hành động bi kịch, lời thoại kịch, khát vọng nhân vật bi kịch.",
+              "Phân tích được cấu trúc tiểu thuyết hiện thực, nghệ thuật miêu tả tâm lý và bức tranh xã hội.",
+              "Hiểu được ý nghĩa triết lý nhân sinh sâu sắc trong bi kịch."
+            ],
+            "viet": [
+              "Viết bài văn nghị luận SO SÁNH, ĐÁNH GIÁ HAI TÁC PHẨM VĂN HỌC (hai bài thơ hoặc hai tác phẩm truyện/bi kịch).",
+              "Viết bài văn nghị luận về một vấn đề xã hội."
+            ],
+            "noi_nghe": [
+              "Trình bày kết quả so sánh, đánh giá hai tác phẩm nghệ thuật."
+            ]
+          },
+          "kien_thuc_van_hoc": [
+            "Đặc điểm thể loại bi kịch (xung đột không thể dung hòa, tính cách bi kịch, cái chết/thất bại bi thảm nâng cao nhân phẩm)",
+            "Đặc điểm tiểu thuyết hiện thực",
+            "Phương pháp so sánh văn học"
+          ],
+          "kien_thuc_tieng_viet": [
+            "Biện pháp tu từ: Đối, Điệp",
+            "Đặc điểm ngôn ngữ nói và ngôn ngữ viết nâng cao"
+          ],
+          "van_ban_trong_sach": [
+            "Sống hay không sống (trích Hăm-lét) – W. Sếch-xpi-a",
+            "Vĩnh biệt Cửu Trùng Đài (trích Vũ Như Tô) – Nguyễn Huy Tưởng",
+            "Hạnh phúc một tang gia (trích Số đỏ) – Vũ Trọng Phụng"
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG khái niệm bi kịch phi lý, dòng ý thức hiện đại (lớp 12).",
+            "CHƯA DÙNG bài phát biểu trong lễ phát động/kỷ niệm (lớp 12)."
+          ],
+          "dang_cau_hoi_doc_hieu": [
+            "Xác định xung đột bi kịch chính và bản chất bi kịch của nhân vật.",
+            "Phân tích lời thoại thể hiện sự giằng xé nội tâm của nhân vật kịch.",
+            "Phân tích hiệu quả của biện pháp tu từ đối và điệp trong văn bản.",
+            "So sánh điểm tương đồng/khác biệt giữa hai chi tiết nghệ thuật trong đoạn trích."
+          ],
+          "de_viet_dien_hinh": [
+            "Viết bài văn (khoảng 800 chữ) nghị luận so sánh, đánh giá hai nhân vật trong hai tác phẩm truyện ngắn (ngữ liệu ngoài SGK).",
+            "Viết bài văn nghị luận so sánh nội dung và nghệ thuật của hai bài thơ viết về tình cha con."
+          ],
+          "luu_y_ra_de": "Lớp 11 HK2 XUẤT HIỆN KIỂU BÀI VIẾT QUAN TRỌNG: 'Nghị luận so sánh, đánh giá hai tác phẩm văn học'."
+        },
+        {
+          "id": "van11-van-ban-nghi-luan-va-bao-cao-nghien-cuu",
+          "ten": "Văn bản nghị luận & Báo cáo nghiên cứu",
+          "hoc_ky": 2,
+          "the_loai": "Văn bản nghị luận & Báo cáo khoa học",
+          "ten_theo_sach": {
+            "KNTT": "Bài 8: Trái Đất - Nhìn từ vũ trụ / Bài 9: Nhìn lại hành trình",
+            "CTST": "Bài 8: Khám phá tri thức / Bài 9: Văn bản thông tin",
+            "CD": "Bài 8: Văn bản nghị luận / Bài 9: Báo cáo nghiên cứu"
+          },
+          "yeu_cau_can_dat": {
+            "doc": [
+              "Phân tích luận đề, hệ thống luận điểm, thao tác bác bỏ, lập luận so sánh trong văn bản nghị luận.",
+              "Đánh giá tính chính xác, khách quan, giá trị khoa học của một báo cáo nghiên cứu.",
+              "Nhận biết cấu trúc báo cáo nghiên cứu (Đặt vấn đề, Nội dung chính, Kết luận, Danh mục tài liệu tham khảo)."
+            ],
+            "viet": [
+              "Viết báo cáo nghiên cứu về một vấn đề văn hóa, xã hội hoặc tự nhiên (có chú thích và tài liệu tham khảo).",
+              "Viết bài văn nghị luận về một vấn đề xã hội có tác động lớn tới giới trẻ."
+            ],
+            "noi_nghe": [
+              "Trình bày kết quả nghiên cứu về một vấn đề văn hóa / xã hội."
+            ]
+          },
+          "kien_thuc_van_hoc": [
+            "Phương pháp nghiên cứu văn học / văn hóa",
+            "Thao tác bác bỏ, so sánh trong văn nghị luận"
+          ],
+          "kien_thuc_tieng_viet": [
+            "Cách trích dẫn tài liệu tham khảo theo chuẩn (họ tên tác giả, năm xuất bản, tên tác phẩm, nhà xuất bản)",
+            "Tránh vi phạm bản quyền và quy tắc đạo đức khoa học"
+          ],
+          "van_ban_trong_sach": [
+            "Một thời đại trong thi ca – Hoài Thanh",
+            "Tiếng mẹ đẻ - nguồn giải phóng các dân tộc bị áp bức – Nguyễn An Ninh",
+            "Báo cáo kết quả nghiên cứu về văn hóa đọc của thanh niên – Tổng hợp"
+          ],
+          "chua_duoc_dung": [
+            "CHƯA DÙNG bài phát biểu chính thức, thư trao đổi công việc (lớp 12).",
+            "CHƯA DÙNG dạng đề nghị luận bàn về hai ý kiến trái chiều (lớp 12)."
+          ],
+          "dang_cau_hoi_doc_hieu": [
+            "Xác định luận đề và chỉ ra các lý lẽ bác bỏ trong văn bản nghị luận.",
+            "Phân tích cách tác giả trích dẫn tài liệu tham khảo.",
+            "Đánh giá tính logic và tính thuyết phục của báo cáo khoa học.",
+            "Rút ra ý nghĩa thực tiễn từ kết quả nghiên cứu."
+          ],
+          "de_viet_dien_hinh": [
+            "Viết báo cáo nghiên cứu (khoảng 800 - 1000 chữ) về vấn đề giữ gìn sự trong sáng của tiếng Việt trên mạng xã hội của học sinh THPT.",
+            "Viết bài văn nghị luận trình bày ý kiến về lối sống xanh và bảo vệ môi trường."
+          ],
+          "luu_y_ra_de": "Phần viết báo cáo nghiên cứu yêu cầu trình bày chuẩn mực theo các phần và có danh mục tài liệu tham khảo."
+        }
+      ],
+      "chuyen_de": [
+        "Chuyên đề 11.1: Tập nghiên cứu và viết báo cáo về một vấn đề văn học trung đại Việt Nam",
+        "Chuyên đề 11.2: Tìm hiểu ngôn ngữ trong đời sống xã hội hiện đại",
+        "Chuyên đề 11.3: Đọc, viết và giới thiệu một tác phẩm văn học"
+      ],
+      "ghi_chu_chua_chac": [
+        "Kỹ năng viết Báo cáo nghiên cứu bắt đầu được đưa vào từ lớp 11 và tiếp tục hoàn thiện ở lớp 12."
+      ]
+    },
+    {
+      "lop": 12,
+      "chuong": [
+        {
+          "id": "van12-truyen-ngan-va-tieu-thuyet-hien-dai",
+          "ten": "Truyện ngắn hiện đại và Tiểu thuyết hiện đại",
+          "hoc_ky": 1,
+          "the_loai": "Truyện",
+          "ten_theo_sach": {
+            "KNTT": "Bài 1: Khai phá tiềm năng / Bài 3: Thế giới tiểu thuyết",
+            "CTST": "Bài 1: Thông điệp cuộc sống / Bài 3: Sức hấp dẫn của tiểu thuyết",
+            "CD": "Bài 1: Truyện ngắn hiện đại / Bài 3: Tiểu thuyết hiện đại"
+          },
+          "yeu_cau_can_dat": {
+            "doc": [
+              "Nhận biết và phân tích được nghệ thuật xây dựng nhân vật, không gian - thời gian nghệ thuật đa chiều trong truyện hiện đại và tiểu thuyết.",
+              "Nhận biết và phân tích được góc nhìn trần thuật đa chiều, lời trần thuật (lời nửa trực tiếp, lời nhại), giọng điệu trần thuật.",
+              "Đánh giá được giá trị tư tưởng, tầm vóc triết lý nhân sinh và phong cách nghệ thuật của nhà văn."
+            ],
+            "viet": [
+              "Viết bài văn nghị luận so sánh, đánh giá hai tác phẩm truyện / hai nhân vật truyện."
+            ],
+            "noi_nghe": [
+              "Trình bày kết quả so sánh, đánh giá hai tác phẩm truyện hoặc hai phong cách nghệ thuật."
+            ]
+          },
+          "kien_thuc_van_hoc": [
+            "Truyện ngắn và tiểu thuyết hiện đại (kết cấu mở, cốt truyện tâm lý)",
+            "Góc nhìn trần thuật đa chiều (đa thanh, nhiều người kể chuyện)",
+            "Lời nhại, lời giễu cợt, lời nửa trực tiếp",
+            "Phong cách nghệ thuật nhà văn"
+          ],
+          "kien_thuc_tieng_viet": [
+            "Lỗi về câu (câu thiếu thành phần, câu không rõ nghĩa, lỗi logic) và cách sửa lỗi nâng cao",
+            "Phong cách ngôn ngữ văn học và đặc điểm"
+          ],
+          "van_ban_trong_sach": [
+            "Vợ nhặt – Kim Lân",
+            "Vợ chồng A Phủ – Tô Hoài",
+            "Chiếc thuyền ngoài xa – Nguyễn Minh Châu",
+            "Số đỏ (trích Hạnh phúc một tang gia) – Vũ Trọng Phụng"
+          ],
+          "chua_duoc_dung": [
+            "KHÔNG DÙNG cách ra đề cũ chương trình 2006 (kiểm tra khả năng thuộc lòng kiến thức tác phẩm trong SGK).",
+            "KHÔNG DÙNG các tác phẩm SGK làm ngữ liệu đề thi chính thức Tốt nghiệp THPT 2025."
+          ],
+          "dang_cau_hoi_doc_hieu": [
+            "Phân tích sự thay đổi góc nhìn trần thuật và hiệu quả biểu đạt trong đoạn trích.",
+            "Chỉ ra lời nửa trực tiếp hoặc lời nhại và phân tích sắc thái biểu cảm.",
+            "Phân tích phong cách nghệ thuật của tác giả qua đoạn trích.",
+            "Chỉ ra lỗi câu trong đoạn văn và đề xuất cách sửa.",
+            "Nhận xét về triết lý nhân sinh mà tác giả gửi gắm qua số phận nhân vật."
+          ],
+          "de_viet_dien_hinh": [
+            "Viết bài văn (khoảng 600 - 800 chữ) nghị luận so sánh, đánh giá hình tượng hai nhân vật người phụ nữ trong hai tác phẩm truyện ngắn hiện đại (ngữ liệu ngoài SGK).",
+            "Viết bài văn nghị luận so sánh cách nhìn nhận cuộc sống của hai tác giả qua hai đoạn trích truyện."
+          ],
+          "luu_y_ra_de": "Cấu trúc đề thi Tốt nghiệp THPT từ năm 2025: Phần Viết yêu cầu Nghị luận văn học (600 - 800 chữ) SO SÁNH hoặc PHÂN TÍCH ĐÁNH GIÁ tác phẩm ngoài SGK."
+        },
+        {
+          "id": "van12-tho-hien-dai-va-truong-ca",
+          "ten": "Thơ hiện đại, Thơ tự do và Trường ca",
+          "hoc_ky": 1,
+          "the_loai": "Thơ",
+          "ten_theo_sach": {
+            "KNTT": "Bài 2: Vẻ đẹp của thơ hiện đại",
+            "CTST": "Bài 2: Âm điệu thời đại",
+            "CD": "Bài 2: Thơ hiện đại và trường ca"
+          },
+          "yeu_cau_can_dat": {
+            "doc": [
+              "Nhận biết và phân tích được kết cấu thơ, hình ảnh tượng trưng, tính trữ tình và tính tự sự trong trường ca.",
+              "Phân tích sự biến đổi nhịp điệu, cảm xúc, giọng điệu trữ tình phong phú.",
+              "Cảm nhận sâu sắc lòng yêu nước, nhân sinh quan và khát vọng của con người Việt Nam."
+            ],
+            "viet": [
+              "Viết bài văn nghị luận so sánh, đánh giá hai bài thơ HOẶC phân tích một trích đoạn trường ca / bài thơ hiện đại."
+            ],
+            "noi_nghe": [
+              "Trình bày ý kiến về một bài thơ hiện đại hoặc trích đoạn trường ca."
+            ]
+          },
+          "kien_thuc_van_hoc": [
+            "Trường ca (kết hợp tự sự và trữ tình, quy mô lớn, cảm hứng sử thi)",
+            "Thơ tự do hiện đại, suy tưởng triết lý trong thơ",
+            "Hình ảnh biểu tượng, sự bứt phá hình thức thơ"
+          ],
+          "kien_thuc_tieng_viet": [
+            "Biện pháp tu từ: Nói mỉa, Nghịch ngữ (oxymoron)",
+            "Tác dụng của các biện pháp tu từ trong thơ hiện đại"
+          ],
+          "van_ban_trong_sach": [
+            "Tây Tiến – Quang Dũng",
+            "Việt Bắc (trích) – Tố Hữu",
+            "Đất Nước (trích trường ca Mặt đường khát vọng) – Nguyễn Khoa Điềm",
+            "Sóng – Xuân Quỳnh"
+          ],
+          "chua_duoc_dung": [
+            "KHÔNG DÙNG ngữ liệu trong SGK để làm đề thi Tốt nghiệp THPT 2025.",
+            "KHÔNG DÙNG cách chấm điểm phân tích rập khuôn theo bài giảng mẫu chương trình cũ."
+          ],
+          "dang_cau_hoi_doc_hieu": [
+            "Phân tích sự kết hợp giữa chất tự sự và chất trữ tình trong trích đoạn trường ca.",
+            "Chỉ ra biện pháp tu từ nghịch ngữ/nói mỉa và phân tích giá trị thẩm mỹ.",
+            "Phân tích giọng điệu trữ tình và sự biến đổi nhịp điệu trong đoạn thơ.",
+            "Nhận xét về cái 'Tôi' trữ tình của tác giả thể hiện qua bài thơ."
+          ],
+          "de_viet_dien_hinh": [
+            "Viết bài văn (khoảng 600 - 800 chữ) nghị luận so sánh, đánh giá hình tượng đất nước trong hai đoạn thơ hiện đại (ngữ liệu ngoài SGK).",
+            "Viết bài văn phân tích suy tưởng triết lý về tình yêu và cuộc sống trong một bài thơ hiện đại ngoài SGK."
+          ],
+          "luu_y_ra_de": "Đề kiểm tra đọc hiểu thơ 12 cần chú trọng khai thác giá trị biểu tượng và sự độc đáo trong hình thức thể hiện."
+        },
+        {
+          "id": "van12-kich-ban-van-hoc-va-van-ban-nghi-luan",
+          "ten": "Kịch bản văn học hiện đại và Văn bản nghị luận",
+          "hoc_ky": 2,
+          "the_loai": "Kịch & Văn bản nghị luận",
+          "ten_theo_sach": {
+            "KNTT": "Bài 6: Sức mạnh của kịch bản / Bài 7: Vấn đề xã hội",
+            "CTST": "Bài 5: Kịch bản sân khấu / Bài 6: Quan điểm sống",
+            "CD": "Bài 5: Kịch bản hiện đại / Bài 6: Văn bản nghị luận"
+          },
+          "yeu_cau_can_dat": {
+            "doc": [
+              "Phân tích mâu thuẫn kịch, triết lý nhân sinh, tính hiện đại trong kịch bản văn học hiện đại.",
+              "Phân tích hệ thống lập luận, thao tác bác bỏ, so sánh, tổng hợp trong văn bản nghị luận xã hội và văn học.",
+              "Đánh giá tầm nhìn, quan điểm và tư tưởng của tác giả."
+            ],
+            "viet": [
+              "Viết bài văn nghị luận về một vấn đề xã hội (dạng đề mở, yêu cầu thể hiện quan điểm sâu sắc và giải pháp khả thi).",
+              "Viết bài văn nghị luận so sánh hai ý kiến / hai quan điểm bàn về cùng một vấn đề."
+            ],
+            "noi_nghe": [
+              "Thảo luận về một vấn đề xã hội có ý kiến trái chiều."
+            ]
+          },
+          "kien_thuc_van_hoc": [
+            "Mâu thuẫn tư tưởng trong kịch hiện đại",
+            "Nghị luận về hai ý kiến trái chiều",
+            "Thao tác bác bỏ, quy nạp, diễn dịch, tổng phân hợp"
+          ],
+          "kien_thuc_tieng_viet": [
+            "Giữ gìn sự trong sáng của tiếng Việt",
+            "Phong cách ngôn ngữ chính luận và phong cách ngôn ngữ báo chí"
+          ],
+          "van_ban_trong_sach": [
+            "Hồn Trương Ba, da hàng thịt – Lưu Quang Vũ",
+            "Tuyên ngôn Độc lập – Hồ Chí Minh",
+            "Nguyễn Trãi – nhà nhân đạo chủ nghĩa – Xuân Diệu"
+          ],
+          "chua_duoc_dung": [
+            "KHÔNG DÙNG cấu trúc đề thi 5 câu đọc hiểu cũ (cấu trúc mới 2025 gồm Đọc hiểu 4.0 điểm + Viết 6.0 điểm).",
+            "KHÔNG DÙNG các câu hỏi nhận biết mang tính tái hiện thuộc lòng."
+          ],
+          "dang_cau_hoi_doc_hieu": [
+            "Phân tích mâu thuẫn kịch giữa các nhân vật trong đoạn trích.",
+            "Chỉ ra thao tác lập luận bác bỏ và phân tích tính sắc bén của lập luận.",
+            "Phân tích đặc điểm phong cách ngôn ngữ chính luận trong văn bản.",
+            "Bày tỏ quan điểm cá nhân trước hai ý kiến trái chiều được nêu trong bài."
+          ],
+          "de_viet_dien_hinh": [
+            "Viết bài văn nghị luận xã hội (khoảng 600 chữ) trình bày suy nghĩ của em về ý kiến: 'Trong thời đại công nghệ số, sự đồng cảm giữa con người với con người đang dần bị thu hẹp'.",
+            "Viết bài văn nghị luận so sánh hai ý kiến bàn về sứ mệnh của văn học đối với đời sống."
+          ],
+          "luu_y_ra_de": "Đề thi TN THPT 2025 môn Ngữ văn có 2 phần: Đọc hiểu (4 câu = 4.0 điểm) và Viết (2 câu: NLXH khoảng 200 chữ hoặc NLVH khoảng 600 chữ = 6.0 điểm)."
+        },
+        {
+          "id": "van12-van-ban-thong-tin-va-nhat-dung-nang-cao",
+          "ten": "Văn bản thông tin nâng cao, Bài phát biểu và Thư trao đổi",
+          "hoc_ky": 2,
+          "the_loai": "Văn bản thông tin & Nhật dụng",
+          "ten_theo_sach": {
+            "KNTT": "Bài 8: Thông tin đa chiều / Bài 9: Tổng kết hành trình",
+            "CTST": "Bài 8: Tri thức và cuộc sống / Bài 9: Văn bản thông tin",
+            "CD": "Bài 8: Văn bản thông tin / Bài 9: Bài phát biểu và thư trao đổi"
+          },
+          "yeu_cau_can_dat": {
+            "doc": [
+              "Đánh giá tính tin cậy, quan điểm người viết, đa phương tiện trong văn bản thông tin phức tạp.",
+              "Kỹ năng đọc hiểu tổng hợp văn bản đa phương thức.",
+              "Phân tích cấu trúc bài phát biểu và thư trao đổi công việc."
+            ],
+            "viet": [
+              "Viết bài phát biểu trong lễ phát động hoặc lễ kỷ niệm.",
+              "Viết thư trao đổi về một vấn đề công việc hoặc học tập."
+            ],
+            "noi_nghe": [
+              "Trình bày bài phát biểu trước công chúng."
+            ]
+          },
+          "kien_thuc_van_hoc": [
+            "Văn bản đa phương thức nâng cao",
+            "Nghệ thuật diễn thuyết và thư từ công vụ"
+          ],
+          "kien_thuc_tieng_viet": [
+            "Tóm tắt văn bản thông tin phức hợp",
+            "Đánh giá hiệu quả của phương tiện phi ngôn ngữ trong truyền thông hiện đại"
+          ],
+          "van_ban_trong_sach": [
+            "Văn bản thông tin về trí tuệ nhân tạo (AI) – Tổng hợp",
+            "Phát biểu tại Diễn đàn Thanh niên – Tổng hợp",
+            "Thư gửi học sinh nhân ngày khai trường – Hồ Chí Minh"
+          ],
+          "chua_duoc_dung": [
+            "KHÔNG DÙNG các mẫu văn bản hành chính lỗi thời.",
+            "KHÔNG DÙNG ngữ liệu thiếu tính xác thực."
+          ],
+          "dang_cau_hoi_doc_hieu": [
+            "Tóm tắt thông tin chính và mục đích của văn bản thông tin.",
+            "Đánh giá thái độ và quan điểm của tác giả qua bài phát biểu.",
+            "Phân tích cách sử dụng dữ liệu số liệu và infographic trong văn bản.",
+            "Rút ra bài học thực tiễn cho bản thân từ nội dung phát biểu."
+          ],
+          "de_viet_dien_hinh": [
+            "Viết bài phát biểu (khoảng 500 - 600 chữ) trong lễ trưởng thành và trưởng thành của học sinh lớp 12.",
+            "Viết thư trao đổi với ban giám hiệu nhà trường đề xuất giải pháp cải thiện không gian đọc sách tại thư viện."
+          ],
+          "luu_y_ra_de": "Phần viết bài phát biểu hoặc thư trao đổi chú trọng tính trang trọng, mạch lạc và mục đích giao tiếp rõ ràng."
+        }
+      ],
+      "chuyen_de": [
+        "Chuyên đề 12.1: Tập nghiên cứu và viết báo cáo về một vấn đề văn học hiện đại Việt Nam",
+        "Chuyên đề 12.2: Tìm hiểu về một tác gia văn học lớn",
+        "Chuyên đề 12.3: Đọc, viết và giới thiệu một tác phẩm kịch bản sân khấu hoặc điện ảnh"
+      ],
+      "ghi_chu_chua_chac": [
+        "Cấu trúc đề thi Tốt nghiệp THPT môn Ngữ văn từ năm 2025 do Bộ GD&ĐT ban hành áp dụng thống nhất cho toàn quốc, sử dụng 100% ngữ liệu ngoài SGK."
+      ]
+    }
+  ],
+  "cau_truc_de": [
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 6,
+      "thoi_gian_phut": 90,
+      "phan": [
+        {
+          "ten": "Phần I: Đọc hiểu",
+          "so_cau": 4,
+          "loai_cau": "Trắc nghiệm và Tự luận ngắn",
+          "diem": 4.0
+        },
+        {
+          "ten": "Phần II: Viết",
+          "kieu_bai": "Viết bài văn kể lại một truyện truyền thuyết hoặc cổ tích (dùng lời văn của em)",
+          "diem": 6.0
+        }
+      ],
+      "pham_vi": [
+        "van6-truyen-truyen-thuyet-co-tich",
+        "van6-tho-luc-bat"
+      ],
+      "quy_dinh_ngu_lieu": "BẮT BUỘC dùng ngữ liệu ngoài SGK (truyện truyền thuyết/cổ tích dân gian). Độ dài ngữ liệu khoảng 300 - 500 từ.",
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 1",
+      "lop": 6,
+      "thoi_gian_phut": 90,
+      "phan": [
+        {
+          "ten": "Phần I: Đọc hiểu",
+          "so_cau": 5,
+          "loai_cau": "Trắc nghiệm và Tự luận ngắn",
+          "diem": 4.0
+        },
+        {
+          "ten": "Phần II: Viết",
+          "kieu_bai": "Viết bài văn kể lại một trải nghiệm đáng nhớ của bản thân (khoảng 400 chữ)",
+          "diem": 6.0
+        }
+      ],
+      "pham_vi": [
+        "van6-tho-luc-bat",
+        "van6-truyen-dong-thoai-va-hoi-ky"
+      ],
+      "quy_dinh_ngu_lieu": "BẮT BUỘC dùng ngữ liệu ngoài SGK. Ngữ liệu thơ lục bát hoặc truyện đồng thoại ngắn (300 - 450 từ).",
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 2",
+      "lop": 6,
+      "thoi_gian_phut": 90,
+      "phan": [
+        {
+          "ten": "Phần I: Đọc hiểu",
+          "so_cau": 4,
+          "loai_cau": "Trắc nghiệm và Tự luận ngắn",
+          "diem": 4.0
+        },
+        {
+          "ten": "Phần II: Viết",
+          "kieu_bai": "Viết bài văn trình bày ý kiến về một hiện tượng đời sống gần gũi với học sinh (khoảng 400 chữ)",
+          "diem": 6.0
+        }
+      ],
+      "pham_vi": [
+        "van6-van-ban-nghi-luan"
+      ],
+      "quy_dinh_ngu_lieu": "BẮT BUỘC dùng ngữ liệu ngoài SGK (văn bản nghị luận xã hội đơn giản, độ dài khoảng 350 - 500 từ).",
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 2",
+      "lop": 6,
+      "thoi_gian_phut": 90,
+      "phan": [
+        {
+          "ten": "Phần I: Đọc hiểu",
+          "so_cau": 5,
+          "loai_cau": "Trắc nghiệm và Tự luận ngắn",
+          "diem": 4.0
+        },
+        {
+          "ten": "Phần II: Viết",
+          "kieu_bai": "Viết văn bản thuyết minh thuật lại một sự kiện / lễ hội / hoạt động (khoảng 400 chữ)",
+          "diem": 6.0
+        }
+      ],
+      "pham_vi": [
+        "van6-van-ban-nghi-luan",
+        "van6-van-ban-thong-tin"
+      ],
+      "quy_dinh_ngu_lieu": "BẮT BUỘC dùng ngữ liệu ngoài SGK (văn bản thông tin thuật lại sự việc, 400 - 550 từ).",
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 7,
+      "thoi_gian_phut": 90,
+      "phan": [
+        {
+          "ten": "Phần I: Đọc hiểu",
+          "so_cau": 4,
+          "loai_cau": "Trắc nghiệm và Tự luận ngắn",
+          "diem": 4.0
+        },
+        {
+          "ten": "Phần II: Viết",
+          "kieu_bai": "Viết bài văn biểu cảm về người thân hoặc viết bài văn kể lại sự việc liên quan nhân vật lịch sử",
+          "diem": 6.0
+        }
+      ],
+      "pham_vi": [
+        "van7-truyen-ngan-va-tieu-thuyet-thieu-nhi",
+        "van7-tho-4-chu-5-chu-va-tho-tru-tinh"
+      ],
+      "quy_dinh_ngu_lieu": "Ngữ liệu ngoài SGK (truyện ngắn thiếu nhi hoặc thơ 4-5 chữ, 350 - 500 từ).",
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 1",
+      "lop": 7,
+      "thoi_gian_phut": 90,
+      "phan": [
+        {
+          "ten": "Phần I: Đọc hiểu",
+          "so_cau": 5,
+          "loai_cau": "Trắc nghiệm và Tự luận ngắn",
+          "diem": 4.0
+        },
+        {
+          "ten": "Phần II: Viết",
+          "kieu_bai": "Viết đoạn văn (150-200 chữ) cảm nghĩ về thơ VÀ viết bài văn biểu cảm về con người/sự việc",
+          "diem": 6.0
+        }
+      ],
+      "pham_vi": [
+        "van7-tho-4-chu-5-chu-va-tho-tru-tinh"
+      ],
+      "quy_dinh_ngu_lieu": "Ngữ liệu ngoài SGK.",
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 2",
+      "lop": 7,
+      "thoi_gian_phut": 90,
+      "phan": [
+        {
+          "ten": "Phần I: Đọc hiểu",
+          "so_cau": 4,
+          "loai_cau": "Trắc nghiệm và Tự luận ngắn",
+          "diem": 4.0
+        },
+        {
+          "ten": "Phần II: Viết",
+          "kieu_bai": "Viết bài văn nghị luận về một vấn đề đời sống (tán thành hoặc phản đối)",
+          "diem": 6.0
+        }
+      ],
+      "pham_vi": [
+        "van7-tuc-ngu-va-van-ban-nghi-luan"
+      ],
+      "quy_dinh_ngu_lieu": "Ngữ liệu ngoài SGK (văn bản nghị luận xã hội hoặc tục ngữ).",
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 2",
+      "lop": 7,
+      "thoi_gian_phut": 90,
+      "phan": [
+        {
+          "ten": "Phần I: Đọc hiểu",
+          "so_cau": 5,
+          "loai_cau": "Trắc nghiệm và Tự luận ngắn",
+          "diem": 4.0
+        },
+        {
+          "ten": "Phần II: Viết",
+          "kieu_bai": "Viết văn bản thuyết minh về một quy trình hoặc hướng dẫn trò chơi/hoạt động (khoảng 450 chữ)",
+          "diem": 6.0
+        }
+      ],
+      "pham_vi": [
+        "van7-van-ban-thuyet-minh-quy-trinh"
+      ],
+      "quy_dinh_ngu_lieu": "Ngữ liệu ngoài SGK (văn bản quy trình/hướng dẫn hoạt động).",
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 8,
+      "thoi_gian_phut": 90,
+      "phan": [
+        {
+          "ten": "Phần I: Đọc hiểu",
+          "so_cau": 4,
+          "loai_cau": "Trắc nghiệm và Tự luận ngắn",
+          "diem": 4.0
+        },
+        {
+          "ten": "Phần II: Viết",
+          "kieu_bai": "Viết bài văn kể lại một chuyến đi hoặc hoạt động xã hội (khoảng 500 chữ)",
+          "diem": 6.0
+        }
+      ],
+      "pham_vi": [
+        "van8-truyen-ngan-hien-dai-va-truyen-cuoi"
+      ],
+      "quy_dinh_ngu_lieu": "Ngữ liệu ngoài SGK (truyện ngắn hiện đại hoặc truyện cười, 400 - 600 từ).",
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 1",
+      "lop": 8,
+      "thoi_gian_phut": 90,
+      "phan": [
+        {
+          "ten": "Phần I: Đọc hiểu",
+          "so_cau": 4,
+          "loai_cau": "Trắc nghiệm và Tự luận ngắn",
+          "diem": 4.0
+        },
+        {
+          "ten": "Phần II: Viết",
+          "kieu_bai": "Viết bài văn phân tích một tác phẩm truyện hoặc phân tích một bài thơ 6, 7 chữ (khoảng 500 chữ)",
+          "diem": 6.0
+        }
+      ],
+      "pham_vi": [
+        "van8-truyen-ngan-hien-dai-va-truyen-cuoi",
+        "van8-tho-6-chu-7-chu-va-tho-doan-truong"
+      ],
+      "quy_dinh_ngu_lieu": "Ngữ liệu ngoài SGK.",
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 2",
+      "lop": 8,
+      "thoi_gian_phut": 90,
+      "phan": [
+        {
+          "ten": "Phần I: Đọc hiểu",
+          "so_cau": 4,
+          "loai_cau": "Trắc nghiệm và Tự luận ngắn",
+          "diem": 4.0
+        },
+        {
+          "ten": "Phần II: Viết",
+          "kieu_bai": "Viết bài văn nghị luận về một vấn đề đời sống (khoảng 500 - 600 chữ)",
+          "diem": 6.0
+        }
+      ],
+      "pham_vi": [
+        "van8-van-ban-nghi-luan"
+      ],
+      "quy_dinh_ngu_lieu": "Ngữ liệu ngoài SGK (văn bản nghị luận xã hội).",
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 2",
+      "lop": 8,
+      "thoi_gian_phut": 90,
+      "phan": [
+        {
+          "ten": "Phần I: Đọc hiểu",
+          "so_cau": 4,
+          "loai_cau": "Trắc nghiệm và Tự luận ngắn",
+          "diem": 4.0
+        },
+        {
+          "ten": "Phần II: Viết",
+          "kieu_bai": "Viết bài văn thuyết minh giải thích một hiện tượng tự nhiên hoặc giới thiệu danh lam thắng cảnh",
+          "diem": 6.0
+        }
+      ],
+      "pham_vi": [
+        "van8-van-ban-thuyet-minh-hien-tuong-tu-nhien"
+      ],
+      "quy_dinh_ngu_lieu": "Ngữ liệu ngoài SGK (văn bản thuyết minh hiện tượng tự nhiên).",
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 9,
+      "thoi_gian_phut": 90,
+      "phan": [
+        {
+          "ten": "Phần I: Đọc hiểu",
+          "so_cau": 4,
+          "loai_cau": "Trắc nghiệm và Tự luận ngắn",
+          "diem": 4.0
+        },
+        {
+          "ten": "Phần II: Viết",
+          "kieu_bai": "Viết bài văn nghị luận phân tích một tác phẩm truyện (truyện truyền kỳ / truyện thơ Nôm ngoài SGK)",
+          "diem": 6.0
+        }
+      ],
+      "pham_vi": [
+        "van9-truyen-truyen-ky-va-truyen-tho-nom"
+      ],
+      "quy_dinh_ngu_lieu": "BẮT BUỘC dùng ngữ liệu ngoài SGK (trích đoạn truyện truyền kỳ hoặc truyện thơ Nôm, 400 - 600 từ).",
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 1",
+      "lop": 9,
+      "thoi_gian_phut": 90,
+      "phan": [
+        {
+          "ten": "Phần I: Đọc hiểu",
+          "so_cau": 4,
+          "loai_cau": "Trắc nghiệm và Tự luận ngắn",
+          "diem": 4.0
+        },
+        {
+          "ten": "Phần II: Viết",
+          "kieu_bai": "Viết bài văn phân tích một bài thơ / đoạn thơ 8 chữ hoặc thơ tự do (khoảng 600 chữ)",
+          "diem": 6.0
+        }
+      ],
+      "pham_vi": [
+        "van9-tho-tam-chu-va-tho-doan-truong"
+      ],
+      "quy_dinh_ngu_lieu": "BẮT BUỘC dùng ngữ liệu ngoài SGK.",
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 2",
+      "lop": 9,
+      "thoi_gian_phut": 90,
+      "phan": [
+        {
+          "ten": "Phần I: Đọc hiểu",
+          "so_cau": 4,
+          "loai_cau": "Trắc nghiệm và Tự luận ngắn",
+          "diem": 4.0
+        },
+        {
+          "ten": "Phần II: Viết",
+          "kieu_bai": "Viết bài văn nghị luận về một vấn đề cần giải quyết / vấn đề xã hội (khoảng 600 chữ)",
+          "diem": 6.0
+        }
+      ],
+      "pham_vi": [
+        "van9-kich-ban-van-hoc-va-truyen-ngan-hien-dai",
+        "van9-van-ban-nghi-luan-va-thuyet-minh-tiet-che"
+      ],
+      "quy_dinh_ngu_lieu": "BẮT BUỘC dùng ngữ liệu ngoài SGK.",
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 2",
+      "lop": 9,
+      "thoi_gian_phut": 90,
+      "phan": [
+        {
+          "ten": "Phần I: Đọc hiểu",
+          "so_cau": 4,
+          "loai_cau": "Trắc nghiệm và Tự luận ngắn",
+          "diem": 4.0
+        },
+        {
+          "ten": "Phần II: Viết",
+          "kieu_bai": "Viết bài văn thuyết minh về danh thắng/di tích (có lồng ghép miêu tả, biểu cảm) HOẶC bài văn nghị luận phân tích truyện ngắn",
+          "diem": 6.0
+        }
+      ],
+      "pham_vi": [
+        "van9-van-ban-nghi-luan-va-thuyet-minh-tiet-che"
+      ],
+      "quy_dinh_ngu_lieu": "BẮT BUỘC dùng ngữ liệu ngoài SGK.",
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Thi vào lớp 10",
+      "lop": 9,
+      "thoi_gian_phut": 120,
+      "phan": [
+        {
+          "ten": "Phần I: Đọc hiểu",
+          "so_cau": 4,
+          "loai_cau": "Tự luận ngắn (Nhận biết, Thông hiểu, Vận dụng)",
+          "diem": 4.0
+        },
+        {
+          "ten": "Phần II: Viết",
+          "kieu_bai": "Câu 1: Nghị luận xã hội (khoảng 200 chữ, 2.0 điểm); Câu 2: Nghị luận văn học phân tích một tác phẩm truyện/thơ ngoài SGK (khoảng 600 chữ, 4.0 điểm)",
+          "diem": 6.0
+        }
+      ],
+      "pham_vi": [
+        "van9-truyen-truyen-ky-va-truyen-tho-nom",
+        "van9-tho-tam-chu-va-tho-doan-truong",
+        "van9-kich-ban-van-hoc-va-truyen-ngan-hien-dai",
+        "van9-van-ban-nghi-luan-va-thuyet-minh-tiet-che"
+      ],
+      "quy_dinh_ngu_lieu": "100% ngữ liệu ngoài SGK (theo định hướng Thông tư 22 và hướng dẫn ra đề từ năm 2025 của Sở GD&ĐT Hà Nội, TP.HCM...).",
+      "ti_le_muc_do": "30% Nhận biết - 40% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 10,
+      "thoi_gian_phut": 90,
+      "phan": [
+        {
+          "ten": "Phần I: Đọc hiểu",
+          "so_cau": 4,
+          "loai_cau": "Trắc nghiệm và Tự luận ngắn",
+          "diem": 4.0
+        },
+        {
+          "ten": "Phần II: Viết",
+          "kieu_bai": "Viết bài văn nghị luận phân tích, đánh giá một tác phẩm truyện (thần thoại / sử thi)",
+          "diem": 6.0
+        }
+      ],
+      "pham_vi": [
+        "van10-than-thoai-va-su-thi"
+      ],
+      "quy_dinh_ngu_lieu": "Ngữ liệu ngoài SGK (đoạn trích thần thoại hoặc sử thi ngoài SGK, 500 - 700 từ).",
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 1",
+      "lop": 10,
+      "thoi_gian_phut": 90,
+      "phan": [
+        {
+          "ten": "Phần I: Đọc hiểu",
+          "so_cau": 4,
+          "loai_cau": "Trắc nghiệm và Tự luận ngắn",
+          "diem": 4.0
+        },
+        {
+          "ten": "Phần II: Viết",
+          "kieu_bai": "Viết bài văn nghị luận phân tích, đánh giá một bài thơ / tác phẩm thơ (khoảng 600 - 700 chữ)",
+          "diem": 6.0
+        }
+      ],
+      "pham_vi": [
+        "van10-tho-tru-tinh-va-trung-dai"
+      ],
+      "quy_dinh_ngu_lieu": "Ngữ liệu ngoài SGK (bài thơ Đường luật hoặc thơ tự do ngoài SGK).",
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 2",
+      "lop": 10,
+      "thoi_gian_phut": 90,
+      "phan": [
+        {
+          "ten": "Phần I: Đọc hiểu",
+          "so_cau": 4,
+          "loai_cau": "Trắc nghiệm và Tự luận ngắn",
+          "diem": 4.0
+        },
+        {
+          "ten": "Phần II: Viết",
+          "kieu_bai": "Viết bài văn nghị luận về một vấn đề xã hội (trình bày quan điểm cá nhân / thuyết phục từ bỏ thói quen xấu)",
+          "diem": 6.0
+        }
+      ],
+      "pham_vi": [
+        "van10-van-ban-nghi-luan"
+      ],
+      "quy_dinh_ngu_lieu": "Ngữ liệu ngoài SGK.",
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 2",
+      "lop": 10,
+      "thoi_gian_phut": 90,
+      "phan": [
+        {
+          "ten": "Phần I: Đọc hiểu",
+          "so_cau": 4,
+          "loai_cau": "Trắc nghiệm và Tự luận ngắn",
+          "diem": 4.0
+        },
+        {
+          "ten": "Phần II: Viết",
+          "kieu_bai": "Viết văn bản thuyết minh về một di sản văn hóa / tác phẩm nghệ thuật (khoảng 600 chữ)",
+          "diem": 6.0
+        }
+      ],
+      "pham_vi": [
+        "van10-van-ban-thuyet-minh-va-nhat-dung"
+      ],
+      "quy_dinh_ngu_lieu": "Ngữ liệu ngoài SGK.",
+      "ti_le_muc_do": "40% Nhận biết - 30% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 11,
+      "thoi_gian_phut": 90,
+      "phan": [
+        {
+          "ten": "Phần I: Đọc hiểu",
+          "so_cau": 4,
+          "loai_cau": "Trắc nghiệm và Tự luận ngắn",
+          "diem": 4.0
+        },
+        {
+          "ten": "Phần II: Viết",
+          "kieu_bai": "Viết bài văn nghị luận phân tích một tác phẩm truyện (chú trọng điểm nhìn trần thuật, nhân vật tâm lý)",
+          "diem": 6.0
+        }
+      ],
+      "pham_vi": [
+        "van11-truyen-tho-nom-va-truyen-ngan-hien-dai"
+      ],
+      "quy_dinh_ngu_lieu": "Ngữ liệu ngoài SGK.",
+      "ti_le_muc_do": "30% Nhận biết - 40% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 1",
+      "lop": 11,
+      "thoi_gian_phut": 90,
+      "phan": [
+        {
+          "ten": "Phần I: Đọc hiểu",
+          "so_cau": 4,
+          "loai_cau": "Trắc nghiệm và Tự luận ngắn",
+          "diem": 4.0
+        },
+        {
+          "ten": "Phần II: Viết",
+          "kieu_bai": "Viết bài văn nghị luận phân tích một bài thơ tượng trưng / thơ trữ tình hiện đại (khoảng 700 chữ)",
+          "diem": 6.0
+        }
+      ],
+      "pham_vi": [
+        "van11-tho-su-tru-tinh-va-tho-tu-do"
+      ],
+      "quy_dinh_ngu_lieu": "Ngữ liệu ngoài SGK.",
+      "ti_le_muc_do": "30% Nhận biết - 40% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 2",
+      "lop": 11,
+      "thoi_gian_phut": 90,
+      "phan": [
+        {
+          "ten": "Phần I: Đọc hiểu",
+          "so_cau": 4,
+          "loai_cau": "Trắc nghiệm và Tự luận ngắn",
+          "diem": 4.0
+        },
+        {
+          "ten": "Phần II: Viết",
+          "kieu_bai": "Viết bài văn nghị luận SO SÁNH, ĐÁNH GIÁ HAI TÁC PHẨM VĂN HỌC (khoảng 700 - 800 chữ)",
+          "diem": 6.0
+        }
+      ],
+      "pham_vi": [
+        "van11-bi-kich-va-truyen-hien-thuc"
+      ],
+      "quy_dinh_ngu_lieu": "Ngữ liệu ngoài SGK (hai đoạn trích/bài thơ ngoài SGK).",
+      "ti_le_muc_do": "30% Nhận biết - 40% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 2",
+      "lop": 11,
+      "thoi_gian_phut": 90,
+      "phan": [
+        {
+          "ten": "Phần I: Đọc hiểu",
+          "so_cau": 4,
+          "loai_cau": "Trắc nghiệm và Tự luận ngắn",
+          "diem": 4.0
+        },
+        {
+          "ten": "Phần II: Viết",
+          "kieu_bai": "Viết báo cáo nghiên cứu về một vấn đề văn hóa/xã hội HOẶC viết bài văn nghị luận xã hội tác động đến giới trẻ",
+          "diem": 6.0
+        }
+      ],
+      "pham_vi": [
+        "van11-van-ban-nghi-luan-va-bao-cao-nghien-cuu"
+      ],
+      "quy_dinh_ngu_lieu": "Ngữ liệu ngoài SGK.",
+      "ti_le_muc_do": "30% Nhận biết - 40% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 1",
+      "lop": 12,
+      "thoi_gian_phut": 90,
+      "phan": [
+        {
+          "ten": "Phần I: Đọc hiểu",
+          "so_cau": 4,
+          "loai_cau": "Tự luận ngắn",
+          "diem": 4.0
+        },
+        {
+          "ten": "Phần II: Viết",
+          "kieu_bai": "Viết bài văn nghị luận so sánh, đánh giá hai tác phẩm truyện / hai nhân vật truyện (khoảng 600 - 800 chữ)",
+          "diem": 6.0
+        }
+      ],
+      "pham_vi": [
+        "van12-truyen-ngan-va-tieu-thuyet-hien-dai"
+      ],
+      "quy_dinh_ngu_lieu": "100% ngữ liệu ngoài SGK.",
+      "ti_le_muc_do": "30% Nhận biết - 40% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 1",
+      "lop": 12,
+      "thoi_gian_phut": 90,
+      "phan": [
+        {
+          "ten": "Phần I: Đọc hiểu",
+          "so_cau": 4,
+          "loai_cau": "Tự luận ngắn",
+          "diem": 4.0
+        },
+        {
+          "ten": "Phần II: Viết",
+          "kieu_bai": "Viết bài văn nghị luận so sánh hai bài thơ HOẶC phân tích trích đoạn trường ca (khoảng 600 - 800 chữ)",
+          "diem": 6.0
+        }
+      ],
+      "pham_vi": [
+        "van12-tho-hien-dai-va-truong-ca"
+      ],
+      "quy_dinh_ngu_lieu": "100% ngữ liệu ngoài SGK.",
+      "ti_le_muc_do": "30% Nhận biết - 40% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Giữa kỳ 2",
+      "lop": 12,
+      "thoi_gian_phut": 90,
+      "phan": [
+        {
+          "ten": "Phần I: Đọc hiểu",
+          "so_cau": 4,
+          "loai_cau": "Tự luận ngắn",
+          "diem": 4.0
+        },
+        {
+          "ten": "Phần II: Viết",
+          "kieu_bai": "Viết bài văn nghị luận về một vấn đề xã hội (dạng đề mở / thể hiện lập trường sắc bén)",
+          "diem": 6.0
+        }
+      ],
+      "pham_vi": [
+        "van12-kich-ban-van-hoc-va-van-ban-nghi-luan"
+      ],
+      "quy_dinh_ngu_lieu": "100% ngữ liệu ngoài SGK.",
+      "ti_le_muc_do": "30% Nhận biết - 40% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Cuối kỳ 2",
+      "lop": 12,
+      "thoi_gian_phut": 90,
+      "phan": [
+        {
+          "ten": "Phần I: Đọc hiểu",
+          "so_cau": 4,
+          "loai_cau": "Tự luận ngắn",
+          "diem": 4.0
+        },
+        {
+          "ten": "Phần II: Viết",
+          "kieu_bai": "Viết bài phát biểu / thư trao đổi HOẶC bài văn nghị luận phân tích tác phẩm văn học hiện đại ngoài SGK",
+          "diem": 6.0
+        }
+      ],
+      "pham_vi": [
+        "van12-van-ban-thong-tin-va-nhat-dung-nang-cao"
+      ],
+      "quy_dinh_ngu_lieu": "100% ngữ liệu ngoài SGK.",
+      "ti_le_muc_do": "30% Nhận biết - 40% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    },
+    {
+      "loai": "Tốt nghiệp THPT 2025",
+      "lop": 12,
+      "thoi_gian_phut": 120,
+      "phan": [
+        {
+          "ten": "Phần I: Đọc hiểu",
+          "so_cau": 4,
+          "loai_cau": "Tự luận ngắn (Nhận biết, Thông hiểu, Vận dụng)",
+          "diem": 4.0
+        },
+        {
+          "ten": "Phần II: Viết",
+          "kieu_bai": "Câu 1: Viết đoạn văn nghị luận xã hội (khoảng 200 chữ, 2.0 điểm); Câu 2: Viết bài văn nghị luận văn học phân tích/so sánh tác phẩm ngoài SGK (khoảng 600 - 800 chữ, 4.0 điểm)",
+          "diem": 6.0
+        }
+      ],
+      "pham_vi": [
+        "van12-truyen-ngan-va-tieu-thuyet-hien-dai",
+        "van12-tho-hien-dai-va-truong-ca",
+        "van12-kich-ban-van-hoc-va-van-ban-nghi-luan",
+        "van12-van-ban-thong-tin-va-nhat-dung-nang-cao"
+      ],
+      "quy_dinh_ngu_lieu": "100% ngữ liệu NGOÀI SGK theo Quyết định ban hành Cấu trúc định dạng đề thi Tốt nghiệp THPT từ năm 2025 của Bộ GD&ĐT. Tuyệt đối không dùng ngữ liệu trong SGK 10, 11, 12.",
+      "ti_le_muc_do": "30% Nhận biết - 40% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao"
+    }
+  ]
+}

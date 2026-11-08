@@ -1,0 +1,259 @@
+{
+  "mon": "Địa lí (phân môn Địa lí của môn Lịch sử và Địa lí)",
+  "pham_vi_luot": "lớp 6–9",
+  "nguon": [
+    "Chương trình GDPT 2018 môn Lịch sử và Địa lí, Thông tư 32/2018/TT-BGDĐT (sửa đổi bởi Thông tư 13/2022)",
+    "SGK Lịch sử và Địa lí 6, 7, 8, 9 — Kết nối tri thức, phần Địa lí (mục lục từ loigiaihay.com, vietjack.com, scribd)"
+  ],
+  "muc_luc_da_tra": [
+    "Lớp 6 – KNTT – Chủ đề 1. Trái Đất (Bài 1: Trái Đất – hành tinh của Hệ Mặt Trời; Bài 2: Chuyển động của Trái Đất và hệ quả; Bài 3: Mô hình Trái Đất – địa cầu; Bài 4: Địa cực và đới khí hậu)",
+    "Lớp 6 – KNTT – Chủ đề 2. Bản đồ (Bài 5–8: tỉ lệ bản đồ; phương hướng; một số dạng bản đồ; thực hành)",
+    "Lớp 6 – KNTT – Tiếp theo: Vỏ Trái Đất và các địa hình bề mặt; Khí hậu và thuỷ văn; Dân cư và các châu lục (từ Bài 9 trở đi — số bài từng chủ đề đối chiếu SGK in)",
+    "Lớp 7 – KNTT – Chương 1. Châu Âu (Bài 1–4: vị trí, đặc điểm tự nhiên; dân cư, xã hội; Liên minh châu Âu; thực hành)",
+    "Lớp 7 – KNTT – Chương 2. Châu Á (Bài 5–8: vị trí, đặc điểm tự nhiên; dân cư, xã hội; bản đồ chính trị, các khu vực; thực hành)",
+    "Lớp 7 – KNTT – Các chương tiếp: châu Phi; châu Mĩ; châu Đại Dương và vùng cực (tên chương theo mục lục SGK, số bài đối chiếu SGK in)",
+    "Lớp 8 – KNTT – Chủ đề chung. Bảo vệ chủ quyền, các quyền và lợi ích hợp pháp của Việt Nam ở Biển Đông (1)",
+    "Lớp 8 – KNTT – Chủ đề 1. Vị trí địa lí và phạm vi lãnh thổ Việt Nam",
+    "Lớp 8 – KNTT – Chủ đề 2. Địa hình, khoáng sản và địa chất Việt Nam",
+    "Lớp 8 – KNTT – Chủ đề 3. Khí hậu và thuỷ văn Việt Nam",
+    "Lớp 8 – KNTT – Chủ đề 4. Đời sống sinh vật và thổ nhưỡng (đất) Việt Nam",
+    "Lớp 8 – KNTT – Chủ đề 5. Người Việt Nam và các vùng văn hoá Việt Nam (một số lần in; đối chiếu SGK)",
+    "Lớp 9 – KNTT – Chương 1. Địa lí dân cư Việt Nam (Bài 1–4: dân tộc và dân số; phân bố dân cư, quần cư; lao động – việc làm; thực hành)",
+    "Lớp 9 – KNTT – Chương 2. Địa lí các ngành kinh tế (Bài 5–11: nông nghiệp; lâm nghiệp, thuỷ sản; thực hành; công nghiệp; thực hành; dịch vụ; thực hành)",
+    "Lớp 9 – KNTT – Chương 3. Địa lí các vùng kinh tế – xã hội (Bài 12–22: trung du miền núi phía Bắc; ĐBSH; Bắc Trung Bộ và thực hành; Duyên hải Nam Trung Bộ, Tây Nguyên; Đông Nam Bộ; Tây Nguyên (bài lặp trong nguồn); thực hành VĐTTrĐ Nam; ĐBSCL; thực hành ĐBCL; phát triển tổng hợp kinh tế biển đảo)",
+    "Lớp 9 – KNTT – Chủ đề chung. Đô thị: lịch sử và hiện tại; Văn minh châu thổ sông Hồng và sông Cửu Long; Bảo vệ chủ quyền, các quyền và lợi ích hợp pháp của Việt Nam ở Biển Đông (2)"
+  ],
+  "ky_nang_tinh_toan": [
+    { "ten": "Mật độ dân số", "cong_thuc": "Mật độ = Dân số / Diện tích", "don_vi": "người/km²", "lop_bat_dau": 8 },
+    { "ten": "Tỉ lệ gia tăng dân số tự nhiên", "cong_thuc": "(Tỉ suất sinh – Tỉ suất tử) / 10", "don_vi": "%", "lop_bat_dau": 9 },
+    { "ten": "Tỉ lệ gia tăng dân số", "cong_thuc": "(Số người tăng thêm trong năm / Dân số đầu năm) × 100", "don_vi": "%", "lop_bat_dau": 9 },
+    { "ten": "Tốc độ tăng trưởng GDP", "cong_thuc": "(GDP năm sau – GDP năm trước) / GDP năm trước × 100", "don_vi": "%", "lop_bat_dau": 9 },
+    { "ten": "Tỉ trọng (cơ cấu)", "cong_thuc": "(Giá trị bộ phận / Tổng giá trị) × 100", "don_vi": "%", "lop_bat_dau": 9 },
+    { "ten": "Bình quân đầu người", "cong_thuc": "Tổng giá trị / Dân số", "don_vi": "đồng/người (hoặc USD/người)", "lop_bat_dau": 9 },
+    { "ten": "Năng suất (lúa, cây công nghiệp)", "cong_thuc": "Sản lượng / Diện tích gieo trồng", "don_vi": "tạ/ha hoặc tấn/ha", "lop_bat_dau": 9 },
+    { "ten": "Cán cân xuất nhập khẩu", "cong_thuc": "Kim ngạch XK – Kim ngạch NK", "don_vi": "tỉ USD (giá trị dương: thặng dư; âm: nhập siêu)", "lop_bat_dau": 9 }
+  ],
+  "lop": [
+    {
+      "lop": 6,
+      "chuong": [
+        { "id": "dia6-trai-dat", "ten": "Trái Đất: Hệ Mặt Trời, chuyển động của Trái Đất, địa cầu, đới khí hậu", "hoc_ky": 1, "mach": "Trái Đất", "ten_theo_sach": { "KNTT": "Chủ đề 1 (Bài 1–4). Trái Đất", "CTST": "Chủ đề Trái Đất", "CD": "Chủ đề Trái Đất" }, "khai_niem": ["thiên thể", "chuyển động tự quay", "chuyển động quanh Mặt Trời", "kinh tuyến", "vĩ tuyến", "toạ độ địa lí", "đới khí hậu"], "dia_danh": ["Mặt Trời", "Mặt Trăng", "Trái Đất", "xích đạo", "hai địa cực"], "so_lieu_moc": [{ "noi_dung": "Chu kì chuyển động tự quay của Trái Đất 24 giờ", "nam": "SGK KNTT lớp 6", "nguon": "SGK" }, { "noi_dung": "Chu kì chuyển động quanh Mặt Trời 365 ngày 5 giờ 48 phút 46 giây", "nam": "SGK KNTT lớp 6", "nguon": "SGK" }], "ky_nang": ["Dùng địa cầu xác định toạ độ địa lí của một điểm", "Chỉ ra kinh tuyến, vĩ tuyến, xích đạo trên địa cầu và bản đồ"], "yeu_cau_can_dat": ["Trình bày vị trí Trái Đất trong Hệ Mặt Trời", "Mô tả hai chuyển động của Trái Đất và nêu hệ quả (ngày – đêm; bốn mùa)", "Sử dụng địa cầu, xác định toạ độ địa lí", "Nêu đặc điểm các đới khí hậu trên Trái Đất"], "kien_thuc_duoc_dung": ["KHTN 6: Trái Đất và bầu trời, chuyển động tự quay"], "chua_duoc_dung": ["Độ nghiêng trục quay 23,5° với phép tính chính xác (chỉ nêu)", "Múi giờ và cách tính giờ theo kinh tuyến chi tiết (chỉ nêu ở mức nêu khái quát)", "Tiêu cự, cách thuyết Nhật tâm (lịch sử thiên văn — chỉ nhắc)"], "dang_bai_dien_hinh": ["Xác định toạ độ điểm trên lưới toạ độ cho sẵn", "Ghép đới khí hậu với mô tả thời tiết", "Trình bày hệ quả các chuyển động của Trái Đất"], "luu_y_ra_de": "Cách chia đới khí hậu khác nhau nhẹ giữa các bộ sách; theo cách chia trong SGK đang dùng." },
+        { "id": "dia6-ban-do", "ten": "Bản đồ: tỉ lệ, phương hướng, các dạng bản đồ", "hoc_ky": 1, "mach": "Bản đồ", "ten_theo_sach": { "KNTT": "Chủ đề 2 (Bài 5–8). Bản đồ", "CTST": "Chủ đề bản đồ", "CD": "Chủ đề bản đồ" }, "khai_niem": ["bản đồ", "tỉ lệ bản đồ", "phương hướng", "kinh tuyến gốc", "chú giải bản đồ"], "dia_danh": [], "so_lieu_moc": [], "ky_nang": ["Đọc tỉ lệ bản đồ, tính khoảng cách thực tế", "Xác định phương hướng trên bản đồ", "Đọc bản đồ địa lí tự nhiên, bản đồ chính trị", "Đọc bảng chú giải"], "yeu_cau_can_dat": ["Nêu ý nghĩa của tỉ lệ bản đồ; tính khoảng cách thực tế theo tỉ lệ", "Xác định phương hướng (8 phương chính)", "Nhận biết và sử dụng một số dạng bản đồ tổng hợp", "Thực hành sử dụng bản đồ để tìm hiểu một khu vực"], "kien_thuc_duoc_dung": ["Toán 6: tỉ lệ, đơn vị đo độ dài"], "chua_duoc_dung": ["Bản đồ hành chính theo địa giới mới sau sáp nhập 2025 (bản đồ in có thể cũ — ghi chú năm xuất bản bản đồ)", "Hệ toạ độ UTM, bản đồ số GIS (ngoài chương trình)"], "dang_bai_dien_hinh": ["Tính khoảng cách thực tế theo tỉ lệ cho sẵn", "Xác định phương hướng điểm B so với A trên bản đồ", "Đọc bản đồ trả lời câu hỏi về đặc điểm khu vực"], "luu_y_ra_de": "Đề kèm bản đồ phải ghi rõ tỉ lệ và hướng chỉ Bắc." },
+        { "id": "dia6-vo-trai-dat-dia-hinh", "ten": "Vỏ Trái Đất và các địa hình bề mặt (trên cạn và dưới đáy đại dương)", "hoc_ky": 2, "mach": "Địa lí tự nhiên", "ten_theo_sach": { "KNTT": "Chủ đề Vỏ Trái Đất và các địa hình bề mặt (từ Bài 9)", "CTST": "Chủ đề vỏ Trái Đất – địa hình", "CD": "Chủ đề vỏ Trái Đất và địa hình" }, "khai_niem": ["vỏ Trái Đất", "địa hình núi", "địa hình đồi", "đồng bằng", "lục địa", "đại dương"], "dia_danh": ["núi Himalaya", "đồng bằng Xích Vĩ", "châu lục", "Thái Bình Dương"], "so_lieu_moc": [{ "noi_dung": "Đỉnh Everest khoảng 8 849 m (chọn đỉnh cao nhất Trái Đất)", "nam": "SGK/bản đồ địa lí", "nguon": "SGK và bản đồ địa lí" }], "ky_nang": ["Đọc bản đồ địa hình thế giới", "Xác định địa hình núi, đồi, đồng bằng qua màu sắc"],
+          "yeu_cau_can_dat": ["Mô tả vỏ Trái Đất và các dạng địa hình chính trên mặt đất, dưới đáy đại dương", "Đọc bản đồ địa hình thế giới, xác định các dãy núi, đồng bằng lớn", "Nêu mối liên hệ địa hình với hoạt động của con người (mức nêu)"],
+          "kien_thuc_duoc_dung": ["KHTN 6: vỏ Trái Đất", "Toán 6: so sánh số lớn"], "chua_duoc_dung": ["Thuyết kiến tạo mảng, chuyển động đai lục địa (chỉ nêu ở mức gợi ý)", "Địa tầng, niên đại địa chất (ngoài chương trình)"],
+          "dang_bai_dien_hinh": ["Đọc bản đồ địa hình thế giới trả lời câu hỏi", "Ghép dạng địa hình với mô tả/kí hiệu màu"], "luu_y_ra_de": "Số liệu cao độ lấy theo bản đồ địa lí thế giới hiện hành." },
+        { "id": "dia6-khi-hau-thuy-van", "ten": "Khí hậu và thuỷ văn: thời tiết, khí hậu, nước trên Trái Đất", "hoc_ky": 2, "mach": "Địa lí tự nhiên", "ten_theo_sach": { "KNTT": "Chủ đề Khí hậu và thuỷ văn (từ Bài 9 trở đi)", "CTST": "Chủ đề khí hậu – thuỷ văn", "CD": "Chủ đề khí hậu và thuỷ văn" }, "khai_niem": ["thời tiết", "khí hậu", "nhiệt độ", "lượng mưa", "sông", "hồ", "đại dương"], "dia_danh": ["đại dương Thái Bình Dương", "sông Nile", "Biển Đông"], "so_lieu_moc": [{ "noi_dung": "Nước chiếm khoảng 71% diện tích bề mặt Trái Đất", "nam": "SGK KHTN/Địa lí 6", "nguon": "SGK" }], "ky_nang": ["Đọc biểu đồ nhiệt độ, lượng mưa (mức nêu)", "Đọc bản đồ sông ngòi, đại dương"],
+          "yeu_cau_can_dat": ["Phân biệt thời tiết và khí hậu; nêu các yếu tố thời tiết", "Mô tả đặc điểm khí hậu các đới (nhiệt đới, ôn đới, hàn đới)", "Nêu phân bố nước trên Trái Đất (đại dương, sông, hồ, băng) và vai trò của nước"],
+          "kien_thuc_duoc_dung": ["KHTN 6: nước, các thể của chất; Toán 6: đọc biểu đồ đơn giản"], "chua_duoc_dung": ["Biểu đồ nhiệt – mưa chi tiết theo phương pháp vẽ chuẩn (chỉ đọc)", "Hệ thống phân loại khí hậu Köppen (ngoài chương trình)"],
+          "dang_bai_dien_hinh": ["Đọc bảng/biểu đồ nhiệt độ, mưa của một địa điểm", "Ghép đới khí hậu với đặc điểm mưa – nhiệt"], "luu_y_ra_de": "Chỉ yêu cầu đọc hiểu biểu đồ đơn giản cho sẵn." },
+        { "id": "dia6-dan-cu-chau-luc", "ten": "Dân cư và các châu lục", "hoc_ky": 2, "mach": "Địa lí châu lục", "ten_theo_sach": { "KNTT": "Chủ đề Dân cư và các châu lục (từ Bài 9 trở đi)", "CTST": "Chủ đề dân cư và các châu lục", "CD": "Chủ đề dân cư và các châu lục" }, "khai_niem": ["dân cư", "châu lục", "lục địa", "quần đảo"], "dia_danh": ["châu Á", "châu Âu", "châu Phi", "châu Mĩ", "châu Đại Dương", "Nam Cực"], "so_lieu_moc": [{ "noi_dung": "Trên Trái Đất có 6 châu lục có người sinh sống và châu Nam Cực", "nam": "SGK Địa lí 6", "nguon": "SGK" }], "ky_nang": ["Đọc bản đồ chính trị thế giới, xác định các châu lục, quốc gia"],
+          "yeu_cau_can_dat": ["Nêu sự phân bố dân cư trên các châu lục", "Trình bày vị trí, đặc điểm nổi bật của các châu lục (mức tổng quát)", "Nhận biết các châu lục, đại dương trên bản đồ chính trị thế giới"],
+          "kien_thuc_duoc_dung": ["Toán 6: so sánh số liệu lớn"], "chua_duoc_dung": ["Đặc điểm kinh tế – xã hội chi tiết từng châu lục (lớp 7)", "Dân số thế giới cập nhật theo năm (ghi năm nếu dùng số liệu)"],
+          "dang_bai_dien_hinh": ["Xác định châu lục trên bản đồ thế giới", "Ghép châu lục với đặc điểm nổi bật"], "luu_y_ra_de": "Chi tiết châu lục học ở lớp 7; lớp 6 chỉ tổng quát." }
+      ],
+      "chuyen_de": [],
+      "ghi_chu_chua_chac": [
+        "Mục lục Địa lí 6 KNTT: chỉ tra được rõ Chủ đề 1 (Trái Đất) và Chủ đề 2 (Bản đồ); các chủ đề tiếp theo (vỏ Trái Đất – địa hình; khí hậu – thuỷ văn; dân cư và các châu lục) ghi theo chương trình 2018 và kết quả tìm kiếm — số bài từng chủ đề cần đối chiếu SGK in",
+        "CTST/CD chia chương khác KNTT (CD 6 phần Địa lí gồm 7 chương/26 bài) — ten_theo_sach ghi mức chủ đề"
+      ]
+    },
+    {
+      "lop": 7,
+      "chuong": [
+        { "id": "dia7-chau-au", "ten": "Châu Âu: vị trí, tự nhiên, dân cư – xã hội, Liên minh châu Âu", "hoc_ky": 1, "mach": "Địa lí châu lục", "ten_theo_sach": { "KNTT": "Chương 1 (Bài 1–4). Châu Âu", "CTST": "Chủ đề châu Âu", "CD": "Chủ đề châu Âu" }, "khai_niem": ["bán đảo", "vịnh", "Liên minh châu Âu (EU)"], "dia_danh": ["Đồng bằng Đông Âu", "núi Anpơ", "Địa Trung Hải", "Bắc Băng Dương", "Thành Vatican"], "so_lieu_moc": [{ "noi_dung": "Liên minh châu Âu có 27 quốc gia thành viên (sau khi Anh rút khỏi EU năm 2020)", "nam": "2020", "nguon": "SGK/cập nhật" }], "ky_nang": ["Đọc bản đồ chính trị, bản đồ tự nhiên châu Âu", "Vẽ sơ đồ mô tả vị trí, đặc điểm châu Âu", "Thực hành tìm hiểu một quốc gia châu Âu qua bản đồ, tranh ảnh"],
+          "yeu_cau_can_dat": ["Trình bày vị trí địa lí, đặc điểm tự nhiên nổi bật của châu Âu (địa hình, khí hậu, sông ngòi)", "Trình bày đặc điểm dân cư, xã hội châu Âu (mật độ, ngôn ngữ, tôn giáo)", "Nêu quá trình hình thành và vai trò của Liên minh châu Âu", "Thực hành tìm hiểu địa lí một quốc gia châu Âu"],
+          "kien_thuc_duoc_dung": ["Địa lí 6: bản đồ, châu lục", "Toán 7: tỉ lệ, phần trăm dân số"], "chua_duoc_dung": ["Kinh tế các ngành chi tiết từng quốc gia châu Âu (chỉ nêu), biểu đồ kinh tế (chỉ đọc)", "Văn hoá – xã hội sâu từng nước (ngoài chương trình)"],
+          "dang_bai_dien_hinh": ["Đọc bản đồ châu Âu nhận biết biển, bán đảo, dãy núi", "Trình bày đặc điểm tự nhiên/dân cư châu Âu", "Giới thiệu một quốc gia châu Âu theo gợi ý"], "luu_y_ra_de": "Số liệu dân số, kinh tế ghi năm và nguồn; EU số thành viên cập nhật theo thời điểm." },
+        { "id": "dia7-chau-a", "ten": "Châu Á: vị trí, tự nhiên, dân cư – xã hội, bản đồ chính trị", "hoc_ky": 2, "mach": "Địa lí châu lục", "ten_theo_sach": { "KNTT": "Chương 2 (Bài 5–8). Châu Á", "CTST": "Chủ đề châu Á", "CD": "Chủ đề châu Á" }, "khai_niem": ["châu lục lớn nhất", "bán đảo", "quần đảo", "khu vực châu Á"], "dia_danh": ["núi Hymalaya", "đỉnh Everest", "sông Hoàng Hà", "sông Trường Giang", "sa mạc Gô-bi", "Vịnh Bengan"], "so_lieu_moc": [{ "noi_dung": "Đỉnh Everest cao 8 848,86 m — đỉnh cao nhất thế giới", "nam": "2020 (nepal – Trung Quốc công bố đo lại)", "nguon": "SGK/bản đồ địa lí" }, { "noi_dung": "Châu Á là châu lục có dân số đông nhất thế giới", "nam": "SGK Địa lí 7", "nguon": "SGK" }], "ky_nang": ["Đọc bản đồ tự nhiên, bản đồ chính trị châu Á", "Xác định các khu vực châu Á (Bắc Á, Trung Á, Đông Á, Nam Á, Đông Nam Á, Tây Á)"],
+          "yeu_cau_can_dat": ["Trình bày vị trí, đặc điểm tự nhiên nổi bật của châu Á (địa hình, khí hậu, sông ngòi)", "Trình bày đặc điểm dân cư, xã hội châu Á", "Xác định các quốc gia, khu vực trên bản đồ chính trị châu Á", "Thực hành tìm hiểu địa lí một quốc gia châu Á"],
+          "kien_thuc_duoc_dung": ["Địa lí 6: châu lục, bản đồ", "Toán 7: so sánh số liệu"], "chua_duoc_dung": ["Kinh tế các quốc gia châu Á chi tiết (lớp 10–11)", "Đặc điểm tự nhiên chi tiết từng tiểu vùng (chỉ nêu)"],
+          "dang_bai_dien_hinh": ["Đọc bản đồ châu Á nhận biết biển, bán đảo, sông, dãy núi", "Trình bày đặc điểm tự nhiên/dân cư châu Á", "Xác định khu vực và quốc gia trên bản đồ chính trị"], "luu_y_ra_de": "Việt Nam thuộc khu vực Đông Nam Á; đề liên hệ với kiến thức Việt Nam." },
+        { "id": "dia7-chau-phi", "ten": "Châu Phi", "hoc_ky": 2, "mach": "Địa lí châu lục", "ten_theo_sach": { "KNTT": "Chương châu Phi (số bài đối chiếu SGK in)", "CTST": "Chủ đề châu Phi", "CD": "Chủ đề châu Phi" }, "khai_niem": ["sa mạc", "xích đạo", "savan"], "dia_danh": ["sa mạc Xahara", "sông Nile", "đỉnh Kilimanjaro", "Hồ Victoria"], "so_lieu_moc": [{ "noi_dung": "Sông Nile là một trong những dòng sông dài nhất thế giới (khoảng 6 650 km)", "nam": "SGK/bản đồ địa lí", "nguon": "SGK" }], "ky_nang": ["Đọc bản đồ tự nhiên, chính trị châu Phi"], "yeu_cau_can_dat": ["Trình bày vị trí, đặc điểm tự nhiên nổi bật của châu Phi", "Trình bày đặc điểm dân cư và xã hội châu Âu ở mức tổng quát với châu Phi", "Nêu ví dụ về đời sống kinh tế của một số quốc gia châu Phi"],
+          "kien_thuc_duoc_dung": ["Địa lí 6–7: châu lục, bản đồ"], "chua_duoc_dung": ["Kinh tế từng quốc gia châu Phi chi tiết (ngoài chương trình)", "Lịch sử thuộc địa chi tiết (Lịch sử 8–9)"],
+          "dang_bai_dien_hinh": ["Đọc bản đồ châu Phi nhận biết sa mạc, sông ngòi", "Trình bày đặc điểm tự nhiên châu Phi"], "luu_y_ra_de": "Không dùng hình ảnh định kiến 'lạc hậu' khi nói về châu Phi." },
+        { "id": "dia7-chau-my", "ten": "Châu Mĩ (Bắc Mĩ và Nam Mĩ)", "hoc_ky": 2, "mach": "Địa lí châu lục", "ten_theo_sach": { "KNTT": "Chương châu Mĩ (số bài đối chiếu SGK in)", "CTST": "Chủ đề châu Mĩ", "CD": "Chủ đề châu Mĩ" }, "khai_niem": ["dãy Cordillera", "đồng bằng Amazon", "châu Mĩ Latin"], "dia_danh": ["dãy Rocky", "đồng bằng Amazon", "sông Amazon", "Ngũ Đại Hồ", "Pana-ma kênh"], "so_lieu_moc": [{ "noi_dung": "Sông Amazon có lưu vực và lưu lượng nước lớn nhất thế giới", "nam": "SGK/bản đồ địa lí", "nguon": "SGK" }], "ky_nang": ["Đọc bản đồ tự nhiên, chính trị châu Mĩ"],
+          "yeu_cau_can_dat": ["Trình bày vị trí, đặc điểm tự nhiên nổi bật của Bắc Mĩ, Nam Mĩ", "Trình bày đặc điểm dân cư, xã hội ở mức tổng quát", "Nêu ví dụ quốc gia tiêu biểu của hai châu lục"],
+          "kien_thuc_duoc_dung": ["Địa lí 6–7: châu lục, bản đồ"], "chua_duoc_dung": ["Kinh tế Hoa Kì, Canada, Braxin chi tiết (ngoài chương trình; liên hệ KTPL)"],
+          "dang_bai_dien_hinh": ["Đọc bản đồ châu Mĩ nhận biết dãy núi, đồng bằng, sông ngòi", "Trình bày đặc điểm tự nhiên của châu Mĩ"], "luu_y_ra_de": "Không đòi hỏi số liệu kinh tế cập nhật của các quốc gia." },
+        { "id": "dia7-chau-dai-duong-vung-cuc", "ten": "Châu Đại Dương và vùng cực", "hoc_ky": 2, "mach": "Địa lí châu lục", "ten_theo_sach": { "KNTT": "Chương châu Đại Dương và vùng cực (số bài đối chiếu SGK in)", "CTST": "Chủ đề châu Đại Dương và vùng cực", "CD": "Chủ đề châu Đại Dương, vùng cực" }, "khai_niem": ["châu Đại Dương", "vùng cực", "băng", "quần đảo đảo quốc"], "dia_danh": ["Úc", "New Zealand", "Nam Cực", "Biển Nam Cực"], "so_lieu_moc": [{ "noi_dung": "Châu Nam Cực là châu lục duy nhất không có dân cư thường trú", "nam": "SGK Địa lí 7", "nguon": "SGK" }], "ky_nang": ["Đọc bản đồ châu Đại Dương, vùng Nam Cực"],
+          "yeu_cau_can_dat": ["Trình bày vị trí, đặc điểm tự nhiên của châu Đại Dương (Úc) và vùng cực", "Trình bày dân cư, xã hội ở mức tổng quát", "Nêu ví dụ quốc gia tiêu chuẩn (Úc, New Zealand)"],
+          "kien_thuc_duoc_dung": ["Địa lí 6–7: châu lục, bản đồ"], "chua_duoc_dung": ["Kinh tế Úc chi tiết theo ngành (ngoài chương trình)", "Hiệp ước Nam Cực chi tiết (chỉ nêu)"],
+          "dang_bai_dien_hinh": ["Đọc bản đồ xác định Úc, New Zealand, Nam Cực", "Trình bày đặc điểm tự nhiên vùng cực"], "luu_y_ra_de": "Nêu ý nghĩa bảo vệ môi trường băng, Nam Cực." }
+      ],
+      "chuyen_de": [],
+      "ghi_chu_chua_chac": ["Địa 7 KNTT gồm các chương châu Âu, châu Á, châu Phi, châu Mĩ, châu Đại Dương và vùng cực; chỉ tra được chi tiết Bài 1–8 (châu Âu, châu Á), các chương còn lại ghi theo chương trình — số bài cần đối chiếu SGK in", "CTST/CD cách gộp chủ đề khác KNTT — ten_theo_sach ghi mức chủ đề"]
+    },
+    {
+      "lop": 8,
+      "chuong": [
+        { "id": "dia8-chu-de-chung-bien-dao-1", "ten": "Bảo vệ chủ quyền, các quyền và lợi ích hợp pháp của Việt Nam ở Biển Đông (1)", "hoc_ky": 1, "mach": "chủ đề chung", "ten_theo_sach": { "KNTT": "Chủ đề chung. Bảo vệ chủ quyền ở Biển Đông (1)", "CTST": "Chủ đề chung. Bảo vệ chủ quyền biển đảo (1)", "CD": "Chủ đề chung. Bảo vệ chủ quyền biển đảo (1)" }, "khai_niem": ["chủ quyền", "vùng biển", "Biển Đông"], "dia_danh": ["Hoàng Sa", "Trường Sa", "vịnh Bắc Bộ"], "so_lieu_moc": [], "ky_nang": ["Đọc bản đồ biển đảo Việt Nam", "Xác định vùng biển Việt Nam trên bản đồ"], "yeu_cau_can_dat": ["Trình bày vị trí, giá trị của Biển Đông và các vùng biển Việt Nam", "Nêu bằng chứng lịch sử, pháp lí khẳng định chủ quyền của Việt Nam đối với Hoàng Sa, Trường Sa", "Có ý thức bảo vệ chủ quyền biển đảo"], "kien_thuc_duoc_dung": ["Lịch sử 8: lịch sử bảo vệ chủ quyền biển đảo"], "chua_duoc_dung": ["Điều khoản UNCLOS 1982 chi tiết từng vùng biển (chỉ nêu ở mức khái niệm)", "Tranh chấp chi tiết theo diễn biến thời sự (tránh)"], "dang_bai_dien_hinh": ["Đọc bản đồ biển đảo trả lời câu hỏi", "Trình bày bằng chứng chủ quyền", "Đề xuất hành động bảo vệ biển đảo"], "luu_y_ra_de": "Dùng lập trường chính thức của Việt Nam và UNCLOS 1982; tránh thời sự xung đột chi tiết." },
+        { "id": "dia8-vi-tri-lanh-tho", "ten": "Vị trí địa lí và phạm vi lãnh thổ Việt Nam", "hoc_ky": 1, "mach": "Địa lí Việt Nam", "ten_theo_sach": { "KNTT": "Chủ đề 1. Vị trí địa lí và phạm vi lãnh thổ Việt Nam", "CTST": "Chủ đề vị trí địa lí và phạm vi lãnh thổ", "CD": "Chủ đề vị trí địa lí và lãnh thổ Việt Nam" }, "khai_niem": ["vĩ độ", "kinh độ", "lãnh thổ", "vùng biển", "vị trí địa lí"], "dia_danh": ["Mũi Cà Mau", "Quần đảo Hoàng Sa", "Quần đảo Trường Sa", "A Pa Chải"], "so_lieu_moc": [{ "noi_dung": "Diện tích lãnh thổ trên đất liền khoảng 331 212 km²", "nam": "SGK/niên giám thống kê", "nguon": "SGK và Tổng cục Thống kê" }, { "noi_dung": "Toạ độ điểm cực Bắc khoảng 23°23'B, cực Nam khoảng 8°34'B", "nam": "SGK Địa lí 8", "nguon": "SGK" }], "ky_nang": ["Xác định toạ độ địa lí của Việt Nam trên bản đồ", "Đọc bản đồ Việt Nam xác định cực Bắc, cực Nam, cực Tây, cực Đông", "Đọc bản đồ các vùng biển"], "yeu_cau_can_dat": ["Trình bày vị trí địa lí, phạm vi lãnh thổ trên đất liền và trên biển", "Phân tích ý nghĩa vị trí địa lí đối với tự nhiên, kinh tế – xã hội và quốc phòng", "Nêu các thành phần lãnh thổ (đất liền, hải đảo, vùng biển)"],
+          "kien_thuc_duoc_dung": ["Địa lí 6: toạ độ địa lí, bản đồ", "Toán 8: toạ độ"], "chua_duoc_dung": ["Đặc quyền kinh tế 200 hải lí theo UNCLOS ở mức chi tiết (chỉ nêu khái niệm)", "Quản lí biên giới theo hiệp định từng nước (chỉ nêu)"],
+          "dang_bai_dien_hinh": ["Đọc bản đồ Việt Nam xác định toạ độ, cận bắc chí tuyến", "Phân tích ý nghĩa vị trí địa lí theo bảng", "Xác định vùng biển trên bản đồ"], "luu_y_ra_de": "Diện tích đất liền có thể khác nhẹ giữa các nguồn (331 212 km² hoặc 331 340 km²) — ghi nguồn số liệu." },
+        { "id": "dia8-dia-hinh-khoang-san", "ten": "Địa hình, khoáng sản và địa chất Việt Nam",
+          "hoc_ky": 1, "mach": "Địa lí Việt Nam",
+          "ten_theo_sach": { "KNTT": "Chủ đề 2. Địa hình, khoáng sản và địa chất Việt Nam", "CTST": "Chủ đề địa hình, khoáng sản", "CD": "Chủ đề địa hình và khoáng sản" },
+          "khai_niem": ["địa hình đồi núi", "bán bình nguyên", "đồng bằng", "khoáng sản", "đá vôi"],
+          "dia_danh": ["Hoàng Liên Sơn", "Trường Sơn Bắc", "Trường Sơn Nam", "Đông Bắc", "Tây Bắc", "Bắc Bộ", "Trung Bộ", "Nam Bộ", "Tây Nguyên"],
+          "so_lieu_moc": [{ "noi_dung": "Đỉnh Phan Xi Păng cao 3 143 m — nóc nhà Đông Dương", "nam": "SGK Địa lí 8", "nguon": "SGK" }, { "noi_dung": "Địa hình đồi núi chiếm khoảng 3/4 diện tích lãnh thổ", "nam": "SGK Địa lí 8", "nguon": "SGK" }],
+          "ky_nang": ["Đọc bản đồ địa hình Việt Nam", "Xác định các dãy núi, vùng đồi, đồng bằng"],
+          "yeu_cau_can_dat": ["Trình bày đặc điểm chung (nhiều núi, hướng vòng cung...) và đặc điểm các vùng địa hình", "Nêu các khoáng sản tiêu biểu và phân bố (than đá Quảng Ninh, bôxit Tây Nguyên, dầu khí thềm lục địa)", "Nêu ảnh hưởng của địa hình, khoáng sản đến hoạt động kinh tế"],
+          "kien_thuc_duoc_dung": ["KHTN 8: khoáng sản", "Địa lí 6: đọc bản đồ địa hình"], "chua_duoc_dung": ["Địa chất kiến tạo chi tiết các hệ tầng (địa chất học chuyên ngành)", "Trữ lượng khoáng sản cập nhật theo thăm dò từng năm (ghi nguồn)"],
+          "dang_bai_dien_hinh": ["Đọc bản đồ địa hình Việt Nam xác định dãy núi, đồng bằng", "Trình bày đặc điểm địa hình vùng Tây Bắc/Tây Nguyên...", "Ghép khoáng sản với địa bàn phân bố"], "luu_y_ra_de": "Không dùng thuật ngữ kiến tạo nâng cao; số liệu trữ lượng ghi nguồn." },
+        { "id": "dia8-khi-hau-thuy-van", "ten": "Khí hậu và thuỷ văn Việt Nam",
+          "hoc_ky": 1, "mach": "Địa lí Việt Nam",
+          "ten_theo_sach": { "KNTT": "Chủ đề 3. Khí hậu và thuỷ văn Việt Nam", "CTST": "Chủ đề khí hậu và thuỷ văn", "CD": "Chủ đề khí hậu và thuỷ văn" },
+          "khai_niem": ["khí hậu nhiệt đới gió mùa", "gió mùa", "khí hậu phân hoá", "lũ", "sụt đất", "thiên tai"],
+          "dia_danh": ["sông Hồng", "sông Mekong", "đồng bằng Bắc Bộ", "Duyên hải Nam Trung Bộ"],
+          "so_lieu_moc": [{ "noi_dung": "Việt Nam có hai mùa gió chính: gió mùa đông nam và đông bắc... thực chất gió mùa mùa hạ (tây nam) và gió mùa mùa đông (đông bắc)", "nam": "SGK Địa lí 8", "nguon": "SGK" }, { "noi_dung": "Lượng mưa trung bình năm ở Việt Nam 1 600–2 000 mm (một số nơi >3 000 mm)", "nam": "SGK Địa lí 8", "nguon": "SGK" }],
+          "ky_nang": ["Đọc biểu đồ nhiệt – mưa của các địa điểm", "Đọc bản đồ khí hậu, bản đồ sông ngòi Việt Nam", "Đọc lưới sông ngòi, xác định các con sông lớn"],
+          "yeu_cau_can_dat": ["Trình bày đặc điểm khí hậu nhiệt đới ẩm gió mùa; sự phân hoá khí hậu theo địa phương", "Nêu ảnh hưởng của khí hậu đến hoạt động sản xuất và đời sống", "Trình bày đặc điểm lưới sông ngòi (độ dày, nước, chế độ nước) và phân biệt sông Hồng với sông Mekong"],
+          "kien_thuc_duoc_dung": ["Địa lí 6: khí hậu, thuỷ văn", "Toán 8–9: đọc biểu đồ"], "chua_duoc_dung": ["Công thức tính lượng mưa chuẩn hoá, phân vùng khí hậu chi tiết (chỉ nêu)", "Dự báo thời tiết kĩ thuật (chỉ nêu)"],
+          "dang_bai_dien_hinh": ["Đọc biểu đồ nhiệt – mưa của Hà Nội, Huế, TP.HCM so sánh", "Trình bày chế độ nước sông Hồng và sông Mekong", "Tình huống thiên tai — đề xuất ứng phó"], "luu_y_ra_de": "Biểu đồ nhiệt – mưa cho sẵn; tránh tính toán chi tiết vượt mức đọc hiểu." },
+        { "id": "dia8-sinh-vat-tho-nhuong", "ten": "Đời sống sinh vật và thổ nhưỡng (đất) Việt Nam",
+          "hoc_ky": 2, "mach": "Địa lí Việt Nam",
+          "ten_theo_sach": { "KNTT": "Chủ đề 4. Đời sống sinh vật và thổ nhưỡng (đất) Việt Nam", "CTST": "Chủ đề sinh vật và thổ nhưỡng", "CD": "Chủ đề sinh vật và thổ nhưỡng" },
+          "khai_niem": ["rừng nhiệt đới", "rừng ngập mặn", "thổ nhưỡng", "đất phù sa", "đất feralit", "đa dạng sinh học"],
+          "dia_danh": ["Vườn quốc gia Cúc Phương", "rừng U Minh", "Tây Nguyên"],
+          "so_lieu_moc": [{ "noi_dung": "Việt Nam nằm trong 16 quốc gia có đa dạng sinh học phong phú", "nam": "SGK Địa lí 8", "nguon": "SGK" }],
+          "ky_nang": ["Đọc bản đồ thổ nhưỡng, bản đồ sinh vật Việt Nam"],
+          "yeu_cau_can_dat": ["Trình bày đặc điểm hệ sinh vật, các kiểu rừng và đa dạng sinh học Việt Nam", "Trình bày đặc điểm các nhóm đất chính và phân bố", "Nêu ảnh hưởng của sinh vật, thổ nhưỡng đến sản xuất; biện pháp bảo vệ"],
+          "kien_thuc_duoc_dung": ["KHTN 6–8: sinh vật, môi trường"], "chua_duoc_dung": ["Phân loại đất theo hệ thống FAO chi tiết (đại học)", "Diện tích rừng cập nhật theo năm (ghi nguồn Bộ Nông nghiệp)"],
+          "dang_bai_dien_hinh": ["Đọc bản đồ đất Việt Nam xác định nhóm đất", "Trình bày đặc điểm rừng nhiệt đới", "Đề xuất biện pháp bảo vệ đa dạng sinh học"], "luu_y_ra_de": "Không dùng kí hiệu phân loại đất chuyên sâu." },
+        { "id": "dia8-nguoi-viet-nam-vung-van-hoa", "ten": "Người Việt Nam và các vùng văn hoá Việt Nam",
+          "hoc_ky": 2, "mach": "Địa lí Việt Nam",
+          "ten_theo_sach": { "KNTT": "Chủ đề 5. Người Việt Nam và các vùng văn hoá Việt Nam (một số lần in; đối chiếu SGK)", "CTST": "Chủ đề người Việt Nam và các vùng văn hoá", "CD": "Chủ đề vùng văn hoá Việt Nam" },
+          "khai_niem": ["vùng văn hoá", "dân tộc", "cư dân"],
+          "dia_danh": ["đồng bằng Bắc Bộ", "Trung du miền núi phía Bắc", "Bắc Trung Bộ", "Tây Nguyên", "Nam Bộ"],
+          "so_lieu_moc": [{ "noi_dung": "Việt Nam có 54 dân tộc", "nam": "Tổng điều tra dân số 2019", "nguon": "Tổng cục Thống kê" }],
+          "ky_nang": ["Đọc bản đồ các vùng văn hoá, bản đồ các dân tộc"],
+          "yeu_cau_can_dat": ["Trình bày đặc điểm cư dân và vùng văn hoá Việt Nam", "Trình bày sự đa dạng văn hoá của 54 dân tộc (mức tổng quát)", "Nêu ý nghĩa tôn trọng, giữ gìn văn hoá các dân tộc"],
+          "kien_thuc_duoc_dung": ["Địa lí 7: các dân tộc châu Á", "Lịch sử 8: dân tộc Việt Nam"], "chua_duoc_dung": ["Phân loại vùng văn hoá theo nhiều cách (Nguyễn Từ Chi, Trần Quốc Vượng...) — ghi theo cách SGK đang dùng", "Dân số từng dân tộc cập nhật theo điều tra dân số gần nhất"],
+          "dang_bai_dien_hinh": ["Xác định vùng văn hoá trên bản đồ", "Ghép dân tộc với đặc trưng văn hoá"], "luu_y_ra_de": "Không dùng thuật ngữ phân biệt đối xử; tôn trọng đặc trưng các dân tộc." }
+      ],
+      "chuyen_de": [],
+      "ghi_chu_chua_chac": [
+        "Mục lục Địa 8 KNTT tra được theo 5–7 chủ đề tùy nguồn (Scribd liệt kê 7 chủ đề gồm cả 'Người Việt Nam và các vùng văn hoá' và chủ đề thực hành); cần đối chiếu SGK in khi gộp",
+        "Năm 2025 Việt Nam sáp nhập tỉnh, bỏ cấp huyện: SGK dùng cách chia tỉnh cũ (63 tỉnh thành); khi ra đề về địa giới hành chính theo cách chia hiện hành hoặc ghi rõ 'theo SGK'/'theo hành chính hiện hành'",
+        "Một số lỗi nguồn (Bài 17 lặp, tên sông Mekong/Cửu Long) — đã bỏ qua phần lặp, số bài đối chiếu SGK in"
+      ]
+    },
+    {
+      "lop": 9,
+      "chuong": [
+        { "id": "dia9-dan-cu-viet-nam", "ten": "Địa lí dân cư Việt Nam: dân tộc, dân số, phân bố, lao động – việc làm",
+          "hoc_ky": 1, "mach": "Địa lí Việt Nam",
+          "ten_theo_sach": { "KNTT": "Chương 1 (Bài 1–4). Địa lí dân cư Việt Nam", "CTST": "Chương dân cư Việt Nam", "CD": "Chương dân cư và việc làm ở Việt Nam" },
+          "khai_niem": ["dân số", "tỉ suất sinh", "tỉ suất tử", "gia tăng dân số", "mật độ dân số", "quần cư nông thôn/đô thị", "lao động", "việc làm"],
+          "dia_danh": ["Đồng bằng sông Hồng", "Đồng bằng sông Cửu Long", "Tây Nguyên"],
+          "so_lieu_moc": [
+            { "noi_dung": "Dân số Việt Nam khoảng 100 triệu người (2023)", "nam": "2023", "nguon": "Tổng cục Thống kê" },
+            { "noi_dung": "Việt Nam có 54 dân tộc; dân tộc Kinh chiếm khoảng 96%", "nam": "Tổng điều tra dân số 2019", "nguon": "Tổng cục Thống kê" },
+            { "noi_dung": "Tỉ lệ dân thành thị khoảng 38%", "nam": "2023", "nguon": "Tổng cục Thống kê" }
+          ],
+          "ky_nang": ["Tính mật độ dân số, tỉ lệ gia tăng dân số", "Đọc biểu đồ tròn, biểu đồ đường dân số", "Đọc bản đồ dân số, bản đồ dân tộc"],
+          "yeu_cau_can_dat": ["Trình bày đặc điểm dân số, các dân tộc Việt Nam; phân tích sự phân bố dân cư không đồng đều", "Trình bày đặc điểm lao động – việc làm và các loại hình quần cư", "Tính toán, sử dụng số liệu, biểu đồ về dân số và lao động"],
+          "kien_thuc_duoc_dung": ["Toán 9: thống kê, xác suất đơn giản (tỉ lệ)", "Toán 8: đọc biểu đồ"],
+          "chua_duoc_dung": ["Dự báo dân số theo mô hình (đại học)", "Chính sách dân số theo từng thời kì chi tiết (chỉ nêu)", "Số liệu dân số thay đổi theo năm — cập nhật nguồn Tổng cục Thống kê"],
+          "dang_bai_dien_hinh": ["Tính mật độ dân số của một vùng theo số liệu cho trước", "Đọc biểu đồ tròn cơ cấu dân số", "Đọc bản đồ phân bố dân cư trả lời câu hỏi", "Giải thích nguyên nhân phân bố không đồng đều"], "luu_y_ra_de": "Số liệu luôn kèm năm, nguồn; khuyến khích tính toán ngắn, số liệu đẹp." },
+        { "id": "dia9-cac-nganh-kinh-te", "ten": "Địa lí các ngành kinh tế: nông nghiệp, lâm nghiệp – thuỷ sản, công nghiệp, dịch vụ",
+          "hoc_ky": 2, "mach": "Địa lí Việt Nam",
+          "ten_theo_sach": { "KNTT": "Chương 2 (Bài 5–11)", "CTST": "Chương các ngành kinh tế", "CD": "Chương các ngành kinh tế Việt Nam" },
+          "khai_niem": ["nông nghiệp", "lâm nghiệp", "thuỷ sản", "công nghiệp", "dịch vụ", "khu công nghiệp", "thương mại", "du lịch"],
+          "dia_danh": ["Đồng bằng sông Cửu Long (vựa lúa)", "Tây Nguyên (cà phê)", "Quảng Ninh (than)", "Khu kinh tế Vũng Tàu"],
+          "so_lieu_moc": [
+            { "noi_dung": "Sản lượng lúa cả năm khoảng 43 triệu tấn (2023)", "nam": "2023", "nguon": "Tổng cục Thống kê" },
+            { "noi_dung": "Kim ngạch xuất khẩu hàng hoá Việt Nam khoảng 683 tỉ USD (2024)", "nam": "2024", "nguon": "Tổng cục Thống kê/Hải quan" }
+          ],
+          "ky_nang": ["Đọc bản đồ các ngành kinh tế", "Đọc biểu đồ cơ cấu kinh tế theo khu vực", "Vẽ và đọc biểu đồ tròn, cột"],
+          "yeu_cau_can_dat": ["Trình bày đặc điểm, sự phân bố của nông nghiệp, lâm nghiệp – thuỷ sản", "Trình bày đặc điểm, sự phân bố công nghiệp và các trung tâm công nghiệp lớn", "Trình bày đặc điểm, sự phân bố dịch vụ (thương mại, du lịch)", "Đọc và sử dụng số liệu, biểu đồ, bản đồ về các ngành kinh tế"],
+          "kien_thuc_duoc_dung": ["Toán 9: cơ cấu phần trăm, biểu đồ", "GDCD 9: tiêu dùng, kinh doanh"],
+          "chua_duoc_dung": ["Sản lượng, kim ngạch cập nhật theo năm — ghi năm và nguồn", "Cụm công nghiệp theo quy hoạch mới thay đổi (theo dõi nghị quyết)"],
+          "dang_bai_dien_hinh": ["Đọc bản đồ nông nghiệp/công nghiệp trả lời câu hỏi", "Đọc biểu đồ cơ cấu GDP theo khu vực", "Giải thích sự phân bố cây công nghiệp Tây Nguyên"], "luu_y_ra_de": "Số liệu kinh tế thay đổi theo năm — câu tính toán chọn số liệu tròn đẹp và ghi nguồn." },
+        { "id": "dia9-cac-vung-kinh-te-xa-hoi", "ten": "Địa lí các vùng kinh tế – xã hội (6 vùng)",
+          "hoc_ky": 2, "mach": "Địa lí Việt Nam",
+          "ten_theo_sach": { "KNTT": "Chương 3 (Bài 12–22)", "CTST": "Chương địa lí các vùng kinh tế", "CD": "Chương địa lí các vùng kinh tế – xã hội" },
+          "khai_niem": ["vùng kinh tế", "vùng kinh tế trọng điểm", "tiềm năng", "thế mạnh"],
+          "dia_danh": ["Trung du và miền núi phía Bắc", "Đồng bằng sông Hồng", "Bắc Trung Bộ", "Duyên hải Nam Trung Bộ", "Tây Nguyên", "Đông Nam Bộ", "Đồng bằng sông Cửu Long"],
+          "so_lieu_moc": [
+            { "noi_dung": "Đông Nam Bộ là vùng có GDP bình quân đầu người cao nhất cả nước", "nam": "2023", "nguon": "Tổng cục Thống kê" },
+            { "noi_dung": "Đồng bằng sông Cửu Long là vựa lúa, vựa cá lớn nhất cả nước", "nam": "SGK Địa lí 9", "nguon": "SGK" }
+          ],
+          "ky_nang": ["Đọc bản đồ các vùng kinh tế", "So sánh các vùng bằng bảng số liệu", "Vẽ biểu đồ tròn/cột so sánh các vùng"],
+          "yeu_cau_can_dat": ["Trình bày đặc điểm tự nhiên, dân cư, xã hội và thế mạnh kinh tế của từng vùng", "So sánh các vùng kinh tế – xã hội", "Nêu vấn đề phát triển tổng hợp kinh tế biển đảo và bảo vệ môi trường"],
+          "kien_thuc_duoc_dung": ["Địa lí 8: tự nhiên Việt Nam", "Địa lí 9: dân cư, các ngành kinh tế", "Toán 9: biểu đồ, bảng số liệu"],
+          "chua_duoc_dung": ["Quy hoạch vùng chi tiết theo nghị quyết mới (theo dõi các nghị quyết phát triển vùng)", "Địa giới tỉnh sau sáp nhập 2025 thay đổi — bài thực hành về vùng dùng cách chia vùng kinh tế theo 6 vùng truyền thống"],
+          "dang_bai_dien_hinh": ["Đọc bản đồ các vùng kinh tế", "So sánh hai vùng theo bảng số liệu", "Phân tích thế mạnh kinh tế của một vùng", "Đọc biểu đồ so sánh GDP các vùng"], "luu_y_ra_de": "Số liệu vùng ghi năm và nguồn; đề bài luôn nêu rõ vùng theo cách chia 6 vùng kinh tế." },
+        { "id": "dia9-chu-de-chung-do-thi-bien-dao", "ten": "Chủ đề chung: đô thị; văn minh châu thổ; bảo vệ chủ quyền biển Đông (2)",
+          "hoc_ky": 2, "mach": "chủ đề chung",
+          "ten_theo_sach": { "KNTT": "Chủ đề chung (3 chủ đề cuối sách)", "CTST": "Chủ đề chung. Đô thị; văn minh châu thổ; bảo vệ chủ quyền", "CD": "Chủ đề chung. Đô thị và văn minh các châu thổ" },
+          "khai_niem": ["đô thị", "đô thị hoá", "văn minh nông nghiệp", "chủ quyền", "đường cơ sở", "vùng biển"],
+          "dia_danh": ["Hoàng Sa", "Trường Sa", "Đô thị Hoa Lư", "Đô thị Thăng Long – Hà Nội", "Huế", "Sài Gòn – TP. Hồ Chí Minh"],
+          "so_lieu_moc": [
+            { "noi_dung": "Tỉ lệ dân số đô thị Việt Nam khoảng 38% (2023)", "nam": "2023", "nguon": "Tổng cục Thống kê" }
+          ],
+          "ky_nang": ["Đọc bản đồ đô thị Việt Nam", "Đọc bản đồ Biển Đông", "Sử dụng Atlat địa lí Việt Nam"],
+          "yeu_cau_can_dat": ["Trình bày sự hình thành, phát triển và đặc điểm đô thị Việt Nam", "Trình bày các văn minh châu thổ sông Hồng và sông Cửu Long", "Trình bày bằng chứng lịch sử, pháp lí về chủ quyền biển đảo và trách nhiệm bảo vệ"],
+          "kien_thuc_duoc_dung": ["Lịch sử 9: lịch sử các đô thị, chứng tích chủ quyền", "Địa lí 9: dân cư, kinh tế"],
+          "chua_duoc_dung": ["Đô thị hoá theo các nhóm đô thị loại I–V chi tiết theo nghị định (chỉ nêu)", "Diễn biến Biển Đông theo thời sự (tránh)"],
+          "dang_bai_dien_hinh": ["Đọc bản đồ đô thị trả lời câu hỏi", "Trình bày đặc điểm văn minh châu thổ", "Trình bày bằng chứng chủ quyền biển đảo"], "luu_y_ra_de": "Chủ đề bảo vệ chủ quyền: dùng lập trường chính thức và chứng tích lịch sử; tránh tranh luận thời sự." }
+      ],
+      "chuyen_de": [],
+      "ghi_chu_chua_chac": [
+        "Mục lục Địa 9 KNTT từ loigiaihay có Bài 17 lặp hai lần (Tây Nguyên) — lỗi nguồn; đã xếp một mục duy nhất theo SGK in",
+        "Năm 2025 sáp nhập tỉnh, bỏ cấp huyện: SGK dùng cách chia tỉnh cũ; khi ra đề thực hành vùng cần ghi rõ cách chia (vùng kinh tế 6 vùng không đổi), tên tỉnh theo hành chính hiện hành nếu đề cập",
+        "Atlat địa lí Việt Nam có thể dùng trong phòng thi cuối kì 2 lớp 9 theo một số Sở (Hà Nội dùng từ 2023); đề tốt nghiệp môn Địa lí (lớp 12) được dùng Atlat — nội dung lớp 9 ghi chú khuyến khích"
+      ]
+    }
+  ],
+  "cau_truc_de": [
+    { "loai": "Đề kiểm tra giữa học kì 1 môn Lịch sử và Địa lí lớp 6 (phần Địa lí)", "lop": 6, "thoi_gian_phut": 30, "phan": [
+      { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 6, "diem_moi_cau": 0.5, "tong_diem": 3 },
+      { "ten": "Phần II. Tự luận (đọc bản đồ, trình bày)", "so_cau": 2, "diem_moi_cau": 1.5, "tong_diem": 3 } ],
+      "pham_vi": ["dia6-trai-dat", "dia6-ban-do"], "ti_le_muc_do": "NB 50%, TH 30%, VD 20%",
+      "ti_le_mach": "Phần Địa lí chiếm 50% điểm đề chung LS&ĐL 6" },
+    { "loai": "Đề kiểm tra cuối học kì 1 môn Lịch sử và Địa lí lớp 6 (phần Địa lí)", "lop": 6, "thoi_gian_phut": 30, "phan": [
+      { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 6, "diem_moi_cau": 0.5, "tong_diem": 3 },
+      { "ten": "Phần II. Tự luận (đọc bản đồ, trình bày)", "so_cau": 2, "diem_moi_cau": 1.5, "tong_diem": 3 } ],
+      "pham_vi": ["dia6-trai-dat", "dia6-ban-do", "dia6-vo-trai-dat-dia-hinh", "dia6-khi-hau-thuy-van", "dia6-dan-cu-chau-luc"], "ti_le_muc_do": "NB 50%, TH 30%, VD 20%",
+      "ti_le_mach": "Phần Địa lí chiếm 50% điểm đề chung LS&ĐL 6" },
+    { "loai": "Đề kiểm tra cuối học kì 2 môn Lịch sử và Địa lí lớp 6 (phần Địa lí)", "lop": 6, "thoi_gian_phut": 30, "phan": [
+      { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 6, "diem_moi_cau": 0.5, "tong_diem": 3 },
+      { "ten": "Phần II. Tự luận (đọc bản đồ, trình bày)", "so_cau": 2, "diem_moi_cau": 1.5, "tong_diem": 3 } ],
+      "pham_vi": ["dia6-trai-dat", "dia6-ban-do", "dia6-vo-trai-dat-dia-hinh", "dia6-khi-hau-thuy-van", "dia6-dan-cu-chau-luc"], "ti_le_muc_do": "NB 50%, TH 30%, VD 20%",
+      "ti_le_mach": "Phần Địa lí chiếm 50% điểm đề chung LS&ĐL 6" },
+    { "loai": "Đề kiểm tra giữa học kì 1 môn Lịch sử và Địa lí lớp 7 (phần Địa lí)", "lop": 7, "thoi_gian_phut": 30, "phan": [
+      { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 6, "diem_moi_cau": 0.5, "tong_diem": 3 },
+      { "ten": "Phần II. Tự luận", "so_cau": 2, "diem_moi_cau": 1.5, "tong_diem": 3 } ],
+      "pham_vi": ["dia7-chau-au", "dia7-chau-a"], "ti_le_muc_do": "NB 50%, TH 30%, VD 20%",
+      "ti_le_mach": "Phần Địa lí chiếm 50% điểm đề chung LS&ĐL 7" },
+    { "loai": "Đề kiểm tra cuối học kì 2 môn Lịch sử và Địa lí lớp 7 (phần Địa lí)", "lop": 7, "thoi_gian_phut": 30, "phan": [
+      { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 6, "diem_moi_cau": 0.5, "tong_diem": 3 },
+      { "ten": "Phần II. Tự luận", "so_cau": 2, "diem_moi_cau": 1.5, "tong_diem": 3 } ],
+      "pham_vi": ["dia7-chau-au", "dia7-chau-a", "dia7-chau-phi", "dia7-chau-my", "dia7-chau-dai-duong-vung-cuc"], "ti_le_muc_do": "NB 50%, TH 30%, VD 20%",
+      "ti_le_mach": "Phần Địa lí chiếm 50% điểm đề chung LS&ĐL 7" },
+    { "loai": "Đề kiểm tra giữa học kì 1 môn Lịch sử và Địa lí lớp 8 (phần Địa lí)", "lop": 8, "thoi_gian_phut": 30, "phan": [
+      { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 6, "diem_moi_cau": 0.5, "tong_diem": 3 },
+      { "ten": "Phần II. Tự luận (đọc bản đồ)", "so_cau": 2, "diem_moi_cau": 1.5, "tong_diem": 3 } ],
+      "pham_vi": ["dia8-vi-tri-lanh-tho", "dia8-dia-hinh-khoang-san", "dia8-khi-hau-thuy-van"], "ti_le_muc_do": "NB 40%, TH 40%, VD 20%",
+      "ti_le_mach": "Phần Địa lí chiếm 50% điểm đề chung LS&ĐL 8" },
+    { "loai": "Đề kiểm tra cuối học kì 2 môn Lịch sử và Địa lí lớp 8 (phần Địa lí)", "lop": 8, "thoi_gian_phut": 30, "phan": [
+      { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 6, "diem_moi_cau": 0.5, "tong_diem": 3 },
+      { "ten": "Phần II. Tự luận (đọc bản đồ)", "so_cau": 2, "diem_moi_cau": 1.5, "tong_diem": 3 } ],
+      "pham_vi": ["dia8-chu-de-chung-bien-dao-1", "dia8-vi-tri-lanh-tho", "dia8-dia-hinh-khoang-san", "dia8-khi-hau-thuy-van", "dia8-sinh-vat-tho-nhuong", "dia8-nguoi-viet-nam-vung-van-hoa"], "ti_le_muc_do": "NB 40%, TH 40%, VD 20%",
+      "ti_le_mach": "Phần Địa lí chiếm 50% điểm đề chung LS&ĐL 8" },
+    { "loai": "Đề kiểm tra giữa học kì 1 môn Lịch sử và Địa lí lớp 9 (phần Địa lí)", "lop": 9, "thoi_gian_phut": 30, "phan": [
+      { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 6, "diem_moi_cau": 0.5, "tong_diem": 3 },
+      { "ten": "Phần II. Tự luận (tính toán, trình bày)", "so_cau": 2, "diem_moi_cau": 1.5, "tong_diem": 3 } ],
+      "pham_vi": ["dia9-dan-cu-viet-nam", "dia9-cac-nganh-kinh-te"], "ti_le_muc_do": "NB 30%, TH 40%, VD 30%",
+      "ti_le_mach": "Phần Địa lí chiếm 50% điểm đề chung LS&ĐL 9" },
+    { "loai": "Đề kiểm tra cuối học kì 2 môn Lịch sử và Địa lí lớp 9 (phần Địa lí)", "lop": 9, "thoi_gian_phut": 30, "phan": [
+      { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 6, "diem_moi_cau": 0.5, "tong_diem": 3 },
+      { "ten": "Phần II. Tự luận (tính toán, trình bày)", "so_cau": 2, "diem_moi_cau": 1.5, "tong_diem": 3 } ],
+      "pham_vi": ["dia9-dan-cu-viet-nam", "dia9-cac-nganh-kinh-te", "dia9-cac-vung-kinh-te-xa-hoi", "dia9-chu-de-chung-do-thi-bien-dao"], "ti_le_muc_do": "NB 30%, TH 40%, VD 30%",
+      "ti_le_mach": "Phần Địa lí chiếm 50% điểm đề chung LS&ĐL 9",
+      "ghi_chu": "Nhiều Sở cho phép dùng Atlat địa lí Việt Nam khi thi; theo quy định từng Sở" }
+  ],
+  "phien_ban": 1
+}

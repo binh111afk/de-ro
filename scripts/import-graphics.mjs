@@ -16,7 +16,7 @@ import { ADDED, REDRAWN, REMOVED } from './graphics-redraw.mjs'
 import { ANIMALS, ANIMALS_REMOVED } from './graphics-animals.mjs'
 import { ICONS_100, ICONS_DOT4, ICONS_NEW, ICONS_PROG, SHEET_100, SHEET_DOT4, SHEET_NEW, SHEET_PROG } from './graphics-extra.mjs'
 
-const SHEET = 'C:/Users/Lenovo/Downloads/112 educational icons · 64px.svg'
+const SHEET = new URL('./nguon-icon/112 educational icons · 64px.svg', import.meta.url)
 const OUT = 'src/lib/graphics.ts'
 
 const ICONS = [

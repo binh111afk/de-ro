@@ -1,0 +1,74 @@
+{
+  "mon": "Tiếng Việt",
+  "pham_vi_luot": "lớp 1–5 (tiểu học)",
+  "nguon": [
+    "Chương trình GDPT 2018 môn Tiếng Việt, Thông tư 32/2018/TT-BGDĐT (sửa đổi bởi Thông tư 13/2022)",
+    "SGK Tiếng Việt 1–5 — Kết nối tri thức (chủ điểm từ loigiaihay.com)",
+    "Thông tư 27/2020/TT-BGDĐT — đánh giá học sinh tiểu học"
+  ],
+  "danh_gia": {
+    "muc_do": [
+      { "muc": 1, "mo_ta": "Nhận biết, đọc đúng, nhắc lại được nội dung đơn giản đã học" },
+      { "muc": 2, "mo_ta": "Hiểu nội dung bài, trình bày được ý chính, viết đúng chính tả, ngữ pháp" },
+      { "muc": 3, "mo_ta": "Vận dụng: viết bài văn/bài nói chuyển tải ý tưởng riêng dựa trên kiến thức đã học" }
+    ],
+    "thang_diem": "Nhận xét bằng lời; đánh giá thường xuyên bằng nhận xét, định kì bằng điểm (thang 10) với bài đọc, viết; không so sánh học sinh với nhau",
+    "thoi_diem_kiem_tra": "Đánh giá thường xuyên mỗi chủ đề/tuần; đánh giá định kì cuối học kì I, cuối học kì II gồm kiểm tra đọc và kiểm tra viết"
+  },
+  "muc_luc_da_tra": [
+    "Lớp 1 – KNTT – Các chủ điểm: Bé vào lớp Một; Tình yêu gia đình; Tết,và mùa xuân; Thế giới động vật; Sự nghiệp Bác Hồ; Quê hương em",
+    "Lớp 2 – KNTT – Các chủ điểm: Tình bạn; Những bàn tay; Nét đẹp quê hương; Thế giới kì diệu; Cả nước hướng về biển đảo; Con người và Tổ quốc",
+    "Lớp 3 – KNTT – Các chủ điểm: Bàn tay sạch; Phép lịch sự; Nhân ái; Quê hương; Chiến thắng Bạch Đằng; Tấm gương sáng",
+    "Lớp 4 – KNTT – Các chủ điểm: Gương sáng; Vì gia đình; Vì quê hương; Vì biển đảo quê hương; Vì cuộc sống tươi đẹp; Vì mọi người",
+    "Lớp 5 – KNTT – Các chủ điểm: Bạn learns về con người; Bốn phương trời Tổ quốc; Bác Hồ kính yêu; Tiếng nói Việt Nam; Công dân toàn cầu; Vòng tay bè bạn"
+  ],
+  "lop": [
+    { "lop": 1, "chuong": [
+      { "id": "thtv1-kg-va-bv-chu-di1", "ten": "Chủ điểm Bé vào lớp Một (học vần, đọc hiểu, viết)", "pham_vi": ["Bài đọc 50–100 chữ", "Bài viết 10–30 chữ"], "hoc_ky": 1, "mach": "Đọc, viết, nói và nghe", "ten_theo_sach": { "KNTT": "Chủ điểm 1", "CTST": "Chủ điểm 1", "CD": "Chủ điểm 1" }, "yeu_cau_can_dat": { "doc": "Đọc đúng tiếng có vần đã học; hiểu nội dung bài ngắn", "viet": "Viết đúng chính tả các vần đã học; viết câu đơn giản", "noi_nghe": "Trình bày, kể lại nội dung bài ngắn" }, "kien_thuc_tieng_viet": ["Tiếng, vần", "Dấu thanh", "Câu đơn giản"], "kieu_bai_viet": ["Câu kể đơn giản"], "chua_duoc_dung": ["Đoạn văn dài, mở – thân – kết (lớp 2 trở đi)", "Chữ viết hoa tên riêng chi tiết (từng bước)"], "dang_bai_dien_hinh": ["Đọc đoạn 50 chữ", "Viết lại câu theo mẫu"], "luu_y_ra_de": "Từ vựng quen thuộc; câu ngắn 5–10 từ." },
+      { "id": "thtv1-kg-va-bv-chu-di2-6", "ten": "Các chủ điểm còn lại của lớp 1 (tình cảm gia đình, Tết, động vật, Bác Hồ, quê hương)", "pham_vi": ["Bài đọc 50–100 chữ", "Bài viết 10–30 chữ"], "hoc_ky": 2, "mach": "Đọc, viết, nói và nghe", "ten_theo_sach": { "KNTT": "Chủ điểm 2–6", "CTST": "Chủ điểm 2–6", "CD": "Chủ điểm 2–6" }, "yeu_cau_can_dat": { "doc": "Đọc đúng, hiểu nội dung các bài đọc theo chủ điểm", "viet": "Viết đúng chính tả, viết câu đơn giản theo chủ điểm", "noi_nghe": "Kể lại nội dung bài, nêu ý kiến đơn giản" }, "kien_thuc_tieng_viet": ["Câu kể, câu hỏi đơn giản", "Dấu hỏi, ngã"], "kieu_bai_viet": ["Câu kể đơn giản", "Câu hỏi đơn giản"], "chua_duoc_dung": ["Đoạn văn hoàn chỉnh 3–5 câu có mở – thân – kết (lớp 2)"], "dang_bai_dien_hinh": ["Đọc đoạn theo chủ điểm", "Viết câu theo mẫu"], "luu_y_ra_de": "Chủ điểm phù hợp lứa tuổi 6." } ],
+      "chuyen_de": [], "ghi_chu_chua_chac": ["Tên chủ điểm lớp 1 KNTT ghi theo loigiaihay — đối chiếu SGK in"] },
+    { "lop": 2, "chuong": [
+      { "id": "thtv2-kg-va-bv-chu-di1-3", "ten": "Các chủ điểm: Tình bạn, Những bàn tay, Nét đẹp quê hương (học kì 1)", "pham_vi": ["Bài đọc 100–150 chữ", "Bài viết 30–50 chữ"], "hoc_ky": 1, "mach": "Đọc, viết, nói và nghe", "ten_theo_sach": { "KNTT": "Chủ điểm 1–3", "CTST": "Chủ điểm 1–3", "CD": "Chủ điểm 1–3" }, "yeu_cau_can_dat": { "doc": "Đọc đúng, hiểu nội dung bài đọc 100–150 chữ", "viet": "Viết đoạn văn ngắn 30–50 chữ về chủ điểm", "noi_nghe": "Kể lại câu chuyện đã học" }, "kien_thuc_tieng_viet": ["Đoạn văn ngắn", "Câu cảm", "Câu hỏi"], "kieu_bai_viet": ["Đoạn văn kể chuyện"], "chua_duoc_dung": ["Bài văn mở – thân – kết đầy đủ (lớp 3 trở đi)"], "dang_bai_dien_hinh": ["Đọc hiểu đoạn văn", "Viết đoạn 3–5 câu"], "luu_y_ra_de": "Đoạn văn 3–5 câu ngắn gọn." },
+      { "id": "thtv2-kg-va-bv-chu-di4-6", "ten": "Các chủ điểm: Thế giới kì diệu, Cả nước hướng về biển đảo, Con người và Tổ quốc (học kì 2)", "pham_vi": ["Bài đọc 100–150 chữ", "Bài viết 30–50 chữ"], "hoc_ky": 2, "mach": "Đọc, viết, nói và nghe", "ten_theo_sach": { "KNTT": "Chủ điểm 4–6", "CTST": "Chủ điểm 4–6", "CD": "Chủ điểm 4–6" }, "yeu_cau_can_dat": { "doc": "Đọc hiểu các bài đọc theo chủ điểm", "viet": "Viết đoạn văn theo chủ điểm biển đảo, Tổ quốc", "noi_nghe": "Trình bày ý kiến về chủ điểm đã học" }, "kien_thuc_tieng_viet": ["Câu cảm thán", "Dấu ngoặc đơn", "Từ chỉ sự vật, hoạt động, đặc điểm"], "kieu_bai_viet": ["Đoạn văn miêu tả", "Đoạn văn kể chuyện"], "chua_duoc_dung": ["Bài văn nhiều đoạn (lớp 3 trở đi)"], "dang_bai_dien_hinh": ["Đọc hiểu", "Viết đoạn 5 câu"], "luu_y_ra_de": "Chủ điểm biển đảo khuyến khích yêu nước biển đảo." } ],
+      "chuyen_de": [], "ghi_chu_chua_chac": ["Tên chủ điểm lớp 2 ghi theo loigiaihay — đối chiếu SGK in"] },
+    { "lop": 3, "chuong": [
+      { "id": "thtv3-kg-va-bv-chu-di1-3", "ten": "Các chủ điểm: Bàn tay sạch, Phép lịch sự, Nhân ái (học kì 1)", "pham_vi": ["Bài đọc 150–200 chữ", "Bài viết 50–80 chữ"], "hoc_ky": 1, "mach": "Đọc, viết, nói và nghe", "ten_theo_sach": { "KNTT": "Chủ điểm 1–3", "CTST": "Chủ điểm 1–3", "CD": "Chủ điểm 1–3" }, "yeu_cau_can_dat": { "doc": "Đọc đúng, trôi chảy; hiểu nội dung, ý chính của bài đọc", "viet": "Viết đoạn văn hoàn chỉnh có mở – thân – kết (50–80 chữ)", "noi_nghe": "Trình bày ý kiến về chủ điểm; kể lại câu chuyện" }, "kien_thuc_tieng_viet": ["Câu hỏi, câu cảm", "Dấu phẩy, chấm câu", "Từ đồng nghĩa (mở đầu)"], "kieu_bai_viet": ["Đoạn văn miêu tả", "Đoạn văn kể chuyện", "Đoạn văn tả cảnh"], "chua_duoc_dung": ["Bài văn nhiều đoạn (lớp 4)", "Miêu tả chi tiết nhân vật, cảnh vật (lớp 4)"], "dang_bai_dien_hinh": ["Đọc hiểu trả lời câu hỏi", "Viết đoạn văn theo chủ điểm", "Đặt câu theo yêu cầu"], "luu_y_ra_de": "Đoạn văn có đủ mở – thân – kết." },
+      { "id": "thtv3-kg-va-bv-chu-di4-6", "ten": "Các chủ điểm: Quê hương, Chiến thắng Bạch Đằng, Tấm gương sáng (học kì 2)", "pham_vi": ["Bài đọc 150–200 chữ", "Bài viết 50–80 chữ"], "hoc_ky": 2, "mach": "Đọc, viết, nói và nghe", "ten_theo_sach": { "KNTT": "Chủ điểm 4–6", "CTST": "Chủ điểm 4–6", "CD": "Chủ điểm 4–6" }, "yeu_cau_can_dat": { "doc": "Đọc hiểu các bài đọc về quê hương, lịch sử, tấm gương", "viet": "Viết đoạn văn về quê hương hoặc tấm gương sáng", "noi_nghe": "Trình bày ý kiến về nội dung bài" }, "kien_thuc_tieng_viet": ["Từ trái nghĩa", "Câu lời dẫn", "Dấu gạch ngang"], "kieu_bai_viet": ["Đoạn văn miêu tả", "Đoạn văn kể chuyện", "Đoạn văn biểu cảm"], "chua_duoc_dung": ["Bài văn nhiều đoạn (lớp 4)"], "dang_bai_dien_hinh": ["Đọc hiểu", "Viết đoạn văn biểu cảm", "Kể chuyện đã học"], "luu_y_ra_de": "Chủ điểm lịch sử liên hệ Lịch sử 3." } ],
+      "chuyen_de": [], "ghi_chu_chua_chac": ["Tên chủ điểm lớp 3 ghi theo loigiaihay — đối chiếu SGK in"] },
+    { "lop": 4, "chuong": [
+      { "id": "thtv4-kg-va-bv-chu-di1-3", "ten": "Các chủ điểm: Gương sáng, Vì gia đình, Vì quê hương (học kì 1)", "pham_vi": ["Bài đọc 200–300 chữ", "Bài viết 80–150 chữ"], "hoc_ky": 1, "mach": "Đọc, viết, nói và nghe", "ten_theo_sach": { "KNTT": "Chủ điểm 1–3", "CTST": "Chủ điểm 1–3", "CD": "Chủ điểm 1–3" }, "yeu_cau_can_dat": { "doc": "Đọc đúng, hiểu chi tiết nội dung bài 200–300 chữ", "viet": "Viết bài văn nhiều đoạn (80–150 chữ) theo chủ điểm", "noi_nghe": "Trình bày quan điểm, cảm nghĩ về vấn đề" }, "kien_thuc_tieng_viet": ["Từ đồng nghĩa, trái nghĩa nâng cao", "Câu ghép", "Dấu hai chấm, dấu ngoặc kép"], "kieu_bai_viet": ["Bài văn miêu tả cảnh", "Bài văn kể chuyện", "Bài văn biểu cảm về một sự kiện"], "chua_duoc_dung": ["Miêu tả đồ vật chi tiết (lớp 5)", "Văn nghị luận xã hội (lớp 5+)"], "dang_bai_dien_hinh": ["Đọc hiểu bài dài", "Viết bài văn nhiều đoạn", "Tìm từ đồng nghĩa/trái nghĩa", "Đặt câu ghép"], "luu_y_ra_de": "Bài văn 80–150 chữ, nhiều đoạn." },
+      { "id": "thtv4-kg-va-bv-chu-di4-6", "ten": "Các chủ điểm: Vì biển đảo quê hương, Vì cuộc sống tươi đẹp, Vì mọi người (học kì 2)", "pham_vi": ["Bài đọc 200–300 chữ", "Bài viết 80–150 chữ"], "hoc_ky": 2, "mach": "Đọc, viết, nói và nghe", "ten_theo_sach": { "KNTT": "Chủ điểm 4–6", "CTST": "Chủ điểm 4–6", "CD": "Chủ điểm 4–6" }, "yeu_cau_can_dat": { "doc": "Đọc hiểu các bài theo chủ điểm biển đảo, cuộc sống", "viet": "Viết bài văn nhiều đoạn theo chủ điểm", "noi_nghe": "Trình bày quan điểm về chủ đề" }, "kien_thuc_tieng_viet": ["Lời dẫn trực tiếp – gián tiếp", "Câu ghép", "Dấu ngoặc đơn"], "kieu_bai_viet": ["Bài văn miêu tả", "Bài văn kể chuyện", "Bài văn biểu cảm"], "chua_duoc_dung": ["Nghị luận xã hội đầy đủ (lớp 5+)"], "dang_bai_dien_hinh": ["Đọc hiểu", "Viết bài văn", "Trình bày ý kiến"], "luu_y_ra_de": "Chủ điểm biển đảo khuyến khích yêu biển đảo." } ],
+      "chuyen_de": [], "ghi_chu_chua_chac": ["Tên chủ điểm lớp 4 ghi theo loigiaihay — đối chiếu SGK in"] },
+    { "lop": 5, "chuong": [
+      { "id": "thtv5-kg-va-bv-chu-di1-3", "ten": "Các chủ điểm: Bạn học về con người, Bốn phương trời Tổ quốc, Bác Hồ kính yêu (học kì 1)", "pham_vi": ["Bài đọc 300–400 chữ", "Bài viết 150–200 chữ"], "hoc_ky": 1, "mach": "Đọc, viết, nói và nghe", "ten_theo_sach": { "KNTT": "Chủ điểm 1–3", "CTST": "Chủ điểm 1–3", "CD": "Chủ điểm 1–3" }, "yeu_cau_can_dat": { "doc": "Đọc đúng, hiểu chi tiết bài 300–400 chữ; nêu ý chính", "viet": "Viết bài văn nhiều đoạn (150–200 chữ) theo yêu cầu", "noi_nghe": "Trình bày quan điểm, cảm nghĩ về một vấn đề" }, "kien_thuc_tieng_viet": ["Từ đồng nghĩa, trái nghĩa, nhiều nghĩa", "Câu ghép chính phụ", "Dấu chấm than, ngoặc kép"], "kieu_bai_viet": ["Bài văn miêu tả người", "Bài văn miêu tả cảnh", "Bài văn kể chuyện", "Bài văn biểu cảm về tác phẩm"], "chua_duoc_dung": ["Nghị luận xã hội có ý kiến phê bình (lớp 6+)"], "dang_bai_dien_hinh": ["Đọc hiểu bài dài", "Viết bài văn nhiều đoạn", "Tìm từ đồng nghĩa/trái nghĩa/nhiều nghĩa", "Đặt câu ghép"], "luu_y_ra_de": "Bài văn 150–200 chữ; miêu tả người + cảnh; văn biểu cảm tác phẩm." },
+      { "id": "thtv5-kg-va-bv-chu-di4-6", "ten": "Các chủ điểm: Tiếng nói Việt Nam, Công dân toàn cầu, Vòng tay bè bạn (học kì 2)", "pham_vi": ["Bài đọc 300–400 chữ", "Bài viết 150–200 chữ"], "hoc_ky": 2, "mach": "Đọc, viết, nói và nghe", "ten_theo_sach": { "KNTT": "Chủ điểm 4–6", "CTST": "Chủ điểm 4–6", "CD": "Chủ điểm 4–6" }, "yeu_cau_can_dat": { "doc": "Đọc hiểu các bài theo chủ điểm", "viet": "Viết bài văn nhiều đoạn theo chủ điểm", "noi_nghe": "Trình bày quan điểm về chủ đề công dân toàn cầu" }, "kien_thuc_tieng_viet": ["Gạch đầu dòng", "Dấu hai chấm", "Câu cầu khiến"], "kieu_bai_viet": ["Bài văn miêu tả", "Bài văn kể chuyện", "Bài văn biểu cảm", "Bài văn trình bày ý kiến"], "chua_duoc_dung": ["Nghị luận có luận điểm phê bình (lớp 6+)"], "dang_bai_dien_hinh": ["Đọc hiểu", "Viết bài văn", "Trình bày ý kiến"], "luu_y_ra_de": "Chủ điểm công dân toàn cầu khuyến khích mở rộng hiểu biết thế giới." } ],
+      "chuyen_de": [], "ghi_chu_chua_chac": ["Tên chủ điểm lớp 5 ghi theo loigiaihay — đối chiếu SGK in"]
+    }
+  ],
+  "cau_truc_de": [
+    { "loai": "Đề kiểm tra đọc và viết cuối học kì 1 môn Tiếng Việt lớp 1", "lop": 1, "thoi_gian_phut": 40, "phan": [
+      { "ten": "Phần I. Kiểm tra đọc (đọc thành tiếng + đọc hiểu)", "so_cau": 3, "diem_moi_cau": 1, "tong_diem": 3 },
+      { "ten": "Phần II. Kiểm tra viết (chính tả + viết câu)", "so_cau": 2, "diem_moi_cau": 1.5, "tong_diem": 3 } ],
+      "pham_vi": ["thtv1-kg-va-bv-chu-di1", "thtv1-kg-va-bv-chu-di2-6"], "ti_le_muc": { "Mức 1": "60%", "Mức 2": "30%", "Mức 3": "10%" } },
+    { "loai": "Đề kiểm tra đọc và viết cuối học kì 1 môn Tiếng Việt lớp 2", "lop": 2, "thoi_gian_phut": 40, "phan": [
+      { "ten": "Phần I. Kiểm tra đọc (đọc thành tiếng + đọc hiểu)", "so_cau": 3, "diem_moi_cau": 1, "tong_diem": 3 },
+      { "ten": "Phần II. Kiểm tra viết (chính tả + viết đoạn 3–5 câu)", "so_cau": 2, "diem_moi_cau": 1.5, "tong_diem": 3 } ],
+      "pham_vi": ["thtv2-kg-va-bv-chu-di1-3", "thtv2-kg-va-bv-chu-di4-6"], "ti_le_muc": { "Mức 1": "60%", "Mức 2": "30%", "Mức 3": "10%" } },
+    { "loai": "Đề kiểm tra đọc và viết cuối học kì 1 môn Tiếng Việt lớp 3", "lop": 3, "thoi_gian_phut": 40, "phan": [
+      { "ten": "Phần I. Kiểm tra đọc (đọc thành tiếng + đọc hiểu)", "so_cau": 3, "diem_moi_cau": 1, "tong_diem": 3 },
+      { "ten": "Phần II. Kiểm tra viết (chính tả + viết đoạn văn)", "so_cau": 2, "diem_moi_cau": 1.5, "tong_diem": 3 },
+      { "ten": "Phần III. Kiểm tra nói và nghe", "so_cau": 1, "diem_moi_cau": 4, "tong_diem": 4 } ],
+      "pham_vi": ["thtv3-kg-va-bv-chu-di1-3", "thtv3-kg-va-bv-chu-di4-6"], "ti_le_muc": { "Mức 1": "50%", "Mức 2": "30%", "Mức 3": "20%" } },
+    { "loai": "Đề kiểm tra đọc và viết cuối học kì 1 môn Tiếng Việt lớp 4", "lop": 4, "thoi_gian_phut": 40, "phan": [
+      { "ten": "Phần I. Kiểm tra đọc (đọc thành tiếng + đọc hiểu)", "so_cau": 3, "diem_moi_cau": 1, "tong_diem": 3 },
+      { "ten": "Phần II. Kiểm tra viết (chính tả + viết bài văn)", "so_cau": 2, "diem_moi_cau": 1.5, "tong_diem": 3 },
+      { "ten": "Phần III. Kiểm tra nói và nghe", "so_cau": 1, "diem_moi_cau": 4, "tong_diem": 4 } ],
+      "pham_vi": ["thtv4-kg-va-bv-chu-di1-3", "thtv4-kg-va-bv-chu-di4-6"], "ti_le_muc": { "Mức 1": "40%", "Mức 2": "40%", "Mức 3": "20%" } },
+    { "loai": "Đề kiểm tra đọc và viết cuối học kì 1 môn Tiếng Việt lớp 5", "lop": 5, "thoi_gian_phut": 40, "phan": [
+      { "ten": "Phần I. Kiểm tra đọc (đọc thành tiếng + đọc hiểu)", "so_cau": 3, "diem_moi_cau": 1, "tong_diem": 3 },
+      { "ten": "Phần II. Kiểm tra viết (chính tả + viết bài văn)", "so_cau": 2, "diem_moi_cau": 1.5, "tong_diem": 3 },
+      { "ten": "Phần III. Kiểm tra nói và nghe", "so_cau": 1, "diem_moi_cau": 4, "tong_diem": 4 } ],
+      "pham_vi": ["thtv5-kg-va-bv-chu-di1-3", "thtv5-kg-va-bv-chu-di4-6"], "ti_le_muc": { "Mức 1": "40%", "Mức 2": "40%", "Mức 3": "20%" } }
+  ],
+  "phien_ban": 1
+}
