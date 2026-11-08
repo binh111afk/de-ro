@@ -14696,57 +14696,6 @@ export const BANK_THPT3: BankEntry[] = [
       "Lớp 12"
     ],
     "type": "trac-nghiem",
-    "prompt": "Bán kính mặt cầu ngoại tiếp khối lập phương cạnh 2 (như hình) là",
-    "options": [
-      {
-        "key": "A",
-        "text": "$\\sqrt{2}$"
-      },
-      {
-        "key": "B",
-        "text": "$\\sqrt{3}$"
-      },
-      {
-        "key": "C",
-        "text": "$2$"
-      },
-      {
-        "key": "D",
-        "text": "$\\sqrt{6}$"
-      }
-    ],
-    "answer": "B",
-    "explanation": "Bán kính bằng nửa đường chéo lập phương $=\\dfrac{2\\sqrt{3}}{2}=\\sqrt{3}$.",
-    "points": 0.25,
-    "tags": [
-      "mặt cầu",
-      "ngoại tiếp",
-      "VD"
-    ],
-    "variable": false,
-    "figure": {
-      "kind": "geo3d",
-      "shape": "cube",
-      "names": [
-        "A",
-        "B",
-        "C",
-        "D",
-        "A'",
-        "B'",
-        "C'",
-        "D'"
-      ],
-      "circumsphere": true
-    }
-  },
-  {
-    "id": "thpt-t12-matcau-06",
-    "subject": "Toán",
-    "grades": [
-      "Lớp 12"
-    ],
-    "type": "trac-nghiem",
     "prompt": "Một trạm ra-đa đặt tại gốc toạ độ có vùng quét là mặt cầu bán kính 100 km. Máy bay ở vị trí $M(60;0;80)$ (km). Khoảng cách từ máy bay đến trạm là",
     "options": [
       {
@@ -14777,7 +14726,7 @@ export const BANK_THPT3: BankEntry[] = [
     "variable": false
   },
   {
-    "id": "thpt-t12-matcau-07",
+    "id": "thpt-t12-matcau-06",
     "subject": "Toán",
     "grades": [
       "Lớp 12"
@@ -14813,13 +14762,13 @@ export const BANK_THPT3: BankEntry[] = [
     "variable": false
   },
   {
-    "id": "thpt-t12-matcau-08",
+    "id": "thpt-t12-matcau-07",
     "subject": "Toán",
     "grades": [
       "Lớp 12"
     ],
     "type": "trac-nghiem",
-    "prompt": "Mặt cầu đi qua bốn điểm $O(0;0;0)$, $A(2;0;0)$, $B(0;2;0)$, $C(0;0;2)$ (như hình) có bán kính bằng",
+    "prompt": "Mặt cầu đi qua bốn điểm $O(0;0;0)$, $A(2;0;0)$, $B(0;2;0)$, $C(0;0;2)$ có bán kính bằng",
     "options": [
       {
         "key": "A",
@@ -14846,21 +14795,10 @@ export const BANK_THPT3: BankEntry[] = [
       "ngoại tiếp",
       "VDC"
     ],
-    "variable": false,
-    "figure": {
-      "kind": "geo3d",
-      "shape": "pyramid3-sa",
-      "names": [
-        "C",
-        "O",
-        "A",
-        "B"
-      ],
-      "circumsphere": true
-    }
+    "variable": false
   },
   {
-    "id": "thpt-t12-matcau-09",
+    "id": "thpt-t12-matcau-08",
     "subject": "Toán",
     "grades": [
       "Lớp 12"
@@ -14896,7 +14834,7 @@ export const BANK_THPT3: BankEntry[] = [
     "variable": false
   },
   {
-    "id": "thpt-t12-matcau-10",
+    "id": "thpt-t12-matcau-09",
     "subject": "Toán",
     "grades": [
       "Lớp 12"
@@ -14932,7 +14870,7 @@ export const BANK_THPT3: BankEntry[] = [
     "variable": false
   },
   {
-    "id": "thpt-t12-matcau-11",
+    "id": "thpt-t12-matcau-10",
     "subject": "Toán",
     "grades": [
       "Lớp 12"
@@ -14968,7 +14906,7 @@ export const BANK_THPT3: BankEntry[] = [
     "variable": false
   },
   {
-    "id": "thpt-t12-matcau-12",
+    "id": "thpt-t12-matcau-11",
     "subject": "Toán",
     "grades": [
       "Lớp 12"
@@ -15004,7 +14942,7 @@ export const BANK_THPT3: BankEntry[] = [
     "variable": false
   },
   {
-    "id": "thpt-t12-matcau-13",
+    "id": "thpt-t12-matcau-12",
     "subject": "Toán",
     "grades": [
       "Lớp 12"
@@ -15040,7 +14978,7 @@ export const BANK_THPT3: BankEntry[] = [
     "variable": false
   },
   {
-    "id": "thpt-t12-matcau-14",
+    "id": "thpt-t12-matcau-13",
     "subject": "Toán",
     "grades": [
       "Lớp 12"
@@ -15076,7 +15014,7 @@ export const BANK_THPT3: BankEntry[] = [
     "variable": false
   },
   {
-    "id": "thpt-t12-matcau-15",
+    "id": "thpt-t12-matcau-14",
     "subject": "Toán",
     "grades": [
       "Lớp 12"
@@ -15112,7 +15050,7 @@ export const BANK_THPT3: BankEntry[] = [
     "variable": false
   },
   {
-    "id": "thpt-t12-matcau-16",
+    "id": "thpt-t12-matcau-15",
     "subject": "Toán",
     "grades": [
       "Lớp 12"
@@ -15148,58 +15086,7 @@ export const BANK_THPT3: BankEntry[] = [
     "variable": false
   },
   {
-    "id": "thpt-t12-matcau-17",
-    "subject": "Toán",
-    "grades": [
-      "Lớp 12"
-    ],
-    "type": "dung-sai",
-    "prompt": "Mặt cầu ngoại tiếp khối hộp chữ nhật $ABCD.A'B'C'D'$ với $AB=2$, $AD=4$, $AA'=4$ (như hình). Xét tính đúng sai:",
-    "options": [
-      {
-        "key": "a",
-        "text": "Bán kính mặt cầu bằng $3$"
-      },
-      {
-        "key": "b",
-        "text": "Tâm mặt cầu là giao điểm của hai đường chéo hộp"
-      },
-      {
-        "key": "c",
-        "text": "Thể tích khối hộp bằng 16"
-      },
-      {
-        "key": "d",
-        "text": "$R^2=8$"
-      }
-    ],
-    "answer": "ĐĐSS",
-    "explanation": "a) $R=\\dfrac{\\sqrt{4+16+16}}{2}=\\dfrac{6}{2}=3$ — đúng. b) Đúng. c) $V=2 \\cdot 4 \\cdot 4=32 \\ne 16$ — sai. d) $R^2=9 \\ne 8$ — sai.",
-    "points": 1,
-    "tags": [
-      "mặt cầu",
-      "ngoại tiếp",
-      "VD"
-    ],
-    "variable": false,
-    "figure": {
-      "kind": "geo3d",
-      "shape": "box",
-      "names": [
-        "A",
-        "B",
-        "C",
-        "D",
-        "A'",
-        "B'",
-        "C'",
-        "D'"
-      ],
-      "circumsphere": true
-    }
-  },
-  {
-    "id": "thpt-t12-matcau-18",
+    "id": "thpt-t12-matcau-16",
     "subject": "Toán",
     "grades": [
       "Lớp 12"
@@ -15235,7 +15122,7 @@ export const BANK_THPT3: BankEntry[] = [
     "variable": false
   },
   {
-    "id": "thpt-t12-matcau-19",
+    "id": "thpt-t12-matcau-17",
     "subject": "Toán",
     "grades": [
       "Lớp 12"
@@ -15253,7 +15140,7 @@ export const BANK_THPT3: BankEntry[] = [
     "variable": false
   },
   {
-    "id": "thpt-t12-matcau-20",
+    "id": "thpt-t12-matcau-18",
     "subject": "Toán",
     "grades": [
       "Lớp 12"
@@ -15271,7 +15158,7 @@ export const BANK_THPT3: BankEntry[] = [
     "variable": false
   },
   {
-    "id": "thpt-t12-matcau-21",
+    "id": "thpt-t12-matcau-19",
     "subject": "Toán",
     "grades": [
       "Lớp 12"
@@ -15289,7 +15176,7 @@ export const BANK_THPT3: BankEntry[] = [
     "variable": false
   },
   {
-    "id": "thpt-t12-matcau-22",
+    "id": "thpt-t12-matcau-20",
     "subject": "Toán",
     "grades": [
       "Lớp 12"
@@ -15307,7 +15194,7 @@ export const BANK_THPT3: BankEntry[] = [
     "variable": false
   },
   {
-    "id": "thpt-t12-matcau-23",
+    "id": "thpt-t12-matcau-21",
     "subject": "Toán",
     "grades": [
       "Lớp 12"
@@ -15325,7 +15212,7 @@ export const BANK_THPT3: BankEntry[] = [
     "variable": false
   },
   {
-    "id": "thpt-t12-matcau-24",
+    "id": "thpt-t12-matcau-22",
     "subject": "Toán",
     "grades": [
       "Lớp 12"
@@ -15338,24 +15225,6 @@ export const BANK_THPT3: BankEntry[] = [
     "tags": [
       "mặt cầu",
       "giao tuyến",
-      "VDC"
-    ],
-    "variable": false
-  },
-  {
-    "id": "thpt-t12-matcau-25",
-    "subject": "Toán",
-    "grades": [
-      "Lớp 12"
-    ],
-    "type": "tra-loi-ngan",
-    "prompt": "Tính bán kính mặt cầu ngoại tiếp tứ diện đều cạnh 6 (làm tròn đến hàng phần trăm).",
-    "answer": "3,67",
-    "explanation": "$R=\\dfrac{6\\sqrt{6}}{4}=\\dfrac{3\\sqrt{6}}{2} \\approx 3{,}67$.",
-    "points": 0.5,
-    "tags": [
-      "mặt cầu",
-      "ngoại tiếp",
       "VDC"
     ],
     "variable": false

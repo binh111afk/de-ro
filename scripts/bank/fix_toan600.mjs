@@ -68,6 +68,12 @@ Object.assign(q('t12-matcau', 8).figure, { shape: 'pyramid3-sa', names: ['C', 'O
 delete q('t10-tohop', 9).figure
 q('t10-tohop', 9).prompt = q('t10-tohop', 9).prompt.replace(' (như hình)', '')
 
+// Mặt cầu ngoại tiếp khối đa diện thuộc chương trình 2006, chương trình 2018 không học → bỏ câu
+const del = [['t12-matcau', 5], ['t12-matcau', 17], ['t12-matcau', 25]]
+// Câu mặt cầu qua 4 điểm cho bằng toạ độ vẫn giải bằng Oxyz → chỉ bỏ hình "chóp trong mặt cầu"
+delete q('t12-matcau', 8).figure
+q('t12-matcau', 8).prompt = q('t12-matcau', 8).prompt.replace(' (như hình)', '')
+
 // ---- Chung ----
 for (const x of get('t12-xacsuat-thongke')) for (const k of ['prompt', 'explanation']) if (x[k]) x[k] = x[k].replace(/trung tâm kiểu/g, 'giá trị đại diện').replace(/Trung tâm kiểu/g, 'Giá trị đại diện')
 for (const x of get('t12-xacsuat-thongke')) for (const o of x.options ?? []) o.text = o.text.replace(/trung tâm kiểu/g, 'giá trị đại diện')
@@ -83,5 +89,6 @@ toGrouped('t11-vuonggoc-xs', 12, 'Thời gian (giờ)', 'Số học sinh')
 toGrouped('t11-vuonggoc-xs', 18, 'Cân nặng (kg)', 'Số học sinh')
 toGrouped('t12-xacsuat-thongke', 12, 'Nhóm', 'Tần số')
 
+for (const [f, n] of del.sort((a, b) => b[1] - a[1])) get(f).splice(n - 1, 1)
 for (const [f, a] of Object.entries(files)) fs.writeFileSync(D + f + '.json', JSON.stringify(a, null, 2) + '\n')
 console.log('Đã sửa', Object.keys(files).length, 'file')
