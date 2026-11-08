@@ -1,6 +1,6 @@
 # context.md — đề rõ (trình soạn đề thi)
 
-Bản đồ ngắn của dự án. **Chỉ đọc file này khi bắt đầu phiên**; các file khác mở khi việc đang làm cần tới (bảng "Đọc thêm khi nào" bên dưới). Cập nhật: 07/11/2026 (phiên 24). **Đang ở nhánh `feat/trig-7-tinh-nang`, chưa merge — xem phiên 24.**
+Bản đồ ngắn của dự án. **Chỉ đọc file này khi bắt đầu phiên**; các file khác mở khi việc đang làm cần tới (bảng "Đọc thêm khi nào" bên dưới). Cập nhật: 07/11/2026 (phiên 24). Phiên 24: trig, Bảng ghép nhóm, 608 câu Toán 10–12 (bankThpt3), khung chương trình trong prompt — đã merge main (08/11/2026).
 
 ## Dự án
 
