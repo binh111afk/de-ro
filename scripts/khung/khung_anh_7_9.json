@@ -1,0 +1,262 @@
+{
+  "mon": "Tiếng Anh",
+  "pham_vi_luot": "lớp 7–9 (bộ Global Success; bảng tiến trình ngữ pháp tính cả lớp 6)",
+  "nguon": [
+    "Chương trình GDPT 2018 môn Tiếng Anh, Thông tư 32/2018/TT-BGDĐT (sửa đổi bởi Thông tư 13/2022)",
+    "SGK Tiếng Anh 7, 8, 9 Global Success (mục lục từ loigiaihay.com, prepedu.com, vietjack.com); Tiếng Anh 6 Global Success dùng cho bảng tiến trình ngữ pháp"
+  ],
+  "muc_luc_da_tra": [
+    "Lớp 7 – KNTT (Global Success) – Unit 1. Hobbies",
+    "Lớp 7 – KNTT – Unit 2. Health",
+    "Lớp 7 – KNTT – Unit 3. Community service",
+    "Lớp 7 – KNTT – Unit 4. Music and arts",
+    "Lớp 7 – KNTT – Unit 5. Food and drink",
+    "Lớp 7 – KNTT – Unit 6. The first university in Viet Nam",
+    "Lớp 7 – KNTT – Unit 7. Traffic",
+    "Lớp 7 – KNTT – Unit 8. Films",
+    "Lớp 7 – KNTT – Unit 9. Festivals around the world",
+    "Lớp 7 – KNTT – Unit 10. Energy sources",
+    "Lớp 7 – KNTT – Unit 11. Traveling in the future",
+    "Lớp 7 – KNTT – Unit 12. English-speaking countries",
+    "Lớp 8 – KNTT (Global Success) – Unit 1. Leisure time",
+    "Lớp 8 – KNTT – Unit 2. Life in the countryside",
+    "Lớp 8 – KNTT – Unit 3. Teenagers",
+    "Lớp 8 – KNTT – Unit 4. Ethnic groups of Viet Nam",
+    "Lớp 8 – KNTT – Unit 5. Our customs and traditions",
+    "Lớp 8 – KNTT – Unit 6. Lifestyles",
+    "Lớp 8 – KNTT – Unit 7. Environmental protection",
+    "Lớp 8 – KNTT – Unit 8. Shopping",
+    "Lớp 8 – KNTT – Unit 9. Natural disasters",
+    "Lớp 8 – KNTT – Unit 10. Communication in the future",
+    "Lớp 9 – KNTT (Global Success, sách mới 2025) – Unit 1. Local community",
+    "Lớp 9 – KNTT – Unit 2. City life",
+    "Lớp 9 – KNTT – Unit 3. Healthy living for teens",
+    "Lớp 9 – KNTT – Unit 4. Remembering the past",
+    "Lớp 9 – KNTT – Unit 5. Our experiences",
+    "Lớp 9 – KNTT – Unit 6. Vietnamese lifestyle: then and now",
+    "Lớp 9 – KNTT – Unit 7. Natural wonders of the world",
+    "Lớp 9 – KNTT – Unit 8. Tourism",
+    "Lớp 9 – KNTT – Unit 9. World Englishes",
+    "Lớp 9 – KNTT – Unit 10. Planet Earth",
+    "Lớp 9 – KNTT – Unit 11. Electronic devices",
+    "Lớp 9 – KNTT – Unit 12. Career choices"
+  ],
+  "lop": [
+    {
+      "lop": 7,
+      "chuong": [
+        { "id": "anh7-u01", "chu_de": "Hobbies (sở thích)", "tu_vung": ["hobby", "collect (stamps/dolls)", "build model kits", "go cycling", "jigsaw puzzle", "guitar", "arrange flowers", "be interested in"], "ngu_phap": "Present simple với động từ thường (I collect stamps.); động từ chỉ sở thích (like/enjoy/love + V-ing)", "phat_am": "/f/ và /v/ trong từ vựng unit", "ky_nang": { "doc": "Đoạn văn về sở thích", "nghe": "Băng giới thiệu sở thích", "noi": "Trình bày sở thích của mình", "viet": "Viết đoạn ngắn 40–50 từ về sở thích" }, "ngu_phap_da_hoc_truoc": ["Present simple (lớp 6)", "Adverbs of frequency (lớp 6)"] },
+        { "id": "anh7-u02", "chu_de": "Health (sức khoẻ)", "tu_vung": ["healthy food", "junk food", "exercise", "flu", "sunburn", "tiredness", "put on weight", "avoid"], "ngu_phap": "Imperatives (Avoid junk food.); more/less + danh từ không đếm được (Eat more fruit. Drink less soda.)", "phat_am": "/t/, /d/, /ɪd/ với đuôi -ed", "ky_nang": { "doc": "Bài về lối sống lành mạnh", "nghe": "Lời khuyên sức khoẻ", "noi": "Đưa lời khuyên sức khoẻ", "viet": "Lời khuyên dạng câu mệnh lệnh" }, "ngu_phap_da_hoc_truoc": ["Present simple", "Imperatives cơ bản (lớp 6)"] },
+        { "id": "anh7-u03", "chu_de": "Community service (công việc cộng đồng)", "tu_vung": ["volunteer", "community service", "donate (books/clothes)", "nursing home", "provide", "clean up", "charity", "help the elderly"], "ngu_phap": "Past simple (khẳng định, phủ định, nghi vấn) với động từ thường", "phat_am": "Âm cuối và nối âm cơ bản", "ky_nang": { "doc": "Bài về hoạt động tình nguyện", "nghe": "Phỏng vấn về hoạt động cộng đồng", "noi": "Kể hoạt động đã tham gia", "viet": "Báo cáo hoạt động tình nguyện" }, "ngu_phap_da_hoc_truoc": ["Past simple (lớp 6)"] },
+        { "id": "anh7-u04", "chu_de": "Music and arts (âm nhạc và nghệ thuật)", "tu_vung": ["composer", "painting", "portrait", "musical instrument", "puppet", "performance", "melody", "art gallery"], "ngu_phap": "So sánh bằng (as...as); so sánh hơn với tính từ ngắn (short adjectives)", "phat_am": "/ʃ/ và /ʒ/; /ɑː/ và /ʌ/; trọng âm từ 2 âm tiết", "ky_nang": { "doc": "Bài về nhạc sĩ/bức tranh nổi tiếng", "nghe": "Đoạn phỏng vấn về đêm nhạc", "noi": "So sánh hai loại hình nghệ thuật", "viet": "Đoạn so sánh đơn giản" }, "ngu_phap_da_hoc_truoc": ["Present simple", "Past simple"] },
+        { "id": "anh7-u05", "chu_de": "Food and drink (thức ăn và đồ uống)", "tu_vung": ["ingredient", "soup", "noodle", "omelette", "pancake", "beef", "pork", "recipe", "spicy", "bitter"], "ngu_phap": "Quantifiers với danh sách đồ ăn (some, any, a lot of, much, many); so sánh hơn với tính từ dài (more delicious than)", "phat_am": "/ɒ/ và /ɔː/", "ky_nang": { "doc": "Công thức món ăn", "nghe": "Đặt món ở nhà hàng", "noi": "Nêu món ăn yêu thích và cách làm", "viet": "Viết công thức nấu một món ăn" }, "ngu_phap_da_hoc_truoc": ["Countable/uncountable nouns (lớp 6)", "So sánh hơn với tính từ ngắn (Unit 4)"] },
+        { "id": "anh7-u06", "chu_de": "The first university in Viet Nam (Trường đại học đầu tiên của Việt Nam — Văn Miếu)", "tu_vung": ["university", "temple", "Confucius", "scholar", "stele", "inscription", "relic", "heritage"], "ngu_phap": "Passive voice ở mức làm quen (is/was + built/founded) — chỉ ở mức nhận biết qua bài đọc; superlatives (the oldest, the most famous)", "phat_am": "/e/ và /æ/; trọng âm từ 3 âm tiết", "ky_nang": { "doc": "Bài đọc về Văn Miếu – Quốc Tử Giám", "nghe": "Thuyết minh di tích", "noi": "Giới thiệu một di tích ở địa phương", "viet": "Đoạn giới thiệu di tích lịch sử" }, "ngu_phap_da_hoc_truoc": ["So sánh hơn (Unit 4–5)"] },
+        { "id": "anh7-u07", "chu_de": "Traffic (giao thông)", "tu_vung": ["traffic jam", "cycle lane", "safety helmet", "road user", "vehicle", "obey traffic rules", "traffic light", "pedestrian"], "ngu_phap": "Signs and signals: must/mustn't, should/shouldn't (quy tắc giao thông); khoảng cách (It's about 2 km from... to...)", "phat_am": "/aɪ/ và /eɪ/", "ky_nang": { "doc": "Bảng quy tắc giao thông", "nghe": "Bảng tin giao thông", "noi": "Đường đi từ nhà đến trường", "viet": "Viết quy tắc an toàn giao thông" }, "ngu_phap_da_hoc_truoc": ["Imperatives (Unit 2)", "Should/shouldn't (Unit 2)"] },
+        { "id": "anh7-u08", "chu_de": "Films (phim)", "tu_vung": ["sci-fi film", "comedy", "documentary", "horror film", "plot", "character", "critic", "review"], "ngu_phap": "Connectors: although/though, however; câu hỏi Wh trong lời phỏng vấn", "phat_am": "Trọng âm câu (sentence stress) trong nhận xét phim", "ky_nang": { "doc": "Bài phê bình phim", "nghe": "Trò chuyện về phim đã xem", "noi": "Trình bày phim yêu thích", "viet": "Viết bài nhận xét phim" }, "ngu_phap_da_hoc_truoc": ["Connectors and/but/or/so (lớp 6)"] },
+        { "id": "anh7-u09", "chu_de": "Festivals around the world (lễ hội trên thế giới)", "tu_vung": ["festival", "celebration", "parade", "costume", "carnival", "religious", "lantern", "custom"], "ngu_phap": "Past continuous ở mức làm quen (was/were + V-ing khi lễ hội đang diễn ra) — chỉ qua câu ví dụ; Hỏi và trả lời thời gian, địa điểm tổ chức", "phat_am": "/g/ và /k/", "ky_nang": { "doc": "Bài giới thiệu lễ hội trên thế giới", "nghe": "Băng miêu tả lễ hội", "noi": "Giới thiệu một lễ hội ở địa phương", "viet": "Đoạn miêu tả lễ hội đã tham dự" }, "ngu_phap_da_hoc_truoc": ["Past simple (Unit 3)"] },
+        { "id": "anh7-u10", "chu_de": "Energy sources (nguồn năng lượng)", "tu_vung": ["energy source", "solar (energy)", "wind (energy)", "coal", "natural gas", "hydro", "nuclear", "renewable"], "ngu_phap": "The future simple: will/won't + V; câu hỏi Will...?", "phat_am": "Trọng âm từ ghép (solar energy)", "ky_nang": { "doc": "Bài về nguồn năng lượng tương lai", "nghe": "Băng về năng lượng tái tạo", "noi": "Dự đoán nguồn năng lượng trong tương lai", "viet": "Đoạn về việc tiết kiệm năng lượng" }, "ngu_phap_da_hoc_truoc": ["Will ở mức nhận biết (lớp 6)"] },
+        { "id": "anh7-u11", "chu_de": "Traveling in the future (du lịch trong tương lai)", "tu_vung": ["flying car", "solar-powered", "driverless", "teleport", "eco-friendly", "bullet train", "hyperloop", "self-driving"], "ngu_phap": "may/might + V để dự đoán khả năng (We may travel by flying car.); present continuous cho kế hoạch", "phat_am": "/aʊ/ và /əʊ/", "ky_nang": { "doc": "Bài về phương tiện tương lai", "nghe": "Băng dự đoán giao thông tương lai", "noi": "Mô tả phương tiện di chuyển trong mơ", "viet": "Đoạn về phương tiện du lịch tương lai" }, "ngu_phap_da_hoc_truoc": ["Will future (Unit 10)"] },
+        { "id": "anh7-u12", "chu_de": "English-speaking countries (các quốc gia nói tiếng Anh)", "tu_vung": ["the UK", "Canada", "Australia", "New Zealand", "native speaker", "capital", "population", "accent"], "ngu_phap": "Câu hỏi và trả lời với what/where/which + tổng hợp thì đã học; số từ và mốc thời gian khi nói về quốc gia", "phat_am": "Phát âm tên riêng quốc gia; âm cuối /s/, /z/", "ky_nang": { "doc": "Bài về một quốc gia nói tiếng Anh", "nghe": "Băng giới thiệu quốc gia", "noi": "Giới thiệu quốc gia nói tiếng Anh yêu thích", "viet": "Đoạn giới thiệu quốc gia" }, "ngu_phap_da_hoc_truoc": ["Tổng hợp thì đã học từ Unit 1–11"] }
+      ],
+      "chuyen_de": [],
+      "ghi_chu_chua_chac": [
+        "Mục lục lớp 7 GS (12 units) xác nhận từ prepedu/loigiaihay",
+        "ngu_phap và phat_am từng unit tổng hợp theo tài liệu dạy kèm Global Success phổ biến; cần đối chiếu phần A Closer Look từng unit trong SGK khi gộp",
+        "Passive voice ở Unit 6 chỉ ở mức làm quen qua câu mẫu của bài đọc; SGK không dạy đầy đủ passive ở lớp 7"
+      ]
+    },
+    {
+      "lop": 8,
+      "chuong": [
+        { "id": "anh8-u01", "chu_de": "Leisure time (thời gian giải trí)", "tu_vung": ["leisure activity", "hang out", "DIY (do it yourself)", "craft kit", "knit", "surf the net", "chill out", "boredom"], "ngu_phap": "Verbs of liking + gerund (enjoy, love, mind + V-ing) và + to-infinitive (want, decide + to V)", "phat_am": "/br/ và /pr/", "ky_nang": { "doc": "Bài về hoạt động giải trí của thanh thiếu niên", "nghe": "Băng về hoạt động dịp cuối tuần", "noi": "Trình bày hoạt động giải trí", "viet": "Đoạn về hoạt động giải trí của gia đình" }, "ngu_phap_da_hoc_truoc": ["Present simple/past simple/present continuous (lớp 6–7)", "Will/may/might (lớp 7)"] },
+        { "id": "anh8-u02", "chu_de": "Life in the countryside (cuộc sống nông thôn)", "tu_vung": ["harvest", "rice paddy", "cattle", "herd", "buffalo-drawn cart", "orchard", "tranquil", "rural"], "ngu_phap": "Comparative and superlative adjectives (revisión) và comparative adverbs (more slowly than)", "phat_am": "/bl/ và /kl/", "ky_nang": { "doc": "Bài về cuộc sống thôn quê", "nghe": "Băng miêu tả làng quê", "noi": "So sánh cuộc sống thành thị – nông thôn", "viet": "Đoạn về cuộc sống quê hương" }, "ngu_phap_da_hoc_truoc": ["So sánh tính từ (lớp 6–7)"] },
+        { "id": "anh8-u03", "chu_de": "Teenagers (thanh thiếu niên)", "tu_vung": ["peer pressure", "social media", "screen time", "stress", "counsellor", "confide in", "appearance", "self-esteem"], "ngu_phap": "Prepositions of time and place (in/on/at...); compound nouns (study skills, family members)", "phat_am": "/aʊ/ và /ɔɪ/", "ky_nang": { "doc": "Bài về áp lực học tập và giải pháp", "nghe": "Băng tư vấn tâm lí học đường", "noi": "Trình bày áp lực của tuổi teen", "viet": "Lời khuyên dạng đoạn văn cho bạn" }, "ngu_phap_da_hoc_truoc": ["Prepositions (lớp 6–7)"] },
+        { "id": "anh8-u04", "chu_de": "Ethnic groups of Viet Nam (các dân tộc Việt Nam)", "tu_vung": ["ethnic minority", "terraced field", "costume", "stilt house", "festival", "weaving", "custom", "ancestral worship"], "ngu_phap": "Articles: a/an/the và trường hợp không dùng mạo từ; Yes/No questions with Wh- answers", "phat_am": "/sk/, /sp/, /st/ (cluster)", "ky_nang": { "doc": "Bài về đời sống các dân tộc", "nghe": "Băng về lễ hội dân tộc", "noi": "Giới thiệu một dân tộc Việt Nam", "viet": "Đoạn về phong tục một dân tộc" }, "ngu_phap_da_hoc_truoc": ["Articles cơ bản (lớp 6–7)"] },
+        { "id": "anh8-u05", "chu_de": "Our customs and traditions (phong tục tập quán)", "tu_vung": ["custom", "tradition", "generosity", "superstition", "ancestor", "taboo", "etiquette", "wrap (gifts)"], "ngu_phap": "Should/shouldn't, must/mustn't, have to (nghĩa vụ và lời khuyên về phong tục)", "phat_am": "/ʊ/ và /uː/", "ky_nang": { "doc": "Bài về phong tục Việt Nam và thế giới", "nghe": "Băng về nghi lễ truyền thống", "noi": "Nói về phong tục gia đình", "viet": "Đoạn về một phong tục cần giữ gìn" }, "ngu_phap_da_hoc_truoc": ["Should/shouldn't (lớp 7)", "Must/mustn't (lớp 7)"] },
+        { "id": "anh8-u06", "chu_de": "Lifestyles (lối sống)", "tu_vung": ["lifestyle", "balanced diet", "organic food", "slow living", "commute", "urban", "suburb", "well-being"], "ngu_phap": "Simple sentences và compound sentences (and, but, or, so, however)", "phat_am": "Trọng âm từ 3–4 âm tiết", "ky_nang": { "doc": "Bài về lối sống xanh", "nghe": "Băng về lối sống thành phố", "noi": "Mô tả lối sống của mình", "viet": "Đoạn về lối sống lành mạnh" }, "ngu_phap_da_hoc_truoc": ["Connectors and/but/or/so (lớp 6–7)"] },
+        { "id": "anh8-u07", "chu_de": "Environmental protection (bảo vệ môi trường)", "tu_vung": ["pollution", "litter", "reuse", "recycle", "reduce", "wildlife", "contaminate", "single-use plastic"], "ngu_phap": "Conditional sentences type 1 (If we protect..., the Earth will...); type 2 ở mức nhận biết", "phat_am": "/ʃən/ với đuôi -tion", "ky_nang": { "doc": "Bài về ô nhiễm và giải pháp", "nghe": "Băng về chiến dịch môi trường", "noi": "Đề xuất hoạt động bảo vệ môi trường", "viet": "Đoạn về bảo vệ môi trường địa phương" }, "ngu_phap_da_hoc_truoc": ["Present simple/future will", "Imperatives"] },
+        { "id": "anh8-u08", "chu_de": "Shopping (mua sắm)", "tu_vung": ["shopaholic", "online shopping", "discount", "bargain", "receipt", "installment", "second-hand", "cashless payment"], "ngu_phap": "Conditional sentences type 1 và type 2 (If I had money, I would buy...)", "phat_am": "/ə/ trong từ nhiều âm tiết", "ky_nang": { "doc": "Bài về xu hướng mua sắm", "nghe": "Băng mua sắm online", "noi": "Trình bày thói quen mua sắm", "viet": "Đoạn về cách mua sắm thông minh" }, "ngu_phap_da_hoc_truoc": ["Conditional type 1 (Unit 7)"] },
+        { "id": "anh8-u09", "chu_de": "Natural disasters (thiên tai)", "tu_vung": ["typhoon", "flood", "drought", "earthquake", "landslide", "evacuate", "emergency", "rescue"], "ngu_phap": "Passive voice (present simple passive, past simple passive)", "phat_am": "Trọng âm từ có đuôi -ity, -ical", "ky_nang": { "doc": "Bản tin thiên tai", "nghe": "Bản tin dự báo thời tiết/thiên tai", "noi": "Trình bày biện pháp ứng phó thiên tai", "viet": "Đoạn về thiên tai ở Việt Nam" }, "ngu_phap_da_hoc_truoc": ["Present/past simple", "Conditional type 1 (Unit 7)"] },
+        { "id": "anh8-u10", "chu_de": "Communication in the future (giao tiếp trong tương lai)", "tu_vung": ["video conference", "virtual reality", "social network", "emoji", "telepathy", "hologram", "interact", "instantly"], "ngu_phap": "Reported speech (statements): She said (that) she...", "phat_am": "Ngữ điệu câu tường thuật", "ky_nang": { "doc": "Bài về giao tiếp tương lai", "nghe": "Băng về công nghệ giao tiếp", "noi": "Dự đoán cách giao tiếp trong tương lai", "viet": "Câu tường thuật và đoạn dự đoán" }, "ngu_phap_da_hoc_truoc": ["Reported speech ở mức câu lệnh đơn giản (lớp 7)"] }
+      ],
+      "chuyen_de": [],
+      "ghi_chu_chua_chac": [
+        "Mục lục lớp 8 GS gồm 10 units (không phải 12 như quy tắc chung cho 6–9) — đã đối chiếu từ nhiều nguồn; YEU_CAU cần cập nhật khi gộp",
+        "ngu_phap từng unit theo tài liệu GS phổ biến (conditional type 1 ở U7, type 1–2 ở U8, passive ở U9, reported speech ở U10) — cần đối chiếu SGK in"
+      ]
+    },
+    {
+      "lop": 9,
+      "chuong": [
+        { "id": "anh9-u01", "chu_de": "Local community (cộng đồng địa phương)", "tu_vung": ["artisan", "handicraft", "lacquerware", "embroidery", "pass down", "workshop", "craft village", "heritage craft"], "ngu_phap": "Phrasal verbs (set up, look around, come back, pass down); complex sentences (nếu cần)", "phat_am": "Trọng âm động từ 2 âm tiết (phrasal verbs)", "ky_nang": { "doc": "Bài về làng nghề truyền thống", "nghe": "Phỏng vấn nghệ nhân", "noi": "Giới thiệu làng nghề địa phương", "viet": "Đoạn về một làng nghề" }, "ngu_phap_da_hoc_truoc": ["Passive voice (lớp 8)", "Reported speech (lớp 8)"] },
+        { "id": "anh9-u02", "chu_de": "City life (cuộc sống thành thị)", "tu_vung": ["metropolitan", "urban sprawl", "infrastructure", "commute", "facilities", "congestion", "livable", "downtown"], "ngu_phap": "Comparative forms: so sánh với like/as; một số dạng so sánh đặc biệt (the more... the more)", "phat_am": "Âm nối (linking) trong câu", "ky_nang": { "doc": "Bài về các thành phố lớn", "nghe": "Băng về cuộc sống đô thị", "noi": "Nói về thành phố yêu thích", "viet": "Đoạn về ưu nhược điểm sống ở thành phố" }, "ngu_phap_da_hoc_truoc": ["Comparatives (lớp 7–8)"] },
+        { "id": "anh9-u03", "chu_de": "Healthy living for teens (sống khoẻ mạnh cho thanh thiếu niên)", "tu_vung": ["balanced diet", "junk food", "mental health", "screen addiction", "workout", "nutrition", "hygiene", "well-being"], "ngu_phap": "Modal verbs: should/must/have to (lời khuyên và nghĩa vụ); expressing opinions (I think/believe)", "phat_am": "/θ/ và /ð/", "ky_nang": { "doc": "Bài về sức khoẻ tuổi teen", "nghe": "Băng tư vấn sức khoẻ", "noi": "Trình bày thói quen sống khoẻ", "viet": "Đoạn về chế độ sống khoẻ" }, "ngu_phap_da_hoc_truoc": ["Modal verbs should/must (lớp 7–8)"] },
+        { "id": "anh9-u04", "chu_de": "Remembering the past (nhớ về quá khứ)", "tu_vung": ["generation", "war", "memorial", "legend", "ancestor", "hero", "tribute", "era"], "ngu_phap": "Past perfect (had + V3) với before/after/by the time", "phat_am": "/ed/ kết thúc quá khứ (revisión)", "ky_nang": { "doc": "Bài về lịch sử, truyền thống", "nghe": "Băng kể chuyện quá khứ", "noi": "Kể sự kiện lịch sử địa phương", "viet": "Đoạn kể về quá khứ của quê hương" }, "ngu_phap_da_hoc_truoc": ["Past simple (lớp 6–7)"] },
+        { "id": "anh9-u05", "chu_de": "Our experiences (trải nghiệm của chúng ta)", "tu_vung": ["experience", "unforgettable", "adventure", "volunteer trip", "challenge", "overcome", "confidence", "memorable"], "ngu_phap": "Present perfect với ever/never/already/yet (trải nghiệm đến hiện tại); since/for", "phat_am": "Trọng âm câu với ever/never", "ky_nang": { "doc": "Bài chia sẻ trải nghiệm", "nghe": "Băng kể chuyến đi đáng nhớ", "noi": "Kể trải nghiệm đáng nhớ nhất", "viet": "Đoạn về trải nghiệm cá nhân" }, "ngu_phap_da_hoc_truoc": ["Past simple", "Present perfect ở mức nhận biết (lớp 7)"] },
+        { "id": "anh9-u06", "chu_de": "Vietnamese lifestyle: then and now (lối sống Việt Nam xưa và nay)", "tu_vung": ["extended family", "nuclear family", "custom", "generation gap", "traditional values", "modern lifestyle", "household", "role"], "ngu_phap": "used to + V (thói quen trong quá khứ); passive voice revisión", "phat_am": "Trọng âm từ ghép (extended family)", "ky_nang": { "doc": "Bài so sánh gia đình xưa và nay", "nghe": "Băng về thay đổi lối sống", "noi": "So sánh lối sống các thế hệ", "viet": "Đoạn so sánh lối sống xưa và nay" }, "ngu_phap_da_hoc_truoc": ["Passive voice (lớp 8)"] },
+        { "id": "anh9-u07", "chu_de": "Natural wonders of the world (kỳ quan thiên nhiên thế giới)", "tu_vung": ["wonder", "canyon", "waterfall", "landscape", "spectacular", "majestic", "cave", "national park"], "ngu_phap": "Articles (the với tên địa danh đặc biệt, the + sông/dãy núi, zero article)", "phat_am": "/w/ và /v/", "ky_nang": { "doc": "Bài về kỳ quan thiên nhiên", "nghe": "Băng giới thiệu kỳ quan", "noi": "Giới thiệu một kỳ quan", "viet": "Đoạn thuyết minh kỳ quan" }, "ngu_phap_da_hoc_truoc": ["Articles (lớp 8)"] },
+        { "id": "anh9-u08", "chu_de": "Tourism (du lịch)", "tu_vung": ["tourist attraction", "accommodation", "itinerary", "ecotourism", "sustainable tourism", "souvenir", "guide", "destination"], "ngu_phap": "Quantifiers (much/many/a few/a little/a lot of); double comparatives (the more... the more)", "phat_am": "/ʌ/ và /ʊ/ (revisión)", "ky_nang": { "doc": "Bài về du lịch bền vững", "nghe": "Băng tư vấn du lịch", "noi": "Giới thiệu kế hoạch chuyến đi", "viet": "Đoạn về du lịch có trách nhiệm" }, "ngu_phap_da_hoc_truoc": ["Quantifiers cơ bản (lớp 6–7)"] },
+        { "id": "anh9-u09", "chu_de": "World Englishes (tiếng Anh trên thế giới)", "tu_vung": ["official language", "mother tongue", "accent", "dialect", "fluent", "proficiency", "lingua franca", "global language"], "ngu_phap": "Gerund (V-ing) và to-infinitive sau động từ chỉ sở thích/kế hoạch (revisión nâng cao)", "phat_am": "Phát âm các biến thể tiếng Anh (accents)", "ky_nang": { "doc": "Bài về vai trò tiếng Anh toàn cầu", "nghe": "Băng người học tiếng Anh các nước", "noi": "Nói về lợi ích học tiếng Anh", "viet": "Đoạn về tiếng Anh trong cuộc sống" }, "ngu_phap_da_hoc_truoc": ["Verbs of liking + V-ing (lớp 8)"] },
+        { "id": "anh9-u10", "chu_de": "Planet Earth (hành tinh Trái Đất)", "tu_vung": ["ecosystem", "climate change", "deforestation", "species", "habitat", "carbon footprint", "conserve", "sustainable"], "ngu_phap": "Relative clauses (who, which, that) ở mức cơ bản", "phat_am": "Trọng âm từ có tiền tố (deforestation)", "ky_nang": { "doc": "Bài về môi trường Trái Đất", "nghe": "Băng về biến đổi khí hậu", "noi": "Trình bày biện pháp bảo vệ hành tinh", "viet": "Đoạn về bảo vệ Trái Đất" }, "ngu_phap_da_hoc_truoc": ["Compound sentences (lớp 8)", "Conditional type 1–2 (lớp 8)"] },
+        { "id": "anh9-u11", "chu_de": "Electronic devices (thiết bị điện tử)", "tu_vung": ["gadget", "portable", "wireless", "touchscreen", "battery", "download", "app", "function"], "ngu_phap": "Conditional sentences type 2 (If I had a..., I would...); reported speech revisión", "phat_am": "Trọng âm từ có đuôi -able, -ible", "ky_nang": { "doc": "Bài về thiết bị công nghệ", "nghe": "Băng về thiết bị thông minh", "noi": "Trình bày thiết bị yêu thích", "viet": "Đoạn về thiết bị điện tử trong học tập" }, "ngu_phap_da_hoc_truoc": ["Conditional type 2 ở mức nhận biết (lớp 8)", "Reported speech (lớp 8)"] },
+        { "id": "anh9-u12", "chu_de": "Career choices (lựa chọn nghề nghiệp)", "tu_vung": ["career", "vocation", "qualifications", "internship", "resume", "aptitude", "profession", "dream job"], "ngu_phap": "Tổng hợp: câu hỏi phỏng vấn xin việc, thì hoàn thành, to-infinitive/V-ing sau động từ; writing about future plans", "phat_am": "Ngữ điệu câu hỏi phỏng vấn", "ky_nang": { "doc": "Bài về hướng nghiệp", "nghe": "Phỏng vấn về nghề nghiệp", "noi": "Trình bày định hướng nghề nghiệp", "viet": "Đoạn về nghề nghiệp tương lai" }, "ngu_phap_da_hoc_truoc": ["Present perfect (Unit 5)", "Verbs + to-inf/V-ing (lớp 8, Unit 9)"] }
+      ],
+      "chuyen_de": [],
+      "ghi_chu_chua_chac": [
+        "SGK Tiếng Anh 9 Global Success là sách mới (2025) gồm 12 units; mục lục từ loigiaihay — Unit 6 ghi trên nguồn là 'Vietnamses lifestyle' (lỗi chính tả nguồn, chuẩn là 'Vietnamese lifestyle')",
+        "ngu_phap từng unit (past perfect ở U4, present perfect ở U5, used to ở U6, relative clauses ở U10, conditional type 2 ở U11) tổng hợp theo tài liệu dạy kèm GS — cần đối chiếu SGK in khi gộp",
+        "Đề thi vào lớp 10 của Hà Nội/TP.HCM phần lớn bám SGK lớp 9 cũ (6 units: local environment, city life...) từ năm học trước; sách 9 GS mới 2025 chưa có đề thi tuyển mẫu — đề tuyển sinh cần ghi chú năm áp dụng"
+      ]
+    }
+  ],
+  "tien_trinh_ngu_phap": [
+    { "cau_truc": "Present simple", "lop": 6, "unit": "Unit 1 (Global Success)", "ghi_chu": "Nền tảng, lặp lại xuyên suốt 6–9" },
+    { "cau_truc": "Present continuous", "lop": 6, "unit": "Unit 1–3", "ghi_chu": "Kế hoạch tương lai gặp ở lớp 7" },
+    { "cau_truc": "There is/There are", "lop": 6, "unit": "Unit 2", "ghi_chu": "" },
+    { "cau_truc": "Prepositions of place and time", "lop": 6, "unit": "Unit 2, 4", "ghi_chu": "Revisión chi tiết ở lớp 8 Unit 3" },
+    { "cau_truc": "Comparative adjectives (short)", "lop": 6, "unit": "Unit 4", "ghi_chu": "Long adjectives và adverbs ở lớp 7–8" },
+    { "cau_truc": "Superlative adjectives", "lop": 6, "unit": "Unit 5", "ghi_chu": "" },
+    { "cau_truc": "Must/mustn't (quy tắc)", "lop": 6, "unit": "Unit 6 (Tet holiday)", "ghi_chu": "Should/shouldn't ở lớp 7 Unit 2" },
+    { "cau_truc": "Past simple", "lop": 6, "unit": "Unit 8", "ghi_chu": "Revisión lớp 7 Unit 3, 6; past perfect lớp 9 Unit 4" },
+    { "cau_truc": "Will (future simple)", "lop": 6, "unit": "Unit 10", "ghi_chu": "Revisión lớp 7 Unit 10" },
+    { "cau_truc": "May/might (possibility)", "lop": 7, "unit": "Unit 11", "ghi_chu": "" },
+    { "cau_truc": "So sánh hơn với long adjectives; comparative adverbs", "lop": 7, "unit": "Unit 5; lớp 8 Unit 2", "ghi_chu": "" },
+    { "cau_truc": "Verbs of liking + gerund/to-infinitive", "lop": 8, "unit": "Unit 1", "ghi_chu": "Revisión lớp 9 Unit 9" },
+    { "cau_truc": "Conditional sentences type 1", "lop": 8, "unit": "Unit 7", "ghi_chu": "Type 2 ở Unit 8; type 2 revisión lớp 9 Unit 11" },
+    { "cau_truc": "Passive voice (present/past simple passive)", "lop": 8, "unit": "Unit 9", "ghi_chu": "Revisión lớp 9 Unit 1, 6; relative clause passive ở lớp 10" },
+    { "cau_truc": "Reported speech (statements)", "lop": 8, "unit": "Unit 10", "ghi_chu": "Revisión lớp 9 Unit 11" },
+    { "cau_truc": "Past perfect", "lop": 9, "unit": "Unit 4", "ghi_chu": "Chỉ ở mức nhận biết qua bài đọc" },
+    { "cau_truc": "Present perfect với ever/never/already/yet", "lop": 9, "unit": "Unit 5", "ghi_chu": "Có gặp câu mẫu ở lớp 7–8" },
+    { "cau_truc": "used to + V", "lop": 9, "unit": "Unit 6", "ghi_chu": "" },
+    { "cau_truc": "Relative clauses (who/which/that)", "lop": 9, "unit": "Unit 10", "ghi_chu": "Chỉ ở mức cơ bản; đầy đủ ở lớp 10" }
+  ],
+  "cau_truc_de": [
+    {
+      "loai": "Đề kiểm tra giữa học kì 1 môn Tiếng Anh lớp 7",
+      "lop": 7,
+      "thoi_gian_phut": 60,
+      "phan": [
+        { "ten": "Phần I. Listening", "so_cau": 4, "diem_moi_cau": 0.5, "tong_diem": 2 },
+        { "ten": "Phần II. Pronunciation (phát âm, trọng âm)", "so_cau": 2, "diem_moi_cau": 0.25, "tong_diem": 0.5 },
+        { "ten": "Phần III. Vocabulary and grammar", "so_cau": 6, "diem_moi_cau": 0.25, "tong_diem": 1.5 },
+        { "ten": "Phần IV. Reading (đọc hiểu)", "so_cau": 4, "diem_moi_cau": 0.25, "tong_diem": 1 },
+        { "ten": "Phần V. Writing (viết câu, viết đoạn)", "so_cau": 4, "diem_moi_cau": 0.75, "tong_diem": 3 }
+      ],
+      "pham_vi": ["anh7-u01", "anh7-u02", "anh7-u03", "anh7-u04"],
+      "ti_le_muc_do": "NB 40%, TH 40%, VD 20%"
+    },
+    {
+      "loai": "Đề kiểm tra cuối học kì 1 môn Tiếng Anh lớp 7",
+      "lop": 7,
+      "thoi_gian_phut": 60,
+      "phan": [
+        { "ten": "Phần I. Listening", "so_cau": 6, "diem_moi_cau": 0.5, "tong_diem": 3 },
+        { "ten": "Phần II. Pronunciation", "so_cau": 4, "diem_moi_cau": 0.25, "tong_diem": 1 },
+        { "ten": "Phần III. Vocabulary and grammar", "so_cau": 8, "diem_moi_cau": 0.25, "tong_diem": 2 },
+        { "ten": "Phần IV. Reading", "so_cau": 6, "diem_moi_cau": 0.25, "tong_diem": 1.5 },
+        { "ten": "Phần V. Writing", "so_cau": 5, "diem_moi_cau": 0.5, "tong_diem": 2.5 }
+      ],
+      "pham_vi": ["anh7-u01", "anh7-u02", "anh7-u03", "anh7-u04", "anh7-u05", "anh7-u06"],
+      "ti_le_muc_do": "NB 40%, TH 40%, VD 20%"
+    },
+    {
+      "loai": "Đề kiểm tra cuối học kì 2 môn Tiếng Anh lớp 7",
+      "lop": 7,
+      "thoi_gian_phut": 60,
+      "phan": [
+        { "ten": "Phần I. Listening", "so_cau": 6, "diem_moi_cau": 0.5, "tong_diem": 3 },
+        { "ten": "Phần II. Pronunciation", "so_cau": 4, "diem_moi_cau": 0.25, "tong_diem": 1 },
+        { "ten": "Phần III. Vocabulary and grammar", "so_cau": 8, "diem_moi_cau": 0.25, "tong_diem": 2 },
+        { "ten": "Phần IV. Reading", "so_cau": 6, "diem_moi_cau": 0.25, "tong_diem": 1.5 },
+        { "ten": "Phần V. Writing", "so_cau": 5, "diem_moi_cau": 0.5, "tong_diem": 2.5 }
+      ],
+      "pham_vi": ["anh7-u07", "anh7-u08", "anh7-u09", "anh7-u10", "anh7-u11", "anh7-u12"],
+      "ti_le_muc_do": "NB 40%, TH 40%, VD 20%"
+    },
+    {
+      "loai": "Đề kiểm tra cuối học kì 1 môn Tiếng Anh lớp 8",
+      "lop": 8,
+      "thoi_gian_phut": 60,
+      "phan": [
+        { "ten": "Phần I. Listening", "so_cau": 6, "diem_moi_cau": 0.5, "tong_diem": 3 },
+        { "ten": "Phần II. Pronunciation", "so_cau": 4, "diem_moi_cau": 0.25, "tong_diem": 1 },
+        { "ten": "Phần III. Vocabulary and grammar", "so_cau": 8, "diem_moi_cau": 0.25, "tong_diem": 2 },
+        { "ten": "Phần IV. Reading", "so_cau": 6, "diem_moi_cau": 0.25, "tong_diem": 1.5 },
+        { "ten": "Phần V. Writing", "so_cau": 5, "diem_moi_cau": 0.5, "tong_diem": 2.5 }
+      ],
+      "pham_vi": ["anh8-u01", "anh8-u02", "anh8-u03", "anh8-u04", "anh8-u05", "anh8-u06"],
+      "ti_le_muc_do": "NB 40%, TH 40%, VD 20%"
+    },
+    {
+      "loai": "Đề kiểm tra cuối học kì 2 môn Tiếng Anh lớp 8",
+      "lop": 8,
+      "thoi_gian_phut": 60,
+      "phan": [
+        { "ten": "Phần I. Listening", "so_cau": 6, "diem_moi_cau": 0.5, "tong_diem": 3 },
+        { "ten": "Phần II. Pronunciation", "so_cau": 4, "diem_moi_cau": 0.25, "tong_diem": 1 },
+        { "ten": "Phần III. Vocabulary and grammar", "so_cau": 8, "diem_moi_cau": 0.25, "tong_diem": 2 },
+        { "ten": "Phần IV. Reading", "so_cau": 6, "diem_moi_cau": 0.25, "tong_diem": 1.5 },
+        { "ten": "Phần V. Writing", "so_cau": 5, "diem_moi_cau": 0.5, "tong_diem": 2.5 }
+      ],
+      "pham_vi": ["anh8-u07", "anh8-u08", "anh8-u09", "anh8-u10"],
+      "ti_le_muc_do": "NB 30%, TH 40%, VD 30%"
+    },
+    {
+      "loai": "Đề kiểm tra cuối học kì 1 môn Tiếng Anh lớp 9",
+      "lop": 9,
+      "thoi_gian_phut": 60,
+      "phan": [
+        { "ten": "Phần I. Listening", "so_cau": 6, "diem_moi_cau": 0.5, "tong_diem": 3 },
+        { "ten": "Phần II. Pronunciation", "so_cau": 4, "diem_moi_cau": 0.25, "tong_diem": 1 },
+        { "ten": "Phần III. Vocabulary and grammar", "so_cau": 8, "diem_moi_cau": 0.25, "tong_diem": 2 },
+        { "ten": "Phần IV. Reading", "so_cau": 6, "diem_moi_cau": 0.25, "tong_diem": 1.5 },
+        { "ten": "Phần V. Writing", "so_cau": 5, "diem_moi_cau": 0.5, "tong_diem": 2.5 }
+      ],
+      "pham_vi": ["anh9-u01", "anh9-u02", "anh9-u03", "anh9-u04", "anh9-u05", "anh9-u06"],
+      "ti_le_muc_do": "NB 30%, TH 40%, VD 30%"
+    },
+    {
+      "loai": "Đề kiểm tra cuối học kì 2 môn Tiếng Anh lớp 9",
+      "lop": 9,
+      "thoi_gian_phut": 60,
+      "phan": [
+        { "ten": "Phần I. Listening", "so_cau": 6, "diem_moi_cau": 0.5, "tong_diem": 3 },
+        { "ten": "Phần II. Pronunciation", "so_cau": 4, "diem_moi_cau": 0.25, "tong_diem": 1 },
+        { "ten": "Phần III. Vocabulary and grammar", "so_cau": 8, "diem_moi_cau": 0.25, "tong_diem": 2 },
+        { "ten": "Phần IV. Reading", "so_cau": 6, "diem_moi_cau": 0.25, "tong_diem": 1.5 },
+        { "ten": "Phần V. Writing", "so_cau": 5, "diem_moi_cau": 0.5, "tong_diem": 2.5 }
+      ],
+      "pham_vi": ["anh9-u07", "anh9-u08", "anh9-u09", "anh9-u10", "anh9-u11", "anh9-u12"],
+      "ti_le_muc_do": "NB 30%, TH 40%, VD 30%"
+    },
+    {
+      "loai": "Đề thi tuyển sinh vào lớp 10 — Hà Nội (môn Tiếng Anh)",
+      "lop": 9,
+      "thoi_gian_phut": 60,
+      "phan": [
+        { "ten": "Phần I. Phonetics (phát âm, trọng âm)", "so_cau": 4, "diem_moi_cau": 0.5, "tong_diem": 2 },
+        { "ten": "Phần II. Vocabulary and grammar", "so_cau": 10, "diem_moi_cau": 0.5, "tong_diem": 5 },
+        { "ten": "Phần III. Reading (đọc điền từ + đọc hiểu)", "so_cau": 8, "diem_moi_cau": 0.5, "tong_diem": 4 },
+        { "ten": "Phần IV. Writing (viết lại câu, viết đoạn)", "so_cau": 6, "diem_moi_cau": 0.5, "tong_diem": 3 }
+      ],
+      "pham_vi": ["anh9-u01", "anh9-u02", "anh9-u03", "anh9-u04", "anh9-u05", "anh9-u06", "anh9-u07", "anh9-u08", "anh9-u09", "anh9-u10", "anh9-u11", "anh9-u12"],
+      "ti_le_muc_do": "NB 20%, TH 50%, VD 30%",
+      "ghi_chu": "Cấu trúc theo đề tuyển sinh Hà Nội các năm gần đây (60 câu, 60 phút); bám SGK lớp 9 trước năm học tuyển sinh — năm 2026 trở đi cần theo dõi chương trình lớp 9 mới"
+    },
+    {
+      "loai": "Đề thi tuyển sinh vào lớp 10 — TP. Hồ Chí Minh (môn Tiếng Anh)",
+      "lop": 9,
+      "thoi_gian_phut": 90,
+      "phan": [
+        { "ten": "Phần I. Listening", "so_cau": 10, "diem_moi_cau": 0.5, "tong_diem": 5 },
+        { "ten": "Phần II. Vocabulary and grammar", "so_cau": 15, "diem_moi_cau": 0.5, "tong_diem": 7.5 },
+        { "ten": "Phần III. Reading", "so_cau": 10, "diem_moi_cau": 0.5, "tong_diem": 5 },
+        { "ten": "Phần IV. Writing", "so_cau": 5, "diem_moi_cau": 0.5, "tong_diem": 2.5 }
+      ],
+      "pham_vi": ["anh9-u01", "anh9-u02", "anh9-u03", "anh9-u04", "anh9-u05", "anh9-u06", "anh9-u07", "anh9-u08", "anh9-u09", "anh9-u10", "anh9-u11", "anh9-u12"],
+      "ti_le_muc_do": "NB 20%, TH 50%, VD 30%",
+      "ghi_chu": "Cấu trúc theo đề tuyển sinh TP.HCM các năm gần đây (40 câu, 90 phút, có listening); cần đối chiếu thông báo tuyển sinh từng năm"
+    }
+  ],
+  "phien_ban": 1
+}
