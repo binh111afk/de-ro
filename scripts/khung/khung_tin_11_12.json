@@ -1,0 +1,476 @@
+{
+  "mon": "Tin học",
+  "pham_vi_luot": "lớp 11–12 (cả định hướng Tin học ứng dụng và Khoa học máy tính)",
+  "nguon": [
+    "Chương trình GDPT 2018 môn Tin học, Thông tư 32/2018/TT-BGDĐT (sửa đổi bởi Thông tư 13/2022)",
+    "SGK Tin học 11, 12 — Kết nối tri thức, định hướng Tin học ứng dụng và Khoa học máy tính (mục lục từ loigiaihay.com)",
+    "Đề tốt nghiệp THPT môn Tin học từ năm 2025 (cấu trúc phổ biến; tỉ lệ chung/riêng cần đối chiếu ma trận chính thức)"
+  ],
+  "muc_luc_da_tra": [
+    "Lớp 11 – KNTT (chung) – Bài 1. Hệ điều hành",
+    "Lớp 11 – KNTT (chung) – Bài 2. Thực hành sử dụng hệ điều hành",
+    "Lớp 11 – KNTT (chung) – Bài 3. Phần mềm nguồn mở và phần mềm chạy trên Internet",
+    "Lớp 11 – KNTT (chung) – Bài 4. Bên trong máy tính",
+    "Lớp 11 – KNTT (chung) – Bài 5. Kết nối máy tính với các thiết bị số",
+    "Lớp 11 – KNTT (chung) – Bài 6. Lưu trữ và chia sẻ tệp tin trên Internet",
+    "Lớp 11 – KNTT (chung) – Bài 7. Thực hành tìm kiếm thông tin trên Internet",
+    "Lớp 11 – KNTT (chung) – Bài 8. Thực hành nâng cao sử dụng thư điện tử và mạng xã hội",
+    "Lớp 11 – KNTT (chung) – Bài 9. Giao tiếp an toàn trên Internet",
+    "Lớp 11 – KNTT (chung) – Bài 10. Lưu trữ dữ liệu và khai thác thông tin phục vụ quản lí",
+    "Lớp 11 – KNTT (chung) – Bài 11. Cơ sở dữ liệu",
+    "Lớp 11 – KNTT (chung) – Bài 12. Hệ quản trị cơ sở dữ liệu và hệ cơ sở dữ liệu",
+    "Lớp 11 – KNTT (chung) – Bài 13. Cơ sở dữ liệu quan hệ",
+    "Lớp 11 – KNTT (chung) – Bài 14. SQL – ngôn ngữ truy vấn có cấu trúc",
+    "Lớp 11 – KNTT (chung) – Bài 15. Bảo mật và an toàn hệ cơ sở dữ liệu",
+    "Lớp 11 – KNTT (chung) – Bài 16. Công việc quản trị cơ sở dữ liệu",
+    "Lớp 11 – KNTT ICT – Bài 17–24. Thực hành tạo và khai thác cơ sở dữ liệu (quản trị CSDL trên máy tính; cấu trúc bảng và khóa; tạo lập CSDL; khóa ngoài; cập nhật và truy xuất; tham chiếu; liên kết bảng; sao lưu)",
+    "Lớp 11 – KNTT ICT – Bài 25–31. Phần mềm chỉnh sửa ảnh và làm video (chỉnh sửa ảnh; màu sắc và công cụ chọn; vẽ; ảnh động; làm phim; biên tập phim; phim hoạt hình)",
+    "Lớp 11 – KNTT CS – Bài 17–18. Dữ liệu mảng một chiều và hai chiều + thực hành",
+    "Lớp 11 – KNTT CS – Bài 19–20. Bài toán tìm kiếm + thực hành",
+    "Lớp 11 – KNTT CS – Bài 21–22. Các thuật toán sắp xếp đơn giản + thực hành",
+    "Lớp 11 – KNTT CS – Bài 23. Kiểm thử và đánh giá chương trình",
+    "Lớp 11 – KNTT CS – Bài 24–25. Đánh giá độ phức tạp thời gian thuật toán + thực hành",
+    "Lớp 11 – KNTT CS – Bài 26–27. Phương pháp làm mịn dần trong thiết kế chương trình + thực hành",
+    "Lớp 11 – KNTT CS – Bài 28–29. Thiết kế chương trình theo mô đun + thực hành",
+    "Lớp 11 – KNTT CS – Bài 30–31. Thiết lập thư viện cho chương trình + thực hành",
+    "Lớp 12 – KNTT (chung) – Bài 1. Làm quen với trí tuệ nhân tạo",
+    "Lớp 12 – KNTT (chung) – Bài 2. Trí tuệ nhân tạo trong khoa học và đời sống",
+    "Lớp 12 – KNTT (chung) – Bài 3. Một số thiết bị mạng thông dụng",
+    "Lớp 12 – KNTT (chung) – Bài 4. Giao thức mạng",
+    "Lớp 12 – KNTT (chung) – Bài 5. Thực hành chia sẻ tài nguyên trên mạng",
+    "Lớp 12 – KNTT (chung) – Bài 6. Giao tiếp và ứng xử trong không gian mạng",
+    "Lớp 12 – KNTT CS – Bài 7–12. HTML và cấu trúc trang web; định dạng văn bản; danh sách, bảng; liên kết; đa phương tiện và khung nội tuyến; biểu mẫu",
+    "Lớp 12 – KNTT CS – Bài 13–18. CSS: khái niệm và vai trò; định dạng văn bản; màu chữ và nền; định dạng khung; mức ưu tiên bộ chọn; thực hành tổng hợp",
+    "Lớp 12 – KNTT CS – Bài 19–21. Dịch vụ sửa chữa và bảo trì máy tính; nhóm nghề quản trị CNTT; hội thảo hướng nghiệp",
+    "Lớp 12 – KNTT CS – Bài 22–24. Tìm hiểu thiết bị mạng; đường truyền mạng và ứng dụng; sơ bộ về thiết kế mạng",
+    "Lớp 12 – KNTT CS – Bài 25–27. Làm quen với học máy; khoa học dữ liệu; máy tính và khoa học dữ liệu",
+    "Lớp 12 – KNTT CS – Bài 28–30. Trích rút thông tin và tri thức; mô phỏng trong giải quyết vấn đề; ứng dụng mô phỏng trong giáo dục",
+    "Lớp 12 – KNTT ICT – Bài 19–26. Marketing điện tử và đồ án thiết kế trang web marketing (chuẩn bị xây dựng trang web; phần đầu; phần thân; hoàn thiện và trình bày đồ án)"
+  ],
+  "lop": [
+    {
+      "lop": 11,
+      "chuong": [
+        {
+          "id": "tin11-may-tinh-xa-hoi-tri-thuc",
+          "ten": "Máy tính và xã hội tri thức: hệ điều hành, phần mềm, thiết bị số",
+          "hoc_ky": 1,
+          "mach": "A — Máy tính và xã hội tri thức",
+          "dinh_huong": "chung",
+          "ten_theo_sach": { "KNTT": "Chủ đề 1. Máy tính và xã hội tri thức (Bài 1–5)", "CTST": "Chủ đề hệ điều hành, phần mềm và hệ thống máy tính", "CD": "Chủ đề máy tính và xã hội tri thức" },
+          "yeu_cau_can_dat": ["Phân biệt vai trò hệ điều hành và phần mềm ứng dụng; nêu được các chức năng chính của hệ điều hành", "Sử dụng thành thạo một hệ điều hành: quản lí thư mục, tệp, cài đặt/gỡ phần mềm, đa nhiệm", "Hiểu phần mềm nguồn mở, phần mềm chạy trên Internet (SaaS) và so sánh với phần mềm sở hữu riêng", "Nhận biết các bộ phận bên trong máy tính (CPU, RAM, ổ đĩa, bo mạch) và vai trò của chúng", "Kết nối máy tính với thiết bị số (điện thoại, camera, máy in) và trao đổi dữ liệu"],
+          "kien_thuc_duoc_dung": ["Khái niệm tệp, thư mục, hệ điều hành đã học ở lớp 6–7", "Kiến thức mạng và Internet lớp 8–9 (dịch vụ web, lưu trữ đám mây)"],
+          "chua_duoc_dung": ["Cách tổ chức CPU theo xung nhịp, siêu đa luồng (kiến thức kiến trúc máy tính ở đại học)", "Cơ chế quản lí tiến trình của nhân hệ điều hành (đại học)", "Lập trình hệ thống, driver (không thuộc chương trình phổ thông)"],
+          "dang_bai_dien_hinh": ["Xác định bộ phận máy tính theo mô tả chức năng", "Chọn hệ điều hành/phần mềm phù hợp cho tình huống", "Phân biệt phần mềm nguồn mở – thương mại – chạy trên Internet"],
+          "luu_y_ra_de": "Không ra câu đòi hỏi tên thương mại cụ thể của linh kiện theo từng năm sản xuất (dễ cũ); hỏi về chức năng và phân loại."
+        },
+        {
+          "id": "tin11-luu-tru-trao-doi-thong-tin",
+          "ten": "Lưu trữ, tìm kiếm và trao đổi thông tin trên Internet",
+          "hoc_ky": 1,
+          "mach": "C — Lưu trữ, tìm kiếm, trao đổi thông tin",
+          "dinh_huong": "chung",
+          "ten_theo_sach": { "KNTT": "Chủ đề 2. Tổ chức lưu trữ, tìm kiếm và trao đổi thông tin (Bài 6–8)", "CTST": "Chủ đề lưu trữ, tìm kiếm, trao đổi thông tin", "CD": "Chủ đề lưu trữ, tìm kiếm và trao đổi thông tin" },
+          "yeu_cau_can_dat": ["Sử dụng dịch vụ lưu trữ đám mây để lưu trữ, đồng bộ, chia sẻ tệp và đặt quyền truy cập", "Tìm kiếm thông tin nâng cao: từ khoá, toán tử lọc, đánh giá độ tin cậy của nguồn", "Sử dụng nâng cao thư điện tử: nhãn, bộ lọc, đính kèm, lịch, chia sẻ lịch", "Sử dụng mạng xã hội hiệu quả và an toàn"],
+          "kien_thuc_duoc_dung": ["Dịch vụ web và tìm kiếm thông tin lớp 8–9", "Kiến thức đám mây lớp 9"],
+          "chua_duoc_dung": ["Thuật toán chỉ số hoá (indexing) và xếp hạng kết quả tìm kiếm của máy tìm kiếm (đại học/kiến thức ngành)", "Lập trình API của dịch vụ đám mây"],
+          "dang_bai_dien_hinh": ["Chọn cách chia sẻ tệp và quyền phù hợp với tình huống", "Nhận dạng thao tác tìm kiếm nâng cao theo mục đích"],
+          "luu_y_ra_de": "Giao diện dịch vụ (Google Drive, Gmail) thay đổi theo thời gian; ra đề theo chức năng chung, không theo vị trí nút bấm."
+        },
+        {
+          "id": "tin11-giao-tiep-an-toan-internet",
+          "ten": "Đạo đức, pháp luật và văn hóa: giao tiếp an toàn trên Internet",
+          "hoc_ky": 1,
+          "mach": "F — Đạo đức, pháp luật và văn hóa trong môi trường số",
+          "dinh_huong": "chung",
+          "ten_theo_sach": { "KNTT": "Chủ đề 3 (Bài 9). Giao tiếp an toàn trên Internet", "CTST": "Chủ đề đạo đức, pháp luật và văn hóa số", "CD": "Chủ đề đạo đức, pháp luật và văn hóa" },
+          "yeu_cau_can_dat": ["Nhận biết các hình thức lừa đảo, giả mạo qua thư điện tử, tin nhắn, mạng xã hội", "Nhận diện và phòng tránh phần mềm độc hại lan truyền qua đường truyền tin", "Ứng xử văn minh, tuân thủ quy định pháp luật khi giao tiếp trên mạng"],
+          "kien_thuc_duoc_dung": ["Kiến thức đạo đức số, nhận diện tin giả lớp 9"],
+          "chua_duoc_dung": ["Kĩ thuật phân tích phần mềm độc hại (hậu mã hoá, sandbox — kiến thức an ninh mạng chuyên sâu)", "Điều khoản hình sự chi tiết của các đạo luật số (chỉ nêu khái quát)"],
+          "dang_bai_dien_hinh": ["Xử lí tình huống nhận được thư/tin nhắn đáng ngờ", "Nhận dạng dấu hiệu lừa đảo (đường link, yêu cầu thông tin cá nhân)"],
+          "luu_y_ra_de": "Không nêu tên phần mềm độc hại cụ thể kèm cách tạo/lây lan chi tiết."
+        },
+        {
+          "id": "tin11-csdl-khai-niem-phap-chung",
+          "ten": "Giới thiệu hệ cơ sở dữ liệu: CSDL, hệ quản trị CSDL, CSDL quan hệ, SQL, bảo mật",
+          "hoc_ky": 1,
+          "mach": "D — Giải quyết vấn đề với sự trợ giúp của máy tính",
+          "dinh_huong": "chung",
+          "ten_theo_sach": { "KNTT": "Chủ đề 4 (Bài 10–15). Giới thiệu các hệ cơ sở dữ liệu", "CTST": "Chủ đề cơ sở dữ liệu và hệ quản trị cơ sở dữ liệu", "CD": "Chủ đề cơ sở dữ liệu" },
+          "yeu_cau_can_dat": ["Nêu được vai trò của CSDL trong quản lí; phân biệt CSDL với hệ quản trị CSDL, hệ CSDL", "Mô tả cấu trúc CSDL quan hệ: bảng, bản ghi, trường, khóa chính, khóa ngoài, ràng buộc", "Sử dụng các truy vấn SQL cơ bản: SELECT, WHERE, ORDER BY và lệnh INSERT, UPDATE, DELETE", "Nêu biện pháp bảo mật, an toàn cho hệ CSDL (phân quyền, sao lưu)"],
+          "kien_thuc_duoc_dung": ["Kiến thức bảng tính lớp 7 (bảng, dòng, cột) làm nền cho khái niệm bảng"],
+          "chua_duoc_dung": ["Chuẩn hoá CSDL các dạng chuẩn 1NF–3NF (đại học)", "JOIN nhiều bảng phức tạp, truy vấn con lồng nhau sâu, thủ tục lưu trữ, chỉ mục (index) và tối ưu truy vấn (ngoài phạm vi yêu cầu cần đạt lớp 11)", "Hệ phân tán, NoSQL"],
+          "dang_bai_dien_hinh": ["Xác định khóa chính/khóa ngoài cho bảng theo bài toán quản lí", "Viết truy vấn SELECT ... WHERE ... ORDER BY trên một bảng cho trước", "Nhận dạng lỗi SQL đơn giản"],
+          "luu_y_ra_de": "SQL chỉ ở mức một bảng; truy vấn nhiều bảng qua khóa ngoài thuộc phần thực hành ICT 11 và có thể ra ở mức đọc hiểu."
+        },
+        {
+          "id": "tin11-thuc-hanh-qlcsdl",
+          "ten": "Thực hành tạo và khai thác cơ sở dữ liệu (riêng Tin học ứng dụng)",
+          "hoc_ky": 2,
+          "mach": "D — Giải quyết vấn đề với sự trợ giúp của máy tính",
+          "dinh_huong": "ICT",
+          "ten_theo_sach": { "KNTT": "Chủ đề 6 (Bài 17–24). Thực hành tạo và khai thác cơ sở dữ liệu", "CTST": "Thực hành quản trị CSDL với hệ quản trị CSDL", "CD": "Thực hành cơ sở dữ liệu" },
+          "yeu_cau_can_dat": ["Tạo CSDL, tạo bảng với kiểu dữ liệu và khóa chính bằng hệ quản trị CSDL (Access hoặc LibreOffice Base)", "Tạo khóa ngoài và ràng buộc tham chiếu giữa các bảng", "Cập nhật (INSERT, UPDATE, DELETE) và truy xuất (SELECT) dữ liệu", "Truy xuất dữ liệu qua liên kết bảng; sao lưu và phục hồi dữ liệu"],
+          "kien_thuc_duoc_dung": ["Kiến thức CSDL quan hệ và SQL của chủ đề chung lớp 11", "Bảng tính lớp 7"],
+          "chua_duoc_dung": ["Lập trình giao diện ứng dụng kết nối CSDL (form application)", "Thủ tục lưu trữ, trigger, giao tác (transaction)"],
+          "dang_bai_dien_hinh": ["Thiết kế bảng cho bài toán quản lí thực tế (thư viện, bán hàng)", "Viết câu lệnh SQL truy xuất có điều kiện, có sắp xếp"],
+          "luu_y_ra_de": "Câu hỏi thực hành nên mô tả bảng/kết quả đầu ra thay vì hỏi vị trí lệnh trên phần mềm cụ thể."
+        },
+        {
+          "id": "tin11-chinh-sua-anh-lam-video",
+          "ten": "Phần mềm chỉnh sửa ảnh và làm video (riêng Tin học ứng dụng)",
+          "hoc_ky": 2,
+          "mach": "E — Ứng dụng tin học",
+          "dinh_huong": "ICT",
+          "ten_theo_sach": { "KNTT": "Chủ đề 7 (Bài 25–31). Phần mềm chỉnh sửa ảnh và làm video", "CTST": "Chủ đề đồ họa máy tính và đa phương tiện", "CD": "Chủ đề đồ họa máy tính" },
+          "yeu_cau_can_dat": ["Sử dụng công cụ chỉnh sửa ảnh: điều chỉnh màu sắc, công cụ chọn, vẽ", "Tạo ảnh động (GIF)", "Biên tập phim: cắt, ghép, thêm hiệu ứng, âm thanh, phụ đề", "Thực hành tạo phim hoạt hình đơn giản"],
+          "kien_thuc_duoc_dung": ["Đồ họa raster/vector cơ bản với Inkscape, GIMP lớp 10 (định hướng ICT)"],
+          "chua_duoc_dung": ["Mô hình màu nâng cao, quản lí màu ICC, đồ họa 3D", "Kĩ thuật dựng hoạt hình kĩ thuật số chuyên nghiệp (keyframe nâng cao)"],
+          "dang_bai_dien_hinh": ["Chọn công cụ/thao tác phù hợp để đạt hiệu chỉnh ảnh theo yêu cầu", "Trình tự biên tập một đoạn phim ngắn"],
+          "luu_y_ra_de": "Không hỏi tên lệnh theo menu của một phần mềm cụ thể theo phiên bản."
+        },
+        {
+          "id": "tin11-ky-thuat-lap-trinh",
+          "ten": "Kĩ thuật lập trình: mảng, tìm kiếm, sắp xếp, kiểm thử, độ phức tạp, mô đun, thư viện (riêng Khoa học máy tính)",
+          "hoc_ky": 2,
+          "mach": "D — Giải quyết vấn đề với sự trợ giúp của máy tính",
+          "dinh_huong": "CS",
+          "ten_theo_sach": { "KNTT": "Chủ đề 6 (Bài 17–31). Kĩ thuật lập trình", "CTST": "Chủ đề lập trình nâng cao", "CD": "Chủ đề kĩ thuật lập trình" },
+          "phan_mem_ngon_ngu": "Python (thực hành trên phần mềm Python IDLE hoặc VS Code)",
+          "lenh_va_cau_truc": ["Kiểu dữ liệu danh sách (list) một chiều và hai chiều: tạo, truy cập, duyệt, thay đổi", "Câu lệnh for/while duyệt mảng; hàm def với tham số là mảng", "Thuật toán tìm kiếm tuần tự, tìm kiếm nhị phân", "Thuật toán sắp xếp chọn, sắp xếp chèn, sắp xếp nổi bọt", "Kiểm thử: bộ dữ liệu test, giá trị biên", "Độ phức tạp thời gian: ký hiệu hiệu dụng, so sánh O(1), O(n), O(n²), O(log n)", "Hàm và thư viện: import, tạo thư viện riêng"],
+          "yeu_cau_can_dat": ["Khai báo, khởi tạo và xử lí mảng một chiều, hai chiều", "Cài đặt và giải thích thuật toán tìm kiếm tuần tự, nhị phân; sắp xếp chọn, chèn, nổi bọt", "Kiểm thử chương trình với các bộ dữ liệu phù hợp", "Ước lượng và so sánh độ phức tạp thời gian của thuật toán", "Thiết kế chương trình theo phương pháp làm mịn dần và theo mô đun; tự lập thư viện hàm"],
+          "kien_thuc_duoc_dung": ["Python cơ bản lớp 10: biến, kiểu dữ liệu, lệnh rẽ nhánh, vòng lặp, xâu, hàm def", "Kiến thức Toán 10–11: dãy số, chỉ số, bất đẳng thức (cho phân tích độ phức tạp)"],
+          "chua_duoc_dung": ["Cấu trúc dữ liệu cây, đồ thị, băm (hash) (đại học)", "Sắp xếp nhanh (quicksort), trộn (mergesort), vun đống (heapsort) — ngoài danh mục thuật toán yêu cầu cần đạt", "Đệ quy (đưa vào chuyên đề học tập, không thuộc nội dung bắt buộc)", "Lập trình hướng đối tượng (không thuộc chương trình GDPT 2018)", "Độ phức tạp không gian, kĩ thuật quy hoạch động (đại học)"],
+          "dang_bai_dien_hinh": ["Đọc đoạn code Python và cho biết kết quả", "Viết hàm Python xử lí mảng theo yêu cầu", "Cho biết số lần so sánh/vòng lặp của thuật toán trên dữ liệu cho trước", "Chọn thuật toán phù hợp (tìm kiếm tuần tự hay nhị phân) theo dữ liệu"],
+          "luu_y_ra_de": "Độ phức tạp chỉ ở mức so sánh cấp độ tăng trưởng cơ bản; không yêu cầu chứng minh."
+        },
+        {
+          "id": "tin11-huong-nghiep-tin-hoc",
+          "ten": "Hướng nghiệp với tin học: công việc quản trị cơ sở dữ liệu",
+          "hoc_ky": 2,
+          "mach": "G — Hướng nghiệp với tin học",
+          "dinh_huong": "chung",
+          "ten_theo_sach": { "KNTT": "Chủ đề 5 (Bài 16). Công việc quản trị cơ sở dữ liệu", "CTST": "Chủ đề hướng nghiệp với tin học", "CD": "Chủ đề hướng nghiệp với tin học" },
+          "yeu_cau_can_dat": ["Mô tả công việc của người quản trị cơ sở dữ liệu (DBA): thiết kế, cập nhật, bảo mật, sao lưu", "Nhận biết một số nghề nghiệp liên quan đến CSDL và yêu cầu năng lực"],
+          "kien_thuc_duoc_dung": ["Kiến thức CSDL vừa học"],
+          "chua_duoc_dung": ["Chuẩn nghề nghiệp CNTT quốc tế, chứng chỉ ngành (ngoài phạm vi chương trình)"],
+          "dang_bai_dien_hinh": ["Ghép nhiệm vụ công việc với vai trò nghề nghiệp", "Câu hỏi nhận biết về nội dung công việc DBA"],
+          "luu_y_ra_de": "Không hỏi tên chức danh theo một doanh nghiệp cụ thể."
+        }
+      ],
+      "chuyen_de": ["Chuyên đề học tập Tin học 11 (bắt buộc/tự chọn theo nhà trường): nội dung do Bộ ban hành, không xếp vào chương bắt buộc"],
+      "ghi_chu_chua_chac": [
+        "Chỉ tra được mục lục đầy đủ của KNTT (hai định hướng); tên chủ đề CTST/CD ghi theo chương trình 2018, chưa đối chiếu tên bài từng sách",
+        "File khungTin.json cũ trong src/data đánh CSDL/SQL lớp 11 là riêng CS; theo mục lục KNTT (loigiaihay) chủ đề CSDL là phần CHUNG của cả hai định hướng — cần Claude đối chiếu lại khi gộp",
+        "Mã mach A–G ghi theo nội dung chủ đề của chương trình 2018; SGK KNTT đánh chủ đề bằng số, chưa thấy tài liệu chính thức công bố bộ chữ A–G"
+      ]
+    },
+    {
+      "lop": 12,
+      "chuong": [
+        {
+          "id": "tin12-tri-tue-nhan-tao-lam-quen",
+          "ten": "Trí tuệ nhân tạo: làm quen và ứng dụng trong khoa học, đời sống",
+          "hoc_ky": 1,
+          "mach": "A — Máy tính và xã hội tri thức",
+          "dinh_huong": "chung",
+          "ten_theo_sach": { "KNTT": "Chủ đề 1 (Bài 1–2). Làm quen với trí tuệ nhân tạo; AI trong khoa học và đời sống", "CTST": "Chủ đề trí tuệ nhân tạo", "CD": "Chủ đề trí tuệ nhân tạo" },
+          "yeu_cau_can_dat": ["Nêu được khái niệm AI và các ví dụ ứng dụng AI trong đời sống (nhận dạng, dịch máy, trợ lí ảo)", "Phân biệt AI loại yếu và loại mạnh ở mức nhận biết", "Nhận biết hạn chế, rủi ro của AI và trách nhiệm khi sử dụng công cụ AI"],
+          "kien_thuc_duoc_dung": ["Kiến thức dữ liệu, mạng máy tính của các lớp dưới"],
+          "chua_duoc_dung": ["Mạng nơ-ron, hàm kích hoạt, huấn luyện mô hình (đại học)", "Học sâu, mạng nơ-ron tích chập (đại học)", "Đạo hàm, tối ưu hoá hàm nhiều biến dùng trong học máy (cần Toán 12 nâng cao và đại học)"],
+          "dang_bai_dien_hinh": ["Nhận dạng ứng dụng AI trong tình huống", "Câu hỏi đúng/sai về khả năng và hạn chế của AI"],
+          "luu_y_ra_de": "AI phát triển nhanh; ví dụ ra đề nên theo đặc tính công nghệ (học từ dữ liệu, dự đoán) thay vì tên sản phẩm cụ thể."
+        },
+        {
+          "id": "tin12-mang-thiet-bi-giao-thuc",
+          "ten": "Mạng máy tính và Internet: thiết bị mạng, giao thức, chia sẻ tài nguyên",
+          "hoc_ky": 1,
+          "mach": "B — Mạng máy tính và Internet",
+          "dinh_huong": "chung",
+          "ten_theo_sach": { "KNTT": "Chủ đề 2 (Bài 3–5). Một số thiết bị mạng thông dụng; giao thức mạng; chia sẻ tài nguyên", "CTST": "Chủ đề mạng máy tính và Internet", "CD": "Chủ đề mạng máy tính và Internet" },
+          "yeu_cau_can_dat": ["Nêu chức năng của router, switch, access point, modem; chọn thiết bị cho mạng quy mô nhỏ", "Mô tả vai trò của một số giao thức mạng phổ biến (HTTP/HTTPS, TCP/IP, DNS, DHCP)", "Thực hành chia sẻ tệp, máy in qua mạng LAN"],
+          "kien_thuc_duoc_dung": ["Kiến thức mạng LAN, Internet, địa chỉ IP lớp 10"],
+          "chua_duoc_dung": ["Cấu hình định tuyến tĩnh/động, VLAN, subnetting chi tiết (kiến thức quản trị mạng chuyên sâu)", "Chồng giao thức TCP/IP ở mức đóng gói gói tin từng lớp"],
+          "dang_bai_dien_hinh": ["Chọn thiết bị mạng cho sơ đồ mạng gia đình/trường học", "So khớp giao thức với chức năng", "Tình huống chia sẻ tài nguyên"],
+          "luu_y_ra_de": "Không hỏi số hiệu cổng (port) chi tiết ngoài những cái phổ biến (80, 443)."
+        },
+        {
+          "id": "tin12-ung-xu-khong-gian-mang",
+          "ten": "Đạo đức, pháp luật và văn hóa: giao tiếp, ứng xử và an toàn trong không gian mạng",
+          "hoc_ky": 1,
+          "mach": "F — Đạo đức, pháp luật và văn hóa trong môi trường số",
+          "dinh_huong": "chung",
+          "ten_theo_sach": { "KNTT": "Chủ đề 3 (Bài 6). Giao tiếp và ứng xử trong không gian mạng", "CTST": "Chủ đề an toàn và bảo mật thông tin", "CD": "Chủ đề đạo đức, pháp luật và văn hóa số" },
+          "yeu_cau_can_dat": ["Ứng xử đúng chuẩn mực khi giao tiếp trên mạng; nhận biết và xử lí bắt nạt trực tuyến", "Nêu biện pháp bảo mật tài khoản (mật khẩu mạnh, xác thực hai bước)", "Nhận biết hành vi vi phạm pháp luật trên không gian mạng và trách nhiệm liên quan"],
+          "kien_thuc_duoc_dung": ["Giao tiếp an toàn trên Internet lớp 11", "Đạo đức số các lớp 6–11"],
+          "chua_duoc_dung": ["Điều khoản cụ thể của Bộ luật Hình sự về tội phạm máy tính (chỉ nêu khái quát)", "Mã hoá khoá công khai, chữ kí số (chuyên sâu an ninh mạng)"],
+          "dang_bai_dien_hinh": ["Xử lí tình huống bắt nạt trực tuyến", "Chọn biện pháp bảo mật tài khoản phù hợp"],
+          "luu_y_ra_de": "KNTT 12 gộp nội dung an toàn – bảo mật vào Bài 6; CTST có chủ đề riêng — ra đề theo nội dung chung này, tránh chi tiết chỉ có trong một bộ sách."
+        },
+        {
+          "id": "tin12-thiet-ke-web-html-css",
+          "ten": "Thiết kế trang web bằng HTML và CSS (riêng Khoa học máy tính)",
+          "hoc_ky": 1,
+          "mach": "D — Giải quyết vấn đề với sự trợ giúp của máy tính",
+          "dinh_huong": "CS",
+          "ten_theo_sach": { "KNTT": "Chủ đề 4 (Bài 7–18). Giải quyết vấn đề với sự trợ giúp của máy tính: HTML, CSS và thực hành tổng hợp", "CTST": "Chủ đề thiết kế website", "CD": "Chủ đề tạo website" },
+          "yeu_cau_can_dat": ["Mô tả cấu trúc trang web và dùng thẻ HTML cơ bản: html, head, body, tiêu đề, đoạn văn, ảnh, liên kết, danh sách, bảng", "Chèn đa phương tiện (âm thanh, video) và khung nội tuyến; tạo biểu mẫu nhập liệu", "Dùng CSS định dạng văn bản, màu sắc, nền, khung; hiểu mức ưu tiên của bộ chọn", "Thực hành tổng hợp thiết kế một trang web hoàn chỉnh"],
+          "kien_thuc_duoc_dung": ["Kiến thức HTML/CSS mức nhận biết đã gặp ở lớp 9 (dịch vụ web)", "Lập trình Python lớp 10–11 (tư duy cú pháp)"],
+          "chua_duoc_dung": ["JavaScript và lập trình phía trình duyệt (một số sách chuyên đề, không thuộc bắt buộc)", "Responsive design nâng cao, framework CSS (Bootstrap)", "Phía máy chủ: PHP, Node.js, cơ sở dữ liệu web (đại học)"],
+          "dang_bai_dien_hinh": ["Đọc đoạn HTML/CSS và cho kết quả hiển thị", "Tìm và sửa lỗi thẻ/cấu trúc trang", "Viết đoạn HTML cho yêu cầu hiển thị cụ thể"],
+          "luu_y_ra_de": "Chỉ dùng thẻ HTML và thuộc tính CSS trong chương trình; không ra đề về thư viện hay công cụ biên dịch."
+        },
+        {
+          "id": "tin12-mang-thiet-bi-thiet-ke-mang",
+          "ten": "Thiết bị mạng, đường truyền và sơ bộ thiết kế mạng (riêng Khoa học máy tính)",
+          "hoc_ky": 2,
+          "mach": "B — Mạng máy tính và Internet",
+          "dinh_huong": "CS",
+          "ten_theo_sach": { "KNTT": "Chủ đề 6 (Bài 22–24). Tìm hiểu thiết bị mạng; đường truyền mạng và ứng dụng; sơ bộ về thiết kế mạng", "CTST": "Chủ đề mạng máy tính nâng cao", "CD": "Chủ đề mạng máy tính" },
+          "yeu_cau_can_dat": ["Phân loại thiết bị mạng (mắc dây, không dây) và chọn thiết bị theo yêu cầu băng thông, khoảng cách", "So sánh các loại đường truyền (cáp xoắn, cáp quang, sóng vô tuyến) và ứng dụng", "Đề xuất sơ đồ mạng đơn giản cho một tổ chức nhỏ: vị trí thiết bị, cách nối, địa chỉ IP"],
+          "kien_thuc_duoc_dung": ["Thiết bị mạng và giao thức của học kì 1", "Địa chỉ IP lớp 10"],
+          "chua_duoc_dung": ["Thiết kế mạng nhiều lớp, giao thức định tuyến OSPF/BGP (quản trị mạng chuyên sâu)", "Tính toán băng thông chi tiết theo mô hình hàng đợi (đại học)"],
+          "dang_bai_dien_hinh": ["Đề xuất mạng cho văn phòng/trường học theo số máy và yêu cầu", "So sánh đường truyền theo tiêu chí"],
+          "luu_y_ra_de": "Không hỏi thông số kĩ thuật của thiết bị theo model cụ thể."
+        },
+        {
+          "id": "tin12-hoc-may-khoa-hoc-du-lieu",
+          "ten": "Học máy, khoa học dữ liệu và mô phỏng (riêng Khoa học máy tính)",
+          "hoc_ky": 2,
+          "mach": "D — Giải quyết vấn đề với sự trợ giúp của máy tính",
+          "dinh_huong": "CS",
+          "ten_theo_sach": { "KNTT": "Chủ đề 7 (Bài 25–30). Học máy, khoa học dữ liệu, mô phỏng trong giải quyết vấn đề", "CTST": "Chủ đề dữ liệu và trí tuệ nhân tạo", "CD": "Chủ đề dữ liệu" },
+          "yeu_cau_can_dat": ["Nêu khái niệm học máy, phân biệt học có giám sát và không giám sát ở mức nhận biết", "Mô tả quy trình khoa học dữ liệu: thu thập, xử lí, phân tích, trực quan hoá dữ liệu", "Nêu vai trò của máy tính trong khoa học dữ liệu; trải nghiệm trích rút thông tin từ bộ dữ liệu đơn giản", "Nêu ý nghĩa của mô phỏng trong giải quyết vấn đề và ví dụ ứng dụng trong giáo dục"],
+          "kien_thuc_duoc_dung": ["AI lớp 12 học kì 1", "Mảng dữ liệu Python lớp 11 (CS)", "Toán 12: xác suất thống kê sơ cấp"],
+          "chua_duoc_dung": ["Thuật toán học máy cụ thể (hồi quy, cây quyết định) ở mức cài đặt", "Phân cụm k-means, độ chính xác/độ phủ chi tiết (đại học)", "Big data, học sâu"],
+          "dang_bai_dien_hinh": ["Phân loại bài toán vào học có giám sát/không giám sát", "Đọc biểu đồ dữ liệu và rút kết luận", "Xếp các bước quy trình khoa học dữ liệu đúng thứ tự"],
+          "luu_y_ra_de": "Không yêu cầu cài đặt thuật toán học máy; chỉ ở mức khái niệm và quy trình."
+        },
+        {
+          "id": "tin12-marketing-dien-tu-do-an-web",
+          "ten": "Marketing điện tử và đồ án thiết kế trang web marketing (riêng Tin học ứng dụng)",
+          "hoc_ky": 2,
+          "mach": "E — Ứng dụng tin học",
+          "dinh_huong": "ICT",
+          "ten_theo_sach": { "KNTT": "Chủ đề cuối năm (khoảng Bài 19–26). Marketing điện tử; đồ án thiết kế trang web marketing (chuẩn bị, phần đầu, phần thân, hoàn thiện)", "CTST": "Chủ đề thiết kế website và marketing điện tử", "CD": "Chủ đề tạo website" },
+          "yeu_cau_can_dat": ["Nêu khái niệm và các hình thức marketing điện tử (mạng xã hội, công cụ tìm kiếm, thư điện tử)", "Lập kế hoạch nội dung quảng bá sản phẩm/dịch vụ trên nền số", "Chuẩn bị và xây dựng trang web marketing bằng công cụ có giao diện sẵn (vd. Google Sites): phần đầu, phần thân", "Hoàn thiện, trình bày và đánh giá đồ án nhóm"],
+          "kien_thuc_duoc_dung": ["Ứng dụng tin học đa phương tiện lớp 9, đồ họa lớp 10 (ICT)", "Kiến thức mạng và dịch vụ trực tuyến"],
+          "chua_duoc_dung": ["Quảng cáo trả phí theo nhấp chuột, SEO kĩ thuật (nội dung nghề nghiệp nâng cao)", "Lập trình website bằng mã nguồn (thuộc CS 12)"],
+          "dang_bai_dien_hinh": ["Chọn kênh marketing điện tử theo đối tượng khách hàng", "Sắp xếp các bước xây dựng trang web marketing", "Nhận xét cấu trúc một trang web marketing"],
+          "luu_y_ra_de": "Không hỏi tính năng theo phiên bản công cụ cụ thể."
+        },
+        {
+          "id": "tin12-huong-nghiep-cntt",
+          "ten": "Hướng nghiệp với tin học: nghề sửa chữa – bảo trì, nhóm nghề quản trị CNTT",
+          "hoc_ky": 2,
+          "mach": "G — Hướng nghiệp với tin học",
+          "dinh_huong": "chung",
+          "ten_theo_sach": { "KNTT": "Chủ đề 5 (CS: Bài 19–21). Dịch vụ sửa chữa và bảo trì máy tính; nhóm nghề quản trị CNTT; hội thảo hướng nghiệp", "CTST": "Chủ đề hướng nghiệp với tin học", "CD": "Chủ đề hướng nghiệp với tin học" },
+          "yeu_cau_can_dat": ["Mô tả dịch vụ sửa chữa, bảo trì máy tính và các bước cơ bản của quy trình bảo trì", "Nhận biết nhóm nghề quản trị thuộc ngành CNTT và yêu cầu năng lực, phẩm chất", "Tham gia hội thảo hướng nghiệp, xác định định hướng cá nhân"],
+          "kien_thuc_duoc_dung": ["Hướng nghiệp tin học các lớp 10–11"],
+          "chua_duoc_dung": ["Chuẩn kỹ năng quốc gia về nghề CNTT, chương trình đào tạo đại học chi tiết"],
+          "dang_bai_dien_hinh": ["Ghép công việc với nghề nghiệp", "Tình huống chọn dịch vụ bảo trì phù hợp"],
+          "luu_y_ra_de": "Không hỏi tên doanh nghiệp hay chứng chỉ cụ thể."
+        },
+        {
+          "id": "tin12-an-toan-bao-mat-thong-tin",
+          "ten": "An toàn và bảo mật thông tin trên mạng",
+          "hoc_ky": 2,
+          "mach": "F — Đạo đức, pháp luật và văn hóa trong môi trường số",
+          "dinh_huong": "chung",
+          "ten_theo_sach": { "KNTT": "Nội dung gộp trong Chủ đề 3 (Bài 6) và phân bố các bài thực hành", "CTST": "Chủ đề riêng về an toàn và bảo mật thông tin", "CD": "Chủ đề an toàn trong môi trường số" },
+          "yeu_cau_can_dat": ["Nhận biết các mối đe doạ an toàn thông tin phổ biến (virús, lừa đảo, đánh cắp dữ liệu)", "Áp dụng biện pháp bảo vệ: cập nhật phần mềm, mật khẩu mạnh, xác thực hai bước, sao lưu", "Nêu trách nhiệm pháp lí khi hành vi của mình làm tổn hại người khác trên mạng"],
+          "kien_thuc_duoc_dung": ["An toàn giao tiếp trên Internet lớp 11", "Kiến thức mạng lớp 12"],
+          "chua_duoc_dung": ["Kĩ thuật mã hoá đối xứng/bất đối xứng, chữ kí số (chuyên đề/sau phổ thông)", "Kiểm thử xâm nhập, tường lửa cấu hình chi tiết (ngành an ninh mạng)"],
+          "dang_bai_dien_hinh": ["Xử lí tình huống mất tài khoản, dính mã độc", "Chọn bộ biện pháp bảo vệ phù hợp cho một hệ thống nhỏ"],
+          "luu_y_ra_de": "KNTT không có chủ đề riêng cho an toàn – bảo mật; ra đề theo nội dung chung này, không lấy chi tiết riêng của CTST/CD."
+        }
+      ],
+      "chuyen_de": ["Chuyên đề học tập Tin học 12 (bắt buộc/tự chọn)"],
+      "ghi_chu_chua_chac": [
+        "Chỉ tra được mục lục KNTT CS đầy đủ từ loigiaihay; mục lục ICT 12 ghép từ kết quả tìm kiếm giáo án (marketing điện tử và đồ án trang web marketing, khoảng Bài 19–26) — số thứ tự bài có thể lệch, cần đối chiếu SGK in",
+        "File khungTin.json cũ có chương lập trình hướng đối tượng (OOP) lớp 12 CS; theo YEU_CAU (phản ánh chương trình 2018) OOP không thuộc chương trình — bản này không đưa OOP vào chương bắt buộc và xếp OOP vào chua_duoc_dung; cần Claude quyết khi gộp",
+        "Đề tốt nghiệp Tin học 2025: cấu trúc ghi theo đề phổ biến (Phần I: 12 câu TN gồm 6 chung + 6 riêng; Phần II: 4 câu ĐS gồm 2 chung + 2 riêng; Phần III: 6 câu trả lời ngắn phần riêng) — tỉ lệ chung/riêng cần đối chiếu ma trận đề chính thức của Bộ"
+      ]
+    }
+  ],
+  "tien_trinh_lap_trinh": [
+    { "noi_dung": "Thuật toán cơ bản, Scratch", "lop": 8, "id": "tin8-lap-trinh-truc-quan-scratch", "ghi_chu": "Lập trình trực quan theo khối lệnh" },
+    { "noi_dung": "Lập trình giải quyết vấn đề (ngôn ngữ văn bản, chuỗi lệnh)", "lop": 9, "id": "tin9-lap-trinh-giai-quyet-van-de", "ghi_chu": "Chuyển tiếp từ Scratch sang ngôn ngữ lập trình" },
+    { "noi_dung": "Python cơ bản: biến, kiểu, rẽ nhánh, vòng lặp, xâu, hàm def, list cơ bản", "lop": 10, "id": "tin10-lap-trinh-python-co-ban", "ghi_chu": "Theo khungTin.json lớp 10 đã kiểm" },
+    { "noi_dung": "Kĩ thuật lập trình: mảng 1–2 chiều, tìm kiếm, sắp xếp, kiểm thử, độ phức tạp, làm mịn dần, mô đun, thư viện (riêng CS)", "lop": 11, "id": "tin11-ky-thuat-lap-trinh", "ghi_chu": "Tiếp nối Python lớp 10" },
+    { "noi_dung": "Lớp 12 không có chương lập trình bắt buộc (CS: học máy, khoa học dữ liệu; ICT: đồ án web); OOP không thuộc chương trình GDPT 2018", "lop": 12, "id": "(không có)", "ghi_chu": "Chỉ dùng kiến thức lập trình đã học khi đọc hiểu đoạn code ví dụ" }
+  ],
+  "cau_truc_de": [
+    {
+      "loai": "Đề thi tốt nghiệp THPT môn Tin học (từ năm 2025)",
+      "lop": 12,
+      "thoi_gian_phut": 90,
+      "phan": [
+        { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 12, "mo_ta": "4 lựa chọn A–D; gồm cả câu phần chung và câu phần riêng theo định hướng (phổ biến 6 chung + 6 riêng)", "diem_moi_cau": 0.25, "tong_diem": 3 },
+        { "ten": "Phần II. Trắc nghiệm đúng/sai", "so_cau": 4, "mo_ta": "Mỗi câu 4 ý a)–d); phổ biến 2 câu chung + 2 câu riêng", "diem_moi_cau": 1, "tong_diem": 4 },
+        { "ten": "Phần III. Trả lời ngắn", "so_cau": 6, "mo_ta": "Chủ yếu thuộc phần định hướng (ICT hoặc CS)", "diem_moi_cau": 0.5, "tong_diem": 3 }
+      ],
+      "pham_vi": ["tin12-tri-tue-nhan-tao-lam-quen", "tin12-mang-thiet-bi-giao-thuc", "tin12-ung-xu-khong-gian-mang", "tin12-thiet-ke-web-html-css", "tin12-mang-thiet-bi-thiet-ke-mang", "tin12-hoc-may-khoa-hoc-du-lieu", "tin12-marketing-dien-tu-do-an-web", "tin12-an-toan-bao-mat-thong-tin", "tin11-may-tinh-xa-hoi-tri-thuc", "tin11-luu-tru-trao-doi-thong-tin", "tin11-giao-tiep-an-toan-internet", "tin11-csdl-khai-niem-phap-chung", "tin11-ky-thuat-lap-trinh", "tin11-thuc-hanh-qlcsdl"],
+      "ti_le_muc_do": "NB khoảng 35–40%, TH khoảng 35–40%, VD khoảng 20–25%, VDC ít hoặc không",
+      "ghi_chu": "Tỉ lệ câu phần chung/phần riêng theo định hướng cần đối chiếu ma trận đề chính thức của Bộ (ghi trong ghi_chu_chua_chac)"
+    },
+    {
+      "loai": "Đề kiểm tra giữa học kì 1 — Tin học 11 (theo định hướng)",
+      "lop": 11,
+      "thoi_gian_phut": 60,
+      "phan": [
+        { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 8, "diem_moi_cau": 0.5, "tong_diem": 4 },
+        { "ten": "Phần II. Trắc nghiệm đúng/sai", "so_cau": 2, "diem_moi_cau": 1, "tong_diem": 2 },
+        { "ten": "Phần III. Trả lời ngắn", "so_cau": 4, "diem_moi_cau": 0.5, "tong_diem": 2 },
+        { "ten": "Phần IV. Tự luận", "so_cau": 1, "diem_moi_cau": 2, "tong_diem": 2 }
+      ],
+      "pham_vi": ["tin11-may-tinh-xa-hoi-tri-thuc", "tin11-luu-tru-trao-doi-thong-tin", "tin11-giao-tiep-an-toan-internet", "tin11-csdl-khai-niem-phap-chung"],
+      "ti_le_muc_do": "NB 40%, TH 30%, VD 30%"
+    },
+    {
+      "loai": "Đề kiểm tra cuối học kì 1 — Tin học 11 (theo định hướng)",
+      "lop": 11,
+      "thoi_gian_phut": 90,
+      "phan": [
+        { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 12, "diem_moi_cau": 0.5, "tong_diem": 6 },
+        { "ten": "Phần II. Trắc nghiệm đúng/sai", "so_cau": 2, "diem_moi_cau": 1, "tong_diem": 2 },
+        { "ten": "Phần III. Trả lời ngắn", "so_cau": 4, "diem_moi_cau": 0.5, "tong_diem": 2 },
+        { "ten": "Phần IV. Tự luận", "so_cau": 1, "diem_moi_cau": 2, "tong_diem": 2 }
+      ],
+      "pham_vi": ["tin11-may-tinh-xa-hoi-tri-thuc", "tin11-luu-tru-trao-doi-thong-tin", "tin11-giao-tiep-an-toan-internet", "tin11-csdl-khai-niem-phap-chung", "tin11-huong-nghiep-tin-hoc"],
+      "ti_le_muc_do": "NB 40%, TH 30%, VD 30%"
+    },
+    {
+      "loai": "Đề kiểm tra giữa học kì 2 — Tin học 11 (riêng CS)",
+      "lop": 11,
+      "thoi_gian_phut": 60,
+      "phan": [
+        { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 8, "diem_moi_cau": 0.5, "tong_diem": 4 },
+        { "ten": "Phần II. Trắc nghiệm đúng/sai", "so_cau": 2, "diem_moi_cau": 1, "tong_diem": 2 },
+        { "ten": "Phần III. Trả lời ngắn", "so_cau": 4, "diem_moi_cau": 0.5, "tong_diem": 2 },
+        { "ten": "Phần IV. Tự luận (viết hàm/thuật toán Python)", "so_cau": 1, "diem_moi_cau": 2, "tong_diem": 2 }
+      ],
+      "pham_vi": ["tin11-ky-thuat-lap-trinh"],
+      "ti_le_muc_do": "NB 30%, TH 40%, VD 30%"
+    },
+    {
+      "loai": "Đề kiểm tra cuối học kì 2 — Tin học 11 (riêng CS)",
+      "lop": 11,
+      "thoi_gian_phut": 90,
+      "phan": [
+        { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 12, "diem_moi_cau": 0.5, "tong_diem": 6 },
+        { "ten": "Phần II. Trắc nghiệm đúng/sai", "so_cau": 2, "diem_moi_cau": 1, "tong_diem": 2 },
+        { "ten": "Phần III. Trả lời ngắn", "so_cau": 4, "diem_moi_cau": 0.5, "tong_diem": 2 },
+        { "ten": "Phần IV. Tự luận (thuật toán + độ phức tạp)", "so_cau": 1, "diem_moi_cau": 2, "tong_diem": 2 }
+      ],
+      "pham_vi": ["tin11-ky-thuat-lap-trinh", "tin11-huong-nghiep-tin-hoc"],
+      "ti_le_muc_do": "NB 30%, TH 40%, VD 30%"
+    },
+    {
+      "loai": "Đề kiểm tra giữa học kì 2 — Tin học 11 (riêng ICT)",
+      "lop": 11,
+      "thoi_gian_phut": 60,
+      "phan": [
+        { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 8, "diem_moi_cau": 0.5, "tong_diem": 4 },
+        { "ten": "Phần II. Trắc nghiệm đúng/sai", "so_cau": 2, "diem_moi_cau": 1, "tong_diem": 2 },
+        { "ten": "Phần III. Trả lời ngắn", "so_cau": 4, "diem_moi_cau": 0.5, "tong_diem": 2 },
+        { "ten": "Phần IV. Thực hành SQL/CSDL", "so_cau": 1, "diem_moi_cau": 2, "tong_diem": 2 }
+      ],
+      "pham_vi": ["tin11-thuc-hanh-qlcsdl", "tin11-chinh-sua-anh-lam-video"],
+      "ti_le_muc_do": "NB 30%, TH 40%, VD 30%"
+    },
+    {
+      "loai": "Đề kiểm tra cuối học kì 2 — Tin học 11 (riêng ICT)",
+      "lop": 11,
+      "thoi_gian_phut": 90,
+      "phan": [
+        { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 12, "diem_moi_cau": 0.5, "tong_diem": 6 },
+        { "ten": "Phần II. Trắc nghiệm đúng/sai", "so_cau": 2, "diem_moi_cau": 1, "tong_diem": 2 },
+        { "ten": "Phần III. Trả lời ngắn", "so_cau": 4, "diem_moi_cau": 0.5, "tong_diem": 2 },
+        { "ten": "Phần IV. Thực hành SQL/CSDL", "so_cau": 1, "diem_moi_cau": 2, "tong_diem": 2 }
+      ],
+      "pham_vi": ["tin11-thuc-hanh-qlcsdl", "tin11-chinh-sua-anh-lam-video", "tin11-huong-nghiep-tin-hoc"],
+      "ti_le_muc_do": "NB 30%, TH 40%, VD 30%"
+    },
+    {
+      "loai": "Đề kiểm tra giữa học kì 1 — Tin học 12 (theo định hướng)",
+      "lop": 12,
+      "thoi_gian_phut": 60,
+      "phan": [
+        { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 8, "diem_moi_cau": 0.5, "tong_diem": 4 },
+        { "ten": "Phần II. Trắc nghiệm đúng/sai", "so_cau": 2, "diem_moi_cau": 1, "tong_diem": 2 },
+        { "ten": "Phần III. Trả lời ngắn", "so_cau": 4, "diem_moi_cau": 0.5, "tong_diem": 2 },
+        { "ten": "Phần IV. Tự luận (CS: HTML/CSS; ICT: marketing điện tử)", "so_cau": 1, "diem_moi_cau": 2, "tong_diem": 2 }
+      ],
+      "pham_vi": ["tin12-tri-tue-nhan-tao-lam-quen", "tin12-mang-thiet-bi-giao-thuc", "tin12-ung-xu-khong-gian-mang", "tin12-thiet-ke-web-html-css", "tin12-marketing-dien-tu-do-an-web"],
+      "ti_le_muc_do": "NB 40%, TH 30%, VD 30%"
+    },
+    {
+      "loai": "Đề kiểm tra cuối học kì 1 — Tin học 12 (theo định hướng)",
+      "lop": 12,
+      "thoi_gian_phut": 90,
+      "phan": [
+        { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 12, "diem_moi_cau": 0.5, "tong_diem": 6 },
+        { "ten": "Phần II. Trắc nghiệm đúng/sai", "so_cau": 2, "diem_moi_cau": 1, "tong_diem": 2 },
+        { "ten": "Phần III. Trả lời ngắn", "so_cau": 4, "diem_moi_cau": 0.5, "tong_diem": 2 },
+        { "ten": "Phần IV. Tự luận", "so_cau": 1, "diem_moi_cau": 2, "tong_diem": 2 }
+      ],
+      "pham_vi": ["tin12-tri-tue-nhan-tao-lam-quen", "tin12-mang-thiet-bi-giao-thuc", "tin12-ung-xu-khong-gian-mang", "tin12-thiet-ke-web-html-css", "tin12-marketing-dien-tu-do-an-web", "tin12-an-toan-bao-mat-thong-tin"],
+      "ti_le_muc_do": "NB 40%, TH 30%, VD 30%"
+    },
+    {
+      "loai": "Đề kiểm tra giữa học kì 2 — Tin học 12 (riêng CS)",
+      "lop": 12,
+      "thoi_gian_phut": 60,
+      "phan": [
+        { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 8, "diem_moi_cau": 0.5, "tong_diem": 4 },
+        { "ten": "Phần II. Trắc nghiệm đúng/sai", "so_cau": 2, "diem_moi_cau": 1, "tong_diem": 2 },
+        { "ten": "Phần III. Trả lời ngắn", "so_cau": 4, "diem_moi_cau": 0.5, "tong_diem": 2 },
+        { "ten": "Phần IV. Tự luận", "so_cau": 1, "diem_moi_cau": 2, "tong_diem": 2 }
+      ],
+      "pham_vi": ["tin12-mang-thiet-bi-thiet-ke-mang", "tin12-hoc-may-khoa-hoc-du-lieu"],
+      "ti_le_muc_do": "NB 30%, TH 40%, VD 30%"
+    },
+    {
+      "loai": "Đề kiểm tra cuối học kì 2 — Tin học 12 (riêng CS)",
+      "lop": 12,
+      "thoi_gian_phut": 90,
+      "phan": [
+        { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 12, "diem_moi_cau": 0.5, "tong_diem": 6 },
+        { "ten": "Phần II. Trắc nghiệm đúng/sai", "so_cau": 2, "diem_moi_cau": 1, "tong_diem": 2 },
+        { "ten": "Phần III. Trả lời ngắn", "so_cau": 4, "diem_moi_cau": 0.5, "tong_diem": 2 },
+        { "ten": "Phần IV. Tự luận", "so_cau": 1, "diem_moi_cau": 2, "tong_diem": 2 }
+      ],
+      "pham_vi": ["tin12-mang-thiet-bi-thiet-ke-mang", "tin12-hoc-may-khoa-hoc-du-lieu", "tin12-huong-nghiep-cntt"],
+      "ti_le_muc_do": "NB 30%, TH 40%, VD 30%"
+    },
+    {
+      "loai": "Đề kiểm tra giữa học kì 2 — Tin học 12 (riêng ICT)",
+      "lop": 12,
+      "thoi_gian_phut": 60,
+      "phan": [
+        { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 8, "diem_moi_cau": 0.5, "tong_diem": 4 },
+        { "ten": "Phần II. Trắc nghiệm đúng/sai", "so_cau": 2, "diem_moi_cau": 1, "tong_diem": 2 },
+        { "ten": "Phần III. Trả lời ngắn", "so_cau": 4, "diem_moi_cau": 0.5, "tong_diem": 2 },
+        { "ten": "Phần IV. Tự luận (kế hoạch trang web marketing)", "so_cau": 1, "diem_moi_cau": 2, "tong_diem": 2 }
+      ],
+      "pham_vi": ["tin12-marketing-dien-tu-do-an-web", "tin12-huong-nghiep-cntt"],
+      "ti_le_muc_do": "NB 30%, TH 40%, VD 30%"
+    },
+    {
+      "loai": "Đề kiểm tra cuối học kì 2 — Tin học 12 (riêng ICT)",
+      "lop": 12,
+      "thoi_gian_phut": 90,
+      "phan": [
+        { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 12, "diem_moi_cau": 0.5, "tong_diem": 6 },
+        { "ten": "Phần II. Trắc nghiệm đúng/sai", "so_cau": 2, "diem_moi_cau": 1, "tong_diem": 2 },
+        { "ten": "Phần III. Trả lời ngắn", "so_cau": 4, "diem_moi_cau": 0.5, "tong_diem": 2 },
+        { "ten": "Phần IV. Tự luận", "so_cau": 1, "diem_moi_cau": 2, "tong_diem": 2 }
+      ],
+      "pham_vi": ["tin12-marketing-dien-tu-do-an-web", "tin12-huong-nghiep-cntt", "tin12-an-toan-bao-mat-thong-tin"],
+      "ti_le_muc_do": "NB 30%, TH 40%, VD 30%"
+    }
+  ],
+  "phien_ban": 1
+}
