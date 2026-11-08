@@ -28,8 +28,8 @@ function figureOf(entry: BankEntry) {
   return figureCache.get(entry.id) ?? null
 }
 
-/** Số câu tối đa hiện trong danh sách; thu hẹp bộ lọc để xem thêm. */
-const LIST_LIMIT = 120
+/** Số câu hiện lúc đầu và thêm vào mỗi lần bấm "Xem thêm". */
+const PAGE_SIZE = 20
 
 const SUBJECT_OPTIONS = [{ value: '', label: 'Mọi môn' }, ...SUBJECTS.map((s) => ({ value: s, label: s }))]
 const GRADE_OPTIONS = [{ value: '', label: 'Mọi lớp' }, ...GRADES.map((g) => ({ value: g, label: g }))]
@@ -117,6 +117,8 @@ export function BankModal({ editor, onClose }: { editor: Editor; onClose: () => 
     return () => window.removeEventListener('keydown', onKey)
   }, [onClose])
 
+  // số câu đang hiện; đổi bộ lọc (results đổi) thì về lại trang đầu
+  const [more, setMore] = useState<{ of: unknown; n: number }>({ of: null, n: PAGE_SIZE })
   const results = useMemo(() => {
     const needle = q.trim().toLowerCase()
     return bank.filter((b) => {
@@ -128,6 +130,7 @@ export function BankModal({ editor, onClose }: { editor: Editor; onClose: () => 
       return b.prompt.toLowerCase().includes(needle) || b.tags.some((t) => t.includes(needle))
     })
   }, [bank, q, subject, grade, type, level])
+  const shownCount = more.of === results ? more.n : PAGE_SIZE
 
   const shown = results.find((b) => b.id === activeId) ?? results[0] ?? null
 
@@ -195,7 +198,7 @@ export function BankModal({ editor, onClose }: { editor: Editor; onClose: () => 
               <p className="px-3 py-10 text-center text-[14px] text-ink-3">Không có câu nào khớp bộ lọc.</p>
             ) : (
               <ul className="flex flex-col gap-2.5">
-                {results.slice(0, LIST_LIMIT).map((b) => {
+                {results.slice(0, shownCount).map((b) => {
                   const checked = selected.includes(b.id)
                   const active = shown?.id === b.id
                   return (
@@ -238,10 +241,19 @@ export function BankModal({ editor, onClose }: { editor: Editor; onClose: () => 
                 })}
               </ul>
             )}
-            {results.length > LIST_LIMIT ? (
-              <p className="pt-4 text-center text-[12.5px] text-ink-4">
-                Hiển thị {LIST_LIMIT} / {results.length} câu — thu hẹp bộ lọc để xem thêm.
-              </p>
+            {results.length > shownCount ? (
+              <div className="flex flex-col items-center gap-2 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setMore({ of: results, n: shownCount + PAGE_SIZE })}
+                  className="rounded-full border border-line-2 px-4 py-1.5 text-[13px] font-medium text-ink-3 hover:border-ink-4 hover:text-clay"
+                >
+                  Xem thêm {Math.min(PAGE_SIZE, results.length - shownCount)} câu
+                </button>
+                <span className="text-[12px] text-ink-4">
+                  Đang hiện {shownCount} / {results.length} câu
+                </span>
+              </div>
             ) : null}
           </div>
 
