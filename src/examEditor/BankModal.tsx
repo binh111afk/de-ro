@@ -28,8 +28,27 @@ function figureOf(entry: BankEntry) {
   return figureCache.get(entry.id) ?? null
 }
 
-/** Số câu hiện lúc đầu và thêm vào mỗi lần bấm "Xem thêm". */
+/** Số câu hiện lúc đầu và nạp thêm mỗi lần cuộn tới cuối danh sách. */
 const PAGE_SIZE = 20
+
+/** Dòng cuối danh sách: lọt vào khung nhìn (trước khoảng 300px) thì báo để nạp thêm câu. */
+function LoadMoreSentinel({ root, onVisible, children }: { root: React.RefObject<HTMLDivElement | null>; onVisible: () => void; children: React.ReactNode }) {
+  const ref = useRef<HTMLParagraphElement>(null)
+  const cb = useRef(onVisible)
+  cb.current = onVisible
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const io = new IntersectionObserver((es) => es.some((e) => e.isIntersecting) && cb.current(), { root: root.current, rootMargin: '0px 0px 300px 0px' })
+    io.observe(el)
+    return () => io.disconnect()
+  }, [root])
+  return (
+    <p ref={ref} className="pt-4 text-center text-[12px] text-ink-4">
+      {children}
+    </p>
+  )
+}
 
 const SUBJECT_OPTIONS = [{ value: '', label: 'Mọi môn' }, ...SUBJECTS.map((s) => ({ value: s, label: s }))]
 const GRADE_OPTIONS = [{ value: '', label: 'Mọi lớp' }, ...GRADES.map((g) => ({ value: g, label: g }))]
@@ -118,6 +137,7 @@ export function BankModal({ editor, onClose }: { editor: Editor; onClose: () => 
   }, [onClose])
 
   // số câu đang hiện; đổi bộ lọc (results đổi) thì về lại trang đầu
+  const listRef = useRef<HTMLDivElement>(null)
   const [more, setMore] = useState<{ of: unknown; n: number }>({ of: null, n: PAGE_SIZE })
   const results = useMemo(() => {
     const needle = q.trim().toLowerCase()
@@ -193,7 +213,7 @@ export function BankModal({ editor, onClose }: { editor: Editor; onClose: () => 
         </div>
 
         <div className="grid min-h-0 flex-1 border-t border-line md:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
-          <div className="min-h-0 overflow-y-auto p-4 md:border-r md:border-line">
+          <div ref={listRef} className="min-h-0 overflow-y-auto p-4 md:border-r md:border-line">
             {results.length === 0 ? (
               <p className="px-3 py-10 text-center text-[14px] text-ink-3">Không có câu nào khớp bộ lọc.</p>
             ) : (
@@ -242,18 +262,14 @@ export function BankModal({ editor, onClose }: { editor: Editor; onClose: () => 
               </ul>
             )}
             {results.length > shownCount ? (
-              <div className="flex flex-col items-center gap-2 pt-4">
-                <button
-                  type="button"
-                  onClick={() => setMore({ of: results, n: shownCount + PAGE_SIZE })}
-                  className="rounded-full border border-line-2 px-4 py-1.5 text-[13px] font-medium text-ink-3 hover:border-ink-4 hover:text-clay"
-                >
-                  Xem thêm {Math.min(PAGE_SIZE, results.length - shownCount)} câu
-                </button>
-                <span className="text-[12px] text-ink-4">
-                  Đang hiện {shownCount} / {results.length} câu
-                </span>
-              </div>
+              // key theo số câu: gắn lại sau mỗi lần nạp, nên nếu vẫn còn trong khung nhìn thì nạp tiếp
+              <LoadMoreSentinel
+                key={shownCount}
+                root={listRef}
+                onVisible={() => setMore({ of: results, n: shownCount + PAGE_SIZE })}
+              >
+                Đang hiện {shownCount} / {results.length} câu — cuộn xuống để xem thêm
+              </LoadMoreSentinel>
             ) : null}
           </div>
 
