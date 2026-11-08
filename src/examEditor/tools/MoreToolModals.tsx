@@ -8,6 +8,8 @@ import { CircleHelp, X } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import { inputClass } from '@/components/ui'
 import { renderTool, type ToolDoc, type ToolImage } from '@/lib/toolSpec'
+import { svgDataUrl } from '@/lib/plot'
+import { LabelPreview } from './LabelDragPreview'
 import { autoSignTable, parseSignTableText, signTableToText, type SignTableSpec } from '@/lib/signTable'
 import { OXY_HELP, type OxySpec } from '@/lib/oxy'
 import type { ChartKind, StatsSpec } from '@/lib/stats'
@@ -248,6 +250,7 @@ const OXY_DEFAULT: OxySpec = {
 export function OxyModal({ initial, submitLabel, onClose, onInsert }: Props<OxySpec>) {
   const [spec, setSpec] = useState<OxySpec>(initial ?? OXY_DEFAULT)
   const set = (p: Partial<OxySpec>) => setSpec((s) => ({ ...s, ...p }))
+  const [move, setMove] = useState(false)
   const doc = useMemo((): ToolDoc => ({ kind: 'oxy', spec }), [spec])
   const { preview } = useRender(doc)
   const errors = (preview?.errors ?? []).map((e) => `Dòng ${e.line}: ${e.msg}`)
@@ -298,6 +301,16 @@ export function OxyModal({ initial, submitLabel, onClose, onInsert }: Props<OxyS
       canSubmit={Boolean(preview)}
       onSubmit={() => preview && onInsert(preview)}
       onClose={onClose}
+      renderPreview={(img) => (
+        <LabelPreview
+          img={img}
+          labelPos={spec.labelPos}
+          onChange={(labelPos) => set({ labelPos })}
+          move={move}
+          onToggle={() => setMove((v) => !v)}
+          fallback={<img src={svgDataUrl(img.svg)} alt="Xem trước" className="max-h-full max-w-full rounded-[4px] border border-line bg-white object-contain" />}
+        />
+      )}
     />
   )
 }
