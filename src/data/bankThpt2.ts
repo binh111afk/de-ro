@@ -18030,10 +18030,13 @@ export const BANK_THPT2: BankEntry[] = [
     ],
     "variable": false,
     "figure": {
-      "kind": "stats",
-      "chart": "table",
-      "title": "Tuổi của 50 thành viên câu lạc bộ",
-      "data": "[20; 30) [30; 40) [40; 50) [50; 60)\nSố người: 10; 15; 20; 5"
+      "kind": "grouped",
+      "groups": "[20; 30): 10\n[30; 40): 15\n[40; 50): 20\n[50; 60): 5",
+      "label": "Tuổi",
+      "freqLabel": "Số người",
+      "view": "htable",
+      "polygon": false,
+      "extras": ""
     }
   },
   {
@@ -18144,12 +18147,13 @@ export const BANK_THPT2: BankEntry[] = [
     ],
     "variable": false,
     "figure": {
-      "kind": "stats",
-      "chart": "hist",
-      "title": "Thời gian làm bài của 50 học sinh",
-      "xLabel": "Thời gian (phút)",
-      "yLabel": "Số học sinh",
-      "data": "[30; 40) [40; 50) [50; 60) [60; 70)\nSố học sinh: 5; 10; 20; 15"
+      "kind": "grouped",
+      "groups": "[30; 40): 5\n[40; 50): 10\n[50; 60): 20\n[60; 70): 15",
+      "label": "Thời gian (phút)",
+      "freqLabel": "Số học sinh",
+      "view": "hist",
+      "polygon": false,
+      "extras": ""
     }
   },
   {
@@ -18368,10 +18372,13 @@ export const BANK_THPT2: BankEntry[] = [
     ],
     "variable": false,
     "figure": {
-      "kind": "stats",
-      "chart": "table",
-      "title": "Số giờ tự học mỗi tuần của 40 học sinh",
-      "data": "[0; 2) [2; 4) [4; 6) [6; 8)\nSố học sinh: 6; 12; 14; 8"
+      "kind": "grouped",
+      "groups": "[0; 2): 6\n[2; 4): 12\n[4; 6): 14\n[6; 8): 8",
+      "label": "Số giờ tự học",
+      "freqLabel": "Số học sinh",
+      "view": "htable",
+      "polygon": false,
+      "extras": ""
     }
   },
   {
@@ -18538,10 +18545,13 @@ export const BANK_THPT2: BankEntry[] = [
     ],
     "variable": false,
     "figure": {
-      "kind": "stats",
-      "chart": "table",
-      "title": "Điểm kiểm tra Toán của 40 học sinh",
-      "data": "[4; 6) [6; 8) [8; 10)\nSố học sinh: 8; 20; 12"
+      "kind": "grouped",
+      "groups": "[4; 6): 8\n[6; 8): 20\n[8; 10): 12",
+      "label": "Điểm",
+      "freqLabel": "Số học sinh",
+      "view": "htable",
+      "polygon": false,
+      "extras": ""
     }
   },
   {

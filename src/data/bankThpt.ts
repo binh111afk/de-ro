@@ -11992,12 +11992,13 @@ export const BANK_THPT: BankEntry[] = [
     ],
     "variable": false,
     "figure": {
-      "kind": "stats",
-      "chart": "hist",
-      "title": "Thời gian chờ của 40 khách hàng",
-      "xLabel": "Thời gian (phút)",
-      "yLabel": "Số khách hàng",
-      "data": "[20; 25) [25; 30) [30; 35) [35; 40) [40; 45)\nSố khách hàng: 6; 10; 14; 7; 3"
+      "kind": "grouped",
+      "groups": "[20; 25): 6\n[25; 30): 10\n[30; 35): 14\n[35; 40): 7\n[40; 45): 3",
+      "label": "Thời gian (phút)",
+      "freqLabel": "Số khách hàng",
+      "view": "hist",
+      "polygon": false,
+      "extras": ""
     }
   },
   {
@@ -12305,12 +12306,13 @@ export const BANK_THPT: BankEntry[] = [
     ],
     "variable": false,
     "figure": {
-      "kind": "stats",
-      "chart": "hist",
-      "title": "Chiều cao của 30 học sinh",
-      "xLabel": "Chiều cao (cm)",
-      "yLabel": "Số học sinh",
-      "data": "[150; 155) [155; 160) [160; 165) [165; 170) [170; 175)\nSố học sinh: 3; 7; 10; 6; 4"
+      "kind": "grouped",
+      "groups": "[150; 155): 3\n[155; 160): 7\n[160; 165): 10\n[165; 170): 6\n[170; 175): 4",
+      "label": "Chiều cao (cm)",
+      "freqLabel": "Số học sinh",
+      "view": "hist",
+      "polygon": false,
+      "extras": ""
     }
   },
   {
@@ -12601,12 +12603,13 @@ export const BANK_THPT: BankEntry[] = [
     ],
     "variable": false,
     "figure": {
-      "kind": "stats",
-      "chart": "hist",
-      "title": "Điểm đánh giá sản phẩm của 40 khách hàng",
-      "xLabel": "Điểm",
-      "yLabel": "Số khách hàng",
-      "data": "[50; 60) [60; 70) [70; 80) [80; 90) [90; 100)\nSố khách hàng: 5; 8; 12; 10; 5"
+      "kind": "grouped",
+      "groups": "[50; 60): 5\n[60; 70): 8\n[70; 80): 12\n[80; 90): 10\n[90; 100): 5",
+      "label": "Điểm",
+      "freqLabel": "Số khách hàng",
+      "view": "hist",
+      "polygon": false,
+      "extras": ""
     }
   },
   {
@@ -12646,12 +12649,13 @@ export const BANK_THPT: BankEntry[] = [
     ],
     "variable": false,
     "figure": {
-      "kind": "stats",
-      "chart": "hist",
-      "title": "Số lần đi siêu thị trong một tháng",
-      "xLabel": "Số lần",
-      "yLabel": "Số khách hàng",
-      "data": "[0; 4) [4; 8) [8; 12) [12; 16) [16; 20)\nSố khách hàng: 2; 6; 9; 5; 3"
+      "kind": "grouped",
+      "groups": "[0; 4): 2\n[4; 8): 6\n[8; 12): 9\n[12; 16): 5\n[16; 20): 3",
+      "label": "Số lần",
+      "freqLabel": "Số khách hàng",
+      "view": "hist",
+      "polygon": false,
+      "extras": ""
     }
   },
   {
@@ -13661,12 +13665,13 @@ export const BANK_THPT: BankEntry[] = [
     ],
     "variable": false,
     "figure": {
-      "kind": "stats",
-      "chart": "hist",
-      "title": "Thời gian hoàn thành bài kiểm tra",
-      "xLabel": "Thời gian (phút)",
-      "yLabel": "Số học sinh",
-      "data": "[10; 15) [15; 20) [20; 25) [25; 30) [30; 35)\nSố học sinh: 4; 6; 10; 7; 3"
+      "kind": "grouped",
+      "groups": "[10; 15): 4\n[15; 20): 6\n[20; 25): 10\n[25; 30): 7\n[30; 35): 3",
+      "label": "Thời gian (phút)",
+      "freqLabel": "Số học sinh",
+      "view": "hist",
+      "polygon": false,
+      "extras": ""
     }
   },
   {
@@ -13820,12 +13825,13 @@ export const BANK_THPT: BankEntry[] = [
     ],
     "variable": false,
     "figure": {
-      "kind": "stats",
-      "chart": "hist",
-      "title": "Số giờ tự học trong tuần",
-      "xLabel": "Số giờ",
-      "yLabel": "Số học sinh",
-      "data": "[0; 10) [10; 20) [20; 30) [30; 40) [40; 50)\nSố học sinh: 2; 5; 8; 3; 2"
+      "kind": "grouped",
+      "groups": "[0; 10): 2\n[10; 20): 5\n[20; 30): 8\n[30; 40): 3\n[40; 50): 2",
+      "label": "Số giờ",
+      "freqLabel": "Số học sinh",
+      "view": "hist",
+      "polygon": false,
+      "extras": ""
     }
   },
   {
@@ -14089,12 +14095,13 @@ export const BANK_THPT: BankEntry[] = [
     ],
     "variable": false,
     "figure": {
-      "kind": "stats",
-      "chart": "hist",
-      "title": "Điểm kiểm tra của 20 học sinh",
-      "xLabel": "Điểm",
-      "yLabel": "Số học sinh",
-      "data": "[0; 2) [2; 4) [4; 6) [6; 8) [8; 10)\nSố học sinh: 2; 5; 9; 3; 1"
+      "kind": "grouped",
+      "groups": "[0; 2): 2\n[2; 4): 5\n[4; 6): 9\n[6; 8): 3\n[8; 10): 1",
+      "label": "Điểm",
+      "freqLabel": "Số học sinh",
+      "view": "hist",
+      "polygon": false,
+      "extras": ""
     }
   },
   {
@@ -14189,12 +14196,13 @@ export const BANK_THPT: BankEntry[] = [
     ],
     "variable": false,
     "figure": {
-      "kind": "stats",
-      "chart": "hist",
-      "title": "Số sách đọc trong học kỳ",
-      "xLabel": "Số cuốn sách",
-      "yLabel": "Số học sinh",
-      "data": "[0; 5) [5; 10) [10; 15) [15; 20) [20; 25)\nSố học sinh: 4; 8; 12; 9; 7"
+      "kind": "grouped",
+      "groups": "[0; 5): 4\n[5; 10): 8\n[10; 15): 12\n[15; 20): 9\n[20; 25): 7",
+      "label": "Số cuốn sách",
+      "freqLabel": "Số học sinh",
+      "view": "hist",
+      "polygon": false,
+      "extras": ""
     }
   },
   {
