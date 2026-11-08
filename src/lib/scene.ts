@@ -19,6 +19,8 @@ const f1 = (n: number) => Math.round(n * 10) / 10
 export interface SceneSpec {
   /** các lệnh, mỗi dòng một lệnh */
   text: string
+  /** độ lệch nhãn do người dùng kéo (khoá = id nhãn trên attr `data-lbl`) */
+  labelPos?: Record<string, [number, number]>
 }
 
 type P = [number, number]
@@ -137,8 +139,8 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
 
   let b = `<defs><marker id="scarr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#111"/></marker></defs>`
   const line = (p: P, q: P, extra = '') => `<path d="M${f1(p[0])} ${f1(p[1])}L${f1(q[0])} ${f1(q[1])}" stroke="#111" fill="none" ${extra}/>`
-  const text = (x: number, y: number, s: string, anchor = 'middle', size = 15) =>
-    `<text x="${f1(x)}" y="${f1(y)}" ${FAM} font-size="${size}" text-anchor="${anchor}">${esc(s)}</text>`
+  const text = (x: number, y: number, s: string, anchor = 'middle', size = 15, lbl?: string) =>
+    `<text x="${f1(x)}" y="${f1(y)}" ${FAM} font-size="${size}"${lbl ? ` data-lbl="${lbl}"` : ''} text-anchor="${anchor}">${esc(s)}</text>`
   /** pháp tuyến đơn vị của PQ hướng ra xa tâm hình */
   const outward = (p: P, q: P): P => {
     const dx = q[0] - p[0]
@@ -197,7 +199,7 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
       b += `<path d="M${f1(o[0] + r * Math.cos(a1))} ${f1(o[1] + r * Math.sin(a1))}A${r} ${r} 0 0 ${sweep} ${f1(o[0] + r * Math.cos(a2))} ${f1(o[1] + r * Math.sin(a2))}" stroke="#111" fill="none" stroke-width="1"/>`
       if (c.text) {
         const mid = a1 + d / 2
-        b += text(o[0] + 36 * Math.cos(mid), o[1] + 36 * Math.sin(mid) + 5, c.text, 'middle', 14)
+        b += text(o[0] + 36 * Math.cos(mid), o[1] + 36 * Math.sin(mid) + 5, c.text, 'middle', 14, `ang:${c.a}${c.o}${c.b}`)
       }
     } else if (c.t === 'dim') {
       const p = at(c.a)
@@ -213,13 +215,13 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
       if (c.text) {
         const mx = (p2[0] + q2[0]) / 2 + n[0] * 12
         const my = (p2[1] + q2[1]) / 2 + n[1] * 12 + 5
-        b += text(mx, my, c.text, Math.abs(n[0]) > 0.7 ? (n[0] > 0 ? 'start' : 'end') : 'middle', 14)
+        b += text(mx, my, c.text, Math.abs(n[0]) > 0.7 ? (n[0] > 0 ? 'start' : 'end') : 'middle', 14, `dim:${c.a}${c.b}`)
       }
     } else if (c.t === 'label') {
       const p = at(c.a)
       const q = at(c.b)
       const n = outward(p, q)
-      b += text((p[0] + q[0]) / 2 + n[0] * 14, (p[1] + q[1]) / 2 + n[1] * 14 + 5, c.text, Math.abs(n[0]) > 0.7 ? (n[0] > 0 ? 'start' : 'end') : 'middle')
+      b += text((p[0] + q[0]) / 2 + n[0] * 14, (p[1] + q[1]) / 2 + n[1] * 14 + 5, c.text, Math.abs(n[0]) > 0.7 ? (n[0] > 0 ? 'start' : 'end') : 'middle', 15, `lbl:${c.a}${c.b}`)
     }
   }
 
@@ -316,7 +318,7 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
       }
     }
     placed.push(best)
-    b += text(best[0], best[1] + 5, name, 'middle', 15)
+    b += text(best[0], best[1] + 5, name, 'middle', 15, `pt:${name}`)
   }
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${desc}<rect width="100%" height="100%" fill="#fff"/>${b}</svg>`
   return { svg, width: W, height: H }

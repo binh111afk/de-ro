@@ -835,6 +835,7 @@ export function GasModal({ initial, submitLabel, onClose, onInsert }: Props<GasS
 
 export function SceneModal({ initial, submitLabel, onClose, onInsert }: Props<SceneSpec>) {
   const [spec, setSpec] = useState<SceneSpec>(initial ?? SCENE_DEFAULT)
+  const [move, setMove] = useState(false)
   const doc = useMemo((): ToolDoc => ({ kind: 'scene', spec }), [spec])
   const { preview, error } = useRender(doc)
   const inputs = (
@@ -843,7 +844,7 @@ export function SceneModal({ initial, submitLabel, onClose, onInsert }: Props<Sc
       help={SCENE_HELP}
       intro="Khai báo điểm, rồi mỗi dòng một lệnh: đoạn, nét đứt, kích thước, góc, nhãn, mặt đất / tường."
       value={spec.text}
-      onChange={(text) => setSpec({ text })}
+      onChange={(text) => setSpec((s) => ({ ...s, text }))}
       rows={12}
       errors={error ? [error] : []}
       label="Lệnh vẽ hình"
@@ -860,6 +861,16 @@ export function SceneModal({ initial, submitLabel, onClose, onInsert }: Props<Sc
       canSubmit={Boolean(preview) && !error}
       onSubmit={() => preview && onInsert(preview)}
       onClose={onClose}
+      renderPreview={(img) => (
+        <LabelPreview
+          img={img}
+          labelPos={spec.labelPos}
+          onChange={(labelPos) => setSpec((s) => ({ ...s, labelPos }))}
+          move={move}
+          onToggle={() => setMove((v) => !v)}
+          fallback={<img src={svgDataUrl(img.svg)} alt="Xem trước" className="max-h-full max-w-full rounded-[4px] border border-line bg-white object-contain" />}
+        />
+      )}
     />
   )
 }
