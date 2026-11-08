@@ -1,0 +1,53 @@
+{
+  "mon": "Tiếng Anh",
+  "pham_vi_luot": "lớp 3–5 (tiểu học, bộ Global Success)",
+  "nguon": [
+    "Chương trình GDPT 2018 môn Tiếng Anh, Thông tư 32/2018/TT-BGDĐT (sửa đổi bởi Thông tư 13/2022)",
+    "SGK Tiếng Anh 3, 4, 5 Global Success (mục lục từ sachmem.net, loigiaihay.com)",
+    "Thông tư 27/2020/TT-BGDĐT — đánh giá học sinh tiểu học"
+  ],
+  "danh_gia": {
+    "muc_do": [
+      { "muc": 1, "mo_ta": "Nhận biết, nghe hiểu và nhắc lại được từ vựng, câu đơn giản đã học" },
+      { "muc": 2, "mo_ta": "Sử dụng được từ vựng, mẫu câu đã học trong tình huống quen thuộc" },
+      { "muc": 3, "mo_ta": "Vận dụng từ vựng, mẫu câu trong tình huống mới, giao tiếp đơn giản" }
+    ],
+    "thang_diem": "Nhận xét bằng lời; đánh giá thường xuyên qua hoạt động nói, nghe, đọc, viết; không dùng điểm số cho lớp 3",
+    "thoi_diem_kiem_tra": "Đánh giá thường xuyên trong từng unit; đánh giá định kì cuối học kì I, cuối học kì II"
+  },
+  "muc_luc_da_tra": [
+    "Lớp 3 – KNTT (Global Success) – Unit 1–10: chủ đề về bản thân, gia đình, bạn bè, trường học, đồ vật, động vật, màu sắc, đồ chơi, sở thích, quà tặng",
+    "Lớp 4 – KNTT – Unit 1–10: chủ đề về học sinh, ngày ở trường, bạn bè nước ngoài, thời gian, đồ vật trong nhà, trang phục, sở thích, đồ ăn, khu vui chơi, công việc",
+    "Lớp 5 – KNTT – Unit 1–10: chủ đề về bạn mới, quê hương, đi học, hoạt động cuối tuần, sức khoẻ, du lịch, đồ dùng cá nhân, sở thích, thành phố, tuổi thơ"
+  ],
+  "lop": [
+    { "lop": 3, "chuong": [
+      { "id": "anh3-u01-u10", "ten": "Unit 1–10: Xin chào, tên, bạn bè, trường học, đồ vật, động vật, màu sắc, đồ chơi, sở thích, quà tặng (10 units)", "pham_vi": ["Nghe hiểu câu đơn giản 5–8 từ", "Nói câu đơn giản 5–8 từ", "Đọc từ, câu đơn giản"], "hoc_ky": 1, "mach": "Tiếng Anh tiểu học", "ten_theo_sach": { "KNTT": "Unit 1–10", "CTST": "Unit 1–10", "CD": "Unit 1–10" }, "tu_vung": ["hello", "name", "friend", "school", "book", "pencil", "cat", "dog", "red", "blue", "toy", "present"], "mau_cau": ["Hi/Hello! I'm...", "What's your name? My name is...", "This is my friend...", "What colour is it? It's red.", "Do you like...? Yes, I do."], "phat_am": "Nguyên âm /æ/, /e/, /ɪ/, /ɒ/; nhận biết chữ cái", "yeu_cau_can_dat": { "doc": "Đọc từ, câu đơn giản theo mẫu", "viet": "Viết từ, câu đơn giản theo mẫu", "noi_nghe": "Nghe hiểu câu đơn giản; nói câu chào, giới thiệu bản thân" }, "chua_duoc_dung": ["Past simple (lớp 4 trở đi)", "Question forms nâng cao (lớp 4 trở đi)"], "dang_bai_dien_hinh": ["Nghe và chọn hình đúng", "Nối từ với hình", "Điền từ còn thiếu"], "luu_y_ra_de": "Từ vựng và câu rất đơn giản, phù hợp trẻ 8 tuổi." }
+    ], "chuyen_de": [], "ghi_chu_chua_chac": ["Mục lục lớp 3 GS gồm 10 units — tên unit cần đối chiếu SGK in khi gộp", "Mức độ đánh giá lớp 3 theo TT 27/2020 không dùng điểm số cho đánh giá thường xuyên"] },
+    { "lop": 4, "chuong": [
+      { "id": "anh4-u01-u10", "ten": "Unit 1–10: học sinh, ngày ở trường, bạn bè nước ngoài, thời gian, đồ vật trong nhà, trang phục, sở thích, đồ ăn, khu vui chơi, công việc (10 units)", "pham_vi": ["Nghe hiểu câu, đoạn ngắn", "Nói 2–3 câu liền mạch", "Đọc câu, đoạn ngắn"], "hoc_ky": 1, "mach": "Tiếng Anh tiểu học", "ten_theo_sach": { "KNTT": "Unit 1–10", "CTST": "Unit 1–10", "CD": "Unit 1–10" }, "tu_vung": ["student", "subject", "friend", "time", "o'clock", "living room", "T-shirt", "hamburger", "playground", "teacher"], "mau_cau": ["What time is it? It's seven o'clock.", "What does she do? She's a teacher.", "Where is the book? It's on the table.", "I like/love...", "What do you do at break time?"], "phat_am": "Diphthongs /eɪ/, /aɪ/, /ɔɪ/", "yeu_cau_can_dat": { "doc": "Đọc hiểu câu, đoạn ngắn", "viet": "Viết câu đơn giản theo mẫu", "noi_nghe": "Nghe hiểu đoạn ngắn; nói 2–3 câu về chủ đề" }, "chua_duoc_dung": ["Future tense (lớp 5 trở đi)", "Question words nâng cao (lớp 5 trở đi)"], "dang_bai_dien_hinh": ["Nghe và điền thông tin", "Đọc hiểu trả lời câu hỏi", "Viết câu theo mẫu"], "luu_y_ra_de": "Câu hỏi về thời gian, công việc dùng mẫu câu SGK." }
+    ], "chuyen_de": [], "ghi_chu_chua_chac": ["Mục lục lớp 4 GS gồm 10 units — tên unit cần đối chiếu SGK in khi gộp"] },
+    { "lop": 5, "chuong": [
+      { "id": "anh5-u01-u10", "ten": "Unit 1–10: bạn mới, quê hương, đi học, hoạt động cuối tuần, sức khoẻ, du lịch, đồ dùng cá nhân, sở thích, thành phố, tuổi thơ (10 units)", "pham_vi": ["Nghe hiểu câu, đoạn ngắn", "Nói 3–4 câu liền mạch", "Đọc đoạn ngắn và trả lời câu hỏi", "Viết đoạn ngắn 3–5 câu"], "hoc_ky": 1, "mach": "Tiếng Anh tiểu học", "ten_theo_sach": { "KNTT": "Unit 1–10", "CTST": "Unit 1–10", "CD": "Unit 1–10" }, "tu_vung": ["new friend", "hometown", "go to school", "weekend", "healthy", "travel", "backpack", "hobby", "city", "childhood"], "mau_cau": ["Where are you from? I'm from...", "What do you do at the weekend? I go to...", "How often do you...? I always/usually...", "What's the matter with you? I have a headache.", "What did you do? I visited..."], "phat_am": "Trọng âm từ 2 âm tiết; âm cuối /s/, /z/", "yeu_cau_can_dat": { "doc": "Đọc hiểu đoạn văn ngắn và trả lời câu hỏi", "viet": "Viết đoạn ngắn 3–5 câu theo chủ điểm", "noi_nghe": "Nghe hiểu đoạn ngắn; nói 3–4 câu về chủ điểm" }, "chua_duoc_dung": ["Present perfect (lớp 6 trở đi)", "Complex sentences (lớp 6 trở đi)"], "dang_bai_dien_hinh": ["Nghe và trả lời câu hỏi", "Đọc hiểu đoạn ngắn", "Viết đoạn ngắn theo chủ điểm"], "luu_y_ra_de": "Chủ điểm chuẩn bị cho lớp 6; không dùng cấu trúc lớp 6 trở lên." }
+    ], "chuyen_de": [], "ghi_chu_chua_chac": ["Mục lục lớp 5 GS gồm 10 units — tên unit cần đối chiếu SGK in khi gộp", "Sách GS lớp 3, 4, 5 có thể được thay bằng bộ mới — cần kiểm tra danh mục SGK hiện hành khi gộp"]
+    }
+  ],
+  "cau_truc_de": [
+    { "loai": "Đề kiểm tra cuối học kì 1 môn Tiếng Anh lớp 3", "lop": 3, "thoi_gian_phut": 35, "phan": [
+      { "ten": "Phần I. Listening", "so_cau": 6, "diem_moi_cau": 0.5, "tong_diem": 3 },
+      { "ten": "Phần II. Vocabulary and Grammar", "so_cau": 8, "diem_moi_cau": 0.5, "tong_diem": 4 },
+      { "ten": "Phần III. Reading and Writing", "so_cau": 6, "diem_moi_cau": 0.5, "tong_diem": 3 } ],
+      "pham_vi": ["anh3-u01-u10"], "ti_le_muc": { "Mức 1": "60%", "Mức 2": "30%", "Mức 3": "10%" } },
+    { "loai": "Đề kiểm tra cuối học kì 1 môn Tiếng Anh lớp 4", "lop": 4, "thoi_gian_phut": 35, "phan": [
+      { "ten": "Phần I. Listening", "so_cau": 6, "diem_moi_cau": 0.5, "tong_diem": 3 },
+      { "ten": "Phần II. Vocabulary and Grammar", "so_cau": 8, "diem_moi_cau": 0.5, "tong_diem": 4 },
+      { "ten": "Phần III. Reading and Writing", "so_cau": 6, "diem_moi_cau": 0.5, "tong_diem": 3 } ],
+      "pham_vi": ["anh4-u01-u10"], "ti_le_muc": { "Mức 1": "50%", "Mức 2": "30%", "Mức 3": "20%" } },
+    { "loai": "Đề kiểm tra cuối học kì 1 môn Tiếng Anh lớp 5", "lop": 5, "thoi_gian_phut": 35, "phan": [
+      { "ten": "Phần I. Listening", "so_cau": 6, "diem_moi_cau": 0.5, "tong_diem": 3 },
+      { "ten": "Phần II. Vocabulary and Grammar", "so_cau": 8, "diem_moi_cau": 0.5, "tong_diem": 4 },
+      { "ten": "Phần III. Reading and Writing", "so_cau": 6, "diem_moi_cau": 0.5, "tong_diem": 3 } ],
+      "pham_vi": ["anh5-u01-u10"], "ti_le_muc": { "Mức 1": "50%", "Mức 2": "30%", "Mức 3": "20%" } }
+  ],
+  "phien_ban": 1
+}
