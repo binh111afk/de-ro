@@ -165,9 +165,11 @@ export function buildKhungBlock(scope: KhungScope, khung: KhungToan): string {
       (st.ti_le_muc_do ? `. Mức độ: ${st.ti_le_muc_do}` : '')
     : ''
   return (
-    'KHUNG CHƯƠNG TRÌNH TOÁN (GDPT 2018) — BẮT BUỘC: chỉ ra câu trong phạm vi dưới đây. ' +
+    'KHUNG CHƯƠNG TRÌNH TOÁN (GDPT 2018) — mặc định chỉ ra câu trong phạm vi dưới đây. ' +
     'KHÔNG dùng kiến thức ghi ở "CHƯA được dùng", kiến thức của lớp trên hay của chương trình cũ (2006). ' +
-    'Soạn xong tự rà từng câu; câu nào vượt phạm vi thì thay bằng câu khác.\n' +
+    'Soạn xong tự rà từng câu; câu nào vượt phạm vi thì thay bằng câu khác. ' +
+    'NGOẠI LỆ: người dùng yêu cầu RÕ nội dung, dạng bài hay ma trận nằm ngoài phạm vi (đề ôn học sinh giỏi, chủ đề cụ thể…) ' +
+    'thì làm đúng theo yêu cầu đó, và thêm vào JSON trả về field "warning": một câu ngắn nói nội dung nào ngoài chương trình 2018.\n' +
     head +
     '\n' +
     out.join('\n') +

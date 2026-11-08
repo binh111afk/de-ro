@@ -108,6 +108,8 @@ interface AiExamEnvelope {
   action?: string
   blocks?: unknown
   patch?: unknown
+  /** một câu nhắc người dùng (vd. nội dung họ yêu cầu nằm ngoài chương trình 2018) — hiện kèm câu tóm tắt */
+  warning?: unknown
 }
 
 const AI_BLOCK_TYPES = new Set([
@@ -620,6 +622,7 @@ export default function ComposeDoc() {
       if (blocks.some((b) => b.type === 'paragraph' && Array.isArray(b.text) && b.text.some((s) => s.image?.plot)))
         setTimeout(() => void pngifyToolImages(editor), 0)
       const patches = sanitizePatches(raw.patch)
+      const warn = typeof raw.warning === 'string' && raw.warning.trim() ? ` Lưu ý: ${raw.warning.trim().slice(0, 300)}` : ''
       const action =
         raw.action === 'append' || raw.action === 'patch' || raw.action === 'replace'
           ? raw.action
@@ -633,12 +636,12 @@ export default function ComposeDoc() {
           // → có thể rơi vào khối bất kỳ. Đặt lại con trỏ về đầu đề.
           editor.commands.setTextSelection(Selection.near(editor.state.doc.resolve(1)).from)
           // Luôn báo việc đã làm; `note` của model hay lặp lại đúng câu prompt.
-          return `Đã soạn xong đề (${blocks.length} khối).`
+          return `Đã soạn xong đề (${blocks.length} khối).${warn}`
         }
         if (action === 'append' && blocks.length) {
           const content = blocksToTipTap(blocks).content ?? []
           editor.chain().focus().insertContentAt(editor.state.doc.content.size, content).run()
-          return `Đã thêm ${blocks.length} khối vào cuối đề.`
+          return `Đã thêm ${blocks.length} khối vào cuối đề.${warn}`
         }
         if (action === 'patch' && patches.length) {
           const { state, view } = editor
@@ -662,7 +665,7 @@ export default function ComposeDoc() {
           }
           if (applied) {
             view.dispatch(tr)
-            return `Đã cập nhật ${applied} khối trong đề.`
+            return `Đã cập nhật ${applied} khối trong đề.${warn}`
           }
           return 'Không tìm thấy khối cần sửa trong đề.'
         }
