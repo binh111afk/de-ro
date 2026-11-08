@@ -59,7 +59,7 @@ Danh sách đủ: `package.json` → `scripts`. `.env` cần `LLM_API_KEY` (mẫ
 
 | Khi làm | Mở |
 |---|---|
-| Tiếp việc phiên trước | [phiên 24](docs/handoff/phien-24.md) (kiểm trig + 600 câu, khung chương trình, công cụ ghép nhóm) |
+| Tiếp việc phiên trước | [phiên 24](docs/handoff/phien-24.md) (kiểm trig, 600 câu, công cụ Bảng ghép nhóm do agent khác làm; nối khung chương trình) |
 | Khung chương trình các môn (chống AI ra đề vượt lớp): soạn prompt cho agent ngoài, kiểm file gửi về | [docs/khung-chuong-trinh.md](docs/khung-chuong-trinh.md) |
 | Soạn thêm câu cho kho câu hỏi | [scripts/bank/HUONG_DAN_SOAN.md](scripts/bank/HUONG_DAN_SOAN.md) |
 | Model AI, nhà cung cấp, hạn mức token, chi phí | [phiên 22](docs/handoff/phien-22.md), mục "So sánh nhà cung cấp" |

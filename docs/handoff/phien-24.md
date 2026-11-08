@@ -28,12 +28,24 @@
 - Việc cần làm: khi soạn đề Toán, xác định lớp + chương (hoặc kỳ) từ yêu cầu hay lựa chọn của người dùng, cắt đúng các chương đó (khoảng 300–3.000 token) rồi chèn vào prompt soạn đề (`AiPanel.tsx` / `docRewrite.ts`), kèm cấu trúc đề phù hợp. **Không nạp cả file vào prompt.** Nạp JSON lười (dynamic import) để không làm nặng bundle. Có thể thêm bước AI tự kiểm "vượt chương trình" sau khi soạn.
 - Các môn khác làm sau, theo cùng mẫu: người dùng nhờ agent ngoài soạn từng môn.
 
-### 4. Công cụ vẽ mới: mẫu số liệu ghép nhóm
-- Người dùng chỉ đặt tên là "mẫu số liệu ghép nhóm"; tên hiển thị tuỳ chọn. Đề xuất **"Bảng ghép nhóm"**, kind `grouped`.
-- Lý do cần: ghép nhóm có ở lớp 9 (lập bảng, biểu đồ), lớp 11 (trung bình, trung vị, tứ phân vị, mốt) và lớp 12 (khoảng biến thiên, khoảng tứ phân vị, phương sai, độ lệch chuẩn). Kho câu hỏi và đề thi dùng loại này rất nhiều. `stats` hiện chỉ có biểu đồ `hist`, không có bảng ghép nhóm chuẩn SGK.
-- Gợi ý chức năng: nhập các nhóm `[a; b)` và tần số → vẽ **bảng tần số ghép nhóm** kiểu SGK (ngang hoặc dọc; tuỳ chọn thêm hàng giá trị đại diện, tần số tích luỹ, tần số tương đối) và/hoặc **biểu đồ cột liền** (histogram) có thể kèm đa giác tần số. Có thể có ô "tính giúp" ra trung bình, trung vị, Q1, Q3, mốt, phương sai, độ lệch chuẩn (theo công thức SGK) để giáo viên soát đáp án. Kết quả tính không vẽ lên hình, tránh lộ đáp án.
-- Thêm công cụ = 7 chỗ (xem context.md mục "Thêm một công cụ vẽ"). Nhớ thêm vào FIGURE_GUIDE để AI và kho câu hỏi dùng được (`{"kind":"grouped",...}`), rồi có thể đổi các câu ghép nhóm trong kho đang vẽ bằng `stats` sang công cụ này.
-- Nên làm trên main hoặc nhánh riêng. Không đụng nhánh trig nếu nhánh đó chưa merge (cả hai cùng sửa `docRewrite.ts` và `MoreToolModals.tsx`, dễ xung đột).
+### 4. Kiểm công cụ "Bảng ghép nhóm" (agent khác làm, Claude kiểm)
+- **Người làm**: một agent khác trong dự án, theo prompt Claude đưa ở phiên 24. Agent làm trên nhánh **`feat/bang-ghep-nhom`**, tách từ `feat/trig-7-tinh-nang` để tránh xung đột `docRewrite.ts` / `MoreToolModals.tsx`. Commit `feat(tools): công cụ Bảng ghép nhóm`, đã push, không merge. Nếu nhánh chưa có trên remote thì agent chưa làm xong, hỏi người dùng.
+- **Agent được giao**: kind `grouped`, tên "Bảng ghép nhóm", nằm trong nhóm Toán cạnh "Thống kê".
+  - Nhập mỗi dòng một nhóm `[a; b): tần số` (nhóm cuối có thể là `[a; b]`, dấu phẩy thập phân), kèm tên đại lượng và tên tần số.
+  - Ba kiểu hiển thị: bảng ngang (mặc định), bảng dọc, biểu đồ cột liền (tuỳ chọn đa giác tần số).
+  - Hàng phụ tuỳ chọn: giá trị đại diện, tần số tích luỹ, tần số tương đối, tổng n.
+  - Ô "Tính giúp" chỉ hiện trong form: trung bình, trung vị, Q1, Q3, mốt, khoảng biến thiên, khoảng tứ phân vị, phương sai, độ lệch chuẩn. Viết thành hàm thuần, test ở `scripts/check-grouped.ts`.
+  - Đủ 7 chỗ của một công cụ, gồm cả FIGURE_GUIDE và toolFromRaw.
+  - Không sửa câu cũ trong kho, chỉ đếm các câu ghép nhóm đang vẽ bằng `stats` `hist`.
+- **Cách kiểm** (làm trên nhánh `feat/bang-ghep-nhom`; trước khi checkout xem `git status` để không đè việc dở):
+  1. `git diff feat/trig-7-tinh-nang...feat/bang-ghep-nhom --stat`: chỉ có các file của công cụ (đủ 7 chỗ) cộng file test. Không sửa lan sang chỗ khác.
+  2. `npx tsc -p tsconfig.app.json --noEmit`.
+  3. **Công thức**: tự tính tay một mẫu SGK để đối chiếu với `check-grouped.ts`. Hay sai ở: trung vị/Q1/Q3 lấy sai nhóm (phải là nhóm đầu tiên có tần số tích luỹ ≥ k·n/4); mốt khi nhóm mốt nằm ở đầu hoặc cuối (n_{m−1} hoặc n_{m+1} lấy bằng 0); phương sai phải chia cho n (SGK), không phải n−1; nhóm có độ rộng không đều.
+  4. **Hình** trong trình duyệt: cả 3 kiểu hiển thị, có 8–10 nhóm không tràn khung, dấu phẩy thập phân, histogram cột sát nhau và mốc trục đúng đầu mút. Bảng phải giống SGK (ô "Nhóm"/"Tần số" ở đầu hàng). Kết quả "Tính giúp" **không** xuất hiện trên hình.
+  5. Nhập sai cú pháp thì báo lỗi rõ ràng, không trắng trang. Dữ liệu cũ khi mở lại công cụ không mất.
+  6. Xuất Word một đề có hình này (ảnh PNG có mặt, rõ nét); in hoặc xem trước.
+  7. AI: soạn một câu Toán 11 về trung vị mẫu ghép nhóm. AI phải dùng `grouped` với cú pháp đúng như FIGURE_GUIDE. Kho câu hỏi: một câu có `figure` kind `grouped` hiển thị đúng trong BankModal.
+- **Sau khi đạt**: báo người dùng. Nếu người dùng đồng ý thì chuyển các câu ghép nhóm trong kho sang `grouped`, bao gồm các câu ghép nhóm trong 600 câu ở mục 2. Thứ tự merge dự kiến: trig, rồi bảng ghép nhóm, rồi main. Chỉ merge khi người dùng bảo.
 
 ### Việc tồn từ phiên 23
 Xem [phiên 23](phien-23.md), mục "Còn lại" (lỗi nội dung câu cũ trong bank.ts, nhãn signtable f'(x)).
