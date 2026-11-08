@@ -4,7 +4,7 @@
  */
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
-import { Box, ChartColumn, ChartSpline, Grid3x3, SquarePlus, Table2, Triangle, TriangleRight, Zap, ChartLine, Atom, Hexagon, FlaskConical, CircleDot, Network, MoveHorizontal, Circle, Thermometer } from 'lucide-react'
+import { Box, ChartColumn, ChartSpline, ClipboardList, Grid3x3, SquarePlus, Table2, Triangle, TriangleRight, Zap, ChartLine, Atom, Hexagon, FlaskConical, CircleDot, Network, MoveHorizontal, Circle, Thermometer } from 'lucide-react'
 import type { ToolImage, ToolKind } from '@/lib/toolSpec'
 import { ToolModal } from './ToolModal'
 import { cn } from '@/lib/cn'
@@ -20,6 +20,7 @@ const SUBJECTS: Array<{ name: string; tools: Array<{ id: ToolId; label: string; 
       { id: 'signtable', label: 'Bảng xét dấu', desc: 'Tự tách nhân tử, tìm nghiệm; sửa tay từng ô', Icon: SquarePlus },
       { id: 'oxy', label: 'Hệ trục Oxy', desc: 'Điểm, vectơ, đường thẳng, đường tròn, miền nghiệm', Icon: Grid3x3 },
       { id: 'stats', label: 'Thống kê', desc: 'Biểu đồ cột, đường, quạt tròn, ghép nhóm; bảng số liệu', Icon: ChartColumn },
+      { id: 'grouped', label: 'Bảng ghép nhóm', desc: 'Bảng tần số ghép nhóm SGK, histogram, đa giác tần số', Icon: ClipboardList },
       { id: 'geo2d', label: 'Hình học phẳng', desc: 'Tam giác, tứ giác, đường tròn; đường cao, trung tuyến', Icon: Triangle },
       { id: 'geo3d', label: 'Hình học không gian', desc: 'Hình chóp, lăng trụ, hộp, nón, trụ, cầu; nét khuất đứt', Icon: Box },
       { id: 'trig', label: 'Đường tròn lượng giác', desc: 'Điểm ngọn cung, chiếu cos/sin, họ nghiệm α + kβ', Icon: CircleDot },

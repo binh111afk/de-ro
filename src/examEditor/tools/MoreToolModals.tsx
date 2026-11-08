@@ -17,6 +17,7 @@ import { GAS_DEFAULT, type GasAxes, type GasSpec } from '@/lib/gas'
 import { SCENE_DEFAULT, SCENE_HELP, type SceneSpec } from '@/lib/scene'
 import type { ChemGraphSpec, ElectronSpec, StructSpec } from '@/lib/chem'
 import type { NumberLineSpec, TreeSpec, TrigSpec, VennSpec } from '@/lib/mathExtra'
+import { groupedStats, parseGroups, round2, type GroupedSpec, type GroupedView } from '@/lib/grouped'
 import { Check, ToolShell, sectionTitle } from './ToolShell'
 
 type Props<S> = { initial?: S | null; submitLabel?: string; onClose: () => void; onInsert: (img: ToolImage) => void }
@@ -399,6 +400,164 @@ export function StatsModal({ initial, submitLabel, onClose, onInsert }: Props<St
       inputsWidth={380}
       preview={preview}
       submitLabel={submitLabel ?? (initial ? 'Cập nhật biểu đồ' : 'Chèn biểu đồ')}
+      canSubmit={Boolean(preview) && !error}
+      onSubmit={() => preview && onInsert(preview)}
+      onClose={onClose}
+    />
+  )
+}
+
+const GROUPED_VIEWS: Array<{ id: GroupedView; label: string }> = [
+  { id: 'htable', label: 'Bảng ngang' },
+  { id: 'vtable', label: 'Bảng dọc' },
+  { id: 'hist', label: 'Biểu đồ cột liền' },
+]
+
+const GROUPED_HELP: HelpGroups = [
+  {
+    group: 'Nhập nhóm (mỗi dòng một nhóm)',
+    items: [
+      { code: '[150; 155): 5', what: 'Nhóm nửa mở [a; b) : tần số' },
+      { code: '[170; 175]: 4', what: 'Nhóm cuối có thể là đoạn đóng [a; b]' },
+      { code: '[1,5; 2): 8', what: 'Dùng dấu phẩy thập phân kiểu Việt Nam' },
+    ],
+  },
+  {
+    group: 'Kiểu hiển thị',
+    items: [
+      { code: 'Bảng ngang', what: 'Hàng 1 các nhóm, hàng 2 tần số (kiểu SGK, mặc định)' },
+      { code: 'Bảng dọc', what: 'Mỗi nhóm một hàng' },
+      { code: 'Biểu đồ cột liền', what: 'Histogram: cột sát nhau, trục ghi mốc đầu mút; tuỳ chọn đa giác tần số' },
+    ],
+  },
+  {
+    group: 'Tuỳ chọn bảng',
+    items: [
+      { code: 'Giá trị đại diện', what: 'Trung điểm của mỗi nhóm' },
+      { code: 'Tần số tích luỹ', what: 'Cộng dồn từ nhóm đầu' },
+      { code: 'Tần số tương đối (%)', what: 'Tần số chia n nhân 100' },
+      { code: 'Cột/hàng Tổng', what: 'Ghi n ở cuối bảng' },
+    ],
+  },
+]
+
+export function GroupedModal({ initial, submitLabel, onClose, onInsert }: Props<GroupedSpec>) {
+  const [spec, setSpec] = useState<GroupedSpec>(
+    initial ?? {
+      groups: '[150; 155): 4\n[155; 160): 10\n[160; 165): 14\n[165; 170): 8\n[170; 175]: 4',
+      label: 'Chiều cao (cm)',
+      freqLabel: 'Số học sinh',
+      view: 'htable',
+      polygon: false,
+      extras: '',
+    },
+  )
+  const set = (p: Partial<GroupedSpec>) => setSpec((s) => ({ ...s, ...p }))
+  const doc = useMemo((): ToolDoc => ({ kind: 'grouped', spec }), [spec])
+  const { preview, error } = useRender(doc)
+  const field = (k: 'label' | 'freqLabel', label: string, ph: string) => (
+    <label className="flex flex-col gap-1 text-[12.5px] text-ink-3">
+      {label}
+      <input value={spec[k]} onChange={(e) => set({ [k]: e.target.value })} placeholder={ph} className={cn(inputClass, 'h-8 px-2 py-1 text-[13px]')} />
+    </label>
+  )
+  const toggleExtra = (extras: string, key: string, on: boolean) => {
+    const s = new Set(extras.split(/[,\s]+/).filter(Boolean))
+    if (on) s.add(key)
+    else s.delete(key)
+    return [...s].join(',')
+  }
+  const isTable = spec.view !== 'hist'
+  // ô "Tính giúp" chỉ hiện trong form (không vẽ lên hình để tránh lộ đáp án)
+  const tinh = useMemo(() => {
+    try {
+      const s = groupedStats(parseGroups(spec.groups))
+      return [
+        ['Cỡ mẫu n', String(s.n)],
+        ['Số trung bình', round2(s.mean)],
+        ['Trung vị', round2(s.median)],
+        ['Q1', round2(s.q1)],
+        ['Q3', round2(s.q3)],
+        ['Mốt', round2(s.mode)],
+        ['Khoảng biến thiên', round2(s.range)],
+        ['Khoảng tứ phân vị', round2(s.iqr)],
+        ['Phương sai s²', round2(s.variance)],
+        ['Độ lệch chuẩn s', round2(s.sd)],
+      ] as Array<[string, string]>
+    } catch {
+      return null
+    }
+  }, [spec.groups])
+  const inputs = (
+    <>
+      <section>
+        <h3 className={sectionTitle}>Kiểu hiển thị</h3>
+        <div className="flex flex-wrap gap-1.5">
+          {GROUPED_VIEWS.map((c) => (
+            <button
+              key={c.id}
+              type="button"
+              aria-pressed={spec.view === c.id}
+              onClick={() => set({ view: c.id })}
+              className={cn(
+                'rounded-[6px] border px-2.5 py-1 text-[12.5px] transition-colors',
+                spec.view === c.id ? 'border-clay bg-clay-tint font-medium text-clay' : 'border-line text-ink-2 hover:border-ink-4',
+              )}
+            >
+              {c.label}
+            </button>
+          ))}
+        </div>
+      </section>
+      <TextBlock
+        title="Các nhóm"
+        help={GROUPED_HELP}
+        intro="Mỗi dòng một nhóm: [a; b): tần số. Nhóm cuối có thể đóng [a; b]."
+        value={spec.groups}
+        onChange={(groups) => set({ groups })}
+        rows={5}
+        errors={error ? [error] : []}
+        label="Các nhóm"
+      />
+      <section className="grid grid-cols-2 gap-2">
+        {field('label', 'Tên đại lượng', 'vd. Chiều cao (cm)')}
+        {field('freqLabel', 'Tên tần số', 'Số học sinh')}
+      </section>
+      <section className="space-y-2">
+        <h3 className={cn(sectionTitle, 'mb-0')}>{isTable ? 'Hàng / cột phụ' : 'Tuỳ chọn'}</h3>
+        {isTable && (
+          <>
+            <Check checked={spec.extras.includes('mid')} onChange={(v) => set({ extras: toggleExtra(spec.extras, 'mid', v) })}>Giá trị đại diện (trung điểm)</Check>
+            <Check checked={spec.extras.includes('cum')} onChange={(v) => set({ extras: toggleExtra(spec.extras, 'cum', v) })}>Tần số tích luỹ</Check>
+            <Check checked={spec.extras.includes('rel')} onChange={(v) => set({ extras: toggleExtra(spec.extras, 'rel', v) })}>Tần số tương đối (%)</Check>
+            <Check checked={spec.extras.includes('total')} onChange={(v) => set({ extras: toggleExtra(spec.extras, 'total', v) })}>Cột / hàng Tổng (n)</Check>
+          </>
+        )}
+        {!isTable && <Check checked={spec.polygon} onChange={(polygon) => set({ polygon })}>Vẽ đa giác tần số</Check>}
+      </section>
+      {tinh && (
+        <section>
+          <h3 className={cn(sectionTitle, 'mb-0')}>Tính giúp (chỉ hiện ở đây)</h3>
+          <div className="grid grid-cols-2 gap-x-4 gap-y-1 rounded-[6px] border border-line bg-paper-2 px-3 py-2 text-[12.5px] text-ink-2">
+            {tinh.map(([k, v]) => (
+              <div key={k} className="flex justify-between gap-2">
+                <span>{k}</span>
+                <span className="font-medium text-ink">{v}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+    </>
+  )
+  return (
+    <ToolShell
+      title="Bảng ghép nhóm"
+      hint="Bảng tần số ghép nhóm kiểu SGK và biểu đồ cột liền; ô Tính giúp chỉ hiện ở đây, không vẽ lên hình"
+      inputs={inputs}
+      inputsWidth={380}
+      preview={preview}
+      submitLabel={submitLabel ?? (initial ? 'Cập nhật bảng' : 'Chèn bảng')}
       canSubmit={Boolean(preview) && !error}
       onSubmit={() => preview && onInsert(preview)}
       onClose={onClose}

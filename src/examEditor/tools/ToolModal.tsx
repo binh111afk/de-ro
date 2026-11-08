@@ -9,8 +9,9 @@ import type { Geo2dSpec, Geo3dSpec } from '@/lib/geometry'
 import { GraphToolModal } from './GraphToolModal'
 import { VarTableModal } from './VarTableModal'
 import { Geo2dModal, Geo3dModal } from './GeometryModal'
-import { NumberLineModal, TreeModal, TrigModal, VennModal } from './MoreToolModals'
+import { NumberLineModal, TreeModal, TrigModal, VennModal, GroupedModal } from './MoreToolModals'
 import type { NumberLineSpec, TreeSpec, TrigSpec, VennSpec } from '@/lib/mathExtra'
+import type { GroupedSpec } from '@/lib/grouped'
 import { GasModal, SceneModal } from './MoreToolModals'
 import type { SceneSpec } from '@/lib/scene'
 import type { GasSpec } from '@/lib/gas'
@@ -75,5 +76,7 @@ export function ToolModal({
       return <NumberLineModal initial={initial as NumberLineSpec | null | undefined} {...common} />
     case 'venn':
       return <VennModal initial={initial as VennSpec | null | undefined} {...common} />
+    case 'grouped':
+      return <GroupedModal initial={initial as GroupedSpec | null | undefined} {...common} />
   }
 }

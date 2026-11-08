@@ -136,6 +136,7 @@ export const FIGURE_GUIDE =
   '9) Sơ đồ cây xác suất: {"kind":"probtree","text":"mỗi dòng một nhánh \\"Tên: xác suất\\", thụt 2 dấu cách cho nhánh con"}\n' +
   '10) Trục số biểu diễn tập hợp: {"kind":"numberline","sets":"mỗi dòng một tập, vd (-2; 3] hoặc (-oo; -1) ∪ [2; 5]"}\n' +
   '11) Biểu đồ Ven: {"kind":"venn","sets":"A, B","shade":"A ∩ B","counts":"A: 5\\nAB: 3\\nB: 4"}\n' +
+  '11b) Bảng ghép nhóm (tần số ghép nhóm): {"kind":"grouped","groups":"mỗi dòng một nhóm, vd \\"[150; 155): 4\\"","label":"Chiều cao (cm)","freqLabel":"Số học sinh","view":"htable","polygon":false,"extras":""}. view: "htable" bảng ngang kiểu SGK (mặc định), "vtable" bảng dọc, "hist" biểu đồ cột liền (polygon=true vẽ thêm đa giác tần số); extras (chỉ bảng): "mid,cum,rel,total" — giá trị đại diện, tần số tích luỹ, tần số tương đối %, cột/hàng Tổng. Nhóm cuối có thể là đoạn đóng [a; b]. Đề cho bảng tần số ghép nhóm thì DÙNG loại này thay cho stats.\n' +
   '12) Mạch điện: {"kind":"circuit","text":"nguồn E = 12 V, r = 1 Ω\\nR1=4Ω - (R2=6Ω // R3=3Ω)"}. "-" nối tiếp, "//" song song, ngoặc gom cụm; linh kiện theo chữ đầu: R, Rb, Đ, A, V, K, C, L, E.\n' +
   '13) Đồ thị chuyển động: {"kind":"motion","yName":"v (m/s)","tName":"t (s)","points":"(0; 0) (2; 4) (5; 4)"}\n' +
   '14) Mặt phẳng nghiêng: {"kind":"incline","angle":30,"fms":"none|up|down","F":"none|up|down"}\n' +
@@ -255,6 +256,19 @@ export function toolFromRaw(raw: Record<string, unknown>): ToolDoc {
       break
     case 'venn':
       doc = { kind: 'venn', spec: { sets: str('sets') || 'A, B', shade: str('shade'), counts: str('counts'), universe: bool('universe', true) } }
+      break
+    case 'grouped':
+      doc = {
+        kind: 'grouped',
+        spec: {
+          groups: need('groups', 'Không có nhóm nào để lập bảng ghép nhóm.'),
+          label: str('label'),
+          freqLabel: str('freqLabel'),
+          view: pick('view', ['htable', 'vtable', 'hist'] as const, 'htable'),
+          polygon: bool('polygon', false),
+          extras: str('extras'),
+        },
+      }
       break
     case 'circuit':
       doc = { kind: 'circuit', spec: { text: need('text', 'Không đọc được mạch điện trong đề.'), values: true } }
