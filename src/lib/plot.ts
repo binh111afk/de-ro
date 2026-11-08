@@ -185,6 +185,8 @@ export interface PlotSpec {
   labels: boolean
   /** điểm đặt tên, mỗi dòng "M(0; 0)" (thêm "chiếu" để kẻ nét đứt xuống trục) */
   points?: string
+  /** độ lệch nhãn do người dùng kéo (khoá = id nhãn trên attr `data-lbl`) */
+  labelPos?: Record<string, [number, number]>
 }
 
 /** "M(0; 0) chiếu" → điểm; dòng sai bị bỏ qua */
@@ -382,9 +384,9 @@ export function renderPlotSvg(spec: PlotSpec): { svg: string; width: number; hei
   out.push(
     `<path d="M${PAD - 6} ${Y0}H${W - 4}M${X0} ${H - PAD + 6}V4" stroke="#222" stroke-width="1.4" fill="none"/>`,
     `<path d="M${W - 4} ${Y0}l-9 -4v8z M${X0} 4l-4 9h8z" fill="#222"/>`,
-    `<text x="${W - 10}" y="${Y0 - 10}" ${font} font-style="italic" text-anchor="end">x</text>`,
-    `<text x="${X0 + 9}" y="16" ${font} font-style="italic">y</text>`,
-    `<text x="${X0 - 5}" y="${Y0 + 16}" ${font} font-style="italic" text-anchor="end">O</text>`,
+    `<text x="${W - 10}" y="${Y0 - 10}" ${font} font-style="italic" text-anchor="end" data-lbl="ax:x">x</text>`,
+    `<text x="${X0 + 9}" y="16" ${font} font-style="italic" data-lbl="ax:y">y</text>`,
+    `<text x="${X0 - 5}" y="${Y0 + 16}" ${font} font-style="italic" text-anchor="end" data-lbl="ax:O">O</text>`,
   )
   // dấu ngắt trục (hai gạch chéo sát gốc O), nền trắng che khúc trục ở giữa
   if (breakY)
@@ -398,14 +400,14 @@ export function renderPlotSvg(spec: PlotSpec): { svg: string; width: number; hei
     const x = sx(v)
     if (x > W - 22) continue
     tickPath.push(`M${x.toFixed(1)} ${Y0 - 3}v6`)
-    out.push(`<text x="${x.toFixed(1)}" y="${Y0 + 17}" ${font} text-anchor="middle">${fmt(v)}</text>`)
+    out.push(`<text x="${x.toFixed(1)}" y="${Y0 + 17}" ${font} text-anchor="middle" data-lbl="x:${Math.round(v * 1000) / 1000}">${fmt(v)}</text>`)
   }
   for (const v of ty) {
     if (Math.abs(v) < 1e-9) continue
     const y = sy(v)
     if (y < 22) continue
     tickPath.push(`M${X0 - 3} ${y.toFixed(1)}h6`)
-    out.push(`<text x="${X0 - 7}" y="${(y + 5).toFixed(1)}" ${font} text-anchor="end">${fmt(v)}</text>`)
+    out.push(`<text x="${X0 - 7}" y="${(y + 5).toFixed(1)}" ${font} text-anchor="end" data-lbl="y:${Math.round(v * 1000) / 1000}">${fmt(v)}</text>`)
   }
   out.push(`<path d="${tickPath.join('')}" stroke="#222" stroke-width="1.2"/>`)
 
@@ -441,7 +443,7 @@ export function renderPlotSvg(spec: PlotSpec): { svg: string; width: number; hei
     if (spec.labels && last) {
       const lx = Math.min(sx(last[0]) - 6, W - 30)
       const ly = Math.max(sy(last[1]) - 8 - ci * 2, 30)
-      out.push(`<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" ${font} fill="${c.color}" font-style="italic" text-anchor="end">y = ${esc(c.expr.trim())}</text>`)
+      out.push(`<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" ${font} fill="${c.color}" font-style="italic" text-anchor="end" data-lbl="cv:${ci}">y = ${esc(c.expr.trim())}</text>`)
     }
   })
 
@@ -461,7 +463,7 @@ export function renderPlotSvg(spec: PlotSpec): { svg: string; width: number; hei
       /* không có đường cong */
     }
     const right = px < W - 40
-    out.push(`<text x="${(px + (right ? 8 : -8)).toFixed(1)}" y="${(py + (below ? 20 : -8)).toFixed(1)}" ${font} font-style="italic" font-weight="bold" text-anchor="${right ? 'start' : 'end'}">${esc(p.name)}</text>`)
+    out.push(`<text x="${(px + (right ? 8 : -8)).toFixed(1)}" y="${(py + (below ? 20 : -8)).toFixed(1)}" ${font} font-style="italic" font-weight="bold" text-anchor="${right ? 'start' : 'end'}" data-lbl="pt:${esc(p.name)}">${esc(p.name)}</text>`)
   }
 
   const svg =

@@ -9,8 +9,9 @@ import { cn } from '@/lib/cn'
 import { PLOT_COLORS, autoYRange, parseExpr, renderPlotSvg, svgDataUrl, type Fn, type PlotSpec } from '@/lib/plot'
 
 export type { ToolImage as PlotImage } from '@/lib/toolSpec'
-import type { ToolImage as PlotImage } from '@/lib/toolSpec'
-import { withTextHalo } from '@/lib/toolSpec'
+import type { ToolImage as PlotImage, LabelPos } from '@/lib/toolSpec'
+import { applyLabelPos, withTextHalo } from '@/lib/toolSpec'
+import { LabelPreview } from './LabelDragPreview'
 
 const MAX_CURVES = 4
 const fmtNum = (v: number) => String(v).replace('.', ',').replace('-', '−')
@@ -38,6 +39,9 @@ export function GraphToolModal({
   const [yMax, setYMax] = useState(String(initial?.yMax ?? 5))
   const [grid, setGrid] = useState(initial?.grid ?? true)
   const [labels, setLabels] = useState(initial?.labels ?? false)
+  // độ lệch nhãn đã kéo (giữ nguyên khi sửa hàm số / miền vẽ — nhãn đi theo điểm của nó)
+  const [labelPos, setLabelPos] = useState<LabelPos | undefined>(initial?.labelPos)
+  const [move, setMove] = useState(false)
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
@@ -84,7 +88,8 @@ export function GraphToolModal({
     }
   }, [parsed, exprs, x0, x1, autoY, yMin, yMax, grid, labels, rangeError])
 
-  const plot = useMemo(() => (spec ? withTextHalo(renderPlotSvg(spec)) : null), [spec])
+  // spec có labelPos → nằm trong <desc> của SVG, chèn/nhấp đúp sửa vẫn giữ độ lệch
+  const plot = useMemo(() => (spec ? withTextHalo(applyLabelPos(renderPlotSvg({ ...spec, labelPos }), labelPos)) : null), [spec, labelPos])
   const canInsert = Boolean(plot && spec && spec.curves.length > 0)
 
   // khi bật tự động, hiện miền y đang dùng trong ô (chỉ đọc)
@@ -217,10 +222,19 @@ export function GraphToolModal({
           <div className="flex h-[min(56vh,520px)] min-h-0 min-w-0 flex-1 items-center justify-center bg-paper-2 p-5 md:h-auto">
             {plot ? (
               // co vừa cả hai chiều: khung 1:1 có thể cao hơn rộng
-              <img
-                src={svgDataUrl(plot.svg)}
-                alt="Xem trước đồ thị"
-                className="max-h-full max-w-full rounded-[4px] border border-line bg-white object-contain"
+              <LabelPreview
+                img={plot}
+                labelPos={labelPos}
+                onChange={setLabelPos}
+                move={move}
+                onToggle={() => setMove((v) => !v)}
+                fallback={
+                  <img
+                    src={svgDataUrl(plot.svg)}
+                    alt="Xem trước đồ thị"
+                    className="max-h-full max-w-full rounded-[4px] border border-line bg-white object-contain"
+                  />
+                }
               />
             ) : (
               <p className="text-[13px] text-ink-3">Kiểm tra lại miền vẽ.</p>
