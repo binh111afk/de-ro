@@ -1,6 +1,6 @@
 # context.md — đề rõ (trình soạn đề thi)
 
-Bản đồ ngắn của dự án. **Chỉ đọc file này khi bắt đầu phiên**; các file khác mở khi việc đang làm cần tới (bảng "Đọc thêm khi nào" bên dưới). Cập nhật: 07/11/2026 (phiên 24). Phiên 24: trig, Bảng ghép nhóm, 608 câu Toán 10–12 (bankThpt3), khung chương trình trong prompt — đã merge main (08/11/2026).
+Bản đồ ngắn của dự án. **Chỉ đọc file này khi bắt đầu phiên**; các file khác mở khi việc đang làm cần tới (bảng "Đọc thêm khi nào" bên dưới). Cập nhật: 08/11/2026 (phiên 25). Phiên 25: khung chương trình 12 môn lớp 1–12 nối vào prompt AI (đã push); đang dở sửa khung trục công cụ Đồ thị (plot.ts chưa commit).
 
 ## Dự án
 
@@ -60,7 +60,7 @@ Danh sách đủ: `package.json` → `scripts`. `.env` cần `LLM_API_KEY` (mẫ
 
 | Khi làm | Mở |
 |---|---|
-| Tiếp việc phiên trước | [phiên 24](docs/handoff/phien-24.md) (kiểm trig, 600 câu, công cụ Bảng ghép nhóm do agent khác làm; nối khung chương trình) |
+| Tiếp việc phiên trước | [phiên 25](docs/handoff/phien-25.md) (công cụ Đồ thị: khung trục/cùng tỉ lệ đang dở; ý tưởng chống hình che số) · [phiên 24](docs/handoff/phien-24.md) (trig, Bảng ghép nhóm, 600 câu) |
 | Khung chương trình các môn (chống AI ra đề vượt lớp): soạn prompt cho agent ngoài, kiểm file gửi về | [docs/khung-chuong-trinh.md](docs/khung-chuong-trinh.md) |
 | Soạn thêm câu cho kho câu hỏi | [scripts/bank/HUONG_DAN_SOAN.md](scripts/bank/HUONG_DAN_SOAN.md) |
 | Model AI, nhà cung cấp, hạn mức token, chi phí | [phiên 22](docs/handoff/phien-22.md), mục "So sánh nhà cung cấp" |

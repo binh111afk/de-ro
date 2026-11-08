@@ -223,7 +223,42 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
     }
   }
 
-  // nhãn điểm: đặt ra phía ngoài so với tâm hình
+  // các nét đã vẽ, để nhãn điểm né (đoạn, cạnh đa giác, mặt đất, mũi tên kích thước)
+  const segs: [P, P][] = []
+  for (const c of cmds) {
+    if (c.t === 'seg' || c.t === 'ground') segs.push([at(c.a), at(c.b)])
+    else if (c.t === 'right') {
+      // kí hiệu góc vuông: hai cạnh ô vuông 10px
+      const o = at(c.o)
+      const u = (n: string): P => {
+        const q = at(n)
+        const l = Math.hypot(q[0] - o[0], q[1] - o[1]) || 1
+        return [(q[0] - o[0]) / l, (q[1] - o[1]) / l]
+      }
+      const da = u(c.a)
+      const db = u(c.b)
+      const p1: P = [o[0] + da[0] * 10, o[1] + da[1] * 10]
+      const p3: P = [o[0] + db[0] * 10, o[1] + db[1] * 10]
+      const p2: P = [p1[0] + db[0] * 10, p1[1] + db[1] * 10]
+      segs.push([p1, p2], [p2, p3])
+    }
+    else if (c.t === 'poly') c.names.forEach((n, i) => segs.push([at(n), at(c.names[(i + 1) % c.names.length])]))
+    else if (c.t === 'dim') {
+      const p = at(c.a)
+      const q = at(c.b)
+      const n = outward(p, q)
+      segs.push([[p[0] + n[0] * 18, p[1] + n[1] * 18], [q[0] + n[0] * 18, q[1] + n[1] * 18]])
+    }
+  }
+  const distSeg = (x: number, y: number, [p, q]: [P, P]) => {
+    const dx = q[0] - p[0]
+    const dy = q[1] - p[1]
+    const t = Math.max(0, Math.min(1, ((x - p[0]) * dx + (y - p[1]) * dy) / (dx * dx + dy * dy || 1)))
+    return Math.hypot(x - p[0] - t * dx, y - p[1] - t * dy)
+  }
+  const placed: P[] = []
+
+  // nhãn điểm: thử 8 hướng quanh điểm, chọn chỗ không đè nét / nhãn khác, ưu tiên phía ngoài tâm hình
   for (const [name, p] of pts) {
     if (name.startsWith('_')) continue
     const [x, y] = S(p)
@@ -246,7 +281,42 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
       dx = -n[0] * 0.8 + u[0] * side * 0.6
       dy = -n[1] * 0.8 + u[1] * side * 0.6
     }
-    b += text(x + dx * 13, y + dy * 13 + 5, name, 'middle', 15)
+    // phía có gạch chéo của mặt đất / tường mà điểm nằm trên: không đặt nhãn vào đó
+    const hatch: P[] = []
+    for (const c of cmds) {
+      if (c.t !== 'ground') continue
+      const g1 = at(c.a)
+      const g2 = at(c.b)
+      if (distSeg(x, y, [g1, g2]) <= 2) hatch.push(outward(g1, g2))
+    }
+    let best: P = [x + dx * 13, y + dy * 13]
+    let bestScore = Infinity
+    for (let k = 0; k < 16; k++) {
+      const a = ((k % 8) * Math.PI) / 4
+      const ux = Math.cos(a)
+      const uy = Math.sin(a)
+      // tâm chữ (chữ cao ~11px, rộng ~9px/kí tự); vòng ngoài xa hơn, phạt nhẹ
+      const rad = k < 8 ? 14 : 22
+      const lx = x + ux * rad
+      const ly = y + uy * rad
+      let score = -(ux * dx + uy * dy) * 2 + (k < 8 ? 0 : 4)
+      for (const n of hatch) if (ux * n[0] + uy * n[1] > 0.2) score += 40
+      for (const sg of segs) {
+        const d = distSeg(lx, ly, sg)
+        if (d < 10) score += (10 - d) * 3
+      }
+      for (const [px, py] of placed) {
+        const d = Math.hypot(lx - px, ly - py)
+        if (d < 16) score += (16 - d) * 3
+      }
+      if (lx < 6 || lx > W - 6 || ly < 8 || ly > H - 4) score += 20
+      if (score < bestScore - 1e-9) {
+        bestScore = score
+        best = [lx, ly]
+      }
+    }
+    placed.push(best)
+    b += text(best[0], best[1] + 5, name, 'middle', 15)
   }
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${desc}<rect width="100%" height="100%" fill="#fff"/>${b}</svg>`
   return { svg, width: W, height: H }

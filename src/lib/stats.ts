@@ -198,6 +198,15 @@ export function renderStatsSvg(spec: StatsSpec, desc: string): { svg: string; wi
   const hist = spec.chart === 'hist'
   const slot = hist ? 56 : spec.chart === 'line' ? 64 : Math.max(56, 26 * ns + 24)
   const plotW = slot * cats.length
+  // biểu đồ đoạn thẳng có trục ngang là số tăng dần, bắt đầu từ 0 (thời gian 0, 1, 2, 3 h…):
+  // vẽ như đồ thị Lý — mốc 0 nằm ngay gốc, hai trục chung một số 0, điểm đặt theo đúng giá trị.
+  const nums = cats.map((c) => Number(c.trim().replace(',', '.')))
+  const origin =
+    spec.chart === 'line' &&
+    nums.length > 1 &&
+    nums.every((v, i) => Number.isFinite(v) && cats[i].trim() !== '' && (i === 0 || v > nums[i - 1])) &&
+    nums[0] === 0
+  const cx = (i: number) => (origin ? left + (nums[i] / nums[nums.length - 1]) * (plotW - slot / 2) : left + i * slot + slot / 2)
   const plotH = 230
   // chú thích + chỗ cho mũi tên và tên trục đứng
   const legH = (ns > 1 ? 26 : 0) + 22
@@ -217,7 +226,10 @@ export function renderStatsSvg(spec: StatsSpec, desc: string): { svg: string; wi
     b += `<text x="${left - 6}" y="${f1(Y(v) + 5)}" ${FAM} font-size="13" text-anchor="end">${fmt(v)}</text>`
   }
   b += `<path d="${grid}" stroke="#bbb" stroke-width="0.8" stroke-dasharray="3 3"/>`
-  b += `<text x="${left - 6}" y="${y0 + 5}" ${FAM} font-size="13" text-anchor="end">0</text>`
+  // gốc: một số 0 chung cho hai trục (ở góc dưới trái) khi trục ngang là số từ 0
+  b += origin
+    ? `<text x="${left - 6}" y="${y0 + 16}" ${FAM} font-size="13" text-anchor="end">0</text>`
+    : `<text x="${left - 6}" y="${y0 + 5}" ${FAM} font-size="13" text-anchor="end">0</text>`
 
   if (hist) {
     // cột liền nhau; mốc ở biên các khoảng
@@ -231,15 +243,16 @@ export function renderStatsSvg(spec: StatsSpec, desc: string): { svg: string; wi
     })
   } else if (spec.chart === 'line') {
     series.forEach((s, si) => {
-      const pts = s.vals.map((v, i) => [left + i * slot + slot / 2, Y(v)])
+      const pts = s.vals.map((v, i) => [cx(i), Y(v)])
       b += `<path d="M${pts.map((p) => `${f1(p[0])} ${f1(p[1])}`).join('L')}" fill="none" stroke="#222" stroke-width="1.6"${si % 2 ? ' stroke-dasharray="6 4"' : ''}/>`
       pts.forEach((p) => (b += mark(MARKS[si % MARKS.length], p[0], p[1])))
     })
-    // nhãn số: cùng một cột, xếp từ điểm cao xuống; nhãn sát nhãn trên thì đặt dưới điểm
+    // nhãn số: cùng một cột, xếp từ điểm cao xuống; nhãn sát nhãn trên thì đặt dưới điểm.
+    // Điểm (0; 0) nằm đúng gốc (đã có số 0 chung) → không ghi thêm "0" cho khỏi trùng.
     if (spec.values)
       cats.forEach((_, i) => {
-        const x = left + i * slot + slot / 2
-        const col = series.map((s) => ({ v: s.vals[i], y: Y(s.vals[i]) })).filter((p) => Number.isFinite(p.v)).sort((p, q) => p.y - q.y)
+        const x = cx(i)
+        const col = series.map((s) => ({ v: s.vals[i], y: Y(s.vals[i]) })).filter((p) => Number.isFinite(p.v) && !(origin && i === 0 && p.v === 0)).sort((p, q) => p.y - q.y)
         let prev = -Infinity
         for (const p of col) {
           let ty = p.y - 9
@@ -258,7 +271,12 @@ export function renderStatsSvg(spec: StatsSpec, desc: string): { svg: string; wi
       })
     })
   }
-  if (!hist) cats.forEach((c, i) => (b += `<text x="${f1(left + i * slot + slot / 2)}" y="${y0 + 18}" ${FAM} font-size="13" text-anchor="middle">${esc(c)}</text>`))
+  if (!hist)
+    cats.forEach((c, i) => {
+      if (origin && i === 0) return // số 0 đã ghi chung ở gốc
+      if (origin) b += `<path d="M${f1(cx(i))} ${y0 - 3}v6" stroke="#222" stroke-width="1"/>`
+      b += `<text x="${f1(cx(i))}" y="${y0 + 18}" ${FAM} font-size="13" text-anchor="middle">${esc(c)}</text>`
+    })
   // trục
   b += `<path d="M${left} ${y0}H${left + plotW + 22}" stroke="#222" stroke-width="1.2" marker-end="url(#starr)"/>`
   b += `<path d="M${left} ${y0}V${top + legH - 14}" stroke="#222" stroke-width="1.2" marker-end="url(#starr)"/>`

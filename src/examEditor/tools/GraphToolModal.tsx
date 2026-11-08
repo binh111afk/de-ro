@@ -10,6 +10,7 @@ import { PLOT_COLORS, autoYRange, parseExpr, renderPlotSvg, svgDataUrl, type Fn,
 
 export type { ToolImage as PlotImage } from '@/lib/toolSpec'
 import type { ToolImage as PlotImage } from '@/lib/toolSpec'
+import { withTextHalo } from '@/lib/toolSpec'
 
 const MAX_CURVES = 4
 const fmtNum = (v: number) => String(v).replace('.', ',').replace('-', '−')
@@ -83,7 +84,7 @@ export function GraphToolModal({
     }
   }, [parsed, exprs, x0, x1, autoY, yMin, yMax, grid, labels, rangeError])
 
-  const plot = useMemo(() => (spec ? renderPlotSvg(spec) : null), [spec])
+  const plot = useMemo(() => (spec ? withTextHalo(renderPlotSvg(spec)) : null), [spec])
   const canInsert = Boolean(plot && spec && spec.curves.length > 0)
 
   // khi bật tự động, hiện miền y đang dùng trong ô (chỉ đọc)

@@ -237,10 +237,11 @@ export function renderOxySvg(spec: OxySpec, desc: string): { svg: string; width:
   const yMax = Math.max(spec.yMax, 0.5)
   const unit = Math.max(14, Math.min(48, 380 / (xMax - xMin)))
   const pad = 26
-  const W = Math.round((xMax - xMin) * unit + 2 * pad)
-  const H = Math.round((yMax - yMin) * unit + 2 * pad)
+  const padEnd = 38 // phía phải / trên: chỗ cho mũi tên dài + tên trục
+  const W = Math.round((xMax - xMin) * unit + pad + padEnd)
+  const H = Math.round((yMax - yMin) * unit + pad + padEnd)
   const X = (x: number) => pad + (x - xMin) * unit
-  const Y = (y: number) => pad + (yMax - y) * unit
+  const Y = (y: number) => padEnd + (yMax - y) * unit
   const S = (p: V) => `${f1(X(p[0]))} ${f1(Y(p[1]))}`
   const box: V[] = [
     [xMin, yMin],
@@ -265,24 +266,27 @@ export function renderOxySvg(spec: OxySpec, desc: string): { svg: string; width:
     if (bad.length >= 3) back.push(`<path d="M${bad.map(S).join('L')}Z" fill="url(#oxyhatch)" stroke="none"/>`)
   }
   // trục
-  const ax = `M${f1(X(xMin))} ${f1(Y(0))}H${f1(X(xMax) + 10)}`
+  // mũi tên vượt vạch cuối 22px, tên trục đặt ở đầu mũi tên → không dính số cuối trục
+  const ax = `M${f1(X(xMin))} ${f1(Y(0))}H${f1(X(xMax) + 22)}`
   out.push(`<path d="${ax}" stroke="#222" stroke-width="1.2" marker-end="url(#oxyarr)"/>`)
-  out.push(`<path d="M${f1(X(0))} ${f1(Y(yMin))}V${f1(Y(yMax) - 10)}" stroke="#222" stroke-width="1.2" marker-end="url(#oxyarr)"/>`)
-  out.push(`<text x="${f1(X(xMax) + 4)}" y="${f1(Y(0) + 18)}" ${FONT} font-style="italic">x</text>`)
-  out.push(`<text x="${f1(X(0) - 14)}" y="${f1(Y(yMax) - 2)}" ${FONT} font-style="italic">y</text>`)
-  out.push(`<text x="${f1(X(0) - 13)}" y="${f1(Y(0) + 16)}" ${FONT} font-style="italic">O</text>`)
+  out.push(`<path d="M${f1(X(0))} ${f1(Y(yMin))}V${f1(Y(yMax) - 22)}" stroke="#222" stroke-width="1.2" marker-end="url(#oxyarr)"/>`)
+  // chữ (tên trục, số) vẽ SAU các đường cong để nét không đè lên chữ
+  const labels: string[] = []
+  labels.push(`<text x="${f1(X(xMax) + 16)}" y="${f1(Y(0) + 17)}" ${FONT} font-style="italic">x</text>`)
+  labels.push(`<text x="${f1(X(0) - 8)}" y="${f1(Y(yMax) - 12)}" ${FONT} font-style="italic" text-anchor="end">y</text>`)
+  labels.push(`<text x="${f1(X(0) - 13)}" y="${f1(Y(0) + 16)}" ${FONT} font-style="italic">O</text>`)
   // vạch chia + số
   const step = unit < 20 ? 2 : 1
   let ticks = ''
   for (let x = Math.ceil(xMin); x <= xMax; x++) {
     if (x === 0) continue
     ticks += `M${f1(X(x))} ${f1(Y(0) - 3)}v6`
-    if (spec.numbers && x % step === 0) out.push(`<text x="${f1(X(x))}" y="${f1(Y(0) + 17)}" ${FAM} font-size="13" text-anchor="middle">${fmt(x)}</text>`)
+    if (spec.numbers && x % step === 0) labels.push(`<text x="${f1(X(x))}" y="${f1(Y(0) + 17)}" ${FAM} font-size="13" text-anchor="middle">${fmt(x)}</text>`)
   }
   for (let y = Math.ceil(yMin); y <= yMax; y++) {
     if (y === 0) continue
     ticks += `M${f1(X(0) - 3)} ${f1(Y(y))}h6`
-    if (spec.numbers && y % step === 0) out.push(`<text x="${f1(X(0) - 7)}" y="${f1(Y(y) + 4.5)}" ${FAM} font-size="13" text-anchor="end">${fmt(y)}</text>`)
+    if (spec.numbers && y % step === 0) labels.push(`<text x="${f1(X(0) - 7)}" y="${f1(Y(y) + 4.5)}" ${FAM} font-size="13" text-anchor="end">${fmt(y)}</text>`)
   }
   out.push(`<path d="${ticks}" stroke="#222" stroke-width="1"/>`)
 
@@ -364,6 +368,7 @@ export function renderOxySvg(spec: OxySpec, desc: string): { svg: string; width:
     back.join('') +
     out.join('') +
     `<g clip-path="url(#oxyclip)">${draw.join('')}</g>` +
+    labels.join('') +
     `</svg>`
   return { svg, width: W, height: H, errors }
 }

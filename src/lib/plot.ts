@@ -212,10 +212,12 @@ const H_MAX = 720
 function niceStep(span: number) {
   // khung vừa phải thì chia theo từng đơn vị như SGK
   if (span >= 4 && span <= 20) return 1
-  const raw = span / 10
+  // khung lớn: chia khoảng 5–8 ô như học sinh vẽ tay (y tới 30 → mỗi ô 5, không phải 2).
+  // Lấy bước "đẹp" nhỏ nhất mà không quá 8 ô.
+  const raw = span / 8
   const p = Math.pow(10, Math.floor(Math.log10(raw)))
   const m = raw / p
-  return (m < 1.5 ? 1 : m < 3.5 ? 2 : m < 7.5 ? 5 : 10) * p
+  return (m <= 1 ? 1 : m <= 2 ? 2 : m <= 5 ? 5 : 10) * p
 }
 
 const fmt = (v: number) => String(Math.round(v * 1000) / 1000).replace('.', ',').replace('-', '−')
@@ -266,8 +268,15 @@ export function autoYRange(fns: Fn[], xMin: number, xMax: number): [number, numb
           best = a
         }
       }
-      lo = best
-      hi = best + cap
+      // vẫn giữ gốc O trong khung (đồ thị hàm số đọc tọa độ bằng đếm ô, không ngắt trục);
+      // miền y dài hơn miền x thì renderPlotSvg chia đơn vị trục y khác trục x (vd mỗi vạch = 5)
+      const cMin = ys[Math.min(upper(ys, best - 1e-9), ys.length - 1)]
+      const cMax = ys[Math.max(upper(ys, best + cap) - 1, 0)]
+      const lo0 = Math.min(cMin, 0)
+      const hi0 = Math.max(cMax, 0)
+      const m = (hi0 - lo0) * 0.1
+      lo = lo0 < 0 ? lo0 - m : -m * 0.5
+      hi = hi0 > 0 ? hi0 + m : m * 0.5
     }
   } else if (hi - lo < xSpan * 0.4) {
     const mid = (lo + hi) / 2
@@ -312,8 +321,28 @@ export function readPlotSpec(svgOrUrl: string | undefined | null): PlotSpec | nu
 }
 
 export function renderPlotSvg(spec: PlotSpec): { svg: string; width: number; height: number } {
-  const { xMin, xMax, yMin, yMax } = spec
-  // cùng đơn vị hai trục; miền y quá dài/ngắn so với miền x thì đành co giãn trong [H_MIN, H_MAX]
+  let { xMin, xMax, yMin, yMax } = spec
+  // khung y lớn (bước > 1): kéo hai đầu ra bội của bước như học sinh vẽ tay (y tới 27 → trục tới 30,
+  // chia mỗi ô 5), chừa thêm nửa ô cho mũi tên kẻo vạch trên cùng sát mép bị bỏ số.
+  const sY = yMax - yMin > 20 ? niceStep(yMax - yMin) : 0
+  if (sY) {
+    const lo = Math.floor(yMin / sY + 1e-9) * sY
+    const hi = Math.ceil(yMax / sY - 1e-9) * sY
+    yMin = lo < 0 ? lo - sY * 0.4 : lo
+    yMax = hi > 0 ? hi + sY * 0.4 : hi
+  }
+  let forced = false
+  // cùng đơn vị hai trục. Miền y quá dài (vd y = 30 trên x ∈ [−5; 5]) thì KHÔNG kéo giãn riêng trục y
+  // mà mở rộng miền x cho vừa khổ hình → hai trục vẫn cùng đơn vị, cùng bước chia, ô lưới vuông.
+  const ySpanPx = (yMax - yMin) * ((W - 2 * PAD) / (xMax - xMin)) + 2 * PAD
+  if (ySpanPx > H_MAX) {
+    const xSpan = ((W - 2 * PAD) * (yMax - yMin)) / (H_MAX - 2 * PAD)
+    const c = (xMin + xMax) / 2
+    xMin = c - xSpan / 2
+    xMax = c + xSpan / 2
+    forced = true
+  }
+  // miền y quá ngắn thì đành co giãn trong [H_MIN, H_MAX]
   const unit = (W - 2 * PAD) / (xMax - xMin)
   const H = Math.round(Math.min(H_MAX, Math.max(H_MIN, (yMax - yMin) * unit + 2 * PAD)))
   const sx = (x: number) => PAD + ((x - xMin) / (xMax - xMin)) * (W - 2 * PAD)
@@ -326,16 +355,20 @@ export function renderPlotSvg(spec: PlotSpec): { svg: string; width: number; hei
   const ay = Math.min(Math.max(0, xMin), xMax)
   const X0 = sx(ay)
   const Y0 = sy(ax)
-  const stepX = niceStep(xMax - xMin)
+  // miền x bị nới theo miền y → dùng luôn bước của trục y cho cả hai trục
+  const stepX = forced && sY ? sY : niceStep(xMax - xMin)
   // cùng đơn vị thì cùng bước chia (trừ khi đành co giãn)
-  const stepY = Math.abs((H - 2 * PAD) / (yMax - yMin) - unit) < 1e-6 ? stepX : niceStep(yMax - yMin)
+  const stepY = Math.abs((H - 2 * PAD) / (yMax - yMin) - unit) < 1e-6 ? stepX : sY || niceStep(yMax - yMin)
   const ticks = (lo: number, hi: number, step: number) => {
     const r: number[] = []
     for (let v = Math.ceil(lo / step) * step; v <= hi + 1e-9; v += step) r.push(Math.round(v / step) * step)
     return r
   }
-  const tx = ticks(xMin, xMax, stepX)
-  const ty = ticks(yMin, yMax, stepY)
+  // 0 nằm ngoài miền → trục bám mép: kẻ dấu ngắt trục, bỏ số sát chỗ trục (kẻo "29" nằm ngay chỗ O)
+  const breakY = ax !== 0
+  const breakX = ay !== 0
+  const tx = ticks(xMin, xMax, stepX).filter((v) => !breakX || Math.abs(sx(v) - X0) > 24)
+  const ty = ticks(yMin, yMax, stepY).filter((v) => !breakY || Math.abs(sy(v) - Y0) > 24)
 
   if (spec.grid) {
     const g = [
@@ -353,6 +386,11 @@ export function renderPlotSvg(spec: PlotSpec): { svg: string; width: number; hei
     `<text x="${X0 + 9}" y="16" ${font} font-style="italic">y</text>`,
     `<text x="${X0 - 5}" y="${Y0 + 16}" ${font} font-style="italic" text-anchor="end">O</text>`,
   )
+  // dấu ngắt trục (hai gạch chéo sát gốc O), nền trắng che khúc trục ở giữa
+  if (breakY)
+    out.push(`<path d="M${X0 - 5} ${Y0 - 9}h10v6h-10z" fill="#fff"/><path d="M${X0 - 6} ${Y0 - 6}l12 -5M${X0 - 6} ${Y0 - 1}l12 -5" stroke="#222" stroke-width="1.3"/>`)
+  if (breakX)
+    out.push(`<path d="M${X0 + 9} ${Y0 - 5}h6v10h-6z" fill="#fff"/><path d="M${X0 + 8} ${Y0 + 6}l5 -12M${X0 + 13} ${Y0 + 6}l5 -12" stroke="#222" stroke-width="1.3"/>`)
   // vạch chia + số
   const tickPath: string[] = []
   for (const v of tx) {

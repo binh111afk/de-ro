@@ -54,7 +54,22 @@ export interface ToolImage {
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 const toolDesc = (doc: ToolDoc) => `<desc>${esc(JSON.stringify({ deTool: doc }))}</desc>`
 
+/**
+ * Viền trắng quanh mọi chữ trong hình (nét vẽ đi qua chữ thì chữ vẫn đọc được, như nhãn "M" nằm trên đoạn AB).
+ * Bỏ qua chữ đã tự đặt `stroke` hoặc chữ trắng (chữ trên nền màu).
+ */
+const HALO_CSS =
+  '<style>text:not([stroke]):not([fill="#fff"]):not([fill="#ffffff"]):not([fill="white"]){paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round}</style>'
+export function withTextHalo<T extends { svg: string }>(img: T): T {
+  if (img.svg.includes(HALO_CSS)) return img
+  return { ...img, svg: img.svg.replace(/<svg[^>]*>/, (m) => m + HALO_CSS) }
+}
+
 export function renderTool(doc: ToolDoc): ToolImage {
+  return withTextHalo(renderToolRaw(doc))
+}
+
+function renderToolRaw(doc: ToolDoc): ToolImage {
   switch (doc.kind) {
     case 'graph':
       // đồ thị giữ định dạng <desc> cũ ({dePlot}) để ảnh cũ/mới đọc như nhau
