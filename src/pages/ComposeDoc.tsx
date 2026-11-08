@@ -344,7 +344,6 @@ export default function ComposeDoc() {
     decks,
     newDoc,
     newSlide,
-    ensureDoc,
     closeTab,
     setActive,
     renameTab,
@@ -363,7 +362,9 @@ export default function ComposeDoc() {
   // trang khác đã mở sẵn một tab (vd. Lưu vào trình soạn thảo ở trang xem đề) thì vào thẳng tab đó
   const { state: navState } = useLocation() as { state: { openTab?: boolean } | null }
   // F5 không về màn Bắt đầu: phiên (tab đang mở, tab đang xem) giữ trong sessionStorage — xem effect khôi phục bên dưới
-  const [startOpen, setStartOpen] = useState(() => (navState?.openTab ? false : (readSession()?.start ?? true)))
+  const [startChosen, setStartOpen] = useState(() => (navState?.openTab ? false : (readSession()?.start ?? true)))
+  // không còn tab nào (mới vào trang, hoặc vừa đóng tab cuối) thì luôn ở màn Bắt đầu
+  const startOpen = startChosen || tabs.length === 0
   // màn hẹp (tablet/điện thoại): trợ lý AI nổi đè lên trang nên mặc định đóng
   const [aiOpen, setAiOpen] = useState(() => window.innerWidth >= 1024)
   const [navOpen, setNavOpen] = useState(true)
@@ -393,19 +394,18 @@ export default function ComposeDoc() {
   const geo = pageGeometry(pageSetup)
   const { PAGE_W, MARGIN } = geo
 
-  // mở tab đầu tiên nếu chưa có.
-  // `ensureDoc` kiểm tra trạng thái tại thời điểm gọi nên StrictMode gọi effect
-  // hai lần vẫn chỉ tạo ra một tab.
+  // mở lại tab của phiên trước (F5); không tự tạo tab trống — mới vào chỉ có màn Bắt đầu, người dùng tự chọn
+  const restoredRef = useRef(false)
   useEffect(() => {
     restoreSession()
-    ensureDoc()
-  }, [ensureDoc])
+    restoredRef.current = true
+  }, [])
 
   // ghi lại phiên mỗi khi đổi tab / mở-đóng màn Bắt đầu
   const sessionTabs = useComposeStore((s) => s.tabs)
   useEffect(() => {
-    // lần render đầu (trước khi khôi phục) chưa có tab — đừng ghi đè phiên cũ bằng danh sách rỗng
-    if (sessionTabs.length === 0) return
+    // trước khi khôi phục xong chưa có tab — đừng ghi đè phiên cũ bằng danh sách rỗng
+    if (!restoredRef.current) return
     try {
       sessionStorage.setItem(SESSION_KEY, JSON.stringify({ ids: sessionTabs.map((t) => t.id), active: activeId, start: startOpen }))
     } catch {
@@ -832,7 +832,6 @@ export default function ComposeDoc() {
           onClose={(id) => {
             saveTab(id)
             closeTab(id)
-            if (id === activeId && tabs.length === 1) newDoc()
           }}
           onNew={() => newDocAndOpen(false)}
           onNewSlide={() => {
