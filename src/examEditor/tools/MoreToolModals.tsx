@@ -958,35 +958,69 @@ const TRIG_HELP: HelpGroups = [
       { code: 'x = π/3 + k2π/3', what: 'Ghi "x =" ở đầu cũng được' },
     ],
   },
+  {
+    group: 'Đặt tên & toạ độ',
+    items: [
+      { code: 'M: pi/3', what: 'Điểm M ứng với góc π/3, tên hiện cạnh chấm' },
+      { code: 'M(1/2; √3/2)', what: 'Điểm theo toạ độ (cos; sin); lệch quá 0,02 khỏi đường tròn sẽ được nhắc nhưng vẫn vẽ' },
+      { code: 'Ô "Ghi giá trị cos, sin"', what: 'Giá trị đẹp ghi 0, ±1/2, ±√2/2, ±√3/2, ±1; góc khác ghi gần đúng 2 chữ số thập phân' },
+    ],
+  },
+  {
+    group: 'Tô cung (miền nghiệm)',
+    items: [
+      { code: 'tô: π/6 → 5π/6', what: 'Cung đậm chạy ngược chiều kim đồng hồ; chấm đặc hai đầu' },
+      { code: 'tô: [π/6 → 5π/6)', what: '[ ] lấy đầu mút (chấm đặc), ( ) không lấy (chấm rỗng); mũi tên →, -> hoặc "đến"; nhiều dòng tô được' },
+    ],
+  },
+  {
+    group: 'Đường thẳng',
+    items: [
+      { code: 'y = 1/2', what: 'Nét liền ngang xuyên qua đường tròn, chấm 2 giao điểm; chấp nhận √3/2, sqrt(3)/2, 0,5' },
+      { code: 'x = -√2/2', what: 'Nét liền dọc; nhãn giá trị ở trục cos (x =) hoặc trục sin (y =)' },
+      { code: 'x = π/3 + kπ', what: 'Vế phải có π, k, ° thì vẫn là góc/họ nghiệm, không phải đường thẳng' },
+    ],
+  },
+  {
+    group: 'Nối & cung',
+    items: [
+      { code: 'nối: M N P', what: 'Đa giác khép kín qua các điểm đã khai báo (M: góc hoặc M(x; y))' },
+      { code: 'nối tô: M N P', what: 'Nối kèm tô nhạt bên trong; "nối tô: họ" nối cả họ nghiệm theo thứ tự góc tăng' },
+      { code: 'cung: M N "π/2"', what: 'Cung mũi tên ngược chiều kim đồng hồ từ M tới N; nhãn trong "…" tuỳ chọn' },
+    ],
+  },
 ]
 
 export function TrigModal({ initial, submitLabel, onClose, onInsert }: Props<TrigSpec>) {
-  const [spec, setSpec] = useState<TrigSpec>(initial ?? { angles: '2π/3', projections: true, tan: false })
+  const [spec, setSpec] = useState<TrigSpec>(initial ?? { angles: '2π/3', projections: true, tan: false, values: false, cot: false })
   const set = (p: Partial<TrigSpec>) => setSpec((s) => ({ ...s, ...p }))
   const doc = useMemo((): ToolDoc => ({ kind: 'trig', spec }), [spec])
   const { preview, error } = useRender(doc)
+  const errs = [...(error ? [error] : []), ...(preview?.errors ?? []).map((e) => `Dòng ${e.line}: ${e.msg}`)]
   const inputs = (
     <>
       <TextBlock
-        title="Góc / họ nghiệm"
+        title="Góc / lệnh vẽ"
         help={TRIG_HELP}
-        intro="Mỗi dòng một góc hoặc một họ nghiệm α + kβ."
+        intro="Mỗi dòng một lệnh: góc, họ nghiệm, tô:, nối:, cung:, y =, x =, M(x; y)."
         value={spec.angles}
         onChange={(angles) => set({ angles })}
         rows={4}
-        errors={error ? [error] : []}
+        errors={errs}
         label="Các góc"
       />
       <section className="space-y-2">
         <Check checked={spec.projections} onChange={(projections) => set({ projections })}>Nét đứt chiếu xuống trục cos, sin</Check>
+        <Check checked={spec.values === true} onChange={(values) => set({ values })}>Ghi giá trị cos, sin trên trục</Check>
         <Check checked={spec.tan} onChange={(tan) => set({ tan })}>Vẽ trục tan</Check>
+        <Check checked={spec.cot === true} onChange={(cot) => set({ cot })}>Vẽ trục cot</Check>
       </section>
     </>
   )
   return (
     <ToolShell
       title="Đường tròn lượng giác"
-      hint="Điểm ngọn cung, hình chiếu lên trục cos, sin; họ nghiệm thành các điểm"
+      hint="Điểm ngọn cung, hình chiếu, họ nghiệm; tô miền nghiệm, đường thẳng y = a / x = a, nối điểm thành đa giác"
       inputs={inputs}
       inputsWidth={340}
       preview={preview}

@@ -132,7 +132,7 @@ export const FIGURE_GUIDE =
   '6) Hình không gian: {"kind":"geo3d","shape":"pyramid3|pyramid3-sa|pyramid3-regular|pyramid4|pyramid4-sa|pyramid4-regular|tetrahedron|prism3|box|cube|cone|cylinder|sphere","names":["S","A","B","C","D"],"height":true,"diagonals":false,"circumsphere":false,"extras":"mỗi dòng một lệnh dựng thêm"}. "circumsphere": true vẽ mặt cầu ngoại tiếp khối (hộp, lập phương, chóp/lăng trụ đều). ' +
   'Lệnh dựng thêm (5 và 6; không dùng cho nón, trụ, cầu): "M = trung điểm SC", "N = SB 1/3", "O = AC cắt BD", "H = hình chiếu S lên (ABCD)", "K = hình chiếu A lên SB", "G = trọng tâm ABC", "O = tâm ngoại tiếp ABC", "đường cao AH", "trung tuyến AM", "MN" (nối), "đứt MN". Đề gọi tên điểm nào (trung điểm, giao điểm, tâm I…) thì PHẢI dựng điểm đó cho hiện trên hình.\n' +
   '7) Biểu đồ thống kê: {"kind":"stats","chart":"bar|line|pie|hist|table","title":"","xLabel":"","yLabel":"","data":"dòng 1: nhãn cách nhau bởi ;\\nTên dãy: số; số; ..."}. Ghép nhóm dùng nhãn "[40; 50) [50; 60)".\n' +
-  '8) Đường tròn lượng giác: {"kind":"trig","angles":"mỗi dòng một góc, vd pi/3; đặt tên điểm: M: pi/3"}. Đề gọi điểm M, N… thì ghi "M: góc" để tên hiện trên hình.\n' +
+  '8) Đường tròn lượng giác: {"kind":"trig","angles":"mỗi dòng một lệnh","values":true|false,"cot":true|false}. Lệnh mỗi dòng: góc "pi/3", "150°"; họ nghiệm "π/4 + kπ/2"; đặt tên điểm "M: pi/6"; điểm theo toạ độ "M(1/2; √3/2)"; tô miền nghiệm "tô: [π/6 → 5π/6)" (mũi tên →, -> hoặc đến; [ ] lấy đầu mút, ( ) không lấy); đường thẳng "y = 1/2", "x = -√2/2"; nối đa giác "nối tô: M N P" (tô nhạt; "nối tô: họ" nối cả họ nghiệm); cung giữa 2 điểm "cung: M N \\"α\\"". Ví dụ: {"kind":"trig","angles":"M: pi/6\\nN: 5pi/6\\ntô: [pi/6 → 5pi/6]\\ny = 1/2","values":true}. values=true ghi giá trị cos, sin trên trục, cot=true vẽ trục cot. Đề gọi điểm M, N… thì ghi M: góc để tên hiện trên hình.\n' +
   '9) Sơ đồ cây xác suất: {"kind":"probtree","text":"mỗi dòng một nhánh \\"Tên: xác suất\\", thụt 2 dấu cách cho nhánh con"}\n' +
   '10) Trục số biểu diễn tập hợp: {"kind":"numberline","sets":"mỗi dòng một tập, vd (-2; 3] hoặc (-oo; -1) ∪ [2; 5]"}\n' +
   '11) Biểu đồ Ven: {"kind":"venn","sets":"A, B","shade":"A ∩ B","counts":"A: 5\\nAB: 3\\nB: 4"}\n' +
@@ -245,7 +245,7 @@ export function toolFromRaw(raw: Record<string, unknown>): ToolDoc {
       }
       break
     case 'trig':
-      doc = { kind: 'trig', spec: { angles: need('angles', 'Không thấy góc để biểu diễn.'), projections: bool('projections', true), tan: bool('tan', false) } }
+      doc = { kind: 'trig', spec: { angles: need('angles', 'Không thấy góc để biểu diễn.'), projections: bool('projections', true), tan: bool('tan', false), values: bool('values', false), cot: bool('cot', false) } }
       break
     case 'probtree':
       doc = { kind: 'probtree', spec: { text: need('text', 'Không thấy sơ đồ cây.'), products: bool('products', false) } }
