@@ -1,0 +1,698 @@
+[
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Cho dãy $u_n=\\dfrac{2n+1}{n+3}$. Khi đó $\\lim u_n$ bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$1$"
+      },
+      {
+        "key": "B",
+        "text": "$2$"
+      },
+      {
+        "key": "C",
+        "text": "$3$"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{1}{2}$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Chia tử và mẫu cho $n$: $\\lim \\dfrac{2+\\frac{1}{n}}{1+\\frac{3}{n}}=2$.",
+    "tags": [
+      "giới hạn",
+      "giới hạn dãy"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "$\\lim\\limits_{x \\to 2}(3x-1)$ bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$4$"
+      },
+      {
+        "key": "B",
+        "text": "$6$"
+      },
+      {
+        "key": "C",
+        "text": "$5$"
+      },
+      {
+        "key": "D",
+        "text": "$3$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Hàm đa thức liên tục: $3 \\cdot 2-1=5$.",
+    "tags": [
+      "giới hạn",
+      "giới hạn hàm số"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "$\\lim \\dfrac{5n^2+3n}{n^2+1}$ bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$5$"
+      },
+      {
+        "key": "B",
+        "text": "$3$"
+      },
+      {
+        "key": "C",
+        "text": "$+\\infty$"
+      },
+      {
+        "key": "D",
+        "text": "$0$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Chia cho $n^2$: $\\lim \\dfrac{5+\\frac{3}{n}}{1+\\frac{1}{n^2}}=5$.",
+    "tags": [
+      "giới hạn",
+      "giới hạn dãy"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "$\\lim\\limits_{x \\to 1}\\dfrac{x^2-1}{x-1}$ bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$0$"
+      },
+      {
+        "key": "B",
+        "text": "$2$"
+      },
+      {
+        "key": "C",
+        "text": "$1$"
+      },
+      {
+        "key": "D",
+        "text": "$+\\infty$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$\\dfrac{x^2-1}{x-1}=x+1$ khi $x \\ne 1$ nên giới hạn bằng $2$.",
+    "tags": [
+      "giới hạn",
+      "dạng 0/0"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Cấp số nhân lùi vô hạn có số hạng đầu $u_1=8$, công bội $q=\\dfrac{1}{4}$. Tổng của cấp số nhân là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\dfrac{16}{3}$"
+      },
+      {
+        "key": "B",
+        "text": "$12$"
+      },
+      {
+        "key": "C",
+        "text": "$24$"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{32}{3}$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "$S=\\dfrac{u_1}{1-q}=\\dfrac{8}{\\frac{3}{4}}=\\dfrac{32}{3}$.",
+    "tags": [
+      "giới hạn",
+      "cấp số nhân lùi vô hạn"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "$\\lim \\dfrac{4n+1}{2n^2+3}$ bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$2$"
+      },
+      {
+        "key": "B",
+        "text": "$4$"
+      },
+      {
+        "key": "C",
+        "text": "$0$"
+      },
+      {
+        "key": "D",
+        "text": "$+\\infty$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Bậc tử nhỏ hơn bậc mẫu nên giới hạn bằng $0$.",
+    "tags": [
+      "giới hạn",
+      "giới hạn dãy"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Hàm số $f(x)=\\dfrac{x^2-4}{x-2}$ có đồ thị như hình (không xác định tại $x=2$). $\\lim\\limits_{x \\to 2}f(x)$ bằng",
+    "figure": {
+      "kind": "graph",
+      "curves": [
+        "x+2"
+      ],
+      "xMin": -2,
+      "xMax": 5,
+      "yMin": -2,
+      "yMax": 8,
+      "labels": true
+    },
+    "options": [
+      {
+        "key": "A",
+        "text": "$4$"
+      },
+      {
+        "key": "B",
+        "text": "$2$"
+      },
+      {
+        "key": "C",
+        "text": "$0$"
+      },
+      {
+        "key": "D",
+        "text": "không tồn tại"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Với $x \\ne 2$: $f(x)=x+2$ nên giới hạn bằng $4$.",
+    "tags": [
+      "giới hạn",
+      "đồ thị"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "$\\lim\\limits_{x \\to +\\infty}\\left(\\sqrt{x^2+1}-x\\right)$ bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$1$"
+      },
+      {
+        "key": "B",
+        "text": "$+\\infty$"
+      },
+      {
+        "key": "C",
+        "text": "$0$"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{1}{2}$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Nhân liên hợp: $\\dfrac{1}{\\sqrt{x^2+1}+x} \\to 0$.",
+    "tags": [
+      "giới hạn",
+      "dạng vô định"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Hàm số $y=f(x)$ liên tục tại điểm $x_0$ khi và chỉ khi",
+    "options": [
+      {
+        "key": "A",
+        "text": "$f$ xác định tại $x_0$"
+      },
+      {
+        "key": "B",
+        "text": "$\\lim\\limits_{x \\to x_0}f(x)=f(x_0)$"
+      },
+      {
+        "key": "C",
+        "text": "$\\lim\\limits_{x \\to x_0}f(x)$ tồn tại"
+      },
+      {
+        "key": "D",
+        "text": "$f(x_0)>0$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Theo định nghĩa tính liên tục.",
+    "tags": [
+      "giới hạn",
+      "liên tục"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "$\\lim\\limits_{x \\to 0}\\sin x$ bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$0$"
+      },
+      {
+        "key": "B",
+        "text": "$1$"
+      },
+      {
+        "key": "C",
+        "text": "không tồn tại"
+      },
+      {
+        "key": "D",
+        "text": "$-1$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "$\\sin x$ liên tục tại $0$ nên giới hạn bằng $\\sin 0=0$.",
+    "tags": [
+      "giới hạn",
+      "giới hạn lượng giác"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Cấp số nhân lùi vô hạn có $u_1=6$, $q=-\\dfrac{1}{2}$. Tổng của cấp số nhân là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$12$"
+      },
+      {
+        "key": "B",
+        "text": "$3$"
+      },
+      {
+        "key": "C",
+        "text": "$18$"
+      },
+      {
+        "key": "D",
+        "text": "$4$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "$S=\\dfrac{6}{1-\\left(-\\frac{1}{2}\\right)}=\\dfrac{6}{\\frac{3}{2}}=4$.",
+    "tags": [
+      "giới hạn",
+      "cấp số nhân lùi vô hạn"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Cho dãy $u_n=\\dfrac{an+1}{2n-3}$. Để $\\lim u_n=3$ thì $a$ bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$3$"
+      },
+      {
+        "key": "B",
+        "text": "$6$"
+      },
+      {
+        "key": "C",
+        "text": "$\\dfrac{3}{2}$"
+      },
+      {
+        "key": "D",
+        "text": "$2$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$\\lim u_n=\\dfrac{a}{2}=3 \\Rightarrow a=6$.",
+    "tags": [
+      "giới hạn",
+      "tham số"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Xét dãy $u_n=\\dfrac{3n-2}{n+1}$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$\\lim u_n=3$"
+      },
+      {
+        "key": "b",
+        "text": "Dãy có giới hạn hữu hạn"
+      },
+      {
+        "key": "c",
+        "text": "$\\lim u_n=0$"
+      },
+      {
+        "key": "d",
+        "text": "$\\lim \\dfrac{n^2}{n^2+1}=1$"
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) Đúng. b) Đúng. c) Giới hạn là 3, không phải 0 — sai. d) Đúng.",
+    "tags": [
+      "giới hạn",
+      "giới hạn dãy"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Xét cấp số nhân lùi vô hạn. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Điều kiện để có tổng là $|q|<1$ và $q \\ne 0$"
+      },
+      {
+        "key": "b",
+        "text": "Với $u_1=9$, $q=\\dfrac{1}{3}$ thì tổng bằng $\\dfrac{27}{2}$"
+      },
+      {
+        "key": "c",
+        "text": "Với $u_1=5$, $q=\\dfrac{1}{2}$ thì tổng bằng $10$"
+      },
+      {
+        "key": "d",
+        "text": "Với $u_1=4$, $q=\\dfrac{1}{2}$ thì tổng bằng $6$"
+      }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a) Đúng. b) $\\dfrac{9}{\\frac{2}{3}}=\\dfrac{27}{2}$ — đúng. c) $\\dfrac{5}{\\frac{1}{2}}=10$ — đúng. d) $\\dfrac{4}{\\frac{1}{2}}=8 \\ne 6$ — sai.",
+    "tags": [
+      "giới hạn",
+      "cấp số nhân lùi vô hạn"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Xét giới hạn $\\lim\\limits_{x \\to 3}\\dfrac{x^2-9}{x-3}$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Thay $x=3$ ta được dạng vô định $\\dfrac{0}{0}$"
+      },
+      {
+        "key": "b",
+        "text": "Giới hạn bằng 6"
+      },
+      {
+        "key": "c",
+        "text": "Giới hạn bằng 0"
+      },
+      {
+        "key": "d",
+        "text": "Hàm số không xác định tại $x=3$"
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) Đúng. b) $\\dfrac{(x-3)(x+3)}{x-3}=x+3 \\to 6$ — đúng. c) Sai. d) Mẫu bằng 0 tại $x=3$ — đúng.",
+    "tags": [
+      "giới hạn",
+      "dạng 0/0"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Cho hàm số $y=x^2$ (đồ thị như hình). Xét tính đúng sai:",
+    "figure": {
+      "kind": "graph",
+      "curves": [
+        "x^2"
+      ],
+      "xMin": -3,
+      "xMax": 3,
+      "yMin": -1,
+      "yMax": 9,
+      "labels": true
+    },
+    "options": [
+      {
+        "key": "a",
+        "text": "$\\lim\\limits_{x \\to 2}x^2=4$"
+      },
+      {
+        "key": "b",
+        "text": "Hàm số liên tục tại $x=2$"
+      },
+      {
+        "key": "c",
+        "text": "$\\lim\\limits_{x \\to -1}x^2=-1$"
+      },
+      {
+        "key": "d",
+        "text": "Hàm số không liên tục tại $x=0$"
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) Đúng. b) Đúng vì là hàm đa thức. c) $(-1)^2=1 \\ne -1$ — sai. d) Hàm đa thức liên tục trên $\\mathbb{R}$ — sai.",
+    "tags": [
+      "giới hạn",
+      "liên tục"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Xét tính đúng sai về các giới hạn:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$\\lim\\limits_{x \\to -\\infty}(2x^3-x+1)=-\\infty$"
+      },
+      {
+        "key": "b",
+        "text": "$\\lim\\limits_{x \\to +\\infty}\\dfrac{3x^2+1}{x^2-2}=3$"
+      },
+      {
+        "key": "c",
+        "text": "$\\lim\\limits_{x \\to \\frac{\\pi}{2}}\\tan x=+\\infty$"
+      },
+      {
+        "key": "d",
+        "text": "$\\lim\\limits_{x \\to 0^+}\\dfrac{1}{x}=+\\infty$"
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) Đúng. b) Đúng. c) Giới hạn trái là $-\\infty$, giới hạn phải là $+\\infty$ nên giới hạn không tồn tại — sai. d) Đúng.",
+    "tags": [
+      "giới hạn",
+      "giới hạn vô cực"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Xét tính đúng sai về dãy số có giới hạn:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Dãy số hội tụ thì bị chặn"
+      },
+      {
+        "key": "b",
+        "text": "Dãy số bị chặn thì hội tụ"
+      },
+      {
+        "key": "c",
+        "text": "Dãy đơn điệu tăng và bị chặn trên thì hội tụ"
+      },
+      {
+        "key": "d",
+        "text": "Dãy $u_n=(-1)^n$ hội tụ"
+      }
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "a) Đúng. b) Ví dụ $(-1)^n$ bị chặn nhưng phân kỳ — sai. c) Đúng theo định lí. d) Dãy dao động giữa $-1$ và $1$ — sai.",
+    "tags": [
+      "giới hạn",
+      "dãy số"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Tính $\\lim \\dfrac{n+5}{2n+1}$.",
+    "answer": "0,5",
+    "explanation": "Chia cho $n$: giới hạn $=\\dfrac{1}{2}=0{,}5$.",
+    "tags": [
+      "giới hạn",
+      "giới hạn dãy"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Tính $\\lim\\limits_{x \\to 1}\\dfrac{x^3-1}{x-1}$.",
+    "answer": "3",
+    "explanation": "$\\dfrac{(x-1)(x^2+x+1)}{x-1}=x^2+x+1 \\to 3$.",
+    "tags": [
+      "giới hạn",
+      "dạng 0/0"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Cấp số nhân lùi vô hạn có $u_1=12$, $q=\\dfrac{1}{3}$. Tính tổng của cấp số nhân.",
+    "answer": "18",
+    "explanation": "$S=\\dfrac{12}{1-\\frac{1}{3}}=\\dfrac{12}{\\frac{2}{3}}=18$.",
+    "tags": [
+      "giới hạn",
+      "cấp số nhân lùi vô hạn"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Tính $\\lim\\limits_{x \\to +\\infty}\\left(5-\\dfrac{2}{x}\\right)$.",
+    "answer": "5",
+    "explanation": "$\\dfrac{2}{x} \\to 0$ nên giới hạn bằng $5$.",
+    "tags": [
+      "giới hạn",
+      "giới hạn hàm số"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Tính $\\lim\\limits_{x \\to 2}\\dfrac{\\sqrt{x+2}-2}{x-2}$.",
+    "answer": "0,25",
+    "explanation": "Nhân liên hợp: $\\dfrac{1}{\\sqrt{x+2}+2} \\to \\dfrac{1}{4}=0{,}25$.",
+    "tags": [
+      "giới hạn",
+      "dạng vô định"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Tính $\\lim \\left(3+\\left(-\\dfrac{1}{2}\\right)^n\\right)$.",
+    "answer": "3",
+    "explanation": "$\\left(-\\dfrac{1}{2}\\right)^n \\to 0$ nên giới hạn bằng $3$.",
+    "tags": [
+      "giới hạn",
+      "giới hạn dãy"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Tìm $a$ để $\\lim\\limits_{x \\to +\\infty}\\dfrac{ax+1}{3x-2}=2$.",
+    "answer": "6",
+    "explanation": "Giới hạn bằng $\\dfrac{a}{3}=2$ nên $a=6$.",
+    "tags": [
+      "giới hạn",
+      "tham số"
+    ]
+  }
+]

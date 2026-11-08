@@ -1,0 +1,725 @@
+[
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Đường thẳng $a$ song song với mặt phẳng $(P)$ khi",
+    "options": [
+      {
+        "key": "A",
+        "text": "$a$ nằm trong $(P)$"
+      },
+      {
+        "key": "B",
+        "text": "$a$ không nằm trong $(P)$ và không có điểm chung với $(P)$"
+      },
+      {
+        "key": "C",
+        "text": "$a$ cắt $(P)$ tại một điểm"
+      },
+      {
+        "key": "D",
+        "text": "$a$ có đúng hai điểm chung với $(P)$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Theo định nghĩa về vị trí tương đối của đường thẳng và mặt phẳng.",
+    "tags": [
+      "hình học không gian",
+      "song song"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Hai mặt phẳng phân biệt được gọi là song song khi",
+    "options": [
+      {
+        "key": "A",
+        "text": "chúng có một điểm chung"
+      },
+      {
+        "key": "B",
+        "text": "chúng có một đường thẳng chung"
+      },
+      {
+        "key": "C",
+        "text": "chúng không có điểm chung"
+      },
+      {
+        "key": "D",
+        "text": "mỗi mặt phẳng chứa một đường thẳng của mặt phẳng kia"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Theo định nghĩa, hai mặt phẳng song song khi không có điểm chung.",
+    "tags": [
+      "hình học không gian",
+      "song song"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Cho hình chóp $S.ABCD$ có đáy $ABCD$ là hình bình hành. Giao tuyến của $(SAB)$ và $(SCD)$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "đường thẳng qua $S$ và song song với $AB$"
+      },
+      {
+        "key": "B",
+        "text": "đường thẳng $AB$"
+      },
+      {
+        "key": "C",
+        "text": "đường thẳng qua $S$ và song song với $SA$"
+      },
+      {
+        "key": "D",
+        "text": "hai mặt phẳng song song, không có giao tuyến"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Hai mặt phẳng có điểm chung $S$; $AB \\parallel CD$ nên giao tuyến qua $S$ song song $AB$.",
+    "tags": [
+      "hình học không gian",
+      "giao tuyến"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Trong hình lập phương $ABCD.A'B'C'D'$, đường thẳng $AB$ và mặt phẳng $(A'B'C'D')$ có vị trí tương đối",
+    "options": [
+      {
+        "key": "A",
+        "text": "cắt nhau"
+      },
+      {
+        "key": "B",
+        "text": "song song"
+      },
+      {
+        "key": "C",
+        "text": "$AB$ nằm trong mặt phẳng"
+      },
+      {
+        "key": "D",
+        "text": "không xác định được"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$AB \\parallel A'B'$ với $A'B' \\subset (A'B'C'D')$ nên $AB$ song song mặt phẳng đó.",
+    "tags": [
+      "hình học không gian",
+      "song song"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Cho hình chóp $S.ABC$ (như hình), $M$ là trung điểm $SA$. Thiết diện cắt bởi mặt phẳng $(MBC)$ là",
+    "figure": {
+      "kind": "geo3d",
+      "shape": "pyramid3",
+      "names": [
+        "S",
+        "A",
+        "B",
+        "C"
+      ],
+      "extras": "M = trung điểm SA\nMB\nMC"
+    },
+    "options": [
+      {
+        "key": "A",
+        "text": "tứ giác $MBCM$"
+      },
+      {
+        "key": "B",
+        "text": "đoạn thẳng $MB$"
+      },
+      {
+        "key": "C",
+        "text": "tam giác $MBC$"
+      },
+      {
+        "key": "D",
+        "text": "tam giác $SBC$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Mặt phẳng $(MBC)$ cắt các cạnh $SA$, $SB$, $SC$ tại $M$, $B$, $C$ nên thiết diện là tam giác $MBC$.",
+    "tags": [
+      "hình học không gian",
+      "thiết diện"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Cho đường thẳng $d$ song song với mặt phẳng $(P)$. Mặt phẳng $(Q)$ đi qua $d$ và cắt $(P)$ theo giao tuyến $a$. Khi đó",
+    "options": [
+      {
+        "key": "A",
+        "text": "$d$ cắt $a$"
+      },
+      {
+        "key": "B",
+        "text": "$d$ song song $a$"
+      },
+      {
+        "key": "C",
+        "text": "$d$ nằm trong $(P)$"
+      },
+      {
+        "key": "D",
+        "text": "$a$ vuông góc $d$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Theo tính chất: nếu đường thẳng song song với mặt phẳng thì mọi mặt phẳng chứa nó cắt mặt phẳng đó theo giao tuyến song song với nó.",
+    "tags": [
+      "hình học không gian",
+      "tính chất song song"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Cho hình chóp $S.ABCD$ có đáy $ABCD$ là hình bình hành, $O=AC \\cap BD$ (như hình). Giao tuyến của $(SAC)$ và $(SBD)$ là",
+    "figure": {
+      "kind": "geo3d",
+      "shape": "pyramid4",
+      "names": [
+        "S",
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "extras": "O = AC cắt BD\nSO"
+    },
+    "options": [
+      {
+        "key": "A",
+        "text": "đường thẳng $SA$"
+      },
+      {
+        "key": "B",
+        "text": "đường thẳng $SO$"
+      },
+      {
+        "key": "C",
+        "text": "đường thẳng $SC$"
+      },
+      {
+        "key": "D",
+        "text": "đường thẳng $SD$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Hai mặt phẳng cùng chứa $S$; $O$ chung của $AC$ và $BD$ nên giao tuyến là $SO$.",
+    "tags": [
+      "hình học không gian",
+      "giao tuyến"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Trong hình lập phương $ABCD.A'B'C'D'$ (như hình), đường chéo $BD$ song song với mặt phẳng nào sau đây?",
+    "figure": {
+      "kind": "geo3d",
+      "shape": "cube",
+      "names": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "A'",
+        "B'",
+        "C'",
+        "D'"
+      ]
+    },
+    "options": [
+      {
+        "key": "A",
+        "text": "$(ABB'A')$"
+      },
+      {
+        "key": "B",
+        "text": "$(ADD'A')$"
+      },
+      {
+        "key": "C",
+        "text": "$(ACC'A')$"
+      },
+      {
+        "key": "D",
+        "text": "$(A'B'C'D')$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "$BD \\parallel B'D'$ với $B'D' \\subset (A'B'C'D')$ và $BD$ không nằm trong mặt phẳng đó nên $BD$ song song $(A'B'C'D')$.",
+    "tags": [
+      "hình học không gian",
+      "song song"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Hai đường thẳng cùng nằm trong một mặt phẳng và không có điểm chung thì",
+    "options": [
+      {
+        "key": "A",
+        "text": "cắt nhau"
+      },
+      {
+        "key": "B",
+        "text": "chồng lên nhau"
+      },
+      {
+        "key": "C",
+        "text": "vuông góc"
+      },
+      {
+        "key": "D",
+        "text": "song song"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Theo định nghĩa hai đường thẳng song song trong mặt phẳng.",
+    "tags": [
+      "hình học không gian",
+      "song song"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Trong phép chiếu song song, khi đường thẳng $a$ song song với phương chiếu thì hình chiếu của $a$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "một đường thẳng song song $a$"
+      },
+      {
+        "key": "B",
+        "text": "một đường thẳng cắt $a$"
+      },
+      {
+        "key": "C",
+        "text": "một điểm"
+      },
+      {
+        "key": "D",
+        "text": "một đường tròn"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Trường hợp suy biến: đường thẳng song song phương chiếu có hình chiếu là một điểm.",
+    "tags": [
+      "hình học không gian",
+      "phép chiếu song song"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Trong phép chiếu song song (không suy biến), hình chiếu của một tam giác là",
+    "options": [
+      {
+        "key": "A",
+        "text": "một tam giác"
+      },
+      {
+        "key": "B",
+        "text": "một đoạn thẳng"
+      },
+      {
+        "key": "C",
+        "text": "một đường tròn"
+      },
+      {
+        "key": "D",
+        "text": "một điểm"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Khi không suy biến, hình chiếu song song của tam giác là một tam giác.",
+    "tags": [
+      "hình học không gian",
+      "phép chiếu song song"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Cho tứ diện $ABCD$, $M$, $N$, $P$ lần lượt là trung điểm của $AB$, $AC$, $AD$. Mặt phẳng $(MNP)$ song song với $(BCD)$. Tỉ số $\\dfrac{S_{MNP}}{S_{BCD}}$ bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\dfrac{1}{2}$"
+      },
+      {
+        "key": "B",
+        "text": "$\\dfrac{1}{4}$"
+      },
+      {
+        "key": "C",
+        "text": "$\\dfrac{1}{3}$"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{1}{8}$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Tam giác $MNP$ đồng dạng với tam giác $BCD$ theo tỉ số $\\dfrac{1}{2}$ nên tỉ số diện tích bằng $\\left(\\dfrac{1}{2}\\right)^2=\\dfrac{1}{4}$.",
+    "tags": [
+      "hình học không gian",
+      "song song"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Trong hình lập phương $ABCD.A'B'C'D'$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$AB$ song song với $(A'B'C'D')$"
+      },
+      {
+        "key": "b",
+        "text": "$AC$ song song với $(A'B'C'D')$"
+      },
+      {
+        "key": "c",
+        "text": "$AB'$ song song với $D'C$"
+      },
+      {
+        "key": "d",
+        "text": "$AA'$ vuông góc với $(ABCD)$"
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) $AB \\parallel A'B'$ — đúng. b) $AC \\parallel A'C'$ — đúng. c) $AB'$ và $D'C$ cắt nhau tại trung điểm (hai đường chéo của mặt phẳng (BCC'B')... $AB'$ không cùng mặt với $D'C$; thực tế chúng chéo nhau — sai. d) Đúng.",
+    "tags": [
+      "hình học không gian",
+      "song song"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Cho hình chóp $S.ABCD$ có đáy là hình bình hành $ABCD$, $O=AC \\cap BD$ (như hình). Xét tính đúng sai:",
+    "figure": {
+      "kind": "geo3d",
+      "shape": "pyramid4",
+      "names": [
+        "S",
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "extras": "O = AC cắt BD\nSO"
+    },
+    "options": [
+      {
+        "key": "a",
+        "text": "$(SAC)$ và $(SBD)$ cắt nhau theo giao tuyến $SO$"
+      },
+      {
+        "key": "b",
+        "text": "$O$ là trung điểm của $AC$"
+      },
+      {
+        "key": "c",
+        "text": "$SO$ vuông góc với $(ABCD)$"
+      },
+      {
+        "key": "d",
+        "text": "$AB$ song song với $(SCD)$"
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) Đúng. b) Đường chéo hình bình hành cắt nhau tại trung điểm — đúng. c) Chóp với đáy hình bình hành bất kì không đảm bảo $SO \\perp$ đáy — sai. d) $AB \\parallel CD \\subset (SCD)$ — đúng.",
+    "tags": [
+      "hình học không gian",
+      "giao tuyến"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Xét phép chiếu song song. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Hình chiếu của một đoạn thẳng là một đoạn thẳng hoặc một điểm"
+      },
+      {
+        "key": "b",
+        "text": "Hình chiếu song song bảo toàn tính song song của hai đường thẳng (không suy biến)"
+      },
+      {
+        "key": "c",
+        "text": "Hình chiếu của tam giác luôn là một tam giác"
+      },
+      {
+        "key": "d",
+        "text": "Hình chiếu của đường tròn có thể là một elip"
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) Đúng. b) Đúng. c) Có thể suy biến thành đoạn thẳng — sai. d) Đúng.",
+    "tags": [
+      "hình học không gian",
+      "phép chiếu song song"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Cho hình chóp $S.ABC$, $M$, $N$ lần lượt là trung điểm $SB$, $SC$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$MN \\parallel BC$"
+      },
+      {
+        "key": "b",
+        "text": "$(AMN)$ cắt $(ABC)$ theo giao tuyến là đường thẳng qua $A$ song song $MN$"
+      },
+      {
+        "key": "c",
+        "text": "$MN=\\dfrac{BC}{2}$"
+      },
+      {
+        "key": "d",
+        "text": "$AM$ vuông góc với $MN$"
+      }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a) Định lí trung bình — đúng. b) Đúng theo tính chất song song. c) Đúng. d) Không có dữ kiện để khẳng định — sai.",
+    "tags": [
+      "hình học không gian",
+      "tính chất song song"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Trong hình lập phương $ABCD.A'B'C'D'$, $O$, $O'$ lần lượt là tâm hai mặt đáy. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$(ACC'A')$ và $(BDD'B')$ cắt nhau theo giao tuyến $OO'$"
+      },
+      {
+        "key": "b",
+        "text": "$BD$ vuông góc với $B'D'$"
+      },
+      {
+        "key": "c",
+        "text": "$AC$ vuông góc với $BD$"
+      },
+      {
+        "key": "d",
+        "text": "$A'C'$ song song với $AC$"
+      }
+    ],
+    "answer": "ĐSĐĐ",
+    "explanation": "a) Đúng. b) $BD \\parallel B'D'$ — sai. c) Hai đường chéo hình vuông vuông góc — đúng. d) Đúng.",
+    "tags": [
+      "hình học không gian",
+      "hình lập phương"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Cho hình chóp đều $S.ABCD$, $M$ là trung điểm $SA$. Xét mặt phẳng $(MBD)$ cắt chóp. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Thiết diện là tam giác $MBD$"
+      },
+      {
+        "key": "b",
+        "text": "Thiết diện chứa đoạn $AC$"
+      },
+      {
+        "key": "c",
+        "text": "$MB=MD$"
+      },
+      {
+        "key": "d",
+        "text": "Thiết diện chia hình chóp thành hai phần"
+      }
+    ],
+    "answer": "ĐSĐĐ",
+    "explanation": "a) Đúng. b) $M$, $B$, $D$ không chứa $A$ hay $C$ trọn đoạn $AC$ — sai. c) Do đối xứng của chóp đều — đúng. d) Đúng.",
+    "tags": [
+      "hình học không gian",
+      "thiết diện"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "NB",
+    "prompt": "Trong hình lập phương $ABCD.A'B'C'D'$, mặt phẳng nào song song với mặt $(ABCD)$?",
+    "answer": "1",
+    "explanation": "Chỉ có mặt $(A'B'C'D')$ song song với $(ABCD)$.",
+    "tags": [
+      "hình học không gian",
+      "song song"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Một hình lập phương có bao nhiêu mặt phẳng?",
+    "answer": "6",
+    "explanation": "Hình lập phương có 6 mặt, mỗi mặt nằm trong một mặt phẳng.",
+    "tags": [
+      "hình học không gian",
+      "hình lập phương"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Một mặt phẳng cắt cả bốn cạnh bên $SA$, $SB$, $SC$, $SD$ của hình chóp $S.ABCD$ tại bốn điểm phân biệt. Thiết diện tạo thành là một tứ giác. Tính số cạnh của thiết diện.",
+    "answer": "4",
+    "explanation": "Thiết diện là tứ giác nên có 4 cạnh.",
+    "tags": [
+      "hình học không gian",
+      "thiết diện"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Trong hình lập phương $ABCD.A'B'C'D'$, có bao nhiêu cạnh của hình lập phương song song với cạnh $AB$ (không tính chính $AB$)?",
+    "answer": "3",
+    "explanation": "Các cạnh song song với $AB$ là $DC$, $A'B'$, $D'C'$: 3 cạnh.",
+    "tags": [
+      "hình học không gian",
+      "hình lập phương"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Tứ diện $ABCD$ có $M$, $N$ lần lượt là trung điểm $AB$, $AC$. Biết $BC=10$, tính $MN$.",
+    "answer": "5",
+    "explanation": "$MN$ là đường trung bình của tam giác $ABC$: $MN=\\dfrac{BC}{2}=5$.",
+    "tags": [
+      "hình học không gian",
+      "đường trung bình"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Hình lập phương $ABCD.A'B'C'D'$ có cạnh bằng 2. Tính khoảng cách giữa hai đường thẳng song song $AB$ và $C'D'$.",
+    "answer": "2",
+    "explanation": "$AB$ nằm trong $(ABCD)$, $C'D'$ nằm trong $(A'B'C'D')$ song song với $(ABCD)$ nên khoảng cách bằng chiều cao khối lập phương, bằng 2.",
+    "tags": [
+      "hình học không gian",
+      "khoảng cách"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Hình chóp $S.ABC$ có $SA \\perp (ABC)$, tam giác $ABC$ vuông tại $A$ với $AB=3$, $AC=4$. Tính khoảng cách từ $S$ đến đường thẳng $BC$.",
+    "answer": "2,4",
+    "explanation": "$BC=5$; vì $BC \\perp AB$ nên $BC \\perp (SAB)$, suy ra $d(S,BC)=d(A,BC)=\\dfrac{AB \\cdot AC}{BC}=\\dfrac{12}{5}=2{,}4$.",
+    "tags": [
+      "hình học không gian",
+      "khoảng cách"
+    ]
+  }
+]

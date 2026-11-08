@@ -1,0 +1,340 @@
+[
+  {
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Khoảng cách từ điểm $A(1;2)$ đến gốc toạ độ $O$ là",
+    "options": [
+      { "key": "A", "text": "$3$" },
+      { "key": "B", "text": "$\\sqrt{5}$" },
+      { "key": "C", "text": "$5$" },
+      { "key": "D", "text": "$\\sqrt{3}$" }
+    ],
+    "answer": "B",
+    "explanation": "$OA=\\sqrt{1^2+2^2}=\\sqrt{5}$.",
+    "tags": ["toạ độ", "khoảng cách"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Đường thẳng đi qua điểm $M(0;2)$ và có hệ số góc $-1$ có phương trình",
+    "options": [
+      { "key": "A", "text": "$y=x+2$" },
+      { "key": "B", "text": "$y=x-2$" },
+      { "key": "C", "text": "$y=-x+2$" },
+      { "key": "D", "text": "$y=-x-2$" }
+    ],
+    "answer": "C",
+    "explanation": "$y=kx+b$ với $k=-1$, $b=2$ (đi qua $(0;2)$): $y=-x+2$.",
+    "tags": ["toạ độ", "phương trình đường thẳng"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Hệ số góc của đường thẳng $d: 3x-4y+12=0$ là",
+    "options": [
+      { "key": "A", "text": "$\\dfrac{4}{3}$" },
+      { "key": "B", "text": "$-\\dfrac{3}{4}$" },
+      { "key": "C", "text": "$-\\dfrac{4}{3}$" },
+      { "key": "D", "text": "$\\dfrac{3}{4}$" }
+    ],
+    "answer": "D",
+    "explanation": "$-4y=-3x-12 \\Leftrightarrow y=\\dfrac{3}{4}x+3$ nên hệ số góc $\\dfrac{3}{4}$.",
+    "tags": ["toạ độ", "hệ số góc"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Khoảng cách từ điểm $M(2;3)$ đến đường thẳng $d: 2x+y-4=0$ là",
+    "options": [
+      { "key": "A", "text": "$\\dfrac{3\\sqrt{5}}{5}$" },
+      { "key": "B", "text": "$\\sqrt{5}$" },
+      { "key": "C", "text": "$3$" },
+      { "key": "D", "text": "$\\dfrac{\\sqrt{5}}{5}$" }
+    ],
+    "answer": "A",
+    "explanation": "$d(M,d)=\\dfrac{|2 \\cdot 2+3-4|}{\\sqrt{4+1}}=\\dfrac{3}{\\sqrt{5}}=\\dfrac{3\\sqrt{5}}{5}$.",
+    "tags": ["toạ độ", "khoảng cách"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Đường tròn $(x-1)^2+(y+2)^2=9$ có bán kính bằng",
+    "options": [
+      { "key": "A", "text": "$9$" },
+      { "key": "B", "text": "$\\sqrt{3}$" },
+      { "key": "C", "text": "$3$" },
+      { "key": "D", "text": "$6$" }
+    ],
+    "answer": "C",
+    "explanation": "Bán kính $R=\\sqrt{9}=3$.",
+    "tags": ["toạ độ", "đường tròn"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Viết phương trình đường tròn có tâm $I(2;-1)$ và đi qua gốc toạ độ $O$.",
+    "options": [
+      { "key": "A", "text": "$(x-2)^2+(y+1)^2=25$" },
+      { "key": "B", "text": "$(x-2)^2+(y+1)^2=\\sqrt{5}$" },
+      { "key": "C", "text": "$(x+2)^2+(y-1)^2=5$" },
+      { "key": "D", "text": "$(x-2)^2+(y+1)^2=5$" }
+    ],
+    "answer": "D",
+    "explanation": "$R=|OI|=\\sqrt{4+1}=\\sqrt{5}$ nên $(x-2)^2+(y+1)^2=5$.",
+    "tags": ["toạ độ", "phương trình đường tròn"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Cho đường tròn $(C): (x-1)^2+y^2=4$ và đường thẳng $d: x-y+3=0$ (như hình). Vị trí tương đối của $d$ và $(C)$ là",
+    "figure": { "kind": "oxy", "xMin": -5, "xMax": 4, "yMin": -3, "yMax": 4, "grid": true, "items": "đường tròn (1; 0) 2\nd: x - y + 3 = 0" },
+    "options": [
+      { "key": "A", "text": "$d$ cắt $(C)$ tại hai điểm phân biệt" },
+      { "key": "B", "text": "$d$ tiếp xúc với $(C)$" },
+      { "key": "C", "text": "$d$ không giao với $(C)$" },
+      { "key": "D", "text": "$d$ đi qua tâm $(C)$" }
+    ],
+    "answer": "C",
+    "explanation": "$d(I;d)=\\dfrac{|1-0+3|}{\\sqrt{2}}=2\\sqrt{2} \\approx 2{,}83>2=R$ nên $d$ không giao $(C)$.",
+    "tags": ["toạ độ", "vị trí tương đối"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Góc giữa hai đường thẳng $d_1: y=2x+1$ và $d_2: y=-x+3$ (làm tròn đến hàng phần mười độ) là",
+    "options": [
+      { "key": "A", "text": "$45^\\circ$" },
+      { "key": "B", "text": "$60^\\circ$" },
+      { "key": "C", "text": "$71{,}6^\\circ$" },
+      { "key": "D", "text": "$30^\\circ$" }
+    ],
+    "answer": "C",
+    "explanation": "$\\tan \\varphi=\\left|\\dfrac{2-(-1)}{1+2(-1)}\\right|=3$ nên $\\varphi=\\arctan 3 \\approx 71{,}6^\\circ$.",
+    "tags": ["toạ độ", "góc giữa hai đường thẳng"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Đường thẳng đi qua hai điểm $A(1;2)$, $B(3;6)$ có phương trình",
+    "options": [
+      { "key": "A", "text": "$y=2x+1$" },
+      { "key": "B", "text": "$y=2x$" },
+      { "key": "C", "text": "$y=x+2$" },
+      { "key": "D", "text": "$y=2x-2$" }
+    ],
+    "answer": "B",
+    "explanation": "Hệ số góc $\\dfrac{6-2}{3-1}=2$; thay $A$: $y=2x$.",
+    "tags": ["toạ độ", "phương trình đường thẳng"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Cho elip $\\dfrac{x^2}{25}+\\dfrac{y^2}{16}=1$. Tiêu cự của elip là",
+    "options": [
+      { "key": "A", "text": "$6$" },
+      { "key": "B", "text": "$3$" },
+      { "key": "C", "text": "$\\sqrt{41}$" },
+      { "key": "D", "text": "$2$" }
+    ],
+    "answer": "A",
+    "explanation": "$c^2=a^2-b^2=25-16=9$ nên $c=3$, tiêu cự $2c=6$.",
+    "tags": ["toạ độ", "elip"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Đường tròn trong hình có tâm $I(0;1)$ và đi qua điểm $M(2;1)$. Phương trình của đường tròn là",
+    "figure": { "kind": "oxy", "xMin": -3, "xMax": 3, "yMin": -2, "yMax": 4, "grid": true, "items": "đường tròn (0; 1) 2\nM(2; 1)" },
+    "options": [
+      { "key": "A", "text": "$x^2+(y-1)^2=2$" },
+      { "key": "B", "text": "$x^2+(y-1)^2=4$" },
+      { "key": "C", "text": "$x^2+(y+1)^2=4$" },
+      { "key": "D", "text": "$(x-2)^2+y^2=4$" }
+    ],
+    "answer": "B",
+    "explanation": "$R=IM=2$ nên $x^2+(y-1)^2=4$.",
+    "tags": ["toạ độ", "phương trình đường tròn"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Cho tam giác $ABC$ với $A(1;1)$, $B(4;5)$, $C(5;-1)$. Phương trình đường cao kẻ từ $A$ là",
+    "options": [
+      { "key": "A", "text": "$x-6y+5=0$" },
+      { "key": "B", "text": "$6x-y-5=0$" },
+      { "key": "C", "text": "$x+6y-5=0$" },
+      { "key": "D", "text": "$6x+y-5=0$" }
+    ],
+    "answer": "A",
+    "explanation": "$\\overrightarrow{BC}=(1;-6)$ nên đường cao qua $A$ có VTPT $\\overrightarrow{BC}$: $1(x-1)-6(y-1)=0 \\Leftrightarrow x-6y+5=0$.",
+    "tags": ["toạ độ", "đường cao"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Cho hai điểm $A(-1;2)$, $B(3;-4)$. Xét tính đúng sai:",
+    "options": [
+      { "key": "a", "text": "$\\overrightarrow{AB}=(4;-6)$" },
+      { "key": "b", "text": "$|\\overrightarrow{AB}|=2\\sqrt{13}$" },
+      { "key": "c", "text": "Trung điểm của $AB$ là $M(1;-1)$" },
+      { "key": "d", "text": "$|\\overrightarrow{AB}|=52$" }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a) $(3+1;-4-2)=(4;-6)$ — đúng. b) $\\sqrt{16+36}=\\sqrt{52}=2\\sqrt{13}$ — đúng. c) $\\left(\\dfrac{-1+3}{2};\\dfrac{2-4}{2}\\right)=(1;-1)$ — đúng. d) Độ dài là $\\sqrt{52}$ — sai.",
+    "tags": ["toạ độ", "vectơ và khoảng cách"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Cho đường tròn $(C): x^2+y^2=4$ và đường thẳng $d: 3x+4y-10=0$ (như hình). Xét tính đúng sai:",
+    "figure": { "kind": "oxy", "xMin": -3, "xMax": 4, "yMin": -3, "yMax": 3, "grid": true, "items": "đường tròn (0; 0) 2\nd: 3x + 4y - 10 = 0" },
+    "options": [
+      { "key": "a", "text": "$d$ cắt $(C)$ tại hai điểm phân biệt" },
+      { "key": "b", "text": "Khoảng cách từ $I(0;0)$ đến $d$ bằng $2$" },
+      { "key": "c", "text": "$d$ tiếp xúc với $(C)$" },
+      { "key": "d", "text": "Toạ độ tiếp điểm là $\\left(\\dfrac{6}{5};\\dfrac{8}{5}\\right)$" }
+    ],
+    "answer": "SĐĐĐ",
+    "explanation": "a) $d(I;d)=\\dfrac{10}{5}=2=R$ nên $d$ tiếp xúc, không cắt tại hai điểm — sai. b) Đúng. c) Đúng vì khoảng cách bằng bán kính. d) Hình chiếu vuông góc của $I$ lên $d$: $\\left(-\\dfrac{3 \\cdot (-10)}{25};-\\dfrac{4 \\cdot (-10)}{25}\\right)=\\left(\\dfrac{6}{5};\\dfrac{8}{5}\\right)$ — đúng.",
+    "tags": ["toạ độ", "tiếp xúc"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Cho đường thẳng $d: 2x-y+4=0$. Xét tính đúng sai:",
+    "options": [
+      { "key": "a", "text": "$d$ có hệ số góc bằng $2$" },
+      { "key": "b", "text": "$d$ có hệ số góc bằng $-2$" },
+      { "key": "c", "text": "$d$ đi qua điểm $(1;6)$" },
+      { "key": "d", "text": "$d$ đi qua điểm $(-2;0)$" }
+    ],
+    "answer": "ĐSĐĐ",
+    "explanation": "a) $y=2x+4$ — đúng. b) Sai. c) $2-6+4=0$ — đúng. d) $-4-0+4=0$ — đúng.",
+    "tags": ["toạ độ", "phương trình đường thẳng"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Cho đường tròn $(C): (x+1)^2+(y-2)^2=16$ (vẽ như hình). Xét tính đúng sai:",
+    "figure": { "kind": "oxy", "xMin": -6, "xMax": 4, "yMin": -3, "yMax": 7, "grid": true, "items": "đường tròn (-1; 2) 4" },
+    "options": [
+      { "key": "a", "text": "Tâm của $(C)$ là $I(-1;2)$" },
+      { "key": "b", "text": "Bán kính của $(C)$ bằng $4$" },
+      { "key": "c", "text": "$(C)$ đi qua gốc toạ độ $O$" },
+      { "key": "d", "text": "$(C)$ cắt trục $Oy$ tại hai điểm phân biệt" }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a), b) Đúng theo phương trình. c) $(0+1)^2+(0-2)^2=5 \\ne 16$ — sai. d) $d(I;Oy)=1<4$ — đúng.",
+    "tags": ["toạ độ", "đường tròn"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Cho tam giác $ABC$ với $A(1;2)$, $B(-1;3)$, $C(2;-1)$. Xét tính đúng sai:",
+    "options": [
+      { "key": "a", "text": "$|\\overrightarrow{BC}|=5$" },
+      { "key": "b", "text": "Tam giác $ABC$ vuông tại $A$" },
+      { "key": "c", "text": "Trọng tâm của tam giác là $G\\left(\\dfrac{2}{3};\\dfrac{4}{3}\\right)$" },
+      { "key": "d", "text": "Diện tích tam giác $ABC$ bằng $\\dfrac{5}{2}$" }
+    ],
+    "answer": "ĐSĐĐ",
+    "explanation": "a) $\\overrightarrow{BC}=(3;-4)$, độ dài $5$ — đúng. b) $\\overrightarrow{AB} \\cdot \\overrightarrow{AC}=(-2)(1)+(1)(-3)=-5 \\ne 0$ — sai. c) $\\left(\\dfrac{1-1+2}{3};\\dfrac{2+3-1}{3}\\right)=\\left(\\dfrac{2}{3};\\dfrac{4}{3}\\right)$ — đúng. d) Diện tích $=\\dfrac{|(-2)(-3)-(1)(1)|}{2}=\\dfrac{5}{2}$ — đúng.",
+    "tags": ["toạ độ", "tam giác"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Cho parabol $(P): y=x^2-2x-3$ và đường thẳng $d: y=2x+3$ (vẽ như hình). Xét tính đúng sai:",
+    "figure": { "kind": "oxy", "xMin": -3, "xMax": 5, "yMin": -6, "yMax": 8, "grid": true, "items": "(P): y = x^2 - 2x - 3\nd: 2x - y - 3 = 0" },
+    "options": [
+      { "key": "a", "text": "$d$ cắt $(P)$ tại hai điểm phân biệt" },
+      { "key": "b", "text": "Hai giao điểm có hoành độ dương" },
+      { "key": "c", "text": "Tổng hai hoành độ giao điểm bằng $4$" },
+      { "key": "d", "text": "Tích hai hoành độ giao điểm bằng $-6$" }
+    ],
+    "answer": "ĐSĐĐ",
+    "explanation": "a) $x^2-4x-6=0$ có $\\Delta=40>0$ — đúng. b) $x=2 \\pm \\sqrt{10}$, một nghiệm âm — sai. c) Theo Vi-ét tổng $=4$ — đúng. d) Tích $=-6$ — đúng.",
+    "tags": ["toạ độ", "giao điểm"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Tính khoảng cách từ điểm $M(3;4)$ đến gốc toạ độ $O$.",
+    "answer": "5",
+    "explanation": "$OM=\\sqrt{9+16}=5$.",
+    "tags": ["toạ độ", "khoảng cách"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Tính khoảng cách từ gốc toạ độ $O$ đến đường thẳng $d: 3x+4y-12=0$.",
+    "answer": "2,4",
+    "explanation": "$d(O;d)=\\dfrac{|-12|}{\\sqrt{9+16}}=\\dfrac{12}{5}=2{,}4$.",
+    "tags": ["toạ độ", "khoảng cách"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Tính bán kính của đường tròn $(C): x^2+y^2-2x+4y-4=0$.",
+    "answer": "3",
+    "explanation": "Tâm $(1;-2)$, $R=\\sqrt{1+4+4}=\\sqrt{9}=3$.",
+    "tags": ["toạ độ", "đường tròn"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Với giá trị dương nào của $m$ thì đường thẳng $d: x+y+m=0$ tiếp xúc với đường tròn $(C): x^2+y^2=8$?",
+    "answer": "4",
+    "explanation": "$d(O;d)=\\dfrac{|m|}{\\sqrt{2}}=2\\sqrt{2} \\Leftrightarrow |m|=4$. Vì $m>0$ nên $m=4$.",
+    "tags": ["toạ độ", "tiếp xúc"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Tính góc (làm tròn đến hàng đơn vị độ) giữa hai đường thẳng $d_1: y=x+1$ và $d_2: y=2x-3$.",
+    "answer": "18",
+    "explanation": "$\\tan \\varphi=\\left|\\dfrac{1-2}{1+1 \\cdot 2}\\right|=\\dfrac{1}{3}$ nên $\\varphi \\approx 18^\\circ$.",
+    "tags": ["toạ độ", "góc giữa hai đường thẳng"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Cho elip $\\dfrac{x^2}{36}+\\dfrac{y^2}{11}=1$. Tính tiêu cự của elip.",
+    "answer": "10",
+    "explanation": "$c^2=36-11=25$ nên $c=5$, tiêu cự $2c=10$.",
+    "tags": ["toạ độ", "elip"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Tam giác $ABC$ có $A(1;0)$, $B(3;4)$, $C(-1;2)$. Tính diện tích tam giác $ABC$.",
+    "answer": "6",
+    "explanation": "Diện tích $=\\dfrac{|(2)(2)-(4)(-2)|}{2}=\\dfrac{12}{2}=6$.",
+    "tags": ["toạ độ", "diện tích tam giác"]
+  }
+]

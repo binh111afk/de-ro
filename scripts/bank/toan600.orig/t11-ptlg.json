@@ -1,0 +1,703 @@
+[
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Tập nghiệm của phương trình $\\sin x=0$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$x=k\\pi,\\ k \\in \\mathbb{Z}$"
+      },
+      {
+        "key": "B",
+        "text": "$x=\\dfrac{\\pi}{2}+k\\pi,\\ k \\in \\mathbb{Z}$"
+      },
+      {
+        "key": "C",
+        "text": "$x=\\dfrac{\\pi}{2}+k2\\pi,\\ k \\in \\mathbb{Z}$"
+      },
+      {
+        "key": "D",
+        "text": "$x=k2\\pi,\\ k \\in \\mathbb{Z}$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "$\\sin x=0 \\Leftrightarrow x=k\\pi$.",
+    "tags": [
+      "phương trình lượng giác",
+      "cơ bản"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Tập nghiệm của phương trình $\\cos x=\\dfrac{1}{2}$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$x=\\pm \\dfrac{\\pi}{6}+k2\\pi$"
+      },
+      {
+        "key": "B",
+        "text": "$x=\\dfrac{\\pi}{3}+k\\pi$"
+      },
+      {
+        "key": "C",
+        "text": "$x=\\pm \\dfrac{\\pi}{3}+k2\\pi$"
+      },
+      {
+        "key": "D",
+        "text": "$x=\\pm \\dfrac{\\sqrt{3}}{2}+k2\\pi$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "$\\cos x=\\dfrac{1}{2} \\Leftrightarrow x=\\pm \\dfrac{\\pi}{3}+k2\\pi,\\ k \\in \\mathbb{Z}$.",
+    "tags": [
+      "phương trình lượng giác",
+      "cơ bản"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Phương trình $\\sin x=\\dfrac{1}{2}$ có bao nhiêu nghiệm trên đoạn $[0;2\\pi]$?",
+    "options": [
+      {
+        "key": "A",
+        "text": "$1$"
+      },
+      {
+        "key": "B",
+        "text": "$2$"
+      },
+      {
+        "key": "C",
+        "text": "$3$"
+      },
+      {
+        "key": "D",
+        "text": "$4$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Hai nghiệm $x=\\dfrac{\\pi}{6}$ và $x=\\dfrac{5\\pi}{6}$.",
+    "tags": [
+      "phương trình lượng giác",
+      "số nghiệm"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Tập nghiệm của phương trình $\\tan x=1$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$x=\\dfrac{\\pi}{4}+k2\\pi$"
+      },
+      {
+        "key": "B",
+        "text": "$x=\\pm \\dfrac{\\pi}{4}+k2\\pi$"
+      },
+      {
+        "key": "C",
+        "text": "$x=\\dfrac{\\pi}{2}+k\\pi$"
+      },
+      {
+        "key": "D",
+        "text": "$x=\\dfrac{\\pi}{4}+k\\pi$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "$\\tan x=1 \\Leftrightarrow x=\\dfrac{\\pi}{4}+k\\pi,\\ k \\in \\mathbb{Z}$.",
+    "tags": [
+      "phương trình lượng giác",
+      "cơ bản"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Trên đường tròn lượng giác, các nghiệm của $\\sin x=\\dfrac{1}{2}$ là giao điểm của đường tròn với đường thẳng $y=\\dfrac{1}{2}$ (như hình). Nghiệm dương nhỏ nhất của phương trình $\\sin x=\\dfrac{1}{2}$ là",
+    "figure": {
+      "kind": "trig",
+      "angles": "y = 1/2",
+      "projections": false,
+      "tan": false,
+      "values": false,
+      "cot": false
+    },
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\dfrac{\\pi}{6}$"
+      },
+      {
+        "key": "B",
+        "text": "$\\dfrac{\\pi}{3}$"
+      },
+      {
+        "key": "C",
+        "text": "$\\dfrac{5\\pi}{6}$"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{\\pi}{2}$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "$\\sin x=\\dfrac{1}{2} \\Leftrightarrow x=\\dfrac{\\pi}{6}+k2\\pi$ hoặc $x=\\dfrac{5\\pi}{6}+k2\\pi$. Nghiệm dương nhỏ nhất $\\dfrac{\\pi}{6}$.",
+    "tags": [
+      "phương trình lượng giác",
+      "đường tròn lượng giác"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Một con lắc dao động với li độ $s=5\\sin(2\\pi t)$ (cm), $t$ tính bằng giây. Chu kì dao động là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$2$ s"
+      },
+      {
+        "key": "B",
+        "text": "$0{,}5$ s"
+      },
+      {
+        "key": "C",
+        "text": "$1$ s"
+      },
+      {
+        "key": "D",
+        "text": "$\\pi$ s"
+      }
+    ],
+    "answer": "C",
+    "explanation": "$T=\\dfrac{2\\pi}{2\\pi}=1$ s.",
+    "tags": [
+      "phương trình lượng giác",
+      "dao động"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Một điểm chuyển động tròn đều, góc quay sau $t$ giây là $\\theta=4\\pi t$ (rad). Sau 3 giây, điểm đó quay được bao nhiêu vòng?",
+    "options": [
+      {
+        "key": "A",
+        "text": "$4$"
+      },
+      {
+        "key": "B",
+        "text": "$6$"
+      },
+      {
+        "key": "C",
+        "text": "$12$"
+      },
+      {
+        "key": "D",
+        "text": "$2$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Số vòng $=\\dfrac{4\\pi \\cdot 3}{2\\pi}=6$.",
+    "tags": [
+      "phương trình lượng giác",
+      "chuyển động tròn"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Phương trình $2\\sin^2 x+\\sin x-1=0$ có bao nhiêu nghiệm trên đoạn $[0;2\\pi]$?",
+    "options": [
+      {
+        "key": "A",
+        "text": "$2$"
+      },
+      {
+        "key": "B",
+        "text": "$4$"
+      },
+      {
+        "key": "C",
+        "text": "$3$"
+      },
+      {
+        "key": "D",
+        "text": "$1$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "Đặt $t=\\sin x$: $2t^2+t-1=0 \\Leftrightarrow t=\\dfrac{1}{2}$ hoặc $t=-1$. $\\sin x=\\dfrac{1}{2}$ cho 2 nghiệm; $\\sin x=-1$ cho $x=\\dfrac{3\\pi}{2}$: tổng 3 nghiệm.",
+    "tags": [
+      "phương trình lượng giác",
+      "đặt ẩn phụ"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Tập nghiệm của phương trình $\\cos x=-1$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$x=0+k2\\pi$"
+      },
+      {
+        "key": "B",
+        "text": "$x=\\pi+k2\\pi$"
+      },
+      {
+        "key": "C",
+        "text": "$x=\\pi+k\\pi$"
+      },
+      {
+        "key": "D",
+        "text": "$x=\\dfrac{\\pi}{2}+k2\\pi$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$\\cos x=-1 \\Leftrightarrow x=\\pi+k2\\pi,\\ k \\in \\mathbb{Z}$.",
+    "tags": [
+      "phương trình lượng giác",
+      "cơ bản"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Nghiệm dương nhỏ nhất của phương trình $\\sin x=\\sin 25^\\circ$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$25^\\circ$"
+      },
+      {
+        "key": "B",
+        "text": "$155^\\circ$"
+      },
+      {
+        "key": "C",
+        "text": "$65^\\circ$"
+      },
+      {
+        "key": "D",
+        "text": "$205^\\circ$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Nghiệm $x=25^\\circ+k360^\\circ$ hoặc $x=155^\\circ+k360^\\circ$; nghiệm dương nhỏ nhất là $25^\\circ$.",
+    "tags": [
+      "phương trình lượng giác",
+      "cơ bản"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Một chất điểm dao động với li độ $s=3\\cos(4\\pi t)$ (cm), $t$ tính bằng giây. Chu kì dao động là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$4$ s"
+      },
+      {
+        "key": "B",
+        "text": "$2$ s"
+      },
+      {
+        "key": "C",
+        "text": "$1$ s"
+      },
+      {
+        "key": "D",
+        "text": "$0{,}5$ s"
+      }
+    ],
+    "answer": "D",
+    "explanation": "$T=\\dfrac{2\\pi}{4\\pi}=\\dfrac{1}{2}$ s.",
+    "tags": [
+      "phương trình lượng giác",
+      "dao động"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Phương trình $\\sin x=\\dfrac{\\sqrt{2}}{2}$ có bao nhiêu nghiệm trong khoảng $(0;4\\pi)$?",
+    "options": [
+      {
+        "key": "A",
+        "text": "$2$"
+      },
+      {
+        "key": "B",
+        "text": "$4$"
+      },
+      {
+        "key": "C",
+        "text": "$3$"
+      },
+      {
+        "key": "D",
+        "text": "$6$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Nghiệm $x=\\dfrac{\\pi}{4}+k2\\pi$ hoặc $x=\\dfrac{3\\pi}{4}+k2\\pi$; trong $(0;4\\pi)$ có $\\dfrac{\\pi}{4},\\dfrac{3\\pi}{4},\\dfrac{9\\pi}{4},\\dfrac{11\\pi}{4}$: 4 nghiệm.",
+    "tags": [
+      "phương trình lượng giác",
+      "số nghiệm"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Xét phương trình $\\cos x=0$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Tập nghiệm là $x=\\dfrac{\\pi}{2}+k\\pi$"
+      },
+      {
+        "key": "b",
+        "text": "$x=\\dfrac{\\pi}{2}$ là một nghiệm"
+      },
+      {
+        "key": "c",
+        "text": "$x=0$ là một nghiệm"
+      },
+      {
+        "key": "d",
+        "text": "$x=\\dfrac{3\\pi}{2}$ là một nghiệm"
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) Đúng. b) $\\cos \\dfrac{\\pi}{2}=0$ — đúng. c) $\\cos 0=1 \\ne 0$ — sai. d) $\\cos \\dfrac{3\\pi}{2}=0$ — đúng.",
+    "tags": [
+      "phương trình lượng giác",
+      "cơ bản"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Xét bất phương trình $\\sin x \\ge \\dfrac{\\sqrt{2}}{2}$ với $x \\in [0;2\\pi]$ (miền nghiệm tô đỏ trên hình). Xét tính đúng sai:",
+    "figure": {
+      "kind": "trig",
+      "angles": "tô: [pi/4 → 3pi/4]",
+      "projections": false,
+      "tan": false,
+      "values": false,
+      "cot": false
+    },
+    "options": [
+      {
+        "key": "a",
+        "text": "Tập nghiệm là $\\left[\\dfrac{\\pi}{4};\\dfrac{3\\pi}{4}\\right]$"
+      },
+      {
+        "key": "b",
+        "text": "$x=\\dfrac{\\pi}{2}$ là một nghiệm"
+      },
+      {
+        "key": "c",
+        "text": "$x=\\pi$ là một nghiệm"
+      },
+      {
+        "key": "d",
+        "text": "Độ dài của tập nghiệm là $\\dfrac{\\pi}{2}$"
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) Đúng. b) $\\sin \\dfrac{\\pi}{2}=1 \\ge \\dfrac{\\sqrt{2}}{2}$ — đúng. c) $\\sin \\pi=0$ — sai. d) $\\dfrac{3\\pi}{4}-\\dfrac{\\pi}{4}=\\dfrac{\\pi}{2}$ — đúng.",
+    "tags": [
+      "phương trình lượng giác",
+      "bất phương trình lượng giác"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Xét phương trình $\\sin x=-\\dfrac{\\sqrt{3}}{2}$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Một họ nghiệm là $x=-\\dfrac{\\pi}{3}+k2\\pi$"
+      },
+      {
+        "key": "b",
+        "text": "Một họ nghiệm là $x=\\dfrac{4\\pi}{3}+k2\\pi$"
+      },
+      {
+        "key": "c",
+        "text": "Họ $x=\\dfrac{\\pi}{3}+k2\\pi$ là họ nghiệm của phương trình"
+      },
+      {
+        "key": "d",
+        "text": "Trên đoạn $[0;2\\pi]$ phương trình có 2 nghiệm"
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) Đúng. b) $\\sin \\dfrac{4\\pi}{3}=-\\dfrac{\\sqrt{3}}{2}$ — đúng. c) $\\sin \\dfrac{\\pi}{3}=\\dfrac{\\sqrt{3}}{2}>0$ — sai. d) Hai nghiệm $\\dfrac{4\\pi}{3}$ và $\\dfrac{5\\pi}{3}$ — đúng.",
+    "tags": [
+      "phương trình lượng giác",
+      "cơ bản"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Một chất điểm dao động với li độ $s=4\\sin(\\pi t)$ (cm), $t$ tính bằng giây (đồ thị như hình). Xét tính đúng sai:",
+    "figure": {
+      "kind": "graph",
+      "curves": [
+        "4sin(pi*x)"
+      ],
+      "xMin": 0,
+      "xMax": 4,
+      "yMin": -5,
+      "yMax": 5,
+      "labels": true
+    },
+    "options": [
+      {
+        "key": "a",
+        "text": "Biên độ dao động là 4 cm"
+      },
+      {
+        "key": "b",
+        "text": "Chu kì dao động là 2 s"
+      },
+      {
+        "key": "c",
+        "text": "Tại thời điểm $t=\\dfrac{1}{2}$ s, li độ bằng 4 cm"
+      },
+      {
+        "key": "d",
+        "text": "Tại thời điểm $t=1$ s, li độ bằng 4 cm"
+      }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a) Đúng. b) $T=\\dfrac{2\\pi}{\\pi}=2$ s — đúng. c) $s\\left(\\dfrac{1}{2}\\right)=4\\sin \\dfrac{\\pi}{2}=4$ — đúng. d) $s(1)=4\\sin \\pi=0$ — sai.",
+    "tags": [
+      "phương trình lượng giác",
+      "dao động"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Xét phương trình $\\sin^2 x-\\sin x=0$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Phương trình tương đương $\\sin x=0$ hoặc $\\sin x=1$"
+      },
+      {
+        "key": "b",
+        "text": "Phương trình có 4 nghiệm trên đoạn $[0;2\\pi]$"
+      },
+      {
+        "key": "c",
+        "text": "$x=\\dfrac{3\\pi}{2}$ là một nghiệm"
+      },
+      {
+        "key": "d",
+        "text": "Phương trình có 3 nghiệm trên đoạn $[0;\\pi]$"
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) $\\sin x(\\sin x-1)=0$ — đúng. b) Nghiệm $0, \\pi, 2\\pi, \\dfrac{\\pi}{2}$: 4 nghiệm — đúng. c) $\\sin \\dfrac{3\\pi}{2}=-1$ — sai. d) Trên $[0;\\pi]$: $0, \\dfrac{\\pi}{2}, \\pi$ — đúng.",
+    "tags": [
+      "phương trình lượng giác",
+      "phương trình bậc hai"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Bánh xe bán kính 50 cm quay đều với tần số 2 vòng/giây. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Chu kì quay là 0,5 s"
+      },
+      {
+        "key": "b",
+        "text": "Tốc độ góc là $4\\pi$ rad/s"
+      },
+      {
+        "key": "c",
+        "text": "Tốc độ dài của điểm trên vành bánh là $100\\pi$ cm/s"
+      },
+      {
+        "key": "d",
+        "text": "Sau 2 giây bánh quay được 4 vòng"
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) $T=\\dfrac{1}{2}$ s — đúng. b) $\\omega=2\\pi f=4\\pi$ — đúng. c) $v=\\omega R=4\\pi \\cdot 50=200\\pi$ cm/s — sai. d) $2 \\cdot 2=4$ vòng — đúng.",
+    "tags": [
+      "phương trình lượng giác",
+      "chuyển động tròn"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Phương trình $\\sin x=0$ có bao nhiêu nghiệm trên đoạn $[0;4\\pi]$?",
+    "answer": "5",
+    "explanation": "Các nghiệm $0, \\pi, 2\\pi, 3\\pi, 4\\pi$: 5 nghiệm.",
+    "tags": [
+      "phương trình lượng giác",
+      "số nghiệm"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Phương trình $\\tan x=\\sqrt{3}$ có bao nhiêu nghiệm trên khoảng $[0;2\\pi)$?",
+    "answer": "2",
+    "explanation": "Nghiệm $x=\\dfrac{\\pi}{3}+k\\pi$: $\\dfrac{\\pi}{3}$ và $\\dfrac{4\\pi}{3}$: 2 nghiệm.",
+    "tags": [
+      "phương trình lượng giác",
+      "số nghiệm"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Tính chu kì (giây) của dao động $s=6\\sin(2\\pi t)$.",
+    "answer": "1",
+    "explanation": "$T=\\dfrac{2\\pi}{2\\pi}=1$ s.",
+    "tags": [
+      "phương trình lượng giác",
+      "dao động"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Tìm nghiệm dương nhỏ nhất của $\\tan x=-1$ (làm tròn đến hàng phần trăm, tính bằng radian).",
+    "answer": "2,36",
+    "explanation": "Nghiệm $x=-\\dfrac{\\pi}{4}+k\\pi$; nghiệm dương nhỏ nhất $\\dfrac{3\\pi}{4} \\approx 2{,}36$.",
+    "tags": [
+      "phương trình lượng giác",
+      "cơ bản"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Một điểm chuyển động tròn đều với chu kì 4 giây. Sau 13 giây, điểm đó quay trọn được bao nhiêu vòng?",
+    "answer": "3",
+    "explanation": "$\\dfrac{13}{4}=3{,}25$ nên quay trọn 3 vòng.",
+    "tags": [
+      "phương trình lượng giác",
+      "chuyển động tròn"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Phương trình $\\sin 2x=0$ có bao nhiêu nghiệm trong khoảng $(0;2\\pi)$?",
+    "answer": "3",
+    "explanation": "$2x=k\\pi \\Leftrightarrow x=\\dfrac{k\\pi}{2}$; trong $(0;2\\pi)$ có $\\dfrac{\\pi}{2},\\pi,\\dfrac{3\\pi}{2}$: 3 nghiệm.",
+    "tags": [
+      "phương trình lượng giác",
+      "số nghiệm"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 11"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Chất điểm dao động với li độ $s=2\\sin(\\pi t)$ (cm). Lần đầu tiên li độ đạt giá trị lớn nhất 2 cm tại thời điểm $t$ bao nhiêu giây?",
+    "answer": "0,5",
+    "explanation": "$\\sin(\\pi t)=1 \\Leftrightarrow \\pi t=\\dfrac{\\pi}{2} \\Leftrightarrow t=\\dfrac{1}{2}$ s.",
+    "tags": [
+      "phương trình lượng giác",
+      "dao động"
+    ]
+  }
+]

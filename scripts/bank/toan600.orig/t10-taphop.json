@@ -1,0 +1,341 @@
+[
+  {
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Cho các câu sau: (I) $4+3=7$; (II) Hãy mở sách ra!; (III) $2$ là số chính phương; (IV) Bạn có khoẻ không?. Số mệnh đề trong các câu trên là",
+    "options": [
+      { "key": "A", "text": "$1$" },
+      { "key": "B", "text": "$2$" },
+      { "key": "C", "text": "$3$" },
+      { "key": "D", "text": "$4$" }
+    ],
+    "answer": "B",
+    "explanation": "(I), (III) là mệnh đề (III sai vì $2$ không chính phương); (II) là câu cầu khiến, (IV) là câu hỏi — không phải mệnh đề. Vậy có 2 mệnh đề.",
+    "tags": ["mệnh đề", "nhận biết mệnh đề"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Tập hợp nào sau đây là tập con của mọi tập hợp?",
+    "options": [
+      { "key": "A", "text": "$\\varnothing$" },
+      { "key": "B", "text": "$\\mathbb{N}$" },
+      { "key": "C", "text": "$\\mathbb{Z}$" },
+      { "key": "D", "text": "$\\mathbb{R}$" }
+    ],
+    "answer": "A",
+    "explanation": "Tập rỗng không chứa phần tử nào nên là tập con của mọi tập hợp.",
+    "tags": ["tập hợp", "tập con"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Tập $A=\\{x \\in \\mathbb{Z} \\mid -2 < x \\le 3\\}$ có bao nhiêu tập con?",
+    "options": [
+      { "key": "A", "text": "$10$" },
+      { "key": "B", "text": "$16$" },
+      { "key": "C", "text": "$25$" },
+      { "key": "D", "text": "$32$" }
+    ],
+    "answer": "D",
+    "explanation": "$A=\\{-1;0;1;2;3\\}$ có 5 phần tử nên có $2^5=32$ tập con.",
+    "tags": ["tập hợp", "số tập con"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Cho $A=(-2;3)$ và $B=[0;5]$. Khi đó $A \\cap B$ bằng",
+    "options": [
+      { "key": "A", "text": "$[0;5]$" },
+      { "key": "B", "text": "$(-2;5]$" },
+      { "key": "C", "text": "$[0;3)$" },
+      { "key": "D", "text": "$(0;3)$" }
+    ],
+    "answer": "C",
+    "explanation": "Phần chung của $(-2;3)$ và $[0;5]$ là $[0;3)$.",
+    "tags": ["tập hợp", "giao hai tập"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Lớp 10A có 40 học sinh. Trong đó 25 em tham gia CLB Toán, 22 em tham gia CLB Văn, 8 em tham gia cả hai CLB (minh hoạ bởi hình). Số em không tham gia CLB nào là",
+    "figure": { "kind": "venn", "sets": "A, B", "shade": "", "counts": "", "universe": true },
+    "options": [
+      { "key": "A", "text": "$0$" },
+      { "key": "B", "text": "$1$" },
+      { "key": "C", "text": "$3$" },
+      { "key": "D", "text": "$5$" }
+    ],
+    "answer": "B",
+    "explanation": "Số em tham gia ít nhất một CLB: $25+22-8=39$. Số em không tham gia CLB nào: $40-39=1$.",
+    "tags": ["tập hợp", "bài toán thực tế"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Cho hai tập hợp $A$, $B$ với $n(A)=12$, $n(B)=18$, $n(A \\cap B)=7$ (minh hoạ bởi hình). Số phần tử của $A \\cup B$ là",
+    "figure": { "kind": "venn", "sets": "A, B", "shade": "", "counts": "", "universe": false },
+    "options": [
+      { "key": "A", "text": "$21$" },
+      { "key": "B", "text": "$23$" },
+      { "key": "C", "text": "$25$" },
+      { "key": "D", "text": "$37$" }
+    ],
+    "answer": "B",
+    "explanation": "$n(A \\cup B)=n(A)+n(B)-n(A \\cap B)=12+18-7=23$.",
+    "tags": ["tập hợp", "số phần tử hợp"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Một quán ăn sáng có 70 khách. Kết quả thống kê đếm theo từng vùng của biểu đồ Ven (P: dùng phở, B: dùng bún, C: dùng cơm) như hình. Số khách không dùng món nào trong ba món là",
+    "figure": { "kind": "venn", "sets": "P, B, C", "shade": "", "counts": "P: 18\nPB: 7\nPC: 6\nB: 14\nBC: 4\nC: 11\nPBC: 5", "universe": true },
+    "options": [
+      { "key": "A", "text": "$3$" },
+      { "key": "B", "text": "$4$" },
+      { "key": "C", "text": "$5$" },
+      { "key": "D", "text": "$6$" }
+    ],
+    "answer": "C",
+    "explanation": "Số khách dùng ít nhất một món: $18+14+11+7+6+4+5=65$. Số khách không dùng món nào: $70-65=5$.",
+    "tags": ["tập hợp", "bài toán thực tế"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Cho tập $A=\\{1;2;3;\\ldots;20\\}$. Số tập con của $A$ chứa cả phần tử $3$ và phần tử $5$ là",
+    "options": [
+      { "key": "A", "text": "$2^{16}$" },
+      { "key": "B", "text": "$2^{17}$" },
+      { "key": "C", "text": "$2^{19}$" },
+      { "key": "D", "text": "$2^{18}$" }
+    ],
+    "answer": "D",
+    "explanation": "Một tập con chứa cả $3$ và $5$ thì 18 phần tử còn lại tuỳ chọn hoặc không: $2^{18}$ tập con.",
+    "tags": ["tập hợp", "đếm tập con"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Số phần tử của tập $A=\\{x \\in \\mathbb{R} \\mid x^2 \\le 4\\} \\cap \\mathbb{Z}$ là",
+    "options": [
+      { "key": "A", "text": "$3$" },
+      { "key": "B", "text": "$4$" },
+      { "key": "C", "text": "$6$" },
+      { "key": "D", "text": "$5$" }
+    ],
+    "answer": "D",
+    "explanation": "$x^2 \\le 4 \\Leftrightarrow -2 \\le x \\le 2$ nên $A=\\{-2;-1;0;1;2\\}$ có 5 phần tử.",
+    "tags": ["tập hợp", "số phần tử"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Cho hai tập hợp $A$, $B$ bất kì. Mệnh đề nào sau đây đúng?",
+    "options": [
+      { "key": "A", "text": "$A \\subset B \\Leftrightarrow$ mọi phần tử của $A$ đều thuộc $B$" },
+      { "key": "B", "text": "$A \\subset B \\Leftrightarrow$ tồn tại phần tử của $A$ thuộc $B$" },
+      { "key": "C", "text": "$A \\subset B \\Leftrightarrow$ mọi phần tử của $B$ đều thuộc $A$" },
+      { "key": "D", "text": "$A \\subset B \\Leftrightarrow n(A) < n(B)$" }
+    ],
+    "answer": "A",
+    "explanation": "Theo định nghĩa: $A \\subset B$ khi mọi phần tử của $A$ đều thuộc $B$.",
+    "tags": ["tập hợp", "tập con"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Số phần tử của tập $A=\\{x \\in \\mathbb{N}^* \\mid x \\le 100,\\ x \\text{ chia hết cho } 3 \\text{ hoặc } 5\\}$ là",
+    "figure": { "kind": "venn", "sets": "A, B", "shade": "", "counts": "", "universe": false },
+    "options": [
+      { "key": "A", "text": "$45$" },
+      { "key": "B", "text": "$46$" },
+      { "key": "C", "text": "$47$" },
+      { "key": "D", "text": "$48$" }
+    ],
+    "answer": "C",
+    "explanation": "Bội của 3: 33 số; bội của 5: 20 số; bội của 15: 6 số. Vậy $|A|=33+20-6=47$.",
+    "tags": ["tập hợp", "đếm phần tử"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Có bao nhiêu số tự nhiên có ba chữ số mà các chữ số đôi một khác nhau?",
+    "options": [
+      { "key": "A", "text": "$648$" },
+      { "key": "B", "text": "$720$" },
+      { "key": "C", "text": "$810$" },
+      { "key": "D", "text": "$900$" }
+    ],
+    "answer": "A",
+    "explanation": "Chữ số hàng trăm: 9 cách; hàng chục: 9 cách (khác hàng trăm); hàng đơn vị: 8 cách. Vậy $9 \\cdot 9 \\cdot 8 = 648$.",
+    "tags": ["đếm phần tử", "quy tắc nhân"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Cho hai tập hợp $A=\\{-1;0;1;2\\}$ và $B=\\{0;1;2;3\\}$. Xét tính đúng sai của các khẳng định sau:",
+    "options": [
+      { "key": "a", "text": "$1 \\in A \\cap B$" },
+      { "key": "b", "text": "$3 \\in A \\cup B$" },
+      { "key": "c", "text": "$n(A \\cap B)=2$" },
+      { "key": "d", "text": "$n(A \\cup B)=6$" }
+    ],
+    "answer": "ĐĐSS",
+    "explanation": "a) $A \\cap B=\\{0;1;2\\}$ chứa $1$ — đúng. b) $A \\cup B=\\{-1;0;1;2;3\\}$ chứa $3$ — đúng. c) $n(A \\cap B)=3$, không phải 2 — sai. d) $n(A \\cup B)=5$, không phải 6 — sai.",
+    "tags": ["tập hợp", "giao và hợp"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Lớp 10B có 45 học sinh, trong đó 20 em thích môn Toán, 18 em thích môn Lí, 12 em thích cả hai môn (minh hoạ bởi hình). Xét tính đúng sai:",
+    "figure": { "kind": "venn", "sets": "T, L", "shade": "", "counts": "", "universe": true },
+    "options": [
+      { "key": "a", "text": "Số em thích ít nhất một trong hai môn là 26" },
+      { "key": "b", "text": "Số em chỉ thích môn Toán là 8" },
+      { "key": "c", "text": "Số em thích đúng một trong hai môn là 26" },
+      { "key": "d", "text": "Số em không thích môn nào là 19" }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) $20+18-12=26$ — đúng. b) $20-12=8$ — đúng. c) $(20-12)+(18-12)=8+6=14 \\ne 26$ — sai. d) $45-26=19$ — đúng.",
+    "tags": ["tập hợp", "bài toán thực tế"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Cho $A=[-1;3)$ và $B=(0;5)$ (vẽ như hình). Xét tính đúng sai:",
+    "figure": { "kind": "numberline", "sets": "A = [-1; 3)\nB = (0; 5)", "style": "bold" },
+    "options": [
+      { "key": "a", "text": "$2 \\in A \\cap B$" },
+      { "key": "b", "text": "$3 \\in A \\cap B$" },
+      { "key": "c", "text": "$A \\cup B=[-1;5)$" },
+      { "key": "d", "text": "$A \\setminus B=[-1;0]$" }
+    ],
+    "answer": "ĐSĐĐ",
+    "explanation": "a) $2 \\in [-1;3) \\cap (0;5)$ — đúng. b) $3 \\notin A=[-1;3)$ — sai. c) $A \\cup B=[-1;5)$ — đúng. d) $A \\setminus B=[-1;0]$: $-1 \\in A$, $-1 \\notin B$ nên $-1$ thuộc hiệu; $0 \\in A$, $0 \\notin B$ (vì $B$ mở tại 0) nên $0$ thuộc hiệu — đúng.",
+    "tags": ["tập hợp", "phép hiệu"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Xét mệnh đề $P$: \\\"Với mọi số tự nhiên $n$, $n^2+n+41$ là số nguyên tố\\\". Xét tính đúng sai:",
+    "options": [
+      { "key": "a", "text": "Với $n=1$ thì $n^2+n+41=43$ là số nguyên tố" },
+      { "key": "b", "text": "Với $n=2$ thì $n^2+n+41=47$ là số nguyên tố" },
+      { "key": "c", "text": "Với $n=10$ thì $n^2+n+41=151$ là số nguyên tố" },
+      { "key": "d", "text": "$P$ là mệnh đề đúng" }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a) $43$ nguyên tố — đúng. b) $47$ nguyên tố — đúng. c) $151$ nguyên tố — đúng. d) Với $n=40$: $40^2+40+41=1681=41^2$ không nguyên tố nên $P$ sai.",
+    "tags": ["mệnh đề", "mệnh đề chứa kí hiệu"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Cho tập $A=\\{1;2;3;\\ldots;8\\}$. Xét tính đúng sai:",
+    "options": [
+      { "key": "a", "text": "$A$ có $256$ tập con" },
+      { "key": "b", "text": "Số tập con của $A$ chứa phần tử $1$ là $128$" },
+      { "key": "c", "text": "Số tập con của $A$ có đúng $3$ phần tử là $56$" },
+      { "key": "d", "text": "Số tập con của $A$ có đúng $2$ phần tử là $24$" }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a) $2^8=256$ — đúng. b) $2^7=128$ — đúng. c) $\\dfrac{8 \\cdot 7 \\cdot 6}{3!}=56$ — đúng. d) $\\dfrac{8 \\cdot 7}{2}=28 \\ne 24$ — sai.",
+    "tags": ["tập hợp", "đếm tập con"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Khảo sát 100 người về việc sử dụng ba mạng xã hội Z, F, T: 45 người dùng Z, 40 người dùng F, 35 người dùng T; 15 người dùng cả Z và F, 12 người dùng cả Z và T, 10 người dùng cả F và T, 5 người dùng cả ba. Xét tính đúng sai:",
+    "options": [
+      { "key": "a", "text": "Số người dùng ít nhất một mạng xã hội là 88" },
+      { "key": "b", "text": "Số người dùng cả ba mạng xã hội là 5" },
+      { "key": "c", "text": "Số người không dùng mạng xã hội nào là 10" },
+      { "key": "d", "text": "Số người dùng đúng một mạng xã hội là 61" }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) $45+40+35-15-12-10+5=88$ — đúng. b) Đề cho 5 — đúng. c) $100-88=12 \\ne 10$ — sai. d) Đúng một: Z $(45-15-12+5)=23$, F $(40-15-10+5)=20$, T $(35-12-10+5)=18$, tổng $61$ — đúng.",
+    "tags": ["tập hợp", "bài toán thực tế"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Cho $A=\\{x \\in \\mathbb{N} \\mid x<20,\\ x \\text{ chia hết cho } 4\\}$ và $B=\\{x \\in \\mathbb{N} \\mid x<20,\\ x \\text{ chia hết cho } 6\\}$. Tính $n(A \\cup B)$.",
+    "answer": "7",
+    "explanation": "$A=\\{0;4;8;12;16\\}$, $B=\\{0;6;12;18\\}$, $A \\cap B=\\{0;12\\}$. Vậy $n(A \\cup B)=5+4-2=7$.",
+    "tags": ["tập hợp", "số phần tử hợp"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Có bao nhiêu tập con gồm ba phần tử của tập $\\{1;2;3;4;5;6;7\\}$ sao cho tập con đó chứa phần tử $4$?",
+    "answer": "15",
+    "explanation": "Phải chọn thêm 2 phần tử từ 6 phần tử còn lại: $\\dfrac{6 \\cdot 5}{2}=15$.",
+    "tags": ["tập hợp", "đếm tập con"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Lớp 10C có 40 học sinh: 18 em giỏi Toán, 16 em giỏi Lí, 8 em giỏi cả hai môn. Hỏi có bao nhiêu em giỏi đúng một trong hai môn?",
+    "answer": "18",
+    "explanation": "Chỉ giỏi Toán: $18-8=10$; chỉ giỏi Lí: $16-8=8$. Tổng $10+8=18$.",
+    "tags": ["tập hợp", "bài toán thực tế"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Tính số phần tử của tập $A=\\{x \\in \\mathbb{Z} \\mid 1 < x^2 < 20\\}$.",
+    "answer": "6",
+    "explanation": "$x^2 \\in \\{4;9;16\\}$ nên $x \\in \\{\\pm 2; \\pm 3; \\pm 4\\}$: 6 phần tử.",
+    "tags": ["tập hợp", "số phần tử"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Có bao nhiêu số tự nhiên có ba chữ số chia hết cho 6?",
+    "answer": "150",
+    "explanation": "Số nhỏ nhất là 102, lớn nhất là 996. Số lượng $=\\dfrac{996-102}{6}+1=150$.",
+    "tags": ["đếm phần tử", "chia hết"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Từ các chữ số $0;1;2;3$ lập được bao nhiêu số có ba chữ số đôi một khác nhau và chia hết cho 2?",
+    "answer": "10",
+    "explanation": "Chữ số cuối là $0$: $3 \\cdot 2=6$ số; chữ số cuối là $2$: hàng trăm chỉ chọn $1$ hoặc $3$ (2 cách), hàng chục còn 2 cách $\\Rightarrow 4$ số. Tổng $6+4=10$.",
+    "tags": ["đếm phần tử", "quy tắc nhân"]
+  },
+  {
+    "grades": ["Lớp 10"],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Cho tập $A=\\{1;2;\\ldots;12\\}$. Có bao nhiêu tập con của $A$ chứa cả phần tử $3$ và phần tử $5$ nhưng không chứa phần tử $7$?",
+    "answer": "512",
+    "explanation": "Ba phần tử $3;5;7$ đã cố định (lấy $3;5$, loại $7$), 9 phần tử còn lại tuỳ chọn: $2^9=512$.",
+    "tags": ["tập hợp", "đếm tập con"]
+  }
+]

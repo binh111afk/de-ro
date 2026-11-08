@@ -1,0 +1,704 @@
+[
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Giá trị của $\\sin 30^\\circ$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\dfrac{\\sqrt{2}}{2}$"
+      },
+      {
+        "key": "B",
+        "text": "$\\dfrac{\\sqrt{3}}{2}$"
+      },
+      {
+        "key": "C",
+        "text": "$1$"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{1}{2}$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "$\\sin 30^\\circ=\\dfrac{1}{2}$.",
+    "tags": [
+      "lượng giác",
+      "giá trị lượng giác"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Giá trị của $\\tan 45^\\circ$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$1$"
+      },
+      {
+        "key": "B",
+        "text": "$\\dfrac{1}{2}$"
+      },
+      {
+        "key": "C",
+        "text": "$\\dfrac{\\sqrt{2}}{2}$"
+      },
+      {
+        "key": "D",
+        "text": "$\\sqrt{3}$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "$\\tan 45^\\circ=1$.",
+    "tags": [
+      "lượng giác",
+      "giá trị lượng giác"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Cho $\\cos \\alpha=\\dfrac{3}{5}$ với $0^\\circ<\\alpha<90^\\circ$. Khi đó $\\tan \\alpha$ bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\dfrac{3}{4}$"
+      },
+      {
+        "key": "B",
+        "text": "$\\dfrac{5}{4}$"
+      },
+      {
+        "key": "C",
+        "text": "$\\dfrac{5}{3}$"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{4}{3}$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "$\\sin \\alpha=\\sqrt{1-\\dfrac{9}{25}}=\\dfrac{4}{5}$ nên $\\tan \\alpha=\\dfrac{4}{3}$.",
+    "tags": [
+      "lượng giác",
+      "hệ thức lượng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Trong tam giác $ABC$ có $a=6$, $\\widehat{A}=30^\\circ$, $\\widehat{B}=45^\\circ$. Độ dài cạnh $b$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$6$"
+      },
+      {
+        "key": "B",
+        "text": "$6\\sqrt{2}$"
+      },
+      {
+        "key": "C",
+        "text": "$3\\sqrt{2}$"
+      },
+      {
+        "key": "D",
+        "text": "$12$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Định lí sin: $b=\\dfrac{a\\sin B}{\\sin A}=\\dfrac{6 \\cdot \\frac{\\sqrt{2}}{2}}{\\frac{1}{2}}=6\\sqrt{2}$.",
+    "tags": [
+      "giải tam giác",
+      "định lí sin"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Trong tam giác $ABC$ có $b=3$, $c=5$, $\\widehat{A}=60^\\circ$. Độ dài cạnh $a$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$4$"
+      },
+      {
+        "key": "B",
+        "text": "$\\sqrt{21}$"
+      },
+      {
+        "key": "C",
+        "text": "$5$"
+      },
+      {
+        "key": "D",
+        "text": "$\\sqrt{19}$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "$a^2=b^2+c^2-2bc\\cos A=9+25-2 \\cdot 3 \\cdot 5 \\cdot \\dfrac{1}{2}=19$ nên $a=\\sqrt{19}$.",
+    "tags": [
+      "giải tam giác",
+      "định lí côsin"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Tam giác $ABC$ có $b=6$, $c=8$ và $\\widehat{A}=30^\\circ$. Diện tích tam giác $ABC$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$24$"
+      },
+      {
+        "key": "B",
+        "text": "$10$"
+      },
+      {
+        "key": "C",
+        "text": "$12$"
+      },
+      {
+        "key": "D",
+        "text": "$14$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "$S=\\dfrac{1}{2}bc\\sin A=\\dfrac{1}{2} \\cdot 6 \\cdot 8 \\cdot \\dfrac{1}{2}=12$.",
+    "tags": [
+      "giải tam giác",
+      "diện tích"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Một chiếc thang dài 5 m dựa vào bức tường, tạo với mặt đất một góc $60^\\circ$ (như hình). Chiều cao điểm tựa thang trên tường (làm tròn đến hàng phần trăm) là",
+    "figure": {
+      "kind": "scene",
+      "text": "A(0; 0) B(0; 4,3) C(2,5; 0)\nAB, BC, AC\ntường AB\ngóc ACB \"60°\"\nkích thước BC \"5 m\"\nnhãn AB \"?\""
+    },
+    "options": [
+      {
+        "key": "A",
+        "text": "$4{,}33$ m"
+      },
+      {
+        "key": "B",
+        "text": "$2{,}5$ m"
+      },
+      {
+        "key": "C",
+        "text": "$5$ m"
+      },
+      {
+        "key": "D",
+        "text": "$3{,}53$ m"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Chiều cao $=5 \\sin 60^\\circ=5 \\cdot \\dfrac{\\sqrt{3}}{2} \\approx 4{,}33$ m.",
+    "tags": [
+      "giải tam giác",
+      "bài toán thực tế"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Tam giác $ABC$ (vẽ như hình) có $AB=7$, $AC=8$, $\\widehat{A}=120^\\circ$. Độ dài cạnh $BC$ là",
+    "figure": {
+      "kind": "scene",
+      "text": "A(0; 0) B(7; 0) C(-4; 6,9)\nAB, BC, CA\ngóc BAC \"120°\"\nkích thước AB \"7\"\nnhãn AC \"8\"\nnhãn BC \"?\""
+    },
+    "options": [
+      {
+        "key": "A",
+        "text": "$15$"
+      },
+      {
+        "key": "B",
+        "text": "$11$"
+      },
+      {
+        "key": "C",
+        "text": "$\\sqrt{113}$"
+      },
+      {
+        "key": "D",
+        "text": "$13$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "$BC^2=49+64-2 \\cdot 7 \\cdot 8 \\cos 120^\\circ=113+56=169$ nên $BC=13$.",
+    "tags": [
+      "giải tam giác",
+      "định lí côsin"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Giá trị của $\\sin 150^\\circ$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\dfrac{\\sqrt{3}}{2}$"
+      },
+      {
+        "key": "B",
+        "text": "$-\\dfrac{1}{2}$"
+      },
+      {
+        "key": "C",
+        "text": "$\\dfrac{1}{2}$"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{\\sqrt{2}}{2}$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "$\\sin 150^\\circ=\\sin(180^\\circ-150^\\circ)=\\sin 30^\\circ=\\dfrac{1}{2}$.",
+    "tags": [
+      "lượng giác",
+      "góc tù"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Tam giác $ABC$ vuông tại $A$ có $AB=3$, $AC=4$. Khi đó $\\cos B$ bằng",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\dfrac{4}{5}$"
+      },
+      {
+        "key": "B",
+        "text": "$\\dfrac{3}{5}$"
+      },
+      {
+        "key": "C",
+        "text": "$\\dfrac{5}{3}$"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{5}{4}$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$BC=5$ (Pythagoras). $\\cos B=\\dfrac{AB}{BC}=\\dfrac{3}{5}$.",
+    "tags": [
+      "lượng giác",
+      "tam giác vuông"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "Để đo khoảng cách $AB$ giữa hai điểm nằm hai bên một khúc sông (hình vẽ), người ta chọn điểm $C$ nhìn thấy cả $A$ và $B$, đo được $CA=100$ m, $CB=140$ m và $\\widehat{ACB}=45^\\circ$. Khoảng cách $AB$ (làm tròn đến hàng mét) là",
+    "figure": {
+      "kind": "scene",
+      "text": "C(0; 0) A(100; 0) B(99; 99)\nCA, CB, AB\ngóc ACB \"45°\"\nkích thước CA \"100 m\"\nkích thước CB \"140 m\"\nnhãn AB \"?\""
+    },
+    "options": [
+      {
+        "key": "A",
+        "text": "$89$ m"
+      },
+      {
+        "key": "B",
+        "text": "$99$ m"
+      },
+      {
+        "key": "C",
+        "text": "$109$ m"
+      },
+      {
+        "key": "D",
+        "text": "$119$ m"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$AB^2=100^2+140^2-2 \\cdot 100 \\cdot 140 \\cos 45^\\circ=29600-14000\\sqrt{2} \\approx 9801$ nên $AB \\approx 99$ m.",
+    "tags": [
+      "giải tam giác",
+      "bài toán thực tế"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Tam giác $ABC$ có $a=2$, $b=3$, $\\widehat{C}=60^\\circ$. Diện tích tam giác $ABC$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$3\\sqrt{3}$"
+      },
+      {
+        "key": "B",
+        "text": "$6\\sqrt{3}$"
+      },
+      {
+        "key": "C",
+        "text": "$\\dfrac{3\\sqrt{3}}{2}$"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{9\\sqrt{3}}{2}$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "$S=\\dfrac{1}{2}ab\\sin C=\\dfrac{1}{2} \\cdot 2 \\cdot 3 \\cdot \\dfrac{\\sqrt{3}}{2}=\\dfrac{3\\sqrt{3}}{2}$.",
+    "tags": [
+      "giải tam giác",
+      "diện tích"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Cho góc $\\alpha=45^\\circ$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$\\sin \\alpha=\\dfrac{\\sqrt{2}}{2}$"
+      },
+      {
+        "key": "b",
+        "text": "$\\cos \\alpha=\\dfrac{1}{2}$"
+      },
+      {
+        "key": "c",
+        "text": "$\\tan \\alpha=1$"
+      },
+      {
+        "key": "d",
+        "text": "$\\sin^2 \\alpha+\\cos^2 \\alpha=2$"
+      }
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "a) Đúng. b) $\\cos 45^\\circ=\\dfrac{\\sqrt{2}}{2}$ — sai. c) Đúng. d) Tổng bằng 1 với mọi góc — sai.",
+    "tags": [
+      "lượng giác",
+      "hệ thức lượng"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Tam giác $ABC$ (vẽ như hình) có $AB=5$, $AC=7$, $\\widehat{A}=60^\\circ$. Xét tính đúng sai:",
+    "figure": {
+      "kind": "scene",
+      "text": "A(0; 0) B(5; 0) C(3,5; 6,1)\nAB, BC, CA\ngóc BAC \"60°\"\nkích thước AB \"5\"\nnhãn AC \"7\"\nnhãn BC \"?\""
+    },
+    "options": [
+      {
+        "key": "a",
+        "text": "$BC=6$"
+      },
+      {
+        "key": "b",
+        "text": "Diện tích tam giác $ABC$ bằng $\\dfrac{35\\sqrt{3}}{4}$"
+      },
+      {
+        "key": "c",
+        "text": "$BC>AB$"
+      },
+      {
+        "key": "d",
+        "text": "$\\widehat{A}$ là góc lớn nhất của tam giác"
+      }
+    ],
+    "answer": "SĐĐS",
+    "explanation": "a) $BC^2=25+49-35=39$ nên $BC=\\sqrt{39} \\approx 6{,}24 \\ne 6$ — sai. b) $S=\\dfrac{1}{2} \\cdot 5 \\cdot 7 \\cdot \\dfrac{\\sqrt{3}}{2}=\\dfrac{35\\sqrt{3}}{4}$ — đúng. c) $\\sqrt{39}>5$ — đúng. d) Cạnh lớn nhất là $AC=7$ nên góc lớn nhất là $\\widehat{B}$ — sai.",
+    "tags": [
+      "giải tam giác",
+      "định lí côsin"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Cho tam giác $ABC$ có bán kính đường tròn ngoại tiếp $R$. Xét tính đúng sai theo định lí sin:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$\\dfrac{a}{\\sin A}=\\dfrac{b}{\\sin B}$"
+      },
+      {
+        "key": "b",
+        "text": "Nếu $\\widehat{A}=30^\\circ$, $a=4$ thì $2R=8$"
+      },
+      {
+        "key": "c",
+        "text": "Nếu $\\widehat{B}=45^\\circ$, $b=\\sqrt{2}$ thì $R=1$"
+      },
+      {
+        "key": "d",
+        "text": "$b=2R \\cos B$"
+      }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a) Đúng theo định lí sin. b) $\\dfrac{a}{\\sin A}=\\dfrac{4}{1/2}=8=2R$ — đúng. c) $\\dfrac{\\sqrt{2}}{\\sqrt{2}/2}=2=2R$ nên $R=1$ — đúng. d) Đúng là $b=2R\\sin B$ — sai.",
+    "tags": [
+      "giải tam giác",
+      "định lí sin"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Một cột đèn cao 6 m đổ bóng dài 8 m trên mặt đất (như hình). Gọi $\\alpha$ là góc chiếu của Mặt Trời so với mặt đất. Xét tính đúng sai:",
+    "figure": {
+      "kind": "scene",
+      "text": "A(0; 0) B(8; 0) C(0; 6)\nAB, BC, CA\nvuông BAC\nkích thước CA \"6 m\"\nnhãn AB \"8 m\"\nnhãn BC \"?\"\nđất AB"
+    },
+    "options": [
+      {
+        "key": "a",
+        "text": "$\\tan \\alpha=\\dfrac{3}{4}$"
+      },
+      {
+        "key": "b",
+        "text": "$\\alpha>45^\\circ$"
+      },
+      {
+        "key": "c",
+        "text": "Khoảng cách từ đỉnh cột đến đầu bóng là 10 m"
+      },
+      {
+        "key": "d",
+        "text": "$\\sin \\alpha=\\dfrac{4}{5}$"
+      }
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "a) $\\tan \\alpha=\\dfrac{6}{8}=\\dfrac{3}{4}$ — đúng. b) $\\tan \\alpha<1$ nên $\\alpha<45^\\circ$ — sai. c) $\\sqrt{6^2+8^2}=10$ — đúng. d) $\\sin \\alpha=\\dfrac{6}{10}=\\dfrac{3}{5}$ — sai.",
+    "tags": [
+      "giải tam giác",
+      "bài toán thực tế"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Tam giác $ABC$ có $a=5$, $b=7$, $\\widehat{C}=120^\\circ$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$c=\\sqrt{109}$"
+      },
+      {
+        "key": "b",
+        "text": "Diện tích tam giác bằng $\\dfrac{35\\sqrt{3}}{4}$"
+      },
+      {
+        "key": "c",
+        "text": "$c<10$"
+      },
+      {
+        "key": "d",
+        "text": "Tam giác $ABC$ là tam giác tù"
+      }
+    ],
+    "answer": "ĐĐSĐ",
+    "explanation": "a) $c^2=25+49-2 \\cdot 35 \\cos 120^\\circ=74+35=109$ — đúng. b) $S=\\dfrac{1}{2} \\cdot 5 \\cdot 7 \\cdot \\dfrac{\\sqrt{3}}{2}=\\dfrac{35\\sqrt{3}}{4}$ — đúng. c) $c=\\sqrt{109} \\approx 10{,}44>10$ — sai. d) Có góc $120^\\circ>90^\\circ$ — đúng.",
+    "tags": [
+      "giải tam giác",
+      "định lí côsin"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Xét tính đúng sai về giá trị lượng giác của các góc đặc biệt:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$\\sin 90^\\circ=1$"
+      },
+      {
+        "key": "b",
+        "text": "$\\cos 90^\\circ=1$"
+      },
+      {
+        "key": "c",
+        "text": "$\\sin 120^\\circ=\\dfrac{\\sqrt{3}}{2}$"
+      },
+      {
+        "key": "d",
+        "text": "$\\cos 120^\\circ=-\\dfrac{1}{2}$"
+      }
+    ],
+    "answer": "ĐSĐĐ",
+    "explanation": "a) Đúng. b) $\\cos 90^\\circ=0$ — sai. c) $\\sin 120^\\circ=\\sin 60^\\circ=\\dfrac{\\sqrt{3}}{2}$ — đúng. d) $\\cos 120^\\circ=-\\cos 60^\\circ=-\\dfrac{1}{2}$ — đúng.",
+    "tags": [
+      "lượng giác",
+      "góc đặc biệt"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Trong tam giác $ABC$ có $a=8$, $\\widehat{B}=60^\\circ$, $\\widehat{C}=45^\\circ$. Tính độ dài cạnh $b$ (làm tròn đến hàng phần mười).",
+    "answer": "7,2",
+    "explanation": "$\\widehat{A}=75^\\circ$, $b=\\dfrac{8\\sin 60^\\circ}{\\sin 75^\\circ} \\approx \\dfrac{6{,}93}{0{,}966} \\approx 7{,}2$.",
+    "tags": [
+      "giải tam giác",
+      "định lí sin"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "NB",
+    "prompt": "Tính $\\tan 135^\\circ$.",
+    "answer": "-1",
+    "explanation": "$\\tan 135^\\circ=\\tan(180^\\circ-45^\\circ)=-\\tan 45^\\circ=-1$.",
+    "tags": [
+      "lượng giác",
+      "góc tù"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Tam giác $ABC$ (vẽ như hình) có $AB=6$, $AC=10$, $\\widehat{A}=150^\\circ$. Tính diện tích tam giác $ABC$.",
+    "figure": {
+      "kind": "scene",
+      "text": "A(0; 0) B(6; 0) C(-8,7; 5)\nAB, BC, CA\ngóc BAC \"150°\"\nkích thước AB \"6\"\nnhãn AC \"10\""
+    },
+    "answer": "15",
+    "explanation": "$S=\\dfrac{1}{2} \\cdot 6 \\cdot 10 \\cdot \\sin 150^\\circ=30 \\cdot \\dfrac{1}{2}=15$.",
+    "tags": [
+      "giải tam giác",
+      "diện tích"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Tam giác $ABC$ vuông tại $A$ có $AB=5$, $AC=12$. Tính bán kính đường tròn ngoại tiếp tam giác $ABC$.",
+    "answer": "6,5",
+    "explanation": "Bán kính đường tròn ngoại tiếp tam giác vuông bằng nửa cạnh huyền $=\\dfrac{13}{2}=6{,}5$.",
+    "tags": [
+      "giải tam giác",
+      "đường tròn ngoại tiếp"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Một chiếc thang dài 4 m nghiêng một góc $75^\\circ$ so với mặt đất (như hình). Tính chiều cao điểm tựa trên tường (làm tròn đến hàng phần mười).",
+    "figure": {
+      "kind": "scene",
+      "text": "A(0; 0) B(1; 0) C(0; 3,9)\nAB, BC, CA\ntường AB\ngóc ABC \"75°\"\nkích thước BC \"4 m\"\nnhãn AC \"?\""
+    },
+    "answer": "3,9",
+    "explanation": "Chiều cao $=4\\sin 75^\\circ \\approx 4 \\cdot 0{,}966 \\approx 3{,}9$ m.",
+    "tags": [
+      "giải tam giác",
+      "bài toán thực tế"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Tam giác $ABC$ có $b=4$, $c=5$, $\\widehat{A}=60^\\circ$. Tính $a^2$.",
+    "answer": "21",
+    "explanation": "$a^2=16+25-2 \\cdot 4 \\cdot 5 \\cdot \\dfrac{1}{2}=41-20=21$.",
+    "tags": [
+      "giải tam giác",
+      "định lí côsin"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 10"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Từ vị trí $A$ trên mặt đất người ta thấy đỉnh một tháp dưới một góc $30^\\circ$. Đi về phía tháp thêm 20 m đến vị trí $B$ (thẳng hàng với $A$ và chân tháp) thì thấy đỉnh tháp dưới góc $60^\\circ$. Tính chiều cao tháp (làm tròn đến hàng phần mười).",
+    "answer": "17,3",
+    "explanation": "$h(\\cot 30^\\circ-\\cot 60^\\circ)=20 \\Rightarrow h \\cdot \\dfrac{2\\sqrt{3}}{3}=20 \\Rightarrow h=10\\sqrt{3} \\approx 17{,}3$ m.",
+    "tags": [
+      "giải tam giác",
+      "bài toán thực tế"
+    ]
+  }
+]

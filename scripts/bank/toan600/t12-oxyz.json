@@ -181,7 +181,7 @@
       },
       {
         "key": "D",
-        "text": "$\\dfrac{2}{3}$"
+        "text": "$\\dfrac{1}{3}$"
       }
     ],
     "answer": "A",
@@ -325,27 +325,27 @@
     ],
     "type": "trac-nghiem",
     "level": "VD",
-    "prompt": "Tích có hướng $\\vec{u} \\times \\vec{v}$ với $\\vec{u}=(1;0;0)$, $\\vec{v}=(0;1;0)$ là",
+    "prompt": "Tích vô hướng $\\vec{u} \\cdot \\vec{v}$ với $\\vec{u}=(1;2;0)$, $\\vec{v}=(2;-1;3)$ bằng",
     "options": [
       {
         "key": "A",
-        "text": "$(0;0;-1)$"
+        "text": "$0$"
       },
       {
         "key": "B",
-        "text": "$(0;0;1)$"
+        "text": "$1$"
       },
       {
         "key": "C",
-        "text": "$(1;1;0)$"
+        "text": "$4$"
       },
       {
         "key": "D",
-        "text": "$(1;1;1)$"
+        "text": "$-1$"
       }
     ],
-    "answer": "B",
-    "explanation": "Theo quy tắc bàn tay phải, $\\vec{i} \\times \\vec{j}=\\vec{k}$.",
+    "answer": "A",
+    "explanation": "$2-2+0=0$.",
     "tags": [
       "Oxyz",
       "tích có hướng"
@@ -520,7 +520,7 @@
     "prompt": "Trong không gian với hệ toạ độ, cho $A(0;0;0)$, $B(3;0;0)$, $C(0;4;0)$, $S(0;0;3)$ (như hình minh hoạ chóp $S.ABC$). Xét tính đúng sai:",
     "figure": {
       "kind": "geo3d",
-      "shape": "pyramid3",
+      "shape": "pyramid3-sa",
       "names": [
         "S",
         "A",
@@ -546,8 +546,8 @@
         "text": "Thể tích khối chóp $S.ABC$ bằng 12"
       }
     ],
-    "answer": "ĐĐSĐ",
-    "explanation": "a) Đúng. b) $SB=\\sqrt{9+9}=3\\sqrt{2} \\ne 9$ — sai. c) $BC \\perp (SAB)$ nên $d(S,BC)=d(A,BC)=AB=3$ — đúng. d) $V=\\dfrac{1}{3} \\cdot 6 \\cdot 3=6 \\ne 12$ — sai.",
+    "answer": "ĐSSS",
+    "explanation": "a) $(ABC)$ là mặt $(Oxy)$ — đúng. b) $SB=\\sqrt{9+9}=3\\sqrt{2}$ — sai. c) Hạ $AH \\perp BC$: $AH=\\dfrac{12}{5}$, $d(S,BC)=SH=\\sqrt{9+5{,}76}\\approx 3{,}84$ — sai. d) $V=\\dfrac{1}{3}\\cdot 6\\cdot 3=6$ — sai.",
     "tags": [
       "Oxyz",
       "hình chóp"

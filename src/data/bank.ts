@@ -1,13 +1,14 @@
 import type { Option, QuestionType, Subject } from './types'
 import { BANK_FIGURES } from './bankFigures'
 
-/** Kho đầy đủ: BANK + câu THPT (bankThpt.ts, bankThpt2.ts) tải sau để không nặng gói tải đầu trang. */
+/** Kho đầy đủ: BANK + câu THPT (bankThpt.ts, bankThpt2.ts, bankThpt3.ts) tải sau để không nặng gói tải đầu trang. */
 let fullBank: Promise<BankEntry[]> | null = null
 export function loadFullBank(): Promise<BankEntry[]> {
-  fullBank ??= Promise.all([import('./bankThpt'), import('./bankThpt2')]).then(([a, b]) => [
+  fullBank ??= Promise.all([import('./bankThpt'), import('./bankThpt2'), import('./bankThpt3')]).then(([a, b, c]) => [
     ...BANK,
     ...a.BANK_THPT,
     ...b.BANK_THPT2,
+    ...c.BANK_THPT3,
   ])
   return fullBank
 }

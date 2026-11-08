@@ -247,12 +247,12 @@
     "prompt": "Mặt cầu đi qua bốn điểm $O(0;0;0)$, $A(2;0;0)$, $B(0;2;0)$, $C(0;0;2)$ (như hình) có bán kính bằng",
     "figure": {
       "kind": "geo3d",
-      "shape": "pyramid3",
+      "shape": "pyramid3-sa",
       "names": [
+        "C",
         "O",
         "A",
-        "B",
-        "C"
+        "B"
       ],
       "circumsphere": true
     },
@@ -395,7 +395,7 @@
       },
       {
         "key": "C",
-        "text": "$29{,}32$"
+        "text": "$8{,}38$"
       },
       {
         "key": "D",
@@ -403,7 +403,7 @@
       }
     ],
     "answer": "C",
-    "explanation": "Chỏm cầu với $h=3-2=1$... tính lại: phần trên $z=2$ có chiều cao $h=R-2=1$: $V=\\dfrac{\\pi h^2(3R-h)}{3}=\\dfrac{28\\pi}{3} \\approx 29{,}32$.",
+    "explanation": "Chỏm cầu cao $h=3-2=1$: $V=\\pi\\int_2^3(9-z^2)\\,dz=\\pi\\left(9-\\dfrac{19}{3}\\right)=\\dfrac{8\\pi}{3}\\approx 8{,}38$.",
     "tags": [
       "mặt cầu",
       "thể tích"

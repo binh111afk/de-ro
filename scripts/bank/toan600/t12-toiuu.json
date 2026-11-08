@@ -301,27 +301,27 @@
     ],
     "type": "trac-nghiem",
     "level": "TH",
-    "prompt": "Một ô tô đi 120 km trong 2 giờ. Tốc độ trung bình của ô tô là",
+    "prompt": "Một hình chữ nhật có chu vi 40 cm. Diện tích lớn nhất của hình chữ nhật đó là",
     "options": [
       {
         "key": "A",
-        "text": "$60$ km/h"
+        "text": "$100$ cm²"
       },
       {
         "key": "B",
-        "text": "$50$ km/h"
+        "text": "$80$ cm²"
       },
       {
         "key": "C",
-        "text": "$70$ km/h"
+        "text": "$120$ cm²"
       },
       {
         "key": "D",
-        "text": "$240$ km/h"
+        "text": "$400$ cm²"
       }
     ],
     "answer": "A",
-    "explanation": "$v=\\dfrac{120}{2}=60$ km/h.",
+    "explanation": "Cạnh $x$ và $20-x$: $S=x(20-x)\\le 100$, dấu bằng khi $x=10$.",
     "tags": [
       "tối ưu",
       "quãng đường"
@@ -384,8 +384,8 @@
         "text": "$400$ sản phẩm"
       }
     ],
-    "answer": "B",
-    "explanation": "$\\dfrac{C(x)}{x}=0{,}01x+40+\\dfrac{4000}{x} \\ge 40+2\\sqrt{40}$, dấu bằng khi $0{,}01x=\\dfrac{4000}{x} \\Leftrightarrow x=2000$.",
+    "answer": "C",
+    "explanation": "$\\dfrac{C(x)}{x}=0{,}01x+40+\\dfrac{4000}{x}$ nhỏ nhất khi $0{,}01=\\dfrac{4000}{x^2}$, tức $x=\\sqrt{400000}\\approx 632$.",
     "tags": [
       "tối ưu",
       "kinh tế"
@@ -584,8 +584,8 @@
         "text": "Tổng thời gian là 1,5 h"
       }
     ],
-    "answer": "ĐĐĐS",
-    "explanation": "a) $\\dfrac{60}{80}=0{,}75$ — đúng. b) $\\dfrac{30}{40}=0{,}75$ — đúng. c) Tốc độ trung bình $=\\dfrac{90}{1{,}5}=60$ km/h $\\ne 90$ — sai. d) Đúng.",
+    "answer": "ĐĐSĐ",
+    "explanation": "a), b) $60:80=30:40=0{,}75$ h — đúng. c) $90:1{,}5=60$ km/h — sai. d) Đúng.",
     "tags": [
       "tối ưu",
       "quãng đường"

@@ -653,9 +653,9 @@
     ],
     "type": "tra-loi-ngan",
     "level": "VD",
-    "prompt": "Gửi tiền với lãi kép $5\\%$/năm. Sau ít nhất bao nhiêu năm (làm tròn đến hàng đơn vị) số tiền gấp đôi số tiền ban đầu?",
-    "answer": "14",
-    "explanation": "$1{,}05^n \\ge 2 \\Leftrightarrow n \\ge \\dfrac{\\ln 2}{\\ln 1{,}05} \\approx 14{,}2$ nên cần 14 năm.",
+    "prompt": "Gửi tiền với lãi kép $5\\%$/năm. Sau ít nhất bao nhiêu năm thì số tiền nhận được không nhỏ hơn gấp đôi số tiền ban đầu?",
+    "answer": "15",
+    "explanation": "$1{,}05^{n} \\ge 2 \\Leftrightarrow n \\ge \\log_{1{,}05}2 \\approx 14{,}2$; $1{,}05^{14}\\approx 1{,}98<2$, $1{,}05^{15}\\approx 2{,}08$. Vậy 15 năm.",
     "tags": [
       "dãy số",
       "lãi kép"

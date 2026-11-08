@@ -1,0 +1,698 @@
+[
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Đường thẳng đứng $x=2$ là tiệm cận đứng của đồ thị hàm số",
+    "options": [
+      {
+        "key": "A",
+        "text": "$y=x+2$"
+      },
+      {
+        "key": "B",
+        "text": "$y=x^2-4$"
+      },
+      {
+        "key": "C",
+        "text": "$y=\\dfrac{1}{x-2}$"
+      },
+      {
+        "key": "D",
+        "text": "$y=\\sqrt{x+2}$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "$\\lim\\limits_{x \\to 2^+}\\dfrac{1}{x-2}=+\\infty$ nên $x=2$ là tiệm cận đứng.",
+    "tags": [
+      "tiệm cận",
+      "hàm phân thức"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "NB",
+    "prompt": "Tiệm cận ngang của đồ thị hàm số $y=\\dfrac{2x+1}{x-1}$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$x=1$"
+      },
+      {
+        "key": "B",
+        "text": "$y=2$"
+      },
+      {
+        "key": "C",
+        "text": "$y=1$"
+      },
+      {
+        "key": "D",
+        "text": "$y=-1$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Bậc tử bằng bậc mẫu nên tiệm cận ngang $y=\\dfrac{2}{1}=2$.",
+    "tags": [
+      "tiệm cận",
+      "hàm phân thức"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Tiệm cận xiên của đồ thị hàm số $y=x^3-3x$ (khi $x \\to \\pm \\infty$) là",
+    "options": [
+      {
+        "key": "A",
+        "text": "không có (bậc ba không có tiệm cận xiên)"
+      },
+      {
+        "key": "B",
+        "text": "$y=3x$"
+      },
+      {
+        "key": "C",
+        "text": "$y=x$"
+      },
+      {
+        "key": "D",
+        "text": "$y=x-3$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Hàm bậc ba không có tiệm cận.",
+    "tags": [
+      "tiệm cận",
+      "hàm bậc ba"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Đồ thị hàm số $y=\\dfrac{x^2-1}{x+1}$ (với $x \\ne -1$) có",
+    "options": [
+      {
+        "key": "A",
+        "text": "tiệm cận đứng $x=-1$"
+      },
+      {
+        "key": "B",
+        "text": "tiệm cận ngang $y=1$"
+      },
+      {
+        "key": "C",
+        "text": "hai tiệm cận đứng"
+      },
+      {
+        "key": "D",
+        "text": "không có tiệm cận, đồ thị là đường thẳng $y=x-1$ bỏ đi điểm $(-1;-2)$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Với $x \\ne -1$: $y=x-1$, hàm rút gọn thành bậc nhất nên không có tiệm cận.",
+    "tags": [
+      "tiệm cận",
+      "hàm phân thức"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "GTLN của hàm số $y=x^3-3x$ trên đoạn $[-2;2]$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$-2$"
+      },
+      {
+        "key": "B",
+        "text": "$0$"
+      },
+      {
+        "key": "C",
+        "text": "$2$"
+      },
+      {
+        "key": "D",
+        "text": "$6$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "$y'=3x^2-3=0 \\Leftrightarrow x=\\pm 1$. So sánh $y(-2)=-2$, $y(-1)=2$, $y(1)=-2$, $y(2)=2$: GTLN $=2$.",
+    "tags": [
+      "GTLN-GTNN",
+      "trên đoạn"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "GTNN của hàm số $y=x^3-3x^2+1$ trên đoạn $[-1;1]$ (đồ thị như hình) là",
+    "figure": {
+      "kind": "graph",
+      "curves": [
+        "x^3-3x^2+1"
+      ],
+      "xMin": -2,
+      "xMax": 4,
+      "yMin": -4,
+      "yMax": 3,
+      "labels": true
+    },
+    "options": [
+      {
+        "key": "A",
+        "text": "$1$"
+      },
+      {
+        "key": "B",
+        "text": "$-3$"
+      },
+      {
+        "key": "C",
+        "text": "$-1$"
+      },
+      {
+        "key": "D",
+        "text": "$0$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "So sánh $y(-1)=-3$, $y(0)=1$, $y(1)=-1$: GTNN $=-3$.",
+    "tags": [
+      "GTLN-GTNN",
+      "trên đoạn"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "GTNN của hàm số $y=x^4-2x^2+1$ trên đoạn $[0;2]$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$0$"
+      },
+      {
+        "key": "B",
+        "text": "$1$"
+      },
+      {
+        "key": "C",
+        "text": "$9$"
+      },
+      {
+        "key": "D",
+        "text": "$-1$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "$y=(x^2-1)^2 \\ge 0$, dấu bằng tại $x=1 \\in [0;2]$.",
+    "tags": [
+      "GTLN-GTNN",
+      "hàm trùng phương"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Đồ thị hàm số $y=\\dfrac{x+2}{x^2-1}$ có bao nhiêu tiệm cận đứng?",
+    "options": [
+      {
+        "key": "A",
+        "text": "$1$"
+      },
+      {
+        "key": "B",
+        "text": "$2$"
+      },
+      {
+        "key": "C",
+        "text": "$0$"
+      },
+      {
+        "key": "D",
+        "text": "$3$"
+      }
+    ],
+    "answer": "B",
+    "explanation": "$x^2-1=0 \\Leftrightarrow x=\\pm 1$, tử khác 0 tại cả hai chỗ nên có 2 tiệm cận đứng $x=\\pm 1$.",
+    "tags": [
+      "tiệm cận",
+      "hàm phân thức"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "Hàm số $y=\\dfrac{x+1}{x-1}$ nghịch biến trên",
+    "options": [
+      {
+        "key": "A",
+        "text": "$\\mathbb{R}$"
+      },
+      {
+        "key": "B",
+        "text": "$(-1;1)$"
+      },
+      {
+        "key": "C",
+        "text": "không nghịch biến trên khoảng nào"
+      },
+      {
+        "key": "D",
+        "text": "$(-\\infty;1)$ và $(1;+\\infty)$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "$y'=\\dfrac{-2}{(x-1)^2}<0$ với mọi $x \\ne 1$ nên nghịch biến trên từng khoảng xác định.",
+    "tags": [
+      "đơn điệu",
+      "hàm phân thức"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "TH",
+    "prompt": "GTNN của hàm số $y=x^2-4x+1$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$1$"
+      },
+      {
+        "key": "B",
+        "text": "$-4$"
+      },
+      {
+        "key": "C",
+        "text": "$-3$"
+      },
+      {
+        "key": "D",
+        "text": "$2$"
+      }
+    ],
+    "answer": "C",
+    "explanation": "$y=(x-2)^2-3 \\ge -3$.",
+    "tags": [
+      "GTLN-GTNN",
+      "parabol"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VD",
+    "prompt": "GTLN của hàm số $y=\\dfrac{x}{x^2+1}$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$1$"
+      },
+      {
+        "key": "B",
+        "text": "$\\dfrac{\\sqrt{2}}{2}$"
+      },
+      {
+        "key": "C",
+        "text": "$2$"
+      },
+      {
+        "key": "D",
+        "text": "$\\dfrac{1}{2}$"
+      }
+    ],
+    "answer": "D",
+    "explanation": "Với $x>0$: $y \\le \\dfrac{1}{2}$ (vì $2x \\le x^2+1$), dấu bằng tại $x=1$.",
+    "tags": [
+      "GTLN-GTNN",
+      "hàm phân thức"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "trac-nghiem",
+    "level": "VDC",
+    "prompt": "Biết hàm số $y=x^3-3x+m$ có GTNN trên đoạn $[0;2]$ bằng $-2$. Giá trị của $m$ là",
+    "options": [
+      {
+        "key": "A",
+        "text": "$0$"
+      },
+      {
+        "key": "B",
+        "text": "$1$"
+      },
+      {
+        "key": "C",
+        "text": "$2$"
+      },
+      {
+        "key": "D",
+        "text": "$-2$"
+      }
+    ],
+    "answer": "A",
+    "explanation": "Trên $[0;2]$: $y(0)=m$, $y(2)=m+2$, $y(1)=m-2$ (cực tiểu) nên GTNN $=m-2=-2 \\Rightarrow m=0$.",
+    "tags": [
+      "GTLN-GTNN",
+      "tham số"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Cho hàm số $y=x^3-3x^2+2$ xét trên đoạn $[0;3]$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "$y'=3x^2-6x$"
+      },
+      {
+        "key": "b",
+        "text": "Hàm số có cực tiểu tại $x=2$"
+      },
+      {
+        "key": "c",
+        "text": "GTNN của hàm số trên đoạn $[0;3]$ bằng $-2$"
+      },
+      {
+        "key": "d",
+        "text": "GTLN của hàm số trên đoạn $[0;3]$ bằng 3"
+      }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a) Đúng. b) Đúng. c) $y(2)=8-12+2=-2$ là nhỏ nhất — đúng. d) GTLN $=\\max\\{y(0)=2; y(1)=0; y(3)=2\\}=2 \\ne 3$ — sai.",
+    "tags": [
+      "GTLN-GTNN",
+      "trên đoạn"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Cho hàm số $y=\\dfrac{x-1}{x+1}$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Tập xác định là $\\mathbb{R} \\setminus \\{-1\\}$"
+      },
+      {
+        "key": "b",
+        "text": "Đồ thị có tiệm cận đứng $x=-1$"
+      },
+      {
+        "key": "c",
+        "text": "Đồ thị có tiệm cận ngang $y=1$"
+      },
+      {
+        "key": "d",
+        "text": "Hàm số nghịch biến trên $\\mathbb{R}$"
+      }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a) Đúng. b) Đúng. c) Đúng. d) Nghịch biến trên từng khoảng $(-\\infty;-1)$ và $(-1;+\\infty)$, không trên toàn $\\mathbb{R}$ — sai.",
+    "tags": [
+      "tiệm cận",
+      "đơn điệu"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Cho hàm số $y=x^3-3x^2+1$ có đồ thị như hình. Xét tính đúng sai:",
+    "figure": {
+      "kind": "graph",
+      "curves": [
+        "x^3-3x^2+1"
+      ],
+      "xMin": -2,
+      "xMax": 4,
+      "yMin": -4,
+      "yMax": 3,
+      "labels": true
+    },
+    "options": [
+      {
+        "key": "a",
+        "text": "Hàm số có cực đại tại $x=0$"
+      },
+      {
+        "key": "b",
+        "text": "Giá trị cực đại của hàm số bằng 2"
+      },
+      {
+        "key": "c",
+        "text": "Đồ thị có tiệm cận đứng $x=0$"
+      },
+      {
+        "key": "d",
+        "text": "GTNN của hàm số trên đoạn $[-1;1]$ bằng $-3$"
+      }
+    ],
+    "answer": "ĐSSĐ",
+    "explanation": "a) Đúng. b) Giá trị cực đại $y(0)=1 \\ne 2$ — sai. c) Hàm bậc ba không có tiệm cận — sai. d) $y(-1)=-3$ là nhỏ nhất — đúng.",
+    "tags": [
+      "cực trị",
+      "GTLN-GTNN"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "TH",
+    "prompt": "Cho hàm số $y=x^4-4x^2+1$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Hàm số có 3 điểm cực trị"
+      },
+      {
+        "key": "b",
+        "text": "GTNN của hàm số bằng $-3$"
+      },
+      {
+        "key": "c",
+        "text": "$\\lim\\limits_{x \\to \\pm \\infty}y=+\\infty$"
+      },
+      {
+        "key": "d",
+        "text": "Hàm số đồng biến trên $(0;\\sqrt{2})$"
+      }
+    ],
+    "answer": "ĐĐĐS",
+    "explanation": "a) Đúng. b) $y(\\pm \\sqrt{2})=4-8+1=-3$ — đúng. c) Đúng. d) Trên $(0;\\sqrt{2})$ hàm nghịch biến — sai.",
+    "tags": [
+      "cực trị",
+      "hàm trùng phương"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VDC",
+    "prompt": "Cho hàm số $y=\\dfrac{x^2-4}{x-2}$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Với $x \\ne 2$, hàm số trở thành $y=x+2$"
+      },
+      {
+        "key": "b",
+        "text": "Đồ thị có tiệm cận đứng $x=2$"
+      },
+      {
+        "key": "c",
+        "text": "$\\lim\\limits_{x \\to 2}y=4$"
+      },
+      {
+        "key": "d",
+        "text": "Hàm số nghịch biến trên $\\mathbb{R} \\setminus \\{2\\}$"
+      }
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "a) Đúng. b) $\\lim\\limits_{x \\to 2^\\pm}y=4$ hữu hạn nên không có tiệm cận — sai. c) Đúng. d) Hàm đồng biến trên từng khoảng — sai.",
+    "tags": [
+      "tiệm cận",
+      "hàm phân thức"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "dung-sai",
+    "level": "VD",
+    "prompt": "Cho hàm số $y=-x^2+4x$ xét trên đoạn $[1;4]$. Xét tính đúng sai:",
+    "options": [
+      {
+        "key": "a",
+        "text": "Hàm số đạt GTLN tại $x=2$"
+      },
+      {
+        "key": "b",
+        "text": "GTLN của hàm số bằng 5"
+      },
+      {
+        "key": "c",
+        "text": "Hàm số đạt GTNN tại $x=4$"
+      },
+      {
+        "key": "d",
+        "text": "GTNN của hàm số bằng 3"
+      }
+    ],
+    "answer": "ĐSĐS",
+    "explanation": "a) Đúng. b) $y(2)=4 \\ne 5$ — sai. c) So sánh $y(1)=3$, $y(4)=0$ — đúng. d) GTNN $=0 \\ne 3$ — sai.",
+    "tags": [
+      "GTLN-GTNN",
+      "parabol"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Tính GTLN của hàm số $y=-x^2+2x+1$.",
+    "answer": "2",
+    "explanation": "Đỉnh tại $x=1$: $y(1)=-1+2+1=2$.",
+    "tags": [
+      "GTLN-GTNN",
+      "parabol"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Tính GTNN của hàm số $y=x^3-3x^2+4$ trên đoạn $[0;3]$.",
+    "answer": "0",
+    "explanation": "So sánh $y(0)=4$, $y(2)=0$, $y(3)=4$: GTNN $=0$.",
+    "tags": [
+      "GTLN-GTNN",
+      "trên đoạn"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Tính tiệm cận ngang của đồ thị hàm số $y=\\dfrac{3x-1}{x+2}$.",
+    "answer": "3",
+    "explanation": "Bậc hai đa thức bằng nhau nên tiệm cận ngang $y=\\dfrac{3}{1}=3$.",
+    "tags": [
+      "tiệm cận",
+      "hàm phân thức"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "TH",
+    "prompt": "Tính GTNN của hàm số $y=2x^2-8x+5$.",
+    "answer": "-3",
+    "explanation": "Đỉnh $x=2$: $y=8-16+5=-3$.",
+    "tags": [
+      "GTLN-GTNN",
+      "parabol"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Với $x>0$, tính GTNN của hàm số $y=\\dfrac{x^2+3}{x}$ (làm tròn đến hàng phần trăm).",
+    "answer": "3,46",
+    "explanation": "$y=x+\\dfrac{3}{x} \\ge 2\\sqrt{3} \\approx 3{,}46$, dấu bằng tại $x=\\sqrt{3}$.",
+    "tags": [
+      "GTLN-GTNN",
+      "Cauchy"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VD",
+    "prompt": "Tính hệ số góc của tiệm cận xiên của đồ thị hàm số $y=\\dfrac{x^2+2x+3}{x+1}$.",
+    "answer": "1",
+    "explanation": "Chia đa thức: $y=x+1+\\dfrac{2}{x+1}$ nên tiệm cận xiên $y=x+1$ có hệ số góc 1.",
+    "tags": [
+      "tiệm cận",
+      "tiệm cận xiên"
+    ]
+  },
+  {
+    "grades": [
+      "Lớp 12"
+    ],
+    "type": "tra-loi-ngan",
+    "level": "VDC",
+    "prompt": "Tính GTNN của hàm số $y=x+\\dfrac{4}{x}$ trên đoạn $[1;3]$ (làm tròn đến hàng phần trăm).",
+    "answer": "2,83",
+    "explanation": "GTNN tại $x=2$: $y=2+2=2\\sqrt{2} \\approx 2{,}83$.",
+    "tags": [
+      "GTLN-GTNN",
+      "trên đoạn"
+    ]
+  }
+]

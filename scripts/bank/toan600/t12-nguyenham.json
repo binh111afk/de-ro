@@ -494,8 +494,8 @@
         "text": "$I$ biểu diễn diện tích hình thang giới hạn bởi $y=2x+1$, trục $Ox$ và $x=1$, $x=2$"
       }
     ],
-    "answer": "ĐĐĐS",
-    "explanation": "a) Đúng. b) $\\left[x^2+x\\right]_1^2=6-2=4$ — đúng. c) Sai. d) Đúng vì $2x+1>0$ trên $[1;2]$.",
+    "answer": "ĐĐSĐ",
+    "explanation": "a) Đúng. b) $(4+2)-(1+1)=4$ — đúng. c) Sai. d) $2x+1>0$ trên $[1;2]$ nên $I$ đúng bằng diện tích hình thang — đúng.",
     "tags": [
       "tích phân",
       "diện tích"
@@ -590,7 +590,7 @@
         "text": "$K=3$"
       }
     ],
-    "answer": "ĐĐSĐ",
+    "answer": "ĐĐĐS",
     "explanation": "a) Đúng. b) Đúng. c) $\\left[\\dfrac{t^4}{8}\\right]_1^2=\\dfrac{16-1}{8}=\\dfrac{15}{8}$ — đúng. d) $\\dfrac{15}{8} \\ne 3$ — sai.",
     "tags": [
       "tích phân",
