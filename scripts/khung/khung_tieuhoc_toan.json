@@ -1,0 +1,79 @@
+{
+  "mon": "Toán",
+  "pham_vi_luot": "lớp 1–5 (tiểu học)",
+  "nguon": [
+    "Chương trình GDPT 2018 môn Toán, Thông tư 32/2018/TT-BGDĐT (sửa đổi bởi Thông tư 13/2022)",
+    "SGK Toán 1–5 — Kết nối tri thức (mục lục từ loigiaihay.com, vietjack.com)",
+    "Thông tư 27/2020/TT-BGDĐT — đánh giá học sinh tiểu học"
+  ],
+  "danh_gia": {
+    "muc_do": [
+      { "muc": 1, "mo_ta": "Nhận biết, nhắc lại được kiến thức, kĩ năng đơn giản đã học" },
+      { "muc": 2, "mo_ta": "Hiểu, trình bày và giải quyết được kiến thức, kĩ năng quen thuộc" },
+      { "muc": 3, "mo_ta": "Vận dụng kiến thức, kĩ năng đã học để giải quyết vấn đề mới hoặc trong tình huống thực tiễn" }
+    ],
+    "thang_diem": "Nhận xét bằng lời; đánh giá thường xuyên bằng điểm số (thang 10) với các bài đánh giá định kì cuối học kì, cuối năm; không so sánh học sinh với nhau",
+    "thoi_diem_kiem_tra": "Đánh giá thường xuyên trong mỗi tiết học, mỗi chủ đề; đánh giá định kì cuối học kì I, cuối học kì II"
+  },
+  "muc_luc_da_tra": [
+    "Lớp 1 – KNTT – Số và phép tính (các số đến 100; phép cộng, trừ trong phạm vi 100; bảng cộng, bảng trừ)",
+    "Lớp 1 – KNTT – Đo lường (độ dài, khối lượng, thời gian ở mức làm quen)",
+    "Lớp 1 – KNTT – Hình học (hình vuông, tròn, tam giác; mô tả vị trí)",
+    "Lớp 2 – KNTT – Số và phép tính (số trong 200; cộng trừ có nhớ; nhân chia trong bảng nhân 5)",
+    "Lớp 2 – KNTT – Đo lường và hình học (độ dài cm, m; hình học cơ bản)",
+    "Lớp 3 – KNTT – Số và phép tính (số trong 100 000; nhân chia có nhớ; bảng nhân chia)",
+    "Lớp 3 – KNTT – Đo lường, hình học, phân số bước đầu (cm, m, km, kg, phút, giờ; hình vuông, chữ nhật, tròn; phân số đơn giản)",
+    "Lớp 4 – KNTT – Số và phép tính (số đến 100 000; cộng trừ nhân chia; phân số; số thập phân bước đầu)",
+    "Lớp 4 – KNTT – Đo lường và hình học (diện tích hình vuông, chữ nhật; góc; độ dài, khối lượng, thời gian)",
+    "Lớp 5 – KNTT – Số và phép tính (số thập phân; cộng trừ nhân chia số thập phân; phân số; tỉ số phần trăm)",
+    "Lớp 5 – KNTT – Đo lường và hình học (diện tích hình tam giác, hình thang, hình tròn; thể tích hình hộp, lập phương; tốc độ)",
+    "Lớp 5 – KNTT – Một số yếu tố thống kê và xác suất (bảng, biểu đồ; khả năng xảy ra)"
+  ],
+  "lop": [
+    { "lop": 1, "chuong": [
+      { "id": "thtoan1-so-va-phep-tinh", "ten": "Số và phép tính (đến 100)", "pham_vi": ["Các số từ 0 đến 100", "Phép cộng, trừ trong phạm vi 100 (không có nhớ và có nhớ)", "Bảng cộng, bảng trừ"], "hoc_ky": 1, "mach": "Số và phép tính", "ten_theo_sach": { "KNTT": "Tập 1 + Tập 2", "CTST": "Tập 1 + Tập 2", "CD": "Tập 1 + Tập 2" }, "yeu_cau_can_dat": ["Đọc, viết, so sánh, sắp xếp các số đến 100", "Cộng, trừ trong phạm vi 100", "Giải bài toán đơn giản với phép cộng, trừ"], "kien_thuc_duoc_dung": ["Đếm, nhận biết số trong đời sống"], "chua_duoc_dung": ["Phép nhân, chia (lớp 2)", "Phân số (lớp 3)", "Số có hơn hai chữ số với phép nhân chia nâng cao"], "dang_bai_dien_hinh": ["Tính nhẩm", "Đặt tính rồi tính", "Giải bài toán có lời văn đơn giản", "Tìm x"], "luu_y_ra_de": "Phạm vi 100; số đẹp; tránh phép tính quá dài với trẻ 6 tuổi." },
+      { "id": "thtoan1-do-luong-hinh-hoc", "ten": "Đo lường và hình học (làm quen)", "pham_vi": ["Độ dài ở mức làm quen (dài hơn, ngắn hơn)", "Khối lượng ở mức làm quen (nặng hơn, nhẹ hơn)", "Hình vuông, hình tròn, hình tam giác", "Vị trí trên – dưới, trái – phải, trước – sau"], "hoc_ky": 2, "mach": "Đo lường và hình học", "ten_theo_sach": { "KNTT": "Tập 2", "CTST": "Tập 2", "CD": "Tập 2" }, "yeu_cau_can_dat": ["Nhận biết hình vuông, tròn, tam giác", "Mô tả vị trí của vật", "Làm quen so sánh độ dài, khối lượng"], "kien_thuc_duoc_dung": ["Quan sát thực tế"], "chua_duoc_dung": ["Đơn vị cm, m (lớp 2)", "Tính diện tích (lớp 3–4)"], "dang_bai_dien_hinh": ["Nhận biết hình", "Mô tả vị trí"], "luu_y_ra_de": "Chỉ nhận biết, chưa tính toán với đơn vị." } ],
+      "chuyen_de": [], "ghi_chu_chua_chac": ["Số chương lớp 1 gộp theo cấu trúc SGK KNTT tập 1+2; cụ thể theo từng bài cần đối chiếu SGK in"] },
+    { "lop": 2, "chuong": [
+      { "id": "thtoan2-so-va-phep-tinh", "ten": "Số và phép tính (đến 200; bảng nhân 5)", "pham_vi": ["Số trong phạm vi 200", "Cộng, trừ có nhớ trong phạm vi 100", "Bảng nhân 2, 3, 4, 5; phép chia hết"], "hoc_ky": 1, "mach": "Số và phép tính", "ten_theo_sach": { "KNTT": "Tập 1 + Tập 2", "CTST": "Tập 1 + Tập 2", "CD": "Tập 1 + Tập 2" }, "yeu_cau_can_dat": ["Đọc, viết, so sánh số đến 200", "Cộng trừ có nhớ trong 100", "Học bảng nhân 2–5, chia hết"], "kien_thuc_duoc_dung": ["Toán 1: cộng trừ trong 100"], "chua_duoc_dung": ["Bảng nhân 6–9 (lớp 3)", "Phân số (lớp 3)"], "dang_bai_dien_hinh": ["Đặt tính", "Tính nhẩm", "Giải bài toán có lời văn", "Tìm x"], "luu_y_ra_de": "Phạm vi 200; bảng nhân 2–5." },
+      { "id": "thtoan2-do-luong-hinh-hoc", "ten": "Đo lường và hình học", "pham_vi": ["Độ dài: centimet (cm), mét (m)", "Hình vuông, chữ nhật, tam giác, tròn", "Mô tả hình khối cơ bản"], "hoc_ky": 2, "mach": "Đo lường và hình học", "ten_theo_sach": { "KNTT": "Tập 2", "CTST": "Tập 2", "CD": "Tập 2" }, "yeu_cau_can_dat": ["Đo, ước lượng độ dài với cm, m", "Nhận biết và vẽ hình đơn giản", "Nêu đặc điểm hình học cơ bản"], "kien_thuc_duoc_dung": ["Toán 1: nhận biết hình"], "chua_duoc_dung": ["Chu vi, diện tích (lớp 3–4)", "Góc (lớp 4)"], "dang_bai_dien_hinh": ["Đo độ dài", "Nhận biết hình", "Đổi đơn vị cm ↔ m đơn giản"], "luu_y_ra_de": "Đơn vị cm, m; chưa dùng mm, km." } ],
+      "chuyen_de": [], "ghi_chu_chua_chac": ["Số chương lớp 2 gộp theo SGK KNTT; đối chiếu SGK in"] },
+    { "lop": 3, "chuong": [
+      { "id": "thtoan3-so-va-phep-tinh", "ten": "Số và phép tính (đến 100 000; bảng nhân chia; phân số đơn giản)", "pham_vi": ["Số trong phạm vi 100 000", "Bảng nhân, bảng chia; nhân chia có nhớ", "Phân số đơn giản (một nửa, một phần ba, một phần tư)"], "hoc_ky": 1, "mach": "Số và phép tính", "ten_theo_sach": { "KNTT": "Tập 1 + Tập 2", "CTST": "Tập 1 + Tập 2", "CD": "Tập 1 + Tập 2" }, "yeu_cau_can_dat": ["Đọc, viết, so sánh số đến 100 000", "Học bảng nhân 6–9, nhân chia có nhớ", "Nhận biết phân số đơn giản và so sánh phân số cùng mẫu"], "kien_thuc_duoc_dung": ["Toán 2: bảng nhân 2–5"], "chua_duoc_dung": ["Cộng trừ phân số khác mẫu (lớp 4)", "Số thập phân (lớp 4)"], "dang_bai_dien_hinh": ["Đặt tính nhân chia", "Tính nhẩm bảng nhân", "Giải bài toán (tìm số gấp nhiều lần, chia đều)", "Tìm x"], "luu_y_ra_de": "Bảng nhân đầy đủ; phân số cùng mẫu đơn giản." },
+      { "id": "thtoan3-do-luong-hinh-hoc-phan-so", "ten": "Đo lường, hình học và phân số bước đầu", "pham_vi": ["Độ dài: mm, cm, dm, m, km", "Khối lượng: g, kg; thời gian: phút, giờ", "Chu vi hình vuông, chữ nhật; diện tích bước đầu", "Góc ở mức làm quen"], "hoc_ky": 2, "mach": "Đo lường và hình học", "ten_theo_sach": { "KNTT": "Tập 2", "CTST": "Tập 2", "CD": "Tập 2" }, "yeu_cau_can_dat": ["Đo, đổi đơn vị đo độ dài, khối lượng, thời gian", "Tính chu vi hình vuông, hình chữ nhật", "Nhận biết góc, loại góc (nhọn, tù, vuông)"], "kien_thuc_duoc_dung": ["Toán 3: bảng nhân chia (chu vi = 4×a hoặc 2×(a+b))"], "chua_duoc_dung": ["Diện tích hình vuông, chữ nhật (lớp 4)", "Hình bình hành, thang (lớp 4–5)"], "dang_bai_dien_hinh": ["Đổi đơn vị đo", "Tính chu vi", "Nhận biết góc"], "luu_y_ra_de": "Đơn vị mm đến km; g, kg; phút, giờ — chưa giây, tấn." } ],
+      "chuyen_de": [], "ghi_chu_chua_chac": ["Số chương lớp 3 gộp theo SGK KNTT; phân số lớp 3 chỉ cùng mẫu đơn giản"] },
+    { "lop": 4, "chuong": [
+      { "id": "thtoan4-so-va-phep-tinh", "ten": "Số và phép tính: số nhiều chữ số, phân số, số thập phân bước đầu", "pham_vi": ["Số đến 100 000", "Phép cộng, trừ, nhân, chia với số nhiều chữ số", "Phân số: so sánh, cộng trừ cùng mẫu", "Số thập phân bước đầu"], "hoc_ky": 1, "mach": "Số và phép tính", "ten_theo_sach": { "KNTT": "Tập 1 + Tập 2", "CTST": "Tập 1 + Tập 2", "CD": "Tập 1 + Tập 2" }, "yeu_cau_can_dat": ["Đọc, viết, so sánh số nhiều chữ số", "Thực hiện 4 phép tính với số nhiều chữ số", "So sánh, cộng trừ phân số cùng mẫu", "Nhận biết số thập phân"], "kien_thuc_duoc_dung": ["Toán 3: bảng nhân chia, phân số đơn giản"], "chua_duoc_dung": ["Cộng trừ phân số khác mẫu (lớp 4 sau)", "Nhân chia phân số (lớp 5)", "Tỉ số phần trăm (lớp 5)"], "dang_bai_dien_hinh": ["Đặt tính 4 phép tính", "So sánh phân số", "Giải bài toán có lời văn", "Tìm x"], "luu_y_ra_de": "Phân số cùng mẫu trước; khác mẫu trong học kì 2." },
+      { "id": "thtoan4-do-luong-hinh-hoc", "ten": "Đo lường và hình học: diện tích, góc, đơn vị đo", "pham_vi": ["Diện tích hình vuông, hình chữ nhật", "Độ dài, khối lượng, thời gian đầy đủ", "Góc và loại góc", "Diện tích ở mức đơn giản"], "hoc_ky": 2, "mach": "Đo lường và hình học", "ten_theo_sach": { "KNTT": "Tập 2", "CTST": "Tập 2", "CD": "Tập 2" }, "yeu_cau_can_dat": ["Tính chu vi, diện tích hình vuông, chữ nhật", "Đọc, sử dụng thước đo góc; nhận biết góc", "Đổi đơn vị đo độ dài, khối lượng, thời gian"], "kien_thuc_duoc_dung": ["Toán 4: bảng nhân chia (chu vi, diện tích)"], "chua_duoc_dung": ["Diện tích tam giác, hình thang, tròn (lớp 5)", "Thể tích (lớp 5)"], "dang_bai_dien_hinh": ["Tính diện tích", "Đổi đơn vị", "Đo góc bằng thước đo góc"], "luu_y_ra_de": "Đơn vị đầy đủ; chưa dùng ha, km² (lớp 4 sau hoặc 5)." } ],
+      "chuyen_de": [], "ghi_chu_chua_chac": ["Số chương lớp 4 gộp theo SGK KNTT; đối chiếu SGK in"] },
+    { "lop": 5, "chuong": [
+      { "id": "thtoan5-so-va-phep-tinh", "ten": "Số và phép tính: số thập phân, phân số, tỉ số phần trăm", "pham_vi": ["Số thập phân: đọc, viết, so sánh, 4 phép tính", "Phân số: cộng, trừ, nhân, chia", "Tỉ số phần trăm và bài toán phần trăm"], "hoc_ky": 1, "mach": "Số và phép tính", "ten_theo_sach": { "KNTT": "Tập 1 + Tập 2", "CTST": "Tập 1 + Tập 2", "CD": "Tập 1 + Tập 2" }, "yeu_cau_can_dat": ["Đọc, viết, so sánh số thập phân; thực hiện 4 phép tính", "Thực hiện 4 phép tính với phân số", "Tính tỉ số phần trăm và giải bài toán phần trăm"], "kien_thuc_duoc_dung": ["Toán 4: phân số, số thập phân bước đầu"], "chua_duoc_dung": ["Phân số nâng cao, hỗn số với phép tính phức tạp (lớp 6)"], "dang_bai_dien_hinh": ["Đặt tính 4 phép tính số thập phân", "Giải bài toán phần trăm (tăng, giảm)", "Tính giá trị biểu thức"], "luu_y_ra_de": "Số thập phân và phân số; phần trăm bài toán thực tế mua bán." },
+      { "id": "thtoan5-do-luong-hinh-hoc", "ten": "Đo lường và hình học: diện tích tam giác, hình thang, hình tròn; thể tích; tốc độ", "pham_vi": ["Diện tích hình tam giác, hình thang, hình tròn", "Thể tích hình hộp chữ nhật, hình lập phương", "Tốc độ, đơn vị tốc độ", "Đơn vị đo: ha, km², lít, m³"], "hoc_ky": 2, "mach": "Đo lường và hình học", "ten_theo_sach": { "KNTT": "Tập 2", "CTST": "Tập 2", "CD": "Tập 2" }, "yeu_cau_can_dat": ["Tính diện tích hình tam giác, hình thang, hình tròn", "Tính thể tích hình hộp chữ nhật, hình lập phương", "Tính tốc độ, quãng đường, thời gian"], "kien_thuc_duoc_dung": ["Toán 4: diện tích hình vuông, chữ nhật", "Toán 5: số thập phân"], "chua_duoc_dung": ["Thể tích trụ, cầu (lớp sau)", "Hình học không gian nâng cao (lớp sau)"],
+          "dang_bai_dien_hinh": ["Tính diện tích, thể tích", "Bài toán chuyển động đều", "Đổi đơn vị đo"], "luu_y_ra_de": "π lấy 3,14; công thức tốc độ trong tiểu học là v = s/t." },
+      { "id": "thtoan5-thong-ke-xac-suat", "ten": "Một số yếu tố thống kê và xác suất", "pham_vi": ["Thu thập, ghi chép, thống kê dữ liệu", "Bảng, biểu đồ dữ liệu", "Khả năng xảy ra của sự kiện ở mức làm quen"], "hoc_ky": 2, "mach": "Một số yếu tố thống kê và xác suất", "ten_theo_sach": { "KNTT": "Tập 2", "CTST": "Tập 2", "CD": "Tập 2" }, "yeu_cau_can_dat": ["Thu thập, ghi chép dữ liệu theo bảng", "Đọc và sử dụng biểu đồ đơn giản", "Nêu khả năng xảy ra của sự kiện (chắc chắn, có thể, không thể)"], "kien_thuc_duoc_dung": ["Toán 5: số thập phân, phần trăm"], "chua_duoc_dung": ["Xác suất cổ điển (lớp 10)", "Biểu đồ phức tạp (lớp 6)"], "dang_bai_dien_hinh": ["Đọc bảng thống kê trả lời câu hỏi", "Nhận định khả năng xảy ra"], "luu_y_ra_de": "Chỉ nhận biết; không tính xác suất bằng công thức." } ],
+      "chuyen_de": [], "ghi_chu_chua_chac": ["Số chương lớp 5 gộp theo SGK KNTT; đối chiếu SGK in"] }
+  ],
+  "cau_truc_de": [
+    { "loai": "Đề kiểm tra cuối học kì 1 môn Toán lớp 1", "lop": 1, "thoi_gian_phut": 40, "phan": [
+      { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 8, "diem_moi_cau": 0.5, "tong_diem": 4 },
+      { "ten": "Phần II. Tự luận", "so_cau": 6, "diem_moi_cau": 1, "tong_diem": 6 } ],
+      "pham_vi": ["thtoan1-so-va-phep-tinh", "thtoan1-do-luong-hinh-hoc"], "ti_le_muc": { "Mức 1": "60%", "Mức 2": "30%", "Mức 3": "10%" } },
+    { "loai": "Đề kiểm tra cuối học kì 1 môn Toán lớp 2", "lop": 2, "thoi_gian_phut": 40, "phan": [
+      { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 8, "diem_moi_cau": 0.5, "tong_diem": 4 },
+      { "ten": "Phần II. Tự luận", "so_cau": 6, "diem_moi_cau": 1, "tong_diem": 6 } ],
+      "pham_vi": ["thtoan2-so-va-phep-tinh", "thtoan2-do-luong-hinh-hoc"], "ti_le_muc": { "Mức 1": "60%", "Mức 2": "30%", "Mức 3": "10%" } },
+    { "loai": "Đề kiểm tra cuối học kì 1 môn Toán lớp 3", "lop": 3, "thoi_gian_phut": 40, "phan": [
+      { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 8, "diem_moi_cau": 0.5, "tong_diem": 4 },
+      { "ten": "Phần II. Tự luận", "so_cau": 6, "diem_moi_cau": 1, "tong_diem": 6 } ],
+      "pham_vi": ["thtoan3-so-va-phep-tinh", "thtoan3-do-luong-hinh-hoc-phan-so"], "ti_le_muc": { "Mức 1": "50%", "Mức 2": "30%", "Mức 3": "20%" } },
+    { "loai": "Đề kiểm tra cuối học kì 1 môn Toán lớp 4", "lop": 4, "thoi_gian_phut": 40, "phan": [
+      { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 10, "diem_moi_cau": 0.5, "tong_diem": 5 },
+      { "ten": "Phần II. Tự luận", "so_cau": 5, "diem_moi_cau": 1, "tong_diem": 5 } ],
+      "pham_vi": ["thtoan4-so-va-phep-tinh", "thtoan4-do-luong-hinh-hoc"], "ti_le_muc": { "Mức 1": "40%", "Mức 2": "40%", "Mức 3": "20%" } },
+    { "loai": "Đề kiểm tra cuối học kì 1 môn Toán lớp 5", "lop": 5, "thoi_gian_phut": 40, "phan": [
+      { "ten": "Phần I. Trắc nghiệm nhiều lựa chọn", "so_cau": 10, "diem_moi_cau": 0.5, "tong_diem": 5 },
+      { "ten": "Phần II. Tự luận", "so_cau": 5, "diem_moi_cau": 1, "tong_diem": 5 } ],
+      "pham_vi": ["thtoan5-so-va-phep-tinh", "thtoan5-do-luong-hinh-hoc", "thtoan5-thong-ke-xac-suat"], "ti_le_muc": { "Mức 1": "40%", "Mức 2": "40%", "Mức 3": "20%" } }
+  ],
+  "phien_ban": 1
+}
