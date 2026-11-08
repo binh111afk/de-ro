@@ -56,10 +56,19 @@ function LabelDragPreview({
   const [minX, minY, w, h] = vb ? vb.slice(1).map(Number) : [0, 0, img.width, img.height]
   const html = useMemo(() => img.svg.replace(/<svg[^>]*>/, (m) => m + '<style>text[data-lbl]{cursor:move}</style>'), [img.svg])
 
-  const toVb = (e: React.PointerEvent) => {
+  const toVb = (e: { clientX: number; clientY: number }) => {
     const r = box.current!.getBoundingClientRect()
     const k = w / r.width
     return { x: minX + (e.clientX - r.left) * k, y: minY + (e.clientY - r.top) * k }
+  }
+
+  /** ghi vị trí mới vào spec (drag.current null thì bỏ qua — đã xử lý rồi) */
+  const finishDrag = (e: { clientX: number; clientY: number }) => {
+    const d = drag.current
+    if (!d) return
+    drag.current = null
+    const p = toVb(e)
+    onChange({ ...labelPos, [d.id]: [n1(d.ox + p.x - d.sx), n1(d.oy + p.y - d.sy)] })
   }
 
   return (
@@ -84,6 +93,13 @@ function LabelDragPreview({
             ox: labelPos?.[id]?.[0] ?? 0,
             oy: labelPos?.[id]?.[1] ?? 0,
           }
+          // thả chuột ngoài khung (capture bị mất) vẫn lưu vị trí: nghe pointerup ở window;
+          // thả trong khung thì handler của khung chạy trước và xoá drag.current, đây bỏ qua
+          const onWinUp = (ev: PointerEvent) => {
+            window.removeEventListener('pointerup', onWinUp)
+            finishDrag(ev)
+          }
+          window.addEventListener('pointerup', onWinUp, { once: true })
         }}
         onPointerMove={(e) => {
           const d = drag.current
@@ -91,13 +107,7 @@ function LabelDragPreview({
           const p = toVb(e)
           d.el.setAttribute('transform', `${d.t0} translate(${n1(p.x - d.sx)} ${n1(p.y - d.sy)})`)
         }}
-        onPointerUp={(e) => {
-          const d = drag.current
-          if (!d) return
-          drag.current = null
-          const p = toVb(e)
-          onChange({ ...labelPos, [d.id]: [n1(d.ox + p.x - d.sx), n1(d.oy + p.y - d.sy)] })
-        }}
+        onPointerUp={finishDrag}
         onPointerCancel={() => (drag.current = null)}
         onPointerOver={(e) => {
           const t = (e.target as Element).closest('text[data-lbl]')
