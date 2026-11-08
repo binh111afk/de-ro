@@ -233,7 +233,7 @@ Prompt mẫu cho từng môn: dùng A1 + A2. Các prompt đầy đủ đã đưa
 | Tiếng Anh 6–12 | `khungAnh.json` | Đã ghép 08/11/2026: lớp 6 bản cũ, 7–12 agent làm lại. Trường riêng `chu_de/tu_vung/ngu_phap`; `ten`, `yeu_cau_can_dat` do Claude suy ra |
 | KHTN 6–9 | `khungKhtn.json` | Đã ghép 08/11/2026 (10/10/8/14 chương) |
 | GDCD 6–9, KTPL 10–12 | `khungGdcd.json`, `khungKtpl.json` | Đã ghép 08/11/2026. Lưu ý Hiến pháp có thể sửa đổi 2025 |
-| Tiểu học 1–5 | `khungToanTieuHoc.json`, `khungTiengViet.json`, `khungAnh.json` (lớp 3–5), `khungTieuHocKhac.json` | Đã ghép 08/11/2026 từ khung_C…G. File "khác" gồm Khoa học, LS&ĐL, Tin học, Công nghệ, TN&XH, Đạo đức, lọc theo trường `mon` của từng lớp; phần này chưa có `cau_truc_de` |
+| Tiểu học 1–5 | `khungToanTieuHoc.json`, `khungTiengViet.json`, `khungAnh.json` (lớp 3–5), `khungTieuHocKhac.json` | Đã ghép 08/11/2026 từ khung_C…G. File "khác" gồm Khoa học, LS&ĐL, Tin học, Công nghệ, TN&XH, Đạo đức, lọc theo trường `mon` của từng lớp; có 20 đề cuối HK1/cuối năm và `danh_gia_khong_dinh_ki` cho TN&XH, Đạo đức |
 | Địa lí 6–12 | `khungDia.json` | Đã ghép 08/11/2026. Chia theo chủ đề lớn; lớp 6–7 vài chủ đề chưa tra số bài |
 | Công nghệ 6–12 | `khungCongNghe.json` | Đã ghép 08/11/2026 từ khung_A, khung_B (bản gốc ở scripts/khung/ban-goc/) |
 

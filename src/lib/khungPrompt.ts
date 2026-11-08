@@ -46,6 +46,8 @@ export interface KhungCauTruc {
 export interface KhungFile {
   lop: KhungLop[]
   cau_truc_de?: KhungCauTruc[]
+  /** tiểu học: môn không kiểm tra định kì (TN&XH, Đạo đức) */
+  danh_gia_khong_dinh_ki?: Array<{ mon: string; lop: number[]; cach_danh_gia: string; vi_du_cong_cu?: string[] }>
 }
 /** giữ tên cũ cho chỗ khác đang import */
 export type KhungToan = KhungFile
@@ -175,6 +177,7 @@ interface Part {
   nhan?: string
   lop: KhungLop[]
   cau_truc_de: KhungCauTruc[]
+  danhGia?: string
 }
 
 /** lấy các lớp (đã lọc theo môn với file tiểu học gộp) */
@@ -183,7 +186,9 @@ function partOf(src: Src, f: KhungFile): Part {
   const mach = src.mach
   if (mach) lop = lop.map((l) => ({ ...l, chuong: l.chuong.filter((c) => !c.mach || mach.includes(c.mach)) }))
   const cau_truc_de = (f.cau_truc_de ?? []).filter((s) => !src.mon || !s.mon || s.mon === src.mon)
-  return { nhan: src.nhan, lop, cau_truc_de }
+  const dg = src.mon ? f.danh_gia_khong_dinh_ki?.find((x) => x.mon === src.mon) : undefined
+  const danhGia = dg ? `${dg.mon} không có bài kiểm tra định kì (TT 27/2020). Đánh giá: ${dg.cach_danh_gia}${dg.vi_du_cong_cu?.length ? ` Công cụ: ${dg.vi_du_cong_cu.join('; ')}` : ''}` : undefined
+  return { nhan: src.nhan, lop, cau_truc_de, danhGia }
 }
 
 function readGrade(t: string): number {
@@ -213,7 +218,7 @@ export function detectScope(text: string, khung: KhungFile, subject: Pick<Subjec
   const t = deaccent(text)
   const graduation = !!subject.thpt && /tot nghiep|thpt ?quoc gia|thptqg|thi thpt|on thi dai hoc/.test(t)
   const sem = /(?:hoc ki|hoc ky|hk|ki|ky)\s*(1|2|ii|i)\b/.exec(t)
-  const semester = sem ? (sem[1] === '2' || sem[1] === 'ii' ? 2 : 1) : undefined
+  const semester = sem ? (sem[1] === '2' || sem[1] === 'ii' ? 2 : 1) : /cuoi nam/.test(t) ? 2 : undefined
   const midterm = /giua (?:hoc )?k[iy]/.test(t)
   // bỏ tên môn khỏi câu trước khi so chương ("lịch sử và địa lí" không được khớp chương "phát kiến địa lí")
   const re = 're' in subject && subject.re ? new RegExp(subject.re.source, 'g') : null
@@ -283,7 +288,7 @@ function structureFor(scope: KhungScope, all: KhungCauTruc[]): KhungCauTruc | un
   const cands = all.filter((s) => !/tot nghiep/.test(stName(s)) && hasLop(s, scope.grade))
   const want = (s: KhungCauTruc) => {
     const n = stName(s)
-    const kyOk = !scope.semester || new RegExp(`(?:hoc )?k[iy] ?(?:${scope.semester === 1 ? '1|i\\b' : '2|ii'})`).test(n)
+    const kyOk = !scope.semester || new RegExp(scope.semester === 1 ? 'k[iy] ?(?:1|i\\b)' : 'k[iy] ?(?:2|ii)|cuoi nam').test(n)
     const giuaOk = scope.midterm === /giua/.test(n)
     return kyOk && giuaOk
   }
@@ -343,7 +348,8 @@ export function buildKhungBlock(scope: KhungScope, khung: KhungFile | Part[]): s
     })
     .filter(Boolean)
     .join('\n')
-  const st = structureText(structureFor(scope, parts.flatMap((p) => p.cau_truc_de)))
+  const dg = parts.map((p) => p.danhGia).filter(Boolean).join('\n')
+  const st = dg ? `\nĐÁNH GIÁ: ${dg}` : structureText(structureFor(scope, parts.flatMap((p) => p.cau_truc_de)))
   return (
     `KHUNG CHƯƠNG TRÌNH ${scope.mon.toUpperCase()} (GDPT 2018) — mặc định chỉ ra câu trong phạm vi dưới đây. ` +
     'KHÔNG dùng kiến thức ghi ở "CHƯA được dùng", kiến thức của lớp trên hay của chương trình cũ (2006). ' +

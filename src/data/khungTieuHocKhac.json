@@ -3946,115 +3946,523 @@
   ],
   "cau_truc_de": [
     {
+      "lop": 4,
+      "mon": "Khoa học",
+      "nguon": "https://vietjack.com/de-kiem-tra-lop-4/de-thi-khoa-hoc-lop-4-ket-noi-tri-thuc.jsp ; https://lib.vn/upload/library/1339380/preview/de-thi-hoc-ki-1-mon-khoa-hoc-lop-4-nam-2024-2025-co-dap-an-truong-ptdtbt-th-xa-muong-nha-1339380.pdf",
+      "pham_vi": "các chủ đề đã học trong học kì 1: Chất, Năng lượng, Thực vật và động vật (Bài 15-17)",
+      "phan": [
+        {
+          "mo_ta": "khoanh vào chữ đặt trước câu trả lời đúng; nối; điền Đ/S",
+          "so_cau": 7,
+          "ten": "Phần I. Trắc nghiệm",
+          "tong_diem": 7
+        },
+        {
+          "mo_ta": "trả lời câu hỏi ngắn; hoàn thành sơ đồ (sự chuyển thể của nước); nêu việc nên/không nên làm để bảo vệ nguồn nước",
+          "so_cau": 3,
+          "ten": "Phần II. Tự luận",
+          "tong_diem": 3
+        }
+      ],
       "ten": "Đề kiểm tra cuối học kì 1 Khoa học 4",
-      "mon": "Khoa học",
-      "lop": 4,
       "thoi_gian_phut": 40,
-      "pham_vi": [
-        "kh4-chat",
-        "kh4-nang-luong",
-        "kh4-thuc-vat-va-dong-vat"
-      ],
-      "cau_truc": "3 mức theo Thông tư 27/2020/TT-BGDĐT: Mức 1 (nhận biết, nhắc lại hoặc mô tả được nội dung đã học); Mức 2 (kết nối, sắp xếp được một số nội dung đã học để giải quyết vấn đề); Mức 3 (vận dụng được các nội dung đã học để giải quyết một số vấn đề mới hoặc đưa ra những phản hồi hợp lí trong học tập và trong cuộc sống). Đề gồm trắc nghiệm (chọn đáp án đúng, điền từ, nối ý) và tự luận ngắn (trả lời câu hỏi, quan sát hình/bản đồ/lược đồ rồi mô tả, xử lí tình huống); thời gian 40 phút."
+      "ti_le_muc_do": "Mức 1: 50%, Mức 2: 30%, Mức 3: 20%"
     },
     {
+      "lop": 4,
+      "mon": "Khoa học",
+      "nguon": "https://hoatieu.vn/de-thi-hoc-ki-2-khoa-hoc-lop-4-207975",
+      "pham_vi": "toàn bộ 6 chủ đề: Chất, Năng lượng, Thực vật và động vật, Nấm, Con người và sức khỏe, Sinh vật và môi trường; trọng tâm học kì 2 là Nấm, Con người và sức khỏe, Sinh vật và môi trường",
+      "phan": [
+        {
+          "mo_ta": "Câu 1-4 khoanh đáp án đúng, mỗi câu 0,5 điểm; Câu 5 hoàn thành sơ đồ chuỗi thức ăn, 1 điểm; Câu 6 điền từ vào chỗ chấm, 1 điểm",
+          "so_cau": 6,
+          "ten": "Phần I. Trắc nghiệm",
+          "tong_diem": 4
+        },
+        {
+          "mo_ta": "trả lời câu hỏi ngắn; kể tên các nhóm chất dinh dưỡng và vai trò; nêu việc nên/không nên làm để phòng tránh đuối nước; xử lí tình huống ăn uống",
+          "so_cau": 4,
+          "ten": "Phần II. Tự luận",
+          "tong_diem": 6
+        }
+      ],
       "ten": "Đề kiểm tra cuối năm Khoa học 4",
-      "mon": "Khoa học",
-      "lop": 4,
       "thoi_gian_phut": 40,
-      "pham_vi": [
-        "kh4-chat",
-        "kh4-nang-luong",
-        "kh4-thuc-vat-va-dong-vat",
-        "kh4-nam",
-        "kh4-con-nguoi-va-suc-khoe",
-        "kh4-sinh-vat-va-moi-truong"
-      ],
-      "cau_truc": "3 mức theo Thông tư 27/2020/TT-BGDĐT: Mức 1 (nhận biết, nhắc lại hoặc mô tả được nội dung đã học); Mức 2 (kết nối, sắp xếp được một số nội dung đã học để giải quyết vấn đề); Mức 3 (vận dụng được các nội dung đã học để giải quyết một số vấn đề mới hoặc đưa ra những phản hồi hợp lí trong học tập và trong cuộc sống). Đề gồm trắc nghiệm (chọn đáp án đúng, điền từ, nối ý) và tự luận ngắn (trả lời câu hỏi, quan sát hình/bản đồ/lược đồ rồi mô tả, xử lí tình huống); thời gian 40 phút."
+      "ti_le_muc_do": "Mức 1: 50%, Mức 2: 30%, Mức 3: 20%"
     },
     {
+      "lop": 5,
+      "mon": "Khoa học",
+      "nguon": "https://Vietjack.com/de-kiem-tra-lop-5/de-thi-khoa-hoc-lop-5-hoc-ki-1-ket-noi-tri-thuc.jsp ; https://cdn-beta.tailieu.vn/files/samples/2025/20250428/vitobirama/de_thi_hoc_ki_1_mon_khoa_hoc_lop_5_nam_2024_2025_co_dap_an_truong_ptdtbt_th_xa_he_muong_8115.pdf",
+      "pham_vi": "Chủ đề 1. Chất, Chủ đề 2. Năng lượng, Chủ đề 3. Thực vật và động vật (Bài 13-17)",
+      "phan": [
+        {
+          "mo_ta": "khoanh vào chữ đặt trước câu trả lời đúng",
+          "so_cau": 7,
+          "ten": "Phần I. Trắc nghiệm",
+          "tong_diem": 7
+        },
+        {
+          "mo_ta": "điền từ/cụm từ vào chỗ chấm; trả lời câu hỏi ngắn; giải thích hiện tượng (vì sao nông dân phủ rơm rạ; vì sao dùng bóng đèn com-pắc)",
+          "so_cau": 3,
+          "ten": "Phần II. Tự luận",
+          "tong_diem": 3
+        }
+      ],
       "ten": "Đề kiểm tra cuối học kì 1 Khoa học 5",
-      "mon": "Khoa học",
-      "lop": 5,
       "thoi_gian_phut": 40,
-      "pham_vi": [
-        "kh5-chat",
-        "kh5-nang-luong",
-        "kh5-thuc-vat-va-dong-vat"
-      ],
-      "cau_truc": "3 mức theo Thông tư 27/2020/TT-BGDĐT: Mức 1 (nhận biết, nhắc lại hoặc mô tả được nội dung đã học); Mức 2 (kết nối, sắp xếp được một số nội dung đã học để giải quyết vấn đề); Mức 3 (vận dụng được các nội dung đã học để giải quyết một số vấn đề mới hoặc đưa ra những phản hồi hợp lí trong học tập và trong cuộc sống). Đề gồm trắc nghiệm (chọn đáp án đúng, điền từ, nối ý) và tự luận ngắn (trả lời câu hỏi, quan sát hình/bản đồ/lược đồ rồi mô tả, xử lí tình huống); thời gian 40 phút."
+      "ti_le_muc_do": "Mức 1: 50%, Mức 2: 30%, Mức 3: 20%"
     },
     {
+      "lop": 5,
+      "mon": "Khoa học",
+      "nguon": "https://Vietjack.com/de-kiem-tra-lop-5/de-thi-khoa-hoc-lop-5-hoc-ki-2-ket-noi-tri-thuc.jsp",
+      "pham_vi": "toàn bộ 6 chủ đề: Chất, Năng lượng, Thực vật và động vật, Vi khuẩn, Con người và sức khỏe, Sinh vật và môi trường; trọng tâm học kì 2 là Vi khuẩn, Con người và sức khỏe, Sinh vật và môi trường",
+      "phan": [
+        {
+          "mo_ta": "khoanh vào chữ đặt trước câu trả lời đúng",
+          "so_cau": 7,
+          "ten": "Phần I. Trắc nghiệm",
+          "tong_diem": 7
+        },
+        {
+          "mo_ta": "trả lời câu hỏi ngắn; nêu việc làm hằng ngày để chăm sóc, bảo vệ sức khoẻ bản thân; nêu hoạt động của con người tác động tích cực/tiêu cực đến môi trường; kể tình huống cảm thấy không an toàn",
+          "so_cau": 3,
+          "ten": "Phần II. Tự luận",
+          "tong_diem": 3
+        }
+      ],
       "ten": "Đề kiểm tra cuối năm Khoa học 5",
-      "mon": "Khoa học",
-      "lop": 5,
       "thoi_gian_phut": 40,
-      "pham_vi": [
-        "kh5-chat",
-        "kh5-nang-luong",
-        "kh5-thuc-vat-va-dong-vat",
-        "kh5-vi-khuan",
-        "kh5-con-nguoi-va-suc-khoe",
-        "kh5-sinh-vat-va-moi-truong"
-      ],
-      "cau_truc": "3 mức theo Thông tư 27/2020/TT-BGDĐT: Mức 1 (nhận biết, nhắc lại hoặc mô tả được nội dung đã học); Mức 2 (kết nối, sắp xếp được một số nội dung đã học để giải quyết vấn đề); Mức 3 (vận dụng được các nội dung đã học để giải quyết một số vấn đề mới hoặc đưa ra những phản hồi hợp lí trong học tập và trong cuộc sống). Đề gồm trắc nghiệm (chọn đáp án đúng, điền từ, nối ý) và tự luận ngắn (trả lời câu hỏi, quan sát hình/bản đồ/lược đồ rồi mô tả, xử lí tình huống); thời gian 40 phút."
+      "ti_le_muc_do": "Mức 1: 50%, Mức 2: 30%, Mức 3: 20%"
     },
     {
+      "lop": 4,
+      "mon": "Lịch sử và Địa lí",
+      "nguon": "https://docx.com.vn/tai-lieu/bo-10-de-kiem-tra-hoc-ky-1-lich-su-dia-li-4-nam-2025-2026-co-dap-an-202431 ; https://Vietjack.com/de-kiem-tra-lop-4/de-thi-lich-su-va-dia-li-lop-4-hoc-ki-1-ket-noi.jsp",
+      "pham_vi": "Mở đầu; Chủ đề 1. Địa phương em; Chủ đề 2. Trung du và miền núi Bắc Bộ; Chủ đề 3. Đồng bằng Bắc Bộ",
+      "phan": [
+        {
+          "mo_ta": "khoanh vào chữ đặt trước câu trả lời đúng; nối; điền Đ/S; đọc lược đồ/bản đồ",
+          "so_cau": 7,
+          "ten": "Phần I. Trắc nghiệm",
+          "tong_diem": 7
+        },
+        {
+          "mo_ta": "trả lời câu hỏi ngắn; kể tên phong tục, tập quán; nêu cảm nghĩ",
+          "so_cau": 3,
+          "ten": "Phần II. Tự luận",
+          "tong_diem": 3
+        }
+      ],
       "ten": "Đề kiểm tra cuối học kì 1 Lịch sử và Địa lí 4",
-      "mon": "Lịch sử và Địa lí",
-      "lop": 4,
       "thoi_gian_phut": 40,
-      "pham_vi": [
-        "lsdl4-mo-dau",
-        "lsdl4-dia-phuong-em",
-        "lsdl4-trung-du-va-mien-nui-bac-bo",
-        "lsdl4-dong-bang-bac-bo"
-      ],
-      "cau_truc": "3 mức theo Thông tư 27/2020/TT-BGDĐT: Mức 1 (nhận biết, nhắc lại hoặc mô tả được nội dung đã học); Mức 2 (kết nối, sắp xếp được một số nội dung đã học để giải quyết vấn đề); Mức 3 (vận dụng được các nội dung đã học để giải quyết một số vấn đề mới hoặc đưa ra những phản hồi hợp lí trong học tập và trong cuộc sống). Đề gồm trắc nghiệm (chọn đáp án đúng, điền từ, nối ý) và tự luận ngắn (trả lời câu hỏi, quan sát hình/bản đồ/lược đồ rồi mô tả, xử lí tình huống); thời gian 40 phút."
+      "ti_le_muc_do": "Mức 1: 50%, Mức 2: 30%, Mức 3: 20%"
     },
     {
+      "lop": 4,
+      "mon": "Lịch sử và Địa lí",
+      "nguon": "https://download.vn/de-thi-hoc-ki-2-mon-lich-su-dia-ly-lop-4-32924",
+      "pham_vi": "toàn bộ 6 chủ đề và Mở đầu; trọng tâm học kì 2 là Duyên hải miền Trung, Tây Nguyên, Nam Bộ",
+      "phan": [
+        {
+          "mo_ta": "khoanh vào chữ đặt trước câu trả lời đúng; nối; điền Đ/S; đọc lược đồ/bản đồ",
+          "so_cau": 8,
+          "ten": "Phần I. Trắc nghiệm",
+          "tong_diem": 8
+        },
+        {
+          "mo_ta": "Câu 9: mô tả vẻ đẹp của Cố đô Huế, 1 điểm; Câu 10: biện pháp phòng chống thiên tai ở Duyên hải miền Trung, 1 điểm",
+          "so_cau": 2,
+          "ten": "Phần II. Tự luận",
+          "tong_diem": 2
+        }
+      ],
       "ten": "Đề kiểm tra cuối năm Lịch sử và Địa lí 4",
-      "mon": "Lịch sử và Địa lí",
-      "lop": 4,
       "thoi_gian_phut": 40,
-      "pham_vi": [
-        "lsdl4-mo-dau",
-        "lsdl4-dia-phuong-em",
-        "lsdl4-trung-du-va-mien-nui-bac-bo",
-        "lsdl4-dong-bang-bac-bo",
-        "lsdl4-duyen-hai-mien-trung",
-        "lsdl4-tay-nguyen",
-        "lsdl4-nam-bo"
-      ],
-      "cau_truc": "3 mức theo Thông tư 27/2020/TT-BGDĐT: Mức 1 (nhận biết, nhắc lại hoặc mô tả được nội dung đã học); Mức 2 (kết nối, sắp xếp được một số nội dung đã học để giải quyết vấn đề); Mức 3 (vận dụng được các nội dung đã học để giải quyết một số vấn đề mới hoặc đưa ra những phản hồi hợp lí trong học tập và trong cuộc sống). Đề gồm trắc nghiệm (chọn đáp án đúng, điền từ, nối ý) và tự luận ngắn (trả lời câu hỏi, quan sát hình/bản đồ/lược đồ rồi mô tả, xử lí tình huống); thời gian 40 phút."
+      "ti_le_muc_do": "Mức 1: 50%, Mức 2: 30%, Mức 3: 20%"
     },
     {
+      "lop": 5,
+      "mon": "Lịch sử và Địa lí",
+      "nguon": "https://kenhgiaovien.com/tai-lieu/de-thi-cuoi-ki-1-lich-su-va-dia-li-5-ket-noi-tri-thuc-de-so-1",
+      "pham_vi": "Chủ đề 1. Đất nước và con người Việt Nam; Chủ đề 2. Những quốc gia đầu tiên trên lãnh thổ Việt Nam; Chủ đề 3. Xây dựng và bảo vệ đất nước Việt Nam (Bài 8-12)",
+      "phan": [
+        {
+          "mo_ta": "khoanh vào chữ đặt trước câu trả lời đúng; điền Đ/S; quan sát lược đồ/bản đồ",
+          "so_cau": 7,
+          "ten": "Phần I. Trắc nghiệm",
+          "tong_diem": 7
+        },
+        {
+          "mo_ta": "Câu 1: nét chính về Triều Lý, 2 điểm; Câu 2: hậu quả phân bố dân cư chưa hợp lí, 1 điểm",
+          "so_cau": 2,
+          "ten": "Phần II. Tự luận",
+          "tong_diem": 3
+        }
+      ],
       "ten": "Đề kiểm tra cuối học kì 1 Lịch sử và Địa lí 5",
-      "mon": "Lịch sử và Địa lí",
-      "lop": 5,
-      "thoi_gian_phut": 40,
-      "pham_vi": [
-        "lsdl5-dat-nuoc-va-con-nguoi-viet-nam",
-        "lsdl5-nhung-quoc-gia-dau-tien",
-        "lsdl5-xay-dung-va-bao-ve-dat-nuoc"
-      ],
-      "cau_truc": "3 mức theo Thông tư 27/2020/TT-BGDĐT: Mức 1 (nhận biết, nhắc lại hoặc mô tả được nội dung đã học); Mức 2 (kết nối, sắp xếp được một số nội dung đã học để giải quyết vấn đề); Mức 3 (vận dụng được các nội dung đã học để giải quyết một số vấn đề mới hoặc đưa ra những phản hồi hợp lí trong học tập và trong cuộc sống). Đề gồm trắc nghiệm (chọn đáp án đúng, điền từ, nối ý) và tự luận ngắn (trả lời câu hỏi, quan sát hình/bản đồ/lược đồ rồi mô tả, xử lí tình huống); thời gian 40 phút. Chủ đề 3 chỉ ra Bài 8-12 (Bài 13-17 học ở HK2)."
+      "thoi_gian_phut": 60,
+      "ti_le_muc_do": "Mức 1: 50%, Mức 2: 30%, Mức 3: 20%"
     },
     {
-      "ten": "Đề kiểm tra cuối năm Lịch sử và Địa lí 5",
-      "mon": "Lịch sử và Địa lí",
       "lop": 5,
-      "thoi_gian_phut": 40,
-      "pham_vi": [
-        "lsdl5-dat-nuoc-va-con-nguoi-viet-nam",
-        "lsdl5-nhung-quoc-gia-dau-tien",
-        "lsdl5-xay-dung-va-bao-ve-dat-nuoc",
-        "lsdl5-cac-nuoc-lang-gieng",
-        "lsdl5-tim-hieu-the-gioi",
-        "lsdl5-chung-tay-xay-dung-the-gioi"
+      "mon": "Lịch sử và Địa lí",
+      "nguon": "http://c1chuvanan.pgddaksong.edu.vn/wp-content/uploads/2025/06/LichSuDiaLi_Cuối-Năm.pdf",
+      "pham_vi": "toàn bộ 6 chủ đề; trọng tâm học kì 2 là Chủ đề 3 (phần còn lại: Triều Nguyễn, Cách mạng tháng Tám, Điện Biên Phủ, Chiến dịch Hồ Chí Minh, Đất nước đổi mới), Chủ đề 4. Các nước láng giềng, Chủ đề 5. Tìm hiểu thế giới, Chủ đề 6. Chung tay xây dựng thế giới",
+      "phan": [
+        {
+          "mo_ta": "khoanh vào chữ đặt trước câu trả lời đúng; điền từ; quan sát bản đồ thế giới",
+          "so_cau": 6,
+          "ten": "Phần I. Trắc nghiệm",
+          "tong_diem": 6
+        },
+        {
+          "mo_ta": "Câu 11: việc làm góp phần xây dựng thế giới hòa bình, 2 điểm; Câu 12: viết đoạn văn 3-5 câu nêu cảm nghĩ về Chiến dịch Hồ Chí Minh 1975, 2 điểm",
+          "so_cau": 2,
+          "ten": "Phần II. Tự luận",
+          "tong_diem": 4
+        }
       ],
-      "cau_truc": "3 mức theo Thông tư 27/2020/TT-BGDĐT: Mức 1 (nhận biết, nhắc lại hoặc mô tả được nội dung đã học); Mức 2 (kết nối, sắp xếp được một số nội dung đã học để giải quyết vấn đề); Mức 3 (vận dụng được các nội dung đã học để giải quyết một số vấn đề mới hoặc đưa ra những phản hồi hợp lí trong học tập và trong cuộc sống). Đề gồm trắc nghiệm (chọn đáp án đúng, điền từ, nối ý) và tự luận ngắn (trả lời câu hỏi, quan sát hình/bản đồ/lược đồ rồi mô tả, xử lí tình huống); thời gian 40 phút."
+      "ten": "Đề kiểm tra cuối năm Lịch sử và Địa lí 5",
+      "thoi_gian_phut": 40,
+      "ti_le_muc_do": "Mức 1: 50%, Mức 2: 30%, Mức 3: 20%"
+    },
+    {
+      "lop": 3,
+      "mon": "Tin học",
+      "nguon": "https://tailieu.duytan.edu.vn/tailieu/2025/20250429/gaupanda090/de_thi_hoc_ki_1_mon_tin_hoc_lop_3_nam_2024_2025_co_dap_an_truong_ptdtbt_th_xa_muong_nha_7338.pdf?rand=107780 ; https://www.vietjack.com/de-kiem-tra-lop-3/de-thi-hoc-ki-1-tin-hoc-lop-3-ket-noi.jsp",
+      "pham_vi": "Chủ đề 1. Máy tính và em; Chủ đề 2. Mạng máy tính và Internet; Chủ đề 3. Tổ chức lưu trữ, tìm kiếm và trao đổi thông tin (Bài 7, 8)",
+      "phan": [
+        {
+          "mo_ta": "trắc nghiệm 8 câu, 4 điểm: khoanh đáp án đúng, nối, điền Đ/S; tự luận 1 câu, 2 điểm; thời gian phần lí thuyết 20 phút",
+          "so_cau": 9,
+          "ten": "Phần I. Lí thuyết",
+          "tong_diem": 6
+        },
+        {
+          "mo_ta": "thực hành trên máy tính, 20 phút: khởi động phần mềm soạn thảo văn bản hoặc Notepad, đặt ngón tay đúng vị trí hàng phím cơ sở, soạn thảo đoạn văn bản; tỉ lệ lí thuyết : thực hành = 60 : 40",
+          "so_cau": 1,
+          "ten": "Phần II. Thực hành",
+          "tong_diem": 4
+        }
+      ],
+      "ten": "Đề kiểm tra cuối học kì 1 Tin học 3",
+      "thoi_gian_phut": 40,
+      "ti_le_muc_do": "Mức 1: 40%, Mức 2: 30%, Mức 3: 30%"
+    },
+    {
+      "lop": 3,
+      "mon": "Tin học",
+      "nguon": "https://bloghoctap.edu.vn/bo-de-thi-hoc-ki-2-mon-tin-hoc-lop-3-nam-2023-2024-sach-moi/",
+      "pham_vi": "Chủ đề 3. Tổ chức lưu trữ, tìm kiếm và trao đổi thông tin (Bài 8, 9); Chủ đề 4. Đạo đức, pháp luật và văn hóa trong môi trường số (Bài 10); Chủ đề 5. Tin học ứng dụng (Bài 11-13); Chủ đề 6. Giải quyết vấn đề với sự trợ giúp của máy tính (Bài 14-16)",
+      "phan": [
+        {
+          "mo_ta": "trắc nghiệm, 10 phút",
+          "so_cau": 10,
+          "ten": "Phần I. Lí thuyết",
+          "tong_diem": 5
+        },
+        {
+          "mo_ta": "thực hành trên máy tính, 25 phút: kích hoạt PowerPoint, lưu tệp tên 'Tên em - tên lớp'; tỉ lệ lí thuyết : thực hành = 50 : 50",
+          "so_cau": 5,
+          "ten": "Phần II. Thực hành",
+          "tong_diem": 5
+        }
+      ],
+      "ten": "Đề kiểm tra cuối năm Tin học 3",
+      "thoi_gian_phut": 35,
+      "ti_le_muc_do": "Mức 1: 40%, Mức 2: 30%, Mức 3: 30%"
+    },
+    {
+      "lop": 4,
+      "mon": "Tin học",
+      "nguon": "https://vmb.edu.vn/wp-content/uploads/2023/02/DE-KIEM-TRA-TIN-HOC-4-CUOI-HK-I.pdf",
+      "pham_vi": "Chủ đề 1. Máy tính và em; Chủ đề 2. Mạng máy tính và Internet; Chủ đề 3. Tổ chức lưu trữ, tìm kiếm và trao đổi thông tin; Chủ đề 4. Đạo đức, pháp luật và văn hóa trong môi trường số; Chủ đề 5. Ứng dụng tin học (Bài 7, 8, 9)",
+      "phan": [
+        {
+          "mo_ta": "trắc nghiệm, 15 phút",
+          "so_cau": 10,
+          "ten": "Phần I. Lí thuyết",
+          "tong_diem": 5
+        },
+        {
+          "mo_ta": "thực hành trên máy tính, 25 phút: tạo cây thư mục trên ổ D; soạn thảo đoạn văn khoảng 50 từ kiểu gõ Telex miêu tả con vật yêu thích, tìm ảnh trên Internet và lưu vào thư mục; tỉ lệ lí thuyết : thực hành = 50 : 50",
+          "so_cau": 3,
+          "ten": "Phần II. Thực hành",
+          "tong_diem": 5
+        }
+      ],
+      "ten": "Đề kiểm tra cuối học kì 1 Tin học 4",
+      "thoi_gian_phut": 40,
+      "ti_le_muc_do": "Mức 1: 40%, Mức 2: 30%, Mức 3: 30%"
+    },
+    {
+      "lop": 4,
+      "mon": "Tin học",
+      "nguon": "https://thuvienso.com.vn/upload/library/1098476/preview/de-thi-hoc-ki-2-mon-tin-hoc-lop-4-nam-2023-2024-co-dap-an-truong-tieu-hoc-le-van-tam-kon-tum-1098476.pdf",
+      "pham_vi": "Chủ đề 5. Ứng dụng tin học (Bài 10, 11, 12A, 12B); Chủ đề 6. Giải quyết vấn đề với sự trợ giúp của máy tính (Bài 13-16)",
+      "phan": [
+        {
+          "mo_ta": "trắc nghiệm, 15 phút",
+          "so_cau": 10,
+          "ten": "Phần I. Lí thuyết",
+          "tong_diem": 5
+        },
+        {
+          "mo_ta": "thực hành trên máy tính, 25 phút: tạo bài trình chiếu (PowerPoint); tỉ lệ lí thuyết : thực hành = 50 : 50",
+          "so_cau": 1,
+          "ten": "Phần II. Thực hành",
+          "tong_diem": 5
+        }
+      ],
+      "ten": "Đề kiểm tra cuối năm Tin học 4",
+      "thoi_gian_phut": 40,
+      "ti_le_muc_do": "Mức 1: 40%, Mức 2: 30%, Mức 3: 30%"
+    },
+    {
+      "lop": 5,
+      "mon": "Tin học",
+      "nguon": "https://hoatieu.vn/de-thi-hoc-ki-1-tin-hoc-5-ket-noi-tri-thuc-227585",
+      "pham_vi": "Chủ đề 1. Máy tính và em (Bài 1); Chủ đề 2. Mạng máy tính và internet (Bài 2); Chủ đề 3. Tổ chức lưu trữ, tìm kiếm và trao đổi thông tin (Bài 3, 4)",
+      "phan": [
+        {
+          "mo_ta": "khoanh vào chữ đặt trước câu trả lời đúng",
+          "so_cau": 7,
+          "ten": "Phần I. Trắc nghiệm",
+          "tong_diem": 7
+        },
+        {
+          "mo_ta": "trả lời câu hỏi ngắn. Mẫu đề này không có phần thực hành riêng trên máy trong ma trận; thực hành được đánh giá qua đánh giá thường xuyên",
+          "so_cau": 3,
+          "ten": "Phần II. Tự luận",
+          "tong_diem": 3
+        }
+      ],
+      "ten": "Đề kiểm tra cuối học kì 1 Tin học 5",
+      "thoi_gian_phut": 40,
+      "ti_le_muc_do": "Mức 1: 40%, Mức 2: 40%, Mức 3: 20%"
+    },
+    {
+      "lop": 5,
+      "mon": "Tin học",
+      "nguon": "http://vndoc.com/bo-de-thi-hoc-ki-2-mon-tin-hoc-lop-5-340357 ; https://kenhgiaovien.com/tai-lieu/de-thi-cuoi-ki-2-tin-hoc-5-ket-noi-tri-thuc-de-so-1",
+      "pham_vi": "Chủ đề 5. Ứng dụng tin học (Bài 6-9); Chủ đề 6. Giải quyết vấn đề với sự trợ giúp của máy tính (Bài 10-16: cấu trúc tuần tự, lặp, rẽ nhánh, biến, biểu thức, từ kịch bản đến chương trình)",
+      "phan": [
+        {
+          "mo_ta": "khoanh vào chữ đặt trước câu trả lời đúng",
+          "so_cau": 7,
+          "ten": "Phần I. Trắc nghiệm",
+          "tong_diem": 7
+        },
+        {
+          "mo_ta": "trả lời câu hỏi ngắn. Mẫu đề này không có phần thực hành riêng trên máy trong ma trận; thực hành được đánh giá qua đề cương/đánh giá thường xuyên (vd: tạo chương trình nhỏ trên Scratch, bài tập về biến và biểu thức)",
+          "so_cau": 3,
+          "ten": "Phần II. Tự luận",
+          "tong_diem": 3
+        }
+      ],
+      "ten": "Đề kiểm tra cuối năm Tin học 5",
+      "thoi_gian_phut": 40,
+      "ti_le_muc_do": "Mức 1: 40%, Mức 2: 30%, Mức 3: 30%"
+    },
+    {
+      "lop": 3,
+      "mon": "Công nghệ",
+      "nguon": "https://download.vn/bo-de-thi-hoc-ki-1-lop-3-sach-ket-noi-tri-thuc-63785 ; https://bloghoctap.edu.vn/bo-de-thi-hoc-ki-1-mon-cong-nghe-lop-3-nam-2023-2024-theo-thong-tu-27/",
+      "pham_vi": "Phần 1. Công nghệ và đời sống (Bài 1-6)",
+      "phan": [
+        {
+          "mo_ta": "khoanh vào chữ đặt trước câu trả lời đúng",
+          "so_cau": 8,
+          "ten": "Phần I. Trắc nghiệm",
+          "tong_diem": 8
+        },
+        {
+          "mo_ta": "trả lời câu hỏi ngắn. Phần thực hành làm sản phẩm được đánh giá thường xuyên trong quá trình học, không có trong bài kiểm tra định kì này",
+          "so_cau": 2,
+          "ten": "Phần II. Tự luận",
+          "tong_diem": 2
+        }
+      ],
+      "ten": "Đề kiểm tra cuối học kì 1 Công nghệ 3",
+      "thoi_gian_phut": 40,
+      "ti_le_muc_do": "Mức 1: 50%, Mức 2: 40%, Mức 3: 10%"
+    },
+    {
+      "lop": 3,
+      "mon": "Công nghệ",
+      "nguon": "https://timtailieu.net/upload/library/1102768/preview/de-thi-hoc-ki-2-mon-cong-nghe-lop-3-nam-2022-2023-co-dap-an-truong-ptdtbt-th-thcs-mo-de-1102768.pdf ; https://Vietjack.com/de-kiem-tra-lop-3/de-thi-cong-nghe-lop-3-hoc-ki-2.jsp",
+      "pham_vi": "Phần 1. Công nghệ và đời sống (Bài 1-6) và Phần 2. Thủ công kĩ thuật (Bài 7-10)",
+      "phan": [
+        {
+          "mo_ta": "khoanh vào chữ đặt trước câu trả lời đúng",
+          "so_cau": 7,
+          "ten": "Phần I. Trắc nghiệm",
+          "tong_diem": 7
+        },
+        {
+          "mo_ta": "nêu việc tiết kiệm điện; các bước làm biển báo giao thông bằng giấy bìa. Phần thực hành làm sản phẩm được đánh giá thường xuyên trong quá trình học, không có trong bài kiểm tra định kì này",
+          "so_cau": 3,
+          "ten": "Phần II. Tự luận",
+          "tong_diem": 3
+        }
+      ],
+      "ten": "Đề kiểm tra cuối năm Công nghệ 3",
+      "thoi_gian_phut": 35,
+      "ti_le_muc_do": "Mức 1: 50%, Mức 2: 40%, Mức 3: 10%"
+    },
+    {
+      "lop": 4,
+      "mon": "Công nghệ",
+      "nguon": "https://kenhgiaovien.com/tai-lieu/de-thi-cuoi-ki-1-cong-nghe-4-ket-noi-tri-thuc-de-so-5 ; https://thcslytutrongst.edu.vn/?p=234800",
+      "pham_vi": "Phần 1. Công nghệ và đời sống (Bài 1-6: hoa và cây cảnh)",
+      "phan": [
+        {
+          "mo_ta": "khoanh vào chữ đặt trước câu trả lời đúng",
+          "so_cau": 7,
+          "ten": "Phần I. Trắc nghiệm",
+          "tong_diem": 7
+        },
+        {
+          "mo_ta": "trả lời câu hỏi ngắn. Phần thực hành làm sản phẩm được đánh giá thường xuyên trong quá trình học, không có trong bài kiểm tra định kì này",
+          "so_cau": 2,
+          "ten": "Phần II. Tự luận",
+          "tong_diem": 3
+        }
+      ],
+      "ten": "Đề kiểm tra cuối học kì 1 Công nghệ 4",
+      "thoi_gian_phut": 40,
+      "ti_le_muc_do": "Mức 1: 60%, Mức 2: 30%, Mức 3: 10%"
+    },
+    {
+      "lop": 4,
+      "mon": "Công nghệ",
+      "nguon": "https://bloghoctap.edu.vn/bo-de-thi-hoc-ki-2-mon-cong-nghe-lop-4-nam-2023-2024-sach-moi/",
+      "pham_vi": "Phần 1. Công nghệ và đời sống (Bài 1-6) và Phần 2. Thủ công kĩ thuật (Bài 7-12)",
+      "phan": [
+        {
+          "mo_ta": "khoanh vào chữ đặt trước câu trả lời đúng",
+          "so_cau": 6,
+          "ten": "Phần I. Trắc nghiệm",
+          "tong_diem": 6
+        },
+        {
+          "mo_ta": "trả lời câu hỏi ngắn. Phần thực hành làm sản phẩm được đánh giá thường xuyên trong quá trình học, không có trong bài kiểm tra định kì này",
+          "so_cau": 3,
+          "ten": "Phần II. Tự luận",
+          "tong_diem": 4
+        }
+      ],
+      "ten": "Đề kiểm tra cuối năm Công nghệ 4",
+      "thoi_gian_phut": 40,
+      "ti_le_muc_do": "Mức 1: 40%, Mức 2: 40%, Mức 3: 20%"
+    },
+    {
+      "lop": 5,
+      "mon": "Công nghệ",
+      "nguon": "https://hoatieu.vn/de-thi-hoc-ki-1-cong-nghe-lop-5-227374?t=4",
+      "pham_vi": "Phần 1. Công nghệ và đời sống (Bài 1-6: vai trò công nghệ, nhà sáng chế, thiết kế, điện thoại, tủ lạnh)",
+      "phan": [
+        {
+          "mo_ta": "khoanh vào chữ đặt trước câu trả lời đúng",
+          "so_cau": 7,
+          "ten": "Phần I. Trắc nghiệm",
+          "tong_diem": 7
+        },
+        {
+          "mo_ta": "trả lời câu hỏi ngắn. Phần thực hành làm sản phẩm được đánh giá thường xuyên trong quá trình học, không có trong bài kiểm tra định kì này",
+          "so_cau": 2,
+          "ten": "Phần II. Tự luận",
+          "tong_diem": 3
+        }
+      ],
+      "ten": "Đề kiểm tra cuối học kì 1 Công nghệ 5",
+      "thoi_gian_phut": 40,
+      "ti_le_muc_do": "Mức 1: 60%, Mức 2: 30%, Mức 3: 10%"
+    },
+    {
+      "lop": 5,
+      "mon": "Công nghệ",
+      "nguon": "https://Vietjack.com/de-kiem-tra-lop-5/de-thi-cong-nghe-lop-5-hoc-ki-2-ket-noi-tri-thuc.jsp ; https://timtailieu.net/upload/library/1346918/preview/de-thi-hoc-ki-2-mon-cong-nghe-lop-5-nam-2024-2025-co-dap-an-truong-tieu-hoc-tan-vien-an-lao-1346918.pdf",
+      "pham_vi": "Phần 1. Công nghệ và đời sống và Phần 2. Thủ công kĩ thuật (Bài 7-9: mô hình xe điện, máy phát điện gió, điện mặt trời)",
+      "phan": [
+        {
+          "mo_ta": "khoanh vào chữ đặt trước câu trả lời đúng",
+          "so_cau": 7,
+          "ten": "Phần I. Trắc nghiệm",
+          "tong_diem": 7
+        },
+        {
+          "mo_ta": "bộ phận mô hình xe điện chạy bằng pin; máy phát điện gió; ý tưởng dùng mô hình điện mặt trời. Phần thực hành làm sản phẩm được đánh giá thường xuyên trong quá trình học, không có trong bài kiểm tra định kì này",
+          "so_cau": 3,
+          "ten": "Phần II. Tự luận",
+          "tong_diem": 3
+        }
+      ],
+      "ten": "Đề kiểm tra cuối năm Công nghệ 5",
+      "thoi_gian_phut": 35,
+      "ti_le_muc_do": "Mức 1: 60%, Mức 2: 30%, Mức 3: 10%"
     }
   ],
-  "phien_ban": "Claude ghép 08/11/2026: khung_F (Khoa học, LS&ĐL 4–5) + khung_G (Tin học, Công nghệ 3–5; TN&XH 1–3; Đạo đức 1–5; file gốc cụt đuôi, chưa có cau_truc_de). Lọc theo trường \"mon\" ở từng lớp."
+  "phien_ban": "Claude ghép 08/11/2026: khung_F (Khoa học, LS&ĐL 4–5) + khung_G (Tin học, Công nghệ 3–5; TN&XH 1–3; Đạo đức 1–5; file gốc cụt đuôi, chưa có cau_truc_de). Lọc theo trường \"mon\" ở từng lớp. Thêm cấu trúc đề từ khung_cau_truc_tieu_hoc.json (20 đề) và cách đánh giá TN&XH, Đạo đức (không kiểm tra định kì).",
+  "danh_gia_khong_dinh_ki": [
+    {
+      "mon": "Tự nhiên và Xã hội",
+      "lop": [
+        1,
+        2,
+        3
+      ],
+      "cach_danh_gia": "Không có bài kiểm tra định kì theo Thông tư 27/2020 (Điều 7 không liệt kê môn này trong 7 môn có bài kiểm tra định kì). Đánh giá định kì bằng nhận xét theo 3 mức Hoàn thành tốt / Hoàn thành / Chưa hoàn thành vào giữa học kì 1, cuối học kì 1, giữa học kì 2 và cuối năm, căn cứ quá trình đánh giá thường xuyên: giáo viên quan sát, vấn đáp, viết nhận xét vào vở hoặc sản phẩm học tập của học sinh; học sinh tự nhận xét và tham gia nhận xét sản phẩm của bạn, nhóm bạn.",
+      "vi_du_cong_cu": [
+        "Quan sát kèm thang đo 3 mức (vd: Bài 3 lớp 1 Nhận biết các vật xung quanh: chỉ, nói tên và chức năng các giác quan)",
+        "Quan sát kèm bảng kiểm Đạt/Chưa đạt (vd: Bài 60 lớp 3 Sự chuyển động của Trái Đất: cách đặt và quay quả địa cầu, mô tả hướng chuyển động)",
+        "Phiếu đánh giá theo tiêu chí (vd: Bài 29 lớp 2 Một số loài vật sống dưới nước: kêu gọi bảo vệ môi trường)",
+        "Vấn đáp, câu hỏi gợi ý (vd: Bài 32 lớp 2 Mặt Trời và phương hướng: xác định phương hướng bằng Mặt Trời)",
+        "Bài tập tình huống (vd: Bài 14 lớp 2 Phòng tránh ngộ độc khi ở nhà: đưa ra cách xử lí khi người nhà bị ngộ độc)",
+        "Bài tập khai thác kênh hình/kênh chữ; bài tập thực hành/thực nghiệm; bài kiểm tra viết, thực hành dùng trong đánh giá thường xuyên (không phải bài kiểm tra định kì)"
+      ]
+    },
+    {
+      "mon": "Đạo đức",
+      "lop": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "cach_danh_gia": "Không có bài kiểm tra định kì theo Thông tư 27/2020 (Điều 7 không liệt kê môn này trong 7 môn có bài kiểm tra định kì). Đánh giá định kì bằng nhận xét theo 3 mức Hoàn thành tốt / Hoàn thành / Chưa hoàn thành vào giữa học kì 1, cuối học kì 1, giữa học kì 2 và cuối năm, căn cứ quá trình đánh giá thường xuyên: giáo viên quan sát thái độ, hành vi trong giờ học, giờ chơi, hoạt động tập thể và giao tiếp ứng xử; viết nhận xét vào vở hoặc sản phẩm học tập; học sinh tự đánh giá và đánh giá đồng đẳng.",
+      "vi_du_cong_cu": [
+        "Quan sát quá trình: thái độ, hành vi trong giờ học, giờ chơi, giờ ăn/nghỉ trưa, thư viện, hoạt động tập thể/xã hội, giao tiếp ứng xử với bạn bè, thầy cô, người thân",
+        "Quan sát sản phẩm: phiếu học tập cá nhân, bài viết ngắn, kết quả thảo luận nhóm, báo cáo sưu tầm/tìm hiểu thực tế, sơ đồ tư duy, báo cáo dự án học tập, tiểu phẩm đóng vai",
+        "Ghi chép ngắn: ghi biểu hiện thái độ, lời nói, cử chỉ, hành động liên quan chuẩn mực hành vi đạo đức/pháp luật đã học",
+        "Thang đo/phiếu đánh giá (dạng số, dạng đồ thị): học sinh tự đánh giá lẫn nhau về mức độ hoàn thành nhiệm vụ",
+        "Bảng kiểm trả lời Có/Không (vd: bảng kiểm hành vi giữ gìn vệ sinh trường lớp)",
+        "Phiếu hướng dẫn đánh giá theo tiêu chí: dùng cho giáo viên, học sinh tự đánh giá, học sinh đánh giá đồng đẳng",
+        "Vấn đáp, câu hỏi gợi mở (vd: 'Điều gì có thể xảy ra nếu chúng ta đi bộ hoặc chơi đùa dưới lòng đường?')",
+        "Mẫu nhận xét học bạ theo Thông tư 27 (vd lớp 3 học kì 1: 'Em biết nhận lỗi và sửa lỗi, biết nhắc nhở bạn tự giác nhận và sửa lỗi'; 'Em kính trọng thầy cô giáo, yêu quý bạn bè')"
+      ]
+    }
+  ],
+  "ghi_chu_cau_truc": [
+    "Thông tư 27/2020 không quy định thời gian làm bài, số câu, tỉ lệ trắc nghiệm/tự luận hay tỉ lệ % từng mức; mọi con số trong file đều lấy từ ma trận/đề mẫu thực tế của từng trường nên khác nhau giữa các nguồn. File này chọn một mẫu đại diện cho mỗi đề và ghi nguồn.",
+    "Quy định 'không cho điểm 0' không phải của Thông tư 27/2020: Thông tư 27 chỉ quy định thang điểm 10 và không cho điểm thập phân; quy định không cho điểm 0 là của Thông tư 22/2016 đã bãi bỏ khi Thông tư 27 có hiệu lực. Yêu cầu không cho điểm 0 được giữ theo đề bài của anh, không phải theo Thông tư 27.",
+    "Đề giữa kì cho Khoa học, Lịch sử và Địa lí, Tin học, Công nghệ tồn tại trên thị trường (tech12h, vietjack) nhưng KHÔNG phải bài kiểm tra định kì theo Thông tư 27; chỉ Toán và Tiếng Việt lớp 4-5 mới có thêm kiểm tra định kì giữa kì. File này chỉ có đề cuối học kì 1 và cuối năm cho 4 môn trên.",
+    "Tỉ lệ mức độ Mức 1/Mức 2/Mức 3 chưa tra được cho các đề: Khoa học 4 cuối năm, Khoa học 5 cuối năm, Lịch sử và Địa lí 4 cuối học kì 1, Lịch sử và Địa lí 5 cuối năm, Tin học 3 cuối học kì 1, Tin học 3 cuối năm, Tin học 4 cuối học kì 1, Tin học 4 cuối năm, Công nghệ 5 cuối năm; file dùng tỉ lệ phổ biến nhất (50%/30%/20% cho Khoa học và Lịch sử và Địa lí; 40%/30%/30% cho Tin học; 60%/30%/10% cho Công nghệ 5 cuối năm theo mẫu cuối học kì 1 cùng lớp) và ghi rõ là chưa xác thực.",
+    "Thời gian làm bài chưa tra được: Khoa học 5 cuối năm (vietjack để trống; 40 phút theo đề chương trình cũ 2022-2023 chỉ dùng tham chiếu), Lịch sử và Địa lí 4 cuối học kì 1 (không đề Kết nối tri thức nào ghi; 40 phút suy theo đề cuối năm Kết nối tri thức), Tin học 5 cuối học kì 1 và cuối năm (hoatieu, vndoc, kenhgiaovien đều không ghi; 40 phút theo mẫu chung), Lịch sử và Địa lí 5 cuối học kì 1 (60 phút theo đề số 1 của kenhgiaovien, 40 phút theo đề ôn hoatieu; file dùng 60 phút theo đề số 1 của kenhgiaovien).",
+    "Lịch sử và Địa lí 5 cuối học kì 1: ma trận hoatieu ghi trắc nghiệm 7,5 điểm + tự luận 2,5 điểm, tỉ lệ Mức 1: 40%, Mức 2: 45%, Mức 3: 15%, thời gian 40 phút; file dùng mẫu kenhgiaovien (60 phút, trắc nghiệm 7 điểm + tự luận 3 điểm) để tổng điểm các phần là số nguyên, và ghi rõ mẫu hoatieu ở đây.",
+    "Khoa học 5 cuối học kì 1: ma trận tailieugiaovien mâu thuẫn nội bộ (dòng tỉ lệ ghi Mức 1: 60%, Mức 2: 30%, Mức 3: 10% nhưng cộng điểm từng phần ra Mức 1: 70%, Mức 2: 30%, Mức 3: 0%); file dùng tỉ lệ 50%/30%/20% theo ma trận Điện Biên.",
+    "Tin học 5 cuối học kì 1 và cuối năm (mẫu hoatieu/vndoc): không có phần thực hành riêng trên máy trong ma trận; thực hành được đánh giá qua đề cương/đánh giá thường xuyên (vd: tạo chương trình nhỏ trên Scratch, bài tập về biến và biểu thức). Tỉ lệ lí thuyết : thực hành 50 : 50 chỉ có ở mẫu Trường Tiểu học Thượng Thanh.",
+    "Công nghệ: đa số đề kiểm tra định kì chỉ có trắc nghiệm + tự luận viết; phần thực hành làm sản phẩm được đánh giá thường xuyên trong quá trình học. Chỉ 1 mẫu duy nhất tìm được có phần thực hành trong bài kiểm tra định kì (Trường Tiểu học Nông nghiệp, Gia Lâm, Công nghệ 4 cuối học kì 1: lí thuyết 7 điểm + thực hành gieo hạt 3 điểm, tỉ lệ 70 : 30).",
+    "Đề Công nghệ 5 cuối học kì 1 của Trường Tiểu học Tây Hưng mâu thuẫn nội bộ (đề ghi trắc nghiệm 7 điểm + tự luận 4 điểm = 11 điểm, đáp án ghi trắc nghiệm 6 điểm + tự luận 4 điểm = 10 điểm); không dùng mẫu này.",
+    "Đề cuối năm Khoa học 5 chương trình cũ 2022-2023 có đáp án thiếu 0,5 điểm so với thang 10 (tự luận cộng lại chỉ 2,5 điểm); lỗi của nguồn, không dùng làm mẫu.",
+    "Đề loigiaihay Lịch sử và Địa lí 5 'học kì 1' hỏi cả Chiến dịch Hồ Chí Minh 1975 và Điện Biên Phủ (nội dung học kì 2); có thể gắn nhầm nhãn, không dùng làm căn cứ phạm vi cuối học kì 1.",
+    "Công nghệ 3 cuối năm: hai ma trận trên cùng trang download.vn cho kết quả khó đọc/khác nhau (ma trận 1 chỉ có Phần 2; ma trận 2 gộp cả 2 phần); file dùng ma trận Trường Tiểu học Mồ Dề làm căn cứ chính.",
+    "Tài liệu hướng dẫn đánh giá thường xuyên Tự nhiên và Xã hội và Đạo đức là tài liệu thời Thông tư 22 (chương trình cũ): số bài và tên bài trong ví dụ theo chương trình cũ, các kĩ thuật (quan sát, bảng kiểm, thang đo, phiếu theo tiêu chí) vẫn áp dụng được theo Thông tư 27.",
+    "Nhiều ma trận trên VietJack dùng nhãn cũ 'Nhận biết/Thông hiểu/Vận dụng' thay vì 'Mức 1/Mức 2/Mức 3' của Thông tư 27; khi chuyển sang JSON đã đối chiếu lại nhãn.",
+    "Điểm từng câu có thể là 0,5 điểm trong các nguồn (vd: Khoa học 4 cuối năm, Câu 1-4 mỗi câu 0,5 điểm); tổng điểm mỗi phần và tổng điểm cả đề đều là số nguyên theo thang 10, không cho điểm thập phân ở điểm bài kiểm tra."
+  ]
 }

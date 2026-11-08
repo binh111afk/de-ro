@@ -50,3 +50,14 @@ const gop = (ds, extra) => ({
   const f = load('khung_F.json'), g = load('khung_G.json', ']}') // file G bị cụt mất "]}" cuối
   save(gop([f, g], { mon: 'Tiểu học – các môn khác', ...TH, cac_mon: ['Khoa học', 'Lịch sử và Địa lí', 'Tin học', 'Công nghệ', 'Tự nhiên và Xã hội', 'Đạo đức'] }), 'khungTieuHocKhac.json', 'khung_F (Khoa học, LS&ĐL 4–5) + khung_G (Tin học, Công nghệ 3–5; TN&XH 1–3; Đạo đức 1–5; file gốc cụt đuôi, chưa có cau_truc_de). Lọc theo trường "mon" ở từng lớp.')
 }
+
+// Cấu trúc đề các môn tiểu học khác (khung_cau_truc_tieu_hoc.json) → khungTieuHocKhac.json
+{
+  const ct = load('khung_cau_truc_tieu_hoc.json'), name = 'khungTieuHocKhac.json'
+  const d = JSON.parse(R(new URL(name, O), 'utf8'))
+  const mons = new Set(ct.cau_truc_de.map((s) => s.mon))
+  d.cau_truc_de = (d.cau_truc_de ?? []).filter((s) => !mons.has(s.mon)).concat(ct.cau_truc_de)
+  d.danh_gia_khong_dinh_ki = ct.danh_gia_khong_dinh_ki
+  d.ghi_chu_cau_truc = ct.ghi_chu_chua_chac
+  save(d, name, d.phien_ban.replace(/^Claude ghép [^:]+: /, '') + ' Thêm cấu trúc đề từ khung_cau_truc_tieu_hoc.json (20 đề) và cách đánh giá TN&XH, Đạo đức (không kiểm tra định kì).')
+}
