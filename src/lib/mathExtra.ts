@@ -232,7 +232,7 @@ export function renderTrigSvg(spec: TrigSpec, desc: string) {
   if (spec.cot) {
     // trục cot: đường ngang y = 1 (tiếp tuyến tại B), mũi tên sang phải
     b += `<path d="M${cx - R - 2} ${cy - R}H${cx + R + 58}" stroke="#111" stroke-width="1.1" marker-end="url(#mxarr)"/>`
-    b += `<text x="${cx + R + 10}" y="${cy - R + 20}" ${FAM} font-size="14" font-style="italic">cot</text>`
+    b += `<text x="${cx + R + 58}" y="${cy - R + 18}" ${FAM} font-size="14" font-style="italic" text-anchor="end">cot</text>`
   }
   // tô cung (miền nghiệm): cung đậm #c0392b ngược chiều kim đồng hồ + chấm đầu mút
   let shadeDots = ''
@@ -327,7 +327,10 @@ export function renderTrigSvg(spec: TrigSpec, desc: string) {
       b += `<path d="M${f1(cx + R * Math.cos(M.a))} ${f1(cy - R * Math.sin(M.a))}A${R} ${R} 0 ${large} 0 ${f1(cx + R * Math.cos(a1))} ${f1(cy - R * Math.sin(a1))}" fill="none" stroke="#111" stroke-width="1.3" marker-end="url(#mxarr)"/>`
     }
     if (c.label) {
-      const mid = M.a + sweep / 2
+      // nhãn cung không đặt sát trục (đè A, B, A', B'): đẩy lệch khỏi hướng trục 0,32 rad dọc theo cung
+      let mid = M.a + sweep / 2
+      const q = Math.round(mid / (Math.PI / 2)) * (Math.PI / 2)
+      if (Math.abs(mid - q) < 0.3) mid = q + (mid < q - 1e-9 ? -0.32 : 0.32)
       const lx = cx + (R + 16) * Math.cos(mid)
       const ly = cy - (R + 16) * Math.sin(mid) + 5
       b += `<text x="${f1(lx)}" y="${f1(ly)}" ${FAM} font-size="14" text-anchor="${Math.cos(mid) > 0.2 ? 'start' : Math.cos(mid) < -0.2 ? 'end' : 'middle'}">${esc(c.label)}</text>`
@@ -335,8 +338,24 @@ export function renderTrigSvg(spec: TrigSpec, desc: string) {
   }
   b += shadeDots
   // giá trị trên trục: cos dưới trục ngang, sin bên trái trục dọc
-  for (const [, v] of cosVals) b += `<text x="${f1(cx + R * v.x)}" y="${cy + 18}" ${FAM} font-size="13" text-anchor="middle" paint-order="stroke" stroke="#fff" stroke-width="3">${esc(v.t)}</text>`
-  for (const [, v] of sinVals) b += `<text x="${cx - 6}" y="${f1(cy - R * v.y + 5)}" ${FAM} font-size="13" text-anchor="end" paint-order="stroke" stroke="#fff" stroke-width="3">${esc(v.t)}</text>`
+  // nhãn sát nhau thì xếp sang hàng (cos) / cột (sin) kế tiếp; độ rộng chữ ước ~7 px/ký tự
+  const tw = (t: string) => t.length * 7 + 4
+  const cosEnd: number[] = []
+  for (const v of [...cosVals.values()].sort((p, q) => p.x - q.x)) {
+    const X = cx + R * v.x
+    let row = cosEnd.findIndex((e) => X - tw(v.t) / 2 > e)
+    if (row < 0) row = cosEnd.push(0) - 1
+    cosEnd[row] = X + tw(v.t) / 2
+    b += `<text x="${f1(X)}" y="${cy + 18 + 15 * row}" ${FAM} font-size="13" text-anchor="middle" paint-order="stroke" stroke="#fff" stroke-width="3">${esc(v.t)}</text>`
+  }
+  const sinCol: Array<{ y: number; x: number }> = [] // mỗi cột: y dưới cùng đã dùng, mép phải của cột
+  for (const v of [...sinVals.values()].sort((p, q) => q.y - p.y)) {
+    const Y = cy - R * v.y + 5
+    let col = sinCol.findIndex((c) => Y - 14 > c.y)
+    if (col < 0) col = sinCol.push({ y: -1e9, x: col === -1 && sinCol.length ? sinCol[sinCol.length - 1].x - 36 : cx - 6 }) - 1
+    sinCol[col].y = Y
+    b += `<text x="${f1(sinCol[col].x)}" y="${f1(Y)}" ${FAM} font-size="13" text-anchor="end" paint-order="stroke" stroke="#fff" stroke-width="3">${esc(v.t)}</text>`
+  }
   const img = wrap(W, H, desc, b)
   return warns.length ? { ...img, errors: warns } : img
 }
