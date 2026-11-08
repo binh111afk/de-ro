@@ -1,4 +1,5 @@
-/** Test lớp chặn lạm dụng API (server/guard.ts): Origin lạ, hạn mức khách theo IP, máy dev không bị chặn. */
+/** Test lớp chặn lạm dụng API (server/guard.ts): Origin lạ, hạn mức khách theo IP, máy dev không bị chặn.
+ * Ngoài Vercel guard lấy IP từ socket (bỏ qua x-forwarded-for vì giả được), nên mỗi ca đặt remoteAddress riêng. */
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { guard } from '../server/guard.ts'
 
@@ -27,25 +28,25 @@ function mock(headers: Record<string, string>, remote = '203.0.113.9') {
 const host = { host: 'de-ro-lac.vercel.app' }
 
 {
-  const m = mock({ ...host, origin: 'https://evil.example', 'x-forwarded-for': '198.51.100.1' })
+  const m = mock({ ...host, origin: 'https://evil.example' }, '198.51.100.1')
   check('Origin trang lạ bị chặn 403', !(await guard(m.req, m.res, 'llm')) && m.out.status === 403)
 }
 {
-  const m = mock({ ...host, origin: 'https://de-ro-lac.vercel.app', 'x-forwarded-for': '198.51.100.2' })
+  const m = mock({ ...host, origin: 'https://de-ro-lac.vercel.app' }, '198.51.100.2')
   check('Origin cùng trang được qua', await guard(m.req, m.res, 'llm'))
 }
 {
   let okCount = 0
   let last = 0
   for (let i = 0; i < 25; i++) {
-    const m = mock({ ...host, 'x-forwarded-for': '198.51.100.3' })
+    const m = mock({ ...host }, '198.51.100.3')
     if (await guard(m.req, m.res, 'llm')) okCount++
     else last = m.out.status
   }
   check(`khách cùng IP: 20 lượt qua rồi 429 (qua ${okCount}, lỗi ${last})`, okCount === 20 && last === 429)
 }
 {
-  const m = mock({ ...host, 'x-forwarded-for': '198.51.100.4' })
+  const m = mock({ ...host }, '198.51.100.4')
   check('IP khác vẫn có lượt riêng', await guard(m.req, m.res, 'llm'))
 }
 {
@@ -57,7 +58,7 @@ const host = { host: 'de-ro-lac.vercel.app' }
   check('máy dev (localhost) không bị giới hạn', ok)
 }
 {
-  const m = mock({ ...host, 'x-forwarded-for': '198.51.100.5', authorization: 'Bearer token-sai' })
+  const m = mock({ ...host, authorization: 'Bearer token-sai' }, '198.51.100.5')
   check('token sai: coi như khách, vẫn qua lượt đầu', await guard(m.req, m.res, 'image'))
 }
 

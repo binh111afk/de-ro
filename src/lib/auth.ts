@@ -3,8 +3,8 @@
  * Khoá publishable là khoá công khai, an toàn đưa vào bundle; không dùng service-role ở client.
  */
 
-const BASE = import.meta.env.VITE_SUPABASE_URL as string
-const KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string
+const BASE = import.meta.env?.VITE_SUPABASE_URL as string // ?. để script Node (test) nạp được file này
+const KEY = import.meta.env?.VITE_SUPABASE_PUBLISHABLE_KEY as string
 const STORE = 'dethinhbien-auth'
 
 export interface Session {
