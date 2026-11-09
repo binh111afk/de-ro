@@ -73,6 +73,37 @@ for (const design of SLIDE_DESIGNS) {
     } else {
       console.log(`  ✅ buildDesignSlides dựng đủ ${builtSlides.length} slide thật, đều có phần tử`)
     }
+
+    // Kiểm tra toạ độ phần tử trong khung 0–100% và không chồng chữ lên chữ
+    for (let sIdx = 0; sIdx < builtSlides.length; sIdx++) {
+      const slide = builtSlides[sIdx]
+      for (const el of slide.elements) {
+        if (el.x < 0 || el.y < 0 || el.x + el.w > 100.01 || el.y + el.h > 100.01 || el.w <= 0 || el.h <= 0) {
+          console.error(`  ❌ Slide ${sIdx + 1} có phần tử ${el.id} (${el.type}) vượt khung 0–100%: x=${el.x}, y=${el.y}, w=${el.w}, h=${el.h}`)
+          allPassed = false
+        }
+      }
+
+      // Kiểm tra các phần tử chữ của skin không chồng lên chữ khác
+      const isCustomSlide = sIdx === 0 || sIdx === builtSlides.length - 1
+      const textEls = slide.elements.filter((el) => el.type === 'text' && Boolean(el.text?.trim()))
+      for (let i = 0; i < textEls.length; i++) {
+        for (let j = i + 1; j < textEls.length; j++) {
+          const a = textEls[i]
+          const b = textEls[j]
+          const aIsSkin = a.id.startsWith('skin-motif-') || isCustomSlide
+          const bIsSkin = b.id.startsWith('skin-motif-') || isCustomSlide
+          if (aIsSkin || bIsSkin) {
+            const overlapX = Math.max(0, Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x))
+            const overlapY = Math.max(0, Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y))
+            if (overlapX > 0.05 && overlapY > 0.05) {
+              console.error(`  ❌ Slide ${sIdx + 1} có chữ skin chồng lên chữ khác: "${a.id}" và "${b.id}" (giao nhau: dx=${overlapX.toFixed(2)}, dy=${overlapY.toFixed(2)})`)
+              allPassed = false
+            }
+          }
+        }
+      }
+    }
   } catch (err) {
     console.error(`  ❌ Lỗi khi dựng slide:`, err)
     allPassed = false

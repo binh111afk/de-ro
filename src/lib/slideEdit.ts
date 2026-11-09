@@ -19,6 +19,7 @@ import { checkSlide, slideFromAi } from './slideAi'
 import { keepCustomBg } from './slideBackground'
 import { DECK_THEMES, contrastRatio, mixHex, normalizeTheme, resolveThemeId, themeById } from './slideTheme'
 import { SLIDE_DESIGNS, designById } from './slideDesigns'
+import { applySkin, skinById, themeWithSkinFonts } from './slideSkins'
 
 export type SlideEditOp =
   | { op: 'set_theme'; theme: string }
@@ -259,16 +260,22 @@ export function applyEdits(deck: Deck, ops: SlideEditOp[]): EditResult {
           summary.push(`Bỏ qua: không tìm thấy thiết kế "${op.id}".`)
           break
         }
-        const targetTheme = themeById(d.themeId)
-        if (!targetTheme) {
+        const baseTheme = themeById(d.themeId)
+        if (!baseTheme) {
           summary.push(`Bỏ qua: không tìm thấy bộ màu "${d.themeId}".`)
           break
         }
+        const skin = skinById(d.id)
+        const targetTheme = skin ? themeWithSkinFonts(baseTheme, skin) : baseTheme
+        const total = next.slides.length
         next = {
           ...next,
           theme: targetTheme,
           style: d.stylePack ?? d.id,
-          slides: next.slides.map((s) => recomposeSlide(targetTheme, { ...s, decorKit: d.decorKit })),
+          design: d.id,
+          slides: next.slides.map((s, i) =>
+            applySkin(recomposeSlide(targetTheme, { ...s, decorKit: d.decorKit }), d.id, targetTheme, i, total),
+          ),
         }
         summary.push(`Áp dụng thiết kế "${d.name}".`)
         break
@@ -401,7 +408,8 @@ export function applyEdits(deck: Deck, ops: SlideEditOp[]): EditResult {
           summary.push(`Bỏ qua: nội dung slide ${op.slide} chưa đủ để dùng bố cục ${op.layout}.`)
           break
         }
-        const updated: Slide = keepCustomBg(slide, { ...slide, layout: op.layout, tone, background: toneBackground(theme, tone), elements }, theme.fg)
+        const rawUpdated: Slide = keepCustomBg(slide, { ...slide, layout: op.layout, tone, background: toneBackground(theme, tone), elements }, theme.fg)
+        const updated = next.design ? applySkin(rawUpdated, next.design, theme, op.slide - 1, next.slides.length) : rawUpdated
         next = { ...next, slides: next.slides.map((s) => (s === slide ? updated : s)) }
         summary.push(`Đổi bố cục slide ${op.slide} sang ${op.layout}.`)
         break
@@ -419,8 +427,9 @@ export function applyEdits(deck: Deck, ops: SlideEditOp[]): EditResult {
         }
         const built = slideFromAi(check.page, theme)
         const at = Math.min(Math.max((op.position ?? next.slides.length + 1) - 1, 0), next.slides.length)
+        const styledBuilt = next.design ? applySkin(built, next.design, theme, at, next.slides.length + 1) : built
         const slides = [...next.slides]
-        slides.splice(at, 0, built)
+        slides.splice(at, 0, styledBuilt)
         next = { ...next, slides }
         summary.push(`Thêm slide mới (${op.layout}) tại vị trí ${at + 1}.`)
         break

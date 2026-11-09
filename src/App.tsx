@@ -39,6 +39,7 @@ const OnlineOpen = lazy(pages.OnlineOpen)
 const ExamView = lazy(pages.ExamView)
 const Auth = lazy(pages.Auth)
 const Profile = lazy(pages.Profile)
+const PreviewDesigns = lazy(() => import('@/pages/PreviewDesigns'))
 
 /** Trang đầu hiện xong thì tải ngầm các trang còn lại (lần lượt, lúc trình duyệt rảnh)
  *  → bấm sang trang khác không còn khựng / "Đang tải…". */
@@ -125,6 +126,7 @@ export default function App() {
           <Route path="/quen-mat-khau" element={<Auth mode="forgot" />} />
           <Route path="/dat-lai-mat-khau" element={<Auth mode="reset" />} />
           <Route path="/ho-so" element={<Profile />} />
+          <Route path="/preview-designs" element={<PreviewDesigns />} />
           <Route path="*" element={<Home />} />
         </Routes>
         </div>

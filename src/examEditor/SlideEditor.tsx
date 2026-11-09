@@ -130,6 +130,7 @@ import { applyEdits, describeSlide, recomposeSlide, type SlideEditOp } from '@/l
 import { elementHeight } from '@/lib/slideText'
 import { DECK_THEMES, normalizeTheme, readableTextOn, themeById, type ResolvedTheme } from '@/lib/slideTheme'
 import { buildDesignSlides, type SlideDesign } from '@/lib/slideDesigns'
+import { applySkin, skinById, themeWithSkinFonts } from '@/lib/slideSkins'
 import { appendSlidesToDeck, withImage } from '@/lib/slideAi'
 import { IMAGE_LAYOUTS, buildImagePrompt, generateSlideImage, queueImage } from '@/lib/imageGen'
 import { uploadImage } from '@/lib/mediaStore'
@@ -348,7 +349,7 @@ export function SlideEditor({
     // slide thêm tay vẫn theo bộ trang trí của deck
     const decorKit = deck.slides.find((slide) => slide.decorKit)?.decorKit
     const elements = composeLayout(deck.theme, layoutId, { ...withPlaceholders(layoutId, {}), decorKit }, tone)
-    const s: Slide = {
+    let s: Slide = {
       id: uid(),
       layout: layoutId,
       tone,
@@ -356,6 +357,9 @@ export function SlideEditor({
       background: toneBackground(deck.theme, tone),
       elements,
       transition: 'none',
+    }
+    if (deck.design) {
+      s = applySkin(s, deck.design, deck.theme, deck.slides.length, deck.slides.length + 1)
     }
     commitDeck({ ...deck, slides: [...deck.slides, s] })
     setSelectedSlideId(s.id)
@@ -446,7 +450,9 @@ export function SlideEditor({
   /** Thêm trọn bộ slide thiết kế mẫu vào bài */
   const addDesignToDeck = (design: SlideDesign, option: 'replace' | 'keep' | 'empty') => {
     const latest = deckRef.current
-    const targetTheme = themeById(design.themeId) ?? DECK_THEMES[0]
+    const baseTheme = themeById(design.themeId) ?? DECK_THEMES[0]
+    const skin = skinById(design.id)
+    const targetTheme = skin ? themeWithSkinFonts(baseTheme, skin) : baseTheme
 
     if (option === 'empty') {
       const newSlides = buildDesignSlides(design, targetTheme)
@@ -454,6 +460,7 @@ export function SlideEditor({
         ...latest,
         theme: targetTheme,
         style: design.stylePack ?? design.id,
+        design: design.id,
         slides: newSlides,
       }
       commitDeck(nextDeck)
@@ -465,12 +472,16 @@ export function SlideEditor({
     }
 
     if (option === 'replace') {
-      const recomposedOldSlides = latest.slides.map((s) => recomposeSlide(targetTheme, s))
+      const totalCount = latest.slides.length + design.slides.length
+      const recomposedOldSlides = latest.slides.map((s, i) =>
+        applySkin(recomposeSlide(targetTheme, { ...s, decorKit: design.decorKit }), design.id, targetTheme, i, totalCount),
+      )
       const newSlides = buildDesignSlides(design, targetTheme)
       const nextDeck: Deck = {
         ...latest,
         theme: targetTheme,
         style: design.stylePack ?? design.id,
+        design: design.id,
         slides: [...recomposedOldSlides, ...newSlides],
       }
       commitDeck(nextDeck)

@@ -36,20 +36,58 @@ Theo đúng hướng dẫn trong `docs/prompt-mau-slide.md`, toàn bộ tab **M�
 
 ---
 
-## 3. Danh sách 8 bộ slide Thiết kế
+## 3. Danh sách 8 bộ slide Thiết kế & Ngôn ngữ hình khối (Skin từng bộ)
 
-| STT | Tên hiển thị | Mã ID | Bộ màu (`themeId`) | Bộ trang trí (`decorKit`) | Phong cách (`stylePack`) | Số slide | Lý do chọn & Phù hợp với |
-|:---:|--------------|:-----:|:------------------:|:-------------------------:|:------------------------:|:--------:|--------------------------|
-| 1 | **Thanh lịch tối giản** | `thanh-lich` | `sang` | `toi-gian` | `consulting` | 7 | Hiện đại, tinh tế, phông thanh thoát; thích hợp cho báo cáo khoa học, hội thảo chuyên đề, tổng kết dự án. |
-| 2 | **Trẻ trung nhiều màu** | `tre-trung` | `tim` | `ve-tay` | `classroom` | 7 | Tươi sáng, hình minh hoạ ngộ nghĩnh; đặc biệt phù hợp học sinh tiểu học, bài khởi động hoặc môn năng khiếu. |
-| 3 | **Học thuật nghiêm túc** | `hoc-thuat` | `do` | `hinh-hoc` | `bold` | 7 | Đỏ thẫm trang trọng, tương phản cao, uy tín; thích hợp cho cấp THPT, ôn thi tốt nghiệp, bài giảng lý thuyết chuẩn mực. |
-| 4 | **Thiên nhiên xanh** | `thien-nhien` | `rung` | `la-xanh` | `bento` | 7 | Xanh lá tươi mát, cảm giác sinh thái; phù hợp môn Sinh học, Địa lý, Hoạt động trải nghiệm và Môi trường. |
-| 5 | **Công nghệ tối màu** | `cong-nghe` | `dem-xanh` | `hinh-hoc` | `keynote` | 7 | Nền tối hiện đại, điểm nhấn xanh neon công nghệ cao; phù hợp môn Tin học, lập trình, trí tuệ nhân tạo, STEM và Robotics. |
-| 6 | **Cổ điển giấy ấm** | `co-dien` | `giay-am` | `hoa-diu` | `editorial` | 7 | Giấy ngả vàng hoài niệm, phông có chân ấm áp; phù hợp môn Ngữ văn, Lịch sử, Giáo dục công dân và tư liệu truyền thống. |
-| 7 | **Vui nhộn hoạt hình** | `vui-nhon` | `tim` | `lap-lanh` | `classroom` | 7 | Màu sắc rực rỡ, trang trí lấp lánh; tạo hứng thú cho sinh hoạt lớp, đố vui có thưởng, tiết học tương tác nhóm. |
-| 8 | **Bảng đen phấn trắng** | `bang-den` | `dem-xanh` | `ve-tay` | `classroom` | 7 | Tái hiện bảng lớp học và nét phấn viết tay thân quen; phù hợp bài luyện tập Toán, Vật lý, Hoá học. |
+Mỗi bộ thiết kế nay được trang bị một hệ thống **"Skin"** độc lập (`src/lib/slideSkins.ts`), quy định toàn bộ ngôn ngữ hình khối, phông chữ, bo góc, khung viền, bóng đổ và motif nhận diện lặp lại. Mục tiêu là: **ngay cả khi chuyển ảnh xem trước sang trắng đen, người xem vẫn nhận diện được từng bộ chỉ nhờ bố cục và hình khối**.
 
-> **Quy tắc tuân thủ**: Toàn bộ 8 bộ thiết kế đều dùng các `themeId` có sẵn trong `DECK_THEMES` (`sang`, `tim`, `do`, `rung`, `dem-xanh`, `giay-am`) kết hợp với các bộ trang trí `decorKit` và bố cục có sẵn, đảm bảo không làm phá vỡ các kiểm thử sẵn có của hệ thống (`test:slide-theme`).
+| STT | Tên hiển thị | Mã ID | Bộ màu (`themeId`) & Phông chữ | Ngôn ngữ hình khối & Motif nhận diện đặc trưng |
+|:---:|--------------|:-----:|:------------------------------:|-----------------------------------------------|
+| 1 | **Thanh lịch tối giản** | `thanh-lich` | `sang`<br>Heading: `Be Vietnam Pro`<br>Body: `Be Vietnam Pro` | Bố cục Swiss bất đối xứng lệch trục trái, khoảng trắng lớn, tiêu đề thanh thoát, vạch hairline siêu mảnh dưới tiêu đề, số thứ tự trang tối giản góc dưới (`01 / 07`), bo góc 0, không viền thẻ. |
+| 2 | **Trẻ trung nhiều màu** | `tre-trung` | `tim`<br>Heading: `Arial` (800)<br>Body: `Arial` | Phong cách bong bóng & viên thuốc (pill capsule), chữ tròn đậm, tiêu đề căn giữa vui tươi, các chấm tròn sticker lơ lửng, thẻ bo tròn lớn (`radius: 26`). |
+| 3 | **Học thuật nghiêm túc** | `hoc-thuat` | `do`<br>Heading: `Calibri` (700)<br>Body: `Calibri` | Dải màu ngang đỉnh slide chạy 100% bề rộng (`top header bar`) trên mọi slide, chữ chuẩn mực, khung chữ nhật sắc cạnh (`radius: 0`), nhãn số La Mã `[ I ]`, vạch nhấn đỏ dày cạnh trái thẻ bài. |
+| 4 | **Thiên nhiên xanh** | `thien-nhien` | `rung`<br>Heading: `Segoe UI` (700)<br>Body: `Segoe UI` | Bố cục chia đôi màn hình, dải màu dọc cạnh trái toàn màn hình (`full-height sidebar band`) trên mọi slide, chữ nhân bản hiện đại, thẻ bento bo góc vừa (`radius: 18`). |
+| 5 | **Công nghệ tối màu** | `cong-nghe` | `dem-xanh`<br>Heading: `Courier New`<br>Body: `Segoe UI` | Màn hình terminal HUD nền tối, chữ monospace, thanh trạng thái `// SYSTEM::ONLINE` ở đỉnh mọi slide, tiêu đề đóng khung ngoặc vuông `[ HỆ THỐNG ]`, góc vuông công nghệ (`radius: 2`). |
+| 6 | **Cổ điển giấy ấm** | `co-dien` | `giay-am`<br>Heading: `Times New Roman`<br>Body: `Times New Roman` | Khung viền đôi (`ornamental double frame 95% × 95%`) bao quanh toàn slide, chữ có chân căn giữa trang trọng, hoa văn phân cách cổ điển `~ ❖ ~`, màu giấy ngả ấm. |
+| 7 | **Vui nhộn hoạt hình** | `vui-nhon` | `tim`<br>Heading: `Verdana` (900)<br>Body: `Verdana` (700) | Neo-brutalist phong cách truyện tranh comic: viền đen dày 3px, bóng khối cứng lệch đen (`shadowLevel: 2`), sticker ngôi sao góc `★ POP ★`, chữ in hoa cực đậm cá tính. |
+| 8 | **Bảng đen phấn trắng** | `bang-den` | `dem-xanh`<br>Heading: `Tahoma` (700)<br>Body: `Tahoma` | Khung viền bảng gỗ quanh slide, chữ phấn trắng, nét phấn gạch chân đứt đoạn (`borderStyle: 'dashed'`) dưới tiêu đề và quanh các khung thẻ bài tập. |
+
+---
+
+### 3.1. Bảng đối chiếu Slide 1, 3, 5 của cả 8 bộ thiết kế
+
+Dưới đây là ảnh chụp thực tế slide 1, 3 và 5 của cả 8 bộ thiết kế, được trích xuất trực tiếp từ trình render của ứng dụng:
+
+#### Bản màu thực tế:
+![Bảng so sánh 8 bộ thiết kế (Bản màu)](mau-slide-anh/bang-so-sanh-8-bo.png)
+
+#### Bản trắng đen (Grayscale để kiểm chứng độ tách biệt hình khối):
+![Bảng so sánh 8 bộ thiết kế (Bản trắng đen)](mau-slide-anh/bang-so-sanh-8-bo-grayscale.png)
+
+> **Kiểm chứng tính nhận diện trắng đen**:
+> - Nhìn vào bản trắng đen, **bộ 3 (Học thuật)** lập tức nổi bật với thanh dải ngang đen tuyền chạy trọn 100% bề rộng đỉnh slide.
+> - **Bộ 4 (Thiên nhiên)** nhận diện ngay nhờ cột dải màu dọc suốt chiều cao mép trái màn hình.
+> - **Bộ 6 (Cổ điển)** là bộ duy nhất có khung viền đôi tinh xảo bao quanh 4 mép cùng chữ có chân căn giữa.
+> - **Bộ 7 (Vui nhộn)** sở hữu nét viền đen dày cộp 3px và khối bóng đổ đen đặc lệch kiểu comic poster.
+> - **Bộ 8 (Bảng đen)** nhận diện qua khung bảng gỗ dày và viền nét đứt (dashed) phấn trắng.
+> - **Bộ 2 (Trẻ trung)** đặc trưng với các khối bo tròn viên thuốc mềm mại và bong bóng chấm tròn lơ lửng.
+> - **Bộ 1 (Thanh lịch)** tối giản tinh khiết với khoảng trắng bao la, không viền thẻ, vạch hairline mảnh và số trang tối giản.
+> - **Bộ 5 (Công nghệ)** mang dấu ấn terminal với thanh HUD trên đỉnh và tiêu đề đặt trong dấu ngoặc vuông monospace `[ ... ]`.
+> 
+> Hoàn toàn không còn tình trạng "các bộ trông y hệt nhau, chỉ khác màu".
+
+---
+
+### 3.2. Cơ chế thừa kế Skin theo bài giảng
+
+1. **Lưu ID thiết kế vào Deck (`deck.design`)**:
+   - Khi người dùng chọn **"Đổi cả bài sang giao diện này"** hoặc AI gọi lệnh `apply_design`, thuộc tính `deck.design` được lưu trực tiếp vào deck.
+   - Khi người dùng chọn **"Giữ giao diện hiện tại"**, `deck.design` không thay đổi để giữ nguyên toàn bộ phong cách trước đó.
+2. **Kế thừa khi thêm slide mới (`addLayoutSlide`)**:
+   - Khi bấm thêm bất kỳ bố cục nào từ tab "Bố cục", hàm kiểm tra `if (deck.design) s = applySkin(s, deck.design, deck.theme)`. Slide mới tự động thừa kế toàn bộ ngôn ngữ hình khối (bo góc, khung viền, phông chữ, motif) của bộ thiết kế đang chọn.
+3. **Kế thừa khi AI thao tác (`slideEdit.ts`)**:
+   - Các lệnh `add_slide` hoặc `set_layout` từ trợ lý AI cũng tự động gọi `applySkin` nếu `deck.design` đã được thiết lập.
+4. **Tương thích hoàn toàn PPTX**:
+   - Mọi biến đổi skin chỉ sử dụng các loại phần tử chuẩn của hệ thống (`text`, `shape`, `line`, `graphic`, `icon`, `image`, `table`), giúp xuất file PowerPoint (.pptx) giữ nguyên 100% bố cục và mở mượt mà trên PowerPoint / Google Slides / Keynote.
 
 ---
 
@@ -111,13 +149,18 @@ Các ảnh chụp màn hình được lưu trong thư mục `docs/handoff/mau-sl
 1. **Kiểm tra TypeScript**:
    - Lệnh: `npx tsc -p tsconfig.app.json --noEmit`
    - Kết quả: **Clean 100% (0 lỗi, 0 cảnh báo)**.
-2. **Kiểm tra test tự động 8 bộ thiết kế**:
+2. **Kiểm tra test tự động 8 bộ thiết kế & Skin**:
    - Lệnh: `npm run test:designs` (`scripts/check-designs.ts`)
-   - Kết quả: **Đạt 100%**. Dựng đủ slide, không lỗi, các trường `themeId`, `decorKit`, `stylePack`, `layout` đều hợp lệ, catalog text và alias nhận diện chuẩn xác.
+   - Kết quả: **Đạt 100%**. Dựng đủ slide, không lỗi, các trường `themeId`, `decorKit`, `stylePack`, `layout` đều hợp lệ, catalog text và alias nhận diện chuẩn xác. **Tất cả phần tử nằm trọn vẹn trong khung 0–100%, không chồng chữ lên chữ**.
 3. **Kiểm tra các test hiện có của dự án**:
    - Lệnh: `npm run test:export` -> **7/7 pass**.
    - Lệnh: `npm run test:slide-theme` -> **4/4 pass**.
-4. **Kiểm tra trải nghiệm tương tác (đã xác thực qua trình duyệt Chrome thật)**:
+4. **Kiểm tra xuất PowerPoint (.pptx) cả 8 bộ**:
+   - Cả 8 bộ thiết kế đều xuất PPTX thành công với dung lượng đầy đủ (116 KB – 155 KB), các khối hình và kiểu chữ tương thích 100% với PptxGenJS.
+5. **Kiểm tra tích hợp chèn, thừa kế skin và hoàn tác (`scripts/test-deck-integration.ts`)**:
+   - Chèn bộ thiết kế theo **Lựa chọn 1 ("Đổi cả bài")**: Toàn bộ slide cũ được chuyển sang skin mới, thêm 1 slide bố cục sau đó tự động mang skin đó, xuất PPTX thành công, nhấn hoàn tác 1 bước khôi phục hoàn hảo bài cũ.
+   - Chèn bộ thiết kế theo **Lựa chọn 2 ("Giữ giao diện")**: Toàn bộ slide cũ giữ nguyên theme, thêm 1 slide bố cục sau đó không bị áp skin ngoài ý muốn, xuất PPTX thành công, hoàn tác 1 bước đạt.
+6. **Kiểm tra trải nghiệm tương tác (đã xác thực qua trình duyệt Chrome thật)**:
    - **Bài trống**: Bấm "Thêm vào bài" tự động đổi theme sang theme của bộ thiết kế, đặt style và chèn slide, **không hiện modal hỏi**.
    - **Bài đã có slide**: Bấm "Thêm vào bài" hiện `DesignPromptModal` với 2 lựa chọn ("Đổi cả bài sang giao diện này" / "Giữ giao diện hiện tại, chỉ thêm slide") + nút "Huỷ".
    - **Nút Huỷ**: Đóng modal ngay lập tức, không thay đổi nội dung bài giảng.

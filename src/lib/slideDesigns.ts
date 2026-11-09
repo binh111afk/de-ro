@@ -8,6 +8,7 @@ import {
   type SlideLayoutId,
 } from './slideLayouts'
 import { DECK_THEMES, themeById } from './slideTheme'
+import { applySkin, skinById, themeWithSkinFonts } from './slideSkins'
 
 export interface SlideDesign {
   id: string // 'thanh-lich', 'tre-trung'…
@@ -220,14 +221,15 @@ export const SLIDE_DESIGNS: SlideDesign[] = [
         },
       },
       {
-        layout: 'bullets',
+        layout: 'table',
         tone: 'theme',
         content: {
-          title: 'Các Dạng Năng Lượng Thường Gặp',
-          bullets: [
-            'Động năng: Năng lượng do vật chuyển động mà có: $W_d = \\tfrac{1}{2}mv^2$',
-            'Thế năng trọng trường: Xác định bởi độ cao: $W_t = mgh$',
-            'Cơ năng toàn phần: Tổng đại số của động năng và thế năng',
+          title: 'Bảng Đối Chiếu Các Dạng Năng Lượng',
+          rows: [
+            ['Dạng năng lượng', 'Công thức xác định', 'Đặc điểm bảo toàn'],
+            ['Động năng', '$W_d = \\tfrac{1}{2}mv^2$', 'Phụ thuộc vận tốc'],
+            ['Thế năng trọng trường', '$W_t = mgh$', 'Phụ thuộc toạ độ cao'],
+            ['Cơ năng toàn phần', '$W = W_d + W_t$', 'Hằng số trong trường thế'],
           ],
         },
       },
@@ -496,6 +498,15 @@ export const SLIDE_DESIGNS: SlideDesign[] = [
         },
       },
       {
+        layout: 'quote',
+        tone: 'soft',
+        content: {
+          quote:
+            'Công cha như núi Thái Sơn, / Nghĩa mẹ như nước trong nguồn chảy ra. / Một lòng thờ mẹ kính cha, / Cho tròn chữ hiếu mới là đạo con.',
+          author: 'Ca dao cổ truyền Việt Nam',
+        },
+      },
+      {
         layout: 'cards',
         tone: 'theme',
         content: {
@@ -505,15 +516,6 @@ export const SLIDE_DESIGNS: SlideDesign[] = [
             'Nỗi niềm lao động: Cày đồng buổi ban trưa, quý từng hạt gạo',
             'Châm biếm thói hư tật xấu: Tiếng cười lạc quan, vượt khó',
           ],
-        },
-      },
-      {
-        layout: 'quote',
-        tone: 'soft',
-        content: {
-          quote:
-            'Công cha như núi Thái Sơn, / Nghĩa mẹ như nước trong nguồn chảy ra. / Một lòng thờ mẹ kính cha, / Cho tròn chữ hiếu mới là đạo con.',
-          author: 'Ca dao cổ truyền Việt Nam',
         },
       },
       {
@@ -606,14 +608,22 @@ export const SLIDE_DESIGNS: SlideDesign[] = [
         },
       },
       {
-        layout: 'quiz',
-        tone: 'soft',
+        layout: 'two-column',
+        tone: 'theme',
         content: {
-          kicker: 'CÂU ĐỐ SỐ 2',
-          question: 'Con gì chân ngắn, mà lại có màng, mỏ bẹt màu vàng, hay kêu cạp cạp?',
-          options: ['Con vịt', 'Con chim bồ câu', 'Con gà trống', 'Con thỏ trắng'],
-          answer: 'Con vịt',
-          explanation: 'Tiếng kêu cạp cạp và chiếc chân màng quen thuộc của chú vịt con!',
+          title: 'Đại Chiến Điểm Số: Đội Cam vs Đội Vàng',
+          leftTitle: 'Đội Cam (Sư Tử)',
+          left: [
+            '120 điểm vòng Khởi động',
+            'Bấm chuông nhanh 4/4 câu hỏi',
+            'Tinh thần đoàn kết xuất sắc',
+          ],
+          rightTitle: 'Đội Vàng (Đại Bàng)',
+          right: [
+            '110 điểm bám đuổi sát nút',
+            'Giải mã ô chữ bí mật nhanh nhất',
+            'Cổ vũ sôi nổi nhất hội trường',
+          ],
         },
       },
       {
@@ -723,8 +733,12 @@ export const SLIDE_DESIGNS: SlideDesign[] = [
 ]
 
 export function buildDesignSlides(design: SlideDesign, overrideTheme?: DeckTheme): Slide[] {
-  const theme = overrideTheme ?? themeById(design.themeId) ?? DECK_THEMES[0]
-  return design.slides.map((spec) => {
+  const baseTheme = overrideTheme ?? themeById(design.themeId) ?? DECK_THEMES[0]
+  const skin = skinById(design.id)
+  const theme = skin ? themeWithSkinFonts(baseTheme, skin) : baseTheme
+  const total = design.slides.length
+
+  return design.slides.map((spec, i) => {
     const layoutId = spec.layout
     const tone = spec.tone ?? defaultTone(layoutId)
     const decorKit = design.decorKit
@@ -734,7 +748,7 @@ export function buildDesignSlides(design: SlideDesign, overrideTheme?: DeckTheme
       ...(decorKit ? { decorKit } : {}),
     }
     const elements = composeLayout(theme, layoutId, content, tone)
-    return {
+    const rawSlide: Slide = {
       id: uid(),
       layout: layoutId,
       tone,
@@ -743,6 +757,7 @@ export function buildDesignSlides(design: SlideDesign, overrideTheme?: DeckTheme
       elements: elements.map((el) => ({ ...el, id: uid() })),
       transition: 'none',
     }
+    return applySkin(rawSlide, design.id, theme, i, total)
   })
 }
 
@@ -813,7 +828,9 @@ export function designCatalogText(): string {
     'BỘ THIẾT KẾ MẪU (khi người dùng yêu cầu làm theo phong cách/thiết kế cụ thể, chọn đúng theme, decorKit, stylePack và nhịp bố cục tương ứng):',
     ...SLIDE_DESIGNS.map((d) => {
       const rhythm = d.slides.map((s) => s.layout).join(' → ')
-      return `- ${d.id}: "${d.name}" — ${d.description} (theme: ${d.themeId}, decorKit: ${d.decorKit ?? 'none'}, stylePack: ${d.stylePack ?? 'none'}). Nhịp bố cục: ${rhythm}`
+      const skin = skinById(d.id)
+      const geo = skin?.geometrySummary ? ` Ngôn ngữ hình khối: ${skin.geometrySummary}` : ''
+      return `- ${d.id}: "${d.name}" — ${d.description} (theme: ${d.themeId}, decorKit: ${d.decorKit ?? 'none'}, stylePack: ${d.stylePack ?? 'none'}).${geo} Nhịp bố cục: ${rhythm}`
     }),
   ].join('\n')
 }
