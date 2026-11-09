@@ -13,3 +13,4 @@ eval-out/
 
 .vercel
 .env*
+compare-llm-result.md

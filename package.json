@@ -22,6 +22,7 @@
     "test:online": "tsx --tsconfig tsconfig.app.json scripts/test-online-exam.ts",
     "test:docx": "tsx --tsconfig tsconfig.app.json scripts/test-docx.ts",
     "test:guard": "tsx scripts/test-guard.ts",
+    "compare:llm": "tsx scripts/compare-llm.ts",
     "test:slide-text": "tsx --tsconfig tsconfig.app.json scripts/test-slide-text.mjs",
     "test:slide-theme": "tsx --tsconfig tsconfig.app.json scripts/test-slide-theme.mjs",
     "test:slide-layout": "tsx --tsconfig tsconfig.app.json scripts/test-slide-layout.mjs",
