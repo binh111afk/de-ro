@@ -82,8 +82,11 @@ const TASKS: Task[] = [
     system: 'Bạn là giáo viên Toán. Trình bày ngắn gọn, mọi công thức đặt trong $…$.',
     user: 'Giải phương trình $x^2 - 5x + 6 = 0$ và hệ $\\begin{cases} x + y = 7 \\\\ x - y = 1 \\end{cases}$. Nêu rõ kết quả cuối cùng.',
     grade(out) {
-      const roots = /x\s*=\s*2\b/.test(out) && /x\s*=\s*3\b/.test(out)
-      const sys = /x\s*=\s*4\b/.test(out) && /y\s*=\s*3\b/.test(out)
+      // nhận nhiều cách viết: x = 2, x_1 = 3, S = {2; 3}, x ∈ {2, 3}, (x - 2)(x - 3)…
+      const has = (re: RegExp) => re.test(out)
+      const roots =
+        (has(/x(_\{?\d\}?)?\s*=\s*2\b/) && has(/x(_\{?\d\}?)?\s*=\s*3\b/)) || has(/\{\s*2\s*[;,]\s*\\?,?\s*3\s*\\?\}/) || has(/\{\s*3\s*[;,]\s*\\?,?\s*2\s*\\?\}/)
+      const sys = (has(/x\s*=\s*4\b/) && has(/y\s*=\s*3\b/)) || has(/\(\s*4\s*[;,]\s*\\?,?\s*3\s*\)/)
       const dollars = (out.match(/\$/g) ?? []).length
       const math = dollars >= 4 && dollars % 2 === 0
       const score = (roots ? 0.4 : 0) + (sys ? 0.4 : 0) + (math ? 0.2 : 0)
@@ -248,24 +251,27 @@ async function main() {
     console.log('\nChưa có model nào để thử. Điền FOSTA_API_KEY / NIGHTROUTER_API_KEY trong .env rồi chạy lại.')
     return
   }
-  const rows: Row[] = []
-  for (const target of targets) {
-    const row: Row = { target, results: [] }
-    rows.push(row)
-    process.stdout.write(`\n${target.provider}/${target.model}: `)
-    for (const task of TASKS) {
+  // --delay: giãn cách giữa các lượt của một model (model miễn phí giới hạn ~3 lượt/phút); khi có delay các model chạy song song
+  const delay = Number(arg('delay') ?? 0)
+  const rows: Row[] = targets.map((target) => ({ target, results: [] }))
+  const runRow = async (row: Row) => {
+    const { target } = row
+    for (const [ti, task] of TASKS.entries()) {
+      if (delay && ti) await new Promise((r) => setTimeout(r, delay))
       const t0 = Date.now()
       try {
         const { text, tokens } = await target.call(task.system, task.user)
         const g = task.grade(text)
         row.results.push({ task, ...g, ms: Date.now() - t0, tokens, text })
-        process.stdout.write(`${task.id} ${(g.score * 100).toFixed(0)}  `)
+        console.log(`${target.provider}/${target.model} ${task.id}: ${(g.score * 100).toFixed(0)}`)
       } catch (e) {
         row.results.push({ task, score: 0, note: 'LỖI', ms: Date.now() - t0, text: '', error: (e as Error).message })
-        process.stdout.write(`${task.id} LỖI  `)
+        console.log(`${target.provider}/${target.model} ${task.id}: LỖI`)
       }
     }
   }
+  if (delay) await Promise.all(rows.map(runRow))
+  else for (const row of rows) await runRow(row)
 
   const sum = (r: Row) => r.results.reduce((s, x) => s + x.score, 0) / TASKS.length
   const avgMs = (r: Row) => r.results.reduce((s, x) => s + x.ms, 0) / r.results.length
