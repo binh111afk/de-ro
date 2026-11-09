@@ -128,7 +128,8 @@ import { exportDeckPptx } from '@/lib/exportDeck'
 import { HtmlDeckBar, HtmlSlideFrame } from './HtmlSlide'
 import { applyEdits, describeSlide, recomposeSlide, type SlideEditOp } from '@/lib/slideEdit'
 import { elementHeight } from '@/lib/slideText'
-import { normalizeTheme, readableTextOn, type ResolvedTheme } from '@/lib/slideTheme'
+import { DECK_THEMES, normalizeTheme, readableTextOn, themeById, type ResolvedTheme } from '@/lib/slideTheme'
+import { buildDesignSlides, type SlideDesign } from '@/lib/slideDesigns'
 import { appendSlidesToDeck, withImage } from '@/lib/slideAi'
 import { IMAGE_LAYOUTS, buildImagePrompt, generateSlideImage, queueImage } from '@/lib/imageGen'
 import { uploadImage } from '@/lib/mediaStore'
@@ -200,6 +201,18 @@ export interface SlideEditorProps {
   onNewDeck?: () => void
   /** menu Tệp: nhập .pptx/.docx/.xlsx thành tab bài giảng mới */
   onImportFile?: (file: File) => Promise<void>
+}
+
+export function isBlankDeck(deck: Deck): boolean {
+  if (deck.slides.length === 0) return true
+  if (deck.slides.length === 1) {
+    const s = deck.slides[0]
+    if (!s.html && !s.layout) {
+      if (s.elements.length === 0) return true
+      if (s.elements.length === 1 && (s.elements[0].text === 'Tiêu đề bài giảng' || !s.elements[0].text)) return true
+    }
+  }
+  return false
 }
 
 export function SlideEditor({
@@ -430,15 +443,78 @@ export function SlideEditor({
     setElementImage(slideId, elId, await uploadImage(image.dataUrl))
   }
 
+  /** Thêm trọn bộ slide thiết kế mẫu vào bài */
+  const addDesignToDeck = (design: SlideDesign, option: 'replace' | 'keep' | 'empty') => {
+    const latest = deckRef.current
+    const targetTheme = themeById(design.themeId) ?? DECK_THEMES[0]
+
+    if (option === 'empty') {
+      const newSlides = buildDesignSlides(design, targetTheme)
+      const nextDeck: Deck = {
+        ...latest,
+        theme: targetTheme,
+        style: design.stylePack ?? design.id,
+        slides: newSlides,
+      }
+      commitDeck(nextDeck)
+      if (newSlides[0]) {
+        setSelectedSlideId(newSlides[0].id)
+        setSelectedElementId(null)
+      }
+      return
+    }
+
+    if (option === 'replace') {
+      const recomposedOldSlides = latest.slides.map((s) => recomposeSlide(targetTheme, s))
+      const newSlides = buildDesignSlides(design, targetTheme)
+      const nextDeck: Deck = {
+        ...latest,
+        theme: targetTheme,
+        style: design.stylePack ?? design.id,
+        slides: [...recomposedOldSlides, ...newSlides],
+      }
+      commitDeck(nextDeck)
+      if (newSlides[0]) {
+        setSelectedSlideId(newSlides[0].id)
+        setSelectedElementId(null)
+      }
+      return
+    }
+
+    if (option === 'keep') {
+      const currentTheme = normalizeTheme(latest.theme)
+      const newSlides = buildDesignSlides(design, currentTheme)
+      const nextDeck: Deck = {
+        ...latest,
+        slides: [...latest.slides, ...newSlides],
+      }
+      commitDeck(nextDeck)
+      if (newSlides[0]) {
+        setSelectedSlideId(newSlides[0].id)
+        setSelectedElementId(null)
+      }
+      return
+    }
+  }
+
   // Panel thư viện được memo để kéo phần tử (cập nhật deck mỗi lần di chuột) không vẽ lại hàng trăm đồ hoạ;
   // handler đi qua ref để callback ổn định mà vẫn luôn gọi bản mới nhất (không giữ deck cũ).
-  const panelHandlers = useRef({ insert: (_el: SlideElement) => {}, addLayout: (_id: SlideLayoutId) => {} })
+  const panelHandlers = useRef({
+    insert: (_el: SlideElement) => {},
+    addLayout: (_id: SlideLayoutId) => {},
+    addDesign: (_design: SlideDesign, _option: 'replace' | 'keep' | 'empty') => {},
+  })
   panelHandlers.current = {
     insert: (el) => { addElement(el); setSelectedElementId(el.id) },
     addLayout: addLayoutSlide,
+    addDesign: addDesignToDeck,
   }
   const insertFromPanel = useCallback((el: SlideElement) => panelHandlers.current.insert(el), [])
   const addLayoutFromPanel = useCallback((id: SlideLayoutId) => panelHandlers.current.addLayout(id), [])
+  const addDesignFromPanel = useCallback(
+    (design: SlideDesign, option: 'replace' | 'keep' | 'empty') => panelHandlers.current.addDesign(design, option),
+    [],
+  )
 
   const previewElement = useCallback(
     (slideId: string, elId: string, patch: Partial<SlideElement>) => {
@@ -974,7 +1050,9 @@ export function SlideEditor({
         accent={theme.accent}
         canInsert={Boolean(currentSlide) && !currentSlide?.html}
         hint={`${deck.title} ${(currentSlide?.elements ?? []).map((e) => e.text ?? '').join(' ').replace(/<[^>]+>/g, ' ')}`}
+        isBlankDeck={isBlankDeck(deck)}
         onAddLayoutSlide={addLayoutFromPanel}
+        onAddDesign={addDesignFromPanel}
         onInsert={insertFromPanel}
         onOpenAi={() => setAiOpen(true)}
       />
