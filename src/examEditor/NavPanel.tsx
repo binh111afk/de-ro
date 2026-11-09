@@ -154,11 +154,13 @@ export function NavPanel({
             }}
             aria-pressed={active === id}
             className={cn(
-              'flex w-[60px] flex-col items-center gap-1 whitespace-nowrap rounded-lg px-0.5 py-2 text-[11px] font-medium tracking-[-0.01em] transition-colors',
-              active === id ? 'bg-paper-2 text-clay' : 'text-ink-3 hover:bg-paper-2 hover:text-ink',
+              // tab đang chọn: nền cam nhạt + vạch cam ở mép thanh + chữ đậm — tách hẳn khỏi hiệu ứng rê chuột
+              'relative flex w-[56px] flex-col items-center gap-1 whitespace-nowrap rounded-xl px-0.5 py-2.5 text-[11px] tracking-[-0.01em] transition-colors',
+              "before:absolute before:-left-1 before:top-2.5 before:bottom-2.5 before:w-[3px] before:rounded-full before:bg-clay before:transition-opacity before:content-['']",
+              active === id ? 'bg-clay-soft font-semibold text-clay-deep before:opacity-100' : 'font-medium text-ink-3 before:opacity-0 hover:bg-paper-2 hover:text-ink',
             )}
           >
-            <Icon className="size-[18px]" strokeWidth={1.7} />
+            <Icon className="size-5" strokeWidth={active === id ? 2.1 : 1.7} />
             {label}
           </button>
         ))}
