@@ -105,20 +105,25 @@ Các ảnh được lưu trong thư mục `docs/handoff/mobile-anh/`:
 
 ---
 
-## 6. Hiệu ứng đổi tab cột trái (leftbar)
+## 6. Hiệu ứng cột trái (leftbar: chỉ báo trượt & chuyển nội dung mượt)
 
-- **Mục tiêu**: Nền cam nhạt (`bg-clay-soft`) và vạch cam 3px mép thanh trượt mượt mà khi đổi tab ở cột trái (thay vì nhảy tức thì).
-- **Cách làm**:
-  1. Tạo component dùng chung `src/examEditor/NavRailIndicator.tsx`:
-     - Đo vị trí `offsetTop` và `offsetHeight` của nút tab đang active bên trong `<nav>` qua ref.
-     - Khi đổi giữa các tab đang mở: trượt bằng `transform: translateY(...)` trong 200ms với easing `cubic-bezier(.2,.8,.2,1)`.
-     - Khi đóng panel: giữ nguyên toạ độ và mờ dần tại chỗ (`opacity: 0`), không trượt đi đâu.
-     - Khi mở lại từ trạng thái đóng: nhảy lập tức tới toạ độ tab được chọn (`mode: jump-fade`) và mờ dần vào (`opacity: 1`), hoàn toàn không trượt từ vị trí cũ.
-     - Lần render đầu tiên: đứng sẵn ở tab active không có hoạt cảnh (`transition: none`).
-     - Tự động tắt hoạt cảnh khi người dùng bật `prefers-reduced-motion: reduce`.
-     - Lắng nghe `ResizeObserver` để cập nhật toạ độ khi đổi font/kích thước mà không làm chạy lại hiệu ứng trượt.
-  2. Áp dụng vào:
-     - Soạn đề: `src/examEditor/NavPanel.tsx` (các tab Mục lục, Khối mẫu, Công cụ).
-     - Soạn slide: `src/examEditor/SlideSidePanel.tsx` (các tab Mẫu, Đồ hoạ, Icon, Tải lên, Công cụ trên thanh rail dọc desktop).
-  3. Thanh tab đáy của soạn slide trên điện thoại (`<nav aria-label="Thư viện slide">`) được giữ nguyên không gắn hiệu ứng theo đúng yêu cầu.
-  4. Chữ và icon của các nút tab đồng bộ chuyển màu với `transition-colors duration-200 ease-[cubic-bezier(0.2,0.8,0.2,1)] motion-reduce:transition-none` để hoàn toàn ăn khớp nhịp trượt.
+### Việc 1: Ô chỉ báo tab trượt mượt (`NavRailIndicator.tsx`)
+- **Kiểu dáng khớp với main**: Nền cam nhạt (`bg-clay-soft`), căn giữa thanh icon 64px, kích thước rộng 54px, bo góc `rounded-xl`, khoảng cách `gap-2`, padding `py-3`, **hoàn toàn không có vạch cam ở mép**. Nút tab bỏ nền riêng, chữ và icon chuyển màu đồng điệu với `transition-colors duration-200 ease-[cubic-bezier(0.2,0.8,0.2,1)]`.
+- **Cơ chế hoạt động**:
+  - Di chuyển bằng `transform: translateY(...)` theo `offsetTop` / `offsetHeight` của nút tab đang chọn với thời gian 200ms, easing `cubic-bezier(.2,.8,.2,1)`.
+  - Khi panel đóng (không có tab nào chọn): chỉ báo mờ đi tại chỗ bằng `opacity: 0`, không trượt đi đâu.
+  - Khi mở lại: hiện ngay tại tab được chọn (`mode: jump-fade`), không trượt từ vị trí cũ.
+  - Lần vẽ đầu tiên trên trang: đứng sẵn tại vị trí không có hoạt cảnh (`mode: instant`, `transition: none`).
+  - Tự động tắt trượt khi bật `prefers-reduced-motion: reduce`.
+  - Component dùng chung cho cả Soạn đề (`NavPanel.tsx`) và Soạn slide (`SlideSidePanel.tsx`). Thanh tab đáy của soạn slide trên mobile (`<nav aria-label="Thư viện slide">`) không gắn hiệu ứng này.
+
+### Việc 2: Nội dung panel đổi mượt khi chuyển tab (`PanelContentTransition.tsx` & `compose.css`)
+- **Cơ chế hoạt động**:
+  - Khi đổi giữa 2 tab trong lúc panel đang mở: nội dung cũ mờ đi và dịch chuyển 8px theo chiều dọc, đồng thời nội dung mới hiện vào với cross-fade trong 200ms, easing `cubic-bezier(.2,.8,.2,1)`.
+  - **Theo hướng tab**:
+    - Tab mới nằm dưới tab cũ (chỉ số tab tăng): nội dung trượt từ dưới lên (`panel-tab-enter-up`, `panel-tab-exit-up`).
+    - Tab mới nằm trên tab cũ (chỉ số tab giảm): nội dung trượt từ trên xuống (`panel-tab-enter-down`, `panel-tab-exit-down`).
+  - **Không chớp trắng, không nhảy chiều cao, không lệch trang giấy**: Hai pane trong thời gian chuyển cảnh được xếp chồng trong cùng một ô CSS Grid (`grid-template-columns: 1fr`, `grid-template-rows: 1fr`, `col-start-1 row-start-1`), pane cũ có `pointer-events-none` và tự động tháo khỏi DOM sau 200ms.
+  - **Giữ vị trí cuộn riêng của từng tab**: Bắt sự kiện cuộn thông qua `onScrollCapture` trên thẻ bọc tab pane và lưu `scrollTop` theo id tab vào `useRef`. Khi chuyển lại tab đó, `useLayoutEffect` khôi phục lại vị trí cuộn ngay trước khi vẽ frame đầu tiên, ngăn chặn giật màn hình.
+  - **Mở/đóng panel**: Khi bấm lại tab đang mở để đóng panel (hoặc mở lại), panel giữ nguyên hoạt cảnh mở/đóng bề rộng (280px <-> 0px); hiệu ứng trượt dọc chỉ áp dụng khi chuyển tab trong khi panel đang mở.
+  - **Tôn trọng `prefers-reduced-motion`**: Tắt toàn bộ chuyển động trượt và chuyển nội dung khi người dùng bật chế độ giảm chuyển động.

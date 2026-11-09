@@ -1,6 +1,6 @@
 /**
  * Thanh chỉ báo trượt (sliding indicator) cho thanh icon dọc (NavPanel & SlideSidePanel):
- * Vẽ nền cam nhạt (bg-clay-soft) và vạch cam 3px ở mép thanh.
+ * Vẽ nền cam nhạt (bg-clay-soft) căn giữa thanh, rộng 54px, bo góc rounded-xl (không có vạch ở mép).
  * Khi đổi tab, chỉ báo trượt mượt bằng transform: translateY(...) theo vị trí tab mới.
  * Khi đóng panel, chỉ báo mờ dần tại chỗ (opacity: 0) mà không trượt đi đâu.
  * Khi mở lại, chỉ báo xuất hiện ngay tại tab được chọn mà không trượt từ vị trí cũ.
@@ -16,7 +16,7 @@ export interface NavRailIndicatorProps {
 
 type IndicatorMode = 'instant' | 'slide' | 'fade' | 'jump-fade'
 
-function usePrefersReducedMotion(): boolean {
+export function usePrefersReducedMotion(): boolean {
   const [reduced, setReduced] = useState(() => {
     if (typeof window === 'undefined') return false
     return window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -38,11 +38,15 @@ export function NavRailIndicator({ containerRef, activeId }: NavRailIndicatorPro
   const [state, setState] = useState<{
     top: number
     height: number
+    left: number
+    width: number
     opacity: number
     mode: IndicatorMode
   }>({
     top: 0,
     height: 0,
+    left: 5,
+    width: 54,
     opacity: 0,
     mode: 'instant',
   })
@@ -67,6 +71,8 @@ export function NavRailIndicator({ containerRef, activeId }: NavRailIndicatorPro
       if (btn) {
         const top = btn.offsetTop
         const height = btn.offsetHeight
+        const left = btn.offsetLeft || 5
+        const width = btn.offsetWidth || 54
         const wasClosed = prevActiveRef.current === null
 
         if (!isMountedRef.current) {
@@ -76,6 +82,8 @@ export function NavRailIndicator({ containerRef, activeId }: NavRailIndicatorPro
           setState({
             top,
             height,
+            left,
+            width,
             opacity: 1,
             mode: 'instant',
           })
@@ -85,6 +93,8 @@ export function NavRailIndicator({ containerRef, activeId }: NavRailIndicatorPro
           setState({
             top,
             height,
+            left,
+            width,
             opacity: 1,
             mode: 'jump-fade',
           })
@@ -94,6 +104,8 @@ export function NavRailIndicator({ containerRef, activeId }: NavRailIndicatorPro
           setState({
             top,
             height,
+            left,
+            width,
             opacity: 1,
             mode: 'slide',
           })
@@ -101,16 +113,18 @@ export function NavRailIndicator({ containerRef, activeId }: NavRailIndicatorPro
       }
     }
 
-    // ResizeObserver: chỉ cập nhật lại tọa độ khi layout/font thay đổi cỡ, không đổi hiệu ứng
+    // ResizeObserver: cập nhật lại toạ độ khi layout/font thay đổi cỡ
     const onResize = () => {
       if (!activeId) return
       const btn = nav.querySelector<HTMLElement>(`[data-tab-id="${activeId}"]`)
       if (!btn) return
       const top = btn.offsetTop
       const height = btn.offsetHeight
+      const left = btn.offsetLeft || 5
+      const width = btn.offsetWidth || 54
       setState((prev) => {
-        if (prev.top === top && prev.height === height) return prev
-        return { ...prev, top, height, mode: 'instant' }
+        if (prev.top === top && prev.height === height && prev.left === left && prev.width === width) return prev
+        return { ...prev, top, height, left, width, mode: 'instant' }
       })
     }
 
@@ -131,9 +145,11 @@ export function NavRailIndicator({ containerRef, activeId }: NavRailIndicatorPro
   return (
     <span
       aria-hidden="true"
-      className="pointer-events-none absolute left-1 z-0 w-[56px] rounded-xl bg-clay-soft before:absolute before:-left-1 before:top-2.5 before:bottom-2.5 before:w-[3px] before:rounded-full before:bg-clay before:content-['']"
+      className="pointer-events-none absolute z-0 rounded-xl bg-clay-soft"
       style={{
         transform: `translateY(${state.top}px)`,
+        left: state.left,
+        width: state.width,
         height: state.height > 0 ? state.height : undefined,
         opacity: state.opacity,
         transition,

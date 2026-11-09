@@ -6,6 +6,7 @@
 import { useMemo, useRef, useState } from 'react'
 import { Blocks, ChevronLeft, ChevronRight, ListTree, Wrench, X } from 'lucide-react'
 import { NavRailIndicator } from './NavRailIndicator'
+import { PanelContentTransition } from './PanelContentTransition'
 import { ToolsPanel } from './tools/ToolsPanel'
 import type { PlotImage } from './tools/GraphToolModal'
 import type { JSONContent } from '@tiptap/core'
@@ -228,67 +229,74 @@ export function NavPanel({
         inert={!active}
       >
         <aside className={cn('nav-panel h-full min-h-0 border-line bg-surface', left ? 'border-r' : 'border-l')} style={{ width: PANEL_W }} aria-label={TABS.find((t) => t.id === shown)?.label}>
-        {shown === 'toc' && (
-          <div className="nav-body">
-            {toc.length === 0 ? (
-              <p className="nav-body__empty">
-                Chưa có tiêu đề hay câu hỏi. Thêm tiêu đề bằng tab <b>Chèn</b> để lập mục lục.
-              </p>
-            ) : (
-              <ul className="nav-toc">
-                {toc.map((entry: TocEntry) => (
-                  <li key={entry.index} style={{ paddingLeft: `${(entry.level - 1) * 12}px` }}>
-                    <button type="button" onClick={() => onGoToBlock(entry.index)}>
-                      {entry.kind === 'question' ? `Câu ${entry.no}. ${entry.text}` : entry.text}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        )}
+          <PanelContentTransition activeTab={active} tabOrder={TABS.map((t) => t.id)}>
+            {(tabId) => (
+              <>
+                {tabId === 'toc' && (
+                  <div className="nav-body">
+                    {toc.length === 0 ? (
+                      <p className="nav-body__empty">
+                        Chưa có tiêu đề hay câu hỏi. Thêm tiêu đề bằng tab <b>Chèn</b> để lập mục lục.
+                      </p>
+                    ) : (
+                      <ul className="nav-toc">
+                        {toc.map((entry: TocEntry) => (
+                          <li key={entry.index} style={{ paddingLeft: `${(entry.level - 1) * 12}px` }}>
+                            <button type="button" onClick={() => onGoToBlock(entry.index)}>
+                              {entry.kind === 'question' ? `Câu ${entry.no}. ${entry.text}` : entry.text}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                )}
 
-        {shown === 'blocks' && (
-          <div className="nav-body">
-            {groupTemplates(BLOCK_TEMPLATES).map((group) => (
-              <section key={group.name} className="nav-tpl-group">
-                <h3 className="nav-tpl-group__name">{group.name}</h3>
-                <ul className="nav-tpl">
-                  {group.items.map((tpl) => (
-                    <li key={tpl.id}>
-                      <button
-                        type="button"
-                        draggable
-                        onDragStart={(e) => {
-                          e.dataTransfer.setData(BLOCK_TEMPLATE_MIME, JSON.stringify(tpl.build()))
-                          e.dataTransfer.effectAllowed = 'copy'
-                        }}
-                        onClick={() => onInsertTemplate(tpl)}
-                        title="Bấm để chèn tại con trỏ, hoặc kéo vào trang"
-                      >
-                        <span className="nav-tpl__grip">
-                          <IconGrip size={12} />
-                        </span>
-                        <span className="nav-tpl__texts">
-                          <span className="nav-tpl__label">{tpl.label}</span>
-                          <span className="nav-tpl__desc">{tpl.desc}</span>
-                        </span>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            ))}
-          </div>
-        )}
-          {shown === 'tools' && (
-            <div className="nav-body">
-              <div className="px-3"><ToolsPanel onInsertPlot={onInsertPlot} /></div>
-            </div>
-          )}
+                {tabId === 'blocks' && (
+                  <div className="nav-body">
+                    {groupTemplates(BLOCK_TEMPLATES).map((group) => (
+                      <section key={group.name} className="nav-tpl-group">
+                        <h3 className="nav-tpl-group__name">{group.name}</h3>
+                        <ul className="nav-tpl">
+                          {group.items.map((tpl) => (
+                            <li key={tpl.id}>
+                              <button
+                                type="button"
+                                draggable
+                                onDragStart={(e) => {
+                                  e.dataTransfer.setData(BLOCK_TEMPLATE_MIME, JSON.stringify(tpl.build()))
+                                  e.dataTransfer.effectAllowed = 'copy'
+                                }}
+                                onClick={() => onInsertTemplate(tpl)}
+                                title="Bấm để chèn tại con trỏ, hoặc kéo vào trang"
+                              >
+                                <span className="nav-tpl__grip">
+                                  <IconGrip size={12} />
+                                </span>
+                                <span className="nav-tpl__texts">
+                                  <span className="nav-tpl__label">{tpl.label}</span>
+                                  <span className="nav-tpl__desc">{tpl.desc}</span>
+                                </span>
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      </section>
+                    ))}
+                  </div>
+                )}
+
+                {tabId === 'tools' && (
+                  <div className="nav-body">
+                    <div className="px-3"><ToolsPanel onInsertPlot={onInsertPlot} /></div>
+                  </div>
+                )}
+              </>
+            )}
+          </PanelContentTransition>
         </aside>
       </div>
-      <nav ref={navRef} aria-label="Bảng điều hướng" className={cn('relative flex w-[64px] flex-col items-center gap-1 border-line bg-surface py-2', left ? 'border-r' : 'border-l')}>
+      <nav ref={navRef} aria-label="Bảng điều hướng" className={cn('relative flex w-[64px] flex-col items-center gap-2 border-line bg-surface py-3', left ? 'border-r' : 'border-l')}>
         <NavRailIndicator containerRef={navRef} activeId={active} />
         {TABS.map(({ id, label, Icon }) => (
           <button
@@ -301,10 +309,8 @@ export function NavPanel({
             }}
             aria-pressed={active === id}
             className={cn(
-              'relative z-10 flex w-[56px] flex-col items-center gap-1 whitespace-nowrap rounded-xl px-0.5 py-2.5 text-[11px] tracking-[-0.01em] transition-colors duration-200 ease-[cubic-bezier(0.2,0.8,0.2,1)] motion-reduce:transition-none',
-              active === id
-                ? 'font-semibold text-clay-deep'
-                : 'font-medium text-ink-3 hover:bg-paper-2 hover:text-ink',
+              'relative z-10 flex w-[54px] flex-col items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-0.5 py-2.5 text-[11px] leading-none tracking-[-0.01em] transition-colors duration-200 ease-[cubic-bezier(0.2,0.8,0.2,1)] motion-reduce:transition-none',
+              active === id ? 'font-semibold text-clay-deep' : 'font-medium text-ink-3 hover:bg-paper-2 hover:text-ink',
             )}
           >
             <Icon className="size-5 transition-all duration-200 ease-[cubic-bezier(0.2,0.8,0.2,1)] motion-reduce:transition-none" strokeWidth={active === id ? 2.1 : 1.7} />
