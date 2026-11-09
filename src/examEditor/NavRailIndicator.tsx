@@ -145,7 +145,7 @@ export function NavRailIndicator({ containerRef, activeId }: NavRailIndicatorPro
   return (
     <span
       aria-hidden="true"
-      className="pointer-events-none absolute z-0 rounded-xl bg-clay-soft"
+      className="pointer-events-none absolute top-0 z-0 rounded-xl bg-clay-soft"
       style={{
         transform: `translateY(${state.top}px)`,
         left: state.left,
