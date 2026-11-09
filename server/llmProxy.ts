@@ -131,6 +131,10 @@ function providerConfig() {
     model: process.env.LLM_MODEL?.trim() || DEFAULT_MODEL,
     // bản -free của opencode đã ngừng → không còn fallback opencode mặc định
     fallbackModel: process.env.LLM_FALLBACK_MODEL?.trim() || '',
+    // NightRouter (chuẩn OpenAI) — dự phòng 3, mặc định deepseek-v4-flash-0731 (10đ/lượt, bản trả phí không giới hạn lượt)
+    nightrouterApiKey: process.env.NIGHTROUTER_API_KEY?.trim() || '',
+    nightrouterBaseURL: assertAllowedUrl((process.env.NIGHTROUTER_BASE_URL?.trim() || 'https://api.nightrouter.ai/v1').replace(/\/+$/, '')).toString().replace(/\/+$/, ''),
+    nightrouterModel: process.env.NIGHTROUTER_MODEL?.trim() || 'deepseek-v4-flash-0731',
     // Claude (Anthropic API chính thức) — dự phòng cuối, gọi qua SDK (server/anthropic.ts)
     anthropicApiKey: process.env.ANTHROPIC_API_KEY?.trim() || '',
     anthropicModel: process.env.ANTHROPIC_MODEL?.trim() || 'claude-opus-5-5',
@@ -192,13 +196,13 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
     } catch (err) {
       return json(res, 500, { error: err instanceof Error ? err.message : String(err) })
     }
-    if (!prov.apiKey && !prov.xkiroApiKey && !prov.anthropicApiKey && !prov.mercuryApiKey) {
+    if (!prov.apiKey && !prov.xkiroApiKey && !prov.anthropicApiKey && !prov.mercuryApiKey && !prov.nightrouterApiKey) {
       return json(res, 500, {
-        error: 'Chưa cấu hình LLM_API_KEY, MERCURY_API_KEY, XKIRO_API_KEY hoặc ANTHROPIC_API_KEY. Kiểm tra file .env/config provider.',
+        error: 'Chưa cấu hình LLM_API_KEY, MERCURY_API_KEY, XKIRO_API_KEY, NIGHTROUTER_API_KEY hoặc ANTHROPIC_API_KEY. Kiểm tra file .env/config provider.',
       })
     }
 
-    // Thứ tự thử: opencode (model chính [+ LLM_FALLBACK_MODEL nếu đặt]) → Mercury → xkiro → Claude (cuối cùng).
+    // Thứ tự thử: opencode (model chính [+ LLM_FALLBACK_MODEL nếu đặt]) → Mercury → xkiro → NightRouter → Claude (cuối cùng).
     // Provider dự phòng nào không có key thì bỏ qua.
     // `opencode` = gửi x-opencode-session + reasoning_effort (chỉ gateway opencode hiểu).
     // `anthropic`: gọi Claude qua SDK (Messages API), không qua fetch kiểu OpenAI.
@@ -206,7 +210,9 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
     const targets: Target[] = []
     // client chỉ định đúng model dự phòng → bỏ qua opencode, gọi thẳng (thử/so chất lượng)
     const wantsBackup =
-      (!!prov.anthropicApiKey && body.model === prov.anthropicModel) || (!!prov.mercuryApiKey && body.model === prov.mercuryModel)
+      (!!prov.anthropicApiKey && body.model === prov.anthropicModel) ||
+      (!!prov.mercuryApiKey && body.model === prov.mercuryModel) ||
+      (!!prov.nightrouterApiKey && body.model === prov.nightrouterModel)
     if (prov.apiKey && !wantsBackup) {
       for (const m of [body.model ?? prov.model, prov.fallbackModel]) {
         if (m && !targets.some((t) => t.model === m)) targets.push({ model: m, url: prov.endpoint.toString(), key: prov.apiKey, opencode: true })
@@ -218,6 +224,8 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
         targets.push({ model: m, url: `${prov.xkiroBaseURL}/chat/completions`, key: prov.xkiroApiKey, opencode: false })
       }
     }
+    if (prov.nightrouterApiKey)
+      targets.push({ model: prov.nightrouterModel, url: `${prov.nightrouterBaseURL}/chat/completions`, key: prov.nightrouterApiKey, opencode: false })
     if (prov.anthropicApiKey) targets.push({ model: prov.anthropicModel, url: '', key: prov.anthropicApiKey, opencode: false, anthropic: true })
     // model dự phòng được chỉ định → thử nó trước tiên
     if (wantsBackup) {
