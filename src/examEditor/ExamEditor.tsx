@@ -77,9 +77,11 @@ export interface ExamEditorProps {
   pageSetup?: PageSetup
   /** chỉ xem (trang xem đề cộng đồng): cùng giấy A4 và kiểu chữ như trình soạn, không sửa được */
   readOnly?: boolean
+  /** Chế độ dàn trang theo màn hình (mobile view) */
+  isReflow?: boolean
 }
 
-export function ExamEditor({ content, onChange, onReady, pageSetup, readOnly }: ExamEditorProps) {
+export function ExamEditor({ content, onChange, onReady, pageSetup, readOnly, isReflow }: ExamEditorProps) {
   const flowRef = useRef<HTMLDivElement>(null)
   const [pageCount, setPageCount] = useState(1)
   const geo = pageGeometry(pageSetup ?? { marginCm: 2, orientation: 'portrait' })
@@ -276,6 +278,18 @@ export function ExamEditor({ content, onChange, onReady, pageSetup, readOnly }: 
    * dao động. Khối cao hơn cả trang thì để tràn (không cắt nội dung bên trong).
    */
   const layoutPass = useCallback(() => {
+    if (isReflow) {
+      setPageCount(1)
+      if (editor && !editor.isDestroyed) {
+        const current = pageGapsKey.getState(editor.state)
+        if (current && current.size > 0) {
+          editor.view.dispatch(
+            editor.state.tr.setMeta(pageGapsKey, EMPTY_GAPS).setMeta('addToHistory', false),
+          )
+        }
+      }
+      return
+    }
     const flow = flowRef.current
     if (!flow) return
     // TipTap v3 bọc `.doc-content` trong div của `EditorContent` → lấy trực tiếp
@@ -333,7 +347,7 @@ export function ExamEditor({ content, onChange, onReady, pageSetup, readOnly }: 
         editor.state.tr.setMeta(pageGapsKey, plan.gaps).setMeta('addToHistory', false),
       )
     }
-  }, [editor, CONTENT_H, PAGE_H, MARGIN])
+  }, [editor, CONTENT_H, PAGE_H, MARGIN, isReflow])
 
   // đo lại khi nội dung đổi, font tải xong, kích thước đổi. Mọi trigger gộp
   // vào một rAF để tránh mutation storm khi widget spacer vừa được chèn.
@@ -369,9 +383,10 @@ export function ExamEditor({ content, onChange, onReady, pageSetup, readOnly }: 
   const pageBorder = pageSetup?.pageBorder ?? 0
 
   return (
-    <div className="doc-stage" style={{ minHeight: pageCount * (PAGE_H + PAGE_GAP) }}>
+    <div className="doc-stage" style={{ minHeight: isReflow ? undefined : pageCount * (PAGE_H + PAGE_GAP) }}>
       {/* lớp giấy */}
-      <div className="doc-papers" aria-hidden="true">
+      {!isReflow && (
+        <div className="doc-papers" aria-hidden="true">
         {papers.map((i) => (
           <div
             key={i}
@@ -387,19 +402,22 @@ export function ExamEditor({ content, onChange, onReady, pageSetup, readOnly }: 
           />
         ))}
       </div>
+      )}
 
       {/* lớp nội dung — 1 editor duy nhất */}
       <div
         className="doc-flow"
         ref={flowRef}
         style={{
-          top: 0,
-          left: 0,
-          width: PAGE_W,
-          padding: `${MARGIN}px ${MARGIN}px`,
+          top: isReflow ? undefined : 0,
+          left: isReflow ? undefined : 0,
+          width: isReflow ? '100%' : PAGE_W,
+          maxWidth: isReflow ? '100%' : undefined,
+          boxSizing: 'border-box',
+          padding: isReflow ? '12px 12px 60px' : `${MARGIN}px ${MARGIN}px`,
           // ngữ cảnh hình học cho CSS khối đề (khoảng cách phương án, thụt lề…)
-          '--doc-content-w': `${CONTENT_W}px`,
-          '--doc-margin': `${MARGIN}px`,
+          '--doc-content-w': isReflow ? '100%' : `${CONTENT_W}px`,
+          '--doc-margin': isReflow ? '12px' : `${MARGIN}px`,
           '--doc-orient': pageSetup?.orientation ?? 'portrait',
         } as React.CSSProperties}
       >
@@ -407,7 +425,7 @@ export function ExamEditor({ content, onChange, onReady, pageSetup, readOnly }: 
           <button
             type="button"
             className="doc-placeholder"
-            style={{ top: MARGIN, left: MARGIN }}
+            style={{ top: isReflow ? 12 : MARGIN, left: isReflow ? 12 : MARGIN }}
             onClick={() => editor?.commands.focus()}
           >
             Bắt đầu soạn đề…
