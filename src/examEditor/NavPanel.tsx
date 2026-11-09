@@ -143,7 +143,7 @@ export function NavPanel({
           )}
         </aside>
       </div>
-      <nav aria-label="Bảng điều hướng" className={cn('flex w-[64px] flex-col items-center gap-1 border-line bg-surface py-2', left ? 'border-r' : 'border-l')}>
+      <nav aria-label="Bảng điều hướng" className={cn('flex w-[64px] flex-col items-center gap-2 border-line bg-surface py-3', left ? 'border-r' : 'border-l')}>
         {TABS.map(({ id, label, Icon }) => (
           <button
             key={id}
@@ -154,10 +154,9 @@ export function NavPanel({
             }}
             aria-pressed={active === id}
             className={cn(
-              // tab đang chọn: nền cam nhạt + vạch cam ở mép thanh + chữ đậm — tách hẳn khỏi hiệu ứng rê chuột
-              'relative flex w-[56px] flex-col items-center gap-1 whitespace-nowrap rounded-xl px-0.5 py-2.5 text-[11px] tracking-[-0.01em] transition-colors',
-              "before:absolute before:-left-1 before:top-2.5 before:bottom-2.5 before:w-[3px] before:rounded-full before:bg-clay before:transition-opacity before:content-['']",
-              active === id ? 'bg-clay-soft font-semibold text-clay-deep before:opacity-100' : 'font-medium text-ink-3 before:opacity-0 hover:bg-paper-2 hover:text-ink',
+              // tab đang chọn: nền cam nhạt + chữ đậm, ô căn giữa thanh — tách hẳn khỏi hiệu ứng rê chuột
+              'flex w-[54px] flex-col items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-0.5 py-2.5 text-[11px] leading-none tracking-[-0.01em] transition-colors',
+              active === id ? 'bg-clay-soft font-semibold text-clay-deep' : 'font-medium text-ink-3 hover:bg-paper-2 hover:text-ink',
             )}
           >
             <Icon className="size-5" strokeWidth={active === id ? 2.1 : 1.7} />
