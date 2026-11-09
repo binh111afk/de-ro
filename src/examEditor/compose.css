@@ -4230,3 +4230,77 @@ div[data-exam-node='examQuestionPrompt'] > .exam-image:has(+ .ProseMirror-separa
     color: inherit !important;
   }
 }
+
+.mobile-only-inline {
+  display: none !important;
+}
+
+@media (max-width: 767px) {
+  .mobile-only-inline {
+    display: inline-flex !important;
+  }
+
+  /* TabStrip mobile: cuon ngang muot ma, khong bop meo chu */
+  .tab-strip {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    padding: 0 6px !important;
+  }
+  .tab-item {
+    flex: 0 0 auto !important;
+    min-width: 110px !important;
+    max-width: 180px !important;
+  }
+  .tab-item--start {
+    min-width: auto !important;
+    padding: 0 8px 6px 8px !important;
+  }
+
+  /* FindPanel mobile */
+  .find-panel {
+    left: 8px !important;
+    right: 8px !important;
+    top: 8px !important;
+    width: auto !important;
+    max-width: calc(100vw - 16px) !important;
+  }
+  .find-panel__row {
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+  }
+  .find-panel__input {
+    height: 36px !important;
+    min-width: 130px !important;
+  }
+  .find-panel__tab {
+    min-height: 36px !important;
+    padding: 0 10px !important;
+  }
+  .find-panel__close {
+    width: 36px !important;
+    height: 36px !important;
+  }
+  .find-panel__nav {
+    width: 36px !important;
+    height: 36px !important;
+  }
+  .find-panel__btn {
+    height: 36px !important;
+    padding: 0 10px !important;
+  }
+
+  /* FileMenu popover */
+  .file-menu__pop {
+    max-width: calc(100vw - 16px) !important;
+  }
+
+  /* Status bar mobile */
+  .status-bar {
+    height: calc(30px + env(safe-area-inset-bottom, 0px)) !important;
+    padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+    padding-left: calc(10px + env(safe-area-inset-left, 0px)) !important;
+    padding-right: calc(10px + env(safe-area-inset-right, 0px)) !important;
+  }
+}

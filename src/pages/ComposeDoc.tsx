@@ -24,7 +24,6 @@ import { TabStrip } from '@/examEditor/TabStrip'
 import { AiPanel } from '@/examEditor/AiPanel'
 import { StartTab } from '@/examEditor/StartTab'
 import { NavPanel, type PaneTab } from '@/examEditor/NavPanel'
-import { Wrench } from 'lucide-react'
 import { DocSelectionAi } from '@/examEditor/DocSelectionAi'
 import { ToolModal } from '@/examEditor/tools/ToolModal'
 import { svgToPng } from '@/lib/plot'
@@ -1001,28 +1000,16 @@ export default function ComposeDoc() {
               <span className="status-item">{activeTab?.dirty ? 'Chưa lưu' : 'Đã lưu'}</span>
             </div>
             <div className="status-right">
-              {isMobile && (
-                <>
-                  <button
-                    type="button"
-                    className="mobile-nav-btn"
-                    onClick={() => openNavWithTab('tools')}
-                    title="Mở Công cụ, Khối mẫu, Mục lục"
-                  >
-                    <Wrench className="size-3.5 inline mr-1" />
-                    Công cụ & Khối
-                  </button>
-                  <button
-                    type="button"
-                    className="mobile-view-toggle-btn"
+              {isMobile ? (
+                <button
+                  type="button"
+                  className="mobile-view-toggle-btn"
                   onClick={toggleMobileView}
                   title={isReflow ? 'Chuyển sang xem trang A4' : 'Chuyển sang dàn trang theo màn hình'}
                 >
                   {isReflow ? 'Xem trang A4' : 'Dàn trang'}
                 </button>
-                </>
-              )}
-              {(!isMobile || !isReflow) && (
+              ) : (
                 <>
                   <button
                     type="button"

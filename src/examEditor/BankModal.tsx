@@ -169,17 +169,17 @@ export function BankModal({ editor, onClose }: { editor: Editor; onClose: () => 
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/30 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/30 p-2 md:p-4"
       onMouseDown={onClose}
     >
       <div
         role="dialog"
         aria-modal="true"
         aria-label="Kho câu hỏi"
-        className="anim-pop flex h-[min(780px,92vh)] w-full max-w-[1120px] flex-col overflow-hidden rounded-[8px] bg-surface shadow-float"
+        className="anim-pop flex h-[96dvh] md:h-[min(780px,92vh)] w-full max-w-[1120px] flex-col overflow-hidden rounded-[8px] bg-surface shadow-float"
         onMouseDown={(e) => e.stopPropagation()}
       >
-        <div className="flex items-start justify-between gap-4 px-7 pb-4 pt-6">
+        <div className="flex items-start justify-between gap-4 px-4 py-3 md:px-7 md:pb-4 md:pt-6">
           <div>
             <h2 className="font-display text-[22px] font-semibold tracking-[-0.01em] text-ink">Kho câu hỏi</h2>
             <p className="mt-1 text-[13.5px] text-ink-3">
@@ -196,7 +196,7 @@ export function BankModal({ editor, onClose }: { editor: Editor; onClose: () => 
           </button>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2.5 px-7 pb-5">
+        <div className="flex flex-wrap items-center gap-2 px-4 pb-3 md:px-7 md:pb-5">
           <div className="relative min-w-[200px] flex-1">
             <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-ink-4" />
             <input
@@ -212,7 +212,7 @@ export function BankModal({ editor, onClose }: { editor: Editor; onClose: () => 
           <SiteSelect value={level} options={LEVEL_OPTIONS} onChange={setLevel} label="Lọc theo độ khó" className="w-[140px]" />
         </div>
 
-        <div className="grid min-h-0 flex-1 border-t border-line md:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
+        <div className="grid min-h-0 flex-1 border-t border-line grid-rows-[1fr_1fr] md:grid-rows-1 md:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
           <div ref={listRef} className="min-h-0 overflow-y-auto p-4 md:border-r md:border-line">
             {results.length === 0 ? (
               <p className="px-3 py-10 text-center text-[14px] text-ink-3">Không có câu nào khớp bộ lọc.</p>
@@ -273,12 +273,12 @@ export function BankModal({ editor, onClose }: { editor: Editor; onClose: () => 
             ) : null}
           </div>
 
-          <div className="min-h-0 overflow-y-auto p-7">
+          <div className="min-h-0 overflow-y-auto p-4 md:p-7">
             {shown ? <QuestionDetail entry={shown} /> : null}
           </div>
         </div>
 
-        <div className="flex items-center justify-between gap-4 border-t border-line px-7 py-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line px-4 py-3 md:px-7 md:py-4">
           <p className="text-[13.5px] text-ink-3">
             <span className="font-semibold text-ink tnum">{selected.length}</span> câu đã chọn · chèn theo thứ tự chọn
           </p>

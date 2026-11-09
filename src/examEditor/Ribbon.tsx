@@ -41,6 +41,8 @@ import {
   IconBorderAll,
   IconCaret,
   IconChangeCase,
+  IconChevronDown,
+  IconChevronUp,
   IconClearFormat,
   IconCopy,
   IconCut,
@@ -446,6 +448,26 @@ export function Ribbon({
           <span className="ribbon-quick__meta">
             {pageCount} trang{dirty ? ' · chưa lưu' : ''}
           </span>
+          {onOpenNav && (
+            <button
+              type="button"
+              className="ribbon-toggle-btn mobile-only-inline"
+              onClick={() => onOpenNav('tools')}
+              title="Công cụ & Khối mẫu"
+              aria-label="Công cụ & Khối mẫu"
+            >
+              <Wrench size={14} />
+            </button>
+          )}
+          <button
+            type="button"
+            className="ribbon-toggle-btn"
+            onClick={() => setCollapsed(!collapsed)}
+            title={collapsed ? 'Mở rộng dải ruy-băng' : 'Thu gọn dải ruy-băng'}
+            aria-label={collapsed ? 'Mở rộng dải ruy-băng' : 'Thu gọn dải ruy-băng'}
+          >
+            {collapsed ? <IconChevronDown size={14} /> : <IconChevronUp size={14} />}
+          </button>
         </div>
       </RibbonTabs>
 

@@ -86,11 +86,25 @@ export function DocSelectionAi({
       if (!editor || editor.isDestroyed || !r) return setPos(null)
       const a = editor.view.coordsAtPos(r.from)
       const b = editor.view.coordsAtPos(r.to)
+      const vv = typeof window !== 'undefined' ? window.visualViewport : null
+      const viewH = vv ? vv.height : window.innerHeight
+      const viewW = vv ? vv.width : window.innerWidth
+      const viewTop = vv ? vv.offsetTop : 0
+      const viewLeft = vv ? vv.offsetLeft : 0
+
+      const panelW = Math.min(PANEL_W, viewW - 16)
+      const boxH = boxRef.current?.offsetHeight ?? 40
+      const need = boxH + 16
+
       // không đủ chỗ phía trên cho thanh/bảng (đo ở lần vẽ trước) thì đặt xuống dưới vùng chọn
-      const need = (boxRef.current?.offsetHeight ?? 40) + 16
-      const below = a.top < Math.max(120, need)
-      const left = Math.max(8, Math.min(a.left, window.innerWidth - PANEL_W - 8))
-      setPos({ left, top: below ? b.bottom + 8 : a.top - 8, below })
+      const spaceAbove = a.top - viewTop
+      const spaceBelow = viewTop + viewH - b.bottom
+      const below = spaceAbove < Math.max(120, need) && spaceBelow > spaceAbove
+      const top = below
+        ? Math.min(b.bottom + 8, viewTop + viewH - boxH - 8)
+        : Math.max(viewTop + 8, a.top - 8)
+      const left = Math.max(viewLeft + 8, Math.min(a.left, viewLeft + viewW - panelW - 8))
+      setPos({ left, top, below })
     },
     [editor],
   )
@@ -141,15 +155,20 @@ export function DocSelectionAi({
     if (range) place(range)
   }, [phase, plan, result, error]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // cuộn trang / đổi cỡ cửa sổ: dời thanh theo vùng chọn
+  // cuộn trang / đổi cỡ cửa sổ / bàn phím ảo: dời thanh theo vùng chọn
   useEffect(() => {
     if (!range) return
     const onMove = () => place(range)
     window.addEventListener('scroll', onMove, true)
     window.addEventListener('resize', onMove)
+    const vv = typeof window !== 'undefined' ? window.visualViewport : null
+    vv?.addEventListener('resize', onMove)
+    vv?.addEventListener('scroll', onMove)
     return () => {
       window.removeEventListener('scroll', onMove, true)
       window.removeEventListener('resize', onMove)
+      vv?.removeEventListener('resize', onMove)
+      vv?.removeEventListener('scroll', onMove)
     }
   }, [range, place])
 
@@ -268,7 +287,7 @@ export function DocSelectionAi({
           role="dialog"
           aria-label="Hỏi AI"
           className="rounded-lg border border-line bg-surface p-2.5 shadow-[0_8px_24px_-6px_rgba(35,32,28,0.3)]"
-          style={{ width: PANEL_W }}
+          style={{ width: `min(${PANEL_W}px, calc(100vw - 16px))`, maxWidth: `calc(100vw - 16px)` }}
         >
           {phase === 'plot' && plan && plotImg ? (
             <>
