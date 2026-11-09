@@ -22,7 +22,7 @@ import {
 } from './Layout'
 import { cn } from '@/lib/cn'
 import { BookMarked } from 'lucide-react'
-import { Hash, ListChecks, MonitorPlay } from 'lucide-react'
+import { Hash, ListChecks, MonitorPlay, Blocks, ListTree, Wrench } from 'lucide-react'
 import { FileMenu } from './FileMenu'
 import { BankModal } from './BankModal'
 import { templateById, insertBlockTemplate } from './templates'
@@ -154,6 +154,7 @@ export function Ribbon({
   onPageColorChange,
   pageBorder = 0,
   onPageBorderChange,
+  onOpenNav,
 }: {
   editor: Editor | null
   activeTab: string
@@ -181,6 +182,7 @@ export function Ribbon({
   onPageColorChange?: (c: string) => void
   pageBorder?: number
   onPageBorderChange?: (w: number) => void
+  onOpenNav?: (tab: 'toc' | 'blocks' | 'tools') => void
 }) {
   const [font, setFont] = useState('Times New Roman')
   const [size, setSize] = useState('14')
@@ -651,6 +653,13 @@ export function Ribbon({
 
         {activeTab === 'insert' && (
           <>
+            <RibbonGroup label="Công cụ">
+              <RibbonButton icon={<Wrench className="size-[26px]" strokeWidth={1.3} />} label="Công cụ vẽ" onClick={() => onOpenNav?.('tools')} />
+              <RibbonButton icon={<Blocks className="size-[26px]" strokeWidth={1.3} />} label="Khối mẫu" onClick={() => onOpenNav?.('blocks')} />
+              <RibbonButton icon={<ListTree className="size-[26px]" strokeWidth={1.3} />} label="Mục lục" onClick={() => onOpenNav?.('toc')} />
+            </RibbonGroup>
+
+            <span className="ribbon-sep" />
             <RibbonGroup label="Trang">
               <RibbonButton icon={<IconPageBreak size={26} />} label="Ngắt trang" disabled={disabled} onClick={() => insertTemplate('pageBreak')} />
             </RibbonGroup>

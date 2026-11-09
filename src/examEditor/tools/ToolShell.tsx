@@ -43,7 +43,7 @@ export function ToolShell({
 
   return (
     <div
-      className="fixed inset-0 z-[120] flex items-center justify-center bg-ink/30 p-4"
+      className="fixed inset-0 z-[120] flex items-center justify-center bg-ink/30 p-0 md:p-4"
       onMouseDown={(e) => {
         e.stopPropagation()
         onClose()
@@ -55,10 +55,10 @@ export function ToolShell({
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className="anim-pop flex max-h-[92vh] w-full max-w-[980px] flex-col overflow-hidden rounded-[8px] bg-surface shadow-float md:h-[min(660px,92vh)]"
+        className="anim-pop flex h-full max-h-[100dvh] w-full max-w-[980px] flex-col overflow-hidden rounded-none bg-surface shadow-float md:h-[min(660px,92vh)] md:max-h-[92vh] md:rounded-[8px]"
         onMouseDown={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between gap-4 border-b border-line px-6 py-4">
+        <div className="flex items-center justify-between gap-4 border-b border-line px-4 py-3 md:px-6 md:py-4">
           <div className="min-w-0">
             <h2 className="text-[17px] font-semibold text-ink">{title}</h2>
             {hint && <p className="mt-0.5 text-[12.5px] text-ink-3">{hint}</p>}
@@ -95,7 +95,7 @@ export function ToolShell({
           </div>
         </div>
 
-        <div className="flex items-center justify-end gap-2 border-t border-line px-6 py-3.5">
+        <div className="sticky bottom-0 z-10 flex shrink-0 items-center justify-end gap-2 border-t border-line bg-surface px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] md:px-6 md:py-3.5">
           <Button variant="ghost" size="sm" onClick={onClose}>
             Huỷ
           </Button>

@@ -23,7 +23,8 @@ import { Ribbon } from '@/examEditor/Ribbon'
 import { TabStrip } from '@/examEditor/TabStrip'
 import { AiPanel } from '@/examEditor/AiPanel'
 import { StartTab } from '@/examEditor/StartTab'
-import { NavPanel } from '@/examEditor/NavPanel'
+import { NavPanel, type PaneTab } from '@/examEditor/NavPanel'
+import { Wrench } from 'lucide-react'
 import { DocSelectionAi } from '@/examEditor/DocSelectionAi'
 import { ToolModal } from '@/examEditor/tools/ToolModal'
 import { svgToPng } from '@/lib/plot'
@@ -372,6 +373,11 @@ export default function ComposeDoc() {
   // màn hẹp (tablet/điện thoại): trợ lý AI nổi đè lên trang nên mặc định đóng
   const [aiOpen, setAiOpen] = useState(() => window.innerWidth >= 1024)
   const [navOpen, setNavOpen] = useState(true)
+  const [navTab, setNavTab] = useState<PaneTab>('toc')
+  const openNavWithTab = useCallback((tab: PaneTab) => {
+    setNavTab(tab)
+    setNavOpen(true)
+  }, [])
   const [zoom, setZoom] = useState(100)
   const [pageCount, setPageCount] = useState(1)
   const stageRef = useRef<HTMLDivElement>(null)
@@ -929,22 +935,24 @@ export default function ComposeDoc() {
         onPageColorChange={(c) => setPageSetup((p) => ({ ...p, pageColor: c }))}
         pageBorder={pageSetup.pageBorder}
         onPageBorderChange={(w) => setPageSetup((p) => ({ ...p, pageBorder: w }))}
+        onOpenNav={openNavWithTab}
       />
 
       {/* ---------- thân ---------- */}
       <div className="compose-body">
         {/* mục lục / khối mẫu / công cụ (trái) */}
-        {viewport.w >= 768 && (
-            <NavPanel
-              doc={activeContent}
-              open={navOpen}
-              onOpenChange={setNavOpen}
-              onInsertTemplate={handleInsertTemplate}
-              onGoToBlock={handleGoToBlock}
-              onInsertPlot={(img) => void handleInsertPlot(img)}
-              side="left"
-            />
-        )}
+        <NavPanel
+          doc={activeContent}
+          open={navOpen}
+          onOpenChange={setNavOpen}
+          onInsertTemplate={handleInsertTemplate}
+          onGoToBlock={handleGoToBlock}
+          onInsertPlot={(img) => void handleInsertPlot(img)}
+          side="left"
+          isMobile={isMobile}
+          currentTab={navTab}
+          onTabChange={setNavTab}
+        />
         {/* sân soạn (giữa) */}
         <div className="compose-center">
           {findTab && editor && (
@@ -994,14 +1002,25 @@ export default function ComposeDoc() {
             </div>
             <div className="status-right">
               {isMobile && (
-                <button
-                  type="button"
-                  className="mobile-view-toggle-btn"
+                <>
+                  <button
+                    type="button"
+                    className="mobile-nav-btn"
+                    onClick={() => openNavWithTab('tools')}
+                    title="Mở Công cụ, Khối mẫu, Mục lục"
+                  >
+                    <Wrench className="size-3.5 inline mr-1" />
+                    Công cụ & Khối
+                  </button>
+                  <button
+                    type="button"
+                    className="mobile-view-toggle-btn"
                   onClick={toggleMobileView}
                   title={isReflow ? 'Chuyển sang xem trang A4' : 'Chuyển sang dàn trang theo màn hình'}
                 >
                   {isReflow ? 'Xem trang A4' : 'Dàn trang'}
                 </button>
+                </>
               )}
               {(!isMobile || !isReflow) && (
                 <>
