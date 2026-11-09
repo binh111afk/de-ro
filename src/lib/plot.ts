@@ -225,6 +225,110 @@ function niceStep(span: number) {
 const fmt = (v: number) => String(Math.round(v * 1000) / 1000).replace('.', ',').replace('-', '−')
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
+const SUP_DIGITS: Record<string, string> = {
+  '0': '⁰',
+  '1': '¹',
+  '2': '²',
+  '3': '³',
+  '4': '⁴',
+  '5': '⁵',
+  '6': '⁶',
+  '7': '⁷',
+  '8': '⁸',
+  '9': '⁹',
+  '+': '⁺',
+  '-': '⁻',
+  '−': '⁻',
+}
+
+/**
+ * Định dạng biểu thức toán học đẹp theo phong cách SGK:
+ * - x^2 -> x², x^3 -> x³, x^(-1) -> x⁻¹
+ * - Bỏ dấu * thô: 2*x -> 2x, 3*(x+1) -> 3(x+1)
+ * - Dấu trừ dùng '−' (\u2212)
+ * - Số mũ phức tạp x^(1/2) dùng <tspan baseline-shift="super" font-size="70%">
+ * - Khoảng trắng cân đối quanh toán tử nhị phân (+, −)
+ */
+export function prettyExpr(raw: string): string {
+  let s = raw.trim().replace(/^\s*(?:y|f\s*\(\s*x\s*\))\s*=\s*/i, '')
+  if (!s) return ''
+
+  // 1. Chuẩn hoá dấu nhân: bỏ dấu * giữa số/chữ/ngoặc
+  s = s.replace(/(\d|[a-zA-Z\)])\s*[*·×]\s*([a-zA-Z\(])/g, '$1$2')
+  s = s.replace(/\s*[*·×]\s*/g, ' ')
+
+  // 2. Chuyển luỹ thừa số nguyên đơn giản sang kí tự Unicode (x^2 -> x², x^3 -> x³, x^-1 -> x⁻¹)
+  s = s.replace(/\^([+-]?\d+)/g, (_, exp: string) =>
+    exp.split('').map((c) => SUP_DIGITS[c] ?? c).join(''),
+  )
+  s = s.replace(/\^\(([+-]?\d+)\)/g, (_, exp: string) =>
+    exp.split('').map((c) => SUP_DIGITS[c] ?? c).join(''),
+  )
+  s = s.replace(/\^([nN])/g, 'ⁿ')
+
+  // 3. Luỹ thừa phức tạp: ví dụ x^(1/2) -> <tspan baseline-shift="super" font-size="70%">1/2</tspan>
+  s = s.replace(/\^\(([^)]+)\)/g, (_, inner: string) => {
+    const formatted = inner
+      .replace(/(\d|[a-zA-Z\)])\s*[*·×]\s*([a-zA-Z\(])/g, '$1$2')
+      .replace(/[-–]/g, '−')
+    return `<tspan baseline-shift="super" font-size="70%">${esc(formatted)}</tspan>`
+  })
+
+  // 4. Chuẩn hoá dấu trừ thường '-' thành dấu trừ toán học '−' (u2212) ngoài tag HTML
+  s = s.replace(/(<[^>]+>)|[-–]/g, (_, tag) => {
+    if (tag) return tag
+    return '−'
+  })
+
+  // 5. Chuẩn hoá khoảng trắng quanh toán tử nhị phân + và −
+  const parts = s.split(/(<[^>]+>)/)
+  for (let i = 0; i < parts.length; i += 2) {
+    let t = parts[i]
+    const opBefore = `[a-zA-Z0-9)⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻ⁿ]`
+    t = t.replace(new RegExp(`(${opBefore})\\s*([+−])\\s*`, 'g'), '$1 $2 ')
+    t = t.replace(/(^|[(/[])\s*−\s*/g, '$1−')
+    t = t.replace(/(^|[(/[])\s*\+\s*/g, '$1+')
+    t = t.replace(/\s{2,}/g, ' ')
+    parts[i] = t
+  }
+  return parts.join('').trim()
+}
+
+function distToBox(
+  px: number,
+  py: number,
+  cx: number,
+  cy: number,
+  cosPhi: number,
+  sinPhi: number,
+  halfW: number,
+  halfH: number,
+): number {
+  const dx = px - cx
+  const dy = py - cy
+  const u = dx * cosPhi + dy * sinPhi
+  const v = -dx * sinPhi + dy * cosPhi
+  const du = Math.max(0, Math.abs(u) - halfW)
+  const dv = Math.max(0, Math.abs(v) - halfH)
+  return Math.hypot(du, dv)
+}
+
+function getBoxCorners(
+  cx: number,
+  cy: number,
+  cosPhi: number,
+  sinPhi: number,
+  halfW: number,
+  halfH: number,
+): Array<{ x: number; y: number }> {
+  return [
+    { x: cx - halfW * cosPhi + halfH * sinPhi, y: cy - halfW * sinPhi - halfH * cosPhi },
+    { x: cx + halfW * cosPhi + halfH * sinPhi, y: cy + halfW * sinPhi - halfH * cosPhi },
+    { x: cx + halfW * cosPhi - halfH * sinPhi, y: cy + halfW * sinPhi + halfH * cosPhi },
+    { x: cx - halfW * cosPhi - halfH * sinPhi, y: cy - halfW * sinPhi + halfH * cosPhi },
+  ]
+}
+
 /**
  * Tự chọn miền y theo các đường cong trên [xMin, xMax]. Giữ khung gần vuông
  * (miền y không dài quá miền x) để hai trục cùng đơn vị: khi đồ thị vọt cao thì
@@ -411,10 +515,36 @@ export function renderPlotSvg(spec: PlotSpec): { svg: string; width: number; hei
   }
   out.push(`<path d="${tickPath.join('')}" stroke="#222" stroke-width="1.2"/>`)
 
+  // điểm đặt tên: "M(0; 0)", thêm "chiếu" để kẻ nét đứt xuống hai trục
+  const plotPoints = parsePlotPoints(spec.points)
+
   // đường cong: lấy mẫu dày, ngắt nét ở chỗ không xác định hoặc nhảy vọt (tiệm cận)
   out.push(`<clipPath id="plotclip"><rect x="${PAD}" y="${PAD}" width="${W - 2 * PAD}" height="${H - 2 * PAD}"/></clipPath>`)
   const N = 1200
   const span = yMax - yMin
+  const marginW = (W - 2 * PAD) * 0.08
+  const marginH = (H - 2 * PAD) * 0.08
+  const safeX0 = PAD + marginW
+  const safeX1 = W - PAD - marginW
+  const safeY0 = PAD + marginH
+  const safeY1 = H - PAD - marginH
+
+  interface CurvePoint {
+    px: number
+    py: number
+    inView: boolean
+    isCont: boolean
+  }
+
+  interface CurveRecord {
+    c: { expr: string; color: string }
+    ci: number
+    points: CurvePoint[]
+    validIndices: number[]
+  }
+
+  const curveRecords: CurveRecord[] = []
+
   spec.curves.forEach((c, ci) => {
     let f: Fn
     try {
@@ -425,30 +555,276 @@ export function renderPlotSvg(spec: PlotSpec): { svg: string; width: number; hei
     let d = ''
     let pen = false
     let prev = NaN
-    let last: [number, number] | null = null
+    const points: CurvePoint[] = []
+
     for (let k = 0; k <= N; k++) {
       const x = xMin + ((xMax - xMin) * k) / N
       const y = f(x)
       const ok = Number.isFinite(y) && Math.abs(y - yMin) < span * 20 && Math.abs(y - yMax) < span * 20
       const jump = ok && Number.isFinite(prev) && Math.abs(y - prev) > span * 1.5
+      const px = sx(x)
+      const py = sy(y)
+      const inView = ok && y >= yMin && y <= yMax
+      const isCont = ok && !jump && Number.isFinite(prev)
+      points.push({ px, py, inView, isCont })
+
       if (!ok || jump) pen = false
       if (ok) {
-        d += `${pen ? 'L' : 'M'}${sx(x).toFixed(1)} ${sy(y).toFixed(1)}`
+        d += `${pen ? 'L' : 'M'}${px.toFixed(1)} ${py.toFixed(1)}`
         pen = true
-        if (y >= yMin && y <= yMax) last = [x, y]
       }
       prev = ok ? y : NaN
     }
     out.push(`<path d="${d}" stroke="${c.color}" stroke-width="2.2" fill="none" stroke-linejoin="round" clip-path="url(#plotclip)"/>`)
-    if (spec.labels && last) {
-      const lx = Math.min(sx(last[0]) - 6, W - 30)
-      const ly = Math.max(sy(last[1]) - 8 - ci * 2, 30)
-      out.push(`<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" ${font} fill="${c.color}" font-style="italic" text-anchor="end" data-lbl="cv:${ci}">y = ${esc(c.expr.trim())}</text>`)
+
+    // Tìm các vị trí mỏ neo hợp lệ: trong miền 8% mép trong và không sát chỗ nhảy tiệm cận
+    const validIndices: number[] = []
+    for (let k = 10; k <= N - 10; k++) {
+      const pt = points[k]
+      if (!pt.inView) continue
+      if (pt.px < safeX0 || pt.px > safeX1 || pt.py < safeY0 || pt.py > safeY1) continue
+      let cont = true
+      for (let j = k - 8; j <= k + 8; j++) {
+        if (!points[j].isCont && j > k - 8) {
+          cont = false
+          break
+        }
+      }
+      if (cont) validIndices.push(k)
     }
+
+    curveRecords.push({ c, ci, points, validIndices })
   })
 
+  // Đặt nhãn tên hàm cạnh đồ thị theo SGK (xoay theo tiếp tuyến, cách nét, không đè)
+  if (spec.labels && curveRecords.length > 0) {
+    // Thu thập các vật cản: trục, số, nhãn trục, tên điểm, giao điểm giữa các đường
+    const axesPoints: Array<{ x: number; y: number }> = []
+    for (let x = PAD; x <= W - PAD; x += 8) axesPoints.push({ x, y: Y0 })
+    for (let y = PAD; y <= H - PAD; y += 8) axesPoints.push({ x: X0, y })
+
+    const axisLabels: Array<{ x: number; y: number }> = [
+      { x: W - 10, y: Y0 - 10 },
+      { x: X0 + 9, y: 16 },
+      { x: X0 - 5, y: Y0 + 16 },
+      ...tx.map((v) => ({ x: sx(v), y: Y0 + 17 })),
+      ...ty.map((v) => ({ x: X0 - 7, y: sy(v) })),
+    ]
+
+    const userPoints = plotPoints
+      .filter((p) => p.x >= xMin && p.x <= xMax && p.y >= yMin && p.y <= yMax)
+      .map((p) => ({ x: sx(p.x), y: sy(p.y) }))
+
+    const intersections: Array<{ x: number; y: number }> = []
+    for (let a = 0; a < curveRecords.length; a++) {
+      for (let b = a + 1; b < curveRecords.length; b++) {
+        const ptsA = curveRecords[a].points
+        const ptsB = curveRecords[b].points
+        for (let k = 0; k <= N; k++) {
+          if (ptsA[k].inView && ptsB[k].inView && Math.abs(ptsA[k].py - ptsB[k].py) <= 8) {
+            intersections.push({ x: ptsA[k].px, y: ptsA[k].py })
+            k += 10
+          }
+        }
+      }
+    }
+
+    interface PlacedLabelInfo {
+      cx: number
+      cy: number
+      deg: number
+      cosPhi: number
+      sinPhi: number
+      halfW: number
+      halfH: number
+      corners: Array<{ x: number; y: number }>
+    }
+
+    const placedLabels: PlacedLabelInfo[] = []
+
+    curveRecords.forEach((cr) => {
+      let anchors = cr.validIndices
+      if (anchors.length === 0) {
+        anchors = cr.points.map((p, k) => (p.inView ? k : -1)).filter((k) => k >= 0)
+      }
+      if (anchors.length === 0) return
+
+      const sampleCount = Math.min(20, anchors.length)
+      const step = (anchors.length - 1) / Math.max(1, sampleCount - 1)
+      const sampledAnchors: number[] = []
+      for (let m = 0; m < sampleCount; m++) {
+        sampledAnchors.push(anchors[Math.round(m * step)])
+      }
+
+      const pretty = prettyExpr(cr.c.expr)
+      const visibleText = 'y = ' + pretty.replace(/<[^>]+>/g, '')
+      const halfW = Math.max(16, (visibleText.length * 7.5) / 2)
+      const halfH = 7.5
+
+      interface Candidate {
+        cx: number
+        cy: number
+        deg: number
+        cosPhi: number
+        sinPhi: number
+        corners: Array<{ x: number; y: number }>
+        score: number
+      }
+
+      let best: Candidate | null = null
+
+      for (const k of sampledAnchors) {
+        const k0 = Math.max(0, k - 4)
+        const k1 = Math.min(N, k + 4)
+        const dx = cr.points[k1].px - cr.points[k0].px
+        const dy = cr.points[k1].py - cr.points[k0].py
+        const theta = Math.atan2(dy, dx)
+        const deg = (theta * 180) / Math.PI
+        const clampedDeg = Math.max(-70, Math.min(70, deg))
+        const phi = (clampedDeg * Math.PI) / 180
+        const cosPhi = Math.cos(phi)
+        const sinPhi = Math.sin(phi)
+
+        const kc0 = Math.max(0, k - 6)
+        const kc1 = Math.min(N, k + 6)
+        const th1 = Math.atan2(cr.points[k].py - cr.points[kc0].py, cr.points[k].px - cr.points[kc0].px)
+        const th2 = Math.atan2(cr.points[kc1].py - cr.points[k].py, cr.points[kc1].px - cr.points[k].px)
+        const curvature = Math.abs(th2 - th1)
+
+        const nx = Math.sin(theta)
+        const ny = -Math.cos(theta)
+        const D_NORM = 12
+
+        const sides = [
+          { side: 1, cx: cr.points[k].px + D_NORM * nx, cy: cr.points[k].py + D_NORM * ny },
+          { side: -1, cx: cr.points[k].px - D_NORM * nx, cy: cr.points[k].py - D_NORM * ny },
+        ]
+
+        for (const s of sides) {
+          const corners = getBoxCorners(s.cx, s.cy, cosPhi, sinPhi, halfW, halfH)
+          let score = 0
+
+          // 1. Phạt tràn khung
+          const xMinF = PAD + 4
+          const xMaxF = W - PAD - 4
+          const yMinF = PAD + 4
+          const yMaxF = H - PAD - 4
+          for (const c of corners) {
+            let ox = 0
+            let oy = 0
+            if (c.x < xMinF) ox += xMinF - c.x
+            if (c.x > xMaxF) ox += c.x - xMaxF
+            if (c.y < yMinF) oy += yMinF - c.y
+            if (c.y > yMaxF) oy += c.y - yMaxF
+            if (ox > 0 || oy > 0) score += 20000 + (ox + oy) * 200
+          }
+
+          // 2. Phạt cắt đường cong
+          for (const other of curveRecords) {
+            const isSelf = other.ci === cr.ci
+            for (let i = 0; i < other.points.length; i += 3) {
+              const pt = other.points[i]
+              if (!pt.inView) continue
+              const d = distToBox(pt.px, pt.py, s.cx, s.cy, cosPhi, sinPhi, halfW, halfH)
+              if (isSelf) {
+                if (d === 0) score += 8000
+                else if (d < 2.5) score += (2.5 - d) * 600
+                else if (d < 3.8) score += (3.8 - d) * 40
+              } else {
+                if (d === 0) score += 15000
+                else if (d < 3.5) score += 3000 + (3.5 - d) * 800
+                else if (d < 10) score += (10 - d) * 80
+              }
+            }
+          }
+
+          // 3. Phạt cắt trục toạ độ
+          for (const ap of axesPoints) {
+            const d = distToBox(ap.x, ap.y, s.cx, s.cy, cosPhi, sinPhi, halfW, halfH)
+            if (d === 0) score += 10000
+            else if (d < 3.5) score += 2000 + (3.5 - d) * 500
+            else if (d < 8) score += (8 - d) * 30
+          }
+
+          // 4. Phạt đè số/nhãn trục
+          for (const lp of axisLabels) {
+            const d = distToBox(lp.x, lp.y, s.cx, s.cy, cosPhi, sinPhi, halfW, halfH)
+            if (d < 12) score += 2000 + (12 - d) * 300
+          }
+
+          // 5. Phạt đè tên điểm
+          for (const up of userPoints) {
+            const d = distToBox(up.x, up.y, s.cx, s.cy, cosPhi, sinPhi, halfW, halfH)
+            if (d < 15) score += 2500 + (15 - d) * 250
+          }
+
+          // 6. Phạt đè nhãn hàm đã đặt
+          for (const pl of placedLabels) {
+            const distCenter = Math.hypot(s.cx - pl.cx, s.cy - pl.cy)
+            if (distCenter < halfW + pl.halfW + 15) {
+              let minD = distToBox(pl.cx, pl.cy, s.cx, s.cy, cosPhi, sinPhi, halfW, halfH)
+              for (const cor of pl.corners) {
+                minD = Math.min(minD, distToBox(cor.x, cor.y, s.cx, s.cy, cosPhi, sinPhi, halfW, halfH))
+              }
+              for (const cor of corners) {
+                minD = Math.min(minD, distToBox(cor.x, cor.y, pl.cx, pl.cy, pl.cosPhi, pl.sinPhi, pl.halfW, pl.halfH))
+              }
+              if (minD === 0) score += 40000
+              else if (minD < 12) score += 5000 + (12 - minD) * 600
+            }
+          }
+
+          // 7. Phạt nhẹ gần giao điểm các đường cong
+          for (const ip of intersections) {
+            const d = Math.hypot(s.cx - ip.x, s.cy - ip.y)
+            if (d < 35) score += (35 - d) * 5
+          }
+
+          // 8. Ưu tiên đường cong ít cong
+          score += curvature * 40
+
+          // 9. Ưu tiên bên phải, gần cuối đường
+          const t = k / Math.max(1, N)
+          score += (1 - t) * 35
+          score += (1 - s.cx / W) * 25
+
+          // 10. Ưu tiên nhẹ phía trên nếu cả hai phía đều thoáng
+          if (s.side === -1) score += 5
+
+          if (!best || score < best.score) {
+            best = {
+              cx: s.cx,
+              cy: s.cy,
+              deg: clampedDeg,
+              cosPhi,
+              sinPhi,
+              corners,
+              score,
+            }
+          }
+        }
+      }
+
+      if (best) {
+        placedLabels.push({
+          cx: best.cx,
+          cy: best.cy,
+          deg: best.deg,
+          cosPhi: best.cosPhi,
+          sinPhi: best.sinPhi,
+          halfW,
+          halfH,
+          corners: best.corners,
+        })
+        out.push(
+          `<text x="${best.cx.toFixed(1)}" y="${best.cy.toFixed(1)}" dominant-baseline="central" transform="rotate(${best.deg.toFixed(1)} ${best.cx.toFixed(1)} ${best.cy.toFixed(1)})" text-anchor="middle" ${font} fill="${cr.c.color}" font-style="italic" data-lbl="cv:${cr.ci}">y = ${pretty}</text>`,
+        )
+      }
+    })
+  }
+
   // điểm đặt tên: "M(0; 0)", thêm "chiếu" để kẻ nét đứt xuống hai trục
-  for (const p of parsePlotPoints(spec.points)) {
+  for (const p of plotPoints) {
     if (p.x < xMin || p.x > xMax || p.y < yMin || p.y > yMax) continue
     const [px, py] = [sx(p.x), sy(p.y)]
     if (p.proj) out.push(`<path d="M${px.toFixed(1)} ${py.toFixed(1)}V${Y0.toFixed(1)}M${px.toFixed(1)} ${py.toFixed(1)}H${X0.toFixed(1)}" stroke="#222" stroke-width="1" stroke-dasharray="4 3" fill="none"/>`)

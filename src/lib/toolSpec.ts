@@ -83,10 +83,13 @@ export function applyLabelPos<T extends { svg: string }>(img: T, labelPos: Label
       const id = /\bdata-lbl="([^"]*)"/.exec(m)?.[1]
       const off = id ? labelPos[id] : undefined
       if (!off || (off[0] === 0 && off[1] === 0)) return m
-      const tr = ` translate(${n1(off[0])} ${n1(off[1])})`
+      const tr = `translate(${n1(off[0])} ${n1(off[1])})`
       return /transform="/.test(m)
-        ? m.replace(/transform="([^"]*)"/, (_, t) => `transform="${t}${tr}"`)
-        : m.replace(/>$/, ` transform="${tr.trim()}">`)
+        ? m.replace(/transform="([^"]*)"/, (_, t) => {
+            const base = t.replace(/^\s*translate\([^)]*\)\s*/, '').trim()
+            return `transform="${base ? `${tr} ${base}` : tr}"`
+          })
+        : m.replace(/>$/, ` transform="${tr}">`)
     }),
   }
 }

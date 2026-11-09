@@ -51,7 +51,7 @@ function LabelDragPreview({
   onChange: (pos: Record<string, [number, number]>) => void
 }) {
   const box = useRef<HTMLDivElement>(null)
-  const drag = useRef<{ id: string; el: SVGTextElement; t0: string; sx: number; sy: number; ox: number; oy: number } | null>(null)
+  const drag = useRef<{ id: string; el: SVGTextElement; baseTransform: string; sx: number; sy: number; ox: number; oy: number } | null>(null)
   const vb = [...img.svg.matchAll(/viewBox="([-\d.]+) ([-\d.]+) ([-\d.]+) ([-\d.]+)"/g)][0]
   const [minX, minY, w, h] = vb ? vb.slice(1).map(Number) : [0, 0, img.width, img.height]
   const html = useMemo(() => img.svg.replace(/<svg[^>]*>/, (m) => m + '<style>text[data-lbl]{cursor:move}</style>'), [img.svg])
@@ -84,10 +84,12 @@ function LabelDragPreview({
           const id = t.getAttribute('data-lbl')!
           e.currentTarget.setPointerCapture(e.pointerId)
           const p = toVb(e)
+          const t0 = t.getAttribute('transform') ?? ''
+          const baseTransform = t0.replace(/^\s*translate\([^)]*\)\s*/, '').trim()
           drag.current = {
             id,
             el: t as SVGTextElement,
-            t0: t.getAttribute('transform') ?? '',
+            baseTransform,
             sx: p.x,
             sy: p.y,
             ox: labelPos?.[id]?.[0] ?? 0,
@@ -105,7 +107,10 @@ function LabelDragPreview({
           const d = drag.current
           if (!d) return
           const p = toVb(e)
-          d.el.setAttribute('transform', `${d.t0} translate(${n1(p.x - d.sx)} ${n1(p.y - d.sy)})`)
+          const curX = n1(d.ox + p.x - d.sx)
+          const curY = n1(d.oy + p.y - d.sy)
+          const tr = `translate(${curX} ${curY})`
+          d.el.setAttribute('transform', d.baseTransform ? `${tr} ${d.baseTransform}` : tr)
         }}
         onPointerUp={finishDrag}
         onPointerCancel={() => (drag.current = null)}
