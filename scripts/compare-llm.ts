@@ -116,6 +116,25 @@ const TASKS: Task[] = [
     },
   },
   {
+    id: 'de-that',
+    name: 'Đề thật 40 câu (đo token)',
+    system:
+      'Bạn là giáo viên Toán THCS soạn đề kiểm tra theo chương trình GDPT 2018. Trình bày rõ ràng, công thức đặt trong $…$. ' +
+      'Không giải thích gì ngoài đề.',
+    user:
+      'Soạn đề kiểm tra cuối học kì 1 môn Toán lớp 7, thời gian 90 phút, gồm: ' +
+      'PHẦN I. 28 câu trắc nghiệm 4 phương án A, B, C, D (mức nhận biết 12 câu, thông hiểu 10 câu, vận dụng 6 câu); ' +
+      'PHẦN II. 12 câu đúng/sai hoặc tự luận ngắn. Cuối đề có BẢNG ĐÁP ÁN đầy đủ và lời giải ngắn cho phần tự luận. ' +
+      'Phạm vi: số hữu tỉ, số thực, góc và đường thẳng song song, tam giác bằng nhau.',
+    grade(out) {
+      const mcq = (out.match(/^\s*\**\s*Câu\s+\d+/gim) ?? []).length
+      const abcd = (out.match(/^\s*\**\s*[A-D][.)]/gm) ?? []).length
+      const key = /đáp án/i.test(out)
+      const score = Math.min(1, mcq / 40) * 0.5 + Math.min(1, abcd / 112) * 0.3 + (key ? 0.2 : 0)
+      return { score, note: `${mcq} câu, ${abcd} dòng phương án, ${key ? 'có' : 'THIẾU'} bảng đáp án` }
+    },
+  },
+  {
     id: 'van',
     name: 'Văn tiếng Việt',
     system: 'Bạn là giáo viên Ngữ văn THCS.',
@@ -136,7 +155,7 @@ const TASKS: Task[] = [
 interface Target {
   provider: string
   model: string
-  call: (system: string, user: string) => Promise<{ text: string; tokens?: number }>
+  call: (system: string, user: string) => Promise<{ text: string; tokens?: number; usage?: string }>
 }
 
 async function post(url: string, headers: Record<string, string>, body: unknown) {
@@ -162,9 +181,9 @@ function openaiTarget(provider: string, base: string, key: string, model: string
       const auth = { Authorization: `Bearer ${key}` }
       if (!useResponses) {
         try {
-          const j = await post(`${base}/chat/completions`, auth, { model, messages: [{ role: 'system', content: system }, { role: 'user', content: user }] })
+          const j = await post(`${base}/chat/completions`, auth, { model, max_tokens: 16000, messages: [{ role: 'system', content: system }, { role: 'user', content: user }] })
           const text = j.choices?.[0]?.message?.content
-          if (typeof text === 'string') return { text, tokens: j.usage?.total_tokens }
+          if (typeof text === 'string') return { text, tokens: j.usage?.total_tokens, usage: JSON.stringify(j.usage ?? {}) }
           throw new Error('trả về rỗng')
         } catch (e) {
           if (!/HTTP (404|400|405)/.test(String(e))) throw e
@@ -176,7 +195,7 @@ function openaiTarget(provider: string, base: string, key: string, model: string
         j.output_text ??
         (j.output as any[] | undefined)?.flatMap((o) => o.content ?? []).filter((c: any) => c.type === 'output_text').map((c: any) => c.text).join('')
       if (!text) throw new Error('trả về rỗng (/responses)')
-      return { text, tokens: j.usage?.total_tokens }
+      return { text, tokens: j.usage?.total_tokens, usage: JSON.stringify(j.usage ?? {}) }
     },
   }
 }
@@ -186,9 +205,9 @@ function anthropicTarget(key: string, model: string): Target {
     provider: 'anthropic',
     model,
     async call(system, user) {
-      const j = await post('https://api.anthropic.com/v1/messages', { 'x-api-key': key, 'anthropic-version': '2023-06-01' }, { model, max_tokens: 2048, system, messages: [{ role: 'user', content: user }] })
+      const j = await post('https://api.anthropic.com/v1/messages', { 'x-api-key': key, 'anthropic-version': '2023-06-01' }, { model, max_tokens: 16000, system, messages: [{ role: 'user', content: user }] })
       const text = (j.content as any[]).filter((c) => c.type === 'text').map((c) => c.text).join('')
-      return { text, tokens: (j.usage?.input_tokens ?? 0) + (j.usage?.output_tokens ?? 0) }
+      return { text, tokens: (j.usage?.input_tokens ?? 0) + (j.usage?.output_tokens ?? 0), usage: JSON.stringify(j.usage ?? {}) }
     },
   }
 }
@@ -242,7 +261,7 @@ async function buildTargets(): Promise<Target[]> {
 // ---------------------------------------------------------------- chạy
 interface Row {
   target: Target
-  results: Array<{ task: Task; score: number; note: string; ms: number; tokens?: number; text: string; error?: string }>
+  results: Array<{ task: Task; score: number; note: string; ms: number; tokens?: number; usage?: string; text: string; error?: string }>
 }
 
 async function main() {
@@ -260,9 +279,9 @@ async function main() {
       if (delay && ti) await new Promise((r) => setTimeout(r, delay))
       const t0 = Date.now()
       try {
-        const { text, tokens } = await target.call(task.system, task.user)
+        const { text, tokens, usage } = await target.call(task.system, task.user)
         const g = task.grade(text)
-        row.results.push({ task, ...g, ms: Date.now() - t0, tokens, text })
+        row.results.push({ task, ...g, ms: Date.now() - t0, tokens, usage, text })
         console.log(`${target.provider}/${target.model} ${task.id}: ${(g.score * 100).toFixed(0)}`)
       } catch (e) {
         row.results.push({ task, score: 0, note: 'LỖI', ms: Date.now() - t0, text: '', error: (e as Error).message })
@@ -291,7 +310,7 @@ async function main() {
   for (const r of rows) {
     md += `\n## ${r.target.provider}/${r.target.model}\n`
     for (const x of r.results) {
-      md += `\n### ${x.task.name}: ${x.error ? 'LỖI' : (x.score * 100).toFixed(0)} điểm, ${(x.ms / 1000).toFixed(1)}s${x.tokens ? `, ${x.tokens} token` : ''}\n\n`
+      md += `\n### ${x.task.name}: ${x.error ? 'LỖI' : (x.score * 100).toFixed(0)} điểm, ${(x.ms / 1000).toFixed(1)}s${x.tokens ? `, ${x.tokens} token` : ''}\n\n${x.usage ? `usage: ${x.usage}\n\n` : ''}`
       md += x.error ? `\`${x.error}\`\n` : `_${x.note}_\n\n\`\`\`\n${x.text.trim().slice(0, 3000)}\n\`\`\`\n`
     }
   }
