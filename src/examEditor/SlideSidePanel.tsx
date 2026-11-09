@@ -9,6 +9,7 @@
 import { memo, useMemo, useRef, useState } from 'react'
 import { ChevronDown, ChevronLeft, ChevronRight, LayoutTemplate, Shapes, Smile, Sparkles, Upload, Wrench, X } from 'lucide-react'
 import { cn } from '@/lib/cn'
+import { NavRailIndicator } from './NavRailIndicator'
 import { SLIDE_LAYOUTS, type SlideLayoutId } from '@/lib/slideLayouts'
 import { SLIDE_ASSET_IDS, SLIDE_ASSETS } from '@/lib/slideAssets'
 import { ICON_LIBRARY } from '@/lib/slideIconLibrary'
@@ -58,6 +59,8 @@ function SlideSidePanelImpl({ accent, canInsert, hint = '', onAddLayoutSlide, on
   const shown = active ?? last
   const current = PANELS.find((p) => p.id === shown) ?? null
   const mobile = useViewportSize().w < 768
+
+  const navRef = useRef<HTMLElement>(null)
 
   const body = current && (
     <>
@@ -145,10 +148,12 @@ function SlideSidePanelImpl({ accent, canInsert, hint = '', onAddLayoutSlide, on
 
   return (
     <div className="relative flex min-h-0 shrink-0">
-      <nav aria-label="Thư viện slide" className="flex w-[64px] flex-col items-center gap-1 border-r border-line bg-surface py-2">
+      <nav ref={navRef} aria-label="Thư viện slide" className="relative flex w-[64px] flex-col items-center gap-1 border-r border-line bg-surface py-2">
+        <NavRailIndicator containerRef={navRef} activeId={active} />
         {PANELS.map(({ id, label, Icon }) => (
           <button
             key={id}
+            data-tab-id={id}
             type="button"
             onClick={() => {
               setActive((cur) => (cur === id ? null : id))
@@ -156,13 +161,13 @@ function SlideSidePanelImpl({ accent, canInsert, hint = '', onAddLayoutSlide, on
             }}
             aria-pressed={active === id}
             className={cn(
-              // tab đang chọn: nền cam nhạt + vạch cam ở mép thanh + chữ đậm — tách hẳn khỏi hiệu ứng rê chuột
-              'relative flex w-[56px] flex-col items-center gap-1 whitespace-nowrap rounded-xl px-0.5 py-2.5 text-[11px] tracking-[-0.01em] transition-colors',
-              "before:absolute before:-left-1 before:top-2.5 before:bottom-2.5 before:w-[3px] before:rounded-full before:bg-clay before:transition-opacity before:content-['']",
-              active === id ? 'bg-clay-soft font-semibold text-clay-deep before:opacity-100' : 'font-medium text-ink-3 before:opacity-0 hover:bg-paper-2 hover:text-ink',
+              'relative z-10 flex w-[56px] flex-col items-center gap-1 whitespace-nowrap rounded-xl px-0.5 py-2.5 text-[11px] tracking-[-0.01em] transition-colors duration-200 ease-[cubic-bezier(0.2,0.8,0.2,1)] motion-reduce:transition-none',
+              active === id
+                ? 'font-semibold text-clay-deep'
+                : 'font-medium text-ink-3 hover:bg-paper-2 hover:text-ink',
             )}
           >
-            <Icon className="size-5" strokeWidth={active === id ? 2.1 : 1.7} />
+            <Icon className="size-5 transition-all duration-200 ease-[cubic-bezier(0.2,0.8,0.2,1)] motion-reduce:transition-none" strokeWidth={active === id ? 2.1 : 1.7} />
             {label}
           </button>
         ))}

@@ -3,8 +3,9 @@
  * thanh icon dọc (Mục lục / Khối mẫu) như thư viện bên soạn slide, panel trượt
  * ra bên trái thanh đó.
  */
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { Blocks, ChevronLeft, ChevronRight, ListTree, Wrench, X } from 'lucide-react'
+import { NavRailIndicator } from './NavRailIndicator'
 import { ToolsPanel } from './tools/ToolsPanel'
 import type { PlotImage } from './tools/GraphToolModal'
 import type { JSONContent } from '@tiptap/core'
@@ -67,6 +68,7 @@ export function NavPanel({
   const active = open ? tab : null
   const shown = tab
 
+  const navRef = useRef<HTMLElement>(null)
   const toc = useMemo(() => buildTocFromDoc(doc), [doc])
 
   if (isMobile) {
@@ -286,10 +288,12 @@ export function NavPanel({
           )}
         </aside>
       </div>
-      <nav aria-label="Bảng điều hướng" className={cn('flex w-[64px] flex-col items-center gap-1 border-line bg-surface py-2', left ? 'border-r' : 'border-l')}>
+      <nav ref={navRef} aria-label="Bảng điều hướng" className={cn('relative flex w-[64px] flex-col items-center gap-1 border-line bg-surface py-2', left ? 'border-r' : 'border-l')}>
+        <NavRailIndicator containerRef={navRef} activeId={active} />
         {TABS.map(({ id, label, Icon }) => (
           <button
             key={id}
+            data-tab-id={id}
             type="button"
             onClick={() => {
               onOpenChange(!(active === id))
@@ -297,13 +301,13 @@ export function NavPanel({
             }}
             aria-pressed={active === id}
             className={cn(
-              // tab đang chọn: nền cam nhạt + vạch cam ở mép thanh + chữ đậm — tách hẳn khỏi hiệu ứng rê chuột
-              'relative flex w-[56px] flex-col items-center gap-1 whitespace-nowrap rounded-xl px-0.5 py-2.5 text-[11px] tracking-[-0.01em] transition-colors',
-              "before:absolute before:-left-1 before:top-2.5 before:bottom-2.5 before:w-[3px] before:rounded-full before:bg-clay before:transition-opacity before:content-['']",
-              active === id ? 'bg-clay-soft font-semibold text-clay-deep before:opacity-100' : 'font-medium text-ink-3 before:opacity-0 hover:bg-paper-2 hover:text-ink',
+              'relative z-10 flex w-[56px] flex-col items-center gap-1 whitespace-nowrap rounded-xl px-0.5 py-2.5 text-[11px] tracking-[-0.01em] transition-colors duration-200 ease-[cubic-bezier(0.2,0.8,0.2,1)] motion-reduce:transition-none',
+              active === id
+                ? 'font-semibold text-clay-deep'
+                : 'font-medium text-ink-3 hover:bg-paper-2 hover:text-ink',
             )}
           >
-            <Icon className="size-5" strokeWidth={active === id ? 2.1 : 1.7} />
+            <Icon className="size-5 transition-all duration-200 ease-[cubic-bezier(0.2,0.8,0.2,1)] motion-reduce:transition-none" strokeWidth={active === id ? 2.1 : 1.7} />
             {label}
           </button>
         ))}

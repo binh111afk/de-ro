@@ -102,3 +102,23 @@ Các ảnh được lưu trong thư mục `docs/handoff/mobile-anh/`:
 
 - Khi chọn bảng trong chế độ reflow, nếu bảng có từ 5-6 cột trở lên thì người dùng cần cuộn ngang bên trong khung bảng (`overflow-x: auto`) để xem hết các cột. Điều này là bình thường với bảng nhiều cột trên màn hình điện thoại 360px.
 - Nút AI nổi hình viên thuốc hiện tại nằm ở góc dưới phải. Khi cuộn tới tận cùng chân trang, người dùng có thể thấy nút nổi che một góc nhỏ lề dưới cùng của trang giấy; tuy nhiên vùng lề này đã được bù đắp bằng padding đáy `60px`.
+
+---
+
+## 6. Hiệu ứng đổi tab cột trái (leftbar)
+
+- **Mục tiêu**: Nền cam nhạt (`bg-clay-soft`) và vạch cam 3px mép thanh trượt mượt mà khi đổi tab ở cột trái (thay vì nhảy tức thì).
+- **Cách làm**:
+  1. Tạo component dùng chung `src/examEditor/NavRailIndicator.tsx`:
+     - Đo vị trí `offsetTop` và `offsetHeight` của nút tab đang active bên trong `<nav>` qua ref.
+     - Khi đổi giữa các tab đang mở: trượt bằng `transform: translateY(...)` trong 200ms với easing `cubic-bezier(.2,.8,.2,1)`.
+     - Khi đóng panel: giữ nguyên toạ độ và mờ dần tại chỗ (`opacity: 0`), không trượt đi đâu.
+     - Khi mở lại từ trạng thái đóng: nhảy lập tức tới toạ độ tab được chọn (`mode: jump-fade`) và mờ dần vào (`opacity: 1`), hoàn toàn không trượt từ vị trí cũ.
+     - Lần render đầu tiên: đứng sẵn ở tab active không có hoạt cảnh (`transition: none`).
+     - Tự động tắt hoạt cảnh khi người dùng bật `prefers-reduced-motion: reduce`.
+     - Lắng nghe `ResizeObserver` để cập nhật toạ độ khi đổi font/kích thước mà không làm chạy lại hiệu ứng trượt.
+  2. Áp dụng vào:
+     - Soạn đề: `src/examEditor/NavPanel.tsx` (các tab Mục lục, Khối mẫu, Công cụ).
+     - Soạn slide: `src/examEditor/SlideSidePanel.tsx` (các tab Mẫu, Đồ hoạ, Icon, Tải lên, Công cụ trên thanh rail dọc desktop).
+  3. Thanh tab đáy của soạn slide trên điện thoại (`<nav aria-label="Thư viện slide">`) được giữ nguyên không gắn hiệu ứng theo đúng yêu cầu.
+  4. Chữ và icon của các nút tab đồng bộ chuyển màu với `transition-colors duration-200 ease-[cubic-bezier(0.2,0.8,0.2,1)] motion-reduce:transition-none` để hoàn toàn ăn khớp nhịp trượt.
