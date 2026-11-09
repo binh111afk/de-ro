@@ -783,7 +783,9 @@ export function appendSlidesToDeck(
   const currentTheme = normalizeTheme(latest.theme)
   const nextTheme = plan?.theme ? themeById(plan.theme) : currentTheme
   const themeChanged = nextTheme.id !== currentTheme.id
-  const added = pages.map((page) => slideFromAi(page, nextTheme))
+  const kit = plan?.decorKit
+  const pagesWithDecor = kit ? pages.map((page) => ({ ...page, decorKit: page.decorKit ?? kit })) : pages
+  const added = pagesWithDecor.map((page) => slideFromAi(page, nextTheme))
   return {
     patch: {
       ...(themeChanged ? { theme: nextTheme } : {}),
