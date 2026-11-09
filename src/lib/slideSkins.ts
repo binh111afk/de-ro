@@ -510,6 +510,7 @@ const skinHocThuat: SlideSkin = {
       h: 46,
       border: 1.5,
       borderColor: '#cbd5e1',
+      fill: 'transparent',
       radius: 0,
     },
     // Vạch nhấn lề trái dày 1.5% của khung
@@ -590,6 +591,7 @@ const skinHocThuat: SlideSkin = {
       h: 44,
       border: 1.5,
       borderColor: '#cbd5e1',
+      fill: 'transparent',
       radius: 0,
     },
     {
@@ -1079,6 +1081,7 @@ const skinCoDien: SlideSkin = {
       h: 95,
       border: 2,
       borderColor: theme.accent,
+      fill: 'transparent',
       radius: 0,
     },
     // Khung viền chỉ trong
@@ -1092,6 +1095,7 @@ const skinCoDien: SlideSkin = {
       h: 92.4,
       border: 0.8,
       borderColor: theme.muted ?? '#92400e',
+      fill: 'transparent',
       radius: 0,
     },
     // Kicker văn học
@@ -1186,6 +1190,7 @@ const skinCoDien: SlideSkin = {
       h: 95,
       border: 2,
       borderColor: theme.accent,
+      fill: 'transparent',
       radius: 0,
     },
     {
@@ -1198,6 +1203,7 @@ const skinCoDien: SlideSkin = {
       h: 92.4,
       border: 0.8,
       borderColor: theme.muted ?? '#92400e',
+      fill: 'transparent',
       radius: 0,
     },
     {
@@ -1273,6 +1279,7 @@ const skinCoDien: SlideSkin = {
       h: 95,
       border: 1.8,
       borderColor: theme.accent,
+      fill: 'transparent',
       radius: 0,
     })
     res.push({
@@ -1285,6 +1292,7 @@ const skinCoDien: SlideSkin = {
       h: 92.8,
       border: 0.8,
       borderColor: theme.muted ?? '#92400e',
+      fill: 'transparent',
       radius: 0,
     })
 
@@ -1526,6 +1534,7 @@ const skinBangDen: SlideSkin = {
       h: 97,
       border: 5,
       borderColor: '#92400e', // viền gỗ nâu
+      fill: 'transparent',
       radius: 4,
     },
     // Đường viền nét đứt phấn bên trong
@@ -1540,6 +1549,7 @@ const skinBangDen: SlideSkin = {
       border: 1.5,
       borderStyle: 'dashed',
       borderColor: '#e2e8f0',
+      fill: 'transparent',
       radius: 2,
     },
     // Tiêu đề môn học viết phấn vàng
@@ -1617,6 +1627,7 @@ const skinBangDen: SlideSkin = {
       h: 97,
       border: 5,
       borderColor: '#92400e',
+      fill: 'transparent',
       radius: 4,
     },
     {
@@ -1630,6 +1641,7 @@ const skinBangDen: SlideSkin = {
       border: 1.5,
       borderStyle: 'dashed',
       borderColor: '#e2e8f0',
+      fill: 'transparent',
       radius: 2,
     },
     {
@@ -1688,6 +1700,7 @@ const skinBangDen: SlideSkin = {
       h: 97,
       border: 4.5,
       borderColor: '#92400e',
+      fill: 'transparent',
       radius: 4,
     })
 

@@ -173,11 +173,11 @@ if (parsedCmds.ops.length !== 1 || parsedCmds.ops[0].op !== 'apply_design' || (p
 // 5. applyEdits
 const deck = emptyDeck('Bài kiểm tra')
 const editRes = applyEdits(deck, [{ op: 'apply_design', id: 'bang-den' }])
-if (!editRes.changed || editRes.deck.theme.id !== 'dem-xanh') {
-  console.error('  ❌ applyEdits không đổi theme sang dem-xanh:', editRes.deck.theme.id)
+if (!editRes.changed || editRes.deck.theme.id !== 'bang-den') {
+  console.error('  ❌ applyEdits không đổi theme sang bang-den:', editRes.deck.theme.id)
   allPassed = false
 } else {
-  console.log('  ✅ applyEdits áp dụng đúng thiết kế bang-den (theme dem-xanh)')
+  console.log('  ✅ applyEdits áp dụng đúng thiết kế bang-den (theme bang-den)')
 }
 
 // 6. parseDeckPlan

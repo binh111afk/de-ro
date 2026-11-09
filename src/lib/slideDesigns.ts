@@ -561,7 +561,7 @@ export const SLIDE_DESIGNS: SlideDesign[] = [
     id: 'vui-nhon',
     name: 'Vui nhộn hoạt hình',
     description: 'Rực rỡ, lấp lánh, sinh động; hợp giờ sinh hoạt, trò chơi học tập, khởi động đầu giờ.',
-    themeId: 'tim',
+    themeId: 'vang-nang',
     decorKit: 'lap-lanh',
     stylePack: 'classroom',
     slides: [
@@ -649,13 +649,13 @@ export const SLIDE_DESIGNS: SlideDesign[] = [
     id: 'bang-den',
     name: 'Bảng đen phấn trắng',
     description: 'Gần gũi như bảng lớp học; hợp bài tập Toán, công thức, bài giảng mẫu và chữa đề.',
-    themeId: 'dem-xanh',
+    themeId: 'bang-den',
     decorKit: 've-tay',
     stylePack: 'classroom',
     slides: [
       {
         layout: 'title',
-        tone: 'accent',
+        tone: 'theme',
         content: {
           kicker: 'TOÁN LỚP 6 — BÀI TẬP VỀ NHÀ',
           title: 'Phân Số & Các Phép Tính',
@@ -702,7 +702,7 @@ export const SLIDE_DESIGNS: SlideDesign[] = [
       },
       {
         layout: 'quiz',
-        tone: 'soft',
+        tone: 'theme',
         content: {
           kicker: 'LUYỆN TẬP NHANH',
           question: 'Kết quả của phép tính $\\tfrac{2}{3} \\times \\tfrac{9}{4}$ sau khi rút gọn là bao nhiêu?',
@@ -713,7 +713,7 @@ export const SLIDE_DESIGNS: SlideDesign[] = [
       },
       {
         layout: 'statement',
-        tone: 'accent',
+        tone: 'theme',
         content: {
           kicker: 'LƯU Ý QUAN TRỌNG',
           body: 'Luôn tìm mẫu số chung nhỏ nhất trước khi quy đồng để phép tính gọn gàng nhất.',
@@ -722,7 +722,7 @@ export const SLIDE_DESIGNS: SlideDesign[] = [
       },
       {
         layout: 'closing',
-        tone: 'soft',
+        tone: 'theme',
         content: {
           title: 'Hết Giờ Chữa Bài',
           subtitle: 'Các em ghi chép cẩn thận vào vở và làm tiếp bài 4, 5 trang 38 nhé.',

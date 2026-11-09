@@ -48,8 +48,8 @@ Mỗi bộ thiết kế nay được trang bị một hệ thống **"Skin"** đ
 | 4 | **Thiên nhiên xanh** | `thien-nhien` | `rung`<br>Heading: `Segoe UI` (700)<br>Body: `Segoe UI` | Bố cục chia đôi màn hình, dải màu dọc cạnh trái toàn màn hình (`full-height sidebar band`) trên mọi slide, chữ nhân bản hiện đại, thẻ bento bo góc vừa (`radius: 18`). |
 | 5 | **Công nghệ tối màu** | `cong-nghe` | `dem-xanh`<br>Heading: `Courier New`<br>Body: `Segoe UI` | Màn hình terminal HUD nền tối, chữ monospace, thanh trạng thái `// SYSTEM::ONLINE` ở đỉnh mọi slide, tiêu đề đóng khung ngoặc vuông `[ HỆ THỐNG ]`, góc vuông công nghệ (`radius: 2`). |
 | 6 | **Cổ điển giấy ấm** | `co-dien` | `giay-am`<br>Heading: `Times New Roman`<br>Body: `Times New Roman` | Khung viền đôi (`ornamental double frame 95% × 95%`) bao quanh toàn slide, chữ có chân căn giữa trang trọng, hoa văn phân cách cổ điển `~ ❖ ~`, màu giấy ngả ấm. |
-| 7 | **Vui nhộn hoạt hình** | `vui-nhon` | `tim`<br>Heading: `Verdana` (900)<br>Body: `Verdana` (700) | Neo-brutalist phong cách truyện tranh comic: viền đen dày 3px, bóng khối cứng lệch đen (`shadowLevel: 2`), sticker ngôi sao góc `★ POP ★`, chữ in hoa cực đậm cá tính. |
-| 8 | **Bảng đen phấn trắng** | `bang-den` | `dem-xanh`<br>Heading: `Tahoma` (700)<br>Body: `Tahoma` | Khung viền bảng gỗ quanh slide, chữ phấn trắng, nét phấn gạch chân đứt đoạn (`borderStyle: 'dashed'`) dưới tiêu đề và quanh các khung thẻ bài tập. |
+| 7 | **Vui nhộn hoạt hình** | `vui-nhon` | `vang-nang`<br>Heading: `Verdana` (900)<br>Body: `Verdana` (700) | Neo-brutalist phong cách truyện tranh comic: viền đen dày 3px, bóng khối cứng lệch đen (`shadowLevel: 2`), sticker ngôi sao góc `★ POP ★`, chữ in hoa cực đậm cá tính, nền vàng nắng kem tươi sáng. |
+| 8 | **Bảng đen phấn trắng** | `bang-den` | `bang-den`<br>Heading: `Tahoma` (700)<br>Body: `Tahoma` | Khung viền bảng gỗ nâu quanh slide, nền bảng xanh rêu tối chuẩn sư phạm (`#14231a`), chữ phấn trắng, vạch gạch chân nét đứt phấn vàng/trắng (`borderStyle: 'dashed'`) dưới tiêu đề và quanh các khung bài tập. |
 
 ---
 
@@ -170,12 +170,33 @@ Các ảnh chụp màn hình được lưu trong thư mục `docs/handoff/mau-sl
 5. **Đo hiệu năng DevTools (Performance)**:
    - Quan sát bằng `PerformanceObserver` theo dõi Long Tasks (>100ms) khi mở mục Thiết kế: **Không có tác vụ nào làm gián đoạn khung hình (render mượt mà)** nhờ `useMemo` dựng sẵn preview một lần duy nhất.
 6. **Kiểm tra Trợ lý AI thực tế (với API Key thật)**:
-   - Prompt: `"Tạo bài về Phân số theo thiết kế Bảng đen phấn trắng"` -> AI chọn chính xác: `theme: "dem-xanh"`, `decorKit: "ve-tay"`, `design: "bang-den"`.
+   - Prompt: `"Tạo bài về Phân số theo thiết kế Bảng đen phấn trắng"` -> AI chọn chính xác: `theme: "bang-den"`, `decorKit: "ve-tay"`, `design: "bang-den"`.
    - Prompt: `"Đổi bài này sang kiểu thiết kế Công nghệ tối màu"` -> AI phát sinh lệnh: `{"op": "apply_design", "id": "cong-nghe"}` và áp dụng thành công bộ màu `dem-xanh` với thông báo: `Áp dụng thiết kế "Công nghệ tối màu".`
 
 ---
 
-## 7. Chỗ còn có thể cải thiện thêm (Nice-to-have)
+## 7. Các lỗi hiển thị đã được chẩn đoán và khắc phục triệt để
+
+1. **Khung viền rỗng bị tô đặc màu che kín slide**:
+   - *Nguyên nhân*: Component `SlideElView` quy định `background: clip && border ? borderColor : (el.fill ?? theme.accent)`. Do các hình khối khung viền (`skin-motif-chalk-frame`, `skin-motif-outer-frame`, `title-frame`...) không khai báo `fill`, trình render tự lấy `theme.accent` để tô nền, biến khung rỗng thành một mảng màu đặc chiếm 97% diện tích slide (trước đây bộ Bảng đen bị phủ kín màu xanh/vàng).
+   - *Khắc phục*: Đặt tường minh `fill: 'transparent'` cho tất cả các phần tử khung viền rỗng của 8 bộ thiết kế.
+
+2. **Bộ màu Bảng đen (`bang-den`) & Vui nhộn (`vang-nang`)**:
+   - *Nguyên nhân*: Ban đầu bộ Bảng đen mượn tạm theme `dem-xanh` (nền xanh tối, màu nhấn xanh lơ cyan sáng) và Vui nhộn mượn `tim`, khiến slide bìa của Bảng đen sáng rực màu xanh lơ thay vì màu xanh rêu bảng lớp học.
+   - *Khắc phục*: Bổ sung 2 theme riêng biệt vào `DECK_THEMES` trong `slideTheme.ts`:
+     - `bang-den`: Nền xanh rêu tối chuẩn sư phạm (`#14231a`), chữ phấn trắng (`#f8fafc`), phấn vàng (`#fef08a`), viền gỗ nâu (`#92400e`).
+     - `vang-nang`: Nền vàng kem hoạt hình (`#fffbeb`), chữ tím than đậm, màu nhấn tím (`#7c3aed`), viền đen comic 3px.
+
+3. **Đồng bộ phông chữ Skin lên thẻ xem trước trong SidePanel**:
+   - *Khắc phục*: Cập nhật `DesignCard` áp dụng `themeWithSkinFonts` khi dựng preview slide cho từng thẻ thiết kế ở cột trái.
+
+4. **Cổng Dev Server**:
+   - Dev server của nhánh `feat/mau-slide` đang phục vụ tại: **`http://127.0.0.1:5184`** (hoặc `http://localhost:5184`).
+   - Do máy đang có tiến trình dev server khác chạy cổng `5186` cho nhánh `feat/mobile-soan-de` ở thư mục dự án chính, việc mở nhầm `5186` hoặc `5173` sẽ thấy mã nguồn cũ. Hãy truy cập đúng cổng `5184`.
+
+---
+
+## 8. Chỗ còn có thể cải thiện thêm (Nice-to-have)
 
 - **Lọc theo chủ đề**: Hiện 8 bộ thiết kế hiển thị cuộn dọc; sau này có thể thêm bộ lọc nhanh theo cấp học (Tiểu học, THCS, THPT) hoặc theo khối môn (Tự nhiên, Xã hội).
 - **Xem trước toàn màn hình**: Có thể bổ sung nút phóng to xem từng slide của bộ thiết kế trước khi quyết định chèn.

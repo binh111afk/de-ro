@@ -20,8 +20,9 @@ import {
   type SlideLayoutDef,
   type SlideLayoutId,
 } from '@/lib/slideLayouts'
-import { normalizeTheme, themeById, type ResolvedTheme } from '@/lib/slideTheme'
+import { DECK_THEMES, normalizeTheme, themeById, type ResolvedTheme } from '@/lib/slideTheme'
 import { SLIDE_DESIGNS, buildDesignSlides, type SlideDesign } from '@/lib/slideDesigns'
+import { skinById, themeWithSkinFonts } from '@/lib/slideSkins'
 import { SlideThumb } from './SlideEditor'
 import { SLIDE_ASSET_IDS, SLIDE_ASSETS } from '@/lib/slideAssets'
 import { ICON_LIBRARY } from '@/lib/slideIconLibrary'
@@ -381,7 +382,12 @@ const DesignCard = memo(function DesignCard({
   design: SlideDesign
   onApply: (design: SlideDesign) => void
 }) {
-  const designTheme = useMemo(() => normalizeTheme(themeById(design.themeId)), [design.themeId])
+  const skin = useMemo(() => skinById(design.id), [design.id])
+  const baseTheme = useMemo(() => themeById(design.themeId) ?? DECK_THEMES[0], [design.themeId])
+  const designTheme = useMemo(
+    () => normalizeTheme(skin ? themeWithSkinFonts(baseTheme, skin) : baseTheme),
+    [skin, baseTheme],
+  )
   const previewSlides = useMemo(() => buildDesignSlides(design, designTheme), [design, designTheme])
   const coverSlide = previewSlides[0]
   const subSlides = previewSlides.slice(1, 5)
