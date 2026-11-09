@@ -3801,7 +3801,7 @@
     color: inherit;
   }
   /* soạn slide gọi AI từ thanh đáy — không cần nút nổi */
-  .ai-dock--right.collapsed .ai-rail {
+  .slide-editor .ai-dock--right.collapsed .ai-rail {
     display: none;
   }
 
@@ -4149,4 +4149,84 @@ div[data-exam-node='examQuestionPrompt'] > .exam-image:has(+ .ProseMirror-separa
   background: var(--color-surface-hover, #f8fafc);
   border-color: var(--color-clay, #b4532a);
   color: var(--color-clay, #b4532a);
+}
+
+/* ------------------------------------------------------------------ *
+ * AI Dock & nút nổi trên mobile (< 768px)
+ * ------------------------------------------------------------------ */
+@media (max-width: 767px) {
+  .ai-dock:not(.collapsed) {
+    width: 100vw !important;
+    width: 100dvw !important;
+    height: var(--ai-dock-h, 100dvh) !important;
+    max-height: var(--ai-dock-h, 100dvh) !important;
+    position: fixed !important;
+    inset: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    z-index: 70 !important;
+  }
+  .ai-dock:not(.collapsed) .ai-dock__body {
+    flex: 1 !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .ai-dock:not(.collapsed) .ai-panel {
+    flex: 1 !important;
+    min-height: 0 !important;
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .ai-dock:not(.collapsed) .ai-body {
+    flex: 1 !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+  }
+  .ai-dock:not(.collapsed) .ai-composer {
+    flex-shrink: 0 !important;
+    padding-bottom: max(14px, env(safe-area-inset-bottom)) !important;
+  }
+  .ai-dock:not(.collapsed) .ai-dock__collapse {
+    width: 36px !important;
+    height: 36px !important;
+    top: 6px !important;
+    right: 8px !important;
+    left: auto !important;
+    z-index: 20 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  .compose-app .ai-dock.collapsed .ai-rail,
+  .compose-app .ai-dock--right.collapsed .ai-rail {
+    display: inline-flex !important;
+    position: fixed !important;
+    right: 14px !important;
+    bottom: calc(36px + env(safe-area-inset-bottom, 0px)) !important;
+    z-index: 55 !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 6px !important;
+    width: auto !important;
+    height: 40px !important;
+    padding: 0 14px !important;
+    border: none !important;
+    border-radius: 999px !important;
+    background: var(--color-clay) !important;
+    color: #fff !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25) !important;
+    cursor: pointer !important;
+  }
+  .compose-app .ai-dock.collapsed .ai-rail:hover {
+    background: var(--color-clay-deep) !important;
+  }
+  .compose-app .ai-dock.collapsed .ai-rail-text {
+    writing-mode: horizontal-tb !important;
+    letter-spacing: 0 !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    color: inherit !important;
+  }
 }
