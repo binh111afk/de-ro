@@ -2,6 +2,7 @@
 
 Chỉ mở phiên liên quan đến việc đang làm. Mới nhất ở trên.
 
+- [phiên 26](phien-26.md): **3 nhánh agent chờ review/merge** (kéo nhãn, mẫu slide, mobile); công cụ vẽ chống che chữ; cột trái; **dự phòng AI NightRouter** + script so sánh model
 - [phiên 23](phien-23.md): **ngân hàng 1198 câu** (GLM soạn, Claude kiểm), chip + lọc độ khó, môn GDKT&PL; soạn thêm câu xem `scripts/bank/HUONG_DAN_SOAN.md`
 - [phiên 22](phien-22.md): hình câu trắc nghiệm nằm giữa đề bài và A–D (trình soạn, in, Word); **chuỗi model dự phòng** (opencode → Mercury 3 → Agnes → xkiro, lỗi từng model); **hạn mức token AI theo tài khoản** (`ai_usage`, `ai_quota_overrides`); so sánh nhà cung cấp AI và gói tháng
 - [phiên 21](phien-21.md): vá bảo mật theo Strix (XSS in đề/slide, IP/Origin, body, zip bomb, ReDoS); **server chấm điểm (`/api/attempt`), đề link giấu đáp án (`/api/exam`)**, `srcId`; thử tải 300 người; AI chia độ khó 4 mức + chủ động chèn hình; công cụ `gas` (đồ thị trạng thái khí) và `scene` (hình thực tế, ẩn khỏi ô Công cụ)
