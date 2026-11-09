@@ -10,7 +10,17 @@ import { memo, useMemo, useRef, useState } from 'react'
 import { ChevronDown, ChevronLeft, ChevronRight, LayoutTemplate, Shapes, Smile, Sparkles, Upload, Wrench, X } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import { Segmented } from '@/components/Segmented'
-import { SLIDE_LAYOUTS, type SlideLayoutId } from '@/lib/slideLayouts'
+import {
+  SLIDE_LAYOUTS,
+  composeLayout,
+  defaultTone,
+  toneBackground,
+  withPlaceholders,
+  type SlideLayoutDef,
+  type SlideLayoutId,
+} from '@/lib/slideLayouts'
+import { normalizeTheme, type ResolvedTheme } from '@/lib/slideTheme'
+import { SlideThumb } from './SlideEditor'
 import { SLIDE_ASSET_IDS, SLIDE_ASSETS } from '@/lib/slideAssets'
 import { ICON_LIBRARY } from '@/lib/slideIconLibrary'
 import { GRAPHICS } from '@/lib/graphics'
@@ -20,7 +30,7 @@ import { FRAME_PLACEHOLDER, PHOTO_FRAMES, dragImage } from '@/lib/slideShapes'
 import { uid } from '@/data/docTypes'
 import { uploadImage } from '@/lib/mediaStore'
 import { useUploads } from '@/store/uploads'
-import type { SlideElement } from '@/store/docs'
+import type { DeckTheme, Slide, SlideElement } from '@/store/docs'
 import { ShapeGallery, ShapePreview, visibleGroups } from './ShapeGallery'
 import { useViewportSize } from './Layout'
 import { ToolsPanel } from './tools/ToolsPanel'
@@ -41,6 +51,7 @@ const MAX_IMAGE_SIDE = 1600
 const MAX_UPLOAD_BYTES = 8 * 1024 * 1024
 
 interface SlideSidePanelProps {
+  theme?: ResolvedTheme | DeckTheme
   accent: string
   /** có slide để chèn vào không (deck HTML hoặc chưa có slide thì tắt chèn) */
   canInsert: boolean
@@ -52,7 +63,7 @@ interface SlideSidePanelProps {
   onOpenAi?: () => void
 }
 
-function SlideSidePanelImpl({ accent, canInsert, hint = '', onAddLayoutSlide, onInsert, onOpenAi }: SlideSidePanelProps) {
+function SlideSidePanelImpl({ theme, accent, canInsert, hint = '', onAddLayoutSlide, onInsert, onOpenAi }: SlideSidePanelProps) {
   const [active, setActive] = useState<PanelId | null>(null)
   // panel cuối cùng đã mở: giữ nội dung trong lúc trượt đóng (và giữ vị trí cuộn khi mở lại)
   const [last, setLast] = useState<PanelId | null>(null)
@@ -65,7 +76,12 @@ function SlideSidePanelImpl({ accent, canInsert, hint = '', onAddLayoutSlide, on
       {!canInsert && <p className="px-3 pt-2 text-[12px] text-ink-3">Mở một slide để thêm nội dung vào đó.</p>}
       {/* ô tìm kiếm nằm ngoài vùng cuộn (kiểu Canva): thanh cuộn chỉ chạy qua phần nội dung bên dưới */}
       <div className="flex min-h-0 flex-1 flex-col">
-        {shown === 'templates' && <TemplatesPanel onPick={mobile ? (id) => { onAddLayoutSlide(id); setActive(null) } : onAddLayoutSlide} />}
+        {shown === 'templates' && (
+          <TemplatesPanel
+            theme={theme}
+            onPick={mobile ? (id) => { onAddLayoutSlide(id); setActive(null) } : onAddLayoutSlide}
+          />
+        )}
         {shown === 'elements' && <ElementsPanel accent={accent} canInsert={canInsert} hint={hint} onInsert={mobile ? insertAndClose : onInsert} />}
         {shown === 'icons' && <IconsPanel canInsert={canInsert} onInsert={mobile ? insertAndClose : onInsert} />}
         {shown === 'tools' && (
@@ -257,7 +273,98 @@ function loadTemplateMode(): TemplateMode {
   return 'layouts'
 }
 
-function TemplatesPanel({ onPick }: { onPick: (id: SlideLayoutId) => void }) {
+const LAYOUT_GROUPS: Array<{ title: string; layouts: SlideLayoutId[] }> = [
+  {
+    title: 'Mở đầu & kết thúc',
+    layouts: ['title', 'section', 'closing', 'agenda', 'hook'],
+  },
+  {
+    title: 'Nội dung chữ',
+    layouts: ['statement', 'bullets', 'cards', 'two-column', 'comparison', 'quote'],
+  },
+  {
+    title: 'Hình ảnh',
+    layouts: ['image-left', 'image-right', 'image-full'],
+  },
+  {
+    title: 'Số liệu & bảng',
+    layouts: ['table', 'stats', 'stat-image'],
+  },
+  {
+    title: 'Sơ đồ',
+    layouts: ['timeline', 'cycle', 'mindmap'],
+  },
+  {
+    title: 'Câu hỏi & ví dụ',
+    layouts: ['quiz', 'example'],
+  },
+]
+
+const LAYOUT_MAP = new Map<SlideLayoutId, SlideLayoutDef>(SLIDE_LAYOUTS.map((l) => [l.id, l]))
+
+function LayoutCard({
+  layout,
+  theme,
+  onPick,
+}: {
+  layout: SlideLayoutDef
+  theme: ResolvedTheme
+  onPick: (id: SlideLayoutId) => void
+}) {
+  const slide = useMemo(() => {
+    try {
+      const tone = defaultTone(layout.id)
+      const content = withPlaceholders(layout.id, {})
+      const elements = composeLayout(theme, layout.id, content, tone)
+      if (!elements || elements.length === 0) return null
+      return {
+        id: `thumb-${layout.id}`,
+        layout: layout.id,
+        tone,
+        background: toneBackground(theme, tone),
+        elements,
+        transition: 'none',
+      } as Slide
+    } catch {
+      return null
+    }
+  }, [layout.id, theme])
+
+  return (
+    <button
+      type="button"
+      title={layout.description}
+      onClick={() => onPick(layout.id)}
+      className="group flex flex-col items-center gap-1.5 rounded-lg border border-line bg-surface p-1.5 text-center transition-all duration-150 hover:border-clay hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay"
+    >
+      <div className="relative aspect-[16/9] w-full overflow-hidden rounded-[4px] border border-line/60 bg-paper transition-transform duration-150 group-hover:-translate-y-[1px] group-hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] pointer-events-none select-none">
+        {slide ? (
+          <SlideThumb slide={slide} theme={theme} />
+        ) : (
+          <div className="flex size-full items-center justify-center">
+            <span className={cn('slide-layout-thumb', `slide-layout-thumb--${layout.id}`)} aria-hidden>
+              <i />
+              <i />
+              <i />
+            </span>
+          </div>
+        )}
+      </div>
+      <small className="w-full truncate px-0.5 text-[12px] font-medium text-ink transition-colors group-hover:text-clay">
+        {layout.name}
+      </small>
+    </button>
+  )
+}
+
+function TemplatesPanel({
+  theme,
+  onPick,
+}: {
+  theme?: ResolvedTheme | DeckTheme
+  onPick: (id: SlideLayoutId) => void
+}) {
+  const resolvedTheme = useMemo(() => normalizeTheme(theme), [theme])
   const [mode, setMode] = useState<TemplateMode>(loadTemplateMode)
 
   const handleModeChange = (next: TemplateMode) => {
@@ -287,22 +394,24 @@ function TemplatesPanel({ onPick }: { onPick: (id: SlideLayoutId) => void }) {
         <div className="pt-3">
           <div key={mode} className="anim-template-fade">
             {mode === 'layouts' ? (
-              <div className="grid grid-cols-2 gap-2">
-                {SLIDE_LAYOUTS.map((layout) => (
-                  <button
-                    key={layout.id}
-                    type="button"
-                    title={layout.description}
-                    onClick={() => onPick(layout.id)}
-                    className="slide-layout-card"
-                  >
-                    <span className={cn('slide-layout-thumb', `slide-layout-thumb--${layout.id}`)} aria-hidden>
-                      <i />
-                      <i />
-                      <i />
-                    </span>
-                    <small>{layout.name}</small>
-                  </button>
+              <div>
+                {LAYOUT_GROUPS.map((group) => (
+                  <Section key={group.title} title={group.title}>
+                    <div className="grid grid-cols-2 gap-2">
+                      {group.layouts.map((id) => {
+                        const layout = LAYOUT_MAP.get(id)
+                        if (!layout) return null
+                        return (
+                          <LayoutCard
+                            key={id}
+                            layout={layout}
+                            theme={resolvedTheme}
+                            onPick={onPick}
+                          />
+                        )
+                      })}
+                    </div>
+                  </Section>
                 ))}
               </div>
             ) : (

@@ -970,6 +970,7 @@ export function SlideEditor({
       <div className="flex min-h-0 min-w-0 flex-1">
       {/* ---------------- thư viện (cột trái, kiểu Canva): panel trượt đẩy sân giấy ---------------- */}
       <SlideSidePanel
+        theme={theme}
         accent={theme.accent}
         canInsert={Boolean(currentSlide) && !currentSlide?.html}
         hint={`${deck.title} ${(currentSlide?.elements ?? []).map((e) => e.text ?? '').join(' ').replace(/<[^>]+>/g, ' ')}`}
