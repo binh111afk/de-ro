@@ -1229,3 +1229,12 @@ input.slide-rail-title:focus {
 body[data-slide-drag] .slide-sel-toolbar {
   visibility: hidden;
 }
+
+/* Hieu ung chuyen doi nhe giua Bo cuc va Thiet ke o tab Mau */
+@keyframes template-tab-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.anim-template-fade {
+  animation: template-tab-fade 150ms ease-out both;
+}

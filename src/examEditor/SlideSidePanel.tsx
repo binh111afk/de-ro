@@ -9,6 +9,7 @@
 import { memo, useMemo, useRef, useState } from 'react'
 import { ChevronDown, ChevronLeft, ChevronRight, LayoutTemplate, Shapes, Smile, Sparkles, Upload, Wrench, X } from 'lucide-react'
 import { cn } from '@/lib/cn'
+import { Segmented } from '@/components/Segmented'
 import { SLIDE_LAYOUTS, type SlideLayoutId } from '@/lib/slideLayouts'
 import { SLIDE_ASSET_IDS, SLIDE_ASSETS } from '@/lib/slideAssets'
 import { ICON_LIBRARY } from '@/lib/slideIconLibrary'
@@ -64,7 +65,7 @@ function SlideSidePanelImpl({ accent, canInsert, hint = '', onAddLayoutSlide, on
       {!canInsert && <p className="px-3 pt-2 text-[12px] text-ink-3">Mở một slide để thêm nội dung vào đó.</p>}
       {/* ô tìm kiếm nằm ngoài vùng cuộn (kiểu Canva): thanh cuộn chỉ chạy qua phần nội dung bên dưới */}
       <div className="flex min-h-0 flex-1 flex-col">
-        {shown === 'templates' && <Scroll><div className="pt-3"><TemplatesPanel onPick={mobile ? (id) => { onAddLayoutSlide(id); setActive(null) } : onAddLayoutSlide} /></div></Scroll>}
+        {shown === 'templates' && <TemplatesPanel onPick={mobile ? (id) => { onAddLayoutSlide(id); setActive(null) } : onAddLayoutSlide} />}
         {shown === 'elements' && <ElementsPanel accent={accent} canInsert={canInsert} hint={hint} onInsert={mobile ? insertAndClose : onInsert} />}
         {shown === 'icons' && <IconsPanel canInsert={canInsert} onInsert={mobile ? insertAndClose : onInsert} />}
         {shown === 'tools' && (
@@ -241,27 +242,77 @@ function Section({ id, title, children }: { id?: string; title?: string; childre
 }
 
 /* ------------------------------------------------------------------ *
- * Mẫu: 22 bố cục có sẵn, bấm để thêm một slide mới theo bố cục đó
+ * Mẫu: thanh chuyển Bố cục | Thiết kế
  * ------------------------------------------------------------------ */
+type TemplateMode = 'layouts' | 'designs'
+const TEMPLATE_MODE_KEY = 'slide-template-mode'
+
+function loadTemplateMode(): TemplateMode {
+  try {
+    const saved = localStorage.getItem(TEMPLATE_MODE_KEY)
+    if (saved === 'designs' || saved === 'layouts') return saved
+  } catch {
+    /* ignore */
+  }
+  return 'layouts'
+}
+
 function TemplatesPanel({ onPick }: { onPick: (id: SlideLayoutId) => void }) {
+  const [mode, setMode] = useState<TemplateMode>(loadTemplateMode)
+
+  const handleModeChange = (next: TemplateMode) => {
+    setMode(next)
+    try {
+      localStorage.setItem(TEMPLATE_MODE_KEY, next)
+    } catch {
+      /* ignore */
+    }
+  }
+
   return (
-    <div className="grid grid-cols-2 gap-2">
-      {SLIDE_LAYOUTS.map((layout) => (
-        <button
-          key={layout.id}
-          type="button"
-          title={layout.description}
-          onClick={() => onPick(layout.id)}
-          className="slide-layout-card"
-        >
-          <span className={cn('slide-layout-thumb', `slide-layout-thumb--${layout.id}`)} aria-hidden>
-            <i />
-            <i />
-            <i />
-          </span>
-          <small>{layout.name}</small>
-        </button>
-      ))}
+    <div className="flex min-h-0 flex-1 flex-col">
+      <div className="shrink-0 border-b border-line bg-surface px-3 pb-2.5 pt-3">
+        <Segmented
+          value={mode}
+          onChange={handleModeChange}
+          label="Chế độ mẫu"
+          className="w-full flex [&>button]:flex-1 [&>button]:justify-center"
+          options={[
+            { key: 'layouts', label: 'Bố cục' },
+            { key: 'designs', label: 'Thiết kế' },
+          ]}
+        />
+      </div>
+      <Scroll>
+        <div className="pt-3">
+          <div key={mode} className="anim-template-fade">
+            {mode === 'layouts' ? (
+              <div className="grid grid-cols-2 gap-2">
+                {SLIDE_LAYOUTS.map((layout) => (
+                  <button
+                    key={layout.id}
+                    type="button"
+                    title={layout.description}
+                    onClick={() => onPick(layout.id)}
+                    className="slide-layout-card"
+                  >
+                    <span className={cn('slide-layout-thumb', `slide-layout-thumb--${layout.id}`)} aria-hidden>
+                      <i />
+                      <i />
+                      <i />
+                    </span>
+                    <small>{layout.name}</small>
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className="py-6 text-center text-[13px] text-ink-3">
+                Mục Thiết kế
+              </div>
+            )}
+          </div>
+        </div>
+      </Scroll>
     </div>
   )
 }
