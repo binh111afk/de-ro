@@ -189,6 +189,12 @@ export function Ribbon({
   const [penColor, setPenColor] = useState('#000000')
   const [painter, setPainter] = useState(false)
   const [dialog, setDialog] = useState<'link' | 'equation' | null>(null)
+  const [collapsed, setCollapsed] = useState(false)
+
+  const handleTabChange = (id: string) => {
+    if (collapsed) setCollapsed(false)
+    onTabChange(id)
+  }
   const painterRef = useRef<{
     marks: Record<string, unknown>
     attrs: Record<string, unknown>
@@ -389,7 +395,7 @@ export function Ribbon({
       <RibbonTabs
         tabs={RIBBON_TABS}
         active={activeTab}
-        onChange={onTabChange}
+        onChange={handleTabChange}
         leading={
           <>
             <FileMenu
@@ -441,7 +447,8 @@ export function Ribbon({
         </div>
       </RibbonTabs>
 
-      <RibbonBody activeKey={activeTab}>
+      {!collapsed && (
+        <RibbonBody activeKey={activeTab}>
         {activeTab === 'home' && (
           <>
             <RibbonGroup label="Clipboard">
@@ -940,6 +947,7 @@ export function Ribbon({
           </>
         )}
       </RibbonBody>
+      )}
 
       {editor && dialog === 'link' && <LinkDialog editor={editor} onClose={() => setDialog(null)} />}
       {editor && dialog === 'equation' && <EquationDialog editor={editor} onClose={() => setDialog(null)} />}

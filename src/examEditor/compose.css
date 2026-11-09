@@ -3998,3 +3998,133 @@ div[data-exam-node='examQuestionPrompt'] > .exam-image:has(+ .ProseMirror-separa
   border-color: var(--color-clay, #b4532a);
   color: var(--color-clay, #b4532a);
 }
+
+/* ------------------------------------------------------------------ *
+ * Ribbon gọn trên điện thoại (< 768px)
+ * ------------------------------------------------------------------ */
+@media (max-width: 767px) {
+  .ribbon {
+    max-height: 25vh;
+  }
+  .ribbon-tabs {
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 4px 6px 2px;
+  }
+  .ribbon-tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .ribbon-tab {
+    flex-shrink: 0;
+    white-space: nowrap;
+    padding: 6px 8px;
+    font-size: 13px;
+  }
+  .ribbon-body {
+    height: 48px !important;
+    min-height: 48px !important;
+    padding: 4px 8px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .ribbon-body::-webkit-scrollbar {
+    display: none;
+  }
+  .ribbon-tab-page {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 4px !important;
+    height: 100% !important;
+    min-width: max-content !important;
+  }
+  .ribbon-group {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    padding: 0 2px !important;
+    height: 100% !important;
+  }
+  .ribbon-group-items {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 2px !important;
+    height: 100% !important;
+  }
+  .rb-row,
+  .rb-col,
+  .rb-font-group {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 2px !important;
+    height: 100% !important;
+  }
+  .rb-big {
+    flex-direction: row !important;
+    min-height: 40px !important;
+    min-width: 40px !important;
+    height: 40px !important;
+    padding: 0 8px !important;
+    gap: 4px !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  .rb-big .rb-big-label {
+    display: none !important;
+  }
+  .rb-big .rb-big-icon {
+    min-height: auto !important;
+    flex: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  .rb-icon {
+    min-width: 40px !important;
+    height: 40px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 4px !important;
+  }
+  .rb-select,
+  .rb-dropdown-trigger {
+    height: 40px !important;
+    min-height: 40px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+  }
+  .ribbon-sep {
+    height: 28px !important;
+    margin: 0 3px !important;
+  }
+  .ribbon-toggle-btn {
+    width: 32px !important;
+    height: 32px !important;
+  }
+  .ribbon-quick__meta {
+    display: none;
+  }
+}
+
+.ribbon-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 4px;
+  border: none;
+  background: transparent;
+  color: var(--text-dim, #64748b);
+  cursor: pointer;
+  padding: 0;
+  margin-left: 4px;
+}
+.ribbon-toggle-btn:hover {
+  background: var(--hover, rgba(0, 0, 0, 0.05));
+  color: var(--text-primary, #0f172a);
+}
