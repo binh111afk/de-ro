@@ -46,7 +46,8 @@
     "test:image": "tsx --tsconfig tsconfig.app.json scripts/test-image.mjs",
     "test:sources": "tsx --tsconfig tsconfig.app.json scripts/test-sources.mjs",
     "test:extract": "tsx scripts/test-extract.mjs",
-    "test:shuffle": "tsx --tsconfig tsconfig.app.json scripts/test-shuffle.ts"
+    "test:shuffle": "tsx --tsconfig tsconfig.app.json scripts/test-shuffle.ts",
+    "test:admin": "tsx scripts/test-admin.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.6.0",

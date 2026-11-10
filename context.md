@@ -1,6 +1,6 @@
 # context.md — đề rõ (trình soạn đề thi)
 
-Bản đồ ngắn của dự án. **Chỉ đọc file này khi bắt đầu phiên**; các file khác mở khi việc đang làm cần tới (bảng "Đọc thêm khi nào" bên dưới). Cập nhật: 10/11/2026 (phiên 27). **Phiên 28 bắt đầu bằng: (1) thử nhanh Xáo đề với đề AI thật + bản PDF; (2) làm trang Admin theo [docs/plan-admin.md](docs/plan-admin.md), hỏi người dùng 4 câu ở cuối file rồi làm Giai đoạn 1. Claude làm logic, giao diện thì viết prompt cho Antigravity CLI dựng (mục "Chia việc"). Xem [phiên 27](docs/handoff/phien-27.md).**
+Bản đồ ngắn của dự án. **Chỉ đọc file này khi bắt đầu phiên**; các file khác mở khi việc đang làm cần tới (bảng "Đọc thêm khi nào" bên dưới). Cập nhật: 10/11/2026 (phiên 28). **Phiên 29 bắt đầu bằng: áp migration admin (người dùng duyệt) + thêm email admin; giao [docs/prompt-admin-ui.md](docs/prompt-admin-ui.md) cho Antigravity rồi review, nối; hỏi 4 câu cuối [docs/plan-admin.md](docs/plan-admin.md). Xem [phiên 28](docs/handoff/phien-28.md).**
 
 ## Dự án
 
@@ -25,7 +25,7 @@ Web app soạn đề thi tiếng Việt kiểu Word: React 19 + TypeScript + Vit
 ```powershell
 npm run dev -- --port 5184 --host 127.0.0.1     # http://127.0.0.1:5184/soan-de (hoặc preview_start "dev")
 npx tsc -p tsconfig.app.json --noEmit           # KHÔNG dùng `tsc -p .` (không kiểm gì)
-npm run test:convert | test:export | test:docx | test:online | test:grading | test:markdown | test:guard   # bộ hay dùng
+npm run test:convert | test:export | test:docx | test:online | test:grading | test:markdown | test:guard | test:admin   # bộ hay dùng
 ```
 
 Danh sách đủ: `package.json` → `scripts`. `.env` cần `LLM_API_KEY` (mẫu `.env.example`).
@@ -60,8 +60,8 @@ Danh sách đủ: `package.json` → `scripts`. `.env` cần `LLM_API_KEY` (mẫ
 
 | Khi làm | Mở |
 |---|---|
-| Trang Admin (kế hoạch, hiện trạng Supabase, giai đoạn) | [docs/plan-admin.md](docs/plan-admin.md) |
-| Tiếp việc phiên trước | [phiên 27](docs/handoff/phien-27.md) (**Xáo đề đang dở**, mẫu slide, LLM dự phòng, so model) · [phiên 26](docs/handoff/phien-26.md) (gộp 3 nhánh agent) · [phiên 25](docs/handoff/phien-25.md) (khung chương trình, trục đồ thị) |
+| Trang Admin (kế hoạch, hiện trạng Supabase, giai đoạn) | [docs/plan-admin.md](docs/plan-admin.md), [phiên 28](docs/handoff/phien-28.md) (G1 logic: `server/admin.ts`, `src/lib/adminApi.ts`, `?mock=1`) |
+| Tiếp việc phiên trước | [phiên 28](docs/handoff/phien-28.md) (Admin G1, Xáo đề giữ đáp án) · [phiên 27](docs/handoff/phien-27.md) (Xáo đề, mẫu slide, LLM dự phòng, so model) · [phiên 26](docs/handoff/phien-26.md) (gộp 3 nhánh agent) · [phiên 25](docs/handoff/phien-25.md) (khung chương trình, trục đồ thị) |
 | Khung chương trình các môn (chống AI ra đề vượt lớp): soạn prompt cho agent ngoài, kiểm file gửi về | [docs/khung-chuong-trinh.md](docs/khung-chuong-trinh.md) |
 | Giao việc cho agent rẻ hơn (mẫu prompt, chạy song song bằng worktree) | `docs/prompt-*.md`, [phiên 26](docs/handoff/phien-26.md) mục "Lưu ý cách làm" |
 | Soạn thêm câu cho kho câu hỏi | [scripts/bank/HUONG_DAN_SOAN.md](scripts/bank/HUONG_DAN_SOAN.md) |

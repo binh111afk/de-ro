@@ -39,7 +39,7 @@ function r2Config() {
 
 /** Gọi R2 với chữ ký SigV4; `body` là null khi đọc. */
 async function r2Request(
-  method: 'GET' | 'PUT',
+  method: 'GET' | 'PUT' | 'DELETE',
   key: string,
   body: Buffer | null,
   contentType?: string,
@@ -74,6 +74,19 @@ async function r2Request(
     body: body ? new Uint8Array(body) : undefined,
     signal: AbortSignal.timeout(30_000),
   })
+}
+
+/** Xoá một tệp trên R2 (admin xoá tài khoản / tài liệu). Key sai định dạng thì bỏ qua. */
+export async function deleteR2Object(key: string): Promise<boolean> {
+  if (!KEY_PATTERN.test(key)) return false
+  const r = await r2Request('DELETE', key, null)
+  return r.ok || r.status === 404
+}
+
+/** `/api/files/doc/<hash>.pdf` → `doc/<hash>.pdf`; không phải tệp R2 của app → null */
+export function r2KeyFromUrl(url: string): string | null {
+  const key = url.replace(/^.*\/api\/files\//, '')
+  return KEY_PATTERN.test(key) ? key : null
 }
 
 export async function handleUploadRequest(req: IncomingMessage, res: ServerResponse): Promise<void> {

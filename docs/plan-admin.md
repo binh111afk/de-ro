@@ -1,6 +1,6 @@
 # Kế hoạch trang Admin
 
-Viết ở phiên 27 (10/11/2026) sau khi xem code và Supabase. **Chưa có dòng code nào.** Phiên sau đọc file này rồi bắt đầu từ Giai đoạn 1.
+Viết ở phiên 27 (10/11/2026). **Phiên 28: Giai đoạn 1 xong phần logic** (migration chưa áp, giao diện giao cho agent), xem [phiên 28](handoff/phien-28.md) để biết các mặc định đang dùng cho 4 câu hỏi cuối file.
 
 ## Quyết định đã chốt với người dùng
 

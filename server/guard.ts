@@ -9,7 +9,7 @@
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { json } from './http.js'
 
-type Api = 'llm' | 'image' | 'upload' | 'extract' | 'search' | 'attempt' | 'exam'
+type Api = 'llm' | 'image' | 'upload' | 'extract' | 'search' | 'attempt' | 'exam' | 'admin'
 
 /** số lượt mỗi cửa sổ 10 phút: [khách theo IP, người đã đăng nhập] */
 const LIMITS: Record<Api, [number, number]> = {
@@ -21,6 +21,8 @@ const LIMITS: Record<Api, [number, number]> = {
   // mở đề và nộp bài: cả lớp/cả trường thường đi chung một IP, và hai API này không gọi AI nên rẻ
   attempt: [500, 500],
   exam: [1000, 1000],
+  // trang admin: khách gọi bị 401 ngay, giới hạn chặt để khỏi dò
+  admin: [20, 600],
 }
 const WINDOW_MS = 10 * 60 * 1000
 

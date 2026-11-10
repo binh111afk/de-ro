@@ -40,6 +40,8 @@ const ExamView = lazy(pages.ExamView)
 const Auth = lazy(pages.Auth)
 const Profile = lazy(pages.Profile)
 const PreviewDesigns = lazy(() => import('@/pages/PreviewDesigns'))
+// không đưa vào `pages` (không tải ngầm): người dùng thường không phải tải code admin
+const AdminPage = lazy(() => import('@/pages/admin/AdminPage'))
 
 /** Trang đầu hiện xong thì tải ngầm các trang còn lại (lần lượt, lúc trình duyệt rảnh)
  *  → bấm sang trang khác không còn khựng / "Đang tải…". */
@@ -127,6 +129,7 @@ export default function App() {
           <Route path="/dat-lai-mat-khau" element={<Auth mode="reset" />} />
           <Route path="/ho-so" element={<Profile />} />
           <Route path="/preview-designs" element={<PreviewDesigns />} />
+          <Route path="/admin/*" element={<AdminPage />} />
           <Route path="*" element={<Home />} />
         </Routes>
         </div>
