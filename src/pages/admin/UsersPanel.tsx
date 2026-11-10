@@ -872,7 +872,7 @@ function GrantCreditsModal({
   const [resultBalance, setResultBalance] = useState<number | null>(null)
 
   const numTokens = Number(tokensInput)
-  const isValid = !isNaN(numTokens) && numTokens > 0
+  const isValid = Number.isInteger(numTokens) && numTokens > 0 && numTokens <= 1e8
 
   const handleGrant = async () => {
     if (!isValid) return
