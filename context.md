@@ -1,6 +1,6 @@
 # context.md — đề rõ (trình soạn đề thi)
 
-Bản đồ ngắn của dự án. **Chỉ đọc file này khi bắt đầu phiên**; các file khác mở khi việc đang làm cần tới (bảng "Đọc thêm khi nào" bên dưới). Cập nhật: 10/11/2026 (phiên 27). **Phiên 28 bắt đầu bằng: thử công cụ Xáo đề (đã push) với đề AI thật + bản PDF, xem [phiên 27](docs/handoff/phien-27.md).**
+Bản đồ ngắn của dự án. **Chỉ đọc file này khi bắt đầu phiên**; các file khác mở khi việc đang làm cần tới (bảng "Đọc thêm khi nào" bên dưới). Cập nhật: 10/11/2026 (phiên 27). **Phiên 28 bắt đầu bằng: (1) thử nhanh Xáo đề với đề AI thật + bản PDF; (2) làm trang Admin theo [docs/plan-admin.md](docs/plan-admin.md), hỏi người dùng 4 câu ở cuối file rồi làm Giai đoạn 1. Xem [phiên 27](docs/handoff/phien-27.md).**
 
 ## Dự án
 
@@ -60,6 +60,7 @@ Danh sách đủ: `package.json` → `scripts`. `.env` cần `LLM_API_KEY` (mẫ
 
 | Khi làm | Mở |
 |---|---|
+| Trang Admin (kế hoạch, hiện trạng Supabase, giai đoạn) | [docs/plan-admin.md](docs/plan-admin.md) |
 | Tiếp việc phiên trước | [phiên 27](docs/handoff/phien-27.md) (**Xáo đề đang dở**, mẫu slide, LLM dự phòng, so model) · [phiên 26](docs/handoff/phien-26.md) (gộp 3 nhánh agent) · [phiên 25](docs/handoff/phien-25.md) (khung chương trình, trục đồ thị) |
 | Khung chương trình các môn (chống AI ra đề vượt lớp): soạn prompt cho agent ngoài, kiểm file gửi về | [docs/khung-chuong-trinh.md](docs/khung-chuong-trinh.md) |
 | Giao việc cho agent rẻ hơn (mẫu prompt, chạy song song bằng worktree) | `docs/prompt-*.md`, [phiên 26](docs/handoff/phien-26.md) mục "Lưu ý cách làm" |

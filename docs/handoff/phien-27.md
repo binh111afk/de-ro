@@ -56,6 +56,10 @@ Còn phải làm:
 - Cách đo chi phí NightRouter: gọi `GET {NIGHTROUTER_BASE_URL}/dashboard/billing/usage?start_date=…&end_date=…` trước và sau rồi so `total_usage`.
 - Gọi opencode bằng tay phải gửi header `x-opencode-session` và `User-Agent`.
 
+## Việc tiếp theo: trang Admin
+
+Đã chốt làm trong repo này, ở `/admin`. Kế hoạch chi tiết, hiện trạng Supabase và 4 câu cần hỏi người dùng: [docs/plan-admin.md](../plan-admin.md).
+
 ## Việc treo
 
 - Các mẫu slide khác vẫn dùng font cài sẵn trên máy (Segoe UI, Tahoma, Verdana, Courier New) nên có thể vỡ chữ trên Mac/Android, như Trẻ trung/Học thuật trước khi sửa.
