@@ -11,6 +11,7 @@
     "test:convert": "tsx scripts/test-convert.mjs",
     "test:markdown": "tsx --tsconfig tsconfig.app.json scripts/test-markdown.mjs",
     "test:export": "tsx --tsconfig tsconfig.app.json scripts/test-export.mjs",
+    "test:designs": "tsx --tsconfig tsconfig.app.json scripts/check-designs.ts",
     "test:layout": "tsx --tsconfig tsconfig.app.json scripts/test-layout.mjs",
     "test:templates": "tsx --tsconfig tsconfig.app.json scripts/test-templates.mjs",
     "test:pagination": "tsx --tsconfig tsconfig.app.json scripts/test-pagination.mjs",

@@ -24,6 +24,7 @@ import { checkSlide, dropRepeatedGraphic, pageSystemPrompt, planDecorKit, repair
 import { SLIDE_LAYOUTS } from '@/lib/slideLayouts'
 import { DECK_THEMES } from '@/lib/slideTheme'
 import { stylePackById } from '@/lib/slideStyles'
+import { designById } from '@/lib/slideDesigns'
 import { HTML_DECK_SYSTEM } from '@/lib/htmlDeckPrompt'
 import { splitHtmlDeck } from '@/lib/htmlDeck'
 import { editSystemPrompt, looksLikeEdit, parseEditCommands, type SlideEditOp } from '@/lib/slideEdit'
@@ -343,10 +344,11 @@ export const SLIDE_PLAN_SYSTEM =
   'Bạn là trợ lý AI của trình soạn bài trình bày tiếng Việt. Nhiệm vụ: LẬP DÀN Ý, ' +
   'chưa viết nội dung chi tiết. Chỉ trả về DUY NHẤT một JSON hợp lệ (không bọc markdown, ' +
   'không chữ ngoài JSON):\n' +
-  '{"title":"...","theme":"<id>","stylePack":"<id>","decorKit":"<id>","subject":"<id>","audience":"...","style":"...","mainIdeas":["..."],' +
+  '{"title":"...","theme":"<id>","stylePack":"<id>","decorKit":"<id>","design":"<id>","subject":"<id>","audience":"...","style":"...","mainIdeas":["..."],' +
   '"slides":[{"title":"...","layout":"<id>","tone":"theme|soft|accent","kicker":"...","brief":"..."}]}\n\n' +
   slideCatalogText() +
   '\n\nQUY TẮC:\n' +
+  '- Nếu người dùng yêu cầu làm theo một bộ thiết kế cụ thể (ví dụ "theo thiết kế Thanh lịch", "giống mẫu bảng đen", "kiểu tối giản"…), hãy điền "design": "<id>" đúng bộ thiết kế đó, chọn đúng "theme", "decorKit", "stylePack" tương ứng và bám theo nhịp bố cục của bộ.\n' +
   '- Số slide theo yêu cầu; nếu không nêu thì 6–10 slide, tối đa 16. Mỗi slide chỉ một ý lớn; ' +
   'nếu một mục có quá 4 ý thì tách thành slide mới.\n' +
   '- Chọn nhịp deck theo nội dung (bài giảng / báo cáo / hội thảo / kể chuyện) — không dùng ' +
@@ -410,7 +412,9 @@ function PlanCard({
   const themeName = plan.theme
     ? DECK_THEMES.find((theme) => theme.id === plan.theme)?.name
     : undefined
+  const designName = plan.design ? designById(plan.design)?.name : undefined
   const meta = [
+    designName ? `Thiết kế ${designName}` : null,
     themeName ? `Bộ màu ${themeName}` : null,
     plan.stylePack ? `Style ${stylePackById(plan.stylePack)?.name ?? plan.stylePack}` : null,
     plan.audience,

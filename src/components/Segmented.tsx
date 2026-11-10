@@ -8,16 +8,23 @@ export function Segmented<T extends string>({
   options,
   onChange,
   label,
+  className,
 }: {
   value: T
   options: Array<{ key: T; label: string; count?: number; icon?: ReactNode }>
   onChange: (v: T) => void
   label: string
+  className?: string
 }) {
   const ref = useRef<HTMLDivElement>(null)
   const thumb = useSlidingThumb(ref, '[aria-checked="true"]', value)
   return (
-    <div ref={ref} role="radiogroup" aria-label={label} className="relative inline-flex h-11 max-w-full items-center rounded-[8px] bg-sunken p-[3px]">
+    <div
+      ref={ref}
+      role="radiogroup"
+      aria-label={label}
+      className={cn('relative inline-flex h-11 max-w-full items-center rounded-[8px] bg-sunken p-[3px]', className)}
+    >
       {thumb ? (
         <span
           aria-hidden

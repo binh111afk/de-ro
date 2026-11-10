@@ -17,10 +17,13 @@ import {
 } from './slideLayouts'
 import { checkSlide, slideFromAi } from './slideAi'
 import { keepCustomBg } from './slideBackground'
-import { DECK_THEMES, contrastRatio, mixHex, normalizeTheme, resolveThemeId } from './slideTheme'
+import { DECK_THEMES, contrastRatio, mixHex, normalizeTheme, resolveThemeId, themeById } from './slideTheme'
+import { SLIDE_DESIGNS, designById } from './slideDesigns'
+import { applySkin, skinById, themeWithSkinFonts } from './slideSkins'
 
 export type SlideEditOp =
   | { op: 'set_theme'; theme: string }
+  | { op: 'apply_design'; id: string }
   | { op: 'set_fonts'; heading?: string; body?: string }
   | { op: 'set_colors'; bg?: string; fg?: string; accent?: string }
   | { op: 'set_tone'; tone: SlideTone; slides?: number[] }
@@ -63,17 +66,19 @@ const stackOf = (font: string): string =>
 
 /** Câu của người dùng có vẻ là yêu cầu SỬA slide có sẵn (bước lọc rẻ trước khi gọi model). */
 export const looksLikeEdit = (text: string): boolean =>
-  /(đổi|thay|chuyển|sửa|chỉnh|set)[^.\n]{0,40}(phông|font|màu|theme|bộ màu|tông|nền|hiệu ứng|bố cục)|(xoá|xóa|bỏ|xoa)\s+slide|(di chuyển|dời|đưa)\s+slide|(sửa|đổi|thay|chỉnh|rút gọn|viết lại|thêm|bớt|bỏ|ngắn|dài)[^.\n]{0,40}(slide\s*(số\s*)?\d|tiêu đề|bố cục)|slide\s*(số\s*)?\d+[^.\n]{0,40}(sửa|đổi|thay|rút gọn|viết lại|ngắn|dài|thêm|bớt)/i.test(
+  /(đổi|thay|chuyển|sửa|chỉnh|set|áp|dùng|chọn|làm giống|theo|sang)[^.\n]{0,40}(phông|font|màu|theme|bộ màu|tông|nền|hiệu ứng|bố cục|thiết kế|bộ mẫu|mẫu slide|mẫu)|(áp dụng)[^.\n]{0,40}(thiết kế|bộ mẫu|mẫu slide|mẫu)|(xoá|xóa|bỏ|xoa)\s+slide|(di chuyển|dời|đưa)\s+slide|(sửa|đổi|thay|chỉnh|rút gọn|viết lại|thêm|bớt|bỏ|ngắn|dài)[^.\n]{0,40}(slide\s*(số\s*)?\d|tiêu đề|bố cục)|slide\s*(số\s*)?\d+[^.\n]{0,40}(sửa|đổi|thay|rút gọn|viết lại|ngắn|dài|thêm|bớt)/i.test(
     text,
   )
 
 /** `context`: mô tả deck hiện tại (theme, phông, danh sách slide) để model chọn đúng. */
 export function editSystemPrompt(context: string): string {
   const themes = DECK_THEMES.map((t) => `${t.id}=${t.name} (${t.vibe})`).join('; ')
+  const designs = SLIDE_DESIGNS.map((d) => `${d.id}="${d.name}"`).join(', ')
   return (
     'Bạn điều khiển trình soạn slide. Người dùng muốn SỬA slide đã có (không viết slide mới). ' +
     'Chỉ trả về DUY NHẤT một JSON, không chữ ngoài JSON: {"action":"edit","commands":[...]}.\n' +
     'Lệnh cho phép (slides = mảng số thứ tự bắt đầu từ 1; bỏ trống = tất cả):\n' +
+    `- {"op":"apply_design","id":"<id>"} — áp dụng trọn gói một bộ thiết kế (theme + phong cách + trang trí) cho cả bài. Thiết kế có sẵn: ${designs}\n` +
     `- {"op":"set_theme","theme":"<id>"} — id: ${themes}\n` +
     `- {"op":"set_fonts","heading":"<phông>","body":"<phông>"} — phông chỉ trong: ${EDIT_FONTS.join(', ')} (heading/body chỉ cần nêu cái đổi)\n` +
     '- {"op":"set_colors","bg":"#rrggbb","fg":"#rrggbb","accent":"#rrggbb"} — chỉ nêu màu cần đổi; chữ/nền phải đủ tương phản\n' +
@@ -107,6 +112,12 @@ export function parseEditCommands(raw: string): { ops: SlideEditOp[]; errors: st
     const c = (item && typeof item === 'object' ? item : {}) as Record<string, unknown>
     const slides = c.slides === undefined ? undefined : isIndexList(c.slides) ? c.slides : null
     switch (c.op) {
+      case 'apply_design': {
+        const id = typeof c.id === 'string' ? c.id.trim() : typeof c.design === 'string' ? c.design.trim() : ''
+        if (id) ops.push({ op: 'apply_design', id })
+        else errors.push('apply_design thiếu "id"')
+        break
+      }
       case 'set_theme':
         if (typeof c.theme === 'string') ops.push({ op: 'set_theme', theme: c.theme })
         else errors.push('set_theme thiếu "theme"')
@@ -237,12 +248,38 @@ export function applyEdits(deck: Deck, ops: SlideEditOp[]): EditResult {
   }
 
   for (const op of ops) {
-    if (html && ['set_theme', 'set_fonts', 'set_colors', 'set_tone'].includes(op.op)) {
+    if (html && ['set_theme', 'set_fonts', 'set_colors', 'set_tone', 'apply_design'].includes(op.op)) {
       summary.push('Bỏ qua: bài giảng HTML không đổi được giao diện bằng lệnh.')
       continue
     }
     const theme = normalizeTheme(next.theme)
     switch (op.op) {
+      case 'apply_design': {
+        const d = designById(op.id)
+        if (!d) {
+          summary.push(`Bỏ qua: không tìm thấy thiết kế "${op.id}".`)
+          break
+        }
+        const baseTheme = themeById(d.themeId)
+        if (!baseTheme) {
+          summary.push(`Bỏ qua: không tìm thấy bộ màu "${d.themeId}".`)
+          break
+        }
+        const skin = skinById(d.id)
+        const targetTheme = skin ? themeWithSkinFonts(baseTheme, skin) : baseTheme
+        const total = next.slides.length
+        next = {
+          ...next,
+          theme: targetTheme,
+          style: d.stylePack ?? d.id,
+          design: d.id,
+          slides: next.slides.map((s, i) =>
+            applySkin(recomposeSlide(targetTheme, { ...s, decorKit: d.decorKit }), d.id, targetTheme, i, total),
+          ),
+        }
+        summary.push(`Áp dụng thiết kế "${d.name}".`)
+        break
+      }
       case 'set_theme': {
         const id = resolveThemeId(op.theme)
         const target = DECK_THEMES.find((t) => t.id === id)
@@ -371,7 +408,8 @@ export function applyEdits(deck: Deck, ops: SlideEditOp[]): EditResult {
           summary.push(`Bỏ qua: nội dung slide ${op.slide} chưa đủ để dùng bố cục ${op.layout}.`)
           break
         }
-        const updated: Slide = keepCustomBg(slide, { ...slide, layout: op.layout, tone, background: toneBackground(theme, tone), elements }, theme.fg)
+        const rawUpdated: Slide = keepCustomBg(slide, { ...slide, layout: op.layout, tone, background: toneBackground(theme, tone), elements }, theme.fg)
+        const updated = next.design ? applySkin(rawUpdated, next.design, theme, op.slide - 1, next.slides.length) : rawUpdated
         next = { ...next, slides: next.slides.map((s) => (s === slide ? updated : s)) }
         summary.push(`Đổi bố cục slide ${op.slide} sang ${op.layout}.`)
         break
@@ -389,8 +427,9 @@ export function applyEdits(deck: Deck, ops: SlideEditOp[]): EditResult {
         }
         const built = slideFromAi(check.page, theme)
         const at = Math.min(Math.max((op.position ?? next.slides.length + 1) - 1, 0), next.slides.length)
+        const styledBuilt = next.design ? applySkin(built, next.design, theme, at, next.slides.length + 1) : built
         const slides = [...next.slides]
-        slides.splice(at, 0, built)
+        slides.splice(at, 0, styledBuilt)
         next = { ...next, slides }
         summary.push(`Thêm slide mới (${op.layout}) tại vị trí ${at + 1}.`)
         break

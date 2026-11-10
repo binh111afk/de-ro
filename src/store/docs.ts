@@ -109,6 +109,8 @@ export interface Deck {
   slides: Slide[]
   /** phong cách AI đã chọn cho cả deck (từ dàn ý); chỉ để tái dùng khi sinh/sửa */
   style?: string
+  /** id bộ thiết kế (từ slideDesigns.ts) áp cho deck để các slide thêm sau giữ skin */
+  design?: string
   /** 'html' = bài giảng HTML của AI: chỉ trình chiếu trên web, không sửa trong trình soạn, không xuất PPT */
   format?: 'html'
   createdAt: string

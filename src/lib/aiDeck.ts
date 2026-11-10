@@ -10,6 +10,7 @@ import { DECK_THEMES, resolveThemeId } from './slideTheme'
 import { inferSubject, isSubjectId, subjectCatalogText } from './slideSubjects'
 import { isStylePackId, stylePackCatalogText } from './slideStyles'
 import { decorKitCatalogText, isDecorKitId } from './slideDecor'
+import { designById, designCatalogText } from './slideDesigns'
 
 export interface AiSlidePayload {
   title?: string
@@ -82,6 +83,8 @@ export interface DeckPlan {
   stylePack?: string
   /** bộ trang trí dùng xuyên suốt deck (lib/slideDecor.ts); id lạ bị bỏ, khi đó suy từ style pack/môn */
   decorKit?: string
+  /** bộ thiết kế mẫu nếu chọn theo bộ (lib/slideDesigns.ts) */
+  design?: string
   /** gói môn (lib/slideSubjects.ts): cấu trúc bài + luật nội dung; thiếu thì suy từ chủ đề */
   subject?: string
   mainIdeas: string[]
@@ -281,21 +284,29 @@ export function parseDeckPlan(raw: string): DeckPlan | null {
     }
     if (!slides.length) continue
 
+    const designId = text(source.design, 40)
+    const design = designById(designId) ?? designById(text(source.style, 80)) ?? designById(text(source.theme, 40))
     const themeId = text(source.theme, 40)
     const packId = text(source.stylePack, 40)
     const title = text(source.title, 160)
     const subjectId = text(source.subject, 40)
     const kitId = text(source.decorKit, 40)
+
+    const resolvedTheme = resolveThemeId(themeId) ?? (design ? design.themeId : undefined)
+    const resolvedPack = isStylePackId(packId) ? packId : (design?.stylePack && isStylePackId(design.stylePack) ? design.stylePack : undefined)
+    const resolvedKit = isDecorKitId(kitId) ? kitId : (design?.decorKit && isDecorKitId(design.decorKit) ? design.decorKit : undefined)
+
     return {
       title,
-      theme: resolveThemeId(themeId),
-      ...(isStylePackId(packId) ? { stylePack: packId } : {}),
-      ...(isDecorKitId(kitId) ? { decorKit: kitId } : {}),
+      theme: resolvedTheme,
+      ...(design ? { design: design.id } : {}),
+      ...(resolvedPack ? { stylePack: resolvedPack } : {}),
+      ...(resolvedKit ? { decorKit: resolvedKit } : {}),
       subject: isSubjectId(subjectId)
         ? subjectId
         : inferSubject([title, text(source.audience, 120), ...slides.map((s) => s.title)].join(' ')),
       audience: text(source.audience, 120),
-      style: text(source.style, 600),
+      style: text(source.style, 600) ?? design?.description,
       mainIdeas: textList(source.mainIdeas, 6, 160),
       slides: enforceRhythm(slides),
     }
@@ -314,6 +325,8 @@ export function slideCatalogText(): string {
       (theme) =>
         `- ${theme.id}: ${theme.name}${theme.vibe ? ` — ${theme.vibe}` : ''}${theme.tags?.length ? ` (gợi ý: ${theme.tags.join(', ')})` : ''}${theme.dark ? ' — nền tối' : ''}`,
     ),
+    '',
+    designCatalogText(),
     '',
     stylePackCatalogText(),
     '',
