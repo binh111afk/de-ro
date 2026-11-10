@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
-import { LogOut, Menu, X } from 'lucide-react'
+import { LogOut, Menu, MessageSquare, X } from 'lucide-react'
 import { cn } from '@/lib/cn'
-import { Button } from '@/components/ui'
+import { Button, inputClass } from '@/components/ui'
 import { signOut } from '@/lib/auth'
 import { useSession } from '@/lib/useSession'
+import { submitFeedback } from '@/lib/community'
+import { dialog } from '@/components/Dialog'
 
 /**
  * Thanh nav chính — chỉ 4 mục, mỗi mục nằm trên MỘT dòng (không xuống
@@ -200,6 +202,40 @@ export function Header() {
 }
 
 export function Footer() {
+  const session = useSession()
+  const [feedbackOpen, setFeedbackOpen] = useState(false)
+  const [email, setEmail] = useState('')
+  const [message, setMessage] = useState('')
+  const [sending, setSending] = useState(false)
+
+  const handleOpenFeedback = () => {
+    if (session?.user.email) setEmail(session.user.email)
+    setFeedbackOpen(true)
+  }
+
+  const handleSubmitFeedback = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!message.trim()) return
+    setSending(true)
+    try {
+      await submitFeedback({
+        message,
+        email: email || undefined,
+        page: typeof window !== 'undefined' ? window.location.pathname + window.location.search : undefined,
+      })
+      setFeedbackOpen(false)
+      setMessage('')
+      void dialog.alert('Cảm ơn bạn đã gửi góp ý! Chúng tôi sẽ tiếp thu và hoàn thiện hơn.', {
+        title: 'Đã gửi góp ý',
+      })
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Không gửi được góp ý, thử lại sau.'
+      void dialog.alert(msg, { title: 'Lỗi gửi góp ý' })
+    } finally {
+      setSending(false)
+    }
+  }
+
   return (
     <footer className="mt-24 overflow-hidden bg-[#f2f3f2]">
       {/* soft organic blob, not a hard divider */}
@@ -246,6 +282,16 @@ export function Footer() {
           <ul className="space-y-2.5 text-[13px] text-ink-3">
             <li>quanbinh@example.edu.vn</li>
             <li>Zalo: 0909 000 000</li>
+            <li>
+              <button
+                type="button"
+                onClick={handleOpenFeedback}
+                className="reveal inline-flex items-center gap-1.5 font-medium text-clay hover:underline"
+              >
+                <MessageSquare className="size-3.5" />
+                <span>Gửi góp ý</span>
+              </button>
+            </li>
           </ul>
         </div>
       </div>
@@ -255,9 +301,82 @@ export function Footer() {
           <p className="text-[12px] text-ink-4">
             © 2026 đề rõ — Dữ liệu mẫu phục vụ mục đích trình diễn.
           </p>
-          <p className="text-[12px] font-semibold text-ink-3">Dành cho giáo viên Việt Nam</p>
+          <div className="flex items-center gap-4">
+            <button
+              type="button"
+              onClick={handleOpenFeedback}
+              className="text-[12px] font-medium text-ink-3 hover:text-ink hover:underline"
+            >
+              Hòm thư góp ý
+            </button>
+            <p className="text-[12px] font-semibold text-ink-3">Dành cho giáo viên Việt Nam</p>
+          </div>
         </div>
       </div>
+
+      {feedbackOpen ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 p-4 backdrop-blur-xs">
+          <div
+            className="w-full max-w-md rounded-[10px] border border-line bg-surface p-6 shadow-float anim-sheet"
+            role="dialog"
+            aria-modal="true"
+          >
+            <div className="flex items-center justify-between border-b border-line pb-3">
+              <div className="flex items-center gap-2">
+                <MessageSquare className="size-4 text-clay" />
+                <h3 className="font-display text-[16px] font-bold text-ink">Góp ý cho Đề Rõ</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setFeedbackOpen(false)}
+                className="rounded-full p-1 text-ink-3 hover:bg-sunken hover:text-ink"
+                aria-label="Đóng"
+              >
+                <X className="size-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmitFeedback} className="mt-4 space-y-4 text-[13.5px]">
+              <div>
+                <label className="mb-1 block font-medium text-ink-2">
+                  Email của bạn <span className="font-normal text-ink-4">(tùy chọn)</span>
+                </label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="name@example.com"
+                  className={`${inputClass} w-full text-[13.5px]`}
+                />
+              </div>
+
+              <div>
+                <label className="mb-1 block font-medium text-ink-2">
+                  Nội dung góp ý <span className="text-clay">*</span>
+                </label>
+                <textarea
+                  required
+                  rows={4}
+                  maxLength={2000}
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="Chia sẻ nhận xét, báo lỗi hoặc tính năng bạn mong muốn..."
+                  className={`${inputClass} w-full resize-none py-2 text-[13.5px]`}
+                />
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2">
+                <Button type="button" variant="outline" size="sm" onClick={() => setFeedbackOpen(false)} disabled={sending}>
+                  Huỷ
+                </Button>
+                <Button type="submit" variant="clay" size="sm" disabled={sending}>
+                  {sending ? 'Đang gửi…' : 'Gửi góp ý'}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      ) : null}
     </footer>
   )
 }

@@ -49,9 +49,9 @@ async function rest<T>(
   return data as T
 }
 
-/** Danh sách đề đã đăng, mới nhất trước. */
+/** Danh sách đề đã đăng, mới nhất trước. Chỉ lấy đề có status = published. */
 export function listCommunityDocs(): Promise<CommunityRow[]> {
-  return rest<CommunityRow[]>(`/community_exams?select=${COLUMNS}&listed=eq.true&order=created_at.desc&limit=100`)
+  return rest<CommunityRow[]>(`/community_exams?select=${COLUMNS}&listed=eq.true&status=eq.published&order=created_at.desc&limit=100`)
 }
 
 /** Các đề người đang đăng nhập đã xuất bản (cả đề công khai và đề chỉ có link), mới nhất trước. */
@@ -126,4 +126,49 @@ export async function getStudentDoc(id: string): Promise<ExamDoc> {
   const data = (await res.json().catch(() => null)) as { doc?: ExamDoc; error?: string } | null
   if (!res.ok || !data?.doc) throw new Error(data?.error ?? 'Đề này không còn được xuất bản.')
   return data.doc
+}
+
+export interface ReportInput {
+  examId: string
+  reason: string
+  detail?: string
+}
+
+/** Gửi báo cáo vi phạm đề thi. Cần đăng nhập; gửi bằng token người dùng. */
+export async function submitReport(input: ReportInput): Promise<void> {
+  const s = await currentSession()
+  if (!s) throw new AuthError('Bạn cần đăng nhập để gửi báo cáo.')
+  await rest('/reports', {
+    method: 'POST',
+    token: s.access_token,
+    prefer: 'return=minimal',
+    body: {
+      exam_id: input.examId,
+      reporter_id: s.user.id,
+      reason: input.reason.trim(),
+      detail: input.detail?.trim() || null,
+    },
+  })
+}
+
+export interface FeedbackInput {
+  message: string
+  email?: string
+  page?: string
+}
+
+/** Gửi góp ý ý kiến người dùng. Khách hoặc người dùng đã đăng nhập đều gửi được. */
+export async function submitFeedback(input: FeedbackInput): Promise<void> {
+  const s = await currentSession()
+  await rest('/feedback', {
+    method: 'POST',
+    token: s?.access_token,
+    prefer: 'return=minimal',
+    body: {
+      user_id: s?.user?.id ?? null,
+      email: input.email?.trim() || (s?.user?.email ?? null),
+      message: input.message.trim(),
+      page: input.page || (typeof window !== 'undefined' ? window.location.pathname + window.location.search : null),
+    },
+  })
 }

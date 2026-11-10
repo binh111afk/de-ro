@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeft, ChevronDown, Download, FileText, MonitorPlay, Printer, Save, Sparkles } from 'lucide-react'
-import { Badge, Button, EmptyState } from '@/components/ui'
+import { ArrowLeft, ChevronDown, Download, FileText, Flag, MonitorPlay, Printer, Save, Sparkles, X } from 'lucide-react'
+import { Badge, Button, EmptyState, inputClass } from '@/components/ui'
 import { ExamEditor, A4_PORTRAIT_W } from '@/examEditor/ExamEditor'
 import { blocksToTipTap } from '@/examEditor/convert'
 import type { ExamBlock } from '@/data/docTypes'
@@ -13,7 +13,8 @@ import { formatPoints } from '@/lib/math'
 import { examToDoc } from '@/lib/exportDocx'
 import { examToDraft } from '@/lib/onlineExam'
 import { isRemoteExamId } from '@/lib/attempts'
-import { getCommunityDoc } from '@/lib/community'
+import { getCommunityDoc, submitReport } from '@/lib/community'
+import { currentSession } from '@/lib/auth'
 import { useDocStore } from '@/store/docs'
 import { useComposeStore } from '@/store/compose'
 import { useOnline } from '@/store/online'
@@ -101,6 +102,8 @@ export default function ExamView() {
             <span className="hidden sm:inline">Chuyển sang đề tương tác</span>
             <span className="sm:hidden">Làm đề</span>
           </Button>
+
+          <ReportExamButton examId={id ?? exam.id} />
         </div>
       </div>
 
@@ -227,5 +230,117 @@ function DocView({ exam }: { exam: Exam }) {
         <div className="h-[1123px] w-full max-w-[794px] animate-pulse rounded-[4px] bg-surface" />
       )}
     </div>
+  )
+}
+
+/** Nút báo cáo vi phạm nhỏ, kín đáo ở trang xem đề cộng đồng */
+function ReportExamButton({ examId }: { examId: string }) {
+  const [open, setOpen] = useState(false)
+  const [reason, setReason] = useState('Sai đáp án')
+  const [detail, setDetail] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+
+  const handleOpen = async () => {
+    const s = await currentSession()
+    if (!s) {
+      void dialog.alert('Bạn cần đăng nhập để gửi báo cáo vi phạm.', { title: 'Yêu cầu đăng nhập' })
+      return
+    }
+    setOpen(true)
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setSubmitting(true)
+    try {
+      await submitReport({ examId, reason, detail })
+      setOpen(false)
+      setDetail('')
+      void dialog.alert('Cảm ơn bạn đã gửi báo cáo. Ban quản trị sẽ sớm xem xét và xử lý.', {
+        title: 'Đã gửi báo cáo',
+      })
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Không gửi được báo cáo.'
+      void dialog.alert(msg, { title: 'Lỗi' })
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  return (
+    <>
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={handleOpen}
+        title="Báo cáo đề này"
+        className="text-ink-4 hover:text-clay"
+      >
+        <Flag className="size-3.5" />
+        <span className="hidden xl:inline">Báo cáo</span>
+      </Button>
+
+      {open ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 p-4 backdrop-blur-xs">
+          <div
+            className="w-full max-w-md rounded-[10px] border border-line bg-surface p-6 shadow-float anim-sheet"
+            role="dialog"
+            aria-modal="true"
+          >
+            <div className="flex items-center justify-between border-b border-line pb-3">
+              <h3 className="font-display text-[16px] font-bold text-ink">Báo cáo vi phạm đề thi</h3>
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                className="rounded-full p-1 text-ink-3 hover:bg-sunken hover:text-ink"
+                aria-label="Đóng"
+              >
+                <X className="size-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="mt-4 space-y-4 text-[13.5px]">
+              <div>
+                <label className="mb-1 block font-medium text-ink-2">Lý do báo cáo</label>
+                <select
+                  value={reason}
+                  onChange={(e) => setReason(e.target.value)}
+                  className={`${inputClass} w-full`}
+                >
+                  <option value="Sai đáp án">Sai đáp án</option>
+                  <option value="Nội dung không phù hợp">Nội dung không phù hợp</option>
+                  <option value="Spam">Spam</option>
+                  <option value="Vi phạm bản quyền">Vi phạm bản quyền</option>
+                  <option value="Khác">Khác</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="mb-1 block font-medium text-ink-2">
+                  Chi tiết vi phạm <span className="font-normal text-ink-4">(tùy chọn)</span>
+                </label>
+                <textarea
+                  rows={4}
+                  maxLength={1000}
+                  value={detail}
+                  onChange={(e) => setDetail(e.target.value)}
+                  placeholder="Mô tả cụ thể câu hỏi bị sai hoặc vấn đề gặp phải..."
+                  className={`${inputClass} w-full resize-none py-2`}
+                />
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2">
+                <Button type="button" variant="outline" size="sm" onClick={() => setOpen(false)} disabled={submitting}>
+                  Huỷ
+                </Button>
+                <Button type="submit" variant="clay" size="sm" disabled={submitting}>
+                  {submitting ? 'Đang gửi…' : 'Gửi báo cáo'}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      ) : null}
+    </>
   )
 }
