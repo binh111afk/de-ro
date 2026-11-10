@@ -12,17 +12,17 @@
 - Commit `0307b55`.
 
 ## Admin giai đoạn 1: phần logic xong, chưa có giao diện thật
-Bốn câu hỏi trong [plan-admin.md](../plan-admin.md) chưa hỏi được, nên đang dùng các mặc định sau:
+Người dùng đã chốt 4 câu hỏi (cuối phiên):
 
-| Câu hỏi | Mặc định đang dùng |
+| Câu hỏi | Đã chốt và làm |
 |---|---|
-| "Cộng điểm AI" | Đặt hạn mức tháng riêng (`quota.set`, ghi `ai_quota_overrides`), có thể chọn không giới hạn. Chưa làm kiểu tặng token dùng một lần. |
-| Admin là ai | Chưa thêm ai. Phải chạy SQL ở đầu migration. Đã có sẵn vai trò moderator, nhưng moderator hiện chỉ gọi được `me`. |
+| "Cộng điểm AI" | Nút **Cộng điểm** mở modal, nhập số điểm, **cộng dồn** vào số dư của tài khoản. Bảng `ai_credits` (balance). Hạn mức hiệu lực bằng hạn mức tháng cộng số dư. Dùng vượt hạn mức tháng thì `consume_ai_credits` trừ phần vượt vào số dư, rồi trừ khỏi `ai_usage` của tháng đó. Số dư không mất khi sang tháng. Action `credits.grant`, client `grantCredits`. Vẫn giữ `quota.set` (hạn mức riêng hoặc không giới hạn). |
+| Admin là ai | Email chủ app (xem git user), đã thêm vào `user_roles` bằng SQL chạy riêng, không ghi email vào repo. |
 | Ngân hàng câu hỏi | Chưa đụng (giai đoạn 4). |
-| Xoá tài khoản | Đề cộng đồng bị xoá theo, vì khoá ngoại đang `on delete cascade`. Muốn giữ lại dưới tên "ẩn danh" thì phải đổi khoá ngoại. |
+| Xoá tài khoản | Đề cộng đồng **giữ lại**, `owner_id` chuyển thành null (khoá ngoại `on delete set null`). Đề cộng đồng không lưu tên tác giả. |
 
 Đã làm:
-- `supabase/migrations/20261110_admin.sql`: bảng `user_roles`, bảng `admin_audit`, hàm `admin_user_stats`. **CHƯA áp lên Supabase**: lệnh `apply_migration` bị chặn trong chế độ tự động, người dùng phải duyệt.
+- `supabase/migrations/20261110_admin.sql`: bảng `user_roles`, bảng `admin_audit`, hàm `admin_user_stats`. Đã áp. Thêm `20261110b_admin_credits.sql` (ai_credits, grant/consume_ai_credits, giữ đề cộng đồng), cũng đã áp. Đã thử hàm trừ điểm trên DB trong giao dịch huỷ được: cộng 500 rồi 100 ra 600; dùng 1200 trên hạn mức 1000 thì số dư còn 400.
 - `server/admin.ts` + `api/admin.ts` (function thứ 9) + middleware trong `vite.config.ts` + `'admin'` trong `guard.ts`.
   - `requireAdmin`: không token trả 401, không đủ quyền trả 403.
   - Action: `me`, `users.list` (lọc email, phân trang, ghép số đề, slide, token), `users.ban`/`unban` (dùng `ban_duration` của Auth), `users.delete` (gõ lại email, xoá tệp R2 không còn ai dùng chung), `quota.get/set/clear`, `audit.list`.
@@ -34,8 +34,7 @@ Bốn câu hỏi trong [plan-admin.md](../plan-admin.md) chưa hỏi được, n
 - `docs/prompt-admin-ui.md`: prompt cho Antigravity dựng AdminLayout, UsersPanel, AuditPanel bằng dữ liệu giả.
 
 ## Việc tiếp theo
-1. Người dùng duyệt áp migration (`supabase/migrations/20261110_admin.sql`), rồi thêm email admin vào `user_roles`.
-2. Đưa `docs/prompt-admin-ui.md` cho Antigravity (nhánh `feat/admin-ui`). Agent làm xong thì review ở 1440px và 360px, rồi merge.
-3. Thử với tài khoản thật trên production. Máy dev thiếu `SUPABASE_SERVICE_ROLE_KEY` nên `/api/admin` trả 503.
-4. Hỏi lại 4 câu trong plan-admin.md, sửa phần mặc định nếu người dùng muốn khác.
-5. Giai đoạn 2 (bảo trì, `ai_calls`, health).
+1. Đưa `docs/prompt-admin-ui.md` cho Antigravity (nhánh `feat/admin-ui`), có cả modal Cộng điểm. Agent làm xong thì review ở 1440px và 360px, rồi merge.
+2. Thử trên production bằng tài khoản admin: `/admin`, cộng điểm, xem hạn mức trong AiPanel. Máy dev thiếu `SUPABASE_SERVICE_ROLE_KEY`.
+3. Trang Hồ sơ (`Profile.tsx`) vẫn hiện điểm AI giả (`CREDIT`). Nên nối với `ai_usage` và `ai_credits`.
+4. Giai đoạn 2 (bảo trì, `ai_calls`, health).

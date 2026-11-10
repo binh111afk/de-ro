@@ -32,6 +32,7 @@ globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
   if (url.includes(`/auth/v1/admin/users/${USER}`) && method === 'GET') return ok({ id: USER, email: 'u@x.vn', created_at: '' })
   if (url.includes('/auth/v1/admin/users/')) return ok({})
   if (url.includes('/rest/v1/user_documents')) return ok([])
+  if (url.includes('/rpc/grant_ai_credits')) return ok(1500)
   if (url.includes('/rest/v1/admin_audit')) return new Response(null, { status: 201 })
   return ok([])
 }) as typeof fetch
@@ -90,6 +91,10 @@ check('xoá sai email không gọi DELETE', !calls.some((c) => c.startsWith('DEL
 check('xoá đúng email → 200', (await hit({ action: 'users.delete', userId: USER, confirmEmail: 'U@x.vn' }, 'tAdmin')).status === 200)
 check('hạn mức âm → 400', (await hit({ action: 'quota.set', userId: USER, monthlyTokens: -5 }, 'tAdmin')).status === 400)
 check('hạn mức null (không giới hạn) → 200', (await hit({ action: 'quota.set', userId: USER, monthlyTokens: null }, 'tAdmin')).status === 200)
+check('moderator cộng điểm → 403', (await hit({ action: 'credits.grant', userId: USER, tokens: 1000 }, 'tMod')).status === 403)
+check('cộng điểm 0 → 400', (await hit({ action: 'credits.grant', userId: USER, tokens: 0 }, 'tAdmin')).status === 400)
+const g = await hit({ action: 'credits.grant', userId: USER, tokens: 1000 }, 'tAdmin')
+check('cộng điểm → 200, trả số dư cộng dồn', g.status === 200 && g.data.balance === 1500)
 
 if (fail) {
   console.error(`${fail} lỗi`)

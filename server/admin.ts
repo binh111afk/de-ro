@@ -193,8 +193,8 @@ const ACTIONS: Record<string, { need: Role; run: Handler }> = {
   },
 
   /**
-   * Xoá tài khoản: bắt gõ lại đúng email. Bảng con có `on delete cascade` (đề đồng bộ, đề cộng đồng,
-   * tài liệu, hạn mức) tự xoá theo. Tệp R2 xoá riêng, chỉ khi không còn tài khoản khác dùng chung tệp đó
+   * Xoá tài khoản: bắt gõ lại đúng email. Bảng con có `on delete cascade` (đề đồng bộ, tài liệu, hạn mức)
+   * tự xoá theo; đề cộng đồng được GIỮ, chỉ mất chủ (`owner_id` → null, migration 20261110b). Tệp R2 xoá riêng, chỉ khi không còn tài khoản khác dùng chung tệp đó
    * (tên tệp là hash nội dung nên hai người tải cùng tệp sẽ trùng key).
    */
   'users.delete': {
@@ -236,6 +236,23 @@ const ACTIONS: Record<string, { need: Role; run: Handler }> = {
     },
   },
 
+  /** cộng điểm AI: cộng dồn `tokens` vào số dư của tài khoản (không mất khi sang tháng) */
+  'credits.grant': {
+    need: 'admin',
+    run: async (ctx, b) => {
+      const id = needUser(b.userId)
+      const tokens = Math.floor(Number(b.tokens))
+      if (!(tokens > 0 && tokens <= 100_000_000)) throw new HttpError(400, 'Số điểm cộng phải là số nguyên dương.')
+      const note = str(b.note, 300)
+      const { data: balance } = await call<number>(ctx.s, '/rest/v1/rpc/grant_ai_credits', {
+        method: 'POST',
+        body: JSON.stringify({ p_user: id, p_tokens: tokens }),
+      })
+      await audit(ctx, 'credits.grant', id, { tokens, balance, note })
+      return { ok: true, balance: Number(balance) }
+    },
+  },
+
   /** bỏ hạn mức riêng: quay về mặc định AI_MONTHLY_TOKENS */
   'quota.clear': {
     need: 'admin',
@@ -251,9 +268,10 @@ const ACTIONS: Record<string, { need: Role; run: Handler }> = {
     need: 'admin',
     run: async ({ s }, b) => {
       const id = needUser(b.userId)
-      const [{ data: ov }, { data: use }] = await Promise.all([
+      const [{ data: ov }, { data: use }, { data: cr }] = await Promise.all([
         call<Array<{ monthly_tokens: number | null; note: string | null }>>(s, `/rest/v1/ai_quota_overrides?user_id=eq.${id}&select=monthly_tokens,note`),
         call<Array<{ tokens: number; requests: number }>>(s, `/rest/v1/ai_usage?user_id=eq.${id}&month=eq.${month()}&select=tokens,requests`),
+        call<Array<{ balance: number }>>(s, `/rest/v1/ai_credits?user_id=eq.${id}&select=balance`),
       ])
       const defaultLimit = Number(process.env.AI_MONTHLY_TOKENS) > 0 ? Number(process.env.AI_MONTHLY_TOKENS) : 150_000
       return {
@@ -261,6 +279,7 @@ const ACTIONS: Record<string, { need: Role; run: Handler }> = {
         defaultLimit,
         usedThisMonth: Number(use[0]?.tokens ?? 0),
         requestsThisMonth: Number(use[0]?.requests ?? 0),
+        credits: Number(cr[0]?.balance ?? 0),
       }
     },
   },

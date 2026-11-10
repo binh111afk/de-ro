@@ -10,7 +10,7 @@ Dự án: web soạn đề thi tiếng Việt (React 19 + TypeScript + Vite 6 + 
 
 Trang `/admin` đã có sẵn phần logic. Việc của bạn **chỉ là giao diện**:
 
-- `src/lib/adminApi.ts`: mọi kiểu dữ liệu và hàm gọi API (`getMe`, `listUsers`, `banUser`, `unbanUser`, `deleteUser`, `getQuota`, `setQuota`, `clearQuota`, `listAudit`, `AUDIT_LABEL`). **Chỉ gọi các hàm này**, không tự `fetch`.
+- `src/lib/adminApi.ts`: mọi kiểu dữ liệu và hàm gọi API (`getMe`, `listUsers`, `banUser`, `unbanUser`, `deleteUser`, `getQuota`, `setQuota`, `clearQuota`, `grantCredits`, `listAudit`, `AUDIT_LABEL`). **Chỉ gọi các hàm này**, không tự `fetch`.
 - `src/pages/admin/AdminPage.tsx`: cổng kiểm quyền. Không có quyền thì hiện trang chủ (giữ nguyên hành vi này). Khi có quyền, thay đoạn "Giao diện đang được dựng" bằng `<AdminLayout me={me} />`.
 - Mở `http://127.0.0.1:5184/admin?mock=1` để xem với **dữ liệu giả** (57 người dùng, 3 dòng nhật ký). Không cần đăng nhập.
 
@@ -29,8 +29,9 @@ Trang `/admin` đã có sẵn phần logic. Việc của bạn **chỉ là giao 
 - Bấm một dòng mở **ngăn bên phải** (drawer) chi tiết người dùng:
   - Thông tin như trên.
   - **Hạn mức AI**: gọi `getQuota`. Hiện đã dùng / hạn mức (thanh tiến độ). Ô số "Hạn mức tháng (token)", nút "Không giới hạn", ô ghi chú, nút Lưu (`setQuota`), nút "Về mặc định" (`clearQuota`, chỉ hiện khi đang có `override`).
+  - **Cộng điểm AI**: hiện "Điểm cộng còn lại: `credits`". Nút **Cộng điểm** mở modal: một ô số "Số điểm cộng thêm (token)", ô ghi chú, nút Cộng. Gọi `grantCredits(userId, tokens, note)`, điểm cộng dồn vào số dư hiện có. Xong thì hiện số dư mới (`balance`). Số ≤ 0 thì nút tắt.
   - **Khoá tài khoản**: chọn thời hạn (1 ngày / 7 ngày / 30 ngày / Vô thời hạn → `hours` 24/168/720/không truyền), ô lý do, nút Khoá. Đang khoá thì hiện "Khoá đến …" và nút Mở khoá.
-  - **Xoá tài khoản** (vùng đỏ cuối ngăn): giải thích "Xoá vĩnh viễn tài khoản, đề đã đồng bộ, đề cộng đồng và tài liệu của người này. Không hoàn tác được." Ô "Gõ lại email để xác nhận", nút Xoá chỉ bật khi gõ đúng email.
+  - **Xoá tài khoản** (vùng đỏ cuối ngăn): giải thích "Xoá vĩnh viễn tài khoản, đề đã đồng bộ và tài liệu của người này. Đề đã đăng lên cộng đồng vẫn giữ lại. Không hoàn tác được." Ô "Gõ lại email để xác nhận", nút Xoá chỉ bật khi gõ đúng email.
   - Không hiện nút Khoá/Xoá với người có `role === 'admin'`.
 - Sau mỗi thao tác: thông báo ngắn, tải lại dòng / danh sách. Lỗi (`AdminError`) hiện bằng `dialog.alert` (`src/components/Dialog`) với `err.message`.
 - Hỏi xác nhận trước khi Khoá bằng `dialog.confirm` (xem cách dùng trong code có sẵn).

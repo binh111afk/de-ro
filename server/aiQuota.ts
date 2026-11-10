@@ -16,7 +16,8 @@ const num = (v: string | undefined, d: number) => {
 export const MONTHLY_LIMIT = () => num(process.env.AI_MONTHLY_TOKENS, 150_000)
 const GUEST_DAILY_LIMIT = () => num(process.env.AI_GUEST_DAILY_TOKENS, 30_000)
 
-export type Quota = { used: number; limit: number; scope: 'month' | 'day' }
+/** limit = hạn mức tháng (base) + số dư điểm admin cộng (credits); dùng vượt base thì trừ vào credits */
+export type Quota = { used: number; limit: number; scope: 'month' | 'day'; base?: number; credits?: number }
 
 const month = () => new Date().toISOString().slice(0, 7)
 const day = () => new Date().toISOString().slice(0, 10)
@@ -36,15 +37,18 @@ export async function readQuota(userId: string | null, ip: string): Promise<Quot
   if (!s) return null
   try {
     const uid = encodeURIComponent(userId)
-    const [ov, r] = await Promise.all([
+    const [ov, r, cr] = await Promise.all([
       fetch(`${s.base}/rest/v1/ai_quota_overrides?user_id=eq.${uid}&select=monthly_tokens`, { headers: s.headers }),
       fetch(`${s.base}/rest/v1/ai_usage?user_id=eq.${uid}&month=eq.${month()}&select=tokens`, { headers: s.headers }),
+      fetch(`${s.base}/rest/v1/ai_credits?user_id=eq.${uid}&select=balance`, { headers: s.headers }),
     ])
     // ngoại lệ: monthly_tokens null = không giới hạn, số = hạn mức riêng
     const override = ov.ok ? ((await ov.json()) as Array<{ monthly_tokens: number | null }>)[0] : undefined
     if (override && override.monthly_tokens == null) return null
     const rows = r.ok ? ((await r.json()) as Array<{ tokens: number }>) : []
-    return { used: Number(rows[0]?.tokens ?? 0), limit: override ? Number(override.monthly_tokens) : MONTHLY_LIMIT(), scope: 'month' }
+    const base = override ? Number(override.monthly_tokens) : MONTHLY_LIMIT()
+    const credits = cr.ok ? Number(((await cr.json()) as Array<{ balance: number }>)[0]?.balance ?? 0) : 0
+    return { used: Number(rows[0]?.tokens ?? 0), limit: base + credits, scope: 'month', base, credits }
   } catch {
     // Supabase lỗi thì không chặn người dùng (đếm lại khi cộng được)
     return { used: 0, limit: MONTHLY_LIMIT(), scope: 'month' }
@@ -69,7 +73,20 @@ export async function addUsage(userId: string | null, ip: string, tokens: number
       headers: s.headers,
       body: JSON.stringify({ p_user: userId, p_month: month(), p_tokens: Math.round(tokens) }),
     })
-    if (r.ok) return { ...prev, used: Number(await r.json()) }
+    if (r.ok) {
+      const used = Number(await r.json())
+      // vượt hạn mức tháng mà còn điểm cộng: trả phần vượt bằng điểm cộng (trừ cả hai phía, nguyên tử)
+      if (prev.credits && prev.base != null && used > prev.base) {
+        const c = await fetch(`${s.base}/rest/v1/rpc/consume_ai_credits`, {
+          method: 'POST',
+          headers: s.headers,
+          body: JSON.stringify({ p_user: userId, p_month: month(), p_base: prev.base }),
+        })
+        const row = c.ok ? ((await c.json()) as Array<{ used: number; balance: number }>)[0] : undefined
+        if (row) return { ...prev, used: Number(row.used), credits: Number(row.balance), limit: prev.base + Number(row.balance) }
+      }
+      return { ...prev, used }
+    }
   } catch {
     /* bỏ qua: không làm hỏng câu trả lời AI vì lỗi đếm */
   }

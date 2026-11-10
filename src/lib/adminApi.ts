@@ -41,6 +41,8 @@ export interface UserQuota {
   defaultLimit: number
   usedThisMonth: number
   requestsThisMonth: number
+  /** số dư điểm cộng (token), cộng thêm vào hạn mức tháng, không mất khi sang tháng */
+  credits: number
 }
 
 export interface AuditEntry {
@@ -139,7 +141,7 @@ export function unbanUser(userId: string): Promise<{ ok: true }> {
   return post('users.unban', { userId })
 }
 
-/** Xoá vĩnh viễn. confirmEmail phải trùng email tài khoản. Đề cộng đồng của họ bị xoá theo. */
+/** Xoá vĩnh viễn. confirmEmail phải trùng email tài khoản. Đề cộng đồng của họ vẫn giữ (không còn chủ). */
 export function deleteUser(userId: string, confirmEmail: string): Promise<{ ok: true; filesRemoved: number }> {
   if (isAdminMock()) {
     const i = MOCK_USERS.findIndex((x) => x.id === userId)
@@ -153,9 +155,21 @@ export function deleteUser(userId: string, confirmEmail: string): Promise<{ ok: 
 export function getQuota(userId: string): Promise<UserQuota> {
   if (isAdminMock()) {
     const u = MOCK_USERS.find((x) => x.id === userId)
-    return wait({ override: null, defaultLimit: 150_000, usedThisMonth: u?.tokensThisMonth ?? 0, requestsThisMonth: 12 })
+    return wait({ override: null, defaultLimit: 150_000, usedThisMonth: u?.tokensThisMonth ?? 0, requestsThisMonth: 12, credits: mockCredits.get(userId) ?? 0 })
   }
   return post('quota.get', { userId })
+}
+
+const mockCredits = new Map<string, number>()
+
+/** Cộng điểm AI: cộng dồn `tokens` vào số dư của người đó. Trả số dư mới. */
+export function grantCredits(userId: string, tokens: number, note = ''): Promise<{ ok: true; balance: number }> {
+  if (isAdminMock()) {
+    const balance = (mockCredits.get(userId) ?? 0) + Math.floor(tokens)
+    mockCredits.set(userId, balance)
+    return wait({ ok: true as const, balance })
+  }
+  return post('credits.grant', { userId, tokens, note })
 }
 
 /** monthlyTokens null = không giới hạn */
@@ -180,5 +194,6 @@ export const AUDIT_LABEL: Record<string, string> = {
   'users.unban': 'Mở khoá tài khoản',
   'users.delete': 'Xoá tài khoản',
   'quota.set': 'Đặt hạn mức AI',
+  'credits.grant': 'Cộng điểm AI',
   'quota.clear': 'Bỏ hạn mức riêng',
 }

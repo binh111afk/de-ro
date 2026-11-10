@@ -1,6 +1,6 @@
 # context.md — đề rõ (trình soạn đề thi)
 
-Bản đồ ngắn của dự án. **Chỉ đọc file này khi bắt đầu phiên**; các file khác mở khi việc đang làm cần tới (bảng "Đọc thêm khi nào" bên dưới). Cập nhật: 10/11/2026 (phiên 28). **Phiên 29 bắt đầu bằng: áp migration admin (người dùng duyệt) + thêm email admin; giao [docs/prompt-admin-ui.md](docs/prompt-admin-ui.md) cho Antigravity rồi review, nối; hỏi 4 câu cuối [docs/plan-admin.md](docs/plan-admin.md). Xem [phiên 28](docs/handoff/phien-28.md).**
+Bản đồ ngắn của dự án. **Chỉ đọc file này khi bắt đầu phiên**; các file khác mở khi việc đang làm cần tới (bảng "Đọc thêm khi nào" bên dưới). Cập nhật: 10/11/2026 (phiên 28). **Phiên 29 bắt đầu bằng: giao [docs/prompt-admin-ui.md](docs/prompt-admin-ui.md) cho Antigravity rồi review, nối API; thử /admin trên production. Migration admin đã áp, admin đã thêm. Xem [phiên 28](docs/handoff/phien-28.md).**
 
 ## Dự án
 
