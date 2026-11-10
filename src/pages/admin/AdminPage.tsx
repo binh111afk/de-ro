@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 import Home from '@/pages/Home'
 import { getMe, isAdminMock, type AdminMe } from '@/lib/adminApi'
 import { useSession } from '@/lib/useSession'
+import AdminLayout from './AdminLayout'
 
 export default function AdminPage() {
   const session = useSession()
@@ -25,10 +26,5 @@ export default function AdminPage() {
 
   if (me === 'loading') return <div className="flex min-h-[50vh] items-center justify-center text-[13px] text-ink-3">Đang tải…</div>
   if (!me) return <Home />
-  return (
-    <div className="mx-auto max-w-[1080px] px-5 py-10">
-      <h1 className="text-[22px] font-bold text-ink">Quản trị</h1>
-      <p className="mt-2 text-[14px] text-ink-3">Quyền: {me.role}. Giao diện đang được dựng.</p>
-    </div>
-  )
+  return <AdminLayout me={me} />
 }
