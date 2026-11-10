@@ -7,7 +7,9 @@ import { cn } from '@/lib/cn'
 import Home from '@/pages/Home'
 import { consumeAuthRedirect } from '@/lib/auth'
 import { startSync } from '@/lib/sync'
+import { startPresence } from '@/lib/presence'
 import { useSession } from '@/lib/useSession'
+import { Analytics } from '@vercel/analytics/react'
 
 // mỗi trang một chunk riêng: học sinh mở link làm đề không phải tải trình soạn slide, đồ hoạ, xuất Word…
 const pages = {
@@ -86,18 +88,20 @@ export default function App() {
     consumeAuthRedirect().catch(() => {})
   }, [])
 
-  // đăng nhập thì đồng bộ đề, slide và lịch sử tạo đề với tài khoản; đăng xuất thì dừng
+  // đăng nhập thì đồng bộ dữ liệu và gửi nhịp đang online; đăng xuất thì dừng
   const userId = useSession()?.user.id
   useEffect(() => {
     if (!userId) return
-    let stop: (() => void) | undefined
+    let stopSync: (() => void) | undefined
     let dead = false
     startSync()
-      .then((fn) => (dead ? fn() : (stop = fn)))
+      .then((fn) => (dead ? fn() : (stopSync = fn)))
       .catch(() => {})
+    const stopPresence = startPresence()
     return () => {
       dead = true
-      stop?.()
+      stopSync?.()
+      stopPresence()
     }
   }, [userId])
 
@@ -140,6 +144,7 @@ export default function App() {
         </SiteStatus>
       </main>
       {fullscreen || authPage ? null : <Footer />}
+      {import.meta.env.PROD ? <Analytics /> : null}
     </div>
   )
 }
