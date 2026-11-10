@@ -2,7 +2,7 @@
 
 Chỉ mở phiên liên quan đến việc đang làm. Mới nhất ở trên.
 
-- [phiên 27](phien-27.md): gộp 3 nhánh agent; tương phản chữ slide; sửa mẫu Trẻ trung/Học thuật (font tiếng Việt); tab Thiết kế + pop-up xem trước; FOSTA dự phòng 2; so model; **Xáo đề (chưa commit)**
+- [phiên 27](phien-27.md): gộp 3 nhánh agent; tương phản chữ slide; sửa mẫu Trẻ trung/Học thuật (font tiếng Việt); tab Thiết kế + pop-up xem trước; FOSTA dự phòng 2; so model; **Xáo đề (chưa thử đề thật)**
 - [phiên 26](phien-26.md): **3 nhánh agent chờ review/merge** (kéo nhãn, mẫu slide, mobile); công cụ vẽ chống che chữ; cột trái; **dự phòng AI NightRouter** + script so sánh model
 - [phiên 23](phien-23.md): **ngân hàng 1198 câu** (GLM soạn, Claude kiểm), chip + lọc độ khó, môn GDKT&PL; soạn thêm câu xem `scripts/bank/HUONG_DAN_SOAN.md`
 - [phiên 22](phien-22.md): hình câu trắc nghiệm nằm giữa đề bài và A–D (trình soạn, in, Word); **chuỗi model dự phòng** (opencode → Mercury 3 → Agnes → xkiro, lỗi từng model); **hạn mức token AI theo tài khoản** (`ai_usage`, `ai_quota_overrides`); so sánh nhà cung cấp AI và gói tháng

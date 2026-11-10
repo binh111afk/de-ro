@@ -26,7 +26,7 @@ Gộp trên nhánh `tich-hop-27` (worktree `../dethinhbien-main`), thứ tự ke
 | `e31be0c` | Tab Thiết kế thành lưới 2 cột (chỉ ảnh bìa + tên). Bấm mẫu mở pop-up xem trước: mũi tên ‹ ›, bộ đếm, dải ảnh nhỏ, nút Thêm vào bài. Bố cục thống kê: thẻ không khớp từ khoá lấy icon chung để cả hàng đều có icon. |
 | `f2db7e8` | Mục lục Soạn đề (`NavPanel`) và Tạo đề online vẽ công thức bằng `MathText`. Chưa nhìn tận mắt một mục lục có công thức. |
 
-## Đang dở: công cụ Xáo đề (CHƯA commit)
+## Đang dở: công cụ Xáo đề (đã push `7d963da`, chưa thử với đề thật)
 
 Tab Công cụ → nhóm **Khác** → **Xáo đề**. Nhóm Khác chỉ hiện khi `ToolsPanel` nhận prop `examDoc`, tức chỉ ở soạn đề; soạn slide và ô ảnh câu hỏi không có.
 
@@ -42,7 +42,7 @@ Tab Công cụ → nhóm **Khác** → **Xáo đề**. Nhóm Khác chỉ hiện 
 Còn phải làm:
 1. Thử với đề thật do AI soạn, có khối `answerKey` và hướng dẫn chấm, nhất là phần đúng/sai và trả lời ngắn.
 2. Thử bản PDF (hộp thoại in).
-3. Commit + push.
+3. Sửa lỗi nếu có rồi push.
 
 Ý tưởng chưa làm: cho người dùng gõ danh sách mã tuỳ ý (hiện chỉ có mã đầu + số đề), và trộn từ ngân hàng câu hỏi.
 

@@ -1,6 +1,6 @@
 # context.md — đề rõ (trình soạn đề thi)
 
-Bản đồ ngắn của dự án. **Chỉ đọc file này khi bắt đầu phiên**; các file khác mở khi việc đang làm cần tới (bảng "Đọc thêm khi nào" bên dưới). Cập nhật: 10/11/2026 (phiên 27). **Phiên 28 bắt đầu bằng: thử công cụ Xáo đề (chưa commit) với đề AI thật + bản PDF rồi commit, xem [phiên 27](docs/handoff/phien-27.md).**
+Bản đồ ngắn của dự án. **Chỉ đọc file này khi bắt đầu phiên**; các file khác mở khi việc đang làm cần tới (bảng "Đọc thêm khi nào" bên dưới). Cập nhật: 10/11/2026 (phiên 27). **Phiên 28 bắt đầu bằng: thử công cụ Xáo đề (đã push) với đề AI thật + bản PDF, xem [phiên 27](docs/handoff/phien-27.md).**
 
 ## Dự án
 
