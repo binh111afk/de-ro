@@ -142,6 +142,9 @@ function providerConfig() {
     mercuryApiKey: process.env.MERCURY_API_KEY?.trim() || '',
     mercuryBaseURL: assertAllowedUrl((process.env.MERCURY_BASE_URL?.trim() || 'https://api.inceptionlabs.ai/v1').replace(/\/+$/, '')).toString().replace(/\/+$/, ''),
     mercuryModel: process.env.MERCURY_MODEL?.trim() || 'mercury-3',
+    fostaApiKey: process.env.FOSTA_API_KEY?.trim() || '',
+    fostaBaseURL: assertAllowedUrl((process.env.FOSTA_BASE_URL?.trim() || 'https://codex.fosta.app/v1').replace(/\/+$/, '')).toString().replace(/\/+$/, ''),
+    fostaModel: process.env.FOSTA_MODEL?.trim() || 'gpt-6-luna',
     // ZCode provider config is the source of truth for local Xkiro fallback;
     // stale shell/.env keys must not shadow the currently selected provider key.
     xkiroApiKey: xkiro.apiKey || process.env.XKIRO_API_KEY?.trim() || '',
@@ -196,13 +199,13 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
     } catch (err) {
       return json(res, 500, { error: err instanceof Error ? err.message : String(err) })
     }
-    if (!prov.apiKey && !prov.xkiroApiKey && !prov.anthropicApiKey && !prov.mercuryApiKey && !prov.nightrouterApiKey) {
+    if (!prov.apiKey && !prov.xkiroApiKey && !prov.anthropicApiKey && !prov.mercuryApiKey && !prov.fostaApiKey && !prov.nightrouterApiKey) {
       return json(res, 500, {
         error: 'Chưa cấu hình LLM_API_KEY, MERCURY_API_KEY, XKIRO_API_KEY, NIGHTROUTER_API_KEY hoặc ANTHROPIC_API_KEY. Kiểm tra file .env/config provider.',
       })
     }
 
-    // Thứ tự thử: opencode (model chính [+ LLM_FALLBACK_MODEL nếu đặt]) → Mercury → xkiro → NightRouter → Claude (cuối cùng).
+    // Thứ tự thử: opencode (model chính [+ LLM_FALLBACK_MODEL nếu đặt]) → Mercury → FOSTA (gpt-6-luna) → xkiro → NightRouter → Claude (cuối cùng).
     // Provider dự phòng nào không có key thì bỏ qua.
     // `opencode` = gửi x-opencode-session + reasoning_effort (chỉ gateway opencode hiểu).
     // `anthropic`: gọi Claude qua SDK (Messages API), không qua fetch kiểu OpenAI.
@@ -212,6 +215,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
     const wantsBackup =
       (!!prov.anthropicApiKey && body.model === prov.anthropicModel) ||
       (!!prov.mercuryApiKey && body.model === prov.mercuryModel) ||
+      (!!prov.fostaApiKey && body.model === prov.fostaModel) ||
       (!!prov.nightrouterApiKey && body.model === prov.nightrouterModel)
     if (prov.apiKey && !wantsBackup) {
       for (const m of [body.model ?? prov.model, prov.fallbackModel]) {
@@ -219,6 +223,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
       }
     }
     if (prov.mercuryApiKey) targets.push({ model: prov.mercuryModel, url: `${prov.mercuryBaseURL}/chat/completions`, key: prov.mercuryApiKey, opencode: false })
+    if (prov.fostaApiKey) targets.push({ model: prov.fostaModel, url: `${prov.fostaBaseURL}/chat/completions`, key: prov.fostaApiKey, opencode: false })
     if (prov.xkiroApiKey) {
       for (const m of [prov.xkiroModel, DEFAULT_XKIRO_FALLBACK_MODEL]) {
         targets.push({ model: m, url: `${prov.xkiroBaseURL}/chat/completions`, key: prov.xkiroApiKey, opencode: false })
