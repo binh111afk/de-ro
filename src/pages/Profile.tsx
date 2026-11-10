@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
-import { Navigate } from 'react-router-dom'
-import { LogOut } from 'lucide-react'
+import { Navigate, useNavigate } from 'react-router-dom'
+import { LogOut, Shield } from 'lucide-react'
+import { getMe, type AdminMe } from '@/lib/adminApi'
 import { Badge, Button, inputClass } from '@/components/ui'
 import { signOut, updateProfile, type Session } from '@/lib/auth'
 import { uploadImage } from '@/lib/mediaStore'
@@ -27,10 +28,43 @@ function ProfilePage({ user }: { user: Session['user'] }) {
       </aside>
 
       <div className="stagger flex min-w-0 flex-col gap-6">
+        <AdminCard />
         <EditCard user={user} />
         <CreditCard />
       </div>
     </div>
+  )
+}
+
+/** Chỉ hiện với admin/kiểm duyệt (server xác nhận qua getMe); người thường không thấy gì. */
+function AdminCard() {
+  const [me, setMe] = useState<AdminMe | null>(null)
+  const navigate = useNavigate()
+  useEffect(() => {
+    let alive = true
+    getMe()
+      .then((m) => alive && setMe(m))
+      .catch(() => {})
+    return () => {
+      alive = false
+    }
+  }, [])
+  if (!me) return null
+  return (
+    <section className="flex flex-wrap items-center justify-between gap-4 rounded-[8px] bg-surface p-6 shadow-lift">
+      <div className="flex items-center gap-3">
+        <div className="flex size-10 items-center justify-center rounded-[6px] bg-clay text-white">
+          <Shield className="size-5" />
+        </div>
+        <div>
+          <h2 className="text-[16px] font-semibold text-ink">Bảng điều khiển</h2>
+          <p className="text-[13px] text-ink-3">Bạn có quyền {me.role === 'admin' ? 'quản trị viên' : 'kiểm duyệt'}.</p>
+        </div>
+      </div>
+      <Button variant="primary" size="sm" onClick={() => navigate('/admin')}>
+        Mở bảng điều khiển
+      </Button>
+    </section>
   )
 }
 
