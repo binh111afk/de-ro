@@ -3,7 +3,7 @@ import type { Exam, Question } from '@/data/types'
 import { formatPoints } from '@/lib/mathText'
 
 /** Đề tương tác (`Exam`) → khối soạn (`ExamDoc`) để dùng chung bộ xuất .docx với trình soạn. */
-export function examToDoc(exam: Exam): ExamDoc {
+export function examToDoc(exam: Exam, opts: { withAnswers?: boolean } = {}): ExamDoc {
   const blocks: ExamBlock[] = [
     { type: 'paragraph', text: [{ text: exam.school || 'TRƯỜNG THCS ...', marks: [{ type: 'bold' }] }], format: { align: 'center' } },
     { type: 'title', text: exam.title },
@@ -53,6 +53,26 @@ export function examToDoc(exam: Exam): ExamDoc {
         text: withImage(q, [{ text }, { text: ` (${formatPoints(q.points)}đ)`, marks: [{ type: 'italic' }] }]),
         ...side(q),
         options: (q.options ?? []).map((o) => ({ label: o.key, text: keepMath(o.text) })),
+      })
+    }
+  }
+  // mở vào trình soạn: kèm bảng đáp án + lời giải tự luận ở cuối (như đề AI soạn), để sửa tiếp và Xáo đề đọc được đáp án
+  if (opts.withAnswers) {
+    const all = exam.sections.flatMap((s) => s.questions)
+    const items = all
+      .map((q, i) => ({ no: i + 1, q }))
+      .filter(({ q }) => q.type !== 'tu-luan' && q.type !== 'tu-luan-dong' && q.answer?.trim())
+      .map(({ no, q }) => ({ no, answer: q.answer!.trim() }))
+    const essays = all
+      .map((q, i) => ({ no: i + 1, q }))
+      .filter(({ q }) => (q.type === 'tu-luan' || q.type === 'tu-luan-dong') && q.solution?.some((l) => l.trim()))
+    if (items.length || essays.length) blocks.push({ type: 'heading', text: 'ĐÁP ÁN VÀ HƯỚNG DẪN CHẤM', level: 1 })
+    if (items.length) blocks.push({ type: 'answerKey', items })
+    for (const { no, q } of essays) {
+      blocks.push({
+        type: 'rubric',
+        title: `Bài ${no}`,
+        items: q.solution!.filter((l) => l.trim()).map((l, i) => ({ label: `${i + 1}.`, text: keepMath(l) })),
       })
     }
   }

@@ -141,7 +141,7 @@ function SaveMenu({ exam }: { exam: Exam }) {
     try {
       // đề đăng từ trình soạn: lấy nguyên khối gốc để giữ định dạng; đề tạo online thì dựng lại từ câu hỏi
       const remote = isRemoteExamId(exam.importedFrom) ? await getCommunityDoc(exam.importedFrom).catch(() => null) : null
-      const base = remote?.blocks.length ? remote : examToDoc(exam)
+      const base = remote?.blocks.length ? remote : examToDoc(exam, { withAnswers: true })
       const now = new Date().toISOString()
       const doc = { ...base, id: Math.random().toString(36).slice(2, 10), online: undefined, kind: 'exam' as const, createdAt: now, updatedAt: now }
       useDocStore.getState().saveDocById(doc)
