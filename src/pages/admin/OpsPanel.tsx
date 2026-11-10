@@ -36,6 +36,7 @@ import {
 } from '@/lib/adminApi'
 import { formatNumber, formatViDateTime } from './adminUtils'
 import { cn } from '@/lib/cn'
+import { DbStatusCard } from './DbStatusCard'
 
 interface OpsPanelProps {
   me?: AdminMe
@@ -662,6 +663,8 @@ export function OpsPanel({ me: _me }: OpsPanelProps) {
             </Button>
           </div>
         </div>
+
+        <DbStatusCard />
 
         {/* Trạng thái đang kiểm tra */}
         {runningHealth ? (

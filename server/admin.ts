@@ -11,6 +11,7 @@ import { json, readBody } from './http.js'
 import { deleteR2Object, pingR2, r2KeyFromUrl } from './r2.js'
 import { pingProviders } from './llmProxy.js'
 import { _resetOpsCache } from './ops.js'
+import { readDbMetrics } from './dbMetrics.js'
 
 export type Role = 'admin' | 'moderator'
 
@@ -381,6 +382,28 @@ const ACTIONS: Record<string, { need: Role; run: Handler }> = {
         `/rest/v1/ai_calls?ok=eq.false&select=id,user_id,model,provider,error,ms,created_at&order=created_at.desc&limit=${limit}`,
       )
       return { items: data.map((r) => ({ id: r.id, userId: r.user_id, model: r.model, provider: r.provider, error: r.error, ms: r.ms, createdAt: r.created_at })) }
+    },
+  },
+
+  /** Số đo máy chủ Postgres (CPU, RAM, ổ đĩa, kết nối). Không tốn tiền, giao diện tự gọi khi mở trang. */
+  'db.metrics': {
+    need: 'admin',
+    run: async ({ s }) => {
+      const key = process.env.SUPABASE_SERVICE_ROLE_KEY ?? ''
+      let metrics
+      try {
+        metrics = await readDbMetrics(s.base, key)
+      } catch (err) {
+        throw new HttpError(502, err instanceof Error ? err.message : String(err))
+      }
+      return {
+        name: 'Primary Database',
+        // vùng và gói máy không có trong metrics; đổi gói thì sửa env SUPABASE_REGION / SUPABASE_COMPUTE
+        region: process.env.SUPABASE_REGION || 'ap-southeast-1',
+        compute: process.env.SUPABASE_COMPUTE || 'Nano',
+        checkedAt: new Date().toISOString(),
+        ...metrics,
+      }
     },
   },
 

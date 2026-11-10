@@ -131,6 +131,32 @@ check('bảo trì: khách bị chặn 503', g1.blocked && g1.code === 503)
 check('bảo trì: user thường bị chặn', (await blockFor('tUser')).blocked)
 check('bảo trì: admin vẫn dùng được', !(await blockFor('tAdmin')).blocked)
 
+// số đo Postgres (dbMetrics.ts)
+const { parseProm, computeMetrics } = await import('../server/dbMetrics.ts')
+const prom = (idle: number, busy: number) => `# HELP x
+node_cpu_seconds_total{cpu="0",mode="idle"} ${idle}
+node_cpu_seconds_total{cpu="0",mode="user"} ${busy}
+node_cpu_seconds_total{cpu="1",mode="idle"} ${idle}
+node_cpu_seconds_total{cpu="1",mode="system"} ${busy}
+node_memory_MemTotal_bytes 1000
+node_memory_MemAvailable_bytes 390
+node_filesystem_size_bytes{device="/dev/x",mountpoint="/"} 50
+node_filesystem_avail_bytes{device="/dev/x",mountpoint="/"} 0
+node_filesystem_size_bytes{device="/dev/y",mountpoint="/data"} 200
+node_filesystem_avail_bytes{device="/dev/y",mountpoint="/data"} 172
+pg_stat_database_num_backends{datname="postgres"} 9
+pg_stat_database_num_backends{datname="template1"} 2
+pg_settings_max_connections{server="x"} 60
+`
+const mt = computeMetrics(parseProm(prom(100, 10)), parseProm(prom(100.97, 10.03)))
+check('metrics: CPU 3%', mt.cpu === 3)
+check('metrics: RAM 61%', mt.ram === 61)
+check('metrics: Disk lấy ổ /data 14%', mt.disk === 14)
+check('metrics: 11/60 kết nối', mt.connections === 11 && mt.maxConnections === 60)
+const empty = computeMetrics(parseProm(''), parseProm('garbage line'))
+check('metrics: thiếu số đo → null, không lỗi', empty.cpu === null && empty.ram === null && empty.disk === null && empty.connections === null)
+check('moderator xem db.metrics → 403', (await hit({ action: 'db.metrics' }, 'tMod')).status === 403)
+
 if (fail) {
   console.error(`${fail} lỗi`)
   process.exit(1)

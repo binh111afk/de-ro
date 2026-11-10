@@ -73,7 +73,7 @@ export const isAdminMock = (): boolean => {
 }
 
 /** Nhớ kết quả các action chỉ đọc 60 giây để chuyển tab admin không phải tải lại; thao tác ghi xoá hết. */
-const READ_ACTIONS = new Set(['me', 'users.list', 'quota.get', 'audit.list', 'settings.get', 'ai.stats', 'ai.errors'])
+const READ_ACTIONS = new Set(['db.metrics', 'me', 'users.list', 'quota.get', 'audit.list', 'settings.get', 'ai.stats', 'ai.errors'])
 const cache = new Map<string, { at: number; p: Promise<unknown> }>()
 export const clearAdminCache = () => cache.clear()
 
@@ -331,6 +331,28 @@ export function runHealth(): Promise<HealthReport> {
       ),
     )
   return post('health')
+}
+
+export interface DbStatus {
+  name: string
+  /** mã vùng AWS, vd 'ap-southeast-1' */
+  region: string
+  /** gói máy Supabase, vd 'Nano' */
+  compute: string
+  checkedAt: string
+  /** phần trăm 0..100; null = không đọc được */
+  cpu: number | null
+  ram: number | null
+  disk: number | null
+  connections: number | null
+  maxConnections: number | null
+}
+
+/** CPU / RAM / ổ đĩa / kết nối của Postgres. Không tốn tiền; mất ~1 giây (lấy 2 mẫu CPU). */
+export function getDbStatus(): Promise<DbStatus> {
+  if (isAdminMock())
+    return wait({ name: 'Primary Database', region: 'ap-southeast-1', compute: 'Nano', checkedAt: new Date().toISOString(), cpu: 3, ram: 61, disk: 14, connections: 11, maxConnections: 60 })
+  return post('db.metrics')
 }
 
 /** Tên tiếng Việt của action trong nhật ký */
