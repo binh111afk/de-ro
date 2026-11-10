@@ -41,6 +41,9 @@ export type ToolDoc =
 
 export type ToolKind = ToolDoc['kind']
 
+/** độ lệch nhãn do người dùng kéo, đơn vị = đơn vị viewBox của SVG; khoá = id nhãn (attr `data-lbl`) */
+export type LabelPos = Record<string, [number, number]>
+
 export interface ToolImage {
   svg: string
   width: number
@@ -62,11 +65,38 @@ const HALO_CSS =
   '<style>text:not([stroke]):not([fill="#fff"]):not([fill="#ffffff"]):not([fill="white"]){paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round}</style>'
 export function withTextHalo<T extends { svg: string }>(img: T): T {
   if (img.svg.includes(HALO_CSS)) return img
-  return { ...img, svg: img.svg.replace(/<svg[^>]*>/, (m) => m + HALO_CSS) }
+  return { ...img, svg: img.svg.replace(/<svg[^>]*>/, (m) => m + HALO_CSS) }
+}
+
+const n1 = (v: number) => String(Math.round(v * 10) / 10)
+
+/**
+ * Áp độ lệch nhãn đã kéo lên SVG: mỗi `<text … data-lbl="id">` có trong bảng
+ * được thêm `transform="translate(dx dy)"` (thẻ đã có transform thì nối thêm,
+ * đừng ghi đè). Renderer chỉ gắn `data-lbl`, không tự đọc labelPos.
+ */
+export function applyLabelPos<T extends { svg: string }>(img: T, labelPos: LabelPos | undefined): T {
+  if (!labelPos || !img.svg.includes('data-lbl')) return img
+  return {
+    ...img,
+    svg: img.svg.replace(/<text\b[^>]*>/g, (m) => {
+      const id = /\bdata-lbl="([^"]*)"/.exec(m)?.[1]
+      const off = id ? labelPos[id] : undefined
+      if (!off || (off[0] === 0 && off[1] === 0)) return m
+      const tr = `translate(${n1(off[0])} ${n1(off[1])})`
+      return /transform="/.test(m)
+        ? m.replace(/transform="([^"]*)"/, (_, t) => {
+            const base = t.replace(/^\s*translate\([^)]*\)\s*/, '').trim()
+            return `transform="${base ? `${tr} ${base}` : tr}"`
+          })
+        : m.replace(/>$/, ` transform="${tr}">`)
+    }),
+  }
 }
 
 export function renderTool(doc: ToolDoc): ToolImage {
-  return withTextHalo(renderToolRaw(doc))
+  const pos = (doc.spec as { labelPos?: LabelPos }).labelPos
+  return withTextHalo(applyLabelPos(renderToolRaw(doc), pos))
 }
 
 function renderToolRaw(doc: ToolDoc): ToolImage {

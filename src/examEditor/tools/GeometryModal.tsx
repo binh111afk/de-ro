@@ -4,11 +4,13 @@
  * song song, cạnh khuất nét đứt).
  */
 import { PickPreview } from './PickPreview'
+import { LabelPreview } from './LabelDragPreview'
 import { useMemo, useState } from 'react'
 import { cn } from '@/lib/cn'
 import { inputClass } from '@/components/ui'
 import { GEO2D_SHAPES, GEO3D_SHAPES, type Geo2dShape, type Geo2dSpec, type Geo3dShape, type Geo3dSpec } from '@/lib/geometry'
 import { renderTool, type ToolImage } from '@/lib/toolSpec'
+import { svgDataUrl } from '@/lib/plot'
 import { GEO_HELP } from '@/lib/geoConstruct'
 import { ChevronDown, CircleHelp, X } from 'lucide-react'
 import { Check, ToolShell, sectionTitle } from './ToolShell'
@@ -26,6 +28,7 @@ export function Geo2dModal({ initial, submitLabel, onClose, onInsert }: Props<Ge
   )
   const preview = useMemo(() => renderTool({ kind: 'geo2d', spec }), [spec])
   const set = (patch: Partial<Geo2dSpec>) => setSpec((s) => ({ ...s, ...patch }))
+  const [move, setMove] = useState(false)
 
   const inputs = (
     <>
@@ -60,7 +63,16 @@ export function Geo2dModal({ initial, submitLabel, onClose, onInsert }: Props<Ge
       preview={preview}
       submitLabel={submitLabel ?? (initial ? 'Cập nhật hình' : 'Chèn hình')}
       canSubmit
-      renderPreview={(img) => <PickPreview img={img} extras={spec.extras ?? ''} onExtras={(extras) => set({ extras })} />}
+      renderPreview={(img) => (
+        <LabelPreview
+          img={img}
+          labelPos={spec.labelPos}
+          onChange={(labelPos) => set({ labelPos })}
+          move={move}
+          onToggle={() => setMove((v) => !v)}
+          fallback={<PickPreview img={img} extras={spec.extras ?? ''} onExtras={(extras) => set({ extras })} />}
+        />
+      )}
       onSubmit={() => onInsert(preview)}
       onClose={onClose}
     />
@@ -73,6 +85,7 @@ export function Geo3dModal({ initial, submitLabel, onClose, onInsert }: Props<Ge
   )
   const preview = useMemo(() => renderTool({ kind: 'geo3d', spec }), [spec])
   const set = (patch: Partial<Geo3dSpec>) => setSpec((s) => ({ ...s, ...patch }))
+  const [move, setMove] = useState(false)
   const round = isRound3d(spec.shape)
 
   const inputs = (
@@ -117,7 +130,22 @@ export function Geo3dModal({ initial, submitLabel, onClose, onInsert }: Props<Ge
       preview={preview}
       submitLabel={submitLabel ?? (initial ? 'Cập nhật hình' : 'Chèn hình')}
       canSubmit
-      renderPreview={round ? undefined : (img) => <PickPreview img={img} extras={spec.extras ?? ''} onExtras={(extras) => set({ extras })} />}
+      renderPreview={(img) => (
+        <LabelPreview
+          img={img}
+          labelPos={spec.labelPos}
+          onChange={(labelPos) => set({ labelPos })}
+          move={move}
+          onToggle={() => setMove((v) => !v)}
+          fallback={
+            round ? (
+              <img src={svgDataUrl(img.svg)} alt="Xem trước" className="max-h-full max-w-full rounded-[4px] border border-line bg-white object-contain" />
+            ) : (
+              <PickPreview img={img} extras={spec.extras ?? ''} onExtras={(extras) => set({ extras })} />
+            )
+          }
+        />
+      )}
       onSubmit={() => onInsert(preview)}
       onClose={onClose}
     />

@@ -32,6 +32,8 @@ export interface Geo2dSpec {
   marks: boolean
   /** dựng thêm (xem geoConstruct.ts), mỗi dòng một lệnh */
   extras?: string
+  /** độ lệch nhãn do người dùng kéo (khoá = id nhãn trên attr `data-lbl`) */
+  labelPos?: Record<string, [number, number]>
 }
 
 export type Geo3dShape =
@@ -64,6 +66,8 @@ export interface Geo3dSpec {
   extras?: string
   /** vẽ mặt cầu ngoại tiếp khối (tâm = trọng tâm các đỉnh, đúng với hộp, lập phương, lăng trụ/chóp đều) */
   circumsphere?: boolean
+  /** độ lệch nhãn do người dùng kéo (khoá = id nhãn trên attr `data-lbl`) */
+  labelPos?: Record<string, [number, number]>
 }
 
 import { construct as construct0 } from './geoConstruct'
@@ -198,7 +202,7 @@ function label(p: P2, name: string, center: P2, dist = 15): string {
   let dir = unit(sub(p, center))
   if (len(sub(p, center)) < 1e-6) dir = [0.7, 0.7]
   const q = add(p, mul(dir, dist))
-  return `<text x="${f1(q[0])}" y="${f1(q[1] + 6)}" ${FONT} text-anchor="middle">${esc(name)}</text>`
+  return `<text x="${f1(q[0])}" y="${f1(q[1] + 6)}" ${FONT} text-anchor="middle" data-lbl="pt:${esc(name)}">${esc(name)}</text>`
 }
 
 const dot = (p: P2) => `<circle cx="${f1(p[0])}" cy="${f1(p[1])}" r="2.2" fill="${STROKE}"/>`
@@ -641,7 +645,7 @@ function renderSolid(spec: Geo3dSpec, desc: string) {
     }
     placed.push(best)
     const name = names[i] ?? ''
-    if (name) parts.push(`<text x="${f1(best[0])}" y="${f1(best[1] + 6)}" ${FONT} text-anchor="middle">${esc(name)}</text>`)
+    if (name) parts.push(`<text x="${f1(best[0])}" y="${f1(best[1] + 6)}" ${FONT} text-anchor="middle" data-lbl="pt:${esc(name)}">${esc(name)}</text>`)
   })
   return frame(parts, P, desc)
 }

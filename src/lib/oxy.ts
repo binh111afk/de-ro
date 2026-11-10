@@ -16,6 +16,8 @@ export interface OxySpec {
   /** hiện số trên trục */
   numbers: boolean
   items: string
+  /** độ lệch nhãn do người dùng kéo (khoá = id nhãn trên attr `data-lbl`) */
+  labelPos?: Record<string, [number, number]>
 }
 
 type V = [number, number]
@@ -272,27 +274,27 @@ export function renderOxySvg(spec: OxySpec, desc: string): { svg: string; width:
   out.push(`<path d="M${f1(X(0))} ${f1(Y(yMin))}V${f1(Y(yMax) - 22)}" stroke="#222" stroke-width="1.2" marker-end="url(#oxyarr)"/>`)
   // chữ (tên trục, số) vẽ SAU các đường cong để nét không đè lên chữ
   const labels: string[] = []
-  labels.push(`<text x="${f1(X(xMax) + 16)}" y="${f1(Y(0) + 17)}" ${FONT} font-style="italic">x</text>`)
-  labels.push(`<text x="${f1(X(0) - 8)}" y="${f1(Y(yMax) - 12)}" ${FONT} font-style="italic" text-anchor="end">y</text>`)
-  labels.push(`<text x="${f1(X(0) - 13)}" y="${f1(Y(0) + 16)}" ${FONT} font-style="italic">O</text>`)
+  labels.push(`<text x="${f1(X(xMax) + 16)}" y="${f1(Y(0) + 17)}" ${FONT} font-style="italic" data-lbl="ax:x">x</text>`)
+  labels.push(`<text x="${f1(X(0) - 8)}" y="${f1(Y(yMax) - 12)}" ${FONT} font-style="italic" text-anchor="end" data-lbl="ax:y">y</text>`)
+  labels.push(`<text x="${f1(X(0) - 13)}" y="${f1(Y(0) + 16)}" ${FONT} font-style="italic" data-lbl="ax:O">O</text>`)
   // vạch chia + số
   const step = unit < 20 ? 2 : 1
   let ticks = ''
   for (let x = Math.ceil(xMin); x <= xMax; x++) {
     if (x === 0) continue
     ticks += `M${f1(X(x))} ${f1(Y(0) - 3)}v6`
-    if (spec.numbers && x % step === 0) labels.push(`<text x="${f1(X(x))}" y="${f1(Y(0) + 17)}" ${FAM} font-size="13" text-anchor="middle">${fmt(x)}</text>`)
+    if (spec.numbers && x % step === 0) labels.push(`<text x="${f1(X(x))}" y="${f1(Y(0) + 17)}" ${FAM} font-size="13" text-anchor="middle" data-lbl="x:${x}">${fmt(x)}</text>`)
   }
   for (let y = Math.ceil(yMin); y <= yMax; y++) {
     if (y === 0) continue
     ticks += `M${f1(X(0) - 3)} ${f1(Y(y))}h6`
-    if (spec.numbers && y % step === 0) labels.push(`<text x="${f1(X(0) - 7)}" y="${f1(Y(y) + 4.5)}" ${FAM} font-size="13" text-anchor="end">${fmt(y)}</text>`)
+    if (spec.numbers && y % step === 0) labels.push(`<text x="${f1(X(0) - 7)}" y="${f1(Y(y) + 4.5)}" ${FAM} font-size="13" text-anchor="end" data-lbl="y:${y}">${fmt(y)}</text>`)
   }
   out.push(`<path d="${ticks}" stroke="#222" stroke-width="1"/>`)
 
   // clip mọi nét theo khung
   const draw: string[] = []
-  for (const it of items) {
+  for (const [ii, it] of items.entries()) {
     if (it.t === 'ineq' || it.t === 'line') {
       // đường bờ: cắt khung để lấy hai đầu
       const { a, b, c } = it
@@ -303,7 +305,7 @@ export function renderOxySvg(spec: OxySpec, desc: string): { svg: string; width:
         const q = xs[xs.length - 1]
         const dashed = it.t === 'ineq' ? it.strict : it.dashed
         draw.push(`<path d="M${S(p)}L${S(q)}" stroke="#222" stroke-width="1.5"${dashed ? ' stroke-dasharray="6 4"' : ''}/>`)
-        if (it.t === 'line' && it.label) draw.push(`<text x="${f1(X(q[0]) - 4)}" y="${f1(Y(q[1]) - 6)}" ${FONT} font-style="italic" text-anchor="end">${esc(it.label)}</text>`)
+        if (it.t === 'line' && it.label) draw.push(`<text x="${f1(X(q[0]) - 4)}" y="${f1(Y(q[1]) - 6)}" ${FONT} font-style="italic" text-anchor="end" data-lbl="cv:${ii}">${esc(it.label)}</text>`)
       }
     } else if (it.t === 'seg') {
       draw.push(`<path d="M${S(it.a)}L${S(it.b)}" stroke="#222" stroke-width="1.5"${it.dashed ? ' stroke-dasharray="6 4"' : ''}/>`)
@@ -313,7 +315,7 @@ export function renderOxySvg(spec: OxySpec, desc: string): { svg: string; width:
         const m: V = [(it.a[0] + it.b[0]) / 2, (it.a[1] + it.b[1]) / 2]
         const lx = X(m[0]) - 10
         const ly = Y(m[1]) - 8
-        draw.push(`<text x="${f1(lx)}" y="${f1(ly)}" ${FONT} font-style="italic" text-anchor="middle">${esc(it.label)}</text>`)
+        draw.push(`<text x="${f1(lx)}" y="${f1(ly)}" ${FONT} font-style="italic" text-anchor="middle" data-lbl="cv:${ii}">${esc(it.label)}</text>`)
         draw.push(`<path d="M${f1(lx - 5)} ${f1(ly - 14)}h10" stroke="#222" stroke-width="1" marker-end="url(#oxyarrs)"/>`)
       }
     } else if (it.t === 'circle') {
@@ -337,7 +339,7 @@ export function renderOxySvg(spec: OxySpec, desc: string): { svg: string; width:
         if (y >= yMin && y <= yMax) last = [x, y]
       }
       draw.push(`<path d="${d}" fill="none" stroke="#222" stroke-width="1.6"/>`)
-      if (it.label && last) draw.push(`<text x="${f1(X(last[0]) - 6)}" y="${f1(Y(last[1]) + 2)}" ${FONT} font-style="italic" text-anchor="end">${esc(it.label)}</text>`)
+      if (it.label && last) draw.push(`<text x="${f1(X(last[0]) - 6)}" y="${f1(Y(last[1]) + 2)}" ${FONT} font-style="italic" text-anchor="end" data-lbl="cv:${ii}">${esc(it.label)}</text>`)
     }
   }
   // điểm (trên cùng) + nét chiếu xuống trục
@@ -346,13 +348,13 @@ export function renderOxySvg(spec: OxySpec, desc: string): { svg: string; width:
     const [x, y] = it.p
     if (it.proj) {
       draw.push(`<path d="M${S(it.p)}L${f1(X(x))} ${f1(Y(0))}M${S(it.p)}L${f1(X(0))} ${f1(Y(y))}" stroke="#222" stroke-width="1" stroke-dasharray="4 3"/>`)
-      if (!spec.numbers || !Number.isInteger(x)) draw.push(`<text x="${f1(X(x))}" y="${f1(Y(0) + (y >= 0 ? 17 : -6))}" ${FAM} font-size="13" text-anchor="middle">${fmt(x)}</text>`)
-      if (!spec.numbers || !Number.isInteger(y)) draw.push(`<text x="${f1(X(0) + (x >= 0 ? -7 : 7))}" y="${f1(Y(y) + 4.5)}" ${FAM} font-size="13" text-anchor="${x >= 0 ? 'end' : 'start'}">${fmt(y)}</text>`)
+      if (!spec.numbers || !Number.isInteger(x)) draw.push(`<text x="${f1(X(x))}" y="${f1(Y(0) + (y >= 0 ? 17 : -6))}" ${FAM} font-size="13" text-anchor="middle" data-lbl="x:${Math.round(x * 1000) / 1000}">${fmt(x)}</text>`)
+      if (!spec.numbers || !Number.isInteger(y)) draw.push(`<text x="${f1(X(0) + (x >= 0 ? -7 : 7))}" y="${f1(Y(y) + 4.5)}" ${FAM} font-size="13" text-anchor="${x >= 0 ? 'end' : 'start'}" data-lbl="y:${Math.round(y * 1000) / 1000}">${fmt(y)}</text>`)
     }
     if (it.name === 'O' && x === 0 && y === 0) continue
     draw.push(`<circle cx="${f1(X(x))}" cy="${f1(Y(y))}" r="2.6" fill="#222"/>`)
     const dx = x >= 0 ? 7 : -7
-    draw.push(`<text x="${f1(X(x) + dx)}" y="${f1(Y(y) - 7)}" ${FONT} font-style="italic" text-anchor="${x >= 0 ? 'start' : 'end'}">${esc(it.name)}</text>`)
+    draw.push(`<text x="${f1(X(x) + dx)}" y="${f1(Y(y) - 7)}" ${FONT} font-style="italic" text-anchor="${x >= 0 ? 'start' : 'end'}" data-lbl="pt:${esc(it.name)}">${esc(it.name)}</text>`)
   }
 
   const svg =

@@ -8,6 +8,8 @@ import { CircleHelp, X } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import { inputClass } from '@/components/ui'
 import { renderTool, type ToolDoc, type ToolImage } from '@/lib/toolSpec'
+import { svgDataUrl } from '@/lib/plot'
+import { LabelPreview } from './LabelDragPreview'
 import { autoSignTable, parseSignTableText, signTableToText, type SignTableSpec } from '@/lib/signTable'
 import { OXY_HELP, type OxySpec } from '@/lib/oxy'
 import type { ChartKind, StatsSpec } from '@/lib/stats'
@@ -248,6 +250,7 @@ const OXY_DEFAULT: OxySpec = {
 export function OxyModal({ initial, submitLabel, onClose, onInsert }: Props<OxySpec>) {
   const [spec, setSpec] = useState<OxySpec>(initial ?? OXY_DEFAULT)
   const set = (p: Partial<OxySpec>) => setSpec((s) => ({ ...s, ...p }))
+  const [move, setMove] = useState(false)
   const doc = useMemo((): ToolDoc => ({ kind: 'oxy', spec }), [spec])
   const { preview } = useRender(doc)
   const errors = (preview?.errors ?? []).map((e) => `Dòng ${e.line}: ${e.msg}`)
@@ -298,6 +301,16 @@ export function OxyModal({ initial, submitLabel, onClose, onInsert }: Props<OxyS
       canSubmit={Boolean(preview)}
       onSubmit={() => preview && onInsert(preview)}
       onClose={onClose}
+      renderPreview={(img) => (
+        <LabelPreview
+          img={img}
+          labelPos={spec.labelPos}
+          onChange={(labelPos) => set({ labelPos })}
+          move={move}
+          onToggle={() => setMove((v) => !v)}
+          fallback={<img src={svgDataUrl(img.svg)} alt="Xem trước" className="max-h-full max-w-full rounded-[4px] border border-line bg-white object-contain" />}
+        />
+      )}
     />
   )
 }
@@ -336,6 +349,7 @@ const STATS_HELP: HelpGroups = [
 export function StatsModal({ initial, submitLabel, onClose, onInsert }: Props<StatsSpec>) {
   const [spec, setSpec] = useState<StatsSpec>(initial ?? { chart: 'bar', title: '', xLabel: '', yLabel: '', values: true, data: CHARTS[0].example })
   const set = (p: Partial<StatsSpec>) => setSpec((s) => ({ ...s, ...p }))
+  const [move, setMove] = useState(false)
   const doc = useMemo((): ToolDoc => ({ kind: 'stats', spec }), [spec])
   const { preview, error } = useRender(doc)
   const field = (k: 'title' | 'xLabel' | 'yLabel', label: string, ph: string) => (
@@ -403,6 +417,21 @@ export function StatsModal({ initial, submitLabel, onClose, onInsert }: Props<St
       canSubmit={Boolean(preview) && !error}
       onSubmit={() => preview && onInsert(preview)}
       onClose={onClose}
+      renderPreview={(img) =>
+        spec.chart === 'table' ? (
+          // bảng số liệu không có nhãn kéo được → xem thường
+          <img src={svgDataUrl(img.svg)} alt="Xem trước" className="max-h-full max-w-full rounded-[4px] border border-line bg-white object-contain" />
+        ) : (
+          <LabelPreview
+            img={img}
+            labelPos={spec.labelPos}
+            onChange={(labelPos) => set({ labelPos })}
+            move={move}
+            onToggle={() => setMove((v) => !v)}
+            fallback={<img src={svgDataUrl(img.svg)} alt="Xem trước" className="max-h-full max-w-full rounded-[4px] border border-line bg-white object-contain" />}
+          />
+        )
+      }
     />
   )
 }
@@ -822,6 +851,7 @@ export function GasModal({ initial, submitLabel, onClose, onInsert }: Props<GasS
 
 export function SceneModal({ initial, submitLabel, onClose, onInsert }: Props<SceneSpec>) {
   const [spec, setSpec] = useState<SceneSpec>(initial ?? SCENE_DEFAULT)
+  const [move, setMove] = useState(false)
   const doc = useMemo((): ToolDoc => ({ kind: 'scene', spec }), [spec])
   const { preview, error } = useRender(doc)
   const inputs = (
@@ -830,7 +860,7 @@ export function SceneModal({ initial, submitLabel, onClose, onInsert }: Props<Sc
       help={SCENE_HELP}
       intro="Khai báo điểm, rồi mỗi dòng một lệnh: đoạn, nét đứt, kích thước, góc, nhãn, mặt đất / tường."
       value={spec.text}
-      onChange={(text) => setSpec({ text })}
+      onChange={(text) => setSpec((s) => ({ ...s, text }))}
       rows={12}
       errors={error ? [error] : []}
       label="Lệnh vẽ hình"
@@ -847,6 +877,16 @@ export function SceneModal({ initial, submitLabel, onClose, onInsert }: Props<Sc
       canSubmit={Boolean(preview) && !error}
       onSubmit={() => preview && onInsert(preview)}
       onClose={onClose}
+      renderPreview={(img) => (
+        <LabelPreview
+          img={img}
+          labelPos={spec.labelPos}
+          onChange={(labelPos) => setSpec((s) => ({ ...s, labelPos }))}
+          move={move}
+          onToggle={() => setMove((v) => !v)}
+          fallback={<img src={svgDataUrl(img.svg)} alt="Xem trước" className="max-h-full max-w-full rounded-[4px] border border-line bg-white object-contain" />}
+        />
+      )}
     />
   )
 }

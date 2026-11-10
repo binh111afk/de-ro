@@ -18,6 +18,8 @@ export interface StatsSpec {
   /** ghi số trên đầu cột / điểm / quạt */
   values: boolean
   data: string
+  /** độ lệch nhãn do người dùng kéo (khoá = id nhãn trên attr `data-lbl`) */
+  labelPos?: Record<string, [number, number]>
 }
 
 interface Parsed {
@@ -172,7 +174,7 @@ export function renderStatsSvg(spec: StatsSpec, desc: string): { svg: string; wi
         const pct = fmt((v / sum) * 100) + '%'
         const lx = cx + (R + 18) * Math.cos(am)
         const ly = cy + (R + 18) * Math.sin(am)
-        lab.push(`<text x="${f1(lx)}" y="${f1(ly + 5)}" ${FONT} text-anchor="${Math.cos(am) > 0.3 ? 'start' : Math.cos(am) < -0.3 ? 'end' : 'middle'}">${pct}</text>`)
+        lab.push(`<text x="${f1(lx)}" y="${f1(ly + 5)}" ${FONT} text-anchor="${Math.cos(am) > 0.3 ? 'start' : Math.cos(am) < -0.3 ? 'end' : 'middle'}" data-lbl="val:0:${i}">${pct}</text>`)
       }
       a0 = a1
     })
@@ -223,7 +225,7 @@ export function renderStatsSvg(spec: StatsSpec, desc: string): { svg: string; wi
   let grid = ''
   for (let v = step; v <= yTop + 1e-9; v += step) {
     grid += `M${left} ${f1(Y(v))}H${left + plotW}`
-    b += `<text x="${left - 6}" y="${f1(Y(v) + 5)}" ${FAM} font-size="13" text-anchor="end">${fmt(v)}</text>`
+    b += `<text x="${left - 6}" y="${f1(Y(v) + 5)}" ${FAM} font-size="13" text-anchor="end" data-lbl="y:${Math.round(v * 1000) / 1000}">${fmt(v)}</text>`
   }
   b += `<path d="${grid}" stroke="#bbb" stroke-width="0.8" stroke-dasharray="3 3"/>`
   // gốc: một số 0 chung cho hai trục (ở góc dưới trái) khi trục ngang là số từ 0
@@ -237,7 +239,7 @@ export function renderStatsSvg(spec: StatsSpec, desc: string): { svg: string; wi
     series[0].vals.forEach((v, i) => {
       const x = left + i * slot
       b += `<rect x="${f1(x)}" y="${f1(Y(v))}" width="${slot}" height="${f1(y0 - Y(v))}" fill="#c8c8c8" stroke="#222" stroke-width="1.2"/>`
-      if (spec.values) b += `<text x="${f1(x + slot / 2)}" y="${f1(Y(v) - 5)}" ${FAM} font-size="13" text-anchor="middle">${fmt(v)}</text>`
+      if (spec.values) b += `<text x="${f1(x + slot / 2)}" y="${f1(Y(v) - 5)}" ${FAM} font-size="13" text-anchor="middle" data-lbl="val:0:${i}">${fmt(v)}</text>`
       b += `<text x="${f1(x)}" y="${y0 + 18}" ${FAM} font-size="13" text-anchor="middle">${esc(bounds[i]?.[0] ?? '')}</text>`
       if (i === cats.length - 1) b += `<text x="${f1(x + slot)}" y="${y0 + 18}" ${FAM} font-size="13" text-anchor="middle">${esc(bounds[i]?.[1] ?? '')}</text>`
     })
@@ -252,12 +254,12 @@ export function renderStatsSvg(spec: StatsSpec, desc: string): { svg: string; wi
     if (spec.values)
       cats.forEach((_, i) => {
         const x = cx(i)
-        const col = series.map((s) => ({ v: s.vals[i], y: Y(s.vals[i]) })).filter((p) => Number.isFinite(p.v) && !(origin && i === 0 && p.v === 0)).sort((p, q) => p.y - q.y)
+        const col = series.map((s, si) => ({ si, v: s.vals[i], y: Y(s.vals[i]) })).filter((p) => Number.isFinite(p.v) && !(origin && i === 0 && p.v === 0)).sort((p, q) => p.y - q.y)
         let prev = -Infinity
         for (const p of col) {
           let ty = p.y - 9
           if (ty - prev < 14) ty = Math.max(p.y + 20, prev + 14)
-          b += `<text x="${f1(x)}" y="${f1(ty)}" ${FAM} font-size="13" text-anchor="middle">${fmt(p.v)}</text>`
+          b += `<text x="${f1(x)}" y="${f1(ty)}" ${FAM} font-size="13" text-anchor="middle" data-lbl="val:${p.si}:${i}">${fmt(p.v)}</text>`
           prev = ty
         }
       })
@@ -267,7 +269,7 @@ export function renderStatsSvg(spec: StatsSpec, desc: string): { svg: string; wi
       s.vals.forEach((v, i) => {
         const x = left + i * slot + (slot - bw * ns) / 2 + si * bw
         b += `<rect x="${f1(x)}" y="${f1(Y(v))}" width="${f1(bw)}" height="${f1(y0 - Y(v))}" fill="${FILLS[si % FILLS.length]}" stroke="#222" stroke-width="1.1"/>`
-        if (spec.values) b += `<text x="${f1(x + bw / 2)}" y="${f1(Y(v) - 5)}" ${FAM} font-size="13" text-anchor="middle">${fmt(v)}</text>`
+        if (spec.values) b += `<text x="${f1(x + bw / 2)}" y="${f1(Y(v) - 5)}" ${FAM} font-size="13" text-anchor="middle" data-lbl="val:${si}:${i}">${fmt(v)}</text>`
       })
     })
   }
@@ -275,12 +277,12 @@ export function renderStatsSvg(spec: StatsSpec, desc: string): { svg: string; wi
     cats.forEach((c, i) => {
       if (origin && i === 0) return // số 0 đã ghi chung ở gốc
       if (origin) b += `<path d="M${f1(cx(i))} ${y0 - 3}v6" stroke="#222" stroke-width="1"/>`
-      b += `<text x="${f1(cx(i))}" y="${y0 + 18}" ${FAM} font-size="13" text-anchor="middle">${esc(c)}</text>`
+      b += `<text x="${f1(cx(i))}" y="${y0 + 18}" ${FAM} font-size="13" text-anchor="middle" data-lbl="x:${i}">${esc(c)}</text>`
     })
   // trục
   b += `<path d="M${left} ${y0}H${left + plotW + 22}" stroke="#222" stroke-width="1.2" marker-end="url(#starr)"/>`
   b += `<path d="M${left} ${y0}V${top + legH - 14}" stroke="#222" stroke-width="1.2" marker-end="url(#starr)"/>`
-  if (spec.yLabel) b += `<text x="${left + 8}" y="${top + legH - 8}" ${FAM} font-size="13">${esc(spec.yLabel)}</text>`
-  if (spec.xLabel) b += `<text x="${left + plotW + 26}" y="${y0 + 36}" ${FAM} font-size="13" text-anchor="end">${esc(spec.xLabel)}</text>`
+  if (spec.yLabel) b += `<text x="${left + 8}" y="${top + legH - 8}" ${FAM} font-size="13" data-lbl="ax:y">${esc(spec.yLabel)}</text>`
+  if (spec.xLabel) b += `<text x="${left + plotW + 26}" y="${y0 + 36}" ${FAM} font-size="13" text-anchor="end" data-lbl="ax:x">${esc(spec.xLabel)}</text>`
   return wrap(W, H, desc, b)
 }
