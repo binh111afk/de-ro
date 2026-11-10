@@ -22,7 +22,7 @@ import {
 } from './Layout'
 import { cn } from '@/lib/cn'
 import { BookMarked } from 'lucide-react'
-import { Hash, ListChecks, MonitorPlay } from 'lucide-react'
+import { Hash, ListChecks, MonitorPlay, Blocks, ListTree, Wrench } from 'lucide-react'
 import { FileMenu } from './FileMenu'
 import { BankModal } from './BankModal'
 import { templateById, insertBlockTemplate } from './templates'
@@ -41,6 +41,8 @@ import {
   IconBorderAll,
   IconCaret,
   IconChangeCase,
+  IconChevronDown,
+  IconChevronUp,
   IconClearFormat,
   IconCopy,
   IconCut,
@@ -154,6 +156,7 @@ export function Ribbon({
   onPageColorChange,
   pageBorder = 0,
   onPageBorderChange,
+  onOpenNav,
 }: {
   editor: Editor | null
   activeTab: string
@@ -181,6 +184,7 @@ export function Ribbon({
   onPageColorChange?: (c: string) => void
   pageBorder?: number
   onPageBorderChange?: (w: number) => void
+  onOpenNav?: (tab: 'toc' | 'blocks' | 'tools') => void
 }) {
   const [font, setFont] = useState('Times New Roman')
   const [size, setSize] = useState('14')
@@ -189,6 +193,12 @@ export function Ribbon({
   const [penColor, setPenColor] = useState('#000000')
   const [painter, setPainter] = useState(false)
   const [dialog, setDialog] = useState<'link' | 'equation' | null>(null)
+  const [collapsed, setCollapsed] = useState(false)
+
+  const handleTabChange = (id: string) => {
+    if (collapsed) setCollapsed(false)
+    onTabChange(id)
+  }
   const painterRef = useRef<{
     marks: Record<string, unknown>
     attrs: Record<string, unknown>
@@ -389,7 +399,7 @@ export function Ribbon({
       <RibbonTabs
         tabs={RIBBON_TABS}
         active={activeTab}
-        onChange={onTabChange}
+        onChange={handleTabChange}
         leading={
           <>
             <FileMenu
@@ -438,10 +448,31 @@ export function Ribbon({
           <span className="ribbon-quick__meta">
             {pageCount} trang{dirty ? ' · chưa lưu' : ''}
           </span>
+          {onOpenNav && (
+            <button
+              type="button"
+              className="ribbon-toggle-btn mobile-only-inline"
+              onClick={() => onOpenNav('tools')}
+              title="Công cụ & Khối mẫu"
+              aria-label="Công cụ & Khối mẫu"
+            >
+              <Wrench size={14} />
+            </button>
+          )}
+          <button
+            type="button"
+            className="ribbon-toggle-btn"
+            onClick={() => setCollapsed(!collapsed)}
+            title={collapsed ? 'Mở rộng dải ruy-băng' : 'Thu gọn dải ruy-băng'}
+            aria-label={collapsed ? 'Mở rộng dải ruy-băng' : 'Thu gọn dải ruy-băng'}
+          >
+            {collapsed ? <IconChevronDown size={14} /> : <IconChevronUp size={14} />}
+          </button>
         </div>
       </RibbonTabs>
 
-      <RibbonBody activeKey={activeTab}>
+      {!collapsed && (
+        <RibbonBody activeKey={activeTab}>
         {activeTab === 'home' && (
           <>
             <RibbonGroup label="Clipboard">
@@ -644,6 +675,13 @@ export function Ribbon({
 
         {activeTab === 'insert' && (
           <>
+            <RibbonGroup label="Công cụ">
+              <RibbonButton icon={<Wrench className="size-[26px]" strokeWidth={1.3} />} label="Công cụ vẽ" onClick={() => onOpenNav?.('tools')} />
+              <RibbonButton icon={<Blocks className="size-[26px]" strokeWidth={1.3} />} label="Khối mẫu" onClick={() => onOpenNav?.('blocks')} />
+              <RibbonButton icon={<ListTree className="size-[26px]" strokeWidth={1.3} />} label="Mục lục" onClick={() => onOpenNav?.('toc')} />
+            </RibbonGroup>
+
+            <span className="ribbon-sep" />
             <RibbonGroup label="Trang">
               <RibbonButton icon={<IconPageBreak size={26} />} label="Ngắt trang" disabled={disabled} onClick={() => insertTemplate('pageBreak')} />
             </RibbonGroup>
@@ -940,6 +978,7 @@ export function Ribbon({
           </>
         )}
       </RibbonBody>
+      )}
 
       {editor && dialog === 'link' && <LinkDialog editor={editor} onClose={() => setDialog(null)} />}
       {editor && dialog === 'equation' && <EquationDialog editor={editor} onClose={() => setDialog(null)} />}

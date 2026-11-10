@@ -329,6 +329,23 @@ export function AiDock({
   side?: 'left' | 'right'
   children: ReactNode
 }) {
+  // Khi mở trên mobile, bám sát visualViewport để bàn phím ảo không che ô nhập
+  useEffect(() => {
+    if (!open || typeof window === 'undefined' || !window.visualViewport) return
+    const vv = window.visualViewport
+    const onResize = () => {
+      document.documentElement.style.setProperty('--ai-dock-h', `${vv.height}px`)
+    }
+    onResize()
+    vv.addEventListener('resize', onResize)
+    vv.addEventListener('scroll', onResize)
+    return () => {
+      vv.removeEventListener('resize', onResize)
+      vv.removeEventListener('scroll', onResize)
+      document.documentElement.style.removeProperty('--ai-dock-h')
+    }
+  }, [open])
+
   // Panel luôn được mount (giữ lịch sử chat); đóng/mở chỉ đổi width bằng CSS
   // transition `.ai-dock` ↔ `.ai-dock.collapsed`, panel teo về 0 và rail hiện ra.
   return (

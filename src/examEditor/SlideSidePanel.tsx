@@ -24,6 +24,8 @@ import { DECK_THEMES, normalizeTheme, themeById, type ResolvedTheme } from '@/li
 import { SLIDE_DESIGNS, buildDesignSlides, type SlideDesign } from '@/lib/slideDesigns'
 import { skinById, themeWithSkinFonts } from '@/lib/slideSkins'
 import { SlideThumb } from './SlideEditor'
+import { NavRailIndicator } from './NavRailIndicator'
+import { PanelContentTransition } from './PanelContentTransition'
 import { SLIDE_ASSET_IDS, SLIDE_ASSETS } from '@/lib/slideAssets'
 import { ICON_LIBRARY } from '@/lib/slideIconLibrary'
 import { GRAPHICS } from '@/lib/graphics'
@@ -86,23 +88,25 @@ function SlideSidePanelImpl({
   const current = PANELS.find((p) => p.id === shown) ?? null
   const mobile = useViewportSize().w < 768
 
-  const body = current && (
+  const navRef = useRef<HTMLElement>(null)
+
+  const renderPanelBody = (tabId: PanelId, isMobileSheet: boolean) => (
     <>
       {!canInsert && <p className="px-3 pt-2 text-[12px] text-ink-3">Mở một slide để thêm nội dung vào đó.</p>}
       {/* ô tìm kiếm nằm ngoài vùng cuộn (kiểu Canva): thanh cuộn chỉ chạy qua phần nội dung bên dưới */}
       <div className="flex min-h-0 flex-1 flex-col">
-        {shown === 'templates' && (
+        {tabId === 'templates' && (
           <TemplatesPanel
             theme={theme}
             isBlankDeck={isBlankDeck}
-            onPick={mobile ? (id) => { onAddLayoutSlide(id); setActive(null) } : onAddLayoutSlide}
+            onPick={isMobileSheet ? (id) => { onAddLayoutSlide(id); setActive(null) } : onAddLayoutSlide}
             onAddDesign={onAddDesign}
-            onCloseDrawer={mobile ? () => setActive(null) : undefined}
+            onCloseDrawer={isMobileSheet ? () => setActive(null) : undefined}
           />
         )}
-        {shown === 'elements' && <ElementsPanel accent={accent} canInsert={canInsert} hint={hint} onInsert={mobile ? insertAndClose : onInsert} />}
-        {shown === 'icons' && <IconsPanel canInsert={canInsert} onInsert={mobile ? insertAndClose : onInsert} />}
-        {shown === 'tools' && (
+        {tabId === 'elements' && <ElementsPanel accent={accent} canInsert={canInsert} hint={hint} onInsert={isMobileSheet ? insertAndClose : onInsert} />}
+        {tabId === 'icons' && <IconsPanel canInsert={canInsert} onInsert={isMobileSheet ? insertAndClose : onInsert} />}
+        {tabId === 'tools' && (
           <Scroll>
             <ToolsPanel
               disabled={!canInsert}
@@ -110,16 +114,15 @@ function SlideSidePanelImpl({
                 // giữ đúng tỉ lệ ảnh trên khung 16:9 (toạ độ phần trăm)
                 const w = 46
                 const h = (w * img.height * 16) / (img.width * 9)
-                ;(mobile ? insertAndClose : onInsert)({ id: uid(), type: 'image', src: svgDataUrl(img.svg), x: (100 - w) / 2, y: (100 - h) / 2, w, h })
+                ;(isMobileSheet ? insertAndClose : onInsert)({ id: uid(), type: 'image', src: svgDataUrl(img.svg), x: (100 - w) / 2, y: (100 - h) / 2, w, h })
               }}
             />
           </Scroll>
         )}
-        {shown === 'uploads' && <Scroll><div className="pt-3"><UploadsPanel canInsert={canInsert} onInsert={mobile ? insertAndClose : onInsert} /></div></Scroll>}
+        {tabId === 'uploads' && <Scroll><div className="pt-3"><UploadsPanel canInsert={canInsert} onInsert={isMobileSheet ? insertAndClose : onInsert} /></div></Scroll>}
       </div>
     </>
   )
-  // điện thoại: chèn xong thì hạ tấm trượt để thấy ngay kết quả trên slide (như Canva)
   function insertAndClose(el: SlideElement) {
     onInsert(el)
     setActive(null)
@@ -142,7 +145,7 @@ function SlideSidePanelImpl({
               <ChevronDown className="size-5" />
             </button>
           </div>
-          {body}
+          {current && renderPanelBody(current.id, true)}
         </div>
         <nav aria-label="Thư viện slide" className="fixed inset-x-0 bottom-0 z-40 flex h-14 items-stretch justify-around border-t border-line bg-surface pb-[env(safe-area-inset-bottom)]">
           {PANELS.map(({ id, label, Icon }) => (
@@ -180,10 +183,12 @@ function SlideSidePanelImpl({
 
   return (
     <div className="relative flex min-h-0 shrink-0">
-      <nav aria-label="Thư viện slide" className="flex w-[64px] flex-col items-center gap-2 border-r border-line bg-surface py-3">
+      <nav ref={navRef} aria-label="Thư viện slide" className="relative flex w-[64px] flex-col items-center gap-2 border-r border-line bg-surface py-3">
+        <NavRailIndicator containerRef={navRef} activeId={active} />
         {PANELS.map(({ id, label, Icon }) => (
           <button
             key={id}
+            data-tab-id={id}
             type="button"
             onClick={() => {
               setActive((cur) => (cur === id ? null : id))
@@ -191,12 +196,11 @@ function SlideSidePanelImpl({
             }}
             aria-pressed={active === id}
             className={cn(
-              // tab đang chọn: nền cam nhạt + chữ đậm, ô căn giữa thanh — tách hẳn khỏi hiệu ứng rê chuột
-              'flex w-[54px] flex-col items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-0.5 py-2.5 text-[11px] leading-none tracking-[-0.01em] transition-colors',
-              active === id ? 'bg-clay-soft font-semibold text-clay-deep' : 'font-medium text-ink-3 hover:bg-paper-2 hover:text-ink',
+              'relative z-10 flex w-[54px] flex-col items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-0.5 py-2.5 text-[11px] leading-none tracking-[-0.01em] transition-colors duration-200 ease-[cubic-bezier(0.2,0.8,0.2,1)] motion-reduce:transition-none',
+              active === id ? 'font-semibold text-clay-deep' : 'font-medium text-ink-3 hover:bg-paper-2 hover:text-ink',
             )}
           >
-            <Icon className="size-5" strokeWidth={active === id ? 2.1 : 1.7} />
+            <Icon className="size-5 transition-all duration-200 ease-[cubic-bezier(0.2,0.8,0.2,1)] motion-reduce:transition-none" strokeWidth={active === id ? 2.1 : 1.7} />
             {label}
           </button>
         ))}
@@ -222,7 +226,9 @@ function SlideSidePanelImpl({
       >
       {current && (
         <aside className="flex h-full w-[280px] min-h-0 flex-col border-r border-line bg-surface" aria-label={current.title}>
-          {body}
+          <PanelContentTransition activeTab={active} tabOrder={PANELS.map((p) => p.id)}>
+            {(tabId) => renderPanelBody(tabId as PanelId, false)}
+          </PanelContentTransition>
         </aside>
       )}
       </div>

@@ -23,7 +23,7 @@ import { Ribbon } from '@/examEditor/Ribbon'
 import { TabStrip } from '@/examEditor/TabStrip'
 import { AiPanel } from '@/examEditor/AiPanel'
 import { StartTab } from '@/examEditor/StartTab'
-import { NavPanel } from '@/examEditor/NavPanel'
+import { NavPanel, type PaneTab } from '@/examEditor/NavPanel'
 import { DocSelectionAi } from '@/examEditor/DocSelectionAi'
 import { ToolModal } from '@/examEditor/tools/ToolModal'
 import { svgToPng } from '@/lib/plot'
@@ -49,8 +49,10 @@ import { importedSlides, readImportFile, textToBlocks } from '@/lib/importFile'
 import { IconZoomIn, IconZoomOut } from '@/examEditor/icons'
 import type { ExamBlock, ExamDoc, FormatAttrs, RichText } from '@/data/docTypes'
 import { emptyDoc } from '@/data/docTypes'
+import { cn } from '@/lib/cn'
 
 const SESSION_KEY = 'dethinhbien-compose-session'
+const MOBILE_VIEW_KEY = 'dethinhbien-mobile-view'
 type ComposeSession = { ids: string[]; active: string | null; start: boolean }
 
 function readSession(): ComposeSession | null {
@@ -370,6 +372,11 @@ export default function ComposeDoc() {
   // màn hẹp (tablet/điện thoại): trợ lý AI nổi đè lên trang nên mặc định đóng
   const [aiOpen, setAiOpen] = useState(() => window.innerWidth >= 1024)
   const [navOpen, setNavOpen] = useState(true)
+  const [navTab, setNavTab] = useState<PaneTab>('toc')
+  const openNavWithTab = useCallback((tab: PaneTab) => {
+    setNavTab(tab)
+    setNavOpen(true)
+  }, [])
   const [zoom, setZoom] = useState(100)
   const [pageCount, setPageCount] = useState(1)
   const stageRef = useRef<HTMLDivElement>(null)
@@ -810,8 +817,29 @@ export default function ComposeDoc() {
     setZoom(z)
   }, [])
 
-  const effectiveZoom = autoFit ? Math.round(fitScale * 100) : zoom
-  const effectiveScale = effectiveZoom / 100
+  const [mobileView, setMobileView] = useState<'reflow' | 'paged'>(() => {
+    try {
+      const saved = localStorage.getItem(MOBILE_VIEW_KEY)
+      if (saved === 'paged' || saved === 'reflow') return saved
+    } catch {}
+    return 'reflow'
+  })
+
+  const isMobile = viewport.w > 0 && viewport.w < 768
+  const isReflow = isMobile && mobileView === 'reflow'
+
+  const toggleMobileView = useCallback(() => {
+    setMobileView((prev) => {
+      const next = prev === 'reflow' ? 'paged' : 'reflow'
+      try {
+        localStorage.setItem(MOBILE_VIEW_KEY, next)
+      } catch {}
+      return next
+    })
+  }, [])
+
+  const effectiveZoom = isReflow ? 100 : (autoFit ? Math.round(fitScale * 100) : zoom)
+  const effectiveScale = isReflow ? 1 : effectiveZoom / 100
 
   // trên màn hình hẹp, ưu tiên sân soạn: tự thu gọn panel bên
   useEffect(() => {
@@ -820,7 +848,7 @@ export default function ComposeDoc() {
   }, [viewport.w])
 
   return (
-    <div className="compose-app">
+    <div className={cn('compose-app', isReflow && 'is-reflow')}>
       {/* ---------- tab strip nhiều đề — trên cùng như GenOffice ---------- */}
       <div className="compose-tabbar">
         <TabStrip
@@ -906,22 +934,24 @@ export default function ComposeDoc() {
         onPageColorChange={(c) => setPageSetup((p) => ({ ...p, pageColor: c }))}
         pageBorder={pageSetup.pageBorder}
         onPageBorderChange={(w) => setPageSetup((p) => ({ ...p, pageBorder: w }))}
+        onOpenNav={openNavWithTab}
       />
 
       {/* ---------- thân ---------- */}
       <div className="compose-body">
         {/* mục lục / khối mẫu / công cụ (trái) */}
-        {viewport.w >= 768 && (
-            <NavPanel
-              doc={activeContent}
-              open={navOpen}
-              onOpenChange={setNavOpen}
-              onInsertTemplate={handleInsertTemplate}
-              onGoToBlock={handleGoToBlock}
-              onInsertPlot={(img) => void handleInsertPlot(img)}
-              side="left"
-            />
-        )}
+        <NavPanel
+          doc={activeContent}
+          open={navOpen}
+          onOpenChange={setNavOpen}
+          onInsertTemplate={handleInsertTemplate}
+          onGoToBlock={handleGoToBlock}
+          onInsertPlot={(img) => void handleInsertPlot(img)}
+          side="left"
+          isMobile={isMobile}
+          currentTab={navTab}
+          onTabChange={setNavTab}
+        />
         {/* sân soạn (giữa) */}
         <div className="compose-center">
           {findTab && editor && (
@@ -930,26 +960,34 @@ export default function ComposeDoc() {
           <div className="compose-scroll" ref={stageRef}>
             {/* `zoom` (không phải transform) để thước kẻ và trang giấy co cùng
                 tỉ lệ và container vẫn đúng bề rộng — giống GenOffice `.doc-zoom`. */}
-            <div className="compose-canvas anim-tab-in" key={activeId ?? 'none'} style={{ zoom: effectiveScale, ['--page-zoom' as string]: effectiveScale }}>
-              <Ruler
-                width={PAGE_W}
-                margin={MARGIN}
-                indentLeft={format.indentLeft}
-                indentFirstLine={format.indentFirstLine}
-                onIndentChange={(patch) => {
-                  if (editor) applyFormatAttrs(editor, patch)
-                }}
-                onMarginChange={(px) =>
-                  setPageSetup((p) => ({ ...p, marginCm: Math.round((px / CM) * 10) / 10 }))
-                }
-              />
+            <div
+              className={cn('compose-canvas anim-tab-in', isReflow && 'is-reflow')}
+              key={activeId ?? 'none'}
+              style={{ zoom: isReflow ? 1 : effectiveScale, ['--page-zoom' as string]: isReflow ? 1 : effectiveScale }}
+            >
+              {!isReflow && (
+                <Ruler
+                  width={PAGE_W}
+                  margin={MARGIN}
+                  indentLeft={format.indentLeft}
+                  indentFirstLine={format.indentFirstLine}
+                  onIndentChange={(patch) => {
+                    if (editor) applyFormatAttrs(editor, patch)
+                  }}
+                  onMarginChange={(px) =>
+                    setPageSetup((p) => ({ ...p, marginCm: Math.round((px / CM) * 10) / 10 }))
+                  }
+                />
+              )}
               <ExamEditor
                 key={activeId ?? 'none'}
                 content={activeContent}
                 onChange={onChange}
                 onReady={handleEditorReady}
                 pageSetup={pageSetup}
-              />            </div>
+                isReflow={isReflow}
+              />
+            </div>
           </div>
 
           {/* thanh trạng thái */}
@@ -962,25 +1000,38 @@ export default function ComposeDoc() {
               <span className="status-item">{activeTab?.dirty ? 'Chưa lưu' : 'Đã lưu'}</span>
             </div>
             <div className="status-right">
-              <button
-                type="button"
-                className="zoom-btn"
-                onClick={() => setZoomManual(Math.max(50, effectiveZoom - 10))}
-                aria-label="Thu nhỏ"
-                disabled={effectiveZoom <= 50}
-              >
-                <IconZoomOut size={14} />
-              </button>
-              <span className="tnum">{effectiveZoom}%</span>
-              <button
-                type="button"
-                className="zoom-btn"
-                onClick={() => setZoomManual(Math.min(200, effectiveZoom + 10))}
-                aria-label="Phóng to"
-                disabled={effectiveZoom >= 200}
-              >
-                <IconZoomIn size={14} />
-              </button>
+              {isMobile ? (
+                <button
+                  type="button"
+                  className="mobile-view-toggle-btn"
+                  onClick={toggleMobileView}
+                  title={isReflow ? 'Chuyển sang xem trang A4' : 'Chuyển sang dàn trang theo màn hình'}
+                >
+                  {isReflow ? 'Xem trang A4' : 'Dàn trang'}
+                </button>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    className="zoom-btn"
+                    onClick={() => setZoomManual(Math.max(50, effectiveZoom - 10))}
+                    aria-label="Thu nhỏ"
+                    disabled={effectiveZoom <= 50}
+                  >
+                    <IconZoomOut size={14} />
+                  </button>
+                  <span className="tnum">{effectiveZoom}%</span>
+                  <button
+                    type="button"
+                    className="zoom-btn"
+                    onClick={() => setZoomManual(Math.min(200, effectiveZoom + 10))}
+                    aria-label="Phóng to"
+                    disabled={effectiveZoom >= 200}
+                  >
+                    <IconZoomIn size={14} />
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>

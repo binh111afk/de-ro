@@ -96,7 +96,7 @@ export function GraphToolModal({
   const shownY = autoY && spec ? [String(spec.yMin), String(spec.yMax)] : [yMin, yMax]
 
   return (
-    <div className="fixed inset-0 z-[120] flex items-center justify-center bg-ink/30 p-4"
+    <div className="fixed inset-0 z-[120] flex items-center justify-center bg-ink/30 p-0 md:p-4"
       // modal có thể render qua portal từ trong phần tử slide: chặn sự kiện lan về phần tử đó
       onMouseDown={(e) => {
         e.stopPropagation()
@@ -109,10 +109,10 @@ export function GraphToolModal({
         role="dialog"
         aria-modal="true"
         aria-label="Đồ thị hàm số"
-        className="anim-pop flex max-h-[92vh] w-full max-w-[920px] flex-col md:h-[min(640px,92vh)] overflow-hidden rounded-[8px] bg-surface shadow-float"
+        className="anim-pop flex h-full max-h-[100dvh] w-full max-w-[920px] flex-col md:h-[min(640px,92vh)] md:max-h-[92vh] overflow-hidden rounded-none md:rounded-[8px] bg-surface shadow-float"
         onMouseDown={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between gap-4 border-b border-line px-6 py-4">
+        <div className="flex items-center justify-between gap-4 border-b border-line px-4 py-3 md:px-6 md:py-4">
           <div>
             <h2 className="text-[17px] font-semibold text-ink">Đồ thị hàm số</h2>
             <p className="mt-0.5 text-[12.5px] text-ink-3">Gõ như viết tay: x^2 - 2x + 1, sqrt(x), sin 2x, |x - 1|, 1/x</p>
@@ -242,7 +242,7 @@ export function GraphToolModal({
           </div>
         </div>
 
-        <div className="flex items-center justify-end gap-2 border-t border-line px-6 py-3.5">
+        <div className="sticky bottom-0 z-10 flex shrink-0 items-center justify-end gap-2 border-t border-line bg-surface px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] md:px-6 md:py-3.5">
           <Button variant="ghost" size="sm" onClick={onClose}>Huỷ</Button>
           <Button variant="clay" size="sm" disabled={!canInsert} onClick={() => plot && onInsert(plot)}>
             {submitLabel ?? (initial ? 'Cập nhật đồ thị' : 'Chèn đồ thị')}
