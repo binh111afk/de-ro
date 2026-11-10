@@ -326,6 +326,54 @@ const LAYOUT_GROUPS: Array<{ title: string; layouts: SlideLayoutId[] }> = [
 
 const LAYOUT_MAP = new Map<SlideLayoutId, SlideLayoutDef>(SLIDE_LAYOUTS.map((l) => [l.id, l]))
 
+/**
+ * Chỉ vẽ hình xem trước khi ô sắp cuộn tới (cách khung nhìn 300px). Vẽ một slide
+ * thu nhỏ khá nặng (mỗi khối chữ đo để tự co cỡ), vẽ hết 40 slide của tab Thiết kế
+ * cùng lúc làm panel đứng vài giây. Đã hiện thì giữ luôn, cuộn lại không vẽ lại.
+ */
+function LazyThumb({ render }: { render: () => React.ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [shown, setShown] = useState(false)
+  useEffect(() => {
+    const el = ref.current
+    if (!el || shown) return
+    if (typeof IntersectionObserver === 'undefined') {
+      setShown(true)
+      return
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setShown(true)
+          io.disconnect()
+        }
+      },
+      { rootMargin: '300px 0px' },
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [shown])
+  return (
+    <div ref={ref} className="absolute inset-0">
+      {shown ? render() : null}
+    </div>
+  )
+}
+
+/** slide xem trước của từng bộ thiết kế: dựng một lần cho cả phiên (dữ liệu bộ không đổi) */
+const designPreviewCache = new Map<string, { theme: ResolvedTheme; slides: Slide[] }>()
+function designPreview(design: SlideDesign) {
+  let hit = designPreviewCache.get(design.id)
+  if (!hit) {
+    const skin = skinById(design.id)
+    const base = themeById(design.themeId) ?? DECK_THEMES[0]
+    const theme = normalizeTheme(skin ? themeWithSkinFonts(base, skin) : base)
+    hit = { theme, slides: buildDesignSlides(design, theme) }
+    designPreviewCache.set(design.id, hit)
+  }
+  return hit
+}
+
 function LayoutCard({
   layout,
   theme,
@@ -363,7 +411,7 @@ function LayoutCard({
     >
       <div className="relative aspect-[16/9] w-full overflow-hidden rounded-[4px] border border-line/60 bg-paper transition-transform duration-150 group-hover:-translate-y-[1px] group-hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] pointer-events-none select-none">
         {slide ? (
-          <SlideThumb slide={slide} theme={theme} />
+          <LazyThumb render={() => <SlideThumb slide={slide} theme={theme} />} />
         ) : (
           <div className="flex size-full items-center justify-center">
             <span className={cn('slide-layout-thumb', `slide-layout-thumb--${layout.id}`)} aria-hidden>
@@ -388,15 +436,12 @@ const DesignCard = memo(function DesignCard({
   design: SlideDesign
   onApply: (design: SlideDesign) => void
 }) {
-  const skin = useMemo(() => skinById(design.id), [design.id])
-  const baseTheme = useMemo(() => themeById(design.themeId) ?? DECK_THEMES[0], [design.themeId])
-  const designTheme = useMemo(
-    () => normalizeTheme(skin ? themeWithSkinFonts(baseTheme, skin) : baseTheme),
-    [skin, baseTheme],
-  )
-  const previewSlides = useMemo(() => buildDesignSlides(design, designTheme), [design, designTheme])
-  const coverSlide = previewSlides[0]
-  const subSlides = previewSlides.slice(1, 5)
+  // dựng slide xem trước lúc ô đầu tiên của bộ cuộn tới, không dựng cả 8 bộ khi mở tab
+  const thumb = (i: number) => () => {
+    const { theme, slides } = designPreview(design)
+    return slides[i] ? <SlideThumb slide={slides[i]} theme={theme} /> : null
+  }
+  const subCount = Math.min(4, Math.max(0, design.slides.length - 1))
 
   return (
     <div
@@ -413,18 +458,18 @@ const DesignCard = memo(function DesignCard({
     >
       {/* Ảnh bìa to 16:9 của bộ theo theme của bộ */}
       <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg border border-line/60 bg-paper shadow-sm pointer-events-none select-none">
-        {coverSlide ? <SlideThumb slide={coverSlide} theme={designTheme} /> : null}
+        <LazyThumb render={thumb(0)} />
       </div>
 
       {/* Dải 4 slide con xem trước */}
-      {subSlides.length > 0 && (
+      {subCount > 0 && (
         <div className="mt-2 grid grid-cols-4 gap-1.5 pointer-events-none select-none">
-          {subSlides.map((s, idx) => (
+          {Array.from({ length: subCount }, (_, idx) => (
             <div
-              key={s.id || idx}
+              key={idx}
               className="relative aspect-[16/9] w-full overflow-hidden rounded-[3px] border border-line/50 bg-paper shadow-[0_1px_2px_rgba(0,0,0,0.03)]"
             >
-              <SlideThumb slide={s} theme={designTheme} />
+              <LazyThumb render={thumb(idx + 1)} />
             </div>
           ))}
         </div>
