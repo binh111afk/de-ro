@@ -1,6 +1,7 @@
 import { Link, Route, Routes, useLocation } from 'react-router-dom'
 import {
   BookOpen,
+  ChartColumn,
   Cpu,
   FileText,
   History,
@@ -14,7 +15,9 @@ import { OverviewPanel } from './OverviewPanel'
 import { UsersPanel } from './UsersPanel'
 import { AuditPanel } from './AuditPanel'
 import { OpsPanel } from './OpsPanel'
-import { ComingSoon } from './ComingSoon'
+import { ContentPanel } from './ContentPanel'
+import { BankPanel } from './BankPanel'
+import { StatsPanel } from './StatsPanel'
 
 interface AdminLayoutProps {
   me: AdminMe
@@ -32,6 +35,7 @@ const NAV_ITEMS: NavItem[] = [
   { path: '/admin/nguoi-dung', label: 'Người dùng', icon: Users, exact: false },
   { path: '/admin/noi-dung', label: 'Nội dung', icon: FileText, exact: false },
   { path: '/admin/ngan-hang', label: 'Ngân hàng', icon: BookOpen, exact: false },
+  { path: '/admin/so-lieu', label: 'Số liệu', icon: ChartColumn, exact: false },
   { path: '/admin/ai', label: 'AI & Server', icon: Cpu, exact: false },
   { path: '/admin/nhat-ky', label: 'Nhật ký', icon: History, exact: false },
 ]
@@ -111,26 +115,9 @@ export function AdminLayout({ me }: AdminLayoutProps) {
             <Routes>
               <Route index element={<OverviewPanel me={me} />} />
               <Route path="nguoi-dung" element={<UsersPanel me={me} />} />
-              <Route
-                path="noi-dung"
-                element={
-                  <ComingSoon
-                    title="Nội dung"
-                    description="Quản lý danh sách đề thi cộng đồng, tài liệu tải lên và duyệt các nội dung vi phạm."
-                    icon={<FileText className="size-6 text-ink-3" />}
-                  />
-                }
-              />
-              <Route
-                path="ngan-hang"
-                element={
-                  <ComingSoon
-                    title="Ngân hàng"
-                    description="Quản lý và chỉnh sửa ngân hàng câu hỏi, phân loại theo môn học và khối lớp."
-                    icon={<BookOpen className="size-6 text-ink-3" />}
-                  />
-                }
-              />
+              <Route path="noi-dung/*" element={<ContentPanel me={me} />} />
+              <Route path="ngan-hang/*" element={<BankPanel me={me} />} />
+              <Route path="so-lieu/*" element={<StatsPanel me={me} />} />
               <Route path="ai" element={<OpsPanel me={me} />} />
               <Route path="nhat-ky" element={<AuditPanel />} />
               <Route path="*" element={<OverviewPanel me={me} />} />

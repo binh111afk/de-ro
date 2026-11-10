@@ -79,8 +79,12 @@ const READ_ACTIONS = new Set(['db.metrics', 'me', 'users.list', 'quota.get', 'au
 const cache = new Map<string, { at: number; p: Promise<unknown> }>()
 export const clearAdminCache = () => cache.clear()
 
-async function post<T>(action: string, body: Record<string, unknown> = {}): Promise<T> {
-  if (!READ_ACTIONS.has(action)) {
+/**
+ * Gọi một action của /api/admin. `read: true` = action chỉ đọc (được nhớ 60 giây);
+ * mặc định đoán theo READ_ACTIONS. Action ghi xoá toàn bộ cache. Dùng được từ file api của giai đoạn khác.
+ */
+export async function post<T>(action: string, body: Record<string, unknown> = {}, read = READ_ACTIONS.has(action)): Promise<T> {
+  if (!read) {
     cache.clear()
     return send<T>(action, body)
   }
@@ -123,7 +127,8 @@ const MOCK_AUDIT: AuditEntry[] = [
   { id: 2, adminId: MOCK_USERS[0].id, action: 'quota.set', target: MOCK_USERS[3].id, detail: { monthlyTokens: 500000 }, createdAt: '2026-11-08T15:40:00Z' },
   { id: 1, adminId: MOCK_USERS[0].id, action: 'users.unban', target: MOCK_USERS[9].id, detail: {}, createdAt: '2026-11-05T10:02:00Z' },
 ]
-const wait = <T,>(v: T) => new Promise<T>((r) => setTimeout(() => r(structuredClone(v)), 250))
+/** Dữ liệu giả trả sau 250ms (giống mạng thật) */
+export const wait = <T,>(v: T) => new Promise<T>((r) => setTimeout(() => r(structuredClone(v)), 250))
 
 // ---------- API ----------
 

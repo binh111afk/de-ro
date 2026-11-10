@@ -12,6 +12,9 @@ import { deleteR2Object, pingR2, r2KeyFromUrl } from './r2.js'
 import { pingProviders } from './llmProxy.js'
 import { _resetOpsCache } from './ops.js'
 import { readDbMetrics } from './dbMetrics.js'
+import { CONTENT_ACTIONS } from './adminContent.js'
+import { BANK_ACTIONS } from './adminBank.js'
+import { STATS_ACTIONS } from './adminStats.js'
 
 export type Role = 'admin' | 'moderator'
 
@@ -74,7 +77,7 @@ export async function requireAdmin(req: IncomingMessage, res: ServerResponse, ne
   return { s, userId, role }
 }
 
-async function audit(ctx: AdminCtx, action: string, target: string, detail: Record<string, unknown> = {}): Promise<void> {
+export async function audit(ctx: AdminCtx, action: string, target: string, detail: Record<string, unknown> = {}): Promise<void> {
   await fetch(`${ctx.s.base}/rest/v1/admin_audit`, {
     method: 'POST',
     headers: { ...ctx.s.headers, Prefer: 'return=minimal' },
@@ -82,7 +85,7 @@ async function audit(ctx: AdminCtx, action: string, target: string, detail: Reco
   }).catch(() => {})
 }
 
-class HttpError extends Error {
+export class HttpError extends Error {
   constructor(
     public code: number,
     message: string,
@@ -91,7 +94,7 @@ class HttpError extends Error {
   }
 }
 
-async function call<T>(s: Supa, path: string, init: RequestInit = {}): Promise<{ data: T; res: Response }> {
+export async function call<T>(s: Supa, path: string, init: RequestInit = {}): Promise<{ data: T; res: Response }> {
   const res = await fetch(`${s.base}${path}`, { ...init, headers: { ...s.headers, ...(init.headers as Record<string, string>) } })
   const text = await res.text()
   if (!res.ok) throw new HttpError(502, `Supabase trả lỗi ${res.status}: ${text.slice(0, 200)}`)
@@ -126,8 +129,8 @@ function toRow(u: AuthUser, st?: { docs: number; decks: number; tokens: number; 
   }
 }
 
-const str = (v: unknown, max = 200) => (typeof v === 'string' ? v.trim().slice(0, max) : '')
-const needUser = (v: unknown) => {
+export const str = (v: unknown, max = 200) => (typeof v === 'string' ? v.trim().slice(0, max) : '')
+export const needUser = (v: unknown) => {
   if (typeof v !== 'string' || !UUID.test(v)) throw new HttpError(400, 'Thiếu hoặc sai mã người dùng.')
   return v
 }
@@ -137,15 +140,21 @@ async function getUser(s: Supa, id: string): Promise<AuthUser> {
 }
 
 /** Không cho admin tự khoá / xoá mình, và không đụng tới tài khoản admin khác. */
-async function protectTarget(ctx: AdminCtx, id: string) {
+export async function protectTarget(ctx: AdminCtx, id: string) {
   if (id === ctx.userId) throw new HttpError(400, 'Không thao tác trên chính tài khoản của bạn.')
   if ((await roleOf(ctx.s, id)) === 'admin') throw new HttpError(400, 'Không thao tác trên tài khoản admin khác.')
 }
 
-type Body = Record<string, unknown>
-type Handler = (ctx: AdminCtx, b: Body) => Promise<unknown>
+export type Body = Record<string, unknown>
+export type Handler = (ctx: AdminCtx, b: Body) => Promise<unknown>
+export type ActionMap = Record<string, { need: Role; run: Handler }>
 
-const ACTIONS: Record<string, { need: Role; run: Handler }> = {
+const ACTIONS: ActionMap = {
+  // giai đoạn 3–5: action nằm ở file riêng (mỗi nhánh agent chỉ sửa file của mình)
+  ...CONTENT_ACTIONS,
+  ...BANK_ACTIONS,
+  ...STATS_ACTIONS,
+
   /** giao diện hỏi "tôi có quyền gì" để quyết định hiện trang hay 404 */
   me: { need: 'moderator', run: async (ctx) => ({ userId: ctx.userId, role: ctx.role }) },
 
