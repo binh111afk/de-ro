@@ -180,6 +180,8 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
   const ip = clientIp(req)
   const userId = isLocal(ip) ? null : await userFromToken(req)
   const quota = isLocal(ip) ? null : await readQuota(userId, ip)
+  // GET: chỉ đọc hạn mức (trang Hồ sơ), không gọi AI. null = máy dev, không giới hạn
+  if (req.method === 'GET') return json(res, 200, { quota })
   if (quota && quota.used >= quota.limit) return json(res, 429, { error: quotaMessage(quota), quota })
 
   try {
@@ -363,7 +365,7 @@ export function llmMiddleware(
   res: ServerResponse,
   next: (err?: unknown) => void,
 ): void {
-  if (req.method !== 'POST' && req.method !== 'OPTIONS') return next()
+  if (!['POST', 'OPTIONS', 'GET'].includes(req.method ?? '')) return next()
   handleLlmRequest(req, res).catch((err: unknown) => {
     if (res.headersSent) return res.end()
     json(res, 500, { error: err instanceof Error ? err.message : String(err) })

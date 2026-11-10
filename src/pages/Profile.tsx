@@ -2,16 +2,11 @@ import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'r
 import { Navigate, useNavigate } from 'react-router-dom'
 import { LogOut, Shield } from 'lucide-react'
 import { getMe, type AdminMe } from '@/lib/adminApi'
-import { Badge, Button, inputClass } from '@/components/ui'
+import { Button, inputClass } from '@/components/ui'
 import { signOut, updateProfile, type Session } from '@/lib/auth'
 import { uploadImage } from '@/lib/mediaStore'
 import { useSession } from '@/lib/useSession'
-
-/** Số liệu điểm AI là MOCK để thử giao diện. Chưa có backend đếm lượt thật. */
-const CREDIT = {
-  used: 128,
-  total: 200,
-}
+import { apiFetch } from '@/lib/apiFetch'
 
 export default function Profile() {
   const session = useSession()
@@ -190,32 +185,57 @@ function EditCard({ user }: { user: Session['user'] }) {
   )
 }
 
-/** Điểm AI: số dư còn lại là số lớn; điểm cấp một lần, dùng hết là hết, không làm mới theo tháng. */
+type Quota = { used: number; limit: number; base?: number; credits?: number }
+const fmt = (n: number) => n.toLocaleString('vi-VN')
+
+/** Điểm AI thật (GET /api/llm): hạn mức tháng + điểm admin cộng (không mất khi sang tháng). */
 function CreditCard() {
-  const left = CREDIT.total - CREDIT.used
-  const pct = Math.round((left / CREDIT.total) * 100)
+  const [q, setQ] = useState<Quota | null | 'loading' | 'error'>('loading')
+  useEffect(() => {
+    let alive = true
+    apiFetch('/api/llm')
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((d: { quota: Quota | null }) => alive && setQ(d.quota))
+      .catch(() => alive && setQ('error'))
+    return () => {
+      alive = false
+    }
+  }, [])
+
+  let body
+  if (q === 'loading') body = <p className="mt-6 text-[13px] text-ink-3">Đang tải…</p>
+  else if (q === 'error') body = <p className="mt-6 text-[13px] text-ink-3">Chưa tải được số liệu, thử lại sau.</p>
+  else if (q === null) body = <p className="mt-6 text-[13px] text-ink-3">Máy dev: không giới hạn token AI.</p>
+  else {
+    const left = Math.max(0, q.limit - q.used)
+    const pct = q.limit > 0 ? Math.round((left / q.limit) * 100) : 0
+    body = (
+      <>
+        <p className="mt-7 font-display text-[44px] font-semibold leading-none tracking-[-0.02em] text-ink tnum">
+          {fmt(left)}
+          <span className="text-[18px] font-medium text-ink-3"> token còn lại</span>
+        </p>
+        <CreditBar pct={pct} />
+        <div className="mt-3 flex flex-wrap justify-between gap-x-4 gap-y-1 text-[12.5px] text-ink-3 tnum">
+          <span>Tháng này đã dùng {fmt(q.used)} / {fmt(q.limit)} token</span>
+          <span>
+            Hạn mức tháng {fmt(q.base ?? q.limit)}
+            {q.credits ? ` + ${fmt(q.credits)} điểm được cộng (không hết hạn)` : ''}
+          </span>
+        </div>
+      </>
+    )
+  }
   return (
     <section className="rounded-[8px] bg-surface p-7 shadow-lift sm:p-8">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="font-display text-[22px] font-semibold tracking-[-0.01em] text-ink">Điểm AI</h2>
-        <Badge tone="honey">Số liệu mẫu</Badge>
-      </div>
-
-      <p className="mt-7 font-display text-[48px] font-semibold leading-none tracking-[-0.02em] text-ink tnum">
-        {left}
-        <span className="text-[18px] font-medium text-ink-3"> điểm còn lại</span>
-      </p>
-      <CreditBar pct={pct} left={left} />
-      <div className="mt-3 flex flex-wrap justify-between gap-x-4 gap-y-1 text-[12.5px] text-ink-3 tnum">
-        <span>Đã dùng {CREDIT.used} / {CREDIT.total} điểm</span>
-        <span>Điểm của tài khoản, không hết hạn và không làm mới hằng tháng</span>
-      </div>
+      <h2 className="font-display text-[22px] font-semibold tracking-[-0.01em] text-ink">Điểm AI</h2>
+      {body}
     </section>
   )
 }
 
 /** Thanh tiến độ, chạy từ 0 lên giá trị thật sau khi trang hiện ra. */
-function CreditBar({ pct, left }: { pct: number; left: number }) {
+function CreditBar({ pct }: { pct: number }) {
   const [width, setWidth] = useState(0)
 
   useEffect(() => {
@@ -228,9 +248,9 @@ function CreditBar({ pct, left }: { pct: number; left: number }) {
       className="mt-5 h-2.5 overflow-hidden rounded-full bg-sunken"
       role="meter"
       aria-valuemin={0}
-      aria-valuemax={CREDIT.total}
-      aria-valuenow={left}
-      aria-label="Điểm AI còn lại"
+      aria-valuemax={100}
+      aria-valuenow={pct}
+      aria-label="Phần trăm token AI còn lại"
     >
       <div
         className="h-full rounded-full bg-clay transition-[width] duration-[1200ms] ease-out"
