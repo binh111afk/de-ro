@@ -47,10 +47,10 @@ assert.ok(themeById('van-su-dia').fonts.heading.includes('Times New Roman'))
 assert.equal(themeById('ngoai-ngu-tin').decor, 'glow')
 assert.equal(themeById('khong-ton-tai').id, DECK_THEMES[0].id)
 
-/* 4. Catalog: 6 theme duy nhất, không hoạ tiết ồn, accent đủ đậm cho chữ trên accent. */
-assert.equal(DECK_THEMES.length, 6)
-assert.equal(new Set(DECK_THEMES.map((t) => t.id)).size, 6, 'id theme không trùng')
-assert.equal(new Set(DECK_THEMES.map((t) => t.bg.toLowerCase())).size, 6, 'bg theme không trùng')
+/* 4. Catalog: 8 theme duy nhất, không hoạ tiết ồn, accent đủ đậm cho chữ trên accent. */
+assert.equal(DECK_THEMES.length, 8)
+assert.equal(new Set(DECK_THEMES.map((t) => t.id)).size, 8, 'id theme không trùng')
+assert.equal(new Set(DECK_THEMES.map((t) => t.bg.toLowerCase())).size, 8, 'bg theme không trùng')
 assert.deepEqual([...new Set(DECK_THEMES.map((t) => t.decor))].sort(), ['glow', 'grain', 'none'])
 for (const theme of DECK_THEMES) {
   const on = readableTextOn(theme.accent)
@@ -62,5 +62,5 @@ assert.equal(themeById('do').radius, 0, 'theme Đỏ không bo góc')
 assert.equal(themeById('giay-am').decor, 'grain', 'Giấy ấm có vân giấy')
 assert.ok(themeById('sang').radius > 0)
 
-console.log('✅ theme v2: normalize theme cũ, tương phản ≥ 4.5:1, themeById, catalog 6 theme OKLCH')
+console.log('✅ theme v2: normalize theme cũ, tương phản ≥ 4.5:1, themeById, catalog 8 theme OKLCH')
 console.log('\n4/4 pass, 0 fail')
