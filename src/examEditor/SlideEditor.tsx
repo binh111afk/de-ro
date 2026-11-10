@@ -129,6 +129,7 @@ import { HtmlDeckBar, HtmlSlideFrame } from './HtmlSlide'
 import { applyEdits, describeSlide, recomposeSlide, type SlideEditOp } from '@/lib/slideEdit'
 import { elementHeight } from '@/lib/slideText'
 import { DECK_THEMES, normalizeTheme, readableTextOn, themeById, type ResolvedTheme } from '@/lib/slideTheme'
+import { readableElements } from '@/lib/slideContrast'
 import { buildDesignSlides, type SlideDesign } from '@/lib/slideDesigns'
 import { applySkin, skinById, themeWithSkinFonts } from '@/lib/slideSkins'
 import { appendSlidesToDeck, withImage } from '@/lib/slideAi'
@@ -177,7 +178,7 @@ function PrintDeck({ slides, theme, onDone }: { slides: Slide[]; theme: Resolved
         <div key={slide.id} className="slide-print-page">
           {slide.html ? null : (
             <div className="slide-frame relative h-full w-full overflow-hidden" data-decor={theme.decor} style={{ ...slideBgStyle(slide), ...decorStyle(theme) }}>
-              {slide.elements.map((el) => (
+              {readableElements(slide, theme).map((el) => (
                 <SlideElView key={el.id} el={el} theme={theme} />
               ))}
             </div>
@@ -933,7 +934,7 @@ export function SlideEditor({
                 data-decor={theme.decor}
                 style={{ ...slideBgStyle(slide), ...decorStyle(theme) }}
               >
-                {slide.elements.map((el) =>
+                {readableElements(slide, theme).map((el) =>
                   el.step ? (
                     <RevealLayer key={el.id} el={el} shown={el.step <= presentStep}>
                       <SlideElView el={el} theme={theme} />
@@ -1151,7 +1152,7 @@ export function SlideEditor({
                 }}
               >
                 <SnapGuides />
-                {currentSlide.elements.map((el) => (
+                {readableElements(currentSlide, theme).map((el) => (
                   <EditableEl
                     key={el.id}
                     el={el}
@@ -1309,7 +1310,7 @@ export function SlideThumb({ slide, theme }: { slide: Slide; theme: ResolvedThem
       data-decor={theme.decor}
       style={{ ...slideBgStyle(slide), ...decorStyle(theme) }}
     >
-      {slide.elements.map((el) => (
+      {readableElements(slide, theme).map((el) => (
         <SlideElView key={el.id} el={el} theme={theme} />
       ))}
     </div>
@@ -1460,6 +1461,12 @@ function shapeCss(el: SlideElement, theme: ResolvedTheme): React.CSSProperties {
   }
 }
 
+const isHollowShape = (el: SlideElement) =>
+  el.type === 'shape' && el.shape !== 'line' && !el.text && (el.fill === 'transparent' || el.fill === 'none')
+/** vùng nhận chuột của hình rỗng: dải viền rộng 10px quanh mép trong (evenodd khoét phần giữa) */
+const HOLLOW_HIT =
+  'polygon(evenodd, 0 0, 100% 0, 100% 100%, 0 100%, 0 0, 10px 10px, 10px calc(100% - 10px), calc(100% - 10px) calc(100% - 10px), calc(100% - 10px) 10px, 10px 10px)'
+
 /** Bóng đổ theo mức (0 không, 1 nhẹ, 2 vừa, 3 đậm); chưa chọn mức thì theo `shadow` và bộ màu như trước. */
 const SHADOWS = [
   undefined,
@@ -1479,7 +1486,7 @@ const shadowLevelOf = (el: SlideElement, theme: ResolvedTheme): 0 | 1 | 2 | 3 =>
 function shadowCss(el: SlideElement, theme: ResolvedTheme): string | undefined {
   if (el.shadowLevel !== undefined) return SHADOWS[el.shadowLevel]
   if (el.shadow === false || (el.shadow !== true && theme.shadow === 'none')) return undefined
-  return theme.shadow === 'hard' ? '6px 6px 0 rgb(17 24 39 / 0.92)' : SHADOWS[2]
+  return theme.shadow === 'hard' ? '0.6cqw 0.6cqw 0 rgb(17 24 39 / 0.92)' : SHADOWS[2]
 }
 
 /** mẫu nét đứt/chấm theo độ dày viền (đơn vị px của SVG) */
@@ -2208,6 +2215,9 @@ function EditableEl({
     transition: 'scale 350ms cubic-bezier(.2,.8,.2,1)',
     outline: selected || grouped ? '2px solid #b4532a' : undefined,
     outlineOffset: selected || grouped ? 0 : undefined,
+    // khung viền rỗng (nền trong suốt, vd khung trang trí của bộ thiết kế phủ gần cả slide):
+    // chỉ nhận chuột ở dải viền, kẻo bấm vào vùng trống hay sát mép lại chọn nhầm cả khung to
+    clipPath: isHollowShape(el) && !selected && !grouped ? HOLLOW_HIT : undefined,
   }
 
   const startDrag = (e: React.PointerEvent, mode: 'move' | 'resize', dir?: ResizeDir) => {
@@ -2555,7 +2565,7 @@ function EditableEl({
 
   if (el.type === 'shape')
     return (
-      <div {...common} style={{ ...style, ...shapeCss(el, theme) }} onDoubleClick={() => el.shape !== 'line' && onEditingText(true)}>
+      <div {...common} style={{ ...style, ...shapeCss(el, theme), ...(style.clipPath ? { clipPath: style.clipPath } : null) }} onDoubleClick={() => el.shape !== 'line' && onEditingText(true)}>
         {shapeInner(el, theme)}
         {editingText && el.shape !== 'line' ? (
           <div style={{ position: 'absolute', inset: '10% 12%' }} onBlur={() => onEditingText(false)}>

@@ -9,6 +9,11 @@ Gộp trên nhánh `tich-hop-27` (worktree `../dethinhbien-main`), thứ tự ke
 - Kiểm: tsc sạch; docx, export, convert, designs, slide-theme/plan/layout, markdown, online, grading, guard đều qua. Xem trên dev: desktop 1440 không đổi, 360px không cuộn ngang, tab Mẫu → Thiết kế hiện 8 bộ, không lỗi console.
 
 ## Còn treo
-- **mau-slide đợt sửa 2 CHƯA làm**: khung chọn phần tử nhảy khi sát mép slide; tương phản chữ theo màu nền ngay dưới chữ; thumbnail bóng đổ tính px không co theo cỡ.
+- mau-slide đợt sửa 2: Claude đã làm trong phiên này (xem mục dưới).
 - Dọn worktree/nhánh sau khi push (xem phiên 26, mục "Nhánh / worktree cần dọn").
 - Các việc treo khác: xem phiên 26.
+
+## Đợt sửa 2 của mau-slide (Claude làm)
+- **Khung chọn nhảy sát mép**: nguyên nhân là khung viền trang trí rỗng của skin (nền trong suốt, phủ ~95% slide) bắt mọi cú bấm vào vùng trống/gần mép. Giờ hình rỗng chưa chọn chỉ nhận chuột ở dải viền 10px (`isHollowShape`, `HOLLOW_HIT` trong `SlideEditor.tsx`).
+- **Tương phản chữ**: `src/lib/slideContrast.ts` (`readableElements`) tính màu nền ngay dưới chữ (ô tô của chữ → hình đặc nằm dưới che tâm chữ → nền slide); dưới 3:1 thì đổi sang `theme.fg` hoặc mực đậm/trắng. Chỉ đổi lúc vẽ (editor, thumbnail, trình chiếu, in, PPTX), không ghi vào dữ liệu. Test `npm run test:slide-contrast` (8 bộ × mọi bộ màu).
+- **Bóng thumbnail**: bóng cứng `6px 6px` → `0.6cqw 0.6cqw`, co theo cỡ slide.

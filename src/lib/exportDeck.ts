@@ -5,6 +5,7 @@
  * bundle chính. Toạ độ của deck là % (0–100) nên truyền thẳng dạng `"12%"`
  * — PptxGenJS hiểu % theo kích thước slide 16:9.
  */
+import { readableElements } from './slideContrast'
 import { boldRuns, hasBold, mathToPlain } from './slideMath'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
@@ -73,7 +74,7 @@ export async function buildDeckPptx(deck: Deck): Promise<ArrayBuffer> {
       slide.addShape('rect' as never, { x: 0, y: 0, w: '100%', h: '100%', fill: { color: hex(source.background), transparency: 70 }, line: { type: 'none' } } as never)
     }
 
-    const elements = [...source.elements].sort((a, b) => (a.zIndex ?? 0) - (b.zIndex ?? 0))
+    const elements = [...readableElements(source, deck.theme)].sort((a, b) => (a.zIndex ?? 0) - (b.zIndex ?? 0))
     for (const el of elements) {
       const box = {
         x: pct(el.x),
