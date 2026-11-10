@@ -131,7 +131,7 @@ export function UsersPanel({ me: _me }: UsersPanelProps) {
           <table className="w-full min-w-[780px] border-collapse text-left text-[13.5px]">
             <thead className="border-b border-line bg-sunken/80 text-[12px] font-semibold uppercase tracking-wider text-ink-3">
               <tr>
-                <th className="px-4 py-3">Email & Tên</th>
+                <th className="px-4 py-3">Người dùng</th>
                 <th className="px-4 py-3">Ngày tạo</th>
                 <th className="px-4 py-3">Đăng nhập gần nhất</th>
                 <th className="px-4 py-3 text-right">Số đề</th>
@@ -185,13 +185,14 @@ export function UsersPanel({ me: _me }: UsersPanelProps) {
                     >
                       {/* Email + tên */}
                       <td className="px-4 py-3">
-                        <div className="flex flex-col">
-                          <span className="font-semibold text-ink hover:text-clay">
-                            {u.email}
-                          </span>
-                          <span className="text-[12px] text-ink-3">
-                            {u.name || 'Chưa đặt tên'}
-                          </span>
+                        <div className="flex items-center gap-3">
+                          <UserAvatar user={u} className="size-8 text-[13px]" />
+                          <div className="flex min-w-0 flex-col">
+                            <span className="truncate font-semibold text-ink">
+                              {u.name || <span className="font-normal italic text-ink-3">Chưa đặt tên</span>}
+                            </span>
+                            <span className="truncate text-[12px] text-ink-3 hover:text-clay">{u.email}</span>
+                          </div>
                         </div>
                       </td>
 
@@ -261,6 +262,12 @@ export function UsersPanel({ me: _me }: UsersPanelProps) {
           user={selectedUser}
           onClose={() => setSelectedUser(null)}
           onReloadList={loadUsers}
+          onDeleted={(id) => {
+            setSelectedUser(null)
+            setUsers((list) => list.filter((x) => x.id !== id))
+            setTotal((t) => Math.max(0, t - 1))
+            void loadUsers()
+          }}
           onUserUpdated={(updated) => setSelectedUser(updated)}
         />
       ) : null}
@@ -276,6 +283,7 @@ interface UserDetailDrawerProps {
   user: AdminUser
   onClose: () => void
   onReloadList: () => Promise<void>
+  onDeleted: (id: string) => void
   onUserUpdated: (u: AdminUser) => void
 }
 
@@ -290,6 +298,7 @@ function UserDetailDrawer({
   user,
   onClose,
   onReloadList,
+  onDeleted,
   onUserUpdated,
 }: UserDetailDrawerProps) {
   const [quota, setQuotaState] = useState<UserQuota | null>(null)
@@ -470,9 +479,8 @@ function UserDetailDrawer({
     setDeleting(true)
     try {
       await deleteUser(user.id, deleteConfirmEmail)
-      await dialog.alert(`Đã xoá vĩnh viễn tài khoản ${user.email}.`, { title: 'Đã xoá' })
-      onClose()
-      await onReloadList()
+      onDeleted(user.id)
+      void dialog.alert(`Đã xoá vĩnh viễn tài khoản ${user.email}.`, { title: 'Đã xoá' })
     } catch (err: unknown) {
       const msg = err instanceof AdminError || err instanceof Error ? err.message : 'Không thể xoá tài khoản'
       await dialog.alert(msg, { title: 'Lỗi' })
@@ -511,9 +519,7 @@ function UserDetailDrawer({
         {/* Header ngăn kéo */}
         <div className="flex items-center justify-between border-b border-line px-6 py-4">
           <div className="flex items-center gap-3">
-            <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-clay-tint font-semibold text-clay">
-              {user.name ? user.name.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase()}
-            </div>
+            <UserAvatar user={user} className="size-10 text-[15px]" />
             <div className="min-w-0">
               <h2 className="truncate text-[16px] font-bold text-ink">
                 {user.name || 'Người dùng'}
@@ -979,3 +985,25 @@ function GrantCreditsModal({
 }
 
 export default UsersPanel
+
+/** Ảnh đại diện người dùng; chưa có ảnh hoặc ảnh lỗi thì hiện chữ cái đầu. */
+function UserAvatar({ user, className }: { user: AdminUser; className?: string }) {
+  const [broken, setBroken] = useState(false)
+  const letter = (user.name || user.email).trim().charAt(0).toUpperCase()
+  if (user.avatar && !broken)
+    return (
+      <img
+        src={user.avatar}
+        alt=""
+        loading="lazy"
+        referrerPolicy="no-referrer"
+        onError={() => setBroken(true)}
+        className={`shrink-0 rounded-full bg-sunken object-cover ${className ?? ''}`}
+      />
+    )
+  return (
+    <div className={`flex shrink-0 items-center justify-center rounded-full bg-clay-tint font-semibold text-clay ${className ?? ''}`}>
+      {letter}
+    </div>
+  )
+}

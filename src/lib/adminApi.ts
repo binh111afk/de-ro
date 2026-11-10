@@ -17,6 +17,8 @@ export interface AdminUser {
   id: string
   email: string
   name: string
+  /** URL ảnh đại diện; null = chưa đặt */
+  avatar: string | null
   /** ISO */
   createdAt: string
   lastSignInAt: string | null
@@ -107,6 +109,7 @@ const MOCK_USERS: AdminUser[] = Array.from({ length: 57 }, (_, i) => ({
   id: `00000000-0000-4000-8000-${String(i).padStart(12, '0')}`,
   email: i === 0 ? 'chu-app@example.com' : `giaovien${i}@example.com`,
   name: i === 0 ? 'Chủ app' : `Giáo viên ${i}`,
+  avatar: i % 3 === 1 ? `https://i.pravatar.cc/96?img=${i % 70}` : null,
   createdAt: new Date(Date.UTC(2026, 9, 1 + (i % 40))).toISOString(),
   lastSignInAt: i % 5 === 4 ? null : new Date(Date.UTC(2026, 10, 1 + (i % 9))).toISOString(),
   bannedUntil: i === 7 ? '2126-01-01T00:00:00Z' : null,

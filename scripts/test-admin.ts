@@ -27,7 +27,7 @@ globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
     const id = /user_id=eq\.([0-9a-f-]+)/.exec(url)?.[1] ?? ''
     return ok(ROLES[id] ? [{ role: ROLES[id] }] : [])
   }
-  if (url.includes('/auth/v1/admin/users?')) return ok({ users: [{ id: USER, email: 'u@x.vn', created_at: '2026-11-01T00:00:00Z' }] }, { 'x-total-count': '1' })
+  if (url.includes('/auth/v1/admin/users?')) return ok({ users: [{ id: USER, email: 'u@x.vn', created_at: '2026-11-01T00:00:00Z', user_metadata: { display_name: 'Cô Lan', avatar_url: 'https://x/a.jpg' } }] }, { 'x-total-count': '1' })
   if (url.includes('/rpc/admin_user_stats')) return ok([{ user_id: USER, docs: 3, decks: 1, tokens: 500, role: null }])
   if (url.includes(`/auth/v1/admin/users/${USER}`) && method === 'GET') return ok({ id: USER, email: 'u@x.vn', created_at: '' })
   if (url.includes('/auth/v1/admin/users/')) return ok({})
@@ -79,6 +79,7 @@ check('action lạ → 400', (await hit({ action: 'drop.all' }, 'tAdmin')).statu
 const list = await hit({ action: 'users.list', q: 'u@', page: 1 }, 'tAdmin')
 const u = (list.data.users as Array<Record<string, unknown>>)?.[0]
 check('admin users.list → 200, ghép số đề/token', list.status === 200 && u?.docs === 3 && u?.tokensThisMonth === 500 && list.data.total === 1)
+check('users.list lấy tên hiển thị + ảnh đại diện', u?.name === 'Cô Lan' && u?.avatar === 'https://x/a.jpg')
 check('users.list gửi filter email', calls.some((c) => c.includes('/auth/v1/admin/users?') && c.includes('filter=u%40')))
 
 check('admin tự khoá mình → 400', (await hit({ action: 'users.ban', userId: ADMIN }, 'tAdmin')).status === 400)

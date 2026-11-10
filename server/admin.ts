@@ -104,7 +104,7 @@ interface AuthUser {
   created_at: string
   last_sign_in_at?: string | null
   banned_until?: string | null
-  user_metadata?: { full_name?: string; name?: string }
+  user_metadata?: { display_name?: string; avatar_url?: string; full_name?: string; name?: string }
 }
 
 /** Dòng người dùng trả cho giao diện; giữ khớp `AdminUser` trong src/lib/adminApi.ts */
@@ -113,7 +113,9 @@ function toRow(u: AuthUser, st?: { docs: number; decks: number; tokens: number; 
   return {
     id: u.id,
     email: u.email ?? '',
-    name: u.user_metadata?.full_name ?? u.user_metadata?.name ?? '',
+    // app lưu ở display_name / avatar_url (src/lib/auth.ts); full_name/name là của đăng nhập bên ngoài
+    name: u.user_metadata?.display_name || u.user_metadata?.full_name || u.user_metadata?.name || '',
+    avatar: u.user_metadata?.avatar_url || null,
     createdAt: u.created_at,
     lastSignInAt: u.last_sign_in_at ?? null,
     bannedUntil: banned ? u.banned_until! : null,
