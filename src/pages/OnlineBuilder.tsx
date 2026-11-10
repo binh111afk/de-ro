@@ -292,9 +292,9 @@ export default function OnlineBuilder() {
                                 >
                                   {q.number}
                                 </span>
-                                <span className="min-w-0 flex-1 truncate text-[13px] text-ink-2">
+                                <MathText className="min-w-0 flex-1 truncate text-[13px] text-ink-2">
                                   {oneLine(q.prompt) || '(chưa có nội dung)'}
-                                </span>
+                                </MathText>
                               </button>
                             </li>
                           )

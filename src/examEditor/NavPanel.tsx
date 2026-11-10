@@ -3,6 +3,7 @@
  * thanh icon dọc (Mục lục / Khối mẫu) như thư viện bên soạn slide, panel trượt
  * ra bên trái thanh đó.
  */
+import { MathText } from '@/components/MathText'
 import { useMemo, useRef, useState } from 'react'
 import { Blocks, ChevronLeft, ChevronRight, ListTree, Wrench, X } from 'lucide-react'
 import { NavRailIndicator } from './NavRailIndicator'
@@ -145,7 +146,7 @@ export function NavPanel({
                             onOpenChange(false)
                           }}
                         >
-                          {entry.kind === 'question' ? `Câu ${entry.no}. ${entry.text}` : entry.text}
+                          <MathText>{entry.kind === 'question' ? `Câu ${entry.no}. ${entry.text}` : entry.text}</MathText>
                         </button>
                       </li>
                     ))}
@@ -243,7 +244,7 @@ export function NavPanel({
                         {toc.map((entry: TocEntry) => (
                           <li key={entry.index} style={{ paddingLeft: `${(entry.level - 1) * 12}px` }}>
                             <button type="button" onClick={() => onGoToBlock(entry.index)}>
-                              {entry.kind === 'question' ? `Câu ${entry.no}. ${entry.text}` : entry.text}
+                              <MathText>{entry.kind === 'question' ? `Câu ${entry.no}. ${entry.text}` : entry.text}</MathText>
                             </button>
                           </li>
                         ))}
