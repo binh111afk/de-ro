@@ -2,13 +2,15 @@ import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Users, FileText, BookOpen, Cpu, ArrowRight } from 'lucide-react'
 import { Card, EmptyState, Spinner } from '@/components/ui'
-import { listUsers, type AdminMe } from '@/lib/adminApi'
+import { listUsers, getAiStats, type AdminMe } from '@/lib/adminApi'
 import { formatNumber } from './adminUtils'
 
 export function OverviewPanel({ me }: { me: AdminMe }) {
   const { search } = useLocation()
   const [totalUsers, setTotalUsers] = useState<number | null>(null)
   const [loading, setLoading] = useState(true)
+  const [aiCalls7d, setAiCalls7d] = useState<number | null>(null)
+  const [aiLoading, setAiLoading] = useState(true)
 
   useEffect(() => {
     let alive = true
@@ -22,6 +24,20 @@ export function OverviewPanel({ me }: { me: AdminMe }) {
       .finally(() => {
         if (alive) setLoading(false)
       })
+
+    getAiStats(7)
+      .then((res) => {
+        if (!alive) return
+        const sum = res.rows.reduce((acc, r) => acc + r.calls, 0)
+        setAiCalls7d(sum)
+      })
+      .catch(() => {
+        if (alive) setAiCalls7d(null)
+      })
+      .finally(() => {
+        if (alive) setAiLoading(false)
+      })
+
     return () => {
       alive = false
     }
@@ -117,24 +133,39 @@ export function OverviewPanel({ me }: { me: AdminMe }) {
           </p>
         </Card>
 
-        {/* Thẻ Sắp có: AI & Server */}
-        <Card className="flex flex-col justify-between border border-line bg-surface/70 p-5 shadow-soft">
+        {/* Thẻ AI & Máy chủ */}
+        <Card className="flex flex-col justify-between border border-line p-5 shadow-soft transition-all hover:border-line-2">
           <div>
             <div className="flex items-center justify-between">
               <span className="text-[13px] font-medium text-ink-3">AI & Máy chủ</span>
-              <div className="flex size-9 items-center justify-center rounded-[6px] bg-sunken text-ink-4">
+              <div className="flex size-9 items-center justify-center rounded-[6px] bg-sunken text-ink-2">
                 <Cpu className="size-4.5" />
               </div>
             </div>
             <div className="mt-3">
-              <span className="inline-block rounded-[4px] bg-sunken px-2 py-0.5 text-[12px] font-medium text-ink-3">
-                Sắp có
-              </span>
+              {aiLoading ? (
+                <div className="flex h-10 items-center">
+                  <Spinner className="text-ink-3" />
+                </div>
+              ) : (
+                <div className="tnum text-[32px] font-bold tracking-tight text-ink">
+                  {formatNumber(aiCalls7d)}
+                  <span className="ml-1.5 text-[12.5px] font-normal text-ink-3">
+                    lượt / 7 ngày
+                  </span>
+                </div>
+              )}
             </div>
           </div>
-          <p className="mt-4 border-t border-line-2 pt-3 text-[12px] text-ink-4">
-            Thống kê token, độ trễ và chi phí model
-          </p>
+          <div className="mt-4 border-t border-line-2 pt-3">
+            <Link
+              to={`/admin/ai${search}`}
+              className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-clay transition-colors hover:text-clay-deep"
+            >
+              <span>Xem chi tiết</span>
+              <ArrowRight className="size-3.5" />
+            </Link>
+          </div>
         </Card>
       </div>
 

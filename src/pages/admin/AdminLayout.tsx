@@ -13,6 +13,7 @@ import { isAdminMock, type AdminMe } from '@/lib/adminApi'
 import { OverviewPanel } from './OverviewPanel'
 import { UsersPanel } from './UsersPanel'
 import { AuditPanel } from './AuditPanel'
+import { OpsPanel } from './OpsPanel'
 import { ComingSoon } from './ComingSoon'
 
 interface AdminLayoutProps {
@@ -130,16 +131,7 @@ export function AdminLayout({ me }: AdminLayoutProps) {
                   />
                 }
               />
-              <Route
-                path="ai"
-                element={
-                  <ComingSoon
-                    title="AI & Server"
-                    description="Theo dõi chi phí LLM, cấu hình các model AI dự phòng và tình trạng hoạt động máy chủ."
-                    icon={<Cpu className="size-6 text-ink-3" />}
-                  />
-                }
-              />
+              <Route path="ai" element={<OpsPanel me={me} />} />
               <Route path="nhat-ky" element={<AuditPanel />} />
               <Route path="*" element={<OverviewPanel me={me} />} />
             </Routes>
