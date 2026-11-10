@@ -25,9 +25,17 @@ const hex = (value: string | undefined, fallback = 'FFFFFF') => {
 
 /** Phông có sẵn trên Windows/Mac cùng PowerPoint; phông web (Be Vietnam Pro…) không nằm trong .pptx nên đổi sang Arial. */
 const SAFE_FONTS = ['Times New Roman', 'Arial', 'Georgia', 'Tahoma', 'Verdana', 'Segoe UI', 'Calibri', 'Courier New']
+/** font web không có sẵn trong PowerPoint → font hệ thống gần giống */
+const WEB_FONT_FALLBACK: Record<string, string> = { nunito: 'Arial', lora: 'Georgia', 'be vietnam pro': 'Arial' }
 const pptxFont = (stack: string | undefined) => {
-  const first = (stack ?? '').split(',')[0].replace(/['"]/g, '').trim()
-  return SAFE_FONTS.find((f) => f.toLowerCase() === first.toLowerCase()) ?? 'Arial'
+  // lấy font đầu tiên trong chuỗi mà PowerPoint chắc có (font web như Nunito/Lora → font dự phòng kế tiếp)
+  for (const part of (stack ?? '').split(',')) {
+    const name = part.replace(/['"]/g, '').trim().toLowerCase()
+    const hit = SAFE_FONTS.find((f) => f.toLowerCase() === name)
+    if (hit) return hit
+    if (WEB_FONT_FALLBACK[name]) return WEB_FONT_FALLBACK[name]
+  }
+  return 'Arial'
 }
 
 /** cỡ chữ của deck là cqw (1% bề rộng); slide 16:9 rộng 10in → 1cqw = 7,2pt */

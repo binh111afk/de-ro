@@ -8,6 +8,10 @@ import '@fontsource/be-vietnam-pro/400.css'
 import '@fontsource/be-vietnam-pro/500.css'
 import '@fontsource/be-vietnam-pro/600.css'
 import '@fontsource/be-vietnam-pro/700.css'
+import '@fontsource/nunito/600.css'
+import '@fontsource/nunito/800.css'
+import '@fontsource/lora/600.css'
+import '@fontsource/lora/700.css'
 import '@fontsource-variable/jetbrains-mono'
 
 // Static hosts that do not rewrite unknown paths to index.html land on

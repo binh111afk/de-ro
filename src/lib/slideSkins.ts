@@ -6,6 +6,10 @@
 import type { DeckTheme, Slide, SlideElement, SlideTone } from '@/store/docs'
 import { contentFromSlide, type SlideLayoutContent, type SlideLayoutId } from './slideLayouts'
 
+/** Font web có đủ dấu tiếng Việt; máy nào cũng hiện giống nhau (không phụ thuộc font cài sẵn). */
+const ROUNDED = 'Nunito'
+const ACADEMIC_SERIF = 'Lora'
+
 const uid = () => Math.random().toString(36).slice(2, 10)
 
 export interface SlideSkinFonts {
@@ -249,15 +253,15 @@ const skinThanhLich: SlideSkin = {
 
 /* ------------------------------------------------------------------ *
  * BỘ 2: TRẺ TRUNG NHIỀU MÀU (Playful Bubble)
- * Chữ đậm tròn trịa Arial, tiêu đề căn giữa, sticker hình tròn nổi bồng bềnh,
+ * Chữ tròn Nunito (có dấu tiếng Việt), tiêu đề căn giữa, sticker hình tròn nổi bồng bềnh,
  * thẻ dạng viên thuốc bo tròn lớn (radius: 26), badge mềm mại.
  * ------------------------------------------------------------------ */
 const skinTreTrung: SlideSkin = {
   id: 'tre-trung',
   name: 'Trẻ trung nhiều màu',
   fonts: {
-    heading: 'Arial',
-    body: 'Arial',
+    heading: ROUNDED,
+    body: ROUNDED,
   },
   geometrySummary: 'Bong bóng & viên thuốc (pill badge), tiêu đề căn giữa vui tươi, các chấm tròn sticker lơ lửng, thẻ bo tròn lớn (radius: 26).',
   createTitleSlide: (theme, content) => [
@@ -265,23 +269,23 @@ const skinTreTrung: SlideSkin = {
     {
       id: 'skin-motif-dot-1',
       type: 'shape',
-      shape: 'circle',
+      shape: 'ellipse',
       x: 6,
       y: 8,
       w: 6,
-      h: 6,
-      fill: theme.secondary ?? '#f472b6',
+      h: 10.67,
+      fill: '#ec4899',
       opacity: 0.8,
     },
     // Sticker chấm tròn nhỏ góc phải trên
     {
       id: 'skin-motif-dot-2',
       type: 'shape',
-      shape: 'circle',
+      shape: 'ellipse',
       x: 88,
       y: 12,
       w: 4.5,
-      h: 4.5,
+      h: 8.0,
       fill: theme.accent,
       opacity: 0.7,
     },
@@ -289,7 +293,7 @@ const skinTreTrung: SlideSkin = {
     {
       id: 'kicker-bg',
       type: 'shape',
-      shape: 'rect',
+      shape: 'round',
       x: 34,
       y: 16,
       w: 32,
@@ -310,7 +314,7 @@ const skinTreTrung: SlideSkin = {
       fontWeight: 800,
       textColor: '#ffffff',
       align: 'center',
-      fontFamily: 'Arial',
+      fontFamily: ROUNDED,
     },
     // Tiêu đề căn giữa, to tròn, đậm nét
     {
@@ -326,7 +330,7 @@ const skinTreTrung: SlideSkin = {
       fontWeight: 800,
       textColor: theme.fg,
       align: 'center',
-      fontFamily: 'Arial',
+      fontFamily: ROUNDED,
       lineHeight: 1.2,
     },
     // Phụ đề thân thiện bên dưới
@@ -343,19 +347,19 @@ const skinTreTrung: SlideSkin = {
       fontWeight: 600,
       textColor: theme.muted ?? '#6b21a8',
       align: 'center',
-      fontFamily: 'Arial',
+      fontFamily: ROUNDED,
     },
     // Sticker viên thuốc ngang dưới chân
     {
       id: 'skin-motif-pill-bottom',
       type: 'shape',
-      shape: 'rect',
+      shape: 'round',
       x: 45,
       y: 82,
       w: 10,
       h: 3,
       radius: 12,
-      fill: theme.secondary ?? '#ec4899',
+      fill: '#ec4899',
       opacity: 0.85,
     },
   ],
@@ -363,23 +367,23 @@ const skinTreTrung: SlideSkin = {
     {
       id: 'skin-motif-dot-1',
       type: 'shape',
-      shape: 'circle',
+      shape: 'ellipse',
       x: 8,
       y: 14,
       w: 5,
-      h: 5,
+      h: 8.89,
       fill: theme.accent,
       opacity: 0.75,
     },
     {
       id: 'skin-motif-dot-2',
       type: 'shape',
-      shape: 'circle',
+      shape: 'ellipse',
       x: 86,
       y: 16,
       w: 7,
-      h: 7,
-      fill: theme.secondary ?? '#f472b6',
+      h: 12.44,
+      fill: '#ec4899',
       opacity: 0.8,
     },
     {
@@ -395,7 +399,7 @@ const skinTreTrung: SlideSkin = {
       fontWeight: 800,
       textColor: theme.fg,
       align: 'center',
-      fontFamily: 'Arial',
+      fontFamily: ROUNDED,
     },
     {
       id: 'subtitle',
@@ -410,7 +414,7 @@ const skinTreTrung: SlideSkin = {
       fontWeight: 600,
       textColor: theme.muted ?? '#6b21a8',
       align: 'center',
-      fontFamily: 'Arial',
+      fontFamily: ROUNDED,
     },
   ],
   transformSlide: (elements, theme) => {
@@ -419,35 +423,36 @@ const skinTreTrung: SlideSkin = {
     res.push({
       id: 'skin-motif-bubble-1',
       type: 'shape',
-      shape: 'circle',
+      shape: 'ellipse',
       x: 3,
       y: 4,
       w: 3.5,
-      h: 3.5,
+      h: 6.22,
       fill: theme.accent,
       opacity: 0.7,
     })
     res.push({
       id: 'skin-motif-bubble-2',
       type: 'shape',
-      shape: 'circle',
+      shape: 'ellipse',
       x: 93,
       y: 4,
       w: 4,
-      h: 4,
-      fill: theme.secondary ?? '#f472b6',
+      h: 7.11,
+      fill: '#ec4899',
       opacity: 0.7,
     })
 
     for (const el of elements) {
       const copy = { ...el }
       if (copy.type === 'text') {
-        copy.fontFamily = 'Arial'
+        copy.fontFamily = ROUNDED
         if (copy.variant === 'title' || copy.id === 'title') {
           copy.fontWeight = 800
         }
       } else if (copy.type === 'shape') {
         // Bo tròn thẻ dạng bubble
+        if (!copy.shape || copy.shape === 'rect') copy.shape = 'round'
         copy.radius = 26
         copy.shadowLevel = 1
       }
@@ -459,190 +464,72 @@ const skinTreTrung: SlideSkin = {
 
 /* ------------------------------------------------------------------ *
  * BỘ 3: HỌC THUẬT NGHIÊM TÚC (Academic Structured)
- * Calibri chuẩn mực, thanh dải màu ngang chạy hết bề rộng màn hình (w: 100%, h: 3.5%)
+ * Tiêu đề Lora có chân, thân Be Vietnam Pro, thanh dải màu ngang chạy hết bề rộng màn hình (w: 100%, h: 3.5%)
  * ở đỉnh mọi slide, góc vuông 0, khung bảng số La Mã [ I ], vạch nhấn đỏ dày cạnh trái.
  * ------------------------------------------------------------------ */
 const skinHocThuat: SlideSkin = {
   id: 'hoc-thuat',
   name: 'Học thuật nghiêm túc',
   fonts: {
-    heading: 'Calibri',
-    body: 'Calibri',
+    heading: ACADEMIC_SERIF,
+    body: 'Be Vietnam Pro',
   },
+  // nền trắng ngà trung tính thay cho nền hồng của bảng màu Đỏ: đọc lâu không mỏi, hợp bài giảng
+  getBackground: () => '#fdfcfa',
   geometrySummary: 'Dải màu ngang đỉnh slide chạy 100% bề rộng, khung chữ nhật sắc cạnh (radius: 0), nhãn số La Mã [ I ], vạch nhấn lề trái thẻ bài.',
   createTitleSlide: (theme, content) => [
-    // Dải màu ngang đỉnh toàn màn hình
+    { id: 'skin-motif-topbar', type: 'shape', shape: 'rect', x: 0, y: 0, w: 100, h: 1.6, fill: theme.accent, radius: 0, shadowLevel: 0 },
+    // cột nhấn mảnh bên trái, chạy theo khối chữ
+    { id: 'title-left-accent', type: 'shape', shape: 'rect', x: 8, y: 26, w: 0.6, h: 40, fill: theme.accent, radius: 0, shadowLevel: 0 },
     {
-      id: 'skin-motif-topbar',
-      type: 'shape',
-      shape: 'rect',
-      x: 0,
-      y: 0,
-      w: 100,
-      h: 3.5,
-      fill: theme.accent,
-      radius: 0,
+      id: 'kicker', type: 'text', x: 11, y: 26, w: 80, h: 5,
+      text: (content.kicker || 'Chuyên đề').toUpperCase(),
+      variant: 'body', fontSize: 1.7, fontWeight: 700, textColor: theme.accent, fontFamily: 'Be Vietnam Pro', letterSpacing: 0.12,
     },
-    // Nhãn chuyên đề trên cùng
     {
-      id: 'kicker',
-      type: 'text',
-      x: 8,
-      y: 14,
-      w: 84,
-      h: 5,
-      text: (content.kicker || '[ CHUYÊN ĐỀ HỌC THUẬT & NGHIÊN CỨU ]').toUpperCase(),
-      variant: 'body',
-      fontSize: 2.0,
-      fontWeight: 700,
-      textColor: theme.accent,
-      fontFamily: 'Calibri',
-      letterSpacing: 0.08,
+      id: 'title', type: 'text', x: 11, y: 32, w: 80, h: 22,
+      text: content.title || 'Tiêu đề bài giảng',
+      variant: 'title', fontSize: 5.4, fontWeight: 700, textColor: theme.fg, fontFamily: ACADEMIC_SERIF, lineHeight: 1.15,
     },
-    // Khung chữ nhật sắc nét bao quanh tiêu đề
     {
-      id: 'title-frame',
-      type: 'shape',
-      shape: 'rect',
-      x: 8,
-      y: 22,
-      w: 84,
-      h: 46,
-      border: 1.5,
-      borderColor: '#cbd5e1',
-      fill: 'transparent',
-      radius: 0,
+      id: 'subtitle', type: 'text', x: 11, y: 56, w: 70, h: 10,
+      text: content.subtitle || 'Tài liệu giảng dạy dành cho học sinh THPT',
+      variant: 'body', fontSize: 2.1, fontWeight: 400, textColor: theme.muted ?? '#475569', fontFamily: 'Be Vietnam Pro', lineHeight: 1.45,
     },
-    // Vạch nhấn lề trái dày 1.5% của khung
+    // chân trang: vạch mảnh + nhãn nhỏ
+    { id: 'skin-motif-footrule', type: 'shape', shape: 'rect', x: 8, y: 88, w: 84, h: 0.25, fill: theme.muted ?? '#94a3b8', opacity: 0.35, radius: 0, shadowLevel: 0 },
+  ],
+  createSectionSlide: (theme, content) => [
+    { id: 'skin-motif-topbar', type: 'shape', shape: 'rect', x: 0, y: 0, w: 100, h: 1.6, fill: theme.accent, radius: 0, shadowLevel: 0 },
     {
-      id: 'title-left-accent',
-      type: 'shape',
-      shape: 'rect',
-      x: 8,
-      y: 22,
-      w: 1.5,
-      h: 46,
-      fill: theme.accent,
-      radius: 0,
+      id: 'kicker', type: 'text', x: 8, y: 30, w: 30, h: 16,
+      text: content.kicker || 'Phần 1',
+      variant: 'title', fontSize: 6.5, fontWeight: 700, textColor: theme.accent, fontFamily: ACADEMIC_SERIF, lineHeight: 1,
     },
-    // Tiêu đề học thuật trang trọng
+    { id: 'section-rule', type: 'shape', shape: 'rect', x: 8, y: 48, w: 10, h: 0.5, fill: theme.accent, radius: 0, shadowLevel: 0 },
     {
-      id: 'title',
-      type: 'text',
-      x: 12,
-      y: 27,
-      w: 76,
-      h: 24,
-      text: content.title || 'Tiêu Đề Nghiên Cứu Học Thuật',
-      variant: 'title',
-      fontSize: 4.8,
-      fontWeight: 700,
-      textColor: theme.fg,
-      fontFamily: 'Calibri',
-      lineHeight: 1.2,
+      id: 'title', type: 'text', x: 8, y: 52, w: 80, h: 16,
+      text: content.title || 'Tên phần',
+      variant: 'title', fontSize: 4.2, fontWeight: 700, textColor: theme.fg, fontFamily: ACADEMIC_SERIF, lineHeight: 1.2,
     },
-    // Phụ đề trong khung
     {
-      id: 'subtitle',
-      type: 'text',
-      x: 12,
-      y: 53,
-      w: 76,
-      h: 12,
-      text: content.subtitle || 'Tài liệu giảng dạy và phân tích cấu trúc dành cho học sinh THPT',
-      variant: 'body',
-      fontSize: 2.4,
-      fontWeight: 400,
-      textColor: theme.muted ?? '#475569',
-      fontFamily: 'Calibri',
-    },
-    // Dải đế chân slide
-    {
-      id: 'skin-motif-botbar',
-      type: 'shape',
-      shape: 'rect',
-      x: 0,
-      y: 97.5,
-      w: 100,
-      h: 2.5,
-      fill: '#1e293b',
-      radius: 0,
+      id: 'subtitle', type: 'text', x: 8, y: 70, w: 70, h: 10,
+      text: content.subtitle || '',
+      variant: 'body', fontSize: 2, fontWeight: 400, textColor: theme.muted ?? '#475569', fontFamily: 'Be Vietnam Pro',
     },
   ],
   createClosingSlide: (theme, content) => [
+    { id: 'skin-motif-topbar', type: 'shape', shape: 'rect', x: 0, y: 0, w: 100, h: 1.6, fill: theme.accent, radius: 0, shadowLevel: 0 },
+    { id: 'closing-accent', type: 'shape', shape: 'rect', x: 8, y: 36, w: 0.6, h: 28, fill: theme.accent, radius: 0, shadowLevel: 0 },
     {
-      id: 'skin-motif-topbar',
-      type: 'shape',
-      shape: 'rect',
-      x: 0,
-      y: 0,
-      w: 100,
-      h: 3.5,
-      fill: theme.accent,
-      radius: 0,
+      id: 'title', type: 'text', x: 11, y: 36, w: 80, h: 16,
+      text: content.title || 'Tổng kết',
+      variant: 'title', fontSize: 4.8, fontWeight: 700, textColor: theme.fg, fontFamily: ACADEMIC_SERIF,
     },
     {
-      id: 'closing-frame',
-      type: 'shape',
-      shape: 'rect',
-      x: 10,
-      y: 28,
-      w: 80,
-      h: 44,
-      border: 1.5,
-      borderColor: '#cbd5e1',
-      fill: 'transparent',
-      radius: 0,
-    },
-    {
-      id: 'closing-accent',
-      type: 'shape',
-      shape: 'rect',
-      x: 10,
-      y: 28,
-      w: 1.5,
-      h: 44,
-      fill: theme.accent,
-      radius: 0,
-    },
-    {
-      id: 'title',
-      type: 'text',
-      x: 14,
-      y: 34,
-      w: 72,
-      h: 20,
-      text: content.title || 'Tổng Kết Chuyên Đề',
-      variant: 'title',
-      fontSize: 4.6,
-      fontWeight: 700,
-      textColor: theme.fg,
-      fontFamily: 'Calibri',
-    },
-    {
-      id: 'subtitle',
-      type: 'text',
-      x: 14,
-      y: 56,
-      w: 72,
-      h: 12,
-      text: content.subtitle || 'Chúc các bạn học tập tốt và nắm vững kiến thức trọng tâm',
-      variant: 'body',
-      fontSize: 2.4,
-      fontWeight: 400,
-      textColor: theme.muted ?? '#475569',
-      fontFamily: 'Calibri',
-    },
-    {
-      id: 'skin-motif-botbar',
-      type: 'shape',
-      shape: 'rect',
-      x: 0,
-      y: 97.5,
-      w: 100,
-      h: 2.5,
-      fill: '#1e293b',
-      radius: 0,
+      id: 'subtitle', type: 'text', x: 11, y: 54, w: 70, h: 10,
+      text: content.subtitle || 'Câu hỏi và thảo luận',
+      variant: 'body', fontSize: 2.1, fontWeight: 400, textColor: theme.muted ?? '#475569', fontFamily: 'Be Vietnam Pro',
     },
   ],
   transformSlide: (elements, theme) => {
@@ -655,36 +542,22 @@ const skinHocThuat: SlideSkin = {
       x: 0,
       y: 0,
       w: 100,
-      h: 3.5,
+      h: 1.6,
       fill: theme.accent,
       radius: 0,
-    })
-    // Đường chỉ mảnh chân slide
-    res.push({
-      id: 'skin-motif-botbar',
-      type: 'shape',
-      shape: 'rect',
-      x: 0,
-      y: 98.2,
-      w: 100,
-      h: 1.8,
-      fill: '#0f172a',
-      radius: 0,
+      shadowLevel: 0,
     })
 
     for (const el of elements) {
       const copy = { ...el }
       if (copy.type === 'text') {
-        copy.fontFamily = 'Calibri'
-        if (copy.variant === 'title' || copy.id === 'title') {
-          copy.fontWeight = 700
-        }
+        const isTitle = copy.variant === 'title' || copy.id === 'title'
+        copy.fontFamily = isTitle ? ACADEMIC_SERIF : 'Be Vietnam Pro'
+        if (isTitle) copy.fontWeight = 700
       } else if (copy.type === 'shape') {
         // Góc vuông học thuật sắc bén
         copy.radius = 0
         copy.shadowLevel = 0
-        if (!copy.border) copy.border = 1
-        copy.borderColor = '#cbd5e1'
       }
       res.push(copy)
     }
@@ -851,6 +724,7 @@ const skinThienNhien: SlideSkin = {
           copy.fontWeight = 700
         }
       } else if (copy.type === 'shape') {
+        if (!copy.shape || copy.shape === 'rect') copy.shape = 'round'
         copy.radius = 18
       }
       res.push(copy)
@@ -1046,6 +920,7 @@ const skinCongNghe: SlideSkin = {
           copy.fontFamily = 'Segoe UI'
         }
       } else if (copy.type === 'shape') {
+        if (!copy.shape || copy.shape === 'rect') copy.shape = 'round'
         copy.radius = 2
         copy.border = 1.2
         copy.borderColor = theme.accent
@@ -1304,6 +1179,7 @@ const skinCoDien: SlideSkin = {
           copy.fontWeight = 700
         }
       } else if (copy.type === 'shape') {
+        if (!copy.shape || copy.shape === 'rect') copy.shape = 'round'
         copy.radius = 4
         copy.border = 1
         copy.borderColor = theme.muted ?? '#92400e'
@@ -1332,7 +1208,7 @@ const skinVuiNhon: SlideSkin = {
     {
       id: 'star-badge',
       type: 'shape',
-      shape: 'rect',
+      shape: 'round',
       x: 10,
       y: 12,
       w: 26,
@@ -1362,7 +1238,7 @@ const skinVuiNhon: SlideSkin = {
     {
       id: 'title-box',
       type: 'shape',
-      shape: 'rect',
+      shape: 'round',
       x: 10,
       y: 24,
       w: 80,
@@ -1392,7 +1268,7 @@ const skinVuiNhon: SlideSkin = {
     {
       id: 'sub-box',
       type: 'shape',
-      shape: 'rect',
+      shape: 'round',
       x: 10,
       y: 67,
       w: 72,
@@ -1422,7 +1298,7 @@ const skinVuiNhon: SlideSkin = {
     {
       id: 'closing-box',
       type: 'shape',
-      shape: 'rect',
+      shape: 'round',
       x: 12,
       y: 26,
       w: 76,
@@ -1501,6 +1377,7 @@ const skinVuiNhon: SlideSkin = {
         copy.border = 3
         copy.borderColor = '#000000'
         copy.shadowLevel = 2
+        if (!copy.shape || copy.shape === 'rect') copy.shape = 'round'
         copy.radius = 8
       }
       res.push(copy)
@@ -1527,7 +1404,7 @@ const skinBangDen: SlideSkin = {
     {
       id: 'skin-motif-chalk-frame',
       type: 'shape',
-      shape: 'rect',
+      shape: 'round',
       x: 1.5,
       y: 1.5,
       w: 97,
@@ -1541,7 +1418,7 @@ const skinBangDen: SlideSkin = {
     {
       id: 'skin-motif-chalk-inner',
       type: 'shape',
-      shape: 'rect',
+      shape: 'round',
       x: 2.8,
       y: 2.8,
       w: 94.4,
@@ -1620,7 +1497,7 @@ const skinBangDen: SlideSkin = {
     {
       id: 'skin-motif-chalk-frame',
       type: 'shape',
-      shape: 'rect',
+      shape: 'round',
       x: 1.5,
       y: 1.5,
       w: 97,
@@ -1633,7 +1510,7 @@ const skinBangDen: SlideSkin = {
     {
       id: 'skin-motif-chalk-inner',
       type: 'shape',
-      shape: 'rect',
+      shape: 'round',
       x: 2.8,
       y: 2.8,
       w: 94.4,
@@ -1693,7 +1570,7 @@ const skinBangDen: SlideSkin = {
     res.push({
       id: 'skin-motif-chalk-frame',
       type: 'shape',
-      shape: 'rect',
+      shape: 'round',
       x: 1.5,
       y: 1.5,
       w: 97,
@@ -1716,6 +1593,7 @@ const skinBangDen: SlideSkin = {
         copy.border = 1.8
         copy.borderStyle = 'dashed'
         copy.borderColor = '#cbd5e1'
+        if (!copy.shape || copy.shape === 'rect') copy.shape = 'round'
         copy.radius = 6
       }
       res.push(copy)
@@ -1775,6 +1653,7 @@ export function applySkin(
   if (!skin) return slide
 
   const content = contentFromSlide(slide)
+  if (skin.getBackground && !slide.customBg) slide = { ...slide, background: skin.getBackground(theme, slide.tone) }
 
   if (slide.layout === 'title') {
     const customElements = skin.createTitleSlide(theme, content, slideIndex, totalSlides)

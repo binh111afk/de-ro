@@ -1420,7 +1420,8 @@ function elTransform(el: SlideElement): string | undefined {
 
 /** font của theme đã là CSS stack đầy đủ, font người dùng chọn chỉ là tên */
 function fontStack(font: string): string {
-  return font.includes(',') ? font : `${font}, sans-serif`
+  if (font.includes(',')) return font
+  return font === 'Lora' ? 'Lora, Georgia, serif' : `${font}, sans-serif`
 }
 
 /** Đường nối cong (connector): S-curve tiếp tuyến ngang trong hộp phần tử; lật dọc bằng `flipY`. */

@@ -754,7 +754,8 @@ export function buildDesignSlides(design: SlideDesign, overrideTheme?: DeckTheme
       tone,
       ...(decorKit ? { decorKit } : {}),
       background: toneBackground(theme, tone),
-      elements: elements.map((el) => ({ ...el, id: uid() })),
+      // giữ id theo vai trò (title, kicker, subtitle…): applySkin đọc lại nội dung theo id này
+      elements,
       transition: 'none',
     }
     return applySkin(rawSlide, design.id, theme, i, total)
