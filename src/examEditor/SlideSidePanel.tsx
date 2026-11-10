@@ -431,77 +431,152 @@ function LayoutCard({
 
 const DesignCard = memo(function DesignCard({
   design,
-  onApply,
+  onOpen,
 }: {
   design: SlideDesign
-  onApply: (design: SlideDesign) => void
+  onOpen: (design: SlideDesign) => void
 }) {
-  // dựng slide xem trước lúc ô đầu tiên của bộ cuộn tới, không dựng cả 8 bộ khi mở tab
-  const thumb = (i: number) => () => {
+  // dựng slide xem trước lúc ô cuộn tới, không dựng cả 8 bộ khi mở tab
+  const cover = () => {
     const { theme, slides } = designPreview(design)
-    return slides[i] ? <SlideThumb slide={slides[i]} theme={theme} /> : null
+    return slides[0] ? <SlideThumb slide={slides[0]} theme={theme} /> : null
   }
-  const subCount = Math.min(4, Math.max(0, design.slides.length - 1))
-
   return (
-    <div
-      role="button"
-      tabIndex={0}
-      onClick={() => onApply(design)}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault()
-          onApply(design)
-        }
-      }}
-      className="group flex w-full cursor-pointer flex-col rounded-xl border border-line bg-surface p-2.5 text-left transition-all duration-150 hover:-translate-y-[1px] hover:border-clay hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay"
+    <button
+      type="button"
+      onClick={() => onOpen(design)}
+      title={design.description}
+      className="group flex w-full min-w-0 flex-col text-left focus-visible:outline-none"
     >
-      {/* Ảnh bìa to 16:9 của bộ theo theme của bộ */}
-      <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg border border-line/60 bg-paper shadow-sm pointer-events-none select-none">
-        <LazyThumb render={thumb(0)} />
+      <div className="relative aspect-[16/9] w-full overflow-hidden rounded-md border border-line bg-paper shadow-sm transition-all duration-150 group-hover:border-clay group-hover:shadow-md group-focus-visible:ring-2 group-focus-visible:ring-clay pointer-events-none select-none">
+        <LazyThumb render={cover} />
       </div>
-
-      {/* Dải 4 slide con xem trước */}
-      {subCount > 0 && (
-        <div className="mt-2 grid grid-cols-4 gap-1.5 pointer-events-none select-none">
-          {Array.from({ length: subCount }, (_, idx) => (
-            <div
-              key={idx}
-              className="relative aspect-[16/9] w-full overflow-hidden rounded-[3px] border border-line/50 bg-paper shadow-[0_1px_2px_rgba(0,0,0,0.03)]"
-            >
-              <LazyThumb render={thumb(idx + 1)} />
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Thông tin bộ thiết kế */}
-      <div className="mt-2.5 flex items-center justify-between gap-1">
-        <h4 className="truncate text-[13.5px] font-semibold text-ink transition-colors group-hover:text-clay">
-          {design.name}
-        </h4>
-        <span className="shrink-0 rounded-full bg-sunken px-2 py-0.5 text-[11px] font-medium text-ink-3">
-          {design.slides.length} slide
-        </span>
-      </div>
-      <p className="mt-1 line-clamp-1 text-[12px] leading-snug text-ink-3">
-        {design.description}
-      </p>
-
-      {/* Nút Thêm vào bài */}
-      <button
-        type="button"
-        onClick={(e) => {
-          e.stopPropagation()
-          onApply(design)
-        }}
-        className="mt-2.5 flex h-8 w-full items-center justify-center gap-1.5 rounded-lg bg-clay text-[12.5px] font-semibold text-white shadow-soft transition-colors hover:bg-clay-deep active:scale-[0.98]"
-      >
-        <Plus className="size-3.5" /> Thêm vào bài
-      </button>
-    </div>
+      <span className="mt-1 w-full truncate px-0.5 text-[12px] font-medium text-ink transition-colors group-hover:text-clay">
+        {design.name}
+      </span>
+    </button>
   )
 })
+
+/** Bấm vào một bộ thiết kế: xem to từng slide, rồi mới thêm vào bài. */
+function DesignPreviewModal({
+  design,
+  onAdd,
+  onClose,
+}: {
+  design: SlideDesign
+  onAdd: () => void
+  onClose: () => void
+}) {
+  const { theme, slides } = designPreview(design)
+  const [index, setIndex] = useState(0)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+      else if (e.key === 'ArrowRight') setIndex((i) => Math.min(slides.length - 1, i + 1))
+      else if (e.key === 'ArrowLeft') setIndex((i) => Math.max(0, i - 1))
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [onClose, slides.length])
+
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[200] flex items-center justify-center overflow-y-auto bg-ink/45 px-4 py-6 backdrop-blur-sm"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) onClose()
+      }}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={`Xem trước bộ ${design.name}`}
+        className="anim-sheet my-auto flex w-full max-w-[880px] flex-col rounded-[14px] border border-line bg-surface p-4 shadow-float sm:p-5"
+      >
+        <div className="mb-3 flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <h3 className="text-[17px] font-semibold text-ink">{design.name}</h3>
+            <p className="mt-0.5 text-[13px] text-ink-3">
+              {design.description} · {slides.length} slide
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Đóng"
+            className="flex size-8 shrink-0 items-center justify-center rounded-lg text-ink-3 hover:bg-sunken hover:text-ink"
+          >
+            <X className="size-4" />
+          </button>
+        </div>
+
+        <div className="group/pv relative">
+          <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg border border-line bg-paper shadow-sm pointer-events-none select-none">
+            {slides[index] && <SlideThumb slide={slides[index]} theme={theme} />}
+          </div>
+          {[
+            { dir: -1, label: 'Slide trước', Icon: ChevronLeft, pos: 'left-2', off: index === 0 },
+            { dir: 1, label: 'Slide sau', Icon: ChevronRight, pos: 'right-2', off: index === slides.length - 1 },
+          ].map(({ dir, label, Icon, pos, off }) => (
+            <button
+              key={dir}
+              type="button"
+              aria-label={label}
+              disabled={off}
+              onClick={() => setIndex((i) => Math.min(slides.length - 1, Math.max(0, i + dir)))}
+              className={cn(
+                'absolute top-1/2 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-line bg-surface/95 text-ink shadow-md transition hover:border-clay hover:text-clay disabled:pointer-events-none disabled:opacity-0',
+                pos,
+              )}
+            >
+              <Icon className="size-5" />
+            </button>
+          ))}
+          <span className="pointer-events-none absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-ink/70 px-2.5 py-0.5 text-[11.5px] font-medium tabular-nums text-white">
+            {index + 1} / {slides.length}
+          </span>
+        </div>
+
+        <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+          {slides.map((slide, i) => (
+            <button
+              key={slide.id}
+              type="button"
+              onClick={() => setIndex(i)}
+              aria-label={`Slide ${i + 1}`}
+              className={cn(
+                'relative aspect-[16/9] w-[104px] shrink-0 overflow-hidden rounded-md border bg-paper transition-all',
+                i === index ? 'border-clay ring-2 ring-clay/40' : 'border-line opacity-80 hover:opacity-100 hover:border-clay',
+              )}
+            >
+              <span className="pointer-events-none absolute inset-0 select-none">
+                <SlideThumb slide={slide} theme={theme} />
+              </span>
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-4 flex justify-end gap-2">
+          <button
+            type="button"
+            onClick={onClose}
+            className="h-9 rounded-lg px-4 text-[13px] font-medium text-ink-3 hover:text-ink"
+          >
+            Đóng
+          </button>
+          <button
+            type="button"
+            onClick={onAdd}
+            className="flex h-9 items-center gap-1.5 rounded-lg bg-clay px-4 text-[13px] font-semibold text-white shadow-soft transition-colors hover:bg-clay-deep active:scale-[0.98]"
+          >
+            <Plus className="size-4" /> Thêm vào bài
+          </button>
+        </div>
+      </div>
+    </div>,
+    document.body,
+  )
+}
 
 interface DesignPromptModalProps {
   design: SlideDesign
@@ -588,6 +663,7 @@ function TemplatesPanel({
   const resolvedTheme = useMemo(() => normalizeTheme(theme), [theme])
   const [mode, setMode] = useState<TemplateMode>(loadTemplateMode)
   const [promptDesign, setPromptDesign] = useState<SlideDesign | null>(null)
+  const [previewDesign, setPreviewDesign] = useState<SlideDesign | null>(null)
 
   const handleModeChange = (next: TemplateMode) => {
     setMode(next)
@@ -654,19 +730,25 @@ function TemplatesPanel({
                 ))}
               </div>
             ) : (
-              <div className="space-y-3 pb-4">
+              <div className="grid grid-cols-2 gap-x-2 gap-y-3 pb-4">
                 {SLIDE_DESIGNS.map((design) => (
-                  <DesignCard
-                    key={design.id}
-                    design={design}
-                    onApply={handleApplyDesign}
-                  />
+                  <DesignCard key={design.id} design={design} onOpen={setPreviewDesign} />
                 ))}
               </div>
             )}
           </div>
         </div>
       </Scroll>
+      {previewDesign && (
+        <DesignPreviewModal
+          design={previewDesign}
+          onClose={() => setPreviewDesign(null)}
+          onAdd={() => {
+            setPreviewDesign(null)
+            handleApplyDesign(previewDesign)
+          }}
+        />
+      )}
       {promptDesign && (
         <DesignPromptModal
           design={promptDesign}

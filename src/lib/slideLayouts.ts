@@ -1143,6 +1143,8 @@ function composeImageFull(p: LayoutPalette, content: SlideLayoutContent): SlideE
   ])
 }
 
+const STAT_FALLBACK_ICONS: SlideAssetId[] = ['chart', 'target', 'idea', 'check', 'globe']
+
 function composeStats(p: LayoutPalette, content: SlideLayoutContent): SlideElement[] {
   const stats = (content.stats ?? [])
     .map((stat) => ({
@@ -1156,6 +1158,15 @@ function composeStats(p: LayoutPalette, content: SlideLayoutContent): SlideEleme
   const usedIcons = new Set<SlideAssetId>()
   const area = { x: 8, y: 27, w: 84, h: 56 }
   const cellW = (area.w - gap * (stats.length - 1)) / stats.length
+  // icon theo nội dung; ô nào không khớp từ khoá thì lấy icon chung chưa dùng,
+  // để không có cảnh 3 thẻ mà chỉ 2 thẻ có icon (lệch hàng)
+  const picked = stats.map((stat) => pickSlideAsset(`${stat.label} ${stat.value}`, usedIcons))
+  if (picked.some(Boolean)) {
+    const spare = STAT_FALLBACK_ICONS.filter((id) => !usedIcons.has(id))
+    picked.forEach((id, i) => {
+      if (!id) picked[i] = spare.shift()
+    })
+  }
   const cells = stats.flatMap((stat, index) => {
     const x = area.x + index * (cellW + gap)
     const panel: SlideElement = {
@@ -1168,7 +1179,7 @@ function composeStats(p: LayoutPalette, content: SlideLayoutContent): SlideEleme
       w: cellW,
       h: 52,
     }
-    const asset = pickSlideAsset(`${stat.label ?? ''} ${stat.value ?? ''}`, usedIcons)
+    const asset = picked[index]
     return [
       panel,
       asset ? shapeEl(`stat-${index + 1}-icon-badge`, { x: x + cellW / 2 - 9, y: area.y + 2, w: 18, h: 14 }, p.accent, 'round') : null,
