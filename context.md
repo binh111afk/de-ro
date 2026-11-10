@@ -1,6 +1,6 @@
 # context.md — đề rõ (trình soạn đề thi)
 
-Bản đồ ngắn của dự án. **Chỉ đọc file này khi bắt đầu phiên**; các file khác mở khi việc đang làm cần tới (bảng "Đọc thêm khi nào" bên dưới). Cập nhật: 10/11/2026 (phiên 27). **Phiên 28 bắt đầu bằng: (1) thử nhanh Xáo đề với đề AI thật + bản PDF; (2) làm trang Admin theo [docs/plan-admin.md](docs/plan-admin.md), hỏi người dùng 4 câu ở cuối file rồi làm Giai đoạn 1. Xem [phiên 27](docs/handoff/phien-27.md).**
+Bản đồ ngắn của dự án. **Chỉ đọc file này khi bắt đầu phiên**; các file khác mở khi việc đang làm cần tới (bảng "Đọc thêm khi nào" bên dưới). Cập nhật: 10/11/2026 (phiên 27). **Phiên 28 bắt đầu bằng: (1) thử nhanh Xáo đề với đề AI thật + bản PDF; (2) làm trang Admin theo [docs/plan-admin.md](docs/plan-admin.md), hỏi người dùng 4 câu ở cuối file rồi làm Giai đoạn 1. Claude làm logic, giao diện thì viết prompt cho Antigravity CLI dựng (mục "Chia việc"). Xem [phiên 27](docs/handoff/phien-27.md).**
 
 ## Dự án
 

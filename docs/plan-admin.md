@@ -97,6 +97,16 @@ Những thứ khác đã có:
 
 Nhật ký thao tác admin, phân quyền admin/moderator, báo cáo vi phạm, dải thông báo, lỗi AI gần đây, góp ý người dùng, cảnh báo chi phí (làm sau). Các mục này đã được xếp vào những giai đoạn ở trên.
 
+## Chia việc (người dùng dặn)
+
+- **Claude (phiên chính) làm logic:** migration, `server/admin.ts` và `api/admin.ts`, kiểm tra quyền, nhật ký, ghi `ai_calls` trong `llmProxy`, chuyển ngân hàng lên Supabase, và nối API vào giao diện.
+- **Giao diện giao cho agent nhỏ hơn (Antigravity CLI) dựng**, theo đúng style của web:
+  - Viết prompt vào `docs/prompt-admin-ui.md`, theo mẫu các file `docs/prompt-*.md` đã có.
+  - Prompt chỉ rõ: dùng component sẵn có (`src/components/ui.tsx`, `Button`, `Segmented`, `Scroll`), token màu và lớp Tailwind đang dùng (`bg-surface`, `border-line`, `text-ink`/`ink-2`/`ink-3`, `clay`, `sage`, `rounded-[6px]`/`[8px]`), font Be Vietnam Pro, icon `lucide-react`. Lấy một trang có sẵn làm mẫu, ví dụ `src/pages/OnlineBuilder.tsx` hoặc `src/pages/Library.tsx`.
+  - Agent chỉ dựng màn hình với dữ liệu giả (mock) theo đúng **kiểu dữ liệu Claude định nghĩa trước**, ví dụ `src/lib/adminApi.ts` có các type và hàm trả mock. Agent không đụng vào `server/`, `api/`, migration.
+  - Agent làm trên worktree hoặc nhánh riêng. Claude review (tsc, xem trên dev server ở 1440px và 360px), rồi thay mock bằng API thật và merge.
+- Thứ tự mỗi giai đoạn: Claude chốt type + API, rồi đưa prompt cho agent dựng UI; trong lúc agent làm, Claude viết server; xong thì Claude nối hai phần và kiểm tra.
+
 ## Cần hỏi người dùng trước khi làm
 
 1. "Cộng điểm AI" nghĩa là gì: tăng hạn mức tháng (`monthly_tokens`), tặng một lượng token dùng một lần, hay trừ bớt số đã dùng?
