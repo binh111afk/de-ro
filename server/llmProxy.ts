@@ -21,6 +21,7 @@ import { fileURLToPath } from 'node:url'
 import { json, readBody } from './http.js'
 import { clientIp, guard, isLocal, userFromToken } from './guard.js'
 import { addUsage, quotaMessage, readQuota } from './aiQuota.js'
+import { costFromUsage, logAiCall, maintenanceBlock } from './ops.js'
 import { callAnthropic } from './anthropic.js'
 import { handleExtractRequest } from './extract.js'
 import { handleSearchRequest } from './searchProxy.js'
@@ -154,6 +155,47 @@ function providerConfig() {
   }
 }
 
+export type ProviderPing = { provider: string; model: string; ok: boolean; ms: number; error?: string }
+
+/** Admin bấm "Kiểm tra": gọi mỗi provider đã cấu hình một prompt rất ngắn (tốn ít token), đo độ trễ. */
+export async function pingProviders(): Promise<ProviderPing[]> {
+  const p = providerConfig()
+  const msg = [{ role: 'user', content: 'Trả lời đúng một chữ: OK' }]
+  const list: Array<{ provider: string; model: string; key: string; url: string; opencode?: boolean; anthropic?: boolean }> = []
+  if (p.apiKey) list.push({ provider: 'opencode', model: p.model, key: p.apiKey, url: p.endpoint.toString(), opencode: true })
+  if (p.mercuryApiKey) list.push({ provider: 'mercury', model: p.mercuryModel, key: p.mercuryApiKey, url: `${p.mercuryBaseURL}/chat/completions` })
+  if (p.fostaApiKey) list.push({ provider: 'fosta', model: p.fostaModel, key: p.fostaApiKey, url: `${p.fostaBaseURL}/chat/completions` })
+  if (p.xkiroApiKey) list.push({ provider: 'xkiro', model: p.xkiroModel, key: p.xkiroApiKey, url: `${p.xkiroBaseURL}/chat/completions` })
+  if (p.nightrouterApiKey) list.push({ provider: 'nightrouter', model: p.nightrouterModel, key: p.nightrouterApiKey, url: `${p.nightrouterBaseURL}/chat/completions` })
+  if (p.anthropicApiKey) list.push({ provider: 'anthropic', model: p.anthropicModel, key: p.anthropicApiKey, url: '', anthropic: true })
+  return Promise.all(
+    list.map(async (t): Promise<ProviderPing> => {
+      const t0 = Date.now()
+      const base = { provider: t.provider, model: t.model }
+      try {
+        if (t.anthropic) {
+          await callAnthropic({ apiKey: t.key, model: t.model, messages: msg, maxTokens: 64, effort: 'low', signal: AbortSignal.timeout(30_000) })
+          return { ...base, ok: true, ms: Date.now() - t0 }
+        }
+        const r = await fetch(t.url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${t.key}`,
+            ...(t.opencode ? { 'x-opencode-session': SESSION_ID, 'User-Agent': 'de-ro/1.0' } : {}),
+          },
+          body: JSON.stringify({ model: t.model, messages: msg, max_tokens: 64, ...(t.opencode ? { reasoning_effort: 'low' } : {}) }),
+          signal: AbortSignal.timeout(30_000),
+        })
+        await r.text()
+        return r.ok ? { ...base, ok: true, ms: Date.now() - t0 } : { ...base, ok: false, ms: Date.now() - t0, error: `HTTP ${r.status}` }
+      } catch (err) {
+        return { ...base, ok: false, ms: Date.now() - t0, error: err instanceof Error ? err.message.slice(0, 200) : String(err) }
+      }
+    }),
+  )
+}
+
 /** Ghi log raw response của upstream để chẩn đoán khi model trả rỗng. */
 function writeRawLog(raw: string, parsed?: Record<string, unknown>) {
   if (process.env.VERCEL) return // không ghi log trên bản thật
@@ -182,6 +224,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
   const quota = isLocal(ip) ? null : await readQuota(userId, ip)
   // GET: chỉ đọc hạn mức (trang Hồ sơ), không gọi AI. null = máy dev, không giới hạn
   if (req.method === 'GET') return json(res, 200, { quota })
+  if (await maintenanceBlock(req, res)) return
   if (quota && quota.used >= quota.limit) return json(res, 429, { error: quotaMessage(quota), quota })
 
   try {
@@ -212,6 +255,26 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
     // `opencode` = gửi x-opencode-session + reasoning_effort (chỉ gateway opencode hiểu).
     // `anthropic`: gọi Claude qua SDK (Messages API), không qua fetch kiểu OpenAI.
     type Target = { model: string; url: string; key: string; opencode: boolean; anthropic?: boolean }
+    // tên provider cho log ai_calls
+    const providerOf = (t: Target) =>
+      t.anthropic ? 'anthropic' : t.opencode ? 'opencode' : t.key === prov.mercuryApiKey ? 'mercury' : t.key === prov.fostaApiKey ? 'fosta' : t.key === prov.xkiroApiKey ? 'xkiro' : t.key === prov.nightrouterApiKey ? 'nightrouter' : 'khac'
+    type Usage = { prompt_tokens?: number; completion_tokens?: number; input_tokens?: number; output_tokens?: number } | undefined
+    // Vercel có thể dừng function ngay sau khi trả lời → gom promise log, chờ trước khi return
+    const pending: Promise<void>[] = []
+    const log = (t: Target, t0: number, ok: boolean, error: string | null, usage?: unknown) => {
+      const u = usage as Usage
+      pending.push(logAiCall({
+        userId,
+        model: t.model,
+        provider: providerOf(t),
+        ok,
+        error,
+        promptTokens: u?.prompt_tokens ?? u?.input_tokens,
+        completionTokens: u?.completion_tokens ?? u?.output_tokens,
+        cost: costFromUsage(usage),
+        ms: Date.now() - t0,
+      }))
+    }
     const targets: Target[] = []
     // client chỉ định đúng model dự phòng → bỏ qua opencode, gọi thẳng (thử/so chất lượng)
     const wantsBackup =
@@ -244,6 +307,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
     for (const [modelIndex, target] of targets.entries()) {
       const selectedModel = target.model
       let lastErr: string | null = null
+      const t0 = Date.now()
       if (target.anthropic) {
         try {
           const r = await callAnthropic({
@@ -256,7 +320,8 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
           })
           if (r.content.trim()) {
             writeRawLog(JSON.stringify(r), { _model: selectedModel, _attempt: 0, finishReason: r.finishReason, usage: r.usage, content: r.content })
-            const after = await addUsage(userId, ip, r.usage.total_tokens, quota)
+            log(target, t0, true, null, r.usage)
+            const [after] = await Promise.all([addUsage(userId, ip, r.usage.total_tokens, quota), ...pending])
             return json(res, 200, { content: r.content, reasoning: '', usage: r.usage, model: r.model, finishReason: r.finishReason, quota: after })
           }
           errs.push(`${selectedModel}: empty content (finish_reason=${r.finishReason})`)
@@ -264,6 +329,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
           const timedOut = err instanceof Error && (err.name === 'TimeoutError' || err.name === 'AbortError')
           errs.push(`${selectedModel}: ${timedOut ? `quá thời gian chờ ${Math.round(upstreamTimeoutMs() / 1000)}s` : err instanceof Error ? err.message.slice(0, 200) : String(err)}`)
         }
+        log(target, t0, false, errs[errs.length - 1] ?? 'lỗi')
         continue
       }
       let attemptBody = JSON.stringify({
@@ -338,7 +404,8 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
 
         if (content.trim()) {
           const spent = Number((data.usage as { total_tokens?: number } | undefined)?.total_tokens ?? 0)
-          const after = await addUsage(userId, ip, spent, quota)
+          log(target, t0, true, null, data.usage)
+          const [after] = await Promise.all([addUsage(userId, ip, spent, quota), ...pending])
           return json(res, 200, { content, reasoning, usage: data.usage ?? null, model: data.model ?? selectedModel, finishReason: choice?.finish_reason ?? 'unknown', quota: after })
         }
         lastErr = `${selectedModel}: empty content (finish_reason=${choice?.finish_reason ?? 'unknown'})`
@@ -348,11 +415,15 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
           attemptBody = JSON.stringify(retryBody)
         }
       }
-      if (lastErr) errs.push(lastErr)
+      if (lastErr) {
+        errs.push(lastErr)
+        log(target, t0, false, lastErr)
+      }
       if (modelIndex < targets.length - 1) await new Promise((r) => setTimeout(r, 500))
     }
 
     // báo lỗi TỪNG model, không chỉ cái cuối (lỗi cuối hay là fallback phụ, che mất nguyên nhân thật)
+    await Promise.all(pending)
     return json(res, 502, { error: `Các model AI đều không phản hồi. ${errs.join(' · ')}`.trim() })
   } catch (err) {
     return json(res, 500, { error: err instanceof Error ? err.message : String(err) })

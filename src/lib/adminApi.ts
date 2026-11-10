@@ -72,7 +72,26 @@ export const isAdminMock = (): boolean => {
   }
 }
 
+/** Nhớ kết quả các action chỉ đọc 60 giây để chuyển tab admin không phải tải lại; thao tác ghi xoá hết. */
+const READ_ACTIONS = new Set(['me', 'users.list', 'quota.get', 'audit.list', 'settings.get', 'ai.stats', 'ai.errors'])
+const cache = new Map<string, { at: number; p: Promise<unknown> }>()
+export const clearAdminCache = () => cache.clear()
+
 async function post<T>(action: string, body: Record<string, unknown> = {}): Promise<T> {
+  if (!READ_ACTIONS.has(action)) {
+    cache.clear()
+    return send<T>(action, body)
+  }
+  const key = action + JSON.stringify(body)
+  const hit = cache.get(key)
+  if (hit && Date.now() - hit.at < 60_000) return structuredClone(await hit.p) as T
+  const p = send<T>(action, body)
+  cache.set(key, { at: Date.now(), p })
+  p.catch(() => cache.delete(key))
+  return structuredClone(await p) as T
+}
+
+async function send<T>(action: string, body: Record<string, unknown>): Promise<T> {
   const res = await apiFetch('/api/admin', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -188,6 +207,132 @@ export function listAudit(opts: { page?: number; perPage?: number } = {}): Promi
   return post('audit.list', opts)
 }
 
+// ---------- giai đoạn 2: vận hành ----------
+
+export interface MaintenanceSetting {
+  on: boolean
+  message?: string
+  /** ISO, dự kiến xong lúc nào (chỉ để hiện) */
+  until?: string | null
+}
+export interface BannerSetting {
+  on: boolean
+  text?: string
+  level?: 'info' | 'warn'
+}
+export interface AppSettings {
+  maintenance: MaintenanceSetting
+  banner: BannerSetting
+}
+export interface AiStatRow {
+  /** yyyy-mm-dd theo giờ VN */
+  day: string
+  model: string
+  provider: string
+  calls: number
+  errors: number
+  tokens: number
+  /** USD; null = provider không báo giá */
+  cost: number | null
+  avgMs: number
+}
+export interface AiErrorRow {
+  id: number
+  userId: string | null
+  model: string
+  provider: string
+  error: string | null
+  ms: number
+  createdAt: string
+}
+export interface HealthCheck {
+  ok: boolean
+  ms: number
+  error?: string
+}
+export interface HealthReport {
+  checkedAt: string
+  supabase: HealthCheck
+  r2: HealthCheck
+  providers: Array<HealthCheck & { provider: string; model: string }>
+}
+
+const mockSettings: AppSettings = { maintenance: { on: false, message: '' }, banner: { on: false, text: '', level: 'info' } }
+
+export function getSettings(): Promise<AppSettings> {
+  if (isAdminMock()) return wait(mockSettings)
+  return post('settings.get')
+}
+
+export function setMaintenance(v: MaintenanceSetting): Promise<{ ok: true }> {
+  if (isAdminMock()) {
+    mockSettings.maintenance = v
+    return wait({ ok: true as const })
+  }
+  return post('settings.set', { key: 'maintenance', value: v })
+}
+
+export function setBanner(v: BannerSetting): Promise<{ ok: true }> {
+  if (isAdminMock()) {
+    mockSettings.banner = v
+    return wait({ ok: true as const })
+  }
+  return post('settings.set', { key: 'banner', value: v })
+}
+
+export function getAiStats(days = 7): Promise<{ days: number; rows: AiStatRow[] }> {
+  if (isAdminMock()) {
+    const models = [
+      ['gpt-5.5', 'opencode', 0.012],
+      ['mercury-3', 'mercury', null],
+      ['claude-opus-5-5', 'anthropic', null],
+    ] as const
+    const rows: AiStatRow[] = []
+    for (let d = 0; d < days; d++) {
+      const day = new Date(Date.now() - d * 864e5).toISOString().slice(0, 10)
+      models.forEach(([model, provider, unit], i) => {
+        const calls = ((d * 7 + i * 13) % 40) + (i === 0 ? 30 : 2)
+        rows.push({ day, model, provider, calls, errors: (d + i) % 4, tokens: calls * 6200, cost: unit == null ? null : +(calls * unit).toFixed(4), avgMs: 4000 + i * 3500 + d * 120 })
+      })
+    }
+    return wait({ days, rows })
+  }
+  return post('ai.stats', { days })
+}
+
+export function getAiErrors(limit = 30): Promise<{ items: AiErrorRow[] }> {
+  if (isAdminMock())
+    return wait({
+      items: [
+        { id: 2, userId: MOCK_USERS[3].id, model: 'gpt-5.5', provider: 'opencode', error: 'gpt-5.5: upstream 503', ms: 12040, createdAt: '2026-11-10T09:12:00Z' },
+        { id: 1, userId: null, model: 'mercury-3', provider: 'mercury', error: 'mercury-3: quá thời gian chờ 280s', ms: 280000, createdAt: '2026-11-09T14:30:00Z' },
+      ].slice(0, limit),
+    })
+  return post('ai.errors', { limit })
+}
+
+/** Gọi thật từng provider (tốn ít token) — chỉ chạy khi admin bấm nút. Có thể mất tới ~30 giây. */
+export function runHealth(): Promise<HealthReport> {
+  if (isAdminMock())
+    return new Promise((r) =>
+      setTimeout(
+        () =>
+          r({
+            checkedAt: new Date().toISOString(),
+            supabase: { ok: true, ms: 84 },
+            r2: { ok: true, ms: 212 },
+            providers: [
+              { provider: 'opencode', model: 'gpt-5.5', ok: true, ms: 2310 },
+              { provider: 'mercury', model: 'mercury-3', ok: true, ms: 640 },
+              { provider: 'nightrouter', model: 'deepseek-v4-flash-0731', ok: false, ms: 30000, error: 'HTTP 502' },
+            ],
+          }),
+        1200,
+      ),
+    )
+  return post('health')
+}
+
 /** Tên tiếng Việt của action trong nhật ký */
 export const AUDIT_LABEL: Record<string, string> = {
   'users.ban': 'Khoá tài khoản',
@@ -196,4 +341,5 @@ export const AUDIT_LABEL: Record<string, string> = {
   'quota.set': 'Đặt hạn mức AI',
   'credits.grant': 'Cộng điểm AI',
   'quota.clear': 'Bỏ hạn mức riêng',
+  'settings.set': 'Đổi cài đặt (bảo trì / thông báo)',
 }

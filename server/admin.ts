@@ -8,7 +8,9 @@
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { guard, userFromToken } from './guard.js'
 import { json, readBody } from './http.js'
-import { deleteR2Object, r2KeyFromUrl } from './r2.js'
+import { deleteR2Object, pingR2, r2KeyFromUrl } from './r2.js'
+import { pingProviders } from './llmProxy.js'
+import { _resetOpsCache } from './ops.js'
 
 export type Role = 'admin' | 'moderator'
 
@@ -302,6 +304,96 @@ const ACTIONS: Record<string, { need: Role; run: Handler }> = {
         page,
         perPage,
       }
+    },
+  },
+
+  // ---------- giai đoạn 2: vận hành ----------
+
+  /** {maintenance: {on, message, until}, banner: {on, text, level}} */
+  'settings.get': {
+    need: 'moderator',
+    run: async ({ s }) => {
+      const { data } = await call<Array<{ key: string; value: unknown }>>(s, '/rest/v1/app_settings?select=key,value&key=in.(maintenance,banner)')
+      const get = (k: string) => data.find((r) => r.key === k)?.value ?? { on: false }
+      return { maintenance: get('maintenance'), banner: get('banner') }
+    },
+  },
+
+  'settings.set': {
+    need: 'admin',
+    run: async (ctx, b) => {
+      const key = str(b.key, 30)
+      const v = (b.value ?? {}) as Record<string, unknown>
+      let value: Record<string, unknown>
+      if (key === 'maintenance') {
+        const until = str(v.until, 40)
+        if (until && isNaN(Date.parse(until))) throw new HttpError(400, 'Thời điểm kết thúc không hợp lệ.')
+        value = { on: v.on === true, message: str(v.message, 500), until: until || null }
+      } else if (key === 'banner') {
+        const text = str(v.text, 300)
+        if (v.on === true && !text) throw new HttpError(400, 'Nhập nội dung thông báo.')
+        value = { on: v.on === true, text, level: v.level === 'warn' ? 'warn' : 'info' }
+      } else throw new HttpError(400, 'Cài đặt không tồn tại.')
+      await call(ctx.s, '/rest/v1/app_settings?on_conflict=key', {
+        method: 'POST',
+        headers: { Prefer: 'resolution=merge-duplicates,return=minimal' },
+        body: JSON.stringify({ key, value, updated_at: new Date().toISOString() }),
+      })
+      _resetOpsCache()
+      await audit(ctx, 'settings.set', key, value)
+      return { ok: true, value }
+    },
+  },
+
+  /** Thống kê gọi AI theo ngày và model; days 1..90 (mặc định 7) */
+  'ai.stats': {
+    need: 'admin',
+    run: async ({ s }, b) => {
+      const days = Math.min(90, Math.max(1, Math.floor(Number(b.days) || 7)))
+      const { data } = await call<Array<{ day: string; model: string; provider: string; calls: number; errors: number; tokens: number; cost: number | null; avg_ms: number }>>(
+        s,
+        '/rest/v1/rpc/admin_ai_stats',
+        { method: 'POST', body: JSON.stringify({ p_days: days }) },
+      )
+      return {
+        days,
+        rows: data.map((r) => ({
+          day: r.day,
+          model: r.model,
+          provider: r.provider,
+          calls: Number(r.calls),
+          errors: Number(r.errors),
+          tokens: Number(r.tokens),
+          cost: r.cost == null ? null : Number(r.cost),
+          avgMs: Number(r.avg_ms),
+        })),
+      }
+    },
+  },
+
+  /** Các lần gọi AI lỗi gần nhất */
+  'ai.errors': {
+    need: 'admin',
+    run: async ({ s }, b) => {
+      const limit = Math.min(100, Math.max(1, Math.floor(Number(b.limit) || 30)))
+      const { data } = await call<Array<{ id: number; user_id: string | null; model: string; provider: string; error: string | null; ms: number; created_at: string }>>(
+        s,
+        `/rest/v1/ai_calls?ok=eq.false&select=id,user_id,model,provider,error,ms,created_at&order=created_at.desc&limit=${limit}`,
+      )
+      return { items: data.map((r) => ({ id: r.id, userId: r.user_id, model: r.model, provider: r.provider, error: r.error, ms: r.ms, createdAt: r.created_at })) }
+    },
+  },
+
+  /** Kiểm tra tình trạng: Supabase, R2, từng provider AI. Chỉ chạy khi admin bấm (tốn ít token). */
+  health: {
+    need: 'admin',
+    run: async ({ s }) => {
+      const t0 = Date.now()
+      const db = await fetch(`${s.base}/rest/v1/app_settings?select=key&limit=1`, { headers: s.headers, signal: AbortSignal.timeout(10_000) })
+        .then((r) => ({ ok: r.ok, ms: Date.now() - t0, ...(r.ok ? {} : { error: `HTTP ${r.status}` }) }))
+        .catch((e: unknown) => ({ ok: false, ms: Date.now() - t0, error: String(e) }))
+      const [r2, providers] = await Promise.all([pingR2(), pingProviders()])
+      return { checkedAt: new Date().toISOString(), supabase: db, r2, providers }
     },
   },
 }

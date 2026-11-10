@@ -2,6 +2,7 @@ import { Suspense, lazy, useEffect } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { DialogHost } from '@/components/Dialog'
 import { Footer, Header } from '@/components/Layout'
+import { SiteStatus } from '@/components/SiteStatus'
 import { cn } from '@/lib/cn'
 import Home from '@/pages/Home'
 import { consumeAuthRedirect } from '@/lib/auth'
@@ -106,8 +107,10 @@ export default function App() {
       <DialogHost />
       {fullscreen ? null : <Header />}
       <main className={cn('flex-1', fullscreen && 'min-h-0 overflow-hidden')}>
+        <SiteStatus>
         <Suspense fallback={<div className="flex h-full min-h-[50vh] items-center justify-center text-[13px] text-ink-3">Đang tải…</div>}>
-        <div key={pathname} className={cn('page-enter', fullscreen && 'h-full')}>
+        {/* các tab trong /admin dùng chung một khoá: chuyển tab không dựng lại cả trang admin */}
+        <div key={pathname.startsWith('/admin') ? '/admin' : pathname} className={cn('page-enter', fullscreen && 'h-full')}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/soan-de" element={<ComposeDoc />} />
@@ -134,6 +137,7 @@ export default function App() {
         </Routes>
         </div>
         </Suspense>
+        </SiteStatus>
       </main>
       {fullscreen || authPage ? null : <Footer />}
     </div>

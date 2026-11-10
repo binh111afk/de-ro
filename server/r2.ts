@@ -11,6 +11,7 @@ import { createHash, createHmac } from 'node:crypto'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { json, readBody } from './http.js'
 import { guard } from './guard.js'
+import { maintenanceBlock } from './ops.js'
 
 const MAX_BYTES = 8 * 1024 * 1024
 const MAX_DOC_BYTES = 20 * 1024 * 1024
@@ -76,6 +77,20 @@ async function r2Request(
   })
 }
 
+/** Admin kiểm tra R2: đọc một key không tồn tại; 404 = chữ ký đúng, bucket truy cập được. */
+export async function pingR2(): Promise<{ ok: boolean; ms: number; error?: string }> {
+  const cfg = r2Config()
+  if (!cfg.accountId || !cfg.bucket) return { ok: false, ms: 0, error: 'Chưa cấu hình R2.' }
+  const t0 = Date.now()
+  try {
+    const r = await r2Request('GET', `health-check-${t0}`, null)
+    const ok = r.status === 404 || r.ok
+    return { ok, ms: Date.now() - t0, ...(ok ? {} : { error: `R2 trả ${r.status}` }) }
+  } catch (err) {
+    return { ok: false, ms: Date.now() - t0, error: err instanceof Error ? err.message : String(err) }
+  }
+}
+
 /** Xoá một tệp trên R2 (admin xoá tài khoản / tài liệu). Key sai định dạng thì bỏ qua. */
 export async function deleteR2Object(key: string): Promise<boolean> {
   if (!KEY_PATTERN.test(key)) return false
@@ -93,6 +108,7 @@ export async function handleUploadRequest(req: IncomingMessage, res: ServerRespo
   if (!(await guard(req, res, 'upload'))) return
   if (req.method === 'OPTIONS') return json(res, 204, {})
   if (req.method !== 'POST') return json(res, 405, { error: 'Method not allowed' })
+  if (await maintenanceBlock(req, res)) return
 
   try {
     const body = JSON.parse(await readBody(req)) as { dataUrl?: unknown }

@@ -34,6 +34,9 @@ globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
   if (url.includes('/rest/v1/user_documents')) return ok([])
   if (url.includes('/rpc/grant_ai_credits')) return ok(1500)
   if (url.includes('/rest/v1/admin_audit')) return new Response(null, { status: 201 })
+  if (url.includes('/rest/v1/app_settings') && method === 'GET') return ok([{ key: 'maintenance', value: { on: true, message: 'x' } }])
+  if (url.includes('/rest/v1/app_settings')) return new Response(null, { status: 201 })
+  if (url.includes('/rpc/admin_ai_stats')) return ok([{ day: '2026-11-10', model: 'm', provider: 'opencode', calls: 3, errors: 1, tokens: 900, cost: null, avg_ms: 1200 }])
   return ok([])
 }) as typeof fetch
 
@@ -95,6 +98,38 @@ check('moderator cộng điểm → 403', (await hit({ action: 'credits.grant', 
 check('cộng điểm 0 → 400', (await hit({ action: 'credits.grant', userId: USER, tokens: 0 }, 'tAdmin')).status === 400)
 const g = await hit({ action: 'credits.grant', userId: USER, tokens: 1000 }, 'tAdmin')
 check('cộng điểm → 200, trả số dư cộng dồn', g.status === 200 && g.data.balance === 1500)
+
+
+// giai đoạn 2
+const sg = await hit({ action: 'settings.get' }, 'tMod')
+check('moderator đọc cài đặt → 200', sg.status === 200 && (sg.data.maintenance as { on: boolean }).on === true && (sg.data.banner as { on: boolean }).on === false)
+check('moderator bật bảo trì → 403', (await hit({ action: 'settings.set', key: 'maintenance', value: { on: true } }, 'tMod')).status === 403)
+check('cài đặt lạ → 400', (await hit({ action: 'settings.set', key: 'drop', value: {} }, 'tAdmin')).status === 400)
+check('banner bật mà trống → 400', (await hit({ action: 'settings.set', key: 'banner', value: { on: true, text: ' ' } }, 'tAdmin')).status === 400)
+check('until sai → 400', (await hit({ action: 'settings.set', key: 'maintenance', value: { on: true, until: 'abc' } }, 'tAdmin')).status === 400)
+calls.length = 0
+const ms = await hit({ action: 'settings.set', key: 'maintenance', value: { on: true, message: 'Nâng cấp', extra: 1 } }, 'tAdmin')
+check('admin bật bảo trì → 200, bỏ trường lạ', ms.status === 200 && JSON.stringify(ms.data.value) === JSON.stringify({ on: true, message: 'Nâng cấp', until: null }))
+check('bật bảo trì ghi nhật ký', calls.some((c) => c.startsWith('POST /rest/v1/admin_audit')))
+const st = await hit({ action: 'ai.stats', days: 500 }, 'tAdmin')
+check('ai.stats kẹp days ≤ 90, đổi tên cột', st.status === 200 && st.data.days === 90 && (st.data.rows as Array<{ avgMs: number }>)[0].avgMs === 1200)
+check('moderator xem ai.stats → 403', (await hit({ action: 'ai.stats' }, 'tMod')).status === 403)
+check('moderator chạy health → 403', (await hit({ action: 'health' }, 'tMod')).status === 403)
+
+// chặn bảo trì ở server (ops.ts)
+const { maintenanceBlock, _resetOpsCache } = await import('../server/ops.ts')
+const blockFor = async (token?: string) => {
+  _resetOpsCache()
+  const req = { headers: token ? { authorization: `Bearer ${token}` } : {} } as unknown as IncomingMessage
+  let code = 0
+  const res = { writeHead: (c: number) => ((code = c), res), end: () => {} } as unknown as ServerResponse
+  const blocked = await maintenanceBlock(req, res)
+  return { blocked, code }
+}
+const g1 = await blockFor()
+check('bảo trì: khách bị chặn 503', g1.blocked && g1.code === 503)
+check('bảo trì: user thường bị chặn', (await blockFor('tUser')).blocked)
+check('bảo trì: admin vẫn dùng được', !(await blockFor('tAdmin')).blocked)
 
 if (fail) {
   console.error(`${fail} lỗi`)
