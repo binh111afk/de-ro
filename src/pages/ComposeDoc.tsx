@@ -947,6 +947,7 @@ export default function ComposeDoc() {
           onInsertTemplate={handleInsertTemplate}
           onGoToBlock={handleGoToBlock}
           onInsertPlot={(img) => void handleInsertPlot(img)}
+          examDoc={activeDoc}
           side="left"
           isMobile={isMobile}
           currentTab={navTab}

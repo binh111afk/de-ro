@@ -355,7 +355,21 @@ ${blocksToHtml(doc.blocks)}
  * CSS @page. Không fallback thì bấm In im lặng, user tưởng nút hỏng.
  */
 export function printDoc(doc: ExamDoc): void {
-  const html = buildPrintHtml(doc)
+  printHtml(buildPrintHtml(doc))
+}
+
+/** In nhiều đề trong một lần (xáo đề: mỗi mã đề sang trang mới) → lưu thành một file PDF. */
+export function printDocs(docs: ExamDoc[], title: string): void {
+  const body = docs.map((d) => blocksToHtml(d.blocks)).join('<div style="page-break-after:always"></div>')
+  printHtml(`<!DOCTYPE html>
+<html lang="vi"><head><meta charset="utf-8"><title>${escapeHtml(title)}</title>
+<style>${EXPORT_CSS}</style></head>
+<body>${body}</body></html>`)
+}
+
+export const docFileName = (title: string) => sanitize(title)
+
+function printHtml(html: string): void {
   const w = window.open('', '_blank', 'width=900,height=1000')
   if (w) {
     w.document.open()

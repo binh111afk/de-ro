@@ -1,6 +1,6 @@
 # context.md — đề rõ (trình soạn đề thi)
 
-Bản đồ ngắn của dự án. **Chỉ đọc file này khi bắt đầu phiên**; các file khác mở khi việc đang làm cần tới (bảng "Đọc thêm khi nào" bên dưới). Cập nhật: 10/11/2026 (phiên 26). **Phiên 27 bắt đầu bằng: review + merge 3 nhánh agent làm (`feat/keo-nhan`, `feat/mau-slide`, `feat/mobile-soan-de`), xem [phiên 26](docs/handoff/phien-26.md).**
+Bản đồ ngắn của dự án. **Chỉ đọc file này khi bắt đầu phiên**; các file khác mở khi việc đang làm cần tới (bảng "Đọc thêm khi nào" bên dưới). Cập nhật: 10/11/2026 (phiên 27). **Phiên 28 bắt đầu bằng: thử công cụ Xáo đề (chưa commit) với đề AI thật + bản PDF rồi commit, xem [phiên 27](docs/handoff/phien-27.md).**
 
 ## Dự án
 
@@ -60,11 +60,11 @@ Danh sách đủ: `package.json` → `scripts`. `.env` cần `LLM_API_KEY` (mẫ
 
 | Khi làm | Mở |
 |---|---|
-| Tiếp việc phiên trước | [phiên 26](docs/handoff/phien-26.md) (**review + merge 3 nhánh agent**, checklist từng nhánh, dọn worktree, việc treo) · [phiên 25](docs/handoff/phien-25.md) (khung chương trình, trục đồ thị) |
+| Tiếp việc phiên trước | [phiên 27](docs/handoff/phien-27.md) (**Xáo đề đang dở**, mẫu slide, LLM dự phòng, so model) · [phiên 26](docs/handoff/phien-26.md) (gộp 3 nhánh agent) · [phiên 25](docs/handoff/phien-25.md) (khung chương trình, trục đồ thị) |
 | Khung chương trình các môn (chống AI ra đề vượt lớp): soạn prompt cho agent ngoài, kiểm file gửi về | [docs/khung-chuong-trinh.md](docs/khung-chuong-trinh.md) |
 | Giao việc cho agent rẻ hơn (mẫu prompt, chạy song song bằng worktree) | `docs/prompt-*.md`, [phiên 26](docs/handoff/phien-26.md) mục "Lưu ý cách làm" |
 | Soạn thêm câu cho kho câu hỏi | [scripts/bank/HUONG_DAN_SOAN.md](scripts/bank/HUONG_DAN_SOAN.md) |
-| Model AI, nhà cung cấp, hạn mức token, chi phí | [phiên 22](docs/handoff/phien-22.md), mục "So sánh nhà cung cấp" |
+| Model AI, nhà cung cấp, hạn mức token, chi phí | [phiên 22](docs/handoff/phien-22.md), mục "So sánh nhà cung cấp" · [phiên 27](docs/handoff/phien-27.md) (FOSTA, NightRouter, qwen) |
 | Chấm điểm server, giấu đáp án đề link, bảo mật API, env Vercel/Supabase | [phiên 21](docs/handoff/phien-21.md), mục "Cấu hình ngoài code" và "Đã làm" |
 | Deploy / biến môi trường / bảo vệ API | [phiên 20](docs/handoff/phien-20.md), mục "Vercel" |
 | Tìm phiên cũ theo chủ đề | [docs/handoff/README.md](docs/handoff/README.md) |

@@ -4,12 +4,15 @@
  */
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
-import { Box, ChartColumn, ChartSpline, ClipboardList, Grid3x3, SquarePlus, Table2, Triangle, TriangleRight, Zap, ChartLine, Atom, Hexagon, FlaskConical, CircleDot, Network, MoveHorizontal, Circle, Thermometer } from 'lucide-react'
+import { Box, ChartColumn, ChartSpline, ClipboardList, Grid3x3, SquarePlus, Table2, Triangle, TriangleRight, Zap, ChartLine, Atom, Hexagon, FlaskConical, CircleDot, Network, MoveHorizontal, Circle, Thermometer, Shuffle } from 'lucide-react'
 import type { ToolImage, ToolKind } from '@/lib/toolSpec'
+import type { ExamDoc } from '@/data/docTypes'
 import { ToolModal } from './ToolModal'
+import { ShuffleModal } from './ShuffleModal'
 import { cn } from '@/lib/cn'
 
-type ToolId = ToolKind
+/** công cụ vẽ hình (chèn ảnh) + công cụ làm việc với cả đề (nhóm Khác) */
+type ToolId = ToolKind | 'shuffle'
 
 const SUBJECTS: Array<{ name: string; tools: Array<{ id: ToolId; label: string; desc: string; Icon: typeof ChartSpline }> }> = [
   {
@@ -46,9 +49,23 @@ const SUBJECTS: Array<{ name: string; tools: Array<{ id: ToolId; label: string; 
       { id: 'chemgraph', label: 'Đồ thị số mol', desc: 'Kết tủa / khí theo chất thêm vào', Icon: FlaskConical },
     ],
   },
+  {
+    name: 'Khác',
+    tools: [{ id: 'shuffle', label: 'Xáo đề', desc: 'Tạo nhiều mã đề: đổi thứ tự câu, phương án; kèm đáp án', Icon: Shuffle }],
+  },
 ]
 
-export function ToolsPanel({ disabled, onInsertPlot }: { disabled?: boolean; onInsertPlot: (img: ToolImage) => void }) {
+export function ToolsPanel({
+  disabled,
+  onInsertPlot,
+  examDoc,
+}: {
+  disabled?: boolean
+  onInsertPlot: (img: ToolImage) => void
+  /** đề đang soạn: có thì hiện nhóm Khác (Xáo đề); soạn slide / ô ảnh câu hỏi không truyền */
+  examDoc?: ExamDoc | null
+}) {
+  const subjects = SUBJECTS.filter((s) => s.name !== 'Khác' || examDoc !== undefined)
   const [open, setOpen] = useState<ToolId | null>(null)
   const [subject, setSubject] = useState(() => {
     try {
@@ -65,12 +82,12 @@ export function ToolsPanel({ disabled, onInsertPlot }: { disabled?: boolean; onI
       /* bỏ qua */
     }
   }
-  const shown = SUBJECTS.filter((s) => s.name === subject).length ? SUBJECTS.filter((s) => s.name === subject) : SUBJECTS.slice(0, 1)
+  const shown = subjects.some((s) => s.name === subject) ? subjects.filter((s) => s.name === subject) : subjects.slice(0, 1)
 
   return (
     <div className="flex flex-col gap-3 py-3">
       <div role="tablist" aria-label="Chọn môn" className="flex flex-wrap gap-1.5">
-        {SUBJECTS.map((s) => (
+        {subjects.map((s) => (
           <button
             key={s.name}
             type="button"
@@ -112,7 +129,14 @@ export function ToolsPanel({ disabled, onInsertPlot }: { disabled?: boolean; onI
         </section>
       ))}
 
-      {open &&
+      {open === 'shuffle' &&
+        createPortal(
+          examDoc ? (
+            <ShuffleModal doc={examDoc} onClose={() => setOpen(null)} />
+          ) : null,
+          document.body,
+        )}
+      {open && open !== 'shuffle' &&
         createPortal(
         <ToolModal
           kind={open}
