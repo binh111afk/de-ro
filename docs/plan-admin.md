@@ -1,6 +1,6 @@
 # Kế hoạch trang Admin
 
-Viết ở phiên 27 (10/11/2026). **Phiên 28: Giai đoạn 1 xong phần logic** (migration chưa áp, giao diện giao cho agent), xem [phiên 28](handoff/phien-28.md) để biết các mặc định đang dùng cho 4 câu hỏi cuối file.
+Viết ở phiên 27 (10/11/2026). **Phiên 29: giai đoạn 1-5 đã xong và lên `main`**, trừ email cảnh báo chi phí (G2 mục 4). Trạng thái thật và việc còn lại xem [phiên 29](handoff/phien-29.md); phần hiện trạng dưới đây là ảnh chụp lúc lập kế hoạch.
 
 ## Quyết định đã chốt với người dùng
 

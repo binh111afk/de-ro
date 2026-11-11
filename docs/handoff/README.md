@@ -2,6 +2,7 @@
 
 Chỉ mở phiên liên quan đến việc đang làm. Mới nhất ở trên.
 
+- [phiên 29](phien-29.md): Admin giai đoạn 1-5, tự khoá tài khoản, sửa theo pentest; quy trình, lỗi hay gặp, tiết kiệm token
 - [phiên 28](phien-28.md): Xáo đề thử đề thật + PDF, sửa mất đáp án khi mở đề cộng đồng vào trình soạn; **Admin giai đoạn 1 phần logic** (`server/admin.ts`, `api/admin.ts`, `adminApi.ts`, migration chưa áp), prompt giao diện cho Antigravity
 - [phiên 27](phien-27.md): gộp 3 nhánh agent; tương phản chữ slide; sửa mẫu Trẻ trung/Học thuật (font tiếng Việt); tab Thiết kế + pop-up xem trước; FOSTA dự phòng 2; so model; Xáo đề
 - [phiên 26](phien-26.md): **3 nhánh agent chờ review/merge** (kéo nhãn, mẫu slide, mobile); công cụ vẽ chống che chữ; cột trái; **dự phòng AI NightRouter** + script so sánh model
