@@ -19,6 +19,8 @@ import {
   Spinner,
   inputClass,
 } from '@/components/ui'
+import { cn } from '@/lib/cn'
+import { useDrawerExit } from './useDrawerExit'
 import { Portal } from '@/components/Portal'
 import { Pager } from '@/components/Pager'
 import { Segmented } from '@/components/Segmented'
@@ -330,6 +332,8 @@ function UserDetailDrawer({
     setTimeout(() => setNotice(null), 3500)
   }
 
+  const { close: handleClose, backdropClass, panelClass } = useDrawerExit(onClose)
+
   // Tải thông tin hạn mức
   const loadQuotaData = useCallback(async () => {
     setQuotaLoading(true)
@@ -527,14 +531,14 @@ function UserDetailDrawer({
     <Portal>
       {/* Lớp nền mờ */}
       <div
-        className="fixed inset-0 z-40 bg-ink/40 backdrop-blur-xs transition-opacity"
-        onClick={onClose}
+        className={cn('fixed inset-0 z-40 bg-ink/40 backdrop-blur-xs', backdropClass)}
+        onClick={handleClose}
         aria-hidden="true"
       />
 
       {/* Ngăn kéo trượt từ phải sang */}
       <aside
-        className="fixed inset-y-0 right-0 z-50 flex w-full max-w-full flex-col border-l border-line bg-surface shadow-2xl transition-transform sm:w-[480px]"
+        className={cn('fixed inset-y-0 right-0 z-50 flex w-full max-w-full flex-col border-l border-line bg-surface shadow-2xl sm:w-[480px]', panelClass)}
         role="dialog"
         aria-label="Chi tiết người dùng"
       >
@@ -551,7 +555,7 @@ function UserDetailDrawer({
           </div>
           <button
             type="button"
-            onClick={onClose}
+            onClick={handleClose}
             className="rounded-[6px] p-1.5 text-ink-3 hover:bg-sunken hover:text-ink"
             aria-label="Đóng ngăn"
           >

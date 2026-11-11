@@ -22,6 +22,8 @@ import {
   Spinner,
   inputClass,
 } from '@/components/ui'
+import { cn } from '@/lib/cn'
+import { useDrawerExit } from './useDrawerExit'
 import { Portal } from '@/components/Portal'
 import { Pager } from '@/components/Pager'
 import { SiteSelect, type SiteSelectOption } from '@/components/SiteSelect'
@@ -105,10 +107,12 @@ export function ContentPanel({ me }: ContentPanelProps) {
       </div>
 
       {/* Nội dung theo từng tab */}
-      {tab === 'exams' && <ExamsTab me={me} />}
-      {tab === 'reports' && <ReportsTab me={me} />}
-      {tab === 'docs' && !isMod && <DocsTab me={me} />}
-      {tab === 'feedback' && !isMod && <FeedbackTab me={me} />}
+      <div key={tab} className="anim-tab-in">
+        {tab === 'exams' && <ExamsTab me={me} />}
+        {tab === 'reports' && <ReportsTab me={me} />}
+        {tab === 'docs' && !isMod && <DocsTab me={me} />}
+        {tab === 'feedback' && !isMod && <FeedbackTab me={me} />}
+      </div>
     </div>
   )
 }
@@ -452,7 +456,7 @@ function ExamDrawer({
     try {
       await deleteContentExam(exam.id)
       onUpdated()
-      onClose()
+      close()
       void dialog.alert('Đã xoá hẳn đề thi khỏi hệ thống.', { title: 'Đã xoá' })
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Lỗi xoá đề thi'
@@ -462,18 +466,20 @@ function ExamDrawer({
     }
   }
 
+  const { close, backdropClass, panelClass } = useDrawerExit(onClose)
+
   const questions = detail?.doc?.blocks?.filter((b: any) => b.type === 'question') ?? []
 
   return (
     <Portal>
       <div
-        className="fixed inset-0 z-40 bg-ink/40 backdrop-blur-xs transition-opacity"
-        onClick={onClose}
+        className={cn('fixed inset-0 z-40 bg-ink/40 backdrop-blur-xs', backdropClass)}
+        onClick={close}
         aria-hidden="true"
       />
 
       <aside
-        className="fixed inset-y-0 right-0 z-50 flex w-full max-w-full flex-col border-l border-line bg-surface shadow-2xl transition-transform sm:w-[540px] md:w-[640px]"
+        className={cn('fixed inset-y-0 right-0 z-50 flex w-full max-w-full flex-col border-l border-line bg-surface shadow-2xl sm:w-[540px] md:w-[640px]', panelClass)}
         role="dialog"
         aria-label="Chi tiết đề thi"
       >
@@ -498,7 +504,7 @@ function ExamDrawer({
           </div>
           <button
             type="button"
-            onClick={onClose}
+            onClick={close}
             className="rounded-[6px] p-1.5 text-ink-3 hover:bg-sunken hover:text-ink"
             aria-label="Đóng"
           >

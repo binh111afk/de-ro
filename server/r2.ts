@@ -26,6 +26,12 @@ const EXT: Record<string, string> = {
 const DOC_TYPES = new Set(['pdf', 'docx'])
 const KEY_PATTERN = /^(img|doc)\/[a-f0-9]{40}\.(png|jpg|webp|gif|pdf|docx)$/
 
+/** Thông tin để admin xem (không có secret). */
+export function r2Info() {
+  const c = r2Config()
+  return { endpoint: c.accountId ? `https://${c.accountId}.r2.cloudflarestorage.com/${c.bucket}` : '', accessKeyId: c.accessKeyId }
+}
+
 const sha256Hex = (data: Buffer | string) => createHash('sha256').update(data).digest('hex')
 const hmac = (key: Buffer | string, data: string) => createHmac('sha256', key).update(data).digest()
 

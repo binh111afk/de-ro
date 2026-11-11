@@ -45,6 +45,7 @@ import { GRADES, SUBJECTS, TYPE_LABEL, type Option, type QuestionType, type Subj
 import { formatViDateTime } from './adminUtils'
 import { figureDoc, figureImageAttrs } from '@/examEditor/toolImages'
 import { cn } from '@/lib/cn'
+import { useDrawerExit } from './useDrawerExit'
 
 const figureCache = new Map<string, { src: string; alt: string } | null>()
 function figureOf(entry: BankEntry) {
@@ -672,6 +673,8 @@ function QuestionDrawer({
   onUnhide: () => void
   onRevert: () => void
 }) {
+  const { close, backdropClass, panelClass } = useDrawerExit(onClose)
+
   const e = item.entry
   const lvl = levelOf(e)
   const figure = figureOf(e)
@@ -682,14 +685,14 @@ function QuestionDrawer({
     <Portal>
       {/* Nền mờ */}
       <div
-        className="fixed inset-0 z-40 bg-ink/40 backdrop-blur-xs transition-opacity"
-        onClick={onClose}
+        className={cn('fixed inset-0 z-40 bg-ink/40 backdrop-blur-xs', backdropClass)}
+        onClick={close}
         aria-hidden="true"
       />
 
       {/* Khung trượt từ phải sang */}
       <aside
-        className="fixed inset-y-0 right-0 z-50 flex w-full max-w-full flex-col border-l border-line bg-surface shadow-2xl transition-transform sm:w-[560px]"
+        className={cn('fixed inset-y-0 right-0 z-50 flex w-full max-w-full flex-col border-l border-line bg-surface shadow-2xl sm:w-[560px]', panelClass)}
         role="dialog"
         aria-label="Chi tiết câu hỏi"
       >
@@ -703,7 +706,7 @@ function QuestionDrawer({
           </div>
           <button
             type="button"
-            onClick={onClose}
+            onClick={close}
             className="rounded-[6px] p-1.5 text-ink-3 transition-colors hover:bg-sunken hover:text-ink"
             aria-label="Đóng"
           >

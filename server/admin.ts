@@ -8,13 +8,16 @@
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { clientIp, guard, userFromToken } from './guard.js'
 import { json, readBody } from './http.js'
-import { deleteR2Object, pingR2, r2DocKeyFromUrl } from './r2.js'
-import { pingProviders } from './llmProxy.js'
+import { deleteR2Object, pingR2, r2DocKeyFromUrl, r2Info } from './r2.js'
+import { assertSafeEndpoint, listProviders, pingProviders } from './llmProxy.js'
+import { encryptKey, hasAiSecret, isAllowedEndpoint, resetAiOverrides } from './aiSettings.js'
 import { _resetOpsCache } from './ops.js'
 import { readDbMetrics } from './dbMetrics.js'
 import { CONTENT_ACTIONS } from './adminContent.js'
 import { BANK_ACTIONS } from './adminBank.js'
 import { STATS_ACTIONS } from './adminStats.js'
+
+const MODEL_NAME = /^[\w.:/-]+$/
 
 export type Role = 'admin' | 'moderator'
 
@@ -512,16 +515,98 @@ const ACTIONS: ActionMap = {
     },
   },
 
-  /** Kiểm tra tình trạng: Supabase, R2, từng provider AI. Chỉ chạy khi admin bấm (tốn ít token). */
-  health: {
+  /** Danh sách provider để hiện sẵn các dòng kiểm tra (không gọi thử). */
+  'health.targets': {
     need: 'admin',
     run: async ({ s }) => {
+      const r2 = r2Info()
+      const mask = (k: string) => (k ? `••••${k.slice(-4)}` : '')
+      return {
+        providers: await listProviders(),
+        services: {
+          supabase: { endpoint: s.base, keyMask: mask(process.env.SUPABASE_SERVICE_ROLE_KEY ?? '') },
+          r2: { endpoint: r2.endpoint, keyMask: mask(r2.accessKeyId) },
+        },
+      }
+    },
+  },
+
+  /** Lưu model, endpoint, API key của provider AI, áp dụng cho cả app. Key rỗng = giữ key đang dùng. */
+  'ai.saveProvider': {
+    need: 'admin',
+    run: async (ctx, b) => {
+      const provider = str(b.provider, 40)
+      const model = str(b.model, 100)
+      const endpoint = str(b.endpoint, 300).replace(/\/+$/, '')
+      const apiKey = str(b.apiKey, 500)
+      const cur = (await listProviders()).find((p) => p.provider === provider)
+      if (!cur) throw new HttpError(400, 'Provider không hợp lệ.')
+      if (model && !MODEL_NAME.test(model)) throw new HttpError(400, 'Tên model không hợp lệ.')
+      if (apiKey && !/^[\x21-\x7e]+$/.test(apiKey)) throw new HttpError(400, 'API key không hợp lệ.')
+      if (apiKey && !hasAiSecret()) throw new HttpError(400, 'Server chưa đặt AI_SETTINGS_SECRET (tối thiểu 32 ký tự) nên chưa lưu được API key.')
+      const next = endpoint || cur.defaultEndpoint
+      const changed = next !== cur.endpoint
+      // đổi endpoint mà giữ key cũ thì key cũ bị gửi tới máy chủ mới
+      if (changed && !apiKey) throw new HttpError(400, 'Đổi endpoint thì phải nhập lại API key.')
+      const custom = next !== cur.defaultEndpoint
+      if (changed && custom) {
+        if (!isAllowedEndpoint(next)) throw new HttpError(400, 'Tên miền này chưa được cho phép. Thêm vào AI_ENDPOINT_ALLOWED_HOSTS trên Vercel rồi lưu lại.')
+        try {
+          await assertSafeEndpoint(next)
+        } catch (err) {
+          throw new HttpError(400, err instanceof Error ? err.message : 'Endpoint không hợp lệ.')
+        }
+      }
+      const { data } = await call<Array<{ api_key_enc: string | null }>>(ctx.s, `/rest/v1/ai_provider_settings?provider=eq.${encodeURIComponent(provider)}&select=api_key_enc`)
+      const savedModel = model && model !== cur.defaultModel ? model : null
+      await call(ctx.s, '/rest/v1/ai_provider_settings?on_conflict=provider', {
+        method: 'POST',
+        headers: { Prefer: 'resolution=merge-duplicates,return=minimal' },
+        body: JSON.stringify({
+          provider,
+          model: savedModel,
+          base_url: custom ? next : null,
+          api_key_enc: apiKey ? encryptKey(apiKey) : (data[0]?.api_key_enc ?? null),
+          updated_at: new Date().toISOString(),
+        }),
+      })
+      resetAiOverrides()
+      await audit(ctx, 'ai.saveProvider', provider, { from: cur.model, model: savedModel ?? cur.defaultModel, endpoint: next, keyChanged: !!apiKey })
+      return { providers: await listProviders() }
+    },
+  },
+
+  /** Xoá cấu hình đã lưu, provider quay về biến môi trường. */
+  'ai.resetProvider': {
+    need: 'admin',
+    run: async (ctx, b) => {
+      const provider = str(b.provider, 40)
+      if (!(await listProviders()).some((p) => p.provider === provider)) throw new HttpError(400, 'Provider không hợp lệ.')
+      await call(ctx.s, `/rest/v1/ai_provider_settings?provider=eq.${encodeURIComponent(provider)}`, { method: 'DELETE', headers: { Prefer: 'return=minimal' } })
+      resetAiOverrides()
+      await audit(ctx, 'ai.resetProvider', provider, {})
+      return { providers: await listProviders() }
+    },
+  },
+
+  /** Kiểm tra tình trạng: Supabase, R2, từng provider AI, hoặc riêng `target`. Chỉ chạy khi admin bấm (tốn ít token). */
+  health: {
+    need: 'admin',
+    run: async ({ s }, b) => {
+      const target = str(b.target, 40)
+      if (target && target !== 'supabase' && target !== 'r2' && !(await listProviders()).some((p) => p.provider === target)) throw new HttpError(400, 'Dịch vụ cần kiểm tra không hợp lệ.')
+      const pingDb = () => {
       const t0 = Date.now()
-      const db = await fetch(`${s.base}/rest/v1/app_settings?select=key&limit=1`, { headers: s.headers, signal: AbortSignal.timeout(10_000) })
+      return fetch(`${s.base}/rest/v1/app_settings?select=key&limit=1`, { headers: s.headers, signal: AbortSignal.timeout(10_000) })
         .then((r) => ({ ok: r.ok, ms: Date.now() - t0, ...(r.ok ? {} : { error: `HTTP ${r.status}` }) }))
         .catch((e: unknown) => ({ ok: false, ms: Date.now() - t0, error: String(e) }))
-      const [r2, providers] = await Promise.all([pingR2(), pingProviders()])
-      return { checkedAt: new Date().toISOString(), supabase: db, r2, providers }
+      }
+      const checkedAt = new Date().toISOString()
+      if (target === 'supabase') return { checkedAt, supabase: await pingDb() }
+      if (target === 'r2') return { checkedAt, r2: await pingR2() }
+      if (target) return { checkedAt, providers: await pingProviders(target) }
+      const [supabase, r2, providers] = await Promise.all([pingDb(), pingR2(), pingProviders()])
+      return { checkedAt, supabase, r2, providers }
     },
   },
 }

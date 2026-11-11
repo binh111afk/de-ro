@@ -45,7 +45,7 @@ export function AdminLayout({ me }: AdminLayoutProps) {
   const isMock = isAdminMock()
 
   return (
-    <div className="w-full max-w-full overflow-x-hidden bg-background">
+    <div className="w-full max-w-full overflow-x-clip">
       <div className="mx-auto max-w-[1280px] px-4 py-6 sm:px-6 lg:px-8">
         {/* Thanh tiêu đề quản trị trên cùng */}
         <header className="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-line pb-4">
@@ -84,7 +84,7 @@ export function AdminLayout({ me }: AdminLayoutProps) {
           {/* Menu trái cố định (~220px) trên desktop, cuộn ngang trên mobile */}
           <nav
             aria-label="Menu quản trị"
-            className="w-full shrink-0 md:w-[220px]"
+            className="sticky top-[68px] z-30 w-full shrink-0 bg-canvas py-2 md:top-[88px] md:w-[220px] md:bg-transparent md:py-0"
           >
             <div className="flex flex-row gap-1.5 overflow-x-auto pb-2 md:flex-col md:overflow-visible md:pb-0">
               {NAV_ITEMS.map((item) => {
@@ -112,6 +112,8 @@ export function AdminLayout({ me }: AdminLayoutProps) {
 
           {/* Vùng nội dung chính */}
           <main className="min-w-0 flex-1">
+            {/* App.tsx giữ nguyên khung admin; chỉ phần nội dung chạy hiệu ứng khi đổi mục */}
+            <div key={pathname.split('/')[2] ?? ''} className="page-enter">
             <Routes>
               <Route index element={<OverviewPanel me={me} />} />
               <Route path="nguoi-dung" element={<UsersPanel me={me} />} />
@@ -122,6 +124,7 @@ export function AdminLayout({ me }: AdminLayoutProps) {
               <Route path="nhat-ky" element={<AuditPanel />} />
               <Route path="*" element={<OverviewPanel me={me} />} />
             </Routes>
+            </div>
           </main>
         </div>
       </div>

@@ -38,6 +38,7 @@ globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
   if (url.includes('/rpc/grant_ai_credits')) return ok(1500)
   if (url.includes('/rpc/record_security_strike')) return strikeReply === 'error' ? new Response('{}', { status: 500 }) : ok(strikeReply)
   if (url.includes('/rest/v1/admin_audit')) return new Response(null, { status: 201 })
+  if (url.includes('/rest/v1/ai_provider_settings')) return method === 'GET' ? ok([]) : new Response(null, { status: 201 })
   if (url.includes('/rest/v1/app_settings') && method === 'GET') return ok([{ key: 'maintenance', value: { on: true, message: 'x' } }])
   if (url.includes('/rest/v1/app_settings')) return new Response(null, { status: 201 })
   if (url.includes('/rpc/admin_ai_stats')) return ok([{ day: '2026-11-10', model: 'm', provider: 'opencode', calls: 3, errors: 1, tokens: 900, cost: null, avg_ms: 1200 }])
@@ -127,6 +128,52 @@ const st = await hit({ action: 'ai.stats', days: 500 }, 'tAdmin')
 check('ai.stats kẹp days ≤ 90, đổi tên cột', st.status === 200 && st.data.days === 90 && (st.data.rows as Array<{ avgMs: number }>)[0].avgMs === 1200)
 check('moderator xem ai.stats → 403', (await hit({ action: 'ai.stats' }, 'tMod')).status === 403)
 check('moderator chạy health → 403', (await hit({ action: 'health' }, 'tMod')).status === 403)
+check('moderator xem health.targets → 403', (await hit({ action: 'health.targets' }, 'tMod')).status === 403)
+{
+  const save = async (o: object, tok = 'tAdmin') => hit({ action: 'ai.saveProvider', provider: 'mercury', ...o }, tok)
+  const SECRET_KEY = 'sk-rat-bi-mat-123456'
+  check('moderator lưu provider → 403', (await save({ model: 'x' }, 'tMod')).status === 403)
+  check('lưu provider lạ → 400', (await save({ provider: 'khong-co', model: 'x' })).status === 400)
+  process.env.MERCURY_API_KEY = 'k-env-12345678'
+  const END = 'https://api.inceptionlabs.ai/v1'
+  check('lưu tên model lạ → 400', (await save({ model: 'a b', endpoint: END })).status === 400)
+  check('đổi endpoint không nhập key → 400', (await save({ model: 'm', endpoint: 'https://8.8.8.8/v1' })).status === 400)
+  delete process.env.AI_SETTINGS_SECRET
+  check('lưu key khi chưa có secret → 400', (await save({ model: 'm', endpoint: END, apiKey: SECRET_KEY })).status === 400)
+  process.env.AI_SETTINGS_SECRET = 'x'.repeat(32)
+  delete process.env.AI_ENDPOINT_ALLOWED_HOSTS
+  check('tên miền chưa cho phép → 400', (await save({ model: 'm', endpoint: 'https://8.8.8.8/v1', apiKey: SECRET_KEY })).status === 400)
+  process.env.AI_ENDPOINT_ALLOWED_HOSTS = '8.8.8.8, 127.0.0.1,169.254.169.254'
+  check('endpoint http → 400', (await save({ model: 'm', endpoint: 'http://8.8.8.8/v1', apiKey: SECRET_KEY })).status === 400)
+  check('endpoint nội bộ → 400', (await save({ model: 'm', endpoint: 'https://127.0.0.1/v1', apiKey: SECRET_KEY })).status === 400)
+  check('endpoint metadata → 400', (await save({ model: 'm', endpoint: 'https://169.254.169.254/v1', apiKey: SECRET_KEY })).status === 400)
+  const from = bodies.length
+  const r = await save({ model: 'mercury-moi', endpoint: 'https://8.8.8.8/v1', apiKey: SECRET_KEY })
+  const sent = bodies.slice(from).join(' ')
+  check('lưu provider → 200, có model và key đã mã hoá', r.status === 200 && sent.includes('"model":"mercury-moi"') && sent.includes('"api_key_enc":"v1:'))
+  check('API key không lọt ra DB hay nhật ký dạng rõ', !sent.includes(SECRET_KEY))
+  check('kết quả chỉ trả key đã che', !JSON.stringify(r.data ?? r).includes(SECRET_KEY))
+  const { encryptKey, decryptKey, rowToOverride, resetAiOverrides } = await import('../server/aiSettings.ts')
+  const { assertSafeEndpoint } = await import('../server/llmProxy.ts')
+  for (const u of ['https://[::ffff:127.0.0.1]/v1', 'https://[::ffff:a9fe:a9fe]/v1', 'https://[::ffff:10.0.0.1]/v1', 'https://[64:ff9b::7f00:1]/v1', 'https://[2002:7f00:1::]/v1', 'https://192.0.0.1/v1', 'https://[fe80::1]/v1', 'https://[ff02::1]/v1']) {
+    check('chặn địa chỉ nội bộ ' + u, await assertSafeEndpoint(u).then(() => false, () => true))
+  }
+  check('địa chỉ công khai vẫn qua', await assertSafeEndpoint('https://8.8.8.8/v1').then(() => true, () => false))
+  const gone = rowToOverride({ provider: 'mercury', model: 'm', base_url: 'https://may-la.test/v1', api_key_enc: encryptKey('abc') })
+  check('tên miền bị gỡ khỏi danh sách thì bỏ endpoint và key', gone.baseUrl === undefined && gone.apiKey === undefined && gone.model === 'm')
+  const okRow = rowToOverride({ provider: 'mercury', model: null, base_url: 'https://8.8.8.8/v1', api_key_enc: encryptKey('abc') })
+  check('tên miền trong danh sách thì dùng', okRow.baseUrl === 'https://8.8.8.8/v1' && okRow.apiKey === 'abc')
+  check('mã hoá rồi giải mã đúng', decryptKey(encryptKey('abc')) === 'abc')
+  const bad = rowToOverride({ provider: 'mercury', model: null, base_url: 'https://evil.test/v1', api_key_enc: 'v1:AAAA:BBBB:CCCC' })
+  check('key hỏng thì bỏ luôn endpoint riêng', bad.apiKey === undefined && bad.baseUrl === undefined)
+  check('về mặc định → 200', (await hit({ action: 'ai.resetProvider', provider: 'mercury' }, 'tAdmin')).status === 200)
+  check('moderator về mặc định → 403', (await hit({ action: 'ai.resetProvider', provider: 'mercury' }, 'tMod')).status === 403)
+  resetAiOverrides()
+  delete process.env.MERCURY_API_KEY
+  delete process.env.AI_SETTINGS_SECRET
+  delete process.env.AI_ENDPOINT_ALLOWED_HOSTS
+}
+check('kiểm tra riêng dịch vụ lạ → 400', (await hit({ action: 'health', target: 'khong-co' }, 'tAdmin')).status === 400)
 
 // chặn bảo trì ở server (ops.ts)
 const { maintenanceBlock, _resetOpsCache } = await import('../server/ops.ts')

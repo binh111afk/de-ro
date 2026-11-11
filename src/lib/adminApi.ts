@@ -352,26 +352,95 @@ export function getAiErrors(limit = 30): Promise<{ items: AiErrorRow[] }> {
   return post('ai.errors', { limit })
 }
 
-/** Gọi thật từng provider (tốn ít token) — chỉ chạy khi admin bấm nút. Có thể mất tới ~30 giây. */
-export function runHealth(): Promise<HealthReport> {
+const MOCK_HEALTH: Omit<HealthReport, 'checkedAt'> = {
+  supabase: { ok: true, ms: 84 },
+  r2: { ok: true, ms: 212 },
+  providers: [
+    { provider: 'opencode', model: 'gpt-5.5', ok: true, ms: 2310 },
+    { provider: 'mercury', model: 'mercury-3', ok: true, ms: 640 },
+    { provider: 'nightrouter', model: 'deepseek-v4-flash-0731', ok: false, ms: 30000, error: 'HTTP 502' },
+  ],
+}
+
+const MOCK_DEFAULT_MODELS = Object.fromEntries(MOCK_HEALTH.providers.map((p) => [p.provider, p.model]))
+const mockEndpoint = (provider: string) => `https://api.${provider}.example/v1`
+const mockEndpoints: Record<string, string> = {}
+const mockProviders = (): HealthProvider[] =>
+  MOCK_HEALTH.providers.map(({ provider, model }) => {
+    const defaultEndpoint = mockEndpoint(provider)
+    const endpoint = mockEndpoints[provider] ?? defaultEndpoint
+    const defaultModel = MOCK_DEFAULT_MODELS[provider]
+    return { provider, model, defaultModel, endpoint, defaultEndpoint, keyMask: '••••a1b2', custom: model !== defaultModel || endpoint !== defaultEndpoint }
+  })
+
+export interface HealthProvider {
+  provider: string
+  /** model app đang dùng */
+  model: string
+  /** model trong biến môi trường */
+  defaultModel: string
+  endpoint: string
+  defaultEndpoint: string
+  /** API key đã che, server không bao giờ trả key đầy đủ */
+  keyMask: string
+  /** đang dùng cấu hình đã lưu trong admin */
+  custom: boolean
+}
+
+export interface HealthService {
+  endpoint: string
+  keyMask: string
+}
+
+/** Các provider đã cấu hình, để hiện sẵn dòng kiểm tra. Không gọi thử nên không tốn token. */
+export function getHealthTargets(): Promise<{ providers: HealthProvider[]; services: { supabase: HealthService; r2: HealthService } }> {
   if (isAdminMock())
-    return new Promise((r) =>
-      setTimeout(
-        () =>
-          r({
-            checkedAt: new Date().toISOString(),
-            supabase: { ok: true, ms: 84 },
-            r2: { ok: true, ms: 212 },
-            providers: [
-              { provider: 'opencode', model: 'gpt-5.5', ok: true, ms: 2310 },
-              { provider: 'mercury', model: 'mercury-3', ok: true, ms: 640 },
-              { provider: 'nightrouter', model: 'deepseek-v4-flash-0731', ok: false, ms: 30000, error: 'HTTP 502' },
-            ],
-          }),
-        1200,
-      ),
-    )
-  return post('health')
+    return wait({
+      providers: mockProviders(),
+      services: { supabase: { endpoint: 'https://mock.supabase.co', keyMask: '••••9f3c' }, r2: { endpoint: 'https://mock.r2.cloudflarestorage.com/de-ro', keyMask: '••••77de' } },
+    })
+  return post('health.targets')
+}
+
+/** Lưu cấu hình provider, áp dụng cho cả app sau tối đa 30 giây. `apiKey` rỗng = giữ key đang dùng. */
+export function saveAiProvider(v: { provider: string; model: string; endpoint: string; apiKey: string }): Promise<{ providers: HealthProvider[] }> {
+  if (isAdminMock()) {
+    const p = MOCK_HEALTH.providers.find((x) => x.provider === v.provider)
+    if (p) p.model = v.model.trim() || MOCK_DEFAULT_MODELS[v.provider]
+    mockEndpoints[v.provider] = v.endpoint.trim().replace(/\/+$/, '') || mockEndpoint(v.provider)
+    return wait({ providers: mockProviders() })
+  }
+  return post('ai.saveProvider', v)
+}
+
+/** Xoá cấu hình đã lưu, provider quay về biến môi trường. */
+export function resetAiProvider(provider: string): Promise<{ providers: HealthProvider[] }> {
+  if (isAdminMock()) {
+    const p = MOCK_HEALTH.providers.find((x) => x.provider === provider)
+    if (p) p.model = MOCK_DEFAULT_MODELS[provider]
+    delete mockEndpoints[provider]
+    return wait({ providers: mockProviders() })
+  }
+  return post('ai.resetProvider', { provider })
+}
+
+export type HealthResult = Partial<HealthReport> & { checkedAt: string }
+
+/**
+ * Gọi thật (tốn ít token), chỉ chạy khi admin bấm nút. Bỏ trống `target` = kiểm tra hết, có thể mất tới ~30 giây;
+ * `target` là 'supabase', 'r2' hoặc tên provider.
+ */
+export function runHealth(target?: string): Promise<HealthResult> {
+  if (isAdminMock()) {
+    const checkedAt = new Date().toISOString()
+    const result: HealthResult =
+      target === 'supabase' ? { checkedAt, supabase: MOCK_HEALTH.supabase }
+      : target === 'r2' ? { checkedAt, r2: MOCK_HEALTH.r2 }
+      : target ? { checkedAt, providers: MOCK_HEALTH.providers.filter((p) => p.provider === target) }
+      : { checkedAt, ...MOCK_HEALTH }
+    return new Promise((r) => setTimeout(() => r(result), target ? 600 : 1200))
+  }
+  return post('health', target ? { target } : {})
 }
 
 export interface DbStatus {

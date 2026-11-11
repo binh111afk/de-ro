@@ -16,12 +16,14 @@ import { createServer, type IncomingMessage, type ServerResponse } from 'node:ht
 import { readFile } from 'node:fs/promises'
 import { randomUUID } from 'node:crypto'
 import { isIP } from 'node:net'
+import { lookup } from 'node:dns/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { json, readBody } from './http.js'
 import { clientIp, guard, isLocal, userFromToken } from './guard.js'
 import { addUsage, quotaMessage, readQuota, reserveQuota } from './aiQuota.js'
 import { costFromUsage, logAiCall, maintenanceBlock } from './ops.js'
+import { readAiOverrides } from './aiSettings.js'
 import { callAnthropic } from './anthropic.js'
 import { handleExtractRequest } from './extract.js'
 import { handleSearchRequest } from './searchProxy.js'
@@ -76,6 +78,9 @@ const BLOCKED_V4: Array<[RegExp, string]> = [
   [/^192\.168\./, 'dải riêng 192.168/16'],
   [/^100\.(6[4-9]|[7-9]\d|1[01]\d|12[0-7])\./, 'CGNAT 100.64/10'],
   [/^198\.1[89]\./, 'benchmark 198.18/15'],
+  [/^192\.0\.[02]\./, 'dải đặc biệt 192.0.0/24, 192.0.2/24'],
+  [/^198\.51\.100\./, 'dải tài liệu'],
+  [/^203\.0\.113\./, 'dải tài liệu'],
   [/^(22[4-9]|2[3-5]\d)\./, 'multicast/reserved'],
 ]
 
@@ -98,17 +103,31 @@ function assertAllowedUrl(raw: string): URL {
   if (host === 'localhost' || host.endsWith('.localhost')) {
     throw new Error('LLM_BASE_URL không được trỏ tới localhost')
   }
-  const v4 = host.startsWith('::ffff:') ? host.slice(7) : host
-  if (isIP(v4) === 4) {
-    const blocked = BLOCKED_V4.find(([re]) => re.test(v4))
+  if (isIP(host) === 4) {
+    const blocked = BLOCKED_V4.find(([re]) => re.test(host))
     if (blocked) throw new Error(`LLM_BASE_URL trỏ tới địa chỉ nội bộ (${blocked[1]})`)
   }
   if (isIP(host) === 6) {
-    if (host === '::1' || host === '::' || /^f[cd]/i.test(host) || /^fe[89ab]/i.test(host)) {
+    // URL đã chuẩn hoá về dạng rút gọn chữ thường. ::ffff:, 64:ff9b::, 2002:, 2001:0: là các dạng bọc IPv4 bên trong
+    if (host === '::1' || host === '::' || /^(::ffff:|64:ff9b:|2002:|2001:0:|2001:db8:|f[cdf]|fe[89ab])/.test(host)) {
       throw new Error('LLM_BASE_URL trỏ tới địa chỉ IPv6 nội bộ')
     }
   }
   return url
+}
+
+/** Endpoint admin nhập trên giao diện: chỉ https, không kèm tài khoản/query, tên miền không trỏ vào mạng nội bộ. */
+export async function assertSafeEndpoint(raw: string): Promise<void> {
+  const url = assertAllowedUrl(raw)
+  if (url.protocol !== 'https:') throw new Error('Endpoint phải dùng https.')
+  if (url.username || url.password || url.search || url.hash) throw new Error('Endpoint không được chứa tài khoản hoặc tham số.')
+  let addrs: Array<{ address: string; family: number }>
+  try {
+    addrs = await lookup(url.hostname.replace(/^\[|\]$/g, ''), { all: true })
+  } catch {
+    throw new Error('Không tìm thấy máy chủ của endpoint.')
+  }
+  for (const a of addrs) assertAllowedUrl(a.family === 6 ? `https://[${a.address}]/` : `https://${a.address}/`)
 }
 
 function xkiroConfig(): { apiKey: string; baseURL: string } {
@@ -139,6 +158,7 @@ function providerConfig() {
     // Claude (Anthropic API chính thức) — dự phòng cuối, gọi qua SDK (server/anthropic.ts)
     anthropicApiKey: process.env.ANTHROPIC_API_KEY?.trim() || '',
     anthropicModel: process.env.ANTHROPIC_MODEL?.trim() || 'claude-opus-5-5',
+    anthropicBaseURL: (process.env.ANTHROPIC_BASE_URL?.trim() || 'https://api.anthropic.com').replace(/\/+$/, ''),
     // Inception Mercury (dLLM), tương thích OpenAI
     mercuryApiKey: process.env.MERCURY_API_KEY?.trim() || '',
     mercuryBaseURL: assertAllowedUrl((process.env.MERCURY_BASE_URL?.trim() || 'https://api.inceptionlabs.ai/v1').replace(/\/+$/, '')).toString().replace(/\/+$/, ''),
@@ -157,24 +177,70 @@ function providerConfig() {
 
 export type ProviderPing = { provider: string; model: string; ok: boolean; ms: number; error?: string }
 
-/** Admin bấm "Kiểm tra": gọi mỗi provider đã cấu hình một prompt rất ngắn (tốn ít token), đo độ trễ. */
-export async function pingProviders(): Promise<ProviderPing[]> {
+/** Cấu hình đang chạy: như providerConfig, thêm phần admin đã lưu (model, endpoint, API key). */
+async function liveConfig() {
   const p = providerConfig()
-  const msg = [{ role: 'user', content: 'Trả lời đúng một chữ: OK' }]
+  const o = await readAiOverrides()
+  return {
+    ...p,
+    apiKey: o.opencode?.apiKey || p.apiKey,
+    model: o.opencode?.model || p.model,
+    endpoint: o.opencode?.baseUrl ? new URL(`${o.opencode.baseUrl}/chat/completions`) : p.endpoint,
+    mercuryApiKey: o.mercury?.apiKey || p.mercuryApiKey,
+    mercuryBaseURL: o.mercury?.baseUrl || p.mercuryBaseURL,
+    mercuryModel: o.mercury?.model || p.mercuryModel,
+    fostaApiKey: o.fosta?.apiKey || p.fostaApiKey,
+    fostaBaseURL: o.fosta?.baseUrl || p.fostaBaseURL,
+    fostaModel: o.fosta?.model || p.fostaModel,
+    xkiroApiKey: o.xkiro?.apiKey || p.xkiroApiKey,
+    xkiroBaseURL: o.xkiro?.baseUrl || p.xkiroBaseURL,
+    xkiroModel: o.xkiro?.model || p.xkiroModel,
+    nightrouterApiKey: o.nightrouter?.apiKey || p.nightrouterApiKey,
+    nightrouterBaseURL: o.nightrouter?.baseUrl || p.nightrouterBaseURL,
+    nightrouterModel: o.nightrouter?.model || p.nightrouterModel,
+    anthropicApiKey: o.anthropic?.apiKey || p.anthropicApiKey,
+    anthropicBaseURL: o.anthropic?.baseUrl || p.anthropicBaseURL,
+    anthropicModel: o.anthropic?.model || p.anthropicModel,
+  }
+}
+
+function pingTargets(p: ReturnType<typeof providerConfig>) {
   const list: Array<{ provider: string; model: string; key: string; url: string; opencode?: boolean; anthropic?: boolean }> = []
   if (p.apiKey) list.push({ provider: 'opencode', model: p.model, key: p.apiKey, url: p.endpoint.toString(), opencode: true })
   if (p.mercuryApiKey) list.push({ provider: 'mercury', model: p.mercuryModel, key: p.mercuryApiKey, url: `${p.mercuryBaseURL}/chat/completions` })
   if (p.fostaApiKey) list.push({ provider: 'fosta', model: p.fostaModel, key: p.fostaApiKey, url: `${p.fostaBaseURL}/chat/completions` })
   if (p.xkiroApiKey) list.push({ provider: 'xkiro', model: p.xkiroModel, key: p.xkiroApiKey, url: `${p.xkiroBaseURL}/chat/completions` })
   if (p.nightrouterApiKey) list.push({ provider: 'nightrouter', model: p.nightrouterModel, key: p.nightrouterApiKey, url: `${p.nightrouterBaseURL}/chat/completions` })
-  if (p.anthropicApiKey) list.push({ provider: 'anthropic', model: p.anthropicModel, key: p.anthropicApiKey, url: '', anthropic: true })
+  if (p.anthropicApiKey) list.push({ provider: 'anthropic', model: p.anthropicModel, key: p.anthropicApiKey, url: p.anthropicBaseURL, anthropic: true })
+  return list
+}
+
+const maskKey = (k: string) => (k ? `••••${k.length >= 8 ? k.slice(-4) : ''}` : '')
+const endpointOf = (url: string) => url.replace(/\/chat\/completions$/, '')
+
+/** Cấu hình từng provider cho trang admin, không gọi thử nên không tốn token. API key chỉ trả phần che. */
+export async function listProviders() {
+  const defaults = new Map(pingTargets(providerConfig()).map((t) => [t.provider, t]))
+  return pingTargets(await liveConfig()).map((t) => {
+    const d = defaults.get(t.provider)
+    const defaultModel = d?.model ?? t.model
+    const defaultEndpoint = endpointOf(d?.url ?? t.url)
+    const endpoint = endpointOf(t.url)
+    return { provider: t.provider, model: t.model, defaultModel, endpoint, defaultEndpoint, keyMask: maskKey(t.key), custom: t.model !== defaultModel || endpoint !== defaultEndpoint || t.key !== d?.key }
+  })
+}
+
+/** Admin bấm "Kiểm tra": gọi provider đã cấu hình (tất cả, hoặc riêng `only`) một prompt rất ngắn (tốn ít token), đo độ trễ. */
+export async function pingProviders(only?: string): Promise<ProviderPing[]> {
+  const msg = [{ role: 'user', content: 'Trả lời đúng một chữ: OK' }]
+  const list = pingTargets(await liveConfig()).filter((t) => !only || t.provider === only)
   return Promise.all(
     list.map(async (t): Promise<ProviderPing> => {
       const t0 = Date.now()
       const base = { provider: t.provider, model: t.model }
       try {
         if (t.anthropic) {
-          await callAnthropic({ apiKey: t.key, model: t.model, messages: msg, maxTokens: 64, effort: 'low', signal: AbortSignal.timeout(30_000) })
+          await callAnthropic({ apiKey: t.key, baseURL: t.url, model: t.model, messages: msg, maxTokens: 64, effort: 'low', signal: AbortSignal.timeout(30_000) })
           return { ...base, ok: true, ms: Date.now() - t0 }
         }
         const r = await fetch(t.url, {
@@ -185,6 +251,7 @@ export async function pingProviders(): Promise<ProviderPing[]> {
             ...(t.opencode ? { 'x-opencode-session': SESSION_ID, 'User-Agent': 'de-ro/1.0' } : {}),
           },
           body: JSON.stringify({ model: t.model, messages: msg, max_tokens: 64, ...(t.opencode ? { reasoning_effort: 'low' } : {}) }),
+          redirect: 'error',
           signal: AbortSignal.timeout(30_000),
         })
         await r.text()
@@ -242,7 +309,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
 
     let prov: ReturnType<typeof providerConfig>
     try {
-      prov = providerConfig()
+      prov = await liveConfig()
     } catch (err) {
       return json(res, 500, { error: err instanceof Error ? err.message : String(err) })
     }
@@ -298,7 +365,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
     }
     if (prov.nightrouterApiKey)
       targets.push({ model: prov.nightrouterModel, url: `${prov.nightrouterBaseURL}/chat/completions`, key: prov.nightrouterApiKey, opencode: false })
-    if (prov.anthropicApiKey) targets.push({ model: prov.anthropicModel, url: '', key: prov.anthropicApiKey, opencode: false, anthropic: true })
+    if (prov.anthropicApiKey) targets.push({ model: prov.anthropicModel, url: prov.anthropicBaseURL, key: prov.anthropicApiKey, opencode: false, anthropic: true })
     // model dự phòng được chỉ định → thử nó trước tiên
     if (wantsBackup) {
       const i = targets.findIndex((t) => t.model === body.model)
@@ -314,6 +381,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
         try {
           const r = await callAnthropic({
             apiKey: target.key,
+            baseURL: target.url,
             model: selectedModel,
             messages: body.messages,
             maxTokens: body.maxTokens ?? 32000,
@@ -352,6 +420,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
               ...(target.opencode ? { 'x-opencode-session': SESSION_ID, 'User-Agent': 'de-ro/1.0' } : {}),
             },
             body: attemptBody,
+            redirect: 'error', // không để endpoint công khai chuyển hướng server vào mạng nội bộ
             signal: AbortSignal.timeout(upstreamTimeoutMs()),
           })
         } catch (err) {

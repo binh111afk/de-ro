@@ -6,7 +6,6 @@ import {
   Database,
   HardDrive,
   RefreshCw,
-  Server,
 } from 'lucide-react'
 import {
   Badge,
@@ -23,10 +22,14 @@ import {
   getSettings,
   setMaintenance,
   runHealth,
+  getHealthTargets,
   getAiStats,
   getAiErrors,
   type AppSettings,
-  type HealthReport,
+  type HealthCheck,
+  type HealthResult,
+  type HealthProvider,
+  type HealthService,
   type AiStatRow,
   type AiErrorRow,
   type AdminMe,
@@ -34,6 +37,7 @@ import {
 import { formatNumber, formatViDateTime, toDatetimeLocalString, toIsoString } from './adminUtils'
 import { cn } from '@/lib/cn'
 import { DbStatusCard } from './DbStatusCard'
+import { HealthDrawer, type HealthDrawerTarget } from './HealthDrawer'
 import { Switch } from './Switch'
 import { AnnouncementsEditor } from './AnnouncementsEditor'
 
@@ -93,7 +97,12 @@ export function OpsPanel({ me: _me }: OpsPanelProps) {
   const [opsTab, setOpsTab] = useState<'maint' | 'notice'>('maint')
 
   // 2. Tình trạng server
-  const [healthReport, setHealthReport] = useState<HealthReport | null>(null)
+  const [healthProviders, setHealthProviders] = useState<HealthProvider[]>([])
+  const [healthResults, setHealthResults] = useState<Record<string, HealthCheck>>({})
+  const [healthCheckedAt, setHealthCheckedAt] = useState<string | null>(null)
+  const [checkingOne, setCheckingOne] = useState<string[]>([])
+  const [healthServices, setHealthServices] = useState<{ supabase: HealthService; r2: HealthService } | null>(null)
+  const [healthDrawer, setHealthDrawer] = useState<HealthDrawerTarget | null>(null)
   const [runningHealth, setRunningHealth] = useState(false)
 
   // 3. Thống kê AI
@@ -210,20 +219,62 @@ export function OpsPanel({ me: _me }: OpsPanelProps) {
     }
   }
 
-  // Chạy kiểm tra server
+  // Hiện sẵn các dòng provider để kiểm tra riêng được ngay
+  useEffect(() => {
+    getHealthTargets()
+      .then((r) => {
+        setHealthProviders(r.providers)
+        setHealthServices(r.services)
+      })
+      .catch(() => {})
+  }, [])
+
+  const applyHealth = (res: HealthResult) => {
+    setHealthCheckedAt(res.checkedAt)
+    setHealthResults((cur) => ({
+      ...cur,
+      ...(res.supabase ? { supabase: res.supabase } : {}),
+      ...(res.r2 ? { r2: res.r2 } : {}),
+      ...Object.fromEntries((res.providers ?? []).map((p) => [p.provider, p])),
+    }))
+  }
+
+  const healthError = async (err: unknown) => {
+    const msg = err instanceof AdminError || err instanceof Error ? err.message : 'Lỗi trong quá trình kiểm tra máy chủ'
+    await dialog.alert(msg, { title: 'Lỗi kiểm tra máy chủ' })
+  }
+
+  // Kiểm tra tất cả
   const handleRunHealth = async () => {
     try {
       setRunningHealth(true)
       const res = await runHealth()
-      setHealthReport(res)
+      applyHealth(res)
       showNotice('Đã hoàn tất kiểm tra tình trạng máy chủ.')
     } catch (err: unknown) {
-      const msg = err instanceof AdminError || err instanceof Error ? err.message : 'Lỗi trong quá trình kiểm tra máy chủ'
-      await dialog.alert(msg, { title: 'Lỗi kiểm tra máy chủ' })
+      await healthError(err)
     } finally {
       setRunningHealth(false)
     }
   }
+
+  // Kiểm tra riêng một dịch vụ
+  const handleCheckOne = async (key: string) => {
+    setCheckingOne((list) => [...list, key])
+    try {
+      applyHealth(await runHealth(key))
+    } catch (err: unknown) {
+      await healthError(err)
+    } finally {
+      setCheckingOne((list) => list.filter((k) => k !== key))
+    }
+  }
+
+  const healthRows: Array<{ key: string; icon: typeof Cpu; name: string; note: string; target: HealthDrawerTarget | null }> = [
+    { key: 'supabase', icon: Database, name: 'Supabase', note: 'Cơ sở dữ liệu & Xác thực', target: healthServices && { name: 'Supabase', service: healthServices.supabase } },
+    { key: 'r2', icon: HardDrive, name: 'Cloudflare R2', note: 'Lưu trữ tệp & tài liệu', target: healthServices && { name: 'Cloudflare R2', service: healthServices.r2 } },
+    ...healthProviders.map((p) => ({ key: p.provider, icon: Cpu, name: p.provider, note: p.model, target: { name: p.provider, provider: p } })),
+  ]
 
   // Xử lý dữ liệu thống kê AI
   // 1. 4 ô số liệu tổng quan
@@ -360,7 +411,7 @@ export function OpsPanel({ me: _me }: OpsPanelProps) {
 
         <div className="space-y-6">
           {/* Mục: Chế độ bảo trì */}
-          <div className={cn('space-y-4', opsTab !== 'maint' && 'hidden')}>
+          <div className={cn('anim-tab-in space-y-4', opsTab !== 'maint' && 'hidden')}>
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <div className="flex items-center gap-2">
@@ -434,7 +485,7 @@ export function OpsPanel({ me: _me }: OpsPanelProps) {
           </div>
 
           {settings ? (
-            <div className={cn(opsTab !== 'notice' && 'hidden')}>
+            <div className={cn('anim-tab-in', opsTab !== 'notice' && 'hidden')}>
               <AnnouncementsEditor initial={settings.announcements.items} onNotice={showNotice} />
             </div>
           ) : null}
@@ -449,13 +500,13 @@ export function OpsPanel({ me: _me }: OpsPanelProps) {
           <div>
             <h2 className="text-[17px] font-bold text-ink">Tình trạng server</h2>
             <p className="text-[12.5px] text-ink-3">
-              Kiểm tra khả năng kết nối và đo độ trễ thực tế tới Supabase, Cloudflare R2 và các provider AI.
+              Đo độ trễ thực tế tới từng dịch vụ. Kiểm tra provider AI tiêu hao một lượng nhỏ token, kiểm tra tất cả có thể mất tới ~30 giây.
             </p>
           </div>
           <div className="flex items-center gap-3">
-            {healthReport?.checkedAt ? (
+            {healthCheckedAt ? (
               <span className="text-[12.5px] font-medium text-ink-3">
-                Kiểm tra lúc {formatViTime(healthReport.checkedAt)}
+                Kiểm tra lúc {formatViTime(healthCheckedAt)}
               </span>
             ) : null}
             <Button
@@ -469,133 +520,75 @@ export function OpsPanel({ me: _me }: OpsPanelProps) {
               ) : (
                 <Activity className="size-3.5 text-clay" />
               )}
-              <span>{runningHealth ? 'Đang kiểm tra…' : 'Kiểm tra ngay'}</span>
+              <span>{runningHealth ? 'Đang kiểm tra…' : 'Kiểm tra tất cả'}</span>
             </Button>
           </div>
         </div>
 
         <DbStatusCard />
 
-        {/* Trạng thái đang kiểm tra */}
-        {runningHealth ? (
-          <div className="flex flex-col items-center justify-center rounded-[8px] bg-sunken/40 py-10 text-center">
-            <Spinner className="size-6 text-clay" />
-            <p className="mt-3 text-[14px] font-semibold text-ink">
-              Đang gọi thử từng dịch vụ, có thể mất tới 30 giây…
-            </p>
-            <p className="mt-1 text-[12.5px] text-ink-3">
-              Hệ thống đang gửi truy vấn kiểm tra tới Supabase, R2 và các nhà cung cấp AI.
-            </p>
-          </div>
-        ) : !healthReport ? (
-          /* Chưa kiểm tra: hiện dòng hướng dẫn */
-          <div className="flex flex-col items-center justify-center rounded-[8px] bg-sunken/40 py-10 text-center">
-            <Server className="size-8 text-ink-4" />
-            <p className="mt-3 text-[14px] font-medium text-ink">Chưa có dữ liệu kiểm tra server</p>
-            <p className="mt-1 max-w-[460px] text-[12.5px] text-ink-3">
-              Bấm nút <strong className="text-ink">Kiểm tra ngay</strong> ở trên để gọi thử từng dịch vụ. Thao tác này tiêu hao một lượng nhỏ token và có thể mất tới ~30 giây.
-            </p>
-          </div>
-        ) : (
-          /* Kết quả kiểm tra */
-          <div className="divide-y divide-line-2 rounded-[6px] border border-line">
-            {/* 1. Supabase */}
-            <div className="flex flex-col gap-2 p-3.5 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-center gap-3">
-                <span
-                  className={cn(
-                    'size-2.5 shrink-0 rounded-full',
-                    healthReport.supabase.ok ? 'bg-sage' : 'bg-clay',
-                  )}
-                />
-                <div className="flex items-center gap-2">
-                  <Database className="size-4 text-ink-3" />
-                  <span className="text-[13.5px] font-semibold text-ink">Supabase</span>
-                  <span className="text-[12px] text-ink-4">Cơ sở dữ liệu & Xác thực</span>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 self-end sm:self-auto">
-                {healthReport.supabase.error ? (
-                  <span className="max-w-[200px] truncate font-mono text-[12px] text-clay sm:max-w-[320px]" title={healthReport.supabase.error}>
-                    {healthReport.supabase.error}
-                  </span>
-                ) : null}
-                <span className="tnum font-mono text-[12.5px] text-ink-2">
-                  {formatLatency(healthReport.supabase.ms)}
-                </span>
-                <Badge tone={healthReport.supabase.ok ? 'sage' : 'clay'}>
-                  {healthReport.supabase.ok ? 'Hoạt động' : 'Lỗi'}
-                </Badge>
-              </div>
-            </div>
-
-            {/* 2. Cloudflare R2 */}
-            <div className="flex flex-col gap-2 p-3.5 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-center gap-3">
-                <span
-                  className={cn(
-                    'size-2.5 shrink-0 rounded-full',
-                    healthReport.r2.ok ? 'bg-sage' : 'bg-clay',
-                  )}
-                />
-                <div className="flex items-center gap-2">
-                  <HardDrive className="size-4 text-ink-3" />
-                  <span className="text-[13.5px] font-semibold text-ink">Cloudflare R2</span>
-                  <span className="text-[12px] text-ink-4">Lưu trữ tệp & tài liệu</span>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 self-end sm:self-auto">
-                {healthReport.r2.error ? (
-                  <span className="max-w-[200px] truncate font-mono text-[12px] text-clay sm:max-w-[320px]" title={healthReport.r2.error}>
-                    {healthReport.r2.error}
-                  </span>
-                ) : null}
-                <span className="tnum font-mono text-[12.5px] text-ink-2">
-                  {formatLatency(healthReport.r2.ms)}
-                </span>
-                <Badge tone={healthReport.r2.ok ? 'sage' : 'clay'}>
-                  {healthReport.r2.ok ? 'Hoạt động' : 'Lỗi'}
-                </Badge>
-              </div>
-            </div>
-
-            {/* 3. Từng provider AI */}
-            {healthReport.providers.map((p, idx) => (
+        <div className="divide-y divide-line-2 rounded-[6px] border border-line">
+          {healthRows.map((row) => {
+            const result = healthResults[row.key]
+            const busy = runningHealth || checkingOne.includes(row.key)
+            const open = () => row.target && setHealthDrawer(row.target)
+            return (
               <div
-                key={`${p.provider}-${p.model}-${idx}`}
-                className="flex flex-col gap-2 p-3.5 sm:flex-row sm:items-center sm:justify-between"
+                key={row.key}
+                role="button"
+                tabIndex={0}
+                aria-label={`Xem cấu hình ${row.name}`}
+                onClick={open}
+                onKeyDown={(e) => {
+                  if (e.target === e.currentTarget && e.key === 'Enter') open()
+                }}
+                className="flex cursor-pointer flex-col gap-2 p-3.5 transition-colors hover:bg-paper-2/80 sm:flex-row sm:items-center sm:justify-between"
               >
-                <div className="flex items-center gap-3">
-                  <span
-                    className={cn(
-                      'size-2.5 shrink-0 rounded-full',
-                      p.ok ? 'bg-sage' : 'bg-clay',
-                    )}
-                  />
-                  <div className="flex items-center gap-2">
-                    <Cpu className="size-4 text-ink-3" />
-                    <span className="text-[13.5px] font-semibold text-ink">
-                      {p.provider} <span className="font-normal text-ink-4">·</span> {p.model}
-                    </span>
+                <div className="flex min-w-0 items-center gap-3">
+                  <span className={cn('size-2.5 shrink-0 rounded-full', !result ? 'bg-line-2' : result.ok ? 'bg-sage' : 'bg-clay')} />
+                  <div className="flex min-w-0 flex-wrap items-center gap-x-2">
+                    <row.icon className="size-4 shrink-0 text-ink-3" />
+                    <span className="text-[13.5px] font-semibold text-ink">{row.name}</span>
+                    <span className="text-[12px] text-ink-4">{row.note}</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 self-end sm:self-auto">
-                  {p.error ? (
-                    <span className="max-w-[200px] truncate font-mono text-[12px] text-clay sm:max-w-[320px]" title={p.error}>
-                      {p.error}
+                  {result?.error ? (
+                    <span className="max-w-[140px] truncate font-mono text-[12px] text-clay sm:max-w-[220px]" title={result.error}>
+                      {result.error}
                     </span>
                   ) : null}
-                  <span className="tnum font-mono text-[12.5px] text-ink-2">
-                    {formatLatency(p.ms)}
-                  </span>
-                  <Badge tone={p.ok ? 'sage' : 'clay'}>
-                    {p.ok ? 'Hoạt động' : 'Lỗi'}
-                  </Badge>
+                  {result ? <span className="tnum font-mono text-[12.5px] text-ink-2">{formatLatency(result.ms)}</span> : null}
+                  <Badge tone={!result ? 'neutral' : result.ok ? 'sage' : 'clay'}>{!result ? 'Chưa kiểm tra' : result.ok ? 'Hoạt động' : 'Lỗi'}</Badge>
+                  <Button
+                    variant="soft"
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      void handleCheckOne(row.key)
+                    }}
+                    disabled={busy}
+                    aria-label={`Kiểm tra ${row.name}`}
+                  >
+                    {busy ? <Spinner className="size-3.5" /> : null}
+                    <span>Kiểm tra</span>
+                  </Button>
                 </div>
               </div>
-            ))}
-          </div>
-        )}
+            )
+          })}
+        </div>
+        {healthDrawer ? (
+          <HealthDrawer
+            target={healthDrawer}
+            onClose={() => setHealthDrawer(null)}
+            onSaved={(providers, provider) => {
+              setHealthProviders(providers)
+              showNotice(`Đã lưu cấu hình ${provider}.`)
+              void handleCheckOne(provider)
+            }}
+          />
+        ) : null}
       </Card>
 
       {/* =========================================================================

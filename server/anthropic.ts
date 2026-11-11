@@ -14,15 +14,17 @@ export type AnthropicResult = {
   finishReason: string
 }
 
-let client: Anthropic | null = null
-function getClient(apiKey: string): Anthropic {
+let client: { sig: string; c: Anthropic } | null = null
+function getClient(apiKey: string, baseURL?: string): Anthropic {
+  const sig = `${apiKey}|${baseURL ?? ''}`
   // maxRetries 1: proxy đã có chuỗi dự phòng; timeout do caller đặt qua signal
-  if (!client) client = new Anthropic({ apiKey, maxRetries: 1 })
-  return client
+  if (client?.sig !== sig) client = { sig, c: new Anthropic({ apiKey, maxRetries: 1, fetchOptions: { redirect: 'error' }, ...(baseURL ? { baseURL } : {}) }) }
+  return client.c
 }
 
 export async function callAnthropic(opts: {
   apiKey: string
+  baseURL?: string
   model: string
   messages: InMsg[]
   maxTokens: number
@@ -41,7 +43,7 @@ export async function callAnthropic(opts: {
   while (messages.length && messages[messages.length - 1].role === 'assistant') messages.pop()
   if (!messages.length) throw new Error('Không có tin nhắn người dùng')
 
-  const stream = getClient(opts.apiKey).beta.messages.stream(
+  const stream = getClient(opts.apiKey, opts.baseURL).beta.messages.stream(
     {
       model: opts.model,
       max_tokens: opts.maxTokens,
