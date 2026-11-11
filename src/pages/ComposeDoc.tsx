@@ -13,7 +13,9 @@
  *   └────────┴───────────────────────────────┴─────────────────┘
  */
 import { dialog } from '@/components/Dialog'
-import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { lazyPage } from '@/lib/lazyPage'
+import { PageErrorBoundary } from '@/components/PageErrorBoundary'
 import { useLocation, useNavigate } from 'react-router-dom'
 import type { Editor } from '@tiptap/core'
 import type { JSONContent } from '@tiptap/core'
@@ -88,10 +90,42 @@ function restoreSession() {
 
 // trình soạn slide (pptxgen, bố cục, trình chiếu…) chỉ tải khi mở tab slide
 const loadSlideEditor = () => import('@/examEditor/SlideEditor')
-const BoardEditor = lazy(() => import('@/pages/Board'))
-const SlideEditor = lazy(() => loadSlideEditor().then((m) => ({ default: m.SlideEditor })))
+const BoardEditor = lazyPage(() => import('@/pages/Board'))
+const SlideEditor = lazyPage(() => loadSlideEditor().then((m) => ({ default: m.SlideEditor })))
 
 /** khung giữ chỗ lúc trình soạn slide chưa tải xong: có sẵn thanh ribbon + vùng slide mờ, không để trắng phía trên */
+/** khung chờ của bảng vẽ: thanh công cụ, hàng tuỳ chọn, mặt bảng */
+function BoardSkeleton() {
+  return (
+    <div className="flex min-h-0 flex-1 flex-col animate-pulse" aria-busy="true" aria-label="Đang tải bảng vẽ">
+      <div className="flex h-12 items-center gap-2 border-b border-line bg-paper px-3">
+        <div className="size-7 rounded-md bg-line/70" />
+        <div className="size-7 rounded-md bg-line/70" />
+        <div className="ml-2 flex h-9 items-center gap-1.5 rounded-[10px] bg-line/40 px-1.5">
+          {[52, 50, 54, 52, 50, 46, 48].map((w, i) => <div key={i} className="h-6 rounded-[7px] bg-line/80" style={{ width: w }} />)}
+        </div>
+        <div className="ml-auto flex items-center gap-2">
+          {[60, 76, 72, 28, 44].map((w, i) => <div key={i} className="h-6 rounded-[7px] bg-line/70" style={{ width: w }} />)}
+        </div>
+      </div>
+      <div className="flex h-10 items-center gap-2 border-b border-line bg-paper px-3">
+        <div className="h-2.5 w-8 rounded bg-line" />
+        {Array.from({ length: 6 }, (_, i) => <div key={i} className="size-5 rounded-full bg-line/80" />)}
+        <div className="mx-2 h-5 w-px bg-line" />
+        <div className="h-2.5 w-10 rounded bg-line" />
+        {[6, 8, 10, 12, 14, 16].map((d, i) => <div key={i} className="rounded-full bg-line/80" style={{ width: d, height: d }} />)}
+      </div>
+      <div className="relative min-h-0 flex-1 bg-white">
+        <div className="absolute inset-0 opacity-60" style={{ backgroundImage: 'radial-gradient(circle, #e7e2dc 1.2px, transparent 1.3px)', backgroundSize: '24px 24px' }} />
+        <div className="absolute left-[12%] top-[18%] h-24 w-40 rounded-lg bg-line/40" />
+        <div className="absolute left-[38%] top-[30%] h-3 w-56 rounded-full bg-line/50" />
+        <div className="absolute left-[40%] top-[38%] h-3 w-40 rounded-full bg-line/40" />
+        <div className="absolute right-[14%] top-[22%] size-28 rounded-full bg-line/30" />
+      </div>
+    </div>
+  )
+}
+
 function SlideEditorSkeleton() {
   return (
     <div className="flex min-h-0 flex-1 flex-col animate-pulse">
@@ -909,13 +943,16 @@ export default function ComposeDoc() {
         />
       ) : activeTab?.kind === 'board' ? (
         <div className="compose-body">
-          <Suspense fallback={null}>
+          <PageErrorBoundary resetKey={activeTab.id}>
+          <Suspense fallback={<BoardSkeleton />}>
             <BoardEditor key={activeTab.id} id={activeTab.id} />
           </Suspense>
+          </PageErrorBoundary>
         </div>
       ) : activeDeck ? (
         /* ---------- tab slide: trình soạn trình chiếu dùng chung với /soan-slide ---------- */
         <div className="compose-body">
+          <PageErrorBoundary resetKey={activeDeck.id}>
           <Suspense fallback={<SlideEditorSkeleton />}>
           <SlideEditor
             deck={activeDeck}
@@ -925,6 +962,7 @@ export default function ComposeDoc() {
             onImportFile={handleImportSlides}
           />
           </Suspense>
+          </PageErrorBoundary>
         </div>
       ) : (
         <>

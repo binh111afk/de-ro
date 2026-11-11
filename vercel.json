@@ -11,6 +11,6 @@
   },
   "rewrites": [
     { "source": "/api/files/:key*", "destination": "/api/files?key=:key*" },
-    { "source": "/((?!api/).*)", "destination": "/index.html" }
+    { "source": "/((?!api/|assets/).*)", "destination": "/index.html" }
   ]
 }

@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect } from 'react'
+import { Suspense, useEffect } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { DialogHost } from '@/components/Dialog'
 import { Footer, Header } from '@/components/Layout'
@@ -10,6 +10,8 @@ import { startSync } from '@/lib/sync'
 import { startPresence } from '@/lib/presence'
 import { useSession } from '@/lib/useSession'
 import { Analytics } from '@vercel/analytics/react'
+import { lazyPage } from '@/lib/lazyPage'
+import { PageErrorBoundary } from '@/components/PageErrorBoundary'
 
 // mỗi trang một chunk riêng: học sinh mở link làm đề không phải tải trình soạn slide, đồ hoạ, xuất Word…
 const pages = {
@@ -28,23 +30,23 @@ const pages = {
   Auth: () => import('@/pages/Auth'),
   Profile: () => import('@/pages/Profile'),
 }
-const ComposeDoc = lazy(pages.ComposeDoc)
-const Community = lazy(pages.Community)
-const MyExams = lazy(pages.MyExams)
-const MyDocs = lazy(pages.MyDocs)
-const Library = lazy(pages.Library)
-const Grading = lazy(pages.Grading)
-const Quiz = lazy(pages.Quiz)
-const OnlineList = lazy(pages.OnlineList)
-const OnlineResults = lazy(pages.OnlineResults)
-const OnlineBuilder = lazy(pages.OnlineBuilder)
-const OnlineOpen = lazy(pages.OnlineOpen)
-const ExamView = lazy(pages.ExamView)
-const Auth = lazy(pages.Auth)
-const Profile = lazy(pages.Profile)
-const PreviewDesigns = lazy(() => import('@/pages/PreviewDesigns'))
+const ComposeDoc = lazyPage(pages.ComposeDoc)
+const Community = lazyPage(pages.Community)
+const MyExams = lazyPage(pages.MyExams)
+const MyDocs = lazyPage(pages.MyDocs)
+const Library = lazyPage(pages.Library)
+const Grading = lazyPage(pages.Grading)
+const Quiz = lazyPage(pages.Quiz)
+const OnlineList = lazyPage(pages.OnlineList)
+const OnlineResults = lazyPage(pages.OnlineResults)
+const OnlineBuilder = lazyPage(pages.OnlineBuilder)
+const OnlineOpen = lazyPage(pages.OnlineOpen)
+const ExamView = lazyPage(pages.ExamView)
+const Auth = lazyPage(pages.Auth)
+const Profile = lazyPage(pages.Profile)
+const PreviewDesigns = lazyPage(() => import('@/pages/PreviewDesigns'))
 // không đưa vào `pages` (không tải ngầm): người dùng thường không phải tải code admin
-const AdminPage = lazy(() => import('@/pages/admin/AdminPage'))
+const AdminPage = lazyPage(() => import('@/pages/admin/AdminPage'))
 
 /** Trang đầu hiện xong thì tải ngầm các trang còn lại (lần lượt, lúc trình duyệt rảnh)
  *  → bấm sang trang khác không còn khựng / "Đang tải…". */
@@ -112,6 +114,8 @@ export default function App() {
       {fullscreen ? null : <Header />}
       <main className={cn('flex-1', fullscreen && 'min-h-0 overflow-hidden')}>
         <SiteStatus>
+        {/* lỗi trong một trang (hoặc tải hụt file sau khi deploy) chỉ hiện thông báo, không trắng cả web */}
+        <PageErrorBoundary resetKey={pathname}>
         <Suspense fallback={<div className="flex h-full min-h-[50vh] items-center justify-center text-[13px] text-ink-3">Đang tải…</div>}>
         {/* các tab trong /admin dùng chung một khoá: chuyển tab không dựng lại cả trang admin */}
         <div key={pathname.startsWith('/admin') ? '/admin' : pathname} className={cn('page-enter', fullscreen && 'h-full')}>
@@ -142,6 +146,7 @@ export default function App() {
         </Routes>
         </div>
         </Suspense>
+        </PageErrorBoundary>
         </SiteStatus>
       </main>
       {fullscreen || authPage ? null : <Footer />}
