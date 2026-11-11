@@ -49,6 +49,14 @@ export interface UserQuota {
   credits: number
 }
 
+export interface UserStorage {
+  /** mức riêng; null = mặc định */
+  override: { maxBytes: number; note: string } | null
+  defaultBytes: number
+  /** byte đã dùng (đồng bộ + tài liệu); null = không đọc được */
+  used: number | null
+}
+
 export interface AuditEntry {
   id: number
   adminId: string | null
@@ -79,7 +87,7 @@ export const isAdminMock = (): boolean => {
 }
 
 /** Nhớ kết quả các action chỉ đọc 60 giây để chuyển tab admin không phải tải lại; thao tác ghi xoá hết. */
-const READ_ACTIONS = new Set(['db.metrics', 'me', 'users.list', 'quota.get', 'audit.list', 'settings.get', 'ai.stats', 'ai.errors'])
+const READ_ACTIONS = new Set(['db.metrics', 'me', 'users.list', 'quota.get', 'storage.get', 'audit.list', 'settings.get', 'ai.stats', 'ai.errors'])
 const cache = new Map<string, { at: number; p: Promise<unknown> }>()
 export const clearAdminCache = () => cache.clear()
 
@@ -223,6 +231,17 @@ export function setQuota(userId: string, monthlyTokens: number | null, note = ''
 export function clearQuota(userId: string): Promise<{ ok: true }> {
   if (isAdminMock()) return wait({ ok: true as const })
   return post('quota.clear', { userId })
+}
+
+export function getStorage(userId: string): Promise<UserStorage> {
+  if (isAdminMock()) return wait({ override: null, defaultBytes: 10 * 1024 * 1024, used: 3_400_000 })
+  return post('storage.get', { userId })
+}
+
+/** maxBytes null = về mặc định 10 MB */
+export function setStorage(userId: string, maxBytes: number | null, note = ''): Promise<{ ok: true }> {
+  if (isAdminMock()) return wait({ ok: true as const })
+  return post('storage.set', { userId, maxBytes, note })
 }
 
 export function listAudit(opts: { page?: number; perPage?: number } = {}): Promise<{ items: AuditEntry[]; total: number; page: number; perPage: number }> {
@@ -495,6 +514,8 @@ export const AUDIT_LABEL: Record<string, string> = {
   'quota.set': 'Đặt hạn mức AI',
   'credits.grant': 'Cộng điểm AI',
   'quota.clear': 'Bỏ hạn mức riêng',
+  'storage.set': 'Đặt dung lượng lưu trữ',
+  'storage.clear': 'Bỏ dung lượng riêng',
   'settings.set': 'Đổi cài đặt (bảo trì / thông báo)',
   'security.strike': 'Tự động khoá: cố truy cập admin',
   'security.clear': 'Gỡ cờ theo dõi',

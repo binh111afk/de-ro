@@ -1,16 +1,13 @@
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
-import { Navigate, useNavigate } from 'react-router-dom'
-import { LogOut, Shield, Trash2, Upload } from 'lucide-react'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
+import { ChevronRight, FileText, LogOut, Shield } from 'lucide-react'
 import { getMe, type AdminMe } from '@/lib/adminApi'
 import { Button, inputClass } from '@/components/ui'
 import { signOut, updateProfile, type Session } from '@/lib/auth'
 import { uploadImage } from '@/lib/mediaStore'
 import { useSession } from '@/lib/useSession'
 import { apiFetch } from '@/lib/apiFetch'
-import { currentSession } from '@/lib/auth'
-import { deleteDocument, DOC_TYPES, listDocuments, rest, uploadDocument, type UserDocument } from '@/lib/documents'
-import { dialog } from '@/components/Dialog'
-import { useSyncStatus } from '@/store/syncStatus'
+import { ProgressBar } from '@/components/ProgressBar'
 
 export default function Profile() {
   const session = useSession()
@@ -24,14 +21,18 @@ function ProfilePage({ user }: { user: Session['user'] }) {
     <div className="mx-auto grid max-w-[1080px] gap-8 px-5 pt-10 sm:px-6 lg:grid-cols-[280px_1fr] lg:pt-14">
       <aside className="anim-rise lg:sticky lg:top-24 lg:self-start">
         <IdentityCard user={user} />
+        <Link to="/ho-so/de-tai-len"
+          className="mt-3 flex items-center gap-3 rounded-[8px] bg-surface px-4 py-3 shadow-lift transition-colors hover:bg-paper-2">
+          <FileText className="size-4 text-ink-3" />
+          <span className="flex-1 text-[14px] font-medium text-ink">Đề của tôi</span>
+          <ChevronRight className="size-4 text-ink-3" />
+        </Link>
       </aside>
 
       <div className="stagger flex min-w-0 flex-col gap-6">
         <AdminCard />
         <EditCard user={user} />
         <CreditCard />
-        <MyFilesCard />
-        <StorageCard />
       </div>
     </div>
   )
@@ -233,7 +234,7 @@ function CreditCard() {
           {fmt(left)}
           <span className="text-[18px] font-medium text-ink-3"> token còn lại</span>
         </p>
-        <CreditBar pct={pct} />
+        <ProgressBar pct={pct} label="Phần trăm token AI còn lại" />
         <div className="mt-3 flex flex-wrap justify-between gap-x-4 gap-y-1 text-[12.5px] text-ink-3 tnum">
           <span>Tháng này đã dùng {fmt(q.used)} / {fmt(q.limit)} token</span>
           <span>
@@ -249,214 +250,6 @@ function CreditCard() {
       <h2 className="font-display text-[22px] font-semibold tracking-[-0.01em] text-ink">Điểm AI</h2>
       {body}
     </section>
-  )
-}
-
-interface Storage {
-  used: number
-  max: number
-  kinds: Record<string, { count: number; bytes: number; limit: number | null }>
-}
-
-const KIND_LABEL: [string, string][] = [['doc', 'Đề thi'], ['deck', 'Slide'], ['board', 'Bảng vẽ'], ['online', 'Đề online'], ['files', 'Đề, tài liệu tải lên'], ['upload', 'Ảnh tải lên']]
-
-const mb = (n: number) => {
-  const v = n / 1048576
-  return `${v < 0.1 && n > 0 ? '<0,1' : v.toLocaleString('vi-VN', { maximumFractionDigits: 1 })} MB`
-}
-
-async function loadStorage(): Promise<Storage> {
-  const s = await currentSession()
-  if (!s) throw new Error('Chưa đăng nhập')
-  return rest<Storage>('/rpc/my_storage', { method: 'POST', token: s.access_token, body: {} })
-}
-
-/** Đề, tài liệu (PDF / Word) người dùng tự tải lên: lưu R2 + bảng user_documents, tính vào dung lượng lưu trữ. */
-function MyFilesCard() {
-  const [files, setFiles] = useState<UserDocument[] | 'loading' | 'error'>('loading')
-  const [busy, setBusy] = useState(false)
-  const [err, setErr] = useState('')
-  const fileRef = useRef<HTMLInputElement>(null)
-  const bump = useSyncStatus((s) => s.bump)
-
-  const reload = () =>
-    listDocuments()
-      .then(setFiles)
-      .catch(() => setFiles('error'))
-  useEffect(() => {
-    void reload()
-  }, [])
-
-  const onPick = async (ev: ChangeEvent<HTMLInputElement>) => {
-    const list = [...(ev.target.files ?? [])]
-    ev.target.value = ''
-    if (!list.length) return
-    setBusy(true)
-    setErr('')
-    try {
-      for (const f of list) {
-        if (!DOC_TYPES[f.type]) throw new Error(`"${f.name}": chỉ nhận PDF hoặc Word (.docx).`)
-        // uploadDocument tự kiểm dung lượng còn lại trước khi đẩy tệp lên
-        await uploadDocument(f, null)
-      }
-    } catch (e) {
-      setErr(e instanceof Error ? e.message : 'Không tải lên được.')
-    } finally {
-      setBusy(false)
-      bump()
-      void reload()
-    }
-  }
-
-  const onDelete = async (d: UserDocument) => {
-    if (!(await dialog.confirm(`Xoá "${d.name}"?`, { title: 'Xoá tệp', danger: true, confirmLabel: 'Xoá' }))) return
-    try {
-      await deleteDocument(d.id)
-    } catch (e) {
-      setErr(e instanceof Error ? e.message : 'Không xoá được.')
-    }
-    bump()
-    void reload()
-  }
-
-  return (
-    <section className="rounded-[8px] bg-surface p-7 shadow-lift sm:p-8">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h2 className="font-display text-[22px] font-semibold tracking-[-0.01em] text-ink">Đề của tôi</h2>
-          <p className="mt-1 text-[13px] text-ink-3">Tải đề, tài liệu (PDF, Word) lên để giữ trên tài khoản, mở ở máy nào cũng được.</p>
-        </div>
-        <Button variant="outline" size="sm" disabled={busy} onClick={() => fileRef.current?.click()}>
-          <Upload className="size-4" />
-          {busy ? 'Đang tải lên…' : 'Tải tệp lên'}
-        </Button>
-        <input
-          ref={fileRef}
-          type="file"
-          multiple
-          accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-          className="sr-only"
-          onChange={onPick}
-        />
-      </div>
-      {err ? <p role="alert" className="mt-4 rounded-[6px] bg-clay-tint px-3 py-2 text-[13px] text-clay-deep">{err}</p> : null}
-      {files === 'loading' ? (
-        <p className="mt-6 text-[13px] text-ink-3">Đang tải…</p>
-      ) : files === 'error' ? (
-        <p className="mt-6 text-[13px] text-ink-3">Chưa tải được danh sách, thử lại sau.</p>
-      ) : !files.length ? (
-        <p className="mt-6 rounded-[6px] border border-dashed border-line px-4 py-6 text-center text-[13px] text-ink-3">
-          Chưa có tệp nào. Bấm “Tải tệp lên” để thêm đề hoặc tài liệu.
-        </p>
-      ) : (
-        <ul className="mt-5 divide-y divide-line-2">
-          {files.map((d) => (
-            <li key={d.id} className="flex items-center gap-3 py-2.5">
-              <span className="flex h-8 w-11 shrink-0 items-center justify-center rounded-[5px] bg-sunken text-[11px] font-semibold text-ink-2">
-                {DOC_TYPES[d.mime] ?? 'TỆP'}
-              </span>
-              <a href={d.url} target="_blank" rel="noreferrer" title={d.name}
-                className="min-w-0 flex-1 truncate text-[14px] text-ink hover:text-clay-deep">
-                {d.name}
-              </a>
-              <span className="hidden shrink-0 text-[12.5px] text-ink-3 tnum sm:inline">{new Date(d.created_at).toLocaleDateString('vi-VN')}</span>
-              <span className="w-16 shrink-0 text-right text-[12.5px] text-ink-3 tnum">{mb(d.size)}</span>
-              <button type="button" onClick={() => void onDelete(d)} aria-label={`Xoá ${d.name}`} title="Xoá"
-                className="grid size-8 shrink-0 place-items-center rounded-[6px] text-ink-3 hover:bg-sunken hover:text-clay-deep">
-                <Trash2 className="size-4" />
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
-    </section>
-  )
-}
-
-/** Dung lượng lưu trữ trên máy chủ (đề, slide, bảng vẽ đồng bộ theo tài khoản). Giới hạn đặt ở trigger của user_items. */
-function StorageCard() {
-  const [st, setSt] = useState<Storage | 'loading' | 'error'>('loading')
-  const quota = useSyncStatus((s) => s.quota)
-  const version = useSyncStatus((s) => s.version)
-  useEffect(() => {
-    let alive = true
-    loadStorage()
-      .then((d) => alive && setSt(d))
-      .catch(() => alive && setSt('error'))
-    return () => {
-      alive = false
-    }
-  }, [quota, version])
-
-  let body
-  if (st === 'loading') body = <p className="mt-6 text-[13px] text-ink-3">Đang tải…</p>
-  else if (st === 'error') body = <p className="mt-6 text-[13px] text-ink-3">Chưa tải được dung lượng, thử lại sau.</p>
-  else {
-    const pct = st.max > 0 ? Math.min(100, Math.round((st.used / st.max) * 100)) : 0
-    body = (
-      <>
-        <p className="mt-7 font-display text-[44px] font-semibold leading-none tracking-[-0.02em] text-ink tnum">
-          {mb(st.used)}
-          <span className="text-[18px] font-medium text-ink-3"> / {mb(st.max)}</span>
-        </p>
-        <CreditBar pct={pct} />
-        <ul className="mt-5 grid grid-cols-2 gap-x-6 gap-y-2 text-[13px] sm:grid-cols-3">
-          {KIND_LABEL.map(([k, label]) => {
-            const v = st.kinds[k]
-            const full = v?.limit != null && v.count >= v.limit
-            return (
-              <li key={k} className="flex items-baseline justify-between gap-2 border-b border-line-2 pb-1.5">
-                <span className="text-ink-2">{label}</span>
-                <span className={`tnum ${full ? 'font-semibold text-clay-deep' : 'text-ink-3'}`}>
-                  {v?.count ?? 0}{v?.limit != null ? `/${v.limit}` : ''} · {mb(v?.bytes ?? 0)}
-                </span>
-              </li>
-            )
-          })}
-        </ul>
-        <p className="mt-4 text-[12.5px] leading-relaxed text-ink-3">
-          Gồm đề, slide, bảng vẽ đồng bộ theo tài khoản và đề, tài liệu bạn tải lên. Ảnh chèn trong đề / slide lưu riêng, không tính vào đây.
-          {pct >= 90 ? ' Sắp đầy: xoá bớt tệp cũ ở tab Bắt đầu trong trang soạn đề.' : ''}
-        </p>
-      </>
-    )
-  }
-  return (
-    <section className="rounded-[8px] bg-surface p-7 shadow-lift sm:p-8">
-      <h2 className="font-display text-[22px] font-semibold tracking-[-0.01em] text-ink">Dung lượng lưu trữ</h2>
-      {quota ? (
-        <p role="alert" className="mt-3 rounded-[6px] bg-clay-tint px-3 py-2 text-[13px] text-clay-deep">
-          Chưa đồng bộ được: {quota} Tệp vẫn còn trên máy này.
-        </p>
-      ) : null}
-      {body}
-    </section>
-  )
-}
-
-/** Thanh tiến độ, chạy từ 0 lên giá trị thật sau khi trang hiện ra. */
-function CreditBar({ pct }: { pct: number }) {
-  const [width, setWidth] = useState(0)
-
-  useEffect(() => {
-    const id = requestAnimationFrame(() => setWidth(pct))
-    return () => cancelAnimationFrame(id)
-  }, [pct])
-
-  return (
-    <div
-      className="mt-5 h-2.5 overflow-hidden rounded-full bg-sunken"
-      role="meter"
-      aria-valuemin={0}
-      aria-valuemax={100}
-      aria-valuenow={pct}
-      aria-label="Phần trăm token AI còn lại"
-    >
-      <div
-        className="h-full rounded-full bg-clay transition-[width] duration-[1200ms] ease-out"
-        style={{ width: `${width}%` }}
-      />
-    </div>
   )
 }
 

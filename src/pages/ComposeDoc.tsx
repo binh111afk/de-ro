@@ -410,7 +410,7 @@ export default function ComposeDoc() {
   const [findTab, setFindTab] = useState<'find' | 'replace' | null>(null)
   // tab khởi động (trang bắt đầu) hiện thay cho sân soạn khi được chọn
   // trang khác đã mở sẵn một tab (vd. Lưu vào trình soạn thảo ở trang xem đề) thì vào thẳng tab đó
-  const { state: navState } = useLocation() as { state: { openTab?: boolean } | null }
+  const { state: navState } = useLocation() as { state: { openTab?: boolean; open?: { kind: 'exam' | 'slide' | 'board'; id: string } } | null }
   // F5 không về màn Bắt đầu: phiên (tab đang mở, tab đang xem) giữ trong sessionStorage — xem effect khôi phục bên dưới
   const [startChosen, setStartOpen] = useState(() => (navState?.openTab ? false : (readSession()?.start ?? true)))
   // không còn tab nào (mới vào trang, hoặc vừa đóng tab cuối) thì luôn ở màn Bắt đầu
@@ -454,6 +454,21 @@ export default function ComposeDoc() {
   useEffect(() => {
     restoreSession()
     restoredRef.current = true
+    // trang "Đề của tôi" (Hồ sơ) gửi sang một mục cần mở
+    const want = navState?.open
+    if (want) {
+      const { myDocs, myDecks } = useDocStore.getState()
+      if (want.kind === 'board') newBoard(want.id, useBoards.getState().items.find((b) => b.id === want.id)?.title)
+      else if (want.kind === 'slide') {
+        const deck = myDecks.find((d) => d.id === want.id)
+        if (deck) openDeck(deck)
+      } else {
+        const doc = myDocs.find((d) => d.id === want.id)
+        if (doc) openDoc(doc)
+      }
+      navigate('.', { replace: true, state: null })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // ghi lại phiên mỗi khi đổi tab / mở-đóng màn Bắt đầu

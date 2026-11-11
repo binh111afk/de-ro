@@ -31,6 +31,9 @@ import {
   clearSecurityFlag,
   deleteUser,
   getQuota,
+  getStorage,
+  setStorage,
+  type UserStorage,
   grantCredits,
   listUsers,
   setQuota,
@@ -730,6 +733,8 @@ function UserDetailDrawer({
             )}
           </section>
 
+          <StorageSection userId={user.id} onSaved={showNotice} />
+
           {/* 3. Cộng điểm AI */}
           <section className="space-y-3">
             <h3 className="text-[12px] font-bold uppercase tracking-wider text-ink-3">
@@ -1052,5 +1057,102 @@ function UserAvatar({ user, className }: { user: AdminUser; className?: string }
     <div className={`flex shrink-0 items-center justify-center rounded-full bg-clay-tint font-semibold text-clay ${className ?? ''}`}>
       {letter}
     </div>
+  )
+}
+
+const MB = 1024 * 1024
+
+/** Dung lượng lưu trữ (đồng bộ + tài liệu): mặc định 10 MB, nâng riêng qua user_quota */
+function StorageSection({ userId, onSaved }: { userId: string; onSaved: (msg: string) => void }) {
+  const [data, setData] = useState<UserStorage | null>(null)
+  const [mb, setMb] = useState('')
+  const [note, setNote] = useState('')
+  const [saving, setSaving] = useState(false)
+
+  const load = useCallback(async () => {
+    try {
+      const d = await getStorage(userId)
+      setData(d)
+      setMb(String(Math.round((d.override?.maxBytes ?? d.defaultBytes) / MB)))
+      setNote(d.override?.note ?? '')
+    } catch (err) {
+      console.error('Lỗi tải dung lượng:', err)
+    }
+  }, [userId])
+
+  useEffect(() => {
+    setData(null)
+    void load()
+  }, [load])
+
+  const save = async (maxBytes: number | null) => {
+    setSaving(true)
+    try {
+      await setStorage(userId, maxBytes, note.trim())
+      onSaved(maxBytes === null ? 'Đã đưa dung lượng về mặc định.' : 'Đã cập nhật dung lượng lưu trữ.')
+      await load()
+    } catch (err: unknown) {
+      await dialog.alert(err instanceof Error ? err.message : 'Không lưu được dung lượng.', { title: 'Lỗi' })
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const onSave = () => {
+    const n = Number(mb)
+    if (!Number.isFinite(n) || n < 1 || n > 1024) return void dialog.alert('Nhập dung lượng từ 1 đến 1024 MB.')
+    void save(Math.round(n * MB))
+  }
+
+  const max = data ? (data.override?.maxBytes ?? data.defaultBytes) : 0
+  const pct = data?.used != null && max ? Math.min(100, Math.round((data.used / max) * 100)) : 0
+
+  return (
+    <section className="space-y-3">
+      <div className="flex items-center justify-between">
+        <h3 className="text-[12px] font-bold uppercase tracking-wider text-ink-3">Dung lượng lưu trữ</h3>
+        {data?.override ? <Badge tone="honey">Đang có mức riêng</Badge> : null}
+      </div>
+      {!data ? (
+        <div className="flex items-center justify-center py-6 text-ink-3">
+          <Spinner className="mr-2" />
+          <span>Đang tải dung lượng…</span>
+        </div>
+      ) : (
+        <div className="space-y-4 rounded-[8px] border border-line-2 bg-sunken/40 p-4">
+          <div>
+            <div className="flex items-center justify-between text-[13px]">
+              <span className="text-ink-2">Đã dùng:</span>
+              <span className="tnum font-semibold text-ink">
+                {data.used == null ? '—' : (data.used / MB).toFixed(1)} / {(max / MB).toFixed(0)} MB
+              </span>
+            </div>
+            <div className="mt-2 h-2.5 overflow-hidden rounded-full bg-sunken">
+              <div className={`h-full rounded-full transition-all duration-500 ${pct > 90 ? 'bg-clay' : 'bg-sage'}`} style={{ width: `${pct}%` }} />
+            </div>
+          </div>
+          <div className="space-y-3 border-t border-line-2 pt-3">
+            <div>
+              <label className="mb-1 block text-[12.5px] font-medium text-ink-2">Mức tối đa (MB)</label>
+              <input type="number" min={1} max={1024} value={mb} onChange={(e) => setMb(e.target.value)} className={`${inputClass} text-[13.5px]`} />
+            </div>
+            <div>
+              <label className="mb-1 block text-[12.5px] font-medium text-ink-2">Ghi chú</label>
+              <input type="text" value={note} onChange={(e) => setNote(e.target.value)} placeholder="Lý do nâng dung lượng…" className={`${inputClass} text-[13.5px]`} />
+            </div>
+            <div className="flex items-center gap-2 pt-1">
+              <Button variant="primary" size="sm" onClick={onSave} disabled={saving}>
+                {saving ? 'Đang lưu…' : 'Lưu'}
+              </Button>
+              {data.override ? (
+                <Button variant="outline" size="sm" onClick={() => void save(null)} disabled={saving}>
+                  Về mặc định
+                </Button>
+              ) : null}
+            </div>
+          </div>
+        </div>
+      )}
+    </section>
   )
 }

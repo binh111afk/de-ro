@@ -385,6 +385,48 @@ const ACTIONS: ActionMap = {
     },
   },
 
+  /** dung lượng lưu trữ (đồng bộ + tài liệu): mặc định 10 MB, nâng riêng qua bảng user_quota */
+  'storage.get': {
+    need: 'admin',
+    run: async ({ s }, b) => {
+      const id = needUser(b.userId)
+      const [{ data: ov }, used] = await Promise.all([
+        call<Array<{ max_bytes: number; note: string | null }>>(s, `/rest/v1/user_quota?user_id=eq.${id}&select=max_bytes,note`),
+        call<number>(s, '/rest/v1/rpc/storage_used', { method: 'POST', body: JSON.stringify({ p_user: id }) })
+          .then((r) => Number(r.data))
+          .catch(() => null),
+      ])
+      return {
+        override: ov[0] ? { maxBytes: Number(ov[0].max_bytes), note: ov[0].note ?? '' } : null,
+        defaultBytes: 10 * 1024 * 1024,
+        used,
+      }
+    },
+  },
+
+  /** maxBytes null = bỏ mức riêng, về 10 MB */
+  'storage.set': {
+    need: 'admin',
+    run: async (ctx, b) => {
+      const id = needUser(b.userId)
+      if (b.maxBytes === null) {
+        await call(ctx.s, `/rest/v1/user_quota?user_id=eq.${id}`, { method: 'DELETE', headers: { Prefer: 'return=minimal' } })
+        await audit(ctx, 'storage.clear', id)
+        return { ok: true }
+      }
+      const maxBytes = Math.floor(Number(b.maxBytes))
+      if (!(maxBytes >= 1024 * 1024 && maxBytes <= 1024 * 1024 * 1024)) throw new HttpError(400, 'Dung lượng phải từ 1 MB đến 1024 MB.')
+      const note = str(b.note, 300)
+      await call(ctx.s, '/rest/v1/user_quota?on_conflict=user_id', {
+        method: 'POST',
+        headers: { Prefer: 'resolution=merge-duplicates,return=minimal' },
+        body: JSON.stringify({ user_id: id, max_bytes: maxBytes, note: note || null, updated_at: new Date().toISOString() }),
+      })
+      await audit(ctx, 'storage.set', id, { maxBytes, note })
+      return { ok: true }
+    },
+  },
+
   'audit.list': {
     need: 'admin',
     run: async ({ s }, b) => {

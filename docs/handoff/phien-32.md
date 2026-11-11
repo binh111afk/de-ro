@@ -28,7 +28,7 @@ Tiếp [phiên 31](phien-31.md). Mọi việc dưới đây **đã lên `main`**
 - `src/lib/lazyPage.ts` (thay `React.lazy`): tải chunk lỗi → tự tải lại trang một lần / 30 giây; `vite:preloadError` ở `main.tsx`; `PageErrorBoundary` bọc Routes, bảng vẽ, slide; `vercel.json` không rewrite `/assets/` về `index.html`.
 
 ### Giới hạn lưu trữ (Hồ sơ)
-- Trigger `check_user_items_quota` (user_items) và `check_user_documents_quota` (user_documents): **10 MB / người** (đồng bộ + tài liệu tải lên, `storage_used`), 100 đề / 50 slide / 30 bảng vẽ, mỗi đề 1 MB, loại khác 2 MB; sửa nhỏ đi luôn được; service role bỏ qua. Nâng mức riêng: ghi `user_quota (user_id, max_bytes)` (chưa có ô trong trang admin). Lỗi trả dạng `QUOTA:<lời báo>`.
+- Trigger `check_user_items_quota` (user_items) và `check_user_documents_quota` (user_documents): **10 MB / người** (đồng bộ + tài liệu tải lên, `storage_used`), 100 đề / 50 slide / 30 bảng vẽ, mỗi đề 1 MB, loại khác 2 MB; sửa nhỏ đi luôn được; service role bỏ qua. Nâng mức riêng: ghi `user_quota (user_id, max_bytes)` (trang admin: mục "Dung lượng lưu trữ"). Lỗi trả dạng `QUOTA:<lời báo>`.
 - `my_storage()` (RPC) cho thẻ **"Dung lượng lưu trữ"**; mục **"Đề của tôi"** ở Hồ sơ: tải PDF / Word lên (dùng lại `src/lib/documents.ts`, R2 + `user_documents`), mở, xoá. `uploadDocument` kiểm dung lượng còn lại trước khi đẩy tệp lên R2. Đồng bộ bị từ chối → báo ở Hồ sơ và tab Bắt đầu (`src/store/syncStatus.ts`).
 
 ## Cách đã kiểm
@@ -42,5 +42,5 @@ Tiếp [phiên 31](phien-31.md). Mọi việc dưới đây **đã lên `main`**
 - **Ảnh R2 chưa tính theo người** (upload ẩn danh, đặt tên theo hash); xoá tài liệu không xoá tệp trên R2; ảnh cũ trong IndexedDB không tự dọn.
 - `user_documents.size` do client gửi (có ràng buộc 1 byte – 20 MB, nhưng có thể khai nhỏ hơn thật). Muốn chặt: để server ghi dòng sau khi upload.
 - Hai máy cùng sửa một bảng: bản sau thắng, bảng đang mở không tự cập nhật.
-- Trang admin: chưa có ô nâng `user_quota`.
+- ~~Trang admin: chưa có ô nâng `user_quota`~~ → đã có (phiên 33): mục "Dung lượng lưu trữ" trong ngăn người dùng, action `storage.get` / `storage.set` ở server/admin.ts. Chưa thử với dữ liệu thật (cần service role gọi được rpc `storage_used`; lỗi thì "Đã dùng" hiện "—").
 - Việc treo từ phiên 30: đặt `AI_SETTINGS_SECRET` trên Vercel.
