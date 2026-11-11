@@ -196,6 +196,23 @@ reset([])
 check('moderator gỡ cờ → 403', (await hit({ action: 'security.clear', userId: USER }, 'tMod')).status === 403)
 check('admin gỡ cờ → 200', (await hit({ action: 'security.clear', userId: USER }, 'tAdmin')).status === 200)
 
+// giữ chỗ hạn mức AI: request song song không cùng lọt
+const { reserveQuota } = await import('../server/aiQuota.ts')
+const guestQ = { used: 0, limit: 30_000, scope: 'day' as const }
+const r1 = await reserveQuota(null, '9.9.9.9', guestQ)
+const r2 = await reserveQuota(null, '9.9.9.9', guestQ)
+const r3 = await reserveQuota(null, '9.9.9.9', guestQ)
+check('khách: 2 request song song được, cái thứ 3 bị chặn', !!r1 && !!r2 && r3 === null)
+await r1!()
+await r1!()
+const r4 = await reserveQuota(null, '9.9.9.9', guestQ)
+check('trả chỗ một lần dù gọi 2 lần', !!r4 && (await reserveQuota(null, '9.9.9.9', guestQ)) === null)
+
+const { r2DocKeyFromUrl } = await import('../server/r2.ts')
+const H = 'a'.repeat(40)
+check('xoá tệp: không nhận ảnh trong đề', r2DocKeyFromUrl(`/api/files/img/${H}.png`) === null)
+check('xoá tệp: nhận tài liệu', r2DocKeyFromUrl(`/api/files/doc/${H}.pdf`) === `doc/${H}.pdf`)
+
 if (fail) {
   console.error(`${fail} lỗi`)
   process.exit(1)

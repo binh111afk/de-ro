@@ -20,7 +20,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { json, readBody } from './http.js'
 import { clientIp, guard, isLocal, userFromToken } from './guard.js'
-import { addUsage, quotaMessage, readQuota } from './aiQuota.js'
+import { addUsage, quotaMessage, readQuota, reserveQuota } from './aiQuota.js'
 import { costFromUsage, logAiCall, maintenanceBlock } from './ops.js'
 import { callAnthropic } from './anthropic.js'
 import { handleExtractRequest } from './extract.js'
@@ -226,6 +226,8 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
   if (req.method === 'GET') return json(res, 200, { quota })
   if (await maintenanceBlock(req, res)) return
   if (quota && quota.used >= quota.limit) return json(res, 429, { error: quotaMessage(quota), quota })
+  const release = quota ? await reserveQuota(userId, ip, quota) : async () => {}
+  if (!release) return json(res, 429, { error: 'Đang có nhiều yêu cầu AI chạy cùng lúc, vui lòng thử lại sau ít giây.', quota })
 
   try {
     const raw = await readBody(req)
@@ -321,7 +323,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
           if (r.content.trim()) {
             writeRawLog(JSON.stringify(r), { _model: selectedModel, _attempt: 0, finishReason: r.finishReason, usage: r.usage, content: r.content })
             log(target, t0, true, null, r.usage)
-            const [after] = await Promise.all([addUsage(userId, ip, r.usage.total_tokens, quota), ...pending])
+            const [after] = await Promise.all([addUsage(userId, ip, r.usage.total_tokens, quota), release(), ...pending])
             return json(res, 200, { content: r.content, reasoning: '', usage: r.usage, model: r.model, finishReason: r.finishReason, quota: after })
           }
           errs.push(`${selectedModel}: empty content (finish_reason=${r.finishReason})`)
@@ -405,7 +407,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
         if (content.trim()) {
           const spent = Number((data.usage as { total_tokens?: number } | undefined)?.total_tokens ?? 0)
           log(target, t0, true, null, data.usage)
-          const [after] = await Promise.all([addUsage(userId, ip, spent, quota), ...pending])
+          const [after] = await Promise.all([addUsage(userId, ip, spent, quota), release(), ...pending])
           return json(res, 200, { content, reasoning, usage: data.usage ?? null, model: data.model ?? selectedModel, finishReason: choice?.finish_reason ?? 'unknown', quota: after })
         }
         lastErr = `${selectedModel}: empty content (finish_reason=${choice?.finish_reason ?? 'unknown'})`
@@ -423,10 +425,12 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
     }
 
     // báo lỗi TỪNG model, không chỉ cái cuối (lỗi cuối hay là fallback phụ, che mất nguyên nhân thật)
-    await Promise.all(pending)
+    await Promise.all([release(), ...pending])
     return json(res, 502, { error: `Các model AI đều không phản hồi. ${errs.join(' · ')}`.trim() })
   } catch (err) {
     return json(res, 500, { error: err instanceof Error ? err.message : String(err) })
+  } finally {
+    await release()
   }
 }
 

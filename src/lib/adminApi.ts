@@ -383,6 +383,7 @@ export const AUDIT_LABEL: Record<string, string> = {
   'users.ban': 'Khoá tài khoản',
   'users.unban': 'Mở khoá tài khoản',
   'users.delete': 'Xoá tài khoản',
+  'users.delete.failed': 'Xoá tài khoản thất bại',
   'quota.set': 'Đặt hạn mức AI',
   'credits.grant': 'Cộng điểm AI',
   'quota.clear': 'Bỏ hạn mức riêng',

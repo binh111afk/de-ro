@@ -6,7 +6,7 @@
  */
 import type { ActionMap, AdminCtx } from './admin.js'
 import { audit, call, HttpError, str } from './admin.js'
-import { deleteR2Object, r2KeyFromUrl } from './r2.js'
+import { deleteR2Object, r2DocKeyFromUrl } from './r2.js'
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
@@ -472,10 +472,10 @@ export const CONTENT_ACTIONS: ActionMap = {
       await call(ctx.s, `/rest/v1/user_documents?id=eq.${docId}`, { method: 'DELETE' })
 
       // Kiểm tra file R2
-      const key = doc.url ? r2KeyFromUrl(doc.url) : null
+      const key = doc.url ? r2DocKeyFromUrl(doc.url) : null
       let r2Removed = false
       if (key) {
-        const fileUrl = doc.url.startsWith('/api/files/') ? doc.url : `/api/files/${key}`
+        const fileUrl = `/api/files/${key}`
         const { data: others } = await call<unknown[]>(
           ctx.s,
           `/rest/v1/user_documents?url=eq.${encodeURIComponent(fileUrl)}&select=id&limit=1`,

@@ -8,7 +8,7 @@
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { clientIp, guard, userFromToken } from './guard.js'
 import { json, readBody } from './http.js'
-import { deleteR2Object, pingR2, r2KeyFromUrl } from './r2.js'
+import { deleteR2Object, pingR2, r2DocKeyFromUrl } from './r2.js'
 import { pingProviders } from './llmProxy.js'
 import { _resetOpsCache } from './ops.js'
 import { readDbMetrics } from './dbMetrics.js'
@@ -291,14 +291,25 @@ const ACTIONS: ActionMap = {
       const user = await getUser(ctx.s, id)
       if (!user.email || str(b.confirmEmail).toLowerCase() !== user.email.toLowerCase()) throw new HttpError(400, 'Email xác nhận không khớp.')
       const { data: docs } = await call<Array<{ url: string }>>(ctx.s, `/rest/v1/user_documents?owner_id=eq.${id}&select=url`)
-      const keys = [...new Set(docs.map((d) => r2KeyFromUrl(d.url ?? '')).filter((k): k is string => !!k))]
-      await call(ctx.s, `/auth/v1/admin/users/${id}`, { method: 'DELETE' })
+      const keys = [...new Set(docs.map((d) => r2DocKeyFromUrl(d.url ?? '')).filter((k): k is string => !!k))]
+      // ghi nhật ký TRƯỚC khi xoá: bước sau có lỗi thì vẫn còn dấu vết
+      await audit(ctx, 'users.delete', id, { email: user.email, files: keys.length })
+      try {
+        await call(ctx.s, `/auth/v1/admin/users/${id}`, { method: 'DELETE' })
+      } catch (err) {
+        await audit(ctx, 'users.delete.failed', id, { email: user.email })
+        throw err
+      }
+      // tài khoản đã mất: dọn tệp lỗi thì bỏ qua, không báo thất bại nữa
       let removed = 0
       for (const key of keys) {
-        const { data: others } = await call<unknown[]>(ctx.s, `/rest/v1/user_documents?url=eq.${encodeURIComponent(`/api/files/${key}`)}&select=id&limit=1`)
-        if (!others.length && (await deleteR2Object(key).catch(() => false))) removed++
+        try {
+          const { data: others } = await call<unknown[]>(ctx.s, `/rest/v1/user_documents?url=eq.${encodeURIComponent(`/api/files/${key}`)}&select=id&limit=1`)
+          if (!others.length && (await deleteR2Object(key))) removed++
+        } catch {
+          /* tệp mồ côi vô hại */
+        }
       }
-      await audit(ctx, 'users.delete', id, { email: user.email, files: keys.length, filesRemoved: removed })
       return { ok: true, filesRemoved: removed }
     },
   },

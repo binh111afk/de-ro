@@ -5,8 +5,8 @@
  * - Khách: AI_GUEST_DAILY_TOKENS token / ngày theo IP, đếm trong bộ nhớ instance.
  * Không có SUPABASE_SERVICE_ROLE_KEY (máy dev) → không giới hạn người đăng nhập.
  * Ngoại lệ từng tài khoản: bảng `ai_quota_overrides` (monthly_tokens null = không giới hạn).
- * Kiểm trước khi gọi AI (đã hết thì chặn), cộng sau khi có `usage` thật; một request có thể
- * vượt hạn mức một chút ở lần cuối — chấp nhận để khỏi phải đoán trước số token.
+ * Kiểm trước khi gọi AI (đã hết thì chặn), giữ chỗ nguyên tử (`reserveQuota`) để request song song không cùng lọt,
+ * cộng sau khi có `usage` thật; request cuối có thể vượt hạn mức một chút — chấp nhận để khỏi phải đoán trước số token.
  */
 
 const num = (v: string | undefined, d: number) => {
@@ -91,6 +91,56 @@ export async function addUsage(userId: string | null, ip: string, tokens: number
     /* bỏ qua: không làm hỏng câu trả lời AI vì lỗi đếm */
   }
   return { ...prev, used: prev.used + tokens }
+}
+
+/** Số token giữ chỗ mỗi request đang chạy (app chạy song song tối đa 2 request AI). */
+const RESERVE = 20_000
+const guestHeld = new Map<string, number>()
+
+/**
+ * Giữ chỗ trước khi gọi model. null = hết chỗ (đang có quá nhiều request song song so với hạn mức còn lại);
+ * ngược lại trả hàm trả chỗ, gọi nhiều lần không sao. Lỗi hạ tầng thì không chặn người dùng.
+ */
+export async function reserveQuota(userId: string | null, ip: string, q: Quota): Promise<(() => Promise<void>) | null> {
+  let done = false
+  const once = (fn: () => Promise<unknown> | void) => async () => {
+    if (done) return
+    done = true
+    await Promise.resolve(fn()).catch(() => {})
+  }
+  if (!userId) {
+    const k = `${day()}:${ip}`
+    const held = guestHeld.get(k) ?? 0
+    if ((guest.get(k) ?? 0) + held >= q.limit) return null
+    if (guestHeld.size > 20000) guestHeld.clear()
+    guestHeld.set(k, held + RESERVE)
+    return once(() => {
+      const left = (guestHeld.get(k) ?? 0) - RESERVE
+      if (left > 0) guestHeld.set(k, left)
+      else guestHeld.delete(k)
+    })
+  }
+  const s = supa()
+  if (!s) return async () => {}
+  const m = month()
+  try {
+    const r = await fetch(`${s.base}/rest/v1/rpc/reserve_ai_quota`, {
+      method: 'POST',
+      headers: s.headers,
+      body: JSON.stringify({ p_user: userId, p_month: m, p_limit: q.limit, p_amount: RESERVE }),
+    })
+    if (r.ok && (await r.json()) === false) return null
+    if (!r.ok) return async () => {}
+  } catch {
+    return async () => {}
+  }
+  return once(() =>
+    fetch(`${s.base}/rest/v1/rpc/release_ai_quota`, {
+      method: 'POST',
+      headers: s.headers,
+      body: JSON.stringify({ p_user: userId, p_month: m, p_amount: RESERVE }),
+    }),
+  )
 }
 
 export function quotaMessage(q: Quota): string {

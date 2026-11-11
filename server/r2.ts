@@ -104,6 +104,12 @@ export function r2KeyFromUrl(url: string): string | null {
   return KEY_PATTERN.test(key) ? key : null
 }
 
+/** Key tệp tài liệu từ `user_documents.url` (cột người dùng tự ghi được): chỉ nhận `doc/`, không bao giờ trỏ tới ảnh trong đề. */
+export function r2DocKeyFromUrl(url: string): string | null {
+  const key = r2KeyFromUrl(url)
+  return key?.startsWith('doc/') ? key : null
+}
+
 export async function handleUploadRequest(req: IncomingMessage, res: ServerResponse): Promise<void> {
   if (!(await guard(req, res, 'upload'))) return
   if (req.method === 'OPTIONS') return json(res, 204, {})
