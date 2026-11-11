@@ -379,7 +379,7 @@ export function StatsPanel({ me: _me }: StatsPanelProps) {
                     <div
                       className={cn(
                         'w-full max-w-[28px] rounded-t-[3px] transition-all group-hover:brightness-90',
-                        d.newUsers > 0 ? 'bg-forest/80' : 'bg-sunken/60',
+                        d.newUsers > 0 ? 'bg-sage/80' : 'bg-sunken/60',
                       )}
                       style={{ height: `${heightPercent}%` }}
                     />
@@ -410,7 +410,7 @@ export function StatsPanel({ me: _me }: StatsPanelProps) {
           </div>
           <div className="flex flex-wrap items-center gap-4 text-[12px]">
             <div className="flex items-center gap-1.5">
-              <span className="size-2.5 rounded-[2px] bg-forest" />
+              <span className="size-2.5 rounded-[2px] bg-sage" />
               <span className="text-ink-3">Đề thi</span>
             </div>
             <div className="flex items-center gap-1.5">
@@ -472,7 +472,7 @@ export function StatsPanel({ me: _me }: StatsPanelProps) {
                       ) : null}
                       {d.newDocs > 0 ? (
                         <div
-                          className="w-full bg-forest transition-all"
+                          className="w-full bg-sage transition-all"
                           style={{ height: `${docPercent}%` }}
                         />
                       ) : null}

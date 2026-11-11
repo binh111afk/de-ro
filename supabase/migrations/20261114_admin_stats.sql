@@ -9,6 +9,7 @@ alter table public.user_items alter column created_at set default now();
 create or replace function public.preserve_user_items_created_at()
 returns trigger
 language plpgsql
+set search_path = ''
 as $$
 begin
   new.created_at = old.created_at;
@@ -30,11 +31,17 @@ create table if not exists public.presence (
 );
 alter table public.presence enable row level security;
 
--- RLS: Người đăng nhập chỉ insert / update dòng của chính mình, không ai đọc.
+-- RLS: Người đăng nhập chỉ ghi và đọc dòng của chính mình; không ai đọc được dòng của người khác.
 drop policy if exists "presence insert own" on public.presence;
 create policy "presence insert own" on public.presence
   for insert to authenticated
   with check (user_id = auth.uid());
+
+-- Upsert (ON CONFLICT DO UPDATE) bắt buộc có quyền SELECT dòng đó; chỉ cho đọc dòng của chính mình.
+drop policy if exists "presence select own" on public.presence;
+create policy "presence select own" on public.presence
+  for select to authenticated
+  using (user_id = (select auth.uid()));
 
 drop policy if exists "presence update own" on public.presence;
 create policy "presence update own" on public.presence
@@ -45,7 +52,7 @@ create policy "presence update own" on public.presence
 create index if not exists presence_last_seen_idx on public.presence (last_seen desc);
 
 revoke all on public.presence from public, anon;
-grant insert, update on public.presence to authenticated;
+grant select, insert, update on public.presence to authenticated;
 grant all on public.presence to service_role;
 
 -- 3) RPC admin_stats_overview: tổng quan số liệu theo ngày (giờ Asia/Ho_Chi_Minh) và các tổng.

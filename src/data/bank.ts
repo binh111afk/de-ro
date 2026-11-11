@@ -23,7 +23,7 @@ export function mergeBank(staticBank: BankEntry[], overrides: BankOverrideRow[])
   for (const o of overrides) {
     if (o.status === 'hidden') {
       hidden.add(o.id)
-    } else if (o.status === 'published' && o.data && typeof o.data === 'object') {
+    } else if (o.status === 'published' && typeof o.data?.prompt === 'string') {
       publishedMap.set(o.id, { ...o.data, id: o.id })
     }
   }

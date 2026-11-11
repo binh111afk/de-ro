@@ -16,6 +16,35 @@ create policy "Xem đề cộng đồng và đề của mình" on public.communi
   for select to anon, authenticated
   using ((listed and status = 'published') or owner_id = (select auth.uid()));
 
+-- Chủ đề được sửa đề của mình qua REST, nên phải khoá các cột kiểm duyệt: chỉ service role (/api/admin) đổi được.
+create or replace function public.protect_exam_moderation()
+returns trigger
+language plpgsql
+set search_path = ''
+as $$
+begin
+  if (select auth.role()) in ('anon', 'authenticated') then
+    if tg_op = 'INSERT' then
+      new.status := 'published';
+      new.removed_reason := null;
+      new.moderated_by := null;
+      new.moderated_at := null;
+    else
+      new.status := old.status;
+      new.removed_reason := old.removed_reason;
+      new.moderated_by := old.moderated_by;
+      new.moderated_at := old.moderated_at;
+    end if;
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists trg_protect_exam_moderation on public.community_exams;
+create trigger trg_protect_exam_moderation
+before insert or update on public.community_exams
+for each row execute function public.protect_exam_moderation();
+
 -- get_shared_exam: từ chối đề removed; đề chỉ-link không kèm đáp án (học sinh mở qua api/exam).
 create or replace function public.get_shared_exam(p_id uuid)
 returns jsonb
@@ -51,7 +80,7 @@ create index if not exists reports_status_idx on public.reports (status, created
 drop policy if exists "reports_insert_authenticated" on public.reports;
 create policy "reports_insert_authenticated" on public.reports
   for insert to authenticated
-  with check (auth.uid() = reporter_id);
+  with check (auth.uid() = reporter_id and status = 'open' and resolved_by is null and resolved_at is null);
 
 -- 3. feedback: hòm thư góp ý của người dùng.
 create table if not exists public.feedback (
@@ -71,4 +100,4 @@ create index if not exists feedback_created_at_idx on public.feedback (created_a
 drop policy if exists "feedback_insert_all" on public.feedback;
 create policy "feedback_insert_all" on public.feedback
   for insert to anon, authenticated
-  with check (true);
+  with check (read = false and (user_id is null or user_id = (select auth.uid())));

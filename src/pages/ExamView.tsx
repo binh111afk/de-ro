@@ -103,7 +103,7 @@ export default function ExamView() {
             <span className="sm:hidden">Làm đề</span>
           </Button>
 
-          <ReportExamButton examId={id ?? exam.id} />
+          {id && isRemoteExamId(id) ? <ReportExamButton examId={id} /> : null}
         </div>
       </div>
 
