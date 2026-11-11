@@ -37,6 +37,8 @@ interface CardItem {
   date?: string
   views?: number
   likes: number
+  /** số câu chưa có đáp án (chỉ đề giáo viên đăng; không biết thì để trống) */
+  missingKeys?: number | null
   onView: () => void
   onQuiz: () => void
 }
@@ -113,6 +115,7 @@ export default function Community() {
       preview: d.preview,
       text: `${d.title} ${d.school} ${d.subject} ${d.preview}`.toLowerCase(),
       mine: true,
+      missingKeys: d.missing_keys,
       date: d.created_at,
       likes: 0,
       onView: () => void openUserDoc(d, 'view'),
@@ -409,6 +412,7 @@ function ExamCard({ item, index, busy }: { item: CardItem; index: number; busy: 
           <div className="flex flex-wrap items-center gap-1.5">
             <Badge tone="clay">{item.subject}</Badge>
             {item.mine ? <Badge tone="honey">Giáo viên</Badge> : null}
+            <KeyBadge item={item} />
           </div>
           <span className="text-[12px] font-semibold text-ink-3">{item.grade}</span>
         </div>
@@ -465,6 +469,19 @@ function ExamCard({ item, index, busy }: { item: CardItem; index: number; busy: 
   )
 }
 
+/** nhãn đề thiếu đáp án: cả đề không có đáp án, hay thiếu vài câu */
+const keyLabel = (item: CardItem) =>
+  (item.missingKeys ?? 0) >= item.questions ? 'Chưa có đáp án' : `Thiếu ${item.missingKeys} đáp án`
+
+function KeyBadge({ item }: { item: CardItem }) {
+  if (!item.missingKeys) return null
+  return (
+    <span title="Các câu chưa có đáp án sẽ không được chấm điểm khi làm đề">
+      <Badge tone="outline">{keyLabel(item)}</Badge>
+    </span>
+  )
+}
+
 function ExamRow({ item, busy }: { item: CardItem; busy: boolean }) {
   return (
     <div className="flex flex-wrap items-center gap-4 border-b border-line-2 px-5 py-4 last:border-0 hover:bg-canvas/60">
@@ -475,6 +492,9 @@ function ExamRow({ item, busy }: { item: CardItem; busy: boolean }) {
         >
           {item.title}
           {item.mine ? <span className="ml-2 align-middle text-[11.5px] font-semibold text-honey">Giáo viên</span> : null}
+          {item.missingKeys ? (
+            <span className="ml-2 align-middle text-[11.5px] font-semibold text-ink-3">{keyLabel(item)}</span>
+          ) : null}
         </p>
         <p className="mt-1 truncate text-[12px] text-ink-3">
           {item.school || 'Chưa ghi tên trường'} · {item.subject} · {item.grade}

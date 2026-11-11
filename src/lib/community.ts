@@ -9,6 +9,7 @@ import { AuthError, currentSession } from '@/lib/auth'
 import { docToExam } from '@/lib/docToExam'
 import { apiFetch } from '@/lib/apiFetch'
 import { confirmPublishWithoutKey } from '@/lib/answerKeyWarn'
+import { missingKeyCount } from '@/lib/grading'
 
 const BASE = import.meta.env.VITE_SUPABASE_URL as string
 const KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string
@@ -26,10 +27,28 @@ export interface CommunityRow {
   total_points: number
   preview: string
   listed: boolean
+  /** số câu chưa có đáp án (null / thiếu = chưa tính) */
+  missing_keys?: number | null
 }
 
-const COLUMNS =
+const BASE_COLUMNS =
   'id,title,subject,grade,school,created_at,question_count,duration_minutes,total_points,preview,listed'
+/** cột missing_keys có từ migration 20261118; DB chưa áp thì đọc / ghi như cũ */
+let hasMissingKeys = true
+const cols = () => (hasMissingKeys ? `${BASE_COLUMNS},missing_keys` : BASE_COLUMNS)
+
+/** thử với cột missing_keys, DB báo chưa có cột thì bỏ cột đó và thử lại */
+async function withMissingKeys<T>(run: () => Promise<T>): Promise<T> {
+  try {
+    return await run()
+  } catch (err) {
+    if (hasMissingKeys && err instanceof Error && err.message.includes('missing_keys')) {
+      hasMissingKeys = false
+      return run()
+    }
+    throw err
+  }
+}
 
 async function rest<T>(
   path: string,
@@ -52,7 +71,7 @@ async function rest<T>(
 
 /** Danh sách đề đã đăng, mới nhất trước. Chỉ lấy đề có status = published. */
 export function listCommunityDocs(): Promise<CommunityRow[]> {
-  return rest<CommunityRow[]>(`/community_exams?select=${COLUMNS}&listed=eq.true&status=eq.published&order=created_at.desc&limit=100`)
+  return withMissingKeys(() => rest<CommunityRow[]>(`/community_exams?select=${cols()}&listed=eq.true&status=eq.published&order=created_at.desc&limit=100`))
 }
 
 /** Các đề người đang đăng nhập đã xuất bản (cả đề công khai và đề chỉ có link), mới nhất trước. */
@@ -60,7 +79,7 @@ export async function listMyPublished(page?: { limit: number; offset: number }):
   const s = await currentSession()
   if (!s) return []
   const range = page ? `&limit=${page.limit}&offset=${page.offset}` : ''
-  return rest<CommunityRow[]>(`/community_exams?select=${COLUMNS}&owner_id=eq.${s.user.id}&order=created_at.desc${range}`, { token: s.access_token })
+  return withMissingKeys(() => rest<CommunityRow[]>(`/community_exams?select=${cols()}&owner_id=eq.${s.user.id}&order=created_at.desc${range}`, { token: s.access_token }))
 }
 
 /** Số đề đã xuất bản (chỉ tải cột id) — để chia trang mà không tải cả danh sách. */
@@ -87,7 +106,7 @@ export async function publishDoc(doc: ExamDoc, listed = true, replaceId?: string
   if (!s) throw new AuthError('Bạn cần đăng nhập để đăng đề.')
   const exam = docToExam(doc, doc.id)
   if (!(await confirmPublishWithoutKey(exam))) throw new Error('Đã huỷ đăng đề để bổ sung đáp án.')
-  const body = {
+  const full = {
     title: doc.title,
     subject: doc.subject,
     grade: doc.grade,
@@ -98,14 +117,24 @@ export async function publishDoc(doc: ExamDoc, listed = true, replaceId?: string
     total_points: totalPoints(exam),
     preview: exam.sections[0]?.questions[0]?.prompt ?? '',
     listed,
+    missing_keys: missingKeyCount(exam.sections.flatMap((sec) => sec.questions)),
   }
   const opts = { token: s.access_token, prefer: 'return=representation' }
-  if (replaceId) {
-    const [row] = await rest<CommunityRow[]>(`/community_exams?select=${COLUMNS}&id=eq.${encodeURIComponent(replaceId)}`, { ...opts, method: 'PATCH', body })
-    if (row) return row
+  // DB chưa có cột missing_keys thì gửi như cũ
+  const body = () => {
+    if (hasMissingKeys) return full
+    const { missing_keys: _drop, ...others } = full
+    void _drop
+    return others
   }
-  const [row] = await rest<CommunityRow[]>(`/community_exams?select=${COLUMNS}`, { ...opts, method: 'POST', body })
-  return row
+  return withMissingKeys(async () => {
+    if (replaceId) {
+      const [row] = await rest<CommunityRow[]>(`/community_exams?select=${cols()}&id=eq.${encodeURIComponent(replaceId)}`, { ...opts, method: 'PATCH', body: body() })
+      if (row) return row
+    }
+    const [row] = await rest<CommunityRow[]>(`/community_exams?select=${cols()}`, { ...opts, method: 'POST', body: body() })
+    return row
+  })
 }
 
 /** Đưa đề đã xuất bản lên (hoặc gỡ khỏi) danh sách cộng đồng; link vẫn dùng được. */
