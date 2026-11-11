@@ -107,10 +107,17 @@ check('cộng điểm → 200, trả số dư cộng dồn', g.status === 200 &&
 
 // giai đoạn 2
 const sg = await hit({ action: 'settings.get' }, 'tMod')
-check('moderator đọc cài đặt → 200', sg.status === 200 && (sg.data.maintenance as { on: boolean }).on === true && (sg.data.banner as { on: boolean }).on === false)
+check('moderator đọc cài đặt → 200', sg.status === 200 && (sg.data.maintenance as { on: boolean }).on === true && (sg.data.announcements as { items: unknown[] }).items.length === 0)
 check('moderator bật bảo trì → 403', (await hit({ action: 'settings.set', key: 'maintenance', value: { on: true } }, 'tMod')).status === 403)
 check('cài đặt lạ → 400', (await hit({ action: 'settings.set', key: 'drop', value: {} }, 'tAdmin')).status === 400)
-check('banner bật mà trống → 400', (await hit({ action: 'settings.set', key: 'banner', value: { on: true, text: ' ' } }, 'tAdmin')).status === 400)
+const setAnn = async (items: unknown[]) => (await hit({ action: 'settings.set', key: 'announcements', value: { items } }, 'tAdmin')).status
+const ann = (o: object) => ({ id: 'a1', on: true, title: 'Mới', ...o })
+check('thông báo hợp lệ → 200', (await setAnn([ann({ tryPath: '/soan-de', image: '/api/files/img/' + 'a'.repeat(40) + '.png' })])) === 200)
+check('thông báo trống → 400', (await setAnn([{ id: 'a1', on: true, title: ' ' }])) === 400)
+check('ảnh ngoài kho → 400', (await setAnn([ann({ image: 'https://evil.test/a.png' })])) === 400)
+check('Dùng thử trỏ ra ngoài → 400', (await setAnn([ann({ tryPath: '//evil.test' })])) === 400)
+check('Dùng thử javascript: → 400', (await setAnn([ann({ tryPath: 'javascript:alert(1)' })])) === 400)
+check('bật 6 thông báo → 400', (await setAnn(Array.from({ length: 6 }, (_, i) => ann({ id: 'a' + i })))) === 400)
 check('until sai → 400', (await hit({ action: 'settings.set', key: 'maintenance', value: { on: true, until: 'abc' } }, 'tAdmin')).status === 400)
 calls.length = 0
 const ms = await hit({ action: 'settings.set', key: 'maintenance', value: { on: true, message: 'Nâng cấp', extra: 1 } }, 'tAdmin')

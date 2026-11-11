@@ -404,13 +404,13 @@ const ACTIONS: ActionMap = {
 
   // ---------- giai đoạn 2: vận hành ----------
 
-  /** {maintenance: {on, message, until}, banner: {on, text, level}} */
+  /** {maintenance: {on, message, until}, announcements: {items: [...]}} */
   'settings.get': {
     need: 'moderator',
     run: async ({ s }) => {
-      const { data } = await call<Array<{ key: string; value: unknown }>>(s, '/rest/v1/app_settings?select=key,value&key=in.(maintenance,banner)')
-      const get = (k: string) => data.find((r) => r.key === k)?.value ?? { on: false }
-      return { maintenance: get('maintenance'), banner: get('banner') }
+      const { data } = await call<Array<{ key: string; value: unknown }>>(s, '/rest/v1/app_settings?select=key,value&key=in.(maintenance,announcements)')
+      const get = (k: string) => data.find((r) => r.key === k)?.value
+      return { maintenance: get('maintenance') ?? { on: false }, announcements: get('announcements') ?? { items: [] } }
     },
   },
 
@@ -424,10 +424,21 @@ const ACTIONS: ActionMap = {
         const until = str(v.until, 40)
         if (until && isNaN(Date.parse(until))) throw new HttpError(400, 'Thời điểm kết thúc không hợp lệ.')
         value = { on: v.on === true, message: str(v.message, 500), until: until || null }
-      } else if (key === 'banner') {
-        const text = str(v.text, 300)
-        if (v.on === true && !text) throw new HttpError(400, 'Nhập nội dung thông báo.')
-        value = { on: v.on === true, text, level: v.level === 'warn' ? 'warn' : 'info' }
+      } else if (key === 'announcements') {
+        const raw = Array.isArray(v.items) ? (v.items as Array<Record<string, unknown>>) : []
+        if (raw.length > 12) throw new HttpError(400, 'Tối đa 12 thông báo.')
+        const items = raw.map((a) => {
+          const item = { id: str(a?.id, 40), on: a?.on === true, title: str(a?.title, 100), text: str(a?.text, 500), image: str(a?.image, 200), tryPath: str(a?.tryPath, 200), until: str(a?.until, 40) || null }
+          if (!item.id) throw new HttpError(400, 'Thông báo thiếu mã.')
+          if (!item.title && !item.text && !item.image) throw new HttpError(400, 'Có thông báo còn trống, hãy nhập nội dung hoặc xoá đi.')
+          // ảnh chỉ từ kho của app, nút "Dùng thử" chỉ đi trong app: dữ liệu này hiện cho mọi người xem
+          if (item.image && !/^\/api\/files\/img\/[a-f0-9]{40}\.(png|jpg|webp|gif)$/.test(item.image)) throw new HttpError(400, 'Ảnh thông báo không hợp lệ.')
+          if (item.tryPath && !/^\/(?![/\\])\S*$/.test(item.tryPath)) throw new HttpError(400, 'Đường dẫn "Dùng thử" phải nằm trong app, ví dụ /soan-de.')
+          if (item.until && isNaN(Date.parse(item.until))) throw new HttpError(400, 'Thời điểm kết thúc không hợp lệ.')
+          return item
+        })
+        if (items.filter((a) => a.on).length > 5) throw new HttpError(400, 'Chỉ bật tối đa 5 thông báo cùng lúc.')
+        value = { items }
       } else throw new HttpError(400, 'Cài đặt không tồn tại.')
       await call(ctx.s, '/rest/v1/app_settings?on_conflict=key', {
         method: 'POST',

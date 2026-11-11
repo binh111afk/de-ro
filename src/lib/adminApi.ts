@@ -238,14 +238,22 @@ export interface MaintenanceSetting {
   /** ISO, dự kiến xong lúc nào (chỉ để hiện) */
   until?: string | null
 }
-export interface BannerSetting {
+/** Một trang trong popup ở trang chủ */
+export interface Announcement {
+  id: string
   on: boolean
-  text?: string
-  level?: 'info' | 'warn'
+  title: string
+  text: string
+  /** `/api/files/img/…`, rỗng = không ảnh */
+  image: string
+  /** đường dẫn trong app cho nút "Dùng thử", rỗng = không có nút */
+  tryPath: string
+  /** ISO, quá giờ này thì tự thôi hiện */
+  until: string | null
 }
 export interface AppSettings {
   maintenance: MaintenanceSetting
-  banner: BannerSetting
+  announcements: { items: Announcement[] }
 }
 export interface AiStatRow {
   /** yyyy-mm-dd theo giờ VN */
@@ -280,7 +288,17 @@ export interface HealthReport {
   providers: Array<HealthCheck & { provider: string; model: string }>
 }
 
-const mockSettings: AppSettings = { maintenance: { on: false, message: '' }, banner: { on: false, text: '', level: 'info' } }
+const mockImage = (color: string) => `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540"><rect width="960" height="540" fill="${color}"/></svg>`)}`
+const mockSettings: AppSettings = {
+  maintenance: { on: false, message: '' },
+  announcements: {
+    items: [
+      { id: 'mock-1', on: true, title: 'Xáo đề giữ nguyên đáp án', text: 'Tạo nhiều mã đề từ một đề gốc chỉ với một lần bấm.', image: mockImage('#c9805f'), tryPath: '/soan-de', until: null },
+      { id: 'mock-2', on: true, title: 'Bảo trì cuối tuần', text: 'Tối Chủ nhật hệ thống nâng cấp khoảng 15 phút.\nBạn nhớ lưu đề trước giờ đó nhé.', image: '', tryPath: '', until: null },
+      { id: 'mock-3', on: true, title: '', text: '', image: mockImage('#8a9a7b'), tryPath: '', until: null },
+    ],
+  },
+}
 
 export function getSettings(): Promise<AppSettings> {
   if (isAdminMock()) return wait(mockSettings)
@@ -295,12 +313,12 @@ export function setMaintenance(v: MaintenanceSetting): Promise<{ ok: true }> {
   return post('settings.set', { key: 'maintenance', value: v })
 }
 
-export function setBanner(v: BannerSetting): Promise<{ ok: true }> {
+export function setAnnouncements(items: Announcement[]): Promise<{ ok: true }> {
   if (isAdminMock()) {
-    mockSettings.banner = v
+    mockSettings.announcements = { items }
     return wait({ ok: true as const })
   }
-  return post('settings.set', { key: 'banner', value: v })
+  return post('settings.set', { key: 'announcements', value: { items } })
 }
 
 export function getAiStats(days = 7): Promise<{ days: number; rows: AiStatRow[] }> {

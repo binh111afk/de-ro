@@ -5,10 +5,8 @@ import {
   Cpu,
   Database,
   HardDrive,
-  Info,
   RefreshCw,
   Server,
-  TriangleAlert,
 } from 'lucide-react'
 import {
   Badge,
@@ -24,7 +22,6 @@ import {
   AdminError,
   getSettings,
   setMaintenance,
-  setBanner,
   runHealth,
   getAiStats,
   getAiErrors,
@@ -34,9 +31,11 @@ import {
   type AiErrorRow,
   type AdminMe,
 } from '@/lib/adminApi'
-import { formatNumber, formatViDateTime } from './adminUtils'
+import { formatNumber, formatViDateTime, toDatetimeLocalString, toIsoString } from './adminUtils'
 import { cn } from '@/lib/cn'
 import { DbStatusCard } from './DbStatusCard'
+import { Switch } from './Switch'
+import { AnnouncementsEditor } from './AnnouncementsEditor'
 
 interface OpsPanelProps {
   me?: AdminMe
@@ -62,29 +61,6 @@ function formatViTime(iso: string | null | undefined): string {
   return `${hh}:${min}`
 }
 
-/** Chuyển ISO sang định dạng YYYY-MM-DDTHH:mm cho input[type="datetime-local"] */
-function toDatetimeLocalString(iso: string | null | undefined): string {
-  if (!iso) return ''
-  const d = new Date(iso)
-  if (isNaN(d.getTime())) return ''
-  const pad = (n: number) => String(n).padStart(2, '0')
-  const yyyy = d.getFullYear()
-  const mm = pad(d.getMonth() + 1)
-  const dd = pad(d.getDate())
-  const hh = pad(d.getHours())
-  const min = pad(d.getMinutes())
-  return `${yyyy}-${mm}-${dd}T${hh}:${min}`
-}
-
-/** Chuyển giá trị từ datetime-local sang ISO chuỗi, rỗng trả về null */
-function toIsoString(localDt: string): string | null {
-  const trimmed = localDt.trim()
-  if (!trimmed) return null
-  const d = new Date(trimmed)
-  if (isNaN(d.getTime())) return null
-  return d.toISOString()
-}
-
 /** Định dạng tổng chi phí (USD) từ các dòng thống kê */
 function computeCostDisplay(rows: AiStatRow[]): string {
   const withCost = rows.filter((r) => r.cost !== null && r.cost !== undefined)
@@ -93,59 +69,6 @@ function computeCostDisplay(rows: AiStatRow[]): string {
   if (total === 0) return '$0.00'
   if (total < 0.01) return `$${total.toFixed(4)}`
   return `$${total.toFixed(2)}`
-}
-
-/** Công tắc Bật/Tắt gạt ngang */
-function Switch({
-  checked,
-  onChange,
-  disabled,
-  label,
-  id,
-}: {
-  checked: boolean
-  onChange: (v: boolean) => void
-  disabled?: boolean
-  label?: string
-  id?: string
-}) {
-  return (
-    <div className="inline-flex select-none items-center gap-2.5">
-      <button
-        id={id}
-        type="button"
-        role="switch"
-        aria-checked={checked}
-        disabled={disabled}
-        onClick={() => onChange(!checked)}
-        className={cn(
-          'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-clay/40',
-          disabled && 'cursor-not-allowed opacity-40',
-          checked ? 'bg-clay' : 'bg-line-2 hover:bg-ink-4',
-        )}
-      >
-        <span
-          aria-hidden="true"
-          className={cn(
-            'pointer-events-none inline-block size-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out',
-            checked ? 'translate-x-5' : 'translate-x-0',
-          )}
-        />
-      </button>
-      {label ? (
-        <label
-          htmlFor={id}
-          className={cn(
-            'cursor-pointer text-[13.5px] font-medium text-ink',
-            disabled && 'cursor-not-allowed opacity-40',
-          )}
-          onClick={() => !disabled && onChange(!checked)}
-        >
-          {label}
-        </label>
-      ) : null}
-    </div>
-  )
 }
 
 export function OpsPanel({ me: _me }: OpsPanelProps) {
@@ -157,7 +80,7 @@ export function OpsPanel({ me: _me }: OpsPanelProps) {
   }
 
   // 1. Cài đặt bảo trì & dải thông báo
-  const [_settings, setSettings] = useState<AppSettings | null>(null)
+  const [settings, setSettings] = useState<AppSettings | null>(null)
   const [loadingSettings, setLoadingSettings] = useState(true)
 
   // Bảo trì
@@ -167,11 +90,7 @@ export function OpsPanel({ me: _me }: OpsPanelProps) {
   const [maintUntil, setMaintUntil] = useState('')
   const [savingMaint, setSavingMaint] = useState(false)
 
-  // Dải thông báo
-  const [bannerOn, setBannerOn] = useState(false)
-  const [bannerText, setBannerText] = useState('')
-  const [bannerLevel, setBannerLevel] = useState<'info' | 'warn'>('info')
-  const [savingBanner, setSavingBanner] = useState(false)
+  const [opsTab, setOpsTab] = useState<'maint' | 'notice'>('maint')
 
   // 2. Tình trạng server
   const [healthReport, setHealthReport] = useState<HealthReport | null>(null)
@@ -198,10 +117,6 @@ export function OpsPanel({ me: _me }: OpsPanelProps) {
         setSavedMaintOn(!!st.maintenance.on)
         setMaintMessage(st.maintenance.message ?? '')
         setMaintUntil(toDatetimeLocalString(st.maintenance.until))
-
-        setBannerOn(!!st.banner.on)
-        setBannerText(st.banner.text ?? '')
-        setBannerLevel(st.banner.level ?? 'info')
       })
       .catch((err: unknown) => {
         if (!alive) return
@@ -292,30 +207,6 @@ export function OpsPanel({ me: _me }: OpsPanelProps) {
       await dialog.alert(msg, { title: 'Lỗi lưu bảo trì' })
     } finally {
       setSavingMaint(false)
-    }
-  }
-
-  // Lưu dải thông báo
-  const handleSaveBanner = async () => {
-    if (bannerOn && !bannerText.trim()) {
-      await dialog.alert('Nội dung dải thông báo không được để trống khi đang bật.', {
-        title: 'Thiếu nội dung',
-      })
-      return
-    }
-    try {
-      setSavingBanner(true)
-      await setBanner({
-        on: bannerOn,
-        text: bannerText.trim() || undefined,
-        level: bannerLevel,
-      })
-      showNotice('Đã lưu cấu hình dải thông báo.')
-    } catch (err: unknown) {
-      const msg = err instanceof AdminError || err instanceof Error ? err.message : 'Không thể lưu dải thông báo'
-      await dialog.alert(msg, { title: 'Lỗi lưu thông báo' })
-    } finally {
-      setSavingBanner(false)
     }
   }
 
@@ -453,17 +344,23 @@ export function OpsPanel({ me: _me }: OpsPanelProps) {
               </Badge>
             ) : null}
           </div>
-          {loadingSettings ? (
-            <div className="flex items-center gap-1.5 text-[12.5px] text-ink-4">
-              <Spinner className="size-3.5 text-ink-3" />
-              <span>Đang tải cài đặt…</span>
-            </div>
-          ) : null}
+          <div className="flex items-center gap-3">
+            {loadingSettings ? <Spinner className="size-3.5 text-ink-3" /> : null}
+            <Segmented<'maint' | 'notice'>
+              value={opsTab}
+              onChange={setOpsTab}
+              label="Bảo trì hoặc thông báo"
+              options={[
+                { key: 'maint', label: 'Bảo trì' },
+                { key: 'notice', label: 'Thông báo' },
+              ]}
+            />
+          </div>
         </div>
 
         <div className="space-y-6">
           {/* Mục: Chế độ bảo trì */}
-          <div className="space-y-4">
+          <div className={cn('space-y-4', opsTab !== 'maint' && 'hidden')}>
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <div className="flex items-center gap-2">
@@ -536,98 +433,11 @@ export function OpsPanel({ me: _me }: OpsPanelProps) {
             </div>
           </div>
 
-          <div className="h-px w-full bg-line" />
-
-          {/* Mục: Dải thông báo */}
-          <div className="space-y-4">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <h3 className="text-[14.5px] font-semibold text-ink">Dải thông báo</h3>
-                <p className="text-[12.5px] text-ink-3">
-                  Hiển thị dải tin nhắn trên cùng của trang web cho tất cả người dùng.
-                </p>
-              </div>
-              <Switch
-                id="switch-banner"
-                checked={bannerOn}
-                onChange={setBannerOn}
-                disabled={savingBanner || loadingSettings}
-                label={bannerOn ? 'Bật thông báo' : 'Tắt thông báo'}
-              />
+          {settings ? (
+            <div className={cn(opsTab !== 'notice' && 'hidden')}>
+              <AnnouncementsEditor initial={settings.announcements.items} onNotice={showNotice} />
             </div>
-
-            <div className="space-y-3">
-              <div>
-                <div className="mb-1.5 flex items-center justify-between">
-                  <label htmlFor="banner-text" className="text-[13px] font-medium text-ink">
-                    Nội dung thông báo
-                  </label>
-                  <span className="text-[11.5px] text-ink-4">{bannerText.length}/300 ký tự</span>
-                </div>
-                <textarea
-                  id="banner-text"
-                  value={bannerText}
-                  onChange={(e) => setBannerText(e.target.value.slice(0, 300))}
-                  maxLength={300}
-                  rows={2}
-                  placeholder="Nhập nội dung thông báo cho người dùng (tối đa 300 ký tự)..."
-                  className={cn(inputClass, 'w-full resize-y text-[13.5px]')}
-                  disabled={savingBanner || loadingSettings}
-                />
-              </div>
-
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <span className="text-[13px] font-medium text-ink">Mức độ:</span>
-                  <Segmented<'info' | 'warn'>
-                    value={bannerLevel}
-                    onChange={setBannerLevel}
-                    label="Mức độ thông báo"
-                    options={[
-                      { key: 'info', label: 'Thông tin' },
-                      { key: 'warn', label: 'Cảnh báo' },
-                    ]}
-                  />
-                </div>
-
-                <Button
-                  variant="primary"
-                  size="sm"
-                  onClick={handleSaveBanner}
-                  disabled={savingBanner || loadingSettings}
-                >
-                  {savingBanner ? <Spinner className="size-3.5" /> : null}
-                  <span>Lưu dải thông báo</span>
-                </Button>
-              </div>
-
-              {/* Xem trước dải thông báo ngay dưới form */}
-              <div className="mt-3 rounded-[6px] border border-line bg-sunken/40 p-3 sm:p-4">
-                <span className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-ink-3">
-                  Xem trước dải thông báo
-                </span>
-                <div
-                  role="status"
-                  className={cn(
-                    'flex items-start gap-2.5 rounded-[6px] px-3.5 py-2.5 text-[13px] transition-colors sm:items-center',
-                    bannerLevel === 'warn'
-                      ? 'border border-honey-soft bg-honey-soft text-ink'
-                      : 'border border-line bg-sunken text-ink-2',
-                  )}
-                >
-                  {bannerLevel === 'warn' ? (
-                    <TriangleAlert className="mt-0.5 size-4 shrink-0 text-honey sm:mt-0" />
-                  ) : (
-                    <Info className="mt-0.5 size-4 shrink-0 text-ink-3 sm:mt-0" />
-                  )}
-                  <span className="min-w-0 flex-1">
-                    {bannerText.trim() || '(Chưa nhập nội dung thông báo)'}
-                  </span>
-                  <span className="text-[11px] text-ink-4">✕</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          ) : null}
         </div>
       </Card>
 

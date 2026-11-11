@@ -7,7 +7,6 @@ import {
   Activity,
   ArrowUpRight,
   Calendar,
-  ExternalLink,
   Radio,
   RefreshCw,
   UserPlus,
@@ -168,9 +167,9 @@ export function StatsPanel({ me: _me }: StatsPanelProps) {
       </div>
 
       {/* Hàng thẻ số liệu chính */}
-      <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:max-lg:[&>*:nth-child(3)]:col-span-2 lg:grid-cols-6 lg:*:col-span-2 lg:[&>*:nth-child(n+4)]:col-span-3">
         {/* Thẻ 1: Tổng người dùng */}
-        <Card className="flex flex-col justify-between border border-line p-4.5 shadow-soft transition-all hover:border-line-2">
+        <Card className="flex flex-col justify-between border border-line p-5 shadow-soft transition-all hover:border-line-2">
           <div>
             <div className="flex items-center justify-between">
               <span className="text-[12.5px] font-medium text-ink-3">Tổng người dùng</span>
@@ -196,7 +195,7 @@ export function StatsPanel({ me: _me }: StatsPanelProps) {
         </Card>
 
         {/* Thẻ 2: Đăng ký mới (trong khoảng) */}
-        <Card className="flex flex-col justify-between border border-line p-4.5 shadow-soft transition-all hover:border-line-2">
+        <Card className="flex flex-col justify-between border border-line p-5 shadow-soft transition-all hover:border-line-2">
           <div>
             <div className="flex items-center justify-between">
               <span className="text-[12.5px] font-medium text-ink-3">Đăng ký mới</span>
@@ -221,65 +220,13 @@ export function StatsPanel({ me: _me }: StatsPanelProps) {
           </p>
         </Card>
 
-        {/* Thẻ 3: Hoạt động 7 ngày */}
-        <Card className="flex flex-col justify-between border border-line p-4.5 shadow-soft transition-all hover:border-line-2">
-          <div>
-            <div className="flex items-center justify-between">
-              <span className="text-[12.5px] font-medium text-ink-3">Hoạt động 7 ngày</span>
-              <div className="flex size-8 items-center justify-center rounded-[6px] bg-sunken text-ink-2">
-                <Activity className="size-4" />
-              </div>
-            </div>
-            <div className="mt-2.5">
-              {loading ? (
-                <div className="flex h-9 items-center">
-                  <Spinner className="text-ink-3" />
-                </div>
-              ) : (
-                <div className="tnum text-[26px] font-bold tracking-tight text-ink sm:text-[28px]">
-                  {formatNumber(stats?.active7d)}
-                </div>
-              )}
-            </div>
-          </div>
-          <p className="mt-3 border-t border-line-2 pt-2.5 text-[11.5px] text-ink-4">
-            Đăng nhập hoặc có nhịp
-          </p>
-        </Card>
-
-        {/* Thẻ 4: Hoạt động 30 ngày */}
-        <Card className="flex flex-col justify-between border border-line p-4.5 shadow-soft transition-all hover:border-line-2">
-          <div>
-            <div className="flex items-center justify-between">
-              <span className="text-[12.5px] font-medium text-ink-3">Hoạt động 30 ngày</span>
-              <div className="flex size-8 items-center justify-center rounded-[6px] bg-sunken text-ink-2">
-                <Calendar className="size-4" />
-              </div>
-            </div>
-            <div className="mt-2.5">
-              {loading ? (
-                <div className="flex h-9 items-center">
-                  <Spinner className="text-ink-3" />
-                </div>
-              ) : (
-                <div className="tnum text-[26px] font-bold tracking-tight text-ink sm:text-[28px]">
-                  {formatNumber(stats?.active30d)}
-                </div>
-              )}
-            </div>
-          </div>
-          <p className="mt-3 border-t border-line-2 pt-2.5 text-[11.5px] text-ink-4">
-            Đăng nhập hoặc có nhịp
-          </p>
-        </Card>
-
         {/* Thẻ 5: Đang online (bấm xem danh sách) */}
         <button
           type="button"
           onClick={handleOpenOnlineModal}
           className="group block w-full text-left rounded-[6px] focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30"
         >
-          <Card className="flex h-full flex-col justify-between border border-line p-4.5 shadow-soft transition-all group-hover:border-emerald-500/50 group-hover:bg-emerald-50/20 group-active:scale-[0.99]">
+          <Card className="flex h-full flex-col justify-between border border-line p-5 shadow-soft transition-all group-hover:border-emerald-500/50 group-hover:bg-emerald-50/20 group-active:scale-[0.99]">
             <div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1.5">
@@ -306,29 +253,55 @@ export function StatsPanel({ me: _me }: StatsPanelProps) {
           </Card>
         </button>
 
-        {/* Thẻ 6: Lượt truy cập (Vercel Analytics) */}
-        <Card className="flex flex-col justify-between border border-line p-4.5 shadow-soft transition-all hover:border-line-2">
+        {/* Thẻ 3: Hoạt động 7 ngày */}
+        <Card className="flex flex-col justify-between border border-line p-5 shadow-soft transition-all hover:border-line-2">
           <div>
             <div className="flex items-center justify-between">
-              <span className="text-[12.5px] font-medium text-ink-3">Lượt truy cập</span>
+              <span className="text-[12.5px] font-medium text-ink-3">Hoạt động 7 ngày</span>
               <div className="flex size-8 items-center justify-center rounded-[6px] bg-sunken text-ink-2">
-                <ExternalLink className="size-4" />
+                <Activity className="size-4" />
               </div>
             </div>
             <div className="mt-2.5">
-              <a
-                href="https://vercel.com/dashboard"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-[13.5px] font-semibold text-clay transition-colors hover:text-clay-deep hover:underline"
-              >
-                <span>Xem trên Vercel Analytics</span>
-                <ExternalLink className="size-3" />
-              </a>
+              {loading ? (
+                <div className="flex h-9 items-center">
+                  <Spinner className="text-ink-3" />
+                </div>
+              ) : (
+                <div className="tnum text-[26px] font-bold tracking-tight text-ink sm:text-[28px]">
+                  {formatNumber(stats?.active7d)}
+                </div>
+              )}
             </div>
           </div>
           <p className="mt-3 border-t border-line-2 pt-2.5 text-[11.5px] text-ink-4">
-            Lượt xem trang & hiệu năng
+            Đăng nhập hoặc có nhịp
+          </p>
+        </Card>
+
+        {/* Thẻ 4: Hoạt động 30 ngày */}
+        <Card className="flex flex-col justify-between border border-line p-5 shadow-soft transition-all hover:border-line-2">
+          <div>
+            <div className="flex items-center justify-between">
+              <span className="text-[12.5px] font-medium text-ink-3">Hoạt động 30 ngày</span>
+              <div className="flex size-8 items-center justify-center rounded-[6px] bg-sunken text-ink-2">
+                <Calendar className="size-4" />
+              </div>
+            </div>
+            <div className="mt-2.5">
+              {loading ? (
+                <div className="flex h-9 items-center">
+                  <Spinner className="text-ink-3" />
+                </div>
+              ) : (
+                <div className="tnum text-[26px] font-bold tracking-tight text-ink sm:text-[28px]">
+                  {formatNumber(stats?.active30d)}
+                </div>
+              )}
+            </div>
+          </div>
+          <p className="mt-3 border-t border-line-2 pt-2.5 text-[11.5px] text-ink-4">
+            Đăng nhập hoặc có nhịp
           </p>
         </Card>
       </div>

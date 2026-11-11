@@ -1,43 +1,36 @@
 /**
  * Cài đặt app do admin đặt (bảng `app_settings`, ai cũng đọc được):
- * - `banner`: dải thông báo trên cùng, người xem đóng được (nhớ theo nội dung).
+ * - `announcements`: popup thông báo ở trang chủ (AnnouncementPopup).
  * - `maintenance`: người thường thấy trang "Đang bảo trì"; admin/moderator vẫn dùng bình thường.
  *   Trang đăng nhập và /admin luôn mở để admin vào tắt bảo trì. Server cũng chặn AI/upload (server/ops.ts).
  */
 import { useEffect, useState, type ReactNode } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Info, TriangleAlert, Wrench, X } from 'lucide-react'
-import { getMe, type AppSettings } from '@/lib/adminApi'
+import { Wrench } from 'lucide-react'
+import { getMe, getSettings, isAdminMock, type AppSettings } from '@/lib/adminApi'
+import { AnnouncementPopup } from '@/components/AnnouncementPopup'
 import { useSession } from '@/lib/useSession'
-import { cn } from '@/lib/cn'
 
 const BASE = import.meta.env.VITE_SUPABASE_URL as string
 const KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string
 
 async function fetchSettings(): Promise<AppSettings | null> {
+  if (isAdminMock()) return getSettings()
   if (!BASE || !KEY) return null
-  const r = await fetch(`${BASE}/rest/v1/app_settings?select=key,value&key=in.(maintenance,banner)`, { headers: { apikey: KEY, Authorization: `Bearer ${KEY}` } })
+  const r = await fetch(`${BASE}/rest/v1/app_settings?select=key,value&key=in.(maintenance,announcements)`, { headers: { apikey: KEY, Authorization: `Bearer ${KEY}` } })
   if (!r.ok) return null
   const rows = (await r.json()) as Array<{ key: string; value: never }>
-  const get = (k: string) => rows.find((x) => x.key === k)?.value ?? { on: false }
-  return { maintenance: get('maintenance'), banner: get('banner') }
+  const get = (k: string) => rows.find((x) => x.key === k)?.value
+  return { maintenance: get('maintenance') ?? { on: false }, announcements: get('announcements') ?? { items: [] } }
 }
 
 const OPEN_PATHS = ['/dang-nhap', '/quen-mat-khau', '/dat-lai-mat-khau', '/admin']
-const DISMISS_KEY = 'banner-dismissed'
 
 export function SiteStatus({ children }: { children: ReactNode }) {
   const { pathname } = useLocation()
   const session = useSession()
   const [st, setSt] = useState<AppSettings | null>(null)
   const [staff, setStaff] = useState(false)
-  const [dismissed, setDismissed] = useState<string | null>(() => {
-    try {
-      return localStorage.getItem(DISMISS_KEY)
-    } catch {
-      return null
-    }
-  })
 
   useEffect(() => {
     fetchSettings()
@@ -58,37 +51,10 @@ export function SiteStatus({ children }: { children: ReactNode }) {
     }
   }, [maintenanceOn, session])
 
-  const banner = st?.banner
-  const bannerText = banner?.on ? banner.text?.trim() : ''
-  const showBanner = !!bannerText && dismissed !== bannerText
-  const dismiss = () => {
-    setDismissed(bannerText ?? null)
-    try {
-      localStorage.setItem(DISMISS_KEY, bannerText ?? '')
-    } catch {
-      /* bỏ qua */
-    }
-  }
-
   const blocked = maintenanceOn && !staff && !OPEN_PATHS.some((p) => pathname.startsWith(p))
 
   return (
     <>
-      {showBanner ? (
-        <div
-          role="status"
-          className={cn(
-            'flex items-start gap-2.5 px-4 py-2.5 text-[13px] sm:items-center sm:justify-center',
-            banner?.level === 'warn' ? 'bg-honey-soft text-ink' : 'bg-sunken text-ink-2',
-          )}
-        >
-          {banner?.level === 'warn' ? <TriangleAlert className="mt-0.5 size-4 shrink-0 sm:mt-0" /> : <Info className="mt-0.5 size-4 shrink-0 sm:mt-0" />}
-          <span className="min-w-0 flex-1 sm:flex-none">{bannerText}</span>
-          <button type="button" onClick={dismiss} aria-label="Đóng thông báo" className="shrink-0 rounded p-0.5 text-ink-3 hover:text-ink">
-            <X className="size-4" />
-          </button>
-        </div>
-      ) : null}
       {maintenanceOn && staff ? (
         <div className="bg-clay px-4 py-1.5 text-center text-[12.5px] font-medium text-white">
           Đang bật chế độ bảo trì, người dùng thường không vào được.{' '}
@@ -97,6 +63,7 @@ export function SiteStatus({ children }: { children: ReactNode }) {
           </Link>
         </div>
       ) : null}
+      {pathname === '/' && !blocked && st ? <AnnouncementPopup items={st.announcements.items} /> : null}
       {blocked ? <Maintenance message={st?.maintenance.message} until={st?.maintenance.until} /> : children}
     </>
   )

@@ -84,3 +84,26 @@ export function formatAuditDetail(_action: string, detail: unknown): string {
     return '—'
   }
 }
+
+/** Chuyển ISO sang định dạng YYYY-MM-DDTHH:mm cho input[type="datetime-local"] */
+export function toDatetimeLocalString(iso: string | null | undefined): string {
+  if (!iso) return ''
+  const d = new Date(iso)
+  if (isNaN(d.getTime())) return ''
+  const pad = (n: number) => String(n).padStart(2, '0')
+  const yyyy = d.getFullYear()
+  const mm = pad(d.getMonth() + 1)
+  const dd = pad(d.getDate())
+  const hh = pad(d.getHours())
+  const min = pad(d.getMinutes())
+  return `${yyyy}-${mm}-${dd}T${hh}:${min}`
+}
+
+/** Chuyển giá trị từ datetime-local sang ISO chuỗi, rỗng trả về null */
+export function toIsoString(localDt: string): string | null {
+  const trimmed = localDt.trim()
+  if (!trimmed) return null
+  const d = new Date(trimmed)
+  if (isNaN(d.getTime())) return null
+  return d.toISOString()
+}
