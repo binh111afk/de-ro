@@ -4508,3 +4508,18 @@ div[data-exam-node='examQuestionPrompt'] > .exam-image:has(+ .ProseMirror-separa
     padding-right: calc(10px + env(safe-area-inset-right, 0px)) !important;
   }
 }
+
+/* tab Bắt đầu: máy chủ từ chối đồng bộ vì vượt dung lượng */
+.start-quota {
+  margin: 0 0 12px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--color-clay-tint, #f8e9e2);
+  color: var(--color-clay-deep, #8f3d1f);
+  font-size: 13px;
+}
+.start-quota a {
+  margin-left: 4px;
+  font-weight: 600;
+  text-decoration: underline;
+}

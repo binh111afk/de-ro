@@ -16,6 +16,7 @@ import type { ExamDoc } from '@/data/docTypes'
 import type { OnlineItem } from '@/lib/onlineExam'
 import { useBoards, type BoardItem } from '@/store/boards'
 import { toRemote } from '@/board/imgStore'
+import { quotaMessage, useSyncStatus } from '@/store/syncStatus'
 
 interface Item {
   id: string
@@ -80,6 +81,15 @@ SPECS.push({
   subscribe: (fn) => useBoards.subscribe((s, p) => s.items !== p.items && fn()),
   prepare: boardImagesToRemote,
 } satisfies Spec<BoardItem>)
+
+/** mục bị máy chủ từ chối vì vượt giới hạn: `kind:id` → lời báo; còn mục nào thì báo cho người dùng */
+const blocked = new Map<string, string>()
+function noteQuota(kind: string, id: string, msg: string | null) {
+  const k = `${kind}:${id}`
+  if (msg) blocked.set(k, msg)
+  else if (!blocked.delete(k)) return
+  useSyncStatus.getState().setQuota(blocked.values().next().value ?? null)
+}
 
 const DELAY = 1500
 
@@ -192,11 +202,14 @@ async function syncKind<T extends Item>(spec: Spec<T>, owner: string): Promise<(
             body: { owner_id: owner, kind, id: it.id, data: it, updated_at: it.updatedAt },
           })
           sent.set(it.id, fp)
-        } catch {
-          // mục này lỗi (quá lớn, mất mạng…): giữ trên máy, các mục khác vẫn đi tiếp; lần thay đổi sau thử lại
+          noteQuota(kind, it.id, null)
+        } catch (err) {
+          // mục này lỗi (quá lớn, vượt giới hạn, mất mạng…): giữ trên máy, các mục khác vẫn đi tiếp; lần thay đổi sau thử lại
+          noteQuota(kind, it.id, quotaMessage(err))
         }
       }
       const gone = [...sent.keys()].filter((id) => !ids.has(id))
+      for (const id of [...blocked.keys()]) if (id.startsWith(`${kind}:`) && !ids.has(id.slice(kind.length + 1))) noteQuota(kind, id.slice(kind.length + 1), null)
       if (gone.length) {
         await rest(`/user_items?kind=eq.${kind}&id=in.(${gone.join(',')})`, { method: 'DELETE', token, prefer: 'return=minimal' })
         for (const id of gone) sent.delete(id)

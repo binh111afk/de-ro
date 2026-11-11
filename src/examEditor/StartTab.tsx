@@ -12,6 +12,7 @@ import type { ExamDoc } from '@/data/docTypes'
 import { docSize, formatBytes, useDocStore, type Deck } from '@/store/docs'
 import { useComposeStore } from '@/store/compose'
 import { useBoards } from '@/store/boards'
+import { useSyncStatus } from '@/store/syncStatus'
 import { cn } from '@/lib/cn'
 import { dialog } from '@/components/Dialog'
 import { DocIcon, IconDocExam, IconDocBoard, IconDocSlide } from '@/components/docIcons'
@@ -93,6 +94,7 @@ export function StartTab({
   const renameDoc = useDocStore((s) => s.renameDoc)
   const renameDeck = useDocStore((s) => s.renameDeck)
   const boards = useBoards((s) => s.items)
+  const quota = useSyncStatus((s) => s.quota)
   const [query, setQuery] = useState('')
   const [filter, setFilter] = useState<FilterKey>('all')
   const [removing, setRemoving] = useState<string[]>([])
@@ -320,6 +322,11 @@ export function StartTab({
             </div>
           </div>
 
+          {quota ? (
+            <p role="alert" className="start-quota">
+              Chưa đồng bộ được lên tài khoản: {quota} <a href="/ho-so">Xem dung lượng</a>
+            </p>
+          ) : null}
           {docs.length === 0 ? (
             <div className="start-empty">
               <p className="start-empty__title">

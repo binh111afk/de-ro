@@ -98,30 +98,34 @@ const SlideEditor = lazyPage(() => loadSlideEditor().then((m) => ({ default: m.S
 /** khung chờ của bảng vẽ: thanh công cụ, hàng tuỳ chọn, mặt bảng */
 function BoardSkeleton() {
   return (
-    <div className="flex min-h-0 flex-1 flex-col animate-pulse" aria-busy="true" aria-label="Đang tải bảng vẽ">
-      <div className="flex h-12 items-center gap-2 border-b border-line bg-paper px-3">
-        <div className="size-7 rounded-md bg-line/70" />
-        <div className="size-7 rounded-md bg-line/70" />
-        <div className="ml-2 flex h-9 items-center gap-1.5 rounded-[10px] bg-line/40 px-1.5">
+    // cùng màu, cùng chiều cao với thanh công cụ thật của BoardEditor (bg-surface, h-12 + h-11, một đường kẻ dưới)
+    <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-white" aria-busy="true" aria-label="Đang tải bảng vẽ">
+      <div className="shrink-0 animate-pulse border-b border-line bg-surface">
+      <div className="flex h-12 items-end gap-2 px-3 pb-1">
+        <div className="mb-0.5 size-7 rounded-md bg-line/70" />
+        <div className="mb-0.5 size-7 rounded-md bg-line/70" />
+        <span className="mb-1.5 h-5 w-px bg-line" />
+        <div className="flex h-[38px] items-center gap-1.5 rounded-[10px] bg-sunken px-[3px]">
           {[52, 50, 54, 52, 50, 46, 48].map((w, i) => <div key={i} className="h-6 rounded-[7px] bg-line/80" style={{ width: w }} />)}
         </div>
         <div className="ml-auto flex items-center gap-2">
           {[60, 76, 72, 28, 44].map((w, i) => <div key={i} className="h-6 rounded-[7px] bg-line/70" style={{ width: w }} />)}
         </div>
       </div>
-      <div className="flex h-10 items-center gap-2 border-b border-line bg-paper px-3">
+      <div className="flex h-11 items-center gap-2 px-3 pb-1">
         <div className="h-2.5 w-8 rounded bg-line" />
         {Array.from({ length: 6 }, (_, i) => <div key={i} className="size-5 rounded-full bg-line/80" />)}
         <div className="mx-2 h-5 w-px bg-line" />
         <div className="h-2.5 w-10 rounded bg-line" />
         {[6, 8, 10, 12, 14, 16].map((d, i) => <div key={i} className="rounded-full bg-line/80" style={{ width: d, height: d }} />)}
       </div>
-      <div className="relative min-h-0 flex-1 bg-white">
-        <div className="absolute inset-0 opacity-60" style={{ backgroundImage: 'radial-gradient(circle, #e7e2dc 1.2px, transparent 1.3px)', backgroundSize: '24px 24px' }} />
-        <div className="absolute left-[12%] top-[18%] h-24 w-40 rounded-lg bg-line/40" />
-        <div className="absolute left-[38%] top-[30%] h-3 w-56 rounded-full bg-line/50" />
-        <div className="absolute left-[40%] top-[38%] h-3 w-40 rounded-full bg-line/40" />
-        <div className="absolute right-[14%] top-[22%] size-28 rounded-full bg-line/30" />
+      </div>
+      {/* mặt bảng: trắng như bảng thật, vài khối mờ thay cho nội dung đang tải */}
+      <div className="relative min-h-0 flex-1 animate-pulse bg-white">
+        <div className="absolute left-[12%] top-[18%] h-24 w-40 rounded-lg bg-sunken" />
+        <div className="absolute left-[38%] top-[30%] h-3 w-56 rounded-full bg-sunken" />
+        <div className="absolute left-[40%] top-[38%] h-3 w-40 rounded-full bg-sunken" />
+        <div className="absolute right-[14%] top-[22%] size-28 rounded-full bg-sunken/70" />
       </div>
     </div>
   )

@@ -7,6 +7,9 @@ import { signOut, updateProfile, type Session } from '@/lib/auth'
 import { uploadImage } from '@/lib/mediaStore'
 import { useSession } from '@/lib/useSession'
 import { apiFetch } from '@/lib/apiFetch'
+import { currentSession } from '@/lib/auth'
+import { rest } from '@/lib/documents'
+import { useSyncStatus } from '@/store/syncStatus'
 
 export default function Profile() {
   const session = useSession()
@@ -26,6 +29,7 @@ function ProfilePage({ user }: { user: Session['user'] }) {
         <AdminCard />
         <EditCard user={user} />
         <CreditCard />
+        <StorageCard />
       </div>
     </div>
   )
@@ -241,6 +245,86 @@ function CreditCard() {
   return (
     <section className="rounded-[8px] bg-surface p-7 shadow-lift sm:p-8">
       <h2 className="font-display text-[22px] font-semibold tracking-[-0.01em] text-ink">Điểm AI</h2>
+      {body}
+    </section>
+  )
+}
+
+interface Storage {
+  used: number
+  max: number
+  kinds: Record<string, { count: number; bytes: number; limit: number | null }>
+}
+
+const KIND_LABEL: [string, string][] = [['doc', 'Đề thi'], ['deck', 'Slide'], ['board', 'Bảng vẽ'], ['online', 'Đề online'], ['upload', 'Tệp tải lên']]
+
+const mb = (n: number) => {
+  const v = n / 1048576
+  return `${v < 0.1 && n > 0 ? '<0,1' : v.toLocaleString('vi-VN', { maximumFractionDigits: 1 })} MB`
+}
+
+/** Dung lượng lưu trữ trên máy chủ (đề, slide, bảng vẽ đồng bộ theo tài khoản). Giới hạn đặt ở trigger của user_items. */
+function StorageCard() {
+  const [st, setSt] = useState<Storage | 'loading' | 'error'>('loading')
+  const quota = useSyncStatus((s) => s.quota)
+  useEffect(() => {
+    let alive = true
+    void (async () => {
+      try {
+        const s = await currentSession()
+        if (!s) throw new Error()
+        const d = await rest<Storage>('/rpc/my_storage', { method: 'POST', token: s.access_token, body: {} })
+        if (alive) setSt(d)
+      } catch {
+        if (alive) setSt('error')
+      }
+    })()
+    return () => {
+      alive = false
+    }
+  }, [quota])
+
+  let body
+  if (st === 'loading') body = <p className="mt-6 text-[13px] text-ink-3">Đang tải…</p>
+  else if (st === 'error') body = <p className="mt-6 text-[13px] text-ink-3">Chưa tải được dung lượng, thử lại sau.</p>
+  else {
+    const pct = st.max > 0 ? Math.min(100, Math.round((st.used / st.max) * 100)) : 0
+    body = (
+      <>
+        <p className="mt-7 font-display text-[44px] font-semibold leading-none tracking-[-0.02em] text-ink tnum">
+          {mb(st.used)}
+          <span className="text-[18px] font-medium text-ink-3"> / {mb(st.max)}</span>
+        </p>
+        <CreditBar pct={pct} />
+        <ul className="mt-5 grid grid-cols-2 gap-x-6 gap-y-2 text-[13px] sm:grid-cols-3">
+          {KIND_LABEL.map(([k, label]) => {
+            const v = st.kinds[k]
+            const full = v?.limit != null && v.count >= v.limit
+            return (
+              <li key={k} className="flex items-baseline justify-between gap-2 border-b border-line-2 pb-1.5">
+                <span className="text-ink-2">{label}</span>
+                <span className={`tnum ${full ? 'font-semibold text-clay-deep' : 'text-ink-3'}`}>
+                  {v?.count ?? 0}{v?.limit != null ? `/${v.limit}` : ''} · {mb(v?.bytes ?? 0)}
+                </span>
+              </li>
+            )
+          })}
+        </ul>
+        <p className="mt-4 text-[12.5px] leading-relaxed text-ink-3">
+          Đề, slide, bảng vẽ được lưu trên máy chủ để mở ở máy khác. Ảnh và tệp PDF lưu riêng, không tính vào đây.
+          {pct >= 90 ? ' Sắp đầy: xoá bớt tệp cũ ở tab Bắt đầu trong trang soạn đề.' : ''}
+        </p>
+      </>
+    )
+  }
+  return (
+    <section className="rounded-[8px] bg-surface p-7 shadow-lift sm:p-8">
+      <h2 className="font-display text-[22px] font-semibold tracking-[-0.01em] text-ink">Dung lượng lưu trữ</h2>
+      {quota ? (
+        <p role="alert" className="mt-3 rounded-[6px] bg-clay-tint px-3 py-2 text-[13px] text-clay-deep">
+          Chưa đồng bộ được: {quota} Tệp vẫn còn trên máy này.
+        </p>
+      ) : null}
       {body}
     </section>
   )
