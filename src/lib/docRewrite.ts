@@ -144,6 +144,7 @@ export const FIGURE_GUIDE =
   '15) Cấu hình electron: {"kind":"electron","element":"Fe"}\n' +
   '16) Công thức cấu tạo hữu cơ: {"kind":"struct","formula":"CH3-CH(CH3)-CH2-OH"}\n' +
   '17) Đồ thị số mol (Hoá): {"kind":"chemgraph","xName":"n CO2","yName":"n↓","points":"(0; 0) (0,2; 0,2) (0,4; 0)"}\n' +
+  '18) Bảng số liệu / đối chiếu tuỳ ý: {"kind":"table","cells":"hàng 1 | ô 2 | ô 3\\nhàng 2 | a | b","header":"row|col|both|none","align":"center|left|right","merges":"","border":"all|outer|horizontal","fontSize":15}. Ô xuống dòng ghi "\\\\n" (hai kí tự) trong ô; chỉ số dùng x_1, x^2; gộp ô ghi "r1,c1:r2,c2" (vd. "1,1:1,3").\n' +
   'Biểu thức dùng biến x, ^ cho luỹ thừa, sqrt(), ln, sin, cos; nhân ngầm được (2x).'
 
 const TOOL_SYSTEM =
@@ -307,6 +308,19 @@ export function toolFromRaw(raw: Record<string, unknown>): ToolDoc {
       break
     case 'chemgraph':
       doc = { kind: 'chemgraph', spec: { xName: str('xName') || 'n', yName: str('yName') || 'n↓', points: need('points', 'Không thấy số liệu đồ thị.'), dashed: bool('dashed', true) } }
+      break
+    case 'table':
+      doc = {
+        kind: 'table',
+        spec: {
+          cells: need('cells', 'Chưa có nội dung các ô của bảng.'),
+          header: pick('header', ['row', 'col', 'both', 'none'] as const, 'row'),
+          align: pick('align', ['left', 'center', 'right'] as const, 'center'),
+          merges: str('merges'),
+          border: pick('border', ['all', 'outer', 'horizontal'] as const, 'all'),
+          fontSize: Math.min(20, Math.max(12, Math.round(num(raw.fontSize, 15)))),
+        },
+      }
       break
     default:
       throw new Error(note || 'Không thấy gì để vẽ minh hoạ trong đoạn đã chọn.')
