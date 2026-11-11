@@ -5,7 +5,7 @@
  */
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { AlignCenter, AlignLeft, AlignRight, Bold, ChevronDown, ChevronUp, ChevronsDown, ChevronsUp, Copy, Italic, Layers, Palette, SlidersHorizontal, Sparkles, Trash2, Type } from 'lucide-react'
+import { AlignCenter, AlignLeft, AlignRight, Bold, ChevronDown, ChevronUp, ChevronsDown, ChevronsUp, Copy, Italic, Layers, Palette, SlidersHorizontal, MessageSquarePlus, Sparkles, Trash2, Type } from 'lucide-react'
 import type { SlideElement } from '@/store/docs'
 import { REWRITE_PRESETS } from '@/lib/slideRewrite'
 import { graphicById, graphicMainColor } from '@/lib/slideGraphics'
@@ -355,6 +355,7 @@ export function SelectionToolbar({
   onSelectLayer,
   onAskAi,
   onEditText,
+  onAskChat,
 }: {
   el: SlideElement
   /** chiều cao hiển thị của phần tử (%), hộp chữ tự co theo nội dung */
@@ -372,6 +373,8 @@ export function SelectionToolbar({
   onAskAi?: (instruction: string) => Promise<void>
   /** bắt đầu gõ chữ trong hình khối */
   onEditText?: () => void
+  /** "Đưa vào chat": đính kèm phần tử vào khung Trợ lý AI */
+  onAskChat?: () => void
 }) {
   const isText = el.type === 'text'
   // thanh nằm nửa phải khung thì bảng màu mở sang trái, khỏi tràn mép
@@ -435,6 +438,22 @@ export function SelectionToolbar({
       style={style}
       onClick={(e) => e.stopPropagation()}
     >
+      {onAskChat && (
+        <>
+          <button
+            type="button"
+            title="Đính kèm phần tử này vào khung chat Trợ lý AI"
+            aria-label="Đưa vào chat"
+            className="flex h-7 shrink-0 items-center whitespace-nowrap gap-1 rounded-md px-2 text-[12px] font-semibold text-clay transition-colors hover:bg-paper-2"
+            onMouseDown={keep}
+            onClick={onAskChat}
+          >
+            <MessageSquarePlus className="size-3.5" />
+            Đưa vào chat
+          </button>
+          {sep}
+        </>
+      )}
       {isText && onAskAi && (
         <>
           <button
@@ -442,7 +461,7 @@ export function SelectionToolbar({
             title="Nhờ AI sửa ô chữ này"
             aria-label="Hỏi AI"
             aria-expanded={askOpen}
-            className={`flex h-7 items-center gap-1 rounded-md px-2 text-[12px] font-semibold text-clay transition-colors hover:bg-paper-2 ${askOpen ? 'bg-paper-2' : ''}`}
+            className={`flex h-7 shrink-0 items-center whitespace-nowrap gap-1 rounded-md px-2 text-[12px] font-semibold text-clay transition-colors hover:bg-paper-2 ${askOpen ? 'bg-paper-2' : ''}`}
             onMouseDown={keep}
             onClick={() => setAskOpen((v) => !v)}
           >

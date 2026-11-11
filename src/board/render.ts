@@ -149,6 +149,21 @@ function pencilFill(ctx: CanvasRenderingContext2D, color: string) {
   return pat
 }
 
+/** ảnh đã nạp (theo src); nạp xong thì báo để vẽ lại */
+const images = new Map<string, HTMLImageElement>()
+let onImageLoad: (() => void) | null = null
+export function setImageLoadHandler(fn: (() => void) | null) { onImageLoad = fn }
+function imageOf(src: string) {
+  let img = images.get(src)
+  if (!img) {
+    img = new Image()
+    img.onload = () => onImageLoad?.()
+    img.src = src
+    images.set(src, img)
+  }
+  return img
+}
+
 export function drawElement(ctx: CanvasRenderingContext2D, rc: ReturnType<typeof rough.canvas>, e: El) {
   ctx.save()
   ctx.globalAlpha = e.opacity / 100
@@ -159,7 +174,14 @@ export function drawElement(ctx: CanvasRenderingContext2D, rc: ReturnType<typeof
     ctx.translate(-cx, -cy)
   }
   ctx.translate(e.x, e.y)
-  if (e.kind === 'text') {
+  if (e.kind === 'image') {
+    const img = e.src ? imageOf(e.src) : null
+    if (img?.complete && img.naturalWidth) ctx.drawImage(img, 0, 0, e.w, e.h)
+    else {
+      ctx.fillStyle = '#f1efec'
+      ctx.fillRect(0, 0, e.w, e.h)
+    }
+  } else if (e.kind === 'text') {
     ctx.font = fontOf(e.fontSize)
     ctx.fillStyle = e.stroke
     ctx.textBaseline = 'top'

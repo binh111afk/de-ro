@@ -148,6 +148,7 @@ import {
 import { AiPanel } from './AiPanel'
 import { AiDock } from './Layout'
 import { SlideRibbon, type SlideRibbonTab } from './SlideRibbon'
+import { attachToAi } from '@/lib/aiAttach'
 
 const uid = () => Math.random().toString(36).slice(2, 10)
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
@@ -1218,6 +1219,18 @@ export function SlideEditor({
                 fg={theme.fg}
                 onUpdate={(patch) => updateElement(currentSlide.id, selectedElement.id, patch)}
                 onEditText={() => setEditingShapeId(selectedElement.id)}
+                onAskChat={() => {
+                  const el = selectedElement
+                  const idx = deck.slides.findIndex((s) => s.id === currentSlide.id) + 1
+                  const text = 'text' in el && typeof el.text === 'string' ? el.text.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim() : ''
+                  const kind = ({ text: 'Hộp chữ', shape: 'Hình khối', image: 'Ảnh', icon: 'Icon', graphic: 'Đồ hoạ', table: 'Bảng', chart: 'Biểu đồ' } as Record<string, string>)[el.type] ?? 'Phần tử'
+                  attachToAi('slide', [{
+                    id: `${currentSlide.id}-${el.id}`,
+                    label: `${kind}${text ? ` “${text.slice(0, 18)}${text.length > 18 ? '…' : ''}”` : ''} · slide ${idx}`,
+                    detail: `${kind} (id ${el.id}) trên slide ${idx}, vị trí x=${Math.round(el.x)}% y=${Math.round(el.y)}% rộng ${Math.round(el.w)}% cao ${Math.round(el.h)}%${text ? `, nội dung: "${text.slice(0, 1500)}"` : ''}`,
+                  }])
+                  setAiOpen(true)
+                }}
                 onDelete={() => removeElement(currentSlide.id, selectedElement.id)}
                 onArrange={arrangeSelected}
                 elements={currentSlide.elements}
@@ -1279,6 +1292,7 @@ export function SlideEditor({
       <AiDock open={aiOpen} onToggle={() => setAiOpen((v) => !v)} width={360} side="right">
         <AiPanel
           mode="slide"
+          attachKey="slide"
           onApplySlides={applyAiResult}
           onAppendSlide={applyAiSlide}
           onApplyHtmlDeck={applyHtmlDeck}

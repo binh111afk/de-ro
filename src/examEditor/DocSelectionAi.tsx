@@ -6,7 +6,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react
 import { createPortal } from 'react-dom'
 import type { Editor } from '@tiptap/core'
 import { TextSelection } from '@tiptap/pm/state'
-import { ChartSpline, Check, Copy, PencilRuler, RotateCcw, Sparkles, X } from 'lucide-react'
+import { ChartSpline, Check, Copy, MessageSquarePlus, PencilRuler, RotateCcw, Sparkles, X } from 'lucide-react'
 import { DOC_REWRITE_PRESETS, planTool, rewriteSelection, wantsPlot, type ToolPlan } from '@/lib/docRewrite'
 import { svgDataUrl } from '@/lib/plot'
 import { renderTool, type ToolDoc } from '@/lib/toolSpec'
@@ -46,6 +46,7 @@ export function DocSelectionAi({
   context,
   onInsertPlot,
   onEditPlot,
+  onAskChat,
 }: {
   editor: Editor | null
   context?: string
@@ -53,6 +54,8 @@ export function DocSelectionAi({
   onInsertPlot?: (img: PlotImage, after: number) => void
   /** mở công cụ Đồ thị với cấu hình AI điền sẵn, chèn vào `after` */
   onEditPlot?: (doc: ToolDoc, after: number) => void
+  /** "Đưa vào chat": đính kèm đoạn đang chọn vào khung Trợ lý AI */
+  onAskChat?: (text: string) => void
 }) {
   const [range, setRange] = useState<Range | null>(null)
   const [pos, setPos] = useState<{ left: number; top: number; below: boolean } | null>(null)
@@ -274,14 +277,23 @@ export function DocSelectionAi({
       onMouseDown={keep}
     >
       {phase === 'pill' ? (
-        <button
-          type="button"
-          onClick={() => setPhase('ask')}
-          className="flex h-8 items-center gap-1.5 rounded-lg border border-line bg-surface px-2.5 text-[12.5px] font-semibold text-clay shadow-[0_6px_18px_-6px_rgba(35,32,28,0.35)] transition-colors hover:bg-paper-2"
-        >
-          <Sparkles className="size-3.5" />
-          Hỏi AI
-        </button>
+        <div className="flex h-8 items-stretch overflow-hidden rounded-lg border border-line bg-surface text-[12.5px] font-semibold text-clay shadow-[0_6px_18px_-6px_rgba(35,32,28,0.35)]">
+          <button type="button" onClick={() => setPhase('ask')} className="flex items-center gap-1.5 px-2.5 transition-colors hover:bg-paper-2">
+            <Sparkles className="size-3.5" />
+            Hỏi AI
+          </button>
+          {onAskChat && range && (
+            <button
+              type="button"
+              title="Đính kèm đoạn đang chọn vào khung chat Trợ lý AI"
+              onClick={() => { onAskChat(range.text); close() }}
+              className="flex items-center gap-1.5 border-l border-line px-2.5 transition-colors hover:bg-paper-2"
+            >
+              <MessageSquarePlus className="size-3.5" />
+              Đưa vào chat
+            </button>
+          )}
+        </div>
       ) : (
         <div
           role="dialog"

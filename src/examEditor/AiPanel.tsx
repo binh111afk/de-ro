@@ -33,6 +33,8 @@ import { buildSourcePack, sourcePrompt, sourceRule, type SourcePack } from '@/li
 import { cn } from '@/lib/cn'
 import { DIFFICULTY_RULE } from '@/lib/difficulty'
 import { FIGURE_GUIDE } from '@/lib/docRewrite'
+import { AI_ATTACH_EVENT, takeAiRefs, type AiRef } from '@/lib/aiAttach'
+import { extractJson } from '@/lib/llm'
 import aiThinkingAnim from '@/assets/ai-assistant.svg'
 import { Markdown } from './markdown'
 import { IconClose, IconEnter, IconPaperclip, IconStop } from './icons'
@@ -132,6 +134,8 @@ export interface ChatTurn {
   text: string
   /** tệp đính kèm của lượt người dùng (để hiển thị lại trong chat) */
   files?: Attachment[]
+  /** thành phần đang chọn được đính kèm (bảng vẽ, câu hỏi, slide) */
+  refs?: string[]
   /** true khi đang chờ model */
   pending?: boolean
   /** 'doc' = yêu cầu soạn/sửa tài liệu, 'chat' = hỏi đáp thường */
@@ -227,6 +231,58 @@ const STARTERS = [
 ]
 
 /** gợi ý riêng cho ngữ cảnh soạn slide */
+/** soạn đề, soạn slide, hay bảng vẽ (chỉ trò chuyện, chưa vẽ lên bảng) */
+export type AiMode = 'exam' | 'slide' | 'board'
+
+const BOARD_STARTERS = [
+  {
+    title: 'Gợi ý hình minh hoạ',
+    prompt: 'Tôi đang giảng định lý Pytago lớp 8. Gợi ý cách vẽ hình minh hoạ lên bảng, từng bước một.',
+  },
+  {
+    title: 'Dàn ý trình bày bảng',
+    prompt: 'Lập dàn ý chia bảng thành các phần để giảng bài "Hệ thức lượng trong tam giác vuông" lớp 9.',
+  },
+  {
+    title: 'Ví dụ giảng nhanh',
+    prompt: 'Cho 3 ví dụ ngắn, giải được ngay trên bảng, về phương trình bậc hai lớp 9.',
+  },
+  {
+    title: 'Câu hỏi gợi mở',
+    prompt: 'Gợi ý 5 câu hỏi gợi mở để hỏi học sinh khi giảng về lực ma sát lớp 10.',
+  },
+]
+
+const BOARD_SYSTEM =
+  'Bạn là trợ lý của giáo viên Việt Nam đang giảng bài trên bảng vẽ điện tử (vẽ tay bằng bút, có hình khối, ' +
+  'mũi tên, chữ, đồ thị chèn từ công cụ). Trả lời bằng tiếng Việt, ngắn gọn, dễ làm theo khi đang đứng lớp: ' +
+  'gợi ý cách vẽ hình minh hoạ từng bước, cách chia bố cục bảng, ví dụ ngắn giải được trên bảng, câu hỏi gợi mở. ' +
+  'Công thức toán trong câu trả lời chữ viết bằng LaTeX trong $...$.'
+
+/** lệnh vẽ của bảng vẽ: AI trả JSON {"say","ops"} thì bảng vẽ thực hiện */
+const BOARD_OPS_GUIDE =
+  '\n\nBẠN VẼ ĐƯỢC LÊN BẢNG. Khi người dùng nhờ vẽ, ghi, đổi hoặc xoá thứ gì trên bảng, CHỈ trả về một JSON (không bọc markdown): ' +
+  '{"say":"câu ngắn báo đã làm gì","ops":[...]}. Câu hỏi bình thường thì trả lời bằng chữ như thường, không JSON.\n' +
+  'Toạ độ là đơn vị của bảng (x sang phải, y xuống dưới), đặt hình trong vùng đang nhìn thấy (xem "Vùng nhìn thấy"), ' +
+  'chừa khoảng cách để không đè lên hình có sẵn. Màu dạng "#rrggbb". Các lệnh:\n' +
+  '- {"op":"figure","figure":{...cấu hình hình vẽ, xem danh sách bên dưới},"x":100,"y":80,"w":360} — đồ thị, bảng biến thiên, hình học, mạch điện… vẽ CHUẨN bằng công cụ có sẵn. Ưu tiên lệnh này cho mọi hình toán, lí, hoá.\n' +
+  '- {"op":"shape","shape":"rectangle|ellipse|diamond","x":0,"y":0,"w":160,"h":90,"stroke":"#1e1e1e","fill":"transparent|#rrggbb","fillStyle":"hachure|solid","strokeStyle":"solid|dashed|dotted","strokeWidth":2,"rough":true,"label":"chữ ở giữa (tuỳ chọn)"}\n' +
+  '- {"op":"line","arrow":true,"points":[[x1,y1],[x2,y2]],"stroke":"#1e1e1e","strokeStyle":"solid","strokeWidth":2} — mũi tên / đường thẳng / đường gấp khúc.\n' +
+  '- {"op":"text","text":"...","x":0,"y":0,"fontSize":24,"color":"#1e1e1e"} — chữ thường, không LaTeX.\n' +
+  '- {"op":"pen","pen":"pencil|ball|fountain|brush|marker|highlight","color":"#1e1e1e","width":2,"points":[[x,y],...]} — nét vẽ tay bằng bút; hoặc thay "points" bằng "curve":{"type":"circle|ellipse|wave|star|polygon","cx":0,"cy":0,"r":60,"rx":80,"ry":50,"n":5,"len":300,"amp":20,"points":[[x,y],...]}. Chỉ dùng khi người dùng muốn vẽ bằng bút; hình phức tạp thì giữ đơn giản.\n' +
+  '- {"op":"update","id":"<id>","stroke":"#...","fill":"#...","x":0,"y":0,"w":0,"h":0,"text":"..."} — sửa hình có sẵn (id trong danh sách hình trên bảng hoặc phần đang chọn).\n' +
+  '- {"op":"delete","ids":["<id>",...]}\n' +
+  'Cấu hình "figure" (giống công cụ của app):\n' + FIGURE_GUIDE
+
+function RefIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M4 7V5a1 1 0 0 1 1-1h2M17 4h2a1 1 0 0 1 1 1v2M20 17v2a1 1 0 0 1-1 1h-2M7 20H5a1 1 0 0 1-1-1v-2" />
+      <path d="M9 12l2 2 4-4" />
+    </svg>
+  )
+}
+
 const SLIDE_STARTERS = [
   {
     title: 'Lập dàn ý bài giảng',
@@ -272,7 +328,8 @@ const CHAT_THINKING = [
 ]
 
 /** Đoán nhanh yêu cầu có sửa tài liệu không, để chọn dải trạng thái phù hợp. */
-function detectIntent(text: string, mode: 'exam' | 'slide'): 'doc' | 'chat' {
+function detectIntent(text: string, mode: AiMode): 'doc' | 'chat' {
+  if (mode === 'board') return 'chat'
   const t = text.toLowerCase()
   const hints =
     mode === 'slide'
@@ -281,7 +338,7 @@ function detectIntent(text: string, mode: 'exam' | 'slide'): 'doc' | 'chat' {
   return hints.some((h) => t.includes(h)) ? 'doc' : 'chat'
 }
 
-function ThinkingLine({ mode, intent }: { mode: 'exam' | 'slide'; intent?: 'doc' | 'chat' }) {
+function ThinkingLine({ mode, intent }: { mode: AiMode; intent?: 'doc' | 'chat' }) {
   const steps =
     intent === 'chat' ? CHAT_THINKING : mode === 'slide' ? SLIDE_THINKING : EXAM_THINKING
   const [step, setStep] = useState(0)
@@ -707,6 +764,8 @@ export function AiPanel({
   contextSummary,
   documentDigest,
   mode = 'exam',
+  attachKey,
+  onBoardOps,
 }: {
   /** nhận nội dung AI sinh ra để áp vào tài liệu; trả về một câu tóm tắt để hiện trong chat */
   onApplyBlocks?: (text: string) => string | undefined
@@ -730,14 +789,32 @@ export function AiPanel({
   contextSummary?: string
   /** bản tóm tắt nội dung đề (id + loại khối + trích đoạn) cho model sửa đúng chỗ */
   documentDigest?: string
-  /** 'exam' = soạn đề, 'slide' = soạn bài trình bày */
-  mode?: 'exam' | 'slide'
+  /** 'exam' = soạn đề, 'slide' = soạn bài trình bày, 'board' = bảng vẽ */
+  mode?: AiMode
+  /** nhận phần đính kèm "Hỏi AI" (attachToAi) có cùng khoá */
+  attachKey?: string
+  /** bảng vẽ: áp các lệnh vẽ AI trả về; trả các dòng báo lại người dùng */
+  onBoardOps?: (ops: Record<string, unknown>[]) => string[]
 }) {
-  const starters = mode === 'slide' ? SLIDE_STARTERS : STARTERS
+  const starters = mode === 'slide' ? SLIDE_STARTERS : mode === 'board' ? BOARD_STARTERS : STARTERS
   const [turns, setTurns] = useState<ChatTurn[]>([])
   const [input, setInput] = useState('')
   const quota = useAiQuota()
   const [files, setFiles] = useState<Attachment[]>([])
+  const [refs, setRefs] = useState<AiRef[]>([])
+  useEffect(() => {
+    if (!attachKey) return
+    const take = () => {
+      const got = takeAiRefs(attachKey)
+      if (!got.length) return
+      setRefs((cur) => [...cur, ...got.filter((g) => !cur.some((c) => c.id === g.id))])
+      requestAnimationFrame(() => taRef.current?.focus())
+    }
+    take()
+    const on = (e: Event) => { if ((e as CustomEvent).detail?.key === attachKey) take() }
+    window.addEventListener(AI_ATTACH_EVENT, on)
+    return () => window.removeEventListener(AI_ATTACH_EVENT, on)
+  }, [attachKey])
   const [removingFiles, setRemovingFiles] = useState<string[]>([])
   const [busy, setBusy] = useState(false)
   /** slide: 'deck' = layout engine (PPT), 'html' = một tệp HTML tự chứa */
@@ -812,7 +889,11 @@ export function AiPanel({
 
   const send = useCallback(async () => {
     const text = input.trim()
-    if ((!text && files.length === 0) || busy) return
+    if ((!text && files.length === 0 && refs.length === 0) || busy) return
+    const sentRefs = refs
+    const refNote = sentRefs.length
+      ? `\n\nPhần đang chọn (người dùng hỏi về phần này):\n${sentRefs.map((r) => `- ${r.label}: ${r.detail}`).join('\n')}`
+      : ''
 
     const sentFiles = files
     const fileNote = sentFiles.length
@@ -824,7 +905,7 @@ export function AiPanel({
     // Giữ File trong `sentFiles` để trích nội dung; lượt chat chỉ lưu metadata
     // để không giữ cả tệp lớn trong state sau khi gửi.
     const displayFiles = sentFiles.map((f) => ({ ...f, file: undefined }))
-    const userTurn: ChatTurn = { id: `u${Date.now()}`, role: 'user', text, files: displayFiles }
+    const userTurn: ChatTurn = { id: `u${Date.now()}`, role: 'user', text, files: displayFiles, refs: sentRefs.map((r) => r.label) }
     const botId = `a${Date.now()}`
     const intent = sentFiles.length && !text.trim() ? 'doc' : detectIntent(text, mode)
     setTurns((t) => [
@@ -837,6 +918,7 @@ export function AiPanel({
       setTurns((t) => t.map((turn) => (turn.id === botId ? { ...turn, ...p(turn) } : turn)))
     setInput('')
     setFiles([])
+    setRefs([])
     setBusy(true)
 
     const controller = new AbortController()
@@ -883,7 +965,9 @@ export function AiPanel({
     const slideDoc = mode === 'slide' && intent === 'doc'
     const htmlMode = mode === 'slide' && intent === 'doc' && slideFormat === 'html'
     const system =
-      mode === 'slide'
+      mode === 'board'
+        ? BOARD_SYSTEM + (onBoardOps ? BOARD_OPS_GUIDE : '') + (contextSummary ? `\nBảng vẽ hiện tại:\n${contextSummary}` : '')
+        : mode === 'slide'
         ? (htmlMode
             ? HTML_SYSTEM
             : slideDoc
@@ -895,7 +979,7 @@ export function AiPanel({
     const messages: LlmMessage[] = [
       { role: 'system', content: system + sourceBlock },
       ...history,
-      { role: 'user', content: (text || 'Hãy xử lý các tệp đính kèm sau.') + fileNote },
+      { role: 'user', content: (text || (sentRefs.length ? 'Giải thích hoặc góp ý cho phần đang chọn.' : 'Hãy xử lý các tệp đính kèm sau.')) + fileNote + refNote },
     ]
 
     try {
@@ -969,6 +1053,25 @@ export function AiPanel({
               : turn,
           ),
         )
+        return
+      }
+      if (mode === 'board') {
+        let say = res.content
+        let lines: string[] = []
+        if (onBoardOps && /"ops"\s*:/.test(res.content)) {
+          try {
+            const raw = extractJson(res.content) as { say?: unknown; ops?: unknown }
+            if (Array.isArray(raw.ops)) {
+              lines = onBoardOps(raw.ops.filter((o): o is Record<string, unknown> => !!o && typeof o === 'object'))
+              say = typeof raw.say === 'string' ? raw.say : ''
+            }
+          } catch {
+            say = 'AI trả lệnh vẽ không đọc được, bạn thử nói lại ngắn hơn nhé.'
+          }
+        }
+        const text = [say.trim(), lines.length ? lines.map((l) => `• ${l}`).join('\n') : '', lines.length ? 'Bấm Ctrl+Z trên bảng nếu muốn hoàn tác.' : '']
+          .filter(Boolean).join('\n\n')
+        setTurns((t) => t.map((turn) => (turn.id === botId ? { ...turn, text, pending: false } : turn)))
         return
       }
       if (mode === 'slide') {
@@ -1072,7 +1175,7 @@ export function AiPanel({
       setBusy(false)
       abortRef.current = null
     }
-  }, [input, files, busy, turns, contextSummary, documentDigest, mode, onApplyBlocks, onApplySlides, slideFormat, existingSlideCount, editContext, onApplyEdits])
+  }, [input, files, refs, busy, turns, contextSummary, documentDigest, mode, onApplyBlocks, onApplySlides, slideFormat, existingSlideCount, editContext, onApplyEdits, onBoardOps])
 
   const stop = useCallback(() => {
     abortRef.current?.abort()
@@ -1255,10 +1358,12 @@ export function AiPanel({
         {empty ? (
           <div className="ai-chat-empty">
             <div className="ai-chat-empty-title">
-              {mode === 'slide' ? 'Nhờ AI soạn slide giúp bạn' : 'Nhờ AI soạn đề giúp bạn'}
+              {mode === 'slide' ? 'Nhờ AI soạn slide giúp bạn' : mode === 'board' ? 'Hỏi AI khi giảng trên bảng' : 'Nhờ AI soạn đề giúp bạn'}
             </div>
             <div className="ai-chat-empty-body">
-              {mode === 'slide'
+              {mode === 'board'
+                ? 'Nhờ AI gợi ý cách vẽ minh hoạ, dàn ý trình bày trên bảng, ví dụ và câu hỏi gợi mở cho bài đang giảng.'
+                : mode === 'slide'
                 ? slideFormat === 'html'
                   ? 'AI dựng từng slide bằng HTML (16:9) để trình chiếu trên web. Không sửa hay xuất PPT được.'
                   : 'Mô tả chủ đề bài giảng; AI lập dàn ý để bạn duyệt rồi viết nội dung từng slide.'
@@ -1308,6 +1413,16 @@ export function AiPanel({
                 }
                 onCancel={() => cancelPlan(turn.id)}
               />
+              {turn.refs?.length ? (
+                <div className="ai-msg-files">
+                  {turn.refs.map((label, i) => (
+                    <span key={i} className="ai-msg-file" title={label}>
+                      <span className="text-clay"><RefIcon /></span>
+                      <span>{label}</span>
+                    </span>
+                  ))}
+                </div>
+              ) : null}
               {turn.files?.length ? (
                 <div className="ai-msg-files">
                   {turn.files.map((f) => (
@@ -1331,6 +1446,23 @@ export function AiPanel({
 
       <div className="ai-composer">
         <div className="ai-input-box">
+          {refs.length > 0 && (
+            <div className="ai-attachments">
+              {refs.map((r) => (
+                <div key={r.id} className="ai-attachment" title={r.detail.slice(0, 300)}>
+                  <span className="ai-attachment__icon grid place-items-center text-clay"><RefIcon /></span>
+                  <span className="ai-attachment__meta">
+                    <span className="ai-attachment__name">{r.label}</span>
+                    <span className="ai-attachment__size">Đang chọn</span>
+                  </span>
+                  <button type="button" className="ai-attachment__remove" title="Bỏ đính kèm" aria-label={`Bỏ ${r.label}`}
+                    onClick={() => setRefs((cur) => cur.filter((x) => x.id !== r.id))}>
+                    <IconClose size={11} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
           {files.length > 0 && (
             <div className="ai-attachments">
               {files.map((f) => (
@@ -1363,7 +1495,9 @@ export function AiPanel({
           <textarea
             ref={taRef}
             placeholder={
-              mode === 'slide'
+              mode === 'board'
+                ? 'Hỏi về bài đang giảng trên bảng…'
+                : mode === 'slide'
                 ? slideFormat === 'html'
                   ? 'Mô tả bài trình bày cần tạo (slide HTML)…'
                   : 'Mô tả bài giảng cần soạn…'

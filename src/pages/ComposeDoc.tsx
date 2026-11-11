@@ -50,6 +50,7 @@ import { IconZoomIn, IconZoomOut } from '@/examEditor/icons'
 import type { ExamBlock, ExamDoc, FormatAttrs, RichText } from '@/data/docTypes'
 import { emptyDoc } from '@/data/docTypes'
 import { cn } from '@/lib/cn'
+import { attachToAi } from '@/lib/aiAttach'
 
 const SESSION_KEY = 'dethinhbien-compose-session'
 const MOBILE_VIEW_KEY = 'dethinhbien-mobile-view'
@@ -1063,6 +1064,11 @@ export default function ComposeDoc() {
           context={activeDoc ? `đề "${activeDoc.title}"` : undefined}
           onInsertPlot={(img, after) => void handleInsertPlot(img, { after })}
           onEditPlot={(doc, after) => setPlotEdit({ doc, target: { after } })}
+          onAskChat={(text) => {
+            const t = text.trim()
+            attachToAi('exam', [{ id: `sel-${t.length}-${t.slice(0, 40)}`, label: `“${t.length > 26 ? `${t.slice(0, 26)}…` : t}”`, detail: `đoạn đang bôi đen trong đề: "${t.slice(0, 2000)}"` }])
+            setAiOpen(true)
+          }}
         />
         {plotEdit && (
           <ToolModal
@@ -1079,6 +1085,7 @@ export default function ComposeDoc() {
         {/* AI dock (phải, như soạn slide) */}
         <AiDock open={aiOpen} onToggle={() => setAiOpen((v) => !v)} width={360} side="right">
           <AiPanel
+            attachKey="exam"
             onApplyBlocks={handleAiResult}
             documentDigest={documentDigest}
             contextSummary={

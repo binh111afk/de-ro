@@ -4,7 +4,7 @@
  * `packages/element/src/types.ts`, `bounds.ts`, `collision.ts`, `transformHandles.ts`. Viết lại gọn, không chép nguyên.
  */
 
-export type Kind = 'rectangle' | 'ellipse' | 'diamond' | 'line' | 'arrow' | 'freedraw' | 'text'
+export type Kind = 'rectangle' | 'ellipse' | 'diamond' | 'line' | 'arrow' | 'freedraw' | 'text' | 'image'
 export type StrokeStyle = 'solid' | 'dashed' | 'dotted'
 export type FillStyle = 'hachure' | 'solid'
 export type Pt = [number, number]
@@ -42,6 +42,8 @@ export interface El extends Style {
   tipSharp?: number
   tipSens?: number
   text?: string
+  /** ảnh (đồ thị, hình học… từ panel Công cụ): data URL */
+  src?: string
   /** tăng mỗi khi hình dạng đổi (không tính di chuyển) — khoá cache nét rough */
   ver: number
 }
@@ -145,6 +147,7 @@ export function hitTest(e: El, p: Pt, tol: number): boolean {
 
   switch (e.kind) {
     case 'text':
+    case 'image':
       return true
     case 'rectangle': {
       if (filled) return true

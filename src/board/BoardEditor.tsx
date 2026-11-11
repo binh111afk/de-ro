@@ -11,7 +11,13 @@ import {
   mutate, newId, newSeed, rotate, unionBounds, worldBounds, fontOf, LINE_HEIGHT, inPolygon,
   type Bounds, type El, type Handle, type Kind, type Paper, type PenKind, type Pt, type Style,
 } from './scene'
-import { dropFromCache, LASER_LIFE, penOutline, render, svgPathFromStroke, type LaserTrail, type View } from './render'
+import { dropFromCache, LASER_LIFE, penOutline, render, setImageLoadHandler, svgPathFromStroke, type LaserTrail, type View } from './render'
+import { AiPanel } from '@/examEditor/AiPanel'
+import { ToolsPanel } from '@/examEditor/tools/ToolsPanel'
+import { svgDataUrl } from '@/lib/plot'
+import { renderTool, type ToolImage } from '@/lib/toolSpec'
+import { figureDoc } from '@/examEditor/toolImages'
+import { attachToAi, type AiRef } from '@/lib/aiAttach'
 import { recognize } from './recognize'
 
 type Tool = 'select' | 'hand' | Kind | 'eraser' | 'laser'
@@ -120,6 +126,14 @@ export default function BoardEditor({ id }: { id: string }) {
   editingRef.current = editing
   const [, setTick] = useState(0)
   const [pop, setPop] = useState<string | null>(null)
+  /** panel bên: trợ lý (trái), công cụ (phải) */
+  const [side, setSide] = useState<SideTab | null>(null)
+  /** đã từng mở tab nào: giữ nội dung (lịch sử trò chuyện) khi đóng / đổi tab */
+  const [mounted, setMounted] = useState<Set<SideTab>>(new Set())
+  const toggleSide = (t: SideTab) => {
+    setMounted((m) => (m.has(t) ? m : new Set(m).add(t)))
+    setSide((cur) => (cur === t ? null : t))
+  }
   const bump = useCallback(() => setTick((t) => t + 1), [])
 
   /** kiểu nét đang dùng — theo công cụ (và loại bút) hiện tại */
@@ -157,9 +171,9 @@ export default function BoardEditor({ id }: { id: string }) {
 
   const raf = useRef(0)
   const marquee = useRef<Bounds | null>(null)
-  const redraw = useCallback(() => {
-    cancelAnimationFrame(raf.current)
-    raf.current = requestAnimationFrame(() => {
+  /** vẽ ngay (đồng bộ) */
+  const paint = useCallback(() => {
+    {
       const c = canvasRef.current
       if (!c) return
       const now = performance.now()
@@ -184,8 +198,13 @@ export default function BoardEditor({ id }: { id: string }) {
       })
       // laser còn vệt thì vẽ tiếp khung sau để mờ dần
       if (laser.current.some((tr) => tr.pts.length)) redrawRef.current()
-    })
+    }
   }, [])
+  /** vẽ ở khung hình kế tiếp (gộp nhiều lần gọi) */
+  const redraw = useCallback(() => {
+    cancelAnimationFrame(raf.current)
+    raf.current = requestAnimationFrame(paint)
+  }, [paint])
   const redrawRef = useRef(redraw)
 
   const saveTimer = useRef(0)
@@ -247,7 +266,9 @@ export default function BoardEditor({ id }: { id: string }) {
       c.height = Math.round(wrap.clientHeight * dpr)
       c.style.width = `${wrap.clientWidth}px`
       c.style.height = `${wrap.clientHeight}px`
-      redraw()
+      // đổi cỡ canvas xoá trắng nó: vẽ lại ngay trong cùng khung hình, không đợi khung sau (tránh chớp khi panel trượt)
+      cancelAnimationFrame(raf.current)
+      paint()
     })
     ro.observe(wrap)
     // phông chữ tải xong thì đo / vẽ lại chữ
@@ -256,7 +277,7 @@ export default function BoardEditor({ id }: { id: string }) {
       redraw()
     })
     return () => ro.disconnect()
-  }, [redraw])
+  }, [redraw, paint])
 
   /* ---------- tiện ích toạ độ ---------- */
 
@@ -886,6 +907,181 @@ export default function BoardEditor({ id }: { id: string }) {
     if (canvasRef.current && !drag.current) canvasRef.current.style.cursor = toolCursor()
   })
 
+  /** chèn hình từ panel Công cụ (đồ thị, hình học…) vào giữa khung nhìn, chọn sẵn để kéo / đổi cỡ */
+  const insertImage = (img: ToolImage) => {
+    const c = canvasRef.current
+    if (!c) return
+    const v = view.current
+    const r = c.getBoundingClientRect()
+    const w = Math.min(420, (r.width / v.zoom) * 0.6)
+    const h = (w * img.height) / img.width
+    const cx = r.width / 2 / v.zoom - v.scrollX, cy = r.height / 2 / v.zoom - v.scrollY
+    const el: El = { ...newElement('image', [cx - w / 2, cy - h / 2]), w, h, src: svgDataUrl(img.svg), opacity: 100 }
+    els.current.push(el)
+    pickTool('select')
+    selected.current = new Set([el.id])
+    commit()
+  }
+
+  useEffect(() => {
+    setImageLoadHandler(redraw)
+    return () => setImageLoadHandler(null)
+  }, [redraw])
+
+  /* ---------- AI: mô tả bảng, lệnh vẽ, "Hỏi AI" theo phần đang chọn ---------- */
+
+  const aiKey = `board-${id}`
+  const r1 = (n: number) => Math.round(n)
+  const describeEl = (e: El) => {
+    const [x1, y1, x2, y2] = worldBounds(e)
+    const what = e.kind === 'freedraw' ? `nét ${PENS.find((pn) => pn.id === e.pen)?.label.toLowerCase() ?? 'bút'}` : KIND_LABEL[e.kind]
+    const extra = [
+      e.kind === 'text' ? `chữ "${(e.text ?? '').slice(0, 80)}"` : '',
+      e.kind !== 'image' ? `màu ${e.stroke}` : '',
+      e.fill !== 'transparent' && e.kind !== 'image' && e.kind !== 'text' ? `nền ${e.fill}` : '',
+    ].filter(Boolean).join(', ')
+    return `id=${e.id} ${what} tại x=${r1(x1)} y=${r1(y1)} rộng ${r1(x2 - x1)} cao ${r1(y2 - y1)}${extra ? `, ${extra}` : ''}`
+  }
+  const boardSummary = () => {
+    const c = canvasRef.current
+    const v = view.current
+    const W = (c?.clientWidth ?? 800) / v.zoom, H = (c?.clientHeight ?? 600) / v.zoom
+    const head = `Vùng nhìn thấy: x từ ${r1(-v.scrollX)} đến ${r1(-v.scrollX + W)}, y từ ${r1(-v.scrollY)} đến ${r1(-v.scrollY + H)}. Giấy: ${PAPERS.find((pp) => pp.id === opts.current.paper)?.label}.`
+    const list = els.current.slice(-80).map(describeEl)
+    return `${head}\n${list.length ? `Các hình trên bảng (${els.current.length}):\n${list.join('\n')}` : 'Bảng đang trống.'}`
+  }
+
+  /** "Hỏi AI": đính kèm các hình đang chọn vào khung chat rồi mở Trợ lý */
+  const askAi = () => {
+    const refs: AiRef[] = sel().map((e) => ({ id: e.id, label: e.kind === 'text' ? `Chữ "${(e.text ?? '').slice(0, 18)}"` : KIND_LABEL[e.kind] ?? 'Hình', detail: describeEl(e) }))
+    if (!refs.length) return
+    attachToAi(aiKey, refs)
+    setMounted((m) => (m.has('ai') ? m : new Set(m).add('ai')))
+    setSide('ai')
+  }
+
+  /** thực hiện các lệnh vẽ của AI; cả lượt là một bước hoàn tác */
+  const applyBoardOps = (ops: Record<string, unknown>[]): string[] => {
+    const out: string[] = []
+    const num = (v: unknown, d: number) => (typeof v === 'number' && Number.isFinite(v) ? v : d)
+    const str = (v: unknown, d: string) => (typeof v === 'string' && v ? v : d)
+    const color = (v: unknown, d: string) => (typeof v === 'string' && /^#[0-9a-f]{3,8}$/i.test(v) ? v : v === 'transparent' ? 'transparent' : d)
+    const pts = (v: unknown): Pt[] => (Array.isArray(v) ? v.filter((p) => Array.isArray(p) && p.length >= 2).map((p) => [Number(p[0]), Number(p[1])] as Pt).filter((p) => p.every(Number.isFinite)) : [])
+    const c = canvasRef.current
+    const v = view.current
+    const cx = ((c?.clientWidth ?? 800) / 2) / v.zoom - v.scrollX, cy = ((c?.clientHeight ?? 600) / 2) / v.zoom - v.scrollY
+    const added: El[] = []
+    const base = (kind: Kind, slot: Slot, x: number, y: number): El => ({ ...newElement(kind, [x, y]), ...styles.current[slot], pen: undefined, x, y })
+    for (const op of ops) {
+      try {
+        switch (op.op) {
+          case 'figure': {
+            const doc = figureDoc(op.figure)
+            if (!doc) { out.push('Không dựng được hình theo cấu hình AI gửi.'); break }
+            const img = renderTool(doc)
+            const w = num(op.w, 360), h = (w * img.height) / img.width
+            const el: El = { ...base('image', 'shape', num(op.x, cx - w / 2), num(op.y, cy - h / 2)), w, h, src: svgDataUrl(img.svg), opacity: 100 }
+            added.push(el)
+            out.push(`Đã vẽ ${TOOL_LABEL[doc.kind] ?? 'hình'}.`)
+            break
+          }
+          case 'shape': {
+            const kind = (['rectangle', 'ellipse', 'diamond'] as const).find((k) => k === op.shape) ?? 'rectangle'
+            const el = base(kind, 'shape', num(op.x, cx - 80), num(op.y, cy - 45))
+            Object.assign(el, {
+              w: Math.max(4, num(op.w, 160)), h: Math.max(4, num(op.h, 90)),
+              stroke: color(op.stroke, el.stroke), fill: color(op.fill, 'transparent'),
+              fillStyle: op.fillStyle === 'solid' ? 'solid' : 'hachure',
+              strokeStyle: (['solid', 'dashed', 'dotted'] as const).find((k) => k === op.strokeStyle) ?? 'solid',
+              strokeWidth: num(op.strokeWidth, 2), roughness: op.rough === false ? 0 : 1,
+            })
+            added.push(el)
+            if (typeof op.label === 'string' && op.label.trim()) {
+              const fs = Math.min(28, Math.max(14, el.h / 3))
+              const m = measureText(op.label, fs)
+              added.push({ ...base('text', 'text', el.x + el.w / 2 - m.w / 2, el.y + el.h / 2 - m.h / 2), text: op.label, fontSize: fs, ...m, stroke: el.stroke })
+            }
+            out.push(`Đã vẽ ${KIND_LABEL[kind].toLowerCase()}.`)
+            break
+          }
+          case 'line': {
+            const P = pts(op.points)
+            if (P.length < 2) break
+            const el = base(op.arrow ? 'arrow' : 'line', 'shape', P[0][0], P[0][1])
+            Object.assign(el, {
+              points: P.map(([x, y]) => [x - P[0][0], y - P[0][1]] as Pt),
+              stroke: color(op.stroke, el.stroke), strokeWidth: num(op.strokeWidth, 2), roughness: 0,
+              strokeStyle: (['solid', 'dashed', 'dotted'] as const).find((k) => k === op.strokeStyle) ?? 'solid',
+            })
+            added.push(el)
+            out.push(op.arrow ? 'Đã vẽ mũi tên.' : 'Đã vẽ đường thẳng.')
+            break
+          }
+          case 'text': {
+            const t = str(op.text, '').slice(0, 400)
+            if (!t) break
+            const fs = Math.min(96, Math.max(10, num(op.fontSize, 24)))
+            const m = measureText(t, fs)
+            added.push({ ...base('text', 'text', num(op.x, cx - m.w / 2), num(op.y, cy)), text: t, fontSize: fs, ...m, stroke: color(op.color, '#1e1e1e') })
+            out.push(`Đã ghi "${t.slice(0, 30)}${t.length > 30 ? '…' : ''}".`)
+            break
+          }
+          case 'pen': {
+            const pen = PENS.find((pn) => pn.id === op.pen)?.id ?? 'ball'
+            let P = pts(op.points)
+            const cv = op.curve as Record<string, unknown> | undefined
+            if (!P.length && cv) P = curvePoints(cv, cx, cy)
+            if (P.length < 2) break
+            const el: El = {
+              ...newElement('freedraw', P[0]), ...styles.current[pen], pen,
+              stroke: color(op.color, styles.current[pen].stroke), strokeWidth: num(op.width, styles.current[pen].strokeWidth),
+              points: densify(P).map(([x, y]) => [x - P[0][0], y - P[0][1]] as Pt), pressures: undefined,
+            }
+            const tp = opts.current.penTips[pen] ?? DEFAULT_TIP
+            el.tipSharp = tp.sharp
+            el.tipSens = tp.sens
+            added.push(el)
+            out.push(`Đã vẽ bằng ${PENS.find((pn) => pn.id === pen)!.label.toLowerCase()}.`)
+            break
+          }
+          case 'update': {
+            const e = els.current.find((x) => x.id === op.id)
+            if (!e) break
+            const patch: Partial<El> = {}
+            if (op.stroke) patch.stroke = color(op.stroke, e.stroke)
+            if (op.fill) patch.fill = color(op.fill, e.fill)
+            if (typeof op.x === 'number') patch.x = op.x
+            if (typeof op.y === 'number') patch.y = op.y
+            if (typeof op.w === 'number' && !hasPoints(e)) patch.w = op.w
+            if (typeof op.h === 'number' && !hasPoints(e)) patch.h = op.h
+            if (typeof op.text === 'string' && e.kind === 'text') Object.assign(patch, { text: op.text, ...measureText(op.text, e.fontSize) })
+            mutate(e, patch)
+            out.push(`Đã sửa ${KIND_LABEL[e.kind]?.toLowerCase() ?? 'hình'}.`)
+            break
+          }
+          case 'delete': {
+            const ids = new Set(Array.isArray(op.ids) ? op.ids.map(String) : [])
+            const before = els.current.length
+            els.current = els.current.filter((e) => !ids.has(e.id))
+            for (const i of ids) selected.current.delete(i)
+            if (before !== els.current.length) out.push(`Đã xoá ${before - els.current.length} hình.`)
+            break
+          }
+        }
+      } catch {
+        out.push('Bỏ qua một lệnh vẽ bị lỗi.')
+      }
+    }
+    if (added.length) {
+      els.current.push(...added)
+      pickTool('select')
+      selected.current = new Set(added.map((e) => e.id))
+    }
+    commit()
+    redraw()
+    return out.length ? out : ['AI không gửi lệnh vẽ nào dùng được.']
+  }
+
   /* menu thả xuống: bấm ra ngoài hoặc Esc thì đóng */
   useEffect(() => {
     if (!pop) return
@@ -928,6 +1124,7 @@ export default function BoardEditor({ id }: { id: string }) {
   const onlyText = kinds.size > 0 && [...kinds].every((k) => k === 'text')
   const canFill = [...kinds].some((k) => k === 'rectangle' || k === 'ellipse' || k === 'diamond')
   const hasText = kinds.has('text')
+  const onlyImage = kinds.size > 0 && [...kinds].every((k) => k === 'image')
   const o = opts.current
   const setOpt = <K extends keyof Opts>(k: K, value: Opts[K]) => {
     opts.current = { ...opts.current, [k]: value }
@@ -1088,12 +1285,17 @@ export default function BoardEditor({ id }: { id: string }) {
     options = (
       <>
         <Group><span className="rounded-full bg-clay/15 px-2 py-0.5 text-[11.5px] font-medium text-clay">Đã chọn {selection.length}</span></Group>
-        {colorRow}
-        {!onlyText && widthRow}
+        {!onlyImage && colorRow}
+        {!onlyText && !onlyImage && widthRow}
         {hasText && fontRow}
-        {!onlyText && strokeStyleRow}
+        {!onlyText && !onlyImage && strokeStyleRow}
         {canFill && <Group>{fillPop}</Group>}
         <Group>{opacityPop}</Group>
+        <Group>
+          <Chip onClick={askAi} title="Đính kèm phần đang chọn vào khung chat Trợ lý AI">
+            <AiIcon /><span>Hỏi AI</span>
+          </Chip>
+        </Group>
         <Group label="Sắp xếp">
           <IconBtn label="Đưa lên trên cùng" onClick={() => reorder('front')}><Ico d="M12 19V5m-6 6l6-6 6 6" /></IconBtn>
           <IconBtn label="Đưa xuống dưới cùng" onClick={() => reorder('back')}><Ico d="M12 5v14m6-6l-6 6-6-6" /></IconBtn>
@@ -1256,6 +1458,9 @@ export default function BoardEditor({ id }: { id: string }) {
             ))}
           </div>
           <div className="ml-auto flex items-center gap-0.5">
+            <SideBtn label="Trợ lý" on={side === 'ai'} onClick={() => toggleSide('ai')}><AiIcon /></SideBtn>
+            <SideBtn label="Công cụ" on={side === 'tools'} onClick={() => toggleSide('tools')}><Ico d={WRENCH_D} size={16} /></SideBtn>
+            <span className="mx-1.5 h-5 w-px bg-line" />
             <Pop id="paper" pop={pop} setPop={setPop} title="Kiểu giấy" align="right"
               face={<span className="flex items-center gap-1.5 px-1.5 text-[13px] text-ink"><Ico d="M6 3h9l4 4v14H6zM14 3v5h5" size={16} />Giấy</span>}>
               <div className="text-[12px] font-medium text-ink-2">Kiểu giấy</div>
@@ -1294,7 +1499,8 @@ export default function BoardEditor({ id }: { id: string }) {
         </div>
       </div>
 
-      <div className="relative min-h-0 flex-1 overflow-hidden" ref={wrapRef}>
+      <div className="flex min-h-0 flex-1">
+      <div className="relative min-w-0 flex-1 overflow-hidden" ref={wrapRef}>
         <canvas
           ref={canvasRef}
           className="absolute inset-0 touch-none select-none"
@@ -1308,6 +1514,33 @@ export default function BoardEditor({ id }: { id: string }) {
         />
         {textarea}
       </div>
+
+      {/* panel phải: khung ngoài đổi bề rộng để trượt ra/vào, khung trong giữ nguyên 360px nên nội dung không bị bóp */}
+      <div className="min-h-0 shrink-0 overflow-hidden transition-[width] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+        style={{ width: side ? SIDE_W : 0 }} inert={!side}>
+        <aside className="flex h-full min-h-0 flex-col border-l border-line bg-surface" style={{ width: SIDE_W }} aria-label={side === 'tools' ? 'Công cụ' : 'Trợ lý'}>
+          <div className={`h-11 shrink-0 items-center gap-2 border-b border-line px-3 text-[13.5px] font-medium text-ink flex`}>
+            <span className="text-clay">{side === 'tools' ? <Ico d={WRENCH_D} size={17} /> : <AiIcon size={17} />}</span>
+            {side === 'tools' ? 'Công cụ' : 'Trợ lý AI'}
+            <button type="button" onClick={() => setSide(null)} title="Đóng" aria-label="Đóng panel" className="ml-auto grid h-7 w-7 place-items-center rounded-[6px] text-ink-3 hover:bg-sunken hover:text-ink">
+              <Ico d="M6 6l12 12M18 6L6 18" />
+            </button>
+          </div>
+          <div className="relative min-h-0 flex-1">
+            {mounted.has('ai') && (
+              <div className={`absolute inset-0 flex flex-col [&>.ai-panel]:min-h-0 [&>.ai-panel]:w-full [&>.ai-panel]:flex-1 [&>.ai-panel]:border-0 [&_.ai-panel-header]:hidden ${side === 'ai' ? '' : 'invisible'}`}>
+                <AiPanel mode="board" attachKey={aiKey} onBoardOps={applyBoardOps} contextSummary={side === 'ai' ? boardSummary() : ''} />
+              </div>
+            )}
+            {mounted.has('tools') && (
+              <div className={`absolute inset-0 overflow-y-auto px-3 pb-3 ${side === 'tools' ? '' : 'invisible'}`}>
+                <ToolsPanel onInsertPlot={insertImage} />
+              </div>
+            )}
+          </div>
+        </aside>
+      </div>
+      </div>
     </div>
   )
 }
@@ -1318,6 +1551,66 @@ type Main = 'pen' | 'eraser' | 'laser' | 'select' | 'shape' | 'text' | 'hand'
 
 const ERASER_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26"><g transform="rotate(-40 13 13)"><rect x="5" y="8" width="17" height="10" rx="2.5" fill="#f4a3a8" stroke="#3f3f46" stroke-width="1.3"/><rect x="5" y="8" width="6" height="10" rx="2.5" fill="#e5e7eb" stroke="#3f3f46" stroke-width="1.3"/></g></svg>'
 const LASER_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"><circle cx="9" cy="9" r="7" fill="#ff3b30" fill-opacity="0.25"/><circle cx="9" cy="9" r="3.5" fill="#ff3b30" stroke="white" stroke-width="1.2"/></svg>'
+const KIND_LABEL: Record<Kind, string> = {
+  rectangle: 'Hình chữ nhật', ellipse: 'Hình elip', diamond: 'Hình thoi', line: 'Đường thẳng', arrow: 'Mũi tên',
+  freedraw: 'Nét bút', text: 'Chữ', image: 'Hình vẽ công cụ',
+}
+const TOOL_LABEL: Record<string, string> = {
+  graph: 'đồ thị', vartable: 'bảng biến thiên', signtable: 'bảng xét dấu', oxy: 'hệ trục Oxy', geo2d: 'hình phẳng', geo3d: 'hình không gian',
+  stats: 'biểu đồ', circuit: 'mạch điện', motion: 'đồ thị chuyển động', incline: 'mặt phẳng nghiêng', gas: 'đồ thị trạng thái khí',
+  scene: 'hình minh hoạ', electron: 'cấu hình electron', struct: 'công thức cấu tạo', chemgraph: 'đồ thị số mol', trig: 'đường tròn lượng giác',
+  probtree: 'sơ đồ cây', numberline: 'trục số', venn: 'biểu đồ Ven', grouped: 'bảng ghép nhóm',
+}
+
+/** nét bút AI vẽ theo dạng có sẵn (tròn, elip, sóng, sao, đa giác) */
+function curvePoints(cv: Record<string, unknown>, dx: number, dy: number): Pt[] {
+  const n = (k: string, d: number) => (typeof cv[k] === 'number' && Number.isFinite(cv[k]) ? (cv[k] as number) : d)
+  const cx = n('cx', dx), cy = n('cy', dy)
+  const out: Pt[] = []
+  switch (cv.type) {
+    case 'circle':
+    case 'ellipse': {
+      const rx = n('rx', n('r', 60)), ry = n('ry', n('r', 60))
+      for (let i = 0; i <= 72; i++) { const a = (i / 72) * Math.PI * 2; out.push([cx + rx * Math.cos(a), cy + ry * Math.sin(a)]) }
+      break
+    }
+    case 'wave': {
+      const len = n('len', 300), amp = n('amp', 20), waves = n('n', 3)
+      for (let i = 0; i <= 120; i++) { const t = i / 120; out.push([cx - len / 2 + t * len, cy + amp * Math.sin(t * Math.PI * 2 * waves)]) }
+      break
+    }
+    case 'star': {
+      const r = n('r', 60), k = Math.max(3, Math.round(n('n', 5)))
+      for (let i = 0; i <= k * 2; i++) { const a = -Math.PI / 2 + (i * Math.PI) / k, rr = i % 2 ? r * 0.45 : r; out.push([cx + rr * Math.cos(a), cy + rr * Math.sin(a)]) }
+      break
+    }
+    case 'polygon': {
+      const P = Array.isArray(cv.points) ? (cv.points as unknown[]).filter((p): p is number[] => Array.isArray(p)).map((p) => [Number(p[0]), Number(p[1])] as Pt) : []
+      if (P.length) out.push(...P, P[0])
+      else {
+        const r = n('r', 60), k = Math.max(3, Math.round(n('n', 6)))
+        for (let i = 0; i <= k; i++) { const a = -Math.PI / 2 + (i / k) * Math.PI * 2; out.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]) }
+      }
+      break
+    }
+  }
+  return out
+}
+
+/** chèn thêm điểm giữa các đỉnh xa nhau để nét bút (perfect-freehand) đều và trơn */
+function densify(P: Pt[]): Pt[] {
+  const out: Pt[] = [P[0]]
+  for (let i = 1; i < P.length; i++) {
+    const [ax, ay] = P[i - 1], [bx, by] = P[i]
+    const k = Math.max(1, Math.ceil(Math.hypot(bx - ax, by - ay) / 6))
+    for (let j = 1; j <= k; j++) out.push([ax + ((bx - ax) * j) / k, ay + ((by - ay) * j) / k])
+  }
+  return out
+}
+
+type SideTab = 'ai' | 'tools'
+const SIDE_W = 360
+const WRENCH_D = 'M14.7 6.3a4 4 0 0 0-5.4 5.4L3.6 17.4a1.4 1.4 0 0 0 2 2l5.7-5.7a4 4 0 0 0 5.4-5.4l-2.5 2.5-2-.5-.5-2z'
 const PEN_D = 'M4 20l4-1 11-11a2.1 2.1 0 0 0-3-3L5 16zM14 7l3 3'
 const ERASER_D = 'M8 20h12M5.5 14.5l7-7a2 2 0 0 1 2.8 0l2.2 2.2a2 2 0 0 1 0 2.8L11 19H8l-2.5-2.5a1.5 1.5 0 0 1 0-2z'
 const LASER_D = 'M12 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0-4 0M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1'
@@ -1419,6 +1712,30 @@ const PAPERS: { id: Paper; label: string; bg?: string }[] = [
 ]
 
 /** một nhóm tuỳ chọn ở tầng 2: nhãn nhỏ + các nút; vạch ngăn giữa các nhóm cao đều nhau */
+/** "Trợ lý giấy" của app, bản nét rỗng (theo /brand/ai-static.svg) */
+function AiIcon({ size = 16 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth={size > 24 ? 2.6 : 4.4} strokeLinejoin="round" strokeLinecap="round" aria-hidden>
+      <path d="M17 22.6l-6.1 2.9a6.4 6.4 0 0 0-3.1 8.5l7.4 15.9" />
+      <path d="M49.7 22.6l5.6 2.6a6.4 6.4 0 0 1 3.1 8.5l-7.6 16.3" />
+      <path d="M24.1 7.6h14.1l11.5 11.5v26.9a7.7 7.7 0 0 1-7.7 7.7H24.1a7.7 7.7 0 0 1-7.7-7.7V15.3a7.7 7.7 0 0 1 7.7-7.7z" />
+      <path d="M38.2 7.6v6.4a5.1 5.1 0 0 0 5.1 5.1h6.4" />
+      <path d="M26.3 27.8v3.2M39.8 27.8v3.2" strokeWidth={size > 24 ? 4 : 6} />
+      <path d="M26.7 39.7c3.6 3.8 9.2 3.8 12.8 0" />
+    </svg>
+  )
+}
+
+function SideBtn({ label, on, onClick, children }: { label: string; on: boolean; onClick: () => void; children: ReactNode }) {
+  return (
+    <button type="button" title={label} aria-pressed={on} onClick={onClick}
+      className={`flex h-8 shrink-0 items-center gap-1.5 rounded-[7px] px-2.5 text-[13px] transition-colors ${on ? 'bg-clay/10 text-clay' : 'text-ink hover:bg-sunken'}`}>
+      {children}
+      <span className="hidden whitespace-nowrap @[980px]:inline">{label}</span>
+    </button>
+  )
+}
+
 function Group({ label, children }: { label?: string; children: ReactNode }) {
   return (
     <div className="relative flex shrink-0 items-center gap-1 px-3 before:absolute before:left-0 before:top-1/2 before:h-5 before:w-px before:-translate-y-1/2 before:bg-line first:before:hidden">
