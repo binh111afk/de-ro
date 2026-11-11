@@ -13,11 +13,14 @@ const USER = '33333333-3333-4333-8333-333333333333'
 const TOKENS: Record<string, string> = { tAdmin: ADMIN, tMod: MOD, tUser: USER }
 const ROLES: Record<string, string> = { [ADMIN]: 'admin', [MOD]: 'moderator' }
 const calls: string[] = []
+let strikeReply: unknown = []
+const bodies: string[] = []
 
 globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
   const url = String(input)
   const method = init.method ?? 'GET'
   calls.push(`${method} ${url.replace('http://sb', '')}`)
+  bodies.push(String(init.body ?? ''))
   const ok = (body: unknown, headers: Record<string, string> = {}) => new Response(JSON.stringify(body), { status: 200, headers })
   if (url.endsWith('/auth/v1/user')) {
     const tok = String((init.headers as Record<string, string>).Authorization ?? '').replace('Bearer ', '')
@@ -33,6 +36,7 @@ globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
   if (url.includes('/auth/v1/admin/users/')) return ok({})
   if (url.includes('/rest/v1/user_documents')) return ok([])
   if (url.includes('/rpc/grant_ai_credits')) return ok(1500)
+  if (url.includes('/rpc/record_security_strike')) return strikeReply === 'error' ? new Response('{}', { status: 500 }) : ok(strikeReply)
   if (url.includes('/rest/v1/admin_audit')) return new Response(null, { status: 201 })
   if (url.includes('/rest/v1/app_settings') && method === 'GET') return ok([{ key: 'maintenance', value: { on: true, message: 'x' } }])
   if (url.includes('/rest/v1/app_settings')) return new Response(null, { status: 201 })
@@ -157,6 +161,40 @@ check('metrics: 11/60 kết nối', mt.connections === 11 && mt.maxConnections =
 const empty = computeMetrics(parseProm(''), parseProm('garbage line'))
 check('metrics: thiếu số đo → null, không lỗi', empty.cpu === null && empty.ram === null && empty.disk === null && empty.connections === null)
 check('moderator xem db.metrics → 403', (await hit({ action: 'db.metrics' }, 'tMod')).status === 403)
+
+// tự động khoá khi cố gọi API admin
+const banBody = () => bodies[calls.findIndex((c) => c.startsWith(`PUT /auth/v1/admin/users/${USER}`))] ?? ''
+const banned = () => calls.some((c) => c.startsWith(`PUT /auth/v1/admin/users/${USER}`))
+const strikeCalled = () => calls.some((c) => c.includes('record_security_strike'))
+const reset = (r: unknown) => { calls.length = 0; bodies.length = 0; strikeReply = r }
+
+reset([{ strikes: 1, is_new: true }])
+check('user thường hỏi me → không phạt', (await hit({ action: 'me' }, 'tUser')).status === 403 && !strikeCalled() && !banned())
+reset([{ strikes: 1, is_new: true }])
+check('moderator gọi action admin → không phạt', (await hit({ action: 'users.list' }, 'tMod')).status === 403 && !strikeCalled() && !banned())
+reset([{ strikes: 1, is_new: true }])
+check('không token → không phạt', (await hit({ action: 'users.list' })).status === 401 && !strikeCalled())
+reset([{ strikes: 1, is_new: true }])
+const s1 = await hit({ action: 'users.list' }, 'tUser')
+check('lần 1 → 403, báo khoá 3 ngày', s1.status === 403 && String(s1.data.error).includes('3 ngày'))
+check('lần 1 → ban 72h, ghi nhật ký', banBody().includes('"72h"') && calls.some((c) => c.startsWith('POST /rest/v1/admin_audit')))
+reset([{ strikes: 2, is_new: true }])
+const s2 = await hit({ action: 'quota.set', userId: USER }, 'tUser')
+check('lần 2 → khoá vĩnh viễn', s2.status === 403 && String(s2.data.error).includes('vĩnh viễn') && banBody().includes('876000h'))
+reset([{ strikes: 1, is_new: false }])
+check('đang bị khoá → không ban lại', (await hit({ action: 'users.list' }, 'tUser')).status === 403 && !banned())
+reset([{ strikes: 1, is_new: true }])
+await hit({ action: 'drop.all' }, 'tUser')
+check('dò action lạ → cũng bị phạt', strikeCalled() && banned())
+reset([{ strikes: 1, is_new: true }])
+await hit({ action: 'constructor' }, 'tAdmin')
+check('admin gọi action lạ → không phạt', !strikeCalled())
+check('action trùng thuộc tính Object → 400', (await hit({ action: 'constructor' }, 'tAdmin')).status === 400)
+reset('error')
+check('lỗi ghi vi phạm → 403 thường, không khoá', (await hit({ action: 'users.list' }, 'tUser')).status === 403 && !banned())
+reset([])
+check('moderator gỡ cờ → 403', (await hit({ action: 'security.clear', userId: USER }, 'tMod')).status === 403)
+check('admin gỡ cờ → 200', (await hit({ action: 'security.clear', userId: USER }, 'tAdmin')).status === 200)
 
 if (fail) {
   console.error(`${fail} lỗi`)

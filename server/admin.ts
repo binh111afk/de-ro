@@ -6,7 +6,7 @@
  * - Tài khoản: Supabase Auth Admin API (`/auth/v1/admin/users`), cần SUPABASE_SERVICE_ROLE_KEY.
  */
 import type { IncomingMessage, ServerResponse } from 'node:http'
-import { guard, userFromToken } from './guard.js'
+import { clientIp, guard, userFromToken } from './guard.js'
 import { json, readBody } from './http.js'
 import { deleteR2Object, pingR2, r2KeyFromUrl } from './r2.js'
 import { pingProviders } from './llmProxy.js'
@@ -52,7 +52,7 @@ export type AdminCtx = { s: Supa; userId: string; role: Role }
  * Người gọi phải đăng nhập và có quyền `need` (admin làm được mọi việc của moderator).
  * Sai → trả 401/403 và null. Không nói rõ lý do để khỏi lộ thông tin.
  */
-export async function requireAdmin(req: IncomingMessage, res: ServerResponse, need: Role = 'admin'): Promise<AdminCtx | null> {
+export async function requireAdmin(req: IncomingMessage, res: ServerResponse, need: Role = 'admin', action?: string): Promise<AdminCtx | null> {
   const s = supa()
   if (!s) {
     json(res, 503, { error: 'Máy chủ chưa cấu hình.' })
@@ -71,10 +71,59 @@ export async function requireAdmin(req: IncomingMessage, res: ServerResponse, ne
     return null
   }
   if (!role || (need === 'admin' && role !== 'admin')) {
-    json(res, 403, { error: 'Không có quyền.' })
+    // `me` là câu hỏi hợp lệ (trang Hồ sơ, /admin gọi cho mọi người); moderator thiếu quyền chỉ bị từ chối
+    const warned = !role && action && action !== 'me' ? await strikeIntruder(s, userId, action, clientIp(req)) : null
+    json(res, 403, { error: warned ?? 'Không có quyền.' })
     return null
   }
   return { s, userId, role }
+}
+
+/**
+ * Tài khoản không có vai trò nhưng gọi action admin (giao diện không bao giờ gọi vậy, chỉ có thể là gọi tay):
+ * lần 1 khoá 3 ngày + gắn cờ, lần 2 khoá vĩnh viễn. Trả thông báo cho người gọi; lỗi hạ tầng thì không phạt (null).
+ */
+async function strikeIntruder(s: Supa, userId: string, action: string, ip: string): Promise<string | null> {
+  try {
+    // đọc lại quyền, không tin cache: vừa được cấp quyền thì không được phạt nhầm
+    roleCache.delete(userId)
+    if (await roleOf(s, userId)) return null
+    const r = await fetch(`${s.base}/rest/v1/rpc/record_security_strike`, {
+      method: 'POST',
+      headers: s.headers,
+      body: JSON.stringify({ p_user: userId, p_action: action, p_ip: ip }),
+    })
+    if (!r.ok) return null
+    const row = ((await r.json()) as Array<{ strikes: number; is_new: boolean }>)[0]
+    if (!row) return null
+    const permanent = row.strikes >= 2
+    const message = permanent
+      ? 'Tài khoản đã bị khoá vĩnh viễn do cố truy cập trái phép vào khu vực quản trị.'
+      : 'Tài khoản đã bị khoá 3 ngày và bị gắn cờ theo dõi do cố truy cập trái phép vào khu vực quản trị.'
+    if (!row.is_new) return message
+    const ban = await fetch(`${s.base}/auth/v1/admin/users/${userId}`, {
+      method: 'PUT',
+      headers: s.headers,
+      body: JSON.stringify({ ban_duration: permanent ? '876000h' : '72h' }),
+    })
+    if (!ban.ok) {
+      // khoá thất bại thì trả lại lần vi phạm, để lần gọi sau còn xử lý được
+      await fetch(`${s.base}/rest/v1/security_flags?user_id=eq.${userId}`, {
+        method: 'PATCH',
+        headers: { ...s.headers, Prefer: 'return=minimal' },
+        body: JSON.stringify({ strikes: row.strikes - 1, locked_until: null }),
+      })
+      return null
+    }
+    await fetch(`${s.base}/rest/v1/admin_audit`, {
+      method: 'POST',
+      headers: { ...s.headers, Prefer: 'return=minimal' },
+      body: JSON.stringify({ admin_id: null, action: 'security.strike', target: userId, detail: { strikes: row.strikes, action, ip, lock: permanent ? 'vĩnh viễn' : '3 ngày' } }),
+    })
+    return message
+  } catch {
+    return null
+  }
 }
 
 export async function audit(ctx: AdminCtx, action: string, target: string, detail: Record<string, unknown> = {}): Promise<void> {
@@ -110,8 +159,10 @@ interface AuthUser {
   user_metadata?: { display_name?: string; avatar_url?: string; full_name?: string; name?: string }
 }
 
+type FlagRow = { user_id: string; strikes: number; last_at: string; last_action: string | null; last_ip: string | null }
+
 /** Dòng người dùng trả cho giao diện; giữ khớp `AdminUser` trong src/lib/adminApi.ts */
-function toRow(u: AuthUser, st?: { docs: number; decks: number; tokens: number; role: Role | null }) {
+function toRow(u: AuthUser, st?: { docs: number; decks: number; tokens: number; role: Role | null }, flag?: FlagRow) {
   const banned = !!u.banned_until && new Date(u.banned_until).getTime() > Date.now()
   return {
     id: u.id,
@@ -126,6 +177,7 @@ function toRow(u: AuthUser, st?: { docs: number; decks: number; tokens: number; 
     docs: Number(st?.docs ?? 0),
     decks: Number(st?.decks ?? 0),
     tokensThisMonth: Number(st?.tokens ?? 0),
+    flag: flag ? { strikes: flag.strikes, lastAt: flag.last_at, lastAction: flag.last_action, lastIp: flag.last_ip } : null,
   }
 }
 
@@ -178,7 +230,14 @@ const ACTIONS: ActionMap = {
           ).data
         : []
       const byId = new Map(stats.map((x) => [x.user_id, x]))
-      return { users: users.map((u) => toRow(u, byId.get(u.id))), total, page, perPage }
+      // bảng cờ lỗi thì danh sách vẫn phải hiện
+      const flags = users.length
+        ? await call<FlagRow[]>(s, `/rest/v1/security_flags?user_id=in.(${users.map((u) => u.id).join(',')})&select=user_id,strikes,last_at,last_action,last_ip`)
+            .then((r) => r.data)
+            .catch(() => [] as FlagRow[])
+        : []
+      const flagById = new Map(flags.map((f) => [f.user_id, f]))
+      return { users: users.map((u) => toRow(u, byId.get(u.id), flagById.get(u.id))), total, page, perPage }
     },
   },
 
@@ -201,7 +260,20 @@ const ACTIONS: ActionMap = {
     run: async (ctx, b) => {
       const id = needUser(b.userId)
       await call(ctx.s, `/auth/v1/admin/users/${id}`, { method: 'PUT', body: JSON.stringify({ ban_duration: 'none' }) })
+      // vẫn giữ số lần vi phạm; chỉ bỏ mốc khoá để lần vi phạm sau được tính
+      await call(ctx.s, `/rest/v1/security_flags?user_id=eq.${id}`, { method: 'PATCH', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ locked_until: null }) }).catch(() => {})
       await audit(ctx, 'users.unban', id)
+      return { ok: true }
+    },
+  },
+
+  /** Gỡ cờ theo dõi: xoá số lần vi phạm (không tự mở khoá tài khoản). */
+  'security.clear': {
+    need: 'admin',
+    run: async (ctx, b) => {
+      const id = needUser(b.userId)
+      await call(ctx.s, `/rest/v1/security_flags?user_id=eq.${id}`, { method: 'DELETE', headers: { Prefer: 'return=minimal' } })
+      await audit(ctx, 'security.clear', id)
       return { ok: true }
     },
   },
@@ -442,10 +514,12 @@ export async function handleAdminRequest(req: IncomingMessage, res: ServerRespon
   } catch {
     return json(res, 400, { error: 'Dữ liệu không hợp lệ.' })
   }
-  const entry = ACTIONS[str(body.action, 50)]
-  if (!entry) return json(res, 400, { error: 'Thao tác không tồn tại.' })
-  const ctx = await requireAdmin(req, res, entry.need)
+  const action = str(body.action, 50)
+  const entry = Object.hasOwn(ACTIONS, action) ? ACTIONS[action] : undefined
+  // kiểm quyền trước: dò tên action lạ cũng tính là cố truy cập
+  const ctx = await requireAdmin(req, res, entry?.need ?? 'admin', action || 'unknown')
   if (!ctx) return
+  if (!entry) return json(res, 400, { error: 'Thao tác không tồn tại.' })
   try {
     return json(res, 200, await entry.run(ctx, body))
   } catch (err) {

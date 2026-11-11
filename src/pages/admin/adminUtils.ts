@@ -46,6 +46,12 @@ export function formatAuditDetail(_action: string, detail: unknown): string {
   const d = detail as Record<string, unknown>
   const parts: string[] = []
 
+  if (d.lock) {
+    parts.push(`Vi phạm lần ${d.strikes}: khoá ${d.lock}`)
+    if (d.action) parts.push(`Thao tác: ${d.action}`)
+    if (d.ip) parts.push(`IP: ${d.ip}`)
+    return parts.join(' · ')
+  }
   if (d.reason && typeof d.reason === 'string') {
     parts.push(`Lý do: ${d.reason}`)
   }

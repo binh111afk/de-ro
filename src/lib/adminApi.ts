@@ -28,6 +28,8 @@ export interface AdminUser {
   docs: number
   decks: number
   tokensThisMonth: number
+  /** cờ theo dõi: từng cố gọi API admin khi không có quyền; null = sạch */
+  flag: { strikes: number; lastAt: string; lastAction: string | null; lastIp: string | null } | null
 }
 
 export interface UserPage {
@@ -66,6 +68,8 @@ export class AdminError extends Error {
 }
 
 export const isAdminMock = (): boolean => {
+  // bản thật không có dữ liệu giả: người thường mở ?mock=1 không được vào giao diện admin
+  if (!import.meta.env?.DEV) return false
   if (import.meta.env?.VITE_ADMIN_MOCK === '1') return true
   try {
     return new URLSearchParams(location.search).get('mock') === '1'
@@ -121,6 +125,7 @@ const MOCK_USERS: AdminUser[] = Array.from({ length: 57 }, (_, i) => ({
   docs: (i * 7) % 23,
   decks: (i * 3) % 6,
   tokensThisMonth: (i * 13_337) % 160_000,
+  flag: i === 7 ? { strikes: 2, lastAt: '2026-11-09T08:12:00Z', lastAction: 'users.list', lastIp: '203.0.113.7' } : i === 12 ? { strikes: 1, lastAt: '2026-11-08T03:40:00Z', lastAction: 'quota.set', lastIp: '198.51.100.4' } : null,
 }))
 const MOCK_AUDIT: AuditEntry[] = [
   { id: 3, adminId: MOCK_USERS[0].id, action: 'users.ban', target: MOCK_USERS[7].id, detail: { reason: 'Đăng đề rác' }, createdAt: '2026-11-09T08:12:00Z' },
@@ -166,6 +171,16 @@ export function unbanUser(userId: string): Promise<{ ok: true }> {
     return wait({ ok: true as const })
   }
   return post('users.unban', { userId })
+}
+
+/** Gỡ cờ theo dõi (xoá số lần vi phạm). Không tự mở khoá tài khoản. */
+export function clearSecurityFlag(userId: string): Promise<{ ok: true }> {
+  if (isAdminMock()) {
+    const u = MOCK_USERS.find((x) => x.id === userId)
+    if (u) u.flag = null
+    return wait({ ok: true as const })
+  }
+  return post('security.clear', { userId })
 }
 
 /** Xoá vĩnh viễn. confirmEmail phải trùng email tài khoản. Đề cộng đồng của họ vẫn giữ (không còn chủ). */
@@ -372,4 +387,6 @@ export const AUDIT_LABEL: Record<string, string> = {
   'credits.grant': 'Cộng điểm AI',
   'quota.clear': 'Bỏ hạn mức riêng',
   'settings.set': 'Đổi cài đặt (bảo trì / thông báo)',
+  'security.strike': 'Tự động khoá: cố truy cập admin',
+  'security.clear': 'Gỡ cờ theo dõi',
 }

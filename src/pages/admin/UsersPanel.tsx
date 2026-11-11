@@ -7,6 +7,7 @@ import {
   Search,
   Trash2,
   Unlock,
+  ShieldAlert,
   Users,
   X,
 } from 'lucide-react'
@@ -25,6 +26,7 @@ import { dialog } from '@/components/Dialog'
 import {
   banUser,
   clearQuota,
+  clearSecurityFlag,
   deleteUser,
   getQuota,
   grantCredits,
@@ -223,6 +225,11 @@ export function UsersPanel({ me: _me }: UsersPanelProps) {
                         ) : (
                           <Badge tone="sage">Bình thường</Badge>
                         )}
+                        {u.flag ? (
+                          <Badge tone="honey" className="ml-1.5">
+                            Theo dõi · lần {u.flag.strikes}
+                          </Badge>
+                        ) : null}
                       </td>
 
                       {/* Vai trò */}
@@ -435,6 +442,26 @@ function UserDetailDrawer({
   }
 
   // Mở khoá tài khoản
+  const [clearingFlag, setClearingFlag] = useState(false)
+  const handleClearFlag = async () => {
+    const ok = await dialog.confirm('Xoá số lần vi phạm của tài khoản này? Lần vi phạm sau sẽ tính lại từ đầu. Việc này không tự mở khoá tài khoản.', {
+      title: 'Gỡ cờ theo dõi',
+      confirmLabel: 'Gỡ cờ',
+    })
+    if (!ok) return
+    setClearingFlag(true)
+    try {
+      await clearSecurityFlag(user.id)
+      onUserUpdated({ ...user, flag: null })
+      showNotice('Đã gỡ cờ theo dõi.')
+      await onReloadList()
+    } catch (err: unknown) {
+      await dialog.alert(err instanceof Error ? err.message : 'Không gỡ được cờ.', { title: 'Lỗi' })
+    } finally {
+      setClearingFlag(false)
+    }
+  }
+
   const handleUnban = async () => {
     const confirmed = await dialog.confirm(`Mở khoá tài khoản ${user.email}?`, {
       title: 'Mở khoá tài khoản',
@@ -722,6 +749,27 @@ function UserDetailDrawer({
               </Button>
             </div>
           </section>
+
+          {/* Cờ theo dõi bảo mật */}
+          {user.flag ? (
+            <section className="space-y-3">
+              <h3 className="text-[12px] font-bold uppercase tracking-wider text-ink-3">Cờ theo dõi</h3>
+              <div className="space-y-2 rounded-[8px] border border-honey/40 bg-honey-soft p-4 text-[13px] text-ink-2">
+                <p className="flex items-start gap-2 font-semibold text-ink">
+                  <ShieldAlert className="mt-0.5 size-4 shrink-0 text-honey" />
+                  Đã cố gọi API quản trị {user.flag.strikes} lần khi không có quyền
+                </p>
+                <p>
+                  Lần gần nhất: {formatViDateTime(user.flag.lastAt)}
+                  {user.flag.lastAction ? ` · thao tác ${user.flag.lastAction}` : ''}
+                  {user.flag.lastIp ? ` · IP ${user.flag.lastIp}` : ''}
+                </p>
+                <Button variant="outline" size="sm" onClick={handleClearFlag} disabled={clearingFlag}>
+                  {clearingFlag ? 'Đang gỡ…' : 'Gỡ cờ theo dõi'}
+                </Button>
+              </div>
+            </section>
+          ) : null}
 
           {/* 4. Khoá tài khoản (không hiện với admin) */}
           {user.role !== 'admin' ? (
