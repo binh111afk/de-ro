@@ -44,6 +44,8 @@ export interface El extends Style {
   text?: string
   /** ảnh (đồ thị, hình học… từ panel Công cụ): data URL */
   src?: string
+  /** ảnh là công thức: mã LaTeX gốc (bấm đúp để sửa); màu chữ ở `stroke` */
+  latex?: string
   /** tăng mỗi khi hình dạng đổi (không tính di chuyển) — khoá cache nét rough */
   ver: number
 }

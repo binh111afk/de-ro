@@ -4,7 +4,7 @@
  */
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
-import { Box, ChartColumn, ChartSpline, ClipboardList, Grid3x3, SquarePlus, Table2, Triangle, TriangleRight, Zap, ChartLine, Atom, Hexagon, FlaskConical, CircleDot, Network, MoveHorizontal, Circle, Thermometer, Shuffle } from 'lucide-react'
+import { Box, ChartColumn, ChartSpline, ClipboardList, Grid3x3, SquarePlus, Table2, Triangle, TriangleRight, Zap, ChartLine, Atom, Hexagon, FlaskConical, CircleDot, Network, MoveHorizontal, Circle, Thermometer, Shuffle, Sigma } from 'lucide-react'
 import type { ToolImage, ToolKind } from '@/lib/toolSpec'
 import type { ExamDoc } from '@/data/docTypes'
 import { ToolModal } from './ToolModal'
@@ -12,7 +12,7 @@ import { ShuffleModal } from './ShuffleModal'
 import { cn } from '@/lib/cn'
 
 /** công cụ vẽ hình (chèn ảnh) + công cụ làm việc với cả đề (nhóm Khác) */
-type ToolId = ToolKind | 'shuffle'
+type ToolId = ToolKind | 'shuffle' | 'formula'
 
 const SUBJECTS: Array<{ name: string; tools: Array<{ id: ToolId; label: string; desc: string; Icon: typeof ChartSpline }> }> = [
   {
@@ -59,13 +59,18 @@ export function ToolsPanel({
   disabled,
   onInsertPlot,
   examDoc,
+  onFormula,
 }: {
   disabled?: boolean
   onInsertPlot: (img: ToolImage) => void
   /** đề đang soạn: có thì hiện nhóm Khác (Xáo đề); soạn slide / ô ảnh câu hỏi không truyền */
   examDoc?: ExamDoc | null
+  /** bảng vẽ: có thì môn Toán hiện thêm "Công thức" (mở hộp LaTeX của bảng) */
+  onFormula?: () => void
 }) {
+  const FORMULA = { id: 'formula' as const, label: 'Công thức', desc: 'Gõ LaTeX, xem trước; bấm đúp trên bảng để sửa', Icon: Sigma }
   const subjects = SUBJECTS.filter((s) => s.name !== 'Khác' || examDoc !== undefined)
+    .map((s) => (onFormula && s.name === 'Toán' ? { ...s, tools: [FORMULA, ...s.tools] } : s))
   const [open, setOpen] = useState<ToolId | null>(null)
   const [subject, setSubject] = useState(() => {
     try {
@@ -112,7 +117,7 @@ export function ToolsPanel({
                 <button
                   type="button"
                   disabled={disabled}
-                  onClick={() => setOpen(id)}
+                  onClick={() => (id === 'formula' ? onFormula?.() : setOpen(id))}
                   className="flex w-full items-start gap-3 rounded-[6px] border border-line bg-white px-3 py-2.5 text-left transition-colors hover:border-ink-4 disabled:opacity-50"
                 >
                   <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-[6px] bg-paper-2 text-clay">
@@ -136,7 +141,7 @@ export function ToolsPanel({
           ) : null,
           document.body,
         )}
-      {open && open !== 'shuffle' &&
+      {open && open !== 'shuffle' && open !== 'formula' &&
         createPortal(
         <ToolModal
           kind={open}

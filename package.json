@@ -78,6 +78,7 @@
     "katex": "^0.19.1",
     "lucide-react": "^0.468.0",
     "mammoth": "^1.13.0",
+    "mathjax-full": "^3.2.2",
     "pdfjs-dist": "^6.4.299",
     "perfect-freehand": "^1.2.3",
     "pptxgenjs": "^4.0.1",

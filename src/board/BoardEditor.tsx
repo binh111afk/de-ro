@@ -19,6 +19,9 @@ import { renderTool, type ToolImage } from '@/lib/toolSpec'
 import { figureDoc } from '@/examEditor/toolImages'
 import { attachToAi, type AiRef } from '@/lib/aiAttach'
 import { recognize } from './recognize'
+import { ExportDialog, FormulaDialog, PdfPagesDialog, type ExportChoice, type FormulaResult } from './BoardDialogs'
+import { canvasToA4Pdf, download, readImageFile, renderRegion, savePng, type Picture } from './io'
+import { texToSvg } from './formula'
 
 type Tool = 'select' | 'hand' | Kind | 'eraser' | 'laser'
 type Slot = PenKind | 'shape' | 'text'
@@ -128,6 +131,11 @@ export default function BoardEditor({ id }: { id: string }) {
   const [pop, setPop] = useState<string | null>(null)
   /** panel bên: trợ lý (trái), công cụ (phải) */
   const [side, setSide] = useState<SideTab | null>(null)
+  const [dialog, setDialog] = useState<{ t: 'formula'; el?: El } | { t: 'pdf'; file: File } | { t: 'export' } | null>(null)
+  const dialogRef = useRef(dialog)
+  dialogRef.current = dialog
+  const [saveErr, setSaveErr] = useState(false)
+  const fileRef = useRef<HTMLInputElement>(null)
   /** đã từng mở tab nào: giữ nội dung (lịch sử trò chuyện) khi đóng / đổi tab */
   const [mounted, setMounted] = useState<Set<SideTab>>(new Set())
   const toggleSide = (t: SideTab) => {
@@ -214,8 +222,10 @@ export default function BoardEditor({ id }: { id: string }) {
       try {
         const data: Saved = { v: 2, elements: els.current, view: view.current, styles: styles.current, opts: opts.current }
         localStorage.setItem(keyOf(id), JSON.stringify(data))
+        setSaveErr(false)
       } catch {
-        /* đầy bộ nhớ: bỏ qua */
+        // đầy bộ nhớ trình duyệt (thường do ảnh / PDF lớn): báo để người dùng biết bảng chưa được lưu
+        setSaveErr(true)
       }
     }, 400)
   }, [id])
@@ -801,6 +811,7 @@ export default function BoardEditor({ id }: { id: string }) {
     const p = toScene(ev.clientX, ev.clientY)
     const hit = topHit(p)
     if (hit?.kind === 'text') return startText(hit, false)
+    if (hit?.latex) return setDialog({ t: 'formula', el: hit })
     if (hit) return
     const el = newElement('text', p)
     Object.assign(el, measureText('', el.fontSize))
@@ -870,7 +881,7 @@ export default function BoardEditor({ id }: { id: string }) {
   keyHandler.current = (ev: KeyboardEvent) => {
     const target = ev.target as HTMLElement | null
     if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) return
-    if (editingRef.current) return
+    if (editingRef.current || dialogRef.current) return
     const k = ev.key.toLowerCase()
     const mod = ev.ctrlKey || ev.metaKey
     if (k === ' ' && !space.current) {
@@ -952,6 +963,89 @@ export default function BoardEditor({ id }: { id: string }) {
     commit()
   }
 
+  /** đặt các ảnh (ảnh từ máy, trang PDF) xếp dọc giữa khung nhìn, chọn sẵn */
+  const placePictures = (pics: Picture[]) => {
+    const c = canvasRef.current
+    if (!c || !pics.length) return
+    const v = view.current
+    const r = c.getBoundingClientRect()
+    const maxW = Math.min(pics.length > 1 ? 640 : 520, (r.width / v.zoom) * 0.7)
+    const gap = 24
+    const sizes = pics.map((p) => { const w = Math.min(maxW, p.w); return [w, (w * p.h) / p.w] })
+    const totalH = sizes.reduce((a, s) => a + s[1], 0) + gap * (pics.length - 1)
+    const cx = r.width / 2 / v.zoom - v.scrollX
+    let y = pics.length > 1 ? 40 / v.zoom - v.scrollY : r.height / 2 / v.zoom - v.scrollY - totalH / 2
+    const added = pics.map((p, i) => {
+      const [w, h] = sizes[i]
+      const el: El = { ...newElement('image', [cx - w / 2, y]), w, h, src: p.src, opacity: 100 }
+      y += h + gap
+      return el
+    })
+    els.current.push(...added)
+    pickTool('select')
+    selected.current = new Set(added.map((e) => e.id))
+    commit()
+  }
+
+  const onPickFile = async (ev: React.ChangeEvent<HTMLInputElement>) => {
+    const files = [...(ev.target.files ?? [])]
+    ev.target.value = ''
+    const pdf = files.find((f) => f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf'))
+    if (pdf) return setDialog({ t: 'pdf', file: pdf })
+    const pics: Picture[] = []
+    for (const f of files) if (f.type.startsWith('image/')) {
+      try { pics.push(await readImageFile(f)) } catch { /* bỏ file hỏng */ }
+    }
+    placePictures(pics)
+  }
+
+  const onFormula = async (r: FormulaResult) => {
+    const old = dialogRef.current?.t === 'formula' ? dialogRef.current.el : undefined
+    setDialog(null)
+    if (old) {
+      const cur = els.current.find((e) => e.id === old.id)
+      if (!cur) return
+      // giữ tỉ lệ phóng to người dùng đã kéo
+      const base = await texToSvg(cur.latex ?? '', 32, cur.stroke)
+      const k = base.w > 1 ? cur.w / base.w : 1
+      mutate(cur, { latex: r.latex, src: r.src, w: r.w * k, h: r.h * k })
+      selected.current = new Set([cur.id])
+      return commit()
+    }
+    const c = canvasRef.current
+    if (!c) return
+    const v = view.current
+    const rc = c.getBoundingClientRect()
+    const cx = rc.width / 2 / v.zoom - v.scrollX, cy = rc.height / 2 / v.zoom - v.scrollY
+    const el: El = { ...newElement('image', [cx - r.w / 2, cy - r.h / 2]), w: r.w, h: r.h, src: r.src, latex: r.latex, stroke: style.current.stroke, opacity: 100 }
+    els.current.push(el)
+    pickTool('select')
+    selected.current = new Set([el.id])
+    commit()
+  }
+
+  const onExport = async (ch: ExportChoice) => {
+    const c = canvasRef.current
+    if (!c) return
+    const v = view.current
+    const r = c.getBoundingClientRect()
+    const pool = ch.area === 'selection' ? els.current.filter((e) => selected.current.has(e.id)) : els.current
+    let b: Bounds | null
+    if (ch.area === 'view') b = [-v.scrollX, -v.scrollY, -v.scrollX + r.width / v.zoom, -v.scrollY + r.height / v.zoom]
+    else {
+      const u = unionBounds(pool)
+      b = u && [u[0] - 20, u[1] - 20, u[2] + 20, u[3] + 20]
+    }
+    if (!b || !pool.length) throw new Error('Bảng chưa có gì để xuất.')
+    // canvas của trình duyệt giới hạn ~16 nghìn px mỗi cạnh
+    const scale = Math.min(ch.scale, 16000 / (b[2] - b[0]), 16000 / (b[3] - b[1]))
+    const out = await renderRegion(pool, b, scale, ch.bg, opts.current.paper)
+    const name = `bang-ve-${new Date().toISOString().slice(0, 10)}`
+    if (ch.format === 'png') await savePng(out, `${name}.png`)
+    else download(URL.createObjectURL(canvasToA4Pdf(out)), `${name}.pdf`)
+    setDialog(null)
+  }
+
   useEffect(() => {
     setImageLoadHandler(redraw)
     return () => setImageLoadHandler(null)
@@ -966,6 +1060,7 @@ export default function BoardEditor({ id }: { id: string }) {
     const what = e.kind === 'freedraw' ? `nét ${PENS.find((pn) => pn.id === e.pen)?.label.toLowerCase() ?? 'bút'}` : KIND_LABEL[e.kind]
     const extra = [
       e.kind === 'text' ? `chữ "${(e.text ?? '').slice(0, 80)}"` : '',
+      e.latex ? `công thức LaTeX "${e.latex.slice(0, 120)}"` : '',
       e.kind !== 'image' ? `màu ${e.stroke}` : '',
       e.fill !== 'transparent' && e.kind !== 'image' && e.kind !== 'text' ? `nền ${e.fill}` : '',
     ].filter(Boolean).join(', ')
@@ -1490,6 +1585,14 @@ export default function BoardEditor({ id }: { id: string }) {
             <SideBtn label="Trợ lý" on={side === 'ai'} onClick={() => toggleSide('ai')}><AiIcon /></SideBtn>
             <SideBtn label="Công cụ" on={side === 'tools'} onClick={() => toggleSide('tools')}><Ico d={WRENCH_D} size={16} /></SideBtn>
             <span className="mx-1.5 h-5 w-px bg-line" />
+            <button type="button" title="Chèn ảnh hoặc PDF từ máy" onClick={() => fileRef.current?.click()}
+              className="flex h-8 items-center gap-1.5 rounded-[7px] px-2.5 text-[13px] text-ink hover:bg-sunken">
+              <Ico d="M4 5h16v14H4zM4 15l4-4 4 4 3-3 5 5M15 9h.01" size={16} />Chèn ảnh/PDF
+            </button>
+            <IconBtn label="Xuất PNG / PDF" onClick={() => setDialog({ t: 'export' })}><Ico d="M12 4v11M7 10l5 5 5-5M5 20h14" /></IconBtn>
+            <input ref={fileRef} type="file" hidden multiple accept="image/png,image/jpeg,image/webp,image/gif,application/pdf,.pdf" onChange={onPickFile} />
+            {saveErr && <span className="ml-1 text-[12px] text-red-600" title="Bộ nhớ trình duyệt đã đầy: xoá bớt ảnh/trang PDF hoặc xuất bảng ra file để giữ lại">Chưa lưu được (đầy bộ nhớ)</span>}
+            <span className="mx-1.5 h-5 w-px bg-line" />
             <Pop id="paper" pop={pop} setPop={setPop} title="Kiểu giấy" align="right"
               face={<span className="flex items-center gap-1.5 px-1.5 text-[13px] text-ink"><Ico d="M6 3h9l4 4v14H6zM14 3v5h5" size={16} />Giấy</span>}>
               <div className="text-[12px] font-medium text-ink-2">Kiểu giấy</div>
@@ -1543,6 +1646,15 @@ export default function BoardEditor({ id }: { id: string }) {
         />
         {textarea}
       </div>
+      {dialog?.t === 'formula' && (
+        <FormulaDialog initial={dialog.el?.latex} color={dialog.el?.stroke ?? style.current.stroke} onClose={() => setDialog(null)} onDone={onFormula} />
+      )}
+      {dialog?.t === 'pdf' && (
+        <PdfPagesDialog file={dialog.file} onClose={() => setDialog(null)} onDone={(pages) => { setDialog(null); placePictures(pages) }} />
+      )}
+      {dialog?.t === 'export' && (
+        <ExportDialog hasSelection={selected.current.size > 0} onClose={() => setDialog(null)} onDone={onExport} />
+      )}
 
       {/* panel phải: khung ngoài đổi bề rộng để trượt ra/vào, khung trong giữ nguyên 360px nên nội dung không bị bóp */}
       <div className="min-h-0 shrink-0 overflow-hidden transition-[width] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
@@ -1563,7 +1675,7 @@ export default function BoardEditor({ id }: { id: string }) {
             )}
             {mounted.has('tools') && (
               <div className={`absolute inset-0 overflow-y-auto px-3 pb-3 ${side === 'tools' ? '' : 'invisible'}`}>
-                <ToolsPanel onInsertPlot={insertImage} />
+                <ToolsPanel onInsertPlot={insertImage} onFormula={() => setDialog({ t: 'formula' })} />
               </div>
             )}
           </div>

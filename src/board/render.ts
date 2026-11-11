@@ -238,7 +238,7 @@ export interface Overlay {
 export const LASER_LIFE = 1000
 
 /** nền giấy: kẻ ô / kẻ dòng / chấm, vẽ theo toạ độ cảnh để cuộn và phóng to theo */
-function drawPaper(ctx: CanvasRenderingContext2D, paper: Paper, view: View, w: number, h: number) {
+export function drawPaper(ctx: CanvasRenderingContext2D, paper: Paper, view: View, w: number, h: number) {
   if (paper === 'plain') return
   const step = paper === 'lines' ? 32 : 24
   if (step * view.zoom < 6) return
