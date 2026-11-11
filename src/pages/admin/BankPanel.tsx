@@ -23,6 +23,10 @@ import { Badge, Button, Card, EmptyState, Spinner, inputClass } from '@/componen
 import { Pager, usePaged } from '@/components/Pager'
 import { SiteSelect, type SiteSelectOption } from '@/components/SiteSelect'
 import { MathText } from '@/components/MathText'
+import { Portal } from '@/components/Portal'
+import { QuestionImageField } from '@/components/QuestionImageField'
+import { imageToSrc } from '@/lib/questionImage'
+import type { QuestionImage } from '@/data/types'
 import { dialog } from '@/components/Dialog'
 import type { AdminMe } from '@/lib/adminApi'
 import {
@@ -44,6 +48,7 @@ import { cn } from '@/lib/cn'
 
 const figureCache = new Map<string, { src: string; alt: string } | null>()
 function figureOf(entry: BankEntry) {
+  if (entry.image?.src) return { src: entry.image.src, alt: entry.image.alt ?? '' }
   if (!entry.figure) return null
   if (!figureCache.has(entry.id)) {
     const doc = figureDoc(entry.figure)
@@ -674,7 +679,7 @@ function QuestionDrawer({
   const isCustomOrEdited = item.origin !== 'goc'
 
   return (
-    <>
+    <Portal>
       {/* Nền mờ */}
       <div
         className="fixed inset-0 z-40 bg-ink/40 backdrop-blur-xs transition-opacity"
@@ -889,7 +894,7 @@ function QuestionDrawer({
           </Button>
         </div>
       </aside>
-    </>
+    </Portal>
   )
 }
 
@@ -911,6 +916,23 @@ function QuestionFormModal({
   const [type, setType] = useState<QuestionType>(initialEntry?.type ?? 'trac-nghiem')
   const [points, setPoints] = useState<number>(initialEntry?.points ?? 0.25)
   const [prompt, setPrompt] = useState(initialEntry?.prompt ?? '')
+  const [image, setImage] = useState<QuestionImage | undefined>(initialEntry?.image)
+  const [imgBusy, setImgBusy] = useState(false)
+  const [imgError, setImgError] = useState<string | null>(null)
+  const pickImage = async (file: File) => {
+    setImgBusy(true)
+    setImgError(null)
+    try {
+      const src = await imageToSrc(file)
+      // tải R2 lỗi thì imageToSrc trả data URL; ảnh lớn lưu vào câu sẽ vượt giới hạn API
+      if (src.startsWith('data:') && src.length > 40_000) throw new Error('Không tải được ảnh lên máy chủ, thử lại sau.')
+      setImage({ ...(image ?? {}), src })
+    } catch (err) {
+      setImgError(err instanceof Error ? err.message : 'Không đọc được ảnh.')
+    } finally {
+      setImgBusy(false)
+    }
+  }
   const [explanation, setExplanation] = useState(initialEntry?.explanation ?? '')
   const [solutionText, setSolutionText] = useState((initialEntry?.solution || []).join('\n'))
   const [tagsText, setTagsText] = useState((initialEntry?.tags || []).join(', '))
@@ -1032,6 +1054,7 @@ function QuestionFormModal({
       variable,
       // Giữ nguyên figure cũ nếu đang sửa
       figure: initialEntry?.figure,
+      image,
     }
 
     setSaving(true)
@@ -1047,7 +1070,7 @@ function QuestionFormModal({
   }
 
   return (
-    <>
+    <Portal>
       <div className="fixed inset-0 z-40 bg-ink/50 backdrop-blur-xs" onClick={onClose} aria-hidden="true" />
       <div
         className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5"
@@ -1109,7 +1132,7 @@ function QuestionFormModal({
                   max="10"
                   value={points}
                   onChange={(e) => setPoints(parseFloat(e.target.value) || 0)}
-                  className={cn(inputClass, 'h-10 text-[14px]')}
+                  className={cn(inputClass, 'h-11 text-[14px]')}
                 />
               </div>
             </div>
@@ -1150,6 +1173,7 @@ function QuestionFormModal({
                 placeholder="Nhập đề bài câu hỏi..."
                 className={cn(inputClass, 'h-auto py-2.5 text-[14px]')}
               />
+              <QuestionImageField image={image} onChange={setImage} busy={imgBusy} error={imgError} pick={(f) => void pickImage(f)} />
               {/* Xem trước trực tiếp */}
               {prompt.trim() && (
                 <div className="mt-2 rounded-[6px] border border-line bg-paper-2/60 p-3">
@@ -1393,6 +1417,6 @@ function QuestionFormModal({
           </div>
         </div>
       </div>
-    </>
+    </Portal>
   )
 }

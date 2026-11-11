@@ -169,6 +169,10 @@ const sampleValidEntry: BankEntry = {
   variable: false,
 }
 
+check('bank.save ảnh link ngoài → 400', (await hit({ action: 'bank.save', entry: { ...sampleValidEntry, image: { src: 'https://x.vn/a.png' } } }, 'tAdmin')).status === 400)
+check('bank.save ảnh SVG nhúng → 400', (await hit({ action: 'bank.save', entry: { ...sampleValidEntry, image: { src: 'data:image/svg+xml;base64,AA==' } } }, 'tAdmin')).status === 400)
+check('bank.save ảnh R2 → 200', (await hit({ action: 'bank.save', entry: { ...sampleValidEntry, image: { src: '/api/files/img/abc.png', position: 'top', width: 60 } } }, 'tAdmin')).status === 200)
+
 check(
   'bank.save môn lạ → 400',
   (await hit({ action: 'bank.save', entry: { ...sampleValidEntry, subject: 'Môn Không Có' } }, 'tAdmin')).status === 400,

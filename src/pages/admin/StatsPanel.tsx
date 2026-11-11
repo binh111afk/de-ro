@@ -25,6 +25,7 @@ import {
 } from '@/lib/adminStatsApi'
 import type { AdminMe } from '@/lib/adminApi'
 import { formatNumber, shortenId } from './adminUtils'
+import { Portal } from '@/components/Portal'
 import { cn } from '@/lib/cn'
 
 interface StatsPanelProps {
@@ -500,6 +501,7 @@ export function StatsPanel({ me: _me }: StatsPanelProps) {
 
       {/* Modal danh sách người dùng đang online */}
       {showOnlineModal ? (
+        <Portal>
         <div
           role="presentation"
           onClick={() => setShowOnlineModal(false)}
@@ -578,6 +580,7 @@ export function StatsPanel({ me: _me }: StatsPanelProps) {
             </div>
           </div>
         </div>
+        </Portal>
       ) : null}
     </div>
   )

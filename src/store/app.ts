@@ -472,6 +472,7 @@ export function bankToQuestion(entry: BankEntry, number: number): Question {
     number,
     type: entry.type,
     prompt: entry.prompt,
+    ...(entry.image ? { image: entry.image } : {}),
     options: entry.options,
     answer: entry.answer,
     explanation: entry.explanation,

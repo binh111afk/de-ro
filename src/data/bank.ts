@@ -1,4 +1,4 @@
-import type { Option, QuestionType, Subject } from './types'
+import type { Option, QuestionImage, QuestionType, Subject } from './types'
 import { BANK_FIGURES } from './bankFigures'
 
 /** Kho đầy đủ: BANK + câu THPT (bankThpt.ts, bankThpt2.ts, bankThpt3.ts) tải sau để không nặng gói tải đầu trang. */
@@ -144,6 +144,8 @@ export interface BankEntry {
   variable: boolean
   /** hình từ công cụ vẽ, dạng cấu hình chữ ({kind, …} như AI trả); vẽ lại lúc hiển thị / chèn */
   figure?: { kind: string; [key: string]: unknown }
+  /** ảnh admin đính kèm (PNG, JPG, SVG đã chuyển sang ảnh thường), lưu trên R2 */
+  image?: QuestionImage
 }
 
 export const BANK: BankEntry[] = [

@@ -20,6 +20,8 @@ async function shrink(dataUrl: string): Promise<string> {
     img.onerror = () => reject(new Error('Không mở được ảnh này.'))
     img.src = dataUrl
   })
+  // SVG không khai báo kích thước thì một số trình duyệt báo 0
+  if (!img.naturalWidth || !img.naturalHeight) throw new Error('Ảnh SVG cần có width và height.')
   const scale = Math.min(1, MAX_SIDE / Math.max(img.naturalWidth, img.naturalHeight))
   const canvas = document.createElement('canvas')
   canvas.width = Math.round(img.naturalWidth * scale)

@@ -20,6 +20,7 @@ import { figureDoc, figureImageAttrs, pngifyToolImages } from './toolImages'
 /** ảnh hình vẽ của câu (vẽ một lần, nhớ lại theo id) */
 const figureCache = new Map<string, { src: string; alt: string } | null>()
 function figureOf(entry: BankEntry) {
+  if (entry.image?.src) return { src: entry.image.src, alt: entry.image.alt ?? '' }
   if (!entry.figure) return null
   if (!figureCache.has(entry.id)) {
     const doc = figureDoc(entry.figure)
@@ -239,7 +240,7 @@ export function BankModal({ editor, onClose }: { editor: Editor; onClose: () => 
                           <Badge tone="clay">{b.subject}</Badge>
                           <Badge tone="outline">{TYPE_LABEL[b.type]}</Badge>
                           <LevelChip entry={b} />
-                          {b.figure ? <Badge tone="honey">Có hình</Badge> : null}
+                          {b.figure || b.image ? <Badge tone="honey">Có hình</Badge> : null}
                         </div>
                         <div className="mt-2.5 line-clamp-2 text-[14.5px] leading-snug text-ink">
                           <MathText as="span">{b.prompt}</MathText>
@@ -248,7 +249,7 @@ export function BankModal({ editor, onClose }: { editor: Editor; onClose: () => 
                           {b.grades.includes('all') ? 'Mọi lớp' : b.grades.join(', ')} · {formatPoints(b.points)}đ
                         </p>
                         </div>
-                        {b.figure ? <FigureThumb entry={b} /> : null}
+                        {b.figure || b.image ? <FigureThumb entry={b} /> : null}
                       </button>
                       <Checkbox
                         checked={checked}

@@ -46,6 +46,14 @@ export function bankSelectionTemplate(entries: BankEntry[]): BlockTemplate {
       entries.flatMap((e, i) => {
         const doc = figureDoc(e.figure)
         const block = entryBlock(e, i)
+        if (e.image?.src) {
+          const image = { type: 'image', attrs: { src: e.image.src, alt: e.image.alt ?? '' } }
+          if (block.type === 'examQuestion') {
+            block.content![0].content!.push(image)
+            return [block]
+          }
+          return [block, { type: 'paragraph', attrs: { textAlign: 'center' }, content: [image] }]
+        }
         if (!doc) return [block]
         // câu trắc nghiệm: ảnh vào cuối đề bài để nằm trước phương án A–D
         if (block.type === 'examQuestion') {

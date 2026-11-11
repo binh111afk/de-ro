@@ -22,6 +22,7 @@ import {
   Spinner,
   inputClass,
 } from '@/components/ui'
+import { Portal } from '@/components/Portal'
 import { Pager } from '@/components/Pager'
 import { SiteSelect, type SiteSelectOption } from '@/components/SiteSelect'
 import { Segmented } from '@/components/Segmented'
@@ -464,7 +465,7 @@ function ExamDrawer({
   const questions = detail?.doc?.blocks?.filter((b: any) => b.type === 'question') ?? []
 
   return (
-    <>
+    <Portal>
       <div
         className="fixed inset-0 z-40 bg-ink/40 backdrop-blur-xs transition-opacity"
         onClick={onClose}
@@ -687,7 +688,7 @@ function ExamDrawer({
           </section>
         </div>
       </aside>
-    </>
+    </Portal>
   )
 }
 

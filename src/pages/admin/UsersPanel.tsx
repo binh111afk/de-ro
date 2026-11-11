@@ -18,6 +18,7 @@ import {
   Spinner,
   inputClass,
 } from '@/components/ui'
+import { Portal } from '@/components/Portal'
 import { Pager } from '@/components/Pager'
 import { Segmented } from '@/components/Segmented'
 import { dialog } from '@/components/Dialog'
@@ -136,7 +137,6 @@ export function UsersPanel({ me: _me }: UsersPanelProps) {
                 <th className="px-4 py-3">Đăng nhập gần nhất</th>
                 <th className="px-4 py-3 text-right">Số đề</th>
                 <th className="px-4 py-3 text-right">Số slide</th>
-                <th className="px-4 py-3 text-right">Token tháng này</th>
                 <th className="px-4 py-3">Trạng thái</th>
                 <th className="px-4 py-3">Vai trò</th>
               </tr>
@@ -144,14 +144,14 @@ export function UsersPanel({ me: _me }: UsersPanelProps) {
             <tbody className="divide-y divide-line-2">
               {loading && users.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="py-16 text-center text-ink-3">
+                  <td colSpan={7} className="py-16 text-center text-ink-3">
                     <Spinner className="mr-2 text-ink-3" />
                     <span>Đang tải danh sách người dùng…</span>
                   </td>
                 </tr>
               ) : users.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="py-12">
+                  <td colSpan={7} className="py-12">
                     <EmptyState
                       icon={<Users className="size-6 text-ink-4" />}
                       title="Không tìm thấy người dùng"
@@ -214,11 +214,6 @@ export function UsersPanel({ me: _me }: UsersPanelProps) {
                       {/* Số slide */}
                       <td className="tnum whitespace-nowrap px-4 py-3 text-right font-medium text-ink-2">
                         {u.decks}
-                      </td>
-
-                      {/* Token tháng này */}
-                      <td className="tnum whitespace-nowrap px-4 py-3 text-right font-medium text-ink">
-                        {formatNumber(u.tokensThisMonth)}
                       </td>
 
                       {/* Trạng thái */}
@@ -502,7 +497,7 @@ function UserDetailDrawer({
       : Math.min(100, Math.round((usedValue / limitValue) * 100))
 
   return (
-    <>
+    <Portal>
       {/* Lớp nền mờ */}
       <div
         className="fixed inset-0 z-40 bg-ink/40 backdrop-blur-xs transition-opacity"
@@ -853,7 +848,7 @@ function UserDetailDrawer({
           }}
         />
       ) : null}
-    </>
+    </Portal>
   )
 }
 

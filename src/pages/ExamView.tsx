@@ -19,6 +19,7 @@ import { currentSession } from '@/lib/auth'
 import { useDocStore } from '@/store/docs'
 import { useComposeStore } from '@/store/compose'
 import { useOnline } from '@/store/online'
+import { Portal } from '@/components/Portal'
 import { dialog } from '@/components/Dialog'
 import type { Exam } from '@/data/types'
 
@@ -282,6 +283,7 @@ function ReportExamButton({ examId }: { examId: string }) {
       </Button>
 
       {open ? (
+        <Portal>
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 p-4 backdrop-blur-xs">
           <div
             className="w-full max-w-md rounded-[10px] border border-line bg-surface p-6 shadow-float anim-sheet"
@@ -336,6 +338,7 @@ function ReportExamButton({ examId }: { examId: string }) {
             </form>
           </div>
         </div>
+        </Portal>
       ) : null}
     </>
   )

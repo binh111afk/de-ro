@@ -92,6 +92,14 @@ export const BANK_ACTIONS: ActionMap = {
         }
       }
 
+      // Ảnh đính kèm: chỉ nhận ảnh đã lên R2 hoặc ảnh nhúng nhỏ (bảng này ai cũng đọc được)
+      if (raw.image !== undefined && raw.image !== null) {
+        const src = (raw.image as { src?: unknown }).src
+        if (typeof src !== 'string' || !/^(\/api\/files\/img\/|data:image\/(png|jpeg|webp|gif);base64,)/.test(src)) {
+          throw new HttpError(400, 'Ảnh của câu hỏi không hợp lệ.')
+        }
+      }
+
       // 7. Xác định id và isNew
       const rawId = typeof raw.id === 'string' ? raw.id.trim() : ''
       const isNew = !rawId
