@@ -27,6 +27,8 @@ export async function callAnthropic(opts: {
   baseURL?: string
   model: string
   messages: InMsg[]
+  /** ảnh data URL đính kèm vào tin nhắn người dùng cuối */
+  images?: string[]
   maxTokens: number
   effort?: 'low' | 'medium' | 'high' | 'max'
   signal?: AbortSignal
@@ -42,6 +44,15 @@ export async function callAnthropic(opts: {
   // Messages API không cho kết thúc bằng assistant (prefill) trên model hiện tại
   while (messages.length && messages[messages.length - 1].role === 'assistant') messages.pop()
   if (!messages.length) throw new Error('Không có tin nhắn người dùng')
+  if (opts.images?.length) {
+    const last = messages[messages.length - 1]
+    const blocks = opts.images.map((url) => {
+      const [head, data] = url.split(',')
+      const media_type = head.slice(5, head.indexOf(';')) as 'image/jpeg' | 'image/png' | 'image/webp'
+      return { type: 'image' as const, source: { type: 'base64' as const, media_type, data } }
+    })
+    last.content = [...blocks, { type: 'text' as const, text: last.content as string }]
+  }
 
   const stream = getClient(opts.apiKey, opts.baseURL).beta.messages.stream(
     {

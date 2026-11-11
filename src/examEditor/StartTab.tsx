@@ -12,6 +12,7 @@ import type { ExamDoc } from '@/data/docTypes'
 import { docSize, formatBytes, useDocStore, type Deck } from '@/store/docs'
 import { useComposeStore } from '@/store/compose'
 import { cn } from '@/lib/cn'
+import { dialog } from '@/components/Dialog'
 import { DocIcon, IconDocExam, IconDocSheet, IconDocSlide } from '@/components/docIcons'
 import { IconPencil, IconSearch, IconTrash } from './icons'
 import { useSlidingThumb } from './useSlidingThumb'
@@ -88,6 +89,11 @@ export function StartTab({
   const [query, setQuery] = useState('')
   const [filter, setFilter] = useState<FilterKey>('all')
   const [removing, setRemoving] = useState<string[]>([])
+  const [selected, setSelected] = useState<string[]>([])
+  /** bật từ ô tick ở dòng tiêu đề: hiện ô tick mọi dòng để người dùng tự chọn */
+  const [selectMode, setSelectMode] = useState(false)
+  /** dòng tick gần nhất, mốc cho Shift + bấm */
+  const anchor = useRef<number | null>(null)
   const [editing, setEditing] = useState<string | null>(null)
   const [draft, setDraft] = useState('')
   const editRef = useRef<HTMLInputElement>(null)
@@ -124,12 +130,20 @@ export function StartTab({
   }
 
   /** xoá có animation: giữ dòng lại 170ms rồi mới bỏ khỏi store */
-  const removeItem = (item: RecentItem) => {
-    setRemoving((cur) => (cur.includes(item.id) ? cur : [...cur, item.id]))
+  const removeItems = async (items: RecentItem[]) => {
+    const message = items.length === 1 ? `Xoá "${items[0].title}"? Thao tác này không thể hoàn tác.` : `Xoá ${items.length} tệp đã chọn? Thao tác này không thể hoàn tác.`
+    const ok = await dialog.confirm(message, { title: 'Xoá tệp', danger: true, confirmLabel: 'Xoá' })
+    if (!ok) return
+    const ids = items.map((it) => it.id)
+    setSelected((cur) => cur.filter((id) => !ids.includes(id)))
+    setSelectMode(false)
+    setRemoving((cur) => [...new Set([...cur, ...ids])])
     window.setTimeout(() => {
-      if (item.kind === 'slide') deleteDeck(item.id)
-      else deleteDoc(item.id)
-      setRemoving((cur) => cur.filter((id) => id !== item.id))
+      for (const item of items) {
+        if (item.kind === 'slide') deleteDeck(item.id)
+        else deleteDoc(item.id)
+      }
+      setRemoving((cur) => cur.filter((id) => !ids.includes(id)))
     }, 170)
   }
 
@@ -163,6 +177,31 @@ export function StartTab({
       .filter((it) => !q || it.title.toLowerCase().includes(q))
       .sort((a, b) => (a.updatedAt < b.updatedAt ? 1 : -1))
   }, [myDocs, myDecks, query, filter])
+
+  // đổi bộ lọc hay tìm kiếm thì bỏ chọn, để không xoá nhầm dòng đang bị ẩn
+  useEffect(() => {
+    setSelected([])
+    setSelectMode(false)
+    anchor.current = null
+  }, [query, filter])
+
+  const chosen = docs.filter((d) => selected.includes(d.id))
+  const allChosen = docs.length > 0 && chosen.length === docs.length
+  const selectAll = () => setSelected(docs.map((d) => d.id))
+  const bulkOpen = selectMode || chosen.length > 0
+  const clearSelection = () => {
+    setSelected([])
+    setSelectMode(false)
+    anchor.current = null
+  }
+
+  const toggleRow = (index: number, checked: boolean, shift: boolean) => {
+    const from = shift && anchor.current !== null ? Math.min(anchor.current, index) : index
+    const to = shift && anchor.current !== null ? Math.max(anchor.current, index) : index
+    const ids = docs.slice(from, to + 1).map((d) => d.id)
+    setSelected((cur) => (checked ? [...new Set([...cur, ...ids])] : cur.filter((id) => !ids.includes(id))))
+    anchor.current = index
+  }
 
   // thẻ trắng của segmented control trượt theo pill active
   const pillsRef = useRef<HTMLDivElement>(null)
@@ -284,8 +323,38 @@ export function StartTab({
             </div>
           ) : (
             <div className="recent-table">
+              {bulkOpen ? (
+                <div className="recent-columns recent-columns--bulk">
+                  <span className="recent-head-check">
+                    <input
+                      type="checkbox"
+                      checked={allChosen}
+                      ref={(el) => {
+                        if (el) el.indeterminate = chosen.length > 0 && !allChosen
+                      }}
+                      onChange={clearSelection}
+                      aria-label="Tắt chế độ chọn"
+                    />
+                  </span>
+                  <span className="recent-bulk-count">Đã chọn {chosen.length}</span>
+                  {allChosen ? null : (
+                    <button type="button" className="recent-bulk-btn" onClick={selectAll}>
+                      Chọn tất cả ({docs.length})
+                    </button>
+                  )}
+                  <button type="button" className="recent-bulk-btn recent-bulk-btn--danger" onClick={() => void removeItems(chosen)} disabled={chosen.length === 0}>
+                    <IconTrash size={15} />
+                    Xoá
+                  </button>
+                  <button type="button" className="recent-bulk-btn" onClick={clearSelection}>
+                    Bỏ chọn
+                  </button>
+                </div>
+              ) : (
               <div className="recent-columns">
-                <span />
+                <span className="recent-head-check">
+                  <input type="checkbox" checked={false} onChange={() => setSelectMode(true)} aria-label="Bật chế độ chọn" />
+                </span>
                 <span className="col-name">Tên</span>
                 <span>Vị trí</span>
                 <span className="col-sort">
@@ -303,12 +372,23 @@ export function StartTab({
                 <span className="col-size">Kích thước</span>
                 <span />
               </div>
-              <ul className="recent-list">
-                {docs.map((d) => (
+              )}
+              <ul className={cn('recent-list', bulkOpen && 'has-selection')}>
+                {docs.map((d, index) => (
                   <li
                     key={d.id}
-                    className={cn('recent-row-item', removing.includes(d.id) && 'is-removing')}
+                    className={cn('recent-row-item', removing.includes(d.id) && 'is-removing', selected.includes(d.id) && 'is-selected')}
                   >
+                    {editing === d.id ? null : (
+                      <label className="recent-check">
+                        <input
+                          type="checkbox"
+                          checked={selected.includes(d.id)}
+                          onChange={(e) => toggleRow(index, e.target.checked, (e.nativeEvent as MouseEvent).shiftKey)}
+                          aria-label={`Chọn ${d.title}`}
+                        />
+                      </label>
+                    )}
                     {editing === d.id ? (
                       <div className="recent-item">
                         <span className="recent-icon">
@@ -374,7 +454,7 @@ export function StartTab({
                           className="recent-act recent-act--danger"
                           title="Xoá tệp"
                           aria-label={`Xoá ${d.title}`}
-                          onClick={() => removeItem(d)}
+                          onClick={() => void removeItems([d])}
                         >
                           <IconTrash size={16} />
                         </button>

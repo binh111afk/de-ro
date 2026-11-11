@@ -3,7 +3,7 @@
  * Quản lý kho câu hỏi: Gốc / Đã sửa / Câu mới / Đã ẩn.
  * Bộ lọc đa chiều, khối đếm môn × độ khó, xem trước dạng drawer, form thêm/sửa câu.
  */
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState, useRef } from 'react'
 import {
   AlertCircle,
   BookOpen,
@@ -46,6 +46,9 @@ import { formatViDateTime } from './adminUtils'
 import { figureDoc, figureImageAttrs } from '@/examEditor/toolImages'
 import { cn } from '@/lib/cn'
 import { useDrawerExit } from './useDrawerExit'
+import { Segmented } from '@/components/Segmented'
+import { BankAiPanel } from './BankAiPanel'
+import type { BankDraft } from '@/lib/bankImport'
 
 const figureCache = new Map<string, { src: string; alt: string } | null>()
 function figureOf(entry: BankEntry) {
@@ -635,6 +638,7 @@ export function BankPanel({ me: _me }: { me: AdminMe }) {
         <QuestionFormModal
           initialEntry={editingItem?.entry}
           origin={editingItem?.origin}
+          onAdded={() => void loadData()}
           onClose={() => {
             setEditingItem(null)
             setIsCreating(false)
@@ -905,11 +909,13 @@ function QuestionDrawer({
 function QuestionFormModal({
   initialEntry,
   origin,
+  onAdded,
   onClose,
   onSaved,
 }: {
   initialEntry?: BankEntry
   origin?: BankItemOrigin
+  onAdded: () => void
   onClose: () => void
   onSaved: (entry: BankEntry) => void
 }) {
@@ -977,7 +983,71 @@ function QuestionFormModal({
     setGrades((prev) => (prev.includes(g) ? (prev.length > 1 ? prev.filter((x) => x !== g) : prev) : [...prev, g]))
   }
 
-  const handleSave = async (e: React.FormEvent) => {
+  const [addedCount, setAddedCount] = useState(0)
+  const [formTab, setFormTab] = useState<'manual' | 'ai'>('manual')
+  const [drafts, setDrafts] = useState<BankDraft[]>([])
+  // câu nháp đang được sửa ở tab Soạn tay
+  const [editingDraft, setEditingDraft] = useState<string | null>(null)
+  const promptRef = useRef<HTMLTextAreaElement>(null)
+
+  // Soạn câu tiếp: giữ môn, dạng, điểm, khối, tags; chỉ xoá phần nội dung
+  const parsedTags = () => tagsText.split(',').map((x) => x.trim()).filter(Boolean)
+
+  const editDraft = (d: BankDraft) => {
+    setType(d.type)
+    setPrompt(d.prompt)
+    setImage(d.image)
+    setExplanation(d.explanation ?? '')
+    setSolutionText((d.solution ?? []).join('\n'))
+    if (d.type === 'trac-nghiem') {
+      setOptions(d.options?.length ? d.options.map((o) => ({ ...o })) : ['A', 'B', 'C', 'D'].map((key) => ({ key, text: '' })))
+      setAnswer(d.answer ?? d.options?.[0]?.key ?? 'A')
+    } else if (d.type === 'dung-sai') {
+      setTfOptions(['a', 'b', 'c', 'd'].map((key, i) => ({ key, text: d.options?.[i]?.text ?? '', verdict: d.answer?.[i] === 'S' ? 'S' : 'Đ' })))
+    } else if (d.type === 'tra-loi-ngan') {
+      setShortAnswer(d.answer ?? '')
+    }
+    setErrorMsg(null)
+    setEditingDraft(d.id)
+    setFormTab('manual')
+  }
+
+  const saveDrafts = async (list: BankDraft[]) => {
+    let done = 0
+    let lastError = ''
+    for (const d of list) {
+      try {
+        await saveBankQuestion(
+          { id: '', subject, grades, type: d.type, prompt: d.prompt, points, options: d.options, answer: d.answer, explanation: d.explanation, solution: d.solution, tags: parsedTags(), variable, image: d.image },
+          'published',
+        )
+        setDrafts((cur) => cur.filter((x) => x.id !== d.id))
+        done++
+      } catch (err) {
+        lastError = err instanceof Error ? err.message : 'Có lỗi khi lưu.'
+      }
+    }
+    if (done) {
+      setAddedCount((n) => n + done)
+      onAdded()
+    }
+    if (lastError) await dialog.alert(`Đã lưu ${done}/${list.length} câu. Lỗi gần nhất: ${lastError}`, { title: 'Chưa lưu hết' })
+  }
+
+  const resetForNext = () => {
+    setPrompt('')
+    setImage(undefined)
+    setImgError(null)
+    setOptions(['A', 'B', 'C', 'D'].map((key) => ({ key, text: '' })))
+    setAnswer('A')
+    setTfOptions(['a', 'b', 'c', 'd'].map((key) => ({ key, text: '', verdict: 'Đ' as const })))
+    setShortAnswer('')
+    setSolutionText('')
+    setExplanation('')
+    promptRef.current?.focus()
+  }
+
+  const handleSave = async (e: React.SyntheticEvent, addNext = false) => {
     e.preventDefault()
     setErrorMsg(null)
 
@@ -1063,7 +1133,21 @@ function QuestionFormModal({
     setSaving(true)
     try {
       const res = await saveBankQuestion(payload, origin === 'da-an' ? 'hidden' : 'published')
-      onSaved(res.entry)
+      if (editingDraft) {
+        // sửa xong câu nháp thì quay lại danh sách nháp
+        setDrafts((cur) => cur.filter((x) => x.id !== editingDraft))
+        setEditingDraft(null)
+        setAddedCount((n) => n + 1)
+        resetForNext()
+        onAdded()
+        setFormTab('ai')
+      } else if (addNext) {
+        setAddedCount((n) => n + 1)
+        resetForNext()
+        onAdded()
+      } else {
+        onSaved(res.entry)
+      }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Có lỗi khi lưu câu hỏi.'
       setErrorMsg(msg)
@@ -1072,38 +1156,8 @@ function QuestionFormModal({
     }
   }
 
-  return (
-    <Portal>
-      <div className="fixed inset-0 z-40 bg-ink/50 backdrop-blur-xs" onClick={onClose} aria-hidden="true" />
-      <div
-        className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5"
-        role="dialog"
-        aria-label="Soạn câu hỏi"
-      >
-        <div className="flex max-h-[92vh] w-full max-w-3xl flex-col rounded-[10px] border border-line bg-surface shadow-2xl">
-          {/* Header */}
-          <div className="flex items-center justify-between border-b border-line px-6 py-4">
-            <h2 className="text-[17px] font-bold text-ink">
-              {isEdit ? `Chỉnh sửa câu hỏi (${initialEntry.id})` : 'Thêm câu hỏi mới vào ngân hàng'}
-            </h2>
-            <button
-              type="button"
-              onClick={onClose}
-              className="rounded-[6px] p-1.5 text-ink-3 hover:bg-sunken hover:text-ink"
-            >
-              <X className="size-5" />
-            </button>
-          </div>
-
-          {/* Form Fields */}
-          <form onSubmit={handleSave} className="flex-1 overflow-y-auto p-6 space-y-5">
-            {errorMsg && (
-              <div className="flex items-start gap-2.5 rounded-[6px] border border-clay/30 bg-clay/10 p-3.5 text-[13.5px] text-clay">
-                <AlertCircle className="size-5 shrink-0" />
-                <span>{errorMsg}</span>
-              </div>
-            )}
-
+  const metaFields = (
+    <div className="space-y-5">
             {/* Môn & Loại câu & Điểm */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               <div>
@@ -1162,6 +1216,63 @@ function QuestionFormModal({
                 })}
               </div>
             </div>
+    </div>
+  )
+
+  return (
+    <Portal>
+      <div className="page-enter fixed inset-0 z-50 flex flex-col bg-surface" role="dialog" aria-label="Soạn câu hỏi">
+          {/* Header */}
+          <div className="flex items-center justify-between border-b border-line px-5 py-3">
+            <div className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2">
+              <h2 className="text-[17px] font-bold text-ink">
+                {isEdit ? `Chỉnh sửa câu hỏi (${initialEntry.id})` : 'Thêm câu hỏi mới vào ngân hàng'}
+              </h2>
+              {isEdit ? null : (
+                <Segmented<'manual' | 'ai'>
+                  value={formTab}
+                  onChange={setFormTab}
+                  label="Cách thêm câu hỏi"
+                  options={[
+                    { key: 'manual', label: 'Soạn tay' },
+                    { key: 'ai', label: 'AI và tệp', count: drafts.length || undefined },
+                  ]}
+                />
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Đóng"
+              className="rounded-[6px] p-1.5 text-ink-3 hover:bg-sunken hover:text-ink"
+            >
+              <X className="size-5" />
+            </button>
+          </div>
+
+          {/* Form Fields: cột trái là đề và đáp án, cột phải là lời giải và phân loại */}
+          {formTab === 'ai' ? (
+            <BankAiPanel
+              meta={metaFields}
+              subject={subject}
+              grade={grades[0] ?? 'Lớp 10'}
+              type={type}
+              drafts={drafts}
+              setDrafts={setDrafts}
+              onEdit={editDraft}
+              onSaveDrafts={saveDrafts}
+            />
+          ) : (
+          <>
+          <form
+            onSubmit={handleSave}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && (e.ctrlKey || e.metaKey) && !saving) void handleSave(e, !isEdit)
+            }}
+            className="min-h-0 flex-1 overflow-y-auto lg:grid lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:overflow-hidden"
+          >
+          <div className="space-y-5 p-5 lg:overflow-y-auto">
+            {metaFields}
 
             {/* Nội dung câu hỏi (prompt) */}
             <div>
@@ -1170,6 +1281,8 @@ function QuestionFormModal({
                 <span className="text-[11.5px] text-ink-4">Hỗ trợ LaTeX kẹp trong $...$</span>
               </div>
               <textarea
+                ref={promptRef}
+                autoFocus
                 rows={4}
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
@@ -1336,6 +1449,9 @@ function QuestionFormModal({
               </div>
             )}
 
+          </div>
+
+          <div className="space-y-5 border-line p-5 lg:overflow-y-auto lg:border-l">
             {/* Lời giải (tự luận / các bước) */}
             <div>
               <label className="mb-1.5 block text-[13px] font-semibold text-ink">
@@ -1406,19 +1522,45 @@ function QuestionFormModal({
                 Câu này có đính kèm cấu hình hình vẽ (figure). Khi lưu, hình vẽ hiện tại sẽ được giữ nguyên.
               </div>
             )}
+          </div>
           </form>
 
-          {/* Footer */}
-          <div className="flex items-center justify-end gap-2.5 border-t border-line bg-paper px-6 py-3.5">
+          {/* Footer: lỗi nằm đây để luôn nhìn thấy, không phải cuộn */}
+          <div className="flex flex-wrap items-center justify-end gap-2.5 border-t border-line bg-paper px-5 py-3">
+            <div className="mr-auto min-w-0 text-[13px]">
+              {errorMsg ? (
+                <span className="flex items-center gap-2 text-clay">
+                  <AlertCircle className="size-4 shrink-0" />
+                  {errorMsg}
+                </span>
+              ) : addedCount > 0 ? (
+                <span className="font-medium text-sage">Đã thêm {addedCount} câu</span>
+              ) : !isEdit ? (
+                <span className="hidden text-ink-4 sm:inline">Ctrl + Enter để lưu và soạn câu tiếp</span>
+              ) : null}
+            </div>
             <Button variant="outline" size="sm" onClick={onClose} disabled={saving}>
-              Huỷ
+              {addedCount > 0 ? 'Xong' : 'Huỷ'}
             </Button>
-            <Button variant="clay" size="sm" onClick={handleSave} disabled={saving}>
-              {saving ? <Spinner /> : null}
-              <span>{isEdit ? 'Lưu thay đổi' : 'Tạo câu hỏi'}</span>
-            </Button>
+            {isEdit ? (
+              <Button variant="clay" size="sm" onClick={handleSave} disabled={saving}>
+                {saving ? <Spinner /> : null}
+                <span>Lưu thay đổi</span>
+              </Button>
+            ) : (
+              <>
+                <Button variant="soft" size="sm" onClick={handleSave} disabled={saving}>
+                  Lưu và đóng
+                </Button>
+                <Button variant="clay" size="sm" onClick={(e) => void handleSave(e, true)} disabled={saving}>
+                  {saving ? <Spinner /> : null}
+                  <span>Lưu và thêm câu tiếp</span>
+                </Button>
+              </>
+            )}
           </div>
-        </div>
+          </>
+          )}
       </div>
     </Portal>
   )

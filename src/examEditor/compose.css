@@ -3522,6 +3522,115 @@
     }
   }
 
+  /* chọn nhiều: ô tick nằm đúng chỗ icon, hiện khi rê chuột hoặc khi đã có dòng được chọn */
+  .recent-row-item {
+    position: relative;
+  }
+
+  .recent-row-item.is-selected,
+  .recent-row-item.is-selected:hover {
+    background: var(--color-clay-soft);
+  }
+
+  .recent-check {
+    position: absolute;
+    top: 50%;
+    left: 16px;
+    z-index: 1;
+    display: grid;
+    width: 24px;
+    height: 24px;
+    place-items: center;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(-50%);
+    transition: opacity 120ms ease;
+  }
+
+  .recent-check input,
+  .recent-head-check input {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--color-clay);
+  }
+
+  .recent-head-check {
+    display: grid;
+    width: 24px;
+    place-items: center;
+  }
+
+  .recent-row-item:hover .recent-check,
+  .recent-check:focus-within,
+  .recent-list.has-selection .recent-check {
+    opacity: 1;
+  }
+
+  .recent-row-item:has(.recent-check):hover .recent-icon,
+  .recent-row-item:has(.recent-check:focus-within) .recent-icon,
+  .recent-list.has-selection .recent-row-item:has(.recent-check) .recent-icon {
+    opacity: 0;
+  }
+
+  @media (hover: none) {
+    .recent-check {
+      opacity: 1;
+    }
+
+    .recent-row-item:has(.recent-check) .recent-icon {
+      opacity: 0;
+    }
+  }
+
+  .recent-columns--bulk {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .recent-bulk-count {
+    color: var(--color-ink);
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .recent-bulk-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    border: none;
+    border-radius: 6px;
+    background: none;
+    padding: 2px 8px;
+    color: var(--color-ink-2);
+    font: inherit;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0;
+    cursor: pointer;
+  }
+
+  .recent-bulk-btn:disabled {
+    opacity: 0.4;
+    pointer-events: none;
+  }
+
+  .recent-bulk-btn:hover {
+    background: var(--color-sunken);
+    color: var(--color-ink);
+  }
+
+  .recent-bulk-btn--danger {
+    color: var(--color-clay);
+  }
+
+  .recent-bulk-btn--danger:hover {
+    background: var(--color-clay-soft);
+    color: var(--color-clay);
+  }
+
   .recent-row {
     display: block;
     width: 100%;

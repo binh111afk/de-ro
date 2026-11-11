@@ -1,6 +1,6 @@
 # context.md — đề rõ (trình soạn đề thi)
 
-Bản đồ ngắn của dự án. **Chỉ đọc file này khi bắt đầu phiên**; các file khác mở khi việc đang làm cần tới (bảng "Đọc thêm khi nào" bên dưới). Cập nhật: 11/11/2026 (phiên 29). **Admin giai đoạn 1-5 và bảo mật đã lên `main`, migration đã áp. Làm tiếp admin: đọc [phiên 29](docs/handoff/phien-29.md) (bản đồ file, quy trình, lỗi hay gặp, tiết kiệm token, việc còn lại).**
+Bản đồ ngắn của dự án. **Chỉ đọc file này khi bắt đầu phiên**; các file khác mở khi việc đang làm cần tới (bảng "Đọc thêm khi nào" bên dưới). Cập nhật: 11/11/2026 (phiên 30). **Mọi việc đã lên `main`, migration đã áp. Làm tiếp: đọc [phiên 30](docs/handoff/phien-30.md) (cấu hình AI trong admin, AI và tệp ở ngân hàng; cần đặt `AI_SETTINGS_SECRET` trên Vercel), admin chung xem [phiên 29](docs/handoff/phien-29.md).**
 
 ## Dự án
 

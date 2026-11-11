@@ -13,6 +13,7 @@ import { assertSafeEndpoint, listProviders, pingProviders } from './llmProxy.js'
 import { encryptKey, hasAiSecret, isAllowedEndpoint, resetAiOverrides } from './aiSettings.js'
 import { _resetOpsCache } from './ops.js'
 import { readDbMetrics } from './dbMetrics.js'
+import { readExamPages, VisionInputError } from './bankVision.js'
 import { CONTENT_ACTIONS } from './adminContent.js'
 import { BANK_ACTIONS } from './adminBank.js'
 import { STATS_ACTIONS } from './adminStats.js'
@@ -611,10 +612,24 @@ const ACTIONS: ActionMap = {
   },
 }
 
+/** Đọc ảnh trang đề. Body lớn hơn các action khác nên kiểm quyền TRƯỚC khi đọc body. */
+async function handleVision(req: IncomingMessage, res: ServerResponse): Promise<void> {
+  const ctx = await requireAdmin(req, res, 'admin', 'bank.vision')
+  if (!ctx) return
+  try {
+    const body = JSON.parse(await readBody(req, 4 * 1024 * 1024)) as Body
+    return json(res, 200, await readExamPages(body.images, ctx.userId))
+  } catch (err) {
+    const bad = err instanceof VisionInputError || err instanceof SyntaxError || (err instanceof Error && err.message.includes('quá lớn'))
+    return json(res, bad ? 400 : 502, { error: err instanceof Error ? err.message : String(err) })
+  }
+}
+
 export async function handleAdminRequest(req: IncomingMessage, res: ServerResponse): Promise<void> {
   if (!(await guard(req, res, 'admin'))) return
   if (req.method === 'OPTIONS') return json(res, 204, {})
   if (req.method !== 'POST') return json(res, 405, { error: 'Method not allowed' })
+  if (new URL(req.url ?? '/', 'http://x').searchParams.has('vision')) return handleVision(req, res)
   let body: Body
   try {
     body = JSON.parse(await readBody(req, 64 * 1024)) as Body

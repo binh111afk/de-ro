@@ -215,6 +215,12 @@ function pingTargets(p: ReturnType<typeof providerConfig>) {
   return list
 }
 
+/** Provider đọc được ảnh đề, theo thứ tự thử (Claude đắt nhất nên để cuối). */
+export async function visionTargets() {
+  const all = pingTargets(await liveConfig())
+  return ['fosta', 'xkiro', 'anthropic'].flatMap((name) => all.filter((t) => t.provider === name))
+}
+
 const maskKey = (k: string) => (k ? `••••${k.length >= 8 ? k.slice(-4) : ''}` : '')
 const endpointOf = (url: string) => url.replace(/\/chat\/completions$/, '')
 

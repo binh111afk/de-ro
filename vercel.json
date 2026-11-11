@@ -7,7 +7,7 @@
     "api/llm.ts": { "maxDuration": 300 },
     "api/extract.ts": { "maxDuration": 60 },
     "api/image.ts": { "maxDuration": 120 },
-    "api/admin.ts": { "maxDuration": 60 }
+    "api/admin.ts": { "maxDuration": 180 }
   },
   "rewrites": [
     { "source": "/api/files/:key*", "destination": "/api/files?key=:key*" },

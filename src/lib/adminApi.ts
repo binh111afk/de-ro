@@ -313,6 +313,27 @@ export function setMaintenance(v: MaintenanceSetting): Promise<{ ok: true }> {
   return post('settings.set', { key: 'maintenance', value: v })
 }
 
+/** AI đọc ảnh trang đề (1-4 ảnh JPEG), trả JSON câu hỏi dạng chuỗi. Chỉ admin. */
+export async function bankVision(images: string[]): Promise<{ content: string; model: string }> {
+  if (isAdminMock()) {
+    await new Promise((r) => setTimeout(r, 300))
+    return {
+      model: 'mock',
+      content: JSON.stringify({
+        questions: [
+          { number: 1, type: 'trac-nghiem', prompt: 'Câu đọc từ trang đề, có hình.', options: ['A', 'B', 'C', 'D'].map((key) => ({ key, text: 'Phương án ' + key })), answer: '', figure: { page: 1, box: [100, 100, 600, 400] } },
+          { number: 2, type: 'tra-loi-ngan', prompt: 'Câu chưa có đáp án trong đề.', answer: '' },
+        ],
+        answerKey: { '1': 'C' },
+      }),
+    }
+  }
+  const res = await apiFetch('/api/admin?vision=1', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ images }) })
+  const data = (await res.json().catch(() => ({}))) as { content?: string; model?: string; error?: string }
+  if (!res.ok || !data.content) throw new Error(data.error ?? 'Không đọc được ảnh đề.')
+  return { content: data.content, model: data.model ?? '' }
+}
+
 export function setAnnouncements(items: Announcement[]): Promise<{ ok: true }> {
   if (isAdminMock()) {
     mockSettings.announcements = { items }
