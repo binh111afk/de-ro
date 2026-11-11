@@ -46,6 +46,8 @@ export interface El extends Style {
   src?: string
   /** ảnh là công thức: mã LaTeX gốc (bấm đúp để sửa); màu chữ ở `stroke` */
   latex?: string
+  /** trang của PDF mở để ghi chú: số trang và khổ gốc (điểm PDF). Trang khoá làm nền: không chọn / kéo / gôm được */
+  page?: { n: number; w: number; h: number }
   /** tăng mỗi khi hình dạng đổi (không tính di chuyển) — khoá cache nét rough */
   ver: number
 }
@@ -66,6 +68,7 @@ export const DEFAULT_STYLE: Style = {
 export const newId = () => Math.random().toString(36).slice(2, 10)
 export const newSeed = () => Math.floor(Math.random() * 2 ** 31)
 export const hasPoints = (e: El) => e.kind === 'line' || e.kind === 'arrow' || e.kind === 'freedraw'
+export const isPage = (e: El) => !!e.page
 export const isLinear = (e: El) => e.kind === 'line' || e.kind === 'arrow'
 
 export function clone(e: El): El {

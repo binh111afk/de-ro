@@ -177,14 +177,16 @@ export function PdfPagesDialog({ file, onClose, onDone }: {
 /* ---------------- xuất ---------------- */
 
 export type ExportArea = 'all' | 'view' | 'selection'
-export interface ExportChoice { format: 'png' | 'pdf'; area: ExportArea; bg: ExportBg; scale: number }
+export interface ExportChoice { format: 'png' | 'pdf' | 'pdf-pages'; area: ExportArea; bg: ExportBg; scale: number }
 
-export function ExportDialog({ hasSelection, onClose, onDone }: {
+export function ExportDialog({ hasSelection, hasPages, onClose, onDone }: {
   hasSelection: boolean
+  /** bảng có trang PDF mở để ghi chú: cho xuất theo trang gốc (mặc định) */
+  hasPages?: boolean
   onClose: () => void
   onDone: (c: ExportChoice) => Promise<void>
 }) {
-  const [c, setC] = useState<ExportChoice>({ format: 'png', area: hasSelection ? 'selection' : 'all', bg: 'white', scale: 2 })
+  const [c, setC] = useState<ExportChoice>({ format: hasPages ? 'pdf-pages' : 'png', area: hasSelection ? 'selection' : 'all', bg: 'white', scale: 2 })
   const [busy, setBusy] = useState(false)
   const [err, setErr] = useState('')
   const set = <K extends keyof ExportChoice>(k: K, v: ExportChoice[K]) => setC((o) => ({ ...o, [k]: v, ...(k === 'format' && v === 'pdf' && o.bg === 'none' ? { bg: 'white' as ExportBg } : {}) }))
@@ -207,11 +209,14 @@ export function ExportDialog({ hasSelection, onClose, onDone }: {
   }
   return (
     <Modal title="Xuất bảng vẽ" onClose={onClose}
-      footer={<><button type="button" className={btn} onClick={onClose}>Huỷ</button><button type="button" className={primary} disabled={busy} onClick={go}>{busy ? 'Đang xuất…' : `Xuất ${c.format.toUpperCase()}`}</button></>}>
+      footer={<><button type="button" className={btn} onClick={onClose}>Huỷ</button><button type="button" className={primary} disabled={busy} onClick={go}>{busy ? 'Đang xuất…' : `Xuất ${c.format === 'png' ? 'PNG' : 'PDF'}`}</button></>}>
       <Row label="Định dạng">
         <Opt on={c.format === 'png'} onClick={() => set('format', 'png')}>Ảnh PNG</Opt>
         <Opt on={c.format === 'pdf'} onClick={() => set('format', 'pdf')}>PDF (chia trang A4)</Opt>
+        {hasPages && <Opt on={c.format === 'pdf-pages'} onClick={() => set('format', 'pdf-pages')}>PDF theo trang gốc</Opt>}
       </Row>
+      {c.format === 'pdf-pages' && <p className="mb-3 text-[12px] text-ink-2">Mỗi trang PDF đã mở ra một trang, đúng khổ giấy gốc, kèm nét vẽ trên trang đó.</p>}
+      {c.format !== 'pdf-pages' && <>
       <Row label="Vùng xuất">
         <Opt on={c.area === 'all'} onClick={() => set('area', 'all')}>Toàn bộ nội dung</Opt>
         <Opt on={c.area === 'view'} onClick={() => set('area', 'view')}>Vùng đang nhìn</Opt>
@@ -222,6 +227,7 @@ export function ExportDialog({ hasSelection, onClose, onDone }: {
         <Opt on={c.bg === 'paper'} onClick={() => set('bg', 'paper')}>Giữ kiểu giấy</Opt>
         <Opt on={c.bg === 'none'} disabled={c.format === 'pdf'} onClick={() => set('bg', 'none')}>Trong suốt</Opt>
       </Row>
+      </>}
       <Row label="Độ nét">
         {[1, 2, 3].map((s) => <Opt key={s} on={c.scale === s} onClick={() => set('scale', s)}>{s}×</Opt>)}
       </Row>

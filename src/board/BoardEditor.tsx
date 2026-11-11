@@ -7,7 +7,7 @@
  */
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import {
-  centerOf, clone, DEFAULT_STYLE, handlePositions, hasPoints, hitTest, isLinear, localBounds, measureText,
+  centerOf, clone, DEFAULT_STYLE, handlePositions, hasPoints, hitTest, isLinear, isPage, localBounds, measureText,
   mutate, newId, newSeed, rotate, unionBounds, worldBounds, fontOf, LINE_HEIGHT, inPolygon,
   type Bounds, type El, type Handle, type Kind, type Paper, type PenKind, type Pt, type Style,
 } from './scene'
@@ -20,7 +20,8 @@ import { figureDoc } from '@/examEditor/toolImages'
 import { attachToAi, type AiRef } from '@/lib/aiAttach'
 import { recognize } from './recognize'
 import { ExportDialog, FormulaDialog, PdfPagesDialog, type ExportChoice, type FormulaResult } from './BoardDialogs'
-import { canvasToA4Pdf, download, readImageFile, renderRegion, savePng, type Picture } from './io'
+import { canvasToA4Pdf, download, openPdf, pagesToPdf, pdfPageSize, readImageFile, renderPdfPage, renderRegion, savePng, type Picture } from './io'
+import { cachedSrc, IDB_PREFIX, stash, unstash } from './imgStore'
 import { texToSvg } from './formula'
 
 type Tool = 'select' | 'hand' | Kind | 'eraser' | 'laser'
@@ -61,6 +62,8 @@ const DEFAULT_STYLES: Record<Slot, Style> = {
   text: { ...DEFAULT_STYLE },
 }
 const ERASE_R = [6, 14, 28]
+/** dấu ghi vào clipboard hệ thống khi sao chép hình trong bảng */
+const CLIP_MARK = 'derou-board-copy:'
 const SHAPES: Kind[] = ['rectangle', 'diamond', 'ellipse', 'arrow', 'line']
 
 const keyOf = (id: string) => `derou.board.${id}`
@@ -126,6 +129,8 @@ export default function BoardEditor({ id }: { id: string }) {
   const hold = useRef<{ timer: number; x: number; y: number }>({ timer: 0, x: 0, y: 0 })
   const space = useRef(false)
   const clipboard = useRef<El[]>([])
+  const clipMark = useRef('')
+  const pasteFallback = useRef(0)
   const undoStack = useRef<string[]>([JSON.stringify(els.current)])
   const redoStack = useRef<string[]>([])
 
@@ -143,6 +148,8 @@ export default function BoardEditor({ id }: { id: string }) {
   dialogRef.current = dialog
   const [saveErr, setSaveErr] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
+  const pdfRef = useRef<HTMLInputElement>(null)
+  const [busy, setBusy] = useState('')
   /** đã từng mở tab nào: giữ nội dung (lịch sử trò chuyện) khi đóng / đổi tab */
   const [mounted, setMounted] = useState<Set<SideTab>>(new Set())
   const toggleSide = (t: SideTab) => {
@@ -232,9 +239,11 @@ export default function BoardEditor({ id }: { id: string }) {
   const saveTimer = useRef(0)
   const persist = useCallback(() => {
     window.clearTimeout(saveTimer.current)
-    saveTimer.current = window.setTimeout(() => {
+    saveTimer.current = window.setTimeout(async () => {
       try {
-        const data: Saved = { v: 2, elements: els.current, view: view.current, styles: styles.current, opts: opts.current }
+        // ảnh lớn (ảnh chèn, trang PDF) cất vào IndexedDB, bản lưu chỉ giữ khoá
+        const elements = await Promise.all(els.current.map(async (e) => (e.src ? { ...e, src: await stash(e.src) } : e)))
+        const data: Saved = { v: 2, elements, view: view.current, styles: styles.current, opts: opts.current }
         localStorage.setItem(keyOf(id), JSON.stringify(data))
         setSaveErr(false)
       } catch {
@@ -262,7 +271,10 @@ export default function BoardEditor({ id }: { id: string }) {
 
   const restore = (snap: string) => {
     els.current = JSON.parse(snap)
-    for (const e of els.current) dropFromCache(e.id)
+    for (const e of els.current) {
+      if (e.src?.startsWith(IDB_PREFIX)) e.src = cachedSrc(e.src) ?? e.src
+      dropFromCache(e.id)
+    }
     const ids = new Set(els.current.map((e) => e.id))
     selected.current = new Set([...selected.current].filter((s) => ids.has(s)))
     changed()
@@ -278,6 +290,17 @@ export default function BoardEditor({ id }: { id: string }) {
     undoStack.current.push(s)
     restore(s)
   }
+
+  /* ---------- mở bảng: đọc ảnh lớn từ IndexedDB ---------- */
+
+  useEffect(() => {
+    const need = els.current.filter((e) => e.src?.startsWith(IDB_PREFIX))
+    if (!need.length) return
+    void Promise.all(need.map(async (e) => {
+      const src = await unstash(e.src!).catch(() => '')
+      if (src) { e.src = src; dropFromCache(e.id) }
+    })).then(() => redraw())
+  }, [redraw])
 
   /* ---------- kích thước canvas ---------- */
 
@@ -315,7 +338,8 @@ export default function BoardEditor({ id }: { id: string }) {
   const sel = () => els.current.filter((e) => selected.current.has(e.id))
   const topHit = (p: Pt) => {
     const tol = 6 / view.current.zoom
-    for (let i = els.current.length - 1; i >= 0; i--) if (hitTest(els.current[i], p, tol)) return els.current[i]
+    // trang PDF khoá làm nền: không bấm chọn được
+    for (let i = els.current.length - 1; i >= 0; i--) if (!isPage(els.current[i]) && hitTest(els.current[i], p, tol)) return els.current[i]
     return null
   }
 
@@ -533,6 +557,7 @@ export default function BoardEditor({ id }: { id: string }) {
     let hit = false
     const out: El[] = []
     for (const e of els.current) {
+      if (isPage(e)) { out.push(e); continue }
       if (opts.current.eraseMode === 'stroke' || e.kind !== 'freedraw') {
         if (hitTest(e, p, r)) { hit = true; selected.current.delete(e.id); dropFromCache(e.id) } else out.push(e)
         continue
@@ -655,6 +680,7 @@ export default function BoardEditor({ id }: { id: string }) {
         marquee.current = b
         const next = new Set(d.base)
         for (const e of els.current) {
+          if (isPage(e)) continue
           const w = worldBounds(e)
           if (w[0] >= b[0] && w[1] >= b[1] && w[2] <= b[2] && w[3] <= b[3]) next.add(e.id)
         }
@@ -737,6 +763,7 @@ export default function BoardEditor({ id }: { id: string }) {
         lasso.current = d.pts
         const next = new Set(d.base)
         for (const e of els.current) {
+          if (isPage(e)) continue
           const pts = hasPoints(e) ? e.points!.map(([px, py]) => [e.x + px, e.y + py] as Pt) : [centerOf(e)]
           const inside = pts.filter((q) => inPolygon(q, d.pts)).length
           if (inside / pts.length >= 0.6) next.add(e.id)
@@ -913,6 +940,59 @@ export default function BoardEditor({ id }: { id: string }) {
     commit()
   }
 
+  const pasteInternal = () => {
+    const copies = clipboard.current.map((e) => ({ ...clone(e), id: newId(), seed: newSeed(), x: e.x + 24, y: e.y + 24 }))
+    clipboard.current = copies.map(clone)
+    els.current.push(...copies)
+    pickTool('select')
+    selected.current = new Set(copies.map((c) => c.id))
+    commit()
+  }
+
+  /** dán: hình đã sao chép trong bảng, ảnh / PDF từ ngoài, hoặc chữ */
+  const pasteHandler = useRef<(ev: ClipboardEvent) => void>(() => {})
+  pasteHandler.current = (ev: ClipboardEvent) => {
+    const target = ev.target as HTMLElement | null
+    if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) return
+    if (editingRef.current || dialogRef.current) return
+    // nhiều tab bảng vẽ cùng mở: chỉ bảng đang hiện mới nhận
+    if (!canvasRef.current?.offsetParent) return
+    clearTimeout(pasteFallback.current)
+    const dt = ev.clipboardData
+    const text = dt?.getData('text/plain') ?? ''
+    // ảnh chép từ trình duyệt / công cụ chụp màn hình nằm trong items (files có khi rỗng)
+    const files = [...(dt?.items ?? [])].filter((i) => i.kind === 'file').map((i) => i.getAsFile()).filter((f): f is File => !!f)
+    const ours = clipboard.current.length > 0 && (text.startsWith(CLIP_MARK) ? text === clipMark.current : !clipMark.current && !files.length && !text)
+    ev.preventDefault()
+    if (ours) return pasteInternal()
+    const pdf = files.find((f) => f.type === 'application/pdf')
+    if (pdf) return setDialog({ t: 'pdf', file: pdf })
+    const imgs = files.filter((f) => f.type.startsWith('image/'))
+    if (imgs.length) {
+      void Promise.all(imgs.map((f) => readImageFile(f).catch(() => null))).then((pics) => placePictures(pics.filter((p): p is Picture => !!p)))
+      return
+    }
+    if (text.trim() && !text.startsWith(CLIP_MARK)) {
+      const c = canvasRef.current!
+      const v = view.current
+      const r = c.getBoundingClientRect()
+      const el = newElement('text', [r.width / 2 / v.zoom - v.scrollX, r.height / 2 / v.zoom - v.scrollY])
+      el.text = text.replace(/\r\n?/g, '\n').slice(0, 5000)
+      Object.assign(el, measureText(el.text, el.fontSize))
+      el.x -= el.w / 2
+      el.y -= el.h / 2
+      els.current.push(el)
+      pickTool('select')
+      selected.current = new Set([el.id])
+      commit()
+    }
+  }
+  useEffect(() => {
+    const on = (ev: ClipboardEvent) => pasteHandler.current(ev)
+    window.addEventListener('paste', on)
+    return () => window.removeEventListener('paste', on)
+  }, [])
+
   const keyHandler = useRef<(ev: KeyboardEvent) => void>(() => {})
   keyHandler.current = (ev: KeyboardEvent) => {
     const target = ev.target as HTMLElement | null
@@ -928,18 +1008,24 @@ export default function BoardEditor({ id }: { id: string }) {
     }
     if (mod && k === 'z') { ev.preventDefault(); return ev.shiftKey ? redo() : undo() }
     if (mod && k === 'y') { ev.preventDefault(); return redo() }
-    if (mod && k === 'a') { ev.preventDefault(); selected.current = new Set(els.current.map((e) => e.id)); pickTool('select'); toolRef.current = 'select'; return changed() }
+    if (mod && k === 'a') { ev.preventDefault(); selected.current = new Set(els.current.filter((e) => !isPage(e)).map((e) => e.id)); pickTool('select'); toolRef.current = 'select'; return changed() }
     if (mod && k === 'd') { ev.preventDefault(); return duplicate() }
-    if (mod && k === 'c') { clipboard.current = sel().map(clone); return }
-    if (mod && k === 'x') { clipboard.current = sel().map(clone); return deleteSelected() }
-    if (mod && k === 'v') {
-      if (!clipboard.current.length) return
-      ev.preventDefault()
-      const copies = clipboard.current.map((e) => ({ ...clone(e), id: newId(), seed: newSeed(), x: e.x + 24, y: e.y + 24 }))
-      clipboard.current = copies.map(clone)
-      els.current.push(...copies)
-      selected.current = new Set(copies.map((c) => c.id))
-      return commit()
+    if (mod && (k === 'c' || k === 'x')) {
+      if (!selected.current.size) return
+      clipboard.current = sel().map(clone)
+      // ghi dấu vào clipboard hệ thống: lúc dán, còn đúng dấu này thì dán hình của bảng,
+      // còn nếu người dùng đã sao chép thứ khác (ảnh, chữ) thì dán thứ đó
+      clipMark.current = `${CLIP_MARK}${Date.now()}`
+      navigator.clipboard?.writeText(clipMark.current).catch(() => { clipMark.current = '' })
+      if (k === 'x') deleteSelected()
+      return
+    }
+    // Ctrl+V: để trình duyệt bắn sự kiện paste (pasteHandler). Dự phòng: không có sự kiện paste
+    // (trình duyệt chặn clipboard) thì vẫn dán hình đã sao chép trong bảng
+    if (mod && k === 'v' && clipboard.current.length) {
+      clearTimeout(pasteFallback.current)
+      pasteFallback.current = window.setTimeout(pasteInternal, 120)
+      return
     }
     if (mod && (k === '=' || k === '+')) { ev.preventDefault(); return zoomAt(view.current.zoom * 1.1) }
     if (mod && k === '-') { ev.preventDefault(); return zoomAt(view.current.zoom / 1.1) }
@@ -1035,6 +1121,53 @@ export default function BoardEditor({ id }: { id: string }) {
     placePictures(pics)
   }
 
+  /** mở PDF để ghi chú: các trang xếp dọc dưới cùng, khoá làm nền */
+  const onOpenPdfNotes = async (ev: React.ChangeEvent<HTMLInputElement>) => {
+    const f = ev.target.files?.[0]
+    ev.target.value = ''
+    const c = canvasRef.current
+    if (!f || !c) return
+    const MAX = 100
+    setBusy('Đang mở PDF…')
+    try {
+      const doc = await openPdf(f)
+      try {
+        const n = Math.min(doc.numPages, MAX)
+        const W = 800, GAP = 32
+        const v = view.current
+        const r = c.getBoundingClientRect()
+        const cx = r.width / 2 / v.zoom - v.scrollX
+        // đặt dưới nội dung đang có, bảng trống thì từ mép trên khung nhìn
+        const u = unionBounds(els.current)
+        let y = u ? u[3] + 80 : 40 / v.zoom - v.scrollY
+        const top = y
+        const pages: El[] = []
+        for (let i = 1; i <= n; i++) {
+          setBusy(`Đang mở PDF… trang ${i}/${n}`)
+          const size = await pdfPageSize(doc, i)
+          const pic = await renderPdfPage(doc, i, 1400)
+          const h = (W * size.h) / size.w
+          pages.push({ ...newElement('image', [cx - W / 2, y]), w: W, h, src: pic.src, opacity: 100, page: { n: i, w: size.w, h: size.h } })
+          y += h + GAP
+        }
+        els.current = [...pages, ...els.current]
+        // phóng cho trang vừa bề ngang khung nhìn, cuộn tới trang đầu
+        v.zoom = Math.max(0.2, Math.min(1.2, (r.width - 48) / W))
+        v.scrollX = r.width / 2 / v.zoom - cx
+        v.scrollY = -top + 24 / v.zoom
+        pickTool('freedraw')
+        commit()
+        if (doc.numPages > MAX) window.alert(`PDF có ${doc.numPages} trang, bảng chỉ mở ${MAX} trang đầu.`)
+      } finally {
+        doc.close()
+      }
+    } catch {
+      window.alert('Không mở được file PDF này.')
+    } finally {
+      setBusy('')
+    }
+  }
+
   const onFormula = async (r: FormulaResult) => {
     const old = dialogRef.current?.t === 'formula' ? dialogRef.current.el : undefined
     setDialog(null)
@@ -1063,6 +1196,18 @@ export default function BoardEditor({ id }: { id: string }) {
   const onExport = async (ch: ExportChoice) => {
     const c = canvasRef.current
     if (!c) return
+    if (ch.format === 'pdf-pages') {
+      // mỗi trang PDF gốc ra một trang, đúng khổ, kèm nét vẽ đè lên
+      const pages = els.current.filter(isPage).sort((a, b) => a.y - b.y || a.x - b.x)
+      if (!pages.length) throw new Error('Bảng chưa có trang PDF nào.')
+      const items = []
+      for (const pg of pages) {
+        const k = Math.min(1600, pg.page!.w * ch.scale * 1.1) / pg.w
+        items.push({ c: await renderRegion(els.current, [pg.x, pg.y, pg.x + pg.w, pg.y + pg.h], k, 'white', 'plain'), pw: pg.page!.w, ph: pg.page!.h })
+      }
+      download(URL.createObjectURL(pagesToPdf(items)), `ghi-chu-${new Date().toISOString().slice(0, 10)}.pdf`)
+      return setDialog(null)
+    }
     const v = view.current
     const r = c.getBoundingClientRect()
     const pool = ch.area === 'selection' ? els.current.filter((e) => selected.current.has(e.id)) : els.current
@@ -1646,6 +1791,12 @@ export default function BoardEditor({ id }: { id: string }) {
               className="flex h-8 items-center gap-1.5 rounded-[7px] px-2.5 text-[13px] text-ink hover:bg-sunken">
               <Ico d="M4 5h16v14H4zM4 15l4-4 4 4 3-3 5 5M15 9h.01" size={16} />Chèn ảnh/PDF
             </button>
+            <button type="button" title="Mở file PDF để vẽ, ghi chú lên từng trang" onClick={() => pdfRef.current?.click()}
+              className="flex h-8 items-center gap-1.5 rounded-[7px] px-2.5 text-[13px] text-ink hover:bg-sunken">
+              <Ico d="M6 3h9l4 4v14H6zM14 3v5h5M9 17l5-5 2 2-5 5H9z" size={16} />Ghi chú PDF
+            </button>
+            <input ref={pdfRef} type="file" hidden accept="application/pdf,.pdf" onChange={onOpenPdfNotes} />
+            {busy && <span className="ml-1 text-[12px] text-ink-2">{busy}</span>}
             <IconBtn label="Xuất PNG / PDF" onClick={() => setDialog({ t: 'export' })}><Ico d="M12 4v11M7 10l5 5 5-5M5 20h14" /></IconBtn>
             <input ref={fileRef} type="file" hidden multiple accept="image/png,image/jpeg,image/webp,image/gif,application/pdf,.pdf" onChange={onPickFile} />
             {saveErr && <span className="ml-1 text-[12px] text-red-600" title="Bộ nhớ trình duyệt đã đầy: xoá bớt ảnh/trang PDF hoặc xuất bảng ra file để giữ lại">Chưa lưu được (đầy bộ nhớ)</span>}
@@ -1711,7 +1862,7 @@ export default function BoardEditor({ id }: { id: string }) {
         <PdfPagesDialog file={dialog.file} onClose={() => setDialog(null)} onDone={(pages) => { setDialog(null); placePictures(pages) }} />
       )}
       {dialog?.t === 'export' && (
-        <ExportDialog hasSelection={selected.current.size > 0} onClose={() => setDialog(null)} onDone={onExport} />
+        <ExportDialog hasSelection={selected.current.size > 0} hasPages={els.current.some(isPage)} onClose={() => setDialog(null)} onDone={onExport} />
       )}
 
       {/* panel phải: khung ngoài đổi bề rộng để trượt ra/vào, khung trong giữ nguyên 360px nên nội dung không bị bóp */}
