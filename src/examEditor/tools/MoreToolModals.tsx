@@ -93,6 +93,7 @@ function TextBlock({
   rows,
   errors,
   label,
+  placeholder,
 }: {
   title: string
   help: HelpGroups
@@ -102,6 +103,7 @@ function TextBlock({
   rows: number
   errors: string[]
   label: string
+  placeholder?: string
 }) {
   const [open, setOpen] = useState(false)
   return (
@@ -114,6 +116,7 @@ function TextBlock({
       <textarea
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
         spellCheck={false}
         rows={rows}
         aria-label={label}
@@ -754,13 +757,14 @@ const GAS_HELP: HelpGroups = [
       { code: '1-2: đẳng nhiệt', what: 'p–V: cung hypebol (p·V như nhau); p–T, V–T: đoạn đứng' },
       { code: '2-3: đẳng tích', what: 'p–V: đoạn đứng; p–T: đoạn trên đường qua O; V–T: đoạn ngang' },
       { code: '3-1: đẳng áp', what: 'p–V, p–T: đoạn ngang; V–T: đoạn trên đường qua O' },
+      { code: 'a-b: đẳng áp | p_1', what: 'Thêm "| nhãn" để ghi nhãn ở đầu xa O (p_1 hoặc p₁ thành p₁)' },
       { code: '1-2', what: 'Bỏ trống loại: nối thẳng' },
     ],
   },
 ]
 
 export function GasModal({ initial, submitLabel, onClose, onInsert }: Props<GasSpec>) {
-  const [spec, setSpec] = useState<GasSpec>(initial ?? GAS_DEFAULT)
+  const [spec, setSpec] = useState<GasSpec>(() => (initial ? { ...initial, showStates: initial.showStates ?? true } : GAS_DEFAULT))
   const set = (p: Partial<GasSpec>) => setSpec((s) => ({ ...s, ...p }))
   const doc = useMemo((): ToolDoc => ({ kind: 'gas', spec }), [spec])
   const { preview, error } = useRender(doc)
@@ -793,7 +797,8 @@ export function GasModal({ initial, submitLabel, onClose, onInsert }: Props<GasS
         title="Quá trình"
         help={GAS_HELP}
         errors={[]}
-        intro="Mỗi dòng một quá trình: đẳng nhiệt, đẳng tích, đẳng áp hoặc bỏ trống để nối thẳng."
+        intro='Mỗi dòng một quá trình: đẳng nhiệt, đẳng tích, đẳng áp (hoặc bỏ trống để nối thẳng); thêm "| nhãn" để ghi nhãn đường (vd. a-b: đẳng áp | p_1).'
+        placeholder="vd. a-b: đẳng áp | p_1"
         value={spec.processes}
         onChange={(processes) => set({ processes })}
         rows={3}
@@ -827,6 +832,7 @@ export function GasModal({ initial, submitLabel, onClose, onInsert }: Props<GasS
         <Check checked={spec.dashed} onChange={(dashed) => set({ dashed })}>Nét đứt gióng xuống hai trục</Check>
         <Check checked={spec.arrows} onChange={(arrows) => set({ arrows })}>Mũi tên chiều quá trình</Check>
         <Check checked={spec.toOrigin} onChange={(toOrigin) => set({ toOrigin })}>Kéo dài nét đứt về gốc O (đường qua O)</Check>
+        <Check checked={spec.showStates !== false} onChange={(showStates) => set({ showStates })}>Hiện điểm trạng thái</Check>
       </section>
     </>
   )

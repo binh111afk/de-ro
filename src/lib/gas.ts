@@ -19,7 +19,7 @@ export interface GasSpec {
   axes: GasAxes
   /** mỗi dòng một trạng thái "1: (2; 3)" — toạ độ (ngang; dọc): p–V là (V; p), p–T là (T; p), V–T là (T; V) */
   states: string
-  /** mỗi dòng một quá trình "1-2: đẳng nhiệt" (đẳng tích, đẳng áp, thẳng) */
+  /** mỗi dòng một quá trình "1-2: đẳng nhiệt" (đẳng tích, đẳng áp, thẳng); thêm "| nhãn" để ghi nhãn đường */
   processes: string
   /** đơn vị trên trục, vd "atm", "L", "K" (trống = không ghi) */
   pUnit: string
@@ -33,6 +33,8 @@ export interface GasSpec {
   arrows: boolean
   /** kéo dài nét đứt về gốc O cho đoạn nằm trên đường qua O (đẳng tích trên p–T, đẳng áp trên V–T) */
   toOrigin: boolean
+  /** hiện chấm tròn và nhãn tên các trạng thái (mặc định true) */
+  showStates?: boolean
 }
 
 export const GAS_PROCESS_LABEL: Record<GasProcess, string> = {
@@ -68,8 +70,11 @@ function processOf(word: string): GasProcess | null {
   return null
 }
 
-export function parseGasProcesses(text: string, states: Map<string, [number, number]>): Array<{ from: string; to: string; kind: GasProcess }> {
-  const out: Array<{ from: string; to: string; kind: GasProcess }> = []
+export function parseGasProcesses(
+  text: string,
+  states: Map<string, [number, number]>,
+): Array<{ from: string; to: string; kind: GasProcess; label?: string }> {
+  const out: Array<{ from: string; to: string; kind: GasProcess; label?: string }> = []
   for (const raw of text.split(/\n|;/)) {
     const line = raw.trim()
     if (!line) continue
@@ -77,9 +82,12 @@ export function parseGasProcesses(text: string, states: Map<string, [number, num
     if (!m) throw new Error(`Không đọc được quá trình "${line}". Viết dạng "1-2: đẳng nhiệt"`)
     if (!states.has(m[1])) throw new Error(`Chưa khai báo trạng thái ${m[1]}`)
     if (!states.has(m[2])) throw new Error(`Chưa khai báo trạng thái ${m[2]}`)
-    const kind = m[3].trim() ? processOf(m[3]) : 'line'
+    const bar = m[3].indexOf('|')
+    const procRaw = (bar >= 0 ? m[3].slice(0, bar) : m[3]).trim()
+    const label = (bar >= 0 ? m[3].slice(bar + 1) : '').trim()
+    const kind = procRaw ? processOf(procRaw) : 'line'
     if (!kind) throw new Error(`Quá trình ${m[1]}-${m[2]}: chỉ nhận đẳng nhiệt, đẳng tích, đẳng áp hoặc thẳng`)
-    out.push({ from: m[1], to: m[2], kind })
+    out.push(label ? { from: m[1], to: m[2], kind, label } : { from: m[1], to: m[2], kind })
   }
   return out
 }
@@ -147,6 +155,11 @@ function processPath(axes: GasAxes, kind: GasProcess, A: [number, number], B: [n
 
 const SUB = '₀₁₂₃₄₅₆₇₈₉'
 const sub = (name: string) => (/^\d+$/.test(name) ? [...name].map((c) => SUB[Number(c)]).join('') : name)
+const formatProcLabel = (raw: string) =>
+  esc(raw).replace(/_\{([^{}]+)\}|_([\p{L}\p{N}]+)/gu, (_, braced?: string, plain?: string) => {
+    const s = braced ?? plain ?? ''
+    return /^\d+$/.test(s) ? sub(s) : `<tspan baseline-shift="sub" font-size="70%">${s}</tspan>`
+  })
 
 export function renderGasSvg(spec: GasSpec, desc: string): { svg: string; width: number; height: number } {
   const states = parseGasStates(spec.states)
@@ -221,6 +234,9 @@ export function renderGasSvg(spec: GasSpec, desc: string): { svg: string; width:
     }
 
   // quá trình + mũi tên ở giữa
+  const cx = (left + right) / 2
+  const cy = (top + bottom) / 2
+  const showStates = spec.showStates !== false
   for (const p of paths) {
     const d = p.pts.map(([x, y], i) => `${i ? 'L' : 'M'}${f1(X(x))} ${f1(Y(y))}`).join('')
     b += `<path d="${d}" fill="none" stroke="#111" stroke-width="2"/>`
@@ -238,19 +254,55 @@ export function renderGasSvg(spec: GasSpec, desc: string): { svg: string; width:
       dy /= len
       b += `<path d="M${f1(ax - dx * 8)} ${f1(ay - dy * 8)}L${f1(ax + dx * 2)} ${f1(ay + dy * 2)}" stroke="#111" stroke-width="2" marker-end="url(#gasarr)"/>`
     }
+    if (p.label) {
+      const p0 = p.pts[0]
+      const p1 = p.pts[p.pts.length - 1]
+      const d0 = Math.hypot(X(p0[0]) - left, bottom - Y(p0[1]))
+      const d1 = Math.hypot(X(p1[0]) - left, bottom - Y(p1[1]))
+      const farEnd = d1 >= d0
+      const far = farEnd ? p1 : p0
+      const adj = farEnd ? p.pts[p.pts.length - 2] : p.pts[1]
+      const fx = X(far[0])
+      const fy = Y(far[1])
+      let vx = fx - X(adj[0])
+      let vy = fy - Y(adj[1])
+      let len = Math.hypot(vx, vy)
+      if (len < 1e-6) {
+        vx = fx - left
+        vy = fy - bottom
+        len = Math.hypot(vx, vy) || 1
+      }
+      const ux = vx / len
+      const uy = vy / len
+      const dist = 11 + (Math.abs(uy) > 0.7 ? 2 : 0)
+      let anchor = ux > 0.25 ? 'start' : ux < -0.25 ? 'end' : 'middle'
+      let lx = fx + ux * dist
+      let ly = fy + uy * dist + 5
+      // nếu vẫn hiện nhãn trạng thái, tránh đè lên "(tên)" tại cùng đầu mút
+      if (showStates) {
+        if (anchor === 'middle' && fy <= cy) {
+          anchor = fx >= cx ? 'end' : 'start'
+          lx = fx + (fx >= cx ? -6 : 6)
+        } else if ((anchor === 'start' && fx >= cx) || (anchor === 'end' && fx < cx)) {
+          ly = fy <= cy ? Math.max(ly, fy + 14) : Math.min(ly, fy - 5)
+        }
+      }
+      ly = Math.max(18, Math.min(H - 6, ly))
+      b += `<text x="${f1(lx)}" y="${f1(ly)}" ${FAM} font-size="15" text-anchor="${anchor}">${formatProcLabel(p.label)}</text>`
+    }
   }
 
   // trạng thái
-  const cx = (left + right) / 2
-  const cy = (top + bottom) / 2
-  for (const [name, [x, y]] of states) {
-    const px = X(x)
-    const py = Y(y)
-    b += `<circle cx="${f1(px)}" cy="${f1(py)}" r="3" fill="#111"/>`
-    // đặt nhãn ra phía ngoài so với tâm khung để đỡ đè đường
-    const lx = px + (px >= cx ? 9 : -9)
-    const ly = py + (py <= cy ? -7 : 16)
-    b += `<text x="${f1(lx)}" y="${f1(ly)}" ${FAM} font-size="15" text-anchor="${px >= cx ? 'start' : 'end'}">(${esc(name)})</text>`
+  if (showStates) {
+    for (const [name, [x, y]] of states) {
+      const px = X(x)
+      const py = Y(y)
+      b += `<circle cx="${f1(px)}" cy="${f1(py)}" r="3" fill="#111"/>`
+      // đặt nhãn ra phía ngoài so với tâm khung để đỡ đè đường
+      const lx = px + (px >= cx ? 9 : -9)
+      const ly = py + (py <= cy ? -7 : 16)
+      b += `<text x="${f1(lx)}" y="${f1(ly)}" ${FAM} font-size="15" text-anchor="${px >= cx ? 'start' : 'end'}">(${esc(name)})</text>`
+    }
   }
 
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${desc}<rect width="100%" height="100%" fill="#fff"/>${b}</svg>`
@@ -268,4 +320,5 @@ export const GAS_DEFAULT: GasSpec = {
   dashed: true,
   arrows: true,
   toOrigin: true,
+  showStates: true,
 }

@@ -140,7 +140,7 @@ export const FIGURE_GUIDE =
   '12) Mạch điện: {"kind":"circuit","text":"nguồn E = 12 V, r = 1 Ω\\nR1=4Ω - (R2=6Ω // R3=3Ω)"}. "-" nối tiếp, "//" song song, ngoặc gom cụm; linh kiện theo chữ đầu: R, Rb, Đ, A, V, K, C, L, E.\n' +
   '13) Đồ thị chuyển động: {"kind":"motion","yName":"v (m/s)","tName":"t (s)","points":"(0; 0) (2; 4) (5; 4)"}\n' +
   '14) Mặt phẳng nghiêng: {"kind":"incline","angle":30,"fms":"none|up|down","F":"none|up|down"}\n' +
-  '15b) Đồ thị trạng thái khí (Vật lí 12): {"kind":"gas","axes":"pV|pT|VT","states":"1: (1; 4)\\n2: (4; 1)\\n3: (4; 4)","processes":"1-2: đẳng nhiệt\\n2-3: đẳng tích\\n3-1: đẳng áp","ticks":"value|symbol|none"}. Toạ độ (ngang; dọc): p–V là (V; p), p–T là (T; p), V–T là (T; V). Số liệu phải khớp quá trình (đẳng nhiệt trên p–V: p·V bằng nhau; đẳng tích trên p–T: p/T bằng nhau…); ticks "symbol" ghi p₁, V₁, T₁ thay cho số.\n' +
+  '15b) Đồ thị trạng thái khí (Vật lí 12): {"kind":"gas","axes":"pV|pT|VT","states":"1: (1; 4)\\n2: (4; 1)\\n3: (4; 4)","processes":"1-2: đẳng nhiệt\\n2-3: đẳng tích\\n3-1: đẳng áp","ticks":"value|symbol|none","showStates":true|false}. Toạ độ (ngang; dọc): p–V là (V; p), p–T là (T; p), V–T là (T; V). Số liệu phải khớp quá trình (đẳng nhiệt trên p–V: p·V bằng nhau; đẳng tích trên p–T: p/T bằng nhau…); thêm "| nhãn" sau quá trình để ghi tên đường (vd "a-b: đẳng áp | p_1"), đặt showStates=false để ẩn chấm/nhãn trạng thái; ticks "symbol" ghi p₁, V₁, T₁ thay cho số.\n' +
   '15) Cấu hình electron: {"kind":"electron","element":"Fe"}\n' +
   '16) Công thức cấu tạo hữu cơ: {"kind":"struct","formula":"CH3-CH(CH3)-CH2-OH"}\n' +
   '17) Đồ thị số mol (Hoá): {"kind":"chemgraph","xName":"n CO2","yName":"n↓","points":"(0; 0) (0,2; 0,2) (0,4; 0)"}\n' +
@@ -293,6 +293,7 @@ export function toolFromRaw(raw: Record<string, unknown>): ToolDoc {
           dashed: bool('dashed', true),
           arrows: bool('arrows', true),
           toOrigin: bool('toOrigin', true),
+          showStates: bool('showStates', true),
         },
       }
       break
