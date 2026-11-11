@@ -144,6 +144,7 @@ export const FIGURE_GUIDE =
   '15) Cấu hình electron: {"kind":"electron","element":"Fe"}\n' +
   '16) Công thức cấu tạo hữu cơ: {"kind":"struct","formula":"CH3-CH(CH3)-CH2-OH"}\n' +
   '17) Đồ thị số mol (Hoá): {"kind":"chemgraph","xName":"n CO2","yName":"n↓","points":"(0; 0) (0,2; 0,2) (0,4; 0)"}\n' +
+  '18) Phương trình hoá học (Hoá): {"kind":"chemeq","equations":"2KMnO4 -> K2MnO4 + MnO2 + O2 [t°]","autoBalance":false,"fontSize":17,"align":"center"}\n' +
   'Biểu thức dùng biến x, ^ cho luỹ thừa, sqrt(), ln, sin, cos; nhân ngầm được (2x).'
 
 const TOOL_SYSTEM =
@@ -307,6 +308,17 @@ export function toolFromRaw(raw: Record<string, unknown>): ToolDoc {
       break
     case 'chemgraph':
       doc = { kind: 'chemgraph', spec: { xName: str('xName') || 'n', yName: str('yName') || 'n↓', points: need('points', 'Không thấy số liệu đồ thị.'), dashed: bool('dashed', true) } }
+      break
+    case 'chemeq':
+      doc = {
+        kind: 'chemeq',
+        spec: {
+          equations: need('equations', 'Không thấy phương trình hoá học.'),
+          autoBalance: bool('autoBalance', false),
+          fontSize: Math.min(22, Math.max(14, num(raw.fontSize, 17))),
+          align: pick('align', ['left', 'center'] as const, 'center'),
+        },
+      }
       break
     default:
       throw new Error(note || 'Không thấy gì để vẽ minh hoạ trong đoạn đã chọn.')

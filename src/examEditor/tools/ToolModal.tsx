@@ -22,6 +22,8 @@ import type { SignTableSpec } from '@/lib/signTable'
 import type { OxySpec } from '@/lib/oxy'
 import type { StatsSpec } from '@/lib/stats'
 import type { CircuitSpec } from '@/lib/circuit'
+import { ChemEqModal } from './MoreToolModals'
+import type { ChemEqSpec } from '@/lib/chemEq'
 
 export function ToolModal({
   kind,
@@ -68,6 +70,8 @@ export function ToolModal({
       return <StructModal initial={initial as StructSpec | null | undefined} {...common} />
     case 'chemgraph':
       return <ChemGraphModal initial={initial as ChemGraphSpec | null | undefined} {...common} />
+    case 'chemeq':
+      return <ChemEqModal initial={initial as ChemEqSpec | null | undefined} {...common} />
     case 'trig':
       return <TrigModal initial={initial as TrigSpec | null | undefined} {...common} />
     case 'probtree':

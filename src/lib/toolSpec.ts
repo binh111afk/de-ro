@@ -15,6 +15,7 @@ import { renderNumberLineSvg, renderTreeSvg, renderTrigSvg, renderVennSvg, type 
 import { renderGasSvg, type GasSpec } from './gas'
 import { renderSceneSvg, type SceneSpec } from './scene'
 import { renderChemGraphSvg, renderElectronSvg, renderStructSvg, type ChemGraphSpec, type ElectronSpec, type StructSpec } from './chem'
+import { renderChemEqSvg, type ChemEqSpec } from './chemEq'
 import { renderGroupedSvg, type GroupedSpec } from './grouped'
 
 export type ToolDoc =
@@ -33,6 +34,7 @@ export type ToolDoc =
   | { kind: 'electron'; spec: ElectronSpec }
   | { kind: 'struct'; spec: StructSpec }
   | { kind: 'chemgraph'; spec: ChemGraphSpec }
+  | { kind: 'chemeq'; spec: ChemEqSpec }
   | { kind: 'trig'; spec: TrigSpec }
   | { kind: 'probtree'; spec: TreeSpec }
   | { kind: 'numberline'; spec: NumberLineSpec }
@@ -132,6 +134,8 @@ function renderToolRaw(doc: ToolDoc): ToolImage {
       return renderStructSvg(doc.spec, toolDesc(doc))
     case 'chemgraph':
       return renderChemGraphSvg(doc.spec, toolDesc(doc))
+    case 'chemeq':
+      return renderChemEqSvg(doc.spec, toolDesc(doc))
     case 'trig':
       return renderTrigSvg(doc.spec, toolDesc(doc))
     case 'probtree':
