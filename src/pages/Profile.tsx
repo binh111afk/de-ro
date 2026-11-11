@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
-import { LogOut, Shield } from 'lucide-react'
+import { LogOut, Shield, Trash2, Upload } from 'lucide-react'
 import { getMe, type AdminMe } from '@/lib/adminApi'
 import { Button, inputClass } from '@/components/ui'
 import { signOut, updateProfile, type Session } from '@/lib/auth'
@@ -8,7 +8,8 @@ import { uploadImage } from '@/lib/mediaStore'
 import { useSession } from '@/lib/useSession'
 import { apiFetch } from '@/lib/apiFetch'
 import { currentSession } from '@/lib/auth'
-import { rest } from '@/lib/documents'
+import { deleteDocument, DOC_TYPES, listDocuments, rest, uploadDocument, type UserDocument } from '@/lib/documents'
+import { dialog } from '@/components/Dialog'
 import { useSyncStatus } from '@/store/syncStatus'
 
 export default function Profile() {
@@ -29,6 +30,7 @@ function ProfilePage({ user }: { user: Session['user'] }) {
         <AdminCard />
         <EditCard user={user} />
         <CreditCard />
+        <MyFilesCard />
         <StorageCard />
       </div>
     </div>
@@ -256,33 +258,135 @@ interface Storage {
   kinds: Record<string, { count: number; bytes: number; limit: number | null }>
 }
 
-const KIND_LABEL: [string, string][] = [['doc', 'Đề thi'], ['deck', 'Slide'], ['board', 'Bảng vẽ'], ['online', 'Đề online'], ['upload', 'Tệp tải lên']]
+const KIND_LABEL: [string, string][] = [['doc', 'Đề thi'], ['deck', 'Slide'], ['board', 'Bảng vẽ'], ['online', 'Đề online'], ['files', 'Đề, tài liệu tải lên'], ['upload', 'Ảnh tải lên']]
 
 const mb = (n: number) => {
   const v = n / 1048576
   return `${v < 0.1 && n > 0 ? '<0,1' : v.toLocaleString('vi-VN', { maximumFractionDigits: 1 })} MB`
 }
 
+async function loadStorage(): Promise<Storage> {
+  const s = await currentSession()
+  if (!s) throw new Error('Chưa đăng nhập')
+  return rest<Storage>('/rpc/my_storage', { method: 'POST', token: s.access_token, body: {} })
+}
+
+/** Đề, tài liệu (PDF / Word) người dùng tự tải lên: lưu R2 + bảng user_documents, tính vào dung lượng lưu trữ. */
+function MyFilesCard() {
+  const [files, setFiles] = useState<UserDocument[] | 'loading' | 'error'>('loading')
+  const [busy, setBusy] = useState(false)
+  const [err, setErr] = useState('')
+  const fileRef = useRef<HTMLInputElement>(null)
+  const bump = useSyncStatus((s) => s.bump)
+
+  const reload = () =>
+    listDocuments()
+      .then(setFiles)
+      .catch(() => setFiles('error'))
+  useEffect(() => {
+    void reload()
+  }, [])
+
+  const onPick = async (ev: ChangeEvent<HTMLInputElement>) => {
+    const list = [...(ev.target.files ?? [])]
+    ev.target.value = ''
+    if (!list.length) return
+    setBusy(true)
+    setErr('')
+    try {
+      for (const f of list) {
+        if (!DOC_TYPES[f.type]) throw new Error(`"${f.name}": chỉ nhận PDF hoặc Word (.docx).`)
+        // uploadDocument tự kiểm dung lượng còn lại trước khi đẩy tệp lên
+        await uploadDocument(f, null)
+      }
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : 'Không tải lên được.')
+    } finally {
+      setBusy(false)
+      bump()
+      void reload()
+    }
+  }
+
+  const onDelete = async (d: UserDocument) => {
+    if (!(await dialog.confirm(`Xoá "${d.name}"?`, { title: 'Xoá tệp', danger: true, confirmLabel: 'Xoá' }))) return
+    try {
+      await deleteDocument(d.id)
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : 'Không xoá được.')
+    }
+    bump()
+    void reload()
+  }
+
+  return (
+    <section className="rounded-[8px] bg-surface p-7 shadow-lift sm:p-8">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 className="font-display text-[22px] font-semibold tracking-[-0.01em] text-ink">Đề của tôi</h2>
+          <p className="mt-1 text-[13px] text-ink-3">Tải đề, tài liệu (PDF, Word) lên để giữ trên tài khoản, mở ở máy nào cũng được.</p>
+        </div>
+        <Button variant="outline" size="sm" disabled={busy} onClick={() => fileRef.current?.click()}>
+          <Upload className="size-4" />
+          {busy ? 'Đang tải lên…' : 'Tải tệp lên'}
+        </Button>
+        <input
+          ref={fileRef}
+          type="file"
+          multiple
+          accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+          className="sr-only"
+          onChange={onPick}
+        />
+      </div>
+      {err ? <p role="alert" className="mt-4 rounded-[6px] bg-clay-tint px-3 py-2 text-[13px] text-clay-deep">{err}</p> : null}
+      {files === 'loading' ? (
+        <p className="mt-6 text-[13px] text-ink-3">Đang tải…</p>
+      ) : files === 'error' ? (
+        <p className="mt-6 text-[13px] text-ink-3">Chưa tải được danh sách, thử lại sau.</p>
+      ) : !files.length ? (
+        <p className="mt-6 rounded-[6px] border border-dashed border-line px-4 py-6 text-center text-[13px] text-ink-3">
+          Chưa có tệp nào. Bấm “Tải tệp lên” để thêm đề hoặc tài liệu.
+        </p>
+      ) : (
+        <ul className="mt-5 divide-y divide-line-2">
+          {files.map((d) => (
+            <li key={d.id} className="flex items-center gap-3 py-2.5">
+              <span className="flex h-8 w-11 shrink-0 items-center justify-center rounded-[5px] bg-sunken text-[11px] font-semibold text-ink-2">
+                {DOC_TYPES[d.mime] ?? 'TỆP'}
+              </span>
+              <a href={d.url} target="_blank" rel="noreferrer" title={d.name}
+                className="min-w-0 flex-1 truncate text-[14px] text-ink hover:text-clay-deep">
+                {d.name}
+              </a>
+              <span className="hidden shrink-0 text-[12.5px] text-ink-3 tnum sm:inline">{new Date(d.created_at).toLocaleDateString('vi-VN')}</span>
+              <span className="w-16 shrink-0 text-right text-[12.5px] text-ink-3 tnum">{mb(d.size)}</span>
+              <button type="button" onClick={() => void onDelete(d)} aria-label={`Xoá ${d.name}`} title="Xoá"
+                className="grid size-8 shrink-0 place-items-center rounded-[6px] text-ink-3 hover:bg-sunken hover:text-clay-deep">
+                <Trash2 className="size-4" />
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  )
+}
+
 /** Dung lượng lưu trữ trên máy chủ (đề, slide, bảng vẽ đồng bộ theo tài khoản). Giới hạn đặt ở trigger của user_items. */
 function StorageCard() {
   const [st, setSt] = useState<Storage | 'loading' | 'error'>('loading')
   const quota = useSyncStatus((s) => s.quota)
+  const version = useSyncStatus((s) => s.version)
   useEffect(() => {
     let alive = true
-    void (async () => {
-      try {
-        const s = await currentSession()
-        if (!s) throw new Error()
-        const d = await rest<Storage>('/rpc/my_storage', { method: 'POST', token: s.access_token, body: {} })
-        if (alive) setSt(d)
-      } catch {
-        if (alive) setSt('error')
-      }
-    })()
+    loadStorage()
+      .then((d) => alive && setSt(d))
+      .catch(() => alive && setSt('error'))
     return () => {
       alive = false
     }
-  }, [quota])
+  }, [quota, version])
 
   let body
   if (st === 'loading') body = <p className="mt-6 text-[13px] text-ink-3">Đang tải…</p>
@@ -311,7 +415,7 @@ function StorageCard() {
           })}
         </ul>
         <p className="mt-4 text-[12.5px] leading-relaxed text-ink-3">
-          Đề, slide, bảng vẽ được lưu trên máy chủ để mở ở máy khác. Ảnh và tệp PDF lưu riêng, không tính vào đây.
+          Gồm đề, slide, bảng vẽ đồng bộ theo tài khoản và đề, tài liệu bạn tải lên. Ảnh chèn trong đề / slide lưu riêng, không tính vào đây.
           {pct >= 90 ? ' Sắp đầy: xoá bớt tệp cũ ở tab Bắt đầu trong trang soạn đề.' : ''}
         </p>
       </>

@@ -1,6 +1,6 @@
 # context.md — đề rõ (trình soạn đề thi)
 
-Bản đồ ngắn của dự án. **Chỉ đọc file này khi bắt đầu phiên**; các file khác mở khi việc đang làm cần tới (bảng "Đọc thêm khi nào" bên dưới). Cập nhật: 11/11/2026 (phiên 31). **Đã lên `main` tới `266d9ad`; còn một thay đổi nhỏ chưa commit (kéo tiếp sau khi nắn hình ở bảng vẽ). Làm tiếp: đọc [phiên 31](docs/handoff/phien-31.md) (Bảng vẽ tự viết, AI vẽ lên bảng, "Đưa vào chat"). Việc Vercel còn treo từ [phiên 30](docs/handoff/phien-30.md): đặt `AI_SETTINGS_SECRET`.**
+Bản đồ ngắn của dự án. **Chỉ đọc file này khi bắt đầu phiên**; các file khác mở khi việc đang làm cần tới (bảng "Đọc thêm khi nào" bên dưới). Cập nhật: 11/11/2026 (phiên 32). **Mọi việc đã lên `main`, migration đã áp. Làm tiếp: đọc [phiên 32](docs/handoff/phien-32.md) (bảng vẽ hoàn thiện + đồng bộ, đề thiếu đáp án, chống trắng màn, giới hạn lưu trữ 10 MB, "Đề của tôi" ở Hồ sơ) — mục "Còn lại" có các phần chưa thử khi đăng nhập. Việc Vercel còn treo từ [phiên 30](docs/handoff/phien-30.md): đặt `AI_SETTINGS_SECRET`.**
 
 ## Dự án
 
@@ -42,7 +42,9 @@ Danh sách đủ: `package.json` → `scripts`. `.env` cần `LLM_API_KEY` (mẫ
 | Khung chương trình | `src/data/khungToan.json` (Toán 6–12 GDPT 2018); `src/lib/khungPrompt.ts` đoán lớp/chương/học kỳ từ yêu cầu, cắt phần cần rồi chèn vào prompt soạn đề Toán (`AiPanel.tsx`), test `scripts/check-khung.ts` |
 | Kho câu hỏi | `src/data/bank.ts` + `bankThpt.ts`/`bankThpt2.ts` (nạp lười), độ khó `bankLevel.ts`, câu có hình `src/data/bankFigures.ts` (field `figure`), `src/examEditor/BankModal.tsx` |
 | Slide | `src/examEditor/SlideEditor.tsx`, `slide.css`; đồ hoạ `src/lib/graphics.ts` là file **sinh tự động** |
-| Bảng vẽ | `src/board/` (`BoardEditor.tsx` giao diện + thao tác + lệnh vẽ của AI, `render.ts`, `scene.ts`, `recognize.ts` nắn hình); lưu `localStorage` `derou.board.<id>` |
+| Bảng vẽ | `src/board/` (`BoardEditor.tsx` giao diện + thao tác + lệnh vẽ của AI, `render.ts`, `scene.ts`, `recognize.ts` nắn hình, `io.ts` nhập/xuất PNG-PDF, `formula.ts`, `imgStore.ts` ảnh IndexedDB ↔ R2); danh sách + nội dung ở `src/store/boards.ts`, đồng bộ `user_items` kind `board` |
+| Lưu trữ / giới hạn | `src/lib/sync.ts` (đồng bộ `user_items`), `src/lib/documents.ts` (tài liệu tải lên), trigger quota trong migration `20261119`/`20261120`, Hồ sơ `src/pages/Profile.tsx` |
+| Tải trang an toàn sau deploy | `src/lib/lazyPage.ts`, `src/components/PageErrorBoundary.tsx` |
 | "Đưa vào chat" (đính kèm phần đang chọn vào AiPanel) | `src/lib/aiAttach.ts`, `AiPanel` prop `attachKey` (khoá `exam` / `slide` / `board-<id>`) |
 | Danh sách có phân trang | `src/components/Pager.tsx` |
 
@@ -63,7 +65,7 @@ Danh sách đủ: `package.json` → `scripts`. `.env` cần `LLM_API_KEY` (mẫ
 | Khi làm | Mở |
 |---|---|
 | Trang Admin (bản đồ file, quyết định, việc còn lại) | [phiên 29](docs/handoff/phien-29.md), kế hoạch gốc [docs/plan-admin.md](docs/plan-admin.md) |
-| Tiếp việc phiên trước | [phiên 31](docs/handoff/phien-31.md) (Bảng vẽ, AI vẽ, Đưa vào chat) · [phiên 30](docs/handoff/phien-30.md) (cấu hình AI admin, AI ngân hàng) · [phiên 29](docs/handoff/phien-29.md) (Admin G1-5, tự khoá, pentest) · [phiên 28](docs/handoff/phien-28.md) (Xáo đề giữ đáp án) · [phiên 27](docs/handoff/phien-27.md) (Xáo đề, mẫu slide, LLM dự phòng, so model) · [phiên 26](docs/handoff/phien-26.md) (gộp 3 nhánh agent) · [phiên 25](docs/handoff/phien-25.md) (khung chương trình, trục đồ thị) |
+| Tiếp việc phiên trước | [phiên 32](docs/handoff/phien-32.md) (bảng vẽ, đề thiếu đáp án, giới hạn lưu trữ) · [phiên 31](docs/handoff/phien-31.md) (Bảng vẽ, AI vẽ, Đưa vào chat) · [phiên 30](docs/handoff/phien-30.md) (cấu hình AI admin, AI ngân hàng) · [phiên 29](docs/handoff/phien-29.md) (Admin G1-5, tự khoá, pentest) · [phiên 28](docs/handoff/phien-28.md) (Xáo đề giữ đáp án) · [phiên 27](docs/handoff/phien-27.md) (Xáo đề, mẫu slide, LLM dự phòng, so model) · [phiên 26](docs/handoff/phien-26.md) (gộp 3 nhánh agent) · [phiên 25](docs/handoff/phien-25.md) (khung chương trình, trục đồ thị) |
 | Khung chương trình các môn (chống AI ra đề vượt lớp): soạn prompt cho agent ngoài, kiểm file gửi về | [docs/khung-chuong-trinh.md](docs/khung-chuong-trinh.md) |
 | Giao việc cho agent rẻ hơn (mẫu prompt, chạy song song bằng worktree) | `docs/prompt-*.md`, [phiên 26](docs/handoff/phien-26.md) mục "Lưu ý cách làm" |
 | Soạn thêm câu cho kho câu hỏi | [scripts/bank/HUONG_DAN_SOAN.md](scripts/bank/HUONG_DAN_SOAN.md) |

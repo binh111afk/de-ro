@@ -5,11 +5,16 @@ interface SyncStatus {
   /** lời báo của máy chủ khi vượt mức (null = không vượt) */
   quota: string | null
   setQuota: (msg: string | null) => void
+  /** tăng mỗi khi dung lượng đổi (tải / xoá tài liệu) để thẻ dung lượng tải lại */
+  version: number
+  bump: () => void
 }
 
 export const useSyncStatus = create<SyncStatus>((set) => ({
   quota: null,
   setQuota: (quota) => set({ quota }),
+  version: 0,
+  bump: () => set((s) => ({ version: s.version + 1 })),
 }))
 
 /** lỗi giới hạn từ trigger `check_user_items_quota` có dạng "QUOTA:<lời báo>" */

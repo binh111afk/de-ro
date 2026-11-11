@@ -70,6 +70,13 @@ export async function uploadDocument(file: File, subject: string | null): Promis
   if (!s) throw new AuthError('Bạn cần đăng nhập để tải tài liệu.')
   if (!DOC_TYPES[file.type]) throw new Error('Chỉ nhận tệp PDF hoặc Word (.docx).')
   if (file.size > MAX_DOC_MB * 1024 * 1024) throw new Error(`Tệp quá lớn (tối đa ${MAX_DOC_MB} MB).`)
+  // tài liệu tính vào dung lượng lưu trữ (migration 20261120): kiểm trước khi đẩy tệp lên kho file,
+  // để không có tệp nằm trên R2 mà dòng trong danh sách bị từ chối
+  const st = await rest<{ used: number; max: number }>('/rpc/my_storage', { method: 'POST', token: s.access_token, body: {} }).catch(() => null)
+  if (st && st.used + file.size > st.max) {
+    const mb = (n: number) => `${(n / 1048576).toLocaleString('vi-VN', { maximumFractionDigits: 1 })} MB`
+    throw new Error(`"${file.name}" (${mb(file.size)}) vượt dung lượng còn lại (${mb(Math.max(0, st.max - st.used))} / ${mb(st.max)}). Xoá bớt tệp ở trang Hồ sơ để tải tiếp.`)
+  }
 
   const res = await apiFetch('/api/upload', {
     method: 'POST',
@@ -79,13 +86,18 @@ export async function uploadDocument(file: File, subject: string | null): Promis
   const data = (await res.json().catch(() => null)) as { url?: string; error?: string } | null
   if (!res.ok || !data?.url) throw new Error(data?.error ?? `Không tải được tệp (${res.status}).`)
 
-  const [row] = await rest<UserDocument[]>(`/user_documents?select=${COLUMNS}`, {
-    method: 'POST',
-    token: s.access_token,
-    prefer: 'return=representation',
-    body: { name: file.name, mime: file.type, size: file.size, url: data.url, subject },
-  })
-  return row
+  try {
+    const [row] = await rest<UserDocument[]>(`/user_documents?select=${COLUMNS}`, {
+      method: 'POST',
+      token: s.access_token,
+      prefer: 'return=representation',
+      body: { name: file.name, mime: file.type, size: file.size, url: data.url, subject },
+    })
+    return row
+  } catch (err) {
+    // trigger giới hạn trả "QUOTA:<lời báo>": chỉ giữ lời báo
+    throw new Error(err instanceof Error ? err.message.replace(/^.*QUOTA:/, '') : String(err))
+  }
 }
 
 /** Xóa dòng trong danh sách. Tệp trên R2 vẫn còn; chưa có endpoint xóa tệp. */
