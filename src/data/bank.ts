@@ -2,15 +2,124 @@ import type { Option, QuestionType, Subject } from './types'
 import { BANK_FIGURES } from './bankFigures'
 
 /** Kho đầy đủ: BANK + câu THPT (bankThpt.ts, bankThpt2.ts, bankThpt3.ts) tải sau để không nặng gói tải đầu trang. */
-let fullBank: Promise<BankEntry[]> | null = null
-export function loadFullBank(): Promise<BankEntry[]> {
-  fullBank ??= Promise.all([import('./bankThpt'), import('./bankThpt2'), import('./bankThpt3')]).then(([a, b, c]) => [
+export interface BankOverrideRow {
+  id: string
+  data: BankEntry
+  status: 'published' | 'hidden'
+}
+
+/**
+ * Hàm gộp thuần (pure): gộp kho câu hỏi tĩnh với các dòng ghi đè từ Supabase.
+ * - Sửa câu có sẵn: ghi đè theo id
+ * - Ẩn câu: bỏ câu có status === 'hidden'
+ * - Câu mới: thêm vào danh sách
+ */
+export function mergeBank(staticBank: BankEntry[], overrides: BankOverrideRow[]): BankEntry[] {
+  if (!overrides || overrides.length === 0) return [...staticBank]
+
+  const hidden = new Set<string>()
+  const publishedMap = new Map<string, BankEntry>()
+
+  for (const o of overrides) {
+    if (o.status === 'hidden') {
+      hidden.add(o.id)
+    } else if (o.status === 'published' && o.data && typeof o.data === 'object') {
+      publishedMap.set(o.id, { ...o.data, id: o.id })
+    }
+  }
+
+  const result: BankEntry[] = []
+  const seenIds = new Set<string>()
+
+  // Duyệt qua staticBank: bỏ câu ẩn, ghi đè câu có sửa đổi, giữ nguyên câu gốc
+  for (const item of staticBank) {
+    if (hidden.has(item.id)) continue
+    if (publishedMap.has(item.id)) {
+      result.push(publishedMap.get(item.id)!)
+    } else {
+      result.push(item)
+    }
+    seenIds.add(item.id)
+  }
+
+  // Thêm câu mới (chưa có trong staticBank và không bị ẩn)
+  for (const [id, entry] of publishedMap.entries()) {
+    if (!seenIds.has(id) && !hidden.has(id)) {
+      result.push(entry)
+      seenIds.add(id)
+    }
+  }
+
+  return result
+}
+
+let staticBankPromise: Promise<BankEntry[]> | null = null
+/** Tải toàn bộ kho tĩnh (không gộp với Supabase) */
+export function loadStaticBank(): Promise<BankEntry[]> {
+  staticBankPromise ??= Promise.all([import('./bankThpt'), import('./bankThpt2'), import('./bankThpt3')]).then(([a, b, c]) => [
     ...BANK,
     ...a.BANK_THPT,
     ...b.BANK_THPT2,
     ...c.BANK_THPT3,
   ])
+  return staticBankPromise
+}
+
+async function fetchBankOverrides(timeoutMs = 4000): Promise<BankOverrideRow[] | null> {
+  const base = (
+    typeof import.meta !== 'undefined' && import.meta.env?.VITE_SUPABASE_URL
+      ? (import.meta.env.VITE_SUPABASE_URL as string)
+      : typeof process !== 'undefined'
+        ? process.env?.VITE_SUPABASE_URL
+        : ''
+  )?.replace(/\/+$/, '')
+
+  const key =
+    typeof import.meta !== 'undefined' && import.meta.env?.VITE_SUPABASE_PUBLISHABLE_KEY
+      ? (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string)
+      : typeof process !== 'undefined'
+        ? process.env?.VITE_SUPABASE_PUBLISHABLE_KEY
+        : ''
+
+  if (!base || !key) return null
+
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), timeoutMs)
+
+  try {
+    const res = await fetch(`${base}/rest/v1/bank_questions?select=id,data,status`, {
+      headers: { apikey: key, Authorization: `Bearer ${key}` },
+      signal: controller.signal,
+    })
+    if (!res.ok) return null
+    return (await res.json()) as BankOverrideRow[]
+  } catch {
+    return null
+  } finally {
+    clearTimeout(timer)
+  }
+}
+
+let fullBank: Promise<BankEntry[]> | null = null
+/** Tải kho câu hỏi đầy đủ: file tĩnh + Supabase overrides (fallback tĩnh nếu lỗi hoặc quá 4s, nhớ trong phiên) */
+export function loadFullBank(): Promise<BankEntry[]> {
+  fullBank ??= (async () => {
+    const staticList = await loadStaticBank()
+    try {
+      const overrides = await fetchBankOverrides(4000)
+      if (overrides && overrides.length > 0) {
+        return mergeBank(staticList, overrides)
+      }
+    } catch {
+      // Tải lỗi hoặc chậm quá 4s: dùng nguyên file tĩnh
+    }
+    return staticList
+  })()
   return fullBank
+}
+
+export function _resetBankCache(): void {
+  fullBank = null
 }
 
 /**
