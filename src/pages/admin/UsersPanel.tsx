@@ -807,7 +807,7 @@ function UserDetailDrawer({
                         options={[...BAN_DURATIONS]}
                         onChange={(v) => setBanDuration(v as typeof banDuration)}
                         label="Thời hạn khoá"
-                        className="w-full"
+                        className="w-full [&>button]:flex-auto [&>button]:justify-center [&>button]:whitespace-nowrap"
                       />
                     </div>
                     <div>
