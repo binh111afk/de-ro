@@ -886,6 +886,21 @@ export default function BoardEditor({ id }: { id: string }) {
     if (canvasRef.current && !drag.current) canvasRef.current.style.cursor = toolCursor()
   })
 
+  /* menu thả xuống: bấm ra ngoài hoặc Esc thì đóng */
+  useEffect(() => {
+    if (!pop) return
+    const down = (e: PointerEvent) => {
+      if (!(e.target as Element | null)?.closest?.(`[data-pop="${pop}"]`)) setPop(null)
+    }
+    const key = (e: KeyboardEvent) => { if (e.key === 'Escape') setPop(null) }
+    document.addEventListener('pointerdown', down, true)
+    document.addEventListener('keydown', key, true)
+    return () => {
+      document.removeEventListener('pointerdown', down, true)
+      document.removeEventListener('keydown', key, true)
+    }
+  }, [pop])
+
   /* vị trí nền trượt của hàng công cụ: đo nút đang chọn sau mỗi lần vẽ và khi đổi cỡ */
   const segRef = useRef<HTMLDivElement>(null)
   const [seg, setSeg] = useState({ l: 0, w: 0 })
@@ -1440,7 +1455,7 @@ function Pop({ id, pop, setPop, title, face, children, align }: {
 }) {
   const open = pop === id
   return (
-    <div className="relative">
+    <div className="relative" data-pop={id}>
       <button
         type="button" title={title} aria-label={title} aria-expanded={open} onClick={() => setPop(open ? null : id)}
         className={`flex h-8 items-center rounded-[7px] px-1 ${open ? 'bg-sunken' : 'hover:bg-sunken'}`}
