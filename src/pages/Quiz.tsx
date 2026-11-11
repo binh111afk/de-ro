@@ -30,6 +30,7 @@ import {
   SHORT_MAX_CHARS,
   describeAnswer,
   formatTrueFalse,
+  gradableMax,
   isAutoGraded,
   isFullyCorrect,
   parseTrueFalse,
@@ -116,7 +117,7 @@ export default function Quiz() {
 
   /** Đề lấy từ link/cộng đồng thì gửi kết quả về cho giáo viên khi nộp bài (mỗi lượt một lần). */
   const sentFor = useRef<number | null>(null)
-  const [sent, setSent] = useState<'sent' | 'failed' | null>(null)
+  const [sent, setSent] = useState<'sent' | 'failed' | 'skipped' | null>(null)
   useEffect(() => {
     if (!submitted || !lastResult || !exam || sentFor.current === lastResult.at) return
     if (!isRemoteExamId(exam.importedFrom) || lastResult.examId !== exam.id) return
@@ -144,7 +145,7 @@ export default function Quiz() {
           cancelLabel: 'Không gửi',
         })
         name = typed?.trim() ?? ''
-        if (!name) return
+        if (!name) { setSent('skipped'); return }
         saveStudent({ ...(loadStudent() ?? { className: '' }), name })
       }
       try {
@@ -159,7 +160,7 @@ export default function Quiz() {
           className: info?.className,
           seat: info?.seat,
         })
-        useApp.getState().applyGrading(exam.id, graded.score, graded.max, graded.key ?? {})
+        useApp.getState().applyGrading(exam.id, graded.score, graded.max, graded.key ?? {}, graded.gradable)
         setSent('sent')
       } catch {
         setSent('failed')
@@ -234,6 +235,11 @@ export default function Quiz() {
   const restart = locked ? undefined : handleRestart
 
   if (submitted && lastResult) {
+    // thang điểm: chỉ các câu có đáp án. Đề link không kèm đáp án thì đợi server chấm (pending);
+    // server lỗi mà máy không có đáp án nào thì quay về tổng điểm cả đề
+    const localGradable = gradableMax(questions)
+    const pending = isRemoteExamId(exam.importedFrom) && sent === null
+    const gradable = sent === 'failed' && localGradable === 0 ? totalPoints : (lastResult.gradable ?? localGradable)
     return reviewing ? (
       <ReviewView
         questions={questions}
@@ -248,6 +254,8 @@ export default function Quiz() {
         examTitle={exam.title}
         score={lastResult.score}
         totalPoints={totalPoints}
+        gradable={gradable}
+        pending={pending}
         questions={questions}
         answers={answers}
         note={sent === 'sent' ? 'Đã gửi kết quả cho giáo viên.' : sent === 'failed' ? 'Chưa gửi được kết quả cho giáo viên, kiểm tra mạng rồi bấm Làm lại nếu cần.' : undefined}
@@ -904,6 +912,8 @@ function ResultView({
   examTitle,
   score,
   totalPoints,
+  gradable,
+  pending,
   questions,
   answers,
   note,
@@ -914,13 +924,20 @@ function ResultView({
   examTitle: string
   score: number
   totalPoints: number
+  /** tổng điểm các câu chấm được (có đáp án) */
+  gradable: number
+  /** đang đợi server chấm */
+  pending?: boolean
   questions: Question[]
   answers: Record<string, string>
   onRestart?: () => void
   onReview: () => void
 }) {
-  const pct = totalPoints > 0 ? (score / totalPoints) * 100 : 0
+  const pct = gradable > 0 ? (score / gradable) * 100 : 0
   const correct = questions.filter((q) => isFullyCorrect(q, answers[q.id])).length
+  const gradedCount = questions.filter(isAutoGraded).length
+  const noKey = !pending && gradable <= 0
+  const skipped = Math.round((totalPoints - gradable) * 1000) / 1000
   const grade =
     pct >= 85
       ? 'Xuất sắc'
@@ -947,21 +964,39 @@ function ResultView({
           </span>
 
           <p className="eyebrow mt-6">Kết quả</p>
-          <p className="mt-2.5 font-display text-[56px] font-semibold leading-none tracking-[-0.03em] text-ink tnum">
-            {formatPoints(score)}
-            <span className="text-[26px] text-ink-4">/{formatPoints(totalPoints)}</span>
-          </p>
-          <p className={cn('mt-3 font-display text-[21px] font-semibold', tone)}>{grade}</p>
-          <p className="mt-1.5 text-[13.5px] text-ink-3">
-            Đúng {correct}/{questions.length} câu · {pct.toFixed(1)}%
-          </p>
+          {pending ? (
+            <p className="mt-4 font-display text-[24px] font-semibold text-ink-3">Đang chấm bài…</p>
+          ) : noKey ? (
+            <>
+              <p className="mt-3 font-display text-[28px] font-semibold text-ink">Đề chưa có đáp án</p>
+              <p className="mx-auto mt-2 max-w-[440px] text-[13.5px] leading-relaxed text-ink-3">
+                Người đăng chưa nhập đáp án nên bài làm không được chấm điểm. Em bấm “Xem lại bài” để tự đối chiếu với sách hoặc lời giải.
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="mt-2.5 font-display text-[56px] font-semibold leading-none tracking-[-0.03em] text-ink tnum">
+                {formatPoints(score)}
+                <span className="text-[26px] text-ink-4">/{formatPoints(gradable)}</span>
+              </p>
+              <p className={cn('mt-3 font-display text-[21px] font-semibold', tone)}>{grade}</p>
+              <p className="mt-1.5 text-[13.5px] text-ink-3">
+                Đúng {correct}/{gradedCount || questions.length} câu · {pct.toFixed(1)}%
+              </p>
+              {skipped > 0 ? (
+                <p className="mt-1 text-[12.5px] text-ink-4">
+                  Chưa tính {formatPoints(skipped)}đ của {questions.length - gradedCount} câu tự luận hoặc chưa có đáp án.
+                </p>
+              ) : null}
 
-          <div className="mx-auto mt-8 h-2.5 w-full max-w-[380px] overflow-hidden rounded-full bg-sunken">
-            <div
-              className="h-full rounded-full bg-clay transition-[width] duration-700 ease-out"
-              style={{ width: `${Math.min(100, pct)}%` }}
-            />
-          </div>
+              <div className="mx-auto mt-8 h-2.5 w-full max-w-[380px] overflow-hidden rounded-full bg-sunken">
+                <div
+                  className="h-full rounded-full bg-clay transition-[width] duration-700 ease-out"
+                  style={{ width: `${Math.min(100, pct)}%` }}
+                />
+              </div>
+            </>
+          )}
 
           <p className="mt-7 text-[13.5px] text-ink-3">{examTitle}</p>
           {note ? <p role="status" className="mt-2 text-[12.5px] text-ink-4">{note}</p> : null}
@@ -997,13 +1032,13 @@ function ResultView({
               key={q.id}
               className={cn(
                 'flex items-start gap-3.5 rounded-[10px] px-5 py-4',
-                ok ? 'bg-sage-soft/70' : 'bg-clay-soft/60',
+                !graded ? 'bg-sunken' : ok ? 'bg-sage-soft/70' : 'bg-clay-soft/60',
               )}
             >
               <span
                 className={cn(
                   'tnum mt-px flex size-7 shrink-0 items-center justify-center rounded-full text-[11.5px] font-bold',
-                  ok ? 'bg-sage text-white' : 'bg-clay text-white',
+                  !graded ? 'bg-ink-4 text-white' : ok ? 'bg-sage text-white' : 'bg-clay text-white',
                 )}
               >
                 {i + 1}
@@ -1018,7 +1053,7 @@ function ResultView({
                 <p className="mt-1.5 text-[12.5px] text-ink-3">
                   Bạn chọn:{' '}
                   <span className="font-semibold text-ink-2">{describeAnswer(q, given) || 'không trả lời'}</span> ·
-                  Đáp án: <span className="font-semibold text-ink">{describeAnswer(q, q.answer) || '—'}</span>
+                  Đáp án: <span className="font-semibold text-ink">{describeAnswer(q, q.answer) || (q.type.startsWith('tu-luan') ? '—' : 'chưa có')}</span>
                   {graded && q.type === 'dung-sai' ? (
                     <span className="ml-1">
                       · Được <span className="font-semibold text-ink-2 tnum">{formatPoints(got)}</span>/{formatPoints(q.points)}đ

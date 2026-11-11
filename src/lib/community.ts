@@ -8,6 +8,7 @@ import { questionCount, totalPoints } from '@/data/types'
 import { AuthError, currentSession } from '@/lib/auth'
 import { docToExam } from '@/lib/docToExam'
 import { apiFetch } from '@/lib/apiFetch'
+import { confirmPublishWithoutKey } from '@/lib/answerKeyWarn'
 
 const BASE = import.meta.env.VITE_SUPABASE_URL as string
 const KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string
@@ -85,6 +86,7 @@ export async function publishDoc(doc: ExamDoc, listed = true, replaceId?: string
   const s = await currentSession()
   if (!s) throw new AuthError('Bạn cần đăng nhập để đăng đề.')
   const exam = docToExam(doc, doc.id)
+  if (!(await confirmPublishWithoutKey(exam))) throw new Error('Đã huỷ đăng đề để bổ sung đáp án.')
   const body = {
     title: doc.title,
     subject: doc.subject,

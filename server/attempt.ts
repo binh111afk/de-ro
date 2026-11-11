@@ -6,7 +6,7 @@
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import type { ExamDoc } from '../src/data/docTypes'
 import { docToExam } from '../src/lib/docToExam.js'
-import { scoreQuestion } from '../src/lib/grading.js'
+import { gradableMax, scoreQuestion } from '../src/lib/grading.js'
 import { guard, userFromToken } from './guard.js'
 import { json, readBody } from './http.js'
 import { getExamRow } from './examCache.js'
@@ -77,7 +77,9 @@ export async function handleAttemptRequest(req: IncomingMessage, res: ServerResp
     })
     if (!ins.ok) return json(res, 502, { error: 'Không lưu được bài làm.' })
     // đề link gửi cho học sinh không kèm đáp án (api/exam): nộp xong mới trả điểm và đáp án để xem lại bài
-    return json(res, 200, { score, max, key: answerKey })
+    // gradable: tổng điểm các câu chấm được (có đáp án) — học sinh xem điểm trên thang này,
+    // max_score lưu cho giáo viên vẫn là tổng điểm cả đề (giáo viên còn chấm tay câu tự luận)
+    return json(res, 200, { score, max, gradable: gradableMax(questions), key: answerKey })
   } catch (err) {
     return json(res, 400, { error: err instanceof Error ? err.message : String(err) })
   }

@@ -94,6 +94,16 @@ export function isAutoGraded(q: Question): boolean {
   return false
 }
 
+/** Tổng điểm các câu chấm tự động được (có đáp án). Câu tự luận / thiếu đáp án không tính. */
+export function gradableMax(qs: Question[]): number {
+  return Math.round(qs.reduce((n, q) => n + (isAutoGraded(q) ? q.points : 0), 0) * 1000) / 1000
+}
+
+/** Số câu trắc nghiệm / đúng-sai / trả lời ngắn chưa có đáp án (người đăng quên nhập). */
+export function missingKeyCount(qs: Question[]): number {
+  return qs.filter((q) => (q.type === 'trac-nghiem' || q.type === 'tra-loi-ngan' || q.type === 'dung-sai') && !isAutoGraded(q)).length
+}
+
 /** Mô tả đáp án để hiện cho người đọc ("a) Đúng · b) Sai …", "-1,5", "B"). */
 export function describeAnswer(q: Question, raw: string | undefined): string {
   if (!raw) return ''

@@ -21,6 +21,7 @@ import { useComposeStore } from '@/store/compose'
 import { useOnline } from '@/store/online'
 import { Portal } from '@/components/Portal'
 import { dialog } from '@/components/Dialog'
+import { confirmQuizWithoutKey } from '@/lib/answerKeyWarn'
 import type { Exam } from '@/data/types'
 
 export default function ExamView() {
@@ -53,8 +54,9 @@ export default function ExamView() {
 
   const isMine = myExams.some((e) => e.id === id)
 
-  const handleInteractive = () => {
+  const handleInteractive = async () => {
     if (!isMine) {
+      if (!(await confirmQuizWithoutKey(exam))) return
       const importedId = importExam(exam)
       useApp.getState().startQuiz(importedId)
       navigate(`/lam-de/${importedId}`)

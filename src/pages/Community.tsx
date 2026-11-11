@@ -16,6 +16,7 @@ import { formatPoints } from '@/lib/math'
 import { COMMUNITY_EXAMS } from '@/data/community'
 import { getCommunityDoc, listCommunityDocs, publishDoc, type CommunityRow } from '@/lib/community'
 import { docToExam } from '@/lib/docToExam'
+import { confirmQuizWithoutKey } from '@/lib/answerKeyWarn'
 import { useSession } from '@/lib/useSession'
 
 /** Một thẻ đề: đề mẫu cố định hoặc đề giáo viên đăng. Cùng một kiểu thẻ cho cả hai. */
@@ -86,8 +87,10 @@ export default function Community() {
     setOpenError(null)
     try {
       const doc = await getCommunityDoc(row.id)
+      const exam = docToExam(doc, row.id)
+      if (mode === 'quiz' && !(await confirmQuizWithoutKey(exam))) return
       const { importExam: doImport, startQuiz } = useApp.getState()
-      const id = doImport(docToExam(doc, row.id))
+      const id = doImport(exam)
       if (mode === 'quiz') startQuiz(id)
       navigate(mode === 'quiz' ? `/lam-de/${id}` : `/de/${id}`)
     } catch (err) {
