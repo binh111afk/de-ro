@@ -85,7 +85,7 @@ type Drag =
   | { t: 'endpoint'; index: number; el: El }
   | { t: 'rotate'; el: El; center: Pt }
   | { t: 'erase'; hit: boolean; last: Pt }
-  | { t: 'snapped' }
+  | { t: 'snapped'; el: El; orig: El; center: Pt; dist: number }
   | { t: 'laser'; trail: LaserTrail }
   | { t: 'lasso'; pts: Pt[]; base: Set<string> }
 
@@ -490,7 +490,11 @@ export default function BoardEditor({ id }: { id: string }) {
     }
     els.current = els.current.map((x) => (x === e ? el : x))
     dropFromCache(e.id)
-    drag.current = { t: 'snapped' }
+    // vẫn giữ bút: kéo tiếp để kéo dài đường thẳng / đổi cỡ hình quanh tâm
+    const center = centerOf(el)
+    const tip = (e.points ?? []).at(-1) ?? [0, 0]
+    const at: Pt = [e.x + tip[0], e.y + tip[1]]
+    drag.current = { t: 'snapped', el, orig: clone(el), center, dist: Math.max(1, Math.hypot(at[0] - center[0], at[1] - center[1])) }
     redraw()
   }
 
@@ -656,6 +660,31 @@ export default function BoardEditor({ id }: { id: string }) {
         eraserAt.current = p
         for (let i = 1; i <= n; i++) eraseAt([d.last[0] + ((p[0] - d.last[0]) * i) / n, d.last[1] + ((p[1] - d.last[1]) * i) / n])
         d.last = p
+        return
+      }
+      case 'snapped': {
+        const { el, orig } = d
+        const pts = orig.points
+        if (el.kind === 'line' && pts?.length === 2) {
+          // đường thẳng: đầu cuối theo bút, gần ngang / dọc / chéo 45° thì bắt thẳng
+          let dx = p[0] - orig.x, dy = p[1] - orig.y
+          const len = Math.hypot(dx, dy)
+          const a = Math.atan2(dy, dx), step = Math.PI / 4, snapA = Math.round(a / step) * step
+          if (Math.abs(snapA - a) < (7 * Math.PI) / 180) { dx = len * Math.cos(snapA); dy = len * Math.sin(snapA) }
+          mutate(el, { points: [[0, 0], [dx, dy]] })
+        } else {
+          // hình: phóng to / thu nhỏ quanh tâm theo khoảng cách bút – tâm
+          const k = Math.max(0.05, Math.hypot(p[0] - d.center[0], p[1] - d.center[1]) / d.dist)
+          const [cx, cy] = d.center
+          if (pts) {
+            const P = pts.map(([px, py]) => [cx + (orig.x + px - cx) * k, cy + (orig.y + py - cy) * k] as Pt)
+            mutate(el, { x: P[0][0], y: P[0][1], points: P.map(([x, y]) => [x - P[0][0], y - P[0][1]] as Pt) })
+          } else {
+            const w = orig.w * k, h = orig.h * k
+            mutate(el, { x: cx - w / 2, y: cy - h / 2, w, h })
+          }
+        }
+        redraw()
         return
       }
       case 'laser': {
