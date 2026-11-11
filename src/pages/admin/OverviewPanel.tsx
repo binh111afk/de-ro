@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Users, FileText, BookOpen, Cpu, ArrowRight } from 'lucide-react'
-import { Card, EmptyState, Spinner } from '@/components/ui'
+import { Card, Spinner } from '@/components/ui'
 import { listUsers, getAiStats, type AdminMe } from '@/lib/adminApi'
+import { listContentExams, listContentReports } from '@/lib/adminContentApi'
+import { loadFullBank } from '@/data/bank'
 import { formatNumber } from './adminUtils'
 
 export function OverviewPanel({ me }: { me: AdminMe }) {
@@ -11,6 +13,10 @@ export function OverviewPanel({ me }: { me: AdminMe }) {
   const [loading, setLoading] = useState(true)
   const [aiCalls7d, setAiCalls7d] = useState<number | null>(null)
   const [aiLoading, setAiLoading] = useState(true)
+  // undefined = đang tải, null = lỗi
+  const [examCount, setExamCount] = useState<number | null>()
+  const [openReports, setOpenReports] = useState(0)
+  const [bankCount, setBankCount] = useState<number | null>()
 
   useEffect(() => {
     let alive = true
@@ -37,6 +43,16 @@ export function OverviewPanel({ me }: { me: AdminMe }) {
       .finally(() => {
         if (alive) setAiLoading(false)
       })
+
+    listContentExams({ perPage: 1 })
+      .then((res) => alive && setExamCount(res.total))
+      .catch(() => alive && setExamCount(null))
+    listContentReports({ status: 'open', perPage: 1 })
+      .then((res) => alive && setOpenReports(res.total))
+      .catch(() => {})
+    loadFullBank()
+      .then((b) => alive && setBankCount(b.length))
+      .catch(() => alive && setBankCount(null))
 
     return () => {
       alive = false
@@ -93,44 +109,74 @@ export function OverviewPanel({ me }: { me: AdminMe }) {
           </div>
         </Card>
 
-        {/* Thẻ Sắp có: Nội dung */}
-        <Card className="flex flex-col justify-between border border-line bg-surface/70 p-5 shadow-soft">
+        {/* Thẻ Nội dung */}
+        <Card className="flex flex-col justify-between border border-line p-5 shadow-soft transition-all hover:border-line-2">
           <div>
             <div className="flex items-center justify-between">
               <span className="text-[13px] font-medium text-ink-3">Nội dung cộng đồng</span>
-              <div className="flex size-9 items-center justify-center rounded-[6px] bg-sunken text-ink-4">
+              <div className="flex size-9 items-center justify-center rounded-[6px] bg-sunken text-ink-2">
                 <FileText className="size-4.5" />
               </div>
             </div>
             <div className="mt-3">
-              <span className="inline-block rounded-[4px] bg-sunken px-2 py-0.5 text-[12px] font-medium text-ink-3">
-                Sắp có
-              </span>
+              {examCount === undefined ? (
+                <div className="flex h-10 items-center">
+                  <Spinner className="text-ink-3" />
+                </div>
+              ) : (
+                <div className="tnum text-[32px] font-bold tracking-tight text-ink">
+                  {examCount === null ? '—' : formatNumber(examCount)}
+                  <span className="ml-1.5 text-[12.5px] font-normal text-ink-3">đề</span>
+                </div>
+              )}
             </div>
+            {openReports ? (
+              <p className="mt-1 text-[12.5px] font-medium text-clay">{formatNumber(openReports)} báo cáo chờ xử lý</p>
+            ) : null}
           </div>
-          <p className="mt-4 border-t border-line-2 pt-3 text-[12px] text-ink-4">
-            Đề cộng đồng, tài liệu và báo cáo vi phạm
-          </p>
+          <div className="mt-4 border-t border-line-2 pt-3">
+            <Link
+              to={`/admin/noi-dung${search}`}
+              className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-clay transition-colors hover:text-clay-deep"
+            >
+              <span>Quản lý nội dung</span>
+              <ArrowRight className="size-3.5" />
+            </Link>
+          </div>
         </Card>
 
-        {/* Thẻ Sắp có: Ngân hàng */}
-        <Card className="flex flex-col justify-between border border-line bg-surface/70 p-5 shadow-soft">
+        {/* Thẻ Ngân hàng */}
+        <Card className="flex flex-col justify-between border border-line p-5 shadow-soft transition-all hover:border-line-2">
           <div>
             <div className="flex items-center justify-between">
               <span className="text-[13px] font-medium text-ink-3">Ngân hàng câu hỏi</span>
-              <div className="flex size-9 items-center justify-center rounded-[6px] bg-sunken text-ink-4">
+              <div className="flex size-9 items-center justify-center rounded-[6px] bg-sunken text-ink-2">
                 <BookOpen className="size-4.5" />
               </div>
             </div>
             <div className="mt-3">
-              <span className="inline-block rounded-[4px] bg-sunken px-2 py-0.5 text-[12px] font-medium text-ink-3">
-                Sắp có
-              </span>
+              {bankCount === undefined ? (
+                <div className="flex h-10 items-center">
+                  <Spinner className="text-ink-3" />
+                </div>
+              ) : (
+                <div className="tnum text-[32px] font-bold tracking-tight text-ink">
+                  {bankCount === null ? '—' : formatNumber(bankCount)}
+                  <span className="ml-1.5 text-[12.5px] font-normal text-ink-3">câu</span>
+                </div>
+              )}
             </div>
+
           </div>
-          <p className="mt-4 border-t border-line-2 pt-3 text-[12px] text-ink-4">
-            1.198 câu hỏi mẫu và kho đề thi
-          </p>
+          <div className="mt-4 border-t border-line-2 pt-3">
+            <Link
+              to={`/admin/ngan-hang${search}`}
+              className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-clay transition-colors hover:text-clay-deep"
+            >
+              <span>Quản lý câu hỏi</span>
+              <ArrowRight className="size-3.5" />
+            </Link>
+          </div>
         </Card>
 
         {/* Thẻ AI & Máy chủ */}
@@ -168,14 +214,6 @@ export function OverviewPanel({ me }: { me: AdminMe }) {
           </div>
         </Card>
       </div>
-
-      {/* Thông tin giai đoạn */}
-      <Card className="border border-line p-6 shadow-soft">
-        <EmptyState
-          title="Giai đoạn 1: Nền tảng & Quản lý người dùng"
-          description="Hiện tại bạn có thể quản lý danh sách người dùng, thiết lập hạn mức AI, cộng điểm token, khoá tài khoản và tra cứu nhật ký thao tác."
-        />
-      </Card>
     </div>
   )
 }
