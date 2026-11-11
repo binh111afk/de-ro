@@ -11,7 +11,7 @@ import {
   mutate, newId, newSeed, rotate, unionBounds, worldBounds, fontOf, LINE_HEIGHT, inPolygon,
   type Bounds, type El, type Handle, type Kind, type Paper, type PenKind, type Pt, type Style,
 } from './scene'
-import { dropFromCache, LASER_LIFE, penOutline, render, setImageLoadHandler, svgPathFromStroke, type LaserTrail, type View } from './render'
+import { dropFromCache, LASER_LIFE, penOutline, render, renderLive, setImageLoadHandler, svgPathFromStroke, type LaserTrail, type View } from './render'
 import { AiPanel } from '@/examEditor/AiPanel'
 import { ToolsPanel } from '@/examEditor/tools/ToolsPanel'
 import { svgDataUrl } from '@/lib/plot'
@@ -41,10 +41,13 @@ interface Opts {
   recentHighlights: string[]
   /** ngòi riêng của từng loại bút */
   penTips: Partial<Record<PenKind, Tip>>
+  /** bút laser: màu và độ dày (hệ số) */
+  laserColor: string
+  laserSize: number
 }
 interface Tip { sharp: number; sens: number }
 const DEFAULT_TIP: Tip = { sharp: 0.5, sens: 0.5 }
-const DEFAULT_OPTS: Opts = { pen: 'ball', lastShape: 'rectangle', paper: 'plain', snap: true, eraseMode: 'stroke', eraseSize: 1, selectMode: 'box', recentShapes: ['rectangle', 'ellipse', 'arrow', 'line'], recentColors: ['#1e1e1e', '#e03131', '#2f9e44', '#1971c2', '#f08c00', '#7048e8'], recentHighlights: ['#fab005', '#82c91e', '#f783ac', '#4dabf7', '#ff922b'], penTips: {} }
+const DEFAULT_OPTS: Opts = { pen: 'ball', lastShape: 'rectangle', paper: 'plain', snap: true, eraseMode: 'stroke', eraseSize: 1, selectMode: 'box', recentShapes: ['rectangle', 'ellipse', 'arrow', 'line'], recentColors: ['#1e1e1e', '#e03131', '#2f9e44', '#1971c2', '#f08c00', '#7048e8'], recentHighlights: ['#fab005', '#82c91e', '#f783ac', '#4dabf7', '#ff922b'], penTips: {}, laserColor: '#ff3b30', laserSize: 1 }
 
 /** mỗi loại bút / hình / chữ nhớ màu và độ dày riêng */
 const DEFAULT_STYLES: Record<Slot, Style> = {
@@ -108,6 +111,10 @@ const CURSOR: Partial<Record<Handle, string>> = {
 export default function BoardEditor({ id }: { id: string }) {
   const wrapRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  /** canvas trong suốt nằm trên, chỉ vẽ nét bút đang viết */
+  const liveRef = useRef<HTMLCanvasElement>(null)
+  const live = useRef<El | null>(null)
+  const liveRaf = useRef(0)
   const saved = useRef(load(id))
   const els = useRef<El[]>(saved.current?.elements ?? [])
   const view = useRef<View>(saved.current?.view ?? { scrollX: 0, scrollY: 0, zoom: 1 })
@@ -165,7 +172,7 @@ export default function BoardEditor({ id }: { id: string }) {
       return `url("data:image/svg+xml,${encodeURIComponent(svg)}") ${c} ${c}, crosshair`
     }
     if (t === 'eraser') return `url("data:image/svg+xml,${encodeURIComponent(ERASER_SVG)}") 6 22, cell`
-    if (t === 'laser') return `url("data:image/svg+xml,${encodeURIComponent(LASER_SVG)}") 9 9, crosshair`
+    if (t === 'laser') return `url("data:image/svg+xml,${encodeURIComponent(LASER_SVG.replaceAll('#ff3b30', opts.current.laserColor))}") 9 9, crosshair`
     if (t === 'text') return 'text'
     if (t === 'hand') return 'grab'
     if (t === 'select') return 'default'
@@ -194,7 +201,8 @@ export default function BoardEditor({ id }: { id: string }) {
       laser.current = laser.current.filter((tr) => tr.pts.length || tr === active)
       const z = view.current.zoom
       const t = toolRef.current
-      render(c, els.current, view.current, {
+      const lv = live.current
+      render(c, lv ? els.current.filter((e) => e !== lv) : els.current, view.current, {
         selected: els.current.filter((e) => selected.current.has(e.id)),
         marquee: marquee.current,
         hiddenId: editingRef.current?.el.id ?? null,
@@ -204,6 +212,7 @@ export default function BoardEditor({ id }: { id: string }) {
         eraser: eraserAt.current && (t === 'eraser' || drag.current?.t === 'erase')
           ? { p: eraserAt.current, r: ERASE_R[opts.current.eraseSize] / z } : null,
       })
+      if (liveRef.current) renderLive(liveRef.current, lv, view.current)
       // laser còn vệt thì vẽ tiếp khung sau để mờ dần
       if (laser.current.some((tr) => tr.pts.length)) redrawRef.current()
     }
@@ -214,6 +223,11 @@ export default function BoardEditor({ id }: { id: string }) {
     raf.current = requestAnimationFrame(paint)
   }, [paint])
   const redrawRef = useRef(redraw)
+  /** chỉ vẽ lại nét đang viết */
+  const redrawLive = useCallback(() => {
+    cancelAnimationFrame(liveRaf.current)
+    liveRaf.current = requestAnimationFrame(() => { if (liveRef.current) renderLive(liveRef.current, live.current, view.current) })
+  }, [])
 
   const saveTimer = useRef(0)
   const persist = useCallback(() => {
@@ -276,6 +290,8 @@ export default function BoardEditor({ id }: { id: string }) {
       c.height = Math.round(wrap.clientHeight * dpr)
       c.style.width = `${wrap.clientWidth}px`
       c.style.height = `${wrap.clientHeight}px`
+      const lc = liveRef.current
+      if (lc) { lc.width = c.width; lc.height = c.height }
       // đổi cỡ canvas xoá trắng nó: vẽ lại ngay trong cùng khung hình, không đợi khung sau (tránh chớp khi panel trượt)
       cancelAnimationFrame(raf.current)
       paint()
@@ -403,7 +419,7 @@ export default function BoardEditor({ id }: { id: string }) {
     if (ev.button !== 0 && !flip) return
 
     if (t === 'laser') {
-      const trail: LaserTrail = { pts: [p], ts: [performance.now()] }
+      const trail: LaserTrail = { pts: [p], ts: [performance.now()], color: opts.current.laserColor, size: opts.current.laserSize }
       laser.current.push(trail)
       drag.current = { t: 'laser', trail }
       redraw()
@@ -472,6 +488,8 @@ export default function BoardEditor({ id }: { id: string }) {
     if (el.kind === 'freedraw') {
       if (ev.pointerType === 'pen') el.pressures = [ev.pressure || 0.5]
       if (opts.current.snap) armHold(ev.clientX, ev.clientY)
+      live.current = el
+      if (liveRef.current) liveRef.current.style.mixBlendMode = el.pen === 'highlight' ? 'multiply' : 'normal'
     }
     els.current.push(el)
     drag.current = { t: 'create', el, start: p }
@@ -499,6 +517,7 @@ export default function BoardEditor({ id }: { id: string }) {
       el = { ...newElement(shape.kind, [shape.x, shape.y]), ...look, w: shape.w, h: shape.h }
     }
     els.current = els.current.map((x) => (x === e ? el : x))
+    live.current = null
     dropFromCache(e.id)
     // vẫn giữ bút: kéo tiếp để kéo dài đường thẳng / đổi cỡ hình quanh tâm
     const center = centerOf(el)
@@ -581,15 +600,22 @@ export default function BoardEditor({ id }: { id: string }) {
         if (e.kind === 'freedraw') {
           const pts = e.points!
           // lấy cả các điểm trình duyệt gộp lại giữa hai khung hình → nét không bị gãy khi viết nhanh
+          const pr = e.pressures
           for (const ce of coalesced()) {
             const q = toScene(ce.clientX, ce.clientY)
             const last = pts[pts.length - 1]
-            if (Math.hypot(q[0] - e.x - last[0], q[1] - e.y - last[1]) * view.current.zoom < 0.75) continue
+            // chỉ bỏ điểm gần như trùng (bỏ quá tay thì chỗ đi bút chậm bị vón cục)
+            if (Math.hypot(q[0] - e.x - last[0], q[1] - e.y - last[1]) * view.current.zoom < 0.25) continue
             pts.push([q[0] - e.x, q[1] - e.y])
-            e.pressures?.push(ce.pressure || 0.5)
+            if (pr) {
+              // lực nhấn nhảy từng điểm làm mép nét lồi lõm: lọc cho êm; lực 0 (mất tín hiệu) thì giữ lực trước
+              const prev = pr[pr.length - 1]
+              pr.push(ce.pressure > 0 ? prev * 0.5 + ce.pressure * 0.5 : prev)
+            }
           }
           e.ver++
           if (opts.current.snap && Math.hypot(ev.clientX - hold.current.x, ev.clientY - hold.current.y) > 4) armHold(ev.clientX, ev.clientY)
+          if (live.current === e) { redrawLive(); return }
         } else if (isLinear(e)) {
           if (ev.shiftKey) {
             const a = Math.round(Math.atan2(dy, dx) / (Math.PI / 12)) * (Math.PI / 12)
@@ -789,8 +815,18 @@ export default function BoardEditor({ id }: { id: string }) {
     lasso.current = null
     if (!d) return
     if (d.t === 'laser') return redraw()
+    live.current = null
     if (d.t === 'create') {
       const e = d.el
+      if (e.kind === 'freedraw') {
+        // chấm bút: thêm điểm thứ hai lệch rất nhỏ để nét không dài bằng 0 (cách của Excalidraw)
+        const pts = e.points!
+        if (pts.every((q) => Math.hypot(q[0], q[1]) * view.current.zoom < 1)) {
+          e.points = [[0, 0], [0.0001, 0.0001]]
+          if (e.pressures) { const p0 = Math.max(0.5, ...e.pressures); e.pressures = [p0, p0] }
+          e.ver++
+        }
+      }
       const [x1, y1, x2, y2] = localBounds(e)
       const tiny = e.kind !== 'freedraw' && x2 - x1 < 3 && y2 - y1 < 3
       if (tiny) els.current = els.current.filter((x) => x !== e)
@@ -1328,7 +1364,8 @@ export default function BoardEditor({ id }: { id: string }) {
     opts.current = { ...opts.current, [recentKey]: [c, ...list.filter((x) => x.toLowerCase() !== c.toLowerCase())].slice(0, list.length || 6) }
     setProp('stroke', c)
   }
-  const widths = isHighlight ? [6, 8, 14] : [1, 2, 4]
+  const widths = isHighlight ? [4, 6, 8, 11, 14, 18] : [0.5, 1, 1.5, 2, 3, 5]
+  const WIDTH_NAMES = ['rất mảnh', 'mảnh', 'vừa', 'hơi đậm', 'đậm', 'rất đậm']
 
   /* nhóm tuỳ chọn dùng lại giữa các công cụ */
   const colorRow = (
@@ -1351,8 +1388,11 @@ export default function BoardEditor({ id }: { id: string }) {
   const widthRow = (
     <Group label="Độ dày">
       {widths.map((w, i) => (
-        <Chip key={w} active={cur.strokeWidth === w} onClick={() => setProp('strokeWidth', w)} title={`Nét ${['mảnh', 'vừa', 'đậm'][i]}`}>
-          <span className="w-5 rounded-full bg-current" style={{ height: Math.min(10, w * (isHighlight ? 0.7 : 1) + 0.5) }} />
+        <Chip key={w} active={cur.strokeWidth === w} onClick={() => setProp('strokeWidth', w)} title={`Nét ${WIDTH_NAMES[i]}`}>
+          {/* chấm tròn to theo độ dày thật của nét */}
+          <span className="flex size-4 items-center justify-center">
+            {(() => { const s = Math.min(16, 2 + w * (isHighlight ? 0.75 : 2.6)); return <span className="rounded-full bg-current" style={{ width: s, height: s }} /> })()}
+          </span>
         </Chip>
       ))}
     </Group>
@@ -1491,7 +1531,24 @@ export default function BoardEditor({ id }: { id: string }) {
       </>
     )
   } else if (main === 'laser') {
-    options = null
+    options = (
+      <>
+        <Group label="Màu">
+          {LASER_COLORS.map((c) => (
+            <Swatch key={c} color={c} round active={o.laserColor === c} onClick={() => setOpt('laserColor', c)} title="Màu laser" />
+          ))}
+        </Group>
+        <Group label="Độ dày">
+          {LASER_SIZES.map((sz, i) => (
+            <Chip key={sz} active={o.laserSize === sz} onClick={() => setOpt('laserSize', sz)} title={`Laser ${WIDTH_NAMES[i + 1]}`}>
+              <span className="flex size-4 items-center justify-center">
+                <span className="rounded-full" style={{ width: 3 + sz * 4.5, height: 3 + sz * 4.5, background: o.laserColor }} />
+              </span>
+            </Chip>
+          ))}
+        </Group>
+      </>
+    )
   } else if (main === 'select') {
     options = (
       <>
@@ -1644,6 +1701,7 @@ export default function BoardEditor({ id }: { id: string }) {
           onDoubleClick={onDoubleClick}
           onContextMenu={(e) => e.preventDefault()}
         />
+        <canvas ref={liveRef} className="pointer-events-none absolute inset-0 h-full w-full" />
         {textarea}
       </div>
       {dialog?.t === 'formula' && (
@@ -1691,6 +1749,8 @@ export default function BoardEditor({ id }: { id: string }) {
 type Main = 'pen' | 'eraser' | 'laser' | 'select' | 'shape' | 'text' | 'hand'
 
 const ERASER_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26"><g transform="rotate(-40 13 13)"><rect x="5" y="8" width="17" height="10" rx="2.5" fill="#f4a3a8" stroke="#3f3f46" stroke-width="1.3"/><rect x="5" y="8" width="6" height="10" rx="2.5" fill="#e5e7eb" stroke="#3f3f46" stroke-width="1.3"/></g></svg>'
+const LASER_COLORS = ['#ff3b30', '#ff9500', '#ffd60a', '#34c759', '#0a84ff', '#bf5af2']
+const LASER_SIZES = [0.6, 1, 1.6, 2.4]
 const LASER_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"><circle cx="9" cy="9" r="7" fill="#ff3b30" fill-opacity="0.25"/><circle cx="9" cy="9" r="3.5" fill="#ff3b30" stroke="white" stroke-width="1.2"/></svg>'
 const KIND_LABEL: Record<Kind, string> = {
   rectangle: 'Hình chữ nhật', ellipse: 'Hình elip', diamond: 'Hình thoi', line: 'Đường thẳng', arrow: 'Mũi tên',

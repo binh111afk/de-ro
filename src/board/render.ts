@@ -104,27 +104,43 @@ function shapeOf(e: El): Drawable[] | Path2D {
 
 /** đặc tính từng loại ngòi: độ thon theo lực, cỡ, độ vuốt nhọn hai đầu */
 const PEN_TRAITS: Record<PenKind, { thin: number; size: number; taper: number; smooth: number }> = {
-  fountain: { thin: 0.72, size: 2.6, taper: 7, smooth: 0.6 },
-  ball: { thin: 0.45, size: 2.2, taper: 3, smooth: 0.6 },
-  brush: { thin: 0.88, size: 4.4, taper: 11, smooth: 0.75 },
-  pencil: { thin: 0.25, size: 2.4, taper: 2, smooth: 0.55 },
-  marker: { thin: 0.12, size: 2.8, taper: 0, smooth: 0.6 },
-  highlight: { thin: 0, size: 2.6, taper: 0, smooth: 0.6 },
+  fountain: { thin: 0.6, size: 2.6, taper: 7, smooth: 0.5 },
+  ball: { thin: 0.4, size: 2.2, taper: 3, smooth: 0.5 },
+  brush: { thin: 0.7, size: 4.4, taper: 11, smooth: 0.55 },
+  pencil: { thin: 0.25, size: 2.4, taper: 2, smooth: 0.5 },
+  marker: { thin: 0.12, size: 2.8, taper: 0, smooth: 0.5 },
+  highlight: { thin: 0, size: 2.6, taper: 0, smooth: 0.5 },
+}
+
+const easeOutSine = (t: number) => Math.sin((t * Math.PI) / 2)
+
+function pathLength(pts: number[][]) {
+  let len = 0
+  for (let i = 1; i < pts.length; i++) len += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1])
+  return len
 }
 
 /** đường viền nét bút; pts = [x, y, lực nhấn]. Dùng cho cả bảng vẽ lẫn ô xem trước kiểu bút */
 export function penOutline(pts: number[][], o: { pen: PenKind; width: number; sharp?: number; sens?: number; real: boolean }) {
   const t = PEN_TRAITS[o.pen]
+  // bút thật: đa số bảng vẽ báo lực rất nhỏ khi đặt bút nhẹ → nét mảnh tới mức phải nhấn mạnh mới thấy.
+  // Nâng đường cong lực: chạm nhẹ đã ra nét rõ, nhấn mạnh vẫn dày hơn.
+  if (o.real) pts = pts.map(([x, y, p]) => [x, y, 0.35 + 0.65 * Math.sqrt(Math.max(0, Math.min(1, p ?? 0.5)))])
   const sens = o.sens ?? 0.5, sharp = o.sharp ?? 0.5
   const size = o.width * t.size
-  const thinning = o.pen === 'highlight' ? 0 : Math.max(-0.95, Math.min(0.95, t.thin * (0.3 + 1.4 * sens)))
-  const taper = t.taper ? sharp * size * t.taper : 0
+  // độ đổi dày theo lực nhấn vừa phải (Excalidraw: 0,6) — quá mạnh thì mép nét lồi lõm, trông lem
+  const thinning = o.pen === 'highlight' ? 0 : Math.max(-0.85, Math.min(0.85, t.thin * (0.4 + 1.2 * sens)))
+  // vuốt nhọn không dài quá nét: nét ngắn / chấm bút không bị vuốt mất
+  // (vuốt nhọn dù chỉ 0,0001px cũng làm perfect-freehand bỏ mất chấm, nên dưới 1px thì tắt hẳn)
+  const tp = t.taper ? Math.min(sharp * size * t.taper, pathLength(pts) * 0.35) : 0
+  const taper = tp < 1 ? 0 : tp
   const cap = o.pen !== 'highlight'
   return getStroke(pts, {
     size,
     thinning,
     smoothing: t.smooth,
-    streamline: o.real ? 0.35 : 0.5,
+    easing: easeOutSine,
+    streamline: 0.5,
     simulatePressure: !o.real && thinning > 0,
     start: { cap, taper },
     end: { cap, taper },
@@ -223,6 +239,15 @@ export function drawElement(ctx: CanvasRenderingContext2D, rc: ReturnType<typeof
 export interface LaserTrail {
   pts: Pt[]
   ts: number[]
+  /** màu (#rrggbb) và hệ số độ dày lúc vẽ vệt này */
+  color?: string
+  size?: number
+}
+
+/** '#rrggbb' → 'r, g, b' để ghép vào rgba() */
+function rgbOf(hex = '#ff3b30') {
+  const n = parseInt(hex.slice(1, 7), 16) || 0xff3b30
+  return `${n >> 16}, ${(n >> 8) & 255}, ${n & 255}`
 }
 
 export interface Overlay {
@@ -375,21 +400,26 @@ export function render(
     }
   }
   const lz = view.zoom
-  ctx.shadowColor = 'rgba(255, 45, 45, 0.85)'
-  ctx.shadowBlur = 14 * dpr
-  for (const tr of overlay.laser) segs(tr, (a) => { ctx.strokeStyle = `rgba(255, 59, 48, ${0.55 * a})`; ctx.lineWidth = (3 + 6 * a) / lz })
-  ctx.shadowBlur = 0
-  for (const tr of overlay.laser) segs(tr, (a) => { ctx.strokeStyle = `rgba(255, 236, 232, ${a})`; ctx.lineWidth = (1 + 1.6 * a) / lz })
+  for (const tr of overlay.laser) {
+    const rgb = rgbOf(tr.color), k = tr.size ?? 1
+    ctx.shadowColor = `rgba(${rgb}, 0.85)`
+    ctx.shadowBlur = 14 * k * dpr
+    segs(tr, (a) => { ctx.strokeStyle = `rgba(${rgb}, ${0.55 * a})`; ctx.lineWidth = ((3 + 6 * a) * k) / lz })
+    ctx.shadowBlur = 0
+    // lõi sáng: màu laser pha trắng
+    segs(tr, (a) => { ctx.strokeStyle = `rgba(255, 255, 255, ${0.85 * a})`; ctx.lineWidth = ((1 + 1.6 * a) * k) / lz })
+  }
   for (const tr of overlay.laser) {
     const last = tr.pts[tr.pts.length - 1]
     if (!last || now - tr.ts[tr.ts.length - 1] > 120) continue
-    const g = ctx.createRadialGradient(last[0], last[1], 0, last[0], last[1], 9 / lz)
+    const rgb = rgbOf(tr.color), r = (9 * (tr.size ?? 1)) / lz
+    const g = ctx.createRadialGradient(last[0], last[1], 0, last[0], last[1], r)
     g.addColorStop(0, 'rgba(255,255,255,1)')
-    g.addColorStop(0.35, 'rgba(255,90,80,0.9)')
-    g.addColorStop(1, 'rgba(255,59,48,0)')
+    g.addColorStop(0.35, `rgba(${rgb},0.9)`)
+    g.addColorStop(1, `rgba(${rgb},0)`)
     ctx.fillStyle = g
     ctx.beginPath()
-    ctx.arc(last[0], last[1], 9 / lz, 0, Math.PI * 2)
+    ctx.arc(last[0], last[1], r, 0, Math.PI * 2)
     ctx.fill()
   }
   ctx.restore()
@@ -413,6 +443,21 @@ export function render(
     ctx.fillRect(x1, y1, x2 - x1, y2 - y1)
     ctx.strokeRect(x1, y1, x2 - x1, y2 - y1)
   }
+}
+
+/**
+ * Nét bút đang vẽ: vẽ riêng lên canvas trong suốt nằm trên (như NewElementCanvas của Excalidraw),
+ * mỗi lần bút di chỉ vẽ lại đúng một nét thay vì cả bảng.
+ */
+export function renderLive(canvas: HTMLCanvasElement, e: El | null, view: View) {
+  // desynchronized: trình duyệt đẩy thẳng lên màn hình, bỏ qua một nhịp ghép khung → nét bám đầu bút hơn
+  const ctx = canvas.getContext('2d', { desynchronized: true })!
+  ctx.setTransform(1, 0, 0, 1, 0, 0)
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
+  if (!e) return
+  const z = view.zoom * (window.devicePixelRatio || 1)
+  ctx.setTransform(z, 0, 0, z, view.scrollX * z, view.scrollY * z)
+  drawElement(ctx, rough.canvas(canvas), e)
 }
 
 export function dropFromCache(id: string) {
