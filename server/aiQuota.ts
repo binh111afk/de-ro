@@ -22,6 +22,8 @@ export type Quota = { used: number; limit: number; scope: 'month' | 'day'; base?
 const month = () => new Date().toISOString().slice(0, 7)
 const day = () => new Date().toISOString().slice(0, 10)
 
+export const hasQuotaStore = () => supa() != null
+
 function supa() {
   const base = (process.env.VITE_SUPABASE_URL ?? process.env.SUPABASE_URL ?? '').replace(/\/+$/, '')
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY ?? ''

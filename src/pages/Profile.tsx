@@ -190,12 +190,12 @@ const fmt = (n: number) => n.toLocaleString('vi-VN')
 
 /** Điểm AI thật (GET /api/llm): hạn mức tháng + điểm admin cộng (không mất khi sang tháng). */
 function CreditCard() {
-  const [q, setQ] = useState<Quota | null | 'loading' | 'error'>('loading')
+  const [q, setQ] = useState<Quota | null | 'loading' | 'error' | 'unlimited'>('loading')
   useEffect(() => {
     let alive = true
     apiFetch('/api/llm')
       .then((r) => (r.ok ? r.json() : Promise.reject()))
-      .then((d: { quota: Quota | null }) => alive && setQ(d.quota))
+      .then((d: { quota: Quota | null; unlimited?: boolean }) => alive && setQ(d.unlimited ? 'unlimited' : d.quota))
       .catch(() => alive && setQ('error'))
     return () => {
       alive = false
@@ -205,6 +205,18 @@ function CreditCard() {
   let body
   if (q === 'loading') body = <p className="mt-6 text-[13px] text-ink-3">Đang tải…</p>
   else if (q === 'error') body = <p className="mt-6 text-[13px] text-ink-3">Chưa tải được số liệu, thử lại sau.</p>
+  else if (q === 'unlimited')
+    body = (
+      <>
+        <p className="mt-7 font-display text-[44px] font-semibold leading-none tracking-[-0.02em] text-ink">
+          ∞<span className="ml-2 text-[18px] font-medium text-ink-3">Không giới hạn</span>
+        </p>
+        <div className="mt-5 h-2.5 overflow-hidden rounded-full bg-clay/80" aria-hidden />
+        <p className="mt-3 text-[12.5px] text-ink-3">
+          Tài khoản của bạn được dùng AI không giới hạn token, không trừ hạn mức tháng.
+        </p>
+      </>
+    )
   else if (q === null) body = <p className="mt-6 text-[13px] text-ink-3">Máy dev: không giới hạn token AI.</p>
   else {
     const left = Math.max(0, q.limit - q.used)

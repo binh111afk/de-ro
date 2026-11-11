@@ -21,7 +21,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { json, readBody } from './http.js'
 import { clientIp, guard, isLocal, userFromToken } from './guard.js'
-import { addUsage, quotaMessage, readQuota, reserveQuota } from './aiQuota.js'
+import { addUsage, hasQuotaStore, quotaMessage, readQuota, reserveQuota } from './aiQuota.js'
 import { costFromUsage, logAiCall, maintenanceBlock } from './ops.js'
 import { readAiOverrides } from './aiSettings.js'
 import { callAnthropic } from './anthropic.js'
@@ -296,7 +296,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
   const userId = isLocal(ip) ? null : await userFromToken(req)
   const quota = isLocal(ip) ? null : await readQuota(userId, ip)
   // GET: chỉ đọc hạn mức (trang Hồ sơ), không gọi AI. null = máy dev, không giới hạn
-  if (req.method === 'GET') return json(res, 200, { quota })
+  if (req.method === 'GET') return json(res, 200, { quota, unlimited: !!userId && quota === null && hasQuotaStore() })
   if (await maintenanceBlock(req, res)) return
   if (quota && quota.used >= quota.limit) return json(res, 429, { error: quotaMessage(quota), quota })
   const release = quota ? await reserveQuota(userId, ip, quota) : async () => {}
