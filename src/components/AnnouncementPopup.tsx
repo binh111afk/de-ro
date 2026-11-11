@@ -74,7 +74,7 @@ export function AnnouncementPopup({ items, onPreviewClose }: { items: Announceme
             touchX.current = null
             if (Math.abs(dx) > 50) go(dx < 0 ? 1 : -1)
           }}
-          className="relative flex max-h-[90dvh] w-full max-w-[480px] flex-col overflow-hidden rounded-[10px] border border-line bg-surface shadow-xl"
+          className="relative flex max-h-[90dvh] w-full max-w-[480px] flex-col md:max-w-[720px] overflow-hidden rounded-[10px] border border-line bg-surface shadow-xl"
         >
           <button
             type="button"
@@ -86,11 +86,11 @@ export function AnnouncementPopup({ items, onPreviewClose }: { items: Announceme
           </button>
 
           <div className="min-h-0 flex-1 overflow-y-auto">
-            {a.image ? <img key={a.id} src={a.image} alt="" className="max-h-[45dvh] w-full bg-sunken object-contain" /> : null}
+            {a.image ? <img key={a.id} src={a.image} alt="" className="max-h-[45dvh] w-full bg-sunken object-contain md:max-h-[60dvh]" /> : null}
             {a.title || a.text ? (
               <div className={cn('px-5 pb-1 pt-4 sm:px-6', !a.image && 'pr-12 pt-5')}>
-                {a.title ? <h2 className="text-[18px] font-bold tracking-tight text-ink">{a.title}</h2> : null}
-                {a.text ? <p className={cn('whitespace-pre-line text-[14px] leading-relaxed text-ink-2', a.title && 'mt-1.5')}>{a.text}</p> : null}
+                {a.title ? <h2 className="text-[18px] font-bold tracking-tight text-ink md:text-[22px]">{a.title}</h2> : null}
+                {a.text ? <p className={cn('whitespace-pre-line text-[14px] leading-relaxed text-ink-2 md:text-[15.5px]', a.title && 'mt-1.5')}>{a.text}</p> : null}
               </div>
             ) : null}
           </div>
