@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import type { OpenTab } from '@/store/compose'
 import { cn } from '@/lib/cn'
-import { DocIcon, IconDocExam, IconDocSheet, IconDocSlide } from '@/components/docIcons'
+import { DocIcon, IconDocExam, IconDocBoard, IconDocSlide } from '@/components/docIcons'
 import { IconChevronLeft, IconClose, IconHome, IconPlus } from './icons'
 import { useAnchoredPopover, popoverStyle } from './useAnchoredPopover'
 import { useSlidingThumb } from './useSlidingThumb'
@@ -21,6 +21,7 @@ export function TabStrip({
   onClose,
   onNew,
   onNewSlide,
+  onNewBoard,
   slideEnabled,
   onRename,
   onBack,
@@ -35,6 +36,7 @@ export function TabStrip({
   onNew: () => void
   /** tạo bài trình bày mới (slide) */
   onNewSlide?: () => void
+  onNewBoard?: () => void
   /** mở khoá lựa chọn Slide trong menu "+" */
   slideEnabled?: boolean
   onRename: (id: string, title: string) => void
@@ -98,6 +100,7 @@ export function TabStrip({
         <NewDocMenu
           onNew={onNew}
           onNewSlide={onNewSlide}
+          onNewBoard={onNewBoard}
           slideEnabled={slideEnabled ?? false}
         />
       </div>
@@ -107,7 +110,7 @@ export function TabStrip({
 
 /** các loại tài liệu mà menu "+" cho chọn */
 interface NewDocOption {
-  kind: 'exam' | 'slide' | 'sheet'
+  kind: 'exam' | 'slide' | 'board'
   label: string
   ext: string
   /** mở khóa hay chưa */
@@ -119,7 +122,7 @@ interface NewDocOption {
 const NEW_DOC_OPTIONS: NewDocOption[] = [
   { kind: 'exam', label: 'Đề thi', ext: '.docx', available: true, note: 'Bài kiểm tra, đề thi' },
   { kind: 'slide', label: 'Slide', ext: '.pptx', available: true, note: 'Bài giảng, thuyết trình' },
-  { kind: 'sheet', label: 'Bảng tính', ext: '.xlsx', available: false, note: 'Sắp có' },
+  { kind: 'board', label: 'Bảng vẽ', ext: '', available: true, note: 'Vẽ tay, sơ đồ' },
 ]
 
 /**
@@ -131,8 +134,10 @@ const NEW_DOC_OPTIONS: NewDocOption[] = [
 function NewDocMenu({
   onNew,
   onNewSlide,
+  onNewBoard,
   slideEnabled,
 }: {
+  onNewBoard?: () => void
   onNew: () => void
   onNewSlide?: () => void
   slideEnabled: boolean
@@ -164,13 +169,14 @@ function NewDocMenu({
   const pick = (opt: NewDocOption) => {
     setOpen(false)
     if (!opt.available) return
-    if (opt.kind === 'slide') onNewSlide?.()
+    if (opt.kind === 'board') onNewBoard?.()
+    else if (opt.kind === 'slide') onNewSlide?.()
     else onNew()
   }
 
   const iconOf = (kind: NewDocOption['kind']) => {
     if (kind === 'slide') return <IconDocSlide size={26} />
-    if (kind === 'sheet') return <IconDocSheet size={26} />
+    if (kind === 'board') return <IconDocBoard size={26} />
     return <IconDocExam size={26} />
   }
 

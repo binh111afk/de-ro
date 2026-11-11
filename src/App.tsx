@@ -118,6 +118,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/soan-de" element={<ComposeDoc />} />
+          <Route path="/bang-ve" element={<Navigate to="/soan-de" replace />} />
           <Route path="/soan-slide" element={<Navigate to="/soan-de" replace />} />
           <Route path="/tao-de-online" element={<OnlineList />} />
           <Route path="/tao-de-online/ket-qua/:id" element={<OnlineResults />} />

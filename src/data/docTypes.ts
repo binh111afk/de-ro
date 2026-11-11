@@ -188,7 +188,7 @@ export type ExamBlock =
   | DividerBlock
 
 /** Loại tài liệu — quyết định icon hiển thị trên tab và thẻ loại ở trang bắt đầu. */
-export type DocKind = 'exam' | 'slide' | 'sheet'
+export type DocKind = 'exam' | 'slide' | 'board'
 
 export interface ExamDoc {
   id: string

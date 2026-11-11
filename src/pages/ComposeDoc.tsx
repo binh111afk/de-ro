@@ -70,6 +70,10 @@ function restoreSession() {
   if (!session || compose.tabs.length > 0) return
   const { myDocs, myDecks } = useDocStore.getState()
   for (const id of session.ids) {
+    if (id.startsWith('board-')) {
+      compose.newBoard(id)
+      continue
+    }
     const deck = myDecks.find((d) => d.id === id)
     if (deck) compose.openDeck(deck)
     else {
@@ -83,6 +87,7 @@ function restoreSession() {
 
 // trình soạn slide (pptxgen, bố cục, trình chiếu…) chỉ tải khi mở tab slide
 const loadSlideEditor = () => import('@/examEditor/SlideEditor')
+const BoardEditor = lazy(() => import('@/pages/Board'))
 const SlideEditor = lazy(() => loadSlideEditor().then((m) => ({ default: m.SlideEditor })))
 
 /** khung giữ chỗ lúc trình soạn slide chưa tải xong: có sẵn thanh ribbon + vùng slide mờ, không để trắng phía trên */
@@ -348,6 +353,7 @@ export default function ComposeDoc() {
     decks,
     newDoc,
     newSlide,
+    newBoard,
     closeTab,
     setActive,
     renameTab,
@@ -869,6 +875,10 @@ export default function ComposeDoc() {
             newSlide()
             setStartOpen(false)
           }}
+          onNewBoard={() => {
+            newBoard()
+            setStartOpen(false)
+          }}
           slideEnabled
           onRename={renameTab}
           onBack={saveAll}
@@ -887,11 +897,21 @@ export default function ComposeDoc() {
             newSlide()
             setStartOpen(false)
           }}
+          onNewBoard={() => {
+            newBoard()
+            setStartOpen(false)
+          }}
           onOpenDeck={(deck) => {
             openDeck(deck)
             setStartOpen(false)
           }}
         />
+      ) : activeTab?.kind === 'board' ? (
+        <div className="compose-body">
+          <Suspense fallback={null}>
+            <BoardEditor key={activeTab.id} id={activeTab.id} />
+          </Suspense>
+        </div>
       ) : activeDeck ? (
         /* ---------- tab slide: trình soạn trình chiếu dùng chung với /soan-slide ---------- */
         <div className="compose-body">

@@ -16,3 +16,17 @@ nét. Logo chính + favicon cũng là file SVG do người dùn cung cấp.
 
 Apache-2.0 cho phép dùng lại kể cả thương mại, chỉ cần giữ phần thông báo bản
 quyền. File `icons.tsx` đã có ghi chú attribution ở đầu file.
+
+## Excalidraw (Bảng vẽ)
+
+Tab Bảng vẽ (`src/board/`) là mã **tự viết lại**, học cách tổ chức và tương tác từ Excalidraw —
+https://github.com/excalidraw/excalidraw (MIT), clone tham khảo ở `_ref/excalidraw/` (không commit).
+Không chép nguyên file nào; phần tham khảo:
+
+| File đích | Học theo |
+|---|---|
+| `src/board/scene.ts` | `packages/element/src/types.ts`, `bounds.ts`, `collision.ts`, `transformHandles.ts` |
+| `src/board/render.ts` | `packages/element/src/renderElement.ts`, `shape.ts` (tham số roughjs, perfect-freehand), `packages/excalidraw/renderer/` |
+| `src/board/BoardEditor.tsx` | luồng chuột / phím tắt của `packages/excalidraw/components/App.tsx`, `resizeElements.ts`, `history.ts` |
+
+Thư viện dùng trực tiếp: `roughjs` (MIT), `perfect-freehand` (MIT).

@@ -3,7 +3,7 @@
  *
  *   đề thi    → nền xanh lam   (Nền xanh lam.svg)
  *   slide     → nền cam đất   (Nền cam đất.svg)
- *   bảng tính → nền xanh lá   (Nền xanh lá.svg)
+ *   bảng vẽ   → nền xanh lá   (Nền xanh lá.svg)
  *
  * Vẽ lại từ file SVG gốc (40×40) để chỉnh kích thước tuỳ ý.
  */
@@ -109,15 +109,11 @@ export function IconDocSlide({ size = 40, className }: DocIconProps) {
   )
 }
 
-/** Bảng tính — lưới ô (nền xanh lá). */
-export function IconDocSheet({ size = 40, className }: DocIconProps) {
+/** Bảng vẽ — khung bảng, nét vẽ tay và bút chì (nền xanh lá). */
+export function IconDocBoard({ size = 40, className }: DocIconProps) {
   return (
     <Frame size={size} className={className}>
       <rect width="40" height="40" rx="10" fill="#EAF4ED" />
-      <path
-        d="M12.75 10.75H27.25C28.355 10.75 29.25 11.645 29.25 12.75V16.75H10.75V12.75C10.75 11.645 11.645 10.75 12.75 10.75Z"
-        fill="#F4E7DE"
-      />
       <path
         d="M12.75 10.75H27.25C28.3546 10.75 29.25 11.6454 29.25 12.75V27.25C29.25 28.3546 28.3546 29.25 27.25 29.25H12.75C11.6454 29.25 10.75 28.3546 10.75 27.25V12.75C10.75 11.6454 11.6454 10.75 12.75 10.75Z"
         strokeWidth="1.75"
@@ -126,16 +122,16 @@ export function IconDocSheet({ size = 40, className }: DocIconProps) {
         stroke="#15191C"
       />
       <path
-        d="M10.75 16.75H17M17 16.75H23.25M17 16.75V23M23.25 16.75H29.25M23.25 16.75V23M10.75 23H17M17 23H23.25M17 23V29.25M23.25 23H29.25M23.25 23V29.25"
+        d="M14.5 23.5C15.8 19.6 17.6 17.4 19 18.6C20.4 19.8 18.4 23.4 20.2 24C21.6 24.4 22.6 22.2 23.4 20.8"
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
         stroke="#15191C"
       />
       <path
-        d="M23.25 23H29.25V27.25C29.25 28.355 28.355 29.25 27.25 29.25H23.25V23Z"
+        d="M22.4 18.2L26.6 14C27.15 13.45 28.05 13.45 28.6 14C29.15 14.55 29.15 15.45 28.6 16L24.4 20.2L21.9 20.7L22.4 18.2Z"
         fill="#F4E7DE"
-        strokeWidth="1.75"
+        strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
         stroke="#B4532A"
@@ -151,6 +147,6 @@ export function DocIcon({
   className,
 }: DocIconProps & { kind?: DocKind }) {
   if (kind === 'slide') return <IconDocSlide size={size} className={className} />
-  if (kind === 'sheet') return <IconDocSheet size={size} className={className} />
+  if (kind === 'board') return <IconDocBoard size={size} className={className} />
   return <IconDocExam size={size} className={className} />
 }

@@ -13,7 +13,7 @@ import { docSize, formatBytes, useDocStore, type Deck } from '@/store/docs'
 import { useComposeStore } from '@/store/compose'
 import { cn } from '@/lib/cn'
 import { dialog } from '@/components/Dialog'
-import { DocIcon, IconDocExam, IconDocSheet, IconDocSlide } from '@/components/docIcons'
+import { DocIcon, IconDocExam, IconDocBoard, IconDocSlide } from '@/components/docIcons'
 import { IconPencil, IconSearch, IconTrash } from './icons'
 import { useSlidingThumb } from './useSlidingThumb'
 
@@ -50,7 +50,7 @@ const FILTERS = [
   { key: 'all', label: 'Tất cả' },
   { key: 'doc', label: 'Đề thi' },
   { key: 'slide', label: 'Slide' },
-  { key: 'sheet', label: 'Bảng tính' },
+  { key: 'board', label: 'Bảng vẽ' },
 ] as const
 
 type FilterKey = (typeof FILTERS)[number]['key']
@@ -72,7 +72,9 @@ export function StartTab({
   onOpenDoc,
   onNewSlide,
   onOpenDeck,
+  onNewBoard,
 }: {
+  onNewBoard?: () => void
   onNewDoc: () => void
   onOpenDoc: (doc: ExamDoc) => void
   /** mở trình soạn slide tạo bài mới */
@@ -171,7 +173,7 @@ export function StartTab({
       .filter((it) => {
         if (filter === 'doc') return it.kind === 'exam'
         if (filter === 'slide') return it.kind === 'slide'
-        if (filter === 'sheet') return false
+        if (filter === 'board') return false
         return true
       })
       .filter((it) => !q || it.title.toLowerCase().includes(q))
@@ -246,16 +248,15 @@ export function StartTab({
               </span>
             </button>
 
-            <div className="quick-card quick-card--soon">
-              <IconDocSheet size={30} />
+            <button type="button" className="quick-card" onClick={onNewBoard}>
+              <IconDocBoard size={30} />
               <span className="quick-text">
                 <span className="quick-title-row">
-                  <span className="quick-title">Bảng tính</span>
-                  <span className="ai-chip">AI</span>
+                  <span className="quick-title">Bảng vẽ</span>
                 </span>
-                <span className="quick-sub">.xlsx · sắp có</span>
+                <span className="quick-sub">Vẽ tay, sơ đồ</span>
               </span>
-            </div>
+            </button>
           </div>
         </section>
 
@@ -303,11 +304,11 @@ export function StartTab({
             </div>
           </div>
 
-          {filter === 'sheet' ? (
+          {filter === 'board' ? (
             <div className="start-empty">
-              <p className="start-empty__title">Bảng tính chưa mở</p>
+              <p className="start-empty__title">Bảng vẽ chưa mở</p>
               <p className="start-empty__desc">
-                Trình soạn bảng tính đang được làm. Khi xong, bảng tính sẽ xuất hiện ở đây cùng đề thi.
+                Bảng vẽ đang được làm. Khi xong, các bảng vẽ sẽ xuất hiện ở đây cùng đề thi và slide.
               </p>
             </div>
           ) : docs.length === 0 ? (

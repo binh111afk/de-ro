@@ -79,10 +79,12 @@
     "lucide-react": "^0.468.0",
     "mammoth": "^1.13.0",
     "pdfjs-dist": "^6.4.299",
+    "perfect-freehand": "^1.2.3",
     "pptxgenjs": "^4.0.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.1.1",
+    "roughjs": "^4.6.6",
     "tailwind-merge": "^2.6.0",
     "zustand": "^5.0.2"
   },

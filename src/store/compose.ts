@@ -32,6 +32,8 @@ export interface ComposeStore {
   openDoc: (doc: ExamDoc) => string
   /** tạo bài trình bày mới, mở thành tab slide */
   newSlide: () => string
+  /** mở tab bảng vẽ (id có tiền tố `board-`; nội dung tự lưu ở localStorage theo id) */
+  newBoard: (id?: string) => string
   /** mở một bài trình bày đã lưu */
   openDeck: (deck: Deck) => string
   /** nội dung deck của các tab slide, theo id tab */
@@ -77,6 +79,15 @@ export const useComposeStore = create<ComposeStore>()((set, get) => ({
       activeId: id,
       decks: { ...s.decks, [id]: deck },
     }))
+    return id
+  },
+
+  newBoard: (id = `board-${uid()}`) => {
+    if (get().tabs.some((t) => t.id === id)) {
+      set({ activeId: id })
+      return id
+    }
+    set((s) => ({ tabs: [...s.tabs, { id, title: 'Bảng vẽ', dirty: false, kind: 'board' }], activeId: id }))
     return id
   },
 
@@ -175,7 +186,7 @@ export const useComposeStore = create<ComposeStore>()((set, get) => ({
   saveTab: (id) => {
     const s = get()
     const tab = s.tabs.find((t) => t.id === id)
-    if (!tab) return
+    if (!tab || tab.kind === 'board') return
     const now = new Date().toISOString()
     const store = useDocStore.getState()
 
