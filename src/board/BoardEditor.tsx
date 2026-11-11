@@ -22,6 +22,7 @@ import { recognize } from './recognize'
 import { ExportDialog, FormulaDialog, PdfPagesDialog, type ExportChoice, type FormulaResult } from './BoardDialogs'
 import { canvasToA4Pdf, download, openPdf, pagesToPdf, pdfPageSize, readImageFile, renderPdfPage, renderRegion, savePng, type Picture } from './io'
 import { cachedSrc, IDB_PREFIX, stash, unstash } from './imgStore'
+import { useBoards, type BoardData } from '@/store/boards'
 import { texToSvg } from './formula'
 
 type Tool = 'select' | 'hand' | Kind | 'eraser' | 'laser'
@@ -66,8 +67,6 @@ const ERASE_R = [6, 14, 28]
 const CLIP_MARK = 'derou-board-copy:'
 const SHAPES: Kind[] = ['rectangle', 'diamond', 'ellipse', 'arrow', 'line']
 
-const keyOf = (id: string) => `derou.board.${id}`
-
 interface Saved {
   v: 2
   elements: El[]
@@ -76,13 +75,10 @@ interface Saved {
   opts?: Partial<Opts>
 }
 
+/** nội dung bảng trong danh sách bảng vẽ (store/boards — đồng bộ theo tài khoản) */
 function load(id: string): Saved | null {
-  try {
-    const d = JSON.parse(localStorage.getItem(keyOf(id)) ?? 'null')
-    return d && d.v === 2 ? d : null
-  } catch {
-    return null
-  }
+  const d = useBoards.getState().items.find((b) => b.id === id)?.data as Saved | undefined
+  return d && d.v === 2 ? d : null
 }
 
 type Drag =
@@ -244,7 +240,7 @@ export default function BoardEditor({ id }: { id: string }) {
         // ảnh lớn (ảnh chèn, trang PDF) cất vào IndexedDB, bản lưu chỉ giữ khoá
         const elements = await Promise.all(els.current.map(async (e) => (e.src ? { ...e, src: await stash(e.src) } : e)))
         const data: Saved = { v: 2, elements, view: view.current, styles: styles.current, opts: opts.current }
-        localStorage.setItem(keyOf(id), JSON.stringify(data))
+        useBoards.getState().save(id, data as unknown as BoardData)
         setSaveErr(false)
       } catch {
         // đầy bộ nhớ trình duyệt (thường do ảnh / PDF lớn): báo để người dùng biết bảng chưa được lưu

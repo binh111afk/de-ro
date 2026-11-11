@@ -37,14 +37,32 @@ function keyOf(src: string) {
 
 const keys = new Map<string, string>() // src → khoá đã ghi
 const srcs = new Map<string, string>() // khoá → src đã đọc
+/** khoá → đường dẫn trên kho file (đã đẩy lên lúc đồng bộ); có rồi thì bản lưu dùng đường dẫn thay cho ảnh */
+const urls = new Map<string, string>()
+const urlChecked = new Set<string>()
 
-/** đổi src lớn thành khoá (ghi ảnh vào IndexedDB nếu chưa có) */
+const urlKey = (k: string) => `u:${k}`
+
+async function knownUrl(k: string): Promise<string | undefined> {
+  if (urls.has(k) || urlChecked.has(k)) return urls.get(k)
+  urlChecked.add(k)
+  const u = await tx<string | undefined>('readonly', (s) => s.get(urlKey(k))).catch(() => undefined)
+  if (u) urls.set(k, u)
+  return u
+}
+
+/**
+ * Ảnh data URL trong bản lưu: đã đẩy lên kho file thì thay bằng đường dẫn;
+ * chưa thì ảnh lớn cất vào IndexedDB (trả khoá `idb:`), ảnh nhỏ giữ nguyên.
+ */
 export async function stash(src: string): Promise<string> {
-  if (src.length < MIN || !src.startsWith('data:')) return src
-  let k = keys.get(src)
-  if (!k) {
-    k = keyOf(src)
-    await tx('readwrite', (s) => s.put(src, k!))
+  if (!src.startsWith('data:')) return src
+  const k = keys.get(src) ?? keyOf(src)
+  const url = await knownUrl(k)
+  if (url) return url
+  if (src.length < MIN) return src
+  if (!keys.has(src)) {
+    await tx('readwrite', (s) => s.put(src, k))
     keys.set(src, k)
     srcs.set(k, src)
   }
@@ -62,3 +80,21 @@ export async function unstash(k: string): Promise<string> {
 
 /** ảnh đã đọc trong phiên (dùng khi hoàn tác về bản có khoá) */
 export const cachedSrc = (k: string) => srcs.get(k)
+
+/**
+ * Chuẩn bị ảnh để đồng bộ: khoá `idb:` hay data URL → đẩy lên kho file (`upload`), nhớ đường dẫn.
+ * Trả đường dẫn, hoặc null nếu không đổi được (giữ nguyên, lần sau thử lại).
+ */
+export async function toRemote(src: string, upload: (dataUrl: string) => Promise<string>): Promise<string | null> {
+  const isKey = src.startsWith(IDB_PREFIX)
+  if (!isKey && !src.startsWith('data:image/')) return null
+  const k = isKey ? src : (keys.get(src) ?? keyOf(src))
+  const known = await knownUrl(k)
+  if (known) return known
+  const data = isKey ? await unstash(src) : src
+  if (!data) return null
+  const url = await upload(data)
+  urls.set(k, url)
+  await tx('readwrite', (s) => s.put(url, urlKey(k))).catch(() => {})
+  return url
+}

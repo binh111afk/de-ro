@@ -14,6 +14,8 @@ import { useDocStore, type Deck } from '@/store/docs'
 import { useOnline } from '@/store/online'
 import type { ExamDoc } from '@/data/docTypes'
 import type { OnlineItem } from '@/lib/onlineExam'
+import { useBoards, type BoardItem } from '@/store/boards'
+import { toRemote } from '@/board/imgStore'
 
 interface Item {
   id: string
@@ -26,6 +28,8 @@ interface Spec<T extends Item> {
   get: () => T[]
   set: (items: T[]) => void
   subscribe: (fn: () => void) => () => void
+  /** đổi mục trước khi đẩy lên (vd. ảnh chỉ có trên máy → đường dẫn kho file); null = không đổi */
+  prepare?: (item: T) => Promise<T | null>
 }
 
 const SPECS: Spec<any>[] = [
@@ -54,6 +58,28 @@ const SPECS: Spec<any>[] = [
     subscribe: (fn) => useUploads.subscribe(fn),
   },
 ]
+
+/** bảng vẽ: ảnh còn là khoá IndexedDB hay data URL thì đẩy lên kho file, thay bằng đường dẫn */
+async function boardImagesToRemote(b: BoardItem): Promise<BoardItem | null> {
+  let changed = false
+  const elements = await Promise.all(b.data.elements.map(async (e) => {
+    const src = typeof e.src === 'string' ? e.src : ''
+    if (!src) return e
+    const url = await toRemote(src, uploadImage).catch(() => null)
+    if (!url || url === src) return e
+    changed = true
+    return { ...e, src: url }
+  }))
+  return changed ? { ...b, data: { ...b.data, elements } } : null
+}
+
+SPECS.push({
+  kind: 'board',
+  get: () => useBoards.getState().items,
+  set: (items: BoardItem[]) => useBoards.getState().replaceAll(items),
+  subscribe: (fn) => useBoards.subscribe((s, p) => s.items !== p.items && fn()),
+  prepare: boardImagesToRemote,
+} satisfies Spec<BoardItem>)
 
 const DELAY = 1500
 
@@ -148,14 +174,13 @@ async function syncKind<T extends Item>(spec: Spec<T>, owner: string): Promise<(
       const ids = new Set(now.map((it) => it.id))
       for (let it of now) {
         const before = fingerprint(it)
-        const slim = await externalizeImages(it)
+        const slim = (spec.prepare && (await spec.prepare(it))) || (await externalizeImages(it))
         if (slim) {
           // chỉ ghi lại vào store nếu người dùng chưa sửa gì trong lúc tải ảnh
           const live = spec.get().find((x) => x.id === it.id)
-          if (live && fingerprint(live) === before) {
-            spec.set(spec.get().map((x) => (x.id === it.id ? slim : x)))
-            it = slim
-          }
+          if (live && fingerprint(live) === before) spec.set(spec.get().map((x) => (x.id === it.id ? slim : x)))
+          // bản gửi lên luôn là bản đã đổi ảnh: máy khác không đọc được ảnh chỉ có trên máy này
+          it = slim
         }
         const fp = fingerprint(it)
         if (sent.get(it.id) === fp) continue

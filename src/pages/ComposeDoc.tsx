@@ -15,6 +15,7 @@
 import { dialog } from '@/components/Dialog'
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { lazyPage } from '@/lib/lazyPage'
+import { useBoards } from '@/store/boards'
 import { PageErrorBoundary } from '@/components/PageErrorBoundary'
 import { useLocation, useNavigate } from 'react-router-dom'
 import type { Editor } from '@tiptap/core'
@@ -74,7 +75,7 @@ function restoreSession() {
   const { myDocs, myDecks } = useDocStore.getState()
   for (const id of session.ids) {
     if (id.startsWith('board-')) {
-      compose.newBoard(id)
+      compose.newBoard(id, useBoards.getState().items.find((b) => b.id === id)?.title)
       continue
     }
     const deck = myDecks.find((d) => d.id === id)
@@ -938,6 +939,10 @@ export default function ComposeDoc() {
           }}
           onOpenDeck={(deck) => {
             openDeck(deck)
+            setStartOpen(false)
+          }}
+          onOpenBoard={(id, title) => {
+            newBoard(id, title)
             setStartOpen(false)
           }}
         />

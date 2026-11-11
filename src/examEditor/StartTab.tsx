@@ -11,6 +11,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import type { ExamDoc } from '@/data/docTypes'
 import { docSize, formatBytes, useDocStore, type Deck } from '@/store/docs'
 import { useComposeStore } from '@/store/compose'
+import { useBoards } from '@/store/boards'
 import { cn } from '@/lib/cn'
 import { dialog } from '@/components/Dialog'
 import { DocIcon, IconDocExam, IconDocBoard, IconDocSlide } from '@/components/docIcons'
@@ -59,7 +60,7 @@ type FilterKey = (typeof FILTERS)[number]['key']
 type RecentItem = {
   id: string
   title: string
-  kind: 'exam' | 'slide'
+  kind: 'exam' | 'slide' | 'board'
   updatedAt: string
   size: number
   /** payload gốc để mở lại */
@@ -73,8 +74,11 @@ export function StartTab({
   onNewSlide,
   onOpenDeck,
   onNewBoard,
+  onOpenBoard,
 }: {
   onNewBoard?: () => void
+  /** mở lại một bảng vẽ đã lưu */
+  onOpenBoard?: (id: string, title: string) => void
   onNewDoc: () => void
   onOpenDoc: (doc: ExamDoc) => void
   /** mở trình soạn slide tạo bài mới */
@@ -88,6 +92,7 @@ export function StartTab({
   const deleteDeck = useDocStore((s) => s.deleteDeck)
   const renameDoc = useDocStore((s) => s.renameDoc)
   const renameDeck = useDocStore((s) => s.renameDeck)
+  const boards = useBoards((s) => s.items)
   const [query, setQuery] = useState('')
   const [filter, setFilter] = useState<FilterKey>('all')
   const [removing, setRemoving] = useState<string[]>([])
@@ -124,6 +129,7 @@ export function StartTab({
     setEditing(null)
     if (!title || title === item.title) return
     if (item.kind === 'slide') renameDeck(item.id, title)
+    else if (item.kind === 'board') useBoards.getState().rename(item.id, title)
     else renameDoc(item.id, title)
     // tab đang mở cũng phải đổi tên, nếu không lần tự lưu sau ghi đè tên cũ
     const compose = useComposeStore.getState()
@@ -143,7 +149,10 @@ export function StartTab({
     window.setTimeout(() => {
       for (const item of items) {
         if (item.kind === 'slide') deleteDeck(item.id)
-        else deleteDoc(item.id)
+        else if (item.kind === 'board') {
+          useBoards.getState().remove(item.id)
+          useComposeStore.getState().closeTab(item.id)
+        } else deleteDoc(item.id)
       }
       setRemoving((cur) => cur.filter((id) => !ids.includes(id)))
     }, 170)
@@ -168,17 +177,24 @@ export function StartTab({
         size: new Blob([JSON.stringify(dk)]).size,
         deck: dk,
       })),
+      ...boards.map((b) => ({
+        id: b.id,
+        title: b.title,
+        kind: 'board' as const,
+        updatedAt: b.updatedAt,
+        size: JSON.stringify(b.data).length,
+      })),
     ]
     return items
       .filter((it) => {
         if (filter === 'doc') return it.kind === 'exam'
         if (filter === 'slide') return it.kind === 'slide'
-        if (filter === 'board') return false
+        if (filter === 'board') return it.kind === 'board'
         return true
       })
       .filter((it) => !q || it.title.toLowerCase().includes(q))
       .sort((a, b) => (a.updatedAt < b.updatedAt ? 1 : -1))
-  }, [myDocs, myDecks, query, filter])
+  }, [myDocs, myDecks, boards, query, filter])
 
   // đổi bộ lọc hay tìm kiếm thì bỏ chọn, để không xoá nhầm dòng đang bị ẩn
   useEffect(() => {
@@ -304,14 +320,7 @@ export function StartTab({
             </div>
           </div>
 
-          {filter === 'board' ? (
-            <div className="start-empty">
-              <p className="start-empty__title">Bảng vẽ chưa mở</p>
-              <p className="start-empty__desc">
-                Bảng vẽ đang được làm. Khi xong, các bảng vẽ sẽ xuất hiện ở đây cùng đề thi và slide.
-              </p>
-            </div>
-          ) : docs.length === 0 ? (
+          {docs.length === 0 ? (
             <div className="start-empty">
               <p className="start-empty__title">
                 {query.trim() ? 'Không tìm thấy tệp phù hợp' : 'Chưa có tệp nào'}
@@ -411,7 +420,7 @@ export function StartTab({
                           }}
                         />
                         <span className="recent-path">
-                          {d.kind === 'slide' ? 'Bài giảng của tôi' : 'Đề của tôi'}
+                          {d.kind === 'slide' ? 'Bài giảng của tôi' : d.kind === 'board' ? 'Bảng vẽ của tôi' : 'Đề của tôi'}
                         </span>
                         <span className="recent-time">{formatModified(d.updatedAt)}</span>
                         <span className="col-size recent-time">{formatBytes(d.size)}</span>
@@ -422,6 +431,7 @@ export function StartTab({
                         className="recent-row"
                         onClick={() => {
                           if (d.kind === 'slide') onOpenDeck?.(d.deck!)
+                          else if (d.kind === 'board') onOpenBoard?.(d.id, d.title)
                           else onOpenDoc(d.doc!)
                         }}
                         disabled={removing.includes(d.id)}
@@ -432,7 +442,7 @@ export function StartTab({
                           </span>
                           <span className="recent-name">{d.title}</span>
                           <span className="recent-path">
-                            {d.kind === 'slide' ? 'Bài giảng của tôi' : 'Đề của tôi'}
+                            {d.kind === 'slide' ? 'Bài giảng của tôi' : d.kind === 'board' ? 'Bảng vẽ của tôi' : 'Đề của tôi'}
                           </span>
                           <span className="recent-time">{formatModified(d.updatedAt)}</span>
                           <span className="col-size recent-time">{formatBytes(d.size)}</span>
