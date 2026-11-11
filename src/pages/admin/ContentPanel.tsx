@@ -23,6 +23,7 @@ import {
   inputClass,
 } from '@/components/ui'
 import { Pager } from '@/components/Pager'
+import { SiteSelect, type SiteSelectOption } from '@/components/SiteSelect'
 import { Segmented } from '@/components/Segmented'
 import { dialog } from '@/components/Dialog'
 import type { AdminMe } from '@/lib/adminApi'
@@ -83,7 +84,7 @@ export function ContentPanel({ me }: ContentPanelProps) {
   return (
     <div className="w-full space-y-6">
       {/* Tiêu đề trang & Tabs */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4">
         <div>
           <h1 className="text-[22px] font-bold tracking-tight text-ink">Quản lý nội dung</h1>
           <p className="text-[13.5px] text-ink-3">
@@ -91,12 +92,13 @@ export function ContentPanel({ me }: ContentPanelProps) {
           </p>
         </div>
 
-        <div className="w-full sm:w-auto">
+        <div className="-mb-1 max-w-full overflow-x-auto pb-1">
           <Segmented
             value={tab}
             onChange={(val) => setTab(val)}
             options={tabOptions}
             label="Mục quản lý nội dung"
+            className="max-w-none [&>button]:whitespace-nowrap"
           />
         </div>
       </div>
@@ -126,6 +128,17 @@ const SUBJECTS_LIST = [
   'Tin học',
   'GDCD',
   'Công nghệ',
+]
+
+const SUBJECT_FILTER_OPTIONS: ReadonlyArray<SiteSelectOption<string>> = [
+  { value: '', label: 'Tất cả môn' },
+  ...SUBJECTS_LIST.map((s) => ({ value: s, label: s })),
+]
+const STATUS_FILTER_OPTIONS: ReadonlyArray<SiteSelectOption<string>> = [
+  { value: '', label: 'Tất cả trạng thái' },
+  { value: 'published', label: 'Đã xuất bản' },
+  { value: 'hidden', label: 'Tạm ẩn' },
+  { value: 'removed', label: 'Đã gỡ' },
 ]
 
 function ExamsTab({ me }: { me: AdminMe }) {
@@ -182,15 +195,15 @@ function ExamsTab({ me }: { me: AdminMe }) {
   return (
     <div className="space-y-4">
       {/* Bộ lọc */}
-      <div className="flex flex-col gap-3 rounded-[8px] border border-line bg-surface p-3.5 shadow-xs sm:flex-row sm:items-center sm:justify-between">
-        <div className="relative flex-1 sm:max-w-xs">
+      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2.5 rounded-[8px] border border-line bg-surface p-3.5 shadow-xs lg:flex">
+        <div className="relative min-w-0 lg:flex-1">
           <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-4" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Tìm theo tiêu đề hoặc trường…"
-            className={`${inputClass} pl-9 pr-9 text-[13.5px]`}
+            className={`${inputClass} h-11 pl-9 pr-9 text-[13.5px]`}
           />
           {search ? (
             <button
@@ -204,43 +217,29 @@ function ExamsTab({ me }: { me: AdminMe }) {
           ) : null}
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          {/* Lọc môn học */}
-          <select
-            value={subjectFilter}
-            onChange={(e) => {
-              setSubjectFilter(e.target.value)
-              setPage(1)
-            }}
-            className={`${inputClass} text-[13px]`}
-          >
-            <option value="">Tất cả môn</option>
-            {SUBJECTS_LIST.map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
-            ))}
-          </select>
-
-          {/* Lọc trạng thái */}
-          <select
-            value={statusFilter}
-            onChange={(e) => {
-              setStatusFilter(e.target.value)
-              setPage(1)
-            }}
-            className={`${inputClass} text-[13px]`}
-          >
-            <option value="">Tất cả trạng thái</option>
-            <option value="published">Đã xuất bản</option>
-            <option value="hidden">Tạm ẩn</option>
-            <option value="removed">Đã gỡ</option>
-          </select>
-
-          <Button variant="outline" size="sm" onClick={() => void loadExams()} title="Làm mới">
-            <RefreshCw className="size-3.5" />
-          </Button>
-        </div>
+        <SiteSelect
+          label="Lọc theo môn"
+          value={subjectFilter}
+          options={SUBJECT_FILTER_OPTIONS}
+          onChange={(v) => {
+            setSubjectFilter(v)
+            setPage(1)
+          }}
+          className="col-span-2 min-w-0 lg:w-[180px]"
+        />
+        <SiteSelect
+          label="Lọc theo trạng thái"
+          value={statusFilter}
+          options={STATUS_FILTER_OPTIONS}
+          onChange={(v) => {
+            setStatusFilter(v)
+            setPage(1)
+          }}
+          className="col-span-2 min-w-0 lg:w-[200px]"
+        />
+        <Button variant="outline" size="icon" onClick={() => void loadExams()} title="Làm mới" aria-label="Làm mới" className="col-start-2 row-start-1 h-11 w-11 lg:order-last">
+          <RefreshCw className="size-4" />
+        </Button>
       </div>
 
       {/* Bảng danh sách đề */}
@@ -1036,15 +1035,15 @@ function DocsTab({ me: _me }: { me: AdminMe }) {
 
       {/* Tìm kiếm & Bảng danh sách tệp */}
       <div className="space-y-4">
-        <div className="flex flex-col gap-3 rounded-[8px] border border-line bg-surface p-3.5 shadow-xs sm:flex-row sm:items-center sm:justify-between">
-          <div className="relative w-full sm:max-w-xs">
+        <div className="flex items-center gap-2.5 rounded-[8px] border border-line bg-surface p-3.5 shadow-xs">
+          <div className="relative min-w-0 flex-1">
             <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-4" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Tìm theo tên tệp hoặc email…"
-              className={`${inputClass} pl-9 pr-9 text-[13.5px]`}
+              className={`${inputClass} h-11 pl-9 pr-9 text-[13.5px]`}
             />
             {search ? (
               <button
@@ -1058,8 +1057,8 @@ function DocsTab({ me: _me }: { me: AdminMe }) {
             ) : null}
           </div>
 
-          <Button variant="outline" size="sm" onClick={() => void loadDocs()} title="Làm mới">
-            <RefreshCw className="size-3.5" />
+          <Button variant="outline" size="icon" onClick={() => void loadDocs()} title="Làm mới" aria-label="Làm mới" className="h-11 w-11">
+            <RefreshCw className="size-4" />
             <span>Tải lại</span>
           </Button>
         </div>

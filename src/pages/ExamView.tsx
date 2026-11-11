@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ArrowLeft, ChevronDown, Download, FileText, Flag, MonitorPlay, Printer, Save, Sparkles, X } from 'lucide-react'
 import { Badge, Button, EmptyState, inputClass } from '@/components/ui'
+import { SiteSelect } from '@/components/SiteSelect'
 import { ExamEditor, A4_PORTRAIT_W } from '@/examEditor/ExamEditor'
 import { blocksToTipTap } from '@/examEditor/convert'
 import type { ExamBlock } from '@/data/docTypes'
@@ -302,17 +303,12 @@ function ReportExamButton({ examId }: { examId: string }) {
             <form onSubmit={handleSubmit} className="mt-4 space-y-4 text-[13.5px]">
               <div>
                 <label className="mb-1 block font-medium text-ink-2">Lý do báo cáo</label>
-                <select
+                <SiteSelect
+                  label="Lý do báo cáo"
                   value={reason}
-                  onChange={(e) => setReason(e.target.value)}
-                  className={`${inputClass} w-full`}
-                >
-                  <option value="Sai đáp án">Sai đáp án</option>
-                  <option value="Nội dung không phù hợp">Nội dung không phù hợp</option>
-                  <option value="Spam">Spam</option>
-                  <option value="Vi phạm bản quyền">Vi phạm bản quyền</option>
-                  <option value="Khác">Khác</option>
-                </select>
+                  options={['Sai đáp án', 'Nội dung không phù hợp', 'Spam', 'Vi phạm bản quyền', 'Khác'].map((r) => ({ value: r, label: r }))}
+                  onChange={setReason}
+                />
               </div>
 
               <div>

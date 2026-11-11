@@ -1082,32 +1082,22 @@ function QuestionFormModal({
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               <div>
                 <label className="mb-1.5 block text-[13px] font-semibold text-ink">Môn học</label>
-                <select
+                <SiteSelect
+                  label="Môn học"
                   value={subject}
-                  onChange={(e) => setSubject(e.target.value as Subject)}
-                  className={cn(inputClass, 'h-10 text-[14px]')}
-                >
-                  {SUBJECTS.map((s) => (
-                    <option key={s} value={s}>
-                      {s}
-                    </option>
-                  ))}
-                </select>
+                  options={SUBJECTS.map((s) => ({ value: s, label: s }))}
+                  onChange={setSubject}
+                />
               </div>
 
               <div>
                 <label className="mb-1.5 block text-[13px] font-semibold text-ink">Dạng câu</label>
-                <select
+                <SiteSelect
+                  label="Dạng câu"
                   value={type}
-                  onChange={(e) => setType(e.target.value as QuestionType)}
-                  className={cn(inputClass, 'h-10 text-[14px]')}
-                >
-                  {(Object.keys(TYPE_LABEL) as QuestionType[]).map((k) => (
-                    <option key={k} value={k}>
-                      {TYPE_LABEL[k]}
-                    </option>
-                  ))}
-                </select>
+                  options={(Object.keys(TYPE_LABEL) as QuestionType[]).map((k) => ({ value: k, label: TYPE_LABEL[k] }))}
+                  onChange={setType}
+                />
               </div>
 
               <div>
