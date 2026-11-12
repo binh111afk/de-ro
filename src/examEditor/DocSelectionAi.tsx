@@ -41,6 +41,7 @@ const TOOL_NAME: Record<ToolDoc['kind'], string> = {
   table: 'Bảng số liệu',
   phase: 'Đồ thị chuyển thể',
   osc: 'Đồ thị dao động',
+  lens: 'Thấu kính',
 }
 const PLOT_ASK = 'Vẽ hình minh hoạ cho đề này'
 const PANEL_W = 340

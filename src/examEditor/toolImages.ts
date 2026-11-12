@@ -34,6 +34,7 @@ export const TOOL_DOC_IMAGE: Record<ToolKind, { width: number; alt: string }> = 
   table: { width: 420, alt: 'Bảng số liệu' },
   phase: { width: 320, alt: 'Đồ thị chuyển thể' },
   osc: { width: 340, alt: 'Đồ thị dao động điều hoà' },
+  lens: { width: 380, alt: 'Sơ đồ thấu kính' },
 }
 
 /** cấu hình dạng chữ (như AI trả, hoặc trong kho câu hỏi) → ToolDoc; sai thì null */

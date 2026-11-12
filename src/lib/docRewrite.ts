@@ -9,6 +9,7 @@ import { autoSignTable } from './signTable'
 import { autoVarTable } from './varTable'
 import { cleanRewrite } from './slideRewrite'
 import { OSC_Y_DEFAULT, oscPeriod, parseOscExpr, type OscQty, type OscSpec, type OscStart, type OscStartX0 } from './oscillation'
+import { LENS_DEFAULT, type LensNames, type LensRay, type LensType } from './lens'
 
 export const DOC_REWRITE_PRESETS = [
   { label: 'Viết lại rõ hơn', ask: 'Viết lại rõ ràng, chặt chẽ hơn, giữ nguyên ý' },
@@ -150,6 +151,7 @@ export const FIGURE_GUIDE =
   '19) Phương trình hoá học (Hoá): {"kind":"chemeq","equations":"2KMnO4 -> K2MnO4 + MnO2 + O2 [t°]","autoBalance":false,"fontSize":17,"align":"center"}. Mũi tên ->, <=>, điều kiện [trên | dưới] (có điện tích như [-OH^- | +H^+]); nhiều mũi tên một dòng đặt [điều kiện] ngay sau mỗi mũi tên; chất cấu tạo bọc trong {...} (vd "{CH3-CH(NH3^+)-COOH} <=> [-OH^- | +H^+] {CH3-CH(NH3^+)-COO^-}"). Chỉ bật autoBalance khi dòng chỉ có 1 mũi tên và không có {...}.\n' +
   '20) Đồ thị chuyển thể (Vật lí 12 — nhiệt độ theo thời gian): {"kind":"phase","yName":"t (°C)","tName":"T (phút)","points":"(0; -45)\\nA: (15; -8,83)\\nB: (27,4; -8,83)\\nC: (40 = T_1; 0)\\n(54 = T_2; 0)\\n_(66; 16)","extend":false,"dashed":true,"dots":true}. Gốc O tự đặt tại giá trị nhỏ nhất của trục dọc; dùng "60 = T_1" để ghi kí hiệu trên trục, "_(x; y)" cho điểm kéo dài không hiện vạch trục; extend=true vẽ đoạn ngang ra mép phải sau điểm cuối.\n' +
   '21) Đồ thị dao động điều hoà (Vật lí 11): {"kind":"osc","qty":"x|v|a","A":8,"period":{"by":"T|f|omega","value":2},"start":{"by":"state","x0":"0|A|-A|A/2|-A/2|A√2/2|-A√2/2|A√3/2|-A√3/2","dir":"up|down"},"tEnd":2.5,"grid":"T/8|T/4|none","ticks":"value|symbol"}. Hoặc start theo pha: {"by":"phi","phiPi":0.5} (đơn vị π). Thêm "second":{"qty":"v","dashed":true} để vẽ đường thứ hai so pha. Dùng cho dao động điều hoà hình sin.\n' +
+  '22) Thấu kính mỏng (Vật lí 11 — tạo ảnh qua thấu kính hội tụ / phân kì): {"kind":"lens","type":"converging|diverging","f":10,"d":30,"h":2,"rays":["parallel","center","focal"],"show2F":false,"showValues":false,"hideImage":false}. f > 0, d > 0 (cm).\n' +
 
   'Biểu thức dùng biến x, ^ cho luỹ thừa, sqrt(), ln, sin, cos; nhân ngầm được (2x).'
 
@@ -419,6 +421,46 @@ export function toolFromRaw(raw: Record<string, unknown>): ToolDoc {
           grid: pick('grid', ['none', 'T/4', 'T/8'] as const, 'T/8'),
           ticks: pick('ticks', ['value', 'symbol'] as const, 'value'),
           second,
+        },
+      }
+      break
+    }
+    case 'lens': {
+      const RAYS = ['parallel', 'center', 'focal'] as const
+      const rawF = num(raw.f, LENS_DEFAULT.f)
+      const lensType: LensType =
+        raw.type === 'diverging' || (raw.type === undefined && rawF < 0) ? 'diverging' : 'converging'
+      const f = Math.abs(rawF) > 0 ? Math.abs(rawF) : LENS_DEFAULT.f
+      const d = num(raw.d, LENS_DEFAULT.d)
+      const h = num(raw.h, LENS_DEFAULT.h ?? 2)
+      const rays: LensRay[] = Array.isArray(raw.rays)
+        ? raw.rays.filter((r): r is LensRay => RAYS.includes(r as LensRay))
+        : ['parallel', 'center', 'focal']
+      const rawNames = raw.names && typeof raw.names === 'object' ? (raw.names as Record<string, unknown>) : null
+      const lensNames: LensNames | undefined = rawNames
+        ? {
+            A: typeof rawNames.A === 'string' ? rawNames.A : undefined,
+            B: typeof rawNames.B === 'string' ? rawNames.B : undefined,
+            APrime: typeof rawNames.APrime === 'string' ? rawNames.APrime : undefined,
+            BPrime: typeof rawNames.BPrime === 'string' ? rawNames.BPrime : undefined,
+            O: typeof rawNames.O === 'string' ? rawNames.O : undefined,
+            F: typeof rawNames.F === 'string' ? rawNames.F : undefined,
+            FPrime: typeof rawNames.FPrime === 'string' ? rawNames.FPrime : undefined,
+          }
+        : undefined
+      doc = {
+        kind: 'lens',
+        spec: {
+          type: lensType,
+          f,
+          d,
+          h,
+          rays,
+          show2F: bool('show2F', false),
+          showValues: bool('showValues', false),
+          hideImage: bool('hideImage', false),
+          objectSide: raw.objectSide === 'right' ? 'right' : 'left',
+          ...(lensNames ? { names: lensNames } : {}),
         },
       }
       break
