@@ -146,6 +146,7 @@ export const FIGURE_GUIDE =
   '17) Đồ thị số mol (Hoá): {"kind":"chemgraph","xName":"n CO2","yName":"n↓","points":"(0; 0) (0,2; 0,2) (0,4; 0)"}\n' +
   '18) Bảng số liệu / đối chiếu tuỳ ý: {"kind":"table","cells":"hàng 1 | ô 2 | ô 3\\nhàng 2 | a | b","header":"row|col|both|none","align":"center|left|right","merges":"","border":"all|outer|horizontal","fontSize":15}. Ô xuống dòng ghi "\\\\n" (hai kí tự) trong ô; chỉ số dùng x_1, x^2; gộp ô ghi "r1,c1:r2,c2" (vd. "1,1:1,3").\n' +
   '19) Phương trình hoá học (Hoá): {"kind":"chemeq","equations":"2KMnO4 -> K2MnO4 + MnO2 + O2 [t°]","autoBalance":false,"fontSize":17,"align":"center"}\n' +
+  '20) Đồ thị chuyển thể (Vật lí 12 — nhiệt độ theo thời gian): {"kind":"phase","yName":"t (°C)","tName":"T (phút)","points":"(0; -45)\\nA: (15; -8,83)\\nB: (27,4; -8,83)\\nC: (40 = T_1; 0)\\n(54 = T_2; 0)\\n_(66; 16)","extend":false,"dashed":true,"dots":true}. Gốc O tự đặt tại giá trị nhỏ nhất của trục dọc; dùng "60 = T_1" để ghi kí hiệu trên trục, "_(x; y)" cho điểm kéo dài không hiện vạch trục; extend=true vẽ đoạn ngang ra mép phải sau điểm cuối.\n' +
   'Biểu thức dùng biến x, ^ cho luỹ thừa, sqrt(), ln, sin, cos; nhân ngầm được (2x).'
 
 const TOOL_SYSTEM =
@@ -332,6 +333,19 @@ export function toolFromRaw(raw: Record<string, unknown>): ToolDoc {
           autoBalance: bool('autoBalance', false),
           fontSize: Math.min(22, Math.max(14, num(raw.fontSize, 17))),
           align: pick('align', ['left', 'center'] as const, 'center'),
+        },
+      }
+      break
+    case 'phase':
+      doc = {
+        kind: 'phase',
+        spec: {
+          yName: str('yName') || 't (°C)',
+          tName: str('tName') || 'T (phút)',
+          points: need('points', 'Không thấy số liệu đồ thị chuyển thể.'),
+          extend: bool('extend', true),
+          dashed: bool('dashed', true),
+          dots: bool('dots', true),
         },
       }
       break

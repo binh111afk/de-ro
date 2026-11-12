@@ -25,6 +25,8 @@ import type { StatsSpec } from '@/lib/stats'
 import type { CircuitSpec } from '@/lib/circuit'
 import { ChemEqModal } from './MoreToolModals'
 import type { ChemEqSpec } from '@/lib/chemEq'
+import { PhaseModal } from './MoreToolModals'
+import type { PhaseSpec } from '@/lib/phaseChange'
 
 export function ToolModal({
   kind,
@@ -85,5 +87,7 @@ export function ToolModal({
       return <GroupedModal initial={initial as GroupedSpec | null | undefined} {...common} />
     case 'table':
       return <TableModal initial={initial as TableSpec | null | undefined} {...common} />
+    case 'phase':
+      return <PhaseModal initial={initial as PhaseSpec | null | undefined} {...common} />
   }
 }
