@@ -3,7 +3,7 @@
  * (mỗi dòng một hàng / một lệnh), xem trước cập nhật khi gõ, bảng lệnh mở bằng
  * dấu "?" chia nhóm.
  */
-import { useMemo, useState, type ReactNode } from 'react'
+import { useMemo, useRef, useState, type ReactNode } from 'react'
 import { CircleHelp, X } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import { inputClass } from '@/components/ui'
@@ -19,6 +19,7 @@ import { GAS_DEFAULT, type GasAxes, type GasSpec } from '@/lib/gas'
 import { SCENE_DEFAULT, SCENE_HELP, type SceneSpec } from '@/lib/scene'
 import type { ChemGraphSpec, ElectronSpec, StructSpec } from '@/lib/chem'
 import type { NumberLineSpec, TreeSpec, TrigSpec, VennSpec } from '@/lib/mathExtra'
+import { CHEMEQ_DEFAULT, type ChemEqSpec } from '@/lib/chemEq'
 import { groupedStats, parseGroups, round2, type GroupedSpec, type GroupedView } from '@/lib/grouped'
 import { TABLE_DEFAULT, parseCells, parseMerges, type TableAlign, type TableBorder, type TableHeader, type TableSpec } from '@/lib/table'
 import { Check, ToolShell, sectionTitle } from './ToolShell'
@@ -1617,6 +1618,179 @@ export function TableModal({ initial, submitLabel, onClose, onInsert }: Props<Ta
       inputsWidth={380}
       preview={preview}
       submitLabel={submitLabel ?? (initial ? 'Cập nhật bảng' : 'Chèn bảng')}
+      canSubmit={Boolean(preview) && !error}
+      onSubmit={() => preview && onInsert(preview)}
+      onClose={onClose}
+    />
+  )
+}
+
+/* ------------------------------------------------------------------ *
+ * Hoá học: phương trình hoá học
+ * ------------------------------------------------------------------ */
+
+const CHEMEQ_HELP: HelpGroups = [
+  {
+    group: 'Mũi tên & điều kiện',
+    items: [
+      { code: '->  hoặc  →  hoặc  =', what: 'Mũi tên một chiều' },
+      { code: '<=>  hoặc  ⇌', what: 'Mũi tên thuận nghịch (hai nửa mũi tên)' },
+      { code: '[t°]   [to]   [t^o]', what: 'Điều kiện trên mũi tên (sau mũi tên hoặc cuối dòng)' },
+      { code: '[t°, xt, p | Fe]', what: 'Ngăn bằng "|" để ghi 2 tầng (trên | dưới)' },
+    ],
+  },
+  {
+    group: 'Chất, ion & kí hiệu',
+    items: [
+      { code: '2H2O   Ca(OH)2', what: 'Hệ số đầu giữ cỡ thường; số sau chữ/ngoặc thành chỉ số dưới' },
+      { code: 'SO4^2-   Fe^3+   OH^-', what: 'Điện tích sau "^" thành chỉ số trên' },
+      { code: 'H2^   hoặc   H2↑', what: 'Chất khí bay lên (↑)' },
+      { code: 'BaSO4v   hoặc   BaSO4↓', what: 'Chất kết tủa (↓); V2O5 vẫn giữ nguyên V' },
+      { code: '(r)  (l)  (k)  (dd)', what: 'Trạng thái chất (cỡ nhỏ hơn)' },
+    ],
+  },
+]
+
+const CHEMEQ_QUICK: Array<{ label: string; text: string; title: string; spaceBefore?: boolean; spaceAfter?: boolean }> = [
+  { label: '→', text: '→', title: 'Chèn mũi tên một chiều', spaceBefore: true, spaceAfter: true },
+  { label: '⇌', text: '⇌', title: 'Chèn mũi tên thuận nghịch', spaceBefore: true, spaceAfter: true },
+  { label: '[t°]', text: '[t°]', title: 'Chèn điều kiện nhiệt độ', spaceBefore: true },
+  { label: '↑', text: '↑', title: 'Chèn kí hiệu khí bay lên' },
+  { label: '↓', text: '↓', title: 'Chèn kí hiệu kết tủa' },
+]
+
+export function ChemEqModal({ initial, submitLabel, onClose, onInsert }: Props<ChemEqSpec>) {
+  const [spec, setSpec] = useState<ChemEqSpec>(() => ({ ...CHEMEQ_DEFAULT, ...initial }))
+  const [helpOpen, setHelpOpen] = useState(false)
+  const taRef = useRef<HTMLTextAreaElement>(null)
+  const set = (p: Partial<ChemEqSpec>) => setSpec((s) => ({ ...s, ...p }))
+  const doc = useMemo((): ToolDoc => ({ kind: 'chemeq', spec }), [spec])
+  const { preview, error } = useRender(doc)
+  const warnings = !error ? (preview?.errors ?? []) : []
+
+  const insertSnippet = (q: (typeof CHEMEQ_QUICK)[number]) => {
+    const el = taRef.current
+    const start = el?.selectionStart ?? spec.equations.length
+    const end = el?.selectionEnd ?? spec.equations.length
+    const before = spec.equations.slice(0, start)
+    const after = spec.equations.slice(end)
+    const pre = q.spaceBefore && before.length > 0 && !/[\s\n]$/.test(before) ? ' ' : ''
+    const post = q.spaceAfter && (!after.length || !/^\s/.test(after)) ? ' ' : ''
+    const next = before + pre + q.text + post + after
+    set({ equations: next })
+    requestAnimationFrame(() => {
+      if (!el) return
+      el.focus()
+      const caret = start + pre.length + q.text.length + post.length
+      el.setSelectionRange(caret, caret)
+    })
+  }
+
+  const inputs = (
+    <>
+      <section>
+        <div className="mb-2 flex items-center gap-1.5">
+          <h3 className={cn(sectionTitle, 'mb-0')}>Phương trình</h3>
+          <HelpButton open={helpOpen} onToggle={() => setHelpOpen((v) => !v)} label="Cách gõ" />
+        </div>
+        {helpOpen && (
+          <HelpCards
+            groups={CHEMEQ_HELP}
+            intro="Mỗi dòng một phương trình; điều kiện [trên | dưới] đặt ngay sau mũi tên hoặc cuối dòng."
+            onClose={() => setHelpOpen(false)}
+          />
+        )}
+        <div className="mb-2 flex flex-wrap gap-1.5">
+          {CHEMEQ_QUICK.map((q) => (
+            <button
+              key={q.label}
+              type="button"
+              title={q.title}
+              onClick={() => insertSnippet(q)}
+              className="rounded-[6px] border border-line bg-surface px-2.5 py-1 text-[12.5px] font-medium text-ink-2 transition-colors hover:border-clay hover:text-clay"
+            >
+              {q.label}
+            </button>
+          ))}
+        </div>
+        <textarea
+          ref={taRef}
+          value={spec.equations}
+          onChange={(e) => set({ equations: e.target.value })}
+          spellCheck={false}
+          rows={5}
+          aria-label="Phương trình hoá học"
+          aria-invalid={Boolean(error)}
+          placeholder="2KMnO4 -> K2MnO4 + MnO2 + O2 [t°]"
+          className={cn(inputClass, 'w-full resize-y px-3 py-2 font-mono text-[13px] leading-relaxed', error && 'border-clay')}
+        />
+        {error ? (
+          <p role="alert" className="mt-1 text-[12px] leading-snug text-clay-deep">
+            {error}
+          </p>
+        ) : null}
+        {warnings.length > 0 && (
+          <ul className="mt-1.5 flex flex-col gap-0.5 rounded-[6px] bg-paper-2 px-2.5 py-1.5 text-[12px] leading-snug text-ink-2">
+            {warnings.map((w, i) => (
+              <li key={i}>
+                Dòng {w.line}: {w.msg}
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+      <section>
+        <Check checked={spec.autoBalance} onChange={(autoBalance) => set({ autoBalance })}>
+          Tự cân bằng hệ số (khi chưa ghi hệ số)
+        </Check>
+      </section>
+      <section>
+        <h3 className={sectionTitle}>Cỡ chữ: {spec.fontSize} px</h3>
+        <input
+          type="range"
+          min={14}
+          max={22}
+          step={1}
+          value={spec.fontSize}
+          onChange={(e) => set({ fontSize: Number(e.target.value) })}
+          className="w-full accent-clay"
+          aria-label="Cỡ chữ"
+        />
+      </section>
+      <section>
+        <h3 className={sectionTitle}>Căn nhiều dòng</h3>
+        <div className="flex flex-wrap gap-1.5">
+          {(
+            [
+              ['center', 'Căn giữa (thẳng mũi tên)'],
+              ['left', 'Căn trái'],
+            ] as const
+          ).map(([id, label]) => (
+            <button
+              key={id}
+              type="button"
+              aria-pressed={spec.align === id}
+              onClick={() => set({ align: id })}
+              className={cn(
+                'rounded-[6px] border px-2.5 py-1 text-[12.5px] transition-colors',
+                spec.align === id ? 'border-clay bg-clay-tint font-medium text-clay' : 'border-line text-ink-2 hover:border-ink-4',
+              )}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </section>
+    </>
+  )
+  return (
+    <ToolShell
+      title="Phương trình hoá học"
+      hint="Gõ chất, mũi tên và điều kiện trên/dưới mũi tên; hỗ trợ nhiều dòng, ion, trạng thái, khí/kết tủa"
+      inputs={inputs}
+      inputsWidth={380}
+      preview={preview}
+      submitLabel={submitLabel ?? (initial ? 'Cập nhật hình' : 'Chèn hình')}
       canSubmit={Boolean(preview) && !error}
       onSubmit={() => preview && onInsert(preview)}
       onClose={onClose}

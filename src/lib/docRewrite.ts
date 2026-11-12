@@ -145,6 +145,7 @@ export const FIGURE_GUIDE =
   '16) Công thức cấu tạo hữu cơ: {"kind":"struct","formula":"CH3-CH(CH3)-CH2-OH"}\n' +
   '17) Đồ thị số mol (Hoá): {"kind":"chemgraph","xName":"n CO2","yName":"n↓","points":"(0; 0) (0,2; 0,2) (0,4; 0)"}\n' +
   '18) Bảng số liệu / đối chiếu tuỳ ý: {"kind":"table","cells":"hàng 1 | ô 2 | ô 3\\nhàng 2 | a | b","header":"row|col|both|none","align":"center|left|right","merges":"","border":"all|outer|horizontal","fontSize":15}. Ô xuống dòng ghi "\\\\n" (hai kí tự) trong ô; chỉ số dùng x_1, x^2; gộp ô ghi "r1,c1:r2,c2" (vd. "1,1:1,3").\n' +
+  '19) Phương trình hoá học (Hoá): {"kind":"chemeq","equations":"2KMnO4 -> K2MnO4 + MnO2 + O2 [t°]","autoBalance":false,"fontSize":17,"align":"center"}\n' +
   'Biểu thức dùng biến x, ^ cho luỹ thừa, sqrt(), ln, sin, cos; nhân ngầm được (2x).'
 
 const TOOL_SYSTEM =
@@ -320,6 +321,17 @@ export function toolFromRaw(raw: Record<string, unknown>): ToolDoc {
           merges: str('merges'),
           border: pick('border', ['all', 'outer', 'horizontal'] as const, 'all'),
           fontSize: Math.min(20, Math.max(12, Math.round(num(raw.fontSize, 15)))),
+        },
+      }
+      break
+    case 'chemeq':
+      doc = {
+        kind: 'chemeq',
+        spec: {
+          equations: need('equations', 'Không thấy phương trình hoá học.'),
+          autoBalance: bool('autoBalance', false),
+          fontSize: Math.min(22, Math.max(14, num(raw.fontSize, 17))),
+          align: pick('align', ['left', 'center'] as const, 'center'),
         },
       }
       break

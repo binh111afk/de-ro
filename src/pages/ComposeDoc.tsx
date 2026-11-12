@@ -31,7 +31,7 @@ import { DocSelectionAi } from '@/examEditor/DocSelectionAi'
 import { ToolModal } from '@/examEditor/tools/ToolModal'
 import { svgToPng } from '@/lib/plot'
 import { parseToolJson, readToolDoc, type ToolDoc, type ToolImage } from '@/lib/toolSpec'
-import { TOOL_DOC_IMAGE, figureDoc, figureImageAttrs, pngifyToolImages } from '@/examEditor/toolImages'
+import { TOOL_DOC_IMAGE, figureDoc, figureImageAttrs, pngifyToolImages, toolImageWidth } from '@/examEditor/toolImages'
 
 /** chỗ đặt đồ thị: thay ảnh cũ, hoặc chèn thành đoạn mới tại vị trí giữa hai khối */
 type PlotTarget = { replace: number } | { after: number }
@@ -771,7 +771,7 @@ export default function ComposeDoc() {
         const doc = readToolDoc(img.svg)
         const plot = JSON.stringify(doc)
         const look = TOOL_DOC_IMAGE[doc?.kind ?? 'graph']
-        const attrs = { src, alt: look.alt, width: look.width, plot }
+        const attrs = { src, alt: look.alt, width: toolImageWidth(doc?.kind ?? 'graph', img.width), plot }
         const node = target && 'replace' in target ? editor.state.doc.nodeAt(target.replace) : null
         if (target && 'replace' in target && node?.type.name === 'image') {
           editor.view.dispatch(editor.state.tr.setNodeMarkup(target.replace, undefined, { ...node.attrs, src, plot }))

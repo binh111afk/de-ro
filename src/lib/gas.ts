@@ -288,6 +288,11 @@ export function renderGasSvg(spec: GasSpec, desc: string): { svg: string; width:
         }
       }
       ly = Math.max(18, Math.min(H - 6, ly))
+      // nhãn dài ở mép phải: đổi sang căn phải để khỏi tràn khung
+      if (anchor === 'start' && lx + p.label.length * 8 > W - 4) {
+        anchor = 'end'
+        lx = fx - 8
+      }
       b += `<text x="${f1(lx)}" y="${f1(ly)}" ${FAM} font-size="15" text-anchor="${anchor}">${formatProcLabel(p.label)}</text>`
     }
   }

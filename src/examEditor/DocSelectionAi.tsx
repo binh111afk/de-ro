@@ -32,6 +32,7 @@ const TOOL_NAME: Record<ToolDoc['kind'], string> = {
   electron: 'Cấu hình electron',
   struct: 'Công thức cấu tạo',
   chemgraph: 'Đồ thị số mol',
+  chemeq: 'Phương trình hoá học',
   trig: 'Đường tròn lượng giác',
   probtree: 'Sơ đồ cây xác suất',
   numberline: 'Trục số',

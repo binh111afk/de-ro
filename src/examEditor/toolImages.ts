@@ -25,6 +25,7 @@ export const TOOL_DOC_IMAGE: Record<ToolKind, { width: number; alt: string }> = 
   electron: { width: 360, alt: 'Cấu hình electron' },
   struct: { width: 280, alt: 'Công thức cấu tạo' },
   chemgraph: { width: 320, alt: 'Đồ thị số mol' },
+  chemeq: { width: 380, alt: 'Phương trình hoá học' },
   trig: { width: 260, alt: 'Đường tròn lượng giác' },
   probtree: { width: 380, alt: 'Sơ đồ cây' },
   numberline: { width: 400, alt: 'Trục số' },
@@ -46,7 +47,15 @@ export function figureDoc(raw: unknown): ToolDoc | null {
 /** attr ảnh (src SVG tạm) cho một hình công cụ */
 export function figureImageAttrs(doc: ToolDoc) {
   const look = TOOL_DOC_IMAGE[doc.kind]
-  return { src: svgDataUrl(renderTool(doc).svg), alt: look.alt, width: look.width, plot: JSON.stringify(doc) }
+  const img = renderTool(doc)
+  return { src: svgDataUrl(img.svg), alt: look.alt, width: toolImageWidth(doc.kind, img.width), plot: JSON.stringify(doc) }
+}
+
+/** hình có cỡ tuỳ nội dung (bảng, phương trình): giữ cỡ thật, không phóng quá mức chuẩn; hình khác dùng mức chuẩn */
+const FIT_KINDS = new Set<ToolKind>(['table', 'chemeq'])
+export function toolImageWidth(kind: ToolKind, natural: number) {
+  const max = TOOL_DOC_IMAGE[kind].width
+  return FIT_KINDS.has(kind) ? Math.min(max, Math.round(natural)) : max
 }
 
 /** đoạn căn giữa chứa ảnh hình công cụ, để đặt ngay dưới câu hỏi */
