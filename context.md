@@ -1,6 +1,6 @@
 # context.md — đề rõ (trình soạn đề thi)
 
-Bản đồ ngắn của dự án. **Chỉ đọc file này khi bắt đầu phiên**; các file khác mở khi việc đang làm cần tới (bảng "Đọc thêm khi nào" bên dưới). Cập nhật: 11/11/2026 (phiên 32). **Mọi việc đã lên `main`, migration đã áp. Làm tiếp: đọc [phiên 32](docs/handoff/phien-32.md) (bảng vẽ hoàn thiện + đồng bộ, đề thiếu đáp án, chống trắng màn, giới hạn lưu trữ 10 MB, "Đề của tôi" ở Hồ sơ) — mục "Còn lại" có các phần chưa thử khi đăng nhập. Việc Vercel còn treo từ [phiên 30](docs/handoff/phien-30.md): đặt `AI_SETTINGS_SECRET`.**
+Bản đồ ngắn của dự án. **Chỉ đọc file này khi bắt đầu phiên**; các file khác mở khi việc đang làm cần tới (bảng "Đọc thêm khi nào" bên dưới). Cập nhật: 12/11/2026 (phiên 33). **Mọi việc đã lên `main`. Làm tiếp: đọc [phiên 33](docs/handoff/phien-33.md) — việc đầu tiên là REVIEW nhánh agy `feat/chinh-canh-3d` (Chỉnh cạnh cho hình không gian, worktree `../dethinhbien-chinh-canh-3d`) theo quy trình trong file đó, được đồng ý mới gộp. Phiên 33: trang "Đề của tôi", 8 công cụ vẽ mới/nâng cấp, chỉnh cạnh hình phẳng, bấm thêm điểm đường tròn lượng giác. Việc Vercel còn treo từ [phiên 30](docs/handoff/phien-30.md): đặt `AI_SETTINGS_SECRET`.**
 
 ## Dự án
 
@@ -65,7 +65,7 @@ Danh sách đủ: `package.json` → `scripts`. `.env` cần `LLM_API_KEY` (mẫ
 | Khi làm | Mở |
 |---|---|
 | Trang Admin (bản đồ file, quyết định, việc còn lại) | [phiên 29](docs/handoff/phien-29.md), kế hoạch gốc [docs/plan-admin.md](docs/plan-admin.md) |
-| Tiếp việc phiên trước | [phiên 32](docs/handoff/phien-32.md) (bảng vẽ, đề thiếu đáp án, giới hạn lưu trữ) · [phiên 31](docs/handoff/phien-31.md) (Bảng vẽ, AI vẽ, Đưa vào chat) · [phiên 30](docs/handoff/phien-30.md) (cấu hình AI admin, AI ngân hàng) · [phiên 29](docs/handoff/phien-29.md) (Admin G1-5, tự khoá, pentest) · [phiên 28](docs/handoff/phien-28.md) (Xáo đề giữ đáp án) · [phiên 27](docs/handoff/phien-27.md) (Xáo đề, mẫu slide, LLM dự phòng, so model) · [phiên 26](docs/handoff/phien-26.md) (gộp 3 nhánh agent) · [phiên 25](docs/handoff/phien-25.md) (khung chương trình, trục đồ thị) |
+| Tiếp việc phiên trước | [phiên 33](docs/handoff/phien-33.md) (review agy chỉnh cạnh 3D, công cụ vẽ mới, Đề của tôi, quy trình giao/gộp agy) · [phiên 32](docs/handoff/phien-32.md) (bảng vẽ, đề thiếu đáp án, giới hạn lưu trữ) · [phiên 31](docs/handoff/phien-31.md) (Bảng vẽ, AI vẽ, Đưa vào chat) · [phiên 30](docs/handoff/phien-30.md) (cấu hình AI admin, AI ngân hàng) · [phiên 29](docs/handoff/phien-29.md) (Admin G1-5, tự khoá, pentest) · [phiên 28](docs/handoff/phien-28.md) (Xáo đề giữ đáp án) · [phiên 27](docs/handoff/phien-27.md) (Xáo đề, mẫu slide, LLM dự phòng, so model) · [phiên 26](docs/handoff/phien-26.md) (gộp 3 nhánh agent) · [phiên 25](docs/handoff/phien-25.md) (khung chương trình, trục đồ thị) |
 | Khung chương trình các môn (chống AI ra đề vượt lớp): soạn prompt cho agent ngoài, kiểm file gửi về | [docs/khung-chuong-trinh.md](docs/khung-chuong-trinh.md) |
 | Giao việc cho agent rẻ hơn (mẫu prompt, chạy song song bằng worktree) | `docs/prompt-*.md`, [phiên 26](docs/handoff/phien-26.md) mục "Lưu ý cách làm" |
 | Soạn thêm câu cho kho câu hỏi | [scripts/bank/HUONG_DAN_SOAN.md](scripts/bank/HUONG_DAN_SOAN.md) |

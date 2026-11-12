@@ -96,15 +96,16 @@ function prettyVal(v: number): string {
   return (v < 0 && r > 0 ? '−' : '') + String(r).replace('.', ',')
 }
 
+/** vị trí đường tròn trong ảnh (đơn vị viewBox) — ảnh xem trước bấm/kéo điểm dùng chung */
+export const TRIG_GEOM = { cx: 170, cy: 160, R: 110 }
+
 export function renderTrigSvg(spec: TrigSpec, desc: string) {
   const lines = spec.angles
     .split('\n')
     .map((l) => l.trim())
     .filter(Boolean)
   if (!lines.length) throw new Error('Gõ ít nhất một góc, vd. π/6')
-  const R = 110
-  const cx = 170
-  const cy = 160
+  const { R, cx, cy } = TRIG_GEOM
   type Pt = { a: number; vx: number; vy: number; px: number; py: number; label?: string; name?: string }
   const pts: Pt[] = [] // mọi điểm sẽ chấm: góc, họ nghiệm, theo toạ độ
   const named = new Map<string, Pt>()

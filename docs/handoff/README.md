@@ -2,6 +2,7 @@
 
 Chỉ mở phiên liên quan đến việc đang làm. Mới nhất ở trên.
 
+- [phiên 33](phien-33.md): trang **"Đề của tôi"** riêng, công cụ mới (Tạo bảng, Phương trình hoá học + cấu tạo, Đồ thị chuyển thể, Đồ thị dao động), hình phẳng **Tự do + Chỉnh cạnh**, bấm thêm điểm đường tròn lượng giác, ô tìm công cụ; quy trình giao/review/gộp agy bằng worktree
 - [phiên 32](phien-32.md): bảng vẽ (công thức, ảnh/PDF, xuất PNG/PDF, nét bút theo Excalidraw, **ghi chú PDF**, dán clipboard, **đồng bộ theo tài khoản**), đề thiếu đáp án, chống trắng màn sau deploy, **giới hạn lưu trữ 10 MB** + "Đề của tôi" ở Hồ sơ
 - [phiên 31](phien-31.md): **Bảng vẽ tự viết** (`src/board/`, 6 loại bút, nắn hình, gôm từng phần, laser, giấy), panel Trợ lý/Công cụ, **AI vẽ lên bảng** (lệnh `ops`), **"Đưa vào chat"** ở bảng vẽ, soạn đề, soạn slide (`src/lib/aiAttach.ts`)
 - [phiên 30](phien-30.md): cấu hình provider AI trong admin (sửa model/endpoint/key, mã hoá, chống SSRF), CPU thẻ DB, **AI soạn câu + tách đề Word/PDF/ảnh vào ngân hàng**, xoá nhiều đề ở tab Bắt đầu

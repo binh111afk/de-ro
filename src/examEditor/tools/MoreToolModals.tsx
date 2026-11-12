@@ -10,6 +10,7 @@ import { inputClass } from '@/components/ui'
 import { renderTool, type ToolDoc, type ToolImage } from '@/lib/toolSpec'
 import { svgDataUrl } from '@/lib/plot'
 import { LabelPreview } from './LabelDragPreview'
+import { TrigPickPreview } from './TrigPickPreview'
 import { autoSignTable, parseSignTableText, signTableToText, type SignTableSpec } from '@/lib/signTable'
 import { OXY_HELP, type OxySpec } from '@/lib/oxy'
 import type { ChartKind, StatsSpec } from '@/lib/stats'
@@ -1235,6 +1236,7 @@ export function TrigModal({ initial, submitLabel, onClose, onInsert }: Props<Tri
       inputs={inputs}
       inputsWidth={340}
       preview={preview}
+      renderPreview={(img) => <TrigPickPreview img={img} angles={spec.angles} onAngles={(angles) => set({ angles })} />}
       submitLabel={submitLabel ?? (initial ? 'Cập nhật hình' : 'Chèn hình')}
       canSubmit={Boolean(preview) && !error}
       onSubmit={() => preview && onInsert(preview)}
