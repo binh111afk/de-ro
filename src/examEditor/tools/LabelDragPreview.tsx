@@ -13,29 +13,51 @@ import type { ToolImage } from '@/lib/toolSpec'
 const n1 = (v: number) => Math.round(v * 10) / 10
 
 /** hàng nút "Di chuyển nhãn" (bật/tắt chế độ kéo) + "Đặt lại vị trí nhãn" */
-function LabelBar({ on, has, onToggle, onReset }: { on: boolean; has: boolean; onToggle: () => void; onReset: () => void }) {
+function LabelBar({
+  on,
+  has,
+  onToggle,
+  onReset,
+  modeExtra,
+  extra,
+}: {
+  on: boolean
+  has: boolean
+  onToggle: () => void
+  onReset: () => void
+  modeExtra?: ReactNode
+  extra?: ReactNode
+}) {
+  const hasExtra = Boolean(modeExtra || extra)
+  const btnCls = hasExtra ? 'gap-1 px-1.5 py-1 text-[11.5px]' : 'gap-1.5 px-2 py-1 text-[12.5px]'
   return (
-    <div className="flex shrink-0 items-center gap-1.5">
+    <div className={cn('flex shrink-0 flex-wrap items-center justify-center', hasExtra ? 'gap-1' : 'gap-1.5')}>
       <button
         type="button"
         aria-pressed={on}
         onClick={onToggle}
         className={cn(
-          'flex items-center gap-1.5 rounded-[6px] border px-2 py-1 text-[12.5px] transition-colors',
+          'flex items-center whitespace-nowrap rounded-[6px] border transition-colors',
+          btnCls,
           on ? 'border-clay bg-clay-tint font-medium text-clay' : 'border-line text-ink-2 hover:border-ink-4',
         )}
       >
         <Move className="size-3.5" /> Di chuyển nhãn
       </button>
+      {modeExtra}
       <button
         type="button"
         onClick={onReset}
         disabled={!has}
         title="Xoá mọi vị trí nhãn đã kéo"
-        className="flex items-center gap-1.5 rounded-[6px] border border-line px-2 py-1 text-[12.5px] text-ink-2 transition-colors hover:border-ink-4 disabled:pointer-events-none disabled:opacity-40"
+        className={cn(
+          'flex items-center whitespace-nowrap rounded-[6px] border border-line text-ink-2 transition-colors hover:border-ink-4 disabled:pointer-events-none disabled:opacity-40',
+          btnCls,
+        )}
       >
         <RotateCcw className="size-3.5" /> Đặt lại vị trí nhãn
       </button>
+      {extra}
     </div>
   )
 }
@@ -144,6 +166,9 @@ export function LabelPreview({
   move,
   onToggle,
   fallback,
+  modeExtra,
+  extraBar,
+  previewOverride,
 }: {
   img: ToolImage
   labelPos?: Record<string, [number, number]>
@@ -152,15 +177,18 @@ export function LabelPreview({
   onToggle: () => void
   /** xem thường khi chế độ kéo đang tắt */
   fallback: ReactNode
+  modeExtra?: ReactNode
+  extraBar?: ReactNode
+  previewOverride?: ReactNode
 }) {
   const has = Boolean(labelPos && Object.keys(labelPos).length)
   return (
     <div className="flex h-full w-full flex-col items-center justify-center gap-2">
-      <LabelBar on={move} has={has} onToggle={onToggle} onReset={() => onChange(undefined)} />
+      <LabelBar on={move} has={has} onToggle={onToggle} onReset={() => onChange(undefined)} modeExtra={modeExtra} extra={extraBar} />
       {move ? (
         <LabelDragPreview img={img} labelPos={labelPos} onChange={onChange} />
       ) : (
-        <div className="flex min-h-0 w-full flex-1 items-center justify-center">{fallback}</div>
+        <div className="flex min-h-0 w-full flex-1 items-center justify-center">{previewOverride ?? fallback}</div>
       )}
     </div>
   )

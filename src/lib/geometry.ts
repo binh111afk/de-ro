@@ -19,6 +19,7 @@ export type Geo2dShape =
   | 'rhombus'
   | 'circle'
   | 'inscribed-triangle'
+  | 'free'
 
 export interface Geo2dSpec {
   shape: Geo2dShape
@@ -70,7 +71,8 @@ export interface Geo3dSpec {
   labelPos?: Record<string, [number, number]>
 }
 
-import { construct as construct0 } from './geoConstruct'
+import { construct as construct0, extractCoords, type Construction } from './geoConstruct'
+import { richTextToSvg } from './table'
 
 /** lỗi dựng thêm của lần vẽ gần nhất (modal hiện cho giáo viên) */
 let lastErrors: Array<{ line: number; msg: string }> = []
@@ -81,6 +83,8 @@ export interface GeoPick {
   segs: Array<{ a: string; b: string }>
   /** tam giác (tên 3 đỉnh) để menu bấm đỉnh: đường cao, trung tuyến, phân giác */
   tris: string[][]
+  /** tên các điểm gốc (đỉnh mẫu, điểm theo toạ độ) — hiện nút chỉnh cạnh */
+  origins?: string[]
 }
 let lastPick: GeoPick = { points: [], segs: [], tris: [] }
 const isHidden = (n: string | undefined) => !!n && n.startsWith('#')
@@ -107,6 +111,7 @@ export const GEO2D_SHAPES: Array<{ id: Geo2dShape; label: string; names: string[
   { id: 'trapezoid', label: 'Hình thang (AB ∥ CD)', names: ['A', 'B', 'C', 'D'] },
   { id: 'circle', label: 'Đường tròn tâm O', names: ['O', 'A'] },
   { id: 'inscribed-triangle', label: 'Tam giác nội tiếp đường tròn', names: ['A', 'B', 'C', 'O'] },
+  { id: 'free', label: 'Tự do', names: [] },
 ]
 
 export const GEO3D_SHAPES: Array<{ id: Geo3dShape; label: string; names: string[] }> = [
@@ -231,6 +236,50 @@ function frame(parts: string[], pts: P2[], desc: string, extra = 0): { svg: stri
  * Hình phẳng
  * ------------------------------------------------------------------ */
 
+const LABEL_FONT = `font-family="'Times New Roman',serif" font-size="15"`
+
+function outward2(p: P2, q: P2, center: P2, preferDown = false): P2 {
+  const dx = q[0] - p[0]
+  const dy = q[1] - p[1]
+  const l = Math.hypot(dx, dy) || 1
+  let n: P2 = [-dy / l, dx / l]
+  const m = mid(p, q)
+  const dotP = (m[0] - center[0]) * n[0] + (m[1] - center[1]) * n[1]
+  if (Math.abs(dotP) > 1e-3) {
+    if (dotP < 0) n = [-n[0], -n[1]]
+  } else if (preferDown) {
+    if (n[1] < -1e-6 || (Math.abs(n[1]) <= 1e-6 && n[0] < 0)) n = [-n[0], -n[1]]
+  } else if (n[1] > 1e-6 || (Math.abs(n[1]) <= 1e-6 && n[0] > 0)) {
+    n = [-n[0], -n[1]]
+  }
+  return n
+}
+
+function dimNormal(p: P2, q: P2, center: P2, side?: 'up' | 'down' | 'left' | 'right'): P2 {
+  const dx = q[0] - p[0]
+  const dy = q[1] - p[1]
+  const l = Math.hypot(dx, dy) || 1
+  const n1: P2 = [-dy / l, dx / l]
+  const n2: P2 = [dy / l, -dx / l]
+  if (!side) return outward2(p, q, center, true)
+  const pick = (score: (n: P2) => number) => {
+    const s1 = score(n1)
+    const s2 = score(n2)
+    if (Math.abs(s1 - s2) < 1e-4) return outward2(p, q, center, true)
+    return s1 > s2 ? n1 : n2
+  }
+  if (side === 'up') return pick((n) => -n[1])
+  if (side === 'down') return pick((n) => n[1])
+  if (side === 'left') return pick((n) => -n[0])
+  return pick((n) => n[0])
+}
+
+const isNearRight = (at: P2, u: P2, v: P2) => {
+  const du = unit(sub(u, at))
+  const dv = unit(sub(v, at))
+  return Math.abs(du[0] * dv[0] + du[1] * dv[1]) < 0.03
+}
+
 function shape2d(shape: Geo2dShape): P2[] {
   // toạ độ màn hình (y hướng xuống), đơn vị px
   switch (shape) {
@@ -263,6 +312,8 @@ function shape2d(shape: Geo2dShape): P2[] {
       const at = (deg: number): P2 => [c[0] + r * Math.cos((deg * Math.PI) / 180), c[1] + r * Math.sin((deg * Math.PI) / 180)]
       return [at(-100), at(150), at(25), c]
     }
+    case 'free':
+      return []
   }
 }
 
@@ -272,30 +323,89 @@ export function renderGeo2dSvg(spec: Geo2dSpec, desc: string): GeoImage {
   return { ...renderGeo2d(spec, desc), errors: lastErrors, pick: lastPick }
 }
 
+const TEMPLATE_SCALE = 50
+
 function renderGeo2d(spec: Geo2dSpec, desc: string) {
-  const pts = shape2d(spec.shape)
+  if (spec.shape === 'free') {
+    const c = construct(spec.extras ?? '', new Map())
+    if (!c.points.length) {
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" width="320" height="240">${desc}<rect x="0" y="0" width="320" height="240" fill="#fff"/></svg>`
+      return { svg, width: 320, height: 240 }
+    }
+    const boundPts: P2[] = c.points.map((q) => q.p as P2)
+    for (const ci of c.circles) boundPts.push([ci.c[0] - ci.r, ci.c[1] - ci.r], [ci.c[0] + ci.r, ci.c[1] + ci.r])
+    const xs = boundPts.map((p) => p[0])
+    const ys = boundPts.map((p) => p[1])
+    const minX = Math.min(...xs)
+    const maxX = Math.max(...xs)
+    const minY = Math.min(...ys)
+    const maxY = Math.max(...ys)
+    const spanX = maxX - minX
+    const spanY = maxY - minY
+    const scale =
+      spanX < 1e-9 && spanY < 1e-9
+        ? TEMPLATE_SCALE
+        : Math.min(spanX > 1e-9 ? 300 / spanX : Infinity, spanY > 1e-9 ? 230 / spanY : Infinity)
+    const toPx = (v: P2): P2 => [(v[0] - minX) * scale, (maxY - v[1]) * scale]
+    const visPts = c.points.filter((q) => !q.hidden).map((q) => toPx(q.p as P2))
+    const center: P2 = visPts.length
+      ? mul(visPts.reduce((s, p) => add(s, p), [0, 0] as P2), 1 / visPts.length)
+      : [0, 0]
+    const parts: string[] = []
+    const all: P2[] = [...visPts]
+    renderExtras2d(c, new Map(), [], center, parts, all, [], undefined, toPx, scale, true)
+    return frame(parts, all, desc)
+  }
+
+  const rawPts = shape2d(spec.shape)
+  const ox = Math.min(...rawPts.map((p) => p[0]))
+  const oy = Math.max(...rawPts.map((p) => p[1]))
+  const toMath = (p: P2): P2 => [(p[0] - ox) / TEMPLATE_SCALE, (oy - p[1]) / TEMPLATE_SCALE]
+  const toPx = (v: P2): P2 => [ox + v[0] * TEMPLATE_SCALE, oy - v[1] * TEMPLATE_SCALE]
+
   const names = spec.names
+  const baseNames =
+    spec.shape === 'circle'
+      ? [names[0] ?? 'O', names[1]].filter(Boolean)
+      : spec.shape === 'inscribed-triangle'
+        ? names.slice(0, 3)
+        : names
+  const overrides = spec.extras ? extractCoords(spec.extras) : new Map<string, P2>()
+  const ptsMath = rawPts.map(toMath)
+  let overridden = false
+  baseNames.forEach((n, i) => {
+    if (n && i < ptsMath.length && overrides.has(n)) {
+      ptsMath[i] = overrides.get(n)!
+      overridden = true
+    }
+  })
+
+  const pts = overridden ? ptsMath.map(toPx) : rawPts
   const parts: string[] = []
-  const all: P2[] = [...pts]
-  const center: P2 = mul(pts.reduce((s, p) => add(s, p), [0, 0] as P2), 1 / pts.length)
   const known = new Map<string, number[]>()
   const know = (n: string | undefined, p: P2) => n && !known.has(n) && known.set(n, p)
   const pairs: Array<[string, string]> = []
 
   if (spec.shape === 'circle') {
     const [o, a] = pts
+    const all: P2[] = [...pts]
     const r = len(sub(a, o))
-    parts.push(`<circle cx="${o[0]}" cy="${o[1]}" r="${f1(r)}" fill="none" stroke="${STROKE}" stroke-width="1.6"/>`)
+    parts.push(`<circle cx="${f1(o[0])}" cy="${f1(o[1])}" r="${f1(r)}" fill="none" stroke="${STROKE}" stroke-width="1.6"/>`)
     parts.push(seg(o, a, false, 1.3), dot(o), dot(a), label(o, names[0] ?? 'O', add(o, [-1, -1])), label(a, names[1] ?? '', o))
     all.push([o[0] - r, o[1] - r], [o[0] + r, o[1] + r])
-    know(names[0] ?? 'O', o)
-    know(names[1], a)
+    know(names[0] ?? 'O', ptsMath[0])
+    know(names[1], ptsMath[1])
     if (names[1]) pairs.push([names[0] ?? 'O', names[1]])
-    extras2d(spec.extras, known, o, parts, all, pairs, undefined)
+    const c = construct(spec.extras ?? '', known)
+    renderExtras2d(c, known, baseNames, o, parts, all, pairs, undefined, toPx, TEMPLATE_SCALE, false)
     return frame(parts, all, desc)
   }
 
   const poly = spec.shape === 'inscribed-triangle' ? pts.slice(0, 3) : pts
+  const polyMath = spec.shape === 'inscribed-triangle' ? ptsMath.slice(0, 3) : ptsMath
+  const centerPts = overridden ? poly : pts
+  const center: P2 = mul(centerPts.reduce((s, p) => add(s, p), [0, 0] as P2), 1 / centerPts.length)
+  const all: P2[] = [...(overridden ? poly : pts)]
   const d = poly.map((p, i) => `${i ? 'L' : 'M'}${f1(p[0])} ${f1(p[1])}`).join('') + 'Z'
   parts.push(`<path d="${d}" fill="none" stroke="${STROKE}" stroke-width="1.6" stroke-linejoin="round"/>`)
 
@@ -305,22 +415,24 @@ function renderGeo2d(spec: Geo2dSpec, desc: string) {
   if (isTri && (spec.circumcircle || spec.shape === 'inscribed-triangle')) {
     const o = circumcenter(A, B, C)
     const r = len(sub(A, o))
-    parts.push(`<circle cx="${f1(o[0])}" cy="${f1(o[1])}" r="${f1(r)}" fill="none" stroke="${STROKE}" stroke-width="1.4"/>`)
-    parts.push(dot(o), label(o, names[3] ?? 'O', add(o, [0, -1]), 14))
-    know(names[3] ?? 'O', o)
-    all.push([o[0] - r, o[1] - r], [o[0] + r, o[1] + r])
+    if (Number.isFinite(r) && Number.isFinite(o[0]) && Number.isFinite(o[1])) {
+      parts.push(`<circle cx="${f1(o[0])}" cy="${f1(o[1])}" r="${f1(r)}" fill="none" stroke="${STROKE}" stroke-width="1.4"/>`)
+      parts.push(dot(o), label(o, names[3] ?? 'O', add(o, [0, -1]), 14))
+      know(names[3] ?? 'O', toMath(o))
+      all.push([o[0] - r, o[1] - r], [o[0] + r, o[1] + r])
+    }
   }
   if (isTri && spec.altitude) {
     const h = foot(A, B, C)
     parts.push(seg(A, h, false, 1.3), dot(h), label(h, 'H', A))
-    know('H', h)
+    know('H', toMath(h))
     pairs.push([names[0], 'H'])
     if (spec.marks) parts.push(rightMark(h, A, C))
   }
   if (isTri && spec.median) {
     const m = mid(B, C)
     parts.push(seg(A, m, false, 1.3), dot(m), label(m, 'M', A))
-    know('M', m)
+    know('M', toMath(m))
     pairs.push([names[0], 'M'])
     if (spec.marks) parts.push(tick(B, m, 2), tick(m, C, 2))
   }
@@ -334,66 +446,191 @@ function renderGeo2d(spec: Geo2dSpec, desc: string) {
       const t = ((p[0] - q[0]) * (q[1] - s[1]) - (p[1] - q[1]) * (q[0] - s[0])) / den
       const o: P2 = [p[0] + t * (r[0] - p[0]), p[1] + t * (r[1] - p[1])]
       parts.push(dot(o), label(o, 'O', add(o, [0, -1]), 14))
-      know('O', o)
+      know('O', toMath(o))
     }
   }
   if (spec.marks) {
-    if (spec.shape === 'right-triangle') parts.push(rightMark(A, B, C))
+    if (spec.shape === 'right-triangle' && (!overridden || isNearRight(A, B, C))) parts.push(rightMark(A, B, C))
     if (spec.shape === 'isosceles') parts.push(tick(A, B), tick(A, C))
     if (spec.shape === 'equilateral') parts.push(tick(A, B), tick(B, C), tick(C, A))
     if (spec.shape === 'square' || spec.shape === 'rectangle') {
-      poly.forEach((p, i) => parts.push(rightMark(p, poly[(i + 1) % 4], poly[(i + 3) % 4])))
+      poly.forEach((p, i) => {
+        const u = poly[(i + 1) % 4]
+        const v = poly[(i + 3) % 4]
+        if (!overridden || isNearRight(p, u, v)) parts.push(rightMark(p, u, v))
+      })
       if (spec.shape === 'square') poly.forEach((p, i) => parts.push(tick(p, poly[(i + 1) % 4])))
     }
     if (spec.shape === 'rhombus') poly.forEach((p, i) => parts.push(tick(p, poly[(i + 1) % 4])))
   }
   poly.forEach((p, i) => parts.push(label(p, names[i] ?? '', center)))
-  poly.forEach((p, i) => know(names[i], p))
+  polyMath.forEach((p, i) => know(names[i], p))
   poly.forEach((_, i) => pairs.push([names[i], names[(i + 1) % poly.length]]))
-  extras2d(spec.extras, known, center, parts, all, pairs, isTri ? names.slice(0, 3) : undefined)
+  const tri = isTri ? names.slice(0, 3) : undefined
+  const c = construct(spec.extras ?? '', known, { triangle: tri })
+  renderExtras2d(c, known, baseNames, center, parts, all, pairs, tri, toPx, TEMPLATE_SCALE, false)
   return frame(parts, all, desc)
 }
 
 /** vẽ phần dựng thêm của hình phẳng */
-function extras2d(
-  text: string | undefined,
+function renderExtras2d(
+  c: Construction,
   known: Map<string, number[]>,
+  baseNames: string[],
   center: P2,
   parts: string[],
   all: P2[],
   pairs: Array<[string, string]>,
   triangle: string[] | undefined,
+  toPx: (v: P2) => P2,
+  scale: number,
+  isFree: boolean,
 ) {
-  const c = construct(text ?? '', known, { triangle })
   const every = new Map(known)
   c.points.forEach((q) => every.set(q.name, q.p))
+  const extSegs: Array<[string, string]> = c.extends.map((e) => [e.a, e.b])
+  const allSegPairs = [...pairs, ...c.segs.map((g) => [g.a, g.b] as [string, string]), ...extSegs]
+    .filter(([a, b]) => a && b && !isHidden(a) && !isHidden(b) && every.has(a) && every.has(b))
+    .map(([a, b]) => ({ a, b }))
+  const origins = [...new Set([...baseNames, ...c.coords])].filter((n) => !isHidden(n) && every.has(n))
   lastPick = {
-    points: [...every].filter(([name]) => !isHidden(name)).map(([name, p]) => ({ name, x: p[0], y: p[1], v: p })),
-    segs: [...pairs, ...c.segs.map((g) => [g.a, g.b] as [string, string])]
-      .filter(([a, b]) => a && b && !isHidden(a) && !isHidden(b) && every.has(a) && every.has(b))
-      .map(([a, b]) => ({ a, b })),
+    points: [...every]
+      .filter(([name]) => !isHidden(name))
+      .map(([name, v]) => {
+        const px = toPx(v as P2)
+        return { name, x: px[0], y: px[1], v }
+      }),
+    segs: allSegPairs,
     tris: triangle && triangle.every(Boolean) ? [triangle] : [],
+    origins,
   }
-  const at = (n: string) => every.get(n) as P2
+  const at = (n: string) => toPx(every.get(n) as P2)
   // tô nằm dưới mọi nét (ngay sau nền)
-  for (const f of c.fills.reverse()) {
+  for (const f of [...c.fills].reverse()) {
     const d = f.map((n, i) => `${i ? 'L' : 'M'}${f1(at(n)[0])} ${f1(at(n)[1])}`).join('') + 'Z'
     parts.unshift(`<path d="${d}" fill="${FILL}" fill-opacity="0.1" stroke="none"/>`)
   }
-  for (const ci of c.circles) {
-    const [x, y] = ci.c
-    parts.push(`<circle cx="${f1(x)}" cy="${f1(y)}" r="${f1(ci.r)}" fill="none" stroke="${STROKE}" stroke-width="1.4"/>`)
-    all.push([x - ci.r, y - ci.r], [x + ci.r, y + ci.r])
+  if (c.dims.length) {
+    parts.unshift(
+      `<defs><marker id="geo-dim-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="${STROKE}"/></marker></defs>`,
+    )
   }
-  for (const g of c.segs) parts.push(seg(at(g.a), at(g.b), g.dashed === true, 1.3))
-  for (const r of c.rights) parts.push(rightMark(at(r.at), at(r.u), at(r.v)))
+  for (const ci of c.circles) {
+    const [x, y] = toPx(ci.c as P2)
+    const r = ci.r * scale
+    parts.push(`<circle cx="${f1(x)}" cy="${f1(y)}" r="${f1(r)}" fill="none" stroke="${STROKE}" stroke-width="1.4"/>`)
+    all.push([x - r, y - r], [x + r, y + r])
+  }
+
+  // đoạn kéo dài (~15% khung hình hiện tại)
+  const figXs = all.length ? all.map((p) => p[0]) : [0]
+  const figYs = all.length ? all.map((p) => p[1]) : [0]
+  const extDist = 0.15 * Math.max(Math.max(...figXs) - Math.min(...figXs), Math.max(...figYs) - Math.min(...figYs), 200)
+  const freeSegsPx: Array<[P2, P2]> = []
+  for (const e of c.extends) {
+    const pa = at(e.a)
+    const pb = at(e.b)
+    const dir = unit(sub(pb, pa))
+    const pStart = e.mode === 'both' ? sub(pa, mul(dir, extDist)) : pa
+    const pEnd = add(pb, mul(dir, extDist))
+    parts.push(seg(pStart, pEnd, e.dashed === true, 1.4))
+    all.push(pStart, pEnd)
+    freeSegsPx.push([pStart, pEnd])
+  }
+
+  for (const g of c.segs) {
+    const pa = at(g.a)
+    const pb = at(g.b)
+    parts.push(seg(pa, pb, g.dashed === true, isFree ? 1.5 : 1.3))
+    freeSegsPx.push([pa, pb])
+  }
+  for (const r of c.rights) {
+    const ra = at(r.at)
+    const ru = at(r.u)
+    const rv = at(r.v)
+    parts.push(rightMark(ra, ru, rv))
+    const du = mul(unit(sub(ru, ra)), 11)
+    const dv = mul(unit(sub(rv, ra)), 11)
+    freeSegsPx.push([add(ra, du), add(add(ra, du), dv)], [add(add(ra, du), dv), add(ra, dv)])
+  }
   c.equals.forEach((grp, k) => grp.forEach(([a, b]) => parts.push(tick(at(a), at(b), k + 1))))
+
+  const placedLabels: P2[] = []
+  // đường kích thước: hai vạch gióng ngắn, đoạn nét đứt song song, mũi tên hai đầu, chữ ở giữa
+  for (const dm of c.dims) {
+    const pa = at(dm.a)
+    const pb = at(dm.b)
+    const n = dimNormal(pa, pb, center, dm.side)
+    const off = 32
+    const t1 = add(pa, mul(n, 4))
+    const t2 = add(pa, mul(n, off + 5))
+    const q1 = add(pb, mul(n, 4))
+    const q2 = add(pb, mul(n, off + 5))
+    const p2 = add(pa, mul(n, off))
+    const p3 = add(pb, mul(n, off))
+    parts.push(
+      `<path d="M${f1(t1[0])} ${f1(t1[1])}L${f1(t2[0])} ${f1(t2[1])}M${f1(q1[0])} ${f1(q1[1])}L${f1(q2[0])} ${f1(q2[1])}" stroke="${STROKE}" stroke-width="1" fill="none"/>`,
+    )
+    parts.push(
+      `<path d="M${f1(p2[0])} ${f1(p2[1])}L${f1(p3[0])} ${f1(p3[1])}" stroke="${STROKE}" stroke-width="1.1" stroke-dasharray="5 4" fill="none" marker-start="url(#geo-dim-arr)" marker-end="url(#geo-dim-arr)"/>`,
+    )
+    freeSegsPx.push([t1, t2], [q1, q2], [p2, p3])
+    all.push(t2, q2, p2, p3)
+    if (dm.text) {
+      const m = mid(p2, p3)
+      const estW = Math.max(18, dm.text.length * 8)
+      parts.push(`<text x="${f1(m[0])}" y="${f1(m[1] + 5)}" ${LABEL_FONT} text-anchor="middle" data-lbl="dim:${esc(dm.a + dm.b)}">${richTextToSvg(dm.text)}</text>`)
+      all.push([m[0] - estW / 2, m[1] - 10], [m[0] + estW / 2, m[1] + 10])
+      placedLabels.push(m)
+    }
+  }
+
+  // nhãn cạnh: đặt ở giữa cạnh, lệch ra phía ngoài hình
+  for (const lb of c.labels) {
+    const pa = at(lb.a)
+    const pb = at(lb.b)
+    const n = outward2(pa, pb, center, false)
+    const m = mid(pa, pb)
+    const anchor = Math.abs(n[0]) > 0.7 ? (n[0] > 0 ? 'start' : 'end') : 'middle'
+    const dist = Math.abs(n[0]) > 0.7 ? 10 : n[1] < -0.5 ? 10 : 16
+    const lx = m[0] + n[0] * dist
+    const ly = m[1] + n[1] * dist + (Math.abs(n[0]) > 0.7 ? 5 : n[1] < -0.5 ? 0 : 4)
+    parts.push(`<text x="${f1(lx)}" y="${f1(ly)}" ${LABEL_FONT} text-anchor="${anchor}" data-lbl="seg:${esc(lb.a + lb.b)}">${richTextToSvg(lb.text)}</text>`)
+    const estW = Math.max(18, lb.text.length * 8)
+    const x0 = anchor === 'end' ? lx - estW : anchor === 'middle' ? lx - estW / 2 : lx - 4
+    const x1 = anchor === 'start' ? lx + estW : anchor === 'middle' ? lx + estW / 2 : lx + 4
+    all.push([x0, ly - 14], [x1, ly + 4])
+    placedLabels.push([lx, ly - 5])
+  }
+
   for (const q of c.points) {
-    const p = q.p as P2
+    const p = toPx(q.p as P2)
     all.push(p)
     if (q.hidden) continue
-    parts.push(dot(p), label(p, q.name, len(sub(p, center)) < 1 ? add(p, [0, 1]) : center, 14))
-    all.push(p)
+    if (!isFree) {
+      parts.push(dot(p), label(p, q.name, len(sub(p, center)) < 1 ? add(p, [0, 1]) : center, 14))
+    } else {
+      parts.push(dot(p))
+      const outDir = len(sub(p, center)) > 1e-3 ? unit(sub(p, center)) : ([0.7, -0.7] as P2)
+      let best: P2 = add(p, mul(outDir, 15))
+      let bestScore = -Infinity
+      for (let k = 0; k < 8; k++) {
+        const a = (k * Math.PI) / 4
+        const ux = Math.cos(a)
+        const uy = Math.sin(a)
+        const cand: P2 = [p[0] + ux * 15, p[1] + uy * 15]
+        const segD = freeSegsPx.length ? Math.min(...freeSegsPx.map(([u, v]) => distToSeg(cand, u, v))) : 20
+        const lblD = placedLabels.length ? Math.min(...placedLabels.map((pl) => len(sub(cand, pl)))) : 30
+        const score = Math.min(segD, 18) + Math.min(lblD, 24) * 0.6 + (ux * outDir[0] + uy * outDir[1]) * 3
+        if (score > bestScore + 1e-6) {
+          bestScore = score
+          best = cand
+        }
+      }
+      placedLabels.push(best)
+      parts.push(`<text x="${f1(best[0])}" y="${f1(best[1] + 6)}" ${FONT} text-anchor="middle" data-lbl="pt:${esc(q.name)}">${esc(q.name)}</text>`)
+      all.push([best[0] - 8, best[1] - 8], [best[0] + 8, best[1] + 8])
+    }
   }
 }
 
