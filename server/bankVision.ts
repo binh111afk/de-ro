@@ -33,7 +33,7 @@ export async function readExamPages(images: unknown, userId: string): Promise<{ 
   const pages = images as string[]
 
   const targets = await visionTargets()
-  if (targets.length === 0) throw new Error('Chưa có provider đọc được ảnh. Cần cấu hình FOSTA_API_KEY, XKIRO_API_KEY hoặc ANTHROPIC_API_KEY.')
+  if (targets.length === 0) throw new Error('Chưa có provider đọc được ảnh. Cần cấu hình FOSTA_API_KEY hoặc ANTHROPIC_API_KEY.')
 
   const errs: string[] = []
   for (const t of targets) {

@@ -11,7 +11,6 @@
  */
 import os from 'node:os'
 import { readFileSync, existsSync, writeFileSync, mkdirSync } from 'node:fs'
-import { homedir } from 'node:os'
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http'
 import { readFile } from 'node:fs/promises'
 import { randomUUID } from 'node:crypto'
@@ -34,8 +33,6 @@ const ROOT = path.resolve(__dirname, '..')
 
 const DEFAULT_BASE_URL = 'https://opencode.ai/inference/go/openai/v1'
 const DEFAULT_MODEL = 'deepseek-v4.1-flash'
-const DEFAULT_XKIRO_MODEL = 'google/gemini-3.8-flash'
-const DEFAULT_XKIRO_FALLBACK_MODEL = 'google/gemini-3-flash'
 const DEFAULT_UPSTREAM_TIMEOUT_MS = 120_000
 
 /**
@@ -130,22 +127,8 @@ export async function assertSafeEndpoint(raw: string): Promise<void> {
   for (const a of addrs) assertAllowedUrl(a.family === 6 ? `https://[${a.address}]/` : `https://${a.address}/`)
 }
 
-function xkiroConfig(): { apiKey: string; baseURL: string } {
-  try {
-    const file = path.join(homedir(), '.zcode', 'v2', 'provider_config.json')
-    const parsed = JSON.parse(readFileSync(file, 'utf8')) as {
-      config?: { providerConfigRules?: { providerRules?: Array<{ providerName?: string; config?: { access?: { apiKey?: string }; api?: { baseUrl?: string } } }> } }
-    }
-    const rule = parsed.config?.providerConfigRules?.providerRules?.find((item) => /xkiro/i.test(item.providerName ?? ''))
-    return { apiKey: rule?.config?.access?.apiKey ?? '', baseURL: rule?.config?.api?.baseUrl ?? 'https://api.xkiro.com/v1' }
-  } catch {
-    return { apiKey: '', baseURL: 'https://api.xkiro.com/v1' }
-  }
-}
-
 function providerConfig() {
   const baseURL = process.env.LLM_BASE_URL?.trim() || DEFAULT_BASE_URL
-  const xkiro = xkiroConfig()
   return {
     apiKey: process.env.LLM_API_KEY?.trim() ?? '',
     model: process.env.LLM_MODEL?.trim() || DEFAULT_MODEL,
@@ -166,11 +149,10 @@ function providerConfig() {
     fostaApiKey: process.env.FOSTA_API_KEY?.trim() || '',
     fostaBaseURL: assertAllowedUrl((process.env.FOSTA_BASE_URL?.trim() || 'https://codex.fosta.app/v1').replace(/\/+$/, '')).toString().replace(/\/+$/, ''),
     fostaModel: process.env.FOSTA_MODEL?.trim() || 'gpt-6-luna',
-    // ZCode provider config is the source of truth for local Xkiro fallback;
-    // stale shell/.env keys must not shadow the currently selected provider key.
-    xkiroApiKey: xkiro.apiKey || process.env.XKIRO_API_KEY?.trim() || '',
-    xkiroBaseURL: (xkiro.baseURL || process.env.XKIRO_BASE_URL?.trim() || 'https://api.xkiro.com/v1').replace(/\/+$/, ''),
-    xkiroModel: process.env.XKIRO_MODEL?.trim() || DEFAULT_XKIRO_MODEL,
+    // AnyRouter (chuẩn OpenAI): gọi kiểu stream, vì gọi thường thì upstream cắt sau 60s (502) khi sinh đề dài
+    anyrouterApiKey: process.env.ANYROUTER_API_KEY?.trim() || '',
+    anyrouterBaseURL: assertAllowedUrl((process.env.ANYROUTER_BASE_URL?.trim() || 'https://anyrouter.dev/v1').replace(/\/+$/, '')).toString().replace(/\/+$/, ''),
+    anyrouterModel: process.env.ANYROUTER_MODEL?.trim() || 'openai/gpt-6.1-terra',
     endpoint: assertAllowedUrl(`${baseURL.replace(/\/+$/, '')}/chat/completions`),
   }
 }
@@ -192,9 +174,9 @@ async function liveConfig() {
     fostaApiKey: o.fosta?.apiKey || p.fostaApiKey,
     fostaBaseURL: o.fosta?.baseUrl || p.fostaBaseURL,
     fostaModel: o.fosta?.model || p.fostaModel,
-    xkiroApiKey: o.xkiro?.apiKey || p.xkiroApiKey,
-    xkiroBaseURL: o.xkiro?.baseUrl || p.xkiroBaseURL,
-    xkiroModel: o.xkiro?.model || p.xkiroModel,
+    anyrouterApiKey: o.anyrouter?.apiKey || p.anyrouterApiKey,
+    anyrouterBaseURL: o.anyrouter?.baseUrl || p.anyrouterBaseURL,
+    anyrouterModel: o.anyrouter?.model || p.anyrouterModel,
     nightrouterApiKey: o.nightrouter?.apiKey || p.nightrouterApiKey,
     nightrouterBaseURL: o.nightrouter?.baseUrl || p.nightrouterBaseURL,
     nightrouterModel: o.nightrouter?.model || p.nightrouterModel,
@@ -209,7 +191,7 @@ function pingTargets(p: ReturnType<typeof providerConfig>) {
   if (p.apiKey) list.push({ provider: 'opencode', model: p.model, key: p.apiKey, url: p.endpoint.toString(), opencode: true })
   if (p.mercuryApiKey) list.push({ provider: 'mercury', model: p.mercuryModel, key: p.mercuryApiKey, url: `${p.mercuryBaseURL}/chat/completions` })
   if (p.fostaApiKey) list.push({ provider: 'fosta', model: p.fostaModel, key: p.fostaApiKey, url: `${p.fostaBaseURL}/chat/completions` })
-  if (p.xkiroApiKey) list.push({ provider: 'xkiro', model: p.xkiroModel, key: p.xkiroApiKey, url: `${p.xkiroBaseURL}/chat/completions` })
+  if (p.anyrouterApiKey) list.push({ provider: 'anyrouter', model: p.anyrouterModel, key: p.anyrouterApiKey, url: `${p.anyrouterBaseURL}/chat/completions` })
   if (p.nightrouterApiKey) list.push({ provider: 'nightrouter', model: p.nightrouterModel, key: p.nightrouterApiKey, url: `${p.nightrouterBaseURL}/chat/completions` })
   if (p.anthropicApiKey) list.push({ provider: 'anthropic', model: p.anthropicModel, key: p.anthropicApiKey, url: p.anthropicBaseURL, anthropic: true })
   return list
@@ -218,7 +200,7 @@ function pingTargets(p: ReturnType<typeof providerConfig>) {
 /** Provider đọc được ảnh đề, theo thứ tự thử (Claude đắt nhất nên để cuối). */
 export async function visionTargets() {
   const all = pingTargets(await liveConfig())
-  return ['fosta', 'xkiro', 'anthropic'].flatMap((name) => all.filter((t) => t.provider === name))
+  return ['fosta', 'anthropic'].flatMap((name) => all.filter((t) => t.provider === name))
 }
 
 const maskKey = (k: string) => (k ? `••••${k.length >= 8 ? k.slice(-4) : ''}` : '')
@@ -286,6 +268,31 @@ function writeRawLog(raw: string, parsed?: Record<string, unknown>) {
   }
 }
 
+/** Gom các dòng SSE `data: {...}` của chat/completions stream thành một body JSON như khi gọi thường. */
+function sseToJson(raw: string): string {
+  let content = ''
+  let reasoning = ''
+  let finish: string | undefined
+  let usage: unknown
+  let model: string | undefined
+  for (const line of raw.split('\n')) {
+    const l = line.trim()
+    if (!l.startsWith('data:') || l === 'data: [DONE]') continue
+    try {
+      const j = JSON.parse(l.slice(5)) as { model?: string; usage?: unknown; choices?: Array<{ finish_reason?: string; delta?: { content?: string; reasoning_content?: string } }> }
+      const c = j.choices?.[0]
+      content += c?.delta?.content ?? ''
+      reasoning += c?.delta?.reasoning_content ?? ''
+      finish = c?.finish_reason ?? finish
+      usage = j.usage ?? usage
+      model = j.model ?? model
+    } catch {
+      /* bỏ dòng hỏng */
+    }
+  }
+  return JSON.stringify({ model, usage, choices: [{ finish_reason: finish, message: { content, reasoning_content: reasoning } }] })
+}
+
 /** Xử lý một lời gọi /api/llm. Luôn tự ghi response. */
 export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse): Promise<void> {
   if (!(await guard(req, res, 'llm'))) return
@@ -319,20 +326,21 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
     } catch (err) {
       return json(res, 500, { error: err instanceof Error ? err.message : String(err) })
     }
-    if (!prov.apiKey && !prov.xkiroApiKey && !prov.anthropicApiKey && !prov.mercuryApiKey && !prov.fostaApiKey && !prov.nightrouterApiKey) {
+    if (!prov.apiKey && !prov.anyrouterApiKey && !prov.anthropicApiKey && !prov.mercuryApiKey && !prov.fostaApiKey && !prov.nightrouterApiKey) {
       return json(res, 500, {
-        error: 'Chưa cấu hình LLM_API_KEY, MERCURY_API_KEY, XKIRO_API_KEY, NIGHTROUTER_API_KEY hoặc ANTHROPIC_API_KEY. Kiểm tra file .env/config provider.',
+        error: 'Chưa cấu hình LLM_API_KEY, MERCURY_API_KEY, ANYROUTER_API_KEY, NIGHTROUTER_API_KEY hoặc ANTHROPIC_API_KEY. Kiểm tra file .env/config provider.',
       })
     }
 
-    // Thứ tự thử: opencode (model chính [+ LLM_FALLBACK_MODEL nếu đặt]) → Mercury → FOSTA (gpt-6-luna) → xkiro → NightRouter → Claude (cuối cùng).
+    // Thứ tự thử: opencode (model chính [+ LLM_FALLBACK_MODEL nếu đặt]) → Mercury → FOSTA (gpt-6-luna) → AnyRouter (gpt-6.1-terra) → NightRouter → Claude (cuối cùng).
     // Provider dự phòng nào không có key thì bỏ qua.
     // `opencode` = gửi x-opencode-session + reasoning_effort (chỉ gateway opencode hiểu).
     // `anthropic`: gọi Claude qua SDK (Messages API), không qua fetch kiểu OpenAI.
-    type Target = { model: string; url: string; key: string; opencode: boolean; anthropic?: boolean }
+    // `stream`: gọi stream:true rồi gom SSE lại (AnyRouter)
+    type Target = { model: string; url: string; key: string; opencode: boolean; anthropic?: boolean; stream?: boolean }
     // tên provider cho log ai_calls
     const providerOf = (t: Target) =>
-      t.anthropic ? 'anthropic' : t.opencode ? 'opencode' : t.key === prov.mercuryApiKey ? 'mercury' : t.key === prov.fostaApiKey ? 'fosta' : t.key === prov.xkiroApiKey ? 'xkiro' : t.key === prov.nightrouterApiKey ? 'nightrouter' : 'khac'
+      t.anthropic ? 'anthropic' : t.opencode ? 'opencode' : t.key === prov.mercuryApiKey ? 'mercury' : t.key === prov.fostaApiKey ? 'fosta' : t.key === prov.anyrouterApiKey ? 'anyrouter' : t.key === prov.nightrouterApiKey ? 'nightrouter' : 'khac'
     type Usage = { prompt_tokens?: number; completion_tokens?: number; input_tokens?: number; output_tokens?: number } | undefined
     // Vercel có thể dừng function ngay sau khi trả lời → gom promise log, chờ trước khi return
     const pending: Promise<void>[] = []
@@ -356,6 +364,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
       (!!prov.anthropicApiKey && body.model === prov.anthropicModel) ||
       (!!prov.mercuryApiKey && body.model === prov.mercuryModel) ||
       (!!prov.fostaApiKey && body.model === prov.fostaModel) ||
+      (!!prov.anyrouterApiKey && body.model === prov.anyrouterModel) ||
       (!!prov.nightrouterApiKey && body.model === prov.nightrouterModel)
     if (prov.apiKey && !wantsBackup) {
       for (const m of [body.model ?? prov.model, prov.fallbackModel]) {
@@ -364,11 +373,8 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
     }
     if (prov.mercuryApiKey) targets.push({ model: prov.mercuryModel, url: `${prov.mercuryBaseURL}/chat/completions`, key: prov.mercuryApiKey, opencode: false })
     if (prov.fostaApiKey) targets.push({ model: prov.fostaModel, url: `${prov.fostaBaseURL}/chat/completions`, key: prov.fostaApiKey, opencode: false })
-    if (prov.xkiroApiKey) {
-      for (const m of [prov.xkiroModel, DEFAULT_XKIRO_FALLBACK_MODEL]) {
-        targets.push({ model: m, url: `${prov.xkiroBaseURL}/chat/completions`, key: prov.xkiroApiKey, opencode: false })
-      }
-    }
+    if (prov.anyrouterApiKey)
+      targets.push({ model: prov.anyrouterModel, url: `${prov.anyrouterBaseURL}/chat/completions`, key: prov.anyrouterApiKey, opencode: false, stream: true })
     if (prov.nightrouterApiKey)
       targets.push({ model: prov.nightrouterModel, url: `${prov.nightrouterBaseURL}/chat/completions`, key: prov.nightrouterApiKey, opencode: false })
     if (prov.anthropicApiKey) targets.push({ model: prov.anthropicModel, url: prov.anthropicBaseURL, key: prov.anthropicApiKey, opencode: false, anthropic: true })
@@ -414,6 +420,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
         max_tokens: body.maxTokens ?? 32000,
         ...(target.opencode && body.reasoningEffort ? { reasoning_effort: body.reasoningEffort } : {}),
         ...(body.temperature !== undefined ? { temperature: body.temperature } : {}),
+        ...(target.stream ? { stream: true, stream_options: { include_usage: true } } : {}),
       })
       for (let attempt = 0; attempt < 2; attempt++) {
         let upstream: Response
@@ -444,7 +451,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
           break
         }
 
-        const text = await upstream.text()
+        const text = target.stream && upstream.ok ? sseToJson(await upstream.text()) : await upstream.text()
         if (!upstream.ok) {
           const authFailed = upstream.status === 401 || upstream.status === 403
           lastErr = `${selectedModel}: upstream ${upstream.status}`
