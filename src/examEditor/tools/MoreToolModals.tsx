@@ -652,6 +652,7 @@ export function CircuitModal({ initial, submitLabel, onClose, onInsert }: Props<
 const MOTION_KINDS: Array<{ y: string; label: string; example: string }> = [
   { y: 'v (m/s)', label: 'v – t', example: '(0; 0) (2; 4) (5; 4) (7; 0)' },
   { y: 'x (m)', label: 'x – t', example: '(0; 10) (2; 20) (4; 20) (6; 0)' },
+  { y: 'd (m)', label: 'd – t', example: '(0; 0) (2; 10) (4; 10) (6; -5)' },
   { y: 'a (m/s²)', label: 'a – t', example: '(0; 2) (3; 2) (3; 0) (6; 0)' },
 ]
 const MOTION_HELP: HelpGroups = [
@@ -719,7 +720,7 @@ export function MotionModal({ initial, submitLabel, onClose, onInsert }: Props<M
   return (
     <ToolShell
       title="Đồ thị chuyển động"
-      hint="x – t, v – t, a – t gấp khúc; số trên trục lấy đúng các điểm đã gõ"
+      hint="x – t, d – t, v – t, a – t gấp khúc; số trên trục lấy đúng các điểm đã gõ"
       inputs={inputs}
       inputsWidth={360}
       preview={preview}
