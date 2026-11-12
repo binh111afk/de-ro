@@ -1,12 +1,14 @@
 /**
  * Phương trình hoá học:
- * - Nhiều dòng (mỗi dòng một phương trình), mũi tên "->", "<=>", "=" (hoặc "→", "⇌").
- * - Điều kiện trên/dưới mũi tên: "[t°]" hoặc "[t°, xt, p | Fe]" đặt ngay sau mũi tên hoặc cuối dòng.
+ * - Nhiều dòng (mỗi dòng một phương trình), mũi tên "->", "<=>", "=" (hoặc "→", "⇌");
+ *   có thể nhiều mũi tên trên một dòng: "A -> [đk1] B -> [đk2] C".
+ * - Điều kiện trên/dưới mũi tên: "[t°]" hoặc "[t°, xt, p | Fe]" đặt ngay sau mũi tên (hoặc cuối dòng khi chỉ có 1 mũi tên).
+ * - Chất là công thức cấu tạo thu gọn bọc trong "{...}" (vẽ bằng bộ vẽ của `chem.ts`, căn mạch chính theo đường giữa mũi tên).
  * - Chỉ số dưới tự động qua `subscript()`, giữ hệ số đầu dòng cỡ thường; ion "^2-", "^3+";
  *   khí bay lên "^" / "↑", kết tủa "v" / "↓" (không nhầm V của Vanadi); trạng thái "(r)", "(l)", "(k)", "(dd)".
  * - Tuỳ chọn cân bằng tự động bằng khử Gauss phân số chính xác (BigInt) trên ma trận bảo toàn nguyên tố & điện tích.
  */
-import { subscript } from './chem'
+import { renderStructBody, subscript, type StructBody } from './chem'
 import type { ToolImage } from './toolSpec'
 
 const FAM = `font-family="'Times New Roman',serif"`
@@ -34,18 +36,23 @@ export const CHEMEQ_DEFAULT: ChemEqSpec = {
 interface Term {
   coeff: string
   formula: string
+  /** nếu là chất cấu tạo `{...}`: nội dung công thức cấu tạo */
+  struct?: string
   charge: string
   state: string
   mark: '↑' | '↓' | ''
 }
 
-interface ParsedEq {
-  lineNo: number
-  lhs: Term[]
-  rhs: Term[]
-  arrow: '->' | '<=>'
+interface ArrowSeg {
+  kind: '->' | '<=>'
   above: string
   below: string
+}
+
+interface ParsedEq {
+  lineNo: number
+  sides: Term[][]
+  arrows: ArrowSeg[]
 }
 
 /* ------------------------------------------------------------------ *
@@ -100,45 +107,93 @@ function measureRuns(runs: TextRun[], fs: number): number {
  * ------------------------------------------------------------------ */
 
 function checkBrackets(line: string, lineNo: number) {
-  let depth = 0
+  let brace = 0
+  let bracket = 0
   for (const ch of line) {
-    if (ch === '[') depth++
-    else if (ch === ']') {
-      depth--
-      if (depth < 0) throw new Error(`Dòng ${lineNo}: Thừa dấu "]" đóng điều kiện`)
+    if (ch === '{') brace++
+    else if (ch === '}') {
+      brace--
+      if (brace < 0) throw new Error(`Dòng ${lineNo}: Thừa dấu "}" đóng công thức cấu tạo`)
+    } else if (brace === 0 && ch === '[') bracket++
+    else if (brace === 0 && ch === ']') {
+      bracket--
+      if (bracket < 0) throw new Error(`Dòng ${lineNo}: Thừa dấu "]" đóng điều kiện`)
     }
   }
-  if (depth > 0) throw new Error(`Dòng ${lineNo}: Thiếu dấu "]" đóng điều kiện`)
+  if (brace > 0) throw new Error(`Dòng ${lineNo}: Thiếu dấu "}" đóng công thức cấu tạo`)
+  if (bracket > 0) throw new Error(`Dòng ${lineNo}: Thiếu dấu "]" đóng điều kiện`)
 }
 
-/** Thay vùng [...] bằng khoảng trắng để tìm mũi tên bên ngoài ngoặc điều kiện. */
+/** Thay vùng [...] và {...} bằng khoảng trắng để tìm mũi tên bên ngoài ngoặc. */
 function maskBrackets(line: string): string {
   let out = ''
-  let depth = 0
+  let brace = 0
+  let bracket = 0
   for (const ch of line) {
-    if (ch === '[') {
-      depth++
+    if (ch === '{') {
+      brace++
       out += ' '
-    } else if (ch === ']') {
-      depth--
+    } else if (ch === '}') {
+      brace = Math.max(0, brace - 1)
+      out += ' '
+    } else if (brace === 0 && ch === '[') {
+      bracket++
+      out += ' '
+    } else if (brace === 0 && ch === ']') {
+      bracket = Math.max(0, bracket - 1)
       out += ' '
     } else {
-      out += depth > 0 ? ' ' : ch
+      out += brace > 0 || bracket > 0 ? ' ' : ch
     }
   }
   return out
 }
 
-function splitArrow(line: string, lineNo: number): { lhs: string; arrow: '->' | '<=>'; rhs: string } {
+function splitCondParts(cond: string): { above: string; below: string } {
+  if (!cond) return { above: '', below: '' }
+  const parts = cond.split('|')
+  return {
+    above: parts[0].trim(),
+    below: parts.slice(1).join(' | ').trim(),
+  }
+}
+
+function splitArrows(line: string, lineNo: number): { sideRaws: string[]; arrows: ArrowSeg[] } {
   const masked = maskBrackets(line)
   const primary = [...masked.matchAll(/<=>|<->|⇌|⇄|->|→/g)]
-  if (primary.length > 1) throw new Error(`Dòng ${lineNo}: Mỗi dòng chỉ dùng một mũi tên phản ứng`)
   if (primary.length === 1) {
     const m = primary[0]
     const idx = m.index!
     const tok = m[0]
-    const arrow: '->' | '<=>' = tok === '->' || tok === '→' ? '->' : '<=>'
-    return { lhs: line.slice(0, idx), arrow, rhs: line.slice(idx + tok.length) }
+    const kind: '->' | '<=>' = tok === '->' || tok === '→' ? '->' : '<=>'
+    const lhs = line.slice(0, idx)
+    const cond = extractCondition(line.slice(idx + tok.length))
+    if (!lhs.trim() || !cond.rhs.trim()) throw new Error(`Dòng ${lineNo}: Thiếu chất tham gia hoặc sản phẩm`)
+    return { sideRaws: [lhs, cond.rhs], arrows: [{ kind, above: cond.above, below: cond.below }] }
+  }
+  if (primary.length > 1) {
+    const sideRaws = [line.slice(0, primary[0].index!)]
+    const arrows: ArrowSeg[] = []
+    for (let k = 0; k < primary.length; k++) {
+      const m = primary[k]
+      const tok = m[0]
+      const kind: '->' | '<=>' = tok === '->' || tok === '→' ? '->' : '<=>'
+      const start = m.index! + tok.length
+      const end = k + 1 < primary.length ? primary[k + 1].index! : line.length
+      const seg = line.slice(start, end)
+      // Nhiều mũi tên: điều kiện phải đặt ngay sau mũi tên tương ứng
+      const afterArrow = /^\s*\[([^\]]*)\](.*)$/s.exec(seg)
+      if (afterArrow) {
+        const { above, below } = splitCondParts(afterArrow[1])
+        arrows.push({ kind, above, below })
+        sideRaws.push(afterArrow[2])
+      } else {
+        arrows.push({ kind, above: '', below: '' })
+        sideRaws.push(seg)
+      }
+    }
+    if (sideRaws.some((s) => !s.trim())) throw new Error(`Dòng ${lineNo}: Thiếu chất tham gia hoặc sản phẩm`)
+    return { sideRaws, arrows }
   }
   // dấu "=" kiểu cũ: ưu tiên "=" có khoảng trắng hai bên để tránh đụng nối đôi CH2=CH2
   const spacedEq = [...masked.matchAll(/(?:\s+=\s*|\s*=\s+)/g)]
@@ -146,12 +201,18 @@ function splitArrow(line: string, lineNo: number): { lhs: string; arrow: '->' | 
   if (spacedEq.length === 1) {
     const m = spacedEq[0]
     const eqAt = m.index! + m[0].indexOf('=')
-    return { lhs: line.slice(0, eqAt), arrow: '->', rhs: line.slice(eqAt + 1) }
+    const lhs = line.slice(0, eqAt)
+    const cond = extractCondition(line.slice(eqAt + 1))
+    if (!lhs.trim() || !cond.rhs.trim()) throw new Error(`Dòng ${lineNo}: Thiếu chất tham gia hoặc sản phẩm`)
+    return { sideRaws: [lhs, cond.rhs], arrows: [{ kind: '->', above: cond.above, below: cond.below }] }
   }
   const anyEq = [...masked.matchAll(/=/g)]
   if (anyEq.length === 1 && !/\s/.test(masked.trim())) {
     const idx = anyEq[0].index!
-    return { lhs: line.slice(0, idx), arrow: '->', rhs: line.slice(idx + 1) }
+    const lhs = line.slice(0, idx)
+    const cond = extractCondition(line.slice(idx + 1))
+    if (!lhs.trim() || !cond.rhs.trim()) throw new Error(`Dòng ${lineNo}: Thiếu chất tham gia hoặc sản phẩm`)
+    return { sideRaws: [lhs, cond.rhs], arrows: [{ kind: '->', above: cond.above, below: cond.below }] }
   }
   throw new Error(`Dòng ${lineNo}: Thiếu mũi tên phản ứng (->, <=> hoặc =)`)
 }
@@ -182,13 +243,7 @@ function extractCondition(rhsRaw: string): { rhs: string; above: string; below: 
       }
     }
   }
-  if (!cond) return { rhs, above: '', below: '' }
-  const parts = cond.split('|')
-  return {
-    rhs,
-    above: parts[0].trim(),
-    below: parts.slice(1).join(' | ').trim(),
-  }
+  return { rhs, ...splitCondParts(cond) }
 }
 
 function splitTerms(side: string, lineNo: number): string[] {
@@ -198,8 +253,8 @@ function splitTerms(side: string, lineNo: number): string[] {
   let paren = 0
   for (let i = 0; i < s.length; i++) {
     const ch = s[i]
-    if (ch === '(' || ch === '[') paren++
-    else if (ch === ')' || ch === ']') paren = Math.max(0, paren - 1)
+    if (ch === '(' || ch === '[' || ch === '{') paren++
+    else if (ch === ')' || ch === ']' || ch === '}') paren = Math.max(0, paren - 1)
     if (ch === '+' && paren === 0) {
       // 1) Điện tích có "^" phía trước: Fe^3+, H^+, Fe^{2+}
       if (/\^\{?\d*$/.test(cur)) {
@@ -269,6 +324,41 @@ function parseTerm(raw: string, lineNo: number): Term {
     }
   }
 
+  // Hệ số đứng đầu (số nguyên hoặc phân số 1/2)
+  let coeff = ''
+  const cm = /^(\d+(?:\s*\/\s*\d+)?)\s*(?=[A-Za-z[({])/.exec(s)
+  if (cm) {
+    coeff = cm[1].replace(/\s+/g, '')
+    s = s.slice(cm[0].length).trim()
+  }
+
+  // Chất cấu tạo đặt trong {...}
+  if (s.startsWith('{')) {
+    let depth = 0
+    let closeIdx = -1
+    for (let i = 0; i < s.length; i++) {
+      if (s[i] === '{') depth++
+      else if (s[i] === '}') {
+        depth--
+        if (depth === 0) {
+          closeIdx = i
+          break
+        }
+      }
+    }
+    if (closeIdx < 0) throw new Error(`Dòng ${lineNo}: Thiếu dấu "}" đóng công thức cấu tạo ở "${raw.trim()}"`)
+    const inner = s.slice(1, closeIdx).trim()
+    if (!inner) throw new Error(`Dòng ${lineNo}: Công thức cấu tạo "{}" đang để trống`)
+    const tail = s.slice(closeIdx + 1).trim()
+    let charge = ''
+    if (tail) {
+      const tm = /^\^\{?(\d*[+-])\}?$/.exec(tail)
+      if (tm) charge = tm[1]
+      else throw new Error(`Dòng ${lineNo}: Dư kí tự sau "}" ở "${raw.trim()}"`)
+    }
+    return { coeff, formula: s.slice(0, closeIdx + 1), struct: inner, charge, state, mark }
+  }
+
   // Điện tích ion: SO4^2-, Fe^3+, OH^-, Cl-, Ag+
   let charge = ''
   const explicitIon = /\^\{?(\d*[+-])\}?$/.exec(s)
@@ -278,14 +368,6 @@ function parseTerm(raw: string, lineNo: number): Term {
   } else if (s.length >= 2 && (s.endsWith('+') || s.endsWith('-'))) {
     charge = s.slice(-1)
     s = s.slice(0, -1).trim()
-  }
-
-  // Hệ số đứng đầu (số nguyên hoặc phân số 1/2)
-  let coeff = ''
-  const cm = /^(\d+(?:\s*\/\s*\d+)?)\s*(?=[A-Za-z[(])/.exec(s)
-  if (cm) {
-    coeff = cm[1].replace(/\s+/g, '')
-    s = s.slice(cm[0].length).trim()
   }
 
   if (!s) throw new Error(`Dòng ${lineNo}: Thiếu công thức chất ở "${raw.trim()}"`)
@@ -300,14 +382,9 @@ function parseEquations(text: string): ParsedEq[] {
     if (!line) continue
     const lineNo = idx + 1
     checkBrackets(line, lineNo)
-    const { lhs, arrow, rhs } = splitArrow(line, lineNo)
-    const cond = extractCondition(rhs)
-    if (!lhs.trim() || !cond.rhs.trim()) {
-      throw new Error(`Dòng ${lineNo}: Thiếu chất tham gia hoặc sản phẩm`)
-    }
-    const lhsTerms = splitTerms(lhs, lineNo).map((t) => parseTerm(t, lineNo))
-    const rhsTerms = splitTerms(cond.rhs, lineNo).map((t) => parseTerm(t, lineNo))
-    eqs.push({ lineNo, lhs: lhsTerms, rhs: rhsTerms, arrow, above: cond.above, below: cond.below })
+    const { sideRaws, arrows } = splitArrows(line, lineNo)
+    const sides = sideRaws.map((raw) => splitTerms(raw, lineNo).map((t) => parseTerm(t, lineNo)))
+    eqs.push({ lineNo, sides, arrows })
   }
   if (!eqs.length) throw new Error('Chưa có phương trình nào')
   return eqs
@@ -427,10 +504,13 @@ const mulF = (a: Frac, b: Frac) => mkFrac(a.n * b.n, a.d * b.d)
 const divF = (a: Frac, b: Frac) => mkFrac(a.n * b.d, a.d * b.n)
 
 function tryAutoBalance(eq: ParsedEq): string | null {
+  // Bỏ qua dòng có nhiều mũi tên hoặc chứa chất cấu tạo {...}
+  if (eq.arrows.length > 1 || eq.sides.some((side) => side.some((t) => t.struct !== undefined))) return null
+  const [lhs, rhs] = eq.sides
   // Chỉ tự cân bằng khi người dùng không ghi hệ số nào trên dòng
-  if (eq.lhs.some((t) => t.coeff) || eq.rhs.some((t) => t.coeff)) return null
+  if (lhs.some((t) => t.coeff) || rhs.some((t) => t.coeff)) return null
 
-  const all = [...eq.lhs, ...eq.rhs]
+  const all = [...lhs, ...rhs]
   const parsed = all.map((t) => parseFormulaCounts(t.formula, t.charge))
   if (parsed.some((p) => p === null)) {
     return 'Chưa tự cân bằng được công thức chứa ẩn hoặc kí hiệu đặc biệt (đã giữ nguyên).'
@@ -445,7 +525,7 @@ function tryAutoBalance(eq: ParsedEq): string | null {
   const rowNames = [...keys, ...(hasCharge ? ['__charge__'] : [])]
   if (!rowNames.length) return null
 
-  const nL = eq.lhs.length
+  const nL = lhs.length
   const cols = all.length
   const mat: Frac[][] = rowNames.map((name) =>
     species.map((sp, c) => {
@@ -557,19 +637,60 @@ function pushSubscripted(runs: TextRun[], raw: string) {
   flushNorm()
 }
 
-function sideToRuns(terms: Term[]): TextRun[] {
-  const runs: TextRun[] = []
+type SidePiece =
+  | { kind: 'runs'; runs: TextRun[]; w: number }
+  | { kind: 'struct'; frag: StructBody; scale: number; leftPad: number; w: number; aboveMid: number; belowMid: number }
+
+function termRuns(t: Term, out: TextRun[]) {
+  if (t.coeff) out.push({ text: t.coeff.includes('/') ? `${t.coeff} ` : t.coeff, kind: 'norm' })
+  pushSubscripted(out, t.formula)
+  if (t.charge) out.push({ text: t.charge.replace(/-/g, '−'), kind: 'sup' })
+  if (t.state) out.push({ text: t.state, kind: 'state' })
+  if (t.mark) out.push({ text: t.mark, kind: 'norm' })
+}
+
+function sideToPieces(terms: Term[], fs: number, lineNo: number): SidePiece[] {
+  const pieces: SidePiece[] = []
+  let pending: TextRun[] = []
+  const flush = () => {
+    if (!pending.length) return
+    pieces.push({ kind: 'runs', runs: pending, w: measureRuns(pending, fs) * 1.03 })
+    pending = []
+  }
+  const scale = fs / 17
   terms.forEach((t, idx) => {
-    if (idx > 0) runs.push({ text: ' + ', kind: 'norm' })
-    if (t.coeff) {
-      runs.push({ text: t.coeff.includes('/') ? `${t.coeff} ` : t.coeff, kind: 'norm' })
+    if (idx > 0) pending.push({ text: ' + ', kind: 'norm' })
+    if (t.struct !== undefined) {
+      if (t.coeff) pending.push({ text: t.coeff.includes('/') ? `${t.coeff} ` : t.coeff, kind: 'norm' })
+      flush()
+      let frag: StructBody
+      try {
+        frag = renderStructBody({ formula: t.struct })
+      } catch (e) {
+        throw new Error(`Dòng ${lineNo}: ${e instanceof Error ? e.message : String(e)}`)
+      }
+      const leftPad = (t.coeff && !t.coeff.includes('/') ? 2 : 1) * scale
+      const rightPad = 2 * scale
+      const aboveMid = frag.mainY * scale
+      const belowMid = (frag.height - frag.mainY) * scale
+      pieces.push({
+        kind: 'struct',
+        frag,
+        scale,
+        leftPad,
+        w: frag.width * scale + leftPad + rightPad,
+        aboveMid,
+        belowMid,
+      })
+      if (t.charge) pending.push({ text: t.charge.replace(/-/g, '−'), kind: 'sup' })
+      if (t.state) pending.push({ text: t.state, kind: 'state' })
+      if (t.mark) pending.push({ text: t.mark, kind: 'norm' })
+    } else {
+      termRuns(t, pending)
     }
-    pushSubscripted(runs, t.formula)
-    if (t.charge) runs.push({ text: t.charge.replace(/-/g, '−'), kind: 'sup' })
-    if (t.state) runs.push({ text: t.state, kind: 'state' })
-    if (t.mark) runs.push({ text: t.mark, kind: 'norm' })
   })
-  return runs
+  flush()
+  return pieces
 }
 
 function formatCondText(s: string): string {
@@ -577,6 +698,7 @@ function formatCondText(s: string): string {
     .replace(/t\^[o0°]/g, 't°')
     .replace(/(\d)\^[o0]/g, '$1°')
     .replace(/(^|[\s,;|(])to(?=$|[\s,;|)°C])/g, '$1t°')
+    .replace(/(^|[\s,;])-(?=\s*[A-Z0-9])/g, '$1−')
 }
 
 function condToRuns(raw: string): TextRun[] {
@@ -647,6 +769,45 @@ function reactionArrowSvg(kind: '->' | '<=>', x0: number, x1: number, midY: numb
   )
 }
 
+/** Vẽ một dãy runs có thể có khoảng trắng đầu/cuối (SVG <text> tự nuốt khoảng trắng rìa nên phải cộng tay vào x). */
+function drawTrimmedRuns(runs: TextRun[], x: number, baseY: number, fs: number): string {
+  const trimmed = runs.map((r) => ({ ...r }))
+  const spaceW = charEm(' ') * fs * 1.03
+  let leadW = 0
+  while (trimmed.length && trimmed[0].kind === 'norm' && trimmed[0].text.startsWith(' ')) {
+    const m = /^ +/.exec(trimmed[0].text)!
+    leadW += m[0].length * spaceW
+    trimmed[0].text = trimmed[0].text.slice(m[0].length)
+    if (!trimmed[0].text) trimmed.shift()
+  }
+  while (trimmed.length && trimmed[trimmed.length - 1].kind === 'norm' && trimmed[trimmed.length - 1].text.endsWith(' ')) {
+    const last = trimmed[trimmed.length - 1]
+    last.text = last.text.replace(/ +$/, '')
+    if (!last.text) trimmed.pop()
+  }
+  return trimmed.length ? runsToSvgText(trimmed, x + leadW, baseY, fs, 'start') : ''
+}
+
+function drawSideAt(pieces: SidePiece[], x0: number, midY: number, baseY: number, fs: number): string {
+  if (pieces.length === 1 && pieces[0].kind === 'runs') {
+    return runsToSvgText(pieces[0].runs, x0, baseY, fs, 'start')
+  }
+  let curX = x0
+  let out = ''
+  for (const p of pieces) {
+    if (p.kind === 'runs') {
+      out += drawTrimmedRuns(p.runs, curX, baseY, fs)
+    } else {
+      const tx = f1(curX + p.leftPad)
+      const ty = f1(midY - p.aboveMid)
+      const sc = p.scale === 1 ? '' : ` scale(${Math.round(p.scale * 1000) / 1000})`
+      out += `<g transform="translate(${tx} ${ty})${sc}">${p.frag.body}</g>`
+    }
+    curX += p.w
+  }
+  return out
+}
+
 export function renderChemEqSvg(spec: ChemEqSpec, desc: string): ToolImage {
   const fs = Math.min(22, Math.max(14, Math.round(Number(spec.fontSize) || 17)))
   const align: 'left' | 'center' = spec.align === 'left' ? 'left' : 'center'
@@ -666,79 +827,95 @@ export function renderChemEqSvg(spec: ChemEqSpec, desc: string): ToolImage {
   const padX = 20
   const padY = 14
   const rowGap = Math.max(10, Math.round(fs * 0.65))
+  const midOff = 0.31 * fs
 
   const rows = eqs.map((eq) => {
-    const lhsRuns = sideToRuns(eq.lhs)
-    const rhsRuns = sideToRuns(eq.rhs)
-    const aboveRuns = condToRuns(eq.above)
-    const belowRuns = condToRuns(eq.below)
-    const lhsW = measureRuns(lhsRuns, fs) * 1.03
-    const rhsW = measureRuns(rhsRuns, fs) * 1.03
-    const aboveW = measureRuns(aboveRuns, condFs) * 1.03
-    const belowW = measureRuns(belowRuns, condFs) * 1.03
-    const arrowW = Math.max(minArrowW, Math.max(aboveW, belowW) + 22)
+    const sidePieces = eq.sides.map((s) => sideToPieces(s, fs, eq.lineNo))
+    const sideWs = sidePieces.map((ps) => ps.reduce((sum, p) => sum + p.w, 0))
+    const arrowInfos = eq.arrows.map((a) => {
+      const aboveRuns = condToRuns(a.above)
+      const belowRuns = condToRuns(a.below)
+      const aboveW = measureRuns(aboveRuns, condFs) * 1.03
+      const belowW = measureRuns(belowRuns, condFs) * 1.03
+      const arrowW = Math.max(minArrowW, Math.max(aboveW, belowW) + 22)
+      const isRev = a.kind === '<=>'
+      const aboveOff = midOff + (isRev ? 9 : 7) + (aboveRuns.some((r) => r.kind === 'sub') ? 2 : 0)
+      const belowOff = -midOff + (isRev ? 5.5 : 3.5) + 0.74 * condFs + 2.5 + (belowRuns.some((r) => r.kind === 'sup') ? 2 : 0)
+      return { kind: a.kind, aboveRuns, belowRuns, arrowW, aboveOff, belowOff }
+    })
 
-    const isRev = eq.arrow === '<=>'
-    const midOff = 0.31 * fs
-    const aboveOff = midOff + (isRev ? 9 : 7) + (aboveRuns.some((r) => r.kind === 'sub') ? 2 : 0)
-    const belowOff = -midOff + (isRev ? 5.5 : 3.5) + 0.74 * condFs + 2.5
-
-    const topExtent = Math.max(0.85 * fs, aboveRuns.length ? aboveOff + 0.9 * condFs : 0)
-    const botExtent = Math.max(0.38 * fs, belowRuns.length ? belowOff + 0.36 * condFs : 0)
-
-    return {
-      eq,
-      lhsRuns,
-      rhsRuns,
-      aboveRuns,
-      belowRuns,
-      lhsW,
-      rhsW,
-      arrowW,
-      midOff,
-      aboveOff,
-      belowOff,
-      topExtent,
-      botExtent,
+    let topFromMid = 0.85 * fs - midOff
+    let botFromMid = 0.38 * fs + midOff
+    for (const a of arrowInfos) {
+      if (a.aboveRuns.length) topFromMid = Math.max(topFromMid, a.aboveOff - midOff + 0.9 * condFs)
+      if (a.belowRuns.length) botFromMid = Math.max(botFromMid, a.belowOff + midOff + 0.36 * condFs)
     }
+    for (const ps of sidePieces) {
+      for (const p of ps) {
+        if (p.kind === 'struct') {
+          topFromMid = Math.max(topFromMid, p.aboveMid + 2)
+          botFromMid = Math.max(botFromMid, p.belowMid + 2)
+        }
+      }
+    }
+
+    const totalW = sideWs.reduce((s, w) => s + w, 0) + arrowInfos.reduce((s, a) => s + a.arrowW, 0) + arrowInfos.length * 2 * gap
+
+    return { eq, sidePieces, sideWs, arrowInfos, topFromMid, botFromMid, totalW }
   })
 
-  const colL = Math.max(...rows.map((r) => r.lhsW))
-  const colA = Math.max(...rows.map((r) => r.arrowW))
-  const colR = Math.max(...rows.map((r) => r.rhsW))
-  const contentW =
-    align === 'center'
-      ? colL + gap + colA + gap + colR
-      : Math.max(...rows.map((r) => r.lhsW + gap + r.arrowW + gap + r.rhsW))
+  const singleRows = rows.filter((r) => r.arrowInfos.length === 1)
+  const colL = singleRows.length ? Math.max(...singleRows.map((r) => r.sideWs[0])) : 0
+  const colA = singleRows.length ? Math.max(...singleRows.map((r) => r.arrowInfos[0].arrowW)) : 0
+  const colR = singleRows.length ? Math.max(...singleRows.map((r) => r.sideWs[1])) : 0
+  const singleAlignedW = singleRows.length ? colL + gap + colA + gap + colR : 0
+  const multiMaxW = Math.max(0, ...rows.filter((r) => r.arrowInfos.length > 1).map((r) => r.totalW))
+  const contentW = align === 'center' ? Math.max(singleAlignedW, multiMaxW) : Math.max(...rows.map((r) => r.totalW))
 
   // khung ôm sát nội dung: phương trình ngắn không kèm khoảng trắng thừa hai bên
   const W = Math.ceil(contentW + padX * 2)
-  const startX = align === 'center' ? (W - contentW) / 2 : padX
 
   let yCursor = padY
   let body = ''
   rows.forEach((r, idx) => {
     if (idx > 0) yCursor += rowGap
-    const baseY = yCursor + r.topExtent
-    const midY = baseY - r.midOff
-    let arrowX0: number
-    let arrowX1: number
-    if (align === 'center') {
-      arrowX0 = startX + colL + gap
-      arrowX1 = arrowX0 + colA
-      body += runsToSvgText(r.lhsRuns, arrowX0 - gap, baseY, fs, 'end')
-      body += runsToSvgText(r.rhsRuns, arrowX1 + gap, baseY, fs, 'start')
-    } else {
-      arrowX0 = startX + r.lhsW + gap
-      arrowX1 = arrowX0 + r.arrowW
-      body += runsToSvgText(r.lhsRuns, startX, baseY, fs, 'start')
-      body += runsToSvgText(r.rhsRuns, arrowX1 + gap, baseY, fs, 'start')
+    const midY = yCursor + r.topFromMid
+    const baseY = midY + midOff
+
+    const drawArrow = (a: (typeof r.arrowInfos)[number], x0: number, x1: number) => {
+      const arrowMidX = (x0 + x1) / 2
+      body += reactionArrowSvg(a.kind, x0, x1, midY, fs)
+      if (a.aboveRuns.length) body += runsToSvgText(a.aboveRuns, arrowMidX, baseY - a.aboveOff, condFs, 'middle')
+      if (a.belowRuns.length) body += runsToSvgText(a.belowRuns, arrowMidX, baseY + a.belowOff, condFs, 'middle')
     }
-    const arrowMidX = (arrowX0 + arrowX1) / 2
-    body += reactionArrowSvg(r.eq.arrow, arrowX0, arrowX1, midY, fs)
-    if (r.aboveRuns.length) body += runsToSvgText(r.aboveRuns, arrowMidX, baseY - r.aboveOff, condFs, 'middle')
-    if (r.belowRuns.length) body += runsToSvgText(r.belowRuns, arrowMidX, baseY + r.belowOff, condFs, 'middle')
-    yCursor = baseY + r.botExtent
+
+    if (align === 'center' && r.arrowInfos.length === 1) {
+      const blockStart = (W - singleAlignedW) / 2
+      const arrowX0 = blockStart + colL + gap
+      const arrowX1 = arrowX0 + colA
+      const lhs = r.sidePieces[0]
+      if (lhs.length === 1 && lhs[0].kind === 'runs') {
+        body += runsToSvgText(lhs[0].runs, arrowX0 - gap, baseY, fs, 'end')
+      } else {
+        body += drawSideAt(lhs, arrowX0 - gap - r.sideWs[0], midY, baseY, fs)
+      }
+      drawArrow(r.arrowInfos[0], arrowX0, arrowX1)
+      body += drawSideAt(r.sidePieces[1], arrowX1 + gap, midY, baseY, fs)
+    } else {
+      let curX = align === 'center' ? (W - r.totalW) / 2 : padX
+      for (let k = 0; k < r.sidePieces.length; k++) {
+        body += drawSideAt(r.sidePieces[k], curX, midY, baseY, fs)
+        curX += r.sideWs[k]
+        if (k < r.arrowInfos.length) {
+          const a = r.arrowInfos[k]
+          curX += gap
+          drawArrow(a, curX, curX + a.arrowW)
+          curX += a.arrowW + gap
+        }
+      }
+    }
+
+    yCursor = midY + r.botFromMid
   })
 
   const H = Math.max(52, Math.ceil(yCursor + padY))

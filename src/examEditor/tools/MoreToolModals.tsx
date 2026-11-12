@@ -1001,11 +1001,12 @@ export function ElectronModal({ initial, submitLabel, onClose, onInsert }: Props
 
 const STRUCT_HELP: HelpGroups = [
   {
-    group: 'Mạch chính',
+    group: 'Mạch chính & điện tích',
     items: [
       { code: 'CH3-CH2-OH', what: 'Liên kết đơn: dấu gạch ngang' },
       { code: 'CH2=CH-CH3', what: 'Liên kết đôi: dấu bằng' },
       { code: 'CH≡C-CH3  hoặc  CH#C-CH3', what: 'Liên kết ba' },
+      { code: 'NH3^+   COO^-   O^-', what: 'Điện tích sau "^" (^+, ^-, ^2+, ^2-) thành chỉ số trên' },
     ],
   },
   {
@@ -1635,14 +1636,16 @@ const CHEMEQ_HELP: HelpGroups = [
     items: [
       { code: '->  hoặc  →  hoặc  =', what: 'Mũi tên một chiều' },
       { code: '<=>  hoặc  ⇌', what: 'Mũi tên thuận nghịch (hai nửa mũi tên)' },
-      { code: '[t°]   [to]   [t^o]', what: 'Điều kiện trên mũi tên (sau mũi tên hoặc cuối dòng)' },
-      { code: '[t°, xt, p | Fe]', what: 'Ngăn bằng "|" để ghi 2 tầng (trên | dưới)' },
+      { code: '[t°]   [to]   [t^o]', what: 'Điều kiện trên mũi tên (sau mũi tên hoặc cuối dòng khi có 1 mũi tên)' },
+      { code: '[t°, xt, p | Fe]   [-OH^- | +H^+]', what: 'Ngăn bằng "|" để ghi 2 tầng (trên | dưới), hỗ trợ điện tích ^+ / ^-' },
+      { code: 'A -> [đk1] B <=> [đk2] C', what: 'Nhiều mũi tên trên một dòng; điều kiện đặt ngay sau mỗi mũi tên' },
     ],
   },
   {
-    group: 'Chất, ion & kí hiệu',
+    group: 'Chất, cấu tạo, ion & kí hiệu',
     items: [
       { code: '2H2O   Ca(OH)2', what: 'Hệ số đầu giữ cỡ thường; số sau chữ/ngoặc thành chỉ số dưới' },
+      { code: '{CH3-CH(NH3^+)-COO^-}   2{CH3-COOH}', what: 'Công thức cấu tạo trong {...}, giữ nhánh dọc và điện tích ^+ / ^-' },
       { code: 'SO4^2-   Fe^3+   OH^-', what: 'Điện tích sau "^" thành chỉ số trên' },
       { code: 'H2^   hoặc   H2↑', what: 'Chất khí bay lên (↑)' },
       { code: 'BaSO4v   hoặc   BaSO4↓', what: 'Chất kết tủa (↓); V2O5 vẫn giữ nguyên V' },
@@ -1651,10 +1654,11 @@ const CHEMEQ_HELP: HelpGroups = [
   },
 ]
 
-const CHEMEQ_QUICK: Array<{ label: string; text: string; title: string; spaceBefore?: boolean; spaceAfter?: boolean }> = [
+const CHEMEQ_QUICK: Array<{ label: string; text: string; title: string; spaceBefore?: boolean; spaceAfter?: boolean; caretOffset?: number }> = [
   { label: '→', text: '→', title: 'Chèn mũi tên một chiều', spaceBefore: true, spaceAfter: true },
   { label: '⇌', text: '⇌', title: 'Chèn mũi tên thuận nghịch', spaceBefore: true, spaceAfter: true },
   { label: '[t°]', text: '[t°]', title: 'Chèn điều kiện nhiệt độ', spaceBefore: true },
+  { label: '{ }', text: '{}', title: 'Chèn cặp ngoặc chất cấu tạo', caretOffset: 1 },
   { label: '↑', text: '↑', title: 'Chèn kí hiệu khí bay lên' },
   { label: '↓', text: '↓', title: 'Chèn kí hiệu kết tủa' },
 ]
@@ -1673,15 +1677,20 @@ export function ChemEqModal({ initial, submitLabel, onClose, onInsert }: Props<C
     const start = el?.selectionStart ?? spec.equations.length
     const end = el?.selectionEnd ?? spec.equations.length
     const before = spec.equations.slice(0, start)
+    const selected = spec.equations.slice(start, end)
     const after = spec.equations.slice(end)
     const pre = q.spaceBefore && before.length > 0 && !/[\s\n]$/.test(before) ? ' ' : ''
     const post = q.spaceAfter && (!after.length || !/^\s/.test(after)) ? ' ' : ''
-    const next = before + pre + q.text + post + after
+    const inserted = q.caretOffset !== undefined && selected ? `${q.text.slice(0, q.caretOffset)}${selected}${q.text.slice(q.caretOffset)}` : q.text
+    const next = before + pre + inserted + post + after
     set({ equations: next })
     requestAnimationFrame(() => {
       if (!el) return
       el.focus()
-      const caret = start + pre.length + q.text.length + post.length
+      const caret =
+        q.caretOffset !== undefined && !selected
+          ? start + pre.length + q.caretOffset
+          : start + pre.length + inserted.length + post.length
       el.setSelectionRange(caret, caret)
     })
   }
@@ -1696,7 +1705,7 @@ export function ChemEqModal({ initial, submitLabel, onClose, onInsert }: Props<C
         {helpOpen && (
           <HelpCards
             groups={CHEMEQ_HELP}
-            intro="Mỗi dòng một phương trình; điều kiện [trên | dưới] đặt ngay sau mũi tên hoặc cuối dòng."
+            intro="Mỗi dòng một phương trình (có thể nhiều mũi tên); chất cấu tạo bọc trong {...}; điều kiện [trên | dưới] sau mũi tên."
             onClose={() => setHelpOpen(false)}
           />
         )}
