@@ -2527,7 +2527,7 @@ export function LensModal({ initial, submitLabel, onClose, onInsert }: Props<Len
           value={spec.type}
           onChange={(type) => set({ type })}
           label="Loại thấu kính"
-          className="w-full"
+          className="w-full flex h-10 [&>button]:flex-1 [&>button]:justify-center"
           options={[
             { key: 'converging', label: 'Hội tụ' },
             { key: 'diverging', label: 'Phân kì' },
