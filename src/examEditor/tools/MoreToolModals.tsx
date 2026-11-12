@@ -22,6 +22,7 @@ import type { NumberLineSpec, TreeSpec, TrigSpec, VennSpec } from '@/lib/mathExt
 import { CHEMEQ_DEFAULT, type ChemEqSpec } from '@/lib/chemEq'
 import { groupedStats, parseGroups, round2, type GroupedSpec, type GroupedView } from '@/lib/grouped'
 import { TABLE_DEFAULT, parseCells, parseMerges, type TableAlign, type TableBorder, type TableHeader, type TableSpec } from '@/lib/table'
+import { PHASE_DEFAULT, type PhaseSpec } from '@/lib/phaseChange'
 import { Check, ToolShell, sectionTitle } from './ToolShell'
 
 type Props<S> = { initial?: S | null; submitLabel?: string; onClose: () => void; onInsert: (img: ToolImage) => void }
@@ -1804,6 +1805,136 @@ export function ChemEqModal({ initial, submitLabel, onClose, onInsert }: Props<C
       canSubmit={Boolean(preview) && !error}
       onSubmit={() => preview && onInsert(preview)}
       onClose={onClose}
+    />
+  )
+}
+
+/* ------------------------------------------------------------------ *
+ * Vật lí 12: đồ thị chuyển thể (nhiệt độ – thời gian)
+ * ------------------------------------------------------------------ */
+
+const PHASE_KINDS: Array<{ label: string; yName: string; tName: string; points: string; extend: boolean }> = [
+  {
+    label: 'Nóng chảy nước đá',
+    yName: 't (°C)',
+    tName: 'T (phút)',
+    points: '(0; -20)\n(4; 0)\n(14; 0)\n(24; 100)',
+    extend: true,
+  },
+  {
+    label: 'Mẫu đề',
+    yName: 't (°C)',
+    tName: 'T (phút)',
+    points: '(0; -45)\nA: (15; -8,83)\nB: (27,4; -8,83)\nC: (40 = T_1; 0)\n(54 = T_2; 0)\n_(66; 16)',
+    extend: false,
+  },
+  {
+    label: 'Đông đặc',
+    yName: 't (°C)',
+    tName: 'T (phút)',
+    points: '(0; 90)\nA: (4; 50)\nB: (12; 50)\n(18; 20)',
+    extend: false,
+  },
+]
+
+const PHASE_HELP: HelpGroups = [
+  {
+    group: 'Điểm & tên điểm',
+    items: [
+      { code: '(0; -45)   (4; 0)', what: 'Điểm (thời gian; nhiệt độ), nối gấp khúc theo thứ tự' },
+      { code: 'A: (15; -8,83)', what: 'Đặt tên điểm A phía trên điểm; thập phân dùng dấu phẩy hoặc chấm' },
+      { code: '_(66; 16)', what: 'Điểm đi tiếp cuối đường (vẽ đoạn nối, không ghi vạch số trên trục)' },
+    ],
+  },
+  {
+    group: 'Kí hiệu trên trục',
+    items: [
+      { code: 'C: (60 = T_1; 0)', what: 'Vẽ ở x = 60, ghi T₁ trên trục ngang (_1, _2… thành chỉ số dưới)' },
+      { code: '(15; 50 = t_1)', what: 'Ghi kí hiệu t₁ trên trục dọc (dùng được cho cả hai trục)' },
+    ],
+  },
+]
+
+export function PhaseModal({ initial, submitLabel, onClose, onInsert }: Props<PhaseSpec>) {
+  const [spec, setSpec] = useState<PhaseSpec>(() => ({ ...PHASE_DEFAULT, ...initial }))
+  const [move, setMove] = useState(false)
+  const set = (p: Partial<PhaseSpec>) => setSpec((s) => ({ ...s, ...p }))
+  const doc = useMemo((): ToolDoc => ({ kind: 'phase', spec }), [spec])
+  const { preview, error } = useRender(doc)
+
+  const inputs = (
+    <>
+      <section>
+        <h3 className={sectionTitle}>Mẫu nhanh</h3>
+        <div className="flex flex-wrap gap-1.5">
+          {PHASE_KINDS.map((k) => {
+            const active = spec.points === k.points && spec.extend === k.extend
+            return (
+              <button
+                key={k.label}
+                type="button"
+                aria-pressed={active}
+                onClick={() => set({ yName: k.yName, tName: k.tName, points: k.points, extend: k.extend, labelPos: undefined })}
+                className={cn(
+                  'rounded-[6px] border px-2.5 py-1 text-[12.5px] transition-colors',
+                  active ? 'border-clay bg-clay-tint font-medium text-clay' : 'border-line text-ink-2 hover:border-ink-4',
+                )}
+              >
+                {k.label}
+              </button>
+            )
+          })}
+        </div>
+      </section>
+      <TextBlock
+        title="Các điểm"
+        help={PHASE_HELP}
+        intro="Mỗi điểm dạng (thời gian; nhiệt độ), thời gian tăng dần; dùng 60 = T_1 để ghi kí hiệu trên trục."
+        value={spec.points}
+        onChange={(points) => set({ points })}
+        rows={5}
+        errors={error ? [error] : []}
+        label="Các điểm của đồ thị chuyển thể"
+      />
+      <section className="grid grid-cols-2 gap-2">
+        <label className="text-[12.5px] text-ink-2">
+          Trục dọc
+          <input className={cn(inputClass, 'mt-1 h-9')} value={spec.yName} onChange={(e) => set({ yName: e.target.value })} />
+        </label>
+        <label className="text-[12.5px] text-ink-2">
+          Trục ngang
+          <input className={cn(inputClass, 'mt-1 h-9')} value={spec.tName} onChange={(e) => set({ tName: e.target.value })} />
+        </label>
+      </section>
+      <section className="space-y-1.5">
+        <Check checked={spec.dashed} onChange={(dashed) => set({ dashed })}>Nét đứt gióng xuống hai trục</Check>
+        <Check checked={spec.dots} onChange={(dots) => set({ dots })}>Chấm tại điểm có tên</Check>
+        <Check checked={spec.extend} onChange={(extend) => set({ extend })}>Kéo dài ngang sau điểm cuối</Check>
+      </section>
+    </>
+  )
+
+  return (
+    <ToolShell
+      title="Đồ thị chuyển thể"
+      hint="Nhiệt độ theo thời gian (nóng chảy, sôi, đông đặc); gốc O đặt tại giá trị nhỏ nhất của trục dọc"
+      inputs={inputs}
+      inputsWidth={360}
+      preview={preview}
+      submitLabel={submitLabel ?? (initial ? 'Cập nhật đồ thị' : 'Chèn đồ thị')}
+      canSubmit={Boolean(preview) && !error}
+      onSubmit={() => preview && onInsert(preview)}
+      onClose={onClose}
+      renderPreview={(img) => (
+        <LabelPreview
+          img={img}
+          labelPos={spec.labelPos}
+          onChange={(labelPos) => set({ labelPos })}
+          move={move}
+          onToggle={() => setMove((v) => !v)}
+          fallback={<img src={svgDataUrl(img.svg)} alt="Xem trước" className="max-h-full max-w-full rounded-[4px] border border-line bg-white object-contain" />}
+        />
+      )}
     />
   )
 }
