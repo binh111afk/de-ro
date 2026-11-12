@@ -5,7 +5,7 @@
  * hít + vẽ đường gióng nét đứt bằng lớp phủ SVG trên DOM cho mượt, thả chuột mới
  * ghi toạ độ vào ô "Dựng thêm". Giữ Alt để tắt hít.
  */
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { svgDataUrl } from '@/lib/plot'
 import type { ToolImage } from '@/lib/toolSpec'
 import { fitCoordTransform, savePointCoord, snapDragPoint, type Pt, type SnapResult } from './edgeSnap'
@@ -35,6 +35,16 @@ export function EdgeEditPreview({ img, extras, onExtras }: { img: ToolImage; ext
   const vbMatch = /viewBox="([-\d.]+) ([-\d.]+) ([-\d.]+) ([-\d.]+)"/.exec(img.svg)
   const [minX, minY, w, h] = vbMatch ? vbMatch.slice(1).map(Number) : [0, 0, img.width, img.height]
   const pick = img.pick ?? { points: [], segs: [], tris: [] as string[][] }
+
+  // Tỉ lệ px trên một đơn vị viewBox, chốt một lần khi vào chế độ: hình chiếm ~70% khung,
+  // chừa chỗ trống xung quanh để kéo cạnh dài ra mà không bị khung che.
+  const outer = useRef<HTMLDivElement>(null)
+  const [scale, setScale] = useState<number | null>(null)
+  useLayoutEffect(() => {
+    const r = outer.current?.getBoundingClientRect()
+    if (r && r.width > 0 && r.height > 0) setScale(0.7 * Math.min(r.width / w, r.height / h))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const originSet = useMemo(() => new Set(pick.origins ?? []), [pick.origins])
   const handles = useMemo(() => pick.points.filter((p) => originSet.has(p.name)), [pick.points, originSet])
@@ -181,18 +191,26 @@ export function EdgeEditPreview({ img, extras, onExtras }: { img: ToolImage; ext
   }, [draggingName])
 
   return (
-    <div className="flex h-full w-full flex-col items-center justify-center" style={{ containerType: 'size' }}>
+    <div
+      ref={outer}
+      className="flex h-full w-full flex-col items-center justify-center rounded-[4px] border border-line bg-white"
+      style={{ containerType: 'size' }}
+    >
       <div
         ref={box}
         className="relative select-none"
-        style={{ aspectRatio: `${w} / ${h}`, width: `min(100cqw, 100cqh * ${w / h})` }}
+        style={{
+          aspectRatio: `${w} / ${h}`,
+          // giữ tỉ lệ px/đơn vị cố định suốt lúc chỉnh: cạnh kéo dài thì hình to ra thật, chỉ co lại khi chạm mép khung
+          width: scale ? `min(100cqw, 100cqh * ${w / h}, ${w * scale}px)` : `min(100cqw, 100cqh * ${w / h})`,
+        }}
       >
         <img
           ref={imgRef}
           src={svgDataUrl(img.svg)}
           alt="Xem trước"
           draggable={false}
-          className="block h-full w-full rounded-[4px] border border-line bg-white transition-opacity duration-75"
+          className="block h-full w-full transition-opacity duration-75"
         />
         <svg
           viewBox={`${minX} ${minY} ${w} ${h}`}
