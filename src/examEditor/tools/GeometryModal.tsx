@@ -135,12 +135,20 @@ export function Geo3dModal({ initial, submitLabel, onClose, onInsert }: Props<Ge
   )
   const preview = useMemo(() => renderTool({ kind: 'geo3d', spec }), [spec])
   const set = (patch: Partial<Geo3dSpec>) => setSpec((s) => ({ ...s, ...patch }))
-  const [move, setMove] = useState(false)
+  const [mode, setMode] = useState<'pick' | 'label' | 'edge'>('pick')
   const round = isRound3d(spec.shape)
+  const hasDrag = hasDragCoords(spec.extras ?? '')
 
   const inputs = (
     <>
-      <ShapePicker options={GEO3D_SHAPES} value={spec.shape} onPick={(o) => set({ shape: o.id, names: o.names })} />
+      <ShapePicker
+        options={GEO3D_SHAPES}
+        value={spec.shape}
+        onPick={(o) => {
+          set({ shape: o.id, names: o.names, extras: resetDragCoords(spec.extras ?? '') })
+          if (isRound3d(o.id) && mode === 'edge') setMode('pick')
+        }}
+      />
       <Names names={spec.names} onChange={(names) => set({ names })} />
       <section>
         <h3 className={sectionTitle}>Đường phụ</h3>
@@ -172,10 +180,16 @@ export function Geo3dModal({ initial, submitLabel, onClose, onInsert }: Props<Ge
       )}
     </>
   )
+  const hint =
+    mode === 'edge' && !round
+      ? 'Kéo nút để đổi vị trí đỉnh (giữ Shift để kéo thẳng đứng, Alt để tắt hít)'
+      : mode === 'label'
+        ? 'Kéo chữ nhãn tới vị trí mong muốn'
+        : 'Bấm lên cạnh để lấy điểm, kéo từ điểm này sang điểm khác để nối đoạn; nét khuất tự vẽ đứt'
   return (
     <ToolShell
       title="Hình học không gian"
-      hint="Bấm lên cạnh để lấy điểm, kéo từ điểm này sang điểm khác để nối đoạn; nét khuất tự vẽ đứt"
+      hint={hint}
       inputs={inputs}
       preview={preview}
       submitLabel={submitLabel ?? (initial ? 'Cập nhật hình' : 'Chèn hình')}
@@ -185,8 +199,37 @@ export function Geo3dModal({ initial, submitLabel, onClose, onInsert }: Props<Ge
           img={img}
           labelPos={spec.labelPos}
           onChange={(labelPos) => set({ labelPos })}
-          move={move}
-          onToggle={() => setMove((v) => !v)}
+          move={mode === 'label'}
+          onToggle={() => setMode((m) => (m === 'label' ? 'pick' : 'label'))}
+          modeExtra={
+            <button
+              type="button"
+              disabled={round}
+              aria-pressed={mode === 'edge' && !round}
+              title={round ? 'Nón, trụ, cầu chưa chỉnh cạnh được' : 'Kéo nút ở đỉnh để chỉnh hình khối'}
+              onClick={() => setMode((m) => (m === 'edge' ? 'pick' : 'edge'))}
+              className={cn(
+                'flex items-center gap-1 whitespace-nowrap rounded-[6px] border px-1.5 py-1 text-[11.5px] transition-colors disabled:pointer-events-none disabled:opacity-40',
+                mode === 'edge' && !round ? 'border-clay bg-clay-tint font-medium text-clay' : 'border-line text-ink-2 hover:border-ink-4',
+              )}
+            >
+              <Waypoints className="size-3.5" /> Chỉnh cạnh
+            </button>
+          }
+          extraBar={
+            <button
+              type="button"
+              onClick={() => set({ extras: resetDragCoords(spec.extras ?? '') })}
+              disabled={!hasDrag || round}
+              title="Xoá các toạ độ do kéo sinh ra"
+              className="flex items-center gap-1 whitespace-nowrap rounded-[6px] border border-line px-1.5 py-1 text-[11.5px] text-ink-2 transition-colors hover:border-ink-4 disabled:pointer-events-none disabled:opacity-40"
+            >
+              <RotateCcw className="size-3.5" /> Đặt lại hình
+            </button>
+          }
+          previewOverride={
+            mode === 'edge' && !round ? <EdgeEditPreview key={spec.shape} img={img} extras={spec.extras ?? ''} onExtras={(extras) => set({ extras })} /> : undefined
+          }
           fallback={
             round ? (
               <img src={svgDataUrl(img.svg)} alt="Xem trước" className="max-h-full max-w-full rounded-[4px] border border-line bg-white object-contain" />

@@ -64,12 +64,11 @@ function parseNumStrict(s: string): number | null {
   return Number.isFinite(v) ? v : null
 }
 
-function parseCoordPair(inner: string): [number, number] | null {
+function parseCoordTuple(inner: string): number[] | null {
   const parts = inner.includes(';') ? inner.split(';') : inner.split(',')
-  if (parts.length !== 2) return null
-  const x = parseNumStrict(parts[0])
-  const y = parseNumStrict(parts[1])
-  return x !== null && y !== null ? [x, y] : null
+  if (parts.length !== 2 && parts.length !== 3) return null
+  const nums = parts.map(parseNumStrict)
+  return nums.every((v) => v !== null) ? (nums as number[]) : null
 }
 
 const COORD_HEAD = /^[A-Z][0-9]*'*\s*(?:=\s*)?\(/
@@ -77,9 +76,13 @@ const COORD_ONE = /([A-Z][0-9]*'*)\s*(?:=\s*)?\(([^()]*)\)/g
 const cleanConstructLine = (raw: string) =>
   raw.replace(/[′’]/g, "'").replace(/\s*\/\/\s*kéo\s*$/i, '').replace(/\s+/g, ' ').trim()
 
-function parseCoordLine(s: string): { items: Array<{ name: string; p: [number, number] }>; error?: string } | null {
+function parseCoordLine(
+  s: string,
+  expectedDim: 2 | 3 = 2,
+): { items: Array<{ name: string; p: number[] }>; error?: string } | null {
   if (!COORD_HEAD.test(s)) return null
-  const items: Array<{ name: string; p: [number, number] }> = []
+  const sample = expectedDim === 3 ? 'S(1; 0,5; 2) hoặc S = (1; 0,5; 2)' : 'A(0; 4) hoặc M(2,5; 0)'
+  const items: Array<{ name: string; p: number[] }> = []
   const re = new RegExp(COORD_ONE.source, 'g')
   let rest = ''
   let last = 0
@@ -87,24 +90,36 @@ function parseCoordLine(s: string): { items: Array<{ name: string; p: [number, n
     const idx = m.index ?? 0
     rest += s.slice(last, idx)
     last = idx + m[0].length
-    const p = parseCoordPair(m[2])
-    if (!p) return { items: [], error: `toạ độ ${m[1]} không hợp lệ — ví dụ: ${m[1]}(0; 4) hoặc M(2,5; 0)` }
+    const p = parseCoordTuple(m[2])
+    if (!p) return { items: [], error: `toạ độ ${m[1]} không hợp lệ — ví dụ: ${sample}` }
+    if (p.length !== expectedDim) {
+      return {
+        items: [],
+        error:
+          expectedDim === 2
+            ? `toạ độ 3 số ${m[1]}(…) chỉ dùng cho hình không gian — hình phẳng cần 2 số: ${m[1]}(0; 4)`
+            : `toạ độ 2 số ${m[1]}(…) chỉ dùng cho hình phẳng — hình không gian cần 3 số: ${m[1]}(1; 0,5; 2)`,
+      }
+    }
     items.push({ name: m[1], p })
   }
   rest += s.slice(last)
   if (!items.length || rest.replace(/[\s,;]+/g, '').length > 0) {
-    return { items: [], error: 'ví dụ: A(0; 4) hoặc A = (0; 4) hoặc M(2,5; 0)' }
+    return { items: [], error: `ví dụ: ${sample}` }
   }
   return { items }
 }
 
-/** đọc trước các lệnh khai báo toạ độ A(x; y) để ghi đè đỉnh mẫu trước khi dựng */
-export function extractCoords(text: string): Map<string, [number, number]> {
-  const map = new Map<string, [number, number]>()
+/** đọc trước các lệnh khai báo toạ độ A(x; y) hoặc A(x; y; z) để ghi đè đỉnh mẫu trước khi dựng */
+export function extractCoords(text: string): Map<string, [number, number]>
+export function extractCoords(text: string, dim: 3): Map<string, [number, number, number]>
+export function extractCoords(text: string, dim?: 2 | 3): Map<string, number[]>
+export function extractCoords(text: string, dim: 2 | 3 = 2): Map<string, number[]> {
+  const map = new Map<string, number[]>()
   for (const raw of text.split('\n')) {
     const s = cleanConstructLine(raw)
     if (!s || s.startsWith('//')) continue
-    const parsed = parseCoordLine(s)
+    const parsed = parseCoordLine(s, dim)
     if (parsed && !parsed.error) for (const it of parsed.items) map.set(it.name, it.p)
   }
   return map
@@ -197,7 +212,7 @@ export function construct(text: string, known: Map<string, Vec>, opts: Construct
     fills: [],
     errors: [],
   }
-  const dim = known.values().next().value?.length ?? 2
+  const dim: 2 | 3 = (known.values().next().value?.length ?? 2) === 3 ? 3 : 2
   let hid = 0
 
   const addPoint = (name: string, p: Vec, hidden = false) => {
@@ -242,11 +257,10 @@ export function construct(text: string, known: Map<string, Vec>, opts: Construct
       return true
     }
 
-    // ---------- điểm theo toạ độ: A(0; 4) hoặc A = (0; 4)
-    const coordParsed = parseCoordLine(s)
+    // ---------- điểm theo toạ độ: A(0; 4) hoặc S(1; 0,5; 2)
+    const coordParsed = parseCoordLine(s, dim)
     if (coordParsed) {
       if (coordParsed.error) return err(coordParsed.error)
-      if (dim !== 2) return err('toạ độ A(x; y) chỉ dùng cho hình phẳng')
       for (const it of coordParsed.items) {
         if (!out.coords.includes(it.name)) out.coords.push(it.name)
         // đỉnh mẫu đã có trong `known` → ghi đè toạ độ, không thêm trùng vào `out.points`
@@ -648,12 +662,13 @@ export const GEO_HELP: Array<{ group: string; items: Array<{ code: string; what:
     ],
   },
   {
-    group: 'Toạ độ, nhãn, kích thước (hình phẳng)',
+    group: 'Toạ độ, nhãn, kích thước',
     items: [
-      { code: 'A(0; 4) hoặc A = (0; 4)', what: 'Đặt điểm theo toạ độ (trùng tên đỉnh mẫu sẽ ghi đè)' },
-      { code: 'nhãn AB "4 km"', what: 'Ghi chữ cạnh đoạn AB (hỗ trợ chỉ số x_1, kéo chỉnh được)' },
-      { code: 'kích thước BC "7 km"', what: 'Đoạn kích thước nét đứt hai mũi tên (thêm trên/dưới/trái/phải)' },
-      { code: 'đường BC kéo dài', what: 'Kéo dài đoạn BC ra hai phía (hoặc "tia BC" quá C)' },
+      { code: 'A(0; 4) hoặc A = (0; 4)', what: 'Đặt điểm 2D (hình phẳng; trùng tên đỉnh mẫu sẽ ghi đè)' },
+      { code: 'S(1; 0,5; 2) hoặc S = (1; 0,5; 2)', what: 'Đặt điểm 3D (hình không gian; trùng tên đỉnh mẫu sẽ ghi đè)' },
+      { code: 'nhãn AB "4 km"', what: 'Ghi chữ cạnh đoạn AB, hình phẳng (hỗ trợ chỉ số x_1, kéo chỉnh được)' },
+      { code: 'kích thước BC "7 km"', what: 'Đoạn kích thước nét đứt hai mũi tên, hình phẳng (thêm trên/dưới/trái/phải)' },
+      { code: 'đường BC kéo dài', what: 'Kéo dài đoạn BC ra hai phía, hình phẳng (hoặc "tia BC" quá C)' },
     ],
   },
   {
