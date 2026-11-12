@@ -17,7 +17,9 @@ import { GEO_HELP } from '@/lib/geoConstruct'
 import { ChevronDown, CircleHelp, RotateCcw, Waypoints, X } from 'lucide-react'
 import { Check, ToolShell, sectionTitle } from './ToolShell'
 
-const isTri2d = (s: Geo2dShape) => ['triangle', 'right-triangle', 'isosceles', 'equilateral', 'inscribed-triangle'].includes(s)
+const FREE_SAMPLE = 'A(0; 4)\nB(0; 0)\nC(7; 0)\nM(2,5; 0)\nAB, AM\nđường BC kéo dài\nnhãn AB "4 km"\nkích thước BC "7 km"'
+
+const isTri2d =(s: Geo2dShape) => ['triangle', 'right-triangle', 'isosceles', 'equilateral', 'inscribed-triangle'].includes(s)
 const isQuad2d = (s: Geo2dShape) => ['square', 'rectangle', 'parallelogram', 'rhombus', 'trapezoid'].includes(s)
 const isRound3d = (s: Geo3dShape) => s === 'cone' || s === 'cylinder' || s === 'sphere'
 const hasBase4 = (s: Geo3dShape) => s.startsWith('pyramid4') || s === 'box' || s === 'cube'
@@ -26,7 +28,7 @@ type Props<S> = { initial?: S | null; submitLabel?: string; onClose: () => void;
 
 export function Geo2dModal({ initial, submitLabel, onClose, onInsert }: Props<Geo2dSpec>) {
   const [spec, setSpec] = useState<Geo2dSpec>(
-    initial ?? { shape: 'triangle', names: GEO2D_SHAPES[0].names, altitude: false, median: false, diagonals: false, circumcircle: false, marks: true },
+    initial ?? { shape: 'triangle', names: ['A', 'B', 'C'], altitude: false, median: false, diagonals: false, circumcircle: false, marks: true },
   )
   const preview = useMemo(() => renderTool({ kind: 'geo2d', spec }), [spec])
   const set = (patch: Partial<Geo2dSpec>) => setSpec((s) => ({ ...s, ...patch }))
@@ -38,7 +40,10 @@ export function Geo2dModal({ initial, submitLabel, onClose, onInsert }: Props<Ge
       <ShapePicker
         options={GEO2D_SHAPES}
         value={spec.shape}
-        onPick={(o) => set({ shape: o.id, names: o.names })}
+        onPick={(o) =>
+          // "Tự do" bắt đầu trống trơn: điền sẵn một hình mẫu để người dùng sửa số, khỏi phải nhớ cú pháp
+          set(o.id === 'free' && !(spec.extras ?? '').trim() ? { shape: o.id, names: o.names, extras: FREE_SAMPLE } : { shape: o.id, names: o.names })
+        }
       />
       {spec.names.length > 0 && <Names names={spec.names} onChange={(names) => set({ names })} />}
       {spec.shape !== 'free' && (

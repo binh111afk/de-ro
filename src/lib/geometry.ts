@@ -100,6 +100,7 @@ type P2 = [number, number]
 type P3 = [number, number, number]
 
 export const GEO2D_SHAPES: Array<{ id: Geo2dShape; label: string; names: string[] }> = [
+  { id: 'free', label: 'Tự do (theo toạ độ)', names: [] },
   { id: 'triangle', label: 'Tam giác', names: ['A', 'B', 'C'] },
   { id: 'right-triangle', label: 'Tam giác vuông tại A', names: ['A', 'B', 'C'] },
   { id: 'isosceles', label: 'Tam giác cân tại A', names: ['A', 'B', 'C'] },
@@ -111,7 +112,6 @@ export const GEO2D_SHAPES: Array<{ id: Geo2dShape; label: string; names: string[
   { id: 'trapezoid', label: 'Hình thang (AB ∥ CD)', names: ['A', 'B', 'C', 'D'] },
   { id: 'circle', label: 'Đường tròn tâm O', names: ['O', 'A'] },
   { id: 'inscribed-triangle', label: 'Tam giác nội tiếp đường tròn', names: ['A', 'B', 'C', 'O'] },
-  { id: 'free', label: 'Tự do', names: [] },
 ]
 
 export const GEO3D_SHAPES: Array<{ id: Geo3dShape; label: string; names: string[] }> = [
@@ -577,7 +577,8 @@ function renderExtras2d(
     freeSegsPx.push([t1, t2], [q1, q2], [p2, p3])
     all.push(t2, q2, p2, p3)
     if (dm.text) {
-      const m = mid(p2, p3)
+      // chữ đặt ngoài đường kích thước (phía xa hình), không đè lên nét đứt — như hình SGK
+      const m = add(mid(p2, p3), mul(n, Math.abs(n[1]) > 0.7 ? 13 : Math.max(18, dm.text.length * 4.5)))
       const estW = Math.max(18, dm.text.length * 8)
       parts.push(`<text x="${f1(m[0])}" y="${f1(m[1] + 5)}" ${LABEL_FONT} text-anchor="middle" data-lbl="dim:${esc(dm.a + dm.b)}">${richTextToSvg(dm.text)}</text>`)
       all.push([m[0] - estW / 2, m[1] - 10], [m[0] + estW / 2, m[1] + 10])

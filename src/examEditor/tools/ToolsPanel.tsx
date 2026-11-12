@@ -4,12 +4,14 @@
  */
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
-import { ArrowRightLeft, Box, Flame, ChartColumn, ChartSpline, ClipboardList, Grid3x3, SquarePlus, Table, Table2, Triangle, TriangleRight, Zap, ChartLine, Atom, Hexagon, FlaskConical, CircleDot, Network, MoveHorizontal, Circle, Thermometer, Shuffle, Sigma, Waves } from 'lucide-react'
+import { ArrowRightLeft, Box, Search, Flame, ChartColumn, ChartSpline, ClipboardList, Grid3x3, SquarePlus, Table, Table2, Triangle, TriangleRight, Zap, ChartLine, Atom, Hexagon, FlaskConical, CircleDot, Network, MoveHorizontal, Circle, Thermometer, Shuffle, Sigma, Waves } from 'lucide-react'
 import type { ToolImage, ToolKind } from '@/lib/toolSpec'
 import type { ExamDoc } from '@/data/docTypes'
 import { ToolModal } from './ToolModal'
 import { ShuffleModal } from './ShuffleModal'
 import { cn } from '@/lib/cn'
+import { inputClass } from '@/components/ui'
+import { deaccent } from '@/lib/khungPrompt'
 
 /** công cụ vẽ hình (chèn ảnh) + công cụ làm việc với cả đề (nhóm Khác) */
 type ToolId = ToolKind | 'shuffle' | 'formula'
@@ -97,9 +99,30 @@ export function ToolsPanel({
     }
   }
   const shown = subjects.some((s) => s.name === subject) ? subjects.filter((s) => s.name === subject) : subjects.slice(0, 1)
+  // tìm kiếm: không dấu, khớp tên hoặc mô tả, gom kết quả mọi môn (giữ tên môn làm tiêu đề nhóm)
+  const [q, setQ] = useState('')
+  const terms = deaccent(q.trim()).split(/\s+/).filter(Boolean)
+  const found = terms.length
+    ? subjects
+        .map((s) => ({ ...s, tools: s.tools.filter((t) => terms.every((w) => deaccent(`${t.label} ${t.desc} ${s.name}`).includes(w))) }))
+        .filter((s) => s.tools.length)
+    : null
+  const list = found ?? shown
 
   return (
     <div className="flex flex-col gap-3 py-3">
+      <label className="relative">
+        <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-3" />
+        <input
+          type="search"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="Tìm công cụ…"
+          aria-label="Tìm công cụ"
+          className={`${inputClass} h-9 pl-9 text-[13px]`}
+        />
+      </label>
+      {!found && (
       <div role="tablist" aria-label="Chọn môn" className="flex flex-wrap gap-1.5">
         {subjects.map((s) => (
           <button
@@ -118,8 +141,11 @@ export function ToolsPanel({
           </button>
         ))}
       </div>
-      {shown.map((s) => (
+      )}
+      {found && !found.length && <p className="px-1 py-6 text-center text-[13px] text-ink-3">Không thấy công cụ nào khớp “{q.trim()}”.</p>}
+      {list.map((s) => (
         <section key={s.name}>
+          {found && <h3 className="mb-1.5 px-0.5 text-[11.5px] font-semibold uppercase tracking-wide text-ink-3">{s.name}</h3>}
           <ul className="flex flex-col gap-1">
             {s.tools.map(({ id, label, desc, Icon }) => (
               <li key={id}>
