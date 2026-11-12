@@ -22,6 +22,24 @@ export interface ShuffleOptions {
 export interface VersionAnswer {
   no: number
   answer: string
+  /** số thứ tự câu trong đề gốc (1..questionCount) */
+  origNo?: number
+  kind?: 'mcq' | 'tf' | 'short'
+}
+
+export interface SummaryAnswerRow {
+  no: number
+  kind: 'mcq' | 'tf' | 'short'
+  /** đáp án ở từng mã đề (theo đúng thứ tự `codes`); '?' nếu câu chưa có đáp án */
+  answers: string[]
+}
+
+export interface SummaryAnswerData {
+  codes: string[]
+  /** Bảng 1: hàng = câu theo thứ tự đề gốc, cột = từng mã đề */
+  byOriginal: SummaryAnswerRow[]
+  /** Bảng 2: hàng = câu theo thứ tự của từng mã đề (để chấm tay) */
+  byVersion: SummaryAnswerRow[]
 }
 
 export interface ShuffledVersion {
@@ -139,6 +157,8 @@ export function shuffleExam(doc: ExamDoc, opts: ShuffleOptions): ShuffleResult {
   const keySection = doc.blocks.slice(cut)
   const keys = readKeys(doc.blocks)
   const questions = body.filter((b): b is QuestionBlock => b.type === 'question')
+  const origMeta = new WeakMap<QuestionBlock, { origNo: number; kind: 'mcq' | 'tf' | 'short' }>()
+  questions.forEach((q, idx) => origMeta.set(q, { origNo: idx + 1, kind: kindOf(q) }))
 
   const versions: ShuffledVersion[] = opts.codes.map((code) => {
     // chia nhóm: dãy câu liền nhau cùng dạng
@@ -164,9 +184,10 @@ export function shuffleExam(doc: ExamDoc, opts: ShuffleOptions): ShuffleResult {
     const answers: VersionAnswer[] = []
     const blocks = out.map((b) => {
       if (b.type !== 'question') return b
+      const meta = origMeta.get(b)
       const { q, answer } = shuffleQuestion(b, keys.get(b.no) ?? [], opts.shuffleOptions, random)
       n += 1
-      answers.push({ no: n, answer })
+      answers.push({ no: n, answer, origNo: meta?.origNo, kind: meta?.kind })
       return { ...q, no: n }
     })
 
@@ -198,6 +219,40 @@ export function shuffleExam(doc: ExamDoc, opts: ShuffleOptions): ShuffleResult {
     questionCount: questions.length,
     answeredCount: versions[0]?.answers.filter((a) => a.answer).length ?? 0,
   }
+}
+
+/**
+ * Dựng dữ liệu Bảng đáp án tổng hợp từ kết quả xáo đề:
+ * - byOriginal: hàng = câu theo thứ tự đề gốc, cột = từng mã đề (đối chiếu giữa các mã).
+ * - byVersion: hàng = câu theo thứ tự của từng mã đề (để chấm tay).
+ * Câu chưa có đáp án ghi '?'.
+ */
+export function buildSummaryAnswers(res: ShuffleResult): SummaryAnswerData {
+  const codes = res.versions.map((v) => v.code)
+  const n = res.questionCount
+  const firstByOrig = new Map<number, VersionAnswer>()
+  for (const a of res.versions[0]?.answers ?? []) {
+    if (a.origNo != null) firstByOrig.set(a.origNo, a)
+  }
+
+  const byOriginal: SummaryAnswerRow[] = Array.from({ length: n }, (_, idx) => {
+    const origNo = idx + 1
+    const kind = firstByOrig.get(origNo)?.kind ?? 'mcq'
+    const answers = res.versions.map((v) => {
+      const hit = v.answers.find((a) => a.origNo === origNo) ?? v.answers[idx]
+      return hit?.answer || '?'
+    })
+    return { no: origNo, kind, answers }
+  })
+
+  const byVersion: SummaryAnswerRow[] = Array.from({ length: n }, (_, idx) => {
+    const no = idx + 1
+    const kind = res.versions[0]?.answers[idx]?.kind ?? 'mcq'
+    const answers = res.versions.map((v) => v.answers[idx]?.answer || '?')
+    return { no, kind, answers }
+  })
+
+  return { codes, byOriginal, byVersion }
 }
 
 /**

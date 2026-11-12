@@ -7,6 +7,7 @@
 import katex from 'katex'
 import 'katex/contrib/mhchem' // \ce{...}
 import type { ExamBlock, ExamDoc, FormatAttrs, RichText, Span } from '@/data/docTypes'
+import type { SummaryAnswerData } from '@/lib/shuffleExam'
 import { estimateChoiceCols } from './choiceCols'
 import { splitRichLines } from './convert'
 
@@ -321,6 +322,14 @@ const EXPORT_CSS = `
   .ak th { background: #f2f2f2; }
   .rub { margin: 0 0 8px 22px; }
   .hr { border: 0; border-top: 1px solid #999; margin: 10px 0; }
+  @page omr { size: A4 portrait; margin: 0.4cm; }
+  .sheet-wrapper { page: omr; page-break-inside: avoid; break-inside: avoid; width: 100%; display: flex; justify-content: center; align-items: center; box-sizing: border-box; }
+  .sheet-wrapper svg { width: 100%; max-width: 202mm; max-height: 288mm; height: auto; display: block; margin: 0 auto; }
+  .summary-wrap { width: 100%; }
+  .summary-table { width: 100%; border-collapse: collapse; margin: 8px 0 18px; font-size: 11pt; }
+  .summary-table th, .summary-table td { border: 1px solid #000; padding: 3px 5px; text-align: center; }
+  .summary-table th { background: #f2f2f2; font-weight: bold; }
+  .summary-table tr { break-inside: avoid; page-break-inside: avoid; }
   /* công thức MathML: phân số cỡ chữ thường thay vì thu nhỏ như chỉ số */
   math { math-style: normal; }
 `
@@ -365,6 +374,88 @@ export function printDocs(docs: ExamDoc[], title: string): void {
 <html lang="vi"><head><meta charset="utf-8"><title>${escapeHtml(title)}</title>
 <style>${EXPORT_CSS}</style></head>
 <body>${body}</body></html>`)
+}
+
+export interface PrintShuffleItem {
+  doc: ExamDoc
+  code: string
+  sheetSvg?: string
+}
+
+/** Dựng HTML cho hai bảng đáp án tổng hợp (theo đề gốc và theo từng mã đề để chấm tay). */
+export function summaryAnswersToHtml(summary: SummaryAnswerData, examTitle: string): string {
+  const codeGroups = chunk(summary.codes.map((_, i) => i), 10)
+
+  const renderGroupTables = (rows: SummaryAnswerData['byOriginal'], firstCol: string) =>
+    codeGroups
+      .map((grp) => {
+        const thCols = grp.map((ci) => `<th>Mã ${escapeHtml(summary.codes[ci])}</th>`).join('')
+        const bodyRows = rows
+          .map(
+            (r) =>
+              `<tr><td style="font-weight:bold;background:#fafafa;">Câu ${r.no}</td>` +
+              grp.map((ci) => `<td style="font-weight:bold;">${escapeHtml(r.answers[ci] || '?')}</td>`).join('') +
+              `</tr>`,
+          )
+          .join('')
+        return `<table class="summary-table"><thead><tr><th style="width:110px;">${escapeHtml(firstCol)}</th>${thCols}</tr></thead><tbody>${bodyRows}</tbody></table>`
+      })
+      .join('')
+
+  return `
+<div class="summary-wrap">
+  <h1 class="t">BẢNG ĐÁP ÁN TỔNG HỢP CÁC MÃ ĐỀ</h1>
+  <p class="p" style="text-align:center;font-style:italic;margin-bottom:14px;">${escapeHtml(examTitle)}</p>
+  <h2 class="h2">1. Bảng đáp án theo thứ tự câu đề gốc</h2>
+  ${renderGroupTables(summary.byOriginal, 'Câu (gốc)')}
+  <h2 class="h2">2. Bảng đáp án theo thứ tự câu từng mã đề (chấm tay)</h2>
+  ${renderGroupTables(summary.byVersion, 'Câu')}
+</div>`
+}
+
+/** Dựng HTML in tổng hợp: mỗi mã đề (+ phiếu trả lời nếu có), đáp án từng mã, trang cuối là bảng đáp án tổng hợp. */
+export function buildShuffledPrintHtml(
+  items: PrintShuffleItem[],
+  title: string,
+  opts: { answerDoc?: ExamDoc; summary?: SummaryAnswerData } = {},
+): string {
+  const sections: Array<{ html: string; omr?: boolean }> = []
+  for (const item of items) {
+    sections.push({ html: blocksToHtml(item.doc.blocks) })
+    if (item.sheetSvg) {
+      sections.push({ html: `<div class="sheet-wrapper">${item.sheetSvg}</div>`, omr: true })
+    }
+  }
+  if (opts.answerDoc) {
+    sections.push({ html: blocksToHtml(opts.answerDoc.blocks) })
+  }
+  if (opts.summary) {
+    sections.push({ html: summaryAnswersToHtml(opts.summary, title) })
+  }
+
+  let body = ''
+  for (let i = 0; i < sections.length; i++) {
+    if (i > 0 && !sections[i].omr && !sections[i - 1].omr) {
+      // Chuyển giữa hai phần cùng dùng @page mặc định thì chèn ngắt trang;
+      // chuyển vào/ra .sheet-wrapper (page: omr) trình duyệt tự ngắt trang nên không chèn thêm tránh trang trắng.
+      body += '<div style="page-break-after:always"></div>'
+    }
+    body += sections[i].html
+  }
+
+  return `<!DOCTYPE html>
+<html lang="vi"><head><meta charset="utf-8"><title>${escapeHtml(title)}</title>
+<style>${EXPORT_CSS}</style></head>
+<body>${body}</body></html>`
+}
+
+/** In toàn bộ mã đề + phiếu trả lời + đáp án + bảng tổng hợp ra PDF một lần. */
+export function printShuffledExams(
+  items: PrintShuffleItem[],
+  title: string,
+  opts: { answerDoc?: ExamDoc; summary?: SummaryAnswerData } = {},
+): void {
+  printHtml(buildShuffledPrintHtml(items, title, opts))
 }
 
 export const docFileName = (title: string) => sanitize(title)
