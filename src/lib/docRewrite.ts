@@ -150,6 +150,7 @@ export const FIGURE_GUIDE =
   '19) Phương trình hoá học (Hoá): {"kind":"chemeq","equations":"2KMnO4 -> K2MnO4 + MnO2 + O2 [t°]","autoBalance":false,"fontSize":17,"align":"center"}. Mũi tên ->, <=>, điều kiện [trên | dưới] (có điện tích như [-OH^- | +H^+]); nhiều mũi tên một dòng đặt [điều kiện] ngay sau mỗi mũi tên; chất cấu tạo bọc trong {...} (vd "{CH3-CH(NH3^+)-COOH} <=> [-OH^- | +H^+] {CH3-CH(NH3^+)-COO^-}"). Chỉ bật autoBalance khi dòng chỉ có 1 mũi tên và không có {...}.\n' +
   '20) Đồ thị chuyển thể (Vật lí 12 — nhiệt độ theo thời gian): {"kind":"phase","yName":"t (°C)","tName":"T (phút)","points":"(0; -45)\\nA: (15; -8,83)\\nB: (27,4; -8,83)\\nC: (40 = T_1; 0)\\n(54 = T_2; 0)\\n_(66; 16)","extend":false,"dashed":true,"dots":true}. Gốc O tự đặt tại giá trị nhỏ nhất của trục dọc; dùng "60 = T_1" để ghi kí hiệu trên trục, "_(x; y)" cho điểm kéo dài không hiện vạch trục; extend=true vẽ đoạn ngang ra mép phải sau điểm cuối.\n' +
   '21) Đồ thị dao động điều hoà (Vật lí 11): {"kind":"osc","qty":"x|v|a","A":8,"period":{"by":"T|f|omega","value":2},"start":{"by":"state","x0":"0|A|-A|A/2|-A/2|A√2/2|-A√2/2|A√3/2|-A√3/2","dir":"up|down"},"tEnd":2.5,"grid":"T/8|T/4|none","ticks":"value|symbol"}. Hoặc start theo pha: {"by":"phi","phiPi":0.5} (đơn vị π). Thêm "second":{"qty":"v","dashed":true} để vẽ đường thứ hai so pha. Dùng cho dao động điều hoà hình sin.\n' +
+  '22) Sơ đồ phả hệ (Sinh học 12): {"kind":"pedigree","text":"1: nam bt\\n2: nữ bệnh\\n1 x 2 -> 3, 4\\n3: nam bt\\n4: nữ mang gen\\nhỏi 4"}. Khai báo người "id: nam|nữ|? bt|bệnh|mang gen|chết"; vợ chồng "1 x 2" (cận huyết "1 xx 2"); con "1 x 2 -> 3, 4" (sinh đôi cùng trứng "(5 6)", khác trứng "[7 8]"); "hỏi 10" đánh dấu người hỏi; đặt tên bệnh: bệnh "mù màu".\n' +
 
   'Biểu thức dùng biến x, ^ cho luỹ thừa, sqrt(), ln, sin, cos; nhân ngầm được (2x).'
 
@@ -423,6 +424,17 @@ export function toolFromRaw(raw: Record<string, unknown>): ToolDoc {
       }
       break
     }
+
+    case 'pedigree':
+      doc = {
+        kind: 'pedigree',
+        spec: {
+          text: need('text', 'Không thấy các dòng khai báo phả hệ.'),
+          legend: bool('legend', true),
+          carrierStyle: pick('carrierStyle', ['half', 'dot'] as const, 'half'),
+        },
+      }
+      break
 
     default:
       throw new Error(note || 'Không thấy gì để vẽ minh hoạ trong đoạn đã chọn.')
