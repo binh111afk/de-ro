@@ -25,7 +25,7 @@ export const TOOL_DOC_IMAGE: Record<ToolKind, { width: number; alt: string }> = 
   electron: { width: 360, alt: 'Cấu hình electron' },
   struct: { width: 280, alt: 'Công thức cấu tạo' },
   chemgraph: { width: 320, alt: 'Đồ thị số mol' },
-  chemeq: { width: 380, alt: 'Phương trình hoá học' },
+  chemeq: { width: 620, alt: 'Phương trình hoá học' },
   trig: { width: 260, alt: 'Đường tròn lượng giác' },
   probtree: { width: 380, alt: 'Sơ đồ cây' },
   numberline: { width: 400, alt: 'Trục số' },

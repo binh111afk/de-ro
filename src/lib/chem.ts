@@ -13,9 +13,16 @@ function wrap(W: number, H: number, desc: string, body: string) {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${desc}<rect width="100%" height="100%" fill="#fff"/>${body}</svg>`
   return { svg, width: W, height: H }
 }
-/** H2O → H<sub>2</sub>O trong SVG */
+/** H2O → H₂O, NH3^+ → NH₃⁺, COO^- → COO⁻ trong SVG */
 function formulaSvg(s: string, sz = 17) {
-  return esc(s).replace(/(\d+)/g, `<tspan font-size="${Math.round(sz * 0.68)}" dy="4">$1</tspan><tspan dy="-4">​</tspan>`)
+  const subSz = Math.round(sz * 0.68)
+  const subDy = Math.round(sz * 0.24)
+  const supDy = Math.round(sz * 0.35)
+  return esc(s).replace(/\^\{?(\d*[+-])\}?|(\d+)/g, (_, sup: string | undefined, sub: string | undefined) =>
+    sup
+      ? `<tspan font-size="${subSz}" dy="${-supDy}">${sup.replace(/-/g, '−')}</tspan><tspan dy="${supDy}">\u200B</tspan>`
+      : `<tspan font-size="${subSz}" dy="${subDy}">${sub}</tspan><tspan dy="${-subDy}">\u200B</tspan>`,
+  )
 }
 const SUB = '₀₁₂₃₄₅₆₇₈₉'
 /** chữ số sau chữ cái thành chỉ số dưới Unicode: CO2 → CO₂ */
@@ -148,9 +155,19 @@ function parseChain(src: string): Grp[] {
     let bond = ''
     for (;;) {
       let text = ''
-      while (i < src.length && !'-=≡#()'.includes(src[i])) text += src[i++]
+      while (i < src.length && !'-=≡#()'.includes(src[i])) {
+        if (src[i] === '^') {
+          const ch = /^\^(?:\{\d*[+-]\}|\d*[+-])/.exec(src.slice(i))
+          if (ch) {
+            text += ch[0]
+            i += ch[0].length
+            continue
+          }
+        }
+        text += src[i++]
+      }
       text = text.trim()
-      if (!text) throw new Error(`Thiếu nhóm nguyên tử ở vị trí ${i + 1}`)
+      if (!text || /^\^\{?\d*[+-]\}?$/.test(text)) throw new Error(`Thiếu nhóm nguyên tử ở vị trí ${i + 1}`)
       const g: Grp = { text, bond, branches: [] }
       while (src[i] === '(') {
         i++
@@ -191,7 +208,14 @@ function ringOf(text: string): { n: number; aromatic: boolean } | null {
 /** nhóm chỉ gồm C và H (CH3, CH2, CH, C): là đỉnh cacbon */
 const isCarbon = (t: string) => /^C(H\d?)?$/.test(t)
 
-const tw = (s: string) => s.replace(/\d/g, '').length * 11 + s.replace(/\D/g, '').length * 6.5
+const tw = (s: string) => {
+  let supLen = 0
+  const base = s.replace(/\^\{?(\d*[+-])\}?/g, (_, c: string) => {
+    supLen += c.length
+    return ''
+  })
+  return base.replace(/\d/g, '').length * 11 + (base.replace(/\D/g, '').length + supLen) * 6.5
+}
 
 function bondSvg(kind: string, x1: number, y1: number, x2: number, y2: number, inner = 0) {
   const dx = x2 - x1
@@ -237,17 +261,17 @@ class Bounds {
   }
 }
 
-function finish(parts: string[], bb: Bounds, desc: string) {
-  const pad = 22
-  const W = Math.max(140, bb.x1 - bb.x0 + pad * 2)
-  const H = Math.max(60, bb.y1 - bb.y0 + pad * 2)
-  const body = `<g transform="translate(${f1(pad - bb.x0)} ${f1(pad - bb.y0)})">${parts.join('')}</g>`
-  return wrap(Math.round(W), Math.round(H), desc, body)
+export interface StructBody {
+  body: string
+  width: number
+  height: number
+  /** toạ độ y của mạch chính trong khung (0..height) */
+  mainY: number
 }
 
 /* ---------- thu gọn ---------- */
 
-function renderCondensed(main: Grp[], number: boolean, desc: string) {
+function buildCondensed(main: Grp[], number: boolean): { parts: string[]; bb: Bounds; mainY: number } {
   const BOND = 26
   const ROW = 48
   const R = 20
@@ -277,6 +301,15 @@ function renderCondensed(main: Grp[], number: boolean, desc: string) {
       y = ny
     }
   }
+  // các nhóm kề nhau cùng có 1 nhánh thì xen kẽ trên/dưới (kết thúc ở dưới để trường hợp 1 nhánh giữ nguyên như cũ)
+  const singleBranchDir = main.map(() => 1)
+  for (let i = 0; i < main.length; i++) {
+    if (ringOf(main[i].text) || main[i].branches.length !== 1) continue
+    let end = i
+    while (end + 1 < main.length && !ringOf(main[end + 1].text) && main[end + 1].branches.length === 1) end++
+    for (let j = i; j <= end; j++) singleBranchDir[j] = (end - j) % 2 === 0 ? 1 : -1
+    i = end
+  }
   let x = 0
   let no = 0
   main.forEach((g, i) => {
@@ -298,20 +331,23 @@ function renderCondensed(main: Grp[], number: boolean, desc: string) {
         parts.push(numSvg(no, cx, -16))
         bb.add(cx, -26)
       }
-      g.branches.forEach((b, k) => drawVert(b, cx, 0, k % 2 === 0 ? 1 : -1))
+      if (g.branches.length === 1) drawVert(g.branches[0], cx, 0, singleBranchDir[i])
+      else g.branches.forEach((b, k) => drawVert(b, cx, 0, k % 2 === 0 ? 1 : -1))
     }
     x += w
   })
-  return finish(parts, bb, desc)
+  return { parts, bb, mainY: 0 }
 }
 
 /* ---------- khung (zigzag) ---------- */
 
-function renderSkeletal(main: Grp[], number: boolean, desc: string) {
+function buildSkeletal(main: Grp[], number: boolean): { parts: string[]; bb: Bounds; mainY: number } {
   const L = 30
   const R = 20
   const parts: string[] = []
   const bb = new Bounds()
+  let minMainY = Infinity
+  let maxMainY = -Infinity
   const text = (t: string, x: number, y: number) => {
     // OH, Cl, NH2… ghi chữ; nền trắng che đầu nét
     const w = tw(t) + 4
@@ -339,11 +375,19 @@ function renderSkeletal(main: Grp[], number: boolean, desc: string) {
         const cy = att[1] + R * Math.sin(a)
         pending.push(ringSvg(ring, cx, cy, R, a + Math.PI))
         bb.add(cx, cy, R)
+        if (!anchored) {
+          minMainY = Math.min(minMainY, cy)
+          maxMainY = Math.max(maxMainY, cy)
+        }
         cur = [cx + R * Math.cos(a), cy + R * Math.sin(a)] // đi ra ở đỉnh đối diện
         side = -side
         return
       }
       const next: [number, number] = moves ? [cur[0] + L * Math.cos(dir), cur[1] + L * Math.sin(dir)] : cur
+      if (!anchored) {
+        minMainY = Math.min(minMainY, next[1])
+        maxMainY = Math.max(maxMainY, next[1])
+      }
       const carbon = isCarbon(g.text)
       if (moves) {
         const shrinkTo = carbon ? 0 : 10
@@ -375,12 +419,26 @@ function renderSkeletal(main: Grp[], number: boolean, desc: string) {
     parts.unshift(...pending)
   }
   walk(main, [0, 0], 0, -1, number)
-  return finish(parts, bb, desc)
+  return { parts, bb, mainY: Number.isFinite(minMainY) ? (minMainY + maxMainY) / 2 : 0 }
+}
+
+export function renderStructBody(spec: StructSpec): StructBody {
+  const main = parseChain(spec.formula)
+  const { parts, bb, mainY } = spec.style === 'skeletal' ? buildSkeletal(main, !!spec.number) : buildCondensed(main, !!spec.number)
+  return {
+    body: `<g transform="translate(${f1(-bb.x0)} ${f1(-bb.y0)})">${parts.join('')}</g>`,
+    width: bb.x1 - bb.x0,
+    height: bb.y1 - bb.y0,
+    mainY: mainY - bb.y0,
+  }
 }
 
 export function renderStructSvg(spec: StructSpec, desc: string) {
-  const main = parseChain(spec.formula)
-  return spec.style === 'skeletal' ? renderSkeletal(main, !!spec.number, desc) : renderCondensed(main, !!spec.number, desc)
+  const { body, width, height } = renderStructBody(spec)
+  const pad = 22
+  const W = Math.max(140, width + pad * 2)
+  const H = Math.max(60, height + pad * 2)
+  return wrap(Math.round(W), Math.round(H), desc, `<g transform="translate(${pad} ${pad})">${body}</g>`)
 }
 
 /* ------------------------------------------------------------------ *
