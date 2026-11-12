@@ -684,7 +684,7 @@ export function snapDragPoint3d({
   altKey: boolean
   viewBox: { minX: number; minY: number; w: number; h: number }
 }): Snap3dResult {
-  const { ptMap, adj, edgeNames } = buildEdgeGraph(points, segs)
+  const { ptMap, adj } = buildEdgeGraph(points, segs)
   const neighbors = [...(adj.get(dragName) ?? [])]
   const behavior = getDrag3dBehavior({ dragName, base, top, footOf })
   const effMode: 'horiz' | 'vert' = behavior.allowVert && mode === 'vert' ? 'vert' : 'horiz'
@@ -921,8 +921,7 @@ export function snapDragPoint3d({
     const Q = ptMap.get(qn)!
     const qReal = moved.get(qn)?.real ?? (Q.v as P3)
     const d3 = Math.hypot(finalReal[0] - qReal[0], finalReal[1] - qReal[1], finalReal[2] - qReal[2])
-    const key = dragName < qn ? `${dragName}\0${qn}` : `${qn}\0${dragName}`
-    const segLabel = edgeNames.get(key) ?? `${dragName}${qn}`
+    const segLabel = `${dragName}${qn}`
     items.push(`${segLabel} = ${d3.toFixed(2).replace('.', ',')}`)
   }
   items.push(`h = ${finalReal[2].toFixed(2).replace('.', ',')}`)

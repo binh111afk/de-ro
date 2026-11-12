@@ -145,7 +145,7 @@ export function Geo3dModal({ initial, submitLabel, onClose, onInsert }: Props<Ge
         options={GEO3D_SHAPES}
         value={spec.shape}
         onPick={(o) => {
-          set({ shape: o.id, names: o.names })
+          set({ shape: o.id, names: o.names, extras: resetDragCoords(spec.extras ?? '') })
           if (isRound3d(o.id) && mode === 'edge') setMode('pick')
         }}
       />
