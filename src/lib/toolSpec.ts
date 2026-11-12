@@ -18,6 +18,7 @@ import { renderChemGraphSvg, renderElectronSvg, renderStructSvg, type ChemGraphS
 import { renderChemEqSvg, type ChemEqSpec } from './chemEq'
 import { renderGroupedSvg, type GroupedSpec } from './grouped'
 import { renderTableSvg, type TableSpec } from './table'
+import { renderOscSvg, type OscSpec } from './oscillation'
 
 export type ToolDoc =
   | { kind: 'graph'; spec: PlotSpec }
@@ -42,6 +43,7 @@ export type ToolDoc =
   | { kind: 'venn'; spec: VennSpec }
   | { kind: 'grouped'; spec: GroupedSpec }
   | { kind: 'table'; spec: TableSpec }
+  | { kind: 'osc'; spec: OscSpec }
 
 export type ToolKind = ToolDoc['kind']
 
@@ -150,6 +152,8 @@ function renderToolRaw(doc: ToolDoc): ToolImage {
       return renderGroupedSvg(doc.spec, toolDesc(doc))
     case 'table':
       return renderTableSvg(doc.spec, toolDesc(doc))
+    case 'osc':
+      return renderOscSvg(doc.spec, toolDesc(doc))
   }
 }
 

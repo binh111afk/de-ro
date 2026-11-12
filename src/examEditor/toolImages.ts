@@ -32,6 +32,7 @@ export const TOOL_DOC_IMAGE: Record<ToolKind, { width: number; alt: string }> = 
   venn: { width: 260, alt: 'Biểu đồ Ven' },
   grouped: { width: 380, alt: 'Bảng ghép nhóm' },
   table: { width: 420, alt: 'Bảng số liệu' },
+  osc: { width: 340, alt: 'Đồ thị dao động điều hoà' },
 }
 
 /** cấu hình dạng chữ (như AI trả, hoặc trong kho câu hỏi) → ToolDoc; sai thì null */

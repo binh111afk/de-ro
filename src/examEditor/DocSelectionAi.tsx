@@ -39,6 +39,7 @@ const TOOL_NAME: Record<ToolDoc['kind'], string> = {
   venn: 'Biểu đồ Ven',
   grouped: 'Bảng ghép nhóm',
   table: 'Bảng số liệu',
+  osc: 'Đồ thị dao động',
 }
 const PLOT_ASK = 'Vẽ hình minh hoạ cho đề này'
 const PANEL_W = 340

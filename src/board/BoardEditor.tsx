@@ -1907,7 +1907,7 @@ const TOOL_LABEL: Record<string, string> = {
   graph: 'đồ thị', vartable: 'bảng biến thiên', signtable: 'bảng xét dấu', oxy: 'hệ trục Oxy', geo2d: 'hình phẳng', geo3d: 'hình không gian',
   stats: 'biểu đồ', circuit: 'mạch điện', motion: 'đồ thị chuyển động', incline: 'mặt phẳng nghiêng', gas: 'đồ thị trạng thái khí',
   scene: 'hình minh hoạ', electron: 'cấu hình electron', struct: 'công thức cấu tạo', chemgraph: 'đồ thị số mol', chemeq: 'phương trình hoá học', trig: 'đường tròn lượng giác',
-  probtree: 'sơ đồ cây', numberline: 'trục số', venn: 'biểu đồ Ven', grouped: 'bảng ghép nhóm', table: 'bảng',
+  probtree: 'sơ đồ cây', numberline: 'trục số', venn: 'biểu đồ Ven', grouped: 'bảng ghép nhóm', table: 'bảng', osc: 'đồ thị dao động',
 }
 
 /** nét bút AI vẽ theo dạng có sẵn (tròn, elip, sóng, sao, đa giác) */

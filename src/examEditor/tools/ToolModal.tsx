@@ -25,6 +25,8 @@ import type { StatsSpec } from '@/lib/stats'
 import type { CircuitSpec } from '@/lib/circuit'
 import { ChemEqModal } from './MoreToolModals'
 import type { ChemEqSpec } from '@/lib/chemEq'
+import { OscModal } from './MoreToolModals'
+import type { OscSpec } from '@/lib/oscillation'
 
 export function ToolModal({
   kind,
@@ -85,5 +87,7 @@ export function ToolModal({
       return <GroupedModal initial={initial as GroupedSpec | null | undefined} {...common} />
     case 'table':
       return <TableModal initial={initial as TableSpec | null | undefined} {...common} />
+    case 'osc':
+      return <OscModal initial={initial as OscSpec | null | undefined} {...common} />
   }
 }
