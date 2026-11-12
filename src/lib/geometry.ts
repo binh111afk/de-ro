@@ -85,6 +85,12 @@ export interface GeoPick {
   tris: string[][]
   /** tên các điểm gốc (đỉnh mẫu, điểm theo toạ độ) — hiện nút chỉnh cạnh */
   origins?: string[]
+  /** 3D: tên các đỉnh đáy (theo thứ tự đa giác) */
+  base?: string[]
+  /** 3D: tên các đỉnh đáy trên của lăng trụ / hộp (tương ứng 1-1 với `base`) */
+  top?: string[]
+  /** 3D: chân đường cao tự động tính theo đỉnh (vd chóp S.ABC có H là hình chiếu của S) */
+  footOf?: { foot: string; apex: string }
 }
 let lastPick: GeoPick = { points: [], segs: [], tris: [] }
 const isHidden = (n: string | undefined) => !!n && n.startsWith('#')
@@ -775,18 +781,76 @@ function onFace(p: P3, face: P3[]): boolean {
   return true
 }
 
+function footPlane3(p: P3, a: P3, b: P3, c: P3): P3 | null {
+  const n = cross(sub3(b, a), sub3(c, a))
+  const nn = dot3(n, n)
+  if (nn < 1e-12) return null
+  const t = dot3(sub3(p, a), n) / nn
+  return [p[0] - n[0] * t, p[1] - n[1] * t, p[2] - n[2] * t]
+}
+
+function intersectLines3(a: P3, b: P3, c: P3, d: P3): P3 | null {
+  const u = sub3(b, a)
+  const v = sub3(d, c)
+  const w = sub3(c, a)
+  const uu = dot3(u, u)
+  const uv = dot3(u, v)
+  const vv = dot3(v, v)
+  const den = uu * vv - uv * uv
+  if (Math.abs(den) < 1e-9 * uu * vv) return null
+  const s = (dot3(w, u) * vv - dot3(w, v) * uv) / den
+  const t = (dot3(w, u) * uv - dot3(w, v) * uu) / den
+  const p1: P3 = [a[0] + s * u[0], a[1] + s * u[1], a[2] + s * u[2]]
+  const p2: P3 = [c[0] + t * v[0], c[1] + t * v[1], c[2] + t * v[2]]
+  if (Math.hypot(p1[0] - p2[0], p1[1] - p2[1], p1[2] - p2[2]) > 1e-4) return null
+  return p1
+}
+
+function isPerp3(at: P3, u: P3, v: P3): boolean {
+  const du = sub3(u, at)
+  const dv = sub3(v, at)
+  const lu = Math.hypot(du[0], du[1], du[2])
+  const lv = Math.hypot(dv[0], dv[1], dv[2])
+  if (lu < 1e-6 || lv < 1e-6) return false
+  return Math.abs(dot3(du, dv) / (lu * lv)) < 0.03
+}
+
 function renderSolid(spec: Geo3dSpec, desc: string) {
   const s = solid(spec)
   const names = [...spec.names]
+  const faceIdx = new Set(s.faces.flat())
+  const overrides = spec.extras ? extractCoords(spec.extras, 3) : new Map<string, P3>()
+  let overridden = false
+  const overriddenIdx = new Set<number>()
+  s.pts.forEach((_, i) => {
+    const n = names[i]
+    if (n && overrides.has(n)) {
+      s.pts[i] = overrides.get(n)!
+      overridden = true
+      overriddenIdx.add(i)
+    }
+  })
+  // điểm phụ của mẫu (chân đường cao H, tâm đáy O) tính lại theo các đỉnh đã ghi đè nếu không bị đặt toạ độ riêng
+  if (overridden) {
+    if (spec.shape === 'pyramid3' && !overriddenIdx.has(4)) {
+      s.pts[4] = footPlane3(s.pts[0], s.pts[1], s.pts[2], s.pts[3]) ?? [s.pts[0][0], s.pts[0][1], s.pts[1][2]]
+    } else if (spec.shape === 'pyramid3-regular' && !overriddenIdx.has(4)) {
+      s.pts[4] = avg3([s.pts[1], s.pts[2], s.pts[3]])
+    } else if ((spec.shape === 'pyramid4' || spec.shape === 'pyramid4-sa' || spec.shape === 'pyramid4-regular') && !overriddenIdx.has(5)) {
+      s.pts[5] = intersectLines3(s.pts[1], s.pts[3], s.pts[2], s.pts[4]) ?? avg3([s.pts[1], s.pts[2], s.pts[3], s.pts[4]])
+    }
+  }
   // dựng thêm: điểm mới nối vào cuối danh sách đỉnh, đoạn mới thành đoạn phụ
   const forced = new Map<string, boolean>()
   const nRight = s.right.length
   const nBase = s.pts.length
   let fills: string[][] = []
+  let coordNames: string[] = []
   if (spec.extras?.trim()) {
     const known = new Map<string, number[]>()
     s.pts.forEach((p, i) => names[i] && !known.has(names[i]) && known.set(names[i], p))
     const c = construct(spec.extras, known)
+    coordNames = c.coords
     for (const q of c.points) {
       s.pts.push(q.p as P3)
       names[s.pts.length - 1] = q.name
@@ -827,10 +891,32 @@ function renderSolid(spec: Geo3dSpec, desc: string) {
     s.pts.forEach((_, i) => names[i] && !pts.has(names[i]) && pts.set(names[i], P[i]))
     const segs = [...edges.values()].map((e) => [e.a, e.b]).concat(s.extra).map(([a, b]) => ({ a: names[a], b: names[b] })).filter((g) => g.a && g.b)
     const tris = s.faces.filter((f) => f.length === 3).map((f) => f.map((i) => names[i])).filter((t) => t.every(Boolean))
+    const baseOrigins = [...faceIdx].map((i) => names[i]).filter(Boolean)
+    const origins = [...new Set([...baseOrigins, ...coordNames])].filter((n) => !isHidden(n) && pts.has(n))
+    let base: string[] | undefined
+    let top: string[] | undefined
+    let footOf: { foot: string; apex: string } | undefined
+    if (spec.shape.startsWith('pyramid3')) base = [names[1], names[2], names[3]].filter(Boolean)
+    else if (spec.shape.startsWith('pyramid4')) base = [names[1], names[2], names[3], names[4]].filter(Boolean)
+    else if (spec.shape === 'tetrahedron') base = [names[0], names[1], names[2]].filter(Boolean)
+    else if (spec.shape === 'prism3') {
+      base = [names[0], names[1], names[2]].filter(Boolean)
+      top = [names[3], names[4], names[5]].filter(Boolean)
+    } else if (spec.shape === 'box' || spec.shape === 'cube') {
+      base = [names[0], names[1], names[2], names[3]].filter(Boolean)
+      top = [names[4], names[5], names[6], names[7]].filter(Boolean)
+    }
+    if (spec.shape === 'pyramid3' && spec.height && names[0] && names[4] && !overriddenIdx.has(4)) {
+      footOf = { foot: names[4], apex: names[0] }
+    }
     lastPick = {
       points: [...pts].filter(([name]) => !isHidden(name)).map(([name, p]) => ({ name, x: p[0], y: p[1], v: s.pts[names.indexOf(name)] })),
       segs: segs.filter((g) => !isHidden(g.a) && !isHidden(g.b)),
       tris,
+      origins,
+      base,
+      top,
+      footOf,
     }
   }
   const parts: string[] = []
@@ -852,7 +938,9 @@ function renderSolid(spec: Geo3dSpec, desc: string) {
     parts.push(seg(P[a], P[b], forced.get(`${a}-${b}`) ?? !onVisible, 1.3))
   }
   s.right.forEach(([at, u, v], k) => {
-    if (spec.marks || k >= nRight) parts.push(rightMark(P[at], P[u], P[v], 9))
+    if (k >= nRight || (spec.marks && (!overridden || isPerp3(s.pts[at], s.pts[u], s.pts[v])))) {
+      parts.push(rightMark(P[at], P[u], P[v], 9))
+    }
   })
   s.ticks?.forEach((grp, k) => grp.forEach(([a, b]) => parts.push(tick(P[a], P[b], k + 1))))
 

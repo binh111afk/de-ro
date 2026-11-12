@@ -169,6 +169,28 @@ function clipLineToBox(
   }
 }
 
+function buildEdgeGraph(points: PickPt[], segs: Array<{ a: string; b: string }>) {
+  const ptMap = new Map(points.map((p) => [p.name, p]))
+  const adj = new Map<string, Set<string>>()
+  const edgeNames = new Map<string, string>()
+  const uniqueSegs: Array<{ a: string; b: string }> = []
+  const seenSeg = new Set<string>()
+  for (const s of segs) {
+    if (s.a === s.b || !ptMap.has(s.a) || !ptMap.has(s.b)) continue
+    const key = s.a < s.b ? `${s.a}\0${s.b}` : `${s.b}\0${s.a}`
+    if (!seenSeg.has(key)) {
+      seenSeg.add(key)
+      uniqueSegs.push(s)
+    }
+    if (!adj.has(s.a)) adj.set(s.a, new Set())
+    if (!adj.has(s.b)) adj.set(s.b, new Set())
+    adj.get(s.a)!.add(s.b)
+    adj.get(s.b)!.add(s.a)
+    edgeNames.set(key, `${s.a}${s.b}`)
+  }
+  return { ptMap, adj, edgeNames, uniqueSegs }
+}
+
 export function snapDragPoint({
   dragName,
   rawVb,
@@ -188,25 +210,7 @@ export function snapDragPoint({
   altKey: boolean
   viewBox: { minX: number; minY: number; w: number; h: number }
 }): SnapResult {
-  const ptMap = new Map(points.map((p) => [p.name, p]))
-  // cạnh kề (không trùng)
-  const adj = new Map<string, Set<string>>()
-  const edgeNames = new Map<string, string>()
-  const uniqueSegs: Array<{ a: string; b: string }> = []
-  const seenSeg = new Set<string>()
-  for (const s of segs) {
-    if (s.a === s.b || !ptMap.has(s.a) || !ptMap.has(s.b)) continue
-    const key = s.a < s.b ? `${s.a}\0${s.b}` : `${s.b}\0${s.a}`
-    if (!seenSeg.has(key)) {
-      seenSeg.add(key)
-      uniqueSegs.push(s)
-    }
-    if (!adj.has(s.a)) adj.set(s.a, new Set())
-    if (!adj.has(s.b)) adj.set(s.b, new Set())
-    adj.get(s.a)!.add(s.b)
-    adj.get(s.b)!.add(s.a)
-    edgeNames.set(key, `${s.a}${s.b}`)
-  }
+  const { ptMap, adj, edgeNames, uniqueSegs } = buildEdgeGraph(points, segs)
 
   const neighbors = [...(adj.get(dragName) ?? [])]
   let finalVb: Pt = rawVb
@@ -419,6 +423,12 @@ export function fmtCoord(n: number, snapped: boolean): string {
   return String(r).replace('.', ',')
 }
 
+function fmtKeep(n: number): string {
+  let r = Math.round(n * 1000) / 1000
+  if (Math.abs(r) < 1e-9) r = 0
+  return String(r).replace('.', ',')
+}
+
 const DRAG_MARK_RE = /\s*\/\/\s*kéo\s*$/i
 const COORD_HEAD = /^[A-Z][0-9]*'*\s*(?:=\s*)?\(/
 
@@ -433,10 +443,9 @@ export function resetDragCoords(extras: string): string {
     .join('\n')
 }
 
-export function savePointCoord(extras: string, name: string, x: number, y: number, snapped: boolean): string {
-  const pair = `${fmtCoord(x, snapped)}; ${fmtCoord(y, snapped)}`
+function upsertCoordInExtras(extras: string, name: string, tuple: string): string {
   const lines = extras ? extras.split('\n') : []
-  const escName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const escName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/'/g, "['′’]")
   const itemRe = new RegExp(`(^|[\\s,;])(${escName}\\s*(?:=\\s*)?)\\([^()]*\\)`, 'g')
   for (let i = lines.length - 1; i >= 0; i--) {
     const clean = lines[i].replace(/[′’]/g, "'").replace(DRAG_MARK_RE, '').trim()
@@ -448,10 +457,498 @@ export function savePointCoord(extras: string, name: string, x: number, y: numbe
       const idx = lastMatch.index
       const before = lines[i].slice(0, idx)
       const after = lines[i].slice(idx + lastMatch[0].length)
-      lines[i] = `${before}${lastMatch[1]}${lastMatch[2]}(${pair})${after}`
+      lines[i] = `${before}${lastMatch[1]}${lastMatch[2]}(${tuple})${after}`
       return lines.join('\n')
     }
   }
-  const newLine = `${name}(${pair}) // kéo`
+  const newLine = `${name}(${tuple}) // kéo`
   return extras.trim() ? `${newLine}\n${extras}` : newLine
+}
+
+export function savePointCoord(extras: string, name: string, x: number, y: number, snapped: boolean): string {
+  return upsertCoordInExtras(extras, name, `${fmtCoord(x, snapped)}; ${fmtCoord(y, snapped)}`)
+}
+
+/* ------------------------------------------------------------------ *
+ * Hình không gian (3D): phép chiếu xiên, kéo ngang / đứng (Shift), liên kết đỉnh, hít
+ * ------------------------------------------------------------------ */
+
+export type P3 = [number, number, number]
+
+export interface CoordXform3d {
+  scale: number
+  c: number
+  s: number
+  x0: number
+  y0: number
+  toVb: (v: P3) => Pt
+  toRealHoriz: (p: Pt, z: number) => P3
+}
+
+export interface Drag3dBehavior {
+  allowVert: boolean
+  linked: string[]
+  baseSpecials: boolean
+  followFoot?: { foot: string; apex: string }
+}
+
+export interface Snap3dResult {
+  vb: Pt
+  real: P3
+  snapped: boolean
+  mode: 'horiz' | 'vert'
+  guides: Array<{ x1: number; y1: number; x2: number; y2: number }>
+  moved: Map<string, { vb: Pt; real: P3 }>
+  savePoints: Array<{ name: string; real: P3; orig: P3 }>
+  readouts: string[]
+}
+
+const K3D = 0.5
+const ANG3D = Math.PI / 4
+
+export function fitCoordTransform3d(points: PickPt[]): CoordXform3d {
+  const c = K3D * Math.cos(ANG3D)
+  const s = K3D * Math.sin(ANG3D)
+  const projUnit = (v: number[]): [number, number] => [v[0] + c * v[1], -(v[2] ?? 0) - s * v[1]]
+
+  let bestI = -1
+  let bestJ = -1
+  let bestDistU = 0
+  for (let i = 0; i < points.length; i++) {
+    const ui = projUnit(points[i].v)
+    for (let j = i + 1; j < points.length; j++) {
+      const uj = projUnit(points[j].v)
+      const du = Math.hypot(uj[0] - ui[0], uj[1] - ui[1])
+      if (du > bestDistU) {
+        bestDistU = du
+        bestI = i
+        bestJ = j
+      }
+    }
+  }
+  let scale = 120
+  let x0 = 0
+  let y0 = 0
+  if (bestI >= 0 && bestDistU > 1e-6) {
+    const p1 = points[bestI]
+    const p2 = points[bestJ]
+    const u1 = projUnit(p1.v)
+    scale = Math.hypot(p2.x - p1.x, p2.y - p1.y) / bestDistU
+    x0 = p1.x - scale * u1[0]
+    y0 = p1.y - scale * u1[1]
+  } else if (points.length >= 1) {
+    const p = points[0]
+    const u = projUnit(p.v)
+    x0 = p.x - scale * u[0]
+    y0 = p.y - scale * u[1]
+  }
+  return {
+    scale,
+    c,
+    s,
+    x0,
+    y0,
+    toVb: ([vx, vy, vz]) => ({ x: x0 + scale * (vx + c * vy), y: y0 - scale * (vz + s * vy) }),
+    toRealHoriz: (p, z) => {
+      const vy = ((y0 - p.y) / scale - z) / s
+      const vx = (p.x - x0) / scale - c * vy
+      return [vx, vy, z]
+    },
+  }
+}
+
+export function getDrag3dBehavior({
+  dragName,
+  base,
+  top,
+  footOf,
+}: {
+  dragName: string
+  base?: string[]
+  top?: string[]
+  footOf?: { foot: string; apex: string }
+}): Drag3dBehavior {
+  const baseIdx = base ? base.indexOf(dragName) : -1
+  if (baseIdx >= 0) {
+    return {
+      allowVert: false,
+      linked: top && top[baseIdx] ? [top[baseIdx]] : [],
+      baseSpecials: false,
+    }
+  }
+  if (top && top.includes(dragName)) {
+    return {
+      allowVert: true,
+      linked: top.filter((n) => n !== dragName),
+      baseSpecials: true,
+    }
+  }
+  return {
+    allowVert: true,
+    linked: [],
+    baseSpecials: Boolean(base && base.length >= 3),
+    followFoot: footOf && footOf.apex === dragName ? footOf : undefined,
+  }
+}
+
+function cross3(a: P3, b: P3): P3 {
+  return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]]
+}
+
+function sub3(a: P3, b: P3): P3 {
+  return [a[0] - b[0], a[1] - b[1], a[2] - b[2]]
+}
+
+function dot3(a: P3, b: P3): number {
+  return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]
+}
+
+function footPlane3(p: P3, a: P3, b: P3, c: P3): P3 {
+  const n = cross3(sub3(b, a), sub3(c, a))
+  const nn = dot3(n, n)
+  if (nn < 1e-12) return [p[0], p[1], a[2]]
+  const t = dot3(sub3(p, a), n) / nn
+  return [p[0] - n[0] * t, p[1] - n[1] * t, p[2] - n[2] * t]
+}
+
+function intersectCoplanar3(a: P3, b: P3, c: P3, d: P3): P3 | null {
+  const u = sub3(b, a)
+  const v = sub3(d, c)
+  const w = sub3(c, a)
+  const uu = dot3(u, u)
+  const uv = dot3(u, v)
+  const vv = dot3(v, v)
+  const den = uu * vv - uv * uv
+  if (Math.abs(den) < 1e-9 * uu * vv) return null
+  const s = (dot3(w, u) * vv - dot3(w, v) * uv) / den
+  const t = (dot3(w, u) * uv - dot3(w, v) * uu) / den
+  const p1: P3 = [a[0] + s * u[0], a[1] + s * u[1], a[2] + s * u[2]]
+  const p2: P3 = [c[0] + t * v[0], c[1] + t * v[1], c[2] + t * v[2]]
+  if (Math.hypot(p1[0] - p2[0], p1[1] - p2[1], p1[2] - p2[2]) > 1e-4) return null
+  return p1
+}
+
+function computeBaseSpecials(base: string[], ptMap: Map<string, PickPt>): P3[] {
+  const vs = base.map((n) => ptMap.get(n)?.v as P3 | undefined).filter((v): v is P3 => Boolean(v && v.length >= 3))
+  if (vs.length < 3) return []
+  const raw: P3[] = [...vs]
+  for (let i = 0; i < vs.length; i++) {
+    const a = vs[i]
+    const b = vs[(i + 1) % vs.length]
+    raw.push([(a[0] + b[0]) / 2, (a[1] + b[1]) / 2, (a[2] + b[2]) / 2])
+  }
+  if (vs.length === 3) {
+    raw.push([(vs[0][0] + vs[1][0] + vs[2][0]) / 3, (vs[0][1] + vs[1][1] + vs[2][1]) / 3, (vs[0][2] + vs[1][2] + vs[2][2]) / 3])
+  } else if (vs.length === 4) {
+    const diag = intersectCoplanar3(vs[0], vs[2], vs[1], vs[3])
+    if (diag) raw.push(diag)
+    raw.push([
+      (vs[0][0] + vs[1][0] + vs[2][0] + vs[3][0]) / 4,
+      (vs[0][1] + vs[1][1] + vs[2][1] + vs[3][1]) / 4,
+      (vs[0][2] + vs[1][2] + vs[2][2] + vs[3][2]) / 4,
+    ])
+  }
+  const out: P3[] = []
+  for (const p of raw) {
+    if (!out.some((q) => Math.hypot(q[0] - p[0], q[1] - p[1], q[2] - p[2]) < 1e-5)) out.push(p)
+  }
+  return out
+}
+
+export function snapDragPoint3d({
+  dragName,
+  rawReal,
+  mode,
+  points,
+  segs,
+  origins,
+  base,
+  top,
+  footOf,
+  xform,
+  pxSize,
+  altKey,
+  viewBox,
+}: {
+  dragName: string
+  rawReal: P3
+  mode: 'horiz' | 'vert'
+  points: PickPt[]
+  segs: Array<{ a: string; b: string }>
+  origins?: string[]
+  base?: string[]
+  top?: string[]
+  footOf?: { foot: string; apex: string }
+  xform: CoordXform3d
+  pxSize: number
+  altKey: boolean
+  viewBox: { minX: number; minY: number; w: number; h: number }
+}): Snap3dResult {
+  const { ptMap, adj, edgeNames } = buildEdgeGraph(points, segs)
+  const neighbors = [...(adj.get(dragName) ?? [])]
+  const behavior = getDrag3dBehavior({ dragName, base, top, footOf })
+  const effMode: 'horiz' | 'vert' = behavior.allowVert && mode === 'vert' ? 'vert' : 'horiz'
+  const excluded = new Set<string>([dragName, ...behavior.linked, ...(behavior.followFoot ? [behavior.followFoot.foot] : [])])
+  const visibleNames = new Set<string>([...(origins ?? []), ...segs.flatMap((s) => [s.a, s.b])])
+  const visiblePts = points.filter((p) => !excluded.has(p.name) && visibleNames.has(p.name))
+
+  const rawVb = xform.toVb(rawReal)
+  let finalReal: P3 = [...rawReal] as P3
+  let finalVb: Pt = rawVb
+  let snapped = false
+  const guides: Array<{ x1: number; y1: number; x2: number; y2: number }> = []
+  const seenGuide = new Set<string>()
+  const pushGuide = (g: { x1: number; y1: number; x2: number; y2: number } | null) => {
+    if (!g || Math.hypot(g.x2 - g.x1, g.y2 - g.y1) < 1) return
+    const pA = `${Math.round(g.x1)}:${Math.round(g.y1)}`
+    const pB = `${Math.round(g.x2)}:${Math.round(g.y2)}`
+    const k = pA < pB ? `${pA}|${pB}` : `${pB}|${pA}`
+    if (!seenGuide.has(k)) {
+      seenGuide.add(k)
+      guides.push(g)
+    }
+  }
+
+  if (!altKey) {
+    const T = 6 * pxSize
+    const dirX: Pt = { x: 1, y: 0 }
+    const ly = Math.hypot(xform.c, -xform.s) || 1
+    const dirY: Pt = { x: xform.c / ly, y: -xform.s / ly }
+
+    if (effMode === 'horiz') {
+      const z0 = rawReal[2]
+      type PtCand = { v: P3; vb: Pt; dist: number; guideFrom: Pt }
+      type AxisCand = { axis: 'x' | 'y'; val: number; refVb: Pt; dirVb: Pt; dist: number; isNeighbor: boolean }
+      type LenCand = { qv: P3; rXy: number; cand3d: P3; dist: number }
+
+      const ptCands: PtCand[] = []
+      const axisCands: AxisCand[] = []
+      const lenCands: LenCand[] = []
+
+      // 1. Đỉnh S / đỉnh trên nằm ngay trên điểm đặc biệt của đáy (đỉnh, trung điểm cạnh, tâm đáy / giao hai đường chéo)
+      if (behavior.baseSpecials && base) {
+        for (const sp of computeBaseSpecials(base, ptMap)) {
+          const cand3d: P3 = [sp[0], sp[1], z0]
+          const candVb = xform.toVb(cand3d)
+          const d = distPt(rawVb, candVb)
+          if (d < T) ptCands.push({ v: cand3d, vb: candVb, dist: d, guideFrom: xform.toVb(sp) })
+        }
+      }
+
+      // 2. Thẳng hàng theo trục z với một điểm khác (cùng x, y) + đường thẳng song song trục x / y (cùng z)
+      for (const o of visiblePts) {
+        const candZ3d: P3 = [o.v[0], o.v[1], z0]
+        const candZVb = xform.toVb(candZ3d)
+        const dzDist = distPt(rawVb, candZVb)
+        if (dzDist < T) ptCands.push({ v: candZ3d, vb: candZVb, dist: dzDist, guideFrom: { x: o.x, y: o.y } })
+
+        if (Math.abs((o.v[2] ?? 0) - z0) < 1e-4) {
+          const isNb = neighbors.includes(o.name)
+          const refVb = { x: o.x, y: o.y }
+          const dxLine = distPointToLine(rawVb, { p0: refVb, dir: dirX })
+          if (dxLine < T) axisCands.push({ axis: 'x', val: o.v[1], refVb, dirVb: dirX, dist: dxLine, isNeighbor: isNb })
+          const dyLine = distPointToLine(rawVb, { p0: refVb, dir: dirY })
+          if (dyLine < T) axisCands.push({ axis: 'y', val: o.v[0], refVb, dirVb: dirY, dist: dyLine, isNeighbor: isNb })
+        }
+      }
+
+      // 3. Độ dài thật 3D của cạnh kề gần số nguyên hoặc bội 0,5
+      for (const qn of neighbors) {
+        if (excluded.has(qn)) continue
+        const Q = ptMap.get(qn)!
+        const qv = Q.v as P3
+        const dz = z0 - qv[2]
+        const dx = rawReal[0] - qv[0]
+        const dy = rawReal[1] - qv[1]
+        const dXy = Math.hypot(dx, dy)
+        if (dXy < 1e-6) continue
+        const len3 = Math.hypot(dx, dy, dz)
+        const lenSnap = Math.round(len3 * 2) / 2
+        if (lenSnap <= Math.abs(dz) + 1e-6) continue
+        const rXy = Math.sqrt(lenSnap * lenSnap - dz * dz)
+        const cand3d: P3 = [qv[0] + (dx / dXy) * rXy, qv[1] + (dy / dXy) * rXy, z0]
+        const candVb = xform.toVb(cand3d)
+        const d = distPt(rawVb, candVb)
+        if (d < T) lenCands.push({ qv, rXy, cand3d, dist: d })
+      }
+
+      ptCands.sort((a, b) => a.dist - b.dist)
+      axisCands.sort((a, b) => a.dist - b.dist)
+      lenCands.sort((a, b) => a.dist - b.dist)
+
+      if (ptCands.length) {
+        finalReal = ptCands[0].v
+        finalVb = ptCands[0].vb
+        snapped = true
+      } else if (axisCands.length) {
+        const L1 = axisCands[0]
+        let solved: P3 | null = null
+        for (let i = 1; i < axisCands.length; i++) {
+          const L2 = axisCands[i]
+          if (L2.axis === L1.axis) continue
+          const cand: P3 = L1.axis === 'x' ? [L2.val, L1.val, z0] : [L1.val, L2.val, z0]
+          if (distPt(xform.toVb(cand), rawVb) < 1.6 * T) {
+            solved = cand
+            break
+          }
+        }
+        if (!solved) {
+          const proj3d: P3 = L1.axis === 'x' ? [rawReal[0], L1.val, z0] : [L1.val, rawReal[1], z0]
+          const projVb = xform.toVb(proj3d)
+          for (const C of lenCands) {
+            if (L1.axis === 'x') {
+              const dyC = L1.val - C.qv[1]
+              if (Math.abs(dyC) > C.rXy) continue
+              const dxC = Math.sqrt(C.rXy * C.rXy - dyC * dyC)
+              const xHit = Math.abs(proj3d[0] - (C.qv[0] + dxC)) <= Math.abs(proj3d[0] - (C.qv[0] - dxC)) ? C.qv[0] + dxC : C.qv[0] - dxC
+              const cand: P3 = [xHit, L1.val, z0]
+              if (distPt(xform.toVb(cand), projVb) < 1.6 * T) {
+                solved = cand
+                break
+              }
+            } else {
+              const dxC = L1.val - C.qv[0]
+              if (Math.abs(dxC) > C.rXy) continue
+              const dyC = Math.sqrt(C.rXy * C.rXy - dxC * dxC)
+              const yHit = Math.abs(proj3d[1] - (C.qv[1] + dyC)) <= Math.abs(proj3d[1] - (C.qv[1] - dyC)) ? C.qv[1] + dyC : C.qv[1] - dyC
+              const cand: P3 = [L1.val, yHit, z0]
+              if (distPt(xform.toVb(cand), projVb) < 1.6 * T) {
+                solved = cand
+                break
+              }
+            }
+          }
+          solved = solved ?? proj3d
+        }
+        finalReal = solved
+        finalVb = xform.toVb(solved)
+        snapped = true
+      } else if (lenCands.length) {
+        finalReal = lenCands[0].cand3d
+        finalVb = xform.toVb(finalReal)
+        snapped = true
+      }
+
+      // gom đường gióng đang khớp với vị trí cuối
+      for (const pc of ptCands) {
+        if (Math.hypot(finalReal[0] - pc.v[0], finalReal[1] - pc.v[1]) < 1e-4) {
+          pushGuide({ x1: finalVb.x, y1: finalVb.y, x2: pc.guideFrom.x, y2: pc.guideFrom.y })
+        }
+      }
+      for (const ac of axisCands) {
+        const hit = ac.axis === 'x' ? Math.abs(finalReal[1] - ac.val) < 1e-4 : Math.abs(finalReal[0] - ac.val) < 1e-4
+        if (!hit) continue
+        if (ac.isNeighbor) pushGuide(clipLineToBox(ac.refVb, ac.dirVb, viewBox))
+        else pushGuide({ x1: ac.refVb.x, y1: ac.refVb.y, x2: finalVb.x, y2: finalVb.y })
+      }
+    } else {
+      // Kéo thẳng đứng (Shift): giữ x, y, chỉ đổi z
+      const [x0, y0] = [rawReal[0], rawReal[1]]
+      type ZCand = { z: number; dist: number }
+      const zCands: ZCand[] = []
+
+      for (const o of visiblePts) {
+        const d = Math.abs(rawReal[2] - (o.v[2] ?? 0)) * xform.scale
+        if (d < T) zCands.push({ z: o.v[2] ?? 0, dist: d })
+      }
+      const zHalf = Math.round(rawReal[2] * 2) / 2
+      const dzHalf = Math.abs(rawReal[2] - zHalf) * xform.scale
+      if (dzHalf < T) zCands.push({ z: zHalf, dist: dzHalf })
+
+      for (const qn of neighbors) {
+        if (excluded.has(qn)) continue
+        const qv = ptMap.get(qn)!.v as P3
+        const dXy = Math.hypot(x0 - qv[0], y0 - qv[1])
+        const len3 = Math.hypot(dXy, rawReal[2] - qv[2])
+        const lenSnap = Math.round(len3 * 2) / 2
+        if (lenSnap <= 0 || lenSnap < dXy - 1e-9) continue
+        const dzAbs = Math.sqrt(Math.max(0, lenSnap * lenSnap - dXy * dXy))
+        const zCand = qv[2] + (rawReal[2] >= qv[2] ? dzAbs : -dzAbs)
+        const d = Math.abs(rawReal[2] - zCand) * xform.scale
+        if (d < T) zCands.push({ z: zCand, dist: d })
+      }
+
+      zCands.sort((a, b) => a.dist - b.dist)
+      if (zCands.length) {
+        finalReal = [x0, y0, zCands[0].z]
+        finalVb = xform.toVb(finalReal)
+        snapped = true
+      }
+
+      // Đường gióng dọc (trùng x, y) hoặc cùng cao độ z / thẳng hàng trục x, y
+      for (const o of visiblePts) {
+        const ov = o.v as P3
+        const sameX = Math.abs(finalReal[0] - ov[0]) < 1e-4
+        const sameY = Math.abs(finalReal[1] - ov[1]) < 1e-4
+        const sameZ = Math.abs(finalReal[2] - ov[2]) < 1e-4
+        if (sameX && sameY) {
+          pushGuide({ x1: o.x, y1: o.y, x2: finalVb.x, y2: finalVb.y })
+        } else if (sameZ && (sameX || sameY)) {
+          if (neighbors.includes(o.name)) pushGuide(clipLineToBox({ x: o.x, y: o.y }, sameY ? dirX : dirY, viewBox))
+          else pushGuide({ x1: o.x, y1: o.y, x2: finalVb.x, y2: finalVb.y })
+        } else if (sameZ && snapped) {
+          pushGuide({ x1: o.x, y1: o.y, x2: finalVb.x, y2: finalVb.y })
+        }
+      }
+    }
+  }
+
+  // Tính vị trí các đỉnh đi theo (lăng trụ / hộp / lập phương + chân đường cao S.ABC)
+  const moved = new Map<string, { vb: Pt; real: P3 }>()
+  moved.set(dragName, { vb: finalVb, real: finalReal })
+  const dragOrig = ptMap.get(dragName)!.v as P3
+  const savePoints: Array<{ name: string; real: P3; orig: P3 }> = [{ name: dragName, real: finalReal, orig: dragOrig }]
+  const delta: P3 = [finalReal[0] - dragOrig[0], finalReal[1] - dragOrig[1], finalReal[2] - dragOrig[2]]
+  for (const ln of behavior.linked) {
+    const lp = ptMap.get(ln)
+    if (!lp) continue
+    const lo = lp.v as P3
+    const lr: P3 = [lo[0] + delta[0], lo[1] + delta[1], lo[2] + delta[2]]
+    moved.set(ln, { real: lr, vb: xform.toVb(lr) })
+    savePoints.push({ name: ln, real: lr, orig: lo })
+  }
+  if (behavior.followFoot && base && base.length >= 3) {
+    const bp = base.map((n) => ptMap.get(n)?.v as P3 | undefined).filter((v): v is P3 => Boolean(v))
+    if (bp.length >= 3) {
+      const foot3d = footPlane3(finalReal, bp[0], bp[1], bp[2])
+      moved.set(behavior.followFoot.foot, { real: foot3d, vb: xform.toVb(foot3d) })
+    }
+  }
+
+  // Bảng cạnh con trỏ: độ dài thật 3D từng cạnh nối vào nút + chiều cao h
+  const items: string[] = []
+  for (const qn of neighbors) {
+    const Q = ptMap.get(qn)!
+    const qReal = moved.get(qn)?.real ?? (Q.v as P3)
+    const d3 = Math.hypot(finalReal[0] - qReal[0], finalReal[1] - qReal[1], finalReal[2] - qReal[2])
+    const key = dragName < qn ? `${dragName}\0${qn}` : `${qn}\0${dragName}`
+    const segLabel = edgeNames.get(key) ?? `${dragName}${qn}`
+    items.push(`${segLabel} = ${d3.toFixed(2).replace('.', ',')}`)
+  }
+  items.push(`h = ${finalReal[2].toFixed(2).replace('.', ',')}`)
+  const readouts: string[] = [effMode === 'horiz' ? 'Kéo ngang (Shift: đứng)' : 'Kéo đứng']
+  for (let i = 0; i < items.length; i += 3) {
+    readouts.push(items.slice(i, i + 3).join(' · '))
+  }
+
+  return { vb: finalVb, real: finalReal, snapped, mode: effMode, guides, moved, savePoints, readouts }
+}
+
+export function savePointsCoord3d(
+  extras: string,
+  items: Array<{ name: string; real: P3; orig?: P3 }>,
+  mode: 'horiz' | 'vert',
+  snapped: boolean,
+): string {
+  let out = extras
+  for (const it of items) {
+    const [x, y, z] = it.real
+    const xyChanged = it.orig ? Math.hypot(x - it.orig[0], y - it.orig[1]) > 1e-6 : mode === 'horiz'
+    const zChanged = it.orig ? Math.abs(z - it.orig[2]) > 1e-6 : mode === 'vert'
+    const sx = xyChanged ? fmtCoord(x, snapped) : fmtKeep(x)
+    const sy = xyChanged ? fmtCoord(y, snapped) : fmtKeep(y)
+    const sz = zChanged ? fmtCoord(z, snapped) : fmtKeep(z)
+    out = upsertCoordInExtras(out, it.name, `${sx}; ${sy}; ${sz}`)
+  }
+  return out
 }
