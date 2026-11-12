@@ -29,6 +29,8 @@ import { PhaseModal } from './MoreToolModals'
 import type { PhaseSpec } from '@/lib/phaseChange'
 import { OscModal } from './MoreToolModals'
 import type { OscSpec } from '@/lib/oscillation'
+import { PunnettModal } from './MoreToolModals'
+import type { PunnettSpec } from '@/lib/punnett'
 
 export function ToolModal({
   kind,
@@ -93,5 +95,7 @@ export function ToolModal({
       return <PhaseModal initial={initial as PhaseSpec | null | undefined} {...common} />
     case 'osc':
       return <OscModal initial={initial as OscSpec | null | undefined} {...common} />
+    case 'punnett':
+      return <PunnettModal initial={initial as PunnettSpec | null | undefined} {...common} />
   }
 }
