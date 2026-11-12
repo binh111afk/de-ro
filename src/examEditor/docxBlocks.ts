@@ -14,6 +14,7 @@ import {
   Math as OMath,
   Packer,
   PageBreak,
+  PageOrientation,
   Paragraph,
   ShadingType,
   Table,
@@ -23,6 +24,7 @@ import {
   TextRun,
   Tab,
   TabStopType,
+  VerticalAlign,
   WidthType,
   type IParagraphOptions,
   type IRunOptions,
@@ -339,6 +341,7 @@ interface Ctx {
   essay: number
   /** mỗi danh sách đánh số một `instance` riêng để bắt đầu lại từ 1 */
   lists: number
+  contentW: number
 }
 
 type Out = Paragraph | Table
@@ -553,13 +556,85 @@ function blockToDocx(b: ExamBlock, ctx: Ctx): Out[] {
     case 'divider':
       return [para([], { border: { bottom: { style: BorderStyle.SINGLE, size: 4, color: '999999', space: 1 } }, spacing: { before: 120, after: 120 } })]
 
+    case 'table': {
+      const occupied = new Set<string>()
+      let maxCols = 0
+      b.rows.forEach((row, r) => {
+        let cIdx = 0
+        for (const c of row) {
+          while (occupied.has(`${r},${cIdx}`)) cIdx++
+          const cs = c.colSpan ?? 1
+          const rs = c.rowSpan ?? 1
+          for (let dr = 0; dr < rs; dr++) {
+            for (let dc = 0; dc < cs; dc++) occupied.add(`${r + dr},${cIdx + dc}`)
+          }
+          cIdx += cs
+          if (cIdx > maxCols) maxCols = cIdx
+        }
+      })
+      const numCols = Math.max(1, maxCols)
+      const totalW = ctx.contentW || CONTENT_W
+      const defaultColW = Math.floor(totalW / numCols)
+      let columnWidths: number[]
+      if (b.colWidths && b.colWidths.length === numCols) {
+        const wSum = b.colWidths.reduce((a, x) => a + x, 0) || 1
+        columnWidths = b.colWidths.map((w) => Math.floor((w / wSum) * totalW))
+      } else {
+        columnWidths = Array(numCols).fill(defaultColW)
+      }
+      occupied.clear()
+      const tableRows = b.rows.map((row, r) => {
+        let cIdx = 0
+        const cells = row.map((c) => {
+          while (occupied.has(`${r},${cIdx}`)) cIdx++
+          const cs = c.colSpan ?? 1
+          const rs = c.rowSpan ?? 1
+          for (let dr = 0; dr < rs; dr++) {
+            for (let dc = 0; dc < cs; dc++) occupied.add(`${r + dr},${cIdx + dc}`)
+          }
+          let cellW = 0
+          for (let s = 0; s < cs; s++) cellW += columnWidths[cIdx + s] ?? defaultColW
+          cIdx += cs
+          const lines = splitRichLines(c.text)
+          const fill = hex(c.shading) ?? (c.header ? 'F2F2F2' : undefined)
+          const paras = (lines.length ? lines : ['']).map((l) =>
+            para(runs(l, { bold: c.header, size: SIZE }), {
+              alignment: c.align === 'center' ? AlignmentType.CENTER : c.align === 'right' ? AlignmentType.RIGHT : AlignmentType.LEFT,
+              spacing: { before: 30, after: 30 },
+            }),
+          )
+          return new TableCell({
+            width: { size: cellW, type: WidthType.DXA },
+            borders: BOX,
+            shading: fill ? { type: ShadingType.CLEAR, color: 'auto', fill } : undefined,
+            verticalAlign: VerticalAlign.CENTER,
+            columnSpan: cs > 1 ? cs : undefined,
+            rowSpan: rs > 1 ? rs : undefined,
+            children: paras,
+          })
+        })
+        return new TableRow({ children: cells })
+      })
+      return [
+        new Table({
+          rows: tableRows,
+          width: { size: totalW, type: WidthType.DXA },
+          columnWidths,
+          layout: TableLayoutType.FIXED,
+        }),
+        para([], { spacing: { after: 60 } }),
+      ]
+    }
+
     default:
       return []
   }
 }
 
-export function buildDocx(doc: ExamDoc): Document {
-  const ctx: Ctx = { q: 0, essay: 0, lists: 0 }
+export function buildDocx(doc: ExamDoc, opts?: { landscape?: boolean }): Document {
+  const landscape = !!opts?.landscape
+  const contentW = (landscape ? PAGE_H : PAGE_W) - 2 * MARGIN_H
+  const ctx: Ctx = { q: 0, essay: 0, lists: 0, contentW }
   const children = doc.blocks.flatMap((b) => blockToDocx(b, ctx))
   const level = (i: number, format: (typeof LevelFormat)[keyof typeof LevelFormat], text: string) => ({
     level: i,
@@ -580,7 +655,14 @@ export function buildDocx(doc: ExamDoc): Document {
     },
     sections: [
       {
-        properties: { page: { size: { width: PAGE_W, height: PAGE_H }, margin: { top: MARGIN_V, bottom: MARGIN_V, left: MARGIN_H, right: MARGIN_H } } },
+        properties: {
+          page: {
+            size: landscape
+              ? { width: PAGE_W, height: PAGE_H, orientation: PageOrientation.LANDSCAPE }
+              : { width: PAGE_W, height: PAGE_H },
+            margin: { top: MARGIN_V, bottom: MARGIN_V, left: MARGIN_H, right: MARGIN_H },
+          },
+        },
         children: children.length ? children : [para([])],
       },
     ],
@@ -588,4 +670,5 @@ export function buildDocx(doc: ExamDoc): Document {
 }
 
 /** File .docx dạng Blob (trình duyệt). */
-export const buildDocxBlob = (doc: ExamDoc): Promise<Blob> => inlineDocImages(doc).then((d) => Packer.toBlob(buildDocx(d)))
+export const buildDocxBlob = (doc: ExamDoc, opts?: { landscape?: boolean }): Promise<Blob> =>
+  inlineDocImages(doc).then((d) => Packer.toBlob(buildDocx(d, opts)))

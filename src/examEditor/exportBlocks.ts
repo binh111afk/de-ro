@@ -15,12 +15,12 @@ import { splitRichLines } from './convert'
  * ------------------------------------------------------------------ */
 
 /** Tải file .docx thật. Thư viện `docx` nạp động để không nằm trong bundle chính. */
-export async function exportDocBlocks(doc: ExamDoc): Promise<void> {
+export async function exportDocBlocks(doc: ExamDoc, opts?: { landscape?: boolean; fileName?: string }): Promise<void> {
   const { buildDocxBlob } = await import('./docxBlocks')
-  const url = URL.createObjectURL(await buildDocxBlob(doc))
+  const url = URL.createObjectURL(await buildDocxBlob(doc, opts))
   const a = document.createElement('a')
   a.href = url
-  a.download = `${sanitize(doc.title)}.docx`
+  a.download = `${sanitize(opts?.fileName ?? doc.title)}.docx`
   document.body.appendChild(a)
   a.click()
   document.body.removeChild(a)
@@ -263,6 +263,28 @@ function blockToHtml(b: ExamBlock, seq: BlockSeq): string {
 
     case 'divider':
       return '<hr class="hr">'
+
+    case 'table': {
+      const rowsHtml = b.rows
+        .map(
+          (row) =>
+            '<tr>' +
+            row
+              .map((c) => {
+                const tag = c.header ? 'th' : 'td'
+                const attrs = [
+                  c.colSpan && c.colSpan > 1 ? ` colspan="${c.colSpan}"` : '',
+                  c.rowSpan && c.rowSpan > 1 ? ` rowspan="${c.rowSpan}"` : '',
+                  c.align ? ` style="text-align:${css(c.align)}"` : '',
+                ].join('')
+                return `<${tag}${attrs}>${richLines(c.text)}</${tag}>`
+              })
+              .join('') +
+            '</tr>',
+        )
+        .join('')
+      return `<table class="doc-table"${formatCss(b.format)}>${rowsHtml}</table>`
+    }
 
     default:
       return ''

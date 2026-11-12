@@ -67,6 +67,7 @@ export type BlockType =
   | 'rubric'
   | 'pageBreak'
   | 'divider'
+  | 'table'
 
 export interface HeaderBlock {
   type: 'header'
@@ -171,6 +172,23 @@ export interface DividerBlock {
   type: 'divider'
 }
 
+export interface TableCellData {
+  text: RichText
+  header?: boolean
+  colSpan?: number
+  rowSpan?: number
+  align?: 'left' | 'center' | 'right'
+  shading?: string
+  format?: FormatAttrs
+}
+
+export interface TableBlock {
+  type: 'table'
+  rows: TableCellData[][]
+  colWidths?: number[]
+  format?: FormatAttrs
+}
+
 export type ExamBlock =
   | HeaderBlock
   | TitleBlock
@@ -186,6 +204,7 @@ export type ExamBlock =
   | RubricBlock
   | PageBreakBlock
   | DividerBlock
+  | TableBlock
 
 /** Loại tài liệu — quyết định icon hiển thị trên tab và thẻ loại ở trang bắt đầu. */
 export type DocKind = 'exam' | 'slide' | 'board'

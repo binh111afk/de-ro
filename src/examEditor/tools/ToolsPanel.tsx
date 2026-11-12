@@ -4,17 +4,18 @@
  */
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
-import { ArrowRightLeft, Box, Search, Flame, ChartColumn, ChartSpline, ClipboardList, Grid3x3, SquarePlus, Table, Table2, Triangle, TriangleRight, Zap, ChartLine, Atom, Hexagon, FlaskConical, CircleDot, Network, MoveHorizontal, Circle, Thermometer, Shuffle, Sigma, Waves } from 'lucide-react'
+import { ArrowRightLeft, Box, Search, Flame, ChartColumn, ChartSpline, ClipboardList, Grid3x3, SquarePlus, Table, Table2, TableProperties, Triangle, TriangleRight, Zap, ChartLine, Atom, Hexagon, FlaskConical, CircleDot, Network, MoveHorizontal, Circle, Thermometer, Shuffle, Sigma, Waves } from 'lucide-react'
 import type { ToolImage, ToolKind } from '@/lib/toolSpec'
-import type { ExamDoc } from '@/data/docTypes'
+import type { ExamBlock, ExamDoc } from '@/data/docTypes'
 import { ToolModal } from './ToolModal'
 import { ShuffleModal } from './ShuffleModal'
+import { MatrixModal } from './MatrixModal'
 import { cn } from '@/lib/cn'
 import { inputClass } from '@/components/ui'
 import { deaccent } from '@/lib/khungPrompt'
 
 /** công cụ vẽ hình (chèn ảnh) + công cụ làm việc với cả đề (nhóm Khác) */
-type ToolId = ToolKind | 'shuffle' | 'formula'
+type ToolId = ToolKind | 'shuffle' | 'matrix' | 'formula'
 
 const SUBJECTS: Array<{ name: string; tools: Array<{ id: ToolId; label: string; desc: string; Icon: typeof ChartSpline }> }> = [
   {
@@ -57,6 +58,7 @@ const SUBJECTS: Array<{ name: string; tools: Array<{ id: ToolId; label: string; 
   {
     name: 'Khác',
     tools: [
+      { id: 'matrix', label: 'Ma trận & đặc tả', desc: 'Bảng ma trận đề và đặc tả theo mẫu Bộ GD; xuất Word hoặc chèn vào đề', Icon: TableProperties },
       { id: 'shuffle', label: 'Xáo đề', desc: 'Tạo nhiều mã đề: đổi thứ tự câu, phương án; kèm đáp án', Icon: Shuffle },
       { id: 'table', label: 'Tạo bảng', desc: 'Bảng kẻ ô: gộp ô, căn lề, tô hàng tiêu đề', Icon: Table },
     ],
@@ -68,6 +70,7 @@ export function ToolsPanel({
   onInsertPlot,
   examDoc,
   onFormula,
+  onInsertBlocks,
 }: {
   disabled?: boolean
   onInsertPlot: (img: ToolImage) => void
@@ -75,11 +78,12 @@ export function ToolsPanel({
   examDoc?: ExamDoc | null
   /** bảng vẽ: có thì môn Toán hiện thêm "Công thức" (mở hộp LaTeX của bảng) */
   onFormula?: () => void
+  onInsertBlocks?: (blocks: ExamBlock[]) => void
 }) {
   const FORMULA = { id: 'formula' as const, label: 'Công thức', desc: 'Gõ LaTeX, xem trước; bấm đúp trên bảng để sửa', Icon: Sigma }
   const subjects = SUBJECTS.map((s) => {
     if (onFormula && s.name === 'Toán') return { ...s, tools: [FORMULA, ...s.tools] }
-    if (s.name === 'Khác' && examDoc === undefined) return { ...s, tools: s.tools.filter((t) => t.id !== 'shuffle') }
+    if (s.name === 'Khác' && examDoc === undefined) return { ...s, tools: s.tools.filter((t) => t.id !== 'shuffle' && t.id !== 'matrix') }
     return s
   })
   const [open, setOpen] = useState<ToolId | null>(null)
@@ -176,7 +180,18 @@ export function ToolsPanel({
           ) : null,
           document.body,
         )}
-      {open && open !== 'shuffle' && open !== 'formula' &&
+      {open === 'matrix' &&
+        createPortal(
+          examDoc ? (
+            <MatrixModal
+              doc={examDoc}
+              onClose={() => setOpen(null)}
+              onInsertBlocks={onInsertBlocks}
+            />
+          ) : null,
+          document.body,
+        )}
+      {open && open !== 'shuffle' && open !== 'matrix' && open !== 'formula' &&
         createPortal(
         <ToolModal
           kind={open}

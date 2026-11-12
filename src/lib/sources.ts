@@ -108,6 +108,8 @@ function blockText(b: ExamBlock): string {
       return b.items.map((i) => `Câu ${i.no}: ${rt(i.answer)}`).join('; ')
     case 'rubric':
       return [rt(b.title ?? ''), ...b.items.map((i) => `${i.label ?? ''} ${rt(i.text)}`)].join('\n')
+    case 'table':
+      return b.rows.map((r) => r.map((c) => rt(c.text)).join(' | ')).join('\n')
     default:
       return ''
   }
