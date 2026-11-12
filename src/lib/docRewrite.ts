@@ -8,6 +8,7 @@ import { renderTool, type ToolDoc } from './toolSpec'
 import { autoSignTable } from './signTable'
 import { autoVarTable } from './varTable'
 import { cleanRewrite } from './slideRewrite'
+import { OSC_Y_DEFAULT, oscPeriod, parseOscExpr, type OscQty, type OscSpec, type OscStart, type OscStartX0 } from './oscillation'
 
 export const DOC_REWRITE_PRESETS = [
   { label: 'Viết lại rõ hơn', ask: 'Viết lại rõ ràng, chặt chẽ hơn, giữ nguyên ý' },
@@ -147,6 +148,8 @@ export const FIGURE_GUIDE =
   '18) Bảng số liệu / đối chiếu tuỳ ý: {"kind":"table","cells":"hàng 1 | ô 2 | ô 3\\nhàng 2 | a | b","header":"row|col|both|none","align":"center|left|right","merges":"","border":"all|outer|horizontal","fontSize":15}. Ô xuống dòng ghi "\\\\n" (hai kí tự) trong ô; chỉ số dùng x_1, x^2; gộp ô ghi "r1,c1:r2,c2" (vd. "1,1:1,3").\n' +
   '19) Phương trình hoá học (Hoá): {"kind":"chemeq","equations":"2KMnO4 -> K2MnO4 + MnO2 + O2 [t°]","autoBalance":false,"fontSize":17,"align":"center"}. Mũi tên ->, <=>, điều kiện [trên | dưới] (có điện tích như [-OH^- | +H^+]); nhiều mũi tên một dòng đặt [điều kiện] ngay sau mỗi mũi tên; chất cấu tạo bọc trong {...} (vd "{CH3-CH(NH3^+)-COOH} <=> [-OH^- | +H^+] {CH3-CH(NH3^+)-COO^-}"). Chỉ bật autoBalance khi dòng chỉ có 1 mũi tên và không có {...}.\n' +
   '20) Đồ thị chuyển thể (Vật lí 12 — nhiệt độ theo thời gian): {"kind":"phase","yName":"t (°C)","tName":"T (phút)","points":"(0; -45)\\nA: (15; -8,83)\\nB: (27,4; -8,83)\\nC: (40 = T_1; 0)\\n(54 = T_2; 0)\\n_(66; 16)","extend":false,"dashed":true,"dots":true}. Gốc O tự đặt tại giá trị nhỏ nhất của trục dọc; dùng "60 = T_1" để ghi kí hiệu trên trục, "_(x; y)" cho điểm kéo dài không hiện vạch trục; extend=true vẽ đoạn ngang ra mép phải sau điểm cuối.\n' +
+  '21) Đồ thị dao động điều hoà (Vật lí 11): {"kind":"osc","qty":"x|v|a","A":8,"period":{"by":"T|f|omega","value":2},"start":{"by":"state","x0":"0|A|-A|A/2|-A/2|A√2/2|-A√2/2|A√3/2|-A√3/2","dir":"up|down"},"tEnd":2.5,"grid":"T/8|T/4|none","ticks":"value|symbol"}. Hoặc start theo pha: {"by":"phi","phiPi":0.5} (đơn vị π). Thêm "second":{"qty":"v","dashed":true} để vẽ đường thứ hai so pha. Dùng cho dao động điều hoà hình sin.\n' +
+
   'Biểu thức dùng biến x, ^ cho luỹ thừa, sqrt(), ln, sin, cos; nhân ngầm được (2x).'
 
 const TOOL_SYSTEM =
@@ -349,6 +352,75 @@ export function toolFromRaw(raw: Record<string, unknown>): ToolDoc {
         },
       }
       break
+    case 'osc': {
+      const X0S = ['A', '-A', '0', 'A/2', '-A/2', 'A√2/2', '-A√2/2', 'A√3/2', '-A√3/2'] as const
+      const QTYS = ['x', 'v', 'a'] as const
+      const parseVal = (v: unknown, allowPi: boolean, d: number) => {
+        if (typeof v === 'number' && Number.isFinite(v)) return v
+        if (typeof v === 'string') {
+          const parsed = parseOscExpr(v, allowPi)
+          if (Number.isFinite(parsed)) return parsed
+        }
+        return d
+      }
+      const parseStart = (s: unknown, d: OscStart): OscStart => {
+        if (!s || typeof s !== 'object') return d
+        const obj = s as Record<string, unknown>
+        if (obj.by === 'phi' || 'phiPi' in obj) {
+          return { by: 'phi', phiPi: parseVal(obj.phiPi, false, 0) }
+        }
+        const rawX0 = typeof obj.x0 === 'string' ? obj.x0.replace(/\s+/g, '').replace(/sqrt\(?2\)?/gi, '√2').replace(/sqrt\(?3\)?/gi, '√3') : ''
+        const x0: OscStartX0 = X0S.find((k) => k === rawX0) ?? '0'
+        const dir = obj.dir === 'up' || obj.dir === 'down' ? obj.dir : 'down'
+        return { by: 'state', x0, dir }
+      }
+      const qty: OscQty = pick('qty', QTYS, 'x')
+      const A = parseVal(raw.A, false, 8)
+      const pRaw = raw.period && typeof raw.period === 'object' ? (raw.period as Record<string, unknown>) : null
+      let period: OscSpec['period'] = { by: 'T', value: 2 }
+      if (pRaw) {
+        const by = (['T', 'f', 'omega'] as const).find((k) => k === pRaw.by) ?? 'T'
+        period = { by, value: parseVal(pRaw.value, by === 'omega', by === 'T' ? 2 : 1) }
+      } else if (raw.omega !== undefined) {
+        period = { by: 'omega', value: parseVal(raw.omega, true, Math.PI) }
+      } else if (raw.f !== undefined) {
+        period = { by: 'f', value: parseVal(raw.f, false, 1) }
+      } else if (raw.T !== undefined) {
+        period = { by: 'T', value: parseVal(raw.T, false, 2) }
+      }
+      const start = parseStart(
+        raw.start ?? (raw.phiPi !== undefined ? { by: 'phi', phiPi: raw.phiPi } : null),
+        { by: 'state', x0: '0', dir: 'down' },
+      )
+      const { T } = oscPeriod({ period })
+      const tEnd = parseVal(raw.tEnd, false, Math.round(2 * T * 1000) / 1000)
+      const secRaw = raw.second && typeof raw.second === 'object' ? (raw.second as Record<string, unknown>) : null
+      const second: OscSpec['second'] = secRaw
+        ? {
+            qty: QTYS.find((k) => k === secRaw.qty) ?? 'v',
+            ...(secRaw.A !== undefined ? { A: parseVal(secRaw.A, false, A) } : {}),
+            ...(secRaw.start && typeof secRaw.start === 'object' ? { start: parseStart(secRaw.start, start) } : {}),
+            dashed: typeof secRaw.dashed === 'boolean' ? secRaw.dashed : true,
+          }
+        : null
+      doc = {
+        kind: 'osc',
+        spec: {
+          qty,
+          A,
+          period,
+          start,
+          tEnd,
+          yName: str('yName') || OSC_Y_DEFAULT[qty],
+          tName: str('tName') || 't (s)',
+          grid: pick('grid', ['none', 'T/4', 'T/8'] as const, 'T/8'),
+          ticks: pick('ticks', ['value', 'symbol'] as const, 'value'),
+          second,
+        },
+      }
+      break
+    }
+
     default:
       throw new Error(note || 'Không thấy gì để vẽ minh hoạ trong đoạn đã chọn.')
   }

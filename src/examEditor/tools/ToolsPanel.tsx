@@ -4,8 +4,7 @@
  */
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
-import { ArrowRightLeft, Box, ChartColumn, ChartSpline, ClipboardList, Grid3x3, SquarePlus, Table, Table2, Triangle, TriangleRight, Zap, ChartLine, Atom, Hexagon, FlaskConical, CircleDot, Network, MoveHorizontal, Circle, Thermometer, Shuffle, Sigma } from 'lucide-react'
-import { Flame } from 'lucide-react'
+import { ArrowRightLeft, Box, Flame, ChartColumn, ChartSpline, ClipboardList, Grid3x3, SquarePlus, Table, Table2, Triangle, TriangleRight, Zap, ChartLine, Atom, Hexagon, FlaskConical, CircleDot, Network, MoveHorizontal, Circle, Thermometer, Shuffle, Sigma, Waves } from 'lucide-react'
 import type { ToolImage, ToolKind } from '@/lib/toolSpec'
 import type { ExamDoc } from '@/data/docTypes'
 import { ToolModal } from './ToolModal'
@@ -41,6 +40,7 @@ const SUBJECTS: Array<{ name: string; tools: Array<{ id: ToolId; label: string; 
       { id: 'incline', label: 'Mặt phẳng nghiêng', desc: 'Vật trên dốc, lực P, N, Fms, F', Icon: TriangleRight },
       { id: 'gas', label: 'Đồ thị trạng thái khí', desc: 'p – V, p – T, V – T; đẳng nhiệt, đẳng tích, đẳng áp, chu trình', Icon: Thermometer },
       { id: 'phase', label: 'Đồ thị chuyển thể', desc: 'Nhiệt độ theo thời gian: nóng chảy, sôi, đông đặc; điểm A, B, C', Icon: Flame },
+      { id: 'osc', label: 'Đồ thị dao động', desc: 'x, v, a theo t; nhập A, T, trạng thái đầu; lưới ô kiểu đề thi', Icon: Waves },
     ],
   },
   {

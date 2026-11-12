@@ -27,6 +27,8 @@ import { ChemEqModal } from './MoreToolModals'
 import type { ChemEqSpec } from '@/lib/chemEq'
 import { PhaseModal } from './MoreToolModals'
 import type { PhaseSpec } from '@/lib/phaseChange'
+import { OscModal } from './MoreToolModals'
+import type { OscSpec } from '@/lib/oscillation'
 
 export function ToolModal({
   kind,
@@ -89,5 +91,7 @@ export function ToolModal({
       return <TableModal initial={initial as TableSpec | null | undefined} {...common} />
     case 'phase':
       return <PhaseModal initial={initial as PhaseSpec | null | undefined} {...common} />
+    case 'osc':
+      return <OscModal initial={initial as OscSpec | null | undefined} {...common} />
   }
 }

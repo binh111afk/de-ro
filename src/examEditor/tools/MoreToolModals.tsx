@@ -22,6 +22,7 @@ import type { NumberLineSpec, TreeSpec, TrigSpec, VennSpec } from '@/lib/mathExt
 import { CHEMEQ_DEFAULT, type ChemEqSpec } from '@/lib/chemEq'
 import { groupedStats, parseGroups, round2, type GroupedSpec, type GroupedView } from '@/lib/grouped'
 import { TABLE_DEFAULT, parseCells, parseMerges, type TableAlign, type TableBorder, type TableHeader, type TableSpec } from '@/lib/table'
+import { OSC_DEFAULT, OSC_Y_DEFAULT, formatOmega, oscEquation, oscParams, oscPeriod, parseOscExpr, type OscQty, type OscSpec, type OscStart, type OscStartX0 } from '@/lib/oscillation'
 import { PHASE_DEFAULT, type PhaseSpec } from '@/lib/phaseChange'
 import { Check, ToolShell, sectionTitle } from './ToolShell'
 
@@ -1935,6 +1936,507 @@ export function PhaseModal({ initial, submitLabel, onClose, onInsert }: Props<Ph
           fallback={<img src={svgDataUrl(img.svg)} alt="Xem trước" className="max-h-full max-w-full rounded-[4px] border border-line bg-white object-contain" />}
         />
       )}
+    />
+  )
+}
+
+/* ------------------------------------------------------------------ *
+ * Vật lí 11: đồ thị dao động điều hoà
+ * ------------------------------------------------------------------ */
+
+const OSC_QTYS: Array<{ id: OscQty; label: string }> = [
+  { id: 'x', label: 'Li độ x' },
+  { id: 'v', label: 'Vận tốc v' },
+  { id: 'a', label: 'Gia tốc a' },
+]
+
+const OSC_PERIOD_BY: Array<{ id: OscSpec['period']['by']; label: string }> = [
+  { id: 'T', label: 'T (s)' },
+  { id: 'f', label: 'f (Hz)' },
+  { id: 'omega', label: 'ω (rad/s)' },
+]
+
+const OSC_X0S: Array<{ id: OscStartX0; label: string }> = [
+  { id: '-A', label: '−A' },
+  { id: '-A√3/2', label: '−A√3/2' },
+  { id: '-A√2/2', label: '−A√2/2' },
+  { id: '-A/2', label: '−A/2' },
+  { id: '0', label: '0 (VTCB)' },
+  { id: 'A/2', label: 'A/2' },
+  { id: 'A√2/2', label: 'A√2/2' },
+  { id: 'A√3/2', label: 'A√3/2' },
+  { id: 'A', label: 'A' },
+]
+
+const OSC_PHI_PRESETS: Array<{ label: string; text: string; val: number }> = [
+  { label: '0', text: '0', val: 0 },
+  { label: 'π/2', text: '0,5', val: 0.5 },
+  { label: '−π/2', text: '-0,5', val: -0.5 },
+  { label: 'π', text: '1', val: 1 },
+  { label: 'π/3', text: '1/3', val: 1 / 3 },
+  { label: '−π/3', text: '-1/3', val: -1 / 3 },
+]
+
+const OSC_TEND_PRESETS: Array<{ label: string; k: number }> = [
+  { label: '1T', k: 1 },
+  { label: '1,25T', k: 1.25 },
+  { label: '1,5T', k: 1.5 },
+  { label: '2T', k: 2 },
+]
+
+const OSC_GRIDS: Array<{ id: OscSpec['grid']; label: string }> = [
+  { id: 'T/8', label: 'T/8 (ô A/4)' },
+  { id: 'T/4', label: 'T/4 (ô A/2)' },
+  { id: 'none', label: 'Không' },
+]
+
+const OSC_TICKS: Array<{ id: OscSpec['ticks']; label: string }> = [
+  { id: 'value', label: 'Số liệu' },
+  { id: 'symbol', label: 'Kí hiệu (A, T…)' },
+]
+
+const fmtOscInput = (n: number) => (Number.isFinite(n) ? String(Math.round(n * 1e6) / 1e6).replace('.', ',') : '')
+
+function OscStartPicker({
+  value,
+  onChange,
+}: {
+  value: OscStart
+  onChange: (next: OscStart) => void
+}) {
+  const [phiText, setPhiText] = useState(() => fmtOscInput(value.by === 'phi' ? value.phiPi : 0.5))
+  const pill = (on: boolean) =>
+    cn(
+      'rounded-[6px] border px-2 py-1 text-[12px] transition-colors',
+      on ? 'border-clay bg-clay-tint font-medium text-clay' : 'border-line text-ink-2 hover:border-ink-4',
+    )
+
+  const toPhiMode = () => {
+    if (value.by === 'phi') return
+    let phiPi = 0
+    try {
+      phiPi = oscParams({ A: 1, period: { by: 'T', value: 1 }, start: value }).phi / Math.PI
+    } catch {
+      phiPi = 0
+    }
+    setPhiText(fmtOscInput(phiPi))
+    onChange({ by: 'phi', phiPi })
+  }
+
+  const toStateMode = () => {
+    if (value.by === 'state') return
+    onChange({ by: 'state', x0: '0', dir: 'down' })
+  }
+
+  const atBoundary = value.by === 'state' && (value.x0 === 'A' || value.x0 === '-A')
+
+  return (
+    <div className="space-y-2">
+      <div className="flex gap-1.5">
+        <button type="button" aria-pressed={value.by === 'state'} onClick={toStateMode} className={pill(value.by === 'state')}>
+          Từ x₀, chiều
+        </button>
+        <button type="button" aria-pressed={value.by === 'phi'} onClick={toPhiMode} className={pill(value.by === 'phi')}>
+          Nhập pha φ
+        </button>
+      </div>
+      {value.by === 'state' ? (
+        <>
+          <div className="grid grid-cols-3 gap-1">
+            {OSC_X0S.map((it) => (
+              <button
+                key={it.id}
+                type="button"
+                aria-pressed={value.x0 === it.id}
+                onClick={() => onChange({ by: 'state', x0: it.id, dir: value.dir })}
+                className={pill(value.x0 === it.id)}
+              >
+                {it.label}
+              </button>
+            ))}
+          </div>
+          {atBoundary ? (
+            <p className="text-[11.5px] text-ink-3">Tại biên ±A, vận tốc bằng 0 (không phân biệt chiều).</p>
+          ) : (
+            <div className="flex gap-1.5">
+              {(
+                [
+                  ['up', 'Chiều dương (+)'],
+                  ['down', 'Chiều âm (−)'],
+                ] as const
+              ).map(([d, label]) => (
+                <button
+                  key={d}
+                  type="button"
+                  aria-pressed={value.dir === d}
+                  onClick={() => onChange({ by: 'state', x0: value.x0, dir: d })}
+                  className={cn(pill(value.dir === d), 'flex-1')}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          )}
+        </>
+      ) : (
+        <div className="space-y-1.5">
+          <div className="flex items-center gap-2">
+            <span className="shrink-0 text-[12.5px] text-ink-2">φ =</span>
+            <input
+              value={phiText}
+              onChange={(e) => {
+                const v = e.target.value
+                setPhiText(v)
+                onChange({ by: 'phi', phiPi: parseOscExpr(v, false) })
+              }}
+              placeholder="vd. 0,5 hoặc -1/3"
+              aria-label="Pha ban đầu theo đơn vị pi"
+              className={cn(inputClass, 'h-9 flex-1')}
+            />
+            <span className="shrink-0 text-[12.5px] text-ink-2">π (rad)</span>
+          </div>
+          <div className="flex flex-wrap gap-1">
+            {OSC_PHI_PRESETS.map((p) => (
+              <button
+                key={p.label}
+                type="button"
+                onClick={() => {
+                  setPhiText(p.text)
+                  onChange({ by: 'phi', phiPi: p.val })
+                }}
+                className={pill(Math.abs(value.phiPi - p.val) < 1e-6)}
+              >
+                {p.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+export function OscModal({ initial, submitLabel, onClose, onInsert }: Props<OscSpec>) {
+  const [spec, setSpec] = useState<OscSpec>(() => (initial ? { ...OSC_DEFAULT, ...initial } : OSC_DEFAULT))
+  const [aText, setAText] = useState(() => fmtOscInput(spec.A))
+  const [pText, setPText] = useState(() =>
+    spec.period.by === 'omega' ? formatOmega(spec.period.value) : fmtOscInput(spec.period.value),
+  )
+  const [tEndText, setTEndText] = useState(() => fmtOscInput(spec.tEnd))
+  const [sAText, setSAText] = useState(() =>
+    spec.second?.A !== undefined ? fmtOscInput(spec.second.A) : '',
+  )
+
+  const set = (p: Partial<OscSpec>) => setSpec((s) => ({ ...s, ...p }))
+  const doc = useMemo((): ToolDoc => ({ kind: 'osc', spec }), [spec])
+  const { preview, error } = useRender(doc)
+
+  const curT = useMemo(() => {
+    try {
+      return oscPeriod(spec).T
+    } catch {
+      return null
+    }
+  }, [spec])
+
+  const eqText = useMemo(() => {
+    try {
+      return oscEquation(spec)
+    } catch {
+      return null
+    }
+  }, [spec])
+
+  const eq2Text = useMemo(() => {
+    if (!spec.second) return null
+    try {
+      return oscEquation(spec, spec.second)
+    } catch {
+      return null
+    }
+  }, [spec])
+
+  const pill = (on: boolean) =>
+    cn(
+      'rounded-[6px] border px-2.5 py-1 text-[12.5px] transition-colors',
+      on ? 'border-clay bg-clay-tint font-medium text-clay' : 'border-line text-ink-2 hover:border-ink-4',
+    )
+
+  const switchQty = (qty: OscQty) => {
+    const isDefaultY = !spec.yName.trim() || Object.values(OSC_Y_DEFAULT).includes(spec.yName)
+    set({ qty, ...(isDefaultY ? { yName: OSC_Y_DEFAULT[qty] } : {}) })
+  }
+
+  const switchPeriodBy = (by: OscSpec['period']['by']) => {
+    if (by === spec.period.by) return
+    if (curT) {
+      const nextVal = by === 'T' ? curT : by === 'f' ? 1 / curT : (2 * Math.PI) / curT
+      setPText(by === 'omega' ? formatOmega(nextVal) : fmtOscInput(nextVal))
+      set({ period: { by, value: nextVal } })
+    } else {
+      set({ period: { by, value: spec.period.value } })
+    }
+  }
+
+  const applyTEndPreset = (k: number) => {
+    if (!curT) return
+    const next = Math.round(k * curT * 1e6) / 1e6
+    setTEndText(fmtOscInput(next))
+    set({ tEnd: next })
+  }
+
+  const inputs = (
+    <>
+      <section>
+        <h3 className={sectionTitle}>Đại lượng</h3>
+        <div className="flex flex-wrap gap-1.5">
+          {OSC_QTYS.map((q) => (
+            <button key={q.id} type="button" aria-pressed={spec.qty === q.id} onClick={() => switchQty(q.id)} className={pill(spec.qty === q.id)}>
+              {q.label}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <h3 className={sectionTitle}>Biên độ</h3>
+        <div className="flex items-center gap-2">
+          <span className="shrink-0 text-[13px] text-ink-2">A =</span>
+          <input
+            value={aText}
+            onChange={(e) => {
+              const v = e.target.value
+              setAText(v)
+              set({ A: parseOscExpr(v, false) })
+            }}
+            inputMode="decimal"
+            aria-label="Biên độ A (cm)"
+            className={cn(inputClass, 'h-9 flex-1')}
+          />
+          <span className="shrink-0 text-[13px] text-ink-2">cm</span>
+        </div>
+      </section>
+
+      <section>
+        <h3 className={sectionTitle}>Chu kì / Tần số</h3>
+        <div className="mb-2 flex flex-wrap gap-1.5">
+          {OSC_PERIOD_BY.map((p) => (
+            <button
+              key={p.id}
+              type="button"
+              aria-pressed={spec.period.by === p.id}
+              onClick={() => switchPeriodBy(p.id)}
+              className={pill(spec.period.by === p.id)}
+            >
+              {p.label}
+            </button>
+          ))}
+        </div>
+        <input
+          value={pText}
+          onChange={(e) => {
+            const v = e.target.value
+            setPText(v)
+            set({ period: { by: spec.period.by, value: parseOscExpr(v, spec.period.by === 'omega') } })
+          }}
+          placeholder={spec.period.by === 'omega' ? 'vd. 2π, π hoặc 10' : 'vd. 2'}
+          aria-label="Giá trị chu kì hoặc tần số"
+          className={cn(inputClass, 'h-9')}
+        />
+      </section>
+
+      <section>
+        <h3 className={sectionTitle}>
+          Trạng thái đầu (<span className="normal-case">t = 0</span>)
+        </h3>
+        <OscStartPicker value={spec.start} onChange={(start) => set({ start })} />
+      </section>
+
+      <section>
+        <h3 className={sectionTitle}>Khoảng vẽ (từ 0 đến)</h3>
+        <div className="flex items-center gap-2">
+          <input
+            value={tEndText}
+            onChange={(e) => {
+              const v = e.target.value
+              setTEndText(v)
+              set({ tEnd: parseOscExpr(v, false) })
+            }}
+            inputMode="decimal"
+            aria-label="Thời gian kết thúc (s)"
+            className={cn(inputClass, 'h-9 flex-1')}
+          />
+          <span className="shrink-0 text-[13px] text-ink-2">s</span>
+        </div>
+        <div className="mt-1.5 flex flex-wrap gap-1.5">
+          {OSC_TEND_PRESETS.map((p) => (
+            <button
+              key={p.label}
+              type="button"
+              disabled={!curT}
+              onClick={() => applyTEndPreset(p.k)}
+              className={pill(Boolean(curT && Math.abs(spec.tEnd - p.k * curT) < 1e-6))}
+            >
+              {p.label}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <h3 className={sectionTitle}>Lưới ô nét đứt</h3>
+        <div className="flex flex-wrap gap-1.5">
+          {OSC_GRIDS.map((g) => (
+            <button key={g.id} type="button" aria-pressed={spec.grid === g.id} onClick={() => set({ grid: g.id })} className={pill(spec.grid === g.id)}>
+              {g.label}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <h3 className={sectionTitle}>Nhãn trên trục</h3>
+        <div className="flex flex-wrap gap-1.5">
+          {OSC_TICKS.map((t) => (
+            <button key={t.id} type="button" aria-pressed={spec.ticks === t.id} onClick={() => set({ ticks: t.id })} className={pill(spec.ticks === t.id)}>
+              {t.label}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section className="grid grid-cols-2 gap-2">
+        <label className="text-[12.5px] text-ink-2">
+          Trục dọc
+          <input className={cn(inputClass, 'mt-1 h-9')} value={spec.yName} onChange={(e) => set({ yName: e.target.value })} />
+        </label>
+        <label className="text-[12.5px] text-ink-2">
+          Trục ngang
+          <input className={cn(inputClass, 'mt-1 h-9')} value={spec.tName} onChange={(e) => set({ tName: e.target.value })} />
+        </label>
+      </section>
+
+      <section>
+        <Check
+          checked={Boolean(spec.second)}
+          onChange={(on) => {
+            if (!on) {
+              set({ second: null })
+            } else {
+              const qty: OscQty = spec.qty === 'x' ? 'v' : 'x'
+              setSAText('')
+              set({ second: { qty, dashed: true } })
+            }
+          }}
+        >
+          Vẽ đường thứ hai để so pha
+        </Check>
+        {spec.second && (
+          <div className="mt-2 space-y-2.5 rounded-[8px] border border-line bg-paper-2 p-3">
+            <div className="flex flex-wrap gap-1.5">
+              {OSC_QTYS.map((q) => (
+                <button
+                  key={q.id}
+                  type="button"
+                  aria-pressed={spec.second?.qty === q.id}
+                  onClick={() => spec.second && set({ second: { ...spec.second, qty: q.id } })}
+                  className={pill(spec.second?.qty === q.id)}
+                >
+                  {q.label}
+                </button>
+              ))}
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="shrink-0 text-[12.5px] text-ink-2">A₂ =</span>
+              <input
+                value={sAText}
+                onChange={(e) => {
+                  const v = e.target.value
+                  setSAText(v)
+                  if (!spec.second) return
+                  set({ second: { ...spec.second, A: v.trim() ? parseOscExpr(v, false) : undefined } })
+                }}
+                placeholder="Bằng A"
+                aria-label="Biên độ đường thứ hai"
+                className={cn(inputClass, 'h-9 flex-1')}
+              />
+              <span className="shrink-0 text-[12.5px] text-ink-2">cm</span>
+            </div>
+            <Check
+              checked={!spec.second.start}
+              onChange={(same) => spec.second && set({ second: { ...spec.second, start: same ? undefined : { ...spec.start } } })}
+            >
+              Cùng trạng thái đầu
+            </Check>
+            {spec.second.start && (
+              <OscStartPicker
+                value={spec.second.start}
+                onChange={(start) => spec.second && set({ second: { ...spec.second, start } })}
+              />
+            )}
+            <Check
+              checked={spec.second.dashed}
+              onChange={(dashed) => spec.second && set({ second: { ...spec.second, dashed } })}
+            >
+              Đường thứ hai nét đứt
+            </Check>
+          </div>
+        )}
+      </section>
+
+      {error && (
+        <p role="alert" className="rounded-[6px] bg-clay-tint px-2.5 py-1.5 text-[12px] leading-snug text-clay-deep">
+          {error}
+        </p>
+      )}
+
+      {eqText && (
+        <div className="rounded-[6px] border border-line bg-paper-2 px-3 py-2 text-[12.5px] text-ink-2">
+          <div>
+            Phương trình: <span className="font-serif text-[13.5px] font-medium text-ink">{eqText}</span>
+          </div>
+          {eq2Text && (
+            <div className="mt-0.5">
+              Đường 2: <span className="font-serif text-[13.5px] font-medium text-ink">{eq2Text}</span>
+            </div>
+          )}
+        </div>
+      )}
+    </>
+  )
+
+  return (
+    <ToolShell
+      title="Đồ thị dao động điều hoà"
+      hint="Nhập biên độ, chu kì và trạng thái đầu; tự tính phương trình và vẽ lưới ô kiểu đề thi"
+      inputs={inputs}
+      inputsWidth={390}
+      preview={preview}
+      renderPreview={(img) => (
+        <div className="flex max-h-full max-w-full flex-col items-center gap-2.5">
+          <img
+            src={svgDataUrl(img.svg)}
+            alt="Xem trước"
+            className="min-h-0 max-h-full max-w-full rounded-[4px] border border-line bg-white object-contain"
+          />
+          {eqText && (
+            <div className="shrink-0 rounded-[6px] border border-line bg-surface px-3 py-1.5 text-center text-[12.5px] text-ink-2">
+              <div>
+                Phương trình: <span className="font-serif text-[13.5px] font-medium text-ink">{eqText}</span>
+              </div>
+              {eq2Text && (
+                <div className="mt-0.5">
+                  Đường 2: <span className="font-serif text-[13.5px] font-medium text-ink">{eq2Text}</span>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+      submitLabel={submitLabel ?? (initial ? 'Cập nhật đồ thị' : 'Chèn đồ thị')}
+      canSubmit={Boolean(preview) && !error}
+      onSubmit={() => preview && onInsert(preview)}
+      onClose={onClose}
     />
   )
 }

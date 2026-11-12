@@ -19,6 +19,7 @@ import { renderChemEqSvg, type ChemEqSpec } from './chemEq'
 import { renderGroupedSvg, type GroupedSpec } from './grouped'
 import { renderTableSvg, type TableSpec } from './table'
 import { renderPhaseSvg, type PhaseSpec } from './phaseChange'
+import { renderOscSvg, type OscSpec } from './oscillation'
 
 export type ToolDoc =
   | { kind: 'graph'; spec: PlotSpec }
@@ -44,6 +45,7 @@ export type ToolDoc =
   | { kind: 'grouped'; spec: GroupedSpec }
   | { kind: 'table'; spec: TableSpec }
   | { kind: 'phase'; spec: PhaseSpec }
+  | { kind: 'osc'; spec: OscSpec }
 
 export type ToolKind = ToolDoc['kind']
 
@@ -154,6 +156,8 @@ function renderToolRaw(doc: ToolDoc): ToolImage {
       return renderTableSvg(doc.spec, toolDesc(doc))
     case 'phase':
       return renderPhaseSvg(doc.spec, toolDesc(doc))
+    case 'osc':
+      return renderOscSvg(doc.spec, toolDesc(doc))
   }
 }
 
