@@ -5,6 +5,8 @@
  */
 import { PickPreview } from './PickPreview'
 import { LabelPreview } from './LabelDragPreview'
+import { EdgeEditPreview } from './EdgeEditPreview'
+import { hasDragCoords, resetDragCoords } from './edgeSnap'
 import { useMemo, useState } from 'react'
 import { cn } from '@/lib/cn'
 import { inputClass } from '@/components/ui'
@@ -12,7 +14,7 @@ import { GEO2D_SHAPES, GEO3D_SHAPES, type Geo2dShape, type Geo2dSpec, type Geo3d
 import { renderTool, type ToolImage } from '@/lib/toolSpec'
 import { svgDataUrl } from '@/lib/plot'
 import { GEO_HELP } from '@/lib/geoConstruct'
-import { ChevronDown, CircleHelp, X } from 'lucide-react'
+import { ChevronDown, CircleHelp, RotateCcw, Waypoints, X } from 'lucide-react'
 import { Check, ToolShell, sectionTitle } from './ToolShell'
 
 const isTri2d = (s: Geo2dShape) => ['triangle', 'right-triangle', 'isosceles', 'equilateral', 'inscribed-triangle'].includes(s)
@@ -28,7 +30,8 @@ export function Geo2dModal({ initial, submitLabel, onClose, onInsert }: Props<Ge
   )
   const preview = useMemo(() => renderTool({ kind: 'geo2d', spec }), [spec])
   const set = (patch: Partial<Geo2dSpec>) => setSpec((s) => ({ ...s, ...patch }))
-  const [move, setMove] = useState(false)
+  const [mode, setMode] = useState<'pick' | 'label' | 'edge'>('pick')
+  const hasDrag = hasDragCoords(spec.extras ?? '')
 
   const inputs = (
     <>
@@ -37,28 +40,45 @@ export function Geo2dModal({ initial, submitLabel, onClose, onInsert }: Props<Ge
         value={spec.shape}
         onPick={(o) => set({ shape: o.id, names: o.names })}
       />
-      <Names names={spec.names} onChange={(names) => set({ names })} />
-      <section>
-        <h3 className={sectionTitle}>Đường phụ</h3>
-        {isTri2d(spec.shape) && (
-          <>
-            <Check checked={spec.altitude} onChange={(altitude) => set({ altitude })}>Đường cao AH</Check>
-            <Check checked={spec.median} onChange={(median) => set({ median })}>Trung tuyến AM</Check>
-            {spec.shape !== 'inscribed-triangle' && (
-              <Check checked={spec.circumcircle} onChange={(circumcircle) => set({ circumcircle })}>Đường tròn ngoại tiếp</Check>
-            )}
-          </>
-        )}
-        {isQuad2d(spec.shape) && <Check checked={spec.diagonals} onChange={(diagonals) => set({ diagonals })}>Hai đường chéo</Check>}
-        <Check checked={spec.marks} onChange={(marks) => set({ marks })}>Kí hiệu góc vuông, cạnh bằng nhau</Check>
-      </section>
-      <Extras value={spec.extras ?? ''} onChange={(extras) => set({ extras })} errors={preview.errors} example={'M = trung điểm BC\nAM\nI = trung điểm AM\nH = hình chiếu A lên BC\nAH đứt\nvuông H A C'} />
+      {spec.names.length > 0 && <Names names={spec.names} onChange={(names) => set({ names })} />}
+      {spec.shape !== 'free' && (
+        <section>
+          <h3 className={sectionTitle}>Đường phụ</h3>
+          {isTri2d(spec.shape) && (
+            <>
+              <Check checked={spec.altitude} onChange={(altitude) => set({ altitude })}>Đường cao AH</Check>
+              <Check checked={spec.median} onChange={(median) => set({ median })}>Trung tuyến AM</Check>
+              {spec.shape !== 'inscribed-triangle' && (
+                <Check checked={spec.circumcircle} onChange={(circumcircle) => set({ circumcircle })}>Đường tròn ngoại tiếp</Check>
+              )}
+            </>
+          )}
+          {isQuad2d(spec.shape) && <Check checked={spec.diagonals} onChange={(diagonals) => set({ diagonals })}>Hai đường chéo</Check>}
+          <Check checked={spec.marks} onChange={(marks) => set({ marks })}>Kí hiệu góc vuông, cạnh bằng nhau</Check>
+        </section>
+      )}
+      <Extras
+        value={spec.extras ?? ''}
+        onChange={(extras) => set({ extras })}
+        errors={preview.errors}
+        example={
+          spec.shape === 'free'
+            ? 'A(0; 4)\nB(0; 0)\nC(7; 0)\nAB, BC, CA\nvuông B A C\nnhãn AB "4 km"\nkích thước BC "7 km"'
+            : 'M = trung điểm BC\nAM\nI = trung điểm AM\nH = hình chiếu A lên BC\nAH đứt\nvuông H A C'
+        }
+      />
     </>
   )
+  const hint =
+    mode === 'edge'
+      ? 'Kéo nút ở đầu cạnh để xoay / đổi độ dài (giữ Alt để tắt hít)'
+      : mode === 'label'
+        ? 'Kéo chữ nhãn tới vị trí mong muốn'
+        : 'Bấm lên cạnh để lấy điểm, kéo từ điểm này sang điểm khác để nối đoạn'
   return (
     <ToolShell
       title="Hình học phẳng"
-      hint="Bấm lên cạnh để lấy điểm, kéo từ điểm này sang điểm khác để nối đoạn"
+      hint={hint}
       inputs={inputs}
       preview={preview}
       submitLabel={submitLabel ?? (initial ? 'Cập nhật hình' : 'Chèn hình')}
@@ -68,8 +88,33 @@ export function Geo2dModal({ initial, submitLabel, onClose, onInsert }: Props<Ge
           img={img}
           labelPos={spec.labelPos}
           onChange={(labelPos) => set({ labelPos })}
-          move={move}
-          onToggle={() => setMove((v) => !v)}
+          move={mode === 'label'}
+          onToggle={() => setMode((m) => (m === 'label' ? 'pick' : 'label'))}
+          modeExtra={
+            <button
+              type="button"
+              aria-pressed={mode === 'edge'}
+              onClick={() => setMode((m) => (m === 'edge' ? 'pick' : 'edge'))}
+              className={cn(
+                'flex items-center gap-1 whitespace-nowrap rounded-[6px] border px-1.5 py-1 text-[11.5px] transition-colors',
+                mode === 'edge' ? 'border-clay bg-clay-tint font-medium text-clay' : 'border-line text-ink-2 hover:border-ink-4',
+              )}
+            >
+              <Waypoints className="size-3.5" /> Chỉnh cạnh
+            </button>
+          }
+          extraBar={
+            <button
+              type="button"
+              onClick={() => set({ extras: resetDragCoords(spec.extras ?? '') })}
+              disabled={!hasDrag}
+              title="Xoá các toạ độ do kéo sinh ra"
+              className="flex items-center gap-1 whitespace-nowrap rounded-[6px] border border-line px-1.5 py-1 text-[11.5px] text-ink-2 transition-colors hover:border-ink-4 disabled:pointer-events-none disabled:opacity-40"
+            >
+              <RotateCcw className="size-3.5" /> Đặt lại hình
+            </button>
+          }
+          previewOverride={mode === 'edge' ? <EdgeEditPreview img={img} extras={spec.extras ?? ''} onExtras={(extras) => set({ extras })} /> : undefined}
           fallback={<PickPreview img={img} extras={spec.extras ?? ''} onExtras={(extras) => set({ extras })} />}
         />
       )}

@@ -13,8 +13,16 @@ export type Vec = number[]
 export interface Construction {
   /** điểm mới, theo thứ tự dựng */
   points: Array<{ name: string; p: Vec; hidden?: boolean }>
+  /** tên điểm khai báo trực tiếp theo toạ độ A(x; y) */
+  coords: string[]
   /** đoạn nối: tên hai đầu + ép nét (undefined = tự tính) */
   segs: Array<{ a: string; b: string; dashed?: boolean }>
+  /** đoạn kéo dài (hình phẳng): 'both' = đường BC kéo dài, 'end' = tia BC */
+  extends: Array<{ a: string; b: string; mode: 'both' | 'end'; dashed?: boolean }>
+  /** nhãn ghi trên cạnh: nhãn AB "4 km" */
+  labels: Array<{ a: string; b: string; text: string }>
+  /** đường kích thước: kích thước BC "7 km" */
+  dims: Array<{ a: string; b: string; text: string; side?: 'up' | 'down' | 'left' | 'right' }>
   /** góc vuông tại `at` giữa hai tia tới u, v */
   rights: Array<{ at: string; u: string; v: string }>
   /** nhóm đoạn bằng nhau */
@@ -46,6 +54,71 @@ function num(s: string): number | null {
   if (!m) return null
   const v = m[2] ? Number(m[1]) / Number(m[2]) : Number(m[1])
   return Number.isFinite(v) ? v : null
+}
+
+function parseNumStrict(s: string): number | null {
+  const t = s.trim().replace(/[−–]/g, '-').replace(',', '.')
+  const m = /^(-?\d+(?:\.\d+)?)(?:\s*\/\s*(-?\d+(?:\.\d+)?))?$/.exec(t)
+  if (!m) return null
+  const v = m[2] ? Number(m[1]) / Number(m[2]) : Number(m[1])
+  return Number.isFinite(v) ? v : null
+}
+
+function parseCoordPair(inner: string): [number, number] | null {
+  const parts = inner.includes(';') ? inner.split(';') : inner.split(',')
+  if (parts.length !== 2) return null
+  const x = parseNumStrict(parts[0])
+  const y = parseNumStrict(parts[1])
+  return x !== null && y !== null ? [x, y] : null
+}
+
+const COORD_HEAD = /^[A-Z][0-9]*'*\s*(?:=\s*)?\(/
+const COORD_ONE = /([A-Z][0-9]*'*)\s*(?:=\s*)?\(([^()]*)\)/g
+const cleanConstructLine = (raw: string) =>
+  raw.replace(/[′’]/g, "'").replace(/\s*\/\/\s*kéo\s*$/i, '').replace(/\s+/g, ' ').trim()
+
+function parseCoordLine(s: string): { items: Array<{ name: string; p: [number, number] }>; error?: string } | null {
+  if (!COORD_HEAD.test(s)) return null
+  const items: Array<{ name: string; p: [number, number] }> = []
+  const re = new RegExp(COORD_ONE.source, 'g')
+  let rest = ''
+  let last = 0
+  for (const m of s.matchAll(re)) {
+    const idx = m.index ?? 0
+    rest += s.slice(last, idx)
+    last = idx + m[0].length
+    const p = parseCoordPair(m[2])
+    if (!p) return { items: [], error: `toạ độ ${m[1]} không hợp lệ — ví dụ: ${m[1]}(0; 4) hoặc M(2,5; 0)` }
+    items.push({ name: m[1], p })
+  }
+  rest += s.slice(last)
+  if (!items.length || rest.replace(/[\s,;]+/g, '').length > 0) {
+    return { items: [], error: 'ví dụ: A(0; 4) hoặc A = (0; 4) hoặc M(2,5; 0)' }
+  }
+  return { items }
+}
+
+/** đọc trước các lệnh khai báo toạ độ A(x; y) để ghi đè đỉnh mẫu trước khi dựng */
+export function extractCoords(text: string): Map<string, [number, number]> {
+  const map = new Map<string, [number, number]>()
+  for (const raw of text.split('\n')) {
+    const s = cleanConstructLine(raw)
+    if (!s || s.startsWith('//')) continue
+    const parsed = parseCoordLine(s)
+    if (parsed && !parsed.error) for (const it of parsed.items) map.set(it.name, it.p)
+  }
+  return map
+}
+
+const SIDE_MAP: Record<string, 'up' | 'down' | 'left' | 'right'> = {
+  trên: 'up',
+  tren: 'up',
+  dưới: 'down',
+  duoi: 'down',
+  trái: 'left',
+  trai: 'left',
+  phải: 'right',
+  phai: 'right',
 }
 
 /** giao (gần nhất) của hai đường a+s·u và c+t·v; null nếu song song */
@@ -111,7 +184,19 @@ export interface ConstructOptions {
  */
 export function construct(text: string, known: Map<string, Vec>, opts: ConstructOptions = {}): Construction {
   const pts = new Map(known)
-  const out: Construction = { points: [], segs: [], rights: [], equals: [], circles: [], fills: [], errors: [] }
+  const out: Construction = {
+    points: [],
+    coords: [],
+    segs: [],
+    extends: [],
+    labels: [],
+    dims: [],
+    rights: [],
+    equals: [],
+    circles: [],
+    fills: [],
+    errors: [],
+  }
   const dim = known.values().next().value?.length ?? 2
   let hid = 0
 
@@ -130,7 +215,7 @@ export function construct(text: string, known: Map<string, Vec>, opts: Construct
 
   text.split('\n').forEach((raw, idx) => {
     const line = idx + 1
-    const s = raw.replace(/[′’]/g, "'").replace(/\s+/g, ' ').trim()
+    const s = cleanConstructLine(raw)
     if (!s || s.startsWith('//')) return
     const err = (msg: string) => {
       out.errors.push({ line, msg })
@@ -156,6 +241,21 @@ export function construct(text: string, known: Map<string, Vec>, opts: Construct
       }
       return true
     }
+
+    // ---------- điểm theo toạ độ: A(0; 4) hoặc A = (0; 4)
+    const coordParsed = parseCoordLine(s)
+    if (coordParsed) {
+      if (coordParsed.error) return err(coordParsed.error)
+      if (dim !== 2) return err('toạ độ A(x; y) chỉ dùng cho hình phẳng')
+      for (const it of coordParsed.items) {
+        if (!out.coords.includes(it.name)) out.coords.push(it.name)
+        // đỉnh mẫu đã có trong `known` → ghi đè toạ độ, không thêm trùng vào `out.points`
+        if (known.has(it.name)) pts.set(it.name, it.p)
+        else addPoint(it.name, it.p)
+      }
+      return
+    }
+
     const lower = s.toLowerCase()
 
     // ---------- "trong ABC": tam giác cho các đường trong tam giác
@@ -342,6 +442,66 @@ export function construct(text: string, known: Map<string, Vec>, opts: Construct
       return
     }
 
+    // ---------- nhãn cạnh: nhãn AB "4 km"
+    const lblCmd = body.match(/^(?:nhãn|nhan)\s+(.+)$/i)
+    if (lblCmd) {
+      if (dim !== 2) return err('nhãn cạnh chỉ dùng cho hình phẳng')
+      const rest = lblCmd[1]
+      const quoted = rest.match(/"([^"]*)"|“([^”]*)”/)
+      if (!quoted) return err('ví dụ: nhãn AB "4 km"')
+      const text = (quoted[1] ?? quoted[2] ?? '').trim()
+      if (!text) return err('nội dung nhãn trống — ví dụ: nhãn AB "4 km"')
+      const clean = rest.replace(quoted[0], ' ').trim()
+      const ns = names(clean)
+      if (ns.length !== 2 || ns.join('') !== clean.replace(/[\s-]+/g, '')) return err('ví dụ: nhãn AB "4 km"')
+      if (!getAll(ns)) return
+      out.labels.push({ a: ns[0], b: ns[1], text })
+      return
+    }
+
+    // ---------- đường kích thước: kích thước BC "7 km" [trên|dưới|trái|phải]
+    const dimCmd = body.match(/^(?:kích thước|kich thuoc|kt)\s+(.+)$/i)
+    if (dimCmd) {
+      if (dim !== 2) return err('đường kích thước chỉ dùng cho hình phẳng')
+      const rest = dimCmd[1]
+      const quoted = rest.match(/"([^"]*)"|“([^”]*)”/)
+      if (!quoted) return err('ví dụ: kích thước BC "7 km"')
+      const text = (quoted[1] ?? quoted[2] ?? '').trim()
+      let clean = rest.replace(quoted[0], ' ').trim()
+      let side: 'up' | 'down' | 'left' | 'right' | undefined
+      const sideM = clean.match(/(?:^|\s)(trên|tren|dưới|duoi|trái|trai|phải|phai)(?=\s|$)/i)
+      if (sideM) {
+        side = SIDE_MAP[sideM[1].toLowerCase()]
+        clean = clean.replace(sideM[0], ' ').trim()
+      }
+      const ns = names(clean)
+      if (ns.length !== 2 || ns.join('') !== clean.replace(/[\s-]+/g, '')) return err('ví dụ: kích thước BC "7 km"')
+      if (!getAll(ns)) return
+      out.dims.push({ a: ns[0], b: ns[1], text, side })
+      return
+    }
+
+    // ---------- kéo dài đoạn: "đường BC kéo dài" (hai phía) hoặc "tia BC" (một phía, quá C)
+    const extLine = body.match(
+      /^(?:(?:đường|duong)(?:\s+(?:thẳng|thang))?\s+(.+?)\s+(?:kéo\s+dài|keo\s+dai)|(.+?)\s+(?:kéo\s+dài|keo\s+dai)|(?:kéo\s+dài|keo\s+dai)\s+(.+?))(?:\s+(đứt|dut|liền|lien))?$/i,
+    )
+    const extRay = !extLine ? body.match(/^tia\s+(.+?)(?:\s+(?:kéo\s+dài|keo\s+dai))?(?:\s+(đứt|dut|liền|lien))?$/i) : null
+    if (extLine || extRay) {
+      if (dim !== 2) return err('kéo dài đường/tia chỉ dùng cho hình phẳng')
+      const arg = (extLine ? extLine[1] ?? extLine[2] ?? extLine[3] : extRay![1]).trim()
+      const styleWord = (extLine ? extLine[4] : extRay![2])?.toLowerCase()
+      const dashed = styleWord === 'đứt' || styleWord === 'dut'
+      const ns = names(arg)
+      if (ns.length !== 2 || ns.join('') !== arg.replace(/[\s-]+/g, '')) {
+        return err(extRay ? 'ví dụ: tia BC' : 'ví dụ: đường BC kéo dài')
+      }
+      const ps = getAll(ns)
+      if (!ps) return
+      if (vlen(vsub(ps[1], ps[0])) < 1e-9) return err(`hai điểm ${ns[0]} và ${ns[1]} trùng nhau`)
+      out.extends.push({ a: ns[0], b: ns[1], mode: extRay ? 'end' : 'both', dashed })
+      return
+    }
+
     // ---------- điểm mới: "M = ..." / "M là ..."
     const def = body.match(/^([A-Z][0-9]*'*)\s*(?:=|:|là\b)\s*(.+)$/)
     if (def) {
@@ -485,6 +645,15 @@ export const GEO_HELP: Array<{ group: string; items: Array<{ code: string; what:
     items: [
       { code: 'qua M song song AB cắt SC tại N', what: 'Dựng đường song song, lấy giao điểm' },
       { code: 'qua M vuông góc BC cắt AC tại K', what: 'Dựng đường vuông góc, lấy giao điểm' },
+    ],
+  },
+  {
+    group: 'Toạ độ, nhãn, kích thước (hình phẳng)',
+    items: [
+      { code: 'A(0; 4) hoặc A = (0; 4)', what: 'Đặt điểm theo toạ độ (trùng tên đỉnh mẫu sẽ ghi đè)' },
+      { code: 'nhãn AB "4 km"', what: 'Ghi chữ cạnh đoạn AB (hỗ trợ chỉ số x_1, kéo chỉnh được)' },
+      { code: 'kích thước BC "7 km"', what: 'Đoạn kích thước nét đứt hai mũi tên (thêm trên/dưới/trái/phải)' },
+      { code: 'đường BC kéo dài', what: 'Kéo dài đoạn BC ra hai phía (hoặc "tia BC" quá C)' },
     ],
   },
   {

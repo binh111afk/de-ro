@@ -75,6 +75,9 @@ function richToSvg(tokens: RichToken[]): string {
     .join('')
 }
 
+/** chuyển chuỗi có chỉ số dưới/trên (x_1, x^2, x^{n+1}) thành đoạn SVG `<tspan>` */
+export const richTextToSvg = (raw: string): string => richToSvg(tokenizeRich(raw))
+
 /** ước lượng bề rộng dòng chữ Times New Roman (px) */
 function measureTokens(tokens: RichToken[], fontSize: number, bold: boolean): number {
   let w = 0
