@@ -20,6 +20,7 @@ import { renderGroupedSvg, type GroupedSpec } from './grouped'
 import { renderTableSvg, type TableSpec } from './table'
 import { renderPhaseSvg, type PhaseSpec } from './phaseChange'
 import { renderOscSvg, type OscSpec } from './oscillation'
+import { renderFoodWebSvg, type FoodWebSpec } from './foodweb'
 
 export type ToolDoc =
   | { kind: 'graph'; spec: PlotSpec }
@@ -46,6 +47,7 @@ export type ToolDoc =
   | { kind: 'table'; spec: TableSpec }
   | { kind: 'phase'; spec: PhaseSpec }
   | { kind: 'osc'; spec: OscSpec }
+  | { kind: 'foodweb'; spec: FoodWebSpec }
 
 export type ToolKind = ToolDoc['kind']
 
@@ -158,6 +160,8 @@ function renderToolRaw(doc: ToolDoc): ToolImage {
       return renderPhaseSvg(doc.spec, toolDesc(doc))
     case 'osc':
       return renderOscSvg(doc.spec, toolDesc(doc))
+    case 'foodweb':
+      return renderFoodWebSvg(doc.spec, toolDesc(doc))
   }
 }
 
