@@ -15,7 +15,8 @@ import type { GroupedSpec } from '@/lib/grouped'
 import { GasModal, SceneModal } from './MoreToolModals'
 import type { SceneSpec } from '@/lib/scene'
 import type { GasSpec } from '@/lib/gas'
-import { ChemGraphModal, CircuitModal, ElectronModal, InclineModal, MotionModal, StructModal, OxyModal, SignTableModal, StatsModal } from './MoreToolModals'
+import { ChemGraphModal, CircuitModal, ElectronModal, InclineModal, MotionModal, StructModal, OxyModal, SignTableModal, StatsModal, TableModal } from './MoreToolModals'
+import type { TableSpec } from '@/lib/table'
 import type { InclineSpec, MotionSpec } from '@/lib/physics'
 import type { ChemGraphSpec, ElectronSpec, StructSpec } from '@/lib/chem'
 import type { SignTableSpec } from '@/lib/signTable'
@@ -78,5 +79,7 @@ export function ToolModal({
       return <VennModal initial={initial as VennSpec | null | undefined} {...common} />
     case 'grouped':
       return <GroupedModal initial={initial as GroupedSpec | null | undefined} {...common} />
+    case 'table':
+      return <TableModal initial={initial as TableSpec | null | undefined} {...common} />
   }
 }

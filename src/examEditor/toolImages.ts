@@ -30,6 +30,7 @@ export const TOOL_DOC_IMAGE: Record<ToolKind, { width: number; alt: string }> = 
   numberline: { width: 400, alt: 'Trục số' },
   venn: { width: 260, alt: 'Biểu đồ Ven' },
   grouped: { width: 380, alt: 'Bảng ghép nhóm' },
+  table: { width: 420, alt: 'Bảng số liệu' },
 }
 
 /** cấu hình dạng chữ (như AI trả, hoặc trong kho câu hỏi) → ToolDoc; sai thì null */

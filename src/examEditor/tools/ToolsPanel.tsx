@@ -4,7 +4,7 @@
  */
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
-import { Box, ChartColumn, ChartSpline, ClipboardList, Grid3x3, SquarePlus, Table2, Triangle, TriangleRight, Zap, ChartLine, Atom, Hexagon, FlaskConical, CircleDot, Network, MoveHorizontal, Circle, Thermometer, Shuffle, Sigma } from 'lucide-react'
+import { Box, ChartColumn, ChartSpline, ClipboardList, Grid3x3, SquarePlus, Table, Table2, Triangle, TriangleRight, Zap, ChartLine, Atom, Hexagon, FlaskConical, CircleDot, Network, MoveHorizontal, Circle, Thermometer, Shuffle, Sigma } from 'lucide-react'
 import type { ToolImage, ToolKind } from '@/lib/toolSpec'
 import type { ExamDoc } from '@/data/docTypes'
 import { ToolModal } from './ToolModal'
@@ -51,7 +51,10 @@ const SUBJECTS: Array<{ name: string; tools: Array<{ id: ToolId; label: string; 
   },
   {
     name: 'Khác',
-    tools: [{ id: 'shuffle', label: 'Xáo đề', desc: 'Tạo nhiều mã đề: đổi thứ tự câu, phương án; kèm đáp án', Icon: Shuffle }],
+    tools: [
+      { id: 'shuffle', label: 'Xáo đề', desc: 'Tạo nhiều mã đề: đổi thứ tự câu, phương án; kèm đáp án', Icon: Shuffle },
+      { id: 'table', label: 'Tạo bảng', desc: 'Bảng kẻ ô: gộp ô, căn lề, tô hàng tiêu đề', Icon: Table },
+    ],
   },
 ]
 
@@ -63,14 +66,17 @@ export function ToolsPanel({
 }: {
   disabled?: boolean
   onInsertPlot: (img: ToolImage) => void
-  /** đề đang soạn: có thì hiện nhóm Khác (Xáo đề); soạn slide / ô ảnh câu hỏi không truyền */
+  /** đề đang soạn: có thì hiện thêm Xáo đề trong nhóm Khác; soạn slide / ô ảnh câu hỏi không truyền */
   examDoc?: ExamDoc | null
   /** bảng vẽ: có thì môn Toán hiện thêm "Công thức" (mở hộp LaTeX của bảng) */
   onFormula?: () => void
 }) {
   const FORMULA = { id: 'formula' as const, label: 'Công thức', desc: 'Gõ LaTeX, xem trước; bấm đúp trên bảng để sửa', Icon: Sigma }
-  const subjects = SUBJECTS.filter((s) => s.name !== 'Khác' || examDoc !== undefined)
-    .map((s) => (onFormula && s.name === 'Toán' ? { ...s, tools: [FORMULA, ...s.tools] } : s))
+  const subjects = SUBJECTS.map((s) => {
+    if (onFormula && s.name === 'Toán') return { ...s, tools: [FORMULA, ...s.tools] }
+    if (s.name === 'Khác' && examDoc === undefined) return { ...s, tools: s.tools.filter((t) => t.id !== 'shuffle') }
+    return s
+  })
   const [open, setOpen] = useState<ToolId | null>(null)
   const [subject, setSubject] = useState(() => {
     try {

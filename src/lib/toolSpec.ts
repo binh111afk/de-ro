@@ -16,6 +16,7 @@ import { renderGasSvg, type GasSpec } from './gas'
 import { renderSceneSvg, type SceneSpec } from './scene'
 import { renderChemGraphSvg, renderElectronSvg, renderStructSvg, type ChemGraphSpec, type ElectronSpec, type StructSpec } from './chem'
 import { renderGroupedSvg, type GroupedSpec } from './grouped'
+import { renderTableSvg, type TableSpec } from './table'
 
 export type ToolDoc =
   | { kind: 'graph'; spec: PlotSpec }
@@ -38,6 +39,7 @@ export type ToolDoc =
   | { kind: 'numberline'; spec: NumberLineSpec }
   | { kind: 'venn'; spec: VennSpec }
   | { kind: 'grouped'; spec: GroupedSpec }
+  | { kind: 'table'; spec: TableSpec }
 
 export type ToolKind = ToolDoc['kind']
 
@@ -142,6 +144,8 @@ function renderToolRaw(doc: ToolDoc): ToolImage {
       return renderVennSvg(doc.spec, toolDesc(doc))
     case 'grouped':
       return renderGroupedSvg(doc.spec, toolDesc(doc))
+    case 'table':
+      return renderTableSvg(doc.spec, toolDesc(doc))
   }
 }
 

@@ -20,6 +20,7 @@ import { SCENE_DEFAULT, SCENE_HELP, type SceneSpec } from '@/lib/scene'
 import type { ChemGraphSpec, ElectronSpec, StructSpec } from '@/lib/chem'
 import type { NumberLineSpec, TreeSpec, TrigSpec, VennSpec } from '@/lib/mathExtra'
 import { groupedStats, parseGroups, round2, type GroupedSpec, type GroupedView } from '@/lib/grouped'
+import { TABLE_DEFAULT, parseCells, parseMerges, type TableAlign, type TableBorder, type TableHeader, type TableSpec } from '@/lib/table'
 import { Check, ToolShell, sectionTitle } from './ToolShell'
 
 type Props<S> = { initial?: S | null; submitLabel?: string; onClose: () => void; onInsert: (img: ToolImage) => void }
@@ -1418,6 +1419,204 @@ export function VennModal({ initial, submitLabel, onClose, onInsert }: Props<Ven
       inputsWidth={360}
       preview={preview}
       submitLabel={submitLabel ?? (initial ? 'Cập nhật hình' : 'Chèn hình')}
+      canSubmit={Boolean(preview) && !error}
+      onSubmit={() => preview && onInsert(preview)}
+      onClose={onClose}
+    />
+  )
+}
+
+/* ------------------------------------------------------------------ *
+ * Khác: tạo bảng kẻ ô tuỳ biến
+ * ------------------------------------------------------------------ */
+
+const TABLE_HEADERS: Array<{ id: TableHeader; label: string }> = [
+  { id: 'row', label: 'Hàng đầu' },
+  { id: 'col', label: 'Cột đầu' },
+  { id: 'both', label: 'Cả hai' },
+  { id: 'none', label: 'Không' },
+]
+
+const TABLE_ALIGNS: Array<{ id: TableAlign; label: string }> = [
+  { id: 'left', label: 'Trái' },
+  { id: 'center', label: 'Giữa' },
+  { id: 'right', label: 'Phải' },
+]
+
+const TABLE_BORDERS: Array<{ id: TableBorder; label: string }> = [
+  { id: 'all', label: 'Đủ ô' },
+  { id: 'outer', label: 'Viền ngoài' },
+  { id: 'horizontal', label: 'Kẻ ngang' },
+]
+
+const TABLE_HELP: HelpGroups = [
+  {
+    group: 'Cách gõ ô',
+    items: [
+      { code: 'A | B | C', what: 'Mỗi dòng một hàng; các ô cách nhau bằng dấu |' },
+      { code: 'A | | C', what: 'Ô trống: để trống giữa hai dấu |' },
+      { code: 'Dòng 1\\nDòng 2 | B', what: 'Xuống dòng trong một ô: gõ \\n' },
+      { code: 'x_1, x^2, x_{10}, x^(1/2)', what: 'Chỉ số dưới (_) và chỉ số trên (^)' },
+    ],
+  },
+]
+
+const MERGE_HELP: HelpGroups = [
+  {
+    group: 'Gộp ô (mỗi dòng một vùng)',
+    items: [
+      { code: '1,1:1,3', what: 'Gộp từ hàng 1 cột 1 đến hàng 1 cột 3 (3 ô đầu hàng 1)' },
+      { code: '2,1:3,1', what: 'Gộp dọc cột 1 từ hàng 2 đến hàng 3' },
+    ],
+  },
+]
+
+export function TableModal({ initial, submitLabel, onClose, onInsert }: Props<TableSpec>) {
+  const [spec, setSpec] = useState<TableSpec>(() => ({ ...TABLE_DEFAULT, ...(initial ?? {}) }))
+  const set = (p: Partial<TableSpec>) => setSpec((s) => ({ ...s, ...p }))
+  const doc = useMemo((): ToolDoc => ({ kind: 'table', spec }), [spec])
+  const { preview, error } = useRender(doc)
+
+  const { cellsError, mergesError } = useMemo(() => {
+    let parsed: { rows: number; cols: number }
+    try {
+      parsed = parseCells(spec.cells)
+    } catch (e) {
+      return { cellsError: e instanceof Error ? e.message : String(e), mergesError: undefined }
+    }
+    try {
+      parseMerges(spec.merges, parsed.rows, parsed.cols)
+      return { cellsError: undefined, mergesError: undefined }
+    } catch (e) {
+      return { cellsError: undefined, mergesError: e instanceof Error ? e.message : String(e) }
+    }
+  }, [spec.cells, spec.merges])
+
+  const addRow = () => {
+    const lines = spec.cells
+      .replace(/\r\n/g, '\n')
+      .split('\n')
+      .filter((l) => l.trim().length > 0)
+    if (!lines.length) {
+      set({ cells: 'Ô 1 | Ô 2 | Ô 3' })
+      return
+    }
+    const cols = Math.max(1, ...lines.map((l) => l.split('|').length))
+    const row = Array.from({ length: cols }, () => '').join(' | ')
+    const base = spec.cells.replace(/\s+$/, '')
+    set({ cells: base ? `${base}\n${row}` : row })
+  }
+
+  const addCol = () => {
+    const raw = spec.cells.replace(/\r\n/g, '\n')
+    if (!raw.trim()) {
+      set({ cells: ' | ' })
+      return
+    }
+    const next = raw
+      .split('\n')
+      .map((l) => (l.trim() ? `${l.replace(/\s+$/, '')} | ` : l))
+      .join('\n')
+    set({ cells: next })
+  }
+
+  const pill = (on: boolean) =>
+    cn('rounded-[6px] border px-2.5 py-1 text-[12.5px] transition-colors', on ? 'border-clay bg-clay-tint font-medium text-clay' : 'border-line text-ink-2 hover:border-ink-4')
+
+  const inputs = (
+    <>
+      <div>
+        <TextBlock
+          title="Nội dung bảng"
+          help={TABLE_HELP}
+          intro="Mỗi dòng một hàng, ô cách nhau bằng | ; xuống dòng trong ô dùng \n ; chỉ số x_1, x^2."
+          value={spec.cells}
+          onChange={(cells) => set({ cells })}
+          rows={4}
+          errors={cellsError ? [cellsError] : []}
+          label="Nội dung bảng"
+        />
+        <div className="mt-1.5 flex gap-1.5">
+          <button
+            type="button"
+            onClick={addRow}
+            className="rounded-[6px] border border-line bg-white px-2.5 py-1 text-[12px] font-medium text-ink-2 transition-colors hover:border-ink-4 hover:text-ink"
+          >
+            + Thêm hàng
+          </button>
+          <button
+            type="button"
+            onClick={addCol}
+            className="rounded-[6px] border border-line bg-white px-2.5 py-1 text-[12px] font-medium text-ink-2 transition-colors hover:border-ink-4 hover:text-ink"
+          >
+            + Thêm cột
+          </button>
+        </div>
+      </div>
+      <section>
+        <h3 className={sectionTitle}>Tiêu đề (đậm + nền nhạt)</h3>
+        <div className="flex flex-wrap gap-1.5">
+          {TABLE_HEADERS.map((h) => (
+            <button key={h.id} type="button" aria-pressed={spec.header === h.id} onClick={() => set({ header: h.id })} className={pill(spec.header === h.id)}>
+              {h.label}
+            </button>
+          ))}
+        </div>
+      </section>
+      <section>
+        <h3 className={sectionTitle}>Căn lề</h3>
+        <div className="flex flex-wrap gap-1.5">
+          {TABLE_ALIGNS.map((a) => (
+            <button key={a.id} type="button" aria-pressed={spec.align === a.id} onClick={() => set({ align: a.id })} className={pill(spec.align === a.id)}>
+              {a.label}
+            </button>
+          ))}
+        </div>
+      </section>
+      <section>
+        <h3 className={sectionTitle}>Đường kẻ</h3>
+        <div className="flex flex-wrap gap-1.5">
+          {TABLE_BORDERS.map((b) => (
+            <button key={b.id} type="button" aria-pressed={spec.border === b.id} onClick={() => set({ border: b.id })} className={pill(spec.border === b.id)}>
+              {b.label}
+            </button>
+          ))}
+        </div>
+      </section>
+      <section>
+        <h3 className={sectionTitle}>Cỡ chữ: {spec.fontSize}px</h3>
+        <input
+          type="range"
+          min={12}
+          max={20}
+          step={1}
+          value={spec.fontSize}
+          onChange={(e) => set({ fontSize: Number(e.target.value) })}
+          aria-label="Cỡ chữ bảng"
+          className="w-full accent-clay"
+        />
+      </section>
+      <TextBlock
+        title="Gộp ô (tuỳ chọn)"
+        help={MERGE_HELP}
+        intro="Mỗi dòng một vùng: hàng,cột:hàng,cột (vd. 1,1:1,3). Để trống nếu không gộp."
+        value={spec.merges}
+        onChange={(merges) => set({ merges })}
+        rows={2}
+        errors={mergesError ? [mergesError] : []}
+        label="Gộp ô"
+      />
+    </>
+  )
+
+  return (
+    <ToolShell
+      title="Tạo bảng"
+      hint="Bảng kẻ ô nét rõ cho đề, slide và bảng vẽ; bấm lại vào ảnh để sửa nội dung"
+      inputs={inputs}
+      inputsWidth={380}
+      preview={preview}
+      submitLabel={submitLabel ?? (initial ? 'Cập nhật bảng' : 'Chèn bảng')}
       canSubmit={Boolean(preview) && !error}
       onSubmit={() => preview && onInsert(preview)}
       onClose={onClose}
