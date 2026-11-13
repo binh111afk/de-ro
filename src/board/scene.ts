@@ -54,6 +54,12 @@ export interface El extends Style {
   /** mảng màu có lỗ: vị trí bắt đầu từng vòng lỗ trong `points` (vòng ngoài = đoạn đầu).
    *  Lỗ nằm chung `points` nên di chuyển / đổi cỡ tự đi theo */
   holes?: number[]
+  /** nhóm: các hình cùng groupId chọn / kéo / đổi cỡ cùng nhau */
+  groupId?: string
+  /** hình do công cụ vẽ dựng ra: ToolDoc (JSON) — chỉ ghi ở một phần tử của nhóm; bấm đúp để sửa lại */
+  tool?: string
+  /** chữ: căn dòng trong khung */
+  align?: 'left' | 'center' | 'right'
   /** tăng mỗi khi hình dạng đổi (không tính di chuyển) — khoá cache nét rough */
   ver: number
 }
@@ -90,6 +96,7 @@ export function isClosedStroke(e: El) {
 /** phần vòng kín của nét (đã cắt đuôi thừa trước/sau chỗ nét tự cắt) — chỉ vùng này được tô */
 export function closedLoop(e: El): Pt[] | null {
   const pts = e.points
+  if (e.kind === 'line') return isClosedLine(e) ? pts!.slice(0, -1) : null
   if (e.kind !== 'freedraw' || !pts || pts.length < 3) return null
   if (e.region) return e.holes?.length ? pts.slice(0, e.holes[0]) : pts
   if (pts.length < 8) return null
@@ -128,6 +135,36 @@ function computeLoop(e: El, pts: Pt[]): Pt[] | null {
   for (let i = n - 1; i >= n - k; i--) if (Math.hypot(a[0] - pts[i][0], a[1] - pts[i][1]) < th) return pts.slice(0, i + 1)
   return null
 }
+/** đường gấp khúc khép kín (điểm cuối trùng điểm đầu) — tô được như đa giác */
+export function isClosedLine(e: El) {
+  const p = e.points
+  if (e.kind !== 'line' || !p || p.length < 4) return false
+  const a = p[0], b = p[p.length - 1]
+  return Math.hypot(a[0] - b[0], a[1] - b[1]) < 0.5
+}
+
+/** thêm vào tập chọn mọi hình cùng nhóm với hình đã có trong tập */
+export function withGroups(els: El[], ids: Set<string>): Set<string> {
+  const gs = new Set(els.filter((e) => e.groupId && ids.has(e.id)).map((e) => e.groupId))
+  if (!gs.size) return ids
+  const out = new Set(ids)
+  for (const e of els) if (e.groupId && gs.has(e.groupId)) out.add(e.id)
+  return out
+}
+
+/** bản sao (nhân đôi / dán): id, seed mới; nhóm cũng được đổi id để bản sao là nhóm riêng */
+export function copyEls(src: El[], dx: number, dy: number): El[] {
+  const gmap = new Map<string, string>()
+  return src.map((e) => {
+    const c = { ...clone(e), id: newId(), seed: newSeed(), x: e.x + dx, y: e.y + dy }
+    if (e.groupId) {
+      if (!gmap.has(e.groupId)) gmap.set(e.groupId, newId())
+      c.groupId = gmap.get(e.groupId)
+    }
+    return c
+  })
+}
+
 export const isLinear = (e: El) => e.kind === 'line' || e.kind === 'arrow'
 
 export function clone(e: El): El {
@@ -270,11 +307,60 @@ export function handlePositions(b: Bounds, zoom: number, withRotate: boolean): P
 }
 
 export function measureText(text: string, fontSize: number): { w: number; h: number } {
-  const ctx = measureCtx()
-  ctx.font = fontOf(fontSize)
   const lines = text.split('\n')
-  const w = Math.max(1, ...lines.map((l) => ctx.measureText(l).width))
+  const w = Math.max(1, ...lines.map((l) => lineWidth(l, fontSize)))
   return { w: Math.ceil(w), h: Math.ceil(lines.length * fontSize * LINE_HEIGHT) }
+}
+
+/** một đoạn chữ cùng kiểu: 0 thường, 1 chỉ số trên, -1 chỉ số dưới */
+export interface Run { t: string; lv: 0 | 1 | -1 }
+/** tách chỉ số: `H_2O`, `x^2`, `3d^{6}`, `T_{1}`, `x^12`. Không có `_`/`^` thì là một đoạn thường.
+ *  Viết `\_` / `\^` để giữ nguyên ký tự. */
+export function textRuns(line: string): Run[] {
+  if (!/[_^]/.test(line)) return [{ t: line, lv: 0 }]
+  const out: Run[] = []
+  let buf = ''
+  const push = (t: string, lv: Run['lv']) => {
+    if (!t) return
+    const last = out[out.length - 1]
+    if (last && last.lv === lv) last.t += t
+    else out.push({ t, lv })
+  }
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i]
+    if (ch === '\\' && (line[i + 1] === '_' || line[i + 1] === '^')) { buf += line[++i]; continue }
+    if ((ch === '_' || ch === '^') && i + 1 < line.length) {
+      let arg: string
+      if (line[i + 1] === '{') {
+        const end = line.indexOf('}', i + 2)
+        if (end < 0) { buf += ch; continue }
+        arg = line.slice(i + 2, end)
+        i = end
+      } else if (/[\p{L}\p{N}+\-−*′']/u.test(line[i + 1])) {
+        // một ký tự; số thì lấy cả dãy số
+        let j = i + 1
+        if (/\d/.test(line[j])) while (j + 1 < line.length && /\d/.test(line[j + 1])) j++
+        arg = line.slice(i + 1, j + 1)
+        i = j
+      } else { buf += ch; continue }
+      push(buf, 0); buf = ''
+      push(arg, ch === '^' ? 1 : -1)
+      continue
+    }
+    buf += ch
+  }
+  push(buf, 0)
+  return out
+}
+export const SUB_SCALE = 0.68
+export function lineWidth(line: string, fontSize: number) {
+  const ctx = measureCtx()
+  let w = 0
+  for (const r of textRuns(line)) {
+    ctx.font = fontOf(r.lv ? fontSize * SUB_SCALE : fontSize)
+    w += ctx.measureText(r.t).width
+  }
+  return w
 }
 
 export const LINE_HEIGHT = 1.25

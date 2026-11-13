@@ -10,13 +10,15 @@ import {
   centerOf, clone, DEFAULT_STYLE, handlePositions, hasPoints, hitTest, isLinear, isPage, localBounds, measureText,
   mutate, newId, newSeed, rotate, unionBounds, worldBounds, fontOf, LINE_HEIGHT, inPolygon,
   type Bounds, type El, type Handle, type Kind, type Paper, type PenKind, type Pt, type Style,
-  isClosedStroke, type FillStyle,
+  isClosedStroke, type FillStyle, withGroups, copyEls,
 } from './scene'
 import { dropFromCache, LASER_LIFE, penOutline, render, renderLive, setImageLoadHandler, svgPathFromStroke, type LaserTrail, type View } from './render'
 import { AiPanel } from '@/examEditor/AiPanel'
 import { ToolsPanel } from '@/examEditor/tools/ToolsPanel'
 import { svgDataUrl } from '@/lib/plot'
-import { renderTool, type ToolImage } from '@/lib/toolSpec'
+import { renderTool, readToolDoc, parseToolJson, type ToolDoc, type ToolImage } from '@/lib/toolSpec'
+import { ToolModal } from '@/examEditor/tools/ToolModal'
+import { createPortal } from 'react-dom'
 import { interiorArea, regionArea, regionAt, type Region } from './regionFill'
 import { figureDoc } from '@/examEditor/toolImages'
 import { attachToAi, type AiRef } from '@/lib/aiAttach'
@@ -150,7 +152,7 @@ export default function BoardEditor({ id }: { id: string }) {
   const [moreFill, setMoreFill] = useState(false)
   /** panel bên: trợ lý (trái), công cụ (phải) */
   const [side, setSide] = useState<SideTab | null>(null)
-  const [dialog, setDialog] = useState<{ t: 'formula'; el?: El } | { t: 'pdf'; file: File } | { t: 'export' } | null>(null)
+  const [dialog, setDialog] = useState<{ t: 'formula'; el?: El } | { t: 'pdf'; file: File } | { t: 'export' } | { t: 'tool'; doc: ToolDoc; ids: string[] } | null>(null)
   const dialogRef = useRef(dialog)
   dialogRef.current = dialog
   const [saveErr, setSaveErr] = useState(false)
@@ -605,14 +607,15 @@ export default function BoardEditor({ id }: { id: string }) {
       }
       const hit = topHit(p)
       if (hit) {
+        const grp = withGroups(els.current, new Set([hit.id]))
         if (ev.shiftKey) {
-          if (selected.current.has(hit.id)) selected.current.delete(hit.id)
-          else selected.current.add(hit.id)
-        } else if (!selected.current.has(hit.id)) selected.current = new Set([hit.id])
+          const on = !selected.current.has(hit.id)
+          for (const id of grp) on ? selected.current.add(id) : selected.current.delete(id)
+        } else if (!selected.current.has(hit.id)) selected.current = grp
         drag.current = { t: 'move', start: p, orig: new Map(sel().map((e) => [e.id, [e.x, e.y]])), moved: false }
         // Alt + kéo: nhân đôi rồi kéo bản sao
         if (ev.altKey) {
-          const copies = sel().map((e) => ({ ...clone(e), id: newId(), seed: newSeed() }))
+          const copies = copyEls(sel(), 0, 0)
           els.current.push(...copies)
           selected.current = new Set(copies.map((c) => c.id))
           drag.current.orig = new Map(copies.map((e) => [e.id, [e.x, e.y]]))
@@ -848,7 +851,7 @@ export default function BoardEditor({ id }: { id: string }) {
           const w = worldBounds(e)
           if (w[0] >= b[0] && w[1] >= b[1] && w[2] <= b[2] && w[3] <= b[3]) next.add(e.id)
         }
-        selected.current = next
+        selected.current = withGroups(els.current, next)
         redraw()
         return
       }
@@ -932,7 +935,7 @@ export default function BoardEditor({ id }: { id: string }) {
           const inside = pts.filter((q) => inPolygon(q, d.pts)).length
           if (inside / pts.length >= 0.6) next.add(e.id)
         }
-        selected.current = next
+        selected.current = withGroups(els.current, next)
         redraw()
         return
       }
@@ -1046,6 +1049,16 @@ export default function BoardEditor({ id }: { id: string }) {
     const hit = topHit(p)
     if (hit?.kind === 'text') return startText(hit, false)
     if (hit?.latex) return setDialog({ t: 'formula', el: hit })
+    // hình của công cụ vẽ: nhóm dựng bằng phần tử (ToolDoc ở trường tool) hoặc ảnh SVG cũ (ToolDoc trong <desc>)
+    if (hit?.groupId) {
+      const members = els.current.filter((e) => e.groupId === hit.groupId)
+      const doc = parseToolJson(members.find((e) => e.tool)?.tool)
+      if (doc) return setDialog({ t: 'tool', doc, ids: members.map((e) => e.id) })
+    }
+    if (hit?.kind === 'image' && !hit.page) {
+      const doc = readToolDoc(hit.src)
+      if (doc) return setDialog({ t: 'tool', doc, ids: [hit.id] })
+    }
     if (hit) return
     const el = newElement('text', p)
     Object.assign(el, measureText('', el.fontSize))
@@ -1097,10 +1110,24 @@ export default function BoardEditor({ id }: { id: string }) {
     commit()
   }
   const duplicate = () => {
-    const copies = sel().map((e) => ({ ...clone(e), id: newId(), seed: newSeed(), x: e.x + 16, y: e.y + 16 }))
+    const copies = copyEls(sel(), 16, 16)
     if (!copies.length) return
     els.current.push(...copies)
     selected.current = new Set(copies.map((c) => c.id))
+    commit()
+  }
+  /** gộp các hình đang chọn thành một nhóm / tách nhóm */
+  const group = () => {
+    const s = sel()
+    if (s.length < 2) return
+    const g = newId()
+    for (const e of s) e.groupId = g
+    commit()
+  }
+  const ungroup = () => {
+    const s = sel().filter((e) => e.groupId)
+    if (!s.length) return
+    for (const e of s) { delete e.groupId; delete e.tool }
     commit()
   }
   const reorder = (dir: 'front' | 'back') => {
@@ -1112,7 +1139,7 @@ export default function BoardEditor({ id }: { id: string }) {
   }
 
   const pasteInternal = () => {
-    const copies = clipboard.current.map((e) => ({ ...clone(e), id: newId(), seed: newSeed(), x: e.x + 24, y: e.y + 24 }))
+    const copies = copyEls(clipboard.current, 24, 24)
     clipboard.current = copies.map(clone)
     els.current.push(...copies)
     pickTool('select')
@@ -1181,6 +1208,7 @@ export default function BoardEditor({ id }: { id: string }) {
     if (mod && k === 'y') { ev.preventDefault(); return redo() }
     if (mod && k === 'a') { ev.preventDefault(); selected.current = new Set(els.current.filter((e) => !isPage(e)).map((e) => e.id)); pickTool('select'); toolRef.current = 'select'; return changed() }
     if (mod && k === 'd') { ev.preventDefault(); return duplicate() }
+    if (mod && k === 'g') { ev.preventDefault(); return ev.shiftKey ? ungroup() : group() }
     if (mod && (k === 'c' || k === 'x')) {
       if (!selected.current.size) return
       clipboard.current = sel().map(clone)
@@ -1261,6 +1289,20 @@ export default function BoardEditor({ id }: { id: string }) {
     const el: El = { ...newElement('image', freeSpot(cx - w / 2, cy - h / 2)), w, h, src: svgDataUrl(img.svg), opacity: 100 }
     els.current.push(el)
     pickTool('select')
+    selected.current = new Set([el.id])
+    commit()
+  }
+
+  /** sửa lại hình công cụ (bấm đúp): thay đúng chỗ cũ, giữ bề ngang, cùng lớp */
+  const replaceTool = (ids: string[], img: ToolImage) => {
+    const old = els.current.filter((e) => ids.includes(e.id))
+    const b = unionBounds(old)
+    if (!b) return
+    const w = b[2] - b[0], h = (w * img.height) / img.width
+    const el: El = { ...newElement('image', [b[0], b[1]]), w, h, src: svgDataUrl(img.svg), opacity: 100 }
+    const at = els.current.findIndex((e) => ids.includes(e.id))
+    els.current = els.current.filter((e) => !ids.includes(e.id))
+    els.current.splice(Math.min(at, els.current.length), 0, el)
     selected.current = new Set([el.id])
     commit()
   }
@@ -1800,6 +1842,12 @@ export default function BoardEditor({ id }: { id: string }) {
         <Group label="Sắp xếp">
           <IconBtn label="Đưa lên trên cùng" onClick={() => reorder('front')}><Ico d="M12 19V5m-6 6l6-6 6 6" /></IconBtn>
           <IconBtn label="Đưa xuống dưới cùng" onClick={() => reorder('back')}><Ico d="M12 5v14m6-6l-6 6-6-6" /></IconBtn>
+          {selection.length > 1 && !selection.every((e) => e.groupId && e.groupId === selection[0].groupId) && (
+            <IconBtn label="Nhóm lại — Ctrl+G" onClick={group}><Ico d="M4 4h7v7H4zM13 13h7v7h-7zM8 11v5h5M16 13V8h-5" /></IconBtn>
+          )}
+          {selection.some((e) => e.groupId) && (
+            <IconBtn label="Tách nhóm — Ctrl+Shift+G" onClick={ungroup}><Ico d="M4 4h7v7H4zM13 13h7v7h-7z" /></IconBtn>
+          )}
           <IconBtn label="Nhân đôi — Ctrl+D" onClick={duplicate}><Ico d="M8 8h11v11H8zM5 16V5h11" /></IconBtn>
           <IconBtn label="Xoá — Delete" onClick={deleteSelected}><Ico d="M5 7h14M10 7V5h4v2m-7 0l1 12h8l1-12" /></IconBtn>
         </Group>
@@ -2149,6 +2197,16 @@ export default function BoardEditor({ id }: { id: string }) {
       </div>
       {dialog?.t === 'formula' && (
         <FormulaDialog initial={dialog.el?.latex} color={dialog.el?.stroke ?? style.current.stroke} onClose={() => setDialog(null)} onDone={onFormula} />
+      )}
+      {dialog?.t === 'tool' && createPortal(
+        <ToolModal
+          kind={dialog.doc.kind}
+          initial={dialog.doc.spec}
+          submitLabel="Cập nhật"
+          onClose={() => setDialog(null)}
+          onInsert={(img) => { const ids = dialog.ids; setDialog(null); replaceTool(ids, img) }}
+        />,
+        document.body,
       )}
       {dialog?.t === 'pdf' && (
         <PdfPagesDialog file={dialog.file} onClose={() => setDialog(null)} onDone={(pages) => { setDialog(null); placePictures(pages) }} />

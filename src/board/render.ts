@@ -9,7 +9,7 @@ import { getStroke } from 'perfect-freehand'
 import {
   centerOf, fontOf, handlePositions, isLinear, LINE_HEIGHT, localBounds, unionBounds,
   type Bounds, type El, type Paper, type PenKind, type Pt,
-  isClosedStroke, closedLoop, regionHoles,
+  isClosedStroke, closedLoop, regionHoles, textRuns, lineWidth, SUB_SCALE,
 } from './scene'
 
 export interface View {
@@ -192,7 +192,12 @@ function rgba(hex: string, a: number): string {
 /** vùng tô được của hình (toạ độ trong hình, trước khi xoay); null nếu hình không tô được */
 export function fillPath(e: El): Path2D | null {
   const p = new Path2D()
-  if (e.kind === 'freedraw') {
+  if (e.kind === 'line') {
+    const lp = closedLoop(e)
+    if (!lp) return null
+    lp.forEach(([x, y], i) => (i ? p.lineTo(x, y) : p.moveTo(x, y)))
+    p.closePath()
+  } else if (e.kind === 'freedraw') {
     const lp = closedLoop(e)
     if (!lp) return null
     if (e.region) {
@@ -283,7 +288,17 @@ export function drawElement(ctx: CanvasRenderingContext2D, rc: ReturnType<typeof
     ctx.fillStyle = e.stroke
     ctx.textBaseline = 'top'
     const lh = e.fontSize * LINE_HEIGHT
-    ;(e.text ?? '').split('\n').forEach((line, i) => ctx.fillText(line, 0, i * lh + (lh - e.fontSize) / 2))
+    ;(e.text ?? '').split('\n').forEach((line, i) => {
+      const y = i * lh + (lh - e.fontSize) / 2
+      let x = e.align && e.align !== 'left' ? (e.w - lineWidth(line, e.fontSize)) * (e.align === 'center' ? 0.5 : 1) : 0
+      for (const r of textRuns(line)) {
+        const fs = r.lv ? e.fontSize * SUB_SCALE : e.fontSize
+        ctx.font = fontOf(fs)
+        // chỉ số trên nâng lên, dưới hạ xuống so với dòng chữ thường
+        ctx.fillText(r.t, x, y + (r.lv === 1 ? -e.fontSize * 0.12 : r.lv === -1 ? e.fontSize * 0.45 : 0))
+        x += ctx.measureText(r.t).width
+      }
+    })
   } else {
     if (e.fill !== 'transparent' && isClosedStroke(e)) {
       // nét vẽ tay khép kín: tô nền trước rồi mới vẽ nét lên trên
