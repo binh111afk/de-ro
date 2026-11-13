@@ -360,6 +360,10 @@ function rgbOf(hex = '#ff3b30') {
   return `${n >> 16}, ${(n >> 8) & 255}, ${n & 255}`
 }
 
+export type Guide =
+  | { kind: 'align'; axis: 'x' | 'y'; pos: number; from: number; to: number; marks: Pt[] }
+  | { kind: 'gap'; axis: 'x' | 'y'; pos: number; from: number; to: number; label: string }
+
 export interface Overlay {
   selected: El[]
   marquee: Bounds | null
@@ -368,6 +372,8 @@ export interface Overlay {
   lasso: Pt[] | null
   laser: LaserTrail[]
   eraser: { p: Pt; r: number } | null
+  /** đường gióng căn thẳng hàng / cách đều khi kéo hình */
+  guides?: Guide[]
   /** thùng sơn / kéo màu: hình sẽ được tô khi bấm/thả — xem trước màu + viền nhấp nháy */
   fillHover?: { el: El; color: string } | null
   /** màu đang lan ra từ điểm bấm: vẽ bản cũ, rồi bản mới trong vòng tròn bán kính r */
@@ -415,6 +421,30 @@ function drawHandle(ctx: CanvasRenderingContext2D, p: Pt, zoom: number, round = 
   ctx.fillStyle = '#fff'
   ctx.fill()
   ctx.stroke()
+}
+
+/** biểu tượng ổ khoá nhỏ ở góc khung chọn khi hình đang bị khoá */
+function drawLockBadge(ctx: CanvasRenderingContext2D, x: number, y: number, zoom: number) {
+  ctx.save()
+  const s = 14 / zoom
+  ctx.translate(x - s / 2, y - s / 2)
+  ctx.fillStyle = '#ffffff'
+  ctx.strokeStyle = '#78716c'
+  ctx.lineWidth = 1.2 / zoom
+  ctx.beginPath()
+  ctx.roundRect(0, 0, s, s, 3 / zoom)
+  ctx.fill()
+  ctx.stroke()
+  // thân ổ khoá + quai khoá
+  const u = s / 14
+  ctx.beginPath()
+  ctx.rect(3.5 * u, 6.5 * u, 7 * u, 4.8 * u)
+  ctx.fillStyle = '#78716c'
+  ctx.fill()
+  ctx.beginPath()
+  ctx.arc(7 * u, 6 * u, 2.2 * u, Math.PI, 0)
+  ctx.stroke()
+  ctx.restore()
 }
 
 export function render(
@@ -468,12 +498,13 @@ export function render(
   }
 
   // khung chọn
-  ctx.lineWidth = 1 / view.zoom
-  ctx.strokeStyle = ACCENT
   const sel = overlay.selected
+  const anyLocked = sel.some((e) => e.locked)
+  ctx.lineWidth = 1 / view.zoom
+  ctx.strokeStyle = anyLocked ? '#78716c' : ACCENT
   // hình trong nhóm: chỉ khung chung của cả vùng chọn, không khung từng phần tử (nhóm công cụ có hàng chục nét)
   for (const e of sel) {
-    if (isLinear(e) && sel.length === 1) continue
+    if (isLinear(e) && sel.length === 1 && !anyLocked) continue
     if (e.groupId && sel.length > 1) continue
     ctx.save()
     if (e.angle) {
@@ -484,7 +515,7 @@ export function render(
     }
     const [x1, y1, x2, y2] = localBounds(e)
     const pad = 4 / view.zoom
-    ctx.setLineDash(sel.length > 1 ? [4 / view.zoom, 4 / view.zoom] : [])
+    ctx.setLineDash(sel.length > 1 || anyLocked ? [4 / view.zoom, 4 / view.zoom] : [])
     ctx.strokeRect(x1 - pad, y1 - pad, x2 - x1 + pad * 2, y2 - y1 + pad * 2)
     ctx.restore()
   }
@@ -492,7 +523,19 @@ export function render(
 
   if (sel.length === 1) {
     const e = sel[0]
-    if (isLinear(e)) {
+    if (anyLocked) {
+      ctx.save()
+      if (e.angle) {
+        const [cx, cy] = centerOf(e)
+        ctx.translate(cx, cy)
+        ctx.rotate(e.angle)
+        ctx.translate(-cx, -cy)
+      }
+      const [, y1, x2] = localBounds(e)
+      const pad = 4 / view.zoom
+      drawLockBadge(ctx, x2 + pad, y1 - pad, view.zoom)
+      ctx.restore()
+    } else if (isLinear(e)) {
       const pts = e.points ?? []
       for (const p of [pts[0], pts[pts.length - 1]]) if (p) drawHandle(ctx, [e.x + p[0], e.y + p[1]], view.zoom, true)
     } else {
@@ -510,8 +553,11 @@ export function render(
   } else if (sel.length > 1) {
     const b = unionBounds(sel)!
     const pad = 6 / view.zoom
+    if (anyLocked) ctx.setLineDash([4 / view.zoom, 4 / view.zoom])
     ctx.strokeRect(b[0] - pad, b[1] - pad, b[2] - b[0] + pad * 2, b[3] - b[1] + pad * 2)
-    for (const p of Object.values(handlePositions(b, view.zoom, false))) drawHandle(ctx, p as Pt, view.zoom)
+    ctx.setLineDash([])
+    if (anyLocked) drawLockBadge(ctx, b[2] + pad, b[1] - pad, view.zoom)
+    else for (const p of Object.values(handlePositions(b, view.zoom, false))) drawHandle(ctx, p as Pt, view.zoom)
   }
 
   if (overlay.lasso && overlay.lasso.length > 1) {
@@ -589,6 +635,51 @@ export function render(
     ctx.fillStyle = 'rgba(180, 83, 42, 0.08)'
     ctx.fillRect(x1, y1, x2 - x1, y2 - y1)
     ctx.strokeRect(x1, y1, x2 - x1, y2 - y1)
+  }
+
+  if (overlay.guides?.length) {
+    ctx.save()
+    const z = view.zoom
+    ctx.strokeStyle = '#ff3b30'
+    ctx.fillStyle = '#ff3b30'
+    ctx.lineWidth = 1 / z
+    const mr = 3 / z
+    const tick = 4 / z
+    for (const g of overlay.guides) {
+      ctx.beginPath()
+      if (g.kind === 'align') {
+        if (g.axis === 'x') { ctx.moveTo(g.pos, g.from); ctx.lineTo(g.pos, g.to) }
+        else { ctx.moveTo(g.from, g.pos); ctx.lineTo(g.to, g.pos) }
+        for (const [mx, my] of g.marks) {
+          ctx.moveTo(mx - mr, my - mr); ctx.lineTo(mx + mr, my + mr)
+          ctx.moveTo(mx - mr, my + mr); ctx.lineTo(mx + mr, my - mr)
+        }
+        ctx.stroke()
+      } else {
+        if (g.axis === 'x') {
+          ctx.moveTo(g.from, g.pos); ctx.lineTo(g.to, g.pos)
+          ctx.moveTo(g.from, g.pos - tick); ctx.lineTo(g.from, g.pos + tick)
+          ctx.moveTo(g.to, g.pos - tick); ctx.lineTo(g.to, g.pos + tick)
+        } else {
+          ctx.moveTo(g.pos, g.from); ctx.lineTo(g.pos, g.to)
+          ctx.moveTo(g.pos - tick, g.from); ctx.lineTo(g.pos + tick, g.from)
+          ctx.moveTo(g.pos - tick, g.to); ctx.lineTo(g.pos + tick, g.to)
+        }
+        ctx.stroke()
+        const mx = g.axis === 'x' ? (g.from + g.to) / 2 : g.pos
+        const my = g.axis === 'x' ? g.pos : (g.from + g.to) / 2
+        ctx.font = `500 ${10 / z}px system-ui, sans-serif`
+        ctx.textAlign = 'center'
+        ctx.textBaseline = 'middle'
+        const tw = ctx.measureText(g.label).width + 6 / z
+        const th = 14 / z
+        ctx.fillStyle = '#ff3b30'
+        ctx.fillRect(mx - tw / 2, my - th / 2, tw, th)
+        ctx.fillStyle = '#ffffff'
+        ctx.fillText(g.label, mx, my)
+      }
+    }
+    ctx.restore()
   }
 }
 

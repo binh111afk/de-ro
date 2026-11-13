@@ -7,12 +7,12 @@
  */
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import {
-  centerOf, clone, DEFAULT_STYLE, handlePositions, hasPoints, hitTest, isLinear, isPage, localBounds, measureText,
+  alignBlocks, centerOf, clone, DEFAULT_STYLE, groupBlocks, handlePositions, hasPoints, hitTest, isLinear, isPage, localBounds, measureText,
   mutate, newId, newSeed, rotate, unionBounds, worldBounds, fontOf, LINE_HEIGHT, inPolygon,
-  type Bounds, type El, type Handle, type Kind, type Paper, type PenKind, type Pt, type Style,
+  type AlignKind, type Bounds, type El, type Handle, type Kind, type Paper, type PenKind, type Pt, type Style,
   isClosedStroke, type FillStyle, withGroups, copyEls,
 } from './scene'
-import { dropFromCache, LASER_LIFE, penOutline, render, renderLive, setImageLoadHandler, svgPathFromStroke, type LaserTrail, type View } from './render'
+import { dropFromCache, LASER_LIFE, penOutline, render, renderLive, setImageLoadHandler, svgPathFromStroke, type Guide, type LaserTrail, type View } from './render'
 import { AiPanel } from '@/examEditor/AiPanel'
 import { ToolsPanel } from '@/examEditor/tools/ToolsPanel'
 import { svgDataUrl } from '@/lib/plot'
@@ -58,10 +58,14 @@ interface Opts {
   /** thùng sơn: màu và kiểu tô */
   bucketFill: string
   bucketStyle: FillStyle
+  /** hiện đường gióng khi kéo hình */
+  guides: boolean
+  /** giữ công cụ Hình sau khi vẽ xong */
+  keepTool: boolean
 }
 interface Tip { sharp: number; sens: number }
 const DEFAULT_TIP: Tip = { sharp: 0.5, sens: 0.5 }
-const DEFAULT_OPTS: Opts = { pen: 'ball', lastShape: 'rectangle', paper: 'plain', snap: true, eraseMode: 'stroke', eraseSize: 1, selectMode: 'box', recentShapes: ['rectangle', 'ellipse', 'arrow', 'line'], recentColors: ['#1e1e1e', '#e03131', '#2f9e44', '#1971c2', '#f08c00', '#7048e8'], recentTextColors: ['#1e1e1e', '#e03131', '#2f9e44', '#1971c2', '#f08c00', '#7048e8'], recentShapeColors: ['#1e1e1e', '#e03131', '#2f9e44', '#1971c2', '#f08c00', '#7048e8'], recentHighlights: ['#fab005', '#82c91e', '#f783ac', '#4dabf7', '#ff922b'], penTips: {}, laserColor: '#ff3b30', laserSize: 1, bucketFill: '#a5d8ff', bucketStyle: 'solid' }
+const DEFAULT_OPTS: Opts = { pen: 'ball', lastShape: 'rectangle', paper: 'plain', snap: true, eraseMode: 'stroke', eraseSize: 1, selectMode: 'box', recentShapes: ['rectangle', 'ellipse', 'arrow', 'line'], recentColors: ['#1e1e1e', '#e03131', '#2f9e44', '#1971c2', '#f08c00', '#7048e8'], recentTextColors: ['#1e1e1e', '#e03131', '#2f9e44', '#1971c2', '#f08c00', '#7048e8'], recentShapeColors: ['#1e1e1e', '#e03131', '#2f9e44', '#1971c2', '#f08c00', '#7048e8'], recentHighlights: ['#fab005', '#82c91e', '#f783ac', '#4dabf7', '#ff922b'], penTips: {}, laserColor: '#ff3b30', laserSize: 1, bucketFill: '#a5d8ff', bucketStyle: 'solid', guides: true, keepTool: false }
 
 /** mỗi loại bút / hình / chữ nhớ màu và độ dày riêng */
 const DEFAULT_STYLES: Record<Slot, Style> = {
@@ -96,7 +100,7 @@ function load(id: string): Saved | null {
 type Drag =
   | { t: 'pan'; sx: number; sy: number; scrollX: number; scrollY: number }
   | { t: 'create'; el: El; start: Pt }
-  | { t: 'move'; start: Pt; orig: Map<string, Pt>; moved: boolean }
+  | { t: 'move'; start: Pt; orig: Map<string, Pt>; moved: boolean; origBounds: Bounds | null; candidates: Bounds[] }
   | { t: 'marquee'; start: Pt; cur: Pt; base: Set<string> }
   | { t: 'resize'; handle: Handle; orig: El[]; ob: Bounds; single: boolean }
   | { t: 'endpoint'; index: number; el: El }
@@ -105,6 +109,106 @@ type Drag =
   | { t: 'snapped'; el: El; orig: El; center: Pt; dist: number }
   | { t: 'laser'; trail: LaserTrail }
   | { t: 'lasso'; pts: Pt[]; base: Set<string> }
+
+/** tính bắt dính đường gióng & khoảng cách đều theo một trục (axis = 'x' hoặc 'y') */
+function snapAxis(
+  mb: Bounds,
+  candidates: Bounds[],
+  thresh: number,
+  axis: 'x' | 'y',
+): { delta: number; guides: Guide[] } {
+  const i0 = axis === 'x' ? 0 : 1
+  const i1 = axis === 'x' ? 2 : 3
+  const j0 = axis === 'x' ? 1 : 0
+  const j1 = axis === 'x' ? 3 : 2
+  const mPts = [mb[i0], (mb[i0] + mb[i1]) / 2, mb[i1]]
+  let bestDist = thresh + 1e-6
+  let bestDelta = 0
+  let snapped = false
+  for (const cb of candidates) {
+    const cPts = [cb[i0], (cb[i0] + cb[i1]) / 2, cb[i1]]
+    for (const mp of mPts) {
+      for (const cp of cPts) {
+        const d = cp - mp
+        if (Math.abs(d) < bestDist) { bestDist = Math.abs(d); bestDelta = d; snapped = true }
+      }
+    }
+  }
+  // nếu chưa hít thẳng hàng, kiểm tra cách đều giữa hai khối kề trái/phải (hoặc trên/dưới) có giao nhau theo trục còn lại
+  let gapMatch: { pos: number; a: Bounds; b: Bounds; gap: number } | null = null
+  if (!snapped) {
+    let left: Bounds | null = null
+    let right: Bounds | null = null
+    for (const cb of candidates) {
+      if (cb[j1] < mb[j0] || cb[j0] > mb[j1]) continue
+      if (cb[i1] < mb[i0] && (!left || cb[i1] > left[i1])) left = cb
+      if (cb[i0] > mb[i1] && (!right || cb[i0] < right[i0])) right = cb
+    }
+    if (left && right) {
+      const targetCenter = (left[i1] + right[i0]) / 2
+      const curCenter = (mb[i0] + mb[i1]) / 2
+      const d = targetCenter - curCenter
+      if (Math.abs(d) <= thresh) {
+        bestDelta = d
+        snapped = true
+        const gap = (right[i0] - left[i1] - (mb[i1] - mb[i0])) / 2
+        if (gap >= 1) {
+          const overlap0 = Math.max(mb[j0], Math.min(left[j0], right[j0]))
+          const overlap1 = Math.min(mb[j1], Math.max(left[j1], right[j1]))
+          gapMatch = { pos: (overlap0 + overlap1) / 2, a: left, b: right, gap }
+        }
+      }
+    }
+  }
+  if (!snapped) return { delta: 0, guides: [] }
+  const guides: Guide[] = []
+  const sm0 = mb[i0] + bestDelta, sm1 = mb[i1] + bestDelta, smc = (sm0 + sm1) / 2
+  const sPts = [sm0, smc, sm1]
+  const eps = 0.01
+  const matchedPos = new Set<number>()
+  for (const sp of sPts) {
+    for (const cb of candidates) {
+      for (const cp of [cb[i0], (cb[i0] + cb[i1]) / 2, cb[i1]]) {
+        if (Math.abs(sp - cp) <= eps) matchedPos.add(cp)
+      }
+    }
+  }
+  for (const pos of matchedPos) {
+    let from = mb[j0], to = mb[j1]
+    const marks: Pt[] = axis === 'x' ? [[pos, mb[j0]], [pos, mb[j1]]] : [[mb[j0], pos], [mb[j1], pos]]
+    for (const cb of candidates) {
+      if (Math.abs(cb[i0] - pos) <= eps || Math.abs((cb[i0] + cb[i1]) / 2 - pos) <= eps || Math.abs(cb[i1] - pos) <= eps) {
+        from = Math.min(from, cb[j0])
+        to = Math.max(to, cb[j1])
+        if (axis === 'x') marks.push([pos, cb[j0]], [pos, cb[j1]])
+        else marks.push([cb[j0], pos], [cb[j1], pos])
+      }
+    }
+    guides.push({ kind: 'align', axis, pos, from, to, marks })
+  }
+  if (gapMatch) {
+    const lbl = String(Math.round(gapMatch.gap))
+    guides.push(
+      { kind: 'gap', axis, pos: gapMatch.pos, from: gapMatch.a[i1], to: sm0, label: lbl },
+      { kind: 'gap', axis, pos: gapMatch.pos, from: sm1, to: gapMatch.b[i0], label: lbl },
+    )
+  }
+  return { delta: bestDelta, guides }
+}
+
+function computeSnap(
+  origBounds: Bounds,
+  dx: number,
+  dy: number,
+  candidates: Bounds[],
+  thresh: number,
+  lockAxis: 'x' | 'y' | null,
+): { dx: number; dy: number; guides: Guide[] } {
+  const mb: Bounds = [origBounds[0] + dx, origBounds[1] + dy, origBounds[2] + dx, origBounds[3] + dy]
+  const rx = lockAxis === 'y' ? { delta: 0, guides: [] } : snapAxis(mb, candidates, thresh, 'x')
+  const ry = lockAxis === 'x' ? { delta: 0, guides: [] } : snapAxis(mb, candidates, thresh, 'y')
+  return { dx: dx + rx.delta, dy: dy + ry.delta, guides: [...rx.guides, ...ry.guides] }
+}
 
 const TOOL_KEYS: Record<string, Tool> = {
   '1': 'select', v: 'select', h: 'hand', '2': 'rectangle', r: 'rectangle', '3': 'diamond', d: 'diamond',
@@ -215,6 +319,7 @@ export default function BoardEditor({ id }: { id: string }) {
 
   const raf = useRef(0)
   const marquee = useRef<Bounds | null>(null)
+  const guidesRef = useRef<Guide[]>([])
   /** vẽ ngay (đồng bộ) */
   const paint = useCallback(() => {
     {
@@ -244,6 +349,7 @@ export default function BoardEditor({ id }: { id: string }) {
         laser: laser.current,
         eraser: eraserAt.current && (t === 'eraser' || drag.current?.t === 'erase')
           ? { p: eraserAt.current, r: ERASE_R[opts.current.eraseSize] / z } : null,
+        guides: guidesRef.current,
         fillHover: fillHover.current,
         spread: sp ? { id: sp.id, prev: sp.prev, p: sp.p, r: sp.rMax * (1 - (1 - spT) ** 3) } : null,
       })
@@ -561,6 +667,7 @@ export default function BoardEditor({ id }: { id: string }) {
     drag.current = null
     marquee.current = null
     lasso.current = null
+    guidesRef.current = []
     if (!d) return
     live.current = null
     redrawLive()
@@ -626,8 +733,8 @@ export default function BoardEditor({ id }: { id: string }) {
     }
 
     if (t === 'select') {
-      const h = handleAt(p)
       const s = sel()
+      const h = s.some((e) => e.locked) ? null : handleAt(p)
       if (h === 'p0' || h === 'p1') {
         drag.current = { t: 'endpoint', index: h === 'p0' ? 0 : (s[0].points!.length - 1), el: s[0] }
         return
@@ -648,13 +755,32 @@ export default function BoardEditor({ id }: { id: string }) {
           const on = !selected.current.has(hit.id)
           for (const id of grp) on ? selected.current.add(id) : selected.current.delete(id)
         } else if (!selected.current.has(hit.id)) selected.current = grp
-        drag.current = { t: 'move', start: p, orig: new Map(sel().map((e) => [e.id, [e.x, e.y]])), moved: false }
+        let moving = sel()
+        if (moving.some((e) => e.locked)) {
+          bump()
+          redraw()
+          return
+        }
         // Alt + kéo: nhân đôi rồi kéo bản sao
         if (ev.altKey) {
-          const copies = copyEls(sel(), 0, 0)
+          const copies = copyEls(moving, 0, 0)
           els.current.push(...copies)
           selected.current = new Set(copies.map((c) => c.id))
-          drag.current.orig = new Map(copies.map((e) => [e.id, [e.x, e.y]]))
+          moving = copies
+        }
+        const movingIds = selected.current
+        const v = view.current, cw = canvasRef.current?.clientWidth ?? 2000, ch = canvasRef.current?.clientHeight ?? 1200
+        const vx0 = -v.scrollX, vy0 = -v.scrollY, vx1 = vx0 + cw / v.zoom, vy1 = vy0 + ch / v.zoom
+        const candidates = groupBlocks(els.current.filter((e) => !movingIds.has(e.id) && !isPage(e)))
+          .map((b) => b.bounds)
+          .filter((b) => b[2] >= vx0 && b[0] <= vx1 && b[3] >= vy0 && b[1] <= vy1)
+        drag.current = {
+          t: 'move',
+          start: p,
+          orig: new Map(moving.map((e) => [e.id, [e.x, e.y]])),
+          moved: false,
+          origBounds: unionBounds(moving),
+          candidates,
         }
       } else {
         if (!ev.shiftKey) selected.current.clear()
@@ -733,7 +859,7 @@ export default function BoardEditor({ id }: { id: string }) {
     let hit = false
     const out: El[] = []
     for (const e of els.current) {
-      if (isPage(e)) { out.push(e); continue }
+      if (isPage(e) || e.locked) { out.push(e); continue }
       if (opts.current.eraseMode === 'stroke' || e.kind !== 'freedraw' || e.region) {
         if (hitTest(e, p, r)) { hit = true; selected.current.delete(e.id); dropFromCache(e.id) } else out.push(e)
         continue
@@ -868,7 +994,17 @@ export default function BoardEditor({ id }: { id: string }) {
       }
       case 'move': {
         let dx = p[0] - d.start[0], dy = p[1] - d.start[1]
-        if (ev.shiftKey) Math.abs(dx) > Math.abs(dy) ? (dy = 0) : (dx = 0)
+        let lockAxis: 'x' | 'y' | null = null
+        if (ev.shiftKey) {
+          if (Math.abs(dx) > Math.abs(dy)) { dy = 0; lockAxis = 'x' }
+          else { dx = 0; lockAxis = 'y' }
+        }
+        if (opts.current.guides && !ev.altKey && d.origBounds && d.candidates.length) {
+          const snapped = computeSnap(d.origBounds, dx, dy, d.candidates, 5 / view.current.zoom, lockAxis)
+          dx = snapped.dx
+          dy = snapped.dy
+          guidesRef.current = snapped.guides
+        } else guidesRef.current = []
         for (const e of sel()) {
           const o = d.orig.get(e.id)
           if (o) mutate(e, { x: o[0] + dx, y: o[1] + dy })
@@ -883,7 +1019,7 @@ export default function BoardEditor({ id }: { id: string }) {
         marquee.current = b
         const next = new Set(d.base)
         for (const e of els.current) {
-          if (isPage(e)) continue
+          if (isPage(e) || e.locked) continue
           const w = worldBounds(e)
           if (w[0] >= b[0] && w[1] >= b[1] && w[2] <= b[2] && w[3] <= b[3]) next.add(e.id)
         }
@@ -966,7 +1102,7 @@ export default function BoardEditor({ id }: { id: string }) {
         lasso.current = d.pts
         const next = new Set(d.base)
         for (const e of els.current) {
-          if (isPage(e)) continue
+          if (isPage(e) || e.locked) continue
           const pts = hasPoints(e) ? e.points!.map(([px, py]) => [e.x + px, e.y + py] as Pt) : [centerOf(e)]
           const inside = pts.filter((q) => inPolygon(q, d.pts)).length
           if (inside / pts.length >= 0.6) next.add(e.id)
@@ -1050,6 +1186,7 @@ export default function BoardEditor({ id }: { id: string }) {
     drag.current = null
     marquee.current = null
     lasso.current = null
+    guidesRef.current = []
     if (!d) return
     if (d.t === 'laser') return redraw()
     live.current = null
@@ -1068,8 +1205,8 @@ export default function BoardEditor({ id }: { id: string }) {
       const tiny = e.kind !== 'freedraw' && x2 - x1 < 3 && y2 - y1 < 3
       if (tiny) els.current = els.current.filter((x) => x !== e)
       else if (e.kind !== 'freedraw') {
-        selected.current = new Set([e.id])
-        pickTool('select')
+        if (opts.current.keepTool && SHAPES.includes(e.kind)) selected.current.clear()
+        else { selected.current = new Set([e.id]); pickTool('select') }
       }
       commit()
     } else if (d.t === 'pan') {
@@ -1083,6 +1220,7 @@ export default function BoardEditor({ id }: { id: string }) {
     if (toolRef.current !== 'select') return
     const p = toScene(ev.clientX, ev.clientY)
     const hit = topHit(p)
+    if (hit?.locked) return
     if (hit?.kind === 'text') return startText(hit, false)
     if (hit?.latex) return setDialog({ t: 'formula', el: hit })
     // hình của công cụ vẽ: nhóm dựng bằng phần tử (ToolDoc ở trường tool) hoặc ảnh SVG cũ (ToolDoc trong <desc>)
@@ -1140,9 +1278,17 @@ export default function BoardEditor({ id }: { id: string }) {
   /* ---------- phím tắt ---------- */
 
   const deleteSelected = () => {
-    if (!selected.current.size) return
-    els.current = els.current.filter((e) => !selected.current.has(e.id))
-    selected.current.clear()
+    const victims = new Set(sel().filter((e) => !e.locked).map((e) => e.id))
+    if (!victims.size) return
+    els.current = els.current.filter((e) => !victims.has(e.id))
+    for (const vid of victims) selected.current.delete(vid)
+    commit()
+  }
+  const toggleLock = () => {
+    const s = sel()
+    if (!s.length) return
+    const next = !s.every((e) => e.locked)
+    for (const e of s) mutate(e, { locked: next || undefined })
     commit()
   }
   const duplicate = () => {
@@ -1165,6 +1311,9 @@ export default function BoardEditor({ id }: { id: string }) {
     if (!s.length) return
     for (const e of s) { delete e.groupId; delete e.tool }
     commit()
+  }
+  const align = (kind: AlignKind) => {
+    if (alignBlocks(sel(), kind)) commit()
   }
   const reorder = (dir: 'front' | 'back') => {
     const s = sel()
@@ -1242,9 +1391,10 @@ export default function BoardEditor({ id }: { id: string }) {
     }
     if (mod && k === 'z') { ev.preventDefault(); return ev.shiftKey ? redo() : undo() }
     if (mod && k === 'y') { ev.preventDefault(); return redo() }
-    if (mod && k === 'a') { ev.preventDefault(); selected.current = new Set(els.current.filter((e) => !isPage(e)).map((e) => e.id)); pickTool('select'); toolRef.current = 'select'; return changed() }
+    if (mod && k === 'a') { ev.preventDefault(); selected.current = new Set(els.current.filter((e) => !isPage(e) && !e.locked).map((e) => e.id)); pickTool('select'); toolRef.current = 'select'; return changed() }
     if (mod && k === 'd') { ev.preventDefault(); return duplicate() }
     if (mod && k === 'g') { ev.preventDefault(); return ev.shiftKey ? ungroup() : group() }
+    if (mod && ev.shiftKey && k === 'l') { ev.preventDefault(); return toggleLock() }
     if (mod && (k === 'c' || k === 'x')) {
       if (!selected.current.size) return
       clipboard.current = sel().map(clone)
@@ -1270,16 +1420,24 @@ export default function BoardEditor({ id }: { id: string }) {
     if (k === 'escape') { selected.current.clear(); pickTool('select'); return changed() }
     if (k.startsWith('arrow') && selected.current.size) {
       ev.preventDefault()
+      const movable = sel().filter((e) => !e.locked)
+      if (!movable.length) return
       const step = ev.shiftKey ? 10 : 1
       const dx = k === 'arrowleft' ? -step : k === 'arrowright' ? step : 0
       const dy = k === 'arrowup' ? -step : k === 'arrowdown' ? step : 0
-      for (const e of sel()) mutate(e, { x: e.x + dx, y: e.y + dy })
+      for (const e of movable) mutate(e, { x: e.x + dx, y: e.y + dy })
       return commit()
     }
     if (k === 'enter' && selected.current.size === 1) {
       const e = sel()[0]
-      if (e.kind === 'text') { ev.preventDefault(); return startText(e, false) }
+      if (e.kind === 'text' && !e.locked) { ev.preventDefault(); return startText(e, false) }
     }
+    if (ev.altKey && !mod && !ev.shiftKey) {
+      const ak: Record<string, AlignKind> = { a: 'left', d: 'right', w: 'top', s: 'bottom', h: 'centerX', v: 'centerY' }
+      if (ak[k] && selected.current.size > 1) { ev.preventDefault(); return align(ak[k]) }
+      return
+    }
+    if (k === 'q') { setOpt('keepTool', !opts.current.keepTool); return }
     const t = TOOL_KEYS[k]
     if (t) pickTool(t)
   }
@@ -1721,16 +1879,57 @@ export default function BoardEditor({ id }: { id: string }) {
   }
 
   const setProp = <K extends keyof Style>(k: K, value: Style[K]) => {
+    const ed = editingRef.current
+    if (ed && (k === 'bold' || k === 'italic' || k === 'font' || k === 'fontSize')) {
+      const e = ed.el
+      const ta = document.getElementById(`board-text-${id}`) as HTMLTextAreaElement | null
+      const txt = ta?.value ?? e.text ?? ''
+      const next = { ...e, [k]: value }
+      const m = measureText(txt || ' ', next.fontSize, next)
+      mutate(e, { [k]: value, ...m } as Partial<El>)
+      if (ta) {
+        ta.style.width = `${(m.w + next.fontSize) * view.current.zoom}px`
+        ta.style.height = `${m.h * view.current.zoom}px`
+      }
+      bump()
+      redraw()
+      return
+    }
     if (!selection.length) style.current = { ...style.current, [k]: value }
     for (const e of selection) {
-      if (k === 'fontSize' && e.kind === 'text') {
-        const c = centerOf(e)
-        const m = measureText(e.text ?? '', value as number, e)
-        mutate(e, { fontSize: value as number, ...m, x: c[0] - m.w / 2, y: c[1] - m.h / 2 })
+      if (e.kind === 'text' && (k === 'fontSize' || k === 'bold' || k === 'italic' || k === 'font')) {
+        const next = { ...e, [k]: value }
+        const m = measureText(e.text ?? '', next.fontSize, next)
+        if (k === 'fontSize') {
+          const c = centerOf(e)
+          mutate(e, { fontSize: value as number, ...m, x: c[0] - m.w / 2, y: c[1] - m.h / 2 })
+        } else mutate(e, { [k]: value, ...m } as Partial<El>)
       } else mutate(e, { [k]: value } as Partial<El>)
     }
     if (selection.length) commit()
     else changed()
+  }
+
+  /** chèn hoặc bọc đoạn đang bôi đen thành chỉ số trên (^{...}) / chỉ số dưới (_{...}) khi đang gõ chữ */
+  const wrapScript = (ch: '^' | '_') => {
+    const ed = editingRef.current
+    if (!ed) return
+    const ta = document.getElementById(`board-text-${id}`) as HTMLTextAreaElement | null
+    if (!ta) return
+    const start = ta.selectionStart ?? 0
+    const end = ta.selectionEnd ?? 0
+    const val = ta.value
+    const selText = val.slice(start, end)
+    const nextVal = `${val.slice(0, start)}${ch}{${selText}}${val.slice(end)}`
+    ta.value = nextVal
+    const caret = selText.length ? start + 2 + selText.length + 1 : start + 2
+    ta.setSelectionRange(caret, caret)
+    const e = ed.el
+    const m = measureText(nextVal || ' ', e.fontSize, e)
+    ta.style.width = `${(m.w + e.fontSize) * view.current.zoom}px`
+    ta.style.height = `${m.h * view.current.zoom}px`
+    mutate(e, { w: m.w, h: m.h })
+    redraw()
   }
 
   /* ---------- ô nhập chữ ---------- */
@@ -1749,7 +1948,13 @@ export default function BoardEditor({ id }: { id: string }) {
         spellCheck={false}
         onBlur={(ev) => finishText(ev.currentTarget.value)}
         onKeyDown={(ev) => {
-          if (ev.key === 'Escape' || (ev.key === 'Enter' && (ev.ctrlKey || ev.metaKey))) {
+          const mod = ev.ctrlKey || ev.metaKey
+          const k = ev.key.toLowerCase()
+          if (mod && k === 'b') { ev.preventDefault(); setProp('bold', !e.bold); return }
+          if (mod && k === 'i') { ev.preventDefault(); setProp('italic', !e.italic); return }
+          if (mod && ev.key === '.') { ev.preventDefault(); wrapScript('^'); return }
+          if (mod && ev.key === ',') { ev.preventDefault(); wrapScript('_'); return }
+          if (ev.key === 'Escape' || (ev.key === 'Enter' && mod)) {
             ev.preventDefault()
             ev.currentTarget.blur()
           }
@@ -1769,7 +1974,7 @@ export default function BoardEditor({ id }: { id: string }) {
           top: (e.y + v.scrollY) * v.zoom,
           width: (Math.max(e.w, 1) + e.fontSize) * v.zoom,
           height: Math.max(e.h, e.fontSize * LINE_HEIGHT) * v.zoom,
-          font: fontOf(fs),
+          font: fontOf(fs, e),
           lineHeight: LINE_HEIGHT,
           color: e.stroke,
           opacity: e.opacity / 100,
@@ -1838,6 +2043,27 @@ export default function BoardEditor({ id }: { id: string }) {
       ))}
     </Group>
   )
+  const keepFocus = (ev: React.MouseEvent) => ev.preventDefault()
+  const subHint = 'Bấm đúp vào chữ để gõ rồi chọn phần cần làm chỉ số'
+  const textStyleRow = (
+    <Group label="Kiểu chữ">
+      <Chip active={!!cur.bold} onMouseDown={keepFocus} onClick={() => setProp('bold', !cur.bold)} title="Đậm — Ctrl+B">
+        <span className="font-bold text-[13.5px]">B</span>
+      </Chip>
+      <Chip active={!!cur.italic} onMouseDown={keepFocus} onClick={() => setProp('italic', !cur.italic)} title="Nghiêng — Ctrl+I">
+        <span className="font-serif italic text-[14px]">I</span>
+      </Chip>
+      <Chip active={cur.font === 'serif'} onMouseDown={keepFocus} onClick={() => setProp('font', cur.font === 'serif' ? undefined : 'serif')} title="Chữ có chân (Serif)">
+        <span className="font-serif text-[13px]">Aa</span>
+      </Chip>
+      <Chip active={false} onMouseDown={keepFocus} onClick={() => { if (editing) wrapScript('^') }} title={editing ? 'Chỉ số trên — Ctrl+.' : subHint}>
+        <span className={`text-[12.5px] leading-none ${editing ? '' : 'opacity-40'}`}>x<sup className="text-[9px]">2</sup></span>
+      </Chip>
+      <Chip active={false} onMouseDown={keepFocus} onClick={() => { if (editing) wrapScript('_') }} title={editing ? 'Chỉ số dưới — Ctrl+,' : subHint}>
+        <span className={`text-[12.5px] leading-none ${editing ? '' : 'opacity-40'}`}>x<sub className="text-[9px]">2</sub></span>
+      </Chip>
+    </Group>
+  )
   const strokeStyleRow = (
     <Group label="Kiểu nét">
       {(['solid', 'dashed', 'dotted'] as const).map((st, i) => (
@@ -1892,7 +2118,81 @@ export default function BoardEditor({ id }: { id: string }) {
   if (selection.length) {
     const canGroup = selection.length > 1 && !selection.every((e) => e.groupId && e.groupId === selection[0].groupId)
     const canUngroup = selection.some((e) => e.groupId)
-    selActions = (
+    const blocks = groupBlocks(selection)
+    const movableBlocks = blocks.filter((b) => !b.locked)
+    const canAlign = blocks.length >= 2 && movableBlocks.length >= 1
+    const canDist = movableBlocks.length >= 3
+    const alignItems: { id: AlignKind; tip: string; kbd?: string; disabled?: boolean; icon: ReactNode }[] = [
+      {
+        id: 'left', tip: 'Căn trái', kbd: 'Alt+A',
+        icon: <><path d="M4 4v16" /><rect x="7" y="6" width="12" height="4.5" rx="1" /><rect x="7" y="13.5" width="7" height="4.5" rx="1" /></>,
+      },
+      {
+        id: 'centerX', tip: 'Căn giữa ngang', kbd: 'Alt+H',
+        icon: <><path d="M12 3v3M12 10.5v3M12 18v3" /><rect x="5" y="6" width="14" height="4.5" rx="1" /><rect x="7.5" y="13.5" width="9" height="4.5" rx="1" /></>,
+      },
+      {
+        id: 'right', tip: 'Căn phải', kbd: 'Alt+D',
+        icon: <><path d="M20 4v16" /><rect x="5" y="6" width="12" height="4.5" rx="1" /><rect x="10" y="13.5" width="7" height="4.5" rx="1" /></>,
+      },
+      {
+        id: 'top', tip: 'Căn trên', kbd: 'Alt+W',
+        icon: <><path d="M4 4h16" /><rect x="6" y="7" width="4.5" height="12" rx="1" /><rect x="13.5" y="7" width="4.5" height="7" rx="1" /></>,
+      },
+      {
+        id: 'centerY', tip: 'Căn giữa dọc', kbd: 'Alt+V',
+        icon: <><path d="M3 12h3M10.5 12h3M18 12h3" /><rect x="6" y="5" width="4.5" height="14" rx="1" /><rect x="13.5" y="7.5" width="4.5" height="9" rx="1" /></>,
+      },
+      {
+        id: 'bottom', tip: 'Căn dưới', kbd: 'Alt+S',
+        icon: <><path d="M4 20h16" /><rect x="6" y="5" width="4.5" height="12" rx="1" /><rect x="13.5" y="10" width="4.5" height="7" rx="1" /></>,
+      },
+      {
+        id: 'distX', tip: 'Giãn đều ngang (cần ≥ 3 khối)', disabled: !canDist,
+        icon: <><path d="M4 4v16M20 4v16" /><rect x="7" y="7" width="3.5" height="10" rx="1" /><rect x="13.5" y="7" width="3.5" height="10" rx="1" /></>,
+      },
+      {
+        id: 'distY', tip: 'Giãn đều dọc (cần ≥ 3 khối)', disabled: !canDist,
+        icon: <><path d="M4 4h16M4 20h16" /><rect x="7" y="7" width="10" height="3.5" rx="1" /><rect x="7" y="13.5" width="10" height="3.5" rx="1" /></>,
+      },
+    ]
+    const hasLocked = selection.some((e) => e.locked)
+    const allLocked = selection.every((e) => e.locked)
+    const lockBtn = (
+      <SelBtn label={allLocked ? 'Mở khoá — Ctrl+Shift+L' : 'Khoá hình — Ctrl+Shift+L'} onClick={toggleLock}>
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+          <rect x="5" y="11" width="14" height="10" rx="2" />
+          {allLocked
+            ? <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+            : <path d="M8 11V7a4 4 0 0 1 7.6-1.7" />}
+        </svg>
+      </SelBtn>
+    )
+    const dupBtn = (
+      <SelBtn label="Nhân đôi — Ctrl+D" onClick={duplicate}>
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+          <rect x="8" y="8" width="12" height="12" rx="2" />
+          <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" />
+        </svg>
+      </SelBtn>
+    )
+    const askAiBtn = (
+      <button
+        type="button" onClick={askAi} data-tip="Đính kèm phần đang chọn vào khung chat Trợ lý AI" aria-label="Đính kèm phần đang chọn vào khung chat Trợ lý AI"
+        className="flex h-9 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 text-[12.5px] font-medium text-ink transition-all hover:bg-sunken active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/40 sm:h-8"
+      >
+        <AiIcon size={16} /><span>Hỏi AI</span>
+      </button>
+    )
+    selActions = hasLocked ? (
+      <>
+        {lockBtn}
+        <span aria-hidden className="mx-1 h-4 w-px shrink-0 bg-line" />
+        {dupBtn}
+        <span aria-hidden className="mx-1 h-4 w-px shrink-0 bg-line" />
+        {askAiBtn}
+      </>
+    ) : (
       <>
         {/* cụm 1: tô nền + độ trong */}
         <div className="flex shrink-0 items-center gap-0.5">
@@ -1930,14 +2230,53 @@ export default function BoardEditor({ id }: { id: string }) {
         <span aria-hidden className="mx-1 h-4 w-px shrink-0 bg-line" />
 
         {/* cụm 2: hỏi AI */}
-        <button
-          type="button" onClick={askAi} data-tip="Đính kèm phần đang chọn vào khung chat Trợ lý AI" aria-label="Đính kèm phần đang chọn vào khung chat Trợ lý AI"
-          className="flex h-9 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 text-[12.5px] font-medium text-ink transition-all hover:bg-sunken active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/40 sm:h-8"
-        >
-          <AiIcon size={16} /><span>Hỏi AI</span>
-        </button>
+        {askAiBtn}
 
         <span aria-hidden className="mx-1 h-4 w-px shrink-0 bg-line" />
+
+        {canAlign && (
+          <>
+            <Pop id="align" pop={pop} setPop={setPop} title="Căn chỉnh"
+              btnClassName={`${selPillBtn} w-9 px-0 sm:w-8 sm:px-0`}
+              face={(
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  <path d="M4 4v16" />
+                  <rect x="7" y="6" width="12" height="4.5" rx="1" />
+                  <rect x="7" y="13.5" width="7" height="4.5" rx="1" />
+                </svg>
+              )}>
+              <div className="grid grid-cols-3 gap-1 p-0.5">
+                {alignItems.slice(0, 6).map((it) => (
+                  <button
+                    key={it.id} type="button" data-tip={it.tip} data-tip-kbd={it.kbd} aria-label={it.tip}
+                    onClick={() => { align(it.id); setPop(null) }}
+                    className="grid h-9 w-9 place-items-center rounded-[7px] text-ink transition-colors hover:bg-sunken active:scale-95 sm:h-8 sm:w-8"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                      {it.icon}
+                    </svg>
+                  </button>
+                ))}
+              </div>
+              <div className="my-1 h-px bg-line" />
+              <div className="grid grid-cols-2 gap-1 p-0.5">
+                {alignItems.slice(6).map((it) => (
+                  <button
+                    key={it.id} type="button" disabled={it.disabled} data-tip={it.tip} aria-label={it.tip}
+                    onClick={() => { align(it.id); setPop(null) }}
+                    className="flex h-9 items-center justify-center gap-1.5 rounded-[7px] px-2 text-[11.5px] text-ink transition-colors hover:bg-sunken active:scale-95 disabled:pointer-events-none disabled:opacity-35 sm:h-8"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                      {it.icon}
+                    </svg>
+                    <span>{it.id === 'distX' ? 'Ngang' : 'Dọc'}</span>
+                  </button>
+                ))}
+              </div>
+            </Pop>
+            <span aria-hidden className="mx-1 h-4 w-px shrink-0 bg-line" />
+          </>
+        )}
 
         {/* cụm 3: sắp xếp & nhân đôi */}
         <div className="flex shrink-0 items-center gap-0.5">
@@ -1973,13 +2312,12 @@ export default function BoardEditor({ id }: { id: string }) {
               </svg>
             </SelBtn>
           )}
-          <SelBtn label="Nhân đôi — Ctrl+D" onClick={duplicate}>
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-              <rect x="8" y="8" width="12" height="12" rx="2" />
-              <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" />
-            </svg>
-          </SelBtn>
+          {dupBtn}
         </div>
+
+        <span aria-hidden className="mx-1 h-4 w-px shrink-0 bg-line" />
+
+        {lockBtn}
 
         <span aria-hidden className="mx-1 h-4 w-px shrink-0 bg-line" />
 
@@ -1993,24 +2331,25 @@ export default function BoardEditor({ id }: { id: string }) {
     )
     options = (
       <>
-        <Group><span className="rounded-full bg-clay/15 px-2 py-0.5 text-[11.5px] font-medium text-clay">Đã chọn {selection.length}</span></Group>
+        <Group><span className="rounded-full bg-clay/15 px-2 py-0.5 text-[11.5px] font-medium text-clay">Đã chọn {selection.length}{hasLocked ? ' · Đã khoá' : ''}</span></Group>
         {tool === 'select' && (
           <Group>
             <Chip active={o.selectMode === 'box'} onClick={() => setOpt('selectMode', 'box')} title="Chọn bằng khung chữ nhật"><Ico d="M4 4h16v16H4z" /></Chip>
             <Chip active={o.selectMode === 'lasso'} onClick={() => setOpt('selectMode', 'lasso')} title="Chọn bằng khoanh tự do"><Ico d={LASSO_D} /></Chip>
           </Group>
         )}
-        {toolDoc && (
+        {!hasLocked && toolDoc && (
           <Group>
             <Chip onClick={() => setDialog({ t: 'tool', doc: toolDoc, ids: selection.map((e) => e.id) })} title="Mở lại bảng thông số của hình (như bấm đúp)">
               <Ico d="M4 20h4L19 9l-4-4L4 16v4zM13 7l4 4" /><span>Sửa hình</span>
             </Chip>
           </Group>
         )}
-        {!onlyImage && colorRow}
-        {!toolDoc && !onlyText && !onlyImage && widthRow}
-        {!toolDoc && hasText && fontRow}
-        {!toolDoc && !onlyText && !onlyImage && strokeStyleRow}
+        {!hasLocked && !onlyImage && colorRow}
+        {!hasLocked && !toolDoc && !onlyText && !onlyImage && widthRow}
+        {!hasLocked && !toolDoc && hasText && fontRow}
+        {!hasLocked && !toolDoc && hasText && textStyleRow}
+        {!hasLocked && !toolDoc && !onlyText && !onlyImage && strokeStyleRow}
       </>
     )
   } else if (main === 'pen') {
@@ -2131,6 +2470,9 @@ export default function BoardEditor({ id }: { id: string }) {
           <Chip active={o.selectMode === 'box'} onClick={() => setOpt('selectMode', 'box')} title="Kéo khung chữ nhật để chọn"><Ico d="M4 4h16v16H4z" /><span>Khung</span></Chip>
           <Chip active={o.selectMode === 'lasso'} onClick={() => setOpt('selectMode', 'lasso')} title="Khoanh tự do quanh nét cần chọn"><Ico d={LASSO_D} /><span>Khoanh tự do</span></Chip>
         </Group>
+        <Group>
+          <Toggle on={o.guides} onClick={() => setOpt('guides', !o.guides)}>Đường gióng</Toggle>
+        </Group>
       </>
     )
   } else if (main === 'shape') {
@@ -2163,6 +2505,15 @@ export default function BoardEditor({ id }: { id: string }) {
         {strokeStyleRow}
         {roughRow}
         {canFill && <Group>{fillPop}</Group>}
+        <Group>
+          <Toggle on={o.keepTool} onClick={() => setOpt('keepTool', !o.keepTool)} title="Vẽ xong vẫn giữ công cụ Hình để vẽ tiếp — Q">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <rect x="5" y="11" width="14" height="10" rx="2" />
+              <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+            </svg>
+            <span>Giữ công cụ</span>
+          </Toggle>
+        </Group>
       </>
     )
   } else if (main === 'text') {
@@ -2170,6 +2521,7 @@ export default function BoardEditor({ id }: { id: string }) {
       <>
         {colorRow}
         {fontRow}
+        {textStyleRow}
       </>
     )
   } else {
@@ -2334,6 +2686,7 @@ export default function BoardEditor({ id }: { id: string }) {
                   </div>
                 </div>
                 <div className="border-t border-line pt-1.5 space-y-1">
+                  <Toggle on={o.guides} onClick={() => setOpt('guides', !o.guides)}>Đường gióng</Toggle>
                   <button type="button" onClick={() => { setPop(null); toggleSide('tools') }} className={`flex h-9 w-full items-center gap-2 rounded-[6px] px-2 text-left text-[13px] ${side === 'tools' ? 'bg-clay/10 font-medium text-clay' : 'text-ink hover:bg-sunken'}`}>
                     <Ico d={WRENCH_D} size={16} />Công cụ
                   </button>
@@ -2658,20 +3011,23 @@ function Group({ label, children }: { label?: string; children: ReactNode }) {
   )
 }
 
-function Chip({ active, onClick, children, title }: { active?: boolean; onClick: () => void; children: ReactNode; title?: string }) {
+function Chip({ active, disabled, onClick, onMouseDown, children, title }: { active?: boolean; disabled?: boolean; onClick: () => void; onMouseDown?: (ev: React.MouseEvent<HTMLButtonElement>) => void; children: ReactNode; title?: string }) {
+  const { tip, kbd } = splitTipKbd(title ?? '')
   return (
     <button
-      type="button" data-tip={title} aria-label={title} onClick={onClick} aria-pressed={active}
-      className={`flex h-9 min-w-9 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-[7px] px-2.5 text-[12.5px] transition-colors sm:h-8 sm:min-w-8 sm:px-2 ${active ? 'bg-clay/10 text-clay' : 'text-ink hover:bg-sunken'}`}
+      type="button" data-tip={tip || undefined} data-tip-kbd={kbd} aria-label={tip || undefined} disabled={disabled}
+      onClick={onClick} onMouseDown={onMouseDown} aria-pressed={active}
+      className={`flex h-9 min-w-9 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-[7px] px-2.5 text-[12.5px] transition-colors disabled:pointer-events-none disabled:opacity-35 sm:h-8 sm:min-w-8 sm:px-2 ${active ? 'bg-clay/10 text-clay' : 'text-ink hover:bg-sunken'}`}
     >
       {children}
     </button>
   )
 }
 
-function Toggle({ on, onClick, children }: { on: boolean; onClick: () => void; children: ReactNode }) {
+function Toggle({ on, onClick, children, title }: { on: boolean; onClick: () => void; children: ReactNode; title?: string }) {
+  const { tip, kbd } = splitTipKbd(title ?? '')
   return (
-    <button type="button" role="switch" aria-checked={on} onClick={onClick} className="flex h-9 items-center gap-2 rounded-[6px] px-2 text-[12.5px] text-ink hover:bg-sunken sm:h-8">
+    <button type="button" role="switch" aria-checked={on} onClick={onClick} data-tip={tip || undefined} data-tip-kbd={kbd} className="flex h-9 items-center gap-2 whitespace-nowrap rounded-[6px] px-2 text-[12.5px] text-ink hover:bg-sunken sm:h-8">
       <span className={`relative h-4 w-7 rounded-full transition-colors ${on ? 'bg-clay' : 'bg-line'}`}>
         <span className={`absolute top-0.5 h-3 w-3 rounded-full bg-white transition-all ${on ? 'left-3.5' : 'left-0.5'}`} />
       </span>

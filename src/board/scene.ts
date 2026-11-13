@@ -21,6 +21,9 @@ export interface Style {
   roughness: number
   opacity: number
   fontSize: number
+  font?: 'serif'
+  italic?: boolean
+  bold?: boolean
 }
 
 export interface El extends Style {
@@ -66,6 +69,8 @@ export interface El extends Style {
   bold?: boolean
   /** nét đứt theo đúng độ dài (hình từ công cụ); không có thì dùng mẫu của strokeStyle */
   dash?: number[]
+  /** khoá hình: vẫn chọn được để mở khoá / hỏi AI, nhưng không kéo, đổi cỡ, xoay, xoá hay sửa kiểu */
+  locked?: boolean
   /** tăng mỗi khi hình dạng đổi (không tính di chuyển) — khoá cache nét rough */
   ver: number
 }
@@ -163,6 +168,7 @@ export function copyEls(src: El[], dx: number, dy: number): El[] {
   const gmap = new Map<string, string>()
   return src.map((e) => {
     const c = { ...clone(e), id: newId(), seed: newSeed(), x: e.x + dx, y: e.y + dy }
+    delete c.locked
     if (e.groupId) {
       if (!gmap.has(e.groupId)) gmap.set(e.groupId, newId())
       c.groupId = gmap.get(e.groupId)
@@ -226,6 +232,81 @@ export function unionBounds(els: El[]): Bounds | null {
     Math.min(...bs.map((b) => b[0])), Math.min(...bs.map((b) => b[1])),
     Math.max(...bs.map((b) => b[2])), Math.max(...bs.map((b) => b[3])),
   ]
+}
+
+export interface Block {
+  els: El[]
+  bounds: Bounds
+  locked: boolean
+}
+
+/** gom các phần tử thành khối: cùng groupId là một khối, phần tử lẻ là một khối */
+export function groupBlocks(els: El[]): Block[] {
+  const byGroup = new Map<string, El[]>()
+  const singles: El[] = []
+  for (const e of els) {
+    if (e.groupId) {
+      let arr = byGroup.get(e.groupId)
+      if (!arr) { arr = []; byGroup.set(e.groupId, arr) }
+      arr.push(e)
+    } else singles.push(e)
+  }
+  const out: Block[] = []
+  for (const list of byGroup.values()) {
+    const b = unionBounds(list)
+    if (b) out.push({ els: list, bounds: b, locked: list.some((e) => !!e.locked) })
+  }
+  for (const e of singles) out.push({ els: [e], bounds: worldBounds(e), locked: !!e.locked })
+  return out
+}
+
+export type AlignKind = 'left' | 'centerX' | 'right' | 'top' | 'centerY' | 'bottom' | 'distX' | 'distY'
+
+/** căn thẳng hàng hoặc giãn đều các khối; trả về true nếu có phần tử thay đổi vị trí */
+export function alignBlocks(els: El[], kind: AlignKind): boolean {
+  const blocks = groupBlocks(els)
+  if (blocks.length < 2) return false
+  const moveBlock = (b: Block, dx: number, dy: number) => {
+    if (!dx && !dy) return false
+    for (const e of b.els) mutate(e, { x: e.x + dx, y: e.y + dy })
+    return true
+  }
+  let changed = false
+  if (kind === 'distX' || kind === 'distY') {
+    const movable = blocks.filter((b) => !b.locked)
+    if (movable.length < 3) return false
+    const i0 = kind === 'distX' ? 0 : 1
+    const i1 = kind === 'distX' ? 2 : 3
+    const sorted = [...movable].sort((a, b) => (a.bounds[i0] + a.bounds[i1]) / 2 - (b.bounds[i0] + b.bounds[i1]) / 2)
+    const span = sorted[sorted.length - 1].bounds[i1] - sorted[0].bounds[i0]
+    const totalSize = sorted.reduce((s, b) => s + (b.bounds[i1] - b.bounds[i0]), 0)
+    const gap = (span - totalSize) / (sorted.length - 1)
+    let cur = sorted[0].bounds[i1] + gap
+    for (let i = 1; i < sorted.length - 1; i++) {
+      const b = sorted[i]
+      const delta = cur - b.bounds[i0]
+      if (moveBlock(b, kind === 'distX' ? delta : 0, kind === 'distY' ? delta : 0)) changed = true
+      cur += (b.bounds[i1] - b.bounds[i0]) + gap
+    }
+    return changed
+  }
+  const all = unionBounds(els)
+  if (!all) return false
+  const [ax1, ay1, ax2, ay2] = all
+  const acx = (ax1 + ax2) / 2, acy = (ay1 + ay2) / 2
+  for (const b of blocks) {
+    if (b.locked) continue
+    const [bx1, by1, bx2, by2] = b.bounds
+    let dx = 0, dy = 0
+    if (kind === 'left') dx = ax1 - bx1
+    else if (kind === 'centerX') dx = acx - (bx1 + bx2) / 2
+    else if (kind === 'right') dx = ax2 - bx2
+    else if (kind === 'top') dy = ay1 - by1
+    else if (kind === 'centerY') dy = acy - (by1 + by2) / 2
+    else if (kind === 'bottom') dy = ay2 - by2
+    if (moveBlock(b, dx, dy)) changed = true
+  }
+  return changed
 }
 
 function distToSeg(p: Pt, a: Pt, b: Pt) {
