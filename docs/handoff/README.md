@@ -2,6 +2,7 @@
 
 Chỉ mở phiên liên quan đến việc đang làm. Mới nhất ở trên.
 
+- [phiên 35](phien-35.md): agy làm **đồ thị điện xoay chiều + sóng dừng, đường sức (`field`), cấu tạo mạch vòng**; bảng vẽ **tô Kính, công cụ Tô màu / thùng sơn theo vùng kín có chừa lỗ** (`regionFill.ts`), kéo màu, tô nét vẽ tay kín; **responsive** bảng vẽ (hai ngón), soạn đề (`RibbonAdaptive.tsx`), slide; agy kiểm thử bảng vẽ + sửa lỗi
 - [phiên 34](phien-34.md): **việc đầu: giao agy nhóm "ưu tiên vừa"** (xoay chiều + sóng, đường sức, cấu tạo vòng, biểu đồ kết hợp); AnyRouter gpt-6.1-terra thay xkiro (gọi stream); Chỉnh cạnh 3D; 6 công cụ mới (Ma trận & đặc tả, phiếu trả lời 3 phần, Thấu kính, nhóm Sinh học: phả hệ, Punnett, lưới thức ăn); khối `table`; cách gộp nhiều nhánh agy
 - [phiên 33](phien-33.md): trang **"Đề của tôi"** riêng, công cụ mới (Tạo bảng, Phương trình hoá học + cấu tạo, Đồ thị chuyển thể, Đồ thị dao động), hình phẳng **Tự do + Chỉnh cạnh**, bấm thêm điểm đường tròn lượng giác, ô tìm công cụ; quy trình giao/review/gộp agy bằng worktree
 - [phiên 32](phien-32.md): bảng vẽ (công thức, ảnh/PDF, xuất PNG/PDF, nét bút theo Excalidraw, **ghi chú PDF**, dán clipboard, **đồng bộ theo tài khoản**), đề thiếu đáp án, chống trắng màn sau deploy, **giới hạn lưu trữ 10 MB** + "Đề của tôi" ở Hồ sơ
