@@ -1781,21 +1781,22 @@ export default function BoardEditor({ id }: { id: string }) {
             ))}
           </div>
           <div className="ml-auto flex items-center gap-0.5">
-            <SideBtn label="Trợ lý" on={side === 'ai'} onClick={() => toggleSide('ai')}><AiIcon /></SideBtn>
-            <SideBtn label="Công cụ" on={side === 'tools'} onClick={() => toggleSide('tools')}><Ico d={WRENCH_D} size={16} /></SideBtn>
-            <span className="mx-1.5 h-5 w-px bg-line" />
-            <button type="button" title="Chèn ảnh hoặc PDF từ máy" onClick={() => fileRef.current?.click()}
-              className="flex h-8 items-center gap-1.5 rounded-[7px] px-2.5 text-[13px] text-ink hover:bg-sunken">
-              <Ico d="M4 5h16v14H4zM4 15l4-4 4 4 3-3 5 5M15 9h.01" size={16} />Chèn ảnh/PDF
-            </button>
-            <button type="button" title="Mở file PDF để vẽ, ghi chú lên từng trang" onClick={() => pdfRef.current?.click()}
-              className="flex h-8 items-center gap-1.5 rounded-[7px] px-2.5 text-[13px] text-ink hover:bg-sunken">
-              <Ico d="M6 3h9l4 4v14H6zM14 3v5h5M9 17l5-5 2 2-5 5H9z" size={16} />Ghi chú PDF
-            </button>
+            <Pop id="insert" pop={pop} setPop={setPop} title="Chèn" align="right"
+              face={<span className="flex items-center gap-1.5 px-1.5 text-[13px] text-ink"><Ico d="M12 5v14M5 12h14" size={16} />Chèn</span>}>
+              <button type="button" onClick={() => { setPop(null); fileRef.current?.click() }} className="flex w-full items-center gap-2 rounded-[6px] px-2 py-1.5 text-left text-[13px] text-ink hover:bg-sunken">
+                <Ico d="M4 5h16v14H4zM4 15l4-4 4 4 3-3 5 5M15 9h.01" size={16} />Ảnh hoặc PDF vào bảng
+              </button>
+              <button type="button" onClick={() => { setPop(null); pdfRef.current?.click() }} className="flex w-full items-center gap-2 rounded-[6px] px-2 py-1.5 text-left text-[13px] text-ink hover:bg-sunken">
+                <Ico d="M6 3h9l4 4v14H6zM14 3v5h5M9 17l5-5 2 2-5 5H9z" size={16} />Mở PDF để ghi chú từng trang
+              </button>
+            </Pop>
             <input ref={pdfRef} type="file" hidden accept="application/pdf,.pdf" onChange={onOpenPdfNotes} />
-            {busy && <span className="ml-1 text-[12px] text-ink-2">{busy}</span>}
-            <IconBtn label="Xuất PNG / PDF" onClick={() => setDialog({ t: 'export' })}><Ico d="M12 4v11M7 10l5 5 5-5M5 20h14" /></IconBtn>
             <input ref={fileRef} type="file" hidden multiple accept="image/png,image/jpeg,image/webp,image/gif,application/pdf,.pdf" onChange={onPickFile} />
+            <button type="button" title="Xuất PNG / PDF" onClick={() => setDialog({ t: 'export' })}
+              className="flex h-8 items-center gap-1.5 rounded-[7px] px-2.5 text-[13px] text-ink hover:bg-sunken">
+              <Ico d="M12 4v11M7 10l5 5 5-5M5 20h14" size={16} />Xuất
+            </button>
+            {busy && <span className="ml-1 text-[12px] text-ink-2">{busy}</span>}
             {saveErr && <span className="ml-1 text-[12px] text-red-600" title="Bộ nhớ trình duyệt đã đầy: xoá bớt ảnh/trang PDF hoặc xuất bảng ra file để giữ lại">Chưa lưu được (đầy bộ nhớ)</span>}
             <span className="mx-1.5 h-5 w-px bg-line" />
             <Pop id="paper" pop={pop} setPop={setPop} title="Kiểu giấy" align="right"
@@ -1823,12 +1824,16 @@ export default function BoardEditor({ id }: { id: string }) {
                 })}
               </div>
             </Pop>
+            <div className="ml-1 flex items-center rounded-[8px] border border-line">
+              <IconBtn label="Thu nhỏ — Ctrl −" onClick={() => zoomAt(v.zoom / 1.2)}><Ico d="M6 12h12" /></IconBtn>
+              <button type="button" title="Về 100% — Ctrl 0" onClick={() => zoomAt(1)} className="h-8 w-12 rounded-[6px] text-center text-[12.5px] text-ink tnum hover:bg-sunken">
+                {Math.round(v.zoom * 100)}%
+              </button>
+              <IconBtn label="Phóng to — Ctrl +" onClick={() => zoomAt(v.zoom * 1.2)}><Ico d="M6 12h12M12 6v12" /></IconBtn>
+            </div>
             <span className="mx-1.5 h-5 w-px bg-line" />
-            <IconBtn label="Thu nhỏ — Ctrl −" onClick={() => zoomAt(v.zoom / 1.2)}><Ico d="M6 12h12" /></IconBtn>
-            <button type="button" title="Về 100% — Ctrl 0" onClick={() => zoomAt(1)} className="h-8 w-12 rounded-[6px] text-center text-[12.5px] text-ink tnum hover:bg-sunken">
-              {Math.round(v.zoom * 100)}%
-            </button>
-            <IconBtn label="Phóng to — Ctrl +" onClick={() => zoomAt(v.zoom * 1.2)}><Ico d="M6 12h12M12 6v12" /></IconBtn>
+            <SideBtn label="Công cụ" on={side === 'tools'} onClick={() => toggleSide('tools')}><Ico d={WRENCH_D} size={16} /></SideBtn>
+            <SideBtn label="Trợ lý" on={side === 'ai'} onClick={() => toggleSide('ai')}><AiIcon /></SideBtn>
           </div>
         </div>
         <div className="flex h-11 items-center overflow-x-auto [scrollbar-width:none] pb-1 px-3 text-[12.5px] text-ink-2 [&>div:first-child]:pl-0">
