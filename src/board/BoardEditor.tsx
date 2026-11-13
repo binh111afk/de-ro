@@ -363,6 +363,8 @@ export default function BoardEditor({ id }: { id: string }) {
         spread: sp ? { id: sp.id, prev: sp.prev, p: sp.p, r: sp.rMax * (1 - (1 - spT) ** 3) } : null,
       })
       if (liveRef.current) renderLive(liveRef.current, lv, view.current)
+      // ghi chú PDF: trang đang nằm giữa khung nhìn
+      syncPageRef.current()
       // dụng cụ hình học đi theo vùng nhìn
       instG.current?.setAttribute('transform', `scale(${z}) translate(${view.current.scrollX} ${view.current.scrollY})`)
       // laser còn vệt thì vẽ tiếp khung sau để mờ dần
@@ -475,6 +477,38 @@ export default function BoardEditor({ id }: { id: string }) {
     })
     return () => ro.disconnect()
   }, [redraw, paint])
+
+  /* ---------- ghi chú PDF: cột trang thu nhỏ + số trang ---------- */
+
+  const pdfPages = els.current.filter(isPage).sort((a, b) => a.y - b.y || a.x - b.x)
+  const [curPage, setCurPage] = useState(0)
+  const [railOpen, setRailOpen] = useState(true)
+  const railRef = useRef<HTMLDivElement>(null)
+  const RAIL_W = 168
+  const railW = () => (railOpen && pdfPages.length && (canvasRef.current?.clientWidth ?? 0) >= 640 ? RAIL_W : 0)
+  const syncPageRef = useRef(() => {})
+  syncPageRef.current = () => {
+    if (!pdfPages.length) return
+    const c = canvasRef.current, v = view.current
+    if (!c) return
+    const midY = (c.clientHeight * 0.4) / v.zoom - v.scrollY
+    let k = 0
+    pdfPages.forEach((pg, i) => { if (pg.y <= midY) k = i })
+    if (k !== curPage) {
+      setCurPage(k)
+      railRef.current?.querySelector<HTMLElement>(`[data-page="${k}"]`)?.scrollIntoView({ block: 'nearest' })
+    }
+  }
+  /** cuộn tới trang i: mép trên trang sát đầu khung, trang nằm giữa phần bên phải cột thu nhỏ */
+  const goPage = (i: number) => {
+    const pg = pdfPages[i], c = canvasRef.current
+    if (!pg || !c) return
+    const v = view.current, rw = railW()
+    v.scrollY = -pg.y + 16 / v.zoom
+    v.scrollX = (rw + (c.clientWidth - rw) / 2) / v.zoom - (pg.x + pg.w / 2)
+    redraw()
+    persist()
+  }
 
   /* ---------- dụng cụ hình học (thước kẻ, thước đo góc, compa) ---------- */
 
@@ -1656,8 +1690,10 @@ export default function BoardEditor({ id }: { id: string }) {
         }
         els.current = [...pages, ...els.current]
         // phóng cho trang vừa bề ngang khung nhìn, cuộn tới trang đầu
-        v.zoom = Math.max(0.2, Math.min(1.2, (r.width - 48) / W))
-        v.scrollX = r.width / 2 / v.zoom - cx
+        const rw = r.width >= 640 ? RAIL_W : 0
+        setRailOpen(true)
+        v.zoom = Math.max(0.2, Math.min(1.2, (r.width - rw - 48) / W))
+        v.scrollX = (rw + (r.width - rw) / 2) / v.zoom - cx
         v.scrollY = -top + 24 / v.zoom
         pickTool('freedraw')
         commit()
@@ -2880,6 +2916,31 @@ export default function BoardEditor({ id }: { id: string }) {
         />
         <canvas ref={liveRef} className="pointer-events-none absolute inset-0 h-full w-full" />
         <Instruments s={inst} set={setInst} gRef={instG} api={instApi} />
+        {pdfPages.length > 0 && (
+          <>
+            {railOpen && (
+              <div ref={railRef} className="absolute inset-y-0 left-0 z-[5] hidden flex-col gap-3 overflow-y-auto border-r border-line bg-[#f4f4f6] px-3 py-3 sm:flex" style={{ width: RAIL_W }}>
+                {pdfPages.map((pg, i) => (
+                  <button key={pg.id} type="button" data-page={i} onClick={() => goPage(i)} aria-label={`Trang ${i + 1}`}
+                    className={`group flex shrink-0 items-start gap-2 rounded-[6px] p-1 text-left ${i === curPage ? 'bg-clay/15' : 'hover:bg-black/5'}`}>
+                    <span className={`w-5 shrink-0 pt-0.5 text-right text-[11.5px] tabular-nums ${i === curPage ? 'font-semibold text-clay' : 'text-ink-2'}`}>{i + 1}</span>
+                    <img src={pg.src?.startsWith(IDB_PREFIX) ? cachedSrc(pg.src) : pg.src} alt="" draggable={false} loading="lazy"
+                      className={`min-w-0 flex-1 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.18)] ${i === curPage ? 'ring-2 ring-clay' : ''}`}
+                      style={{ aspectRatio: `${pg.w} / ${pg.h}` }} />
+                  </button>
+                ))}
+              </div>
+            )}
+            <button type="button" onClick={() => setRailOpen((o) => !o)} data-tip={railOpen ? 'Ẩn danh sách trang' : 'Hiện danh sách trang'}
+              className="absolute bottom-3 z-[6] hidden h-8 items-center gap-1.5 rounded-full border border-line bg-surface px-3 text-[12.5px] text-ink shadow-lift sm:flex"
+              style={{ left: railOpen ? RAIL_W + 12 : 12 }}>
+              <Ico d={PAPER_D} size={14} />{railOpen ? 'Ẩn trang' : 'Trang'}
+            </button>
+            <div className="pointer-events-none absolute bottom-3 left-1/2 z-[6] -translate-x-1/2 rounded-full bg-black/60 px-3 py-1 text-[12.5px] tabular-nums text-white">
+              {curPage + 1} / {pdfPages.length}
+            </div>
+          </>
+        )}
         {textarea}
       </div>
       {dialog?.t === 'formula' && (

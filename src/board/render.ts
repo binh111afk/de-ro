@@ -360,6 +360,16 @@ export function drawElement(ctx: CanvasRenderingContext2D, rc: ReturnType<typeof
   ctx.translate(e.x, e.y)
   if (e.kind === 'image') {
     const img = e.src ? imageOf(e.src) : null
+    // trang PDF: tờ giấy trắng có bóng đổ nổi trên nền xám (như trình đọc PDF)
+    if (e.page) {
+      ctx.save()
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.18)'
+      ctx.shadowBlur = 14
+      ctx.shadowOffsetY = 3
+      ctx.fillStyle = '#ffffff'
+      ctx.fillRect(0, 0, e.w, e.h)
+      ctx.restore()
+    }
     if (img?.complete && img.naturalWidth) ctx.drawImage(img, 0, 0, e.w, e.h)
     else {
       ctx.fillStyle = '#f1efec'
@@ -586,13 +596,15 @@ export function render(
   const dpr = window.devicePixelRatio || 1
   const dark = isDarkPaper(overlay.paper)
   const accent = dark ? '#f08c5c' : ACCENT
+  // bảng ghi chú PDF: nền xám quanh các trang thay cho kiểu giấy
+  const pdfMode = els.some((e) => e.page)
   ctx.setTransform(1, 0, 0, 1, 0, 0)
-  ctx.fillStyle = paperBg(overlay.paper)
+  ctx.fillStyle = pdfMode ? (dark ? '#1f2322' : '#e9e9ec') : paperBg(overlay.paper)
   ctx.fillRect(0, 0, canvas.width, canvas.height)
   const z = view.zoom * dpr
   ctx.setTransform(z, 0, 0, z, view.scrollX * z, view.scrollY * z)
 
-  drawPaper(ctx, overlay.paper, view, canvas.width / dpr, canvas.height / dpr)
+  if (!pdfMode) drawPaper(ctx, overlay.paper, view, canvas.width / dpr, canvas.height / dpr)
 
   const rc = rough.canvas(canvas)
   const sp = overlay.spread
