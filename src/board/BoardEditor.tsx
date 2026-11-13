@@ -18,6 +18,7 @@ import { ToolsPanel } from '@/examEditor/tools/ToolsPanel'
 import { svgDataUrl } from '@/lib/plot'
 import { renderTool, readToolDoc, parseToolJson, type ToolDoc, type ToolImage } from '@/lib/toolSpec'
 import { ToolModal } from '@/examEditor/tools/ToolModal'
+import { svgToElements } from './svgImport'
 import { createPortal } from 'react-dom'
 import { interiorArea, regionArea, regionAt, type Region } from './regionFill'
 import { figureDoc } from '@/examEditor/toolImages'
@@ -344,7 +345,7 @@ export default function BoardEditor({ id }: { id: string }) {
     ro.observe(wrap)
     // phông chữ tải xong thì đo / vẽ lại chữ
     document.fonts?.ready.then(() => {
-      for (const e of els.current) if (e.kind === 'text') mutate(e, measureText(e.text ?? '', e.fontSize))
+      for (const e of els.current) if (e.kind === 'text') mutate(e, measureText(e.text ?? '', e.fontSize, e))
       redraw()
     })
     return () => ro.disconnect()
@@ -510,7 +511,7 @@ export default function BoardEditor({ id }: { id: string }) {
     if (!text) {
       els.current = els.current.filter((e) => e.id !== ed.el.id)
       selected.current.delete(ed.el.id)
-    } else mutate(ed.el, { text, ...measureText(text, ed.el.fontSize) })
+    } else mutate(ed.el, { text, ...measureText(text, ed.el.fontSize, ed.el) })
     editingRef.current = null
     setEditing(null)
     commit()
@@ -975,7 +976,7 @@ export default function BoardEditor({ id }: { id: string }) {
       const C = rotate([(x1 + x2) / 2, (y1 + y2) / 2], oc, o0.angle)
       if (o0.kind === 'text') {
         const fontSize = Math.max(6, o0.fontSize * sx)
-        const m = measureText(o0.text ?? '', fontSize)
+        const m = measureText(o0.text ?? '', fontSize, o0)
         mutate(e, { fontSize, ...m, x: C[0] - m.w / 2, y: C[1] - m.h / 2 })
       } else if (hasPoints(o0)) {
         const [bx1, by1] = localBounds(o0)
@@ -995,7 +996,7 @@ export default function BoardEditor({ id }: { id: string }) {
       const nx = x1 + (o.x - ox1) * sx, ny = y1 + (o.y - oy1) * sy
       if (o.kind === 'text') {
         const fontSize = Math.max(6, o.fontSize * Math.min(sx, sy))
-        mutate(e, { x: nx, y: ny, fontSize, ...measureText(o.text ?? '', fontSize) })
+        mutate(e, { x: nx, y: ny, fontSize, ...measureText(o.text ?? '', fontSize, o) })
       } else if (hasPoints(o)) mutate(e, { x: nx, y: ny, points: o.points!.map(([px, py]) => [px * sx, py * sy] as Pt) })
       else mutate(e, { x: nx, y: ny, w: o.w * sx, h: o.h * sy })
     }
@@ -1176,7 +1177,7 @@ export default function BoardEditor({ id }: { id: string }) {
       const r = c.getBoundingClientRect()
       const el = newElement('text', [r.width / 2 / v.zoom - v.scrollX, r.height / 2 / v.zoom - v.scrollY])
       el.text = text.replace(/\r\n?/g, '\n').slice(0, 5000)
-      Object.assign(el, measureText(el.text, el.fontSize))
+      Object.assign(el, measureText(el.text, el.fontSize, el))
       el.x -= el.w / 2
       el.y -= el.h / 2
       els.current.push(el)
@@ -1286,24 +1287,43 @@ export default function BoardEditor({ id }: { id: string }) {
     const w = Math.min(420, (r.width / v.zoom) * 0.6)
     const h = (w * img.height) / img.width
     const cx = r.width / 2 / v.zoom - v.scrollX, cy = r.height / 2 / v.zoom - v.scrollY
-    const el: El = { ...newElement('image', freeSpot(cx - w / 2, cy - h / 2)), w, h, src: svgDataUrl(img.svg), opacity: 100 }
-    els.current.push(el)
+    const [x, y] = freeSpot(cx - w / 2, cy - h / 2)
+    const added = toolEls(img, x, y, w)
+    els.current.push(...added)
     pickTool('select')
-    selected.current = new Set([el.id])
+    selected.current = new Set(added.map((e) => e.id))
     commit()
+  }
+  /** hình công cụ → phần tử gốc của bảng (một nhóm giữ ToolDoc); không chuyển được thì để ảnh như cũ */
+  const toolEls = (img: ToolImage, x: number, y: number, w: number): El[] => {
+    const doc = readToolDoc(img.svg)
+    let out: El[] = []
+    try { out = svgToElements(img.svg, { x, y, width: w, tool: doc ? JSON.stringify(doc) : undefined }) } catch (err) { console.warn('svgToElements', err) }
+    if (out.length) return out
+    return [{ ...newElement('image', [x, y]), w, h: (w * img.height) / img.width, src: svgDataUrl(img.svg), opacity: 100 }]
   }
 
   /** sửa lại hình công cụ (bấm đúp): thay đúng chỗ cũ, giữ bề ngang, cùng lớp */
-  const replaceTool = (ids: string[], img: ToolImage) => {
+  const replaceTool = (ids: string[], oldDoc: ToolDoc, img: ToolImage) => {
     const old = els.current.filter((e) => ids.includes(e.id))
     const b = unionBounds(old)
     if (!b) return
-    const w = b[2] - b[0], h = (w * img.height) / img.width
-    const el: El = { ...newElement('image', [b[0], b[1]]), w, h, src: svgDataUrl(img.svg), opacity: 100 }
+    // vị trí, tỉ lệ của hình cũ: ảnh thì chính khung ảnh; nhóm thì dựng lại hình cũ ở tỉ lệ 1 rồi so khung
+    // (khung nhóm không gồm nền trắng / lề nên không dùng thẳng được, nhóm có thể đã bị kéo / đổi cỡ)
+    let x = b[0], y = b[1], w = b[2] - b[0]
+    if (!(old.length === 1 && old[0].kind === 'image')) {
+      const ref = renderTool(oldDoc)
+      const bo = unionBounds(svgToElements(ref.svg, { x: 0, y: 0, width: ref.width }))
+      if (bo && bo[2] > bo[0]) {
+        const sc = (b[2] - b[0]) / (bo[2] - bo[0])
+        x = b[0] - bo[0] * sc; y = b[1] - bo[1] * sc; w = ref.width * sc
+      }
+    }
+    const added = toolEls(img, x, y, w)
     const at = els.current.findIndex((e) => ids.includes(e.id))
     els.current = els.current.filter((e) => !ids.includes(e.id))
-    els.current.splice(Math.min(at, els.current.length), 0, el)
-    selected.current = new Set([el.id])
+    els.current.splice(Math.min(at, els.current.length), 0, ...added)
+    selected.current = new Set(added.map((e) => e.id))
     commit()
   }
 
@@ -1507,8 +1527,7 @@ export default function BoardEditor({ id }: { id: string }) {
             if (!doc) { out.push('Không dựng được hình theo cấu hình AI gửi.'); break }
             const img = renderTool(doc)
             const w = num(op.w, 360), h = (w * img.height) / img.width
-            const el: El = { ...base('image', 'shape', num(op.x, cx - w / 2), num(op.y, cy - h / 2)), w, h, src: svgDataUrl(img.svg), opacity: 100 }
-            added.push(el)
+            added.push(...toolEls(img, num(op.x, cx - w / 2), num(op.y, cy - h / 2), w))
             out.push(`Đã vẽ ${TOOL_LABEL[doc.kind] ?? 'hình'}.`)
             break
           }
@@ -1581,7 +1600,7 @@ export default function BoardEditor({ id }: { id: string }) {
             if (typeof op.y === 'number') patch.y = op.y
             if (typeof op.w === 'number' && !hasPoints(e)) patch.w = op.w
             if (typeof op.h === 'number' && !hasPoints(e)) patch.h = op.h
-            if (typeof op.text === 'string' && e.kind === 'text') Object.assign(patch, { text: op.text, ...measureText(op.text, e.fontSize) })
+            if (typeof op.text === 'string' && e.kind === 'text') Object.assign(patch, { text: op.text, ...measureText(op.text, e.fontSize, e) })
             mutate(e, patch)
             out.push(`Đã sửa ${KIND_LABEL[e.kind]?.toLowerCase() ?? 'hình'}.`)
             break
@@ -1668,7 +1687,7 @@ export default function BoardEditor({ id }: { id: string }) {
     for (const e of selection) {
       if (k === 'fontSize' && e.kind === 'text') {
         const c = centerOf(e)
-        const m = measureText(e.text ?? '', value as number)
+        const m = measureText(e.text ?? '', value as number, e)
         mutate(e, { fontSize: value as number, ...m, x: c[0] - m.w / 2, y: c[1] - m.h / 2 })
       } else mutate(e, { [k]: value } as Partial<El>)
     }
@@ -1699,7 +1718,7 @@ export default function BoardEditor({ id }: { id: string }) {
         }}
         onInput={(ev) => {
           const ta = ev.currentTarget
-          const m = measureText(ta.value || ' ', e.fontSize)
+          const m = measureText(ta.value || ' ', e.fontSize, e)
           ta.style.width = `${(m.w + e.fontSize) * v.zoom}px`
           ta.style.height = `${m.h * v.zoom}px`
         }}
@@ -2204,7 +2223,7 @@ export default function BoardEditor({ id }: { id: string }) {
           initial={dialog.doc.spec}
           submitLabel="Cập nhật"
           onClose={() => setDialog(null)}
-          onInsert={(img) => { const ids = dialog.ids; setDialog(null); replaceTool(ids, img) }}
+          onInsert={(img) => { const { ids, doc } = dialog; setDialog(null); replaceTool(ids, doc, img) }}
         />,
         document.body,
       )}

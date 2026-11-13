@@ -45,5 +45,19 @@ struct/chemgraph/chemeq (chỉ số lồng, liên kết đôi/ba, benzen), geo3d
 - `BoardEditor.tsx`: chọn 1 = chọn cả nhóm (bấm, Shift, khung, khoanh); Ctrl+G / Ctrl+Shift+G + nút trong nhóm "Sắp xếp"; bấm đúp nhóm có `tool` hoặc ảnh SVG công cụ cũ → `ToolModal` ("Cập nhật") → `replaceTool` thay đúng chỗ, giữ bề ngang. Hiện `replaceTool` vẫn chèn ảnh — Giai đoạn 1 đổi sang `toBoard`.
 - Mục 5 (lấy mẫu đường cong) để sang Giai đoạn 1, làm cùng hàm dựng `toBoard`.
 
+## Đổi hướng Giai đoạn 1–3 (phiên 36): một bộ chuyển SVG chung thay cho 29 hàm `toBoard`
+Đọc SVG của 29 công cụ thì thấy chỉ dùng path, line, rect, circle, text/tspan, marker, clipPath (+ pattern/mask ở Ven). Nên viết **`src/board/svgImport.ts` `svgToElements(svg, {x, y, width, tool})`** dùng chung: đầu ra SVG giữ nguyên cho trình soạn đề, bảng vẽ đọc lại SVG đó.
+- Gắn SVG tạm vào trang (ẩn bằng opacity) để lấy ma trận biến đổi, kiểu kế thừa, độ dài path.
+- path: tự đọc lệnh; đoạn chỉ có thẳng lấy đúng đỉnh, đoạn có cong lấy mẫu mỗi 2,5 đơn vị. Path hở có tô → một hình nền khép kín + nét riêng.
+- marker: dựng đúng hình đầu mũi tên (tam giác tô đặc…) ở đầu / cuối / đỉnh giữa, theo refX/refY/viewBox/orient.
+- clipPath hình chữ nhật (đồ thị cắt khung) → cắt đường theo khung. pattern gạch chéo → tô kiểu `hachure`. mask / clip khác → cắt riêng phần đó thành ảnh SVG nhỏ (hiện chỉ có miền gạch của Ven).
+- text/tspan: tspan nhỏ lệch lên/xuống → `^{}`/`_{}`; chữ có chân (`font: 'serif'`), nghiêng (cả khi chỉ chữ cái nằm trong tspan nghiêng), đậm, căn theo text-anchor, xoay theo ma trận.
+- Phần tử mới của `El`: `font`, `italic`, `bold`, `dash` (nét đứt đúng độ dài).
+- Nhóm nhiều phần tử: không vẽ khung chọn từng phần tử.
+- `BoardEditor`: `toolEls()` dùng cho panel Công cụ, lệnh AI `figure`, và `replaceTool` (bấm đúp sửa: dựng lại hình cũ ở tỉ lệ 1 để tìm vị trí / tỉ lệ thật của nhóm đã kéo, đổi cỡ). Không chuyển được thì vẫn chèn ảnh như cũ.
+- Script so sánh: `src/board/dev/compareTools.ts` — trên trình duyệt dev `(await import('/src/board/dev/compareTools.ts')).compare()`.
+
+Kết quả: cả 29 loại đều dựng được, so ảnh cạnh SVG gốc gần như trùng. Khác biệt còn lại: hộp bo góc (`rx`) thành góc vuông; miền gạch Ven là ảnh nhỏ (không tẩy/tô từng nét được); chữ trộn đứng + nghiêng trong một dòng (vd "T (phút)") hiện đứng hết. Giai đoạn 2 (giao agy theo đợt) không cần nữa.
+
 ## Bước kế tiếp
-Giai đoạn 1: `src/board/tools/` — venn + graph, rồi cho `insertImage`/`replaceTool` dùng `toBoard` khi loại đó đã có.
+Người dùng dùng thử. Có thể làm thêm: bo góc hộp, miền gạch Ven bằng phần tử gốc (tính giao các hình tròn), chữ trộn kiểu trong một dòng.

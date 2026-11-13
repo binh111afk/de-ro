@@ -33,7 +33,7 @@ function roughOptions(e: El): Options {
     fillStyle: e.fillStyle === 'glass' ? 'solid' : e.fillStyle,
     fillWeight: sw / 2,
     hachureGap: sw * 4,
-    strokeLineDash: e.strokeStyle === 'dashed' ? [8, 8 + sw] : e.strokeStyle === 'dotted' ? [1.5, 6 + sw] : undefined,
+    strokeLineDash: e.strokeStyle !== 'solid' && e.dash ? e.dash : e.strokeStyle === 'dashed' ? [8, 8 + sw] : e.strokeStyle === 'dotted' ? [1.5, 6 + sw] : undefined,
     disableMultiStroke: e.strokeStyle !== 'solid',
     preserveVertices: e.roughness < 1,
   }
@@ -284,16 +284,15 @@ export function drawElement(ctx: CanvasRenderingContext2D, rc: ReturnType<typeof
       ctx.fillRect(0, 0, e.w, e.h)
     }
   } else if (e.kind === 'text') {
-    ctx.font = fontOf(e.fontSize)
     ctx.fillStyle = e.stroke
     ctx.textBaseline = 'top'
     const lh = e.fontSize * LINE_HEIGHT
     ;(e.text ?? '').split('\n').forEach((line, i) => {
       const y = i * lh + (lh - e.fontSize) / 2
-      let x = e.align && e.align !== 'left' ? (e.w - lineWidth(line, e.fontSize)) * (e.align === 'center' ? 0.5 : 1) : 0
+      let x = e.align && e.align !== 'left' ? (e.w - lineWidth(line, e.fontSize, e)) * (e.align === 'center' ? 0.5 : 1) : 0
       for (const r of textRuns(line)) {
         const fs = r.lv ? e.fontSize * SUB_SCALE : e.fontSize
-        ctx.font = fontOf(fs)
+        ctx.font = fontOf(fs, e)
         // chỉ số trên nâng lên, dưới hạ xuống so với dòng chữ thường
         ctx.fillText(r.t, x, y + (r.lv === 1 ? -e.fontSize * 0.12 : r.lv === -1 ? e.fontSize * 0.45 : 0))
         x += ctx.measureText(r.t).width
@@ -472,8 +471,10 @@ export function render(
   ctx.lineWidth = 1 / view.zoom
   ctx.strokeStyle = ACCENT
   const sel = overlay.selected
+  // hình trong nhóm: chỉ khung chung của cả vùng chọn, không khung từng phần tử (nhóm công cụ có hàng chục nét)
   for (const e of sel) {
     if (isLinear(e) && sel.length === 1) continue
+    if (e.groupId && sel.length > 1) continue
     ctx.save()
     if (e.angle) {
       const [cx, cy] = centerOf(e)

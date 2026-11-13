@@ -60,6 +60,12 @@ export interface El extends Style {
   tool?: string
   /** chữ: căn dòng trong khung */
   align?: 'left' | 'center' | 'right'
+  /** chữ: kiểu chữ có chân (ký hiệu toán, lý, hoá từ công cụ) và nghiêng */
+  font?: 'serif'
+  italic?: boolean
+  bold?: boolean
+  /** nét đứt theo đúng độ dài (hình từ công cụ); không có thì dùng mẫu của strokeStyle */
+  dash?: number[]
   /** tăng mỗi khi hình dạng đổi (không tính di chuyển) — khoá cache nét rough */
   ver: number
 }
@@ -306,9 +312,10 @@ export function handlePositions(b: Bounds, zoom: number, withRotate: boolean): P
   return h
 }
 
-export function measureText(text: string, fontSize: number): { w: number; h: number } {
+export interface FontOpt { font?: 'serif'; italic?: boolean; bold?: boolean }
+export function measureText(text: string, fontSize: number, f?: FontOpt): { w: number; h: number } {
   const lines = text.split('\n')
-  const w = Math.max(1, ...lines.map((l) => lineWidth(l, fontSize)))
+  const w = Math.max(1, ...lines.map((l) => lineWidth(l, fontSize, f)))
   return { w: Math.ceil(w), h: Math.ceil(lines.length * fontSize * LINE_HEIGHT) }
 }
 
@@ -353,11 +360,11 @@ export function textRuns(line: string): Run[] {
   return out
 }
 export const SUB_SCALE = 0.68
-export function lineWidth(line: string, fontSize: number) {
+export function lineWidth(line: string, fontSize: number, f?: FontOpt) {
   const ctx = measureCtx()
   let w = 0
   for (const r of textRuns(line)) {
-    ctx.font = fontOf(r.lv ? fontSize * SUB_SCALE : fontSize)
+    ctx.font = fontOf(r.lv ? fontSize * SUB_SCALE : fontSize, f)
     w += ctx.measureText(r.t).width
   }
   return w
@@ -365,7 +372,9 @@ export function lineWidth(line: string, fontSize: number) {
 
 export const LINE_HEIGHT = 1.25
 export const FONT_FAMILY = "'Be Vietnam Pro', system-ui, 'Segoe UI', sans-serif"
-export const fontOf = (size: number) => `${size}px ${FONT_FAMILY}`
+export const SERIF_FAMILY = "'Times New Roman', 'Noto Serif', serif"
+export const fontOf = (size: number, f?: FontOpt) =>
+  `${f?.italic ? 'italic ' : ''}${f?.bold ? 'bold ' : ''}${size}px ${f?.font === 'serif' ? SERIF_FAMILY : FONT_FAMILY}`
 
 let _ctx: CanvasRenderingContext2D | null = null
 function measureCtx() {
