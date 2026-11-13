@@ -1753,20 +1753,20 @@ export default function BoardEditor({ id }: { id: string }) {
     commit()
   }
 
-  const onExport = async (ch: ExportChoice) => {
+  /** dựng ảnh xuất; `preview` = cạnh dài tối đa (px) để xem trước nhanh, chỉ dựng vài trang đầu */
+  const buildExport = async (ch: ExportChoice, preview?: number) => {
     const c = canvasRef.current
-    if (!c) return
+    if (!c) throw new Error('Bảng chưa sẵn sàng.')
     if (ch.format === 'pdf-pages') {
       // mỗi trang PDF gốc ra một trang, đúng khổ, kèm nét vẽ đè lên
       const pages = els.current.filter(isPage).sort((a, b) => a.y - b.y || a.x - b.x)
       if (!pages.length) throw new Error('Bảng chưa có trang PDF nào.')
       const items = []
-      for (const pg of pages) {
-        const k = Math.min(1600, pg.page!.w * ch.scale * 1.1) / pg.w
+      for (const pg of preview ? pages.slice(0, 3) : pages) {
+        const k = preview ? preview / Math.max(pg.w, pg.h) : Math.min(1600, pg.page!.w * ch.scale * 1.1) / pg.w
         items.push({ c: await renderRegion(els.current, [pg.x, pg.y, pg.x + pg.w, pg.y + pg.h], k, 'white', 'plain'), pw: pg.page!.w, ph: pg.page!.h })
       }
-      download(URL.createObjectURL(pagesToPdf(items)), `ghi-chu-${new Date().toISOString().slice(0, 10)}.pdf`)
-      return setDialog(null)
+      return { items, total: pages.length }
     }
     const v = view.current
     const r = c.getBoundingClientRect()
@@ -1779,8 +1779,23 @@ export default function BoardEditor({ id }: { id: string }) {
     }
     if (!b || !pool.length) throw new Error('Bảng chưa có gì để xuất.')
     // canvas của trình duyệt giới hạn ~16 nghìn px mỗi cạnh
-    const scale = Math.min(ch.scale, 16000 / (b[2] - b[0]), 16000 / (b[3] - b[1]))
+    const scale = preview ? preview / Math.max(b[2] - b[0], b[3] - b[1]) : Math.min(ch.scale, 16000 / (b[2] - b[0]), 16000 / (b[3] - b[1]))
     const out = await renderRegion(pool, b, scale, ch.bg, opts.current.paper)
+    return { items: [{ c: out, pw: 0, ph: 0 }], total: 1 }
+  }
+
+  const exportPreview = async (ch: ExportChoice) => {
+    const r = await buildExport(ch, 640)
+    return { urls: r.items.map((i) => i.c.toDataURL('image/png')), total: r.total }
+  }
+
+  const onExport = async (ch: ExportChoice) => {
+    const r = await buildExport(ch)
+    if (ch.format === 'pdf-pages') {
+      download(URL.createObjectURL(pagesToPdf(r.items)), `ghi-chu-${new Date().toISOString().slice(0, 10)}.pdf`)
+      return setDialog(null)
+    }
+    const out = r.items[0].c
     const name = `bang-ve-${new Date().toISOString().slice(0, 10)}`
     if (ch.format === 'png') await savePng(out, `${name}.png`)
     else download(URL.createObjectURL(canvasToA4Pdf(out)), `${name}.pdf`)
@@ -2980,7 +2995,7 @@ export default function BoardEditor({ id }: { id: string }) {
         <PdfPagesDialog file={dialog.file} onClose={() => setDialog(null)} onDone={(pages) => { setDialog(null); placePictures(pages) }} />
       )}
       {dialog?.t === 'export' && (
-        <ExportDialog hasSelection={selected.current.size > 0} hasPages={els.current.some(isPage)} defaultPaperBg={isDarkPaper(o.paper)} onClose={() => setDialog(null)} onDone={onExport} />
+        <ExportDialog hasSelection={selected.current.size > 0} hasPages={els.current.some(isPage)} defaultPaperBg={isDarkPaper(o.paper)} onClose={() => setDialog(null)} onDone={onExport} preview={exportPreview} />
       )}
 
       {side && (
@@ -3116,7 +3131,8 @@ const PAPER_D = 'M6 3h9l4 4v14H6zM14 3v5h5'
 const RULER_D = 'M3 15.5L15.5 3l5.5 5.5L8.5 21zM7 11.5l2 2M10 8.5l1.5 1.5M13 5.5l2 2M5.5 14l1 1M11.5 10l1 1'
 /** bút máy: vẽ lại dạng nét viền theo icons/pen-nib.svg */
 const FOUNTAIN_D = 'M13 6l-5.2 1.5a2.4 2.4 0 0 0-1.7 1.8L3 21l11.7-3.1a2.4 2.4 0 0 0 1.8-1.7L18 11M13 6l2.2-2.2a1.3 1.3 0 0 1 1.8 0l3.2 3.2a1.3 1.3 0 0 1 0 1.8L18 11M13 6l5 5M3 21l5.4-5.4M11 14.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0'
-const CHALK_D = 'M4 17L15 6a2 2 0 0 1 2.8 0l.2.2a2 2 0 0 1 0 2.8L7 20H4v-3zM13 8l3 3'
+// viên phấn nghiêng (vẽ lại dạng nét từ icons/chalk-goc.svg): thân dài + đầu phấn mòn ở góc dưới trái
+const CHALK_D = 'M4.5 14.5 16 3a2.3 2.3 0 0 1 3.2 0l1.8 1.8a2.3 2.3 0 0 1 0 3.2L9.5 19.5M4.5 14.5c2 .6 4.4 3 5 5M4.5 14.5l-1.2 1.2c-1.1 1.1-.5 3.3 1.2 5 1.7 1.7 3.9 2.3 5 1.2l1.2-1.2'
 /** outside = hiện thẳng ở hàng 2; còn lại nằm trong bảng "Kiểu bút" */
 const PENS: { id: PenKind; label: string; icon: string; outside?: boolean }[] = [
   { id: 'ball', label: 'Bút bi', icon: PEN_D, outside: true },

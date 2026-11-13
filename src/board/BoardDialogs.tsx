@@ -179,17 +179,31 @@ export function PdfPagesDialog({ file, onClose, onDone }: {
 export type ExportArea = 'all' | 'view' | 'selection'
 export interface ExportChoice { format: 'png' | 'pdf' | 'pdf-pages'; area: ExportArea; bg: ExportBg; scale: number }
 
-export function ExportDialog({ hasSelection, hasPages, defaultPaperBg, onClose, onDone }: {
+export function ExportDialog({ hasSelection, hasPages, defaultPaperBg, onClose, onDone, preview }: {
   hasSelection: boolean
   /** bảng có trang PDF mở để ghi chú: cho xuất theo trang gốc (mặc định) */
   hasPages?: boolean
   defaultPaperBg?: boolean
   onClose: () => void
   onDone: (c: ExportChoice) => Promise<void>
+  /** ảnh xem trước (dựng nhỏ) theo lựa chọn hiện tại */
+  preview?: (c: ExportChoice) => Promise<{ urls: string[]; total: number }>
 }) {
   const [c, setC] = useState<ExportChoice>({ format: hasPages ? 'pdf-pages' : 'png', area: hasSelection ? 'selection' : 'all', bg: defaultPaperBg ? 'paper' : 'white', scale: 2 })
   const [busy, setBusy] = useState(false)
   const [err, setErr] = useState('')
+  const [pv, setPv] = useState<{ urls: string[]; total: number; err?: string } | null>(null)
+  // độ nét không đổi hình ảnh → không dựng lại xem trước khi chỉ đổi độ nét
+  const pvKey = `${c.format}|${c.area}|${c.bg}`
+  useEffect(() => {
+    if (!preview) return
+    let live = true
+    const t = setTimeout(() => {
+      preview(c).then((r) => { if (live) setPv(r) }, (e) => { if (live) setPv({ urls: [], total: 0, err: e instanceof Error ? e.message : 'Không dựng được xem trước' }) })
+    }, 120)
+    return () => { live = false; clearTimeout(t) }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pvKey])
   const set = <K extends keyof ExportChoice>(k: K, v: ExportChoice[K]) => setC((o) => ({ ...o, [k]: v, ...(k === 'format' && v === 'pdf' && o.bg === 'none' ? { bg: 'white' as ExportBg } : {}) }))
   const Row = ({ label, children }: { label: string; children: ReactNode }) => (
     <div className="mb-3"><div className="mb-1 text-[12px] font-medium text-ink-2">{label}</div><div className="flex flex-wrap gap-1.5">{children}</div></div>
@@ -209,8 +223,10 @@ export function ExportDialog({ hasSelection, hasPages, defaultPaperBg, onClose, 
     }
   }
   return (
-    <Modal title="Xuất bảng vẽ" onClose={onClose}
+    <Modal wide={!!preview} title="Xuất bảng vẽ" onClose={onClose}
       footer={<><button type="button" className={btn} onClick={onClose}>Huỷ</button><button type="button" className={primary} disabled={busy} onClick={go}>{busy ? 'Đang xuất…' : `Xuất ${c.format === 'png' ? 'PNG' : 'PDF'}`}</button></>}>
+      <div className="flex flex-col gap-4 sm:flex-row">
+      <div className="min-w-0 sm:w-[300px] sm:shrink-0">
       <Row label="Định dạng">
         <Opt on={c.format === 'png'} onClick={() => set('format', 'png')}>Ảnh PNG</Opt>
         <Opt on={c.format === 'pdf'} onClick={() => set('format', 'pdf')}>PDF (chia trang A4)</Opt>
@@ -233,6 +249,19 @@ export function ExportDialog({ hasSelection, hasPages, defaultPaperBg, onClose, 
         {[1, 2, 3].map((s) => <Opt key={s} on={c.scale === s} onClick={() => set('scale', s)}>{s}×</Opt>)}
       </Row>
       {err && <p className="text-[12.5px] text-red-600">{err}</p>}
+      </div>
+      {preview && (
+        <div className="min-w-0 flex-1">
+          <div className="mb-1 text-[12px] font-medium text-ink-2">Xem trước{pv && pv.total > pv.urls.length ? ` · ${pv.urls.length}/${pv.total} trang đầu` : ''}</div>
+          <div className="grid max-h-[52vh] min-h-[180px] place-items-center gap-2 overflow-auto rounded-[8px] border border-line p-3"
+            style={{ backgroundColor: '#e9e9ec', backgroundImage: 'conic-gradient(#d8d8dc 25%, transparent 0 50%, #d8d8dc 0 75%, transparent 0)', backgroundSize: '16px 16px' }}>
+            {!pv ? <span className="text-[12.5px] text-ink-3">Đang dựng…</span>
+              : pv.err ? <span className="text-[12.5px] text-red-600">{pv.err}</span>
+              : pv.urls.map((u, i) => <img key={i} src={u} alt={`Xem trước ${i + 1}`} className="block max-w-full shadow-md" />)}
+          </div>
+        </div>
+      )}
+      </div>
     </Modal>
   )
 }
