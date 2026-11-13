@@ -327,6 +327,7 @@ export default function BoardEditor({ id }: { id: string }) {
   /* ---------- vẽ + lưu ---------- */
 
   const raf = useRef(0)
+  const clampRef = useRef(() => {})
   const marquee = useRef<Bounds | null>(null)
   const guidesRef = useRef<Guide[]>([])
   /** vẽ ngay (đồng bộ) */
@@ -375,6 +376,8 @@ export default function BoardEditor({ id }: { id: string }) {
   }, [])
   /** vẽ ở khung hình kế tiếp (gộp nhiều lần gọi) */
   const redraw = useCallback(() => {
+    // bảng PDF: kéo vùng nhìn về trong phạm vi các trang ngay khi cuộn / phóng
+    clampRef.current()
     cancelAnimationFrame(raf.current)
     raf.current = requestAnimationFrame(paint)
   }, [paint])
@@ -498,6 +501,22 @@ export default function BoardEditor({ id }: { id: string }) {
       setCurPage(k)
       railRef.current?.querySelector<HTMLElement>(`[data-page="${k}"]`)?.scrollIntoView({ block: 'nearest' })
     }
+  }
+  /** bảng PDF: chỉ cuộn trong phạm vi các trang (chừa lề), không trôi ra vùng trống vô tận */
+  clampRef.current = () => {
+    if (!pdfPages.length) return
+    const c = canvasRef.current
+    if (!c) return
+    const v = view.current, M = 40
+    const x1 = Math.min(...pdfPages.map((p) => p.x)), x2 = Math.max(...pdfPages.map((p) => p.x + p.w))
+    const y1 = pdfPages[0].y, y2 = Math.max(...pdfPages.map((p) => p.y + p.h))
+    const rw = railW() / v.zoom
+    const W = c.clientWidth / v.zoom - rw, H = c.clientHeight / v.zoom
+    // trục ngang: trang hẹp hơn khung thì giữ giữa; rộng hơn thì chỉ cuộn tới hai mép trang
+    if (x2 - x1 + 2 * M <= W) v.scrollX = rw + W / 2 - (x1 + x2) / 2
+    else v.scrollX = Math.min(rw - (x1 - M), Math.max(rw + W - (x2 + M), v.scrollX))
+    const top = y1 - M, bottom = Math.max(top, y2 + M - H)
+    v.scrollY = Math.min(-top, Math.max(-bottom, v.scrollY))
   }
   /** cuộn tới trang i: mép trên trang sát đầu khung, trang nằm giữa phần bên phải cột thu nhỏ */
   const goPage = (i: number) => {
@@ -1671,9 +1690,10 @@ export default function BoardEditor({ id }: { id: string }) {
       const doc = await openPdf(f)
       try {
         const n = Math.min(doc.numPages, MAX)
-        const W = 800, GAP = 32
         const v = view.current
         const r = c.getBoundingClientRect()
+        // trang rộng vừa khung ở tỉ lệ 100% → viết ghi chú ở đúng cỡ thật (thu nhỏ thì nét mảnh bị nhoè, rung tay lộ rõ)
+        const W = Math.round(Math.max(560, Math.min(1100, r.width - (r.width >= 640 ? RAIL_W : 0) - 64))), GAP = 32
         const cx = r.width / 2 / v.zoom - v.scrollX
         // đặt dưới nội dung đang có, bảng trống thì từ mép trên khung nhìn
         const u = unionBounds(els.current)
