@@ -253,6 +253,7 @@ export function SlideEditor({
   const deckRef = useRef(deck)
   /** vừa kéo/resize/xoay: bỏ qua cú click kế tiếp rơi ra ngoài phần tử */
   const didDragRef = useRef(false)
+  const swipeRef = useRef<{ x: number; y: number; didSwipe: boolean } | null>(null)
 
   const slides = deck.slides
   /** số ô skeleton còn chờ trong cột thumbnail (trang bị bỏ cũng tính là xong) */
@@ -915,8 +916,33 @@ export function SlideEditor({
     }
     return (
       <div
-        className="fixed inset-0 z-[100] select-none overflow-hidden bg-black"
-        onClick={goNext}
+        className="fixed inset-0 z-[100] select-none overflow-hidden bg-black touch-pan-y"
+        onPointerDown={(e) => {
+          if (e.pointerType === 'mouse') return
+          swipeRef.current = { x: e.clientX, y: e.clientY, didSwipe: false }
+        }}
+        onPointerUp={(e) => {
+          if (e.pointerType === 'mouse' || !swipeRef.current) return
+          const dx = e.clientX - swipeRef.current.x
+          const dy = e.clientY - swipeRef.current.y
+          if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.2) {
+            swipeRef.current.didSwipe = true
+            if (dx < 0) goNext()
+            else goPrev()
+          }
+        }}
+        onClick={(e) => {
+          if (swipeRef.current?.didSwipe) {
+            swipeRef.current.didSwipe = false
+            return
+          }
+          // Chạm vào phần dưới màn hình trên cảm ứng để bật/tắt thanh điều khiển
+          if (e.clientY > window.innerHeight - 90) {
+            setPresentHover((cur) => (cur === 'bar' ? null : 'bar'))
+            return
+          }
+          goNext()
+        }}
         onMouseMove={onMove}
         onMouseLeave={() => setPresentHover(null)}
       >
@@ -980,7 +1006,7 @@ export function SlideEditor({
    * ---------------------------------------------------------------- */
   return (
     // điện thoại: chừa chỗ cho thanh tab đáy (SlideSidePanel) để dải slide không bị che
-    <div className="flex min-h-0 min-w-0 flex-1 flex-col max-md:pb-14">
+    <div className="slide-editor flex min-h-0 min-w-0 flex-1 flex-col max-sm:pb-14">
       {printing && <PrintDeck slides={deck.slides} theme={theme} onDone={() => setPrinting(false)} />}
       {deck.format === 'html' ? (
         <HtmlDeckBar
@@ -2233,6 +2259,7 @@ function EditableEl({
     // khung viền rỗng (nền trong suốt, vd khung trang trí của bộ thiết kế phủ gần cả slide):
     // chỉ nhận chuột ở dải viền, kẻo bấm vào vùng trống hay sát mép lại chọn nhầm cả khung to
     clipPath: isHollowShape(el) && !selected && !grouped ? HOLLOW_HIT : undefined,
+    touchAction: editingText ? 'auto' : 'none',
   }
 
   const startDrag = (e: React.PointerEvent, mode: 'move' | 'resize', dir?: ResizeDir) => {

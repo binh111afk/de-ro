@@ -1238,3 +1238,221 @@ body[data-slide-drag] .slide-sel-toolbar {
 .anim-template-fade {
   animation: template-tab-fade 150ms ease-out both;
 }
+
+/* ---------------------------------------------------------------- *
+ * Responsive: Máy tính bảng & Điện thoại (< 1024px)
+ * Desktop (>= 1024px) giữ nguyên 100%.
+ * ---------------------------------------------------------------- */
+@media (max-width: 1023px) {
+  .slide-stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 16px;
+    overflow: hidden;
+  }
+
+  .slide-stage__inner {
+    width: min(100%, 1000px, calc(100cqh * 16 / 9));
+    margin: 0 auto;
+  }
+
+  .slide-ribbon--tablet .ribbon-tabs {
+    overflow: visible;
+  }
+
+  .slide-ribbon--tablet .ribbon-body {
+    overflow: hidden;
+  }
+
+  .slide-ribbon__tablet-page {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .slide-ribbon__measure-row {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: flex;
+    align-items: center;
+    visibility: hidden;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  .slide-ribbon__overflow-groups {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    max-width: min(360px, calc(100vw - 24px));
+    padding: 4px;
+  }
+
+  .slide-ribbon__overflow-groups .ribbon-group {
+    padding: 6px 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--surface);
+  }
+
+  .slide-ribbon-menu,
+  .file-menu__pop,
+  .rb-dropdown-menu {
+    max-width: calc(100vw - 16px) !important;
+    max-height: calc(100dvh - 96px) !important;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .slide-format-pane {
+    right: 8px;
+    top: 8px;
+    max-width: calc(100vw - 24px);
+  }
+}
+
+@media (max-width: 639px) {
+  .slide-stage {
+    padding: 8px 10px;
+  }
+
+  .slide-ribbon--phone {
+    display: flex;
+    flex-direction: column;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .slide-ribbon__phone-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    padding: 4px 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .slide-ribbon__phone-quick {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+    padding: 4px 8px;
+  }
+
+  .slide-ribbon__qbtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    min-width: 38px;
+    min-height: 38px;
+    padding: 0 8px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text-primary);
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .slide-ribbon__qbtn--wide {
+    padding: 0 10px;
+    font-size: 12.5px;
+    font-weight: 500;
+    border-color: var(--border);
+    background: var(--hover);
+  }
+
+  .slide-ribbon__qbtn--play {
+    color: var(--accent);
+  }
+
+  .slide-ribbon__qbtn.active {
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .slide-ribbon__qbtn:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+
+  .slide-ribbon__phone-sheet-body {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .slide-ribbon__phone-sheet-body .ribbon-sep {
+    display: none;
+  }
+
+  .slide-ribbon__phone-sheet-body .ribbon-group {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+  }
+
+  .slide-ribbon__phone-sheet-body .ribbon-group-items {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .slide-ribbon-menu-item,
+  .file-menu__item,
+  .rb-dropdown-item,
+  .slide-ribbon .qa-btn,
+  .slide-ribbon .rb-icon {
+    min-width: 36px;
+    min-height: 36px;
+  }
+
+  .slide-layout-card {
+    min-height: 44px;
+  }
+
+  .slide-el-handle {
+    width: 32px;
+    height: 32px;
+  }
+
+  .slide-notes {
+    width: min(320px, calc(100vw - 24px));
+  }
+
+  .slide-sel-toolbar {
+    max-width: calc(100vw - 16px);
+    overflow-x: auto;
+  }
+
+  .slide-editor .ai-dock--right.collapsed .ai-rail {
+    display: none !important;
+  }
+}
+
+@media (max-height: 500px) and (max-width: 1023px) {
+  .slide-stage {
+    padding: 6px 10px;
+  }
+
+  .slide-ribbon--tablet .ribbon-body {
+    height: 56px !important;
+    min-height: 56px !important;
+  }
+
+  .slide-ribbon-menu,
+  .file-menu__pop,
+  .rb-dropdown-menu {
+    max-height: calc(100dvh - 160px) !important;
+  }
+}

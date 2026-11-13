@@ -1,4 +1,6 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { Children, Fragment, isValidElement, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
+import { ChevronDown, MoreHorizontal, X } from 'lucide-react'
+import { useSlideViewport } from './useSlideViewport'
 import {
   IconAlignCenter,
   IconAlignLeft,
@@ -276,7 +278,14 @@ export function SlideRibbon(props: SlideRibbonProps) {
   } = props
 
   const [popup, setPopup] = useState<string | null>(null)
+  const [phoneSheetOpen, setPhoneSheetOpen] = useState(false)
+  const [phoneInsertSub, setPhoneInsertSub] = useState<'menu' | 'shape' | 'layout'>('menu')
+  const [visibleGroups, setVisibleGroups] = useState<number | null>(null)
+  const [visibleTabs, setVisibleTabs] = useState<number | null>(null)
   const rootRef = useRef<HTMLDivElement>(null)
+  const bodyRef = useRef<HTMLDivElement>(null)
+  const tabsWrapRef = useRef<HTMLDivElement>(null)
+  const { isPhone, isTablet } = useSlideViewport()
 
   useEffect(() => {
     if (!popup) return
@@ -951,7 +960,7 @@ export function SlideRibbon(props: SlideRibbonProps) {
     )
   }
 
-  const body = activeContext
+  const rawBody = activeContext
     ? renderElementFormat()
     : activeTab === 'home'
       ? renderHome()
@@ -969,14 +978,114 @@ export function SlideRibbon(props: SlideRibbonProps) {
                 ? renderView()
                 : renderHome()
 
-  return (
-    <div className="ribbon slide-ribbon" ref={rootRef}>
-      <RibbonTabs
-        tabs={tabs}
-        active={activeTab}
-        onChange={(id) => onTabChange(id as SlideRibbonTab)}
-        leading={
-          <>
+  // Tách các RibbonGroup để ở khổ tablet có thể thu nhóm tràn vào menu "Thêm"
+  const rawChildren = isValidElement<{ children?: ReactNode }>(rawBody) && rawBody.type === Fragment
+    ? Children.toArray(rawBody.props.children)
+    : [rawBody]
+  const groups = rawChildren.filter((child) => isValidElement(child) && child.type === RibbonGroup)
+
+  useLayoutEffect(() => {
+    if (!isTablet) {
+      setVisibleGroups(null)
+      return
+    }
+    const el = bodyRef.current
+    if (!el) return
+    const measure = () => {
+      const avail = el.clientWidth - 24 // padding ngang
+      if (avail <= 0) return
+      const nodes = [...el.querySelectorAll<HTMLElement>('[data-ribbon-measure]')]
+      if (!nodes.length) return
+      let used = 0
+      let count = 0
+      const moreReserve = 78
+      for (let i = 0; i < nodes.length; i++) {
+        const w = nodes[i].offsetWidth + (i > 0 ? 13 : 0) // + sep
+        const needMore = i < nodes.length - 1 ? moreReserve : 0
+        if (used + w + needMore <= avail || i === 0) {
+          used += w
+          count++
+        } else {
+          break
+        }
+      }
+      setVisibleGroups(count >= nodes.length ? null : count)
+    }
+    measure()
+    const ro = new ResizeObserver(measure)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [isTablet, activeTab, groups.length, selected?.id])
+
+  useLayoutEffect(() => {
+    if (!isTablet) {
+      setVisibleTabs(null)
+      return
+    }
+    const el = tabsWrapRef.current
+    if (!el) return
+    const measure = () => {
+      const bar = el.querySelector<HTMLElement>('.ribbon-tabs')
+      if (!bar) return
+      const avail = bar.clientWidth - 16
+      const leadingNodes = [...bar.querySelectorAll<HTMLElement>('.file-menu, .qa-btn, .qa-sep')]
+      let used = 0
+      for (const n of leadingNodes) used += n.offsetWidth + 4
+      const tabNodes = [...el.querySelectorAll<HTMLElement>('[data-measure-tab]')]
+      let count = 0
+      const moreReserve = 76
+      for (let i = 0; i < tabNodes.length; i++) {
+        const w = tabNodes[i].offsetWidth + 4
+        const needMore = i < tabNodes.length - 1 ? moreReserve : 0
+        if (used + w + needMore <= avail || i === 0) {
+          used += w
+          count++
+        } else {
+          break
+        }
+      }
+      setVisibleTabs(count >= tabs.length ? null : count)
+    }
+    measure()
+    const ro = new ResizeObserver(measure)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [isTablet, tabs.length, activeContext])
+
+  const leadingControls = (
+    <>
+      {onNewDeck && onImportFile ? (
+        <FileMenu
+          kind="slide"
+          onNew={onNewDeck}
+          onImport={onImportFile}
+          onDownload={onDownload ?? (() => {})}
+          downloadHint=".pptx"
+          extra={{ label: 'Xuất PDF', hint: 'Mở hộp thoại in → chọn Lưu thành PDF', onClick: onExportPdf }}
+          downloadNote="Do hạn chế kỹ thuật, file .pptx dùng phông Arial thay cho phông của bài giảng. Chúng tôi sẽ cải tiến để giữ đúng phông trong thời gian tới."
+        />
+      ) : null}
+      <span className="qa-sep" aria-hidden="true" />
+      {onSave && (
+        <button type="button" className="qa-btn" title="Lưu" aria-label="Lưu" onClick={onSave}>
+          <IconSave size={16} />
+        </button>
+      )}
+      <button type="button" className="qa-btn" title="Hoàn tác" aria-label="Hoàn tác" onMouseDown={(e) => e.preventDefault()} onClick={onUndo} disabled={!canUndo}>
+        <IconUndo size={16} />
+      </button>
+      <button type="button" className="qa-btn" title="Làm lại" aria-label="Làm lại" onMouseDown={(e) => e.preventDefault()} onClick={onRedo} disabled={!canRedo}>
+        <IconRedo size={16} />
+      </button>
+      <span className="qa-sep" aria-hidden="true" />
+    </>
+  )
+
+  if (isPhone) {
+    return (
+      <div className="ribbon slide-ribbon slide-ribbon--phone" ref={rootRef}>
+        <div className="slide-ribbon__phone-top">
+          <div className="flex min-w-0 items-center gap-1">
             {onNewDeck && onImportFile ? (
               <FileMenu
                 kind="slide"
@@ -988,7 +1097,6 @@ export function SlideRibbon(props: SlideRibbonProps) {
                 downloadNote="Do hạn chế kỹ thuật, file .pptx dùng phông Arial thay cho phông của bài giảng. Chúng tôi sẽ cải tiến để giữ đúng phông trong thời gian tới."
               />
             ) : null}
-            <span className="qa-sep" aria-hidden="true" />
             {onSave && (
               <button type="button" className="qa-btn" title="Lưu" aria-label="Lưu" onClick={onSave}>
                 <IconSave size={16} />
@@ -1000,11 +1108,320 @@ export function SlideRibbon(props: SlideRibbonProps) {
             <button type="button" className="qa-btn" title="Làm lại" aria-label="Làm lại" onMouseDown={(e) => e.preventDefault()} onClick={onRedo} disabled={!canRedo}>
               <IconRedo size={16} />
             </button>
-            <span className="qa-sep" aria-hidden="true" />
+          </div>
+          <button
+            type="button"
+            onClick={() => setPhoneSheetOpen(true)}
+            aria-label="Mở tất cả công cụ"
+            className="flex min-h-[36px] items-center gap-1 rounded-md border border-line bg-surface px-2.5 text-[12px] font-medium text-ink hover:bg-paper-2"
+          >
+            <span>Công cụ</span>
+            <ChevronDown className="size-3.5" />
+          </button>
+        </div>
+
+        <div className="slide-ribbon__phone-quick">
+          <button
+            type="button"
+            className="slide-ribbon__qbtn"
+            title="Slide mới"
+            aria-label="Slide mới"
+            onClick={onAddSlide}
+          >
+            <IconNewSlide size={20} />
+          </button>
+          <button
+            type="button"
+            className={cn('slide-ribbon__qbtn', selected?.fontWeight === 700 && 'active')}
+            title="Đậm"
+            aria-label="Đậm"
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => onUpdateSelected({ fontWeight: selected?.fontWeight === 700 ? 400 : 700 })}
+            disabled={!isText}
+          >
+            <b>B</b>
+          </button>
+          <button
+            type="button"
+            className={cn('slide-ribbon__qbtn', selected?.fontStyle === 'italic' && 'active')}
+            title="Nghiêng"
+            aria-label="Nghiêng"
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => onUpdateSelected({ fontStyle: selected?.fontStyle === 'italic' ? 'normal' : 'italic' })}
+            disabled={!isText}
+          >
+            <i>I</i>
+          </button>
+          <Anchored
+            open={popup === 'phoneColor'}
+            minWidth={248}
+            trigger={
+              <button
+                type="button"
+                className="slide-ribbon__qbtn slide-ribbon-color-btn"
+                title="Màu chữ"
+                aria-label="Màu chữ"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => toggle('phoneColor')}
+                disabled={!isText}
+              >
+                <span className="slide-ribbon-A">A</span>
+                <span className="rb-color-bar" style={{ background: selected?.textColor ?? deck.theme.fg }} />
+              </button>
+            }
+          >
+            <ColorPalette
+              value={selected?.textColor ?? deck.theme.fg}
+              themeColors={[deck.theme.fg, deck.theme.accent]}
+              onPick={(textColor) => {
+                onUpdateSelected({ textColor })
+                close()
+              }}
+            />
+          </Anchored>
+          <Anchored
+            open={popup === 'phoneInsert'}
+            minWidth={296}
+            trigger={
+              <button
+                type="button"
+                className={cn('slide-ribbon__qbtn slide-ribbon__qbtn--wide', popup === 'phoneInsert' && 'active')}
+                title="Chèn"
+                aria-label="Chèn"
+                onClick={() => {
+                  setPhoneInsertSub('menu')
+                  toggle('phoneInsert')
+                }}
+              >
+                <IconShapes size={18} />
+                <span>Chèn</span>
+                <ChevronDown className="size-3.5" />
+              </button>
+            }
+          >
+            {phoneInsertSub === 'menu' ? (
+              <>
+                <MenuItem icon={<IconPicture size={16} />} onClick={() => { onInsert({ id: uid(), type: 'image', x: 25, y: 26, w: 50, h: 38 }); close() }}>
+                  Hình ảnh
+                </MenuItem>
+                <MenuItem icon={<IconShapes size={16} />} onClick={() => setPhoneInsertSub('shape')}>
+                  Hình dạng…
+                </MenuItem>
+                <MenuItem icon={<IconTextBox size={16} />} onClick={() => { onInsert({ id: uid(), type: 'text', x: 35, y: 42, w: 30, h: 18, text: 'Nhập văn bản', variant: 'body', fontSize: 3.2 }); close() }}>
+                  Hộp văn bản
+                </MenuItem>
+                <MenuItem icon={<IconSlideLayout size={16} />} onClick={() => setPhoneInsertSub('layout')} disabled={!slide}>
+                  Bố cục slide…
+                </MenuItem>
+                <MenuItem icon={<IconTable size={16} />} onClick={() => insertTable(3, 3)}>
+                  Bảng 3×3
+                </MenuItem>
+                <MenuItem icon={<IconChart size={16} />} onClick={() => insertChart('bar')}>
+                  Biểu đồ cột
+                </MenuItem>
+              </>
+            ) : phoneInsertSub === 'shape' ? (
+              <div className="max-w-[calc(100vw-32px)]">
+                <button type="button" onClick={() => setPhoneInsertSub('menu')} className="mb-1.5 flex min-h-[36px] items-center gap-1 px-1 text-[12px] font-medium text-clay">
+                  ← Quay lại
+                </button>
+                <ShapeGallery onPick={insertPreset} />
+              </div>
+            ) : (
+              <div className="max-w-[calc(100vw-32px)]">
+                <button type="button" onClick={() => setPhoneInsertSub('menu')} className="mb-1.5 flex min-h-[36px] items-center gap-1 px-1 text-[12px] font-medium text-clay">
+                  ← Quay lại
+                </button>
+                <div className="slide-layout-grid">
+                  {SLIDE_LAYOUTS.map((layout) => (
+                    <button
+                      key={layout.id}
+                      type="button"
+                      className={cn('slide-layout-card', slide?.layout === layout.id && 'active')}
+                      onClick={() => {
+                        onApplyLayout(layout.id)
+                        close()
+                      }}
+                    >
+                      <span className={cn('slide-layout-thumb', `slide-layout-thumb--${layout.id}`)} aria-hidden>
+                        <i />
+                        <i />
+                        <i />
+                      </span>
+                      <small>{layout.name}</small>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </Anchored>
+          <button
+            type="button"
+            className="slide-ribbon__qbtn slide-ribbon__qbtn--play"
+            title="Trình chiếu"
+            aria-label="Trình chiếu"
+            onClick={onPresent}
+          >
+            <IconPlayCurrent size={20} />
+          </button>
+        </div>
+
+        {phoneSheetOpen && (
+          <>
+            <div className="fixed inset-0 z-50 bg-black/35" aria-hidden="true" onClick={() => setPhoneSheetOpen(false)} />
+            <div
+              role="dialog"
+              aria-label="Công cụ trình soạn slide"
+              className="slide-ribbon__phone-sheet fixed inset-x-0 bottom-0 z-50 flex max-h-[78dvh] flex-col rounded-t-2xl border-t border-line bg-surface shadow-[0_-12px_40px_-12px_rgb(0_0_0/0.4)] pb-[env(safe-area-inset-bottom)]"
+            >
+              <div className="flex shrink-0 items-center justify-between border-b border-line px-3 py-2">
+                <span className="text-[14px] font-semibold text-ink">Công cụ slide</span>
+                <button
+                  type="button"
+                  aria-label="Đóng"
+                  onClick={() => setPhoneSheetOpen(false)}
+                  className="flex min-h-[36px] min-w-[36px] items-center justify-center rounded-md text-ink-2 hover:bg-paper-2"
+                >
+                  <X className="size-5" />
+                </button>
+              </div>
+              <div className="flex shrink-0 flex-wrap gap-1.5 border-b border-line px-3 py-2" role="tablist">
+                {tabs.map((t) => (
+                  <button
+                    key={t.id}
+                    type="button"
+                    role="tab"
+                    aria-selected={activeTab === t.id}
+                    onClick={() => onTabChange(t.id as SlideRibbonTab)}
+                    className={cn(
+                      'min-h-[36px] rounded-full px-3 text-[12px] font-medium transition-colors',
+                      activeTab === t.id ? 'bg-clay text-white' : 'bg-paper-2 text-ink-2 hover:text-ink',
+                    )}
+                  >
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+              <div className="slide-ribbon__phone-sheet-body flex-1 overflow-y-auto p-3">
+                {rawBody}
+              </div>
+            </div>
           </>
-        }
+        )}
+      </div>
+    )
+  }
+
+  if (isTablet) {
+    const tabCut = visibleTabs ?? tabs.length
+    const mainTabs = tabs.slice(0, tabCut)
+    const overflowTabs = tabs.slice(tabCut)
+    const groupCut = visibleGroups ?? groups.length
+    const visibleGroupEls = groups.slice(0, groupCut)
+    const overflowGroupEls = groups.slice(groupCut)
+
+    return (
+      <div className="ribbon slide-ribbon slide-ribbon--tablet" ref={rootRef}>
+        <div ref={tabsWrapRef} className="relative">
+          <RibbonTabs
+            tabs={mainTabs}
+            active={activeTab}
+            onChange={(id) => onTabChange(id as SlideRibbonTab)}
+            leading={leadingControls}
+          >
+            {overflowTabs.length > 0 && (
+              <Anchored
+                open={popup === 'moreTabs'}
+                minWidth={170}
+                trigger={
+                  <button
+                    type="button"
+                    className={cn('ribbon-tab flex items-center gap-1', overflowTabs.some((t) => t.id === activeTab) && 'active')}
+                    onClick={() => toggle('moreTabs')}
+                    aria-label="Thêm thẻ ribbon"
+                  >
+                    <span>Thêm</span>
+                    <ChevronDown className="size-3.5" />
+                  </button>
+                }
+              >
+                {overflowTabs.map((t) => (
+                  <MenuItem
+                    key={t.id}
+                    active={activeTab === t.id}
+                    onClick={() => {
+                      onTabChange(t.id as SlideRibbonTab)
+                      close()
+                    }}
+                  >
+                    {t.label}
+                  </MenuItem>
+                ))}
+              </Anchored>
+            )}
+          </RibbonTabs>
+          {/* Phần tử ẩn để đo chiều rộng tự nhiên của tất cả tab khi resize */}
+          <div className="pointer-events-none invisible absolute left-0 top-0 flex whitespace-nowrap" aria-hidden="true">
+            {tabs.map((t) => (
+              <span key={t.id} data-measure-tab={t.id} className="ribbon-tab">
+                {t.label}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div ref={bodyRef} className="ribbon-body">
+          <div key={activeTab} className="ribbon-tab-page slide-ribbon__tablet-page">
+            {visibleGroupEls.map((g, idx) => (
+              <Fragment key={idx}>
+                {idx > 0 && <div className="ribbon-sep" />}
+                {g}
+              </Fragment>
+            ))}
+            {overflowGroupEls.length > 0 && (
+              <>
+                <div className="ribbon-sep" />
+                <Anchored
+                  open={popup === 'moreGroups'}
+                  minWidth={260}
+                  trigger={
+                    <RibbonButton
+                      icon={<MoreHorizontal size={22} />}
+                      label="Thêm"
+                      onClick={() => toggle('moreGroups')}
+                      active={popup === 'moreGroups'}
+                    />
+                  }
+                >
+                  <div className="slide-ribbon__overflow-groups">
+                    {overflowGroupEls}
+                  </div>
+                </Anchored>
+              </>
+            )}
+            {/* Bản sao ẩn để ResizeObserver đo bề rộng thật của từng nhóm */}
+            <div className="slide-ribbon__measure-row" aria-hidden="true">
+              {groups.map((g, idx) => (
+                <div key={idx} data-ribbon-measure={idx}>
+                  {g}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="ribbon slide-ribbon" ref={rootRef}>
+      <RibbonTabs
+        tabs={tabs}
+        active={activeTab}
+        onChange={(id) => onTabChange(id as SlideRibbonTab)}
+        leading={leadingControls}
       />
-      <RibbonBody activeKey={activeTab}>{body}</RibbonBody>
+      <RibbonBody activeKey={activeTab}>{rawBody}</RibbonBody>
     </div>
   )
 }
