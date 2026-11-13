@@ -8,7 +8,7 @@ import { renderTool, type ToolDoc } from './toolSpec'
 import { autoSignTable } from './signTable'
 import { autoVarTable } from './varTable'
 import { cleanRewrite } from './slideRewrite'
-import { OSC_Y_DEFAULT, oscPeriod, parseOscExpr, type OscQty, type OscSpec, type OscStart, type OscStartX0 } from './oscillation'
+import { AC_DEFAULT, OSC_DEFAULT, OSC_Y_DEFAULT, STANDING_DEFAULT, oscPeriod, parseOscExpr, type OscQty, type OscSpec, type OscStart, type OscStartX0 } from './oscillation'
 import { LENS_DEFAULT, type LensNames, type LensRay, type LensType } from './lens'
 
 export const DOC_REWRITE_PRESETS = [
@@ -150,7 +150,7 @@ export const FIGURE_GUIDE =
   '18) Bảng số liệu / đối chiếu tuỳ ý: {"kind":"table","cells":"hàng 1 | ô 2 | ô 3\\nhàng 2 | a | b","header":"row|col|both|none","align":"center|left|right","merges":"","border":"all|outer|horizontal","fontSize":15}. Ô xuống dòng ghi "\\\\n" (hai kí tự) trong ô; chỉ số dùng x_1, x^2; gộp ô ghi "r1,c1:r2,c2" (vd. "1,1:1,3").\n' +
   '19) Phương trình hoá học (Hoá): {"kind":"chemeq","equations":"2KMnO4 -> K2MnO4 + MnO2 + O2 [t°]","autoBalance":false,"fontSize":17,"align":"center"}. Mũi tên ->, <=>, điều kiện [trên | dưới] (có điện tích như [-OH^- | +H^+]); nhiều mũi tên một dòng đặt [điều kiện] ngay sau mỗi mũi tên; chất cấu tạo bọc trong {...} (vd "{CH3-CH(NH3^+)-COOH} <=> [-OH^- | +H^+] {CH3-CH(NH3^+)-COO^-}"). Chỉ bật autoBalance khi dòng chỉ có 1 mũi tên và không có {...}.\n' +
   '20) Đồ thị chuyển thể (Vật lí 12 — nhiệt độ theo thời gian): {"kind":"phase","yName":"t (°C)","tName":"T (phút)","points":"(0; -45)\\nA: (15; -8,83)\\nB: (27,4; -8,83)\\nC: (40 = T_1; 0)\\n(54 = T_2; 0)\\n_(66; 16)","extend":false,"dashed":true,"dots":true}. Gốc O tự đặt tại giá trị nhỏ nhất của trục dọc; dùng "60 = T_1" để ghi kí hiệu trên trục, "_(x; y)" cho điểm kéo dài không hiện vạch trục; extend=true vẽ đoạn ngang ra mép phải sau điểm cuối.\n' +
-  '21) Đồ thị dao động điều hoà (Vật lí 11): {"kind":"osc","qty":"x|v|a","A":8,"period":{"by":"T|f|omega","value":2},"start":{"by":"state","x0":"0|A|-A|A/2|-A/2|A√2/2|-A√2/2|A√3/2|-A√3/2","dir":"up|down"},"tEnd":2.5,"grid":"T/8|T/4|none","ticks":"value|symbol"}. Hoặc start theo pha: {"by":"phi","phiPi":0.5} (đơn vị π). Thêm "second":{"qty":"v","dashed":true} để vẽ đường thứ hai so pha. Dùng cho dao động điều hoà hình sin.\n' +
+  '21) Đồ thị dao động điều hoà (Vật lí 11): {"kind":"osc","qty":"x|v|a","A":8,"period":{"by":"T|f|omega","value":2},"start":{"by":"state","x0":"0|A|-A|A/2|-A/2|A√2/2|-A√2/2|A√3/2|-A√3/2","dir":"up|down"},"tEnd":2.5,"grid":"T/8|T/4|none","ticks":"value|symbol"}. Hoặc start theo pha: {"by":"phi","phiPi":0.5} (đơn vị π). Thêm "second":{"qty":"v","dashed":true} để vẽ đường thứ hai so pha. Dùng cho dao động điều hoà hình sin. Điện xoay chiều u-i (Vật lí 12): {"kind":"osc","mode":"ac","ac":{"U0":311.13,"I0":2,"period":{"by":"f","value":50},"phiUPi":0,"phiIPi":-0.3333,"tEnd":0.03,"grid":"T/8","ticks":"value","showPhaseDiff":true}}. Sóng dừng (Vật lí 12): {"kind":"osc","mode":"standing","standing":{"length":60,"k":3,"ends":"fixed-fixed|fixed-free","A":4,"showNodes":true,"showAntinodes":true,"showDim":true}}.\n' +
   '22) Thấu kính mỏng (Vật lí 11 — tạo ảnh qua thấu kính hội tụ / phân kì): {"kind":"lens","type":"converging|diverging","f":10,"d":30,"h":2,"rays":["parallel","center","focal"],"show2F":false,"showValues":false,"hideImage":false}. f > 0, d > 0 (cm).\n' +
   '23) Sơ đồ phả hệ (Sinh học 12): {"kind":"pedigree","text":"1: nam bt\\n2: nữ bệnh\\n1 x 2 -> 3, 4\\n3: nam bt\\n4: nữ mang gen\\nhỏi 4"}. Khai báo người "id: nam|nữ|? bt|bệnh|mang gen|chết"; vợ chồng "1 x 2" (cận huyết "1 xx 2"); con "1 x 2 -> 3, 4" (sinh đôi cùng trứng "(5 6)", khác trứng "[7 8]"); "hỏi 10" đánh dấu người hỏi; đặt tên bệnh: bệnh "mù màu".\n' +
   '24) Bảng lai Punnett (Sinh học 9 & 12): {"kind":"punnett","cross":"AaBb x Aabb"}. Tối đa 3 cặp gen phân li độc lập (khung tối đa 8x8), hỗ trợ gen liên kết giới tính (XAXa x XaY), trội không hoàn toàn, tên kiểu hình, để trống (blankGrid: true).\n' +
@@ -361,8 +361,6 @@ export function toolFromRaw(raw: Record<string, unknown>): ToolDoc {
       }
       break
     case 'osc': {
-      const X0S = ['A', '-A', '0', 'A/2', '-A/2', 'A√2/2', '-A√2/2', 'A√3/2', '-A√3/2'] as const
-      const QTYS = ['x', 'v', 'a'] as const
       const parseVal = (v: unknown, allowPi: boolean, d: number) => {
         if (typeof v === 'number' && Number.isFinite(v)) return v
         if (typeof v === 'string') {
@@ -371,6 +369,70 @@ export function toolFromRaw(raw: Record<string, unknown>): ToolDoc {
         }
         return d
       }
+      const parsePeriodFrom = (src: Record<string, unknown>, def: OscSpec['period']): OscSpec['period'] => {
+        const pRaw = src.period && typeof src.period === 'object' ? (src.period as Record<string, unknown>) : null
+        if (pRaw) {
+          const by = (['T', 'f', 'omega'] as const).find((k) => k === pRaw.by) ?? 'T'
+          return { by, value: parseVal(pRaw.value, by === 'omega', by === 'T' ? 2 : 1) }
+        }
+        if (src.omega !== undefined) return { by: 'omega', value: parseVal(src.omega, true, Math.PI) }
+        if (src.f !== undefined) return { by: 'f', value: parseVal(src.f, false, 1) }
+        if (src.T !== undefined) return { by: 'T', value: parseVal(src.T, false, 2) }
+        return def
+      }
+      if (raw.mode === 'ac') {
+        const s = (raw.ac && typeof raw.ac === 'object' ? raw.ac : raw) as Record<string, unknown>
+        const period = parsePeriodFrom(s, AC_DEFAULT.period)
+        const { T } = oscPeriod({ period })
+        const grid = (['none', 'T/4', 'T/8'] as const).find((k) => k === s.grid) ?? AC_DEFAULT.grid
+        const ticks = (['value', 'symbol'] as const).find((k) => k === s.ticks) ?? AC_DEFAULT.ticks
+        const phaseDiffLabel = s.phaseDiffLabel === 'phi' ? 'phi' : 'dt'
+        doc = {
+          kind: 'osc',
+          spec: {
+            ...OSC_DEFAULT,
+            mode: 'ac',
+            ac: {
+              U0: parseVal(s.U0, false, AC_DEFAULT.U0),
+              I0: parseVal(s.I0, false, AC_DEFAULT.I0),
+              period,
+              phiUPi: parseVal(s.phiUPi, false, AC_DEFAULT.phiUPi),
+              phiIPi: parseVal(s.phiIPi, false, AC_DEFAULT.phiIPi),
+              tEnd: parseVal(s.tEnd, false, Math.round(1.5 * T * 1e6) / 1e6),
+              grid,
+              ticks,
+              showPhaseDiff: typeof s.showPhaseDiff === 'boolean' ? s.showPhaseDiff : AC_DEFAULT.showPhaseDiff,
+              phaseDiffLabel,
+            },
+          },
+        }
+        break
+      }
+      if (raw.mode === 'standing') {
+        const s = (raw.standing && typeof raw.standing === 'object' ? raw.standing : raw) as Record<string, unknown>
+        const kRaw = Math.round(parseVal(s.k, false, STANDING_DEFAULT.k))
+        const k = Math.max(1, Math.min(10, kRaw))
+        const ends = s.ends === 'fixed-free' ? 'fixed-free' : 'fixed-fixed'
+        doc = {
+          kind: 'osc',
+          spec: {
+            ...OSC_DEFAULT,
+            mode: 'standing',
+            standing: {
+              length: parseVal(s.length, false, STANDING_DEFAULT.length),
+              k,
+              ends,
+              A: parseVal(s.A, false, STANDING_DEFAULT.A),
+              showNodes: typeof s.showNodes === 'boolean' ? s.showNodes : STANDING_DEFAULT.showNodes,
+              showAntinodes: typeof s.showAntinodes === 'boolean' ? s.showAntinodes : STANDING_DEFAULT.showAntinodes,
+              showDim: typeof s.showDim === 'boolean' ? s.showDim : STANDING_DEFAULT.showDim,
+            },
+          },
+        }
+        break
+      }
+      const X0S = ['A', '-A', '0', 'A/2', '-A/2', 'A√2/2', '-A√2/2', 'A√3/2', '-A√3/2'] as const
+      const QTYS = ['x', 'v', 'a'] as const
       const parseStart = (s: unknown, d: OscStart): OscStart => {
         if (!s || typeof s !== 'object') return d
         const obj = s as Record<string, unknown>
@@ -384,18 +446,7 @@ export function toolFromRaw(raw: Record<string, unknown>): ToolDoc {
       }
       const qty: OscQty = pick('qty', QTYS, 'x')
       const A = parseVal(raw.A, false, 8)
-      const pRaw = raw.period && typeof raw.period === 'object' ? (raw.period as Record<string, unknown>) : null
-      let period: OscSpec['period'] = { by: 'T', value: 2 }
-      if (pRaw) {
-        const by = (['T', 'f', 'omega'] as const).find((k) => k === pRaw.by) ?? 'T'
-        period = { by, value: parseVal(pRaw.value, by === 'omega', by === 'T' ? 2 : 1) }
-      } else if (raw.omega !== undefined) {
-        period = { by: 'omega', value: parseVal(raw.omega, true, Math.PI) }
-      } else if (raw.f !== undefined) {
-        period = { by: 'f', value: parseVal(raw.f, false, 1) }
-      } else if (raw.T !== undefined) {
-        period = { by: 'T', value: parseVal(raw.T, false, 2) }
-      }
+      const period = parsePeriodFrom(raw, { by: 'T', value: 2 })
       const start = parseStart(
         raw.start ?? (raw.phiPi !== undefined ? { by: 'phi', phiPi: raw.phiPi } : null),
         { by: 'state', x0: '0', dir: 'down' },
