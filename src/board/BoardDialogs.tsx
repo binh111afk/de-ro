@@ -229,10 +229,11 @@ export function ExportDialog({ hasSelection, hasPages, defaultPaperBg, onClose, 
       <div className="min-w-0 sm:w-[300px] sm:shrink-0">
       <Row label="Định dạng">
         <Opt on={c.format === 'png'} onClick={() => set('format', 'png')}>Ảnh PNG</Opt>
-        <Opt on={c.format === 'pdf'} onClick={() => set('format', 'pdf')}>PDF (chia trang A4)</Opt>
-        {hasPages && <Opt on={c.format === 'pdf-pages'} onClick={() => set('format', 'pdf-pages')}>PDF theo trang gốc</Opt>}
+        <Opt on={c.format === 'pdf'} onClick={() => set('format', 'pdf')}>{hasPages ? 'PDF cả bảng (cắt khổ A4)' : 'PDF (khổ A4)'}</Opt>
+        {hasPages && <Opt on={c.format === 'pdf-pages'} onClick={() => set('format', 'pdf-pages')}>PDF tài liệu kèm ghi chú</Opt>}
       </Row>
-      {c.format === 'pdf-pages' && <p className="mb-3 text-[12px] text-ink-2">Mỗi trang PDF đã mở ra một trang, đúng khổ giấy gốc, kèm nét vẽ trên trang đó.</p>}
+      {c.format === 'pdf-pages' && <p className="mb-3 text-[12px] text-ink-2">Trả lại đúng tài liệu PDF đã mở: từng trang như bản gốc, có thêm nét bạn viết lên. Phần viết ngoài trang không được xuất.</p>}
+      {c.format === 'pdf' && hasPages && <p className="mb-3 text-[12px] text-ink-2">Chụp cả bảng (trang PDF lẫn phần vẽ ngoài trang) thành một ảnh dài rồi cắt ra các trang A4. Ranh giới trang có thể lệch so với tài liệu gốc.</p>}
       {c.format !== 'pdf-pages' && <>
       <Row label="Vùng xuất">
         <Opt on={c.area === 'all'} onClick={() => set('area', 'all')}>Toàn bộ nội dung</Opt>
