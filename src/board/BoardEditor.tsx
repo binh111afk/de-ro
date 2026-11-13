@@ -488,6 +488,34 @@ export default function BoardEditor({ id }: { id: string }) {
   const [railOpen, setRailOpen] = useState(true)
   const railRef = useRef<HTMLDivElement>(null)
   const RAIL_W = 168
+  /** ảnh thu nhỏ từng trang kèm nét vẽ; chỉ dựng lại trang có nét đổi (so theo chữ ký các hình đè lên trang) */
+  const [inkThumbs, setInkThumbs] = useState<Record<string, string>>({})
+  const thumbSig = useRef<Record<string, string>>({})
+  const sv = sceneVer.current
+  useEffect(() => {
+    const pages = els.current.filter(isPage)
+    if (!pages.length) return
+    const t = window.setTimeout(async () => {
+      const next: Record<string, string> = {}
+      for (const pg of pages) {
+        const b: Bounds = [pg.x, pg.y, pg.x + pg.w, pg.y + pg.h]
+        const ink = els.current.filter((e) => {
+          if (e === pg) return false
+          const w = worldBounds(e)
+          return w[0] < b[2] && w[2] > b[0] && w[1] < b[3] && w[3] > b[1]
+        })
+        const sig = ink.length ? JSON.stringify(ink.map((e) => [e.id, e.x, e.y, e.w, e.h, e.angle, e.points?.length ?? 0, e.stroke, e.strokeWidth, e.opacity, e.text])) : ''
+        if (!sig) continue
+        if (thumbSig.current[pg.id] === sig && inkThumbs[pg.id]) { next[pg.id] = inkThumbs[pg.id]; continue }
+        const c = await renderRegion([pg, ...ink], b, 260 / pg.w, 'white', 'plain')
+        next[pg.id] = c.toDataURL('image/jpeg', 0.8)
+        thumbSig.current[pg.id] = sig
+      }
+      setInkThumbs(next)
+    }, 600)
+    return () => window.clearTimeout(t)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sv])
   /** độ mở cột trang 0..1, chạy dần khi ẩn / hiện để trang trượt theo cột */
   const railK = useRef(1)
   const railW = () => (els.current.some(isPage) && (canvasRef.current?.clientWidth ?? 0) >= 640 ? RAIL_W * railK.current : 0)
@@ -2976,7 +3004,7 @@ export default function BoardEditor({ id }: { id: string }) {
                   <button key={pg.id} type="button" data-page={i} onClick={() => goPage(i)} aria-label={`Trang ${i + 1}`}
                     className={`group flex shrink-0 items-start gap-2 rounded-[6px] p-1 text-left ${i === curPage ? 'bg-clay/15' : 'hover:bg-black/5'}`}>
                     <span className={`w-5 shrink-0 pt-0.5 text-right text-[11.5px] tabular-nums ${i === curPage ? 'font-semibold text-clay' : 'text-ink-2'}`}>{i + 1}</span>
-                    <img src={pg.src?.startsWith(IDB_PREFIX) ? cachedSrc(pg.src) : pg.src} alt="" draggable={false} loading="lazy"
+                    <img src={inkThumbs[pg.id] ?? (pg.src?.startsWith(IDB_PREFIX) ? cachedSrc(pg.src) : pg.src)} alt="" draggable={false} loading="lazy"
                       className={`min-w-0 flex-1 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.18)] ${i === curPage ? 'ring-2 ring-clay' : ''}`}
                       style={{ aspectRatio: `${pg.w} / ${pg.h}` }} />
                   </button>
