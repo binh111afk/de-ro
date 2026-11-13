@@ -92,7 +92,7 @@ export function ToolShell({
           <div
             className={cn(
               'flex h-[min(56vh,520px)] min-h-0 min-w-0 flex-1 bg-paper-2 p-4 md:h-auto',
-              renderPreview ? 'flex-col items-stretch justify-start' : 'items-center justify-center',
+              renderPreview && !preview ? 'flex-col items-stretch justify-start' : 'items-center justify-center',
             )}
           >
             {renderPreview ? (

@@ -188,9 +188,9 @@ export function buildClassificationPrompt(
     `}`
 
   const user =
-    `Dưới đây là danh sách ${questions.length} câu hỏi cần phân loại:\n\n` +
+    `Dưới đây là danh sách ${questions.length} câu hỏi cần phân loại (trả "no" đúng như số no ghi ở mỗi câu):\n\n` +
     questions
-      .map((q) => `[${q.label}] (Dạng: ${q.kind}, số: ${q.no}): ${q.textSummary}`)
+      .map((q, i) => `[${q.label}] (Dạng: ${q.kind}, no: ${i + 1}): ${q.textSummary}`)
       .join('\n\n')
 
   return [
@@ -243,7 +243,7 @@ export async function classifyQuestionsWithAi(
   const chapterSet = new Set(chapters)
 
   return questions.map((q, idx) => {
-    const ai = itemMap.get(q.no) ?? items[idx]
+    const ai = itemMap.get(idx + 1) ?? items[idx]
     if (!ai) return q
 
     let chuDe = q.chuDe

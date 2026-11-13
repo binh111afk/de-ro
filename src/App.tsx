@@ -47,7 +47,6 @@ const Auth = lazyPage(pages.Auth)
 const Profile = lazyPage(pages.Profile)
 const MyUploads = lazyPage(pages.MyUploads)
 const PreviewDesigns = lazyPage(() => import('@/pages/PreviewDesigns'))
-const PreviewMatrix = lazyPage(() => import('@/pages/PreviewMatrix'))
 // không đưa vào `pages` (không tải ngầm): người dùng thường không phải tải code admin
 const AdminPage = lazyPage(() => import('@/pages/admin/AdminPage'))
 
@@ -145,7 +144,6 @@ export default function App() {
           <Route path="/ho-so" element={<Profile />} />
           <Route path="/ho-so/de-tai-len" element={<MyUploads />} />
           <Route path="/preview-designs" element={<PreviewDesigns />} />
-          <Route path="/preview-ma-tran" element={<PreviewMatrix />} />
           <Route path="/admin/*" element={<AdminPage />} />
           <Route path="*" element={<Home />} />
         </Routes>
