@@ -9,7 +9,7 @@ import { getStroke } from 'perfect-freehand'
 import {
   centerOf, fontOf, handlePositions, isLinear, LINE_HEIGHT, localBounds, unionBounds,
   type Bounds, type El, type Paper, type PenKind, type Pt,
-  isClosedStroke, closedLoop,
+  isClosedStroke, closedLoop, regionHoles,
 } from './scene'
 
 export interface View {
@@ -195,8 +195,10 @@ export function fillPath(e: El): Path2D | null {
   if (e.kind === 'freedraw') {
     const lp = closedLoop(e)
     if (!lp) return null
-    lp.forEach(([x, y], i) => (i ? p.lineTo(x, y) : p.moveTo(x, y)))
-    p.closePath()
+    for (const ring of [lp, ...regionHoles(e)]) {
+      ring.forEach(([x, y], i) => (i ? p.lineTo(x, y) : p.moveTo(x, y)))
+      p.closePath()
+    }
   } else if (e.kind === 'rectangle') p.rect(0, 0, e.w, e.h)
   else if (e.kind === 'ellipse') p.ellipse(e.w / 2, e.h / 2, Math.abs(e.w / 2), Math.abs(e.h / 2), 0, 0, Math.PI * 2)
   else if (e.kind === 'diamond') {
@@ -205,20 +207,23 @@ export function fillPath(e: El): Path2D | null {
   return p
 }
 
+/** mảng màu có lỗ tô theo quy tắc chẵn–lẻ để lỗ được chừa trống */
+export const fillRule = (e: El): CanvasFillRule => (e.holes?.length ? 'evenodd' : 'nonzero')
+
 function drawGlass(ctx: CanvasRenderingContext2D, e: El) {
   const p = fillPath(e)
   if (!p) return
   ctx.save()
   ctx.fillStyle = rgba(e.fill, 0.42)
-  ctx.fill(p)
-  ctx.clip(p)
+  ctx.fill(p, fillRule(e))
+  ctx.clip(p, fillRule(e))
   const g = ctx.createLinearGradient(0, 0, e.w * 0.7, e.h * 0.9)
   g.addColorStop(0, 'rgba(255,255,255,0.65)')
   g.addColorStop(0.35, 'rgba(255,255,255,0.12)')
   g.addColorStop(0.36, 'rgba(255,255,255,0)')
   g.addColorStop(1, rgba(e.fill, 0.25))
   ctx.fillStyle = g
-  ctx.fill(p)
+  ctx.fill(p, fillRule(e))
   ctx.strokeStyle = 'rgba(255,255,255,0.7)'
   ctx.lineWidth = 3
   ctx.stroke(p)
@@ -254,8 +259,14 @@ export function drawElement(ctx: CanvasRenderingContext2D, rc: ReturnType<typeof
       if (e.fillStyle === 'glass') drawGlass(ctx, e)
       else if (e.fillStyle === 'solid') {
         ctx.fillStyle = e.fill
-        ctx.fill(fillPath(e)!)
-      } else rc.polygon(closedLoop(e)!, { ...roughOptions(e), stroke: 'none', fill: e.fill, fillStyle: 'hachure' })
+        ctx.fill(fillPath(e)!, fillRule(e))
+      } else {
+        // gạch chéo: rough không biết lỗ → cắt theo vùng (chừa lỗ) rồi gạch cả vòng ngoài
+        ctx.save()
+        if (e.holes?.length) ctx.clip(fillPath(e)!, 'evenodd')
+        rc.polygon(closedLoop(e)!, { ...roughOptions(e), stroke: 'none', fill: e.fill, fillStyle: 'hachure' })
+        ctx.restore()
+      }
     }
     if (e.kind === 'freedraw' && e.strokeStyle !== 'solid') {
       // nét bút đứt / chấm: vẽ đường cong trơn qua các điểm rồi đặt mẫu gạch (đường viền của perfect-freehand không gạch được)
@@ -402,7 +413,7 @@ export function render(
     ctx.translate(-cx, -cy)
     ctx.translate(e.x, e.y)
     ctx.fillStyle = fh.color === 'transparent' ? 'rgba(255,255,255,0.6)' : rgba(fh.color, 0.35)
-    ctx.fill(fp)
+    ctx.fill(fp, fillRule(e))
     ctx.strokeStyle = ACCENT
     ctx.lineWidth = 2.5 / view.zoom
     ctx.setLineDash([6 / view.zoom, 4 / view.zoom])

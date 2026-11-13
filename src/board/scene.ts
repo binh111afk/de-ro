@@ -49,6 +49,11 @@ export interface El extends Style {
   latex?: string
   /** trang của PDF mở để ghi chú: số trang và khổ gốc (điểm PDF). Trang khoá làm nền: không chọn / kéo / gôm được */
   page?: { n: number; w: number; h: number }
+  /** mảng màu do thùng sơn tạo từ vùng kín giữa nhiều nét: không có nét, chỉ có nền */
+  region?: boolean
+  /** mảng màu có lỗ: vị trí bắt đầu từng vòng lỗ trong `points` (vòng ngoài = đoạn đầu).
+   *  Lỗ nằm chung `points` nên di chuyển / đổi cỡ tự đi theo */
+  holes?: number[]
   /** tăng mỗi khi hình dạng đổi (không tính di chuyển) — khoá cache nét rough */
   ver: number
 }
@@ -73,13 +78,21 @@ export const isPage = (e: El) => !!e.page
 /** nét vẽ tay khép kín — tô màu được như hình khối. Kín khi: hai đầu gần nhau, hoặc nét tự cắt chính nó
  *  (vẽ lố qua điểm đầu như dấu +), hoặc một đầu chạm lại thân nét. Cache theo `ver`. */
 const loopCache = new WeakMap<El, { ver: number; v: Pt[] | null }>()
+/** các vòng lỗ của mảng màu (toạ độ trong hình) */
+export function regionHoles(e: El): Pt[][] {
+  const pts = e.points, hs = e.holes
+  if (!e.region || !pts || !hs?.length) return []
+  return hs.map((st, i) => pts.slice(st, hs[i + 1] ?? pts.length))
+}
 export function isClosedStroke(e: El) {
   return !!closedLoop(e)
 }
 /** phần vòng kín của nét (đã cắt đuôi thừa trước/sau chỗ nét tự cắt) — chỉ vùng này được tô */
 export function closedLoop(e: El): Pt[] | null {
   const pts = e.points
-  if (e.kind !== 'freedraw' || !pts || pts.length < 8) return null
+  if (e.kind !== 'freedraw' || !pts || pts.length < 3) return null
+  if (e.region) return e.holes?.length ? pts.slice(0, e.holes[0]) : pts
+  if (pts.length < 8) return null
   const c = loopCache.get(e)
   if (c && c.ver === e.ver) return c.v
   const v = computeLoop(e, pts)
@@ -220,7 +233,14 @@ export function hitTest(e: El, p: Pt, tol: number): boolean {
       return Math.abs(d - 1) * Math.min(rx, ry) <= t
     }
     default: {
-      { const lp = filled ? closedLoop(e) : null; if (lp && inPolygon([q[0] - e.x, q[1] - e.y], lp)) return true }
+      {
+        const lp = filled ? closedLoop(e) : null
+        const lq: Pt = [q[0] - e.x, q[1] - e.y]
+        if (lp && inPolygon(lq, lp)) {
+          if (!regionHoles(e).some((r) => inPolygon(lq, r))) return true
+          if (e.region) return false
+        }
+      }
       const pts = (e.points ?? []).map(([px, py]) => [e.x + px, e.y + py] as Pt)
       if (pts.length === 1) return Math.hypot(q[0] - pts[0][0], q[1] - pts[0][1]) <= t
       for (let i = 0; i < pts.length - 1; i++) if (distToSeg(q, pts[i], pts[i + 1]) <= t) return true

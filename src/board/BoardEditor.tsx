@@ -17,6 +17,7 @@ import { AiPanel } from '@/examEditor/AiPanel'
 import { ToolsPanel } from '@/examEditor/tools/ToolsPanel'
 import { svgDataUrl } from '@/lib/plot'
 import { renderTool, type ToolImage } from '@/lib/toolSpec'
+import { interiorArea, regionArea, regionAt, type Region } from './regionFill'
 import { figureDoc } from '@/examEditor/toolImages'
 import { attachToAi, type AiRef } from '@/lib/aiAttach'
 import { recognize } from './recognize'
@@ -113,6 +114,8 @@ const CURSOR: Partial<Record<Handle, string>> = {
 
 export default function BoardEditor({ id }: { id: string }) {
   const wrapRef = useRef<HTMLDivElement>(null)
+  /** tăng mỗi khi cảnh đổi — khoá cache lớp "tường" của thùng sơn */
+  const sceneVer = useRef(0)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   /** canvas trong suốt nằm trên, chỉ vẽ nét bút đang viết */
   const liveRef = useRef<HTMLCanvasElement>(null)
@@ -217,6 +220,8 @@ export default function BoardEditor({ id }: { id: string }) {
       const z = view.current.zoom
       const t = toolRef.current
       const lv = live.current
+      // lan xong thì thôi vẽ bản cũ bên dưới (gạch chéo / kính sẽ lộ màu cũ)
+      if (spread.current && now - spread.current.t0 >= SPREAD_MS) spread.current = null
       const sp = spread.current
       const spT = sp ? Math.min(1, (now - sp.t0) / SPREAD_MS) : 0
       render(c, lv ? els.current.filter((e) => e !== lv) : els.current, view.current, {
@@ -231,7 +236,6 @@ export default function BoardEditor({ id }: { id: string }) {
         fillHover: fillHover.current,
         spread: sp ? { id: sp.id, prev: sp.prev, p: sp.p, r: sp.rMax * (1 - (1 - spT) ** 3) } : null,
       })
-      if (sp && spT >= 1) spread.current = null
       if (liveRef.current) renderLive(liveRef.current, lv, view.current)
       // laser còn vệt thì vẽ tiếp khung sau để mờ dần
       if (laser.current.some((tr) => tr.pts.length)) redrawRef.current()
@@ -269,6 +273,7 @@ export default function BoardEditor({ id }: { id: string }) {
   }, [id])
 
   const changed = useCallback(() => {
+    sceneVer.current++
     redraw()
     persist()
     bump()
@@ -360,6 +365,61 @@ export default function BoardEditor({ id }: { id: string }) {
       if (ok && !isPage(e) && hitTest({ ...e, fill: '#000' }, p, tol)) return e
     }
     return null
+  }
+  /** thùng sơn tại p: vùng kín giữa các nét (kiểu Paint). Nếu vùng đó chính là phần trong của một hình
+   *  (hoặc mảng màu đã tô trước) thì tô lại hình đó; vùng hở thì quay về tô hình dưới con trỏ */
+  const bucketTarget = (p: Pt): { el: El } | { region: Region } | null => {
+    const v = view.current, c = canvasRef.current
+    const el = fillTarget(p)
+    if (!c) return el ? { el } : null
+    const key = `${sceneVer.current}|${v.zoom}|${v.scrollX}|${v.scrollY}|${c.clientWidth}x${c.clientHeight}`
+    const region = regionAt(els.current, v, c.clientWidth, c.clientHeight, key, p)
+    if (!region) return el ? { el } : null
+    const area = regionArea(region)
+    const same = (e: El) => { const r = area / Math.max(1, interiorArea(e)); return r > 0.85 && r < 1.2 }
+    // vùng này đã có mảng màu (tô lần trước) → đổi màu mảng đó, không chồng thêm mảng mới
+    const tol = 2 / v.zoom
+    for (let i = els.current.length - 1; i >= 0; i--) {
+      const e = els.current[i]
+      if (e.region && hitTest({ ...e, fill: '#000' }, p, tol) && same(e)) return { el: e }
+    }
+    // vùng có lỗ không bao giờ là "cả hình" (tô cả hình sẽ đè mất lỗ)
+    if (el && !region.holes.length && same(el)) return { el }
+    return { region }
+  }
+  /** mảng màu từ vùng kín: vòng ngoài rồi tới các vòng lỗ, chung một `points` */
+  const regionEl = ({ outer, holes }: Region, fs: FillStyle): El => {
+    const x = Math.min(...outer.map((q) => q[0])), y = Math.min(...outer.map((q) => q[1]))
+    const ring = (r: Pt[]) => [...r, r[0]].map(([px, py]) => [px - x, py - y] as Pt)
+    const points = ring(outer)
+    const starts: number[] = []
+    for (const h of holes) { starts.push(points.length); points.push(...ring(h)) }
+    return {
+      ...DEFAULT_STYLE, id: newId(), kind: 'freedraw', x, y, w: 0, h: 0, angle: 0, seed: newSeed(), ver: 0,
+      points, pen: 'ball', region: true, holes: starts.length ? starts : undefined,
+      stroke: 'transparent', strokeWidth: 1, fill: 'transparent', fillStyle: fs,
+    }
+  }
+  /** xem trước cho thùng sơn / kéo màu */
+  const bucketPreview = (p: Pt, color: string) => {
+    const t = bucketTarget(p)
+    const prev = fillHover.current
+    const same = t && prev && ('el' in t ? prev.el === t.el : !!prev.el.region && !prev.el.ver && Math.abs(prev.el.x - Math.min(...t.region.outer.map((q) => q[0]))) < 0.5 && Math.abs(prev.el.y - Math.min(...t.region.outer.map((q) => q[1]))) < 0.5 && (prev.el.holes?.length ?? 0) === t.region.holes.length)
+    if (same || (!t && !prev)) return
+    fillHover.current = t ? { el: 'el' in t ? t.el : regionEl(t.region, opts.current.bucketStyle), color } : null
+    redraw()
+  }
+  const bucketFill = (p: Pt, color: string, fs: FillStyle) => {
+    const t = bucketTarget(p)
+    if (!t) return
+    if ('el' in t) return applyFill(t.el, color, fs, p)
+    if (color === 'transparent') return
+    const e = regionEl(t.region, fs)
+    // nằm dưới mọi nét, trên các trang PDF làm nền
+    let at = 0
+    els.current.forEach((x, i) => { if (isPage(x)) at = i + 1 })
+    els.current.splice(at, 0, e)
+    applyFill(e, color, fs, p)
   }
   /** tô hình e, màu lan ra từ điểm p */
   const applyFill = (e: El, color: string, fs: FillStyle, p: Pt) => {
@@ -515,8 +575,8 @@ export default function BoardEditor({ id }: { id: string }) {
     if (ev.button !== 0 && !flip) return
 
     if (t === 'bucket') {
-      const e = fillTarget(p)
-      if (e) applyFill(e, opts.current.bucketFill, opts.current.bucketStyle, p)
+      fillHover.current = null
+      bucketFill(p, opts.current.bucketFill, opts.current.bucketStyle)
       return
     }
     if (t === 'laser') {
@@ -635,7 +695,7 @@ export default function BoardEditor({ id }: { id: string }) {
     const out: El[] = []
     for (const e of els.current) {
       if (isPage(e)) { out.push(e); continue }
-      if (opts.current.eraseMode === 'stroke' || e.kind !== 'freedraw') {
+      if (opts.current.eraseMode === 'stroke' || e.kind !== 'freedraw' || e.region) {
         if (hitTest(e, p, r)) { hit = true; selected.current.delete(e.id); dropFromCache(e.id) } else out.push(e)
         continue
       }
@@ -697,11 +757,8 @@ export default function BoardEditor({ id }: { id: string }) {
       const t = toolRef.current
       if (t === 'eraser') { eraserAt.current = p; c.style.cursor = toolCursor(); redraw(); return }
       if (t === 'bucket') {
-        const e = fillTarget(p)
-        const was = fillHover.current?.el
-        fillHover.current = e ? { el: e, color: opts.current.bucketFill } : null
         c.style.cursor = toolCursor()
-        if (was !== e) redraw()
+        bucketPreview(p, opts.current.bucketFill)
         return
       }
       if (space.current || t === 'hand') c.style.cursor = 'grab'
@@ -2052,8 +2109,7 @@ export default function BoardEditor({ id }: { id: string }) {
             if (!draggingFill) return
             ev.preventDefault()
             ev.dataTransfer.dropEffect = 'copy'
-            const e = fillTarget(toScene(ev.clientX, ev.clientY))
-            if (fillHover.current?.el !== e) { fillHover.current = e ? { el: e, color: draggingFill.color } : null; redraw() }
+            bucketPreview(toScene(ev.clientX, ev.clientY), draggingFill.color)
           }}
           onDragLeave={() => { if (fillHover.current) { fillHover.current = null; redraw() } }}
           onDrop={(ev) => {
@@ -2061,10 +2117,8 @@ export default function BoardEditor({ id }: { id: string }) {
             if (!d) return
             ev.preventDefault()
             fillHover.current = null
-            const p = toScene(ev.clientX, ev.clientY)
-            const e = fillTarget(p)
-            if (e) applyFill(e, d.color, d.style, p)
-            else redraw()
+            bucketFill(toScene(ev.clientX, ev.clientY), d.color, d.style)
+            redraw()
           }}
         />
         <canvas ref={liveRef} className="pointer-events-none absolute inset-0 h-full w-full" />
