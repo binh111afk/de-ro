@@ -44,7 +44,10 @@ interface Opts {
   selectMode: 'box' | 'lasso'
   recentShapes: Kind[]
   /** hàng màu: màu dùng gần nhất đứng đầu (bút dạ quang có hàng riêng) */
+  /** màu gần đây, mỗi công cụ một hàng: bút (recentColors), chữ, hình */
   recentColors: string[]
+  recentTextColors: string[]
+  recentShapeColors: string[]
   recentHighlights: string[]
   /** ngòi riêng của từng loại bút */
   penTips: Partial<Record<PenKind, Tip>>
@@ -57,7 +60,7 @@ interface Opts {
 }
 interface Tip { sharp: number; sens: number }
 const DEFAULT_TIP: Tip = { sharp: 0.5, sens: 0.5 }
-const DEFAULT_OPTS: Opts = { pen: 'ball', lastShape: 'rectangle', paper: 'plain', snap: true, eraseMode: 'stroke', eraseSize: 1, selectMode: 'box', recentShapes: ['rectangle', 'ellipse', 'arrow', 'line'], recentColors: ['#1e1e1e', '#e03131', '#2f9e44', '#1971c2', '#f08c00', '#7048e8'], recentHighlights: ['#fab005', '#82c91e', '#f783ac', '#4dabf7', '#ff922b'], penTips: {}, laserColor: '#ff3b30', laserSize: 1, bucketFill: '#a5d8ff', bucketStyle: 'solid' }
+const DEFAULT_OPTS: Opts = { pen: 'ball', lastShape: 'rectangle', paper: 'plain', snap: true, eraseMode: 'stroke', eraseSize: 1, selectMode: 'box', recentShapes: ['rectangle', 'ellipse', 'arrow', 'line'], recentColors: ['#1e1e1e', '#e03131', '#2f9e44', '#1971c2', '#f08c00', '#7048e8'], recentTextColors: ['#1e1e1e', '#e03131', '#2f9e44', '#1971c2', '#f08c00', '#7048e8'], recentShapeColors: ['#1e1e1e', '#e03131', '#2f9e44', '#1971c2', '#f08c00', '#7048e8'], recentHighlights: ['#fab005', '#82c91e', '#f783ac', '#4dabf7', '#ff922b'], penTips: {}, laserColor: '#ff3b30', laserSize: 1, bucketFill: '#a5d8ff', bucketStyle: 'solid' }
 
 /** mỗi loại bút / hình / chữ nhớ màu và độ dày riêng */
 const DEFAULT_STYLES: Record<Slot, Style> = {
@@ -422,7 +425,27 @@ export default function BoardEditor({ id }: { id: string }) {
     let at = 0
     els.current.forEach((x, i) => { if (isPage(x)) at = i + 1 })
     els.current.splice(at, 0, e)
+    groupWithWalls(e, t.region)
     applyFill(e, color, fs, p)
+  }
+  /** mảng màu tô giữa nhiều nét: gom vào cùng nhóm với các nét làm viền để kéo hình thì màu chạy theo.
+   *  Viền đã thuộc một nhóm (vd hình công cụ) thì vào nhóm đó; chưa có thì tạo nhóm mới */
+  const groupWithWalls = (e: El, { outer, holes }: Region) => {
+    const tol = 6 / view.current.zoom
+    const walls = new Set<El>()
+    for (const ring of [outer, ...holes]) {
+      const step = Math.max(1, Math.floor(ring.length / 120))
+      for (let i = 0; i < ring.length; i += step) {
+        for (const o of els.current) {
+          if (o === e || o.region || isPage(o) || walls.has(o)) continue
+          if (hitTest(o, ring[i], tol + o.strokeWidth)) walls.add(o)
+        }
+      }
+    }
+    if (!walls.size) return
+    const gid = [...walls].find((o) => o.groupId)?.groupId ?? newId()
+    for (const o of walls) if (!o.groupId) mutate(o, { groupId: gid })
+    mutate(e, { groupId: gid })
   }
   /** tô hình e, màu lan ra từ điểm p */
   const applyFill = (e: El, color: string, fs: FillStyle, p: Pt) => {
@@ -438,6 +461,13 @@ export default function BoardEditor({ id }: { id: string }) {
     const tol = 6 / view.current.zoom
     // trang PDF khoá làm nền: không bấm chọn được
     for (let i = els.current.length - 1; i >= 0; i--) if (!isPage(els.current[i]) && hitTest(els.current[i], p, tol)) return els.current[i]
+    // hình công cụ (đồ thị, sơ đồ…) là nhiều nét rời: bấm chỗ trống trong khung của nhóm cũng chọn được
+    for (let i = els.current.length - 1; i >= 0; i--) {
+      const e = els.current[i]
+      if (!e.tool || !e.groupId) continue
+      const b = unionBounds(els.current.filter((o) => o.groupId === e.groupId))
+      if (b && p[0] >= b[0] - tol && p[0] <= b[2] + tol && p[1] >= b[1] - tol && p[1] <= b[3] + tol) return e
+    }
     return null
   }
 
@@ -1671,6 +1701,9 @@ export default function BoardEditor({ id }: { id: string }) {
   const canFill = [...kinds].some((k) => k === 'rectangle' || k === 'ellipse' || k === 'diamond') || selection.some(isClosedStroke)
   const hasText = kinds.has('text')
   const onlyImage = kinds.size > 0 && [...kinds].every((k) => k === 'image')
+  // đang chọn đúng một hình công cụ (đồ thị, sơ đồ…): thanh gọn, đổi nét / chữ qua bảng thông số
+  const toolDoc = selection.length && selection.every((e) => e.groupId && e.groupId === selection[0].groupId)
+    ? parseToolJson(selection.find((e) => e.tool)?.tool) : null
   const o = opts.current
   const setOpt = <K extends keyof Opts>(k: K, value: Opts[K]) => {
     opts.current = { ...opts.current, [k]: value }
@@ -1721,6 +1754,9 @@ export default function BoardEditor({ id }: { id: string }) {
           const m = measureText(ta.value || ' ', e.fontSize, e)
           ta.style.width = `${(m.w + e.fontSize) * v.zoom}px`
           ta.style.height = `${m.h * v.zoom}px`
+          // khung chọn co giãn theo chữ ngay lúc gõ (không đợi gõ xong)
+          mutate(e, { w: m.w, h: m.h })
+          redraw()
         }}
         className="absolute z-10 resize-none overflow-hidden border-0 bg-transparent p-0 outline-none"
         style={{
@@ -1742,11 +1778,15 @@ export default function BoardEditor({ id }: { id: string }) {
 
   const main: Main = tool === 'freedraw' ? 'pen' : SHAPES.includes(tool as Kind) ? 'shape' : (tool as Main)
   const isHighlight = tool === 'freedraw' && o.pen === 'highlight' && !selection.length
-  const recentKey = isHighlight ? 'recentHighlights' : 'recentColors'
-  const colors = o[recentKey]
+  // hàng màu gần đây riêng theo công cụ (đang chọn hình thì theo loại hình được chọn)
+  const ctxTool = selection.length
+    ? selection.every((e) => e.kind === 'text') ? 'text' : selection.every((e) => e.kind === 'freedraw') ? 'pen' : 'shape'
+    : tool === 'text' ? 'text' : tool === 'freedraw' ? 'pen' : 'shape'
+  const recentKey = isHighlight ? 'recentHighlights' : ctxTool === 'text' ? 'recentTextColors' : ctxTool === 'shape' ? 'recentShapeColors' : 'recentColors'
+  const colors = o[recentKey] ?? DEFAULT_OPTS[recentKey]
   /** dùng một màu: tô cho nét/hình, rồi đưa màu đó lên đầu hàng */
   const useColor = (c: string) => {
-    const list = opts.current[recentKey]
+    const list = opts.current[recentKey] ?? DEFAULT_OPTS[recentKey]
     opts.current = { ...opts.current, [recentKey]: [c, ...list.filter((x) => x.toLowerCase() !== c.toLowerCase())].slice(0, list.length || 6) }
     setProp('stroke', c)
   }
@@ -1837,7 +1877,32 @@ export default function BoardEditor({ id }: { id: string }) {
   )
 
   let options: ReactNode
+  /** hàng thứ 3 khi đang chọn: thao tác với phần đang chọn, thanh viên thuốc nổi trên bảng */
+  let selActions: ReactNode = null
   if (selection.length) {
+    selActions = (
+      <>
+        {!toolDoc && canFill && <Group>{fillPop}</Group>}
+        <Group>{opacityPop}</Group>
+        <Group>
+          <Chip onClick={askAi} title="Đính kèm phần đang chọn vào khung chat Trợ lý AI">
+            <AiIcon /><span>Hỏi AI</span>
+          </Chip>
+        </Group>
+        <Group label="Sắp xếp">
+          <IconBtn label="Đưa lên trên cùng" onClick={() => reorder('front')}><Ico d="M12 19V5m-6 6l6-6 6 6" /></IconBtn>
+          <IconBtn label="Đưa xuống dưới cùng" onClick={() => reorder('back')}><Ico d="M12 5v14m6-6l-6 6-6-6" /></IconBtn>
+          {selection.length > 1 && !selection.every((e) => e.groupId && e.groupId === selection[0].groupId) && (
+            <IconBtn label="Nhóm lại — Ctrl+G" onClick={group}><Ico d="M4 4h7v7H4zM13 13h7v7h-7zM8 11v5h5M16 13V8h-5" /></IconBtn>
+          )}
+          {selection.some((e) => e.groupId) && (
+            <IconBtn label="Tách nhóm — Ctrl+Shift+G" onClick={ungroup}><Ico d="M4 4h7v7H4zM13 13h7v7h-7z" /></IconBtn>
+          )}
+          <IconBtn label="Nhân đôi — Ctrl+D" onClick={duplicate}><Ico d="M8 8h11v11H8zM5 16V5h11" /></IconBtn>
+          <IconBtn label="Xoá — Delete" onClick={deleteSelected}><Ico d="M5 7h14M10 7V5h4v2m-7 0l1 12h8l1-12" /></IconBtn>
+        </Group>
+      </>
+    )
     options = (
       <>
         <Group><span className="rounded-full bg-clay/15 px-2 py-0.5 text-[11.5px] font-medium text-clay">Đã chọn {selection.length}</span></Group>
@@ -1847,29 +1912,17 @@ export default function BoardEditor({ id }: { id: string }) {
             <Chip active={o.selectMode === 'lasso'} onClick={() => setOpt('selectMode', 'lasso')} title="Chọn bằng khoanh tự do"><Ico d={LASSO_D} /></Chip>
           </Group>
         )}
+        {toolDoc && (
+          <Group>
+            <Chip onClick={() => setDialog({ t: 'tool', doc: toolDoc, ids: selection.map((e) => e.id) })} title="Mở lại bảng thông số của hình (như bấm đúp)">
+              <Ico d="M4 20h4L19 9l-4-4L4 16v4zM13 7l4 4" /><span>Sửa hình</span>
+            </Chip>
+          </Group>
+        )}
         {!onlyImage && colorRow}
-        {!onlyText && !onlyImage && widthRow}
-        {hasText && fontRow}
-        {!onlyText && !onlyImage && strokeStyleRow}
-        {canFill && <Group>{fillPop}</Group>}
-        <Group>{opacityPop}</Group>
-        <Group>
-          <Chip onClick={askAi} title="Đính kèm phần đang chọn vào khung chat Trợ lý AI">
-            <AiIcon /><span>Hỏi AI</span>
-          </Chip>
-        </Group>
-        <Group label="Sắp xếp">
-          <IconBtn label="Đưa lên trên cùng" onClick={() => reorder('front')}><Ico d="M12 19V5m-6 6l6-6 6 6" /></IconBtn>
-          <IconBtn label="Đưa xuống dưới cùng" onClick={() => reorder('back')}><Ico d="M12 5v14m6-6l-6 6-6-6" /></IconBtn>
-          {selection.length > 1 && !selection.every((e) => e.groupId && e.groupId === selection[0].groupId) && (
-            <IconBtn label="Nhóm lại — Ctrl+G" onClick={group}><Ico d="M4 4h7v7H4zM13 13h7v7h-7zM8 11v5h5M16 13V8h-5" /></IconBtn>
-          )}
-          {selection.some((e) => e.groupId) && (
-            <IconBtn label="Tách nhóm — Ctrl+Shift+G" onClick={ungroup}><Ico d="M4 4h7v7H4zM13 13h7v7h-7z" /></IconBtn>
-          )}
-          <IconBtn label="Nhân đôi — Ctrl+D" onClick={duplicate}><Ico d="M8 8h11v11H8zM5 16V5h11" /></IconBtn>
-          <IconBtn label="Xoá — Delete" onClick={deleteSelected}><Ico d="M5 7h14M10 7V5h4v2m-7 0l1 12h8l1-12" /></IconBtn>
-        </Group>
+        {!toolDoc && !onlyText && !onlyImage && widthRow}
+        {!toolDoc && hasText && fontRow}
+        {!toolDoc && !onlyText && !onlyImage && strokeStyleRow}
       </>
     )
   } else if (main === 'pen') {
@@ -1941,6 +1994,16 @@ export default function BoardEditor({ id }: { id: string }) {
           {LASER_COLORS.map((c) => (
             <Swatch key={c} color={c} round active={o.laserColor === c} onClick={() => setOpt('laserColor', c)} title="Màu laser" />
           ))}
+          <Pop id="laserColor" pop={pop} setPop={setPop} title="Màu khác"
+            face={<span className={`mx-[3px] block h-5 w-5 rounded-full border border-black/10 ${!LASER_COLORS.includes(o.laserColor) ? 'ring-2 ring-clay ring-offset-2 ring-offset-surface' : ''}`} style={{ background: 'conic-gradient(#e03131, #f08c00, #fab005, #2f9e44, #1971c2, #7048e8, #e03131)' }} />}>
+            <div className="grid grid-cols-10 gap-1">
+              {THEME_COLORS.map((c) => (
+                <button key={c} type="button" title={c} aria-label={c} onClick={() => { setOpt('laserColor', c); setPop(null) }}
+                  className={`h-[18px] w-[18px] rounded-[3px] border border-black/10 hover:scale-110 ${o.laserColor === c ? 'ring-2 ring-clay ring-offset-1' : ''}`} style={{ background: c }} />
+              ))}
+            </div>
+            <HexInput value={o.laserColor} onPreview={(c) => setOpt('laserColor', c)} onCommit={(c) => setOpt('laserColor', c)} />
+          </Pop>
         </Group>
         <Group label="Độ dày">
           {LASER_SIZES.map((sz, i) => (
@@ -2185,6 +2248,11 @@ export default function BoardEditor({ id }: { id: string }) {
 
       <div className="relative flex min-h-0 flex-1">
       <div className="relative min-w-0 flex-1 overflow-hidden" ref={wrapRef}>
+        {selActions && (
+          <div className="absolute left-1/2 top-2 z-10 flex h-10 max-w-[calc(100%-16px)] -translate-x-1/2 items-center overflow-x-auto rounded-full border border-line bg-surface px-3 text-[12.5px] text-ink-2 shadow-lift [scrollbar-width:none] [&>div:first-child]:pl-0">
+            {selActions}
+          </div>
+        )}
         <canvas
           ref={canvasRef}
           className="absolute inset-0 touch-none select-none"
@@ -2544,13 +2612,16 @@ function Pop({ id, pop, setPop, title, face, children, align, className }: {
       >
         {face}
       </button>
-      {open && (
+      {/* gắn vào body: thanh công cụ cuộn ngang (overflow) sẽ cắt mất bảng nếu để bên trong */}
+      {open && createPortal(
         <div
           ref={panelRef}
+          data-pop={id}
           className="fixed z-50 max-h-[calc(100dvh-120px)] max-w-[calc(100vw-16px)] space-y-2.5 overflow-auto rounded-[10px] border border-line bg-surface p-3 shadow-lift"
         >
           {children}
-        </div>
+        </div>,
+        document.body,
       )}
     </div>
   )

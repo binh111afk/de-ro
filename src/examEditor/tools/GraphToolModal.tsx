@@ -37,7 +37,7 @@ export function GraphToolModal({
   const [autoY, setAutoY] = useState(!initial)
   const [yMin, setYMin] = useState(String(initial?.yMin ?? -5))
   const [yMax, setYMax] = useState(String(initial?.yMax ?? 5))
-  const [grid, setGrid] = useState(initial?.grid ?? true)
+  const [grid, setGrid] = useState(initial?.grid ?? false)
   const [labels, setLabels] = useState(initial?.labels ?? false)
   // độ lệch nhãn đã kéo (giữ nguyên khi sửa hàm số / miền vẽ — nhãn đi theo điểm của nó)
   const [labelPos, setLabelPos] = useState<LabelPos | undefined>(initial?.labelPos)

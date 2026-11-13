@@ -110,7 +110,7 @@ function planFromRaw(raw: Record<string, unknown>): ToolPlan {
         xMax,
         yMin,
         yMax,
-        grid: true,
+        grid: raw.grid === true,
         labels: raw.labels === true || exprs.length > 1,
         points: typeof raw.points === 'string' && raw.points.trim() ? raw.points : undefined,
       },
@@ -125,7 +125,7 @@ function planFromRaw(raw: Record<string, unknown>): ToolPlan {
 
 /** danh sách loại hình AI được chọn + cấu hình từng loại; dùng chung cho "Vẽ hình minh hoạ" và AI soạn đề */
 export const FIGURE_GUIDE =
-  '1) Đồ thị hàm số: {"kind":"graph","curves":["x^2-2x"],"xMin":-2,"xMax":4,"points":"M(1; -1) chiếu"}. "points" (tuỳ chọn) chấm và ghi tên điểm đề nhắc tới (cực trị, giao điểm…), mỗi dòng một điểm, thêm "chiếu" để kẻ nét đứt xuống trục; đề gọi tên điểm nào thì PHẢI có điểm đó.\n' +
+  '1) Đồ thị hàm số: {"kind":"graph","curves":["x^2-2x"],"xMin":-2,"xMax":4,"points":"M(1; -1) chiếu"}. "points" (tuỳ chọn) chấm và ghi tên điểm đề nhắc tới (cực trị, giao điểm…), mỗi dòng một điểm, thêm "chiếu" để kẻ nét đứt xuống trục; đề gọi tên điểm nào thì PHẢI có điểm đó. Mặc định không có lưới ô vuông; thêm "grid": true nếu đề cần lưới.\n' +
   '2) Bảng biến thiên của hàm số: {"kind":"vartable","expr":"x^3-3x+1","fname":"y"}\n' +
   '3) Bảng xét dấu của một biểu thức: {"kind":"signtable","expr":"(x-1)(x+2)/(x-3)"}\n' +
   '4) Hệ trục Oxy (điểm, vectơ, đường thẳng, đường tròn, miền nghiệm): {"kind":"oxy","xMin":-1,"xMax":5,"yMin":-1,"yMax":5,"items":"mỗi dòng một lệnh"}. ' +
