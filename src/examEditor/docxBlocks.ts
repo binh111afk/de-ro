@@ -31,6 +31,7 @@ import {
   type ParagraphChild,
 } from 'docx'
 import type { ExamBlock, ExamDoc, FormatAttrs, RichText, Span } from '@/data/docTypes'
+import type { SummaryAnswerData } from '@/lib/shuffleExam'
 import { latexToMath } from '@/lib/latexMath'
 import { toDataUrl } from '@/lib/mediaStore'
 import { estimateChoiceCols } from './choiceCols'
@@ -672,3 +673,119 @@ export function buildDocx(doc: ExamDoc, opts?: { landscape?: boolean }): Documen
 /** File .docx dạng Blob (trình duyệt). */
 export const buildDocxBlob = (doc: ExamDoc, opts?: { landscape?: boolean }): Promise<Blob> =>
   inlineDocImages(doc).then((d) => Packer.toBlob(buildDocx(d, opts)))
+
+/** Tạo file Word (.docx) chứa ảnh PNG phiếu trả lời cỡ A4 (≥ 200 dpi). */
+export function buildAnswerSheetDocx(code: string, pngDataUrl: string): Document {
+  const dec = decodeImage(pngDataUrl)
+  const margin = 284 // 0,5 cm
+  const w = 750
+  const h = dec && dec.w && dec.h ? Math.round((w * dec.h) / dec.w) : 1061
+  const children: Out[] = dec
+    ? [
+        para(
+          [
+            new ImageRun({
+              type: dec.type,
+              data: dec.data,
+              transformation: { width: w, height: h },
+              altText: { name: `phieu-${code}`, description: `Phiếu trả lời mã đề ${code}`, title: `Phiếu trả lời mã đề ${code}` },
+            }),
+          ],
+          { alignment: AlignmentType.CENTER, spacing: { before: 0, after: 0, line: 240 } },
+        ),
+      ]
+    : [para([new TextRun({ text: `Phiếu trả lời mã đề ${code}` })])]
+
+  return new Document({
+    title: `Phiếu trả lời - Mã ${code}`,
+    creator: 'đề rõ',
+    sections: [
+      {
+        properties: { page: { size: { width: PAGE_W, height: PAGE_H }, margin: { top: margin, bottom: margin, left: margin, right: margin } } },
+        children,
+      },
+    ],
+  })
+}
+
+export const buildAnswerSheetDocxBlob = (code: string, pngDataUrl: string): Promise<Blob> =>
+  Packer.toBlob(buildAnswerSheetDocx(code, pngDataUrl))
+
+/** Tạo file Word (.docx) Bảng đáp án tổng hợp: Bảng 1 theo thứ tự đề gốc, Bảng 2 theo thứ tự từng mã (chấm tay). */
+export function buildSummaryDocx(doc: ExamDoc, summary: SummaryAnswerData): Document {
+  const cell = (text: string, width: number, shade = false, bold = false) =>
+    new TableCell({
+      width: { size: width, type: WidthType.DXA },
+      borders: BOX,
+      shading: shade ? { type: ShadingType.CLEAR, color: 'auto', fill: 'F2F2F2' } : undefined,
+      children: [para([new TextRun({ text, bold, size: 22 })], { alignment: AlignmentType.CENTER, spacing: { before: 30, after: 30, line: 260 } })],
+    })
+
+  const buildTables = (firstColLabel: string, rows: SummaryAnswerData['byOriginal']) => {
+    const out: Out[] = []
+    const codeIndices = summary.codes.map((_, i) => i)
+    const groups = chunk(codeIndices, 10)
+    for (const grp of groups) {
+      const firstW = 1500
+      const colW = Math.floor((CONTENT_W - firstW) / Math.max(1, grp.length))
+      const widths = [firstW, ...grp.map(() => colW)]
+      const headerRow = new TableRow({
+        tableHeader: true,
+        children: [cell(firstColLabel, firstW, true, true), ...grp.map((ci) => cell(`Mã ${summary.codes[ci]}`, colW, true, true))],
+      })
+      const dataRows = rows.map(
+        (r) =>
+          new TableRow({
+            cantSplit: true,
+            children: [cell(`Câu ${r.no}`, firstW, true, true), ...grp.map((ci) => cell(r.answers[ci] || '?', colW, false, true))],
+          }),
+      )
+      out.push(
+        new Table({
+          rows: [headerRow, ...dataRows],
+          width: { size: widths.reduce((a, b) => a + b, 0), type: WidthType.DXA },
+          columnWidths: widths,
+          layout: TableLayoutType.FIXED,
+        }),
+        para([], { spacing: { after: 120 } }),
+      )
+    }
+    return out
+  }
+
+  const children: Out[] = [
+    para([new TextRun({ text: 'BẢNG ĐÁP ÁN TỔNG HỢP CÁC MÃ ĐỀ', bold: true, size: 28, allCaps: true })], {
+      alignment: AlignmentType.CENTER,
+      spacing: { after: 60 },
+    }),
+    para([new TextRun({ text: `${doc.title}${doc.subject ? ` • Môn: ${doc.subject}` : ''}`, italics: true, size: 24 })], {
+      alignment: AlignmentType.CENTER,
+      spacing: { after: 180 },
+    }),
+    para([new TextRun({ text: '1. Bảng đáp án theo thứ tự câu đề gốc', bold: true, size: 25 })], {
+      spacing: { before: 120, after: 80 },
+      keepNext: true,
+    }),
+    ...buildTables('Câu (gốc)', summary.byOriginal),
+    para([new TextRun({ text: '2. Bảng đáp án theo thứ tự câu từng mã đề (chấm tay)', bold: true, size: 25 })], {
+      spacing: { before: 160, after: 80 },
+      keepNext: true,
+    }),
+    ...buildTables('Câu', summary.byVersion),
+  ]
+
+  return new Document({
+    title: `${doc.title} - Bảng đáp án tổng hợp`,
+    creator: 'đề rõ',
+    styles: { default: { document: { run: { font: 'Times New Roman', size: SIZE }, paragraph: { spacing: { line: 300 } } } } },
+    sections: [
+      {
+        properties: { page: { size: { width: PAGE_W, height: PAGE_H }, margin: { top: MARGIN_V, bottom: MARGIN_V, left: MARGIN_H, right: MARGIN_H } } },
+        children,
+      },
+    ],
+  })
+}
+
+export const buildSummaryDocxBlob = (doc: ExamDoc, summary: SummaryAnswerData): Promise<Blob> =>
+  Packer.toBlob(buildSummaryDocx(doc, summary))
