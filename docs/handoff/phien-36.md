@@ -4,7 +4,7 @@ Tiếp [phiên 35](phien-35.md). Mọi việc dưới đây **đã lên `main` v
 
 ## Việc nên làm tiếp (chọn cùng người dùng)
 1. **Thước kẻ, compa, thước đo góc** nổi trên bảng vẽ (Claude tự làm — tương tác hình học cần chính xác).
-2. **Nhiều trang + chế độ trình chiếu**: Claude chốt cấu trúc lưu (đổi `elements` → danh sách trang, bảng cũ, hoàn tác, xuất PDF nhiều trang, AI vẽ vào trang nào), agy làm phần giao diện trình chiếu (ẩn thanh, bút / laser / gôm, phím mũi tên, toàn màn hình).
+2. ~~**Nhiều trang + chế độ trình chiếu**~~ — người dùng quyết định **không làm** (13/11/2026).: Claude chốt cấu trúc lưu (đổi `elements` → danh sách trang, bảng cũ, hoàn tác, xuất PDF nhiều trang, AI vẽ vào trang nào), agy làm phần giao diện trình chiếu (ẩn thanh, bút / laser / gôm, phím mũi tên, toàn màn hình).
 3. **Nền bảng đen / xanh + bút phấn** (giao agy, worktree riêng).
 4. Ghi **số token mỗi lần gọi AI** vào thống kê admin (người dùng định dùng Kira 2.5 Flash trả theo lượt; ước lượng ~10–20k token / lượt, 100 GV dùng vừa ≈ 80k đ/tháng giá đang giảm, ~400k đ giá gốc — cần số thật).
 5. Còn treo: tô một ô trong hình công cụ rồi "Sửa hình" thì màu tô mất (hình dựng lại); chưa thử thật trên điện thoại (nhấn giữ tooltip, thanh nổi); lệnh AI `figure` chưa gọi AI thật (đã chạy đúng đường với spec mẫu 29 loại). Từ phiên 35: biểu đồ kết hợp cột + đường / miền chưa giao; Vercel `ANYROUTER_API_KEY`, `AI_SETTINGS_SECRET`.
