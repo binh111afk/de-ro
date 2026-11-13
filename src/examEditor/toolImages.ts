@@ -37,6 +37,7 @@ export const TOOL_DOC_IMAGE: Record<ToolKind, { width: number; alt: string }> = 
   lens: { width: 380, alt: 'Sơ đồ thấu kính' },
   pedigree: { width: 500, alt: 'Sơ đồ phả hệ' },
   punnett: { width: 560, alt: 'Bảng lai Punnett' },
+  foodweb: { width: 440, alt: 'Lưới thức ăn' },
 }
 
 /** cấu hình dạng chữ (như AI trả, hoặc trong kho câu hỏi) → ToolDoc; sai thì null */
@@ -57,7 +58,7 @@ export function figureImageAttrs(doc: ToolDoc) {
 }
 
 /** hình có cỡ tuỳ nội dung (bảng, phương trình): giữ cỡ thật, không phóng quá mức chuẩn; hình khác dùng mức chuẩn */
-const FIT_KINDS = new Set<ToolKind>(['table', 'chemeq', 'punnett'])
+const FIT_KINDS = new Set<ToolKind>(['table', 'chemeq', 'punnett', 'foodweb'])
 export function toolImageWidth(kind: ToolKind, natural: number) {
   const max = TOOL_DOC_IMAGE[kind].width
   return FIT_KINDS.has(kind) ? Math.min(max, Math.round(natural)) : max

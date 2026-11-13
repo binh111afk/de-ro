@@ -4,7 +4,7 @@
  */
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
-import { ArrowRightLeft, Box, Search, Flame, ChartColumn, ChartSpline, ClipboardList, Grid3x3, SquarePlus, Table, Table2, TableProperties, Triangle, TriangleRight, Zap, ChartLine, Atom, Hexagon, FlaskConical, CircleDot, Network, MoveHorizontal, Circle, Thermometer, Shuffle, Sigma, Waves, Focus, GitFork, Dna } from 'lucide-react'
+import { ArrowRightLeft, Box, Search, Flame, ChartColumn, ChartSpline, ClipboardList, Grid3x3, SquarePlus, Table, Table2, TableProperties, Triangle, TriangleRight, Zap, ChartLine, Atom, Hexagon, FlaskConical, CircleDot, Network, MoveHorizontal, Circle, Thermometer, Shuffle, Sigma, Waves, Focus, GitFork, Dna, Workflow } from 'lucide-react'
 import type { ToolImage, ToolKind } from '@/lib/toolSpec'
 import type { ExamBlock, ExamDoc } from '@/data/docTypes'
 import { ToolModal } from './ToolModal'
@@ -61,6 +61,7 @@ const SUBJECTS: Array<{ name: string; tools: Array<{ id: ToolId; label: string; 
     tools: [
       { id: 'pedigree', label: 'Sơ đồ phả hệ', desc: 'Kí hiệu SGK, tự dàn thế hệ, người mang gen', Icon: GitFork },
       { id: 'punnett', label: 'Bảng lai Punnett', desc: 'Giao tử, khung lai, tỉ lệ kiểu gen – kiểu hình', Icon: Dna },
+      { id: 'foodweb', label: 'Lưới thức ăn', desc: 'Chuỗi, lưới thức ăn; tự xếp bậc dinh dưỡng', Icon: Workflow },
     ],
   },
   {

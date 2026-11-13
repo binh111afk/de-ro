@@ -23,6 +23,7 @@ import { renderOscSvg, type OscSpec } from './oscillation'
 import { renderLensSvg, type LensSpec } from './lens'
 import { renderPedigreeSvg, type PedigreeSpec } from './pedigree'
 import { renderPunnettSvg, type PunnettSpec } from './punnett'
+import { renderFoodWebSvg, type FoodWebSpec } from './foodweb'
 
 export type ToolDoc =
   | { kind: 'graph'; spec: PlotSpec }
@@ -52,6 +53,7 @@ export type ToolDoc =
   | { kind: 'lens'; spec: LensSpec }
   | { kind: 'pedigree'; spec: PedigreeSpec }
   | { kind: 'punnett'; spec: PunnettSpec }
+  | { kind: 'foodweb'; spec: FoodWebSpec }
 
 export type ToolKind = ToolDoc['kind']
 
@@ -170,6 +172,8 @@ function renderToolRaw(doc: ToolDoc): ToolImage {
       return renderPedigreeSvg(doc.spec, toolDesc(doc))
     case 'punnett':
       return renderPunnettSvg(doc.spec, toolDesc(doc))
+    case 'foodweb':
+      return renderFoodWebSvg(doc.spec, toolDesc(doc))
   }
 }
 

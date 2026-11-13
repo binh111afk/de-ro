@@ -44,6 +44,7 @@ const TOOL_NAME: Record<ToolDoc['kind'], string> = {
   lens: 'Thấu kính',
   pedigree: 'Sơ đồ phả hệ',
   punnett: 'Bảng lai Punnett',
+  foodweb: 'Lưới thức ăn',
 }
 const PLOT_ASK = 'Vẽ hình minh hoạ cho đề này'
 const PANEL_W = 340

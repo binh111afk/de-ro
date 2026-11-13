@@ -35,6 +35,8 @@ import { PedigreeModal } from './MoreToolModals'
 import type { PedigreeSpec } from '@/lib/pedigree'
 import { PunnettModal } from './MoreToolModals'
 import type { PunnettSpec } from '@/lib/punnett'
+import { FoodWebModal } from './MoreToolModals'
+import type { FoodWebSpec } from '@/lib/foodweb'
 
 export function ToolModal({
   kind,
@@ -105,5 +107,7 @@ export function ToolModal({
       return <PedigreeModal initial={initial as PedigreeSpec | null | undefined} {...common} />
     case 'punnett':
       return <PunnettModal initial={initial as PunnettSpec | null | undefined} {...common} />
+    case 'foodweb':
+      return <FoodWebModal initial={initial as FoodWebSpec | null | undefined} {...common} />
   }
 }

@@ -30,6 +30,7 @@ import { Segmented } from '@/components/Segmented'
 import { Check, ToolShell, sectionTitle } from './ToolShell'
 import { PEDIGREE_SAMPLE, PEDIGREE_SAMPLE_TWINS, type PedigreeSpec } from '@/lib/pedigree'
 import { PUNNETT_DEFAULT, exportPunnettToText, parsePunnettCross, type GeneTrait, type PunnettSpec } from '@/lib/punnett'
+import { DEFAULT_FOODWEB_CHAIN, DEFAULT_FOODWEB_GRASSLAND, FOODWEB_HELP, type FoodWebSpec } from '@/lib/foodweb'
 
 type Props<S> = { initial?: S | null; submitLabel?: string; onClose: () => void; onInsert: (img: ToolImage) => void }
 type HelpGroups = Array<{ group: string; items: Array<{ code: string; what: string }> }>
@@ -3079,6 +3080,143 @@ export function PunnettModal({ initial, submitLabel, onClose, onInsert }: Props<
       preview={preview}
       submitLabel={submitLabel ?? (initial ? 'Cập nhật bảng lai' : 'Chèn bảng lai')}
       canSubmit={Boolean(preview) && !error && !parseResult.error}
+      onSubmit={() => preview && onInsert(preview)}
+      onClose={onClose}
+    />
+  )
+}
+
+/* ------------------------------------------------------------------ *
+ * Chuỗi và lưới thức ăn (Sinh học)
+ * ------------------------------------------------------------------ */
+
+export function FoodWebModal({ initial, submitLabel, onClose, onInsert }: Props<FoodWebSpec>) {
+  const [spec, setSpec] = useState<FoodWebSpec>(initial ?? DEFAULT_FOODWEB_GRASSLAND)
+  const set = (p: Partial<FoodWebSpec>) => setSpec((s) => ({ ...s, ...p }))
+  const doc = useMemo((): ToolDoc => ({ kind: 'foodweb', spec }), [spec])
+  const { preview, error } = useRender(doc)
+
+  const lineErrors = useMemo(() => {
+    const list: string[] = []
+    if (error) list.push(error)
+    if (preview?.errors) {
+      for (const err of preview.errors) {
+        list.push(`Dòng ${err.line}: ${err.msg}`)
+      }
+    }
+    return list
+  }, [error, preview?.errors])
+
+  const inputs = (
+    <>
+      <section>
+        <div className="mb-2 flex items-center justify-between">
+          <h3 className={cn(sectionTitle, 'mb-0')}>Mẫu nhanh</h3>
+          <div className="flex gap-1.5">
+            <button
+              type="button"
+              onClick={() => setSpec(DEFAULT_FOODWEB_GRASSLAND)}
+              className="rounded-[6px] border border-line px-2 py-0.5 text-[12px] text-ink-2 transition-colors hover:border-ink-4 hover:text-ink"
+            >
+              Lưới đồng cỏ (8 loài)
+            </button>
+            <button
+              type="button"
+              onClick={() => setSpec(DEFAULT_FOODWEB_CHAIN)}
+              className="rounded-[6px] border border-line px-2 py-0.5 text-[12px] text-ink-2 transition-colors hover:border-ink-4 hover:text-ink"
+            >
+              Chuỗi đơn (4 loài)
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <TextBlock
+        title="Các chuỗi / quan hệ thức ăn"
+        help={FOODWEB_HELP}
+        intro="Mỗi dòng một chuỗi (A -> B -> C) hoặc quan hệ (A -> B, C). Dùng ?A hoặc [A] để ẩn tên loài làm câu hỏi."
+        value={spec.text}
+        onChange={(text) => set({ text })}
+        rows={8}
+        errors={lineErrors}
+        label="Lưới thức ăn"
+      />
+
+      <section>
+        <h3 className={sectionTitle}>Bố cục</h3>
+        <div className="flex flex-wrap gap-1.5">
+          {(
+            [
+              ['bottom-up', 'Bậc 1 ở dưới (chuẩn SGK)'],
+              ['left-right', 'Trái sang phải (chuỗi đơn)'],
+            ] as const
+          ).map(([id, label]) => (
+            <button
+              key={id}
+              type="button"
+              aria-pressed={(spec.direction ?? 'bottom-up') === id}
+              onClick={() => set({ direction: id })}
+              className={cn(
+                'rounded-[6px] border px-2.5 py-1 text-[12.5px] transition-colors',
+                (spec.direction ?? 'bottom-up') === id
+                  ? 'border-clay bg-clay-tint font-medium text-clay'
+                  : 'border-line text-ink-2 hover:border-ink-4',
+              )}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <h3 className={sectionTitle}>Khung nút</h3>
+        <div className="flex flex-wrap gap-1.5">
+          {(
+            [
+              ['box', 'Khung bo góc'],
+              ['text', 'Chỉ hiện chữ'],
+            ] as const
+          ).map(([id, label]) => (
+            <button
+              key={id}
+              type="button"
+              aria-pressed={(spec.nodeStyle ?? 'box') === id}
+              onClick={() => set({ nodeStyle: id })}
+              className={cn(
+                'rounded-[6px] border px-2.5 py-1 text-[12.5px] transition-colors',
+                (spec.nodeStyle ?? 'box') === id
+                  ? 'border-clay bg-clay-tint font-medium text-clay'
+                  : 'border-line text-ink-2 hover:border-ink-4',
+              )}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section className="flex flex-col gap-1">
+        <h3 className={sectionTitle}>Tuỳ chọn hiển thị</h3>
+        <Check checked={spec.showLevels ?? false} onChange={(showLevels) => set({ showLevels })}>
+          Hiện nhãn bậc dinh dưỡng (SV sản xuất, SV tiêu thụ...)
+        </Check>
+        <Check checked={spec.connectDecomposers ?? true} onChange={(connectDecomposers) => set({ connectDecomposers })}>
+          Nối mũi tên từ các loài tới sinh vật phân giải
+        </Check>
+      </section>
+    </>
+  )
+
+  return (
+    <ToolShell
+      title="Chuỗi và lưới thức ăn"
+      hint="Mũi tên chỉ chiều năng lượng; máy tự tính bậc dinh dưỡng từ dưới lên"
+      inputs={inputs}
+      inputsWidth={360}
+      preview={preview}
+      submitLabel={submitLabel ?? (initial ? 'Cập nhật hình' : 'Chèn hình')}
+      canSubmit={Boolean(preview) && !error}
       onSubmit={() => preview && onInsert(preview)}
       onClose={onClose}
     />
