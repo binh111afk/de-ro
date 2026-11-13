@@ -3586,6 +3586,11 @@
     .recent-row-item:has(.recent-check) .recent-icon {
       opacity: 0;
     }
+
+    .recent-actions {
+      opacity: 1;
+      pointer-events: auto;
+    }
   }
 
   .recent-columns--bulk {
@@ -4749,9 +4754,244 @@ div[data-exam-node='examQuestionPrompt'] > .exam-image:has(+ .ProseMirror-separa
   background: var(--color-clay-tint, #f8e9e2);
   color: var(--color-clay-deep, #8f3d1f);
   font-size: 13px;
+  overflow-wrap: anywhere;
 }
 .start-quota a {
   margin-left: 4px;
   font-weight: 600;
   text-decoration: underline;
+}
+
+/* ------------------------------------------------------------------ *
+ * Tab Bắt đầu — responsive máy tính bảng (640–1023px) & điện thoại (< 640px)
+ * ------------------------------------------------------------------ */
+@media (max-width: 1023px) {
+  .start {
+    max-width: none;
+    padding: 24px 24px 36px;
+  }
+
+  .quick-cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .quick-card {
+    padding: 14px 14px 12px;
+    gap: 10px;
+  }
+
+  .recents-toolbar {
+    gap: 12px;
+  }
+
+  .file-search {
+    flex: 1 1 160px;
+    min-width: 0;
+  }
+
+  .recents-heading .section-label {
+    display: none;
+  }
+
+  .recent-columns {
+    grid-template-columns: 24px minmax(0, 1fr) 110px 115px 64px;
+    gap: 10px;
+  }
+
+  .recent-item {
+    grid-template-columns: 24px minmax(0, 1fr) 110px 115px;
+    gap: 10px;
+  }
+
+  .recent-row {
+    min-width: 0;
+  }
+
+  .recent-columns .col-size,
+  .recent-item .col-size {
+    display: none;
+  }
+}
+
+@media (max-width: 639px) {
+  .start-scroll {
+    overflow-x: hidden;
+  }
+
+  .start {
+    padding: 16px 16px 32px;
+  }
+
+  .start-hero {
+    margin: 12px 0 16px;
+  }
+
+  .hero-title {
+    font-size: 22px;
+  }
+
+  .quick-cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .quick-card {
+    min-height: 76px;
+    padding: 12px 8px;
+    gap: 8px;
+    align-items: center;
+    text-align: center;
+  }
+
+  .quick-text {
+    align-items: center;
+  }
+
+  .quick-title-row {
+    justify-content: center;
+    gap: 4px;
+  }
+
+  .quick-sub {
+    display: none;
+  }
+
+  .recents {
+    margin-top: 20px;
+  }
+
+  .recents-toolbar {
+    gap: 10px;
+    padding: 8px 0 12px;
+  }
+
+  .file-search {
+    order: -1;
+    flex: 1 1 100%;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .filter-pills {
+    order: 1;
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .filter-pill {
+    flex-shrink: 0;
+    padding: 6px 11px;
+    font-size: 13px;
+  }
+
+  .recents-heading {
+    order: 2;
+    margin-left: auto;
+  }
+
+  .recent-columns:not(.recent-columns--bulk) {
+    display: none;
+  }
+
+  .recent-columns--bulk {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    gap: 8px;
+    padding: 10px 12px;
+  }
+
+  .recent-columns--bulk > * {
+    flex-shrink: 0;
+  }
+
+  .recent-bulk-btn {
+    min-height: 36px;
+    padding: 4px 10px;
+    white-space: nowrap;
+  }
+
+  .recent-row-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 56px;
+    padding: 6px 8px 6px 4px;
+  }
+
+  .recent-check {
+    position: static;
+    transform: none;
+    opacity: 1;
+    flex-shrink: 0;
+    width: 40px;
+    height: 44px;
+  }
+
+  .recent-row-item:has(.recent-check) .recent-icon {
+    opacity: 1;
+  }
+
+  .recent-row {
+    flex: 1;
+    min-width: 0;
+    padding: 4px 0;
+  }
+
+  .recent-item {
+    grid-template-columns: 22px auto minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    align-items: center;
+    column-gap: 6px;
+    row-gap: 2px;
+    padding: 4px 0;
+  }
+
+  .recent-icon {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .recent-name,
+  .recent-name-input {
+    grid-column: 2 / -1;
+    grid-row: 1;
+    min-width: 0;
+  }
+
+  .recent-path {
+    grid-column: 2;
+    grid-row: 2;
+    font-size: 12px;
+  }
+
+  .recent-path::after {
+    content: ' ·';
+  }
+
+  .recent-time:not(.col-size) {
+    grid-column: 3;
+    grid-row: 2;
+    font-size: 12px;
+  }
+
+  .recent-actions {
+    opacity: 1;
+    pointer-events: auto;
+    flex-shrink: 0;
+    gap: 2px;
+  }
+
+  .recent-act {
+    width: 36px;
+    height: 36px;
+  }
+
+  .start-empty {
+    padding: 36px 16px;
+  }
 }
