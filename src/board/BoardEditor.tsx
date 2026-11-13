@@ -488,7 +488,21 @@ export default function BoardEditor({ id }: { id: string }) {
   const [railOpen, setRailOpen] = useState(true)
   const railRef = useRef<HTMLDivElement>(null)
   const RAIL_W = 168
-  const railW = () => (railOpen && els.current.some(isPage) && (canvasRef.current?.clientWidth ?? 0) >= 640 ? RAIL_W : 0)
+  /** độ mở cột trang 0..1, chạy dần khi ẩn / hiện để trang trượt theo cột */
+  const railK = useRef(1)
+  const railW = () => (els.current.some(isPage) && (canvasRef.current?.clientWidth ?? 0) >= 640 ? RAIL_W * railK.current : 0)
+  const toggleRail = () => {
+    const open = !railOpen, from = railK.current, t0 = performance.now(), D = 220
+    setRailOpen(open)
+    const step = (t: number) => {
+      const u = Math.min(1, (t - t0) / D), e = 1 - (1 - u) ** 3
+      railK.current = from + ((open ? 1 : 0) - from) * e
+      redraw()
+      if (u < 1) requestAnimationFrame(step)
+      else persist()
+    }
+    requestAnimationFrame(step)
+  }
   const syncPageRef = useRef(() => {})
   syncPageRef.current = () => {
     if (!pdfPages.length) return
@@ -2955,8 +2969,9 @@ export default function BoardEditor({ id }: { id: string }) {
         <Instruments s={inst} set={setInst} gRef={instG} api={instApi} />
         {pdfPages.length > 0 && (
           <>
-            {railOpen && (
-              <div ref={railRef} className="absolute inset-y-0 left-0 z-[5] hidden flex-col gap-3 overflow-y-auto border-r border-line bg-[#f4f4f6] px-3 py-3 sm:flex" style={{ width: RAIL_W }}>
+            {(
+              <div ref={railRef} aria-hidden={!railOpen} className="absolute inset-y-0 left-0 z-[5] hidden flex-col gap-3 overflow-y-auto border-r border-line bg-[#f4f4f6] px-3 py-3 transition-transform duration-[220ms] ease-out sm:flex"
+                style={{ width: RAIL_W, transform: railOpen ? 'none' : 'translateX(-100%)', visibility: railOpen ? undefined : 'hidden', transition: railOpen ? undefined : 'transform 220ms ease-out, visibility 0s 220ms' }}>
                 {pdfPages.map((pg, i) => (
                   <button key={pg.id} type="button" data-page={i} onClick={() => goPage(i)} aria-label={`Trang ${i + 1}`}
                     className={`group flex shrink-0 items-start gap-2 rounded-[6px] p-1 text-left ${i === curPage ? 'bg-clay/15' : 'hover:bg-black/5'}`}>
@@ -2968,8 +2983,8 @@ export default function BoardEditor({ id }: { id: string }) {
                 ))}
               </div>
             )}
-            <button type="button" onClick={() => setRailOpen((o) => !o)} data-tip={railOpen ? 'Ẩn danh sách trang' : 'Hiện danh sách trang'}
-              className="absolute bottom-3 z-[6] hidden h-8 items-center gap-1.5 rounded-full border border-line bg-surface px-3 text-[12.5px] text-ink shadow-lift sm:flex"
+            <button type="button" onClick={toggleRail} data-tip={railOpen ? 'Ẩn danh sách trang' : 'Hiện danh sách trang'}
+              className="absolute bottom-3 z-[6] hidden h-8 items-center gap-1.5 rounded-full border border-line bg-surface px-3 text-[12.5px] text-ink shadow-lift transition-[left] duration-[220ms] ease-out sm:flex"
               style={{ left: railOpen ? RAIL_W + 12 : 12 }}>
               <Ico d={PAPER_D} size={14} />{railOpen ? 'Ẩn trang' : 'Trang'}
             </button>
