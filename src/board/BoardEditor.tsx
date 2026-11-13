@@ -7,8 +7,8 @@
  */
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import {
-  alignBlocks, centerOf, clone, DEFAULT_STYLE, groupBlocks, handlePositions, hasPoints, hitTest, isLinear, isPage, localBounds, measureText,
-  mutate, newId, newSeed, rotate, unionBounds, worldBounds, fontOf, LINE_HEIGHT, inPolygon,
+  alignBlocks, centerOf, clone, DEFAULT_STYLE, groupBlocks, handlePositions, hasPoints, hitTest, isDarkPaper, isLinear, isPage, localBounds, measureText,
+  mutate, newId, newSeed, paperBg, rotate, unionBounds, worldBounds, fontOf, LINE_HEIGHT, inPolygon,
   type AlignKind, type Bounds, type El, type Handle, type Kind, type Paper, type PenKind, type Pt, type Style,
   isClosedStroke, type FillStyle, withGroups, copyEls,
 } from './scene'
@@ -66,7 +66,11 @@ interface Opts {
 }
 interface Tip { sharp: number; sens: number }
 const DEFAULT_TIP: Tip = { sharp: 0.5, sens: 0.5 }
-const DEFAULT_OPTS: Opts = { pen: 'ball', lastShape: 'rectangle', paper: 'plain', snap: true, eraseMode: 'stroke', eraseSize: 1, selectMode: 'box', recentShapes: ['rectangle', 'ellipse', 'arrow', 'line'], recentColors: ['#1e1e1e', '#e03131', '#2f9e44', '#1971c2', '#f08c00', '#7048e8'], recentTextColors: ['#1e1e1e', '#e03131', '#2f9e44', '#1971c2', '#f08c00', '#7048e8'], recentShapeColors: ['#1e1e1e', '#e03131', '#2f9e44', '#1971c2', '#f08c00', '#7048e8'], recentHighlights: ['#fab005', '#82c91e', '#f783ac', '#4dabf7', '#ff922b'], penTips: {}, laserColor: '#ff3b30', laserSize: 1, bucketFill: '#a5d8ff', bucketStyle: 'solid', guides: true, keepTool: false }
+const CHALK_WHITE = '#f5f3ea'
+const LIGHT_COLORS = ['#1e1e1e', '#e03131', '#2f9e44', '#1971c2', '#f08c00', '#7048e8']
+const CHALK_COLORS = ['#f5f3ea', '#f7e07a', '#f4a6b8', '#9fd3f5', '#b7e4a7', '#f9b97a']
+
+const DEFAULT_OPTS: Opts = { pen: 'ball', lastShape: 'rectangle', paper: 'plain', snap: true, eraseMode: 'stroke', eraseSize: 1, selectMode: 'box', recentShapes: ['rectangle', 'ellipse', 'arrow', 'line'], recentColors: [...LIGHT_COLORS], recentTextColors: [...LIGHT_COLORS], recentShapeColors: [...LIGHT_COLORS], recentHighlights: ['#fab005', '#82c91e', '#f783ac', '#4dabf7', '#ff922b'], penTips: {}, laserColor: '#ff3b30', laserSize: 1, bucketFill: '#a5d8ff', bucketStyle: 'solid', guides: true, keepTool: false }
 
 /** mỗi loại bút / hình / chữ nhớ màu và độ dày riêng */
 const DEFAULT_STYLES: Record<Slot, Style> = {
@@ -75,6 +79,7 @@ const DEFAULT_STYLES: Record<Slot, Style> = {
   brush: { ...DEFAULT_STYLE, strokeWidth: 2 },
   pencil: { ...DEFAULT_STYLE, strokeWidth: 1, stroke: '#495057' },
   marker: { ...DEFAULT_STYLE, stroke: '#1971c2', strokeWidth: 2 },
+  chalk: { ...DEFAULT_STYLE, stroke: CHALK_WHITE, strokeWidth: 2 },
   highlight: { ...DEFAULT_STYLE, stroke: '#fab005', strokeWidth: 8, opacity: 40 },
   shape: { ...DEFAULT_STYLE },
   text: { ...DEFAULT_STYLE },
@@ -1936,6 +1941,38 @@ export default function BoardEditor({ id }: { id: string }) {
     opts.current = { ...opts.current, [k]: value }
     changed()
   }
+  const setPaper = (next: Paper) => {
+    const wasDark = isDarkPaper(opts.current.paper)
+    const nowDark = isDarkPaper(next)
+    if (wasDark !== nowDark) {
+      const darkSlots: Slot[] = ['fountain', 'ball', 'brush', 'pencil', 'marker', 'shape', 'text']
+      const nextStyles = { ...styles.current }
+      for (const s of darkSlots) {
+        const cur = nextStyles[s].stroke.toLowerCase()
+        if (nowDark) {
+          if (cur === '#1e1e1e' || cur === '#000000' || cur === '#495057' || cur === '#1c3d7a') {
+            nextStyles[s] = { ...nextStyles[s], stroke: CHALK_WHITE }
+          }
+        } else {
+          if (cur === CHALK_WHITE || cur === '#ffffff') {
+            nextStyles[s] = { ...nextStyles[s], stroke: DEFAULT_STYLES[s].stroke }
+          }
+        }
+      }
+      styles.current = nextStyles
+      const palette = nowDark ? [...CHALK_COLORS] : [...LIGHT_COLORS]
+      opts.current = {
+        ...opts.current,
+        paper: next,
+        recentColors: palette,
+        recentTextColors: [...palette],
+        recentShapeColors: [...palette],
+      }
+      changed()
+      return
+    }
+    setOpt('paper', next)
+  }
   const pickPen = (pen: PenKind) => {
     opts.current = { ...opts.current, pen }
     pickTool('freedraw')
@@ -2041,6 +2078,7 @@ export default function BoardEditor({ id }: { id: string }) {
           font: fontOf(fs, e),
           lineHeight: LINE_HEIGHT,
           color: e.stroke,
+          caretColor: e.stroke,
           opacity: e.opacity / 100,
           transform: e.angle ? `rotate(${e.angle}rad)` : undefined,
           transformOrigin: `${(c[0] - e.x) * v.zoom}px ${(c[1] - e.y) * v.zoom}px`,
@@ -2464,7 +2502,7 @@ export default function BoardEditor({ id }: { id: string }) {
               )
             })()}>
             <PenPanel
-              pen={o.pen} color={styles.current[o.pen].stroke} width={styles.current[o.pen].strokeWidth}
+              pen={o.pen} paper={o.paper} color={styles.current[o.pen].stroke} width={styles.current[o.pen].strokeWidth}
               tip={o.penTips[o.pen] ?? DEFAULT_TIP}
               onPen={pickPen}
               onTip={(tp) => setOpt('penTips', { ...o.penTips, [o.pen]: tp })}
@@ -2643,7 +2681,7 @@ export default function BoardEditor({ id }: { id: string }) {
   ]
 
   return (
-    <div className="board-editor flex min-h-0 flex-1 flex-col overflow-hidden bg-white">
+    <div className="board-editor flex min-h-0 flex-1 flex-col overflow-hidden" style={{ backgroundColor: paperBg(o.paper) }}>
       {/* tầng 1: công cụ chính · tầng 2: tuỳ chọn của công cụ đang chọn */}
       <div className="relative z-20 shrink-0 border-b border-line bg-surface">
         <div className="@container flex h-12 min-w-0 items-end gap-1.5 px-2 pb-1 sm:gap-2 sm:px-3">
@@ -2708,11 +2746,11 @@ export default function BoardEditor({ id }: { id: string }) {
                 {PAPERS.map((pp) => {
                   const on = o.paper === pp.id
                   return (
-                    <button key={pp.id} type="button" aria-pressed={on} onClick={() => { setOpt('paper', pp.id); setPop(null) }}
+                    <button key={pp.id} type="button" aria-pressed={on} onClick={() => { setPaper(pp.id); setPop(null) }}
                       className="group flex flex-col items-center gap-1.5 rounded-[8px] p-1 text-[12px]">
                       <span
-                        className={`relative block h-[64px] w-[88px] rounded-[6px] border bg-white transition-shadow ${on ? 'border-clay ring-2 ring-clay/30' : 'border-line group-hover:border-ink-3'}`}
-                        style={{ backgroundImage: pp.bg, backgroundSize: '11px 11px', backgroundPosition: '5px 5px' }}
+                        className={`relative block h-[64px] w-[88px] rounded-[6px] border transition-shadow ${on ? 'border-clay ring-2 ring-clay/30' : 'border-line group-hover:border-ink-3'}`}
+                        style={{ backgroundColor: pp.color ?? '#ffffff', backgroundImage: pp.bg, backgroundSize: '11px 11px', backgroundPosition: '5px 5px' }}
                       >
                         {on && (
                           <span className="absolute right-1 top-1 grid h-4 w-4 place-items-center rounded-full bg-clay text-white">
@@ -2774,9 +2812,9 @@ export default function BoardEditor({ id }: { id: string }) {
                     {PAPERS.map((pp) => {
                       const on = o.paper === pp.id
                       return (
-                        <button key={pp.id} type="button" aria-pressed={on} onClick={() => { setOpt('paper', pp.id); setPop(null) }}
+                        <button key={pp.id} type="button" aria-pressed={on} onClick={() => { setPaper(pp.id); setPop(null) }}
                           className={`flex h-9 items-center gap-2 rounded-[7px] border px-2 text-[12px] ${on ? 'border-clay bg-clay/10 font-medium text-clay' : 'border-line text-ink-2 hover:bg-sunken'}`}>
-                          <span className="h-4 w-4 shrink-0 rounded-[3px] border border-line bg-white" style={{ backgroundImage: pp.bg, backgroundSize: '8px 8px' }} />
+                          <span className="h-4 w-4 shrink-0 rounded-[3px] border border-line" style={{ backgroundColor: pp.color ?? '#ffffff', backgroundImage: pp.bg, backgroundSize: '8px 8px' }} />
                           <span>{pp.label}</span>
                         </button>
                       )
@@ -2861,7 +2899,7 @@ export default function BoardEditor({ id }: { id: string }) {
         <PdfPagesDialog file={dialog.file} onClose={() => setDialog(null)} onDone={(pages) => { setDialog(null); placePictures(pages) }} />
       )}
       {dialog?.t === 'export' && (
-        <ExportDialog hasSelection={selected.current.size > 0} hasPages={els.current.some(isPage)} onClose={() => setDialog(null)} onDone={onExport} />
+        <ExportDialog hasSelection={selected.current.size > 0} hasPages={els.current.some(isPage)} defaultPaperBg={isDarkPaper(o.paper)} onClose={() => setDialog(null)} onDone={onExport} />
       )}
 
       {side && (
@@ -2997,6 +3035,7 @@ const PAPER_D = 'M6 3h9l4 4v14H6zM14 3v5h5'
 const RULER_D = 'M3 15.5L15.5 3l5.5 5.5L8.5 21zM7 11.5l2 2M10 8.5l1.5 1.5M13 5.5l2 2M5.5 14l1 1M11.5 10l1 1'
 /** bút máy: vẽ lại dạng nét viền theo icons/pen-nib.svg */
 const FOUNTAIN_D = 'M13 6l-5.2 1.5a2.4 2.4 0 0 0-1.7 1.8L3 21l11.7-3.1a2.4 2.4 0 0 0 1.8-1.7L18 11M13 6l2.2-2.2a1.3 1.3 0 0 1 1.8 0l3.2 3.2a1.3 1.3 0 0 1 0 1.8L18 11M13 6l5 5M3 21l5.4-5.4M11 14.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0'
+const CHALK_D = 'M4 17L15 6a2 2 0 0 1 2.8 0l.2.2a2 2 0 0 1 0 2.8L7 20H4v-3zM13 8l3 3'
 /** outside = hiện thẳng ở hàng 2; còn lại nằm trong bảng "Kiểu bút" */
 const PENS: { id: PenKind; label: string; icon: string; outside?: boolean }[] = [
   { id: 'ball', label: 'Bút bi', icon: PEN_D, outside: true },
@@ -3005,11 +3044,20 @@ const PENS: { id: PenKind; label: string; icon: string; outside?: boolean }[] = 
   { id: 'brush', label: 'Bút lông', icon: 'm9.06 11.9 8.07-8.06a2.85 2.85 0 1 1 4.03 4.03l-8.06 8.08M7.07 14.94c-1.66 0-3 1.35-3 3.02 0 1.33-2.5 1.52-2 2.02 1.08 1.1 2.49 2.02 4 2.02 2.2 0 4-1.8 4-4.04a3.01 3.01 0 0 0-3-3.02z' },
   { id: 'pencil', label: 'Bút chì', icon: 'M4 20l1.5-4.5L16 5l3 3L8.5 18.5zM14 7l3 3M4 20l3-1' },
   { id: 'marker', label: 'Bút dạ', icon: 'M10 13l6.5-6.5 3.5 3.5-6.5 6.5zM16.5 6.5l1.4-1.4a1.6 1.6 0 0 1 2.2 0l1.3 1.3a1.6 1.6 0 0 1 0 2.2L20 10M10 13l-2.3 2.3 3.5 3.5 2.3-2.3M7.7 15.3L4 20.5l.5.5 5.2-3.7' },
+  { id: 'chalk', label: 'Bút phấn', icon: CHALK_D },
+]
+
+const CHALK_GRAIN_DOTS: [number, number, number, number, number][] = [
+  [0, 0, 2, 2, 0.9], [3, 0, 2, 1.5, 0.55], [6, 1, 2, 2, 0.85], [9, 0, 2, 2, 0.6],
+  [1, 3, 2, 2, 0.7], [4, 2, 1.5, 2, 0.95], [7, 3, 2, 1.5, 0.45], [10, 3, 2, 2, 0.85],
+  [0, 5, 1.5, 2, 0.6], [2, 6, 2, 2, 0.9], [5, 5, 2, 2, 0.5], [8, 6, 2, 2, 0.85], [10, 6, 1.5, 1.5, 0.7],
+  [1, 8, 2, 2, 0.8], [3, 9, 2, 1.5, 0.45], [6, 8, 2, 2, 0.95], [9, 9, 2, 2, 0.65],
+  [0, 10, 2, 2, 0.75], [4, 10, 2, 2, 0.85], [7, 10, 1.5, 2, 0.55], [10, 10, 2, 1.5, 0.9],
 ]
 
 /** bảng Kiểu bút: nét mẫu xem trước + các loại ngòi + độ nhọn / độ nhạy lực nhấn */
-function PenPanel({ pen, color, width, tip, onPen, onTip }: {
-  pen: PenKind; color: string; width: number; tip: Tip; onPen: (p: PenKind) => void; onTip: (t: Tip) => void
+function PenPanel({ pen, paper, color, width, tip, onPen, onTip }: {
+  pen: PenKind; paper: Paper; color: string; width: number; tip: Tip; onPen: (p: PenKind) => void; onTip: (t: Tip) => void
 }) {
   const label = PENS.find((p) => p.id === pen)?.label ?? ''
   // đường cong chữ S, lực nhấn tăng rồi giảm như khi viết thật
@@ -3020,18 +3068,29 @@ function PenPanel({ pen, color, width, tip, onPen, onTip }: {
   }
   const d = svgPathFromStroke(penOutline(pts, { pen, width: Math.max(width, 1.5), sharp: tip.sharp, sens: tip.sens, real: true }))
   const tunable = pen !== 'highlight' && pen !== 'marker'
+  const darkPreview = isDarkPaper(paper) || (pen === 'chalk' && (color.toLowerCase() === '#f5f3ea' || color.toLowerCase() === '#ffffff'))
   return (
     <div className="w-[min(300px,calc(100vw-40px))] space-y-3">
       <div className="text-[12px] font-medium text-ink-2">{label}</div>
-      <div className="grid h-[104px] place-items-center rounded-[8px] border border-line bg-white">
+      <div className="grid h-[104px] place-items-center rounded-[8px] border border-line"
+        style={{ backgroundColor: isDarkPaper(paper) ? paperBg(paper) : darkPreview ? '#2b2f2e' : '#ffffff' }}>
         <svg className="w-full" height="104" viewBox="0 0 280 104">
-          <path d={d} fill={color} fillOpacity={pen === 'highlight' ? 0.45 : pen === 'pencil' ? 0.8 : 1} />
+          {pen === 'chalk' && (
+            <defs>
+              <pattern id="chalk-preview-grain" width="12" height="12" patternUnits="userSpaceOnUse">
+                {CHALK_GRAIN_DOTS.map(([x, y, w, h, a], idx) => (
+                  <rect key={idx} x={x} y={y} width={w} height={h} fill={color} fillOpacity={a} />
+                ))}
+              </pattern>
+            </defs>
+          )}
+          <path d={d} fill={pen === 'chalk' ? 'url(#chalk-preview-grain)' : color} fillOpacity={pen === 'highlight' ? 0.45 : pen === 'pencil' ? 0.8 : 1} />
         </svg>
       </div>
-      <div className="grid grid-cols-4 gap-1">
+      <div className="grid grid-cols-5 gap-1">
         {PENS.filter((p) => !p.outside).map((p) => (
           <button key={p.id} type="button" onClick={() => onPen(p.id)} aria-pressed={pen === p.id}
-            className={`flex flex-col items-center gap-1 rounded-[8px] py-2 text-[11.5px] ${pen === p.id ? 'bg-clay/15 font-medium text-clay' : 'text-ink hover:bg-sunken'}`}>
+            className={`flex flex-col items-center gap-1 rounded-[8px] py-2 text-[11px] ${pen === p.id ? 'bg-clay/15 font-medium text-clay' : 'text-ink hover:bg-sunken'}`}>
             <Ico d={p.icon} size={20} />
             {p.label}
           </button>
@@ -3080,11 +3139,13 @@ const THEME_COLORS = [
   '#e6b8af', '#f4cccc', '#fce5cd', '#fff2cc', '#d9ead3', '#d0e0e3', '#c9daf8', '#cfe2f3', '#d9d2e9', '#ead1dc',
 ]
 
-const PAPERS: { id: Paper; label: string; bg?: string }[] = [
+const PAPERS: { id: Paper; label: string; bg?: string; color?: string }[] = [
   { id: 'plain', label: 'Trắng' },
   { id: 'grid', label: 'Kẻ ô', bg: 'linear-gradient(#e2ddd7 1px, transparent 1px), linear-gradient(90deg, #e2ddd7 1px, transparent 1px)' },
   { id: 'lines', label: 'Kẻ dòng', bg: 'linear-gradient(#cfe0ee 1px, transparent 1px)' },
   { id: 'dots', label: 'Chấm', bg: 'radial-gradient(#bdb6ae 1px, transparent 1.2px)' },
+  { id: 'chalkboard', label: 'Bảng đen', color: '#2b2f2e', bg: 'radial-gradient(rgba(255,255,255,0.09) 1px, transparent 1px)' },
+  { id: 'greenboard', label: 'Bảng xanh', color: '#2f4a3a', bg: 'radial-gradient(rgba(255,255,255,0.09) 1px, transparent 1px)' },
 ]
 
 /** một nhóm tuỳ chọn ở tầng 2: nhãn nhỏ + các nút; vạch ngăn giữa các nhóm cao đều nhau */
