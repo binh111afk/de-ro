@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom'
 import type { OpenTab } from '@/store/compose'
 import { cn } from '@/lib/cn'
 import { DocIcon, IconDocExam, IconDocBoard, IconDocSlide } from '@/components/docIcons'
-import { IconChevronLeft, IconClose, IconHome, IconPlus } from './icons'
+import { IconChevronDown, IconChevronLeft, IconClose, IconHome, IconPlus } from './icons'
 import { useAnchoredPopover, popoverStyle } from './useAnchoredPopover'
 import { useSlidingThumb } from './useSlidingThumb'
 
@@ -48,9 +48,49 @@ export function TabStrip({
   // đĩa trắng trượt tới tab đang chọn; đo lại khi đổi tab hoặc danh sách tab thay đổi
   const thumb = useSlidingThumb(stripRef, '.tab-item.active', `${startActive ? 'start' : activeId}:${tabs.map((t) => t.id).join(',')}`)
 
+  // nhiều tab tràn khỏi thanh: mép mờ bên còn tab khuất + nút liệt kê tất cả tab
+  const [edge, setEdge] = useState({ l: false, r: false, over: false })
+  useEffect(() => {
+    const el = stripRef.current
+    if (!el) return
+    const sync = () => {
+      const over = el.scrollWidth > el.clientWidth + 1
+      const l = over && el.scrollLeft > 2
+      const r = over && el.scrollLeft < el.scrollWidth - el.clientWidth - 2
+      setEdge((o) => (o.l === l && o.r === r && o.over === over ? o : { l, r, over }))
+    }
+    // chuột thường chỉ có lăn dọc → đổi thành cuộn ngang thanh tab
+    const onWheel = (e: WheelEvent) => {
+      if (el.scrollWidth <= el.clientWidth || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return
+      e.preventDefault()
+      el.scrollLeft += e.deltaY
+    }
+    sync()
+    el.addEventListener('scroll', sync, { passive: true })
+    el.addEventListener('wheel', onWheel, { passive: false })
+    const ro = new ResizeObserver(sync)
+    ro.observe(el)
+    return () => {
+      el.removeEventListener('scroll', sync)
+      el.removeEventListener('wheel', onWheel)
+      ro.disconnect()
+    }
+  }, [tabs.length])
+
+  // tab vừa chọn / vừa mở nằm ngoài khung nhìn → cuộn tới (chừa chỗ cho mép mờ)
+  useEffect(() => {
+    const el = stripRef.current
+    const t = el?.querySelector<HTMLElement>('.tab-item.active')
+    if (!el || !t) return
+    const pad = 40
+    const left = t.offsetLeft - pad, right = t.offsetLeft + t.offsetWidth + pad
+    if (left < el.scrollLeft) el.scrollTo({ left, behavior: 'smooth' })
+    else if (right > el.scrollLeft + el.clientWidth) el.scrollTo({ left: right - el.clientWidth, behavior: 'smooth' })
+  }, [activeId, startActive, tabs.length])
+
   return (
     <>
-      <div className="tab-strip" role="tablist" aria-label="Đề đang mở" ref={stripRef}>
+      <div className={cn('tab-strip', edge.l && 'fade-l', edge.r && 'fade-r')} role="tablist" aria-label="Đề đang mở" ref={stripRef}>
         {thumb ? (
           <span
             aria-hidden
@@ -104,7 +144,64 @@ export function TabStrip({
           slideEnabled={slideEnabled ?? false}
         />
       </div>
+      {edge.over && (
+        <TabListMenu tabs={tabs} activeId={startActive ? null : activeId} onSelect={onSelect} onSelectStart={onSelectStart} startActive={startActive} />
+      )}
     </>
+  )
+}
+
+/** Nút ⌄ khi tab tràn: liệt kê mọi tab đang mở để nhảy tới nhanh (như Chrome) */
+function TabListMenu({ tabs, activeId, startActive, onSelect, onSelectStart }: {
+  tabs: OpenTab[]
+  activeId: string | null
+  startActive: boolean
+  onSelect: (id: string) => void
+  onSelectStart: () => void
+}) {
+  const [open, setOpen] = useState(false)
+  const boxRef = useRef<HTMLDivElement>(null)
+  const { triggerRef, pos } = useAnchoredPopover(open, 260)
+  useEffect(() => {
+    if (!open) return
+    const onDown = (e: MouseEvent) => { if (boxRef.current && !boxRef.current.contains(e.target as Node)) setOpen(false) }
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false) }
+    document.addEventListener('mousedown', onDown)
+    document.addEventListener('keydown', onKey)
+    return () => { document.removeEventListener('mousedown', onDown); document.removeEventListener('keydown', onKey) }
+  }, [open])
+  const pick = (fn: () => void) => { setOpen(false); fn() }
+  return (
+    <div className="tab-list-menu" ref={boxRef}>
+      <button
+        type="button"
+        className="tab-list-btn"
+        ref={triggerRef as React.RefObject<HTMLButtonElement>}
+        onClick={() => setOpen((o) => !o)}
+        data-tip={`Tất cả tab (${tabs.length + 1})`}
+        aria-label="Danh sách tab đang mở"
+        aria-haspopup="menu"
+        aria-expanded={open}
+      >
+        <IconChevronDown size={16} />
+      </button>
+      {open && (
+        <div className="new-doc-pop tab-list-pop" style={popoverStyle(pos)} role="menu">
+          <div className="new-doc-pop__head">Tab đang mở</div>
+          <button type="button" role="menuitem" className={cn('tab-list-opt', startActive && 'is-active')} onClick={() => pick(onSelectStart)}>
+            <IconHome size={18} />
+            <span className="tab-list-opt__title">Bắt đầu</span>
+          </button>
+          {tabs.map((t) => (
+            <button key={t.id} type="button" role="menuitem" className={cn('tab-list-opt', t.id === activeId && 'is-active')} onClick={() => pick(() => onSelect(t.id))}>
+              <DocIcon kind={t.kind} size={18} />
+              <span className="tab-list-opt__title">{t.title}</span>
+              {t.dirty && <span className="tab-list-opt__dot" aria-label="Chưa lưu" />}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
   )
 }
 

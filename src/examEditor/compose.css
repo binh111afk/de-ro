@@ -4995,3 +4995,86 @@ div[data-exam-node='examQuestionPrompt'] > .exam-image:has(+ .ProseMirror-separa
     padding: 36px 16px;
   }
 }
+
+/* ------------------------------------------------------------------ *
+ * Thanh tab khi mở nhiều tab: mép mờ bên còn tab khuất + nút ⌄ liệt kê tab
+ * ------------------------------------------------------------------ */
+.tab-strip.fade-l {
+  mask-image: linear-gradient(to right, transparent 0, #000 32px);
+}
+.tab-strip.fade-r {
+  mask-image: linear-gradient(to left, transparent 0, #000 32px);
+}
+.tab-strip.fade-l.fade-r {
+  mask-image: linear-gradient(to right, transparent 0, #000 32px, #000 calc(100% - 32px), transparent 100%);
+}
+.tab-list-menu {
+  display: flex;
+  align-items: flex-start;
+  flex-shrink: 0;
+}
+.tab-list-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  margin: 6px 6px 6px 0;
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+  background: none;
+  color: var(--tabstrip-text);
+  cursor: pointer;
+}
+.tab-list-btn:hover,
+.tab-list-btn[aria-expanded='true'] {
+  background: rgb(255 255 255 / 85%);
+}
+.tab-list-pop {
+  max-height: min(420px, 70vh);
+  overflow-y: auto;
+}
+.tab-list-opt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 36px;
+  padding: 6px 8px;
+  border: none;
+  border-radius: 7px;
+  background: none;
+  color: var(--text, inherit);
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+.tab-list-opt:hover {
+  background: var(--hover);
+}
+.tab-list-opt.is-active {
+  background: var(--hover);
+  font-weight: 600;
+}
+.tab-list-opt__title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tab-list-opt__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-clay, #b4532a);
+  flex-shrink: 0;
+}
+@media (max-width: 639px) {
+  .tab-list-btn {
+    width: 36px;
+    height: 36px;
+    margin: 3px 4px 3px 0;
+  }
+}
