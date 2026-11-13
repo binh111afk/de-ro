@@ -3134,7 +3134,7 @@ const RULER_D = 'M3 15.5L15.5 3l5.5 5.5L8.5 21zM7 11.5l2 2M10 8.5l1.5 1.5M13 5.5
 /** bút máy: vẽ lại dạng nét viền theo icons/pen-nib.svg */
 const FOUNTAIN_D = 'M13 6l-5.2 1.5a2.4 2.4 0 0 0-1.7 1.8L3 21l11.7-3.1a2.4 2.4 0 0 0 1.8-1.7L18 11M13 6l2.2-2.2a1.3 1.3 0 0 1 1.8 0l3.2 3.2a1.3 1.3 0 0 1 0 1.8L18 11M13 6l5 5M3 21l5.4-5.4M11 14.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0'
 // viên phấn nghiêng (vẽ lại dạng nét từ icons/chalk-goc.svg): thân dài + đầu phấn mòn ở góc dưới trái
-const CHALK_D = 'M2.8 15.8 16.9 1.7a3.3 3.3 0 0 1 4.7 4.7L7.5 20.5ZM1.9 16.9c-1 1.1-.4 3.1 1.2 4.6 1.5 1.5 3.4 2.1 4.5 1.2'
+const CHALK_D = 'M18.1 3.1 2 19.2l2 2h3.8L22 7Z'
 /** outside = hiện thẳng ở hàng 2; còn lại nằm trong bảng "Kiểu bút" */
 const PENS: { id: PenKind; label: string; icon: string; outside?: boolean }[] = [
   { id: 'ball', label: 'Bút bi', icon: PEN_D, outside: true },

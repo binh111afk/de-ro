@@ -1,7 +1,11 @@
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<!-- Uploaded to: SVG Repo, www.svgrepo.com, Transformed by: SVG Repo Mixer Tools -->
-<svg fill="#000000" height="800px" width="800px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 324.985 324.985" xml:space="preserve">
-<g id="SVGRepo_bgCarrier" stroke-width="0"/>
-<g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
-<g id="SVGRepo_iconCarrier"> <g> <path d="M54.324,270.626c-12.33-12.332-26.508-21.168-39.921-24.881c-2.358-0.652-4.514-1.089-6.521-1.382l-1.348,1.348 c-0.003,0.003-0.007,0.006-0.01,0.009c-12.576,12.577-6.46,38.396,13.923,58.778c12.823,12.823,28.313,20.479,41.437,20.479 c7.057,0,13.054-2.268,17.344-6.557c0.004-0.004,0.008-0.009,0.012-0.013l1.345-1.345c-0.294-2.006-0.729-4.161-1.382-6.519 C75.491,297.133,66.655,282.956,54.324,270.626z"/> <path d="M323.409,51.129c-2.901-10.481-9.62-21.375-18.918-30.672C284.11,0.073,258.29-6.045,245.712,6.534L21.175,231.071 c14.74,4.594,30.43,14.206,44.464,28.241c14.033,14.032,23.645,29.722,28.237,44.46L318.413,79.235 C324.866,72.783,326.641,62.801,323.409,51.129z"/> </g> </g>
-</svg>
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+<svg fill="#000000" height="800px" width="800px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+	 viewBox="0 0 512 512" xml:space="preserve">
+<g>
+	<g>
+		<path d="M398.957,26.239L0,425.197l60.563,60.564h104.959L512,139.281L398.957,26.239z M151.702,452.394H74.384l-27.197-27.197
+			L398.957,73.427l65.855,65.855L151.702,452.394z"/>
+	</g>
+</g>
+</svg>
