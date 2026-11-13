@@ -3,7 +3,7 @@
  * thanh icon dọc (Mục lục / Khối mẫu) như thư viện bên soạn slide, panel trượt
  * ra bên trái thanh đó.
  */
-import type { ExamDoc } from '@/data/docTypes'
+import type { ExamBlock, ExamDoc } from '@/data/docTypes'
 import { MathText } from '@/components/MathText'
 import { useMemo, useRef, useState } from 'react'
 import { Blocks, ChevronLeft, ChevronRight, ListTree, Wrench, X } from 'lucide-react'
@@ -46,6 +46,7 @@ export function NavPanel({
   onInsertTemplate,
   onGoToBlock,
   onInsertPlot,
+  onInsertBlocks,
   examDoc = null,
   side = 'right',
   isMobile,
@@ -59,6 +60,7 @@ export function NavPanel({
   onInsertTemplate: (tpl: BlockTemplate) => void
   onGoToBlock: (index: number) => void
   onInsertPlot: (img: PlotImage) => void
+  onInsertBlocks?: (blocks: ExamBlock[]) => void
   /** đề đang soạn (cho công cụ Xáo đề) */
   examDoc?: ExamDoc | null
   /** cột đặt panel: soạn đề để bên trái (AI bên phải, như soạn slide) */
@@ -205,6 +207,10 @@ export function NavPanel({
                     onInsertPlot(img)
                     onOpenChange(false)
                   }}
+                  onInsertBlocks={(blocks) => {
+                    onInsertBlocks?.(blocks)
+                    onOpenChange(false)
+                  }}
                 />
               </div>
             )}
@@ -294,7 +300,13 @@ export function NavPanel({
 
                 {tabId === 'tools' && (
                   <div className="nav-body">
-                    <div className="px-3"><ToolsPanel examDoc={examDoc} onInsertPlot={onInsertPlot} /></div>
+                    <div className="px-3">
+                      <ToolsPanel
+                        examDoc={examDoc}
+                        onInsertPlot={onInsertPlot}
+                        onInsertBlocks={onInsertBlocks}
+                      />
+                    </div>
                   </div>
                 )}
               </>

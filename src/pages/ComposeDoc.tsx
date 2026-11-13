@@ -174,6 +174,7 @@ const AI_BLOCK_TYPES = new Set([
   'rubric',
   'pageBreak',
   'divider',
+  'table',
 ])
 
 /** Chuẩn hoá block AI trả về: đúng loại + field tối thiểu, sai thì bỏ. */
@@ -757,6 +758,22 @@ export default function ComposeDoc() {
     [editor],
   )
 
+  /** Chèn danh sách khối vào cuối đề (sau ngắt trang). */
+  const handleInsertBlocks = useCallback(
+    (newBlocks: ExamBlock[]) => {
+      if (!editor || editor.isDestroyed) return
+      const tipTapDoc = blocksToTipTap(newBlocks)
+      const nodes = tipTapDoc.content ?? []
+      if (!nodes.length) return
+      editor
+        .chain()
+        .focus('end')
+        .insertContentAt(editor.state.doc.content.size, nodes)
+        .run()
+    },
+    [editor],
+  )
+
   /**
    * Chèn đồ thị (công cụ Toán) tại con trỏ — dạng PNG vì bản xuất Word không đọc SVG;
    * cấu hình đi kèm trong attr `plot` để nhấp đúp sửa lại. `replace`: thay ảnh cũ ở vị trí đó;
@@ -1030,6 +1047,7 @@ export default function ComposeDoc() {
           onInsertTemplate={handleInsertTemplate}
           onGoToBlock={handleGoToBlock}
           onInsertPlot={(img) => void handleInsertPlot(img)}
+          onInsertBlocks={handleInsertBlocks}
           examDoc={activeDoc}
           side="left"
           isMobile={isMobile}

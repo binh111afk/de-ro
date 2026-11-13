@@ -10,7 +10,7 @@
  * và `FormatAttrs` (align/lineHeight/indent/space/borders/shading).
  */
 import type { JSONContent } from '@tiptap/core'
-import type { ExamBlock, FormatAttrs, Mark, MarkType, RichText, Span } from '@/data/docTypes'
+import type { ExamBlock, FormatAttrs, Mark, MarkType, RichText, Span, TableCellData } from '@/data/docTypes'
 import { TF_PARTS, groupAnswers, gridRows, tfParts } from '../lib/answerKey'
 
 /* ------------------------------------------------------------------ *
@@ -339,6 +339,35 @@ export function tipTapToBlocks(doc: JSONContent): ExamBlock[] {
         out.push({ type: 'divider' })
         break
 
+      case 'table': {
+        flushHeader()
+        const rows: TableCellData[][] = (node.content ?? [])
+          .filter((r) => r.type === 'tableRow')
+          .map((r) =>
+            (r.content ?? [])
+              .filter((c) => c.type === 'tableCell' || c.type === 'tableHeader')
+              .map((c) => {
+                const colSpan = Number(c.attrs?.colspan ?? 1)
+                const rowSpan = Number(c.attrs?.rowspan ?? 1)
+                const pAlign = c.content?.[0]?.attrs?.textAlign as TableCellData['align'] | undefined
+                const align = pAlign === 'left' || pAlign === 'center' || pAlign === 'right' ? pAlign : undefined
+                return {
+                  text: columnToRich(c),
+                  ...(c.type === 'tableHeader' ? { header: true } : {}),
+                  ...(colSpan > 1 ? { colSpan } : {}),
+                  ...(rowSpan > 1 ? { rowSpan } : {}),
+                  ...(align ? { align } : {}),
+                }
+              }),
+          )
+        out.push({
+          type: 'table',
+          rows,
+          ...(formatFromAttrs(node.attrs) ? { format: formatFromAttrs(node.attrs) } : {}),
+        })
+        break
+      }
+
       case 'paragraph': {
         flushHeader()
         const t = plainText(richOf(node)).trim()
@@ -638,6 +667,33 @@ export function blocksToTipTap(blocks: ExamBlock[]): JSONContent {
 
       case 'divider':
         content.push({ type: 'examDivider', attrs: { id: `dv${content.length}` } })
+        break
+
+      case 'table':
+        content.push({
+          type: 'table',
+          content: b.rows.map((row) => ({
+            type: 'tableRow',
+            content: row.map((c) => {
+              const lines = splitRichLines(c.text)
+              return {
+                type: c.header ? 'tableHeader' : 'tableCell',
+                attrs: {
+                  colspan: c.colSpan && c.colSpan > 1 ? c.colSpan : 1,
+                  rowspan: c.rowSpan && c.rowSpan > 1 ? c.rowSpan : 1,
+                },
+                content: (lines.length ? lines : ['']).map((line) => {
+                  const inline = richNodes(line)
+                  return {
+                    type: 'paragraph',
+                    ...(c.align ? { attrs: { textAlign: c.align } } : {}),
+                    ...(inline.length ? { content: inline } : {}),
+                  }
+                }),
+              }
+            }),
+          })),
+        })
         break
 
       default:

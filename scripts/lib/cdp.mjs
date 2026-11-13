@@ -33,8 +33,22 @@ export async function withPage(url, { width = 1400, height = 900 } = {}, fn) {
   )
   try {
     const portFile = join(dir, 'DevToolsActivePort')
-    for (let i = 0; i < 100 && !existsSync(portFile); i++) await sleep(100)
-    const port = readFileSync(portFile, 'utf8').split(/\r?\n/)[0]
+    let port = ''
+    for (let i = 0; i < 100; i++) {
+      if (existsSync(portFile)) {
+        try {
+          const content = readFileSync(portFile, 'utf8').trim()
+          if (content) {
+            port = content.split(/\r?\n/)[0]
+            break
+          }
+        } catch {
+          // file đang bị lock lúc Chrome vừa tạo — đợi vòng sau
+        }
+      }
+      await sleep(100)
+    }
+    if (!port) throw new Error('Không đọc được DevToolsActivePort.')
     const targets = await (await fetch(`http://127.0.0.1:${port}/json/list`)).json()
     const ws = new WebSocket(targets.find((t) => t.type === 'page').webSocketDebuggerUrl)
     await new Promise((resolve, reject) => {

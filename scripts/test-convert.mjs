@@ -137,6 +137,18 @@ const cases = [
       },
     ],
   },
+  {
+    name: 'table block round-trip giữ nguyên nội dung và cấu trúc hàng cột',
+    blocks: [
+      {
+        type: 'table',
+        rows: [
+          [{ text: 'TT', header: true }, { text: 'Nội dung', header: true }],
+          [{ text: '1' }, { text: 'Bài toán khảo sát hàm số' }],
+        ],
+      },
+    ],
+  },
 ]
 
 let pass = 0

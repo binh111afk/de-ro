@@ -7,6 +7,7 @@ import { useEffect, type ReactNode } from 'react'
 import { X } from 'lucide-react'
 import { Button } from '@/components/ui'
 import { svgDataUrl } from '@/lib/plot'
+import { cn } from '@/lib/cn'
 import type { ToolImage } from '@/lib/toolSpec'
 
 export function ToolShell({
@@ -20,7 +21,9 @@ export function ToolShell({
   onSubmit,
   onClose,
   inputsWidth = 340,
+  maxWidth,
   renderPreview,
+  extraActions,
 }: {
   title: string
   hint?: string
@@ -32,8 +35,10 @@ export function ToolShell({
   onSubmit: () => void
   onClose: () => void
   inputsWidth?: number
+  maxWidth?: number | string
   /** thay ảnh xem trước mặc định (vd. khung bấm/kéo để dựng hình) */
   renderPreview?: (preview: ToolImage) => ReactNode
+  extraActions?: ReactNode
 }) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
@@ -55,7 +60,11 @@ export function ToolShell({
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className="anim-pop flex h-full max-h-[100dvh] w-full max-w-[980px] flex-col overflow-hidden rounded-none bg-surface shadow-float md:h-[min(660px,92vh)] md:max-h-[92vh] md:rounded-[8px]"
+        className={cn(
+          'anim-pop flex h-full max-h-[100dvh] w-full flex-col overflow-hidden rounded-none bg-surface shadow-float md:h-[min(660px,92vh)] md:max-h-[92vh] md:rounded-[8px]',
+          !maxWidth && 'max-w-[980px]',
+        )}
+        style={{ maxWidth: maxWidth ? (typeof maxWidth === 'number' ? `${maxWidth}px` : maxWidth) : undefined }}
         onMouseDown={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between gap-4 border-b border-line px-4 py-3 md:px-6 md:py-4">
@@ -80,9 +89,14 @@ export function ToolShell({
           >
             {inputs}
           </div>
-          <div className="flex h-[min(56vh,520px)] min-h-0 min-w-0 flex-1 items-center justify-center bg-paper-2 p-5 md:h-auto">
-            {preview && renderPreview ? (
-              renderPreview(preview)
+          <div
+            className={cn(
+              'flex h-[min(56vh,520px)] min-h-0 min-w-0 flex-1 bg-paper-2 p-4 md:h-auto',
+              renderPreview && !preview ? 'flex-col items-stretch justify-start' : 'items-center justify-center',
+            )}
+          >
+            {renderPreview ? (
+              renderPreview(preview ?? ({} as ToolImage))
             ) : preview ? (
               <img
                 src={svgDataUrl(preview.svg)}
@@ -95,13 +109,16 @@ export function ToolShell({
           </div>
         </div>
 
-        <div className="sticky bottom-0 z-10 flex shrink-0 items-center justify-end gap-2 border-t border-line bg-surface px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] md:px-6 md:py-3.5">
-          <Button variant="ghost" size="sm" onClick={onClose}>
-            Huỷ
-          </Button>
-          <Button variant="clay" size="sm" disabled={!canSubmit} onClick={onSubmit}>
-            {submitLabel}
-          </Button>
+        <div className="sticky bottom-0 z-10 flex shrink-0 items-center justify-between gap-2 border-t border-line bg-surface px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] md:px-6 md:py-3.5">
+          <div className="flex items-center gap-2">{extraActions}</div>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" onClick={onClose}>
+              Huỷ
+            </Button>
+            <Button variant="clay" size="sm" disabled={!canSubmit} onClick={onSubmit}>
+              {submitLabel}
+            </Button>
+          </div>
         </div>
       </div>
     </div>

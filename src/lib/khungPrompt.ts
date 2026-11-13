@@ -369,6 +369,45 @@ function subjectOf(t: string): Subject | undefined {
   return SUBJECTS.find((s) => s.re.test(t))
 }
 
+export const KHUNG_SUBJECTS = SUBJECTS.map((s) => ({ ten: s.ten, lops: s.lops }))
+
+export function detectSubjectAndGrade(text: string): { subject?: string; grade?: number } {
+  const t = deaccent(text)
+  const sub = subjectOf(t)
+  const grade = readGrade(t) || (/tot nghiep|thpt/.test(t) ? 12 : 0)
+  return {
+    ...(sub ? { subject: sub.ten } : {}),
+    ...(grade ? { grade } : {}),
+  }
+}
+
+export async function getChaptersFor(subjectName: string, grade: number): Promise<string[]> {
+  const t = deaccent(subjectName)
+  const subject = SUBJECTS.find((s) => s.ten === subjectName || s.re.test(t))
+  if (!subject) return []
+  if (grade < subject.lops[0] || grade > subject.lops[1]) return []
+  try {
+    const parts = await Promise.all(subject.src(grade).map(async (s) => partOf(s, await s.load())))
+    const seen = new Set<string>()
+    const out: string[] = []
+    for (const p of parts) {
+      for (const l of p.lop) {
+        if (l.lop !== grade) continue
+        for (const c of l.chuong) {
+          const name = (c.ten || c.chu_de || '').trim()
+          if (name && !seen.has(name)) {
+            seen.add(name)
+            out.push(name)
+          }
+        }
+      }
+    }
+    return out
+  } catch {
+    return []
+  }
+}
+
 /** dùng trong AiPanel: '' khi không xác định được môn + lớp */
 export async function khungPromptFor(text: string): Promise<string> {
   const t = deaccent(text)
