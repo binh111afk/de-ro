@@ -467,16 +467,16 @@ export const LASER_LIFE = 1000
 let chalkBoardTex: CanvasPattern | null | undefined
 function boardTexture(ctx: CanvasRenderingContext2D) {
   if (chalkBoardTex !== undefined) return chalkBoardTex
-  const S = 256
+  const S = 512
   const c = document.createElement('canvas')
   c.width = c.height = S
   const g = c.getContext('2d')!
   let s = 135792468
   const rnd = () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296 }
   // vài vệt loang phấn mờ rất nhẹ (lặp qua biên ô để không lộ đường nối)
-  for (let i = 0; i < 10; i++) {
-    const x = rnd() * S, y = rnd() * S, r = 28 + rnd() * 52
-    const a = 0.012 + rnd() * 0.014
+  for (let i = 0; i < 18; i++) {
+    const x = rnd() * S, y = rnd() * S, r = 60 + rnd() * 120
+    const a = 0.005 + rnd() * 0.007
     for (const ox of [-S, 0, S]) for (const oy of [-S, 0, S]) {
       if (x + ox + r < 0 || x + ox - r > S || y + oy + r < 0 || y + oy - r > S) continue
       const gr = g.createRadialGradient(x + ox, y + oy, 0, x + ox, y + oy, r)
@@ -488,7 +488,7 @@ function boardTexture(ctx: CanvasRenderingContext2D) {
   }
   // bụi phấn li ti cố định theo toạ độ cảnh
   g.fillStyle = '#ffffff'
-  for (let i = 0; i < 240; i++) {
+  for (let i = 0; i < 900; i++) {
     g.globalAlpha = 0.02 + rnd() * 0.035
     const sz = rnd() < 0.25 ? 1.5 : 1
     g.fillRect(Math.floor(rnd() * S), Math.floor(rnd() * S), sz, sz)
