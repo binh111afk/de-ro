@@ -125,6 +125,8 @@ export default function BoardEditor({ id }: { id: string }) {
   const opts = useRef<Opts>({ ...DEFAULT_OPTS, ...saved.current?.opts })
   const selected = useRef<Set<string>>(new Set())
   const drag = useRef<Drag | null>(null)
+  const touches = useRef<Map<number, { x: number; y: number }>>(new Map())
+  const pinching = useRef(false)
   const penSeen = useRef(false)
   const hold = useRef<{ timer: number; x: number; y: number }>({ timer: 0, x: 0, y: 0 })
   const space = useRef(false)
@@ -455,6 +457,33 @@ export default function BoardEditor({ id }: { id: string }) {
 
   /* ---------- chuột / bút ---------- */
 
+  const cancelDrag = () => {
+    clearTimeout(hold.current.timer)
+    const d = drag.current
+    drag.current = null
+    marquee.current = null
+    lasso.current = null
+    if (!d) return
+    live.current = null
+    redrawLive()
+    if (d.t === 'create' || d.t === 'snapped') {
+      els.current = els.current.filter((x) => x !== d.el)
+      dropFromCache(d.el.id)
+      redraw()
+    } else if (d.t === 'laser') {
+      laser.current = laser.current.filter((x) => x !== d.trail)
+      redraw()
+    } else if (d.t === 'marquee' || d.t === 'lasso') {
+      selected.current = d.base
+      bump()
+      redraw()
+    } else if (d.t !== 'pan') {
+      const snap = undoStack.current.at(-1)
+      if (snap) els.current = JSON.parse(snap)
+      redraw()
+    }
+  }
+
   const onPointerDown = (ev: React.PointerEvent<HTMLCanvasElement>) => {
     setPop(null)
     if (editingRef.current) {
@@ -462,7 +491,16 @@ export default function BoardEditor({ id }: { id: string }) {
       finishText(ta?.value ?? '')
       return
     }
-    ev.currentTarget.setPointerCapture(ev.pointerId)
+    try { ev.currentTarget.setPointerCapture(ev.pointerId) } catch {}
+    if (ev.pointerType === 'touch') {
+      touches.current.set(ev.pointerId, { x: ev.clientX, y: ev.clientY })
+      if (touches.current.size >= 2) {
+        pinching.current = true
+        cancelDrag()
+        return
+      }
+      if (pinching.current) return
+    }
     const p = toScene(ev.clientX, ev.clientY)
     // lật đầu gôm của bút hoặc giữ nút trên thân bút → gôm tạm thời
     const flip = ev.pointerType === 'pen' && (ev.button === 5 || ev.button === 2 || (ev.buttons & 32) !== 0)
@@ -629,6 +667,28 @@ export default function BoardEditor({ id }: { id: string }) {
   }
 
   const onPointerMove = (ev: React.PointerEvent<HTMLCanvasElement>) => {
+    if (ev.pointerType === 'touch' && touches.current.has(ev.pointerId)) {
+      if (pinching.current) {
+        if (touches.current.size === 2) {
+          const prev = [...touches.current.values()]
+          const m0x = (prev[0].x + prev[1].x) / 2, m0y = (prev[0].y + prev[1].y) / 2
+          const d0 = Math.hypot(prev[1].x - prev[0].x, prev[1].y - prev[0].y)
+          touches.current.set(ev.pointerId, { x: ev.clientX, y: ev.clientY })
+          const next = [...touches.current.values()]
+          const m1x = (next[0].x + next[1].x) / 2, m1y = (next[0].y + next[1].y) / 2
+          const d1 = Math.hypot(next[1].x - next[0].x, next[1].y - next[0].y)
+          const v = view.current
+          v.scrollX += (m1x - m0x) / v.zoom
+          v.scrollY += (m1y - m0y) / v.zoom
+          if (d0 > 0 && d1 > 0 && d1 !== d0) zoomAt(v.zoom * (d1 / d0), m1x, m1y)
+          else { redraw(); persist() }
+        } else {
+          touches.current.set(ev.pointerId, { x: ev.clientX, y: ev.clientY })
+        }
+        return
+      }
+      touches.current.set(ev.pointerId, { x: ev.clientX, y: ev.clientY })
+    }
     const d = drag.current
     const p = toScene(ev.clientX, ev.clientY)
     const c = canvasRef.current!
@@ -881,7 +941,14 @@ export default function BoardEditor({ id }: { id: string }) {
     }
   }
 
-  const onPointerUp = () => {
+  const onPointerUp = (ev?: React.PointerEvent<HTMLCanvasElement>) => {
+    if (ev?.pointerType === 'touch') {
+      touches.current.delete(ev.pointerId)
+      if (pinching.current) {
+        if (touches.current.size === 0) pinching.current = false
+        return
+      }
+    }
     clearTimeout(hold.current.timer)
     const d = drag.current
     drag.current = null
@@ -1834,31 +1901,33 @@ export default function BoardEditor({ id }: { id: string }) {
     <div className="board-editor flex min-h-0 flex-1 flex-col overflow-hidden bg-white">
       {/* tầng 1: công cụ chính · tầng 2: tuỳ chọn của công cụ đang chọn */}
       <div className="relative z-20 shrink-0 border-b border-line bg-surface">
-        <div className="@container flex h-12 min-w-0 items-end gap-2 px-3 pb-1">
-          <div className="flex items-center gap-0.5">
-            <IconBtn label="Hoàn tác — Ctrl Z" onClick={undo} disabled={undoStack.current.length < 2}><Ico d="M9 14L4 9l5-5M4 9h11a5 5 0 0 1 0 10h-3" /></IconBtn>
-            <IconBtn label="Làm lại — Ctrl Y" onClick={redo} disabled={!redoStack.current.length}><Ico d="M15 14l5-5-5-5m5 5H9a5 5 0 0 0 0 10h3" /></IconBtn>
+        <div className="@container flex h-12 min-w-0 items-end gap-1.5 px-2 pb-1 sm:gap-2 sm:px-3">
+          <div className="flex min-w-0 flex-1 items-center gap-1.5 overflow-x-auto [scrollbar-width:none] sm:flex-none sm:gap-2 sm:overflow-visible">
+            <div className="flex shrink-0 items-center gap-0.5">
+              <IconBtn label="Hoàn tác — Ctrl Z" onClick={undo} disabled={undoStack.current.length < 2}><Ico d="M9 14L4 9l5-5M4 9h11a5 5 0 0 1 0 10h-3" /></IconBtn>
+              <IconBtn label="Làm lại — Ctrl Y" onClick={redo} disabled={!redoStack.current.length}><Ico d="M15 14l5-5-5-5m5 5H9a5 5 0 0 0 0 10h3" /></IconBtn>
+            </div>
+            <span className="h-5 w-px shrink-0 bg-line" />
+            <div ref={segRef} className="relative flex shrink-0 items-center gap-0.5 rounded-[10px] bg-sunken p-[3px]">
+              {/* nền trắng trượt theo công cụ đang chọn */}
+              <span
+                aria-hidden
+                className="absolute top-[3px] h-9 rounded-[7px] bg-surface shadow-[0_1px_2px_rgba(0,0,0,0.08),0_0_0_1px_rgba(0,0,0,0.04)] transition-[left,width] duration-200 ease-out sm:h-8"
+                style={{ left: seg.l, width: seg.w, opacity: seg.w ? 1 : 0 }}
+              />
+              {mainTools.map((m) => (
+                <button
+                  key={m.id} type="button" title={m.label} aria-pressed={main === m.id} onClick={m.onClick}
+                  className={`relative flex h-9 min-w-9 items-center justify-center gap-1.5 rounded-[7px] px-2 text-[13px] transition-colors duration-200 sm:h-8 sm:min-w-0 sm:px-3 ${main === m.id ? 'text-clay' : 'text-ink-2 hover:text-ink'}`}
+                >
+                  <Ico d={m.icon} size={16} />
+                  <span className="hidden lg:inline">{m.label}</span>
+                </button>
+              ))}
+            </div>
           </div>
-          <span className="h-5 w-px bg-line" />
-          <div ref={segRef} className="relative flex items-center gap-0.5 rounded-[10px] bg-sunken p-[3px]">
-            {/* nền trắng trượt theo công cụ đang chọn */}
-            <span
-              aria-hidden
-              className="absolute top-[3px] h-8 rounded-[7px] bg-surface shadow-[0_1px_2px_rgba(0,0,0,0.08),0_0_0_1px_rgba(0,0,0,0.04)] transition-[left,width] duration-200 ease-out"
-              style={{ left: seg.l, width: seg.w, opacity: seg.w ? 1 : 0 }}
-            />
-            {mainTools.map((m) => (
-              <button
-                key={m.id} type="button" title={m.label} aria-pressed={main === m.id} onClick={m.onClick}
-                className={`relative flex h-8 items-center gap-1.5 rounded-[7px] px-3 text-[13px] transition-colors duration-200 ${main === m.id ? 'text-clay' : 'text-ink-2 hover:text-ink'}`}
-              >
-                <Ico d={m.icon} size={16} />
-                <span className="hidden @[860px]:inline">{m.label}</span>
-              </button>
-            ))}
-          </div>
-          <div className="ml-auto flex items-center gap-0.5">
-            <Pop id="insert" pop={pop} setPop={setPop} title="Chèn" align="right"
+          <div className="ml-auto flex shrink-0 items-center gap-0.5">
+            <Pop id="insert" pop={pop} setPop={setPop} title="Chèn" align="right" className="hidden sm:block"
               face={<span className="flex items-center gap-1.5 px-1.5 text-[13px] text-ink"><Ico d="M12 5v14M5 12h14" size={16} />Chèn</span>}>
               <button type="button" onClick={() => { setPop(null); fileRef.current?.click() }} className="flex w-full items-center gap-2 rounded-[6px] px-2 py-1.5 text-left text-[13px] text-ink hover:bg-sunken">
                 <Ico d="M4 5h16v14H4zM4 15l4-4 4 4 3-3 5 5M15 9h.01" size={16} />Ảnh hoặc PDF vào bảng
@@ -1870,13 +1939,13 @@ export default function BoardEditor({ id }: { id: string }) {
             <input ref={pdfRef} type="file" hidden accept="application/pdf,.pdf" onChange={onOpenPdfNotes} />
             <input ref={fileRef} type="file" hidden multiple accept="image/png,image/jpeg,image/webp,image/gif,application/pdf,.pdf" onChange={onPickFile} />
             <button type="button" title="Xuất PNG / PDF" onClick={() => setDialog({ t: 'export' })}
-              className="flex h-8 items-center gap-1.5 rounded-[7px] px-2.5 text-[13px] text-ink hover:bg-sunken">
+              className="hidden h-8 items-center gap-1.5 rounded-[7px] px-2.5 text-[13px] text-ink hover:bg-sunken sm:flex">
               <Ico d="M12 4v11M7 10l5 5 5-5M5 20h14" size={16} />Xuất
             </button>
             {busy && <span className="ml-1 text-[12px] text-ink-2">{busy}</span>}
             {saveErr && <span className="ml-1 text-[12px] text-red-600" title="Bộ nhớ trình duyệt đã đầy: xoá bớt ảnh/trang PDF hoặc xuất bảng ra file để giữ lại">Chưa lưu được (đầy bộ nhớ)</span>}
-            <span className="mx-1.5 h-5 w-px bg-line" />
-            <Pop id="paper" pop={pop} setPop={setPop} title="Kiểu giấy" align="right"
+            <span className="mx-1.5 hidden h-5 w-px bg-line lg:block" />
+            <Pop id="paper" pop={pop} setPop={setPop} title="Kiểu giấy" align="right" className="hidden lg:block"
               face={<span className="flex items-center gap-1.5 px-1.5 text-[13px] text-ink"><Ico d="M6 3h9l4 4v14H6zM14 3v5h5" size={16} />Giấy</span>}>
               <div className="text-[12px] font-medium text-ink-2">Kiểu giấy</div>
               <div className="grid grid-cols-2 gap-2">
@@ -1901,24 +1970,73 @@ export default function BoardEditor({ id }: { id: string }) {
                 })}
               </div>
             </Pop>
-            <div className="ml-1 flex items-center rounded-[8px] border border-line">
+            <div className="ml-1 hidden items-center rounded-[8px] border border-line sm:flex">
               <IconBtn label="Thu nhỏ — Ctrl −" onClick={() => zoomAt(v.zoom / 1.2)}><Ico d="M6 12h12" /></IconBtn>
               <button type="button" title="Về 100% — Ctrl 0" onClick={() => zoomAt(1)} className="h-8 w-12 rounded-[6px] text-center text-[12.5px] text-ink tnum hover:bg-sunken">
                 {Math.round(v.zoom * 100)}%
               </button>
               <IconBtn label="Phóng to — Ctrl +" onClick={() => zoomAt(v.zoom * 1.2)}><Ico d="M6 12h12M12 6v12" /></IconBtn>
             </div>
-            <span className="mx-1.5 h-5 w-px bg-line" />
-            <SideBtn label="Công cụ" on={side === 'tools'} onClick={() => toggleSide('tools')}><Ico d={WRENCH_D} size={16} /></SideBtn>
-            <SideBtn label="Trợ lý" on={side === 'ai'} onClick={() => toggleSide('ai')}><AiIcon /></SideBtn>
+            <span className="mx-1.5 hidden h-5 w-px bg-line lg:block" />
+            <div className="hidden items-center gap-0.5 lg:flex">
+              <SideBtn label="Công cụ" on={side === 'tools'} onClick={() => toggleSide('tools')}><Ico d={WRENCH_D} size={16} /></SideBtn>
+              <SideBtn label="Trợ lý" on={side === 'ai'} onClick={() => toggleSide('ai')}><AiIcon /></SideBtn>
+            </div>
+            <Pop id="more" pop={pop} setPop={setPop} title="Thêm" align="right" className="lg:hidden"
+              face={<span className="flex items-center justify-center px-1 text-ink"><Ico d="M5 12h.01M12 12h.01M19 12h.01" size={18} /></span>}>
+              <div className="w-[232px] space-y-2.5">
+                <div className="space-y-1.5 sm:hidden">
+                  <div className="flex items-center justify-between rounded-[8px] border border-line px-1 py-0.5">
+                    <IconBtn label="Thu nhỏ" onClick={() => zoomAt(v.zoom / 1.2)}><Ico d="M6 12h12" /></IconBtn>
+                    <button type="button" title="Về 100%" onClick={() => zoomAt(1)} className="h-9 flex-1 rounded-[6px] text-center text-[12.5px] text-ink tnum hover:bg-sunken">
+                      {Math.round(v.zoom * 100)}%
+                    </button>
+                    <IconBtn label="Phóng to" onClick={() => zoomAt(v.zoom * 1.2)}><Ico d="M6 12h12M12 6v12" /></IconBtn>
+                  </div>
+                  <button type="button" onClick={() => { setPop(null); fileRef.current?.click() }} className="flex h-9 w-full items-center gap-2 rounded-[6px] px-2 text-left text-[13px] text-ink hover:bg-sunken">
+                    <Ico d="M4 5h16v14H4zM4 15l4-4 4 4 3-3 5 5M15 9h.01" size={16} />Chèn ảnh / PDF vào bảng
+                  </button>
+                  <button type="button" onClick={() => { setPop(null); pdfRef.current?.click() }} className="flex h-9 w-full items-center gap-2 rounded-[6px] px-2 text-left text-[13px] text-ink hover:bg-sunken">
+                    <Ico d="M6 3h9l4 4v14H6zM14 3v5h5M9 17l5-5 2 2-5 5H9z" size={16} />Mở PDF để ghi chú
+                  </button>
+                  <button type="button" onClick={() => { setPop(null); setDialog({ t: 'export' }) }} className="flex h-9 w-full items-center gap-2 rounded-[6px] px-2 text-left text-[13px] text-ink hover:bg-sunken">
+                    <Ico d="M12 4v11M7 10l5 5 5-5M5 20h14" size={16} />Xuất PNG / PDF
+                  </button>
+                  <div className="border-t border-line" />
+                </div>
+                <div>
+                  <div className="mb-1.5 text-[12px] font-medium text-ink-2">Kiểu giấy</div>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    {PAPERS.map((pp) => {
+                      const on = o.paper === pp.id
+                      return (
+                        <button key={pp.id} type="button" aria-pressed={on} onClick={() => setOpt('paper', pp.id)}
+                          className={`flex h-9 items-center gap-2 rounded-[7px] border px-2 text-[12px] ${on ? 'border-clay bg-clay/10 font-medium text-clay' : 'border-line text-ink-2 hover:bg-sunken'}`}>
+                          <span className="h-4 w-4 shrink-0 rounded-[3px] border border-line bg-white" style={{ backgroundImage: pp.bg, backgroundSize: '8px 8px' }} />
+                          <span>{pp.label}</span>
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+                <div className="border-t border-line pt-1.5 space-y-1">
+                  <button type="button" onClick={() => { setPop(null); toggleSide('tools') }} className={`flex h-9 w-full items-center gap-2 rounded-[6px] px-2 text-left text-[13px] ${side === 'tools' ? 'bg-clay/10 font-medium text-clay' : 'text-ink hover:bg-sunken'}`}>
+                    <Ico d={WRENCH_D} size={16} />Công cụ
+                  </button>
+                  <button type="button" onClick={() => { setPop(null); toggleSide('ai') }} className={`flex h-9 w-full items-center gap-2 rounded-[6px] px-2 text-left text-[13px] ${side === 'ai' ? 'bg-clay/10 font-medium text-clay' : 'text-ink hover:bg-sunken'}`}>
+                    <AiIcon size={16} />Trợ lý AI
+                  </button>
+                </div>
+              </div>
+            </Pop>
           </div>
         </div>
-        <div className="flex h-11 items-center overflow-x-auto [scrollbar-width:none] pb-1 px-3 text-[12.5px] text-ink-2 [&>div:first-child]:pl-0">
+        <div className="flex h-12 items-center overflow-x-auto [scrollbar-width:none] px-2 pb-1 text-[12.5px] text-ink-2 sm:h-11 sm:px-3 [&>div:first-child]:pl-0">
           {options}
         </div>
       </div>
 
-      <div className="flex min-h-0 flex-1">
+      <div className="relative flex min-h-0 flex-1">
       <div className="relative min-w-0 flex-1 overflow-hidden" ref={wrapRef}>
         <canvas
           ref={canvasRef}
@@ -1962,14 +2080,25 @@ export default function BoardEditor({ id }: { id: string }) {
         <ExportDialog hasSelection={selected.current.size > 0} hasPages={els.current.some(isPage)} onClose={() => setDialog(null)} onDone={onExport} />
       )}
 
-      {/* panel phải: khung ngoài đổi bề rộng để trượt ra/vào, khung trong giữ nguyên 360px nên nội dung không bị bóp */}
-      <div className="min-h-0 shrink-0 overflow-hidden transition-[width] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
-        style={{ width: side ? SIDE_W : 0 }} inert={!side}>
-        <aside className="flex h-full min-h-0 flex-col border-l border-line bg-surface" style={{ width: SIDE_W }} aria-label={side === 'tools' ? 'Công cụ' : 'Trợ lý'}>
-          <div className={`h-11 shrink-0 items-center gap-2 border-b border-line px-3 text-[13.5px] font-medium text-ink flex`}>
+      {side && (
+        <div
+          className="fixed inset-0 z-30 bg-black/30 lg:hidden"
+          onClick={() => setSide(null)}
+          aria-hidden
+        />
+      )}
+
+      {/* panel phải: điện thoại phủ toàn màn hình, máy tính bảng trượt đè lên canvas, desktop đẩy canvas */}
+      <div
+        className={`${side ? 'fixed inset-0 z-40 sm:inset-auto sm:absolute sm:inset-y-0 sm:right-0 sm:w-[min(360px,90vw)]' : 'hidden'} lg:static lg:inset-auto lg:z-auto lg:block lg:h-full lg:w-[var(--side-w)] lg:min-h-0 lg:shrink-0 lg:overflow-hidden lg:transition-[width] lg:duration-300 lg:ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none`}
+        style={{ '--side-w': side ? `${SIDE_W}px` : '0px' } as React.CSSProperties}
+        inert={!side}
+      >
+        <aside className="flex h-full min-h-0 w-full flex-col border-l border-line bg-surface lg:w-[360px]" aria-label={side === 'tools' ? 'Công cụ' : 'Trợ lý'}>
+          <div className="flex h-12 shrink-0 items-center gap-2 border-b border-line px-3 text-[13.5px] font-medium text-ink sm:h-11">
             <span className="text-clay">{side === 'tools' ? <Ico d={WRENCH_D} size={17} /> : <AiIcon size={17} />}</span>
             {side === 'tools' ? 'Công cụ' : 'Trợ lý AI'}
-            <button type="button" onClick={() => setSide(null)} title="Đóng" aria-label="Đóng panel" className="ml-auto grid h-7 w-7 place-items-center rounded-[6px] text-ink-3 hover:bg-sunken hover:text-ink">
+            <button type="button" onClick={() => setSide(null)} title="Đóng" aria-label="Đóng panel" className="ml-auto grid h-9 w-9 place-items-center rounded-[6px] text-ink-3 hover:bg-sunken hover:text-ink sm:h-7 sm:w-7">
               <Ico d="M6 6l12 12M18 6L6 18" />
             </button>
           </div>
@@ -2097,10 +2226,10 @@ function PenPanel({ pen, color, width, tip, onPen, onTip }: {
   const d = svgPathFromStroke(penOutline(pts, { pen, width: Math.max(width, 1.5), sharp: tip.sharp, sens: tip.sens, real: true }))
   const tunable = pen !== 'highlight' && pen !== 'marker'
   return (
-    <div className="w-[300px] space-y-3">
+    <div className="w-[min(300px,calc(100vw-40px))] space-y-3">
       <div className="text-[12px] font-medium text-ink-2">{label}</div>
       <div className="grid h-[104px] place-items-center rounded-[8px] border border-line bg-white">
-        <svg width="280" height="104" viewBox="0 0 280 104">
+        <svg className="w-full" height="104" viewBox="0 0 280 104">
           <path d={d} fill={color} fillOpacity={pen === 'highlight' ? 0.45 : pen === 'pencil' ? 0.8 : 1} />
         </svg>
       </div>
@@ -2201,7 +2330,7 @@ function Chip({ active, onClick, children, title }: { active?: boolean; onClick:
   return (
     <button
       type="button" title={title} aria-label={title} onClick={onClick} aria-pressed={active}
-      className={`flex h-8 min-w-8 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-[7px] px-2 text-[12.5px] transition-colors ${active ? 'bg-clay/10 text-clay' : 'text-ink hover:bg-sunken'}`}
+      className={`flex h-9 min-w-9 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-[7px] px-2.5 text-[12.5px] transition-colors sm:h-8 sm:min-w-8 sm:px-2 ${active ? 'bg-clay/10 text-clay' : 'text-ink hover:bg-sunken'}`}
     >
       {children}
     </button>
@@ -2210,7 +2339,7 @@ function Chip({ active, onClick, children, title }: { active?: boolean; onClick:
 
 function Toggle({ on, onClick, children }: { on: boolean; onClick: () => void; children: ReactNode }) {
   return (
-    <button type="button" role="switch" aria-checked={on} onClick={onClick} className="flex h-8 items-center gap-2 rounded-[6px] px-2 text-[12.5px] text-ink hover:bg-sunken">
+    <button type="button" role="switch" aria-checked={on} onClick={onClick} className="flex h-9 items-center gap-2 rounded-[6px] px-2 text-[12.5px] text-ink hover:bg-sunken sm:h-8">
       <span className={`relative h-4 w-7 rounded-full transition-colors ${on ? 'bg-clay' : 'bg-line'}`}>
         <span className={`absolute top-0.5 h-3 w-3 rounded-full bg-white transition-all ${on ? 'left-3.5' : 'left-0.5'}`} />
       </span>
@@ -2219,20 +2348,53 @@ function Toggle({ on, onClick, children }: { on: boolean; onClick: () => void; c
   )
 }
 
-function Pop({ id, pop, setPop, title, face, children, align }: {
-  id: string; pop: string | null; setPop: (p: string | null) => void; title: string; face: ReactNode; children: ReactNode; align?: 'right'
+function Pop({ id, pop, setPop, title, face, children, align, className }: {
+  id: string; pop: string | null; setPop: (p: string | null) => void; title: string; face: ReactNode; children: ReactNode; align?: 'right'; className?: string
 }) {
   const open = pop === id
+  const btnRef = useRef<HTMLButtonElement>(null)
+  const panelRef = useRef<HTMLDivElement>(null)
+
+  useLayoutEffect(() => {
+    if (!open) return
+    const place = () => {
+      const btn = btnRef.current
+      const panel = panelRef.current
+      if (!btn || !panel) return
+      const br = btn.getBoundingClientRect()
+      const pr = panel.getBoundingClientRect()
+      const vw = document.documentElement.clientWidth
+      const vh = document.documentElement.clientHeight
+      const rawLeft = align === 'right' ? br.right - pr.width : br.left
+      const left = Math.max(8, Math.min(rawLeft, vw - pr.width - 8))
+      const top = Math.max(8, Math.min(br.bottom + 6, vh - pr.height - 8))
+      panel.style.left = `${left}px`
+      panel.style.top = `${top}px`
+    }
+    place()
+    const ro = new ResizeObserver(place)
+    if (panelRef.current) ro.observe(panelRef.current)
+    window.addEventListener('resize', place)
+    return () => {
+      ro.disconnect()
+      window.removeEventListener('resize', place)
+    }
+  }, [open, align])
+
   return (
-    <div className="relative" data-pop={id}>
+    <div className={`relative ${className ?? ''}`} data-pop={id}>
       <button
+        ref={btnRef}
         type="button" title={title} aria-label={title} aria-expanded={open} onClick={() => setPop(open ? null : id)}
-        className={`flex h-8 items-center rounded-[7px] px-1 ${open ? 'bg-sunken' : 'hover:bg-sunken'}`}
+        className={`flex h-9 min-w-9 items-center justify-center rounded-[7px] px-1.5 sm:h-8 sm:min-w-0 sm:px-1 ${open ? 'bg-sunken' : 'hover:bg-sunken'}`}
       >
         {face}
       </button>
       {open && (
-        <div className={`z-50 space-y-2.5 rounded-[10px] border border-line bg-surface p-3 shadow-lift ${align === 'right' ? 'absolute right-0 top-full mt-1.5 w-max' : 'fixed mt-1'}`}>
+        <div
+          ref={panelRef}
+          className="fixed z-50 max-h-[calc(100dvh-120px)] max-w-[calc(100vw-16px)] space-y-2.5 overflow-auto rounded-[10px] border border-line bg-surface p-3 shadow-lift"
+        >
           {children}
         </div>
       )}
@@ -2289,7 +2451,7 @@ function PanelRow({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div>
       <div className="mb-1 whitespace-nowrap text-[11.5px] text-ink-3">{label}</div>
-      <div className="flex gap-1">{children}</div>
+      <div className="flex flex-wrap gap-1">{children}</div>
     </div>
   )
 }
@@ -2339,7 +2501,7 @@ function IconBtn({ label, onClick, children, disabled }: { label: string; onClic
   return (
     <button
       type="button" title={label} aria-label={label} onClick={onClick} disabled={disabled}
-      className="grid h-8 w-8 place-items-center rounded-[6px] text-ink hover:bg-sunken disabled:opacity-35 disabled:hover:bg-transparent"
+      className="grid h-9 w-9 place-items-center rounded-[6px] text-ink hover:bg-sunken disabled:opacity-35 disabled:hover:bg-transparent sm:h-8 sm:w-8"
     >
       {children}
     </button>
