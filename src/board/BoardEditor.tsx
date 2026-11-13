@@ -111,6 +111,9 @@ const TOOL_KEYS: Record<string, Tool> = {
   '4': 'ellipse', o: 'ellipse', '5': 'arrow', a: 'arrow', '6': 'line', l: 'line', '7': 'freedraw', p: 'freedraw',
   '8': 'text', t: 'text', '0': 'eraser', e: 'eraser', k: 'laser', g: 'bucket',
 }
+const IS_MAC = typeof navigator !== 'undefined' && /Mac|iPhone|iPad|iPod/i.test(navigator.platform || navigator.userAgent)
+const MOD_KEY = IS_MAC ? '⌘' : 'Ctrl'
+const SHAPE_KEYS: Partial<Record<Kind, string>> = { rectangle: 'R', diamond: 'D', ellipse: 'O', arrow: 'A', line: 'L' }
 
 const FILLS = ['transparent', '#ffc9c9', '#b2f2bb', '#a5d8ff', '#ffec99', '#fa5252', '#40c057', '#228be6', '#fab005', '#be4bdb']
 
@@ -1783,6 +1786,7 @@ export default function BoardEditor({ id }: { id: string }) {
 
   const main: Main = tool === 'freedraw' ? 'pen' : SHAPES.includes(tool as Kind) ? 'shape' : (tool as Main)
   const isHighlight = tool === 'freedraw' && o.pen === 'highlight' && !selection.length
+  const hasShape = main === 'shape' || [...kinds].some((k) => SHAPES.includes(k))
   // hàng màu gần đây riêng theo công cụ (đang chọn hình thì theo loại hình được chọn)
   const ctxTool = selection.length
     ? selection.every((e) => e.kind === 'text') ? 'text' : selection.every((e) => e.kind === 'freedraw') ? 'pen' : 'shape'
@@ -1816,19 +1820,6 @@ export default function BoardEditor({ id }: { id: string }) {
       </Pop>
     </Group>
   )
-  const widthRow = (
-    <Group label="Độ dày">
-      {widths.map((w, i) => (
-        <Chip key={w} active={cur.strokeWidth === w} onClick={() => setProp('strokeWidth', w)} title={`Nét ${WIDTH_NAMES[i]}`}>
-          {/* chấm tròn to dần theo độ dày */}
-          <span className="flex size-4 items-center justify-center">
-            {/* cỡ chẵn, nguyên px: cỡ lẻ thập phân làm chấm nhỏ bị vẽ méo thành ô vuông */}
-            <span className="rounded-full bg-current" style={{ width: DOT_SIZES[i], height: DOT_SIZES[i] }} />
-          </span>
-        </Chip>
-      ))}
-    </Group>
-  )
   const fontRow = (
     <Group label="Cỡ chữ">
       {[16, 24, 36, 56].map((s, i) => (
@@ -1838,20 +1829,59 @@ export default function BoardEditor({ id }: { id: string }) {
       ))}
     </Group>
   )
-  const strokeStyleRow = (
-    <Group label="Kiểu nét">
-      {(['solid', 'dashed', 'dotted'] as const).map((st, i) => (
-        <Chip key={st} active={cur.strokeStyle === st} onClick={() => setProp('strokeStyle', st)} title={`Nét ${['liền', 'đứt', 'chấm'][i]}`}>
-          <svg width="22" height="10" viewBox="0 0 22 10"><path d="M1 5h20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeDasharray={st === 'dashed' ? '5 4' : st === 'dotted' ? '0.5 4' : undefined} /></svg>
-        </Chip>
-      ))}
-    </Group>
-  )
-  const roughRow = (
-    <Group label="Nét vẽ">
-      <Chip active={cur.roughness === 0} onClick={() => setProp('roughness', 0)} title="Nét thẳng, gọn">Thẳng</Chip>
-      <Chip active={cur.roughness >= 1} onClick={() => setProp('roughness', 1)} title="Nét như vẽ tay">Vẽ tay</Chip>
-    </Group>
+  const strokeDash = cur.strokeStyle === 'dashed' ? '5 4' : cur.strokeStyle === 'dotted' ? '0.5 4' : undefined
+  const previewW = Math.min(7, Math.max(1, cur.strokeWidth * (isHighlight ? 0.38 : 1.2)))
+  const strokePop = (
+    <Pop id="stroke" pop={pop} setPop={setPop} title="Nét"
+      face={(
+        <span className="flex items-center gap-1.5 px-1 text-[12.5px] text-ink">
+          <svg width="28" height="12" viewBox="0 0 28 12" aria-hidden>
+            <path
+              d="M2 6h24"
+              stroke={cur.stroke}
+              strokeOpacity={isHighlight ? 0.5 : 1}
+              strokeWidth={previewW}
+              strokeLinecap="round"
+              strokeDasharray={strokeDash}
+            />
+          </svg>
+          <span className="hidden sm:inline">Nét</span>
+        </span>
+      )}>
+      <PanelRow label="Độ dày">
+        {widths.map((w, i) => (
+          <Chip key={w} active={cur.strokeWidth === w} onClick={() => setProp('strokeWidth', w)} title={`Nét ${WIDTH_NAMES[i]}`}>
+            <span className="flex h-4 w-5 items-center justify-center">
+              <span className="block w-4 rounded-full bg-current" style={{ height: [1, 1.5, 2.5, 3.5, 5, 7][i] }} />
+            </span>
+          </Chip>
+        ))}
+      </PanelRow>
+      <PanelRow label="Kiểu nét">
+        {(['solid', 'dashed', 'dotted'] as const).map((st, i) => (
+          <Chip key={st} active={cur.strokeStyle === st} onClick={() => setProp('strokeStyle', st)} title={`Nét ${['liền', 'đứt', 'chấm'][i]}`}>
+            <svg width="22" height="10" viewBox="0 0 22 10" aria-hidden>
+              <path d="M1 5h20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeDasharray={st === 'dashed' ? '5 4' : st === 'dotted' ? '0.5 4' : undefined} />
+            </svg>
+          </Chip>
+        ))}
+      </PanelRow>
+      {hasShape && (
+        <PanelRow label="Nét vẽ">
+          <Chip active={cur.roughness === 0} onClick={() => setProp('roughness', 0)} title="Nét thẳng, gọn">Thẳng</Chip>
+          <Chip active={cur.roughness >= 1} onClick={() => setProp('roughness', 1)} title="Nét như vẽ tay">Vẽ tay</Chip>
+        </PanelRow>
+      )}
+      {selection.length > 0 && !onlyText && hasText && (
+        <PanelRow label="Cỡ chữ">
+          {[16, 24, 36, 56].map((s, i) => (
+            <Chip key={s} active={cur.fontSize === s} onClick={() => setProp('fontSize', s)} title={`Chữ ${['nhỏ', 'vừa', 'lớn', 'rất lớn'][i]}`}>
+              <span className="font-semibold" style={{ fontSize: 10 + i * 3 }}>A</span>
+            </Chip>
+          ))}
+        </PanelRow>
+      )}
+    </Pop>
   )
   const fillPopBody = (
     <>
@@ -1997,7 +2027,7 @@ export default function BoardEditor({ id }: { id: string }) {
         {tool === 'select' && (
           <Group>
             <Chip active={o.selectMode === 'box'} onClick={() => setOpt('selectMode', 'box')} title="Chọn bằng khung chữ nhật"><Ico d="M4 4h16v16H4z" /></Chip>
-            <Chip active={o.selectMode === 'lasso'} onClick={() => setOpt('selectMode', 'lasso')} title="Chọn bằng khoanh tự do"><Ico d={LASSO_D} /></Chip>
+            <Chip active={o.selectMode === 'lasso'} onClick={() => setOpt('selectMode', 'lasso')} title="Chọn bằng khoanh tự do"><LassoIco /></Chip>
           </Group>
         )}
         {toolDoc && (
@@ -2008,9 +2038,8 @@ export default function BoardEditor({ id }: { id: string }) {
           </Group>
         )}
         {!onlyImage && colorRow}
-        {!toolDoc && !onlyText && !onlyImage && widthRow}
-        {!toolDoc && hasText && fontRow}
-        {!toolDoc && !onlyText && !onlyImage && strokeStyleRow}
+        {!toolDoc && !onlyText && !onlyImage && <Group>{strokePop}</Group>}
+        {!toolDoc && onlyText && fontRow}
       </>
     )
   } else if (main === 'pen') {
@@ -2043,8 +2072,7 @@ export default function BoardEditor({ id }: { id: string }) {
           </Pop>
         </Group>
         {colorRow}
-        {widthRow}
-        {strokeStyleRow}
+        <Group>{strokePop}</Group>
         <Group>
           <Toggle on={o.snap} onClick={() => setOpt('snap', !o.snap)}>Giữ bút để nắn hình</Toggle>
         </Group>
@@ -2129,7 +2157,7 @@ export default function BoardEditor({ id }: { id: string }) {
       <>
         <Group label="Cách chọn">
           <Chip active={o.selectMode === 'box'} onClick={() => setOpt('selectMode', 'box')} title="Kéo khung chữ nhật để chọn"><Ico d="M4 4h16v16H4z" /><span>Khung</span></Chip>
-          <Chip active={o.selectMode === 'lasso'} onClick={() => setOpt('selectMode', 'lasso')} title="Khoanh tự do quanh nét cần chọn"><Ico d={LASSO_D} /><span>Khoanh tự do</span></Chip>
+          <Chip active={o.selectMode === 'lasso'} onClick={() => setOpt('selectMode', 'lasso')} title="Khoanh tự do quanh nét cần chọn"><LassoIco /><span>Khoanh tự do</span></Chip>
         </Group>
       </>
     )
@@ -2138,7 +2166,7 @@ export default function BoardEditor({ id }: { id: string }) {
       <>
         <Group label="Hình">
           {o.recentShapes.map((k) => SHAPE_BY_ID[k]).filter(Boolean).map((sd) => (
-            <Chip key={sd.id} active={tool === sd.id} onClick={() => pickTool(sd.id)} title={sd.label}><Ico d={sd.icon} /></Chip>
+            <Chip key={sd.id} active={tool === sd.id} onClick={() => pickTool(sd.id)} title={sd.label} kbd={sd.kbd}><Ico d={sd.icon} /></Chip>
           ))}
           <Pop id="shapes" pop={pop} setPop={setPop} title="Tất cả hình"
             face={<span className="flex items-center gap-1 px-1 text-[12.5px] text-ink">Tất cả<svg width="9" height="9" viewBox="0 0 10 10"><path d="M2 4l3 3 3-3" fill="none" stroke="currentColor" strokeWidth="1.5" /></svg></span>}>
@@ -2147,7 +2175,7 @@ export default function BoardEditor({ id }: { id: string }) {
                 <div className="mb-1 text-[11.5px] text-ink-3">{sec.label}</div>
                 <div className="grid grid-cols-4 gap-1">
                   {sec.ids.map((k) => SHAPE_BY_ID[k]).map((sd) => (
-                    <button key={sd.id} type="button" data-tip={sd.label} aria-label={sd.label} onClick={() => { pickTool(sd.id); setPop(null) }}
+                    <button key={sd.id} type="button" data-tip={sd.label} data-tip-kbd={sd.kbd} aria-label={sd.label} onClick={() => { pickTool(sd.id); setPop(null) }}
                       className={`flex h-14 w-16 flex-col items-center justify-center gap-1 rounded-[7px] text-[11px] ${tool === sd.id ? 'bg-clay/15 text-clay' : 'text-ink hover:bg-sunken'}`}>
                       <Ico d={sd.icon} size={18} />
                       <span>{sd.short}</span>
@@ -2159,9 +2187,7 @@ export default function BoardEditor({ id }: { id: string }) {
           </Pop>
         </Group>
         {colorRow}
-        {widthRow}
-        {strokeStyleRow}
-        {roughRow}
+        <Group>{strokePop}</Group>
         {canFill && <Group>{fillPop}</Group>}
       </>
     )
@@ -2192,15 +2218,15 @@ export default function BoardEditor({ id }: { id: string }) {
     return () => window.clearTimeout(t)
   }, [hasSel])
 
-  const mainTools: { id: Main; label: string; icon: string; onClick: () => void }[] = [
-    { id: 'pen', label: 'Bút', icon: PEN_D, onClick: () => pickTool('freedraw') },
-    { id: 'eraser', label: 'Gôm', icon: ERASER_D, onClick: () => pickTool('eraser') },
-    { id: 'laser', label: 'Laser', icon: LASER_D, onClick: () => pickTool('laser') },
-    { id: 'select', label: 'Chọn', icon: o.selectMode === 'lasso' ? LASSO_D : SELECT_D, onClick: () => pickTool('select') },
-    { id: 'shape', label: 'Hình', icon: SHAPE_D, onClick: () => pickTool(o.lastShape) },
-    { id: 'bucket', label: 'Tô màu', icon: BUCKET_D, onClick: () => pickTool('bucket') },
-    { id: 'text', label: 'Chữ', icon: TEXT_D, onClick: () => pickTool('text') },
-    { id: 'hand', label: 'Kéo', icon: HAND_D, onClick: () => pickTool('hand') },
+  const mainTools: { id: Main; label: string; tip: string; kbd: string; icon: string; onClick: () => void }[] = [
+    { id: 'pen', label: 'Bút', tip: 'Bút vẽ', kbd: 'P', icon: PEN_D, onClick: () => pickTool('freedraw') },
+    { id: 'eraser', label: 'Gôm', tip: 'Gôm', kbd: 'E', icon: ERASER_D, onClick: () => pickTool('eraser') },
+    { id: 'laser', label: 'Laser', tip: 'Bút laser (chỉ trỏ, tự mờ)', kbd: 'K', icon: LASER_D, onClick: () => pickTool('laser') },
+    { id: 'select', label: 'Chọn', tip: 'Chọn', kbd: 'V', icon: o.selectMode === 'lasso' ? LASSO_D : SELECT_D, onClick: () => pickTool('select') },
+    { id: 'shape', label: 'Hình', tip: 'Hình', kbd: SHAPE_KEYS[o.lastShape] ?? 'R', icon: SHAPE_D, onClick: () => pickTool(o.lastShape) },
+    { id: 'bucket', label: 'Tô màu', tip: 'Tô màu vùng kín', kbd: 'G', icon: BUCKET_D, onClick: () => pickTool('bucket') },
+    { id: 'text', label: 'Chữ', tip: 'Chữ', kbd: 'T', icon: TEXT_D, onClick: () => pickTool('text') },
+    { id: 'hand', label: 'Kéo', tip: 'Kéo bảng', kbd: 'H', icon: HAND_D, onClick: () => pickTool('hand') },
   ]
 
   return (
@@ -2210,8 +2236,8 @@ export default function BoardEditor({ id }: { id: string }) {
         <div className="@container flex h-12 min-w-0 items-end gap-1.5 px-2 pb-1 sm:gap-2 sm:px-3">
           <div className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto [scrollbar-width:none] sm:flex-none sm:gap-2 sm:overflow-visible">
             <div className="flex shrink-0 items-center gap-0.5">
-              <IconBtn label="Hoàn tác — Ctrl Z" onClick={undo} disabled={undoStack.current.length < 2}><Ico d="M9 14L4 9l5-5M4 9h11a5 5 0 0 1 0 10h-3" /></IconBtn>
-              <IconBtn label="Làm lại — Ctrl Y" onClick={redo} disabled={!redoStack.current.length}><Ico d="M15 14l5-5-5-5m5 5H9a5 5 0 0 0 0 10h3" /></IconBtn>
+              <IconBtn label={`Hoàn tác — ${MOD_KEY}+Z`} onClick={undo} disabled={undoStack.current.length < 2}><Ico d={UNDO_D} /></IconBtn>
+              <IconBtn label={`Làm lại — ${MOD_KEY}+Y`} onClick={redo} disabled={!redoStack.current.length}><Ico d={REDO_D} /></IconBtn>
             </div>
             <span className="h-5 w-px shrink-0 bg-line" />
             <div ref={segRef} className="relative flex shrink-0 items-center gap-0.5 rounded-[10px] bg-sunken p-[3px]">
@@ -2223,10 +2249,10 @@ export default function BoardEditor({ id }: { id: string }) {
               />
               {mainTools.map((m) => (
                 <button
-                  key={m.id} type="button" data-tip={m.label} aria-label={m.label} aria-pressed={main === m.id} onClick={m.onClick}
+                  key={m.id} type="button" data-tip={m.tip} data-tip-kbd={m.kbd} aria-label={m.tip} aria-pressed={main === m.id} onClick={m.onClick}
                   className={`${m.id === 'laser' || m.id === 'hand' ? 'hidden sm:flex' : 'flex'} relative h-9 min-w-9 items-center justify-center gap-1.5 rounded-[7px] px-2 text-[13px] transition-colors duration-200 sm:h-8 sm:min-w-0 sm:px-3 ${main === m.id ? 'text-clay' : 'text-ink-2 hover:text-ink'}`}
                 >
-                  <Ico d={m.icon} size={16} />
+                  {m.id === 'laser' ? <LaserIco /> : m.id === 'select' && o.selectMode === 'lasso' ? <LassoIco /> : <Ico d={m.icon} size={16} />}
                   <span className="hidden @[1300px]:inline">{m.label}</span>
                 </button>
               ))}
@@ -2234,25 +2260,25 @@ export default function BoardEditor({ id }: { id: string }) {
           </div>
           <div className="ml-auto flex shrink-0 items-center gap-0.5">
             <Pop id="insert" pop={pop} setPop={setPop} title="Chèn" align="right" className="hidden sm:block"
-              face={<span className="flex items-center gap-1.5 px-1.5 text-[13px] text-ink"><Ico d="M12 5v14M5 12h14" size={16} />Chèn</span>}>
+              face={<span className="flex items-center gap-1.5 px-1.5 text-[13px] text-ink"><Ico d={PLUS_D} size={16} />Chèn</span>}>
               <button type="button" onClick={() => { setPop(null); fileRef.current?.click() }} className="flex w-full items-center gap-2 rounded-[6px] px-2 py-1.5 text-left text-[13px] text-ink hover:bg-sunken">
-                <Ico d="M4 5h16v14H4zM4 15l4-4 4 4 3-3 5 5M15 9h.01" size={16} />Ảnh hoặc PDF vào bảng
+                <Ico d={IMG_D} size={16} />Ảnh hoặc PDF vào bảng
               </button>
               <button type="button" onClick={() => { setPop(null); pdfRef.current?.click() }} className="flex w-full items-center gap-2 rounded-[6px] px-2 py-1.5 text-left text-[13px] text-ink hover:bg-sunken">
-                <Ico d="M6 3h9l4 4v14H6zM14 3v5h5M9 17l5-5 2 2-5 5H9z" size={16} />Mở PDF để ghi chú từng trang
+                <Ico d={PDF_NOTE_D} size={16} />Mở PDF để ghi chú từng trang
               </button>
             </Pop>
             <input ref={pdfRef} type="file" hidden accept="application/pdf,.pdf" onChange={onOpenPdfNotes} />
             <input ref={fileRef} type="file" hidden multiple accept="image/png,image/jpeg,image/webp,image/gif,application/pdf,.pdf" onChange={onPickFile} />
             <button type="button" data-tip="Xuất PNG / PDF" onClick={() => setDialog({ t: 'export' })}
               className="hidden h-8 items-center gap-1.5 rounded-[7px] px-2.5 text-[13px] text-ink hover:bg-sunken sm:flex">
-              <Ico d="M12 4v11M7 10l5 5 5-5M5 20h14" size={16} />Xuất
+              <Ico d={EXPORT_D} size={16} />Xuất
             </button>
             {busy && <span className="ml-1 text-[12px] text-ink-2">{busy}</span>}
             {saveErr && <span className="ml-1 text-[12px] text-red-600" data-tip="Bộ nhớ trình duyệt đã đầy: xoá bớt ảnh/trang PDF hoặc xuất bảng ra file để giữ lại">Chưa lưu được (đầy bộ nhớ)</span>}
             <span className="mx-1.5 hidden h-5 w-px bg-line @[1000px]:block" />
             <Pop id="paper" pop={pop} setPop={setPop} title="Kiểu giấy" align="right" className="hidden @[1000px]:block"
-              face={<span className="flex items-center gap-1.5 px-1.5 text-[13px] text-ink"><Ico d="M6 3h9l4 4v14H6zM14 3v5h5" size={16} />Giấy</span>}>
+              face={<span className="flex items-center gap-1.5 px-1.5 text-[13px] text-ink"><Ico d={PAPER_D} size={16} />Giấy</span>}>
               <div className="text-[12px] font-medium text-ink-2">Kiểu giấy</div>
               <div className="grid grid-cols-2 gap-2">
                 {PAPERS.map((pp) => {
@@ -2277,11 +2303,11 @@ export default function BoardEditor({ id }: { id: string }) {
               </div>
             </Pop>
             <div className="ml-1 hidden items-center rounded-[8px] border border-line sm:flex">
-              <IconBtn label="Thu nhỏ — Ctrl −" onClick={() => zoomAt(v.zoom / 1.2)}><Ico d="M6 12h12" /></IconBtn>
-              <button type="button" data-tip="Về 100%" data-tip-kbd="Ctrl+0" onClick={() => zoomAt(1)} className="h-8 w-12 rounded-[6px] text-center text-[12.5px] text-ink tnum hover:bg-sunken">
+              <IconBtn label={`Thu nhỏ — ${MOD_KEY}+-`} onClick={() => zoomAt(v.zoom / 1.2)}><Ico d="M6 12h12" /></IconBtn>
+              <button type="button" data-tip="Về 100%" data-tip-kbd={`${MOD_KEY}+0`} onClick={() => zoomAt(1)} className="h-8 w-12 rounded-[6px] text-center text-[12.5px] text-ink tnum hover:bg-sunken">
                 {Math.round(v.zoom * 100)}%
               </button>
-              <IconBtn label="Phóng to — Ctrl +" onClick={() => zoomAt(v.zoom * 1.2)}><Ico d="M6 12h12M12 6v12" /></IconBtn>
+              <IconBtn label={`Phóng to — ${MOD_KEY}++`} onClick={() => zoomAt(v.zoom * 1.2)}><Ico d="M6 12h12M12 6v12" /></IconBtn>
             </div>
             <span className="mx-1.5 hidden h-5 w-px bg-line @[1000px]:block" />
             <div className="hidden items-center gap-0.5 @[1000px]:flex">
@@ -2296,25 +2322,25 @@ export default function BoardEditor({ id }: { id: string }) {
                     {mainTools.filter((m) => m.id === 'laser' || m.id === 'hand').map((m) => (
                       <button key={m.id} type="button" aria-pressed={main === m.id} onClick={() => { setPop(null); m.onClick() }}
                         className={`flex h-9 items-center gap-2 rounded-[7px] border px-2 text-[13px] ${main === m.id ? 'border-clay bg-clay/10 font-medium text-clay' : 'border-line text-ink hover:bg-sunken'}`}>
-                        <Ico d={m.icon} size={16} />{m.id === 'hand' ? 'Kéo trang' : m.label}
+                        {m.id === 'laser' ? <LaserIco /> : <Ico d={m.icon} size={16} />}{m.id === 'hand' ? 'Kéo trang' : m.label}
                       </button>
                     ))}
                   </div>
                   <div className="flex items-center justify-between rounded-[8px] border border-line px-1 py-0.5">
-                    <IconBtn label="Thu nhỏ" onClick={() => zoomAt(v.zoom / 1.2)}><Ico d="M6 12h12" /></IconBtn>
-                    <button type="button" data-tip="Về 100%" onClick={() => zoomAt(1)} className="h-9 flex-1 rounded-[6px] text-center text-[12.5px] text-ink tnum hover:bg-sunken">
+                    <IconBtn label={`Thu nhỏ — ${MOD_KEY}+-`} onClick={() => zoomAt(v.zoom / 1.2)}><Ico d="M6 12h12" /></IconBtn>
+                    <button type="button" data-tip="Về 100%" data-tip-kbd={`${MOD_KEY}+0`} onClick={() => zoomAt(1)} className="h-9 flex-1 rounded-[6px] text-center text-[12.5px] text-ink tnum hover:bg-sunken">
                       {Math.round(v.zoom * 100)}%
                     </button>
-                    <IconBtn label="Phóng to" onClick={() => zoomAt(v.zoom * 1.2)}><Ico d="M6 12h12M12 6v12" /></IconBtn>
+                    <IconBtn label={`Phóng to — ${MOD_KEY}++`} onClick={() => zoomAt(v.zoom * 1.2)}><Ico d="M6 12h12M12 6v12" /></IconBtn>
                   </div>
                   <button type="button" onClick={() => { setPop(null); fileRef.current?.click() }} className="flex h-9 w-full items-center gap-2 rounded-[6px] px-2 text-left text-[13px] text-ink hover:bg-sunken">
-                    <Ico d="M4 5h16v14H4zM4 15l4-4 4 4 3-3 5 5M15 9h.01" size={16} />Chèn ảnh / PDF vào bảng
+                    <Ico d={IMG_D} size={16} />Chèn ảnh / PDF vào bảng
                   </button>
                   <button type="button" onClick={() => { setPop(null); pdfRef.current?.click() }} className="flex h-9 w-full items-center gap-2 rounded-[6px] px-2 text-left text-[13px] text-ink hover:bg-sunken">
-                    <Ico d="M6 3h9l4 4v14H6zM14 3v5h5M9 17l5-5 2 2-5 5H9z" size={16} />Mở PDF để ghi chú
+                    <Ico d={PDF_NOTE_D} size={16} />Mở PDF để ghi chú
                   </button>
                   <button type="button" onClick={() => { setPop(null); setDialog({ t: 'export' }) }} className="flex h-9 w-full items-center gap-2 rounded-[6px] px-2 text-left text-[13px] text-ink hover:bg-sunken">
-                    <Ico d="M12 4v11M7 10l5 5 5-5M5 20h14" size={16} />Xuất PNG / PDF
+                    <Ico d={EXPORT_D} size={16} />Xuất PNG / PDF
                   </button>
                   <div className="border-t border-line" />
                 </div>
@@ -2522,26 +2548,33 @@ function densify(P: Pt[]): Pt[] {
 type SideTab = 'ai' | 'tools'
 const SIDE_W = 360
 const WRENCH_D = 'M14.7 6.3a4 4 0 0 0-5.4 5.4L3.6 17.4a1.4 1.4 0 0 0 2 2l5.7-5.7a4 4 0 0 0 5.4-5.4l-2.5 2.5-2-.5-.5-2z'
-const PEN_D = 'M4 20l4-1 11-11a2.1 2.1 0 0 0-3-3L5 16zM14 7l3 3'
-const ERASER_D = 'M8 20h12M5.5 14.5l7-7a2 2 0 0 1 2.8 0l2.2 2.2a2 2 0 0 1 0 2.8L11 19H8l-2.5-2.5a1.5 1.5 0 0 1 0-2z'
-const LASER_D = 'M12 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0-4 0M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1'
-const SELECT_D = 'M5 3l14 7-6 2-2 6z'
-const LASSO_D = 'M7 17c-2.5-1-4-3-4-5.5C3 7.4 7 4 12 4s9 3.4 9 7.5S17 19 12 19c-1.2 0-2.3-.2-3.3-.5M7 17a2 2 0 1 0 1.7 1.5M8.7 18.5L9 21'
-const SHAPE_D = 'M3 3h9v9H3zM16.5 12a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9z'
-const TEXT_D = 'M5 6V4h14v2M12 4v16m-3 0h6'
+const PEN_D = 'M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4zM14 6l4 4'
+const ERASER_D = 'M4 20h16M6.5 16.5l-2-2a2 2 0 0 1 0-2.8l7.7-7.7a2 2 0 0 1 2.8 0l4 4a2 2 0 0 1 0 2.8L12 18H8zM9 8l6 6'
+const LASER_D = 'M3.5 18.5l6.5-6.5a1.4 1.4 0 0 1 2 2l-6.5 6.5a1.4 1.4 0 0 1-2-2zM13 11l3-3'
+const SELECT_D = 'M5 3l13.5 6.8-5.6 1.9 3.6 3.6-1.4 1.4-3.6-3.6-1.9 5.6z'
+const LASSO_D = 'M7 17c-2.5-1-4-3-4-5.5C3 7.4 7 4 12 4s9 3.4 9 7.5S17 19 12 19c-1.2 0-2.3-.2-3.3-.5'
+const SHAPE_D = 'M3.5 4h9.5v9.5H3.5zM15.5 10.5a5 5 0 1 1 0 10 5 5 0 0 1 0-10z'
+const TEXT_D = 'M5 6.5V4.5h14v2M12 4.5v15M9 19.5h6'
 const DOT_SIZES = [4, 6, 8, 10, 12, 14]
-const BUCKET_D = 'M11 3l8 8-7 7-8-8zM4 10h11M20 14s2 2.6 2 4a2 2 0 0 1-4 0c0-1.4 2-4 2-4z'
-const HAND_D = 'M8 11V5.5a1.5 1.5 0 0 1 3 0V10m0-1V4.5a1.5 1.5 0 0 1 3 0V10m0-.5V6a1.5 1.5 0 0 1 3 0v7a6 6 0 0 1-6 6h-1a6 6 0 0 1-4.9-2.5L3.6 13a1.5 1.5 0 0 1 2.4-1.8L8 13'
+const BUCKET_D = 'M19 11l-8-8-7.5 7.5a2 2 0 0 0 0 2.8l4.7 4.7a2 2 0 0 0 2.8 0L19 11zM5 2l5 5M2 13h15M20.5 15.5s2 2.4 2 3.8a2 2 0 1 1-4 0c0-1.4 2-3.8 2-3.8z'
+const HAND_D = 'M8.5 11.5V5.5a1.5 1.5 0 0 1 3 0V10m0-1V4.5a1.5 1.5 0 0 1 3 0V10m0-.5V6a1.5 1.5 0 0 1 3 0v7.5a5.5 5.5 0 0 1-5.5 5.5h-1a5.5 5.5 0 0 1-4.5-2.3L4.2 13a1.5 1.5 0 0 1 2.3-1.8L8.5 13'
+const UNDO_D = 'M9 14L4 9l5-5M4 9h10.5a5.5 5.5 0 0 1 0 11H11'
+const REDO_D = 'M15 14l5-5-5-5M20 9H9.5a5.5 5.5 0 0 0 0 11H13'
+const PLUS_D = 'M12 5v14M5 12h14'
+const IMG_D = 'M4 5h16v14H4zM4 15l4-4 4 4 3-3 5 5M15 9h.01'
+const PDF_NOTE_D = 'M6 3h8l4 4v14H6zM14 3v4h4M9 17l5-5 2 2-5 5H9z'
+const EXPORT_D = 'M12 4v11M7 10l5 5 5-5M4 19h16'
+const PAPER_D = 'M6 3h8l4 4v14H6zM14 3v4h4'
 
-const FOUNTAIN_D = 'M12 3l5 7-5 11-5-11zM12 3v9m0 0a1.5 1.5 0 1 0 0 .01'
+const FOUNTAIN_D = 'M12 3l5 7-3.5 10h-3L7 10zM12 3v7M12 11.5a1.2 1.2 0 1 0 0 .01'
 /** outside = hiện thẳng ở hàng 2; còn lại nằm trong bảng "Kiểu bút" */
 const PENS: { id: PenKind; label: string; icon: string; outside?: boolean }[] = [
   { id: 'ball', label: 'Bút bi', icon: PEN_D, outside: true },
-  { id: 'highlight', label: 'Dạ quang', icon: 'M4 20h7M9 16l-2 2-2-2 2-2M7 14l8-8 4 4-8 8z', outside: true },
+  { id: 'highlight', label: 'Dạ quang', icon: 'M4 20h7M14.5 4.5l5 5-8.5 8.5-4.5 1 1-4.5zM12 7l5 5', outside: true },
   { id: 'fountain', label: 'Bút máy', icon: FOUNTAIN_D },
-  { id: 'brush', label: 'Bút lông', icon: 'M7 21c-2 0-3-1-3-3 0-2.5 3-2 4-4l2-2 3 3-2 2c-2 1-1.5 4-4 4zM12 12l7-8 1 1-8 7' },
+  { id: 'brush', label: 'Bút lông', icon: 'M6.5 20.5c-2 0-2.5-1.2-2.5-2.5 0-2 2.2-2.2 3.2-3.8l2.3-2.3 2.6 2.6-2.3 2.3c-1.6 1-1.8 3.7-3.3 3.7zM11.5 11.5l7.5-7.5 1 1-7.5 7.5' },
   { id: 'pencil', label: 'Bút chì', icon: 'M4 20l1.5-4.5L16 5l3 3L8.5 18.5zM14 7l3 3M4 20l3-1' },
-  { id: 'marker', label: 'Bút dạ', icon: 'M9 15l-5 5M9 15l6-6 4 4-6 6zM15 9l2-2a2.8 2.8 0 0 1 4 4l-2 2' },
+  { id: 'marker', label: 'Bút dạ', icon: 'M9 15l-4 4M9 15l6-6 4 4-6 6zM15 9l2-2a2.8 2.8 0 0 1 4 4l-2 2' },
 ]
 
 /** bảng Kiểu bút: nét mẫu xem trước + các loại ngòi + độ nhọn / độ nhạy lực nhấn */
@@ -2597,12 +2630,12 @@ function Slider({ label, value, onChange }: { label: string; value: number; onCh
 }
 
 /** thêm hình mới: khai báo ở đây và đưa vào một mục của SHAPE_SECTIONS */
-const SHAPE_DEFS: { id: Kind; label: string; short: string; icon: string }[] = [
-  { id: 'rectangle', label: 'Hình chữ nhật — R', short: 'Chữ nhật', icon: 'M4 5h16v14H4z' },
-  { id: 'ellipse', label: 'Hình tròn / elip — O', short: 'Tròn', icon: 'M12 4a8 8 0 1 1 0 16 8 8 0 0 1 0-16z' },
-  { id: 'diamond', label: 'Hình thoi — D', short: 'Thoi', icon: 'M12 3l9 9-9 9-9-9z' },
-  { id: 'arrow', label: 'Mũi tên — A', short: 'Mũi tên', icon: 'M4 20L20 4m0 0h-8m8 0v8' },
-  { id: 'line', label: 'Đường thẳng — L', short: 'Đường', icon: 'M4 20L20 4' },
+const SHAPE_DEFS: { id: Kind; label: string; short: string; kbd: string; icon: string }[] = [
+  { id: 'rectangle', label: 'Hình chữ nhật', short: 'Chữ nhật', kbd: 'R', icon: 'M4 5.5h16v13H4z' },
+  { id: 'ellipse', label: 'Hình tròn / elip', short: 'Tròn', kbd: 'O', icon: 'M12 4.5a7.5 7.5 0 1 1 0 15 7.5 7.5 0 0 1 0-15z' },
+  { id: 'diamond', label: 'Hình thoi', short: 'Thoi', kbd: 'D', icon: 'M12 3.5l8.5 8.5-8.5 8.5L3.5 12z' },
+  { id: 'arrow', label: 'Mũi tên', short: 'Mũi tên', kbd: 'A', icon: 'M5 19L19 5m0 0h-7m7 0v7' },
+  { id: 'line', label: 'Đường thẳng', short: 'Đường', kbd: 'L', icon: 'M5 19L19 5' },
 ]
 const SHAPE_BY_ID = Object.fromEntries(SHAPE_DEFS.map((d) => [d.id, d])) as Record<Kind, (typeof SHAPE_DEFS)[number]>
 const SHAPE_SECTIONS: { label: string; ids: Kind[] }[] = [
@@ -2628,7 +2661,7 @@ const PAPERS: { id: Paper; label: string; bg?: string }[] = [
 /** "Trợ lý giấy" của app, bản nét rỗng (theo /brand/ai-static.svg) */
 function AiIcon({ size = 16 }: { size?: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth={size > 24 ? 2.6 : 4.4} strokeLinejoin="round" strokeLinecap="round" aria-hidden>
+    <svg width={size} height={size} viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth={size > 24 ? 2.6 : 6} strokeLinejoin="round" strokeLinecap="round" aria-hidden>
       <path d="M17 22.6l-6.1 2.9a6.4 6.4 0 0 0-3.1 8.5l7.4 15.9" />
       <path d="M49.7 22.6l5.6 2.6a6.4 6.4 0 0 1 3.1 8.5l-7.6 16.3" />
       <path d="M24.1 7.6h14.1l11.5 11.5v26.9a7.7 7.7 0 0 1-7.7 7.7H24.1a7.7 7.7 0 0 1-7.7-7.7V15.3a7.7 7.7 0 0 1 7.7-7.7z" />
@@ -2658,10 +2691,10 @@ function Group({ label, children }: { label?: string; children: ReactNode }) {
   )
 }
 
-function Chip({ active, onClick, children, title }: { active?: boolean; onClick: () => void; children: ReactNode; title?: string }) {
+function Chip({ active, onClick, children, title, kbd }: { active?: boolean; onClick: () => void; children: ReactNode; title?: string; kbd?: string }) {
   return (
     <button
-      type="button" data-tip={title} aria-label={title} onClick={onClick} aria-pressed={active}
+      type="button" data-tip={title} data-tip-kbd={kbd} aria-label={title} onClick={onClick} aria-pressed={active}
       className={`flex h-9 min-w-9 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-[7px] px-2.5 text-[12.5px] transition-colors sm:h-8 sm:min-w-8 sm:px-2 ${active ? 'bg-clay/10 text-clay' : 'text-ink hover:bg-sunken'}`}
     >
       {children}
@@ -2828,7 +2861,28 @@ function Swatch({ color, active, onClick, round, title, drag }: { color: string;
 
 function Ico({ d, size = 16 }: { d: string; size?: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d={d} /></svg>
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d={d} /></svg>
+  )
+}
+
+/** icon bút laser kèm chấm sáng */
+function LaserIco({ size = 16 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d={LASER_D} />
+      <circle cx="18.5" cy="5.5" r="1.5" fill="currentColor" stroke="none" />
+      <path d="M18.5 2v1M22 5.5h-1M16 3l.7.7M21 8l-.7-.7" />
+    </svg>
+  )
+}
+
+/** icon khoanh tự do: vòng nét đứt kèm con trỏ */
+function LassoIco({ size = 16 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <ellipse cx="10.5" cy="10.5" rx="7" ry="6" strokeDasharray="3 2.5" />
+      <path d="M13.5 13.5l7 3.2-2.9 1-1 2.9z" />
+    </svg>
   )
 }
 
