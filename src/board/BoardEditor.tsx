@@ -134,8 +134,8 @@ export default function BoardEditor({ id }: { id: string }) {
   const undoStack = useRef<string[]>([JSON.stringify(els.current)])
   const redoStack = useRef<string[]>([])
 
-  const [tool, setTool] = useState<Tool>('select')
-  const toolRef = useRef<Tool>('select')
+  const [tool, setTool] = useState<Tool>('freedraw')
+  const toolRef = useRef<Tool>('freedraw')
   const [editing, setEditing] = useState<{ el: El; isNew: boolean } | null>(null)
   const editingRef = useRef<typeof editing>(null)
   editingRef.current = editing
