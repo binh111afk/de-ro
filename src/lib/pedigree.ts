@@ -103,6 +103,8 @@ function deaccent(str: string): string {
     .replace(/Đ/g, 'D')
 }
 
+const MARR_RE = /^(\S+?)\s*(xx|x)\s*(\S+?)(?:\s*(?:->|→)\s*(.*))?$/i
+
 export function parsePedigree(text: string, options?: { legend?: boolean; carrierStyle?: 'half' | 'dot' }): ParseResult {
   const persons = new Map<string, PedigreePerson>()
   const marriages: PedigreeMarriage[] = []
@@ -114,6 +116,7 @@ export function parsePedigree(text: string, options?: { legend?: boolean; carrie
   let carrierStyle: 'half' | 'dot' = options?.carrierStyle ?? 'half'
 
   const lines = text.split('\n')
+  const marriageLines: Array<{ line: string; lineNum: number }> = []
 
   lines.forEach((rawLine, idx) => {
     const lineNum = idx + 1
@@ -213,8 +216,18 @@ export function parsePedigree(text: string, options?: { legend?: boolean; carrie
       }
     }
 
-    // 6. Hôn nhân & con cái: 1 x 2 [-> 5, 6, 7] hoặc 1 xx 2
-    const marrMatch = line.match(/^(\S+?)\s*(xx|x)\s*(\S+?)(?:\s*(?:->|→)\s*(.*))?$/i)
+    // 6. Hôn nhân & con cái: 1 x 2 [-> 5, 6, 7] hoặc 1 xx 2 — xử lý sau khi đọc hết khai báo người,
+    // để người (kể cả con) khai báo ở dòng sau vẫn hợp lệ
+    if (MARR_RE.test(line)) {
+      marriageLines.push({ line, lineNum })
+      return
+    }
+
+    errors.push({ line: lineNum, msg: `Cú pháp không hợp lệ: "${line}"` })
+  })
+
+  marriageLines.forEach(({ line, lineNum }) => {
+    const marrMatch = line.match(MARR_RE)
     if (marrMatch) {
       const p1 = marrMatch[1]
       const rel = marrMatch[2].toLowerCase()
@@ -286,10 +299,7 @@ export function parsePedigree(text: string, options?: { legend?: boolean; carrie
         children,
         line: lineNum,
       })
-      return
     }
-
-    errors.push({ line: lineNum, msg: `Cú pháp không hợp lệ: "${line}"` })
   })
 
   // Áp dụng các id trong lệnh "hỏi"
@@ -457,6 +467,9 @@ export function layoutPedigree(parsed: ParseResult): PedigreeLayout {
     }
   }
 
+  const hasParents = new Set<string>()
+  for (const m of marriages) for (const ch of m.children) for (const id of ch.type === 'single' ? [ch.id] : ch.ids) hasParents.add(id)
+
   // 1. Sắp xếp thứ tự các cá thể trong từng thế hệ từ trái sang phải
   const orderedGen = new Map<number, string[]>()
 
@@ -501,24 +514,37 @@ export function layoutPedigree(parsed: ParseResult): PedigreeLayout {
     }
 
     const sortedMarriages = marriages
-      .filter((m) => (genMap.get(m.parent1) ?? 0) < g && (genMap.get(m.parent2) ?? 0) < g && m.children.length > 0)
+      // chỉ cặp bố mẹ ở đúng thế hệ ngay trên (con của họ thuộc thế hệ g)
+      .filter((m) => Math.max(genMap.get(m.parent1) ?? 0, genMap.get(m.parent2) ?? 0) === g - 1 && m.children.length > 0)
       .sort((a, b) => (parentMidPos.get(a) ?? 0) - (parentMidPos.get(b) ?? 0))
 
     for (const m of sortedMarriages) {
       const sibIds: string[] = []
-      for (const ch of m.children) {
+      // người có vợ/chồng thuộc nhóm anh chị em đã xếp (bên trái) đứng đầu, thuộc nhóm chưa xếp (bên phải) đứng cuối,
+      // để đường nối vợ chồng không cắt qua người khác; cặp sinh đôi giữ nguyên khối
+      const sideOf = (ids: string[]) => {
+        const sp = ids.flatMap((id) => spouseOf.get(id) ?? []).filter((s) => (genMap.get(s) ?? 0) === g && hasParents.has(s))
+        if (sp.some((s) => placed.has(s))) return 0
+        if (sp.length) return 2
+        return 1
+      }
+      const groups = [...m.children].sort(
+        (a, b) => sideOf(a.type === 'single' ? [a.id] : a.ids) - sideOf(b.type === 'single' ? [b.id] : b.ids),
+      )
+      for (const ch of groups) {
         if (ch.type === 'single') sibIds.push(ch.id)
         else sibIds.push(ch.ids[0], ch.ids[1])
       }
 
       // Đặt con cái và vợ/chồng lấy vào
       sibIds.forEach((cid, i) => {
-        if (placed.has(cid)) return
+        if (placed.has(cid) || (genMap.get(cid) ?? 0) !== g) return
         const spouses = (spouseOf.get(cid) ?? []).filter((sid) => (genMap.get(sid) ?? 0) === g)
 
         // Nếu người này kết hôn với người ngoài (không thuộc nhóm con cái của các gia đình khác ở thế hệ này)
         // Đặt người vợ/chồng cạnh nhau
-        const outsideSpouses = spouses.filter((sid) => !placed.has(sid))
+        // chỉ người "lấy vào" (không có bố mẹ trong sơ đồ) mới đứng cạnh; người có bố mẹ đứng trong nhóm anh chị em của mình
+        const outsideSpouses = spouses.filter((sid) => !placed.has(sid) && !hasParents.has(sid))
 
         if (outsideSpouses.length > 0) {
           const sid = outsideSpouses[0]
