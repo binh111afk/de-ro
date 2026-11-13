@@ -320,10 +320,24 @@ export function measureText(text: string, fontSize: number, f?: FontOpt): { w: n
 }
 
 /** một đoạn chữ cùng kiểu: 0 thường, 1 chỉ số trên, -1 chỉ số dưới */
-export interface Run { t: string; lv: 0 | 1 | -1 }
+export interface Run { t: string; lv: 0 | 1 | -1; it?: boolean }
 /** tách chỉ số: `H_2O`, `x^2`, `3d^{6}`, `T_{1}`, `x^12`. Không có `_`/`^` thì là một đoạn thường.
- *  Viết `\_` / `\^` để giữ nguyên ký tự. */
+ *  Viết `\_` / `\^` để giữ nguyên ký tự. `\it{..}` đảo kiểu nghiêng cho đoạn trong ngoặc: `\it{T} (phút)`. */
+const IT = String.raw`\it{`
 export function textRuns(line: string): Run[] {
+  if (!line.includes(IT)) return subRuns(line)
+  const out: Run[] = []
+  let i = 0
+  for (let j; (j = line.indexOf(IT, i)) >= 0;) {
+    const end = line.indexOf('}', j + 4)
+    if (end < 0) break
+    out.push(...subRuns(line.slice(i, j)), ...subRuns(line.slice(j + 4, end)).map((r) => ({ ...r, it: true })))
+    i = end + 1
+  }
+  out.push(...subRuns(line.slice(i)))
+  return out.filter((r) => r.t)
+}
+function subRuns(line: string): Run[] {
   if (!/[_^]/.test(line)) return [{ t: line, lv: 0 }]
   const out: Run[] = []
   let buf = ''
@@ -364,11 +378,14 @@ export function lineWidth(line: string, fontSize: number, f?: FontOpt) {
   const ctx = measureCtx()
   let w = 0
   for (const r of textRuns(line)) {
-    ctx.font = fontOf(r.lv ? fontSize * SUB_SCALE : fontSize, f)
+    ctx.font = fontOf(r.lv ? fontSize * SUB_SCALE : fontSize, runFont(r, f))
     w += ctx.measureText(r.t).width
   }
   return w
 }
+
+/** kiểu chữ của một đoạn: `\it{}` đảo nghiêng so với cả khung chữ */
+export const runFont = (r: Run, f?: FontOpt): FontOpt | undefined => (r.it ? { ...f, italic: !f?.italic } : f)
 
 export const LINE_HEIGHT = 1.25
 export const FONT_FAMILY = "'Be Vietnam Pro', system-ui, 'Segoe UI', sans-serif"

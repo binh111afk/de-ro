@@ -9,7 +9,7 @@ import { getStroke } from 'perfect-freehand'
 import {
   centerOf, fontOf, handlePositions, isLinear, LINE_HEIGHT, localBounds, unionBounds,
   type Bounds, type El, type Paper, type PenKind, type Pt,
-  isClosedStroke, closedLoop, regionHoles, textRuns, lineWidth, SUB_SCALE,
+  isClosedStroke, closedLoop, regionHoles, textRuns, lineWidth, SUB_SCALE, runFont,
 } from './scene'
 
 export interface View {
@@ -292,7 +292,7 @@ export function drawElement(ctx: CanvasRenderingContext2D, rc: ReturnType<typeof
       let x = e.align && e.align !== 'left' ? (e.w - lineWidth(line, e.fontSize, e)) * (e.align === 'center' ? 0.5 : 1) : 0
       for (const r of textRuns(line)) {
         const fs = r.lv ? e.fontSize * SUB_SCALE : e.fontSize
-        ctx.font = fontOf(fs, e)
+        ctx.font = fontOf(fs, runFont(r, e))
         // chỉ số trên nâng lên, dưới hạ xuống so với dòng chữ thường
         ctx.fillText(r.t, x, y + (r.lv === 1 ? -e.fontSize * 0.12 : r.lv === -1 ? e.fontSize * 0.45 : 0))
         x += ctx.measureText(r.t).width

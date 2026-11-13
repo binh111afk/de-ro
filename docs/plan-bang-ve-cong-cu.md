@@ -59,5 +59,11 @@ struct/chemgraph/chemeq (chỉ số lồng, liên kết đôi/ba, benzen), geo3d
 
 Kết quả: cả 29 loại đều dựng được, so ảnh cạnh SVG gốc gần như trùng. Khác biệt còn lại: hộp bo góc (`rx`) thành góc vuông; miền gạch Ven là ảnh nhỏ (không tẩy/tô từng nét được); chữ trộn đứng + nghiêng trong một dòng (vd "T (phút)") hiện đứng hết. Giai đoạn 2 (giao agy theo đợt) không cần nữa.
 
+## Đã làm thêm (phiên 36, sau commit c4bfbf4)
+- Hộp bo góc (`rx`/`ry`) → line kín có cung góc.
+- Chữ trộn đứng + nghiêng trong một dòng: cú pháp `\it{..}` trong chữ của bảng (đảo nghiêng đoạn đó), `textRuns` trả `it`, `runFont`.
+- Vùng tô có mask / clip (miền gạch Ven): `regionsOf` (regionFill.ts) dò miền trên lưới bằng `isPointInFill` → mảng tô `region` có lỗ, gạch `hachure`. Không hiểu được mask thì vẫn cắt ảnh.
+- Đường lệnh AI `figure` (`figureDoc` → `renderTool` → `svgToElements`) chạy với spec mẫu của cả 29 loại: một nhóm, có ToolDoc, không còn mảnh ảnh. Chưa gọi AI thật.
+
 ## Bước kế tiếp
-Người dùng dùng thử. Có thể làm thêm: bo góc hộp, miền gạch Ven bằng phần tử gốc (tính giao các hình tròn), chữ trộn kiểu trong một dòng.
+Người dùng dùng thử trên bảng thật.

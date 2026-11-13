@@ -7,6 +7,7 @@
  * Chạy trên trình duyệt: cần DOM để lấy ma trận biến đổi, độ dài đường cong và kiểu đã tính.
  */
 import { DEFAULT_STYLE, measureText, newId, newSeed, type El, type Pt, type StrokeStyle } from './scene'
+import { regionsOf } from './regionFill'
 
 const SKIP = new Set(['defs', 'marker', 'pattern', 'clipPath', 'mask', 'desc', 'style', 'title', 'metadata'])
 /** bước lấy mẫu đường cong (đơn vị SVG) */
@@ -73,7 +74,12 @@ function convert(svg: SVGSVGElement, svgText: string, o: ImportOpts): El[] {
       const cs = getComputedStyle(g)
       if (cs.display === 'none' || cs.visibility === 'hidden') continue
       // phần tô bằng pattern / mask / clip không phải hình chữ nhật: cắt thành ảnh nhỏ
-      if (needsImage(svg, g, cs)) { const im = imagePiece(g, svgText, vx, vy, vw, vh); if (im) out.push(finishImage(im)); continue }
+      if (needsImage(svg, g, cs)) {
+        // thử dựng thành mảng tô (vùng có lỗ) bằng cách dò miền; không được mới cắt ảnh
+        const reg = maskedRegions(g, cs)
+        if (reg) { out.push(...reg); continue }
+        const im = imagePiece(g, svgText, vx, vy, vw, vh); if (im) out.push(finishImage(im)); continue
+      }
       const m = ctm(g)
       const sw = parseFloat(cs.strokeWidth) || 1
       const stroke = paint(cs.stroke)
@@ -96,7 +102,7 @@ function convert(svg: SVGSVGElement, svgText: string, o: ImportOpts): El[] {
         const x = r.x.baseVal.value, y = r.y.baseVal.value, w = r.width.baseVal.value, h = r.height.baseVal.value
         // nền trắng phủ cả hình: bỏ
         if (!stroke && fill && /^#?f{3,6}$|white|rgb\(255, 255, 255\)/i.test(fill) && w >= vw * 0.95 && h >= vh * 0.95) continue
-        poly([[x, y], [x + w, y], [x + w, y + h], [x, y + h], [x, y]].map(([a, b]) => toBoard(m, a, b)), style, null)
+        poly(roundRect(x, y, w, h, r.rx.baseVal.value, r.ry.baseVal.value).map(([a, b]) => toBoard(m, a, b)), style, null)
         continue
       }
       if (tag === 'circle' || tag === 'ellipse') {
@@ -151,6 +157,73 @@ function convert(svg: SVGSVGElement, svgText: string, o: ImportOpts): El[] {
     }
   }
 
+  /** vùng tô bằng pattern gạch, bị cắt bởi clip-path / mask gồm các hình đơn giản → mảng tô có lỗ.
+   *  null nếu gặp thứ không hiểu (để cắt ảnh như cũ) */
+  const maskedRegions = (g: SVGGraphicsElement, cs: CSSStyleDeclaration): El[] | null => {
+    const hatch = cs.fill.startsWith('url(') ? hatchOf(svg, cs.fill) : null
+    const color = hatch ?? paint(cs.fill)
+    if (!color || !(g instanceof SVGGeometryElement)) return null
+    const inv = (el: Element) => ctm(el as SVGGraphicsElement).inverse()
+    const inFill = (shape: SVGGeometryElement, mInv: DOMMatrix, x: number, y: number) => {
+      const p = new DOMPoint(x, y).matrixTransform(mInv)
+      return shape.isPointInFill(p)
+    }
+    const tests: ((x: number, y: number) => boolean)[] = []
+    const gi = inv(g)
+    tests.push((x, y) => inFill(g, gi, x, y))
+    const refOf = (e: Element, attr: string) => {
+      const id = /url\(["']?#([^"')]+)/.exec(e.getAttribute(attr) ?? '')?.[1]
+      return id ? svg.ownerDocument.getElementById(id) : null
+    }
+    for (let e: Element | null = g; e && e.tagName !== 'svg'; e = e?.parentElement ?? null) {
+      const ei = inv(e)
+      if (e.getAttribute('clip-path')) {
+        const cp = refOf(e, 'clip-path')
+        const shapes = cp ? Array.from(cp.children) : []
+        if (!shapes.length || !shapes.every((s) => s instanceof SVGGeometryElement)) return null
+        tests.push((x, y) => shapes.some((s) => inFill(s as SVGGeometryElement, ei, x, y)))
+      }
+      if (e.getAttribute('mask')) {
+        const mk = refOf(e, 'mask')
+        const shapes = mk ? Array.from(mk.children) : []
+        if (!shapes.length || !shapes.every((s) => s instanceof SVGGeometryElement)) return null
+        // màu sáng = giữ, tối = bỏ; hình sau đè hình trước
+        const lit = shapes.map((s) => /^(#f{3}|#f{6}|white)$/i.test(s.getAttribute('fill') ?? ''))
+        tests.push((x, y) => {
+          let on = false
+          shapes.forEach((s, i) => { if (inFill(s as SVGGeometryElement, ei, x, y)) on = lit[i] })
+          return on
+        })
+      }
+    }
+    // khung dò: khung bao của phần tử (toạ độ viewBox)
+    const b = g.getBBox()
+    const m = ctm(g)
+    const cs4 = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]]
+      .map(([x, y]) => new DOMPoint(x, y).matrixTransform(m))
+    const X0 = Math.min(...cs4.map((p) => p.x)), Y0 = Math.min(...cs4.map((p) => p.y))
+    const X1 = Math.max(...cs4.map((p) => p.x)), Y1 = Math.max(...cs4.map((p) => p.y))
+    const regs = regionsOf((x, y) => tests.every((t) => t(x, y)), X0, Y0, X1, Y1, Math.max(0.5, (X1 - X0) / 400))
+    if (!regs.length) return []
+    const B = (p: Pt): Pt => [o.x + (p[0] - vx) * k, o.y + (p[1] - vy) * k]
+    return regs.map(({ outer, holes }) => {
+      const rings = [outer, ...holes].map((r) => r.map(B))
+      const xs = rings[0].map((p) => p[0]), ys = rings[0].map((p) => p[1])
+      const x = Math.min(...xs), y = Math.min(...ys)
+      const points: Pt[] = []
+      const starts: number[] = []
+      rings.forEach((r, i) => {
+        if (i) starts.push(points.length)
+        points.push(...[...r, r[0]].map(([a, c]) => [a - x, c - y] as Pt))
+      })
+      return {
+        ...base(), kind: 'freedraw', x, y, w: Math.max(...xs) - x, h: Math.max(...ys) - y,
+        points, pen: 'ball', region: true, holes: starts.length ? starts : undefined,
+        stroke: 'transparent', strokeWidth: 1, fill: color, fillStyle: hatch ? 'hachure' : 'solid',
+      } as El
+    })
+  }
+
   /** vẽ một marker tại điểm p (toạ độ phần tử), hướng theo góc a */
   const placeMarker = (mk: Marker, p: Pt, a: number, atStart: boolean, sw: number, m: DOMMatrix, stroke: string | null) => {
     const rot = mk.orient === 'auto-start-reverse' && atStart ? a + Math.PI : mk.orient === 'auto' || mk.orient === 'auto-start-reverse' ? a : (parseFloat(mk.orient) || 0) * Math.PI / 180
@@ -193,12 +266,13 @@ function convert(svg: SVGSVGElement, svgText: string, o: ImportOpts): El[] {
     const fs0 = parseFloat(cs.fontSize) || 16
     const sc = scaleOf(m)
     const fontSize = fs0 * sc
-    const text = textMarkup(t, fs0)
+    const allItalic = cs.fontStyle === 'italic' || lettersItalic(t)
+    const text = textMarkup(t, fs0, !allItalic)
     if (!text.trim()) return []
     const anchor = cs.textAnchor
     const align = anchor === 'middle' ? 'center' : anchor === 'end' ? 'right' : 'left'
     const serif = /serif/i.test(cs.fontFamily) && !/sans-serif/i.test(cs.fontFamily)
-    const italic = cs.fontStyle === 'italic' || lettersItalic(t)
+    const italic = allItalic
     const font = serif ? 'serif' : undefined
     const bold = (parseInt(cs.fontWeight) || 400) >= 600
     const { w, h } = measureText(text, fontSize, { font, italic, bold })
@@ -449,6 +523,24 @@ function pathPoints(p: SVGPathElement): { pts: Pt[]; closed: boolean; straight: 
   return out
 }
 
+/** hình chữ nhật bo góc → các điểm (cung góc lấy mẫu) */
+function roundRect(x: number, y: number, w: number, h: number, rx0: number, ry0: number): Pt[] {
+  let rx = rx0 || ry0, ry = ry0 || rx0
+  rx = Math.min(rx, w / 2); ry = Math.min(ry, h / 2)
+  if (!(rx > 0 && ry > 0)) return [[x, y], [x + w, y], [x + w, y + h], [x, y + h], [x, y]]
+  const pts: Pt[] = []
+  const n = 6
+  const corner = (cx: number, cy: number, a0: number) => {
+    for (let i = 0; i <= n; i++) { const a = a0 + (i / n) * Math.PI / 2; pts.push([cx + rx * Math.cos(a), cy + ry * Math.sin(a)]) }
+  }
+  corner(x + w - rx, y + ry, -Math.PI / 2)
+  corner(x + w - rx, y + h - ry, 0)
+  corner(x + rx, y + h - ry, Math.PI / 2)
+  corner(x + rx, y + ry, Math.PI)
+  pts.push([pts[0][0], pts[0][1]])
+  return pts
+}
+
 function dedupe(pts: Pt[]): Pt[] {
   return pts.filter((p, i) => !i || Math.hypot(p[0] - pts[i - 1][0], p[1] - pts[i - 1][1]) > 1e-3)
 }
@@ -467,7 +559,7 @@ function lettersItalic(t: SVGTextElement): boolean {
 }
 
 /** nội dung chữ → cú pháp chữ của bảng: tspan cỡ nhỏ lệch lên = ^{..}, lệch xuống = _{..}; ký tự _ ^ gốc được thoát */
-function textMarkup(t: SVGTextElement, fs0: number): string {
+function textMarkup(t: SVGTextElement, fs0: number, mixed: boolean): string {
   const esc = (s: string) => s.replace(/[_^]/g, (c) => '\\' + c)
   let out = '', off = 0
   for (const n of Array.from(t.childNodes)) {
@@ -477,7 +569,9 @@ function textMarkup(t: SVGTextElement, fs0: number): string {
     off += dy
     const bs = n.getAttribute('baseline-shift')
     const fs = parseFloat(getComputedStyle(n).fontSize) || fs0
-    const s = esc(n.textContent ?? '')
+    let s = esc(n.textContent ?? '')
+    // dòng trộn đứng + nghiêng: tspan nghiêng có chữ cái → \it{..}
+    if (mixed && /\p{L}/u.test(s) && getComputedStyle(n).fontStyle === 'italic') s = String.raw`\it{` + s + '}'
     const small = fs < fs0 * 0.9
     if (bs === 'super' || (small && off < -0.5)) out += `^{${s}}`
     else if (bs === 'sub' || (small && off > 0.5)) out += `_{${s}}`

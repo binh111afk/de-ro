@@ -201,3 +201,51 @@ export function interiorArea(e: El): number {
 export function regionArea(r: Region) {
   return polyArea(r.outer) - r.holes.reduce((a, h) => a + polyArea(h), 0)
 }
+
+/** các miền (vòng ngoài + lỗ) của tập điểm thoả `inside`, lấy mẫu lưới bước `step` trong khung [x0, y0, x1, y1].
+ *  Dùng cho vùng tô của SVG cắt bằng mask / clip (miền gạch biểu đồ Ven). Toạ độ trả về cùng hệ với `inside`. */
+export function regionsOf(inside: (x: number, y: number) => boolean, x0: number, y0: number, x1: number, y1: number, step: number): Region[] {
+  // chừa 1 ô trống quanh mép để viền ngoài luôn khép
+  const w = Math.ceil((x1 - x0) / step) + 3, h = Math.ceil((y1 - y0) / step) + 3
+  if (w * h > MAX_PX) return []
+  const m = new Uint8Array(w * h)
+  for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) {
+    if (inside(x0 + (x - 0.5) * step, y0 + (y - 0.5) * step)) m[y * w + x] = 1
+  }
+  traceW = w
+  const lab = new Int32Array(w * h) // >0 số hiệu miền, <0 số hiệu ô trống (−1 = bên ngoài)
+  const q = new Int32Array(w * h)
+  const fill = (i0: number, v: number, want: number) => {
+    let head = 0, tail = 0
+    lab[i0] = v; q[tail++] = i0
+    while (head < tail) {
+      const i = q[head++]
+      const x = i % w
+      for (const j of [x > 0 ? i - 1 : -1, x < w - 1 ? i + 1 : -1, i - w, i + w]) {
+        if (j >= 0 && j < w * h && !lab[j] && m[j] === want) { lab[j] = v; q[tail++] = j }
+      }
+    }
+    return tail
+  }
+  fill(0, -1, 0)
+  const toScene = (r: Pt[]) => simplify(r, 0.6).map(([x, y]) => [x0 + (x - 0.5) * step, y0 + (y - 0.5) * step] as Pt)
+  const out: Region[] = []
+  let id = 0, hid = -1
+  for (let i = 0; i < w * h; i++) {
+    if (lab[i]) continue
+    if (m[i]) {
+      const k = ++id
+      if (fill(i, k, 1) < 6) { out.push({ outer: [], holes: [] }); continue }
+      out.push({ outer: toScene(traceOuter((x, y) => x >= 0 && y >= 0 && x < w && y < h && lab[y * w + x] === k, i)), holes: [] })
+    } else {
+      const k = --hid
+      const n = fill(i, k, 0)
+      // ô bên trái điểm đầu (theo hàng) của lỗ thuộc miền bao quanh nó
+      const owner = lab[i - 1]
+      if (n < 6 || owner <= 0) continue
+      const ring = traceOuter((x, y) => x >= 0 && y >= 0 && x < w && y < h && lab[y * w + x] === k, i)
+      if (ring.length >= 4) out[owner - 1].holes.push(toScene(ring))
+    }
+  }
+  return out.filter((r) => r.outer.length >= 4)
+}

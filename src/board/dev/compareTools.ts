@@ -23,6 +23,7 @@ export function samples(): Record<string, unknown>[] {
   add({ kind: 'grouped', groups: '[150; 155): 4\n[155; 160): 7\n[160; 165]: 5', label: 'Chiều cao (cm)', freqLabel: 'Số HS', view: 'hist', polygon: true })
   add({ kind: 'gas', axes: 'pV', states: '1: (1; 4)\n2: (4; 1)\n3: (4; 4)', processes: '1-2: đẳng nhiệt\n2-3: đẳng tích\n3-1: đẳng áp', ticks: 'symbol', showStates: true })
   add({ kind: 'foodweb', text: 'Cỏ -> Thỏ, Chuột\nThỏ, Chuột -> Cáo', direction: 'bottom-up', nodeStyle: 'box', showLevels: true })
+  out.push({ kind: 'venn', sets: 'A, B, C', shade: "(A ∪ B ∪ C)' ∪ A \\ (B ∪ C)", universe: true, counts: '' })
   const re = /\{"kind":"\w+"/g
   let m: RegExpExecArray | null
   while ((m = re.exec(FIGURE_GUIDE))) {
