@@ -42,6 +42,7 @@ const TOOL_NAME: Record<ToolDoc['kind'], string> = {
   phase: 'Đồ thị chuyển thể',
   osc: 'Đồ thị dao động',
   lens: 'Thấu kính',
+  pedigree: 'Sơ đồ phả hệ',
 }
 const PLOT_ASK = 'Vẽ hình minh hoạ cho đề này'
 const PANEL_W = 340

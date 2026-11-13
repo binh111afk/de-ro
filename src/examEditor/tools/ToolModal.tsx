@@ -31,6 +31,8 @@ import { OscModal } from './MoreToolModals'
 import type { OscSpec } from '@/lib/oscillation'
 import { LensModal } from './MoreToolModals'
 import type { LensSpec } from '@/lib/lens'
+import { PedigreeModal } from './MoreToolModals'
+import type { PedigreeSpec } from '@/lib/pedigree'
 
 export function ToolModal({
   kind,
@@ -97,5 +99,7 @@ export function ToolModal({
       return <OscModal initial={initial as OscSpec | null | undefined} {...common} />
     case 'lens':
       return <LensModal initial={initial as LensSpec | null | undefined} {...common} />
+    case 'pedigree':
+      return <PedigreeModal initial={initial as PedigreeSpec | null | undefined} {...common} />
   }
 }

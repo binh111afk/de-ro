@@ -4,7 +4,7 @@
  */
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
-import { ArrowRightLeft, Box, Search, Flame, ChartColumn, ChartSpline, ClipboardList, Grid3x3, SquarePlus, Table, Table2, TableProperties, Triangle, TriangleRight, Zap, ChartLine, Atom, Hexagon, FlaskConical, CircleDot, Network, MoveHorizontal, Circle, Thermometer, Shuffle, Sigma, Waves, Focus } from 'lucide-react'
+import { ArrowRightLeft, Box, Search, Flame, ChartColumn, ChartSpline, ClipboardList, Grid3x3, SquarePlus, Table, Table2, TableProperties, Triangle, TriangleRight, Zap, ChartLine, Atom, Hexagon, FlaskConical, CircleDot, Network, MoveHorizontal, Circle, Thermometer, Shuffle, Sigma, Waves, Focus, GitFork } from 'lucide-react'
 import type { ToolImage, ToolKind } from '@/lib/toolSpec'
 import type { ExamBlock, ExamDoc } from '@/data/docTypes'
 import { ToolModal } from './ToolModal'
@@ -54,6 +54,12 @@ const SUBJECTS: Array<{ name: string; tools: Array<{ id: ToolId; label: string; 
       { id: 'struct', label: 'Công thức cấu tạo', desc: 'Thu gọn mạch hở, nhánh, liên kết đôi / ba', Icon: Hexagon },
       { id: 'chemgraph', label: 'Đồ thị số mol', desc: 'Kết tủa / khí theo chất thêm vào', Icon: FlaskConical },
       { id: 'chemeq', label: 'Phương trình hoá học', desc: 'Chất, hệ số, mũi tên kèm điều kiện phản ứng', Icon: ArrowRightLeft },
+    ],
+  },
+  {
+    name: 'Sinh học',
+    tools: [
+      { id: 'pedigree', label: 'Sơ đồ phả hệ', desc: 'Kí hiệu SGK, tự dàn thế hệ, người mang gen', Icon: GitFork },
     ],
   },
   {

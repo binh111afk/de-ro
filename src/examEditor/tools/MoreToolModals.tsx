@@ -28,6 +28,7 @@ import { PHASE_DEFAULT, type PhaseSpec } from '@/lib/phaseChange'
 import { calcLens, fmtLensNum, LENS_DEFAULT, type LensNames, type LensRay, type LensSpec } from '@/lib/lens'
 import { Segmented } from '@/components/Segmented'
 import { Check, ToolShell, sectionTitle } from './ToolShell'
+import { PEDIGREE_SAMPLE, PEDIGREE_SAMPLE_TWINS, type PedigreeSpec } from '@/lib/pedigree'
 
 type Props<S> = { initial?: S | null; submitLabel?: string; onClose: () => void; onInsert: (img: ToolImage) => void }
 type HelpGroups = Array<{ group: string; items: Array<{ code: string; what: string }> }>
@@ -2687,6 +2688,132 @@ export function LensModal({ initial, submitLabel, onClose, onInsert }: Props<Len
           )}
         </div>
       )}
+      submitLabel={submitLabel ?? (initial ? 'Cập nhật hình' : 'Chèn hình')}
+      canSubmit={Boolean(preview) && !error}
+      onSubmit={() => preview && onInsert(preview)}
+      onClose={onClose}
+    />
+  )
+}
+
+/* ------------------------------------------------------------------ *
+ * Sinh học: Sơ đồ phả hệ
+ * ------------------------------------------------------------------ */
+
+const PEDIGREE_HELP: HelpGroups = [
+  {
+    group: 'Khai báo người (mỗi dòng một người)',
+    items: [
+      { code: '1: nam bệnh', what: 'Nam bị bệnh (tô đen)' },
+      { code: '2: nữ', what: 'Nữ bình thường (ô tròn trắng)' },
+      { code: '3: nữ mang gen', what: 'Dị hợp tử (tô nửa hoặc chấm giữa)' },
+      { code: '4: nam chết', what: 'Gạch chéo' },
+      { code: '5: ?', what: 'Chưa rõ giới tính (hình thoi)' },
+    ],
+  },
+  {
+    group: 'Vợ chồng & Con cái',
+    items: [
+      { code: '1 x 2', what: 'Kết hôn bình thường (đường nối ngang)' },
+      { code: '1 xx 2', what: 'Kết hôn cận huyết (đường nối đôi)' },
+      { code: '1 x 2 -> 5, 6, 7', what: 'Các con theo thứ tự từ trái sang phải' },
+      { code: '1 x 2 -> (8 9)', what: 'Sinh đôi cùng trứng (nhánh có gạch ngang)' },
+      { code: '1 x 2 -> [8 9]', what: 'Sinh đôi khác trứng (nhánh chéo)' },
+    ],
+  },
+  {
+    group: 'Lệnh khác',
+    items: [
+      { code: 'hỏi 10', what: 'Đánh dấu dấu "?" cạnh người cần xác định' },
+      { code: 'bệnh "mù màu"', what: 'Đặt tên bệnh hiển thị trong chú thích' },
+      { code: 'chú thích: có | không', what: 'Bật/tắt khung chú thích' },
+      { code: 'kiểu mang gen: tô nửa | chấm', what: 'Cách biểu diễn người mang gen' },
+    ],
+  },
+]
+
+export function PedigreeModal({ initial, submitLabel, onClose, onInsert }: Props<PedigreeSpec>) {
+  const [spec, setSpec] = useState<PedigreeSpec>(
+    initial ?? {
+      text: PEDIGREE_SAMPLE,
+      legend: true,
+      carrierStyle: 'half',
+    },
+  )
+  const set = (p: Partial<PedigreeSpec>) => setSpec((s) => ({ ...s, ...p }))
+  const doc = useMemo((): ToolDoc => ({ kind: 'pedigree', spec }), [spec])
+  const { preview, error } = useRender(doc)
+  const errs = [...(error ? [error] : []), ...(preview?.errors ?? []).map((e) => `Dòng ${e.line}: ${e.msg}`)]
+
+  const inputs = (
+    <>
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-[12.5px] font-medium text-ink">Mẫu phả hệ</span>
+        <div className="flex gap-1.5">
+          <button
+            type="button"
+            onClick={() => set({ text: PEDIGREE_SAMPLE })}
+            className="rounded-[5px] border border-line bg-surface px-2 py-1 text-[11.5px] text-ink-2 hover:bg-sunken hover:text-ink"
+          >
+            Mẫu 3 thế hệ
+          </button>
+          <button
+            type="button"
+            onClick={() => set({ text: PEDIGREE_SAMPLE_TWINS })}
+            className="rounded-[5px] border border-line bg-surface px-2 py-1 text-[11.5px] text-ink-2 hover:bg-sunken hover:text-ink"
+          >
+            Mẫu sinh đôi
+          </button>
+        </div>
+      </div>
+      <TextBlock
+        title="Các dòng phả hệ"
+        help={PEDIGREE_HELP}
+        intro="Mỗi dòng một khai báo: người, vợ chồng, con cái. Tự động tính thế hệ và căn chỉnh bố cục."
+        value={spec.text}
+        onChange={(text) => set({ text })}
+        rows={10}
+        errors={errs}
+        label="Các dòng phả hệ"
+      />
+      <section className="space-y-2">
+        <Check checked={spec.legend !== false} onChange={(legend) => set({ legend })}>
+          Hiện khung chú thích kí hiệu
+        </Check>
+        <div className="flex items-center gap-2 pt-1 text-[12.5px] text-ink-2">
+          <span>Kiểu mang gen:</span>
+          {(
+            [
+              ['half', 'Tô nửa'],
+              ['dot', 'Chấm giữa'],
+            ] as const
+          ).map(([val, label]) => (
+            <button
+              key={val}
+              type="button"
+              onClick={() => set({ carrierStyle: val })}
+              className={cn(
+                'rounded-[5px] border px-2 py-0.5 text-[12px] transition-colors',
+                (spec.carrierStyle ?? 'half') === val
+                  ? 'border-clay bg-clay-tint font-medium text-clay'
+                  : 'border-line text-ink-3 hover:border-ink-4',
+              )}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </section>
+    </>
+  )
+
+  return (
+    <ToolShell
+      title="Sơ đồ phả hệ"
+      hint="Kí hiệu SGK Sinh học 12, tự dàn thế hệ, kết hôn cận huyết, sinh đôi, người mang gen"
+      inputs={inputs}
+      inputsWidth={370}
+      preview={preview}
       submitLabel={submitLabel ?? (initial ? 'Cập nhật hình' : 'Chèn hình')}
       canSubmit={Boolean(preview) && !error}
       onSubmit={() => preview && onInsert(preview)}
