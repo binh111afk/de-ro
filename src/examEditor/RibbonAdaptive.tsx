@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 import { AlignCenter, AlignJustify, AlignLeft, AlignRight, ChevronDown, MoreHorizontal, Plus, X } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import { RibbonGroup } from './Layout'
@@ -623,7 +624,7 @@ export function PhoneRibbon({
       )}
 
       {/* Bottom sheet chứa toàn bộ nhóm của các tab */}
-      {sheetTab !== null && (
+      {sheetTab !== null && createPortal(
         <div className="fixed inset-0 z-50 flex flex-col justify-end">
           <div
             className="fixed inset-0 bg-black/40 backdrop-blur-xs transition-opacity"
@@ -693,8 +694,8 @@ export function PhoneRibbon({
               ))}
             </div>
           </div>
-        </div>
-      )}
+        </div>,
+      document.body)}
     </>
   )
 }
