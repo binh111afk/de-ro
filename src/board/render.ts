@@ -128,9 +128,14 @@ export function penOutline(pts: number[][], o: { pen: PenKind; width: number; sh
   // Nâng đường cong lực: chạm nhẹ đã ra nét rõ, nhấn mạnh vẫn dày hơn.
   if (o.real) pts = pts.map(([x, y, p]) => [x, y, 0.35 + 0.65 * Math.sqrt(Math.max(0, Math.min(1, p ?? 0.5)))])
   const sens = o.sens ?? 0.5, sharp = o.sharp ?? 0.5
+  // bút máy, bút lông: tự tính độ dày từng điểm thay cho giả lập lực của perfect-freehand
+  // (giả lập đó chỉ theo tốc độ, ra nét gần như đều → trông như bút bi)
+  const shaped = o.pen === 'fountain' || o.pen === 'brush'
+  if (shaped && pts.length > 2) pts = o.pen === 'fountain' ? nibPressure(pts, o.real) : brushPressure(pts, o.real, sens)
   const size = o.width * t.size
   // độ đổi dày theo lực nhấn vừa phải (Excalidraw: 0,6) — quá mạnh thì mép nét lồi lõm, trông lem
-  const thinning = o.pen === 'highlight' ? 0 : Math.max(-0.85, Math.min(0.85, t.thin * (0.4 + 1.2 * sens)))
+  // bút máy / bút lông đã tự tính độ dày mượt → cho đổi dày mạnh hơn mới ra dáng nét thanh nét đậm
+  const thinning = shaped ? (o.pen === 'fountain' ? 0.9 : 0.75 + 0.15 * sens) : o.pen === 'highlight' ? 0 : Math.max(-0.85, Math.min(0.85, t.thin * (0.4 + 1.2 * sens)))
   // vuốt nhọn không dài quá nét: nét ngắn / chấm bút không bị vuốt mất
   // (vuốt nhọn dù chỉ 0,0001px cũng làm perfect-freehand bỏ mất chấm, nên dưới 1px thì tắt hẳn)
   const tp = t.taper ? Math.min(sharp * size * t.taper, pathLength(pts) * 0.35) : 0
@@ -142,11 +147,50 @@ export function penOutline(pts: number[][], o: { pen: PenKind; width: number; sh
     smoothing: t.smooth,
     easing: easeOutSine,
     streamline: 0.5,
-    simulatePressure: !o.real && thinning > 0,
+    simulatePressure: !o.real && !shaped && thinning > 0,
     start: { cap, taper },
     end: { cap, taper },
     last: true,
   })
+}
+
+/** hướng nét tại từng điểm (rad), lấy theo đoạn dài ~6px để không rung theo từng pixel */
+function directions(pts: number[][]): number[] {
+  const n = pts.length, out: number[] = new Array(n)
+  for (let i = 0; i < n; i++) {
+    let a = i, b = i
+    while (a > 0 && Math.hypot(pts[i][0] - pts[a][0], pts[i][1] - pts[a][1]) < 3) a--
+    while (b < n - 1 && Math.hypot(pts[b][0] - pts[i][0], pts[b][1] - pts[i][1]) < 3) b++
+    out[i] = Math.atan2(pts[b][1] - pts[a][1], pts[b][0] - pts[a][0])
+  }
+  return out
+}
+/** làm mượt dãy số (trung bình trượt hai chiều) */
+function smoothArr(v: number[], k: number) {
+  let a = v.slice()
+  for (let pass = 0; pass < 2; pass++) {
+    for (let i = 1; i < a.length; i++) a[i] = a[i - 1] + (a[i] - a[i - 1]) * k
+    for (let i = a.length - 2; i >= 0; i--) a[i] = a[i + 1] + (a[i] - a[i + 1]) * k
+  }
+  return a
+}
+/** bút máy: ngòi dẹt nghiêng 45° — nét đi dọc ngòi thì mảnh, đi ngang ngòi thì đậm (nét sổ xuống đậm, nét hất lên mảnh) */
+function nibPressure(pts: number[][], real: boolean): number[][] {
+  const NIB = -Math.PI / 4
+  const dir = directions(pts)
+  const w = smoothArr(dir.map((a) => 0.04 + 0.96 * Math.abs(Math.sin(a - NIB)) ** 1.3), 0.5)
+  return pts.map(([x, y, p], i) => [x, y, real ? w[i] * (0.6 + 0.4 * (p ?? 0.5)) : w[i]])
+}
+/** bút lông: đi chậm thì loe đậm, đi nhanh thì vuốt mảnh; bút thật thì theo lực nhấn là chính */
+function brushPressure(pts: number[][], real: boolean, sens: number): number[][] {
+  if (real) return pts
+  const n = pts.length
+  const sp = new Array(n).fill(0)
+  for (let i = 1; i < n; i++) sp[i] = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1])
+  sp[0] = sp[1]
+  const s = smoothArr(sp, 0.25)
+  const k = 4 + 6 * (1 - sens)
+  return pts.map(([x, y], i) => [x, y, Math.max(0.12, Math.min(1, 1.05 - s[i] / k))])
 }
 
 /** bút chì: tô bằng mẫu hạt li ti cùng màu để ra vân chì (lưu theo màu) */
