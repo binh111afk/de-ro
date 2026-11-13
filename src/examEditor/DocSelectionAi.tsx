@@ -43,6 +43,7 @@ const TOOL_NAME: Record<ToolDoc['kind'], string> = {
   osc: 'Đồ thị dao động',
   lens: 'Thấu kính',
   pedigree: 'Sơ đồ phả hệ',
+  punnett: 'Bảng lai Punnett',
 }
 const PLOT_ASK = 'Vẽ hình minh hoạ cho đề này'
 const PANEL_W = 340

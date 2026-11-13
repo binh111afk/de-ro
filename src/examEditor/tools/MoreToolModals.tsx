@@ -4,7 +4,7 @@
  * dấu "?" chia nhóm.
  */
 import { useMemo, useRef, useState, type ReactNode } from 'react'
-import { CircleHelp, X } from 'lucide-react'
+import { CircleHelp, X, CheckCheck, Copy } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import { inputClass } from '@/components/ui'
 import { renderTool, type ToolDoc, type ToolImage } from '@/lib/toolSpec'
@@ -29,6 +29,7 @@ import { calcLens, fmtLensNum, LENS_DEFAULT, type LensNames, type LensRay, type 
 import { Segmented } from '@/components/Segmented'
 import { Check, ToolShell, sectionTitle } from './ToolShell'
 import { PEDIGREE_SAMPLE, PEDIGREE_SAMPLE_TWINS, type PedigreeSpec } from '@/lib/pedigree'
+import { PUNNETT_DEFAULT, exportPunnettToText, parsePunnettCross, type GeneTrait, type PunnettSpec } from '@/lib/punnett'
 
 type Props<S> = { initial?: S | null; submitLabel?: string; onClose: () => void; onInsert: (img: ToolImage) => void }
 type HelpGroups = Array<{ group: string; items: Array<{ code: string; what: string }> }>
@@ -2816,6 +2817,268 @@ export function PedigreeModal({ initial, submitLabel, onClose, onInsert }: Props
       preview={preview}
       submitLabel={submitLabel ?? (initial ? 'Cập nhật hình' : 'Chèn hình')}
       canSubmit={Boolean(preview) && !error}
+      onSubmit={() => preview && onInsert(preview)}
+      onClose={onClose}
+    />
+  )
+}
+
+/* ------------------------------------------------------------------ *
+ * Sinh học: Bảng lai Punnett
+ * ------------------------------------------------------------------ */
+
+const PUNNETT_PRESETS: Array<{ label: string; cross: string }> = [
+  { label: 'Aa × Aa', cross: 'Aa x Aa' },
+  { label: 'AaBb × AaBb', cross: 'AaBb x AaBb' },
+  { label: 'AaBb × Aabb', cross: 'AaBb x Aabb' },
+  { label: 'XᴬXᵃ × XᵃY', cross: 'XAXa x XaY' },
+  { label: 'AaBbDd × AaBbDd', cross: 'AaBbDd x AaBbDd' },
+]
+
+export function PunnettModal({ initial, submitLabel, onClose, onInsert }: Props<PunnettSpec>) {
+  const [spec, setSpec] = useState<PunnettSpec>(() => ({ ...PUNNETT_DEFAULT, ...(initial ?? {}) }))
+  const set = (p: Partial<PunnettSpec>) => setSpec((s) => ({ ...s, ...p }))
+  const [copied, setCopied] = useState(false)
+
+  const doc = useMemo((): ToolDoc => ({ kind: 'punnett', spec }), [spec])
+  const { preview, error } = useRender(doc)
+
+  const parseResult = useMemo(() => {
+    try {
+      return { data: parsePunnettCross(spec), error: null }
+    } catch (e) {
+      return { data: null, error: e instanceof Error ? e.message : String(e) }
+    }
+  }, [spec])
+
+  const pill = (on: boolean) =>
+    cn(
+      'rounded-[6px] border px-2.5 py-1 text-[12px] transition-colors',
+      on ? 'border-clay bg-clay-tint font-medium text-clay' : 'border-line text-ink-2 hover:border-ink-4',
+    )
+
+  const updateTrait = (gene: string, patch: Partial<GeneTrait>) => {
+    const oldTraits = spec.traits ?? []
+    const existingIdx = oldTraits.findIndex((t) => t.gene.toUpperCase() === gene.toUpperCase())
+    let nextTraits: GeneTrait[]
+    if (existingIdx >= 0) {
+      nextTraits = oldTraits.map((t, i) => (i === existingIdx ? { ...t, ...patch } : t))
+    } else {
+      nextTraits = [...oldTraits, { gene, ...patch }]
+    }
+    set({ traits: nextTraits })
+  }
+
+  const handleCopyText = async () => {
+    try {
+      const text = exportPunnettToText(spec)
+      await navigator.clipboard.writeText(text)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch {
+      /* bỏ qua */
+    }
+  }
+
+  const detectedGenes = parseResult.data?.genes ?? []
+
+  const inputs = (
+    <>
+      <section>
+        <div className="mb-1 flex items-center justify-between">
+          <label className={sectionTitle}>Phép lai (P)</label>
+          <div className="flex gap-1">
+            <button
+              type="button"
+              onClick={handleCopyText}
+              title="Sao chép toàn bộ kết quả dạng văn bản"
+              className="inline-flex items-center gap-1 rounded-[6px] border border-line bg-surface px-2 py-0.5 text-[11.5px] text-ink-2 hover:border-ink-4 hover:text-ink"
+            >
+              {copied ? <CheckCheck className="size-3 text-emerald-600" /> : <Copy className="size-3" />}
+              {copied ? 'Đã chép' : 'Chép text'}
+            </button>
+          </div>
+        </div>
+        <input
+          type="text"
+          value={spec.cross}
+          onChange={(e) => set({ cross: e.target.value })}
+          placeholder="vd. AaBb × Aabb hoặc XAXa × XaY"
+          className={cn(inputClass, 'font-serif text-[14px] font-medium')}
+        />
+        {parseResult.error && (
+          <p className="mt-1.5 rounded-[6px] border border-rose-200 bg-rose-50 px-2.5 py-1.5 text-[12px] text-rose-700">
+            {parseResult.error}
+          </p>
+        )}
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {PUNNETT_PRESETS.map((p) => (
+            <button
+              key={p.label}
+              type="button"
+              onClick={() => set({ cross: p.cross })}
+              className={cn(
+                'rounded-[6px] border px-2 py-0.5 text-[11.5px] transition-colors',
+                spec.cross.trim() === p.cross ? 'border-clay bg-clay-tint font-medium text-clay' : 'border-line bg-white text-ink-2 hover:border-ink-4',
+              )}
+            >
+              {p.label}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <h3 className={sectionTitle}>Hiển thị các phần</h3>
+        <div className="grid grid-cols-2 gap-2">
+          <Check checked={spec.showGametes ?? true} onChange={(showGametes) => set({ showGametes })}>
+            Giao tử (GP)
+          </Check>
+          <Check checked={spec.showGrid ?? true} onChange={(showGrid) => set({ showGrid })}>
+            Khung Punnett
+          </Check>
+          <Check checked={spec.showGenotypeRatio ?? true} onChange={(showGenotypeRatio) => set({ showGenotypeRatio })}>
+            Tỉ lệ kiểu gen
+          </Check>
+          <Check checked={spec.showPhenotypeRatio ?? true} onChange={(showPhenotypeRatio) => set({ showPhenotypeRatio })}>
+            Tỉ lệ kiểu hình
+          </Check>
+        </div>
+      </section>
+
+      <section>
+        <h3 className={sectionTitle}>Tuỳ chọn khung</h3>
+        <div className="flex flex-col gap-2">
+          <Check checked={spec.blankGrid ?? false} onChange={(blankGrid) => set({ blankGrid })}>
+            Để trống cho học sinh điền
+          </Check>
+          <Check checked={spec.colorByPhenotype ?? true} onChange={(colorByPhenotype) => set({ colorByPhenotype })}>
+            Tô màu ô theo kiểu hình
+          </Check>
+        </div>
+      </section>
+
+      {detectedGenes.length > 0 && (
+        <section>
+          <h3 className={sectionTitle}>Kiểu hình & Trội lặn từng gen</h3>
+          <div className="flex flex-col gap-3">
+            {detectedGenes.map((g) => {
+              const trait = spec.traits?.find((t) => t.gene.toUpperCase() === g.toUpperCase())
+              const dom = trait?.dominance ?? 'complete'
+              const phenos = trait?.phenotypes ?? ['', '']
+              const isNonComplete = dom === 'incomplete' || dom === 'codominant'
+
+              return (
+                <div key={g} className="rounded-[8px] border border-line bg-surface p-2.5">
+                  <div className="mb-2 flex items-center justify-between">
+                    <span className="font-serif text-[13px] font-bold text-ink">Gen {g}</span>
+                    <div className="flex gap-1">
+                      <button
+                        type="button"
+                        onClick={() => updateTrait(g, { dominance: 'complete' })}
+                        className={pill(dom === 'complete')}
+                      >
+                        Trội hoàn toàn
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => updateTrait(g, { dominance: 'incomplete' })}
+                        className={pill(dom === 'incomplete')}
+                      >
+                        Trội không HT
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => updateTrait(g, { dominance: 'codominant' })}
+                        className={pill(dom === 'codominant')}
+                      >
+                        Đồng trội
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 text-[12px]">
+                    <div>
+                      <span className="mb-0.5 block text-ink-3">Kiểu hình trội</span>
+                      <input
+                        type="text"
+                        value={phenos[0] || ''}
+                        onChange={(e) => {
+                          const next: [string, string, string] | [string, string] = isNonComplete
+                            ? [e.target.value, phenos[1] || '', phenos[2] || '']
+                            : [e.target.value, phenos[1] || '']
+                          updateTrait(g, { phenotypes: next })
+                        }}
+                        placeholder="vd. Hạt vàng, Hoa đỏ"
+                        className={cn(inputClass, 'text-[12px]')}
+                      />
+                    </div>
+                    <div>
+                      <span className="mb-0.5 block text-ink-3">Kiểu hình lặn</span>
+                      <input
+                        type="text"
+                        value={isNonComplete ? phenos[2] || '' : phenos[1] || ''}
+                        onChange={(e) => {
+                          const next: [string, string, string] | [string, string] = isNonComplete
+                            ? [phenos[0] || '', phenos[1] || '', e.target.value]
+                            : [phenos[0] || '', e.target.value]
+                          updateTrait(g, { phenotypes: next })
+                        }}
+                        placeholder="vd. Hạt xanh, Hoa trắng"
+                        className={cn(inputClass, 'text-[12px]')}
+                      />
+                    </div>
+                  </div>
+
+                  {isNonComplete && (
+                    <div className="mt-2 text-[12px]">
+                      <span className="mb-0.5 block text-ink-3">
+                        {dom === 'incomplete' ? 'Kiểu hình trung gian' : 'Kiểu hình đồng trội'}
+                      </span>
+                      <input
+                        type="text"
+                        value={phenos[1] || ''}
+                        onChange={(e) => {
+                          const next: [string, string, string] = [phenos[0] || '', e.target.value, phenos[2] || '']
+                          updateTrait(g, { phenotypes: next })
+                        }}
+                        placeholder="vd. Hoa hồng, Nhóm máu AB"
+                        className={cn(inputClass, 'text-[12px]')}
+                      />
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        </section>
+      )}
+
+      <section>
+        <h3 className={sectionTitle}>Cỡ chữ: {spec.fontSize ?? 14}px</h3>
+        <input
+          type="range"
+          min={12}
+          max={18}
+          step={1}
+          value={spec.fontSize ?? 14}
+          onChange={(e) => set({ fontSize: Number(e.target.value) })}
+          aria-label="Cỡ chữ bảng Punnett"
+          className="w-full accent-clay"
+        />
+      </section>
+    </>
+  )
+
+  return (
+    <ToolShell
+      title="Bảng lai Punnett"
+      hint="Nhập phép lai (vd: AaBb × Aabb, XAXa × XaY); app tự liệt kê giao tử, kẻ khung và đếm tỉ lệ kiểu gen, kiểu hình"
+      inputs={inputs}
+      inputsWidth={390}
+      preview={preview}
+      submitLabel={submitLabel ?? (initial ? 'Cập nhật bảng lai' : 'Chèn bảng lai')}
+      canSubmit={Boolean(preview) && !error && !parseResult.error}
       onSubmit={() => preview && onInsert(preview)}
       onClose={onClose}
     />

@@ -22,6 +22,7 @@ import { renderPhaseSvg, type PhaseSpec } from './phaseChange'
 import { renderOscSvg, type OscSpec } from './oscillation'
 import { renderLensSvg, type LensSpec } from './lens'
 import { renderPedigreeSvg, type PedigreeSpec } from './pedigree'
+import { renderPunnettSvg, type PunnettSpec } from './punnett'
 
 export type ToolDoc =
   | { kind: 'graph'; spec: PlotSpec }
@@ -50,6 +51,7 @@ export type ToolDoc =
   | { kind: 'osc'; spec: OscSpec }
   | { kind: 'lens'; spec: LensSpec }
   | { kind: 'pedigree'; spec: PedigreeSpec }
+  | { kind: 'punnett'; spec: PunnettSpec }
 
 export type ToolKind = ToolDoc['kind']
 
@@ -166,6 +168,8 @@ function renderToolRaw(doc: ToolDoc): ToolImage {
       return renderLensSvg(doc.spec, toolDesc(doc))
     case 'pedigree':
       return renderPedigreeSvg(doc.spec, toolDesc(doc))
+    case 'punnett':
+      return renderPunnettSvg(doc.spec, toolDesc(doc))
   }
 }
 

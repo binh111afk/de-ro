@@ -33,6 +33,8 @@ import { LensModal } from './MoreToolModals'
 import type { LensSpec } from '@/lib/lens'
 import { PedigreeModal } from './MoreToolModals'
 import type { PedigreeSpec } from '@/lib/pedigree'
+import { PunnettModal } from './MoreToolModals'
+import type { PunnettSpec } from '@/lib/punnett'
 
 export function ToolModal({
   kind,
@@ -101,5 +103,7 @@ export function ToolModal({
       return <LensModal initial={initial as LensSpec | null | undefined} {...common} />
     case 'pedigree':
       return <PedigreeModal initial={initial as PedigreeSpec | null | undefined} {...common} />
+    case 'punnett':
+      return <PunnettModal initial={initial as PunnettSpec | null | undefined} {...common} />
   }
 }

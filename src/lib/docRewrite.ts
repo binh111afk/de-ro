@@ -153,6 +153,7 @@ export const FIGURE_GUIDE =
   '21) Đồ thị dao động điều hoà (Vật lí 11): {"kind":"osc","qty":"x|v|a","A":8,"period":{"by":"T|f|omega","value":2},"start":{"by":"state","x0":"0|A|-A|A/2|-A/2|A√2/2|-A√2/2|A√3/2|-A√3/2","dir":"up|down"},"tEnd":2.5,"grid":"T/8|T/4|none","ticks":"value|symbol"}. Hoặc start theo pha: {"by":"phi","phiPi":0.5} (đơn vị π). Thêm "second":{"qty":"v","dashed":true} để vẽ đường thứ hai so pha. Dùng cho dao động điều hoà hình sin.\n' +
   '22) Thấu kính mỏng (Vật lí 11 — tạo ảnh qua thấu kính hội tụ / phân kì): {"kind":"lens","type":"converging|diverging","f":10,"d":30,"h":2,"rays":["parallel","center","focal"],"show2F":false,"showValues":false,"hideImage":false}. f > 0, d > 0 (cm).\n' +
   '22) Sơ đồ phả hệ (Sinh học 12): {"kind":"pedigree","text":"1: nam bt\\n2: nữ bệnh\\n1 x 2 -> 3, 4\\n3: nam bt\\n4: nữ mang gen\\nhỏi 4"}. Khai báo người "id: nam|nữ|? bt|bệnh|mang gen|chết"; vợ chồng "1 x 2" (cận huyết "1 xx 2"); con "1 x 2 -> 3, 4" (sinh đôi cùng trứng "(5 6)", khác trứng "[7 8]"); "hỏi 10" đánh dấu người hỏi; đặt tên bệnh: bệnh "mù màu".\n' +
+  '22) Bảng lai Punnett (Sinh học 9 & 12): {"kind":"punnett","cross":"AaBb x Aabb"}. Tối đa 3 cặp gen phân li độc lập (khung tối đa 8x8), hỗ trợ gen liên kết giới tính (XAXa x XaY), trội không hoàn toàn, tên kiểu hình, để trống (blankGrid: true).\n' +
 
   'Biểu thức dùng biến x, ^ cho luỹ thừa, sqrt(), ln, sin, cos; nhân ngầm được (2x).'
 
@@ -478,6 +479,22 @@ export function toolFromRaw(raw: Record<string, unknown>): ToolDoc {
       }
       break
 
+    case 'punnett':
+      doc = {
+        kind: 'punnett',
+        spec: {
+          cross: need('cross', 'Chưa có phép lai P.'),
+          showGametes: bool('showGametes', true),
+          showGrid: bool('showGrid', true),
+          showGenotypeRatio: bool('showGenotypeRatio', true),
+          showPhenotypeRatio: bool('showPhenotypeRatio', true),
+          blankGrid: bool('blankGrid', false),
+          colorByPhenotype: bool('colorByPhenotype', true),
+          fontSize: Math.min(18, Math.max(12, Math.round(num(raw.fontSize, 14)))),
+        },
+      }
+      break
+
     default:
       throw new Error(note || 'Không thấy gì để vẽ minh hoạ trong đoạn đã chọn.')
   }
@@ -488,4 +505,4 @@ export function toolFromRaw(raw: Record<string, unknown>): ToolDoc {
 
 /** câu yêu cầu tự gõ có phải là "vẽ đồ thị" không */
 export const wantsPlot = (ask: string) =>
-  /(vẽ|ve|minh hoạ|minh họa).*(đồ thị|hình|bảng xét dấu|biểu đồ|mạch|hệ trục|miền nghiệm)|(đồ thị|bảng xét dấu|biểu đồ|mạch điện).*(vẽ|minh hoạ|minh họa)/i.test(ask)
+  /(vẽ|ve|minh hoạ|minh họa).*(đồ thị|hình|bảng xét dấu|biểu đồ|mạch|hệ trục|miền nghiệm|bảng lai|punnett)|(đồ thị|bảng xét dấu|biểu đồ|mạch điện|bảng lai|punnett).*(vẽ|minh hoạ|minh họa)/i.test(ask)
