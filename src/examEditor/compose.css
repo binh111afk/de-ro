@@ -583,6 +583,7 @@
     box-shadow: var(--shadow-menu);
     padding: 6px;
     min-width: 148px;
+    max-width: calc(100vw - 16px);
   }
 
   .rb-color-grid {
@@ -3003,6 +3004,7 @@
     border-radius: 6px;
     box-shadow: var(--shadow-menu);
     padding: 8px;
+    max-width: calc(100vw - 16px);
   }
 
   .rb-table-picker {
@@ -3078,6 +3080,9 @@
 
   .rb-modal {
     width: 420px;
+    max-width: calc(100vw - 16px);
+    max-height: calc(100dvh - 32px);
+    overflow-y: auto;
     background: var(--surface);
     border-radius: 8px;
     box-shadow: var(--shadow-modal-strong);
@@ -3970,7 +3975,7 @@
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 639px) {
   .ai-dock:not(.collapsed) {
     width: 100vw;
   }
@@ -4087,7 +4092,7 @@ div[data-exam-node='examQuestionPrompt'] > .exam-image:has(+ .ProseMirror-separa
 /* ------------------------------------------------------------------ *
  * Chế độ dàn trang theo màn hình trên mobile (is-reflow)
  * ------------------------------------------------------------------ */
-@media (max-width: 767px) {
+@media (max-width: 639px) {
   .is-reflow .compose-center {
     background: #fff;
   }
@@ -4204,11 +4209,11 @@ div[data-exam-node='examQuestionPrompt'] > .exam-image:has(+ .ProseMirror-separa
 }
 
 /* ------------------------------------------------------------------ *
- * Ribbon gọn trên điện thoại (< 768px)
+ * Ribbon gọn trên điện thoại (< 640px)
  * ------------------------------------------------------------------ */
-@media (max-width: 767px) {
+@media (max-width: 639px) {
   .ribbon {
-    max-height: 25vh;
+    max-height: none;
   }
   .ribbon-tabs {
     overflow-x: auto;
@@ -4358,7 +4363,7 @@ div[data-exam-node='examQuestionPrompt'] > .exam-image:has(+ .ProseMirror-separa
 /* ------------------------------------------------------------------ *
  * AI Dock & nút nổi trên mobile (< 768px)
  * ------------------------------------------------------------------ */
-@media (max-width: 767px) {
+@media (max-width: 639px) {
   .ai-dock:not(.collapsed) {
     width: 100vw !important;
     width: 100dvw !important;
@@ -4439,27 +4444,73 @@ div[data-exam-node='examQuestionPrompt'] > .exam-image:has(+ .ProseMirror-separa
   display: none !important;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 639px) {
   .mobile-only-inline {
     display: inline-flex !important;
   }
 
-  /* TabStrip mobile: cuon ngang muot ma, khong bop meo chu */
+  /* TabStrip phone (< 640px): không tràn, tab dài cắt chữ "…", nút đóng / tạo mới luôn thấy */
   .tab-strip {
     flex-wrap: nowrap !important;
     overflow-x: auto !important;
     -webkit-overflow-scrolling: touch !important;
     scrollbar-width: none !important;
-    padding: 0 6px !important;
+    padding: 0 4px !important;
+  }
+  .tab-back-btn,
+  .tab-new-btn {
+    min-width: 36px !important;
+    min-height: 36px !important;
+    width: 36px !important;
+    height: 36px !important;
+    margin: 3px 2px !important;
   }
   .tab-item {
-    flex: 0 0 auto !important;
-    min-width: 110px !important;
-    max-width: 180px !important;
+    flex: 1 1 0 !important;
+    min-width: 84px !important;
+    max-width: 220px !important;
+    padding: 0 4px 6px 8px !important;
+    gap: 5px !important;
   }
   .tab-item--start {
-    min-width: auto !important;
-    padding: 0 8px 6px 8px !important;
+    flex: 0 0 auto !important;
+    min-width: 40px !important;
+    padding: 0 8px 6px !important;
+  }
+  .tab-item--start .tab-item__title {
+    display: none !important;
+  }
+  .tab-item__close {
+    opacity: 1 !important;
+    min-width: 36px !important;
+    min-height: 36px !important;
+    width: 36px !important;
+    height: 36px !important;
+    margin-right: -4px !important;
+  }
+  .new-doc-menu {
+    position: sticky !important;
+    right: 0 !important;
+    z-index: 2 !important;
+    background: var(--tabstrip-bg) !important;
+    flex-shrink: 0 !important;
+  }
+  .file-menu__btn {
+    min-height: 36px !important;
+    padding: 0 12px !important;
+  }
+  .compose-app:not(.is-reflow) .compose-scroll {
+    padding: 12px 10px 80px !important;
+  }
+  .rb-modal__close,
+  .rb-modal__btn {
+    min-width: 36px !important;
+    min-height: 36px !important;
+  }
+  .mobile-view-toggle-btn {
+    min-height: 36px !important;
+    padding: 0 10px !important;
+    font-size: 12px !important;
   }
 
   /* FindPanel mobile */
@@ -4502,11 +4553,192 @@ div[data-exam-node='examQuestionPrompt'] > .exam-image:has(+ .ProseMirror-separa
 
   /* Status bar mobile */
   .status-bar {
-    height: calc(30px + env(safe-area-inset-bottom, 0px)) !important;
-    padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+    height: auto !important;
+    min-height: calc(40px + env(safe-area-inset-bottom, 0px)) !important;
+    padding-top: 2px !important;
+    padding-bottom: calc(2px + env(safe-area-inset-bottom, 0px)) !important;
     padding-left: calc(10px + env(safe-area-inset-left, 0px)) !important;
     padding-right: calc(10px + env(safe-area-inset-right, 0px)) !important;
   }
+}
+
+/* ------------------------------------------------------------------ *
+ * Tablet Ribbon (640–1023px) & Phone Ribbon (< 640px)
+ * ------------------------------------------------------------------ */
+.ribbon-body--tablet {
+  overflow: hidden !important;
+}
+
+.rb-collapsed-group {
+  min-width: 68px;
+}
+
+.ribbon-group-pop {
+  z-index: 70;
+  position: fixed;
+  max-width: calc(100vw - 16px);
+  max-height: 75dvh;
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: var(--shadow-menu);
+  padding: 10px 12px;
+}
+
+.ribbon-group-pop__title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.ribbon-group-pop__body {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+
+.ribbon-group-pop--multi {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 260px;
+}
+
+.ribbon-group-pop__section {
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+}
+
+.ribbon-group-pop__section:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.ribbon-phone-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.ribbon-phone-bar__left,
+.ribbon-phone-bar__right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ribbon-phone-quick {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2px;
+  padding: 4px 8px;
+  background: var(--chrome-bg);
+}
+
+.ribbon-phone-btn {
+  min-width: 36px;
+  height: 36px;
+  border: none;
+  background: none;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 0 6px;
+}
+
+.ribbon-phone-btn:hover:not(:disabled) {
+  background: var(--hover);
+}
+
+.ribbon-phone-btn.active {
+  background: var(--active-bg);
+  color: var(--word-blue);
+}
+
+.ribbon-phone-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.ribbon-phone-btn--pill {
+  font-size: 12.5px;
+  padding: 0 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.ribbon-phone-menu-item {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  font-size: 13px;
+}
+
+.ribbon-phone-sheet-group {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px;
+  background: var(--color-paper, #fafafa);
+}
+
+.ribbon-phone-sheet-group__title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+  margin: 0 0 8px;
+}
+
+.ribbon-phone-sheet-group__items {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.ribbon-phone-sheet-group__items .rb-big,
+.ribbon-phone-sheet-group__items .rb-icon,
+.ribbon-phone-sheet-group__items .rb-toggle,
+.ribbon-phone-sheet-group__items .rb-mini-btn {
+  min-width: 36px !important;
+  min-height: 36px !important;
+}
+
+.ribbon-phone-sheet-group__items .rb-big {
+  flex-direction: row !important;
+  padding: 6px 10px !important;
+  height: auto !important;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.ribbon-phone-sheet-group__items .rb-big .rb-big-label {
+  display: inline !important;
+}
+
+.ribbon-phone-sheet-group__items .rb-row,
+.ribbon-phone-sheet-group__items .rb-col,
+.ribbon-phone-sheet-group__items .rb-font-group,
+.ribbon-phone-sheet-group__items .rb-styles {
+  flex-wrap: wrap !important;
+  height: auto !important;
 }
 
 /* tab Bắt đầu: máy chủ từ chối đồng bộ vì vượt dung lượng */

@@ -24,7 +24,7 @@ export function TablePicker({ editor, disabled }: { editor: Editor | null; disab
   const [open, setOpen] = useState(false)
   const [hover, setHover] = useState<{ r: number; c: number } | null>(null)
   const ref = useRef<HTMLDivElement>(null)
-  const { triggerRef, pos } = useAnchoredPopover(open)
+  const { triggerRef, pos } = useAnchoredPopover(open, 228)
   const MAX_R = 8
   const MAX_C = 10
 

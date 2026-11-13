@@ -63,7 +63,9 @@ export function Dropdown<K extends string>({
     if (!open) return
     const rect = triggerRef.current?.getBoundingClientRect()
     if (!rect) return
-    setPopPos({ top: rect.bottom + 2, left: rect.left, width: rect.width })
+    const menuW = Math.min(Math.max(rect.width, 120), window.innerWidth - 16)
+    const left = Math.max(8, Math.min(rect.left, window.innerWidth - menuW - 8))
+    setPopPos({ top: Math.min(rect.bottom + 2, window.innerHeight - 160), left, width: rect.width })
   }, [open])
 
   // giữ vị trí đúng khi cuộn/resize
@@ -71,7 +73,10 @@ export function Dropdown<K extends string>({
     if (!open) return
     const sync = () => {
       const rect = triggerRef.current?.getBoundingClientRect()
-      if (rect) setPopPos({ top: rect.bottom + 2, left: rect.left, width: rect.width })
+      if (!rect) return
+      const menuW = Math.min(Math.max(rect.width, 120), window.innerWidth - 16)
+      const left = Math.max(8, Math.min(rect.left, window.innerWidth - menuW - 8))
+      setPopPos({ top: Math.min(rect.bottom + 2, window.innerHeight - 160), left, width: rect.width })
     }
     window.addEventListener('scroll', sync, true)
     window.addEventListener('resize', sync)

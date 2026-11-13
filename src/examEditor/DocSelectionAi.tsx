@@ -318,7 +318,7 @@ export function DocSelectionAi({
               </div>
               <img src={svgDataUrl(plotImg.svg)} alt="Xem trước hình" onLoad={() => place(range)} className="mx-auto block max-h-[260px] max-w-full rounded-md border border-line bg-white" />
               {plan.note && <p className="mt-1.5 text-[12px] leading-snug text-ink-3">{plan.note}</p>}
-              <div className="mt-2 flex items-center gap-1.5">
+              <div className="mt-2 flex flex-wrap items-center gap-1.5">
                 <button
                   type="button"
                   onClick={() => {
@@ -374,7 +374,7 @@ export function DocSelectionAi({
                   {error}
                 </div>
               )}
-              <div className="mt-2 flex items-center gap-1.5">
+              <div className="mt-2 flex flex-wrap items-center gap-1.5">
                 <button
                   type="button"
                   onClick={replace}
