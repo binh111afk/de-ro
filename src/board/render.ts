@@ -9,6 +9,7 @@ import { getStroke } from 'perfect-freehand'
 import {
   centerOf, fontOf, handlePositions, isLinear, LINE_HEIGHT, localBounds, unionBounds,
   type Bounds, type El, type Paper, type PenKind, type Pt,
+  isClosedStroke, closedLoop,
 } from './scene'
 
 export interface View {
@@ -188,13 +189,25 @@ function rgba(hex: string, a: number): string {
 }
 
 /** nền kính: lớp màu trong suốt + vệt sáng chéo từ góc trên trái + viền sáng mảnh phía trong */
-function drawGlass(ctx: CanvasRenderingContext2D, e: El) {
+/** vùng tô được của hình (toạ độ trong hình, trước khi xoay); null nếu hình không tô được */
+export function fillPath(e: El): Path2D | null {
   const p = new Path2D()
-  if (e.kind === 'rectangle') p.rect(0, 0, e.w, e.h)
+  if (e.kind === 'freedraw') {
+    const lp = closedLoop(e)
+    if (!lp) return null
+    lp.forEach(([x, y], i) => (i ? p.lineTo(x, y) : p.moveTo(x, y)))
+    p.closePath()
+  } else if (e.kind === 'rectangle') p.rect(0, 0, e.w, e.h)
   else if (e.kind === 'ellipse') p.ellipse(e.w / 2, e.h / 2, Math.abs(e.w / 2), Math.abs(e.h / 2), 0, 0, Math.PI * 2)
   else if (e.kind === 'diamond') {
     p.moveTo(e.w / 2, 0); p.lineTo(e.w, e.h / 2); p.lineTo(e.w / 2, e.h); p.lineTo(0, e.h / 2); p.closePath()
-  } else return
+  } else return null
+  return p
+}
+
+function drawGlass(ctx: CanvasRenderingContext2D, e: El) {
+  const p = fillPath(e)
+  if (!p) return
   ctx.save()
   ctx.fillStyle = rgba(e.fill, 0.42)
   ctx.fill(p)
@@ -236,6 +249,14 @@ export function drawElement(ctx: CanvasRenderingContext2D, rc: ReturnType<typeof
     const lh = e.fontSize * LINE_HEIGHT
     ;(e.text ?? '').split('\n').forEach((line, i) => ctx.fillText(line, 0, i * lh + (lh - e.fontSize) / 2))
   } else {
+    if (e.fill !== 'transparent' && isClosedStroke(e)) {
+      // nét vẽ tay khép kín: tô nền trước rồi mới vẽ nét lên trên
+      if (e.fillStyle === 'glass') drawGlass(ctx, e)
+      else if (e.fillStyle === 'solid') {
+        ctx.fillStyle = e.fill
+        ctx.fill(fillPath(e)!)
+      } else rc.polygon(closedLoop(e)!, { ...roughOptions(e), stroke: 'none', fill: e.fill, fillStyle: 'hachure' })
+    }
     if (e.kind === 'freedraw' && e.strokeStyle !== 'solid') {
       // nét bút đứt / chấm: vẽ đường cong trơn qua các điểm rồi đặt mẫu gạch (đường viền của perfect-freehand không gạch được)
       const pts = e.points ?? []
@@ -291,6 +312,10 @@ export interface Overlay {
   lasso: Pt[] | null
   laser: LaserTrail[]
   eraser: { p: Pt; r: number } | null
+  /** thùng sơn / kéo màu: hình sẽ được tô khi bấm/thả — xem trước màu + viền nhấp nháy */
+  fillHover?: { el: El; color: string } | null
+  /** màu đang lan ra từ điểm bấm: vẽ bản cũ, rồi bản mới trong vòng tròn bán kính r */
+  spread?: { id: string; prev: El; p: Pt; r: number } | null
 }
 
 export const LASER_LIFE = 1000
@@ -353,7 +378,38 @@ export function render(
   drawPaper(ctx, overlay.paper, view, canvas.width / dpr, canvas.height / dpr)
 
   const rc = rough.canvas(canvas)
-  for (const e of els) if (e.id !== overlay.hiddenId) drawElement(ctx, rc, e)
+  const sp = overlay.spread
+  for (const e of els) {
+    if (e.id === overlay.hiddenId) continue
+    if (sp && e.id === sp.id) {
+      drawElement(ctx, rc, sp.prev)
+      ctx.save()
+      ctx.beginPath()
+      ctx.arc(sp.p[0], sp.p[1], sp.r, 0, Math.PI * 2)
+      ctx.clip()
+      drawElement(ctx, rc, e)
+      ctx.restore()
+    } else drawElement(ctx, rc, e)
+  }
+  const fh = overlay.fillHover
+  const fp = fh && fillPath(fh.el)
+  if (fh && fp) {
+    const e = fh.el
+    ctx.save()
+    const [cx, cy] = centerOf(e)
+    ctx.translate(cx, cy)
+    ctx.rotate(e.angle)
+    ctx.translate(-cx, -cy)
+    ctx.translate(e.x, e.y)
+    ctx.fillStyle = fh.color === 'transparent' ? 'rgba(255,255,255,0.6)' : rgba(fh.color, 0.35)
+    ctx.fill(fp)
+    ctx.strokeStyle = ACCENT
+    ctx.lineWidth = 2.5 / view.zoom
+    ctx.setLineDash([6 / view.zoom, 4 / view.zoom])
+    ctx.lineDashOffset = -(performance.now() / 40) % 1000 / view.zoom
+    ctx.stroke(fp)
+    ctx.restore()
+  }
 
   // khung chọn
   ctx.lineWidth = 1 / view.zoom

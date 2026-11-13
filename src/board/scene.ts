@@ -70,6 +70,51 @@ export const newId = () => Math.random().toString(36).slice(2, 10)
 export const newSeed = () => Math.floor(Math.random() * 2 ** 31)
 export const hasPoints = (e: El) => e.kind === 'line' || e.kind === 'arrow' || e.kind === 'freedraw'
 export const isPage = (e: El) => !!e.page
+/** nét vẽ tay khép kín — tô màu được như hình khối. Kín khi: hai đầu gần nhau, hoặc nét tự cắt chính nó
+ *  (vẽ lố qua điểm đầu như dấu +), hoặc một đầu chạm lại thân nét. Cache theo `ver`. */
+const loopCache = new WeakMap<El, { ver: number; v: Pt[] | null }>()
+export function isClosedStroke(e: El) {
+  return !!closedLoop(e)
+}
+/** phần vòng kín của nét (đã cắt đuôi thừa trước/sau chỗ nét tự cắt) — chỉ vùng này được tô */
+export function closedLoop(e: El): Pt[] | null {
+  const pts = e.points
+  if (e.kind !== 'freedraw' || !pts || pts.length < 8) return null
+  const c = loopCache.get(e)
+  if (c && c.ver === e.ver) return c.v
+  const v = computeLoop(e, pts)
+  loopCache.set(e, { ver: e.ver, v })
+  return v
+}
+/** giao điểm hai đoạn ab, cd (null nếu không cắt) */
+function segCross(a: Pt, b: Pt, c: Pt, d: Pt): Pt | null {
+  const o = (p: Pt, q: Pt, r: Pt) => (q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0])
+  const d1 = o(a, b, c), d2 = o(a, b, d)
+  if (d1 * d2 >= 0 || o(c, d, a) * o(c, d, b) >= 0) return null
+  const t = d1 / (d1 - d2)
+  return [c[0] + (d[0] - c[0]) * t, c[1] + (d[1] - c[1]) * t]
+}
+function computeLoop(e: El, pts: Pt[]): Pt[] | null {
+  const [x1, y1, x2, y2] = localBounds(e)
+  const size = Math.hypot(x2 - x1, y2 - y1)
+  if (size < 20) return null
+  const n = pts.length, a = pts[0], b = pts[n - 1]
+  const k = Math.floor(n * 0.4)
+  // 1. nét tự cắt: lấy chỗ cắt ngoài cùng (đoạn đầu sớm nhất × đoạn cuối muộn nhất) → vòng = giao điểm + phần giữa
+  for (let i = 0; i < k; i++) {
+    for (let j = n - 2; j >= n - k && j > i + 1; j--) {
+      const x = segCross(pts[i], pts[i + 1], pts[j], pts[j + 1])
+      if (x) return [x, ...pts.slice(i + 1, j + 1)]
+    }
+  }
+  // 2. hai đầu gần nhau
+  if (Math.hypot(a[0] - b[0], a[1] - b[1]) < Math.max(16, size * 0.2)) return pts
+  // 3. một đầu chạm lại thân nét: bỏ đoạn đuôi phía trước / phía sau điểm chạm
+  const th = Math.max(12, size * 0.08)
+  for (let i = 0; i < k; i++) if (Math.hypot(b[0] - pts[i][0], b[1] - pts[i][1]) < th) return pts.slice(i)
+  for (let i = n - 1; i >= n - k; i--) if (Math.hypot(a[0] - pts[i][0], a[1] - pts[i][1]) < th) return pts.slice(0, i + 1)
+  return null
+}
 export const isLinear = (e: El) => e.kind === 'line' || e.kind === 'arrow'
 
 export function clone(e: El): El {
@@ -175,6 +220,7 @@ export function hitTest(e: El, p: Pt, tol: number): boolean {
       return Math.abs(d - 1) * Math.min(rx, ry) <= t
     }
     default: {
+      { const lp = filled ? closedLoop(e) : null; if (lp && inPolygon([q[0] - e.x, q[1] - e.y], lp)) return true }
       const pts = (e.points ?? []).map(([px, py]) => [e.x + px, e.y + py] as Pt)
       if (pts.length === 1) return Math.hypot(q[0] - pts[0][0], q[1] - pts[0][1]) <= t
       for (let i = 0; i < pts.length - 1; i++) if (distToSeg(q, pts[i], pts[i + 1]) <= t) return true

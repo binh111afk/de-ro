@@ -10,6 +10,7 @@ import {
   centerOf, clone, DEFAULT_STYLE, handlePositions, hasPoints, hitTest, isLinear, isPage, localBounds, measureText,
   mutate, newId, newSeed, rotate, unionBounds, worldBounds, fontOf, LINE_HEIGHT, inPolygon,
   type Bounds, type El, type Handle, type Kind, type Paper, type PenKind, type Pt, type Style,
+  isClosedStroke, type FillStyle,
 } from './scene'
 import { dropFromCache, LASER_LIFE, penOutline, render, renderLive, setImageLoadHandler, svgPathFromStroke, type LaserTrail, type View } from './render'
 import { AiPanel } from '@/examEditor/AiPanel'
@@ -25,7 +26,7 @@ import { cachedSrc, IDB_PREFIX, stash, unstash } from './imgStore'
 import { useBoards, type BoardData } from '@/store/boards'
 import { texToSvg } from './formula'
 
-type Tool = 'select' | 'hand' | Kind | 'eraser' | 'laser'
+type Tool = 'select' | 'hand' | Kind | 'eraser' | 'laser' | 'bucket'
 type Slot = PenKind | 'shape' | 'text'
 
 /** tuỳ chọn của bảng (lưu cùng bản vẽ) */
@@ -46,10 +47,13 @@ interface Opts {
   /** bút laser: màu và độ dày (hệ số) */
   laserColor: string
   laserSize: number
+  /** thùng sơn: màu và kiểu tô */
+  bucketFill: string
+  bucketStyle: FillStyle
 }
 interface Tip { sharp: number; sens: number }
 const DEFAULT_TIP: Tip = { sharp: 0.5, sens: 0.5 }
-const DEFAULT_OPTS: Opts = { pen: 'ball', lastShape: 'rectangle', paper: 'plain', snap: true, eraseMode: 'stroke', eraseSize: 1, selectMode: 'box', recentShapes: ['rectangle', 'ellipse', 'arrow', 'line'], recentColors: ['#1e1e1e', '#e03131', '#2f9e44', '#1971c2', '#f08c00', '#7048e8'], recentHighlights: ['#fab005', '#82c91e', '#f783ac', '#4dabf7', '#ff922b'], penTips: {}, laserColor: '#ff3b30', laserSize: 1 }
+const DEFAULT_OPTS: Opts = { pen: 'ball', lastShape: 'rectangle', paper: 'plain', snap: true, eraseMode: 'stroke', eraseSize: 1, selectMode: 'box', recentShapes: ['rectangle', 'ellipse', 'arrow', 'line'], recentColors: ['#1e1e1e', '#e03131', '#2f9e44', '#1971c2', '#f08c00', '#7048e8'], recentHighlights: ['#fab005', '#82c91e', '#f783ac', '#4dabf7', '#ff922b'], penTips: {}, laserColor: '#ff3b30', laserSize: 1, bucketFill: '#a5d8ff', bucketStyle: 'solid' }
 
 /** mỗi loại bút / hình / chữ nhớ màu và độ dày riêng */
 const DEFAULT_STYLES: Record<Slot, Style> = {
@@ -97,7 +101,7 @@ type Drag =
 const TOOL_KEYS: Record<string, Tool> = {
   '1': 'select', v: 'select', h: 'hand', '2': 'rectangle', r: 'rectangle', '3': 'diamond', d: 'diamond',
   '4': 'ellipse', o: 'ellipse', '5': 'arrow', a: 'arrow', '6': 'line', l: 'line', '7': 'freedraw', p: 'freedraw',
-  '8': 'text', t: 'text', '0': 'eraser', e: 'eraser', k: 'laser',
+  '8': 'text', t: 'text', '0': 'eraser', e: 'eraser', k: 'laser', g: 'bucket',
 }
 
 const FILLS = ['transparent', '#ffc9c9', '#b2f2bb', '#a5d8ff', '#ffec99', '#fa5252', '#40c057', '#228be6', '#fab005', '#be4bdb']
@@ -175,6 +179,7 @@ export default function BoardEditor({ id }: { id: string }) {
       return `url("data:image/svg+xml,${encodeURIComponent(svg)}") ${c} ${c}, crosshair`
     }
     if (t === 'eraser') return `url("data:image/svg+xml,${encodeURIComponent(ERASER_SVG)}") 6 22, cell`
+    if (t === 'bucket') return `url("data:image/svg+xml,${encodeURIComponent(BUCKET_SVG.replaceAll('#4dabf7', opts.current.bucketFill === 'transparent' ? '#ffffff' : opts.current.bucketFill))}") 4 21, crosshair`
     if (t === 'laser') return `url("data:image/svg+xml,${encodeURIComponent(LASER_SVG.replaceAll('#ff3b30', opts.current.laserColor))}") 9 9, crosshair`
     if (t === 'text') return 'text'
     if (t === 'hand') return 'grab'
@@ -184,6 +189,9 @@ export default function BoardEditor({ id }: { id: string }) {
   const laser = useRef<LaserTrail[]>([])
   const lasso = useRef<Pt[] | null>(null)
   const eraserAt = useRef<Pt | null>(null)
+  /** thùng sơn / kéo màu: hình sắp được tô (xem trước) và hiệu ứng màu lan */
+  const fillHover = useRef<{ el: El; color: string } | null>(null)
+  const spread = useRef<{ id: string; prev: El; p: Pt; t0: number; rMax: number } | null>(null)
 
   /* ---------- vẽ + lưu ---------- */
 
@@ -205,6 +213,8 @@ export default function BoardEditor({ id }: { id: string }) {
       const z = view.current.zoom
       const t = toolRef.current
       const lv = live.current
+      const sp = spread.current
+      const spT = sp ? Math.min(1, (now - sp.t0) / SPREAD_MS) : 0
       render(c, lv ? els.current.filter((e) => e !== lv) : els.current, view.current, {
         selected: els.current.filter((e) => selected.current.has(e.id)),
         marquee: marquee.current,
@@ -214,10 +224,15 @@ export default function BoardEditor({ id }: { id: string }) {
         laser: laser.current,
         eraser: eraserAt.current && (t === 'eraser' || drag.current?.t === 'erase')
           ? { p: eraserAt.current, r: ERASE_R[opts.current.eraseSize] / z } : null,
+        fillHover: fillHover.current,
+        spread: sp ? { id: sp.id, prev: sp.prev, p: sp.p, r: sp.rMax * (1 - (1 - spT) ** 3) } : null,
       })
+      if (sp && spT >= 1) spread.current = null
       if (liveRef.current) renderLive(liveRef.current, lv, view.current)
       // laser còn vệt thì vẽ tiếp khung sau để mờ dần
       if (laser.current.some((tr) => tr.pts.length)) redrawRef.current()
+      // màu đang lan / viền xem trước đang chạy → vẽ tiếp
+      else if (spread.current || fillHover.current) redrawRef.current()
     }
   }, [])
   /** vẽ ở khung hình kế tiếp (gộp nhiều lần gọi) */
@@ -332,6 +347,26 @@ export default function BoardEditor({ id }: { id: string }) {
     return [(cx - r.left) / v.zoom - v.scrollX, (cy - r.top) / v.zoom - v.scrollY]
   }
   const sel = () => els.current.filter((e) => selected.current.has(e.id))
+  /** hình tô được nằm trên cùng tại p — tính cả phần trong của hình chưa tô */
+  const fillTarget = (p: Pt) => {
+    const tol = 6 / view.current.zoom
+    for (let i = els.current.length - 1; i >= 0; i--) {
+      const e = els.current[i]
+      const ok = e.kind === 'rectangle' || e.kind === 'ellipse' || e.kind === 'diamond' || isClosedStroke(e)
+      if (ok && !isPage(e) && hitTest({ ...e, fill: '#000' }, p, tol)) return e
+    }
+    return null
+  }
+  /** tô hình e, màu lan ra từ điểm p */
+  const applyFill = (e: El, color: string, fs: FillStyle, p: Pt) => {
+    if (e.fill === color && (color === 'transparent' || e.fillStyle === fs)) return
+    const prev = clone(e)
+    mutate(e, { fill: color, fillStyle: fs })
+    const [x1, y1, x2, y2] = worldBounds(e)
+    const rMax = Math.max(...[[x1, y1], [x2, y1], [x1, y2], [x2, y2]].map(([x, y]) => Math.hypot(x - p[0], y - p[1])))
+    spread.current = { id: e.id, prev, p, t0: performance.now(), rMax }
+    commit()
+  }
   const topHit = (p: Pt) => {
     const tol = 6 / view.current.zoom
     // trang PDF khoá làm nền: không bấm chọn được
@@ -365,6 +400,7 @@ export default function BoardEditor({ id }: { id: string }) {
 
   const pickTool = useCallback((t: Tool) => {
     toolRef.current = t
+    fillHover.current = null
     if (SHAPES.includes(t as Kind)) {
       const k = t as Kind
       opts.current.lastShape = k
@@ -438,6 +474,11 @@ export default function BoardEditor({ id }: { id: string }) {
     }
     if (ev.button !== 0 && !flip) return
 
+    if (t === 'bucket') {
+      const e = fillTarget(p)
+      if (e) applyFill(e, opts.current.bucketFill, opts.current.bucketStyle, p)
+      return
+    }
     if (t === 'laser') {
       const trail: LaserTrail = { pts: [p], ts: [performance.now()], color: opts.current.laserColor, size: opts.current.laserSize }
       laser.current.push(trail)
@@ -593,6 +634,14 @@ export default function BoardEditor({ id }: { id: string }) {
     if (!d) {
       const t = toolRef.current
       if (t === 'eraser') { eraserAt.current = p; c.style.cursor = toolCursor(); redraw(); return }
+      if (t === 'bucket') {
+        const e = fillTarget(p)
+        const was = fillHover.current?.el
+        fillHover.current = e ? { el: e, color: opts.current.bucketFill } : null
+        c.style.cursor = toolCursor()
+        if (was !== e) redraw()
+        return
+      }
       if (space.current || t === 'hand') c.style.cursor = 'grab'
       else if (t === 'select') {
         const h = handleAt(p)
@@ -1423,7 +1472,7 @@ export default function BoardEditor({ id }: { id: string }) {
     : tool === 'freedraw' || tool === 'text' || SHAPES.includes(tool as Kind) ? [tool as Kind] : []
   const kinds = new Set(ctxKinds)
   const onlyText = kinds.size > 0 && [...kinds].every((k) => k === 'text')
-  const canFill = [...kinds].some((k) => k === 'rectangle' || k === 'ellipse' || k === 'diamond')
+  const canFill = [...kinds].some((k) => k === 'rectangle' || k === 'ellipse' || k === 'diamond') || selection.some(isClosedStroke)
   const hasText = kinds.has('text')
   const onlyImage = kinds.size > 0 && [...kinds].every((k) => k === 'image')
   const o = opts.current
@@ -1566,7 +1615,7 @@ export default function BoardEditor({ id }: { id: string }) {
     <Pop id="fill" pop={pop} setPop={setPop} title="Tô nền"
       face={<span className="flex items-center gap-1.5 px-1 text-[12.5px] text-ink"><span className="h-4 w-4 rounded-[4px] border border-line" style={{ background: cur.fill === 'transparent' ? NONE_BG : cur.fill }} />Tô nền</span>}>
       <PanelRow label="Màu nền">
-        {FILLS.map((c) => <Swatch key={c} color={c} active={cur.fill === c} onClick={() => setProp('fill', c)} />)}
+        {FILLS.map((c) => <Swatch key={c} color={c} drag={cur.fillStyle} active={cur.fill === c} onClick={() => setProp('fill', c)} />)}
       </PanelRow>
       {cur.fill !== 'transparent' && (
         <PanelRow label="Kiểu tô">
@@ -1691,6 +1740,22 @@ export default function BoardEditor({ id }: { id: string }) {
         </Group>
       </>
     )
+  } else if (main === 'bucket') {
+    options = (
+      <>
+        <Group label="Màu tô">
+          {FILLS.map((c) => (
+            <Swatch key={c} color={c} drag={o.bucketStyle} active={o.bucketFill === c} onClick={() => setOpt('bucketFill', c)} title="Bấm vào hình để tô, hoặc kéo màu thả vào hình" />
+          ))}
+        </Group>
+        <Group label="Kiểu tô">
+          <Chip active={o.bucketStyle === 'solid'} onClick={() => setOpt('bucketStyle', 'solid')}>Đặc</Chip>
+          <Chip active={o.bucketStyle === 'glass'} onClick={() => setOpt('bucketStyle', 'glass')} title="Màu trong suốt như kính, nhìn xuyên được hình phía sau">Kính</Chip>
+          <Chip active={o.bucketStyle === 'hachure'} onClick={() => setOpt('bucketStyle', 'hachure')}>Gạch chéo</Chip>
+        </Group>
+        <Group><span className="text-[12px] text-ink-3">Bấm vào trong hình để tô · kéo ô màu thả vào hình cũng được</span></Group>
+      </>
+    )
   } else if (main === 'select') {
     options = (
       <>
@@ -1749,6 +1814,7 @@ export default function BoardEditor({ id }: { id: string }) {
     { id: 'laser', label: 'Laser', icon: LASER_D, onClick: () => pickTool('laser') },
     { id: 'select', label: 'Chọn', icon: o.selectMode === 'lasso' ? LASSO_D : SELECT_D, onClick: () => pickTool('select') },
     { id: 'shape', label: 'Hình', icon: SHAPE_D, onClick: () => pickTool(o.lastShape) },
+    { id: 'bucket', label: 'Tô màu', icon: BUCKET_D, onClick: () => pickTool('bucket') },
     { id: 'text', label: 'Chữ', icon: TEXT_D, onClick: () => pickTool('text') },
     { id: 'hand', label: 'Kéo', icon: HAND_D, onClick: () => pickTool('hand') },
   ]
@@ -1850,9 +1916,27 @@ export default function BoardEditor({ id }: { id: string }) {
           onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
           onPointerCancel={onPointerUp}
-          onPointerLeave={() => { eraserAt.current = null; redraw() }}
+          onPointerLeave={() => { eraserAt.current = null; fillHover.current = null; redraw() }}
           onDoubleClick={onDoubleClick}
           onContextMenu={(e) => e.preventDefault()}
+          onDragOver={(ev) => {
+            if (!draggingFill) return
+            ev.preventDefault()
+            ev.dataTransfer.dropEffect = 'copy'
+            const e = fillTarget(toScene(ev.clientX, ev.clientY))
+            if (fillHover.current?.el !== e) { fillHover.current = e ? { el: e, color: draggingFill.color } : null; redraw() }
+          }}
+          onDragLeave={() => { if (fillHover.current) { fillHover.current = null; redraw() } }}
+          onDrop={(ev) => {
+            const d = draggingFill
+            if (!d) return
+            ev.preventDefault()
+            fillHover.current = null
+            const p = toScene(ev.clientX, ev.clientY)
+            const e = fillTarget(p)
+            if (e) applyFill(e, d.color, d.style, p)
+            else redraw()
+          }}
         />
         <canvas ref={liveRef} className="pointer-events-none absolute inset-0 h-full w-full" />
         {textarea}
@@ -1899,7 +1983,7 @@ export default function BoardEditor({ id }: { id: string }) {
 
 /* ---------- định nghĩa giao diện ---------- */
 
-type Main = 'pen' | 'eraser' | 'laser' | 'select' | 'shape' | 'text' | 'hand'
+type Main = 'pen' | 'eraser' | 'laser' | 'select' | 'shape' | 'bucket' | 'text' | 'hand'
 
 const ERASER_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26"><g transform="rotate(-40 13 13)"><rect x="5" y="8" width="17" height="10" rx="2.5" fill="#f4a3a8" stroke="#3f3f46" stroke-width="1.3"/><rect x="5" y="8" width="6" height="10" rx="2.5" fill="#e5e7eb" stroke="#3f3f46" stroke-width="1.3"/></g></svg>'
 const LASER_COLORS = ['#ff3b30', '#ff9500', '#ffd60a', '#34c759', '#0a84ff', '#bf5af2']
@@ -1973,6 +2057,7 @@ const SELECT_D = 'M5 3l14 7-6 2-2 6z'
 const LASSO_D = 'M7 17c-2.5-1-4-3-4-5.5C3 7.4 7 4 12 4s9 3.4 9 7.5S17 19 12 19c-1.2 0-2.3-.2-3.3-.5M7 17a2 2 0 1 0 1.7 1.5M8.7 18.5L9 21'
 const SHAPE_D = 'M3 3h9v9H3zM16.5 12a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9z'
 const TEXT_D = 'M5 6V4h14v2M12 4v16m-3 0h6'
+const BUCKET_D = 'M11 3l8 8-7 7-8-8zM4 10h11M20 14s2 2.6 2 4a2 2 0 0 1-4 0c0-1.4 2-4 2-4z'
 const HAND_D = 'M8 11V5.5a1.5 1.5 0 0 1 3 0V10m0-1V4.5a1.5 1.5 0 0 1 3 0V10m0-.5V6a1.5 1.5 0 0 1 3 0v7a6 6 0 0 1-6 6h-1a6 6 0 0 1-4.9-2.5L3.6 13a1.5 1.5 0 0 1 2.4-1.8L8 13'
 
 const FOUNTAIN_D = 'M12 3l5 7-5 11-5-11zM12 3v9m0 0a1.5 1.5 0 1 0 0 .01'
@@ -2181,11 +2266,33 @@ function PanelRow({ label, children }: { label: string; children: ReactNode }) {
 
 const NONE_BG = 'linear-gradient(135deg, #fff 45%, #e03131 45%, #e03131 55%, #fff 55%)'
 
-function Swatch({ color, active, onClick, round, title }: { color: string; active: boolean; onClick: () => void; round?: boolean; title?: string }) {
+/** kéo ô màu nền thả vào hình để tô. Lúc kéo (dragover) trình duyệt không cho đọc dữ liệu nên giữ màu ở đây */
+const FILL_MIME = 'application/x-board-fill'
+let draggingFill: { color: string; style: FillStyle } | null = null
+const SPREAD_MS = 380
+const BUCKET_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M11 3l8 8-7 7-8-8z" fill="#fff" stroke="#27272a" stroke-width="1.5" stroke-linejoin="round"/><path d="M4 10l8 8 3-3H4z" fill="#4dabf7"/><path d="M20 14s2 2.6 2 4a2 2 0 0 1-4 0c0-1.4 2-4 2-4z" fill="#4dabf7" stroke="#27272a" stroke-width="1.2"/></svg>'
+
+/** ảnh đi theo con trỏ khi kéo: giọt màu tròn có bóng */
+function startFillDrag(ev: React.DragEvent, color: string, style: FillStyle) {
+  draggingFill = { color, style }
+  ev.dataTransfer.setData(FILL_MIME, color)
+  ev.dataTransfer.effectAllowed = 'copy'
+  const g = document.createElement('div')
+  const none = color === 'transparent'
+  g.style.cssText = `position:fixed;top:-100px;left:-100px;width:34px;height:34px;border-radius:50% 50% 50% 4px;transform:rotate(-45deg);background:${none ? '#fff' : color};border:2px solid #fff;box-shadow:0 4px 12px rgba(0,0,0,.25),inset -4px -4px 0 rgba(0,0,0,.08)`
+  document.body.appendChild(g)
+  ev.dataTransfer.setDragImage(g, 6, 28)
+  setTimeout(() => g.remove(), 0)
+}
+
+function Swatch({ color, active, onClick, round, title, drag }: { color: string; active: boolean; onClick: () => void; round?: boolean; title?: string; drag?: FillStyle }) {
   const none = color === 'transparent'
   return (
     <button
-      type="button" onClick={onClick} title={none ? 'Không màu' : title ?? color} aria-label={none ? 'Không màu' : `${title ?? 'Màu'} ${color}`} aria-pressed={active}
+      type="button" onClick={onClick}
+      draggable={!!drag}
+      onDragStart={drag ? (ev) => startFillDrag(ev, color, drag) : undefined}
+      onDragEnd={drag ? () => { draggingFill = null } : undefined} title={none ? 'Không màu' : title ?? color} aria-label={none ? 'Không màu' : `${title ?? 'Màu'} ${color}`} aria-pressed={active}
       className={`mx-[3px] h-5 w-5 shrink-0 ${round ? 'rounded-full' : 'rounded-[5px]'} border border-black/10 transition-transform hover:scale-110 ${active ? 'ring-2 ring-clay ring-offset-2 ring-offset-surface' : ''}`}
       style={{ background: none ? NONE_BG : color }}
     />
