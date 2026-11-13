@@ -141,6 +141,8 @@ export default function BoardEditor({ id }: { id: string }) {
   editingRef.current = editing
   const [, setTick] = useState(0)
   const [pop, setPop] = useState<string | null>(null)
+  /** ô Tô nền: mở bảng màu đầy đủ */
+  const [moreFill, setMoreFill] = useState(false)
   /** panel bên: trợ lý (trái), công cụ (phải) */
   const [side, setSide] = useState<SideTab | null>(null)
   const [dialog, setDialog] = useState<{ t: 'formula'; el?: El } | { t: 'pdf'; file: File } | { t: 'export' } | null>(null)
@@ -1579,9 +1581,10 @@ export default function BoardEditor({ id }: { id: string }) {
     <Group label="Độ dày">
       {widths.map((w, i) => (
         <Chip key={w} active={cur.strokeWidth === w} onClick={() => setProp('strokeWidth', w)} title={`Nét ${WIDTH_NAMES[i]}`}>
-          {/* chấm tròn to theo độ dày thật của nét */}
+          {/* chấm tròn to dần theo độ dày */}
           <span className="flex size-4 items-center justify-center">
-            {(() => { const s = Math.min(16, 2 + w * (isHighlight ? 0.75 : 2.6)); return <span className="rounded-full bg-current" style={{ width: s, height: s }} /> })()}
+            {/* cỡ chẵn, nguyên px: cỡ lẻ thập phân làm chấm nhỏ bị vẽ méo thành ô vuông */}
+            <span className="rounded-full bg-current" style={{ width: DOT_SIZES[i], height: DOT_SIZES[i] }} />
           </span>
         </Chip>
       ))}
@@ -1616,7 +1619,11 @@ export default function BoardEditor({ id }: { id: string }) {
       face={<span className="flex items-center gap-1.5 px-1 text-[12.5px] text-ink"><span className="h-4 w-4 rounded-[4px] border border-line" style={{ background: cur.fill === 'transparent' ? NONE_BG : cur.fill }} />Tô nền</span>}>
       <PanelRow label="Màu nền">
         {FILLS.map((c) => <Swatch key={c} color={c} drag={cur.fillStyle} active={cur.fill === c} onClick={() => setProp('fill', c)} />)}
+        <button type="button" title="Màu khác" aria-label="Màu khác" aria-expanded={moreFill} onClick={() => setMoreFill((v) => !v)}
+          className={`mx-[3px] h-5 w-5 shrink-0 rounded-[5px] border border-black/10 hover:scale-110 ${moreFill || (cur.fill !== 'transparent' && !FILLS.includes(cur.fill)) ? 'ring-2 ring-clay ring-offset-2 ring-offset-surface' : ''}`}
+          style={{ background: 'conic-gradient(#e03131, #f08c00, #fab005, #2f9e44, #1971c2, #7048e8, #e03131)' }} />
       </PanelRow>
+      {moreFill && <MoreColors value={cur.fill} drag={cur.fillStyle} onPick={(c) => setProp('fill', c)} onPreview={(c) => setProp('fill', c)} />}
       {cur.fill !== 'transparent' && (
         <PanelRow label="Kiểu tô">
           <Chip active={cur.fillStyle === 'hachure'} onClick={() => setProp('fillStyle', 'hachure')}>Gạch chéo</Chip>
@@ -1710,7 +1717,7 @@ export default function BoardEditor({ id }: { id: string }) {
         <Group label="Cỡ gôm">
           {ERASE_R.map((r, i) => (
             <Chip key={r} active={o.eraseSize === i} onClick={() => setOpt('eraseSize', i)} title={`Gôm ${['nhỏ', 'vừa', 'to'][i]}`}>
-              <span className="rounded-full bg-current opacity-70" style={{ width: 5 + i * 5, height: 5 + i * 5 }} />
+              <span className="rounded-full bg-current opacity-70" style={{ width: 6 + i * 4, height: 6 + i * 4 }} />
             </Chip>
           ))}
         </Group>
@@ -1733,7 +1740,7 @@ export default function BoardEditor({ id }: { id: string }) {
           {LASER_SIZES.map((sz, i) => (
             <Chip key={sz} active={o.laserSize === sz} onClick={() => setOpt('laserSize', sz)} title={`Laser ${WIDTH_NAMES[i + 1]}`}>
               <span className="flex size-4 items-center justify-center">
-                <span className="rounded-full" style={{ width: 3 + sz * 4.5, height: 3 + sz * 4.5, background: o.laserColor }} />
+                <span className="rounded-full" style={{ width: DOT_SIZES[i + 1], height: DOT_SIZES[i + 1], background: o.laserColor }} />
               </span>
             </Chip>
           ))}
@@ -1747,6 +1754,10 @@ export default function BoardEditor({ id }: { id: string }) {
           {FILLS.map((c) => (
             <Swatch key={c} color={c} drag={o.bucketStyle} active={o.bucketFill === c} onClick={() => setOpt('bucketFill', c)} title="Bấm vào hình để tô, hoặc kéo màu thả vào hình" />
           ))}
+          <Pop id="bucketMore" pop={pop} setPop={setPop} title="Màu khác"
+            face={<span className={`mx-[3px] block h-5 w-5 rounded-[5px] border border-black/10 ${!FILLS.includes(o.bucketFill) ? 'ring-2 ring-clay ring-offset-2 ring-offset-surface' : ''}`} style={{ background: 'conic-gradient(#e03131, #f08c00, #fab005, #2f9e44, #1971c2, #7048e8, #e03131)' }} />}>
+            <MoreColors value={o.bucketFill} drag={o.bucketStyle} onPick={(c) => setOpt('bucketFill', c)} onPreview={(c) => setOpt('bucketFill', c)} />
+          </Pop>
         </Group>
         <Group label="Kiểu tô">
           <Chip active={o.bucketStyle === 'solid'} onClick={() => setOpt('bucketStyle', 'solid')}>Đặc</Chip>
@@ -2057,6 +2068,7 @@ const SELECT_D = 'M5 3l14 7-6 2-2 6z'
 const LASSO_D = 'M7 17c-2.5-1-4-3-4-5.5C3 7.4 7 4 12 4s9 3.4 9 7.5S17 19 12 19c-1.2 0-2.3-.2-3.3-.5M7 17a2 2 0 1 0 1.7 1.5M8.7 18.5L9 21'
 const SHAPE_D = 'M3 3h9v9H3zM16.5 12a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9z'
 const TEXT_D = 'M5 6V4h14v2M12 4v16m-3 0h6'
+const DOT_SIZES = [4, 6, 8, 10, 12, 14]
 const BUCKET_D = 'M11 3l8 8-7 7-8-8zM4 10h11M20 14s2 2.6 2 4a2 2 0 0 1-4 0c0-1.4 2-4 2-4z'
 const HAND_D = 'M8 11V5.5a1.5 1.5 0 0 1 3 0V10m0-1V4.5a1.5 1.5 0 0 1 3 0V10m0-.5V6a1.5 1.5 0 0 1 3 0v7a6 6 0 0 1-6 6h-1a6 6 0 0 1-4.9-2.5L3.6 13a1.5 1.5 0 0 1 2.4-1.8L8 13'
 
@@ -2229,6 +2241,24 @@ function Pop({ id, pop, setPop, title, face, children, align }: {
 }
 
 /** ô nhập mã màu (#rrggbb) + nút mở bảng màu của máy */
+/** bảng màu đầy đủ + ô nhập mã màu; dùng cho màu nền (kéo thả được như ô màu thường) */
+function MoreColors({ value, onPick, onPreview, drag }: { value: string; onPick: (c: string) => void; onPreview: (c: string) => void; drag?: FillStyle }) {
+  return (
+    <>
+      <div className="grid grid-cols-10 gap-1">
+        {THEME_COLORS.map((c) => (
+          <button key={c} type="button" title={c} aria-label={c} onClick={() => onPick(c)}
+            draggable={!!drag}
+            onDragStart={drag ? (ev) => startFillDrag(ev, c, drag) : undefined}
+            onDragEnd={drag ? () => { draggingFill = null } : undefined}
+            className={`h-[18px] w-[18px] rounded-[3px] border border-black/10 hover:scale-110 ${value === c ? 'ring-2 ring-clay ring-offset-1' : ''}`} style={{ background: c }} />
+        ))}
+      </div>
+      <HexInput value={value === 'transparent' ? '#ffffff' : value} onPreview={onPreview} onCommit={onPick} />
+    </>
+  )
+}
+
 function HexInput({ value, onPreview, onCommit }: { value: string; onPreview: (c: string) => void; onCommit: (c: string) => void }) {
   const [text, setText] = useState(value)
   useEffect(() => setText(value), [value])
