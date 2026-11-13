@@ -1,6 +1,6 @@
 # context.md — đề rõ (trình soạn đề thi)
 
-Bản đồ ngắn của dự án. **Chỉ đọc file này khi bắt đầu phiên**; các file khác mở khi việc đang làm cần tới (bảng "Đọc thêm khi nào" bên dưới). Cập nhật: 12/11/2026 (phiên 33). **Mọi việc đã lên `main`. Làm tiếp: đọc [phiên 33](docs/handoff/phien-33.md) — việc đầu tiên là REVIEW nhánh agy `feat/chinh-canh-3d` (Chỉnh cạnh cho hình không gian, worktree `../dethinhbien-chinh-canh-3d`) theo quy trình trong file đó, được đồng ý mới gộp. Phiên 33: trang "Đề của tôi", 8 công cụ vẽ mới/nâng cấp, chỉnh cạnh hình phẳng, bấm thêm điểm đường tròn lượng giác. Việc Vercel còn treo từ [phiên 30](docs/handoff/phien-30.md): đặt `AI_SETTINGS_SECRET`.**
+Bản đồ ngắn của dự án. **Chỉ đọc file này khi bắt đầu phiên**; các file khác mở khi việc đang làm cần tới (bảng "Đọc thêm khi nào" bên dưới). Cập nhật: 13/11/2026 (phiên 34). **Mọi việc đã lên `main` và đã push, không còn nhánh agy treo. Làm tiếp: đọc [phiên 34](docs/handoff/phien-34.md) — việc đầu tiên là VIẾT PROMPT VÀ GIAO AGY các công cụ "ưu tiên vừa" (người dùng gọi là 7, 8, 9: đồ thị điện xoay chiều + sóng, đường sức điện/từ trường, công thức cấu tạo mạch vòng, biểu đồ kết hợp cột + đường / miền — hỏi lại người dùng đúng các mục nào), mỗi việc một worktree, review + gộp như phiên 34. Phiên 34: AnyRouter gpt-6.1-terra thay xkiro, Chỉnh cạnh 3D, 6 công cụ mới (ma trận & đặc tả, phiếu trả lời 3 phần, thấu kính, phả hệ, Punnett, lưới thức ăn). Vercel còn treo: `ANYROUTER_API_KEY`, `AI_SETTINGS_SECRET`.**
 
 ## Dự án
 
@@ -9,7 +9,7 @@ Web app soạn đề thi tiếng Việt kiểu Word: React 19 + TypeScript + Vit
 - `/soan-de`: trình soạn chính (tab Bắt đầu tạo đề / slide / bảng vẽ). Soạn đề: AI bên **phải**; Mục lục / Khối mẫu / Công cụ bên **trái**. Soạn slide: AI bên phải.
 - Màn khác: Đề cộng đồng, Tạo đề online (lịch sử, đề đã xuất bản, kết quả), Đề của tôi, Thư viện, Chấm điểm, Quiz.
 - Tài khoản Supabase (`user_items`, `community_exams`, `exam_attempts`, `ai_usage`), file trên R2.
-- AI: `server/llmProxy.ts` thử opencode (`LLM_*`) → Mercury 3 (`MERCURY_*`) → xkiro → NightRouter deepseek-v4-flash-0731 (`NIGHTROUTER_*`) → Claude (`ANTHROPIC_*`). So sánh model: `npm run compare:llm`. Hạn mức token `server/aiQuota.ts`: tài khoản 150k/tháng, khách 30k/ngày, ngoại lệ ở bảng `ai_quota_overrides`.
+- AI: `server/llmProxy.ts` thử opencode (`LLM_*`) → Mercury 3 (`MERCURY_*`) → FOSTA gpt-6-luna (`FOSTA_*`) → AnyRouter gpt-6.1-terra (`ANYROUTER_*`, gọi stream) → NightRouter deepseek-v4-flash-0731 (`NIGHTROUTER_*`) → Claude (`ANTHROPIC_*`). So sánh model: `npm run compare:llm`. Hạn mức token `server/aiQuota.ts`: tài khoản 150k/tháng, khách 30k/ngày, ngoại lệ ở bảng `ai_quota_overrides`.
 - Chạy thật: Vercel https://de-ro-lac.vercel.app, push `main` là tự deploy. `api/*.ts` chỉ re-export handler `server/`; `server/guard.ts` chặn Origin lạ + giới hạn lượt.
 
 ## Nguyên tắc không được phá
@@ -65,7 +65,7 @@ Danh sách đủ: `package.json` → `scripts`. `.env` cần `LLM_API_KEY` (mẫ
 | Khi làm | Mở |
 |---|---|
 | Trang Admin (bản đồ file, quyết định, việc còn lại) | [phiên 29](docs/handoff/phien-29.md), kế hoạch gốc [docs/plan-admin.md](docs/plan-admin.md) |
-| Tiếp việc phiên trước | [phiên 33](docs/handoff/phien-33.md) (review agy chỉnh cạnh 3D, công cụ vẽ mới, Đề của tôi, quy trình giao/gộp agy) · [phiên 32](docs/handoff/phien-32.md) (bảng vẽ, đề thiếu đáp án, giới hạn lưu trữ) · [phiên 31](docs/handoff/phien-31.md) (Bảng vẽ, AI vẽ, Đưa vào chat) · [phiên 30](docs/handoff/phien-30.md) (cấu hình AI admin, AI ngân hàng) · [phiên 29](docs/handoff/phien-29.md) (Admin G1-5, tự khoá, pentest) · [phiên 28](docs/handoff/phien-28.md) (Xáo đề giữ đáp án) · [phiên 27](docs/handoff/phien-27.md) (Xáo đề, mẫu slide, LLM dự phòng, so model) · [phiên 26](docs/handoff/phien-26.md) (gộp 3 nhánh agent) · [phiên 25](docs/handoff/phien-25.md) (khung chương trình, trục đồ thị) |
+| Tiếp việc phiên trước | [phiên 34](docs/handoff/phien-34.md) (giao agy nhóm ưu tiên vừa, AnyRouter, 6 công cụ mới, gộp nhiều nhánh) · [phiên 33](docs/handoff/phien-33.md) (review agy chỉnh cạnh 3D, công cụ vẽ mới, Đề của tôi, quy trình giao/gộp agy) · [phiên 32](docs/handoff/phien-32.md) (bảng vẽ, đề thiếu đáp án, giới hạn lưu trữ) · [phiên 31](docs/handoff/phien-31.md) (Bảng vẽ, AI vẽ, Đưa vào chat) · [phiên 30](docs/handoff/phien-30.md) (cấu hình AI admin, AI ngân hàng) · [phiên 29](docs/handoff/phien-29.md) (Admin G1-5, tự khoá, pentest) · [phiên 28](docs/handoff/phien-28.md) (Xáo đề giữ đáp án) · [phiên 27](docs/handoff/phien-27.md) (Xáo đề, mẫu slide, LLM dự phòng, so model) · [phiên 26](docs/handoff/phien-26.md) (gộp 3 nhánh agent) · [phiên 25](docs/handoff/phien-25.md) (khung chương trình, trục đồ thị) |
 | Khung chương trình các môn (chống AI ra đề vượt lớp): soạn prompt cho agent ngoài, kiểm file gửi về | [docs/khung-chuong-trinh.md](docs/khung-chuong-trinh.md) |
 | Giao việc cho agent rẻ hơn (mẫu prompt, chạy song song bằng worktree) | `docs/prompt-*.md`, [phiên 26](docs/handoff/phien-26.md) mục "Lưu ý cách làm" |
 | Soạn thêm câu cho kho câu hỏi | [scripts/bank/HUONG_DAN_SOAN.md](scripts/bank/HUONG_DAN_SOAN.md) |
