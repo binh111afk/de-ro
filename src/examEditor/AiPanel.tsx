@@ -266,7 +266,7 @@ const BOARD_OPS_GUIDE =
   'Toạ độ là đơn vị của bảng (x sang phải, y xuống dưới), đặt hình trong vùng đang nhìn thấy (xem "Vùng nhìn thấy"), ' +
   'chừa khoảng cách để không đè lên hình có sẵn. Màu dạng "#rrggbb". Các lệnh:\n' +
   '- {"op":"figure","figure":{...cấu hình hình vẽ, xem danh sách bên dưới},"x":100,"y":80,"w":360} — đồ thị, bảng biến thiên, hình học, mạch điện… vẽ CHUẨN bằng công cụ có sẵn. Ưu tiên lệnh này cho mọi hình toán, lí, hoá.\n' +
-  '- {"op":"shape","shape":"rectangle|ellipse|diamond","x":0,"y":0,"w":160,"h":90,"stroke":"#1e1e1e","fill":"transparent|#rrggbb","fillStyle":"hachure|solid","strokeStyle":"solid|dashed|dotted","strokeWidth":2,"rough":true,"label":"chữ ở giữa (tuỳ chọn)"}\n' +
+  '- {"op":"shape","shape":"rectangle|ellipse|diamond","x":0,"y":0,"w":160,"h":90,"stroke":"#1e1e1e","fill":"transparent|#rrggbb","fillStyle":"hachure|solid|glass","strokeStyle":"solid|dashed|dotted","strokeWidth":2,"rough":true,"label":"chữ ở giữa (tuỳ chọn)"}\n' +
   '- {"op":"line","arrow":true,"points":[[x1,y1],[x2,y2]],"stroke":"#1e1e1e","strokeStyle":"solid","strokeWidth":2} — mũi tên / đường thẳng / đường gấp khúc.\n' +
   '- {"op":"text","text":"...","x":0,"y":0,"fontSize":24,"color":"#1e1e1e"} — chữ thường, không LaTeX.\n' +
   '- {"op":"pen","pen":"pencil|ball|fountain|brush|marker|highlight","color":"#1e1e1e","width":2,"points":[[x,y],...]} — nét vẽ tay bằng bút; hoặc thay "points" bằng "curve":{"type":"circle|ellipse|wave|star|polygon","cx":0,"cy":0,"r":60,"rx":80,"ry":50,"n":5,"len":300,"amp":20,"points":[[x,y],...]}. Chỉ dùng khi người dùng muốn vẽ bằng bút; hình phức tạp thì giữ đơn giản.\n' +

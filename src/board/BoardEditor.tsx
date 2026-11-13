@@ -100,7 +100,7 @@ const TOOL_KEYS: Record<string, Tool> = {
   '8': 'text', t: 'text', '0': 'eraser', e: 'eraser', k: 'laser',
 }
 
-const FILLS = ['transparent', '#ffc9c9', '#b2f2bb', '#a5d8ff', '#ffec99']
+const FILLS = ['transparent', '#ffc9c9', '#b2f2bb', '#a5d8ff', '#ffec99', '#fa5252', '#40c057', '#228be6', '#fab005', '#be4bdb']
 
 const CURSOR: Partial<Record<Handle, string>> = {
   nw: 'nwse-resize', se: 'nwse-resize', ne: 'nesw-resize', sw: 'nesw-resize',
@@ -1292,7 +1292,7 @@ export default function BoardEditor({ id }: { id: string }) {
             Object.assign(el, {
               w: Math.max(4, num(op.w, 160)), h: Math.max(4, num(op.h, 90)),
               stroke: color(op.stroke, el.stroke), fill: color(op.fill, 'transparent'),
-              fillStyle: op.fillStyle === 'solid' ? 'solid' : 'hachure',
+              fillStyle: op.fillStyle === 'solid' || op.fillStyle === 'glass' ? op.fillStyle : 'hachure',
               strokeStyle: (['solid', 'dashed', 'dotted'] as const).find((k) => k === op.strokeStyle) ?? 'solid',
               strokeWidth: num(op.strokeWidth, 2), roughness: op.rough === false ? 0 : 1,
             })
@@ -1572,6 +1572,7 @@ export default function BoardEditor({ id }: { id: string }) {
         <PanelRow label="Kiểu tô">
           <Chip active={cur.fillStyle === 'hachure'} onClick={() => setProp('fillStyle', 'hachure')}>Gạch chéo</Chip>
           <Chip active={cur.fillStyle === 'solid'} onClick={() => setProp('fillStyle', 'solid')}>Đặc</Chip>
+          <Chip active={cur.fillStyle === 'glass'} onClick={() => setProp('fillStyle', 'glass')} title="Màu trong suốt như kính, nhìn xuyên được hình phía sau">Kính</Chip>
         </PanelRow>
       )}
     </Pop>

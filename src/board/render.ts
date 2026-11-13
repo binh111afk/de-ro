@@ -28,8 +28,8 @@ function roughOptions(e: El): Options {
     bowing: 1,
     stroke: e.stroke,
     strokeWidth: sw,
-    fill: e.fill === 'transparent' ? undefined : e.fill,
-    fillStyle: e.fillStyle,
+    fill: e.fill === 'transparent' || e.fillStyle === 'glass' ? undefined : e.fill,
+    fillStyle: e.fillStyle === 'glass' ? 'solid' : e.fillStyle,
     fillWeight: sw / 2,
     hachureGap: sw * 4,
     strokeLineDash: e.strokeStyle === 'dashed' ? [8, 8 + sw] : e.strokeStyle === 'dotted' ? [1.5, 6 + sw] : undefined,
@@ -180,6 +180,38 @@ function imageOf(src: string) {
   return img
 }
 
+function rgba(hex: string, a: number): string {
+  const m = /^#?([0-9a-f]{6})$/i.exec(hex)
+  if (!m) return hex
+  const n = parseInt(m[1], 16)
+  return `rgba(${n >> 16}, ${(n >> 8) & 255}, ${n & 255}, ${a})`
+}
+
+/** nền kính: lớp màu trong suốt + vệt sáng chéo từ góc trên trái + viền sáng mảnh phía trong */
+function drawGlass(ctx: CanvasRenderingContext2D, e: El) {
+  const p = new Path2D()
+  if (e.kind === 'rectangle') p.rect(0, 0, e.w, e.h)
+  else if (e.kind === 'ellipse') p.ellipse(e.w / 2, e.h / 2, Math.abs(e.w / 2), Math.abs(e.h / 2), 0, 0, Math.PI * 2)
+  else if (e.kind === 'diamond') {
+    p.moveTo(e.w / 2, 0); p.lineTo(e.w, e.h / 2); p.lineTo(e.w / 2, e.h); p.lineTo(0, e.h / 2); p.closePath()
+  } else return
+  ctx.save()
+  ctx.fillStyle = rgba(e.fill, 0.42)
+  ctx.fill(p)
+  ctx.clip(p)
+  const g = ctx.createLinearGradient(0, 0, e.w * 0.7, e.h * 0.9)
+  g.addColorStop(0, 'rgba(255,255,255,0.65)')
+  g.addColorStop(0.35, 'rgba(255,255,255,0.12)')
+  g.addColorStop(0.36, 'rgba(255,255,255,0)')
+  g.addColorStop(1, rgba(e.fill, 0.25))
+  ctx.fillStyle = g
+  ctx.fill(p)
+  ctx.strokeStyle = 'rgba(255,255,255,0.7)'
+  ctx.lineWidth = 3
+  ctx.stroke(p)
+  ctx.restore()
+}
+
 export function drawElement(ctx: CanvasRenderingContext2D, rc: ReturnType<typeof rough.canvas>, e: El) {
   ctx.save()
   ctx.globalAlpha = e.opacity / 100
@@ -226,6 +258,7 @@ export function drawElement(ctx: CanvasRenderingContext2D, rc: ReturnType<typeof
       ctx.restore()
       return
     }
+    if (e.fillStyle === 'glass' && e.fill !== 'transparent') drawGlass(ctx, e)
     const s = shapeOf(e)
     if (s instanceof Path2D) {
       ctx.fillStyle = (e.pen === 'pencil' && pencilFill(ctx, e.stroke)) || e.stroke

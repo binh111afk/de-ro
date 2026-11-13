@@ -6,7 +6,8 @@
 
 export type Kind = 'rectangle' | 'ellipse' | 'diamond' | 'line' | 'arrow' | 'freedraw' | 'text' | 'image'
 export type StrokeStyle = 'solid' | 'dashed' | 'dotted'
-export type FillStyle = 'hachure' | 'solid'
+/** glass: nền màu trong suốt có vệt sáng như mặt kính (vẽ riêng, không qua rough) */
+export type FillStyle = 'hachure' | 'solid' | 'glass'
 export type Pt = [number, number]
 export type PenKind = 'fountain' | 'ball' | 'brush' | 'pencil' | 'marker' | 'highlight'
 export type Paper = 'plain' | 'grid' | 'lines' | 'dots'
