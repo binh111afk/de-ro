@@ -1241,6 +1241,15 @@ export default function BoardEditor({ id }: { id: string }) {
   })
 
   /** chèn hình từ panel Công cụ (đồ thị, hình học…) vào giữa khung nhìn, chọn sẵn để kéo / đổi cỡ */
+  /** chỗ trống gần (x, y): nếu đã có hình đặt đúng chỗ đó (chèn liên tiếp) thì lệch xuống-phải từng nấc */
+  const freeSpot = (x: number, y: number): Pt => {
+    const step = 28 / view.current.zoom, near = 6 / view.current.zoom
+    for (let k = 0; k < 30; k++) {
+      if (!els.current.some((e) => !isPage(e) && Math.abs(e.x - x) < near && Math.abs(e.y - y) < near)) break
+      x += step; y += step
+    }
+    return [x, y]
+  }
   const insertImage = (img: ToolImage) => {
     const c = canvasRef.current
     if (!c) return
@@ -1249,7 +1258,7 @@ export default function BoardEditor({ id }: { id: string }) {
     const w = Math.min(420, (r.width / v.zoom) * 0.6)
     const h = (w * img.height) / img.width
     const cx = r.width / 2 / v.zoom - v.scrollX, cy = r.height / 2 / v.zoom - v.scrollY
-    const el: El = { ...newElement('image', [cx - w / 2, cy - h / 2]), w, h, src: svgDataUrl(img.svg), opacity: 100 }
+    const el: El = { ...newElement('image', freeSpot(cx - w / 2, cy - h / 2)), w, h, src: svgDataUrl(img.svg), opacity: 100 }
     els.current.push(el)
     pickTool('select')
     selected.current = new Set([el.id])
@@ -1357,7 +1366,7 @@ export default function BoardEditor({ id }: { id: string }) {
     const v = view.current
     const rc = c.getBoundingClientRect()
     const cx = rc.width / 2 / v.zoom - v.scrollX, cy = rc.height / 2 / v.zoom - v.scrollY
-    const el: El = { ...newElement('image', [cx - r.w / 2, cy - r.h / 2]), w: r.w, h: r.h, src: r.src, latex: r.latex, stroke: style.current.stroke, opacity: 100 }
+    const el: El = { ...newElement('image', freeSpot(cx - r.w / 2, cy - r.h / 2)), w: r.w, h: r.h, src: r.src, latex: r.latex, stroke: style.current.stroke, opacity: 100 }
     els.current.push(el)
     pickTool('select')
     selected.current = new Set([el.id])
@@ -1771,6 +1780,12 @@ export default function BoardEditor({ id }: { id: string }) {
     options = (
       <>
         <Group><span className="rounded-full bg-clay/15 px-2 py-0.5 text-[11.5px] font-medium text-clay">Đã chọn {selection.length}</span></Group>
+        {tool === 'select' && (
+          <Group>
+            <Chip active={o.selectMode === 'box'} onClick={() => setOpt('selectMode', 'box')} title="Chọn bằng khung chữ nhật"><Ico d="M4 4h16v16H4z" /></Chip>
+            <Chip active={o.selectMode === 'lasso'} onClick={() => setOpt('selectMode', 'lasso')} title="Chọn bằng khoanh tự do"><Ico d={LASSO_D} /></Chip>
+          </Group>
+        )}
         {!onlyImage && colorRow}
         {!onlyText && !onlyImage && widthRow}
         {hasText && fontRow}
@@ -1959,7 +1974,7 @@ export default function BoardEditor({ id }: { id: string }) {
       {/* tầng 1: công cụ chính · tầng 2: tuỳ chọn của công cụ đang chọn */}
       <div className="relative z-20 shrink-0 border-b border-line bg-surface">
         <div className="@container flex h-12 min-w-0 items-end gap-1.5 px-2 pb-1 sm:gap-2 sm:px-3">
-          <div className="flex min-w-0 flex-1 items-center gap-1.5 overflow-x-auto [scrollbar-width:none] sm:flex-none sm:gap-2 sm:overflow-visible">
+          <div className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto [scrollbar-width:none] sm:flex-none sm:gap-2 sm:overflow-visible">
             <div className="flex shrink-0 items-center gap-0.5">
               <IconBtn label="Hoàn tác — Ctrl Z" onClick={undo} disabled={undoStack.current.length < 2}><Ico d="M9 14L4 9l5-5M4 9h11a5 5 0 0 1 0 10h-3" /></IconBtn>
               <IconBtn label="Làm lại — Ctrl Y" onClick={redo} disabled={!redoStack.current.length}><Ico d="M15 14l5-5-5-5m5 5H9a5 5 0 0 0 0 10h3" /></IconBtn>
@@ -1975,10 +1990,10 @@ export default function BoardEditor({ id }: { id: string }) {
               {mainTools.map((m) => (
                 <button
                   key={m.id} type="button" title={m.label} aria-pressed={main === m.id} onClick={m.onClick}
-                  className={`relative flex h-9 min-w-9 items-center justify-center gap-1.5 rounded-[7px] px-2 text-[13px] transition-colors duration-200 sm:h-8 sm:min-w-0 sm:px-3 ${main === m.id ? 'text-clay' : 'text-ink-2 hover:text-ink'}`}
+                  className={`${m.id === 'laser' || m.id === 'hand' ? 'hidden sm:flex' : 'flex'} relative h-9 min-w-9 items-center justify-center gap-1.5 rounded-[7px] px-2 text-[13px] transition-colors duration-200 sm:h-8 sm:min-w-0 sm:px-3 ${main === m.id ? 'text-clay' : 'text-ink-2 hover:text-ink'}`}
                 >
                   <Ico d={m.icon} size={16} />
-                  <span className="hidden lg:inline">{m.label}</span>
+                  <span className="hidden @[1300px]:inline">{m.label}</span>
                 </button>
               ))}
             </div>
@@ -2001,15 +2016,15 @@ export default function BoardEditor({ id }: { id: string }) {
             </button>
             {busy && <span className="ml-1 text-[12px] text-ink-2">{busy}</span>}
             {saveErr && <span className="ml-1 text-[12px] text-red-600" title="Bộ nhớ trình duyệt đã đầy: xoá bớt ảnh/trang PDF hoặc xuất bảng ra file để giữ lại">Chưa lưu được (đầy bộ nhớ)</span>}
-            <span className="mx-1.5 hidden h-5 w-px bg-line lg:block" />
-            <Pop id="paper" pop={pop} setPop={setPop} title="Kiểu giấy" align="right" className="hidden lg:block"
+            <span className="mx-1.5 hidden h-5 w-px bg-line @[1000px]:block" />
+            <Pop id="paper" pop={pop} setPop={setPop} title="Kiểu giấy" align="right" className="hidden @[1000px]:block"
               face={<span className="flex items-center gap-1.5 px-1.5 text-[13px] text-ink"><Ico d="M6 3h9l4 4v14H6zM14 3v5h5" size={16} />Giấy</span>}>
               <div className="text-[12px] font-medium text-ink-2">Kiểu giấy</div>
               <div className="grid grid-cols-2 gap-2">
                 {PAPERS.map((pp) => {
                   const on = o.paper === pp.id
                   return (
-                    <button key={pp.id} type="button" aria-pressed={on} onClick={() => setOpt('paper', pp.id)}
+                    <button key={pp.id} type="button" aria-pressed={on} onClick={() => { setOpt('paper', pp.id); setPop(null) }}
                       className="group flex flex-col items-center gap-1.5 rounded-[8px] p-1 text-[12px]">
                       <span
                         className={`relative block h-[64px] w-[88px] rounded-[6px] border bg-white transition-shadow ${on ? 'border-clay ring-2 ring-clay/30' : 'border-line group-hover:border-ink-3'}`}
@@ -2034,15 +2049,23 @@ export default function BoardEditor({ id }: { id: string }) {
               </button>
               <IconBtn label="Phóng to — Ctrl +" onClick={() => zoomAt(v.zoom * 1.2)}><Ico d="M6 12h12M12 6v12" /></IconBtn>
             </div>
-            <span className="mx-1.5 hidden h-5 w-px bg-line lg:block" />
-            <div className="hidden items-center gap-0.5 lg:flex">
+            <span className="mx-1.5 hidden h-5 w-px bg-line @[1000px]:block" />
+            <div className="hidden items-center gap-0.5 @[1000px]:flex">
               <SideBtn label="Công cụ" on={side === 'tools'} onClick={() => toggleSide('tools')}><Ico d={WRENCH_D} size={16} /></SideBtn>
               <SideBtn label="Trợ lý" on={side === 'ai'} onClick={() => toggleSide('ai')}><AiIcon /></SideBtn>
             </div>
-            <Pop id="more" pop={pop} setPop={setPop} title="Thêm" align="right" className="lg:hidden"
+            <Pop id="more" pop={pop} setPop={setPop} title="Thêm" align="right" className="@[1000px]:hidden"
               face={<span className="flex items-center justify-center px-1 text-ink"><Ico d="M5 12h.01M12 12h.01M19 12h.01" size={18} /></span>}>
               <div className="w-[232px] space-y-2.5">
                 <div className="space-y-1.5 sm:hidden">
+                  <div className="grid grid-cols-2 gap-1.5">
+                    {mainTools.filter((m) => m.id === 'laser' || m.id === 'hand').map((m) => (
+                      <button key={m.id} type="button" aria-pressed={main === m.id} onClick={() => { setPop(null); m.onClick() }}
+                        className={`flex h-9 items-center gap-2 rounded-[7px] border px-2 text-[13px] ${main === m.id ? 'border-clay bg-clay/10 font-medium text-clay' : 'border-line text-ink hover:bg-sunken'}`}>
+                        <Ico d={m.icon} size={16} />{m.id === 'hand' ? 'Kéo trang' : m.label}
+                      </button>
+                    ))}
+                  </div>
                   <div className="flex items-center justify-between rounded-[8px] border border-line px-1 py-0.5">
                     <IconBtn label="Thu nhỏ" onClick={() => zoomAt(v.zoom / 1.2)}><Ico d="M6 12h12" /></IconBtn>
                     <button type="button" title="Về 100%" onClick={() => zoomAt(1)} className="h-9 flex-1 rounded-[6px] text-center text-[12.5px] text-ink tnum hover:bg-sunken">
@@ -2067,7 +2090,7 @@ export default function BoardEditor({ id }: { id: string }) {
                     {PAPERS.map((pp) => {
                       const on = o.paper === pp.id
                       return (
-                        <button key={pp.id} type="button" aria-pressed={on} onClick={() => setOpt('paper', pp.id)}
+                        <button key={pp.id} type="button" aria-pressed={on} onClick={() => { setOpt('paper', pp.id); setPop(null) }}
                           className={`flex h-9 items-center gap-2 rounded-[7px] border px-2 text-[12px] ${on ? 'border-clay bg-clay/10 font-medium text-clay' : 'border-line text-ink-2 hover:bg-sunken'}`}>
                           <span className="h-4 w-4 shrink-0 rounded-[3px] border border-line bg-white" style={{ backgroundImage: pp.bg, backgroundSize: '8px 8px' }} />
                           <span>{pp.label}</span>
@@ -2088,7 +2111,7 @@ export default function BoardEditor({ id }: { id: string }) {
             </Pop>
           </div>
         </div>
-        <div className="flex h-12 items-center overflow-x-auto [scrollbar-width:none] px-2 pb-1 text-[12.5px] text-ink-2 sm:h-11 sm:px-3 [&>div:first-child]:pl-0">
+        <div className="flex h-12 items-center overflow-x-auto [scrollbar-width:none] px-2 pb-1 text-[12.5px] text-ink-2 sm:h-11 sm:px-3 [&>div:first-child]:pl-0 max-xl:[mask-image:linear-gradient(to_right,#000_calc(100%-28px),transparent)]">
           {options}
         </div>
       </div>

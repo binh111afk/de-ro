@@ -195,8 +195,39 @@ export function fillPath(e: El): Path2D | null {
   if (e.kind === 'freedraw') {
     const lp = closedLoop(e)
     if (!lp) return null
-    for (const ring of [lp, ...regionHoles(e)]) {
-      ring.forEach(([x, y], i) => (i ? p.lineTo(x, y) : p.moveTo(x, y)))
+    if (e.region) {
+      for (const ring of [lp, ...regionHoles(e)]) {
+        ring.forEach(([x, y], i) => (i ? p.lineTo(x, y) : p.moveTo(x, y)))
+        p.closePath()
+      }
+    } else {
+      // nét bút được làm mượt nên bo góc → vùng tô cũng bo: chia lại viền thành điểm cách đều ~4px
+      // rồi lấy trung bình trượt (±3 điểm ≈ 12px) dọc viền, để màu không lòi ra ngoài nét ở góc
+      const STEP = 4
+      const even: Pt[] = [lp[0]]
+      let carry = 0
+      for (let i = 1; i <= lp.length; i++) {
+        const a = lp[i - 1], b = lp[i % lp.length]
+        const seg = Math.hypot(b[0] - a[0], b[1] - a[1])
+        let t = STEP - carry
+        while (t <= seg) { even.push([a[0] + ((b[0] - a[0]) * t) / seg, a[1] + ((b[1] - a[1]) * t) / seg]); t += STEP }
+        carry = seg - (t - STEP)
+      }
+      const R = even.length > 12 ? 3 : 0
+      const ring: Pt[] = even.map((_, i) => {
+        let x = 0, y = 0
+        for (let k = -R; k <= R; k++) { const q = even[(i + k + even.length) % even.length]; x += q[0]; y += q[1] }
+        return [x / (2 * R + 1), y / (2 * R + 1)]
+      })
+      const lpS = ring
+      const n = lpS.length
+      const mid = (a: Pt, b: Pt): Pt => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]
+      const m0 = mid(lpS[n - 1], lpS[0])
+      p.moveTo(m0[0], m0[1])
+      for (let i = 0; i < n; i++) {
+        const c = lpS[i], m = mid(c, lpS[(i + 1) % n])
+        p.quadraticCurveTo(c[0], c[1], m[0], m[1])
+      }
       p.closePath()
     }
   } else if (e.kind === 'rectangle') p.rect(0, 0, e.w, e.h)
@@ -263,7 +294,7 @@ export function drawElement(ctx: CanvasRenderingContext2D, rc: ReturnType<typeof
       } else {
         // gạch chéo: rough không biết lỗ → cắt theo vùng (chừa lỗ) rồi gạch cả vòng ngoài
         ctx.save()
-        if (e.holes?.length) ctx.clip(fillPath(e)!, 'evenodd')
+        ctx.clip(fillPath(e)!, fillRule(e))
         rc.polygon(closedLoop(e)!, { ...roughOptions(e), stroke: 'none', fill: e.fill, fillStyle: 'hachure' })
         ctx.restore()
       }
