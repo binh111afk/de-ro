@@ -383,7 +383,13 @@ export function ExamEditor({ content, onChange, onReady, pageSetup, readOnly, is
   const pageBorder = pageSetup?.pageBorder ?? 0
 
   return (
-    <div className="doc-stage" style={{ minHeight: isReflow ? undefined : pageCount * (PAGE_H + PAGE_GAP) }}>
+    <div
+      className="doc-stage"
+      style={{
+        width: isReflow ? '100%' : PAGE_W,
+        minHeight: isReflow ? undefined : pageCount * (PAGE_H + PAGE_GAP),
+      }}
+    >
       {/* lớp giấy */}
       {!isReflow && (
         <div className="doc-papers" aria-hidden="true">

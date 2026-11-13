@@ -50,6 +50,7 @@ export function NavPanel({
   examDoc = null,
   side = 'right',
   isMobile,
+  isOverlay,
   currentTab,
   onTabChange,
 }: {
@@ -66,6 +67,8 @@ export function NavPanel({
   /** cột đặt panel: soạn đề để bên trái (AI bên phải, như soạn slide) */
   side?: 'left' | 'right'
   isMobile?: boolean
+  /** trên tablet (640–1023px): giữ thanh icon, mở panel phủ lên trang thay vì đẩy trang hẹp lại */
+  isOverlay?: boolean
   currentTab?: PaneTab
   onTabChange?: (tab: PaneTab) => void
 }) {
@@ -111,7 +114,7 @@ export function NavPanel({
                   onClick={() => setTab(id)}
                   aria-pressed={tab === id}
                   className={cn(
-                    'flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors',
+                    'flex min-h-9 items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors',
                     tab === id
                       ? 'bg-clay-soft text-clay-deep'
                       : 'text-ink-3 hover:bg-paper-2 hover:text-ink',
@@ -126,7 +129,7 @@ export function NavPanel({
               type="button"
               onClick={() => onOpenChange(false)}
               aria-label="Đóng"
-              className="flex size-8 items-center justify-center rounded-lg text-ink-3 hover:bg-paper-2 hover:text-ink"
+              className="flex size-9 items-center justify-center rounded-lg text-ink-3 hover:bg-paper-2 hover:text-ink"
             >
               <X className="size-4" />
             </button>
@@ -222,6 +225,13 @@ export function NavPanel({
 
   return (
     <div className={cn('relative flex min-h-0 shrink-0', left && 'flex-row-reverse')}>
+      {isOverlay && active && (
+        <div
+          className="fixed inset-0 z-30 bg-black/15"
+          onClick={() => onOpenChange(false)}
+          aria-hidden="true"
+        />
+      )}
       {/* nút thu panel kiểu Canva: viên thuốc bám mép trái panel */}
       <button
         type="button"
@@ -229,15 +239,22 @@ export function NavPanel({
         title="Đóng panel"
         tabIndex={active ? 0 : -1}
         onClick={() => onOpenChange(false)}
-        className={cn('absolute top-1/2 z-30 flex h-12 w-5 -translate-y-1/2 items-center justify-center rounded-full border border-line bg-white text-ink-2 shadow-sm transition-[left,right,opacity] duration-200 ease-out hover:text-clay motion-reduce:transition-none', left ? '-translate-x-1/2' : 'translate-x-1/2')}
+        className={cn('absolute top-1/2 z-50 flex h-12 w-5 -translate-y-1/2 items-center justify-center rounded-full border border-line bg-white text-ink-2 shadow-sm transition-[left,right,opacity] duration-200 ease-out hover:text-clay motion-reduce:transition-none', left ? '-translate-x-1/2' : 'translate-x-1/2')}
         style={{ [left ? 'left' : 'right']: 64 + (active ? PANEL_W : 0), opacity: active ? 1 : 0, pointerEvents: active ? 'auto' : 'none' }}
       >
         {left ? <ChevronLeft className="size-4" /> : <ChevronRight className="size-4" />}
       </button>
       {/* khung ngoài đổi bề rộng để panel trượt; khung trong giữ nguyên bề rộng nên nội dung không bị bóp */}
       <div
-        className="min-h-0 overflow-hidden transition-[width] duration-200 ease-out motion-reduce:transition-none"
-        style={{ width: active ? PANEL_W : 0 }}
+        className={cn(
+          'min-h-0 overflow-hidden transition-[width] duration-200 ease-out motion-reduce:transition-none',
+          isOverlay && 'absolute top-0 bottom-0 z-40',
+          isOverlay && active && 'shadow-[8px_0_24px_-8px_rgba(0,0,0,0.18)]',
+        )}
+        style={{
+          width: active ? PANEL_W : 0,
+          ...(isOverlay ? { [left ? 'left' : 'right']: 64 } : {}),
+        }}
         inert={!active}
       >
         <aside className={cn('nav-panel h-full min-h-0 border-line bg-surface', left ? 'border-r' : 'border-l')} style={{ width: PANEL_W }} aria-label={TABS.find((t) => t.id === shown)?.label}>

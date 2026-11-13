@@ -20,7 +20,8 @@ export function useAnchoredPopover(open: boolean, minWidth = 220) {
   const sync = () => {
     const rect = triggerRef.current?.getBoundingClientRect()
     if (!rect) return
-    const menuWidth = Math.max(rect.width, minWidth)
+    const maxAllowed = Math.max(120, window.innerWidth - 16)
+    const menuWidth = Math.min(Math.max(rect.width, minWidth), maxAllowed)
     const menuHeight = 300
     const gap = 6
     const left = Math.max(8, Math.min(rect.left, window.innerWidth - menuWidth - 8))

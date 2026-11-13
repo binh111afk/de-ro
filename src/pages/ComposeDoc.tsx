@@ -868,32 +868,10 @@ export default function ComposeDoc() {
   const [autoFit, setAutoFit] = useState(true)
   const [stageBox, setStageBox] = useState({ w: 0, h: 0 })
 
-  useEffect(() => {
-    const el = stageRef.current
-    if (!el) return
-    const ro = new ResizeObserver(() => {
-      setStageBox({ w: el.clientWidth, h: el.clientHeight })
-    })
-    ro.observe(el)
-    return () => ro.disconnect()
-    // khung soạn chỉ có khi rời màn Bắt đầu / tab slide — đo lại lúc nó xuất hiện, không thì autofit kẹt ở 100%
-  }, [startOpen, activeDeck?.id])
-
-  // co trang A4 vừa chiều rộng khung nhìn (như Word), giới hạn 25%–130%.
-  // Sàn thấp là 25% vì khi cả AI dock + nav pane đều mở trên màn hình hẹp,
-  // trang vẫn phải nhìn thấy được (sân cuộn ngang được).
-  const fitScale = useMemo(() => {
-    if (!stageBox.w) return 1
-    const usableW = stageBox.w - 56
-    const byW = usableW / PAGE_W
-    return Math.max(0.25, Math.min(1.3, byW))
-  }, [stageBox])
-
-  // zoom bấm tay thì bỏ auto-fit
-  const setZoomManual = useCallback((z: number) => {
-    setAutoFit(false)
-    setZoom(z)
-  }, [])
+  const isPhone = viewport.w > 0 && viewport.w < 640
+  const isTablet = viewport.w >= 640 && viewport.w < 1024
+  const isMobile = isPhone
+  const layoutMode: 'desktop' | 'tablet' | 'phone' = isPhone ? 'phone' : isTablet ? 'tablet' : 'desktop'
 
   const [mobileView, setMobileView] = useState<'reflow' | 'paged'>(() => {
     try {
@@ -903,8 +881,36 @@ export default function ComposeDoc() {
     return 'reflow'
   })
 
-  const isMobile = viewport.w > 0 && viewport.w < 768
-  const isReflow = isMobile && mobileView === 'reflow'
+  const isReflow = isPhone && mobileView === 'reflow'
+
+  useEffect(() => {
+    const el = stageRef.current
+    if (!el) return
+    const sync = () => setStageBox({ w: el.clientWidth, h: el.clientHeight })
+    sync()
+    const ro = new ResizeObserver(sync)
+    ro.observe(el)
+    return () => ro.disconnect()
+    // khung soạn chỉ có khi rời màn Bắt đầu / tab slide / bảng vẽ — đo lại lúc nó xuất hiện, không thì autofit kẹt ở 100%
+  }, [startOpen, activeDeck?.id, activeTab?.kind, isReflow])
+
+  // co trang A4 vừa chiều rộng khung nhìn (như Word), giới hạn 25%–130%.
+  // Sàn thấp là 25% vì khi cả AI dock + nav pane đều mở trên màn hình hẹp,
+  // trang vẫn phải nhìn thấy được (sân cuộn ngang được).
+  const fitScale = useMemo(() => {
+    const availW = isPhone ? Math.min(stageBox.w || viewport.w, viewport.w) : stageBox.w
+    if (!availW) return 1
+    const pad = isPhone ? 24 : 56
+    const usableW = Math.max(120, availW - pad)
+    const byW = usableW / PAGE_W
+    return Math.max(0.25, Math.min(1.3, byW))
+  }, [stageBox, PAGE_W, isPhone, viewport.w])
+
+  // zoom bấm tay thì bỏ auto-fit
+  const setZoomManual = useCallback((z: number) => {
+    setAutoFit(false)
+    setZoom(z)
+  }, [])
 
   const toggleMobileView = useCallback(() => {
     setMobileView((prev) => {
@@ -916,7 +922,7 @@ export default function ComposeDoc() {
     })
   }, [])
 
-  const effectiveZoom = isReflow ? 100 : (autoFit ? Math.round(fitScale * 100) : zoom)
+  const effectiveZoom = isReflow ? 100 : (autoFit ? Math.floor(fitScale * 100) : zoom)
   const effectiveScale = isReflow ? 1 : effectiveZoom / 100
 
   // trên màn hình hẹp, ưu tiên sân soạn: tự thu gọn panel bên
@@ -1035,6 +1041,7 @@ export default function ComposeDoc() {
         pageBorder={pageSetup.pageBorder}
         onPageBorderChange={(w) => setPageSetup((p) => ({ ...p, pageBorder: w }))}
         onOpenNav={openNavWithTab}
+        layoutMode={layoutMode}
       />
 
       {/* ---------- thân ---------- */}
@@ -1051,6 +1058,7 @@ export default function ComposeDoc() {
           examDoc={activeDoc}
           side="left"
           isMobile={isMobile}
+          isOverlay={isTablet}
           currentTab={navTab}
           onTabChange={setNavTab}
         />
