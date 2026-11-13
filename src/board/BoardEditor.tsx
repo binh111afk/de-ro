@@ -30,6 +30,7 @@ import { cachedSrc, IDB_PREFIX, stash, unstash } from './imgStore'
 import { useBoards, type BoardData } from '@/store/boards'
 import { splitTipKbd } from '@/components/Tooltip'
 import { texToSvg } from './formula'
+import { bindToScene, guideAt, Instruments, placeInstrument, projectGuide, type InstApi, type InstGuide, type InstKind, type InstState } from './Instruments'
 
 type Tool = 'select' | 'hand' | Kind | 'eraser' | 'laser' | 'bucket'
 type Slot = PenKind | 'shape' | 'text'
@@ -99,7 +100,7 @@ function load(id: string): Saved | null {
 
 type Drag =
   | { t: 'pan'; sx: number; sy: number; scrollX: number; scrollY: number }
-  | { t: 'create'; el: El; start: Pt }
+  | { t: 'create'; el: El; start: Pt; guide?: InstGuide }
   | { t: 'move'; start: Pt; orig: Map<string, Pt>; moved: boolean; origBounds: Bounds | null; candidates: Bounds[] }
   | { t: 'marquee'; start: Pt; cur: Pt; base: Set<string> }
   | { t: 'resize'; handle: Handle; orig: El[]; ob: Bounds; single: boolean }
@@ -357,6 +358,8 @@ export default function BoardEditor({ id }: { id: string }) {
         spread: sp ? { id: sp.id, prev: sp.prev, p: sp.p, r: sp.rMax * (1 - (1 - spT) ** 3) } : null,
       })
       if (liveRef.current) renderLive(liveRef.current, lv, view.current)
+      // dụng cụ hình học đi theo vùng nhìn
+      instG.current?.setAttribute('transform', `scale(${z}) translate(${view.current.scrollX} ${view.current.scrollY})`)
       // laser còn vệt thì vẽ tiếp khung sau để mờ dần
       if (laser.current.some((tr) => tr.pts.length)) redrawRef.current()
       // màu đang lan / viền xem trước đang chạy → vẽ tiếp
@@ -468,6 +471,48 @@ export default function BoardEditor({ id }: { id: string }) {
     return () => ro.disconnect()
   }, [redraw, paint])
 
+  /* ---------- dụng cụ hình học (thước kẻ, thước đo góc, compa) ---------- */
+
+  const [inst, setInst] = useState<InstState>({})
+  const instRef = useRef(inst)
+  instRef.current = inst
+  const instG = useRef<SVGGElement>(null)
+  useLayoutEffect(() => { redraw() }, [inst, redraw])
+  const toggleInst = (k: InstKind) => setInst((s) => {
+    if (s[k]) { const n = { ...s }; delete n[k]; return n }
+    const c = canvasRef.current, v = view.current
+    const center: Pt = [(c?.clientWidth ?? 800) / 2 / v.zoom - v.scrollX, (c?.clientHeight ?? 600) / 2 / v.zoom - v.scrollY]
+    return { ...s, [k]: placeInstrument(k, center) }
+  })
+  /** compa vẽ cung: một nét bút bình thường (kiểu bút đang chọn) */
+  const arcEl = useRef<El | null>(null)
+  const instApi: InstApi = {
+    toScene: (x, y) => toScene(x, y),
+    arcStart: (p) => {
+      const el = newElement('freedraw', p)
+      Object.assign(el, styles.current[opts.current.pen], { pen: opts.current.pen })
+      arcEl.current = el
+      live.current = el
+      els.current.push(el)
+      redraw()
+    },
+    arcPoint: (p) => {
+      const e = arcEl.current
+      if (!e) return
+      e.points!.push([p[0] - e.x, p[1] - e.y])
+      e.ver++
+      redrawLive()
+    },
+    arcEnd: () => {
+      const e = arcEl.current
+      arcEl.current = null
+      live.current = null
+      if (e && e.points!.length < 2) els.current = els.current.filter((x) => x !== e)
+      commit()
+      redraw()
+    },
+  }
+
   /* ---------- tiện ích toạ độ ---------- */
 
   const toScene = (cx: number, cy: number): Pt => {
@@ -475,6 +520,7 @@ export default function BoardEditor({ id }: { id: string }) {
     const v = view.current
     return [(cx - r.left) / v.zoom - v.scrollX, (cy - r.top) / v.zoom - v.scrollY]
   }
+  bindToScene(toScene)
   const sel = () => els.current.filter((e) => selected.current.has(e.id))
   /** hình tô được nằm trên cùng tại p — tính cả phần trong của hình chưa tô */
   const fillTarget = (p: Pt) => {
@@ -813,15 +859,17 @@ export default function BoardEditor({ id }: { id: string }) {
       return
     }
 
-    const el = newElement(t as Kind, p)
+    // bút đặt sát mép thước → nét bám theo mép
+    const guide = t === 'freedraw' ? guideAt(instRef.current, p, 14 / v.zoom) ?? undefined : undefined
+    const el = newElement(t as Kind, guide ? projectGuide(guide, p) : p)
     if (el.kind === 'freedraw') {
       if (ev.pointerType === 'pen') el.pressures = [ev.pressure || 0.5]
-      if (opts.current.snap) armHold(ev.clientX, ev.clientY)
+      if (opts.current.snap && !guide) armHold(ev.clientX, ev.clientY)
       live.current = el
       if (liveRef.current) liveRef.current.style.mixBlendMode = el.pen === 'highlight' ? 'multiply' : 'normal'
     }
     els.current.push(el)
-    drag.current = { t: 'create', el, start: p }
+    drag.current = { t: 'create', el, start: p, guide }
     redraw()
   }
 
@@ -959,7 +1007,8 @@ export default function BoardEditor({ id }: { id: string }) {
           // lấy cả các điểm trình duyệt gộp lại giữa hai khung hình → nét không bị gãy khi viết nhanh
           const pr = e.pressures
           for (const ce of coalesced()) {
-            const q = toScene(ce.clientX, ce.clientY)
+            let q = toScene(ce.clientX, ce.clientY)
+            if (d.guide) q = projectGuide(d.guide, q)
             const last = pts[pts.length - 1]
             // chỉ bỏ điểm gần như trùng (bỏ quá tay thì chỗ đi bút chậm bị vón cục)
             if (Math.hypot(q[0] - e.x - last[0], q[1] - e.y - last[1]) * view.current.zoom < 0.25) continue
@@ -971,7 +1020,7 @@ export default function BoardEditor({ id }: { id: string }) {
             }
           }
           e.ver++
-          if (opts.current.snap && Math.hypot(ev.clientX - hold.current.x, ev.clientY - hold.current.y) > 4) armHold(ev.clientX, ev.clientY)
+          if (opts.current.snap && !d.guide && Math.hypot(ev.clientX - hold.current.x, ev.clientY - hold.current.y) > 4) armHold(ev.clientX, ev.clientY)
           if (live.current === e) { redrawLive(); return }
         } else if (isLinear(e)) {
           if (ev.shiftKey) {
@@ -2629,6 +2678,17 @@ export default function BoardEditor({ id }: { id: string }) {
             {busy && <span className="ml-1 text-[12px] text-ink-2">{busy}</span>}
             {saveErr && <span className="ml-1 text-[12px] text-red-600" data-tip="Bộ nhớ trình duyệt đã đầy: xoá bớt ảnh/trang PDF hoặc xuất bảng ra file để giữ lại">Chưa lưu được (đầy bộ nhớ)</span>}
             <span className="mx-1.5 hidden h-5 w-px bg-line @[1000px]:block" />
+            <Pop id="inst" pop={pop} setPop={setPop} title="Dụng cụ hình học" align="right" className="hidden @[1000px]:block"
+              face={<span className="flex items-center gap-1.5 px-1.5 text-[13px] text-ink"><Ico d={RULER_D} size={16} />Dụng cụ</span>}>
+              <div className="text-[12px] font-medium text-ink-2">Dụng cụ hình học</div>
+              {([['ruler', 'Thước kẻ', 'Vẽ sát mép thước thành đường thẳng'], ['protractor', 'Thước đo góc', 'Kéo kim đỏ để đo góc'], ['compass', 'Compa', 'Kéo núm xanh quanh kim để vẽ cung']] as const).map(([k, label, hint]) => (
+                <button key={k} type="button" aria-pressed={!!inst[k]} onClick={() => toggleInst(k)}
+                  className={`flex w-full flex-col items-start rounded-[6px] px-2 py-1.5 text-left text-[13px] hover:bg-sunken ${inst[k] ? 'text-clay' : 'text-ink'}`}>
+                  <span className="flex items-center gap-2">{inst[k] ? '✓ ' : ''}{label}</span>
+                  <span className="text-[11.5px] text-ink-2">{hint}</span>
+                </button>
+              ))}
+            </Pop>
             <Pop id="paper" pop={pop} setPop={setPop} title="Kiểu giấy" align="right" className="hidden @[1000px]:block"
               face={<span className="flex items-center gap-1.5 px-1.5 text-[13px] text-ink"><Ico d={PAPER_D} size={16} />Giấy</span>}>
               <div className="text-[12px] font-medium text-ink-2">Kiểu giấy</div>
@@ -2769,6 +2829,7 @@ export default function BoardEditor({ id }: { id: string }) {
           }}
         />
         <canvas ref={liveRef} className="pointer-events-none absolute inset-0 h-full w-full" />
+        <Instruments s={inst} set={setInst} gRef={instG} api={instApi} />
         {textarea}
       </div>
       {dialog?.t === 'formula' && (
@@ -2921,6 +2982,7 @@ const IMG_D = 'M4 5h16v14H4zM4 15l4-4 4 4 3-3 5 5M15 9h.01'
 const PDF_NOTE_D = 'M6 3h9l4 4v14H6zM14 3v5h5M9 17l5-5 2 2-5 5H9z'
 const EXPORT_D = 'M12 4v11M7 10l5 5 5-5M5 20h14'
 const PAPER_D = 'M6 3h9l4 4v14H6zM14 3v5h5'
+const RULER_D = 'M3 15.5L15.5 3l5.5 5.5L8.5 21zM7 11.5l2 2M10 8.5l1.5 1.5M13 5.5l2 2M5.5 14l1 1M11.5 10l1 1'
 /** bút máy: vẽ lại dạng nét viền theo icons/pen-nib.svg */
 const FOUNTAIN_D = 'M13 6l-5.2 1.5a2.4 2.4 0 0 0-1.7 1.8L3 21l11.7-3.1a2.4 2.4 0 0 0 1.8-1.7L18 11M13 6l2.2-2.2a1.3 1.3 0 0 1 1.8 0l3.2 3.2a1.3 1.3 0 0 1 0 1.8L18 11M13 6l5 5M3 21l5.4-5.4M11 14.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0'
 /** outside = hiện thẳng ở hàng 2; còn lại nằm trong bảng "Kiểu bút" */
