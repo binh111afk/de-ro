@@ -24,6 +24,7 @@ import { renderLensSvg, type LensSpec } from './lens'
 import { renderPedigreeSvg, type PedigreeSpec } from './pedigree'
 import { renderPunnettSvg, type PunnettSpec } from './punnett'
 import { renderFoodWebSvg, type FoodWebSpec } from './foodweb'
+import { renderFieldSvg, type FieldSpec } from './field'
 
 export type ToolDoc =
   | { kind: 'graph'; spec: PlotSpec }
@@ -54,6 +55,7 @@ export type ToolDoc =
   | { kind: 'pedigree'; spec: PedigreeSpec }
   | { kind: 'punnett'; spec: PunnettSpec }
   | { kind: 'foodweb'; spec: FoodWebSpec }
+  | { kind: 'field'; spec: FieldSpec }
 
 export type ToolKind = ToolDoc['kind']
 
@@ -174,6 +176,8 @@ function renderToolRaw(doc: ToolDoc): ToolImage {
       return renderPunnettSvg(doc.spec, toolDesc(doc))
     case 'foodweb':
       return renderFoodWebSvg(doc.spec, toolDesc(doc))
+    case 'field':
+      return renderFieldSvg(doc.spec, toolDesc(doc))
   }
 }
 

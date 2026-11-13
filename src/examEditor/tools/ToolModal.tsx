@@ -37,6 +37,8 @@ import { PunnettModal } from './MoreToolModals'
 import type { PunnettSpec } from '@/lib/punnett'
 import { FoodWebModal } from './MoreToolModals'
 import type { FoodWebSpec } from '@/lib/foodweb'
+import { FieldModal } from './MoreToolModals'
+import type { FieldSpec } from '@/lib/field'
 
 export function ToolModal({
   kind,
@@ -109,5 +111,7 @@ export function ToolModal({
       return <PunnettModal initial={initial as PunnettSpec | null | undefined} {...common} />
     case 'foodweb':
       return <FoodWebModal initial={initial as FoodWebSpec | null | undefined} {...common} />
+    case 'field':
+      return <FieldModal initial={initial as FieldSpec | null | undefined} {...common} />
   }
 }

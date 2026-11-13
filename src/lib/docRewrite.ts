@@ -10,6 +10,7 @@ import { autoVarTable } from './varTable'
 import { cleanRewrite } from './slideRewrite'
 import { AC_DEFAULT, OSC_DEFAULT, OSC_Y_DEFAULT, STANDING_DEFAULT, oscPeriod, parseOscExpr, type OscQty, type OscSpec, type OscStart, type OscStartX0 } from './oscillation'
 import { LENS_DEFAULT, type LensNames, type LensRay, type LensType } from './lens'
+import { FIELD_DEFAULT, type FieldScene } from './field'
 
 export const DOC_REWRITE_PRESETS = [
   { label: 'Viết lại rõ hơn', ask: 'Viết lại rõ ràng, chặt chẽ hơn, giữ nguyên ý' },
@@ -155,6 +156,7 @@ export const FIGURE_GUIDE =
   '23) Sơ đồ phả hệ (Sinh học 12): {"kind":"pedigree","text":"1: nam bt\\n2: nữ bệnh\\n1 x 2 -> 3, 4\\n3: nam bt\\n4: nữ mang gen\\nhỏi 4"}. Khai báo người "id: nam|nữ|? bt|bệnh|mang gen|chết"; vợ chồng "1 x 2" (cận huyết "1 xx 2"); con "1 x 2 -> 3, 4" (sinh đôi cùng trứng "(5 6)", khác trứng "[7 8]"); "hỏi 10" đánh dấu người hỏi; đặt tên bệnh: bệnh "mù màu".\n' +
   '24) Bảng lai Punnett (Sinh học 9 & 12): {"kind":"punnett","cross":"AaBb x Aabb"}. Tối đa 3 cặp gen phân li độc lập (khung tối đa 8x8), hỗ trợ gen liên kết giới tính (XAXa x XaY), trội không hoàn toàn, tên kiểu hình, để trống (blankGrid: true).\n' +
   '25) Chuỗi và lưới thức ăn (Sinh học): {"kind":"foodweb","text":"Cỏ -> Thỏ, Chuột\\nThỏ, Chuột -> Cáo\\nVi sinh vật: phân giải","direction":"bottom-up|left-right","nodeStyle":"box|text","showLevels":true|false,"connectDecomposers":true|false}. Mũi tên -> chỉ chiều năng lượng (thức ăn -> vật ăn); máy tự xếp bậc dinh dưỡng từ dưới lên. Dùng [A] hoặc ?A để ẩn tên loài làm câu hỏi.\n' +
+  '26) Đường sức điện trường / từ trường (Vật lí 11): {"kind":"field","scene":{"type":"two-charges","signs":["+","-"],"ratio":1},"lines":8,"showArrows":true,"labels":true}. scene.type: "charge" (sign:"+"|"-"), "two-charges" (signs:["+"|"-","+"|"-"], ratio), "plates", "wire" (current:"out"|"in"), "wire-side" (current:"up"|"down"), "loop" (current:"cw"|"ccw"), "solenoid" (current:"left"|"right"), "magnet" (orient:"h"|"v"). Tuỳ chọn probe:{"x":0,"y":0.6,"vector":"E"|"B"}.\n' +
 
   'Biểu thức dùng biến x, ^ cho luỹ thừa, sqrt(), ln, sin, cos; nhân ngầm được (2x).'
 
@@ -559,6 +561,61 @@ export function toolFromRaw(raw: Record<string, unknown>): ToolDoc {
         },
       }
       break
+
+    case 'field': {
+      const sc = raw.scene && typeof raw.scene === 'object' ? (raw.scene as Record<string, unknown>) : raw
+      const st = typeof sc.type === 'string' ? sc.type : 'two-charges'
+      let scene: FieldScene
+      switch (st) {
+        case 'charge':
+          scene = { type: 'charge', sign: sc.sign === '-' ? '-' : '+' }
+          break
+        case 'two-charges': {
+          const arr = Array.isArray(sc.signs) ? sc.signs : ['+', '-']
+          const s1 = arr[0] === '-' ? '-' : '+'
+          const s2 = arr[1] === '-' ? '-' : '+'
+          const ratio = typeof sc.ratio === 'number' && Number.isFinite(sc.ratio) && sc.ratio > 0 ? sc.ratio : 1
+          scene = { type: 'two-charges', signs: [s1, s2], ratio }
+          break
+        }
+        case 'plates':
+          scene = { type: 'plates' }
+          break
+        case 'wire':
+          scene = { type: 'wire', current: sc.current === 'in' ? 'in' : 'out' }
+          break
+        case 'wire-side':
+          scene = { type: 'wire-side', current: sc.current === 'down' ? 'down' : 'up' }
+          break
+        case 'loop':
+          scene = { type: 'loop', current: sc.current === 'cw' ? 'cw' : 'ccw' }
+          break
+        case 'solenoid':
+          scene = { type: 'solenoid', current: sc.current === 'left' ? 'left' : 'right' }
+          break
+        case 'magnet':
+          scene = { type: 'magnet', orient: sc.orient === 'v' ? 'v' : 'h' }
+          break
+        default:
+          scene = FIELD_DEFAULT.scene
+      }
+      const rawProbe = raw.probe && typeof raw.probe === 'object' ? (raw.probe as Record<string, unknown>) : null
+      const probe =
+        rawProbe && typeof rawProbe.x === 'number' && typeof rawProbe.y === 'number'
+          ? { x: rawProbe.x, y: rawProbe.y, vector: (rawProbe.vector === 'B' ? 'B' : 'E') as 'E' | 'B' }
+          : undefined
+      doc = {
+        kind: 'field',
+        spec: {
+          scene,
+          lines: Math.max(4, Math.min(16, Math.round(num(raw.lines, FIELD_DEFAULT.lines)))),
+          showArrows: bool('showArrows', FIELD_DEFAULT.showArrows),
+          labels: bool('labels', FIELD_DEFAULT.labels),
+          ...(probe ? { probe } : {}),
+        },
+      }
+      break
+    }
 
     default:
       throw new Error(note || 'Không thấy gì để vẽ minh hoạ trong đoạn đã chọn.')

@@ -45,6 +45,7 @@ const TOOL_NAME: Record<ToolDoc['kind'], string> = {
   pedigree: 'Sơ đồ phả hệ',
   punnett: 'Bảng lai Punnett',
   foodweb: 'Lưới thức ăn',
+  field: 'Đường sức',
 }
 const PLOT_ASK = 'Vẽ hình minh hoạ cho đề này'
 const PANEL_W = 340
