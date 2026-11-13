@@ -2905,11 +2905,13 @@ const PEN_D = 'M4 20l4-1 11-11a2.1 2.1 0 0 0-3-3L5 16zM14 7l3 3'
 const ERASER_D = 'M8 20h12M5.5 14.5l7-7a2 2 0 0 1 2.8 0l2.2 2.2a2 2 0 0 1 0 2.8L11 19H8l-2.5-2.5a1.5 1.5 0 0 1 0-2z'
 const LASER_D = 'M12 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0-4 0M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1'
 const SELECT_D = 'M5 3l14 7-6 2-2 6z'
-const LASSO_D = 'M7 17c-2.5-1-4-3-4-5.5C3 7.4 7 4 12 4s9 3.4 9 7.5S17 19 12 19c-1.2 0-2.3-.2-3.3-.5M7 17a2 2 0 1 0 1.7 1.5M8.7 18.5L9 21'
+/** khoanh tự do: lucide lasso-select */
+const LASSO_D = 'M7 22a5 5 0 0 1-2-4M7 16.93c.96.43 1.96.74 2.99.91M3.34 14A6.8 6.8 0 0 1 2 10c0-4.42 4.48-8 10-8s10 3.58 10 8a7.19 7.19 0 0 1-.33 2M5 18a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM14.33 22h-.09a.35.35 0 0 1-.24-.32v-10a.34.34 0 0 1 .33-.34c.08 0 .15.03.21.08l7.34 6a.33.33 0 0 1-.21.59h-4.49l-2.57 3.85a.35.35 0 0 1-.28.14z'
 const SHAPE_D = 'M3 3h9v9H3zM16.5 12a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9z'
 const TEXT_D = 'M5 6V4h14v2M12 4v16m-3 0h6'
 const DOT_SIZES = [4, 6, 8, 10, 12, 14]
-const BUCKET_D = 'M11 3l8 8-7 7-8-8zM4 10h11M20 14s2 2.6 2 4a2 2 0 0 1-4 0c0-1.4 2-4 2-4z'
+/** thùng sơn: vẽ lại dạng nét viền theo icons/paint-bucket.svg */
+const BUCKET_D = 'M10.6 4.6L19 13l-7.3 7.3a1.6 1.6 0 0 1-2.2 0l-6.2-6.2a1.6 1.6 0 0 1 0-2.2zM3 13h15.5M5.4 9.8a3.6 3.6 0 1 1 5.2-5.2M20.5 15.5s2 2.3 2 3.6a2 2 0 1 1-4 0c0-1.3 2-3.6 2-3.6z'
 const HAND_D = 'M8 11V5.5a1.5 1.5 0 0 1 3 0V10m0-1V4.5a1.5 1.5 0 0 1 3 0V10m0-.5V6a1.5 1.5 0 0 1 3 0v7a6 6 0 0 1-6 6h-1a6 6 0 0 1-4.9-2.5L3.6 13a1.5 1.5 0 0 1 2.4-1.8L8 13'
 
 const UNDO_D = 'M9 14L4 9l5-5M4 9h11a5 5 0 0 1 0 10h-3'
@@ -2919,15 +2921,16 @@ const IMG_D = 'M4 5h16v14H4zM4 15l4-4 4 4 3-3 5 5M15 9h.01'
 const PDF_NOTE_D = 'M6 3h9l4 4v14H6zM14 3v5h5M9 17l5-5 2 2-5 5H9z'
 const EXPORT_D = 'M12 4v11M7 10l5 5 5-5M5 20h14'
 const PAPER_D = 'M6 3h9l4 4v14H6zM14 3v5h5'
-const FOUNTAIN_D = 'M12 3l5 7-5 11-5-11zM12 3v9m0 0a1.5 1.5 0 1 0 0 .01'
+/** bút máy: vẽ lại dạng nét viền theo icons/pen-nib.svg */
+const FOUNTAIN_D = 'M13 6l-5.2 1.5a2.4 2.4 0 0 0-1.7 1.8L3 21l11.7-3.1a2.4 2.4 0 0 0 1.8-1.7L18 11M13 6l2.2-2.2a1.3 1.3 0 0 1 1.8 0l3.2 3.2a1.3 1.3 0 0 1 0 1.8L18 11M13 6l5 5M3 21l5.4-5.4M11 14.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0'
 /** outside = hiện thẳng ở hàng 2; còn lại nằm trong bảng "Kiểu bút" */
 const PENS: { id: PenKind; label: string; icon: string; outside?: boolean }[] = [
   { id: 'ball', label: 'Bút bi', icon: PEN_D, outside: true },
-  { id: 'highlight', label: 'Dạ quang', icon: 'M4 20h7M9 16l-2 2-2-2 2-2M7 14l8-8 4 4-8 8z', outside: true },
+  { id: 'highlight', label: 'Dạ quang', icon: 'M9 11l-6 6v3h9l3-3M22 12l-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4', outside: true },
   { id: 'fountain', label: 'Bút máy', icon: FOUNTAIN_D },
-  { id: 'brush', label: 'Bút lông', icon: 'M7 21c-2 0-3-1-3-3 0-2.5 3-2 4-4l2-2 3 3-2 2c-2 1-1.5 4-4 4zM12 12l7-8 1 1-8 7' },
+  { id: 'brush', label: 'Bút lông', icon: 'm9.06 11.9 8.07-8.06a2.85 2.85 0 1 1 4.03 4.03l-8.06 8.08M7.07 14.94c-1.66 0-3 1.35-3 3.02 0 1.33-2.5 1.52-2 2.02 1.08 1.1 2.49 2.02 4 2.02 2.2 0 4-1.8 4-4.04a3.01 3.01 0 0 0-3-3.02z' },
   { id: 'pencil', label: 'Bút chì', icon: 'M4 20l1.5-4.5L16 5l3 3L8.5 18.5zM14 7l3 3M4 20l3-1' },
-  { id: 'marker', label: 'Bút dạ', icon: 'M9 15l-5 5M9 15l6-6 4 4-6 6zM15 9l2-2a2.8 2.8 0 0 1 4 4l-2 2' },
+  { id: 'marker', label: 'Bút dạ', icon: 'M10 13l6.5-6.5 3.5 3.5-6.5 6.5zM16.5 6.5l1.4-1.4a1.6 1.6 0 0 1 2.2 0l1.3 1.3a1.6 1.6 0 0 1 0 2.2L20 10M10 13l-2.3 2.3 3.5 3.5 2.3-2.3M7.7 15.3L4 20.5l.5.5 5.2-3.7' },
 ]
 
 /** bảng Kiểu bút: nét mẫu xem trước + các loại ngòi + độ nhọn / độ nhạy lực nhấn */
