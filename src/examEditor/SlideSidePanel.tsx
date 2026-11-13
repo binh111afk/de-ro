@@ -8,7 +8,7 @@
  */
 import { memo, useMemo, useRef, useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import { ChevronDown, ChevronLeft, ChevronRight, LayoutTemplate, Plus, Shapes, Smile, Sparkles, Upload, Wrench, X } from 'lucide-react'
+import { ChevronLeft, ChevronRight, LayoutTemplate, Plus, Shapes, Smile, Sparkles, Upload, Wrench, X } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import { Segmented } from '@/components/Segmented'
 import {
@@ -37,7 +37,7 @@ import { uploadImage } from '@/lib/mediaStore'
 import { useUploads } from '@/store/uploads'
 import type { DeckTheme, Slide, SlideElement } from '@/store/docs'
 import { ShapeGallery, ShapePreview, visibleGroups } from './ShapeGallery'
-import { useViewportSize } from './Layout'
+import { useSlideViewport } from './useSlideViewport'
 import { ToolsPanel } from './tools/ToolsPanel'
 import { svgDataUrl } from '@/lib/plot'
 
@@ -86,7 +86,7 @@ function SlideSidePanelImpl({
   const [last, setLast] = useState<PanelId | null>(null)
   const shown = active ?? last
   const current = PANELS.find((p) => p.id === shown) ?? null
-  const mobile = useViewportSize().w < 768
+  const { isPhone, isTablet } = useSlideViewport()
 
   const navRef = useRef<HTMLElement>(null)
 
@@ -128,12 +128,19 @@ function SlideSidePanelImpl({
     setActive(null)
   }
 
-  if (mobile) {
+  if (isPhone) {
     return (
       <>
+        {active && (
+          <div
+            className="fixed inset-0 z-30 bg-black/25"
+            aria-hidden="true"
+            onClick={() => setActive(null)}
+          />
+        )}
         {/* tấm trượt từ đáy lên, nằm trên thanh tab */}
         <div
-          className="fixed inset-x-0 bottom-14 z-40 flex h-[62dvh] flex-col rounded-t-2xl border-t border-line bg-surface shadow-[0_-12px_40px_-16px_rgb(0_0_0/0.35)] transition-transform duration-200 ease-out motion-reduce:transition-none"
+          className="fixed inset-x-0 bottom-14 z-40 flex h-[68dvh] max-h-[calc(100dvh-64px)] flex-col rounded-t-2xl border-t border-line bg-surface shadow-[0_-12px_40px_-16px_rgb(0_0_0/0.35)] transition-transform duration-200 ease-out motion-reduce:transition-none"
           style={{ transform: active ? 'translateY(0)' : 'translateY(calc(100% + 56px))' }}
           inert={!active}
           aria-label={current?.title}
@@ -141,8 +148,8 @@ function SlideSidePanelImpl({
         >
           <div className="flex shrink-0 items-center justify-between px-3 pt-2">
             <span className="text-[14px] font-semibold text-ink">{current?.title}</span>
-            <button type="button" aria-label="Đóng" onClick={() => setActive(null)} className="rounded-md p-1.5 text-ink-2 hover:bg-paper-2">
-              <ChevronDown className="size-5" />
+            <button type="button" aria-label="Đóng" onClick={() => setActive(null)} className="flex min-h-[36px] min-w-[36px] items-center justify-center rounded-md p-1.5 text-ink-2 hover:bg-paper-2">
+              <X className="size-5" />
             </button>
           </div>
           {current && renderPanelBody(current.id, true)}
@@ -181,9 +188,11 @@ function SlideSidePanelImpl({
     )
   }
 
+  const railW = isTablet ? 56 : 64
+
   return (
     <div className="relative flex min-h-0 shrink-0">
-      <nav ref={navRef} aria-label="Thư viện slide" className="relative flex w-[64px] flex-col items-center gap-2 border-r border-line bg-surface py-3">
+      <nav ref={navRef} aria-label="Thư viện slide" className={cn('relative flex flex-col items-center gap-2 overflow-y-auto border-r border-line bg-surface py-3 [scrollbar-width:none]', isTablet ? 'w-[56px]' : 'w-[64px]')}>
         <NavRailIndicator containerRef={navRef} activeId={active} />
         {PANELS.map(({ id, label, Icon }) => (
           <button
@@ -196,7 +205,8 @@ function SlideSidePanelImpl({
             }}
             aria-pressed={active === id}
             className={cn(
-              'relative z-10 flex w-[54px] flex-col items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-0.5 py-2.5 text-[11px] leading-none tracking-[-0.01em] transition-colors duration-200 ease-[cubic-bezier(0.2,0.8,0.2,1)] motion-reduce:transition-none',
+              'relative z-10 flex flex-col items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-0.5 py-2.5 text-[11px] leading-none tracking-[-0.01em] transition-colors duration-200 ease-[cubic-bezier(0.2,0.8,0.2,1)] motion-reduce:transition-none',
+              isTablet ? 'w-[48px]' : 'w-[54px]',
               active === id ? 'font-semibold text-clay-deep' : 'font-medium text-ink-3 hover:bg-paper-2 hover:text-ink',
             )}
           >
@@ -206,32 +216,67 @@ function SlideSidePanelImpl({
         ))}
       </nav>
 
-      {/* nút thu panel kiểu Canva: viên thuốc bám mép phải panel, đi theo khi panel trượt */}
-      <button
-        type="button"
-        aria-label="Đóng panel"
-        title="Đóng panel"
-        tabIndex={active ? 0 : -1}
-        onClick={() => setActive(null)}
-        className="absolute top-1/2 z-30 flex h-12 w-5 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-line bg-white text-ink-2 shadow-sm transition-[left,opacity] duration-200 ease-out hover:text-clay motion-reduce:transition-none"
-        style={{ left: 64 + (active ? 280 : 0), opacity: active ? 1 : 0, pointerEvents: active ? 'auto' : 'none' }}
-      >
-        <ChevronLeft className="size-4" />
-      </button>
-      {/* khung ngoài đổi bề rộng để panel trượt ra/vào; khung trong giữ nguyên 280px nên nội dung không bị bóp */}
-      <div
-        className="min-h-0 overflow-hidden transition-[width] duration-200 ease-out motion-reduce:transition-none"
-        style={{ width: active ? 280 : 0 }}
-        inert={!active}
-      >
-      {current && (
-        <aside className="flex h-full w-[280px] min-h-0 flex-col border-r border-line bg-surface" aria-label={current.title}>
-          <PanelContentTransition activeTab={active} tabOrder={PANELS.map((p) => p.id)}>
-            {(tabId) => renderPanelBody(tabId as PanelId, false)}
-          </PanelContentTransition>
-        </aside>
+      {isTablet ? (
+        <>
+          {active && (
+            <div
+              className="fixed inset-0 z-30 bg-black/20"
+              aria-hidden="true"
+              onClick={() => setActive(null)}
+            />
+          )}
+          {active && current && (
+            <aside
+              className="absolute bottom-0 top-0 z-40 flex w-[280px] max-w-[calc(100vw-64px)] min-h-0 flex-col border-r border-line bg-surface shadow-[8px_0_32px_-8px_rgb(0_0_0/0.25)]"
+              style={{ left: railW }}
+              aria-label={current.title}
+              role="dialog"
+            >
+              <div className="flex shrink-0 items-center justify-between border-b border-line px-3 py-2">
+                <span className="text-[13px] font-semibold text-ink">{current.title}</span>
+                <button
+                  type="button"
+                  aria-label="Đóng panel"
+                  onClick={() => setActive(null)}
+                  className="flex min-h-[36px] min-w-[36px] items-center justify-center rounded-md text-ink-2 hover:bg-paper-2"
+                >
+                  <X className="size-4" />
+                </button>
+              </div>
+              {renderPanelBody(active, false)}
+            </aside>
+          )}
+        </>
+      ) : (
+        <>
+          {/* nút thu panel kiểu Canva: viên thuốc bám mép phải panel, đi theo khi panel trượt */}
+          <button
+            type="button"
+            aria-label="Đóng panel"
+            title="Đóng panel"
+            tabIndex={active ? 0 : -1}
+            onClick={() => setActive(null)}
+            className="absolute top-1/2 z-30 flex h-12 w-5 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-line bg-white text-ink-2 shadow-sm transition-[left,opacity] duration-200 ease-out hover:text-clay motion-reduce:transition-none"
+            style={{ left: railW + (active ? 280 : 0), opacity: active ? 1 : 0, pointerEvents: active ? 'auto' : 'none' }}
+          >
+            <ChevronLeft className="size-4" />
+          </button>
+          {/* khung ngoài đổi bề rộng để panel trượt ra/vào; khung trong giữ nguyên 280px nên nội dung không bị bóp */}
+          <div
+            className="min-h-0 overflow-hidden transition-[width] duration-200 ease-out motion-reduce:transition-none"
+            style={{ width: active ? 280 : 0 }}
+            inert={!active}
+          >
+          {current && (
+            <aside className="flex h-full w-[280px] min-h-0 flex-col border-r border-line bg-surface" aria-label={current.title}>
+              <PanelContentTransition activeTab={active} tabOrder={PANELS.map((p) => p.id)}>
+                {(tabId) => renderPanelBody(tabId as PanelId, false)}
+              </PanelContentTransition>
+            </aside>
+          )}
+          </div>
+        </>
       )}
-      </div>
     </div>
   )
 }
