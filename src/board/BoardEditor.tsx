@@ -2574,7 +2574,7 @@ export default function BoardEditor({ id }: { id: string }) {
     { id: 'pen', label: 'Bút', tip: 'Bút vẽ', kbd: 'P', icon: PEN_D, onClick: () => pickTool('freedraw') },
     { id: 'eraser', label: 'Gôm', tip: 'Gôm', kbd: 'E', icon: ERASER_D, onClick: () => pickTool('eraser') },
     { id: 'laser', label: 'Laser', tip: 'Bút laser (chỉ trỏ, tự mờ)', kbd: 'K', icon: LASER_D, onClick: () => pickTool('laser') },
-    { id: 'select', label: 'Chọn', tip: 'Chọn', kbd: 'V', icon: o.selectMode === 'lasso' ? LASSO_D : SELECT_D, onClick: () => pickTool('select') },
+    { id: 'select', label: 'Chọn', tip: 'Chọn', kbd: 'V', icon: SELECT_D, onClick: () => pickTool('select') },
     { id: 'shape', label: 'Hình', tip: 'Hình', kbd: SHAPE_KEYS[o.lastShape] ?? 'R', icon: SHAPE_D, onClick: () => pickTool(o.lastShape) },
     { id: 'bucket', label: 'Tô màu', tip: 'Tô màu vùng kín', kbd: 'G', icon: BUCKET_D, onClick: () => pickTool('bucket') },
     { id: 'text', label: 'Chữ', tip: 'Chữ', kbd: 'T', icon: TEXT_D, onClick: () => pickTool('text') },
