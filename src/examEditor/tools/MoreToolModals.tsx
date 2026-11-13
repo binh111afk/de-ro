@@ -1030,8 +1030,9 @@ const STRUCT_HELP: HelpGroups = [
   {
     group: 'Vòng',
     items: [
-      { code: 'C6H5-CH3', what: 'Vòng benzen (C6H5, C6H4, Ph hoặc benzen)' },
-      { code: 'vòng6-CH3', what: 'Vòng no 3–8 cạnh (vòng3 … vòng8, hoặc xiclo6)' },
+      { code: '[benzen]  hoặc  C6H5-CH3', what: 'Vòng benzen (C6H5, C6H4, Ph hoặc [benzen])' },
+      { code: '[xiclo3] … [xiclo6]', what: 'Vòng no 3–8 cạnh ([xiclo6], vòng6…)' },
+      { code: '[benzen](1:CH3)(4:NO2)', what: 'Nhóm thế theo vị trí (1..6) trên vòng' },
       { code: 'CH3-CH(C6H5)-CH3', what: 'Vòng làm nhánh' },
     ],
   },
@@ -1043,6 +1044,12 @@ export function StructModal({ initial, submitLabel, onClose, onInsert }: Props<S
   const doc = useMemo((): ToolDoc => ({ kind: 'struct', spec }), [spec])
   const { preview, error } = useRender(doc)
   const style = spec.style ?? 'condensed'
+  const ringStyle = spec.ringStyle ?? 'kekule'
+  const drawRings = spec.drawRings !== false
+  const insertToken = (tok: string) => {
+    const f = spec.formula.trim()
+    set({ formula: !f ? tok : f.endsWith('-') || f.endsWith('=') ? f + tok : `${f}-${tok}` })
+  }
   const inputs = (
     <>
       <section>
@@ -1072,7 +1079,7 @@ export function StructModal({ initial, submitLabel, onClose, onInsert }: Props<S
       <TextBlock
         title="Công thức"
         help={STRUCT_HELP}
-        intro="Gõ dạng thu gọn; chọn Khung để vẽ zigzag không ghi C, H. Vòng: C6H5 (benzen), vòng6, vòng5…"
+        intro="Gõ dạng thu gọn; chọn Khung để vẽ zigzag không ghi C, H. Vòng: [benzen], [xiclo3]…[xiclo6], nhóm thế (1:CH3)(4:NO2)."
         value={spec.formula}
         onChange={(formula) => set({ formula })}
         rows={3}
@@ -1080,7 +1087,62 @@ export function StructModal({ initial, submitLabel, onClose, onInsert }: Props<S
         label="Công thức cấu tạo"
       />
       <section>
-        <Check checked={!!spec.number} onChange={(number) => set({ number })}>Đánh số các C mạch chính</Check>
+        <h3 className={sectionTitle}>Chèn nhanh vòng &amp; ví dụ</h3>
+        <div className="flex flex-wrap gap-1.5">
+          {(
+            [
+              ['[benzen]', '+ [benzen]'],
+              ['[xiclo6]', '+ [xiclo6]'],
+              ['[xiclo5]', '+ [xiclo5]'],
+            ] as const
+          ).map(([tok, label]) => (
+            <button
+              key={tok}
+              type="button"
+              onClick={() => insertToken(tok)}
+              className="rounded-[6px] border border-line px-2 py-0.5 text-[12px] text-ink-2 hover:border-ink-4"
+            >
+              {label}
+            </button>
+          ))}
+          <button
+            type="button"
+            onClick={() => set({ formula: '[benzen](1:CH3)(4:NO2)' })}
+            className="rounded-[6px] border border-line px-2 py-0.5 text-[12px] text-ink-2 hover:border-ink-4"
+          >
+            p-nitrotoluen
+          </button>
+        </div>
+      </section>
+      <section>
+        <h3 className={sectionTitle}>Kiểu vòng thơm</h3>
+        <div className="flex flex-wrap gap-1.5">
+          {(
+            [
+              ['kekule', 'Kekulé (3 nối đôi)'],
+              ['circle', 'Vòng tròn'],
+            ] as const
+          ).map(([id, label]) => (
+            <button
+              key={id}
+              type="button"
+              aria-pressed={ringStyle === id}
+              onClick={() => set({ ringStyle: id })}
+              className={cn(
+                'rounded-[6px] border px-2.5 py-1 text-[12.5px] transition-colors',
+                ringStyle === id ? 'border-clay bg-clay-tint font-medium text-clay' : 'border-line text-ink-2 hover:border-ink-4',
+              )}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </section>
+      <section className="space-y-1.5">
+        <Check checked={!!spec.number} onChange={(number) => set({ number })}>Đánh số mạch chính / đỉnh vòng</Check>
+        {style === 'condensed' && (
+          <Check checked={drawRings} onChange={(v) => set({ drawRings: v })}>Vẽ C₆H₅ thành vòng</Check>
+        )}
       </section>
     </>
   )
