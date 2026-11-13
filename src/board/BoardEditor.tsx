@@ -488,7 +488,7 @@ export default function BoardEditor({ id }: { id: string }) {
   const [railOpen, setRailOpen] = useState(true)
   const railRef = useRef<HTMLDivElement>(null)
   const RAIL_W = 168
-  const railW = () => (railOpen && pdfPages.length && (canvasRef.current?.clientWidth ?? 0) >= 640 ? RAIL_W : 0)
+  const railW = () => (railOpen && els.current.some(isPage) && (canvasRef.current?.clientWidth ?? 0) >= 640 ? RAIL_W : 0)
   const syncPageRef = useRef(() => {})
   syncPageRef.current = () => {
     if (!pdfPages.length) return
@@ -504,6 +504,8 @@ export default function BoardEditor({ id }: { id: string }) {
   }
   /** bảng PDF: chỉ cuộn trong phạm vi các trang (chừa lề), không trôi ra vùng trống vô tận */
   clampRef.current = () => {
+    // đọc thẳng els.current: lúc vừa nạp bảng, biến pdfPages của lần render trước còn rỗng
+    const pdfPages = els.current.filter(isPage).sort((a, b) => a.y - b.y || a.x - b.x)
     if (!pdfPages.length) return
     const c = canvasRef.current
     if (!c) return
