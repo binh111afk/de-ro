@@ -222,13 +222,13 @@ function Ruler({ r, begin, h, close }: { r: NonNullable<InstState['ruler']>; beg
       <g className="pointer-events-none">{ticks}</g>
       <text x={RULER_LEN / 2} y={RULER_W - 12} fontSize={11} textAnchor="middle" fill={INK} className="pointer-events-none">{shownDeg(r.a)}°</text>
       <g
-        transform={`translate(${RULER_LEN - 18} ${RULER_W - 18})`} className="pointer-events-auto cursor-grab" {...h} data-tip="Kéo để xoay thước"
+        transform={`translate(${RULER_LEN / 2 - 14} ${RULER_W + 24})`} className="pointer-events-auto cursor-grab" {...h} data-tip="Kéo để xoay thước"
         onPointerDown={(e) => begin(e, { k: 'rotate', which: 'ruler', c, a0: r.a, p0: angTo(e, c) })}
       >
         <circle r={10} fill="#fff" stroke={EDGE} />
         <path d="M-4 1a4 4 0 1 0 1-4.5M-3 -6v3h3" fill="none" stroke={INK} strokeWidth={1.4} strokeLinecap="round" />
       </g>
-      <CloseBtn x={RULER_LEN + 2} y={14} onClick={close} />
+      <CloseBtn x={RULER_LEN / 2 + 14} y={RULER_W + 24} onClick={close} />
     </g>
   )
 }
@@ -266,12 +266,12 @@ function Protractor({ q, begin, h, close }: { q: NonNullable<InstState['protract
         <circle r={7} fill="#fff" stroke="#e03131" strokeWidth={1.4} />
       </g>
       <text x={0} y={-22} fontSize={13} fontWeight={600} textAnchor="middle" fill="#e03131" className="pointer-events-none">{q.m}°</text>
-      <g transform={`translate(${R + 4} 26)`} className="pointer-events-auto cursor-grab" {...h} data-tip="Kéo để xoay thước đo góc"
+      <g transform={`translate(-14 38)`} className="pointer-events-auto cursor-grab" {...h} data-tip="Kéo để xoay thước đo góc"
         onPointerDown={(e) => begin(e, { k: 'rotate', which: 'protractor', c, a0: q.a, p0: angTo(e, c) })}>
         <circle r={10} fill="#fff" stroke={EDGE} />
         <path d="M-4 1a4 4 0 1 0 1-4.5M-3 -6v3h3" fill="none" stroke={INK} strokeWidth={1.4} strokeLinecap="round" />
       </g>
-      <CloseBtn x={-R - 4} y={26} onClick={close} />
+      <CloseBtn x={14} y={38} onClick={close} />
     </g>
   )
 }
