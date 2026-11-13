@@ -9,8 +9,12 @@ export type StrokeStyle = 'solid' | 'dashed' | 'dotted'
 /** glass: nền màu trong suốt có vệt sáng như mặt kính (vẽ riêng, không qua rough) */
 export type FillStyle = 'hachure' | 'solid' | 'glass'
 export type Pt = [number, number]
-export type PenKind = 'fountain' | 'ball' | 'brush' | 'pencil' | 'marker' | 'highlight'
-export type Paper = 'plain' | 'grid' | 'lines' | 'dots'
+export type PenKind = 'fountain' | 'ball' | 'brush' | 'pencil' | 'marker' | 'chalk' | 'highlight'
+export type Paper = 'plain' | 'grid' | 'lines' | 'dots' | 'chalkboard' | 'greenboard'
+
+export const isDarkPaper = (p: Paper) => p === 'chalkboard' || p === 'greenboard'
+export const paperBg = (p: Paper) =>
+  p === 'chalkboard' ? '#2b2f2e' : p === 'greenboard' ? '#2f4a3a' : '#ffffff'
 
 export interface Style {
   stroke: string

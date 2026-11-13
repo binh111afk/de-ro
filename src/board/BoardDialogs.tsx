@@ -179,14 +179,15 @@ export function PdfPagesDialog({ file, onClose, onDone }: {
 export type ExportArea = 'all' | 'view' | 'selection'
 export interface ExportChoice { format: 'png' | 'pdf' | 'pdf-pages'; area: ExportArea; bg: ExportBg; scale: number }
 
-export function ExportDialog({ hasSelection, hasPages, onClose, onDone }: {
+export function ExportDialog({ hasSelection, hasPages, defaultPaperBg, onClose, onDone }: {
   hasSelection: boolean
   /** bảng có trang PDF mở để ghi chú: cho xuất theo trang gốc (mặc định) */
   hasPages?: boolean
+  defaultPaperBg?: boolean
   onClose: () => void
   onDone: (c: ExportChoice) => Promise<void>
 }) {
-  const [c, setC] = useState<ExportChoice>({ format: hasPages ? 'pdf-pages' : 'png', area: hasSelection ? 'selection' : 'all', bg: 'white', scale: 2 })
+  const [c, setC] = useState<ExportChoice>({ format: hasPages ? 'pdf-pages' : 'png', area: hasSelection ? 'selection' : 'all', bg: defaultPaperBg ? 'paper' : 'white', scale: 2 })
   const [busy, setBusy] = useState(false)
   const [err, setErr] = useState('')
   const set = <K extends keyof ExportChoice>(k: K, v: ExportChoice[K]) => setC((o) => ({ ...o, [k]: v, ...(k === 'format' && v === 'pdf' && o.bg === 'none' ? { bg: 'white' as ExportBg } : {}) }))

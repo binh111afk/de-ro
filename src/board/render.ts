@@ -7,7 +7,7 @@ import rough from 'roughjs'
 import type { Drawable, Options } from 'roughjs/bin/core'
 import { getStroke } from 'perfect-freehand'
 import {
-  centerOf, fontOf, handlePositions, isLinear, LINE_HEIGHT, localBounds, unionBounds,
+  centerOf, fontOf, handlePositions, isDarkPaper, isLinear, LINE_HEIGHT, localBounds, paperBg, unionBounds,
   type Bounds, type El, type Paper, type PenKind, type Pt,
   isClosedStroke, closedLoop, regionHoles, textRuns, lineWidth, SUB_SCALE, runFont,
 } from './scene'
@@ -93,7 +93,22 @@ function shapeOf(e: El): Drawable[] | Path2D {
       const pr = e.pen === 'highlight' ? undefined : e.pressures
       const pts = (e.points ?? []).map((p, i) => [p[0], p[1], pr?.[i] ?? 0.5])
       const outline = penOutline(pts, { pen: e.pen ?? 'ball', width: e.strokeWidth, sharp: e.tipSharp, sens: e.tipSens, real: !!pr })
-      d = new Path2D(svgPathFromStroke(outline))
+      const path = new Path2D(svgPathFromStroke(outline))
+      if (e.pen === 'chalk' && outline.length > 2) {
+        const step = Math.max(1, Math.floor(outline.length / 180))
+        const spread = Math.max(1.2, e.strokeWidth * 0.9)
+        let s = (e.seed || 1) >>> 0
+        const rnd = () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296 }
+        for (let i = 0; i < outline.length; i += step) {
+          if (rnd() < 0.35) continue
+          const [ox, oy] = outline[i]
+          const dx = (rnd() - 0.5) * spread * 2
+          const dy = (rnd() - 0.5) * spread * 2
+          const sz = 1 + rnd() * 1.4
+          path.rect(ox + dx, oy + dy, sz, sz)
+        }
+      }
+      d = path
       break
     }
     default:
@@ -110,6 +125,7 @@ const PEN_TRAITS: Record<PenKind, { thin: number; size: number; taper: number; s
   brush: { thin: 0.7, size: 4.4, taper: 11, smooth: 0.55 },
   pencil: { thin: 0.25, size: 2.4, taper: 2, smooth: 0.5 },
   marker: { thin: 0.12, size: 2.8, taper: 0, smooth: 0.5 },
+  chalk: { thin: 0.08, size: 2.8, taper: 0.5, smooth: 0.45 },
   highlight: { thin: 0, size: 2.6, taper: 0, smooth: 0.5 },
 }
 
@@ -163,6 +179,28 @@ function pencilFill(ctx: CanvasRenderingContext2D, color: string) {
   }
   const pat = ctx.createPattern(c, 'repeat')
   grain.set(color, pat)
+  return pat
+}
+
+/** bút phấn: mẫu hạt thưa và to hơn bút chì để tạo lỗ hổng lấm tấm như phấn trên bảng */
+const chalkGrain = new Map<string, CanvasPattern | null>()
+function chalkFill(ctx: CanvasRenderingContext2D, color: string) {
+  if (chalkGrain.has(color)) return chalkGrain.get(color)!
+  const S = 64
+  const c = document.createElement('canvas')
+  c.width = c.height = S
+  const g = c.getContext('2d')!
+  g.fillStyle = color
+  let s = 2463534242
+  const rnd = () => { s ^= s << 13; s ^= s >>> 17; s ^= s << 5; return (s >>> 0) / 4294967296 }
+  for (let i = 0; i < S * S * 0.48; i++) {
+    g.globalAlpha = 0.35 + rnd() * 0.65
+    const w = rnd() < 0.35 ? 2 : 1.5
+    const h = rnd() < 0.3 ? 2 : 1.5
+    g.fillRect(Math.floor(rnd() * S), Math.floor(rnd() * S), w, h)
+  }
+  const pat = ctx.createPattern(c, 'repeat')
+  chalkGrain.set(color, pat)
   return pat
 }
 
@@ -338,7 +376,7 @@ export function drawElement(ctx: CanvasRenderingContext2D, rc: ReturnType<typeof
     if (e.fillStyle === 'glass' && e.fill !== 'transparent') drawGlass(ctx, e)
     const s = shapeOf(e)
     if (s instanceof Path2D) {
-      ctx.fillStyle = (e.pen === 'pencil' && pencilFill(ctx, e.stroke)) || e.stroke
+      ctx.fillStyle = (e.pen === 'pencil' && pencilFill(ctx, e.stroke)) || (e.pen === 'chalk' && chalkFill(ctx, e.stroke)) || e.stroke
       if (e.pen === 'highlight') ctx.globalCompositeOperation = 'multiply'
       ctx.fill(s)
     } else for (const d of s) rc.draw(d)
@@ -382,9 +420,56 @@ export interface Overlay {
 
 export const LASER_LIFE = 1000
 
-/** nền giấy: kẻ ô / kẻ dòng / chấm, vẽ theo toạ độ cảnh để cuộn và phóng to theo */
+let chalkBoardTex: CanvasPattern | null | undefined
+function boardTexture(ctx: CanvasRenderingContext2D) {
+  if (chalkBoardTex !== undefined) return chalkBoardTex
+  const S = 256
+  const c = document.createElement('canvas')
+  c.width = c.height = S
+  const g = c.getContext('2d')!
+  let s = 135792468
+  const rnd = () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296 }
+  // vài vệt loang phấn mờ rất nhẹ (lặp qua biên ô để không lộ đường nối)
+  for (let i = 0; i < 10; i++) {
+    const x = rnd() * S, y = rnd() * S, r = 28 + rnd() * 52
+    const a = 0.012 + rnd() * 0.014
+    for (const ox of [-S, 0, S]) for (const oy of [-S, 0, S]) {
+      if (x + ox + r < 0 || x + ox - r > S || y + oy + r < 0 || y + oy - r > S) continue
+      const gr = g.createRadialGradient(x + ox, y + oy, 0, x + ox, y + oy, r)
+      gr.addColorStop(0, `rgba(255,255,255,${a})`)
+      gr.addColorStop(1, 'rgba(255,255,255,0)')
+      g.fillStyle = gr
+      g.fillRect(0, 0, S, S)
+    }
+  }
+  // bụi phấn li ti cố định theo toạ độ cảnh
+  g.fillStyle = '#ffffff'
+  for (let i = 0; i < 240; i++) {
+    g.globalAlpha = 0.02 + rnd() * 0.035
+    const sz = rnd() < 0.25 ? 1.5 : 1
+    g.fillRect(Math.floor(rnd() * S), Math.floor(rnd() * S), sz, sz)
+  }
+  chalkBoardTex = ctx.createPattern(c, 'repeat')
+  return chalkBoardTex
+}
+
+/** nền giấy: kẻ ô / kẻ dòng / chấm / bảng đen / bảng xanh, vẽ theo toạ độ cảnh để cuộn và phóng to theo */
 export function drawPaper(ctx: CanvasRenderingContext2D, paper: Paper, view: View, w: number, h: number) {
   if (paper === 'plain') return
+  if (isDarkPaper(paper)) {
+    const x0 = -view.scrollX, y0 = -view.scrollY
+    const vw = w / view.zoom, vh = h / view.zoom
+    ctx.save()
+    ctx.fillStyle = paperBg(paper)
+    ctx.fillRect(x0 - 1, y0 - 1, vw + 2, vh + 2)
+    const tex = boardTexture(ctx)
+    if (tex) {
+      ctx.fillStyle = tex
+      ctx.fillRect(x0 - 1, y0 - 1, vw + 2, vh + 2)
+    }
+    ctx.restore()
+    return
+  }
   const step = paper === 'lines' ? 32 : 24
   if (step * view.zoom < 6) return
   const x0 = -view.scrollX, y0 = -view.scrollY
@@ -455,8 +540,10 @@ export function render(
 ) {
   const ctx = canvas.getContext('2d')!
   const dpr = window.devicePixelRatio || 1
+  const dark = isDarkPaper(overlay.paper)
+  const accent = dark ? '#f08c5c' : ACCENT
   ctx.setTransform(1, 0, 0, 1, 0, 0)
-  ctx.fillStyle = '#ffffff'
+  ctx.fillStyle = paperBg(overlay.paper)
   ctx.fillRect(0, 0, canvas.width, canvas.height)
   const z = view.zoom * dpr
   ctx.setTransform(z, 0, 0, z, view.scrollX * z, view.scrollY * z)
@@ -487,9 +574,9 @@ export function render(
     ctx.rotate(e.angle)
     ctx.translate(-cx, -cy)
     ctx.translate(e.x, e.y)
-    ctx.fillStyle = fh.color === 'transparent' ? 'rgba(255,255,255,0.6)' : rgba(fh.color, 0.35)
+    ctx.fillStyle = fh.color === 'transparent' ? (dark ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.6)') : rgba(fh.color, 0.35)
     ctx.fill(fp, fillRule(e))
-    ctx.strokeStyle = ACCENT
+    ctx.strokeStyle = accent
     ctx.lineWidth = 2.5 / view.zoom
     ctx.setLineDash([6 / view.zoom, 4 / view.zoom])
     ctx.lineDashOffset = -(performance.now() / 40) % 1000 / view.zoom
@@ -501,7 +588,7 @@ export function render(
   const sel = overlay.selected
   const anyLocked = sel.some((e) => e.locked)
   ctx.lineWidth = 1 / view.zoom
-  ctx.strokeStyle = anyLocked ? '#78716c' : ACCENT
+  ctx.strokeStyle = anyLocked ? (dark ? '#a8a29e' : '#78716c') : accent
   // hình trong nhóm: chỉ khung chung của cả vùng chọn, không khung từng phần tử (nhóm công cụ có hàng chục nét)
   for (const e of sel) {
     if (isLinear(e) && sel.length === 1 && !anyLocked) continue
@@ -622,9 +709,9 @@ export function render(
     ctx.save()
     ctx.beginPath()
     ctx.arc(p[0], p[1], r, 0, Math.PI * 2)
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'
+    ctx.fillStyle = dark ? 'rgba(255, 255, 255, 0.16)' : 'rgba(255, 255, 255, 0.5)'
     ctx.fill()
-    ctx.strokeStyle = '#78716c'
+    ctx.strokeStyle = dark ? '#e7e5e4' : '#78716c'
     ctx.lineWidth = 1 / view.zoom
     ctx.stroke()
     ctx.restore()
@@ -632,7 +719,8 @@ export function render(
 
   if (overlay.marquee) {
     const [x1, y1, x2, y2] = overlay.marquee
-    ctx.fillStyle = 'rgba(180, 83, 42, 0.08)'
+    ctx.fillStyle = dark ? 'rgba(240, 140, 92, 0.14)' : 'rgba(180, 83, 42, 0.08)'
+    ctx.strokeStyle = accent
     ctx.fillRect(x1, y1, x2 - x1, y2 - y1)
     ctx.strokeRect(x1, y1, x2 - x1, y2 - y1)
   }
