@@ -860,7 +860,7 @@ export default function BoardEditor({ id }: { id: string }) {
     }
 
     // bút đặt sát mép thước → nét bám theo mép
-    const guide = t === 'freedraw' ? guideAt(instRef.current, p, 14 / v.zoom) ?? undefined : undefined
+    const guide = t === 'freedraw' ? guideAt(instRef.current, p, 22 / v.zoom) ?? undefined : undefined
     const el = newElement(t as Kind, guide ? projectGuide(guide, p) : p)
     if (el.kind === 'freedraw') {
       if (ev.pointerType === 'pen') el.pressures = [ev.pressure || 0.5]
@@ -1008,6 +1008,18 @@ export default function BoardEditor({ id }: { id: string }) {
           const pr = e.pressures
           for (const ce of coalesced()) {
             let q = toScene(ce.clientX, ce.clientY)
+            // nét mới bắt đầu mà chạm mép thước → bám theo mép từ đầu nét
+            if (!d.guide && pts.length < 12) {
+              const g = guideAt(instRef.current, q, 22 / view.current.zoom)
+              if (g) {
+                d.guide = g
+                clearTimeout(hold.current.timer)
+                const o = projectGuide(g, [e.x + pts[0][0], e.y + pts[0][1]])
+                e.x = o[0]; e.y = o[1]
+                pts.length = 1; pts[0] = [0, 0]
+                if (pr) pr.length = 1
+              }
+            }
             if (d.guide) q = projectGuide(d.guide, q)
             const last = pts[pts.length - 1]
             // chỉ bỏ điểm gần như trùng (bỏ quá tay thì chỗ đi bút chậm bị vón cục)

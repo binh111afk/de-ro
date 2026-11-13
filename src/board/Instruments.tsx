@@ -37,7 +37,9 @@ export function guideAt(s: InstState, p: Pt, tol: number): InstGuide | null {
     const d: Pt = [Math.cos(r.a), Math.sin(r.a)], n: Pt = [-d[1], d[0]]
     const v: Pt = [p[0] - r.x, p[1] - r.y]
     const t = dot(v, d), sd = dot(v, n)
-    if (t > -tol && t < RULER_LEN + tol) {
+    // đặt bút hơi lố ra ngoài hai đầu thước vẫn tính (kẻ hết chiều dài thước)
+    const slack = 3 * CM
+    if (t > -slack && t < RULER_LEN + slack) {
       if (sd > -tol && sd < tol) return { t: 'line', o: [r.x, r.y], d }
       if (sd > RULER_W - tol && sd < RULER_W + tol) return { t: 'line', o: [r.x + n[0] * RULER_W, r.y + n[1] * RULER_W], d }
     }
