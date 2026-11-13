@@ -31,6 +31,7 @@ import { Check, ToolShell, sectionTitle } from './ToolShell'
 import { PEDIGREE_SAMPLE, PEDIGREE_SAMPLE_TWINS, type PedigreeSpec } from '@/lib/pedigree'
 import { PUNNETT_DEFAULT, exportPunnettToText, parsePunnettCross, type GeneTrait, type PunnettSpec } from '@/lib/punnett'
 import { DEFAULT_FOODWEB_CHAIN, DEFAULT_FOODWEB_GRASSLAND, FOODWEB_HELP, type FoodWebSpec } from '@/lib/foodweb'
+import { FIELD_DEFAULT, type FieldScene, type FieldSpec } from '@/lib/field'
 
 type Props<S> = { initial?: S | null; submitLabel?: string; onClose: () => void; onInsert: (img: ToolImage) => void }
 type HelpGroups = Array<{ group: string; items: Array<{ code: string; what: string }> }>
@@ -3212,6 +3213,311 @@ export function FoodWebModal({ initial, submitLabel, onClose, onInsert }: Props<
     <ToolShell
       title="Chuỗi và lưới thức ăn"
       hint="Mũi tên chỉ chiều năng lượng; máy tự tính bậc dinh dưỡng từ dưới lên"
+      inputs={inputs}
+      inputsWidth={360}
+      preview={preview}
+      submitLabel={submitLabel ?? (initial ? 'Cập nhật hình' : 'Chèn hình')}
+      canSubmit={Boolean(preview) && !error}
+      onSubmit={() => preview && onInsert(preview)}
+      onClose={onClose}
+    />
+  )
+}
+
+/* ------------------------------------------------------------------ *
+ * Đường sức điện trường / từ trường (Vật lí 11)
+ * ------------------------------------------------------------------ */
+
+const FIELD_SCENE_OPTIONS: Array<{ key: FieldScene['type']; label: string }> = [
+  { key: 'charge', label: '1 điện tích' },
+  { key: 'two-charges', label: '2 điện tích' },
+  { key: 'plates', label: 'Bản tụ' },
+  { key: 'wire', label: 'Dây ⊙/⊗' },
+  { key: 'wire-side', label: 'Dây thẳng' },
+  { key: 'loop', label: 'Vòng dây' },
+  { key: 'solenoid', label: 'Ống dây' },
+  { key: 'magnet', label: 'Nam châm' },
+]
+
+function defaultFieldScene(type: FieldScene['type']): FieldScene {
+  switch (type) {
+    case 'charge':
+      return { type: 'charge', sign: '+' }
+    case 'two-charges':
+      return { type: 'two-charges', signs: ['+', '-'], ratio: 1 }
+    case 'plates':
+      return { type: 'plates' }
+    case 'wire':
+      return { type: 'wire', current: 'out' }
+    case 'wire-side':
+      return { type: 'wire-side', current: 'up' }
+    case 'loop':
+      return { type: 'loop', current: 'ccw' }
+    case 'solenoid':
+      return { type: 'solenoid', current: 'right' }
+    case 'magnet':
+      return { type: 'magnet', orient: 'h' }
+  }
+}
+
+export function FieldModal({ initial, submitLabel, onClose, onInsert }: Props<FieldSpec>) {
+  const [spec, setSpec] = useState<FieldSpec>(() =>
+    initial
+      ? { ...FIELD_DEFAULT, ...initial }
+      : { ...FIELD_DEFAULT },
+  )
+  const set = (p: Partial<FieldSpec>) => setSpec((s) => ({ ...s, ...p }))
+  const doc = useMemo((): ToolDoc => ({ kind: 'field', spec }), [spec])
+  const { preview, error } = useRender(doc)
+
+  const sc = spec.scene
+  const isMagnetic = sc.type === 'wire' || sc.type === 'wire-side' || sc.type === 'loop' || sc.type === 'solenoid' || sc.type === 'magnet'
+
+  const inputs = (
+    <>
+      <section>
+        <h3 className={sectionTitle}>Cảnh đường sức</h3>
+        <div className="grid grid-cols-2 gap-1.5">
+          {FIELD_SCENE_OPTIONS.map((opt) => (
+            <button
+              key={opt.key}
+              type="button"
+              aria-pressed={sc.type === opt.key}
+              onClick={() => {
+                const nextScene = defaultFieldScene(opt.key)
+                const nextVec = opt.key === 'wire' || opt.key === 'wire-side' || opt.key === 'loop' || opt.key === 'solenoid' || opt.key === 'magnet' ? 'B' : 'E'
+                set({
+                  scene: nextScene,
+                  ...(spec.probe ? { probe: { ...spec.probe, vector: nextVec } } : {}),
+                })
+              }}
+              className={cn(
+                'rounded-[6px] border px-2.5 py-1.5 text-[12.5px] text-left transition-colors',
+                sc.type === opt.key
+                  ? 'border-clay bg-clay-tint font-medium text-clay'
+                  : 'border-line text-ink-2 hover:border-ink-4',
+              )}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {sc.type === 'charge' && (
+        <section>
+          <h3 className={sectionTitle}>Dấu điện tích</h3>
+          <Segmented<'+' | '-'>
+            value={sc.sign}
+            onChange={(sign) => set({ scene: { type: 'charge', sign } })}
+            label="Dấu điện tích"
+            className="w-full flex h-9 [&>button]:flex-1 [&>button]:justify-center"
+            options={[
+              { key: '+', label: 'Dương (+)' },
+              { key: '-', label: 'Âm (−)' },
+            ]}
+          />
+        </section>
+      )}
+
+      {sc.type === 'two-charges' && (
+        <section className="flex flex-col gap-2">
+          <h3 className={sectionTitle}>Hai điện tích</h3>
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <span className="text-[12px] text-ink-3">Điện tích trái (q₁)</span>
+              <Segmented<'+' | '-'>
+                value={sc.signs[0]}
+                onChange={(s0) => set({ scene: { ...sc, signs: [s0, sc.signs[1]] } })}
+                label="Dấu q1"
+                className="mt-1 w-full flex h-9 [&>button]:flex-1 [&>button]:justify-center"
+                options={[
+                  { key: '+', label: '+' },
+                  { key: '-', label: '−' },
+                ]}
+              />
+            </div>
+            <div>
+              <span className="text-[12px] text-ink-3">Điện tích phải (q₂)</span>
+              <Segmented<'+' | '-'>
+                value={sc.signs[1]}
+                onChange={(s1) => set({ scene: { ...sc, signs: [sc.signs[0], s1] } })}
+                label="Dấu q2"
+                className="mt-1 w-full flex h-9 [&>button]:flex-1 [&>button]:justify-center"
+                options={[
+                  { key: '+', label: '+' },
+                  { key: '-', label: '−' },
+                ]}
+              />
+            </div>
+          </div>
+          <label className="text-[12.5px] text-ink-2">
+            Tỉ số độ lớn |q₂| / |q₁| ({(sc.ratio ?? 1).toFixed(1).replace('.', ',')})
+            <input
+              type="range"
+              min={0.5}
+              max={3}
+              step={0.5}
+              value={sc.ratio ?? 1}
+              onChange={(e) => set({ scene: { ...sc, ratio: Number(e.target.value) } })}
+              className="mt-1 w-full accent-clay"
+            />
+          </label>
+        </section>
+      )}
+
+      {sc.type === 'wire' && (
+        <section>
+          <h3 className={sectionTitle}>Chiều dòng điện</h3>
+          <Segmented<'out' | 'in'>
+            value={sc.current}
+            onChange={(current) => set({ scene: { type: 'wire', current } })}
+            label="Chiều dòng điện"
+            className="w-full flex h-9 [&>button]:flex-1 [&>button]:justify-center"
+            options={[
+              { key: 'out', label: 'Đi ra (⊙)' },
+              { key: 'in', label: 'Đi vào (⊗)' },
+            ]}
+          />
+        </section>
+      )}
+
+      {sc.type === 'wire-side' && (
+        <section>
+          <h3 className={sectionTitle}>Chiều dòng điện</h3>
+          <Segmented<'up' | 'down'>
+            value={sc.current}
+            onChange={(current) => set({ scene: { type: 'wire-side', current } })}
+            label="Chiều dòng điện"
+            className="w-full flex h-9 [&>button]:flex-1 [&>button]:justify-center"
+            options={[
+              { key: 'up', label: 'Đi lên (↑)' },
+              { key: 'down', label: 'Đi xuống (↓)' },
+            ]}
+          />
+        </section>
+      )}
+
+      {sc.type === 'loop' && (
+        <section>
+          <h3 className={sectionTitle}>Chiều dòng điện (mặt cắt)</h3>
+          <Segmented<'ccw' | 'cw'>
+            value={sc.current}
+            onChange={(current) => set({ scene: { type: 'loop', current } })}
+            label="Chiều dòng điện vòng dây"
+            className="w-full flex h-9 [&>button]:flex-1 [&>button]:justify-center"
+            options={[
+              { key: 'ccw', label: 'Trên ⊙, dưới ⊗' },
+              { key: 'cw', label: 'Trên ⊗, dưới ⊙' },
+            ]}
+          />
+        </section>
+      )}
+
+      {sc.type === 'solenoid' && (
+        <section>
+          <h3 className={sectionTitle}>Chiều dòng điện qua ống dây</h3>
+          <Segmented<'right' | 'left'>
+            value={sc.current}
+            onChange={(current) => set({ scene: { type: 'solenoid', current } })}
+            label="Chiều dòng điện ống dây"
+            className="w-full flex h-9 [&>button]:flex-1 [&>button]:justify-center"
+            options={[
+              { key: 'right', label: 'Trái → phải (mặt trước ↑)' },
+              { key: 'left', label: 'Phải → trái (mặt trước ↓)' },
+            ]}
+          />
+        </section>
+      )}
+
+      {sc.type === 'magnet' && (
+        <section>
+          <h3 className={sectionTitle}>Hướng nam châm</h3>
+          <Segmented<'h' | 'v'>
+            value={sc.orient}
+            onChange={(orient) => set({ scene: { type: 'magnet', orient } })}
+            label="Hướng nam châm"
+            className="w-full flex h-9 [&>button]:flex-1 [&>button]:justify-center"
+            options={[
+              { key: 'h', label: 'Nằm ngang (N–S)' },
+              { key: 'v', label: 'Thẳng đứng' },
+            ]}
+          />
+        </section>
+      )}
+
+      <section className="flex flex-col gap-1.5">
+        <h3 className={sectionTitle}>Đường sức &amp; hiển thị</h3>
+        <label className="text-[12.5px] text-ink-2">
+          Số đường sức: {spec.lines}
+          <input
+            type="range"
+            min={4}
+            max={16}
+            step={2}
+            value={spec.lines}
+            onChange={(e) => set({ lines: Number(e.target.value) })}
+            className="mt-1 w-full accent-clay"
+          />
+        </label>
+        <Check checked={spec.showArrows} onChange={(showArrows) => set({ showArrows })}>
+          Hiện mũi tên chiều trên đường sức
+        </Check>
+        <Check checked={spec.labels} onChange={(labels) => set({ labels })}>
+          Hiện nhãn (q, I, N, S, E⃗/B⃗)
+        </Check>
+        {sc.type !== 'wire-side' && (
+          <Check
+            checked={Boolean(spec.probe)}
+            onChange={(on) =>
+              set({
+                probe: on ? { x: 0, y: 0.65, vector: isMagnetic ? 'B' : 'E' } : undefined,
+              })
+            }
+          >
+            Vẽ vectơ tại điểm M
+          </Check>
+        )}
+        {spec.probe && sc.type !== 'wire-side' && (
+          <div className="grid grid-cols-2 gap-2 pl-6">
+            <label className="text-[12px] text-ink-3">
+              xM ({spec.probe.x.toFixed(1).replace('.', ',')})
+              <input
+                type="range"
+                min={-1.8}
+                max={1.8}
+                step={0.1}
+                value={spec.probe.x}
+                onChange={(e) =>
+                  set({ probe: { ...spec.probe!, x: Number(e.target.value) } })
+                }
+                className="mt-0.5 w-full accent-clay"
+              />
+            </label>
+            <label className="text-[12px] text-ink-3">
+              yM ({spec.probe.y.toFixed(1).replace('.', ',')})
+              <input
+                type="range"
+                min={-1.2}
+                max={1.2}
+                step={0.1}
+                value={spec.probe.y}
+                onChange={(e) =>
+                  set({ probe: { ...spec.probe!, y: Number(e.target.value) } })
+                }
+                className="mt-0.5 w-full accent-clay"
+              />
+            </label>
+          </div>
+        )}
+      </section>
+    </>
+  )
+
+  return (
+    <ToolShell
+      title="Đường sức điện trường / từ trường"
+      hint="Vẽ đường sức chuẩn SGK Vật lí 11 (in đen trắng rõ nét)"
       inputs={inputs}
       inputsWidth={360}
       preview={preview}
