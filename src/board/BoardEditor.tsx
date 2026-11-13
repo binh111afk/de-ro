@@ -152,6 +152,10 @@ export default function BoardEditor({ id }: { id: string }) {
   editingRef.current = editing
   const [, setTick] = useState(0)
   const [pop, setPop] = useState<string | null>(null)
+  /** hiệu ứng hiện/ẩn thanh nổi hàng 3 khi chọn/bỏ chọn */
+  const [selBarMounted, setSelBarMounted] = useState(false)
+  const [selBarVisible, setSelBarVisible] = useState(false)
+  const lastSelActionsRef = useRef<ReactNode>(null)
   /** ô Tô nền: mở bảng màu đầy đủ */
   const [moreFill, setMoreFill] = useState(false)
   /** panel bên: trợ lý (trái), công cụ (phải) */
@@ -1848,9 +1852,8 @@ export default function BoardEditor({ id }: { id: string }) {
       <Chip active={cur.roughness >= 1} onClick={() => setProp('roughness', 1)} title="Nét như vẽ tay">Vẽ tay</Chip>
     </Group>
   )
-  const fillPop = (
-    <Pop id="fill" pop={pop} setPop={setPop} title="Tô nền"
-      face={<span className="flex items-center gap-1.5 px-1 text-[12.5px] text-ink"><span className="h-4 w-4 rounded-[4px] border border-line" style={{ background: cur.fill === 'transparent' ? NONE_BG : cur.fill }} />Tô nền</span>}>
+  const fillPopBody = (
+    <>
       <PanelRow label="Màu nền">
         {FILLS.map((c) => <Swatch key={c} color={c} drag={cur.fillStyle} active={cur.fill === c} onClick={() => setProp('fill', c)} />)}
         <button type="button" title="Màu khác" aria-label="Màu khác" aria-expanded={moreFill} onClick={() => setMoreFill((v) => !v)}
@@ -1865,42 +1868,126 @@ export default function BoardEditor({ id }: { id: string }) {
           <Chip active={cur.fillStyle === 'glass'} onClick={() => setProp('fillStyle', 'glass')} title="Màu trong suốt như kính, nhìn xuyên được hình phía sau">Kính</Chip>
         </PanelRow>
       )}
+    </>
+  )
+  const fillPop = (
+    <Pop id="fill" pop={pop} setPop={setPop} title="Tô nền"
+      face={<span className="flex items-center gap-1.5 px-1 text-[12.5px] text-ink"><span className="h-4 w-4 rounded-[4px] border border-line" style={{ background: cur.fill === 'transparent' ? NONE_BG : cur.fill }} />Tô nền</span>}>
+      {fillPopBody}
     </Pop>
   )
-  const opacityPop = (
-    <Pop id="opacity" pop={pop} setPop={setPop} title="Độ trong" face={<span className="px-1 text-[12.5px] text-ink">Độ trong {cur.opacity}%</span>}>
-      <div className="w-[180px]">
-        <input type="range" min={10} max={100} step={10} value={cur.opacity}
-          onChange={(e) => setProp('opacity', Number(e.target.value))} className="w-full accent-[#b4532a]" />
-      </div>
-    </Pop>
+  const opacityPopBody = (
+    <div className="w-[180px]">
+      <input type="range" min={10} max={100} step={10} value={cur.opacity}
+        onChange={(e) => setProp('opacity', Number(e.target.value))} className="w-full accent-[#b4532a]" />
+    </div>
   )
+
+  const selPillBtn = 'flex h-9 min-w-9 shrink-0 items-center justify-center gap-1.5 rounded-full px-2 text-ink transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/40 sm:h-8 sm:min-w-8'
 
   let options: ReactNode
   /** hàng thứ 3 khi đang chọn: thao tác với phần đang chọn, thanh viên thuốc nổi trên bảng */
   let selActions: ReactNode = null
   if (selection.length) {
+    const canGroup = selection.length > 1 && !selection.every((e) => e.groupId && e.groupId === selection[0].groupId)
+    const canUngroup = selection.some((e) => e.groupId)
     selActions = (
       <>
-        {!toolDoc && canFill && <Group>{fillPop}</Group>}
-        <Group>{opacityPop}</Group>
-        <Group>
-          <Chip onClick={askAi} title="Đính kèm phần đang chọn vào khung chat Trợ lý AI">
-            <AiIcon /><span>Hỏi AI</span>
-          </Chip>
-        </Group>
-        <Group label="Sắp xếp">
-          <IconBtn label="Đưa lên trên cùng" onClick={() => reorder('front')}><Ico d="M12 19V5m-6 6l6-6 6 6" /></IconBtn>
-          <IconBtn label="Đưa xuống dưới cùng" onClick={() => reorder('back')}><Ico d="M12 5v14m6-6l-6 6-6-6" /></IconBtn>
-          {selection.length > 1 && !selection.every((e) => e.groupId && e.groupId === selection[0].groupId) && (
-            <IconBtn label="Nhóm lại — Ctrl+G" onClick={group}><Ico d="M4 4h7v7H4zM13 13h7v7h-7zM8 11v5h5M16 13V8h-5" /></IconBtn>
-          )}
-          {selection.some((e) => e.groupId) && (
-            <IconBtn label="Tách nhóm — Ctrl+Shift+G" onClick={ungroup}><Ico d="M4 4h7v7H4zM13 13h7v7h-7z" /></IconBtn>
-          )}
-          <IconBtn label="Nhân đôi — Ctrl+D" onClick={duplicate}><Ico d="M8 8h11v11H8zM5 16V5h11" /></IconBtn>
-          <IconBtn label="Xoá — Delete" onClick={deleteSelected}><Ico d="M5 7h14M10 7V5h4v2m-7 0l1 12h8l1-12" /></IconBtn>
-        </Group>
+        {/* cụm 1: tô nền + độ trong */}
+        <div className="flex shrink-0 items-center gap-0.5">
+          {!toolDoc && canFill && (
+            <Pop id="fill" pop={pop} setPop={setPop} title="Tô nền"
+              btnClassName={`${selPillBtn} w-9 px-0 sm:w-8 sm:px-0`}
+              face={(
+                <span className="flex flex-col items-center justify-center gap-[2px]">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                    <path d="M19 11l-8-8-8.6 8.6a2 2 0 0 0 0 2.8l5.2 5.2c.8.8 2 .8 2.8 0L19 11z" />
+                    <path d="M5 2l5 5M2 13h15" />
+                    <path d="M21 15s1.8 2.1 1.8 3.3a1.8 1.8 0 1 1-3.6 0c0-1.2 1.8-3.3 1.8-3.3z" />
+                  </svg>
+                  <span className="h-[3px] w-4 rounded-full border border-black/15" style={{ background: cur.fill === 'transparent' ? NONE_BG : cur.fill }} />
+                </span>
+              )}>
+              {fillPopBody}
+            </Pop>
+          )}
+          <Pop id="opacity" pop={pop} setPop={setPop} title="Độ trong"
+            btnClassName={selPillBtn}
+            face={(
+              <span className="flex items-center gap-1.5 text-ink">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  <circle cx="12" cy="12" r="8" />
+                  <path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor" stroke="none" />
+                </svg>
+                <span className="text-[11.5px] font-medium tabular-nums leading-none">{cur.opacity}%</span>
+              </span>
+            )}>
+            {opacityPopBody}
+          </Pop>
+        </div>
+
+        <span aria-hidden className="mx-1 h-4 w-px shrink-0 bg-line" />
+
+        {/* cụm 2: hỏi AI */}
+        <button
+          type="button" onClick={askAi} title="Đính kèm phần đang chọn vào khung chat Trợ lý AI" aria-label="Đính kèm phần đang chọn vào khung chat Trợ lý AI"
+          className="flex h-9 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 text-[12.5px] font-medium text-ink transition-all hover:bg-sunken active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/40 sm:h-8"
+        >
+          <AiIcon size={16} /><span>Hỏi AI</span>
+        </button>
+
+        <span aria-hidden className="mx-1 h-4 w-px shrink-0 bg-line" />
+
+        {/* cụm 3: sắp xếp & nhân đôi */}
+        <div className="flex shrink-0 items-center gap-0.5">
+          <SelBtn label="Đưa lên trên cùng" onClick={() => reorder('front')}>
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <rect x="3" y="3" width="10" height="10" rx="2" fill="currentColor" />
+              <path d="M15 11h4a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-6a2 2 0 0 1-2-2v-4" />
+              <path d="M17.5 8.5V3m-2.2 2.2L17.5 3l2.2 2.2" />
+            </svg>
+          </SelBtn>
+          <SelBtn label="Đưa xuống dưới cùng" onClick={() => reorder('back')}>
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <rect x="3" y="3" width="10" height="10" rx="2" />
+              <rect x="11" y="11" width="10" height="10" rx="2" fill="currentColor" />
+              <path d="M17.5 3v5.5m-2.2-2.2 2.2 2.2 2.2-2.2" />
+            </svg>
+          </SelBtn>
+          {canGroup && (
+            <SelBtn label="Nhóm lại — Ctrl+G" onClick={group}>
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <rect x="3" y="3" width="18" height="18" rx="3" strokeDasharray="3 2.5" />
+                <rect x="6.5" y="6.5" width="5" height="5" rx="1" />
+                <rect x="12.5" y="12.5" width="5" height="5" rx="1" />
+              </svg>
+            </SelBtn>
+          )}
+          {canUngroup && (
+            <SelBtn label="Tách nhóm — Ctrl+Shift+G" onClick={ungroup}>
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <path d="M14 3h5a2 2 0 0 1 2 2v5M10 21H5a2 2 0 0 1-2-2v-5" strokeDasharray="2.5 2.5" />
+                <rect x="4" y="4" width="6.5" height="6.5" rx="1.2" />
+                <rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.2" />
+              </svg>
+            </SelBtn>
+          )}
+          <SelBtn label="Nhân đôi — Ctrl+D" onClick={duplicate}>
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <rect x="8" y="8" width="12" height="12" rx="2" />
+              <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" />
+            </svg>
+          </SelBtn>
+        </div>
+
+        <span aria-hidden className="mx-1 h-4 w-px shrink-0 bg-line" />
+
+        {/* cụm 4: xoá */}
+        <SelBtn label="Xoá — Delete" onClick={deleteSelected} danger>
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M10 11v6M14 11v6" />
+          </svg>
+        </SelBtn>
       </>
     )
     options = (
@@ -2088,6 +2175,22 @@ export default function BoardEditor({ id }: { id: string }) {
     options = null
   }
 
+  const hasSel = selection.length > 0
+  if (selActions) lastSelActionsRef.current = selActions
+  useEffect(() => {
+    if (hasSel) {
+      setSelBarMounted(true)
+      const raf = requestAnimationFrame(() => setSelBarVisible(true))
+      return () => cancelAnimationFrame(raf)
+    }
+    setSelBarVisible(false)
+    const t = window.setTimeout(() => {
+      setSelBarMounted(false)
+      lastSelActionsRef.current = null
+    }, 150)
+    return () => window.clearTimeout(t)
+  }, [hasSel])
+
   const mainTools: { id: Main; label: string; icon: string; onClick: () => void }[] = [
     { id: 'pen', label: 'Bút', icon: PEN_D, onClick: () => pickTool('freedraw') },
     { id: 'eraser', label: 'Gôm', icon: ERASER_D, onClick: () => pickTool('eraser') },
@@ -2248,9 +2351,15 @@ export default function BoardEditor({ id }: { id: string }) {
 
       <div className="relative flex min-h-0 flex-1">
       <div className="relative min-w-0 flex-1 overflow-hidden" ref={wrapRef}>
-        {selActions && (
-          <div className="absolute left-1/2 top-2 z-10 flex h-10 max-w-[calc(100%-16px)] -translate-x-1/2 items-center overflow-x-auto rounded-full border border-line bg-surface px-3 text-[12.5px] text-ink-2 shadow-lift [scrollbar-width:none] [&>div:first-child]:pl-0">
-            {selActions}
+        {selBarMounted && (
+          <div className="pointer-events-none absolute left-1/2 top-2 z-10 max-w-[calc(100%-16px)] -translate-x-1/2">
+            <div
+              className={`flex h-10 items-center rounded-full border border-line bg-surface px-1.5 text-[12.5px] text-ink-2 shadow-lift transition-[opacity,transform] duration-150 ease-out motion-reduce:translate-y-0 ${selBarVisible ? 'pointer-events-auto translate-y-0 opacity-100' : 'pointer-events-none -translate-y-1 opacity-0'}`}
+            >
+              <div className="flex items-center overflow-x-auto [scrollbar-width:none] max-sm:[mask-image:linear-gradient(to_right,#000_calc(100%-24px),transparent)]">
+                {selActions ?? lastSelActionsRef.current}
+              </div>
+            </div>
           </div>
         )}
         <canvas
@@ -2570,8 +2679,8 @@ function Toggle({ on, onClick, children }: { on: boolean; onClick: () => void; c
   )
 }
 
-function Pop({ id, pop, setPop, title, face, children, align, className }: {
-  id: string; pop: string | null; setPop: (p: string | null) => void; title: string; face: ReactNode; children: ReactNode; align?: 'right'; className?: string
+function Pop({ id, pop, setPop, title, face, children, align, className, btnClassName }: {
+  id: string; pop: string | null; setPop: (p: string | null) => void; title: string; face: ReactNode; children: ReactNode; align?: 'right'; className?: string; btnClassName?: string
 }) {
   const open = pop === id
   const btnRef = useRef<HTMLButtonElement>(null)
@@ -2608,7 +2717,7 @@ function Pop({ id, pop, setPop, title, face, children, align, className }: {
       <button
         ref={btnRef}
         type="button" title={title} aria-label={title} aria-expanded={open} onClick={() => setPop(open ? null : id)}
-        className={`flex h-9 min-w-9 items-center justify-center rounded-[7px] px-1.5 sm:h-8 sm:min-w-0 sm:px-1 ${open ? 'bg-sunken' : 'hover:bg-sunken'}`}
+        className={`${btnClassName ?? 'flex h-9 min-w-9 items-center justify-center rounded-[7px] px-1.5 sm:h-8 sm:min-w-0 sm:px-1'} ${open ? 'bg-sunken' : 'hover:bg-sunken'}`}
       >
         {face}
       </button>
@@ -2727,6 +2836,18 @@ function IconBtn({ label, onClick, children, disabled }: { label: string; onClic
     <button
       type="button" title={label} aria-label={label} onClick={onClick} disabled={disabled}
       className="grid h-9 w-9 place-items-center rounded-[6px] text-ink hover:bg-sunken disabled:opacity-35 disabled:hover:bg-transparent sm:h-8 sm:w-8"
+    >
+      {children}
+    </button>
+  )
+}
+
+/** nút icon trong thanh nổi hàng 3 */
+function SelBtn({ label, onClick, children, danger }: { label: string; onClick: () => void; children: ReactNode; danger?: boolean }) {
+  return (
+    <button
+      type="button" title={label} aria-label={label} onClick={onClick}
+      className={`grid h-9 w-9 shrink-0 place-items-center rounded-full text-ink transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/40 sm:h-8 sm:w-8 ${danger ? 'hover:bg-red-500/10 hover:text-red-600' : 'hover:bg-sunken'}`}
     >
       {children}
     </button>
