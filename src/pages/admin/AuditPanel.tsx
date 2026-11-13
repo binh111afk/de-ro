@@ -126,7 +126,7 @@ export function AuditPanel() {
 
                       {/* Đối tượng */}
                       <td className="whitespace-nowrap px-4 py-3 font-mono text-[12.5px] text-ink-3">
-                        <span title={entry.target ?? undefined}>
+                        <span data-tip={entry.target ?? undefined}>
                           {shortenId(entry.target)}
                         </span>
                       </td>

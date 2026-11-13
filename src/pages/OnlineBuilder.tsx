@@ -506,7 +506,7 @@ export default function OnlineBuilder() {
               Làm thử
             </Button>
             {item.publishedId ? null : (
-              <Button variant="outline" disabled={busy} onClick={() => void publish(true)} title="Đăng lên đề cộng đồng">
+              <Button variant="outline" disabled={busy} onClick={() => void publish(true)} data-tip="Đăng lên đề cộng đồng">
                 <Upload className="size-4" />
                 {busy ? 'Đang đăng…' : 'Đăng'}
               </Button>
@@ -655,7 +655,7 @@ function IconBtn({ label, onClick, disabled, danger, children }: { label: string
     <button
       type="button"
       aria-label={label}
-      title={label}
+      data-tip={label}
       onClick={onClick}
       disabled={disabled}
       className={cn(

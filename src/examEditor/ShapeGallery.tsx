@@ -49,7 +49,7 @@ export function ShapeGallery({ onPick, query = '', scroll = true }: { onPick: (p
               <button
                 key={shape.prst}
                 type="button"
-                title={shape.label}
+                data-tip={shape.label}
                 aria-label={shape.label}
                 className="flex size-[40px] items-center justify-center rounded-md text-ink-2 transition-colors hover:bg-paper-2 hover:text-clay"
                 onClick={() => onPick(shape.prst)}

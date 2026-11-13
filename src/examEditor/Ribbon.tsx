@@ -454,10 +454,10 @@ export function Ribbon({
               <RibbonIconButton icon={<IconClearFormat size={16} />} title="Xóa định dạng" disabled={disabled} onClick={clearFormatting} />
             </div>
             <div className="rb-row">
-              <button type="button" className={cn('rb-icon', format.bold && 'active')} title="Đậm" disabled={disabled} onMouseDown={(e) => e.preventDefault()} onClick={() => chain()?.toggleBold().run()}><b>B</b></button>
-              <button type="button" className={cn('rb-icon', format.italic && 'active')} title="Nghiêng" disabled={disabled} onMouseDown={(e) => e.preventDefault()} onClick={() => chain()?.toggleItalic().run()}><i>I</i></button>
-              <button type="button" className={cn('rb-icon', format.underline && 'active')} title="Gạch chân" disabled={disabled} onMouseDown={(e) => e.preventDefault()} onClick={() => chain()?.toggleUnderline().run()}><u>U</u></button>
-              <button type="button" className={cn('rb-icon', format.strike && 'active')} title="Gạch ngang" disabled={disabled} onMouseDown={(e) => e.preventDefault()} onClick={() => chain()?.toggleStrike().run()}><s>ab</s></button>
+              <button type="button" className={cn('rb-icon', format.bold && 'active')} data-tip="Đậm" aria-label="Đậm" disabled={disabled} onMouseDown={(e) => e.preventDefault()} onClick={() => chain()?.toggleBold().run()}><b>B</b></button>
+              <button type="button" className={cn('rb-icon', format.italic && 'active')} data-tip="Nghiêng" aria-label="Nghiêng" disabled={disabled} onMouseDown={(e) => e.preventDefault()} onClick={() => chain()?.toggleItalic().run()}><i>I</i></button>
+              <button type="button" className={cn('rb-icon', format.underline && 'active')} data-tip="Gạch chân" aria-label="Gạch chân" disabled={disabled} onMouseDown={(e) => e.preventDefault()} onClick={() => chain()?.toggleUnderline().run()}><u>U</u></button>
+              <button type="button" className={cn('rb-icon', format.strike && 'active')} data-tip="Gạch ngang" aria-label="Gạch ngang" disabled={disabled} onMouseDown={(e) => e.preventDefault()} onClick={() => chain()?.toggleStrike().run()}><s>ab</s></button>
               <span className="rb-mini-sep" />
               <RibbonIconButton icon={<IconSubscript size={16} />} title="Chỉ số dưới" active={format.sub} disabled={disabled} onClick={() => chain()?.toggleMark('sub').run()} />
               <RibbonIconButton icon={<IconSuperscript size={16} />} title="Chỉ số trên" active={format.super} disabled={disabled} onClick={() => chain()?.toggleMark('super').run()} />
@@ -576,7 +576,7 @@ export function Ribbon({
         render: () => (
           <div className="rb-styles">
             {STYLE_PRESETS.map((s) => (
-              <button key={s.id} type="button" className="rb-style-card" disabled={disabled} title={s.label} onMouseDown={(e) => e.preventDefault()} onClick={() => applyStylePreset(s.id)}>
+              <button key={s.id} type="button" className="rb-style-card" disabled={disabled} data-tip={s.label} onMouseDown={(e) => e.preventDefault()} onClick={() => applyStylePreset(s.id)}>
                 <span className="rb-style-card__preview" style={s.preview}>AaBbCcDd</span>
                 <span className="rb-style-card__label">{s.label}</span>
               </button>
@@ -987,7 +987,7 @@ export function Ribbon({
               <>
                 {fileMenuEl}
                 <span className="qa-sep" aria-hidden="true" />
-                <button type="button" className="qa-btn" onClick={onSave} title="Lưu đề" aria-label="Lưu đề">
+                <button type="button" className="qa-btn" onClick={onSave} data-tip="Lưu đề" aria-label="Lưu đề">
                   <IconSave size={16} />
                 </button>
                 <button
@@ -996,7 +996,7 @@ export function Ribbon({
                   onMouseDown={(e) => e.preventDefault()}
                   onClick={() => chain()?.undo().run()}
                   disabled={disabled || !canUndo}
-                  title="Hoàn tác"
+                  data-tip="Hoàn tác"
                   aria-label="Hoàn tác"
                 >
                   <IconUndo size={16} />
@@ -1007,12 +1007,12 @@ export function Ribbon({
                   onMouseDown={(e) => e.preventDefault()}
                   onClick={() => chain()?.redo().run()}
                   disabled={disabled || !canRedo}
-                  title="Làm lại"
+                  data-tip="Làm lại"
                   aria-label="Làm lại"
                 >
                   <IconRedo size={16} />
                 </button>
-                <button type="button" className="qa-btn" onClick={onPrint} title="In đề" aria-label="In đề">
+                <button type="button" className="qa-btn" onClick={onPrint} data-tip="In đề" aria-label="In đề">
                   <IconPrinter size={16} />
                 </button>
                 <span className="qa-sep" aria-hidden="true" />
@@ -1028,7 +1028,7 @@ export function Ribbon({
                 type="button"
                 className="ribbon-toggle-btn"
                 onClick={() => setCollapsed(!collapsed)}
-                title={collapsed ? 'Mở rộng dải ruy-băng' : 'Thu gọn dải ruy-băng'}
+                data-tip={collapsed ? 'Mở rộng dải ruy-băng' : 'Thu gọn dải ruy-băng'}
                 aria-label={collapsed ? 'Mở rộng dải ruy-băng' : 'Thu gọn dải ruy-băng'}
               >
                 {collapsed ? <IconChevronDown size={14} /> : <IconChevronUp size={14} />}
@@ -1099,7 +1099,7 @@ function StylePaneButton({
         ref={triggerRef as React.RefObject<HTMLButtonElement>}
         type="button"
         className="rb-icon"
-        title="Khung kiểu"
+        data-tip="Khung kiểu"
         aria-label="Khung kiểu"
         disabled={disabled}
         onMouseDown={(e) => e.preventDefault()}
@@ -1161,7 +1161,7 @@ function ColorDropdown({
         disabled={disabled}
         onMouseDown={(e) => e.preventDefault()}
         onClick={() => setOpen((o) => !o)}
-        title="Chọn màu"
+        data-tip="Chọn màu"
         aria-label="Chọn màu"
       >
         <IconCaret size={14} />
@@ -1171,7 +1171,7 @@ function ColorDropdown({
           {colors.length > 0 && (
             <div className="rb-color-grid">
               {colors.map((c) => (
-                <button key={c} type="button" className="rb-color-swatch" style={{ background: c }} title={c} onClick={() => { onPick?.(c); setOpen(false) }} />
+                <button key={c} type="button" className="rb-color-swatch" style={{ background: c }} data-tip={c} aria-label={c} onClick={() => { onPick?.(c); setOpen(false) }} />
               ))}
             </div>
           )}

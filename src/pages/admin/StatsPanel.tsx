@@ -158,7 +158,7 @@ export function StatsPanel({ me: _me }: StatsPanelProps) {
               void loadOnline()
             }}
             disabled={loading || refreshing}
-            title="Làm mới số liệu"
+            data-tip="Làm mới số liệu"
             aria-label="Làm mới số liệu"
           >
             <RefreshCw className={cn('size-4', refreshing && 'animate-spin')} />
@@ -348,7 +348,7 @@ export function StatsPanel({ me: _me }: StatsPanelProps) {
                   <div
                     key={d.day}
                     className="group relative flex h-full flex-1 min-w-[8px] flex-col items-center justify-end"
-                    title={`${d.day}: ${formatNumber(d.newUsers)} người đăng ký mới`}
+                    data-tip={`${d.day}: ${formatNumber(d.newUsers)} người đăng ký mới`}
                   >
                     <div
                       className={cn(
@@ -429,7 +429,7 @@ export function StatsPanel({ me: _me }: StatsPanelProps) {
                   <div
                     key={d.day}
                     className="group relative flex h-full flex-1 min-w-[8px] flex-col items-center justify-end"
-                    title={`${d.day}: ${formatNumber(d.newDocs)} đề thi, ${formatNumber(d.newDecks)} slide${d.newCommunityExams > 0 ? `, ${formatNumber(d.newCommunityExams)} đề cộng đồng` : ''}`}
+                    data-tip={`${d.day}: ${formatNumber(d.newDocs)} đề thi, ${formatNumber(d.newDecks)} slide${d.newCommunityExams > 0 ? `, ${formatNumber(d.newCommunityExams)} đề cộng đồng` : ''}`}
                   >
                     <div
                       className={cn(
@@ -533,7 +533,7 @@ export function StatsPanel({ me: _me }: StatsPanelProps) {
                       <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-sunken text-[11px] font-semibold text-ink-3">
                         {u.email ? u.email[0].toUpperCase() : '?'}
                       </div>
-                      <span className="truncate font-medium text-ink" title={u.email}>
+                      <span className="truncate font-medium text-ink" data-tip={u.email}>
                         {u.email || shortenId(u.userId)}
                       </span>
                     </div>

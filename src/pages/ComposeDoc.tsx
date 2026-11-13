@@ -1115,7 +1115,7 @@ export default function ComposeDoc() {
                   type="button"
                   className="mobile-view-toggle-btn"
                   onClick={toggleMobileView}
-                  title={isReflow ? 'Chuyển sang xem trang A4' : 'Chuyển sang dàn trang theo màn hình'}
+                  data-tip={isReflow ? 'Chuyển sang xem trang A4' : 'Chuyển sang dàn trang theo màn hình'}
                 >
                   {isReflow ? 'Xem trang A4' : 'Dàn trang'}
                 </button>

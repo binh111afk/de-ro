@@ -420,13 +420,13 @@ export function SlideRibbon(props: SlideRibbonProps) {
               options={FONT_SIZES.map((s) => ({ value: String(s), label: String(s) }))}
               onPick={(size) => onUpdateSelected({ fontSize: Number(size) * PT_TO_CQW })}
             />
-            <button type="button" className="rb-icon" title="Tăng cỡ chữ" onMouseDown={(e) => e.preventDefault()} onClick={() => onUpdateSelected({ fontSize: (pt + 2) * PT_TO_CQW })} disabled={!isText}><IconGrowFont size={18} /></button>
-            <button type="button" className="rb-icon" title="Giảm cỡ chữ" onMouseDown={(e) => e.preventDefault()} onClick={() => onUpdateSelected({ fontSize: Math.max(8, pt - 2) * PT_TO_CQW })} disabled={!isText}><IconShrinkFont size={18} /></button>
+            <button type="button" className="rb-icon" data-tip="Tăng cỡ chữ" aria-label="Tăng cỡ chữ" onMouseDown={(e) => e.preventDefault()} onClick={() => onUpdateSelected({ fontSize: (pt + 2) * PT_TO_CQW })} disabled={!isText}><IconGrowFont size={18} /></button>
+            <button type="button" className="rb-icon" data-tip="Giảm cỡ chữ" aria-label="Giảm cỡ chữ" onMouseDown={(e) => e.preventDefault()} onClick={() => onUpdateSelected({ fontSize: Math.max(8, pt - 2) * PT_TO_CQW })} disabled={!isText}><IconShrinkFont size={18} /></button>
           </div>
           <div className="rb-row">
-            <button type="button" className="rb-icon" title="Đậm" onMouseDown={(e) => e.preventDefault()} onClick={() => onUpdateSelected({ fontWeight: selected?.fontWeight === 700 ? 400 : 700 })} disabled={!isText}><b>B</b></button>
-            <button type="button" className="rb-icon" title="Nghiêng" onMouseDown={(e) => e.preventDefault()} onClick={() => onUpdateSelected({ fontStyle: selected?.fontStyle === 'italic' ? 'normal' : 'italic' })} disabled={!isText}><i>I</i></button>
-            <button type="button" className="rb-icon" title="Gạch chân" onMouseDown={(e) => e.preventDefault()} onClick={() => onUpdateSelected({ textDecoration: selected?.textDecoration === 'underline' ? 'none' : 'underline' })} disabled={!isText}><u>U</u></button>
+            <button type="button" className="rb-icon" data-tip="Đậm" aria-label="Đậm" onMouseDown={(e) => e.preventDefault()} onClick={() => onUpdateSelected({ fontWeight: selected?.fontWeight === 700 ? 400 : 700 })} disabled={!isText}><b>B</b></button>
+            <button type="button" className="rb-icon" data-tip="Nghiêng" aria-label="Nghiêng" onMouseDown={(e) => e.preventDefault()} onClick={() => onUpdateSelected({ fontStyle: selected?.fontStyle === 'italic' ? 'normal' : 'italic' })} disabled={!isText}><i>I</i></button>
+            <button type="button" className="rb-icon" data-tip="Gạch chân" aria-label="Gạch chân" onMouseDown={(e) => e.preventDefault()} onClick={() => onUpdateSelected({ textDecoration: selected?.textDecoration === 'underline' ? 'none' : 'underline' })} disabled={!isText}><u>U</u></button>
             <Anchored
               open={popup === 'textColor'}
               minWidth={190}
@@ -434,7 +434,8 @@ export function SlideRibbon(props: SlideRibbonProps) {
                 <button
                   type="button"
                   className="rb-icon slide-ribbon-color-btn"
-                  title="Màu chữ"
+                  data-tip="Màu chữ"
+                  aria-label="Màu chữ"
                   onMouseDown={(e) => e.preventDefault()}
                   onClick={() => toggle('textColor')}
                   disabled={!isText}
@@ -534,7 +535,7 @@ export function SlideRibbon(props: SlideRibbonProps) {
                   onApplyLayout(layout.id)
                   close()
                 }}
-                title={layout.description}
+                data-tip={layout.description}
                 disabled={!slide}
               >
                 <span
@@ -633,7 +634,7 @@ export function SlideRibbon(props: SlideRibbonProps) {
               className={cn('slide-ribbon-theme-card', activeThemeId === theme.id && 'active')}
               onMouseDown={(e) => e.preventDefault()}
               onClick={() => onTheme(theme)}
-              title={theme.name}
+              data-tip={theme.name}
             >
               <span
                 className="slide-ribbon-theme-preview"
@@ -667,7 +668,7 @@ export function SlideRibbon(props: SlideRibbonProps) {
                 style={{ background: color, borderColor: deck.theme.fg }}
               />
             }
-            title={toneEnabled ? label : `${label} (áp bố cục trước)`}
+            data-tip={toneEnabled ? label : `${label} (áp bố cục trước)`}
             onClick={() => onTone(tone)}
             active={activeTone === tone}
             disabled={!toneEnabled}
@@ -1067,14 +1068,14 @@ export function SlideRibbon(props: SlideRibbonProps) {
       ) : null}
       <span className="qa-sep" aria-hidden="true" />
       {onSave && (
-        <button type="button" className="qa-btn" title="Lưu" aria-label="Lưu" onClick={onSave}>
+        <button type="button" className="qa-btn" data-tip="Lưu" aria-label="Lưu" onClick={onSave}>
           <IconSave size={16} />
         </button>
       )}
-      <button type="button" className="qa-btn" title="Hoàn tác" aria-label="Hoàn tác" onMouseDown={(e) => e.preventDefault()} onClick={onUndo} disabled={!canUndo}>
+      <button type="button" className="qa-btn" data-tip="Hoàn tác" aria-label="Hoàn tác" onMouseDown={(e) => e.preventDefault()} onClick={onUndo} disabled={!canUndo}>
         <IconUndo size={16} />
       </button>
-      <button type="button" className="qa-btn" title="Làm lại" aria-label="Làm lại" onMouseDown={(e) => e.preventDefault()} onClick={onRedo} disabled={!canRedo}>
+      <button type="button" className="qa-btn" data-tip="Làm lại" aria-label="Làm lại" onMouseDown={(e) => e.preventDefault()} onClick={onRedo} disabled={!canRedo}>
         <IconRedo size={16} />
       </button>
       <span className="qa-sep" aria-hidden="true" />
@@ -1098,14 +1099,14 @@ export function SlideRibbon(props: SlideRibbonProps) {
               />
             ) : null}
             {onSave && (
-              <button type="button" className="qa-btn" title="Lưu" aria-label="Lưu" onClick={onSave}>
+              <button type="button" className="qa-btn" data-tip="Lưu" aria-label="Lưu" onClick={onSave}>
                 <IconSave size={16} />
               </button>
             )}
-            <button type="button" className="qa-btn" title="Hoàn tác" aria-label="Hoàn tác" onMouseDown={(e) => e.preventDefault()} onClick={onUndo} disabled={!canUndo}>
+            <button type="button" className="qa-btn" data-tip="Hoàn tác" aria-label="Hoàn tác" onMouseDown={(e) => e.preventDefault()} onClick={onUndo} disabled={!canUndo}>
               <IconUndo size={16} />
             </button>
-            <button type="button" className="qa-btn" title="Làm lại" aria-label="Làm lại" onMouseDown={(e) => e.preventDefault()} onClick={onRedo} disabled={!canRedo}>
+            <button type="button" className="qa-btn" data-tip="Làm lại" aria-label="Làm lại" onMouseDown={(e) => e.preventDefault()} onClick={onRedo} disabled={!canRedo}>
               <IconRedo size={16} />
             </button>
           </div>
@@ -1124,7 +1125,7 @@ export function SlideRibbon(props: SlideRibbonProps) {
           <button
             type="button"
             className="slide-ribbon__qbtn"
-            title="Slide mới"
+            data-tip="Slide mới"
             aria-label="Slide mới"
             onClick={onAddSlide}
           >
@@ -1133,7 +1134,7 @@ export function SlideRibbon(props: SlideRibbonProps) {
           <button
             type="button"
             className={cn('slide-ribbon__qbtn', selected?.fontWeight === 700 && 'active')}
-            title="Đậm"
+            data-tip="Đậm"
             aria-label="Đậm"
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => onUpdateSelected({ fontWeight: selected?.fontWeight === 700 ? 400 : 700 })}
@@ -1144,7 +1145,7 @@ export function SlideRibbon(props: SlideRibbonProps) {
           <button
             type="button"
             className={cn('slide-ribbon__qbtn', selected?.fontStyle === 'italic' && 'active')}
-            title="Nghiêng"
+            data-tip="Nghiêng"
             aria-label="Nghiêng"
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => onUpdateSelected({ fontStyle: selected?.fontStyle === 'italic' ? 'normal' : 'italic' })}
@@ -1159,7 +1160,7 @@ export function SlideRibbon(props: SlideRibbonProps) {
               <button
                 type="button"
                 className="slide-ribbon__qbtn slide-ribbon-color-btn"
-                title="Màu chữ"
+                data-tip="Màu chữ"
                 aria-label="Màu chữ"
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => toggle('phoneColor')}
@@ -1186,7 +1187,7 @@ export function SlideRibbon(props: SlideRibbonProps) {
               <button
                 type="button"
                 className={cn('slide-ribbon__qbtn slide-ribbon__qbtn--wide', popup === 'phoneInsert' && 'active')}
-                title="Chèn"
+                data-tip="Chèn"
                 aria-label="Chèn"
                 onClick={() => {
                   setPhoneInsertSub('menu')
@@ -1258,7 +1259,7 @@ export function SlideRibbon(props: SlideRibbonProps) {
           <button
             type="button"
             className="slide-ribbon__qbtn slide-ribbon__qbtn--play"
-            title="Trình chiếu"
+            data-tip="Trình chiếu"
             aria-label="Trình chiếu"
             onClick={onPresent}
           >

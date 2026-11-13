@@ -1416,7 +1416,7 @@ export function AiPanel({
               {turn.refs?.length ? (
                 <div className="ai-msg-files">
                   {turn.refs.map((label, i) => (
-                    <span key={i} className="ai-msg-file" title={label}>
+                    <span key={i} className="ai-msg-file" data-tip={label}>
                       <span className="text-clay"><RefIcon /></span>
                       <span>{label}</span>
                     </span>
@@ -1426,7 +1426,7 @@ export function AiPanel({
               {turn.files?.length ? (
                 <div className="ai-msg-files">
                   {turn.files.map((f) => (
-                    <span key={f.id} className="ai-msg-file" title={f.name}>
+                    <span key={f.id} className="ai-msg-file" data-tip={f.name}>
                       {f.kind !== 'image' ? (
                         <img src={ATTACH_ICONS[f.kind]} alt="" className="ai-msg-file__icon" />
                       ) : f.url ? (
@@ -1449,13 +1449,13 @@ export function AiPanel({
           {refs.length > 0 && (
             <div className="ai-attachments">
               {refs.map((r) => (
-                <div key={r.id} className="ai-attachment" title={r.detail.slice(0, 300)}>
+                <div key={r.id} className="ai-attachment" data-tip={r.detail.slice(0, 300)}>
                   <span className="ai-attachment__icon grid place-items-center text-clay"><RefIcon /></span>
                   <span className="ai-attachment__meta">
                     <span className="ai-attachment__name">{r.label}</span>
                     <span className="ai-attachment__size">Đang chọn</span>
                   </span>
-                  <button type="button" className="ai-attachment__remove" title="Bỏ đính kèm" aria-label={`Bỏ ${r.label}`}
+                  <button type="button" className="ai-attachment__remove" data-tip="Bỏ đính kèm" aria-label={`Bỏ ${r.label}`}
                     onClick={() => setRefs((cur) => cur.filter((x) => x.id !== r.id))}>
                     <IconClose size={11} />
                   </button>
@@ -1476,13 +1476,13 @@ export function AiPanel({
                     <img src={f.url} alt="" className="ai-attachment__thumb" />
                   ) : null}
                   <span className="ai-attachment__meta">
-                    <span className="ai-attachment__name" title={f.name}>{f.name}</span>
+                    <span className="ai-attachment__name" data-tip={f.name}>{f.name}</span>
                     <span className="ai-attachment__size">{formatSize(f.size)}</span>
                   </span>
                   <button
                     type="button"
                     className="ai-attachment__remove"
-                    title="Bỏ tệp"
+                    data-tip="Bỏ tệp"
                     aria-label={`Bỏ ${f.name}`}
                     onClick={() => removeFile(f.id)}
                   >
@@ -1513,7 +1513,7 @@ export function AiPanel({
             <button
               type="button"
               className="ai-attach-btn"
-              title="Đính kèm tệp (docx, xlsx, pdf, ảnh)"
+              data-tip="Đính kèm tệp (docx, xlsx, pdf, ảnh)"
               aria-label="Đính kèm tệp"
               onClick={() => fileRef.current?.click()}
             >
@@ -1545,7 +1545,7 @@ export function AiPanel({
                   className={cn('ai-format-opt', slideFormat === 'deck' && 'active')}
                   onClick={() => setSlideFormat('deck')}
                   disabled={busy}
-                  title="Slide dựng bằng layout engine, sửa được"
+                  data-tip="Slide dựng bằng layout engine, sửa được"
                 >
                   PPT
                 </button>
@@ -1556,7 +1556,7 @@ export function AiPanel({
                   className={cn('ai-format-opt', slideFormat === 'html' && 'active')}
                   onClick={() => (slideFormat === 'html' ? undefined : setHtmlNotice(true))}
                   disabled={busy}
-                  title="Slide HTML: chỉ trình chiếu trên web, không sửa/xuất PPT"
+                  data-tip="Slide HTML: chỉ trình chiếu trên web, không sửa/xuất PPT"
                 >
                   HTML
                 </button>
@@ -1566,7 +1566,7 @@ export function AiPanel({
             {quota ? (
               <span
                 className={cn('ai-quota', quota.used >= quota.limit * 0.9 && 'is-low')}
-                title={`Đã dùng ${quota.used.toLocaleString('vi-VN')} / ${quota.limit.toLocaleString('vi-VN')} token AI ${quota.scope === 'day' ? 'hôm nay' : 'tháng này'}`}
+                data-tip={`Đã dùng ${quota.used.toLocaleString('vi-VN')} / ${quota.limit.toLocaleString('vi-VN')} token AI ${quota.scope === 'day' ? 'hôm nay' : 'tháng này'}`}
               >
                 {Math.min(100, Math.round((quota.used / quota.limit) * 100))}% {quota.scope === 'day' ? 'hôm nay' : 'tháng này'}
               </span>
@@ -1576,7 +1576,7 @@ export function AiPanel({
                 type="button"
                 className="ai-send-btn is-stop"
                 onClick={stop}
-                title="Dừng"
+                data-tip="Dừng"
                 aria-label="Dừng"
               >
                 <IconStop size={14} />
@@ -1587,7 +1587,7 @@ export function AiPanel({
                 className="ai-send-btn"
                 onClick={() => void send()}
                 disabled={!input.trim() && files.length === 0}
-                title="Gửi"
+                data-tip="Gửi"
                 aria-label="Gửi"
               >
                 <IconEnter size={16} />

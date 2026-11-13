@@ -298,7 +298,7 @@ function MyFilesCard() {
                         <DocIcon kind={it.kind} size={24} />
                       )}
                     </span>
-                    <button type="button" onClick={() => open(it)} disabled={!!it.pending} title={it.title}
+                    <button type="button" onClick={() => open(it)} disabled={!!it.pending} data-tip={it.title}
                       className="min-w-0 flex-1 text-left disabled:cursor-default">
                       <span className="block truncate text-[14px] text-ink hover:text-clay-deep">{it.title}</span>
                       <span className={`block truncate text-[12px] ${failed ? 'text-clay-deep' : 'text-ink-3'}`}>
@@ -310,7 +310,7 @@ function MyFilesCard() {
                     {it.pending && !failed ? (
                       <span className="grid size-8 shrink-0 place-items-center"><Spinner /></span>
                     ) : (
-                      <button type="button" onClick={() => void onDelete(it)} aria-label={failed ? `Bỏ ${it.title}` : `Xoá ${it.title}`} title={failed ? 'Bỏ' : 'Xoá'}
+                      <button type="button" onClick={() => void onDelete(it)} aria-label={failed ? `Bỏ ${it.title}` : `Xoá ${it.title}`} data-tip={failed ? 'Bỏ' : 'Xoá'}
                         className="grid size-8 shrink-0 place-items-center rounded-[6px] text-ink-3 hover:bg-sunken hover:text-clay-deep">
                         {failed ? <X className="size-4" /> : <Trash2 className="size-4" />}
                       </button>

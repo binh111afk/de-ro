@@ -48,7 +48,7 @@ export function BackgroundMenu({
           <button
             key={b.value}
             type="button"
-            title={b.label}
+            data-tip={b.label}
             aria-label={`Nền ${b.label}`}
             className="h-8 rounded-md border border-black/15 transition-transform hover:scale-105"
             style={{

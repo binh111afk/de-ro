@@ -14,7 +14,7 @@ function Modal({ title, onClose, children, footer, wide }: { title: string; onCl
   return (
     <div className="fixed inset-0 z-[100] grid place-items-center bg-black/30 p-4" onMouseDown={onClose}>
       <div
-        role="dialog" aria-label={title}
+        role="dialog" aria-modal="true" aria-label={title}
         className={`flex max-h-[90vh] w-full flex-col rounded-[12px] bg-surface shadow-xl ${wide ? 'max-w-[760px]' : 'max-w-[520px]'}`}
         onMouseDown={(e) => e.stopPropagation()}
       >
@@ -73,7 +73,7 @@ export function FormulaDialog({ initial, color, onClose, onDone }: {
       footer={<><button type="button" className={btn} onClick={onClose}>Huỷ</button><button type="button" className={primary} disabled={!ok} onClick={done}>{initial ? 'Cập nhật' : 'Chèn'}</button></>}>
       <div className="mb-2 flex flex-wrap gap-1">
         {FORMULA_SNIPPETS.map((s) => (
-          <button key={s.label} type="button" title={s.tex} onClick={() => add(s.tex)}
+          <button key={s.label} type="button" data-tip={s.tex} onClick={() => add(s.tex)}
             className="h-7 min-w-8 rounded-[6px] border border-line px-2 text-[13px] text-ink hover:bg-sunken">{s.label}</button>
         ))}
       </div>

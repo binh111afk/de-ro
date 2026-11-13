@@ -66,7 +66,7 @@ export function TabStrip({
             onBack?.()
             navigate('/')
           }}
-          title="Quay lại trang chủ"
+          data-tip="Quay lại trang chủ"
           aria-label="Quay lại trang chủ"
         >
           <IconChevronLeft size={16} />
@@ -79,7 +79,7 @@ export function TabStrip({
           }}
           role="tab"
           aria-selected={startActive}
-          title="Trang bắt đầu"
+          data-tip="Trang bắt đầu"
         >
           <span className="tab-plate" aria-hidden="true" />
           <span className="tab-item__icon" aria-hidden="true">
@@ -187,7 +187,7 @@ function NewDocMenu({
         className="tab-new-btn"
         ref={triggerRef as React.RefObject<HTMLButtonElement>}
         onClick={() => setOpen((o) => !o)}
-        title="Tạo tài liệu mới"
+        data-tip="Tạo tài liệu mới"
         aria-label="Tạo tài liệu mới"
         aria-haspopup="menu"
         aria-expanded={open}
@@ -272,7 +272,7 @@ function TabItem({
       onDoubleClick={() => setEditing(true)}
       role="tab"
       aria-selected={active}
-      title={tab.title}
+      data-tip={tab.title}
     >
       <span className="tab-plate" aria-hidden="true" />
       <span className="tab-item__icon" aria-hidden="true">
@@ -305,7 +305,7 @@ function TabItem({
         className="tab-item__close"
         onMouseDown={(e) => e.stopPropagation()}
         onClick={onClose}
-        title="Đóng tab"
+        data-tip="Đóng tab"
         aria-label={`Đóng ${tab.title}`}
       >
         <IconClose size={13} />

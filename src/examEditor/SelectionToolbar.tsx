@@ -33,7 +33,7 @@ function ColorTool({
     <div className="relative">
       <button
         type="button"
-        title={title}
+        data-tip={title}
         aria-label={title}
         aria-expanded={open}
         className={`flex size-7 flex-col items-center justify-center gap-0.5 rounded-md text-ink-2 transition-colors hover:bg-paper-2 ${open ? 'bg-paper-2' : ''}`}
@@ -148,7 +148,7 @@ function LayerTool({
       <button
         ref={btnRef}
         type="button"
-        title="Lớp"
+        data-tip="Lớp"
         aria-label="Lớp"
         aria-expanded={open}
         disabled={count < 2}
@@ -263,7 +263,7 @@ function ShapeStyleTool({
     <div className="relative">
       <button
         type="button"
-        title={plain ? 'Độ trong suốt' : isLine ? 'Độ dày, đầu mũi tên' : 'Viền, độ trong suốt, bóng đổ'}
+        data-tip={plain ? 'Độ trong suốt' : isLine ? 'Độ dày, đầu mũi tên' : 'Viền, độ trong suốt, bóng đổ'}
         aria-label="Kiểu hình"
         aria-expanded={open}
         className={`flex size-7 items-center justify-center rounded-md text-ink-2 transition-colors hover:bg-paper-2 ${open ? 'bg-paper-2' : ''}`}
@@ -417,7 +417,7 @@ export function SelectionToolbar({
   // giữ vùng chọn/ô nhập chữ: bấm nút không làm mất focus
   const keep = (e: React.MouseEvent) => e.preventDefault()
   const tool = (title: string, onClick: () => void, icon: React.ReactNode, active = false) => (
-    <button type="button" title={title} aria-label={title} className={`${btn} ${active ? 'bg-paper-2 text-clay' : ''}`} onMouseDown={keep} onClick={onClick}>
+    <button type="button" data-tip={title} aria-label={title} className={`${btn} ${active ? 'bg-paper-2 text-clay' : ''}`} onMouseDown={keep} onClick={onClick}>
       {icon}
     </button>
   )
@@ -442,7 +442,7 @@ export function SelectionToolbar({
         <>
           <button
             type="button"
-            title="Đính kèm phần tử này vào khung chat Trợ lý AI"
+            data-tip="Đính kèm phần tử này vào khung chat Trợ lý AI"
             aria-label="Đưa vào chat"
             className="flex h-7 shrink-0 items-center whitespace-nowrap gap-1 rounded-md px-2 text-[12px] font-semibold text-clay transition-colors hover:bg-paper-2"
             onMouseDown={keep}
@@ -458,7 +458,7 @@ export function SelectionToolbar({
         <>
           <button
             type="button"
-            title="Nhờ AI sửa ô chữ này"
+            data-tip="Nhờ AI sửa ô chữ này"
             aria-label="Hỏi AI"
             aria-expanded={askOpen}
             className={`flex h-7 shrink-0 items-center whitespace-nowrap gap-1 rounded-md px-2 text-[12px] font-semibold text-clay transition-colors hover:bg-paper-2 ${askOpen ? 'bg-paper-2' : ''}`}

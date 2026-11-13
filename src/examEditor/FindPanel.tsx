@@ -108,7 +108,7 @@ export function FindPanel({
             Thay thế
           </button>
         </div>
-        <button type="button" className="find-panel__close" onClick={onClose} title="Đóng" aria-label="Đóng">
+        <button type="button" className="find-panel__close" onClick={onClose} data-tip="Đóng" aria-label="Đóng">
           <IconClose size={14} />
         </button>
       </div>
@@ -132,10 +132,10 @@ export function FindPanel({
           <span className="find-panel__count tnum">
             {count.total ? `${count.active + 1}/${count.total}` : text ? '0' : ''}
           </span>
-          <button type="button" className="find-panel__nav" title="Kết quả trước" aria-label="Kết quả trước" onClick={() => gotoMatch(-1)}>
+          <button type="button" className="find-panel__nav" data-tip="Kết quả trước" aria-label="Kết quả trước" onClick={() => gotoMatch(-1)}>
             ‹
           </button>
-          <button type="button" className="find-panel__nav" title="Kết quả sau" aria-label="Kết quả sau" onClick={() => gotoMatch(1)}>
+          <button type="button" className="find-panel__nav" data-tip="Kết quả sau" aria-label="Kết quả sau" onClick={() => gotoMatch(1)}>
             ›
           </button>
         </div>

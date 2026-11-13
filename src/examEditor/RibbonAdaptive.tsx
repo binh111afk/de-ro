@@ -170,7 +170,7 @@ function CollapsedGroupButton({ group }: { group: RibbonGroupDef }) {
         className={cn('rb-big rb-collapsed-group', open && 'active')}
         onMouseDown={(e) => e.preventDefault()}
         onClick={() => setOpen((o) => !o)}
-        title={group.label}
+        data-tip={group.label}
         aria-expanded={open}
       >
         <span className="rb-big-icon">
@@ -222,7 +222,7 @@ function OverflowGroupsButton({ groups }: { groups: RibbonGroupDef[] }) {
         className={cn('rb-big rb-collapsed-group', open && 'active')}
         onMouseDown={(e) => e.preventDefault()}
         onClick={() => setOpen((o) => !o)}
-        title="Thêm công cụ"
+        data-tip="Thêm công cụ"
         aria-label="Thêm công cụ"
         aria-expanded={open}
       >
@@ -359,7 +359,7 @@ export function PhoneRibbon({
             type="button"
             className="ribbon-phone-btn"
             onClick={onSave}
-            title="Lưu đề"
+            data-tip="Lưu đề"
             aria-label="Lưu đề"
           >
             <IconSave size={18} />
@@ -370,7 +370,7 @@ export function PhoneRibbon({
             onMouseDown={(e) => e.preventDefault()}
             onClick={onUndo}
             disabled={disabled || !canUndo}
-            title="Hoàn tác"
+            data-tip="Hoàn tác"
             aria-label="Hoàn tác"
           >
             <IconUndo size={18} />
@@ -381,7 +381,7 @@ export function PhoneRibbon({
             onMouseDown={(e) => e.preventDefault()}
             onClick={onRedo}
             disabled={disabled || !canRedo}
-            title="Làm lại"
+            data-tip="Làm lại"
             aria-label="Làm lại"
           >
             <IconRedo size={18} />
@@ -394,7 +394,7 @@ export function PhoneRibbon({
               type="button"
               className="ribbon-phone-btn"
               onClick={() => onOpenNav('tools')}
-              title="Mục lục, Khối mẫu & Công cụ"
+              data-tip="Mục lục, Khối mẫu & Công cụ"
               aria-label="Mục lục, Khối mẫu & Công cụ"
             >
               <Wrench size={17} />
@@ -404,7 +404,7 @@ export function PhoneRibbon({
             type="button"
             className={cn('ribbon-phone-btn', sheetTab !== null && 'active')}
             onClick={() => setSheetTab((s) => (s ? null : 'home'))}
-            title="Tất cả công cụ"
+            data-tip="Tất cả công cụ"
             aria-label="Tất cả công cụ"
             aria-expanded={sheetTab !== null}
           >
@@ -414,7 +414,7 @@ export function PhoneRibbon({
             type="button"
             className="ribbon-phone-btn"
             onClick={() => setCollapsed((c) => !c)}
-            title={collapsed ? 'Mở thanh định dạng' : 'Thu gọn thanh định dạng'}
+            data-tip={collapsed ? 'Mở thanh định dạng' : 'Thu gọn thanh định dạng'}
             aria-label={collapsed ? 'Mở thanh định dạng' : 'Thu gọn thanh định dạng'}
           >
             {collapsed ? <IconChevronDown size={16} /> : <IconChevronUp size={16} />}
@@ -431,7 +431,7 @@ export function PhoneRibbon({
             disabled={disabled}
             onMouseDown={(e) => e.preventDefault()}
             onClick={onToggleBold}
-            title="Đậm"
+            data-tip="Đậm"
             aria-label="Đậm"
             aria-pressed={format.bold}
           >
@@ -443,7 +443,7 @@ export function PhoneRibbon({
             disabled={disabled}
             onMouseDown={(e) => e.preventDefault()}
             onClick={onToggleItalic}
-            title="Nghiêng"
+            data-tip="Nghiêng"
             aria-label="Nghiêng"
             aria-pressed={format.italic}
           >
@@ -455,7 +455,7 @@ export function PhoneRibbon({
             disabled={disabled}
             onMouseDown={(e) => e.preventDefault()}
             onClick={onToggleUnderline}
-            title="Gạch chân"
+            data-tip="Gạch chân"
             aria-label="Gạch chân"
             aria-pressed={format.underline}
           >
@@ -471,7 +471,7 @@ export function PhoneRibbon({
               disabled={disabled}
               onMouseDown={(e) => e.preventDefault()}
               onClick={() => setOpenPop((p) => (p === 'color' ? null : 'color'))}
-              title="Màu chữ"
+              data-tip="Màu chữ"
               aria-label="Màu chữ"
               aria-expanded={openPop === 'color'}
             >
@@ -489,7 +489,8 @@ export function PhoneRibbon({
                       type="button"
                       className="rb-color-swatch"
                       style={{ background: c }}
-                      title={c}
+                      data-tip={c}
+                      aria-label={c}
                       onClick={() => {
                         onPickColor(c)
                         setOpenPop(null)
@@ -510,7 +511,7 @@ export function PhoneRibbon({
               disabled={disabled}
               onMouseDown={(e) => e.preventDefault()}
               onClick={() => setOpenPop((p) => (p === 'list' ? null : 'list'))}
-              title="Danh sách & Thụt lề"
+              data-tip="Danh sách & Thụt lề"
               aria-label="Danh sách & Thụt lề"
               aria-expanded={openPop === 'list'}
             >
@@ -567,7 +568,7 @@ export function PhoneRibbon({
               disabled={disabled}
               onMouseDown={(e) => e.preventDefault()}
               onClick={() => setOpenPop((p) => (p === 'align' ? null : 'align'))}
-              title="Căn lề"
+              data-tip="Căn lề"
               aria-label="Căn lề"
               aria-expanded={openPop === 'align'}
             >
@@ -614,7 +615,7 @@ export function PhoneRibbon({
             type="button"
             className="ribbon-phone-btn ribbon-phone-btn--pill"
             onClick={() => setSheetTab('insert')}
-            title="Chèn bảng, câu hỏi, công thức…"
+            data-tip="Chèn bảng, câu hỏi, công thức…"
             aria-label="Chèn"
           >
             <Plus className="size-4" />

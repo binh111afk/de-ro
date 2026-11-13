@@ -294,7 +294,7 @@ export function DocSelectionAi({
           {onAskChat && range && (
             <button
               type="button"
-              title="Đính kèm đoạn đang chọn vào khung chat Trợ lý AI"
+              data-tip="Đính kèm đoạn đang chọn vào khung chat Trợ lý AI"
               onClick={() => { onAskChat(range.text); close() }}
               className="flex items-center gap-1.5 border-l border-line px-2.5 transition-colors hover:bg-paper-2"
             >

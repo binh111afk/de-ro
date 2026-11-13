@@ -113,7 +113,7 @@ export function Geo2dModal({ initial, submitLabel, onClose, onInsert }: Props<Ge
               type="button"
               onClick={() => set({ extras: resetDragCoords(spec.extras ?? '') })}
               disabled={!hasDrag}
-              title="Xoá các toạ độ do kéo sinh ra"
+              data-tip="Xoá các toạ độ do kéo sinh ra"
               className="flex items-center gap-1 whitespace-nowrap rounded-[6px] border border-line px-1.5 py-1 text-[11.5px] text-ink-2 transition-colors hover:border-ink-4 disabled:pointer-events-none disabled:opacity-40"
             >
               <RotateCcw className="size-3.5" /> Đặt lại hình
@@ -206,7 +206,7 @@ export function Geo3dModal({ initial, submitLabel, onClose, onInsert }: Props<Ge
               type="button"
               disabled={round}
               aria-pressed={mode === 'edge' && !round}
-              title={round ? 'Nón, trụ, cầu chưa chỉnh cạnh được' : 'Kéo nút ở đỉnh để chỉnh hình khối'}
+              data-tip={round ? 'Nón, trụ, cầu chưa chỉnh cạnh được' : 'Kéo nút ở đỉnh để chỉnh hình khối'}
               onClick={() => setMode((m) => (m === 'edge' ? 'pick' : 'edge'))}
               className={cn(
                 'flex items-center gap-1 whitespace-nowrap rounded-[6px] border px-1.5 py-1 text-[11.5px] transition-colors disabled:pointer-events-none disabled:opacity-40',
@@ -221,7 +221,7 @@ export function Geo3dModal({ initial, submitLabel, onClose, onInsert }: Props<Ge
               type="button"
               onClick={() => set({ extras: resetDragCoords(spec.extras ?? '') })}
               disabled={!hasDrag || round}
-              title="Xoá các toạ độ do kéo sinh ra"
+              data-tip="Xoá các toạ độ do kéo sinh ra"
               className="flex items-center gap-1 whitespace-nowrap rounded-[6px] border border-line px-1.5 py-1 text-[11.5px] text-ink-2 transition-colors hover:border-ink-4 disabled:pointer-events-none disabled:opacity-40"
             >
               <RotateCcw className="size-3.5" /> Đặt lại hình
@@ -318,7 +318,7 @@ function Extras({ value, onChange, errors, example }: { value: string; onChange:
           onClick={() => setHelp((h) => !h)}
           aria-label="Các lệnh dựng hình"
           aria-expanded={help}
-          title="Các lệnh dựng hình"
+          data-tip="Các lệnh dựng hình"
           className={cn('flex size-5 items-center justify-center rounded-full transition-colors', help ? 'bg-clay text-white' : 'text-ink-3 hover:bg-sunken hover:text-clay')}
         >
           <CircleHelp className="size-4" />

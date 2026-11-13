@@ -209,7 +209,8 @@ export default function MyDocs() {
             <button
               key={v.id}
               type="button"
-              title={v.label}
+              data-tip={v.label}
+              aria-label={v.label}
               onClick={() => setView(v.id)}
               className={cn(
                 'rounded-md p-1.5 transition-colors',

@@ -253,7 +253,7 @@ function SlideSidePanelImpl({
           <button
             type="button"
             aria-label="Đóng panel"
-            title="Đóng panel"
+            data-tip="Đóng panel"
             tabIndex={active ? 0 : -1}
             onClick={() => setActive(null)}
             className="absolute top-1/2 z-30 flex h-12 w-5 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-line bg-white text-ink-2 shadow-sm transition-[left,opacity] duration-200 ease-out hover:text-clay motion-reduce:transition-none"
@@ -450,7 +450,7 @@ function LayoutCard({
   return (
     <button
       type="button"
-      title={layout.description}
+      data-tip={layout.description}
       onClick={() => onPick(layout.id)}
       className="group flex flex-col items-center gap-1.5 rounded-lg border border-line bg-surface p-1.5 text-center transition-all duration-150 hover:border-clay hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay"
     >
@@ -490,7 +490,7 @@ const DesignCard = memo(function DesignCard({
     <button
       type="button"
       onClick={() => onOpen(design)}
-      title={design.description}
+      data-tip={design.description}
       className="group flex w-full min-w-0 flex-col text-left focus-visible:outline-none"
     >
       <div className="relative aspect-[16/9] w-full overflow-hidden rounded-md border border-line bg-paper shadow-sm transition-all duration-150 group-hover:border-clay group-hover:shadow-md group-focus-visible:ring-2 group-focus-visible:ring-clay pointer-events-none select-none">
@@ -972,7 +972,7 @@ function ElementsPanel({ accent, canInsert, hint, onInsert }: { accent: string; 
               <button
                 key={s.prst}
                 type="button"
-                title={s.label}
+                data-tip={s.label}
                 aria-label={s.label}
                 onClick={() => pickShape(s.prst)}
                 className="flex size-[40px] items-center justify-center rounded-md text-ink-2 transition-colors hover:bg-paper-2 hover:text-clay"
@@ -1009,7 +1009,7 @@ function FrameGrid({ frames, onInsert }: { frames: typeof PHOTO_FRAMES; onInsert
         <button
           key={f.id}
           type="button"
-          title={`${f.label} · kéo ảnh vào khung`}
+          data-tip={`${f.label} · kéo ảnh vào khung`}
           aria-label={f.label}
           onClick={() => onInsert({ id: uid(), type: 'image', shape: f.id, x: 37.5, y: 22.5, w: 25, h: 44.4 })}
           className="flex aspect-square items-center justify-center rounded-md p-1 transition-colors hover:bg-paper-2"
@@ -1036,7 +1036,7 @@ function GraphicGrid({ items, onPick }: { items: Array<{ id: string; name: strin
         <button
           key={g.id}
           type="button"
-          title={g.name}
+          data-tip={g.name}
           aria-label={g.name}
           onClick={() => onPick(g.id)}
           className="flex aspect-square items-center justify-center rounded-md p-1.5 text-ink-2 transition-colors hover:bg-paper-2 hover:text-clay"
@@ -1089,7 +1089,7 @@ function IconsPanel({ canInsert, onInsert }: { canInsert: boolean; onInsert: (el
                     <button
                       key={id}
                       type="button"
-                      title={tags[0]}
+                      data-tip={tags[0]}
                       aria-label={tags[0]}
                       onClick={() => insert(id)}
                       className="flex aspect-square items-center justify-center rounded-md text-ink-2 transition-colors hover:bg-paper-2 hover:text-clay"
@@ -1184,7 +1184,8 @@ function UploadsPanel({ canInsert, onInsert }: { canInsert: boolean; onInsert: (
                   type="button"
                   disabled={!canInsert}
                   onClick={() => insert(img)}
-                  title="Chèn vào slide"
+                  data-tip="Chèn vào slide"
+                  aria-label="Chèn vào slide"
                   className="block w-full overflow-hidden rounded-md border border-line bg-white p-1 transition-colors hover:border-clay disabled:opacity-40"
                 >
                   <img src={img.src} alt="" loading="lazy" className="aspect-video w-full object-contain" onDragStart={(e) => {
@@ -1196,7 +1197,7 @@ function UploadsPanel({ canInsert, onInsert }: { canInsert: boolean; onInsert: (
                 <button
                   type="button"
                   onClick={() => removeUpload(img.id)}
-                  title="Xoá khỏi danh sách (slide đã chèn không đổi)"
+                  data-tip="Xoá khỏi danh sách (slide đã chèn không đổi)"
                   aria-label="Xoá ảnh khỏi danh sách"
                   className="absolute right-1 top-1 flex size-5 items-center justify-center rounded-full bg-white/90 text-ink-3 opacity-0 shadow-soft transition-opacity hover:text-clay focus-visible:opacity-100 group-hover:opacity-100"
                 >

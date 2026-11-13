@@ -28,6 +28,7 @@ import { ExportDialog, FormulaDialog, PdfPagesDialog, type ExportChoice, type Fo
 import { canvasToA4Pdf, download, openPdf, pagesToPdf, pdfPageSize, readImageFile, renderPdfPage, renderRegion, savePng, type Picture } from './io'
 import { cachedSrc, IDB_PREFIX, stash, unstash } from './imgStore'
 import { useBoards, type BoardData } from '@/store/boards'
+import { splitTipKbd } from '@/components/Tooltip'
 import { texToSvg } from './formula'
 
 type Tool = 'select' | 'hand' | Kind | 'eraser' | 'laser' | 'bucket'
@@ -1807,7 +1808,7 @@ export default function BoardEditor({ id }: { id: string }) {
         face={<span className="mx-[3px] block h-5 w-5 rounded-full border border-black/10" style={{ background: 'conic-gradient(#e03131, #f08c00, #fab005, #2f9e44, #1971c2, #7048e8, #e03131)' }} />}>
         <div className="grid grid-cols-10 gap-1">
           {THEME_COLORS.map((c) => (
-            <button key={c} type="button" title={c} aria-label={c} onClick={() => { useColor(c); setPop(null) }}
+            <button key={c} type="button" data-tip={c} aria-label={c} onClick={() => { useColor(c); setPop(null) }}
               className={`h-[18px] w-[18px] rounded-[3px] border border-black/10 hover:scale-110 ${cur.stroke === c ? 'ring-2 ring-clay ring-offset-1' : ''}`} style={{ background: c }} />
           ))}
         </div>
@@ -1856,7 +1857,7 @@ export default function BoardEditor({ id }: { id: string }) {
     <>
       <PanelRow label="Màu nền">
         {FILLS.map((c) => <Swatch key={c} color={c} drag={cur.fillStyle} active={cur.fill === c} onClick={() => setProp('fill', c)} />)}
-        <button type="button" title="Màu khác" aria-label="Màu khác" aria-expanded={moreFill} onClick={() => setMoreFill((v) => !v)}
+        <button type="button" data-tip="Màu khác" aria-label="Màu khác" aria-expanded={moreFill} onClick={() => setMoreFill((v) => !v)}
           className={`mx-[3px] h-5 w-5 shrink-0 rounded-[5px] border border-black/10 hover:scale-110 ${moreFill || (cur.fill !== 'transparent' && !FILLS.includes(cur.fill)) ? 'ring-2 ring-clay ring-offset-2 ring-offset-surface' : ''}`}
           style={{ background: 'conic-gradient(#e03131, #f08c00, #fab005, #2f9e44, #1971c2, #7048e8, #e03131)' }} />
       </PanelRow>
@@ -1930,7 +1931,7 @@ export default function BoardEditor({ id }: { id: string }) {
 
         {/* cụm 2: hỏi AI */}
         <button
-          type="button" onClick={askAi} title="Đính kèm phần đang chọn vào khung chat Trợ lý AI" aria-label="Đính kèm phần đang chọn vào khung chat Trợ lý AI"
+          type="button" onClick={askAi} data-tip="Đính kèm phần đang chọn vào khung chat Trợ lý AI" aria-label="Đính kèm phần đang chọn vào khung chat Trợ lý AI"
           className="flex h-9 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 text-[12.5px] font-medium text-ink transition-all hover:bg-sunken active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/40 sm:h-8"
         >
           <AiIcon size={16} /><span>Hỏi AI</span>
@@ -2085,7 +2086,7 @@ export default function BoardEditor({ id }: { id: string }) {
             face={<span className={`mx-[3px] block h-5 w-5 rounded-full border border-black/10 ${!LASER_COLORS.includes(o.laserColor) ? 'ring-2 ring-clay ring-offset-2 ring-offset-surface' : ''}`} style={{ background: 'conic-gradient(#e03131, #f08c00, #fab005, #2f9e44, #1971c2, #7048e8, #e03131)' }} />}>
             <div className="grid grid-cols-10 gap-1">
               {THEME_COLORS.map((c) => (
-                <button key={c} type="button" title={c} aria-label={c} onClick={() => { setOpt('laserColor', c); setPop(null) }}
+                <button key={c} type="button" data-tip={c} aria-label={c} onClick={() => { setOpt('laserColor', c); setPop(null) }}
                   className={`h-[18px] w-[18px] rounded-[3px] border border-black/10 hover:scale-110 ${o.laserColor === c ? 'ring-2 ring-clay ring-offset-1' : ''}`} style={{ background: c }} />
               ))}
             </div>
@@ -2146,7 +2147,7 @@ export default function BoardEditor({ id }: { id: string }) {
                 <div className="mb-1 text-[11.5px] text-ink-3">{sec.label}</div>
                 <div className="grid grid-cols-4 gap-1">
                   {sec.ids.map((k) => SHAPE_BY_ID[k]).map((sd) => (
-                    <button key={sd.id} type="button" title={sd.label} onClick={() => { pickTool(sd.id); setPop(null) }}
+                    <button key={sd.id} type="button" data-tip={sd.label} aria-label={sd.label} onClick={() => { pickTool(sd.id); setPop(null) }}
                       className={`flex h-14 w-16 flex-col items-center justify-center gap-1 rounded-[7px] text-[11px] ${tool === sd.id ? 'bg-clay/15 text-clay' : 'text-ink hover:bg-sunken'}`}>
                       <Ico d={sd.icon} size={18} />
                       <span>{sd.short}</span>
@@ -2222,7 +2223,7 @@ export default function BoardEditor({ id }: { id: string }) {
               />
               {mainTools.map((m) => (
                 <button
-                  key={m.id} type="button" title={m.label} aria-pressed={main === m.id} onClick={m.onClick}
+                  key={m.id} type="button" data-tip={m.label} aria-label={m.label} aria-pressed={main === m.id} onClick={m.onClick}
                   className={`${m.id === 'laser' || m.id === 'hand' ? 'hidden sm:flex' : 'flex'} relative h-9 min-w-9 items-center justify-center gap-1.5 rounded-[7px] px-2 text-[13px] transition-colors duration-200 sm:h-8 sm:min-w-0 sm:px-3 ${main === m.id ? 'text-clay' : 'text-ink-2 hover:text-ink'}`}
                 >
                   <Ico d={m.icon} size={16} />
@@ -2243,12 +2244,12 @@ export default function BoardEditor({ id }: { id: string }) {
             </Pop>
             <input ref={pdfRef} type="file" hidden accept="application/pdf,.pdf" onChange={onOpenPdfNotes} />
             <input ref={fileRef} type="file" hidden multiple accept="image/png,image/jpeg,image/webp,image/gif,application/pdf,.pdf" onChange={onPickFile} />
-            <button type="button" title="Xuất PNG / PDF" onClick={() => setDialog({ t: 'export' })}
+            <button type="button" data-tip="Xuất PNG / PDF" onClick={() => setDialog({ t: 'export' })}
               className="hidden h-8 items-center gap-1.5 rounded-[7px] px-2.5 text-[13px] text-ink hover:bg-sunken sm:flex">
               <Ico d="M12 4v11M7 10l5 5 5-5M5 20h14" size={16} />Xuất
             </button>
             {busy && <span className="ml-1 text-[12px] text-ink-2">{busy}</span>}
-            {saveErr && <span className="ml-1 text-[12px] text-red-600" title="Bộ nhớ trình duyệt đã đầy: xoá bớt ảnh/trang PDF hoặc xuất bảng ra file để giữ lại">Chưa lưu được (đầy bộ nhớ)</span>}
+            {saveErr && <span className="ml-1 text-[12px] text-red-600" data-tip="Bộ nhớ trình duyệt đã đầy: xoá bớt ảnh/trang PDF hoặc xuất bảng ra file để giữ lại">Chưa lưu được (đầy bộ nhớ)</span>}
             <span className="mx-1.5 hidden h-5 w-px bg-line @[1000px]:block" />
             <Pop id="paper" pop={pop} setPop={setPop} title="Kiểu giấy" align="right" className="hidden @[1000px]:block"
               face={<span className="flex items-center gap-1.5 px-1.5 text-[13px] text-ink"><Ico d="M6 3h9l4 4v14H6zM14 3v5h5" size={16} />Giấy</span>}>
@@ -2277,7 +2278,7 @@ export default function BoardEditor({ id }: { id: string }) {
             </Pop>
             <div className="ml-1 hidden items-center rounded-[8px] border border-line sm:flex">
               <IconBtn label="Thu nhỏ — Ctrl −" onClick={() => zoomAt(v.zoom / 1.2)}><Ico d="M6 12h12" /></IconBtn>
-              <button type="button" title="Về 100% — Ctrl 0" onClick={() => zoomAt(1)} className="h-8 w-12 rounded-[6px] text-center text-[12.5px] text-ink tnum hover:bg-sunken">
+              <button type="button" data-tip="Về 100%" data-tip-kbd="Ctrl+0" onClick={() => zoomAt(1)} className="h-8 w-12 rounded-[6px] text-center text-[12.5px] text-ink tnum hover:bg-sunken">
                 {Math.round(v.zoom * 100)}%
               </button>
               <IconBtn label="Phóng to — Ctrl +" onClick={() => zoomAt(v.zoom * 1.2)}><Ico d="M6 12h12M12 6v12" /></IconBtn>
@@ -2301,7 +2302,7 @@ export default function BoardEditor({ id }: { id: string }) {
                   </div>
                   <div className="flex items-center justify-between rounded-[8px] border border-line px-1 py-0.5">
                     <IconBtn label="Thu nhỏ" onClick={() => zoomAt(v.zoom / 1.2)}><Ico d="M6 12h12" /></IconBtn>
-                    <button type="button" title="Về 100%" onClick={() => zoomAt(1)} className="h-9 flex-1 rounded-[6px] text-center text-[12.5px] text-ink tnum hover:bg-sunken">
+                    <button type="button" data-tip="Về 100%" onClick={() => zoomAt(1)} className="h-9 flex-1 rounded-[6px] text-center text-[12.5px] text-ink tnum hover:bg-sunken">
                       {Math.round(v.zoom * 100)}%
                     </button>
                     <IconBtn label="Phóng to" onClick={() => zoomAt(v.zoom * 1.2)}><Ico d="M6 12h12M12 6v12" /></IconBtn>
@@ -2429,7 +2430,7 @@ export default function BoardEditor({ id }: { id: string }) {
           <div className="flex h-12 shrink-0 items-center gap-2 border-b border-line px-3 text-[13.5px] font-medium text-ink sm:h-11">
             <span className="text-clay">{side === 'tools' ? <Ico d={WRENCH_D} size={17} /> : <AiIcon size={17} />}</span>
             {side === 'tools' ? 'Công cụ' : 'Trợ lý AI'}
-            <button type="button" onClick={() => setSide(null)} title="Đóng" aria-label="Đóng panel" className="ml-auto grid h-9 w-9 place-items-center rounded-[6px] text-ink-3 hover:bg-sunken hover:text-ink sm:h-7 sm:w-7">
+            <button type="button" onClick={() => setSide(null)} data-tip="Đóng" aria-label="Đóng panel" className="ml-auto grid h-9 w-9 place-items-center rounded-[6px] text-ink-3 hover:bg-sunken hover:text-ink sm:h-7 sm:w-7">
               <Ico d="M6 6l12 12M18 6L6 18" />
             </button>
           </div>
@@ -2640,7 +2641,7 @@ function AiIcon({ size = 16 }: { size?: number }) {
 
 function SideBtn({ label, on, onClick, children }: { label: string; on: boolean; onClick: () => void; children: ReactNode }) {
   return (
-    <button type="button" title={label} aria-pressed={on} onClick={onClick}
+    <button type="button" data-tip={label} aria-label={label} aria-pressed={on} onClick={onClick}
       className={`flex h-8 shrink-0 items-center gap-1.5 rounded-[7px] px-2.5 text-[13px] transition-colors ${on ? 'bg-clay/10 text-clay' : 'text-ink hover:bg-sunken'}`}>
       {children}
       <span className="hidden whitespace-nowrap @[980px]:inline">{label}</span>
@@ -2660,7 +2661,7 @@ function Group({ label, children }: { label?: string; children: ReactNode }) {
 function Chip({ active, onClick, children, title }: { active?: boolean; onClick: () => void; children: ReactNode; title?: string }) {
   return (
     <button
-      type="button" title={title} aria-label={title} onClick={onClick} aria-pressed={active}
+      type="button" data-tip={title} aria-label={title} onClick={onClick} aria-pressed={active}
       className={`flex h-9 min-w-9 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-[7px] px-2.5 text-[12.5px] transition-colors sm:h-8 sm:min-w-8 sm:px-2 ${active ? 'bg-clay/10 text-clay' : 'text-ink hover:bg-sunken'}`}
     >
       {children}
@@ -2716,7 +2717,7 @@ function Pop({ id, pop, setPop, title, face, children, align, className, btnClas
     <div className={`relative ${className ?? ''}`} data-pop={id}>
       <button
         ref={btnRef}
-        type="button" title={title} aria-label={title} aria-expanded={open} onClick={() => setPop(open ? null : id)}
+        type="button" data-tip={title} aria-label={title} aria-expanded={open} onClick={() => setPop(open ? null : id)}
         className={`${btnClassName ?? 'flex h-9 min-w-9 items-center justify-center rounded-[7px] px-1.5 sm:h-8 sm:min-w-0 sm:px-1'} ${open ? 'bg-sunken' : 'hover:bg-sunken'}`}
       >
         {face}
@@ -2743,7 +2744,7 @@ function MoreColors({ value, onPick, onPreview, drag }: { value: string; onPick:
     <>
       <div className="grid grid-cols-10 gap-1">
         {THEME_COLORS.map((c) => (
-          <button key={c} type="button" title={c} aria-label={c} onClick={() => onPick(c)}
+          <button key={c} type="button" data-tip={c} aria-label={c} onClick={() => onPick(c)}
             draggable={!!drag}
             onDragStart={drag ? (ev) => startFillDrag(ev, c, drag) : undefined}
             onDragEnd={drag ? () => { draggingFill = null } : undefined}
@@ -2763,7 +2764,7 @@ function HexInput({ value, onPreview, onCommit }: { value: string; onPreview: (c
   const commit = () => { if (valid(text) && norm(text) !== value.toLowerCase()) onCommit(norm(text)) }
   return (
     <div className="flex items-center gap-2">
-      <label className="relative h-7 w-7 shrink-0 cursor-pointer overflow-hidden rounded-[6px] border border-black/10" style={{ background: valid(text) ? norm(text) : value }} title="Mở bảng màu">
+      <label className="relative h-7 w-7 shrink-0 cursor-pointer overflow-hidden rounded-[6px] border border-black/10" style={{ background: valid(text) ? norm(text) : value }} data-tip="Mở bảng màu">
         <input type="color" value={valid(text) ? norm(text) : '#000000'} className="absolute inset-0 cursor-pointer opacity-0"
           onChange={(e) => { setText(e.target.value); onPreview(e.target.value) }} onBlur={(e) => onCommit(e.target.value)} />
       </label>
@@ -2818,7 +2819,7 @@ function Swatch({ color, active, onClick, round, title, drag }: { color: string;
       type="button" onClick={onClick}
       draggable={!!drag}
       onDragStart={drag ? (ev) => startFillDrag(ev, color, drag) : undefined}
-      onDragEnd={drag ? () => { draggingFill = null } : undefined} title={none ? 'Không màu' : title ?? color} aria-label={none ? 'Không màu' : `${title ?? 'Màu'} ${color}`} aria-pressed={active}
+      onDragEnd={drag ? () => { draggingFill = null } : undefined} data-tip={none ? 'Không màu' : title ?? color} aria-label={none ? 'Không màu' : `${title ?? 'Màu'} ${color}`} aria-pressed={active}
       className={`mx-[3px] h-5 w-5 shrink-0 ${round ? 'rounded-full' : 'rounded-[5px]'} border border-black/10 transition-transform hover:scale-110 ${active ? 'ring-2 ring-clay ring-offset-2 ring-offset-surface' : ''}`}
       style={{ background: none ? NONE_BG : color }}
     />
@@ -2832,9 +2833,10 @@ function Ico({ d, size = 16 }: { d: string; size?: number }) {
 }
 
 function IconBtn({ label, onClick, children, disabled }: { label: string; onClick: () => void; children: ReactNode; disabled?: boolean }) {
+  const { tip, kbd } = splitTipKbd(label)
   return (
     <button
-      type="button" title={label} aria-label={label} onClick={onClick} disabled={disabled}
+      type="button" data-tip={tip} data-tip-kbd={kbd} aria-label={tip} onClick={onClick} disabled={disabled}
       className="grid h-9 w-9 place-items-center rounded-[6px] text-ink hover:bg-sunken disabled:opacity-35 disabled:hover:bg-transparent sm:h-8 sm:w-8"
     >
       {children}
@@ -2844,9 +2846,10 @@ function IconBtn({ label, onClick, children, disabled }: { label: string; onClic
 
 /** nút icon trong thanh nổi hàng 3 */
 function SelBtn({ label, onClick, children, danger }: { label: string; onClick: () => void; children: ReactNode; danger?: boolean }) {
+  const { tip, kbd } = splitTipKbd(label)
   return (
     <button
-      type="button" title={label} aria-label={label} onClick={onClick}
+      type="button" data-tip={tip} data-tip-kbd={kbd} aria-label={tip} onClick={onClick}
       className={`grid h-9 w-9 shrink-0 place-items-center rounded-full text-ink transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/40 sm:h-8 sm:w-8 ${danger ? 'hover:bg-red-500/10 hover:text-red-600' : 'hover:bg-sunken'}`}
     >
       {children}

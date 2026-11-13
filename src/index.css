@@ -1055,3 +1055,32 @@
 @media (prefers-reduced-motion: reduce) {
   .page-enter, .drawer-in, .drawer-out, .backdrop-in, .backdrop-out { animation: none; }
 }
+
+/* tooltip: mờ dần vào và trượt 3px về phía phần tử */
+@keyframes tip-in {
+  from {
+    opacity: 0;
+    transform: translate3d(var(--tip-dx, 0px), var(--tip-dy, 3px), 0) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes tip-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+/* chỉ giữ trạng thái đầu (backwards), hết hiệu ứng thì nhường cho transition lúc ẩn / trượt */
+.anim-tip {
+  animation: tip-in 160ms cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+  transform-origin: center;
+  will-change: opacity, transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  .anim-tip {
+    animation: tip-fade 120ms ease-out backwards;
+    transition: opacity 120ms ease-out !important;
+    transform: none !important;
+  }
+}

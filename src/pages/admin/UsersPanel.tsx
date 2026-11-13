@@ -584,7 +584,7 @@ function UserDetailDrawer({
             <div className="grid grid-cols-2 gap-3 rounded-[8px] border border-line-2 bg-sunken/40 p-4">
               <div>
                 <span className="block text-[12px] text-ink-3">Mã định danh (ID)</span>
-                <span className="font-mono text-[11.5px] text-ink-2" title={user.id}>
+                <span className="font-mono text-[11.5px] text-ink-2" data-tip={user.id}>
                   {shortenId(user.id)}…
                 </span>
               </div>

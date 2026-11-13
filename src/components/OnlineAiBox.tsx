@@ -122,7 +122,7 @@ export function OnlineAiBox({
             onClick={() => fileRef.current?.click()}
             disabled={busy || reading}
             aria-label="Đính kèm file"
-            title="Đính kèm file (Word, PDF, văn bản)"
+            data-tip="Đính kèm file (Word, PDF, văn bản)"
             className="mb-[5px] flex size-8 shrink-0 items-center justify-center rounded-[5px] text-ink-3 transition-colors hover:bg-sunken hover:text-ink disabled:pointer-events-none disabled:opacity-40"
           >
             {reading ? <span className="size-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" /> : <Plus className="size-4" />}
@@ -133,7 +133,7 @@ export function OnlineAiBox({
               <button
                 type="button"
                 onClick={() => setListOpen(true)}
-                title={files.map((f) => f.name).join('\n')}
+                data-tip={files.map((f) => f.name).join('\n')}
                 aria-label={`Xem ${files.length} file đính kèm`}
                 className="inline-flex items-center gap-1 rounded-l-full py-1 pl-2.5 pr-1 transition-colors hover:bg-clay/10"
               >
@@ -176,7 +176,7 @@ export function OnlineAiBox({
             type="button"
             onClick={() => abort.current?.abort()}
             aria-label="Dừng"
-            title="Dừng"
+            data-tip="Dừng"
             className="flex size-11 shrink-0 items-center justify-center rounded-[6px] bg-sunken text-ink-2 transition-colors hover:text-ink"
           >
             <Square className="size-3.5 fill-current" />
@@ -186,7 +186,8 @@ export function OnlineAiBox({
             type="submit"
             disabled={!canSend}
             aria-label="Gửi"
-            title="Gửi (Enter)"
+            data-tip="Gửi"
+            data-tip-kbd="Enter"
             className="flex size-11 shrink-0 items-center justify-center rounded-[6px] bg-clay text-white transition-colors hover:bg-clay-deep disabled:pointer-events-none disabled:opacity-40"
           >
             <ArrowUp className="size-4" />
@@ -253,14 +254,14 @@ function AttachmentsModal({
             <li key={f.name + i} className="flex items-center gap-3 px-3.5 py-2.5">
               <FileText className="size-4 shrink-0 text-ink-3" />
               <div className="min-w-0 flex-1">
-                <p className="truncate text-[14px] font-medium text-ink" title={f.name}>{f.name}</p>
+                <p className="truncate text-[14px] font-medium text-ink" data-tip={f.name}>{f.name}</p>
                 <p className="tnum text-[12px] text-ink-3">{kchars(f.text.length)}</p>
               </div>
               <button
                 type="button"
                 onClick={() => onRemove(i)}
                 aria-label={`Bỏ ${f.name}`}
-                title="Bỏ file này"
+                data-tip="Bỏ file này"
                 className="flex size-8 shrink-0 items-center justify-center rounded-[6px] text-ink-3 transition-colors hover:bg-clay-soft hover:text-clay"
               >
                 <X className="size-4" />
@@ -270,7 +271,7 @@ function AttachmentsModal({
         </ul>
 
         <div className="mt-6 flex flex-col-reverse gap-2.5 sm:flex-row sm:justify-end">
-          <Button variant="soft" onClick={onAdd} disabled={reading || files.length >= MAX_FILES} title={files.length >= MAX_FILES ? `Tối đa ${MAX_FILES} file` : undefined}>
+          <Button variant="soft" onClick={onAdd} disabled={reading || files.length >= MAX_FILES} data-tip={files.length >= MAX_FILES ? `Tối đa ${MAX_FILES} file` : undefined}>
             <Plus className="size-4" />
             Thêm file
           </Button>

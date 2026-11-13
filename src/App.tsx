@@ -1,6 +1,7 @@
 import { Suspense, useEffect } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { DialogHost } from '@/components/Dialog'
+import { TooltipLayer } from '@/components/Tooltip'
 import { Footer, Header } from '@/components/Layout'
 import { SiteStatus } from '@/components/SiteStatus'
 import { cn } from '@/lib/cn'
@@ -113,6 +114,7 @@ export default function App() {
     <div className={cn('flex min-h-dvh flex-col', fullscreen && 'h-dvh overflow-hidden')}>
       <ScrollToTop />
       <DialogHost />
+      <TooltipLayer />
       {fullscreen ? null : <Header />}
       <main className={cn('flex-1', fullscreen && 'min-h-0 overflow-hidden')}>
         <SiteStatus>

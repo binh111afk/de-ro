@@ -135,7 +135,7 @@ export function SlideStrip({
                 <button
                   type="button"
                   onClick={() => onDuplicate(s.id)}
-                  title="Nhân bản slide"
+                  data-tip="Nhân bản slide"
                   aria-label="Nhân bản slide"
                   className="rounded bg-white/85 p-1 text-ink-3 hover:text-ink"
                 >
@@ -145,7 +145,7 @@ export function SlideStrip({
               <button
                 type="button"
                 onClick={() => onRemove(s.id)}
-                title="Xoá slide"
+                data-tip="Xoá slide"
                 aria-label="Xoá slide"
                 className="rounded bg-white/85 p-1 text-ink-3 hover:text-clay"
               >
@@ -161,7 +161,7 @@ export function SlideStrip({
           key={`pending-${i}`}
           className={cn('slide-skeleton ml-2 shrink-0', thumbW, isPhone ? 'h-[54px]' : 'h-[74px]')}
           aria-hidden="true"
-          title="AI đang viết slide…"
+          data-tip="AI đang viết slide…"
         >
           <span className="slide-skeleton__bar slide-skeleton__bar--title" />
           <span className="slide-skeleton__bar" />
@@ -173,7 +173,7 @@ export function SlideStrip({
         <button
           type="button"
           onClick={() => onAddAt(count)}
-          title="Thêm slide"
+          data-tip="Thêm slide"
           aria-label="Thêm slide"
           className={cn(
             'ml-2 flex shrink-0 items-center justify-center rounded-lg border border-dashed border-line-2 text-ink-3 transition-colors hover:border-clay hover:text-clay',
@@ -223,7 +223,7 @@ export function SlideStrip({
         <button
           type="button"
           onClick={() => setTabletCollapsed(true)}
-          title="Thu gọn dải slide"
+          data-tip="Thu gọn dải slide"
           aria-label="Thu gọn dải slide"
           className="flex w-7 shrink-0 items-center justify-center border-r border-line text-ink-3 hover:bg-paper-2 hover:text-ink"
         >
@@ -246,7 +246,7 @@ function Gap({ enabled, onAdd, compact }: { enabled: boolean; onAdd: () => void;
         <button
           type="button"
           onClick={onAdd}
-          title="Thêm slide vào đây"
+          data-tip="Thêm slide vào đây"
           aria-label="Thêm slide vào đây"
           className="absolute left-1/2 top-1/2 flex size-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-clay text-white opacity-0 shadow transition-opacity group-hover/gap:opacity-100 group-hover/gap:delay-[400ms] focus-visible:opacity-100 focus-visible:delay-0"
         >

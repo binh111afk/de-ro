@@ -236,7 +236,7 @@ export function NavPanel({
       <button
         type="button"
         aria-label="Đóng panel"
-        title="Đóng panel"
+        data-tip="Đóng panel"
         tabIndex={active ? 0 : -1}
         onClick={() => onOpenChange(false)}
         className={cn('absolute top-1/2 z-50 flex h-12 w-5 -translate-y-1/2 items-center justify-center rounded-full border border-line bg-white text-ink-2 shadow-sm transition-[left,right,opacity] duration-200 ease-out hover:text-clay motion-reduce:transition-none', left ? '-translate-x-1/2' : 'translate-x-1/2')}
@@ -297,7 +297,7 @@ export function NavPanel({
                                   e.dataTransfer.effectAllowed = 'copy'
                                 }}
                                 onClick={() => onInsertTemplate(tpl)}
-                                title="Bấm để chèn tại con trỏ, hoặc kéo vào trang"
+                                data-tip="Bấm để chèn tại con trỏ, hoặc kéo vào trang"
                               >
                                 <span className="nav-tpl__grip">
                                   <IconGrip size={12} />

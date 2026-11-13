@@ -160,7 +160,7 @@ function ItemCard({ item, index, onDelete }: { item: OnlineItem; index: number; 
             variant="clay"
             size="sm"
             disabled={!playable}
-            title={playable ? 'Làm thử như học sinh' : 'Hoàn thiện các câu còn lỗi trước'}
+            data-tip={playable ? 'Làm thử như học sinh' : 'Hoàn thiện các câu còn lỗi trước'}
             onClick={() => navigate(`/lam-de/${loadForQuiz(item)}`)}
           >
             <MonitorPlay className="size-3.5" />
@@ -177,7 +177,7 @@ function ItemCard({ item, index, onDelete }: { item: OnlineItem; index: number; 
               size="sm"
               className="min-w-0 flex-1"
               disabled={busy || item.status !== 'done' || !playable}
-              title={item.status !== 'done' ? 'Bấm Tạo đề ở bước cuối trước khi đăng' : 'Đăng lên đề cộng đồng'}
+              data-tip={item.status !== 'done' ? 'Bấm Tạo đề ở bước cuối trước khi đăng' : 'Đăng lên đề cộng đồng'}
               onClick={() => void publish(true)}
             >
               <Upload className="size-3.5" />
@@ -187,7 +187,7 @@ function ItemCard({ item, index, onDelete }: { item: OnlineItem; index: number; 
           <button
             type="button"
             aria-label="Xoá đề"
-            title="Xoá đề"
+            data-tip="Xoá đề"
             onClick={async () => {
               const ok = await dialog.confirm('Bản đã xuất bản (nếu có) không bị gỡ, vẫn xem được ở tab Đề đã xuất bản.', {
                 title: `Xoá "${item.meta.title.trim() || 'Đề chưa đặt tên'}" khỏi lịch sử?`,

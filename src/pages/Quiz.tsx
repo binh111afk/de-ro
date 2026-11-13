@@ -284,7 +284,8 @@ export default function Quiz() {
           <Link
             to="/de-cong-dong"
             className="flex size-9 shrink-0 items-center justify-center rounded-full bg-cream text-ink-2 shadow-soft transition-colors hover:text-ink"
-            title="Thoát"
+            data-tip="Thoát"
+            aria-label="Thoát"
           >
             <X className="size-4" />
           </Link>
@@ -316,7 +317,7 @@ export default function Quiz() {
                 'flex items-center gap-2 rounded-full px-3.5 py-2 font-mono text-[13.5px] font-bold tabular-nums transition-colors duration-500',
                 low ? 'bg-clay-soft text-clay' : 'bg-cream text-ink shadow-soft',
               )}
-              title="Thời gian còn lại"
+              data-tip="Thời gian còn lại"
             >
               <Clock className="size-3.5" />
               {mm}:{ss}

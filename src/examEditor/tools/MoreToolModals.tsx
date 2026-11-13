@@ -58,7 +58,7 @@ function HelpButton({ open, onToggle, label }: { open: boolean; onToggle: () => 
       onClick={onToggle}
       aria-label={label}
       aria-expanded={open}
-      title={label}
+      data-tip={label}
       className={cn('flex size-5 items-center justify-center rounded-full transition-colors', open ? 'bg-clay text-white' : 'text-ink-3 hover:bg-sunken hover:text-clay')}
     >
       <CircleHelp className="size-4" />
@@ -1787,7 +1787,7 @@ export function ChemEqModal({ initial, submitLabel, onClose, onInsert }: Props<C
             <button
               key={q.label}
               type="button"
-              title={q.title}
+              data-tip={q.title}
               onClick={() => insertSnippet(q)}
               className="rounded-[6px] border border-line bg-surface px-2.5 py-1 text-[12.5px] font-medium text-ink-2 transition-colors hover:border-clay hover:text-clay"
             >
@@ -3343,7 +3343,7 @@ export function PunnettModal({ initial, submitLabel, onClose, onInsert }: Props<
             <button
               type="button"
               onClick={handleCopyText}
-              title="Sao chép toàn bộ kết quả dạng văn bản"
+              data-tip="Sao chép toàn bộ kết quả dạng văn bản"
               className="inline-flex items-center gap-1 rounded-[6px] border border-line bg-surface px-2 py-0.5 text-[11.5px] text-ink-2 hover:border-ink-4 hover:text-ink"
             >
               {copied ? <CheckCheck className="size-3 text-emerald-600" /> : <Copy className="size-3" />}

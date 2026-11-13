@@ -205,7 +205,7 @@ function PublishedCard({
           <span className="text-[12px] font-semibold text-ink-3">{row.grade}</span>
         </div>
         <div className="relative">
-          <p title={row.title} className="line-clamp-2 font-display text-[16px] font-semibold leading-snug tracking-[-0.01em] text-ink">
+          <p data-tip={row.title} className="line-clamp-2 font-display text-[16px] font-semibold leading-snug tracking-[-0.01em] text-ink">
             {row.title.trim() || 'Đề chưa đặt tên'}
           </p>
           <p className="mt-1 truncate text-[12px] text-ink-3">{row.school || 'Chưa ghi tên trường'}</p>
@@ -252,7 +252,7 @@ function PublishedCard({
         </div>
 
         <div className="mt-2 flex items-center gap-2">
-          <Button variant="clay" size="sm" className="min-w-0 flex-1" onClick={copy} title={url}>
+          <Button variant="clay" size="sm" className="min-w-0 flex-1" onClick={copy} data-tip={url}>
             {copied ? <Check className="size-3.5" /> : <Link2 className="size-3.5" />}
             {copied ? 'Đã chép link' : 'Chép link cho học sinh'}
           </Button>
@@ -277,7 +277,7 @@ function IconBtn({ label, onClick, disabled, danger, children }: { label: string
     <button
       type="button"
       aria-label={label}
-      title={label}
+      data-tip={label}
       onClick={onClick}
       disabled={disabled}
       className={cn(
@@ -308,7 +308,7 @@ function Bands({ bands }: { bands: ExamStats['bands'] }) {
       role="img"
       aria-label={`Phổ điểm: ${bands.map((n, i) => `${BAND_LABEL[i]} ${n} người`).join(', ')}`}
     >
-      {bands.map((n, i) => (n ? <span key={i} className={BAND_COLOR[i]} style={{ width: `${(n / sum) * 100}%` }} title={`${BAND_LABEL[i]}: ${n} người`} /> : null))}
+      {bands.map((n, i) => (n ? <span key={i} className={BAND_COLOR[i]} style={{ width: `${(n / sum) * 100}%` }} data-tip={`${BAND_LABEL[i]}: ${n} người`} /> : null))}
     </div>
   )
 }
@@ -341,7 +341,7 @@ function Podium({ top }: { top: Student[] }) {
               >
                 {i + 1}
               </span>
-              <p className={cn('mt-2 w-full truncate text-center font-semibold text-ink', first ? 'text-[16px]' : 'text-[13.5px]')} title={s.name}>
+              <p className={cn('mt-2 w-full truncate text-center font-semibold text-ink', first ? 'text-[16px]' : 'text-[13.5px]')} data-tip={s.name}>
                 {s.name}
               </p>
               <p className={cn('tnum font-display font-semibold', first ? 'text-[22px] text-honey' : 'text-[16px] text-ink-2')}>

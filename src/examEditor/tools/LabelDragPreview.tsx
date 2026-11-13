@@ -49,7 +49,7 @@ function LabelBar({
         type="button"
         onClick={onReset}
         disabled={!has}
-        title="Xoá mọi vị trí nhãn đã kéo"
+        data-tip="Xoá mọi vị trí nhãn đã kéo"
         className={cn(
           'flex items-center whitespace-nowrap rounded-[6px] border border-line text-ink-2 transition-colors hover:border-ink-4 disabled:pointer-events-none disabled:opacity-40',
           btnCls,

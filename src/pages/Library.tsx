@@ -312,7 +312,7 @@ function DocumentCard({
         </div>
       </div>
 
-      <p title={doc.name} className="mt-4 line-clamp-2 font-display text-[16px] font-semibold leading-snug tracking-[-0.01em] text-ink">
+      <p data-tip={doc.name} className="mt-4 line-clamp-2 font-display text-[16px] font-semibold leading-snug tracking-[-0.01em] text-ink">
         {doc.name}
       </p>
       <p className="mt-2 flex items-center gap-1.5 text-[12px] font-medium text-ink-3 tnum">

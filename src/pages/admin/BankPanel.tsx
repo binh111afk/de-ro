@@ -335,7 +335,8 @@ export function BankPanel({ me: _me }: { me: AdminMe }) {
             variant="outline"
             size="sm"
             onClick={() => setShowMatrix((v) => !v)}
-            title="Bật/tắt ma trận câu theo môn"
+            data-tip="Bật/tắt ma trận câu theo môn"
+            aria-label="Bật/tắt ma trận câu theo môn"
           >
             <SlidersHorizontal className="size-4" />
             <span className="hidden sm:inline">Ma trận môn</span>
@@ -393,7 +394,7 @@ export function BankPanel({ me: _me }: { me: AdminMe }) {
                       <td className="py-2 font-medium">
                         <span className="flex items-center gap-1.5">
                           {sub}
-                          {isLow && <span className="size-1.5 rounded-full bg-amber-500" title="Ít hơn 10 câu" />}
+                          {isLow && <span className="size-1.5 rounded-full bg-amber-500" data-tip="Ít hơn 10 câu" />}
                         </span>
                       </td>
                       <td className="py-2 text-center tnum text-ink-2">{s.de}</td>
@@ -567,7 +568,7 @@ export function BankPanel({ me: _me }: { me: AdminMe }) {
                       <Badge tone={ORIGIN_TONE[item.origin]}>{ORIGIN_LABEL[item.origin]}</Badge>
                       <Badge tone="neutral">{e.subject}</Badge>
                     </div>
-                    <span className="font-mono text-[11px] text-ink-4 truncate max-w-[170px]" title={e.id}>
+                    <span className="font-mono text-[11px] text-ink-4 truncate max-w-[170px]" data-tip={e.id}>
                       {e.id}
                     </span>
                     <div className="flex items-center gap-1 text-[11.5px] text-ink-3">
@@ -704,7 +705,7 @@ function QuestionDrawer({
         <div className="flex items-center justify-between border-b border-line px-5 py-4">
           <div className="flex items-center gap-2">
             <Badge tone={ORIGIN_TONE[item.origin]}>{ORIGIN_LABEL[item.origin]}</Badge>
-            <h2 className="font-mono text-[13px] font-semibold text-ink truncate max-w-[280px]" title={e.id}>
+            <h2 className="font-mono text-[13px] font-semibold text-ink truncate max-w-[280px]" data-tip={e.id}>
               {e.id}
             </h2>
           </div>
@@ -1362,7 +1363,8 @@ function QuestionFormModal({
                             if (answer === o.key && next[0]) setAnswer(next[0].key)
                           }}
                           className="mt-2 text-ink-4 hover:text-clay"
-                          title="Xoá phương án này"
+                          data-tip="Xoá phương án này"
+                          aria-label="Xoá phương án này"
                         >
                           <Trash2 className="size-4" />
                         </button>

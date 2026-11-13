@@ -242,7 +242,7 @@ function ExamsTab({ me }: { me: AdminMe }) {
           }}
           className="col-span-2 min-w-0 lg:w-[200px]"
         />
-        <Button variant="outline" size="icon" onClick={() => void loadExams()} title="Làm mới" aria-label="Làm mới" className="col-start-2 row-start-1 h-11 w-11 lg:order-last">
+        <Button variant="outline" size="icon" onClick={() => void loadExams()} data-tip="Làm mới" aria-label="Làm mới" className="col-start-2 row-start-1 h-11 w-11 lg:order-last">
           <RefreshCw className="size-4" />
         </Button>
       </div>
@@ -288,7 +288,7 @@ function ExamsTab({ me }: { me: AdminMe }) {
                   >
                     <td className="px-4 py-3">
                       <div className="max-w-[280px]">
-                        <p className="truncate font-semibold text-ink" title={ex.title}>
+                        <p className="truncate font-semibold text-ink" data-tip={ex.title}>
                           {ex.title}
                         </p>
                         {ex.school ? (
@@ -301,7 +301,7 @@ function ExamsTab({ me }: { me: AdminMe }) {
                       {ex.grade ? <span className="text-ink-3"> · {ex.grade}</span> : null}
                     </td>
                     <td className="whitespace-nowrap px-4 py-3 text-ink-3">
-                      <span className="font-mono text-[12px]" title={ex.ownerEmail ?? ex.ownerId ?? ''}>
+                      <span className="font-mono text-[12px]" data-tip={ex.ownerEmail ?? ex.ownerId ?? ''}>
                         {ex.ownerEmail || (ex.ownerId ? shortenId(ex.ownerId) : 'Khách')}
                       </span>
                     </td>
@@ -487,7 +487,7 @@ function ExamDrawer({
         <div className="flex items-center justify-between border-b border-line px-6 py-4">
           <div className="min-w-0 pr-4">
             <div className="flex items-center gap-2">
-              <h2 className="truncate text-[16px] font-bold text-ink" title={exam.title}>
+              <h2 className="truncate text-[16px] font-bold text-ink" data-tip={exam.title}>
                 {exam.title}
               </h2>
               {exam.status === 'published' ? (
@@ -805,7 +805,7 @@ function ReportsTab({ me: _me }: { me: AdminMe }) {
           </button>
         </div>
 
-        <Button variant="outline" size="sm" onClick={() => void loadReports()} title="Làm mới">
+        <Button variant="outline" size="sm" onClick={() => void loadReports()} data-tip="Làm mới">
           <RefreshCw className="size-3.5" />
           <span>Tải lại</span>
         </Button>
@@ -851,7 +851,7 @@ function ReportsTab({ me: _me }: { me: AdminMe }) {
                     </td>
                     <td className="px-4 py-3">
                       <div className="max-w-[220px]">
-                        <p className="truncate font-semibold text-ink" title={r.examTitle}>
+                        <p className="truncate font-semibold text-ink" data-tip={r.examTitle}>
                           {r.examTitle}
                         </p>
                         <a
@@ -871,7 +871,7 @@ function ReportsTab({ me: _me }: { me: AdminMe }) {
                       </Badge>
                     </td>
                     <td className="px-4 py-3">
-                      <p className="max-w-[260px] line-clamp-2 text-[12.5px] text-ink-2" title={r.detail || ''}>
+                      <p className="max-w-[260px] line-clamp-2 text-[12.5px] text-ink-2" data-tip={r.detail || ''}>
                         {r.detail || '—'}
                       </p>
                     </td>
@@ -1025,7 +1025,7 @@ function DocsTab({ me: _me }: { me: AdminMe }) {
                       <span className="font-bold text-ink-3">#{i + 1}</span>
                       <span className="font-semibold text-clay">{formatBytes(u.totalSize)}</span>
                     </div>
-                    <p className="mt-1 truncate font-medium text-ink" title={u.name || u.email}>
+                    <p className="mt-1 truncate font-medium text-ink" data-tip={u.name || u.email}>
                       {u.name || u.email}
                     </p>
                     <p className="truncate text-[11px] text-ink-3">{u.email}</p>
@@ -1064,7 +1064,7 @@ function DocsTab({ me: _me }: { me: AdminMe }) {
             ) : null}
           </div>
 
-          <Button variant="outline" size="icon" onClick={() => void loadDocs()} title="Làm mới" aria-label="Làm mới" className="h-11 w-11">
+          <Button variant="outline" size="icon" onClick={() => void loadDocs()} data-tip="Làm mới" aria-label="Làm mới" className="h-11 w-11">
             <RefreshCw className="size-4" />
             <span>Tải lại</span>
           </Button>
@@ -1107,7 +1107,7 @@ function DocsTab({ me: _me }: { me: AdminMe }) {
                         <div className="flex items-center gap-2.5">
                           <FileText className="size-4 shrink-0 text-clay" />
                           <div className="max-w-[280px]">
-                            <p className="truncate font-semibold text-ink" title={d.name}>
+                            <p className="truncate font-semibold text-ink" data-tip={d.name}>
                               {d.name}
                             </p>
                             <span className="text-[11px] text-ink-3 font-mono">{d.mime}</span>
@@ -1132,7 +1132,8 @@ function DocsTab({ me: _me }: { me: AdminMe }) {
                           size="sm"
                           onClick={() => void handleDelete(d)}
                           className="text-ink-3 hover:text-clay"
-                          title="Xoá tài liệu"
+                          data-tip="Xoá tài liệu"
+                          aria-label="Xoá tài liệu"
                         >
                           <Trash2 className="size-3.5" />
                           <span className="hidden sm:inline">Xoá</span>
@@ -1251,7 +1252,7 @@ function FeedbackTab({ me: _me }: { me: AdminMe }) {
           </button>
         </div>
 
-        <Button variant="outline" size="sm" onClick={() => void loadFeedback()} title="Làm mới">
+        <Button variant="outline" size="sm" onClick={() => void loadFeedback()} data-tip="Làm mới">
           <RefreshCw className="size-3.5" />
           <span>Tải lại</span>
         </Button>
@@ -1283,7 +1284,7 @@ function FeedbackTab({ me: _me }: { me: AdminMe }) {
                 <div className="flex-1 space-y-1.5">
                   <div className="flex flex-wrap items-center gap-2">
                     {!f.read ? (
-                      <span className="inline-block size-2 rounded-full bg-clay" title="Chưa đọc" />
+                      <span className="inline-block size-2 rounded-full bg-clay" data-tip="Chưa đọc" />
                     ) : null}
                     <span className={`text-[13.5px] ${!f.read ? 'font-bold text-ink' : 'font-medium text-ink-2'}`}>
                       {f.email || 'Khách ẩn danh'}

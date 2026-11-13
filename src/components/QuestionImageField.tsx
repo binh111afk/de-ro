@@ -94,7 +94,7 @@ export function QuestionImageField({
             <button
               type="button"
               aria-label="Xoá ảnh"
-              title="Xoá ảnh"
+              data-tip="Xoá ảnh"
               onClick={() => onChange(undefined)}
               className="flex size-9 items-center justify-center rounded-[6px] text-ink-3 transition-colors hover:bg-clay-soft hover:text-clay"
             >

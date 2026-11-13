@@ -554,7 +554,7 @@ export function OpsPanel({ me: _me }: OpsPanelProps) {
                 </div>
                 <div className="flex items-center gap-3 self-end sm:self-auto">
                   {result?.error ? (
-                    <span className="max-w-[140px] truncate font-mono text-[12px] text-clay sm:max-w-[220px]" title={result.error}>
+                    <span className="max-w-[140px] truncate font-mono text-[12px] text-clay sm:max-w-[220px]" data-tip={result.error}>
                       {result.error}
                     </span>
                   ) : null}
@@ -712,7 +712,7 @@ export function OpsPanel({ me: _me }: OpsPanelProps) {
                     <div
                       key={d.day}
                       className="group relative flex h-full flex-1 min-w-[16px] flex-col items-center justify-end"
-                      title={`${d.day}: ${formatNumber(d.calls)} lượt (${formatNumber(d.success)} thành công, ${formatNumber(d.errors)} lỗi)`}
+                      data-tip={`${d.day}: ${formatNumber(d.calls)} lượt (${formatNumber(d.success)} thành công, ${formatNumber(d.errors)} lỗi)`}
                     >
                       {/* Cột chồng thành công / lỗi */}
                       <div
@@ -871,7 +871,7 @@ export function OpsPanel({ me: _me }: OpsPanelProps) {
                       <td className="px-4 py-2.5">
                         <span
                           className="block max-w-[240px] truncate font-mono text-[12px] text-clay sm:max-w-[360px] md:max-w-[460px]"
-                          title={err.error ?? ''}
+                          data-tip={err.error ?? ''}
                         >
                           {err.error || '—'}
                         </span>

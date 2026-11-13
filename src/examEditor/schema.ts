@@ -863,7 +863,7 @@ export const ImageNode = Node.create({
       const handles = (['nw', 'ne', 'sw', 'se'] as const).map((corner) => {
         const h = document.createElement('span')
         h.className = `exam-image__handle exam-image__handle--${corner}`
-        h.title = 'Kéo để đổi cỡ ảnh'
+        h.setAttribute('data-tip', 'Kéo để đổi cỡ ảnh')
         h.draggable = false
         h.addEventListener('pointerdown', (e) => startResize(e, corner === 'nw' || corner === 'sw' ? -1 : 1))
         return h

@@ -409,7 +409,7 @@ export function MatrixModal({
                       <Badge tone={badge.tone} className="px-1.5 py-0 text-[10.5px]">
                         {badge.label}
                       </Badge>
-                      <span className="truncate text-[12px] text-ink-3" title={q.textSummary}>
+                      <span className="truncate text-[12px] text-ink-3" data-tip={q.textSummary}>
                         {q.textSummary}
                       </span>
                     </div>

@@ -375,7 +375,7 @@ function PublishModal({
                   variant="clay"
                   size="sm"
                   disabled={busyId !== null || d.blocks.length === 0}
-                  title={d.blocks.length === 0 ? 'Đề chưa có nội dung' : undefined}
+                  data-tip={d.blocks.length === 0 ? 'Đề chưa có nội dung' : undefined}
                   onClick={() => void publish(d.id, () => publishDoc(d, true))}
                 >
                   {busyId === d.id ? 'Đang đăng…' : 'Đăng'}
@@ -418,7 +418,7 @@ function ExamCard({ item, index, busy }: { item: CardItem; index: number; busy: 
         </div>
         <div className="relative">
           <p
-            title={item.title}
+            data-tip={item.title}
             className="line-clamp-2 font-display text-[16px] font-semibold leading-snug tracking-[-0.01em] text-ink"
           >
             {item.title}
@@ -458,7 +458,7 @@ function ExamCard({ item, index, busy }: { item: CardItem; index: number; busy: 
             className="w-full justify-center"
             onClick={item.onQuiz}
             disabled={busy}
-            title="Làm đề tương tác"
+            data-tip="Làm đề tương tác"
           >
             <MonitorPlay className="size-3.5" />
             {busy ? 'Đang mở…' : 'Làm đề'}
@@ -476,7 +476,7 @@ const keyLabel = (item: CardItem) =>
 function KeyBadge({ item }: { item: CardItem }) {
   if (!item.missingKeys) return null
   return (
-    <span title="Các câu chưa có đáp án sẽ không được chấm điểm khi làm đề">
+    <span data-tip="Các câu chưa có đáp án sẽ không được chấm điểm khi làm đề">
       <Badge tone="outline">{keyLabel(item)}</Badge>
     </span>
   )
@@ -487,7 +487,7 @@ function ExamRow({ item, busy }: { item: CardItem; busy: boolean }) {
     <div className="flex flex-wrap items-center gap-4 border-b border-line-2 px-5 py-4 last:border-0 hover:bg-canvas/60">
       <button type="button" onClick={item.onView} disabled={busy} className="min-w-0 flex-1 text-left">
         <p
-          title={item.title}
+          data-tip={item.title}
           className="line-clamp-2 font-display text-[16px] font-semibold text-ink transition-colors hover:text-clay"
         >
           {item.title}
@@ -557,7 +557,7 @@ function ViewToggle({ value, onChange }: { value: 'grid' | 'list'; onChange: (v:
             role="radio"
             aria-checked={active}
             aria-label={label}
-            title={label}
+            data-tip={label}
             onClick={() => onChange(key)}
             className={cn(
               'relative z-10 flex h-full w-11 items-center justify-center rounded-[6px] transition-colors duration-200 active:scale-[0.96]',

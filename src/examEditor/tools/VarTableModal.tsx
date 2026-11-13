@@ -108,7 +108,7 @@ export function VarTableModal({
             onClick={() => setHelpOpen((v) => !v)}
             aria-expanded={helpOpen}
             aria-label="Cách gõ nội dung bảng"
-            title="Cách gõ"
+            data-tip="Cách gõ"
             className={cn(
               'flex size-5 items-center justify-center rounded-full transition-colors',
               helpOpen ? 'bg-clay-tint text-clay' : 'text-ink-4 hover:bg-sunken hover:text-ink',

@@ -103,7 +103,7 @@ function MathCell({ value, onChange }: { value: string; onChange: (value: string
   if (hasRich(value) && !editing) {
     return (
       <span
-        title="Nhấp đúp để sửa công thức"
+        data-tip="Nhấp đúp để sửa công thức"
         onDoubleClick={() => setEditing(true)}
         dangerouslySetInnerHTML={{ __html: slideMathHtml(value) }}
       />
@@ -993,7 +993,7 @@ export function SlideEditor({
               <ChevronRight className="size-6" />
             </button>
           </div>
-          <button type="button" aria-label="Thoát trình chiếu" title="Thoát trình chiếu (Esc)" onClick={() => setPresenting(false)} className="rounded-md p-1.5 transition-colors hover:bg-white/10">
+          <button type="button" aria-label="Thoát trình chiếu" data-tip="Thoát trình chiếu" data-tip-kbd="Esc" onClick={() => setPresenting(false)} className="rounded-md p-1.5 transition-colors hover:bg-white/10">
             <Minimize2 className="size-6" />
           </button>
         </div>
@@ -1982,7 +1982,7 @@ function AutoFitText({
 
   if (showMath) {
     return (
-      <div className="h-full w-full" onDoubleClick={() => setEditing(true)} title="Nhấp đúp để sửa công thức">
+      <div className="h-full w-full" onDoubleClick={() => setEditing(true)} data-tip="Nhấp đúp để sửa công thức">
         <FitText
           html={slideMathHtml(value)}
           baseSize={baseSize}
@@ -2082,7 +2082,8 @@ function GroupToolbar({ els, onAlign, onDelete }: { els: SlideElement[]; onAlign
         <button
           key={mode}
           type="button"
-          title={min && els.length < min ? `${label} (cần chọn từ ${min} mục)` : label}
+          data-tip={min && els.length < min ? `${label} (cần chọn từ ${min} mục)` : label}
+          aria-label={label}
           disabled={!!min && els.length < min}
           className={cn('grid size-7 place-items-center rounded-md text-ink hover:bg-black/5 disabled:opacity-35 disabled:hover:bg-transparent', (i === 3 || i === 6) && 'ml-1.5')}
           onClick={() => onAlign(mode)}
@@ -2090,7 +2091,7 @@ function GroupToolbar({ els, onAlign, onDelete }: { els: SlideElement[]; onAlign
           <Icon size={16} strokeWidth={1.8} />
         </button>
       ))}
-      <button type="button" title="Xoá các mục đã chọn" className="ml-1.5 grid size-7 place-items-center rounded-md text-ink hover:bg-black/5" onClick={onDelete}>
+      <button type="button" data-tip="Xoá các mục đã chọn" aria-label="Xoá các mục đã chọn" className="ml-1.5 grid size-7 place-items-center rounded-md text-ink hover:bg-black/5" onClick={onDelete}>
         <Trash2 size={16} strokeWidth={1.8} />
       </button>
     </div>
@@ -2540,7 +2541,7 @@ function EditableEl({
           onPointerDown={(e) => startDrag(e, 'resize', dir)}
         />
       ))}
-      <span className={`slide-el-rotate${rotTop ? ' slide-el-rotate--top' : ''}${rotInside ? ' slide-el-rotate--in' : ''}`} title="Xoay" onPointerDown={startRotate}>
+      <span className={`slide-el-rotate${rotTop ? ' slide-el-rotate--top' : ''}${rotInside ? ' slide-el-rotate--in' : ''}`} data-tip="Xoay" onPointerDown={startRotate}>
         <RotateCw size={13} strokeWidth={2} />
       </span>
     </>
@@ -2795,7 +2796,7 @@ function EditableEl({
               {imageBusy ? 'Đang tạo ảnh…' : 'Tạo ảnh AI'}
             </button>
             {imageError ? (
-              <span className="max-w-full truncate text-[1.3cqw] text-red-500" title={imageError}>
+              <span className="max-w-full truncate text-[1.3cqw] text-red-500" data-tip={imageError}>
                 Lỗi tạo ảnh
               </span>
             ) : null}

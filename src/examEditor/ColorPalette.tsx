@@ -47,7 +47,7 @@ export function ColorPalette({
           <button
             key={c}
             type="button"
-            title={c}
+            data-tip={c}
             aria-label={`Màu ${c}`}
             className="size-6 rounded-md border border-black/15 transition-transform hover:scale-110"
             style={{ background: c, outline: c === current ? '2px solid var(--color-clay)' : undefined, outlineOffset: 1 }}

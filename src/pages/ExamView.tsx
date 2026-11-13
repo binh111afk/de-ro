@@ -277,7 +277,8 @@ function ReportExamButton({ examId }: { examId: string }) {
         variant="ghost"
         size="sm"
         onClick={handleOpen}
-        title="Báo cáo đề này"
+        data-tip="Báo cáo đề này"
+        aria-label="Báo cáo đề này"
         className="text-ink-4 hover:text-clay"
       >
         <Flag className="size-3.5" />

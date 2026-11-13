@@ -137,7 +137,7 @@ export default function MyExams() {
                       setDraft(exam)
                       navigate('/soan-de')
                     }}
-                    title="Mở trong trình soạn đề"
+                    data-tip="Mở trong trình soạn đề"
                   >
                     Mở
                   </Button>

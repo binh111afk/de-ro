@@ -461,7 +461,7 @@ export function StartTab({
                         <button
                           type="button"
                           className="recent-act"
-                          title="Đổi tên"
+                          data-tip="Đổi tên"
                           aria-label={`Đổi tên ${d.title}`}
                           onClick={() => startRename(d)}
                         >
@@ -470,7 +470,7 @@ export function StartTab({
                         <button
                           type="button"
                           className="recent-act recent-act--danger"
-                          title="Xoá tệp"
+                          data-tip="Xoá tệp"
                           aria-label={`Xoá ${d.title}`}
                           onClick={() => void removeItems([d])}
                         >

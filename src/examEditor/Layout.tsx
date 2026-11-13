@@ -16,6 +16,7 @@
  */
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { cn } from '@/lib/cn'
+import { splitTipKbd } from '@/components/Tooltip'
 import { IconChevronLeft, IconChevronRight, IconSidebarLeft, IconSidebarRight } from './icons'
 import { useSlidingThumb } from './useSlidingThumb'
 
@@ -118,6 +119,7 @@ export function RibbonButton({
   disabled?: boolean
   active?: boolean
 }) {
+  const parsed = title ?? label ? splitTipKbd(title ?? label ?? '') : null
   return (
     <button
       type="button"
@@ -125,8 +127,9 @@ export function RibbonButton({
       onMouseDown={(e) => e.preventDefault()}
       onClick={onClick}
       disabled={disabled}
-      title={title ?? label}
-      aria-label={title ?? label}
+      data-tip={parsed?.tip}
+      data-tip-kbd={parsed?.kbd}
+      aria-label={parsed?.tip}
     >
       <span className="rb-big-icon">{icon}</span>
       {label ? <span className="rb-big-label">{label}</span> : null}
@@ -150,6 +153,7 @@ export function RibbonIconButton({
   disabled?: boolean
   active?: boolean
 }) {
+  const parsed = title ?? label ? splitTipKbd(title ?? label ?? '') : null
   return (
     <button
       type="button"
@@ -157,8 +161,9 @@ export function RibbonIconButton({
       onMouseDown={(e) => e.preventDefault()}
       onClick={onClick}
       disabled={disabled}
-      title={title ?? label}
-      aria-label={title ?? label}
+      data-tip={parsed?.tip}
+      data-tip-kbd={parsed?.kbd}
+      aria-label={parsed?.tip}
     >
       {icon}
     </button>
@@ -242,7 +247,7 @@ export function Ruler({
   return (
     <div className="ruler" style={{ width }} role="group" aria-label="Thước kẻ">
       {/* nút chọn kiểu tab, bên trái */}
-      <button type="button" className="ruler-tab-type" title="Kiểu tab">
+      <button type="button" className="ruler-tab-type" data-tip="Kiểu tab" aria-label="Kiểu tab">
         L
       </button>
 
@@ -250,14 +255,14 @@ export function Ruler({
       <div
         className="ruler-zone ruler-zone--drag"
         style={{ left: 0, width: margin }}
-        title="Kéo để đổi lề trái"
+        data-tip="Kéo để đổi lề trái"
         onMouseDown={startMarginDrag('left')}
         aria-hidden="true"
       />
       <div
         className="ruler-zone ruler-zone--drag"
         style={{ left: width - margin, width: margin }}
-        title="Kéo để đổi lề phải"
+        data-tip="Kéo để đổi lề phải"
         onMouseDown={startMarginDrag('right')}
         aria-hidden="true"
       />
@@ -284,7 +289,7 @@ export function Ruler({
             type="button"
             className="ruler-marker ruler-marker--first"
             style={{ left: margin + indentLeft + indentFirstLine }}
-            title="Thụt dòng đầu"
+            data-tip="Thụt dòng đầu"
             aria-label="Thụt dòng đầu"
             onMouseDown={startIndentDrag('first')}
           />
@@ -292,7 +297,7 @@ export function Ruler({
             type="button"
             className="ruler-marker ruler-marker--hang"
             style={{ left: margin + indentLeft }}
-            title="Thụt treo"
+            data-tip="Thụt treo"
             aria-label="Thụt treo"
             onMouseDown={startIndentDrag('left')}
           />
@@ -300,7 +305,7 @@ export function Ruler({
             type="button"
             className="ruler-marker ruler-marker--left"
             style={{ left: margin + indentLeft }}
-            title="Thụt lề trái"
+            data-tip="Thụt lề trái"
             aria-label="Thụt lề trái"
             onMouseDown={startIndentDrag('left')}
           />
@@ -361,7 +366,7 @@ export function AiDock({
           type="button"
           className="ai-dock__collapse"
           onClick={onToggle}
-          title="Thu gọn trợ lý AI"
+          data-tip="Thu gọn trợ lý AI"
           aria-label="Thu gọn trợ lý AI"
         >
           {side === 'right' ? <IconChevronRight size={16} /> : <IconChevronLeft size={16} />}
@@ -371,7 +376,7 @@ export function AiDock({
           type="button"
           className={cn('ai-rail', side === 'right' && 'ai-rail--right')}
           onClick={onToggle}
-          title="Mở trợ lý AI"
+          data-tip="Mở trợ lý AI"
           aria-label="Mở trợ lý AI"
         >
           {side === 'right' ? <IconSidebarRight size={18} /> : <IconSidebarLeft size={18} />}
