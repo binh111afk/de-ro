@@ -25,6 +25,8 @@ import { groupedStats, parseGroups, round2, type GroupedSpec, type GroupedView }
 import { TABLE_DEFAULT, parseCells, parseMerges, type TableAlign, type TableBorder, type TableHeader, type TableSpec } from '@/lib/table'
 import { OSC_DEFAULT, OSC_Y_DEFAULT, formatOmega, oscEquation, oscParams, oscPeriod, parseOscExpr, type OscQty, type OscSpec, type OscStart, type OscStartX0 } from '@/lib/oscillation'
 import { PHASE_DEFAULT, type PhaseSpec } from '@/lib/phaseChange'
+import { calcLens, fmtLensNum, LENS_DEFAULT, type LensNames, type LensRay, type LensSpec } from '@/lib/lens'
+import { Segmented } from '@/components/Segmented'
 import { Check, ToolShell, sectionTitle } from './ToolShell'
 
 type Props<S> = { initial?: S | null; submitLabel?: string; onClose: () => void; onInsert: (img: ToolImage) => void }
@@ -2436,6 +2438,256 @@ export function OscModal({ initial, submitLabel, onClose, onInsert }: Props<OscS
         </div>
       )}
       submitLabel={submitLabel ?? (initial ? 'Cập nhật đồ thị' : 'Chèn đồ thị')}
+      canSubmit={Boolean(preview) && !error}
+      onSubmit={() => preview && onInsert(preview)}
+      onClose={onClose}
+    />
+  )
+}
+
+/* ------------------------------------------------------------------ *
+ * Vật lí: Thấu kính mỏng (hội tụ / phân kì)
+ * ------------------------------------------------------------------ */
+
+const parseLensNum = (raw: string) => {
+  const s = raw.trim().replace(',', '.').replace(/[−–]/g, '-')
+  if (!s) return NaN
+  const n = Number(s)
+  return Number.isFinite(n) ? n : NaN
+}
+
+const fmtLensInput = (n: number | undefined, fallback: number) => {
+  const v = n !== undefined && Number.isFinite(n) ? n : fallback
+  return String(Math.round(v * 1e6) / 1e6).replace('.', ',')
+}
+
+const LENS_RAYS: Array<{ id: LensRay; label: string }> = [
+  { id: 'parallel', label: 'Tia song song trục chính (→ qua F′)' },
+  { id: 'center', label: 'Tia qua quang tâm O (truyền thẳng)' },
+  { id: 'focal', label: 'Tia qua tiêu điểm F (→ ló song song)' },
+]
+
+const LENS_NAME_FIELDS: Array<{ key: keyof LensNames; label: string; def: string }> = [
+  { key: 'A', label: 'A', def: 'A' },
+  { key: 'B', label: 'B', def: 'B' },
+  { key: 'APrime', label: 'A′', def: 'A′' },
+  { key: 'BPrime', label: 'B′', def: 'B′' },
+  { key: 'O', label: 'O', def: 'O' },
+  { key: 'F', label: 'F', def: 'F' },
+  { key: 'FPrime', label: 'F′', def: 'F′' },
+]
+
+export function LensModal({ initial, submitLabel, onClose, onInsert }: Props<LensSpec>) {
+  const [spec, setSpec] = useState<LensSpec>(() =>
+    initial
+      ? {
+          ...LENS_DEFAULT,
+          ...initial,
+          rays: initial.rays ? [...initial.rays] : [...(LENS_DEFAULT.rays ?? [])],
+          names: { ...LENS_DEFAULT.names, ...initial.names },
+        }
+      : {
+          ...LENS_DEFAULT,
+          rays: [...(LENS_DEFAULT.rays ?? [])],
+          names: { ...LENS_DEFAULT.names },
+        },
+  )
+  const [fText, setFText] = useState(() => fmtLensInput(spec.f, 10))
+  const [dText, setDText] = useState(() => fmtLensInput(spec.d, 30))
+  const [hText, setHText] = useState(() => fmtLensInput(spec.h, 2))
+  const [showNames, setShowNames] = useState(false)
+
+  const set = (p: Partial<LensSpec>) => setSpec((s) => ({ ...s, ...p }))
+  const doc = useMemo((): ToolDoc => ({ kind: 'lens', spec }), [spec])
+  const { preview, error } = useRender(doc)
+
+  const calc = useMemo(() => {
+    try {
+      return calcLens(spec)
+    } catch {
+      return null
+    }
+  }, [spec])
+
+  const rays = spec.rays ?? ['parallel', 'center', 'focal']
+  const toggleRay = (id: LensRay, on: boolean) => {
+    const next = on ? (rays.includes(id) ? rays : [...rays, id]) : rays.filter((r) => r !== id)
+    set({ rays: next })
+  }
+
+  const setName = (key: keyof LensNames, val: string) => {
+    set({ names: { ...spec.names, [key]: val } })
+  }
+
+  const inputs = (
+    <>
+      <section>
+        <h3 className={sectionTitle}>Loại thấu kính</h3>
+        <Segmented<'converging' | 'diverging'>
+          value={spec.type}
+          onChange={(type) => set({ type })}
+          label="Loại thấu kính"
+          className="w-full flex h-10 [&>button]:flex-1 [&>button]:justify-center"
+          options={[
+            { key: 'converging', label: 'Hội tụ' },
+            { key: 'diverging', label: 'Phân kì' },
+          ]}
+        />
+      </section>
+
+      <section>
+        <h3 className={sectionTitle}>Số liệu (cm)</h3>
+        <div className="grid grid-cols-3 gap-2">
+          <label className="text-[12.5px] text-ink-2">
+            Tiêu cự f
+            <input
+              value={fText}
+              onChange={(e) => {
+                const v = e.target.value
+                setFText(v)
+                set({ f: parseLensNum(v) })
+              }}
+              inputMode="decimal"
+              aria-label="Tiêu cự f (cm)"
+              className={cn(inputClass, 'mt-1 h-9')}
+            />
+          </label>
+          <label className="text-[12.5px] text-ink-2">
+            Khoảng cách d
+            <input
+              value={dText}
+              onChange={(e) => {
+                const v = e.target.value
+                setDText(v)
+                set({ d: parseLensNum(v) })
+              }}
+              inputMode="decimal"
+              aria-label="Khoảng cách vật d (cm)"
+              className={cn(inputClass, 'mt-1 h-9')}
+            />
+          </label>
+          <label className="text-[12.5px] text-ink-2">
+            Cao vật h
+            <input
+              value={hText}
+              onChange={(e) => {
+                const v = e.target.value
+                setHText(v)
+                set({ h: parseLensNum(v) })
+              }}
+              inputMode="decimal"
+              aria-label="Chiều cao vật h (cm)"
+              className={cn(inputClass, 'mt-1 h-9')}
+            />
+          </label>
+        </div>
+      </section>
+
+      <section>
+        <h3 className={sectionTitle}>Các tia sáng đặc biệt</h3>
+        {LENS_RAYS.map((r) => (
+          <Check key={r.id} checked={rays.includes(r.id)} onChange={(on) => toggleRay(r.id, on)}>
+            {r.label}
+          </Check>
+        ))}
+      </section>
+
+      <section>
+        <h3 className={sectionTitle}>Hiển thị</h3>
+        <Check checked={Boolean(spec.show2F)} onChange={(show2F) => set({ show2F })}>
+          Hiện các điểm 2F, 2F′
+        </Check>
+        <Check checked={Boolean(spec.showValues)} onChange={(showValues) => set({ showValues })}>
+          Ghi kích thước d, d′, f trên hình
+        </Check>
+        <Check checked={Boolean(spec.hideImage)} onChange={(hideImage) => set({ hideImage })}>
+          Ẩn ảnh (học sinh tự vẽ)
+        </Check>
+        <div className="mt-2.5 flex items-center justify-between gap-2">
+          <span className="text-[13px] text-ink-2">Vật đặt bên</span>
+          <Segmented<'left' | 'right'>
+            value={spec.objectSide ?? 'left'}
+            onChange={(objectSide) => set({ objectSide })}
+            label="Vị trí vật"
+            className="h-9"
+            options={[
+              { key: 'left', label: 'Trái' },
+              { key: 'right', label: 'Phải' },
+            ]}
+          />
+        </div>
+      </section>
+
+      <section>
+        <button
+          type="button"
+          onClick={() => setShowNames((v) => !v)}
+          className="text-[12.5px] font-medium text-clay hover:underline"
+        >
+          {showNames ? 'Thu gọn đặt tên điểm' : 'Đổi tên các điểm (A, B, A′, B′, O, F, F′)'}
+        </button>
+        {showNames && (
+          <div className="mt-2 grid grid-cols-4 gap-1.5">
+            {LENS_NAME_FIELDS.map((f) => (
+              <label key={f.key} className="text-[11.5px] text-ink-3">
+                {f.label}
+                <input
+                  value={spec.names?.[f.key] ?? f.def}
+                  onChange={(e) => setName(f.key, e.target.value)}
+                  className={cn(inputClass, 'mt-0.5 h-8 px-2 text-[12.5px]')}
+                />
+              </label>
+            ))}
+          </div>
+        )}
+      </section>
+
+      {error && (
+        <p role="alert" className="rounded-[6px] bg-clay-tint px-2.5 py-1.5 text-[12px] leading-snug text-clay-deep">
+          {error}
+        </p>
+      )}
+
+      {calc && (
+        <div className="rounded-[6px] border border-line bg-paper-2 px-3 py-2 text-[12.5px] text-ink-2">
+          <div className="font-medium text-ink">{calc.summary}</div>
+          {!calc.atInfinity && calc.dPrime !== null && calc.k !== null && (
+            <div className="mt-0.5 text-[12px] text-ink-3">
+              d′ = {fmtLensNum(calc.dPrime)} cm · k = {fmtLensNum(calc.k)}
+            </div>
+          )}
+        </div>
+      )}
+    </>
+  )
+
+  return (
+    <ToolShell
+      title="Thấu kính mỏng"
+      hint="Nhập tiêu cự f, khoảng cách d để tính ảnh đúng tỉ lệ và vẽ ba tia sáng đặc biệt"
+      inputs={inputs}
+      inputsWidth={370}
+      preview={preview}
+      renderPreview={(img) => (
+        <div className="flex max-h-full max-w-full flex-col items-center gap-2.5">
+          <img
+            src={svgDataUrl(img.svg)}
+            alt="Xem trước"
+            className="min-h-0 max-h-full max-w-full rounded-[4px] border border-line bg-white object-contain"
+          />
+          {calc && (
+            <div className="shrink-0 rounded-[6px] border border-line bg-surface px-3 py-1.5 text-center text-[12.5px] text-ink-2">
+              <span className="font-medium text-ink">{calc.summary}</span>
+              {!calc.atInfinity && calc.dPrime !== null && calc.k !== null && (
+                <span className="ml-2 text-ink-3">
+                  (d′ = {fmtLensNum(calc.dPrime)} cm, k = {fmtLensNum(calc.k)})
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+      submitLabel={submitLabel ?? (initial ? 'Cập nhật hình' : 'Chèn hình')}
       canSubmit={Boolean(preview) && !error}
       onSubmit={() => preview && onInsert(preview)}
       onClose={onClose}
