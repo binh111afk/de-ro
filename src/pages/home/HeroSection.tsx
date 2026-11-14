@@ -44,12 +44,12 @@ const TABS: Array<{
   {
     key: 'board',
     label: 'Bảng vẽ',
-    ext: 'Phấn & PDF',
+    ext: 'PDF',
     icon: PenTool,
-    img: '/landing/hero-board.webp',
-    img2x: '/landing/hero-board@2x.webp',
-    alt: 'Bảng đen dạy học trên đề rõ với nét phấn vàng và hình chóp S.ABCD',
-    caption: 'Viết phấn, quay compa, khoanh thẳng lên đề PDF.',
+    img: '/landing/board-pdf.webp',
+    img2x: '/landing/board-pdf@2x.webp',
+    alt: 'Bảng vẽ mở đề PDF nhiều trang, có cột trang thu nhỏ bên trái và nét ghi chú trên đề',
+    caption: 'Viết tay, kẻ thước, quay compa, khoanh thẳng lên đề PDF.',
   },
 ]
 

@@ -1,11 +1,8 @@
-import { useRef, useState } from 'react'
-import { TabThumb } from './TabThumb'
 import { Link } from 'react-router-dom'
 import { ArrowRight, Compass, FileUp, Highlighter, PenLine } from 'lucide-react'
-import { cn } from '@/lib/cn'
 import { useReveal } from './reveal'
 
-type BoardMode = 'pdf' | 'chalk'
+type BoardMode = 'pdf'
 
 const MODES: Array<{
   key: BoardMode
@@ -25,22 +22,13 @@ const MODES: Array<{
     h: 618,
     alt: 'Màn hình bảng vẽ mở tệp PDF nhiều trang với thanh trang bên trái và nét ghi chú',
   },
-  {
-    key: 'chalk',
-    label: 'Bảng đen & phấn',
-    img: '/landing/hero-board.webp',
-    img2x: '/landing/hero-board@2x.webp',
-    w: 1100,
-    h: 653,
-    alt: 'Bảng đen dạy hình học không gian S.ABCD với nét phấn vàng và xanh',
-  },
 ]
 
 const BOARD_SPECS = [
   {
     icon: PenLine,
     title: 'Bút và giấy',
-    text: 'Sáu loại bút, bút máy có nét thanh nét đậm. Giấy trơn, ô li, kẻ dòng, bảng đen, bảng xanh.',
+    text: 'Bút bi, bút máy có nét thanh nét đậm, bút lông, bút chì, dạ quang. Giấy trơn, ô li, kẻ dòng, chấm.',
   },
   {
     icon: Compass,
@@ -54,15 +42,13 @@ const BOARD_SPECS = [
   },
 ]
 
-const PENS_LIST = ['Bút bi', 'Dạ quang', 'Bút máy', 'Bút lông', 'Bút chì', 'Bút phấn']
-const PAPERS_LIST = ['Giấy trơn', 'Ô vuông', 'Kẻ ngang', 'Chấm bi', 'Bảng đen', 'Bảng xanh']
+const PENS_LIST = ['Bút bi', 'Dạ quang', 'Bút máy', 'Bút lông', 'Bút chì']
+const PAPERS_LIST = ['Giấy trơn', 'Ô vuông', 'Kẻ ngang', 'Chấm bi']
 
 export function BoardSection() {
-  const [mode, setMode] = useState<BoardMode>('pdf')
-  const active = MODES.find((m) => m.key === mode) ?? MODES[0]
+  const active = MODES[0]
   const head = useReveal<HTMLDivElement>()
   const reveal = useReveal<HTMLDivElement>()
-  const modeRef = useRef<HTMLDivElement>(null)
 
   return (
     <section id="bang-ve" className="landing-below-fold border-b border-ink-2/30 bg-deep py-14 text-deep-text sm:py-16 lg:py-20">
@@ -73,38 +59,11 @@ export function BoardSection() {
               Bảng vẽ
             </p>
             <h2 className="mt-2 text-[clamp(1.45rem,2.7vw,2.1rem)] font-bold leading-[1.18] tracking-[-0.02em] text-deep-text">
-              Chữa bài như trên bảng lớp.
+              Vẽ, giảng, chữa đề trên một tấm bảng.
             </h2>
             <p className="mt-3 text-[15px] leading-[1.65] text-deep-muted">
-              Chiếu lên lớp hoặc chia sẻ màn hình khi dạy online. Viết phấn, quay compa, khoanh đáp án ngay trên đề.
+              Chiếu lên lớp hoặc chia sẻ màn hình khi dạy online. Viết tay, kẻ thước, quay compa, mở đề PDF ra khoanh đáp án.
             </p>
-          </div>
-
-          <div
-            ref={modeRef}
-            role="tablist"
-            aria-label="Chọn chế độ xem bảng vẽ"
-            className="relative flex flex-wrap gap-1.5 rounded-[9px] border border-white/15 bg-white/5 p-1"
-          >
-            <TabThumb active={mode} className="rounded-[6px] bg-surface" />
-            {MODES.map((m) => {
-              const selected = m.key === mode
-              return (
-                <button
-                  key={m.key}
-                  type="button"
-                  role="tab"
-                  aria-selected={selected}
-                  onClick={() => setMode(m.key)}
-                  className={cn(
-                    'relative min-h-[38px] rounded-[6px] px-3 py-1.5 text-[13px] font-semibold transition-colors',
-                    selected ? 'text-ink' : 'text-deep-muted hover:text-deep-text',
-                  )}
-                >
-                  {m.label}
-                </button>
-              )
-            })}
           </div>
         </div>
 

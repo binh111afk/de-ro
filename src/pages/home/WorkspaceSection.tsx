@@ -26,7 +26,7 @@ const SECONDARY_WORKSPACES = [
     badge: 'Bảng vẽ · PDF',
     title: 'Bảng vẽ',
     icon: PenTool,
-    desc: 'Giấy ô li hay bảng đen, bút bi hay phấn. Giữ bút một nhịp là nét tay thành đường thẳng, đường tròn.',
+    desc: 'Viết tay trên giấy trơn hay ô li. Giữ bút một nhịp là nét tay thành đường thẳng, đường tròn. Mở được đề PDF để ghi chú.',
     bullets: [
       'Thước kẻ, thước đo góc, compa',
       'Mở PDF, ghi chú, xuất lại',
