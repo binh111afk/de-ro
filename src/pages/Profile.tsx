@@ -228,8 +228,8 @@ function CreditCard() {
   else if (q === null) body = <p className="mt-6 text-[13px] text-ink-3">Máy dev: không giới hạn token AI.</p>
   else {
     const left = aiPointsLeft({ ...q, scope: 'month' })
-    // thanh so với quà chào mừng 200 điểm (nạp thêm vượt mức thì thanh đầy)
-    const pct = Math.min(100, Math.round((left / Math.max(200, left)) * 100))
+    // thanh so với quà chào mừng 120 điểm (nạp thêm vượt mức thì thanh đầy)
+    const pct = Math.min(100, Math.round((left / Math.max(120, left)) * 100))
     body = (
       <>
         <p className="mt-7 font-display text-[44px] font-semibold leading-none tracking-[-0.02em] text-ink tnum">
@@ -238,7 +238,7 @@ function CreditCard() {
         </p>
         <ProgressBar pct={pct} label="Phần trăm điểm AI còn lại" />
         <p className="mt-3 text-[12.5px] text-ink-3">
-          Tài khoản được tặng 200 điểm khi bắt đầu dùng AI (1 điểm = 1.000 token). Kết quả AI bị lỗi được hoàn điểm.
+          Tài khoản được tặng 120 điểm khi bắt đầu dùng AI (1 điểm = 1.000 token). Kết quả AI bị lỗi được hoàn điểm.
           {q.base ? ` Hạn mức tháng: ${fmt(Math.floor(q.base / 1000))} điểm.` : ''}
         </p>
       </>
