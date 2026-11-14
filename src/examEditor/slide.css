@@ -1889,3 +1889,15 @@ body[data-slide-drag] .slide-sel-toolbar {
     transition: none;
   }
 }
+
+/* lưới căn chỉnh (ribbon Xem → Lưới): 16 × 9 ô, không bắt chuột */
+.slide-grid-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, #3b82f6 28%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, #3b82f6 28%, transparent) 1px, transparent 1px);
+  background-size: calc(100% / 16) calc(100% / 9);
+}

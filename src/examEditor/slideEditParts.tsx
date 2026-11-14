@@ -100,7 +100,13 @@ export function gapsTo(box: { x: number; y: number; w: number; h: number }, othe
 export const showGuides = (g: Guides) => window.dispatchEvent(new CustomEvent<Guides>(GUIDES, { detail: g }))
 
 /** Mép trái/giữa/phải (hoặc trên/giữa/dưới) của hộp gần đích nào nhất trong `tol` → độ dời và vị trí đường gióng. */
+let snapEnabled = true
+/** bật/tắt đường gióng + hít khi kéo (ribbon Xem → Đường gióng) */
+export const setSnapEnabled = (on: boolean) => {
+  snapEnabled = on
+}
 export function snapTo(pos: number, size: number, targets: number[], tol: number) {
+  if (!snapEnabled) return null
   let best: { d: number; at: number } | null = null
   for (const off of [0, size / 2, size])
     for (const at of targets) {

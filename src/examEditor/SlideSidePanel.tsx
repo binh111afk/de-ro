@@ -71,6 +71,8 @@ interface SlideSidePanelProps {
   onApplyDesign: (design: SlideDesign | null) => void
   /** tăng số này để mở panel ở Mẫu → Bộ màu (nút "Thiết kế…" trên ribbon) */
   openDesignsSignal?: number
+  /** tăng lên → mở panel Icon (nút Chèn → Icon trên ribbon) */
+  openIconsSignal?: number
   onInsert: (el: SlideElement) => void
   /** điện thoại: mục "Trợ lý AI" ở thanh đáy mở AI toàn màn hình */
   onOpenAi?: () => void
@@ -86,6 +88,7 @@ function SlideSidePanelImpl({
   designDisabled,
   onApplyDesign,
   openDesignsSignal = 0,
+  openIconsSignal = 0,
   onInsert,
   onOpenAi,
 }: SlideSidePanelProps) {
@@ -97,6 +100,11 @@ function SlideSidePanelImpl({
     setActive('templates')
     setLast('templates')
   }, [openDesignsSignal])
+  useEffect(() => {
+    if (!openIconsSignal) return
+    setActive('icons')
+    setLast('icons')
+  }, [openIconsSignal])
   const shown = active ?? last
   const current = PANELS.find((p) => p.id === shown) ?? null
   const { isPhone, isTablet } = useSlideViewport()

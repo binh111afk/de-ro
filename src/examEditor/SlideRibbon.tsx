@@ -1,5 +1,21 @@
 import { Children, Fragment, isValidElement, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
-import { ChevronDown, MoreHorizontal, Palette, X } from 'lucide-react'
+import {
+  AlignVerticalJustifyCenter,
+  AlignVerticalJustifyStart,
+  BringToFront,
+  ChevronDown,
+  Grid3x3,
+  List,
+  ListOrdered,
+  Magnet,
+  MoreHorizontal,
+  Palette,
+  SendToBack,
+  Sigma,
+  Smile,
+  UnfoldVertical,
+  X,
+} from 'lucide-react'
 import { useAnimatedPresence } from '@/lib/useAnimatedPresence'
 import { useSlideViewport } from './useSlideViewport'
 import {
@@ -116,6 +132,14 @@ export interface SlideRibbonProps {
   onFlip: (axis: 'x' | 'y') => void
   /** mở panel trái ở Mẫu → Bộ màu */
   onOpenDesigns: () => void
+  /** mở panel trái ở tab Icon */
+  onOpenIcons: () => void
+  /** đường gióng + hít khi kéo đối tượng */
+  snapOn: boolean
+  onToggleSnap: () => void
+  /** lưới căn chỉnh trên khung slide */
+  gridOn: boolean
+  onToggleGrid: () => void
   /** áp bố cục cho slide đang chọn (xác nhận trong SlideEditor) */
   onApplyLayout: (layout: SlideLayoutId) => void
   /** đổi tông nền cho slide đã có layout */
@@ -234,6 +258,20 @@ function Caret() {
   return <span className="slide-ribbon-caret"><IconCaret size={14} /></span>
 }
 
+/** mẫu công thức chèn nhanh (KaTeX; \ce cho hoá học) */
+const FORMULA_PRESETS: Array<[string, string]> = [
+  ['Phân số', '\\frac{a}{b}'],
+  ['Căn bậc hai', '\\sqrt{x}'],
+  ['Luỹ thừa', 'x^{2}'],
+  ['Chỉ số dưới', 'x_{1}'],
+  ['Nghiệm bậc hai', 'x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}'],
+  ['Hệ phương trình', '\\begin{cases} x + y = 5 \\\\ x - y = 1 \\end{cases}'],
+  ['Tích phân', '\\int_{a}^{b} f(x)\\,dx'],
+  ['Giới hạn', '\\lim_{x \\to 0} \\frac{\\sin x}{x} = 1'],
+  ['Tổng', '\\sum_{i=1}^{n} i'],
+  ['Phương trình hoá học', '\\ce{2H2 + O2 -> 2H2O}'],
+]
+
 export function SlideRibbon(props: SlideRibbonProps) {
   const {
     deck,
@@ -263,6 +301,11 @@ export function SlideRibbon(props: SlideRibbonProps) {
     onAlign,
     onFlip,
     onOpenDesigns,
+    onOpenIcons,
+    snapOn,
+    onToggleSnap,
+    gridOn,
+    onToggleGrid,
     onApplyLayout,
     onTone,
     onTransition,
@@ -301,6 +344,30 @@ export function SlideRibbon(props: SlideRibbonProps) {
 
   const toggle = (key: string) => setPopup((p) => (p === key ? null : key))
   const close = () => setPopup(null)
+
+  /** bật/tắt danh sách cho hộp chữ: mọi dòng đã có đúng kiểu thì gỡ, ngược lại gắn (thay kiểu cũ) */
+  const listKind = (text: string): 'bullet' | 'number' | null => {
+    const lines = text.split('\n').filter((l) => l.trim())
+    if (!lines.length) return null
+    if (lines.every((l) => /^•\s/.test(l))) return 'bullet'
+    if (lines.every((l) => /^\d+[.)]\s/.test(l))) return 'number'
+    return null
+  }
+  const toggleList = (kind: 'bullet' | 'number') => {
+    const text = selected?.text ?? ''
+    const off = listKind(text) === kind
+    let n = 0
+    const next = text
+      .split('\n')
+      .map((line) => {
+        const bare = line.replace(/^(•\s*|\d+[.)]\s*)/, '')
+        if (off || !bare.trim()) return bare
+        n++
+        return kind === 'bullet' ? `• ${bare}` : `${n}. ${bare}`
+      })
+      .join('\n')
+    onUpdateSelected({ text: next })
+  }
 
   const context = selected ? CONTEXT_LABELS[selected.type] : null
   const tabs = context ? [...TABS, { id: context.id, label: context.label }] : TABS
@@ -345,6 +412,9 @@ export function SlideRibbon(props: SlideRibbonProps) {
     })
     close()
   }
+
+  const insertFormula = (tex: string) =>
+    onInsert({ id: uid(), type: 'text', x: 30, y: 58, w: 40, h: 16, text: `$${tex}$`, variant: 'body', fontSize: 4, align: 'center' })
 
   const insertChart = (type: 'bar' | 'line' | 'pie') => {
     onInsert({
@@ -500,6 +570,57 @@ export function SlideRibbon(props: SlideRibbonProps) {
               disabled={!isText}
             />
           ))}
+          <RibbonIconButton
+            icon={<AlignVerticalJustifyStart size={17} />}
+            title="Chữ sát mép trên hộp"
+            active={isText && selected?.valign !== 'middle' && !selected?.fill}
+            onClick={() => onUpdateSelected({ valign: 'top' })}
+            disabled={!isText || !!selected?.fill}
+          />
+          <RibbonIconButton
+            icon={<AlignVerticalJustifyCenter size={17} />}
+            title="Chữ ở giữa hộp (theo chiều dọc)"
+            active={isText && (selected?.valign === 'middle' || !!selected?.fill)}
+            onClick={() => onUpdateSelected({ valign: 'middle' })}
+            disabled={!isText || !!selected?.fill}
+          />
+        </div>
+        <div className="rb-row">
+          <RibbonIconButton
+            icon={<List size={17} />}
+            title="Danh sách gạch đầu dòng"
+            active={isText && listKind(selected?.text ?? '') === 'bullet'}
+            onClick={() => toggleList('bullet')}
+            disabled={!isText}
+          />
+          <RibbonIconButton
+            icon={<ListOrdered size={17} />}
+            title="Danh sách đánh số"
+            active={isText && listKind(selected?.text ?? '') === 'number'}
+            onClick={() => toggleList('number')}
+            disabled={!isText}
+          />
+          <Anchored
+            open={popup === 'lineHeight'}
+            minWidth={150}
+            trigger={
+              <RibbonIconButton
+                icon={<UnfoldVertical size={17} />}
+                title="Giãn dòng"
+                onClick={() => toggle('lineHeight')}
+                active={popup === 'lineHeight'}
+                disabled={!isText}
+              />
+            }
+          >
+            <div className="slide-ribbon-menu-title">Giãn dòng</div>
+            {[1, 1.15, 1.25, 1.5, 2].map((lh) => (
+              <MenuItem key={lh} onClick={() => { onUpdateSelected({ lineHeight: lh }); close() }}>
+                {(selected?.lineHeight ?? 1.25) === lh ? '✓ ' : ''}
+                {lh.toLocaleString('vi-VN')}
+              </MenuItem>
+            ))}
+          </Anchored>
         </div>
       </RibbonGroup>
       <div className="ribbon-sep" />
@@ -603,6 +724,20 @@ export function SlideRibbon(props: SlideRibbonProps) {
           label="Hộp văn bản"
           onClick={() => onInsert({ id: uid(), type: 'text', x: 35, y: 42, w: 30, h: 18, text: 'Nhập văn bản', variant: 'body', fontSize: 3.2 })}
         />
+        <Anchored
+          open={popup === 'formula'}
+          minWidth={220}
+          trigger={<RibbonButton icon={<><Sigma size={28} strokeWidth={1.6} /><Caret /></>} label="Công thức" onClick={() => toggle('formula')} active={popup === 'formula'} />}
+        >
+          <div className="slide-ribbon-menu-title">Chèn công thức (sửa trong hộp chữ, viết giữa $…$)</div>
+          {FORMULA_PRESETS.map(([label, tex]) => (
+            <MenuItem key={label} onClick={() => { insertFormula(tex); close() }}>{label}</MenuItem>
+          ))}
+        </Anchored>
+      </RibbonGroup>
+      <div className="ribbon-sep" />
+      <RibbonGroup label="Biểu tượng">
+        <RibbonButton icon={<Smile size={28} strokeWidth={1.6} />} label="Icon" onClick={onOpenIcons} />
       </RibbonGroup>
     </>
   )
@@ -732,6 +867,11 @@ export function SlideRibbon(props: SlideRibbonProps) {
         <RibbonButton icon={<IconZoomOut size={28} />} label="Thu nhỏ" onClick={() => onZoom(Math.max(40, zoom - 10))} disabled={zoom <= 40} />
         <RibbonButton icon={<IconZoomIn size={28} />} label="Phóng to" onClick={() => onZoom(Math.min(160, zoom + 10))} disabled={zoom >= 160} />
         <RibbonButton icon={<span className="slide-ribbon-zoom-glyph">1:1</span>} label={`${zoom}%`} onClick={() => onZoom(100)} />
+      </RibbonGroup>
+      <div className="ribbon-sep" />
+      <RibbonGroup label="Căn chỉnh">
+        <RibbonButton icon={<Grid3x3 size={26} strokeWidth={1.6} />} label="Lưới" onClick={onToggleGrid} active={gridOn} />
+        <RibbonButton icon={<Magnet size={26} strokeWidth={1.6} />} label="Đường gióng" onClick={onToggleSnap} active={snapOn} />
       </RibbonGroup>
       <div className="ribbon-sep" />
       <RibbonGroup label="Ngăn">
@@ -903,6 +1043,31 @@ export function SlideRibbon(props: SlideRibbonProps) {
           </div>
         </RibbonGroup>
 
+        <div className="ribbon-sep" />
+        <RibbonGroup label="Thứ tự lớp">
+          <RibbonButton icon={<BringToFront size={26} strokeWidth={1.6} />} label="Đưa lên trên" onClick={() => onArrange('front')} disabled={!selected} />
+          <RibbonButton icon={<SendToBack size={26} strokeWidth={1.6} />} label="Đưa xuống dưới" onClick={() => onArrange('back')} disabled={!selected} />
+        </RibbonGroup>
+        <div className="ribbon-sep" />
+        <RibbonGroup label="Căn vào slide">
+          <div className="rb-row">
+            <RibbonIconButton icon={<IconObjAlignLeft size={17} />} title="Căn trái slide" onClick={() => onAlign('left')} disabled={!selected} />
+            <RibbonIconButton icon={<IconObjAlignCenterH size={17} />} title="Căn giữa ngang" onClick={() => onAlign('center')} disabled={!selected} />
+            <RibbonIconButton icon={<IconObjAlignRight size={17} />} title="Căn phải slide" onClick={() => onAlign('right')} disabled={!selected} />
+          </div>
+          <div className="rb-row">
+            <RibbonIconButton icon={<IconObjAlignTop size={17} />} title="Căn trên slide" onClick={() => onAlign('top')} disabled={!selected} />
+            <RibbonIconButton icon={<IconObjAlignMiddle size={17} />} title="Căn giữa dọc" onClick={() => onAlign('middle')} disabled={!selected} />
+            <RibbonIconButton icon={<IconObjAlignBottom size={17} />} title="Căn dưới slide" onClick={() => onAlign('bottom')} disabled={!selected} />
+          </div>
+        </RibbonGroup>
+        <div className="ribbon-sep" />
+        <RibbonGroup label="Lật">
+          <div className="rb-row">
+            <RibbonIconButton icon={<IconObjFlipH size={17} />} title="Lật ngang" active={!!selected?.flipX} onClick={() => onFlip('x')} disabled={!selected} />
+            <RibbonIconButton icon={<IconObjFlipV size={17} />} title="Lật dọc" active={!!selected?.flipY} onClick={() => onFlip('y')} disabled={!selected} />
+          </div>
+        </RibbonGroup>
         <div className="ribbon-sep" />
         <RibbonGroup label="Xoay">
           <div className="rb-row">

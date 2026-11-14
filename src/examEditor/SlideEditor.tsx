@@ -42,10 +42,29 @@ import { AiDock } from './Layout'
 import { SlideRibbon, type SlideRibbonTab } from './SlideRibbon'
 import { attachToAi } from '@/lib/aiAttach'
 import { SlideThumb, SlideElView } from './slideRender'
-import { GroupToolbar, SnapGuides, EditableEl } from './slideEditParts'
+import { GroupToolbar, SnapGuides, EditableEl, setSnapEnabled } from './slideEditParts'
 
 /** Trạng thái ẩn/hiện của hiệu ứng bấm-chuột: mờ dần + trượt/phóng nhẹ (translate/scale tách khỏi transform xoay của phần tử). */
 const HIDDEN_POSE = { fade: {}, rise: { translate: '0 2.4cqw' }, zoom: { scale: '0.8' } } as const
+
+/** cài đặt nhỏ theo trình duyệt (lưới, đường gióng); localStorage hỏng thì dùng mặc định */
+function readPref(key: string, fallback: boolean): boolean {
+  try {
+    const v = localStorage.getItem(key)
+    return v == null ? fallback : v === '1'
+  } catch {
+    return fallback
+  }
+}
+function writePref(key: string, value: boolean): boolean {
+  try {
+    localStorage.setItem(key, value ? '1' : '0')
+  } catch {
+    /* bỏ qua */
+  }
+  return value
+}
+
 export const revealStyle = (shown: boolean, anim: SlideElement['anim'] = 'fade'): React.CSSProperties => ({
   opacity: shown ? 1 : 0,
   ...(shown ? { translate: '0 0', scale: '1' } : HIDDEN_POSE[anim]),
@@ -203,6 +222,11 @@ export function SlideEditor({
   const [aiOpen, setAiOpen] = useState(() => window.innerWidth >= 1024)
   const [zoom, setZoom] = useState(100)
   const [openDesignsSignal, setOpenDesignsSignal] = useState(0)
+  const [openIconsSignal, setOpenIconsSignal] = useState(0)
+  // lưới / đường gióng: nhớ theo trình duyệt
+  const [gridOn, setGridOn] = useState(() => readPref('slide-grid', false))
+  const [snapOn, setSnapOn] = useState(() => readPref('slide-snap', true))
+  useEffect(() => setSnapEnabled(snapOn), [snapOn])
   const [formatPaneOpen, setFormatPaneOpen] = useState(false)
   const [clipboardElement, setClipboardElement] = useState<SlideElement | null>(null)
   /** ghi chú diễn giả đang mở (nút nhỏ ở góc slide) */
@@ -940,6 +964,11 @@ export function SlideEditor({
         onAlign={alignSelected}
         onFlip={flipSelected}
         onOpenDesigns={() => setOpenDesignsSignal((n) => n + 1)}
+        onOpenIcons={() => setOpenIconsSignal((n) => n + 1)}
+        gridOn={gridOn}
+        onToggleGrid={() => setGridOn((v) => writePref('slide-grid', !v))}
+        snapOn={snapOn}
+        onToggleSnap={() => setSnapOn((v) => writePref('slide-snap', !v))}
         onApplyLayout={applyLayout}
         onTone={applyTone}
         onTransition={(transition, allSlides) => {
@@ -991,6 +1020,7 @@ export function SlideEditor({
         designDisabled={deck.format === 'html'}
         onApplyDesign={applyDesignFromPanel}
         openDesignsSignal={openDesignsSignal}
+        openIconsSignal={openIconsSignal}
         onInsert={insertFromPanel}
         onOpenAi={() => setAiOpen(true)}
       />
@@ -1077,6 +1107,7 @@ export function SlideEditor({
                   setGroupIds([])
                 }}
               >
+                {gridOn ? <div className="slide-grid-overlay" aria-hidden /> : null}
                 <SnapGuides />
                 {readableElements(currentSlide, theme).map((el) => (
                   <EditableEl
