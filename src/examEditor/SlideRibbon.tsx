@@ -359,22 +359,6 @@ export function SlideRibbon(props: SlideRibbonProps) {
     close()
   }
 
-  const alignMenu = (
-    <>
-      <MenuItem icon={<IconAlignLeft size={16} />} onClick={() => { if (isText) onUpdateSelected({ align: 'left' }); else onAlign('left'); close() }}>Căn trái</MenuItem>
-      <MenuItem icon={<IconAlignCenter size={16} />} onClick={() => { if (isText) onUpdateSelected({ align: 'center' }); else onAlign('center'); close() }}>Căn giữa</MenuItem>
-      <MenuItem icon={<IconAlignRight size={16} />} onClick={() => { if (isText) onUpdateSelected({ align: 'right' }); else onAlign('right'); close() }}>Căn phải</MenuItem>
-      <div className="slide-ribbon-menu-sep" />
-      <MenuItem icon={<IconObjAlignLeft size={16} />} onClick={() => { onAlign('left'); close() }}>Căn trái slide</MenuItem>
-      <MenuItem icon={<IconObjAlignCenterH size={16} />} onClick={() => { onAlign('center'); close() }}>Căn giữa ngang slide</MenuItem>
-      <MenuItem icon={<IconObjAlignRight size={16} />} onClick={() => { onAlign('right'); close() }}>Căn phải slide</MenuItem>
-      <div className="slide-ribbon-menu-sep" />
-      <MenuItem icon={<IconObjAlignTop size={16} />} onClick={() => { onAlign('top'); close() }}>Căn trên slide</MenuItem>
-      <MenuItem icon={<IconObjAlignMiddle size={16} />} onClick={() => { onAlign('middle'); close() }}>Căn giữa dọc slide</MenuItem>
-      <MenuItem icon={<IconObjAlignBottom size={16} />} onClick={() => { onAlign('bottom'); close() }}>Căn dưới slide</MenuItem>
-    </>
-  )
-
   const renderHome = () => (
     <>
       <RibbonGroup label="Bảng tạm">
@@ -385,12 +369,49 @@ export function SlideRibbon(props: SlideRibbonProps) {
         </div>
       </RibbonGroup>
       <div className="ribbon-sep" />
-      <RibbonGroup label="Trình chiếu">
-        <RibbonButton icon={<IconPlayCurrent size={28} />} label="Từ slide hiện tại" onClick={onPresent} />
-      </RibbonGroup>
-      <div className="ribbon-sep" />
       <RibbonGroup label="Slide">
         <RibbonButton icon={<IconNewSlide size={28} />} label="Slide mới" onClick={onAddSlide} />
+        <Anchored
+          open={popup === 'layout'}
+          minWidth={288}
+          trigger={
+            <RibbonButton
+              icon={<><IconSlideLayout size={28} /><Caret /></>}
+              label="Bố cục"
+              onClick={() => toggle('layout')}
+              active={popup === 'layout'}
+              disabled={!slide}
+            />
+          }
+        >
+          <div className="slide-ribbon-menu-title">Bố cục slide</div>
+          <div className="slide-layout-grid">
+            {SLIDE_LAYOUTS.map((layout) => (
+              <button
+                key={layout.id}
+                type="button"
+                className={cn('slide-layout-card', slide?.layout === layout.id && 'active')}
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => {
+                  onApplyLayout(layout.id)
+                  close()
+                }}
+                data-tip={layout.description}
+                disabled={!slide}
+              >
+                <span
+                  className={cn('slide-layout-thumb', `slide-layout-thumb--${layout.id}`)}
+                  aria-hidden
+                >
+                  <i />
+                  <i />
+                  <i />
+                </span>
+                <small>{layout.name}</small>
+              </button>
+            ))}
+          </div>
+        </Anchored>
         <div className="rb-col rb-col--icons">
           <RibbonIconButton icon={<IconCopy size={16} />} title="Nhân bản slide" onClick={onDuplicateSlide} disabled={!slide} />
           <RibbonIconButton icon={<IconTrash size={16} />} title="Xóa slide" onClick={onDeleteSlide} disabled={!slide} />
@@ -462,21 +483,24 @@ export function SlideRibbon(props: SlideRibbonProps) {
       </RibbonGroup>
       <div className="ribbon-sep" />
       <RibbonGroup label="Đoạn văn">
-        <Anchored
-          open={popup === 'align'}
-          minWidth={200}
-          trigger={
-            <RibbonButton
-              icon={<><IconAlignLeft size={28} /><Caret /></>}
-              label="Đoạn văn"
-              onClick={() => toggle('align')}
-              active={popup === 'align'}
-              disabled={!selected}
+        <div className="rb-row">
+          {(
+            [
+              ['left', 'Căn trái', IconAlignLeft],
+              ['center', 'Căn giữa', IconAlignCenter],
+              ['right', 'Căn phải', IconAlignRight],
+            ] as const
+          ).map(([align, label, Icon]) => (
+            <RibbonIconButton
+              key={align}
+              icon={<Icon size={18} />}
+              title={label}
+              active={isText && (selected?.align ?? 'left') === align}
+              onClick={() => onUpdateSelected({ align })}
+              disabled={!isText}
             />
-          }
-        >
-          {alignMenu}
-        </Anchored>
+          ))}
+        </div>
       </RibbonGroup>
       <div className="ribbon-sep" />
       <RibbonGroup label="Bảng chọn">
@@ -490,18 +514,28 @@ export function SlideRibbon(props: SlideRibbonProps) {
           trigger={
             <RibbonButton
               icon={<><IconAlignCenter size={28} /><Caret /></>}
-              label="Căn chỉnh"
+              label="Sắp xếp"
               onClick={() => toggle('arrange')}
               active={popup === 'arrange'}
               disabled={!selected}
             />
           }
         >
+          <div className="slide-ribbon-menu-title">Thứ tự lớp</div>
           <MenuItem onClick={() => { onArrange('front'); close() }}>Đưa lên đầu</MenuItem>
           <MenuItem onClick={() => { onArrange('back'); close() }}>Đưa xuống cuối</MenuItem>
           <MenuItem onClick={() => { onArrange('forward'); close() }}>Đưa lên một lớp</MenuItem>
           <MenuItem onClick={() => { onArrange('backward'); close() }}>Đưa xuống một lớp</MenuItem>
           <div className="slide-ribbon-menu-sep" />
+          <div className="slide-ribbon-menu-title">Căn vào slide</div>
+          <MenuItem icon={<IconObjAlignLeft size={16} />} onClick={() => { onAlign('left'); close() }}>Căn trái slide</MenuItem>
+          <MenuItem icon={<IconObjAlignCenterH size={16} />} onClick={() => { onAlign('center'); close() }}>Căn giữa ngang</MenuItem>
+          <MenuItem icon={<IconObjAlignRight size={16} />} onClick={() => { onAlign('right'); close() }}>Căn phải slide</MenuItem>
+          <MenuItem icon={<IconObjAlignTop size={16} />} onClick={() => { onAlign('top'); close() }}>Căn trên slide</MenuItem>
+          <MenuItem icon={<IconObjAlignMiddle size={16} />} onClick={() => { onAlign('middle'); close() }}>Căn giữa dọc</MenuItem>
+          <MenuItem icon={<IconObjAlignBottom size={16} />} onClick={() => { onAlign('bottom'); close() }}>Căn dưới slide</MenuItem>
+          <div className="slide-ribbon-menu-sep" />
+          <div className="slide-ribbon-menu-title">Lật</div>
           <MenuItem icon={<IconObjFlipH size={16} />} onClick={() => { onFlip('x'); close() }}>Lật ngang</MenuItem>
           <MenuItem icon={<IconObjFlipV size={16} />} onClick={() => { onFlip('y'); close() }}>Lật dọc</MenuItem>
         </Anchored>
@@ -511,51 +545,6 @@ export function SlideRibbon(props: SlideRibbonProps) {
 
   const renderInsert = () => (
     <>
-      <RibbonGroup label="Slide">
-        <RibbonButton icon={<IconNewSlide size={28} />} label="Slide mới" onClick={onAddSlide} />
-        <Anchored
-          open={popup === 'layout'}
-          minWidth={288}
-          trigger={
-            <RibbonButton
-              icon={<><IconSlideLayout size={28} /><Caret /></>}
-              label="Bố cục"
-              onClick={() => toggle('layout')}
-              active={popup === 'layout'}
-              disabled={!slide}
-            />
-          }
-        >
-          <div className="slide-ribbon-menu-title">Bố cục slide</div>
-          <div className="slide-layout-grid">
-            {SLIDE_LAYOUTS.map((layout) => (
-              <button
-                key={layout.id}
-                type="button"
-                className={cn('slide-layout-card', slide?.layout === layout.id && 'active')}
-                onMouseDown={(e) => e.preventDefault()}
-                onClick={() => {
-                  onApplyLayout(layout.id)
-                  close()
-                }}
-                data-tip={layout.description}
-                disabled={!slide}
-              >
-                <span
-                  className={cn('slide-layout-thumb', `slide-layout-thumb--${layout.id}`)}
-                  aria-hidden
-                >
-                  <i />
-                  <i />
-                  <i />
-                </span>
-                <small>{layout.name}</small>
-              </button>
-            ))}
-          </div>
-        </Anchored>
-      </RibbonGroup>
-      <div className="ribbon-sep" />
       <RibbonGroup label="Bảng">
         <Anchored
           open={popup === 'table'}
@@ -950,12 +939,6 @@ export function SlideRibbon(props: SlideRibbonProps) {
           </div>
         </RibbonGroup>
 
-        <div className="ribbon-sep" />
-        <RibbonGroup label="Sắp xếp">
-          <RibbonButton icon={<IconAlignCenter size={28} />} label="Căn giữa slide" onClick={() => onAlign('middle')} disabled={!selected} />
-          <RibbonButton icon={<IconObjFlipH size={28} />} label="Lật ngang" onClick={() => onFlip('x')} disabled={!selected} />
-          <RibbonButton icon={<IconObjFlipV size={28} />} label="Lật dọc" onClick={() => onFlip('y')} disabled={!selected} />
-        </RibbonGroup>
         <div className="ribbon-sep" />
         <RibbonGroup label="Đối tượng">
           <RibbonButton icon={<IconTrash size={28} />} label="Xóa" onClick={onDeleteSelected} disabled={!selected} />

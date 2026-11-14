@@ -1414,6 +1414,16 @@ body[data-slide-drag] .slide-sel-toolbar {
   .slide-ribbon__phone-sheet-body .ribbon-group-items {
     flex-wrap: wrap;
     gap: 6px;
+    min-width: 0;
+  }
+
+  /* trong bảng công cụ điện thoại: hàng phông chữ và lưới chủ đề tự xuống dòng, không tràn ngang */
+  .slide-ribbon__phone-sheet-body .rb-font-group,
+  .slide-ribbon__phone-sheet-body .rb-font-group .rb-row,
+  .slide-ribbon__phone-sheet-body .slide-ribbon-theme-grid {
+    flex-wrap: wrap;
+    min-width: 0;
+    max-width: 100%;
   }
 
   .slide-ribbon-menu-item,
