@@ -1,5 +1,5 @@
 import { Children, Fragment, isValidElement, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
-import { ChevronDown, MoreHorizontal, Palette, X } from 'lucide-react'
+import { ChevronDown, MoreHorizontal, X } from 'lucide-react'
 import { useAnimatedPresence } from '@/lib/useAnimatedPresence'
 import { useSlideViewport } from './useSlideViewport'
 import {
@@ -131,8 +131,6 @@ export interface SlideRibbonProps {
   onExportPdf: () => void
   formatPaneOpen: boolean
   onToggleFormatPane: () => void
-  designOpen: boolean
-  onToggleDesign: () => void
   aiOpen: boolean
   onToggleAi: () => void
   zoom: number
@@ -275,8 +273,6 @@ export function SlideRibbon(props: SlideRibbonProps) {
     onExportPdf,
     formatPaneOpen,
     onToggleFormatPane,
-    designOpen,
-    onToggleDesign,
     aiOpen,
     onToggleAi,
     zoom,
@@ -621,20 +617,6 @@ export function SlideRibbon(props: SlideRibbonProps) {
     const toneEnabled = Boolean(slide?.layout && isLayoutId(slide.layout))
     return (
     <>
-      <RibbonGroup label="Bộ thiết kế">
-        <RibbonButton
-          icon={<Palette size={24} strokeWidth={1.7} />}
-          label="Thiết kế"
-          data-tip="Mở bảng chọn bộ thiết kế cho toàn bài"
-          onClick={() => {
-            onToggleDesign()
-            if (phoneSheetOpen) setPhoneSheetOpen(false)
-          }}
-          active={designOpen}
-          disabled={deck.format === 'html'}
-        />
-      </RibbonGroup>
-      <div className="ribbon-sep" />
       <RibbonGroup label="Chủ đề">
         <div className="slide-ribbon-theme-grid">
           {DECK_THEMES.map((theme) => (

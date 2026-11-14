@@ -1520,26 +1520,8 @@ body[data-slide-drag] .slide-sel-toolbar {
 }
 
 /* ---------------------------------------------------------------- *
- * Panel phải "Thiết kế" (kiểu .slide-ribbon-theme-card phóng lớn)
+ * Tab Mẫu → Thiết kế (kiểu .slide-ribbon-theme-card phóng lớn)
  * ---------------------------------------------------------------- */
-.slide-editor .slide-design-dock.collapsed {
-  width: 0;
-  border: 0;
-}
-
-.slide-design-panel {
-  width: 340px;
-}
-
-.slide-design-scroll {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-gutter: stable;
-  padding: 12px;
-}
-
 .slide-design-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1728,9 +1710,10 @@ body[data-slide-drag] .slide-sel-toolbar {
   font-weight: 500;
   color: var(--text-primary);
   padding: 0 2px 1px;
-  white-space: nowrap;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
   overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 @media (prefers-reduced-motion: reduce) {

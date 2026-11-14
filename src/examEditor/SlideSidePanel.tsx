@@ -20,6 +20,9 @@ import {
   type SlideLayoutId,
 } from '@/lib/slideLayouts'
 import { normalizeTheme, type ResolvedTheme } from '@/lib/slideTheme'
+import type { SlideDesign } from '@/lib/slideDesigns'
+import { Segmented } from '@/components/Segmented'
+import { SlideDesignGrid } from './SlideDesignGrid'
 import { SlideThumb } from './SlideEditor'
 import { NavRailIndicator } from './NavRailIndicator'
 import { PanelContentTransition } from './PanelContentTransition'
@@ -60,6 +63,12 @@ interface SlideSidePanelProps {
   /** chữ của bài giảng và slide đang mở, để gợi ý đồ hoạ */
   hint?: string
   onAddLayoutSlide: (layoutId: SlideLayoutId) => void
+  /** bộ thiết kế đang dùng (tab Mẫu → Thiết kế) */
+  activeDesignId?: string
+  /** bài HTML: không áp thiết kế */
+  designDisabled?: boolean
+  /** đổi / gỡ thiết kế cho toàn bài (không thêm slide) */
+  onApplyDesign: (design: SlideDesign | null) => void
   onInsert: (el: SlideElement) => void
   /** điện thoại: mục "Trợ lý AI" ở thanh đáy mở AI toàn màn hình */
   onOpenAi?: () => void
@@ -71,6 +80,9 @@ function SlideSidePanelImpl({
   canInsert,
   hint = '',
   onAddLayoutSlide,
+  activeDesignId,
+  designDisabled,
+  onApplyDesign,
   onInsert,
   onOpenAi,
 }: SlideSidePanelProps) {
@@ -93,6 +105,9 @@ function SlideSidePanelImpl({
         {tabId === 'templates' && (
           <TemplatesPanel
             theme={theme}
+            activeDesignId={activeDesignId}
+            designDisabled={designDisabled}
+            onApplyDesign={onApplyDesign}
             onPick={isMobileSheet ? (id) => { onAddLayoutSlide(id); setActive(null) } : onAddLayoutSlide}
           />
         )}
@@ -442,18 +457,66 @@ function LayoutCard({
   )
 }
 
+type TemplateMode = 'layouts' | 'designs'
+const TEMPLATE_MODE_KEY = 'slide-template-mode'
+
+function loadTemplateMode(): TemplateMode {
+  try {
+    const saved = localStorage.getItem(TEMPLATE_MODE_KEY)
+    if (saved === 'designs' || saved === 'layouts') return saved
+  } catch {
+    /* ignore */
+  }
+  return 'layouts'
+}
+
 function TemplatesPanel({
   theme,
+  activeDesignId,
+  designDisabled,
   onPick,
+  onApplyDesign,
 }: {
   theme?: ResolvedTheme | DeckTheme
+  activeDesignId?: string
+  designDisabled?: boolean
   onPick: (id: SlideLayoutId) => void
+  onApplyDesign: (design: SlideDesign | null) => void
 }) {
   const resolvedTheme = useMemo(() => normalizeTheme(theme), [theme])
+  const [mode, setMode] = useState<TemplateMode>(loadTemplateMode)
+  const changeMode = (next: TemplateMode) => {
+    setMode(next)
+    try {
+      localStorage.setItem(TEMPLATE_MODE_KEY, next)
+    } catch {
+      /* ignore */
+    }
+  }
   return (
+    <div className="flex min-h-0 flex-1 flex-col">
+      <div className="shrink-0 border-b border-line bg-surface px-3 pb-2.5 pt-3">
+        <Segmented
+          value={mode}
+          onChange={changeMode}
+          label="Chế độ mẫu"
+          className="w-full flex [&>button]:flex-1 [&>button]:justify-center"
+          options={[
+            { key: 'layouts', label: 'Bố cục' },
+            { key: 'designs', label: 'Thiết kế' },
+          ]}
+        />
+      </div>
     <Scroll>
-      <div className="pt-3">
-        {LAYOUT_GROUPS.map((group) => (
+      <div key={mode} className="anim-template-fade pt-3">
+        {mode === 'designs' ? (
+          <SlideDesignGrid
+            activeDesignId={activeDesignId}
+            currentTheme={resolvedTheme}
+            disabled={designDisabled}
+            onSelect={onApplyDesign}
+          />
+        ) : LAYOUT_GROUPS.map((group) => (
           <Section key={group.title} title={group.title}>
             <div className="grid grid-cols-2 gap-2">
               {group.layouts.map((id) => {
@@ -473,6 +536,7 @@ function TemplatesPanel({
         ))}
       </div>
     </Scroll>
+    </div>
   )
 }
 

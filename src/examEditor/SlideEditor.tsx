@@ -39,7 +39,6 @@ import { uploadImage } from '@/lib/mediaStore'
 import { SLIDE_LAYOUTS, composeLayout, contentFromSlide, defaultTone, isLayoutId, toneBackground, withPlaceholders, type SlideLayoutId } from '@/lib/slideLayouts'
 import { AiPanel } from './AiPanel'
 import { AiDock } from './Layout'
-import { SlideDesignPanel } from './SlideDesignPanel'
 import { SlideRibbon, type SlideRibbonTab } from './SlideRibbon'
 import { attachToAi } from '@/lib/aiAttach'
 import { SlideThumb, SlideElView } from './slideRender'
@@ -202,7 +201,6 @@ export function SlideEditor({
   const [editingShapeId, setEditingShapeId] = useState<string | null>(null)
   // màn hẹp (tablet/điện thoại): trợ lý AI nổi đè lên slide nên mặc định đóng
   const [aiOpen, setAiOpen] = useState(() => window.innerWidth >= 1024)
-  const [designOpen, setDesignOpen] = useState(false)
   const [zoom, setZoom] = useState(100)
   const [formatPaneOpen, setFormatPaneOpen] = useState(false)
   const [clipboardElement, setClipboardElement] = useState<SlideElement | null>(null)
@@ -419,39 +417,22 @@ export function SlideEditor({
     commitDeck(applyDeckDesign(latest, design))
   }
 
-  const toggleAi = () => {
-    setAiOpen((prev) => {
-      const next = !prev
-      if (next) setDesignOpen(false)
-      return next
-    })
-  }
-
-  const openAi = () => {
-    setDesignOpen(false)
-    setAiOpen(true)
-  }
-
-  const toggleDesign = () => {
-    setDesignOpen((prev) => {
-      const next = !prev
-      if (next) setAiOpen(false)
-      return next
-    })
-  }
 
   // Panel thư viện được memo để kéo phần tử (cập nhật deck mỗi lần di chuột) không vẽ lại hàng trăm đồ hoạ;
   // handler đi qua ref để callback ổn định mà vẫn luôn gọi bản mới nhất (không giữ deck cũ).
   const panelHandlers = useRef({
     insert: (_el: SlideElement) => {},
     addLayout: (_id: SlideLayoutId) => {},
+    applyDesign: (_design: SlideDesign | null) => {},
   })
   panelHandlers.current = {
     insert: (el) => { addElement(el); setSelectedElementId(el.id) },
     addLayout: addLayoutSlide,
+    applyDesign: applyDesignToDeck,
   }
   const insertFromPanel = useCallback((el: SlideElement) => panelHandlers.current.insert(el), [])
   const addLayoutFromPanel = useCallback((id: SlideLayoutId) => panelHandlers.current.addLayout(id), [])
+  const applyDesignFromPanel = useCallback((design: SlideDesign | null) => panelHandlers.current.applyDesign(design), [])
 
   const previewElement = useCallback(
     (slideId: string, elId: string, patch: Partial<SlideElement>) => {
@@ -999,10 +980,8 @@ export function SlideEditor({
         onExportPdf={() => setPrinting(true)}
         formatPaneOpen={formatPaneOpen}
         onToggleFormatPane={() => setFormatPaneOpen((v) => !v)}
-        designOpen={designOpen}
-        onToggleDesign={toggleDesign}
         aiOpen={aiOpen}
-        onToggleAi={toggleAi}
+        onToggleAi={() => setAiOpen((v) => !v)}
         zoom={zoom}
         onZoom={setZoom}
       />
@@ -1015,8 +994,11 @@ export function SlideEditor({
         canInsert={Boolean(currentSlide) && !currentSlide?.html}
         hint={`${deck.title} ${(currentSlide?.elements ?? []).map((e) => e.text ?? '').join(' ').replace(/<[^>]+>/g, ' ')}`}
         onAddLayoutSlide={addLayoutFromPanel}
+        activeDesignId={deck.design}
+        designDisabled={deck.format === 'html'}
+        onApplyDesign={applyDesignFromPanel}
         onInsert={insertFromPanel}
-        onOpenAi={openAi}
+        onOpenAi={() => setAiOpen(true)}
       />
 
       {/* ---------------- sân soạn (giữa) ---------------- */}
@@ -1237,18 +1219,8 @@ export function SlideEditor({
         />
       </div>
 
-      {/* ---------------- panel "Thiết kế" (phải, cạnh AI dock) ---------------- */}
-      <SlideDesignPanel
-        open={designOpen}
-        activeDesignId={deck.design}
-        currentTheme={theme}
-        disabled={deck.format === 'html'}
-        onSelect={applyDesignToDeck}
-        onClose={() => setDesignOpen(false)}
-      />
-
       {/* ---------------- AI panel (phải) — trợ lý AI nằm ở cột phải --------- */}
-      <AiDock open={aiOpen} onToggle={toggleAi} width={360} side="right">
+      <AiDock open={aiOpen} onToggle={() => setAiOpen((v) => !v)} width={360} side="right">
         <AiPanel
           mode="slide"
           attachKey="slide"
