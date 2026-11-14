@@ -833,8 +833,9 @@ export function render(
  * mỗi lần bút di chỉ vẽ lại đúng một nét thay vì cả bảng.
  */
 export function renderLive(canvas: HTMLCanvasElement, e: El | null, view: View) {
-  // desynchronized: trình duyệt đẩy thẳng lên màn hình, bỏ qua một nhịp ghép khung → nét bám đầu bút hơn
-  const ctx = canvas.getContext('2d', { desynchronized: true })!
+  // không dùng { desynchronized: true }: trên Android canvas đó bị ghép như lớp đục (bỏ kênh alpha)
+  // → lớp trong suốt này thành tấm đen che kín bảng
+  const ctx = canvas.getContext('2d')!
   ctx.setTransform(1, 0, 0, 1, 0, 0)
   ctx.clearRect(0, 0, canvas.width, canvas.height)
   if (!e) return
