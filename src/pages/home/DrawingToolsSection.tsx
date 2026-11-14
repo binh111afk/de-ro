@@ -77,7 +77,7 @@ export function DrawingToolsSection() {
             aria-label="Chọn môn học xem công cụ vẽ hình"
             className="relative flex flex-wrap gap-1.5 rounded-[10px] border border-line bg-sunken p-1"
           >
-            <TabThumb parent={subjRef} active={subject} className="rounded-[7px] bg-surface shadow-xs ring-1 ring-line" />
+            <TabThumb active={subject} className="rounded-[7px] bg-surface shadow-xs ring-1 ring-line" />
             {SUBJECT_GROUPS.map((g) => {
               const active = g.key === subject
               return (

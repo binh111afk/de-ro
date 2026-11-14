@@ -86,7 +86,7 @@ export function BoardSection() {
             aria-label="Chọn chế độ xem bảng vẽ"
             className="relative flex flex-wrap gap-1.5 rounded-[9px] border border-white/15 bg-white/5 p-1"
           >
-            <TabThumb parent={modeRef} active={mode} className="rounded-[6px] bg-surface" />
+            <TabThumb active={mode} className="rounded-[6px] bg-surface" />
             {MODES.map((m) => {
               const selected = m.key === mode
               return (

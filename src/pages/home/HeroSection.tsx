@@ -141,7 +141,7 @@ export function HeroSection() {
             <div className="overflow-hidden rounded-[12px] border border-line bg-surface shadow-[0_12px_32px_rgba(20,24,28,0.08)]">
               <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line bg-sunken px-3 py-2 sm:px-4">
                 <div ref={tabsRef} role="tablist" aria-label="Xem trước" className="relative flex flex-wrap gap-1">
-                  <TabThumb parent={tabsRef} active={tab} className="rounded-[7px] bg-surface shadow-xs ring-1 ring-line" />
+                  <TabThumb active={tab} className="rounded-[7px] bg-surface shadow-xs ring-1 ring-line" />
                   {TABS.map((item) => {
                     const Icon = item.icon
                     const isSelected = item.key === tab
