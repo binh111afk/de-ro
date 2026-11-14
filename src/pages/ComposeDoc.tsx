@@ -931,6 +931,12 @@ export default function ComposeDoc() {
     if (viewport.w > 0 && viewport.w < 860) setAiOpen(false)
   }, [viewport.w])
 
+  // màn laptop (< 1440px): mở trợ lý AI thì thu cột Mục lục về dải icon để trang đề không bị bóp nhỏ
+  // (chỉ chạy khi AI vừa mở / đổi cỡ màn — người dùng vẫn bấm mở lại cột được)
+  useEffect(() => {
+    if (aiOpen && viewport.w > 0 && viewport.w < 1440) setNavOpen(false)
+  }, [aiOpen, viewport.w])
+
   return (
     <div className={cn('compose-app', isReflow && 'is-reflow')}>
       {/* ---------- tab strip nhiều đề — trên cùng như GenOffice ---------- */}

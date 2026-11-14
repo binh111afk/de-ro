@@ -1124,3 +1124,7 @@
 
 /* app chỉ có giao diện sáng: không cho trình duyệt điện thoại tự đảo màu (chế độ tối ép buộc) */
 :root { color-scheme: only light; }
+
+/* màn rất lớn để tỉ lệ 100% (vd. 30 inch 2560px): phóng cả trang web (trừ trình soạn) cho chữ, nút khỏi bé tí */
+@media (min-width: 2200px) { .site-scale { zoom: 1.15; } }
+@media (min-width: 2800px) { .site-scale { zoom: 1.3; } }

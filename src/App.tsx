@@ -115,6 +115,10 @@ export default function App() {
       <ScrollToTop />
       <DialogHost />
       <TooltipLayer />
+      {/* màn rất lớn (≥ 2200px, vd. 30 inch để 100%): phóng cả trang cho chữ khỏi lọt thỏm — xem .site-scale
+          trong index.css. Không áp cho trình soạn (fullscreen: có thu phóng riêng, canvas cần toạ độ chuẩn)
+          và để ngoài các lớp tooltip / hộp thoại (chúng định vị bằng toạ độ màn hình). */}
+      <div className={cn('flex flex-1 flex-col', fullscreen ? 'min-h-0' : 'site-scale')}>
       {fullscreen ? null : <Header />}
       <main className={cn('flex-1', fullscreen && 'min-h-0 overflow-hidden')}>
         <SiteStatus>
@@ -155,6 +159,7 @@ export default function App() {
         </SiteStatus>
       </main>
       {fullscreen || authPage ? null : <Footer />}
+      </div>
       {import.meta.env.PROD ? <Analytics /> : null}
     </div>
   )
