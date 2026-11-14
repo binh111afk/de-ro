@@ -1605,6 +1605,234 @@ body[data-slide-drag] .slide-sel-toolbar {
   border: 1.5px dashed rgba(255, 255, 255, 0.42);
 }
 
+.slide-design-card__preview[data-motif='pastel-mam-non'] {
+  border-radius: 10px;
+}
+.slide-design-card__preview[data-motif='pastel-mam-non']::before {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border-radius: 7px;
+  border: 1.5px dashed color-mix(in srgb, var(--motif-accent) 45%, transparent);
+  pointer-events: none;
+}
+.slide-design-card__preview[data-motif='pastel-mam-non']::after {
+  content: '';
+  position: absolute;
+  top: 6px;
+  right: 7px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--motif-secondary);
+  box-shadow: -9px 3px 0 -1px var(--motif-accent);
+  opacity: 0.72;
+  pointer-events: none;
+}
+
+.slide-design-card__preview[data-motif='bien-xanh']::before {
+  content: '';
+  position: absolute;
+  left: -8%;
+  right: -8%;
+  bottom: -6px;
+  height: 15px;
+  border-radius: 50% 50% 0 0;
+  background: color-mix(in srgb, var(--motif-secondary) 28%, transparent);
+  pointer-events: none;
+}
+.slide-design-card__preview[data-motif='bien-xanh']::after {
+  content: '';
+  position: absolute;
+  top: 6px;
+  right: 7px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  border: 1.5px solid var(--motif-accent);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.slide-design-card__preview[data-motif='so-tay-o-li']::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(30, 58, 95, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(30, 58, 95, 0.08) 1px, transparent 1px);
+  background-size: 9px 9px;
+  pointer-events: none;
+}
+.slide-design-card__preview[data-motif='so-tay-o-li']::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 11px;
+  width: 1.5px;
+  background: color-mix(in srgb, var(--motif-secondary) 65%, transparent);
+  pointer-events: none;
+}
+
+.slide-design-card__preview[data-motif='cam-nang-dong']::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 24px;
+  height: 24px;
+  background: linear-gradient(225deg, color-mix(in srgb, var(--motif-accent) 28%, transparent) 50%, transparent 50%);
+  pointer-events: none;
+}
+.slide-design-card__preview[data-motif='cam-nang-dong']::after {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 7px;
+  width: 14px;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--motif-secondary);
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.slide-design-card__preview[data-motif='lich-su-co']::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border: 1px solid color-mix(in srgb, var(--motif-secondary) 55%, transparent);
+  pointer-events: none;
+}
+.slide-design-card__preview[data-motif='lich-su-co']::after {
+  content: '';
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  width: 7px;
+  height: 7px;
+  border-top: 2px solid var(--motif-accent);
+  border-left: 2px solid var(--motif-accent);
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.slide-design-card__preview[data-motif='phong-thi-nghiem']::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(color-mix(in srgb, var(--motif-accent) 26%, transparent) 1px, transparent 1px);
+  background-size: 8px 8px;
+  pointer-events: none;
+}
+.slide-design-card__preview[data-motif='phong-thi-nghiem']::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--motif-accent), var(--motif-secondary));
+  pointer-events: none;
+}
+
+.slide-design-card__preview[data-motif='bac-au-toi-gian']::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 8px;
+  width: 2.5px;
+  border-radius: 999px;
+  background: var(--motif-accent);
+  opacity: 0.85;
+  pointer-events: none;
+}
+.slide-design-card__preview[data-motif='bac-au-toi-gian']::after {
+  content: '';
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--motif-secondary);
+  opacity: 0.78;
+  pointer-events: none;
+}
+
+.slide-design-card__preview[data-motif='hoa-si-mau-nuoc']::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--motif-accent) 26%, transparent), transparent 70%);
+  pointer-events: none;
+}
+.slide-design-card__preview[data-motif='hoa-si-mau-nuoc']::after {
+  content: '';
+  position: absolute;
+  right: -8px;
+  bottom: -10px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--motif-secondary) 28%, transparent), transparent 70%);
+  pointer-events: none;
+}
+
+.slide-design-card__preview[data-motif='vu-tru'] {
+  border-color: rgba(167, 139, 250, 0.35);
+}
+.slide-design-card__preview[data-motif='vu-tru']::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  background: radial-gradient(circle at 82% 24%, color-mix(in srgb, var(--motif-accent) 32%, transparent), transparent 46%),
+              radial-gradient(circle at 18% 82%, color-mix(in srgb, var(--motif-secondary) 24%, transparent), transparent 44%);
+  pointer-events: none;
+}
+.slide-design-card__preview[data-motif='vu-tru']::after {
+  content: '';
+  position: absolute;
+  top: 7px;
+  right: 8px;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #f8fafc;
+  box-shadow: -14px 4px 0 0 rgba(248, 250, 252, 0.55), -6px 14px 0 0 rgba(56, 189, 248, 0.85), -26px -2px 0 0 rgba(167, 139, 250, 0.8);
+  pointer-events: none;
+}
+
+.slide-design-card__preview[data-motif='rung-dem'] {
+  border-color: rgba(110, 231, 183, 0.32);
+}
+.slide-design-card__preview[data-motif='rung-dem']::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 18% 18%, color-mix(in srgb, var(--motif-secondary) 22%, transparent), transparent 48%),
+              linear-gradient(to top, color-mix(in srgb, var(--motif-accent) 18%, transparent), transparent 42%);
+  pointer-events: none;
+}
+.slide-design-card__preview[data-motif='rung-dem']::after {
+  content: '';
+  position: absolute;
+  right: 7px;
+  bottom: 6px;
+  width: 10px;
+  height: 10px;
+  border-radius: 0 80% 0 80%;
+  background: var(--motif-accent);
+  opacity: 0.72;
+  pointer-events: none;
+}
+
 .slide-design-card__aa {
   position: relative;
   z-index: 1;

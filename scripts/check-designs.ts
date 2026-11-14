@@ -7,14 +7,14 @@ import { applyEdits, looksLikeEdit, parseEditCommands } from '../src/lib/slideEd
 import { parseDeckPlan } from '../src/lib/aiDeck.ts'
 import { emptyDeck } from '../src/store/docs.ts'
 
-console.log('--- Kiểm tra 8 bộ thiết kế slide ---')
+console.log('--- Kiểm tra 18 bộ thiết kế slide ---')
 
 const themeIds = new Set(DECK_THEMES.map((t) => t.id))
 const decorKitIds = new Set(DECOR_KITS.map((k) => k.id))
 const stylePackIds = new Set(SLIDE_STYLE_PACKS.map((s) => s.id))
 
-if (SLIDE_DESIGNS.length !== 8) {
-  console.error(`❌ Cần đúng 8 bộ thiết kế, hiện có ${SLIDE_DESIGNS.length}`)
+if (SLIDE_DESIGNS.length !== 18) {
+  console.error(`❌ Cần đúng 18 bộ thiết kế, hiện có ${SLIDE_DESIGNS.length}`)
   process.exit(1)
 }
 
@@ -120,7 +120,7 @@ for (const d of SLIDE_DESIGNS) {
     allPassed = false
   }
 }
-console.log('  ✅ designCatalogText liệt kê đủ 8 bộ thiết kế')
+console.log('  ✅ designCatalogText liệt kê đủ 18 bộ thiết kế')
 
 // 2. resolveDesignId & alias
 const testAliases: Array<[string, string]> = [
@@ -135,6 +135,16 @@ const testAliases: Array<[string, string]> = [
   ['tin hoc', 'cong-nghe'],
   ['sinh thai', 'thien-nhien'],
   ['nghiem tuc', 'hoc-thuat'],
+  ['pastel mầm non', 'pastel-mam-non'],
+  ['biển xanh mát', 'bien-xanh'],
+  ['sổ tay ô li', 'so-tay-o-li'],
+  ['cam năng động', 'cam-nang-dong'],
+  ['lịch sử cổ điển', 'lich-su-co'],
+  ['phòng thí nghiệm', 'phong-thi-nghiem'],
+  ['bắc âu tối giản', 'bac-au-toi-gian'],
+  ['hoạ sĩ màu nước', 'hoa-si-mau-nuoc'],
+  ['vũ trụ đêm', 'vu-tru'],
+  ['rừng đêm', 'rung-dem'],
 ]
 for (const [input, expected] of testAliases) {
   const actual = resolveDesignId(input)
@@ -195,4 +205,4 @@ if (!allPassed) {
   process.exit(1)
 }
 
-console.log('\n✅ Toàn bộ 8 bộ thiết kế đều đạt yêu cầu kiểm tra!')
+console.log('\n✅ Toàn bộ 18 bộ thiết kế đều đạt yêu cầu kiểm tra!')

@@ -5,11 +5,14 @@
  */
 import type { DeckTheme, Slide, SlideElement, SlideTone } from '@/store/docs'
 import {
+  composeLayout,
   contentFromSlide,
+  defaultTone,
   isDecorElement,
   isLayoutId,
   isLayoutOwnedId,
   isSkinDecorId,
+  withPlaceholders,
   type SlideLayoutContent,
   type SlideLayoutId,
 } from './slideLayouts'
@@ -17,6 +20,9 @@ import {
 /** Font web có đủ dấu tiếng Việt; máy nào cũng hiện giống nhau (không phụ thuộc font cài sẵn). */
 const ROUNDED = 'Nunito'
 const ACADEMIC_SERIF = 'Lora'
+const HANDWRITING = 'Patrick Hand'
+const DISPLAY_SANS = 'Space Grotesk'
+const LAB_MONO = 'JetBrains Mono Variable'
 
 const uid = () => Math.random().toString(36).slice(2, 10)
 
@@ -1610,6 +1616,352 @@ const skinBangDen: SlideSkin = {
   },
 }
 
+interface StyledSkinSpec {
+  id: string
+  name: string
+  fonts: SlideSkinFonts
+  geometrySummary: string
+  headingWeight?: number
+  headingStyle?: 'normal' | 'italic'
+  bodyWeight?: number
+  kickerFont?: string
+  kickerLetterSpacing?: number
+  panelShape?: string
+  radius: number
+  border?: number
+  borderStyle?: 'solid' | 'dashed' | 'dotted'
+  borderColor?: string | ((theme: DeckTheme) => string)
+  shadowLevel?: 0 | 1 | 2 | 3
+  getBackground?: (theme: DeckTheme, tone?: SlideTone) => string
+  motifs: (theme: DeckTheme, slideIndex: number, totalSlides: number) => SlideElement[]
+}
+
+function createStyledSkin(spec: StyledSkinSpec): SlideSkin {
+  const transformSlide: SlideSkin['transformSlide'] = (
+    elements,
+    theme,
+    _layout,
+    slideIndex,
+    totalSlides,
+  ) => {
+    const borderColor =
+      typeof spec.borderColor === 'function' ? spec.borderColor(theme) : spec.borderColor
+    const res: SlideElement[] = elements.map((el) => {
+      const copy = { ...el }
+      if (copy.type === 'text') {
+        const isTitle = copy.variant === 'title' || copy.id === 'title'
+        if (isTitle) {
+          copy.fontFamily = spec.fonts.heading
+          if (spec.headingWeight !== undefined) copy.fontWeight = spec.headingWeight
+          if (spec.headingStyle !== undefined) copy.fontStyle = spec.headingStyle
+        } else {
+          copy.fontFamily = copy.id === 'kicker' && spec.kickerFont ? spec.kickerFont : spec.fonts.body
+          if (copy.id === 'kicker' && spec.kickerLetterSpacing !== undefined) {
+            copy.letterSpacing = spec.kickerLetterSpacing
+          }
+          if (spec.bodyWeight !== undefined && copy.fontWeight === undefined) {
+            copy.fontWeight = spec.bodyWeight
+          }
+        }
+      } else if (copy.type === 'shape') {
+        const isRule = copy.w < 2 || copy.h < 2
+        const isSideBar = copy.id === 'side-panel' || copy.id === 'section-panel'
+        const isPlate = copy.id.endsWith('-plate')
+        const isBadge = copy.shape === 'ellipse' || copy.id.endsWith('-badge')
+        if (isRule) {
+          copy.radius = 0
+          copy.border = 0
+          copy.shadowLevel = 0
+          copy.shadow = false
+        } else if (isSideBar) {
+          copy.radius = 0
+          copy.border = 0
+          copy.shadowLevel = 0
+          copy.shadow = false
+        } else if (isBadge) {
+          if (copy.shape !== 'ellipse') copy.radius = Math.min(spec.radius, 12)
+          copy.shadowLevel = spec.shadowLevel ?? 0
+          copy.shadow = (spec.shadowLevel ?? 0) > 0
+        } else if (!isPlate) {
+          if (!copy.shape || copy.shape === 'rect' || copy.shape === 'round') {
+            copy.shape = spec.panelShape ?? 'round'
+          }
+          copy.radius = spec.radius
+          if (spec.border !== undefined) copy.border = spec.border
+          if (spec.borderStyle !== undefined) copy.borderStyle = spec.borderStyle
+          if (borderColor !== undefined) copy.borderColor = borderColor
+          copy.shadowLevel = spec.shadowLevel ?? 0
+          copy.shadow = (spec.shadowLevel ?? 0) > 0
+        }
+      }
+      return copy
+    })
+    return [...res, ...spec.motifs(theme, slideIndex, totalSlides)]
+  }
+
+  return {
+    id: spec.id,
+    name: spec.name,
+    fonts: spec.fonts,
+    geometrySummary: spec.geometrySummary,
+    ...(spec.getBackground ? { getBackground: spec.getBackground } : {}),
+    createTitleSlide: (theme, content, index = 0, total = 7) =>
+      transformSlide(
+        composeLayout(theme, 'title', withPlaceholders('title', content), defaultTone('title')),
+        theme,
+        'title',
+        index,
+        total,
+      ),
+    createClosingSlide: (theme, content, index = 6, total = 7) =>
+      transformSlide(
+        composeLayout(theme, 'closing', withPlaceholders('closing', content), defaultTone('closing')),
+        theme,
+        'closing',
+        index,
+        total,
+      ),
+    transformSlide,
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * 10 BỘ MỚI (8 SÁNG + 2 TỐI)
+ * ------------------------------------------------------------------ */
+
+const skinPastelMamNon = createStyledSkin({
+  id: 'pastel-mam-non',
+  name: 'Pastel mầm non',
+  fonts: { heading: ROUNDED, body: ROUNDED },
+  headingWeight: 800,
+  bodyWeight: 600,
+  geometrySummary: 'Thẻ bo tròn lớn mềm mại (radius: 28), viền hồng phấn mảnh, chấm tròn pastel ở các góc ngoài.',
+  radius: 28,
+  border: 1.5,
+  borderColor: '#f9a8d4',
+  shadowLevel: 1,
+  motifs: (theme) => [
+    { id: 'skin-motif-dot-tl', type: 'shape', shape: 'ellipse', x: 1.2, y: 1.8, w: 3.0, h: 5.33, fill: theme.accent, opacity: 0.22 },
+    { id: 'skin-motif-dot-tr', type: 'shape', shape: 'ellipse', x: 95.0, y: 1.6, w: 3.6, h: 6.4, fill: theme.secondary ?? '#0d9488', opacity: 0.24 },
+    { id: 'skin-motif-dot-tr2', type: 'shape', shape: 'ellipse', x: 92.2, y: 2.0, w: 1.9, h: 3.38, fill: theme.accent, opacity: 0.32 },
+    { id: 'skin-motif-dot-bl', type: 'shape', shape: 'ellipse', x: 1.8, y: 93.2, w: 2.8, h: 4.98, fill: theme.accent, opacity: 0.26 },
+    { id: 'skin-motif-pill-br', type: 'shape', shape: 'round', x: 88.5, y: 95.8, w: 9.0, h: 2.2, radius: 12, fill: theme.secondary ?? '#0d9488', opacity: 0.42 },
+  ],
+})
+
+const skinBienXanh = createStyledSkin({
+  id: 'bien-xanh',
+  name: 'Biển xanh',
+  fonts: { heading: 'Be Vietnam Pro', body: 'Be Vietnam Pro' },
+  headingWeight: 700,
+  bodyWeight: 500,
+  geometrySummary: 'Thẻ bo vừa (radius: 16) viền xanh ngọc nhạt, dải sóng mảnh ở góc và dải cát ấm ở mép dưới.',
+  radius: 16,
+  border: 1,
+  borderColor: '#67e8f9',
+  shadowLevel: 1,
+  motifs: (theme) => [
+    { id: 'skin-motif-wave-tr', type: 'shape', shape: 'wave', x: 83.0, y: 1.2, w: 15.0, h: 3.6, fill: theme.accent, opacity: 0.26 },
+    { id: 'skin-motif-wave-bl', type: 'shape', shape: 'wave', x: 2.0, y: 93.6, w: 11.5, h: 2.6, fill: theme.secondary ?? '#b45309', opacity: 0.3 },
+    { id: 'skin-motif-sea-line', type: 'shape', shape: 'rect', x: 0, y: 96.6, w: 100, h: 0.7, fill: theme.accent, opacity: 0.7 },
+    { id: 'skin-motif-sand-strip', type: 'shape', shape: 'rect', x: 0, y: 97.3, w: 100, h: 2.7, fill: '#f4e3c1', opacity: 0.92 },
+  ],
+})
+
+const skinSoTayOLi = createStyledSkin({
+  id: 'so-tay-o-li',
+  name: 'Sổ tay ô li',
+  fonts: { heading: HANDWRITING, body: 'Be Vietnam Pro' },
+  headingWeight: 400,
+  bodyWeight: 400,
+  kickerLetterSpacing: 0.06,
+  geometrySummary: 'Giấy vở kem, chữ viết tay Patrick Hand, lề đỏ trái, lỗ gáy lò xo và kẹp giấy góc phải.',
+  radius: 4,
+  border: 1.2,
+  borderStyle: 'dashed',
+  borderColor: '#94a3b8',
+  shadowLevel: 0,
+  motifs: (theme) => [
+    { id: 'skin-motif-margin-red', type: 'shape', shape: 'rect', x: 4.1, y: 0, w: 0.3, h: 100, fill: '#ef4444', opacity: 0.55 },
+    { id: 'skin-motif-hole-1', type: 'shape', shape: 'ellipse', x: 1.3, y: 15, w: 1.6, h: 2.84, fill: '#e2e8f0', border: 1, borderColor: '#94a3b8' },
+    { id: 'skin-motif-hole-2', type: 'shape', shape: 'ellipse', x: 1.3, y: 37, w: 1.6, h: 2.84, fill: '#e2e8f0', border: 1, borderColor: '#94a3b8' },
+    { id: 'skin-motif-hole-3', type: 'shape', shape: 'ellipse', x: 1.3, y: 59, w: 1.6, h: 2.84, fill: '#e2e8f0', border: 1, borderColor: '#94a3b8' },
+    { id: 'skin-motif-hole-4', type: 'shape', shape: 'ellipse', x: 1.3, y: 81, w: 1.6, h: 2.84, fill: '#e2e8f0', border: 1, borderColor: '#94a3b8' },
+    { id: 'skin-motif-paperclip', type: 'shape', shape: 'round', x: 91.5, y: 0.8, w: 2.0, h: 4.8, radius: 8, fill: 'transparent', border: 1.8, borderColor: theme.accent },
+    { id: 'skin-motif-top-rule', type: 'shape', shape: 'rect', x: 6, y: 4.6, w: 83, h: 0.2, fill: '#cbd5e1', opacity: 0.75 },
+  ],
+})
+
+const skinCamNangDong = createStyledSkin({
+  id: 'cam-nang-dong',
+  name: 'Cam năng động',
+  fonts: { heading: DISPLAY_SANS, body: 'Be Vietnam Pro' },
+  headingWeight: 700,
+  bodyWeight: 500,
+  geometrySummary: 'Thẻ viền xanh navy dày 2px, bóng khối cứng, hình bình hành chéo góc thể thao.',
+  radius: 6,
+  border: 2,
+  borderColor: '#1e3a8a',
+  shadowLevel: 2,
+  motifs: (theme) => [
+    { id: 'skin-motif-slash-tr1', type: 'shape', shape: 'parallelogram', x: 84.0, y: 0.8, w: 8.5, h: 4.0, fill: theme.accent, opacity: 0.9 },
+    { id: 'skin-motif-slash-tr2', type: 'shape', shape: 'parallelogram', x: 92.0, y: 0.8, w: 6.5, h: 4.0, fill: theme.secondary ?? '#1e3a8a', opacity: 0.9 },
+    { id: 'skin-motif-slash-bl', type: 'shape', shape: 'parallelogram', x: 2.0, y: 95.0, w: 13.0, h: 3.8, fill: theme.accent, opacity: 0.88 },
+    { id: 'skin-motif-bot-stripe', type: 'shape', shape: 'rect', x: 17.0, y: 96.4, w: 79.0, h: 0.9, fill: theme.secondary ?? '#1e3a8a', opacity: 0.85 },
+  ],
+})
+
+const skinLichSuCo = createStyledSkin({
+  id: 'lich-su-co',
+  name: 'Lịch sử cổ',
+  fonts: { heading: ACADEMIC_SERIF, body: 'Be Vietnam Pro' },
+  headingWeight: 700,
+  bodyWeight: 400,
+  geometrySummary: 'Khung cổ điển góc sắc (radius: 2), viền vàng đồng, nẹp góc hoa văn 4 phía.',
+  radius: 2,
+  border: 1.5,
+  borderColor: '#b45309',
+  shadowLevel: 0,
+  motifs: (theme) => [
+    { id: 'skin-motif-top-rule', type: 'shape', shape: 'rect', x: 5.5, y: 2.6, w: 89.0, h: 0.35, fill: '#b45309', opacity: 0.65 },
+    { id: 'skin-motif-bot-rule', type: 'shape', shape: 'rect', x: 5.5, y: 97.0, w: 89.0, h: 0.35, fill: '#b45309', opacity: 0.65 },
+    { id: 'skin-motif-corner-tl', type: 'shape', shape: 'corner', x: 1.8, y: 1.8, w: 2.6, h: 4.6, fill: theme.accent, opacity: 0.82 },
+    { id: 'skin-motif-corner-tr', type: 'shape', shape: 'corner', x: 95.6, y: 1.8, w: 2.6, h: 4.6, fill: theme.accent, opacity: 0.82, flipX: true },
+    { id: 'skin-motif-corner-bl', type: 'shape', shape: 'corner', x: 1.8, y: 93.6, w: 2.6, h: 4.6, fill: theme.accent, opacity: 0.82, flipY: true },
+    { id: 'skin-motif-corner-br', type: 'shape', shape: 'corner', x: 95.6, y: 93.6, w: 2.6, h: 4.6, fill: theme.accent, opacity: 0.82, flipX: true, flipY: true },
+  ],
+})
+
+const skinPhongThiNghiem = createStyledSkin({
+  id: 'phong-thi-nghiem',
+  name: 'Phòng thí nghiệm',
+  fonts: { heading: LAB_MONO, body: 'Be Vietnam Pro' },
+  headingWeight: 700,
+  bodyWeight: 400,
+  kickerFont: LAB_MONO,
+  geometrySummary: 'Thẻ viền xanh lá chanh mảnh (radius: 4), tiêu đề JetBrains Mono, hình lục giác phân tử góc trên.',
+  radius: 4,
+  border: 1,
+  borderColor: '#84cc16',
+  shadowLevel: 0,
+  motifs: (theme, slideIndex, totalSlides) => [
+    { id: 'skin-motif-hex-tr1', type: 'shape', shape: 'hexagon', x: 95.0, y: 1.4, w: 3.3, h: 5.8, fill: 'transparent', border: 1.5, borderColor: theme.accent, opacity: 0.72 },
+    { id: 'skin-motif-hex-tr2', type: 'shape', shape: 'hexagon', x: 91.8, y: 1.6, w: 2.3, h: 4.0, fill: theme.accent, opacity: 0.25 },
+    { id: 'skin-motif-ruler-top', type: 'shape', shape: 'rect', x: 4.0, y: 2.2, w: 24.0, h: 0.3, fill: theme.secondary ?? '#0369a1', opacity: 0.65 },
+    { id: 'skin-motif-ruler-bot', type: 'shape', shape: 'rect', x: 4.0, y: 96.8, w: 72.0, h: 0.25, fill: '#a3e635', opacity: 0.75 },
+    {
+      id: 'skin-motif-lab-tag',
+      type: 'text',
+      x: 78,
+      y: 95.0,
+      w: 18,
+      h: 3.8,
+      text: `LAB // ${String(slideIndex + 1).padStart(2, '0')}·${String(totalSlides).padStart(2, '0')}`,
+      variant: 'body',
+      fontSize: 1.5,
+      fontWeight: 600,
+      textColor: theme.muted ?? '#3d5a48',
+      align: 'right',
+      fontFamily: LAB_MONO,
+      letterSpacing: 0.06,
+    },
+  ],
+})
+
+const skinBacAuToiGian = createStyledSkin({
+  id: 'bac-au-toi-gian',
+  name: 'Tối giản Bắc Âu',
+  fonts: { heading: 'Be Vietnam Pro', body: 'Be Vietnam Pro' },
+  headingWeight: 600,
+  bodyWeight: 400,
+  geometrySummary: 'Phẳng hoàn toàn trên nền xám ấm, không viền không bóng, vạch đất nung mảnh và số trang gọn.',
+  radius: 8,
+  border: 0,
+  shadowLevel: 0,
+  motifs: (theme, slideIndex, totalSlides) => [
+    { id: 'skin-motif-terra-bar', type: 'shape', shape: 'rect', x: 8, y: 96.0, w: 6.5, h: 0.45, fill: theme.accent, opacity: 0.9 },
+    {
+      id: 'skin-motif-page',
+      type: 'text',
+      x: 88,
+      y: 95.0,
+      w: 8,
+      h: 3.8,
+      text: `${slideIndex + 1} / ${totalSlides}`,
+      variant: 'body',
+      fontSize: 1.6,
+      fontWeight: 500,
+      textColor: theme.muted ?? '#57534e',
+      align: 'right',
+      fontFamily: 'Be Vietnam Pro',
+      letterSpacing: 0.05,
+    },
+  ],
+})
+
+const skinHoaSiMauNuoc = createStyledSkin({
+  id: 'hoa-si-mau-nuoc',
+  name: 'Hoạ sĩ màu nước',
+  fonts: { heading: ACADEMIC_SERIF, body: ACADEMIC_SERIF },
+  headingWeight: 600,
+  headingStyle: 'italic',
+  bodyWeight: 400,
+  geometrySummary: 'Chữ Lora có chân mềm mại, thẻ bo tròn êm (radius: 20), vệt loang màu nước mờ ở góc đối xứng.',
+  radius: 20,
+  border: 1,
+  borderColor: '#f5d0fe',
+  shadowLevel: 1,
+  motifs: (theme) => [
+    { id: 'skin-motif-wash-tr1', type: 'shape', shape: 'teardrop', x: 93.2, y: 1.0, w: 5.5, h: 9.8, fill: theme.accent, opacity: 0.15, rotation: 35 },
+    { id: 'skin-motif-wash-tr2', type: 'shape', shape: 'ellipse', x: 89.2, y: 1.0, w: 4.8, h: 8.5, fill: theme.secondary ?? '#6d28d9', opacity: 0.12 },
+    { id: 'skin-motif-wash-bl1', type: 'shape', shape: 'teardrop', x: 1.2, y: 88.8, w: 5.4, h: 9.6, fill: theme.secondary ?? '#6d28d9', opacity: 0.13, rotation: -145 },
+    { id: 'skin-motif-wash-bl2', type: 'shape', shape: 'ellipse', x: 3.5, y: 93.4, w: 4.0, h: 5.6, fill: theme.accent, opacity: 0.16 },
+  ],
+})
+
+const skinVuTru = createStyledSkin({
+  id: 'vu-tru',
+  name: 'Vũ trụ',
+  fonts: { heading: DISPLAY_SANS, body: 'Be Vietnam Pro' },
+  headingWeight: 700,
+  bodyWeight: 400,
+  kickerFont: LAB_MONO,
+  geometrySummary: 'Nền tối tím than, thẻ viền neon xanh lơ 1px (radius: 12), sao 4 cánh và chấm tinh vân ở góc.',
+  radius: 12,
+  border: 1,
+  borderColor: (theme) => theme.accent,
+  shadowLevel: 0,
+  motifs: (theme) => [
+    { id: 'skin-motif-star-tr', type: 'shape', shape: 'star4', x: 94.8, y: 1.8, w: 2.6, h: 4.6, fill: theme.accent, opacity: 0.88 },
+    { id: 'skin-motif-star-tr2', type: 'shape', shape: 'ellipse', x: 91.6, y: 3.2, w: 0.9, h: 1.6, fill: theme.secondary ?? '#c084fc', opacity: 0.85 },
+    { id: 'skin-motif-star-tl', type: 'shape', shape: 'ellipse', x: 2.8, y: 3.0, w: 0.8, h: 1.4, fill: '#f8fafc', opacity: 0.7 },
+    { id: 'skin-motif-star-bl', type: 'shape', shape: 'star4', x: 2.0, y: 93.2, w: 2.2, h: 3.9, fill: theme.secondary ?? '#c084fc', opacity: 0.82 },
+    { id: 'skin-motif-star-bl2', type: 'shape', shape: 'ellipse', x: 5.6, y: 95.8, w: 0.8, h: 1.4, fill: theme.accent, opacity: 0.72 },
+    { id: 'skin-motif-orbit-bar', type: 'shape', shape: 'rect', x: 78.0, y: 96.6, w: 18.0, h: 0.3, fill: theme.accent, opacity: 0.6 },
+  ],
+})
+
+const skinRungDem = createStyledSkin({
+  id: 'rung-dem',
+  name: 'Rừng đêm',
+  fonts: { heading: ACADEMIC_SERIF, body: 'Be Vietnam Pro' },
+  headingWeight: 700,
+  bodyWeight: 400,
+  geometrySummary: 'Nền rêu đêm sâu, tiêu đề Lora ấm áp, thẻ viền vàng đồng (radius: 16), chấm đom đóm và lá góc.',
+  radius: 16,
+  border: 1.2,
+  borderColor: '#b45309',
+  shadowLevel: 0,
+  motifs: (theme) => [
+    { id: 'skin-motif-leaf-tr', type: 'shape', shape: 'round2DiagRect', x: 94.2, y: 1.6, w: 4.2, h: 5.0, fill: theme.secondary ?? '#4ade80', opacity: 0.35 },
+    { id: 'skin-motif-firefly-1', type: 'shape', shape: 'ellipse', x: 91.5, y: 2.8, w: 1.4, h: 2.49, fill: theme.accent, opacity: 0.9 },
+    { id: 'skin-motif-firefly-2', type: 'shape', shape: 'ellipse', x: 89.2, y: 4.0, w: 0.9, h: 1.6, fill: theme.secondary ?? '#4ade80', opacity: 0.78 },
+    { id: 'skin-motif-firefly-3', type: 'shape', shape: 'ellipse', x: 2.4, y: 93.8, w: 1.3, h: 2.31, fill: theme.accent, opacity: 0.85 },
+    { id: 'skin-motif-leaf-bl', type: 'shape', shape: 'round2DiagRect', x: 4.6, y: 94.8, w: 3.6, h: 4.0, fill: theme.accent, opacity: 0.28 },
+    { id: 'skin-motif-glow-bar', type: 'shape', shape: 'rect', x: 10.0, y: 96.8, w: 80.0, h: 0.25, fill: theme.accent, opacity: 0.42 },
+  ],
+})
+
 export const SLIDE_SKINS: Record<string, SlideSkin> = {
   'thanh-lich': skinThanhLich,
   'tre-trung': skinTreTrung,
@@ -1619,6 +1971,16 @@ export const SLIDE_SKINS: Record<string, SlideSkin> = {
   'co-dien': skinCoDien,
   'vui-nhon': skinVuiNhon,
   'bang-den': skinBangDen,
+  'pastel-mam-non': skinPastelMamNon,
+  'bien-xanh': skinBienXanh,
+  'so-tay-o-li': skinSoTayOLi,
+  'cam-nang-dong': skinCamNangDong,
+  'lich-su-co': skinLichSuCo,
+  'phong-thi-nghiem': skinPhongThiNghiem,
+  'bac-au-toi-gian': skinBacAuToiGian,
+  'hoa-si-mau-nuoc': skinHoaSiMauNuoc,
+  'vu-tru': skinVuTru,
+  'rung-dem': skinRungDem,
 }
 
 export function skinById(id: string | undefined): SlideSkin | undefined {
