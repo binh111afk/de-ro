@@ -1,4 +1,5 @@
 /** Bảng vẽ — định nghĩa giao diện: icon, danh sách bút / hình / giấy, các nút và ô chọn nhỏ. */
+import protractorUrl from '@/assets/icons/protractor.svg'
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { isDarkPaper, paperBg, type Kind, type Paper, type PenKind, type Pt, type FillStyle } from './scene'
 import { penOutline, svgPathFromStroke } from './render'
@@ -97,6 +98,8 @@ export const PDF_NOTE_D = 'M6 3h9l4 4v14H6zM14 3v5h5M9 17l5-5 2 2-5 5H9z'
 export const EXPORT_D = 'M12 4v11M7 10l5 5 5-5M5 20h14'
 export const PAPER_D = 'M6 3h9l4 4v14H6zM14 3v5h5'
 export const RULER_D = 'M3 15.5L15.5 3l5.5 5.5L8.5 21zM7 11.5l2 2M10 8.5l1.5 1.5M13 5.5l2 2M5.5 14l1 1M11.5 10l1 1'
+/** compa: núm cầm, khớp tròn và hai chân dang ra */
+export const COMPASS_D = 'M12 2.5v2.5M12 5a1.8 1.8 0 1 1 0 3.6A1.8 1.8 0 0 1 12 5zM10.9 8.3L6 20.5M13.1 8.3L18 20.5M8.3 15h7.4'
 /** bút máy: vẽ lại dạng nét viền theo icons/pen-nib.svg */
 export const FOUNTAIN_D = 'M13 6l-5.2 1.5a2.4 2.4 0 0 0-1.7 1.8L3 21l11.7-3.1a2.4 2.4 0 0 0 1.8-1.7L18 11M13 6l2.2-2.2a1.3 1.3 0 0 1 1.8 0l3.2 3.2a1.3 1.3 0 0 1 0 1.8L18 11M13 6l5 5M3 21l5.4-5.4M11 14.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0'
 // viên phấn nghiêng (vẽ lại dạng nét từ icons/chalk-goc.svg): thân dài + đầu phấn mòn ở góc dưới trái
@@ -424,6 +427,17 @@ export function Swatch({ color, active, onClick, round, title, drag }: { color: 
 export function Ico({ d, size = 16 }: { d: string; size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d={d} /></svg>
+  )
+}
+
+/** icon thước đo góc lấy từ tệp SVG (hình tô đặc): dùng làm mặt nạ để màu theo `currentColor` như các icon nét */
+export function ProtractorIcon({ size = 16 }: { size?: number }) {
+  return (
+    <span
+      aria-hidden
+      className="inline-block shrink-0 bg-current"
+      style={{ width: size, height: size, mask: `url("${protractorUrl}") center / contain no-repeat`, WebkitMask: `url("${protractorUrl}") center / contain no-repeat` }}
+    />
   )
 }
 

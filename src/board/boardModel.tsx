@@ -38,6 +38,8 @@ export interface Opts {
   guides: boolean
   /** giữ công cụ Hình sau khi vẽ xong */
   keepTool: boolean
+  /** đã chuyển hình sang nét thẳng mặc định (bảng lưu trước khi đổi mặc định còn giữ kiểu vẽ tay) */
+  shapeStraight?: boolean
 }
 export interface Tip { sharp: number; sens: number }
 export const DEFAULT_TIP: Tip = { sharp: 0.5, sens: 0.5 }
@@ -45,7 +47,7 @@ export const CHALK_WHITE = '#f5f3ea'
 export const LIGHT_COLORS = ['#1e1e1e', '#e03131', '#2f9e44', '#1971c2', '#f08c00', '#7048e8']
 export const CHALK_COLORS = ['#f5f3ea', '#f7e07a', '#f4a6b8', '#9fd3f5', '#b7e4a7', '#f9b97a']
 
-export const DEFAULT_OPTS: Opts = { pen: 'ball', lastShape: 'rectangle', paper: 'plain', snap: true, eraseMode: 'stroke', eraseSize: 1, selectMode: 'box', recentShapes: ['rectangle', 'ellipse', 'arrow', 'line'], recentColors: [...LIGHT_COLORS], recentTextColors: [...LIGHT_COLORS], recentShapeColors: [...LIGHT_COLORS], recentHighlights: ['#fab005', '#82c91e', '#f783ac', '#4dabf7', '#ff922b'], penTips: {}, laserColor: '#ff3b30', laserSize: 1, bucketFill: '#a5d8ff', bucketStyle: 'solid', guides: true, keepTool: false }
+export const DEFAULT_OPTS: Opts = { pen: 'ball', lastShape: 'rectangle', paper: 'plain', snap: true, eraseMode: 'stroke', eraseSize: 1, selectMode: 'box', recentShapes: ['rectangle', 'ellipse', 'arrow', 'line'], recentColors: [...LIGHT_COLORS], recentTextColors: [...LIGHT_COLORS], recentShapeColors: [...LIGHT_COLORS], recentHighlights: ['#fab005', '#82c91e', '#f783ac', '#4dabf7', '#ff922b'], penTips: {}, laserColor: '#ff3b30', laserSize: 1, bucketFill: '#a5d8ff', bucketStyle: 'solid', guides: true, keepTool: false, shapeStraight: true }
 
 /** mỗi loại bút / hình / chữ nhớ màu và độ dày riêng */
 export const DEFAULT_STYLES: Record<Slot, Style> = {
@@ -56,7 +58,8 @@ export const DEFAULT_STYLES: Record<Slot, Style> = {
   marker: { ...DEFAULT_STYLE, stroke: '#1971c2', strokeWidth: 2 },
   chalk: { ...DEFAULT_STYLE, stroke: CHALK_WHITE, strokeWidth: 2 },
   highlight: { ...DEFAULT_STYLE, stroke: '#fab005', strokeWidth: 8, opacity: 40 },
-  shape: { ...DEFAULT_STYLE },
+  // hình khối mặc định vẽ thẳng, tô đặc (kiểu vẽ tay vẫn chọn được bằng nút Vẽ tay)
+  shape: { ...DEFAULT_STYLE, roughness: 0, fillStyle: 'solid' },
   text: { ...DEFAULT_STYLE },
 }
 export const ERASE_R = [6, 14, 28]

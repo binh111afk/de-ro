@@ -27,7 +27,7 @@ import { useBoards, type BoardData } from '@/store/boards'
 import { texToSvg } from './formula'
 import { bindToScene, guideAt, Instruments, placeInstrument, projectGuide, type InstApi, type InstKind, type InstState } from './Instruments'
 import { type Tool, type Slot, type Opts, DEFAULT_TIP, CHALK_WHITE, LIGHT_COLORS, CHALK_COLORS, DEFAULT_OPTS, DEFAULT_STYLES, ERASE_R, CLIP_MARK, SHAPES, type Saved, load, type Drag, computeSnap, TOOL_KEYS, MOD_KEY, SHAPE_KEYS, FILLS, CURSOR } from './boardModel'
-import { type Main, ERASER_SVG, LASER_COLORS, LASER_SIZES, LASER_SVG, KIND_LABEL, TOOL_LABEL, curvePoints, densify, type SideTab, SIDE_W, WRENCH_D, PEN_D, ERASER_D, LASER_D, SELECT_D, LASSO_D, SHAPE_D, TEXT_D, DOT_SIZES, BUCKET_D, HAND_D, UNDO_D, REDO_D, PLUS_D, IMG_D, PDF_NOTE_D, EXPORT_D, PAPER_D, RULER_D, FOUNTAIN_D, PENS, PenPanel, SHAPE_BY_ID, SHAPE_SECTIONS, THEME_COLORS, PAPERS, AiIcon, SideBtn, Group, Chip, Toggle, Pop, MoreColors, HexInput, PanelRow, NONE_BG, draggingFill, SPREAD_MS, BUCKET_SVG, Swatch, Ico, IconBtn, SelBtn } from './boardUi'
+import { type Main, ERASER_SVG, LASER_COLORS, LASER_SIZES, LASER_SVG, KIND_LABEL, TOOL_LABEL, curvePoints, densify, type SideTab, SIDE_W, WRENCH_D, PEN_D, ERASER_D, LASER_D, SELECT_D, LASSO_D, SHAPE_D, TEXT_D, DOT_SIZES, BUCKET_D, HAND_D, UNDO_D, REDO_D, PLUS_D, IMG_D, PDF_NOTE_D, EXPORT_D, PAPER_D, RULER_D, ProtractorIcon, COMPASS_D, FOUNTAIN_D, PENS, PenPanel, SHAPE_BY_ID, SHAPE_SECTIONS, THEME_COLORS, PAPERS, AiIcon, SideBtn, Group, Chip, Toggle, Pop, MoreColors, HexInput, PanelRow, NONE_BG, draggingFill, SPREAD_MS, BUCKET_SVG, Swatch, Ico, IconBtn, SelBtn } from './boardUi'
 
 export default function BoardEditor({ id }: { id: string }) {
   const wrapRef = useRef<HTMLDivElement>(null)
@@ -43,6 +43,12 @@ export default function BoardEditor({ id }: { id: string }) {
   const view = useRef<View>(saved.current?.view ?? { scrollX: 0, scrollY: 0, zoom: 1 })
   const styles = useRef<Record<Slot, Style>>({ ...DEFAULT_STYLES, ...saved.current?.styles })
   const opts = useRef<Opts>({ ...DEFAULT_OPTS, ...saved.current?.opts })
+  // bảng lưu trước khi hình mặc định vẽ thẳng: chuyển kiểu hình đang dùng sang thẳng một lần (hình đã vẽ giữ nguyên)
+  if (saved.current?.opts && !saved.current.opts.shapeStraight) {
+    styles.current.shape = { ...styles.current.shape, roughness: 0, ...(styles.current.shape.fillStyle === 'hachure' ? { fillStyle: 'solid' as const } : {}) }
+    opts.current.shapeStraight = true
+    saved.current.opts.shapeStraight = true
+  }
   const selected = useRef<Set<string>>(new Set())
   const drag = useRef<Drag | null>(null)
   const touches = useRef<Map<number, { x: number; y: number }>>(new Map())
@@ -2656,11 +2662,15 @@ export default function BoardEditor({ id }: { id: string }) {
             <Pop id="inst" pop={pop} setPop={setPop} title="Dụng cụ hình học" align="right" className="hidden @[1000px]:block"
               face={<span className="flex items-center gap-1.5 px-1.5 text-[13px] text-ink"><Ico d={RULER_D} size={16} />Dụng cụ</span>}>
               <div className="text-[12px] font-medium text-ink-2">Dụng cụ hình học</div>
-              {([['ruler', 'Thước kẻ', 'Vẽ sát mép thước thành đường thẳng'], ['protractor', 'Thước đo góc', 'Kéo kim đỏ để đo góc'], ['compass', 'Compa', 'Kéo núm xanh quanh kim để vẽ cung']] as const).map(([k, label, hint]) => (
+              {([['ruler', 'Thước kẻ', 'Vẽ sát mép thước thành đường thẳng', <Ico d={RULER_D} size={18} />], ['protractor', 'Thước đo góc', 'Kéo kim đỏ để đo góc', <ProtractorIcon size={20} />], ['compass', 'Compa', 'Kéo núm xanh quanh kim để vẽ cung', <Ico d={COMPASS_D} size={18} />]] as const).map(([k, label, hint, icon]) => (
                 <button key={k} type="button" aria-pressed={!!inst[k]} onClick={() => toggleInst(k)}
-                  className={`flex w-full flex-col items-start rounded-[6px] px-2 py-1.5 text-left text-[13px] hover:bg-sunken ${inst[k] ? 'text-clay' : 'text-ink'}`}>
-                  <span className="flex items-center gap-2">{inst[k] ? '✓ ' : ''}{label}</span>
-                  <span className="text-[11.5px] text-ink-2">{hint}</span>
+                  className={`flex w-full items-center gap-2.5 rounded-[6px] px-2 py-1.5 text-left text-[13px] hover:bg-sunken ${inst[k] ? 'text-clay' : 'text-ink'}`}>
+                  <span className={`flex size-8 shrink-0 items-center justify-center rounded-[7px] ${inst[k] ? 'bg-clay/10' : 'bg-sunken'}`}>{icon}</span>
+                  <span className="flex min-w-0 flex-1 flex-col">
+                    <span className="font-medium">{label}</span>
+                    <span className="text-[11.5px] text-ink-2">{hint}</span>
+                  </span>
+                  {inst[k] ? <Ico d="M5 12.5l4.5 4.5L19 7.5" size={16} /> : null}
                 </button>
               ))}
             </Pop>
