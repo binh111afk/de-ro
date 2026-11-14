@@ -1,5 +1,5 @@
 import { Children, Fragment, isValidElement, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
-import { ChevronDown, MoreHorizontal, X } from 'lucide-react'
+import { ChevronDown, MoreHorizontal, Palette, X } from 'lucide-react'
 import { useAnimatedPresence } from '@/lib/useAnimatedPresence'
 import { useSlideViewport } from './useSlideViewport'
 import {
@@ -116,6 +116,8 @@ export interface SlideRibbonProps {
   onAlign: (action: 'left' | 'center' | 'right' | 'top' | 'middle' | 'bottom') => void
   onFlip: (axis: 'x' | 'y') => void
   onTheme: (theme: DeckTheme) => void
+  /** mở panel trái ở Mẫu → Thiết kế */
+  onOpenDesigns: () => void
   /** áp bố cục cho slide đang chọn (xác nhận trong SlideEditor) */
   onApplyLayout: (layout: SlideLayoutId) => void
   /** đổi tông nền cho slide đã có layout */
@@ -263,6 +265,7 @@ export function SlideRibbon(props: SlideRibbonProps) {
     onAlign,
     onFlip,
     onTheme,
+    onOpenDesigns,
     onApplyLayout,
     onTone,
     onTransition,
@@ -617,7 +620,19 @@ export function SlideRibbon(props: SlideRibbonProps) {
     const toneEnabled = Boolean(slide?.layout && isLayoutId(slide.layout))
     return (
     <>
-      <RibbonGroup label="Chủ đề">
+      <RibbonGroup label="Thiết kế">
+        <RibbonButton
+          icon={<Palette size={26} strokeWidth={1.7} />}
+          label="Thiết kế…"
+          data-tip="Chọn bộ thiết kế cho cả bài (mở tab Mẫu → Thiết kế)"
+          onClick={() => {
+            onOpenDesigns()
+            if (phoneSheetOpen) setPhoneSheetOpen(false)
+          }}
+        />
+      </RibbonGroup>
+      <div className="ribbon-sep" />
+      <RibbonGroup label="Bộ màu">
         <div className="slide-ribbon-theme-grid">
           {DECK_THEMES.map((theme) => (
             <button

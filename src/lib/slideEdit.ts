@@ -220,8 +220,9 @@ export function recomposeSlide(theme: DeckTheme, slide: Slide, tone?: SlideTone)
 /**
  * Áp dụng hoặc gỡ bộ thiết kế lên toàn bộ deck hiện có (thuần, không thêm/bớt slide).
  * Truyền `null` để quay về thiết kế mặc định của bài mới (DECK_THEMES[0], gỡ decor/skin).
+ * `palette`: dùng bộ màu này thay cho bộ màu gốc của thiết kế (ribbon "Bộ màu": đổi màu, giữ kiểu).
  */
-export function applyDeckDesign(deck: Deck, design: SlideDesign | null): Deck {
+export function applyDeckDesign(deck: Deck, design: SlideDesign | null, palette?: DeckTheme): Deck {
   if (!design) {
     // "Mặc định" = về đúng bộ màu + phông của bài slide mới (DECK_THEMES[0])
     const currentTheme = normalizeTheme(DECK_THEMES[0])
@@ -236,7 +237,7 @@ export function applyDeckDesign(deck: Deck, design: SlideDesign | null): Deck {
       }),
     }
   }
-  const baseTheme = themeById(design.themeId) ?? normalizeTheme(deck.theme)
+  const baseTheme = palette ?? themeById(design.themeId) ?? normalizeTheme(deck.theme)
   const skin = skinById(design.id)
   const targetTheme = skin ? themeWithSkinFonts(baseTheme, skin) : baseTheme
   const total = deck.slides.length

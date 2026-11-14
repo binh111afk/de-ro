@@ -69,6 +69,8 @@ interface SlideSidePanelProps {
   designDisabled?: boolean
   /** đổi / gỡ thiết kế cho toàn bài (không thêm slide) */
   onApplyDesign: (design: SlideDesign | null) => void
+  /** tăng số này để mở panel ở Mẫu → Thiết kế (nút "Thiết kế…" trên ribbon) */
+  openDesignsSignal?: number
   onInsert: (el: SlideElement) => void
   /** điện thoại: mục "Trợ lý AI" ở thanh đáy mở AI toàn màn hình */
   onOpenAi?: () => void
@@ -83,12 +85,18 @@ function SlideSidePanelImpl({
   activeDesignId,
   designDisabled,
   onApplyDesign,
+  openDesignsSignal = 0,
   onInsert,
   onOpenAi,
 }: SlideSidePanelProps) {
   const [active, setActive] = useState<PanelId | null>(null)
   // panel cuối cùng đã mở: giữ nội dung trong lúc trượt đóng (và giữ vị trí cuộn khi mở lại)
   const [last, setLast] = useState<PanelId | null>(null)
+  useEffect(() => {
+    if (!openDesignsSignal) return
+    setActive('templates')
+    setLast('templates')
+  }, [openDesignsSignal])
   const shown = active ?? last
   const current = PANELS.find((p) => p.id === shown) ?? null
   const { isPhone, isTablet } = useSlideViewport()
@@ -108,6 +116,7 @@ function SlideSidePanelImpl({
             activeDesignId={activeDesignId}
             designDisabled={designDisabled}
             onApplyDesign={onApplyDesign}
+            openDesignsSignal={openDesignsSignal}
             onPick={isMobileSheet ? (id) => { onAddLayoutSlide(id); setActive(null) } : onAddLayoutSlide}
           />
         )}
@@ -476,15 +485,20 @@ function TemplatesPanel({
   designDisabled,
   onPick,
   onApplyDesign,
+  openDesignsSignal = 0,
 }: {
   theme?: ResolvedTheme | DeckTheme
   activeDesignId?: string
   designDisabled?: boolean
   onPick: (id: SlideLayoutId) => void
   onApplyDesign: (design: SlideDesign | null) => void
+  openDesignsSignal?: number
 }) {
   const resolvedTheme = useMemo(() => normalizeTheme(theme), [theme])
   const [mode, setMode] = useState<TemplateMode>(loadTemplateMode)
+  useEffect(() => {
+    if (openDesignsSignal) setMode('designs')
+  }, [openDesignsSignal])
   const changeMode = (next: TemplateMode) => {
     setMode(next)
     try {

@@ -31,7 +31,7 @@ import { applyDeckDesign, applyEdits, describeSlide, recomposeSlide, type SlideE
 import { elementHeight } from '@/lib/slideText'
 import { normalizeTheme, type ResolvedTheme } from '@/lib/slideTheme'
 import { readableElements } from '@/lib/slideContrast'
-import { type SlideDesign } from '@/lib/slideDesigns'
+import { designById, type SlideDesign } from '@/lib/slideDesigns'
 import { applySkin } from '@/lib/slideSkins'
 import { appendSlidesToDeck, withImage } from '@/lib/slideAi'
 import { IMAGE_LAYOUTS, buildImagePrompt, generateSlideImage, queueImage } from '@/lib/imageGen'
@@ -202,6 +202,7 @@ export function SlideEditor({
   // màn hẹp (tablet/điện thoại): trợ lý AI nổi đè lên slide nên mặc định đóng
   const [aiOpen, setAiOpen] = useState(() => window.innerWidth >= 1024)
   const [zoom, setZoom] = useState(100)
+  const [openDesignsSignal, setOpenDesignsSignal] = useState(0)
   const [formatPaneOpen, setFormatPaneOpen] = useState(false)
   const [clipboardElement, setClipboardElement] = useState<SlideElement | null>(null)
   /** ghi chú diễn giả đang mở (nút nhỏ ở góc slide) */
@@ -585,6 +586,12 @@ export function SlideEditor({
    * của layout là màu cụ thể, không tự theo theme); slide freeform giữ hành vi cũ.
    */
   const applyTheme = (nextTheme: DeckTheme) => {
+    // đang dùng bộ thiết kế: ribbon "Bộ màu" chỉ thay màu, giữ motif + kiểu dàn trang của thiết kế
+    const design = designById(deck.design)
+    if (design) {
+      commitDeck(applyDeckDesign(deck, design, nextTheme))
+      return
+    }
     commitDeck({ ...deck, theme: nextTheme, slides: deck.slides.map((slide) => recomposeSlide(nextTheme, slide)) })
   }
 
@@ -947,6 +954,7 @@ export function SlideEditor({
         onAlign={alignSelected}
         onFlip={flipSelected}
         onTheme={applyTheme}
+        onOpenDesigns={() => setOpenDesignsSignal((n) => n + 1)}
         onApplyLayout={applyLayout}
         onTone={applyTone}
         onTransition={(transition, allSlides) => {
@@ -997,6 +1005,7 @@ export function SlideEditor({
         activeDesignId={deck.design}
         designDisabled={deck.format === 'html'}
         onApplyDesign={applyDesignFromPanel}
+        openDesignsSignal={openDesignsSignal}
         onInsert={insertFromPanel}
         onOpenAi={() => setAiOpen(true)}
       />
