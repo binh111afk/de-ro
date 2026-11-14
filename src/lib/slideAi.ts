@@ -482,17 +482,48 @@ function budgetLine(id: SlideLayoutId): string {
   return `NGÂN SÁCH CHỮ: ${parts.join('; ')}.`
 }
 
-/**
- * System prompt cho một slide. Có đủ layout bắt buộc, field cần điền và dàn ý
- * cả deck (để không lặp ý) nhưng không gửi catalog 14 layout.
- */
-export function pageSystemPrompt(
-  plan: DeckPlan,
-  slide: DeckPlanSlide,
-  index: number,
-): string {
+const GRAPHIC_LAYOUTS = new Set(['title', 'section', 'closing', 'hook', 'bullets', 'image-left', 'image-right'])
+
+/** Phần riêng của một slide: layout, field, ngân sách chữ, gợi ý đồ hoạ. */
+function slideSpecBlock(slide: DeckPlanSlide): string {
   const layout = SLIDE_LAYOUTS.find((item) => item.id === slide.layout) ?? SLIDE_LAYOUTS[2]
   const fields = layout.fields.map((field) => `- ${FIELD_HINTS[field]}`).join('\n')
+  const supportsGraphic = GRAPHIC_LAYOUTS.has(layout.id)
+  const isImageLayout = layout.id === 'image-left' || layout.id === 'image-right'
+  const hints = supportsGraphic
+    ? searchGraphics(`${slide.title} ${slide.brief ?? ''}`, 6).map((g) => `${g.id}=${g.name}`)
+    : []
+  return (
+    `LAYOUT BẮT BUỘC: "${layout.id}" (${layout.name}) — ${layout.description}\n` +
+    `FIELD CẦN ĐIỀN:\n${fields}\n` +
+    '- "notes" — mảng 0–6 chuỗi ghi chú trình bày (tuỳ chọn).\n' +
+    (LAYOUT_NOTES[layout.id] ?? '') +
+    (supportsGraphic ? '- "graphic" — id đồ hoạ có sẵn (tuỳ chọn).\n' : '') +
+    `- "layout" phải đúng "${layout.id}"; không thêm field khác.\n` +
+    budgetLine(layout.id) +
+    (hints.length ? `\nGợi ý đồ hoạ khớp từ khoá tiêu đề (xét trước): ${hints.join(', ')}.` : '') +
+    (isImageLayout
+      ? '\nLayout ảnh: ĐỂ TRỐNG "image" (app tự vẽ ảnh minh hoạ nền sau 45–90 giây). Có id đồ hoạ phù hợp thì ' +
+        'đặt "graphic" để slide có hình ngay trong lúc chờ ảnh.'
+      : '')
+  )
+}
+
+/** Catalog đồ hoạ — gửi một lần nếu có slide nào cần. */
+function graphicBlock(plan: DeckPlan): string {
+  return (
+    '\n\nĐỒ HOẠ CÓ SẴN — chọn MỘT id khớp chủ đề cho field "graphic" ' +
+    '(nhanh, đúng màu, không tốn lượt vẽ ảnh):\n' +
+    graphicCatalogText(subjectById(plan.subject)?.graphicGroups) +
+    '\n- "graphic" chỉ dùng id trong danh sách trên; KHÔNG bịa id mới.\n' +
+    '- Chọn theo NGHĨA CỦA NỘI DUNG slide, không theo hình tượng chung của môn (vd: cái cân không hợp với ƯCLN). ' +
+    'NÊN chọn một hình: hình gần nghĩa (cùng chủ đề, cùng hoạt động — vd: mục tiêu → cờ đích, luyện tập → bút chì, ' +
+    'tổng kết → sách/bài trắc nghiệm) vẫn tốt hơn để trống. Chỉ BỎ TRỐNG khi mọi id đều lệch hẳn nghĩa.\n'
+  )
+}
+
+/** Quy tắc nội dung + bối cảnh deck + dàn ý: dùng chung mọi slide. */
+function deckContextBlock(plan: DeckPlan): string {
   const outline = plan.slides
     .map(
       (item, i) =>
@@ -507,45 +538,7 @@ export function pageSystemPrompt(
       pack.avoid.join('; ') +
       '.\n\n'
     : ''
-  // Chỉ những layout đang dùng đồ hoạ; không nhồi catalog 112 mục vào mọi lượt gọi.
-  const supportsGraphic =
-    layout.id === 'title' ||
-    layout.id === 'section' ||
-    layout.id === 'closing' ||
-    layout.id === 'hook' ||
-    layout.id === 'bullets' ||
-    layout.id === 'image-left' ||
-    layout.id === 'image-right'
-  const isImageLayout = layout.id === 'image-left' || layout.id === 'image-right'
-  const hints = supportsGraphic
-    ? searchGraphics(`${slide.title} ${slide.brief ?? ''}`, 6).map((g) => `${g.id}=${g.name}`)
-    : []
-  const graphicBlock = supportsGraphic
-    ? '\n\nĐỒ HOẠ CÓ SẴN — chọn MỘT id khớp chủ đề cho field "graphic" ' +
-      '(nhanh, đúng màu, không tốn lượt vẽ ảnh):\n' +
-      graphicCatalogText(subjectById(plan.subject)?.graphicGroups) +
-      '\n- "graphic" chỉ dùng id trong danh sách trên; KHÔNG bịa id mới.\n' +
-      '- Chọn theo NGHĨA CỦA NỘI DUNG slide, không theo hình tượng chung của môn (vd: cái cân không hợp với ƯCLN). ' +
-      'NÊN chọn một hình: hình gần nghĩa (cùng chủ đề, cùng hoạt động — vd: mục tiêu → cờ đích, luyện tập → bút chì, ' +
-      'tổng kết → sách/bài trắc nghiệm) vẫn tốt hơn để trống. Chỉ BỎ TRỐNG khi mọi id đều lệch hẳn nghĩa.\n' +
-      (hints.length ? `- Gợi ý khớp từ khoá tiêu đề (xét trước): ${hints.join(', ')}.\n` : '') +
-      (isImageLayout
-        ? '- Layout ảnh: ĐỂ TRỐNG "image" (app tự vẽ ảnh minh hoạ nền sau 45–90 giây). Có id đồ hoạ phù hợp thì ' +
-          'đặt "graphic" để slide có hình ngay trong lúc chờ ảnh.\n'
-        : '')
-    : ''
-
   return (
-    'Bạn là trợ lý AI của trình soạn bài trình bày tiếng Việt. Viết nội dung cho ĐÚNG MỘT slide. ' +
-    'Chỉ trả về DUY NHẤT một JSON hợp lệ, không bọc markdown, không chữ ngoài JSON.\n\n' +
-    `LAYOUT BẮT BUỘC: "${layout.id}" (${layout.name}) — ${layout.description}\n` +
-    `FIELD CẦN ĐIỀN:\n${fields}\n` +
-    '- "notes" — mảng 0–6 chuỗi ghi chú trình bày (tuỳ chọn).\n' +
-    (LAYOUT_NOTES[layout.id] ?? '') +
-    (supportsGraphic ? '- "graphic" — id đồ hoạ có sẵn (tuỳ chọn).\n' : '') +
-    `- "layout" phải đúng "${layout.id}"; không thêm field khác.\n\n` +
-    budgetLine(layout.id) +
-    graphicBlock +
     '\n\nQUY TẮC NỘI DUNG:\n' +
     '- Viết như slide thuyết trình: MỘT thông điệp chính mỗi slide, mỗi ý là cụm từ cụ thể ' +
     '8–18 từ, không viết câu dài hay đoạn văn.\n' +
@@ -558,19 +551,69 @@ export function pageSystemPrompt(
     '- Không bịa số liệu thật; số liệu minh hoạ phải ghi rõ "ví dụ".\n' +
     '- Công thức đơn giản (x², √, ≤, →, π, α) viết bằng ký tự Unicode. Công thức có phân số, căn dài, ' +
     'chỉ số, tích phân hoặc phương trình hoá học viết LaTeX giữa $...$ ' +
-    '(vd $\\frac{18}{24}=\\frac{3}{4}$, $\\ce{Zn + CuSO4 -> ZnSO4 + Cu}$). Trong JSON PHẢI viết hai dấu ' +
-    'gạch chéo ngược (\\\\frac, \\\\sqrt, \\\\cdot). Chỉ dùng $ cho công thức, không dùng cho tiền.\n\n' +
+    '(vd $\frac{18}{24}=\frac{3}{4}$, $\ce{Zn + CuSO4 -> ZnSO4 + Cu}$). Trong JSON PHẢI viết hai dấu ' +
+    'gạch chéo ngược (\\frac, \\sqrt, \\cdot). Chỉ dùng $ cho công thức, không dùng cho tiền.\n\n' +
     'BỐI CẢNH DECK:\n' +
     `- Tiêu đề: ${plan.title ?? '(chưa có)'}\n` +
     `- Đối tượng: ${plan.audience ?? 'học sinh'}\n` +
     `- Phong cách: ${plan.style ?? 'thuyết trình rõ ràng, có điểm nhấn: mỗi slide chốt một thông điệp, ưu tiên số liệu và ví dụ cụ thể'}\n\n` +
     packBlock +
     subjectRulesBlock(plan.subject) +
-    `DÀN Ý CẢ DECK (để không lặp ý):\n${outline}\n\n` +
-    `SLIDE CẦN VIẾT: ${index + 1}/${plan.slides.length} — ${slide.title}` +
+    `DÀN Ý CẢ DECK (để không lặp ý):\n${outline}\n\n`
+  )
+}
+
+function slideHeading(plan: DeckPlan, slide: DeckPlanSlide, index: number): string {
+  return (
+    `${index + 1}/${plan.slides.length} — ${slide.title}` +
     `${slide.kicker ? ` (nhãn: ${slide.kicker})` : ''}\n` +
     (slide.brief ? `Brief: ${slide.brief}\n` : '')
   )
+}
+
+/**
+ * System prompt cho một slide (dùng cho lượt sửa / chấm lại từng slide).
+ */
+export function pageSystemPrompt(
+  plan: DeckPlan,
+  slide: DeckPlanSlide,
+  index: number,
+): string {
+  return (
+    'Bạn là trợ lý AI của trình soạn bài trình bày tiếng Việt. Viết nội dung cho ĐÚNG MỘT slide. ' +
+    'Chỉ trả về DUY NHẤT một JSON hợp lệ, không bọc markdown, không chữ ngoài JSON.\n\n' +
+    slideSpecBlock(slide) +
+    (GRAPHIC_LAYOUTS.has(slide.layout) ? graphicBlock(plan) : '') +
+    deckContextBlock(plan) +
+    'SLIDE CẦN VIẾT: ' + slideHeading(plan, slide, index)
+  )
+}
+
+/**
+ * System prompt cho một nhóm slide liền nhau trong MỘT lần gọi: phần quy tắc, bối cảnh,
+ * dàn ý và catalog đồ hoạ chỉ gửi một lần thay vì lặp lại cho từng slide (đỡ token).
+ */
+export function batchSystemPrompt(plan: DeckPlan, indices: number[]): string {
+  const needsGraphic = indices.some((i) => GRAPHIC_LAYOUTS.has(plan.slides[i].layout))
+  const specs = indices
+    .map((i) => `### SLIDE ${slideHeading(plan, plan.slides[i], i)}${slideSpecBlock(plan.slides[i])}`)
+    .join('\n\n')
+  return (
+    'Bạn là trợ lý AI của trình soạn bài trình bày tiếng Việt. Viết nội dung cho ' +
+    `${indices.length} slide liệt kê ở cuối. Chỉ trả về DUY NHẤT một JSON hợp lệ dạng ` +
+    '{"slides":[{...},{...}]} — mỗi phần tử là JSON của một slide, ĐÚNG THỨ TỰ và ĐỦ số slide, ' +
+    'không bọc markdown, không chữ ngoài JSON.' +
+    (needsGraphic ? graphicBlock(plan) : '') +
+    deckContextBlock(plan) +
+    `CÁC SLIDE CẦN VIẾT (mỗi slide tuân thủ đúng layout, field, ngân sách chữ của nó):\n\n${specs}\n`
+  )
+}
+
+/** Tách mảng slide từ phản hồi gộp; thiếu/hỏng thì phần tử đó là null. */
+export function parseBatchSlides(raw: unknown, count: number): unknown[] {
+  const list = raw && typeof raw === 'object' ? (raw as { slides?: unknown }).slides : null
+  const arr = Array.isArray(list) ? list : []
+  return Array.from({ length: count }, (_, i) => arr[i] ?? null)
 }
 
 /** Lượt sửa duy nhất: nêu đúng lỗi để model sửa thay vì viết lại mù. */

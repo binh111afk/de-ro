@@ -20,7 +20,7 @@ import {
   type DeckPlan,
   type DeckPlanSlide,
 } from '@/lib/aiDeck'
-import { checkSlide, dropRepeatedGraphic, pageSystemPrompt, planDecorKit, repairPrompt } from '@/lib/slideAi'
+import { batchSystemPrompt, checkSlide, dropRepeatedGraphic, pageSystemPrompt, parseBatchSlides, planDecorKit, repairPrompt } from '@/lib/slideAi'
 import { SLIDE_LAYOUTS } from '@/lib/slideLayouts'
 import { DECK_THEMES } from '@/lib/slideTheme'
 import { stylePackById } from '@/lib/slideStyles'
@@ -615,6 +615,52 @@ export async function generateSlide(
   // Lỗi cứng sau repair → bỏ slide; chỉ còn lỗi "chữ nhỏ" thì vẫn dùng (đừng mất slide vì thẩm mỹ).
   if (second.errors.length) return check.errors.length ? null : withKit(check.page)
   return withKit(second.page)
+}
+
+/** Số slide mỗi lần gọi model: gộp để không gửi lại prompt chung cho từng slide. */
+export const SLIDE_BATCH = 4
+
+/**
+ * Sinh một nhóm slide trong MỘT lần gọi. Slide nào sai thì sửa riêng đúng một lần
+ * (prompt một slide + bản lỗi); vẫn sai trả null để slide đó bị bỏ.
+ */
+export async function generateSlideBatch(
+  plan: DeckPlan,
+  indices: number[],
+  signal: AbortSignal,
+): Promise<Array<AiSlidePayload | null>> {
+  if (indices.length === 1) return [await generateSlide(plan, plan.slides[indices[0]], indices[0], signal)]
+  const decorKit = planDecorKit(plan)
+  const withKit = (page: AiSlidePayload): AiSlidePayload => ({ ...page, decorKit })
+  const res = await callLlm(
+    [
+      { role: 'system', content: batchSystemPrompt(plan, indices) },
+      { role: 'user', content: `Viết slide ${indices.map((i) => i + 1).join(', ')}.` },
+    ],
+    { signal, reasoningEffort: 'medium' },
+  )
+  const items = parseBatchSlides(parseAiObject(res.content), indices.length)
+  return Promise.all(
+    indices.map(async (index, k) => {
+      const planSlide = plan.slides[index]
+      if (!items[k]) return generateSlide(plan, planSlide, index, signal)
+      const check = checkSlide(items[k], planSlide.layout, planSlide.tone)
+      if (!check.errors.length && !check.readability.length) return withKit(check.page)
+      const system = pageSystemPrompt(plan, planSlide, index)
+      const repaired = await callLlm(
+        [
+          { role: 'system', content: system },
+          { role: 'user', content: `Viết slide ${index + 1}: "${planSlide.title}".` },
+          { role: 'assistant', content: JSON.stringify(items[k]) },
+          { role: 'user', content: repairPrompt([...check.errors, ...check.readability]) },
+        ],
+        { signal, reasoningEffort: 'medium' },
+      )
+      const second = checkSlide(parseAiObject(repaired.content), planSlide.layout, planSlide.tone)
+      if (second.errors.length) return check.errors.length ? null : withKit(check.page)
+      return withKit(second.page)
+    }),
+  )
 }
 
 /**
@@ -1266,16 +1312,18 @@ export function AiPanel({
 
       const worker = async () => {
         while (!controller.signal.aborted) {
-          const index = nextIndex++
-          if (index >= total) return
-          const planSlide = plan.slides[index]
-          progress(planSlide.title)
+          const start = nextIndex
+          if (start >= total) return
+          nextIndex = Math.min(total, start + SLIDE_BATCH)
+          const indices = Array.from({ length: nextIndex - start }, (_, k) => start + k)
+          progress(plan.slides[start].title)
           try {
-            results[index] = await generateSlide(plan, planSlide, index, controller.signal)
+            const pages = await generateSlideBatch(plan, indices, controller.signal)
+            indices.forEach((index, k) => { results[index] = pages[k] })
           } catch (err) {
             if (controller.signal.aborted) return
             lastError = (err as Error)?.message || 'Lỗi không rõ'
-            results[index] = null
+            indices.forEach((index) => { results[index] = null })
           }
           await landReady()
         }

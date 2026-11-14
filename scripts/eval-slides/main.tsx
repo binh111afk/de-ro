@@ -10,7 +10,7 @@ import '@fontsource/be-vietnam-pro/700.css'
 import '@/index.css'
 import { createRoot } from 'react-dom/client'
 import { SlideThumb } from '@/examEditor/SlideEditor'
-import { SLIDE_PLAN_SYSTEM, generateSlide, polishSlide } from '@/examEditor/AiPanel'
+import { SLIDE_BATCH, SLIDE_PLAN_SYSTEM, generateSlide, generateSlideBatch, polishSlide } from '@/examEditor/AiPanel'
 import { callLlm } from '@/lib/llm'
 import { parseDeckPlan } from '@/lib/aiDeck'
 import { dropRepeatedGraphic, slideFromAi, withImage } from '@/lib/slideAi'
@@ -59,10 +59,26 @@ async function main() {
   }
   const planMs = Math.round(performance.now() - t0)
 
-  // đồng thời 3 như AiPanel
   const pages = new Array<Awaited<ReturnType<typeof generateSlide>>>(plan.slides.length)
   let next = 0
-  await Promise.all(
+  // ?batch=1: gộp SLIDE_BATCH slide mỗi lần gọi, hai luồng như AiPanel
+  if (new URLSearchParams(location.search).get('batch')) await Promise.all(
+    Array.from({ length: 2 }, async () => {
+      while (next < plan.slides.length) {
+        const start = next
+        next = Math.min(plan.slides.length, start + SLIDE_BATCH)
+        const idx = Array.from({ length: next - start }, (_, k) => start + k)
+        try {
+          const got = await generateSlideBatch(plan, idx, controller.signal)
+          idx.forEach((i, k) => { pages[i] = got[k] })
+        } catch {
+          idx.forEach((i) => { pages[i] = null })
+        }
+      }
+    }),
+  )
+  // mặc định: từng slide, đồng thời 3
+  else await Promise.all(
     Array.from({ length: 3 }, async () => {
       while (next < plan.slides.length) {
         const i = next++
