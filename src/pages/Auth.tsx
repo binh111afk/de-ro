@@ -16,7 +16,7 @@ const COPY: Record<Mode, { eyebrow: string; title: string; body: string; submit:
   register: {
     eyebrow: 'Tạo tài khoản',
     title: 'Mở là soạn, không cần thẻ.',
-    body: 'Một tài khoản để giữ đề, slide và ảnh của bạn. Miễn phí, chỉ cần email và mật khẩu.',
+    body: 'Một tài khoản để giữ đề, slide và ảnh của bạn. Chỉ cần email và mật khẩu.',
     submit: 'Tạo tài khoản',
   },
   forgot: {

@@ -85,12 +85,8 @@ export function HeroSection() {
         <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-10">
           {/* Cột nội dung chính */}
           <div className="min-w-0 lg:col-span-5">
-            <p style={{ '--d': '0ms' } as React.CSSProperties} className="land-rise inline-flex items-center gap-2 rounded-full border border-clay-line bg-clay-tint px-3 py-1 text-[12px] font-semibold text-clay-deep">
-              <span className="h-1.5 w-1.5 rounded-full bg-clay" aria-hidden />
-              Miễn phí cho giáo viên Việt Nam
-            </p>
 
-            <h1 style={{ '--d': '80ms' } as React.CSSProperties} className="land-rise mt-4 text-[clamp(1.75rem,3.6vw,2.75rem)] font-bold leading-[1.12] tracking-[-0.025em] text-ink">
+            <h1 style={{ '--d': '80ms' } as React.CSSProperties} className="land-rise text-[clamp(1.75rem,3.6vw,2.75rem)] font-bold leading-[1.12] tracking-[-0.025em] text-ink">
               Đề thi, bài giảng, bảng dạy — cùng một chỗ.
             </h1>
 
@@ -116,7 +112,7 @@ export function HeroSection() {
 
             <dl
               ref={statsReveal.ref}
-              className="mt-7 grid grid-cols-2 gap-x-5 gap-y-3 border-t border-line pt-5 sm:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4"
+              className="mt-7 grid grid-cols-2 gap-x-5 gap-y-3 border-t border-line pt-5 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3"
             >
               {STATS.map((s, idx) => (
                 <div key={s.label} className="min-w-0">
@@ -129,10 +125,6 @@ export function HeroSection() {
                   </dd>
                 </div>
               ))}
-              <div className="min-w-0">
-                <dt className="text-[12px] font-medium text-ink-2">tài khoản miễn phí</dt>
-                <dd className="tnum mt-0.5 text-[18px] font-bold tracking-[-0.02em] text-clay-deep">0 đ</dd>
-              </div>
             </dl>
           </div>
 
