@@ -23,13 +23,13 @@ const SECONDARY_WORKSPACES = [
   },
   {
     id: 'board',
-    badge: 'Bảng vẽ · PDF',
+    badge: 'Bảng vẽ',
     title: 'Bảng vẽ',
     icon: PenTool,
-    desc: 'Viết tay trên giấy trơn hay ô li. Giữ bút một nhịp là nét tay thành đường thẳng, đường tròn. Mở được đề PDF để ghi chú.',
+    desc: 'Viết tay trên giấy trơn hay ô li. Giữ bút một nhịp là nét tay thành đường thẳng, đường tròn.',
     bullets: [
       'Thước kẻ, thước đo góc, compa',
-      'Mở PDF, ghi chú, xuất lại',
+      'Chèn hình từ bộ công cụ vẽ',
     ],
   },
 ]

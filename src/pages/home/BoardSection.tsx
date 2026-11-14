@@ -15,12 +15,12 @@ const MODES: Array<{
 }> = [
   {
     key: 'pdf',
-    label: 'Ghi chú trên PDF',
-    img: '/landing/board-pdf.webp',
-    img2x: '/landing/board-pdf@2x.webp',
-    w: 1040,
-    h: 618,
-    alt: 'Màn hình bảng vẽ mở tệp PDF nhiều trang với thanh trang bên trái và nét ghi chú',
+    label: 'Bảng vẽ',
+    img: '/landing/hero-board.webp',
+    img2x: '/landing/hero-board@2x.webp',
+    w: 1100,
+    h: 653,
+    alt: 'Bảng vẽ giấy ô li: đồ thị parabol dựng bằng công cụ, bảng giá trị và ghi chú viết tay',
   },
 ]
 
@@ -37,8 +37,8 @@ const BOARD_SPECS = [
   },
   {
     icon: FileUp,
-    title: 'Chữa đề PDF',
-    text: 'Mở đề PDF, lật trang ở cột trái, ghi chú rồi xuất lại đúng khổ giấy gốc.',
+    title: 'Chèn hình, mở PDF',
+    text: 'Đồ thị, hình học từ bộ công cụ vẽ đặt thẳng lên bảng. Cần chữa đề có sẵn thì mở file PDF ra ghi chú.',
   },
 ]
 
@@ -62,16 +62,16 @@ export function BoardSection() {
               Vẽ, giảng, chữa đề trên một tấm bảng.
             </h2>
             <p className="mt-3 text-[15px] leading-[1.65] text-deep-muted">
-              Chiếu lên lớp hoặc chia sẻ màn hình khi dạy online. Viết tay, kẻ thước, quay compa, mở đề PDF ra khoanh đáp án.
+              Chiếu lên lớp hoặc chia sẻ màn hình khi dạy online. Viết tay, kẻ thước, quay compa, chèn đồ thị ngay trên bảng.
             </p>
           </div>
         </div>
 
         <div {...reveal.revealProps} className="mt-9 grid grid-cols-1 items-start gap-7 lg:grid-cols-12">
-          {/* Ảnh màn hình thật của Bảng vẽ / PDF */}
+          {/* Ảnh màn hình thật của Bảng vẽ */}
           <div className="min-w-0 lg:col-span-7">
             <div className="overflow-hidden rounded-[12px] border border-white/15 bg-[#1b2025]">
-              <div className="aspect-[1040/618] w-full">
+              <div className="aspect-[1100/653] w-full">
                 <img
                   key={active.key}
                   src={active.img}

@@ -44,12 +44,12 @@ const TABS: Array<{
   {
     key: 'board',
     label: 'Bảng vẽ',
-    ext: 'PDF',
+    ext: 'Vẽ tay',
     icon: PenTool,
-    img: '/landing/board-pdf.webp',
-    img2x: '/landing/board-pdf@2x.webp',
-    alt: 'Bảng vẽ mở đề PDF nhiều trang, có cột trang thu nhỏ bên trái và nét ghi chú trên đề',
-    caption: 'Viết tay, kẻ thước, quay compa, khoanh thẳng lên đề PDF.',
+    img: '/landing/hero-board.webp',
+    img2x: '/landing/hero-board@2x.webp',
+    alt: 'Bảng vẽ giấy ô li: đồ thị parabol dựng bằng công cụ, bảng giá trị và ghi chú viết tay',
+    caption: 'Chèn đồ thị, viết lời giải, khoanh, tô ngay bên cạnh.',
   },
 ]
 
