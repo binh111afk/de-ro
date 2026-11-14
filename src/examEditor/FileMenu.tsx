@@ -11,6 +11,13 @@ import { IconPlus } from './icons'
 import { popoverStyle, useAnchoredPopover } from './useAnchoredPopover'
 import { IMPORT_ACCEPT } from '@/lib/importFile'
 
+export interface FileMenuExtra {
+  label: string
+  hint: string
+  onClick: () => void
+  icon?: React.ReactNode
+}
+
 export interface FileMenuProps {
   kind: 'exam' | 'slide'
   onNew: () => void
@@ -20,8 +27,8 @@ export interface FileMenuProps {
   downloadHint: string
   /** lưu ý dưới mục tải xuống (vd. giới hạn khi xuất) */
   downloadNote?: string
-  /** mục xuất thêm sau "Tải xuống file" (vd. PDF) */
-  extra?: { label: string; hint: string; onClick: () => void; icon?: React.ReactNode }
+  /** mục thêm sau "Tải xuống file" (vd. Xuất PDF, Làm đề tương tác) — một mục hoặc danh sách */
+  extra?: FileMenuExtra | FileMenuExtra[]
 }
 
 function IconTray({ up = false }: { up?: boolean }) {
@@ -172,24 +179,25 @@ export function FileMenu({ kind, onNew, onImport, onDownload, downloadHint, down
             </span>
           </button>
 
-          {extra && (
+          {(Array.isArray(extra) ? extra : extra ? [extra] : []).map((x) => (
             <button
+              key={x.label}
               type="button"
               role="menuitem"
               className="file-menu__item"
               disabled={busy}
               onClick={() => {
                 setOpen(false)
-                extra.onClick()
+                x.onClick()
               }}
             >
-              <span className="file-menu__icon">{extra.icon ?? <IconTray />}</span>
+              <span className="file-menu__icon">{x.icon ?? <IconTray />}</span>
               <span className="file-menu__text">
-                <span className="file-menu__label">{extra.label}</span>
-                <span className="file-menu__hint">{extra.hint}</span>
+                <span className="file-menu__label">{x.label}</span>
+                <span className="file-menu__hint">{x.hint}</span>
               </span>
             </button>
-          )}
+          ))}
           {downloadNote && <div className="file-menu__note">{downloadNote}</div>}
           {busy && <div className="file-menu__status">Đang xử lý tệp…</div>}
           {error && (

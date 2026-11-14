@@ -59,6 +59,8 @@ const DEFAULT_STATE: FormatState = {
 }
 
 function num(v: unknown, fallback: number): number {
+  // Number(null) và Number('') đều ra 0: thuộc tính chưa đặt phải lấy giá trị mặc định, không thành 0
+  if (v === null || v === undefined || v === '') return fallback
   const n = Number(v)
   return Number.isFinite(n) ? n : fallback
 }

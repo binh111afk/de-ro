@@ -512,12 +512,27 @@
     cursor: default;
   }
 
-  /* ---- split button + color picker (font color / highlight / shading) ---- */
+  /* ---- split button + color picker (font color / highlight / shading) ----
+   * Nút chính + mũi tên là MỘT khối: rê vào thì cả khối có nền và viền chung,
+   * có vạch ngăn giữa hai phần để thấy rõ bấm trái = áp ngay, bấm mũi tên = mở bảng. */
   .rb-split {
     position: relative;
     display: inline-flex;
-    align-items: center;
-    gap: 1px;
+    align-items: stretch;
+    border-radius: 6px;
+    box-shadow: inset 0 0 0 1px transparent;
+    transition: box-shadow 0.15s, background-color 0.15s;
+  }
+
+  .rb-split:hover:not(:has(:disabled)),
+  .rb-split:has(.rb-color-caret.is-open) {
+    background: var(--bg-hover-subtle, var(--hover));
+    box-shadow: inset 0 0 0 1px var(--border);
+  }
+
+  .rb-split > .rb-icon,
+  .rb-split > button:first-child {
+    border-radius: 6px 0 0 6px;
   }
 
   /* glyph xếp dọc: icon trên, thanh màu treo bên dưới (giống GenOffice) */
@@ -542,20 +557,22 @@
     height: 4px;
     border-radius: 1px;
     margin: 0 2px;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
   }
 
   .rb-color-drop {
     position: relative;
     display: inline-flex;
-    align-items: center;
+    align-items: stretch;
   }
 
   .rb-color-caret {
-    width: 16px;
-    height: 24px;
+    position: relative;
+    width: 20px;
+    min-height: 30px;
     border: none;
     background: none;
-    border-radius: 3px;
+    border-radius: 0 6px 6px 0;
     line-height: 1;
     cursor: pointer;
     color: var(--text-secondary);
@@ -563,10 +580,39 @@
     align-items: center;
     justify-content: center;
     padding: 0;
+    transition: background-color 0.15s, color 0.15s;
   }
 
-  .rb-color-caret:hover:not(:disabled) {
+  /* vạch ngăn giữa nút chính và mũi tên, chỉ hiện khi rê vào khối */
+  .rb-color-caret::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 6px;
+    bottom: 6px;
+    width: 1px;
+    background: var(--border);
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  .rb-split:hover .rb-color-caret::before,
+  .rb-color-caret.is-open::before {
+    opacity: 1;
+  }
+
+  .rb-color-caret svg {
+    transition: transform 0.18s ease;
+  }
+
+  .rb-color-caret.is-open svg {
+    transform: rotate(180deg);
+  }
+
+  .rb-color-caret:hover:not(:disabled),
+  .rb-color-caret.is-open {
     background: var(--hover);
+    color: var(--text);
   }
 
   .rb-color-caret:disabled {
@@ -579,48 +625,111 @@
     position: fixed;
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 4px;
+    border-radius: 8px;
     box-shadow: var(--shadow-menu);
-    padding: 6px;
-    min-width: 148px;
+    padding: 8px;
+    min-width: 196px;
     max-width: calc(100vw - 16px);
+    animation: gs-dd-in 0.12s ease-out;
+  }
+
+  .rb-color-menu__title {
+    padding: 2px 4px 6px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
   }
 
   .rb-color-grid {
     display: grid;
-    grid-template-columns: repeat(10, 14px);
-    gap: 2px;
-    margin-bottom: 4px;
+    grid-template-columns: repeat(10, 20px);
+    gap: 4px;
+    padding: 2px 4px 4px;
   }
 
   .rb-color-swatch {
-    width: 14px;
-    height: 14px;
+    width: 20px;
+    height: 20px;
     border: 1px solid var(--docs-swatch-outline);
-    border-radius: 2px;
+    border-radius: 4px;
     cursor: pointer;
     padding: 0;
+    transition: transform 0.1s, box-shadow 0.1s;
   }
 
   .rb-color-swatch:hover {
     border-color: var(--docs-swatch-outline-strong);
+    transform: scale(1.12);
+  }
+
+  .rb-color-swatch.is-current {
+    box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent);
   }
 
   .rb-color-item {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 10px;
     width: 100%;
+    min-height: 32px;
     border: none;
     background: none;
     text-align: left;
-    padding: 5px 8px;
-    font-size: 12px;
-    border-radius: 3px;
+    padding: 6px 8px;
+    font-size: 12.5px;
+    border-radius: 5px;
     cursor: pointer;
     color: var(--text);
   }
 
   .rb-color-item:hover {
     background: var(--hover);
+  }
+
+  .rb-color-item.is-active {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .rb-color-item__label {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* ô "không màu": vuông trắng gạch chéo đỏ */
+  .rb-color-none {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    border: 1px solid var(--docs-swatch-outline);
+    border-radius: 4px;
+    background: linear-gradient(to top right, transparent calc(50% - 1px), #e5484d calc(50% - 1px), #e5484d calc(50% + 1px), transparent calc(50% + 1px)), #fff;
+  }
+
+  /* hình minh hoạ cạnh viền: khung mờ, cạnh được chọn tô đậm */
+  .rb-border-glyph {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    border: 1px dashed var(--border-strong);
+    border-radius: 2px;
+  }
+
+  .rb-border-glyph.is-top { border-top: 2px solid var(--text); }
+  .rb-border-glyph.is-bottom { border-bottom: 2px solid var(--text); }
+  .rb-border-glyph.is-left { border-left: 2px solid var(--text); }
+  .rb-border-glyph.is-right { border-right: 2px solid var(--text); }
+  .rb-border-glyph.is-box { border: 2px solid var(--text); }
+
+  /* độ dày viền trang */
+  .rb-line-glyph {
+    display: block;
+    width: 22px;
+    flex-shrink: 0;
+    border-radius: 1px;
+    background: var(--text);
   }
 
   /* ---- styles gallery (Normal / Heading / Quote…) ---- */
@@ -2861,27 +2970,33 @@
   .rb-inline-label {
     display: inline-flex;
     align-items: center;
-    gap: 3px;
-    font-size: 11px;
+    gap: 5px;
+    font-size: 11.5px;
     color: var(--text-secondary);
     white-space: nowrap;
   }
 
   .rb-num-input {
-    width: 44px;
-    height: 24px;
+    width: 48px;
+    height: 28px;
     border: 1px solid var(--border-strong);
-    border-radius: 3px;
-    padding: 0 4px;
-    font-size: 11.5px;
+    border-radius: 6px;
+    padding: 0 6px;
+    font-size: 12.5px;
+    transition: border-color 0.15s, box-shadow 0.15s;
     background: var(--surface);
     color: var(--text);
     font-variant-numeric: tabular-nums;
   }
 
+  .rb-num-input:hover:not(:disabled) {
+    border-color: var(--border-hover);
+  }
+
   .rb-num-input:focus {
     outline: none;
     border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
   }
 
   .rb-num-input:disabled {
@@ -2898,33 +3013,38 @@
     gap: 2px;
   }
 
+  /* ô chọn trong ribbon (phông, cỡ chữ, giãn dòng, lề…): cùng chiều cao, viền, bo góc với ô nhập số */
   .gs-dd-trigger {
     display: inline-flex;
     align-items: center;
     justify-content: space-between;
     gap: 2px;
+    width: 100%;
     height: 28px;
     border: 1px solid var(--border-strong);
-    border-radius: 3px;
+    border-radius: 6px;
     background: var(--surface);
-    padding: 0 2px 0 6px;
-    font-size: 12px;
+    padding: 0 3px 0 8px;
+    font-size: 12.5px;
     color: var(--text);
     cursor: pointer;
     white-space: nowrap;
+    transition: border-color 0.15s, box-shadow 0.15s, background-color 0.15s;
   }
 
   .gs-dd-trigger:hover:not(:disabled) {
     border-color: var(--border-hover);
-    background: var(--bg-hover-subtle);
   }
 
-  .gs-dd-trigger.open {
+  .gs-dd-trigger.open,
+  .gs-dd-trigger:focus-visible {
+    outline: none;
     border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
   }
 
   .gs-dd-trigger:disabled {
-    opacity: 0.55;
+    opacity: 0.5;
     cursor: default;
   }
 
@@ -2933,48 +3053,70 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     flex: 1;
+    min-width: 0;
     text-align: left;
   }
 
   .gs-dd-caret {
     width: 16px;
-    height: 22px;
+    height: 20px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     color: var(--text-secondary);
-    border-radius: 2px;
     flex-shrink: 0;
+    transition: transform 0.18s ease;
   }
 
-  .gs-dd-trigger:hover:not(:disabled) .gs-dd-caret {
-    background: var(--hover);
+  .gs-dd-trigger.open .gs-dd-caret {
+    transform: rotate(180deg);
+    color: var(--accent);
   }
 
   .gs-dd-pop {
-    /* position/top/left/width do inline style đặt theo tọa độ trigger
+    /* position/top/left/min-width do inline style đặt theo tọa độ trigger
        (position: fixed) — để thoát khỏi overflow clipping của ribbon body */
     z-index: 60;
     max-height: 320px;
     overflow-y: auto;
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 4px;
+    border-radius: 8px;
     box-shadow: var(--shadow-menu);
-    padding: 3px;
+    padding: 4px;
+    animation: gs-dd-in 0.12s ease-out;
+  }
+
+  @keyframes gs-dd-in {
+    from { opacity: 0; transform: translateY(-3px); }
+    to { opacity: 1; transform: none; }
   }
 
   .gs-dd-item {
-    padding: 5px 8px;
-    border-radius: 3px;
-    font-size: 12px;
+    padding: 6px 10px 6px 4px;
+    border-radius: 5px;
+    font-size: 12.5px;
     color: var(--text);
     cursor: pointer;
     white-space: nowrap;
     display: flex;
     align-items: center;
-    gap: 6px;
-    min-height: 24px;
+    gap: 4px;
+    min-height: 28px;
+  }
+
+  .gs-dd-check {
+    width: 18px;
+    display: inline-flex;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--accent);
+  }
+
+  .gs-dd-label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .gs-dd-item.active {
@@ -4796,6 +4938,12 @@ div[data-exam-node='examQuestionPrompt'] > .exam-image:has(+ .ProseMirror-separa
   min-height: 36px !important;
 }
 
+/* mũi tên của nút tách: đủ rộng để bấm bằng ngón tay */
+.ribbon-phone-sheet-group__items .rb-color-caret {
+  width: 28px !important;
+  min-height: 36px !important;
+}
+
 .ribbon-phone-sheet-group__items .rb-big {
   flex-direction: row !important;
   padding: 6px 10px !important;
@@ -5210,8 +5358,8 @@ div[data-exam-node='examQuestionPrompt'] > .exam-image:has(+ .ProseMirror-separa
   }
 
   .rb-color-caret {
-    width: 24px;
-    height: 36px;
+    width: 26px;
+    min-height: 40px;
   }
 
   .file-menu__pop,

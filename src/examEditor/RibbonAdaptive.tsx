@@ -262,8 +262,6 @@ const PHONE_SHEET_TABS: Array<{ id: string; label: string }> = [
   { id: 'home', label: 'Định dạng' },
   { id: 'insert', label: 'Chèn' },
   { id: 'layout', label: 'Bố cục' },
-  { id: 'design', label: 'Thiết kế' },
-  { id: 'doc', label: 'Tài liệu' },
 ]
 
 export function PhoneRibbon({

@@ -10,7 +10,7 @@
  *
  * Mọi icon là SVG stroke `currentColor` từ bộ icon GenOffice — KHÔNG dùng emoji.
  */
-import { Fragment, useEffect, useRef, useState, type CSSProperties } from 'react'
+import { Fragment, useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import type { Editor } from '@tiptap/core'
 import {
   RibbonBody,
@@ -22,7 +22,7 @@ import {
 } from './Layout'
 import { cn } from '@/lib/cn'
 import { BookMarked } from 'lucide-react'
-import { MonitorPlay, Blocks, ListTree, Wrench } from 'lucide-react'
+import { MonitorPlay, Blocks, ListTree, TableCellsMerge, TableCellsSplit, Wrench } from 'lucide-react'
 import { FileMenu } from './FileMenu'
 import { BankModal } from './BankModal'
 import { templateById, insertBlockTemplate } from './templates'
@@ -40,6 +40,7 @@ import {
   IconBullets,
   IconBorderAll,
   IconCaret,
+  IconCheck,
   IconChangeCase,
   IconChevronDown,
   IconChevronUp,
@@ -83,8 +84,6 @@ export const RIBBON_TABS: RibbonTabDef[] = [
   { id: 'home', label: 'Trang chủ' },
   { id: 'insert', label: 'Chèn' },
   { id: 'layout', label: 'Bố cục' },
-  { id: 'design', label: 'Thiết kế' },
-  { id: 'doc', label: 'Tài liệu' },
 ]
 
 const FONT_SIZES = ['8', '9', '10', '11', '12', '13', '14', '15', '16', '18', '20', '22', '24', '26', '28', '36', '48', '72']
@@ -393,7 +392,10 @@ export function Ribbon({
       onImport={onImportFile}
       onDownload={onExportWord}
       downloadHint=".doc"
-      extra={{ label: 'Làm đề tương tác', hint: 'Làm thử có đếm ngược, tự chấm', onClick: onStartQuiz, icon: <MonitorPlay className="size-4" strokeWidth={1.5} /> }}
+      extra={[
+        { label: 'Xuất PDF', hint: 'In ra hoặc lưu thành PDF', onClick: onExportPdf },
+        { label: 'Làm đề tương tác', hint: 'Làm thử có đếm ngược, tự chấm', onClick: onStartQuiz, icon: <MonitorPlay className="size-4" strokeWidth={1.5} /> },
+      ]}
     />
   )
 
@@ -432,7 +434,7 @@ export function Ribbon({
                 onPick={setFontFamily}
                 disabled={disabled}
                 ariaLabel="Phông chữ"
-                width={128}
+                width={148}
               />
               <Dropdown
                 value={size}
@@ -440,7 +442,7 @@ export function Ribbon({
                 onPick={setFontSize}
                 disabled={disabled}
                 ariaLabel="Cỡ chữ"
-                width={48}
+                width={58}
               />
               <RibbonIconButton icon={<IconGrowFont size={16} />} title="Phóng to chữ" disabled={disabled} onClick={() => stepFontSize(1)} />
               <RibbonIconButton icon={<IconShrinkFont size={16} />} title="Thu nhỏ chữ" disabled={disabled} onClick={() => stepFontSize(-1)} />
@@ -471,7 +473,10 @@ export function Ribbon({
                   onClick={() => chain()?.toggleHighlight({ color: penHighlight }).run()}
                 />
                 <ColorDropdown
+                  title="Màu tô sáng"
                   colors={HIGHLIGHTS}
+                  current={penHighlight}
+                  none={{ label: 'Không tô sáng', onClick: () => chain()?.unsetHighlight().run() }}
                   onPick={(c) => {
                     setPenHighlight(c)
                     chain()?.toggleHighlight({ color: c }).run()
@@ -492,7 +497,10 @@ export function Ribbon({
                   onClick={() => chain()?.setMark('textStyle', { color: penColor }).run()}
                 />
                 <ColorDropdown
+                  title="Màu chữ"
                   colors={THEME_COLORS}
+                  current={penColor}
+                  none={{ label: 'Tự động (đen)', onClick: () => { setPenColor('#000000'); chain()?.unsetMark('textStyle').run() } }}
                   onPick={(c) => {
                     setPenColor(c)
                     chain()?.setMark('textStyle', { color: c }).run()
@@ -529,7 +537,7 @@ export function Ribbon({
                 onPick={(v) => chain()?.setLineHeight(v).run()}
                 disabled={disabled}
                 ariaLabel="Giãn dòng"
-                width={52}
+                width={64}
               />
               <span className="rb-mini-sep" />
               <div className="rb-split">
@@ -544,20 +552,26 @@ export function Ribbon({
                   disabled={disabled}
                   onClick={() => live && applyFormatAttrs(live, { shading: format.shading ? undefined : '#fff2cc' })}
                 />
-                <ColorDropdown colors={THEME_COLORS} onPick={(c) => live && applyFormatAttrs(live, { shading: c })} disabled={disabled} />
+                <ColorDropdown
+                  title="Màu đổ bóng đoạn"
+                  colors={THEME_COLORS}
+                  current={format.shading}
+                  none={{ label: 'Không đổ bóng', onClick: () => live && applyFormatAttrs(live, { shading: undefined }) }}
+                  onPick={(c) => live && applyFormatAttrs(live, { shading: c })}
+                  disabled={disabled}
+                />
               </div>
               <div className="rb-split">
                 <RibbonIconButton icon={<IconBorderAll size={16} />} title="Viền đoạn" disabled={disabled} onClick={() => live && applyFormatAttrs(live, { borders: format.borders === 'box' ? 'none' : 'box' })} />
                 <ColorDropdown
+                  title="Viền đoạn"
                   colors={[]}
-                  items={[
-                    { label: 'Trên', onClick: () => live && applyFormatAttrs(live, { borders: 'top' }) },
-                    { label: 'Dưới', onClick: () => live && applyFormatAttrs(live, { borders: 'bottom' }) },
-                    { label: 'Trái', onClick: () => live && applyFormatAttrs(live, { borders: 'left' }) },
-                    { label: 'Phải', onClick: () => live && applyFormatAttrs(live, { borders: 'right' }) },
-                    { label: 'Khung', onClick: () => live && applyFormatAttrs(live, { borders: 'box' }) },
-                    { label: 'Không viền', onClick: () => live && applyFormatAttrs(live, { borders: 'none' }) },
-                  ]}
+                  items={BORDER_ITEMS.map((it) => ({
+                    label: it.label,
+                    icon: <BorderGlyph side={it.side} />,
+                    active: (format.borders || 'none') === it.side,
+                    onClick: () => live && applyFormatAttrs(live, { borders: it.side }),
+                  }))}
                   disabled={disabled}
                 />
               </div>
@@ -592,14 +606,10 @@ export function Ribbon({
               <RibbonIconButton icon={<IconSearch size={16} />} title="Tìm" disabled={disabled} onClick={onFind} />
               <RibbonIconButton icon={<IconReplace size={16} />} title="Thay thế" disabled={disabled} onClick={onReplace} />
               <RibbonIconButton icon={<IconSelectAll size={16} />} title="Chọn tất cả" disabled={disabled} onClick={() => chain()?.selectAll().run()} />
+              <RibbonIconButton icon={<IconTrash size={16} />} title="Xóa khối đang chọn" disabled={disabled} onClick={() => live && deleteCurrentBlock(live)} />
             </div>
           </div>
         ),
-      },
-      {
-        id: 'print',
-        label: 'Cỡ trang',
-        render: () => <RibbonButton icon={<IconPrintLayout size={26} />} label="In" onClick={onPrint} />,
       },
     ],
     insert: [
@@ -615,11 +625,6 @@ export function Ribbon({
         ),
       },
       {
-        id: 'page',
-        label: 'Trang',
-        render: () => <RibbonButton icon={<IconPageBreak size={26} />} label="Ngắt trang" disabled={disabled} onClick={() => insertTemplate('pageBreak')} />,
-      },
-      {
         id: 'bank',
         label: 'Kho',
         render: () => <RibbonButton icon={<BookMarked size={26} strokeWidth={1.75} />} label="Kho câu hỏi" disabled={disabled} onClick={() => setBankOpen(true)} />,
@@ -630,18 +635,25 @@ export function Ribbon({
         render: () => (
           <>
             <TablePicker editor={editor} disabled={disabled} />
-          </>
-        ),
-      },
-      {
-        id: 'delete',
-        label: 'Xóa',
-        render: () => (
-          <>
-            <RibbonButton icon={<IconTableDelete size={26} />} label="Xóa bảng" disabled={disabled} onClick={() => live && deleteCurrentTable(live)} />
-            <RibbonButton icon={<IconRowDelete size={26} />} label="Xóa hàng" disabled={disabled} onClick={() => live && deleteCurrentTableRow(live)} />
-            <RibbonButton icon={<IconColDelete size={26} />} label="Xóa cột" disabled={disabled} onClick={() => live && deleteCurrentTableColumn(live)} />
-            <RibbonButton icon={<IconTrash size={26} />} label="Xóa khối" disabled={disabled} onClick={() => live && deleteCurrentBlock(live)} />
+            <RibbonButton
+              icon={<TableCellsMerge className="size-[26px]" strokeWidth={1.3} />}
+              label="Gộp ô"
+              title="Kéo chọn nhiều ô trong bảng rồi bấm để gộp"
+              disabled={disabled}
+              onClick={() => live?.chain().focus().mergeCells().run()}
+            />
+            <RibbonButton
+              icon={<TableCellsSplit className="size-[26px]" strokeWidth={1.3} />}
+              label="Tách ô"
+              title="Đặt con trỏ vào ô đã gộp rồi bấm để tách lại"
+              disabled={disabled}
+              onClick={() => live?.chain().focus().splitCell().run()}
+            />
+            <div className="rb-col rb-col--icons">
+              <RibbonIconButton icon={<IconRowDelete size={16} />} title="Xóa hàng" disabled={disabled} onClick={() => live && deleteCurrentTableRow(live)} />
+              <RibbonIconButton icon={<IconColDelete size={16} />} title="Xóa cột" disabled={disabled} onClick={() => live && deleteCurrentTableColumn(live)} />
+              <RibbonIconButton icon={<IconTableDelete size={16} />} title="Xóa bảng" disabled={disabled} onClick={() => live && deleteCurrentTable(live)} />
+            </div>
           </>
         ),
       },
@@ -665,6 +677,11 @@ export function Ribbon({
           </>
         ),
       },
+      {
+        id: 'page',
+        label: 'Trang',
+        render: () => <RibbonButton icon={<IconPageBreak size={26} />} label="Ngắt trang" disabled={disabled} onClick={() => insertTemplate('pageBreak')} />,
+      },
     ],
     layout: [
       {
@@ -686,7 +703,7 @@ export function Ribbon({
                 onPick={(v) => onMarginChange?.(Number(v))}
                 disabled={disabled}
                 ariaLabel="Lề trang"
-                width={72}
+                width={84}
               />
             </div>
             <div className="rb-col rb-col--gap4">
@@ -712,24 +729,64 @@ export function Ribbon({
         ),
       },
       {
+        id: 'theme',
+        label: 'Nền & viền trang',
+        render: () => (
+          <>
+            <div className="rb-split">
+              <RibbonButton
+                icon={
+                  <span className="rb-color-glyph">
+                    <IconDoc size={26} />
+                    <ColorBar color={pageColor} />
+                  </span>
+                }
+                label="Màu trang"
+                onClick={() => onPageColorChange?.('#ffffff')}
+              />
+              <ColorDropdown
+                title="Màu trang"
+                current={pageColor}
+                colors={['#ffffff', '#f7f8f7', '#fff8e6', '#eef4ff', '#eaf4ed', '#fdeceb']}
+                onPick={(c) => onPageColorChange?.(c)}
+              />
+            </div>
+            <div className="rb-split">
+              <RibbonButton
+                icon={
+                  <span className="rb-color-glyph">
+                    <IconTable size={26} />
+                    <ColorBar color={pageBorder ? '#000000' : '#c0c0c0'} />
+                  </span>
+                }
+                label="Viền trang"
+                onClick={() => onPageBorderChange?.(pageBorder ? 0 : 3)}
+              />
+              <ColorDropdown
+                title="Viền trang"
+                colors={[]}
+                items={[
+                  { w: 0, label: 'Không viền' },
+                  { w: 1, label: 'Mảnh (1px)' },
+                  { w: 3, label: 'Đậm (3px)' },
+                  { w: 6, label: 'Rất đậm (6px)' },
+                ].map((it) => ({
+                  label: it.label,
+                  icon: <span className="rb-line-glyph" style={{ height: Math.max(1, it.w), opacity: it.w ? 1 : 0.25 }} aria-hidden="true" />,
+                  active: (pageBorder ?? 0) === it.w,
+                  onClick: () => onPageBorderChange?.(it.w),
+                }))}
+              />
+            </div>
+          </>
+        ),
+      },
+      {
         id: 'layoutPara',
-        label: 'Đoạn văn',
+        label: 'Khoảng cách & thụt lề',
         render: () => (
           <div className="rb-col">
             <div className="rb-row">
-              <RibbonIconButton
-                icon={<IconIndentDec size={16} />}
-                title="Giảm thụt lề"
-                disabled={disabled}
-                onClick={() => live && applyFormatAttrs(live, { indentLeft: Math.max(0, format.indentLeft - 12) })}
-              />
-              <RibbonIconButton
-                icon={<IconIndentInc size={16} />}
-                title="Tăng thụt lề"
-                disabled={disabled}
-                onClick={() => live && applyFormatAttrs(live, { indentLeft: format.indentLeft + 12 })}
-              />
-              <span className="rb-mini-sep" />
               <label className="rb-inline-label">
                 Trước
                 <input
@@ -779,34 +836,6 @@ export function Ribbon({
                   aria-label="Thụt dòng đầu"
                 />
               </label>
-              <span className="rb-mini-sep" />
-              <label className="rb-inline-label">
-                Giãn dòng
-                <Dropdown
-                  value={String(format.lineHeight)}
-                  options={LINE_SPACING.map((l) => ({ value: l.value, label: l.label }))}
-                  onPick={(v) => chain()?.setLineHeight(v).run()}
-                  disabled={disabled}
-                  ariaLabel="Giãn dòng"
-                  width={52}
-                />
-              </label>
-            </div>
-          </div>
-        ),
-      },
-      {
-        id: 'breaks',
-        label: 'Ngắt',
-        render: () => (
-          <div className="rb-col">
-            <div className="rb-row">
-              <RibbonButton
-                icon={<IconPageBreak size={26} />}
-                label="Ngắt trang"
-                disabled={disabled}
-                onClick={() => insertTemplate('pageBreak')}
-              />
             </div>
           </div>
         ),
@@ -823,95 +852,9 @@ export function Ribbon({
         ),
       },
     ],
-    design: [
-      {
-        id: 'theme',
-        label: 'Giao diện',
-        render: () => (
-          <>
-            <div className="rb-split">
-              <RibbonButton
-                icon={
-                  <span className="rb-color-glyph">
-                    <IconDoc size={26} />
-                    <ColorBar color={pageColor} />
-                  </span>
-                }
-                label="Màu trang"
-                onClick={() => onPageColorChange?.('#ffffff')}
-              />
-              <ColorDropdown
-                colors={['#ffffff', '#f7f8f7', '#fff8e6', '#eef4ff', '#eaf4ed', '#fdeceb']}
-                onPick={(c) => onPageColorChange?.(c)}
-              />
-            </div>
-            <div className="rb-split">
-              <RibbonButton
-                icon={
-                  <span className="rb-color-glyph">
-                    <IconTable size={26} />
-                    <ColorBar color={pageBorder ? '#000000' : '#c0c0c0'} />
-                  </span>
-                }
-                label="Viền trang"
-                onClick={() => onPageBorderChange?.(pageBorder ? 0 : 3)}
-              />
-              <ColorDropdown
-                colors={[]}
-                items={[
-                  { label: 'Không viền', onClick: () => onPageBorderChange?.(0) },
-                  { label: 'Mảnh (1px)', onClick: () => onPageBorderChange?.(1) },
-                  { label: 'Đậm (3px)', onClick: () => onPageBorderChange?.(3) },
-                  { label: 'Rất đậm (6px)', onClick: () => onPageBorderChange?.(6) },
-                ]}
-              />
-            </div>
-          </>
-        ),
-      },
-      {
-        id: 'designFont',
-        label: 'Chữ',
-        render: () => (
-          <div className="rb-font-group">
-            <Dropdown
-              value={font}
-              options={FONTS.map((f) => ({ value: f, label: f, render: <span style={{ fontFamily: f }}>{f}</span> }))}
-              onPick={setFontFamily}
-              disabled={disabled}
-              ariaLabel="Phông chữ"
-              width={128}
-            />
-          </div>
-        ),
-      },
-    ],
-    doc: [
-      {
-        id: 'docFile',
-        label: 'Tệp',
-        render: () => (
-          <>
-            <RibbonButton icon={<IconSave size={26} />} label="Lưu" onClick={onSave} />
-            <RibbonButton icon={<IconDoc size={26} />} label="Xuất Word" onClick={onExportWord} />
-            <RibbonButton icon={<IconPrintLayout size={26} />} label="Xuất PDF" onClick={onExportPdf} />
-          </>
-        ),
-      },
-      {
-        id: 'docInfo',
-        label: 'Thông tin',
-        render: () => (
-          <div className="rb-col">
-            <span><b>Trang</b> {pageCount}</span>
-            <span><b>Tỉ lệ</b> {zoom}%</span>
-          </div>
-        ),
-      },
-    ],
   }
 
-  const activeGroups = groupsByTab[activeTab] ?? []
+  const activeGroups = groupsByTab[activeTab] ?? groupsByTab.home
 
   return (
     <div
@@ -1098,56 +1041,122 @@ function StylePaneButton({
   )
 }
 
+type BorderSide = 'top' | 'bottom' | 'left' | 'right' | 'box' | 'none'
+
+/** hình nhỏ minh hoạ cạnh có viền, dùng trong menu Viền đoạn */
+function BorderGlyph({ side }: { side: BorderSide }) {
+  return <span className={cn('rb-border-glyph', `is-${side}`)} aria-hidden="true" />
+}
+
+const BORDER_ITEMS: Array<{ side: BorderSide; label: string }> = [
+  { side: 'bottom', label: 'Viền dưới' },
+  { side: 'top', label: 'Viền trên' },
+  { side: 'left', label: 'Viền trái' },
+  { side: 'right', label: 'Viền phải' },
+  { side: 'box', label: 'Khung quanh đoạn' },
+  { side: 'none', label: 'Không viền' },
+]
+
+/**
+ * Nửa phải của nút tách (mũi tên): mở bảng màu và/hoặc danh sách lựa chọn.
+ * Bảng có tiêu đề nói rõ đang chọn gì, ô màu đủ lớn để bấm, mục đang dùng có dấu tích.
+ */
 function ColorDropdown({
+  title,
   colors,
+  current,
+  none,
   items,
   onPick,
   disabled,
 }: {
+  /** tiêu đề bảng + chú thích của mũi tên, vd "Màu tô sáng" */
+  title: string
   colors: string[]
-  items?: Array<{ label: string; onClick: () => void }>
+  /** màu đang dùng, để viền nổi ô tương ứng */
+  current?: string
+  /** mục bỏ màu đặt trên cùng, vd "Không tô sáng" */
+  none?: { label: string; onClick: () => void }
+  items?: Array<{ label: string; onClick: () => void; icon?: ReactNode; active?: boolean }>
   onPick?: (color: string) => void
   disabled?: boolean
 }) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
-  const { triggerRef, pos } = useAnchoredPopover(open, 176)
+  const { triggerRef, pos } = useAnchoredPopover(open, 236)
 
   useEffect(() => {
     if (!open) return
     const onDown = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
     }
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false)
+    }
     document.addEventListener('mousedown', onDown)
-    return () => document.removeEventListener('mousedown', onDown)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('mousedown', onDown)
+      document.removeEventListener('keydown', onKey)
+    }
   }, [open])
+
+  const cur = current?.toLowerCase()
 
   return (
     <div className="rb-color-drop" ref={ref}>
       <button
         ref={triggerRef as React.RefObject<HTMLButtonElement>}
         type="button"
-        className="rb-color-caret"
+        className={cn('rb-color-caret', open && 'is-open')}
         disabled={disabled}
         onMouseDown={(e) => e.preventDefault()}
         onClick={() => setOpen((o) => !o)}
-        data-tip="Chọn màu"
-        aria-label="Chọn màu"
+        data-tip={title}
+        aria-label={title}
+        aria-haspopup="menu"
+        aria-expanded={open}
       >
         <IconCaret size={14} />
       </button>
       {open && (
-        <div className="rb-color-menu" style={{ ...popoverStyle(pos), width: 'auto', minWidth: 148 }}>
+        <div className="rb-color-menu" role="menu" aria-label={title} style={{ ...popoverStyle(pos), width: 'auto', minWidth: 196 }}>
+          <div className="rb-color-menu__title">{title}</div>
+          {none && (
+            <button type="button" role="menuitem" className="rb-color-item" onMouseDown={(e) => e.preventDefault()} onClick={() => { none.onClick(); setOpen(false) }}>
+              <span className="rb-color-none" aria-hidden="true" />
+              <span className="rb-color-item__label">{none.label}</span>
+            </button>
+          )}
           {colors.length > 0 && (
             <div className="rb-color-grid">
               {colors.map((c) => (
-                <button key={c} type="button" className="rb-color-swatch" style={{ background: c }} data-tip={c} aria-label={c} onClick={() => { onPick?.(c); setOpen(false) }} />
+                <button
+                  key={c}
+                  type="button"
+                  className={cn('rb-color-swatch', cur === c.toLowerCase() && 'is-current')}
+                  style={{ background: c }}
+                  data-tip={c}
+                  aria-label={c}
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => { onPick?.(c); setOpen(false) }}
+                />
               ))}
             </div>
           )}
           {items?.map((it) => (
-            <button key={it.label} type="button" className="rb-color-item" onClick={() => { it.onClick(); setOpen(false) }}>
-              {it.label}
+            <button
+              key={it.label}
+              type="button"
+              role="menuitemradio"
+              aria-checked={!!it.active}
+              className={cn('rb-color-item', it.active && 'is-active')}
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => { it.onClick(); setOpen(false) }}
+            >
+              {it.icon}
+              <span className="rb-color-item__label">{it.label}</span>
+              {it.active ? <IconCheck size={13} /> : null}
             </button>
           ))}
         </div>

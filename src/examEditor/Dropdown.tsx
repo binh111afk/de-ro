@@ -8,7 +8,7 @@
  */
 import { useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { cn } from '@/lib/cn'
-import { IconCaret } from './icons'
+import { IconCaret, IconCheck } from './icons'
 
 export interface DropdownOption<K extends string = string> {
   value: K
@@ -65,7 +65,7 @@ export function Dropdown<K extends string>({
     if (!rect) return
     const menuW = Math.min(Math.max(rect.width, 120), window.innerWidth - 16)
     const left = Math.max(8, Math.min(rect.left, window.innerWidth - menuW - 8))
-    setPopPos({ top: Math.min(rect.bottom + 2, window.innerHeight - 160), left, width: rect.width })
+    setPopPos({ top: Math.min(rect.bottom + 4, window.innerHeight - 160), left, width: rect.width })
   }, [open])
 
   // giữ vị trí đúng khi cuộn/resize
@@ -76,7 +76,7 @@ export function Dropdown<K extends string>({
       if (!rect) return
       const menuW = Math.min(Math.max(rect.width, 120), window.innerWidth - 16)
       const left = Math.max(8, Math.min(rect.left, window.innerWidth - menuW - 8))
-      setPopPos({ top: Math.min(rect.bottom + 2, window.innerHeight - 160), left, width: rect.width })
+      setPopPos({ top: Math.min(rect.bottom + 4, window.innerHeight - 160), left, width: rect.width })
     }
     window.addEventListener('scroll', sync, true)
     window.addEventListener('resize', sync)
@@ -186,7 +186,7 @@ export function Dropdown<K extends string>({
           id={id}
           ref={listRef}
           aria-label={ariaLabel}
-          style={{ position: 'fixed', top: popPos.top, left: popPos.left, width: popPos.width }}
+          style={{ position: 'fixed', top: popPos.top, left: popPos.left, minWidth: Math.max(popPos.width, 120) }}
         >
           {options.map((o, i) => (
             <div
@@ -206,7 +206,8 @@ export function Dropdown<K extends string>({
                 pick(i)
               }}
             >
-              {o.render ?? o.label}
+              <span className="gs-dd-check" aria-hidden="true">{o.value === value ? <IconCheck size={13} /> : null}</span>
+              <span className="gs-dd-label">{o.render ?? o.label}</span>
             </div>
           ))}
         </div>
