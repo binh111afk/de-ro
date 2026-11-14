@@ -184,7 +184,7 @@ export function HeroSection() {
                   className="land-swap h-full w-full object-cover object-top"
                 />
                 {auto && !hover && (
-                  <span key={tab} aria-hidden style={{ '--dur': `${ROTATE_MS}ms` } as React.CSSProperties} className="land-progress absolute inset-x-0 top-0 h-[2px] bg-clay/70" />
+                  <span key={`progress-${tab}`} aria-hidden style={{ '--dur': `${ROTATE_MS}ms` } as React.CSSProperties} className="land-progress absolute inset-x-0 top-0 h-[2px] bg-clay/70" />
                 )}
               </div>
 
