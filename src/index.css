@@ -1084,3 +1084,6 @@
     transform: none !important;
   }
 }
+
+/* app chỉ có giao diện sáng: không cho trình duyệt điện thoại tự đảo màu (chế độ tối ép buộc) */
+:root { color-scheme: only light; }
