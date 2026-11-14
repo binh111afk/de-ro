@@ -7,11 +7,9 @@
  * nhóm) và Tải lên (ảnh của giáo viên). Ô tìm kiếm ở Đồ hoạ và Icon lọc theo tên.
  */
 import { memo, useMemo, useRef, useState, useEffect } from 'react'
-import { createPortal } from 'react-dom'
-import { ChevronLeft, ChevronRight, LayoutTemplate, Plus, Shapes, Smile, Sparkles, Upload, Wrench, X } from 'lucide-react'
+import { ChevronLeft, ChevronRight, LayoutTemplate, Shapes, Smile, Sparkles, Upload, Wrench, X } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import { useAnimatedPresence } from '@/lib/useAnimatedPresence'
-import { Segmented } from '@/components/Segmented'
 import {
   SLIDE_LAYOUTS,
   composeLayout,
@@ -21,9 +19,7 @@ import {
   type SlideLayoutDef,
   type SlideLayoutId,
 } from '@/lib/slideLayouts'
-import { DECK_THEMES, normalizeTheme, themeById, type ResolvedTheme } from '@/lib/slideTheme'
-import { SLIDE_DESIGNS, buildDesignSlides, type SlideDesign } from '@/lib/slideDesigns'
-import { skinById, themeWithSkinFonts } from '@/lib/slideSkins'
+import { normalizeTheme, type ResolvedTheme } from '@/lib/slideTheme'
 import { SlideThumb } from './SlideEditor'
 import { NavRailIndicator } from './NavRailIndicator'
 import { PanelContentTransition } from './PanelContentTransition'
@@ -63,9 +59,7 @@ interface SlideSidePanelProps {
   canInsert: boolean
   /** chữ của bài giảng và slide đang mở, để gợi ý đồ hoạ */
   hint?: string
-  isBlankDeck?: boolean
   onAddLayoutSlide: (layoutId: SlideLayoutId) => void
-  onAddDesign?: (design: SlideDesign, option: 'replace' | 'keep' | 'empty') => void
   onInsert: (el: SlideElement) => void
   /** điện thoại: mục "Trợ lý AI" ở thanh đáy mở AI toàn màn hình */
   onOpenAi?: () => void
@@ -76,9 +70,7 @@ function SlideSidePanelImpl({
   accent,
   canInsert,
   hint = '',
-  isBlankDeck = false,
   onAddLayoutSlide,
-  onAddDesign,
   onInsert,
   onOpenAi,
 }: SlideSidePanelProps) {
@@ -101,10 +93,7 @@ function SlideSidePanelImpl({
         {tabId === 'templates' && (
           <TemplatesPanel
             theme={theme}
-            isBlankDeck={isBlankDeck}
             onPick={isMobileSheet ? (id) => { onAddLayoutSlide(id); setActive(null) } : onAddLayoutSlide}
-            onAddDesign={onAddDesign}
-            onCloseDrawer={isMobileSheet ? () => setActive(null) : undefined}
           />
         )}
         {tabId === 'elements' && <ElementsPanel accent={accent} canInsert={canInsert} hint={hint} onInsert={isMobileSheet ? insertAndClose : onInsert} />}
@@ -333,21 +322,8 @@ function Section({ id, title, children }: { id?: string; title?: string; childre
 }
 
 /* ------------------------------------------------------------------ *
- * Mẫu: thanh chuyển Bố cục | Thiết kế
+ * Mẫu bố cục slide (nhấp thêm slide mới)
  * ------------------------------------------------------------------ */
-type TemplateMode = 'layouts' | 'designs'
-const TEMPLATE_MODE_KEY = 'slide-template-mode'
-
-function loadTemplateMode(): TemplateMode {
-  try {
-    const saved = localStorage.getItem(TEMPLATE_MODE_KEY)
-    if (saved === 'designs' || saved === 'layouts') return saved
-  } catch {
-    /* ignore */
-  }
-  return 'layouts'
-}
-
 const LAYOUT_GROUPS: Array<{ title: string; layouts: SlideLayoutId[] }> = [
   {
     title: 'Mở đầu & kết thúc',
@@ -411,20 +387,6 @@ function LazyThumb({ render }: { render: () => React.ReactNode }) {
   )
 }
 
-/** slide xem trước của từng bộ thiết kế: dựng một lần cho cả phiên (dữ liệu bộ không đổi) */
-const designPreviewCache = new Map<string, { theme: ResolvedTheme; slides: Slide[] }>()
-function designPreview(design: SlideDesign) {
-  let hit = designPreviewCache.get(design.id)
-  if (!hit) {
-    const skin = skinById(design.id)
-    const base = themeById(design.themeId) ?? DECK_THEMES[0]
-    const theme = normalizeTheme(skin ? themeWithSkinFonts(base, skin) : base)
-    hit = { theme, slides: buildDesignSlides(design, theme) }
-    designPreviewCache.set(design.id, hit)
-  }
-  return hit
-}
-
 function LayoutCard({
   layout,
   theme,
@@ -480,334 +442,37 @@ function LayoutCard({
   )
 }
 
-const DesignCard = memo(function DesignCard({
-  design,
-  onOpen,
-}: {
-  design: SlideDesign
-  onOpen: (design: SlideDesign) => void
-}) {
-  // dựng slide xem trước lúc ô cuộn tới, không dựng cả 8 bộ khi mở tab
-  const cover = () => {
-    const { theme, slides } = designPreview(design)
-    return slides[0] ? <SlideThumb slide={slides[0]} theme={theme} /> : null
-  }
-  return (
-    <button
-      type="button"
-      onClick={() => onOpen(design)}
-      data-tip={design.description}
-      className="group flex w-full min-w-0 flex-col text-left focus-visible:outline-none"
-    >
-      <div className="relative aspect-[16/9] w-full overflow-hidden rounded-md border border-line bg-paper shadow-sm transition-all duration-150 group-hover:border-clay group-hover:shadow-md group-focus-visible:ring-2 group-focus-visible:ring-clay pointer-events-none select-none">
-        <LazyThumb render={cover} />
-      </div>
-      <span className="mt-1 w-full truncate px-0.5 text-[12px] font-medium text-ink transition-colors group-hover:text-clay">
-        {design.name}
-      </span>
-    </button>
-  )
-})
-
-/** Bấm vào một bộ thiết kế: xem to từng slide, rồi mới thêm vào bài. */
-function DesignPreviewModal({
-  design,
-  onAdd,
-  onClose,
-}: {
-  design: SlideDesign
-  onAdd: () => void
-  onClose: () => void
-}) {
-  const { theme, slides } = designPreview(design)
-  const [index, setIndex] = useState(0)
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-      else if (e.key === 'ArrowRight') setIndex((i) => Math.min(slides.length - 1, i + 1))
-      else if (e.key === 'ArrowLeft') setIndex((i) => Math.max(0, i - 1))
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [onClose, slides.length])
-
-  return createPortal(
-    <div
-      className="fixed inset-0 z-[200] flex items-center justify-center overflow-y-auto bg-ink/45 px-4 py-6 backdrop-blur-sm"
-      onMouseDown={(e) => {
-        if (e.target === e.currentTarget) onClose()
-      }}
-    >
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-label={`Xem trước bộ ${design.name}`}
-        className="anim-sheet my-auto flex w-full max-w-[880px] flex-col rounded-[14px] border border-line bg-surface p-4 shadow-float sm:p-5"
-      >
-        <div className="mb-3 flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <h3 className="text-[17px] font-semibold text-ink">{design.name}</h3>
-            <p className="mt-0.5 text-[13px] text-ink-3">
-              {design.description} · {slides.length} slide
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Đóng"
-            className="flex size-8 shrink-0 items-center justify-center rounded-lg text-ink-3 hover:bg-sunken hover:text-ink"
-          >
-            <X className="size-4" />
-          </button>
-        </div>
-
-        <div className="group/pv relative">
-          <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg border border-line bg-paper shadow-sm pointer-events-none select-none">
-            {slides[index] && <SlideThumb slide={slides[index]} theme={theme} />}
-          </div>
-          {[
-            { dir: -1, label: 'Slide trước', Icon: ChevronLeft, pos: 'left-2', off: index === 0 },
-            { dir: 1, label: 'Slide sau', Icon: ChevronRight, pos: 'right-2', off: index === slides.length - 1 },
-          ].map(({ dir, label, Icon, pos, off }) => (
-            <button
-              key={dir}
-              type="button"
-              aria-label={label}
-              disabled={off}
-              onClick={() => setIndex((i) => Math.min(slides.length - 1, Math.max(0, i + dir)))}
-              className={cn(
-                'absolute top-1/2 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-line bg-surface/95 text-ink shadow-md transition hover:border-clay hover:text-clay disabled:pointer-events-none disabled:opacity-0',
-                pos,
-              )}
-            >
-              <Icon className="size-5" />
-            </button>
-          ))}
-          <span className="pointer-events-none absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-ink/70 px-2.5 py-0.5 text-[11.5px] font-medium tabular-nums text-white">
-            {index + 1} / {slides.length}
-          </span>
-        </div>
-
-        <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
-          {slides.map((slide, i) => (
-            <button
-              key={slide.id}
-              type="button"
-              onClick={() => setIndex(i)}
-              aria-label={`Slide ${i + 1}`}
-              className={cn(
-                'relative aspect-[16/9] w-[104px] shrink-0 overflow-hidden rounded-md border bg-paper transition-all',
-                i === index ? 'border-clay ring-2 ring-clay/40' : 'border-line opacity-80 hover:opacity-100 hover:border-clay',
-              )}
-            >
-              <span className="pointer-events-none absolute inset-0 select-none">
-                <SlideThumb slide={slide} theme={theme} />
-              </span>
-            </button>
-          ))}
-        </div>
-
-        <div className="mt-4 flex justify-end gap-2">
-          <button
-            type="button"
-            onClick={onClose}
-            className="h-9 rounded-lg px-4 text-[13px] font-medium text-ink-3 hover:text-ink"
-          >
-            Đóng
-          </button>
-          <button
-            type="button"
-            onClick={onAdd}
-            className="flex h-9 items-center gap-1.5 rounded-lg bg-clay px-4 text-[13px] font-semibold text-white shadow-soft transition-colors hover:bg-clay-deep active:scale-[0.98]"
-          >
-            <Plus className="size-4" /> Thêm vào bài
-          </button>
-        </div>
-      </div>
-    </div>,
-    document.body,
-  )
-}
-
-interface DesignPromptModalProps {
-  design: SlideDesign
-  onConfirm: (option: 'replace' | 'keep') => void
-  onCancel: () => void
-}
-
-function DesignPromptModal({ design, onConfirm, onCancel }: DesignPromptModalProps) {
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onCancel()
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [onCancel])
-
-  return createPortal(
-    <div
-      className="fixed inset-0 z-[200] flex items-center justify-center overflow-y-auto bg-ink/40 px-5 py-8 backdrop-blur-sm"
-      onMouseDown={(e) => {
-        if (e.target === e.currentTarget) onCancel()
-      }}
-    >
-      <div
-        role="dialog"
-        aria-modal="true"
-        className="anim-sheet my-auto w-full max-w-[420px] rounded-[12px] border border-line bg-surface p-6 shadow-float"
-      >
-        <h3 className="text-[17px] font-semibold text-ink">Thêm bộ thiết kế vào bài</h3>
-        <p className="mt-2 text-[13.5px] leading-relaxed text-ink-2">
-          Bộ thiết kế <strong>"{design.name}"</strong> gồm {design.slides.length} slide. Bạn muốn áp dụng giao diện này như thế nào?
-        </p>
-
-        <div className="mt-5 flex flex-col gap-2.5">
-          <button
-            type="button"
-            onClick={() => onConfirm('replace')}
-            className="flex w-full flex-col items-start rounded-lg bg-clay px-3.5 py-2.5 text-left text-white shadow-soft transition-colors hover:bg-clay-deep active:scale-[0.98]"
-          >
-            <span className="text-[13.5px] font-semibold">Đổi cả bài sang giao diện này</span>
-            <span className="text-[11.5px] text-white/85">
-              Đổi theme cả bài sang phong cách của bộ, các slide cũ tự đổi màu & font
-            </span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => onConfirm('keep')}
-            className="flex w-full flex-col items-start rounded-lg border border-line bg-paper px-3.5 py-2.5 text-left text-ink transition-colors hover:border-clay hover:text-clay active:scale-[0.98]"
-          >
-            <span className="text-[13.5px] font-semibold">Giữ giao diện hiện tại, chỉ thêm slide</span>
-            <span className="text-[11.5px] text-ink-3">
-              Giữ nguyên màu và font bài hiện tại, dựng slide mẫu theo theme hiện có
-            </span>
-          </button>
-
-          <button
-            type="button"
-            onClick={onCancel}
-            className="mt-1 flex w-full items-center justify-center rounded-lg py-2 text-[13px] font-medium text-ink-3 transition-colors hover:text-ink"
-          >
-            Huỷ
-          </button>
-        </div>
-      </div>
-    </div>,
-    document.body,
-  )
-}
-
 function TemplatesPanel({
   theme,
-  isBlankDeck = false,
   onPick,
-  onAddDesign,
-  onCloseDrawer,
 }: {
   theme?: ResolvedTheme | DeckTheme
-  isBlankDeck?: boolean
   onPick: (id: SlideLayoutId) => void
-  onAddDesign?: (design: SlideDesign, option: 'replace' | 'keep' | 'empty') => void
-  onCloseDrawer?: () => void
 }) {
   const resolvedTheme = useMemo(() => normalizeTheme(theme), [theme])
-  const [mode, setMode] = useState<TemplateMode>(loadTemplateMode)
-  const [promptDesign, setPromptDesign] = useState<SlideDesign | null>(null)
-  const [previewDesign, setPreviewDesign] = useState<SlideDesign | null>(null)
-
-  const handleModeChange = (next: TemplateMode) => {
-    setMode(next)
-    try {
-      localStorage.setItem(TEMPLATE_MODE_KEY, next)
-    } catch {
-      /* ignore */
-    }
-  }
-
-  const handleApplyDesign = (design: SlideDesign) => {
-    if (isBlankDeck) {
-      onAddDesign?.(design, 'empty')
-      onCloseDrawer?.()
-      return
-    }
-    setPromptDesign(design)
-  }
-
-  const handleConfirmPrompt = (option: 'replace' | 'keep') => {
-    if (promptDesign) {
-      onAddDesign?.(promptDesign, option)
-      setPromptDesign(null)
-      onCloseDrawer?.()
-    }
-  }
-
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
-      <div className="shrink-0 border-b border-line bg-surface px-3 pb-2.5 pt-3">
-        <Segmented
-          value={mode}
-          onChange={handleModeChange}
-          label="Chế độ mẫu"
-          className="w-full flex [&>button]:flex-1 [&>button]:justify-center"
-          options={[
-            { key: 'layouts', label: 'Bố cục' },
-            { key: 'designs', label: 'Thiết kế' },
-          ]}
-        />
+    <Scroll>
+      <div className="pt-3">
+        {LAYOUT_GROUPS.map((group) => (
+          <Section key={group.title} title={group.title}>
+            <div className="grid grid-cols-2 gap-2">
+              {group.layouts.map((id) => {
+                const layout = LAYOUT_MAP.get(id)
+                if (!layout) return null
+                return (
+                  <LayoutCard
+                    key={id}
+                    layout={layout}
+                    theme={resolvedTheme}
+                    onPick={onPick}
+                  />
+                )
+              })}
+            </div>
+          </Section>
+        ))}
       </div>
-      <Scroll>
-        <div className="pt-3">
-          <div key={mode} className="anim-template-fade">
-            {mode === 'layouts' ? (
-              <div>
-                {LAYOUT_GROUPS.map((group) => (
-                  <Section key={group.title} title={group.title}>
-                    <div className="grid grid-cols-2 gap-2">
-                      {group.layouts.map((id) => {
-                        const layout = LAYOUT_MAP.get(id)
-                        if (!layout) return null
-                        return (
-                          <LayoutCard
-                            key={id}
-                            layout={layout}
-                            theme={resolvedTheme}
-                            onPick={onPick}
-                          />
-                        )
-                      })}
-                    </div>
-                  </Section>
-                ))}
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 gap-x-2 gap-y-3 pb-4">
-                {SLIDE_DESIGNS.map((design) => (
-                  <DesignCard key={design.id} design={design} onOpen={setPreviewDesign} />
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      </Scroll>
-      {previewDesign && (
-        <DesignPreviewModal
-          design={previewDesign}
-          onClose={() => setPreviewDesign(null)}
-          onAdd={() => {
-            setPreviewDesign(null)
-            handleApplyDesign(previewDesign)
-          }}
-        />
-      )}
-      {promptDesign && (
-        <DesignPromptModal
-          design={promptDesign}
-          onConfirm={handleConfirmPrompt}
-          onCancel={() => setPromptDesign(null)}
-        />
-      )}
-    </div>
+    </Scroll>
   )
 }
 

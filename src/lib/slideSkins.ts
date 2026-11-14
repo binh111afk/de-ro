@@ -4,7 +4,15 @@
  * để mỗi bộ khác biệt rõ rệt kể cả khi chuyển sang ảnh trắng đen.
  */
 import type { DeckTheme, Slide, SlideElement, SlideTone } from '@/store/docs'
-import { contentFromSlide, type SlideLayoutContent, type SlideLayoutId } from './slideLayouts'
+import {
+  contentFromSlide,
+  isDecorElement,
+  isLayoutId,
+  isLayoutOwnedId,
+  isSkinDecorId,
+  type SlideLayoutContent,
+  type SlideLayoutId,
+} from './slideLayouts'
 
 /** Font web có đủ dấu tiếng Việt; máy nào cũng hiện giống nhau (không phụ thuộc font cài sẵn). */
 const ROUNDED = 'Nunito'
@@ -1648,48 +1656,70 @@ export function applySkin(
   slideIndex = 0,
   totalSlides = 7,
 ): Slide {
-  if (!designId) return slide
+  if (!designId || slide.html) return slide
+  // Slide freeform (không có layout) giữ nguyên các phần tử, chỉ đổi nền khi không có customBg
+  if (!slide.layout || !isLayoutId(slide.layout)) return slide
   const skin = SLIDE_SKINS[designId]
   if (!skin) return slide
 
-  const content = contentFromSlide(slide)
-  if (skin.getBackground && !slide.customBg) slide = { ...slide, background: skin.getBackground(theme, slide.tone) }
+  const userAdded = slide.elements.filter((el) => !isDecorElement(el) && !isLayoutOwnedId(el.id))
+  const layoutEls = slide.elements.filter((el) => !isDecorElement(el) && isLayoutOwnedId(el.id))
+  const content = contentFromSlide({ ...slide, elements: layoutEls })
+
+  let nextSlide = slide
+  if (skin.getBackground && !slide.customBg) nextSlide = { ...slide, background: skin.getBackground(theme, slide.tone) }
+
+  const finalize = (els: SlideElement[]): SlideElement[] => {
+    const decorated = els.map((el) => ({
+      ...el,
+      id: el.id || uid(),
+      ...(isSkinDecorId(el.id) ? { decor: true } : {}),
+    }))
+    // Không nhân bản ảnh/bảng/đồ hoạ người dùng nếu layout đã dựng phần tử tương ứng từ contentFromSlide
+    const keptUser = userAdded.filter((el) => {
+      if (el.type === 'image' && decorated.some((e) => e.type === 'image' && e.src === el.src)) return false
+      if (el.type === 'table' && decorated.some((e) => e.type === 'table')) return false
+      if (el.type === 'graphic' && decorated.some((e) => e.type === 'graphic' && e.graphicId === el.graphicId)) return false
+      return true
+    })
+    return [...decorated, ...keptUser]
+  }
 
   if (slide.layout === 'title') {
     const customElements = skin.createTitleSlide(theme, content, slideIndex, totalSlides)
     return {
-      ...slide,
-      elements: customElements.map((el) => ({ ...el, id: el.id || uid() })),
+      ...nextSlide,
+      elements: finalize(customElements),
     }
   }
 
   if (slide.layout === 'closing') {
     const customElements = skin.createClosingSlide(theme, content, slideIndex, totalSlides)
     return {
-      ...slide,
-      elements: customElements.map((el) => ({ ...el, id: el.id || uid() })),
+      ...nextSlide,
+      elements: finalize(customElements),
     }
   }
 
   if (slide.layout === 'section' && skin.createSectionSlide) {
     const customElements = skin.createSectionSlide(theme, content, slideIndex, totalSlides)
     return {
-      ...slide,
-      elements: customElements.map((el) => ({ ...el, id: el.id || uid() })),
+      ...nextSlide,
+      elements: finalize(customElements),
     }
   }
 
-  // Layout nội dung thông thường: biến đổi phần tử + chèn motif
+  // Layout nội dung thông thường: biến đổi phần tử + chèn motif (không đụng phần tử người dùng tự thêm)
   const transformed = skin.transformSlide(
-    slide.elements,
+    layoutEls,
     theme,
-    (slide.layout as SlideLayoutId) || 'cards',
+    slide.layout,
     slideIndex,
     totalSlides,
   )
 
   return {
-    ...slide,
-    elements: transformed.map((el) => ({ ...el, id: el.id || uid() })),
+    ...nextSlide,
+    elements: finalize(transformed),
   }
 }

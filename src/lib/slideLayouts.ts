@@ -421,7 +421,8 @@ function ornament(id: string, ornId: string, x: number, y: number, w: number, in
   const ratio = graphicById(ornId)?.ratio
   if (!ratio) return null
   const h = (w * 16) / (9 * ratio)
-  return graphicEl(id, ornId, { x, y: centerY ? y - h / 2 : y, w, h }, ink)
+  const el = graphicEl(id, ornId, { x, y: centerY ? y - h / 2 : y, w, h }, ink)
+  return id.startsWith('decor-') ? { ...el, decor: true } : el
 }
 
 /**
@@ -491,7 +492,7 @@ function withKitDecor(id: SlideLayoutId, els: SlideElement[], content: SlideLayo
         ? { ...anchor.at, w, h }
         : { x: anchor.at[1] === 'l' ? mx : 100 - mx - w, y: anchor.at[0] === 't' ? my : 100 - my - h, w, h }
     if (blockers.some((el) => overlaps(box, el))) return
-    out.push(graphicEl(`decor-kit-${i + 1}`, graphic.id, box, p.ink))
+    out.push({ ...graphicEl(`decor-kit-${i + 1}`, graphic.id, box, p.ink), decor: true })
   })
   return out
 }
@@ -1694,9 +1695,40 @@ const RESERVED = new Set([
 const NUMBERED = /^(card|option|stat|step|item|node|left|right|link)-\d+(-value|-label|-index|-heading|-box)?$/
 const isRoleId = (id: string): boolean => RESERVED.has(id) || NUMBERED.test(id)
 
+const SKIN_DECOR_IDS = new Set([
+  'kicker-bg', 'title-left-accent', 'section-rule', 'closing-accent',
+  'split-left-block', 'left-tag', 'neon-line', 'terminal-prompt',
+  'flourish-top', 'flourish-bot', 'star-badge', 'title-box',
+  'sub-box', 'closing-box', 'chalk-line',
+])
+const STATIC_LAYOUT_IDS = new Set([
+  'accent-band', 'accent-bar', 'accent-line', 'accent-rail', 'accent-rule',
+  'answer-bar', 'answer-stripe', 'bullet-graphic', 'bullet-graphic-plate',
+  'closing-graphic', 'conclusion-bar', 'content-panel', 'divider',
+  'hero-graphic', 'hero-graphic-plate', 'hero-icon', 'hero-image', 'hero-panel',
+  'hook-bar', 'hook-graphic', 'hook-graphic-plate', 'hook-icon', 'hook-label', 'hook-panel',
+  'image-1', 'image-panel', 'left-panel', 'problem-panel', 'quote-bar',
+  'right-panel', 'rule', 'scrim', 'section-graphic', 'section-graphic-plate',
+  'section-panel', 'section-rule', 'side-panel', 'table', 'timeline-line',
+  'timeline-panel', 'title-rule', 'vs-badge', 'decor-1', 'decor-2',
+])
+const NUMBERED_LAYOUT_STRUCT = /^(card|stat|step|node|pill|divider|decor|decor-kit|left|right)-\d+(-[a-z-]+)?$/
+
+/** Phần tử trang trí/motif do skin hoặc decor kit thêm vào (không phải nội dung người dùng). */
+export const isSkinDecorId = (id: string): boolean =>
+  id.startsWith('skin-motif-') || SKIN_DECOR_IDS.has(id)
+
+export const isDecorElement = (el: SlideElement): boolean =>
+  Boolean(el.decor) || isSkinDecorId(el.id)
+
+/** Phần tử được sinh ra bởi layout engine (kể cả text vai trò lẫn hình khối nền/viền của layout). */
+export const isLayoutOwnedId = (id: string): boolean =>
+  isRoleId(id) || NUMBERED_LAYOUT_STRUCT.test(id) || STATIC_LAYOUT_IDS.has(id)
+
 /** Đọc nội dung slide đang có để đổi layout mà không mất chữ/ảnh/bảng. */
 export function contentFromSlide(slide: Slide): SlideLayoutContent {
-  const texts = slide.elements.filter(
+  const contentEls = slide.elements.filter((el) => !isDecorElement(el))
+  const texts = contentEls.filter(
     (el): el is SlideElement & { text: string } =>
       el.type === 'text' && Boolean(el.text?.trim()),
   )
@@ -1706,14 +1738,17 @@ export function contentFromSlide(slide: Slide): SlideLayoutContent {
     texts.find((el) => el.id === 'title') ??
     texts.find((el) => el.variant === 'title' && !isRoleId(el.id)) ??
     texts.find((el) => !isRoleId(el.id))
+  const isComposedLayout = Boolean(slide.layout && isLayoutId(slide.layout)) && texts.some((el) => isRoleId(el.id))
   const bullets = [
     ...linesOf(byId('bullets')),
-    ...texts
-      .filter((el) => el !== titleEl && !isRoleId(el.id))
-      .flatMap((el) => linesOf(el.text)),
+    ...(isComposedLayout
+      ? []
+      : texts
+          .filter((el) => el !== titleEl && !isRoleId(el.id))
+          .flatMap((el) => linesOf(el.text))),
   ]
 
-  const optionEls = slide.elements
+  const optionEls = contentEls
     .filter((el): el is SlideElement & { text: string } => el.type === 'text' && /^option-\d+$/.test(el.id))
     .sort((a, b) => suffixOf(a.id) - suffixOf(b.id))
   const fills = optionEls.map((el) => el.fill)
@@ -1726,9 +1761,9 @@ export function contentFromSlide(slide: Slide): SlideLayoutContent {
   const stepEls = texts
     .filter((el) => /^item-\d+$/.test(el.id))
     .sort((a, b) => suffixOf(a.id) - suffixOf(b.id))
-  const tableEl = slide.elements.find((el) => el.type === 'table')
-  const imageEl = slide.elements.find((el) => el.type === 'image')
-  const graphicEl = slide.elements.find(
+  const tableEl = contentEls.find((el) => el.type === 'table')
+  const imageEl = contentEls.find((el) => el.type === 'image')
+  const graphicEl = contentEls.find(
     (el) => el.type === 'graphic' && isGraphicId(el.graphicId),
   )
 
@@ -1744,12 +1779,14 @@ export function contentFromSlide(slide: Slide): SlideLayoutContent {
     })
   }
   const answerMatch = byId('answer')?.match(/^Đáp án:\s*([A-D])(?:\s*[—–-]\s*([\s\S]*))?$/i)
+  const rawTitle = byId('title') ?? titleEl?.text
+  const rawKicker = byId('kicker')
   return {
-    title: byId('title') ?? titleEl?.text,
+    title: rawTitle?.replace(/^\[ ([\s\S]+) \]$/, '$1'),
     problem: byId('problem'),
     conclusion: byId('conclusion'),
     explanation: answerMatch?.[2]?.trim() || undefined,
-    kicker: byId('kicker'),
+    kicker: rawKicker?.replace(/^> EXECUTE:\s*/, '').replace(/^—\s*(.+?)\s*—$/, '$1'),
     subtitle: byId('subtitle'),
     body: byId('body'),
     bullets: bullets.length > 0 ? bullets : undefined,

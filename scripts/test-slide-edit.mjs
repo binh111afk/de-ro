@@ -3,7 +3,8 @@
  * Chạy: npm run test:slide-edit
  */
 import assert from 'node:assert/strict'
-import { applyEdits, looksLikeEdit, parseEditCommands } from '../src/lib/slideEdit.ts'
+import { applyDeckDesign, applyEdits, looksLikeEdit, parseEditCommands } from '../src/lib/slideEdit.ts'
+import { designById } from '../src/lib/slideDesigns.ts'
 import { slideFromAi } from '../src/lib/slideAi.ts'
 import { DECK_THEMES, normalizeTheme } from '../src/lib/slideTheme.ts'
 
@@ -145,4 +146,72 @@ assert.equal(parseEditCommands('{"action":"edit","commands":[{"op":"set_tone","t
   assert.equal(JSON.stringify(d), before)
 }
 
-console.log('test-slide-edit: parse/phông/theme/màu/tông/xoá/dời/HTML pass')
+// --- applyDeckDesign: không thêm/bớt slide, idempotent A -> B -> A, giữ phần tử tự thêm, freeform, html, clear -> null
+{
+  const titleSlide = slideFromAi({ layout: 'title', kicker: 'BÀI 1', title: 'Quang hợp', subtitle: 'Sinh học 11' }, theme)
+  titleSlide.notes = 'Ghi chú trang bìa'
+  const userShape = { id: 'u1234567', type: 'shape', shape: 'ellipse', x: 82, y: 12, w: 8, h: 10, fill: '#ff0000' }
+  const userText = { id: 'u7654321', type: 'text', x: 80, y: 80, w: 15, h: 6, text: 'Nhãn riêng' }
+  const bulletSlide = slideFromAi(page('Cơ chế'), theme)
+  bulletSlide.elements = [...bulletSlide.elements, userShape, userText]
+  const freeformSlide = {
+    id: 'free-1',
+    background: theme.bg,
+    elements: [{ id: 'free-t', type: 'text', x: 10, y: 20, w: 60, h: 12, text: 'Slide tự do' }],
+  }
+  const customBgFreeform = {
+    id: 'free-custom',
+    background: '#123456',
+    customBg: true,
+    elements: [{ id: 'free-c', type: 'text', x: 10, y: 20, w: 60, h: 12, text: 'Nền riêng' }],
+  }
+  const htmlSlide = { id: 'html-1', background: '#ffffff', elements: [], html: '<h1>HTML</h1>' }
+
+  const baseDeck = {
+    id: 'd-design',
+    title: 'Test',
+    theme,
+    slides: [titleSlide, bulletSlide, freeformSlide, customBgFreeform, htmlSlide],
+    createdAt: '',
+    updatedAt: '',
+  }
+
+  const tech = designById('cong-nghe')
+  const elegant = designById('thanh-lich')
+  assert.ok(tech && elegant)
+
+  const afterTech1 = applyDeckDesign(baseDeck, tech)
+  assert.equal(afterTech1.design, 'cong-nghe')
+  assert.equal(afterTech1.slides.length, 5)
+  assert.deepEqual(afterTech1.slides.map((s) => s.id), baseDeck.slides.map((s) => s.id))
+  assert.equal(afterTech1.slides[0].notes, 'Ghi chú trang bìa')
+  assert.equal(afterTech1.slides[4].html, '<h1>HTML</h1>')
+  assert.equal(afterTech1.slides[2].elements[0].text, 'Slide tự do')
+  assert.equal(afterTech1.slides[3].background, '#123456')
+
+  // Áp lại A -> B -> A không chồng motif, không lồng "[ ... ]" hay "> EXECUTE:"
+  const afterElegant = applyDeckDesign(afterTech1, elegant)
+  const afterTech2 = applyDeckDesign(afterElegant, tech)
+  assert.equal(afterTech2.slides[0].elements.length, afterTech1.slides[0].elements.length)
+  assert.equal(afterTech2.slides[1].elements.length, afterTech1.slides[1].elements.length)
+  const techTitle = afterTech2.slides[0].elements.find((e) => e.id === 'title')?.text
+  const techKicker = afterTech2.slides[0].elements.find((e) => e.id === 'kicker')?.text
+  assert.equal(techTitle, '[ Quang hợp ]')
+  assert.equal(techKicker, '> EXECUTE: BÀI 1')
+
+  // Phần tử người dùng tự thêm vẫn còn nguyên
+  assert.ok(afterTech2.slides[1].elements.some((e) => e.id === 'u1234567' && e.shape === 'ellipse'))
+  assert.ok(afterTech2.slides[1].elements.some((e) => e.id === 'u7654321' && e.text === 'Nhãn riêng'))
+
+  // Gỡ thiết kế -> gỡ motif, bỏ ngoặc/prefix của skin, giữ phần tử tự thêm
+  const cleared = applyDeckDesign(afterTech2, null)
+  assert.equal(cleared.design, undefined)
+  assert.equal(cleared.slides.length, 5)
+  assert.equal(cleared.slides[0].elements.find((e) => e.id === 'title')?.text, 'Quang hợp')
+  assert.equal(cleared.slides[0].elements.find((e) => e.id === 'kicker')?.text, 'BÀI 1')
+  assert.equal(cleared.slides[0].elements.some((e) => e.decor || e.id.startsWith('skin-motif-')), false)
+  assert.ok(cleared.slides[1].elements.some((e) => e.id === 'u1234567'))
+  assert.ok(cleared.slides[1].elements.some((e) => e.id === 'u7654321'))
+}
+
+console.log('test-slide-edit: parse/phông/theme/màu/tông/xoá/dời/HTML/applyDeckDesign pass')

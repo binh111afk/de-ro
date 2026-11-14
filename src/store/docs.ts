@@ -77,6 +77,8 @@ export interface SlideElement {
   /** hộp chữ nhiều dòng: dòng đầu hiện ở lần bấm `lineStep`, mỗi bấm thêm một dòng */
   lineStep?: number
   anim?: 'fade' | 'rise' | 'zoom'
+  /** Phần tử trang trí/motif do skin hoặc decor kit sinh ra; sẽ được thay sạch khi đổi hoặc bỏ thiết kế */
+  decor?: boolean
 }
 
 export type SlideTone = 'theme' | 'soft' | 'accent'
