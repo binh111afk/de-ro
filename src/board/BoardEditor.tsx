@@ -111,7 +111,7 @@ export default function BoardEditor({ id }: { id: string }) {
       return `url("data:image/svg+xml,${encodeURIComponent(svg)}") ${c} ${c}, crosshair`
     }
     if (t === 'eraser') return `url("data:image/svg+xml,${encodeURIComponent(ERASER_SVG)}") 6 22, cell`
-    if (t === 'bucket') return `url("data:image/svg+xml,${encodeURIComponent(BUCKET_SVG.replaceAll('#4dabf7', opts.current.bucketFill === 'transparent' ? '#ffffff' : opts.current.bucketFill))}") 4 21, crosshair`
+    if (t === 'bucket') return `url("data:image/svg+xml,${encodeURIComponent(BUCKET_SVG.replaceAll('#4dabf7', opts.current.bucketFill === 'transparent' ? '#ffffff' : opts.current.bucketFill))}") 20 21, crosshair`
     if (t === 'laser') return `url("data:image/svg+xml,${encodeURIComponent(LASER_SVG.replaceAll('#ff3b30', opts.current.laserColor))}") 9 9, crosshair`
     if (t === 'text') return 'text'
     if (t === 'hand') return 'grab'

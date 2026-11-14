@@ -391,7 +391,8 @@ export const NONE_BG = 'linear-gradient(135deg, #fff 45%, #e03131 45%, #e03131 5
 export const FILL_MIME = 'application/x-board-fill'
 export let draggingFill: { color: string; style: FillStyle } | null = null
 export const SPREAD_MS = 380
-export const BUCKET_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M11 3l8 8-7 7-8-8z" fill="#fff" stroke="#27272a" stroke-width="1.5" stroke-linejoin="round"/><path d="M4 10l8 8 3-3H4z" fill="#4dabf7"/><path d="M20 14s2 2.6 2 4a2 2 0 0 1-4 0c0-1.4 2-4 2-4z" fill="#4dabf7" stroke="#27272a" stroke-width="1.2"/></svg>'
+/** con trỏ tô màu: cùng hình với icon trên thanh công cụ (BUCKET_D), lòng thùng + giọt sơn mang màu đang chọn (#4dabf7 được thay lúc dùng), viền trắng để nổi trên nền tối */
+export const BUCKET_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="${BUCKET_D}" stroke="#fff" stroke-width="3.6"/><path d="M3 13h16l-7.3 7.3a1.6 1.6 0 0 1-2.2 0l-6.2-6.2a1.6 1.6 0 0 1 0-1.1z" fill="#4dabf7"/><path d="M20.5 15.5s2 2.3 2 3.6a2 2 0 1 1-4 0c0-1.3 2-3.6 2-3.6z" fill="#4dabf7"/><path d="${BUCKET_D}" stroke="#27272a" stroke-width="1.6"/></svg>`
 
 /** ảnh đi theo con trỏ khi kéo: giọt màu tròn có bóng */
 export function startFillDrag(ev: React.DragEvent, color: string, style: FillStyle) {
