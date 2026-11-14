@@ -18,7 +18,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } fro
 import { cn } from '@/lib/cn'
 import { useAnimatedPresence } from '@/lib/useAnimatedPresence'
 import { splitTipKbd } from '@/components/Tooltip'
-import { IconChevronLeft, IconChevronRight, IconSidebarLeft, IconSidebarRight } from './icons'
+import { IconChevronDown, IconChevronLeft, IconChevronRight, IconSidebarLeft, IconSidebarRight } from './icons'
 import { useSlidingThumb } from './useSlidingThumb'
 
 /* ------------------------------------------------------------------ *
@@ -377,7 +377,10 @@ export function AiDock({
           data-tip="Thu gọn trợ lý AI"
           aria-label="Thu gọn trợ lý AI"
         >
-          {side === 'right' ? <IconChevronRight size={16} /> : <IconChevronLeft size={16} />}
+          {/* mũi tên chỉ đúng hướng panel rút về: máy tính / máy tính bảng về cạnh của nó,
+              điện thoại (panel trượt từ đáy lên) thì chỉ xuống */}
+          <span className="ai-dock__collapse-side">{side === 'right' ? <IconChevronRight size={16} /> : <IconChevronLeft size={16} />}</span>
+          <span className="ai-dock__collapse-down"><IconChevronDown size={18} /></span>
         </button>
       ) : (
         <button

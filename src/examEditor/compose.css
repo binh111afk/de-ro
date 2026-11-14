@@ -1092,6 +1092,9 @@
     transition: all var(--transition-fast);
   }
 
+  .ai-dock__collapse-side, .ai-dock__collapse-down { display: flex; }
+  .ai-dock__collapse-down { display: none; }
+
   .ai-dock__collapse:hover {
     background: var(--color-bg-subtle);
     color: var(--color-text-primary);
@@ -3965,6 +3968,11 @@
  * mục "Trợ lý AI" ở thanh đáy (soạn slide — xem SlideSidePanel).
  * ------------------------------------------------------------------ */
 @media (max-width: 1023px) {
+  /* panel nổi đè lên: chỉ chạy hiệu ứng trượt, bỏ transition bề rộng của bản máy tính
+     (để cả hai cùng chạy thì panel vừa giãn ngang từ mép trái vừa trượt → giật) */
+  .ai-dock {
+    transition: none;
+  }
   .ai-dock:not(.collapsed),
   .ai-dock.ai-dock--closing {
     position: fixed;
@@ -4024,6 +4032,10 @@
     width: auto;
     border: none;
   }
+  .ai-dock__collapse-side { display: none; }
+  .ai-dock__collapse-down { display: flex; }
+  /* đang trượt xuống thì ẩn nút nổi "Trợ lý AI", hiện lại khi panel đã đóng hẳn */
+  .ai-dock.ai-dock--closing .ai-rail { display: none !important; }
   /* rail dọc biến thành nút nổi góc dưới phải */
   /* nút nổi là position: fixed nên không bị overflow của dock cắt */
   .ai-dock.collapsed {
