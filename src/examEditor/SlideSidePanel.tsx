@@ -10,6 +10,7 @@ import { memo, useMemo, useRef, useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { ChevronLeft, ChevronRight, LayoutTemplate, Plus, Shapes, Smile, Sparkles, Upload, Wrench, X } from 'lucide-react'
 import { cn } from '@/lib/cn'
+import { useAnimatedPresence } from '@/lib/useAnimatedPresence'
 import { Segmented } from '@/components/Segmented'
 import {
   SLIDE_LAYOUTS,
@@ -87,6 +88,8 @@ function SlideSidePanelImpl({
   const shown = active ?? last
   const current = PANELS.find((p) => p.id === shown) ?? null
   const { isPhone, isTablet } = useSlideViewport()
+  const phoneBackdrop = useAnimatedPresence(Boolean(isPhone && active), 180)
+  const tabletDrawer = useAnimatedPresence(Boolean(isTablet && active), 180)
 
   const navRef = useRef<HTMLElement>(null)
 
@@ -131,9 +134,9 @@ function SlideSidePanelImpl({
   if (isPhone) {
     return (
       <>
-        {active && (
+        {phoneBackdrop.mounted && (
           <div
-            className="fixed inset-0 z-30 bg-black/25"
+            className={cn('fixed inset-0 z-30 bg-black/25', phoneBackdrop.closing ? 'backdrop-out' : 'backdrop-in')}
             aria-hidden="true"
             onClick={() => setActive(null)}
           />
@@ -192,7 +195,7 @@ function SlideSidePanelImpl({
 
   return (
     <div className="relative flex min-h-0 shrink-0">
-      <nav ref={navRef} aria-label="Thư viện slide" className={cn('relative flex flex-col items-center gap-2 overflow-y-auto border-r border-line bg-surface py-3 [scrollbar-width:none]', isTablet ? 'w-[56px]' : 'w-[64px]')}>
+      <nav ref={navRef} aria-label="Thư viện slide" className={cn('relative z-[45] flex flex-col items-center gap-2 overflow-y-auto border-r border-line bg-surface py-3 [scrollbar-width:none]', isTablet ? 'w-[56px]' : 'w-[64px]')}>
         <NavRailIndicator containerRef={navRef} activeId={active} />
         {PANELS.map(({ id, label, Icon }) => (
           <button
@@ -218,16 +221,19 @@ function SlideSidePanelImpl({
 
       {isTablet ? (
         <>
-          {active && (
+          {tabletDrawer.mounted && (
             <div
-              className="fixed inset-0 z-30 bg-black/20"
+              className={cn('fixed inset-0 z-30 bg-black/20', tabletDrawer.closing ? 'backdrop-out' : 'backdrop-in')}
               aria-hidden="true"
               onClick={() => setActive(null)}
             />
           )}
-          {active && current && (
+          {tabletDrawer.mounted && current && (
             <aside
-              className="absolute bottom-0 top-0 z-40 flex w-[280px] max-w-[calc(100vw-64px)] min-h-0 flex-col border-r border-line bg-surface shadow-[8px_0_32px_-8px_rgb(0_0_0/0.25)]"
+              className={cn(
+                'absolute bottom-0 top-0 z-40 flex w-[280px] max-w-[calc(100vw-64px)] min-h-0 flex-col border-r border-line bg-surface shadow-[8px_0_32px_-8px_rgb(0_0_0/0.25)]',
+                tabletDrawer.closing ? 'drawer-out-left' : 'drawer-in-left',
+              )}
               style={{ left: railW }}
               aria-label={current.title}
               role="dialog"
@@ -243,7 +249,7 @@ function SlideSidePanelImpl({
                   <X className="size-4" />
                 </button>
               </div>
-              {renderPanelBody(active, false)}
+              {renderPanelBody(current.id, false)}
             </aside>
           )}
         </>

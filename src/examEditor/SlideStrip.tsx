@@ -7,6 +7,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { ChevronDown, ChevronUp, Copy, Plus, Trash2 } from 'lucide-react'
 import { cn } from '@/lib/cn'
+import { useAnimatedPresence } from '@/lib/useAnimatedPresence'
 import type { Slide } from '@/store/docs'
 import { useSlideViewport } from './useSlideViewport'
 
@@ -41,6 +42,7 @@ export function SlideStrip({
   /** vị trí chèn khi kéo (0..n): khe trước slide `dropPos` */
   const [dropPos, setDropPos] = useState<number | null>(null)
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const drawerAnim = useAnimatedPresence(drawerOpen, 180)
   const [tabletCollapsed, setTabletCollapsed] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
   const count = slides.length
@@ -208,8 +210,13 @@ export function SlideStrip({
             <span>Thêm slide</span>
           </button>
         )}
-        {drawerOpen && (
-          <div className="absolute inset-x-0 bottom-full z-30 flex h-[96px] border-t border-line bg-surface shadow-[0_-8px_24px_-8px_rgb(0_0_0/0.2)]">
+        {drawerAnim.mounted && (
+          <div
+            className={cn(
+              'absolute inset-x-0 bottom-full z-30 flex h-[96px] border-t border-line bg-surface shadow-[0_-8px_24px_-8px_rgb(0_0_0/0.2)]',
+              drawerAnim.closing ? 'sheet-out-down' : 'sheet-in-up',
+            )}
+          >
             {stripContent}
           </div>
         )}

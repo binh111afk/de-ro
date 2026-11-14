@@ -4,6 +4,7 @@ import { isDarkPaper, paperBg, type Kind, type Paper, type PenKind, type Pt, typ
 import { penOutline, svgPathFromStroke } from './render'
 import { createPortal } from 'react-dom'
 import { splitTipKbd } from '@/components/Tooltip'
+import { useAnimatedPresence } from '@/lib/useAnimatedPresence'
 import { type Tip } from './boardModel'
 
 /* ---------- định nghĩa giao diện ---------- */
@@ -276,6 +277,7 @@ export function Pop({ id, pop, setPop, title, face, children, align, className, 
   id: string; pop: string | null; setPop: (p: string | null) => void; title: string; face: ReactNode; children: ReactNode; align?: 'right'; className?: string; btnClassName?: string
 }) {
   const open = pop === id
+  const popAnim = useAnimatedPresence(open, 140)
   const btnRef = useRef<HTMLButtonElement>(null)
   const panelRef = useRef<HTMLDivElement>(null)
 
@@ -315,11 +317,11 @@ export function Pop({ id, pop, setPop, title, face, children, align, className, 
         {face}
       </button>
       {/* gắn vào body: thanh công cụ cuộn ngang (overflow) sẽ cắt mất bảng nếu để bên trong */}
-      {open && createPortal(
+      {popAnim.mounted && createPortal(
         <div
           ref={panelRef}
           data-pop={id}
-          className="fixed z-50 max-h-[calc(100dvh-120px)] max-w-[calc(100vw-16px)] space-y-2.5 overflow-auto rounded-[10px] border border-line bg-surface p-3 shadow-lift"
+          className={`fixed z-50 max-h-[calc(100dvh-120px)] max-w-[calc(100vw-16px)] space-y-2.5 overflow-auto rounded-[10px] border border-line bg-surface p-3 shadow-lift ${popAnim.closing ? 'pop-out' : 'pop-in'}`}
         >
           {children}
         </div>,

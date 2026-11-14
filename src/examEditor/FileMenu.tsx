@@ -6,6 +6,7 @@
  * và được chuyển thành block đề / slide ở call site.
  */
 import { useEffect, useRef, useState } from 'react'
+import { useAnimatedPresence } from '@/lib/useAnimatedPresence'
 import { IconPlus } from './icons'
 import { popoverStyle, useAnchoredPopover } from './useAnchoredPopover'
 import { IMPORT_ACCEPT } from '@/lib/importFile'
@@ -45,6 +46,7 @@ function IconTray({ up = false }: { up?: boolean }) {
 
 export function FileMenu({ kind, onNew, onImport, onDownload, downloadHint, downloadNote, extra }: FileMenuProps) {
   const [open, setOpen] = useState(false)
+  const popAnim = useAnimatedPresence(open, 140)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const wrapRef = useRef<HTMLDivElement>(null)
@@ -110,8 +112,13 @@ export function FileMenu({ kind, onNew, onImport, onDownload, downloadHint, down
         </svg>
       </button>
 
-      {open && (
-        <div className="file-menu__pop" style={popoverStyle(pos)} role="menu" aria-label="Tệp">
+      {popAnim.mounted && (
+        <div
+          className={`file-menu__pop ${popAnim.closing ? 'pop-out' : 'pop-in'}`}
+          style={popoverStyle(pos)}
+          role="menu"
+          aria-label="Tệp"
+        >
           <button
             type="button"
             role="menuitem"

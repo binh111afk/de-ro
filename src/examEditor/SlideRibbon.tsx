@@ -1,5 +1,6 @@
 import { Children, Fragment, isValidElement, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { ChevronDown, MoreHorizontal, X } from 'lucide-react'
+import { useAnimatedPresence } from '@/lib/useAnimatedPresence'
 import { useSlideViewport } from './useSlideViewport'
 import {
   IconAlignCenter,
@@ -188,11 +189,12 @@ function Anchored({
   children: ReactNode
 }) {
   const { triggerRef, pos } = useAnchoredPopover(open, minWidth)
+  const anim = useAnimatedPresence(open, 140)
   return (
     <div className="rb-drop-wrap" ref={triggerRef as React.RefObject<HTMLDivElement>}>
       {trigger}
-      {open && (
-        <div className="rb-drop-menu slide-ribbon-menu" style={popoverStyle(pos)}>
+      {anim.mounted && (
+        <div className={cn('rb-drop-menu slide-ribbon-menu', anim.closing ? 'pop-out' : 'pop-in')} style={popoverStyle(pos)}>
           {children}
         </div>
       )}
@@ -279,6 +281,7 @@ export function SlideRibbon(props: SlideRibbonProps) {
 
   const [popup, setPopup] = useState<string | null>(null)
   const [phoneSheetOpen, setPhoneSheetOpen] = useState(false)
+  const phoneSheetAnim = useAnimatedPresence(phoneSheetOpen, 180)
   const [phoneInsertSub, setPhoneInsertSub] = useState<'menu' | 'shape' | 'layout'>('menu')
   const [visibleGroups, setVisibleGroups] = useState<number | null>(null)
   const [visibleTabs, setVisibleTabs] = useState<number | null>(null)
@@ -1267,13 +1270,20 @@ export function SlideRibbon(props: SlideRibbonProps) {
           </button>
         </div>
 
-        {phoneSheetOpen && (
+        {phoneSheetAnim.mounted && (
           <>
-            <div className="fixed inset-0 z-50 bg-black/35" aria-hidden="true" onClick={() => setPhoneSheetOpen(false)} />
+            <div
+              className={cn('fixed inset-0 z-50 bg-black/35', phoneSheetAnim.closing ? 'backdrop-out' : 'backdrop-in')}
+              aria-hidden="true"
+              onClick={() => setPhoneSheetOpen(false)}
+            />
             <div
               role="dialog"
               aria-label="Công cụ trình soạn slide"
-              className="slide-ribbon__phone-sheet fixed inset-x-0 bottom-0 z-50 flex max-h-[78dvh] flex-col rounded-t-2xl border-t border-line bg-surface shadow-[0_-12px_40px_-12px_rgb(0_0_0/0.4)] pb-[env(safe-area-inset-bottom)]"
+              className={cn(
+                'slide-ribbon__phone-sheet fixed inset-x-0 bottom-0 z-50 flex max-h-[78dvh] flex-col rounded-t-2xl border-t border-line bg-surface shadow-[0_-12px_40px_-12px_rgb(0_0_0/0.4)] pb-[env(safe-area-inset-bottom)]',
+                phoneSheetAnim.closing ? 'sheet-out-down' : 'sheet-in-up',
+              )}
             >
               <div className="flex shrink-0 items-center justify-between border-b border-line px-3 py-2">
                 <span className="text-[14px] font-semibold text-ink">Công cụ slide</span>

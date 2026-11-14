@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import type { OpenTab } from '@/store/compose'
 import { cn } from '@/lib/cn'
+import { useAnimatedPresence } from '@/lib/useAnimatedPresence'
 import { DocIcon, IconDocExam, IconDocBoard, IconDocSlide } from '@/components/docIcons'
 import { IconChevronDown, IconChevronLeft, IconClose, IconHome, IconPlus } from './icons'
 import { useAnchoredPopover, popoverStyle } from './useAnchoredPopover'
@@ -162,6 +163,7 @@ function TabListMenu({ tabs, activeId, startActive, onSelect, onSelectStart }: {
   const [open, setOpen] = useState(false)
   const boxRef = useRef<HTMLDivElement>(null)
   const { triggerRef, pos } = useAnchoredPopover(open, 260)
+  const popAnim = useAnimatedPresence(open, 140)
   useEffect(() => {
     if (!open) return
     const onDown = (e: MouseEvent) => { if (boxRef.current && !boxRef.current.contains(e.target as Node)) setOpen(false) }
@@ -185,8 +187,8 @@ function TabListMenu({ tabs, activeId, startActive, onSelect, onSelectStart }: {
       >
         <IconChevronDown size={16} />
       </button>
-      {open && (
-        <div className="new-doc-pop tab-list-pop" style={popoverStyle(pos)} role="menu">
+      {popAnim.mounted && (
+        <div className={cn('new-doc-pop tab-list-pop', popAnim.closing ? 'pop-out' : 'pop-in')} style={popoverStyle(pos)} role="menu">
           <div className="new-doc-pop__head">Tab đang mở</div>
           <button type="button" role="menuitem" className={cn('tab-list-opt', startActive && 'is-active')} onClick={() => pick(onSelectStart)}>
             <IconHome size={18} />
@@ -242,6 +244,7 @@ function NewDocMenu({
   const [open, setOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const { triggerRef, pos } = useAnchoredPopover(open, 232)
+  const popAnim = useAnimatedPresence(open, 140)
 
   // đóng khi bấm ra ngoài
   useEffect(() => {
@@ -292,8 +295,8 @@ function NewDocMenu({
         <IconPlus size={16} />
       </button>
 
-      {open && (
-        <div className="new-doc-pop" style={popoverStyle(pos)} role="menu">
+      {popAnim.mounted && (
+        <div className={cn('new-doc-pop', popAnim.closing ? 'pop-out' : 'pop-in')} style={popoverStyle(pos)} role="menu">
           <div className="new-doc-pop__head">Tạo tài liệu mới</div>
           {NEW_DOC_OPTIONS.map((opt) => {
             const disabled = !opt.available || (opt.kind === 'slide' && !slideEnabled)

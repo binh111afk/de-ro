@@ -6,6 +6,7 @@
 import type { ExamBlock, ExamDoc } from '@/data/docTypes'
 import { MathText } from '@/components/MathText'
 import { useMemo, useRef, useState } from 'react'
+import { useAnimatedPresence } from '@/lib/useAnimatedPresence'
 import { Blocks, ChevronLeft, ChevronRight, ListTree, Wrench, X } from 'lucide-react'
 import { NavRailIndicator } from './NavRailIndicator'
 import { PanelContentTransition } from './PanelContentTransition'
@@ -81,14 +82,16 @@ export function NavPanel({
 
   const navRef = useRef<HTMLElement>(null)
   const toc = useMemo(() => buildTocFromDoc(doc), [doc])
+  const mobileSheet = useAnimatedPresence(Boolean(isMobile && open), 180)
+  const tabletBackdrop = useAnimatedPresence(Boolean(isOverlay && active), 180)
 
   if (isMobile) {
-    if (!open) return null
+    if (!mobileSheet.mounted) return null
     return (
       <div className="fixed inset-0 z-50 flex flex-col justify-end">
         {/* Backdrop */}
         <div
-          className="fixed inset-0 bg-black/40 backdrop-blur-xs transition-opacity"
+          className={cn('fixed inset-0 bg-black/40 backdrop-blur-xs', mobileSheet.closing ? 'backdrop-out' : 'backdrop-in')}
           onClick={() => onOpenChange(false)}
           aria-hidden="true"
         />
@@ -97,7 +100,10 @@ export function NavPanel({
           role="dialog"
           aria-modal="true"
           aria-label="Mục lục, Khối mẫu và Công cụ"
-          className="relative z-10 flex max-h-[85dvh] w-full flex-col rounded-t-2xl border-t border-line bg-surface shadow-2xl pb-[max(0.75rem,env(safe-area-inset-bottom))]"
+          className={cn(
+            'relative z-10 flex max-h-[85dvh] w-full flex-col rounded-t-2xl border-t border-line bg-surface shadow-2xl pb-[max(0.75rem,env(safe-area-inset-bottom))]',
+            mobileSheet.closing ? 'sheet-out-down' : 'sheet-in-up',
+          )}
         >
           {/* Handle bar */}
           <div className="flex items-center justify-center pt-2.5 pb-1">
@@ -225,9 +231,9 @@ export function NavPanel({
 
   return (
     <div className={cn('relative flex min-h-0 shrink-0', left && 'flex-row-reverse')}>
-      {isOverlay && active && (
+      {tabletBackdrop.mounted && (
         <div
-          className="fixed inset-0 z-30 bg-black/15"
+          className={cn('fixed inset-0 z-30 bg-black/15', tabletBackdrop.closing ? 'backdrop-out' : 'backdrop-in')}
           onClick={() => onOpenChange(false)}
           aria-hidden="true"
         />

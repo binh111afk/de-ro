@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { useAnimatedPresence } from '@/lib/useAnimatedPresence'
 import {
   AlertCircle,
   ArrowLeft,
@@ -56,6 +57,7 @@ export default function Quiz() {
   const [remaining, setRemaining] = useState<number | null>(null)
   const [flagged, setFlagged] = useState<Set<string>>(new Set())
   const [showGrid, setShowGrid] = useState(false)
+  const gridAnim = useAnimatedPresence(showGrid, 180)
   const [confirm, setConfirm] = useState(false)
   const [reviewing, setReviewing] = useState(false)
   /** câu đã bấm kiểm tra (chế độ hiện đáp án ngay) — chỉ có hiệu lực khi đề bật `instantFeedback` */
@@ -454,13 +456,13 @@ export default function Quiz() {
       </div>
 
       {/* question grid drawer */}
-      {showGrid ? (
+      {gridAnim.mounted ? (
         <div
-          className="fixed inset-0 z-50 flex items-end justify-center bg-ink/35 backdrop-blur-sm sm:items-center sm:p-4"
+          className={`fixed inset-0 z-50 flex items-end justify-center bg-ink/35 backdrop-blur-sm sm:items-center sm:p-4 ${gridAnim.closing ? 'backdrop-out' : 'backdrop-in'}`}
           onClick={() => setShowGrid(false)}
         >
           <div
-            className="w-full max-w-[560px] rounded-t-[28px] bg-canvas p-6 shadow-float anim-sheet sm:rounded-[28px]"
+            className={`w-full max-w-[560px] rounded-t-[28px] bg-canvas p-6 shadow-float sm:rounded-[28px] ${gridAnim.closing ? 'sheet-out-down' : 'anim-sheet'}`}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mb-5 flex items-center justify-between">
