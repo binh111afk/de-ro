@@ -1,6 +1,6 @@
 /**
  * Lưới chọn bộ thiết kế (tab Mẫu → Bộ màu ở panel trái): bấm là đổi phong cách
- * toàn bài, không thêm slide. Thẻ gọn kiểu .slide-ribbon-theme-card (không dựng SlideThumb nặng).
+ * toàn bài, không thêm slide. Thẻ gọn (không dựng SlideThumb nặng).
  */
 import type { CSSProperties } from 'react'
 import { Check } from 'lucide-react'

@@ -23,7 +23,7 @@ import { renderMath } from '@/lib/math'
 import { autoAnimate, clearAnimation, slideSteps } from '@/lib/slideAnim'
 import { EmptyState } from '@/components/ui'
 import { cn } from '@/lib/cn'
-import type { Deck, DeckTheme, Slide, SlideElement, SlideTone } from '@/store/docs'
+import type { Deck, Slide, SlideElement, SlideTone } from '@/store/docs'
 import { parseAiDeck, type AiSlidePayload, type DeckPlan } from '@/lib/aiDeck'
 import { exportDeckPptx } from '@/lib/exportDeck'
 import { HtmlDeckBar, HtmlSlideFrame } from './HtmlSlide'
@@ -31,7 +31,7 @@ import { applyDeckDesign, applyEdits, describeSlide, recomposeSlide, type SlideE
 import { elementHeight } from '@/lib/slideText'
 import { normalizeTheme, type ResolvedTheme } from '@/lib/slideTheme'
 import { readableElements } from '@/lib/slideContrast'
-import { designById, type SlideDesign } from '@/lib/slideDesigns'
+import { type SlideDesign } from '@/lib/slideDesigns'
 import { applySkin } from '@/lib/slideSkins'
 import { appendSlidesToDeck, withImage } from '@/lib/slideAi'
 import { IMAGE_LAYOUTS, buildImagePrompt, generateSlideImage, queueImage } from '@/lib/imageGen'
@@ -581,20 +581,6 @@ export function SlideEditor({
     updateElement(currentSlide.id, selectedElement.id, axis === 'x' ? { flipX: !selectedElement.flipX } : { flipY: !selectedElement.flipY })
   }
 
-  /**
-   * Đổi theme: slide có layout được dựng lại để màu/font khớp theme mới (màu chữ
-   * của layout là màu cụ thể, không tự theo theme); slide freeform giữ hành vi cũ.
-   */
-  const applyTheme = (nextTheme: DeckTheme) => {
-    // đang dùng bộ thiết kế: ribbon "Bộ màu" chỉ thay màu, giữ motif + kiểu dàn trang của thiết kế
-    const design = designById(deck.design)
-    if (design) {
-      commitDeck(applyDeckDesign(deck, design, nextTheme))
-      return
-    }
-    commitDeck({ ...deck, theme: nextTheme, slides: deck.slides.map((slide) => recomposeSlide(nextTheme, slide)) })
-  }
-
   /** Đổi tông cho slide đã có layout; dựng lại phần tử theo tông mới. */
   const applyTone = (tone: SlideTone) => {
     if (!currentSlide?.layout || !isLayoutId(currentSlide.layout)) return
@@ -953,7 +939,6 @@ export function SlideEditor({
         onArrange={arrangeSelected}
         onAlign={alignSelected}
         onFlip={flipSelected}
-        onTheme={applyTheme}
         onOpenDesigns={() => setOpenDesignsSignal((n) => n + 1)}
         onApplyLayout={applyLayout}
         onTone={applyTone}

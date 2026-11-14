@@ -62,8 +62,7 @@ import {
   type RibbonTabDef,
 } from './Layout'
 import { useAnchoredPopover, popoverStyle } from './useAnchoredPopover'
-import type { Deck, DeckTheme, Slide, SlideElement, SlideElType, SlideTone } from '@/store/docs'
-import { DECK_THEMES, normalizeTheme } from '@/lib/slideTheme'
+import type { Deck, Slide, SlideElement, SlideElType, SlideTone } from '@/store/docs'
 import { graphicMainColor } from '@/lib/slideGraphics'
 import {
   SLIDE_LAYOUTS,
@@ -115,7 +114,6 @@ export interface SlideRibbonProps {
   onArrange: (action: 'front' | 'back' | 'forward' | 'backward') => void
   onAlign: (action: 'left' | 'center' | 'right' | 'top' | 'middle' | 'bottom') => void
   onFlip: (axis: 'x' | 'y') => void
-  onTheme: (theme: DeckTheme) => void
   /** mở panel trái ở Mẫu → Bộ màu */
   onOpenDesigns: () => void
   /** áp bố cục cho slide đang chọn (xác nhận trong SlideEditor) */
@@ -264,7 +262,6 @@ export function SlideRibbon(props: SlideRibbonProps) {
     onArrange,
     onAlign,
     onFlip,
-    onTheme,
     onOpenDesigns,
     onApplyLayout,
     onTone,
@@ -611,7 +608,6 @@ export function SlideRibbon(props: SlideRibbonProps) {
   )
 
   const renderDesign = () => {
-    const activeThemeId = normalizeTheme(deck.theme).id
     const activeTone = slide
       ? isTone(slide.tone)
         ? slide.tone
@@ -620,43 +616,16 @@ export function SlideRibbon(props: SlideRibbonProps) {
     const toneEnabled = Boolean(slide?.layout && isLayoutId(slide.layout))
     return (
     <>
-      <RibbonGroup label="Thiết kế">
+      <RibbonGroup label="Bộ màu">
         <RibbonButton
           icon={<Palette size={26} strokeWidth={1.7} />}
-          label="Thiết kế…"
-          data-tip="Chọn bộ thiết kế cho cả bài (mở tab Mẫu → Bộ màu)"
+          label="Bộ màu…"
+          data-tip="Chọn bộ màu cho cả bài (mở tab Mẫu → Bộ màu)"
           onClick={() => {
             onOpenDesigns()
             if (phoneSheetOpen) setPhoneSheetOpen(false)
           }}
         />
-      </RibbonGroup>
-      <div className="ribbon-sep" />
-      <RibbonGroup label="Bộ màu">
-        <div className="slide-ribbon-theme-grid">
-          {DECK_THEMES.map((theme) => (
-            <button
-              key={theme.id}
-              type="button"
-              className={cn('slide-ribbon-theme-card', activeThemeId === theme.id && 'active')}
-              onMouseDown={(e) => e.preventDefault()}
-              onClick={() => onTheme(theme)}
-              data-tip={theme.name}
-            >
-              <span
-                className="slide-ribbon-theme-preview"
-                style={{ background: theme.bg, color: theme.fg, fontFamily: theme.fonts?.heading }}
-              >
-                <b>Aa</b>
-                <span className="slide-ribbon-theme-bars">
-                  <i style={{ background: theme.accent }} />
-                  <i style={{ background: theme.secondary ?? theme.accent }} />
-                </span>
-              </span>
-              <small>{theme.name}</small>
-            </button>
-          ))}
-        </div>
       </RibbonGroup>
       <div className="ribbon-sep" />
       <RibbonGroup label="Tông nền">

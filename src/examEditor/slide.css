@@ -981,65 +981,6 @@
   width: 15px;
 }
 
-.slide-ribbon-theme-grid {
-  display: flex;
-  gap: 6px;
-}
-
-.slide-ribbon-theme-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  padding: 3px;
-  border: 1px solid transparent;
-  border-radius: 4px;
-  background: none;
-  cursor: pointer;
-}
-
-.slide-ribbon-theme-card:hover {
-  background: var(--hover);
-}
-
-.slide-ribbon-theme-card.active {
-  border-color: var(--accent);
-}
-
-.slide-ribbon-theme-preview {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 62px;
-  height: 40px;
-  padding: 4px 5px;
-  border: 1px solid var(--border);
-  border-radius: 2px;
-  font-size: 12px;
-}
-
-.slide-ribbon-theme-preview b {
-  font-weight: 600;
-}
-
-.slide-ribbon-theme-bars {
-  display: flex;
-  gap: 3px;
-}
-
-.slide-ribbon-theme-preview i {
-  display: block;
-  width: 18px;
-  height: 4px;
-  border-radius: 1px;
-}
-
-.slide-ribbon-theme-card small {
-  font-size: 10px;
-  color: var(--text-secondary);
-  white-space: nowrap;
-}
-
 /* ---------------------------------------------------------------- *
  * Cột thumbnail — tiêu đề bài giảng
  * ---------------------------------------------------------------- */
@@ -1417,10 +1358,9 @@ body[data-slide-drag] .slide-sel-toolbar {
     min-width: 0;
   }
 
-  /* trong bảng công cụ điện thoại: hàng phông chữ và lưới chủ đề tự xuống dòng, không tràn ngang */
+  /* trong bảng công cụ điện thoại: hàng phông chữ tự xuống dòng, không tràn ngang */
   .slide-ribbon__phone-sheet-body .rb-font-group,
-  .slide-ribbon__phone-sheet-body .rb-font-group .rb-row,
-  .slide-ribbon__phone-sheet-body .slide-ribbon-theme-grid {
+  .slide-ribbon__phone-sheet-body .rb-font-group .rb-row {
     flex-wrap: wrap;
     min-width: 0;
     max-width: 100%;
@@ -1520,7 +1460,7 @@ body[data-slide-drag] .slide-sel-toolbar {
 }
 
 /* ---------------------------------------------------------------- *
- * Tab Mẫu → Thiết kế (kiểu .slide-ribbon-theme-card phóng lớn)
+ * Tab Mẫu → Bộ màu: lưới thẻ chọn bộ thiết kế
  * ---------------------------------------------------------------- */
 .slide-design-grid {
   display: grid;
