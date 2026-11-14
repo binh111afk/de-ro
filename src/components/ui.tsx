@@ -1,4 +1,5 @@
-import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react'
+import { forwardRef, useState, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode } from 'react'
+import { Eye, EyeOff } from 'lucide-react'
 import { cn } from '@/lib/cn'
 
 type Variant = 'primary' | 'soft' | 'ghost' | 'outline' | 'clay' | 'quiet'
@@ -209,6 +210,26 @@ export function Checkbox({
 export const inputClass =
   'w-full rounded-[6px] border border-line-2 bg-white px-4 py-2.5 text-[14px] text-ink placeholder:text-ink-4 ' +
   'transition-all duration-200 hover:border-ink-4 focus:border-clay focus:bg-white focus:outline-none focus:ring-2 focus:ring-clay/15'
+
+/** ô mật khẩu có nút con mắt: mắt nhắm khi đang ẩn, mắt mở khi đang hiện */
+export function PasswordInput({ className, ...props }: Omit<InputHTMLAttributes<HTMLInputElement>, 'type'>) {
+  const [show, setShow] = useState(false)
+  return (
+    <div className="relative">
+      <input {...props} type={show ? 'text' : 'password'} className={cn(className, '!pr-10')} />
+      <button
+        type="button"
+        onClick={() => setShow((v) => !v)}
+        aria-label={show ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
+        aria-pressed={show}
+        data-tip={show ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
+        className="absolute inset-y-0 right-0 grid w-10 place-items-center text-ink-3 hover:text-ink"
+      >
+        {show ? <Eye className="size-[18px]" /> : <EyeOff className="size-[18px]" />}
+      </button>
+    </div>
+  )
+}
 
 export const selectClass =
   inputClass +

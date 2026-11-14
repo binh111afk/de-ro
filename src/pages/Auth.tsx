@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { ArrowRight, Feather } from 'lucide-react'
-import { Button } from '@/components/ui'
+import { Button, PasswordInput } from '@/components/ui'
 import { AuthError, requestReset, setNewPassword, signIn, signUp } from '@/lib/auth'
 
 type Mode = 'login' | 'register' | 'forgot' | 'reset'
@@ -154,8 +154,7 @@ export default function Auth({ mode }: { mode: Mode }) {
               )}
               {showPassword && (
                 <Field label={mode === 'reset' ? 'Mật khẩu mới' : 'Mật khẩu'}>
-                  <input
-                    type="password"
+                  <PasswordInput
                     autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
                     required
                     value={password}
@@ -166,8 +165,7 @@ export default function Auth({ mode }: { mode: Mode }) {
               )}
               {showConfirm && (
                 <Field label="Nhập lại mật khẩu">
-                  <input
-                    type="password"
+                  <PasswordInput
                     autoComplete="new-password"
                     required
                     value={confirm}

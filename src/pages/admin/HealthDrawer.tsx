@@ -1,7 +1,7 @@
 /** Panel bên phải của Tình trạng server: sửa cấu hình provider AI, Supabase và R2 chỉ xem. */
 import { useState } from 'react'
 import { X } from 'lucide-react'
-import { Button, Spinner, inputClass } from '@/components/ui'
+import { Button, PasswordInput, Spinner, inputClass } from '@/components/ui'
 import { Portal } from '@/components/Portal'
 import { dialog } from '@/components/Dialog'
 import { resetAiProvider, saveAiProvider, type HealthProvider, type HealthService } from '@/lib/adminApi'
@@ -96,8 +96,7 @@ function ProviderForm({ provider: p, onCancel, onSaved }: { provider: HealthProv
         </label>
         <label className={labelClass}>
           API key
-          <input
-            type="password"
+          <PasswordInput
             value={apiKey}
             onChange={(e) => setApiKey(e.target.value)}
             placeholder={needKey ? 'Đổi endpoint thì phải nhập lại key' : `${p.keyMask}, để trống nếu giữ nguyên`}
