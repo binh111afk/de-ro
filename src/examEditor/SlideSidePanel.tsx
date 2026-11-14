@@ -63,13 +63,13 @@ interface SlideSidePanelProps {
   /** chữ của bài giảng và slide đang mở, để gợi ý đồ hoạ */
   hint?: string
   onAddLayoutSlide: (layoutId: SlideLayoutId) => void
-  /** bộ thiết kế đang dùng (tab Mẫu → Thiết kế) */
+  /** bộ thiết kế đang dùng (tab Mẫu → Bộ màu) */
   activeDesignId?: string
   /** bài HTML: không áp thiết kế */
   designDisabled?: boolean
   /** đổi / gỡ thiết kế cho toàn bài (không thêm slide) */
   onApplyDesign: (design: SlideDesign | null) => void
-  /** tăng số này để mở panel ở Mẫu → Thiết kế (nút "Thiết kế…" trên ribbon) */
+  /** tăng số này để mở panel ở Mẫu → Bộ màu (nút "Thiết kế…" trên ribbon) */
   openDesignsSignal?: number
   onInsert: (el: SlideElement) => void
   /** điện thoại: mục "Trợ lý AI" ở thanh đáy mở AI toàn màn hình */
@@ -517,7 +517,7 @@ function TemplatesPanel({
           className="w-full flex [&>button]:flex-1 [&>button]:justify-center"
           options={[
             { key: 'layouts', label: 'Bố cục' },
-            { key: 'designs', label: 'Thiết kế' },
+            { key: 'designs', label: 'Bộ màu' },
           ]}
         />
       </div>

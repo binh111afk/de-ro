@@ -1,5 +1,5 @@
 /**
- * Lưới chọn bộ thiết kế (tab Mẫu → Thiết kế ở panel trái): bấm là đổi phong cách
+ * Lưới chọn bộ thiết kế (tab Mẫu → Bộ màu ở panel trái): bấm là đổi phong cách
  * toàn bài, không thêm slide. Thẻ gọn kiểu .slide-ribbon-theme-card (không dựng SlideThumb nặng).
  */
 import type { CSSProperties } from 'react'

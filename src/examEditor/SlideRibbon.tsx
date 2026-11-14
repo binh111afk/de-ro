@@ -116,7 +116,7 @@ export interface SlideRibbonProps {
   onAlign: (action: 'left' | 'center' | 'right' | 'top' | 'middle' | 'bottom') => void
   onFlip: (axis: 'x' | 'y') => void
   onTheme: (theme: DeckTheme) => void
-  /** mở panel trái ở Mẫu → Thiết kế */
+  /** mở panel trái ở Mẫu → Bộ màu */
   onOpenDesigns: () => void
   /** áp bố cục cho slide đang chọn (xác nhận trong SlideEditor) */
   onApplyLayout: (layout: SlideLayoutId) => void
@@ -624,7 +624,7 @@ export function SlideRibbon(props: SlideRibbonProps) {
         <RibbonButton
           icon={<Palette size={26} strokeWidth={1.7} />}
           label="Thiết kế…"
-          data-tip="Chọn bộ thiết kế cho cả bài (mở tab Mẫu → Thiết kế)"
+          data-tip="Chọn bộ thiết kế cho cả bài (mở tab Mẫu → Bộ màu)"
           onClick={() => {
             onOpenDesigns()
             if (phoneSheetOpen) setPhoneSheetOpen(false)
