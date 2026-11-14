@@ -19,7 +19,7 @@ import { lookup } from 'node:dns/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { json, readBody } from './http.js'
-import { clientIp, guard, isLocal, userFromToken } from './guard.js'
+import { LOGIN_REQUIRED, clientIp, guard, isLocal, userFromToken } from './guard.js'
 import { addUsage, hasQuotaStore, issueReceipt, quotaMessage, readQuota, refundReceipt, reserveQuota } from './aiQuota.js'
 import { costFromUsage, logAiCall, maintenanceBlock } from './ops.js'
 import { readAiOverrides } from './aiSettings.js'
@@ -305,6 +305,8 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
   // GET: chỉ đọc hạn mức (trang Hồ sơ), không gọi AI. null = máy dev, không giới hạn
   if (req.method === 'GET') return json(res, 200, { quota, unlimited: !!userId && quota === null && hasQuotaStore() })
   if (await maintenanceBlock(req, res)) return
+  // AI chỉ cho người đã đăng nhập (máy dev không cần)
+  if (!userId && !isLocal(ip)) return json(res, 401, { error: LOGIN_REQUIRED, loginRequired: true })
   // gọi lại vì lượt trước trả kết quả hỏng: hoàn token lượt đó trước khi kiểm hạn mức
   const retryOf = req.headers['x-ai-retry-of']
   if (typeof retryOf === 'string' && retryOf) quota = await refundReceipt(userId, ip, retryOf, quota)

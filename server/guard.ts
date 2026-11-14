@@ -37,6 +37,8 @@ const header = (req: IncomingMessage, name: string) => {
 const onVercel = !!process.env.VERCEL
 
 /** IP thật: trên Vercel lấy header do Vercel tự ghi (khách không giả được); máy dev lấy địa chỉ socket. */
+export const LOGIN_REQUIRED = 'Bạn cần đăng nhập để dùng AI.'
+
 export function clientIp(req: IncomingMessage): string {
   if (onVercel) return header(req, 'x-vercel-forwarded-for').split(',')[0].trim() || header(req, 'x-real-ip') || req.socket?.remoteAddress || ''
   return req.socket?.remoteAddress || ''

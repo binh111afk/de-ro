@@ -17,7 +17,7 @@ import { homedir } from 'node:os'
 import path from 'node:path'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { json, readBody } from './http.js'
-import { guard } from './guard.js'
+import { LOGIN_REQUIRED, clientIp, guard, isLocal, userFromToken } from './guard.js'
 
 const DEFAULT_BASE_URL = 'https://api.xkiro.com/v1'
 const DEFAULT_MODEL = 'sensenova/sensenova-u1.5-lite'
@@ -174,6 +174,8 @@ export async function handleImageRequest(
   if (!(await guard(req, res, 'image'))) return
   if (req.method === 'OPTIONS') return json(res, 204, {})
   if (req.method !== 'POST') return json(res, 405, { error: 'Method not allowed' })
+  // vẽ ảnh AI chỉ cho người đã đăng nhập (máy dev không cần)
+  if (!isLocal(clientIp(req)) && !(await userFromToken(req))) return json(res, 401, { error: LOGIN_REQUIRED, loginRequired: true })
 
   try {
     const body = JSON.parse(await readBody(req)) as { prompt?: unknown }

@@ -9,6 +9,9 @@
  *   - composer là thẻ bo 16px, Enter gửi, Shift+Enter xuống dòng, Esc để dừng.
  */
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { useSession } from '@/lib/useSession'
+import { Button } from '@/components/ui'
 import { callLlm, callLlmChecked, lastAiQuota, type AiQuota, type LlmMessage } from '@/lib/llm'
 import { khungPromptFor } from '@/lib/khungPrompt'
 import {
@@ -847,6 +850,9 @@ export function AiPanel({
   /** bảng vẽ: áp các lệnh vẽ AI trả về; trả các dòng báo lại người dùng */
   onBoardOps?: (ops: Record<string, unknown>[]) => string[]
 }) {
+  // AI chỉ cho người đã đăng nhập (server chặn khách); máy dev vẫn dùng được
+  const session = useSession()
+  const needsLogin = !session && !/^(localhost|127\.0\.0\.1)$/.test(window.location.hostname)
   const starters = mode === 'slide' ? SLIDE_STARTERS : mode === 'board' ? BOARD_STARTERS : STARTERS
   const [turns, setTurns] = useState<ChatTurn[]>([])
   const [input, setInput] = useState('')
@@ -1532,6 +1538,14 @@ export function AiPanel({
           }}
         />
       ) : null}
+      {needsLogin ? (
+        <div className="ai-composer ai-login">
+          <p>Bạn cần đăng nhập để dùng trợ lý AI.</p>
+          <Link to="/dang-nhap">
+            <Button variant="primary" size="sm">Đăng nhập</Button>
+          </Link>
+        </div>
+      ) : (
       <div className="ai-composer">
         <div className="ai-input-box">
           {refs.length > 0 && (
@@ -1712,6 +1726,7 @@ export function AiPanel({
           </div>
         </div>
       </div>
+      )}
 
       {overwriteAsk ? (
         <div className="ai-html-modal" role="dialog" aria-modal="true" aria-label="Ghi đè slide cũ">
