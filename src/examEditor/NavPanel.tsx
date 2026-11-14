@@ -10,6 +10,7 @@ import { useAnimatedPresence } from '@/lib/useAnimatedPresence'
 import { Blocks, ChevronLeft, ChevronRight, ListTree, Wrench, X } from 'lucide-react'
 import { NavRailIndicator } from './NavRailIndicator'
 import { PanelContentTransition } from './PanelContentTransition'
+import { SheetTabs } from './SheetTabs'
 import { ToolsPanel } from './tools/ToolsPanel'
 import type { PlotImage } from './tools/GraphToolModal'
 import type { JSONContent } from '@tiptap/core'
@@ -112,25 +113,7 @@ export function NavPanel({
 
           {/* Header with tabs & close */}
           <div className="flex items-center justify-between border-b border-line px-4 py-2">
-            <div className="flex items-center gap-1">
-              {TABS.map(({ id, label, Icon }) => (
-                <button
-                  key={id}
-                  type="button"
-                  onClick={() => setTab(id)}
-                  aria-pressed={tab === id}
-                  className={cn(
-                    'flex min-h-9 items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors',
-                    tab === id
-                      ? 'bg-clay-soft text-clay-deep'
-                      : 'text-ink-3 hover:bg-paper-2 hover:text-ink',
-                  )}
-                >
-                  <Icon className="size-4" />
-                  {label}
-                </button>
-              ))}
-            </div>
+            <SheetTabs items={TABS.map(({ id, label, Icon }) => ({ id, label, icon: <Icon className="size-4" /> }))} value={tab} onChange={setTab} />
             <button
               type="button"
               onClick={() => onOpenChange(false)}

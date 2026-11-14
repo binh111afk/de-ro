@@ -4,6 +4,7 @@ import { AlignCenter, AlignJustify, AlignLeft, AlignRight, ChevronDown, MoreHori
 import { cn } from '@/lib/cn'
 import { useAnimatedPresence } from '@/lib/useAnimatedPresence'
 import { RibbonGroup } from './Layout'
+import { SheetTabs } from './SheetTabs'
 import { popoverStyle, useAnchoredPopover } from './useAnchoredPopover'
 import type { FormatState } from './formatState'
 import {
@@ -660,24 +661,7 @@ export function PhoneRibbon({
             </div>
 
             <div className="flex items-center justify-between gap-2 border-b border-line px-3 py-2">
-              <div className="flex flex-1 items-center gap-1 overflow-x-auto scrollbar-none">
-                {PHONE_SHEET_TABS.map((t) => (
-                  <button
-                    key={t.id}
-                    type="button"
-                    onClick={() => setSheetTab(t.id)}
-                    aria-pressed={shownSheetTab === t.id}
-                    className={cn(
-                      'min-h-9 shrink-0 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-colors',
-                      shownSheetTab === t.id
-                        ? 'bg-clay-soft text-clay-deep'
-                        : 'text-ink-3 hover:bg-paper-2 hover:text-ink',
-                    )}
-                  >
-                    {t.label}
-                  </button>
-                ))}
-              </div>
+              <SheetTabs className="flex-1 overflow-x-auto scrollbar-none" items={PHONE_SHEET_TABS.map((t) => ({ id: t.id, label: t.label }))} value={shownSheetTab} onChange={(id) => setSheetTab(id)} />
               <button
                 type="button"
                 onClick={() => setSheetTab(null)}
