@@ -305,7 +305,7 @@ export function SlideElView({ el, theme, revealStep }: { el: SlideElement; theme
       >
         {lines
           ? lines.map((line, i) => (
-              <div key={i} style={revealStyle((el.lineStep ?? 0) + i <= (revealStep ?? 0), el.anim)}>
+              <div key={i} style={revealStyle((el.lineStep ?? 0) + i <= (revealStep ?? 0), el.anim, el.animMs)}>
                 {hasRich(line) ? <span dangerouslySetInnerHTML={{ __html: slideMathHtml(line) }} /> : line || ' '}
               </div>
             ))

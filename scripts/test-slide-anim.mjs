@@ -5,7 +5,7 @@
  */
 import assert from 'node:assert/strict'
 import { composeLayout, SLIDE_LAYOUTS } from '../src/lib/slideLayouts.ts'
-import { autoAnimate, clearAnimation, slideSteps } from '../src/lib/slideAnim.ts'
+import { applyElementAnim, autoAnimate, clearAnimation, slideSteps } from '../src/lib/slideAnim.ts'
 import { DECK_THEMES } from '../src/lib/slideTheme.ts'
 
 const theme = DECK_THEMES[0]
@@ -62,4 +62,26 @@ assert.deepEqual(
 const cleared = clearAnimation(cards)
 assert.equal(slideSteps(cleared), 0)
 assert.deepEqual(autoAnimate(cleared, 'cards'), cards)
+// hiệu ứng từng đối tượng: thêm nối tiếp, đổi thứ tự, hiện từng dòng, bỏ thì đánh số lại liền mạch
+let els = [
+  { id: 'a', type: 'shape', x: 0, y: 0, w: 10, h: 10 },
+  { id: 'b', type: 'text', x: 0, y: 0, w: 10, h: 10, text: ['x', 'y', 'z'].join('\n') },
+  { id: 'c', type: 'shape', x: 0, y: 0, w: 10, h: 10 },
+]
+const at = (id) => els.find((e) => e.id === id)
+els = applyElementAnim(els, 'a', { type: 'set', anim: 'left' })
+els = applyElementAnim(els, 'b', { type: 'set', anim: 'fade' })
+els = applyElementAnim(els, 'c', { type: 'set', anim: 'zoom' })
+assert.deepEqual([at('a').step, at('b').step, at('c').step], [1, 2, 3])
+els = applyElementAnim(els, 'b', { type: 'byLine', on: true })
+assert.equal(at('b').lineStep, 2)
+assert.equal(at('c').step, 5, 'hộp 3 dòng chiếm lần bấm 2–4')
+els = applyElementAnim(els, 'c', { type: 'move', dir: -1 })
+assert.deepEqual([at('a').step, at('c').step, at('b').lineStep], [1, 2, 3])
+els = applyElementAnim(els, 'a', { type: 'none' })
+assert.equal(at('a').step, undefined)
+assert.deepEqual([at('c').step, at('b').lineStep], [1, 2])
+els = applyElementAnim(els, 'c', { type: 'speed', ms: 700 })
+assert.equal(at('c').animMs, 700)
+assert.equal(slideSteps(els), 4)
 console.log('test-slide-anim: pass')

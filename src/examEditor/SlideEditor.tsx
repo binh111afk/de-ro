@@ -20,7 +20,7 @@ import { alignBoxes, type AlignMode } from '@/lib/slideAlign'
 import { graphicMainColor } from '@/lib/slideGraphics'
 import { hasRich } from '@/lib/slideMath'
 import { renderMath } from '@/lib/math'
-import { autoAnimate, clearAnimation, slideSteps } from '@/lib/slideAnim'
+import { autoAnimate, clearAnimation, slideSteps, applyElementAnim, startOf } from '@/lib/slideAnim'
 import { EmptyState } from '@/components/ui'
 import { cn } from '@/lib/cn'
 import type { Deck, Slide, SlideElement, SlideTone } from '@/store/docs'
@@ -45,7 +45,15 @@ import { SlideThumb, SlideElView } from './slideRender'
 import { GroupToolbar, SnapGuides, EditableEl, setSnapEnabled } from './slideEditParts'
 
 /** Trạng thái ẩn/hiện của hiệu ứng bấm-chuột: mờ dần + trượt/phóng nhẹ (translate/scale tách khỏi transform xoay của phần tử). */
-const HIDDEN_POSE = { fade: {}, rise: { translate: '0 2.4cqw' }, zoom: { scale: '0.8' } } as const
+const HIDDEN_POSE: Record<NonNullable<SlideElement['anim']>, React.CSSProperties> = {
+  fade: {},
+  rise: { translate: '0 2.4cqw' },
+  drop: { translate: '0 -2.4cqw' },
+  left: { translate: '-6cqw 0' },
+  right: { translate: '6cqw 0' },
+  zoom: { scale: '0.8' },
+  spin: { rotate: '-90deg', scale: '0.6' },
+}
 
 /** cài đặt nhỏ theo trình duyệt (lưới, đường gióng); localStorage hỏng thì dùng mặc định */
 function readPref(key: string, fallback: boolean): boolean {
@@ -65,10 +73,10 @@ function writePref(key: string, value: boolean): boolean {
   return value
 }
 
-export const revealStyle = (shown: boolean, anim: SlideElement['anim'] = 'fade'): React.CSSProperties => ({
+export const revealStyle = (shown: boolean, anim: SlideElement['anim'] = 'fade', ms = 450): React.CSSProperties => ({
   opacity: shown ? 1 : 0,
-  ...(shown ? { translate: '0 0', scale: '1' } : HIDDEN_POSE[anim]),
-  transition: 'opacity 450ms ease, translate 450ms cubic-bezier(.2,.8,.2,1), scale 450ms cubic-bezier(.2,.8,.2,1)',
+  ...(shown ? { translate: '0 0', scale: '1', rotate: '0deg' } : HIDDEN_POSE[anim] ?? {}),
+  transition: `opacity ${ms}ms ease, translate ${ms}ms cubic-bezier(.2,.8,.2,1), scale ${ms}ms cubic-bezier(.2,.8,.2,1), rotate ${ms}ms cubic-bezier(.2,.8,.2,1)`,
 })
 
 /** Lớp phủ cả slide bọc một phần tử; zoom phóng quanh tâm phần tử chứ không quanh tâm slide. */
@@ -81,7 +89,7 @@ function RevealLayer({ el, shown, children }: { el: SlideElement; shown: boolean
         pointerEvents: 'none',
         zIndex: el.zIndex,
         transformOrigin: `${el.x + el.w / 2}% ${el.y + el.h / 2}%`,
-        ...revealStyle(shown, el.anim),
+        ...revealStyle(shown, el.anim, el.animMs),
       }}
     >
       {children}
@@ -528,7 +536,8 @@ export function SlideEditor({
       chart: 'chartDesign',
     }
     const next = auto[selectedElement.type]
-    if (next) setRibbonTab(next)
+    // đang ở Hoạt ảnh thì giữ nguyên tab để chọn lần lượt từng đối tượng gắn hiệu ứng
+    if (next && ribbonTab !== 'animations') setRibbonTab(next)
   }, [selectedElement?.id])
 
   useEffect(() => {
@@ -987,6 +996,15 @@ export function SlideEditor({
             ),
           })
         }
+        onElementAnim={(action) => {
+          if (!currentSlide || !selectedElement) return
+          commitDeck({
+            ...deck,
+            slides: deck.slides.map((s) =>
+              s.id === currentSlide.id ? { ...s, elements: applyElementAnim(s.elements, selectedElement.id, action) } : s,
+            ),
+          })
+        }}
         onAnimate={(mode, allSlides) =>
           commitDeck({
             ...deck,
@@ -1108,6 +1126,20 @@ export function SlideEditor({
                 }}
               >
                 {gridOn ? <div className="slide-grid-overlay" aria-hidden /> : null}
+                {ribbonTab === 'animations'
+                  ? currentSlide.elements
+                      .filter((el) => startOf(el) !== undefined)
+                      .map((el) => (
+                        <span
+                          key={`anim-${el.id}`}
+                          className={cn('slide-anim-badge', el.id === selectedElementId && 'is-selected')}
+                          style={{ left: `${el.x}%`, top: `${el.y}%` }}
+                          aria-hidden
+                        >
+                          {el.lineStep !== undefined ? `${el.lineStep}…` : el.step}
+                        </span>
+                      ))
+                  : null}
                 <SnapGuides />
                 {readableElements(currentSlide, theme).map((el) => (
                   <EditableEl
