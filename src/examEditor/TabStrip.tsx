@@ -4,6 +4,7 @@
  * trắng bên dưới, mỗi đề là một tab độc lập.
  */
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 import type { OpenTab } from '@/store/compose'
 import { cn } from '@/lib/cn'
@@ -162,11 +163,12 @@ function TabListMenu({ tabs, activeId, startActive, onSelect, onSelectStart }: {
 }) {
   const [open, setOpen] = useState(false)
   const boxRef = useRef<HTMLDivElement>(null)
+  const popRef = useRef<HTMLDivElement>(null)
   const { triggerRef, pos } = useAnchoredPopover(open, 260)
   const popAnim = useAnimatedPresence(open, 140)
   useEffect(() => {
     if (!open) return
-    const onDown = (e: MouseEvent) => { if (boxRef.current && !boxRef.current.contains(e.target as Node)) setOpen(false) }
+    const onDown = (e: MouseEvent) => { const t = e.target as Node; if (boxRef.current && !boxRef.current.contains(t) && !popRef.current?.contains(t)) setOpen(false) }
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false) }
     document.addEventListener('mousedown', onDown)
     document.addEventListener('keydown', onKey)
@@ -187,8 +189,9 @@ function TabListMenu({ tabs, activeId, startActive, onSelect, onSelectStart }: {
       >
         <IconChevronDown size={16} />
       </button>
-      {popAnim.mounted && (
-        <div className={cn('new-doc-pop tab-list-pop', popAnim.closing ? 'pop-out' : 'pop-in')} style={popoverStyle(pos)} role="menu">
+      {/* gắn vào body: thanh tab có lớp chồng riêng (mép mờ), để bên trong thì menu bị nội dung bên dưới (bảng vẽ…) đè lên */}
+      {popAnim.mounted && createPortal(
+        <div ref={popRef} className={cn('new-doc-pop tab-list-pop', popAnim.closing ? 'pop-out' : 'pop-in')} style={popoverStyle(pos)} role="menu">
           <div className="new-doc-pop__head">Tab đang mở</div>
           <button type="button" role="menuitem" className={cn('tab-list-opt', startActive && 'is-active')} onClick={() => pick(onSelectStart)}>
             <IconHome size={18} />
@@ -201,7 +204,8 @@ function TabListMenu({ tabs, activeId, startActive, onSelect, onSelectStart }: {
               {t.dirty && <span className="tab-list-opt__dot" aria-label="Chưa lưu" />}
             </button>
           ))}
-        </div>
+        </div>,
+        document.body,
       )}
     </div>
   )
@@ -243,6 +247,7 @@ function NewDocMenu({
 }) {
   const [open, setOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
+  const popRef = useRef<HTMLDivElement>(null)
   const { triggerRef, pos } = useAnchoredPopover(open, 232)
   const popAnim = useAnimatedPresence(open, 140)
 
@@ -250,7 +255,8 @@ function NewDocMenu({
   useEffect(() => {
     if (!open) return
     const onDown = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setOpen(false)
+      const t = e.target as Node
+      if (menuRef.current && !menuRef.current.contains(t) && !popRef.current?.contains(t)) setOpen(false)
     }
     document.addEventListener('mousedown', onDown)
     return () => document.removeEventListener('mousedown', onDown)
@@ -295,8 +301,8 @@ function NewDocMenu({
         <IconPlus size={16} />
       </button>
 
-      {popAnim.mounted && (
-        <div className={cn('new-doc-pop', popAnim.closing ? 'pop-out' : 'pop-in')} style={popoverStyle(pos)} role="menu">
+      {popAnim.mounted && createPortal(
+        <div ref={popRef} className={cn('new-doc-pop', popAnim.closing ? 'pop-out' : 'pop-in')} style={popoverStyle(pos)} role="menu">
           <div className="new-doc-pop__head">Tạo tài liệu mới</div>
           {NEW_DOC_OPTIONS.map((opt) => {
             const disabled = !opt.available || (opt.kind === 'slide' && !slideEnabled)
@@ -323,7 +329,8 @@ function NewDocMenu({
               </button>
             )
           })}
-        </div>
+        </div>,
+        document.body,
       )}
     </div>
   )
