@@ -27,12 +27,12 @@ import type { Deck, DeckTheme, Slide, SlideElement, SlideTone } from '@/store/do
 import { parseAiDeck, type AiSlidePayload, type DeckPlan } from '@/lib/aiDeck'
 import { exportDeckPptx } from '@/lib/exportDeck'
 import { HtmlDeckBar, HtmlSlideFrame } from './HtmlSlide'
-import { applyEdits, describeSlide, recomposeSlide, type SlideEditOp } from '@/lib/slideEdit'
+import { applyDeckDesign, applyEdits, describeSlide, recomposeSlide, type SlideEditOp } from '@/lib/slideEdit'
 import { elementHeight } from '@/lib/slideText'
-import { DECK_THEMES, normalizeTheme, themeById, type ResolvedTheme } from '@/lib/slideTheme'
+import { normalizeTheme, type ResolvedTheme } from '@/lib/slideTheme'
 import { readableElements } from '@/lib/slideContrast'
-import { buildDesignSlides, type SlideDesign } from '@/lib/slideDesigns'
-import { applySkin, skinById, themeWithSkinFonts } from '@/lib/slideSkins'
+import { type SlideDesign } from '@/lib/slideDesigns'
+import { applySkin } from '@/lib/slideSkins'
 import { appendSlidesToDeck, withImage } from '@/lib/slideAi'
 import { IMAGE_LAYOUTS, buildImagePrompt, generateSlideImage, queueImage } from '@/lib/imageGen'
 import { uploadImage } from '@/lib/mediaStore'
@@ -176,18 +176,6 @@ export interface SlideEditorProps {
   onNewDeck?: () => void
   /** menu Tệp: nhập .pptx/.docx/.xlsx thành tab bài giảng mới */
   onImportFile?: (file: File) => Promise<void>
-}
-
-export function isBlankDeck(deck: Deck): boolean {
-  if (deck.slides.length === 0) return true
-  if (deck.slides.length === 1) {
-    const s = deck.slides[0]
-    if (!s.html && !s.layout) {
-      if (s.elements.length === 0) return true
-      if (s.elements.length === 1 && (s.elements[0].text === 'Tiêu đề bài giảng' || !s.elements[0].text)) return true
-    }
-  }
-  return false
 }
 
 export function SlideEditor({
@@ -422,85 +410,29 @@ export function SlideEditor({
     setElementImage(slideId, elId, await uploadImage(image.dataUrl))
   }
 
-  /** Thêm trọn bộ slide thiết kế mẫu vào bài */
-  const addDesignToDeck = (design: SlideDesign, option: 'replace' | 'keep' | 'empty') => {
+  /** Áp dụng bộ thiết kế lên toàn bộ slide hiện có (chỉ restyle, không thêm/bớt slide). */
+  const applyDesignToDeck = (design: SlideDesign | null) => {
     const latest = deckRef.current
-    const baseTheme = themeById(design.themeId) ?? DECK_THEMES[0]
-    const skin = skinById(design.id)
-    const targetTheme = skin ? themeWithSkinFonts(baseTheme, skin) : baseTheme
-
-    if (option === 'empty') {
-      const newSlides = buildDesignSlides(design, targetTheme)
-      const nextDeck: Deck = {
-        ...latest,
-        theme: targetTheme,
-        style: design.stylePack ?? design.id,
-        design: design.id,
-        slides: newSlides,
-      }
-      commitDeck(nextDeck)
-      if (newSlides[0]) {
-        setSelectedSlideId(newSlides[0].id)
-        setSelectedElementId(null)
-      }
-      return
-    }
-
-    if (option === 'replace') {
-      const totalCount = latest.slides.length + design.slides.length
-      const recomposedOldSlides = latest.slides.map((s, i) =>
-        applySkin(recomposeSlide(targetTheme, { ...s, decorKit: design.decorKit }), design.id, targetTheme, i, totalCount),
-      )
-      const newSlides = buildDesignSlides(design, targetTheme)
-      const nextDeck: Deck = {
-        ...latest,
-        theme: targetTheme,
-        style: design.stylePack ?? design.id,
-        design: design.id,
-        slides: [...recomposedOldSlides, ...newSlides],
-      }
-      commitDeck(nextDeck)
-      if (newSlides[0]) {
-        setSelectedSlideId(newSlides[0].id)
-        setSelectedElementId(null)
-      }
-      return
-    }
-
-    if (option === 'keep') {
-      const currentTheme = normalizeTheme(latest.theme)
-      const newSlides = buildDesignSlides(design, currentTheme)
-      const nextDeck: Deck = {
-        ...latest,
-        slides: [...latest.slides, ...newSlides],
-      }
-      commitDeck(nextDeck)
-      if (newSlides[0]) {
-        setSelectedSlideId(newSlides[0].id)
-        setSelectedElementId(null)
-      }
-      return
-    }
+    if (latest.format === 'html') return
+    commitDeck(applyDeckDesign(latest, design))
   }
+
 
   // Panel thư viện được memo để kéo phần tử (cập nhật deck mỗi lần di chuột) không vẽ lại hàng trăm đồ hoạ;
   // handler đi qua ref để callback ổn định mà vẫn luôn gọi bản mới nhất (không giữ deck cũ).
   const panelHandlers = useRef({
     insert: (_el: SlideElement) => {},
     addLayout: (_id: SlideLayoutId) => {},
-    addDesign: (_design: SlideDesign, _option: 'replace' | 'keep' | 'empty') => {},
+    applyDesign: (_design: SlideDesign | null) => {},
   })
   panelHandlers.current = {
     insert: (el) => { addElement(el); setSelectedElementId(el.id) },
     addLayout: addLayoutSlide,
-    addDesign: addDesignToDeck,
+    applyDesign: applyDesignToDeck,
   }
   const insertFromPanel = useCallback((el: SlideElement) => panelHandlers.current.insert(el), [])
   const addLayoutFromPanel = useCallback((id: SlideLayoutId) => panelHandlers.current.addLayout(id), [])
-  const addDesignFromPanel = useCallback(
-    (design: SlideDesign, option: 'replace' | 'keep' | 'empty') => panelHandlers.current.addDesign(design, option),
-    [],
-  )
+  const applyDesignFromPanel = useCallback((design: SlideDesign | null) => panelHandlers.current.applyDesign(design), [])
 
   const previewElement = useCallback(
     (slideId: string, elId: string, patch: Partial<SlideElement>) => {
@@ -1061,9 +993,10 @@ export function SlideEditor({
         accent={theme.accent}
         canInsert={Boolean(currentSlide) && !currentSlide?.html}
         hint={`${deck.title} ${(currentSlide?.elements ?? []).map((e) => e.text ?? '').join(' ').replace(/<[^>]+>/g, ' ')}`}
-        isBlankDeck={isBlankDeck(deck)}
         onAddLayoutSlide={addLayoutFromPanel}
-        onAddDesign={addDesignFromPanel}
+        activeDesignId={deck.design}
+        designDisabled={deck.format === 'html'}
+        onApplyDesign={applyDesignFromPanel}
         onInsert={insertFromPanel}
         onOpenAi={() => setAiOpen(true)}
       />

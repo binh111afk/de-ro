@@ -10,7 +10,9 @@ import {
   composeLayout,
   contentFromSlide,
   defaultTone,
+  isDecorElement,
   isLayoutId,
+  isLayoutOwnedId,
   isTone,
   toneBackground,
   type SlideLayoutContent,
@@ -18,7 +20,7 @@ import {
 import { checkSlide, slideFromAi } from './slideAi'
 import { keepCustomBg } from './slideBackground'
 import { DECK_THEMES, contrastRatio, mixHex, normalizeTheme, resolveThemeId, themeById } from './slideTheme'
-import { SLIDE_DESIGNS, designById } from './slideDesigns'
+import { SLIDE_DESIGNS, designById, type SlideDesign } from './slideDesigns'
 import { applySkin, skinById, themeWithSkinFonts } from './slideSkins'
 
 export type SlideEditOp =
@@ -196,11 +198,58 @@ export function parseEditCommands(raw: string): { ops: SlideEditOp[]; errors: st
 export function recomposeSlide(theme: DeckTheme, slide: Slide, tone?: SlideTone): Slide {
   if (slide.html) return slide
   if (slide.layout && isLayoutId(slide.layout)) {
+    const cleanSlide: Slide = { ...slide, elements: slide.elements.filter((el) => !isDecorElement(el)) }
     const t = tone ?? (isTone(slide.tone) ? slide.tone : defaultTone(slide.layout))
-    const elements = composeLayout(theme, slide.layout, contentFromSlide(slide), t)
-    if (elements.length > 0) return keepCustomBg(slide, { ...slide, tone: t, background: toneBackground(theme, t), elements }, theme.fg)
+    const elements = composeLayout(theme, slide.layout, contentFromSlide(cleanSlide), t)
+    if (elements.length > 0) {
+      // Giữ lại phần tử người dùng tự thêm (hình khối, icon, chữ, ảnh thứ 2…) khi đổi thiết kế/bộ màu
+      const userAdded = cleanSlide.elements.filter((el) => {
+        if (isLayoutOwnedId(el.id)) return false
+        if (el.type === 'image' && elements.some((e) => e.type === 'image' && e.src === el.src)) return false
+        if (el.type === 'table' && elements.some((e) => e.type === 'table')) return false
+        if (el.type === 'graphic' && elements.some((e) => e.type === 'graphic' && e.graphicId === el.graphicId)) return false
+        return true
+      })
+      return keepCustomBg(slide, { ...slide, tone: t, background: toneBackground(theme, t), elements: [...elements, ...userAdded] }, theme.fg)
+    }
   }
-  return slide.customBg ? slide : { ...slide, background: theme.bg }
+  const kept = slide.elements.filter((el) => !isDecorElement(el))
+  return slide.customBg ? { ...slide, elements: kept } : { ...slide, background: theme.bg, elements: kept }
+}
+
+/**
+ * Áp dụng hoặc gỡ bộ thiết kế lên toàn bộ deck hiện có (thuần, không thêm/bớt slide).
+ * Truyền `null` để quay về chế độ không thiết kế (giữ theme hiện tại, gỡ decor/skin).
+ */
+export function applyDeckDesign(deck: Deck, design: SlideDesign | null): Deck {
+  if (!design) {
+    const currentTheme = normalizeTheme(deck.theme)
+    return {
+      ...deck,
+      theme: currentTheme,
+      style: undefined,
+      design: undefined,
+      slides: deck.slides.map((s) => {
+        const cleaned = { ...s, decorKit: undefined }
+        return recomposeSlide(currentTheme, cleaned)
+      }),
+    }
+  }
+  const baseTheme = themeById(design.themeId) ?? normalizeTheme(deck.theme)
+  const skin = skinById(design.id)
+  const targetTheme = skin ? themeWithSkinFonts(baseTheme, skin) : baseTheme
+  const total = deck.slides.length
+  return {
+    ...deck,
+    theme: targetTheme,
+    style: design.stylePack ?? design.id,
+    design: design.id,
+    slides: deck.slides.map((s, i) => {
+      if (s.html) return s
+      const nextBase = recomposeSlide(targetTheme, { ...s, decorKit: design.decorKit })
+      return applySkin(nextBase, design.id, targetTheme, i, total)
+    }),
+  }
 }
 
 /** Mô tả ngắn một slide (bố cục + nội dung chữ) để đưa vào prompt cho model biết đang sửa gì. */
@@ -260,23 +309,11 @@ export function applyEdits(deck: Deck, ops: SlideEditOp[]): EditResult {
           summary.push(`Bỏ qua: không tìm thấy thiết kế "${op.id}".`)
           break
         }
-        const baseTheme = themeById(d.themeId)
-        if (!baseTheme) {
+        if (!themeById(d.themeId)) {
           summary.push(`Bỏ qua: không tìm thấy bộ màu "${d.themeId}".`)
           break
         }
-        const skin = skinById(d.id)
-        const targetTheme = skin ? themeWithSkinFonts(baseTheme, skin) : baseTheme
-        const total = next.slides.length
-        next = {
-          ...next,
-          theme: targetTheme,
-          style: d.stylePack ?? d.id,
-          design: d.id,
-          slides: next.slides.map((s, i) =>
-            applySkin(recomposeSlide(targetTheme, { ...s, decorKit: d.decorKit }), d.id, targetTheme, i, total),
-          ),
-        }
+        next = applyDeckDesign(next, d)
         summary.push(`Áp dụng thiết kế "${d.name}".`)
         break
       }
