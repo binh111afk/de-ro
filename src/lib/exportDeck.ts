@@ -26,7 +26,14 @@ const hex = (value: string | undefined, fallback = 'FFFFFF') => {
 /** Phông có sẵn trên Windows/Mac cùng PowerPoint; phông web (Be Vietnam Pro…) không nằm trong .pptx nên đổi sang Arial. */
 const SAFE_FONTS = ['Times New Roman', 'Arial', 'Georgia', 'Tahoma', 'Verdana', 'Segoe UI', 'Calibri', 'Courier New']
 /** font web không có sẵn trong PowerPoint → font hệ thống gần giống */
-const WEB_FONT_FALLBACK: Record<string, string> = { nunito: 'Arial', lora: 'Georgia', 'be vietnam pro': 'Arial' }
+const WEB_FONT_FALLBACK: Record<string, string> = {
+  nunito: 'Arial',
+  lora: 'Georgia',
+  'be vietnam pro': 'Arial',
+  'patrick hand': 'Comic Sans MS',
+  'space grotesk': 'Arial',
+  'jetbrains mono variable': 'Courier New',
+}
 const pptxFont = (stack: string | undefined) => {
   // lấy font đầu tiên trong chuỗi mà PowerPoint chắc có (font web như Nunito/Lora → font dự phòng kế tiếp)
   for (const part of (stack ?? '').split(',')) {

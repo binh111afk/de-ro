@@ -132,7 +132,11 @@ export function elTransform(el: SlideElement): string | undefined {
 /** font của theme đã là CSS stack đầy đủ, font người dùng chọn chỉ là tên */
 export function fontStack(font: string): string {
   if (font.includes(',')) return font
-  return font === 'Lora' ? 'Lora, Georgia, serif' : `${font}, sans-serif`
+  if (font === 'Lora') return 'Lora, Georgia, serif'
+  if (font === 'JetBrains Mono Variable') return "'JetBrains Mono Variable', ui-monospace, monospace"
+  if (font === 'Patrick Hand') return "'Patrick Hand', 'Nunito', sans-serif"
+  if (font === 'Space Grotesk') return "'Space Grotesk', 'Be Vietnam Pro', sans-serif"
+  return `${font}, sans-serif`
 }
 
 /** Đường nối cong (connector): S-curve tiếp tuyến ngang trong hộp phần tử; lật dọc bằng `flipY`. */

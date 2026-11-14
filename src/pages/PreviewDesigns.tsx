@@ -26,7 +26,7 @@ export default function PreviewDesigns() {
     <div id="comparison-matrix" className="min-h-screen bg-white p-8 text-ink font-sans">
       <div className="mb-6 border-b border-clay/40 pb-4">
         <h1 className="text-2xl font-bold tracking-tight text-ink">
-          Bảng So Sánh Ngôn Ngữ Hình Khối & Bố Cục (8 Bộ Thiết Kế Slide)
+          Bảng So Sánh Ngôn Ngữ Hình Khối & Bố Cục ({SLIDE_DESIGNS.length} Bộ Thiết Kế Slide)
         </h1>
         <p className="mt-1 text-sm text-ink-3">
           Kiểm tra độ khác biệt về hình khối, kiểu chữ, khung viền, và motif nhận diện ở Slide 1, Slide 3 và Slide 5.
