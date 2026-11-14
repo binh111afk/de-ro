@@ -2694,7 +2694,7 @@ export default function BoardEditor({ id }: { id: string }) {
             </div>
             <Pop id="more" pop={pop} setPop={setPop} title="Thêm" align="right" className="@[1000px]:hidden"
               face={<span className="flex items-center justify-center px-1 text-ink"><Ico d="M5 12h.01M12 12h.01M19 12h.01" size={18} /></span>}>
-              <div className="w-[232px] space-y-2.5">
+              <div className="w-[232px] max-w-full space-y-2.5">
                 <div className="space-y-1.5 sm:hidden">
                   <div className="grid grid-cols-2 gap-1.5">
                     {mainTools.filter((m) => m.id === 'laser' || m.id === 'hand').map((m) => (

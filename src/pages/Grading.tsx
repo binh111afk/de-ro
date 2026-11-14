@@ -223,7 +223,7 @@ export default function Grading() {
                 <div className="flex flex-wrap gap-2">
                   {keyLetters.map((_, i) => (
                     <div key={i} className="flex items-center gap-1">
-                      <span className="eyebrow w-5 text-right tnum">{i + 1}</span>
+                      <span className="eyebrow w-4 max-[359px]:w-4 sm:w-5 text-right tnum">{i + 1}</span>
                       {(['A', 'B', 'C', 'D'] as const).map((l) => (
                         <button
                           key={l}
@@ -236,7 +236,7 @@ export default function Grading() {
                             setResult(null)
                           }}
                           className={cn(
-                            'size-7 rounded-[9px] border text-[11.5px] font-bold transition-colors',
+                            'size-7 max-[359px]:size-9 rounded-[9px] border text-[11.5px] font-bold transition-colors',
                             answers[i] === l
                               ? 'border-ink bg-ink text-paper'
                               : 'border-line-2 bg-white text-ink-3 hover:border-ink-4',

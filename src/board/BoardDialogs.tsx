@@ -20,17 +20,17 @@ function Modal({ title, onClose, children, footer, wide }: { title: string; onCl
       >
         <div className="flex items-center justify-between border-b border-line px-4 py-3">
           <b className="text-[14px] text-ink">{title}</b>
-          <button type="button" aria-label="Đóng" onClick={onClose} className="grid h-7 w-7 place-items-center rounded-[6px] text-ink-2 hover:bg-sunken">✕</button>
+          <button type="button" aria-label="Đóng" onClick={onClose} className="grid h-7 w-7 max-[359px]:h-9 max-[359px]:w-9 place-items-center rounded-[6px] text-ink-2 hover:bg-sunken">✕</button>
         </div>
         <div className="min-h-0 flex-1 overflow-auto px-4 py-3">{children}</div>
-        <div className="flex justify-end gap-2 border-t border-line px-4 py-3">{footer}</div>
+        <div className="flex flex-wrap justify-end gap-2 border-t border-line px-4 py-3">{footer}</div>
       </div>
     </div>
   )
 }
 
-const btn = 'h-8 rounded-[7px] px-3 text-[13px] border border-line text-ink hover:bg-sunken disabled:opacity-50'
-const primary = 'h-8 rounded-[7px] px-3 text-[13px] bg-clay text-white hover:brightness-95 disabled:opacity-50'
+const btn = 'h-8 max-[359px]:h-9 rounded-[7px] px-3 text-[13px] border border-line text-ink hover:bg-sunken disabled:opacity-50'
+const primary = 'h-8 max-[359px]:h-9 rounded-[7px] px-3 text-[13px] bg-clay text-white hover:brightness-95 disabled:opacity-50'
 
 /* ---------------- công thức ---------------- */
 
@@ -74,7 +74,7 @@ export function FormulaDialog({ initial, color, onClose, onDone }: {
       <div className="mb-2 flex flex-wrap gap-1">
         {FORMULA_SNIPPETS.map((s) => (
           <button key={s.label} type="button" data-tip={s.tex} onClick={() => add(s.tex)}
-            className="h-7 min-w-8 rounded-[6px] border border-line px-2 text-[13px] text-ink hover:bg-sunken">{s.label}</button>
+            className="h-7 min-w-8 max-[359px]:h-9 max-[359px]:min-w-9 rounded-[6px] border border-line px-2 text-[13px] text-ink hover:bg-sunken">{s.label}</button>
         ))}
       </div>
       <textarea
@@ -210,7 +210,7 @@ export function ExportDialog({ hasSelection, hasPages, defaultPaperBg, onClose, 
   )
   const Opt = ({ on, onClick, children, disabled }: { on: boolean; onClick: () => void; children: ReactNode; disabled?: boolean }) => (
     <button type="button" aria-pressed={on} disabled={disabled} onClick={onClick}
-      className={`h-8 rounded-[7px] border px-3 text-[13px] disabled:opacity-40 ${on ? 'border-clay bg-clay/10 text-clay' : 'border-line text-ink hover:bg-sunken'}`}>{children}</button>
+      className={`h-8 max-[359px]:h-9 rounded-[7px] border px-3 text-[13px] disabled:opacity-40 ${on ? 'border-clay bg-clay/10 text-clay' : 'border-line text-ink hover:bg-sunken'}`}>{children}</button>
   )
   const go = async () => {
     setBusy(true)

@@ -1089,7 +1089,7 @@ export function SlideRibbon(props: SlideRibbonProps) {
     return (
       <div className="ribbon slide-ribbon slide-ribbon--phone" ref={rootRef}>
         <div className="slide-ribbon__phone-top">
-          <div className="flex min-w-0 items-center gap-1">
+          <div className="flex min-w-0 flex-1 items-center gap-1 max-[359px]:gap-0.5 overflow-x-auto no-scrollbar">
             {onNewDeck && onImportFile ? (
               <FileMenu
                 kind="slide"
@@ -1102,14 +1102,14 @@ export function SlideRibbon(props: SlideRibbonProps) {
               />
             ) : null}
             {onSave && (
-              <button type="button" className="qa-btn" data-tip="Lưu" aria-label="Lưu" onClick={onSave}>
+              <button type="button" className="qa-btn shrink-0" data-tip="Lưu" aria-label="Lưu" onClick={onSave}>
                 <IconSave size={16} />
               </button>
             )}
-            <button type="button" className="qa-btn" data-tip="Hoàn tác" aria-label="Hoàn tác" onMouseDown={(e) => e.preventDefault()} onClick={onUndo} disabled={!canUndo}>
+            <button type="button" className="qa-btn shrink-0" data-tip="Hoàn tác" aria-label="Hoàn tác" onMouseDown={(e) => e.preventDefault()} onClick={onUndo} disabled={!canUndo}>
               <IconUndo size={16} />
             </button>
-            <button type="button" className="qa-btn" data-tip="Làm lại" aria-label="Làm lại" onMouseDown={(e) => e.preventDefault()} onClick={onRedo} disabled={!canRedo}>
+            <button type="button" className="qa-btn shrink-0" data-tip="Làm lại" aria-label="Làm lại" onMouseDown={(e) => e.preventDefault()} onClick={onRedo} disabled={!canRedo}>
               <IconRedo size={16} />
             </button>
           </div>
@@ -1117,7 +1117,7 @@ export function SlideRibbon(props: SlideRibbonProps) {
             type="button"
             onClick={() => setPhoneSheetOpen(true)}
             aria-label="Mở tất cả công cụ"
-            className="flex min-h-[36px] items-center gap-1 rounded-md border border-line bg-surface px-2.5 text-[12px] font-medium text-ink hover:bg-paper-2"
+            className="flex min-h-[36px] shrink-0 whitespace-nowrap items-center gap-1 max-[359px]:gap-0.5 max-[359px]:px-1.5 max-[359px]:text-[11.5px] rounded-md border border-line bg-surface px-2.5 text-[12px] font-medium text-ink hover:bg-paper-2"
           >
             <span>Công cụ</span>
             <ChevronDown className="size-3.5" />

@@ -167,7 +167,7 @@ function SlideSidePanelImpl({
                 setLast(id)
               }}
               aria-pressed={active === id}
-              className={cn('flex flex-1 flex-col items-center justify-center gap-0.5 text-[11px] font-medium', active === id ? 'text-clay' : 'text-ink-3')}
+              className={cn('flex flex-1 flex-col items-center justify-center gap-0.5 whitespace-nowrap text-[11px] font-medium max-[359px]:text-[10px]', active === id ? 'text-clay' : 'text-ink-3')}
             >
               <Icon className="size-5" strokeWidth={1.7} />
               {label}
@@ -180,7 +180,7 @@ function SlideSidePanelImpl({
                 setActive(null)
                 onOpenAi()
               }}
-              className="flex flex-1 flex-col items-center justify-center gap-0.5 text-[11px] font-medium text-clay"
+              className="flex flex-1 flex-col items-center justify-center gap-0.5 whitespace-nowrap text-[11px] font-medium text-clay max-[359px]:text-[10px]"
             >
               <Sparkles className="size-5" strokeWidth={1.7} />
               Trợ lý AI
