@@ -512,7 +512,6 @@ function TemplatesPanel({
         {mode === 'designs' ? (
           <SlideDesignGrid
             activeDesignId={activeDesignId}
-            currentTheme={resolvedTheme}
             disabled={designDisabled}
             onSelect={onApplyDesign}
           />

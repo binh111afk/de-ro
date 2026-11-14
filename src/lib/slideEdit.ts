@@ -219,11 +219,12 @@ export function recomposeSlide(theme: DeckTheme, slide: Slide, tone?: SlideTone)
 
 /**
  * Áp dụng hoặc gỡ bộ thiết kế lên toàn bộ deck hiện có (thuần, không thêm/bớt slide).
- * Truyền `null` để quay về chế độ không thiết kế (giữ theme hiện tại, gỡ decor/skin).
+ * Truyền `null` để quay về thiết kế mặc định của bài mới (DECK_THEMES[0], gỡ decor/skin).
  */
 export function applyDeckDesign(deck: Deck, design: SlideDesign | null): Deck {
   if (!design) {
-    const currentTheme = normalizeTheme(deck.theme)
+    // "Mặc định" = về đúng bộ màu + phông của bài slide mới (DECK_THEMES[0])
+    const currentTheme = normalizeTheme(DECK_THEMES[0])
     return {
       ...deck,
       theme: currentTheme,

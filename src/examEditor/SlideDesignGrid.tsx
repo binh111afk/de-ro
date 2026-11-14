@@ -2,17 +2,15 @@
  * Lưới chọn bộ thiết kế (tab Mẫu → Thiết kế ở panel trái): bấm là đổi phong cách
  * toàn bài, không thêm slide. Thẻ gọn kiểu .slide-ribbon-theme-card (không dựng SlideThumb nặng).
  */
-import { useMemo, type CSSProperties } from 'react'
+import type { CSSProperties } from 'react'
 import { Check } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import { SLIDE_DESIGNS, type SlideDesign } from '@/lib/slideDesigns'
 import { skinById } from '@/lib/slideSkins'
-import { DECK_THEMES, themeById } from '@/lib/slideTheme'
-import type { DeckTheme } from '@/store/docs'
+import { DECK_THEMES, normalizeTheme, themeById } from '@/lib/slideTheme'
 
 interface SlideDesignGridProps {
   activeDesignId?: string
-  currentTheme: DeckTheme
   disabled?: boolean
   onSelect: (design: SlideDesign | null) => void
 }
@@ -25,6 +23,9 @@ interface DesignSwatch {
   secondary: string
   headingFont: string
 }
+
+/** bộ màu của bài slide mới — thẻ "Mặc định" đưa bài về đây */
+const DEFAULT_THEME = normalizeTheme(DECK_THEMES[0])
 
 const SWATCHES: DesignSwatch[] = SLIDE_DESIGNS.map((design) => {
   const base = themeById(design.themeId) ?? DECK_THEMES[0]
@@ -42,18 +43,9 @@ const SWATCHES: DesignSwatch[] = SLIDE_DESIGNS.map((design) => {
 
 export function SlideDesignGrid({
   activeDesignId,
-  currentTheme,
   disabled = false,
   onSelect,
 }: SlideDesignGridProps) {
-  const defaultPreviewStyle = useMemo<CSSProperties>(
-    () => ({
-      background: currentTheme.bg,
-      color: currentTheme.fg,
-    }),
-    [currentTheme.bg, currentTheme.fg],
-  )
-
   return (
     <div className="pb-4">
       {disabled && (
@@ -71,26 +63,26 @@ export function SlideDesignGrid({
           role="listitem"
           disabled={disabled}
           aria-pressed={!activeDesignId}
-          data-tip="Không dùng bộ thiết kế — giữ màu và phông đơn giản theo bố cục"
+          data-tip="Về thiết kế mặc định của slide (nền sáng, phông đơn giản)"
           onClick={() => onSelect(null)}
           className={cn('slide-design-card', !activeDesignId && 'active')}
         >
           <span
             className="slide-design-card__preview slide-design-card__preview--none"
-            style={defaultPreviewStyle}
+            style={{ background: DEFAULT_THEME.bg, color: DEFAULT_THEME.fg }}
           >
             <span
               className="slide-design-card__aa"
               style={{
-                fontFamily: currentTheme.fontHeading ?? 'Inter, sans-serif',
-                color: currentTheme.fg,
+                fontFamily: DEFAULT_THEME.fontHeading ?? 'Inter, sans-serif',
+                color: DEFAULT_THEME.fg,
               }}
             >
               Aa
             </span>
             <span className="slide-design-card__bars">
-              <i style={{ background: currentTheme.accent }} />
-              <i style={{ background: currentTheme.secondary ?? currentTheme.muted ?? '#94a3b8' }} />
+              <i style={{ background: DEFAULT_THEME.accent }} />
+              <i style={{ background: DEFAULT_THEME.secondary ?? DEFAULT_THEME.muted ?? '#94a3b8' }} />
             </span>
           </span>
           {!activeDesignId && (
