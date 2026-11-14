@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Pager, usePaged } from '@/components/Pager'
 import { Link, useNavigate } from 'react-router-dom'
 import { Clock, Grid2x2, List, MonitorPlay, Search, Sparkles, Upload, Users, X } from 'lucide-react'
+import { Avatar } from '@/components/Avatar'
 import { Badge, Button, EmptyState, inputClass, SkeletonCard } from '@/components/ui'
 import { SiteSelect } from '@/components/SiteSelect'
 import { useSlidingThumb } from '@/examEditor/useSlidingThumb'
@@ -14,7 +15,14 @@ import { useOnline } from '@/store/online'
 import { publishItem } from '@/lib/onlinePublish'
 import { formatPoints } from '@/lib/math'
 import { COMMUNITY_EXAMS } from '@/data/community'
-import { getCommunityDoc, listCommunityDocs, publishDoc, type CommunityRow } from '@/lib/community'
+import {
+  getCommunityDoc,
+  listCommunityAuthors,
+  listCommunityDocs,
+  publishDoc,
+  type CommunityAuthor,
+  type CommunityRow,
+} from '@/lib/community'
 import { docToExam } from '@/lib/docToExam'
 import { confirmQuizWithoutKey } from '@/lib/answerKeyWarn'
 import { useSession } from '@/lib/useSession'
@@ -34,6 +42,7 @@ interface CardItem {
   text: string
   /** true = đề giáo viên đăng lên */
   mine: boolean
+  author?: CommunityAuthor
   date?: string
   views?: number
   likes: number
@@ -64,17 +73,33 @@ export default function Community() {
   const [view, setView] = useState<'grid' | 'list'>('grid')
   const [sort, setSort] = useState<'new' | 'popular'>('new')
   const [userDocs, setUserDocs] = useState<CommunityRow[]>([])
+  const [authors, setAuthors] = useState<Map<string, CommunityAuthor>>(() => new Map())
   const [loading, setLoading] = useState(true)
   const [publishOpen, setPublishOpen] = useState(false)
   const [openingId, setOpeningId] = useState<string | null>(null)
   const [openError, setOpenError] = useState<string | null>(null)
 
-  useEffect(() => {
-    listCommunityDocs()
-      .then(setUserDocs)
-      .catch(() => {})
-      .finally(() => setLoading(false))
+  const loadDocs = useCallback(async (isAlive?: () => boolean) => {
+    const rows = await listCommunityDocs()
+    if (isAlive && !isAlive()) return
+    const ids = [...new Set(rows.map((r) => r.owner_id).filter((id): id is string => Boolean(id)))]
+    const authorMap = await listCommunityAuthors(ids)
+    if (isAlive && !isAlive()) return
+    setUserDocs(rows)
+    setAuthors(authorMap)
   }, [])
+
+  useEffect(() => {
+    let alive = true
+    loadDocs(() => alive)
+      .catch(() => {})
+      .finally(() => {
+        if (alive) setLoading(false)
+      })
+    return () => {
+      alive = false
+    }
+  }, [loadDocs])
 
   /** Chuyển đề mẫu sang đề tương tác rồi làm ngay. */
   const handleInteractive = (exam: Exam) => {
@@ -103,24 +128,29 @@ export default function Community() {
   }
 
   const items = useMemo<CardItem[]>(() => {
-    const mine: CardItem[] = userDocs.map((d) => ({
-      id: d.id,
-      title: d.title,
-      subject: d.subject,
-      grade: d.grade,
-      school: d.school,
-      questions: d.question_count,
-      minutes: d.duration_minutes,
-      points: d.total_points,
-      preview: d.preview,
-      text: `${d.title} ${d.school} ${d.subject} ${d.preview}`.toLowerCase(),
-      mine: true,
-      missingKeys: d.missing_keys,
-      date: d.created_at,
-      likes: 0,
-      onView: () => void openUserDoc(d, 'view'),
-      onQuiz: () => void openUserDoc(d, 'quiz'),
-    }))
+    const mine: CardItem[] = userDocs.map((d) => {
+      const author = d.owner_id ? (authors.get(d.owner_id) ?? {}) : {}
+      const authorLabel = author.name?.trim() || 'Giáo viên'
+      return {
+        id: d.id,
+        title: d.title,
+        subject: d.subject,
+        grade: d.grade,
+        school: d.school,
+        questions: d.question_count,
+        minutes: d.duration_minutes,
+        points: d.total_points,
+        preview: d.preview,
+        text: `${d.title} ${d.school} ${d.subject} ${d.preview} ${authorLabel}`.toLowerCase(),
+        mine: true,
+        author,
+        missingKeys: d.missing_keys,
+        date: d.created_at,
+        likes: 0,
+        onView: () => void openUserDoc(d, 'view'),
+        onQuiz: () => void openUserDoc(d, 'quiz'),
+      }
+    })
     const samples: CardItem[] = COMMUNITY_EXAMS.map((e) => ({
       id: e.id,
       title: e.title,
@@ -142,7 +172,7 @@ export default function Community() {
     }))
     return [...mine, ...samples]
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userDocs, navigate])
+  }, [userDocs, authors, navigate])
 
   const results = useMemo(() => {
     const needle = q.trim().toLowerCase()
@@ -186,14 +216,14 @@ export default function Community() {
           loggedIn={Boolean(session)}
           onClose={() => setPublishOpen(false)}
           onPublished={() => {
-            listCommunityDocs().then(setUserDocs).catch(() => {})
+            loadDocs().catch(() => {})
             setPublishOpen(false)
           }}
         />
       ) : null}
 
       <div className="mb-8 flex flex-col gap-3 lg:flex-row lg:items-center">
-        <div className="relative flex-1">
+        <div className="relative min-w-0 flex-1">
           <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-ink-4" />
           <input
             value={q}
@@ -204,9 +234,27 @@ export default function Community() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <SiteSelect value={subject} options={SUBJECT_OPTIONS} onChange={setSubject} label="Lọc theo môn" className="w-[170px]" />
-          <SiteSelect value={grade} options={GRADE_OPTIONS} onChange={setGrade} label="Lọc theo lớp" className="w-[150px]" />
-          <SiteSelect value={sort} options={SORT_OPTIONS} onChange={setSort} label="Sắp xếp" className="w-[150px]" />
+          <SiteSelect
+            value={subject}
+            options={SUBJECT_OPTIONS}
+            onChange={setSubject}
+            label="Lọc theo môn"
+            className="min-w-0 flex-[1_1_130px] sm:w-[170px] sm:flex-none"
+          />
+          <SiteSelect
+            value={grade}
+            options={GRADE_OPTIONS}
+            onChange={setGrade}
+            label="Lọc theo lớp"
+            className="min-w-0 flex-[1_1_120px] sm:w-[150px] sm:flex-none"
+          />
+          <SiteSelect
+            value={sort}
+            options={SORT_OPTIONS}
+            onChange={setSort}
+            label="Sắp xếp"
+            className="min-w-0 flex-[1_1_110px] sm:w-[150px] sm:flex-none"
+          />
 
           <ViewToggle value={view} onChange={setView} />
         </div>
@@ -392,6 +440,8 @@ function PublishModal({
 }
 
 function ExamCard({ item, index, busy }: { item: CardItem; index: number; busy: boolean }) {
+  const authorName = item.author ? item.author.name?.trim() || 'Giáo viên' : ''
+
   return (
     <article
       className="anim-delay group flex flex-col overflow-hidden rounded-[8px] bg-surface shadow-[0_1px_2px_rgba(60,48,32,0.03)] transition-all duration-500 hover:-translate-y-1 hover:shadow-lift"
@@ -401,7 +451,7 @@ function ExamCard({ item, index, busy }: { item: CardItem; index: number; busy: 
         type="button"
         onClick={item.onView}
         disabled={busy}
-        className="relative flex h-[140px] w-full flex-col justify-between overflow-hidden bg-sunken/70 p-5 text-left"
+        className="relative flex min-h-[140px] w-full flex-col justify-between gap-3 overflow-hidden bg-sunken/70 p-5 text-left"
       >
         {/* soft corner shape instead of a hard cover */}
         <div
@@ -414,9 +464,9 @@ function ExamCard({ item, index, busy }: { item: CardItem; index: number; busy: 
             {item.mine ? <Badge tone="honey">Giáo viên</Badge> : null}
             <KeyBadge item={item} />
           </div>
-          <span className="text-[12px] font-semibold text-ink-3">{item.grade}</span>
+          <span className="shrink-0 text-[12px] font-semibold text-ink-3">{item.grade}</span>
         </div>
-        <div className="relative">
+        <div className="relative min-w-0">
           <p
             data-tip={item.title}
             className="line-clamp-2 font-display text-[16px] font-semibold leading-snug tracking-[-0.01em] text-ink"
@@ -428,16 +478,28 @@ function ExamCard({ item, index, busy }: { item: CardItem; index: number; busy: 
       </button>
 
       <div className="flex flex-1 flex-col p-5">
-        <div className="flex items-center gap-3.5 text-[12px] font-medium text-ink-3">
-          <span className="tnum flex items-center gap-1.5">
-            <Sparkles className="size-3.5" />
+        {item.author ? (
+          <div className="mb-3 flex min-w-0 items-center gap-2">
+            <Avatar src={item.author.avatar} name={authorName} className="size-6 shrink-0 text-[11px]" />
+            <span
+              data-tip={authorName}
+              className="min-w-0 truncate text-[12.5px] font-medium text-ink-2"
+            >
+              {authorName}
+            </span>
+          </div>
+        ) : null}
+
+        <div className="flex flex-wrap items-center gap-x-3.5 gap-y-1 text-[12px] font-medium text-ink-3">
+          <span className="tnum flex items-center gap-1.5 whitespace-nowrap">
+            <Sparkles className="size-3.5 shrink-0" />
             {item.questions} câu
           </span>
-          <span className="tnum flex items-center gap-1.5">
-            <Clock className="size-3.5" />
+          <span className="tnum flex items-center gap-1.5 whitespace-nowrap">
+            <Clock className="size-3.5 shrink-0" />
             {item.minutes}′
           </span>
-          <span className="tnum">{formatPoints(item.points)}đ</span>
+          <span className="tnum whitespace-nowrap">{formatPoints(item.points)}đ</span>
         </div>
 
         {item.preview ? (
@@ -449,18 +511,24 @@ function ExamCard({ item, index, busy }: { item: CardItem; index: number; busy: 
         ) : null}
 
         <div className="mt-auto grid grid-cols-2 gap-2 pt-5">
-          <Button variant="soft" size="sm" className="w-full justify-center" onClick={item.onView} disabled={busy}>
+          <Button
+            variant="soft"
+            size="sm"
+            className="w-full justify-center whitespace-nowrap px-2.5 sm:px-3.5"
+            onClick={item.onView}
+            disabled={busy}
+          >
             Xem đề
           </Button>
           <Button
             variant="clay"
             size="sm"
-            className="w-full justify-center"
+            className="w-full justify-center whitespace-nowrap px-2.5 sm:px-3.5"
             onClick={item.onQuiz}
             disabled={busy}
             data-tip="Làm đề tương tác"
           >
-            <MonitorPlay className="size-3.5" />
+            <MonitorPlay className="size-3.5 shrink-0" />
             {busy ? 'Đang mở…' : 'Làm đề'}
           </Button>
         </div>
@@ -483,43 +551,66 @@ function KeyBadge({ item }: { item: CardItem }) {
 }
 
 function ExamRow({ item, busy }: { item: CardItem; busy: boolean }) {
+  const authorName = item.author ? item.author.name?.trim() || 'Giáo viên' : ''
+
   return (
-    <div className="flex flex-wrap items-center gap-4 border-b border-line-2 px-5 py-4 last:border-0 hover:bg-canvas/60">
+    <div className="flex flex-col gap-3 border-b border-line-2 px-5 py-4 last:border-0 hover:bg-canvas/60 md:flex-row md:items-center md:gap-4">
       <button type="button" onClick={item.onView} disabled={busy} className="min-w-0 flex-1 text-left">
-        <p
+        <span
           data-tip={item.title}
           className="line-clamp-2 font-display text-[16px] font-semibold text-ink transition-colors hover:text-clay"
         >
           {item.title}
-          {item.mine ? <span className="ml-2 align-middle text-[11.5px] font-semibold text-honey">Giáo viên</span> : null}
-          {item.missingKeys ? (
-            <span className="ml-2 align-middle text-[11.5px] font-semibold text-ink-3">{keyLabel(item)}</span>
+          {item.mine ? (
+            <span className="ml-2 inline-block whitespace-nowrap align-middle text-[11.5px] font-semibold text-honey">
+              Giáo viên
+            </span>
           ) : null}
-        </p>
-        <p className="mt-1 truncate text-[12px] text-ink-3">
-          {item.school || 'Chưa ghi tên trường'} · {item.subject} · {item.grade}
-        </p>
-      </button>
-      <div className="flex items-center gap-4 text-[12.5px] font-medium text-ink-3">
-        <span className="tnum">{item.questions} câu</span>
-        <span className="tnum">{item.minutes}′</span>
-        {item.mine ? (
-          <span className="tnum hidden sm:inline">{formatDate(item.date ?? '')}</span>
-        ) : (
-          <span className="tnum flex items-center gap-1.5">
-            <Users className="size-3.5" />
-            {item.views ?? 0}
+          {item.missingKeys ? (
+            <span className="ml-2 inline-block whitespace-nowrap align-middle text-[11.5px] font-semibold text-ink-3">
+              {keyLabel(item)}
+            </span>
+          ) : null}
+        </span>
+        <span className="mt-1.5 flex min-w-0 items-center gap-1.5 text-[12px] text-ink-3">
+          {item.author ? (
+            <>
+              <Avatar src={item.author.avatar} name={authorName} className="size-5 shrink-0 text-[10px]" />
+              <span data-tip={authorName} className="min-w-0 max-w-[45%] shrink truncate font-medium text-ink-2">
+                {authorName}
+              </span>
+              <span aria-hidden="true" className="shrink-0 text-ink-4">
+                ·
+              </span>
+            </>
+          ) : null}
+          <span className="min-w-0 flex-1 truncate">
+            {item.school || 'Chưa ghi tên trường'} · {item.subject} · {item.grade}
           </span>
-        )}
-      </div>
-      <div className="flex items-center gap-2">
-        <Button variant="ghost" size="sm" onClick={item.onView} disabled={busy}>
-          Xem
-        </Button>
-        <Button variant="clay" size="sm" onClick={item.onQuiz} disabled={busy}>
-          <MonitorPlay className="size-3.5" />
-          {busy ? 'Đang mở…' : 'Làm đề'}
-        </Button>
+        </span>
+      </button>
+      <div className="flex flex-wrap items-center justify-between gap-3 md:shrink-0 md:flex-nowrap md:gap-4">
+        <div className="flex items-center gap-3.5 whitespace-nowrap text-[12.5px] font-medium text-ink-3">
+          <span className="tnum">{item.questions} câu</span>
+          <span className="tnum">{item.minutes}′</span>
+          {item.mine ? (
+            <span className="tnum hidden sm:inline">{formatDate(item.date ?? '')}</span>
+          ) : (
+            <span className="tnum flex items-center gap-1.5">
+              <Users className="size-3.5" />
+              {item.views ?? 0}
+            </span>
+          )}
+        </div>
+        <div className="flex shrink-0 items-center gap-2">
+          <Button variant="ghost" size="sm" className="whitespace-nowrap" onClick={item.onView} disabled={busy}>
+            Xem
+          </Button>
+          <Button variant="clay" size="sm" className="whitespace-nowrap" onClick={item.onQuiz} disabled={busy}>
+            <MonitorPlay className="size-3.5 shrink-0" />
+            {busy ? 'Đang mở…' : 'Làm đề'}
+          </Button>
+        </div>
       </div>
     </div>
   )

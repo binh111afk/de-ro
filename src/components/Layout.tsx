@@ -8,6 +8,7 @@ import { signOut } from '@/lib/auth'
 import { useSession } from '@/lib/useSession'
 import { submitFeedback } from '@/lib/community'
 import { dialog } from '@/components/Dialog'
+import { Avatar } from '@/components/Avatar'
 
 /**
  * Thanh nav chính — chỉ 4 mục, mỗi mục nằm trên MỘT dòng (không xuống
@@ -90,7 +91,7 @@ export function Header() {
         <div className="ml-auto flex items-center gap-2">
           <Link to="/soan-de" className="hidden xl:block">
             <Button variant="primary" size="sm" className="whitespace-nowrap">
-              Soạn đề miễn phí
+              Soạn đề
             </Button>
           </Link>
 
@@ -100,13 +101,12 @@ export function Header() {
                 to="/ho-so"
                 className="flex max-w-[220px] items-center gap-2 rounded-full bg-cream py-1.5 pl-1.5 pr-3.5 text-[13px] font-semibold text-ink shadow-soft transition-colors hover:text-clay"
               >
-                <span className="flex size-7 shrink-0 items-center justify-center overflow-hidden rounded-full bg-clay text-[10.5px] font-bold uppercase text-white">
-                  {session.user.avatar ? (
-                    <img src={session.user.avatar} alt="" className="size-full object-cover" />
-                  ) : (
-                    (session.user.name ?? session.user.email).charAt(0)
-                  )}
-                </span>
+                <Avatar
+                  src={session.user.avatar}
+                  name={session.user.name ?? session.user.email}
+                  className="size-7 text-[10.5px]"
+                  fallbackClassName="bg-clay font-bold text-white"
+                />
                 <span className="truncate">{session.user.name ?? session.user.email}</span>
               </Link>
               <button
@@ -165,7 +165,7 @@ export function Header() {
             ))}
             <Link to="/soan-de" className="mt-2 block sm:hidden">
               <Button variant="primary" className="w-full">
-                Soạn đề miễn phí
+                Soạn đề
               </Button>
             </Link>
             <div className="mt-2 border-t border-line/70 pt-2 md:hidden">
@@ -256,7 +256,7 @@ export function Footer() {
             <Logo className="h-7 w-auto" />
           </div>
           <p className="mt-3.5 max-w-[32ch] text-[13px] leading-relaxed text-ink-3">
-            Trợ lý soạn đề thi miễn phí cho giáo viên. Soạn đề, xuất Word, làm đề tương tác và
+            Trợ lý soạn đề thi cho giáo viên. Soạn đề, xuất Word, làm đề tương tác và
             chấm điểm tự động.
           </p>
         </div>

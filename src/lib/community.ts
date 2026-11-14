@@ -17,6 +17,7 @@ const KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string
 /** Các cột đủ để vẽ thẻ đề, không kéo nội dung đề. */
 export interface CommunityRow {
   id: string
+  owner_id?: string | null
   title: string
   subject: string
   grade: string
@@ -32,7 +33,7 @@ export interface CommunityRow {
 }
 
 const BASE_COLUMNS =
-  'id,title,subject,grade,school,created_at,question_count,duration_minutes,total_points,preview,listed'
+  'id,owner_id,title,subject,grade,school,created_at,question_count,duration_minutes,total_points,preview,listed'
 /** cột missing_keys có từ migration 20261118; DB chưa áp thì đọc / ghi như cũ */
 let hasMissingKeys = true
 const cols = () => (hasMissingKeys ? `${BASE_COLUMNS},missing_keys` : BASE_COLUMNS)
@@ -69,9 +70,41 @@ async function rest<T>(
   return data as T
 }
 
+export interface CommunityAuthor {
+  name?: string
+  avatar?: string
+}
+
 /** Danh sách đề đã đăng, mới nhất trước. Chỉ lấy đề có status = published. */
 export function listCommunityDocs(): Promise<CommunityRow[]> {
   return withMissingKeys(() => rest<CommunityRow[]>(`/community_exams?select=${cols()}&listed=eq.true&status=eq.published&order=created_at.desc&limit=100`))
+}
+
+/**
+ * Lấy tên hiển thị và ảnh đại diện của các tác giả theo danh sách `owner_id`.
+ * Nếu RPC lỗi (vd. DB chưa áp migration) thì trả Map rỗng để không làm hỏng trang.
+ */
+export async function listCommunityAuthors(ids: string[]): Promise<Map<string, CommunityAuthor>> {
+  const unique = [...new Set(ids.filter(Boolean))]
+  if (unique.length === 0) return new Map()
+  try {
+    const rows = await rest<Array<{ id: string; name: string | null; avatar: string | null }>>('/rpc/community_authors', {
+      method: 'POST',
+      body: { p_ids: unique },
+    })
+    if (!Array.isArray(rows)) return new Map()
+    const map = new Map<string, CommunityAuthor>()
+    for (const r of rows) {
+      if (!r?.id) continue
+      map.set(r.id, {
+        name: r.name?.trim() || undefined,
+        avatar: r.avatar?.trim() || undefined,
+      })
+    }
+    return map
+  } catch {
+    return new Map()
+  }
 }
 
 /** Các đề người đang đăng nhập đã xuất bản (cả đề công khai và đề chỉ có link), mới nhất trước. */

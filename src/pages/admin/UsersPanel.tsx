@@ -25,6 +25,7 @@ import { Portal } from '@/components/Portal'
 import { Pager } from '@/components/Pager'
 import { Segmented } from '@/components/Segmented'
 import { dialog } from '@/components/Dialog'
+import { Avatar } from '@/components/Avatar'
 import {
   banUser,
   clearQuota,
@@ -1040,24 +1041,7 @@ export default UsersPanel
 
 /** Ảnh đại diện người dùng; chưa có ảnh hoặc ảnh lỗi thì hiện chữ cái đầu. */
 function UserAvatar({ user, className }: { user: AdminUser; className?: string }) {
-  const [broken, setBroken] = useState(false)
-  const letter = (user.name || user.email).trim().charAt(0).toUpperCase()
-  if (user.avatar && !broken)
-    return (
-      <img
-        src={user.avatar}
-        alt=""
-        loading="lazy"
-        referrerPolicy="no-referrer"
-        onError={() => setBroken(true)}
-        className={`shrink-0 rounded-full bg-sunken object-cover ${className ?? ''}`}
-      />
-    )
-  return (
-    <div className={`flex shrink-0 items-center justify-center rounded-full bg-clay-tint font-semibold text-clay ${className ?? ''}`}>
-      {letter}
-    </div>
-  )
+  return <Avatar src={user.avatar} name={user.name || user.email} className={className} />
 }
 
 const MB = 1024 * 1024

@@ -8,6 +8,7 @@ import { uploadImage } from '@/lib/mediaStore'
 import { useSession } from '@/lib/useSession'
 import { apiFetch } from '@/lib/apiFetch'
 import { ProgressBar } from '@/components/ProgressBar'
+import { Avatar } from '@/components/Avatar'
 
 export default function Profile() {
   const session = useSession()
@@ -95,13 +96,12 @@ function IdentityCard({ user }: { user: Session['user'] }) {
 
   return (
     <div className="flex flex-col items-center rounded-[8px] bg-surface px-7 pb-7 pt-9 text-center shadow-lift">
-      <span className="flex size-28 items-center justify-center overflow-hidden rounded-full bg-clay-tint font-display text-[42px] font-semibold uppercase text-clay ring-4 ring-surface">
-        {user.avatar ? (
-          <img src={user.avatar} alt="" className="size-full object-cover" />
-        ) : (
-          (user.name ?? user.email).charAt(0)
-        )}
-      </span>
+      <Avatar
+        src={user.avatar}
+        name={user.name ?? user.email}
+        className="size-28 ring-4 ring-surface"
+        fallbackClassName="font-display text-[42px]"
+      />
 
       <h1 className="mt-5 max-w-full truncate font-display text-[26px] font-semibold leading-tight tracking-[-0.01em] text-ink">
         {user.name ?? 'Chưa đặt tên'}
