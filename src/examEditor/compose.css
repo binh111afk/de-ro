@@ -3970,7 +3970,8 @@
 @media (max-width: 1023px) {
   /* panel nổi đè lên: chỉ chạy hiệu ứng trượt, bỏ transition bề rộng của bản máy tính
      (để cả hai cùng chạy thì panel vừa giãn ngang từ mép trái vừa trượt → giật) */
-  .ai-dock {
+  .ai-dock,
+  .ai-dock .ai-panel {
     transition: none;
   }
   .ai-dock:not(.collapsed),

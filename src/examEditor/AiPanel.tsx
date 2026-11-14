@@ -879,12 +879,21 @@ export function AiPanel({
     if (el) el.scrollTop = el.scrollHeight
   }, [turns])
 
-  // tự động lớn dần textarea theo nội dung
+  // tự động lớn dần textarea theo nội dung; đo lại khi bề rộng đổi — panel đóng sẵn có bề rộng 0,
+  // đo lúc đó thì mỗi chữ một dòng, ô nhập cao vọt và giữ nguyên khi panel mở ra
   useEffect(() => {
     const ta = taRef.current
     if (!ta) return
-    ta.style.height = 'auto'
-    ta.style.height = `${Math.min(168, ta.scrollHeight)}px`
+    const fit = () => {
+      if (!ta.clientWidth) return
+      ta.style.height = 'auto'
+      ta.style.height = `${Math.min(168, ta.scrollHeight)}px`
+    }
+    fit()
+    let w = ta.clientWidth
+    const ro = new ResizeObserver(() => { if (ta.clientWidth !== w) { w = ta.clientWidth; fit() } })
+    ro.observe(ta)
+    return () => ro.disconnect()
   }, [input])
 
   const send = useCallback(async () => {
