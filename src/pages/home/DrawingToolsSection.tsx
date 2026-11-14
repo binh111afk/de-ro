@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
 import type { ToolDoc, ToolImage } from '@/lib/toolSpec'
 import { cn } from '@/lib/cn'
-import { useReveal } from './reveal'
+import { prefersReducedMotion, useReveal } from './reveal'
 import { SUBJECT_GROUPS, type SubjectKey } from './toolDemos'
 
 type RenderFn = (doc: ToolDoc) => ToolImage
@@ -28,19 +28,44 @@ export function DrawingToolsSection() {
 
   const group = SUBJECT_GROUPS.find((g) => g.key === subject) ?? SUBJECT_GROUPS[0]
 
+  // hình tự vẽ nét: mỗi nét (không tô, không nét đứt) chạy từ đầu đến cuối, chữ hiện sau
+  const gridRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const root = gridRef.current
+    if (!root || !renderFn || !gridReveal.shown || prefersReducedMotion()) return
+    root.querySelectorAll('svg').forEach((svg) => {
+      let i = 0
+      svg.querySelectorAll<SVGGeometryElement>('path, line, polyline, polygon, circle, ellipse').forEach((el) => {
+        const cs = getComputedStyle(el)
+        if (cs.stroke === 'none' && cs.fill === 'none') return
+        const dashed = cs.strokeDasharray && cs.strokeDasharray !== 'none'
+        const filled = cs.fill !== 'none' && cs.fill !== 'transparent' && !cs.fill.endsWith(', 0)')
+        // nét đứt (cạnh khuất) và hình tô thì hiện dần; nét liền thì vẽ từ đầu tới cuối
+        if (dashed || filled || cs.stroke === 'none') el.classList.add('dr-f')
+        else { el.setAttribute('pathLength', '1'); el.classList.add('dr') }
+        el.style.setProperty('--d', `${Math.min(900, 120 + i * 22)}ms`)
+        i++
+      })
+      svg.querySelectorAll<SVGElement>('text, foreignObject').forEach((el) => {
+        el.classList.add('dr-f')
+        el.style.setProperty('--d', `${Math.min(1200, 500 + i * 10)}ms`)
+      })
+    })
+  }, [renderFn, gridReveal.shown, subject])
+
   return (
     <section id="cong-cu" className="landing-below-fold border-b border-line bg-canvas py-14 sm:py-16 lg:py-20">
       <div className="mx-auto max-w-[1260px] px-4 sm:px-6">
         <div {...headerReveal.revealProps} className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
           <div className="max-w-2xl min-w-0">
             <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-clay">
-              27 công cụ vẽ hình chuyên môn
+              Công cụ vẽ hình
             </p>
             <h2 className="mt-2 text-[clamp(1.45rem,2.7vw,2.1rem)] font-bold leading-[1.18] tracking-[-0.02em] text-ink">
-              Hình chuẩn sách giáo khoa cho Toán, Vật lí, Hoá học và Sinh học.
+              Gõ thông số, ra hình như sách giáo khoa.
             </h2>
             <p className="mt-3 text-[15px] leading-[1.65] text-ink-2">
-              Không cần vẽ thủ công trong Paint hay tải ảnh mờ từ mạng. Nhập thông số là có ngay hình SVG sắc nét để chèn vào đề thi, slide hoặc bảng vẽ — nhấp đúp là sửa lại thông số cũ.
+              Bảng biến thiên, hình chóp, mạch điện, phả hệ… Hình nét ở mọi cỡ, chèn được vào đề, slide, bảng. Cần sửa thì nháy đúp vào hình.
             </p>
           </div>
 
@@ -98,7 +123,9 @@ export function DrawingToolsSection() {
         {/* 3 hình vector thật dựng trực tiếp từ bộ máy vẽ hình của app */}
         <div
           {...gridReveal.revealProps}
-          className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-3"
+          ref={(el) => { gridReveal.ref.current = el; gridRef.current = el }}
+          key={subject}
+          className="land-draw stagger-kids mt-6 grid grid-cols-1 gap-5 md:grid-cols-3"
         >
           {group.demos.map((demo) => {
             let svgHtml = ''
@@ -138,15 +165,13 @@ export function DrawingToolsSection() {
         {/* Thanh bổ sung Ma trận & đặc tả + Xáo đề */}
         <div className="mt-6 flex flex-col gap-3 rounded-[10px] border border-clay-line bg-clay-tint px-4 py-3.5 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-5">
           <div className="min-w-0 flex-1 text-[13.5px] leading-relaxed text-ink-2">
-            <strong className="font-semibold text-ink">Đi kèm trong tab Công cụ:</strong>{' '}
-            lập <strong>Ma trận &amp; bản đặc tả BGD 2025</strong> (Nhận biết · Thông hiểu · Vận dụng),
-            <strong> Xáo đề trắc nghiệm</strong> thành nhiều mã đề kèm đáp án, và tạo nhanh bảng số liệu.
+            Cũng trong tab Công cụ: <strong className="font-semibold text-ink">lập ma trận, đặc tả</strong> và <strong className="font-semibold text-ink">xáo đề</strong> ra nhiều mã kèm đáp án.
           </div>
           <Link
             to="/soan-de"
             className="inline-flex min-h-[38px] shrink-0 self-start items-center gap-1.5 text-[13.5px] font-semibold text-clay-deep hover:text-clay sm:self-center"
           >
-            Thử các công cụ trong trình soạn
+            Thử vẽ một hình
             <ArrowRight className="h-4 w-4 shrink-0" aria-hidden />
           </Link>
         </div>

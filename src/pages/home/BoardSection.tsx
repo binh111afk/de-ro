@@ -38,18 +38,18 @@ const MODES: Array<{
 const BOARD_SPECS = [
   {
     icon: PenLine,
-    title: 'Nhiều ngòi bút & nền giấy',
-    text: 'Bút bi, dạ quang, bút máy, bút lông, bút chì và bút phấn; chuyển nhanh giữa giấy trơn, ô vuông, kẻ ngang, chấm bi, bảng đen hoặc bảng xanh.',
+    title: 'Bút và giấy',
+    text: 'Sáu loại bút, bút máy có nét thanh nét đậm. Giấy trơn, ô li, kẻ dòng, bảng đen, bảng xanh.',
   },
   {
     icon: Compass,
-    title: 'Thước kẻ, thước đo góc & compa',
-    text: 'Kéo thả thước đo ngay trên mặt bảng, bật nắn nét tay thành đoạn thẳng, hình tròn, elip và chèn hình từ 27 công cụ chuyên môn.',
+    title: 'Thước, compa',
+    text: 'Đặt thước lên bảng rồi kẻ dọc theo mép. Quay compa ra cung tròn thật.',
   },
   {
     icon: FileUp,
-    title: 'Nạp PDF nhiều trang để chữa bài',
-    text: 'Mở thẳng đề PDF có sẵn, duyệt từng trang ở cột bên trái, gạch chân bằng bút dạ quang rồi xuất bản PDF đã chú thích hoặc ảnh PNG.',
+    title: 'Chữa đề PDF',
+    text: 'Mở đề PDF, lật trang ở cột trái, ghi chú rồi xuất lại đúng khổ giấy gốc.',
   },
 ]
 
@@ -67,13 +67,13 @@ export function BoardSection() {
         <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
           <div className="max-w-2xl min-w-0">
             <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-[#e79d7b]">
-              Bảng vẽ dạy học &amp; Chú thích PDF
+              Bảng vẽ
             </p>
             <h2 className="mt-2 text-[clamp(1.45rem,2.7vw,2.1rem)] font-bold leading-[1.18] tracking-[-0.02em] text-deep-text">
-              Chữa đề trực tiếp trên bảng đen hoặc trên từng trang PDF.
+              Chữa bài như trên bảng lớp.
             </h2>
             <p className="mt-3 text-[15px] leading-[1.65] text-deep-muted">
-              Khi giảng bài trực tiếp hoặc dạy online, mở một tab Bảng vẽ ngay cạnh đề thi để viết phấn, quay compa, đo góc hoặc khoanh sửa thẳng vào bản PDF của đề.
+              Chiếu lên lớp hoặc chia sẻ màn hình khi dạy online. Viết phấn, quay compa, khoanh đáp án ngay trên đề.
             </p>
           </div>
 
@@ -118,14 +118,14 @@ export function BoardSection() {
                   alt={active.alt}
                   loading="lazy"
                   decoding="async"
-                  className="h-full w-full object-cover object-top"
+                  className="land-swap h-full w-full object-cover object-top"
                 />
               </div>
             </div>
           </div>
 
           {/* Thông số & danh sách dụng cụ bảng */}
-          <div className="flex min-w-0 flex-col gap-5 lg:col-span-5">
+          <div className="stagger-kids flex min-w-0 flex-col gap-5 lg:col-span-5">
             {BOARD_SPECS.map((sp) => {
               const Icon = sp.icon
               return (
@@ -146,7 +146,7 @@ export function BoardSection() {
             <div className="rounded-[10px] border border-white/12 bg-white/[0.04] p-4">
               <div className="flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.06em] text-deep-muted">
                 <Highlighter className="h-3.5 w-3.5 text-[#e79d7b]" aria-hidden />
-                Tuỳ chọn sẵn trong thanh công cụ
+                Có sẵn
               </div>
               <div className="mt-2.5 flex flex-wrap gap-1.5">
                 {PENS_LIST.map((p) => (
@@ -167,7 +167,7 @@ export function BoardSection() {
                 to="/soan-de"
                 className="inline-flex min-h-[42px] items-center justify-center gap-2 rounded-[6px] bg-clay px-4 py-2 text-[14px] font-semibold text-white transition-colors hover:bg-clay-deep active:scale-[0.98]"
               >
-                <span>Mở bảng vẽ dạy học</span>
+                <span>Mở bảng vẽ</span>
                 <ArrowRight className="h-4 w-4 shrink-0" aria-hidden />
               </Link>
             </div>

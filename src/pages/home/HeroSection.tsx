@@ -1,8 +1,10 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, FileText, PenTool, Presentation } from 'lucide-react'
 import { cn } from '@/lib/cn'
-import { useCountUpRef, useReveal } from './reveal'
+import { prefersReducedMotion, useCountUpRef, useReveal } from './reveal'
+
+const ROTATE_MS = 6000
 
 type HeroTab = 'exam' | 'slide' | 'board'
 
@@ -26,7 +28,7 @@ const TABS: Array<{
     img: '/landing/hero-exam.webp',
     img2x: '/landing/hero-exam@2x.webp',
     alt: 'Trình soạn đề thi Toán lớp 10 trên đề rõ với công thức KaTeX và đồ thị parabol',
-    caption: 'Soạn thẳng trên trang A4: gõ LaTeX, chèn đồ thị hàm số và xuất .docx giữ nguyên định dạng.',
+    caption: 'Gõ thẳng lên trang A4, công thức và đồ thị giữ nguyên khi xuất Word.',
   },
   {
     key: 'slide',
@@ -36,7 +38,7 @@ const TABS: Array<{
     img: '/landing/hero-slide.webp',
     img2x: '/landing/hero-slide@2x.webp',
     alt: 'Trình soạn slide bài giảng Định luật Bảo toàn Năng lượng trên đề rõ',
-    caption: 'Bố cục sẵn bảng đối chiếu, khối công thức và sơ đồ minh hoạ — xuất PowerPoint .pptx để dạy ngay.',
+    caption: 'Dàn ý thành slide, sửa trên khung, xuất PowerPoint mang lên lớp.',
   },
   {
     key: 'board',
@@ -46,7 +48,7 @@ const TABS: Array<{
     img: '/landing/hero-board.webp',
     img2x: '/landing/hero-board@2x.webp',
     alt: 'Bảng đen dạy học trên đề rõ với nét phấn vàng và hình chóp S.ABCD',
-    caption: 'Bảng đen, bảng xanh, vở ô li cùng bộ thước kẻ, thước đo góc, compa và ghi chú trên PDF.',
+    caption: 'Viết phấn, quay compa, khoanh thẳng lên đề PDF.',
   },
 ]
 
@@ -58,6 +60,16 @@ const STATS = [
 
 export function HeroSection() {
   const [tab, setTab] = useState<HeroTab>('exam')
+  // tự chuyển Đề thi → Slide → Bảng vẽ; dừng khi rê chuột vào khung hoặc khi người dùng đã tự bấm tab
+  const [auto, setAuto] = useState(() => !prefersReducedMotion())
+  const [hover, setHover] = useState(false)
+  useEffect(() => {
+    if (!auto || hover) return
+    const t = window.setTimeout(() => {
+      setTab((cur) => TABS[(TABS.findIndex((x) => x.key === cur) + 1) % TABS.length].key)
+    }, ROTATE_MS)
+    return () => window.clearTimeout(t)
+  }, [auto, hover, tab])
   const active = TABS.find((t) => t.key === tab) ?? TABS[0]
   const statsReveal = useReveal<HTMLDListElement>()
   const r0 = useCountUpRef(STATS[0].num, statsReveal.shown)
@@ -71,26 +83,25 @@ export function HeroSection() {
         <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-10">
           {/* Cột nội dung chính */}
           <div className="min-w-0 lg:col-span-5">
-            <p className="inline-flex items-center gap-2 rounded-full border border-clay-line bg-clay-tint px-3 py-1 text-[12px] font-semibold text-clay-deep">
+            <p style={{ '--d': '0ms' } as React.CSSProperties} className="land-rise inline-flex items-center gap-2 rounded-full border border-clay-line bg-clay-tint px-3 py-1 text-[12px] font-semibold text-clay-deep">
               <span className="h-1.5 w-1.5 rounded-full bg-clay" aria-hidden />
               Miễn phí cho giáo viên Việt Nam
             </p>
 
-            <h1 className="mt-4 text-[clamp(1.75rem,3.6vw,2.75rem)] font-bold leading-[1.12] tracking-[-0.025em] text-ink">
-              Soạn đề thi, bài giảng và bảng dạy học trong một chỗ.
+            <h1 style={{ '--d': '80ms' } as React.CSSProperties} className="land-rise mt-4 text-[clamp(1.75rem,3.6vw,2.75rem)] font-bold leading-[1.12] tracking-[-0.025em] text-ink">
+              Đề thi, bài giảng, bảng dạy — cùng một chỗ.
             </h1>
 
-            <p className="mt-4 text-[15px] leading-[1.65] text-ink-2 sm:text-[16px]">
-              Viết đề trực tiếp trên khổ giấy A4, dựng 27 loại hình Toán – Lí – Hoá – Sinh chính xác, làm slide bài giảng,
-              chú thích PDF trên bảng vẽ rồi đưa sang làm bài online hoặc chấm phiếu ngay.
+            <p style={{ '--d': '170ms' } as React.CSSProperties} className="land-rise mt-4 text-[15px] leading-[1.65] text-ink-2 sm:text-[16px]">
+              Soạn đề trên trang A4, vẽ hình Toán – Lí – Hoá – Sinh bằng vài thông số, làm slide, chữa bài trên bảng. Xong thì xuất Word, PowerPoint hoặc giao bài online.
             </p>
 
-            <div className="mt-6 flex flex-col items-start gap-3 min-[460px]:flex-row min-[460px]:flex-wrap min-[460px]:items-center">
+            <div style={{ '--d': '260ms' } as React.CSSProperties} className="land-rise mt-6 flex flex-col items-start gap-3 min-[460px]:flex-row min-[460px]:flex-wrap min-[460px]:items-center">
               <Link
                 to="/soan-de"
                 className="inline-flex min-h-[44px] shrink-0 items-center justify-center gap-2 rounded-[8px] bg-clay px-5 py-2.5 text-center text-[15px] font-semibold leading-snug text-white shadow-[0_1px_2px_rgba(180,83,42,0.2),0_10px_20px_-10px_rgba(180,83,42,0.5)] transition-colors hover:bg-clay-deep active:scale-[0.98]"
               >
-                <span>Mở trình soạn thảo</span>
+                <span>Bắt đầu soạn</span>
                 <ArrowRight className="h-4 w-4 shrink-0" aria-hidden />
               </Link>
               <Link
@@ -124,10 +135,10 @@ export function HeroSection() {
           </div>
 
           {/* Cột xem trước sản phẩm thật với 3 tab chuyển */}
-          <div className="min-w-0 lg:col-span-7">
+          <div style={{ '--d': '200ms' } as React.CSSProperties} className="land-rise min-w-0 lg:col-span-7" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
             <div className="overflow-hidden rounded-[12px] border border-line bg-surface shadow-[0_12px_32px_rgba(20,24,28,0.08)]">
               <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line bg-sunken px-3 py-2 sm:px-4">
-                <div role="tablist" aria-label="Xem trước ba không gian làm việc" className="flex flex-wrap gap-1">
+                <div role="tablist" aria-label="Xem trước" className="flex flex-wrap gap-1">
                   {TABS.map((item) => {
                     const Icon = item.icon
                     const isSelected = item.key === tab
@@ -137,7 +148,7 @@ export function HeroSection() {
                         type="button"
                         role="tab"
                         aria-selected={isSelected}
-                        onClick={() => setTab(item.key)}
+                        onClick={() => { setTab(item.key); setAuto(false) }}
                         className={cn(
                           'inline-flex min-h-[38px] items-center gap-1.5 rounded-[7px] px-3 py-1.5 text-[13px] font-semibold transition-colors',
                           isSelected
@@ -152,7 +163,6 @@ export function HeroSection() {
                     )
                   })}
                 </div>
-                <span className="hidden text-[12px] font-medium text-ink-2 sm:inline">Ảnh chụp từ ứng dụng thật</span>
               </div>
 
               <div className="relative aspect-[1100/653] w-full bg-sunken">
@@ -170,8 +180,11 @@ export function HeroSection() {
                   alt={active.alt}
                   loading="eager"
                   fetchPriority="high"
-                  className="h-full w-full object-cover object-top"
+                  className="land-swap h-full w-full object-cover object-top"
                 />
+                {auto && !hover && (
+                  <span key={tab} aria-hidden style={{ '--dur': `${ROTATE_MS}ms` } as React.CSSProperties} className="land-progress absolute inset-x-0 top-0 h-[2px] bg-clay/70" />
+                )}
               </div>
 
               <div className="flex flex-wrap items-center justify-between gap-2 border-t border-line bg-surface px-3.5 py-2.5 sm:px-4">

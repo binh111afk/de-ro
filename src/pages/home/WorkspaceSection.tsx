@@ -3,33 +3,33 @@ import { ArrowRight, Check, FileText, PenTool, Presentation } from 'lucide-react
 import { useReveal } from './reveal'
 
 const EXAM_POINTS = [
-  'Khổ giấy A4 chuẩn in ấn, đánh số câu tự động theo Phần I – II – III',
-  'Gõ trực tiếp LaTeX ($...$, $$...$$) và chèn hình vẽ từ 27 công cụ',
-  'Ma trận & đặc tả BGD 2025, xáo câu hỏi & phương án ra nhiều mã đề',
-  'Xuất file Word (.docx) hoặc PDF, giữ nguyên công thức và hình vẽ',
+  'Trang A4 thật, câu hỏi tự đánh số theo Phần I – II – III',
+  'Gõ công thức LaTeX, chèn hình từ bộ công cụ vẽ',
+  'Lập ma trận, đặc tả; xáo câu và đáp án ra nhiều mã đề',
+  'Xuất Word hoặc in thẳng, công thức và hình không vỡ',
 ]
 
 const SECONDARY_WORKSPACES = [
   {
     id: 'slide',
     badge: 'Slide · .pptx',
-    title: 'Trình soạn bài giảng có sẵn toán, hình và chủ đề',
+    title: 'Slide bài giảng',
     icon: Presentation,
-    desc: 'Chọn bố cục trang bìa, bảng đối chiếu hay bài toán mẫu; kéo thả khối chữ, công thức và hình vẽ trực tiếp rồi xuất tệp PowerPoint (.pptx).',
+    desc: 'Đưa dàn ý cho AI hoặc tự dựng từng trang. Công thức, hình vẽ đặt thẳng lên slide, xuất ra PowerPoint.',
     bullets: [
-      'Thư viện chủ đề sáng / tối dịu mắt khi chiếu lớp',
-      'Chèn đồ thị, bảng biến thiên, mạch điện thẳng vào slide',
+      'Chủ đề sáng, tối cho phòng học',
+      'Đồ thị, mạch điện chèn như trong đề',
     ],
   },
   {
     id: 'board',
     badge: 'Bảng vẽ · PDF',
-    title: 'Bảng viết dạy học kiêm công cụ ghi chú trên đề PDF',
+    title: 'Bảng vẽ',
     icon: PenTool,
-    desc: 'Chuyển nhanh giữa giấy trơn, ô li, bảng đen hay bảng xanh; viết tay hoặc giữ nét để nắn thẳng thành đoạn thẳng, đường tròn, hình chữ nhật.',
+    desc: 'Giấy ô li hay bảng đen, bút bi hay phấn. Giữ bút một nhịp là nét tay thành đường thẳng, đường tròn.',
     bullets: [
-      'Bộ thước kẻ, thước đo góc và compa xoay trực tiếp trên bảng',
-      'Mở đề PDF nhiều trang để gạch chân, khoanh đáp án và xuất bản đã chú thích',
+      'Thước kẻ, thước đo góc, compa',
+      'Mở PDF, ghi chú, xuất lại',
     ],
   },
 ]
@@ -43,13 +43,13 @@ export function WorkspaceSection() {
       <div className="mx-auto max-w-[1260px] px-4 sm:px-6">
         <div className="max-w-2xl">
           <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-clay">
-            Một cửa sổ · Ba chế độ
+            Ba chế độ
           </p>
           <h2 className="mt-2 text-[clamp(1.45rem,2.7vw,2.1rem)] font-bold leading-[1.18] tracking-[-0.02em] text-ink">
-            Mở tab mới trên dải tab, chuyển mượt từ đề thi sang bài giảng và bảng dạy.
+            Một tiết dạy, ba tab.
           </h2>
           <p className="mt-3 text-[15px] leading-[1.65] text-ink-2">
-            Thay vì dùng ba phần mềm rời rạc để gõ Word, dựng PowerPoint và viết bảng phụ, mọi tài liệu của một tiết dạy nằm cạnh nhau trên cùng thanh tab.
+            Đề kiểm tra, slide và bảng của cùng một bài mở cạnh nhau, không phải nhảy qua lại giữa Word, PowerPoint và phần mềm bảng.
           </p>
         </div>
 
@@ -65,17 +65,16 @@ export function WorkspaceSection() {
                   <FileText className="h-3.5 w-3.5" aria-hidden />
                   Đề thi · .docx &amp; .pdf
                 </span>
-                <span className="text-[12px] font-medium text-ink-3">Trình soạn A4 nhiều trang</span>
               </div>
 
               <h3 className="mt-4 text-[21px] font-bold leading-snug tracking-[-0.015em] text-ink">
-                Soạn đề đúng mẫu Việt Nam ngay trên trình duyệt
+                Đề thi đúng mẫu
               </h3>
               <p className="mt-2 text-[14.5px] leading-[1.65] text-ink-2">
-                Từ tiêu đề Sở/Trường, câu trắc nghiệm 4 lựa chọn, câu Đúng/Sai nhiều ý đến bài tự luận có biểu điểm — toàn bộ được căn lề sẵn để in hoặc xuất Word sửa tiếp.
+                Tiêu đề Sở, Trường; trắc nghiệm, Đúng/Sai, trả lời ngắn, tự luận. Căn lề sẵn, in là dùng.
               </p>
 
-              <ul className="mt-5 space-y-2.5 border-t border-line pt-5">
+              <ul className="stagger-kids mt-5 space-y-2.5 border-t border-line pt-5">
                 {EXAM_POINTS.map((p) => (
                   <li key={p} className="flex items-start gap-2.5 text-[14px] leading-relaxed text-ink-2">
                     <Check className="mt-1 h-4 w-4 shrink-0 text-clay" aria-hidden />
@@ -86,23 +85,19 @@ export function WorkspaceSection() {
             </div>
 
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-5">
-              <div className="flex flex-wrap items-center gap-2 text-[12.5px] font-medium text-ink-3">
-                <span className="rounded-[5px] border border-line bg-surface px-2 py-0.5 text-ink-2">Ma trận 2025</span>
-                <span className="rounded-[5px] border border-line bg-surface px-2 py-0.5 text-ink-2">Xáo nhiều mã đề</span>
-                <span className="rounded-[5px] border border-line bg-surface px-2 py-0.5 text-ink-2">Chèn hình SVG</span>
-              </div>
+              <span />
               <Link
                 to="/soan-de"
                 className="inline-flex min-h-[38px] items-center gap-1.5 text-[14px] font-semibold text-clay hover:text-clay-deep"
               >
-                Mở trình soạn đề
+                Soạn đề
                 <ArrowRight className="h-4 w-4" aria-hidden />
               </Link>
             </div>
           </div>
 
           {/* Cột phải: Slide & Bảng vẽ xếp dọc không đồng đều */}
-          <div {...right.revealProps} className="flex flex-col gap-6 lg:col-span-6">
+          <div {...right.revealProps} className="stagger-kids flex flex-col gap-6 lg:col-span-6">
             {SECONDARY_WORKSPACES.map((ws) => {
               const Icon = ws.icon
               return (

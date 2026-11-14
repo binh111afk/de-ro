@@ -11,13 +11,13 @@ export function OnlineGradingSection() {
       <div className="mx-auto max-w-[1260px] px-4 sm:px-6">
         <div className="max-w-2xl">
           <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-clay">
-            Từ file đề sang chấm điểm
+            Giao bài, chấm bài
           </p>
           <h2 className="mt-2 text-[clamp(1.45rem,2.7vw,2.1rem)] font-bold leading-[1.18] tracking-[-0.02em] text-ink">
-            Giao bài làm online có tính giờ, hoặc chấm nhanh phiếu trắc nghiệm giấy.
+            Làm bài trên điện thoại, hoặc chấm phiếu giấy.
           </h2>
           <p className="mt-3 text-[15px] leading-[1.65] text-ink-2">
-            Khi đã có đề hoàn chỉnh, giáo viên có thể xuất bản thành bài kiểm tra trực tuyến kèm đồng hồ đếm ngược, hoặc mở mục Chấm trắc nghiệm để đọc phiếu tô đáp án ngay trên lớp.
+            Đề soạn xong có thể gửi link cho học sinh làm có tính giờ, hoặc in ra rồi chấm phiếu.
           </p>
         </div>
 
@@ -49,13 +49,13 @@ export function OnlineGradingSection() {
               <div>
                 <div className="inline-flex items-center gap-2 text-[12.5px] font-semibold text-clay">
                   <Clock className="h-4 w-4 shrink-0" aria-hidden />
-                  <span>Tạo đề online &amp; làm bài tính giờ</span>
+                  <span>Đề online</span>
                 </div>
                 <h3 className="mt-2 text-[19px] font-bold leading-snug text-ink">
-                  Học sinh làm bài trực tiếp, nộp xong thấy đáp án và điểm ngay
+                  Nộp bài là có điểm
                 </h3>
                 <p className="mt-2 text-[14px] leading-[1.6] text-ink-2">
-                  Hỗ trợ đầy đủ trắc nghiệm nhiều lựa chọn, câu Đúng/Sai nhiều ý và trả lời ngắn. Có bảng điều hướng từng câu và đồng hồ đếm ngược 45–90 phút.
+                  Trắc nghiệm, Đúng/Sai, trả lời ngắn. Học sinh thấy đồng hồ và bảng câu đã làm.
                 </p>
               </div>
               <div className="mt-5 border-t border-line pt-4">
@@ -97,13 +97,13 @@ export function OnlineGradingSection() {
               <div>
                 <div className="inline-flex items-center gap-2 text-[12.5px] font-semibold text-clay">
                   <CheckSquare className="h-4 w-4 shrink-0" aria-hidden />
-                  <span>Chấm trắc nghiệm theo đáp án chuẩn</span>
+                  <span>Chấm trắc nghiệm</span>
                 </div>
                 <h3 className="mt-2 text-[19px] font-bold leading-snug text-ink">
-                  Chụp ảnh phiếu hoặc bấm nhanh đáp án, ra điểm ngay lập tức
+                  Chụp phiếu, ra điểm
                 </h3>
                 <p className="mt-2 text-[14px] leading-[1.6] text-ink-2">
-                  Chọn bộ đáp án đúng từ đề có sẵn, tải ảnh phiếu trả lời hoặc tick tay trên lưới 20 câu, gắn tên học sinh và lưu danh sách điểm đã chấm.
+                  Lấy đáp án từ đề đã soạn, chụp hoặc nhập phiếu từng em, lưu bảng điểm cả lớp.
                 </p>
               </div>
               <div className="mt-5 border-t border-line pt-4">
@@ -111,7 +111,7 @@ export function OnlineGradingSection() {
                   to="/cham-trac-nghiem"
                   className="inline-flex min-h-[42px] items-center justify-center gap-2 rounded-[6px] border border-line-2 bg-white px-4 py-2 text-[14px] font-semibold text-ink transition-colors hover:border-ink-4 hover:bg-sunken/60 active:scale-[0.98]"
                 >
-                  <span>Mở trang chấm trắc nghiệm</span>
+                  <span>Chấm thử</span>
                   <ArrowRight className="h-4 w-4 shrink-0" aria-hidden />
                 </Link>
               </div>
