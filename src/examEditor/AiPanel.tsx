@@ -29,7 +29,9 @@ import { HTML_DECK_SYSTEM } from '@/lib/htmlDeckPrompt'
 import { splitHtmlDeck } from '@/lib/htmlDeck'
 import { editSystemPrompt, looksLikeEdit, parseEditCommands, type SlideEditOp } from '@/lib/slideEdit'
 import { useSlidingThumb } from './useSlidingThumb'
-import { buildSourcePack, sourcePrompt, sourceRule, type SourcePack } from '@/lib/sources'
+import { buildSourcePack, loadPickedSources, pickedKey, sourcePrompt, sourceRule, type PickedSource, type SourcePack } from '@/lib/sources'
+import { BookOpen } from 'lucide-react'
+import { SourcePicker } from './SourcePicker'
 import { cn } from '@/lib/cn'
 import { DIFFICULTY_RULE } from '@/lib/difficulty'
 import { FIGURE_GUIDE } from '@/lib/docRewrite'
@@ -802,6 +804,9 @@ export function AiPanel({
   const quota = useAiQuota()
   const [files, setFiles] = useState<Attachment[]>([])
   const [refs, setRefs] = useState<AiRef[]>([])
+  /** nguồn chọn trong modal "Thêm nguồn" — giữ qua các lượt tới khi giáo viên bỏ */
+  const [picked, setPicked] = useState<PickedSource[]>([])
+  const [pickerOpen, setPickerOpen] = useState(false)
   useEffect(() => {
     if (!attachKey) return
     const take = () => {
@@ -934,10 +939,17 @@ export function AiPanel({
     abortRef.current = controller
 
     // Thang nguồn chỉ áp cho soạn/sửa ĐỀ; slide và câu hỏi thường không search.
+    // Nguồn giáo viên tự chọn thì áp cho mọi chế độ (soạn đề, slide, hỏi đáp).
     let pack: SourcePack = { tier: 0, items: [], warnings: [] }
-    if (intent === 'doc' && mode === 'exam') {
+    const sentPicked = picked
+    const examDoc = intent === 'doc' && mode === 'exam'
+    if (examDoc || sentPicked.length) {
       try {
-        pack = await buildSourcePack(text, sentFiles)
+        if (examDoc) pack = await buildSourcePack(text, sentFiles, sentPicked)
+        else {
+          const got = await loadPickedSources(sentPicked)
+          pack = { tier: got.items.length ? 1 : 0, items: got.items, warnings: got.warnings }
+        }
       } catch (err) {
         pack = {
           tier: 0,
@@ -966,7 +978,7 @@ export function AiPanel({
         (await khungPromptFor([text, ...prev, contextSummary ?? '', (documentDigest ?? '').slice(0, 800)].join('\n')))
     }
     const sourceBlock =
-      intent === 'doc' && mode === 'exam'
+      examDoc || pack.items.length
         ? `\n\n${sourceRule(pack)}${sourceText ? `\n\n${sourceText}` : ''}${khungBlock ? `\n\n${khungBlock}` : ''}`
         : ''
 
@@ -1453,6 +1465,17 @@ export function AiPanel({
         )}
       </div>
 
+      {pickerOpen ? (
+        <SourcePicker
+          value={picked}
+          onClose={() => setPickerOpen(false)}
+          onDone={(next) => {
+            setPicked(next)
+            setPickerOpen(false)
+            taRef.current?.focus()
+          }}
+        />
+      ) : null}
       <div className="ai-composer">
         <div className="ai-input-box">
           {refs.length > 0 && (
@@ -1466,6 +1489,25 @@ export function AiPanel({
                   </span>
                   <button type="button" className="ai-attachment__remove" data-tip="Bỏ đính kèm" aria-label={`Bỏ ${r.label}`}
                     onClick={() => setRefs((cur) => cur.filter((x) => x.id !== r.id))}>
+                    <IconClose size={11} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+          {picked.length > 0 && (
+            <div className="ai-attachments">
+              {picked.map((p) => (
+                <div key={pickedKey(p)} className="ai-attachment">
+                  <span className="ai-attachment__icon grid place-items-center text-clay"><BookOpen size={15} strokeWidth={1.75} /></span>
+                  <span className="ai-attachment__meta">
+                    <span className="ai-attachment__name" data-tip={p.name}>{p.name}</span>
+                    <span className="ai-attachment__size">
+                      {p.kind === 'mine' ? 'Đề của tôi' : p.kind === 'community' ? 'Đề cộng đồng' : 'Kho tài liệu'}
+                    </span>
+                  </span>
+                  <button type="button" className="ai-attachment__remove" data-tip="Bỏ nguồn" aria-label={`Bỏ nguồn ${p.name}`}
+                    onClick={() => setPicked((cur) => cur.filter((x) => pickedKey(x) !== pickedKey(p)))}>
                     <IconClose size={11} />
                   </button>
                 </div>
@@ -1527,6 +1569,15 @@ export function AiPanel({
               onClick={() => fileRef.current?.click()}
             >
               <IconPaperclip size={16} />
+            </button>
+            <button
+              type="button"
+              className={cn('ai-attach-btn', picked.length > 0 && 'text-clay')}
+              data-tip="Thêm nguồn: đề của tôi, đề cộng đồng, kho tài liệu"
+              aria-label="Thêm nguồn"
+              onClick={() => setPickerOpen(true)}
+            >
+              <BookOpen size={16} strokeWidth={1.75} />
             </button>
             <input
               ref={fileRef}

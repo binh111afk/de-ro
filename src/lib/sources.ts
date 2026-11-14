@@ -10,6 +10,7 @@ import type { ExamBlock, ExamDoc, RichText } from '@/data/docTypes'
 import { plainText } from '@/examEditor/convert'
 import { useDocStore } from '@/store/docs'
 import { useComposeStore } from '@/store/compose'
+import { getCommunityDoc } from '@/lib/community'
 
 export interface SourceFile {
   name: string
@@ -38,6 +39,23 @@ export interface SearchFeed {
 const MAX_SOURCE_CHARS = 30_000
 const MAX_SAVED_DOC_CHARS = 8_000
 const MAX_SAVED_DOCS = 3
+/** nguồn giáo viên tự chọn: mỗi nguồn được nhiều chữ hơn tài liệu tự dò (vẫn chung trần MAX_SOURCE_CHARS) */
+const MAX_PICKED_CHARS = 12_000
+export const MAX_PICKED = 5
+
+/** Nguồn giáo viên chọn trong modal "Thêm nguồn": đề của tôi, đề cộng đồng hoặc tệp trong kho tài liệu. */
+export interface PickedSource {
+  kind: 'mine' | 'community' | 'library'
+  id: string
+  name: string
+  /** dòng phụ trong thẻ nguồn (môn · lớp, loại tệp…) */
+  meta?: string
+  /** tệp trong kho tài liệu: đường dẫn và loại tệp để tải về trích chữ */
+  url?: string
+  mime?: string
+}
+
+export const pickedKey = (p: Pick<PickedSource, 'kind' | 'id'>) => `${p.kind}:${p.id}`
 
 function fileToBase64(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -116,7 +134,12 @@ function blockText(b: ExamBlock): string {
 }
 
 function docText(doc: ExamDoc): string {
-  return doc.blocks.map(blockText).filter(Boolean).join('\n')
+  const text = doc.blocks.map(blockText).filter(Boolean).join('\n')
+  if (text || !doc.online) return text
+  // đề tạo online đăng cộng đồng: blocks rỗng, nội dung nằm trong đề tương tác
+  return doc.online.sections
+    .flatMap((sec) => sec.questions.map((q) => [`Câu ${q.number}. ${q.prompt}`, ...(q.options ?? []).map((o) => `${o.key}. ${o.text}`)].join('\n')))
+    .join('\n\n')
 }
 
 function normalize(s: string): string {
@@ -248,9 +271,46 @@ export async function searchWeb(prompt: string): Promise<SearchFeed> {
   }
 }
 
-export async function buildSourcePack(prompt: string, files: SourceFile[]): Promise<SourcePack> {
+/** Tải nội dung các nguồn giáo viên đã chọn (lúc bấm gửi, không lúc chọn). Nguồn lỗi thì bỏ qua kèm cảnh báo. */
+export async function loadPickedSources(list: PickedSource[]): Promise<{ items: SourceItem[]; warnings: string[] }> {
   const warnings: string[] = []
-  const attached: SourceItem[] = []
+  const items = await Promise.all(
+    list.map(async (p): Promise<SourceItem | null> => {
+      try {
+        let text = ''
+        if (p.kind === 'mine') {
+          const doc = useDocStore.getState().myDocs.find((d) => d.id === p.id)
+          if (!doc) throw new Error('đề không còn trong máy')
+          text = docText(doc)
+        } else if (p.kind === 'community') {
+          text = docText(await getCommunityDoc(p.id))
+        } else {
+          if (!p.url) throw new Error('thiếu đường dẫn tệp')
+          const res = await fetch(p.url)
+          if (!res.ok) throw new Error(`không tải được tệp (${res.status})`)
+          const blob = await res.blob()
+          const extracted = await extractAttachment(new File([blob], p.name, { type: p.mime || blob.type }))
+          if (extracted.warning) warnings.push(`${p.name}: ${extracted.warning}`)
+          text = extracted.text
+        }
+        if (!text.trim()) {
+          warnings.push(`${p.name}: không có chữ để làm nguồn.`)
+          return null
+        }
+        return { tier: 1, name: p.name, text: text.slice(0, MAX_PICKED_CHARS) }
+      } catch (err) {
+        warnings.push(`${p.name}: ${err instanceof Error ? err.message : String(err)}`)
+        return null
+      }
+    }),
+  )
+  return { items: items.filter((x): x is SourceItem => x !== null), warnings }
+}
+
+export async function buildSourcePack(prompt: string, files: SourceFile[], picked: PickedSource[] = []): Promise<SourcePack> {
+  const loaded = picked.length ? await loadPickedSources(picked) : { items: [], warnings: [] }
+  const warnings: string[] = [...loaded.warnings]
+  const attached: SourceItem[] = [...loaded.items]
 
   for (const f of files) {
     if (f.kind === 'image') {
@@ -287,7 +347,7 @@ const UNTRUSTED_NOTE =
 function tierRule(pack: SourcePack): string {
   if (pack.tier === 1) {
     return (
-      'NGUỒN ƯU TIÊN 1 — TỆP MẪU. Bám sát cấu trúc, độ khó, dạng câu, cách trình bày và ' +
+      'NGUỒN ƯU TIÊN 1 — TỆP MẪU / TÀI LIỆU GIÁO VIÊN CHỌN. Bám sát cấu trúc, độ khó, dạng câu, cách trình bày và ' +
       'phạm vi kiến thức của tệp mẫu. Không thay bằng kiến thức ngoài tệp; nếu tệp thiếu ' +
       'dữ kiện để làm một câu, ghi rõ chỗ thiếu thay vì bịa.'
     )
