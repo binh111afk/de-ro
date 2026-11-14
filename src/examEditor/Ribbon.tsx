@@ -22,7 +22,7 @@ import {
 } from './Layout'
 import { cn } from '@/lib/cn'
 import { BookMarked } from 'lucide-react'
-import { Hash, ListChecks, MonitorPlay, Blocks, ListTree, Wrench } from 'lucide-react'
+import { MonitorPlay, Blocks, ListTree, Wrench } from 'lucide-react'
 import { FileMenu } from './FileMenu'
 import { BankModal } from './BankModal'
 import { templateById, insertBlockTemplate } from './templates'
@@ -37,7 +37,6 @@ import {
   IconAlignJustify,
   IconAlignLeft,
   IconAlignRight,
-  IconAnswerKey,
   IconBullets,
   IconBorderAll,
   IconCaret,
@@ -48,13 +47,11 @@ import {
   IconCopy,
   IconCut,
   IconDoc,
-  IconEssay,
   IconEquation,
   IconLink,
   IconFontColorA,
   IconFormatPainter,
   IconGrowFont,
-  IconHeading,
   IconHighlight,
   IconIndentDec,
   IconIndentInc,
@@ -66,7 +63,6 @@ import {
   IconPrintLayout,
   IconRedo,
   IconReplace,
-  IconRubric,
   IconRowDelete,
   IconColDelete,
   IconSave,
@@ -80,7 +76,6 @@ import {
   IconTable,
   IconTableDelete,
   IconTrash,
-  IconTextBox,
   IconUndo,
 } from './icons'
 
@@ -635,8 +630,6 @@ export function Ribbon({
         render: () => (
           <>
             <TablePicker editor={editor} disabled={disabled} />
-            <RibbonButton icon={<IconAnswerKey size={26} />} label="Bảng đáp án" disabled={disabled} onClick={() => insertTemplate('answerKey')} />
-            <RibbonButton icon={<IconRubric size={26} />} label="Thang điểm" disabled={disabled} onClick={() => insertTemplate('rubric')} />
           </>
         ),
       },
@@ -656,29 +649,6 @@ export function Ribbon({
         id: 'media',
         label: 'Minh họa',
         render: () => <ImagePicker editor={editor} disabled={disabled} />,
-      },
-      {
-        id: 'questions',
-        label: 'Câu hỏi',
-        render: () => (
-          <>
-            <RibbonButton icon={<IconNumbered size={26} />} label="Trắc nghiệm" disabled={disabled} onClick={() => insertTemplate('question')} />
-            <RibbonButton icon={<ListChecks className="size-[26px]" strokeWidth={1.3} />} label="Đúng/Sai" disabled={disabled} onClick={() => insertTemplate('truefalse')} />
-            <RibbonButton icon={<Hash className="size-[26px]" strokeWidth={1.3} />} label="Trả lời ngắn" disabled={disabled} onClick={() => insertTemplate('short')} />
-            <RibbonButton icon={<IconEssay size={26} />} label="Tự luận" disabled={disabled} onClick={() => insertTemplate('essay')} />
-          </>
-        ),
-      },
-      {
-        id: 'blocks',
-        label: 'Khối',
-        render: () => (
-          <>
-            <RibbonButton icon={<IconTextBox size={26} />} label="Đoạn văn" disabled={disabled} onClick={() => insertTemplate('paragraph')} />
-            <RibbonButton icon={<IconHeading size={26} />} label="Tiêu đề" disabled={disabled} onClick={() => insertTemplate('heading')} />
-            <RibbonButton icon={<IconBullets size={26} />} label="Danh sách" disabled={disabled} onClick={() => insertTemplate('bullets')} />
-          </>
-        ),
       },
       {
         id: 'link',
