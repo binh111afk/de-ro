@@ -3,7 +3,7 @@
  * model chỉ trả `{"action":"edit","commands":[...]}`, engine kiểm tra từng lệnh rồi dựng lại
  * slide bằng layout engine. Lệnh sai/lạ bị bỏ kèm lý do, không làm hỏng deck.
  */
-import type { Deck, DeckTheme, Slide, SlideTone } from '@/store/docs'
+import type { Deck, DeckTheme, Slide, SlideElement, SlideTone } from '@/store/docs'
 import { parseAiObject } from './aiDeck'
 import {
   SLIDE_LAYOUTS,
@@ -249,9 +249,34 @@ export function applyDeckDesign(deck: Deck, design: SlideDesign | null, palette?
     slides: deck.slides.map((s, i) => {
       if (s.html) return s
       const nextBase = recomposeSlide(targetTheme, { ...s, decorKit: design.decorKit })
-      return applySkin(nextBase, design.id, targetTheme, i, total)
+      return keepGeometry(s, nextBase, applySkin(nextBase, design.id, targetTheme, i, total))
     }),
   }
+}
+
+// vị trí, kích thước, căn lề, cỡ chữ: thuộc bố cục — đổi thiết kế không đụng tới
+const GEOMETRY = ['x', 'y', 'w', 'h', 'rotation', 'fixedHeight', 'align', 'valign', 'fontSize', 'flipX', 'flipY'] as const
+
+/**
+ * Thiết kế chỉ đổi kiểu, không đổi bố cục: lấy màu / phông / viền / nền / motif từ bản skin,
+ * nhưng vị trí + kích thước giữ như slide đang có. Khung phụ skin tự dàn cho bố cục riêng
+ * của nó (trang bìa, trang kết…) bị bỏ vì sẽ lệch khỏi chữ; chỉ giữ motif trang trí góc.
+ */
+function keepGeometry(original: Slide, base: Slide, styled: Slide): Slide {
+  const before = new Map(original.elements.map((el) => [el.id, el]))
+  const skinned = new Map(styled.elements.map((el) => [el.id, el]))
+  const elements: SlideElement[] = base.elements.map((el) => {
+    const look = skinned.get(el.id)
+    if (!look || isDecorElement(look)) return el
+    const geo = before.get(el.id) ?? el
+    const merged: SlideElement = { ...look }
+    for (const k of GEOMETRY) (merged as unknown as Record<string, unknown>)[k] = geo[k]
+    return merged
+  })
+  const motifs = styled.elements.filter(
+    (el) => isDecorElement(el) && (el.id.startsWith('skin-motif-') || el.id.startsWith('decor-kit-')) && !base.elements.some((b) => b.id === el.id),
+  )
+  return { ...styled, elements: [...elements, ...motifs] }
 }
 
 /** Mô tả ngắn một slide (bố cục + nội dung chữ) để đưa vào prompt cho model biết đang sửa gì. */
