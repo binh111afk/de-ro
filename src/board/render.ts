@@ -362,13 +362,14 @@ export function drawElement(ctx: CanvasRenderingContext2D, rc: ReturnType<typeof
     const img = e.src ? imageOf(e.src) : null
     // trang PDF: tờ giấy trắng có bóng đổ nổi trên nền xám (như trình đọc PDF)
     if (e.page) {
-      ctx.save()
-      ctx.shadowColor = 'rgba(0, 0, 0, 0.18)'
-      ctx.shadowBlur = 14
-      ctx.shadowOffsetY = 3
+      // bóng giả bằng vài lớp viền mờ (không dùng shadowBlur: trên điện thoại Android
+      // vùng bóng lớn làm hỏng canvas, cả bảng thành màu đen)
+      for (let i = 1; i <= 4; i++) {
+        ctx.fillStyle = `rgba(0, 0, 0, ${0.05 - i * 0.01})`
+        ctx.fillRect(-i, -i + 2, e.w + 2 * i, e.h + 2 * i)
+      }
       ctx.fillStyle = '#ffffff'
       ctx.fillRect(0, 0, e.w, e.h)
-      ctx.restore()
     }
     if (img?.complete && img.naturalWidth) ctx.drawImage(img, 0, 0, e.w, e.h)
     else {
