@@ -24,6 +24,8 @@ export interface Opts {
   recentTextColors: string[]
   recentShapeColors: string[]
   recentHighlights: string[]
+  /** màu laser gần đây (màu vừa chọn lên đầu); thiếu ở bảng cũ thì lấy bộ màu laser mặc định */
+  recentLaserColors?: string[]
   /** ngòi riêng của từng loại bút */
   penTips: Partial<Record<PenKind, Tip>>
   /** bút laser: màu và độ dày (hệ số) */

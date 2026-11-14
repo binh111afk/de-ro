@@ -2460,21 +2460,28 @@ export default function BoardEditor({ id }: { id: string }) {
       </>
     )
   } else if (main === 'laser') {
+    // hàng màu laser gần đây, giống hàng màu của bút: màu vừa dùng lên đầu, giữ đủ 6 ô
+    const laserColors = o.recentLaserColors ?? LASER_COLORS
+    const useLaserColor = (c: string) => {
+      const list = opts.current.recentLaserColors ?? LASER_COLORS
+      opts.current = { ...opts.current, recentLaserColors: [c, ...list.filter((x) => x.toLowerCase() !== c.toLowerCase())].slice(0, list.length || 6) }
+      setOpt('laserColor', c)
+    }
     options = (
       <>
         <Group label="Màu">
-          {LASER_COLORS.map((c) => (
-            <Swatch key={c} color={c} round active={o.laserColor === c} onClick={() => setOpt('laserColor', c)} title="Màu laser" />
+          {laserColors.map((c) => (
+            <Swatch key={c} color={c} round active={o.laserColor.toLowerCase() === c.toLowerCase()} onClick={() => useLaserColor(c)} title="Màu laser" />
           ))}
           <Pop id="laserColor" pop={pop} setPop={setPop} title="Màu khác"
-            face={<span className={`mx-[3px] block h-5 w-5 rounded-full border border-black/10 ${!LASER_COLORS.includes(o.laserColor) ? 'ring-2 ring-clay ring-offset-2 ring-offset-surface' : ''}`} style={{ background: 'conic-gradient(#e03131, #f08c00, #fab005, #2f9e44, #1971c2, #7048e8, #e03131)' }} />}>
+            face={<span className="mx-[3px] block h-5 w-5 rounded-full border border-black/10" style={{ background: 'conic-gradient(#e03131, #f08c00, #fab005, #2f9e44, #1971c2, #7048e8, #e03131)' }} />}>
             <div className="grid grid-cols-10 gap-1">
               {THEME_COLORS.map((c) => (
-                <button key={c} type="button" data-tip={c} aria-label={c} onClick={() => { setOpt('laserColor', c); setPop(null) }}
+                <button key={c} type="button" data-tip={c} aria-label={c} onClick={() => { useLaserColor(c); setPop(null) }}
                   className={`h-[18px] w-[18px] rounded-[3px] border border-black/10 hover:scale-110 ${o.laserColor === c ? 'ring-2 ring-clay ring-offset-1' : ''}`} style={{ background: c }} />
               ))}
             </div>
-            <HexInput value={o.laserColor} onPreview={(c) => setOpt('laserColor', c)} onCommit={(c) => setOpt('laserColor', c)} />
+            <HexInput value={o.laserColor} onPreview={(c) => setOpt('laserColor', c)} onCommit={useLaserColor} />
           </Pop>
         </Group>
         <Group label="Độ dày">

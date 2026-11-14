@@ -449,7 +449,10 @@ export interface LaserTrail {
 
 /** '#rrggbb' → 'r, g, b' để ghép vào rgba() */
 function rgbOf(hex = '#ff3b30') {
-  const n = parseInt(hex.slice(1, 7), 16) || 0xff3b30
+  // đen (#000000) ra 0: không dùng `|| mặc định` kẻo đen thành đỏ; chỉ mã hỏng (NaN) mới lấy màu đỏ
+  const raw = hex.length === 4 ? hex.slice(1).replace(/./g, (c) => c + c) : hex.slice(1, 7)
+  const parsed = parseInt(raw, 16)
+  const n = Number.isNaN(parsed) ? 0xff3b30 : parsed
   return `${n >> 16}, ${(n >> 8) & 255}, ${n & 255}`
 }
 
