@@ -1,18 +1,16 @@
-import { Suspense, useEffect } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
-import { DialogHost } from '@/components/Dialog'
-import { TooltipLayer } from '@/components/Tooltip'
 import { Footer, Header } from '@/components/Layout'
 import { SiteStatus } from '@/components/SiteStatus'
 import { cn } from '@/lib/cn'
 import Home from '@/pages/Home'
-import { consumeAuthRedirect } from '@/lib/auth'
-import { startSync } from '@/lib/sync'
-import { startPresence } from '@/lib/presence'
 import { useSession } from '@/lib/useSession'
-import { Analytics } from '@vercel/analytics/react'
 import { lazyPage } from '@/lib/lazyPage'
 import { PageErrorBoundary } from '@/components/PageErrorBoundary'
+
+const DialogHost = lazy(() => import('@/components/Dialog').then((m) => ({ default: m.DialogHost })))
+const TooltipLayer = lazy(() => import('@/components/Tooltip').then((m) => ({ default: m.TooltipLayer })))
+const Analytics = lazy(() => import('@vercel/analytics/react').then((m) => ({ default: m.Analytics })))
 
 // mỗi trang một chunk riêng: học sinh mở link làm đề không phải tải trình soạn slide, đồ hoạ, xuất Word…
 const pages = {
@@ -62,7 +60,7 @@ function usePrefetchPages() {
       const load = queue.shift()
       if (load) load().catch(() => {}).finally(() => idle(next))
     }
-    const t = setTimeout(() => idle(next), 1500)
+    const t = setTimeout(() => idle(next), 6500)
     return () => {
       clearTimeout(t)
       queue.length = 0
@@ -87,10 +85,17 @@ export default function App() {
   const { pathname } = useLocation()
   const fullscreen = FULLSCREEN_ROUTES.includes(pathname)
   const authPage = AUTH_ROUTES.includes(pathname)
+  const [animateRoutes, setAnimateRoutes] = useState(() => pathname !== '/')
   usePrefetchPages()
 
   useEffect(() => {
-    consumeAuthRedirect().catch(() => {})
+    if (!animateRoutes && pathname !== '/') setAnimateRoutes(true)
+  }, [animateRoutes, pathname])
+
+  useEffect(() => {
+    void import('@/lib/auth')
+      .then((m) => m.consumeAuthRedirect())
+      .catch(() => {})
   }, [])
 
   // đăng nhập thì đồng bộ dữ liệu và gửi nhịp đang online; đăng xuất thì dừng
@@ -98,23 +103,31 @@ export default function App() {
   useEffect(() => {
     if (!userId) return
     let stopSync: (() => void) | undefined
+    let stopPresence: (() => void) | undefined
     let dead = false
-    startSync()
+    void import('@/lib/sync')
+      .then((m) => m.startSync())
       .then((fn) => (dead ? fn() : (stopSync = fn)))
       .catch(() => {})
-    const stopPresence = startPresence()
+    void import('@/lib/presence')
+      .then((m) => {
+        if (!dead) stopPresence = m.startPresence()
+      })
+      .catch(() => {})
     return () => {
       dead = true
       stopSync?.()
-      stopPresence()
+      stopPresence?.()
     }
   }, [userId])
 
   return (
     <div className={cn('flex min-h-dvh flex-col', fullscreen && 'h-dvh overflow-hidden')}>
       <ScrollToTop />
-      <DialogHost />
-      <TooltipLayer />
+      <Suspense fallback={null}>
+        <DialogHost />
+        <TooltipLayer />
+      </Suspense>
       {/* màn rất lớn (≥ 2200px, vd. 30 inch để 100%): phóng cả trang cho chữ khỏi lọt thỏm — xem .site-scale
           trong index.css. Không áp cho trình soạn (fullscreen: có thu phóng riêng, canvas cần toạ độ chuẩn)
           và để ngoài các lớp tooltip / hộp thoại (chúng định vị bằng toạ độ màn hình). */}
@@ -126,7 +139,7 @@ export default function App() {
         <PageErrorBoundary resetKey={pathname}>
         <Suspense fallback={<div className="flex h-full min-h-[50vh] items-center justify-center text-[13px] text-ink-3">Đang tải…</div>}>
         {/* các tab trong /admin dùng chung một khoá: chuyển tab không dựng lại cả trang admin */}
-        <div key={pathname.startsWith('/admin') ? '/admin' : pathname} className={cn('page-enter', fullscreen && 'h-full')}>
+        <div key={pathname.startsWith('/admin') ? '/admin' : pathname} className={cn(animateRoutes && 'page-enter', fullscreen && 'h-full')}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/soan-de" element={<ComposeDoc />} />
@@ -160,7 +173,11 @@ export default function App() {
       </main>
       {fullscreen || authPage ? null : <Footer />}
       </div>
-      {import.meta.env.PROD ? <Analytics /> : null}
+      {import.meta.env.PROD ? (
+        <Suspense fallback={null}>
+          <Analytics />
+        </Suspense>
+      ) : null}
     </div>
   )
 }
