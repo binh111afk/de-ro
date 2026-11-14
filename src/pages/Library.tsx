@@ -300,12 +300,12 @@ function DocumentCard({
 }) {
   const kind = DOC_TYPES[doc.mime] ?? 'Tệp'
   return (
-    <li className="flex flex-col rounded-[8px] bg-surface p-5 shadow-[0_1px_2px_rgba(60,48,32,0.03)] transition-all duration-500 hover:-translate-y-1 hover:shadow-lift">
+    <li className="flex min-w-0 flex-col rounded-[8px] bg-surface p-5 shadow-[0_1px_2px_rgba(60,48,32,0.03)] transition-all duration-500 hover:-translate-y-1 hover:shadow-lift">
       <div className="flex items-start justify-between gap-3">
         <span className="flex size-10 shrink-0 items-center justify-center rounded-[8px] bg-clay-tint text-clay">
           <FileText className="size-5" />
         </span>
-        <div className="flex items-center gap-1.5">
+        <div className="flex flex-wrap items-center justify-end gap-1.5">
           {sample ? <Badge tone="honey">Mẫu</Badge> : null}
           {doc.subject ? <Badge tone="neutral">{doc.subject}</Badge> : null}
           <Badge tone={kind === 'PDF' ? 'honey' : 'clay'}>{kind}</Badge>

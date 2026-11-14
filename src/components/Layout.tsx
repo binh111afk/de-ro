@@ -288,7 +288,7 @@ export function Footer() {
               <button
                 type="button"
                 onClick={handleOpenFeedback}
-                className="reveal inline-flex items-center gap-1.5 font-medium text-clay hover:underline"
+                className="reveal inline-flex items-center gap-1.5 font-medium text-clay hover:underline max-[359px]:min-h-9"
               >
                 <MessageSquare className="size-3.5" />
                 <span>Gửi góp ý</span>
@@ -303,11 +303,11 @@ export function Footer() {
           <p className="text-[12px] text-ink-4">
             © 2026 đề rõ — Dữ liệu mẫu phục vụ mục đích trình diễn.
           </p>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-4">
             <button
               type="button"
               onClick={handleOpenFeedback}
-              className="text-[12px] font-medium text-ink-3 hover:text-ink hover:underline"
+              className="text-[12px] font-medium text-ink-3 hover:text-ink hover:underline max-[359px]:min-h-9"
             >
               Hòm thư góp ý
             </button>
@@ -319,7 +319,7 @@ export function Footer() {
       {feedbackOpen ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 p-4 backdrop-blur-xs">
           <div
-            className="w-full max-w-md rounded-[10px] border border-line bg-surface p-6 shadow-float anim-sheet"
+            className="max-h-[90dvh] w-full max-w-md overflow-y-auto rounded-[10px] border border-line bg-surface p-6 shadow-float anim-sheet"
             role="dialog"
             aria-modal="true"
           >
@@ -331,7 +331,7 @@ export function Footer() {
               <button
                 type="button"
                 onClick={() => setFeedbackOpen(false)}
-                className="rounded-full p-1 text-ink-3 hover:bg-sunken hover:text-ink"
+                className="flex size-9 items-center justify-center rounded-full text-ink-3 hover:bg-sunken hover:text-ink"
                 aria-label="Đóng"
               >
                 <X className="size-4" />

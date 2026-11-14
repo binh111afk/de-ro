@@ -168,7 +168,7 @@ export default function MyDocs() {
               type="button"
               onClick={() => setTab(t.id)}
               className={cn(
-                'rounded-[10px] px-3.5 py-1.5 text-[13px] font-semibold transition-colors',
+                'rounded-[10px] px-3.5 py-1.5 text-[13px] font-semibold transition-colors max-[359px]:min-h-9',
                 tab === t.id ? 'bg-clay-soft text-clay' : 'text-ink-3 hover:text-ink',
               )}
             >
@@ -177,20 +177,20 @@ export default function MyDocs() {
           ))}
         </div>
 
-        <div className="relative ml-auto">
+        <div className="relative ml-auto max-[359px]:ml-0 max-[359px]:w-full">
           <Search className="pointer-events-none absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-ink-4" />
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="Tìm đề…"
-            className={cn(inputClass, 'w-[200px] !py-1.5 !pl-8 !text-[13px]')}
+            className={cn(inputClass, 'w-[200px] max-[359px]:w-full !py-1.5 !pl-8 !text-[13px]')}
           />
         </div>
 
         <select
           value={sort}
           onChange={(e) => setSort(e.target.value as SortKey)}
-          className={cn(inputClass, 'w-auto !py-1.5 !text-[13px]')}
+          className={cn(inputClass, 'w-auto max-[359px]:min-h-9 max-[359px]:flex-1 !py-1.5 !text-[13px]')}
         >
           {SORTS.map((s) => (
             <option key={s.key} value={s.key}>
@@ -213,7 +213,7 @@ export default function MyDocs() {
               aria-label={v.label}
               onClick={() => setView(v.id)}
               className={cn(
-                'rounded-md p-1.5 transition-colors',
+                'rounded-md p-1.5 transition-colors max-[359px]:flex max-[359px]:size-9 max-[359px]:items-center max-[359px]:justify-center',
                 view === v.id ? 'bg-sunken text-ink' : 'text-ink-4 hover:text-ink',
               )}
             >

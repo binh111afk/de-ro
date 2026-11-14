@@ -194,7 +194,7 @@ export function SlideStrip({
         <button
           type="button"
           onClick={() => (isCompact && isShort ? setDrawerOpen((v) => !v) : setTabletCollapsed(false))}
-          className="flex min-h-[32px] items-center gap-1.5 rounded-md px-2 text-[12px] font-medium text-ink hover:bg-paper-2"
+          className="flex min-h-[36px] items-center gap-1.5 rounded-md px-2 text-[12px] font-medium text-ink hover:bg-paper-2"
         >
           <span>Slide {count ? currentIdx + 1 : 0}/{count}</span>
           <ChevronUp className={cn('size-4 transition-transform', drawerOpen && 'rotate-180')} />
@@ -204,7 +204,7 @@ export function SlideStrip({
             type="button"
             onClick={() => onAddAt(count)}
             aria-label="Thêm slide"
-            className="flex min-h-[32px] items-center gap-1 rounded-md px-2 text-[12px] font-medium text-clay hover:bg-paper-2"
+            className="flex min-h-[36px] items-center gap-1 rounded-md px-2 text-[12px] font-medium text-clay hover:bg-paper-2"
           >
             <Plus className="size-4" />
             <span>Thêm slide</span>

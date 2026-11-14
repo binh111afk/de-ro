@@ -439,7 +439,7 @@ function HowItWorks() {
 
 function Showcase() {
   return (
-    <section className="mx-auto max-w-[1180px] px-5 py-24 sm:px-6 lg:py-28">
+    <section className="mx-auto max-w-[1180px] overflow-x-hidden px-5 py-24 sm:px-6 lg:py-28">
       <div className="grid items-center gap-16 lg:grid-cols-2">
         <div className="order-2 lg:order-1">
           <div className="relative">

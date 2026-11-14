@@ -112,13 +112,13 @@ export function NavPanel({
           </div>
 
           {/* Header with tabs & close */}
-          <div className="flex items-center justify-between border-b border-line px-4 py-2">
-            <SheetTabs items={TABS.map(({ id, label, Icon }) => ({ id, label, icon: <Icon className="size-4" /> }))} value={tab} onChange={setTab} />
+          <div className="flex items-center justify-between gap-2 border-b border-line px-3 py-2">
+            <SheetTabs className="min-w-0 flex-1 overflow-x-auto no-scrollbar" items={TABS.map(({ id, label, Icon }) => ({ id, label, icon: <Icon className="size-4" /> }))} value={tab} onChange={setTab} />
             <button
               type="button"
               onClick={() => onOpenChange(false)}
               aria-label="Đóng"
-              className="flex size-9 items-center justify-center rounded-lg text-ink-3 hover:bg-paper-2 hover:text-ink"
+              className="flex size-9 shrink-0 items-center justify-center rounded-lg text-ink-3 hover:bg-paper-2 hover:text-ink"
             >
               <X className="size-4" />
             </button>

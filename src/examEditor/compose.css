@@ -4473,7 +4473,7 @@ div[data-exam-node='examQuestionPrompt'] > .exam-image:has(+ .ProseMirror-separa
     position: fixed !important;
     right: 14px !important;
     bottom: calc(36px + env(safe-area-inset-bottom, 0px)) !important;
-    z-index: 55 !important;
+    z-index: 35 !important;
     flex-direction: row !important;
     align-items: center !important;
     gap: 6px !important;
@@ -4685,11 +4685,19 @@ div[data-exam-node='examQuestionPrompt'] > .exam-image:has(+ .ProseMirror-separa
   gap: 4px;
   padding: 4px 8px;
   border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.ribbon-phone-bar::-webkit-scrollbar {
+  display: none;
 }
 
 .ribbon-phone-bar__left,
 .ribbon-phone-bar__right {
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   gap: 4px;
 }
@@ -4701,9 +4709,17 @@ div[data-exam-node='examQuestionPrompt'] > .exam-image:has(+ .ProseMirror-separa
   gap: 2px;
   padding: 4px 8px;
   background: var(--chrome-bg);
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.ribbon-phone-quick::-webkit-scrollbar {
+  display: none;
 }
 
 .ribbon-phone-btn {
+  flex-shrink: 0;
   min-width: 36px;
   height: 36px;
   border: none;
@@ -5130,5 +5146,77 @@ div[data-exam-node='examQuestionPrompt'] > .exam-image:has(+ .ProseMirror-separa
     width: 36px;
     height: 36px;
     margin: 3px 4px 3px 0;
+  }
+}
+
+/* Màn rất hẹp (< 360px: cỡ chữ hệ thống phóng lớn trên điện thoại) */
+@media (max-width: 359px) {
+  .start {
+    padding: 12px 12px 28px;
+  }
+
+  .quick-cards {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .quick-card {
+    flex-direction: row;
+    align-items: center;
+    text-align: left;
+    min-height: 54px;
+    padding: 10px 12px;
+    gap: 10px;
+  }
+
+  .quick-text {
+    align-items: flex-start;
+  }
+
+  .quick-title-row {
+    justify-content: flex-start;
+    gap: 6px;
+  }
+
+  .quick-sub {
+    display: block;
+    font-size: 12px;
+  }
+
+  .ribbon-phone-bar,
+  .ribbon-phone-quick {
+    padding: 4px 6px;
+    gap: 2px;
+  }
+
+  .ribbon-phone-btn {
+    padding: 0 4px;
+  }
+
+  .ribbon-phone-btn--pill {
+    padding: 0 8px;
+  }
+
+  .ai-attach-btn,
+  .ai-send-btn,
+  .ai-header-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .gs-dd-trigger {
+    height: 36px;
+    min-height: 36px;
+  }
+
+  .rb-color-caret {
+    width: 24px;
+    height: 36px;
+  }
+
+  .file-menu__pop,
+  .rb-color-menu,
+  .rb-dropdown-menu {
+    max-width: calc(100vw - 16px);
   }
 }

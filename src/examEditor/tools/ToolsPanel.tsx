@@ -146,7 +146,7 @@ export function ToolsPanel({
             aria-selected={s.name === shown[0].name}
             onClick={() => pick(s.name)}
             className={cn(
-              'rounded-full border px-3 py-1 text-[13px] font-medium transition-colors',
+              'rounded-full border px-3 py-1 text-[13px] font-medium transition-colors max-[359px]:min-h-9',
               s.name === shown[0].name ? 'border-clay bg-clay-tint text-clay' : 'border-line bg-white text-ink-2 hover:border-ink-4',
             )}
           >

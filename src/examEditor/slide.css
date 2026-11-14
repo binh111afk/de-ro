@@ -1343,10 +1343,18 @@ body[data-slide-drag] .slide-sel-toolbar {
     justify-content: space-between;
     gap: 4px;
     padding: 4px 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .slide-ribbon__phone-quick::-webkit-scrollbar {
+    display: none;
   }
 
   .slide-ribbon__qbtn {
     display: inline-flex;
+    flex-shrink: 0;
     align-items: center;
     justify-content: center;
     gap: 4px;
@@ -1415,6 +1423,7 @@ body[data-slide-drag] .slide-sel-toolbar {
   .slide-ribbon .rb-icon {
     min-width: 36px;
     min-height: 36px;
+    flex-shrink: 0;
   }
 
   .slide-layout-card {
@@ -1454,5 +1463,48 @@ body[data-slide-drag] .slide-sel-toolbar {
   .file-menu__pop,
   .rb-dropdown-menu {
     max-height: calc(100dvh - 160px) !important;
+  }
+}
+
+@media (max-width: 359px) {
+  .slide-ribbon__phone-top {
+    padding: 4px 6px;
+    gap: 4px;
+  }
+
+  .slide-ribbon__phone-top .file-menu__btn {
+    padding: 0 7px;
+    min-height: 36px;
+  }
+
+  .slide-ribbon__phone-quick {
+    padding: 4px 6px;
+    gap: 2px;
+  }
+
+  .slide-ribbon__qbtn {
+    min-width: 36px;
+    min-height: 36px;
+    padding: 0 5px;
+  }
+
+  .slide-ribbon__qbtn--wide {
+    padding: 0 7px;
+  }
+
+  .slide-layout-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .slide-ribbon-gallery {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .slide-ribbon-menu,
+  .file-menu__pop,
+  .rb-dropdown-menu {
+    max-width: calc(100vw - 16px) !important;
+    max-height: calc(100dvh - 150px) !important;
+    overflow-y: auto;
   }
 }

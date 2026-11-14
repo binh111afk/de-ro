@@ -661,7 +661,7 @@ export function PhoneRibbon({
             </div>
 
             <div className="flex items-center justify-between gap-2 border-b border-line px-3 py-2">
-              <SheetTabs className="flex-1 overflow-x-auto scrollbar-none" items={PHONE_SHEET_TABS.map((t) => ({ id: t.id, label: t.label }))} value={shownSheetTab} onChange={(id) => setSheetTab(id)} />
+              <SheetTabs className="min-w-0 flex-1 overflow-x-auto no-scrollbar" items={PHONE_SHEET_TABS.map((t) => ({ id: t.id, label: t.label }))} value={shownSheetTab} onChange={(id) => setSheetTab(id)} />
               <button
                 type="button"
                 onClick={() => setSheetTab(null)}
