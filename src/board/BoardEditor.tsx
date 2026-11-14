@@ -351,7 +351,9 @@ export default function BoardEditor({ id }: { id: string }) {
     const pdfPages = els.current.filter(isPage).sort((a, b) => a.y - b.y || a.x - b.x)
     if (!pdfPages.length) return
     const c = canvasRef.current
-    if (!c) return
+    // đổi tab thì bảng dựng lại: canvas còn cỡ mặc định 300×150 tới khi ResizeObserver đo khung thật.
+    // Kéo vùng nhìn theo cỡ tạm đó sẽ làm trang lệch khỏi chỗ cũ, nên chờ đo xong (style.width do ResizeObserver đặt).
+    if (!c || !c.style.width || !c.clientWidth || !c.clientHeight) return
     const v = view.current, M = 40
     const x1 = Math.min(...pdfPages.map((p) => p.x)), x2 = Math.max(...pdfPages.map((p) => p.x + p.w))
     const y1 = pdfPages[0].y, y2 = Math.max(...pdfPages.map((p) => p.y + p.h))
