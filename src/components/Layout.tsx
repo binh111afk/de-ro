@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { LogOut, Menu, MessageSquare, X } from 'lucide-react'
 import { cn } from '@/lib/cn'
+import { useAnimatedPresence } from '@/lib/useAnimatedPresence'
 import { Button, inputClass } from '@/components/ui'
 import { signOut } from '@/lib/auth'
 import { useSession } from '@/lib/useSession'
@@ -34,6 +35,7 @@ function Logo({ className }: { className?: string }) {
 export function Header() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const menuAnim = useAnimatedPresence(menuOpen, 140)
   const location = useLocation()
   const session = useSession()
 
@@ -143,8 +145,8 @@ export function Header() {
         </div>
       </div>
 
-      {menuOpen ? (
-        <div className="border-t border-line/70 bg-canvas/95 backdrop-blur-xl lg:hidden anim-slide">
+      {menuAnim.mounted ? (
+        <div className={cn('border-t border-line/70 bg-canvas/95 backdrop-blur-xl lg:hidden', menuAnim.closing ? 'slide-out-up' : 'anim-slide')}>
           <div className="mx-auto max-w-[1180px] px-5 py-2.5 sm:px-6">
             {NAV.map((item) => (
               <NavLink

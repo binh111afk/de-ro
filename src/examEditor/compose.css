@@ -3965,7 +3965,8 @@
  * mục "Trợ lý AI" ở thanh đáy (soạn slide — xem SlideSidePanel).
  * ------------------------------------------------------------------ */
 @media (max-width: 1023px) {
-  .ai-dock:not(.collapsed) {
+  .ai-dock:not(.collapsed),
+  .ai-dock.ai-dock--closing {
     position: fixed;
     top: 0;
     bottom: 0;
@@ -3974,17 +3975,51 @@
     background: var(--surface);
     box-shadow: 0 12px 48px -12px rgb(0 0 0 / 0.4);
   }
-  .ai-dock--right:not(.collapsed) {
+  .ai-dock:not(.collapsed) {
+    animation: drawer-in-left var(--sheet-dur, 240ms) var(--sheet-ease, ease-out) backwards;
+  }
+  .ai-dock.ai-dock--closing {
+    animation: drawer-out-left var(--sheet-dur-out, 180ms) var(--sheet-ease-out, ease-in) forwards;
+    pointer-events: none;
+  }
+  .ai-dock--right:not(.collapsed),
+  .ai-dock--right.ai-dock--closing {
     left: auto;
     right: 0;
+  }
+  .ai-dock--right:not(.collapsed) {
+    animation: drawer-in var(--sheet-dur, 240ms) var(--sheet-ease, ease-out) backwards;
+  }
+  .ai-dock--right.ai-dock--closing {
+    animation: drawer-out var(--sheet-dur-out, 180ms) var(--sheet-ease-out, ease-in) forwards;
+  }
+  .ai-dock.ai-dock--closing .ai-panel {
+    width: var(--ai-panel-width, 360px);
+    min-width: 0;
+    opacity: 1;
+    border-right-width: 1px;
+  }
+  .ai-dock.ai-dock--closing.ai-dock--right .ai-panel {
+    border-left-width: 1px;
+  }
+  .ai-dock.ai-dock--closing .ai-rail {
+    display: none !important;
   }
 }
 
 @media (max-width: 639px) {
-  .ai-dock:not(.collapsed) {
+  .ai-dock:not(.collapsed),
+  .ai-dock.ai-dock--closing {
     width: 100vw;
   }
-  .ai-dock:not(.collapsed) .ai-panel {
+  .ai-dock:not(.collapsed) {
+    animation: sheet-in-up var(--sheet-dur, 240ms) var(--sheet-ease, ease-out) backwards;
+  }
+  .ai-dock.ai-dock--closing {
+    animation: sheet-out-down var(--sheet-dur-out, 180ms) var(--sheet-ease-out, ease-in) forwards;
+  }
+  .ai-dock:not(.collapsed) .ai-panel,
+  .ai-dock.ai-dock--closing .ai-panel {
     flex: 1;
     width: auto;
     border: none;
@@ -4369,7 +4404,8 @@ div[data-exam-node='examQuestionPrompt'] > .exam-image:has(+ .ProseMirror-separa
  * AI Dock & nút nổi trên mobile (< 768px)
  * ------------------------------------------------------------------ */
 @media (max-width: 639px) {
-  .ai-dock:not(.collapsed) {
+  .ai-dock:not(.collapsed),
+  .ai-dock.ai-dock--closing {
     width: 100vw !important;
     width: 100dvw !important;
     height: var(--ai-dock-h, 100dvh) !important;
@@ -4380,29 +4416,34 @@ div[data-exam-node='examQuestionPrompt'] > .exam-image:has(+ .ProseMirror-separa
     flex-direction: column !important;
     z-index: 70 !important;
   }
-  .ai-dock:not(.collapsed) .ai-dock__body {
+  .ai-dock:not(.collapsed) .ai-dock__body,
+  .ai-dock.ai-dock--closing .ai-dock__body {
     flex: 1 !important;
     min-height: 0 !important;
     display: flex !important;
     flex-direction: column !important;
   }
-  .ai-dock:not(.collapsed) .ai-panel {
+  .ai-dock:not(.collapsed) .ai-panel,
+  .ai-dock.ai-dock--closing .ai-panel {
     flex: 1 !important;
     min-height: 0 !important;
     width: 100% !important;
     display: flex !important;
     flex-direction: column !important;
   }
-  .ai-dock:not(.collapsed) .ai-body {
+  .ai-dock:not(.collapsed) .ai-body,
+  .ai-dock.ai-dock--closing .ai-body {
     flex: 1 !important;
     min-height: 0 !important;
     overflow-y: auto !important;
   }
-  .ai-dock:not(.collapsed) .ai-composer {
+  .ai-dock:not(.collapsed) .ai-composer,
+  .ai-dock.ai-dock--closing .ai-composer {
     flex-shrink: 0 !important;
     padding-bottom: max(14px, env(safe-area-inset-bottom)) !important;
   }
-  .ai-dock:not(.collapsed) .ai-dock__collapse {
+  .ai-dock:not(.collapsed) .ai-dock__collapse,
+  .ai-dock.ai-dock--closing .ai-dock__collapse {
     width: 36px !important;
     height: 36px !important;
     top: 6px !important;

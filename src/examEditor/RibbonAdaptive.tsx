@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode }
 import { createPortal } from 'react-dom'
 import { AlignCenter, AlignJustify, AlignLeft, AlignRight, ChevronDown, MoreHorizontal, Plus, X } from 'lucide-react'
 import { cn } from '@/lib/cn'
+import { useAnimatedPresence } from '@/lib/useAnimatedPresence'
 import { RibbonGroup } from './Layout'
 import { popoverStyle, useAnchoredPopover } from './useAnchoredPopover'
 import type { FormatState } from './formatState'
@@ -143,6 +144,7 @@ export function TabletRibbonBody({
 
 function CollapsedGroupButton({ group }: { group: RibbonGroupDef }) {
   const [open, setOpen] = useState(false)
+  const popAnim = useAnimatedPresence(open, 140)
   const wrapRef = useRef<HTMLDivElement>(null)
   const { triggerRef, pos } = useAnchoredPopover(open, 240)
 
@@ -178,9 +180,9 @@ function CollapsedGroupButton({ group }: { group: RibbonGroupDef }) {
         </span>
         <span className="rb-big-label">{group.label}</span>
       </button>
-      {open && (
+      {popAnim.mounted && (
         <div
-          className="ribbon-group-pop"
+          className={cn('ribbon-group-pop', popAnim.closing ? 'pop-out' : 'pop-in')}
           style={popoverStyle(pos)}
           role="region"
           aria-label={group.label}
@@ -195,6 +197,7 @@ function CollapsedGroupButton({ group }: { group: RibbonGroupDef }) {
 
 function OverflowGroupsButton({ groups }: { groups: RibbonGroupDef[] }) {
   const [open, setOpen] = useState(false)
+  const popAnim = useAnimatedPresence(open, 140)
   const wrapRef = useRef<HTMLDivElement>(null)
   const { triggerRef, pos } = useAnchoredPopover(open, 280)
 
@@ -231,9 +234,9 @@ function OverflowGroupsButton({ groups }: { groups: RibbonGroupDef[] }) {
         </span>
         <span className="rb-big-label">Thêm</span>
       </button>
-      {open && (
+      {popAnim.mounted && (
         <div
-          className="ribbon-group-pop ribbon-group-pop--multi"
+          className={cn('ribbon-group-pop ribbon-group-pop--multi', popAnim.closing ? 'pop-out' : 'pop-in')}
           style={popoverStyle(pos)}
           role="region"
           aria-label="Thêm công cụ"
@@ -307,7 +310,18 @@ export function PhoneRibbon({
 }) {
   const [collapsed, setCollapsed] = useState(false)
   const [sheetTab, setSheetTab] = useState<string | null>(null)
+  const [lastSheetTab, setLastSheetTab] = useState<string>('home')
   const [openPop, setOpenPop] = useState<'color' | 'list' | 'align' | null>(null)
+  const sheetAnim = useAnimatedPresence(sheetTab !== null, 180)
+  const colorAnim = useAnimatedPresence(openPop === 'color', 140)
+  const listAnim = useAnimatedPresence(openPop === 'list', 140)
+  const alignAnim = useAnimatedPresence(openPop === 'align', 140)
+
+  useEffect(() => {
+    if (sheetTab) setLastSheetTab(sheetTab)
+  }, [sheetTab])
+
+  const shownSheetTab = sheetTab ?? lastSheetTab
 
   const colorRef = useRef<HTMLDivElement>(null)
   const listRef = useRef<HTMLDivElement>(null)
@@ -480,8 +494,8 @@ export function PhoneRibbon({
                 <span className="rb-color-bar" style={{ background: penColor }} />
               </span>
             </button>
-            {openPop === 'color' && (
-              <div className="rb-color-menu" style={{ ...popoverStyle(colorPop.pos), width: 'auto', minWidth: 176 }}>
+            {colorAnim.mounted && (
+              <div className={cn('rb-color-menu', colorAnim.closing ? 'pop-out' : 'pop-in')} style={{ ...popoverStyle(colorPop.pos), width: 'auto', minWidth: 176 }}>
                 <div className="rb-color-grid">
                   {themeColors.map((c) => (
                     <button
@@ -517,8 +531,8 @@ export function PhoneRibbon({
             >
               <IconBullets size={17} />
             </button>
-            {openPop === 'list' && (
-              <div className="rb-color-menu" style={{ ...popoverStyle(listPop.pos), minWidth: 196 }}>
+            {listAnim.mounted && (
+              <div className={cn('rb-color-menu', listAnim.closing ? 'pop-out' : 'pop-in')} style={{ ...popoverStyle(listPop.pos), minWidth: 196 }}>
                 <button
                   type="button"
                   className="rb-color-item ribbon-phone-menu-item"
@@ -574,8 +588,8 @@ export function PhoneRibbon({
             >
               <AlignIcon className="size-[17px]" />
             </button>
-            {openPop === 'align' && (
-              <div className="rb-color-menu" style={{ ...popoverStyle(alignPop.pos), minWidth: 164 }}>
+            {alignAnim.mounted && (
+              <div className={cn('rb-color-menu', alignAnim.closing ? 'pop-out' : 'pop-in')} style={{ ...popoverStyle(alignPop.pos), minWidth: 164 }}>
                 <button
                   type="button"
                   className={cn('rb-color-item ribbon-phone-menu-item', format.align === 'left' && 'font-semibold text-clay-deep')}
@@ -625,10 +639,10 @@ export function PhoneRibbon({
       )}
 
       {/* Bottom sheet chứa toàn bộ nhóm của các tab */}
-      {sheetTab !== null && createPortal(
+      {sheetAnim.mounted && createPortal(
         <div className="fixed inset-0 z-50 flex flex-col justify-end">
           <div
-            className="fixed inset-0 bg-black/40 backdrop-blur-xs transition-opacity"
+            className={cn('fixed inset-0 bg-black/40 backdrop-blur-xs', sheetAnim.closing ? 'backdrop-out' : 'backdrop-in')}
             onClick={() => setSheetTab(null)}
             aria-hidden="true"
           />
@@ -636,7 +650,10 @@ export function PhoneRibbon({
             role="dialog"
             aria-modal="true"
             aria-label="Công cụ soạn đề"
-            className="relative z-10 flex max-h-[82dvh] w-full flex-col rounded-t-2xl border-t border-line bg-surface shadow-2xl pb-[max(0.75rem,env(safe-area-inset-bottom))]"
+            className={cn(
+              'relative z-10 flex max-h-[82dvh] w-full flex-col rounded-t-2xl border-t border-line bg-surface shadow-2xl pb-[max(0.75rem,env(safe-area-inset-bottom))]',
+              sheetAnim.closing ? 'sheet-out-down' : 'sheet-in-up',
+            )}
           >
             <div className="flex items-center justify-center pt-2.5 pb-1">
               <div className="h-1 w-10 rounded-full bg-line" />
@@ -649,10 +666,10 @@ export function PhoneRibbon({
                     key={t.id}
                     type="button"
                     onClick={() => setSheetTab(t.id)}
-                    aria-pressed={sheetTab === t.id}
+                    aria-pressed={shownSheetTab === t.id}
                     className={cn(
                       'min-h-9 shrink-0 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-colors',
-                      sheetTab === t.id
+                      shownSheetTab === t.id
                         ? 'bg-clay-soft text-clay-deep'
                         : 'text-ink-3 hover:bg-paper-2 hover:text-ink',
                     )}
@@ -687,7 +704,7 @@ export function PhoneRibbon({
                 }
               }}
             >
-              {(groupsByTab[sheetTab] ?? []).map((g) => (
+              {(groupsByTab[shownSheetTab] ?? []).map((g) => (
                 <section key={g.id} className="ribbon-phone-sheet-group">
                   <h3 className="ribbon-phone-sheet-group__title">{g.label}</h3>
                   <div className="ribbon-phone-sheet-group__items">{g.render()}</div>

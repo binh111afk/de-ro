@@ -16,6 +16,7 @@
  */
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { cn } from '@/lib/cn'
+import { useAnimatedPresence } from '@/lib/useAnimatedPresence'
 import { splitTipKbd } from '@/components/Tooltip'
 import { IconChevronLeft, IconChevronRight, IconSidebarLeft, IconSidebarRight } from './icons'
 import { useSlidingThumb } from './useSlidingThumb'
@@ -334,6 +335,8 @@ export function AiDock({
   side?: 'left' | 'right'
   children: ReactNode
 }) {
+  const dockAnim = useAnimatedPresence(open, 180)
+
   // Khi mở trên mobile, bám sát visualViewport để bàn phím ảo không che ô nhập
   useEffect(() => {
     if (!open || typeof window === 'undefined' || !window.visualViewport) return
@@ -355,7 +358,12 @@ export function AiDock({
   // transition `.ai-dock` ↔ `.ai-dock.collapsed`, panel teo về 0 và rail hiện ra.
   return (
     <aside
-      className={cn('ai-dock', !open && 'collapsed', side === 'right' && 'ai-dock--right')}
+      className={cn(
+        'ai-dock',
+        !open && 'collapsed',
+        dockAnim.closing && 'ai-dock--closing',
+        side === 'right' && 'ai-dock--right',
+      )}
       style={{ ['--ai-panel-width' as string]: `${width}px` }}
     >
       <div className="ai-dock__body" inert={!open}>

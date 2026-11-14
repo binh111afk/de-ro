@@ -18,6 +18,7 @@ import { createPortal } from 'react-dom'
 import { interiorArea, regionArea, regionAt, type Region } from './regionFill'
 import { figureDoc } from '@/examEditor/toolImages'
 import { attachToAi, type AiRef } from '@/lib/aiAttach'
+import { useAnimatedPresence } from '@/lib/useAnimatedPresence'
 import { recognize } from './recognize'
 import { ExportDialog, FormulaDialog, PdfPagesDialog, type ExportChoice, type FormulaResult } from './BoardDialogs'
 import { canvasToA4Pdf, download, openPdf, pagesToPdf, pdfPageSize, readImageFile, renderPdfPage, renderRegion, savePng, type Picture } from './io'
@@ -70,6 +71,9 @@ export default function BoardEditor({ id }: { id: string }) {
   const [moreFill, setMoreFill] = useState(false)
   /** panel bên: trợ lý (trái), công cụ (phải) */
   const [side, setSide] = useState<SideTab | null>(null)
+  const [lastSide, setLastSide] = useState<SideTab>('tools')
+  const sideAnim = useAnimatedPresence(Boolean(side), 180)
+  const shownSide = side ?? lastSide
   const [dialog, setDialog] = useState<{ t: 'formula'; el?: El } | { t: 'pdf'; file: File } | { t: 'export' } | { t: 'tool'; doc: ToolDoc; ids: string[] } | null>(null)
   const dialogRef = useRef(dialog)
   dialogRef.current = dialog
@@ -80,6 +84,7 @@ export default function BoardEditor({ id }: { id: string }) {
   /** đã từng mở tab nào: giữ nội dung (lịch sử trò chuyện) khi đóng / đổi tab */
   const [mounted, setMounted] = useState<Set<SideTab>>(new Set())
   const toggleSide = (t: SideTab) => {
+    setLastSide(t)
     setMounted((m) => (m.has(t) ? m : new Set(m).add(t)))
     setSide((cur) => (cur === t ? null : t))
   }
@@ -2839,9 +2844,9 @@ export default function BoardEditor({ id }: { id: string }) {
         <ExportDialog hasSelection={selected.current.size > 0} hasPages={els.current.some(isPage)} defaultPaperBg={isDarkPaper(o.paper)} onClose={() => setDialog(null)} onDone={onExport} preview={exportPreview} />
       )}
 
-      {side && (
+      {sideAnim.mounted && (
         <div
-          className="fixed inset-0 z-30 bg-black/30 lg:hidden"
+          className={`fixed inset-0 z-30 bg-black/30 lg:hidden ${sideAnim.closing ? 'backdrop-out' : 'backdrop-in'}`}
           onClick={() => setSide(null)}
           aria-hidden
         />
@@ -2849,26 +2854,26 @@ export default function BoardEditor({ id }: { id: string }) {
 
       {/* panel phải: điện thoại phủ toàn màn hình, máy tính bảng trượt đè lên canvas, desktop đẩy canvas */}
       <div
-        className={`${side ? 'fixed inset-0 z-40 sm:inset-auto sm:absolute sm:inset-y-0 sm:right-0 sm:w-[min(360px,90vw)]' : 'hidden'} lg:static lg:inset-auto lg:z-auto lg:block lg:h-full lg:w-[var(--side-w)] lg:min-h-0 lg:shrink-0 lg:overflow-hidden lg:transition-[width] lg:duration-300 lg:ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none`}
+        className={`${sideAnim.mounted ? `fixed inset-0 z-40 sm:inset-auto sm:absolute sm:inset-y-0 sm:right-0 sm:w-[min(360px,90vw)] ${sideAnim.closing ? 'board-side-out' : 'board-side-in'}` : 'hidden'} lg:static lg:inset-auto lg:z-auto lg:block lg:h-full lg:w-[var(--side-w)] lg:min-h-0 lg:shrink-0 lg:overflow-hidden lg:transition-[width] lg:duration-300 lg:ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none`}
         style={{ '--side-w': side ? `${SIDE_W}px` : '0px' } as React.CSSProperties}
         inert={!side}
       >
-        <aside className="flex h-full min-h-0 w-full flex-col border-l border-line bg-surface lg:w-[360px]" aria-label={side === 'tools' ? 'Công cụ' : 'Trợ lý'}>
+        <aside className="flex h-full min-h-0 w-full flex-col border-l border-line bg-surface lg:w-[360px]" aria-label={shownSide === 'tools' ? 'Công cụ' : 'Trợ lý'}>
           <div className="flex h-12 shrink-0 items-center gap-2 border-b border-line px-3 text-[13.5px] font-medium text-ink sm:h-11">
-            <span className="text-clay">{side === 'tools' ? <Ico d={WRENCH_D} size={17} /> : <AiIcon size={17} />}</span>
-            {side === 'tools' ? 'Công cụ' : 'Trợ lý AI'}
+            <span className="text-clay">{shownSide === 'tools' ? <Ico d={WRENCH_D} size={17} /> : <AiIcon size={17} />}</span>
+            {shownSide === 'tools' ? 'Công cụ' : 'Trợ lý AI'}
             <button type="button" onClick={() => setSide(null)} data-tip="Đóng" aria-label="Đóng panel" className="ml-auto grid h-9 w-9 place-items-center rounded-[6px] text-ink-3 hover:bg-sunken hover:text-ink sm:h-7 sm:w-7">
               <Ico d="M6 6l12 12M18 6L6 18" />
             </button>
           </div>
           <div className="relative min-h-0 flex-1">
             {mounted.has('ai') && (
-              <div className={`absolute inset-0 flex flex-col [&>.ai-panel]:min-h-0 [&>.ai-panel]:w-full [&>.ai-panel]:flex-1 [&>.ai-panel]:border-0 [&_.ai-panel-header]:hidden ${side === 'ai' ? '' : 'invisible'}`}>
+              <div className={`absolute inset-0 flex flex-col [&>.ai-panel]:min-h-0 [&>.ai-panel]:w-full [&>.ai-panel]:flex-1 [&>.ai-panel]:border-0 [&_.ai-panel-header]:hidden ${shownSide === 'ai' ? '' : 'invisible'}`}>
                 <AiPanel mode="board" attachKey={aiKey} onBoardOps={applyBoardOps} contextSummary={side === 'ai' ? boardSummary() : ''} />
               </div>
             )}
             {mounted.has('tools') && (
-              <div className={`absolute inset-0 overflow-y-auto px-3 pb-3 ${side === 'tools' ? '' : 'invisible'}`}>
+              <div className={`absolute inset-0 overflow-y-auto px-3 pb-3 ${shownSide === 'tools' ? '' : 'invisible'}`}>
                 <ToolsPanel onInsertPlot={insertImage} onFormula={() => setDialog({ t: 'formula' })} />
               </div>
             )}
