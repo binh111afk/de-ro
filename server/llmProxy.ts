@@ -20,7 +20,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { json, readBody } from './http.js'
 import { clientIp, guard, isLocal, userFromToken } from './guard.js'
-import { addUsage, hasQuotaStore, quotaMessage, readQuota, reserveQuota } from './aiQuota.js'
+import { addUsage, hasQuotaStore, issueReceipt, quotaMessage, readQuota, refundReceipt, reserveQuota } from './aiQuota.js'
 import { costFromUsage, logAiCall, maintenanceBlock } from './ops.js'
 import { readAiOverrides } from './aiSettings.js'
 import { callAnthropic } from './anthropic.js'
@@ -301,10 +301,15 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
   // hạn mức token theo tài khoản (tháng) / khách (ngày theo IP); máy dev không giới hạn
   const ip = clientIp(req)
   const userId = isLocal(ip) ? null : await userFromToken(req)
-  const quota = isLocal(ip) ? null : await readQuota(userId, ip)
+  let quota = isLocal(ip) ? null : await readQuota(userId, ip)
   // GET: chỉ đọc hạn mức (trang Hồ sơ), không gọi AI. null = máy dev, không giới hạn
   if (req.method === 'GET') return json(res, 200, { quota, unlimited: !!userId && quota === null && hasQuotaStore() })
   if (await maintenanceBlock(req, res)) return
+  // gọi lại vì lượt trước trả kết quả hỏng: hoàn token lượt đó trước khi kiểm hạn mức
+  const retryOf = req.headers['x-ai-retry-of']
+  if (typeof retryOf === 'string' && retryOf) quota = await refundReceipt(userId, ip, retryOf, quota)
+  // biên nhận để client xin hoàn nếu kết quả không dùng được; lượt gọi lại không được hoàn tiếp
+  const receiptFor = (spent: number) => (quota && !retryOf ? issueReceipt(userId, ip, spent) : undefined)
   if (quota && quota.used >= quota.limit) return json(res, 429, { error: quotaMessage(quota), quota })
   const release = quota ? await reserveQuota(userId, ip, quota) : async () => {}
   if (!release) return json(res, 429, { error: 'Đang có nhiều yêu cầu AI chạy cùng lúc, vui lòng thử lại sau ít giây.', quota })
@@ -404,7 +409,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
             writeRawLog(JSON.stringify(r), { _model: selectedModel, _attempt: 0, finishReason: r.finishReason, usage: r.usage, content: r.content })
             log(target, t0, true, null, r.usage)
             const [after] = await Promise.all([addUsage(userId, ip, r.usage.total_tokens, quota), release(), ...pending])
-            return json(res, 200, { content: r.content, reasoning: '', usage: r.usage, model: r.model, finishReason: r.finishReason, quota: after })
+            return json(res, 200, { content: r.content, reasoning: '', usage: r.usage, model: r.model, finishReason: r.finishReason, quota: after, receipt: receiptFor(r.usage.total_tokens) })
           }
           errs.push(`${selectedModel}: empty content (finish_reason=${r.finishReason})`)
         } catch (err) {
@@ -490,7 +495,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
           const spent = Number((data.usage as { total_tokens?: number } | undefined)?.total_tokens ?? 0)
           log(target, t0, true, null, data.usage)
           const [after] = await Promise.all([addUsage(userId, ip, spent, quota), release(), ...pending])
-          return json(res, 200, { content, reasoning, usage: data.usage ?? null, model: data.model ?? selectedModel, finishReason: choice?.finish_reason ?? 'unknown', quota: after })
+          return json(res, 200, { content, reasoning, usage: data.usage ?? null, model: data.model ?? selectedModel, finishReason: choice?.finish_reason ?? 'unknown', quota: after, receipt: receiptFor(spent) })
         }
         lastErr = `${selectedModel}: empty content (finish_reason=${choice?.finish_reason ?? 'unknown'})`
         if (attempt === 0 && target.opencode) {

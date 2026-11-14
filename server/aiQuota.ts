@@ -1,3 +1,4 @@
+import { createHmac, randomUUID, timingSafeEqual } from 'node:crypto'
 /**
  * Hạn mức token AI:
  * - Người đã đăng nhập: AI_MONTHLY_TOKENS token / tháng (UTC), lưu ở bảng Supabase `ai_usage`
@@ -149,4 +150,68 @@ export function quotaMessage(q: Quota): string {
   return q.scope === 'day'
     ? 'Bạn đã dùng hết lượt AI dùng thử hôm nay. Đăng nhập để có thêm hạn mức hằng tháng.'
     : 'Bạn đã dùng hết hạn mức AI của tháng này. Hạn mức sẽ được làm mới vào đầu tháng sau.'
+}
+
+/*
+ * Biên nhận hoàn điểm: mỗi lượt AI thành công (có tính hạn mức) trả về một chuỗi ký HMAC
+ * gồm người dùng, tháng, số token. Kết quả không dùng được (JSON hỏng…) thì client gửi lại
+ * biên nhận kèm lượt gọi lại → server trừ lại số token đó. Lượt gọi lại không có biên nhận
+ * (không hoàn hai lần liền), biên nhận sống 15 phút, mỗi biên nhận hoàn một lần.
+ */
+
+const RECEIPT_TTL = 15 * 60_000
+const receiptKey = () => process.env.AI_RECEIPT_SECRET ?? process.env.SUPABASE_SERVICE_ROLE_KEY ?? ''
+const sign = (data: string) => createHmac('sha256', receiptKey()).update(data).digest('base64url')
+type Receipt = { u: string; m: string; t: number; e: number; n: string }
+
+export function issueReceipt(userId: string | null, ip: string, tokens: number): string | undefined {
+  if (!receiptKey() || tokens <= 0) return undefined
+  const r: Receipt = { u: userId ?? `ip:${ip}`, m: userId ? month() : day(), t: Math.round(tokens), e: Date.now() + RECEIPT_TTL, n: randomUUID() }
+  const data = Buffer.from(JSON.stringify(r)).toString('base64url')
+  return `${data}.${sign(data)}`
+}
+
+function readReceipt(receipt: string, who: string): Receipt | null {
+  const [data, mac] = receipt.split('.')
+  if (!data || !mac || !receiptKey()) return null
+  const want = Buffer.from(sign(data))
+  const got = Buffer.from(mac)
+  if (want.length !== got.length || !timingSafeEqual(want, got)) return null
+  try {
+    const r = JSON.parse(Buffer.from(data, 'base64url').toString('utf8')) as Receipt
+    return r.u === who && r.e > Date.now() && r.t > 0 ? r : null
+  } catch {
+    return null
+  }
+}
+
+const guestRefunded = new Set<string>()
+
+/** Hoàn token theo biên nhận; trả hạn mức mới, hoặc prev nếu không hoàn được. */
+export async function refundReceipt(userId: string | null, ip: string, receipt: string, prev: Quota | null): Promise<Quota | null> {
+  if (!prev) return prev
+  const r = readReceipt(receipt, userId ?? `ip:${ip}`)
+  if (!r) return prev
+  if (!userId) {
+    if (guestRefunded.has(r.n) || r.m !== day()) return prev
+    if (guestRefunded.size > 20000) guestRefunded.clear()
+    guestRefunded.add(r.n)
+    const k = `${day()}:${ip}`
+    const used = Math.max(0, (guest.get(k) ?? 0) - r.t)
+    guest.set(k, used)
+    return { ...prev, used }
+  }
+  const s = supa()
+  if (!s || r.m !== month()) return prev
+  try {
+    const res = await fetch(`${s.base}/rest/v1/rpc/refund_ai_usage`, {
+      method: 'POST',
+      headers: s.headers,
+      body: JSON.stringify({ p_user: userId, p_month: r.m, p_receipt: r.n, p_tokens: r.t }),
+    })
+    const used = res.ok ? ((await res.json()) as number | null) : null
+    return used == null ? prev : { ...prev, used: Number(used) }
+  } catch {
+    return prev
+  }
 }

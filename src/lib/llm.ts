@@ -13,6 +13,8 @@ export interface LlmResult {
   reasoning: string
   usage: unknown
   model: string
+  /** biên nhận để xin hoàn token nếu kết quả không dùng được (gửi lại qua `retryOf`) */
+  receipt?: string
 }
 
 export interface LlmOptions {
@@ -20,6 +22,8 @@ export interface LlmOptions {
   reasoningEffort?: 'low' | 'medium' | 'high' | 'max'
   temperature?: number
   signal?: AbortSignal
+  /** biên nhận của lượt trước bị hỏng: server hoàn token lượt đó rồi mới tính lượt này */
+  retryOf?: string
 }
 
 const ENDPOINT = '/api/llm'
@@ -38,18 +42,51 @@ function reportQuota(q: unknown) {
   if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent<AiQuota>('ai-quota', { detail: lastAiQuota }))
 }
 
+/** Lỗi tạm (mạng, server/gateway 5xx): lượt hỏng không bị tính token nên gọi lại luôn một lần. */
+class TransientLlmError extends Error {}
+
 export async function callLlm(messages: LlmMessage[], opts: LlmOptions = {}): Promise<LlmResult> {
-  const res = await apiFetch(ENDPOINT, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    signal: opts.signal,
-    body: JSON.stringify({
-      messages,
-      maxTokens: opts.maxTokens ?? 32000,
-      reasoningEffort: opts.reasoningEffort ?? 'max',
-      ...(opts.temperature !== undefined ? { temperature: opts.temperature } : {}),
-    }),
-  })
+  try {
+    return await callOnce(messages, opts)
+  } catch (err) {
+    if (!(err instanceof TransientLlmError) || opts.signal?.aborted) throw err
+    await new Promise((r) => setTimeout(r, 1500))
+    return callOnce(messages, opts)
+  }
+}
+
+/**
+ * Gọi rồi kiểm kết quả; không dùng được thì hoàn token lượt đó và gọi lại đúng một lần
+ * (lượt gọi lại vẫn hỏng thì trả về để caller tự xử lý).
+ */
+export async function callLlmChecked(
+  messages: LlmMessage[],
+  opts: LlmOptions,
+  usable: (content: string) => boolean,
+): Promise<LlmResult> {
+  const first = await callLlm(messages, opts)
+  if (usable(first.content)) return first
+  return callLlm(messages, { ...opts, retryOf: first.receipt })
+}
+
+async function callOnce(messages: LlmMessage[], opts: LlmOptions): Promise<LlmResult> {
+  let res: Response
+  try {
+    res = await apiFetch(ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...(opts.retryOf ? { 'x-ai-retry-of': opts.retryOf } : {}) },
+      signal: opts.signal,
+      body: JSON.stringify({
+        messages,
+        maxTokens: opts.maxTokens ?? 32000,
+        reasoningEffort: opts.reasoningEffort ?? 'max',
+        ...(opts.temperature !== undefined ? { temperature: opts.temperature } : {}),
+      }),
+    })
+  } catch (err) {
+    if ((err as Error)?.name === 'AbortError') throw err
+    throw new TransientLlmError((err as Error)?.message || 'Lỗi mạng khi gọi AI')
+  }
 
   if (!res.ok) {
     const text = await res.text()
@@ -61,6 +98,7 @@ export async function callLlm(messages: LlmMessage[], opts: LlmOptions = {}): Pr
     } catch {
       /* giữ raw text */
     }
+    if (res.status >= 500) throw new TransientLlmError(detail)
     throw new Error(detail)
   }
   const data = (await res.json()) as LlmResult & { quota?: unknown }

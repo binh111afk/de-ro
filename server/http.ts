@@ -6,7 +6,7 @@ export function json(res: ServerResponse, code: number, body: unknown) {
   res.writeHead(code, {
     'Content-Type': 'application/json; charset=utf-8',
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Headers': 'Content-Type, x-ai-retry-of',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
   })
   res.end(payload)

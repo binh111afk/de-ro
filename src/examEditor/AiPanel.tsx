@@ -9,7 +9,7 @@
  *   - composer là thẻ bo 16px, Enter gửi, Shift+Enter xuống dòng, Esc để dừng.
  */
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { callLlm, lastAiQuota, type AiQuota, type LlmMessage } from '@/lib/llm'
+import { callLlm, callLlmChecked, lastAiQuota, type AiQuota, type LlmMessage } from '@/lib/llm'
 import { khungPromptFor } from '@/lib/khungPrompt'
 import {
   parseAiObject,
@@ -605,7 +605,8 @@ export async function generateSlide(
       { role: 'assistant', content: first.content },
       { role: 'user', content: repairPrompt([...check.errors, ...check.readability]) },
     ],
-    { signal, reasoningEffort: 'medium' },
+    // lượt đầu không dùng được: hoàn token lượt đó
+    { signal, reasoningEffort: 'medium', retryOf: first.receipt },
   )
   const second = checkSlide(
     parseAiObject(repaired.content),
@@ -632,12 +633,14 @@ export async function generateSlideBatch(
   if (indices.length === 1) return [await generateSlide(plan, plan.slides[indices[0]], indices[0], signal)]
   const decorKit = planDecorKit(plan)
   const withKit = (page: AiSlidePayload): AiSlidePayload => ({ ...page, decorKit })
-  const res = await callLlm(
+  // cả nhóm không đọc được (JSON hỏng/cụt) → hoàn token lượt đó, gọi lại một lần
+  const res = await callLlmChecked(
     [
       { role: 'system', content: batchSystemPrompt(plan, indices) },
       { role: 'user', content: `Viết slide ${indices.map((i) => i + 1).join(', ')}.` },
     ],
     { signal, reasoningEffort: 'medium' },
+    (content) => parseBatchSlides(parseAiObject(content), indices.length).some(Boolean),
   )
   const items = parseBatchSlides(parseAiObject(res.content), indices.length)
   return Promise.all(
@@ -1157,7 +1160,7 @@ export function AiPanel({
                   'ngắn gọn hơn: mỗi "brief" ≤ 100 ký tự, không xuống dòng trong chuỗi.',
               },
             ],
-            { signal: controller.signal, reasoningEffort: 'medium' },
+            { signal: controller.signal, reasoningEffort: 'medium', retryOf: res.receipt },
           )
           plan = parseDeckPlan(again.content)
         }
@@ -1190,7 +1193,12 @@ export function AiPanel({
       } else {
         // JSON đề đã được áp vào tài liệu → hiện câu tóm tắt thay vì JSON thô;
         // câu trả lời văn bản thường (không sửa tài liệu) giữ nguyên.
-        const summary = onApplyBlocks?.(res.content)
+        let summary = onApplyBlocks?.(res.content)
+        // đề trả JSON hỏng (thường bị cắt cụt): hoàn token lượt đó và soạn lại đúng một lần
+        if (!summary && /^\s*[[{]/.test(res.content) && onApplyBlocks) {
+          const again = await callLlm(messages, { signal: controller.signal, retryOf: res.receipt })
+          summary = onApplyBlocks(again.content)
+        }
         // Áp thất bại nhưng trông như envelope JSON → nói rõ lý do thay vì để
         // người dùng tưởng AI "gửi JSON chứ không soạn đề" (thường do JSON bị
         // cắt cụt hoặc trang đang chạy code cũ). Vẫn giữ JSON gốc để đối chiếu.
