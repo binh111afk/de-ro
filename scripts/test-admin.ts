@@ -262,17 +262,10 @@ reset([])
 check('moderator gỡ cờ → 403', (await hit({ action: 'security.clear', userId: USER }, 'tMod')).status === 403)
 check('admin gỡ cờ → 200', (await hit({ action: 'security.clear', userId: USER }, 'tAdmin')).status === 200)
 
-// giữ chỗ hạn mức AI: request song song không cùng lọt
-const { reserveQuota } = await import('../server/aiQuota.ts')
-const guestQ = { used: 0, limit: 30_000, scope: 'day' as const }
-const r1 = await reserveQuota(null, '9.9.9.9', guestQ)
-const r2 = await reserveQuota(null, '9.9.9.9', guestQ)
-const r3 = await reserveQuota(null, '9.9.9.9', guestQ)
-check('khách: 2 request song song được, cái thứ 3 bị chặn', !!r1 && !!r2 && r3 === null)
-await r1!()
-await r1!()
-const r4 = await reserveQuota(null, '9.9.9.9', guestQ)
-check('trả chỗ một lần dù gọi 2 lần', !!r4 && (await reserveQuota(null, '9.9.9.9', guestQ)) === null)
+// hạn mức AI: khách không có hạn mức (llmProxy chặn khách từ trước), biên nhận hoàn điểm chỉ cho người đăng nhập
+const { readQuota, issueReceipt } = await import('../server/aiQuota.ts')
+check('khách: không có hạn mức', (await readQuota(null, '9.9.9.9')) === null)
+check('khách: không cấp biên nhận hoàn điểm', issueReceipt(null, '9.9.9.9', 1000) === undefined)
 
 const { r2DocKeyFromUrl } = await import('../server/r2.ts')
 const H = 'a'.repeat(40)

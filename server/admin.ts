@@ -7,6 +7,7 @@
  */
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { clientIp, guard, userFromToken } from './guard.js'
+import { MONTHLY_LIMIT } from './aiQuota.js'
 import { json, readBody } from './http.js'
 import { deleteR2Object, pingR2, r2DocKeyFromUrl, r2Info } from './r2.js'
 import { assertSafeEndpoint, listProviders, pingProviders } from './llmProxy.js'
@@ -374,7 +375,7 @@ const ACTIONS: ActionMap = {
         call<Array<{ tokens: number; requests: number }>>(s, `/rest/v1/ai_usage?user_id=eq.${id}&month=eq.${month()}&select=tokens,requests`),
         call<Array<{ balance: number }>>(s, `/rest/v1/ai_credits?user_id=eq.${id}&select=balance`),
       ])
-      const defaultLimit = Number(process.env.AI_MONTHLY_TOKENS) > 0 ? Number(process.env.AI_MONTHLY_TOKENS) : 150_000
+      const defaultLimit = MONTHLY_LIMIT()
       return {
         override: ov[0] ? { monthlyTokens: ov[0].monthly_tokens, note: ov[0].note ?? '' } : null,
         defaultLimit,

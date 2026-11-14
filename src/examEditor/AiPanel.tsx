@@ -12,7 +12,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useSession } from '@/lib/useSession'
 import { Button } from '@/components/ui'
-import { callLlm, callLlmChecked, lastAiQuota, type AiQuota, type LlmMessage } from '@/lib/llm'
+import { aiPointsLeft, callLlm, callLlmChecked, lastAiQuota, type AiQuota, type LlmMessage } from '@/lib/llm'
 import { khungPromptFor } from '@/lib/khungPrompt'
 import {
   parseAiObject,
@@ -1695,10 +1695,10 @@ export function AiPanel({
             <span className="ai-input-spacer" />
             {quota ? (
               <span
-                className={cn('ai-quota', quota.used >= quota.limit * 0.9 && 'is-low')}
-                data-tip={`Đã dùng ${quota.used.toLocaleString('vi-VN')} / ${quota.limit.toLocaleString('vi-VN')} token AI ${quota.scope === 'day' ? 'hôm nay' : 'tháng này'}`}
+                className={cn('ai-quota', aiPointsLeft(quota) < 20 && 'is-low')}
+                data-tip={`Còn ${aiPointsLeft(quota).toLocaleString('vi-VN')} điểm AI (1 điểm = 1.000 token). Kết quả AI bị lỗi được hoàn điểm.`}
               >
-                {Math.min(100, Math.round((quota.used / quota.limit) * 100))}% {quota.scope === 'day' ? 'hôm nay' : 'tháng này'}
+                Còn {aiPointsLeft(quota).toLocaleString('vi-VN')} điểm
               </span>
             ) : null}
             {busy ? (

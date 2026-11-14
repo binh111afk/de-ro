@@ -28,12 +28,15 @@ export interface LlmOptions {
 
 const ENDPOINT = '/api/llm'
 
-/** Hạn mức token AI server báo về (tháng với tài khoản, ngày với khách). */
+/** Hạn mức AI server báo về (token; giao diện quy ra điểm). */
 export interface AiQuota {
   used: number
   limit: number
-  scope: 'month' | 'day'
+  scope: 'month'
 }
+/** 1 điểm AI = 1.000 token (khớp TOKENS_PER_POINT ở server/aiQuota.ts) */
+export const TOKENS_PER_POINT = 1000
+export const aiPointsLeft = (q: AiQuota) => Math.max(0, Math.floor((q.limit - q.used) / TOKENS_PER_POINT))
 /** Lần báo gần nhất + sự kiện `ai-quota` để giao diện cập nhật. */
 export let lastAiQuota: AiQuota | null = null
 function reportQuota(q: unknown) {

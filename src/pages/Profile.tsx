@@ -6,6 +6,7 @@ import { Button, inputClass } from '@/components/ui'
 import { signOut, updateProfile, type Session } from '@/lib/auth'
 import { uploadImage } from '@/lib/mediaStore'
 import { useSession } from '@/lib/useSession'
+import { aiPointsLeft } from '@/lib/llm'
 import { apiFetch } from '@/lib/apiFetch'
 import { ProgressBar } from '@/components/ProgressBar'
 import { Avatar } from '@/components/Avatar'
@@ -195,7 +196,7 @@ function EditCard({ user }: { user: Session['user'] }) {
 type Quota = { used: number; limit: number; base?: number; credits?: number }
 const fmt = (n: number) => n.toLocaleString('vi-VN')
 
-/** Điểm AI thật (GET /api/llm): hạn mức tháng + điểm admin cộng (không mất khi sang tháng). */
+/** Điểm AI thật (GET /api/llm): số dư điểm (quà chào mừng + điểm cộng/nạp) + hạn mức tháng nếu có. */
 function CreditCard() {
   const [q, setQ] = useState<Quota | null | 'loading' | 'error' | 'unlimited'>('loading')
   useEffect(() => {
@@ -226,22 +227,20 @@ function CreditCard() {
     )
   else if (q === null) body = <p className="mt-6 text-[13px] text-ink-3">Máy dev: không giới hạn token AI.</p>
   else {
-    const left = Math.max(0, q.limit - q.used)
-    const pct = q.limit > 0 ? Math.round((left / q.limit) * 100) : 0
+    const left = aiPointsLeft({ ...q, scope: 'month' })
+    // thanh so với quà chào mừng 200 điểm (nạp thêm vượt mức thì thanh đầy)
+    const pct = Math.min(100, Math.round((left / Math.max(200, left)) * 100))
     body = (
       <>
         <p className="mt-7 font-display text-[44px] font-semibold leading-none tracking-[-0.02em] text-ink tnum">
           {fmt(left)}
-          <span className="text-[18px] font-medium text-ink-3"> token còn lại</span>
+          <span className="text-[18px] font-medium text-ink-3"> điểm còn lại</span>
         </p>
-        <ProgressBar pct={pct} label="Phần trăm token AI còn lại" />
-        <div className="mt-3 flex flex-wrap justify-between gap-x-4 gap-y-1 text-[12.5px] text-ink-3 tnum">
-          <span>Tháng này đã dùng {fmt(q.used)} / {fmt(q.limit)} token</span>
-          <span>
-            Hạn mức tháng {fmt(q.base ?? q.limit)}
-            {q.credits ? ` + ${fmt(q.credits)} điểm được cộng (không hết hạn)` : ''}
-          </span>
-        </div>
+        <ProgressBar pct={pct} label="Phần trăm điểm AI còn lại" />
+        <p className="mt-3 text-[12.5px] text-ink-3">
+          Tài khoản được tặng 200 điểm khi bắt đầu dùng AI (1 điểm = 1.000 token). Kết quả AI bị lỗi được hoàn điểm.
+          {q.base ? ` Hạn mức tháng: ${fmt(Math.floor(q.base / 1000))} điểm.` : ''}
+        </p>
       </>
     )
   }
