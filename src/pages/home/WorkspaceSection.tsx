@@ -35,13 +35,14 @@ const SECONDARY_WORKSPACES = [
 ]
 
 export function WorkspaceSection() {
+  const head = useReveal<HTMLDivElement>()
   const lead = useReveal<HTMLDivElement>()
   const right = useReveal<HTMLDivElement>(80)
 
   return (
     <section id="khong-gian" className="landing-below-fold border-b border-line bg-surface py-14 sm:py-16 lg:py-20">
       <div className="mx-auto max-w-[1260px] px-4 sm:px-6">
-        <div className="max-w-2xl">
+        <div {...head.revealProps} className="max-w-2xl">
           <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-clay">
             Ba chế độ
           </p>

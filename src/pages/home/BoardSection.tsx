@@ -59,13 +59,14 @@ const PAPERS_LIST = ['Giấy trơn', 'Ô vuông', 'Kẻ ngang', 'Chấm bi', 'B�
 export function BoardSection() {
   const [mode, setMode] = useState<BoardMode>('pdf')
   const active = MODES.find((m) => m.key === mode) ?? MODES[0]
+  const head = useReveal<HTMLDivElement>()
   const reveal = useReveal<HTMLDivElement>()
 
   return (
     <section id="bang-ve" className="landing-below-fold border-b border-ink-2/30 bg-deep py-14 text-deep-text sm:py-16 lg:py-20">
       <div className="mx-auto max-w-[1260px] px-4 sm:px-6">
         <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
-          <div className="max-w-2xl min-w-0">
+          <div {...head.revealProps} className="max-w-2xl min-w-0">
             <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-[#e79d7b]">
               Bảng vẽ
             </p>

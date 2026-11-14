@@ -3,13 +3,14 @@ import { ArrowRight, CheckSquare, Clock } from 'lucide-react'
 import { useReveal } from './reveal'
 
 export function OnlineGradingSection() {
+  const head = useReveal<HTMLDivElement>()
   const onlineRev = useReveal<HTMLDivElement>()
   const gradeRev = useReveal<HTMLDivElement>(80)
 
   return (
     <section id="thi-va-cham" className="landing-below-fold border-b border-line bg-canvas py-14 sm:py-16 lg:py-20">
       <div className="mx-auto max-w-[1260px] px-4 sm:px-6">
-        <div className="max-w-2xl">
+        <div {...head.revealProps} className="max-w-2xl">
           <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-clay">
             Giao bài, chấm bài
           </p>

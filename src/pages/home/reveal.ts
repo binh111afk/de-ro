@@ -25,19 +25,20 @@ export function useReveal<T extends HTMLElement = HTMLDivElement>(delayMs = 0) {
         for (const e of entries) {
           const r = e.boundingClientRect
           // Tránh coi các khối bên trong `content-visibility: auto` (height=0 khi chưa layout) là đang nằm trên cùng màn hình
-          if (e.isIntersecting || (window.scrollY > 0 && r.height > 0 && r.top < window.innerHeight + 60)) {
+          if (e.isIntersecting || (window.scrollY > 0 && r.height > 0 && r.top < window.innerHeight * 0.88)) {
             setShown(true)
             io.disconnect()
             break
           }
         }
       },
-      { threshold: 0.01, rootMargin: '80px 0px 80px 0px' },
+      // chỉ bật khi khối đã lên tới ~12% trên mép dưới màn hình — bật sớm hơn thì hiệu ứng chạy xong lúc còn khuất
+      { threshold: 0, rootMargin: '0px 0px -12% 0px' },
     )
     io.observe(el)
     const onScroll = () => {
       const rect = el.getBoundingClientRect()
-      if (rect.height > 0 && rect.top < window.innerHeight + 60) {
+      if (rect.height > 0 && rect.top < window.innerHeight * 0.88) {
         setShown(true)
         io.disconnect()
         window.removeEventListener('scroll', onScroll)

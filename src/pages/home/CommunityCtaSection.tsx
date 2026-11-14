@@ -30,13 +30,14 @@ const LIBRARY_ROUTES = [
 ]
 
 export function CommunityCtaSection() {
+  const head = useReveal<HTMLDivElement>()
   const listRev = useReveal<HTMLDivElement>()
   const ctaRev = useReveal<HTMLDivElement>(80)
 
   return (
     <section className="landing-below-fold bg-canvas py-14 sm:py-16 lg:py-20">
       <div className="mx-auto max-w-[1260px] px-4 sm:px-6">
-        <div className="max-w-2xl">
+        <div {...head.revealProps} className="max-w-2xl">
           <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-clay-deep">
             Kho đề
           </p>
