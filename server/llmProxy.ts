@@ -33,7 +33,9 @@ const ROOT = path.resolve(__dirname, '..')
 
 const DEFAULT_BASE_URL = 'https://opencode.ai/inference/go/openai/v1'
 const DEFAULT_MODEL = 'deepseek-v4.1-flash'
-const DEFAULT_UPSTREAM_TIMEOUT_MS = 120_000
+// soạn cả đề (22 câu + đáp án) mất 160–240 s; dưới mức này model chính luôn bị cắt rồi rơi sang model dự phòng (kém hơn).
+// Function Vercel tối đa 300 s (vercel.json) nên còn ~50 s cho model dự phòng.
+const DEFAULT_UPSTREAM_TIMEOUT_MS = 250_000
 
 /**
  * Thời gian chờ mỗi lượt gọi model. Model reasoning (deepseek) có thể suy luận

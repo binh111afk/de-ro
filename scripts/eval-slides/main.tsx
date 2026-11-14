@@ -10,7 +10,7 @@ import '@fontsource/be-vietnam-pro/700.css'
 import '@/index.css'
 import { createRoot } from 'react-dom/client'
 import { SlideThumb } from '@/examEditor/SlideEditor'
-import { SLIDE_BATCH, SLIDE_PLAN_SYSTEM, generateSlide, generateSlideBatch, polishSlide } from '@/examEditor/AiPanel'
+import { AI_EFFORT, SLIDE_BATCH, SLIDE_PLAN_SYSTEM, generateSlide, generateSlideBatch, polishSlide } from '@/examEditor/AiPanel'
 import { callLlm } from '@/lib/llm'
 import { parseDeckPlan } from '@/lib/aiDeck'
 import { dropRepeatedGraphic, slideFromAi, withImage } from '@/lib/slideAi'
@@ -43,6 +43,8 @@ const done = (payload: unknown) => {
 
 async function main() {
   const topic = new URLSearchParams(location.search).get('topic') ?? 'Hàm số bậc nhất'
+  const effort = new URLSearchParams(location.search).get('effort')
+  if (effort) AI_EFFORT.slide = effort as typeof AI_EFFORT.slide
   await ensureMeasureFonts()
   await document.fonts.ready
   const controller = new AbortController()
@@ -50,7 +52,7 @@ async function main() {
 
   const res = await callLlm(
     [{ role: 'system', content: SLIDE_PLAN_SYSTEM }, { role: 'user', content: topic }],
-    { signal: controller.signal, reasoningEffort: 'medium' },
+    { signal: controller.signal, reasoningEffort: AI_EFFORT.slide },
   )
   const plan = parseDeckPlan(res.content)
   if (!plan) {

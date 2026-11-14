@@ -592,7 +592,7 @@ export async function generateSlide(
       { role: 'system', content: system },
       { role: 'user', content: user },
     ],
-    { signal, reasoningEffort: 'medium' },
+    { signal, reasoningEffort: AI_EFFORT.slide },
   )
   const check = checkSlide(
     parseAiObject(first.content),
@@ -609,7 +609,7 @@ export async function generateSlide(
       { role: 'user', content: repairPrompt([...check.errors, ...check.readability]) },
     ],
     // lượt đầu không dùng được: hoàn token lượt đó
-    { signal, reasoningEffort: 'medium', retryOf: first.receipt },
+    { signal, reasoningEffort: AI_EFFORT.slide, retryOf: first.receipt },
   )
   const second = checkSlide(
     parseAiObject(repaired.content),
@@ -619,6 +619,17 @@ export async function generateSlide(
   // Lỗi cứng sau repair → bỏ slide; chỉ còn lỗi "chữ nhỏ" thì vẫn dùng (đừng mất slide vì thẩm mỹ).
   if (second.errors.length) return check.errors.length ? null : withKit(check.page)
   return withKit(second.page)
+}
+
+/**
+ * Mức suy luận của model theo việc. Đo thật (`npm run eval:exam`, `eval:slides --effort`, 11/2026, deepseek-v4.1-flash):
+ * - Đề Toán THPT QG: max 34,3k token / 240 s, medium 31,1k / 214 s, low 23,6k / 160 s — đúng cấu trúc, không thấy sai ở low.
+ * - 15 slide: medium 51,7k, low 44,2k token — chất lượng ngang nhau.
+ * → dùng low cho cả hai.
+ */
+export const AI_EFFORT: { exam: 'low' | 'medium' | 'high' | 'max'; slide: 'low' | 'medium' | 'high' | 'max' } = {
+  exam: 'low',
+  slide: 'low',
 }
 
 /** Số slide mỗi lần gọi model: gộp để không gửi lại prompt chung cho từng slide. */
@@ -642,7 +653,7 @@ export async function generateSlideBatch(
       { role: 'system', content: batchSystemPrompt(plan, indices) },
       { role: 'user', content: `Viết slide ${indices.map((i) => i + 1).join(', ')}.` },
     ],
-    { signal, reasoningEffort: 'medium' },
+    { signal, reasoningEffort: AI_EFFORT.slide },
     (content) => parseBatchSlides(parseAiObject(content), indices.length).some(Boolean),
   )
   const items = parseBatchSlides(parseAiObject(res.content), indices.length)
@@ -660,7 +671,7 @@ export async function generateSlideBatch(
           { role: 'assistant', content: JSON.stringify(items[k]) },
           { role: 'user', content: repairPrompt([...check.errors, ...check.readability]) },
         ],
-        { signal, reasoningEffort: 'medium' },
+        { signal, reasoningEffort: AI_EFFORT.slide },
       )
       const second = checkSlide(parseAiObject(repaired.content), planSlide.layout, planSlide.tone)
       if (second.errors.length) return check.errors.length ? null : withKit(check.page)
@@ -695,7 +706,7 @@ export async function polishSlide(
           'bỏ "graphic" nếu bị chê lạc nghĩa), giữ nguyên layout, trả DUY NHẤT một JSON hợp lệ.',
       },
     ],
-    { signal, reasoningEffort: 'medium' },
+    { signal, reasoningEffort: AI_EFFORT.slide },
   )
   const check = checkSlide(parseAiObject(reply.content), planSlide.layout, planSlide.tone)
   return check.errors.length ? null : { ...check.page, decorKit: planDecorKit(plan) }
@@ -723,7 +734,7 @@ const SCOPE_RULE =
  * - patch: sửa vài khối theo id trong bản tóm tắt tài liệu.
  * - không sửa tài liệu: trả lời văn bản thường (không JSON).
  */
-function examSystemPrompt(documentDigest?: string): string {
+export function examSystemPrompt(documentDigest?: string): string {
   return (
     'Bạn là trợ lý AI của trình soạn đề thi tiếng Việt (THCS/THPT). Trả lời ngắn gọn, đúng ngữ pháp.\n\n' +
     'KHI SINH HOẶC SỬA NỘI DUNG ĐỀ, chỉ trả về DUY NHẤT một JSON hợp lệ (không bọc markdown, không chữ ngoài JSON):\n' +
@@ -1086,7 +1097,7 @@ export function AiPanel({
         signal: controller.signal,
         // Soạn slide trả JSON có schema rõ ràng; reasoning 'max' chỉ làm lượt
         // dàn ý kéo dài 30–60s (dễ vượt timeout proxy) mà không nội dung hơn.
-        ...(mode === 'slide' ? { reasoningEffort: 'medium' as const } : {}),
+        reasoningEffort: mode === 'slide' ? AI_EFFORT.slide : AI_EFFORT.exam,
       })
       if (examSteps) {
         patchTurn(() => ({ stepAt: 3 }))
@@ -1166,7 +1177,7 @@ export function AiPanel({
                   'ngắn gọn hơn: mỗi "brief" ≤ 100 ký tự, không xuống dòng trong chuỗi.',
               },
             ],
-            { signal: controller.signal, reasoningEffort: 'medium', retryOf: res.receipt },
+            { signal: controller.signal, reasoningEffort: AI_EFFORT.slide, retryOf: res.receipt },
           )
           plan = parseDeckPlan(again.content)
         }
@@ -1202,7 +1213,7 @@ export function AiPanel({
         let summary = onApplyBlocks?.(res.content)
         // đề trả JSON hỏng (thường bị cắt cụt): hoàn token lượt đó và soạn lại đúng một lần
         if (!summary && /^\s*[[{]/.test(res.content) && onApplyBlocks) {
-          const again = await callLlm(messages, { signal: controller.signal, retryOf: res.receipt })
+          const again = await callLlm(messages, { signal: controller.signal, reasoningEffort: AI_EFFORT.exam, retryOf: res.receipt })
           summary = onApplyBlocks(again.content)
         }
         // Áp thất bại nhưng trông như envelope JSON → nói rõ lý do thay vì để

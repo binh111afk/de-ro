@@ -14,6 +14,8 @@ const outDir = outAt >= 0 ? args.splice(outAt, 2)[1] : 'eval-out'
 const withImages = args.includes('--images') && args.splice(args.indexOf('--images'), 1).length > 0
 const perSlide = args.includes('--slides') && args.splice(args.indexOf('--slides'), 1).length > 0
 const batch = args.includes('--batch') && args.splice(args.indexOf('--batch'), 1).length > 0
+const effortAt = args.indexOf('--effort')
+const effort = effortAt >= 0 ? args.splice(effortAt, 2)[1] : ''
 const polish = args.includes('--polish') && args.splice(args.indexOf('--polish'), 1).length > 0
 const POLISH_BELOW = 6.5 // slide điểm thấp hơn mức này được viết lại một lượt rồi chấm lại
 const topics = args.length ? args : ['Hàm số bậc nhất và đồ thị']
@@ -30,7 +32,7 @@ const base = server.resolvedUrls.local[0]
 let exit = 0
 try {
   for (const [i, topic] of topics.entries()) {
-    const url = `${base}scripts/eval-slides/index.html?topic=${encodeURIComponent(topic)}${withImages ? '&images=1' : ''}${batch ? '&batch=1' : ''}`
+    const url = `${base}scripts/eval-slides/index.html?topic=${encodeURIComponent(topic)}${withImages ? '&images=1' : ''}${batch ? '&batch=1' : ''}${effort ? `&effort=${effort}` : ''}`
     const { result, png, slides } = await withPage(url, { width: 1900, height: 1000 }, async ({ evaluate, screenshot }) => {
       const encoded = await waitFor(evaluate, 'document.getElementById("eval-result")?.textContent', 900000)
       const result = JSON.parse(Buffer.from(encoded, 'base64').toString('utf8'))
