@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
+import { TabThumb } from './TabThumb'
 import { Link } from 'react-router-dom'
 import { ArrowRight, Compass, FileUp, Highlighter, PenLine } from 'lucide-react'
 import { cn } from '@/lib/cn'
@@ -61,6 +62,7 @@ export function BoardSection() {
   const active = MODES.find((m) => m.key === mode) ?? MODES[0]
   const head = useReveal<HTMLDivElement>()
   const reveal = useReveal<HTMLDivElement>()
+  const modeRef = useRef<HTMLDivElement>(null)
 
   return (
     <section id="bang-ve" className="landing-below-fold border-b border-ink-2/30 bg-deep py-14 text-deep-text sm:py-16 lg:py-20">
@@ -79,10 +81,12 @@ export function BoardSection() {
           </div>
 
           <div
+            ref={modeRef}
             role="tablist"
             aria-label="Chọn chế độ xem bảng vẽ"
-            className="flex flex-wrap gap-1.5 rounded-[9px] border border-white/15 bg-white/5 p-1"
+            className="relative flex flex-wrap gap-1.5 rounded-[9px] border border-white/15 bg-white/5 p-1"
           >
+            <TabThumb parent={modeRef} active={mode} className="rounded-[6px] bg-surface" />
             {MODES.map((m) => {
               const selected = m.key === mode
               return (
@@ -93,8 +97,8 @@ export function BoardSection() {
                   aria-selected={selected}
                   onClick={() => setMode(m.key)}
                   className={cn(
-                    'min-h-[38px] rounded-[6px] px-3 py-1.5 text-[13px] font-semibold transition-colors',
-                    selected ? 'bg-surface text-ink' : 'text-deep-muted hover:text-deep-text',
+                    'relative min-h-[38px] rounded-[6px] px-3 py-1.5 text-[13px] font-semibold transition-colors',
+                    selected ? 'text-ink' : 'text-deep-muted hover:text-deep-text',
                   )}
                 >
                   {m.label}

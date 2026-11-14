@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { TabThumb } from './TabThumb'
 import { Link } from 'react-router-dom'
 import { ArrowRight, FileText, PenTool, Presentation } from 'lucide-react'
 import { cn } from '@/lib/cn'
@@ -63,6 +64,7 @@ export function HeroSection() {
   // tự chuyển Đề thi → Slide → Bảng vẽ; dừng khi rê chuột vào khung hoặc khi người dùng đã tự bấm tab
   const [auto, setAuto] = useState(() => !prefersReducedMotion())
   const [hover, setHover] = useState(false)
+  const tabsRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
     if (!auto || hover) return
     const t = window.setTimeout(() => {
@@ -138,7 +140,8 @@ export function HeroSection() {
           <div style={{ '--d': '200ms' } as React.CSSProperties} className="land-rise min-w-0 lg:col-span-7" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
             <div className="overflow-hidden rounded-[12px] border border-line bg-surface shadow-[0_12px_32px_rgba(20,24,28,0.08)]">
               <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line bg-sunken px-3 py-2 sm:px-4">
-                <div role="tablist" aria-label="Xem trước" className="flex flex-wrap gap-1">
+                <div ref={tabsRef} role="tablist" aria-label="Xem trước" className="relative flex flex-wrap gap-1">
+                  <TabThumb parent={tabsRef} active={tab} className="rounded-[7px] bg-surface shadow-xs ring-1 ring-line" />
                   {TABS.map((item) => {
                     const Icon = item.icon
                     const isSelected = item.key === tab
@@ -150,10 +153,8 @@ export function HeroSection() {
                         aria-selected={isSelected}
                         onClick={() => { setTab(item.key); setAuto(false) }}
                         className={cn(
-                          'inline-flex min-h-[38px] items-center gap-1.5 rounded-[7px] px-3 py-1.5 text-[13px] font-semibold transition-colors',
-                          isSelected
-                            ? 'bg-surface text-ink shadow-xs ring-1 ring-line'
-                            : 'text-ink-2 hover:bg-surface/60 hover:text-ink',
+                          'relative inline-flex min-h-[38px] items-center gap-1.5 rounded-[7px] px-3 py-1.5 text-[13px] font-semibold transition-colors',
+                          isSelected ? 'text-ink' : 'text-ink-2 hover:text-ink',
                         )}
                       >
                         <Icon className={cn('h-3.5 w-3.5 shrink-0', isSelected ? 'text-clay' : 'text-ink-2')} aria-hidden />

@@ -4,6 +4,7 @@ import { ArrowRight } from 'lucide-react'
 import type { ToolDoc, ToolImage } from '@/lib/toolSpec'
 import { cn } from '@/lib/cn'
 import { prefersReducedMotion, useReveal } from './reveal'
+import { TabThumb } from './TabThumb'
 import { SUBJECT_GROUPS, type SubjectKey } from './toolDemos'
 
 type RenderFn = (doc: ToolDoc) => ToolImage
@@ -30,6 +31,7 @@ export function DrawingToolsSection() {
 
   // hình tự vẽ nét: mỗi nét (không tô, không nét đứt) chạy từ đầu đến cuối, chữ hiện sau
   const gridRef = useRef<HTMLDivElement>(null)
+  const subjRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
     const root = gridRef.current
     if (!root || !renderFn || !gridReveal.shown || prefersReducedMotion()) return
@@ -70,10 +72,12 @@ export function DrawingToolsSection() {
           </div>
 
           <div
+            ref={subjRef}
             role="tablist"
             aria-label="Chọn môn học xem công cụ vẽ hình"
-            className="flex flex-wrap gap-1.5 rounded-[10px] border border-line bg-sunken p-1"
+            className="relative flex flex-wrap gap-1.5 rounded-[10px] border border-line bg-sunken p-1"
           >
+            <TabThumb parent={subjRef} active={subject} className="rounded-[7px] bg-surface shadow-xs ring-1 ring-line" />
             {SUBJECT_GROUPS.map((g) => {
               const active = g.key === subject
               return (
@@ -84,10 +88,8 @@ export function DrawingToolsSection() {
                   aria-selected={active}
                   onClick={() => setSubject(g.key)}
                   className={cn(
-                    'inline-flex min-h-[40px] items-center gap-1.5 rounded-[7px] px-3 py-1.5 text-[13.5px] font-semibold transition-colors',
-                    active
-                      ? 'bg-surface text-ink shadow-xs ring-1 ring-line'
-                      : 'text-ink-2 hover:text-ink',
+                    'relative inline-flex min-h-[40px] items-center gap-1.5 rounded-[7px] px-3 py-1.5 text-[13.5px] font-semibold transition-colors',
+                    active ? 'text-ink' : 'text-ink-2 hover:text-ink',
                   )}
                 >
                   <span>{g.label}</span>
