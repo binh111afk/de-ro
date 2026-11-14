@@ -60,7 +60,11 @@ export interface SlideElement {
   fontFamily?: string
   textColor?: string
   fontStyle?: 'normal' | 'italic'
-  textDecoration?: 'none' | 'underline'
+  textDecoration?: 'none' | 'underline' | 'line-through'
+  /** Màu tô sáng nền phía sau chữ (CSS color) */
+  highlight?: string
+  /** Liên kết ngoài khi trình chiếu (http/https) */
+  href?: string
   align?: 'left' | 'center' | 'right'
   zIndex?: number
   flipX?: boolean
@@ -106,6 +110,12 @@ export interface Slide {
   html?: string
 }
 
+export interface DeckFooter {
+  slideNumber?: boolean
+  text?: string
+  skipTitle?: boolean
+}
+
 export interface Deck {
   id: string
   title: string
@@ -117,6 +127,8 @@ export interface Deck {
   design?: string
   /** 'html' = bài giảng HTML của AI: chỉ trình chiếu trên web, không sửa trong trình soạn, không xuất PPT */
   format?: 'html'
+  /** Số trang và chân trang dùng chung toàn bộ deck */
+  footer?: DeckFooter
   createdAt: string
   updatedAt: string
 }

@@ -23,7 +23,8 @@ import { renderMath } from '@/lib/math'
 import { autoAnimate, clearAnimation, slideSteps, applyElementAnim, startOf } from '@/lib/slideAnim'
 import { EmptyState } from '@/components/ui'
 import { cn } from '@/lib/cn'
-import type { Deck, Slide, SlideElement, SlideTone } from '@/store/docs'
+import type { Deck, DeckFooter, Slide, SlideElement, SlideTone } from '@/store/docs'
+import { applyTextFormat, captureTextFormat, type TextFormatSample } from '@/lib/slideFormat'
 import { parseAiDeck, type AiSlidePayload, type DeckPlan } from '@/lib/aiDeck'
 import { exportDeckPptx } from '@/lib/exportDeck'
 import { HtmlDeckBar, HtmlSlideFrame } from './HtmlSlide'
@@ -41,7 +42,7 @@ import { AiPanel } from './AiPanel'
 import { AiDock } from './Layout'
 import { SlideRibbon, type SlideRibbonTab } from './SlideRibbon'
 import { attachToAi } from '@/lib/aiAttach'
-import { SlideThumb, SlideElView } from './slideRender'
+import { SlideThumb, SlideElView, SlideFooterView, elTransform } from './slideRender'
 import { GroupToolbar, SnapGuides, EditableEl, setSnapEnabled } from './slideEditParts'
 
 /** Trạng thái ẩn/hiện của hiệu ứng bấm-chuột: mờ dần + trượt/phóng nhẹ (translate/scale tách khỏi transform xoay của phần tử). */
@@ -158,7 +159,7 @@ export const clamp = (value: number, min: number, max: number) => Math.min(max, 
  * trình duyệt (chọn "Lưu thành PDF"). Dùng đúng bộ vẽ của bản xem nên phông, công thức, màu giống hệt —
  * không phụ thuộc phông trong PowerPoint. CSS in nằm ở slide.css (`.slide-print-*`).
  */
-function PrintDeck({ slides, theme, onDone }: { slides: Slide[]; theme: ResolvedTheme; onDone: () => void }) {
+function PrintDeck({ slides, theme, footer, onDone }: { slides: Slide[]; theme: ResolvedTheme; footer?: DeckFooter; onDone: () => void }) {
   const done = useRef(onDone)
   done.current = onDone
   useEffect(() => {
@@ -174,13 +175,14 @@ function PrintDeck({ slides, theme, onDone }: { slides: Slide[]; theme: Resolved
   }, [])
   return createPortal(
     <div className="slide-print-root">
-      {slides.map((slide) => (
+      {slides.map((slide, idx) => (
         <div key={slide.id} className="slide-print-page">
           {slide.html ? null : (
             <div className="slide-frame relative h-full w-full overflow-hidden" data-decor={theme.decor} style={{ ...slideBgStyle(slide), ...decorStyle(theme) }}>
               {readableElements(slide, theme).map((el) => (
                 <SlideElView key={el.id} el={el} theme={theme} />
               ))}
+              <SlideFooterView footer={footer} slide={slide} slideIndex={idx} theme={theme} />
             </div>
           )}
         </div>
@@ -237,6 +239,8 @@ export function SlideEditor({
   useEffect(() => setSnapEnabled(snapOn), [snapOn])
   const [formatPaneOpen, setFormatPaneOpen] = useState(false)
   const [clipboardElement, setClipboardElement] = useState<SlideElement | null>(null)
+  /** sao chép định dạng (cây cọ): once = áp 1 lần rồi tắt, lock = khoá áp nhiều lần */
+  const [painter, setPainter] = useState<{ mode: 'once' | 'lock'; sample: TextFormatSample } | null>(null)
   /** ghi chú diễn giả đang mở (nút nhỏ ở góc slide) */
   const [notesOpen, setNotesOpen] = useState(false)
   /** AI đang sinh slide: cột thumbnail vẽ ô chờ skeleton (chặng 26b) */
@@ -576,6 +580,7 @@ export function SlideEditor({
         return
       }
       if (e.key === 'Escape') {
+        setPainter(null)
         setSelectedElementId(null)
         setGroupIds([])
       }
@@ -891,15 +896,47 @@ export function SlideEditor({
                 data-decor={theme.decor}
                 style={{ ...slideBgStyle(slide), ...decorStyle(theme) }}
               >
-                {readableElements(slide, theme).map((el) =>
-                  el.step ? (
+                {readableElements(slide, theme).map((el) => {
+                  const linkHitbox =
+                    el.href && (!el.step || el.step <= presentStep) ? (
+                      <a
+                        key={`${el.id}-href`}
+                        href={el.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`Mở liên kết ${el.href}`}
+                        data-tip={el.href}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          e.preventDefault()
+                          window.open(el.href, '_blank', 'noopener')
+                        }}
+                        style={{
+                          position: 'absolute',
+                          left: `${el.x}%`,
+                          top: `${el.y}%`,
+                          width: `${el.w}%`,
+                          height: `${elementHeight(el)}%`,
+                          transform: elTransform(el),
+                          zIndex: (el.zIndex ?? 0) + 1,
+                          pointerEvents: 'auto',
+                          cursor: 'pointer',
+                        }}
+                      />
+                    ) : null
+                  return el.step ? (
                     <RevealLayer key={el.id} el={el} shown={el.step <= presentStep}>
                       <SlideElView el={el} theme={theme} />
+                      {linkHitbox}
                     </RevealLayer>
                   ) : (
-                    <SlideElView key={el.id} el={el} theme={theme} revealStep={presentStep} />
-                  ),
-                )}
+                    <div key={el.id} style={{ display: 'contents' }}>
+                      <SlideElView el={el} theme={theme} revealStep={presentStep} />
+                      {linkHitbox}
+                    </div>
+                  )
+                })}
+                <SlideFooterView footer={deck.footer} slide={slide} slideIndex={presentIndex} theme={theme} />
               </div>
             )}
           </div>
@@ -937,7 +974,7 @@ export function SlideEditor({
   return (
     // điện thoại: chừa chỗ cho thanh tab đáy (SlideSidePanel) để dải slide không bị che
     <div className="slide-editor flex min-h-0 min-w-0 flex-1 flex-col max-sm:pb-14">
-      {printing && <PrintDeck slides={deck.slides} theme={theme} onDone={() => setPrinting(false)} />}
+      {printing && <PrintDeck slides={deck.slides} theme={theme} footer={deck.footer} onDone={() => setPrinting(false)} />}
       {deck.format === 'html' ? (
         <HtmlDeckBar
           onSave={onSave}
@@ -1020,6 +1057,21 @@ export function SlideEditor({
         onExportPdf={() => setPrinting(true)}
         formatPaneOpen={formatPaneOpen}
         onToggleFormatPane={() => setFormatPaneOpen((v) => !v)}
+        painterMode={painter?.mode ?? 'off'}
+        onTogglePainter={(lock) => {
+          if (lock) {
+            const sample = captureTextFormat(selectedElement ?? undefined) ?? painter?.sample
+            if (sample) setPainter({ mode: 'lock', sample })
+            return
+          }
+          if (painter) {
+            setPainter(null)
+            return
+          }
+          const sample = captureTextFormat(selectedElement ?? undefined)
+          if (sample) setPainter({ mode: 'once', sample })
+        }}
+        onUpdateFooter={(footer) => commitDeck({ ...deck, footer })}
         aiOpen={aiOpen}
         onToggleAi={() => setAiOpen((v) => !v)}
         zoom={zoom}
@@ -1110,7 +1162,10 @@ export function SlideEditor({
               <HtmlSlideFrame html={currentSlide.html} interactive className="shadow-[0_2px_24px_-8px_rgba(35,32,28,0.35)]" />
             ) : currentSlide ? (
               <div
-                className="slide-frame relative aspect-[16/9] w-full overflow-hidden bg-white shadow-[0_2px_24px_-8px_rgba(35,32,28,0.35)]"
+                className={cn(
+                  'slide-frame relative aspect-[16/9] w-full overflow-hidden bg-white shadow-[0_2px_24px_-8px_rgba(35,32,28,0.35)]',
+                  painter && 'is-painter',
+                )}
                 data-decor={theme.decor}
                 style={{ ...slideBgStyle(currentSlide), ...decorStyle(theme) }}
                 onClickCapture={(e) => {
@@ -1121,6 +1176,7 @@ export function SlideEditor({
                   didDragRef.current = false
                 }}
                 onClick={() => {
+                  setPainter(null)
                   setSelectedElementId(null)
                   setGroupIds([])
                 }}
@@ -1177,8 +1233,23 @@ export function SlideEditor({
                     }}
                     editingText={editingShapeId === el.id}
                     onEditingText={(on) => setEditingShapeId(on ? el.id : null)}
+                    formatPainterActive={Boolean(painter)}
+                    onPaintApply={() => {
+                      if (!painter) return
+                      if (el.type === 'text') {
+                        updateElement(currentSlide.id, el.id, applyTextFormat(painter.sample))
+                        setSelectedElementId(el.id)
+                      }
+                      if (painter.mode === 'once') setPainter(null)
+                    }}
                   />
                 ))}
+                <SlideFooterView
+                  footer={deck.footer}
+                  slide={currentSlide}
+                  slideIndex={deck.slides.indexOf(currentSlide)}
+                  theme={theme}
+                />
               </div>
             ) : (
               <EmptyState
@@ -1267,7 +1338,14 @@ export function SlideEditor({
           currentId={currentSlide?.id ?? null}
           allowAdd={deck.format !== 'html'}
           pendingCount={pendingCount}
-          renderThumb={(s) => <SlideThumb slide={s} theme={theme} />}
+          renderThumb={(s) => (
+            <SlideThumb
+              slide={s}
+              theme={theme}
+              footer={deck.footer}
+              slideIndex={deck.slides.indexOf(s)}
+            />
+          )}
           onSelect={(id) => { setSelectedSlideId(id); setSelectedElementId(null) }}
           onAddAt={addSlideAt}
           onDuplicate={duplicateSlide}

@@ -6,14 +6,57 @@ import { isPresetShape, isStrokeOnlyShape, presetPaths, prstOf } from '@/lib/sli
 import { slideIconById } from '@/lib/slideIconLibrary'
 import { graphicById, graphicMarkup } from '@/lib/slideGraphics'
 import { hasRich } from '@/lib/slideMath'
+import { shouldShowSlideFooter } from '@/lib/slideFormat'
 import { cn } from '@/lib/cn'
-import type { Slide, SlideElement } from '@/store/docs'
+import type { DeckFooter, Slide, SlideElement } from '@/store/docs'
 import { HtmlSlideFrame } from './HtmlSlide'
 import { readableTextOn, type ResolvedTheme } from '@/lib/slideTheme'
 import { readableElements } from '@/lib/slideContrast'
 import { revealStyle, slideMathHtml, decorStyle } from './SlideEditor'
 
-export function SlideThumb({ slide, theme }: { slide: Slide; theme: ResolvedTheme }) {
+export function SlideFooterView({
+  footer,
+  slide,
+  slideIndex,
+  theme,
+}: {
+  footer?: DeckFooter
+  slide: Slide
+  slideIndex?: number
+  theme: ResolvedTheme
+}) {
+  if (!shouldShowSlideFooter(footer, slide, slideIndex)) return null
+  const text = footer?.text?.trim()
+  const num = footer?.slideNumber && slideIndex !== undefined ? slideIndex + 1 : null
+  if (!text && num === null) return null
+  return (
+    <div
+      className="slide-footer pointer-events-none absolute inset-x-[3.5%] bottom-[2%] z-10 flex items-center justify-between gap-[2%]"
+      style={{
+        color: theme.muted,
+        fontFamily: fontStack(theme.fonts.body),
+        fontSize: '1.4cqw',
+        lineHeight: 1.2,
+        opacity: 0.85,
+      }}
+    >
+      <span className="truncate">{text ?? ''}</span>
+      {num !== null && <span className="shrink-0 tabular-nums">{num}</span>}
+    </div>
+  )
+}
+
+export function SlideThumb({
+  slide,
+  theme,
+  footer,
+  slideIndex,
+}: {
+  slide: Slide
+  theme: ResolvedTheme
+  footer?: DeckFooter
+  slideIndex?: number
+}) {
   if (slide.html) return <HtmlSlideFrame html={slide.html} />
   return (
     <div
@@ -24,6 +67,7 @@ export function SlideThumb({ slide, theme }: { slide: Slide; theme: ResolvedThem
       {readableElements(slide, theme).map((el) => (
         <SlideElView key={el.id} el={el} theme={theme} />
       ))}
+      <SlideFooterView footer={footer} slide={slide} slideIndex={slideIndex} theme={theme} />
     </div>
   )
 }
@@ -50,15 +94,29 @@ export function refitOnFonts(fit: () => void): () => void {
   }
 }
 
+export const highlightSpanStyle = (highlight?: string): React.CSSProperties | undefined =>
+  highlight
+    ? {
+        background: highlight,
+        boxDecorationBreak: 'clone',
+        WebkitBoxDecorationBreak: 'clone',
+        padding: '0 0.14em',
+        borderRadius: '0.14em',
+      }
+    : undefined
+
 export function FitText({
   children,
   html,
+  highlight,
   baseSize,
   style,
 }: {
   children: React.ReactNode
   /** HTML đã vẽ công thức (KaTeX) — có thì dùng thay cho `children` */
   html?: string
+  /** màu tô sáng nền ngay sau ký tự chữ */
+  highlight?: string
   /** cỡ chữ tối đa, tính bằng cqw */
   baseSize: number
   style: React.CSSProperties
@@ -104,15 +162,31 @@ export function FitText({
     whiteSpace: 'pre-wrap',
     overflow: 'hidden',
   }
-  // Công thức nằm trong MỘT khối con: hộp chữ canh giữa dùng flex-column, nếu để
-  // chữ và `.katex` làm con trực tiếp thì mỗi phần thành một hàng riêng ("Vậy" / phân số).
-  return html !== undefined ? (
+  const hi = highlightSpanStyle(highlight)
+  // Công thức (hoặc tô sáng) nằm trong một khối div bọc ngoài để span inline ôm sát
+  // từng dòng chữ dù hộp cha dùng flex-column canh giữa dọc.
+  if (html !== undefined) {
+    return (
+      <div ref={ref} style={box}>
+        {hi ? (
+          <div>
+            <span style={hi} dangerouslySetInnerHTML={{ __html: html }} />
+          </div>
+        ) : (
+          <div dangerouslySetInnerHTML={{ __html: html }} />
+        )}
+      </div>
+    )
+  }
+  return (
     <div ref={ref} style={box}>
-      <div dangerouslySetInnerHTML={{ __html: html }} />
-    </div>
-  ) : (
-    <div ref={ref} style={box}>
-      {children}
+      {hi ? (
+        <div>
+          <span style={hi}>{children}</span>
+        </div>
+      ) : (
+        children
+      )}
     </div>
   )
 }
@@ -279,10 +353,12 @@ export function SlideElView({ el, theme, revealStep }: { el: SlideElement; theme
     const size = el.fontSize ?? (isBody ? 2.4 : 3.6)
     // trình chiếu: mỗi dòng là một khối riêng để hiện lần lượt (bố cục không đổi vì chỉ đổi opacity/translate)
     const lines = el.lineStep && revealStep !== undefined ? (el.text ?? '').split('\n') : null
+    const lineHi = highlightSpanStyle(el.highlight)
     return (
       <FitText
         // công thức `$...$` vẽ bằng KaTeX (HTML do KaTeX sinh, không phải input thô)
         html={!lines && hasRich(el.text) ? slideMathHtml(el.text ?? '') : undefined}
+        highlight={lines ? undefined : el.highlight}
         style={{
           ...style,
           color: el.textColor ?? theme.fg,
@@ -306,7 +382,15 @@ export function SlideElView({ el, theme, revealStep }: { el: SlideElement; theme
         {lines
           ? lines.map((line, i) => (
               <div key={i} style={revealStyle((el.lineStep ?? 0) + i <= (revealStep ?? 0), el.anim, el.animMs)}>
-                {hasRich(line) ? <span dangerouslySetInnerHTML={{ __html: slideMathHtml(line) }} /> : line || ' '}
+                {lineHi ? (
+                  <span style={lineHi}>
+                    {hasRich(line) ? <span dangerouslySetInnerHTML={{ __html: slideMathHtml(line) }} /> : line || '\u00a0'}
+                  </span>
+                ) : hasRich(line) ? (
+                  <span dangerouslySetInnerHTML={{ __html: slideMathHtml(line) }} />
+                ) : (
+                  line || '\u00a0'
+                )}
               </div>
             ))
           : el.text}
@@ -566,6 +650,7 @@ export function AutoFitText({
   align,
   color,
   background,
+  highlight,
   lineHeight,
   letterSpacing,
   valign,
@@ -588,13 +673,15 @@ export function AutoFitText({
   weight: number
   fontFamily?: string
   fontStyle?: 'normal' | 'italic'
-  textDecoration?: 'none' | 'underline'
+  textDecoration?: 'none' | 'underline' | 'line-through'
   align?: 'left' | 'center' | 'right'
   color?: string
   lineHeight?: number
   letterSpacing?: number
   /** nền hộp chữ (thẻ của layout cards) */
   background?: string
+  /** màu tô sáng nền ngay sau ký tự chữ */
+  highlight?: string
   onChange: (text: string) => void
 }) {
   const ref = useRef<HTMLTextAreaElement>(null)
@@ -602,8 +689,12 @@ export function AutoFitText({
   const middle = valign === 'middle'
   const [size, setSize] = useState(baseSize)
   // Công thức hiển thị bằng KaTeX khi không gõ; nhấp đúp để sửa mã LaTeX.
+  // Khi đang mở khoá sửa (`locked === false`), giữ textarea để gõ/chèn `$^{...}$` không bị nhảy ra ngoài.
   const [editing, setEditing] = useState(false)
-  const showMath = hasRich(value) && !editing
+  const isEditing = editing || locked === false
+  const rich = hasRich(value)
+  const showFit = (rich && !isEditing) || (Boolean(highlight) && locked !== false)
+  const showMath = rich && !isEditing
 
   useEffect(() => {
     setSize(baseSize)
@@ -653,13 +744,20 @@ export function AutoFitText({
       stopFonts()
       ro.disconnect()
     }
-  }, [value, baseSize, showMath, middle])
+  }, [value, baseSize, showFit, middle])
 
-  if (showMath) {
+  if (showFit) {
     return (
-      <div className="h-full w-full" onDoubleClick={() => setEditing(true)} data-tip="Nhấp đúp để sửa công thức">
+      <div
+        className="h-full w-full"
+        onDoubleClick={() => {
+          if (showMath) setEditing(true)
+        }}
+        data-tip={showMath ? 'Nhấp đúp để sửa công thức' : undefined}
+      >
         <FitText
-          html={slideMathHtml(value)}
+          html={showMath ? slideMathHtml(value) : undefined}
+          highlight={highlight}
           baseSize={baseSize}
           style={{
             width: '100%',

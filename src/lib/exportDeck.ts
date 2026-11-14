@@ -7,6 +7,7 @@
  */
 import { readableElements } from './slideContrast'
 import { boldRuns, hasBold, mathToPlain } from './slideMath'
+import { shouldShowSlideFooter } from './slideFormat'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { Deck } from '@/store/docs'
@@ -77,7 +78,7 @@ export async function buildDeckPptx(deck: Deck): Promise<ArrayBuffer> {
   pptx.title = deck.title
 
   const slides = deck.slides.length > 0 ? deck.slides : [{ id: 'blank', background: '#ffffff', elements: [] }]
-  for (const source of slides) {
+  for (const [slideIndex, source] of slides.entries()) {
     const slide = pptx.addSlide()
     // nền gradient: PPTX chỉ có nền màu đặc nên đặt màu đầu làm nền dự phòng rồi phủ ảnh gradient toàn trang
     slide.background = { color: hex(firstColor(source.background)) }
@@ -106,15 +107,40 @@ export async function buildDeckPptx(deck: Deck): Promise<ArrayBuffer> {
         const centered = !!el.fill || el.valign === 'middle'
         const padX = (el.fill ? 3 : 1) * 7.2
         const padY = (el.fill ? 1.5 : 1) * 7.2
+        const hyperlink = el.href ? { url: el.href } : undefined
+        const highlight = el.highlight ? hex(el.highlight) : undefined
+        const strike = el.textDecoration === 'line-through' ? ('sngStrike' as const) : undefined
+        const underline = el.textDecoration === 'underline' ? ({ style: 'sng' } as const) : undefined
         // Mỗi dòng là một đoạn, chữ **đậm** là run riêng. Mọi run mang cùng `align` và dòng cuối có
         // `breakLine`: PptxGenJS tách đoạn mỗi khi `align` của run đổi → trước đây chữ đậm nhảy xuống dòng.
-        const runs: { text: string; options: { bold: boolean; align: typeof align; breakLine?: boolean } }[] = []
+        const runs: {
+          text: string
+          options: {
+            bold: boolean
+            align: typeof align
+            breakLine?: boolean
+            hyperlink?: { url: string }
+            highlight?: string
+            strike?: 'sngStrike'
+            underline?: { style: 'sng' }
+          }
+        }[] = []
         for (const run of hasBold(el.text) ? boldRuns(el.text ?? '') : [{ text: el.text ?? '', bold: false }]) {
           mathToPlain(run.text)
             .split('\n')
             .forEach((part, i) => {
               if (i > 0 && runs.length) runs[runs.length - 1].options.breakLine = true
-              runs.push({ text: part, options: { bold: baseBold || run.bold, align } })
+              runs.push({
+                text: part,
+                options: {
+                  bold: baseBold || run.bold,
+                  align,
+                  ...(hyperlink ? { hyperlink } : {}),
+                  ...(highlight ? { highlight } : {}),
+                  ...(strike ? { strike } : {}),
+                  ...(underline ? { underline } : {}),
+                },
+              })
             })
         }
         slide.addText(runs.length ? runs : '', {
@@ -129,7 +155,9 @@ export async function buildDeckPptx(deck: Deck): Promise<ArrayBuffer> {
           color: hex(el.textColor ?? deck.theme.fg),
           bold: (el.fontWeight ?? 400) >= 600,
           italic: el.fontStyle === 'italic',
-          underline: el.textDecoration === 'underline' ? { style: 'sng' } : undefined,
+          underline,
+          strike,
+          highlight,
           align,
           valign: centered ? 'middle' : 'top',
           margin: [padX, padX, padY, padY],
@@ -150,11 +178,17 @@ export async function buildDeckPptx(deck: Deck): Promise<ArrayBuffer> {
           w: side,
           h: side,
           transparency: Math.round((1 - (el.opacity ?? 1)) * 100),
+          ...(el.href ? { hyperlink: { url: el.href } } : {}),
         })
       } else if (el.type === 'graphic' && el.graphicId) {
         const svg = graphicMarkup(el.graphicId, `#${hex(el.textColor ?? deck.theme.fg)}`, el.fill ? `#${hex(el.fill)}` : undefined)
         if (svg) {
-          slide.addImage({ ...box, data: `data:image/svg+xml;base64,${btoa(svg)}`, transparency: Math.round((1 - (el.opacity ?? 1)) * 100) })
+          slide.addImage({
+            ...box,
+            data: `data:image/svg+xml;base64,${btoa(svg)}`,
+            transparency: Math.round((1 - (el.opacity ?? 1)) * 100),
+            ...(el.href ? { hyperlink: { url: el.href } } : {}),
+          })
         }
       } else if (el.type === 'connector') {
         slide.addShape('line' as never, {
@@ -187,34 +221,46 @@ export async function buildDeckPptx(deck: Deck): Promise<ArrayBuffer> {
           rotate,
           fill: { color: fill, transparency: Math.round((1 - (el.opacity ?? 1)) * 100) },
           line: el.border ? { color: hex(el.borderColor ?? '#111827'), width: el.border * 0.72 } : { type: 'none' },
+          ...(el.href ? { hyperlink: { url: el.href } } : {}),
           ...(level > 0 ? { shadow: { type: 'outer', blur: [0, 4, 8, 14][level], offset: [0, 2, 4, 6][level], angle: 90, color: '0F172A', opacity: [0, 0.25, 0.3, 0.4][level] } } : {}),
         }
         const kind = prstOf(el.shape) as never
         if (isStrokeOnlyShape(el.shape)) {
           // đường nối gấp khúc/cong: chỉ có nét, màu nét lấy từ màu tô
-          slide.addShape(kind, { ...box, rotate, line: { color: fill, width: Math.max(el.border ?? 0, 3) * 0.72 } } as never)
+          slide.addShape(kind, { ...box, rotate, line: { color: fill, width: Math.max(el.border ?? 0, 3) * 0.72 }, ...(el.href ? { hyperlink: { url: el.href } } : {}) } as never)
           continue
         }
         if (el.text?.trim()) {
           // hình có chữ: PowerPoint giữ chữ bên trong hình (sửa được), không phải hộp chữ chồng lên
-          slide.addText(mathToPlain(el.text), {
-            ...options,
-            shape: kind,
-            align: el.align ?? 'center',
-            valign: 'middle',
-            margin: 4,
-            fit: 'shrink',
-            fontSize: pt(el.fontSize ?? 2.4),
-            fontFace: pptxFont(el.fontFamily ?? deck.theme.fontBody),
-            color: hex(el.textColor ?? readableTextOn(el.fill ?? deck.theme.accent)),
-            bold: (el.fontWeight ?? 600) >= 600,
-            italic: el.fontStyle === 'italic',
-          } as never)
+          const plainShapeText = mathToPlain(el.text)
+          slide.addText(
+            [{ text: plainShapeText, options: el.href ? { hyperlink: { url: el.href } } : {} }],
+            {
+              ...options,
+              shape: kind,
+              align: el.align ?? 'center',
+              valign: 'middle',
+              margin: 4,
+              fit: 'shrink',
+              fontSize: pt(el.fontSize ?? 2.4),
+              fontFace: pptxFont(el.fontFamily ?? deck.theme.fontBody),
+              color: hex(el.textColor ?? readableTextOn(el.fill ?? deck.theme.accent)),
+              bold: (el.fontWeight ?? 600) >= 600,
+              italic: el.fontStyle === 'italic',
+              strike: el.textDecoration === 'line-through' ? 'sngStrike' : undefined,
+              underline: el.textDecoration === 'underline' ? { style: 'sng' } : undefined,
+            } as never,
+          )
         } else {
           slide.addShape(kind, options as never)
         }
       } else if (el.type === 'image' && el.src) {
-        slide.addImage({ ...box, data: await toDataUrl(el.src), ...(el.shape === 'ellipse' ? { rounding: true } : {}) })
+        slide.addImage({
+          ...box,
+          data: await toDataUrl(el.src),
+          ...(el.shape === 'ellipse' ? { rounding: true } : {}),
+          ...(el.href ? { hyperlink: { url: el.href } } : {}),
+        })
       } else if (el.type === 'table' && el.rows?.length) {
         const headerFg = readableTextOn(deck.theme.accent)
         const bodyBg = deck.theme.surface ?? deck.theme.bg
@@ -259,6 +305,40 @@ export async function buildDeckPptx(deck: Deck): Promise<ArrayBuffer> {
             chartColors: [hex(el.fill ?? deck.theme.accent)],
           },
         )
+      }
+    }
+
+    if (shouldShowSlideFooter(deck.footer, source, slideIndex)) {
+      const mutedHex = hex(deck.theme.muted, '6B7280')
+      const footerFont = pptxFont(deck.theme.fontBody)
+      const footerText = deck.footer?.text?.trim()
+      if (footerText) {
+        slide.addText(footerText, {
+          x: pct(3.5),
+          y: pct(93.5),
+          w: pct(75),
+          h: pct(5),
+          fontSize: 10,
+          fontFace: footerFont,
+          color: mutedHex,
+          align: 'left',
+          valign: 'bottom',
+          margin: 0,
+        })
+      }
+      if (deck.footer?.slideNumber) {
+        slide.addText(String(slideIndex + 1), {
+          x: pct(80),
+          y: pct(93.5),
+          w: pct(16.5),
+          h: pct(5),
+          fontSize: 10,
+          fontFace: footerFont,
+          color: mutedHex,
+          align: 'right',
+          valign: 'bottom',
+          margin: 0,
+        })
       }
     }
 
