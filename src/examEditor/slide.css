@@ -1833,7 +1833,256 @@ body[data-slide-drag] .slide-sel-toolbar {
   pointer-events: none;
 }
 
-.slide-design-card__aa {
+
+.slide-design-card__preview[data-motif='bac-ha'] {
+  border-radius: 8px;
+}
+.slide-design-card__preview[data-motif='bac-ha']::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  width: 10px;
+  height: 8px;
+  border-radius: 0 80% 0 80%;
+  background: var(--motif-accent);
+  opacity: 0.55;
+  pointer-events: none;
+}
+.slide-design-card__preview[data-motif='bac-ha']::after {
+  content: '';
+  position: absolute;
+  left: 6px;
+  bottom: 6px;
+  width: 18px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--motif-secondary);
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.slide-design-card__preview[data-motif='hong-dao']::before {
+  content: '';
+  position: absolute;
+  top: 5px;
+  right: 7px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50% 0 50% 50%;
+  background: var(--motif-accent);
+  opacity: 0.55;
+  pointer-events: none;
+}
+.slide-design-card__preview[data-motif='hong-dao']::after {
+  content: '';
+  position: absolute;
+  left: 6px;
+  bottom: 5px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--motif-secondary);
+  opacity: 0.75;
+  pointer-events: none;
+}
+
+.slide-design-card__preview[data-motif='oai-huong']::before {
+  content: '';
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--motif-accent);
+  box-shadow: -4px 5px 0 0 var(--motif-secondary), 0 9px 0 0 var(--motif-accent);
+  opacity: 0.75;
+  pointer-events: none;
+}
+.slide-design-card__preview[data-motif='oai-huong']::after {
+  content: '';
+  position: absolute;
+  left: 7px;
+  bottom: 6px;
+  width: 16px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--motif-secondary);
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+.slide-design-card__preview[data-motif='cat-vang']::before {
+  content: '';
+  position: absolute;
+  top: 7px;
+  right: 6px;
+  width: 14px;
+  height: 7px;
+  transform: skewX(-20deg);
+  background: color-mix(in srgb, var(--motif-accent) 45%, transparent);
+  pointer-events: none;
+}
+.slide-design-card__preview[data-motif='cat-vang']::after {
+  content: '';
+  position: absolute;
+  left: 6px;
+  bottom: 6px;
+  width: 12px;
+  height: 5px;
+  border-radius: 2px;
+  background: var(--motif-secondary);
+  opacity: 0.75;
+  pointer-events: none;
+}
+
+.slide-design-card__preview[data-motif='chanh-tuoi']::before {
+  content: '';
+  position: absolute;
+  top: 5px;
+  right: 6px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--motif-secondary);
+  background: color-mix(in srgb, var(--motif-secondary) 25%, transparent);
+  pointer-events: none;
+}
+.slide-design-card__preview[data-motif='chanh-tuoi']::after {
+  content: '';
+  position: absolute;
+  left: 6px;
+  bottom: 6px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--motif-accent);
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.slide-design-card__preview[data-motif='bau-troi']::before {
+  content: '';
+  position: absolute;
+  top: 6px;
+  right: 7px;
+  width: 14px;
+  height: 8px;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: -4px 2px 0 0 #ffffff;
+  border: 1px solid var(--motif-accent);
+  opacity: 0.85;
+  pointer-events: none;
+}
+.slide-design-card__preview[data-motif='bau-troi']::after {
+  content: '';
+  position: absolute;
+  left: 6px;
+  bottom: 6px;
+  width: 22px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--motif-accent);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.slide-design-card__preview[data-motif='bao-tuong'] {
+  border-radius: 0;
+}
+.slide-design-card__preview[data-motif='bao-tuong']::before {
+  content: '';
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  right: 5px;
+  height: 2px;
+  background: var(--motif-accent);
+  box-shadow: 0 3px 0 0 #111827;
+  pointer-events: none;
+}
+.slide-design-card__preview[data-motif='bao-tuong']::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  bottom: 5px;
+  width: 12px;
+  height: 3px;
+  background: #111827;
+  pointer-events: none;
+}
+
+.slide-design-card__preview[data-motif='hinh-hoc-mau']::before {
+  content: '';
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 7px;
+  height: 7px;
+  background: var(--motif-secondary);
+  border: 1px solid #090d16;
+  pointer-events: none;
+}
+.slide-design-card__preview[data-motif='hinh-hoc-mau']::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  right: 15px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--motif-accent);
+  border: 1px solid #090d16;
+  pointer-events: none;
+}
+
+.slide-design-card__preview[data-motif='bang-trang']::before {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 4px;
+  pointer-events: none;
+}
+.slide-design-card__preview[data-motif='bang-trang']::after {
+  content: '';
+  position: absolute;
+  bottom: 5px;
+  right: 6px;
+  width: 14px;
+  height: 3px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--motif-accent) 45%, var(--motif-secondary) 45%);
+  pointer-events: none;
+}
+
+.slide-design-card__preview[data-motif='tet-xuan']::before {
+  content: '';
+  position: absolute;
+  top: 6px;
+  right: 7px;
+  width: 8px;
+  height: 8px;
+  background: var(--motif-accent);
+  transform: rotate(45deg);
+  opacity: 0.85;
+  pointer-events: none;
+}
+.slide-design-card__preview[data-motif='tet-xuan']::after {
+  content: '';
+  position: absolute;
+  left: 6px;
+  bottom: 6px;
+  width: 18px;
+  height: 2.5px;
+  border-radius: 999px;
+  background: var(--motif-secondary);
+  opacity: 0.8;
+  pointer-events: none;
+}
+\r\n.slide-design-card__aa {
   position: relative;
   z-index: 1;
   font-size: 20px;
