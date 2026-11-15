@@ -89,6 +89,49 @@ So với trước (opencode): đề ~24 điểm / 160 s, slide ~41–50 điểm 
 - Cache chỉ trúng khi đã có người gửi cùng phần đầu prompt trong ít phút trước; lượt đầu tiên của ngày, hoặc hai lượt slide chạy song song cùng lúc, vẫn tính đủ.
 - **Chất lượng:** đề đúng 12/4/6, đủ 22 đáp án, JSON hợp lệ (chưa soát tay từng câu). 15 slide (`eval-out/s-low-ds1/1.png`): đủ, không slide hỏng, phép tính đúng (ƯCLN(12, 18) = 6, ƯCLN(36, 48) = 12, U(120) có 16 ước, câu hỏi ƯCLN(18, 30) = 6).
 
+## Thí nghiệm giảm chi phí soạn đề (16/11/2026)
+
+Script `scripts/exp-exam-cost.mjs` gọi thẳng DeepSeek chính hãng (`deepseek-flash`) bằng đúng prompt soạn đề của app, mỗi cách 3 đề Toán THPT QG. Giám khảo: `deepseek-flash` mức suy luận max, tự giải lại từng câu và đếm câu sai (đáp án sai, hai phương án đúng, thiếu dữ kiện, hình không khớp). Tôi soát tay 2 lỗi giám khảo chỉ ra (đề A-2 câu 3 và câu 15): giám khảo đúng cả hai.
+
+Tham số: DeepSeek tắt suy luận được bằng `thinking: {type: "disabled"}` (hoặc `reasoning_effort: "none"`); còn `reasoning_effort: "low"` thì **không khác** mặc định.
+
+| Cách | Token / đề | Suy luận | Điểm* | Thời gian | Câu sai / 22 (3 đề) |
+|---|---|---|---|---|---|
+| A — như hiện tại (có suy luận) | 26.000–33.500 | 15.000–22.800 | 26–34 | 89–123 s | 0 · 0 · 2 |
+| B — tắt suy luận | 12.300–13.600 | 0 | **12–14** | 26–31 s | **7 · 8 · 9** |
+| C — tắt suy luận + lượt soát có suy luận | ~36.000 | ~19.700 | ~36 | ~124 s | 0 (1 đề; 2/3 lần lượt soát trả JSON hỏng) |
+| **D — có suy luận, dặn suy luận gọn** | **25.600–26.400** | **15.300–16.200** | **20–21** | 83–91 s | **0 · 2 · 0** |
+
+\* Điểm tính theo cách tính mới (phần cache 1/10). Các lượt A chạy song song lúc cache còn lạnh nên gần như không trúng cache; D chạy sau nên trúng ~6.000 token cache prompt. So sánh công bằng theo token: D ít hơn A ~10–20% và ổn định hơn (A dao động 15.000–22.800 token suy luận).
+
+- **B (tắt suy luận)** rẻ nhất nhưng sai 7–9/22 câu mỗi đề, 12 câu trắc nghiệm đều đáp án A → **không dùng được**.
+- **C (thêm lượt soát)** sửa được lỗi nhưng lượt soát phải giải lại cả 22 câu nên **tốn hơn cả A**, lại hay hỏng JSON → không đáng.
+- **D (dặn suy luận gọn)**: thêm đoạn hướng dẫn vào cuối prompt ("trong phần suy nghĩ chỉ chọn số liệu và tính kiểm đáp án, không nháp lại đề…"). Chất lượng ngang A (2 câu sai / 66 câu, như A), độ khó như nhau (giám khảo chấm 3/5 cả hai — cả hai đều thiếu câu chốt chặn thật khó).
+
+**Kết luận:** không có cách nào đưa đề xuống 10–15 điểm mà giữ được chất lượng; phần suy luận ~15.000 token là thứ giữ đáp án đúng. Cách đáng áp dụng là **D + DeepSeek chính hãng có cache**: ~20 điểm/đề lúc cache lạnh, ~19–20 khi trúng cache, nhanh ~85 s. Muốn thấp hơn nữa chỉ còn cách giảm số câu cần suy luận (ví dụ đề ngắn hơn) hoặc chấp nhận đề sai nhiều hơn.
+
+## Đã áp dụng và chi phí hiện tại (16/11/2026)
+
+**Đã áp vào web:**
+- Cách D: đoạn "CÁCH SUY NGHĨ (tiết kiệm)" ở cuối `examSystemPrompt` (`src/examEditor/AiPanel.tsx`), trước phần tài liệu hiện tại.
+- Từ các lần trước: hướng dẫn hình theo môn (cách 2), slide gộp 5 slide mỗi lượt và rút danh mục đồ hoạ (cách 4), phần cache tính 1/10 điểm (cách 1).
+- **Model chính vẫn là opencode** (`deepseek-v4.1-flash`). DeepSeek chính hãng chỉ để trong `.env` máy dev làm dự phòng, chờ nạp tiền rồi tính.
+- Cách D mới đo trên DeepSeek chính hãng; **chưa đo riêng trên opencode** (cùng dòng model V4.1-Flash nên dự kiến tương tự).
+
+**Chi phí ước tính mỗi lần tạo (mức low):**
+
+| | Opencode (đang chạy trên web) | DeepSeek chính hãng (khi chuyển làm model chính) |
+|---|---|---|
+| 1 đề Toán THPT QG | **~20–23 điểm** (~23.000 token trước cách D, trừ ~11%) | **~20 điểm** khi cache lạnh, ~19 khi trúng cache |
+| 1 bộ 15 slide | **~41 điểm** (40.765 token) | **~20–26 điểm** lúc đông người dùng; ~28–30 khi cache lạnh |
+| Thời gian | đề ~160 s, slide ~90–100 s | đề ~85 s, slide ~30 s |
+
+- 120 điểm tặng lúc đầu: với opencode khoảng **5–6 đề** hoặc **khoảng 3 bộ slide**; với DeepSeek chính hãng khoảng **6 đề** hoặc **4–6 bộ slide**.
+- Opencode không giảm giá phần lặp lại (báo `cached_tokens: 0`), nên trên opencode điểm = token thật.
+- Các số dựa trên 1–3 lần đo mỗi trường hợp; mỗi lần chạy có thể lệch vài nghìn token (model chọn bố cục khác, có lượt sửa…).
+
+**Chi phí đã tiêu cho thí nghiệm** (tài khoản DeepSeek chính hãng, 15–16/11): khoảng 600.000 token cho 12 đề + 12 lượt chấm + 3 bộ slide + vài lượt thử tham số.
+
 ## Đo lại
 
 ```bash

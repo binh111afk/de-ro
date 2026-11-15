@@ -31,6 +31,8 @@ async function main() {
   const q = new URLSearchParams(location.search)
   const effort = (q.get('effort') ?? 'max') as 'low' | 'medium' | 'high' | 'max'
   const topic = q.get('topic') ?? 'Tạo đề thi tốt nghiệp THPT môn Toán theo đúng cấu trúc đề tham khảo 2025, có đáp án.'
+  // ?dump=1: chỉ trả system prompt (để thí nghiệm ngoài app), không gọi model
+  if (q.get('dump')) return done({ effort, system: examSystemPrompt(undefined, topic), tokens, raw: '' })
   const t0 = performance.now()
   const res = await callLlm(
     [

@@ -796,6 +796,10 @@ export function examSystemPrompt(documentDigest?: string, request = ''): string 
     figureGuideFor(request) +
     '\n' +
     '- Tiếng Việt chuẩn, số liệu nhất quán, mọi câu phải có đáp án đúng.\n\n' +
+    // suy luận gọn: đo thật (docs/bao-cao-chi-phi-ai.md) bớt ~11% token mà số câu sai không tăng.
+    // Đặt trước phần tài liệu (thay đổi theo đề) để phần đầu prompt giống nhau, cache khớp được.
+    'CÁCH SUY NGHĨ (tiết kiệm): trong phần suy nghĩ chỉ chọn số liệu cho đẹp và TÍNH KIỂM đáp án từng câu (ngắn gọn, mỗi câu vài dòng). ' +
+    'KHÔNG viết nháp nội dung đề, KHÔNG liệt kê lại cấu trúc JSON, KHÔNG cân nhắc nhiều phương án trình bày. Viết đề trực tiếp ở câu trả lời.\n\n' +
     (documentDigest
       ? 'TÀI LIỆU HIỆN TẠI (mỗi dòng "[id] loại khối: nội dung rút gọn" — dùng đúng id khi patch):\n' +
         documentDigest +
