@@ -4,8 +4,8 @@ import { parseSlideVideo } from '@/lib/slideVideo'
 import { slideBgStyle } from '@/lib/slideBackground'
 import { FRAME_PLACEHOLDER, photoFrameClip, photoFrameRadius, shapeClipOf } from '@/lib/slideShapes'
 import { isPresetShape, isStrokeOnlyShape, presetPaths, prstOf } from '@/lib/slidePresets'
-import { slideIconById } from '@/lib/slideIconLibrary'
-import { graphicById, graphicMarkup } from '@/lib/slideGraphics'
+import { graphicById } from '@/lib/slideGraphics'
+import { GraphicFill, SlideIcon } from './LazyAssets'
 import { hasRich } from '@/lib/slideMath'
 import { shouldShowSlideFooter } from '@/lib/slideFormat'
 import { cn } from '@/lib/cn'
@@ -471,8 +471,8 @@ export function SlideElView({ el, theme, revealStep, live }: { el: SlideElement;
   }
 
   if (el.type === 'icon') {
-    const Icon = slideIconById(el.assetId)
-    return Icon ? <Icon size="100%" weight="duotone" style={{ ...style, opacity: el.opacity, padding: '1%', color: el.textColor ?? theme.accent }} /> : null
+    if (!el.assetId) return null
+    return <SlideIcon id={el.assetId} style={{ ...style, opacity: el.opacity, padding: '1%', color: el.textColor ?? theme.accent }} />
   }
 
   if (el.type === 'connector') {
@@ -488,10 +488,9 @@ export function SlideElView({ el, theme, revealStep, live }: { el: SlideElement;
     return (
       <div
         style={{ ...style, opacity: el.opacity, padding: graphicById(el.graphicId)?.category === 'ornament' ? 0 : '1%' }}
-        // SVG do chính app sinh ra từ file thiết kế (không phải dữ liệu người
-        // dùng nhập) nên nhúng trực tiếp là an toàn.
-        dangerouslySetInnerHTML={{ __html: graphicMarkup(el.graphicId, el.textColor ?? theme.fg, el.fill) }}
-      />
+      >
+        <GraphicFill id={el.graphicId} ink={el.textColor ?? theme.fg} fill={el.fill} />
+      </div>
     )
   }
 

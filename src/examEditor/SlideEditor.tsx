@@ -26,7 +26,6 @@ import { cn } from '@/lib/cn'
 import type { Deck, DeckFooter, Slide, SlideElement, SlideTone } from '@/store/docs'
 import { applyTextFormat, captureTextFormat, type TextFormatSample, normalizeSlideHref } from '@/lib/slideFormat'
 import { parseAiDeck, type AiSlidePayload, type DeckPlan } from '@/lib/aiDeck'
-import { exportDeckPptx } from '@/lib/exportDeck'
 import { HtmlDeckBar, HtmlSlideFrame } from './HtmlSlide'
 import { applyDeckDesign, applyEdits, describeSlide, recomposeSlide, type SlideEditOp } from '@/lib/slideEdit'
 import { elementHeight } from '@/lib/slideText'
@@ -1205,7 +1204,7 @@ export function SlideEditor({
         onTabChange={setRibbonTab}
         onNewDeck={onNewDeck}
         onImportFile={onImportFile}
-        onDownload={() => exportDeckPptx(deck)}
+        onDownload={() => import('@/lib/exportDeck').then((m) => m.exportDeckPptx(deck))}
         onSave={onSave}
         onUndo={undo}
         onRedo={redo}

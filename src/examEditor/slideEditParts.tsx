@@ -8,8 +8,8 @@ import { FRAME_PLACEHOLDER, dragImage, photoFrameClip } from '@/lib/slideShapes'
 import { AlignCenterHorizontal, AlignCenterVertical, AlignEndHorizontal, AlignEndVertical, AlignHorizontalSpaceAround, AlignStartHorizontal, AlignStartVertical, AlignVerticalSpaceAround, Group, Link2, Lock, RotateCw, Ungroup } from 'lucide-react'
 import { TrashIcon } from '@/components/appIcons'
 import { type AlignMode } from '@/lib/slideAlign'
-import { slideIconById } from '@/lib/slideIconLibrary'
-import { graphicById, graphicMarkup } from '@/lib/slideGraphics'
+import { graphicById } from '@/lib/slideGraphics'
+import { GraphicFill, SlideIcon } from './LazyAssets'
 import { cn } from '@/lib/cn'
 import type { SlideElement } from '@/store/docs'
 import { elementHeight } from '@/lib/slideText'
@@ -643,10 +643,9 @@ export function EditableEl({
     )
 
   if (el.type === 'icon') {
-    const Icon = slideIconById(el.assetId)
-    return Icon ? (
+    return el.assetId ? (
       <div {...common} style={{ ...style, opacity: el.opacity, color: el.textColor ?? theme.accent, cursor: formatPainterActive ? 'inherit' : selected ? 'move' : 'default' }}>
-        <Icon size="100%" weight="duotone" className="h-full w-full p-[2%]" />
+        <SlideIcon id={el.assetId} className="h-full w-full p-[2%]" />
         {chrome}
       </div>
     ) : null
@@ -665,9 +664,11 @@ export function EditableEl({
     if (!el.graphicId || !graphicById(el.graphicId)) return null
     return (
       <div {...common} style={{ ...style, opacity: el.opacity, cursor: formatPainterActive ? 'inherit' : selected ? 'move' : 'default' }}>
-        <div
+        <GraphicFill
           className={`h-full w-full ${graphicById(el.graphicId)?.category === 'ornament' ? '' : 'p-[2%]'}`}
-          dangerouslySetInnerHTML={{ __html: graphicMarkup(el.graphicId, el.textColor ?? theme.fg, el.fill) }}
+          id={el.graphicId}
+          ink={el.textColor ?? theme.fg}
+          fill={el.fill}
         />
         {chrome}
       </div>

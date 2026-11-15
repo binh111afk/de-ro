@@ -346,3 +346,4 @@ export const GRAPHICS = RAW as SlideGraphicData[]
 
 writeFileSync(OUT, file)
 console.log(`Đã ghi ${OUT}: ${entries.length} icon, ${file.length} ký tự`)
+await import('./split-graphics.mjs')

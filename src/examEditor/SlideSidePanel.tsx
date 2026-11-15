@@ -27,9 +27,9 @@ import { SlideThumb } from './SlideEditor'
 import { NavRailIndicator } from './NavRailIndicator'
 import { PanelContentTransition } from './PanelContentTransition'
 import { SLIDE_ASSET_IDS, SLIDE_ASSETS } from '@/lib/slideAssets'
-import { ICON_LIBRARY } from '@/lib/slideIconLibrary'
-import { GRAPHICS } from '@/lib/graphics'
-import { GRAPHIC_CATEGORY_LABEL, findGraphics, graphicById, graphicMarkup, matchesWords, searchGraphics, type GraphicCategory } from '@/lib/slideGraphics'
+import { iconLibrary, loadSlideIcons } from '@/lib/slideIcons'
+import { useGraphicsReady, useSlideIconsReady } from './LazyAssets'
+import { ALL_GRAPHICS as GRAPHICS, GRAPHIC_CATEGORY_LABEL, findGraphics, graphicById, graphicMarkup, matchesWords, searchGraphics, type GraphicCategory } from '@/lib/slideGraphics'
 import { PRESET_GROUPS, defaultBox, shapeNameOf } from '@/lib/slidePresets'
 import { FRAME_PLACEHOLDER, PHOTO_FRAMES, dragImage } from '@/lib/slideShapes'
 import { uid } from '@/data/docTypes'
@@ -781,11 +781,15 @@ function FrameGrid({ frames, onInsert }: { frames: typeof PHOTO_FRAMES; onInsert
 const markupCache = new Map<string, string>()
 const cachedMarkup = (id: string) => {
   let m = markupCache.get(id)
-  if (m === undefined) markupCache.set(id, (m = graphicMarkup(id)))
+  if (m === undefined) {
+    m = graphicMarkup(id)
+    if (m) markupCache.set(id, m) // chưa tải SVG thì '' — đừng nhớ
+  }
   return m
 }
 
 function GraphicGrid({ items, onPick }: { items: Array<{ id: string; name: string }>; onPick: (id: string) => void }) {
+  useGraphicsReady()
   return (
     <div className="grid grid-cols-4 gap-1.5">
       {items.map((g) => (
@@ -811,14 +815,16 @@ function GraphicGrid({ items, onPick }: { items: Array<{ id: string; name: strin
 function IconsPanel({ canInsert, onInsert }: { canInsert: boolean; onInsert: (el: SlideElement) => void }) {
   const [query, setQuery] = useState('')
   const q = norm(query.trim())
+  const ready = useSlideIconsReady()
+  useEffect(() => void loadSlideIcons(), [])
 
-  // bộ 27 icon AI/layout dùng đứng trước, rồi tới thư viện mở rộng
+  // bộ 27 icon AI/layout dùng đứng trước, rồi tới thư viện mở rộng (tải sau)
   const all = useMemo(
     () => [
       ...SLIDE_ASSET_IDS.map((id) => ({ id: id as string, ...SLIDE_ASSETS[id] })),
-      ...ICON_LIBRARY,
+      ...(ready ? iconLibrary() : []),
     ],
-    [],
+    [ready],
   )
   const matches = (i: (typeof all)[number]) => !q || norm([i.id, i.group, ...i.tags].join(' ')).includes(q)
   const hits = all.filter(matches)

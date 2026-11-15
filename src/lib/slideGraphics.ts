@@ -6,9 +6,35 @@
  * chữ, và luôn đúng bộ màu. Renderer chỉ thay màu nét (#22333B) theo theme,
  * giữ nguyên khối fill pastel như bản thiết kế.
  */
-import { GRAPHICS, type GraphicCategory, type SlideGraphicData } from './graphics'
+import type { GraphicCategory } from './graphics'
+import { GRAPHIC_META, type GraphicMeta } from './graphicsMeta'
 
-export type { GraphicCategory, SlideGraphicData }
+export type { GraphicCategory, GraphicMeta }
+
+/**
+ * Danh mục (tên, từ khoá, tỉ lệ, màu chủ đạo) nạp ngay; SVG (~1,4 MB) nằm ở `graphics.ts`, tải sau bằng
+ * `loadGraphics()` để trang soạn đề/slide mở nhanh. Chưa tải xong thì `graphicMarkup` trả '' và tự kích tải;
+ * component vẽ hình dùng `subscribeGraphics` (hook `useGraphicsReady`) để vẽ lại khi SVG về.
+ */
+export const ALL_GRAPHICS = GRAPHIC_META
+const GRAPHICS = ALL_GRAPHICS
+let SVG: Map<string, string> | null = null
+let loading: Promise<void> | null = null
+const listeners = new Set<() => void>()
+
+export function loadGraphics(): Promise<void> {
+  return (loading ??= import('./graphics').then((m) => {
+    SVG = new Map(m.GRAPHICS.map((graphic) => [graphic.id, graphic.svg]))
+    listeners.forEach((fn) => fn())
+  }))
+}
+export const graphicsReady = (): boolean => SVG !== null
+export function subscribeGraphics(fn: () => void): () => void {
+  listeners.add(fn)
+  return () => listeners.delete(fn)
+}
+/** SVG gốc của hình (chưa đổi màu); '' nếu chưa tải `loadGraphics()` */
+export const graphicSvg = (id: string): string => SVG?.get(id) ?? ''
 
 /** Icon AI được chọn; `ornament` (trang trí do layout đặt) chỉ tra được qua graphicById. */
 export const SLIDE_GRAPHICS = GRAPHICS.filter((graphic) => graphic.category !== 'ornament')
@@ -96,7 +122,7 @@ export function isGraphicId(value: unknown): value is string {
   return typeof value === 'string' && GRAPHIC_IDS.has(value)
 }
 
-export function graphicById(id: string | undefined): SlideGraphicData | undefined {
+export function graphicById(id: string | undefined): GraphicMeta | undefined {
   return id ? BY_ID.get(id) : undefined
 }
 
@@ -104,7 +130,7 @@ export function graphicById(id: string | undefined): SlideGraphicData | undefine
  * Tìm đồ hoạ theo từ khoá tiếng Việt (có dấu hay không dấu đều được).
  * Trả về xếp theo điểm khớp, tối đa `limit`.
  */
-export function searchGraphics(text: string, limit = 8): SlideGraphicData[] {
+export function searchGraphics(text: string, limit = 8): GraphicMeta[] {
   const q = norm(text).trim()
   if (!q) return []
   const tokens = q.split(/[^a-z0-9]+/).filter((token) => token.length >= 2)
@@ -130,7 +156,7 @@ const wordsOf = (text: string) => norm(text).split(/[^a-z0-9]+/).filter(Boolean)
  * Tìm cho panel Đồ hoạ (gồm cả hoạ tiết): MỌI từ gõ vào phải khớp đầu một từ trong tên/từ khoá
  * (gõ "trai tim" không ra "bên trái", "tim" không ra "tìm kiếm"); khớp tên xếp trước khớp từ khoá.
  */
-export function findGraphics(text: string): SlideGraphicData[] {
+export function findGraphics(text: string): GraphicMeta[] {
   const tokens = wordsOf(text)
   if (!tokens.length) return []
   const phrase = tokens.join(' ')
@@ -172,7 +198,8 @@ export function graphicFits(id: string, text: string): boolean {
   return false
 }
 
-/** màu pastel được tô nhiều nhất trong SVG (bỏ nét và trắng): đó là "màu chủ đạo" của hình */
+/** màu pastel được tô nhiều nhất trong SVG (bỏ nét và trắng): đó là "màu chủ đạo" của hình.
+ *  Giữ đồng bộ với bản trong scripts/split-graphics.mjs (tính sẵn `main` cho danh mục). */
 function dominantFill(svg: string): string | null {
   const count = new Map<string, number>()
   for (const [, color] of svg.matchAll(/fill="(#[0-9a-fA-F]{6})"/g)) {
@@ -185,7 +212,7 @@ function dominantFill(svg: string): string | null {
 /** màu chủ đạo hiện tại của đồ hoạ (để bảng màu hiện đúng màu đang dùng) */
 export function graphicMainColor(id: string | undefined): string {
   const graphic = graphicById(id)
-  return (graphic && dominantFill(graphic.svg)) ?? '#b9d4ea'
+  return graphic?.main ?? '#b9d4ea'
 }
 
 /** SVG sẵn sàng nhúng: đổi màu nét và (tuỳ chọn) màu chủ đạo, ép phủ kín hộp chứa. */
@@ -198,7 +225,12 @@ export function graphicMarkup(id: string, inkIn = GRAPHIC_INK, mainIn?: string):
   const main = safeColor(mainIn)
   const graphic = graphicById(id)
   if (!graphic) return ''
-  let svg = graphic.svg.replace(/^<svg /, '<svg width="100%" height="100%" preserveAspectRatio="xMidYMid meet" ')
+  const raw = SVG?.get(id)
+  if (!raw) {
+    void loadGraphics()
+    return ''
+  }
+  let svg = raw.replace(/^<svg /, '<svg width="100%" height="100%" preserveAspectRatio="xMidYMid meet" ')
   const dominant = main ? dominantFill(svg) : null
   if (main && dominant) svg = svg.replaceAll(`fill="${dominant}"`, `fill="${main}"`)
   return svg.replaceAll(GRAPHIC_INK, ink)

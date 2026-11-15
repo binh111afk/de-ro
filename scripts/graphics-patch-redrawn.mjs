@@ -10,3 +10,4 @@ for (const id of process.argv.slice(2)) {
   s = s.slice(0, a) + `    svg: ${JSON.stringify(REDRAWN[id])},` + s.slice(b)
 }
 writeFileSync('src/lib/graphics.ts', s)
+await import('./split-graphics.mjs')

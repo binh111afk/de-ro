@@ -18,10 +18,17 @@ import {
   graphicById,
   graphicCatalogText,
   graphicMarkup,
+  graphicMainColor,
+  graphicSvg,
+  loadGraphics,
   isGraphicId,
   searchGraphics,
 } from '../src/lib/slideGraphics.ts'
 import { sanitizeSlide, pageSystemPrompt } from '../src/lib/slideAi.ts'
+
+// SVG tải sau: trước khi tải thì markup rỗng, sau đó mới kiểm hình
+assert.equal(graphicMarkup('math-eke'), '')
+await loadGraphics()
 
 let passed = 0
 const check = (name, fn) => {
@@ -48,7 +55,8 @@ check('mọi icon thuộc nhóm đã khai báo', () => {
 })
 
 check('mỗi icon: ≥2 path (màu + nét), nét gốc #22333B, không chữ/nền/ảnh ngoài', () => {
-  for (const graphic of SLIDE_GRAPHICS) {
+  for (const meta of SLIDE_GRAPHICS) {
+    const graphic = { id: meta.id, svg: graphicSvg(meta.id) }
     assert.ok(graphic.svg.startsWith('<svg'), graphic.id)
     // icon từ sheet có đúng 2 path; icon vẽ lại theo lớp (hoa sen) có nhiều hơn — đổi màu theo mã màu nên vẫn đúng
     assert.ok((graphic.svg.match(/<path/g) ?? []).length >= 2, graphic.id)
@@ -100,6 +108,10 @@ check('chuỗi rỗng không trả kết quả', () => {
 })
 
 console.log('\n[3] render / catalog')
+
+check('màu chủ đạo tính sẵn khớp SVG', () => {
+  for (const meta of SLIDE_GRAPHICS.slice(0, 50)) assert.ok(graphicSvg(meta.id).includes(graphicMainColor(meta.id)) || !meta.main, meta.id)
+})
 
 check('graphicMarkup đổi màu nét và phủ kín hộp', () => {
   const svg = graphicMarkup('math-eke', '#FFFFFF')

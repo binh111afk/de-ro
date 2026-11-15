@@ -15,7 +15,7 @@ import type { Deck } from '@/store/docs'
 import { elementHeight } from './slideText'
 import { readableTextOn } from './slideTheme'
 import { slideIconById } from './slideIconLibrary'
-import { graphicMarkup } from './slideGraphics'
+import { graphicMarkup, loadGraphics } from './slideGraphics'
 import { firstColor, gradientSvg } from './slideBackground'
 import { isStrokeOnlyShape, prstOf } from './slidePresets'
 import { photoFrameClip, photoFrameRadius } from './slideShapes'
@@ -216,7 +216,7 @@ export async function exportDeckPptx(deck: Deck): Promise<void> {
 
 export async function buildDeckPptx(deck: Deck): Promise<ArrayBuffer> {
   if (deck.format === 'html') throw new Error('Bài giảng HTML chỉ trình chiếu trên web, không xuất PowerPoint được.')
-  const { default: PptxGenJS } = await import('pptxgenjs')
+  const [{ default: PptxGenJS }] = await Promise.all([import('pptxgenjs'), loadGraphics()])
   const pptx = new PptxGenJS()
   pptx.layout = 'LAYOUT_16x9'
   pptx.title = deck.title

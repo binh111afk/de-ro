@@ -14,3 +14,4 @@ for (const { after, ...e } of ADDED) {
 }
 writeFileSync('src/lib/graphics.ts', s)
 console.log('inserted', n)
+await import('./split-graphics.mjs')
