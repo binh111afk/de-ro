@@ -44,6 +44,8 @@ export interface SlideElement {
   /** kiểu nét viền: liền (mặc định), đứt, chấm */
   borderStyle?: 'solid' | 'dashed' | 'dotted'
   src?: string
+  /** ảnh: vùng cắt, phần trăm cắt bớt mỗi cạnh của ảnh gốc (0–90); thiếu = không cắt */
+  crop?: { l: number; t: number; r: number; b: number }
   /** icon semantic trong catalog slideAssets — optional để deck cũ không đổi */
   assetId?: string
   /** id đồ hoạ vector trong catalog slideGraphics (chặng 2) */

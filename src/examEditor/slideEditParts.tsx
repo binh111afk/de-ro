@@ -15,9 +15,23 @@ import { elementHeight } from '@/lib/slideText'
 import { readableTextOn, type ResolvedTheme } from '@/lib/slideTheme'
 import { uploadImage } from '@/lib/mediaStore'
 import { MathCell, clamp } from './SlideEditor'
-import { fontStack, ConnectorSvg, shapeCss, isHollowShape, HOLLOW_HIT, shapeInner, ShapeText, ChartView, AutoFitText } from './slideRender'
+import { fontStack, ConnectorSvg, shapeCss, isHollowShape, HOLLOW_HIT, shapeInner, ShapeText, ChartView, AutoFitText, imageImgStyle, imageStyleParts } from './slideRender'
 
 export const FRAME_HOVER = 'slide-frame-hover'
+
+type CropBox = { l: number; t: number; r: number; b: number }
+function coverCropOf(w: number, h: number, nat: { w: number; h: number } | null): CropBox {
+  if (!nat || nat.w <= 0 || nat.h <= 0 || w <= 0 || h <= 0) return { l: 0, t: 0, r: 0, b: 0 }
+  const boxRatio = (w * 16) / (h * 9)
+  const imgRatio = nat.w / nat.h
+  if (Math.abs(boxRatio - imgRatio) < 1e-3) return { l: 0, t: 0, r: 0, b: 0 }
+  if (imgRatio > boxRatio) {
+    const cut = Math.min(45, ((1 - boxRatio / imgRatio) * 100) / 2)
+    return { l: cut, t: 0, r: cut, b: 0 }
+  }
+  const cut = Math.min(45, ((1 - imgRatio / boxRatio) * 100) / 2)
+  return { l: 0, t: cut, r: 0, b: cut }
+}
 
 /* ---------- thanh nổi khi chọn nhiều phần tử: căn + phân bố đều ---------- */
 export const GROUP_ACTIONS: Array<{ mode: AlignMode; label: string; Icon: typeof AlignStartVertical; min?: number }> = [
@@ -187,6 +201,7 @@ export function EditableEl({
   onDropInFrame,
   editingText,
   onEditingText,
+  cropping = false,
   grouped = false,
   group = [],
   onToggleSelect,
@@ -217,6 +232,8 @@ export function EditableEl({
   /** đang gõ chữ trong hình khối (nhấp đúp hình hoặc nút "Thêm chữ" trên thanh nổi) */
   editingText: boolean
   onEditingText: (on: boolean) => void
+  /** đang ở chế độ cắt ảnh */
+  cropping?: boolean
   /** chế độ sao chép định dạng đang bật — nhấp vào ô chữ sẽ dán định dạng thay vì kéo */
   formatPainterActive?: boolean
   onPaintApply?: () => void
@@ -224,6 +241,10 @@ export function EditableEl({
   const movedRef = useRef(false)
   const [imageBusy, setImageBusy] = useState(false)
   const [imageError, setImageError] = useState<string | null>(null)
+  const [natSize, setNatSize] = useState<{ w: number; h: number } | null>(null)
+  useEffect(() => {
+    setNatSize(null)
+  }, [el.src])
   // ảnh đang được kéo qua khung: '' = file từ máy (chưa đọc được), null = không kéo
   const [dropPreview, setDropPreview] = useState<string | null>(null)
   // đồ thị đang mở lại để sửa (ảnh chèn từ công cụ Đồ thị hàm số)
@@ -740,48 +761,157 @@ export function EditableEl({
       </div>
     )
 
-  if (el.type === 'image')
-    return (
-      <div {...common} className="group/frame">
-        {/* ô cắt (bo góc/elip) tách khỏi khung ngoài để tay nắm resize và xoay không bị overflow-hidden cắt mất */}
-        <div
-          data-frame-id={isFrame ? el.id : undefined}
-          style={{ clipPath: photoFrameClip(el.shape) }}
-          onDragOver={(e) => {
-            if (!e.dataTransfer.types.includes('Files') && !e.dataTransfer.types.includes('text/uri-list')) return
-            e.preventDefault()
-            if (dropPreview === null) setDropPreview(dragImage.src)
-          }}
-          onDragLeave={(e) => {
-            if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setDropPreview(null)
-          }}
-          onDrop={(e) => {
-            setDropPreview(null)
-            // kéo ảnh (file từ máy hoặc ảnh ở tab Tải lên) thả vào khung: ảnh tự cover rồi cắt theo khung
-            const file = e.dataTransfer.files[0]
-            const url = e.dataTransfer.getData('text/uri-list')
-            if (!file?.type.startsWith('image/') && !url) return
-            e.preventDefault()
-            e.stopPropagation()
-            if (!file) return onChange({ src: url })
-            const reader = new FileReader()
-            reader.onload = () => {
-              const data = String(reader.result)
-              onChange({ src: data })
-              uploadImage(data)
-                .then((src) => onChange({ src }))
-                .catch(() => {})
-            }
-            reader.readAsDataURL(file)
-          }}
-          className={cn(
-            'flex h-full w-full items-center justify-center overflow-hidden',
-            photoFrameClip(el.shape) ? '' : 'rounded-[1cqw]',
-            el.src || photoFrameClip(el.shape)
-              ? ''
-              : 'border-2 border-dashed border-[#9ca3af] text-[1.8cqw] text-[#6b7280]',
-          )}
-        >
+  if (el.type === 'image') {
+    const parts = imageStyleParts(el, theme)
+    const activeCrop = cropping ? (el.crop ?? coverCropOf(el.w, el.h, natSize)) : el.crop
+    const isCropActive = cropping && !!el.src && !el.locked
+
+    const startCropHandle = (e: React.PointerEvent, dir: ResizeDir) => {
+      e.stopPropagation()
+      e.preventDefault()
+      if (el.locked) return
+      const frame = (e.currentTarget as HTMLElement).closest('.slide-frame') as HTMLElement | null
+      if (!frame) return
+      const rect = frame.getBoundingClientRect()
+      const startX = e.clientX
+      const startY = e.clientY
+      const base = el.crop ?? coverCropOf(el.w, el.h, natSize)
+      const visL0 = el.flipX ? base.r : base.l
+      const visR0 = el.flipX ? base.l : base.r
+      const visT0 = el.flipY ? base.b : base.t
+      const visB0 = el.flipY ? base.t : base.b
+      const fullW = (el.w * 100) / Math.max(10, 100 - visL0 - visR0)
+      const fullH = (el.h * 100) / Math.max(10, 100 - visT0 - visB0)
+      const fullX = el.x - (visL0 / 100) * fullW
+      const fullY = el.y - (visT0 / 100) * fullH
+      const hitW = (dir.includes('w') && !el.flipX) || (dir.includes('e') && !!el.flipX)
+      const hitE = (dir.includes('e') && !el.flipX) || (dir.includes('w') && !!el.flipX)
+      const hitN = (dir.includes('n') && !el.flipY) || (dir.includes('s') && !!el.flipY)
+      const hitS = (dir.includes('s') && !el.flipY) || (dir.includes('n') && !!el.flipY)
+      const minCropPctW = Math.max(10, (2 / Math.max(0.1, fullW)) * 100)
+      const minCropPctH = Math.max(10, (2 / Math.max(0.1, fullH)) * 100)
+
+      const move = (ev: PointerEvent) => {
+        const dxPct = ((ev.clientX - startX) / rect.width) * 100
+        const dyPct = ((ev.clientY - startY) / rect.height) * 100
+        let visL = visL0
+        let visR = visR0
+        let visT = visT0
+        let visB = visB0
+        if (hitW) visL = clamp(visL0 + (dxPct / fullW) * 100, 0, Math.min(90, 100 - minCropPctW - visR))
+        if (hitE) visR = clamp(visR0 - (dxPct / fullW) * 100, 0, Math.min(90, 100 - minCropPctW - visL))
+        if (hitN) visT = clamp(visT0 + (dyPct / fullH) * 100, 0, Math.min(90, 100 - minCropPctH - visB))
+        if (hitS) visB = clamp(visB0 - (dyPct / fullH) * 100, 0, Math.min(90, 100 - minCropPctH - visT))
+        const l = Math.round((el.flipX ? visR : visL) * 100) / 100
+        const r = Math.round((el.flipX ? visL : visR) * 100) / 100
+        const t = Math.round((el.flipY ? visB : visT) * 100) / 100
+        const b = Math.round((el.flipY ? visT : visB) * 100) / 100
+        const x = fullX + (visL / 100) * fullW
+        const y = fullY + (visT / 100) * fullH
+        const w = (fullW * (100 - visL - visR)) / 100
+        const h = (fullH * (100 - visT - visB)) / 100
+        const isEmpty = l < 0.05 && t < 0.05 && r < 0.05 && b < 0.05
+        onPreview({ x, y, w, h, crop: isEmpty ? undefined : { l, t, r, b } })
+      }
+      const up = () => {
+        window.removeEventListener('pointermove', move)
+        window.removeEventListener('pointerup', up)
+        window.removeEventListener('pointercancel', up)
+        onDragEnd()
+      }
+      window.addEventListener('pointermove', move)
+      window.addEventListener('pointerup', up)
+      window.addEventListener('pointercancel', up)
+    }
+
+    const startCropPan = (e: React.PointerEvent) => {
+      if (e.button !== 0 || el.locked) return
+      e.stopPropagation()
+      e.preventDefault()
+      const frame = (e.currentTarget as HTMLElement).closest('.slide-frame') as HTMLElement | null
+      if (!frame) return
+      const rect = frame.getBoundingClientRect()
+      const startX = e.clientX
+      const startY = e.clientY
+      const base = el.crop ?? coverCropOf(el.w, el.h, natSize)
+      const visL0 = el.flipX ? base.r : base.l
+      const visR0 = el.flipX ? base.l : base.r
+      const visT0 = el.flipY ? base.b : base.t
+      const visB0 = el.flipY ? base.t : base.b
+      const spanX = visL0 + visR0
+      const spanY = visT0 + visB0
+      if (spanX < 0.05 && spanY < 0.05) return
+      const fullW = (el.w * 100) / Math.max(10, 100 - spanX)
+      const fullH = (el.h * 100) / Math.max(10, 100 - spanY)
+      const move = (ev: PointerEvent) => {
+        const dxPct = ((ev.clientX - startX) / rect.width) * 100
+        const dyPct = ((ev.clientY - startY) / rect.height) * 100
+        const visL = clamp(visL0 - (dxPct / fullW) * 100, 0, spanX)
+        const visR = spanX - visL
+        const visT = clamp(visT0 - (dyPct / fullH) * 100, 0, spanY)
+        const visB = spanY - visT
+        const l = Math.round((el.flipX ? visR : visL) * 100) / 100
+        const r = Math.round((el.flipX ? visL : visR) * 100) / 100
+        const t = Math.round((el.flipY ? visB : visT) * 100) / 100
+        const b = Math.round((el.flipY ? visT : visB) * 100) / 100
+        onPreview({ crop: { l, t, r, b } })
+      }
+      const up = () => {
+        window.removeEventListener('pointermove', move)
+        window.removeEventListener('pointerup', up)
+        window.removeEventListener('pointercancel', up)
+        onDragEnd()
+      }
+      window.addEventListener('pointermove', move)
+      window.addEventListener('pointerup', up)
+      window.addEventListener('pointercancel', up)
+    }
+
+    const inner = (
+      <div
+        data-frame-id={isFrame ? el.id : undefined}
+        style={{
+          position: 'relative',
+          boxSizing: 'border-box',
+          width: '100%',
+          height: '100%',
+          borderRadius: parts.polygonBorder ? 0 : parts.borderRadius,
+          clipPath: parts.frameRadius ? undefined : parts.clip,
+          border: parts.cssBorder,
+        }}
+        onDragOver={(e) => {
+          if (!e.dataTransfer.types.includes('Files') && !e.dataTransfer.types.includes('text/uri-list')) return
+          e.preventDefault()
+          if (dropPreview === null) setDropPreview(dragImage.src)
+        }}
+        onDragLeave={(e) => {
+          if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setDropPreview(null)
+        }}
+        onDrop={(e) => {
+          setDropPreview(null)
+          // kéo ảnh (file từ máy hoặc ảnh ở tab Tải lên) thả vào khung: ảnh tự cover rồi cắt theo khung
+          const file = e.dataTransfer.files[0]
+          const url = e.dataTransfer.getData('text/uri-list')
+          if (!file?.type.startsWith('image/') && !url) return
+          e.preventDefault()
+          e.stopPropagation()
+          if (!file) return onChange({ src: url, crop: undefined })
+          const reader = new FileReader()
+          reader.onload = () => {
+            const data = String(reader.result)
+            uploadImage(data)
+              .then((src) => onChange({ src, crop: undefined }))
+              .catch(() => onChange({ src: data, crop: undefined }))
+          }
+          reader.readAsDataURL(file)
+        }}
+        className={cn(
+          'flex items-center justify-center overflow-hidden',
+          el.src || parts.clip || parts.cssBorder
+            ? ''
+            : 'border-2 border-dashed border-[#9ca3af] text-[1.8cqw] text-[#6b7280]',
+        )}
+      >
         {dropPreview !== null ? (
           // xem trước khi kéo ảnh qua khung (file từ máy chưa đọc được thì làm mờ ảnh hiện có)
           <img
@@ -793,15 +923,16 @@ export function EditableEl({
           <img
             src={el.src}
             alt=""
-            className="h-full w-full object-cover"
+            style={imageImgStyle(el.crop)}
+            onLoad={(e) => setNatSize({ w: e.currentTarget.naturalWidth, h: e.currentTarget.naturalHeight })}
             onDoubleClick={() => {
               // ảnh vẽ bằng công cụ Đồ thị: nhấp đúp mở lại modal để sửa
               const doc = readToolDoc(el.src)
               if (doc) setPlotEdit(doc)
             }}
           />
-        ) : photoFrameClip(el.shape) ? (
-<img src={FRAME_PLACEHOLDER} alt="" className="pointer-events-none h-full w-full object-cover" />
+        ) : parts.clip ? (
+          <img src={FRAME_PLACEHOLDER} alt="" className="pointer-events-none h-full w-full object-cover" />
         ) : (
           <div className="flex flex-col items-center gap-1 px-1 text-center">
             <label className="cursor-pointer hover:underline">
@@ -815,7 +946,7 @@ export function EditableEl({
                   const reader = new FileReader()
                   reader.onload = () => {
                     uploadImage(String(reader.result))
-                      .then((src) => onChange({ src }))
+                      .then((src) => onChange({ src, crop: undefined }))
                       .catch((err) => setImageError(err instanceof Error ? err.message : String(err)))
                   }
                   reader.readAsDataURL(file)
@@ -849,8 +980,60 @@ export function EditableEl({
             ) : null}
           </div>
         )}
+      </div>
+    )
+
+    return (
+      <div
+        {...common}
+        onPointerDown={isCropActive ? startCropPan : common.onPointerDown}
+        style={{
+          ...style,
+          cursor: isCropActive ? 'move' : undefined,
+        }}
+        className="group/frame"
+      >
+        {/* Khi đang cắt ảnh: hiện toàn bộ ảnh gốc làm mờ phía sau để người dùng căn vùng giữ lại */}
+        {isCropActive && (
+          <img
+            src={el.src}
+            alt=""
+            style={{
+              ...imageImgStyle(activeCrop),
+              opacity: 0.34,
+              filter: 'brightness(0.72)',
+              pointerEvents: 'none',
+              userSelect: 'none',
+            }}
+          />
+        )}
+        {/* Wrapper bóng đổ đặt ngoài clipPath/overflow-hidden để drop-shadow bám đúng mép bo góc/khung hình */}
+        <div
+          style={{
+            position: 'relative',
+            width: '100%',
+            height: '100%',
+            opacity: el.opacity,
+            filter: parts.shadowFilter,
+          }}
+        >
+          {parts.polygonBorder ? (
+            <div
+              style={{
+                width: '100%',
+                height: '100%',
+                clipPath: parts.clip,
+                background: parts.borderColor,
+                padding: `max(1px, ${parts.borderW / 10}cqw)`,
+              }}
+            >
+              {inner}
+            </div>
+          ) : (
+            inner
+          )}
         </div>
-        {isFrame && (
+        {isFrame && !isCropActive && (
           // nút chọn file nằm ngoài lớp cắt để khung tim/sao… không cắt mất; khung vẫn nhận kéo-thả
           <label className="absolute bottom-[6%] left-1/2 z-10 -translate-x-1/2 cursor-pointer whitespace-nowrap rounded-full bg-white/95 px-[1.2cqw] py-[0.45cqw] text-[1.35cqw] font-semibold text-ink opacity-0 shadow transition-opacity group-hover/frame:opacity-100">
             <input
@@ -864,8 +1047,9 @@ export function EditableEl({
                 const reader = new FileReader()
                 reader.onload = () => {
                   const data = String(reader.result)
-                  onChange({ src: data })
-                  uploadImage(data).then((src) => onChange({ src })).catch(() => {})
+                  uploadImage(data)
+                    .then((src) => onChange({ src, crop: undefined }))
+                    .catch(() => onChange({ src: data, crop: undefined }))
                 }
                 reader.readAsDataURL(file)
               }}
@@ -873,10 +1057,19 @@ export function EditableEl({
             {el.src ? 'Đổi ảnh' : 'Chọn ảnh'}
           </label>
         )}
-        {chrome}
+        {isCropActive
+          ? HANDLE_DIRS.map((dir) => (
+              <span
+                key={dir}
+                className={`slide-crop-handle slide-crop-handle--${dir}`}
+                onPointerDown={(e) => startCropHandle(e, dir)}
+              />
+            ))
+          : chrome}
         {plotModal}
       </div>
     )
+  }
 
   return null
 }

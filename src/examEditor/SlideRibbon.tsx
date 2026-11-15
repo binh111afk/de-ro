@@ -4,12 +4,16 @@ import {
   AlignVerticalJustifyStart,
   BringToFront,
   ChevronDown,
+  Crop,
+  Frame,
   Grid3x3,
+  ImagePlus,
   List,
   ListOrdered,
   Magnet,
   MoreHorizontal,
   Palette,
+  RotateCcw,
   SendToBack,
   Sigma,
   Smile,
@@ -96,6 +100,8 @@ import {
   normalizeSlideHref,
 } from '@/lib/slideFormat'
 import { graphicMainColor } from '@/lib/slideGraphics'
+import { FRAME_PLACEHOLDER, PHOTO_FRAMES, photoFrameClip } from '@/lib/slideShapes'
+import { uploadImage } from '@/lib/mediaStore'
 import { ANIM_EFFECTS, ANIM_SPEEDS, startOf, type ElementAnimAction } from '@/lib/slideAnim'
 import {
   SLIDE_LAYOUTS,
@@ -139,6 +145,10 @@ export interface SlideRibbonProps {
   onDeleteSlide: () => void
   onInsert: (element: SlideElement) => void
   onUpdateSelected: (patch: Partial<SlideElement>) => void
+  /** đang mở chế độ cắt ảnh cho phần tử ảnh được chọn */
+  cropping?: boolean
+  onToggleCrop?: () => void
+  onResetCrop?: () => void
   onDeleteSelected: () => void
   onCopySelected: () => void
   onCutSelected: () => void
@@ -316,6 +326,9 @@ export function SlideRibbon(props: SlideRibbonProps) {
     onDeleteSlide,
     onInsert,
     onUpdateSelected,
+    cropping,
+    onToggleCrop,
+    onResetCrop,
     onDeleteSelected,
     onCopySelected,
     onCutSelected,
@@ -362,6 +375,7 @@ export function SlideRibbon(props: SlideRibbonProps) {
   const rootRef = useRef<HTMLDivElement>(null)
   const bodyRef = useRef<HTMLDivElement>(null)
   const tabsWrapRef = useRef<HTMLDivElement>(null)
+  const replaceImgRef = useRef<HTMLInputElement>(null)
   const { isPhone, isTablet } = useSlideViewport()
 
   useEffect(() => {
@@ -1568,8 +1582,322 @@ export function SlideRibbon(props: SlideRibbonProps) {
     )
   }
 
+  /** tab ngữ cảnh "Định dạng ảnh": hiện khi đang chọn phần tử ảnh */
+  const renderPictureFormat = () => {
+    const isLocked = Boolean(selected?.locked)
+    const hasSrc = Boolean(selected?.src)
+    const rotated = ((selected?.rotation ?? 0) % 360) !== 0
+    const cropDisabled = !selected || isLocked || !hasSrc || rotated
+    const cropTip = isLocked
+      ? 'Ảnh đang khoá — mở khoá để cắt'
+      : !hasSrc
+        ? 'Khung chưa có ảnh để cắt'
+        : rotated
+          ? 'Xoay về 0° trước khi cắt ảnh'
+          : cropping
+            ? 'Xác nhận vùng cắt (Enter)'
+            : 'Cắt ảnh theo khung'
+    const isFramed = Boolean(photoFrameClip(selected?.shape))
+    const borderW = selected?.border ?? 0
+    const borderColor = selected?.borderColor ?? deck.theme.fg
+    const borderStyle = selected?.borderStyle ?? 'solid'
+    const radiusVal = selected?.radius ?? 10
+    const transparency = Math.round((1 - (selected?.opacity ?? 1)) * 100)
+
+    return (
+      <>
+        <RibbonGroup label="Ảnh">
+          <input
+            ref={replaceImgRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0]
+              e.target.value = ''
+              if (!file || !selected || selected.type !== 'image') return
+              const reader = new FileReader()
+              reader.onload = () => {
+                const data = String(reader.result)
+                uploadImage(data)
+                  .then((src) => onUpdateSelected({ src, crop: undefined }))
+                  .catch(() => onUpdateSelected({ src: data, crop: undefined }))
+              }
+              reader.readAsDataURL(file)
+            }}
+          />
+          <RibbonButton
+            icon={<ImagePlus size={26} strokeWidth={1.6} />}
+            label="Thay ảnh"
+            title="Thay ảnh mới nhưng giữ nguyên vị trí, kích thước và hiệu ứng"
+            onClick={() => replaceImgRef.current?.click()}
+            disabled={!selected || isLocked}
+          />
+        </RibbonGroup>
+
+        <div className="ribbon-sep" />
+        <RibbonGroup label="Cắt ảnh">
+          <RibbonButton
+            icon={<Crop size={26} strokeWidth={1.6} />}
+            label="Cắt"
+            title={cropTip}
+            active={cropping}
+            onClick={onToggleCrop}
+            disabled={cropDisabled}
+          />
+          <RibbonButton
+            icon={<RotateCcw size={24} strokeWidth={1.6} />}
+            label="Bỏ cắt"
+            title="Khôi phục ảnh gốc ban đầu"
+            onClick={onResetCrop}
+            disabled={!selected || isLocked || !selected?.crop}
+          />
+        </RibbonGroup>
+
+        <div className="ribbon-sep" />
+        <RibbonGroup label="Khung & bo góc">
+          <Anchored
+            open={popup === 'photoFrame'}
+            minWidth={268}
+            trigger={
+              <RibbonButton
+                icon={<><Frame size={26} strokeWidth={1.6} /><Caret /></>}
+                label="Khung hình"
+                title="Chọn khung cắt ảnh"
+                onClick={() => toggle('photoFrame')}
+                active={popup === 'photoFrame'}
+                disabled={!selected || isLocked}
+              />
+            }
+          >
+            <div className="slide-ribbon-menu-title">Khung hình</div>
+            <div className="mb-1.5 px-1">
+              <button
+                type="button"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => {
+                  onUpdateSelected({ shape: undefined })
+                  close()
+                }}
+                className={cn(
+                  'w-full rounded border px-2 py-1 text-left text-[12px] font-medium transition-colors',
+                  !selected?.shape
+                    ? 'border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--accent)]'
+                    : 'border-[var(--border-strong)] bg-[var(--surface)] text-[var(--text)] hover:bg-[var(--bg-subtle)]',
+                )}
+              >
+                Không khung (bo góc tự do)
+              </button>
+            </div>
+            <div className="grid max-h-[260px] grid-cols-5 gap-1.5 overflow-y-auto p-1">
+              {PHOTO_FRAMES.map((f) => (
+                <button
+                  key={f.id}
+                  type="button"
+                  data-tip={f.label}
+                  aria-label={f.label}
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => {
+                    onUpdateSelected({ shape: f.id })
+                    close()
+                  }}
+                  className={cn(
+                    'flex aspect-square items-center justify-center rounded border p-1 transition-colors',
+                    selected?.shape === f.id
+                      ? 'border-[var(--accent)] bg-[var(--accent-soft)]'
+                      : 'border-transparent hover:bg-[var(--bg-subtle)]',
+                  )}
+                >
+                  <img src={FRAME_PLACEHOLDER} alt="" className="size-full object-cover" style={{ clipPath: f.clip }} />
+                </button>
+              ))}
+            </div>
+          </Anchored>
+          <div className="rb-col">
+            <label
+              className="rb-inline-label"
+              data-tip={isFramed ? 'Đang dùng khung hình — chọn Không khung để chỉnh bo góc' : 'Độ bo góc ảnh (0–50)'}
+            >
+              Bo góc
+              <input
+                type="range"
+                min={0}
+                max={50}
+                step={1}
+                value={radiusVal}
+                disabled={!selected || isFramed}
+                onChange={(e) => onUpdateSelected({ radius: Number(e.target.value) })}
+                aria-label="Bo góc"
+                className="w-20"
+              />
+              <span className="tnum w-6 text-right">{radiusVal}</span>
+            </label>
+            <label className="rb-inline-label" data-tip="Độ trong suốt ảnh">
+              Mờ
+              <input
+                type="range"
+                min={0}
+                max={90}
+                step={5}
+                value={transparency}
+                disabled={!selected}
+                onChange={(e) => onUpdateSelected({ opacity: 1 - Number(e.target.value) / 100 })}
+                aria-label="Độ trong suốt"
+                className="w-20"
+              />
+              <span className="tnum w-7 text-right">{transparency}%</span>
+            </label>
+          </div>
+        </RibbonGroup>
+
+        <div className="ribbon-sep" />
+        <RibbonGroup label="Đổ bóng">
+          <div className="grid grid-cols-2 gap-1">
+            {(['Không', 'Nhẹ', 'Vừa', 'Đậm'] as const).map((label, lvl) => {
+              const cur = (selected?.shadowLevel ?? 0) === lvl
+              return (
+                <button
+                  key={label}
+                  type="button"
+                  data-tip={`Đổ bóng: ${label}`}
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => onUpdateSelected({ shadowLevel: lvl as 0 | 1 | 2 | 3 })}
+                  disabled={!selected}
+                  className={cn(
+                    'h-[26px] rounded px-2 text-[11.5px] font-medium transition-colors',
+                    cur
+                      ? 'border border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--accent)]'
+                      : 'border border-[var(--border-strong)] bg-[var(--surface)] text-[var(--text)] hover:bg-[var(--bg-subtle)]',
+                  )}
+                >
+                  {label}
+                </button>
+              )
+            })}
+          </div>
+        </RibbonGroup>
+
+        <div className="ribbon-sep" />
+        <RibbonGroup label="Viền ảnh">
+          <Anchored
+            open={popup === 'imgBorderColor'}
+            minWidth={190}
+            trigger={
+              <RibbonButton
+                icon={
+                  <span className="flex flex-col items-center">
+                    <IconBorderAll size={24} />
+                    <span className="mt-0.5 h-1 w-6 rounded-sm" style={{ background: borderColor }} />
+                  </span>
+                }
+                label="Màu viền"
+                title="Chọn màu viền ảnh"
+                onClick={() => toggle('imgBorderColor')}
+                active={popup === 'imgBorderColor'}
+                disabled={!selected}
+              />
+            }
+          >
+            <ColorPalette
+              value={borderColor}
+              themeColors={[deck.theme.accent, deck.theme.fg]}
+              onPick={(c) => {
+                onUpdateSelected({ borderColor: c, ...(borderW === 0 ? { border: 2 } : {}) })
+                close()
+              }}
+              onClose={close}
+            />
+          </Anchored>
+          <div className="rb-col">
+            <Dropdown
+              value={String(borderW)}
+              options={[
+                { value: '0', label: 'Không viền' },
+                { value: '1', label: '1 px' },
+                { value: '2', label: '2 px' },
+                { value: '4', label: '4 px' },
+                { value: '6', label: '6 px' },
+              ]}
+              onPick={(v) => {
+                const n = Number(v)
+                onUpdateSelected({ border: n, ...(n > 0 && !selected?.borderColor ? { borderColor: deck.theme.fg } : {}) })
+              }}
+              disabled={!selected}
+              ariaLabel="Độ dày viền ảnh"
+              width={108}
+            />
+            <Dropdown
+              value={borderStyle}
+              options={[
+                { value: 'solid', label: 'Nét liền' },
+                { value: 'dashed', label: 'Nét đứt' },
+                { value: 'dotted', label: 'Nét chấm' },
+              ]}
+              onPick={(v) => onUpdateSelected({ borderStyle: v as 'solid' | 'dashed' | 'dotted' })}
+              disabled={!selected || borderW === 0}
+              ariaLabel="Kiểu nét viền ảnh"
+              width={108}
+            />
+          </div>
+        </RibbonGroup>
+
+        <div className="ribbon-sep" />
+        <RibbonGroup label="Thứ tự lớp">
+          <RibbonButton icon={<BringToFront size={26} strokeWidth={1.6} />} label="Đưa lên trên" onClick={() => onArrange('front')} disabled={!selected} />
+          <RibbonButton icon={<SendToBack size={26} strokeWidth={1.6} />} label="Đưa xuống dưới" onClick={() => onArrange('back')} disabled={!selected} />
+        </RibbonGroup>
+        <div className="ribbon-sep" />
+        <RibbonGroup label="Căn vào slide">
+          <div className="rb-row">
+            <RibbonIconButton icon={<IconObjAlignLeft size={17} />} title="Căn trái slide" onClick={() => onAlign('left')} disabled={!selected} />
+            <RibbonIconButton icon={<IconObjAlignCenterH size={17} />} title="Căn giữa ngang" onClick={() => onAlign('center')} disabled={!selected} />
+            <RibbonIconButton icon={<IconObjAlignRight size={17} />} title="Căn phải slide" onClick={() => onAlign('right')} disabled={!selected} />
+          </div>
+          <div className="rb-row">
+            <RibbonIconButton icon={<IconObjAlignTop size={17} />} title="Căn trên slide" onClick={() => onAlign('top')} disabled={!selected} />
+            <RibbonIconButton icon={<IconObjAlignMiddle size={17} />} title="Căn giữa dọc" onClick={() => onAlign('middle')} disabled={!selected} />
+            <RibbonIconButton icon={<IconObjAlignBottom size={17} />} title="Căn dưới slide" onClick={() => onAlign('bottom')} disabled={!selected} />
+          </div>
+        </RibbonGroup>
+        <div className="ribbon-sep" />
+        <RibbonGroup label="Lật">
+          <div className="rb-row">
+            <RibbonIconButton icon={<IconObjFlipH size={17} />} title="Lật ngang" active={!!selected?.flipX} onClick={() => onFlip('x')} disabled={!selected} />
+            <RibbonIconButton icon={<IconObjFlipV size={17} />} title="Lật dọc" active={!!selected?.flipY} onClick={() => onFlip('y')} disabled={!selected} />
+          </div>
+        </RibbonGroup>
+        <div className="ribbon-sep" />
+        <RibbonGroup label="Xoay">
+          <div className="rb-row">
+            <label className="rb-inline-label">
+              Góc
+              <input
+                className="rb-num-input"
+                type="number"
+                min={0}
+                max={359}
+                value={Math.round(selected?.rotation ?? 0)}
+                disabled={!selected}
+                onChange={(e) => onUpdateSelected({ rotation: ((Number(e.target.value) % 360) + 360) % 360 })}
+                aria-label="Góc xoay"
+              />
+              °
+            </label>
+          </div>
+        </RibbonGroup>
+
+        <div className="ribbon-sep" />
+        <RibbonGroup label="Đối tượng">
+          <RibbonButton icon={<IconTrash size={28} />} label="Xóa" onClick={onDeleteSelected} disabled={!selected} />
+        </RibbonGroup>
+      </>
+    )
+  }
+
   const rawBody = activeContext
-    ? renderElementFormat()
+    ? context?.id === 'pictureFormat'
+      ? renderPictureFormat()
+      : renderElementFormat()
     : activeTab === 'home'
       ? renderHome()
       : activeTab === 'insert'

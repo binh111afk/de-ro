@@ -1,7 +1,7 @@
 /** Slide — hiển thị phần tử (chữ tự co, hình, biểu đồ, ảnh thu nhỏ slide). */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { slideBgStyle } from '@/lib/slideBackground'
-import { FRAME_PLACEHOLDER, photoFrameClip, shapeClipOf } from '@/lib/slideShapes'
+import { FRAME_PLACEHOLDER, photoFrameClip, photoFrameRadius, shapeClipOf } from '@/lib/slideShapes'
 import { isPresetShape, isStrokeOnlyShape, presetPaths, prstOf } from '@/lib/slidePresets'
 import { slideIconById } from '@/lib/slideIconLibrary'
 import { graphicById, graphicMarkup } from '@/lib/slideGraphics'
@@ -337,6 +337,39 @@ export function ShapeText({ el, theme }: { el: SlideElement; theme: ResolvedThem
   )
 }
 
+/** Style của `<img>` bên trong khung ảnh: có `crop` thì phóng to + dời đúng vùng cắt, không thì `cover`. */
+export function imageImgStyle(crop?: SlideElement['crop']): React.CSSProperties {
+  if (!crop) return { width: '100%', height: '100%', objectFit: 'cover' }
+  const visW = Math.max(10, 100 - crop.l - crop.r)
+  const visH = Math.max(10, 100 - crop.t - crop.b)
+  return {
+    position: 'absolute',
+    left: `${(-crop.l / visW) * 100}%`,
+    top: `${(-crop.t / visH) * 100}%`,
+    width: `${(100 / visW) * 100}%`,
+    height: `${(100 / visH) * 100}%`,
+    maxWidth: 'none',
+    maxHeight: 'none',
+    objectFit: 'fill',
+  }
+}
+
+/** Tính viền, bo góc, clip-path và bóng đổ cho phần tử ảnh (dùng chung bản xem và bản sửa). */
+export function imageStyleParts(el: SlideElement, theme: ResolvedTheme) {
+  const clip = photoFrameClip(el.shape)
+  const frameRadius = photoFrameRadius(el.shape)
+  const borderW = el.border ?? 0
+  const borderColor = el.borderColor ?? theme.borderColor ?? theme.fg
+  const borderStyle = el.borderStyle ?? 'solid'
+  const borderRadius = frameRadius ?? (clip ? 0 : el.radius !== undefined ? `${el.radius / 10}cqw` : '1cqw')
+  // Khung cắt đa giác (clip-path polygon) không dùng được viền CSS trực tiếp; các khung bo góc thuần dùng borderRadius để viền bám sát mép.
+  const canCssBorder = !clip || !!frameRadius
+  const cssBorder = borderW > 0 && canCssBorder ? `max(1px, ${borderW / 10}cqw) ${borderStyle} ${borderColor}` : undefined
+  const polygonBorder = borderW > 0 && !!clip && !frameRadius && el.shape !== 'pill'
+  const shadowFilter = SHADOW_FILTERS[el.shadowLevel ?? 0]
+  return { clip, frameRadius, borderW, borderColor, borderStyle, borderRadius, cssBorder, polygonBorder, shadowFilter }
+}
+
 export function SlideElView({ el, theme, revealStep }: { el: SlideElement; theme: ResolvedTheme; revealStep?: number }) {
   const style: React.CSSProperties = {
     position: 'absolute',
@@ -431,19 +464,23 @@ export function SlideElView({ el, theme, revealStep }: { el: SlideElement; theme
       </div>
     )
 
-  if (el.type === 'image')
-    return (
+  if (el.type === 'image') {
+    const parts = imageStyleParts(el, theme)
+    const inner = (
       <div
         style={{
-          ...style,
+          position: 'relative',
+          boxSizing: 'border-box',
+          width: '100%',
+          height: '100%',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           // khung chờ ảnh ở bản xem là panel theme (nét đứt chỉ có ở bản chỉnh sửa)
           background: el.src ? undefined : `linear-gradient(135deg, ${theme.surface} 0 48%, ${theme.accent}22 48% 54%, ${theme.surface} 54% 100%)`,
-          border: el.src ? undefined : `1px solid ${theme.accent}66`,
-          borderRadius: photoFrameClip(el.shape) ? 0 : '1cqw',
-          clipPath: photoFrameClip(el.shape),
+          border: parts.cssBorder ?? (el.src || parts.clip ? undefined : `1px solid ${theme.accent}66`),
+          borderRadius: parts.polygonBorder ? 0 : parts.borderRadius,
+          clipPath: parts.frameRadius ? undefined : parts.clip,
           overflow: 'hidden',
           color: el.src ? theme.muted : theme.accent,
           fontSize: '1.9cqw',
@@ -453,16 +490,40 @@ export function SlideElView({ el, theme, revealStep }: { el: SlideElement; theme
         }}
       >
         {el.src ? (
-          <img
-            src={el.src}
-            alt=""
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          />
+          <img src={el.src} alt="" style={imageImgStyle(el.crop)} />
+        ) : parts.clip ? (
+          <img src={FRAME_PLACEHOLDER} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         ) : (
-          photoFrameClip(el.shape) ? <img src={FRAME_PLACEHOLDER} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : 'Ảnh minh hoạ'
+          'Ảnh minh hoạ'
         )}
       </div>
     )
+    return (
+      <div
+        style={{
+          ...style,
+          opacity: el.opacity,
+          filter: parts.shadowFilter,
+        }}
+      >
+        {parts.polygonBorder ? (
+          <div
+            style={{
+              width: '100%',
+              height: '100%',
+              clipPath: parts.clip,
+              background: parts.borderColor,
+              padding: `max(1px, ${parts.borderW / 10}cqw)`,
+            }}
+          >
+            {inner}
+          </div>
+        ) : (
+          inner
+        )}
+      </div>
+    )
+  }
 
   if (el.type === 'table') {
     const headerFg = readableTextOn(theme.accent)

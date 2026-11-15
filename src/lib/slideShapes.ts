@@ -115,6 +115,25 @@ export const PHOTO_FRAMES: Array<{ id: string; label: string; clip: string }> = 
 
 export const photoFrameClip = (shape?: string): string | undefined => PHOTO_FRAMES.find((f) => f.id === shape)?.clip
 
+/**
+ * Các khung ảnh dạng bo góc thuần (`inset(0 round ...)` / `ellipse`) có thể vẽ bằng `border-radius`
+ * thay cho `clip-path`, nhờ đó viền CSS (`solid`/`dashed`/`dotted`) bám sát theo mép khung.
+ */
+const FRAME_RADIUS: Record<string, string> = {
+  rect: '0',
+  ellipse: '50%',
+  round: '12%',
+  'round-lg': '28%',
+  arch: '50% 50% 0 0 / 35% 35% 0 0',
+  'arch-down': '0 0 50% 50% / 0 0 35% 35%',
+  leaf: '50% 0',
+  tab: '20% 20% 0 0',
+  corner: '30% 0 30% 0',
+  'half-circle': '50% 50% 0 0 / 100% 100% 0 0',
+  quarter: '100% 0 0 0',
+}
+export const photoFrameRadius = (shape?: string): string | undefined => (shape ? FRAME_RADIUS[shape] : undefined)
+
 /** Ảnh chờ của khung ảnh (giấy kem, mặt trời, núi gấp khúc — theo màu đất sét của app), dùng ở panel và khung trống trên slide. */
 export const FRAME_PLACEHOLDER = `data:image/svg+xml,${encodeURIComponent(
   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="s" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fbefe4"/><stop offset="1" stop-color="#f3d9c4"/></linearGradient></defs><rect width="160" height="160" fill="url(#s)"/><circle cx="108" cy="54" r="15" fill="#f2b37a"/><path d="M-4 132 46 74l30 34 18-20 70 44v52H-4z" fill="#d98a63"/><path d="M-4 150 58 104l26 18 22-14 58 42v14H-4z" fill="#b5654a"/></svg>',
