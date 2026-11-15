@@ -82,6 +82,28 @@ export const revealStyle = (shown: boolean, anim: SlideElement['anim'] = 'fade',
 })
 
 /** Lớp phủ cả slide bọc một phần tử; zoom phóng quanh tâm phần tử chứ không quanh tâm slide. */
+/** Chạy thử hiệu ứng ngay trên bản soạn (kiểu Canva): phủ bản sao phần tử lên đúng chỗ, ẩn bản thật, diễn một lần rồi tự tắt. */
+function AnimPreview({ el, theme, onDone }: { el: SlideElement; theme: ResolvedTheme; onDone: () => void }) {
+  const [shown, setShown] = useState(false)
+  useEffect(() => {
+    // trình duyệt vẽ tư thế ẩn trước, rồi mới chuyển sang hiện để transition chạy
+    const show = window.setTimeout(() => setShown(true), 40)
+    const t = window.setTimeout(onDone, (el.animMs ?? 450) + 300)
+    return () => {
+      window.clearTimeout(show)
+      window.clearTimeout(t)
+    }
+  }, [el, onDone])
+  return (
+    <>
+      <style>{`[data-el-id="${CSS.escape(el.id)}"]{visibility:hidden}`}</style>
+      <RevealLayer el={el} shown={shown}>
+        <SlideElView el={el} theme={theme} />
+      </RevealLayer>
+    </>
+  )
+}
+
 function RevealLayer({ el, shown, children }: { el: SlideElement; shown: boolean; children: React.ReactNode }) {
   return (
     <div
@@ -242,6 +264,9 @@ export function SlideEditor({
   const [snapOn, setSnapOn] = useState(() => readPref('slide-snap', true))
   useEffect(() => setSnapEnabled(snapOn), [snapOn])
   const [formatPaneOpen, setFormatPaneOpen] = useState(false)
+  /** phần tử đang chạy thử hiệu ứng (nonce để chọn lại cùng hiệu ứng vẫn chạy lại) */
+  const [animPreview, setAnimPreview] = useState<{ id: string; nonce: number } | null>(null)
+  const endAnimPreview = useCallback(() => setAnimPreview(null), [])
   const [clipboardElement, setClipboardElement] = useState<SlideElement | null>(null)
   /** sao chép định dạng (cây cọ): once = áp 1 lần rồi tắt, lock = khoá áp nhiều lần */
   const [painter, setPainter] = useState<{ mode: 'once' | 'lock'; sample: TextFormatSample } | null>(null)
@@ -1120,6 +1145,8 @@ export function SlideEditor({
               s.id === currentSlide.id ? { ...s, elements: applyElementAnim(s.elements, selectedElement.id, action) } : s,
             ),
           })
+          if (action.type === 'set' || action.type === 'speed' || action.type === 'byLine')
+            setAnimPreview({ id: selectedElement.id, nonce: Date.now() })
         }}
         onAnimate={(mode, allSlides) =>
           commitDeck({
@@ -1276,6 +1303,12 @@ export function SlideEditor({
                       ))
                   : null}
                 <SnapGuides />
+                {animPreview
+                  ? (() => {
+                      const el = currentSlide.elements.find((e) => e.id === animPreview.id)
+                      return el?.anim ? <AnimPreview key={animPreview.nonce} el={el} theme={theme} onDone={endAnimPreview} /> : null
+                    })()
+                  : null}
                 {readableElements(currentSlide, theme).map((el) => (
                   <EditableEl
                     key={el.id}
