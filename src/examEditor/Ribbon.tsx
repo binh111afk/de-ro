@@ -10,7 +10,7 @@
  *
  * Mọi icon là SVG stroke `currentColor` từ bộ icon GenOffice — KHÔNG dùng emoji.
  */
-import { Fragment, useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
+import { Fragment, Suspense, useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import type { PageMargins } from './ExamEditor'
 import type { Editor } from '@tiptap/core'
 import {
@@ -25,7 +25,9 @@ import { cn } from '@/lib/cn'
 import { BookMarked } from 'lucide-react'
 import { MonitorPlay, Blocks, ListTree, TableCellsMerge, TableCellsSplit, Wrench } from 'lucide-react'
 import { FileMenu } from './FileMenu'
-import { BankModal } from './BankModal'
+import { lazyPage } from '@/lib/lazyPage'
+// ngân hàng câu hỏi (kéo theo công cụ vẽ hình ~100 KB gzip) nạp khi mở
+const BankModal = lazyPage(() => import('./BankModal').then((m) => ({ default: m.BankModal })))
 import { templateById, insertBlockTemplate } from './templates'
 import { applyFormatAttrs, getSelectedBlock, syncDomSelection, type FormatState } from './formatState'
 import { TablePicker, SymbolPicker, ImagePicker, EquationDialog, LinkDialog } from './InsertMenus'
@@ -1001,7 +1003,11 @@ export function Ribbon({
 
       {editor && dialog === 'link' && <LinkDialog editor={editor} onClose={() => setDialog(null)} />}
       {editor && dialog === 'equation' && <EquationDialog editor={editor} onClose={() => setDialog(null)} />}
-      {editor && bankOpen && <BankModal editor={editor} onClose={() => setBankOpen(false)} />}
+      {editor && bankOpen && (
+        <Suspense fallback={null}>
+          <BankModal editor={editor} onClose={() => setBankOpen(false)} />
+        </Suspense>
+      )}
     </div>
   )
 }

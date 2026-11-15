@@ -9,7 +9,7 @@ import { useSession } from '@/lib/useSession'
 import { aiPointsLeft } from '@/lib/llm'
 import { apiFetch } from '@/lib/apiFetch'
 import { rest } from '@/lib/documents'
-import { currentSession } from '@/lib/auth'
+import { currentSession, getSession } from '@/lib/auth'
 import { ProgressBar } from '@/components/ProgressBar'
 import { Avatar } from '@/components/Avatar'
 
@@ -199,14 +199,35 @@ type Quota = { used: number; limit: number; base?: number; credits?: number }
 const fmt = (n: number) => n.toLocaleString('vi-VN')
 
 /** Điểm AI thật (GET /api/llm): số dư điểm (quà chào mừng + điểm cộng/nạp) + hạn mức tháng nếu có. */
+type QuotaState = Quota | null | 'loading' | 'error' | 'unlimited'
+/** nhớ số lần trước theo tài khoản: mở Hồ sơ là thấy số ngay, số mới về thì thay (không chờ máy chủ) */
+const quotaKey = () => `dethinhbien-quota:${getSession()?.user.id ?? ''}`
+function cachedQuota(): QuotaState {
+  try {
+    const raw = localStorage.getItem(quotaKey())
+    return raw ? (JSON.parse(raw) as QuotaState) : 'loading'
+  } catch {
+    return 'loading'
+  }
+}
+
 function CreditCard() {
-  const [q, setQ] = useState<Quota | null | 'loading' | 'error' | 'unlimited'>('loading')
+  const [q, setQ] = useState<QuotaState>(cachedQuota)
   useEffect(() => {
     let alive = true
-    apiFetch('/api/llm')
+    // /api/quota: hàm nhỏ chỉ đọc điểm, khởi động nhanh hơn nhiều so với /api/llm
+    apiFetch('/api/quota')
       .then((r) => (r.ok ? r.json() : Promise.reject()))
-      .then((d: { quota: Quota | null; unlimited?: boolean }) => alive && setQ(d.unlimited ? 'unlimited' : d.quota))
-      .catch(() => alive && setQ('error'))
+      .then((d: { quota: Quota | null; unlimited?: boolean }) => {
+        const next: QuotaState = d.unlimited ? 'unlimited' : d.quota
+        try {
+          localStorage.setItem(quotaKey(), JSON.stringify(next))
+        } catch {
+          // chặn localStorage: chỉ mất phần nhớ số
+        }
+        if (alive) setQ(next)
+      })
+      .catch(() => alive && setQ((cur) => (cur === 'loading' ? 'error' : cur)))
     return () => {
       alive = false
     }

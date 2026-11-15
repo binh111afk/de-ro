@@ -10,6 +10,7 @@ import { uploadMiddleware, fileMiddleware } from './server/r2'
 import { attemptMiddleware } from './server/attempt'
 import { examMiddleware } from './server/exam'
 import { adminMiddleware } from './server/admin'
+import { quotaMiddleware } from './server/quota'
 
 // Nạp `.env` cho proxy. Không dùng `loadEnv` của Vite vì nó để process.env
 // thắng file — một biến LLM_API_KEY cũ trong shell sẽ đè key người dùng vừa
@@ -23,6 +24,7 @@ export default defineConfig({
     {
       name: 'llm-proxy',
       configureServer(server) {
+        server.middlewares.use('/api/quota', quotaMiddleware)
         server.middlewares.use('/api/llm', llmMiddleware)
         server.middlewares.use('/api/extract', extractMiddleware)
         server.middlewares.use('/api/search', searchMiddleware)

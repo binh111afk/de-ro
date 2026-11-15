@@ -26,10 +26,7 @@ import { Ribbon } from '@/examEditor/Ribbon'
 import { TabStrip } from '@/examEditor/TabStrip'
 import { StartTab } from '@/examEditor/StartTab'
 import { NavPanel, type PaneTab } from '@/examEditor/NavPanel'
-import { ToolModal } from '@/examEditor/tools/ToolModal'
-import { svgToPng } from '@/lib/plot'
-import { parseToolJson, readToolDoc, type ToolDoc, type ToolImage } from '@/lib/toolSpec'
-import { TOOL_DOC_IMAGE, figureDoc, figureImageAttrs, pngifyToolImages, toolImageWidth } from '@/examEditor/toolImages'
+import type { ToolDoc, ToolImage } from '@/lib/toolSpec'
 
 /** chỗ đặt đồ thị: thay ảnh cũ, hoặc chèn thành đoạn mới tại vị trí giữa hai khối */
 type PlotTarget = { replace: number } | { after: number }
@@ -92,6 +89,19 @@ const BoardEditor = lazyPage(() => import('@/pages/Board'))
 const ExamEditor = lazyPage(() => import('@/examEditor/ExamEditor').then((m) => ({ default: m.ExamEditor })))
 const FindPanel = lazyPage(() => import('@/examEditor/FindPanel').then((m) => ({ default: m.FindPanel })))
 const DocSelectionAi = lazyPage(() => import('@/examEditor/DocSelectionAi').then((m) => ({ default: m.DocSelectionAi })))
+const ToolModal = lazyPage(() => import('@/examEditor/tools/ToolModal').then((m) => ({ default: m.ToolModal })))
+
+/**
+ * Công cụ vẽ hình (toolSpec ~100 KB gzip: hình học, mạch điện, phả hệ…) nạp sau, không chặn lúc mở trang.
+ * Tải sẵn ngay khi trình soạn sẵn sàng (xem effect gọi `loadTools`), nên lúc AI trả đề có hình thì đã có.
+ */
+type ToolMods = { ti: typeof import('@/examEditor/toolImages'); ts: typeof import('@/lib/toolSpec'); plot: typeof import('@/lib/plot') }
+let tools: ToolMods | null = null
+let toolsLoading: Promise<ToolMods> | null = null
+const loadTools = (): Promise<ToolMods> =>
+  (toolsLoading ??= Promise.all([import('@/examEditor/toolImages'), import('@/lib/toolSpec'), import('@/lib/plot')]).then(
+    ([ti, ts, plot]) => (tools = { ti, ts, plot }),
+  ))
 const AiPanel = lazyPage(() => import('@/examEditor/AiPanel').then((m) => ({ default: m.AiPanel })))
 const SlideEditor = lazyPage(() => loadSlideEditor().then((m) => ({ default: m.SlideEditor })))
 
@@ -189,9 +199,10 @@ function expandFigures(raw: unknown): unknown {
   return raw.flatMap((item) => {
     if (!item || typeof item !== 'object' || !('figure' in item)) return [item]
     const { figure, ...block } = item as Record<string, unknown>
-    const doc = figureDoc(figure)
+    // công cụ chưa tải (hiếm: tải sẵn khi mở trình soạn) thì chèn đề không kèm hình
+    const doc = tools?.ti.figureDoc(figure)
     if (!doc) return [block]
-    const { src, alt, width, plot } = figureImageAttrs(doc)
+    const { src, alt, width, plot } = tools!.ti.figureImageAttrs(doc)
     // câu trắc nghiệm: ảnh vào cuối đề bài (dòng riêng) để nằm TRƯỚC phương án A–D
     if (block.type === 'question') {
       const t = block.text
@@ -691,7 +702,7 @@ export default function ComposeDoc() {
 
       const blocks = sanitizeBlocks(expandFigures(raw.blocks))
       if (blocks.some((b) => b.type === 'paragraph' && Array.isArray(b.text) && b.text.some((s) => s.image?.plot)))
-        setTimeout(() => void pngifyToolImages(editor), 0)
+        setTimeout(() => void loadTools().then(({ ti }) => ti.pngifyToolImages(editor)), 0)
       const patches = sanitizePatches(raw.patch)
       const warn = typeof raw.warning === 'string' && raw.warning.trim() ? ` Lưu ý: ${raw.warning.trim().slice(0, 300)}` : ''
       const action =
@@ -787,12 +798,13 @@ export default function ComposeDoc() {
     async (img: ToolImage, target?: PlotTarget) => {
       if (!editor || editor.isDestroyed) return
       try {
-        const src = await svgToPng(img.svg, img.width, img.height)
+        const { ti, ts, plot: plotLib } = await loadTools()
+        const src = await plotLib.svgToPng(img.svg, img.width, img.height)
         if (editor.isDestroyed) return
-        const doc = readToolDoc(img.svg)
+        const doc = ts.readToolDoc(img.svg)
         const plot = JSON.stringify(doc)
-        const look = TOOL_DOC_IMAGE[doc?.kind ?? 'graph']
-        const attrs = { src, alt: look.alt, width: toolImageWidth(doc?.kind ?? 'graph', img.width), plot }
+        const look = ti.TOOL_DOC_IMAGE[doc?.kind ?? 'graph']
+        const attrs = { src, alt: look.alt, width: ti.toolImageWidth(doc?.kind ?? 'graph', img.width), plot }
         const node = target && 'replace' in target ? editor.state.doc.nodeAt(target.replace) : null
         if (target && 'replace' in target && node?.type.name === 'image') {
           editor.view.dispatch(editor.state.tr.setNodeMarkup(target.replace, undefined, { ...node.attrs, src, plot }))
@@ -821,10 +833,16 @@ export default function ComposeDoc() {
     const onDbl = (e: MouseEvent) => {
       const img = (e.target as HTMLElement).closest?.('img[data-plot]')
       if (!img) return
-      const doc = parseToolJson(img.getAttribute('data-plot'))
-      if (doc) setPlotEdit({ doc, target: { replace: editor.view.posAtDOM(img.closest('.exam-image') ?? img, 0) } })
+      const raw = img.getAttribute('data-plot')
+      const pos = editor.view.posAtDOM(img.closest('.exam-image') ?? img, 0)
+      void loadTools().then(({ ts }) => {
+        const doc = ts.parseToolJson(raw)
+        if (doc) setPlotEdit({ doc, target: { replace: pos } })
+      })
     }
     dom.addEventListener('dblclick', onDbl)
+    // trình soạn đã sẵn sàng: tải sẵn công cụ vẽ hình lúc rảnh (AI chèn hình, nhấp đúp sửa hình)
+    void loadTools()
     return () => dom.removeEventListener('dblclick', onDbl)
   }, [editor])
 
@@ -1180,6 +1198,7 @@ export default function ComposeDoc() {
         />
         </Suspense>
         {plotEdit && (
+          <Suspense fallback={null}>
           <ToolModal
             kind={plotEdit.doc.kind}
             initial={plotEdit.doc.spec}
@@ -1190,6 +1209,7 @@ export default function ComposeDoc() {
               setPlotEdit(null)
             }}
           />
+          </Suspense>
         )}
         {/* AI dock (phải, như soạn slide) */}
         <AiDock open={aiOpen} onToggle={() => setAiOpen((v) => !v)} width={360} side="right">
