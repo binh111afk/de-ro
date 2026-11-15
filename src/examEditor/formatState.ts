@@ -5,7 +5,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { Editor } from '@tiptap/core'
 import type { Node as PMNode } from '@tiptap/pm/model'
-import { TextSelection } from '@tiptap/pm/state'
 import type { FormatAttrs } from '@/data/docTypes'
 
 export interface FormatState {
@@ -164,7 +163,8 @@ export function syncDomSelection(editor: Editor): void {
     const from = view.posAtDOM(range.startContainer, range.startOffset)
     const to = view.posAtDOM(range.endContainer, range.endOffset)
     if (from !== to && (editor.state.selection.from !== from || editor.state.selection.to !== to)) {
-      view.dispatch(editor.state.tr.setSelection(TextSelection.create(editor.state.doc, from, to)))
+      // lệnh TipTap (không import lớp ProseMirror) để trang bảng vẽ/slide không kéo theo cả bộ ProseMirror
+      editor.commands.setTextSelection({ from, to })
     }
   } catch {
     // View may not be mounted, or DOM selection may be between nodes.

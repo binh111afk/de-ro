@@ -11,7 +11,7 @@ import { Blocks, ChevronLeft, ChevronRight, ListTree, Wrench, X } from 'lucide-r
 import { NavRailIndicator } from './NavRailIndicator'
 import { PanelContentTransition } from './PanelContentTransition'
 import { SheetTabs } from './SheetTabs'
-import { ToolsPanel } from './tools/ToolsPanel'
+import { ToolsPanel } from './tools/LazyToolsPanel'
 import type { PlotImage } from './tools/GraphToolModal'
 import type { JSONContent } from '@tiptap/core'
 import { buildTocFromDoc, type TocEntry } from './convert'

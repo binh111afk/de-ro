@@ -5,12 +5,14 @@
  * Ctrl + lăn chuột để phóng to. Giao diện viết lại bằng tiếng Việt theo token của app.
  * Nội dung tự lưu trong localStorage theo id tab.
  */
-import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
+import { Suspense, useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { TrashIcon } from '@/components/appIcons'
 import { alignBlocks, centerOf, clone, DEFAULT_STYLE, groupBlocks, handlePositions, hasPoints, hitTest, isDarkPaper, isLinear, isPage, localBounds, measureText, mutate, newId, newSeed, paperBg, rotate, unionBounds, worldBounds, fontOf, LINE_HEIGHT, inPolygon, type AlignKind, type Bounds, type El, type Handle, type Kind, type Paper, type PenKind, type Pt, type Style, isClosedStroke, type FillStyle, withGroups, copyEls } from './scene'
 import { dropFromCache, LASER_LIFE, render, renderLive, setImageLoadHandler, type Guide, type LaserTrail, type View } from './render'
-import { AiPanel } from '@/examEditor/AiPanel'
-import { ToolsPanel } from '@/examEditor/tools/ToolsPanel'
+import { lazyPage } from '@/lib/lazyPage'
+// trợ lý AI kéo theo dữ liệu slide (~160 KB gzip): tải khi mở tab AI, bảng vẽ hiện trước
+const AiPanel = lazyPage(() => import('@/examEditor/AiPanel').then((m) => ({ default: m.AiPanel })))
+import { ToolsPanel } from '@/examEditor/tools/LazyToolsPanel'
 import { svgDataUrl } from '@/lib/plot'
 import { renderTool, readToolDoc, parseToolJson, type ToolDoc, type ToolImage } from '@/lib/toolSpec'
 import { ToolModal } from '@/examEditor/tools/ToolModal'
@@ -2887,7 +2889,7 @@ export default function BoardEditor({ id }: { id: string }) {
           <div className="relative min-h-0 flex-1">
             {mounted.has('ai') && (
               <div className={`absolute inset-0 flex flex-col [&>.ai-panel]:min-h-0 [&>.ai-panel]:w-full [&>.ai-panel]:flex-1 [&>.ai-panel]:border-0 [&_.ai-panel-header]:hidden ${shownSide === 'ai' ? '' : 'invisible'}`}>
-                <AiPanel mode="board" attachKey={aiKey} onBoardOps={applyBoardOps} contextSummary={side === 'ai' ? boardSummary() : ''} />
+                <Suspense fallback={null}><AiPanel mode="board" attachKey={aiKey} onBoardOps={applyBoardOps} contextSummary={side === 'ai' ? boardSummary() : ''} /></Suspense>
               </div>
             )}
             {mounted.has('tools') && (

@@ -32,7 +32,9 @@ import { TablePicker, SymbolPicker, ImagePicker, EquationDialog, LinkDialog } fr
 import { Dropdown } from './Dropdown'
 import { useAnchoredPopover, popoverStyle } from './useAnchoredPopover'
 import { PhoneRibbon, TabletRibbonBody, type RibbonGroupDef } from './RibbonAdaptive'
-import { deleteCurrentTable, deleteCurrentTableColumn, deleteCurrentTableRow, deleteCurrentBlock } from './deleteActions'
+// deleteActions kéo theo lõi TipTap/ProseMirror: nạp lúc bấm (khi đó ExamEditor đã tải sẵn) để trang chung nhẹ
+const del = (fn: 'deleteCurrentTable' | 'deleteCurrentTableColumn' | 'deleteCurrentTableRow' | 'deleteCurrentBlock', editor: Editor) =>
+  void import('./deleteActions').then((m) => m[fn](editor))
 import {
   IconAlignCenter,
   IconAlignJustify,
@@ -607,7 +609,7 @@ export function Ribbon({
               <RibbonIconButton icon={<IconSearch size={16} />} title="Tìm" disabled={disabled} onClick={onFind} />
               <RibbonIconButton icon={<IconReplace size={16} />} title="Thay thế" disabled={disabled} onClick={onReplace} />
               <RibbonIconButton icon={<IconSelectAll size={16} />} title="Chọn tất cả" disabled={disabled} onClick={() => chain()?.selectAll().run()} />
-              <RibbonIconButton icon={<IconTrash size={16} />} title="Xóa khối đang chọn" disabled={disabled} onClick={() => live && deleteCurrentBlock(live)} />
+              <RibbonIconButton icon={<IconTrash size={16} />} title="Xóa khối đang chọn" disabled={disabled} onClick={() => live && del('deleteCurrentBlock', live)} />
             </div>
           </div>
         ),
@@ -651,9 +653,9 @@ export function Ribbon({
               onClick={() => live?.chain().focus().splitCell().run()}
             />
             <div className="rb-col rb-col--icons">
-              <RibbonIconButton icon={<IconRowDelete size={16} />} title="Xóa hàng" disabled={disabled} onClick={() => live && deleteCurrentTableRow(live)} />
-              <RibbonIconButton icon={<IconColDelete size={16} />} title="Xóa cột" disabled={disabled} onClick={() => live && deleteCurrentTableColumn(live)} />
-              <RibbonIconButton icon={<IconTableDelete size={16} />} title="Xóa bảng" disabled={disabled} onClick={() => live && deleteCurrentTable(live)} />
+              <RibbonIconButton icon={<IconRowDelete size={16} />} title="Xóa hàng" disabled={disabled} onClick={() => live && del('deleteCurrentTableRow', live)} />
+              <RibbonIconButton icon={<IconColDelete size={16} />} title="Xóa cột" disabled={disabled} onClick={() => live && del('deleteCurrentTableColumn', live)} />
+              <RibbonIconButton icon={<IconTableDelete size={16} />} title="Xóa bảng" disabled={disabled} onClick={() => live && del('deleteCurrentTable', live)} />
             </div>
           </>
         ),

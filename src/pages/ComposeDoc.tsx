@@ -20,14 +20,12 @@ import { PageErrorBoundary } from '@/components/PageErrorBoundary'
 import { useLocation, useNavigate } from 'react-router-dom'
 import type { Editor } from '@tiptap/core'
 import type { JSONContent } from '@tiptap/core'
-import { Selection } from '@tiptap/pm/state'
-import { ExamEditor, pageGeometry, marginsOf, CM, type PageSetup } from '@/examEditor/ExamEditor'
+import type { Selection } from '@tiptap/pm/state'
+import { pageGeometry, marginsOf, CM, type PageSetup } from '@/examEditor/pageSetup'
 import { Ribbon } from '@/examEditor/Ribbon'
 import { TabStrip } from '@/examEditor/TabStrip'
-import { AiPanel } from '@/examEditor/AiPanel'
 import { StartTab } from '@/examEditor/StartTab'
 import { NavPanel, type PaneTab } from '@/examEditor/NavPanel'
-import { DocSelectionAi } from '@/examEditor/DocSelectionAi'
 import { ToolModal } from '@/examEditor/tools/ToolModal'
 import { svgToPng } from '@/lib/plot'
 import { parseToolJson, readToolDoc, type ToolDoc, type ToolImage } from '@/lib/toolSpec'
@@ -39,8 +37,6 @@ import { insertBlockTemplate, type BlockTemplate } from '@/examEditor/templates'
 import { AiDock, Ruler, useViewportSize } from '@/examEditor/Layout'
 import { tipTapToBlocks, blocksToTipTap } from '@/examEditor/convert'
 import { useFormatState, applyFormatAttrs } from '@/examEditor/formatState'
-import { FindPanel } from '@/examEditor/FindPanel'
-import { exportDocBlocks, printDoc } from '@/examEditor/exportBlocks'
 import { useComposeStore } from '@/store/compose'
 import { useDocStore } from '@/store/docs'
 import { useOnline } from '@/store/online'
@@ -92,6 +88,11 @@ function restoreSession() {
 // trình soạn slide (pptxgen, bố cục, trình chiếu…) chỉ tải khi mở tab slide
 const loadSlideEditor = () => import('@/examEditor/SlideEditor')
 const BoardEditor = lazyPage(() => import('@/pages/Board'))
+// trình soạn văn bản (TipTap) và trợ lý AI (kéo theo dữ liệu slide) tải sau: tab bảng vẽ/slide không cần chờ
+const ExamEditor = lazyPage(() => import('@/examEditor/ExamEditor').then((m) => ({ default: m.ExamEditor })))
+const FindPanel = lazyPage(() => import('@/examEditor/FindPanel').then((m) => ({ default: m.FindPanel })))
+const DocSelectionAi = lazyPage(() => import('@/examEditor/DocSelectionAi').then((m) => ({ default: m.DocSelectionAi })))
+const AiPanel = lazyPage(() => import('@/examEditor/AiPanel').then((m) => ({ default: m.AiPanel })))
 const SlideEditor = lazyPage(() => loadSlideEditor().then((m) => ({ default: m.SlideEditor })))
 
 /** khung giữ chỗ lúc trình soạn slide chưa tải xong: có sẵn thanh ribbon + vùng slide mờ, không để trắng phía trên */
@@ -524,8 +525,8 @@ export default function ComposeDoc() {
   const newDocAndOpen = useCallback(
     (reuseEmpty: boolean) => {
       if (reuseEmpty) {
-        // chỉ dùng lại tab ĐỀ trống — tab slide không có `contents` nên trước đây bị coi nhầm là đề trống
-        const only = tabs.length === 1 && tabs[0].kind !== 'slide' ? tabs[0] : null
+        // chỉ dùng lại tab ĐỀ trống — tab slide/bảng vẽ không có `contents` nên trước đây bị coi nhầm là đề trống
+        const only = tabs.length === 1 && tabs[0].kind !== 'slide' && tabs[0].kind !== 'board' ? tabs[0] : null
         const empty =
           only && !only.dirty && (contents[only.id]?.content?.length ?? 0) === 0
         if (empty) {
@@ -613,6 +614,7 @@ export default function ComposeDoc() {
 
   const handleExportWord = useCallback(async () => {
     if (!activeDoc) return
+    const { exportDocBlocks } = await import('@/examEditor/exportBlocks') // xuất Word nạp lúc bấm
     await exportDocBlocks(activeDoc, { landscape: pageSetup.orientation === 'landscape', margins: marginsOf(pageSetup) })
   }, [activeDoc, pageSetup])
 
@@ -671,7 +673,7 @@ export default function ComposeDoc() {
 
   const handlePrint = useCallback(() => {
     if (!activeDoc) return
-    printDoc(activeDoc, { landscape: pageSetup.orientation === 'landscape', margins: marginsOf(pageSetup) })
+    void import('@/examEditor/exportBlocks').then(({ printDoc }) => printDoc(activeDoc, { landscape: pageSetup.orientation === 'landscape', margins: marginsOf(pageSetup) }))
   }, [activeDoc, pageSetup])
 
   /** AI trả về JSON đề → áp theo `action` (replace / append / patch), trả câu tóm tắt. */
@@ -703,7 +705,9 @@ export default function ComposeDoc() {
           editor.commands.setContent(blocksToTipTap(blocks))
           // setContent thay cả tài liệu nên selection cũ được map lại tuỳ vị trí
           // → có thể rơi vào khối bất kỳ. Đặt lại con trỏ về đầu đề.
-          editor.commands.setTextSelection(Selection.near(editor.state.doc.resolve(1)).from)
+          // lấy lớp Selection từ chính editor (không import runtime ProseMirror vào trang chung)
+          const Sel = editor.state.selection.constructor as typeof Selection
+          editor.commands.setTextSelection(Sel.near(editor.state.doc.resolve(1)).from)
           // Luôn báo việc đã làm; `note` của model hay lặp lại đúng câu prompt.
           return `Đã soạn xong đề (${blocks.length} khối).${warn}`
         }
@@ -1071,7 +1075,7 @@ export default function ComposeDoc() {
         {/* sân soạn (giữa) */}
         <div className="compose-center">
           {findTab && editor && (
-            <FindPanel editor={editor} initialTab={findTab} onClose={() => setFindTab(null)} />
+            <Suspense fallback={null}><FindPanel editor={editor} initialTab={findTab} onClose={() => setFindTab(null)} /></Suspense>
           )}
           <div className="compose-scroll" ref={stageRef}>
             {/* `zoom` (không phải transform) để thước kẻ và trang giấy co cùng
@@ -1096,14 +1100,16 @@ export default function ComposeDoc() {
                   }
                 />
               )}
-              <ExamEditor
-                key={activeId ?? 'none'}
-                content={activeContent}
-                onChange={onChange}
-                onReady={handleEditorReady}
-                pageSetup={pageSetup}
-                isReflow={isReflow}
-              />
+              <Suspense fallback={null}>
+                <ExamEditor
+                  key={activeId ?? 'none'}
+                  content={activeContent}
+                  onChange={onChange}
+                  onReady={handleEditorReady}
+                  pageSetup={pageSetup}
+                  isReflow={isReflow}
+                />
+              </Suspense>
             </div>
           </div>
 
@@ -1160,6 +1166,7 @@ export default function ComposeDoc() {
         </div>
 
         {/* nav pane (phải) */}
+        <Suspense fallback={null}>
         <DocSelectionAi
           editor={editor}
           context={activeDoc ? `đề "${activeDoc.title}"` : undefined}
@@ -1171,6 +1178,7 @@ export default function ComposeDoc() {
             setAiOpen(true)
           }}
         />
+        </Suspense>
         {plotEdit && (
           <ToolModal
             kind={plotEdit.doc.kind}
@@ -1185,6 +1193,7 @@ export default function ComposeDoc() {
         )}
         {/* AI dock (phải, như soạn slide) */}
         <AiDock open={aiOpen} onToggle={() => setAiOpen((v) => !v)} width={360} side="right">
+          <Suspense fallback={null}>
           <AiPanel
             attachKey="exam"
             onApplyBlocks={handleAiResult}
@@ -1195,6 +1204,7 @@ export default function ComposeDoc() {
                 : undefined
             }
           />
+          </Suspense>
         </AiDock>
 
       </div>
