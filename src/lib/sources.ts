@@ -286,7 +286,8 @@ export async function loadPickedSources(list: PickedSource[]): Promise<{ items: 
           text = docText(await getCommunityDoc(p.id))
         } else {
           if (!p.url) throw new Error('thiếu đường dẫn tệp')
-          const res = await fetch(p.url)
+          // tệp trong kho là tài liệu riêng: máy chủ chỉ trả cho chủ tệp → gửi kèm token
+          const res = await apiFetch(p.url)
           if (!res.ok) throw new Error(`không tải được tệp (${res.status})`)
           const blob = await res.blob()
           const extracted = await extractAttachment(new File([blob], p.name, { type: p.mime || blob.type }))

@@ -23,7 +23,7 @@ globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
   bodies.push(String(init.body ?? ''))
   const ok = (body: unknown, headers: Record<string, string> = {}) => new Response(JSON.stringify(body), { status: 200, headers })
   if (url.endsWith('/auth/v1/user')) {
-    const tok = String((init.headers as Record<string, string>).Authorization ?? '').replace('Bearer ', '')
+    const tok = String((init.headers as Record<string, string>).Authorization ?? '').replace('Bearer ', '').replace(/^h\.(.*)\.s$/, '$1')
     return TOKENS[tok] ? ok({ id: TOKENS[tok] }) : new Response('{}', { status: 401 })
   }
   if (url.includes('/rest/v1/user_roles')) {
@@ -49,7 +49,7 @@ const { handleAdminRequest, _resetRoleCache } = await import('../server/admin.ts
 
 async function hit(body: unknown, token?: string): Promise<{ status: number; data: Record<string, unknown> }> {
   const req = Readable.from([Buffer.from(JSON.stringify(body))]) as unknown as IncomingMessage
-  Object.assign(req, { method: 'POST', headers: { host: 'x', ...(token ? { authorization: `Bearer ${token}` } : {}) }, socket: { remoteAddress: '127.0.0.1' } })
+  Object.assign(req, { method: 'POST', headers: { host: 'x', ...(token ? { authorization: `Bearer h.${token}.s` } : {}) }, socket: { remoteAddress: '127.0.0.1' } })
   const out = { status: 0, body: '' }
   const res = {
     writeHead(c: number) {
@@ -179,7 +179,7 @@ check('kiểm tra riêng dịch vụ lạ → 400', (await hit({ action: 'health
 const { maintenanceBlock, _resetOpsCache } = await import('../server/ops.ts')
 const blockFor = async (token?: string) => {
   _resetOpsCache()
-  const req = { headers: token ? { authorization: `Bearer ${token}` } : {} } as unknown as IncomingMessage
+  const req = { headers: token ? { authorization: `Bearer h.${token}.s` } : {} } as unknown as IncomingMessage
   let code = 0
   const res = { writeHead: (c: number) => ((code = c), res), end: () => {} } as unknown as ServerResponse
   const blocked = await maintenanceBlock(req, res)

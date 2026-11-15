@@ -67,7 +67,7 @@ async function hit(payload: unknown, headers: Record<string, string> = {}) {
   Object.assign(req, {
     method: 'POST',
     url: '/api/llm',
-    headers: { host: 'localhost', origin: 'http://localhost', authorization: 'Bearer t', 'content-type': 'application/json', ...headers },
+    headers: { host: 'localhost', origin: 'http://localhost', authorization: 'Bearer h.t.s', 'content-type': 'application/json', ...headers },
     socket: { remoteAddress: '203.0.113.9' },
   })
   const out = { status: 0, body: '' }

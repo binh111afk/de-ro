@@ -41,7 +41,7 @@ globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
   const ok = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status })
 
   if (url.endsWith('/auth/v1/user')) {
-    const tok = String((init.headers as Record<string, string>)?.Authorization ?? '').replace('Bearer ', '')
+    const tok = String((init.headers as Record<string, string>)?.Authorization ?? '').replace('Bearer ', '').replace(/^h\.(.*)\.s$/, '$1')
     return TOKENS[tok] ? ok({ id: TOKENS[tok] }) : new Response('{}', { status: 401 })
   }
 
@@ -112,7 +112,7 @@ async function hit(body: unknown, token?: string): Promise<{ status: number; dat
   const req = Readable.from([Buffer.from(JSON.stringify(body))]) as unknown as IncomingMessage
   Object.assign(req, {
     method: 'POST',
-    headers: { host: 'x', ...(token ? { authorization: `Bearer ${token}` } : {}) },
+    headers: { host: 'x', ...(token ? { authorization: `Bearer h.${token}.s` } : {}) },
     socket: { remoteAddress: '127.0.0.1' },
   })
   const out = { status: 0, body: '' }

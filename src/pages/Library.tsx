@@ -5,7 +5,7 @@ import { Clock, ExternalLink, FileText, Search, Upload } from 'lucide-react'
 import { TrashIcon } from '@/components/appIcons'
 import { Badge, Button, EmptyState, inputClass, SkeletonCard } from '@/components/ui'
 import { SiteSelect } from '@/components/SiteSelect'
-import { deleteDocument, DOC_TYPES, listDocuments, MAX_DOC_MB, uploadDocument, type UserDocument } from '@/lib/documents'
+import { deleteDocument, DOC_TYPES, listDocuments, MAX_DOC_MB, openDocument, uploadDocument, type UserDocument } from '@/lib/documents'
 import { useSession } from '@/lib/useSession'
 import { cn } from '@/lib/cn'
 import { SUBJECTS } from '@/data/types'
@@ -328,15 +328,15 @@ function DocumentCard({
             Mở
           </span>
         ) : (
-          <a
-            href={doc.url}
-            target="_blank"
-            rel="noreferrer"
+          <button
+            type="button"
+            // tài liệu riêng: máy chủ chỉ trả cho chủ tệp nên mở qua openDocument (gửi kèm token), không dùng link trần
+            onClick={() => openDocument(doc).catch((e: unknown) => void dialog.alert(e instanceof Error ? e.message : 'Không mở được tệp.'))}
             className="inline-flex h-9 flex-1 items-center justify-center gap-1.5 rounded-[6px] bg-sunken text-[13px] font-semibold text-ink transition-colors hover:bg-veil"
           >
             <ExternalLink className="size-3.5" />
             Mở
-          </a>
+          </button>
         )}
         {sample || !onDelete ? null : (
           <Button variant="ghost" size="sm" onClick={() => onDelete(doc)} aria-label={`Xóa ${doc.name}`}>

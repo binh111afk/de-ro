@@ -15,7 +15,7 @@ import { ProgressBar } from '@/components/ProgressBar'
 import { DocIcon } from '@/components/docIcons'
 import { useSession } from '@/lib/useSession'
 import { currentSession } from '@/lib/auth'
-import { deleteDocument, DOC_TYPES, listDocuments, rest, uploadDocument, type UserDocument } from '@/lib/documents'
+import { deleteDocument, DOC_TYPES, listDocuments, openDocument, rest, uploadDocument, type UserDocument } from '@/lib/documents'
 import { useSyncStatus } from '@/store/syncStatus'
 import { docSize, useDocStore } from '@/store/docs'
 import { useBoards } from '@/store/boards'
@@ -212,7 +212,8 @@ function MyFilesCard() {
 
   const open = (it: Item) => {
     if (it.pending) return
-    if (it.kind === 'file') window.open(it.url, '_blank', 'noopener')
+    if (it.kind === 'file' && it.url)
+      openDocument({ url: it.url, name: it.title, mime: it.mime }).catch((e: unknown) => void dialog.alert(e instanceof Error ? e.message : 'Không mở được tệp.'))
     else navigate('/soan-de', { state: { openTab: true, open: { kind: it.kind, id: it.id } } })
   }
 

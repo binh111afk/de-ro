@@ -6,6 +6,7 @@
  * Đếm trong bộ nhớ của từng instance (Vercel tái dùng instance nên vẫn chặn được phần lớn);
  * máy dev (localhost) không bị giới hạn.
  */
+import { createHash } from 'node:crypto'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { json } from './http.js'
 
@@ -27,7 +28,28 @@ const LIMITS: Record<Api, [number, number]> = {
 const WINDOW_MS = 10 * 60 * 1000
 
 const hits = new Map<string, { count: number; reset: number }>()
+/** kết quả kiểm token, khoá bằng mã băm (không giữ cả chuỗi token client gửi — có thể dài tuỳ ý) */
 const tokenCache = new Map<string, { userId: string | null; until: number }>()
+const TOKEN_CACHE_MAX = 5000
+/** số lần hỏi Supabase /auth/v1/user mỗi IP trong 10 phút (token đã nhớ trong cache không tính) */
+const VERIFY_PER_IP = 60
+const verifyHits = new Map<string, { count: number; reset: number }>()
+/** JWT của Supabase: 3 đoạn base64url, vài trăm byte – vài KB */
+const JWT_SHAPE = /^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/
+
+/** đếm theo cửa sổ 10 phút; true = còn lượt */
+function take(map: Map<string, { count: number; reset: number }>, key: string, max: number): boolean {
+  const now = Date.now()
+  const cur = map.get(key)
+  if (!cur || cur.reset <= now) {
+    if (map.size > 20000) map.clear()
+    map.set(key, { count: 1, reset: now + WINDOW_MS })
+    return true
+  }
+  if (cur.count >= max) return false
+  cur.count++
+  return true
+}
 
 const header = (req: IncomingMessage, name: string) => {
   const v = req.headers[name]
@@ -64,15 +86,22 @@ function originAllowed(req: IncomingMessage): boolean {
   return extra.includes(origin)
 }
 
-/** id người dùng từ token Supabase (hỏi Supabase, nhớ 5 phút); token sai/hết hạn → null */
+/**
+ * id người dùng từ token Supabase (hỏi Supabase, nhớ 5 phút); token sai/hết hạn → null.
+ * Chống spam: token không đúng dạng JWT hoặc quá dài thì bỏ luôn (không hỏi Supabase, không nhớ);
+ * mỗi IP chỉ được làm máy chủ hỏi Supabase VERIFY_PER_IP lần / 10 phút (quá thì coi như khách).
+ */
 export async function userFromToken(req: IncomingMessage): Promise<string | null> {
   const token = header(req, 'authorization').replace(/^Bearer\s+/i, '').trim()
-  if (!token) return null
-  const cached = tokenCache.get(token)
+  if (!token || token.length > 4096 || !JWT_SHAPE.test(token)) return null
+  const digest = createHash('sha256').update(token).digest('base64url')
+  const cached = tokenCache.get(digest)
   if (cached && cached.until > Date.now()) return cached.userId
   const base = (process.env.VITE_SUPABASE_URL ?? process.env.SUPABASE_URL ?? '').replace(/\/+$/, '')
   const key = process.env.VITE_SUPABASE_PUBLISHABLE_KEY ?? process.env.SUPABASE_PUBLISHABLE_KEY ?? ''
   if (!base || !key) return null
+  const ip = clientIp(req)
+  if (!isLocal(ip) && !take(verifyHits, ip, VERIFY_PER_IP)) return null
   let userId: string | null = null
   try {
     const res = await fetch(`${base}/auth/v1/user`, { headers: { apikey: key, Authorization: `Bearer ${token}` } })
@@ -80,8 +109,9 @@ export async function userFromToken(req: IncomingMessage): Promise<string | null
   } catch {
     userId = null
   }
-  if (tokenCache.size > 5000) tokenCache.clear()
-  tokenCache.set(token, { userId, until: Date.now() + 5 * 60 * 1000 })
+  // đầy thì bỏ mục cũ nhất (Map giữ thứ tự thêm vào), không xoá sạch
+  if (tokenCache.size >= TOKEN_CACHE_MAX) tokenCache.delete(tokenCache.keys().next().value as string)
+  tokenCache.set(digest, { userId, until: Date.now() + 5 * 60 * 1000 })
   return userId
 }
 

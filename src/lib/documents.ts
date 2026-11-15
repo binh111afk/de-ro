@@ -106,3 +106,31 @@ export async function deleteDocument(id: string): Promise<void> {
   if (!s) throw new AuthError('Bạn cần đăng nhập để xóa tài liệu.')
   await rest<null>(`/user_documents?id=eq.${encodeURIComponent(id)}`, { method: 'DELETE', token: s.access_token })
 }
+
+/**
+ * Mở tài liệu riêng (`/api/files/doc/…`): máy chủ chỉ trả cho chủ tệp nên phải gửi kèm token —
+ * tải về rồi mở bản tạm trong tab mới (PDF) hoặc lưu xuống máy (DOCX, giữ đúng tên tệp).
+ * Tab được mở ngay lúc bấm để trình duyệt không chặn cửa sổ bật lên.
+ */
+export async function openDocument(doc: { url: string; name?: string; mime?: string }): Promise<void> {
+  const isPdf = (doc.mime ?? doc.url).toLowerCase().includes('pdf')
+  const tab = isPdf ? window.open('', '_blank') : null
+  try {
+    const res = await apiFetch(doc.url)
+    if (!res.ok) throw new Error(res.status === 404 ? 'Không tìm thấy tệp hoặc bạn không có quyền mở.' : `Không mở được tệp (${res.status}).`)
+    const blobUrl = URL.createObjectURL(await res.blob())
+    if (isPdf) {
+      if (tab) tab.location.href = blobUrl
+      else window.open(blobUrl, '_blank', 'noopener')
+    } else {
+      const a = document.createElement('a')
+      a.href = blobUrl
+      a.download = doc.name ?? 'tai-lieu.docx'
+      a.click()
+    }
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 60_000)
+  } catch (err) {
+    tab?.close()
+    throw err
+  }
+}

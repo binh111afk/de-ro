@@ -144,19 +144,43 @@ export async function handleUploadRequest(req: IncomingMessage, res: ServerRespo
   }
 }
 
+/**
+ * Tài liệu riêng (`doc/`): chỉ chủ tệp đọc được. Hỏi Supabase bằng CHÍNH token người gọi — RLS của
+ * `user_documents` chỉ trả dòng của họ — nên không cần service key và không tự viết lại luật quyền.
+ * (`img/` vẫn công khai: ảnh nằm trong đề đã chia sẻ / đề cộng đồng.)
+ */
+async function ownsDocument(req: IncomingMessage, key: string): Promise<boolean> {
+  const token = String(req.headers.authorization ?? '').replace(/^Bearer\s+/i, '').trim()
+  const base = (process.env.VITE_SUPABASE_URL ?? process.env.SUPABASE_URL ?? '').replace(/\/+$/, '')
+  const anon = process.env.VITE_SUPABASE_PUBLISHABLE_KEY ?? process.env.SUPABASE_PUBLISHABLE_KEY ?? ''
+  if (!token || !base || !anon) return false
+  try {
+    const url = encodeURIComponent(`/api/files/${key}`)
+    const r = await fetch(`${base}/rest/v1/user_documents?select=id&url=eq.${url}&limit=1`, {
+      headers: { apikey: anon, Authorization: `Bearer ${token}` },
+    })
+    return r.ok && ((await r.json()) as unknown[]).length > 0
+  } catch {
+    return false
+  }
+}
+
 export async function handleFileRequest(req: IncomingMessage, res: ServerResponse): Promise<void> {
   if (req.method !== 'GET') return json(res, 405, { error: 'Method not allowed' })
   // Vite cắt tiền tố `/api/files` khỏi req.url, còn lại `/img/<hash>.<ext>`
   const key = decodeURIComponent((req.url ?? '').split('?')[0].replace(/^\/+/, ''))
   if (!KEY_PATTERN.test(key)) return json(res, 404, { error: 'Không tìm thấy tệp' })
+  const isDoc = key.startsWith('doc/')
+  // không phải chủ thì báo 404 như không có tệp: không lộ cả việc tệp có tồn tại hay không
+  if (isDoc && !(await ownsDocument(req, key))) return json(res, 404, { error: 'Không tìm thấy tệp' })
 
   try {
     const got = await r2Request('GET', key, null)
     if (!got.ok) return json(res, got.status === 404 ? 404 : 502, { error: `R2 trả lỗi ${got.status}` })
     res.writeHead(200, {
       'Content-Type': got.headers.get('content-type') ?? 'application/octet-stream',
-      // tên file là hash nội dung nên không bao giờ đổi
-      'Cache-Control': 'public, max-age=31536000, immutable',
+      // tên file là hash nội dung nên không bao giờ đổi; tài liệu riêng thì không cho proxy/CDN giữ
+      'Cache-Control': isDoc ? 'private, no-store' : 'public, max-age=31536000, immutable',
     })
     res.end(Buffer.from(await got.arrayBuffer()))
   } catch (err) {
