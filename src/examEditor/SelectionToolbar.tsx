@@ -5,11 +5,11 @@
  */
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { AlignCenter, AlignLeft, AlignRight, Bold, ChevronDown, ChevronUp, ChevronsDown, ChevronsUp, Copy, Italic, Layers, Lock, LockOpen, Palette, SlidersHorizontal, MessageSquarePlus, Sparkles, Trash2, Type } from 'lucide-react'
+import { ChevronDown, ChevronUp, ChevronsDown, ChevronsUp, Copy, Layers, Lock, LockOpen, Palette, SlidersHorizontal, MessageSquarePlus, Sparkles, Type } from 'lucide-react'
+import { TrashIcon } from '@/components/appIcons'
 import type { SlideElement } from '@/store/docs'
 import { REWRITE_PRESETS } from '@/lib/slideRewrite'
 import { graphicById, graphicMainColor } from '@/lib/slideGraphics'
-import { readableTextOn } from '@/lib/slideTheme'
 import { ColorPalette } from './ColorPalette'
 
 const POPOVER = 'absolute top-full z-10 mt-1.5 rounded-lg border border-line bg-surface p-2 shadow-[0_8px_24px_-6px_rgba(35,32,28,0.3)]'
@@ -398,7 +398,6 @@ export function SelectionToolbar({
       setBusy(false)
     }
   }
-  const size = el.fontSize ?? (el.variant === 'body' ? 2.4 : 3.6)
   // thanh rộng ~33% khung: kẹp để không tràn mép phải; sát mép trên thì xuống dưới phần tử
   const above = el.y > 10
   const covers = !above && el.y + height > 80
@@ -471,31 +470,9 @@ export function SelectionToolbar({
           {sep}
         </>
       )}
-      {isText && (
-        <>
-          {tool('Giảm cỡ chữ', () => onUpdate({ fontSize: Math.max(1, size - 0.3) }), <span className="text-[11px] font-semibold">A−</span>)}
-          {tool('Tăng cỡ chữ', () => onUpdate({ fontSize: size + 0.3 }), <span className="text-[13px] font-semibold">A+</span>)}
-          {sep}
-          {tool('Đậm', () => onUpdate({ fontWeight: (el.fontWeight ?? 500) >= 700 ? 400 : 700 }), <Bold className="size-3.5" />, (el.fontWeight ?? 500) >= 700)}
-          {tool('Nghiêng', () => onUpdate({ fontStyle: el.fontStyle === 'italic' ? 'normal' : 'italic' }), <Italic className="size-3.5" />, el.fontStyle === 'italic')}
-          <ColorTool right={right} title="Màu chữ" value={el.textColor ?? fg} themeColors={[fg, accent]} onPick={(textColor) => onUpdate({ textColor })} />
-          {sep}
-          {tool('Căn trái', () => onUpdate({ align: 'left' }), <AlignLeft className="size-3.5" />, (el.align ?? 'left') === 'left')}
-          {tool('Căn giữa', () => onUpdate({ align: 'center' }), <AlignCenter className="size-3.5" />, el.align === 'center')}
-          {tool('Căn phải', () => onUpdate({ align: 'right' }), <AlignRight className="size-3.5" />, el.align === 'right')}
-          {sep}
-        </>
-      )}
       {el.type === 'shape' && el.shape !== 'line' && (
         <>
           {tool(el.text?.trim() ? 'Sửa chữ trong hình' : 'Thêm chữ vào hình', () => onEditText?.(), <Type className="size-3.5" />, Boolean(el.text?.trim()))}
-          {el.text?.trim() && (
-            <>
-              {tool('Giảm cỡ chữ', () => onUpdate({ fontSize: Math.max(1, (el.fontSize ?? 2.4) - 0.3) }), <span className="text-[11px] font-semibold">A−</span>)}
-              {tool('Tăng cỡ chữ', () => onUpdate({ fontSize: (el.fontSize ?? 2.4) + 0.3 }), <span className="text-[13px] font-semibold">A+</span>)}
-              <ColorTool right={right} title="Màu chữ" value={el.textColor ?? readableTextOn(el.fill ?? accent)} themeColors={[fg, accent, '#ffffff']} onPick={(textColor) => onUpdate({ textColor })} />
-            </>
-          )}
           {sep}
         </>
       )}
@@ -522,7 +499,7 @@ export function SelectionToolbar({
       {tool('Nhân đôi (Ctrl+D)', onDuplicate, <Copy className="size-3.5" />)}
       <LayerTool elements={elements} selectedId={el.id} onArrange={onArrange} onSelect={onSelectLayer} />
       {tool(el.locked ? 'Mở khoá (Ctrl+Shift+L)' : 'Khoá vị trí (Ctrl+Shift+L)', () => onUpdate({ locked: el.locked ? undefined : true }), el.locked ? <Lock className="size-3.5" /> : <LockOpen className="size-3.5" />, Boolean(el.locked))}
-      {!el.locked && tool('Xoá', onDelete, <Trash2 className="size-3.5" />)}
+      {!el.locked && tool('Xoá', onDelete, <TrashIcon className="size-3.5" />)}
     </div>
     {askOpen && isText && (
       <div
