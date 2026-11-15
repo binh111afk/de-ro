@@ -134,6 +134,9 @@ db.used = 0
 upstream.length = 0
 const r5 = await hit({ messages: msgs('x'.repeat(60_000)), maxTokens: 256 })
 check('số dư 1.000 + prompt ~20.000 token → 429, không gọi model', r5.status === 429 && upstream.length === 0, { r5, calls: upstream.length })
+db.credits = 8_000
+const r5c = await hit({ messages: msgs('x'.repeat(60_000)), maxTokens: 256 })
+check('còn 8 điểm, yêu cầu cần ~20 điểm → báo rõ cần bao nhiêu, không nói "đã hết điểm"', r5c.status === 429 && /cần khoảng 21 điểm.*còn 8 điểm/.test(r5c.data.error ?? ''), r5c)
 const r5b = await hit({ messages: msgs('x'.repeat(700_000)), maxTokens: 256 })
 check('prompt quá dài (> 200k token ước) → 413', r5b.status === 413, r5b)
 

@@ -20,7 +20,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { json, readBody } from './http.js'
 import { LOGIN_REQUIRED, clientIp, guard, isLocal, userFromToken } from './guard.js'
-import { addUsage, checkReceipt, estimatePromptTokens, hasQuotaStore, issueReceipt, quotaMessage, readQuota, refundReceipt, requestHash, reserveQuota } from './aiQuota.js'
+import { TOKENS_PER_POINT, addUsage, checkReceipt, estimatePromptTokens, hasQuotaStore, issueReceipt, quotaMessage, readQuota, refundReceipt, requestHash, reserveQuota } from './aiQuota.js'
 import { costFromUsage, logAiCall, maintenanceBlock } from './ops.js'
 import { readAiOverrides } from './aiSettings.js'
 import { callAnthropic } from './anthropic.js'
@@ -348,7 +348,14 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
   const receiptFor = (spent: number) => (quota && !retryOf ? issueReceipt(userId, ip, spent, reqHash) : undefined)
   // hạn mức tính trên TỔNG token (đầu vào + đầu ra): phần gửi lên cũng bị tính tiền
   const remaining = quota ? quota.limit - quota.used + pendingRefund : Infinity
-  if (quota && remaining - promptTokens < 256) return json(res, 429, { error: quotaMessage(quota), quota })
+  if (quota && remaining - promptTokens < 256) {
+    // còn điểm mà không đủ cho yêu cầu dài: nói rõ cần bao nhiêu, đừng báo "đã hết điểm"
+    const pts = (n: number) => Math.max(0, Math.ceil(n / TOKENS_PER_POINT)).toLocaleString('vi-VN')
+    const error = remaining >= 1000
+      ? `Yêu cầu này cần khoảng ${pts(promptTokens + 256)} điểm AI nhưng bạn chỉ còn ${pts(remaining)} điểm. Hãy rút gọn tài liệu nguồn hoặc bớt nội dung gửi kèm.`
+      : quotaMessage(quota)
+    return json(res, 429, { error, quota })
+  }
   // phần còn lại sau đầu vào mới là trần đầu ra (bỏ sàn 1.000 từng cho vượt số dư)
   if (quota) maxTokens = Math.min(maxTokens, Math.floor(remaining - promptTokens))
   // giữ chỗ đúng mức tối đa lượt này có thể tốn, để các lượt song song không cùng lọt quá hạn mức
