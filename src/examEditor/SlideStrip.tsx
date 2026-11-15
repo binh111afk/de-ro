@@ -5,7 +5,8 @@
  * - Kéo thả để đổi thứ tự, giống kéo thumbnail trước đây nhưng theo chiều ngang.
  */
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { ChevronDown, ChevronUp, Copy, Plus, Trash2 } from 'lucide-react'
+import { ChevronDown, ChevronUp, Copy, Plus } from 'lucide-react'
+import { TrashIcon } from '@/components/appIcons'
 import { cn } from '@/lib/cn'
 import { useAnimatedPresence } from '@/lib/useAnimatedPresence'
 import type { Slide } from '@/store/docs'
@@ -151,7 +152,7 @@ export function SlideStrip({
                 aria-label="Xoá slide"
                 className="rounded bg-white/85 p-1 text-ink-3 hover:text-clay"
               >
-                <Trash2 className="size-3" />
+                <TrashIcon className="size-3" />
               </button>
             </div>
           </div>

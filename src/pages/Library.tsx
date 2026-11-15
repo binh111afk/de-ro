@@ -1,7 +1,8 @@
 import { dialog } from '@/components/Dialog'
 import { useEffect, useRef, useState, type ChangeEvent, type DragEvent } from 'react'
 import { Link } from 'react-router-dom'
-import { Clock, ExternalLink, FileText, Search, Trash2, Upload } from 'lucide-react'
+import { Clock, ExternalLink, FileText, Search, Upload } from 'lucide-react'
+import { TrashIcon } from '@/components/appIcons'
 import { Badge, Button, EmptyState, inputClass, SkeletonCard } from '@/components/ui'
 import { SiteSelect } from '@/components/SiteSelect'
 import { deleteDocument, DOC_TYPES, listDocuments, MAX_DOC_MB, uploadDocument, type UserDocument } from '@/lib/documents'
@@ -339,7 +340,7 @@ function DocumentCard({
         )}
         {sample || !onDelete ? null : (
           <Button variant="ghost" size="sm" onClick={() => onDelete(doc)} aria-label={`Xóa ${doc.name}`}>
-            <Trash2 className="size-4" />
+            <TrashIcon className="size-4" />
           </Button>
         )}
       </div>

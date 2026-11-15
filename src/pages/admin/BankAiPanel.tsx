@@ -1,6 +1,7 @@
 /** Tab "AI và tệp" của form thêm câu: AI soạn hoặc tách từ tệp đề ra danh sách nháp, tách riêng câu hỏi, đáp án, ảnh. */
 import { useRef, useState, type ReactNode } from 'react'
-import { FileUp, ImageOff, Pencil, Sparkles, Trash2 } from 'lucide-react'
+import { FileUp, ImageOff, Pencil, Sparkles } from 'lucide-react'
+import { TrashIcon } from '@/components/appIcons'
 import { Badge, Button, EmptyState, Spinner, inputClass } from '@/components/ui'
 import { dialog } from '@/components/Dialog'
 import { MathText } from '@/components/MathText'
@@ -173,7 +174,7 @@ export function BankAiPanel({
                         <Pencil className="size-4" />
                       </button>
                       <button type="button" onClick={() => setDrafts((list) => list.filter((x) => x.id !== d.id))} aria-label={`Bỏ câu ${i + 1}`} className="rounded p-1.5 hover:text-clay">
-                        <Trash2 className="size-4" />
+                        <TrashIcon className="size-4" />
                       </button>
                     </div>
                   </div>

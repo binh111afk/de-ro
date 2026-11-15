@@ -4,7 +4,8 @@
  */
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
-import { ChevronLeft, Search, Trash2, Upload, X } from 'lucide-react'
+import { ChevronLeft, Search, Upload, X } from 'lucide-react'
+import { TrashIcon } from '@/components/appIcons'
 import { Button, inputClass, Spinner } from '@/components/ui'
 import { Pager } from '@/components/Pager'
 import { dialog } from '@/components/Dialog'
@@ -312,7 +313,7 @@ function MyFilesCard() {
                     ) : (
                       <button type="button" onClick={() => void onDelete(it)} aria-label={failed ? `Bỏ ${it.title}` : `Xoá ${it.title}`} data-tip={failed ? 'Bỏ' : 'Xoá'}
                         className="grid size-8 shrink-0 place-items-center rounded-[6px] text-ink-3 hover:bg-sunken hover:text-clay-deep">
-                        {failed ? <X className="size-4" /> : <Trash2 className="size-4" />}
+                        {failed ? <X className="size-4" /> : <TrashIcon className="size-4" />}
                       </button>
                     )}
                   </li>

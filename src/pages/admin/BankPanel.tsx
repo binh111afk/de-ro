@@ -16,9 +16,9 @@ import {
   RotateCcw,
   Search,
   SlidersHorizontal,
-  Trash2,
   X,
 } from 'lucide-react'
+import { TrashIcon } from '@/components/appIcons'
 import { Badge, Button, Card, EmptyState, Spinner, inputClass } from '@/components/ui'
 import { Pager, usePaged } from '@/components/Pager'
 import { SiteSelect, type SiteSelectOption } from '@/components/SiteSelect'
@@ -884,7 +884,7 @@ function QuestionDrawer({
               <Button variant="quiet" size="sm" onClick={onRevert} className="text-ink-3 hover:text-clay">
                 {item.origin === 'cau-moi' ? (
                   <>
-                    <Trash2 className="size-4" />
+                    <TrashIcon className="size-4" />
                     <span>Xoá câu</span>
                   </>
                 ) : (
@@ -1366,7 +1366,7 @@ function QuestionFormModal({
                           data-tip="Xoá phương án này"
                           aria-label="Xoá phương án này"
                         >
-                          <Trash2 className="size-4" />
+                          <TrashIcon className="size-4" />
                         </button>
                       )}
                     </div>

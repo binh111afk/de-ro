@@ -1,6 +1,7 @@
 import { useRef, useState, type ReactNode } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
-import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Check, Copy, Eye, MonitorPlay, Plus, Trash2, Upload, X } from 'lucide-react'
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Check, Copy, Eye, MonitorPlay, Plus, Upload, X } from 'lucide-react'
+import { TrashIcon } from '@/components/appIcons'
 import { Button, Checkbox, EmptyState, Field, inputClass } from '@/components/ui'
 import { CopyLink } from '@/components/CopyLink'
 import { OnlineAiBox } from '@/components/OnlineAiBox'
@@ -731,7 +732,7 @@ function QuestionEditor({
             <Copy className="size-4" />
           </IconBtn>
           <IconBtn label="Xoá câu" onClick={onRemove} danger>
-            <Trash2 className="size-4" />
+            <TrashIcon className="size-4" />
           </IconBtn>
         </div>
       </div>
@@ -798,7 +799,7 @@ function QuestionEditor({
                   </button>
                   <input className={inputClass} value={o.text} onChange={(e) => setOption(i, e.target.value)} placeholder={`Phương án ${o.key}`} aria-label={`Phương án ${o.key}`} />
                   <IconBtn label={`Xoá phương án ${o.key}`} onClick={() => removeOption(i)} disabled={options.length <= 2} danger>
-                    <Trash2 className="size-4" />
+                    <TrashIcon className="size-4" />
                   </IconBtn>
                 </li>
               )

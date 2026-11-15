@@ -2,7 +2,8 @@ import { dialog } from '@/components/Dialog'
 import { Pager, usePaged } from '@/components/Pager'
 import { useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
-import { Clock, History, MonitorPlay, Plus, Send, Sparkles, Trash2, Upload } from 'lucide-react'
+import { Clock, History, MonitorPlay, Plus, Send, Sparkles, Upload } from 'lucide-react'
+import { TrashIcon } from '@/components/appIcons'
 import { Badge, Button, EmptyState } from '@/components/ui'
 import { CopyLink } from '@/components/CopyLink'
 import { Segmented } from '@/components/Segmented'
@@ -198,7 +199,7 @@ function ItemCard({ item, index, onDelete }: { item: OnlineItem; index: number; 
             }}
             className="flex size-9 shrink-0 items-center justify-center rounded-[6px] text-ink-3 transition-colors hover:bg-clay-soft hover:text-clay"
           >
-            <Trash2 className="size-4" />
+            <TrashIcon className="size-4" />
           </button>
         </div>
         {error ? (

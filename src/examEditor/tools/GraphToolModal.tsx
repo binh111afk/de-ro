@@ -3,7 +3,8 @@
  * phải xem trước ngay khi gõ; "Chèn" trả về SVG để trình soạn tự đưa vào.
  */
 import { useEffect, useMemo, useState } from 'react'
-import { ChevronRight, Plus, Trash2, X } from 'lucide-react'
+import { ChevronRight, Plus, X } from 'lucide-react'
+import { TrashIcon } from '@/components/appIcons'
 import { Button, inputClass } from '@/components/ui'
 import { cn } from '@/lib/cn'
 import { PLOT_COLORS, autoYRange, parseExpr, renderPlotSvg, svgDataUrl, type Fn, type PlotSpec } from '@/lib/plot'
@@ -154,7 +155,7 @@ export function GraphToolModal({
                           onClick={() => setExprs(exprs.filter((_, k) => k !== i))}
                           className="flex size-8 shrink-0 items-center justify-center rounded-[6px] text-ink-4 hover:bg-sunken hover:text-ink"
                         >
-                          <Trash2 className="size-3.5" />
+                          <TrashIcon className="size-3.5" />
                         </button>
                       )}
                     </div>

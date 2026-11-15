@@ -15,8 +15,8 @@ import {
   Presentation,
   Search,
   Share2,
-  Trash2,
 } from 'lucide-react'
+import { TrashIcon } from '@/components/appIcons'
 import { Button, EmptyState, inputClass } from '@/components/ui'
 import { cn } from '@/lib/cn'
 import { useDocStore, STORAGE_QUOTA, formatBytes, totalDocSize } from '@/store/docs'
@@ -33,7 +33,7 @@ const SORTS: Array<{ key: SortKey; label: string }> = [
 
 type RowAction = {
   label: string
-  icon: typeof FileText
+  icon: React.ComponentType<{ className?: string }>
   fn: () => void
   danger?: boolean
 }
@@ -48,7 +48,7 @@ function rowActions(d: ExamDoc, handlers: {
     { label: 'Mở', icon: FileText, fn: () => handlers.onOpen(d) },
     { label: 'Đổi tên', icon: Pencil, fn: () => handlers.onRename(d) },
     { label: 'Chia sẻ', icon: Share2, fn: () => handlers.onShare(d) },
-    { label: 'Xoá', icon: Trash2, fn: () => handlers.onDelete(d), danger: true },
+    { label: 'Xoá', icon: TrashIcon, fn: () => handlers.onDelete(d), danger: true },
   ]
 }
 

@@ -5,12 +5,12 @@ import {
   Coins,
   Lock,
   Search,
-  Trash2,
   Unlock,
   ShieldAlert,
   Users,
   X,
 } from 'lucide-react'
+import { TrashIcon } from '@/components/appIcons'
 import {
   Badge,
   Button,
@@ -852,7 +852,7 @@ function UserDetailDrawer({
             <section className="space-y-3 pt-2">
               <div className="rounded-[8px] border border-clay/30 bg-clay-soft/40 p-4">
                 <div className="flex items-center gap-2 font-bold text-clay">
-                  <Trash2 className="size-4.5" />
+                  <TrashIcon className="size-4.5" />
                   <span>Vùng nguy hiểm: Xoá tài khoản</span>
                 </div>
                 <p className="mt-2 text-[12.5px] leading-relaxed text-ink-2">
@@ -883,7 +883,7 @@ function UserDetailDrawer({
                     }
                     onClick={handleDeleteUser}
                   >
-                    <Trash2 className="size-4" />
+                    <TrashIcon className="size-4" />
                     <span>{deleting ? 'Đang xoá…' : 'Xoá vĩnh viễn tài khoản'}</span>
                   </Button>
                 </div>

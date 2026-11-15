@@ -1,5 +1,6 @@
 /** Bảng vẽ — định nghĩa giao diện: icon, danh sách bút / hình / giấy, các nút và ô chọn nhỏ. */
 import protractorUrl from '@/assets/icons/protractor.svg'
+import { BUCKET_D, TRASH_D } from '@/components/appIcons'
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { isDarkPaper, paperBg, type Kind, type Paper, type PenKind, type Pt, type FillStyle } from './scene'
 import { penOutline, svgPathFromStroke } from './render'
@@ -87,7 +88,7 @@ export const SHAPE_D = 'M3 3h9v9H3zM16.5 12a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9z
 export const TEXT_D = 'M5 6V4h14v2M12 4v16m-3 0h6'
 export const DOT_SIZES = [4, 6, 8, 10, 12, 14]
 /** thùng sơn: vẽ lại dạng nét viền theo icons/paint-bucket.svg */
-export const BUCKET_D = 'M10.6 4.6L19 13l-7.3 7.3a1.6 1.6 0 0 1-2.2 0l-6.2-6.2a1.6 1.6 0 0 1 0-2.2zM3 13h15.5M5.4 9.8a3.6 3.6 0 1 1 5.2-5.2M20.5 15.5s2 2.3 2 3.6a2 2 0 1 1-4 0c0-1.3 2-3.6 2-3.6z'
+export { BUCKET_D, TRASH_D }
 export const HAND_D = 'M8 11V5.5a1.5 1.5 0 0 1 3 0V10m0-1V4.5a1.5 1.5 0 0 1 3 0V10m0-.5V6a1.5 1.5 0 0 1 3 0v7a6 6 0 0 1-6 6h-1a6 6 0 0 1-4.9-2.5L3.6 13a1.5 1.5 0 0 1 2.4-1.8L8 13'
 
 export const UNDO_D = 'M9 14L4 9l5-5M4 9h11a5 5 0 0 1 0 10h-3'

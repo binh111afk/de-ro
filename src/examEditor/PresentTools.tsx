@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { Eraser, MousePointer2, Pause, PenLine, Play, RotateCcw, ScrollText, Sparkle, Trash2 } from 'lucide-react'
+import { Eraser, MousePointer2, Pause, PenLine, Play, RotateCcw, ScrollText, Sparkle } from 'lucide-react'
+import { TrashIcon } from '@/components/appIcons'
 import { cn } from '@/lib/cn'
 
 /* Công cụ khi trình chiếu: bút vẽ, bút laser, tẩy nét, đồng hồ, màn người trình bày (cửa sổ riêng). */
@@ -200,7 +201,7 @@ export function PresentToolbar({
         <Eraser className="size-5" />
       </button>
       <button type="button" aria-label="Xoá hết nét trên slide" data-tip="Xoá hết nét trên slide" onClick={() => tools.clearSlide(slideId)} className={toolBtn}>
-        <Trash2 className="size-5" />
+        <TrashIcon className="size-5" />
       </button>
       <span className="mx-2 h-6 w-px bg-white/20" />
       <span className="tnum min-w-[3.5rem] text-center text-[15px] font-semibold text-white">{formatElapsed(timer.elapsed)}</span>

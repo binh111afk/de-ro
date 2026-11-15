@@ -6,6 +6,7 @@
  * Nội dung tự lưu trong localStorage theo id tab.
  */
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
+import { TrashIcon } from '@/components/appIcons'
 import { alignBlocks, centerOf, clone, DEFAULT_STYLE, groupBlocks, handlePositions, hasPoints, hitTest, isDarkPaper, isLinear, isPage, localBounds, measureText, mutate, newId, newSeed, paperBg, rotate, unionBounds, worldBounds, fontOf, LINE_HEIGHT, inPolygon, type AlignKind, type Bounds, type El, type Handle, type Kind, type Paper, type PenKind, type Pt, type Style, isClosedStroke, type FillStyle, withGroups, copyEls } from './scene'
 import { dropFromCache, LASER_LIFE, render, renderLive, setImageLoadHandler, type Guide, type LaserTrail, type View } from './render'
 import { AiPanel } from '@/examEditor/AiPanel'
@@ -27,7 +28,7 @@ import { useBoards, type BoardData } from '@/store/boards'
 import { texToSvg } from './formula'
 import { bindToScene, guideAt, Instruments, placeInstrument, projectGuide, type InstApi, type InstKind, type InstState } from './Instruments'
 import { type Tool, type Slot, type Opts, DEFAULT_TIP, CHALK_WHITE, LIGHT_COLORS, CHALK_COLORS, DEFAULT_OPTS, DEFAULT_STYLES, ERASE_R, CLIP_MARK, SHAPES, type Saved, load, type Drag, computeSnap, TOOL_KEYS, MOD_KEY, SHAPE_KEYS, FILLS, CURSOR } from './boardModel'
-import { type Main, ERASER_SVG, LASER_COLORS, LASER_SIZES, LASER_SVG, KIND_LABEL, TOOL_LABEL, curvePoints, densify, type SideTab, SIDE_W, WRENCH_D, PEN_D, ERASER_D, LASER_D, SELECT_D, LASSO_D, SHAPE_D, TEXT_D, DOT_SIZES, BUCKET_D, HAND_D, UNDO_D, REDO_D, PLUS_D, IMG_D, PDF_NOTE_D, EXPORT_D, PAPER_D, RULER_D, ProtractorIcon, COMPASS_D, FOUNTAIN_D, PENS, PenPanel, SHAPE_BY_ID, SHAPE_SECTIONS, THEME_COLORS, PAPERS, AiIcon, SideBtn, Group, Chip, Toggle, Pop, MoreColors, HexInput, PanelRow, NONE_BG, draggingFill, SPREAD_MS, BUCKET_SVG, Swatch, Ico, IconBtn, SelBtn } from './boardUi'
+import { type Main, ERASER_SVG, LASER_COLORS, LASER_SIZES, LASER_SVG, KIND_LABEL, TOOL_LABEL, curvePoints, densify, type SideTab, SIDE_W, WRENCH_D, PEN_D, ERASER_D, LASER_D, SELECT_D, LASSO_D, SHAPE_D, TEXT_D, DOT_SIZES, BUCKET_D, TRASH_D, HAND_D, UNDO_D, REDO_D, PLUS_D, IMG_D, PDF_NOTE_D, EXPORT_D, PAPER_D, RULER_D, ProtractorIcon, COMPASS_D, FOUNTAIN_D, PENS, PenPanel, SHAPE_BY_ID, SHAPE_SECTIONS, THEME_COLORS, PAPERS, AiIcon, SideBtn, Group, Chip, Toggle, Pop, MoreColors, HexInput, PanelRow, NONE_BG, draggingFill, SPREAD_MS, BUCKET_SVG, Swatch, Ico, IconBtn, SelBtn } from './boardUi'
 
 export default function BoardEditor({ id }: { id: string }) {
   const wrapRef = useRef<HTMLDivElement>(null)
@@ -2376,9 +2377,7 @@ export default function BoardEditor({ id }: { id: string }) {
 
         {/* cụm 4: xoá */}
         <SelBtn label="Xoá — Delete" onClick={deleteSelected} danger>
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-            <path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M10 11v6M14 11v6" />
-          </svg>
+          <TrashIcon size={17} strokeWidth={1.5} />
         </SelBtn>
       </>
     )
@@ -2460,7 +2459,7 @@ export default function BoardEditor({ id }: { id: string }) {
         </Group>
         <Group>
           <Chip onClick={() => { if (!els.current.length) return; els.current = []; selected.current.clear(); commit() }} title="Xoá mọi thứ trên bảng (Ctrl+Z để lấy lại)">
-            <Ico d="M5 7h14M10 7V5h4v2m-7 0l1 12h8l1-12" /><span>Xoá cả bảng</span>
+            <Ico d={TRASH_D} /><span>Xoá cả bảng</span>
           </Chip>
         </Group>
       </>

@@ -11,9 +11,9 @@ import {
   HardDrive,
   RefreshCw,
   Search,
-  Trash2,
   X,
 } from 'lucide-react'
+import { TrashIcon } from '@/components/appIcons'
 import {
   Badge,
   Button,
@@ -573,7 +573,7 @@ function ExamDrawer({
                 onClick={() => void handleDelete()}
                 disabled={actionBusy}
               >
-                <Trash2 className="size-3.5" />
+                <TrashIcon className="size-3.5" />
                 <span>Xoá hẳn</span>
               </Button>
             </div>
@@ -1135,7 +1135,7 @@ function DocsTab({ me: _me }: { me: AdminMe }) {
                           data-tip="Xoá tài liệu"
                           aria-label="Xoá tài liệu"
                         >
-                          <Trash2 className="size-3.5" />
+                          <TrashIcon className="size-3.5" />
                           <span className="hidden sm:inline">Xoá</span>
                         </Button>
                       </td>

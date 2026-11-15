@@ -7,6 +7,7 @@
  * hai hệ toạ độ; các icon trùng tên đã có trong bộ docs thì dùng lại bộ docs.
  */
 import type { ReactNode } from 'react'
+import { BUCKET_D } from '@/components/appIcons'
 
 interface IconProps {
   size?: number
@@ -272,11 +273,10 @@ export function IconShapeStyle(props: IconProps) {
 }
 
 export function IconFillColor(props: IconProps) {
+  // cùng hình thùng sơn với bảng vẽ (components/appIcons)
   return (
     <Svg {...props}>
-      <path d="M 7.6 10.4 12.6 5.4 l 5.6 5.6 -6.3 6.3 a 1.4 1.4 0 0 1 -2 0 L 5.6 13 a 1.4 1.4 0 0 1 0 -2 z" />
-      <path d="M 12.6 5.4 10.9 3.7" />
-      <path d="M 19.7 15.4 c 0.9 1.2 1.5 2.2 1.5 3 a 1.5 1.5 0 0 1 -3 0 c 0 -0.8 0.6 -1.8 1.5 -3 z" fill="currentColor" stroke="none" />
+      <path d={BUCKET_D} />
     </Svg>
   )
 }

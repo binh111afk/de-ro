@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { ImagePlus, PencilRuler, Trash2, X } from 'lucide-react'
+import { ImagePlus, PencilRuler, X } from 'lucide-react'
+import { TrashIcon } from '@/components/appIcons'
 import { ToolsPanel } from '@/examEditor/tools/ToolsPanel'
 import { ToolModal } from '@/examEditor/tools/ToolModal'
 import { parseToolJson, readToolDoc, type ToolImage } from '@/lib/toolSpec'
@@ -98,7 +99,7 @@ export function QuestionImageField({
               onClick={() => onChange(undefined)}
               className="flex size-9 items-center justify-center rounded-[6px] text-ink-3 transition-colors hover:bg-clay-soft hover:text-clay"
             >
-              <Trash2 className="size-4" />
+              <TrashIcon className="size-4" />
             </button>
           </div>
           <label className="mt-3 flex items-center gap-3 text-[12.5px] text-ink-3">

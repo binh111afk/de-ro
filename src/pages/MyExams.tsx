@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { Pager, usePaged } from '@/components/Pager'
 import { Link, useNavigate } from 'react-router-dom'
-import { Copy, FileText, FolderOpen, MoreHorizontal, MonitorPlay, Share2, Trash2 } from 'lucide-react'
+import { Copy, FileText, FolderOpen, MoreHorizontal, MonitorPlay, Share2 } from 'lucide-react'
+import { TrashIcon } from '@/components/appIcons'
 import { Badge, Button, EmptyState } from '@/components/ui'
 import { useApp } from '@/store/app'
 import { totalPoints } from '@/data/types'
@@ -111,7 +112,7 @@ export default function MyExams() {
                     }}
                     className="text-clay hover:bg-clay-soft"
                   >
-                    <Trash2 className="size-3.5" />
+                    <TrashIcon className="size-3.5" />
                     Xoá
                   </Button>
                   <Button variant="quiet" size="sm" onClick={() => setConfirmDelete(null)}>
@@ -180,7 +181,7 @@ export default function MyExams() {
                         </MenuItem>
                         <div className="my-1.5 h-px bg-line-2" />
                         <MenuItem
-                          icon={<Trash2 className="size-3.5" />}
+                          icon={<TrashIcon className="size-3.5" />}
                           danger
                           onClick={() => {
                             setConfirmDelete(exam.id)

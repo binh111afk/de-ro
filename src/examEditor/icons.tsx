@@ -14,6 +14,7 @@
  */
 
 import type { ReactNode } from 'react'
+import { TrashIcon } from '@/components/appIcons'
 
 interface IconProps {
   size?: number
@@ -1775,14 +1776,9 @@ export function IconPencil(props: IconProps) {
   )
 }
 
-export function IconTrash(props: IconProps) {
-  return (
-    <Svg {...props}>
-      <path d="M3.11 4.89h9.79M6.4 4.89V3.73a.62.62 0 0 1 .62-.62h1.96a.62.62 0 0 1 .62.62v1.16" />
-      <path d="M4.44 4.89l.62 7.39a.89.89 0 0 0 .89.8h4.09a.89.89 0 0 0 .89-.8l.62-7.39" />
-      <path d="M6.75 7.11v3.56M9.25 7.11v3.56" />
-    </Svg>
-  )
+export function IconTrash({ size = 20 }: IconProps) {
+  // cùng hình thùng rác với bảng vẽ (components/appIcons)
+  return <TrashIcon size={size} strokeWidth={(pinnedStroke(size) * 24) / 16} />
 }
 
 /** Thin dropdown chevron replacing the ▾ text glyph (same path as the slides ribbon's RbCaret);

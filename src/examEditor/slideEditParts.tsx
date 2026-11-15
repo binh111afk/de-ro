@@ -5,7 +5,8 @@ import { svgDataUrl } from '@/lib/plot'
 import { readToolDoc, type ToolDoc } from '@/lib/toolSpec'
 import { ToolModal } from './tools/ToolModal'
 import { FRAME_PLACEHOLDER, dragImage, photoFrameClip } from '@/lib/slideShapes'
-import { AlignCenterHorizontal, AlignCenterVertical, AlignEndHorizontal, AlignEndVertical, AlignHorizontalSpaceAround, AlignStartHorizontal, AlignStartVertical, AlignVerticalSpaceAround, Group, Link2, Lock, RotateCw, Trash2, Ungroup } from 'lucide-react'
+import { AlignCenterHorizontal, AlignCenterVertical, AlignEndHorizontal, AlignEndVertical, AlignHorizontalSpaceAround, AlignStartHorizontal, AlignStartVertical, AlignVerticalSpaceAround, Group, Link2, Lock, RotateCw, Ungroup } from 'lucide-react'
+import { TrashIcon } from '@/components/appIcons'
 import { type AlignMode } from '@/lib/slideAlign'
 import { slideIconById } from '@/lib/slideIconLibrary'
 import { graphicById, graphicMarkup } from '@/lib/slideGraphics'
@@ -80,7 +81,7 @@ export function GroupToolbar({
         </button>
       )}
       <button type="button" data-tip="Xoá các mục đã chọn" aria-label="Xoá các mục đã chọn" className="ml-1.5 grid size-7 place-items-center rounded-md text-ink hover:bg-black/5" onClick={onDelete}>
-        <Trash2 size={16} strokeWidth={1.8} />
+        <TrashIcon size={16} strokeWidth={1.8} />
       </button>
     </div>
   )

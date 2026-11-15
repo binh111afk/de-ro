@@ -1,6 +1,7 @@
 /** Tab "Thông báo" trong Vận hành: danh sách các trang của popup ở trang chủ. */
 import { useRef, useState } from 'react'
-import { ArrowDown, ArrowUp, Eye, ImagePlus, Plus, Trash2 } from 'lucide-react'
+import { ArrowDown, ArrowUp, Eye, ImagePlus, Plus } from 'lucide-react'
+import { TrashIcon } from '@/components/appIcons'
 import { Button, EmptyState, Spinner, inputClass } from '@/components/ui'
 import { dialog } from '@/components/Dialog'
 import { AnnouncementPopup } from '@/components/AnnouncementPopup'
@@ -169,7 +170,7 @@ export function AnnouncementsEditor({ initial, onNotice }: { initial: Announceme
                       <ArrowDown className="size-4" />
                     </button>
                     <button type="button" onClick={() => setItems((list) => list.filter((x) => x.id !== a.id))} aria-label="Xoá thông báo" className="rounded p-1.5 hover:text-clay">
-                      <Trash2 className="size-4" />
+                      <TrashIcon className="size-4" />
                     </button>
                   </div>
                 </div>

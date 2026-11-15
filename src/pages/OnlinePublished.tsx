@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Pager } from '@/components/Pager'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeft, BarChart3, Check, Clock, Crown, Globe2, Link2, Lock, Sparkles, Trash2 } from 'lucide-react'
+import { ArrowLeft, BarChart3, Check, Clock, Crown, Globe2, Link2, Lock, Sparkles } from 'lucide-react'
+import { TrashIcon } from '@/components/appIcons'
 import { CopyLink } from '@/components/CopyLink'
 import { dialog } from '@/components/Dialog'
 import { Badge, Button, EmptyState, SkeletonCard } from '@/components/ui'
@@ -264,7 +265,7 @@ function PublishedCard({
             <Globe2 className={cn('size-4', row.listed && 'text-sage')} />
           </IconBtn>
           <IconBtn label="Gỡ xuất bản" onClick={onRemove} disabled={busy} danger>
-            <Trash2 className="size-4" />
+            <TrashIcon className="size-4" />
           </IconBtn>
         </div>
       </div>
