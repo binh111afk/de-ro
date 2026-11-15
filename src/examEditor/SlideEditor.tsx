@@ -984,12 +984,12 @@ export function SlideEditor({
                     ) : null
                   return el.step ? (
                     <RevealLayer key={el.id} el={el} shown={el.step <= presentStep}>
-                      <SlideElView el={el} theme={theme} />
+                      <SlideElView el={el} theme={theme} live />
                       {linkHitbox}
                     </RevealLayer>
                   ) : (
                     <div key={el.id} style={{ display: 'contents' }}>
-                      <SlideElView el={el} theme={theme} revealStep={presentStep} />
+                      <SlideElView el={el} theme={theme} revealStep={presentStep} live />
                       {linkHitbox}
                     </div>
                   )

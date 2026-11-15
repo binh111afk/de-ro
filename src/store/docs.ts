@@ -11,7 +11,7 @@ import { DECK_THEMES } from '@/lib/slideTheme'
 /* ------------------------------------------------------------------ *
  * Slide
  * ------------------------------------------------------------------ */
-export type SlideElType = 'text' | 'shape' | 'image' | 'icon' | 'graphic' | 'table' | 'chart' | 'formula' | 'connector'
+export type SlideElType = 'text' | 'shape' | 'image' | 'icon' | 'graphic' | 'table' | 'chart' | 'formula' | 'connector' | 'video'
 
 export interface SlideElement {
   id: string
@@ -43,6 +43,7 @@ export interface SlideElement {
   borderColor?: string
   /** kiểu nét viền: liền (mặc định), đứt, chấm */
   borderStyle?: 'solid' | 'dashed' | 'dotted'
+  /** ảnh: đường dẫn ảnh; video: link YouTube / Vimeo / tệp .mp4 (lib/slideVideo.ts) */
   src?: string
   /** icon semantic trong catalog slideAssets — optional để deck cũ không đổi */
   assetId?: string

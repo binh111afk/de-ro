@@ -15,7 +15,7 @@ import { elementHeight } from '@/lib/slideText'
 import { readableTextOn, type ResolvedTheme } from '@/lib/slideTheme'
 import { uploadImage } from '@/lib/mediaStore'
 import { MathCell, clamp } from './SlideEditor'
-import { fontStack, ConnectorSvg, shapeCss, isHollowShape, HOLLOW_HIT, shapeInner, ShapeText, ChartView, AutoFitText } from './slideRender'
+import { fontStack, ConnectorSvg, shapeCss, isHollowShape, HOLLOW_HIT, shapeInner, ShapeText, ChartView, AutoFitText, VideoView } from './slideRender'
 
 export const FRAME_HOVER = 'slide-frame-hover'
 
@@ -736,6 +736,15 @@ export function EditableEl({
     return (
       <div {...common}>
         <ChartView el={el} absolute={false} colors={theme.chart} />
+        {chrome}
+      </div>
+    )
+
+  if (el.type === 'video')
+    return (
+      <div {...common}>
+        {/* bản soạn chỉ hiện ảnh bìa: iframe sẽ nuốt thao tác kéo/chọn */}
+        <VideoView el={el} theme={theme} style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }} />
         {chrome}
       </div>
     )

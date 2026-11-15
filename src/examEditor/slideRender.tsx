@@ -1,5 +1,6 @@
 /** Slide — hiển thị phần tử (chữ tự co, hình, biểu đồ, ảnh thu nhỏ slide). */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { parseSlideVideo } from '@/lib/slideVideo'
 import { slideBgStyle } from '@/lib/slideBackground'
 import { FRAME_PLACEHOLDER, photoFrameClip, shapeClipOf } from '@/lib/slideShapes'
 import { isPresetShape, isStrokeOnlyShape, presetPaths, prstOf } from '@/lib/slidePresets'
@@ -337,7 +338,45 @@ export function ShapeText({ el, theme }: { el: SlideElement; theme: ResolvedThem
   )
 }
 
-export function SlideElView({ el, theme, revealStep }: { el: SlideElement; theme: ResolvedTheme; revealStep?: number }) {
+/** Video: `live` (trình chiếu) thì phát được; bản soạn / ảnh thu nhỏ chỉ hiện ảnh bìa + nút phát */
+export function VideoView({ el, theme, live, style }: { el: SlideElement; theme: ResolvedTheme; live?: boolean; style?: React.CSSProperties }) {
+  const v = parseSlideVideo(el.src)
+  const box: React.CSSProperties = { ...style, overflow: 'hidden', borderRadius: '0.6cqw', background: '#000' }
+  if (v && live) {
+    return v.kind === 'file' ? (
+      <video src={v.url} controls playsInline preload="metadata" style={{ ...box, objectFit: 'contain' }} />
+    ) : (
+      <iframe
+        src={v.embed}
+        title="Video"
+        style={{ ...box, border: 0 }}
+        allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+        allowFullScreen
+        referrerPolicy="strict-origin-when-cross-origin"
+      />
+    )
+  }
+  return (
+    <div style={{ ...box, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
+      {v?.kind === 'youtube' ? (
+        <img src={v.thumb} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+      ) : null}
+      <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.6cqw' }}>
+        <svg viewBox="0 0 68 48" style={{ width: '6cqw', height: 'auto' }} aria-hidden>
+          <rect width="68" height="48" rx="12" fill={v ? '#000a' : theme.accent} />
+          <path d="M27 14v20l18-10z" fill="#fff" />
+        </svg>
+        {!v ? (
+          <span style={{ fontSize: '1.6cqw', fontFamily: fontStack(theme.fonts.body), opacity: 0.85 }}>
+            {el.src ? 'Link video không hợp lệ' : 'Dán link video'}
+          </span>
+        ) : null}
+      </div>
+    </div>
+  )
+}
+
+export function SlideElView({ el, theme, revealStep, live }: { el: SlideElement; theme: ResolvedTheme; revealStep?: number; live?: boolean }) {
   const style: React.CSSProperties = {
     position: 'absolute',
     left: `${el.x}%`,
@@ -430,6 +469,8 @@ export function SlideElView({ el, theme, revealStep }: { el: SlideElement; theme
         <ShapeText el={el} theme={theme} />
       </div>
     )
+
+  if (el.type === 'video') return <VideoView el={el} theme={theme} live={live} style={style} />
 
   if (el.type === 'image')
     return (

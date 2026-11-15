@@ -13,9 +13,11 @@ import {
   SendToBack,
   Sigma,
   Smile,
+  Video,
   UnfoldVertical,
   X,
 } from 'lucide-react'
+import { parseSlideVideo } from '@/lib/slideVideo'
 import { useAnimatedPresence } from '@/lib/useAnimatedPresence'
 import { useSlideViewport } from './useSlideViewport'
 import {
@@ -206,6 +208,8 @@ const CONTEXT_LABELS: Record<SlideElType, { id: SlideRibbonTab; label: string } 
   table: { id: 'tableDesign', label: 'Thiết kế bảng' },
   chart: { id: 'chartDesign', label: 'Thiết kế biểu đồ' },
   formula: null,
+  // đổi link video: bấm lại nút Video ở tab Chèn khi video đang chọn
+  video: null,
 }
 
 const TRANSITIONS: Array<{ id: NonNullable<Slide['transition']>; label: string }> = [
@@ -351,6 +355,8 @@ export function SlideRibbon(props: SlideRibbonProps) {
   } = props
 
   const [popup, setPopup] = useState<string | null>(null)
+  const [videoInput, setVideoInput] = useState('')
+  const [videoError, setVideoError] = useState<string | null>(null)
   const [hrefInput, setHrefInput] = useState('')
   const [hrefError, setHrefError] = useState<string | null>(null)
   const [footerDraft, setFooterDraft] = useState(deck.footer?.text ?? '')
@@ -939,6 +945,61 @@ export function SlideRibbon(props: SlideRibbonProps) {
           label="Hình ảnh"
           onClick={() => onInsert({ id: uid(), type: 'image', x: 25, y: 26, w: 50, h: 38 })}
         />
+        <Anchored
+          open={popup === 'video'}
+          minWidth={300}
+          trigger={
+            <RibbonButton
+              icon={<Video size={28} strokeWidth={1.6} />}
+              label="Video"
+              active={popup === 'video'}
+              onClick={() => {
+                setVideoInput(selected?.type === 'video' ? selected.src ?? '' : '')
+                setVideoError(null)
+                toggle('video')
+              }}
+            />
+          }
+        >
+          <form
+            className="flex flex-col gap-2 p-2.5"
+            onSubmit={(e) => {
+              e.preventDefault()
+              const v = parseSlideVideo(videoInput)
+              if (!v) {
+                setVideoError('Dán link YouTube, Vimeo hoặc tệp .mp4 (https).')
+                return
+              }
+              const src = videoInput.trim()
+              if (selected?.type === 'video') onUpdateSelected({ src })
+              else onInsert({ id: uid(), type: 'video', src, x: 20, y: 18, w: 60, h: 60 })
+              close()
+            }}
+          >
+            <div className="text-[11px] font-semibold uppercase tracking-wide text-ink-3">
+              {selected?.type === 'video' ? 'Đổi link video' : 'Chèn video từ link'}
+            </div>
+            <input
+              type="text"
+              value={videoInput}
+              onChange={(e) => {
+                setVideoInput(e.target.value)
+                if (videoError) setVideoError(null)
+              }}
+              placeholder="https://www.youtube.com/watch?v=…"
+              aria-label="Link video"
+              autoFocus
+              className="w-full rounded border border-line bg-white px-2 py-1 text-[12px] outline-none focus:border-clay"
+            />
+            {videoError && <div className="text-[11px] text-red-600">{videoError}</div>}
+            <div className="text-[11px] text-ink-3">Video phát khi trình chiếu; xuất PPTX giữ link YouTube.</div>
+            <div className="flex justify-end">
+              <button type="submit" className="rounded bg-clay px-2.5 py-1 text-[12px] font-medium text-white hover:opacity-90">
+                {selected?.type === 'video' ? 'Đổi' : 'Chèn'}
+              </button>
+            </div>
+          </form>
+        </Anchored>
       </RibbonGroup>
       <div className="ribbon-sep" />
       <RibbonGroup label="Minh họa">

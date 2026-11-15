@@ -8,6 +8,7 @@
 import { readableElements } from './slideContrast'
 import { boldRuns, hasBold, mathToPlain } from './slideMath'
 import { normalizeSlideHref, shouldShowSlideFooter } from './slideFormat'
+import { parseSlideVideo } from './slideVideo'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { Deck } from '@/store/docs'
@@ -254,6 +255,29 @@ export async function buildDeckPptx(deck: Deck): Promise<ArrayBuffer> {
           )
         } else {
           slide.addShape(kind, options as never)
+        }
+      } else if (el.type === 'video') {
+        // YouTube nhúng được (PowerPoint mới phát trực tuyến); Vimeo/tệp: khung đen có nút ▶ bấm mở link
+        const v = parseSlideVideo(el.src)
+        if (v?.kind === 'youtube') {
+          let cover: string | undefined
+          try {
+            cover = await toDataUrl(v.thumb)
+          } catch {
+            cover = undefined
+          }
+          slide.addMedia({ ...box, type: 'online', link: v.link, ...(cover ? { cover } : {}) })
+        } else {
+          slide.addText('▶  Video', {
+            ...box,
+            shape: 'rect',
+            fill: { color: '111111' },
+            color: 'FFFFFF',
+            align: 'center',
+            valign: 'middle',
+            fontSize: 20,
+            ...(v ? { hyperlink: { url: v.link } } : {}),
+          } as never)
         }
       } else if (el.type === 'image' && el.src) {
         slide.addImage({
