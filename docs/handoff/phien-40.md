@@ -1,11 +1,16 @@
 # Phiên 40 (15/11/2026): công cụ trình chiếu, nhóm/khoá, video + ảnh slide, hoạt ảnh chạy thử, lịch sử điểm AI, lề trang soạn đề, dero.id.vn chạy
 
-Tiếp [phiên 39](phien-39.md). Mọi việc đã lên `main` và đã push (code cuối `5726249`). **1 migration mới, đã áp lên Supabase**: `20261124_ai_credit_events.sql`. Đã dọn sạch nhánh: local và GitHub chỉ còn `main`, không còn worktree agy.
+Tiếp [phiên 39](phien-39.md). Mọi việc đã lên `main` và đã push (code cuối `5726249`). **1 migration mới, đã áp lên Supabase**: `20261124_ai_credit_events.sql`. Đã dọn sạch nhánh cũ; **agy được giao 10 bộ màu sáng** (mục 0 dưới đây) nên có thể đang có nhánh `feat/10-bo-mau-sang`.
 
 ## Việc còn treo (không phải tính năng mới)
 
 > Người dùng dặn: **chưa tự đề xuất thêm tính năng cho soạn thảo** (ribbon soạn đề, tab "Đề thi"…) — người dùng sẽ tự quyết sau.
 
+0. **Giao agy: 10 bộ màu slide mới, tất cả nền sáng (18 → 28 bộ).** Prompt: [docs/prompt-10-bo-mau-sang.md](../prompt-10-bo-mau-sang.md), nhánh `feat/10-bo-mau-sang`, worktree `../dethinhbien-bo-mau`, cổng 5191. Khi agy báo xong, phiên sau phải:
+   - review diff (mẫu chuẩn là commit `7530f89`), kiểm EOL hai phía trước khi gộp;
+   - **preview cho người dùng xem**: mở `/preview-designs` và panel trái › Mẫu › Bộ màu, chụp đủ 10 bộ mới (Tiêu đề, một slide nội dung, Kết thúc) gửi người dùng duyệt **trước khi merge**;
+   - chạy `npm run test:designs`, `test:slide-theme`, `test:slide-plan`, `test:slide-contrast`; áp cả 28 bộ lên deck 7 slide → bố cục không đổi;
+   - người dùng đồng ý mới merge, push, xoá worktree + nhánh (tắt dev server 5191 trước khi xoá thư mục).
 1. **Thử thật** (khung trình duyệt của app không kiểm được):
    - Màn người trình bày bằng cửa sổ bật lên trên Chrome thật (khung app chặn popup, mới thử phần dự phòng nổi trên màn chiếu).
    - Mở PPTX bằng PowerPoint thật: video YouTube phát trực tuyến; ảnh cắt + bo góc + bóng đúng.
