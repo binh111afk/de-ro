@@ -24,7 +24,7 @@ import { autoAnimate, clearAnimation, slideSteps, applyElementAnim, startOf } fr
 import { EmptyState } from '@/components/ui'
 import { cn } from '@/lib/cn'
 import type { Deck, DeckFooter, Slide, SlideElement, SlideTone } from '@/store/docs'
-import { applyTextFormat, captureTextFormat, type TextFormatSample } from '@/lib/slideFormat'
+import { applyTextFormat, captureTextFormat, type TextFormatSample, normalizeSlideHref } from '@/lib/slideFormat'
 import { parseAiDeck, type AiSlidePayload, type DeckPlan } from '@/lib/aiDeck'
 import { exportDeckPptx } from '@/lib/exportDeck'
 import { HtmlDeckBar, HtmlSlideFrame } from './HtmlSlide'
@@ -897,19 +897,21 @@ export function SlideEditor({
                 style={{ ...slideBgStyle(slide), ...decorStyle(theme) }}
               >
                 {readableElements(slide, theme).map((el) => {
+                  // kiểm lại link lúc vẽ: bài chia sẻ/nhập tệp có thể chứa sẵn `javascript:`…
+                  const safeHref = el.href ? normalizeSlideHref(el.href) : null
                   const linkHitbox =
-                    el.href && (!el.step || el.step <= presentStep) ? (
+                    safeHref && (!el.step || el.step <= presentStep) ? (
                       <a
                         key={`${el.id}-href`}
-                        href={el.href}
+                        href={safeHref}
                         target="_blank"
                         rel="noopener noreferrer"
-                        aria-label={`Mở liên kết ${el.href}`}
-                        data-tip={el.href}
+                        aria-label={`Mở liên kết ${safeHref}`}
+                        data-tip={safeHref}
                         onClick={(e) => {
                           e.stopPropagation()
                           e.preventDefault()
-                          window.open(el.href, '_blank', 'noopener')
+                          window.open(safeHref, '_blank', 'noopener')
                         }}
                         style={{
                           position: 'absolute',

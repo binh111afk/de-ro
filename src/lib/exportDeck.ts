@@ -7,7 +7,7 @@
  */
 import { readableElements } from './slideContrast'
 import { boldRuns, hasBold, mathToPlain } from './slideMath'
-import { shouldShowSlideFooter } from './slideFormat'
+import { normalizeSlideHref, shouldShowSlideFooter } from './slideFormat'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { Deck } from '@/store/docs'
@@ -107,7 +107,8 @@ export async function buildDeckPptx(deck: Deck): Promise<ArrayBuffer> {
         const centered = !!el.fill || el.valign === 'middle'
         const padX = (el.fill ? 3 : 1) * 7.2
         const padY = (el.fill ? 1.5 : 1) * 7.2
-        const hyperlink = el.href ? { url: el.href } : undefined
+        const safeHref = el.href ? normalizeSlideHref(el.href) : null
+        const hyperlink = safeHref ? { url: safeHref } : undefined
         const highlight = el.highlight ? hex(el.highlight) : undefined
         const strike = el.textDecoration === 'line-through' ? ('sngStrike' as const) : undefined
         const underline = el.textDecoration === 'underline' ? ({ style: 'sng' } as const) : undefined
