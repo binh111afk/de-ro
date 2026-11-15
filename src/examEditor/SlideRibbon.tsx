@@ -25,9 +25,14 @@ import {
   IconBorderAll,
   IconCaret,
   IconChart,
+  IconClearFormat,
   IconCopy,
   IconCut,
+  IconFooter,
+  IconFormatPainter,
   IconGrowFont,
+  IconHighlight,
+  IconLink,
   IconPaste,
   IconPicture,
   IconPosition,
@@ -35,6 +40,10 @@ import {
   IconSave,
   IconShapes,
   IconShrinkFont,
+  IconStrikethrough,
+  IconSubscript,
+  IconSuperscript,
+  IconSymbol,
   IconTable,
   IconTextBox,
   IconTrash,
@@ -78,7 +87,14 @@ import {
   type RibbonTabDef,
 } from './Layout'
 import { useAnchoredPopover, popoverStyle } from './useAnchoredPopover'
-import type { Deck, Slide, SlideElement, SlideElType, SlideTone } from '@/store/docs'
+import type { Deck, DeckFooter, Slide, SlideElement, SlideElType, SlideTone } from '@/store/docs'
+import {
+  SLIDE_SYMBOLS,
+  UNICODE_SUBSCRIPTS,
+  UNICODE_SUPERSCRIPTS,
+  clearTextFormatting,
+  normalizeSlideHref,
+} from '@/lib/slideFormat'
 import { graphicMainColor } from '@/lib/slideGraphics'
 import { ANIM_EFFECTS, ANIM_SPEEDS, startOf, type ElementAnimAction } from '@/lib/slideAnim'
 import {
@@ -158,6 +174,11 @@ export interface SlideRibbonProps {
   onExportPdf: () => void
   formatPaneOpen: boolean
   onToggleFormatPane: () => void
+  /** chế độ sao chép định dạng chữ (off / once / lock) */
+  painterMode: 'off' | 'once' | 'lock'
+  onTogglePainter: (lock?: boolean) => void
+  /** cập nhật cấu hình số trang và chân trang của toàn deck */
+  onUpdateFooter: (footer: DeckFooter) => void
   aiOpen: boolean
   onToggleAi: () => void
   zoom: number
@@ -320,6 +341,9 @@ export function SlideRibbon(props: SlideRibbonProps) {
     onExportPdf,
     formatPaneOpen,
     onToggleFormatPane,
+    painterMode,
+    onTogglePainter,
+    onUpdateFooter,
     aiOpen,
     onToggleAi,
     zoom,
@@ -327,6 +351,9 @@ export function SlideRibbon(props: SlideRibbonProps) {
   } = props
 
   const [popup, setPopup] = useState<string | null>(null)
+  const [hrefInput, setHrefInput] = useState('')
+  const [hrefError, setHrefError] = useState<string | null>(null)
+  const [footerDraft, setFooterDraft] = useState(deck.footer?.text ?? '')
   const [phoneSheetOpen, setPhoneSheetOpen] = useState(false)
   const phoneSheetAnim = useAnimatedPresence(phoneSheetOpen, 180)
   const [phoneInsertSub, setPhoneInsertSub] = useState<'menu' | 'shape' | 'layout'>('menu')
@@ -336,6 +363,10 @@ export function SlideRibbon(props: SlideRibbonProps) {
   const bodyRef = useRef<HTMLDivElement>(null)
   const tabsWrapRef = useRef<HTMLDivElement>(null)
   const { isPhone, isTablet } = useSlideViewport()
+
+  useEffect(() => {
+    if (deck.footer?.text !== undefined) setFooterDraft(deck.footer.text)
+  }, [deck.id, deck.footer?.text])
 
   useEffect(() => {
     if (!popup) return
@@ -348,6 +379,62 @@ export function SlideRibbon(props: SlideRibbonProps) {
 
   const toggle = (key: string) => setPopup((p) => (p === key ? null : key))
   const close = () => setPopup(null)
+
+  const activeSlideTextarea = (): HTMLTextAreaElement | null => {
+    const ae = document.activeElement
+    return ae instanceof HTMLTextAreaElement && ae.closest('.slide-frame') && !ae.readOnly ? ae : null
+  }
+
+  const insertAtCursor = (snippet: string, wrapWith?: [string, string]): boolean => {
+    const ta = activeSlideTextarea()
+    if (!ta || !selected || selected.type !== 'text') return false
+    const start = ta.selectionStart ?? 0
+    const end = ta.selectionEnd ?? 0
+    const val = ta.value
+    if (wrapWith) {
+      if (start === end) return false
+      const inner = val.slice(start, end)
+      const inserted = `${wrapWith[0]}${inner}${wrapWith[1]}`
+      const next = `${val.slice(0, start)}${inserted}${val.slice(end)}`
+      onUpdateSelected({ text: next })
+      requestAnimationFrame(() => {
+        ta.focus()
+        ta.setSelectionRange(start, start + inserted.length)
+      })
+      return true
+    }
+    const next = `${val.slice(0, start)}${snippet}${val.slice(end)}`
+    onUpdateSelected({ text: next })
+    requestAnimationFrame(() => {
+      ta.focus()
+      ta.setSelectionRange(start + snippet.length, start + snippet.length)
+    })
+    return true
+  }
+
+  const insertScriptChar = (ch: string) => {
+    if (!selected || selected.type !== 'text') return
+    if (!insertAtCursor(ch)) onUpdateSelected({ text: `${selected.text ?? ''}${ch}` })
+    close()
+  }
+
+  const insertSymbolChar = (ch: string) => {
+    if (!insertAtCursor(ch)) {
+      onInsert({
+        id: uid(),
+        type: 'text',
+        x: 40,
+        y: 42,
+        w: 20,
+        h: 12,
+        text: ch,
+        variant: 'body',
+        fontSize: 4,
+        align: 'center',
+      })
+    }
+    close()
+  }
 
   /** bật/tắt danh sách cho hộp chữ: mọi dòng đã có đúng kiểu thì gỡ, ngược lại gắn (thay kiểu cũ) */
   const listKind = (text: string): 'bullet' | 'number' | null => {
@@ -525,6 +612,129 @@ export function SlideRibbon(props: SlideRibbonProps) {
             <button type="button" className="rb-icon" data-tip="Đậm" aria-label="Đậm" onMouseDown={(e) => e.preventDefault()} onClick={() => onUpdateSelected({ fontWeight: selected?.fontWeight === 700 ? 400 : 700 })} disabled={!isText}><b>B</b></button>
             <button type="button" className="rb-icon" data-tip="Nghiêng" aria-label="Nghiêng" onMouseDown={(e) => e.preventDefault()} onClick={() => onUpdateSelected({ fontStyle: selected?.fontStyle === 'italic' ? 'normal' : 'italic' })} disabled={!isText}><i>I</i></button>
             <button type="button" className="rb-icon" data-tip="Gạch chân" aria-label="Gạch chân" onMouseDown={(e) => e.preventDefault()} onClick={() => onUpdateSelected({ textDecoration: selected?.textDecoration === 'underline' ? 'none' : 'underline' })} disabled={!isText}><u>U</u></button>
+            <button
+              type="button"
+              className={cn('rb-icon', selected?.textDecoration === 'line-through' && 'active')}
+              data-tip="Gạch ngang"
+              aria-label="Gạch ngang"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => onUpdateSelected({ textDecoration: selected?.textDecoration === 'line-through' ? 'none' : 'line-through' })}
+              disabled={!isText}
+            >
+              <IconStrikethrough size={16} />
+            </button>
+            <Anchored
+              open={popup === 'highlight'}
+              minWidth={190}
+              trigger={
+                <button
+                  type="button"
+                  className={cn('rb-icon slide-ribbon-color-btn', selected?.highlight && 'active')}
+                  data-tip="Tô sáng chữ"
+                  aria-label="Tô sáng chữ"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => toggle('highlight')}
+                  disabled={!isText}
+                >
+                  <IconHighlight size={16} />
+                  <span className="rb-color-bar" style={{ background: selected?.highlight ?? 'transparent' }} />
+                </button>
+              }
+            >
+              <ColorPalette
+                value={selected?.highlight ?? '#fef08a'}
+                themeColors={[deck.theme.accent, '#fef08a']}
+                onPick={(highlight) => {
+                  onUpdateSelected({ highlight })
+                  close()
+                }}
+              />
+              <div className="slide-ribbon-menu-sep" />
+              <MenuItem
+                onClick={() => {
+                  onUpdateSelected({ highlight: undefined })
+                  close()
+                }}
+              >
+                Không tô
+              </MenuItem>
+            </Anchored>
+            <Anchored
+              open={popup === 'sup'}
+              minWidth={136}
+              trigger={
+                <button
+                  type="button"
+                  className={cn('rb-icon', popup === 'sup' && 'active')}
+                  data-tip="Chỉ số trên (bôi chữ để bọc $x^{a}$ hoặc chèn ² ³ ⁿ)"
+                  aria-label="Chỉ số trên"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => {
+                    if (insertAtCursor('', ['$^{', '}$'])) {
+                      close()
+                      return
+                    }
+                    toggle('sup')
+                  }}
+                  disabled={!isText}
+                >
+                  <IconSuperscript size={16} />
+                </button>
+              }
+            >
+              <div className="slide-ribbon-menu-title">Chèn chỉ số trên</div>
+              <div className="flex gap-1 px-2 pb-1">
+                {UNICODE_SUPERSCRIPTS.map((ch) => (
+                  <button
+                    key={ch}
+                    type="button"
+                    className="slide-sym-btn flex-1 border border-line/60 font-medium"
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => insertScriptChar(ch)}
+                  >
+                    x{ch}
+                  </button>
+                ))}
+              </div>
+            </Anchored>
+            <Anchored
+              open={popup === 'sub'}
+              minWidth={136}
+              trigger={
+                <button
+                  type="button"
+                  className={cn('rb-icon', popup === 'sub' && 'active')}
+                  data-tip="Chỉ số dưới (bôi chữ để bọc $x_{a}$ hoặc chèn ₁ ₂ ₙ)"
+                  aria-label="Chỉ số dưới"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => {
+                    if (insertAtCursor('', ['$_{', '}$'])) {
+                      close()
+                      return
+                    }
+                    toggle('sub')
+                  }}
+                  disabled={!isText}
+                >
+                  <IconSubscript size={16} />
+                </button>
+              }
+            >
+              <div className="slide-ribbon-menu-title">Chèn chỉ số dưới</div>
+              <div className="flex gap-1 px-2 pb-1">
+                {UNICODE_SUBSCRIPTS.map((ch) => (
+                  <button
+                    key={ch}
+                    type="button"
+                    className="slide-sym-btn flex-1 border border-line/60 font-medium"
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => insertScriptChar(ch)}
+                  >
+                    x{ch}
+                  </button>
+                ))}
+              </div>
+            </Anchored>
             <Anchored
               open={popup === 'textColor'}
               minWidth={190}
@@ -552,6 +762,34 @@ export function SlideRibbon(props: SlideRibbonProps) {
                 }}
               />
             </Anchored>
+            <button
+              type="button"
+              className="rb-icon"
+              data-tip="Xoá định dạng"
+              aria-label="Xoá định dạng"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => selected && onUpdateSelected(clearTextFormatting(selected))}
+              disabled={!isText}
+            >
+              <IconClearFormat size={16} />
+            </button>
+            <button
+              type="button"
+              className={cn('rb-icon', painterMode !== 'off' && 'active')}
+              data-tip={
+                painterMode === 'lock'
+                  ? 'Đang khoá sao chép định dạng (bấm hoặc Esc để tắt)'
+                  : 'Sao chép định dạng (nhấp đúp để khoá)'
+              }
+              aria-label="Sao chép định dạng"
+              aria-pressed={painterMode !== 'off'}
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={(e) => onTogglePainter(e.detail >= 2)}
+              onDoubleClick={() => onTogglePainter(true)}
+              disabled={!isText && painterMode === 'off'}
+            >
+              <IconFormatPainter size={16} />
+            </button>
           </div>
         </div>
       </RibbonGroup>
@@ -741,7 +979,177 @@ export function SlideRibbon(props: SlideRibbonProps) {
       </RibbonGroup>
       <div className="ribbon-sep" />
       <RibbonGroup label="Biểu tượng">
+        <Anchored
+          open={popup === 'symbol'}
+          minWidth={300}
+          trigger={
+            <RibbonButton
+              icon={<><IconSymbol size={26} /><Caret /></>}
+              label="Ký hiệu"
+              title="Chèn ký hiệu đặc biệt (Ω)"
+              onClick={() => toggle('symbol')}
+              active={popup === 'symbol'}
+            />
+          }
+        >
+          <div className="max-h-[320px] overflow-y-auto p-1">
+            {SLIDE_SYMBOLS.map((group, gi) => (
+              <div key={group.label}>
+                {gi > 0 && <div className="slide-ribbon-menu-sep" />}
+                <div className="slide-ribbon-menu-title">{group.label}</div>
+                <div className="slide-sym-grid px-1.5 pb-1">
+                  {group.chars.map((ch) => (
+                    <button
+                      key={ch}
+                      type="button"
+                      className="slide-sym-btn"
+                      onMouseDown={(e) => e.preventDefault()}
+                      onClick={() => insertSymbolChar(ch)}
+                    >
+                      {ch}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </Anchored>
         <RibbonButton icon={<Smile size={28} strokeWidth={1.6} />} label="Icon" onClick={onOpenIcons} />
+      </RibbonGroup>
+      <div className="ribbon-sep" />
+      <RibbonGroup label="Liên kết">
+        <Anchored
+          open={popup === 'link'}
+          minWidth={260}
+          trigger={
+            <RibbonButton
+              icon={<IconLink size={26} />}
+              label="Liên kết"
+              title="Gắn liên kết web (http/https) cho phần tử đang chọn"
+              disabled={!selected}
+              active={popup === 'link' || Boolean(selected?.href)}
+              onClick={() => {
+                setHrefInput(selected?.href ?? '')
+                setHrefError(null)
+                toggle('link')
+              }}
+            />
+          }
+        >
+          <form
+            className="flex flex-col gap-2 p-2.5"
+            onSubmit={(e) => {
+              e.preventDefault()
+              const url = normalizeSlideHref(hrefInput)
+              if (!url) {
+                setHrefError('Nhập URL http(s):// hợp lệ.')
+                return
+              }
+              onUpdateSelected({ href: url })
+              setHrefError(null)
+              close()
+            }}
+          >
+            <div className="text-[11px] font-semibold uppercase tracking-wide text-ink-3">Địa chỉ liên kết</div>
+            <input
+              type="text"
+              value={hrefInput}
+              onChange={(e) => {
+                setHrefInput(e.target.value)
+                if (hrefError) setHrefError(null)
+              }}
+              placeholder="https://example.com"
+              aria-label="URL liên kết"
+              autoFocus
+              className="w-full rounded border border-line bg-white px-2 py-1 text-[12px] outline-none focus:border-clay"
+            />
+            {hrefError && <div className="text-[11px] text-red-600">{hrefError}</div>}
+            <div className="flex items-center justify-end gap-1.5">
+              {selected?.href ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    onUpdateSelected({ href: undefined })
+                    setHrefInput('')
+                    setHrefError(null)
+                    close()
+                  }}
+                  className="rounded border border-line px-2 py-1 text-[12px] text-ink-2 hover:bg-subtle"
+                >
+                  Gỡ
+                </button>
+              ) : null}
+              <button
+                type="submit"
+                className="rounded bg-clay px-2.5 py-1 text-[12px] font-medium text-white hover:opacity-90"
+              >
+                Áp dụng
+              </button>
+            </div>
+          </form>
+        </Anchored>
+      </RibbonGroup>
+      <div className="ribbon-sep" />
+      <RibbonGroup label="Đầu trang & chân trang">
+        <Anchored
+          open={popup === 'footer'}
+          minWidth={260}
+          trigger={
+            <RibbonButton
+              icon={<IconFooter size={26} />}
+              label="Chân trang"
+              title="Bật tắt số trang và nội dung chân trang slide"
+              active={popup === 'footer' || Boolean(deck.footer?.slideNumber || deck.footer?.text?.trim())}
+              onClick={() => toggle('footer')}
+            />
+          }
+        >
+          <div className="flex flex-col gap-2.5 p-2.5 text-[12px] text-ink">
+            <label className="flex cursor-pointer items-center gap-2 select-none">
+              <input
+                type="checkbox"
+                checked={Boolean(deck.footer?.slideNumber)}
+                onChange={(e) => onUpdateFooter({ ...deck.footer, slideNumber: e.target.checked })}
+              />
+              <span>Số trang</span>
+            </label>
+            <div className="flex flex-col gap-1.5">
+              <label className="flex cursor-pointer items-center gap-2 select-none">
+                <input
+                  type="checkbox"
+                  checked={deck.footer?.text !== undefined}
+                  onChange={(e) =>
+                    onUpdateFooter({
+                      ...deck.footer,
+                      text: e.target.checked ? footerDraft : undefined,
+                    })
+                  }
+                />
+                <span>Chân trang</span>
+              </label>
+              <input
+                type="text"
+                value={deck.footer?.text ?? ''}
+                disabled={deck.footer?.text === undefined}
+                onChange={(e) => {
+                  setFooterDraft(e.target.value)
+                  onUpdateFooter({ ...deck.footer, text: e.target.value })
+                }}
+                placeholder="Nhập nội dung chân trang…"
+                aria-label="Nội dung chân trang"
+                className="w-full rounded border border-line bg-white px-2 py-1 text-[12px] outline-none focus:border-clay disabled:bg-subtle disabled:text-ink-3"
+              />
+            </div>
+            <label className="flex cursor-pointer items-center gap-2 select-none">
+              <input
+                type="checkbox"
+                checked={Boolean(deck.footer?.skipTitle)}
+                onChange={(e) => onUpdateFooter({ ...deck.footer, skipTitle: e.target.checked })}
+              />
+              <span>Không hiện ở slide tiêu đề</span>
+            </label>
+          </div>
+        </Anchored>
       </RibbonGroup>
     </>
   )

@@ -7,6 +7,8 @@ import { applyDeckDesign, applyEdits, looksLikeEdit, parseEditCommands } from '.
 import { designById } from '../src/lib/slideDesigns.ts'
 import { slideFromAi } from '../src/lib/slideAi.ts'
 import { DECK_THEMES, normalizeTheme } from '../src/lib/slideTheme.ts'
+import { applyTextFormat, captureTextFormat, clearTextFormatting, normalizeSlideHref, shouldShowSlideFooter } from '../src/lib/slideFormat.ts'
+import { buildDeckPptx } from '../src/lib/exportDeck.ts'
 
 const theme = DECK_THEMES[0]
 const page = (title) => ({ layout: 'bullets', title, bullets: ['Ý thứ nhất', 'Ý thứ hai'] })
@@ -214,4 +216,154 @@ assert.equal(parseEditCommands('{"action":"edit","commands":[{"op":"set_tone","t
   assert.ok(cleared.slides[1].elements.some((e) => e.id === 'u7654321'))
 }
 
-console.log('test-slide-edit: parse/phông/theme/màu/tông/xoá/dời/HTML/applyDeckDesign pass')
+// --- chuẩn hoá liên kết (chặn javascript:, tự thêm https://)
+assert.equal(normalizeSlideHref('vi.wikipedia.org/wiki/Toán'), 'https://vi.wikipedia.org/wiki/To%C3%A1n')
+assert.equal(normalizeSlideHref('http://example.com/bai'), 'http://example.com/bai')
+assert.equal(normalizeSlideHref('https://example.com'), 'https://example.com/')
+assert.equal(normalizeSlideHref('javascript:alert(1)'), null)
+assert.equal(normalizeSlideHref('  JaVaScRiPt:void(0)'), null)
+assert.equal(normalizeSlideHref('data:text/html,<script>'), null)
+assert.equal(normalizeSlideHref('not a url'), null)
+assert.equal(normalizeSlideHref('   '), null)
+
+// --- xoá định dạng chữ (giữ cỡ chữ, căn lề, toạ độ; bỏ **đậm**)
+{
+  const el = {
+    id: 't1',
+    type: 'text',
+    x: 10,
+    y: 20,
+    w: 50,
+    h: 15,
+    text: 'Nội dung **quan trọng** và $x^{2}$',
+    fontSize: 3.6,
+    align: 'center',
+    fontWeight: 700,
+    fontStyle: 'italic',
+    textDecoration: 'line-through',
+    textColor: '#dc2626',
+    fontFamily: 'Times New Roman',
+    highlight: '#fef08a',
+    letterSpacing: 0.08,
+    lineHeight: 1.5,
+  }
+  const merged = { ...el, ...clearTextFormatting(el) }
+  assert.equal(merged.text, 'Nội dung quan trọng và $x^{2}$')
+  assert.equal(merged.fontSize, 3.6)
+  assert.equal(merged.align, 'center')
+  assert.equal(merged.x, 10)
+  assert.equal(merged.fontWeight, undefined)
+  assert.equal(merged.fontStyle, undefined)
+  assert.equal(merged.textDecoration, undefined)
+  assert.equal(merged.textColor, undefined)
+  assert.equal(merged.fontFamily, undefined)
+  assert.equal(merged.highlight, undefined)
+  assert.equal(merged.letterSpacing, undefined)
+  assert.equal(merged.lineHeight, undefined)
+}
+
+// --- sao chép định dạng (cây cọ): bắt đủ thuộc tính và ghi đè sạch đích
+{
+  const src = {
+    id: 'src',
+    type: 'text',
+    x: 5,
+    y: 5,
+    w: 40,
+    h: 10,
+    text: 'Nguồn',
+    fontWeight: 700,
+    fontStyle: 'italic',
+    textDecoration: 'line-through',
+    textColor: '#1d4ed8',
+    fontFamily: 'Georgia',
+    highlight: '#fde047',
+    fontSize: 4,
+    align: 'right',
+  }
+  const sample = captureTextFormat(src)
+  assert.ok(sample)
+  assert.equal(captureTextFormat({ id: 's1', type: 'shape', x: 0, y: 0, w: 10, h: 10 }), null)
+  const target = {
+    id: 'dst',
+    type: 'text',
+    x: 20,
+    y: 30,
+    w: 40,
+    h: 10,
+    text: 'Đích',
+    letterSpacing: 0.1,
+    lineHeight: 1.6,
+    fontWeight: 400,
+    align: 'left',
+  }
+  const painted = { ...target, ...applyTextFormat(sample) }
+  assert.equal(painted.fontWeight, 700)
+  assert.equal(painted.fontStyle, 'italic')
+  assert.equal(painted.textDecoration, 'line-through')
+  assert.equal(painted.highlight, '#fde047')
+  assert.equal(painted.fontSize, 4)
+  assert.equal(painted.align, 'right')
+  assert.equal(painted.letterSpacing, undefined)
+  assert.equal(painted.lineHeight, undefined)
+  assert.equal(painted.text, 'Đích')
+}
+
+// --- điều kiện hiện chân trang & xuất PPTX có gạch ngang, tô sáng, liên kết, chân trang
+{
+  const footer = { slideNumber: true, text: 'Trường THPT A', skipTitle: true }
+  assert.equal(shouldShowSlideFooter(footer, { layout: 'title' }, 0), false)
+  assert.equal(shouldShowSlideFooter(footer, { layout: 'bullets' }, 0), false)
+  assert.equal(shouldShowSlideFooter(footer, { layout: 'title' }, 1), false)
+  assert.equal(shouldShowSlideFooter(footer, { layout: 'bullets' }, 1), true)
+
+  const sampleDeck = {
+    id: 'd-fmt',
+    title: 'Định dạng',
+    theme,
+    footer,
+    slides: [
+      {
+        id: 's1',
+        layout: 'title',
+        background: '#ffffff',
+        elements: [{ id: 't1', type: 'text', x: 10, y: 40, w: 80, h: 12, text: 'Tiêu đề bài học' }],
+      },
+      {
+        id: 's2',
+        layout: 'bullets',
+        background: '#ffffff',
+        elements: [
+          {
+            id: 't2',
+            type: 'text',
+            x: 10,
+            y: 20,
+            w: 80,
+            h: 20,
+            text: 'Chữ gạch ngang tô sáng',
+            textDecoration: 'line-through',
+            highlight: '#fef08a',
+            href: 'https://vi.wikipedia.org/',
+          },
+        ],
+      },
+    ],
+    createdAt: '',
+    updatedAt: '',
+  }
+  const ab = await buildDeckPptx(sampleDeck)
+  const { default: JSZip } = await import('jszip')
+  const zip = await JSZip.loadAsync(ab)
+  const s1Xml = await zip.file('ppt/slides/slide1.xml').async('string')
+  const s2Xml = await zip.file('ppt/slides/slide2.xml').async('string')
+  const s2Rels = await zip.file('ppt/slides/_rels/slide2.xml.rels').async('string')
+  assert.ok(!s1Xml.includes('Trường THPT A'), 'skipTitle phải ẩn chân trang ở slide đầu')
+  assert.ok(s2Xml.includes('strike="sngStrike"'), 'PPTX phải có gạch ngang strike')
+  assert.ok(s2Xml.includes('<a:highlight><a:srgbClr val="FEF08A"/></a:highlight>'), 'PPTX phải có highlight FEF08A')
+  assert.ok(s2Xml.includes('<a:hlinkClick'), 'PPTX phải gắn hlinkClick')
+  assert.ok(s2Rels.includes('https://vi.wikipedia.org/'), 'PPTX rels phải chứa URL')
+  assert.ok(s2Xml.includes('Trường THPT A') && s2Xml.includes('>2<'), 'PPTX slide 2 phải có chân trang và số trang')
+}
+
+console.log('test-slide-edit: parse/phông/theme/màu/tông/xoá/dời/HTML/applyDeckDesign/format pass')

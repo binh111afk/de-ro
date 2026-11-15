@@ -5,7 +5,7 @@ import { svgDataUrl } from '@/lib/plot'
 import { readToolDoc, type ToolDoc } from '@/lib/toolSpec'
 import { ToolModal } from './tools/ToolModal'
 import { FRAME_PLACEHOLDER, dragImage, photoFrameClip } from '@/lib/slideShapes'
-import { AlignCenterHorizontal, AlignCenterVertical, AlignEndHorizontal, AlignEndVertical, AlignHorizontalSpaceAround, AlignStartHorizontal, AlignStartVertical, AlignVerticalSpaceAround, RotateCw, Trash2 } from 'lucide-react'
+import { AlignCenterHorizontal, AlignCenterVertical, AlignEndHorizontal, AlignEndVertical, AlignHorizontalSpaceAround, AlignStartHorizontal, AlignStartVertical, AlignVerticalSpaceAround, Link2, RotateCw, Trash2 } from 'lucide-react'
 import { type AlignMode } from '@/lib/slideAlign'
 import { slideIconById } from '@/lib/slideIconLibrary'
 import { graphicById, graphicMarkup } from '@/lib/slideGraphics'
@@ -168,6 +168,8 @@ export function EditableEl({
   group = [],
   onToggleSelect,
   onPreviewMany,
+  formatPainterActive = false,
+  onPaintApply,
 }: {
   el: SlideElement
   theme: ResolvedTheme
@@ -192,6 +194,9 @@ export function EditableEl({
   /** đang gõ chữ trong hình khối (nhấp đúp hình hoặc nút "Thêm chữ" trên thanh nổi) */
   editingText: boolean
   onEditingText: (on: boolean) => void
+  /** chế độ sao chép định dạng đang bật — nhấp vào ô chữ sẽ dán định dạng thay vì kéo */
+  formatPainterActive?: boolean
+  onPaintApply?: () => void
 }) {
   const movedRef = useRef(false)
   const [imageBusy, setImageBusy] = useState(false)
@@ -235,6 +240,11 @@ export function EditableEl({
   }
 
   const startDrag = (e: React.PointerEvent, mode: 'move' | 'resize', dir?: ResizeDir) => {
+    if (formatPainterActive && mode === 'move') {
+      e.stopPropagation()
+      e.preventDefault()
+      return
+    }
     if ((e.target as HTMLElement).closest('textarea, input, button, label')) {
       onSelect()
       return
@@ -452,7 +462,14 @@ export function EditableEl({
     style,
     'data-el-id': el.id,
     // Shift+bấm đã xử lý ở pointerdown; vừa kéo xong thì giữ nguyên vùng chọn (nhóm không bị thu về một)
-    onClick: (e: React.MouseEvent) => { e.stopPropagation(); if (!e.shiftKey && !movedRef.current) onSelect() },
+    onClick: (e: React.MouseEvent) => {
+      e.stopPropagation()
+      if (formatPainterActive) {
+        onPaintApply?.()
+        return
+      }
+      if (!e.shiftKey && !movedRef.current) onSelect()
+    },
     onPointerDown: (e: React.PointerEvent) => startDrag(e, 'move'),
   }
 
@@ -518,9 +535,37 @@ export function EditableEl({
     </>
   ) : null
 
+  const linkBadge = el.href ? (
+    <span
+      className="slide-el-link"
+      data-tip={`Liên kết: ${el.href}`}
+      aria-label={`Liên kết: ${el.href}`}
+      onClick={(e) => {
+        e.stopPropagation()
+        if (formatPainterActive) onPaintApply?.()
+        else if (!selected) onSelect()
+      }}
+    >
+      <Link2 size={11} strokeWidth={2.2} />
+    </span>
+  ) : null
+
+  const chrome = (
+    <>
+      {linkBadge}
+      {handle}
+    </>
+  )
+
   if (el.type === 'text')
     return (
-      <div {...common} style={{ ...style, cursor: selected && !editingText ? 'move' : 'default' }} onDoubleClick={() => onEditingText(true)}>
+      <div
+        {...common}
+        style={{ ...style, cursor: formatPainterActive ? 'inherit' : selected && !editingText ? 'move' : 'default' }}
+        onDoubleClick={() => {
+          if (!formatPainterActive) onEditingText(true)
+        }}
+      >
         <AutoFitText
           locked={!editingText}
           focusOnMount={editingText}
@@ -538,28 +583,29 @@ export function EditableEl({
           lineHeight={el.lineHeight}
           letterSpacing={el.letterSpacing}
           background={el.fill}
+          highlight={el.highlight}
           valign={el.valign === 'middle' || el.fill ? 'middle' : 'top'}
           onChange={(text) => onChange({ text })}
         />
-        {handle}
+        {chrome}
       </div>
     )
 
   if (el.type === 'icon') {
     const Icon = slideIconById(el.assetId)
     return Icon ? (
-      <div {...common} style={{ ...style, opacity: el.opacity, color: el.textColor ?? theme.accent, cursor: selected ? 'move' : 'default' }}>
+      <div {...common} style={{ ...style, opacity: el.opacity, color: el.textColor ?? theme.accent, cursor: formatPainterActive ? 'inherit' : selected ? 'move' : 'default' }}>
         <Icon size="100%" weight="duotone" className="h-full w-full p-[2%]" />
-        {handle}
+        {chrome}
       </div>
     ) : null
   }
 
   if (el.type === 'connector') {
     return (
-      <div {...common} style={{ ...style, cursor: selected ? 'move' : 'default' }}>
+      <div {...common} style={{ ...style, cursor: formatPainterActive ? 'inherit' : selected ? 'move' : 'default' }}>
         <ConnectorSvg el={el} theme={theme} />
-        {handle}
+        {chrome}
       </div>
     )
   }
@@ -567,19 +613,19 @@ export function EditableEl({
   if (el.type === 'graphic') {
     if (!el.graphicId || !graphicById(el.graphicId)) return null
     return (
-      <div {...common} style={{ ...style, opacity: el.opacity, cursor: selected ? 'move' : 'default' }}>
+      <div {...common} style={{ ...style, opacity: el.opacity, cursor: formatPainterActive ? 'inherit' : selected ? 'move' : 'default' }}>
         <div
           className={`h-full w-full ${graphicById(el.graphicId)?.category === 'ornament' ? '' : 'p-[2%]'}`}
           dangerouslySetInnerHTML={{ __html: graphicMarkup(el.graphicId, el.textColor ?? theme.fg, el.fill) }}
         />
-        {handle}
+        {chrome}
       </div>
     )
   }
 
   if (el.type === 'shape')
     return (
-      <div {...common} style={{ ...style, ...shapeCss(el, theme), ...(style.clipPath ? { clipPath: style.clipPath } : null) }} onDoubleClick={() => el.shape !== 'line' && onEditingText(true)}>
+      <div {...common} style={{ ...style, ...shapeCss(el, theme), ...(style.clipPath ? { clipPath: style.clipPath } : null) }} onDoubleClick={() => el.shape !== 'line' && !formatPainterActive && onEditingText(true)}>
         {shapeInner(el, theme)}
         {editingText && el.shape !== 'line' ? (
           <div style={{ position: 'absolute', inset: '10% 12%' }} onBlur={() => onEditingText(false)}>
@@ -589,6 +635,7 @@ export function EditableEl({
               weight={el.fontWeight ?? 600}
               fontFamily={fontStack(el.fontFamily ?? theme.fonts.body)}
               fontStyle={el.fontStyle}
+              textDecoration={el.textDecoration}
               align={el.align ?? 'center'}
               color={el.textColor ?? readableTextOn(el.fill ?? theme.accent)}
               valign="middle"
@@ -599,7 +646,7 @@ export function EditableEl({
         ) : (
           <ShapeText el={el} theme={theme} />
         )}
-        {handle}
+        {chrome}
       </div>
     )
 
@@ -651,7 +698,7 @@ export function EditableEl({
             ))}
           </tbody>
         </table>
-        {handle}
+        {chrome}
       </div>
     )
   }
@@ -660,7 +707,7 @@ export function EditableEl({
     return (
       <div {...common}>
         <ChartView el={el} absolute={false} colors={theme.chart} />
-        {handle}
+        {chrome}
       </div>
     )
 
@@ -797,7 +844,7 @@ export function EditableEl({
             {el.src ? 'Đổi ảnh' : 'Chọn ảnh'}
           </label>
         )}
-        {handle}
+        {chrome}
         {plotModal}
       </div>
     )
