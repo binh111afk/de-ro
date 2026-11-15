@@ -11,6 +11,12 @@ Tiếp [phiên 39](phien-39.md). Mọi việc đã lên `main` và đã push (co
    - **preview cho người dùng xem**: mở `/preview-designs` và panel trái › Mẫu › Bộ màu, chụp đủ 10 bộ mới (Tiêu đề, một slide nội dung, Kết thúc) gửi người dùng duyệt **trước khi merge**;
    - chạy `npm run test:designs`, `test:slide-theme`, `test:slide-plan`, `test:slide-contrast`; áp cả 28 bộ lên deck 7 slide → bố cục không đổi;
    - người dùng đồng ý mới merge, push, xoá worktree + nhánh (tắt dev server 5191 trước khi xoá thư mục).
+0b. **Tính năng mới người dùng giao: đăng nhập bằng Google.** Ghi chú để bắt đầu (chưa làm gì):
+   - Auth hiện tự gọi REST Supabase, không dùng `supabase-js` (`src/lib/auth.ts`: `signIn`, `signUp`, `requestReset`…). Trang đăng nhập/đăng ký: `src/pages/Auth.tsx`.
+   - **Đã có sẵn chỗ nhận token khi quay về**: `consumeAuthRedirect()` (gọi ở `src/App.tsx`) đọc `#access_token=…&refresh_token=…` trên URL, lấy `/auth/v1/user` rồi `saveSession`. Nên nút Google chỉ cần chuyển trang tới `${VITE_SUPABASE_URL}/auth/v1/authorize?provider=google&redirect_to=<origin>/` (luồng implicit trả token qua hash). Cân nhắc PKCE nếu muốn chặt hơn (cần thêm bước đổi `code`).
+   - **Phần người dùng phải làm (Claude không tự làm được)**: tạo OAuth Client trong Google Cloud Console (Authorized redirect URI = `https://ddcyhsxytbcdpgpggexh.supabase.co/auth/v1/callback`), rồi bật provider Google trong Supabase › Authentication › Providers, dán Client ID + Secret. Trong Supabase › URL Configuration thêm `https://dero.id.vn` (và `http://localhost:5184` để thử) vào Redirect URLs.
+   - Cần xử lý: tài khoản Google trùng email tài khoản mật khẩu có sẵn (Supabase tự liên kết nếu email đã xác minh — kiểm lại), tên + ảnh đại diện lấy từ `user_metadata` (`full_name`, `avatar_url`) trong `toUser`, quà chào mừng 120 điểm vẫn chạy như tài khoản thường.
+   - Nút "Tiếp tục với Google" đặt trên cả trang đăng nhập và đăng ký; dùng logo Google chuẩn (màu gốc, nền trắng) theo hướng dẫn thương hiệu của Google.
 1. **Thử thật** (khung trình duyệt của app không kiểm được):
    - Màn người trình bày bằng cửa sổ bật lên trên Chrome thật (khung app chặn popup, mới thử phần dự phòng nổi trên màn chiếu).
    - Mở PPTX bằng PowerPoint thật: video YouTube phát trực tuyến; ảnh cắt + bo góc + bóng đúng.
