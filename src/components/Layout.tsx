@@ -311,6 +311,8 @@ export function Footer() {
             >
               Hòm thư góp ý
             </button>
+            <Link to="/quyen-rieng-tu" className="text-[12px] font-medium text-ink-3 hover:text-ink hover:underline">Quyền riêng tư</Link>
+            <Link to="/dieu-khoan" className="text-[12px] font-medium text-ink-3 hover:text-ink hover:underline">Điều khoản</Link>
             <p className="text-[12px] font-semibold text-ink-3">Dành cho giáo viên Việt Nam</p>
           </div>
         </div>

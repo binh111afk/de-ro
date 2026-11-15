@@ -45,6 +45,7 @@ const ExamView = lazyPage(pages.ExamView)
 const Auth = lazyPage(pages.Auth)
 const Profile = lazyPage(pages.Profile)
 const MyUploads = lazyPage(pages.MyUploads)
+const Legal = lazyPage(() => import('@/pages/Legal'))
 const PreviewDesigns = lazyPage(() => import('@/pages/PreviewDesigns'))
 // không đưa vào `pages` (không tải ngầm): người dùng thường không phải tải code admin
 const AdminPage = lazyPage(() => import('@/pages/admin/AdminPage'))
@@ -162,6 +163,8 @@ export default function App() {
           <Route path="/dat-lai-mat-khau" element={<Auth mode="reset" />} />
           <Route path="/ho-so" element={<Profile />} />
           <Route path="/ho-so/de-tai-len" element={<MyUploads />} />
+          <Route path="/quyen-rieng-tu" element={<Legal kind="privacy" />} />
+          <Route path="/dieu-khoan" element={<Legal kind="terms" />} />
           <Route path="/preview-designs" element={<PreviewDesigns />} />
           <Route path="/admin/*" element={<AdminPage />} />
           <Route path="*" element={<Home />} />

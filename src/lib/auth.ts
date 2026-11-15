@@ -67,14 +67,14 @@ function toVietnamese(data: Record<string, unknown>, status: number): string {
   return raw || 'Có lỗi xảy ra, thử lại sau.'
 }
 
-type RawUser = { id: string; email: string; user_metadata?: { display_name?: string; avatar_url?: string } }
+type RawUser = { id: string; email: string; user_metadata?: { display_name?: string; full_name?: string; name?: string; avatar_url?: string; picture?: string } }
 
 function toUser(u: RawUser): Session['user'] {
   return {
     id: u.id,
     email: u.email,
-    name: u.user_metadata?.display_name || undefined,
-    avatar: u.user_metadata?.avatar_url || undefined,
+    name: u.user_metadata?.display_name || u.user_metadata?.full_name || u.user_metadata?.name || undefined,
+    avatar: u.user_metadata?.avatar_url || u.user_metadata?.picture || undefined,
   }
 }
 
@@ -86,6 +86,15 @@ function toSession(data: Record<string, unknown>): Session {
     expires_at: Number(data.expires_at ?? Math.floor(Date.now() / 1000) + Number(data.expires_in ?? 3600)),
     user: toUser(user),
   }
+}
+
+/**
+ * Đăng nhập bằng Google: chuyển sang trang uỷ quyền của Supabase (luồng implicit).
+ * Google xong sẽ quay về `<origin>/#access_token=…`, `consumeAuthRedirect()` ở App nhận và lưu phiên.
+ */
+export function signInWithGoogle(): void {
+  const redirect = `${window.location.origin}/`
+  window.location.assign(`${BASE}/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(redirect)}`)
 }
 
 /** Đăng ký. Trả về `true` nếu cần xác nhận email (chưa có phiên). */
