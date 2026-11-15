@@ -1,15 +1,15 @@
 /**
- * Hộp thoại "Tìm và thay thế" kiểu Word / Google Docs: giữa màn hình, nền tối phía sau, 2 tab Tìm / Thay thế.
+ * Thanh "Tìm và thay thế" nổi ở góc trên bên phải vùng soạn — kiểu Ctrl+F của Google Docs:
+ * không phủ nền tối, không che trang; ↑/↓ (Enter / Shift+Enter) nhảy kết quả và tự cuộn tới;
+ * bấm nút ⇄ để mở hàng Thay thế.
  */
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { Editor } from '@tiptap/core'
 import { TextSelection } from '@tiptap/pm/state'
 import { createSearchPlugin, findMatches, searchPluginKey, type SearchQuery } from './find'
-import { IconClose, IconSearch, IconReplace } from './icons'
-import { createPortal } from 'react-dom'
+import { IconChevronDown, IconChevronUp, IconClose, IconReplace } from './icons'
 import { cn } from '@/lib/cn'
-import { Button, Checkbox } from '@/components/ui'
-import { Segmented } from '@/components/Segmented'
+import { Checkbox } from '@/components/ui'
 
 export function FindPanel({
   editor,
@@ -26,59 +26,63 @@ export function FindPanel({
   const [matchCase, setMatchCase] = useState(false)
   const [wholeWord, setWholeWord] = useState(false)
   const [count, setCount] = useState({ active: -1, total: 0 })
+  // tăng sau mỗi lần thay → tìm lại (vị trí cũ đã lệch)
+  const [version, setVersion] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
 
+  // mở lần đầu hoặc bấm lại Ctrl+F / Ctrl+H khi thanh đang mở: về đúng chế độ, chọn sẵn chữ trong ô tìm
   useEffect(() => {
     if (initialTab) setTab(initialTab)
-  }, [initialTab])
-
-  useEffect(() => {
     inputRef.current?.focus()
     inputRef.current?.select()
-  }, [tab])
+  }, [initialTab])
 
-  // debounce tìm kiếm mỗi khi query đổi
+  /** đặt kết quả `i` là kết quả đang chọn, tô đậm và cuộn trang tới (không lấy focus khỏi ô tìm) */
+  const show = useCallback(
+    (matches: Array<{ from: number; to: number }>, query: SearchQuery, i: number) => {
+      if (!editor) return
+      let tr = editor.state.tr.setMeta(searchPluginKey, { query, matches, active: i })
+      if (i >= 0) tr = tr.setSelection(TextSelection.near(editor.state.doc.resolve(matches[i].from))).scrollIntoView()
+      editor.view.dispatch(tr)
+      setCount({ active: i, total: matches.length })
+    },
+    [editor],
+  )
+
   useEffect(() => {
     if (!editor) return
     const query: SearchQuery = { text, matchCase, wholeWord }
     const matches = findMatches(editor.state.doc, query)
-    setCount({ active: matches.length ? 0 : -1, total: matches.length })
-    const tr = editor.state.tr.setMeta(searchPluginKey, { query, matches, active: matches.length ? 0 : -1 })
-    editor.view.dispatch(tr)
-  }, [editor, text, matchCase, wholeWord])
+    // sau khi thay: giữ vị trí gần chỗ vừa thay thay vì nhảy về kết quả đầu
+    const prev = searchPluginKey.getState(editor.state)?.active ?? 0
+    show(matches, query, matches.length ? Math.min(Math.max(prev, 0), matches.length - 1) : -1)
+  }, [editor, text, matchCase, wholeWord, version, show])
 
   const gotoMatch = useCallback(
     (delta: number) => {
       if (!editor) return
       const s = searchPluginKey.getState(editor.state)
       if (!s || !s.matches.length) return
-      const next = (s.active + delta + s.matches.length) % s.matches.length
-      const m = s.matches[next]
-      editor.view.dispatch(
-        editor.state.tr
-          .setMeta(searchPluginKey, { ...s, active: next })
-          .setSelection(TextSelection.near(editor.state.doc.resolve(m.from))),
-      )
-      setCount({ active: next, total: s.matches.length })
+      show(s.matches, s.query, (s.active + delta + s.matches.length) % s.matches.length)
     },
-    [editor],
+    [editor, show],
   )
 
   const replaceCurrent = useCallback(() => {
     if (!editor) return
     const s = searchPluginKey.getState(editor.state)
-    if (!s || s.active < 0) return
-    const m = s.matches[s.active]
+    const m = s && s.active >= 0 ? s.matches[s.active] : null
     if (!m) return
-    editor.chain().focus().deleteRange({ from: m.from, to: m.to }).insertContentAt(m.from, replacement).run()
+    // không focus vào trang: con trỏ ở lại ô Thay bằng để bấm Enter thay tiếp
+    editor.chain().deleteRange({ from: m.from, to: m.to }).insertContentAt(m.from, replacement).run()
+    setVersion((v) => v + 1)
   }, [editor, replacement])
 
   const replaceAll = useCallback(() => {
     if (!editor) return
-    const query: SearchQuery = { text, matchCase, wholeWord }
-    const matches = findMatches(editor.state.doc, query)
+    const matches = findMatches(editor.state.doc, { text, matchCase, wholeWord })
     if (!matches.length) return
-    const chain = editor.chain().focus()
+    const chain = editor.chain()
     // thay từ cuối về đầu để không lệch offset
     for (let i = matches.length - 1; i >= 0; i--) {
       const m = matches[i]
@@ -86,126 +90,99 @@ export function FindPanel({
       if (replacement) chain.insertContentAt(m.from, replacement)
     }
     chain.run()
+    setVersion((v) => v + 1)
   }, [editor, text, matchCase, wholeWord, replacement])
 
-  const counter = count.total ? `${count.active + 1} / ${count.total}` : text ? 'Không thấy' : ''
-  const field = 'h-10 w-full rounded-[6px] border border-line-2 bg-white px-3 text-[14px] text-ink placeholder:text-ink-4 focus:border-clay focus:outline-none focus:ring-2 focus:ring-clay/15'
+  const counter = count.total ? `${count.active + 1}/${count.total}` : text ? '0/0' : ''
+  const field =
+    'h-9 w-full min-w-0 rounded-[6px] border border-line-2 bg-white px-3 text-[13.5px] text-ink placeholder:text-ink-4 focus:border-clay focus:outline-none focus:ring-2 focus:ring-clay/15'
+  const iconBtn =
+    'grid h-8 w-8 shrink-0 place-items-center rounded-[6px] text-ink-2 hover:bg-sunken hover:text-ink disabled:opacity-35 disabled:hover:bg-transparent'
+  const textBtn = 'h-9 shrink-0 rounded-[6px] border border-line-2 bg-white px-3 text-[13px] font-medium text-ink hover:bg-sunken disabled:opacity-40'
 
-  // hộp thoại giữa màn hình, nền tối phía sau (bấm ra ngoài hoặc Esc để đóng)
-  return createPortal(
+  return (
     <div
-      className="fixed inset-0 z-[60] grid place-items-center bg-ink/40 p-3"
-      onMouseDown={(e) => {
-        if (e.target === e.currentTarget) onClose()
-      }}
+      role="search"
+      aria-label="Tìm và thay thế"
+      className="absolute right-4 top-3 z-30 w-[min(400px,calc(100%-32px))] rounded-[10px] border border-line bg-surface p-2.5 shadow-lift"
       onKeyDown={(e) => {
         if (e.key === 'Escape') onClose()
       }}
     >
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-label="Tìm và thay thế"
-      className="w-[min(440px,100%)] rounded-[10px] border border-line bg-surface shadow-lift"
-    >
-      <div className="flex items-center gap-2 px-5 pb-2 pt-4">
-        <h2 className="font-display text-[17px] font-semibold text-ink">Tìm và thay thế</h2>
+      <div className="flex items-center gap-1">
+        <div className="relative min-w-0 flex-1">
+          <input
+            ref={inputRef}
+            className={cn(field, 'pr-14')}
+            placeholder="Tìm trong đề"
+            aria-label="Tìm"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault()
+                gotoMatch(e.shiftKey ? -1 : 1)
+              }
+            }}
+          />
+          <span className={cn('tnum pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[12px]', count.total ? 'text-ink-3' : 'text-ink-4')}>
+            {counter}
+          </span>
+        </div>
+        <button type="button" className={iconBtn} onClick={() => gotoMatch(-1)} disabled={!count.total} data-tip="Kết quả trước (Shift+Enter)" aria-label="Kết quả trước">
+          <IconChevronUp size={16} />
+        </button>
+        <button type="button" className={iconBtn} onClick={() => gotoMatch(1)} disabled={!count.total} data-tip="Kết quả sau (Enter)" aria-label="Kết quả sau">
+          <IconChevronDown size={16} />
+        </button>
         <button
           type="button"
-          onClick={onClose}
-          aria-label="Đóng"
-          className="ml-auto grid h-8 w-8 place-items-center rounded-[6px] text-ink-3 hover:bg-sunken hover:text-ink"
+          className={cn(iconBtn, tab === 'replace' && 'bg-sunken text-ink')}
+          onClick={() => setTab(tab === 'replace' ? 'find' : 'replace')}
+          aria-pressed={tab === 'replace'}
+          data-tip="Thay thế"
+          aria-label="Thay thế"
         >
-          <IconClose size={16} />
+          <IconReplace size={16} />
+        </button>
+        <button type="button" className={iconBtn} onClick={onClose} data-tip="Đóng (Esc)" aria-label="Đóng">
+          <IconClose size={15} />
         </button>
       </div>
 
-      <div className="px-5">
-        <Segmented
-          label="Chế độ"
-          value={tab}
-          onChange={setTab}
-          className="h-9"
-          options={[
-            { key: 'find', label: 'Tìm', icon: <IconSearch size={14} /> },
-            { key: 'replace', label: 'Thay thế', icon: <IconReplace size={14} /> },
-          ]}
-        />
-      </div>
-
-      <div className="space-y-3 px-5 pb-5 pt-4">
-        <label className="block">
-          <span className="mb-1.5 block text-[12.5px] font-medium text-ink-2">Tìm</span>
-          <div className="relative">
-            <input
-              ref={inputRef}
-              className={cn(field, 'pr-24')}
-              placeholder="Nhập chữ cần tìm"
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  e.preventDefault()
-                  gotoMatch(e.shiftKey ? -1 : 1)
-                }
-              }}
-            />
-            <span className={cn('tnum absolute right-3 top-1/2 -translate-y-1/2 text-[12.5px]', count.total ? 'text-ink-3' : 'text-ink-4')}>
-              {counter}
-            </span>
-          </div>
-        </label>
-
-        {tab === 'replace' && (
-          <label className="block">
-            <span className="mb-1.5 block text-[12.5px] font-medium text-ink-2">Thay bằng</span>
-            <input
-              className={field}
-              placeholder="Nhập chữ thay thế"
-              value={replacement}
-              onChange={(e) => setReplacement(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  e.preventDefault()
-                  replaceCurrent()
-                }
-              }}
-            />
-          </label>
-        )}
-
-        <div className="flex flex-wrap gap-x-5 gap-y-2 text-[13px] text-ink-2">
-          <Checkbox checked={matchCase} onChange={setMatchCase} className="gap-2">
-            Phân biệt hoa/thường
-          </Checkbox>
-          <Checkbox checked={wholeWord} onChange={setWholeWord} className="gap-2">
-            Nguyên từ
-          </Checkbox>
+      {tab === 'replace' && (
+        <div className="mt-2 flex items-center gap-1.5">
+          <input
+            className={field}
+            placeholder="Thay bằng"
+            aria-label="Thay bằng"
+            value={replacement}
+            onChange={(e) => setReplacement(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault()
+                replaceCurrent()
+              }
+            }}
+          />
+          <button type="button" className={textBtn} onClick={replaceCurrent} disabled={!count.total}>
+            Thay
+          </button>
+          <button type="button" className={textBtn} onClick={replaceAll} disabled={!count.total}>
+            Thay hết
+          </button>
         </div>
+      )}
 
-        <div className="flex flex-wrap items-center justify-end gap-2 border-t border-line pt-4">
-          {tab === 'replace' && (
-            <>
-              <Button size="sm" variant="outline" onClick={replaceCurrent} disabled={!count.total}>
-                Thay
-              </Button>
-              <Button size="sm" variant="outline" onClick={replaceAll} disabled={!count.total}>
-                Thay tất cả
-              </Button>
-              <span className="flex-1" />
-            </>
-          )}
-          <Button size="sm" variant="outline" onClick={() => gotoMatch(-1)} disabled={!count.total}>
-            Trước
-          </Button>
-          <Button size="sm" variant="clay" onClick={() => gotoMatch(1)} disabled={!count.total}>
-            Sau
-          </Button>
-        </div>
+      <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 px-0.5 text-[12.5px] text-ink-3">
+        <Checkbox checked={matchCase} onChange={setMatchCase} className="gap-1.5">
+          Phân biệt hoa/thường
+        </Checkbox>
+        <Checkbox checked={wholeWord} onChange={setWholeWord} className="gap-1.5">
+          Nguyên từ
+        </Checkbox>
       </div>
     </div>
-    </div>,
-    document.body,
   )
 }
 

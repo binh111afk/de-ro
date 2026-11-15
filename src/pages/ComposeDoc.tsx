@@ -598,6 +598,21 @@ export default function ComposeDoc() {
 
   const activeTab = tabs.find((t) => t.id === activeId)
 
+  // Ctrl/Cmd+F: Tìm, Ctrl/Cmd+H: Thay thế (như Word/Docs) — chỉ ở tab đề thi, thay ô tìm của trình duyệt
+  const docTabOpen = !startOpen && !!editor && activeTab?.kind !== 'slide' && activeTab?.kind !== 'board'
+  useEffect(() => {
+    if (!docTabOpen) return
+    const onKey = (e: KeyboardEvent) => {
+      if (!(e.ctrlKey || e.metaKey) || e.altKey || e.shiftKey) return
+      const k = e.key.toLowerCase()
+      if (k !== 'f' && k !== 'h') return
+      e.preventDefault()
+      setFindTab(k === 'f' ? 'find' : 'replace')
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [docTabOpen])
+
   /** deck đang mở — chỉ có khi tab active là slide */
   const activeDeck = useMemo(() => {
     if (!activeId) return null
