@@ -732,13 +732,13 @@ export function SlideEditor({
     return added
   }
 
-  // Bấm/→ hiện phần tử kế tiếp của slide; hết hiệu ứng mới sang slide sau. Lùi: ẩn bớt, rồi về slide trước (đã hiện đủ).
+  // Bấm/→ hiện phần tử kế tiếp của slide; hết hiệu ứng mới sang slide sau; hết slide thì thoát. Lùi: ẩn bớt, rồi về slide trước (đã hiện đủ).
   const goNext = () => {
     if (presentStep < slideSteps(slides[presentIndex]?.elements ?? [])) setPresentStep(presentStep + 1)
     else if (presentIndex < slides.length - 1) {
       setPresentIndex(presentIndex + 1)
       setPresentStep(0)
-    }
+    } else setPresenting(false) // đã ở bước cuối của slide cuối: tiến thêm thì thoát trình chiếu
   }
   const goPrev = () => {
     if (presentStep > 0) setPresentStep(presentStep - 1)
@@ -877,7 +877,8 @@ export function SlideEditor({
       return null
     }
     const canPrev = presentIndex > 0 || presentStep > 0
-    const canNext = presentIndex < deck.slides.length - 1 || presentStep < slideSteps(slide.elements)
+    // tiến luôn được: hết slide thì goNext thoát trình chiếu
+    const canNext = true
     const onMove = (e: React.MouseEvent) => {
       const { innerWidth: w, innerHeight: h } = window
       setPresentHover(e.clientY > h - 90 ? 'bar' : e.clientX < w * 0.12 ? 'left' : e.clientX > w * 0.88 ? 'right' : null)
