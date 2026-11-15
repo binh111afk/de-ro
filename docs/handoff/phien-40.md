@@ -1,6 +1,6 @@
 # Phiên 40 (15/11/2026): công cụ trình chiếu, nhóm/khoá, video + ảnh slide, hoạt ảnh chạy thử, lịch sử điểm AI, lề trang soạn đề, dero.id.vn chạy
 
-Tiếp [phiên 39](phien-39.md). Code lên `main` và đã push tới `fada54d`; phần **lề/hướng trang soạn đề** (cuối phiên) — xem dòng trạng thái cuối mục "Đã làm". **1 migration mới, đã áp lên Supabase**: `20261124_ai_credit_events.sql`. Đã dọn sạch nhánh: local và GitHub chỉ còn `main`, không còn worktree agy.
+Tiếp [phiên 39](phien-39.md). Mọi việc đã lên `main` và đã push (code cuối `5726249`). **1 migration mới, đã áp lên Supabase**: `20261124_ai_credit_events.sql`. Đã dọn sạch nhánh: local và GitHub chỉ còn `main`, không còn worktree agy.
 
 ## Việc còn treo (không phải tính năng mới)
 
@@ -56,7 +56,7 @@ Tiếp [phiên 39](phien-39.md). Code lên `main` và đã push tới `fada54d`;
 - `PageSetup.margins?` (cm từng cạnh, thiếu thì lấy `marginCm`), `marginsOf()`; `pageGeometry` trả `MARGIN_TOP/RIGHT/BOTTOM` (`MARGIN` = lề trái). Khung soạn, ngắt trang, thước (kéo trái/phải độc lập, đủ 29,7 cm khi ngang) dùng đúng 4 lề.
 - Ribbon Bố cục › Thiết lập trang: nút lớn **Lề** (5 mẫu có hình minh hoạ: Thường, Hẹp, Vừa, Đề thi trái 3 cm, Rộng + 4 ô tuỳ chỉnh) và **Hướng** (Dọc/Ngang, icon đúng) — `MenuButton`, `PageGlyph`, `OrientGlyph` cuối `Ribbon.tsx`.
 - **In/PDF và Word giờ theo lề + hướng của trình soạn** (trước đây cố định 1,8 × 1,6 cm, luôn dọc): `printDoc(doc, page)` ghi đè `@page`; `exportDocBlocks(doc, { landscape, margins })` → `w:pgMar`.
-- Trạng thái: **chưa commit** lúc viết bàn giao (7 file: `ExamEditor.tsx`, `Layout.tsx`, `Ribbon.tsx`, `compose.css`, `docxBlocks.ts`, `exportBlocks.ts`, `ComposeDoc.tsx`).
+- Commit `5726249`, đã push.
 
 ### Tên miền dero.id.vn — đã chạy
 - Vercel không tạo được DNS zone cho `dero.id.vn` (API: `not a DNS zone`) → máy chủ Vercel từ chối trả lời. Đã chuyển DNS về **iNET** (portal.inet.vn): NS `ns1.inet.vn`, `ns2.inet.vn`; `A @ → 216.198.79.1`, `CNAME www → 8ef114a07f70902a.vercel-dns-017.com`. `https://dero.id.vn` 200; `www` 308 về tên miền chính. Bản ghi DNS sau này tạo trên iNET.
