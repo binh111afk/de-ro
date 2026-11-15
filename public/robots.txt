@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /admin
+Disallow: /ho-so
+Disallow: /de-cua-toi
+Disallow: /preview-designs
+
+Sitemap: https://dero.id.vn/sitemap.xml
