@@ -102,6 +102,12 @@ export async function signUp(email: string, password: string, name: string): Pro
   const data = await request<Record<string, unknown>>('/signup', {
     body: { email, password, data: { display_name: name } },
   })
+  // Email đã có tài khoản (kể cả tài khoản tạo bằng Google): Supabase không tạo mới mà trả user giả
+  // với `identities: []`. Báo trùng để không ai tưởng đăng ký được thêm tài khoản (và thêm điểm AI).
+  const user = (data.user ?? data) as { identities?: unknown[] }
+  if (Array.isArray(user.identities) && user.identities.length === 0) {
+    throw new AuthError('Email này đã có tài khoản (có thể đã đăng nhập bằng Google). Hãy đăng nhập thay vì đăng ký.')
+  }
   if (data.access_token) {
     saveSession(toSession(data))
     return { needsConfirm: false }
