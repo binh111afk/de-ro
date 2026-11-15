@@ -5383,3 +5383,11 @@ div[data-exam-node='examQuestionPrompt'] > .exam-image:has(+ .ProseMirror-separa
   color: var(--color-text-secondary);
   font-size: 13.5px;
 }
+
+/* Bố cục › Lề / Hướng: nút lớn có mũi tên + bảng chọn */
+.rb-menu-glyph { display: inline-flex; align-items: center; gap: 1px; }
+.rb-margin-item { align-items: center; padding-top: 6px; padding-bottom: 6px; }
+.rb-margin-item__text { display: flex; flex-direction: column; gap: 1px; }
+.rb-margin-item__sub { font-size: 11px; color: var(--muted, #8a8580); font-weight: 400; }
+.rb-margin-grid { display: grid; grid-template-columns: repeat(2, auto); gap: 6px 10px; padding: 4px 10px 10px; }
+.rb-margin-grid .rb-inline-label { justify-content: space-between; }

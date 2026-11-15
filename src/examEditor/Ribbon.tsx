@@ -11,6 +11,7 @@
  * Mọi icon là SVG stroke `currentColor` từ bộ icon GenOffice — KHÔNG dùng emoji.
  */
 import { Fragment, useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
+import type { PageMargins } from './ExamEditor'
 import type { Editor } from '@tiptap/core'
 import {
   RibbonBody,
@@ -61,7 +62,6 @@ import {
   IconPageBreak,
   IconPaste,
   IconPrinter,
-  IconPrintLayout,
   IconRedo,
   IconReplace,
   IconRowDelete,
@@ -143,8 +143,8 @@ export function Ribbon({
   format,
   onFind,
   onReplace,
-  marginCm = 2,
-  onMarginChange,
+  margins = { top: 2, right: 2, bottom: 2, left: 2 },
+  onMarginsChange,
   orientation = 'portrait',
   onOrientationChange,
   pageColor = '#ffffff',
@@ -172,8 +172,9 @@ export function Ribbon({
   format: FormatState
   onFind?: () => void
   onReplace?: () => void
-  marginCm?: number
-  onMarginChange?: (cm: number) => void
+  /** lề 4 cạnh (cm) */
+  margins?: PageMargins
+  onMarginsChange?: (margins: PageMargins) => void
   orientation?: 'portrait' | 'landscape'
   onOrientationChange?: (o: 'portrait' | 'landscape') => void
   pageColor?: string
@@ -689,42 +690,72 @@ export function Ribbon({
         label: 'Thiết lập trang',
         render: () => (
           <div className="rb-row rb-row--top">
-            <div className="rb-col rb-col--gap4">
-              <span className="rb-label">Lề</span>
-              <Dropdown
-                value={String(marginCm)}
-                options={[
-                  { value: '1', label: '1 cm' },
-                  { value: '1.5', label: '1,5 cm' },
-                  { value: '2', label: '2 cm' },
-                  { value: '2.5', label: '2,5 cm' },
-                  { value: '3', label: '3 cm' },
-                ]}
-                onPick={(v) => onMarginChange?.(Number(v))}
-                disabled={disabled}
-                ariaLabel="Lề trang"
-                width={84}
-              />
-            </div>
-            <div className="rb-col rb-col--gap4">
-              <span className="rb-label">Hướng</span>
-              <div className="rb-row">
-                <RibbonIconButton
-                  icon={<IconDoc size={16} />}
-                  title="Dọc"
-                  active={orientation === 'portrait'}
-                  disabled={disabled}
-                  onClick={() => onOrientationChange?.('portrait')}
-                />
-                <RibbonIconButton
-                  icon={<IconPrintLayout size={16} />}
-                  title="Ngang"
-                  active={orientation === 'landscape'}
-                  disabled={disabled}
-                  onClick={() => onOrientationChange?.('landscape')}
-                />
-              </div>
-            </div>
+            <MenuButton
+              icon={<PageGlyph margins={margins} />}
+              label="Lề"
+              title="Lề trang"
+              disabled={disabled}
+              minWidth={260}
+            >
+              {(close) => (
+                <>
+                  {MARGIN_PRESETS.map((p) => (
+                    <button
+                      key={p.id}
+                      type="button"
+                      role="menuitem"
+                      className={cn('rb-color-item rb-margin-item', sameMargins(p.m, margins) && 'is-active')}
+                      onMouseDown={(e) => e.preventDefault()}
+                      onClick={() => {
+                        onMarginsChange?.(p.m)
+                        close()
+                      }}
+                    >
+                      <PageGlyph margins={p.m} size={30} />
+                      <span className="rb-margin-item__text">
+                        <span className="rb-color-item__label">{p.label}</span>
+                        <span className="rb-margin-item__sub">
+                          Trên {fmtCm(p.m.top)} · Dưới {fmtCm(p.m.bottom)} · Trái {fmtCm(p.m.left)} · Phải {fmtCm(p.m.right)}
+                        </span>
+                      </span>
+                    </button>
+                  ))}
+                  <div className="rb-color-menu__title">Lề tuỳ chỉnh (cm)</div>
+                  <div className="rb-margin-grid">
+                    {([['top', 'Trên'], ['bottom', 'Dưới'], ['left', 'Trái'], ['right', 'Phải']] as const).map(([side, label]) => (
+                      <MarginInput key={side} label={label} value={margins[side]} disabled={disabled}
+                        onChange={(cm) => onMarginsChange?.({ ...margins, [side]: cm })} />
+                    ))}
+                  </div>
+                </>
+              )}
+            </MenuButton>
+            <MenuButton
+              icon={<OrientGlyph landscape={orientation === 'landscape'} />}
+              label="Hướng"
+              title="Hướng trang"
+              disabled={disabled}
+              minWidth={170}
+            >
+              {(close) =>
+                (['portrait', 'landscape'] as const).map((o) => (
+                  <button
+                    key={o}
+                    type="button"
+                    role="menuitem"
+                    className={cn('rb-color-item', orientation === o && 'is-active')}
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => {
+                      onOrientationChange?.(o)
+                      close()
+                    }}
+                  >
+                    <OrientGlyph landscape={o === 'landscape'} size={22} />
+                    <span className="rb-color-item__label">{o === 'portrait' ? 'Dọc' : 'Ngang'}</span>
+                  </button>
+                ))
+              }
+            </MenuButton>
           </div>
         ),
       },
@@ -1166,3 +1197,131 @@ function ColorDropdown({
 }
 
 export { cn }
+
+/** mẫu lề trang (cm), giống các mẫu thường dùng trong Word */
+const MARGIN_PRESETS: Array<{ id: string; label: string; m: PageMargins }> = [
+  { id: 'normal', label: 'Thường (2 cm)', m: { top: 2, right: 2, bottom: 2, left: 2 } },
+  { id: 'narrow', label: 'Hẹp (1,27 cm)', m: { top: 1.27, right: 1.27, bottom: 1.27, left: 1.27 } },
+  { id: 'moderate', label: 'Vừa', m: { top: 2.54, right: 1.91, bottom: 2.54, left: 1.91 } },
+  { id: 'exam', label: 'Đề thi (trái 3 cm)', m: { top: 2, right: 1.5, bottom: 2, left: 3 } },
+  { id: 'wide', label: 'Rộng', m: { top: 2.54, right: 5.08, bottom: 2.54, left: 5.08 } },
+]
+const sameMargins = (a: PageMargins, b: PageMargins) =>
+  (['top', 'right', 'bottom', 'left'] as const).every((k) => Math.abs(a[k] - b[k]) < 0.005)
+
+/** ô nhập lề một cạnh (cm), 0–6 cm */
+function MarginInput({ label, value, disabled, onChange }: { label: string; value: number; disabled?: boolean; onChange: (cm: number) => void }) {
+  return (
+    <label className="rb-inline-label">
+      {label}
+      <input
+        className="rb-num-input"
+        type="number"
+        min={0}
+        max={6}
+        step={0.1}
+        value={Math.round(value * 100) / 100}
+        disabled={disabled}
+        onChange={(e) => {
+          const v = Number(e.target.value)
+          if (Number.isFinite(v)) onChange(Math.min(6, Math.max(0, v)))
+        }}
+        aria-label={`Lề ${label.toLowerCase()} (cm)`}
+      />
+    </label>
+  )
+}
+
+const fmtCm = (n: number) => n.toLocaleString('vi-VN')
+
+/** trang giấy thu nhỏ, khung nét đứt bên trong là vùng chữ theo lề (minh hoạ mẫu lề) */
+function PageGlyph({ margins, size = 26 }: { margins: PageMargins; size?: number }) {
+  const W = 16
+  const H = 22
+  const k = W / 21 // cm → đơn vị hình (A4 rộng 21 cm)
+  const x = 4 + margins.left * k
+  const y = 1 + margins.top * k
+  const w = Math.max(1, W - (margins.left + margins.right) * k)
+  const h = Math.max(1, H - (margins.top + margins.bottom) * k)
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
+      <rect x="4" y="1" width={W} height={H} rx="1.5" strokeWidth="1.3" />
+      <rect x={x} y={y} width={w} height={h} strokeWidth="1" strokeDasharray="1.6 1.4" opacity="0.75" />
+    </svg>
+  )
+}
+
+/** trang dọc / ngang có dòng chữ */
+function OrientGlyph({ landscape, size = 26 }: { landscape: boolean; size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" aria-hidden>
+      {landscape ? (
+        <>
+          <rect x="1.5" y="5" width="21" height="14" rx="1.5" />
+          <path d="M5 9h14M5 12h14M5 15h9" opacity="0.7" />
+        </>
+      ) : (
+        <>
+          <rect x="5" y="1.5" width="14" height="21" rx="1.5" />
+          <path d="M8 6h8M8 9.5h8M8 13h8M8 16.5h5" opacity="0.7" />
+        </>
+      )}
+    </svg>
+  )
+}
+
+/** nút lớn trên ribbon có mũi tên, bấm mở bảng chọn neo dưới nút (đóng khi bấm ra ngoài / Esc) */
+function MenuButton({
+  icon,
+  label,
+  title,
+  disabled,
+  minWidth = 200,
+  children,
+}: {
+  icon: ReactNode
+  label: string
+  title: string
+  disabled?: boolean
+  minWidth?: number
+  children: (close: () => void) => ReactNode
+}) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+  const { triggerRef, pos } = useAnchoredPopover(open, minWidth)
+  useEffect(() => {
+    if (!open) return
+    const onDown = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false)
+    }
+    document.addEventListener('mousedown', onDown)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('mousedown', onDown)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [open])
+  return (
+    <div className="rb-color-drop" ref={ref}>
+      <span ref={triggerRef as React.RefObject<HTMLSpanElement>} style={{ display: 'inline-flex' }}>
+        <RibbonButton
+          icon={<span className="rb-menu-glyph">{icon}<IconCaret size={10} /></span>}
+          label={label}
+          title={title}
+          disabled={disabled}
+          active={open}
+          onClick={() => setOpen((o) => !o)}
+        />
+      </span>
+      {open && (
+        <div className="rb-color-menu" role="menu" aria-label={title} style={{ ...popoverStyle(pos), width: 'auto', minWidth }}>
+          <div className="rb-color-menu__title">{title}</div>
+          {children(() => setOpen(false))}
+        </div>
+      )}
+    </div>
+  )
+}

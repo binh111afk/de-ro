@@ -178,25 +178,31 @@ export function RibbonIconButton({
 export function Ruler({
   width,
   margin,
+  marginRight = margin,
   indentLeft = 0,
   indentFirstLine = 0,
   onIndentChange,
   onMarginChange,
 }: {
   width: number
+  /** lề trái (px) */
   margin: number
+  /** lề phải (px), mặc định bằng lề trái */
+  marginRight?: number
   /** thụt lề trái của đoạn hiện tại (px) */
   indentLeft?: number
   /** thụt dòng đầu (px, âm = thụt treo) */
   indentFirstLine?: number
   onIndentChange?: (patch: { indentLeft?: number; indentFirstLine?: number }) => void
-  /** kéo vùng lề — trả về lề mới (px) */
-  onMarginChange?: (marginPx: number) => void
+  /** kéo vùng lề — trả về lề mới (px) của cạnh đang kéo */
+  onMarginChange?: (marginPx: number, side: 'left' | 'right') => void
 }) {
   // 1cm = 96/2.54 px; vạch mỗi 5mm, số ở mốc cm
   const ticks = useMemo(() => {
     const out: Array<{ x: number; mid: boolean; label?: string }> = []
-    for (let mm = 0; mm <= 210; mm += 5) {
+    // đủ bề rộng trang (dọc 21 cm, ngang 29,7 cm)
+    const maxMm = Math.floor((width / (96 / 2.54)) * 10)
+    for (let mm = 0; mm <= maxMm; mm += 5) {
       const x = (mm / 10) * (96 / 2.54)
       if (mm === 0) continue
       out.push({
@@ -206,7 +212,7 @@ export function Ruler({
       })
     }
     return out
-  }, [])
+  }, [width])
 
   /** kéo chung 1 marker: trả về giá trị px mới (làm tròn 5px) */
   const startDrag = useCallback(
@@ -237,11 +243,11 @@ export function Ruler({
 
   const startMarginDrag = (side: 'left' | 'right') => (e: React.MouseEvent) => {
     if (!onMarginChange) return
-    const base = margin
+    const base = side === 'left' ? margin : marginRight
     startDrag(e, (dx) => {
       const next = side === 'left' ? base + dx : base - dx
       const snap = Math.round(next / 5) * 5
-      onMarginChange(Math.min(width / 2 - 60, Math.max(20, snap)))
+      onMarginChange(Math.min(width / 2 - 60, Math.max(20, snap)), side)
     })
   }
 
@@ -262,7 +268,7 @@ export function Ruler({
       />
       <div
         className="ruler-zone ruler-zone--drag"
-        style={{ left: width - margin, width: margin }}
+        style={{ left: width - marginRight, width: marginRight }}
         data-tip="Kéo để đổi lề phải"
         onMouseDown={startMarginDrag('right')}
         aria-hidden="true"

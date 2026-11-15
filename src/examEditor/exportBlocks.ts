@@ -16,7 +16,10 @@ import { splitRichLines } from './convert'
  * ------------------------------------------------------------------ */
 
 /** Tải file .docx thật. Thư viện `docx` nạp động để không nằm trong bundle chính. */
-export async function exportDocBlocks(doc: ExamDoc, opts?: { landscape?: boolean; fileName?: string }): Promise<void> {
+export async function exportDocBlocks(
+  doc: ExamDoc,
+  opts?: { landscape?: boolean; fileName?: string; margins?: { top: number; right: number; bottom: number; left: number } },
+): Promise<void> {
   const { buildDocxBlob } = await import('./docxBlocks')
   const url = URL.createObjectURL(await buildDocxBlob(doc, opts))
   const a = document.createElement('a')
@@ -385,8 +388,19 @@ ${blocksToHtml(doc.blocks)}
  * fallback sang iframe ẩn: in ra chính trang hiện tại, vẫn ra đúng A4 nhờ
  * CSS @page. Không fallback thì bấm In im lặng, user tưởng nút hỏng.
  */
-export function printDoc(doc: ExamDoc): void {
-  printHtml(buildPrintHtml(doc))
+export function printDoc(doc: ExamDoc, page?: PrintPage): void {
+  printHtml(buildPrintHtml(doc, page))
+}
+
+/** khổ/lề trang lấy từ Thiết lập trang của trình soạn (cm) */
+export type PrintPage = { landscape?: boolean; margins?: { top: number; right: number; bottom: number; left: number } }
+
+/** ghi đè @page mặc định của EXPORT_CSS bằng lề/hướng người dùng đặt */
+function pageCss(page?: PrintPage): string {
+  if (!page) return ''
+  const m = page.margins
+  const n = (v: number) => `${Math.max(0, Math.min(6, Number(v) || 0))}cm`
+  return `@page { size: A4 ${page.landscape ? 'landscape' : 'portrait'};${m ? ` margin: ${n(m.top)} ${n(m.right)} ${n(m.bottom)} ${n(m.left)};` : ''} }`
 }
 
 /** In nhiều đề trong một lần (xáo đề: mỗi mã đề sang trang mới) → lưu thành một file PDF. */
@@ -532,9 +546,9 @@ function printViaHiddenFrame(html: string): void {
   }
 }
 
-function buildPrintHtml(doc: ExamDoc): string {
+function buildPrintHtml(doc: ExamDoc, page?: PrintPage): string {
   return `<!DOCTYPE html>
 <html lang="vi"><head><meta charset="utf-8"><title>${escapeHtml(doc.title)}</title>
-<style>${EXPORT_CSS}</style></head>
+<style>${EXPORT_CSS}${pageCss(page)}</style></head>
 <body>${blocksToHtml(doc.blocks)}</body></html>`
 }

@@ -632,9 +632,17 @@ function blockToDocx(b: ExamBlock, ctx: Ctx): Out[] {
   }
 }
 
-export function buildDocx(doc: ExamDoc, opts?: { landscape?: boolean }): Document {
+/** lề trang (cm) lấy từ Thiết lập trang của trình soạn */
+export type DocxMargins = { top: number; right: number; bottom: number; left: number }
+const twip = (cm: number) => Math.round(cm * 567)
+
+export function buildDocx(doc: ExamDoc, opts?: { landscape?: boolean; margins?: DocxMargins }): Document {
   const landscape = !!opts?.landscape
-  const contentW = (landscape ? PAGE_H : PAGE_W) - 2 * MARGIN_H
+  const m = opts?.margins
+  const margin = m
+    ? { top: twip(m.top), bottom: twip(m.bottom), left: twip(m.left), right: twip(m.right) }
+    : { top: MARGIN_V, bottom: MARGIN_V, left: MARGIN_H, right: MARGIN_H }
+  const contentW = (landscape ? PAGE_H : PAGE_W) - margin.left - margin.right
   const ctx: Ctx = { q: 0, essay: 0, lists: 0, contentW }
   const children = doc.blocks.flatMap((b) => blockToDocx(b, ctx))
   const level = (i: number, format: (typeof LevelFormat)[keyof typeof LevelFormat], text: string) => ({
@@ -661,7 +669,7 @@ export function buildDocx(doc: ExamDoc, opts?: { landscape?: boolean }): Documen
             size: landscape
               ? { width: PAGE_W, height: PAGE_H, orientation: PageOrientation.LANDSCAPE }
               : { width: PAGE_W, height: PAGE_H },
-            margin: { top: MARGIN_V, bottom: MARGIN_V, left: MARGIN_H, right: MARGIN_H },
+            margin,
           },
         },
         children: children.length ? children : [para([])],
@@ -671,7 +679,7 @@ export function buildDocx(doc: ExamDoc, opts?: { landscape?: boolean }): Documen
 }
 
 /** File .docx dạng Blob (trình duyệt). */
-export const buildDocxBlob = (doc: ExamDoc, opts?: { landscape?: boolean }): Promise<Blob> =>
+export const buildDocxBlob = (doc: ExamDoc, opts?: { landscape?: boolean; margins?: DocxMargins }): Promise<Blob> =>
   inlineDocImages(doc).then((d) => Packer.toBlob(buildDocx(d, opts)))
 
 /** Tạo file Word (.docx) chứa ảnh PNG phiếu trả lời cỡ A4 (≥ 200 dpi). */

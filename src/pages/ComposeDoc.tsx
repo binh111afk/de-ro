@@ -21,7 +21,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import type { Editor } from '@tiptap/core'
 import type { JSONContent } from '@tiptap/core'
 import { Selection } from '@tiptap/pm/state'
-import { ExamEditor, pageGeometry, CM, type PageSetup } from '@/examEditor/ExamEditor'
+import { ExamEditor, pageGeometry, marginsOf, CM, type PageSetup } from '@/examEditor/ExamEditor'
 import { Ribbon } from '@/examEditor/Ribbon'
 import { TabStrip } from '@/examEditor/TabStrip'
 import { AiPanel } from '@/examEditor/AiPanel'
@@ -448,7 +448,7 @@ export default function ComposeDoc() {
   const format = useFormatState(editor)
   const [pageSetup, setPageSetup] = useState<PageSetup>({ marginCm: 2, orientation: 'portrait' })
   const geo = pageGeometry(pageSetup)
-  const { PAGE_W, MARGIN } = geo
+  const { PAGE_W, MARGIN, MARGIN_RIGHT } = geo
 
   // mở lại tab của phiên trước (F5); không tự tạo tab trống — mới vào chỉ có màn Bắt đầu, người dùng tự chọn
   const restoredRef = useRef(false)
@@ -613,8 +613,8 @@ export default function ComposeDoc() {
 
   const handleExportWord = useCallback(async () => {
     if (!activeDoc) return
-    await exportDocBlocks(activeDoc)
-  }, [activeDoc])
+    await exportDocBlocks(activeDoc, { landscape: pageSetup.orientation === 'landscape', margins: marginsOf(pageSetup) })
+  }, [activeDoc, pageSetup])
 
   /**
    * Tệp → Làm đề tương tác: chuyển các khối đang soạn (`docToExam`) thành bản nháp ở trang Tạo đề online
@@ -671,8 +671,8 @@ export default function ComposeDoc() {
 
   const handlePrint = useCallback(() => {
     if (!activeDoc) return
-    printDoc(activeDoc)
-  }, [activeDoc])
+    printDoc(activeDoc, { landscape: pageSetup.orientation === 'landscape', margins: marginsOf(pageSetup) })
+  }, [activeDoc, pageSetup])
 
   /** AI trả về JSON đề → áp theo `action` (replace / append / patch), trả câu tóm tắt. */
   const handleAiResult = useCallback(
@@ -1038,8 +1038,8 @@ export default function ComposeDoc() {
         format={format}
         onFind={() => setFindTab('find')}
         onReplace={() => setFindTab('replace')}
-        marginCm={pageSetup.marginCm}
-        onMarginChange={(cm) => setPageSetup((p) => ({ ...p, marginCm: cm }))}
+        margins={marginsOf(pageSetup)}
+        onMarginsChange={(margins) => setPageSetup((p) => ({ ...p, margins }))}
         orientation={pageSetup.orientation}
         onOrientationChange={(o) => setPageSetup((p) => ({ ...p, orientation: o }))}
         pageColor={pageSetup.pageColor}
@@ -1085,13 +1085,14 @@ export default function ComposeDoc() {
                 <Ruler
                   width={PAGE_W}
                   margin={MARGIN}
+                  marginRight={MARGIN_RIGHT}
                   indentLeft={format.indentLeft}
                   indentFirstLine={format.indentFirstLine}
                   onIndentChange={(patch) => {
                     if (editor) applyFormatAttrs(editor, patch)
                   }}
-                  onMarginChange={(px) =>
-                    setPageSetup((p) => ({ ...p, marginCm: Math.round((px / CM) * 10) / 10 }))
+                  onMarginChange={(px, side) =>
+                    setPageSetup((p) => ({ ...p, margins: { ...marginsOf(p), [side]: Math.round((px / CM) * 10) / 10 } }))
                   }
                 />
               )}
@@ -1111,7 +1112,13 @@ export default function ComposeDoc() {
             <div className="status-left">
               <span className="status-item">{pageCount} trang</span>
               <span className="status-item">
-                Trang A4 {pageSetup.orientation === 'landscape' ? 'ngang' : 'dọc'} · lề {pageSetup.marginCm} cm
+                Trang A4 {pageSetup.orientation === 'landscape' ? 'ngang' : 'dọc'} · lề {(() => {
+                  const m = marginsOf(pageSetup)
+                  const f = (n: number) => n.toLocaleString('vi-VN')
+                  return m.top === m.bottom && m.left === m.right && m.top === m.left
+                    ? `${f(m.top)} cm`
+                    : `trên ${f(m.top)} · dưới ${f(m.bottom)} · trái ${f(m.left)} · phải ${f(m.right)} cm`
+                })()}
               </span>
               <span className="status-item">{activeTab?.dirty ? 'Chưa lưu' : 'Đã lưu'}</span>
             </div>

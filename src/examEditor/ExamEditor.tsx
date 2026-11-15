@@ -46,8 +46,10 @@ export const A4_PORTRAIT_H = Math.round(29.7 * CM) // 1123
 export const PAGE_GAP = 24
 
 export interface PageSetup {
-  /** lề trang (cm), đều 4 cạnh */
+  /** lề trang (cm) mặc định cho cả 4 cạnh */
   marginCm: number
+  /** lề riêng từng cạnh (cm); cạnh nào thiếu thì lấy `marginCm` */
+  margins?: Partial<PageMargins>
   /** hướng trang */
   orientation: 'portrait' | 'landscape'
   /** màu nền trang giấy (mặc định trắng) */
@@ -56,16 +58,30 @@ export interface PageSetup {
   pageBorder?: number
 }
 
+export type PageMargins = { top: number; right: number; bottom: number; left: number }
+
+/** lề 4 cạnh (cm) sau khi gộp `margins` với `marginCm` */
+export function marginsOf(setup: PageSetup): PageMargins {
+  const m = setup.margins ?? {}
+  const d = setup.marginCm
+  return { top: m.top ?? d, right: m.right ?? d, bottom: m.bottom ?? d, left: m.left ?? d }
+}
+
 export function pageGeometry(setup: PageSetup) {
   const w = setup.orientation === 'landscape' ? A4_PORTRAIT_H : A4_PORTRAIT_W
   const h = setup.orientation === 'landscape' ? A4_PORTRAIT_W : A4_PORTRAIT_H
-  const margin = Math.round(setup.marginCm * CM)
+  const m = marginsOf(setup)
+  const [top, right, bottom, left] = [m.top, m.right, m.bottom, m.left].map((cm) => Math.round(cm * CM))
   return {
     PAGE_W: w,
     PAGE_H: h,
-    MARGIN: margin,
-    CONTENT_W: w - margin * 2,
-    CONTENT_H: h - margin * 2,
+    /** lề trái (px) — giữ tên cũ cho thước và CSS */
+    MARGIN: left,
+    MARGIN_TOP: top,
+    MARGIN_RIGHT: right,
+    MARGIN_BOTTOM: bottom,
+    CONTENT_W: w - left - right,
+    CONTENT_H: h - top - bottom,
   }
 }
 
@@ -85,7 +101,7 @@ export function ExamEditor({ content, onChange, onReady, pageSetup, readOnly, is
   const flowRef = useRef<HTMLDivElement>(null)
   const [pageCount, setPageCount] = useState(1)
   const geo = pageGeometry(pageSetup ?? { marginCm: 2, orientation: 'portrait' })
-  const { PAGE_W, PAGE_H, MARGIN, CONTENT_W, CONTENT_H } = geo
+  const { PAGE_W, PAGE_H, MARGIN, MARGIN_TOP, MARGIN_RIGHT, MARGIN_BOTTOM, CONTENT_W, CONTENT_H } = geo
 
   // `useEditor` chỉ đọc options ở lần render đầu, nên callback đưa vào
   // options phải đi qua ref để không giữ closure cũ (onChange/onReady hay
@@ -329,7 +345,7 @@ export function ExamEditor({ content, onChange, onReady, pageSetup, readOnly, is
       prevBottom = naturalTop + rect.height / k
     })
 
-    const plan = computePagePlan(heights, spaces, CONTENT_H, PAGE_H + PAGE_GAP, MARGIN)
+    const plan = computePagePlan(heights, spaces, CONTENT_H, PAGE_H + PAGE_GAP, MARGIN_TOP)
     setPageCount(plan.pages)
 
     // chỉ dispatch khi bản đồ spacer thực sự đổi
@@ -347,7 +363,7 @@ export function ExamEditor({ content, onChange, onReady, pageSetup, readOnly, is
         editor.state.tr.setMeta(pageGapsKey, plan.gaps).setMeta('addToHistory', false),
       )
     }
-  }, [editor, CONTENT_H, PAGE_H, MARGIN, isReflow])
+  }, [editor, CONTENT_H, PAGE_H, MARGIN_TOP, isReflow])
 
   // đo lại khi nội dung đổi, font tải xong, kích thước đổi. Mọi trigger gộp
   // vào một rAF để tránh mutation storm khi widget spacer vừa được chèn.
@@ -420,7 +436,7 @@ export function ExamEditor({ content, onChange, onReady, pageSetup, readOnly, is
           width: isReflow ? '100%' : PAGE_W,
           maxWidth: isReflow ? '100%' : undefined,
           boxSizing: 'border-box',
-          padding: isReflow ? '12px 12px 60px' : `${MARGIN}px ${MARGIN}px`,
+          padding: isReflow ? '12px 12px 60px' : `${MARGIN_TOP}px ${MARGIN_RIGHT}px ${MARGIN_BOTTOM}px ${MARGIN}px`,
           // ngữ cảnh hình học cho CSS khối đề (khoảng cách phương án, thụt lề…)
           '--doc-content-w': isReflow ? '100%' : `${CONTENT_W}px`,
           '--doc-margin': isReflow ? '12px' : `${MARGIN}px`,
@@ -431,7 +447,7 @@ export function ExamEditor({ content, onChange, onReady, pageSetup, readOnly, is
           <button
             type="button"
             className="doc-placeholder"
-            style={{ top: isReflow ? 12 : MARGIN, left: isReflow ? 12 : MARGIN }}
+            style={{ top: isReflow ? 12 : MARGIN_TOP, left: isReflow ? 12 : MARGIN }}
             onClick={() => editor?.commands.focus()}
           >
             Bắt đầu soạn đề…
