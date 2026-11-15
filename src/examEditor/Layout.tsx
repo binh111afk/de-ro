@@ -138,7 +138,7 @@ export function RibbonButton({
   )
 }
 
-/** Nút icon nhỏ 28×30 (căn chỉnh, in, v.v.). */
+/** Nút icon nhỏ 28×30 (căn chỉnh, in, v.v.). Có `label` thì hiện chữ cạnh icon (kiểu Tìm / Thay thế của Word). */
 export function RibbonIconButton({
   icon,
   label,
@@ -158,7 +158,7 @@ export function RibbonIconButton({
   return (
     <button
       type="button"
-      className={cn('rb-icon', active && 'active')}
+      className={cn('rb-icon', label && 'rb-icon--labeled', active && 'active')}
       onMouseDown={(e) => e.preventDefault()}
       onClick={onClick}
       disabled={disabled}
@@ -167,6 +167,7 @@ export function RibbonIconButton({
       aria-label={parsed?.tip}
     >
       {icon}
+      {label ? <span className="rb-icon-label">{label}</span> : null}
     </button>
   )
 }

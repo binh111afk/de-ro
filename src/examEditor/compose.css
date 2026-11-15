@@ -403,6 +403,21 @@
     margin: 0 auto;
   }
 
+  /* nút nhỏ có chữ: icon + nhãn nằm ngang, canh trái (nhóm Chỉnh sửa) */
+  .rb-icon--labeled {
+    justify-content: flex-start;
+    gap: 6px;
+    padding: 0 8px 0 6px;
+    font-size: 12.5px;
+    font-weight: 400;
+    white-space: nowrap;
+  }
+
+  .rb-icon--labeled svg {
+    margin: 0;
+    flex-shrink: 0;
+  }
+
   .rb-mini-sep {
     width: 1px;
     height: 20px;
@@ -2781,171 +2796,6 @@
   }
 
   /* toast lưu */
-  /* ------------------------------------------------------------------ *
-   * Find / Replace panel
-   * ------------------------------------------------------------------ */
-  .find-panel {
-    position: absolute;
-    top: 8px;
-    right: 16px;
-    z-index: 30;
-    width: 320px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    box-shadow: var(--shadow-menu);
-    font-family: var(--gs-font-sans);
-  }
-
-  .find-panel__header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 4px 6px 0;
-    border-bottom: 1px solid var(--border-subtle);
-  }
-
-  .find-panel__tabs {
-    display: flex;
-    gap: 2px;
-  }
-
-  .find-panel__tab {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    border: none;
-    background: none;
-    padding: 5px 8px;
-    border-radius: 3px 3px 0 0;
-    font-size: 12px;
-    cursor: pointer;
-    color: var(--text-secondary);
-  }
-
-  .find-panel__tab:hover {
-    background: var(--hover);
-    color: var(--text);
-  }
-
-  .find-panel__tab.on {
-    background: var(--active-bg);
-    color: var(--text);
-    font-weight: 600;
-  }
-
-  .find-panel__close {
-    border: none;
-    background: none;
-    width: 22px;
-    height: 22px;
-    border-radius: 3px;
-    cursor: pointer;
-    color: var(--text-secondary);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .find-panel__close:hover {
-    background: var(--hover);
-    color: var(--text);
-  }
-
-  .find-panel__body {
-    padding: 8px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .find-panel__row {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-
-  .find-panel__input {
-    flex: 1;
-    min-width: 0;
-    height: 26px;
-    border: 1px solid var(--border-strong);
-    border-radius: 3px;
-    padding: 0 6px;
-    font-size: 12px;
-    background: var(--surface);
-    color: var(--text);
-  }
-
-  .find-panel__input:focus {
-    outline: none;
-    border-color: var(--accent);
-  }
-
-  .find-panel__count {
-    font-size: 11px;
-    color: var(--text-secondary);
-    min-width: 32px;
-    text-align: right;
-  }
-
-  .find-panel__nav {
-    width: 22px;
-    height: 22px;
-    border: 1px solid var(--border-strong);
-    border-radius: 3px;
-    background: var(--surface);
-    cursor: pointer;
-    color: var(--text-secondary);
-    font-size: 14px;
-    line-height: 1;
-  }
-
-  .find-panel__nav:hover {
-    background: var(--hover);
-    color: var(--text);
-  }
-
-  .find-panel__btn {
-    height: 26px;
-    border: 1px solid var(--border-strong);
-    border-radius: 3px;
-    background: var(--surface);
-    padding: 0 8px;
-    font-size: 11.5px;
-    cursor: pointer;
-    color: var(--text);
-    white-space: nowrap;
-  }
-
-  .find-panel__btn:hover {
-    background: var(--hover);
-  }
-
-  .find-panel__btn--primary {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: var(--docs-on-accent);
-  }
-
-  .find-panel__btn--primary:hover {
-    background: var(--accent-dark);
-  }
-
-  .find-panel__opts {
-    display: flex;
-    gap: 12px;
-    font-size: 11px;
-    color: var(--text-secondary);
-  }
-
-  .find-panel__opts label {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    cursor: pointer;
-  }
-
   /* highlight kết quả tìm kiếm trong editor */
   .doc-search-hit {
     background: #ffe28a;
@@ -4715,37 +4565,6 @@ div[data-exam-node='examQuestionPrompt'] > .exam-image:has(+ .ProseMirror-separa
   }
 
   /* FindPanel mobile */
-  .find-panel {
-    left: 8px !important;
-    right: 8px !important;
-    top: 8px !important;
-    width: auto !important;
-    max-width: calc(100vw - 16px) !important;
-  }
-  .find-panel__row {
-    flex-wrap: wrap !important;
-    gap: 6px !important;
-  }
-  .find-panel__input {
-    height: 36px !important;
-    min-width: 130px !important;
-  }
-  .find-panel__tab {
-    min-height: 36px !important;
-    padding: 0 10px !important;
-  }
-  .find-panel__close {
-    width: 36px !important;
-    height: 36px !important;
-  }
-  .find-panel__nav {
-    width: 36px !important;
-    height: 36px !important;
-  }
-  .find-panel__btn {
-    height: 36px !important;
-    padding: 0 10px !important;
-  }
 
   /* FileMenu popover */
   .file-menu__pop {

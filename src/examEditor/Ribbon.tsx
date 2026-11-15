@@ -606,12 +606,14 @@ export function Ribbon({
         id: 'editing',
         label: 'Chỉnh sửa',
         render: () => (
-          <div className="rb-col">
-            <div className="rb-row">
-              <RibbonIconButton icon={<IconSearch size={16} />} title="Tìm" disabled={disabled} onClick={onFind} />
-              <RibbonIconButton icon={<IconReplace size={16} />} title="Thay thế" disabled={disabled} onClick={onReplace} />
-              <RibbonIconButton icon={<IconSelectAll size={16} />} title="Chọn tất cả" disabled={disabled} onClick={() => chain()?.selectAll().run()} />
-              <RibbonIconButton icon={<IconTrash size={16} />} title="Xóa khối đang chọn" disabled={disabled} onClick={() => live && del('deleteCurrentBlock', live)} />
+          <div className="rb-row">
+            <div className="rb-col">
+              <RibbonIconButton icon={<IconSearch size={16} />} label="Tìm" title="Tìm" disabled={disabled} onClick={onFind} />
+              <RibbonIconButton icon={<IconReplace size={16} />} label="Thay thế" title="Thay thế" disabled={disabled} onClick={onReplace} />
+            </div>
+            <div className="rb-col">
+              <RibbonIconButton icon={<IconSelectAll size={16} />} label="Chọn tất cả" title="Chọn tất cả" disabled={disabled} onClick={() => chain()?.selectAll().run()} />
+              <RibbonIconButton icon={<IconTrash size={16} />} label="Xóa khối" title="Xóa khối đang chọn" disabled={disabled} onClick={() => live && del('deleteCurrentBlock', live)} />
             </div>
           </div>
         ),
