@@ -43,6 +43,7 @@ import { AiDock } from './Layout'
 import { SlideRibbon, type SlideRibbonTab } from './SlideRibbon'
 import { attachToAi } from '@/lib/aiAttach'
 import { SlideThumb, SlideElView, SlideFooterView, elTransform } from './slideRender'
+import { InkLayer, PresentToolbar, PresenterWindow, usePresentTools } from './PresentTools'
 import { GroupToolbar, SnapGuides, EditableEl, setSnapEnabled } from './slideEditParts'
 
 /** Trạng thái ẩn/hiện của hiệu ứng bấm-chuột: mờ dần + trượt/phóng nhẹ (translate/scale tách khỏi transform xoay của phần tử). */
@@ -226,6 +227,9 @@ export function SlideEditor({
   /** vùng chuột đang đứng khi chiếu: mép trái/phải hiện mũi tên, đáy hiện thanh điều khiển */
   const [presentHover, setPresentHover] = useState<'left' | 'right' | 'bar' | null>(null)
   const [printing, setPrinting] = useState(false)
+  /** bút vẽ / laser / đồng hồ khi chiếu */
+  const presentTools = usePresentTools(presenting)
+  const [presenterOpen, setPresenterOpen] = useState(false)
   /** hình khối đang được gõ chữ trong đó */
   const [editingShapeId, setEditingShapeId] = useState<string | null>(null)
   // màn hẹp (tablet/điện thoại): trợ lý AI nổi đè lên slide nên mặc định đóng
@@ -717,6 +721,7 @@ export function SlideEditor({
     return () => {
       document.removeEventListener('fullscreenchange', onChange)
       setPresentHover(null)
+      setPresenterOpen(false)
       if (document.fullscreenElement) void document.exitFullscreen().catch(() => {})
     }
   }, [presenting])
@@ -725,8 +730,16 @@ export function SlideEditor({
   useEffect(() => {
     if (!presenting) return
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setPresenting(false)
-      else if (['ArrowRight', 'ArrowDown', 'PageDown', ' ', 'Enter'].includes(e.key)) goNext()
+      if (e.target instanceof HTMLElement && e.target.closest('input, textarea')) return
+      const k = e.key.toLowerCase()
+      // Esc: đang cầm bút/laser thì cất bút trước, lần nữa mới thoát
+      if (e.key === 'Escape') {
+        if (presentTools.tool !== 'none') presentTools.setTool('none')
+        else setPresenting(false)
+      } else if (k === 'p' || k === 'l' || k === 'e') {
+        const t = k === 'p' ? 'pen' : k === 'l' ? 'laser' : 'eraser'
+        presentTools.setTool(presentTools.tool === t ? 'none' : t)
+      } else if (['ArrowRight', 'ArrowDown', 'PageDown', ' ', 'Enter'].includes(e.key)) goNext()
       else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) goPrev()
     }
     window.addEventListener('keydown', onKey)
@@ -876,6 +889,7 @@ export function SlideEditor({
             setPresentHover((cur) => (cur === 'bar' ? null : 'bar'))
             return
           }
+          if (presentTools.tool !== 'none') return
           goNext()
         }}
         onMouseMove={onMove}
@@ -939,12 +953,19 @@ export function SlideEditor({
                   )
                 })}
                 <SlideFooterView footer={deck.footer} slide={slide} slideIndex={presentIndex} theme={theme} />
+                <InkLayer
+                  tool={presentTools.tool}
+                  color={presentTools.color}
+                  strokes={presentTools.ink[slide.id] ?? []}
+                  onAdd={(st) => presentTools.addStroke(slide.id, st)}
+                  onRemove={(i) => presentTools.removeStroke(slide.id, i)}
+                />
               </div>
             )}
           </div>
         </div>
-        {edge('left')}
-        {edge('right')}
+        {presentTools.tool === 'none' && edge('left')}
+        {presentTools.tool === 'none' && edge('right')}
         {/* thanh điều khiển trượt lên từ đáy, đè lên slide chứ không đẩy slide */}
         <div
           className="absolute inset-x-0 bottom-0 z-20 flex h-[68px] items-center justify-between px-10 text-white/85 backdrop-blur-md transition-transform duration-300 ease-out"
@@ -962,10 +983,23 @@ export function SlideEditor({
               <ChevronRight className="size-6" />
             </button>
           </div>
+          <PresentToolbar tools={presentTools} slideId={slide.id} presenterOpen={presenterOpen} onOpenPresenter={() => setPresenterOpen((v) => !v)} />
           <button type="button" aria-label="Thoát trình chiếu" data-tip="Thoát trình chiếu" data-tip-kbd="Esc" onClick={() => setPresenting(false)} className="rounded-md p-1.5 transition-colors hover:bg-white/10">
             <Minimize2 className="size-6" />
           </button>
         </div>
+        <PresenterWindow
+          open={presenterOpen}
+          onClose={() => setPresenterOpen(false)}
+          index={presentIndex}
+          total={deck.slides.length}
+          title={contentFromSlide(slide).title ?? ''}
+          nextTitle={deck.slides[presentIndex + 1] ? contentFromSlide(deck.slides[presentIndex + 1]).title ?? '' : null}
+          notes={slide.notes ?? ''}
+          elapsed={presentTools.timer.elapsed}
+          onPrev={goPrev}
+          onNext={goNext}
+        />
       </div>
     )
   }
