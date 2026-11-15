@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ArrowRight, Feather } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { Button, PasswordInput } from '@/components/ui'
 import { AuthError, requestReset, setNewPassword, signIn, signInWithGoogle, signUp } from '@/lib/auth'
 
@@ -107,14 +107,16 @@ export default function Auth({ mode }: { mode: Mode }) {
         <p className="mt-5 max-w-[42ch] text-[15px] leading-[1.75] text-ink-2 text-pretty">{copy.body}</p>
       </div>
 
-      <AuthArt />
+      <div className="hidden lg:block">
+        <AuthArt />
+      </div>
       </div>
 
       <div className="anim-rise [animation-delay:0.12s]">
         <div className="rounded-[8px] bg-surface p-6 shadow-lift sm:p-7">
-          <span className="mb-4 flex size-10 items-center justify-center rounded-full bg-clay-soft text-clay">
-            <Feather className="size-4" strokeWidth={1.8} />
-          </span>
+          <h2 className="mb-5 text-center font-display text-[22px] font-semibold text-ink">
+            {{ login: 'Đăng nhập', register: 'Đăng ký', forgot: 'Quên mật khẩu', reset: 'Đặt mật khẩu mới' }[mode]}
+          </h2>
 
           {resetInvalid ? (
             <div className="space-y-5">
