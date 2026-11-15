@@ -2,6 +2,7 @@
  * Sinh đề THẬT bằng đúng prompt của AiPanel ở một mức suy luận (`?effort=`), đếm token
  * do gateway trả về. `eval-exam.mjs` đọc kết quả để so chất lượng giữa các mức.
  */
+import '../lib/forceModel'
 import { examSystemPrompt } from '@/examEditor/AiPanel'
 import { callLlm, extractJson } from '@/lib/llm'
 
@@ -33,7 +34,7 @@ async function main() {
   const t0 = performance.now()
   const res = await callLlm(
     [
-      { role: 'system', content: examSystemPrompt() },
+      { role: 'system', content: examSystemPrompt(undefined, topic) },
       { role: 'user', content: topic },
     ],
     { reasoningEffort: effort },

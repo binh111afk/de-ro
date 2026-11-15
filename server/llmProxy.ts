@@ -149,10 +149,10 @@ function providerConfig() {
     anthropicApiKey: process.env.ANTHROPIC_API_KEY?.trim() || '',
     anthropicModel: process.env.ANTHROPIC_MODEL?.trim() || 'claude-opus-5-5',
     anthropicBaseURL: (process.env.ANTHROPIC_BASE_URL?.trim() || 'https://api.anthropic.com').replace(/\/+$/, ''),
-    // Inception Mercury (dLLM), tương thích OpenAI
-    mercuryApiKey: process.env.MERCURY_API_KEY?.trim() || '',
-    mercuryBaseURL: assertAllowedUrl((process.env.MERCURY_BASE_URL?.trim() || 'https://api.inceptionlabs.ai/v1').replace(/\/+$/, '')).toString().replace(/\/+$/, ''),
-    mercuryModel: process.env.MERCURY_MODEL?.trim() || 'mercury-3',
+    // DeepSeek chính hãng (chuẩn OpenAI) — dự phòng 1, thay Mercury (Inception đã đóng cổng API). Có cache prompt: phần trùng chỉ ~1/10 giá
+    deepseekApiKey: process.env.DEEPSEEK_API_KEY?.trim() || '',
+    deepseekBaseURL: assertAllowedUrl((process.env.DEEPSEEK_BASE_URL?.trim() || 'https://api.deepseek.com').replace(/\/+$/, '')).toString().replace(/\/+$/, ''),
+    deepseekModel: process.env.DEEPSEEK_MODEL?.trim() || 'deepseek-flash',
     fostaApiKey: process.env.FOSTA_API_KEY?.trim() || '',
     fostaBaseURL: assertAllowedUrl((process.env.FOSTA_BASE_URL?.trim() || 'https://codex.fosta.app/v1').replace(/\/+$/, '')).toString().replace(/\/+$/, ''),
     fostaModel: process.env.FOSTA_MODEL?.trim() || 'gpt-6-luna',
@@ -175,9 +175,9 @@ async function liveConfig() {
     apiKey: o.opencode?.apiKey || p.apiKey,
     model: o.opencode?.model || p.model,
     endpoint: o.opencode?.baseUrl ? new URL(`${o.opencode.baseUrl}/chat/completions`) : p.endpoint,
-    mercuryApiKey: o.mercury?.apiKey || p.mercuryApiKey,
-    mercuryBaseURL: o.mercury?.baseUrl || p.mercuryBaseURL,
-    mercuryModel: o.mercury?.model || p.mercuryModel,
+    deepseekApiKey: o.deepseek?.apiKey || p.deepseekApiKey,
+    deepseekBaseURL: o.deepseek?.baseUrl || p.deepseekBaseURL,
+    deepseekModel: o.deepseek?.model || p.deepseekModel,
     fostaApiKey: o.fosta?.apiKey || p.fostaApiKey,
     fostaBaseURL: o.fosta?.baseUrl || p.fostaBaseURL,
     fostaModel: o.fosta?.model || p.fostaModel,
@@ -196,7 +196,7 @@ async function liveConfig() {
 function pingTargets(p: ReturnType<typeof providerConfig>) {
   const list: Array<{ provider: string; model: string; key: string; url: string; opencode?: boolean; anthropic?: boolean }> = []
   if (p.apiKey) list.push({ provider: 'opencode', model: p.model, key: p.apiKey, url: p.endpoint.toString(), opencode: true })
-  if (p.mercuryApiKey) list.push({ provider: 'mercury', model: p.mercuryModel, key: p.mercuryApiKey, url: `${p.mercuryBaseURL}/chat/completions` })
+  if (p.deepseekApiKey) list.push({ provider: 'deepseek', model: p.deepseekModel, key: p.deepseekApiKey, url: `${p.deepseekBaseURL}/chat/completions` })
   if (p.fostaApiKey) list.push({ provider: 'fosta', model: p.fostaModel, key: p.fostaApiKey, url: `${p.fostaBaseURL}/chat/completions` })
   if (p.anyrouterApiKey) list.push({ provider: 'anyrouter', model: p.anyrouterModel, key: p.anyrouterApiKey, url: `${p.anyrouterBaseURL}/chat/completions` })
   if (p.nightrouterApiKey) list.push({ provider: 'nightrouter', model: p.nightrouterModel, key: p.nightrouterApiKey, url: `${p.nightrouterBaseURL}/chat/completions` })
@@ -373,21 +373,21 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
     } catch (err) {
       return json(res, 500, { error: err instanceof Error ? err.message : String(err) })
     }
-    if (!prov.apiKey && !prov.anyrouterApiKey && !prov.anthropicApiKey && !prov.mercuryApiKey && !prov.fostaApiKey && !prov.nightrouterApiKey) {
+    if (!prov.apiKey && !prov.anyrouterApiKey && !prov.anthropicApiKey && !prov.deepseekApiKey && !prov.fostaApiKey && !prov.nightrouterApiKey) {
       return json(res, 500, {
-        error: 'Chưa cấu hình LLM_API_KEY, MERCURY_API_KEY, ANYROUTER_API_KEY, NIGHTROUTER_API_KEY hoặc ANTHROPIC_API_KEY. Kiểm tra file .env/config provider.',
+        error: 'Chưa cấu hình LLM_API_KEY, DEEPSEEK_API_KEY, ANYROUTER_API_KEY, NIGHTROUTER_API_KEY hoặc ANTHROPIC_API_KEY. Kiểm tra file .env/config provider.',
       })
     }
 
     // Thứ tự thử: opencode (model chính [+ LLM_FALLBACK_MODEL nếu đặt]) → Mercury → FOSTA (gpt-6-luna) → AnyRouter (gpt-6.1-terra) → NightRouter → Claude (cuối cùng).
     // Provider dự phòng nào không có key thì bỏ qua.
-    // `opencode` = gửi x-opencode-session + reasoning_effort (chỉ gateway opencode hiểu).
+    // `opencode` = gửi x-opencode-session + reasoning_effort; `effort` = chỉ gửi reasoning_effort (DeepSeek chính hãng).
     // `anthropic`: gọi Claude qua SDK (Messages API), không qua fetch kiểu OpenAI.
     // `stream`: gọi stream:true rồi gom SSE lại (AnyRouter)
-    type Target = { model: string; url: string; key: string; opencode: boolean; anthropic?: boolean; stream?: boolean }
+    type Target = { model: string; url: string; key: string; opencode: boolean; anthropic?: boolean; stream?: boolean; effort?: boolean }
     // tên provider cho log ai_calls
     const providerOf = (t: Target) =>
-      t.anthropic ? 'anthropic' : t.opencode ? 'opencode' : t.key === prov.mercuryApiKey ? 'mercury' : t.key === prov.fostaApiKey ? 'fosta' : t.key === prov.anyrouterApiKey ? 'anyrouter' : t.key === prov.nightrouterApiKey ? 'nightrouter' : 'khac'
+      t.anthropic ? 'anthropic' : t.opencode ? 'opencode' : t.key === prov.deepseekApiKey ? 'deepseek' : t.key === prov.fostaApiKey ? 'fosta' : t.key === prov.anyrouterApiKey ? 'anyrouter' : t.key === prov.nightrouterApiKey ? 'nightrouter' : 'khac'
     type Usage = { prompt_tokens?: number; completion_tokens?: number; input_tokens?: number; output_tokens?: number } | undefined
     // Vercel có thể dừng function ngay sau khi trả lời → gom promise log, chờ trước khi return
     const pending: Promise<void>[] = []
@@ -395,7 +395,11 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
     let wasted = 0
     /** usage thật; provider không trả usage (stream thiếu) thì ước theo độ dài vào + ra */
     const billOf = (usage: unknown, out: string) => {
-      const n = Number((usage as { total_tokens?: number } | undefined)?.total_tokens)
+      const u = usage as { total_tokens?: number; prompt_cache_hit_tokens?: number; prompt_tokens_details?: { cached_tokens?: number } } | undefined
+      const n = Number(u?.total_tokens)
+      // phần đầu vào nhà cung cấp lấy từ cache chỉ tốn ~1/10 giá → chỉ tính 1/10 điểm
+      const cached = Math.max(0, Number(u?.prompt_cache_hit_tokens ?? u?.prompt_tokens_details?.cached_tokens) || 0)
+      if (Number.isFinite(n) && n > 0) return Math.max(1, Math.ceil(n - Math.min(cached, n) * 0.9))
       // nhà cung cấp không báo usage: tính mức trần (prompt + toàn bộ phần đầu ra cho phép), không đoán thấp
       return Number.isFinite(n) && n > 0 ? n : promptTokens + Math.max(maxTokens, Math.ceil(out.length / 3))
     }
@@ -420,12 +424,12 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
     }
     const targets: Target[] = []
     // client chỉ được chọn model nằm trong cấu hình của app (trước đây gửi tên model tuỳ ý là gọi được model đắt nhất của gateway)
-    const knownModels = [prov.model, prov.fallbackModel, prov.anthropicModel, prov.mercuryModel, prov.fostaModel, prov.anyrouterModel, prov.nightrouterModel].filter(Boolean)
+    const knownModels = [prov.model, prov.fallbackModel, prov.anthropicModel, prov.deepseekModel, prov.fostaModel, prov.anyrouterModel, prov.nightrouterModel].filter(Boolean)
     if (body.model !== undefined && !knownModels.includes(body.model)) body.model = undefined
     // client chỉ định đúng model dự phòng → bỏ qua opencode, gọi thẳng (thử/so chất lượng)
     const wantsBackup =
       (!!prov.anthropicApiKey && body.model === prov.anthropicModel) ||
-      (!!prov.mercuryApiKey && body.model === prov.mercuryModel) ||
+      (!!prov.deepseekApiKey && body.model === prov.deepseekModel) ||
       (!!prov.fostaApiKey && body.model === prov.fostaModel) ||
       (!!prov.anyrouterApiKey && body.model === prov.anyrouterModel) ||
       (!!prov.nightrouterApiKey && body.model === prov.nightrouterModel)
@@ -434,7 +438,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
         if (m && !targets.some((t) => t.model === m)) targets.push({ model: m, url: prov.endpoint.toString(), key: prov.apiKey, opencode: true })
       }
     }
-    if (prov.mercuryApiKey) targets.push({ model: prov.mercuryModel, url: `${prov.mercuryBaseURL}/chat/completions`, key: prov.mercuryApiKey, opencode: false })
+    if (prov.deepseekApiKey) targets.push({ model: prov.deepseekModel, url: `${prov.deepseekBaseURL}/chat/completions`, key: prov.deepseekApiKey, opencode: false, effort: true })
     if (prov.fostaApiKey) targets.push({ model: prov.fostaModel, url: `${prov.fostaBaseURL}/chat/completions`, key: prov.fostaApiKey, opencode: false })
     if (prov.anyrouterApiKey)
       targets.push({ model: prov.anyrouterModel, url: `${prov.anyrouterBaseURL}/chat/completions`, key: prov.anyrouterApiKey, opencode: false, stream: true })
@@ -482,7 +486,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
         model: selectedModel,
         messages: body.messages,
         max_tokens: maxTokens,
-        ...(target.opencode && body.reasoningEffort ? { reasoning_effort: body.reasoningEffort } : {}),
+        ...((target.opencode || target.effort) && body.reasoningEffort ? { reasoning_effort: body.reasoningEffort } : {}),
         ...(body.temperature !== undefined ? { temperature: body.temperature } : {}),
         ...(target.stream ? { stream: true, stream_options: { include_usage: true } } : {}),
       })

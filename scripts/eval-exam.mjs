@@ -29,7 +29,7 @@ function structure(parsed) {
 const rows = []
 try {
   await Promise.all(efforts.map(async (effort) => {
-    const url = `${base}scripts/eval-exam/index.html?effort=${effort}`
+    const url = `${base}scripts/eval-exam/index.html?effort=${effort}${process.env.EVAL_MODEL ? `&model=${encodeURIComponent(process.env.EVAL_MODEL)}` : ''}`
     const result = await withPage(url, { width: 800, height: 600 }, async ({ evaluate }) => {
       const encoded = await waitFor(evaluate, 'document.getElementById("eval-result")?.textContent', 900000)
       return JSON.parse(Buffer.from(encoded, 'base64').toString('utf8'))

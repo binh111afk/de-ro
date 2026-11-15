@@ -14,7 +14,7 @@ import { stylePackById } from './slideStyles'
 import { defaultDecorKit, isDecorKitId } from './slideDecor'
 import { subjectById, subjectRulesBlock } from './slideSubjects'
 import { fixMathEscapes, limitBold, mathToPlain } from './slideMath'
-import { graphicCatalogText, graphicFits, isGraphicId, searchGraphics } from './slideGraphics'
+import { graphicShortlistText, graphicFits, isGraphicId, searchGraphics } from './slideGraphics'
 import {
   composeLayout,
   contentFromSlide,
@@ -510,11 +510,11 @@ function slideSpecBlock(slide: DeckPlanSlide): string {
 }
 
 /** Catalog đồ hoạ — gửi một lần nếu có slide nào cần. */
-function graphicBlock(plan: DeckPlan): string {
+function graphicBlock(plan: DeckPlan, slides: DeckPlanSlide[]): string {
   return (
     '\n\nĐỒ HOẠ CÓ SẴN — chọn MỘT id khớp chủ đề cho field "graphic" ' +
     '(nhanh, đúng màu, không tốn lượt vẽ ảnh):\n' +
-    graphicCatalogText(subjectById(plan.subject)?.graphicGroups) +
+    graphicShortlistText(subjectById(plan.subject)?.graphicGroups, slides.map((s) => `${s.title} ${s.brief ?? ''}`)) +
     '\n- "graphic" chỉ dùng id trong danh sách trên; KHÔNG bịa id mới.\n' +
     '- Chọn theo NGHĨA CỦA NỘI DUNG slide, không theo hình tượng chung của môn (vd: cái cân không hợp với ƯCLN). ' +
     'NÊN chọn một hình: hình gần nghĩa (cùng chủ đề, cùng hoạt động — vd: mục tiêu → cờ đích, luyện tập → bút chì, ' +
@@ -583,7 +583,7 @@ export function pageSystemPrompt(
     'Bạn là trợ lý AI của trình soạn bài trình bày tiếng Việt. Viết nội dung cho ĐÚNG MỘT slide. ' +
     'Chỉ trả về DUY NHẤT một JSON hợp lệ, không bọc markdown, không chữ ngoài JSON.\n\n' +
     slideSpecBlock(slide) +
-    (GRAPHIC_LAYOUTS.has(slide.layout) ? graphicBlock(plan) : '') +
+    (GRAPHIC_LAYOUTS.has(slide.layout) ? graphicBlock(plan, [slide]) : '') +
     deckContextBlock(plan) +
     'SLIDE CẦN VIẾT: ' + slideHeading(plan, slide, index)
   )
@@ -603,8 +603,9 @@ export function batchSystemPrompt(plan: DeckPlan, indices: number[]): string {
     `${indices.length} slide liệt kê ở cuối. Chỉ trả về DUY NHẤT một JSON hợp lệ dạng ` +
     '{"slides":[{...},{...}]} — mỗi phần tử là JSON của một slide, ĐÚNG THỨ TỰ và ĐỦ số slide, ' +
     'không bọc markdown, không chữ ngoài JSON.' +
-    (needsGraphic ? graphicBlock(plan) : '') +
+    // phần giống nhau giữa các lượt đặt TRƯỚC (cache prompt của nhà cung cấp chỉ khớp phần đầu trùng nhau)
     deckContextBlock(plan) +
+    (needsGraphic ? graphicBlock(plan, indices.map((i) => plan.slides[i])) : '') +
     `CÁC SLIDE CẦN VIẾT (mỗi slide tuân thủ đúng layout, field, ngân sách chữ của nó):\n\n${specs}\n`
   )
 }

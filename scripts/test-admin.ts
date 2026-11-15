@@ -130,11 +130,11 @@ check('moderator xem ai.stats → 403', (await hit({ action: 'ai.stats' }, 'tMod
 check('moderator chạy health → 403', (await hit({ action: 'health' }, 'tMod')).status === 403)
 check('moderator xem health.targets → 403', (await hit({ action: 'health.targets' }, 'tMod')).status === 403)
 {
-  const save = async (o: object, tok = 'tAdmin') => hit({ action: 'ai.saveProvider', provider: 'mercury', ...o }, tok)
+  const save = async (o: object, tok = 'tAdmin') => hit({ action: 'ai.saveProvider', provider: 'deepseek', ...o }, tok)
   const SECRET_KEY = 'sk-rat-bi-mat-123456'
   check('moderator lưu provider → 403', (await save({ model: 'x' }, 'tMod')).status === 403)
   check('lưu provider lạ → 400', (await save({ provider: 'khong-co', model: 'x' })).status === 400)
-  process.env.MERCURY_API_KEY = 'k-env-12345678'
+  process.env.DEEPSEEK_API_KEY = 'k-env-12345678'
   const END = 'https://api.inceptionlabs.ai/v1'
   check('lưu tên model lạ → 400', (await save({ model: 'a b', endpoint: END })).status === 400)
   check('đổi endpoint không nhập key → 400', (await save({ model: 'm', endpoint: 'https://8.8.8.8/v1' })).status === 400)
@@ -148,9 +148,9 @@ check('moderator xem health.targets → 403', (await hit({ action: 'health.targe
   check('endpoint nội bộ → 400', (await save({ model: 'm', endpoint: 'https://127.0.0.1/v1', apiKey: SECRET_KEY })).status === 400)
   check('endpoint metadata → 400', (await save({ model: 'm', endpoint: 'https://169.254.169.254/v1', apiKey: SECRET_KEY })).status === 400)
   const from = bodies.length
-  const r = await save({ model: 'mercury-moi', endpoint: 'https://8.8.8.8/v1', apiKey: SECRET_KEY })
+  const r = await save({ model: 'deepseek-moi', endpoint: 'https://8.8.8.8/v1', apiKey: SECRET_KEY })
   const sent = bodies.slice(from).join(' ')
-  check('lưu provider → 200, có model và key đã mã hoá', r.status === 200 && sent.includes('"model":"mercury-moi"') && sent.includes('"api_key_enc":"v1:'))
+  check('lưu provider → 200, có model và key đã mã hoá', r.status === 200 && sent.includes('"model":"deepseek-moi"') && sent.includes('"api_key_enc":"v1:'))
   check('API key không lọt ra DB hay nhật ký dạng rõ', !sent.includes(SECRET_KEY))
   check('kết quả chỉ trả key đã che', !JSON.stringify(r.data ?? r).includes(SECRET_KEY))
   const { encryptKey, decryptKey, rowToOverride, resetAiOverrides } = await import('../server/aiSettings.ts')
@@ -159,17 +159,17 @@ check('moderator xem health.targets → 403', (await hit({ action: 'health.targe
     check('chặn địa chỉ nội bộ ' + u, await assertSafeEndpoint(u).then(() => false, () => true))
   }
   check('địa chỉ công khai vẫn qua', await assertSafeEndpoint('https://8.8.8.8/v1').then(() => true, () => false))
-  const gone = rowToOverride({ provider: 'mercury', model: 'm', base_url: 'https://may-la.test/v1', api_key_enc: encryptKey('abc') })
+  const gone = rowToOverride({ provider: 'deepseek', model: 'm', base_url: 'https://may-la.test/v1', api_key_enc: encryptKey('abc') })
   check('tên miền bị gỡ khỏi danh sách thì bỏ endpoint và key', gone.baseUrl === undefined && gone.apiKey === undefined && gone.model === 'm')
-  const okRow = rowToOverride({ provider: 'mercury', model: null, base_url: 'https://8.8.8.8/v1', api_key_enc: encryptKey('abc') })
+  const okRow = rowToOverride({ provider: 'deepseek', model: null, base_url: 'https://8.8.8.8/v1', api_key_enc: encryptKey('abc') })
   check('tên miền trong danh sách thì dùng', okRow.baseUrl === 'https://8.8.8.8/v1' && okRow.apiKey === 'abc')
   check('mã hoá rồi giải mã đúng', decryptKey(encryptKey('abc')) === 'abc')
-  const bad = rowToOverride({ provider: 'mercury', model: null, base_url: 'https://evil.test/v1', api_key_enc: 'v1:AAAA:BBBB:CCCC' })
+  const bad = rowToOverride({ provider: 'deepseek', model: null, base_url: 'https://evil.test/v1', api_key_enc: 'v1:AAAA:BBBB:CCCC' })
   check('key hỏng thì bỏ luôn endpoint riêng', bad.apiKey === undefined && bad.baseUrl === undefined)
-  check('về mặc định → 200', (await hit({ action: 'ai.resetProvider', provider: 'mercury' }, 'tAdmin')).status === 200)
-  check('moderator về mặc định → 403', (await hit({ action: 'ai.resetProvider', provider: 'mercury' }, 'tMod')).status === 403)
+  check('về mặc định → 200', (await hit({ action: 'ai.resetProvider', provider: 'deepseek' }, 'tAdmin')).status === 200)
+  check('moderator về mặc định → 403', (await hit({ action: 'ai.resetProvider', provider: 'deepseek' }, 'tMod')).status === 403)
   resetAiOverrides()
-  delete process.env.MERCURY_API_KEY
+  delete process.env.DEEPSEEK_API_KEY
   delete process.env.AI_SETTINGS_SECRET
   delete process.env.AI_ENDPOINT_ALLOWED_HOSTS
 }

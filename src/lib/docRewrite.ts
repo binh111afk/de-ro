@@ -160,6 +160,28 @@ export const FIGURE_GUIDE =
 
   'Biểu thức dùng biến x, ^ cho luỹ thừa, sqrt(), ln, sin, cos; nhân ngầm được (2x).'
 
+/** loại hình hợp từng môn (số mục trong FIGURE_GUIDE) — đề một môn khỏi phải gửi cả hướng dẫn mạch điện, phả hệ… */
+const FIGURE_BY_SUBJECT: Array<[RegExp, string[]]> = [
+  [/to[aá]n/i, ['1', '2', '3', '4', '5', '5b', '6', '7', '8', '9', '10', '11', '11b', '18']],
+  [/v[aậ]t\s*l[ií]|m[oô]n\s*l[ý]/i, ['1', '4', '5b', '7', '12', '13', '14', '15b', '18', '20', '21', '22', '26']],
+  [/ho[aá]\s*h[oọ]c|m[oô]n\s*ho[aá]/i, ['7', '15', '16', '17', '18', '19']],
+  [/sinh\s*h[oọ]c|m[oô]n\s*sinh/i, ['7', '18', '23', '24', '25']],
+  [/[đd][iị]a\s*l[ií]/i, ['7', '18']],
+]
+
+/**
+ * FIGURE_GUIDE rút theo môn đoán từ yêu cầu. Không đoán được môn (hoặc đề nhiều môn) thì trả đủ.
+ * Môn không có hình (Văn, Sử, ngoại ngữ…) vẫn trả đủ: hiếm khi dùng, không đáng rủi ro đoán sai.
+ */
+export function figureGuideFor(request: string): string {
+  const hits = FIGURE_BY_SUBJECT.filter(([re]) => re.test(request))
+  if (hits.length !== 1) return FIGURE_GUIDE
+  const keep = new Set(hits[0][1])
+  const lines = FIGURE_GUIDE.split('\n')
+  const tail = lines.pop() ?? ''
+  return lines.filter((l) => keep.has(/^(\d+b?)\)/.exec(l)?.[1] ?? '')).join('\n') + '\n' + tail
+}
+
 const TOOL_SYSTEM =
   'Bạn đọc một đề bài tiếng Việt và chọn MỘT hình minh hoạ cần vẽ. Chỉ trả về MỘT object JSON, không giải thích. Các loại:\n' +
   FIGURE_GUIDE +

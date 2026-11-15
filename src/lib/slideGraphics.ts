@@ -241,6 +241,23 @@ export function graphicMarkup(id: string, inkIn = GRAPHIC_INK, mainIn?: string):
  * nên prompt từng slide chỉ gửi các nhóm hợp với môn (`categories`); không truyền
  * thì gửi hết (dùng khi chưa biết môn).
  */
+/**
+ * Danh mục đồ hoạ RÚT GỌN cho một lượt gọi: đủ nhóm chính của môn + nhóm lớp học (dùng chung),
+ * cộng các hình khớp từ khoá của từng slide trong lượt. Danh mục đầy đủ ~8.000 ký tự, gửi lại ở mọi lượt.
+ */
+export function graphicShortlistText(categories: readonly string[] | undefined, queries: string[]): string {
+  const keep = new Set(categories?.length ? [categories[0], 'class'] : ['class'])
+  const picked = new Map<string, GraphicMeta>()
+  for (const g of SLIDE_GRAPHICS) if (keep.has(g.category)) picked.set(g.id, g)
+  for (const q of queries) for (const g of searchGraphics(q, 8)) picked.set(g.id, g)
+  return CATEGORY_ORDER.map((category) => {
+    const items = [...picked.values()].filter((g) => g.category === category)
+    return items.length ? `${category}: ${items.map((g) => `${g.id}=${g.name}`).join(', ')}` : ''
+  })
+    .filter(Boolean)
+    .join('\n')
+}
+
 export function graphicCatalogText(categories?: readonly string[]): string {
   return CATEGORY_ORDER.filter((category) => !categories || categories.includes(category))
     .map((category) => {

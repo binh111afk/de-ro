@@ -32,7 +32,7 @@ const base = server.resolvedUrls.local[0]
 let exit = 0
 try {
   for (const [i, topic] of topics.entries()) {
-    const url = `${base}scripts/eval-slides/index.html?topic=${encodeURIComponent(topic)}${withImages ? '&images=1' : ''}${batch ? '&batch=1' : ''}${effort ? `&effort=${effort}` : ''}`
+    const url = `${base}scripts/eval-slides/index.html?topic=${encodeURIComponent(topic)}${withImages ? '&images=1' : ''}${batch ? '&batch=1' : ''}${effort ? `&effort=${effort}` : ''}${process.env.EVAL_MODEL ? `&model=${encodeURIComponent(process.env.EVAL_MODEL)}` : ''}`
     const { result, png, slides } = await withPage(url, { width: 1900, height: 1000 }, async ({ evaluate, screenshot }) => {
       const encoded = await waitFor(evaluate, 'document.getElementById("eval-result")?.textContent', 900000)
       const result = JSON.parse(Buffer.from(encoded, 'base64').toString('utf8'))

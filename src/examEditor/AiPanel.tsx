@@ -37,7 +37,7 @@ import { BookOpen } from 'lucide-react'
 import { SourcePicker } from './SourcePicker'
 import { cn } from '@/lib/cn'
 import { DIFFICULTY_RULE } from '@/lib/difficulty'
-import { FIGURE_GUIDE } from '@/lib/docRewrite'
+import { FIGURE_GUIDE, figureGuideFor } from '@/lib/docRewrite'
 import { AI_ATTACH_EVENT, takeAiRefs, type AiRef } from '@/lib/aiAttach'
 import { extractJson } from '@/lib/llm'
 import aiThinkingAnim from '@/assets/ai-assistant.svg'
@@ -633,7 +633,7 @@ export const AI_EFFORT: { exam: 'low' | 'medium' | 'high' | 'max'; slide: 'low' 
 }
 
 /** Số slide mỗi lần gọi model: gộp để không gửi lại prompt chung cho từng slide. */
-export const SLIDE_BATCH = 4
+export const SLIDE_BATCH = 5
 
 /**
  * Sinh một nhóm slide trong MỘT lần gọi. Slide nào sai thì sửa riêng đúng một lần
@@ -734,7 +734,7 @@ const SCOPE_RULE =
  * - patch: sửa vài khối theo id trong bản tóm tắt tài liệu.
  * - không sửa tài liệu: trả lời văn bản thường (không JSON).
  */
-export function examSystemPrompt(documentDigest?: string): string {
+export function examSystemPrompt(documentDigest?: string, request = ''): string {
   return (
     'Bạn là trợ lý AI của trình soạn đề thi tiếng Việt (THCS/THPT). Trả lời ngắn gọn, đúng ngữ pháp.\n\n' +
     'KHI SINH HOẶC SỬA NỘI DUNG ĐỀ, chỉ trả về DUY NHẤT một JSON hợp lệ (không bọc markdown, không chữ ngoài JSON):\n' +
@@ -793,7 +793,7 @@ export function examSystemPrompt(documentDigest?: string): string {
     'Ưu tiên dạng "Cho hàm số $y=f(x)$ có đồ thị / bảng biến thiên / bảng xét dấu đạo hàm như hình" (học sinh phải đọc hình mới làm được), hình học phẳng/không gian, biểu đồ số liệu, mạch điện, đồ thị chuyển động. ' +
     'Bài toán thực tế đã được mô hình hoá sẵn bằng công thức (ví dụ "lợi nhuận $P(x)=…$", "nhiệt độ $T(t)=…$") thì không cần ép có hình. ' +
     'Môn không có hình phù hợp (Văn, Sử, ngoại ngữ…) thì không cần figure. Các loại figure:\n' +
-    FIGURE_GUIDE +
+    figureGuideFor(request) +
     '\n' +
     '- Tiếng Việt chuẩn, số liệu nhất quán, mọi câu phải có đáp án đúng.\n\n' +
     (documentDigest
@@ -1060,7 +1060,7 @@ export function AiPanel({
             : slideDoc
               ? SLIDE_PLAN_SYSTEM
               : SLIDE_SYSTEM) + (contextSummary ? `\nBài trình bày hiện tại: ${contextSummary}` : '')
-        : examSystemPrompt(documentDigest) +
+        : examSystemPrompt(documentDigest, `${text}\n${contextSummary ?? ''}`) +
           (contextSummary ? `\nTài liệu hiện tại: ${contextSummary}` : '')
 
     const messages: LlmMessage[] = [

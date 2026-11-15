@@ -3,6 +3,7 @@
  * chủ đề (`?topic=`), dựng lưới `SlideThumb` để `eval-slides.mjs` chụp ảnh.
  * Ảnh AI không được sinh (layout ảnh dùng khung chờ/graphic) để chạy nhanh và rẻ.
  */
+import '../lib/forceModel'
 import '@fontsource/be-vietnam-pro/400.css'
 import '@fontsource/be-vietnam-pro/500.css'
 import '@fontsource/be-vietnam-pro/600.css'
