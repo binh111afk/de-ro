@@ -20,7 +20,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { json, readBody } from './http.js'
 import { LOGIN_REQUIRED, clientIp, guard, isLocal, userFromToken } from './guard.js'
-import { addUsage, hasQuotaStore, issueReceipt, quotaMessage, readQuota, refundReceipt, reserveQuota } from './aiQuota.js'
+import { addUsage, hasQuotaStore, issueReceipt, quotaMessage, readQuota, refundReceipt, requestHash, reserveQuota } from './aiQuota.js'
 import { costFromUsage, logAiCall, maintenanceBlock } from './ops.js'
 import { readAiOverrides } from './aiSettings.js'
 import { callAnthropic } from './anthropic.js'
@@ -36,6 +36,8 @@ const DEFAULT_MODEL = 'deepseek-v4.1-flash'
 // soạn cả đề (22 câu + đáp án) mất 160–240 s; dưới mức này model chính luôn bị cắt rồi rơi sang model dự phòng (kém hơn).
 // Function Vercel tối đa 300 s (vercel.json) nên còn ~50 s cho model dự phòng.
 const DEFAULT_UPSTREAM_TIMEOUT_MS = 250_000
+/** trần token đầu ra mỗi lượt AI (client gửi lớn hơn thì cắt về đây); app đang dùng tối đa 32.000 */
+const MAX_OUTPUT_TOKENS = 32_000
 
 /**
  * Thời gian chờ mỗi lượt gọi model. Model reasoning (deepseek) có thể suy luận
@@ -309,25 +311,39 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
   if (await maintenanceBlock(req, res)) return
   // AI chỉ cho người đã đăng nhập (máy dev không cần)
   if (!userId && !isLocal(ip)) return json(res, 401, { error: LOGIN_REQUIRED, loginRequired: true })
-  // gọi lại vì lượt trước trả kết quả hỏng: hoàn token lượt đó trước khi kiểm hạn mức
+  // đọc body TRƯỚC khi hoàn điểm / giữ chỗ: biên nhận hoàn điểm gắn với đúng nội dung yêu cầu
+  let body: {
+    messages?: Array<{ role: string; content: string }>
+    maxTokens?: number
+    reasoningEffort?: 'low' | 'medium' | 'high' | 'max'
+    temperature?: number
+    model?: string
+  }
+  try {
+    body = JSON.parse(await readBody(req))
+  } catch {
+    return json(res, 400, { error: 'Yêu cầu không hợp lệ.' })
+  }
+  if (!Array.isArray(body.messages) || !body.messages.length) return json(res, 400, { error: 'messages is required' })
+  // trần token đầu ra mỗi lượt: không tin số client gửi (trước đây gửi 250.000 là gọi được, vượt xa hạn mức)
+  const requested = Math.floor(Number(body.maxTokens ?? MAX_OUTPUT_TOKENS)) || MAX_OUTPUT_TOKENS
+  let maxTokens = Math.min(MAX_OUTPUT_TOKENS, Math.max(256, requested))
+  const reqHash = requestHash(body.messages, maxTokens)
+
+  // gọi lại vì lượt trước trả kết quả hỏng: hoàn token lượt đó trước khi kiểm hạn mức — CHỈ khi gửi lại
+  // đúng yêu cầu cũ (mã băm nội dung trong biên nhận). Không thế thì giữ kết quả đắt rồi "gọi lại" bằng
+  // một câu rẻ để được hoàn gần hết điểm, dùng AI gần như miễn phí.
   const retryOf = req.headers['x-ai-retry-of']
-  if (typeof retryOf === 'string' && retryOf) quota = await refundReceipt(userId, ip, retryOf, quota)
+  if (typeof retryOf === 'string' && retryOf) quota = await refundReceipt(userId, ip, retryOf, quota, reqHash)
   // biên nhận để client xin hoàn nếu kết quả không dùng được; lượt gọi lại không được hoàn tiếp
-  const receiptFor = (spent: number) => (quota && !retryOf ? issueReceipt(userId, ip, spent) : undefined)
+  const receiptFor = (spent: number) => (quota && !retryOf ? issueReceipt(userId, ip, spent, reqHash) : undefined)
   if (quota && quota.used >= quota.limit) return json(res, 429, { error: quotaMessage(quota), quota })
+  // không cho một lượt sinh vượt số token còn lại của tài khoản (tối thiểu 1.000 để còn trả lời được)
+  if (quota) maxTokens = Math.min(maxTokens, Math.max(1000, quota.limit - quota.used))
   const release = quota ? await reserveQuota(userId, ip, quota) : async () => {}
   if (!release) return json(res, 429, { error: 'Đang có nhiều yêu cầu AI chạy cùng lúc, vui lòng thử lại sau ít giây.', quota })
 
   try {
-    const raw = await readBody(req)
-    const body = JSON.parse(raw) as {
-      messages?: Array<{ role: string; content: string }>
-      maxTokens?: number
-      reasoningEffort?: 'low' | 'medium' | 'high' | 'max'
-      temperature?: number
-      model?: string
-    }
-    if (!body.messages?.length) return json(res, 400, { error: 'messages is required' })
 
     let prov: ReturnType<typeof providerConfig>
     try {
@@ -368,6 +384,9 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
       }))
     }
     const targets: Target[] = []
+    // client chỉ được chọn model nằm trong cấu hình của app (trước đây gửi tên model tuỳ ý là gọi được model đắt nhất của gateway)
+    const knownModels = [prov.model, prov.fallbackModel, prov.anthropicModel, prov.mercuryModel, prov.fostaModel, prov.anyrouterModel, prov.nightrouterModel]
+    if (body.model !== undefined && !knownModels.includes(body.model)) body.model = undefined
     // client chỉ định đúng model dự phòng → bỏ qua opencode, gọi thẳng (thử/so chất lượng)
     const wantsBackup =
       (!!prov.anthropicApiKey && body.model === prov.anthropicModel) ||
@@ -405,7 +424,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
             baseURL: target.url,
             model: selectedModel,
             messages: body.messages,
-            maxTokens: body.maxTokens ?? 32000,
+            maxTokens,
             effort: 'medium',
             signal: AbortSignal.timeout(upstreamTimeoutMs()),
           })
@@ -426,7 +445,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
       let attemptBody = JSON.stringify({
         model: selectedModel,
         messages: body.messages,
-        max_tokens: body.maxTokens ?? 32000,
+        max_tokens: maxTokens,
         ...(target.opencode && body.reasoningEffort ? { reasoning_effort: body.reasoningEffort } : {}),
         ...(body.temperature !== undefined ? { temperature: body.temperature } : {}),
         ...(target.stream ? { stream: true, stream_options: { include_usage: true } } : {}),

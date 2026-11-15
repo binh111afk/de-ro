@@ -1,4 +1,4 @@
-import { createHmac, randomUUID, timingSafeEqual } from 'node:crypto'
+import { createHash, createHmac, randomUUID, timingSafeEqual } from 'node:crypto'
 
 /**
  * Điểm AI (chỉ người đã đăng nhập; khách bị chặn ở llmProxy):
@@ -150,17 +150,24 @@ export function quotaMessage(q: Quota): string {
  * Biên nhận hoàn điểm: mỗi lượt AI thành công (có tính hạn mức) trả về một chuỗi ký HMAC
  * gồm người dùng, tháng, số token. Kết quả không dùng được (JSON hỏng…) thì client gửi lại
  * biên nhận kèm lượt gọi lại → server hoàn số token đó. Lượt gọi lại không có biên nhận
- * (không hoàn hai lần liền), biên nhận sống 15 phút, mỗi biên nhận hoàn một lần.
+ * (không hoàn hai lần liền), biên nhận sống 15 phút, mỗi biên nhận hoàn một lần, và chỉ hoàn khi lượt gọi lại
+ * gửi đúng yêu cầu cũ (mã băm `h`) — để không ai giữ kết quả đắt rồi "gọi lại" bằng câu rẻ cho được hoàn điểm.
  */
 
 const RECEIPT_TTL = 15 * 60_000
 const receiptKey = () => process.env.AI_RECEIPT_SECRET ?? process.env.SUPABASE_SERVICE_ROLE_KEY ?? ''
 const sign = (data: string) => createHmac('sha256', receiptKey()).update(data).digest('base64url')
-type Receipt = { u: string; m: string; t: number; e: number; n: string }
+/** h = mã băm yêu cầu đã sinh ra biên nhận: chỉ gửi lại ĐÚNG yêu cầu đó mới được hoàn */
+type Receipt = { u: string; m: string; t: number; e: number; n: string; h?: string }
 
-export function issueReceipt(userId: string | null, _ip: string, tokens: number): string | undefined {
+/** mã băm nội dung yêu cầu AI (messages + trần token) để gắn biên nhận hoàn điểm với đúng lượt gọi lại */
+export function requestHash(messages: unknown, maxTokens: number): string {
+  return createHash('sha256').update(JSON.stringify(messages ?? null)).update(`|${maxTokens}`).digest('base64url').slice(0, 22)
+}
+
+export function issueReceipt(userId: string | null, _ip: string, tokens: number, hash?: string): string | undefined {
   if (!userId || !receiptKey() || tokens <= 0) return undefined
-  const r: Receipt = { u: userId, m: month(), t: Math.round(tokens), e: Date.now() + RECEIPT_TTL, n: randomUUID() }
+  const r: Receipt = { u: userId, m: month(), t: Math.round(tokens), e: Date.now() + RECEIPT_TTL, n: randomUUID(), h: hash }
   const data = Buffer.from(JSON.stringify(r)).toString('base64url')
   return `${data}.${sign(data)}`
 }
@@ -180,11 +187,13 @@ export function readReceipt(receipt: string, userId: string): Receipt | null {
 }
 
 /** Hoàn token theo biên nhận (vào số đã dùng tháng trước, phần còn lại trả về số dư điểm); trả hạn mức mới. */
-export async function refundReceipt(userId: string | null, _ip: string, receipt: string, prev: Quota | null): Promise<Quota | null> {
+export async function refundReceipt(userId: string | null, _ip: string, receipt: string, prev: Quota | null, hash?: string): Promise<Quota | null> {
   if (!prev || !userId) return prev
   const r = readReceipt(receipt, userId)
   const s = supa()
   if (!r || !s) return prev
+  // lượt gọi lại phải là đúng yêu cầu cũ; biên nhận không có mã băm (bản cũ) thì không hoàn
+  if (!r.h || r.h !== hash) return prev
   try {
     const res = await fetch(`${s.base}/rest/v1/rpc/refund_ai_usage`, {
       method: 'POST',
