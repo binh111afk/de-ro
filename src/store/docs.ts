@@ -15,6 +15,10 @@ export type SlideElType = 'text' | 'shape' | 'image' | 'icon' | 'graphic' | 'tab
 
 export interface SlideElement {
   id: string
+  /** nhóm cố định (Ctrl+G): bấm một thành viên chọn cả nhóm, kéo/xoá/căn cùng nhau */
+  groupId?: string
+  /** khoá: không kéo, đổi cỡ, xoay hay xoá được (vẫn chọn để mở khoá / sửa định dạng) */
+  locked?: boolean
   type: SlideElType
   x: number
   y: number

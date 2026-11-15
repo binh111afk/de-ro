@@ -5,7 +5,7 @@ import { svgDataUrl } from '@/lib/plot'
 import { readToolDoc, type ToolDoc } from '@/lib/toolSpec'
 import { ToolModal } from './tools/ToolModal'
 import { FRAME_PLACEHOLDER, dragImage, photoFrameClip } from '@/lib/slideShapes'
-import { AlignCenterHorizontal, AlignCenterVertical, AlignEndHorizontal, AlignEndVertical, AlignHorizontalSpaceAround, AlignStartHorizontal, AlignStartVertical, AlignVerticalSpaceAround, Link2, RotateCw, Trash2 } from 'lucide-react'
+import { AlignCenterHorizontal, AlignCenterVertical, AlignEndHorizontal, AlignEndVertical, AlignHorizontalSpaceAround, AlignStartHorizontal, AlignStartVertical, AlignVerticalSpaceAround, Group, Link2, Lock, RotateCw, Trash2, Ungroup } from 'lucide-react'
 import { type AlignMode } from '@/lib/slideAlign'
 import { slideIconById } from '@/lib/slideIconLibrary'
 import { graphicById, graphicMarkup } from '@/lib/slideGraphics'
@@ -31,7 +31,21 @@ export const GROUP_ACTIONS: Array<{ mode: AlignMode; label: string; Icon: typeof
   { mode: 'spreadY', label: 'Khoảng cách đều theo chiều dọc', Icon: AlignVerticalSpaceAround, min: 3 },
 ]
 
-export function GroupToolbar({ els, onAlign, onDelete }: { els: SlideElement[]; onAlign: (mode: AlignMode) => void; onDelete: () => void }) {
+export function GroupToolbar({
+  els,
+  onAlign,
+  onDelete,
+  onGroup,
+  onUngroup,
+}: {
+  els: SlideElement[]
+  onAlign: (mode: AlignMode) => void
+  onDelete: () => void
+  onGroup: () => void
+  onUngroup: () => void
+}) {
+  const gid = els[0]?.groupId
+  const isOneGroup = Boolean(gid) && els.every((e) => e.groupId === gid)
   const top = Math.min(...els.map((e) => e.y))
   const bottom = Math.max(...els.map((e) => e.y + elementHeight(e)))
   const above = top > 12
@@ -56,6 +70,15 @@ export function GroupToolbar({ els, onAlign, onDelete }: { els: SlideElement[]; 
           <Icon size={16} strokeWidth={1.8} />
         </button>
       ))}
+      {isOneGroup ? (
+        <button type="button" data-tip="Rã nhóm" data-tip-kbd="Ctrl+Shift+G" aria-label="Rã nhóm" className="ml-1.5 grid size-7 place-items-center rounded-md text-ink hover:bg-black/5" onClick={onUngroup}>
+          <Ungroup size={16} strokeWidth={1.8} />
+        </button>
+      ) : (
+        <button type="button" data-tip="Nhóm" data-tip-kbd="Ctrl+G" aria-label="Nhóm" className="ml-1.5 grid size-7 place-items-center rounded-md text-ink hover:bg-black/5" onClick={onGroup}>
+          <Group size={16} strokeWidth={1.8} />
+        </button>
+      )}
       <button type="button" data-tip="Xoá các mục đã chọn" aria-label="Xoá các mục đã chọn" className="ml-1.5 grid size-7 place-items-center rounded-md text-ink hover:bg-black/5" onClick={onDelete}>
         <Trash2 size={16} strokeWidth={1.8} />
       </button>
@@ -259,6 +282,7 @@ export function EditableEl({
     // Chọn và bắt đầu kéo trong cùng một thao tác, như PowerPoint.
     if (!selected && !grouped) onSelect()
     e.preventDefault()
+    if (el.locked) return
     const frame = (e.currentTarget as HTMLElement).closest('.slide-frame') as HTMLElement | null
     if (!frame) return
     const rect = frame.getBoundingClientRect()
@@ -434,7 +458,8 @@ export function EditableEl({
       window.removeEventListener('pointermove', move)
       window.removeEventListener('pointerup', up)
       window.removeEventListener('pointercancel', up)
-      onDragEnd()
+      // chỉ chặn cú click sau khi kéo thật; bấm tại chỗ phải tới được onClick (vd chọn riêng một mục trong nhóm)
+      if (movedRef.current) onDragEnd()
       showGuides({ x: null, y: null })
       delete document.body.dataset.slideDrag
       const target = frameId
@@ -513,7 +538,11 @@ export function EditableEl({
     window.addEventListener('pointercancel', up)
   }
 
-  const handle = selected ? (
+  const handle = selected && el.locked ? (
+    <span className="slide-el-lock" data-tip="Đã khoá" aria-label="Đã khoá">
+      <Lock size={12} strokeWidth={2.2} />
+    </span>
+  ) : selected ? (
     <>
       {/* hộp chữ không có tay nắm trên/dưới (như Canva): chiều cao luôn ôm theo chữ */}
       {HANDLE_DIRS.filter((dir) => el.type !== 'text' || (dir !== 'n' && dir !== 's')).map((dir) => (

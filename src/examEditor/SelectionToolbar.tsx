@@ -5,7 +5,7 @@
  */
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { AlignCenter, AlignLeft, AlignRight, Bold, ChevronDown, ChevronUp, ChevronsDown, ChevronsUp, Copy, Italic, Layers, Palette, SlidersHorizontal, MessageSquarePlus, Sparkles, Trash2, Type } from 'lucide-react'
+import { AlignCenter, AlignLeft, AlignRight, Bold, ChevronDown, ChevronUp, ChevronsDown, ChevronsUp, Copy, Italic, Layers, Lock, LockOpen, Palette, SlidersHorizontal, MessageSquarePlus, Sparkles, Trash2, Type } from 'lucide-react'
 import type { SlideElement } from '@/store/docs'
 import { REWRITE_PRESETS } from '@/lib/slideRewrite'
 import { graphicById, graphicMainColor } from '@/lib/slideGraphics'
@@ -521,7 +521,8 @@ export function SelectionToolbar({
       )}
       {tool('Nhân đôi (Ctrl+D)', onDuplicate, <Copy className="size-3.5" />)}
       <LayerTool elements={elements} selectedId={el.id} onArrange={onArrange} onSelect={onSelectLayer} />
-      {tool('Xoá', onDelete, <Trash2 className="size-3.5" />)}
+      {tool(el.locked ? 'Mở khoá (Ctrl+Shift+L)' : 'Khoá vị trí (Ctrl+Shift+L)', () => onUpdate({ locked: el.locked ? undefined : true }), el.locked ? <Lock className="size-3.5" /> : <LockOpen className="size-3.5" />, Boolean(el.locked))}
+      {!el.locked && tool('Xoá', onDelete, <Trash2 className="size-3.5" />)}
     </div>
     {askOpen && isText && (
       <div

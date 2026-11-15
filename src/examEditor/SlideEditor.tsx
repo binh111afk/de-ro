@@ -292,6 +292,19 @@ export function SlideEditor({
     }
   }
 
+  /** thành viên nhóm cố định chứa phần tử (≥2 mục), không có nhóm thì [] */
+  const groupMembers = (el: SlideElement) =>
+    el.groupId ? (currentSlide?.elements.filter((e) => e.groupId === el.groupId) ?? []) : []
+  /** bấm phần tử: thuộc nhóm thì chọn cả nhóm; nhóm đang được chọn rồi thì chọn riêng mục đó (sửa chữ…) */
+  const selectEl = (el: SlideElement) => {
+    const members = groupMembers(el)
+    const groupSelected = members.length >= 2 && members.every((m) => groupIds.includes(m.id)) && groupIds.length === members.length
+    if (members.length >= 2 && !groupSelected && selectedElementId !== el.id) {
+      setGroupIds(members.map((m) => m.id))
+      setSelectedElementId(null)
+    } else setSelectedElementId(el.id)
+  }
+
   const commitDeck = useCallback((next: Deck) => {
     historyRef.current.past = [...historyRef.current.past, deck].slice(-50)
     historyRef.current.future = []
@@ -516,9 +529,26 @@ export function SlideEditor({
     if (!currentSlide) return
     commitDeck({
       ...deck,
-      slides: deck.slides.map((s) => (s.id === currentSlide.id ? { ...s, elements: s.elements.filter((e) => !groupIds.includes(e.id)) } : s)),
+      // mục đã khoá được giữ lại
+      slides: deck.slides.map((s) => (s.id === currentSlide.id ? { ...s, elements: s.elements.filter((e) => e.locked || !groupIds.includes(e.id)) } : s)),
     })
     setGroupIds([])
+  }
+
+  /** Nhóm (Ctrl+G) / rã nhóm (Ctrl+Shift+G) các mục đang chọn. */
+  const setGroupOf = (ids: string[], groupId: string | undefined) => {
+    if (!currentSlide || !ids.length) return
+    commitDeck({
+      ...deck,
+      slides: deck.slides.map((s) =>
+        s.id === currentSlide.id ? { ...s, elements: s.elements.map((e) => (ids.includes(e.id) ? { ...e, groupId } : e)) } : s,
+      ),
+    })
+  }
+  const groupSelected = () => groupIds.length >= 2 && setGroupOf(groupIds, uid())
+  const ungroupSelected = () => {
+    const ids = groupIds.length ? groupIds : selectedElement ? groupMembers(selectedElement).map((m) => m.id) : []
+    setGroupOf(ids, undefined)
   }
 
   /** Chụp trạng thái trước khi bắt đầu một thao tác kéo/đổi text để undo gộp cả thao tác. */
@@ -561,7 +591,7 @@ export function SlideEditor({
       }
       if (mod && e.key.toLowerCase() === 'd' && selectedElement && currentSlide && !typing) {
         e.preventDefault()
-        addElement({ ...selectedElement, id: uid(), x: selectedElement.x + 3, y: selectedElement.y + 3 })
+        addElement({ ...selectedElement, id: uid(), groupId: undefined, locked: undefined, x: selectedElement.x + 3, y: selectedElement.y + 3 })
         return
       }
       if (mod && e.key.toLowerCase() === 'a' && currentSlide && !currentSlide.html && !typing) {
@@ -573,12 +603,24 @@ export function SlideEditor({
         } else setSelectedElementId(ids[0] ?? null)
         return
       }
+      if (mod && e.key.toLowerCase() === 'g' && currentSlide && !typing) {
+        e.preventDefault()
+        if (e.shiftKey) ungroupSelected()
+        else groupSelected()
+        return
+      }
+      if (mod && e.shiftKey && e.key.toLowerCase() === 'l' && selectedElement && currentSlide && !typing) {
+        e.preventDefault()
+        updateElement(currentSlide.id, selectedElement.id, { locked: selectedElement.locked ? undefined : true })
+        return
+      }
       if ((e.key === 'Delete' || e.key === 'Backspace') && groupIds.length && !typing) {
         e.preventDefault()
         removeGroup()
         return
       }
       if ((e.key === 'Delete' || e.key === 'Backspace') && selectedElement && currentSlide && !typing) {
+        if (selectedElement.locked) return
         e.preventDefault()
         removeElement(currentSlide.id, selectedElement.id)
         return
@@ -1239,9 +1281,12 @@ export function SlideEditor({
                     el={el}
                     theme={theme}
                     selected={selectedElementId === el.id}
-                    onSelect={() => setSelectedElementId(el.id)}
+                    onSelect={() => selectEl(el)}
                     grouped={groupIds.includes(el.id)}
-                    group={groupIds.includes(el.id) ? groupEls.filter((g) => g.id !== el.id).map((g) => ({ id: g.id, x: g.x, y: g.y })) : []}
+                    // kéo cả nhóm chọn, hoặc cả nhóm cố định ngay từ cú bấm đầu; mục khoá đứng yên
+                    group={(groupIds.includes(el.id) ? groupEls : selectedElementId === el.id ? [] : groupMembers(el))
+                      .filter((g) => g.id !== el.id && !g.locked)
+                      .map((g) => ({ id: g.id, x: g.x, y: g.y }))}
                     onToggleSelect={() => toggleInGroup(el.id)}
                     onPreviewMany={(patches) => previewMany(currentSlide.id, patches)}
                     onDragEnd={() => {
@@ -1295,7 +1340,7 @@ export function SlideEditor({
               />
             )}
             {groupEls.length >= 2 && currentSlide && !currentSlide.html && (
-              <GroupToolbar els={groupEls} onAlign={alignGroup} onDelete={removeGroup} />
+              <GroupToolbar els={groupEls} onAlign={alignGroup} onDelete={removeGroup} onGroup={groupSelected} onUngroup={ungroupSelected} />
             )}
             {selectedElement && currentSlide && !currentSlide.html && (
               <SelectionToolbar
