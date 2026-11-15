@@ -8,6 +8,8 @@ import { uploadImage } from '@/lib/mediaStore'
 import { useSession } from '@/lib/useSession'
 import { aiPointsLeft } from '@/lib/llm'
 import { apiFetch } from '@/lib/apiFetch'
+import { rest } from '@/lib/documents'
+import { currentSession } from '@/lib/auth'
 import { ProgressBar } from '@/components/ProgressBar'
 import { Avatar } from '@/components/Avatar'
 
@@ -248,7 +250,62 @@ function CreditCard() {
     <section className="rounded-[8px] bg-surface p-7 shadow-lift sm:p-8">
       <h2 className="font-display text-[22px] font-semibold tracking-[-0.01em] text-ink">Điểm AI</h2>
       {body}
+      <CreditHistory />
     </section>
+  )
+}
+
+type CreditEvent = { id: number; kind: string; tokens: number; created_at: string }
+const EVENT_LABELS: Record<string, string> = {
+  welcome: 'Quà chào mừng',
+  admin: 'Quản trị viên tặng',
+}
+
+/** Lịch sử điểm được cộng: 20 lần mới nhất (bảng ai_credit_events, chỉ đọc dòng của mình). */
+function CreditHistory() {
+  const [rows, setRows] = useState<CreditEvent[] | null | 'error'>(null)
+  useEffect(() => {
+    let alive = true
+    currentSession()
+      .then((s) =>
+        s
+          ? rest<CreditEvent[]>('/ai_credit_events?select=id,kind,tokens,created_at&order=created_at.desc&limit=20', { token: s.access_token })
+          : [],
+      )
+      .then((r) => alive && setRows(r))
+      .catch(() => alive && setRows('error'))
+    return () => {
+      alive = false
+    }
+  }, [])
+
+  return (
+    <div className="mt-7 border-t border-line pt-5">
+      <h3 className="text-[14px] font-semibold text-ink">Lịch sử điểm</h3>
+      {rows === null ? (
+        <p className="mt-3 text-[13px] text-ink-3">Đang tải…</p>
+      ) : rows === 'error' ? (
+        <p className="mt-3 text-[13px] text-ink-3">Chưa tải được lịch sử điểm, thử lại sau.</p>
+      ) : rows.length === 0 ? (
+        <p className="mt-3 text-[13px] text-ink-3">Chưa có lần cộng điểm nào.</p>
+      ) : (
+        <ul className="mt-2 divide-y divide-line">
+          {rows.map((r) => (
+            <li key={r.id} className="flex items-center justify-between gap-4 py-2.5">
+              <div className="min-w-0">
+                <p className="text-[14px] text-ink">{EVENT_LABELS[r.kind] ?? 'Cộng điểm'}</p>
+                <p className="text-[12px] text-ink-3">
+                  {new Date(r.created_at).toLocaleString('vi-VN', { dateStyle: 'short', timeStyle: 'short' })}
+                </p>
+              </div>
+              <span className="shrink-0 text-[14px] font-semibold text-emerald-700 tnum">
+                +{fmt(Math.floor(r.tokens / 1000))} điểm
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   )
 }
 
