@@ -4,6 +4,7 @@
  *   A  = như hiện tại (có suy luận)
  *   B  = tắt suy luận
  *   D  = có suy luận nhưng dặn suy luận gọn (chỉ tính kiểm đáp án)
+ *   O / OD = qua opencode (LLM_*), mức low, prompt cũ / prompt có cách D
  *   C  = B + một lượt soát (có suy luận) giải lại từng câu, trả câu sai kèm bản sửa
  * Mỗi đề chấm bằng giám khảo deepseek-flash (suy luận max): giải lại từng câu, đếm câu sai.
  *
@@ -18,6 +19,12 @@ const BASE = (env.DEEPSEEK_BASE_URL || 'https://api.deepseek.com').replace(/\/+$
 const MODEL = env.DEEPSEEK_MODEL || 'deepseek-flash'
 const JUDGE = process.env.JUDGE_MODEL || MODEL
 const SYSTEM = readFileSync('eval-out/exp/system.txt', 'utf8')
+// O / OD: soạn qua opencode (model chính của web, mức low) với prompt cũ / prompt có cách D
+const SESSION = `exp-${Date.now()}`
+const OC = { base: (env.LLM_BASE_URL || '').replace(/\/+$/, ''), key: env.LLM_API_KEY, model: env.LLM_MODEL || 'deepseek-v4.1-flash' }
+const read = (f) => { try { return readFileSync(f, 'utf8') } catch { return SYSTEM } }
+const SYSTEM_OLD = read('eval-out/exp/system-old.txt')
+const SYSTEM_D = read('eval-out/exp/system-d.txt')
 const TOPIC = 'Tạo đề thi tốt nghiệp THPT môn Toán theo đúng cấu trúc đề tham khảo 2025, có đáp án.'
 const OUT = 'eval-out/exp'
 mkdirSync(OUT, { recursive: true })
@@ -27,11 +34,11 @@ const nAt = args.indexOf('--n')
 const N = nAt >= 0 ? Number(args.splice(nAt, 2)[1]) : 2
 const variants = args.length ? args : ['A', 'B', 'C']
 
-async function chat(body) {
+async function chat(body, via) {
   const t0 = Date.now()
-  const res = await fetch(`${BASE}/chat/completions`, {
+  const res = await fetch(`${via ? via.base : BASE}/chat/completions`, {
     method: 'POST',
-    headers: { Authorization: `Bearer ${KEY}`, 'Content-Type': 'application/json' },
+    headers: { Authorization: `Bearer ${via ? via.key : KEY}`, 'Content-Type': 'application/json', ...(via ? { 'x-opencode-session': SESSION, 'User-Agent': 'de-ro/1.0' } : {}) },
     body: JSON.stringify(body),
     signal: AbortSignal.timeout(600_000),
   })
@@ -105,6 +112,11 @@ function applyFixes(doc, fixes) {
 
 async function generate(variant) {
   const calls = []
+  if (variant === 'O' || variant === 'OD') {
+    const gen = await chat({ model: OC.model, max_tokens: 32000, reasoning_effort: 'low', messages: [{ role: 'system', content: variant === 'O' ? SYSTEM_OLD : SYSTEM_D }, { role: 'user', content: TOPIC }] }, OC)
+    calls.push({ step: 'soạn', ...gen.usage, ms: gen.ms })
+    return { doc: json(gen.content), calls, fixes: [] }
+  }
   const thinking = variant === 'A' || variant === 'D' ? {} : { thinking: { type: 'disabled' } }
   // D: vẫn suy luận nhưng dặn suy luận gọn — chỉ tính và kiểm đáp án, không nháp lại cả đề
   const brief = variant === 'D' ? BRIEF : ''

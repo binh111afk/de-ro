@@ -113,7 +113,7 @@ Tham số: DeepSeek tắt suy luận được bằng `thinking: {type: "disabled
 ## Đã áp dụng và chi phí hiện tại (16/11/2026)
 
 **Đã áp vào web:**
-- Cách D: đoạn "CÁCH SUY NGHĨ (tiết kiệm)" ở cuối `examSystemPrompt` (`src/examEditor/AiPanel.tsx`), trước phần tài liệu hiện tại.
+- ~~Cách D~~: đã áp rồi gỡ (không lợi trên opencode, xem mục dưới).
 - Từ các lần trước: hướng dẫn hình theo môn (cách 2), slide gộp 5 slide mỗi lượt và rút danh mục đồ hoạ (cách 4), phần cache tính 1/10 điểm (cách 1).
 - **Model chính vẫn là opencode** (`deepseek-v4.1-flash`). DeepSeek chính hãng chỉ để trong `.env` máy dev làm dự phòng, chờ nạp tiền rồi tính.
 - Cách D mới đo trên DeepSeek chính hãng; **chưa đo riêng trên opencode** (cùng dòng model V4.1-Flash nên dự kiến tương tự).
@@ -122,7 +122,7 @@ Tham số: DeepSeek tắt suy luận được bằng `thinking: {type: "disabled
 
 | | Opencode (đang chạy trên web) | DeepSeek chính hãng (khi chuyển làm model chính) |
 |---|---|---|
-| 1 đề Toán THPT QG | **~20–23 điểm** (~23.000 token trước cách D, trừ ~11%) | **~20 điểm** khi cache lạnh, ~19 khi trúng cache |
+| 1 đề Toán THPT QG | **~18–23 điểm** (đo 3 đề: 18.177–23.115 token, trung bình ~21) | **~20 điểm** khi cache lạnh, ~19 khi trúng cache |
 | 1 bộ 15 slide | **~41 điểm** (40.765 token) | **~20–26 điểm** lúc đông người dùng; ~28–30 khi cache lạnh |
 | Thời gian | đề ~160 s, slide ~90–100 s | đề ~85 s, slide ~30 s |
 
@@ -131,6 +131,20 @@ Tham số: DeepSeek tắt suy luận được bằng `thinking: {type: "disabled
 - Các số dựa trên 1–3 lần đo mỗi trường hợp; mỗi lần chạy có thể lệch vài nghìn token (model chọn bố cục khác, có lượt sửa…).
 
 **Chi phí đã tiêu cho thí nghiệm** (tài khoản DeepSeek chính hãng, 15–16/11): khoảng 600.000 token cho 12 đề + 12 lượt chấm + 3 bộ slide + vài lượt thử tham số.
+
+## Cách D trên opencode (16/11/2026)
+
+Đo bằng `scripts/exp-exam-cost.mjs O OD --n 3` (gọi thẳng opencode `deepseek-v4.1-flash`, mức low, cùng header `x-opencode-session` như proxy; giám khảo deepseek-flash mức max).
+
+| Opencode, mức low | Token đề 1 · 2 · 3 | Trung bình | Câu sai | Ghi chú |
+|---|---|---|---|---|
+| O — prompt cũ | 22.287 · 23.115 · 18.177 | 21.193 | 0 · 0 · 0 | |
+| OD — prompt có cách D | 19.856 · 22.945 · 23.087 | 21.963 | 3 · 1 · 0 | đề 1 hỏng cấu trúc: 26 câu, câu 14 lặp, câu đúng/sai 14–16 thiếu ý a)–d) |
+
+- Trên opencode, cách D **không bớt token** (trung bình còn nhỉnh hơn ~800) và **chất lượng có dấu hiệu kém hơn** (4 câu sai / 70 câu so với 0 / 66, kèm 1 đề hỏng cấu trúc).
+- Khác với DeepSeek chính hãng (ở đó D bớt ~11% token, câu sai không tăng). Opencode ở mức low vốn đã suy luận ít hơn (8.300–13.100 token), nên đoạn dặn "suy luận gọn" không còn gì để cắt mà lại làm model bỏ sót.
+- Mẫu nhỏ (3 đề mỗi bên), nhưng không có lợi gì để bù rủi ro → **không nên dùng cách D khi model chính là opencode**.
+- **Đã gỡ cách D khỏi web** (16/11/2026). Khi chuyển DeepSeek chính hãng làm model chính thì thêm lại, chỉ bật cho model đó. Ước tính chi phí đề trên opencode trở về **~21 điểm** (trung bình 3 đề prompt cũ: 21.193 token).
 
 ## Đo lại
 
