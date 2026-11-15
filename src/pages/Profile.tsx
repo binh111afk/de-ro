@@ -213,6 +213,8 @@ function cachedQuota(): QuotaState {
 
 function CreditCard() {
   const [q, setQ] = useState<QuotaState>(cachedQuota)
+  // lần đầu đọc điểm, máy chủ mới tặng quà chào mừng → lịch sử phải đọc lại sau đó mới thấy dòng quà
+  const [fetched, setFetched] = useState(0)
   useEffect(() => {
     let alive = true
     // /api/quota: hàm nhỏ chỉ đọc điểm, khởi động nhanh hơn nhiều so với /api/llm
@@ -225,7 +227,10 @@ function CreditCard() {
         } catch {
           // chặn localStorage: chỉ mất phần nhớ số
         }
-        if (alive) setQ(next)
+        if (alive) {
+          setQ(next)
+          setFetched((n) => n + 1)
+        }
       })
       .catch(() => alive && setQ((cur) => (cur === 'loading' ? 'error' : cur)))
     return () => {
@@ -271,7 +276,7 @@ function CreditCard() {
     <section className="rounded-[8px] bg-surface p-7 shadow-lift sm:p-8">
       <h2 className="font-display text-[22px] font-semibold tracking-[-0.01em] text-ink">Điểm AI</h2>
       {body}
-      <CreditHistory />
+      <CreditHistory refresh={fetched} />
     </section>
   )
 }
@@ -283,7 +288,7 @@ const EVENT_LABELS: Record<string, string> = {
 }
 
 /** Lịch sử điểm được cộng: 20 lần mới nhất (bảng ai_credit_events, chỉ đọc dòng của mình). */
-function CreditHistory() {
+function CreditHistory({ refresh }: { refresh: number }) {
   const [rows, setRows] = useState<CreditEvent[] | null | 'error'>(null)
   useEffect(() => {
     let alive = true
@@ -298,7 +303,7 @@ function CreditHistory() {
     return () => {
       alive = false
     }
-  }, [])
+  }, [refresh])
 
   return (
     <div className="mt-7 border-t border-line pt-5">
