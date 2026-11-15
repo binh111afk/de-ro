@@ -45,6 +45,8 @@ export interface SlideElement {
   borderStyle?: 'solid' | 'dashed' | 'dotted'
   /** ảnh: đường dẫn ảnh; video: link YouTube / Vimeo / tệp .mp4 (lib/slideVideo.ts) */
   src?: string
+  /** ảnh: vùng cắt, phần trăm cắt bớt mỗi cạnh của ảnh gốc (0–90); thiếu = không cắt */
+  crop?: { l: number; t: number; r: number; b: number }
   /** icon semantic trong catalog slideAssets — optional để deck cũ không đổi */
   assetId?: string
   /** id đồ hoạ vector trong catalog slideGraphics (chặng 2) */

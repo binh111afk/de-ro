@@ -2031,3 +2031,76 @@ body[data-slide-drag] .slide-sel-toolbar {
   justify-content: center;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
 }
+
+/* tay nắm cắt ảnh: chữ L ở 4 góc + thanh đậm ở 4 cạnh */
+.slide-crop-handle {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  translate: -50% -50%;
+  z-index: 15;
+  touch-action: none;
+}
+.slide-crop-handle::after {
+  content: '';
+  position: absolute;
+  box-sizing: border-box;
+}
+.slide-crop-handle--nw { left: 0; top: 0; cursor: nwse-resize; }
+.slide-crop-handle--ne { left: 100%; top: 0; cursor: nesw-resize; }
+.slide-crop-handle--se { left: 100%; top: 100%; cursor: nwse-resize; }
+.slide-crop-handle--sw { left: 0; top: 100%; cursor: nesw-resize; }
+.slide-crop-handle--n { left: 50%; top: 0; cursor: ns-resize; }
+.slide-crop-handle--s { left: 50%; top: 100%; cursor: ns-resize; }
+.slide-crop-handle--e { left: 100%; top: 50%; cursor: ew-resize; }
+.slide-crop-handle--w { left: 0; top: 50%; cursor: ew-resize; }
+
+.slide-crop-handle--nw::after,
+.slide-crop-handle--ne::after,
+.slide-crop-handle--se::after,
+.slide-crop-handle--sw::after {
+  width: 14px;
+  height: 14px;
+  left: 5px;
+  top: 5px;
+  border-color: #111827;
+  border-style: solid;
+  border-width: 0;
+  filter: drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff);
+}
+.slide-crop-handle--nw::after { border-top-width: 4px; border-left-width: 4px; transform: translate(3px, 3px); }
+.slide-crop-handle--ne::after { border-top-width: 4px; border-right-width: 4px; transform: translate(-3px, 3px); }
+.slide-crop-handle--se::after { border-bottom-width: 4px; border-right-width: 4px; transform: translate(-3px, -3px); }
+.slide-crop-handle--sw::after { border-bottom-width: 4px; border-left-width: 4px; transform: translate(3px, -3px); }
+
+.slide-crop-handle--n::after,
+.slide-crop-handle--s::after {
+  left: 50%;
+  top: 50%;
+  width: 22px;
+  height: 5px;
+  translate: -50% -50%;
+  border-radius: 2px;
+  background: #111827;
+  border: 1px solid #fff;
+}
+.slide-crop-handle--e::after,
+.slide-crop-handle--w::after {
+  left: 50%;
+  top: 50%;
+  width: 5px;
+  height: 22px;
+  translate: -50% -50%;
+  border-radius: 2px;
+  background: #111827;
+  border: 1px solid #fff;
+}
+.slide-crop-handle:hover::after {
+  border-color: #b4532a;
+}
+.slide-crop-handle--n:hover::after,
+.slide-crop-handle--s:hover::after,
+.slide-crop-handle--e:hover::after,
+.slide-crop-handle--w:hover::after {
+  background: #b4532a;
+}

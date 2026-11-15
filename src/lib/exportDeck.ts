@@ -18,6 +18,7 @@ import { slideIconById } from './slideIconLibrary'
 import { graphicMarkup } from './slideGraphics'
 import { firstColor, gradientSvg } from './slideBackground'
 import { isStrokeOnlyShape, prstOf } from './slidePresets'
+import { photoFrameClip, photoFrameRadius } from './slideShapes'
 import { toDataUrl } from './mediaStore'
 
 const hex = (value: string | undefined, fallback = 'FFFFFF') => {
@@ -53,6 +54,148 @@ const pt = (cqw: number) => Math.round(cqw * 7.2 * 10) / 10
 /** toạ độ % của deck → kiểu `Coord` của PptxGenJS (template literal) */
 const pct = (value: number) => `${value}%` as `${number}%`
 
+
+/** Chuyển CSS border-radius (1..4 giá trị mỗi chiều hoặc "X / Y") thành 8 bán kính pixel chuẩn CSS. */
+function parseBorderRadii(spec: string, cw: number, ch: number): [number, number, number, number, number, number, number, number] {
+  const [hStr, vStr] = spec.split('/').map((s) => s.trim())
+  const expand4 = (raw: string, ref: number) => {
+    const parts = raw.split(/\s+/).filter(Boolean).map((tok) => {
+      if (tok.endsWith('%')) return (parseFloat(tok) / 100) * ref
+      if (tok.endsWith('cqw')) return (parseFloat(tok) / 100) * cw
+      return parseFloat(tok) || 0
+    })
+    const [a = 0, b = a, c = a, d = b] = parts
+    return [a, b, c, d] as const
+  }
+  const [tlX, trX, brX, blX] = expand4(hStr, cw)
+  const [tlY, trY, brY, blY] = expand4(vStr ?? hStr, ch)
+  // Co đồng bộ nếu tổng bán kính vượt quá cạnh hộp (giống CSS border-radius)
+  const scale = Math.min(
+    1,
+    cw / Math.max(1e-6, tlX + trX),
+    cw / Math.max(1e-6, blX + brX),
+    ch / Math.max(1e-6, tlY + blY),
+    ch / Math.max(1e-6, trY + brY),
+  )
+  return [tlX * scale, tlY * scale, trX * scale, trY * scale, brX * scale, brY * scale, blX * scale, blY * scale]
+}
+
+function buildImagePath(el: Deck['slides'][number]['elements'][number], cw: number, ch: number): Path2D {
+  const path = new Path2D()
+  const clip = photoFrameClip(el.shape)
+  const frameRad = photoFrameRadius(el.shape)
+  if (el.shape === 'pill') {
+    const ry = ch * 0.22
+    const rh = ch * 0.56
+    path.roundRect(0, ry, cw, rh, Math.min(cw, rh) / 2)
+    return path
+  }
+  if (clip && !frameRad && clip.startsWith('polygon(')) {
+    const pts = clip
+      .slice(8, -1)
+      .split(',')
+      .map((pair) => {
+        const [xStr, yStr] = pair.trim().split(/\s+/)
+        return [(parseFloat(xStr) / 100) * cw, (parseFloat(yStr) / 100) * ch] as const
+      })
+      .filter(([x, y]) => Number.isFinite(x) && Number.isFinite(y))
+    if (pts.length >= 3) {
+      path.moveTo(pts[0][0], pts[0][1])
+      for (let i = 1; i < pts.length; i++) path.lineTo(pts[i][0], pts[i][1])
+      path.closePath()
+      return path
+    }
+  }
+  const cqwPx = cw / Math.max(1, el.w)
+  const radSpec = frameRad ?? (el.radius !== undefined ? `${(el.radius / 10) * cqwPx}px` : `${cqwPx}px`)
+  const [tlX, tlY, trX, trY, brX, brY, blX, blY] = parseBorderRadii(radSpec, cw, ch)
+  path.moveTo(tlX, 0)
+  path.lineTo(cw - trX, 0)
+  if (trX > 0 && trY > 0) path.ellipse(cw - trX, trY, trX, trY, 0, -Math.PI / 2, 0)
+  else path.lineTo(cw, 0)
+  path.lineTo(cw, ch - brY)
+  if (brX > 0 && brY > 0) path.ellipse(cw - brX, ch - brY, brX, brY, 0, 0, Math.PI / 2)
+  else path.lineTo(cw, ch)
+  path.lineTo(blX, ch)
+  if (blX > 0 && blY > 0) path.ellipse(blX, ch - blY, blX, blY, 0, Math.PI / 2, Math.PI)
+  else path.lineTo(0, ch)
+  path.lineTo(0, tlY)
+  if (tlX > 0 && tlY > 0) path.ellipse(tlX, tlY, tlX, tlY, 0, Math.PI, Math.PI * 1.5)
+  else path.lineTo(0, 0)
+  path.closePath()
+  return path
+}
+
+/** Bake crop, bo góc, khung hình và viền ảnh thành PNG nền trong suốt cho PowerPoint/LibreOffice. */
+async function renderImageForPptx(
+  el: Deck['slides'][number]['elements'][number],
+  dataUrl: string,
+  defaultBorderColor: string,
+): Promise<string> {
+  if (typeof document === 'undefined') return dataUrl
+  const needsCanvas = Boolean(el.crop || el.shape || (el.radius !== undefined ? el.radius > 0 : true) || (el.border ?? 0) > 0)
+  if (!needsCanvas) return dataUrl
+  try {
+    const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+      const i = new Image()
+      i.onload = () => resolve(i)
+      i.onerror = reject
+      i.src = dataUrl
+    })
+    const nw = img.naturalWidth || 800
+    const nh = img.naturalHeight || 600
+    const cw = Math.max(64, Math.min(1920, Math.round(el.w * 19.2)))
+    const ch = Math.max(64, Math.min(1080, Math.round(el.h * 10.8)))
+    const canvas = document.createElement('canvas')
+    canvas.width = cw
+    canvas.height = ch
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return dataUrl
+
+    const path = buildImagePath(el, cw, ch)
+    ctx.save()
+    ctx.clip(path)
+
+    let sx = 0
+    let sy = 0
+    let sw = nw
+    let sh = nh
+    if (el.crop) {
+      const visW = Math.max(10, 100 - el.crop.l - el.crop.r)
+      const visH = Math.max(10, 100 - el.crop.t - el.crop.b)
+      sx = (el.crop.l / 100) * nw
+      sy = (el.crop.t / 100) * nh
+      sw = (visW / 100) * nw
+      sh = (visH / 100) * nh
+    } else {
+      const imgRatio = nw / nh
+      const boxRatio = cw / ch
+      if (imgRatio > boxRatio) {
+        sw = nh * boxRatio
+        sx = (nw - sw) / 2
+      } else if (boxRatio > imgRatio) {
+        sh = nw / boxRatio
+        sy = (nh - sh) / 2
+      }
+    }
+    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, cw, ch)
+
+    if ((el.border ?? 0) > 0 && el.shape !== 'pill') {
+      const cqwPx = cw / Math.max(1, el.w)
+      const borderPx = Math.max(1.5, ((el.border ?? 0) / 10) * cqwPx)
+      ctx.strokeStyle = el.borderColor ?? defaultBorderColor
+      ctx.lineWidth = borderPx * 2
+      if (el.borderStyle === 'dashed') ctx.setLineDash([borderPx * 3, borderPx * 2])
+      else if (el.borderStyle === 'dotted') ctx.setLineDash([borderPx, borderPx * 1.5])
+      ctx.stroke(path)
+    }
+
+    ctx.restore()
+    return canvas.toDataURL('image/png')
+  } catch {
+    return dataUrl
+  }
+}
 
 /** PptxGenJS ghi `<a:pPr>` trước MỖI run, trong khi OOXML chỉ cho một `<a:pPr>` đầu đoạn — giữ cái đầu, bỏ phần thừa. */
 export const dedupeParagraphProps = (xml: string): string =>
@@ -280,10 +423,29 @@ export async function buildDeckPptx(deck: Deck): Promise<ArrayBuffer> {
           } as never)
         }
       } else if (el.type === 'image' && el.src) {
+        const rawUrl = await toDataUrl(el.src)
+        const bakedUrl = await renderImageForPptx(el, rawUrl, deck.theme.fg)
+        const level = el.shadowLevel ?? 0
         slide.addImage({
           ...box,
-          data: await toDataUrl(el.src),
-          ...(el.shape === 'ellipse' ? { rounding: true } : {}),
+          data: bakedUrl,
+          ...(rotate ? { rotate } : {}),
+          ...(el.flipX ? { flipH: true } : {}),
+          ...(el.flipY ? { flipV: true } : {}),
+          ...(el.opacity !== undefined && el.opacity < 1 ? { transparency: Math.round((1 - el.opacity) * 100) } : {}),
+          ...(level > 0
+            ? {
+                shadow: {
+                  type: 'outer',
+                  blur: [0, 4, 8, 14][level],
+                  offset: [0, 2, 4, 6][level],
+                  angle: 90,
+                  color: '0F172A',
+                  opacity: [0, 0.25, 0.3, 0.4][level],
+                },
+              }
+            : {}),
+          ...(typeof document === 'undefined' && el.shape === 'ellipse' ? { rounding: true } : {}),
           ...(el.href ? { hyperlink: { url: el.href } } : {}),
         })
       } else if (el.type === 'table' && el.rows?.length) {

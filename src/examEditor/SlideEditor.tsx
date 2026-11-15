@@ -254,6 +254,9 @@ export function SlideEditor({
   const [presenterOpen, setPresenterOpen] = useState(false)
   /** hình khối đang được gõ chữ trong đó */
   const [editingShapeId, setEditingShapeId] = useState<string | null>(null)
+  /** ảnh đang mở chế độ cắt */
+  const [croppingId, setCroppingId] = useState<string | null>(null)
+  const preCropDeckRef = useRef<Deck | null>(null)
   // màn hẹp (tablet/điện thoại): trợ lý AI nổi đè lên slide nên mặc định đóng
   const [aiOpen, setAiOpen] = useState(() => window.innerWidth >= 1024)
   const [zoom, setZoom] = useState(100)
@@ -603,6 +606,105 @@ export function SlideEditor({
     if (next && ribbonTab !== 'animations') setRibbonTab(next)
   }, [selectedElement?.id])
 
+  const confirmCrop = useCallback(() => {
+    if (!croppingId) return
+    const before = preCropDeckRef.current
+    preCropDeckRef.current = null
+    setCroppingId(null)
+    if (before && before !== deckRef.current) {
+      historyRef.current.past = [...historyRef.current.past, before].slice(-50)
+      historyRef.current.future = []
+    }
+  }, [croppingId])
+
+  const cancelCrop = useCallback(() => {
+    if (!croppingId) return
+    const before = preCropDeckRef.current
+    preCropDeckRef.current = null
+    setCroppingId(null)
+    if (before && before !== deckRef.current) updateDeck(before)
+  }, [croppingId, updateDeck])
+
+  const toggleCrop = useCallback(() => {
+    if (croppingId) {
+      confirmCrop()
+      return
+    }
+    if (!selectedElement || selectedElement.type !== 'image' || !selectedElement.src || selectedElement.locked) return
+    if (((selectedElement.rotation ?? 0) % 360) !== 0) return
+    preCropDeckRef.current = deckRef.current
+    setCroppingId(selectedElement.id)
+  }, [croppingId, confirmCrop, selectedElement])
+
+  const resetCrop = useCallback(() => {
+    const slide = currentSlide
+    const el = selectedElement
+    if (!slide || !el || el.type !== 'image' || el.locked || !el.crop || !el.src) return
+    const baseDeck = (croppingId === el.id ? preCropDeckRef.current : null) ?? deckRef.current
+    preCropDeckRef.current = null
+    setCroppingId(null)
+    const c = el.crop
+    const visW = Math.max(10, 100 - c.l - c.r)
+    const visH = Math.max(10, 100 - c.t - c.b)
+    const fullW = (el.w * 100) / visW
+    const fullH = (el.h * 100) / visH
+    const visL = el.flipX ? c.r : c.l
+    const visT = el.flipY ? c.b : c.t
+    const fullX = el.x - (visL / 100) * fullW
+    const fullY = el.y - (visT / 100) * fullH
+
+    const applyReset = (targetW: number, targetH: number) => {
+      const latest = deckRef.current
+      historyRef.current.past = [...historyRef.current.past, baseDeck].slice(-50)
+      historyRef.current.future = []
+      updateDeck({
+        ...latest,
+        slides: latest.slides.map((s) =>
+          s.id === slide.id
+            ? {
+                ...s,
+                elements: s.elements.map((item) =>
+                  item.id === el.id ? { ...item, x: fullX, y: fullY, w: targetW, h: targetH, crop: undefined } : item,
+                ),
+              }
+            : s,
+        ),
+      })
+    }
+
+    const img = new Image()
+    img.onload = () => {
+      if (img.naturalWidth > 0 && img.naturalHeight > 0) {
+        const natH = (fullW * img.naturalHeight * 16) / (img.naturalWidth * 9)
+        applyReset(fullW, clamp(natH, 4, 95))
+      } else applyReset(fullW, fullH)
+    }
+    img.onerror = () => applyReset(fullW, fullH)
+    img.src = el.src
+  }, [currentSlide, selectedElement, croppingId, updateDeck])
+
+  // Thoát chế độ cắt khi đổi phần tử chọn, khoá hoặc xoay ảnh
+  useEffect(() => {
+    if (!croppingId) return
+    if (selectedElementId !== croppingId || !selectedElement || selectedElement.locked || ((selectedElement.rotation ?? 0) % 360) !== 0) {
+      setCroppingId(null)
+      preCropDeckRef.current = null
+    }
+  }, [croppingId, selectedElementId, selectedElement])
+
+  // Bấm ra ngoài khung ảnh đang cắt → xác nhận vùng cắt
+  useEffect(() => {
+    if (!croppingId) return
+    const onDown = (e: PointerEvent) => {
+      const t = e.target as HTMLElement | null
+      if (!t) return
+      if (t.closest(`[data-el-id="${croppingId}"]`) || t.closest('.slide-ribbon') || t.closest('.slide-ribbon-menu')) return
+      confirmCrop()
+    }
+    window.addEventListener('pointerdown', onDown, true)
+    return () => window.removeEventListener('pointerdown', onDown, true)
+  }, [croppingId, confirmCrop])
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement | null
@@ -650,7 +752,16 @@ export function SlideEditor({
         removeElement(currentSlide.id, selectedElement.id)
         return
       }
+      if (e.key === 'Enter' && croppingId && !typing) {
+        e.preventDefault()
+        confirmCrop()
+        return
+      }
       if (e.key === 'Escape') {
+        if (croppingId) {
+          cancelCrop()
+          return
+        }
         setPainter(null)
         setSelectedElementId(null)
         setGroupIds([])
@@ -658,7 +769,7 @@ export function SlideEditor({
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [selectedElement, currentSlide, undo, redo, groupIds])
+  }, [selectedElement, currentSlide, undo, redo, groupIds, croppingId, confirmCrop, cancelCrop])
 
   /**
    * Áp kết quả AI vào deck.
@@ -1105,6 +1216,9 @@ export function SlideEditor({
         onDeleteSlide={() => currentSlide && removeSlide(currentSlide.id)}
         onInsert={(el) => { addElement(el); setSelectedElementId(el.id) }}
         onUpdateSelected={onUpdateSelected}
+        cropping={Boolean(croppingId && croppingId === selectedElement?.id)}
+        onToggleCrop={toggleCrop}
+        onResetCrop={resetCrop}
         onDeleteSelected={() => selectedElement && removeElement(currentSlide?.id ?? '', selectedElement.id)}
         onCopySelected={() => selectedElement && setClipboardElement({ ...selectedElement, id: uid() })}
         onCutSelected={() => { if (!selectedElement || !currentSlide) return; setClipboardElement({ ...selectedElement, id: uid() }); removeElement(currentSlide.id, selectedElement.id) }}
@@ -1348,6 +1462,7 @@ export function SlideEditor({
                     }}
                     editingText={editingShapeId === el.id}
                     onEditingText={(on) => setEditingShapeId(on ? el.id : null)}
+                    cropping={croppingId === el.id}
                     formatPainterActive={Boolean(painter)}
                     onPaintApply={() => {
                       if (!painter) return
@@ -1376,7 +1491,7 @@ export function SlideEditor({
             {groupEls.length >= 2 && currentSlide && !currentSlide.html && (
               <GroupToolbar els={groupEls} onAlign={alignGroup} onDelete={removeGroup} onGroup={groupSelected} onUngroup={ungroupSelected} />
             )}
-            {selectedElement && currentSlide && !currentSlide.html && (
+            {selectedElement && currentSlide && !currentSlide.html && croppingId !== selectedElement.id && (
               <SelectionToolbar
                 key={selectedElement.id}
                 el={selectedElement}
