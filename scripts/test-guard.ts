@@ -122,8 +122,8 @@ const jwt = (sub: string) => `h.${Buffer.from(JSON.stringify({ sub })).toString(
       return new Response(JSON.stringify({ id: sub }), { status: 200 })
     }
     if (url.includes('/rest/v1/user_documents')) {
-      // tệp cũ: chủ thật thêm dòng trước, kẻ gian tự thêm dòng trỏ vào tệp sau → dòng sớm nhất là chủ thật
-      return new Response(JSON.stringify([{ user_id: 'owner' }]), { status: 200 })
+      // tệp cũ OLD: chỉ chủ có dòng; tệp cũ MIX: kẻ gian tự thêm dòng trỏ vào → không ai đọc được
+      return new Response(JSON.stringify(url.includes('d'.repeat(40)) ? [{ owner_id: 'owner' }, { owner_id: 'other' }] : [{ owner_id: 'owner' }]), { status: 200 })
     }
     const meta: Record<string, string> = url.includes(KEY) ? { 'x-amz-meta-owner': 'owner' } : {}
     return new Response('PDF', { status: 200, headers: { 'content-type': 'application/pdf', ...meta } })
@@ -150,7 +150,9 @@ const jwt = (sub: string) => `h.${Buffer.from(JSON.stringify({ sub })).toString(
   const own = await get(KEY, `Bearer ${jwt('owner')}`)
   check('chủ tệp tải được, không cho proxy giữ', own.status === 200 && own.cache.includes('private'))
   check('tệp cũ (chưa có metadata): kẻ tự thêm dòng trỏ vào vẫn bị 404', (await get(OLD, `Bearer ${jwt('other')}`)).status === 404)
-  check('tệp cũ: chủ (dòng sớm nhất) tải được', (await get(OLD, `Bearer ${jwt('owner')}`)).status === 200)
+  check('tệp cũ: chủ (mọi dòng là của mình) tải được', (await get(OLD, `Bearer ${jwt('owner')}`)).status === 200)
+  const MIX = 'doc/' + 'd'.repeat(40) + '.pdf'
+  check('tệp cũ có dòng của người khác (kể cả ghi lùi ngày) → khoá, kẻ gian 404', (await get(MIX, `Bearer ${jwt('other')}`)).status === 404)
   check('ảnh (img/) vẫn công khai', (await get('img/' + 'b'.repeat(40) + '.png')).status === 200)
   globalThis.fetch = realFetch
 }

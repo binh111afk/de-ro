@@ -126,7 +126,7 @@ export async function handleUploadRequest(req: IncomingMessage, res: ServerRespo
   if (await maintenanceBlock(req, res)) return
 
   try {
-    const body = JSON.parse(await readBody(req)) as { dataUrl?: unknown }
+    const body = JSON.parse(await readBody(req)) as { dataUrl?: unknown; name?: unknown; subject?: unknown }
     const match = typeof body.dataUrl === 'string' ? /^data:([a-z0-9.+/-]+);base64,([A-Za-z0-9+/=]+)$/.exec(body.dataUrl) : null
     const ext = match ? EXT[match[1]] : undefined
     if (!match || !ext) {
@@ -144,9 +144,31 @@ export async function handleUploadRequest(req: IncomingMessage, res: ServerRespo
     // tài liệu: key băm cả chủ tệp → mỗi người một bản, không ghi đè chủ của người khác cùng nội dung
     const hash = isDoc ? sha256Hex(Buffer.concat([Buffer.from(`${owner}\n`), buf])) : sha256Hex(buf)
     const key = `${isDoc ? 'doc' : 'img'}/${hash.slice(0, 40)}.${ext}`
+    // tài liệu: kiểm dung lượng theo cỡ THẬT trước khi ghi (trước đây cột `size` do trình duyệt tự khai)
+    const sb = isDoc && owner !== 'local' ? serviceDb() : null
+    if (sb) {
+      const quota = await storageLeft(sb, owner as string)
+      if (quota !== null && buf.length > quota) {
+        return json(res, 413, { error: `Tệp vượt dung lượng còn lại (${(Math.max(0, quota) / 1048576).toFixed(1)} MB). Xoá bớt tệp ở trang Hồ sơ để tải tiếp.` })
+      }
+    }
     const put = await r2Request('PUT', key, buf, match[1], owner ? { owner } : undefined)
     if (!put.ok) return json(res, 502, { error: `R2 trả lỗi ${put.status}` })
-    return json(res, 200, { url: `/api/files/${key}` })
+    const url = `/api/files/${key}`
+    // máy chủ tự ghi dòng danh sách với cỡ đo được
+    if (sb) {
+      const name = typeof body.name === 'string' && body.name.trim() ? body.name.trim().slice(0, 200) : `tai-lieu.${ext}`
+      const subject = typeof body.subject === 'string' && body.subject ? body.subject.slice(0, 60) : null
+      const ins = await fetch(`${sb.base}/rest/v1/user_documents?select=id,name,mime,size,url,subject,created_at`, {
+        method: 'POST',
+        headers: { ...sb.headers, 'Content-Type': 'application/json', Prefer: 'return=representation' },
+        body: JSON.stringify({ owner_id: owner, name, mime: match[1], size: buf.length, url, subject }),
+      })
+      if (!ins.ok) return json(res, 502, { error: 'Không ghi được tài liệu vào danh sách.' })
+      const [doc] = (await ins.json()) as unknown[]
+      return json(res, 200, { url, doc })
+    }
+    return json(res, 200, { url })
   } catch (err) {
     return json(res, 500, { error: err instanceof Error ? err.message : String(err) })
   }
@@ -155,25 +177,47 @@ export async function handleUploadRequest(req: IncomingMessage, res: ServerRespo
 /**
  * Tài liệu riêng (`doc/`): chỉ chủ tệp đọc được. Chủ tệp lấy từ metadata `owner` server ghi lúc tải lên
  * — KHÔNG từ `user_documents.url` (cột người dùng tự ghi được: tự thêm một dòng trỏ vào tệp người khác là
- * từng đọc được). Tệp cũ chưa có metadata: chủ là người có dòng `user_documents` SỚM NHẤT trỏ tới tệp
- * (dòng tự thêm sau để chiếm quyền thì luôn muộn hơn).
+ * từng đọc được). Tệp cũ chưa có metadata: chỉ cho khi MỌI dòng `user_documents` trỏ tới tệp đều của cùng
+ * một người (không dựa vào created_at — cột đó người dùng tự ghi lùi ngày được). Có người khác tự thêm
+ * dòng trỏ vào thì không ai đọc được, thà khoá còn hơn lộ.
  * (`img/` vẫn công khai: ảnh nằm trong đề đã chia sẻ / đề cộng đồng.)
  */
 async function ownsDocument(userId: string | null, key: string, metaOwner: string | null): Promise<boolean> {
   if (!userId) return false
   if (metaOwner) return metaOwner === userId
-  const base = (process.env.VITE_SUPABASE_URL ?? process.env.SUPABASE_URL ?? '').replace(/\/+$/, '')
-  const service = process.env.SUPABASE_SERVICE_ROLE_KEY ?? ''
-  if (!base || !service) return false
+  const sb = serviceDb()
+  if (!sb) return false
   try {
     const url = encodeURIComponent(`/api/files/${key}`)
-    const r = await fetch(`${base}/rest/v1/user_documents?select=user_id&url=eq.${url}&order=created_at.asc,id.asc&limit=1`, {
-      headers: { apikey: service, Authorization: `Bearer ${service}` },
-    })
-    const rows = r.ok ? ((await r.json()) as Array<{ user_id: string }>) : []
-    return rows[0]?.user_id === userId
+    const r = await fetch(`${sb.base}/rest/v1/user_documents?select=owner_id&url=eq.${url}&limit=50`, { headers: sb.headers })
+    const rows = r.ok ? ((await r.json()) as Array<{ owner_id: string }>) : []
+    return rows.length > 0 && rows.every((x) => x.owner_id === userId)
   } catch {
     return false
+  }
+}
+
+function serviceDb(): { base: string; headers: Record<string, string> } | null {
+  const base = (process.env.VITE_SUPABASE_URL ?? process.env.SUPABASE_URL ?? '').replace(/\/+$/, '')
+  const service = process.env.SUPABASE_SERVICE_ROLE_KEY ?? ''
+  return base && service ? { base, headers: { apikey: service, Authorization: `Bearer ${service}` } } : null
+}
+
+/** dung lượng còn lại (byte); null = không kiểm được (để trigger ở DB chặn) */
+async function storageLeft(sb: { base: string; headers: Record<string, string> }, userId: string): Promise<number | null> {
+  try {
+    const call = async (fn: string) => {
+      const r = await fetch(`${sb.base}/rest/v1/rpc/${fn}`, {
+        method: 'POST',
+        headers: { ...sb.headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ p_user: userId }),
+      })
+      return r.ok ? Number(await r.json()) : NaN
+    }
+    const [used, max] = await Promise.all([call('storage_used'), call('storage_max_bytes')])
+    return Number.isFinite(used) && Number.isFinite(max) ? max - used : null
+  } catch {
+    return null
   }
 }
 

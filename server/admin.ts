@@ -81,7 +81,30 @@ export async function requireAdmin(req: IncomingMessage, res: ServerResponse, ne
     json(res, 403, { error: warned ?? 'Không có quyền.' })
     return null
   }
+  // tài khoản đang bị khoá thì token cũ còn hạn cũng không dùng quyền quản trị được (kể cả tự gỡ khoá)
+  try {
+    if (await isBanned(s, userId)) {
+      json(res, 403, { error: 'Tài khoản đang bị khoá.' })
+      return null
+    }
+  } catch {
+    json(res, 503, { error: 'Không kiểm tra được quyền, thử lại sau.' })
+    return null
+  }
   return { s, userId, role }
+}
+
+const banCache = new Map<string, { banned: boolean; until: number }>()
+async function isBanned(s: Supa, userId: string): Promise<boolean> {
+  const hit = banCache.get(userId)
+  if (hit && hit.until > Date.now()) return hit.banned
+  const r = await fetch(`${s.base}/auth/v1/admin/users/${encodeURIComponent(userId)}`, { headers: s.headers })
+  if (!r.ok) throw new Error(`auth ${r.status}`)
+  const u = (await r.json()) as { banned_until?: string | null }
+  const banned = !!u.banned_until && new Date(u.banned_until).getTime() > Date.now()
+  if (banCache.size > 1000) banCache.clear()
+  banCache.set(userId, { banned, until: Date.now() + 60_000 })
+  return banned
 }
 
 /**
@@ -264,6 +287,8 @@ const ACTIONS: ActionMap = {
     need: 'admin',
     run: async (ctx, b) => {
       const id = needUser(b.userId)
+      // như ban/xoá: không tự gỡ khoá cho mình, không đụng admin khác
+      await protectTarget(ctx, id)
       await call(ctx.s, `/auth/v1/admin/users/${id}`, { method: 'PUT', body: JSON.stringify({ ban_duration: 'none' }) })
       // vẫn giữ số lần vi phạm; chỉ bỏ mốc khoá để lần vi phạm sau được tính
       await call(ctx.s, `/rest/v1/security_flags?user_id=eq.${id}`, { method: 'PATCH', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ locked_until: null }) }).catch(() => {})
@@ -277,6 +302,7 @@ const ACTIONS: ActionMap = {
     need: 'admin',
     run: async (ctx, b) => {
       const id = needUser(b.userId)
+      await protectTarget(ctx, id)
       await call(ctx.s, `/rest/v1/security_flags?user_id=eq.${id}`, { method: 'DELETE', headers: { Prefer: 'return=minimal' } })
       await audit(ctx, 'security.clear', id)
       return { ok: true }

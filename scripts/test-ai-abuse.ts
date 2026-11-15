@@ -29,14 +29,14 @@ const db = { credits: 120_000, used: 0, refunds: new Set<string>() }
 let nextUsage = 30_000
 let emptyReply = false
 let upstreamDown = false
-const upstream: Array<{ model: string; max_tokens: number }> = []
+const upstream: Array<{ model: string; max_tokens: number; messages?: unknown[] }> = []
 const ok = (b: unknown) => new Response(JSON.stringify(b), { status: 200 })
 
 globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
   const url = String(input)
   const body = init.body ? JSON.parse(String(init.body)) : {}
   if (url.includes('/chat/completions')) {
-    upstream.push({ model: body.model, max_tokens: body.max_tokens })
+    upstream.push({ model: body.model, max_tokens: body.max_tokens, messages: body.messages })
     if (upstreamDown) return new Response('{}', { status: 400 })
     if (emptyReply) return ok({ model: body.model, choices: [{ finish_reason: 'length', message: { content: '' } }], usage: { total_tokens: nextUsage } })
     return ok({ model: body.model, choices: [{ finish_reason: 'stop', message: { content: 'nội dung' } }], usage: { total_tokens: nextUsage } })
@@ -173,6 +173,13 @@ upstream.length = 0
 nextUsage = 10
 await hit({ messages: msgs('m'), model: '' })
 check('model "" → dùng model chính', upstream[0]?.model === 'app-model', upstream[0])
+
+// 10. giấu prompt dài trong trường khác `content` (name) → bị bỏ, không chuyển lên model
+db.credits = 1_000
+db.used = 0
+upstream.length = 0
+const r10 = await hit({ messages: [{ role: 'user', content: 'hi', name: 'x'.repeat(60_000) }], maxTokens: 256 })
+check('trường name bị bỏ trước khi gửi model', !JSON.stringify(upstream[0]?.messages ?? []).includes('xxxx'), { r10: r10.status })
 
 if (fail) {
   console.error(`${fail} lỗi`)

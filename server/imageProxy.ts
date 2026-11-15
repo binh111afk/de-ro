@@ -18,6 +18,10 @@ import path from 'node:path'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { json, readBody } from './http.js'
 import { LOGIN_REQUIRED, clientIp, guard, isLocal, userFromToken } from './guard.js'
+import { TOKENS_PER_POINT, addUsage, quotaMessage, readQuota, reserveQuota } from './aiQuota.js'
+
+/** điểm AI trừ cho mỗi ảnh vẽ thành công (ảnh tốn tiền nhà cung cấp như chữ) */
+const IMAGE_TOKENS = () => Math.max(0, Number(process.env.AI_IMAGE_POINTS ?? 5) || 0) * TOKENS_PER_POINT
 
 const DEFAULT_BASE_URL = 'https://api.xkiro.com/v1'
 const DEFAULT_MODEL = 'sensenova/sensenova-u1.5-lite'
@@ -175,7 +179,17 @@ export async function handleImageRequest(
   if (req.method === 'OPTIONS') return json(res, 204, {})
   if (req.method !== 'POST') return json(res, 405, { error: 'Method not allowed' })
   // vẽ ảnh AI chỉ cho người đã đăng nhập (máy dev không cần)
-  if (!isLocal(clientIp(req)) && !(await userFromToken(req))) return json(res, 401, { error: LOGIN_REQUIRED, loginRequired: true })
+  const ip = clientIp(req)
+  const userId = await userFromToken(req)
+  if (!isLocal(ip) && !userId) return json(res, 401, { error: LOGIN_REQUIRED, loginRequired: true })
+  // trừ điểm AI: giữ chỗ trước khi vẽ, vẽ được mới tính
+  const cost = IMAGE_TOKENS()
+  const quota = cost ? await readQuota(userId, ip) : null
+  if (quota && quota.limit - quota.used < cost) {
+    return json(res, 429, { error: quota.limit - quota.used >= 1000 ? `Vẽ một ảnh cần ${cost / TOKENS_PER_POINT} điểm AI, bạn chỉ còn ${Math.floor((quota.limit - quota.used) / TOKENS_PER_POINT)} điểm.` : quotaMessage(quota), quota })
+  }
+  const release = quota ? await reserveQuota(userId, ip, quota, cost) : async () => {}
+  if (!release) return json(res, 429, { error: 'Đang có nhiều yêu cầu AI cùng lúc so với số điểm còn lại, thử lại sau ít giây.', quota })
 
   try {
     const body = JSON.parse(await readBody(req)) as { prompt?: unknown }
@@ -190,14 +204,18 @@ export async function handleImageRequest(
     let lastStatus = 502
     for (const config of configs) {
       try {
-        return json(res, 200, { dataUrl: await generate(config, prompt), model: config.model })
+        const dataUrl = await generate(config, prompt)
+        const [after] = await Promise.all([addUsage(userId, ip, cost, quota), release()])
+        return json(res, 200, { dataUrl, model: config.model, quota: after })
       } catch (err) {
         lastStatus = err instanceof ImageError ? err.status : 502
         errors.push(`${config.model}: ${err instanceof Error ? err.message : String(err)}`)
       }
     }
+    await release()
     return json(res, lastStatus, { error: errors.join(' | ') })
   } catch (err) {
+    await release()
     return json(res, 500, { error: err instanceof Error ? err.message : String(err) })
   }
 }

@@ -331,6 +331,8 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
   if (!Array.isArray(body.messages) || !body.messages.length) return json(res, 400, { error: 'messages is required' })
   // model rỗng / không phải chuỗi = không chọn (đừng để chuỗi rỗng khớp model chưa cấu hình rồi bỏ qua model chính)
   if (typeof body.model !== 'string' || !body.model.trim()) body.model = undefined
+  // chỉ chuyển {role, content} lên model: trường lạ (name, …) cũng bị tính tiền mà trước đây không được đếm
+  body.messages = body.messages.map((m) => ({ role: String(m?.role ?? 'user'), content: m?.content })) as typeof body.messages
   const promptTokens = estimatePromptTokens(body.messages)
   if (promptTokens > MAX_PROMPT_TOKENS) return json(res, 413, { error: 'Nội dung gửi cho AI quá dài, hãy rút gọn tài liệu nguồn.' })
   // trần token đầu ra mỗi lượt: không tin số client gửi (trước đây gửi 250.000 là gọi được, vượt xa hạn mức)
@@ -394,7 +396,8 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
     /** usage thật; provider không trả usage (stream thiếu) thì ước theo độ dài vào + ra */
     const billOf = (usage: unknown, out: string) => {
       const n = Number((usage as { total_tokens?: number } | undefined)?.total_tokens)
-      return Number.isFinite(n) && n > 0 ? n : promptTokens + Math.ceil(out.length / 3)
+      // nhà cung cấp không báo usage: tính mức trần (prompt + toàn bộ phần đầu ra cho phép), không đoán thấp
+      return Number.isFinite(n) && n > 0 ? n : promptTokens + Math.max(maxTokens, Math.ceil(out.length / 3))
     }
     /** lượt thành công: hoàn biên nhận (nếu có) rồi cộng token đã dùng */
     const settle = async (spent: number) => {

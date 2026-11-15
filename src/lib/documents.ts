@@ -81,10 +81,12 @@ export async function uploadDocument(file: File, subject: string | null): Promis
   const res = await apiFetch('/api/upload', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ dataUrl: await readAsDataUrl(file) }),
+    body: JSON.stringify({ dataUrl: await readAsDataUrl(file), name: file.name, subject }),
   })
-  const data = (await res.json().catch(() => null)) as { url?: string; error?: string } | null
+  const data = (await res.json().catch(() => null)) as { url?: string; doc?: UserDocument; error?: string } | null
   if (!res.ok || !data?.url) throw new Error(data?.error ?? `Không tải được tệp (${res.status}).`)
+  // máy chủ đã tự ghi dòng danh sách với cỡ tệp thật
+  if (data.doc) return data.doc
 
   try {
     const [row] = await rest<UserDocument[]>(`/user_documents?select=${COLUMNS}`, {

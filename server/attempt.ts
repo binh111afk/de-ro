@@ -38,11 +38,12 @@ export async function handleAttemptRequest(req: IncomingMessage, res: ServerResp
     const seat = Number(body.seat)
     const device = str(body.deviceId, 64)
     const userId = await userFromToken(req)
-    // đề "chỉ làm một lần": đã đăng nhập thì khoá theo TÀI KHOẢN (mã thiết bị do trình duyệt tự đặt, đổi
-    // được); khách thì khoá theo mã thiết bị như cũ
+    // đề "chỉ làm một lần": khoá theo MỌI danh tính gửi lên — tài khoản (nếu có) VÀ mã thiết bị; trùng
+    // một trong hai là từ chối (bỏ token đi để rơi về nhánh thiết bị không còn lách được)
     if (exam.settings?.oneAttempt) {
-      if (!userId && device.length < 8) return json(res, 400, { error: 'Thiếu mã thiết bị.' })
-      const by = userId ? `user_id=eq.${encodeURIComponent(userId)}` : `device_id=eq.${encodeURIComponent(device)}`
+      if (device.length < 8) return json(res, 400, { error: 'Thiếu mã thiết bị.' })
+      const dev = `device_id.eq.${encodeURIComponent(device)}`
+      const by = `or=(${userId ? `user_id.eq.${encodeURIComponent(userId)},` : ''}${dev})`
       const dup = await fetch(`${base}/rest/v1/exam_attempts?exam_id=eq.${examId}&${by}&select=id&limit=1`, { headers })
       if (dup.ok && ((await dup.json()) as unknown[]).length) return json(res, 409, { error: 'Em đã nộp bài cho đề này rồi.' })
     }
@@ -50,8 +51,7 @@ export async function handleAttemptRequest(req: IncomingMessage, res: ServerResp
     let score = 0
     // đáp án vốn đã công khai (đề cộng đồng, hoặc "hiện đúng/sai ngay" — api/exam trả kèm đáp án): trả đủ.
     // đề link: KHÔNG trả đủ chỉ vì đề "chỉ làm một lần" (trước đây nộp bài trống là lấy được cả đáp án):
-    //  - chỉ làm một lần: đáp án những câu em ĐÃ trả lời (xem lại bài của mình)
-    //  - làm nhiều lần: chỉ câu đã làm đúng trọn
+    // còn lại chỉ trả đáp án câu đã làm đúng trọn (trả theo "đã trả lời" thì gõ bừa mọi câu là lấy được cả đề)
     const fullKey = row.listed || exam.settings?.instantFeedback
     const answerKey: Record<string, { answer?: string; explanation?: string; solution?: string[] }> = {}
     for (const q of questions) {
@@ -59,8 +59,7 @@ export async function handleAttemptRequest(req: IncomingMessage, res: ServerResp
       const text = typeof given === 'string' ? given.slice(0, 200) : undefined
       const got = scoreQuestion(q, text)
       score += got
-      const answered = !!text?.trim()
-      if (fullKey || (exam.settings?.oneAttempt && answered)) {
+      if (fullKey) {
         if (q.answer || q.explanation || q.solution) answerKey[q.id] = { answer: q.answer, explanation: q.explanation, solution: q.solution }
       } else if (q.points > 0 && got >= q.points) answerKey[q.id] = { answer: q.answer, explanation: q.explanation }
     }

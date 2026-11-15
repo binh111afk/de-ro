@@ -184,6 +184,8 @@ export const CONTENT_ACTIONS: ActionMap = {
         `/rest/v1/community_exams?id=eq.${examId}&select=*`,
       )
       if (!data.length) throw new HttpError(404, 'Không tìm thấy đề thi.')
+      // moderator chỉ xem đề đã đăng cộng đồng (đề link riêng của giáo viên có đáp án chưa công khai)
+      if (ctx.role !== 'admin' && !(data[0] as { listed?: boolean }).listed) throw new HttpError(403, 'Chỉ admin xem được đề chưa đăng cộng đồng.')
       return { exam: data[0] }
     },
   },

@@ -107,9 +107,10 @@ export async function addUsage(userId: string | null, _ip: string, tokens: numbe
  * Ước số token của phần gửi lên (không cần tokenizer): ~3 ký tự/token cho tiếng Việt lẫn JSON,
  * cộng phụ phí mỗi tin nhắn. Thà ước cao một chút — dùng để chặn trước khi gọi, số tính tiền vẫn là `usage` thật.
  */
-export function estimatePromptTokens(messages: Array<{ content?: unknown }>): number {
+export function estimatePromptTokens(messages: unknown[]): number {
+  // đếm cả object (mọi trường đều được gửi lên model), không chỉ `content`
   let chars = 0
-  for (const m of messages) chars += typeof m.content === 'string' ? m.content.length : JSON.stringify(m.content ?? '').length
+  for (const m of messages) chars += typeof m === 'string' ? m.length : JSON.stringify(m ?? '').length
   return Math.ceil(chars / 3) + messages.length * 8
 }
 
