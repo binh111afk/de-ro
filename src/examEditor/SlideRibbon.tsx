@@ -1343,8 +1343,8 @@ export function SlideRibbon(props: SlideRibbonProps) {
             disabled={!selected}
             data-tip="Hiện sẵn, không có hiệu ứng"
           >
-            <span className="slide-anim-chip__demo" data-anim="none" />
-            Không
+            <span className="slide-anim-chip__stage"><span className="slide-anim-chip__demo" data-anim="none" /></span>
+            <span className="slide-anim-chip__label">Không</span>
           </button>
           {ANIM_EFFECTS.map((fx) => (
             <button
@@ -1355,8 +1355,8 @@ export function SlideRibbon(props: SlideRibbonProps) {
               disabled={!selected}
               data-tip={`${fx.label} khi bấm chuột lúc trình chiếu`}
             >
-              <span className="slide-anim-chip__demo" data-anim={fx.id} />
-              {fx.label}
+              <span className="slide-anim-chip__stage"><span className="slide-anim-chip__demo" data-anim={fx.id} /></span>
+              <span className="slide-anim-chip__label">{fx.label}</span>
             </button>
           ))}
         </div>

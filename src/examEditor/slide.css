@@ -1904,20 +1904,22 @@ body[data-slide-drag] .slide-sel-toolbar {
 
 /* ribbon Hoạt ảnh: thư viện hiệu ứng cho đối tượng đang chọn */
 .slide-anim-gallery {
-  display: grid;
-  grid-template-columns: repeat(4, auto);
-  gap: 2px 4px;
+  display: flex;
+  gap: 4px;
 }
+/* mỗi hiệu ứng là một thẻ: khung slide nhỏ + tên; rê chuột thì phần tử trong khung diễn hiệu ứng lặp lại */
 .slide-anim-chip {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 6px;
-  height: 26px;
-  padding: 0 8px 0 6px;
+  gap: 4px;
+  width: 60px;
+  padding: 4px 2px 3px;
   border: 1px solid transparent;
-  border-radius: 6px;
+  border-radius: 8px;
   background: none;
-  font-size: 12px;
+  font-size: 11px;
+  line-height: 1.15;
   color: var(--color-text-primary, #23201c);
   cursor: pointer;
   white-space: nowrap;
@@ -1925,24 +1927,75 @@ body[data-slide-drag] .slide-sel-toolbar {
 .slide-anim-chip:hover:not(:disabled) { background: var(--color-bg-subtle, #f3f1ee); }
 .slide-anim-chip.is-active { border-color: var(--color-accent, #c2410c); background: color-mix(in srgb, var(--color-accent, #c2410c) 10%, transparent); }
 .slide-anim-chip:disabled { opacity: 0.45; cursor: default; }
-.slide-anim-chip__demo {
-  width: 12px;
-  height: 12px;
-  border-radius: 3px;
-  background: currentColor;
-  opacity: 0.75;
+.slide-anim-chip__stage {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 30px;
+  border-radius: 4px;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--color-border, #e4dfd8);
+  overflow: hidden;
 }
-.slide-anim-chip:hover:not(:disabled) .slide-anim-chip__demo:not([data-anim='none']) { animation: slide-anim-demo 900ms ease infinite; }
-.slide-anim-chip__demo[data-anim='none'] { background: none; border: 1.5px solid currentColor; }
-.slide-anim-chip__demo[data-anim='rise'] { --from: translateY(6px); }
-.slide-anim-chip__demo[data-anim='drop'] { --from: translateY(-6px); }
-.slide-anim-chip__demo[data-anim='left'] { --from: translateX(-8px); }
-.slide-anim-chip__demo[data-anim='right'] { --from: translateX(8px); }
+.slide-anim-chip.is-active .slide-anim-chip__stage { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-accent, #c2410c) 45%, transparent); }
+.slide-anim-chip__demo {
+  width: 20px;
+  height: 14px;
+  border-radius: 3px;
+  background: var(--color-accent, #c2410c);
+}
+.slide-anim-chip__label { font-size: 11px; }
+.slide-anim-chip:hover:not(:disabled) .slide-anim-chip__demo:not([data-anim='none']) { animation: slide-anim-demo 1100ms cubic-bezier(.2,.8,.2,1) infinite; }
+/* "Không": phần tử đứng yên, gạch chéo */
+.slide-anim-chip__demo[data-anim='none'] { background: color-mix(in srgb, var(--color-text-primary, #23201c) 22%, transparent); }
+.slide-anim-chip__stage:has([data-anim='none'])::after {
+  content: '';
+  position: absolute;
+  width: 34px;
+  height: 1.5px;
+  background: var(--color-text-secondary, #6b645c);
+  transform: rotate(-30deg);
+}
+/* cùng hướng với HIDDEN_POSE lúc trình chiếu (SlideEditor.tsx) */
+.slide-anim-chip__demo[data-anim='rise'] { --from: translateY(10px); }
+.slide-anim-chip__demo[data-anim='drop'] { --from: translateY(-10px); }
+.slide-anim-chip__demo[data-anim='left'] { --from: translateX(-18px); }
+.slide-anim-chip__demo[data-anim='right'] { --from: translateX(18px); }
 .slide-anim-chip__demo[data-anim='zoom'] { --from: scale(0.4); }
 .slide-anim-chip__demo[data-anim='spin'] { --from: rotate(-90deg) scale(0.5); }
+/* minh hoạ tĩnh: bóng nét đứt ở vị trí xuất phát (rê chuột thì ẩn bóng, phần tử diễn thật) */
+.slide-anim-chip__stage { isolation: isolate; }
+.slide-anim-chip__demo { position: relative; }
+.slide-anim-chip__demo:not([data-anim='none'], [data-anim='fade'], [data-anim='zoom'])::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 3px;
+  border: 1.5px dashed var(--color-accent, #c2410c);
+  background: color-mix(in srgb, var(--color-accent, #c2410c) 18%, transparent);
+  transform: var(--ghost);
+  transition: opacity 0.15s;
+}
+.slide-anim-chip__demo[data-anim='rise'] { --ghost: translateY(13px); translate: 0 -6px; }
+.slide-anim-chip__demo[data-anim='drop'] { --ghost: translateY(-13px); translate: 0 6px; }
+.slide-anim-chip__demo[data-anim='left'] { --ghost: translateX(-21px); translate: 9px 0; }
+.slide-anim-chip__demo[data-anim='right'] { --ghost: translateX(21px); translate: -9px 0; }
+.slide-anim-chip__demo[data-anim='spin'] { --ghost: rotate(-55deg); }
+/* hiện dần: màu nhạt dần sang trong suốt */
+.slide-anim-chip__demo[data-anim='fade'] {
+  background: linear-gradient(90deg, var(--color-accent, #c2410c) 15%, color-mix(in srgb, var(--color-accent, #c2410c) 12%, transparent));
+}
+/* phóng to: khung đích nét đứt, phần tử nhỏ ở giữa */
+.slide-anim-chip__demo[data-anim='zoom'] { background: linear-gradient(var(--color-accent, #c2410c), var(--color-accent, #c2410c)) center / 50% 50% no-repeat; outline: 1.5px dashed color-mix(in srgb, var(--color-accent, #c2410c) 60%, transparent); outline-offset: -1.5px; }
+.slide-anim-chip:hover:not(:disabled) .slide-anim-chip__demo::before { opacity: 0; }
+.slide-anim-chip:hover:not(:disabled) .slide-anim-chip__demo[data-anim='fade'],
+.slide-anim-chip:hover:not(:disabled) .slide-anim-chip__demo[data-anim='zoom'] { background: var(--color-accent, #c2410c); outline: none; }
 @keyframes slide-anim-demo {
   0% { opacity: 0; transform: var(--from, none); }
-  60%, 100% { opacity: 0.75; transform: none; }
+  55%, 100% { opacity: 1; transform: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   .slide-anim-chip:hover .slide-anim-chip__demo { animation: none !important; }
