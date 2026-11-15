@@ -37,23 +37,30 @@ export async function handleAttemptRequest(req: IncomingMessage, res: ServerResp
     const exam = docToExam(row.doc, examId)
     const seat = Number(body.seat)
     const device = str(body.deviceId, 64)
-    // đề "chỉ làm một lần": máy này đã nộp thì từ chối (trước đây chỉ chặn ở trình duyệt)
+    const userId = await userFromToken(req)
+    // đề "chỉ làm một lần": đã đăng nhập thì khoá theo TÀI KHOẢN (mã thiết bị do trình duyệt tự đặt, đổi
+    // được); khách thì khoá theo mã thiết bị như cũ
     if (exam.settings?.oneAttempt) {
-      if (device.length < 8) return json(res, 400, { error: 'Thiếu mã thiết bị.' })
-      const dup = await fetch(`${base}/rest/v1/exam_attempts?exam_id=eq.${examId}&device_id=eq.${encodeURIComponent(device)}&select=id&limit=1`, { headers })
+      if (!userId && device.length < 8) return json(res, 400, { error: 'Thiếu mã thiết bị.' })
+      const by = userId ? `user_id=eq.${encodeURIComponent(userId)}` : `device_id=eq.${encodeURIComponent(device)}`
+      const dup = await fetch(`${base}/rest/v1/exam_attempts?exam_id=eq.${examId}&${by}&select=id&limit=1`, { headers })
       if (dup.ok && ((await dup.json()) as unknown[]).length) return json(res, 409, { error: 'Em đã nộp bài cho đề này rồi.' })
     }
     const questions = exam.sections.flatMap((s) => s.questions)
     let score = 0
-    // đề cộng đồng / chỉ làm một lần / hiện đáp án ngay: trả đủ đáp án để xem lại bài.
-    // đề link làm nhiều lần: chỉ trả đáp án những câu đã làm đúng trọn (nộp bài trống không dò được đáp án)
-    const fullKey = row.listed || exam.settings?.oneAttempt || exam.settings?.instantFeedback
+    // đáp án vốn đã công khai (đề cộng đồng, hoặc "hiện đúng/sai ngay" — api/exam trả kèm đáp án): trả đủ.
+    // đề link: KHÔNG trả đủ chỉ vì đề "chỉ làm một lần" (trước đây nộp bài trống là lấy được cả đáp án):
+    //  - chỉ làm một lần: đáp án những câu em ĐÃ trả lời (xem lại bài của mình)
+    //  - làm nhiều lần: chỉ câu đã làm đúng trọn
+    const fullKey = row.listed || exam.settings?.instantFeedback
     const answerKey: Record<string, { answer?: string; explanation?: string; solution?: string[] }> = {}
     for (const q of questions) {
       const given = answers[q.id]
-      const got = scoreQuestion(q, typeof given === 'string' ? given.slice(0, 200) : undefined)
+      const text = typeof given === 'string' ? given.slice(0, 200) : undefined
+      const got = scoreQuestion(q, text)
       score += got
-      if (fullKey) {
+      const answered = !!text?.trim()
+      if (fullKey || (exam.settings?.oneAttempt && answered)) {
         if (q.answer || q.explanation || q.solution) answerKey[q.id] = { answer: q.answer, explanation: q.explanation, solution: q.solution }
       } else if (q.points > 0 && got >= q.points) answerKey[q.id] = { answer: q.answer, explanation: q.explanation }
     }
@@ -65,7 +72,7 @@ export async function handleAttemptRequest(req: IncomingMessage, res: ServerResp
       headers: { ...headers, Prefer: 'return=minimal' },
       body: JSON.stringify({
         exam_id: examId,
-        user_id: await userFromToken(req),
+        user_id: userId,
         student_name: name,
         score,
         max_score: max,

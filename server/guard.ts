@@ -31,8 +31,13 @@ const hits = new Map<string, { count: number; reset: number }>()
 /** kết quả kiểm token, khoá bằng mã băm (không giữ cả chuỗi token client gửi — có thể dài tuỳ ý) */
 const tokenCache = new Map<string, { userId: string | null; until: number }>()
 const TOKEN_CACHE_MAX = 5000
-/** số lần hỏi Supabase /auth/v1/user mỗi IP trong 10 phút (token đã nhớ trong cache không tính) */
-const VERIFY_PER_IP = 60
+/**
+ * Số lần hỏi Supabase /auth/v1/user trong 10 phút (token đã nhớ trong cache không tính):
+ * theo từng tài khoản (`sub` trong token) và một mức chung rộng hơn nhiều cho cả IP — cả lớp đi chung
+ * một IP vẫn đăng nhập được, còn một người spam token giả chỉ tự làm cạn phần của mình.
+ */
+const VERIFY_PER_SUB = 30
+const VERIFY_PER_IP = 600
 const verifyHits = new Map<string, { count: number; reset: number }>()
 /** JWT của Supabase: 3 đoạn base64url, vài trăm byte – vài KB */
 const JWT_SHAPE = /^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/
@@ -86,34 +91,72 @@ function originAllowed(req: IncomingMessage): boolean {
   return extra.includes(origin)
 }
 
+/** `sub` (id tài khoản) ghi trong token, CHƯA kiểm chữ ký — chỉ dùng làm khoá đếm lượt */
+function claimedSub(token: string): string {
+  try {
+    const sub = (JSON.parse(Buffer.from(token.split('.')[1], 'base64url').toString('utf8')) as { sub?: unknown }).sub
+    return typeof sub === 'string' ? sub.slice(0, 64) : ''
+  } catch {
+    return ''
+  }
+}
+
+/** 'busy' = chưa kiểm được (hết lượt hỏi Supabase hoặc Supabase lỗi tạm) — KHÁC với token sai */
+export type TokenCheck = { userId: string | null; busy?: boolean }
+/** kết quả đã kiểm cho request này (guard kiểm trước, handler đọc lại không tốn thêm lượt) */
+const checked = new WeakMap<IncomingMessage, TokenCheck>()
+
 /**
- * id người dùng từ token Supabase (hỏi Supabase, nhớ 5 phút); token sai/hết hạn → null.
+ * Kiểm token Supabase (hỏi Supabase, nhớ 5 phút); token sai/hết hạn → userId null.
  * Chống spam: token không đúng dạng JWT hoặc quá dài thì bỏ luôn (không hỏi Supabase, không nhớ);
- * mỗi IP chỉ được làm máy chủ hỏi Supabase VERIFY_PER_IP lần / 10 phút (quá thì coi như khách).
+ * giới hạn số lần hỏi theo tài khoản và theo IP. Hết lượt hay Supabase lỗi tạm → busy, không nhớ
+ * (đừng biến người dùng thật thành khách suốt 5 phút).
  */
-export async function userFromToken(req: IncomingMessage): Promise<string | null> {
+export async function checkToken(req: IncomingMessage): Promise<TokenCheck> {
+  const done = checked.get(req)
+  if (done) return done
+  const r = await verify(req)
+  checked.set(req, r)
+  return r
+}
+
+async function verify(req: IncomingMessage): Promise<TokenCheck> {
   const token = header(req, 'authorization').replace(/^Bearer\s+/i, '').trim()
-  if (!token || token.length > 4096 || !JWT_SHAPE.test(token)) return null
+  if (!token || token.length > 4096 || !JWT_SHAPE.test(token)) return { userId: null }
   const digest = createHash('sha256').update(token).digest('base64url')
   const cached = tokenCache.get(digest)
-  if (cached && cached.until > Date.now()) return cached.userId
+  if (cached && cached.until > Date.now()) return { userId: cached.userId }
   const base = (process.env.VITE_SUPABASE_URL ?? process.env.SUPABASE_URL ?? '').replace(/\/+$/, '')
   const key = process.env.VITE_SUPABASE_PUBLISHABLE_KEY ?? process.env.SUPABASE_PUBLISHABLE_KEY ?? ''
-  if (!base || !key) return null
+  if (!base || !key) return { userId: null }
   const ip = clientIp(req)
-  if (!isLocal(ip) && !take(verifyHits, ip, VERIFY_PER_IP)) return null
+  if (!isLocal(ip)) {
+    const sub = claimedSub(token)
+    // token không có sub thì không thể là token đăng nhập Supabase
+    if (!sub) return { userId: null }
+    if (!take(verifyHits, `s:${sub}`, VERIFY_PER_SUB) || !take(verifyHits, `ip:${ip}`, VERIFY_PER_IP)) return { userId: null, busy: true }
+  }
   let userId: string | null = null
   try {
     const res = await fetch(`${base}/auth/v1/user`, { headers: { apikey: key, Authorization: `Bearer ${token}` } })
+    // chỉ 401/403 mới là token sai; 5xx/429 là Supabase trục trặc → thử lại sau, không nhớ
+    if (!res.ok && res.status !== 401 && res.status !== 403) return { userId: null, busy: true }
     if (res.ok) userId = ((await res.json()) as { id?: string }).id ?? null
   } catch {
-    userId = null
+    return { userId: null, busy: true }
   }
   // đầy thì bỏ mục cũ nhất (Map giữ thứ tự thêm vào), không xoá sạch
   if (tokenCache.size >= TOKEN_CACHE_MAX) tokenCache.delete(tokenCache.keys().next().value as string)
   tokenCache.set(digest, { userId, until: Date.now() + 5 * 60 * 1000 })
-  return userId
+  return { userId }
 }
+
+/** id người dùng (null = khách / token sai / chưa kiểm được) */
+export async function userFromToken(req: IncomingMessage): Promise<string | null> {
+  return (await checkToken(req)).userId
+}
+
+export const TOKEN_BUSY = 'Hệ thống đang bận kiểm tra đăng nhập, vui lòng thử lại sau ít giây.'
 
 /** true = cho qua; false = đã trả lỗi 403/429 */
 export async function guard(req: IncomingMessage, res: ServerResponse, api: Api): Promise<boolean> {
@@ -124,7 +167,12 @@ export async function guard(req: IncomingMessage, res: ServerResponse, api: Api)
   }
   const ip = clientIp(req)
   if (isLocal(ip)) return true
-  const userId = await userFromToken(req)
+  const { userId, busy } = await checkToken(req)
+  // có token mà chưa kiểm được: báo thử lại (503), đừng coi là khách rồi bắt đăng nhập lại
+  if (busy) {
+    json(res, 503, { error: TOKEN_BUSY, retry: true })
+    return false
+  }
   const [anonMax, userMax] = LIMITS[api]
   const max = userId ? userMax : anonMax
   const bucket = `${api}:${userId ? `u:${userId}` : `ip:${ip}`}`

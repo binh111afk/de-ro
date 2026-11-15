@@ -20,7 +20,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { json, readBody } from './http.js'
 import { LOGIN_REQUIRED, clientIp, guard, isLocal, userFromToken } from './guard.js'
-import { addUsage, hasQuotaStore, issueReceipt, quotaMessage, readQuota, refundReceipt, requestHash, reserveQuota } from './aiQuota.js'
+import { addUsage, checkReceipt, estimatePromptTokens, hasQuotaStore, issueReceipt, quotaMessage, readQuota, refundReceipt, requestHash, reserveQuota } from './aiQuota.js'
 import { costFromUsage, logAiCall, maintenanceBlock } from './ops.js'
 import { readAiOverrides } from './aiSettings.js'
 import { callAnthropic } from './anthropic.js'
@@ -38,6 +38,9 @@ const DEFAULT_MODEL = 'deepseek-v4.1-flash'
 const DEFAULT_UPSTREAM_TIMEOUT_MS = 250_000
 /** trần token đầu ra mỗi lượt AI (client gửi lớn hơn thì cắt về đây); app đang dùng tối đa 32.000 */
 const MAX_OUTPUT_TOKENS = 32_000
+/** body /api/llm tối đa (byte) và phần gửi lên tối đa (token ước) — chặn trước khi tốn tiền gọi model */
+const MAX_LLM_BODY = 2 * 1024 * 1024
+const MAX_PROMPT_TOKENS = 200_000
 
 /**
  * Thời gian chờ mỗi lượt gọi model. Model reasoning (deepseek) có thể suy luận
@@ -320,27 +323,37 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
     model?: string
   }
   try {
-    body = JSON.parse(await readBody(req))
+    // 2 MB chữ ≈ 700k token — đủ cho đề + nguồn tham khảo dài nhất app gửi; to hơn là lạm dụng
+    body = JSON.parse(await readBody(req, MAX_LLM_BODY))
   } catch {
-    return json(res, 400, { error: 'Yêu cầu không hợp lệ.' })
+    return json(res, 400, { error: 'Yêu cầu không hợp lệ hoặc quá lớn.' })
   }
   if (!Array.isArray(body.messages) || !body.messages.length) return json(res, 400, { error: 'messages is required' })
+  // model rỗng / không phải chuỗi = không chọn (đừng để chuỗi rỗng khớp model chưa cấu hình rồi bỏ qua model chính)
+  if (typeof body.model !== 'string' || !body.model.trim()) body.model = undefined
+  const promptTokens = estimatePromptTokens(body.messages)
+  if (promptTokens > MAX_PROMPT_TOKENS) return json(res, 413, { error: 'Nội dung gửi cho AI quá dài, hãy rút gọn tài liệu nguồn.' })
   // trần token đầu ra mỗi lượt: không tin số client gửi (trước đây gửi 250.000 là gọi được, vượt xa hạn mức)
   const requested = Math.floor(Number(body.maxTokens ?? MAX_OUTPUT_TOKENS)) || MAX_OUTPUT_TOKENS
   let maxTokens = Math.min(MAX_OUTPUT_TOKENS, Math.max(256, requested))
-  const reqHash = requestHash(body.messages, maxTokens)
+  const reqHash = requestHash(body.messages, maxTokens, { model: body.model, effort: body.reasoningEffort, temperature: body.temperature })
 
-  // gọi lại vì lượt trước trả kết quả hỏng: hoàn token lượt đó trước khi kiểm hạn mức — CHỈ khi gửi lại
-  // đúng yêu cầu cũ (mã băm nội dung trong biên nhận). Không thế thì giữ kết quả đắt rồi "gọi lại" bằng
-  // một câu rẻ để được hoàn gần hết điểm, dùng AI gần như miễn phí.
+  // gọi lại vì lượt trước trả kết quả hỏng: biên nhận chỉ hợp lệ khi gửi lại ĐÚNG yêu cầu cũ (mã băm mọi
+  // thứ quyết định giá). Lúc kiểm hạn mức tính trước phần sẽ hoàn, nhưng chỉ thật sự hoàn khi lượt gọi
+  // lại thành công — không thì gọi lại cho hỏng cũng được hoàn, giữ kết quả đắt mà không mất điểm.
   const retryOf = req.headers['x-ai-retry-of']
-  if (typeof retryOf === 'string' && retryOf) quota = await refundReceipt(userId, ip, retryOf, quota, reqHash)
+  const receipt = typeof retryOf === 'string' && retryOf && quota ? checkReceipt(retryOf, userId, reqHash) : null
+  const pendingRefund = receipt?.t ?? 0
   // biên nhận để client xin hoàn nếu kết quả không dùng được; lượt gọi lại không được hoàn tiếp
   const receiptFor = (spent: number) => (quota && !retryOf ? issueReceipt(userId, ip, spent, reqHash) : undefined)
-  if (quota && quota.used >= quota.limit) return json(res, 429, { error: quotaMessage(quota), quota })
-  // không cho một lượt sinh vượt số token còn lại của tài khoản (tối thiểu 1.000 để còn trả lời được)
-  if (quota) maxTokens = Math.min(maxTokens, Math.max(1000, quota.limit - quota.used))
-  const release = quota ? await reserveQuota(userId, ip, quota) : async () => {}
+  // hạn mức tính trên TỔNG token (đầu vào + đầu ra): phần gửi lên cũng bị tính tiền
+  const remaining = quota ? quota.limit - quota.used + pendingRefund : Infinity
+  if (quota && remaining - promptTokens < 256) return json(res, 429, { error: quotaMessage(quota), quota })
+  // phần còn lại sau đầu vào mới là trần đầu ra (bỏ sàn 1.000 từng cho vượt số dư)
+  if (quota) maxTokens = Math.min(maxTokens, Math.floor(remaining - promptTokens))
+  // giữ chỗ đúng mức tối đa lượt này có thể tốn, để các lượt song song không cùng lọt quá hạn mức
+  const reserveFor = quota && pendingRefund ? { ...quota, limit: quota.limit + pendingRefund } : quota
+  const release = reserveFor ? await reserveQuota(userId, ip, reserveFor, promptTokens + maxTokens) : async () => {}
   if (!release) return json(res, 429, { error: 'Đang có nhiều yêu cầu AI chạy cùng lúc, vui lòng thử lại sau ít giây.', quota })
 
   try {
@@ -369,6 +382,18 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
     type Usage = { prompt_tokens?: number; completion_tokens?: number; input_tokens?: number; output_tokens?: number } | undefined
     // Vercel có thể dừng function ngay sau khi trả lời → gom promise log, chờ trước khi return
     const pending: Promise<void>[] = []
+    // token provider đã tính nhưng lượt đó hỏng (trả rỗng…): vẫn trừ vào hạn mức
+    let wasted = 0
+    /** usage thật; provider không trả usage (stream thiếu) thì ước theo độ dài vào + ra */
+    const billOf = (usage: unknown, out: string) => {
+      const n = Number((usage as { total_tokens?: number } | undefined)?.total_tokens)
+      return Number.isFinite(n) && n > 0 ? n : promptTokens + Math.ceil(out.length / 3)
+    }
+    /** lượt thành công: hoàn biên nhận (nếu có) rồi cộng token đã dùng */
+    const settle = async (spent: number) => {
+      const q = receipt ? await refundReceipt(userId, receipt, quota) : quota
+      return addUsage(userId, ip, spent + wasted, q)
+    }
     const log = (t: Target, t0: number, ok: boolean, error: string | null, usage?: unknown) => {
       const u = usage as Usage
       pending.push(logAiCall({
@@ -385,7 +410,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
     }
     const targets: Target[] = []
     // client chỉ được chọn model nằm trong cấu hình của app (trước đây gửi tên model tuỳ ý là gọi được model đắt nhất của gateway)
-    const knownModels = [prov.model, prov.fallbackModel, prov.anthropicModel, prov.mercuryModel, prov.fostaModel, prov.anyrouterModel, prov.nightrouterModel]
+    const knownModels = [prov.model, prov.fallbackModel, prov.anthropicModel, prov.mercuryModel, prov.fostaModel, prov.anyrouterModel, prov.nightrouterModel].filter(Boolean)
     if (body.model !== undefined && !knownModels.includes(body.model)) body.model = undefined
     // client chỉ định đúng model dự phòng → bỏ qua opencode, gọi thẳng (thử/so chất lượng)
     const wantsBackup =
@@ -431,8 +456,9 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
           if (r.content.trim()) {
             writeRawLog(JSON.stringify(r), { _model: selectedModel, _attempt: 0, finishReason: r.finishReason, usage: r.usage, content: r.content })
             log(target, t0, true, null, r.usage)
-            const [after] = await Promise.all([addUsage(userId, ip, r.usage.total_tokens, quota), release(), ...pending])
-            return json(res, 200, { content: r.content, reasoning: '', usage: r.usage, model: r.model, finishReason: r.finishReason, quota: after, receipt: receiptFor(r.usage.total_tokens) })
+            const spent = billOf(r.usage, r.content)
+            const [after] = await Promise.all([settle(spent), release(), ...pending])
+            return json(res, 200, { content: r.content, reasoning: '', usage: r.usage, model: r.model, finishReason: r.finishReason, quota: after, receipt: receiptFor(spent) })
           }
           errs.push(`${selectedModel}: empty content (finish_reason=${r.finishReason})`)
         } catch (err) {
@@ -515,12 +541,14 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
         writeRawLog(text, { _model: selectedModel, _attempt: attempt, finishReason: choice?.finish_reason, usage: data.usage, content, reasoning })
 
         if (content.trim()) {
-          const spent = Number((data.usage as { total_tokens?: number } | undefined)?.total_tokens ?? 0)
+          const spent = billOf(data.usage, content + reasoning)
           log(target, t0, true, null, data.usage)
-          const [after] = await Promise.all([addUsage(userId, ip, spent, quota), release(), ...pending])
+          const [after] = await Promise.all([settle(spent), release(), ...pending])
           return json(res, 200, { content, reasoning, usage: data.usage ?? null, model: data.model ?? selectedModel, finishReason: choice?.finish_reason ?? 'unknown', quota: after, receipt: receiptFor(spent) })
         }
         lastErr = `${selectedModel}: empty content (finish_reason=${choice?.finish_reason ?? 'unknown'})`
+        // trả rỗng vẫn tốn token (thường là suy luận hết trần) → tính vào hạn mức
+        wasted += billOf(data.usage, reasoning)
         if (attempt === 0 && target.opencode) {
           const retryBody = JSON.parse(attemptBody) as Record<string, unknown>
           retryBody.reasoning_effort = 'medium'
@@ -535,7 +563,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
     }
 
     // báo lỗi TỪNG model, không chỉ cái cuối (lỗi cuối hay là fallback phụ, che mất nguyên nhân thật)
-    await Promise.all([release(), ...pending])
+    await Promise.all([wasted ? addUsage(userId, ip, wasted, quota) : null, release(), ...pending])
     return json(res, 502, { error: `Các model AI đều không phản hồi. ${errs.join(' · ')}`.trim() })
   } catch (err) {
     return json(res, 500, { error: err instanceof Error ? err.message : String(err) })

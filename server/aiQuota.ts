@@ -103,14 +103,21 @@ export async function addUsage(userId: string | null, _ip: string, tokens: numbe
   return { ...prev, used: prev.used + tokens }
 }
 
-/** Số token giữ chỗ mỗi request đang chạy (app chạy song song tối đa 2 request AI). */
-const RESERVE = 20_000
+/**
+ * Ước số token của phần gửi lên (không cần tokenizer): ~3 ký tự/token cho tiếng Việt lẫn JSON,
+ * cộng phụ phí mỗi tin nhắn. Thà ước cao một chút — dùng để chặn trước khi gọi, số tính tiền vẫn là `usage` thật.
+ */
+export function estimatePromptTokens(messages: Array<{ content?: unknown }>): number {
+  let chars = 0
+  for (const m of messages) chars += typeof m.content === 'string' ? m.content.length : JSON.stringify(m.content ?? '').length
+  return Math.ceil(chars / 3) + messages.length * 8
+}
 
 /**
  * Giữ chỗ trước khi gọi model. null = hết chỗ (đang có quá nhiều request song song so với hạn mức còn lại);
  * ngược lại trả hàm trả chỗ, gọi nhiều lần không sao. Lỗi hạ tầng thì không chặn người dùng.
  */
-export async function reserveQuota(userId: string | null, _ip: string, q: Quota): Promise<(() => Promise<void>) | null> {
+export async function reserveQuota(userId: string | null, _ip: string, q: Quota, amount: number): Promise<(() => Promise<void>) | null> {
   let done = false
   const once = (fn: () => Promise<unknown> | void) => async () => {
     if (done) return
@@ -124,7 +131,7 @@ export async function reserveQuota(userId: string | null, _ip: string, q: Quota)
     const r = await fetch(`${s.base}/rest/v1/rpc/reserve_ai_quota`, {
       method: 'POST',
       headers: s.headers,
-      body: JSON.stringify({ p_user: userId, p_month: m, p_limit: q.limit, p_amount: RESERVE }),
+      body: JSON.stringify({ p_user: userId, p_month: m, p_limit: q.limit, p_amount: amount }),
     })
     if (r.ok && (await r.json()) === false) return null
     if (!r.ok) return async () => {}
@@ -135,7 +142,7 @@ export async function reserveQuota(userId: string | null, _ip: string, q: Quota)
     fetch(`${s.base}/rest/v1/rpc/release_ai_quota`, {
       method: 'POST',
       headers: s.headers,
-      body: JSON.stringify({ p_user: userId, p_month: m, p_amount: RESERVE }),
+      body: JSON.stringify({ p_user: userId, p_month: m, p_amount: amount }),
     }),
   )
 }
@@ -160,9 +167,13 @@ const sign = (data: string) => createHmac('sha256', receiptKey()).update(data).d
 /** h = mã băm yêu cầu đã sinh ra biên nhận: chỉ gửi lại ĐÚNG yêu cầu đó mới được hoàn */
 type Receipt = { u: string; m: string; t: number; e: number; n: string; h?: string }
 
-/** mã băm nội dung yêu cầu AI (messages + trần token) để gắn biên nhận hoàn điểm với đúng lượt gọi lại */
-export function requestHash(messages: unknown, maxTokens: number): string {
-  return createHash('sha256').update(JSON.stringify(messages ?? null)).update(`|${maxTokens}`).digest('base64url').slice(0, 22)
+/** mã băm MỌI thứ quyết định giá của yêu cầu AI (messages, trần token, model, mức suy luận, nhiệt độ) để gắn biên nhận với đúng lượt gọi lại */
+export function requestHash(messages: unknown, maxTokens: number, extra: { model?: unknown; effort?: unknown; temperature?: unknown } = {}): string {
+  return createHash('sha256')
+    .update(JSON.stringify(messages ?? null))
+    .update(`|${maxTokens}|${JSON.stringify([extra.model ?? null, extra.effort ?? null, extra.temperature ?? null])}`)
+    .digest('base64url')
+    .slice(0, 22)
 }
 
 export function issueReceipt(userId: string | null, _ip: string, tokens: number, hash?: string): string | undefined {
@@ -186,14 +197,19 @@ export function readReceipt(receipt: string, userId: string): Receipt | null {
   }
 }
 
-/** Hoàn token theo biên nhận (vào số đã dùng tháng trước, phần còn lại trả về số dư điểm); trả hạn mức mới. */
-export async function refundReceipt(userId: string | null, _ip: string, receipt: string, prev: Quota | null, hash?: string): Promise<Quota | null> {
-  if (!prev || !userId) return prev
+/** Biên nhận hợp lệ cho đúng yêu cầu này (cùng mã băm) → trả biên nhận để hoàn SAU khi lượt gọi lại thành công. */
+export function checkReceipt(receipt: string, userId: string | null, hash: string): Receipt | null {
+  if (!userId) return null
   const r = readReceipt(receipt, userId)
-  const s = supa()
-  if (!r || !s) return prev
   // lượt gọi lại phải là đúng yêu cầu cũ; biên nhận không có mã băm (bản cũ) thì không hoàn
-  if (!r.h || r.h !== hash) return prev
+  return r && r.h && r.h === hash ? r : null
+}
+
+/** Hoàn token theo biên nhận đã kiểm (vào số đã dùng tháng trước, phần còn lại trả về số dư điểm); trả hạn mức mới. */
+export async function refundReceipt(userId: string | null, r: Receipt | null, prev: Quota | null): Promise<Quota | null> {
+  if (!prev || !userId || !r) return prev
+  const s = supa()
+  if (!s) return prev
   try {
     const res = await fetch(`${s.base}/rest/v1/rpc/refund_ai_usage`, {
       method: 'POST',

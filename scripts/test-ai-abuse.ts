@@ -2,7 +2,9 @@
  * Chống lạm dụng điểm AI (/api/llm), chạy trong tiến trình với fetch giả (không gọi mạng thật):
  *  1. client gửi maxTokens rất lớn → bị cắt về trần, và không vượt số token còn lại;
  *  2. client gửi tên model lạ → không chuyển lên gateway;
- *  3. biên nhận hoàn điểm chỉ hoàn khi gọi lại ĐÚNG yêu cầu cũ (giữ kết quả đắt rồi "gọi lại" bằng câu rẻ thì không hoàn).
+ *  3. biên nhận hoàn điểm chỉ hoàn khi gọi lại ĐÚNG yêu cầu cũ (giữ kết quả đắt rồi "gọi lại" bằng câu rẻ thì không hoàn),
+ *     kể cả đổi mức suy luận / nhiệt độ, và chỉ hoàn khi lượt gọi lại thành công;
+ *  4. hạn mức tính cả token gửi lên (prompt dài không lách được số dư); lượt trả rỗng vẫn bị tính.
  *   npx tsx scripts/test-ai-abuse.ts
  */
 import { Readable } from 'node:stream'
@@ -25,6 +27,8 @@ for (const k of ['VERCEL', 'MERCURY_API_KEY', 'FOSTA_API_KEY', 'ANYROUTER_API_KE
 // DB giả: số dư điểm + token đã dùng tháng này + biên nhận đã hoàn
 const db = { credits: 120_000, used: 0, refunds: new Set<string>() }
 let nextUsage = 30_000
+let emptyReply = false
+let upstreamDown = false
 const upstream: Array<{ model: string; max_tokens: number }> = []
 const ok = (b: unknown) => new Response(JSON.stringify(b), { status: 200 })
 
@@ -33,6 +37,8 @@ globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
   const body = init.body ? JSON.parse(String(init.body)) : {}
   if (url.includes('/chat/completions')) {
     upstream.push({ model: body.model, max_tokens: body.max_tokens })
+    if (upstreamDown) return new Response('{}', { status: 400 })
+    if (emptyReply) return ok({ model: body.model, choices: [{ finish_reason: 'length', message: { content: '' } }], usage: { total_tokens: nextUsage } })
     return ok({ model: body.model, choices: [{ finish_reason: 'stop', message: { content: 'nội dung' } }], usage: { total_tokens: nextUsage } })
   }
   if (url.endsWith('/auth/v1/user')) return ok({ id: USER })
@@ -67,7 +73,7 @@ async function hit(payload: unknown, headers: Record<string, string> = {}) {
   Object.assign(req, {
     method: 'POST',
     url: '/api/llm',
-    headers: { host: 'localhost', origin: 'http://localhost', authorization: 'Bearer h.t.s', 'content-type': 'application/json', ...headers },
+    headers: { host: 'localhost', origin: 'http://localhost', authorization: `Bearer h.${Buffer.from(JSON.stringify({ sub: USER })).toString('base64url')}.s`, 'content-type': 'application/json', ...headers },
     socket: { remoteAddress: '203.0.113.9' },
   })
   const out = { status: 0, body: '' }
@@ -121,6 +127,49 @@ upstream.length = 0
 nextUsage = 100
 await hit({ messages: msgs('ít điểm'), maxTokens: 32_000 })
 check('còn 3.000 token → trần lượt này ≤ 3.000', upstream[0]?.max_tokens <= 3_000, upstream[0])
+
+// 5. prompt rất dài với số dư ít → chặn trước khi gọi model (trước đây 1 token số dư gọi được ~87.000 token)
+db.credits = 1_000
+db.used = 0
+upstream.length = 0
+const r5 = await hit({ messages: msgs('x'.repeat(60_000)), maxTokens: 256 })
+check('số dư 1.000 + prompt ~20.000 token → 429, không gọi model', r5.status === 429 && upstream.length === 0, { r5, calls: upstream.length })
+const r5b = await hit({ messages: msgs('x'.repeat(700_000)), maxTokens: 256 })
+check('prompt quá dài (> 200k token ước) → 413', r5b.status === 413, r5b)
+
+// 6. gọi lại đổi mức suy luận (yếu tố quyết định giá) → không hoàn
+db.credits = 120_000
+nextUsage = 30_000
+const r6 = await hit({ messages: msgs('soạn đề 6'), maxTokens: 32_000, reasoningEffort: 'low' })
+const after6 = db.credits
+nextUsage = 1000
+await hit({ messages: msgs('soạn đề 6'), maxTokens: 32_000, reasoningEffort: 'max' }, { 'x-ai-retry-of': r6.data.receipt ?? '' })
+check('gọi lại cùng messages nhưng đổi reasoningEffort → không hoàn', db.credits === after6 - 1000, { after6, now: db.credits })
+
+// 7. lượt gọi lại hỏng (model lỗi) → không hoàn; biên nhận vẫn dùng được cho lần gọi lại thành công sau
+nextUsage = 30_000
+const r7 = await hit({ messages: msgs('soạn đề 7'), maxTokens: 32_000 })
+const after7 = db.credits
+upstreamDown = true
+const r7b = await hit({ messages: msgs('soạn đề 7'), maxTokens: 32_000 }, { 'x-ai-retry-of': r7.data.receipt ?? '' })
+upstreamDown = false
+check('lượt gọi lại thất bại → không hoàn điểm', r7b.status === 502 && db.credits === after7, { status: r7b.status, after7, now: db.credits })
+
+// 8. model trả rỗng vẫn tốn token → bị tính
+emptyReply = true
+nextUsage = 5_000
+const before8 = db.credits
+upstream.length = 0
+await hit({ messages: msgs('soạn đề 8'), maxTokens: 32_000 })
+emptyReply = false
+// mỗi lượt gọi model trả rỗng (kể cả lượt tự thử lại) đều bị tính
+check('model trả rỗng (đã tốn token) → vẫn trừ điểm mỗi lượt gọi', upstream.length > 0 && db.credits === before8 - 5_000 * upstream.length, { before8, now: db.credits, calls: upstream.length })
+
+// 9. model rỗng "" không được coi là lựa chọn
+upstream.length = 0
+nextUsage = 10
+await hit({ messages: msgs('m'), model: '' })
+check('model "" → dùng model chính', upstream[0]?.model === 'app-model', upstream[0])
 
 if (fail) {
   console.error(`${fail} lỗi`)

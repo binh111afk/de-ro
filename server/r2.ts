@@ -10,7 +10,7 @@
 import { createHash, createHmac } from 'node:crypto'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { json, readBody } from './http.js'
-import { guard } from './guard.js'
+import { guard, isLocal, clientIp, userFromToken } from './guard.js'
 import { maintenanceBlock } from './ops.js'
 
 const MAX_BYTES = 8 * 1024 * 1024
@@ -50,6 +50,7 @@ async function r2Request(
   key: string,
   body: Buffer | null,
   contentType?: string,
+  meta?: Record<string, string>,
 ): Promise<Response> {
   const cfg = r2Config()
   const host = `${cfg.accountId}.r2.cloudflarestorage.com`
@@ -57,12 +58,13 @@ async function r2Request(
   const amz = new Date().toISOString().replace(/[:-]|\.\d{3}/g, '')
   const date = amz.slice(0, 8)
   const payloadHash = sha256Hex(body ?? '')
-  const signedHeaders = contentType
-    ? 'content-type;host;x-amz-content-sha256;x-amz-date'
-    : 'host;x-amz-content-sha256;x-amz-date'
+  // metadata (x-amz-meta-*) phải nằm trong chữ ký, xếp theo tên header
+  const metaHeaders = Object.entries(meta ?? {}).map(([k, v]) => [`x-amz-meta-${k.toLowerCase()}`, v] as const).sort(([a], [b]) => a.localeCompare(b))
+  const signedHeaders = [contentType ? 'content-type' : '', 'host', 'x-amz-content-sha256', 'x-amz-date', ...metaHeaders.map(([k]) => k)].filter(Boolean).join(';')
   const headerLines =
     (contentType ? `content-type:${contentType}\n` : '') +
-    `host:${host}\nx-amz-content-sha256:${payloadHash}\nx-amz-date:${amz}\n`
+    `host:${host}\nx-amz-content-sha256:${payloadHash}\nx-amz-date:${amz}\n` +
+    metaHeaders.map(([k, v]) => `${k}:${v}\n`).join('')
   const canonical = [method, uri, '', headerLines, signedHeaders, payloadHash].join('\n')
   const scope = `${date}/auto/s3/aws4_request`
   const toSign = ['AWS4-HMAC-SHA256', amz, scope, sha256Hex(canonical)].join('\n')
@@ -75,6 +77,7 @@ async function r2Request(
     Authorization: `AWS4-HMAC-SHA256 Credential=${cfg.accessKeyId}/${scope}, SignedHeaders=${signedHeaders}, Signature=${signature}`,
   }
   if (contentType) headers['content-type'] = contentType
+  for (const [k, v] of metaHeaders) headers[k] = v
   return fetch(`https://${host}${uri}`, {
     method,
     headers,
@@ -130,13 +133,18 @@ export async function handleUploadRequest(req: IncomingMessage, res: ServerRespo
       return json(res, 400, { error: 'Chỉ nhận ảnh PNG, JPEG, WebP, GIF hoặc tệp PDF, DOCX dạng base64' })
     }
     const isDoc = DOC_TYPES.has(ext)
+    // tài liệu riêng phải gắn với một tài khoản (máy dev thì gắn 'local')
+    const owner = isDoc ? (isLocal(clientIp(req)) ? 'local' : await userFromToken(req)) : null
+    if (isDoc && !owner) return json(res, 401, { error: 'Bạn cần đăng nhập để tải tài liệu lên.' })
     const buf = Buffer.from(match[2], 'base64')
     const limit = isDoc ? MAX_DOC_BYTES : MAX_BYTES
     if (buf.length === 0 || buf.length > limit) {
       return json(res, 400, { error: `Tệp rỗng hoặc quá lớn (tối đa ${limit / 1024 / 1024} MB)` })
     }
-    const key = `${isDoc ? 'doc' : 'img'}/${sha256Hex(buf).slice(0, 40)}.${ext}`
-    const put = await r2Request('PUT', key, buf, match[1])
+    // tài liệu: key băm cả chủ tệp → mỗi người một bản, không ghi đè chủ của người khác cùng nội dung
+    const hash = isDoc ? sha256Hex(Buffer.concat([Buffer.from(`${owner}\n`), buf])) : sha256Hex(buf)
+    const key = `${isDoc ? 'doc' : 'img'}/${hash.slice(0, 40)}.${ext}`
+    const put = await r2Request('PUT', key, buf, match[1], owner ? { owner } : undefined)
     if (!put.ok) return json(res, 502, { error: `R2 trả lỗi ${put.status}` })
     return json(res, 200, { url: `/api/files/${key}` })
   } catch (err) {
@@ -145,21 +153,25 @@ export async function handleUploadRequest(req: IncomingMessage, res: ServerRespo
 }
 
 /**
- * Tài liệu riêng (`doc/`): chỉ chủ tệp đọc được. Hỏi Supabase bằng CHÍNH token người gọi — RLS của
- * `user_documents` chỉ trả dòng của họ — nên không cần service key và không tự viết lại luật quyền.
+ * Tài liệu riêng (`doc/`): chỉ chủ tệp đọc được. Chủ tệp lấy từ metadata `owner` server ghi lúc tải lên
+ * — KHÔNG từ `user_documents.url` (cột người dùng tự ghi được: tự thêm một dòng trỏ vào tệp người khác là
+ * từng đọc được). Tệp cũ chưa có metadata: chủ là người có dòng `user_documents` SỚM NHẤT trỏ tới tệp
+ * (dòng tự thêm sau để chiếm quyền thì luôn muộn hơn).
  * (`img/` vẫn công khai: ảnh nằm trong đề đã chia sẻ / đề cộng đồng.)
  */
-async function ownsDocument(req: IncomingMessage, key: string): Promise<boolean> {
-  const token = String(req.headers.authorization ?? '').replace(/^Bearer\s+/i, '').trim()
+async function ownsDocument(userId: string | null, key: string, metaOwner: string | null): Promise<boolean> {
+  if (!userId) return false
+  if (metaOwner) return metaOwner === userId
   const base = (process.env.VITE_SUPABASE_URL ?? process.env.SUPABASE_URL ?? '').replace(/\/+$/, '')
-  const anon = process.env.VITE_SUPABASE_PUBLISHABLE_KEY ?? process.env.SUPABASE_PUBLISHABLE_KEY ?? ''
-  if (!token || !base || !anon) return false
+  const service = process.env.SUPABASE_SERVICE_ROLE_KEY ?? ''
+  if (!base || !service) return false
   try {
     const url = encodeURIComponent(`/api/files/${key}`)
-    const r = await fetch(`${base}/rest/v1/user_documents?select=id&url=eq.${url}&limit=1`, {
-      headers: { apikey: anon, Authorization: `Bearer ${token}` },
+    const r = await fetch(`${base}/rest/v1/user_documents?select=user_id&url=eq.${url}&order=created_at.asc,id.asc&limit=1`, {
+      headers: { apikey: service, Authorization: `Bearer ${service}` },
     })
-    return r.ok && ((await r.json()) as unknown[]).length > 0
+    const rows = r.ok ? ((await r.json()) as Array<{ user_id: string }>) : []
+    return rows[0]?.user_id === userId
   } catch {
     return false
   }
@@ -171,12 +183,17 @@ export async function handleFileRequest(req: IncomingMessage, res: ServerRespons
   const key = decodeURIComponent((req.url ?? '').split('?')[0].replace(/^\/+/, ''))
   if (!KEY_PATTERN.test(key)) return json(res, 404, { error: 'Không tìm thấy tệp' })
   const isDoc = key.startsWith('doc/')
-  // không phải chủ thì báo 404 như không có tệp: không lộ cả việc tệp có tồn tại hay không
-  if (isDoc && !(await ownsDocument(req, key))) return json(res, 404, { error: 'Không tìm thấy tệp' })
+  const userId = isDoc ? (isLocal(clientIp(req)) ? 'local' : await userFromToken(req)) : null
+  // chưa đăng nhập thì khỏi hỏi R2
+  if (isDoc && !userId) return json(res, 404, { error: 'Không tìm thấy tệp' })
 
   try {
     const got = await r2Request('GET', key, null)
     if (!got.ok) return json(res, got.status === 404 ? 404 : 502, { error: `R2 trả lỗi ${got.status}` })
+    // không phải chủ thì báo 404 như không có tệp: không lộ cả việc tệp có tồn tại hay không
+    if (isDoc && !(userId === 'local' || (await ownsDocument(userId, key, got.headers.get('x-amz-meta-owner'))))) {
+      return json(res, 404, { error: 'Không tìm thấy tệp' })
+    }
     res.writeHead(200, {
       'Content-Type': got.headers.get('content-type') ?? 'application/octet-stream',
       // tên file là hash nội dung nên không bao giờ đổi; tài liệu riêng thì không cho proxy/CDN giữ
