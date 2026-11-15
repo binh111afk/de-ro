@@ -7,14 +7,14 @@ import { applyEdits, looksLikeEdit, parseEditCommands } from '../src/lib/slideEd
 import { parseDeckPlan } from '../src/lib/aiDeck.ts'
 import { emptyDeck } from '../src/store/docs.ts'
 
-console.log('--- Kiểm tra 18 bộ thiết kế slide ---')
+console.log('--- Kiểm tra 28 bộ thiết kế slide ---')
 
 const themeIds = new Set(DECK_THEMES.map((t) => t.id))
 const decorKitIds = new Set(DECOR_KITS.map((k) => k.id))
 const stylePackIds = new Set(SLIDE_STYLE_PACKS.map((s) => s.id))
 
-if (SLIDE_DESIGNS.length !== 18) {
-  console.error(`❌ Cần đúng 18 bộ thiết kế, hiện có ${SLIDE_DESIGNS.length}`)
+if (SLIDE_DESIGNS.length !== 28) {
+  console.error(`❌ Cần đúng 28 bộ thiết kế, hiện có ${SLIDE_DESIGNS.length}`)
   process.exit(1)
 }
 
@@ -120,7 +120,7 @@ for (const d of SLIDE_DESIGNS) {
     allPassed = false
   }
 }
-console.log('  ✅ designCatalogText liệt kê đủ 18 bộ thiết kế')
+console.log('  ✅ designCatalogText liệt kê đủ 28 bộ thiết kế')
 
 // 2. resolveDesignId & alias
 const testAliases: Array<[string, string]> = [
@@ -145,6 +145,16 @@ const testAliases: Array<[string, string]> = [
   ['hoạ sĩ màu nước', 'hoa-si-mau-nuoc'],
   ['vũ trụ đêm', 'vu-tru'],
   ['rừng đêm', 'rung-dem'],
+  ['bạc hà', 'bac-ha'],
+  ['hồng đào', 'hong-dao'],
+  ['oải hương', 'oai-huong'],
+  ['cát vàng', 'cat-vang'],
+  ['chanh tươi', 'chanh-tuoi'],
+  ['bầu trời', 'bau-troi'],
+  ['báo tường', 'bao-tuong'],
+  ['hình học màu', 'hinh-hoc-mau'],
+  ['bảng trắng', 'bang-trang'],
+  ['tết xuân', 'tet-xuan'],
 ]
 for (const [input, expected] of testAliases) {
   const actual = resolveDesignId(input)
@@ -205,4 +215,4 @@ if (!allPassed) {
   process.exit(1)
 }
 
-console.log('\n✅ Toàn bộ 18 bộ thiết kế đều đạt yêu cầu kiểm tra!')
+console.log('\n✅ Toàn bộ 28 bộ thiết kế đều đạt yêu cầu kiểm tra!')

@@ -1631,6 +1631,7 @@ interface StyledSkinSpec {
   border?: number
   borderStyle?: 'solid' | 'dashed' | 'dotted'
   borderColor?: string | ((theme: DeckTheme) => string)
+  panelFill?: string | ((theme: DeckTheme) => string)
   shadowLevel?: 0 | 1 | 2 | 3
   getBackground?: (theme: DeckTheme, tone?: SlideTone) => string
   motifs: (theme: DeckTheme, slideIndex: number, totalSlides: number) => SlideElement[]
@@ -1646,6 +1647,8 @@ function createStyledSkin(spec: StyledSkinSpec): SlideSkin {
   ) => {
     const borderColor =
       typeof spec.borderColor === 'function' ? spec.borderColor(theme) : spec.borderColor
+    const panelFill =
+      typeof spec.panelFill === 'function' ? spec.panelFill(theme) : spec.panelFill
     const res: SlideElement[] = elements.map((el) => {
       const copy = { ...el }
       if (copy.type === 'text') {
@@ -1690,6 +1693,7 @@ function createStyledSkin(spec: StyledSkinSpec): SlideSkin {
           if (spec.border !== undefined) copy.border = spec.border
           if (spec.borderStyle !== undefined) copy.borderStyle = spec.borderStyle
           if (borderColor !== undefined) copy.borderColor = borderColor
+          if (panelFill !== undefined) copy.fill = panelFill
           copy.shadowLevel = spec.shadowLevel ?? 0
           copy.shadow = (spec.shadowLevel ?? 0) > 0
         }
@@ -1962,6 +1966,201 @@ const skinRungDem = createStyledSkin({
   ],
 })
 
+const skinBacHa = createStyledSkin({
+  id: 'bac-ha',
+  name: 'Bạc hà',
+  fonts: { heading: ROUNDED, body: 'Be Vietnam Pro' },
+  headingWeight: 700,
+  bodyWeight: 400,
+  geometrySummary: 'Góc bo mềm mại (radius: 14), viền xanh ngọc bạc hà 1px, motif lá mầm và giọt sương mai thanh mát.',
+  radius: 14,
+  border: 1,
+  borderColor: '#a7f3d0',
+  shadowLevel: 1,
+  motifs: (theme) => [
+    { id: 'skin-motif-leaf-tr', type: 'shape', shape: 'round2DiagRect', x: 94.5, y: 1.6, w: 3.8, h: 4.8, fill: theme.accent, opacity: 0.35, rotation: 15 },
+    { id: 'skin-motif-dew-tr', type: 'shape', shape: 'ellipse', x: 92.2, y: 2.8, w: 1.4, h: 2.5, fill: theme.secondary ?? '#0d9488', opacity: 0.55 },
+    { id: 'skin-motif-leaf-bl', type: 'shape', shape: 'round2DiagRect', x: 2.2, y: 93.5, w: 3.2, h: 4.0, fill: theme.secondary ?? '#0d9488', opacity: 0.3, rotation: -45 },
+    { id: 'skin-motif-mint-line', type: 'shape', shape: 'rect', x: 8.0, y: 97.2, w: 84.0, h: 0.25, fill: theme.accent, opacity: 0.4 },
+  ],
+})
+
+const skinHongDao = createStyledSkin({
+  id: 'hong-dao',
+  name: 'Hồng đào',
+  fonts: { heading: ACADEMIC_SERIF, body: 'Be Vietnam Pro' },
+  headingWeight: 600,
+  headingStyle: 'italic',
+  bodyWeight: 400,
+  geometrySummary: 'Tiêu đề Lora thanh nhã, thẻ bo tròn kem đào (radius: 18), cánh hoa đào nghiêng nhẹ ở các góc.',
+  radius: 18,
+  border: 1,
+  borderColor: '#fed7aa',
+  shadowLevel: 1,
+  motifs: (theme) => [
+    { id: 'skin-motif-petal-tr1', type: 'shape', shape: 'teardrop', x: 94.2, y: 1.4, w: 4.2, h: 6.8, fill: theme.accent, opacity: 0.22, rotation: 25 },
+    { id: 'skin-motif-petal-tr2', type: 'shape', shape: 'teardrop', x: 90.8, y: 2.2, w: 3.2, h: 5.2, fill: theme.secondary ?? '#ea580c', opacity: 0.28, rotation: 65 },
+    { id: 'skin-motif-petal-bl', type: 'shape', shape: 'teardrop', x: 2.0, y: 92.5, w: 3.8, h: 6.0, fill: theme.accent, opacity: 0.2, rotation: -135 },
+    { id: 'skin-motif-peach-dot', type: 'shape', shape: 'ellipse', x: 5.8, y: 95.8, w: 1.2, h: 2.1, fill: theme.secondary ?? '#ea580c', opacity: 0.6 },
+  ],
+})
+
+const skinOaiHuong = createStyledSkin({
+  id: 'oai-huong',
+  name: 'Oải hương',
+  fonts: { heading: ACADEMIC_SERIF, body: 'Be Vietnam Pro' },
+  headingWeight: 600,
+  bodyWeight: 400,
+  geometrySummary: 'Nền tím nhạt thoảng hương, tiêu đề Lora mềm mại, chùm chấm hoa oải hương cách điệu góc slide.',
+  radius: 16,
+  border: 1,
+  borderColor: '#ddd6fe',
+  shadowLevel: 1,
+  motifs: (theme) => [
+    { id: 'skin-motif-sprig-1', type: 'shape', shape: 'ellipse', x: 95.0, y: 1.6, w: 2.2, h: 3.9, fill: theme.accent, opacity: 0.35 },
+    { id: 'skin-motif-sprig-2', type: 'shape', shape: 'ellipse', x: 93.2, y: 3.2, w: 1.8, h: 3.2, fill: theme.secondary ?? '#9333ea', opacity: 0.4 },
+    { id: 'skin-motif-sprig-3', type: 'shape', shape: 'ellipse', x: 95.2, y: 4.8, w: 1.5, h: 2.6, fill: theme.accent, opacity: 0.3 },
+    { id: 'skin-motif-sprig-bl1', type: 'shape', shape: 'ellipse', x: 2.0, y: 93.2, w: 2.0, h: 3.5, fill: theme.secondary ?? '#9333ea', opacity: 0.32 },
+    { id: 'skin-motif-sprig-bl2', type: 'shape', shape: 'ellipse', x: 3.8, y: 95.0, w: 1.5, h: 2.6, fill: theme.accent, opacity: 0.4 },
+  ],
+})
+
+const skinCatVang = createStyledSkin({
+  id: 'cat-vang',
+  name: 'Cát vàng',
+  fonts: { heading: 'Be Vietnam Pro', body: 'Be Vietnam Pro' },
+  headingWeight: 700,
+  bodyWeight: 400,
+  geometrySummary: 'Nền cát ấm hạt mịn (grain), khối chữ nhật bo nhẹ (radius: 8), đường viền sa mạc và vạch nâu đất góc.',
+  radius: 8,
+  border: 1,
+  borderColor: '#d6c7b2',
+  shadowLevel: 0,
+  motifs: (theme) => [
+    { id: 'skin-motif-dune-tr', type: 'shape', shape: 'parallelogram', x: 88.0, y: 1.2, w: 10.5, h: 3.5, fill: theme.accent, opacity: 0.25 },
+    { id: 'skin-motif-olive-tr', type: 'shape', shape: 'round', x: 95.2, y: 3.2, w: 3.2, h: 2.2, radius: 4, fill: theme.secondary ?? '#4d7c0f', opacity: 0.35 },
+    { id: 'skin-motif-dune-bl', type: 'shape', shape: 'parallelogram', x: 1.8, y: 94.5, w: 12.0, h: 3.6, fill: theme.secondary ?? '#4d7c0f', opacity: 0.22 },
+    { id: 'skin-motif-sand-rule', type: 'shape', shape: 'rect', x: 15.0, y: 96.6, w: 75.0, h: 0.25, fill: theme.accent, opacity: 0.4 },
+  ],
+})
+
+const skinChanhTuoi = createStyledSkin({
+  id: 'chanh-tuoi',
+  name: 'Chanh tươi',
+  fonts: { heading: ROUNDED, body: ROUNDED },
+  headingWeight: 800,
+  bodyWeight: 600,
+  geometrySummary: 'Khối bo tròn lớn tươi vui (radius: 20), viền vàng chanh nõn chuối 1.5px, đốm chanh mọng nước vui mắt.',
+  radius: 20,
+  border: 1.5,
+  borderColor: '#bef264',
+  shadowLevel: 1,
+  motifs: (theme) => [
+    { id: 'skin-motif-citrus-slice', type: 'shape', shape: 'round', x: 93.0, y: 1.5, w: 5.5, h: 5.5, radius: 18, fill: theme.secondary ?? '#ca8a04', opacity: 0.35 },
+    { id: 'skin-motif-citrus-drop', type: 'shape', shape: 'ellipse', x: 90.0, y: 2.8, w: 2.0, h: 3.5, fill: theme.accent, opacity: 0.5 },
+    { id: 'skin-motif-citrus-bl', type: 'shape', shape: 'round', x: 2.0, y: 92.8, w: 4.8, h: 4.8, radius: 14, fill: theme.accent, opacity: 0.25 },
+    { id: 'skin-motif-citrus-dot', type: 'shape', shape: 'ellipse', x: 7.2, y: 95.0, w: 1.6, h: 2.8, fill: theme.secondary ?? '#ca8a04', opacity: 0.6 },
+  ],
+})
+
+const skinBauTroi = createStyledSkin({
+  id: 'bau-troi',
+  name: 'Bầu trời',
+  fonts: { heading: 'Be Vietnam Pro', body: 'Be Vietnam Pro' },
+  headingWeight: 700,
+  bodyWeight: 400,
+  geometrySummary: 'Nền xanh thiên thanh trong vắt, thẻ bo tròn mềm (radius: 16), cụm mây trắng và viền xanh lơ dịu mát.',
+  radius: 16,
+  border: 1,
+  borderColor: '#bae6fd',
+  shadowLevel: 1,
+  motifs: (theme) => [
+    { id: 'skin-motif-cloud-1', type: 'shape', shape: 'ellipse', x: 92.5, y: 1.5, w: 5.5, h: 4.8, fill: '#ffffff', opacity: 0.75, border: 1, borderColor: '#bae6fd' },
+    { id: 'skin-motif-cloud-2', type: 'shape', shape: 'ellipse', x: 89.2, y: 2.2, w: 4.5, h: 3.8, fill: theme.surface, opacity: 0.7 },
+    { id: 'skin-motif-cloud-bl', type: 'shape', shape: 'ellipse', x: 2.0, y: 93.8, w: 5.0, h: 4.2, fill: '#ffffff', opacity: 0.65, border: 1, borderColor: '#bae6fd' },
+    { id: 'skin-motif-sky-line', type: 'shape', shape: 'rect', x: 8.5, y: 96.8, w: 83.0, h: 0.25, fill: theme.accent, opacity: 0.35 },
+  ],
+})
+
+const skinBaoTuong = createStyledSkin({
+  id: 'bao-tuong',
+  name: 'Báo tường',
+  fonts: { heading: ACADEMIC_SERIF, body: 'Be Vietnam Pro' },
+  headingWeight: 700,
+  bodyWeight: 400,
+  geometrySummary: 'Đường nét vuông vức phong cách báo in (radius: 0), viền đen đôi 2px, vạch đỏ son điểm nhấn trang trọng.',
+  radius: 0,
+  border: 2,
+  borderColor: '#111827',
+  panelFill: (theme) => theme.surface ?? theme.bg,
+  getBackground: (theme, tone) => (tone === 'soft' ? (theme.surface ?? theme.bg) : theme.bg),
+  shadowLevel: 0,
+  motifs: (theme) => [
+    { id: 'skin-motif-head-thick', type: 'shape', shape: 'rect', x: 4.0, y: 1.5, w: 92.0, h: 0.45, fill: '#111827' },
+    { id: 'skin-motif-head-thin', type: 'shape', shape: 'rect', x: 4.0, y: 2.3, w: 92.0, h: 0.15, fill: '#111827' },
+    { id: 'skin-motif-news-badge', type: 'shape', shape: 'rect', x: 4.0, y: 3.2, w: 4.5, h: 0.8, fill: theme.accent },
+    { id: 'skin-motif-foot-rule', type: 'shape', shape: 'rect', x: 4.0, y: 97.2, w: 92.0, h: 0.35, fill: '#111827' },
+  ],
+})
+
+const skinHinhHocMau = createStyledSkin({
+  id: 'hinh-hoc-mau',
+  name: 'Hình học màu',
+  fonts: { heading: DISPLAY_SANS, body: 'Be Vietnam Pro' },
+  headingWeight: 700,
+  bodyWeight: 400,
+  geometrySummary: 'Khối Bauhaus sắc nét có đổ bóng cứng (radius: 4), viền đen 2px, ba hình khối tròn-vuông-thoi màu cơ bản.',
+  radius: 4,
+  border: 2,
+  borderColor: '#090d16',
+  shadowLevel: 2,
+  motifs: (theme) => [
+    { id: 'skin-motif-bauhaus-sq', type: 'shape', shape: 'rect', x: 94.2, y: 1.6, w: 3.5, h: 6.2, fill: theme.accent, border: 1.5, borderColor: '#090d16' },
+    { id: 'skin-motif-bauhaus-cir', type: 'shape', shape: 'ellipse', x: 90.0, y: 2.2, w: 3.2, h: 5.6, fill: theme.secondary ?? '#dc2626', border: 1.5, borderColor: '#090d16' },
+    { id: 'skin-motif-bauhaus-dia', type: 'shape', shape: 'parallelogram', x: 1.8, y: 93.0, w: 5.0, h: 4.5, fill: '#eab308', border: 1.5, borderColor: '#090d16' },
+    { id: 'skin-motif-bauhaus-bar', type: 'shape', shape: 'rect', x: 8.5, y: 96.8, w: 12.0, h: 0.6, fill: '#090d16' },
+  ],
+})
+
+const skinBangTrang = createStyledSkin({
+  id: 'bang-trang',
+  name: 'Bảng trắng',
+  fonts: { heading: ROUNDED, body: 'Be Vietnam Pro' },
+  headingWeight: 700,
+  kickerFont: HANDWRITING,
+  geometrySummary: 'Nền bảng trắng hiện đại (radius: 10), khung viền xám nhôm 1.5px, khay bút dạ nhiều màu ở chân slide.',
+  radius: 10,
+  border: 1.5,
+  borderColor: '#cbd5e1',
+  shadowLevel: 1,
+  motifs: (theme) => [
+    { id: 'skin-motif-marker-blue', type: 'shape', shape: 'round', x: 90.0, y: 96.2, w: 2.8, h: 1.6, radius: 4, fill: theme.accent },
+    { id: 'skin-motif-marker-red', type: 'shape', shape: 'round', x: 93.2, y: 96.2, w: 2.8, h: 1.6, radius: 4, fill: theme.secondary ?? '#e11d48' },
+    { id: 'skin-motif-marker-green', type: 'shape', shape: 'round', x: 96.4, y: 96.2, w: 2.8, h: 1.6, radius: 4, fill: '#16a34a' },
+    { id: 'skin-motif-tray-line', type: 'shape', shape: 'rect', x: 4.0, y: 98.2, w: 92.0, h: 0.35, fill: '#94a3b8' },
+    { id: 'skin-motif-pin-tl', type: 'shape', shape: 'ellipse', x: 2.0, y: 2.0, w: 1.4, h: 2.5, fill: theme.accent, opacity: 0.6 },
+  ],
+})
+
+const skinTetXuan = createStyledSkin({
+  id: 'tet-xuan',
+  name: 'Tết xuân',
+  fonts: { heading: ACADEMIC_SERIF, body: 'Be Vietnam Pro' },
+  headingWeight: 700,
+  bodyWeight: 400,
+  geometrySummary: 'Nền kem lễ hội, tiêu đề Lora đỏ thắm, viền vàng kim 1.5px (radius: 12), cánh hoa đào mai may mắn ở các góc.',
+  radius: 12,
+  border: 1.5,
+  borderColor: '#fed7aa',
+  shadowLevel: 1,
+  motifs: (theme) => [
+    { id: 'skin-motif-blossom-1', type: 'shape', shape: 'star4', x: 94.6, y: 1.6, w: 2.8, h: 4.8, fill: theme.accent, opacity: 0.8 },
+    { id: 'skin-motif-blossom-2', type: 'shape', shape: 'ellipse', x: 92.2, y: 2.6, w: 1.5, h: 2.6, fill: theme.secondary ?? '#b45309', opacity: 0.85 },
+    { id: 'skin-motif-blossom-bl', type: 'shape', shape: 'star4', x: 2.0, y: 93.4, w: 2.4, h: 4.2, fill: theme.secondary ?? '#b45309', opacity: 0.75 },
+    { id: 'skin-motif-gold-ribbon', type: 'shape', shape: 'rect', x: 8.0, y: 96.8, w: 84.0, h: 0.35, fill: theme.secondary ?? '#b45309', opacity: 0.6 },
+  ],
+})
+
 export const SLIDE_SKINS: Record<string, SlideSkin> = {
   'thanh-lich': skinThanhLich,
   'tre-trung': skinTreTrung,
@@ -1981,6 +2180,16 @@ export const SLIDE_SKINS: Record<string, SlideSkin> = {
   'hoa-si-mau-nuoc': skinHoaSiMauNuoc,
   'vu-tru': skinVuTru,
   'rung-dem': skinRungDem,
+  'bac-ha': skinBacHa,
+  'hong-dao': skinHongDao,
+  'oai-huong': skinOaiHuong,
+  'cat-vang': skinCatVang,
+  'chanh-tuoi': skinChanhTuoi,
+  'bau-troi': skinBauTroi,
+  'bao-tuong': skinBaoTuong,
+  'hinh-hoc-mau': skinHinhHocMau,
+  'bang-trang': skinBangTrang,
+  'tet-xuan': skinTetXuan,
 }
 
 export function skinById(id: string | undefined): SlideSkin | undefined {

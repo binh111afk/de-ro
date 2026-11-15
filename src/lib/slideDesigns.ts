@@ -1572,6 +1572,860 @@ export const SLIDE_DESIGNS: SlideDesign[] = [
       },
     ],
   },
+  {
+    id: 'bac-ha',
+    name: 'Bạc Hà Xanh Mát',
+    description: 'Nền trắng ngà ánh lục bạc hà, điểm nhấn xanh lá đậm thanh lọc, tươi mới cho Sinh học và KHTN.',
+    themeId: 'bac-ha',
+    decorKit: 'la-xanh',
+    stylePack: 'bento',
+    slides: [
+      {
+        layout: 'title',
+        tone: 'accent',
+        content: {
+          kicker: 'Sinh Học Lớp 10 • Chương III',
+          title: 'Quang Hợp & Sự Sống Trên Hành Tinh Xanh',
+          subtitle: 'Khám phá cơ chế hấp thu năng lượng ánh sáng và chuyển hoá carbon kỳ diệu của lục lạp.',
+        },
+      },
+      {
+        layout: 'bullets',
+        tone: 'soft',
+        content: {
+          kicker: 'Vai trò sinh thái',
+          title: 'Tại Sao Cây Xanh Là Lá Phổi Của Trái Đất?',
+          subtitle: 'Ba đóng góp then chốt của thực vật quang hợp đối với khí quyển toàn cầu.',
+          bullets: [
+            'Cung cấp oxy tinh khiết: Giải phóng hàng tỷ tấn khí oxy nuôi dưỡng mọi sinh vật hiếu khí.',
+            'Cân bằng khí hậu: Hấp thụ CO₂ trong khí quyển, giảm thiểu đáng kể hiệu ứng nhà kính.',
+            'Nguồn năng lượng sơ cấp: Chuyển năng lượng mặt trời thành chất hữu cơ nuôi sống chuỗi thức ăn.',
+          ],
+        },
+      },
+      {
+        layout: 'cards',
+        tone: 'theme',
+        content: {
+          kicker: 'Cơ chế sinh học',
+          title: 'Hai Pha Phản Ứng Trong Lục Lạp',
+          items: [
+            'Pha Sáng Thylakoid: Hấp thụ photon ánh sáng qua chlorophyll, quang phân ly nước và tổng hợp ATP, NADPH.',
+            'Chu Trình Calvin: Diễn ra trong chất nền stroma, cố định phân tử CO₂ để tổng hợp đường glucose.',
+            'Sản Phẩm Đầu Ra: Glucose tích luỹ thành tinh bột, đồng thời giải phóng khí oxy ra ngoài khí khổng.',
+          ],
+        },
+      },
+      {
+        layout: 'comparison',
+        tone: 'soft',
+        content: {
+          kicker: 'Thích nghi tiến hoá',
+          title: 'So Sánh Quang Hợp Thực Vật C3 & C4',
+          leftTitle: 'Nhóm thực vật C3',
+          left: [
+            'Phổ biến ở vùng khí hậu ôn hoà và nhiệt đới ẩm.',
+            'Cố định CO₂ trực tiếp bằng enzyme Rubisco.',
+            'Điểm bão hoà ánh sáng và nhiệt độ ở mức trung bình.',
+          ],
+          rightTitle: 'Nhóm thực vật C4',
+          right: [
+            'Thích nghi vùng nhiệt đới nắng gắt và khô hạn.',
+            'Cố định CO₂ hai lần qua tế bào bao bó mạch.',
+            'Năng suất quang hợp cao và tiết kiệm nước vượt trội.',
+          ],
+        },
+      },
+      {
+        layout: 'stats',
+        tone: 'theme',
+        content: {
+          kicker: 'Năng suất sinh học',
+          title: 'Hiệu Quả Sinh Khối Rừng Tự Nhiên',
+          stats: [
+            { value: '90%', label: 'Sinh khối hữu cơ trên Trái Đất tạo ra từ thực vật' },
+            { value: '120 tấn/ha', label: 'Lượng sinh khối rừng nhiệt đới cố định hằng năm' },
+            { value: '2.500 tỷ', label: 'Cây xanh đang tích cực quang hợp trên hành tinh' },
+          ],
+        },
+      },
+      {
+        layout: 'closing',
+        tone: 'soft',
+        content: {
+          title: 'Bảo Vệ Mầm Xanh Tương Lai',
+          subtitle: 'Mỗi mầm cây trồng xuống hôm nay là một lá chắn xanh bảo vệ sự sống mai sau.',
+        },
+      },
+    ],
+  },
+  {
+    id: 'hong-dao',
+    name: 'Hồng Đào Dịu Êm',
+    description: 'Nền kem đào êm ái, sắc san hô và đỏ ấm nồng nàn, cảm xúc cho Ngữ văn và Kỹ năng sống.',
+    themeId: 'hong-dao',
+    decorKit: 'hoa-diu',
+    stylePack: 'editorial',
+    slides: [
+      {
+        layout: 'title',
+        tone: 'accent',
+        content: {
+          kicker: 'Kỹ Năng Sống • Chuyên Đề 4',
+          title: 'Nghệ Thuật Lắng Nghe & Thấu Cảm',
+          subtitle: 'Kết nối trái tim bằng sự hiện diện chân thành, ánh mắt tin cậy và lời nói ấm áp.',
+        },
+      },
+      {
+        layout: 'bullets',
+        tone: 'soft',
+        content: {
+          kicker: 'Ba cấp độ lắng nghe',
+          title: 'Học Cách Lắng Nghe Trọn Vẹn',
+          subtitle: 'Từ việc nghe để đối đáp đến sự thấu cảm chiều sâu cảm xúc của người khác.',
+          bullets: [
+            'Nghe bề mặt: Chỉ ghi nhận âm thanh mà không đặt tâm trí vào câu chuyện đang diễn ra.',
+            'Nghe tập trung: Nắm bắt thông tin, ghi nhớ ý chính để chuẩn bị phản hồi hợp lý.',
+            'Nghe thấu cảm: Cảm nhận niềm vui, nỗi lo âu phía sau từng lời chia sẻ của người đối diện.',
+          ],
+        },
+      },
+      {
+        layout: 'cards',
+        tone: 'theme',
+        content: {
+          kicker: 'Chìa khoá kết nối',
+          title: 'Bốn Bước Giao Tiếp Thấu Cảm',
+          items: [
+            'Hiện Diện Trọn Vẹn: Gác lại điện thoại, hướng ánh mắt chân thành và gật đầu khích lệ.',
+            'Không Phán Xét Vội Vã: Tôn trọng góc nhìn riêng của bạn bè trước khi đưa ra nhận định.',
+            'Đặt Câu Hỏi Mở: Khơi gợi chia sẻ sâu hơn bằng câu hỏi dịu dàng và mang tính nâng đỡ.',
+          ],
+        },
+      },
+      {
+        layout: 'comparison',
+        tone: 'soft',
+        content: {
+          kicker: 'Thực hành hội thoại',
+          title: 'Lời Phê Bình Hay Sự Khích Lệ?',
+          leftTitle: 'Phản ứng tiêu cực',
+          left: [
+            'Ngắt lời khi người khác chưa nói xong ý.',
+            'Áp đặt quan điểm cá nhân một cách cứng nhắc.',
+            'Tập trung vào lỗi sai thay vì sự cố gắng.',
+          ],
+          rightTitle: 'Ứng xử thấu cảm',
+          right: [
+            'Chờ đợi trong kiên nhẫn và đồng cảm.',
+            'Xác nhận cảm xúc của bạn trước khi góp ý.',
+            'Đồng hành tìm giải pháp cùng tiến bộ.',
+          ],
+        },
+      },
+      {
+        layout: 'quote',
+        tone: 'theme',
+        content: {
+          kicker: 'Thông điệp yêu thương',
+          quote: 'Lắng nghe chân thành là món quà vô giá và dịu dàng nhất mà một người có thể trao tặng cho người khác.',
+          author: 'Tâm lý học Ứng dụng',
+        },
+      },
+      {
+        layout: 'closing',
+        tone: 'soft',
+        content: {
+          title: 'Mở Rộng Trái Tim Lắng Nghe',
+          subtitle: 'Hãy dành 10 phút tối nay để lắng nghe câu chuyện của một người thân yêu quanh bạn.',
+        },
+      },
+    ],
+  },
+  {
+    id: 'oai-huong',
+    name: 'Oải Hương Tím Nhạt',
+    description: 'Sắc tím oải hương mơ màng, tím than thanh lịch và thi vị, phù hợp cho Âm nhạc, Mĩ thuật và Thơ ca.',
+    themeId: 'oai-huong',
+    decorKit: 'hoa-diu',
+    stylePack: 'editorial',
+    slides: [
+      {
+        layout: 'title',
+        tone: 'accent',
+        content: {
+          kicker: 'Âm Nhạc & Mĩ Thuật • Lớp 8',
+          title: 'Giai Điệu Cổ Điển & Sắc Màu Hội Hoạ',
+          subtitle: 'Sự giao thoa diệu kỳ giữa tiết tấu âm thanh và ngôn ngữ đường nét trong không gian nghệ thuật.',
+        },
+      },
+      {
+        layout: 'bullets',
+        tone: 'soft',
+        content: {
+          kicker: 'Nguyên lý đồng điệu',
+          title: 'Khi Âm Thanh Chuyển Hoá Thành Màu Sắc',
+          subtitle: 'Mỗi nốt nhạc ngân vang gợi lên một sắc thái thị giác phong phú trong tâm trí người thưởng thức.',
+          bullets: [
+            'Cao độ và sắc độ: Nốt cao mang ánh sáng trong trẻo, nốt trầm mang sắc màu đậm sâu bí ẩn.',
+            'Tiết tấu và nhịp điệu: Tiết tấu dồn dập tạo nên những đường nét góc cạnh, tiết tấu êm dịu tạo đường cong uốn lượn.',
+            'Chất cảm hoà âm: Sự phức hợp của dàn nhạc giao hưởng tạo nên các tầng lớp màu sắc đa tầng.',
+          ],
+        },
+      },
+      {
+        layout: 'cards',
+        tone: 'theme',
+        content: {
+          kicker: 'Tác gia tiêu biểu',
+          title: 'Ba Bậc Thầy Sáng Tạo Cảm Xúc',
+          items: [
+            'Claude Debussy: Khắc hoạ ánh sáng biển cả và trăng đêm qua âm sắc piano trường phái ấn tượng.',
+            'Vincent van Gogh: Đưa giai điệu xoáy cuộn mãnh liệt vào bầu trời đêm đầy sao và cánh đồng hoa.',
+            'Frédéric Chopin: Gửi gắm chất thơ lãng mạn vào từng khúc dạ khúc nocturne êm dịu.',
+          ],
+        },
+      },
+      {
+        layout: 'comparison',
+        tone: 'soft',
+        content: {
+          kicker: 'Trường phái nghệ thuật',
+          title: 'Cổ Điển Mực Thước & Ấn Tượng Tự Do',
+          leftTitle: 'Chủ nghĩa cổ điển',
+          left: [
+            'Bố cục cân đối, tuân thủ tỉ lệ vàng chặt chẽ.',
+            'Hoà âm chuẩn mực và giai điệu rõ ràng.',
+            'Đề cao lý tính và vẻ đẹp hoàn mỹ khách quan.',
+          ],
+          rightTitle: 'Chủ nghĩa ấn tượng',
+          right: [
+            'Bắt trọn khoảnh khắc ánh sáng và cảm xúc tức thời.',
+            'Màu sắc biến ảo, không viền ranh giới cứng nhắc.',
+            'Khơi gợi trực giác và trí tưởng tượng bay bổng.',
+          ],
+        },
+      },
+      {
+        layout: 'quote',
+        tone: 'theme',
+        content: {
+          kicker: 'Cảm hứng sáng tạo',
+          quote: 'Màu sắc là phím đàn, đôi mắt là búa gõ, tâm hồn là cây đàn dương cầm muôn điệu rung lên theo từng xúc cảm.',
+          author: 'Wassily Kandinsky',
+        },
+      },
+      {
+        layout: 'closing',
+        tone: 'soft',
+        content: {
+          title: 'Nuôi Dưỡng Tâm Hồn Yêu Nghệ Thuật',
+          subtitle: 'Hãy thả mình vào một bản nhạc giao hưởng êm dịu khi vẽ bức tranh tuần này của em.',
+        },
+      },
+    ],
+  },
+  {
+    id: 'cat-vang',
+    name: 'Cát Vàng Sa Mạc',
+    description: 'Sắc be cát sa mạc mộc mạc, điểm nhấn nâu đất và xanh ô liu bền vững cho Địa lí, Du lịch và Lịch sử.',
+    themeId: 'cat-vang',
+    decorKit: 'toi-gian',
+    stylePack: 'consulting',
+    slides: [
+      {
+        layout: 'title',
+        tone: 'accent',
+        content: {
+          kicker: 'Địa Lý Tự Nhiên • Thế Giới',
+          title: 'Cảnh Quan Sa Mạc & Sự Thích Nghi Sinh Học',
+          subtitle: 'Khám phá những vùng đất khô hạn nhất hành tinh và sức sống phi thường của sinh quyển.',
+        },
+      },
+      {
+        layout: 'bullets',
+        tone: 'soft',
+        content: {
+          kicker: 'Đặc trưng địa lý',
+          title: 'Quy Luật Tự Nhiên Của Vùng Đất Cát',
+          subtitle: 'Ba yếu tố khí hậu định hình nên địa mạo và đời sống tại các hoang mạc lớn.',
+          bullets: [
+            'Biên độ nhiệt khắc nghiệt: Ban ngày nắng nóng gay gắt trên 45°C, ban đêm nhiệt độ hạ sâu.',
+            'Quá trình phong hoá gió: Gió thổi tạo nên những cồn cát di động và hẻm núi sa thạch kỳ vĩ.',
+            'Mạch nước ngầm hiếm hoi: O-a-xit xanh tươi là chiếc nôi nuôi dưỡng các nền văn minh sa mạc cổ đại.',
+          ],
+        },
+      },
+      {
+        layout: 'cards',
+        tone: 'theme',
+        content: {
+          kicker: 'Địa danh nổi tiếng',
+          title: 'Ba Miền Sa Mạc Tiêu Biểu',
+          items: [
+            'Sa Mạc Sahara: Vùng hoang mạc nhiệt đới rộng lớn nhất thế giới trải dài qua Bắc Phi.',
+            'Hoang Mạc Atacama: Nơi khô cằn nhất Trái Đất, nơi lý tưởng để đặt các kính thiên văn vũ trụ.',
+            'Đồi Cát Bàu Trắng: Thắng cảnh cát trắng thoai thoải uốn lượn bên hồ sen mát lành tại Việt Nam.',
+          ],
+        },
+      },
+      {
+        layout: 'comparison',
+        tone: 'soft',
+        content: {
+          kicker: 'Chiến lược sinh tồn',
+          title: 'Sự Thích Nghi Của Thực Vật & Động Vật',
+          leftTitle: 'Thực vật chịu hạn',
+          left: [
+            'Lá biến thành gai nhọn để giảm thiểu thoát hơi nước.',
+            'Thân mọng nước trữ nước qua nhiều tháng khô cằn.',
+            'Rễ cọc đâm sâu chục mét tìm nguồn nước ngầm.',
+          ],
+          rightTitle: 'Động vật sa mạc',
+          right: [
+            'Hoạt động kiếm ăn vào ban đêm khi trời mát mẻ.',
+            'Thận thích nghi cao, bảo tồn tối đa lượng nước cơ thể.',
+            'Bộ lông sáng màu phản xạ bức xạ nhiệt mặt trời.',
+          ],
+        },
+      },
+      {
+        layout: 'stats',
+        tone: 'theme',
+        content: {
+          kicker: 'Số liệu sinh thái',
+          title: 'Quy Mô Hoang Mạc Trên Địa Cầu',
+          stats: [
+            { value: '33%', label: 'Diện tích bề mặt lục địa là sa mạc và bán sa mạc' },
+            { value: '50°C', label: 'Biên độ nhiệt chênh lệch giữa ngày và đêm tại Sahara' },
+            { value: '< 250 mm', label: 'Lượng mưa trung bình hằng năm ở các vùng hoang mạc' },
+          ],
+        },
+      },
+      {
+        layout: 'closing',
+        tone: 'soft',
+        content: {
+          title: 'Hành Động Chống Sa Mạc Hoá',
+          subtitle: 'Trồng cây gây rừng chắn cát là sứ mệnh bảo vệ đất đai cho các thế hệ tương lai.',
+        },
+      },
+    ],
+  },
+  {
+    id: 'chanh-tuoi',
+    name: 'Chanh Tươi Sôi Nổi',
+    description: 'Nền vàng chanh ánh trắng tươi mát, xanh lá sinh động, kích thích sự hứng khởi cho Tiểu học và Trò chơi.',
+    themeId: 'chanh-tuoi',
+    decorKit: 'lap-lanh',
+    stylePack: 'classroom',
+    slides: [
+      {
+        layout: 'title',
+        tone: 'accent',
+        content: {
+          kicker: 'Toán Vui Lớp 3 • Tuần 15',
+          title: 'Vương Quốc Số Học & Những Phép Tính Vui',
+          subtitle: 'Cùng tham gia hành trình giải đố thông minh để chinh phục kho báu tri thức toán học.',
+        },
+      },
+      {
+        layout: 'bullets',
+        tone: 'soft',
+        content: {
+          kicker: 'Luật chơi lớp học',
+          title: 'Ba Quy Tắc Vàng Của Cuộc Thi',
+          subtitle: 'Học mà chơi, chơi mà học giúp các bạn nhỏ rèn luyện tư duy nhanh nhẹn.',
+          bullets: [
+            'Quan sát kỹ đề bài: Đọc đề cẩn thận và xác định rõ yêu cầu phép tính cần làm.',
+            'Tính nhẩm thông minh: Vận dụng bảng nhân chia và các mẹo tách số nhanh trong 30 giây.',
+            'Hợp tác đồng đội: Cùng thảo luận nhóm nhỏ và giơ bảng đáp án thật chuẩn xác.',
+          ],
+        },
+      },
+      {
+        layout: 'cards',
+        tone: 'theme',
+        content: {
+          kicker: 'Các trạm thử thách',
+          title: 'Ba Trạm Khám Phá Hấp Dẫn',
+          items: [
+            'Trạm 1: Khởi Động Nhân Chia: Ôn tập bảng cửu chương và giải cứu những chú sâu tinh nghịch.',
+            'Trạm 2: Vượt Chướng Ngại: Ghép các mảnh ghép hình học để tìm ra diện tích khu vườn bí mật.',
+            'Trạm 3: Về Đích Thông Thái: Giải câu đố toán đố logic cuối cùng để nhận huy hiệu sao vàng.',
+          ],
+        },
+      },
+      {
+        layout: 'comparison',
+        tone: 'soft',
+        content: {
+          kicker: 'Bí quyết tính nhẩm',
+          title: 'Mẹo Tính Nhanh Hơn Mỗi Ngày',
+          leftTitle: 'Cách đếm truyền thống',
+          left: [
+            'Đếm từng ngón tay mất nhiều thời gian.',
+            'Dễ nhầm lẫn khi số lượng vượt quá mười.',
+            'Khó thực hiện khi tính nhẩm dãy số dài.',
+          ],
+          rightTitle: 'Tách gộp số tròn chục',
+          right: [
+            'Gộp các cặp số có tổng bằng 10 hoặc 100.',
+            'Nhân nhẩm với 5 bằng cách nhân 10 rồi chia 2.',
+            'Tính nhẩm thần tốc và chính xác tuyệt đối.',
+          ],
+        },
+      },
+      {
+        layout: 'stats',
+        tone: 'theme',
+        content: {
+          kicker: 'Bảng vàng khen thưởng',
+          title: 'Thành Tích Xuất Sắc Cả Lớp',
+          stats: [
+            { value: '100%', label: 'Học sinh tham gia trả lời đúng câu hỏi trạm 1' },
+            { value: '15 câu', label: 'Thử thách toán đố vui được giải mã hoàn toàn' },
+            { value: '4 đội', label: 'Cùng đạt danh hiệu Thám Tử Toán Học Thông Thái' },
+          ],
+        },
+      },
+      {
+        layout: 'closing',
+        tone: 'soft',
+        content: {
+          title: 'Chúc Mừng Các Bạn Nhỏ Xuất Sắc!',
+          subtitle: 'Về nhà hãy đố bố mẹ những câu đố toán học vui nhộn hôm nay chúng mình đã học nhé.',
+        },
+      },
+    ],
+  },
+  {
+    id: 'bau-troi',
+    name: 'Bầu Trời Xanh Trong',
+    description: 'Sắc xanh thiên thanh bao la, cụm mây trắng êm đềm, tạo không gian thoáng đãng cho Khoa học và Vật lí.',
+    themeId: 'bau-troi',
+    decorKit: 'toi-gian',
+    stylePack: 'keynote',
+    slides: [
+      {
+        layout: 'title',
+        tone: 'accent',
+        content: {
+          kicker: 'Vật Lý Khí Quyển • KHTN Lớp 8',
+          title: 'Khí Quyển Trái Đất & Hiện Tượng Quang Học',
+          subtitle: 'Giải mã màu xanh của vòm trời, ánh hoàng hôn rực rỡ và những dải cầu vồng sau mưa.',
+        },
+      },
+      {
+        layout: 'bullets',
+        tone: 'soft',
+        content: {
+          kicker: 'Cấu trúc khí quyển',
+          title: 'Các Tầng Không Gian Bao Bọc Địa Cầu',
+          subtitle: 'Lớp vỏ khí quyển giữ nhiệt độ ôn hoà và bảo vệ mọi sự sống trước bức xạ vũ trụ.',
+          bullets: [
+            'Tầng đối lưu (0–12 km): Nơi diễn ra mọi hiện tượng thời tiết mưa, nắng, gió bão và mây trôi.',
+            'Tầng bình lưu (12–50 km): Chứa tầng ozone quý giá hấp thụ tia cực tím nguy hại từ Mặt Trời.',
+            'Tầng trung lưu & nhiệt quyển: Nơi các thiên thạch bốc cháy và tạo ra hiện tượng cực quang kỳ thú.',
+          ],
+        },
+      },
+      {
+        layout: 'cards',
+        tone: 'theme',
+        content: {
+          kicker: 'Hiện tượng quang học',
+          title: 'Ba Tuyệt Tác Ánh Sáng Trên Trời',
+          items: [
+            'Tán Xạ Rayleigh: Các phân tử khí tán xạ bước sóng ngắn màu xanh mạnh hơn, tạo màu trời trong xanh.',
+            'Khúc Xạ Giọt Nước: Ánh sáng tán sắc qua hàng triệu giọt mưa tạo nên dải cầu vồng 7 màu uốn lượn.',
+            'Tán Xạ Hoàng Hôn: Khi Mặt Trời xuống thấp, ánh sáng đi qua tầng khí dày hơn khiến sắc đỏ vàng rực rỡ.',
+          ],
+        },
+      },
+      {
+        layout: 'comparison',
+        tone: 'soft',
+        content: {
+          kicker: 'Khí tượng học',
+          title: 'Nhận Biết Thời Tiết Qua Đám Mây',
+          leftTitle: 'Mây tích trời trong (Cumulus)',
+          left: [
+            'Mây trắng xốp bồng bềnh như bông gòn.',
+            'Đáy mây phẳng, xuất hiện vào buổi sáng nắng đẹp.',
+            'Báo hiệu thời tiết khô ráo, thuận lợi cho hoạt động ngoài trời.',
+          ],
+          rightTitle: 'Mây vũ tích dông sét (Cumulonimbus)',
+          right: [
+            'Cột mây khổng lồ hình đe màu xám đen đặc.',
+            'Đỉnh mây vươn cao tới ranh giới tầng bình lưu.',
+            'Báo hiệu mưa dông lớn, gió giật mạnh và sấm sét.',
+          ],
+        },
+      },
+      {
+        layout: 'stats',
+        tone: 'theme',
+        content: {
+          kicker: 'Thông số khí quyển',
+          title: 'Các Hằng Số Khí Quyển Tiêu Chuẩn',
+          stats: [
+            { value: '101.3 kPa', label: 'Áp suất khí quyển tiêu chuẩn ở mực nước biển' },
+            { value: '78%', label: 'Tỉ lệ khí Nitơ chiếm ưu thế trong thành phần không khí' },
+            { value: '-56°C', label: 'Nhiệt độ thấp nhất ghi nhận tại đỉnh tầng đối lưu' },
+          ],
+        },
+      },
+      {
+        layout: 'closing',
+        tone: 'soft',
+        content: {
+          title: 'Chung Tay Giữ Bầu Trời Trong Lành',
+          subtitle: 'Giảm khí thải carbon là hành động thiết thực gìn giữ màu xanh bao la cho tương lai.',
+        },
+      },
+    ],
+  },
+  {
+    id: 'bao-tuong',
+    name: 'Báo Tường Xã Luận',
+    description: 'Phong cách báo in truyền thống, tiêu đề có chân đĩnh đạc, viền kép và điểm đỏ cho Lịch sử, GDCD và Sự kiện.',
+    themeId: 'bao-tuong',
+    decorKit: 'toi-gian',
+    stylePack: 'editorial',
+    slides: [
+      {
+        layout: 'title',
+        tone: 'accent',
+        content: {
+          kicker: 'Chuyên Đề Lịch Sử • Số Đặc Biệt',
+          title: 'Ký Ức Lịch Sử & Tinh Thần Độc Lập Dân Tộc',
+          subtitle: 'Những trang sử vàng chói lọi và bài học về ý chí tự lực, kiên cường bảo vệ non sông.',
+        },
+      },
+      {
+        layout: 'bullets',
+        tone: 'soft',
+        content: {
+          kicker: 'Mốc son thời đại',
+          title: 'Những Trang Sử Vàng Dân Tộc Khắc Ghi',
+          subtitle: 'Ba chặng đường vẻ vang khẳng định chủ quyền và vị thế đất nước trên trường quốc tế.',
+          bullets: [
+            'Cách mạng Tháng Tám 1945: Khúc ca quật khởi giành chính quyền về tay nhân dân cả nước.',
+            'Chiến thắng Điện Biên Phủ 1954: Mốc son lừng lẫy năm châu, chấn động địa cầu mở ra kỷ nguyên mới.',
+            'Đại thắng Mùa Xuân 1975: Non sông thu về một mối, đất nước trọn niềm vui thống nhất hoàn toàn.',
+          ],
+        },
+      },
+      {
+        layout: 'cards',
+        tone: 'theme',
+        content: {
+          kicker: 'Tấm gương tiêu biểu',
+          title: 'Ý Chí Kiên Cường Của Thế Hệ Đi Trước',
+          items: [
+            'Đại Tướng Võ Nguyên Giáp: Người anh cả của Quân đội Nhân dân Việt Nam với tài thao lược kiệt xuất.',
+            'Anh Hùng Võ Thị Sáu: Biểu tượng bất khuất của tuổi trẻ kiên trung, dâng hiến trọn đời cho cách mạng.',
+            'Lý Tự Trọng: Khắc sâu lời hiệu triệu bất hủ về con đường duy nhất của thanh niên là con đường cách mạng.',
+          ],
+        },
+      },
+      {
+        layout: 'comparison',
+        tone: 'soft',
+        content: {
+          kicker: 'Góc nhìn sử liệu',
+          title: 'So Sánh Văn Kiện Hai Thời Kỳ Lịch Sử',
+          leftTitle: 'Bản Tuyên Ngôn Độc Lập 1945',
+          left: [
+            'Khẳng định quyền con người và quyền dân tộc thiêng liêng.',
+            'Tuyên bố xoá bỏ chế độ thực dân phong kiến hàng thế kỷ.',
+            'Ý chí sắt đá toàn dân quyết giữ vững nền tự do.',
+          ],
+          rightTitle: 'Lời Kêu Gọi Toàn Quốc Kháng Chiến',
+          right: [
+            'Lời thề quyết tử cho Tổ quốc quyết sinh.',
+            'Huy động sức mạnh toàn dân kháng chiến toàn diện.',
+            'Trường kỳ kháng chiến ắt đi đến ngày toàn thắng.',
+          ],
+        },
+      },
+      {
+        layout: 'quote',
+        tone: 'theme',
+        content: {
+          kicker: 'Xã luận trang nhất',
+          quote: 'Không có gì quý hơn độc lập, tự do. Nước Việt Nam là một, dân tộc Việt Nam là một. Sông có thể cạn, núi có thể mòn, song chân lý ấy không bao giờ thay đổi.',
+          author: 'Chủ tịch Hồ Chí Minh',
+        },
+      },
+      {
+        layout: 'closing',
+        tone: 'soft',
+        content: {
+          title: 'Viết Tiếp Truyền Thống Yêu Nước Hôm Nay',
+          subtitle: 'Mỗi học sinh nỗ lực rèn đức luyện tài chính là đóng góp thiết thực xây dựng quê hương.',
+        },
+      },
+    ],
+  },
+  {
+    id: 'hinh-hoc-mau',
+    name: 'Hình Học Bauhaus',
+    description: 'Khối tròn, vuông, thoi màu sắc cơ bản tương phản mạnh kiểu Bauhaus, độc đáo cho Hình học và Kiến trúc.',
+    themeId: 'hinh-hoc-mau',
+    decorKit: 'toi-gian',
+    stylePack: 'bold',
+    slides: [
+      {
+        layout: 'title',
+        tone: 'accent',
+        content: {
+          kicker: 'Toán Hình & Mĩ Thuật • Lớp 9',
+          title: 'Ngôn Ngữ Hình Khối & Tỉ Lệ Vàng Kiến Trúc',
+          subtitle: 'Ứng dụng hình học phẳng vào thiết kế công trình, đồ hoạ hiện đại và thị giác thị dân.',
+        },
+      },
+      {
+        layout: 'bullets',
+        tone: 'soft',
+        content: {
+          kicker: 'Nguyên lý tạo hình',
+          title: 'Ba Trụ Cột Của Thiết Kế Bauhaus',
+          subtitle: 'Trường phái nghệ thuật kết hợp hoàn hảo giữa công năng sử dụng và vẻ đẹp hình khối thuần khiết.',
+          bullets: [
+            'Công năng định hình hình thể: Loại bỏ các chi tiết rườm rà, tập trung vào cấu trúc sử dụng tối ưu.',
+            'Màu sắc cơ bản: Khai thác sức mạnh thị giác của bộ ba màu đỏ, vàng, xanh cobalt nguyên bản.',
+            'Đơn vị hình học chuẩn: Xây dựng toàn bộ bố cục từ ba hình thái cơ bản vuông, tròn và tam giác.',
+          ],
+        },
+      },
+      {
+        layout: 'cards',
+        tone: 'theme',
+        content: {
+          kicker: 'Hình khối cốt lõi',
+          title: 'Ý Nghĩa Biểu Trưng Của Hình Khối',
+          items: [
+            'Hình Vuông Kiên Định: Tượng trưng cho sự trật tự, vững chãi, cân bằng và tính kỷ luật kiến trúc.',
+            'Đường Tròn Hoàn Hảo: Biểu thị tính chuyển động liên tục, sự mềm mại và không gian tuần hoàn vô tận.',
+            'Tam Giác Chuyển Động: Tạo hướng nhìn năng động, xung lực phát triển và sự bứt phá mạnh mẽ.',
+          ],
+        },
+      },
+      {
+        layout: 'comparison',
+        tone: 'soft',
+        content: {
+          kicker: 'Đối chiếu phong cách',
+          title: 'Kiến Trúc Cổ Điển & Bauhaus Hiện Đại',
+          leftTitle: 'Kiến trúc cổ điển',
+          left: [
+            'Nhiều hoa văn đắp nổi cầu kỳ và trang trí phức tạp.',
+            'Cột trụ đồ sộ, chia cắt không gian thành nhiều phòng nhỏ.',
+            'Thi công thủ công tốn nhiều thời gian và chi phí.',
+          ],
+          rightTitle: 'Kiến trúc Bauhaus',
+          right: [
+            'Mặt đứng phẳng, cửa kính lớn đón trọn ánh sáng tự nhiên.',
+            'Không gian mở liên thông, linh hoạt công năng sử dụng.',
+            'Ứng dụng vật liệu thép, kính và bê tông đúc sẵn hiện đại.',
+          ],
+        },
+      },
+      {
+        layout: 'stats',
+        tone: 'theme',
+        content: {
+          kicker: 'Hằng số hình học',
+          title: 'Tỉ Lệ Vàng Trong Tự Nhiên & Thiết Kế',
+          stats: [
+            { value: '1.618', label: 'Hằng số Phi (φ) định hình tỉ lệ vàng chuẩn mực trong nghệ thuật' },
+            { value: '90°', label: 'Góc vuông định hình cấu trúc chịu lực và mặt bằng kiến trúc' },
+            { value: '360°', label: 'Chu kỳ trọn vẹn của hình tròn và không gian đa chiều' },
+          ],
+        },
+      },
+      {
+        layout: 'closing',
+        tone: 'soft',
+        content: {
+          title: 'Sáng Tạo Không Giới Hạn Cùng Hình Khối',
+          subtitle: 'Hãy thử phác thảo một mẫu logo ứng dụng chỉ từ ba hình khối cơ bản trong tuần này.',
+        },
+      },
+    ],
+  },
+  {
+    id: 'bang-trang',
+    name: 'Bảng Trắng Giảng Đường',
+    description: 'Mô phỏng mặt bảng trắng hiện đại, nét bút dạ xanh – đỏ sinh động, thân thuộc trong tiết học hằng ngày.',
+    themeId: 'bang-trang',
+    decorKit: 'toi-gian',
+    stylePack: 'classroom',
+    slides: [
+      {
+        layout: 'title',
+        tone: 'accent',
+        content: {
+          kicker: 'Phương Pháp Học Tập • Tiết 5',
+          title: 'Sơ Đồ Tư Duy & Kỹ Thuật Ghi Nhớ Nhanh',
+          subtitle: 'Tối ưu hoá hiệu suất tiếp thu bài học bằng bút dạ màu sắc và từ khoá trực quan.',
+        },
+      },
+      {
+        layout: 'bullets',
+        tone: 'soft',
+        content: {
+          kicker: 'Bốn bước cơ bản',
+          title: 'Cách Vẽ Bản Đồ Tư Duy Hiệu Quả',
+          subtitle: 'Chuyển đổi những trang sách dày đặc chữ thành bức tranh kiến thức sinh động và dễ nhớ.',
+          bullets: [
+            'Chủ đề trung tâm: Đặt chủ đề bài học ở chính giữa trang với hình vẽ nổi bật và màu sắc bắt mắt.',
+            'Nhánh chính cấp 1: Vẽ các đường cong đậm toả ra các hướng đại diện cho các luận điểm lớn.',
+            'Nhánh phụ & từ khoá: Điền các khái niệm chi tiết bằng chữ in hoa ngắn gọn, kèm biểu tượng ghi nhớ.',
+          ],
+        },
+      },
+      {
+        layout: 'cards',
+        tone: 'theme',
+        content: {
+          kicker: 'Quy ước màu bút dạ',
+          title: 'Bộ Ba Bút Dạ Màu Cơ Bản',
+          items: [
+            'Bút Dạ Xanh Dương: Ghi chép nội dung chính, định nghĩa chuẩn mực và các bước triển khai bài học.',
+            'Bút Dạ Đỏ Nổi Bật: Đánh dấu các công thức cốt lõi, lưu ý quan trọng và lỗi sai học sinh hay mắc.',
+            'Bút Dạ Quang Vàng: Tô sáng từ khoá then chốt giúp mắt quét thông tin nhanh chóng khi ôn tập.',
+          ],
+        },
+      },
+      {
+        layout: 'comparison',
+        tone: 'soft',
+        content: {
+          kicker: 'Đánh giá phương pháp',
+          title: 'Ghi Chép Truyền Thống Hay Mindmap?',
+          leftTitle: 'Ghi chép một màu đều đặn',
+          left: [
+            'Chữ viết dài kín trang vở, dễ gây buồn ngủ và mỏi mắt.',
+            'Khó tìm kiếm ý chính khi cần tra cứu nhanh trước giờ thi.',
+            'Chỉ kích hoạt bán cầu não trái xử lý chuỗi ký tự đơn điệu.',
+          ],
+          rightTitle: 'Sơ đồ tư duy đa màu',
+          right: [
+            'Trực quan, sinh động với các nhánh màu và hình biểu trưng.',
+            'Bao quát toàn bộ cấu trúc bài giảng chỉ trên một mặt giấy.',
+            'Kích hoạt cả hai bán cầu não giúp ghi nhớ lâu gấp nhiều lần.',
+          ],
+        },
+      },
+      {
+        layout: 'stats',
+        tone: 'theme',
+        content: {
+          kicker: 'Nghiên cứu não bộ',
+          title: 'Hiệu Quả Tiếp Thu Hình Ảnh Trực Quan',
+          stats: [
+            { value: '60.000x', label: 'Tốc độ não bộ xử lý hình ảnh nhanh hơn ký tự văn bản đơn thuần' },
+            { value: '80%', label: 'Lượng kiến thức được ghi nhớ lâu dài khi học kèm hình ảnh minh hoạ' },
+            { value: '20 phút', label: 'Thời gian lý tưởng để hoàn thiện một sơ đồ tư duy ôn tập bài giảng' },
+          ],
+        },
+      },
+      {
+        layout: 'closing',
+        tone: 'soft',
+        content: {
+          title: 'Bắt Đầu Với Trang Vở Của Em',
+          subtitle: 'Hãy mở tập và vẽ ngay một sơ đồ tư duy tóm tắt bài học ngày hôm nay.',
+        },
+      },
+    ],
+  },
+  {
+    id: 'tet-xuan',
+    name: 'Tết Xuân Truyền Thống',
+    description: 'Sắc đỏ son may mắn, vàng kim ấm áp trên nền kem lễ hội, rộn ràng phong vị Tết Nguyên Đán và mùa xuân.',
+    themeId: 'tet-xuan',
+    decorKit: 'lap-lanh',
+    stylePack: 'editorial',
+    slides: [
+      {
+        layout: 'title',
+        tone: 'accent',
+        content: {
+          kicker: 'Văn Hoá Truyền Thống • Mùa Xuân',
+          title: 'Phong Vị Tết Cổ Truyền & Nét Đẹp Văn Hoá Việt',
+          subtitle: 'Ý nghĩa phong tục ngày Tết Nguyên Đán, mâm ngũ quả, câu đối đỏ và sự sum vầy gia đình ấm áp.',
+        },
+      },
+      {
+        layout: 'bullets',
+        tone: 'soft',
+        content: {
+          kicker: 'Phong tục nghìn năm',
+          title: 'Ba Nét Đẹp Ngày Tết Không Thể Phai Mờ',
+          subtitle: 'Những giá trị tinh thần thiêng liêng gắn kết các thế hệ người Việt trong dịp Tết sum vầy.',
+          bullets: [
+            'Bữa cơm tất niên chiều 30: Thời khắc mọi thành viên sum họp quanh mâm cơm, sẻ chia một năm đã qua.',
+            'Phong tục chúc Tết & mừng tuổi: Trao nhau những phong bao lì xì đỏ thắm cùng lời chúc vạn sự như ý.',
+            'Khai bút đầu xuân & hái lộc: Gửi gắm ước vọng về một năm mới học hành tiến bộ, công danh rộng mở.',
+          ],
+        },
+      },
+      {
+        layout: 'cards',
+        tone: 'theme',
+        content: {
+          kicker: 'Hương vị mùa xuân',
+          title: 'Biểu Tượng Ẩm Thực & Hoa Tết',
+          items: [
+            'Bánh Chưng & Bánh Tét: Tượng trưng cho đất trời vuông tròn, lòng biết ơn sâu sắc đối với tổ tiên.',
+            'Hoa Đào & Hoa Mai: Sắc hồng thắm miền Bắc xua tan giá rét, sắc vàng rực miền Nam đón tài lộc an khang.',
+            'Mâm Ngũ Quả Ngày Tết: Ước mong năm mới cầu sung túc, vừa đủ tiêu xài và gia đạo bình an thịnh vượng.',
+          ],
+        },
+      },
+      {
+        layout: 'comparison',
+        tone: 'soft',
+        content: {
+          kicker: 'Bản sắc vùng miền',
+          title: 'Hương Sắc Tết Bắc & Tết Nam',
+          leftTitle: 'Tết cổ truyền miền Bắc',
+          left: [
+            'Tiết trời mưa phùn se lạnh đầu xuân ấm cúng.',
+            'Cành đào phai chúm chím và chậu quất trĩu quả vàng.',
+            'Mâm cỗ truyền thống canh bóng, giò lụa, nem rán.',
+          ],
+          rightTitle: 'Tết rực rỡ miền Nam',
+          right: [
+            'Nắng vàng rực rỡ chan hoà khắp các nẻo đường.',
+            'Cành mai vàng bung nở năm cánh kiêu hãnh đón xuân.',
+            'Thịt kho tàu nước dừa trứng cút và đĩa dưa giá thanh mát.',
+          ],
+        },
+      },
+      {
+        layout: 'quote',
+        tone: 'theme',
+        content: {
+          kicker: 'Hơi thở mùa xuân',
+          quote: 'Tết là nơi để trở về, là lúc những người con xa xứ tìm về bên bếp lửa gia đình, cảm nhận trọn vẹn tình thân sau bao tháng ngày bôn ba.',
+          author: 'Giai phẩm Mùa Xuân',
+        },
+      },
+      {
+        layout: 'closing',
+        tone: 'soft',
+        content: {
+          title: 'Kính Chúc Năm Mới An Khang Thịnh Vượng!',
+          subtitle: 'Cùng gửi những lời chúc tốt đẹp nhất tới thầy cô giáo, bạn bè và toàn thể gia đình yêu thương.',
+        },
+      },
+    ],
+  },
 ]
 
 export function buildDesignSlides(design: SlideDesign, overrideTheme?: DeckTheme): Slide[] {
@@ -1670,6 +2524,35 @@ const ALIASES: Record<string, string> = {
   'space': 'vu-tru',
   'rung dem': 'rung-dem',
   'forest': 'rung-dem',
+  'bac ha': 'bac-ha',
+  'bac ha xanh': 'bac-ha',
+  'mint': 'bac-ha',
+  'hong dao': 'hong-dao',
+  'dao': 'hong-dao',
+  'peach': 'hong-dao',
+  'oai huong': 'oai-huong',
+  'lavender': 'oai-huong',
+  'cat vang': 'cat-vang',
+  'sa mac': 'cat-vang',
+  'desert': 'cat-vang',
+  'chanh tuoi': 'chanh-tuoi',
+  'chanh': 'chanh-tuoi',
+  'lemon': 'chanh-tuoi',
+  'lime': 'chanh-tuoi',
+  'bau troi': 'bau-troi',
+  'troi xanh': 'bau-troi',
+  'sky': 'bau-troi',
+  'bao tuong': 'bao-tuong',
+  'tap chi': 'bao-tuong',
+  'newspaper': 'bao-tuong',
+  'xa luan': 'bao-tuong',
+  'hinh hoc mau': 'hinh-hoc-mau',
+  'bauhaus': 'hinh-hoc-mau',
+  'bang trang': 'bang-trang',
+  'whiteboard': 'bang-trang',
+  'tet xuan': 'tet-xuan',
+  'tet': 'tet-xuan',
+  'xuan': 'tet-xuan',
 }
 
 const SORTED_ALIASES = Object.entries(ALIASES).sort((a, b) => b[0].length - a[0].length)

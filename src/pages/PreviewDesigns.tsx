@@ -17,7 +17,7 @@ export default function PreviewDesigns() {
         theme,
         slide1: slides[0],
         slide3: slides[2],
-        slide5: slides[4],
+        slideClosing: slides[slides.length - 1],
       }
     })
   }, [])
@@ -29,12 +29,12 @@ export default function PreviewDesigns() {
           Bảng So Sánh Ngôn Ngữ Hình Khối & Bố Cục ({SLIDE_DESIGNS.length} Bộ Thiết Kế Slide)
         </h1>
         <p className="mt-1 text-sm text-ink-3">
-          Kiểm tra độ khác biệt về hình khối, kiểu chữ, khung viền, và motif nhận diện ở Slide 1, Slide 3 và Slide 5.
+          Kiểm tra độ khác biệt về hình khối, kiểu chữ, khung viền, và motif nhận diện ở Slide Tiêu đề, Slide Nội dung và Slide Kết thúc.
         </p>
       </div>
 
       <div className="flex flex-col gap-6">
-        {rows.map(({ design, skin, theme, slide1, slide3, slide5 }, idx) => (
+        {rows.map(({ design, skin, theme, slide1, slide3, slideClosing }, idx) => (
           <div
             key={design.id}
             className="flex flex-col gap-2 rounded-xl border border-clay/60 bg-paper-2 p-4 shadow-sm"
@@ -68,7 +68,7 @@ export default function PreviewDesigns() {
 
               <div className="flex flex-col gap-1">
                 <span className="text-[11px] font-semibold text-ink-3">
-                  Slide 3: Đặc trưng 1 ({slide3.layout})
+                  Slide 3: Nội dung ({slide3.layout})
                 </span>
                 <div className="overflow-hidden rounded-lg border border-clay/40 shadow-sm">
                   <SlideThumb slide={slide3} theme={theme} />
@@ -77,10 +77,10 @@ export default function PreviewDesigns() {
 
               <div className="flex flex-col gap-1">
                 <span className="text-[11px] font-semibold text-ink-3">
-                  Slide 5: Đặc trưng 2 ({slide5.layout})
+                  Slide Cuối: Kết thúc ({slideClosing.layout})
                 </span>
                 <div className="overflow-hidden rounded-lg border border-clay/40 shadow-sm">
-                  <SlideThumb slide={slide5} theme={theme} />
+                  <SlideThumb slide={slideClosing} theme={theme} />
                 </div>
               </div>
             </div>
