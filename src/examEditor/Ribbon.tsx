@@ -12,6 +12,7 @@
  */
 import { Fragment, Suspense, useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import type { PageMargins } from './ExamEditor'
+import { DEFAULT_PAGE_NUMBER, type PageNumberSetup } from './pageSetup'
 import type { Editor } from '@tiptap/core'
 import {
   RibbonBody,
@@ -22,6 +23,7 @@ import {
   type RibbonTabDef,
 } from './Layout'
 import { cn } from '@/lib/cn'
+import { Segmented } from '@/components/Segmented'
 import { BookMarked } from 'lucide-react'
 import { MonitorPlay, Blocks, ListTree, TableCellsMerge, TableCellsSplit, Wrench } from 'lucide-react'
 import { FileMenu } from './FileMenu'
@@ -64,6 +66,7 @@ import {
   IconMultilevel,
   IconNumbered,
   IconPageBreak,
+  IconPageNumber,
   IconPaste,
   IconPrinter,
   IconRedo,
@@ -155,6 +158,8 @@ export function Ribbon({
   onPageColorChange,
   pageBorder = 0,
   onPageBorderChange,
+  pageNumber,
+  onPageNumberChange,
   onOpenNav,
   layoutMode = 'desktop',
 }: {
@@ -185,6 +190,9 @@ export function Ribbon({
   onPageColorChange?: (c: string) => void
   pageBorder?: number
   onPageBorderChange?: (w: number) => void
+  /** số trang ở chân trang */
+  pageNumber?: PageNumberSetup
+  onPageNumberChange?: (pn: PageNumberSetup) => void
   onOpenNav?: (tab: 'toc' | 'blocks' | 'tools') => void
   layoutMode?: 'desktop' | 'tablet' | 'phone'
 }) {
@@ -761,6 +769,54 @@ export function Ribbon({
                   </button>
                 ))
               }
+            </MenuButton>
+            <MenuButton
+              icon={<IconPageNumber size={26} />}
+              label="Số trang"
+              title="Đánh số trang"
+              disabled={disabled}
+              minWidth={230}
+            >
+              {() => {
+                const pn = pageNumber ?? { ...DEFAULT_PAGE_NUMBER, show: false }
+                const set = (patch: Partial<PageNumberSetup>) => onPageNumberChange?.({ ...pn, ...patch })
+                const int = (v: string, min: number) => Math.max(min, Math.min(999, Math.round(Number(v)) || min))
+                return (
+                  <div className="flex flex-col gap-2.5 p-2.5 text-[12px] text-ink">
+                    <label className="flex cursor-pointer items-center gap-2 select-none">
+                      <input type="checkbox" checked={pn.show} onChange={(e) => set({ show: e.target.checked })} />
+                      <span>Hiện số trang</span>
+                    </label>
+                    <label className="rb-inline-label justify-between">
+                      Bắt đầu đánh số từ trang
+                      <input className="rb-num-input" type="number" min={1} max={999} value={pn.from} disabled={!pn.show}
+                        onChange={(e) => set({ from: int(e.target.value, 1) })} aria-label="Trang bắt đầu hiện số" />
+                    </label>
+                    <label className="rb-inline-label justify-between">
+                      Số đầu tiên
+                      <input className="rb-num-input" type="number" min={0} max={999} value={pn.startAt} disabled={!pn.show}
+                        onChange={(e) => set({ startAt: int(e.target.value, 0) })} aria-label="Số in ở trang bắt đầu" />
+                    </label>
+                    <div className={cn('flex flex-col gap-1.5', !pn.show && 'pointer-events-none opacity-50')}>
+                      Vị trí
+                      <Segmented
+                        value={pn.place ?? 'bottom'}
+                        onChange={(place) => set({ place })}
+                        label="Đầu hay chân trang"
+                        className="!h-8 w-full [&>button]:flex-1 [&>button]:justify-center [&>button]:px-2 [&>button]:text-[12px]"
+                        options={[{ key: 'top', label: 'Đầu trang' }, { key: 'bottom', label: 'Chân trang' }]}
+                      />
+                      <Segmented
+                        value={pn.align}
+                        onChange={(align) => set({ align })}
+                        label="Căn số trang"
+                        className="!h-8 w-full [&>button]:flex-1 [&>button]:justify-center [&>button]:px-2 [&>button]:text-[12px]"
+                        options={[{ key: 'left', label: 'Trái' }, { key: 'center', label: 'Giữa' }, { key: 'right', label: 'Phải' }]}
+                      />
+                    </div>
+                  </div>
+                )
+              }}
             </MenuButton>
           </div>
         ),

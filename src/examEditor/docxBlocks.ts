@@ -8,12 +8,15 @@ import {
   AlignmentType,
   BorderStyle,
   Document,
+  Footer,
+  Header,
   HeightRule,
   ImageRun,
   LevelFormat,
   Math as OMath,
   Packer,
   PageBreak,
+  PageNumber,
   PageOrientation,
   Paragraph,
   ShadingType,
@@ -35,6 +38,7 @@ import type { SummaryAnswerData } from '@/lib/shuffleExam'
 import { latexToMath } from '@/lib/latexMath'
 import { toDataUrl } from '@/lib/mediaStore'
 import { estimateChoiceCols } from './choiceCols'
+import type { PageNumberSetup } from './pageSetup'
 import { splitRichLines } from './convert'
 import { TF_PARTS, groupAnswers, gridRows, tfParts } from '@/lib/answerKey'
 
@@ -636,7 +640,30 @@ function blockToDocx(b: ExamBlock, ctx: Ctx): Out[] {
 export type DocxMargins = { top: number; right: number; bottom: number; left: number }
 const twip = (cm: number) => Math.round(cm * 567)
 
-export function buildDocx(doc: ExamDoc, opts?: { landscape?: boolean; margins?: DocxMargins }): Document {
+export type DocxOpts = { landscape?: boolean; margins?: DocxMargins; pageNumber?: PageNumberSetup }
+
+/**
+ * Chân trang có trường PAGE. Word chỉ ẩn riêng được trang đầu (titlePage) trong
+ * một section, nên `from` > 2 thì vẫn chỉ ẩn trang 1; số được dời sao cho
+ * trang `from` in đúng `startAt`.
+ */
+type BoxSet = { default: Header | Footer; first?: Header | Footer }
+function pageNumberSection(pn?: PageNumberSetup): { titlePage?: boolean; start?: number; headers?: { default: Header; first?: Header }; footers?: { default: Footer; first?: Footer } } {
+  if (!pn?.show) return {}
+  const align = pn.align === 'left' ? AlignmentType.LEFT : pn.align === 'right' ? AlignmentType.RIGHT : AlignmentType.CENTER
+  const top = pn.place === 'top'
+  const make = (children: Paragraph[]) => (top ? new Header({ children }) : new Footer({ children }))
+  const skipFirst = pn.from > 1
+  const set: BoxSet = { default: make([new Paragraph({ alignment: align, children: [new TextRun({ children: [PageNumber.CURRENT] })] })]) }
+  if (skipFirst) set.first = make([new Paragraph({})])
+  return {
+    titlePage: skipFirst,
+    start: Math.max(0, pn.startAt - pn.from + 1),
+    ...(top ? { headers: set as { default: Header } } : { footers: set as { default: Footer } }),
+  }
+}
+
+export function buildDocx(doc: ExamDoc, opts?: DocxOpts): Document {
   const landscape = !!opts?.landscape
   const m = opts?.margins
   const margin = m
@@ -644,6 +671,7 @@ export function buildDocx(doc: ExamDoc, opts?: { landscape?: boolean; margins?: 
     : { top: MARGIN_V, bottom: MARGIN_V, left: MARGIN_H, right: MARGIN_H }
   const contentW = (landscape ? PAGE_H : PAGE_W) - margin.left - margin.right
   const ctx: Ctx = { q: 0, essay: 0, lists: 0, contentW }
+  const pn = pageNumberSection(opts?.pageNumber)
   const children = doc.blocks.flatMap((b) => blockToDocx(b, ctx))
   const level = (i: number, format: (typeof LevelFormat)[keyof typeof LevelFormat], text: string) => ({
     level: i,
@@ -670,8 +698,12 @@ export function buildDocx(doc: ExamDoc, opts?: { landscape?: boolean; margins?: 
               ? { width: PAGE_W, height: PAGE_H, orientation: PageOrientation.LANDSCAPE }
               : { width: PAGE_W, height: PAGE_H },
             margin,
+            ...(pn.start !== undefined ? { pageNumbers: { start: pn.start } } : {}),
           },
+          ...(pn.titlePage ? { titlePage: true } : {}),
         },
+        ...(pn.footers ? { footers: pn.footers } : {}),
+        ...(pn.headers ? { headers: pn.headers } : {}),
         children: children.length ? children : [para([])],
       },
     ],
@@ -679,7 +711,7 @@ export function buildDocx(doc: ExamDoc, opts?: { landscape?: boolean; margins?: 
 }
 
 /** File .docx dạng Blob (trình duyệt). */
-export const buildDocxBlob = (doc: ExamDoc, opts?: { landscape?: boolean; margins?: DocxMargins }): Promise<Blob> =>
+export const buildDocxBlob = (doc: ExamDoc, opts?: DocxOpts): Promise<Blob> =>
   inlineDocImages(doc).then((d) => Packer.toBlob(buildDocx(d, opts)))
 
 /** Tạo file Word (.docx) chứa ảnh PNG phiếu trả lời cỡ A4 (≥ 200 dpi). */

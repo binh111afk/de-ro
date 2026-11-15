@@ -34,6 +34,8 @@
   }
 
   .compose-center {
+    /* mốc cho thanh Tìm nổi (FindPanel, absolute góc trên phải) */
+    position: relative;
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -2719,6 +2721,13 @@
     left: 0;
     background: var(--docs-paper);
     box-shadow: var(--docs-page-shadow);
+  }
+
+  /* số trang ở lề dưới (Bố cục › Số trang) */
+  .doc-page-number {
+    position: absolute;
+    font: 13px/20px 'Times New Roman', serif;
+    color: #222;
   }
 
   .doc-flow {

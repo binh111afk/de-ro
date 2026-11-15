@@ -5,6 +5,7 @@
  * đề cộng đồng), còn trình soạn dùng mô hình block `ExamDoc`.
  */
 import katex from 'katex'
+import type { PageNumberSetup } from './pageSetup'
 import 'katex/contrib/mhchem' // \ce{...}
 import type { ExamBlock, ExamDoc, FormatAttrs, RichText, Span } from '@/data/docTypes'
 import type { SummaryAnswerData } from '@/lib/shuffleExam'
@@ -18,7 +19,7 @@ import { splitRichLines } from './convert'
 /** Tải file .docx thật. Thư viện `docx` nạp động để không nằm trong bundle chính. */
 export async function exportDocBlocks(
   doc: ExamDoc,
-  opts?: { landscape?: boolean; fileName?: string; margins?: { top: number; right: number; bottom: number; left: number } },
+  opts?: { landscape?: boolean; fileName?: string; margins?: { top: number; right: number; bottom: number; left: number }; pageNumber?: PageNumberSetup },
 ): Promise<void> {
   const { buildDocxBlob } = await import('./docxBlocks')
   const url = URL.createObjectURL(await buildDocxBlob(doc, opts))
@@ -393,14 +394,30 @@ export function printDoc(doc: ExamDoc, page?: PrintPage): void {
 }
 
 /** khổ/lề trang lấy từ Thiết lập trang của trình soạn (cm) */
-export type PrintPage = { landscape?: boolean; margins?: { top: number; right: number; bottom: number; left: number } }
+export type PrintPage = { landscape?: boolean; margins?: { top: number; right: number; bottom: number; left: number }; pageNumber?: PageNumberSetup }
 
 /** ghi đè @page mặc định của EXPORT_CSS bằng lề/hướng người dùng đặt */
 function pageCss(page?: PrintPage): string {
   if (!page) return ''
   const m = page.margins
   const n = (v: number) => `${Math.max(0, Math.min(6, Number(v) || 0))}cm`
-  return `@page { size: A4 ${page.landscape ? 'landscape' : 'portrait'};${m ? ` margin: ${n(m.top)} ${n(m.right)} ${n(m.bottom)} ${n(m.left)};` : ''} }`
+  return `@page { size: A4 ${page.landscape ? 'landscape' : 'portrait'};${m ? ` margin: ${n(m.top)} ${n(m.right)} ${n(m.bottom)} ${n(m.left)};` : ''} }${pageNumberCss(page.pageNumber)}`
+}
+
+/**
+ * Số trang khi in: ô lề @page (Chrome/Edge). Trình duyệt in không cho ẩn từng
+ * trang tuỳ ý — chỉ `:first` — và không cộng/trừ được vào counter(page), nên
+ * dời số bằng counter-increment ở trang đầu: trang `from` in đúng `startAt`.
+ */
+function pageNumberCss(pn?: PageNumberSetup): string {
+  if (!pn?.show) return ''
+  const side = pn.place === 'top' ? 'top' : 'bottom'
+  const box = `${side}-${pn.align === 'left' ? 'left' : pn.align === 'right' ? 'right' : 'center'}`
+  const offset = Math.round(pn.startAt - pn.from)
+  return ` @page { @${box} { content: counter(page); font: 13px 'Times New Roman', serif; } }` +
+    // counter-increment ở trang đầu thay cho mức +1 mặc định → các trang sau cứ +1 tiếp
+    (offset ? ` @page :first { counter-increment: page ${offset + 1}; }` : '') +
+    (pn.from > 1 ? ` @page :first { @${box} { content: none; } }` : '')
 }
 
 /** In nhiều đề trong một lần (xáo đề: mỗi mã đề sang trang mới) → lưu thành một file PDF. */

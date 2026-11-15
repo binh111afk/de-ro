@@ -17,6 +17,27 @@ export interface PageSetup {
   pageColor?: string
   /** viền trang: độ dày (px) — 0 = không viền */
   pageBorder?: number
+  /** số trang ở chân trang (không có = không đánh số) */
+  pageNumber?: PageNumberSetup
+}
+
+export interface PageNumberSetup {
+  show: boolean
+  /** trang (đếm từ 1) bắt đầu hiện số — các trang trước để trống, vd. bỏ trang bìa */
+  from: number
+  /** số hiện ở trang `from` */
+  startAt: number
+  align: 'left' | 'center' | 'right'
+  /** đầu trang hay chân trang (thiếu = chân trang) */
+  place?: 'top' | 'bottom'
+}
+
+export const DEFAULT_PAGE_NUMBER: PageNumberSetup = { show: true, from: 1, startAt: 1, align: 'center' }
+
+/** số in ở trang `page` (đếm từ 1), `null` = trang này không đánh số */
+export function pageNumberAt(pn: PageNumberSetup | undefined, page: number): number | null {
+  if (!pn?.show || page < pn.from) return null
+  return pn.startAt + page - pn.from
 }
 
 export type PageMargins = { top: number; right: number; bottom: number; left: number }

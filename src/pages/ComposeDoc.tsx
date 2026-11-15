@@ -626,7 +626,7 @@ export default function ComposeDoc() {
   const handleExportWord = useCallback(async () => {
     if (!activeDoc) return
     const { exportDocBlocks } = await import('@/examEditor/exportBlocks') // xuất Word nạp lúc bấm
-    await exportDocBlocks(activeDoc, { landscape: pageSetup.orientation === 'landscape', margins: marginsOf(pageSetup) })
+    await exportDocBlocks(activeDoc, { landscape: pageSetup.orientation === 'landscape', margins: marginsOf(pageSetup), pageNumber: pageSetup.pageNumber })
   }, [activeDoc, pageSetup])
 
   /**
@@ -684,7 +684,7 @@ export default function ComposeDoc() {
 
   const handlePrint = useCallback(() => {
     if (!activeDoc) return
-    void import('@/examEditor/exportBlocks').then(({ printDoc }) => printDoc(activeDoc, { landscape: pageSetup.orientation === 'landscape', margins: marginsOf(pageSetup) }))
+    void import('@/examEditor/exportBlocks').then(({ printDoc }) => printDoc(activeDoc, { landscape: pageSetup.orientation === 'landscape', margins: marginsOf(pageSetup), pageNumber: pageSetup.pageNumber }))
   }, [activeDoc, pageSetup])
 
   /** AI trả về JSON đề → áp theo `action` (replace / append / patch), trả câu tóm tắt. */
@@ -1068,6 +1068,8 @@ export default function ComposeDoc() {
         onPageColorChange={(c) => setPageSetup((p) => ({ ...p, pageColor: c }))}
         pageBorder={pageSetup.pageBorder}
         onPageBorderChange={(w) => setPageSetup((p) => ({ ...p, pageBorder: w }))}
+        pageNumber={pageSetup.pageNumber}
+        onPageNumberChange={(pn) => setPageSetup((p) => ({ ...p, pageNumber: pn }))}
         onOpenNav={openNavWithTab}
         layoutMode={layoutMode}
       />
