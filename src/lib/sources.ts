@@ -1,15 +1,12 @@
 /**
- * Thang nguồn cho AI soạn đề:
- *   1. Tệp giáo viên đính kèm (ưu tiên cao nhất)
- *   2. Tài liệu đã lưu trong app (myDocs)
- *   3. Kết quả search web (nếu đã cấu hình TAVILY_API_KEY)
- *   0. Không có nguồn — dùng kiến thức chung, phải cảnh báo.
+ * Nguồn cho AI soạn đề: CHỈ những gì giáo viên tự đưa vào — tệp đính kèm hoặc nguồn chọn trong "Thêm nguồn".
+ * Không tự dò đề đã lưu hay tìm web (giáo viên không thêm nguồn mà AI vẫn lôi đề khác vào là sai ý;
+ * tìm web đi qua nút "Tìm trên web" riêng). Không có nguồn — dùng kiến thức chung, phải cảnh báo.
  */
 import { apiFetch } from '@/lib/apiFetch'
 import type { ExamBlock, ExamDoc, RichText } from '@/data/docTypes'
 import { plainText } from '@/examEditor/convert'
 import { useDocStore } from '@/store/docs'
-import { useComposeStore } from '@/store/compose'
 import { getCommunityDoc } from '@/lib/community'
 
 export interface SourceFile {
@@ -19,27 +16,20 @@ export interface SourceFile {
 }
 
 export interface SourceItem {
-  tier: 1 | 2 | 3
+  tier: 1
   name: string
   text: string
   url?: string
 }
 
 export interface SourcePack {
-  tier: 0 | 1 | 2 | 3
+  tier: 0 | 1
   items: SourceItem[]
   warnings: string[]
 }
 
-export interface SearchFeed {
-  items: SourceItem[]
-  note?: string
-}
-
 const MAX_SOURCE_CHARS = 30_000
-const MAX_SAVED_DOC_CHARS = 8_000
-const MAX_SAVED_DOCS = 3
-/** nguồn giáo viên tự chọn: mỗi nguồn được nhiều chữ hơn tài liệu tự dò (vẫn chung trần MAX_SOURCE_CHARS) */
+/** mỗi nguồn giáo viên chọn tối đa bấy nhiêu chữ (vẫn chung trần MAX_SOURCE_CHARS) */
 const MAX_PICKED_CHARS = 12_000
 export const MAX_PICKED = 5
 
@@ -144,135 +134,6 @@ function docText(doc: ExamDoc): string {
     .join('\n\n')
 }
 
-function normalize(s: string): string {
-  return s.normalize('NFC').toLowerCase()
-}
-
-const SUBJECT_HINTS: Array<[RegExp, string]> = [
-  [/ngữ văn|môn văn|văn học/, 'Ngữ văn'],
-  [/tiếng anh|môn anh/, 'Tiếng Anh'],
-  [/vật lý|môn lý/, 'Vật lý'],
-  [/hóa học|môn hóa/, 'Hóa học'],
-  [/sinh học|môn sinh/, 'Sinh học'],
-  [/lịch sử|môn sử/, 'Lịch sử'],
-  [/địa lý|địa lí|môn địa/, 'Địa lý'],
-  [/tin học|môn tin/, 'Tin học'],
-  [/gdcd|giáo dục công dân/, 'GDCD'],
-  [/toán/, 'Toán'],
-]
-
-function promptGrade(text: string): string | null {
-  const m = normalize(text).match(/lớp\s*(\d{1,2})/)
-  return m ? m[1] : null
-}
-
-function promptSubject(text: string): string | null {
-  const t = normalize(text)
-  for (const [re, name] of SUBJECT_HINTS) if (re.test(t)) return name
-  return null
-}
-
-function docGrade(doc: ExamDoc): string | null {
-  const m = String(doc.grade ?? '').match(/\d{1,2}/)
-  return m ? m[0] : null
-}
-
-function textScore(prompt: string, haystack: string): number {
-  const words = Array.from(
-    new Set(
-      normalize(prompt)
-        .split(/[^a-z0-9à-ỹ]+/i)
-        .filter((w) => w.length >= 3),
-    ),
-  )
-  if (!words.length) return 0
-  const hay = normalize(haystack)
-  let score = 0
-  for (const w of words) if (hay.includes(w)) score += 1
-  return Math.min(score, 6)
-}
-
-/**
- * Ưu tiên 2: tìm trong tài liệu đã lưu. Chỉ lấy tài liệu khớp lớp/môn hoặc có
- * từ khoá trùng với yêu cầu; không lôi tài liệu không liên quan vào prompt.
- */
-export function findSavedSources(prompt: string): SourceItem[] {
-  const grade = promptGrade(prompt)
-  const subject = promptSubject(prompt)
-  const activeId = useComposeStore.getState().activeId
-  const docs = useDocStore.getState().myDocs.filter(
-    (d) => d.id !== activeId && (d.kind ?? 'exam') === 'exam' && d.blocks.length > 0,
-  )
-
-  const scored = docs
-    .map((doc) => {
-      const text = docText(doc)
-      let score = 0
-      if (grade && docGrade(doc) === grade) score += 5
-      if (subject && normalize(doc.subject ?? '').includes(normalize(subject))) score += 4
-      score += textScore(prompt, `${doc.title}\n${text.slice(0, 4000)}`)
-      if (!grade && !subject && score < 3) score = 0
-      return { doc, text, score }
-    })
-    .filter((d) => d.score > 0)
-    .sort((a, b) => b.score - a.score)
-    .slice(0, MAX_SAVED_DOCS)
-
-  const seen = new Map<string, number>()
-  return scored.map(({ doc, text }) => {
-    const base = `${doc.title}${doc.grade ? ` · ${doc.grade}` : ''}${doc.subject ? ` · ${doc.subject}` : ''}`
-    const n = (seen.get(base) ?? 0) + 1
-    seen.set(base, n)
-    return {
-      tier: 2 as const,
-      name: n > 1 ? `${base} (${n})` : base,
-      text: text.slice(0, MAX_SAVED_DOC_CHARS),
-    }
-  })
-}
-
-/** Ưu tiên 3: search web qua proxy server. Chưa có key → trả rỗng + ghi chú. */
-export async function searchWeb(prompt: string): Promise<SearchFeed> {
-  try {
-    const res = await apiFetch('/api/search', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query: prompt.slice(0, 400) }),
-    })
-    const data = (await res.json().catch(() => null)) as
-      | {
-          configured?: boolean
-          results?: Array<{ title?: string; url?: string; content?: string }>
-          message?: string
-          error?: string
-        }
-      | null
-    if (!res.ok) throw new Error(data?.error || `Search lỗi (${res.status}).`)
-    if (!data?.configured) {
-      // Thiếu key là chuyện cấu hình của dev → không báo cho người dùng.
-      if (data?.message) console.info('[search]', data.message)
-      return { items: [] }
-    }
-    if (data.error && !(data.results?.length)) {
-      return { items: [], note: `Search lỗi: ${data.error}` }
-    }
-    const items: SourceItem[] = (data.results ?? [])
-      .filter((r) => r.url && r.content)
-      .map((r) => ({
-        tier: 3 as const,
-        name: r.title || r.url || 'Nguồn web',
-        text: r.content ?? '',
-        url: r.url,
-      }))
-    return { items }
-  } catch (err) {
-    return {
-      items: [],
-      note: `Không search được web: ${err instanceof Error ? err.message : String(err)}`,
-    }
-  }
-}
-
 /** Tải nội dung các nguồn giáo viên đã chọn (lúc bấm gửi, không lúc chọn). Nguồn lỗi thì bỏ qua kèm cảnh báo. */
 export async function loadPickedSources(list: PickedSource[]): Promise<{ items: SourceItem[]; warnings: string[] }> {
   const warnings: string[] = []
@@ -310,7 +171,7 @@ export async function loadPickedSources(list: PickedSource[]): Promise<{ items: 
   return { items: items.filter((x): x is SourceItem => x !== null), warnings }
 }
 
-export async function buildSourcePack(prompt: string, files: SourceFile[], picked: PickedSource[] = []): Promise<SourcePack> {
+export async function buildSourcePack(files: SourceFile[], picked: PickedSource[] = []): Promise<SourcePack> {
   const loaded = picked.length ? await loadPickedSources(picked) : { items: [], warnings: [] }
   const warnings: string[] = [...loaded.warnings]
   const attached: SourceItem[] = [...loaded.items]
@@ -333,15 +194,7 @@ export async function buildSourcePack(prompt: string, files: SourceFile[], picke
       warnings.push(`${f.name}: ${err instanceof Error ? err.message : String(err)}`)
     }
   }
-  if (attached.length) return { tier: 1, items: attached, warnings }
-
-  const saved = findSavedSources(prompt)
-  if (saved.length) return { tier: 2, items: saved, warnings }
-
-  const web = await searchWeb(prompt)
-  if (web.items.length) return { tier: 3, items: web.items, warnings }
-  if (web.note) warnings.push(web.note)
-  return { tier: 0, items: [], warnings }
+  return { tier: attached.length ? 1 : 0, items: attached, warnings }
 }
 
 const UNTRUSTED_NOTE =
@@ -353,18 +206,6 @@ function tierRule(pack: SourcePack): string {
       'NGUỒN ƯU TIÊN 1 — TỆP MẪU / TÀI LIỆU GIÁO VIÊN CHỌN. Bám sát cấu trúc, độ khó, dạng câu, cách trình bày và ' +
       'phạm vi kiến thức của tệp mẫu. Không thay bằng kiến thức ngoài tệp; nếu tệp thiếu ' +
       'dữ kiện để làm một câu, ghi rõ chỗ thiếu thay vì bịa.'
-    )
-  }
-  if (pack.tier === 2) {
-    return (
-      'NGUỒN ƯU TIÊN 2 — TÀI LIỆU ĐÃ LƯU. Dùng các tài liệu dưới đây làm tham chiếu, ưu ' +
-      'tiên đúng lớp/môn; không bịa nguồn hoặc trích dẫn ngoài tài liệu.'
-    )
-  }
-  if (pack.tier === 3) {
-    return (
-      'NGUỒN ƯU TIÊN 3 — KẾT QUẢ WEB. Chỉ dùng làm tham khảo; không bịa nguồn. Nếu nguồn ' +
-      'mâu thuẫn hoặc không đủ, nêu rõ để giáo viên kiểm tra.'
     )
   }
   return (

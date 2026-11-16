@@ -1,11 +1,11 @@
 /**
- * Test thang nguồn: tìm tài liệu đã lưu theo lớp/môn + rule/prompt nguồn.
+ * Test nguồn cho AI soạn đề: chỉ dùng nguồn giáo viên tự đưa vào, không tự lôi đề đã lưu; rule/prompt nguồn.
  * Chạy: npm run test:sources
  */
 import assert from 'node:assert/strict'
 import { emptyDoc } from '../src/data/docTypes.ts'
 import { useDocStore } from '../src/store/docs.ts'
-import { findSavedSources, sourcePrompt, sourceRule } from '../src/lib/sources.ts'
+import { buildSourcePack, sourcePrompt, sourceRule } from '../src/lib/sources.ts'
 
 const grade7 = emptyDoc({ title: 'Đề giữa kỳ Toán 7', grade: 'Lớp 7', subject: 'Toán' })
 grade7.blocks = [
@@ -19,19 +19,19 @@ grade7.blocks = [
     ],
   },
 ]
-const grade9 = emptyDoc({ title: 'Đề Văn 9', grade: 'Lớp 9', subject: 'Ngữ văn' })
-grade9.blocks = [{ type: 'paragraph', text: 'Nghị luận văn học' }]
-useDocStore.setState({ myDocs: [grade7, grade9] })
+useDocStore.setState({ myDocs: [grade7] })
 
-const matched = findSavedSources('Soạn đề kiểm tra toán lớp 7 về căn bậc hai')
-assert.equal(matched.length, 1, 'phải tìm đúng tài liệu Toán 7')
-assert.match(matched[0].name, /Lớp 7/)
-assert.match(matched[0].text, /căn bậc hai/)
-console.log('✅ tìm tài liệu đã lưu theo lớp/môn')
+// đề cùng lớp/môn có sẵn trong máy (vd đề mở từ cộng đồng / kho đề) nhưng giáo viên không chọn → không được dùng
+const none = await buildSourcePack([], [])
+assert.equal(none.tier, 0)
+assert.equal(none.items.length, 0, 'không thêm nguồn thì không được tự lấy đề đã lưu')
+console.log('✅ không thêm nguồn thì không tự lấy đề đã lưu')
 
-const noMatch = findSavedSources('Soạn đề hóa lớp 11 về ancol')
-assert.equal(noMatch.length, 0, 'không được lôi tài liệu không liên quan')
-console.log('✅ không lấy tài liệu ngoài phạm vi')
+// giáo viên chọn đúng đề đó trong "Thêm nguồn" → dùng
+const picked = await buildSourcePack([], [{ kind: 'mine', id: grade7.id, name: grade7.title }])
+assert.equal(picked.tier, 1)
+assert.match(picked.items[0].text, /căn bậc hai/)
+console.log('✅ nguồn giáo viên chọn thì dùng')
 
 const tier1 = { tier: 1, items: [{ tier: 1, name: 'mau.docx', text: 'Mẫu đề' }], warnings: [] }
 assert.match(sourceRule(tier1), /TỆP MẪU/)

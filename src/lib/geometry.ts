@@ -327,7 +327,50 @@ function shape2d(shape: Geo2dShape): P2[] {
 export function renderGeo2dSvg(spec: Geo2dSpec, desc: string): GeoImage {
   lastErrors = []
   lastPick = { points: [], segs: [], tris: [] }
-  return { ...renderGeo2d(spec, desc), errors: lastErrors, pick: lastPick }
+  return { ...renderGeo2d(fixRightAngleCoords(spec), desc), errors: lastErrors, pick: lastPick }
+}
+
+/**
+ * AI đôi khi khai báo "vuông tại A" (mẫu right-triangle hoặc lệnh "vuông A B C") nhưng toạ độ lại cho góc vuông
+ * ở đỉnh khác (vd A(0; 4) B(0; 0) C(5; 0) — vuông tại B), hình vẽ ra tự mâu thuẫn. Khi đỉnh khai báo không vuông
+ * mà một đỉnh khác của tam giác đó vuông, đổi toạ độ hai đỉnh cho nhau để góc vuông về đúng đỉnh đề nói.
+ */
+export function fixRightAngleCoords(spec: Geo2dSpec): Geo2dSpec {
+  if (!spec.extras) return spec
+  const coords = extractCoords(spec.extras)
+  if (coords.size < 3) return spec
+  const claims: string[][] = []
+  if (spec.shape === 'right-triangle' && spec.names.length >= 3) claims.push(spec.names.slice(0, 3))
+  for (const line of spec.extras.split('\n')) {
+    const m = line.trim().match(/^(?:góc vuông|vuông|⊥)\s+(.+)$/iu)
+    const ns = m?.[1].match(/[A-Z][0-9]*'?/g)
+    if (ns?.length === 3) claims.push(ns)
+  }
+  const isRight = (at: string, u: string, v: string) => {
+    const [o, p, q] = [coords.get(at)!, coords.get(u)!, coords.get(v)!]
+    const a: P2 = [p[0] - o[0], p[1] - o[1]]
+    const b: P2 = [q[0] - o[0], q[1] - o[1]]
+    const la = Math.hypot(...a)
+    const lb = Math.hypot(...b)
+    return la > 1e-9 && lb > 1e-9 && Math.abs((a[0] * b[0] + a[1] * b[1]) / (la * lb)) < 0.05
+  }
+  let extras = spec.extras
+  for (const [at, u, v] of claims) {
+    if (![at, u, v].every((n) => coords.has(n)) || isRight(at, u, v)) continue
+    const other = isRight(u, at, v) ? u : isRight(v, at, u) ? v : null
+    if (!other) continue
+    const [pa, po] = [coords.get(at)!, coords.get(other)!]
+    coords.set(at, po)
+    coords.set(other, pa)
+    // đổi phần toạ độ trong chữ: "A(0; 4)" ↔ "B(0; 0)"
+    // tên điểm chỉ gồm chữ hoa, số, dấu phẩy trên — không có ký tự đặc biệt của regex
+    const both = new RegExp(`(^|[^A-Za-z0-9'])(${at}|${other})(?![0-9'])\\s*\\(([^)]*)\\)`, 'gu')
+    const text = new Map<string, string>()
+    for (const m of extras.matchAll(both)) if (!text.has(m[2])) text.set(m[2], m[3])
+    if (!text.has(at) || !text.has(other)) continue
+    extras = extras.replace(both, (_, pre: string, n: string) => `${pre}${n}(${text.get(n === at ? other : at)})`)
+  }
+  return extras === spec.extras ? spec : { ...spec, extras }
 }
 
 const TEMPLATE_SCALE = 50

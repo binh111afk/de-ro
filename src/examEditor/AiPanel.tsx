@@ -1033,8 +1033,8 @@ export function AiPanel({
     const controller = new AbortController()
     abortRef.current = controller
 
-    // Thang nguồn chỉ áp cho soạn/sửa ĐỀ; slide và câu hỏi thường không search.
-    // Nguồn giáo viên tự chọn thì áp cho mọi chế độ (soạn đề, slide, hỏi đáp).
+    // Chỉ dùng nguồn giáo viên tự đưa vào (tệp đính kèm, "Thêm nguồn") — không tự lấy đề đã lưu hay tìm web.
+    // Tệp đính kèm chỉ áp cho soạn/sửa ĐỀ; nguồn tự chọn áp cho mọi chế độ (soạn đề, slide, hỏi đáp).
     let pack: SourcePack = { tier: 0, items: [], warnings: [] }
     const sentPicked = picked
     const examDoc = intent === 'doc' && mode === 'exam'
@@ -1042,7 +1042,7 @@ export function AiPanel({
     const vague = examDoc && !sentFiles.length && !sentPicked.length && text.split(/\s+/).length < 5 && !turns.length
     if ((examDoc && !vague) || sentPicked.length) {
       try {
-        if (examDoc) pack = await buildSourcePack(text, sentFiles, sentPicked)
+        if (examDoc) pack = await buildSourcePack(sentFiles, sentPicked)
         else {
           const got = await loadPickedSources(sentPicked)
           pack = { tier: got.items.length ? 1 : 0, items: got.items, warnings: got.warnings }
