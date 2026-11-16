@@ -4,7 +4,7 @@
  * Giao diện từng mục (AdminLayout, UsersPanel, AuditPanel…) do agent dựng theo docs/prompt-admin-ui.md.
  */
 import { useEffect, useState } from 'react'
-import Home from '@/pages/Home'
+import NotFound from '@/pages/NotFound'
 import { getMe, isAdminMock, type AdminMe } from '@/lib/adminApi'
 import { useSession } from '@/lib/useSession'
 import AdminLayout from './AdminLayout'
@@ -25,6 +25,6 @@ export default function AdminPage() {
   }, [session])
 
   if (me === 'loading') return <div className="flex min-h-[50vh] items-center justify-center text-[13px] text-ink-3">Đang tải…</div>
-  if (!me) return <Home />
+  if (!me) return <NotFound />
   return <AdminLayout me={me} />
 }

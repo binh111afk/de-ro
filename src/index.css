@@ -947,6 +947,49 @@
   }
 }
 
+/* Trang 404: tờ đề trượt lên, phương án hiện lần lượt, bút đỏ tự vẽ rồi đứng yên */
+@keyframes nf-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes nf-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -3.5px, 0);
+  }
+}
+.nf-paper {
+  animation: sheet-in 500ms var(--ease-soft) both;
+}
+.nf-float {
+  animation: nf-float 7s ease-in-out 2.1s infinite;
+}
+.nf-step {
+  animation: rise 380ms var(--ease-soft) both;
+  animation-delay: var(--nf-d, 0ms);
+}
+.nf-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: nf-draw var(--nf-dur, 550ms) ease-out forwards;
+  animation-delay: var(--nf-d, 0ms);
+}
+@media (prefers-reduced-motion: reduce) {
+  .nf-paper,
+  .nf-float,
+  .nf-step,
+  .nf-draw {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+}
+
 .caret::after {
   content: '';
   display: inline-block;
