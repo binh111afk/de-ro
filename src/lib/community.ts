@@ -181,7 +181,9 @@ export async function setListed(id: string, listed: boolean): Promise<void> {
 export async function unpublish(id: string): Promise<void> {
   const s = await currentSession()
   if (!s) throw new AuthError('Bạn cần đăng nhập.')
-  await rest(`/community_exams?id=eq.${encodeURIComponent(id)}`, { method: 'DELETE', token: s.access_token, prefer: 'return=minimal' })
+  const gone = await rest<Array<{ id: string }>>(`/community_exams?id=eq.${encodeURIComponent(id)}&select=id`, { method: 'DELETE', token: s.access_token, prefer: 'return=representation' })
+  // RLS chặn đề đang bị báo cáo / đã bị gỡ: PostgREST trả 0 dòng thay vì lỗi
+  if (Array.isArray(gone) && !gone.length) throw new Error('Đề đang được kiểm duyệt nên chưa gỡ được.')
 }
 
 /** Đề cho học sinh mở bằng link: qua server, đề chỉ-link không kèm đáp án (xem server/exam.ts). */

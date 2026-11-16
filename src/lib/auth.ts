@@ -92,8 +92,17 @@ function toSession(data: Record<string, unknown>): Session {
  * Đăng nhập bằng Google: chuyển sang trang uỷ quyền của Supabase (luồng implicit).
  * Google xong sẽ quay về `<origin>/#access_token=…`, `consumeAuthRedirect()` ở App nhận và lưu phiên.
  */
+const AUTH_FLOW_KEY = 'dethinhbien-auth-flow'
+
 export function signInWithGoogle(): void {
-  const redirect = `${window.location.origin}/`
+  // nonce của luồng do CHÍNH tab này bắt đầu: link lạ kèm token người khác không gài được phiên (login CSRF)
+  const nonce = Array.from(crypto.getRandomValues(new Uint8Array(16)), (b) => b.toString(16).padStart(2, '0')).join('')
+  try {
+    sessionStorage.setItem(AUTH_FLOW_KEY, nonce)
+  } catch {
+    return
+  }
+  const redirect = `${window.location.origin}/?auth_flow=${nonce}`
   window.location.assign(`${BASE}/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(redirect)}`)
 }
 
@@ -162,6 +171,22 @@ export async function consumeAuthRedirect(): Promise<'recovery' | 'session' | nu
   if (!access || !refresh) return null
   if (hash.get('type') === 'recovery') return 'recovery'
 
+  const params = new URLSearchParams(window.location.search)
+  const expected = params.get('auth_flow')
+  let started = false
+  try {
+    started = !!expected && sessionStorage.getItem(AUTH_FLOW_KEY) === expected
+    sessionStorage.removeItem(AUTH_FLOW_KEY)
+  } catch {
+    started = false
+  }
+  params.delete('auth_flow')
+  const cleanUrl = window.location.pathname + (params.size ? `?${params}` : '')
+  if (!started) {
+    window.history.replaceState(null, '', cleanUrl)
+    return null
+  }
+
   const res = await fetch(`${BASE}/auth/v1/user`, {
     headers: { apikey: KEY, Authorization: `Bearer ${access}` },
   })
@@ -176,7 +201,7 @@ export async function consumeAuthRedirect(): Promise<'recovery' | 'session' | nu
   })
   const back = takeReturnPath()
   if (back) window.location.replace(back)
-  else window.history.replaceState(null, '', window.location.pathname + window.location.search)
+  else window.history.replaceState(null, '', cleanUrl)
   return 'session'
 }
 

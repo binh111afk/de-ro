@@ -367,11 +367,13 @@ export const CONTENT_ACTIONS: ActionMap = {
       // nên đọc exam_id trong phạm vi rồi ghim nó vào chính lệnh ghi (báo cáo đã bị đổi sang đề khác → 0 dòng)
       let pin = ''
       if (ctx.role !== 'admin') {
-        const { data: rep } = await call<Array<{ exam_id: string }>>(
+        const { data: rep } = await call<Array<{ exam_id: string; community_exams?: { owner_id: string | null } | null }>>(
           ctx.s,
-          `/rest/v1/reports?id=eq.${reportId}&select=exam_id,community_exams!inner(id)${scopeQs(ctx, 'community_exams.')}`,
+          `/rest/v1/reports?id=eq.${reportId}&select=exam_id,community_exams!inner(id,owner_id)${scopeQs(ctx, 'community_exams.')}`,
         )
         if (!rep.length || !UUID.test(rep[0].exam_id ?? '')) throw new HttpError(404, 'Không tìm thấy báo cáo.')
+        // tách quyền như content.exams.setStatus: không tự xử lý báo cáo về đề của chính mình
+        if (rep[0].community_exams?.owner_id === ctx.userId) throw new HttpError(403, 'Không xử lý báo cáo về đề của chính bạn.')
         pin = `&exam_id=eq.${rep[0].exam_id}`
       }
       const { data: done } = await call<unknown[]>(ctx.s, `/rest/v1/reports?id=eq.${reportId}${pin}`, {
@@ -385,7 +387,7 @@ export const CONTENT_ACTIONS: ActionMap = {
       })
       if (!Array.isArray(done) || !done.length) throw new HttpError(404, 'Không tìm thấy báo cáo.')
 
-      await audit(ctx, 'content.reports.resolve', String(reportId), { status })
+      await audit(ctx, 'content.reports.resolve', String(reportId), { status, examId: pin ? pin.slice('&exam_id=eq.'.length) : undefined })
       return { ok: true }
     },
   },

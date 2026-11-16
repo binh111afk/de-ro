@@ -115,7 +115,16 @@ export async function submitAttempt(a: { examId: string; name: string; answers: 
 export async function listAttempts(examIds: string[]): Promise<Attempt[]> {
   const s = await currentSession()
   if (!s || !examIds.length) return []
-  const q = (cols: string) => rest<Attempt[]>(`/exam_attempts?exam_id=in.(${examIds.join(',')})&select=${cols}&order=created_at.desc&limit=3000`, { token: s.access_token })
+  // đọc hết theo trang: một trần cố định sẽ âm thầm giấu bài thật khi đề bị nộp tràn
+  const q = async (cols: string) => {
+    const out: Attempt[] = []
+    for (let offset = 0; offset < 50000; offset += 1000) {
+      const rows = await rest<Attempt[]>(`/exam_attempts?exam_id=in.(${examIds.join(',')})&select=${cols}&order=created_at.desc,id.desc&limit=1000&offset=${offset}`, { token: s.access_token })
+      out.push(...rows)
+      if (rows.length < 1000) break
+    }
+    return out
+  }
   return q(COLUMNS).catch(() => q(OLD_COLUMNS))
 }
 
