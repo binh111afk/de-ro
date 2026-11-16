@@ -91,7 +91,7 @@ export function HeroSection() {
             </h1>
 
             <p style={{ '--d': '170ms' } as React.CSSProperties} className="land-rise mt-4 text-[15px] leading-[1.65] text-ink-2 sm:text-[16px]">
-              Soạn đề trên trang A4, vẽ hình Toán – Lí – Hoá – Sinh bằng vài thông số, làm slide, chữa bài trên bảng. Xong thì xuất Word, PowerPoint hoặc giao bài online.
+              Soạn đề, làm slide, chữa bài trên bảng. Xuất Word, PowerPoint hoặc giao bài online.
             </p>
 
             <div style={{ '--d': '260ms' } as React.CSSProperties} className="land-rise mt-6 flex flex-col items-start gap-3 min-[460px]:flex-row min-[460px]:flex-wrap min-[460px]:items-center">

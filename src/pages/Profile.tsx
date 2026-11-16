@@ -126,7 +126,6 @@ function IdentityCard({ user }: { user: Session['user'] }) {
           <LogOut className="size-4" />
           Đăng xuất
         </button>
-        <p className="mt-1.5 text-[12.5px] text-ink-4">Đề và slide đã lưu vẫn còn.</p>
       </div>
     </div>
   )
@@ -159,10 +158,7 @@ function EditCard({ user }: { user: Session['user'] }) {
 
   return (
     <form onSubmit={save} className="rounded-[8px] bg-surface p-7 shadow-lift sm:p-8" noValidate>
-      <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 className="font-display text-[22px] font-semibold tracking-[-0.01em] text-ink">Thông tin cá nhân</h2>
-        <p className="text-[13px] text-ink-4">Tên hiển thị xuất hiện trên đầu trang và trong danh sách đề.</p>
-      </div>
+      <h2 className="font-display text-[22px] font-semibold tracking-[-0.01em] text-ink">Thông tin cá nhân</h2>
 
       <div className="mt-7 grid gap-5 sm:grid-cols-2">
         <label className="block">
@@ -248,9 +244,6 @@ function CreditCard() {
           ∞<span className="ml-2 text-[18px] font-medium text-ink-3">Không giới hạn</span>
         </p>
         <div className="mt-5 h-2.5 overflow-hidden rounded-full bg-clay/80" aria-hidden />
-        <p className="mt-3 text-[12.5px] text-ink-3">
-          Tài khoản của bạn được dùng AI không giới hạn token, không trừ hạn mức tháng.
-        </p>
       </>
     )
   else if (q === null) body = <p className="mt-6 text-[13px] text-ink-3">Máy dev: không giới hạn token AI.</p>
@@ -265,10 +258,9 @@ function CreditCard() {
           <span className="text-[18px] font-medium text-ink-3"> điểm còn lại</span>
         </p>
         <ProgressBar pct={pct} label="Phần trăm điểm AI còn lại" />
-        <p className="mt-3 text-[12.5px] text-ink-3">
-          Tài khoản được tặng 120 điểm khi bắt đầu dùng AI (1 điểm = 1.000 token). Kết quả AI bị lỗi được hoàn điểm.
-          {q.base ? ` Hạn mức tháng: ${fmt(Math.floor(q.base / 1000))} điểm.` : ''}
-        </p>
+        {q.base ? (
+          <p className="mt-3 text-[12.5px] text-ink-3">Hạn mức tháng: {fmt(Math.floor(q.base / 1000))} điểm.</p>
+        ) : null}
       </>
     )
   }

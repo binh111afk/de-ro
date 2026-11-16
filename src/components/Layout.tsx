@@ -301,7 +301,7 @@ export function Footer() {
       <div className="border-t border-line/60">
         <div className="mx-auto flex max-w-[1180px] flex-wrap items-center justify-between gap-2 px-5 py-5 sm:px-6">
           <p className="text-[12px] text-ink-4">
-            © 2026 đề rõ — Dữ liệu mẫu phục vụ mục đích trình diễn.
+            © 2026 đề rõ
           </p>
           <div className="flex flex-wrap items-center gap-4">
             <button

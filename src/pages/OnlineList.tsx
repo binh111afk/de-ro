@@ -35,8 +35,7 @@ export default function OnlineList() {
             Tạo đề online
           </h1>
           <p className="mt-4 max-w-[56ch] text-[15px] leading-[1.75] text-ink-2">
-            Nhập từng câu, đặt đáp án và lời giải, cài đặt cách làm bài rồi cho học sinh làm trực tiếp. Đề đang soạn dở được tự lưu
-            ở đây. Soạn xong bấm Đăng để đưa lên đề cộng đồng.
+            Nhập câu hỏi, đáp án và lời giải rồi cho học sinh làm trực tiếp.
           </p>
         </div>
         <Button variant="primary" onClick={() => navigate(`/tao-de-online/${create()}`)}>

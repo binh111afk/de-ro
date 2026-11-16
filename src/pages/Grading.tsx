@@ -1,5 +1,4 @@
 import { useMemo, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { Camera, CheckCircle2, ClipboardList, ScanLine, XCircle } from 'lucide-react'
 import { Badge, Button, EmptyState, inputClass, selectClass } from '@/components/ui'
 import { cn } from '@/lib/cn'
@@ -82,8 +81,7 @@ export default function Grading() {
           Chấm trắc nghiệm
         </h1>
         <p className="mt-4 max-w-[54ch] text-[15px] leading-[1.75] text-ink-2">
-          Chấm nhanh phiếu trả lời trắc nghiệm. Chọn đáp án, chụp tay vào ảnh phiếu, hoặc gõ tay
-          từng câu — kết quả hiện ra ngay.
+          Chụp ảnh phiếu hoặc gõ đáp án từng câu, kết quả hiện ngay.
         </p>
       </header>
 
@@ -304,17 +302,6 @@ export default function Grading() {
             />
           )}
         </div>
-      </div>
-
-      <div className="mt-8 rounded-[6px] bg-cream/60 p-6">
-        <p className="eyebrow mb-2.5">Gợi ý</p>
-        <p className="text-[14px] leading-relaxed text-ink-2">
-          Bạn cũng có thể chấm trực tiếp trong một đề tương tác — mở{' '}
-          <Link to="/de-cong-dong" className="reveal font-semibold text-clay">
-            đề cộng đồng
-          </Link>{' '}
-          và bấm “Làm đề”, phần lời giải chi tiết sẽ hiện ngay sau khi nộp bài.
-        </p>
       </div>
     </div>
   )

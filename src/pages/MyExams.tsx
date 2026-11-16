@@ -26,7 +26,7 @@ export default function MyExams() {
         <EmptyState
           icon={<FolderOpen className="size-7" strokeWidth={1.4} />}
           title="Chưa có đề nào"
-          description="Những đề bạn soạn hoặc lưu từ thư viện sẽ xuất hiện ở đây. Bạn có thể mở lại, làm thử, hoặc chia sẻ."
+          description="Những đề bạn soạn hoặc lưu từ thư viện sẽ xuất hiện ở đây."
           action={
             <div className="flex flex-wrap justify-center gap-2.5">
               <Link to="/soan-de">

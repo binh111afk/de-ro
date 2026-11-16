@@ -69,7 +69,7 @@ export default function Library() {
           Kho tài liệu
         </h1>
         <p className="mt-4 max-w-[54ch] text-[15px] leading-[1.75] text-ink-2">
-          Lưu tài liệu tham khảo của bạn dưới dạng PDF hoặc Word, mở lại bất cứ lúc nào.
+          Lưu tài liệu tham khảo dạng PDF hoặc Word.
         </p>
       </header>
 

@@ -202,7 +202,7 @@ export default function Community() {
             Đề thi cộng đồng
           </h1>
           <p className="mt-4 max-w-[52ch] text-[15px] leading-[1.75] text-ink-2">
-            Đề mẫu và đề giáo viên đăng. Mở để xem, hoặc chuyển thẳng sang làm đề tương tác có đếm ngược.
+            Đề mẫu và đề giáo viên đăng.
           </p>
         </div>
         <Button variant="primary" onClick={() => setPublishOpen(true)}>

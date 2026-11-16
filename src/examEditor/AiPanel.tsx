@@ -1707,7 +1707,7 @@ export function AiPanel({
             {quota ? (
               <span
                 className={cn('ai-quota', aiPointsLeft(quota) < 20 && 'is-low')}
-                data-tip={`Còn ${aiPointsLeft(quota).toLocaleString('vi-VN')} điểm AI (1 điểm = 1.000 token). Kết quả AI bị lỗi được hoàn điểm.`}
+                data-tip="Điểm AI còn lại"
               >
                 Còn {aiPointsLeft(quota).toLocaleString('vi-VN')} điểm
               </span>

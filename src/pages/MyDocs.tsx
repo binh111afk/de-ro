@@ -150,7 +150,7 @@ export default function MyDocs() {
           />
         </div>
         <p className="mt-1.5 text-[11.5px] text-ink-4">
-          Đề được lưu trên thiết bị này. Quota tối đa 10 MB.
+          Tối đa 10 MB.
         </p>
       </div>
 

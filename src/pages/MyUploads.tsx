@@ -241,7 +241,7 @@ function MyFilesCard() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="font-display text-[22px] font-semibold tracking-[-0.01em] text-ink">Đề của tôi</h1>
-          <p className="mt-1 text-[13px] text-ink-3">Đề, slide, bảng vẽ bạn soạn và đề, tài liệu (PDF, Word) tải lên. Mở ở máy nào cũng được.</p>
+          <p className="mt-1 text-[13px] text-ink-3">Đề, slide, bảng vẽ bạn soạn và đề, tài liệu (PDF, Word) tải lên.</p>
         </div>
         <Button variant="outline" size="sm" onClick={() => fileRef.current?.click()}>
           <Upload className="size-4" />

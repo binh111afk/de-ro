@@ -107,7 +107,6 @@ export function PublishedPanel() {
       <EmptyState
         icon={<Lock className="size-6" strokeWidth={1.6} />}
         title="Đăng nhập để xem đề đã xuất bản"
-        description="Đề xuất bản và kết quả của học sinh gắn với tài khoản của bạn, nên cần đăng nhập mới xem được."
         action={
           <Link to="/dang-nhap">
             <Button variant="primary">Đăng nhập</Button>
