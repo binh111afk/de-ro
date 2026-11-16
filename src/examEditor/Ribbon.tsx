@@ -25,7 +25,7 @@ import {
 import { cn } from '@/lib/cn'
 import { Segmented } from '@/components/Segmented'
 import { BookMarked } from 'lucide-react'
-import { MonitorPlay, Blocks, ListTree, TableCellsMerge, TableCellsSplit, Wrench } from 'lucide-react'
+import { MonitorPlay, ListTree, TableCellsMerge, TableCellsSplit } from 'lucide-react'
 import { FileMenu } from './FileMenu'
 import { lazyPage } from '@/lib/lazyPage'
 // ngân hàng câu hỏi (kéo theo công cụ vẽ hình ~100 KB gzip) nạp khi mở
@@ -628,17 +628,6 @@ export function Ribbon({
       },
     ],
     insert: [
-      {
-        id: 'tools',
-        label: 'Công cụ',
-        render: () => (
-          <>
-            <RibbonButton icon={<Wrench className="size-[26px]" strokeWidth={1.3} />} label="Công cụ vẽ" onClick={() => onOpenNav?.('tools')} />
-            <RibbonButton icon={<Blocks className="size-[26px]" strokeWidth={1.3} />} label="Khối mẫu" onClick={() => onOpenNav?.('blocks')} />
-            <RibbonButton icon={<ListTree className="size-[26px]" strokeWidth={1.3} />} label="Mục lục" onClick={() => onOpenNav?.('toc')} />
-          </>
-        ),
-      },
       {
         id: 'bank',
         label: 'Kho',

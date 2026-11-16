@@ -29,6 +29,7 @@ Tiếp [phiên 44](phien-44.md). Không có migration mới. Repo chỉ có nhá
 | `570e2f6` | Mục lục tự động |
 | `e2b050e` (agy), `85c0388`, merge `88974d2` | Đo lại chi phí AI; lượt hỏi rút gọn khi chưa nêu môn; đề lớp 6+ bỏ hướng dẫn tranh đếm/đồng hồ |
 | `d9222b4` | Nút Tìm trên web (DeepSeek `deepseek_web_search`) |
+| (commit cuối) | Bỏ nhóm "Công cụ" (Công cụ vẽ, Khối mẫu, Mục lục) khỏi tab Chèn của ribbon; các panel bên trái giữ nguyên, mở từ thanh dọc trái |
 
 ## Panel hỏi lại (AI soạn đề / slide)
 
@@ -62,7 +63,7 @@ Tiếp [phiên 44](phien-44.md). Không có migration mới. Repo chỉ có nhá
 
 ## Mục lục tự động (`src/examEditor/toc.ts`)
 
-- Node atom `examToc` (block `toc` trong `docTypes`/`convert`). Chèn qua Chèn → Trang → "Chèn mục lục" hoặc template `toc` ở Khối mẫu. Nút "Mục lục" cũ trên ribbon vẫn là mở bảng điều hướng.
+- Node atom `examToc` (block `toc` trong `docTypes`/`convert`). Chèn qua Chèn → Trang → "Chèn mục lục" hoặc template `toc` ở Khối mẫu. Nút "Mục lục" mở bảng điều hướng đã bỏ khỏi ribbon (panel vẫn mở từ thanh dọc trái).
 - Node view liệt kê `examHeading` cấp 1–3 nằm **sau** nó. Số trang = vị trí DOM / `stride`, đổi theo `pageNumberAt` nếu có đánh số trang.
 - ExamEditor ghi `stride` và `pageNumber` vào `editor.storage.examToc`, rồi dispatch meta `tocRefresh`.
 - Vẽ lại khi `docChanged`, khi có meta `pageGapsKey` (phân trang đổi), hoặc `tocRefresh`. Bấm dòng: đặt con trỏ trước rồi mới cuộn.
