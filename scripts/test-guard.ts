@@ -103,34 +103,53 @@ const jwt = (sub: string) => `h.${Buffer.from(JSON.stringify({ sub })).toString(
   globalThis.fetch = realFetch
 }
 
-// Strix vuln-0001 + bản vá lại: tài liệu riêng (doc/) chỉ chủ tệp tải được — chủ lấy từ metadata R2
-// (server ghi lúc tải lên), không từ cột `url` người dùng tự ghi; tệp cũ: dòng user_documents sớm nhất
+// Strix vuln-0001 + lần 3 mục 2: tài liệu riêng (doc/) chỉ chủ tệp tải được — chủ CHỈ lấy từ metadata R2
+// (server ghi lúc tải lên). Không còn fallback hỏi user_documents: tệp thiếu metadata thì không ai đọc được.
+// Lần 3 mục 3: hạn mức giữ chỗ nguyên tử qua RPC trước khi ghi R2, fail-closed; xoá qua server (xoá cả R2);
+// ảnh cũng bắt đăng nhập; đường đọc tệp có giới hạn lượt theo IP.
 {
   process.env.R2_ACCOUNT_ID = 'acc'
   process.env.R2_ACCESS_KEY_ID = 'id'
   process.env.R2_SECRET_ACCESS_KEY = 'secret'
   process.env.R2_BUCKET = 'b'
+  process.env.VITE_SUPABASE_URL = 'http://sb.test'
   process.env.SUPABASE_SERVICE_ROLE_KEY = 'svc'
   const KEY = 'doc/' + 'a'.repeat(40) + '.pdf'
   const OLD = 'doc/' + 'c'.repeat(40) + '.pdf'
+  const DOC_ID = 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee'
+  const calls: string[] = []
+  const mode = { rpc: 'ok' as 'ok' | 'quota' | 'down', put: true }
   const realFetch = globalThis.fetch
   globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
     const url = String(input)
+    const method = init.method ?? 'GET'
+    calls.push(`${method} ${url}`)
     if (url.includes('/auth/v1/user')) {
       const auth = String((init.headers as Record<string, string>).Authorization)
       const sub = JSON.parse(Buffer.from(auth.split('.')[1], 'base64url').toString()).sub as string
       return new Response(JSON.stringify({ id: sub }), { status: 200 })
     }
-    if (url.includes('/rest/v1/user_documents')) {
-      // tệp cũ OLD: chỉ chủ có dòng; tệp cũ MIX: kẻ gian tự thêm dòng trỏ vào → không ai đọc được
-      return new Response(JSON.stringify(url.includes('d'.repeat(40)) ? [{ owner_id: 'owner' }, { owner_id: 'other' }] : [{ owner_id: 'owner' }]), { status: 200 })
+    if (url.includes('/rest/v1/rpc/reserve_')) {
+      if (mode.rpc === 'quota') return new Response(JSON.stringify({ message: 'QUOTA:Tệp vượt dung lượng còn lại (0.5 MB).' }), { status: 400 })
+      if (mode.rpc === 'down') return new Response('{}', { status: 500 })
+      return new Response(JSON.stringify(url.includes('document') ? { id: DOC_ID } : true), { status: 200 })
     }
+    if (url.includes('/rest/v1/user_documents')) {
+      if (method === 'DELETE') return new Response(null, { status: 204 })
+      // dòng tài liệu DOC_ID của 'owner' trỏ vào KEY; người khác hỏi thì không có dòng nào
+      if (url.includes('neq.')) return new Response('[]', { status: 200 })
+      return new Response(JSON.stringify(url.includes('owner_id=eq.owner') ? [{ id: DOC_ID, url: `/api/files/${KEY}` }] : []), { status: 200 })
+    }
+    if (url.includes('/rest/v1/')) return new Response(null, { status: 204 })
+    // R2
+    if (method === 'PUT') return new Response(null, { status: mode.put ? 200 : 500 })
+    if (method === 'DELETE') return new Response(null, { status: 204 })
     const meta: Record<string, string> = url.includes(KEY) ? { 'x-amz-meta-owner': 'owner' } : {}
-    return new Response('PDF', { status: 200, headers: { 'content-type': 'application/pdf', ...meta } })
+    return new Response(method === 'HEAD' ? null : 'PDF', { status: 200, headers: { 'content-type': 'application/pdf', ...meta } })
   }) as typeof fetch
-  const { handleFileRequest } = await import('../server/r2.ts')
-  const get = async (key: string, auth?: string) => {
-    const req = { method: 'GET', url: `/${key}`, headers: auth ? { authorization: auth } : {}, socket: { remoteAddress: '203.0.113.50' } } as unknown as IncomingMessage
+  const { handleFileRequest, handleUploadRequest } = await import('../server/r2.ts')
+  const get = async (key: string, auth?: string, ip = '203.0.113.50') => {
+    const req = { method: 'GET', url: `/${key}`, headers: auth ? { authorization: auth } : {}, socket: { remoteAddress: ip } } as unknown as IncomingMessage
     const out = { status: 0, cache: '' }
     const res = {
       headersSent: false,
@@ -149,11 +168,68 @@ const jwt = (sub: string) => `h.${Buffer.from(JSON.stringify({ sub })).toString(
   check('người khác tải tài liệu riêng → 404', (await get(KEY, `Bearer ${jwt('other')}`)).status === 404)
   const own = await get(KEY, `Bearer ${jwt('owner')}`)
   check('chủ tệp tải được, không cho proxy giữ', own.status === 200 && own.cache.includes('private'))
-  check('tệp cũ (chưa có metadata): kẻ tự thêm dòng trỏ vào vẫn bị 404', (await get(OLD, `Bearer ${jwt('other')}`)).status === 404)
-  check('tệp cũ: chủ (mọi dòng là của mình) tải được', (await get(OLD, `Bearer ${jwt('owner')}`)).status === 200)
-  const MIX = 'doc/' + 'd'.repeat(40) + '.pdf'
-  check('tệp cũ có dòng của người khác (kể cả ghi lùi ngày) → khoá, kẻ gian 404', (await get(MIX, `Bearer ${jwt('other')}`)).status === 404)
+  calls.length = 0
+  check('tệp cũ (chưa có metadata): kẻ gian → 404', (await get(OLD, `Bearer ${jwt('other')}`)).status === 404)
+  check('tệp cũ chưa backfill: cả chủ cũng 404 (không còn đoán chủ qua user_documents)', (await get(OLD, `Bearer ${jwt('owner')}`)).status === 404)
+  check('đọc tệp không còn hỏi user_documents', !calls.some((c) => c.includes('user_documents')))
   check('ảnh (img/) vẫn công khai', (await get('img/' + 'b'.repeat(40) + '.png')).status === 200)
+  let limited = 0
+  for (let i = 0; i < 610; i++) if ((await get('img/' + 'b'.repeat(40) + '.png', undefined, '203.0.113.77')).status === 429) limited++
+  check(`đọc tệp: quá 600 lượt / 10 phút cùng IP → 429 (${limited} lượt bị chặn)`, limited === 10)
+
+  let ip = 1
+  const call = async (method: string, opts: { auth?: string; body?: unknown; url?: string }) => {
+    const buf = Buffer.from(opts.body === undefined ? '' : JSON.stringify(opts.body))
+    const req = Object.assign((async function* () { if (buf.length) yield buf })(), {
+      method,
+      url: opts.url ?? '/',
+      headers: { host: 'de-ro-lac.vercel.app', origin: 'https://de-ro-lac.vercel.app', ...(opts.auth ? { authorization: opts.auth } : {}) },
+      socket: { remoteAddress: `192.0.2.${ip++}` },
+    }) as unknown as IncomingMessage
+    const out = { status: 0, body: '' }
+    const res = {
+      headersSent: false,
+      setHeader() {},
+      writeHead(c: number) {
+        out.status = c
+        return this
+      },
+      end(b?: string) {
+        out.body = b ?? ''
+      },
+    } as unknown as ServerResponse
+    await handleUploadRequest(req, res)
+    return out
+  }
+  const png = { dataUrl: 'data:image/png;base64,' + Buffer.from('png-bytes').toString('base64') }
+  const pdf = { dataUrl: 'data:application/pdf;base64,' + Buffer.from('%PDF-1.4 x').toString('base64'), name: 'a.pdf' }
+  check('khách tải ảnh lên → 401', (await call('POST', { body: png })).status === 401)
+  calls.length = 0
+  const up = await call('POST', { auth: `Bearer ${jwt('owner')}`, body: pdf })
+  const rpcAt = calls.findIndex((c) => c.includes('rpc/reserve_user_document'))
+  const putAt = calls.findIndex((c) => c.startsWith('PUT https://acc.r2'))
+  check('tải tài liệu: giữ chỗ hạn mức (RPC) TRƯỚC khi ghi R2', up.status === 200 && rpcAt >= 0 && putAt > rpcAt)
+  check('ảnh của người đã đăng nhập: tính hạn mức qua reserve_user_image', (await call('POST', { auth: `Bearer ${jwt('owner')}`, body: png })).status === 200 && calls.some((c) => c.includes('rpc/reserve_user_image')))
+  mode.rpc = 'quota'
+  calls.length = 0
+  const over = await call('POST', { auth: `Bearer ${jwt('owner')}`, body: pdf })
+  check('vượt hạn mức → 413, không ghi R2', over.status === 413 && over.body.includes('dung lượng') && !calls.some((c) => c.startsWith('PUT https://acc.r2')))
+  mode.rpc = 'down'
+  calls.length = 0
+  check('RPC hạn mức lỗi → 503, không ghi R2 (fail-closed)', (await call('POST', { auth: `Bearer ${jwt('owner')}`, body: pdf })).status === 503 && !calls.some((c) => c.startsWith('PUT https://acc.r2')))
+  mode.rpc = 'ok'
+  mode.put = false
+  calls.length = 0
+  check('ghi R2 lỗi → 502 và xoá dòng vừa giữ chỗ', (await call('POST', { auth: `Bearer ${jwt('owner')}`, body: pdf })).status === 502 && calls.some((c) => c.startsWith(`DELETE http://sb.test/rest/v1/user_documents?id=eq.${DOC_ID}`)))
+  mode.put = true
+
+  calls.length = 0
+  const del = await call('DELETE', { auth: `Bearer ${jwt('owner')}`, url: `/api/upload?id=${DOC_ID}` })
+  check('chủ xoá tài liệu: xoá cả tệp R2 lẫn dòng danh sách', del.status === 200 && calls.some((c) => c === `DELETE https://acc.r2.cloudflarestorage.com/b/${KEY}`) && calls.some((c) => c.startsWith('DELETE http://sb.test/rest/v1/user_documents')))
+  calls.length = 0
+  const delOther = await call('DELETE', { auth: `Bearer ${jwt('other')}`, url: `/api/upload?id=${DOC_ID}` })
+  check('người khác xoá tài liệu → 404, không đụng R2', delOther.status === 404 && !calls.some((c) => c.startsWith('DELETE https://acc.r2')))
+  check('khách xoá → 401', (await call('DELETE', { url: `/api/upload?id=${DOC_ID}` })).status === 401)
   globalThis.fetch = realFetch
 }
 

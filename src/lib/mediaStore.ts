@@ -13,6 +13,8 @@ export async function uploadImage(src: string): Promise<string> {
     body: JSON.stringify({ dataUrl: src }),
   })
   const body = (await res.json().catch(() => ({}))) as { url?: string; error?: string }
+  // khách chưa đăng nhập: server không nhận ảnh (ảnh tính vào hạn mức theo tài khoản) → giữ data URL, vẫn dùng được
+  if (res.status === 401) return src
   if (!res.ok || !body.url) throw new Error(body.error ?? `Không tải ảnh lên được (${res.status})`)
   return body.url
 }

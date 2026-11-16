@@ -2,6 +2,7 @@
  * Lưu ảnh lên Cloudflare R2 — khoá truy cập chỉ nằm server-side (`.env`).
  *
  * POST /api/upload  {dataUrl}  → {url}   ghi ảnh (img/) hoặc tệp PDF/DOCX (doc/), tên theo hash nội dung
+ * DELETE /api/upload?id=<uuid>          xoá tài liệu của mình (dòng danh sách + tệp R2)
  * GET  /api/files/<key>        → ảnh     đọc lại qua server (bucket để private)
  *
  * Cấu hình: `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`.
@@ -10,7 +11,7 @@
 import { createHash, createHmac } from 'node:crypto'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { json, readBody } from './http.js'
-import { guard, isLocal, clientIp, userFromToken } from './guard.js'
+import { guard, isLocal, clientIp, rateLimitOnly, userFromToken } from './guard.js'
 import { maintenanceBlock } from './ops.js'
 
 const MAX_BYTES = 8 * 1024 * 1024
@@ -46,7 +47,7 @@ function r2Config() {
 
 /** Gọi R2 với chữ ký SigV4; `body` là null khi đọc. */
 async function r2Request(
-  method: 'GET' | 'PUT' | 'DELETE',
+  method: 'GET' | 'HEAD' | 'PUT' | 'DELETE',
   key: string,
   body: Buffer | null,
   contentType?: string,
@@ -119,9 +120,31 @@ export function r2DocKeyFromUrl(url: string): string | null {
   return key?.startsWith('doc/') ? key : null
 }
 
+type Sb = { base: string; headers: Record<string, string> }
+
+/** gọi RPC bằng service key; lỗi QUOTA:<lời báo> của DB tách riêng để báo người dùng */
+async function rpc<T>(sb: Sb, fn: string, body: unknown): Promise<{ data?: T; quota?: string; failed?: boolean }> {
+  try {
+    const r = await fetch(`${sb.base}/rest/v1/rpc/${fn}`, {
+      method: 'POST',
+      headers: { ...sb.headers, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    })
+    const data = (await r.json().catch(() => null)) as (T & { message?: string }) | null
+    if (r.ok) return { data: data as T }
+    const msg = typeof data?.message === 'string' ? data.message : ''
+    return msg.includes('QUOTA:') ? { quota: msg.replace(/^.*QUOTA:/, '') } : { failed: true }
+  } catch {
+    return { failed: true }
+  }
+}
+
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
 export async function handleUploadRequest(req: IncomingMessage, res: ServerResponse): Promise<void> {
   if (!(await guard(req, res, 'upload'))) return
   if (req.method === 'OPTIONS') return json(res, 204, {})
+  if (req.method === 'DELETE') return handleDeleteDocument(req, res)
   if (req.method !== 'POST') return json(res, 405, { error: 'Method not allowed' })
   if (await maintenanceBlock(req, res)) return
 
@@ -133,9 +156,9 @@ export async function handleUploadRequest(req: IncomingMessage, res: ServerRespo
       return json(res, 400, { error: 'Chỉ nhận ảnh PNG, JPEG, WebP, GIF hoặc tệp PDF, DOCX dạng base64' })
     }
     const isDoc = DOC_TYPES.has(ext)
-    // tài liệu riêng phải gắn với một tài khoản (máy dev thì gắn 'local')
-    const owner = isDoc ? (isLocal(clientIp(req)) ? 'local' : await userFromToken(req)) : null
-    if (isDoc && !owner) return json(res, 401, { error: 'Bạn cần đăng nhập để tải tài liệu lên.' })
+    // mọi tệp (cả ảnh) phải gắn với một tài khoản để tính hạn mức; máy dev thì gắn 'local', không tính
+    const owner = isLocal(clientIp(req)) ? 'local' : await userFromToken(req)
+    if (!owner) return json(res, 401, { error: `Bạn cần đăng nhập để tải ${isDoc ? 'tài liệu' : 'ảnh'} lên.`, loginRequired: true })
     const buf = Buffer.from(match[2], 'base64')
     const limit = isDoc ? MAX_DOC_BYTES : MAX_BYTES
     if (buf.length === 0 || buf.length > limit) {
@@ -144,99 +167,120 @@ export async function handleUploadRequest(req: IncomingMessage, res: ServerRespo
     // tài liệu: key băm cả chủ tệp → mỗi người một bản, không ghi đè chủ của người khác cùng nội dung
     const hash = isDoc ? sha256Hex(Buffer.concat([Buffer.from(`${owner}\n`), buf])) : sha256Hex(buf)
     const key = `${isDoc ? 'doc' : 'img'}/${hash.slice(0, 40)}.${ext}`
-    // tài liệu: kiểm dung lượng theo cỡ THẬT trước khi ghi (trước đây cột `size` do trình duyệt tự khai)
-    const sb = isDoc && owner !== 'local' ? serviceDb() : null
-    if (sb) {
-      const quota = await storageLeft(sb, owner as string)
-      if (quota !== null && buf.length > quota) {
-        return json(res, 413, { error: `Tệp vượt dung lượng còn lại (${(Math.max(0, quota) / 1048576).toFixed(1)} MB). Xoá bớt tệp ở trang Hồ sơ để tải tiếp.` })
-      }
-    }
-    const put = await r2Request('PUT', key, buf, match[1], owner ? { owner } : undefined)
-    if (!put.ok) return json(res, 502, { error: `R2 trả lỗi ${put.status}` })
     const url = `/api/files/${key}`
-    // máy chủ tự ghi dòng danh sách với cỡ đo được
+
+    // giữ chỗ trong hạn mức TRƯỚC khi ghi R2, nguyên tử ở DB (khoá theo chủ). Không kiểm được → từ chối.
+    const sb = owner === 'local' ? null : serviceDb()
+    if (owner !== 'local' && !sb) return json(res, 503, { error: 'Máy chủ chưa cấu hình lưu trữ.' })
+    let doc: { id: string } | undefined
+    let newImage = false
     if (sb) {
-      const name = typeof body.name === 'string' && body.name.trim() ? body.name.trim().slice(0, 200) : `tai-lieu.${ext}`
-      const subject = typeof body.subject === 'string' && body.subject ? body.subject.slice(0, 60) : null
-      const ins = await fetch(`${sb.base}/rest/v1/user_documents?select=id,name,mime,size,url,subject,created_at`, {
-        method: 'POST',
-        headers: { ...sb.headers, 'Content-Type': 'application/json', Prefer: 'return=representation' },
-        body: JSON.stringify({ owner_id: owner, name, mime: match[1], size: buf.length, url, subject }),
-      })
-      if (!ins.ok) return json(res, 502, { error: 'Không ghi được tài liệu vào danh sách.' })
-      const [doc] = (await ins.json()) as unknown[]
-      return json(res, 200, { url, doc })
+      const r = isDoc
+        ? await rpc<{ id: string }>(sb, 'reserve_user_document', {
+            p_owner: owner,
+            p_name: typeof body.name === 'string' && body.name.trim() ? body.name.trim().slice(0, 200) : `tai-lieu.${ext}`,
+            p_mime: match[1],
+            p_size: buf.length,
+            p_url: url,
+            p_subject: typeof body.subject === 'string' && body.subject ? body.subject.slice(0, 60) : null,
+          })
+        : await rpc<boolean>(sb, 'reserve_user_image', { p_owner: owner, p_key: key, p_size: buf.length })
+      if (r.quota) return json(res, 413, { error: r.quota })
+      if (r.failed || r.data == null) return json(res, 503, { error: 'Máy chủ bận, thử lại sau ít phút.' })
+      if (isDoc) doc = r.data as { id: string }
+      else newImage = r.data === true
     }
-    return json(res, 200, { url })
+    const put = await r2Request('PUT', key, buf, match[1], isDoc ? { owner } : undefined).catch(() => null)
+    if (!put?.ok) {
+      // ghi tệp lỗi: trả lại phần hạn mức vừa giữ
+      if (sb && doc) await fetch(`${sb.base}/rest/v1/user_documents?id=eq.${doc.id}`, { method: 'DELETE', headers: sb.headers }).catch(() => undefined)
+      if (sb && newImage) {
+        await fetch(`${sb.base}/rest/v1/user_images?owner_id=eq.${owner}&key=eq.${encodeURIComponent(key)}`, { method: 'DELETE', headers: sb.headers }).catch(() => undefined)
+      }
+      return json(res, 502, { error: `R2 trả lỗi ${put?.status ?? 'mạng'}` })
+    }
+    return json(res, 200, doc ? { url, doc } : { url })
   } catch (err) {
     return json(res, 500, { error: err instanceof Error ? err.message : String(err) })
   }
 }
 
 /**
- * Tài liệu riêng (`doc/`): chỉ chủ tệp đọc được. Chủ tệp lấy từ metadata `owner` server ghi lúc tải lên
- * — KHÔNG từ `user_documents.url` (cột người dùng tự ghi được: tự thêm một dòng trỏ vào tệp người khác là
- * từng đọc được). Tệp cũ chưa có metadata: chỉ cho khi MỌI dòng `user_documents` trỏ tới tệp đều của cùng
- * một người (không dựa vào created_at — cột đó người dùng tự ghi lùi ngày được). Có người khác tự thêm
- * dòng trỏ vào thì không ai đọc được, thà khoá còn hơn lộ.
- * (`img/` vẫn công khai: ảnh nằm trong đề đã chia sẻ / đề cộng đồng.)
+ * DELETE /api/upload?id=<uuid>: xoá tài liệu của chính mình — dòng `user_documents` VÀ tệp trên R2
+ * (trước đây client xoá thẳng dòng: được trả dung lượng mà tệp vẫn nằm đó, tải-xoá lặp vô hạn).
+ * Tệp R2 chỉ xoá khi metadata owner đúng là người này và không còn dòng nào khác của họ trỏ tới.
  */
-async function ownsDocument(userId: string | null, key: string, metaOwner: string | null): Promise<boolean> {
-  if (!userId) return false
-  if (metaOwner) return metaOwner === userId
+async function handleDeleteDocument(req: IncomingMessage, res: ServerResponse): Promise<void> {
+  const id = new URL(req.url ?? '/', 'http://x').searchParams.get('id') ?? ''
+  if (!UUID.test(id)) return json(res, 400, { error: 'Thiếu mã tài liệu.' })
+  const owner = await userFromToken(req)
+  if (!owner) return json(res, 401, { error: 'Bạn cần đăng nhập để xoá tài liệu.', loginRequired: true })
   const sb = serviceDb()
-  if (!sb) return false
+  if (!sb) return json(res, 503, { error: 'Máy chủ chưa cấu hình lưu trữ.' })
   try {
-    const url = encodeURIComponent(`/api/files/${key}`)
-    const r = await fetch(`${sb.base}/rest/v1/user_documents?select=owner_id&url=eq.${url}&limit=50`, { headers: sb.headers })
-    const rows = r.ok ? ((await r.json()) as Array<{ owner_id: string }>) : []
-    return rows.length > 0 && rows.every((x) => x.owner_id === userId)
-  } catch {
-    return false
+    const q = await fetch(`${sb.base}/rest/v1/user_documents?id=eq.${id}&owner_id=eq.${owner}&select=id,url`, { headers: sb.headers })
+    if (!q.ok) return json(res, 503, { error: 'Máy chủ bận, thử lại sau ít phút.' })
+    const [row] = (await q.json()) as Array<{ id: string; url: string }>
+    if (!row) return json(res, 404, { error: 'Không tìm thấy tài liệu.' })
+    const key = r2DocKeyFromUrl(row.url)
+    if (key) {
+      const others = await fetch(
+        `${sb.base}/rest/v1/user_documents?owner_id=eq.${owner}&url=eq.${encodeURIComponent(row.url)}&id=neq.${id}&select=id&limit=1`,
+        { headers: sb.headers },
+      )
+      if (!others.ok) return json(res, 503, { error: 'Máy chủ bận, thử lại sau ít phút.' })
+      if (!((await others.json()) as unknown[]).length) {
+        const head = await r2Request('HEAD', key, null)
+        if (head.ok && head.headers.get('x-amz-meta-owner') === owner && !(await deleteR2Object(key))) {
+          return json(res, 502, { error: 'Không xoá được tệp, thử lại sau.' })
+        }
+      }
+    }
+    const del = await fetch(`${sb.base}/rest/v1/user_documents?id=eq.${id}&owner_id=eq.${owner}`, { method: 'DELETE', headers: sb.headers })
+    if (!del.ok) return json(res, 503, { error: 'Máy chủ bận, thử lại sau ít phút.' })
+    return json(res, 200, { ok: true })
+  } catch (err) {
+    return json(res, 500, { error: err instanceof Error ? err.message : String(err) })
   }
 }
 
-function serviceDb(): { base: string; headers: Record<string, string> } | null {
+/**
+ * Tài liệu riêng (`doc/`): chỉ chủ tệp đọc được. Chủ tệp CHỈ lấy từ metadata `owner` server ghi lúc tải lên
+ * — không bao giờ từ `user_documents` (từng là cột người dùng tự ghi được). Tệp cũ thiếu metadata được
+ * gắn chủ bằng `scripts/backfill-doc-owner.mjs`; tệp nào còn thiếu thì không ai đọc được.
+ * (`img/` vẫn công khai: ảnh nằm trong đề đã chia sẻ / đề cộng đồng.)
+ */
+function ownsDocument(userId: string | null, metaOwner: string | null): boolean {
+  return !!userId && !!metaOwner && metaOwner === userId
+}
+
+function serviceDb(): Sb | null {
   const base = (process.env.VITE_SUPABASE_URL ?? process.env.SUPABASE_URL ?? '').replace(/\/+$/, '')
   const service = process.env.SUPABASE_SERVICE_ROLE_KEY ?? ''
   return base && service ? { base, headers: { apikey: service, Authorization: `Bearer ${service}` } } : null
 }
 
-/** dung lượng còn lại (byte); null = không kiểm được (để trigger ở DB chặn) */
-async function storageLeft(sb: { base: string; headers: Record<string, string> }, userId: string): Promise<number | null> {
-  try {
-    const call = async (fn: string) => {
-      const r = await fetch(`${sb.base}/rest/v1/rpc/${fn}`, {
-        method: 'POST',
-        headers: { ...sb.headers, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ p_user: userId }),
-      })
-      return r.ok ? Number(await r.json()) : NaN
-    }
-    const [used, max] = await Promise.all([call('storage_used'), call('storage_max_bytes')])
-    return Number.isFinite(used) && Number.isFinite(max) ? max - used : null
-  } catch {
-    return null
-  }
-}
+const NOT_FOUND = { error: 'Không tìm thấy tệp' }
 
 export async function handleFileRequest(req: IncomingMessage, res: ServerResponse): Promise<void> {
   if (req.method !== 'GET') return json(res, 405, { error: 'Method not allowed' })
+  // đếm lượt theo IP (không dùng guard(): <img src> không gửi Origin); mức rộng vì một đề có nhiều ảnh
+  if (!rateLimitOnly(req, res, 'files', 600)) return
   // Vite cắt tiền tố `/api/files` khỏi req.url, còn lại `/img/<hash>.<ext>`
   const key = decodeURIComponent((req.url ?? '').split('?')[0].replace(/^\/+/, ''))
-  if (!KEY_PATTERN.test(key)) return json(res, 404, { error: 'Không tìm thấy tệp' })
+  if (!KEY_PATTERN.test(key)) return json(res, 404, NOT_FOUND)
   const isDoc = key.startsWith('doc/')
   const userId = isDoc ? (isLocal(clientIp(req)) ? 'local' : await userFromToken(req)) : null
   // chưa đăng nhập thì khỏi hỏi R2
-  if (isDoc && !userId) return json(res, 404, { error: 'Không tìm thấy tệp' })
+  if (isDoc && !userId) return json(res, 404, NOT_FOUND)
 
   try {
     const got = await r2Request('GET', key, null)
-    if (!got.ok) return json(res, got.status === 404 ? 404 : 502, { error: `R2 trả lỗi ${got.status}` })
-    // không phải chủ thì báo 404 như không có tệp: không lộ cả việc tệp có tồn tại hay không
-    if (isDoc && !(userId === 'local' || (await ownsDocument(userId, key, got.headers.get('x-amz-meta-owner'))))) {
-      return json(res, 404, { error: 'Không tìm thấy tệp' })
+    // tệp không có và tệp không phải của mình trả cùng một câu: không lộ tệp có tồn tại hay không
+    if (got.status === 404) return json(res, 404, NOT_FOUND)
+    if (!got.ok) return json(res, 502, { error: 'Kho tệp đang lỗi, thử lại sau.' })
+    if (isDoc && !(userId === 'local' || ownsDocument(userId, got.headers.get('x-amz-meta-owner')))) {
+      return json(res, 404, NOT_FOUND)
     }
     res.writeHead(200, {
       'Content-Type': got.headers.get('content-type') ?? 'application/octet-stream',
@@ -250,7 +294,7 @@ export async function handleFileRequest(req: IncomingMessage, res: ServerRespons
 }
 
 export function uploadMiddleware(req: IncomingMessage, res: ServerResponse, next: (err?: unknown) => void): void {
-  if (req.method !== 'POST' && req.method !== 'OPTIONS') return next()
+  if (req.method !== 'POST' && req.method !== 'DELETE' && req.method !== 'OPTIONS') return next()
   handleUploadRequest(req, res).catch((err: unknown) => {
     if (res.headersSent) return res.end()
     json(res, 500, { error: err instanceof Error ? err.message : String(err) })

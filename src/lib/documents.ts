@@ -1,6 +1,7 @@
 /**
  * Tài liệu tải lên của từng người dùng. Tệp nằm trên R2 (qua `/api/upload`), còn danh sách
- * nằm trong bảng `user_documents` của Supabase. RLS: chỉ chủ tài liệu đọc, thêm và xóa được.
+ * nằm trong bảng `user_documents` của Supabase. Client chỉ đọc danh sách của mình; thêm và xoá đều qua
+ * `/api/upload` (server giữ chỗ hạn mức nguyên tử, xoá cả tệp trên R2).
  */
 import { apiFetch } from '@/lib/apiFetch'
 import { AuthError, currentSession } from '@/lib/auth'
@@ -86,27 +87,19 @@ export async function uploadDocument(file: File, subject: string | null): Promis
   const data = (await res.json().catch(() => null)) as { url?: string; doc?: UserDocument; error?: string } | null
   if (!res.ok || !data?.url) throw new Error(data?.error ?? `Không tải được tệp (${res.status}).`)
   // máy chủ đã tự ghi dòng danh sách với cỡ tệp thật
-  if (data.doc) return data.doc
-
-  try {
-    const [row] = await rest<UserDocument[]>(`/user_documents?select=${COLUMNS}`, {
-      method: 'POST',
-      token: s.access_token,
-      prefer: 'return=representation',
-      body: { name: file.name, mime: file.type, size: file.size, url: data.url, subject },
-    })
-    return row
-  } catch (err) {
-    // trigger giới hạn trả "QUOTA:<lời báo>": chỉ giữ lời báo
-    throw new Error(err instanceof Error ? err.message.replace(/^.*QUOTA:/, '') : String(err))
-  }
+  if (!data.doc) throw new Error('Máy chủ chưa ghi được tài liệu vào danh sách, thử lại sau.')
+  return data.doc
 }
 
-/** Xóa dòng trong danh sách. Tệp trên R2 vẫn còn; chưa có endpoint xóa tệp. */
+/** Xoá tài liệu: server xoá dòng danh sách và tệp trên R2 (trả lại dung lượng). */
 export async function deleteDocument(id: string): Promise<void> {
   const s = await currentSession()
   if (!s) throw new AuthError('Bạn cần đăng nhập để xóa tài liệu.')
-  await rest<null>(`/user_documents?id=eq.${encodeURIComponent(id)}`, { method: 'DELETE', token: s.access_token })
+  const res = await apiFetch(`/api/upload?id=${encodeURIComponent(id)}`, { method: 'DELETE' })
+  if (!res.ok) {
+    const data = (await res.json().catch(() => null)) as { error?: string } | null
+    throw new Error(data?.error ?? `Không xoá được tài liệu (${res.status}).`)
+  }
 }
 
 /**
