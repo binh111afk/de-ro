@@ -13,6 +13,9 @@ const USER = '33333333-3333-4333-8333-333333333333'
 const TOKENS: Record<string, string> = { tAdmin: ADMIN, tMod: MOD, tUser: USER }
 const ROLES: Record<string, string> = { [ADMIN]: 'admin', [MOD]: 'moderator' }
 const calls: string[] = []
+const LISTED = '44444444-4444-4444-8444-444444444444'
+const PRIVATE = '55555555-5555-4555-8555-555555555555'
+const EXAMS = [{ id: LISTED, listed: true }, { id: PRIVATE, listed: false }]
 let strikeReply: unknown = []
 const bodies: string[] = []
 
@@ -42,6 +45,18 @@ globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
   if (url.includes('/rest/v1/app_settings') && method === 'GET') return ok([{ key: 'maintenance', value: { on: true, message: 'x' } }])
   if (url.includes('/rest/v1/app_settings')) return new Response(null, { status: 201 })
   if (url.includes('/rpc/admin_ai_stats')) return ok([{ day: '2026-11-10', model: 'm', provider: 'opencode', calls: 3, errors: 1, tokens: 900, cost: null, avg_ms: 1200 }])
+  if (url.includes('/rest/v1/community_exams')) {
+    // một đề cộng đồng (listed) và một đề link riêng; lọc theo id / listed như PostgREST
+    const q = new URL(url).searchParams
+    const rows = EXAMS.filter((e) => (!q.get('id') || q.get('id') === `eq.${e.id}`) && (!q.get('listed') || q.get('listed') === `eq.${e.listed}`))
+    return ok(rows.map((e) => ({ ...e, title: e.id === LISTED ? 'Đề cộng đồng' : 'Đề riêng' })))
+  }
+  if (url.includes('/rest/v1/reports')) {
+    const q = new URL(url).searchParams
+    const all = [{ id: 1, exam_id: LISTED, community_exams: { title: 'Đề cộng đồng', listed: true } }, { id: 2, exam_id: PRIVATE, community_exams: { title: 'Đề riêng', listed: false } }]
+    const rows = all.filter((r) => (!q.get('id') || q.get('id') === `eq.${r.id}`) && (!q.get('community_exams.listed') || q.get('community_exams.listed') === `eq.${r.community_exams.listed}`))
+    return ok(rows)
+  }
   return ok([])
 }) as typeof fetch
 
@@ -271,6 +286,24 @@ const { r2DocKeyFromUrl } = await import('../server/r2.ts')
 const H = 'a'.repeat(40)
 check('xoá tệp: không nhận ảnh trong đề', r2DocKeyFromUrl(`/api/files/img/${H}.png`) === null)
 check('xoá tệp: nhận tài liệu', r2DocKeyFromUrl(`/api/files/doc/${H}.pdf`) === `doc/${H}.pdf`)
+
+// Strix lần 3 mục 4: moderator chỉ đụng được đề đã đăng cộng đồng — mọi action, kể cả list/setStatus/báo cáo
+{
+  const ml = await hit({ action: 'content.exams.list' }, 'tMod')
+  const ids = ((ml.data.exams as Array<{ id: string }>) ?? []).map((e) => e.id)
+  check('moderator list đề → chỉ đề cộng đồng (0 đề riêng)', ml.status === 200 && ids.includes(LISTED) && !ids.includes(PRIVATE))
+  check('moderator xem đề riêng → 404', (await hit({ action: 'content.exams.get', examId: PRIVATE }, 'tMod')).status === 404)
+  check('moderator gỡ đề riêng → 404', (await hit({ action: 'content.exams.setStatus', examId: PRIVATE, status: 'removed', reason: 'x' }, 'tMod')).status === 404)
+  check('moderator gỡ đề cộng đồng → được', (await hit({ action: 'content.exams.setStatus', examId: LISTED, status: 'hidden' }, 'tMod')).status === 200)
+  const mr = await hit({ action: 'content.reports.list' }, 'tMod')
+  const rids = ((mr.data.reports as Array<{ examId: string }>) ?? []).map((r) => r.examId)
+  check('moderator xem báo cáo → không có báo cáo của đề riêng', mr.status === 200 && rids.includes(LISTED) && !rids.includes(PRIVATE))
+  check('moderator xử lý báo cáo của đề riêng → 404', (await hit({ action: 'content.reports.resolve', reportId: 2, status: 'dismissed' }, 'tMod')).status === 404)
+  const al = await hit({ action: 'content.exams.list' }, 'tAdmin')
+  const aids = ((al.data.exams as Array<{ id: string }>) ?? []).map((e) => e.id)
+  check('admin vẫn thấy cả đề riêng', aids.includes(LISTED) && aids.includes(PRIVATE))
+  check('admin gỡ đề riêng → được', (await hit({ action: 'content.exams.setStatus', examId: PRIVATE, status: 'hidden' }, 'tAdmin')).status === 200)
+}
 
 if (fail) {
   console.error(`${fail} lỗi`)

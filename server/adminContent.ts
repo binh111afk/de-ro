@@ -80,6 +80,17 @@ function parseTotal(res: Response, fallback: number): number {
   return fallback
 }
 
+/**
+ * Phạm vi đề mà người gọi được đụng tới: moderator chỉ đề đã đăng cộng đồng (`listed`); đề link riêng
+ * của giáo viên (đáp án chưa công khai, đang cho học sinh làm) chỉ admin thấy. Dùng cho MỌI truy vấn
+ * `community_exams` của action `need: 'moderator'` — không vá từng chỗ.
+ */
+export function examScope(ctx: AdminCtx): Record<string, string> {
+  return ctx.role === 'admin' ? {} : { listed: 'eq.true' }
+}
+const scopeQs = (ctx: AdminCtx, prefix = '') =>
+  Object.entries(examScope(ctx)).map(([k, v]) => `&${prefix}${k}=${v}`).join('')
+
 export const CONTENT_ACTIONS: ActionMap = {
   /**
    * Danh sách đề cộng đồng (moderator/admin):
@@ -107,6 +118,7 @@ export const CONTENT_ACTIONS: ActionMap = {
       if (q) qs.set('title', `ilike.*${q}*`)
       if (status) qs.set('status', `eq.${status}`)
       if (subject) qs.set('subject', `eq.${subject}`)
+      for (const [k, v] of Object.entries(examScope(ctx))) qs.set(k, v)
 
       const { data: exams, res } = await call<ExamDbRow[]>(
         ctx.s,
@@ -181,11 +193,9 @@ export const CONTENT_ACTIONS: ActionMap = {
       const examId = needUuid(b.examId, 'Mã đề thi không hợp lệ.')
       const { data } = await call<unknown[]>(
         ctx.s,
-        `/rest/v1/community_exams?id=eq.${examId}&select=*`,
+        `/rest/v1/community_exams?id=eq.${examId}${scopeQs(ctx)}&select=*`,
       )
       if (!data.length) throw new HttpError(404, 'Không tìm thấy đề thi.')
-      // moderator chỉ xem đề đã đăng cộng đồng (đề link riêng của giáo viên có đáp án chưa công khai)
-      if (ctx.role !== 'admin' && !(data[0] as { listed?: boolean }).listed) throw new HttpError(403, 'Chỉ admin xem được đề chưa đăng cộng đồng.')
       return { exam: data[0] }
     },
   },
@@ -215,11 +225,13 @@ export const CONTENT_ACTIONS: ActionMap = {
         moderated_at: new Date().toISOString(),
       }
 
-      await call(ctx.s, `/rest/v1/community_exams?id=eq.${examId}`, {
+      // lọc phạm vi ngay trong lệnh PATCH: đề ngoài phạm vi thì không dòng nào đổi → 404
+      const { data: changed } = await call<Array<{ id: string }>>(ctx.s, `/rest/v1/community_exams?id=eq.${examId}${scopeQs(ctx)}&select=id`, {
         method: 'PATCH',
-        headers: { Prefer: 'return=minimal' },
+        headers: { Prefer: 'return=representation' },
         body: JSON.stringify(patchBody),
       })
+      if (!changed?.length) throw new HttpError(404, 'Không tìm thấy đề thi.')
 
       await audit(ctx, 'content.exams.setStatus', examId, {
         status,
@@ -269,10 +281,12 @@ export const CONTENT_ACTIONS: ActionMap = {
       qs.set('offset', String((page - 1) * perPage))
       qs.set(
         'select',
-        'id,exam_id,reporter_id,reason,detail,status,created_at,resolved_by,resolved_at,community_exams(title)',
+        `id,exam_id,reporter_id,reason,detail,status,created_at,resolved_by,resolved_at,community_exams${ctx.role === 'admin' ? '' : '!inner'}(title)`,
       )
 
       if (status) qs.set('status', `eq.${status}`)
+      // moderator: chỉ báo cáo của đề đã đăng cộng đồng (inner join + lọc theo bảng nhúng)
+      for (const [k, v] of Object.entries(examScope(ctx))) qs.set(`community_exams.${k}`, v)
 
       const { data: reports, res } = await call<ReportDbRow[]>(
         ctx.s,
@@ -328,6 +342,13 @@ export const CONTENT_ACTIONS: ActionMap = {
         throw new HttpError(400, 'Trạng thái xử lý không hợp lệ.')
       }
 
+      if (ctx.role !== 'admin') {
+        const { data: rep } = await call<unknown[]>(
+          ctx.s,
+          `/rest/v1/reports?id=eq.${reportId}&select=id,community_exams!inner(id)${scopeQs(ctx, 'community_exams.')}`,
+        )
+        if (!rep.length) throw new HttpError(404, 'Không tìm thấy báo cáo.')
+      }
       await call(ctx.s, `/rest/v1/reports?id=eq.${reportId}`, {
         method: 'PATCH',
         headers: { Prefer: 'return=minimal' },
