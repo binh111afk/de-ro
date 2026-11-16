@@ -136,6 +136,16 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
   const { pts, cmds } = parseScene(spec.text)
   const px = [...pts.values()].map((p) => p[0])
   const py = [...pts.values()].map((p) => p[1])
+  // cạnh của góc mà AI quên vẽ (thiếu "đất AB"…) thì tự vẽ, không thì cung góc lơ lửng
+  const drawn = (a: string, b: string) =>
+    cmds.some((c) =>
+      (c.t === 'seg' || c.t === 'ground') ? (c.a === a && c.b === b) || (c.a === b && c.b === a)
+      : c.t === 'poly' && c.names.some((n, i) => { const m = c.names[(i + 1) % c.names.length]; return (n === a && m === b) || (n === b && m === a) }))
+  for (const c of [...cmds]) {
+    if (c.t !== 'angle' && c.t !== 'right') continue
+    for (const x of [c.a, c.b]) if (!drawn(c.o, x)) cmds.push({ t: 'seg', a: c.o, b: x, dashed: false })
+  }
+
   // hình vật: hình chữ nhật (đơn vị của hình) — chân giữa cạnh dưới, xoay theo hướng chân → đỉnh
   const ptSpan = Math.max(Math.max(...py) - Math.min(...py), (Math.max(...px) - Math.min(...px)) * 0.5) || 1
   // tâm các điểm có tên (điểm ẩn "_" thường là mép mặt đất kéo dài, không tính)
@@ -161,7 +171,15 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
       if (shifted) {
         const mx = (foot[0] + top[0]) / 2 - ptCx
         const my = (foot[1] + top[1]) / 2 - ptCy
-        const sgn = mx * n[0] + my * n[1] >= 0 ? 1 : -1
+        let sgn = mx * n[0] + my * n[1] >= 0 ? 1 : -1
+        // có góc ở chân/đỉnh vật nhận đoạn này làm cạnh: lệch về phía không có góc, kẻo thân vật đè cung góc
+        const ang = cmds.find((g): g is Extract<Cmd, { t: 'angle' }> =>
+          g.t === 'angle' && (g.o === c.a || g.o === c.b) && [g.a, g.b].includes(g.o === c.a ? c.b! : c.a))
+        if (ang) {
+          const o = pts.get(ang.o)!
+          const other = pts.get(ang.a === (ang.o === c.a ? c.b : c.a) ? ang.b : ang.a)!
+          sgn = (other[0] - o[0]) * n[0] + (other[1] - o[1]) * n[1] >= 0 ? -1 : 1
+        }
         // thang: lệch nửa bề rộng (ảnh thường vẽ phối cảnh, thuôn dần; lệch hẳn một mép thì hở khỏi tường)
         const off = hw * (wide ? 1 : 0.5) * sgn
         foot = [foot[0] + n[0] * off, foot[1] + n[1] * off]

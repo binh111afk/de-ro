@@ -292,7 +292,8 @@ function shape2d(shape: Geo2dShape): P2[] {
     case 'triangle':
       return [[150, 40], [40, 260], [330, 260]]
     case 'right-triangle':
-      return [[60, 60], [60, 270], [360, 270]]
+      // vuông tại A (đỉnh đầu), cạnh huyền BC nằm ngang: AB:AC = 3:4, đường cao AH rơi vào trong BC
+      return [[155.2, 116.4], [40, 270], [360, 270]]
     case 'isosceles':
       return [[200, 30], [80, 280], [320, 280]]
     case 'equilateral': {
