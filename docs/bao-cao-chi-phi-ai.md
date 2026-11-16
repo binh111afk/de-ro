@@ -122,12 +122,13 @@ Tham số: DeepSeek tắt suy luận được bằng `thinking: {type: "disabled
 
 | | Opencode (đang chạy trên web) | DeepSeek chính hãng (khi chuyển làm model chính) |
 |---|---|---|
-| 1 đề Toán THPT QG | **~18–23 điểm** (đo 3 đề: 18.177–23.115 token, trung bình ~21) | **~20 điểm** khi cache lạnh, ~19 khi trúng cache |
-| 1 bộ 15 slide | **~41 điểm** (40.765 token) | **~20–26 điểm** lúc đông người dùng; ~28–30 khi cache lạnh |
-| Thời gian | đề ~160 s, slide ~90–100 s | đề ~85 s, slide ~30 s |
+| 1 đề Toán THPT QG | **~23–26 điểm** (đo 3 đề sau phiên 45: 23.147–26.103 token, trung bình **~25**) | **~22 điểm** khi cache lạnh, ~20 khi trúng cache (ước cộng thêm ~2.000 token prompt từ phiên 44–45) |
+| 1 đề qua lượt hỏi lại (#2 + #3) | **~25–33 điểm** token thật (trung bình **~29** = ~11 lượt hỏi + ~18 lượt soạn; ~20–27 nếu lượt 2 trúng cache) | chưa đo riêng |
+| 1 bộ 15 slide | **~34–41 điểm** (3 lần không lỗi sau phiên 45: 33.877–36.005 token, trung bình **~35**; lên ~41 nếu có lượt sửa) | **~20–26 điểm** lúc đông người dùng; ~28–30 khi cache lạnh |
+| Thời gian | đề ~145–172 s (lượt hỏi ~7 s), slide ~80–100 s | đề ~85 s, slide ~30 s |
 
-- 120 điểm tặng lúc đầu: với opencode khoảng **5–6 đề** hoặc **khoảng 3 bộ slide**; với DeepSeek chính hãng khoảng **6 đề** hoặc **4–6 bộ slide**.
-- Opencode không giảm giá phần lặp lại (báo `cached_tokens: 0`), nên trên opencode điểm = token thật.
+- 120 điểm tặng lúc đầu: với opencode khoảng **4–5 đề** (hoặc **3–4 đề** nếu đi qua lượt hỏi lại) hoặc **khoảng 3 bộ slide**; với DeepSeek chính hãng khoảng **5–6 đề** hoặc **4–6 bộ slide**.
+- Trước đây opencode luôn báo `cached_tokens: 0`; trong lần đo ngày 16/11/2026 (sau phiên 45), opencode bắt đầu trả `cached_tokens` ở các lượt liên tiếp trong cùng phiên (6.144–10.496 token), nhưng không ổn định giữa các lần gọi rời (`0` ở nhiều lượt), nên bảng trên vẫn lấy token thật làm chuẩn bảo thủ.
 - Các số dựa trên 1–3 lần đo mỗi trường hợp; mỗi lần chạy có thể lệch vài nghìn token (model chọn bố cục khác, có lượt sửa…).
 
 **Chi phí đã tiêu cho thí nghiệm** (tài khoản DeepSeek chính hãng, 15–16/11): khoảng 600.000 token cho 12 đề + 12 lượt chấm + 3 bộ slide + vài lượt thử tham số.
@@ -150,7 +151,61 @@ Tham số: DeepSeek tắt suy luận được bằng `thinking: {type: "disabled
 
 ```bash
 LLM_TIMEOUT_MS=400000 npm run eval:exam -- max high medium low
+node scripts/eval-ask-exam.mjs --effort low
 npm run eval:slides -- "<chủ đề>" --batch --effort low
 ```
 
 Log từng lượt gọi: bảng `ai_calls` trên Supabase, hoặc `%TEMP%/dethinhbien-llmlog/` khi chạy trên máy.
+
+## Đo lại sau phiên 45 (16/11/2026)
+
+Đo ở mức suy luận `low`, model chính opencode `deepseek-v4.1-flash` như web đang chạy, mỗi trường hợp 3 lần. Đã sửa `scripts/eval-exam/main.tsx` và `scripts/eval-slides/main.tsx` để nối thêm `ASK_RULE` khớp với `AiPanel.tsx`, và thêm `scripts/eval-ask-exam.mjs` (dựng lịch sử bằng `historyOf` và `askAnswerText` thật) cho hội thoại hỏi lại 2 lượt.
+
+### Bảng số đo chi tiết (từng lần và trung bình)
+
+| Trường hợp | Lần | Prompt | Suy luận | Đầu ra | Tổng token | Điểm* | Thời gian | Cấu trúc / kết quả |
+|---|---|---|---|---|---|---|---|---|
+| **#1** Đề Toán THPT QG (rõ) | 1 | 8.309 | 12.195 | 16.355 | 24.664 | 25 | 197,8 s | 12/4/6, 22 đáp án, JSON hợp lệ, không hỏi lại |
+| | 2 | 8.309 | 14.231 | 17.794 | 26.103 | 26 | 179,6 s | 12/4/6, JSON hợp lệ, không hỏi lại (`answerKey` 22 câu nằm ở gốc thay vì trong `blocks`) |
+| | 3 | 8.309 | 11.380 | 14.838 | 23.147 | 23 | 138,4 s | 12/4/6, 22 đáp án, JSON hợp lệ, không hỏi lại |
+| **#1 Trung bình** | **3 lần** | **8.309** | **12.602** | **16.329** | **24.638** | **~25** | **171,9 s** | Đều không hỏi nhầm; soát tay đủ 22/22 câu ở lần 1: đúng hết |
+| **#2** Yêu cầu mơ hồ `"soạn đề đi"` (lượt hỏi) | 1 | 10.555 | 19 | 241 | 10.796 | 11 | 5,7 s | `parseAsk` hợp lệ (4 câu hỏi) |
+| | 2 | 10.555 | 32 | 282 | 10.837 | 11 | 8,6 s | `parseAsk` hợp lệ (4 câu hỏi) |
+| | 3 | 10.555 | 16 | 240 | 10.795 | 11 (2) | 6,0 s | `parseAsk` hợp lệ (4 câu hỏi); opencode báo cache 10.496 |
+| **#2 Trung bình** | **3 lần** | **10.555** | **22** | **254** | **10.809** | **~11** | **6,8 s** | 3/3 lượt trả JSON hỏi lại đúng chuẩn |
+| **#3** Lượt soạn sau khi trả lời (Toán 9, 1 tiết, có hình, kèm `ASK_DEFAULT`) | 1 | 8.206 | 8.970 | 11.027 | 19.233 | 19 (14) | 104,0 s | 4 TN + 4 TL, 2 hình, 4 đáp án + rubric 8 ý, cache 6.144 |
+| | 2 | 8.232 | 10.688 | 13.581 | 21.813 | 22 (16) | 163,6 s | 12 TN + 4 TL, 1 hình, 12 đáp án + rubric 6 ý, cache 6.144 |
+| | 3 | 8.207 | 3.775 | 5.544 | 13.751 | 14 (7) | 56,8 s | 4 TN + 4 TL, 3 hình, 4 đáp án + rubric 7 ý, cache 7.808 |
+| **#3 Trung bình** | **3 lần** | **8.215** | **7.811** | **10.051** | **18.266** | **~18** | **108,1 s** | 3/3 JSON hợp lệ, không hỏi lại; soát tay lần 1 & 3 đúng hết |
+| **Tổng #2 + #3** | **TB 3 lần** | — | **7.833** | **10.305** | **29.075** | **~29 (20)** | **114,9 s** | Lần 1: 30.029 · Lần 2: 32.650 · Lần 3: 24.546 |
+| **#4** Đề Toán lớp 10 có hình (hình học phẳng, vectơ) | 1 | 8.354 | 10.887 | 14.338 | 22.692 | 23 | 136,6 s | 12/4/6, 22 đáp án, 9 hình, JSON hợp lệ |
+| | 2 | 8.354 | 13.440 | 18.109 | 26.463 | 26 (19) | 173,2 s | 12/4/6, 22 đáp án, 13 hình, JSON hợp lệ, cache 8.192 |
+| | 3 | 8.354 | 9.307 | 12.751 | 21.105 | 21 | 123,8 s | 12/4/6, 22 đáp án, 13 hình, JSON hợp lệ |
+| **#4 Trung bình** | **3 lần** | **8.354** | **11.211** | **15.066** | **23.420** | **~23** | **144,5 s** | Dùng đúng lệnh `vectơ AB, AD` và `vectơ AC "u"` |
+
+| **#5** Bộ 15 slide (`--batch --effort low`) | Lượt gọi | Vào | Ra (suy luận) | Tổng token | Điểm* | Thời gian | Ghi chú |
+|---|---|---|---|---|---|---|---|
+| Lần 1 | 4 | 25.557 | 8.320 (3.499) | 33.877 | 34 | 77,6 s | 15/15 slide, 0 lỗi |
+| Lần 2 | 4 | 28.044 | 7.121 (3.103) | 35.165 | 35 | 85,5 s | 15/15 slide, 0 lỗi |
+| Lần 3 | 4 | 28.125 | 7.880 (3.876) | 36.005 | 36 (30) | 78,1 s | 15/15 slide, 0 lỗi, cache 6.400 |
+| **#5 Trung bình** | **4** | **27.242** | **7.774 (3.493)** | **35.016** | **~35** | **80,4 s** | So với 40.765 token cũ: giảm ~5.749 token (~6 điểm) |
+
+\* Điểm tính theo token thật (`total_tokens / 1000`); số trong ngoặc là điểm thực tế bị trừ theo `billOf` ở những lượt opencode báo có `cached_tokens`.
+
+### Nhận xét
+
+- **Prompt đề tăng +2.010 token so với mốc cũ (`6.299` → `8.309`), nhưng phần lớn đến từ phiên 44 chứ không phải phiên 45:** đo độ dài chuỗi thật cho thấy tổng prompt đề Toán tăng +4.672 ký tự so với bản trước phiên 44 (`~14.298` → `18.970` ký tự), trong đó **~3.542 ký tự (~1.500 token)** là do phiên 44 thêm mục `27) Tranh đếm đồ vật` (`2.882` ký tự, liệt kê ~90 đồ vật tiểu học), `28) Đồng hồ kim` (`110` ký tự) và danh sách `SCENE_OBJECTS` vào mục `5b`; còn **phiên 45 chỉ thêm 1.130 ký tự (~500 token)** gồm `ASK_RULE` (`827` ký tự) và hướng dẫn `vectơ AB` + `đất`/`tường` (`303` ký tự).
+- **Tổng chi phí 1 đề Toán THPT QG tăng ~3,4 điểm** (`21.193` → `24.638` token, tức ~21 → ~25 điểm): ngoài +2.010 token prompt, phần suy luận trung bình cũng nhích từ ~11k lên ~12,6k token (vẫn trong biên dao động bình thường của model). Trên web thật còn cộng thêm `sourceRule` (`238` ký tự) và `khungPromptFor` (`9.139` ký tự với THPT QG, `5.388` ký tự với Toán 9, `4.088` ký tự với Toán 10 vectơ), thêm khoảng `~1.800–4.000` token prompt ngoài phần `eval:exam` đo.
+- **`ASK_RULE` hoạt động ổn định, không gây hỏi nhầm hay hỏng JSON:** 6/6 đề ở #1 và #4 và 3/3 bộ slide ở #5 đều đi thẳng vào soạn khi yêu cầu rõ; 3/3 lượt mơ hồ ở #2 đều hỏi lại đúng JSON; 3/3 lượt #3 sau khi trả lời + `ASK_DEFAULT` đều soạn ngay mà không hỏi vòng lại. Có 1 lỗi cấu trúc ở #1 lần 2 (`answerKey` đặt ở gốc JSON thay vì trong `blocks`) — không liên quan `ASK_RULE` nhưng đáng lưu ý vì `ComposeDoc.tsx` hiện chỉ đọc từ `blocks`.
+- **Lượt hỏi lại (#2) tốn ~10.809 token (~11 điểm) nhưng chỉ mất ~6,8 s:** đắt bất ngờ ở prompt (`10.555` token, `24.112` ký tự) vì câu mơ hồ `"soạn đề đi"` không nêu môn nên `figureGuideFor` gửi toàn bộ 28 loại hình của mọi môn (Lý, Hoá, Sinh, tiểu học…), chỉ để lấy về ~250 token JSON câu hỏi. Tổng hội thoại 2 lượt (#2 + #3) mất trung bình `29.075` token (~29 điểm thật, cao hơn #1 khoảng +4,4 điểm; nếu lượt 2 trúng cache trên opencode thì còn ~20–27 điểm).
+- **Đề hình học lớp 10 (#4) tốn trung bình `23.420` token (~23 điểm), dùng tốt lệnh mới:** prompt `8.354` token (chỉ hơn #1 đúng `45` token do câu prompt dài hơn); cả 3 đề đều sinh 9–13 hình, có câu dùng đúng `vectơ AB, AD` và `vectơ AC "u"` theo mục 5 mới.
+- **Bộ 15 slide (#5) rẻ hơn ~6 điểm so với số cũ (`35.016` so với `40.765`):** dù lượt lập dàn ý dài thêm `827` ký tự từ `ASK_RULE` (prompt dàn ý `10.456` token), cả 3 lần đo mới đều chạy trơn tru trong đúng 4 lượt gọi (không phát sinh lượt sửa thứ 5 như lần đo cũ) và đầu ra gọn hơn (~7,8k so với 11,1k).
+
+### Kết luận và đề xuất rút gọn (không sửa code app)
+
+- **Mức tăng thực tế của phiên 45:** riêng thay đổi phiên 45 chỉ cộng thêm **~0,5 điểm/lượt đầu** cho cả đề và slide — không đáng kể. Mức tăng ~3,4 điểm/đề thấy được khi đo lại chủ yếu đến từ danh mục tranh đếm tiểu học của phiên 44 và dao động suy luận. Riêng **lượt hỏi lại khi yêu cầu mơ hồ tốn ~11 điểm** (tổng 2 lượt ~29 điểm).
+- **Có đáng rút gọn `ASK_RULE` / `FIGURE_GUIDE` không?**
+  - **Không cần rút `FIGURE_GUIDE` mục 5 và 5b** (`+303` ký tự ≈ ~120 token): đã rất gọn và giúp model vẽ đúng vectơ ngay.
+  - **Nên rút `FIGURE_GUIDE` theo cấp học (đề xuất lớn nhất, không đổi hành vi):** tách mục `27) Tranh đếm đồ vật` (`2.882` ký tự) và `28) Đồng hồ kim` (`110` ký tự) khỏi các đề Toán nhận ra lớp 6–12 / THPT (`figureGuideFor` trong `src/lib/docRewrite.ts`). Việc này cắt ngay **~3.000 ký tự (~1.350–1.400 token ≈ 1,4 điểm)** cho mọi đề Toán THCS/THPT mà hoàn toàn không ảnh hưởng Toán tiểu học.
+  - **Nên tránh gửi cả `FIGURE_GUIDE` khi lượt hỏi đang xử lý yêu cầu quá ngắn/mơ hồ:** khi yêu cầu như `"soạn đề đi"` chưa nêu môn, `AiPanel.tsx` có thể dùng prompt rút gọn (hoặc bỏ phần chi tiết 28 loại hình ở lượt 1) vì lượt đó nhiều khả năng chỉ trả `{"action":"ask",...}`, lượt 2 sau khi biết môn mới gửi `figureGuideFor` chuẩn. Cách này có thể kéo lượt hỏi từ **~11 điểm xuống ~2–3 điểm**.
+  - **`ASK_RULE` (`827` ký tự ≈ ~380 token):** không bắt buộc rút ngay; nếu muốn gọn hơn nữa có thể nén câu chữ xuống ~550 ký tự (bớt ví dụ dài dòng, giữ nguyên schema JSON và các chữ viết hoa `KHÔNG`/`CHƯA`) để tiết kiệm thêm ~120 token/lượt đầu.
