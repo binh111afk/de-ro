@@ -2141,6 +2141,12 @@
   }
 
   /* panel AI hỏi lại: thế chỗ ô nhập, cùng khung với ô nhập */
+  /* nút bật/tắt trên ô nhập (Tìm trên web) */
+  .ai-attach-btn.is-on {
+    color: var(--color-clay);
+    background: var(--color-clay-soft);
+  }
+
   .ai-ask {
     border: 1px solid var(--color-border-default);
     border-radius: var(--radius-16);

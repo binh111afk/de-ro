@@ -15,6 +15,8 @@ export interface LlmResult {
   model: string
   /** biên nhận để xin hoàn token nếu kết quả không dùng được (gửi lại qua `retryOf`) */
   receipt?: string
+  /** lượt `webSearch`: các trang web model đã dẫn */
+  citations?: Array<{ url: string; title: string }>
 }
 
 export interface LlmOptions {
@@ -24,6 +26,8 @@ export interface LlmOptions {
   signal?: AbortSignal
   /** biên nhận của lượt trước bị hỏng: server hoàn token lượt đó rồi mới tính lượt này */
   retryOf?: string
+  /** tìm trên web trước khi trả lời (DeepSeek chính hãng), kết quả có `citations` */
+  webSearch?: boolean
 }
 
 const ENDPOINT = '/api/llm'
@@ -84,6 +88,7 @@ async function callOnce(messages: LlmMessage[], opts: LlmOptions): Promise<LlmRe
         maxTokens: opts.maxTokens ?? 32000,
         reasoningEffort: opts.reasoningEffort ?? 'max',
         ...(opts.temperature !== undefined ? { temperature: opts.temperature } : {}),
+        ...(opts.webSearch ? { webSearch: true } : {}),
       }),
     })
   } catch (err) {

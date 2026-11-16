@@ -336,6 +336,8 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
     reasoningEffort?: 'low' | 'medium' | 'high' | 'max'
     temperature?: number
     model?: string
+    /** tìm trên web trước khi trả lời: chỉ DeepSeek chính hãng (tool deepseek_web_search, tắt suy luận) */
+    webSearch?: boolean
   }
   try {
     // 2 MB chữ ≈ 700k token — đủ cho đề + nguồn tham khảo dài nhất app gửi; to hơn là lạm dụng
@@ -353,7 +355,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
   // trần token đầu ra mỗi lượt: không tin số client gửi (trước đây gửi 250.000 là gọi được, vượt xa hạn mức)
   const requested = Math.floor(Number(body.maxTokens ?? MAX_OUTPUT_TOKENS)) || MAX_OUTPUT_TOKENS
   let maxTokens = Math.min(MAX_OUTPUT_TOKENS, Math.max(256, requested))
-  const reqHash = requestHash(body.messages, maxTokens, { model: body.model, effort: body.reasoningEffort, temperature: body.temperature })
+  const reqHash = requestHash(body.messages, maxTokens, { model: body.webSearch ? `web:${body.model ?? ''}` : body.model, effort: body.reasoningEffort, temperature: body.temperature })
 
   // gọi lại vì lượt trước trả kết quả hỏng: biên nhận chỉ hợp lệ khi gửi lại ĐÚNG yêu cầu cũ (mã băm mọi
   // thứ quyết định giá). Lúc kiểm hạn mức tính trước phần sẽ hoàn, nhưng chỉ thật sự hoàn khi lượt gọi
@@ -399,7 +401,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
     // `opencode` = gửi x-opencode-session + reasoning_effort; `effort` = chỉ gửi reasoning_effort (DeepSeek chính hãng).
     // `anthropic`: gọi Claude qua SDK (Messages API), không qua fetch kiểu OpenAI.
     // `stream`: gọi stream:true rồi gom SSE lại (AnyRouter)
-    type Target = { model: string; url: string; key: string; opencode: boolean; anthropic?: boolean; stream?: boolean; effort?: boolean }
+    type Target = { model: string; url: string; key: string; opencode: boolean; anthropic?: boolean; stream?: boolean; effort?: boolean; search?: boolean }
     // tên provider cho log ai_calls
     const providerOf = (t: Target) =>
       t.anthropic ? 'anthropic' : t.opencode ? 'opencode' : t.key === prov.deepseekApiKey ? 'deepseek' : t.key === prov.fostaApiKey ? 'fosta' : t.key === prov.anyrouterApiKey ? 'anyrouter' : t.key === prov.nightrouterApiKey ? 'nightrouter' : 'khac'
@@ -461,6 +463,11 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
     if (prov.nightrouterApiKey)
       targets.push({ model: prov.nightrouterModel, url: `${prov.nightrouterBaseURL}/chat/completions`, key: prov.nightrouterApiKey, opencode: false })
     if (prov.anthropicApiKey) targets.push({ model: prov.anthropicModel, url: prov.anthropicBaseURL, key: prov.anthropicApiKey, opencode: false, anthropic: true })
+    // tìm trên web: chỉ DeepSeek chính hãng có tool tìm kiếm, không rơi sang model khác (sẽ trả lời không có nguồn)
+    if (body.webSearch) {
+      if (!prov.deepseekApiKey) return json(res, 400, { error: 'Tìm trên web chưa được bật trên máy chủ.' })
+      targets.splice(0, targets.length, { model: prov.deepseekModel, url: `${prov.deepseekBaseURL}/chat/completions`, key: prov.deepseekApiKey, opencode: false, search: true })
+    }
     // model dự phòng được chỉ định → thử nó trước tiên
     if (wantsBackup) {
       const i = targets.findIndex((t) => t.model === body.model)
@@ -503,6 +510,8 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
         messages: body.messages,
         max_tokens: maxTokens,
         ...((target.opencode || target.effort) && body.reasoningEffort ? { reasoning_effort: body.reasoningEffort } : {}),
+        // bật suy luận thì DeepSeek chuyển sang tìm nhiều bước (đắt gấp 2–4 lần): lượt tìm chỉ cần tóm tắt nguồn
+        ...(target.search ? { tools: [{ type: 'deepseek_web_search' }], thinking: { type: 'disabled' } } : {}),
         ...(body.temperature !== undefined ? { temperature: body.temperature } : {}),
         ...(target.stream ? { stream: true, stream_options: { include_usage: true } } : {}),
       })
@@ -553,7 +562,10 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
         }
 
         let data: {
-          choices?: Array<{ finish_reason?: string; message?: { content?: string; reasoning_content?: string } }>
+          choices?: Array<{
+            finish_reason?: string
+            message?: { content?: string; reasoning_content?: string; annotations?: Array<{ type?: string; url_citation?: { url?: string; title?: string } }> }
+          }>
           usage?: unknown
           model?: string
         }
@@ -574,7 +586,11 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
           const spent = billOf(data.usage, content + reasoning)
           log(target, t0, true, null, data.usage)
           const [after] = await Promise.all([settle(spent), release(), ...pending])
-          return json(res, 200, { content, reasoning, usage: data.usage ?? null, model: data.model ?? selectedModel, finishReason: choice?.finish_reason ?? 'unknown', quota: after, receipt: receiptFor(spent) })
+          // nguồn web model đã dẫn (bỏ trùng link)
+          const citations = target.search
+            ? [...new Map((msg.annotations ?? []).filter((a) => a.type === 'url_citation' && a.url_citation?.url).map((a) => [a.url_citation!.url!, { url: a.url_citation!.url!, title: a.url_citation!.title || a.url_citation!.url! }])).values()].slice(0, 20)
+            : undefined
+          return json(res, 200, { content, reasoning, usage: data.usage ?? null, model: data.model ?? selectedModel, finishReason: choice?.finish_reason ?? 'unknown', quota: after, receipt: receiptFor(spent), ...(citations ? { citations } : {}) })
         }
         lastErr = `${selectedModel}: empty content (finish_reason=${choice?.finish_reason ?? 'unknown'})`
         // trả rỗng vẫn tốn token (thường là suy luận hết trần) → tính vào hạn mức

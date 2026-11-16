@@ -15,6 +15,8 @@ interface Options {
   cancelLabel?: string
   /** việc không hoàn tác được: nút xác nhận màu đất */
   danger?: boolean
+  /** confirm: nút phụ giữa Huỷ và nút chính (vd "Bật, không hỏi lại"); bấm thì trả 'alt' */
+  altLabel?: string
   /** chỉ prompt */
   label?: string
   defaultValue?: string
@@ -36,6 +38,8 @@ function open<T>(kind: Spec['kind'], message: string, o: Options = {}) {
 export const dialog = {
   alert: (message: string, o?: Options) => open<void>('alert', message, o),
   confirm: (message: string, o?: Options) => open<boolean>('confirm', message, o),
+  /** confirm có nút phụ `altLabel`: trả true (nút chính), 'alt' (nút phụ) hoặc false (huỷ) */
+  choose: (message: string, o: Options & { altLabel: string }) => open<boolean | 'alt'>('confirm', message, o),
   /** Trả chuỗi người dùng nhập, hoặc `null` khi huỷ. */
   prompt: (message: string, o?: Options) => open<string | null>('prompt', message, o),
 }
@@ -138,6 +142,11 @@ function DialogView({ spec }: { spec: Spec }) {
           {kind !== 'alert' ? (
             <Button data-autofocus={danger ? '' : undefined} variant="soft" onClick={cancel}>
               {spec.cancelLabel ?? 'Huỷ'}
+            </Button>
+          ) : null}
+          {kind === 'confirm' && spec.altLabel ? (
+            <Button variant="soft" onClick={() => close('alt')}>
+              {spec.altLabel}
             </Button>
           ) : null}
           <Button data-autofocus={danger ? undefined : ''} variant={danger ? 'clay' : 'primary'} onClick={accept}>

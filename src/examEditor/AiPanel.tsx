@@ -31,7 +31,8 @@ import { splitHtmlDeck } from '@/lib/htmlDeck'
 import { editSystemPrompt, looksLikeEdit, parseEditCommands, type SlideEditOp } from '@/lib/slideEdit'
 import { useSlidingThumb } from './useSlidingThumb'
 import { buildSourcePack, loadPickedSources, pickedKey, sourcePrompt, sourceRule, type PickedSource, type SourcePack } from '@/lib/sources'
-import { BookOpen } from 'lucide-react'
+import { BookOpen, Globe } from 'lucide-react'
+import { dialog } from '@/components/Dialog'
 import { SourcePicker } from './SourcePicker'
 import { cn } from '@/lib/cn'
 import { DIFFICULTY_RULE } from '@/lib/difficulty'
@@ -146,6 +147,8 @@ export interface ChatTurn {
   intent?: 'doc' | 'chat'
   /** tên các nguồn đã dùng cho lượt này (tệp mẫu / tài liệu lưu / web) */
   sources?: string[]
+  /** trang web lượt tìm trên web đã dẫn */
+  webSources?: Array<{ url: string; title: string }>
   /** cảnh báo nguồn (tệp không đọc được, chưa cấu hình search…) */
   sourceNote?: string
   /** thông báo lỗi nếu lượt lỗi */
@@ -190,9 +193,9 @@ function StepList({ at, failed, notes }: { at: number; failed?: boolean; notes?:
 }
 
 /** nút "Nguồn (n)" bấm mở danh sách nguồn + cảnh báo, thay cho dòng chữ lộ thiên dưới tin nhắn */
-function SourcesButton({ sources, note }: { sources?: string[]; note?: string }) {
+function SourcesButton({ sources, web, note }: { sources?: string[]; web?: Array<{ url: string; title: string }>; note?: string }) {
   const [open, setOpen] = useState(false)
-  const n = sources?.length ?? 0
+  const n = (sources?.length ?? 0) + (web?.length ?? 0)
   return (
     <div className="ai-sources">
       <button type="button" className="ai-sources__btn" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
@@ -204,8 +207,13 @@ function SourcesButton({ sources, note }: { sources?: string[]; note?: string })
         <div className="ai-sources__panel">
           {n ? (
             <ul>
-              {sources!.map((s) => (
+              {(sources ?? []).map((s) => (
                 <li key={s}>{s}</li>
+              ))}
+              {(web ?? []).map((w) => (
+                <li key={w.url}>
+                  <a href={w.url} target="_blank" rel="noopener noreferrer">{w.title}</a>
+                </li>
               ))}
             </ul>
           ) : (
@@ -440,6 +448,13 @@ export const SLIDE_PLAN_SYSTEM =
   '"style" 2 câu tả phong cách (nhịp bố cục, điểm nhấn màu, số liệu, hình ảnh). ' +
   '"decorKit" chọn một bộ trang trí hợp chủ đề và đối tượng (dùng cho cả bài); bài trang trọng chọn "toi-gian".\n' +
   '- Không bịa số liệu thật; số liệu minh hoạ phải ghi rõ "ví dụ". Tiếng Việt chuẩn.'
+
+const WEB_WARN_KEY = 'dethinhbien-web-search-warned'
+
+const WEB_SEARCH_SYSTEM =
+  'Tìm trên web thông tin, số liệu mới và chính xác phục vụ yêu cầu soạn đề / bài giảng của giáo viên dưới đây. ' +
+  'Chỉ trả bản tóm tắt gạch đầu dòng (tối đa 25 dòng), mỗi dòng một dữ kiện hoặc số liệu kèm tên nguồn và năm. ' +
+  'Ưu tiên nguồn chính thống (cơ quan nhà nước, sách giáo khoa, báo lớn). Không soạn đề, không bình luận.'
 
 /** Lịch sử hội thoại gửi kèm mỗi lượt gọi model. */
 function historyOf(turns: ChatTurn[]): LlmMessage[] {
@@ -858,6 +873,32 @@ export function AiPanel({
   const [refs, setRefs] = useState<AiRef[]>([])
   /** nguồn chọn trong modal "Thêm nguồn" — giữ qua các lượt tới khi giáo viên bỏ */
   const [picked, setPicked] = useState<PickedSource[]>([])
+  // tìm trên web trước mỗi lượt soạn (tốn thêm điểm); tắt mặc định
+  const [webSearch, setWebSearch] = useState(false)
+  const toggleWebSearch = async () => {
+    if (webSearch) return setWebSearch(false)
+    let skip = false
+    try {
+      skip = localStorage.getItem(WEB_WARN_KEY) === '1'
+    } catch {
+      /* chế độ riêng tư: hỏi mỗi lần */
+    }
+    if (!skip) {
+      const ok = await dialog.choose(
+        'Mỗi lượt soạn sẽ tìm nguồn trên web trước rồi mới soạn, tốn thêm khoảng 10–15 điểm AI (thường gấp rưỡi bình thường).',
+        { title: 'Tìm trên web', confirmLabel: 'Bật', altLabel: 'Bật, không hỏi lại' },
+      )
+      if (!ok) return
+      if (ok === 'alt') {
+        try {
+          localStorage.setItem(WEB_WARN_KEY, '1')
+        } catch {
+          /* bỏ qua */
+        }
+      }
+    }
+    setWebSearch(true)
+  }
   const [pickerOpen, setPickerOpen] = useState(false)
   useEffect(() => {
     if (!attachKey) return
@@ -1093,6 +1134,18 @@ export function AiPanel({
           patchTurn(() => ({ text: quickAsk.intro || 'Mình cần biết thêm vài điều trước khi soạn.', ask: quickAsk, askState: 'open', pending: false, stepAt: undefined, sources: undefined, sourceNote: undefined }))
           return
         }
+      }
+      // bật Tìm trên web: một lượt tìm + tóm tắt nguồn (DeepSeek, tắt suy luận), rồi soạn như thường với phần tóm tắt trong prompt
+      if (webSearch && intent === 'doc' && mode !== 'board') {
+        const found = await callLlm(
+          [
+            { role: 'system', content: WEB_SEARCH_SYSTEM },
+            { role: 'user', content: [...turns.filter((t) => t.role === 'user').slice(-2).map((t) => t.text), text].filter(Boolean).join('\n') },
+          ],
+          { signal: controller.signal, webSearch: true, maxTokens: 4000 },
+        )
+        messages[0] = { ...messages[0], content: `${messages[0].content}\n\nNGUỒN TÌM TRÊN WEB (số liệu mới, ưu tiên dùng; số liệu lấy từ đây thì ghi nguồn ngắn trong đề/slide):\n${found.content.trim()}` }
+        patchTurn((t) => ({ webSources: found.citations, stepNotes: { ...t.stepNotes, 1: found.citations?.length ? `${found.citations.length} trang web` : 'web' } }))
       }
       const res = await callLlm(messages, {
         signal: controller.signal,
@@ -1544,7 +1597,7 @@ export function AiPanel({
                   ))}
                 </div>
               ) : null}
-              {turn.sources?.length || turn.sourceNote ? <SourcesButton sources={turn.sources} note={turn.sourceNote} /> : null}
+              {turn.sources?.length || turn.webSources?.length || turn.sourceNote ? <SourcesButton sources={turn.sources} web={turn.webSources} note={turn.sourceNote} /> : null}
               {turn.error ? <div className="ai-msg-error">{turn.error}</div> : null}
             </div>
           ))
@@ -1682,6 +1735,18 @@ export function AiPanel({
             >
               <BookOpen size={16} strokeWidth={1.75} />
             </button>
+            {mode !== 'board' ? (
+              <button
+                type="button"
+                className={cn('ai-attach-btn', webSearch && 'is-on')}
+                data-tip={webSearch ? 'Tìm trên web: đang bật (tốn thêm điểm)' : 'Tìm trên web'}
+                aria-label="Tìm trên web"
+                aria-pressed={webSearch}
+                onClick={() => void toggleWebSearch()}
+              >
+                <Globe size={16} strokeWidth={1.75} />
+              </button>
+            ) : null}
             <input
               ref={fileRef}
               type="file"
