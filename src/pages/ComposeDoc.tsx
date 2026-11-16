@@ -691,8 +691,10 @@ export default function ComposeDoc() {
   /** Tệp → Nhập file: mở tệp Word/Excel/PowerPoint thành một tab đề mới. */
   const handleImportExam = useCallback(
     async (file: File) => {
-      const data = await readImportFile(file)
-      const blocks = textToBlocks(data.text)
+      // .docx đọc trên trình duyệt để giữ định dạng; .doc/.xlsx… vẫn qua server lấy chữ
+      const isDocx = /\.docx$/i.test(file.name)
+      const data = isDocx ? { title: file.name.replace(/\.[^.]+$/, '').trim().slice(0, 120) || 'Tài liệu nhập', text: '' } : await readImportFile(file)
+      const blocks = isDocx ? await (await import('@/lib/docxImport')).docxToBlocks(file) : textToBlocks(data.text)
       if (!blocks.length) throw new Error('Tệp không có nội dung văn bản để nhập.')
       const id = newDoc()
       renameTab(id, data.title)
