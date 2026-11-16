@@ -9,6 +9,7 @@
  * Node đặc biệt: `answerKey` và `rubric` là bảng (render bằng node table chuẩn
  * của TipTap) nên mọi ô đều sửa trực tiếp được trong editor.
  */
+import { TocNode } from './toc'
 import { Mark, Node, mergeAttributes, nodeInputRule } from '@tiptap/core'
 import katex from 'katex'
 
@@ -969,6 +970,7 @@ export const EXAM_NODES = [
   RubricItemNode,
   ImageNode,
   InlineMathNode,
+  TocNode,
 ]
 
 /** Node cấp cao nhất — đơn vị đo cho phân trang A4. */
@@ -984,6 +986,7 @@ export const TOP_LEVEL_EXAM_NODES = [
   'examEssay',
   'examPageBreak',
   'examDivider',
+  'examToc',
   'examAnswerKey',
   'examRubric',
 ] as const

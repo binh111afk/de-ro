@@ -26,6 +26,7 @@ import {
   TableRow,
   TextRun,
   Tab,
+  TableOfContents,
   TabStopType,
   VerticalAlign,
   WidthType,
@@ -349,7 +350,7 @@ interface Ctx {
   contentW: number
 }
 
-type Out = Paragraph | Table
+type Out = Paragraph | Table | TableOfContents
 
 function blockToDocx(b: ExamBlock, ctx: Ctx): Out[] {
   switch (b.type) {
@@ -388,6 +389,8 @@ function blockToDocx(b: ExamBlock, ctx: Ctx): Out[] {
           alignment: level === 1 ? AlignmentType.CENTER : AlignmentType.LEFT,
           spacing: { before: level === 1 ? 240 : 180, after: 120 },
           keepNext: true,
+          // để trường mục lục của Word nhận ra đề mục
+          outlineLevel: level - 1,
           ...fmtOpts(b.format),
         }),
       ]
@@ -558,6 +561,12 @@ function blockToDocx(b: ExamBlock, ctx: Ctx): Out[] {
     case 'pageBreak':
       return [para([new PageBreak()])]
 
+    case 'toc':
+      return [
+        para(runs('MỤC LỤC', { bold: true, size: 26 }), { alignment: AlignmentType.CENTER, spacing: { after: 120 } }),
+        new TableOfContents('Mục lục', { hyperlink: true, useAppliedParagraphOutlineLevel: true, headingStyleRange: '1-3' }),
+      ]
+
     case 'divider':
       return [para([], { border: { bottom: { style: BorderStyle.SINGLE, size: 4, color: '999999', space: 1 } }, spacing: { before: 120, after: 120 } })]
 
@@ -683,6 +692,8 @@ export function buildDocx(doc: ExamDoc, opts?: DocxOpts): Document {
   return new Document({
     title: doc.title,
     creator: 'đề rõ',
+    // mục lục là trường TOC: Word hỏi cập nhật trường khi mở để điền số trang
+    ...(doc.blocks.some((b) => b.type === 'toc') ? { features: { updateFields: true } } : {}),
     styles: { default: { document: { run: { font: 'Times New Roman', size: SIZE }, paragraph: { spacing: { line: 360 } } } } },
     numbering: {
       config: [

@@ -712,6 +712,63 @@
     text-indent: -1.5rem;
   }
 
+  /* mục lục tự động: chữ như đề in, dấu chấm dẫn tới số trang */
+  .doc-content div[data-exam-node='examToc'] {
+    margin: 0.2rem 0 0.6rem;
+    cursor: default;
+  }
+  .doc-content div[data-exam-node='examToc'].ProseMirror-selectednode {
+    outline: 2px solid var(--docs-input-ring, #c96442);
+    outline-offset: 4px;
+  }
+  .exam-toc__title {
+    margin-bottom: 0.4rem;
+    font-weight: 700;
+    text-align: center;
+  }
+  .exam-toc__row {
+    display: flex;
+    align-items: baseline;
+    width: 100%;
+    padding: 0;
+    border: none;
+    background: none;
+    font: inherit;
+    color: inherit;
+    text-align: left;
+    line-height: inherit;
+    cursor: pointer;
+  }
+  .exam-toc__row:hover .exam-toc__text {
+    text-decoration: underline;
+  }
+  .exam-toc__row--l1 {
+    font-weight: 700;
+  }
+  .exam-toc__row--l2 {
+    padding-left: 1.5em;
+  }
+  .exam-toc__row--l3 {
+    padding-left: 3em;
+  }
+  .exam-toc__text {
+    min-width: 0;
+  }
+  .exam-toc__dots {
+    flex: 1;
+    min-width: 1.5em;
+    margin: 0 0.3em;
+    border-bottom: 1px dotted currentColor;
+    transform: translateY(-0.25em);
+  }
+  .exam-toc__page {
+    font-variant-numeric: tabular-nums;
+  }
+  .exam-toc__empty {
+    color: #8a8580;
+    font-style: italic;
+  }
+
   .doc-content div[data-exam-node='examPageBreak'] {
     height: 0;
     border-top: 1px dashed #c9c2b7;

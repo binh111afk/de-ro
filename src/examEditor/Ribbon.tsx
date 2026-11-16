@@ -695,7 +695,12 @@ export function Ribbon({
       {
         id: 'page',
         label: 'Trang',
-        render: () => <RibbonButton icon={<IconPageBreak size={26} />} label="Ngắt trang" disabled={disabled} onClick={() => insertTemplate('pageBreak')} />,
+        render: () => (
+          <>
+            <RibbonButton icon={<IconPageBreak size={26} />} label="Ngắt trang" disabled={disabled} onClick={() => insertTemplate('pageBreak')} />
+            <RibbonButton icon={<ListTree className="size-[26px]" strokeWidth={1.3} />} label="Chèn mục lục" disabled={disabled} onClick={() => insertTemplate('toc')} />
+          </>
+        ),
       },
     ],
     layout: [

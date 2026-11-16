@@ -321,6 +321,17 @@ export function ExamEditor({ content, onChange, onReady, pageSetup, readOnly, is
     }
   }, [editor, CONTENT_H, PAGE_H, MARGIN_TOP, isReflow])
 
+  // mục lục đọc bước trang và cách đánh số trang từ storage; báo nó vẽ lại khi đổi
+  const pageNumberKey = JSON.stringify(pageSetup?.pageNumber ?? null)
+  useEffect(() => {
+    if (!editor || editor.isDestroyed) return
+    const st = (editor.storage as unknown as Record<string, unknown>).examToc as { stride: number; pageNumber?: PageSetup['pageNumber'] }
+    st.stride = isReflow ? 0 : PAGE_H + PAGE_GAP
+    st.pageNumber = pageSetup?.pageNumber
+    editor.view.dispatch(editor.state.tr.setMeta('tocRefresh', true).setMeta('addToHistory', false))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editor, PAGE_H, isReflow, pageNumberKey])
+
   // đo lại khi nội dung đổi, font tải xong, kích thước đổi. Mọi trigger gộp
   // vào một rAF để tránh mutation storm khi widget spacer vừa được chèn.
   useLayoutEffect(() => {

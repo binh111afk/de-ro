@@ -404,6 +404,13 @@ export const BLOCK_TEMPLATES: BlockTemplate[] = [
     desc: 'Đẩy nội dung sang trang sau',
     build: () => ({ type: 'examPageBreak', attrs: { id: `pb${Date.now()}` } }),
   },
+  {
+    id: 'toc',
+    group: 'Bố cục',
+    label: 'Mục lục',
+    desc: 'Liệt kê các đề mục kèm số trang, tự cập nhật',
+    build: () => ({ type: 'examToc', attrs: { id: `toc${Date.now()}` } }),
+  },
 ]
 
 /** Tìm template theo id. */

@@ -339,6 +339,11 @@ export function tipTapToBlocks(doc: JSONContent): ExamBlock[] {
         out.push({ type: 'divider' })
         break
 
+      case 'examToc':
+        flushHeader()
+        out.push({ type: 'toc' })
+        break
+
       case 'table': {
         flushHeader()
         const rows: TableCellData[][] = (node.content ?? [])
@@ -667,6 +672,10 @@ export function blocksToTipTap(blocks: ExamBlock[]): JSONContent {
 
       case 'divider':
         content.push({ type: 'examDivider', attrs: { id: `dv${content.length}` } })
+        break
+
+      case 'toc':
+        content.push({ type: 'examToc', attrs: { id: `toc${content.length}` } })
         break
 
       case 'table':

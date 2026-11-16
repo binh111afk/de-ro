@@ -68,6 +68,7 @@ export type BlockType =
   | 'pageBreak'
   | 'divider'
   | 'table'
+  | 'toc'
 
 export interface HeaderBlock {
   type: 'header'
@@ -172,6 +173,11 @@ export interface DividerBlock {
   type: 'divider'
 }
 
+/** Mục lục tự động: liệt kê các khối heading phía sau, kèm số trang */
+export interface TocBlock {
+  type: 'toc'
+}
+
 export interface TableCellData {
   text: RichText
   header?: boolean
@@ -205,6 +211,7 @@ export type ExamBlock =
   | PageBreakBlock
   | DividerBlock
   | TableBlock
+  | TocBlock
 
 /** Loại tài liệu — quyết định icon hiển thị trên tab và thẻ loại ở trang bắt đầu. */
 export type DocKind = 'exam' | 'slide' | 'board'

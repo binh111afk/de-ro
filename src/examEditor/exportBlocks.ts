@@ -145,12 +145,21 @@ function blocksToHtml(blocks: ExamBlock[]): string {
   // `block.no` có thể cũ sau khi chèn/xoá/sắp xếp lại câu.
   const seq: BlockSeq = { q: 0, essay: 0 }
   return blocks
-    .map((b) => {
+    .map((b, i) => {
       if (b.type === 'question') seq.q += 1
       if (b.type === 'essay') seq.essay += 1
+      if (b.type === 'toc') return tocHtml(blocks.slice(i + 1))
       return blockToHtml(b, seq)
     })
     .join('\n')
+}
+
+/** mục lục khi in / xuất HTML: chưa biết số trang nên chỉ liệt kê đề mục */
+function tocHtml(after: ExamBlock[]): string {
+  const rows = after
+    .filter((b): b is Extract<ExamBlock, { type: 'heading' }> => b.type === 'heading')
+    .map((h) => `<p class="p" style="margin:2px 0 2px ${((h.level ?? 1) - 1) * 18}px">${richToHtml(h.text)}</p>`)
+  return `<h2 class="h1">MỤC LỤC</h2>${rows.join('')}`
 }
 
 interface BlockSeq {
