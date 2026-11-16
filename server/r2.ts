@@ -35,6 +35,9 @@ export function r2Info() {
 
 const sha256Hex = (data: Buffer | string) => createHash('sha256').update(data).digest('hex')
 const hmac = (key: Buffer | string, data: string) => createHmac('sha256', key).update(data).digest()
+/** key tài liệu riêng: HMAC(bí mật server, chủ + nội dung) — không bí mật thì không ai tính ra được key */
+const docKeyHash = (owner: string, buf: Buffer) =>
+  createHmac('sha256', `doc-key:${process.env.DOC_KEY_SECRET || process.env.R2_SECRET_ACCESS_KEY || ''}`).update(`${owner}\n`).update(buf).digest('hex')
 
 function r2Config() {
   return {
@@ -151,7 +154,8 @@ export async function handleUploadRequest(req: IncomingMessage, res: ServerRespo
   try {
     const body = JSON.parse(await readBody(req)) as { dataUrl?: unknown; name?: unknown; subject?: unknown }
     const match = typeof body.dataUrl === 'string' ? /^data:([a-z0-9.+/-]+);base64,([A-Za-z0-9+/=]+)$/.exec(body.dataUrl) : null
-    const ext = match ? EXT[match[1]] : undefined
+    // Object.hasOwn: kiểu lạ như `constructor` / `__proto__` không được lấy từ prototype
+    const ext = match && Object.hasOwn(EXT, match[1]) ? EXT[match[1]] : undefined
     if (!match || !ext) {
       return json(res, 400, { error: 'Chỉ nhận ảnh PNG, JPEG, WebP, GIF hoặc tệp PDF, DOCX dạng base64' })
     }
@@ -165,7 +169,9 @@ export async function handleUploadRequest(req: IncomingMessage, res: ServerRespo
       return json(res, 400, { error: `Tệp rỗng hoặc quá lớn (tối đa ${limit / 1024 / 1024} MB)` })
     }
     // tài liệu: key băm cả chủ tệp → mỗi người một bản, không ghi đè chủ của người khác cùng nội dung
-    const hash = isDoc ? sha256Hex(Buffer.concat([Buffer.from(`${owner}\n`), buf])) : sha256Hex(buf)
+    // băm có KHOÁ BÍ MẬT của server: id chủ tệp lộ công khai (danh sách đề cộng đồng), băm trần thì ai có
+    // cùng tệp + id chủ là tính ra key (đọc thẳng được nếu bucket còn bật URL công khai r2.dev)
+    const hash = isDoc ? docKeyHash(owner, buf) : sha256Hex(buf)
     const key = `${isDoc ? 'doc' : 'img'}/${hash.slice(0, 40)}.${ext}`
     const url = `/api/files/${key}`
 

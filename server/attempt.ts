@@ -31,9 +31,7 @@ export async function handleAttemptRequest(req: IncomingMessage, res: ServerResp
     if (!UUID.test(examId) || !name) return json(res, 400, { error: 'Thiếu đề hoặc tên học sinh.' })
     const answers = (body.answers && typeof body.answers === 'object' ? body.answers : {}) as Record<string, unknown>
 
-    // điểm tổng vẫn dò được từng câu (đổi một câu mỗi lượt) — giới hạn số lượt nộp mỗi đề / IP / 10 phút.
-    // 60 đủ cho cả lớp chung một IP nộp cùng lúc; dò một đề 40 câu cần cỡ 120 lượt và để lại từng ấy dòng
-    // trong bảng điểm giáo viên.
+    // chặn nộp dồn dập một đề từ một IP (60 lượt / 10 phút đủ cho cả lớp chung IP)
     if (!rateLimitOnly(req, res, `attempt-exam:${examId.toLowerCase()}`, 60)) return
     const row = await getExamRow(base, key, examId)
     if (!row?.doc) return json(res, 404, { error: 'Không tìm thấy đề.' })
@@ -65,11 +63,14 @@ export async function handleAttemptRequest(req: IncomingMessage, res: ServerResp
     let score = 0
     let correct = 0
     // đáp án vốn đã công khai (đề cộng đồng, hoặc "hiện đúng/sai ngay" — api/exam trả kèm đáp án): trả đủ.
-    // Đề link giấu đáp án: KHÔNG trả gì theo từng câu — kể cả "câu này đúng" hay đáp án của câu làm đúng.
-    // Nộp được nhiều lần, nên mọi phản hồi theo từng câu đều là máy dò: mỗi lượt thử song song mọi câu,
-    // vài lượt là ra cả đề (kể cả đề "chỉ làm một lần" — mỗi tài khoản miễn phí một lượt). Chỉ trả điểm tổng
-    // và số câu đúng; muốn học sinh xem đáp án sau khi nộp thì giáo viên bật "hiện đáp án ngay".
+    // Đề link giấu đáp án: mọi phản hồi sau khi nộp đều là máy dò, vì nộp được nhiều lần:
+    // - theo từng câu (đáp án / đúng-sai): mỗi lượt thử song song mọi câu, vài lượt ra cả đề;
+    // - điểm tổng / số câu đúng: mỗi lượt chỉ làm một câu, bỏ trống phần còn lại → điểm 0 hay >0 là đúng/sai
+    //   (Strix đo: đề 10 câu ra hết đáp án sau 22 lượt, không cần tài khoản).
+    // Nên đề giấu đáp án chỉ báo "đã nộp"; điểm lưu cho giáo viên. Giáo viên tự bật `showScore` nếu chấp nhận
+    // rủi ro đó, hoặc bật "hiện đáp án ngay" (khi ấy đáp án vốn công khai).
     const fullKey = row.listed || exam.settings?.instantFeedback
+    const revealScore = fullKey || exam.settings?.showScore === true
     const answerKey: Record<string, { answer?: string; explanation?: string; solution?: string[] }> = {}
     for (const q of questions) {
       const given = answers[q.id]
@@ -104,6 +105,7 @@ export async function handleAttemptRequest(req: IncomingMessage, res: ServerResp
     // đề link gửi cho học sinh không kèm đáp án (api/exam): nộp xong mới trả điểm và đáp án để xem lại bài
     // gradable: tổng điểm các câu chấm được (có đáp án) — học sinh xem điểm trên thang này,
     // max_score lưu cho giáo viên vẫn là tổng điểm cả đề (giáo viên còn chấm tay câu tự luận)
+    if (!revealScore) return json(res, 200, { submitted: true, hidden: true })
     return json(res, 200, { score, max, gradable: gradableMax(questions), correct, key: answerKey })
   } catch (err) {
     return json(res, 400, { error: err instanceof Error ? err.message : String(err) })

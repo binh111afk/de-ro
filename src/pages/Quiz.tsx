@@ -120,6 +120,8 @@ export default function Quiz() {
   /** Đề lấy từ link/cộng đồng thì gửi kết quả về cho giáo viên khi nộp bài (mỗi lượt một lần). */
   const sentFor = useRef<number | null>(null)
   const [sent, setSent] = useState<'sent' | 'failed' | 'skipped' | null>(null)
+  /** server không trả điểm (đề giấu đáp án, giáo viên không bật "cho xem điểm") */
+  const [scoreHidden, setScoreHidden] = useState(false)
   useEffect(() => {
     if (!submitted || !lastResult || !exam || sentFor.current === lastResult.at) return
     if (!isRemoteExamId(exam.importedFrom) || lastResult.examId !== exam.id) return
@@ -162,7 +164,9 @@ export default function Quiz() {
           className: info?.className,
           seat: info?.seat,
         })
-        useApp.getState().applyGrading(exam.id, graded.score, graded.max, graded.key ?? {}, graded.gradable, graded.correct)
+        // đề giấu đáp án và giáo viên không cho xem điểm: server chỉ báo đã nộp
+        if (graded.hidden) setScoreHidden(true)
+        else useApp.getState().applyGrading(exam.id, graded.score, graded.max, graded.key ?? {}, graded.gradable, graded.correct)
         setSent('sent')
       } catch {
         setSent('failed')
@@ -222,6 +226,7 @@ export default function Quiz() {
     setReviewing(false)
     setChecked(new Set())
     setSent(null)
+    setScoreHidden(false)
     setShuffleKey((k) => k + 1)
     startQuiz(exam.id)
   }
@@ -258,10 +263,11 @@ export default function Quiz() {
         totalPoints={totalPoints}
         gradable={gradable}
         correctCount={lastResult.correct}
+        scoreHidden={scoreHidden}
         pending={pending}
         questions={questions}
         answers={answers}
-        note={sent === 'sent' ? 'Đã gửi kết quả cho giáo viên.' : sent === 'failed' ? 'Chưa gửi được kết quả cho giáo viên, kiểm tra mạng rồi bấm Làm lại nếu cần.' : undefined}
+        note={scoreHidden ? undefined : sent === 'sent' ? 'Đã gửi kết quả cho giáo viên.' : sent === 'failed' ? 'Chưa gửi được kết quả cho giáo viên, kiểm tra mạng rồi bấm Làm lại nếu cần.' : undefined}
         onRestart={restart}
         onReview={() => {
           setIndex(0)
@@ -918,6 +924,7 @@ function ResultView({
   totalPoints,
   gradable,
   correctCount,
+  scoreHidden,
   pending,
   questions,
   answers,
@@ -925,6 +932,8 @@ function ResultView({
   onRestart,
   onReview,
 }: {
+  /** đã nộp nhưng giáo viên không cho xem điểm (đề giấu đáp án) */
+  scoreHidden?: boolean
   /** số câu đúng do server đếm — đề giấu đáp án thì máy không có đáp án để tự đếm */
   correctCount?: number
   note?: string
@@ -973,6 +982,13 @@ function ResultView({
           <p className="eyebrow mt-6">Kết quả</p>
           {pending ? (
             <p className="mt-4 font-display text-[24px] font-semibold text-ink-3">Đang chấm bài…</p>
+          ) : scoreHidden ? (
+            <>
+              <p className="mt-3 font-display text-[28px] font-semibold text-ink">Đã nộp bài</p>
+              <p className="mx-auto mt-2 max-w-[440px] text-[13.5px] leading-relaxed text-ink-3">
+                Bài làm đã gửi cho thầy cô. Đề này không hiện điểm và đáp án sau khi nộp, thầy cô sẽ báo kết quả cho em.
+              </p>
+            </>
           ) : noKey ? (
             <>
               <p className="mt-3 font-display text-[28px] font-semibold text-ink">Đề chưa có đáp án</p>

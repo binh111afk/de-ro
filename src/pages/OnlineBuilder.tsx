@@ -429,10 +429,18 @@ export default function OnlineBuilder() {
               </div>
               <Toggle
                 label="Hiện đáp án và giải thích ngay"
-                hint="Trắc nghiệm: chọn xong là hiện đúng/sai và giải thích. Các dạng khác có nút Kiểm tra đáp án. Tắt thì nộp xong học sinh chỉ thấy điểm, không thấy đáp án."
+                hint="Trắc nghiệm: chọn xong là hiện đúng/sai và giải thích. Các dạng khác có nút Kiểm tra đáp án. Đáp án khi đó công khai với ai có link."
                 checked={Boolean(item.settings.instantFeedback)}
                 onChange={(v) => setSettings({ instantFeedback: v })}
               />
+              {item.settings.instantFeedback || item.publishedListed ? null : (
+                <Toggle
+                  label="Cho học sinh xem điểm sau khi nộp"
+                  hint="Tắt: học sinh chỉ thấy “Đã nộp bài”, thầy cô xem điểm ở trang kết quả. Bật: học sinh thấy điểm, nhưng ai có link có thể nộp thử nhiều lần để dò ra đáp án."
+                  checked={Boolean(item.settings.showScore)}
+                  onChange={(v) => setSettings({ showScore: v })}
+                />
+              )}
               <Toggle
                 label="Đảo thứ tự câu hỏi"
                 hint="Mỗi lượt làm, các câu hiện theo thứ tự ngẫu nhiên."

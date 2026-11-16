@@ -88,7 +88,10 @@ export const isRemoteExamId = (id: string | undefined): id is string =>
 
 /** Nộp bài: gửi bài làm (không gửi điểm), server tự chấm theo đáp án của đề rồi lưu. Có phiên đăng nhập thì gắn vào tài khoản. */
 /** `correct` = số câu đúng trọn do server đếm (đề giấu đáp án không trả đáp án từng câu, máy không tự đếm được) */
-export interface GradeResult { score: number; max: number; gradable?: number; correct?: number; key:Record<string, { answer?: string; explanation?: string; solution?: string[] }> }
+/** `hidden` = đề giấu đáp án và không cho xem điểm: server chỉ báo đã nộp, không có điểm / số câu đúng / đáp án */
+export type GradeResult =
+  | { hidden: true; submitted: true }
+  | { hidden?: false; score: number; max: number; gradable?: number; correct?: number; key: Record<string, { answer?: string; explanation?: string; solution?: string[] }> }
 
 export async function submitAttempt(a: { examId: string; name: string; answers: Record<string, string>; seconds: number; className?: string; seat?: number }): Promise<GradeResult> {
   const res = await apiFetch('/api/attempt', {

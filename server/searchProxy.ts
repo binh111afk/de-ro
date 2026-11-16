@@ -42,6 +42,7 @@ function normalizeResults(raw: unknown): SearchResult[] {
 async function runSearch(query: string, key: string): Promise<SearchResult[]> {
   const upstream = await fetch(TAVILY_ENDPOINT, {
     method: 'POST',
+    signal: AbortSignal.timeout(15_000),
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       api_key: key,
@@ -53,7 +54,11 @@ async function runSearch(query: string, key: string): Promise<SearchResult[]> {
     }),
   })
   const text = await upstream.text()
-  if (!upstream.ok) throw new Error(`Tavily ${upstream.status}: ${text.slice(0, 300)}`)
+  // không trả nguyên văn lỗi nhà cung cấp cho người dùng (có thể lộ cấu hình); ghi log server là đủ
+  if (!upstream.ok) {
+    console.error(`Tavily ${upstream.status}: ${text.slice(0, 300)}`)
+    throw new Error(`Dịch vụ tìm kiếm lỗi ${upstream.status}`)
+  }
   const data = JSON.parse(text) as { results?: unknown }
   return normalizeResults(data.results)
 }

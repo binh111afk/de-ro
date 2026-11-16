@@ -18,7 +18,15 @@ let adminBanned = false
 const calls: string[] = []
 const LISTED = '44444444-4444-4444-8444-444444444444'
 const PRIVATE = '55555555-5555-4555-8555-555555555555'
-const EXAMS = [{ id: LISTED, listed: true }, { id: PRIVATE, listed: false }]
+const REMOVED = '77777777-7777-4777-8777-777777777777'
+const OWN = '88888888-8888-4888-8888-888888888888'
+// status / owner_id cho các ca kiểm duyệt (Strix lần 5): đề admin đã gỡ, đề của chính moderator
+const EXAMS: Array<{ id: string; listed: boolean; status: string; owner_id: string }> = [
+  { id: LISTED, listed: true, status: 'published', owner_id: USER },
+  { id: PRIVATE, listed: false, status: 'published', owner_id: USER },
+  { id: REMOVED, listed: true, status: 'removed', owner_id: USER },
+  { id: OWN, listed: true, status: 'published', owner_id: MOD },
+]
 let strikeReply: unknown = []
 const bodies: string[] = []
 
@@ -52,7 +60,12 @@ globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
   if (url.includes('/rest/v1/community_exams')) {
     // một đề cộng đồng (listed) và một đề link riêng; lọc theo id / listed như PostgREST
     const q = new URL(url).searchParams
-    const rows = EXAMS.filter((e) => (!q.get('id') || q.get('id') === `eq.${e.id}`) && (!q.get('listed') || q.get('listed') === `eq.${e.listed}`))
+    const rows = EXAMS.filter(
+      (e) =>
+        (!q.get('id') || q.get('id') === `eq.${e.id}`) &&
+        (!q.get('listed') || q.get('listed') === `eq.${e.listed}`) &&
+        (!q.get('status') || q.get('status') === `eq.${e.status}`),
+    )
     return ok(rows.map((e) => ({ ...e, title: e.id === LISTED ? 'Đề cộng đồng' : 'Đề riêng' })))
   }
   if (url.includes('/rest/v1/reports')) {
@@ -307,6 +320,19 @@ check('xoá tệp: nhận tài liệu', r2DocKeyFromUrl(`/api/files/doc/${H}.pdf
   const aids = ((al.data.exams as Array<{ id: string }>) ?? []).map((e) => e.id)
   check('admin vẫn thấy cả đề riêng', aids.includes(LISTED) && aids.includes(PRIVATE))
   check('admin gỡ đề riêng → được', (await hit({ action: 'content.exams.setStatus', examId: PRIVATE, status: 'hidden' }, 'tAdmin')).status === 200)
+}
+
+// Strix lần 5: moderator không khôi phục / sửa đề admin đã gỡ, không tự kiểm duyệt đề của mình; nhật ký giữ quyết định cũ
+{
+  check('moderator khôi phục đề đã gỡ → 403', (await hit({ action: 'content.exams.setStatus', examId: REMOVED, status: 'published' }, 'tMod')).status === 403)
+  check('moderator đổi lý do gỡ → 403', (await hit({ action: 'content.exams.setStatus', examId: REMOVED, status: 'removed', reason: 'khác' }, 'tMod')).status === 403)
+  check('moderator ẩn đề của chính mình → 403', (await hit({ action: 'content.exams.setStatus', examId: OWN, status: 'hidden' }, 'tMod')).status === 403)
+  const before = bodies.length
+  check('admin khôi phục đề đã gỡ → được', (await hit({ action: 'content.exams.setStatus', examId: REMOVED, status: 'published' }, 'tAdmin')).status === 200)
+  const auditBody = bodies.slice(before).find((b) => b.includes('content.exams.setStatus')) ?? ''
+  check('nhật ký ghi trạng thái cũ (from: removed)', auditBody.includes('"from":"removed"'))
+  const patchUrl = calls.find((c) => c.startsWith('PATCH') && c.includes(REMOVED)) ?? ''
+  check('lệnh ghi ghim trạng thái vừa đọc (status=eq.removed)', patchUrl.includes('status=eq.removed'))
 }
 
 // Strix lần 3 mục 5: không nhớ trạng thái khoá — admin vừa bị khoá mất quyền ngay request kế tiếp

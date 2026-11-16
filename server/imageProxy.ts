@@ -19,6 +19,7 @@ import type { IncomingMessage, ServerResponse } from 'node:http'
 import { json, readBody } from './http.js'
 import { LOGIN_REQUIRED, clientIp, guard, isLocal, userFromToken } from './guard.js'
 import { TOKENS_PER_POINT, addUsage, quotaMessage, readQuota, reserveQuota } from './aiQuota.js'
+import { assertPublicHttpsUrl } from './llmProxy.js'
 
 /** điểm AI trừ cho mỗi ảnh vẽ thành công (ảnh tốn tiền nhà cung cấp như chữ) */
 const IMAGE_TOKENS = () => Math.max(0, Number(process.env.AI_IMAGE_POINTS ?? 5) || 0) * TOKENS_PER_POINT
@@ -115,7 +116,9 @@ function upstreamError(status: number, body: Record<string, unknown>): string {
 
 /** Tải ảnh về dạng data URL để deck lưu được offline (URL CDN có thể hết hạn). */
 async function imageToDataUrl(url: string): Promise<string> {
-  const res = await fetch(url, { signal: AbortSignal.timeout(30_000) })
+  // URL do nhà cung cấp trả về: chỉ https tới địa chỉ công khai, không theo chuyển hướng (khỏi bị dẫn vào mạng nội bộ)
+  const safe = await assertPublicHttpsUrl(url)
+  const res = await fetch(safe, { signal: AbortSignal.timeout(30_000), redirect: 'error' })
   if (!res.ok) throw new Error(`Không tải được ảnh (${res.status})`)
   const buf = Buffer.from(await res.arrayBuffer())
   if (buf.length === 0) throw new Error('Ảnh trả về rỗng')

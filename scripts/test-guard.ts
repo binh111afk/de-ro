@@ -367,6 +367,8 @@ const jwt = (sub: string) => `h.${Buffer.from(JSON.stringify({ sub })).toString(
   process.env.VITE_SUPABASE_URL = 'http://sb.test'
   process.env.SUPABASE_SERVICE_ROLE_KEY = 'svc'
   const EXAM = '99999999-2222-3333-4444-555555555555'
+  // cùng đề nhưng giáo viên bật "cho học sinh xem điểm"
+  const EXAM_SCORE = '99999999-2222-3333-4444-666666666666'
   const online = {
     title: 'Đề giấu đáp án',
     settings: {},
@@ -379,13 +381,16 @@ const jwt = (sub: string) => `h.${Buffer.from(JSON.stringify({ sub })).toString(
   const realFetch = globalThis.fetch
   globalThis.fetch = (async (input: string | URL) => {
     const url = String(input)
-    if (url.includes('/rest/v1/community_exams')) return new Response(JSON.stringify([{ doc: { online }, listed }]), { status: 200 })
+    if (url.includes('/rest/v1/community_exams')) {
+      const doc = url.includes(EXAM_SCORE) ? { online: { ...online, settings: { showScore: true } } } : { online }
+      return new Response(JSON.stringify([{ doc, listed }]), { status: 200 })
+    }
     if (url.includes('/rest/v1/exam_attempts')) return new Response(null, { status: 201 })
     return new Response('{}', { status: 404 })
   }) as typeof fetch
   const { handleAttemptRequest } = await import('../server/attempt.ts')
-  const submit = async (answers: Record<string, string>, ipLast: number) => {
-    const body = Buffer.from(JSON.stringify({ examId: EXAM, name: 'Hs', answers }))
+  const submit = async (answers: Record<string, string>, ipLast: number, examId = EXAM) => {
+    const body = Buffer.from(JSON.stringify({ examId, name: 'Hs', answers }))
     const req = Object.assign((async function* () { yield body })(), {
       method: 'POST',
       headers: { host: 'de-ro-lac.vercel.app', origin: 'https://de-ro-lac.vercel.app' },
@@ -404,11 +409,17 @@ const jwt = (sub: string) => `h.${Buffer.from(JSON.stringify({ sub })).toString(
       },
     } as unknown as ServerResponse
     await handleAttemptRequest(req, res)
-    return { status: out.status, data: JSON.parse(out.body || '{}') as { score?: number; correct?: number; key?: Record<string, unknown> } }
+    return { status: out.status, data: JSON.parse(out.body || '{}') as { score?: number; correct?: number; hidden?: boolean; submitted?: boolean; key?: Record<string, unknown> } }
   }
+  // Strix lần 5: điểm tổng cũng là máy dò (mỗi lượt làm 1 câu) → đề giấu đáp án chỉ báo đã nộp
   const r = await submit({ q1: 'B', q2: 'A' }, 150)
-  check('đề giấu đáp án: làm đúng 1 câu → điểm 1, số câu đúng 1', r.status === 200 && r.data.score === 1 && r.data.correct === 1)
-  check('đề giấu đáp án: không trả đáp án / giải thích / đúng-sai của câu nào', JSON.stringify(r.data.key) === '{}' && !JSON.stringify(r.data).includes('vì B'))
+  check('đề giấu đáp án: nộp xong chỉ báo đã nộp', r.status === 200 && r.data.hidden === true && r.data.submitted === true)
+  check('đề giấu đáp án: không trả điểm, số câu đúng, đáp án hay giải thích', r.data.score === undefined && r.data.correct === undefined && r.data.key === undefined && !JSON.stringify(r.data).includes('vì B'))
+  const probeA = await submit({ q1: 'B' }, 152)
+  const probeB = await submit({ q1: 'A' }, 153)
+  check('dò từng câu: trả lời đúng hay sai đều nhận phản hồi giống hệt', JSON.stringify(probeA.data) === JSON.stringify(probeB.data))
+  const shown = await submit({ q1: 'B', q2: 'A' }, 154, EXAM_SCORE)
+  check('giáo viên bật "cho xem điểm": trả điểm + số câu đúng, vẫn không trả đáp án', shown.data.score === 1 && shown.data.correct === 1 && JSON.stringify(shown.data.key) === '{}' && !JSON.stringify(shown.data).includes('vì B'))
   // nộp dồn dập cùng đề từ một IP: quá 60 lượt / 10 phút → 429
   let blocked = 0
   for (let i = 0; i < 70; i++) if ((await submit({ q1: 'A' }, 151)).status === 429) blocked++

@@ -120,6 +120,21 @@ function assertAllowedUrl(raw: string): URL {
   return url
 }
 
+/** URL bên ngoài server sắp tải (vd. ảnh nhà cung cấp trả về): chỉ https, không kèm tài khoản, mọi địa chỉ DNS đều công khai. */
+export async function assertPublicHttpsUrl(raw: string): Promise<URL> {
+  const url = assertAllowedUrl(raw)
+  if (url.protocol !== 'https:') throw new Error('Địa chỉ phải dùng https.')
+  if (url.username || url.password) throw new Error('Địa chỉ không được chứa tài khoản.')
+  let addrs: Array<{ address: string; family: number }>
+  try {
+    addrs = await lookup(url.hostname.replace(/^\[|\]$/g, ''), { all: true })
+  } catch {
+    throw new Error('Không tìm thấy máy chủ.')
+  }
+  for (const a of addrs) assertAllowedUrl(a.family === 6 ? `https://[${a.address}]/` : `https://${a.address}/`)
+  return url
+}
+
 /** Endpoint admin nhập trên giao diện: chỉ https, không kèm tài khoản/query, tên miền không trỏ vào mạng nội bộ. */
 export async function assertSafeEndpoint(raw: string): Promise<void> {
   const url = assertAllowedUrl(raw)

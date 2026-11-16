@@ -218,6 +218,19 @@ export const CONTENT_ACTIONS: ActionMap = {
         throw new HttpError(400, 'Cần có lý do khi gỡ đề thi.')
       }
 
+      // trạng thái hiện tại (trong phạm vi của người gọi) để quyết định chuyển trạng thái có được phép không
+      const { data: curRows } = await call<Array<{ owner_id: string | null; status: string; removed_reason: string | null; moderated_by: string | null }>>(
+        ctx.s,
+        `/rest/v1/community_exams?id=eq.${examId}${scopeQs(ctx)}&select=owner_id,status,removed_reason,moderated_by`,
+      )
+      const cur = curRows?.[0]
+      if (!cur) throw new HttpError(404, 'Không tìm thấy đề thi.')
+      if (ctx.role !== 'admin') {
+        // tách quyền: không tự kiểm duyệt đề của mình; đề đã gỡ chỉ admin đụng tới (khôi phục, đổi lý do)
+        if (cur.owner_id && cur.owner_id === ctx.userId) throw new HttpError(403, 'Không kiểm duyệt đề của chính bạn.')
+        if (cur.status === 'removed') throw new HttpError(403, 'Đề đã bị gỡ, chỉ admin được khôi phục hoặc sửa.')
+      }
+
       const patchBody: Record<string, unknown> = {
         status,
         removed_reason: status === 'removed' ? reason : null,
@@ -225,17 +238,25 @@ export const CONTENT_ACTIONS: ActionMap = {
         moderated_at: new Date().toISOString(),
       }
 
-      // lọc phạm vi ngay trong lệnh PATCH: đề ngoài phạm vi thì không dòng nào đổi → 404
-      const { data: changed } = await call<Array<{ id: string }>>(ctx.s, `/rest/v1/community_exams?id=eq.${examId}${scopeQs(ctx)}&select=id`, {
-        method: 'PATCH',
-        headers: { Prefer: 'return=representation' },
-        body: JSON.stringify(patchBody),
-      })
-      if (!changed?.length) throw new HttpError(404, 'Không tìm thấy đề thi.')
+      // lọc phạm vi + ghim trạng thái vừa đọc ngay trong lệnh PATCH: ai đổi giữa chừng thì 0 dòng → không ghi đè
+      const { data: changed } = await call<Array<{ id: string }>>(
+        ctx.s,
+        `/rest/v1/community_exams?id=eq.${examId}${scopeQs(ctx)}&status=eq.${encodeURIComponent(cur.status)}&select=id`,
+        {
+          method: 'PATCH',
+          headers: { Prefer: 'return=representation' },
+          body: JSON.stringify(patchBody),
+        },
+      )
+      if (!changed?.length) throw new HttpError(409, 'Trạng thái đề vừa thay đổi, tải lại rồi thử lại.')
 
+      // giữ quyết định cũ trong nhật ký (cột trên dòng đề bị ghi đè)
       await audit(ctx, 'content.exams.setStatus', examId, {
         status,
         reason: status === 'removed' ? reason : undefined,
+        from: cur.status,
+        prevReason: cur.removed_reason ?? undefined,
+        prevModeratedBy: cur.moderated_by ?? undefined,
       })
 
       return { ok: true }

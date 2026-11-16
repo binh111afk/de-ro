@@ -6,7 +6,7 @@
  * - Tài khoản: Supabase Auth Admin API (`/auth/v1/admin/users`), cần SUPABASE_SERVICE_ROLE_KEY.
  */
 import type { IncomingMessage, ServerResponse } from 'node:http'
-import { clientIp, guard, userFromToken } from './guard.js'
+import { clientIp, forgetBan, guard, userFromToken } from './guard.js'
 import { MONTHLY_LIMIT } from './aiQuota.js'
 import { json, readBody } from './http.js'
 import { deleteR2Object, pingR2, r2DocKeyFromUrl, r2Info } from './r2.js'
@@ -284,6 +284,7 @@ const ACTIONS: ActionMap = {
       const hours = Math.floor(Number(b.hours) || 0)
       const reason = str(b.reason, 500)
       await call(ctx.s, `/auth/v1/admin/users/${id}`, { method: 'PUT', body: JSON.stringify({ ban_duration: hours > 0 ? `${hours}h` : '876000h' }) })
+      forgetBan(id)
       await audit(ctx, 'users.ban', id, { hours: hours || null, reason })
       return { ok: true }
     },
@@ -296,6 +297,7 @@ const ACTIONS: ActionMap = {
       // như ban/xoá: không tự gỡ khoá cho mình, không đụng admin khác
       await protectTarget(ctx, id, 'users.unban')
       await call(ctx.s, `/auth/v1/admin/users/${id}`, { method: 'PUT', body: JSON.stringify({ ban_duration: 'none' }) })
+      forgetBan(id)
       // vẫn giữ số lần vi phạm; chỉ bỏ mốc khoá để lần vi phạm sau được tính
       await call(ctx.s, `/rest/v1/security_flags?user_id=eq.${id}`, { method: 'PATCH', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ locked_until: null }) }).catch(() => {})
       await audit(ctx, 'users.unban', id)
@@ -333,6 +335,7 @@ const ACTIONS: ActionMap = {
       await audit(ctx, 'users.delete', id, { email: user.email, files: keys.length })
       try {
         await call(ctx.s, `/auth/v1/admin/users/${id}`, { method: 'DELETE' })
+        forgetBan(id)
       } catch (err) {
         await audit(ctx, 'users.delete.failed', id, { email: user.email })
         throw err

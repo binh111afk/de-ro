@@ -42,12 +42,28 @@ const verifyHits = new Map<string, { count: number; reset: number }>()
 /** JWT của Supabase: 3 đoạn base64url, vài trăm byte – vài KB */
 const JWT_SHAPE = /^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/
 
+/**
+ * Bộ đếm quá lớn (nhiều IP / token khác nhau): bỏ mục đã hết hạn, còn đầy thì bỏ mục cũ nhất.
+ * KHÔNG xoá sạch — xoá sạch thì một đợt spam nhiều khoá sẽ reset luôn mọi bộ đếm đang chặn.
+ */
+function prune(map: Map<string, { count: number; reset: number }>) {
+  if (map.size <= 20000) return
+  const now = Date.now()
+  for (const [k, v] of map) if (v.reset <= now) map.delete(k)
+  if (map.size <= 20000) return
+  let drop = map.size - 15000
+  for (const k of map.keys()) {
+    if (drop-- <= 0) break
+    map.delete(k)
+  }
+}
+
 /** đếm theo cửa sổ 10 phút; true = còn lượt */
 function take(map: Map<string, { count: number; reset: number }>, key: string, max: number): boolean {
   const now = Date.now()
   const cur = map.get(key)
   if (!cur || cur.reset <= now) {
-    if (map.size > 20000) map.clear()
+    prune(map)
     map.set(key, { count: 1, reset: now + WINDOW_MS })
     return true
   }
@@ -185,12 +201,18 @@ async function verifyLocal(token: string): Promise<string | false | null> {
  */
 const banCache = new Map<string, { banned: boolean; until: number }>()
 export const _resetBanCache = () => banCache.clear()
+/** admin vừa khoá / mở khoá: bỏ kết quả đã nhớ (instance khác tự hết hạn sau tối đa 30 giây) */
+export const forgetBan = (userId: string) => banCache.delete(userId)
 
 async function isBannedUser(userId: string): Promise<boolean> {
   const hit = banCache.get(userId)
   if (hit && hit.until > Date.now()) return hit.banned
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY ?? ''
-  if (!supaBase() || !key) return false
+  // thiếu cấu hình: máy dev thì bỏ qua; trên Vercel coi là lỗi (không bao giờ mặc định "chưa bị khoá")
+  if (!supaBase() || !key) {
+    if (onVercel) throw new Error('missing service key')
+    return false
+  }
   const r = await fetch(`${supaBase()}/auth/v1/admin/users/${encodeURIComponent(userId)}`, {
     headers: { apikey: key, Authorization: `Bearer ${key}` },
     signal: AbortSignal.timeout(5000),
@@ -306,7 +328,7 @@ export async function guard(req: IncomingMessage, res: ServerResponse, api: Api)
   const now = Date.now()
   const cur = hits.get(bucket)
   if (!cur || cur.reset <= now) {
-    if (hits.size > 20000) hits.clear()
+    prune(hits)
     hits.set(bucket, { count: 1, reset: now + WINDOW_MS })
     return true
   }

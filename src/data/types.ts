@@ -67,8 +67,13 @@ export interface ExamSettings {
   instantFeedback?: boolean
   /** đảo thứ tự câu mỗi lượt làm */
   shuffleQuestions?: boolean
-  /** mỗi thiết bị chỉ được nộp một lần (chặn theo id thiết bị, không tuyệt đối) */
+  /** mỗi tài khoản chỉ được nộp một lần (bắt đăng nhập, khoá ở server) */
   oneAttempt?: boolean
+  /**
+   * đề giấu đáp án (không bật instantFeedback, không ở cộng đồng): nộp xong có cho học sinh xem điểm không.
+   * Mặc định tắt — điểm số là máy dò đáp án (mỗi lượt chỉ làm một câu, xem điểm là biết đúng sai).
+   */
+  showScore?: boolean
   /** danh sách lớp, mỗi phần tử một tên theo số thứ tự; có thì học sinh chọn tên thay vì gõ */
   roster?: string[]
 }
