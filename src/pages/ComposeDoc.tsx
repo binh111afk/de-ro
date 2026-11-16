@@ -710,6 +710,14 @@ export default function ComposeDoc() {
   /** Tệp → Nhập file trong trình soạn slide: tab bài giảng mới. */
   const handleImportSlides = useCallback(
     async (file: File) => {
+      if (/\.pptx$/i.test(file.name)) {
+        if (file.size > 40 * 1024 * 1024) throw new Error('Tệp quá lớn (tối đa 40 MB).')
+        const { importPptx } = await import('@/lib/pptxImport')
+        const deck = await importPptx(file)
+        const id = newSlide()
+        updateDeck(id, deck)
+        return
+      }
       const data = await readImportFile(file)
       const id = newSlide()
       updateDeck(id, { title: data.title, slides: importedSlides(data, DECK_THEMES[0]) })

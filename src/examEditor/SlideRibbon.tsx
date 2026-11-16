@@ -2061,7 +2061,7 @@ export function SlideRibbon(props: SlideRibbonProps) {
           onDownload={onDownload ?? (() => {})}
           downloadHint=".pptx"
           extra={{ label: 'Xuất PDF', hint: 'Mở hộp thoại in → chọn Lưu thành PDF', onClick: onExportPdf }}
-          downloadNote="Do hạn chế kỹ thuật, file .pptx dùng phông Arial thay cho phông của bài giảng. Chúng tôi sẽ cải tiến để giữ đúng phông trong thời gian tới."
+          downloadNote="File .pptx tạm dùng phông Arial thay phông của bài giảng."
         />
       ) : null}
       <span className="qa-sep" aria-hidden="true" />
@@ -2093,7 +2093,7 @@ export function SlideRibbon(props: SlideRibbonProps) {
                 onDownload={onDownload ?? (() => {})}
                 downloadHint=".pptx"
                 extra={{ label: 'Xuất PDF', hint: 'Mở hộp thoại in → chọn Lưu thành PDF', onClick: onExportPdf }}
-                downloadNote="Do hạn chế kỹ thuật, file .pptx dùng phông Arial thay cho phông của bài giảng. Chúng tôi sẽ cải tiến để giữ đúng phông trong thời gian tới."
+                downloadNote="File .pptx tạm dùng phông Arial thay phông của bài giảng."
               />
             ) : null}
             {onSave && (
