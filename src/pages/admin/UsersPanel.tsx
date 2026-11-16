@@ -971,8 +971,7 @@ function GrantCreditsModal({
 
         <div className="space-y-4 py-4 text-[13.5px]">
           <p className="text-ink-2">
-            Cộng điểm AI vào tài khoản <strong>{user.email}</strong>. Điểm được cộng dồn vào số dư
-            và không bị mất khi sang tháng mới.
+            Tài khoản: <strong>{user.email}</strong>
           </p>
 
           <div className="rounded-[6px] bg-sunken/60 p-3 text-[13px]">
