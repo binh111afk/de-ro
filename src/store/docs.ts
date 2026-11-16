@@ -72,7 +72,7 @@ export interface SlideElement {
   highlight?: string
   /** Liên kết ngoài khi trình chiếu (http/https) */
   href?: string
-  align?: 'left' | 'center' | 'right'
+  align?: 'left' | 'center' | 'right' | 'justify'
   zIndex?: number
   flipX?: boolean
   flipY?: boolean

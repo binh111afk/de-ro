@@ -194,6 +194,11 @@ export function tipTapToBlocks(doc: JSONContent): ExamBlock[] {
         break
       }
 
+      case 'examColumns':
+        flushHeader()
+        out.push({ type: 'columns', cols: (node.content ?? []).map((c) => columnToRich(c)) })
+        break
+
       case 'examTitle':
         flushHeader()
         out.push({
@@ -500,6 +505,17 @@ export function blocksToTipTap(blocks: ExamBlock[]): JSONContent {
         })
         break
       }
+
+      case 'columns':
+        content.push({
+          type: 'examColumns',
+          attrs: { id: `c${content.length}` },
+          content: b.cols.slice(0, 3).map((rt) => ({
+            type: 'examColumn',
+            content: splitRichLines(rt).map((line) => ({ type: 'paragraph', content: richNodes(line) })),
+          })),
+        })
+        break
 
       case 'title':
         content.push({

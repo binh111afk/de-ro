@@ -21,7 +21,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import type { Editor } from '@tiptap/core'
 import type { JSONContent } from '@tiptap/core'
 import type { Selection } from '@tiptap/pm/state'
-import { pageGeometry, marginsOf, CM, type PageSetup } from '@/examEditor/pageSetup'
+import { pageGeometry, marginsOf, paperCm, CM, PAGE_SIZES, type PageSetup } from '@/examEditor/pageSetup'
 import { Ribbon } from '@/examEditor/Ribbon'
 import { TabStrip } from '@/examEditor/TabStrip'
 import { StartTab } from '@/examEditor/StartTab'
@@ -655,7 +655,7 @@ export default function ComposeDoc() {
   const handleExportWord = useCallback(async () => {
     if (!activeDoc) return
     const { exportDocBlocks } = await import('@/examEditor/exportBlocks') // xuất Word nạp lúc bấm
-    await exportDocBlocks(activeDoc, { landscape: pageSetup.orientation === 'landscape', margins: marginsOf(pageSetup), pageNumber: pageSetup.pageNumber })
+    await exportDocBlocks(activeDoc, { landscape: pageSetup.orientation === 'landscape', paper: paperCm(pageSetup), margins: marginsOf(pageSetup), pageNumber: pageSetup.pageNumber, header: pageSetup.header, footer: pageSetup.footer })
   }, [activeDoc, pageSetup])
 
   /**
@@ -719,7 +719,7 @@ export default function ComposeDoc() {
 
   const handlePrint = useCallback(() => {
     if (!activeDoc) return
-    void import('@/examEditor/exportBlocks').then(({ printDoc }) => printDoc(activeDoc, { landscape: pageSetup.orientation === 'landscape', margins: marginsOf(pageSetup), pageNumber: pageSetup.pageNumber }))
+    void import('@/examEditor/exportBlocks').then(({ printDoc }) => printDoc(activeDoc, { landscape: pageSetup.orientation === 'landscape', paper: paperCm(pageSetup), margins: marginsOf(pageSetup), pageNumber: pageSetup.pageNumber, header: pageSetup.header, footer: pageSetup.footer }))
   }, [activeDoc, pageSetup])
 
   /** AI trả về JSON đề → áp theo `action` (replace / append / patch), trả câu tóm tắt. */
@@ -1099,12 +1099,18 @@ export default function ComposeDoc() {
         onMarginsChange={(margins) => setPageSetup((p) => ({ ...p, margins }))}
         orientation={pageSetup.orientation}
         onOrientationChange={(o) => setPageSetup((p) => ({ ...p, orientation: o }))}
+        pageSize={pageSetup.size ?? 'A4'}
+        onPageSizeChange={(size) => setPageSetup((p) => ({ ...p, size }))}
         pageColor={pageSetup.pageColor}
         onPageColorChange={(c) => setPageSetup((p) => ({ ...p, pageColor: c }))}
         pageBorder={pageSetup.pageBorder}
         onPageBorderChange={(w) => setPageSetup((p) => ({ ...p, pageBorder: w }))}
         pageNumber={pageSetup.pageNumber}
         onPageNumberChange={(pn) => setPageSetup((p) => ({ ...p, pageNumber: pn }))}
+        header={pageSetup.header}
+        footer={pageSetup.footer}
+        onHeaderChange={(header) => setPageSetup((p) => ({ ...p, header }))}
+        onFooterChange={(footer) => setPageSetup((p) => ({ ...p, footer }))}
         onOpenNav={openNavWithTab}
         layoutMode={layoutMode}
       />
@@ -1183,7 +1189,7 @@ export default function ComposeDoc() {
                     : `Lề trên ${f(m.top)}, dưới ${f(m.bottom)}, trái ${f(m.left)}, phải ${f(m.right)} cm`
                 })()}
               >
-                A4 {pageSetup.orientation === 'landscape' ? 'ngang' : 'dọc'}
+                {PAGE_SIZES[pageSetup.size ?? 'A4'].label} {pageSetup.orientation === 'landscape' ? 'ngang' : 'dọc'}
               </span>
               <span className="status-item">{activeTab?.dirty ? 'Chưa lưu' : 'Đã lưu'}</span>
             </div>

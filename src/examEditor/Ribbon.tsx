@@ -12,7 +12,8 @@
  */
 import { Fragment, Suspense, useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import type { PageMargins } from './ExamEditor'
-import { DEFAULT_PAGE_NUMBER, type PageNumberSetup } from './pageSetup'
+import { ColorPalette } from './ColorPalette'
+import { DEFAULT_PAGE_NUMBER, PAGE_SIZES, type BandSetup, type PageNumberSetup, type PageSizeId } from './pageSetup'
 import type { Editor } from '@tiptap/core'
 import {
   RibbonBody,
@@ -32,7 +33,7 @@ import { lazyPage } from '@/lib/lazyPage'
 const BankModal = lazyPage(() => import('./BankModal').then((m) => ({ default: m.BankModal })))
 import { templateById, insertBlockTemplate } from './templates'
 import { applyFormatAttrs, getSelectedBlock, syncDomSelection, type FormatState } from './formatState'
-import { TablePicker, SymbolPicker, ImagePicker, EquationDialog, LinkDialog } from './InsertMenus'
+import { TablePicker, SymbolPicker, ImagePicker, EquationDialog, LinkDialog, ShapePicker } from './InsertMenus'
 import { Dropdown } from './Dropdown'
 import { useAnchoredPopover, popoverStyle } from './useAnchoredPopover'
 import { PhoneRibbon, TabletRibbonBody, type RibbonGroupDef } from './RibbonAdaptive'
@@ -67,6 +68,10 @@ import {
   IconNumbered,
   IconPageBreak,
   IconPageNumber,
+  IconHeader,
+  IconPageSize,
+  IconColumns,
+  IconFooter,
   IconPaste,
   IconPrinter,
   IconRedo,
@@ -153,6 +158,8 @@ export function Ribbon({
   margins = { top: 2, right: 2, bottom: 2, left: 2 },
   onMarginsChange,
   orientation = 'portrait',
+  pageSize = 'A4',
+  onPageSizeChange,
   onOrientationChange,
   pageColor = '#ffffff',
   onPageColorChange,
@@ -160,6 +167,10 @@ export function Ribbon({
   onPageBorderChange,
   pageNumber,
   onPageNumberChange,
+  header,
+  footer,
+  onHeaderChange,
+  onFooterChange,
   onOpenNav,
   layoutMode = 'desktop',
 }: {
@@ -185,6 +196,8 @@ export function Ribbon({
   margins?: PageMargins
   onMarginsChange?: (margins: PageMargins) => void
   orientation?: 'portrait' | 'landscape'
+  pageSize?: PageSizeId
+  onPageSizeChange?: (s: PageSizeId) => void
   onOrientationChange?: (o: 'portrait' | 'landscape') => void
   pageColor?: string
   onPageColorChange?: (c: string) => void
@@ -193,6 +206,10 @@ export function Ribbon({
   /** số trang ở chân trang */
   pageNumber?: PageNumberSetup
   onPageNumberChange?: (pn: PageNumberSetup) => void
+  header?: BandSetup
+  footer?: BandSetup
+  onHeaderChange?: (b: BandSetup) => void
+  onFooterChange?: (b: BandSetup) => void
   onOpenNav?: (tab: 'toc' | 'blocks' | 'tools') => void
   layoutMode?: 'desktop' | 'tablet' | 'phone'
 }) {
@@ -664,7 +681,12 @@ export function Ribbon({
       {
         id: 'media',
         label: 'Minh họa',
-        render: () => <ImagePicker editor={editor} disabled={disabled} />,
+        render: () => (
+          <>
+            <ImagePicker editor={editor} disabled={disabled} />
+            <ShapePicker editor={editor} disabled={disabled} />
+          </>
+        ),
       },
       {
         id: 'link',
@@ -764,6 +786,72 @@ export function Ribbon({
                 ))
               }
             </MenuButton>
+            <MenuButton icon={<IconColumns size={26} />} label="Cột" title="Chèn khối chia cột" disabled={disabled || !editor} minWidth={170}>
+              {(close) =>
+                [2, 3].map((n) => (
+                  <button
+                    key={n}
+                    type="button"
+                    role="menuitem"
+                    className="rb-color-item"
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => {
+                      editor
+                        ?.chain()
+                        .focus()
+                        .insertContent({
+                          type: 'examColumns',
+                          content: Array.from({ length: n }, () => ({ type: 'examColumn', content: [{ type: 'paragraph' }] })),
+                        })
+                        .run()
+                      close()
+                    }}
+                  >
+                    <span className="rb-color-item__label">{n} cột</span>
+                  </button>
+                ))
+              }
+            </MenuButton>
+            <MenuButton icon={<IconPageSize size={26} />} label="Khổ giấy" title="Khổ giấy" disabled={disabled} minWidth={200}>
+              {(close) =>
+                (Object.keys(PAGE_SIZES) as PageSizeId[]).map((id) => (
+                  <button
+                    key={id}
+                    type="button"
+                    role="menuitem"
+                    className={cn('rb-color-item', pageSize === id && 'is-active')}
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => {
+                      onPageSizeChange?.(id)
+                      close()
+                    }}
+                  >
+                    <span className="rb-color-item__label">{PAGE_SIZES[id].label}</span>
+                    <span className="ml-auto pl-4 text-[11.5px] text-ink-3 tabular-nums">
+                      {`${PAGE_SIZES[id].w} × ${PAGE_SIZES[id].h} cm`.replace(/\./g, ',')}
+                    </span>
+                  </button>
+                ))
+              }
+            </MenuButton>
+            <MenuButton
+              icon={<IconHeader size={26} />}
+              label="Đầu trang"
+              title="Đầu trang"
+              disabled={disabled}
+              minWidth={260}
+            >
+              {() => <BandMenu value={header} onChange={onHeaderChange} label="Đầu trang" />}
+            </MenuButton>
+            <MenuButton
+              icon={<IconFooter size={26} />}
+              label="Chân trang"
+              title="Chân trang"
+              disabled={disabled}
+              minWidth={260}
+            >
+              {() => <BandMenu value={footer} onChange={onFooterChange} label="Chân trang" />}
+            </MenuButton>
             <MenuButton
               icon={<IconPageNumber size={26} />}
               label="Số trang"
@@ -834,7 +922,7 @@ export function Ribbon({
               <ColorDropdown
                 title="Màu trang"
                 current={pageColor}
-                colors={['#ffffff', '#f7f8f7', '#fff8e6', '#eef4ff', '#eaf4ed', '#fdeceb']}
+                colors={THEME_COLORS}
                 onPick={(c) => onPageColorChange?.(c)}
               />
             </div>
@@ -1192,7 +1280,6 @@ function ColorDropdown({
     }
   }, [open])
 
-  const cur = current?.toLowerCase()
 
   return (
     <div className="rb-color-drop" ref={ref}>
@@ -1219,20 +1306,9 @@ function ColorDropdown({
               <span className="rb-color-item__label">{none.label}</span>
             </button>
           )}
-          {colors.length > 0 && (
-            <div className="rb-color-grid">
-              {colors.map((c) => (
-                <button
-                  key={c}
-                  type="button"
-                  className={cn('rb-color-swatch', cur === c.toLowerCase() && 'is-current')}
-                  style={{ background: c }}
-                  data-tip={c}
-                  aria-label={c}
-                  onMouseDown={(e) => e.preventDefault()}
-                  onClick={() => { onPick?.(c); setOpen(false) }}
-                />
-              ))}
+          {colors.length > 0 && onPick && (
+            <div className="rb-color-palette">
+              <ColorPalette value={current ?? ''} themeColors={[]} onPick={onPick} onClose={() => setOpen(false)} />
             </div>
           )}
           {items?.map((it) => (
@@ -1382,6 +1458,35 @@ function MenuButton({
           {children(() => setOpen(false))}
         </div>
       )}
+    </div>
+  )
+}
+
+/** Ô chữ đầu/chân trang: nội dung, căn lề, bỏ trang đầu. */
+function BandMenu({ value, onChange, label }: { value?: BandSetup; onChange?: (b: BandSetup) => void; label: string }) {
+  const b = value ?? { text: '', align: 'center' as const }
+  const set = (patch: Partial<BandSetup>) => onChange?.({ ...b, ...patch })
+  return (
+    <div className="flex flex-col gap-2.5 p-2.5 text-[12px] text-ink">
+      <input
+        className="rb-num-input !h-8 !w-full !text-[13px]"
+        value={b.text}
+        onChange={(e) => set({ text: e.target.value })}
+        onKeyDown={(e) => e.stopPropagation()}
+        aria-label={`Nội dung ${label.toLowerCase()}`}
+        autoFocus
+      />
+      <Segmented
+        value={b.align}
+        onChange={(align) => set({ align })}
+        label={`Căn ${label.toLowerCase()}`}
+        className="!h-8 w-full [&>button]:flex-1 [&>button]:justify-center [&>button]:px-2 [&>button]:text-[12px]"
+        options={[{ key: 'left', label: 'Trái' }, { key: 'center', label: 'Giữa' }, { key: 'right', label: 'Phải' }]}
+      />
+      <label className="flex cursor-pointer items-center gap-2 select-none">
+        <input type="checkbox" checked={!!b.skipFirst} onChange={(e) => set({ skipFirst: e.target.checked })} />
+        <span>Bỏ trang đầu</span>
+      </label>
     </div>
   )
 }

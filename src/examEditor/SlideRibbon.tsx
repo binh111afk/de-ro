@@ -28,6 +28,7 @@ import {
   IconAlignCenter,
   IconAlignLeft,
   IconAlignRight,
+  IconAlignJustify,
   IconBorderAll,
   IconCaret,
   IconChart,
@@ -821,6 +822,7 @@ export function SlideRibbon(props: SlideRibbonProps) {
               ['left', 'Căn trái', IconAlignLeft],
               ['center', 'Căn giữa', IconAlignCenter],
               ['right', 'Căn phải', IconAlignRight],
+              ['justify', 'Căn đều hai bên', IconAlignJustify],
             ] as const
           ).map(([align, label, Icon]) => (
             <RibbonIconButton

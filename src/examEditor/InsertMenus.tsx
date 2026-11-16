@@ -12,7 +12,7 @@ import type { Editor } from '@tiptap/core'
 import katex from 'katex'
 import { cn } from '@/lib/cn'
 import { uploadImage } from '@/lib/mediaStore'
-import { IconClose, IconEquation, IconLink, IconPicture, IconSymbol, IconTable } from './icons'
+import { IconClose, IconEquation, IconLink, IconPicture, IconShapes, IconSymbol, IconTable } from './icons'
 import { RibbonButton } from './Layout'
 import { useAnchoredPopover, popoverStyle } from './useAnchoredPopover'
 
@@ -243,12 +243,15 @@ export function EquationDialog({
 export function LinkDialog({
   editor,
   onClose,
+  initialHref,
 }: {
   editor: Editor
   onClose: () => void
+  /** sửa liên kết có sẵn: điền sẵn địa chỉ cũ */
+  initialHref?: string
 }) {
   const [text, setText] = useState('')
-  const [href, setHref] = useState('https://')
+  const [href, setHref] = useState(initialHref || 'https://')
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -371,5 +374,71 @@ export function ImagePicker({ editor, disabled }: { editor: Editor | null; disab
         }}
       />
     </>
+  )
+}
+
+/* ------------------------------------------------------------------ *
+ * Hình dạng — dùng chung thư viện hình của slide, chèn thành ảnh nét đen
+ * ------------------------------------------------------------------ */
+
+/** Vẽ hình ra PNG nền trong suốt (2× để in nét), nét đen như hình vẽ trong đề. */
+async function shapePng(prst: string, px = 240): Promise<string> {
+  const [{ renderToStaticMarkup }, { ShapePreview }] = await Promise.all([import('react-dom/server'), import('./ShapeGallery')])
+  const raw = renderToStaticMarkup(<ShapePreview prst={prst} />)
+  // hình khép kín vẽ nét không phóng (non-scaling-stroke) → cỡ nét tính bằng px ảnh; đường thẳng thì nét phóng theo khung 32
+  const stroke = raw.includes('non-scaling-stroke') ? 2.4 : (2.4 * 32) / px
+  const svg = raw
+    .replace(/width="26" height="26"/, `width="${px}" height="${px}" xmlns="http://www.w3.org/2000/svg"`)
+    .replace(/currentColor/g, '#000')
+    // 2.4px ở ảnh 2× ≈ 1.2px khi hiện, gần nét bút vẽ hình trong đề
+    .replace(/stroke-width="1.3"/g, `stroke-width="${stroke}"`)
+  const img = new Image()
+  img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`
+  await img.decode()
+  const canvas = document.createElement('canvas')
+  canvas.width = canvas.height = px
+  canvas.getContext('2d')!.drawImage(img, 0, 0, px, px)
+  return canvas.toDataURL('image/png')
+}
+
+export function ShapePicker({ editor, disabled }: { editor: Editor | null; disabled?: boolean }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+  const { triggerRef, pos } = useAnchoredPopover(open, 368)
+  const [Gallery, setGallery] = useState<null | typeof import('./ShapeGallery').ShapeGallery>(null)
+
+  useEffect(() => {
+    if (!open) return
+    // thư viện hình chỉ nạp khi mở lần đầu
+    if (!Gallery) void import('./ShapeGallery').then((m) => setGallery(() => m.ShapeGallery))
+    const onDown = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener('mousedown', onDown)
+    return () => document.removeEventListener('mousedown', onDown)
+  }, [open, Gallery])
+
+  const pick = async (prst: string) => {
+    setOpen(false)
+    if (!editor || editor.isDestroyed) return
+    try {
+      const src = await uploadImage(await shapePng(prst))
+      if (!editor.isDestroyed) editor.chain().focus().setImage({ src, width: 120 }).run()
+    } catch (err) {
+      void dialog.alert(err instanceof Error ? err.message : 'Không chèn được hình này.', { title: 'Không chèn được hình' })
+    }
+  }
+
+  return (
+    <div className="rb-drop" ref={ref}>
+      <span ref={triggerRef as React.RefObject<HTMLSpanElement>} className="rb-drop-trigger">
+        <RibbonButton icon={<IconShapes size={26} />} label="Hình dạng" disabled={disabled} onClick={() => setOpen((o) => !o)} />
+      </span>
+      {open && (
+        <div className="rb-drop-menu" style={popoverStyle(pos)}>
+          {Gallery ? <Gallery onPick={(p) => void pick(p)} /> : <div className="h-40 w-[352px]" />}
+        </div>
+      )}
+    </div>
   )
 }

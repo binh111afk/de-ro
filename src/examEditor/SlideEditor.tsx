@@ -13,9 +13,12 @@ import { ColorPalette } from './ColorPalette'
 import { SelectionToolbar } from './SelectionToolbar'
 import { SlideSidePanel } from './SlideSidePanel'
 import { SlideStrip } from './SlideStrip'
+import { ContextMenu, type MenuEntry, type MenuState } from './ContextMenu'
+import { IconBringForward, IconBringToFront, IconCopy, IconCut, IconDesign, IconGridlines, IconPalette, IconPaste, IconPlus, IconSendBackward, IconSendToBack } from './icons'
+import { TrashIcon } from '@/components/appIcons'
 import { rewriteElement } from '@/lib/slideRewrite'
 import { keepCustomBg, slideBgStyle, withBackground } from '@/lib/slideBackground'
-import { ChevronLeft, ChevronRight, Minimize2, MonitorPlay } from 'lucide-react'
+import { AlignCenterHorizontal, AlignCenterVertical, AlignEndHorizontal, AlignEndVertical, AlignStartHorizontal, AlignStartVertical, ChevronLeft, ChevronRight, CopyPlus, Group, Layers, Lock, LockOpen, Minimize2, MonitorPlay, Ungroup } from 'lucide-react'
 import { alignBoxes, type AlignMode } from '@/lib/slideAlign'
 import { graphicMainColor } from '@/lib/slideGraphics'
 import { hasRich } from '@/lib/slideMath'
@@ -269,7 +272,10 @@ export function SlideEditor({
   /** phần tử đang chạy thử hiệu ứng (nonce để chọn lại cùng hiệu ứng vẫn chạy lại) */
   const [animPreview, setAnimPreview] = useState<{ id: string; nonce: number } | null>(null)
   const endAnimPreview = useCallback(() => setAnimPreview(null), [])
-  const [clipboardElement, setClipboardElement] = useState<SlideElement | null>(null)
+  /** phần tử đã sao chép (một mục hoặc cả nhóm) */
+  const [clipboard, setClipboard] = useState<SlideElement[]>([])
+  const [ctxMenu, setCtxMenu] = useState<MenuState>(null)
+  const closeCtxMenu = useCallback(() => setCtxMenu(null), [])
   /** sao chép định dạng (cây cọ): once = áp 1 lần rồi tắt, lock = khoá áp nhiều lần */
   const [painter, setPainter] = useState<{ mode: 'once' | 'lock'; sample: TextFormatSample } | null>(null)
   /** ghi chú diễn giả đang mở (nút nhỏ ở góc slide) */
@@ -281,6 +287,8 @@ export function SlideEditor({
   const deckRef = useRef(deck)
   /** vừa kéo/resize/xoay: bỏ qua cú click kế tiếp rơi ra ngoài phần tử */
   const didDragRef = useRef(false)
+  /** kéo trên nền slide để quét chọn nhiều phần tử (giống Canva) — toạ độ % của slide */
+  const [marquee, setMarquee] = useState<{ x0: number; y0: number; x1: number; y1: number } | null>(null)
   const swipeRef = useRef<{ x: number; y: number; didSwipe: boolean } | null>(null)
 
   const slides = deck.slides
@@ -301,6 +309,8 @@ export function SlideEditor({
   )
   const selectedElement = currentSlide?.elements.find((el) => el.id === selectedElementId) ?? null
   const groupEls = currentSlide?.elements.filter((el) => groupIds.includes(el.id)) ?? []
+  /** đang chọn đúng một nhóm cố định (đã bấm Nhóm): vẽ một khung bao chung như Canva */
+  const fixedGroup = groupEls.length >= 2 && !!groupEls[0].groupId && groupEls.every((el) => el.groupId === groupEls[0].groupId)
 
   useEffect(() => {
     if (selectedElementId) setGroupIds([])
@@ -322,11 +332,13 @@ export function SlideEditor({
   /** thành viên nhóm cố định chứa phần tử (≥2 mục), không có nhóm thì [] */
   const groupMembers = (el: SlideElement) =>
     el.groupId ? (currentSlide?.elements.filter((e) => e.groupId === el.groupId) ?? []) : []
-  /** bấm phần tử: thuộc nhóm thì chọn cả nhóm; nhóm đang được chọn rồi thì chọn riêng mục đó (sửa chữ…) */
+  /** bấm phần tử: thuộc nhóm thì chọn cả nhóm; muốn chọn riêng một mục trong nhóm thì bấm đúp */
   const selectEl = (el: SlideElement) => {
     const members = groupMembers(el)
     const groupSelected = members.length >= 2 && members.every((m) => groupIds.includes(m.id)) && groupIds.length === members.length
-    if (members.length >= 2 && !groupSelected && selectedElementId !== el.id) {
+    // nhóm đang được chọn: bấm một lần vẫn giữ cả nhóm (bấm đúp mới vào từng mục), kẻo kéo lộn một mục ra
+    if (groupSelected) return
+    if (members.length >= 2 && selectedElementId !== el.id) {
       setGroupIds(members.map((m) => m.id))
       setSelectedElementId(null)
     } else setSelectedElementId(el.id)
@@ -715,6 +727,11 @@ export function SlideEditor({
         else undo()
         return
       }
+      if (mod && e.key.toLowerCase() === 'd' && groupIds.length >= 2 && !typing) {
+        e.preventDefault()
+        duplicateIds(groupIds)
+        return
+      }
       if (mod && e.key.toLowerCase() === 'd' && selectedElement && currentSlide && !typing) {
         e.preventDefault()
         addElement({ ...selectedElement, id: uid(), groupId: undefined, locked: undefined, x: selectedElement.x + 3, y: selectedElement.y + 3 })
@@ -777,15 +794,185 @@ export function SlideEditor({
    *   { "slides": [ { "title": "...", "elements": [ { "type": "text", "text": "..." } ] } ] }
    * Nếu không parse được thì coi như một slide text đơn giản — không làm hỏng deck.
    */
-  const arrangeSelected = (action: 'front' | 'back' | 'forward' | 'backward') => {
-    if (!currentSlide || !selectedElementId) return
-    const index = currentSlide.elements.findIndex((el) => el.id === selectedElementId)
+  const arrangeSelected = (action: 'front' | 'back' | 'forward' | 'backward', elId = selectedElementId) => {
+    if (!currentSlide || !elId) return
+    const index = currentSlide.elements.findIndex((el) => el.id === elId)
     if (index < 0) return
     const next = [...currentSlide.elements]
     const target = action === 'front' ? next.length - 1 : action === 'back' ? 0 : action === 'forward' ? Math.min(next.length - 1, index + 1) : Math.max(0, index - 1)
     const [element] = next.splice(index, 1)
     next.splice(target, 0, element)
     patchSlide(currentSlide.id, { elements: next })
+  }
+
+  /** Menu chuột phải trên slide, giống PowerPoint: trên phần tử thì lệnh phần tử, trên nền thì lệnh slide. */
+  const MOD = /Mac/i.test(navigator.platform) ? '⌘' : 'Ctrl+'
+  const slideItems = (slideId: string, index: number): MenuEntry[] => [
+    { label: 'Slide mới', icon: <IconPlus size={16} />, onClick: () => addSlideAt(index + 1), disabled: deck.format === 'html' },
+    { label: 'Nhân bản slide', icon: <IconCopy size={16} />, onClick: () => duplicateSlide(slideId), disabled: deck.format === 'html' },
+    { label: 'Xoá slide', icon: <TrashIcon size={16} strokeWidth={1.8} />, onClick: () => removeSlide(slideId) },
+  ]
+  const selectIds = (ids: string[]) => {
+    if (ids.length >= 2) {
+      setSelectedElementId(null)
+      setGroupIds(ids)
+    } else {
+      setGroupIds([])
+      setSelectedElementId(ids[0] ?? null)
+    }
+  }
+  /** bản sao của các mục: id mới, nhóm mới nếu chép cả nhóm, lệch 3% để thấy bản sao */
+  const cloneEls = (src: SlideElement[]) => {
+    const gid = new Map<string, string>()
+    const newGid = (g: string) => gid.get(g) ?? gid.set(g, uid()).get(g)
+    return src.map((el) => ({
+      ...el,
+      id: uid(),
+      locked: undefined,
+      // chép một mục lẻ trong nhóm thì bản sao đứng riêng
+      groupId: src.length > 1 && el.groupId ? newGid(el.groupId) : undefined,
+      x: el.x + 3,
+      y: el.y + 3,
+    }))
+  }
+  const addCopies = (src: SlideElement[]) => {
+    if (!currentSlide || !src.length) return
+    const copies = cloneEls(src)
+    patchSlide(currentSlide.id, { elements: [...currentSlide.elements, ...copies] })
+    selectIds(copies.map((c) => c.id))
+  }
+  const pasteClipboard = () => addCopies(clipboard)
+  const duplicateIds = (ids: string[]) => addCopies(currentSlide?.elements.filter((el) => ids.includes(el.id)) ?? [])
+  /** Sửa nhiều phần tử trên slide hiện tại trong một bước hoàn tác. */
+  const patchEls = (ids: string[], fn: (el: SlideElement) => SlideElement) => {
+    if (!currentSlide) return
+    patchSlide(currentSlide.id, { elements: currentSlide.elements.map((el) => (ids.includes(el.id) ? fn(el) : el)) })
+  }
+  /** Xếp lớp cả một tập phần tử, giữ thứ tự giữa chúng. */
+  const arrangeIds = (ids: string[], action: 'front' | 'back' | 'forward' | 'backward') => {
+    if (!currentSlide || !ids.length) return
+    const els = [...currentSlide.elements]
+    const isIn = (el: SlideElement) => ids.includes(el.id)
+    let next: SlideElement[]
+    if (action === 'front') next = [...els.filter((e) => !isIn(e)), ...els.filter(isIn)]
+    else if (action === 'back') next = [...els.filter(isIn), ...els.filter((e) => !isIn(e))]
+    else {
+      next = els
+      // đổi chỗ từng mục với hàng xóm ngoài tập, duyệt từ phía đang tiến tới để các mục không giẫm lên nhau
+      const order = action === 'forward' ? [...next.keys()].reverse() : [...next.keys()]
+      for (const i of order) {
+        const j = action === 'forward' ? i + 1 : i - 1
+        if (isIn(next[i]) && j >= 0 && j < next.length && !isIn(next[j])) [next[i], next[j]] = [next[j], next[i]]
+      }
+    }
+    patchSlide(currentSlide.id, { elements: next })
+  }
+  /** Căn cả khối (một mục hoặc nhóm) theo trang: dời mọi mục cùng một khoảng. */
+  const alignIdsToPage = (ids: string[], mode: 'left' | 'center' | 'right' | 'top' | 'middle' | 'bottom') => {
+    const els = currentSlide?.elements.filter((el) => ids.includes(el.id) && !el.locked) ?? []
+    if (!els.length) return
+    const l = Math.min(...els.map((e) => e.x))
+    const r = Math.max(...els.map((e) => e.x + e.w))
+    const t = Math.min(...els.map((e) => e.y))
+    const b = Math.max(...els.map((e) => e.y + elementHeight(e)))
+    const dx = mode === 'left' ? -l : mode === 'center' ? (100 - (r - l)) / 2 - l : mode === 'right' ? 100 - r : 0
+    const dy = mode === 'top' ? -t : mode === 'middle' ? (100 - (b - t)) / 2 - t : mode === 'bottom' ? 100 - b : 0
+    patchEls(els.map((e) => e.id), (e) => ({ ...e, x: e.x + dx, y: e.y + dy }))
+  }
+  const toggleLockIds = (ids: string[]) => {
+    const els = currentSlide?.elements.filter((el) => ids.includes(el.id)) ?? []
+    const lock = !els.every((el) => el.locked)
+    patchEls(ids, (el) => ({ ...el, locked: lock ? true : undefined }))
+  }
+  const removeIds = (ids: string[]) => {
+    if (!currentSlide) return
+    patchSlide(currentSlide.id, { elements: currentSlide.elements.filter((el) => el.locked || !ids.includes(el.id)) })
+    setGroupIds([])
+    setSelectedElementId(null)
+  }
+
+  /** Mục menu cho một mục hoặc một nhóm (chuột phải và nút ⋯ trên thanh công cụ), bố cục như PowerPoint/Canva. */
+  const elementItems = (ids: string[]): MenuEntry[] => {
+    const els = currentSlide?.elements.filter((el) => ids.includes(el.id)) ?? []
+    if (!els.length) return []
+    const many = els.length >= 2
+    const locked = els.every((el) => el.locked)
+    const fixed = many && !!els[0].groupId && els.every((el) => el.groupId === els[0].groupId)
+    const single = many ? null : els[0]
+    const lu = { size: 16, strokeWidth: 1.5 }
+    return [
+      { label: 'Cắt', icon: <IconCut size={16} />, disabled: locked, onClick: () => { setClipboard(els); removeIds(ids) } },
+      { label: 'Sao chép', icon: <IconCopy size={16} />, onClick: () => setClipboard(els) },
+      { label: 'Dán', icon: <IconPaste size={16} />, disabled: !clipboard.length, onClick: pasteClipboard },
+      { label: 'Nhân bản', icon: <CopyPlus {...lu} />, hint: `${MOD}D`, onClick: () => duplicateIds(ids) },
+      { label: 'Xoá', icon: <TrashIcon size={16} strokeWidth={1.8} />, hint: 'Delete', disabled: locked, onClick: () => removeIds(ids) },
+      'sep',
+      {
+        label: 'Lớp',
+        icon: <Layers {...lu} />,
+        children: [
+          { label: 'Đưa lên trên cùng', icon: <IconBringToFront size={16} />, onClick: () => arrangeIds(ids, 'front') },
+          { label: 'Đưa lên một lớp', icon: <IconBringForward size={16} />, onClick: () => arrangeIds(ids, 'forward') },
+          { label: 'Đưa xuống một lớp', icon: <IconSendBackward size={16} />, onClick: () => arrangeIds(ids, 'backward') },
+          { label: 'Đưa xuống dưới cùng', icon: <IconSendToBack size={16} />, onClick: () => arrangeIds(ids, 'back') },
+        ],
+      },
+      {
+        label: 'Căn chỉnh theo trang',
+        icon: <AlignStartVertical {...lu} />,
+        disabled: locked,
+        children: [
+          { label: 'Căn trái', icon: <AlignStartVertical {...lu} />, onClick: () => alignIdsToPage(ids, 'left') },
+          { label: 'Căn giữa ngang', icon: <AlignCenterVertical {...lu} />, onClick: () => alignIdsToPage(ids, 'center') },
+          { label: 'Căn phải', icon: <AlignEndVertical {...lu} />, onClick: () => alignIdsToPage(ids, 'right') },
+          'sep',
+          { label: 'Căn trên', icon: <AlignStartHorizontal {...lu} />, onClick: () => alignIdsToPage(ids, 'top') },
+          { label: 'Căn giữa dọc', icon: <AlignCenterHorizontal {...lu} />, onClick: () => alignIdsToPage(ids, 'middle') },
+          { label: 'Căn dưới', icon: <AlignEndHorizontal {...lu} />, onClick: () => alignIdsToPage(ids, 'bottom') },
+        ],
+      },
+      'sep',
+      ...(many && !fixed ? [{ label: 'Nhóm', icon: <Group {...lu} />, hint: `${MOD}G`, onClick: groupSelected } as MenuEntry] : []),
+      ...(fixed ? [{ label: 'Bỏ nhóm', icon: <Ungroup {...lu} />, hint: `${MOD}⇧G`, onClick: ungroupSelected } as MenuEntry] : []),
+      { label: locked ? 'Mở khoá' : 'Khoá', icon: locked ? <Lock size={16} strokeWidth={1.8} /> : <LockOpen size={16} strokeWidth={1.8} />, hint: `${MOD}⇧L`, onClick: () => toggleLockIds(ids) },
+      ...(single ? [{ label: 'Định dạng…', icon: <IconPalette size={16} />, onClick: () => setFormatPaneOpen(true) } as MenuEntry] : []),
+    ]
+  }
+
+  const openSlideMenu = (e: React.MouseEvent) => {
+    if (!currentSlide || currentSlide.html) return
+    const target = e.target as HTMLElement
+    // đang gõ chữ trong hộp: để menu của trình duyệt (cắt/dán chữ, kiểm tra chính tả)
+    if (target.closest('[contenteditable="true"], input, textarea')) return
+    e.preventDefault()
+    const slide = currentSlide
+    const el = slide.elements.find((x) => x.id === target.closest<HTMLElement>('[data-el-id]')?.dataset.elId)
+    let items: MenuEntry[]
+    if (el) {
+      // chuột phải lên một mục của nhóm → lệnh cho cả nhóm (trừ khi đang chọn riêng mục đó bằng bấm đúp)
+      const members = groupMembers(el)
+      const ids =
+        groupIds.length >= 2 && groupIds.includes(el.id)
+          ? groupIds
+          : members.length >= 2 && selectedElementId !== el.id
+            ? members.map((m) => m.id)
+            : [el.id]
+      selectIds(ids)
+      items = elementItems(ids)
+    } else {
+      setSelectedElementId(null)
+      setGroupIds([])
+      const index = deck.slides.findIndex((x) => x.id === slide.id)
+      items = [
+        { label: 'Dán', icon: <IconPaste size={16} />, disabled: !clipboard.length, onClick: pasteClipboard },
+        'sep',
+        ...slideItems(slide.id, index),
+        'sep',
+        { label: 'Mẫu thiết kế…', icon: <IconDesign size={16} />, onClick: () => setOpenDesignsSignal((n) => n + 1) },
+        { label: gridOn ? 'Ẩn lưới' : 'Hiện lưới', icon: <IconGridlines size={16} />, onClick: () => setGridOn((v) => writePref('slide-grid', !v)) },
+      ]
+    }
+    setCtxMenu({ x: e.clientX, y: e.clientY, items })
   }
 
   const alignSelected = (action: 'left' | 'center' | 'right' | 'top' | 'middle' | 'bottom') => {
@@ -1219,10 +1406,15 @@ export function SlideEditor({
         onToggleCrop={toggleCrop}
         onResetCrop={resetCrop}
         onDeleteSelected={() => selectedElement && removeElement(currentSlide?.id ?? '', selectedElement.id)}
-        onCopySelected={() => selectedElement && setClipboardElement({ ...selectedElement, id: uid() })}
-        onCutSelected={() => { if (!selectedElement || !currentSlide) return; setClipboardElement({ ...selectedElement, id: uid() }); removeElement(currentSlide.id, selectedElement.id) }}
-        onPaste={() => clipboardElement && addElement({ ...clipboardElement, id: uid() })}
-        canPaste={Boolean(clipboardElement)}
+        onCopySelected={() => (groupEls.length >= 2 ? setClipboard(groupEls) : selectedElement && setClipboard([selectedElement]))}
+        onCutSelected={() => {
+          if (groupEls.length >= 2) { setClipboard(groupEls); removeGroup(); return }
+          if (!selectedElement || !currentSlide) return
+          setClipboard([selectedElement])
+          removeElement(currentSlide.id, selectedElement.id)
+        }}
+        onPaste={pasteClipboard}
+        canPaste={clipboard.length > 0}
         onArrange={arrangeSelected}
         onAlign={alignSelected}
         onFlip={flipSelected}
@@ -1387,6 +1579,48 @@ export function SlideEditor({
                 )}
                 data-decor={theme.decor}
                 style={{ ...slideBgStyle(currentSlide), ...decorStyle(theme) }}
+                onContextMenu={openSlideMenu}
+                onPointerDown={(e) => {
+                  // chỉ bắt đầu khi bấm chuột trái lên nền trống (không phải phần tử, tay nắm)
+                  if (e.button !== 0 || e.target !== e.currentTarget || painter || croppingId || animPreview) return
+                  const frame = e.currentTarget
+                  const box = frame.getBoundingClientRect()
+                  const at = (ev: PointerEvent) => ({
+                    x: Math.max(0, Math.min(100, ((ev.clientX - box.left) / box.width) * 100)),
+                    y: Math.max(0, Math.min(100, ((ev.clientY - box.top) / box.height) * 100)),
+                  })
+                  const p0 = at(e.nativeEvent)
+                  let rect = { x0: p0.x, y0: p0.y, x1: p0.x, y1: p0.y }
+                  let moved = false
+                  const onMove = (ev: PointerEvent) => {
+                    const p = at(ev)
+                    rect = { ...rect, x1: p.x, y1: p.y }
+                    if (!moved && Math.hypot(p.x - p0.x, p.y - p0.y) < 0.6) return
+                    moved = true
+                    setMarquee(rect)
+                  }
+                  const onUp = () => {
+                    window.removeEventListener('pointermove', onMove)
+                    window.removeEventListener('pointerup', onUp)
+                    setMarquee(null)
+                    if (!moved) return
+                    didDragRef.current = true
+                    const [l, r] = [Math.min(rect.x0, rect.x1), Math.max(rect.x0, rect.x1)]
+                    const [t, b] = [Math.min(rect.y0, rect.y1), Math.max(rect.y0, rect.y1)]
+                    // chạm vào khung là tính, như Canva
+                    const hits = currentSlide.elements.filter((el) => el.x < r && el.x + el.w > l && el.y < b && el.y + elementHeight(el) > t)
+                    setPainter(null)
+                    if (hits.length >= 2) {
+                      setSelectedElementId(null)
+                      setGroupIds(hits.map((el) => el.id))
+                    } else {
+                      setGroupIds([])
+                      setSelectedElementId(hits[0]?.id ?? null)
+                    }
+                  }
+                  window.addEventListener('pointermove', onMove)
+                  window.addEventListener('pointerup', onUp)
+                }}
                 onClickCapture={(e) => {
                   // Kéo xoay/resize có thể nhả chuột ngoài phần tử; đừng để cú
                   // click rơi vào nền xoá mất vùng chọn vừa thao tác.
@@ -1401,6 +1635,30 @@ export function SlideEditor({
                 }}
               >
                 {gridOn ? <div className="slide-grid-overlay" aria-hidden /> : null}
+                {fixedGroup && (
+                  <div
+                    className="slide-group-box"
+                    aria-hidden
+                    style={{
+                      left: `${Math.min(...groupEls.map((el) => el.x))}%`,
+                      top: `${Math.min(...groupEls.map((el) => el.y))}%`,
+                      width: `${Math.max(...groupEls.map((el) => el.x + el.w)) - Math.min(...groupEls.map((el) => el.x))}%`,
+                      height: `${Math.max(...groupEls.map((el) => el.y + elementHeight(el))) - Math.min(...groupEls.map((el) => el.y))}%`,
+                    }}
+                  />
+                )}
+                {marquee && (
+                  <div
+                    className="slide-marquee"
+                    aria-hidden
+                    style={{
+                      left: `${Math.min(marquee.x0, marquee.x1)}%`,
+                      top: `${Math.min(marquee.y0, marquee.y1)}%`,
+                      width: `${Math.abs(marquee.x1 - marquee.x0)}%`,
+                      height: `${Math.abs(marquee.y1 - marquee.y0)}%`,
+                    }}
+                  />
+                )}
                 {ribbonTab === 'animations'
                   ? currentSlide.elements
                       .filter((el) => startOf(el) !== undefined)
@@ -1429,7 +1687,8 @@ export function SlideEditor({
                     theme={theme}
                     selected={selectedElementId === el.id}
                     onSelect={() => selectEl(el)}
-                    grouped={groupIds.includes(el.id)}
+                    grouped={groupIds.includes(el.id) ? (fixedGroup ? 'soft' : true) : false}
+                    onSelectSingle={() => { setGroupIds([]); setSelectedElementId(el.id) }}
                     // kéo cả nhóm chọn, hoặc cả nhóm cố định ngay từ cú bấm đầu; mục khoá đứng yên
                     group={(groupIds.includes(el.id) ? groupEls : selectedElementId === el.id ? [] : groupMembers(el))
                       .filter((g) => g.id !== el.id && !g.locked)
@@ -1488,7 +1747,16 @@ export function SlideEditor({
               />
             )}
             {groupEls.length >= 2 && currentSlide && !currentSlide.html && (
-              <GroupToolbar els={groupEls} onAlign={alignGroup} onDelete={removeGroup} onGroup={groupSelected} onUngroup={ungroupSelected} />
+              <GroupToolbar
+                els={groupEls}
+                onAlign={alignGroup}
+                onDelete={removeGroup}
+                onGroup={groupSelected}
+                onUngroup={ungroupSelected}
+                onDuplicate={() => duplicateIds(groupIds)}
+                onToggleLock={() => toggleLockIds(groupIds)}
+                onMore={(r) => setCtxMenu({ x: r.left, y: r.bottom + 6, items: elementItems(groupIds) })}
+              />
             )}
             {selectedElement && currentSlide && !currentSlide.html && croppingId !== selectedElement.id && (
               <SelectionToolbar
@@ -1580,7 +1848,9 @@ export function SlideEditor({
           onDuplicate={duplicateSlide}
           onRemove={removeSlide}
           onMove={moveSlide}
+          onSlideMenu={(id, index, e) => setCtxMenu({ x: e.clientX, y: e.clientY, items: slideItems(id, index) })}
         />
+        <ContextMenu menu={ctxMenu} onClose={closeCtxMenu} />
       </div>
 
       {/* ---------------- AI panel (phải) — trợ lý AI nằm ở cột phải --------- */}

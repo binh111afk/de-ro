@@ -775,7 +775,7 @@ export function AutoFitText({
   fontFamily?: string
   fontStyle?: 'normal' | 'italic'
   textDecoration?: 'none' | 'underline' | 'line-through'
-  align?: 'left' | 'center' | 'right'
+  align?: 'left' | 'center' | 'right' | 'justify'
   color?: string
   lineHeight?: number
   letterSpacing?: number

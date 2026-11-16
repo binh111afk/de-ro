@@ -5,7 +5,7 @@ import { svgDataUrl } from '@/lib/plot'
 import { readToolDoc, type ToolDoc } from '@/lib/toolSpec'
 import { ToolModal } from './tools/ToolModal'
 import { FRAME_PLACEHOLDER, dragImage, photoFrameClip } from '@/lib/slideShapes'
-import { AlignCenterHorizontal, AlignCenterVertical, AlignEndHorizontal, AlignEndVertical, AlignHorizontalSpaceAround, AlignStartHorizontal, AlignStartVertical, AlignVerticalSpaceAround, Group, Link2, Lock, RotateCw, Ungroup } from 'lucide-react'
+import { AlignCenterHorizontal, AlignCenterVertical, AlignEndHorizontal, AlignEndVertical, AlignHorizontalSpaceAround, AlignStartHorizontal, AlignStartVertical, AlignVerticalSpaceAround, CopyPlus, Ellipsis, Link2, Lock, LockOpen, RotateCw } from 'lucide-react'
 import { TrashIcon } from '@/components/appIcons'
 import { type AlignMode } from '@/lib/slideAlign'
 import { graphicById } from '@/lib/slideGraphics'
@@ -52,50 +52,75 @@ export function GroupToolbar({
   onDelete,
   onGroup,
   onUngroup,
+  onDuplicate,
+  onToggleLock,
+  onMore,
 }: {
   els: SlideElement[]
   onAlign: (mode: AlignMode) => void
   onDelete: () => void
   onGroup: () => void
   onUngroup: () => void
+  onDuplicate: () => void
+  onToggleLock: () => void
+  /** mở menu đầy đủ (Lớp, Căn chỉnh theo trang…) ngay dưới nút ⋯ */
+  onMore: (anchor: DOMRect) => void
 }) {
   const gid = els[0]?.groupId
   const isOneGroup = Boolean(gid) && els.every((e) => e.groupId === gid)
+  const locked = els.every((e) => e.locked)
   const top = Math.min(...els.map((e) => e.y))
   const bottom = Math.max(...els.map((e) => e.y + elementHeight(e)))
   const above = top > 12
+  const btn = 'grid size-8 place-items-center rounded-md text-ink hover:bg-black/5'
   return (
     <div
-      className="slide-sel-toolbar absolute left-1/2 z-[51] flex -translate-x-1/2 items-center gap-0.5 rounded-lg border border-line bg-surface p-1 shadow-[0_4px_16px_-4px_rgba(35,32,28,0.25)]"
-      style={above ? { top: `calc(${top}% - 44px)` } : { top: `calc(${Math.min(bottom, 100)}% + 8px)` }}
+      className="slide-sel-toolbar absolute left-1/2 z-[51] flex -translate-x-1/2 items-center gap-0.5 rounded-full border border-line bg-surface px-1.5 py-1 shadow-[0_4px_16px_-4px_rgba(35,32,28,0.25)]"
+      style={above ? { top: `calc(${top}% - 48px)` } : { top: `calc(${Math.min(bottom, 100)}% + 8px)` }}
       onPointerDown={(e) => e.stopPropagation()}
       onClick={(e) => e.stopPropagation()}
     >
-      <span className="whitespace-nowrap px-1.5 text-[12px] font-medium text-ink/60">{els.length} mục</span>
-      {GROUP_ACTIONS.map(({ mode, label, Icon, min }, i) => (
-        <button
-          key={mode}
-          type="button"
-          data-tip={min && els.length < min ? `${label} (cần chọn từ ${min} mục)` : label}
-          aria-label={label}
-          disabled={!!min && els.length < min}
-          className={cn('grid size-7 place-items-center rounded-md text-ink hover:bg-black/5 disabled:opacity-35 disabled:hover:bg-transparent', (i === 3 || i === 6) && 'ml-1.5')}
-          onClick={() => onAlign(mode)}
-        >
-          <Icon size={16} strokeWidth={1.8} />
-        </button>
-      ))}
       {isOneGroup ? (
-        <button type="button" data-tip="Rã nhóm" data-tip-kbd="Ctrl+Shift+G" aria-label="Rã nhóm" className="ml-1.5 grid size-7 place-items-center rounded-md text-ink hover:bg-black/5" onClick={onUngroup}>
-          <Ungroup size={16} strokeWidth={1.8} />
+        <button type="button" data-tip-kbd="Ctrl+Shift+G" data-tip="Rã nhóm" className="h-8 whitespace-nowrap rounded-full px-3 text-[13px] font-semibold text-ink hover:bg-black/5" onClick={onUngroup}>
+          Bỏ nhóm
         </button>
       ) : (
-        <button type="button" data-tip="Nhóm" data-tip-kbd="Ctrl+G" aria-label="Nhóm" className="ml-1.5 grid size-7 place-items-center rounded-md text-ink hover:bg-black/5" onClick={onGroup}>
-          <Group size={16} strokeWidth={1.8} />
-        </button>
+        <>
+          <button type="button" data-tip-kbd="Ctrl+G" data-tip={`Nhóm ${els.length} mục`} className="h-8 whitespace-nowrap rounded-full px-3 text-[13px] font-semibold text-ink hover:bg-black/5" onClick={onGroup}>
+            Nhóm
+          </button>
+          {GROUP_ACTIONS.map(({ mode, label, Icon, min }, i) => (
+            <button
+              key={mode}
+              type="button"
+              data-tip={min && els.length < min ? `${label} (cần chọn từ ${min} mục)` : label}
+              aria-label={label}
+              disabled={!!min && els.length < min}
+              className={cn(btn, 'disabled:opacity-35 disabled:hover:bg-transparent', (i === 0 || i === 3 || i === 6) && 'ml-1')}
+              onClick={() => onAlign(mode)}
+            >
+              <Icon size={16} strokeWidth={1.8} />
+            </button>
+          ))}
+        </>
       )}
-      <button type="button" data-tip="Xoá các mục đã chọn" aria-label="Xoá các mục đã chọn" className="ml-1.5 grid size-7 place-items-center rounded-md text-ink hover:bg-black/5" onClick={onDelete}>
-        <TrashIcon size={16} strokeWidth={1.8} />
+      <button type="button" data-tip={locked ? 'Mở khoá' : 'Khoá'} aria-label={locked ? 'Mở khoá' : 'Khoá'} aria-pressed={locked} className={cn(btn, 'ml-1', locked && 'bg-clay/10 text-clay')} onClick={onToggleLock}>
+        {locked ? <Lock size={17} strokeWidth={1.8} /> : <LockOpen size={17} strokeWidth={1.8} />}
+      </button>
+      <button type="button" data-tip="Nhân bản" data-tip-kbd="Ctrl+D" aria-label="Nhân bản" className={btn} onClick={onDuplicate}>
+        <CopyPlus size={17} strokeWidth={1.8} />
+      </button>
+      <button type="button" data-tip="Xoá" aria-label="Xoá các mục đã chọn" className={btn} onClick={onDelete}>
+        <TrashIcon size={17} strokeWidth={1.8} />
+      </button>
+      <button
+        type="button"
+        data-tip="Thêm"
+        aria-label="Thêm lệnh"
+        className={cn(btn, 'bg-black/5')}
+        onClick={(e) => onMore(e.currentTarget.getBoundingClientRect())}
+      >
+        <Ellipsis size={18} strokeWidth={2} />
       </button>
     </div>
   )
@@ -204,6 +229,7 @@ export function EditableEl({
   onEditingText,
   cropping = false,
   grouped = false,
+  onSelectSingle,
   group = [],
   onToggleSelect,
   onPreviewMany,
@@ -214,8 +240,10 @@ export function EditableEl({
   theme: ResolvedTheme
   selected: boolean
   onSelect: () => void
-  /** nằm trong nhóm chọn nhiều: chỉ viền, không tay nắm */
-  grouped?: boolean
+  /** nằm trong nhóm chọn nhiều: chỉ viền, không tay nắm; 'soft' = thuộc nhóm cố định (khung bao chung vẽ riêng) */
+  grouped?: boolean | 'soft'
+  /** bấm đúp vào một mục của nhóm cố định: chọn riêng mục đó (như Canva) */
+  onSelectSingle?: () => void
   /** các phần tử khác trong nhóm — kéo phần tử này thì cả nhóm đi theo */
   group?: Array<{ id: string; x: number; y: number }>
   /** Shift+bấm: thêm/bớt khỏi nhóm chọn */
@@ -276,7 +304,7 @@ export function EditableEl({
     rotate: el.rotation ? `${el.rotation}deg` : undefined,
     scale: el.flipX || el.flipY ? `${el.flipX ? -1 : 1} ${el.flipY ? -1 : 1}` : undefined,
     transition: 'scale 350ms cubic-bezier(.2,.8,.2,1)',
-    outline: selected || grouped ? '2px solid #b4532a' : undefined,
+    outline: selected || grouped === true ? '2px solid #b4532a' : grouped === 'soft' ? '1px dashed rgba(180, 83, 42, 0.55)' : undefined,
     outlineOffset: selected || grouped ? 0 : undefined,
     // khung viền rỗng (nền trong suốt, vd khung trang trí của bộ thiết kế phủ gần cả slide):
     // chỉ nhận chuột ở dải viền, kẻo bấm vào vùng trống hay sát mép lại chọn nhầm cả khung to
@@ -518,6 +546,8 @@ export function EditableEl({
       if (!e.shiftKey && !movedRef.current) onSelect()
     },
     onPointerDown: (e: React.PointerEvent) => startDrag(e, 'move'),
+    // chạy trước handler bấm đúp của từng loại (sửa chữ…): vào trong nhóm rồi mới sửa
+    onDoubleClickCapture: grouped === 'soft' ? () => onSelectSingle?.() : undefined,
   }
 
   // sát mép dưới slide thì nút xoay không còn chỗ phía dưới (bị cắt) nên lật lên đỉnh;

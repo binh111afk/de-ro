@@ -1729,7 +1729,7 @@ export function AiPanel({
             <button
               type="button"
               className={cn('ai-attach-btn', picked.length > 0 && 'text-clay')}
-              data-tip="Thêm nguồn: đề của tôi, đề cộng đồng, kho tài liệu"
+              data-tip="Thêm nguồn"
               aria-label="Thêm nguồn"
               onClick={() => setPickerOpen(true)}
             >

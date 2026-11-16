@@ -2140,6 +2140,24 @@ body[data-slide-drag] .slide-sel-toolbar {
 }
 
 /* lưới căn chỉnh (ribbon Xem → Lưới): 16 × 9 ô, không bắt chuột */
+.slide-group-box {
+  position: absolute;
+  z-index: 9997;
+  pointer-events: none;
+  outline: 2px solid #b4532a;
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+.slide-marquee {
+  position: absolute;
+  z-index: 9999;
+  pointer-events: none;
+  border: 1px solid var(--color-clay);
+  background: color-mix(in srgb, var(--color-clay) 10%, transparent);
+  border-radius: 2px;
+}
+
 .slide-grid-overlay {
   position: absolute;
   inset: 0;

@@ -487,6 +487,22 @@
   .doc-content div[data-exam-node='headerCol'] p {
     margin: 0;
   }
+  /* Khối chia cột: cột đều nhau, có khe giữa như Word. */
+  .doc-content div[data-exam-node='examColumns'] {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 1.25cm;
+    margin: 0;
+  }
+  .doc-content div[data-exam-node='examColumns'][data-cols='3'] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .doc-content div[data-exam-node='examColumn'] {
+    min-width: 0;
+  }
+  .doc-content div[data-exam-node='examColumn'] > p:first-child {
+    margin-top: 0;
+  }
   /* Dòng "Thời gian làm bài…" là nghiêng thường, không đậm như các dòng khác. */
   .doc-content div[data-exam-node='examHeader'] em {
     font-weight: 400;

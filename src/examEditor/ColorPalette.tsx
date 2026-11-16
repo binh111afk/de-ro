@@ -1,21 +1,12 @@
-/** Bảng màu dùng chung (thanh nổi + ribbon): ô vuông màu của bộ màu và màu phổ biến, kèm ô nhập mã màu. */
-import { useEffect, useState } from 'react'
+/** Bảng màu dùng chung (thanh nổi + slide): ô vuông màu như bảng vẽ, kèm ô nhập mã màu. */
+import { HexInput } from '@/components/HexInput'
 
-/** Màu hay dùng ngoài màu của bộ màu: hàng trung tính, rồi mỗi sắc độ ba mức (nhạt, vừa, đậm). */
+/** Lưới 10 × 3: hàng xám, hàng màu tươi, hàng màu nhạt — giống bảng vẽ và ribbon soạn đề. */
 export const COMMON_COLORS = [
-  '#ffffff', '#f3f4f6', '#d1d5db', '#9ca3af', '#6b7280', '#374151', '#111827', '#000000',
-  '#fecaca', '#fed7aa', '#fde68a', '#bbf7d0', '#99f6e4', '#bfdbfe', '#ddd6fe', '#fbcfe8',
-  '#dc2626', '#ea580c', '#d97706', '#16a34a', '#0d9488', '#2563eb', '#7c3aed', '#db2777',
-  '#991b1b', '#9a3412', '#92400e', '#166534', '#115e59', '#1e40af', '#5b21b6', '#9d174d',
+  '#000000', '#434343', '#666666', '#999999', '#b7b7b7', '#cccccc', '#d9d9d9', '#efefef', '#f3f3f3', '#ffffff',
+  '#980000', '#ff0000', '#ff9900', '#ffff00', '#00ff00', '#00ffff', '#4a86e8', '#0000ff', '#9900ff', '#ff00ff',
+  '#e6b8af', '#f4cccc', '#fce5cd', '#fff2cc', '#d9ead3', '#d0e0e3', '#c9daf8', '#cfe2f3', '#d9d2e9', '#ead1dc',
 ]
-
-/** "#abc" / "abc" / "#aabbcc" → "#aabbcc"; không hợp lệ thì null */
-function parseHex(text: string): string | null {
-  const m = /^#?([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(text.trim())
-  if (!m) return null
-  const h = m[1].length === 3 ? [...m[1]].map((c) => c + c).join('') : m[1]
-  return `#${h.toLowerCase()}`
-}
 
 export function ColorPalette({
   value,
@@ -30,61 +21,29 @@ export function ColorPalette({
   onClose?: () => void
 }) {
   const current = value.toLowerCase()
-  const [hex, setHex] = useState(current)
-  useEffect(() => setHex(current), [current])
-  const colors = [...new Set([...themeColors, ...COMMON_COLORS].map((c) => c.toLowerCase()))]
+  // màu của chủ đề slide đặt hàng riêng phía trên, bỏ màu đã có trong lưới
+  const theme = [...new Set(themeColors.map((c) => c.toLowerCase()))].filter((c) => !COMMON_COLORS.includes(c))
 
-  const commit = () => {
-    const color = parseHex(hex)
-    if (color && color !== current) onPick(color)
-    else setHex(current)
-  }
+  const swatch = (c: string) => (
+    <button
+      key={c}
+      type="button"
+      data-tip={c}
+      aria-label={`Màu ${c}`}
+      className={`h-[18px] w-[18px] rounded-[3px] border border-black/10 hover:scale-110 ${c === current ? 'ring-2 ring-clay ring-offset-1' : ''}`}
+      style={{ background: c }}
+      onClick={() => {
+        onPick(c)
+        onClose?.()
+      }}
+    />
+  )
 
   return (
-    <div className="w-[216px]" onMouseDown={(e) => e.target instanceof HTMLInputElement || e.preventDefault()}>
-      <div className="grid grid-cols-8 gap-1">
-        {colors.map((c) => (
-          <button
-            key={c}
-            type="button"
-            data-tip={c}
-            aria-label={`Màu ${c}`}
-            className="size-6 rounded-md border border-black/15 transition-transform hover:scale-110"
-            style={{ background: c, outline: c === current ? '2px solid var(--color-clay)' : undefined, outlineOffset: 1 }}
-            onClick={() => {
-              onPick(c)
-              onClose?.()
-            }}
-          />
-        ))}
-      </div>
-      <label className="mt-2.5 flex items-center gap-2 text-[12px] text-ink-2">
-        <span className="size-7 shrink-0 rounded-md border border-black/15" style={{ background: parseHex(hex) ?? current }} />
-        <input
-          value={hex}
-          maxLength={7}
-          spellCheck={false}
-          aria-label="Mã màu"
-          placeholder="#000000"
-          className="min-w-0 flex-1 rounded-md border border-line px-2 py-1.5 font-mono text-[12.5px] uppercase outline-none focus:border-clay"
-          onChange={(e) => {
-            setHex(e.target.value)
-            // đủ 6 số thì áp ngay; mã 3 số chờ Enter hoặc rời ô để không nhảy giữa chừng khi đang gõ
-            const typed = e.target.value.replace('#', '')
-            if (typed.length === 6) {
-              const color = parseHex(typed)
-              if (color && color !== current) onPick(color)
-            }
-          }}
-          onBlur={commit}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              e.preventDefault()
-              commit()
-            }
-          }}
-        />
-      </label>
+    <div className="flex w-[216px] flex-col gap-2" onMouseDown={(e) => e.target instanceof HTMLInputElement || e.preventDefault()}>
+      {theme.length > 0 && <div className="flex gap-1">{theme.map(swatch)}</div>}
+      <div className="grid grid-cols-10 gap-1">{COMMON_COLORS.map(swatch)}</div>
+      <HexInput value={/^#[0-9a-f]{6}$/.test(current) ? current : '#000000'} onPreview={() => {}} onCommit={onPick} />
     </div>
   )
 }

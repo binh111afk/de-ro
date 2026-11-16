@@ -38,7 +38,8 @@ import { PaginationExtension, pageGapsKey, computePagePlan } from './pagination'
 const EMPTY_GAPS = new Map<number, number>()
 import { DeleteObjects } from './deleteActions'
 
-import { A4_PORTRAIT_H, A4_PORTRAIT_W, CM, PAGE_GAP, marginsOf, pageGeometry, pageNumberAt, type PageMargins, type PageSetup } from './pageSetup'
+import { EditorContextMenu } from './EditorContextMenu'
+import { A4_PORTRAIT_H, A4_PORTRAIT_W, CM, PAGE_GAP, marginsOf, pageGeometry, bandAt, type PageMargins, type PageSetup } from './pageSetup'
 export { A4_PORTRAIT_H, A4_PORTRAIT_W, CM, PAGE_GAP, marginsOf, pageGeometry, type PageMargins, type PageSetup }
 
 export interface ExamEditorProps {
@@ -389,22 +390,28 @@ export function ExamEditor({ content, onChange, onReady, pageSetup, readOnly, is
               boxSizing: 'border-box',
             }}
           >
-            {pageNumberAt(pageSetup?.pageNumber, i + 1) !== null && (
-              <span
-                className="doc-page-number"
-                style={{
-                  left: MARGIN,
-                  right: MARGIN_RIGHT,
-                  // giữa lề trên/dưới, giống đầu/chân trang Word
-                  ...(pageSetup?.pageNumber?.place === 'top'
-                    ? { top: Math.max(8, MARGIN_TOP / 2 - 10) }
-                    : { bottom: Math.max(8, MARGIN_BOTTOM / 2 - 10) }),
-                  textAlign: pageSetup?.pageNumber?.align ?? 'center',
-                }}
-              >
-                {pageNumberAt(pageSetup?.pageNumber, i + 1)}
-              </span>
-            )}
+            {(['top', 'bottom'] as const).map((place) => {
+              const slots = bandAt(pageSetup, place, i + 1)
+              if (!slots) return null
+              return (
+                <div
+                  key={place}
+                  className="doc-page-band"
+                  style={{
+                    left: MARGIN,
+                    right: MARGIN_RIGHT,
+                    // giữa lề trên/dưới, giống đầu/chân trang Word
+                    ...(place === 'top'
+                      ? { top: Math.max(8, MARGIN_TOP / 2 - 10) }
+                      : { bottom: Math.max(8, MARGIN_BOTTOM / 2 - 10) }),
+                  }}
+                >
+                  <span>{slots.left}</span>
+                  <span>{slots.center}</span>
+                  <span>{slots.right}</span>
+                </div>
+              )
+            })}
           </div>
         ))}
       </div>
@@ -438,6 +445,7 @@ export function ExamEditor({ content, onChange, onReady, pageSetup, readOnly, is
           </button>
         )}
         <EditorContent editor={editor} />
+        <EditorContextMenu editor={editor} />
       </div>
     </div>
   )

@@ -69,6 +69,7 @@ export type BlockType =
   | 'divider'
   | 'table'
   | 'toc'
+  | 'columns'
 
 export interface HeaderBlock {
   type: 'header'
@@ -173,6 +174,13 @@ export interface DividerBlock {
   type: 'divider'
 }
 
+/** Khối chia 2–3 cột: mỗi cột là các dòng chữ (xuống dòng bằng 
+) */
+export interface ColumnsBlock {
+  type: 'columns'
+  cols: RichText[]
+}
+
 /** Mục lục tự động: liệt kê các khối heading phía sau, kèm số trang */
 export interface TocBlock {
   type: 'toc'
@@ -212,6 +220,7 @@ export type ExamBlock =
   | DividerBlock
   | TableBlock
   | TocBlock
+  | ColumnsBlock
 
 /** Loại tài liệu — quyết định icon hiển thị trên tab và thẻ loại ở trang bắt đầu. */
 export type DocKind = 'exam' | 'slide' | 'board'

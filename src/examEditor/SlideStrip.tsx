@@ -25,6 +25,8 @@ interface SlideStripProps {
   onDuplicate: (id: string) => void
   onRemove: (id: string) => void
   onMove: (from: number, insertAt: number) => void
+  /** chuột phải lên thumbnail slide */
+  onSlideMenu?: (id: string, index: number, e: React.MouseEvent) => void
 }
 
 export function SlideStrip({
@@ -38,6 +40,7 @@ export function SlideStrip({
   onDuplicate,
   onRemove,
   onMove,
+  onSlideMenu,
 }: SlideStripProps) {
   const [dragIndex, setDragIndex] = useState<number | null>(null)
   /** vị trí chèn khi kéo (0..n): khe trước slide `dropPos` */
@@ -118,6 +121,11 @@ export function SlideStrip({
                 onSelect(s.id)
                 if (drawerOpen) setDrawerOpen(false)
               }}
+              onContextMenu={onSlideMenu ? (e) => {
+                e.preventDefault()
+                onSelect(s.id)
+                onSlideMenu(s.id, i, e)
+              } : undefined}
               className={cn(
                 'block w-full overflow-hidden rounded-md border-2 transition-colors',
                 currentId === s.id ? 'border-clay' : 'border-line',

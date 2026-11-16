@@ -39,7 +39,7 @@ import type { SummaryAnswerData } from '@/lib/shuffleExam'
 import { latexToMath } from '@/lib/latexMath'
 import { toDataUrl } from '@/lib/mediaStore'
 import { estimateChoiceCols } from './choiceCols'
-import type { PageNumberSetup } from './pageSetup'
+import type { BandSetup, PageNumberSetup } from './pageSetup'
 import { splitRichLines } from './convert'
 import { TF_PARTS, groupAnswers, gridRows, tfParts } from '@/lib/answerKey'
 
@@ -364,6 +364,16 @@ function blockToDocx(b: ExamBlock, ctx: Ctx): Out[] {
       return [borderless([new TableRow({ children: [cell(b.left, left), cell(b.right, CONTENT_W - left)] })], [left, CONTENT_W - left]), para([], { spacing: { after: 90 } })]
     }
 
+    case 'columns': {
+      const n = Math.max(1, b.cols.length)
+      const w = Math.floor(ctx.contentW / n)
+      const widths = b.cols.map(() => w)
+      return [
+        borderless([new TableRow({ children: b.cols.map((rt) => plainCell(w, splitRichLines(rt).map((line) => para(runs(line, { size: SIZE }))))) })], widths),
+        para([], { spacing: { after: 90 } }),
+      ]
+    }
+
     case 'title':
       return [para(runs(b.text, { bold: true, size: 30, caps: true }), { alignment: AlignmentType.CENTER, spacing: { after: 90 }, ...fmtOpts(b.format) })]
 
@@ -649,27 +659,49 @@ function blockToDocx(b: ExamBlock, ctx: Ctx): Out[] {
 export type DocxMargins = { top: number; right: number; bottom: number; left: number }
 const twip = (cm: number) => Math.round(cm * 567)
 
-export type DocxOpts = { landscape?: boolean; margins?: DocxMargins; pageNumber?: PageNumberSetup }
+export type DocxOpts = { landscape?: boolean; paper?: { w: number; h: number }; margins?: DocxMargins; pageNumber?: PageNumberSetup; header?: BandSetup; footer?: BandSetup }
 
 /**
- * Chân trang có trường PAGE. Word chỉ ẩn riêng được trang đầu (titlePage) trong
- * một section, nên `from` > 2 thì vẫn chỉ ẩn trang 1; số được dời sao cho
- * trang `from` in đúng `startAt`.
+ * Đầu/chân trang: một đoạn có tab giữa + phải, ô số trang là trường PAGE.
+ * Word chỉ cho riêng trang đầu (titlePage) trong một section, nên `from` > 2
+ * vẫn chỉ ẩn trang 1; số được dời sao cho trang `from` in đúng `startAt`.
  */
-type BoxSet = { default: Header | Footer; first?: Header | Footer }
-function pageNumberSection(pn?: PageNumberSetup): { titlePage?: boolean; start?: number; headers?: { default: Header; first?: Header }; footers?: { default: Footer; first?: Footer } } {
-  if (!pn?.show) return {}
-  const align = pn.align === 'left' ? AlignmentType.LEFT : pn.align === 'right' ? AlignmentType.RIGHT : AlignmentType.CENTER
-  const top = pn.place === 'top'
-  const make = (children: Paragraph[]) => (top ? new Header({ children }) : new Footer({ children }))
-  const skipFirst = pn.from > 1
-  const set: BoxSet = { default: make([new Paragraph({ alignment: align, children: [new TextRun({ children: [PageNumber.CURRENT] })] })]) }
-  if (skipFirst) set.first = make([new Paragraph({})])
-  return {
-    titlePage: skipFirst,
-    start: Math.max(0, pn.startAt - pn.from + 1),
-    ...(top ? { headers: set as { default: Header } } : { footers: set as { default: Footer } }),
+function bandSection(opts: DocxOpts | undefined, contentW: number) {
+  const pn = opts?.pageNumber
+  // trang 1 = trang đầu, trang 2 đại diện cho mọi trang sau (Word chỉ tách riêng được trang đầu)
+  const para = (place: 'top' | 'bottom', page: 1 | 2) => {
+    const band = place === 'top' ? opts?.header : opts?.footer
+    const text = band?.text.trim() && !(band.skipFirst && page === 1) ? band.text.trim() : ''
+    const num = !!pn?.show && (pn.place ?? 'bottom') === place && (page === 2 || pn.from <= 1)
+    if (!text && !num) return null
+    const runs = (slot: 'left' | 'center' | 'right') => {
+      const t = text && band!.align === slot
+      const n = num && pn!.align === slot
+      return [
+        ...(t ? [new TextRun(text + (n ? ' – ' : ''))] : []),
+        ...(n ? [new TextRun({ children: [PageNumber.CURRENT] })] : []),
+      ]
+    }
+    const slots = { left: runs('left'), center: runs('center'), right: runs('right') }
+    return new Paragraph({
+      tabStops: [{ type: TabStopType.CENTER, position: Math.round(contentW / 2) }, { type: TabStopType.RIGHT, position: contentW }],
+      children: [...slots.left, new TextRun({ children: [new Tab()] }), ...slots.center, new TextRun({ children: [new Tab()] }), ...slots.right],
+    })
   }
+  let titlePage = false
+  const build = (place: 'top' | 'bottom') => {
+    const d = para(place, 2)
+    const f = para(place, 1)
+    if (!d && !f) return undefined
+    const make = (p: Paragraph | null) => (place === 'top' ? new Header({ children: [p ?? new Paragraph({})] }) : new Footer({ children: [p ?? new Paragraph({})] }))
+    const differs = !!d !== !!f || (!!pn?.show && pn.from > 1 && (pn.place ?? 'bottom') === place) ||
+      !!(place === 'top' ? opts?.header : opts?.footer)?.skipFirst
+    if (differs) titlePage = true
+    return differs ? { default: make(d), first: make(f) } : { default: make(d) }
+  }
+  const headers = build('top') as { default: Header; first?: Header } | undefined
+  const footers = build('bottom') as { default: Footer; first?: Footer } | undefined
+  return { titlePage, start: pn?.show ? Math.max(0, pn.startAt - pn.from + 1) : undefined, headers, footers }
 }
 
 export function buildDocx(doc: ExamDoc, opts?: DocxOpts): Document {
@@ -678,9 +710,12 @@ export function buildDocx(doc: ExamDoc, opts?: DocxOpts): Document {
   const margin = m
     ? { top: twip(m.top), bottom: twip(m.bottom), left: twip(m.left), right: twip(m.right) }
     : { top: MARGIN_V, bottom: MARGIN_V, left: MARGIN_H, right: MARGIN_H }
-  const contentW = (landscape ? PAGE_H : PAGE_W) - margin.left - margin.right
+  // khổ giấy (cm, đã xoay theo hướng) → twip; thiếu thì A4
+  const sw = opts?.paper ? twip(opts.paper.w) : landscape ? PAGE_H : PAGE_W
+  const sh = opts?.paper ? twip(opts.paper.h) : landscape ? PAGE_W : PAGE_H
+  const contentW = sw - margin.left - margin.right
   const ctx: Ctx = { q: 0, essay: 0, lists: 0, contentW }
-  const pn = pageNumberSection(opts?.pageNumber)
+  const pn = bandSection(opts, contentW)
   const children = doc.blocks.flatMap((b) => blockToDocx(b, ctx))
   const level = (i: number, format: (typeof LevelFormat)[keyof typeof LevelFormat], text: string) => ({
     level: i,
@@ -706,8 +741,8 @@ export function buildDocx(doc: ExamDoc, opts?: DocxOpts): Document {
         properties: {
           page: {
             size: landscape
-              ? { width: PAGE_W, height: PAGE_H, orientation: PageOrientation.LANDSCAPE }
-              : { width: PAGE_W, height: PAGE_H },
+              ? { width: Math.min(sw, sh), height: Math.max(sw, sh), orientation: PageOrientation.LANDSCAPE }
+              : { width: sw, height: sh },
             margin,
             ...(pn.start !== undefined ? { pageNumbers: { start: pn.start } } : {}),
           },

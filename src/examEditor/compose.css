@@ -715,6 +715,52 @@
     min-width: 0;
   }
 
+  /* menu chuột phải */
+  .ctx-menu {
+    min-width: 240px;
+    padding: 6px;
+  }
+  .ctx-fmt {
+    display: flex;
+    gap: 2px;
+  }
+  .ctx-item {
+    min-height: 30px;
+    font-size: 13px;
+  }
+  .ctx-item:disabled {
+    opacity: 0.45;
+    cursor: default;
+    background: none;
+  }
+  .ctx-item__icon {
+    display: inline-flex;
+    width: 16px;
+    justify-content: center;
+    color: var(--text-secondary);
+  }
+  .ctx-item__hint {
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: var(--hover);
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 18px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+  }
+  .ctx-item__chev {
+    color: var(--text-secondary);
+  }
+  .ctx-item.is-open {
+    background: var(--hover);
+  }
+  .ctx-sep {
+    height: 1px;
+    margin: 5px 4px;
+    background: var(--border);
+  }
+
   /* ô "không màu": vuông trắng gạch chéo đỏ */
   .rb-color-none {
     width: 20px;
@@ -2882,11 +2928,17 @@
   }
 
   /* số trang ở lề dưới (Bố cục › Số trang) */
-  .doc-page-number {
+  .doc-page-band {
     position: absolute;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 12px;
     font: 13px/20px 'Times New Roman', serif;
     color: #222;
+    white-space: nowrap;
   }
+  .doc-page-band > :nth-child(1) { text-align: left; overflow: hidden; text-overflow: ellipsis; }
+  .doc-page-band > :nth-child(3) { text-align: right; overflow: hidden; text-overflow: ellipsis; }
 
   .doc-flow {
     position: absolute;
@@ -2991,6 +3043,10 @@
     font-size: 11.5px;
     color: var(--text-secondary);
     white-space: nowrap;
+  }
+
+  .rb-color-palette {
+    padding: 2px 4px 4px;
   }
 
   .rb-num-input {

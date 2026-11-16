@@ -98,6 +98,8 @@ function blockText(b: ExamBlock): string {
   switch (b.type) {
     case 'header':
       return `[Đầu đề] ${rt(b.left)} ${rt(b.right)}`.trim()
+    case 'columns':
+      return b.cols.map(rt).join(' | ')
     case 'title':
       return rt(b.text)
     case 'meta':

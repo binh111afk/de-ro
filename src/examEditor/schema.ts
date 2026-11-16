@@ -259,6 +259,40 @@ export const HeaderColumnNode = Node.create({
   },
 })
 
+/** Khối chia 2–3 cột (giống Columns của Word, nhưng chỉ cho một đoạn tài liệu). */
+export const ColumnsNode = Node.create({
+  name: 'examColumns',
+  group: 'block',
+  content: 'examColumn{2,3}',
+  defining: true,
+  addAttributes() {
+    return { id: { default: null } }
+  },
+  parseHTML() {
+    return [{ tag: 'div[data-exam-node="examColumns"]' }]
+  },
+  renderHTML({ HTMLAttributes, node }) {
+    const { id } = HTMLAttributes as Record<string, unknown>
+    return [
+      'div',
+      mergeAttributes({ 'data-exam-node': 'examColumns', 'data-cols': node.childCount, ...(id ? { 'data-id': id } : {}) }),
+      0,
+    ]
+  },
+})
+
+export const ColumnNode = Node.create({
+  name: 'examColumn',
+  content: 'paragraph+',
+  isolating: true,
+  parseHTML() {
+    return [{ tag: 'div[data-exam-node="examColumn"]' }]
+  },
+  renderHTML() {
+    return ['div', { 'data-exam-node': 'examColumn' }, 0]
+  },
+})
+
 /** Tiêu đề đề — h1 căn giữa, in hoa. */
 export const TitleNode = textBlock('examTitle', 'block')
 
@@ -947,6 +981,8 @@ declare module '@tiptap/core' {
 export const EXAM_NODES = [
   HeaderNode,
   HeaderColumnNode,
+  ColumnsNode,
+  ColumnNode,
   TitleNode,
   MetaNode,
   MetaRowNode,
