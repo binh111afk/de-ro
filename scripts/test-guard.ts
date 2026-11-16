@@ -157,5 +157,85 @@ const jwt = (sub: string) => `h.${Buffer.from(JSON.stringify({ sub })).toString(
   globalThis.fetch = realFetch
 }
 
+// Strix lần 3 mục 1: đề "chỉ làm một lần" — bắt đăng nhập, khoá nguyên tử (exam_attempt_locks) trước khi chấm,
+// lỗi khoá → từ chối (fail-closed), lưu bài lỗi → nhả khoá. Không còn tra theo device_id.
+{
+  process.env.VITE_SUPABASE_URL = 'http://sb.test'
+  process.env.SUPABASE_SERVICE_ROLE_KEY = 'svc'
+  const EXAM = '11111111-2222-3333-4444-555555555555'
+  const online = {
+    title: 'Đề một lần',
+    settings: { oneAttempt: true },
+    sections: [{ id: 's', title: 'I', questions: [{ id: 'q1', type: 'trac-nghiem', prompt: 'x', options: ['a', 'b'], answer: 'A', points: 1 }] }],
+  }
+  const locks = new Set<string>()
+  let lockDown = false
+  let saveDown = false
+  const seen: string[] = []
+  const realFetch = globalThis.fetch
+  globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
+    const url = String(input)
+    seen.push(`${init.method ?? 'GET'} ${url}`)
+    if (url.includes('/auth/v1/user')) {
+      const auth = String((init.headers as Record<string, string>).Authorization)
+      const sub = JSON.parse(Buffer.from(auth.split('.')[1], 'base64url').toString()).sub as string
+      return new Response(JSON.stringify({ id: sub }), { status: 200 })
+    }
+    if (url.includes('/rest/v1/community_exams')) return new Response(JSON.stringify([{ doc: { online }, listed: false }]), { status: 200 })
+    if (url.includes('/rest/v1/exam_attempt_locks')) {
+      if (init.method === 'DELETE') {
+        locks.delete(new URL(url).searchParams.get('user_id')!.replace(/^eq\./, ''))
+        return new Response(null, { status: 204 })
+      }
+      if (lockDown) return new Response('{}', { status: 500 })
+      const { user_id } = JSON.parse(String(init.body)) as { user_id: string }
+      if (locks.has(user_id)) return new Response(JSON.stringify({ code: '23505' }), { status: 409 })
+      locks.add(user_id)
+      return new Response(null, { status: 201 })
+    }
+    if (url.includes('/rest/v1/exam_attempts')) return new Response(null, { status: saveDown ? 500 : 201 })
+    return new Response('{}', { status: 404 })
+  }) as typeof fetch
+  const { handleAttemptRequest } = await import('../server/attempt.ts')
+  let ip = 60
+  const submit = async (auth: string | null, deviceId = 'device-abcdef') => {
+    const body = Buffer.from(JSON.stringify({ examId: EXAM, name: 'Hs', answers: { q1: 'A' }, deviceId }))
+    const req = Object.assign((async function* () { yield body })(), {
+      method: 'POST',
+      headers: { host: 'de-ro-lac.vercel.app', origin: 'https://de-ro-lac.vercel.app', ...(auth ? { authorization: auth } : {}) },
+      socket: { remoteAddress: `198.51.100.${ip++}` },
+    }) as unknown as IncomingMessage
+    const out = { status: 0, body: '' }
+    const res = {
+      headersSent: false,
+      setHeader() {},
+      writeHead(c: number) {
+        out.status = c
+        return this
+      },
+      end(b?: string) {
+        out.body = b ?? ''
+      },
+    } as unknown as ServerResponse
+    await handleAttemptRequest(req, res)
+    return out
+  }
+  const anon = await submit(null)
+  check('đề một lần: khách (không token) nộp → 401 cần đăng nhập', anon.status === 401 && anon.body.includes('loginRequired'))
+  check('đề một lần: lượt đầu của tài khoản → 200', (await submit(`Bearer ${jwt('stu-1')}`)).status === 200)
+  check('đề một lần: cùng tài khoản đổi mã thiết bị → 409', (await submit(`Bearer ${jwt('stu-1')}`, 'thiet-bi-khac-))(')).status === 409)
+  const par = await Promise.all([submit(`Bearer ${jwt('stu-2')}`), submit(`Bearer ${jwt('stu-2')}`), submit(`Bearer ${jwt('stu-2')}`)])
+  check('đề một lần: 3 lượt song song cùng tài khoản → đúng 1 lượt qua', par.filter((r) => r.status === 200).length === 1)
+  lockDown = true
+  check('đề một lần: bảng khoá lỗi → 503, không chấm (fail-closed)', (await submit(`Bearer ${jwt('stu-3')}`)).status === 503)
+  lockDown = false
+  saveDown = true
+  check('đề một lần: lưu bài lỗi → 502', (await submit(`Bearer ${jwt('stu-4')}`)).status === 502)
+  saveDown = false
+  check('lưu bài lỗi thì nhả khoá: nộp lại được', (await submit(`Bearer ${jwt('stu-4')}`)).status === 200)
+  check('không còn tra exam_attempts theo device_id', !seen.some((s) => s.includes('device_id')))
+  globalThis.fetch = realFetch
+}
+
 console.log(`\n${pass}/${pass + fail} pass, ${fail} fail`)
 if (fail) process.exit(1)

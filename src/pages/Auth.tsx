@@ -2,7 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
 import { Button, PasswordInput } from '@/components/ui'
-import { AuthError, requestReset, setNewPassword, signIn, signInWithGoogle, signUp } from '@/lib/auth'
+import { AuthError, requestReset, setNewPassword, signIn, signInWithGoogle, signUp, takeReturnPath } from '@/lib/auth'
 
 type Mode = 'login' | 'register' | 'forgot' | 'reset'
 
@@ -70,7 +70,7 @@ export default function Auth({ mode }: { mode: Mode }) {
     try {
       if (mode === 'login') {
         await signIn(email.trim(), password)
-        navigate('/')
+        navigate(takeReturnPath() ?? '/')
       } else if (mode === 'register') {
         const { needsConfirm } = await signUp(email.trim(), password, name.trim())
         if (needsConfirm) setNotice('Đã gửi email xác nhận. Mở email và bấm liên kết để kích hoạt tài khoản.')

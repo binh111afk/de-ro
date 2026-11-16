@@ -67,11 +67,15 @@ export function loadStudent(): StudentInfo | null {
 }
 export const saveStudent = (s: StudentInfo) => write('dethinhbien-student', JSON.stringify(s))
 
-/** Trước khi làm: đề có ở cộng đồng không, máy này đã nộp bài chưa. Máy chủ chưa có hàm thì coi như đề chỉ-link, chưa nộp. */
+/**
+ * Trước khi làm: đề có ở cộng đồng không, đã nộp bài chưa (theo tài khoản đang đăng nhập, hoặc máy này).
+ * Chỉ để báo sớm cho học sinh; chốt thật là server khi nộp. Máy chủ chưa có hàm thì coi như đề chỉ-link, chưa nộp.
+ */
 export async function examGate(examId: string): Promise<{ listed: boolean; attempted: boolean }> {
+  const s = await currentSession().catch(() => null)
   return rest<{ listed: boolean; attempted: boolean } | null>('/rpc/exam_gate', {
     method: 'POST',
-    token: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+    token: s?.access_token ?? import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
     body: { p_id: examId, p_device: deviceId() },
   })
     .then((r) => r ?? { listed: false, attempted: false })

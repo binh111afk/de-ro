@@ -174,8 +174,30 @@ export async function consumeAuthRedirect(): Promise<'recovery' | 'session' | nu
     expires_at: Math.floor(Date.now() / 1000) + expiresIn,
     user: toUser(user),
   })
-  window.history.replaceState(null, '', window.location.pathname + window.location.search)
+  const back = takeReturnPath()
+  if (back) window.location.replace(back)
+  else window.history.replaceState(null, '', window.location.pathname + window.location.search)
   return 'session'
+}
+
+const RETURN_KEY = 'dethinhbien-return'
+/** Nhớ trang cần quay lại sau khi đăng nhập (vd link đề "chỉ làm một lần"). Chỉ nhận đường dẫn nội bộ. */
+export function rememberReturnPath(path: string): void {
+  try {
+    if (/^\/(?![/\\])/.test(path)) sessionStorage.setItem(RETURN_KEY, path)
+  } catch {
+    /* không nhớ được thì về trang chủ */
+  }
+}
+/** Lấy (và xoá) trang cần quay lại; null nếu không có. */
+export function takeReturnPath(): string | null {
+  try {
+    const p = sessionStorage.getItem(RETURN_KEY)
+    sessionStorage.removeItem(RETURN_KEY)
+    return p && /^\/(?![/\\])/.test(p) ? p : null
+  } catch {
+    return null
+  }
 }
 
 /** Phiên còn hiệu lực; tự làm mới bằng refresh token khi sắp hết hạn. */

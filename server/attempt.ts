@@ -38,15 +38,25 @@ export async function handleAttemptRequest(req: IncomingMessage, res: ServerResp
     const seat = Number(body.seat)
     const device = str(body.deviceId, 64)
     const userId = await userFromToken(req)
-    // đề "chỉ làm một lần": khoá theo MỌI danh tính gửi lên — tài khoản (nếu có) VÀ mã thiết bị; trùng
-    // một trong hai là từ chối (bỏ token đi để rơi về nhánh thiết bị không còn lách được)
+    // đề "chỉ làm một lần": chỉ tài khoản là danh tính tin được (mã thiết bị trình duyệt tự đặt, đổi là xong).
+    // Bắt đăng nhập, rồi giữ chỗ nguyên tử trong DB TRƯỚC khi chấm: khoá chính (exam_id, user_id) nên hai lượt
+    // song song chỉ một lượt qua. Lỗi khác trùng khoá → từ chối (không bao giờ coi là "chưa nộp").
+    let locked = false
     if (exam.settings?.oneAttempt) {
-      if (device.length < 8) return json(res, 400, { error: 'Thiếu mã thiết bị.' })
-      const dev = `device_id.eq.${encodeURIComponent(device)}`
-      const by = `or=(${userId ? `user_id.eq.${encodeURIComponent(userId)},` : ''}${dev})`
-      const dup = await fetch(`${base}/rest/v1/exam_attempts?exam_id=eq.${examId}&${by}&select=id&limit=1`, { headers })
-      if (dup.ok && ((await dup.json()) as unknown[]).length) return json(res, 409, { error: 'Em đã nộp bài cho đề này rồi.' })
+      if (!userId) return json(res, 401, { error: 'Đề này chỉ làm một lần, em cần đăng nhập để nộp bài.', loginRequired: true })
+      const lock = await fetch(`${base}/rest/v1/exam_attempt_locks`, {
+        method: 'POST',
+        headers: { ...headers, Prefer: 'return=minimal' },
+        body: JSON.stringify({ exam_id: examId, user_id: userId }),
+      })
+      if (lock.status === 409) return json(res, 409, { error: 'Em đã nộp bài cho đề này rồi.' })
+      if (!lock.ok) return json(res, 503, { error: 'Máy chủ bận, em nộp lại sau ít phút.' })
+      locked = true
     }
+    const unlock = () =>
+      locked
+        ? fetch(`${base}/rest/v1/exam_attempt_locks?exam_id=eq.${examId}&user_id=eq.${userId}`, { method: 'DELETE', headers }).catch(() => undefined)
+        : undefined
     const questions = exam.sections.flatMap((s) => s.questions)
     let score = 0
     // đáp án vốn đã công khai (đề cộng đồng, hoặc "hiện đúng/sai ngay" — api/exam trả kèm đáp án): trả đủ.
@@ -80,8 +90,11 @@ export async function handleAttemptRequest(req: IncomingMessage, res: ServerResp
         class_name: str(body.className, 30) || null,
         seat_no: Number.isInteger(seat) && seat >= 1 && seat <= 999 ? seat : null,
       }),
-    })
-    if (!ins.ok) return json(res, 502, { error: 'Không lưu được bài làm.' })
+    }).catch(() => null)
+    if (!ins?.ok) {
+      await unlock()
+      return json(res, 502, { error: 'Không lưu được bài làm.' })
+    }
     // đề link gửi cho học sinh không kèm đáp án (api/exam): nộp xong mới trả điểm và đáp án để xem lại bài
     // gradable: tổng điểm các câu chấm được (có đáp án) — học sinh xem điểm trên thang này,
     // max_score lưu cho giáo viên vẫn là tổng điểm cả đề (giáo viên còn chấm tay câu tự luận)

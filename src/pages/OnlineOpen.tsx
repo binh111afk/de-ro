@@ -1,11 +1,12 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { AlertCircle, ArrowRight, CheckCircle2 } from 'lucide-react'
+import { AlertCircle, ArrowRight, CheckCircle2, LogIn } from 'lucide-react'
 import { Button, EmptyState, Field, inputClass, Spinner } from '@/components/ui'
 import { SiteSelect } from '@/components/SiteSelect'
 import { getStudentDoc } from '@/lib/community'
 import { docToExam } from '@/lib/docToExam'
 import { examGate, loadStudent, saveStudent, type StudentInfo } from '@/lib/attempts'
+import { currentSession, rememberReturnPath } from '@/lib/auth'
 import { useApp } from '@/store/app'
 import type { Exam } from '@/data/types'
 
@@ -22,6 +23,7 @@ export default function OnlineOpen() {
   const [error, setError] = useState<string | null>(null)
   const [exam, setExam] = useState<Exam | null>(null)
   const [done, setDone] = useState(false)
+  const [needLogin, setNeedLogin] = useState(false)
 
   const start = (e: Exam) => {
     const app = useApp.getState()
@@ -33,12 +35,14 @@ export default function OnlineOpen() {
   useEffect(() => {
     if (!id) return
     let alive = true
-    Promise.all([getStudentDoc(id), examGate(id)])
-      .then(([doc, gate]) => {
+    Promise.all([getStudentDoc(id), examGate(id), currentSession().catch(() => null)])
+      .then(([doc, gate, session]) => {
         if (!alive) return
         const e = docToExam(doc, id)
-        if (gate.listed) return start(e)
         if (e.settings?.oneAttempt && gate.attempted) return setDone(true)
+        // đề một lần: server chỉ nhận bài của tài khoản đã đăng nhập — báo trước, đừng để làm xong mới biết
+        if (e.settings?.oneAttempt && !session) return setNeedLogin(true)
+        if (gate.listed) return start(e)
         setExam(e)
       })
       .catch((err) => alive && setError(err instanceof Error ? err.message : 'Không mở được đề, thử lại sau.'))
@@ -58,6 +62,22 @@ export default function OnlineOpen() {
           action={
             <Link to="/">
               <Button variant="primary">Về trang chủ</Button>
+            </Link>
+          }
+        />
+      </div>
+    )
+
+  if (needLogin)
+    return (
+      <div className="mx-auto max-w-[700px] px-5 py-20">
+        <EmptyState
+          icon={<LogIn className="size-6" strokeWidth={1.6} />}
+          title="Đăng nhập để làm bài"
+          description="Đề này chỉ được làm một lần, nên em cần đăng nhập để thầy cô nhận đúng bài của em. Đăng nhập xong sẽ quay lại đề này."
+          action={
+            <Link to="/dang-nhap" onClick={() => rememberReturnPath(`/de-online/${id}`)}>
+              <Button variant="primary">Đăng nhập</Button>
             </Link>
           }
         />
