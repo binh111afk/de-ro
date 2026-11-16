@@ -1172,14 +1172,18 @@ export default function ComposeDoc() {
           <div className="status-bar">
             <div className="status-left">
               <span className="status-item">{pageCount} trang</span>
-              <span className="status-item">
-                Trang A4 {pageSetup.orientation === 'landscape' ? 'ngang' : 'dọc'} · lề {(() => {
+              {/* chỉ khổ + hướng; số đo lề để trong tooltip cho thanh trạng thái gọn */}
+              <span
+                className="status-item"
+                data-tip={(() => {
                   const m = marginsOf(pageSetup)
                   const f = (n: number) => n.toLocaleString('vi-VN')
                   return m.top === m.bottom && m.left === m.right && m.top === m.left
-                    ? `${f(m.top)} cm`
-                    : `trên ${f(m.top)} · dưới ${f(m.bottom)} · trái ${f(m.left)} · phải ${f(m.right)} cm`
+                    ? `Lề ${f(m.top)} cm`
+                    : `Lề trên ${f(m.top)}, dưới ${f(m.bottom)}, trái ${f(m.left)}, phải ${f(m.right)} cm`
                 })()}
+              >
+                A4 {pageSetup.orientation === 'landscape' ? 'ngang' : 'dọc'}
               </span>
               <span className="status-item">{activeTab?.dirty ? 'Chưa lưu' : 'Đã lưu'}</span>
             </div>
