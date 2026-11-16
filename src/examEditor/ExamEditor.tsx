@@ -39,6 +39,7 @@ const EMPTY_GAPS = new Map<number, number>()
 import { DeleteObjects } from './deleteActions'
 
 import { EditorContextMenu } from './EditorContextMenu'
+import { MathEdit } from './MathEdit'
 import { A4_PORTRAIT_H, A4_PORTRAIT_W, CM, PAGE_GAP, marginsOf, pageGeometry, bandAt, type PageMargins, type PageSetup } from './pageSetup'
 export { A4_PORTRAIT_H, A4_PORTRAIT_W, CM, PAGE_GAP, marginsOf, pageGeometry, type PageMargins, type PageSetup }
 
@@ -446,6 +447,7 @@ export function ExamEditor({ content, onChange, onReady, pageSetup, readOnly, is
         )}
         <EditorContent editor={editor} />
         <EditorContextMenu editor={editor} />
+        <MathEdit editor={editor} />
       </div>
     </div>
   )

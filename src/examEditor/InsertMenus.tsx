@@ -156,11 +156,17 @@ export function SymbolPicker({ editor, disabled }: { editor: Editor | null; disa
 export function EquationDialog({
   editor,
   onClose,
+  initial,
+  onSave,
 }: {
   editor: Editor
   onClose: () => void
+  /** sửa công thức có sẵn: LaTeX cũ */
+  initial?: string
+  /** sửa: thay công thức cũ thay vì chèn mới */
+  onSave?: (tex: string) => void
 }) {
-  const [tex, setTex] = useState('')
+  const [tex, setTex] = useState(initial ?? '')
   const [err, setErr] = useState('')
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
@@ -178,6 +184,11 @@ export function EquationDialog({
 
   const insert = () => {
     if (!tex.trim()) return
+    if (onSave) {
+      onSave(tex.trim())
+      onClose()
+      return
+    }
     // chèn dạng text $...$ để MathText/export nhận diện được
     editor.chain().focus().insertContent(` $${tex.trim()}$ `).run()
     onClose()
@@ -228,7 +239,7 @@ export function EquationDialog({
             Hủy
           </button>
           <button type="button" className="rb-modal__btn rb-modal__btn--primary" onClick={insert}>
-            Chèn
+            {onSave ? 'Lưu' : 'Chèn'}
           </button>
         </div>
       </div>
