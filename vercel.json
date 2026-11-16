@@ -3,6 +3,7 @@
   "framework": "vite",
   "buildCommand": "vite build",
   "outputDirectory": "dist",
+  "regions": ["sin1"],
   "functions": {
     "api/llm.ts": { "maxDuration": 300 },
     "api/extract.ts": { "maxDuration": 60 },

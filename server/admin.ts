@@ -68,6 +68,8 @@ export async function requireAdmin(req: IncomingMessage, res: ServerResponse, ne
     json(res, 401, { error: 'Cần đăng nhập.' })
     return null
   }
+  // hỏi trạng thái khoá song song với quyền (bớt một lượt chờ Supabase); null = không hỏi được
+  const bannedP = isBanned(s, userId).catch(() => null)
   let role: Role | null
   try {
     role = await roleOf(s, userId)
@@ -82,13 +84,13 @@ export async function requireAdmin(req: IncomingMessage, res: ServerResponse, ne
     return null
   }
   // tài khoản đang bị khoá thì token cũ còn hạn cũng không dùng quyền quản trị được (kể cả tự gỡ khoá)
-  try {
-    if (await isBanned(s, userId)) {
-      json(res, 403, { error: 'Tài khoản đang bị khoá.' })
-      return null
-    }
-  } catch {
+  const banned = await bannedP
+  if (banned === null) {
     json(res, 503, { error: 'Không kiểm tra được quyền, thử lại sau.' })
+    return null
+  }
+  if (banned) {
+    json(res, 403, { error: 'Tài khoản đang bị khoá.' })
     return null
   }
   return { s, userId, role }
@@ -254,21 +256,20 @@ const ACTIONS: ActionMap = {
       const { data, res } = await call<{ users: AuthUser[]; total?: number }>(s, `/auth/v1/admin/users?${qs}`)
       const users = data.users ?? []
       const total = Number(res.headers.get('x-total-count') ?? data.total ?? users.length)
-      const stats = users.length
-        ? (
-            await call<Array<{ user_id: string; docs: number; decks: number; tokens: number; role: Role | null }>>(s, '/rest/v1/rpc/admin_user_stats', {
+      // số liệu và cờ hỏi song song
+      const [stats, flags] = users.length
+        ? await Promise.all([
+            call<Array<{ user_id: string; docs: number; decks: number; tokens: number; role: Role | null }>>(s, '/rest/v1/rpc/admin_user_stats', {
               method: 'POST',
               body: JSON.stringify({ p_ids: users.map((u) => u.id), p_month: month() }),
-            })
-          ).data
-        : []
+            }).then((r) => r.data),
+            // bảng cờ lỗi thì danh sách vẫn phải hiện
+            call<FlagRow[]>(s, `/rest/v1/security_flags?user_id=in.(${users.map((u) => u.id).join(',')})&select=user_id,strikes,last_at,last_action,last_ip`)
+              .then((r) => r.data)
+              .catch(() => [] as FlagRow[]),
+          ])
+        : [[], [] as FlagRow[]]
       const byId = new Map(stats.map((x) => [x.user_id, x]))
-      // bảng cờ lỗi thì danh sách vẫn phải hiện
-      const flags = users.length
-        ? await call<FlagRow[]>(s, `/rest/v1/security_flags?user_id=in.(${users.map((u) => u.id).join(',')})&select=user_id,strikes,last_at,last_action,last_ip`)
-            .then((r) => r.data)
-            .catch(() => [] as FlagRow[])
-        : []
       const flagById = new Map(flags.map((f) => [f.user_id, f]))
       return { users: users.map((u) => toRow(u, byId.get(u.id), flagById.get(u.id))), total, page, perPage }
     },
