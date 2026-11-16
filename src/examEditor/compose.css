@@ -2769,29 +2769,6 @@
     flex-shrink: 0;
   }
 
-  .ruler-tab-type {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 20px;
-    height: 100%;
-    background: var(--docs-ruler-btn-bg);
-    border: none;
-    border-right: 1px solid var(--docs-ruler-btn-border);
-    font-size: 9px;
-    font-weight: bold;
-    cursor: pointer;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--docs-ruler-btn-ink);
-  }
-
-  .ruler-tab-type:hover {
-    background: var(--docs-ruler-btn-hover);
-  }
-
   .ruler-zone {
     position: absolute;
     top: 0;

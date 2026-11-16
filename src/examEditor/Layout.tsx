@@ -198,22 +198,24 @@ export function Ruler({
   /** kéo vùng lề — trả về lề mới (px) của cạnh đang kéo */
   onMarginChange?: (marginPx: number, side: 'left' | 'right') => void
 }) {
-  // 1cm = 96/2.54 px; vạch mỗi 5mm, số ở mốc cm
+  // 1cm = 96/2.54 px; vạch mỗi 5mm, số ở mốc cm.
+  // Như Word: mốc 0 ở mép lề trái, đếm ra hai phía (phần lề trái đánh số ngược 1, 2…)
   const ticks = useMemo(() => {
     const out: Array<{ x: number; mid: boolean; label?: string }> = []
-    // đủ bề rộng trang (dọc 21 cm, ngang 29,7 cm)
-    const maxMm = Math.floor((width / (96 / 2.54)) * 10)
-    for (let mm = 0; mm <= maxMm; mm += 5) {
-      const x = (mm / 10) * (96 / 2.54)
-      if (mm === 0) continue
+    const mmPx = 96 / 2.54 / 10
+    const from = -Math.floor(margin / mmPx / 5) * 5
+    const to = Math.floor((width - margin) / mmPx)
+    for (let mm = from; mm <= to; mm += 5) {
+      const x = margin + mm * mmPx
+      if (mm === 0 || x <= 0 || x >= width) continue
       out.push({
         x,
         mid: mm % 10 !== 0,
-        label: mm % 10 === 0 ? String(mm / 10) : undefined,
+        label: mm % 10 === 0 ? String(Math.abs(mm / 10)) : undefined,
       })
     }
     return out
-  }, [width])
+  }, [width, margin])
 
   /** kéo chung 1 marker: trả về giá trị px mới (làm tròn 5px) */
   const startDrag = useCallback(
@@ -231,14 +233,20 @@ export function Ruler({
     [],
   )
 
-  const startIndentDrag = (kind: 'first' | 'left' | 'right') => (e: React.MouseEvent) => {
+  /**
+   * Như Word: tam giác trên = dòng đầu; tam giác dưới (thụt treo) = các dòng sau, dòng đầu đứng yên;
+   * ô vuông = dời cả đoạn (dòng đầu đi theo).
+   */
+  const startIndentDrag = (kind: 'first' | 'hang' | 'left') => (e: React.MouseEvent) => {
     if (!onIndentChange) return
-    const base =
-      kind === 'first' ? indentFirstLine : kind === 'left' ? indentLeft : 0
     startDrag(e, (dx) => {
-      const snap = Math.round((base + dx) / 5) * 5
-      if (kind === 'first') onIndentChange({ indentFirstLine: snap })
-      else if (kind === 'left') onIndentChange({ indentLeft: Math.max(0, snap) })
+      if (kind === 'first') {
+        onIndentChange({ indentFirstLine: Math.max(-indentLeft, Math.round((indentFirstLine + dx) / 5) * 5) })
+        return
+      }
+      const left = Math.max(0, Math.round((indentLeft + dx) / 5) * 5)
+      if (kind === 'left') onIndentChange({ indentLeft: left })
+      else onIndentChange({ indentLeft: left, indentFirstLine: indentLeft + indentFirstLine - left })
     })
   }
 
@@ -254,11 +262,6 @@ export function Ruler({
 
   return (
     <div className="ruler" style={{ width }} role="group" aria-label="Thước kẻ">
-      {/* nút chọn kiểu tab, bên trái */}
-      <button type="button" className="ruler-tab-type" data-tip="Kiểu tab" aria-label="Kiểu tab">
-        L
-      </button>
-
       {/* vùng lề trái / lề phải — kéo được */}
       <div
         className="ruler-zone ruler-zone--drag"
@@ -307,7 +310,7 @@ export function Ruler({
             style={{ left: margin + indentLeft }}
             data-tip="Thụt treo"
             aria-label="Thụt treo"
-            onMouseDown={startIndentDrag('left')}
+            onMouseDown={startIndentDrag('hang')}
           />
           <button
             type="button"
