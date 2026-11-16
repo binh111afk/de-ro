@@ -100,12 +100,15 @@ function Chevron({ dir }: { dir: 'left' | 'right' }) {
 export function AiAskPanel({
   ask,
   request = '',
+  figure = true,
   onSubmit,
   onSkip,
 }: {
   ask: AiAsk
   /** yêu cầu gốc của người dùng, để biết có phải đề Toán không */
   request?: string
+  /** slide môn nào cũng có hình nên chỉ đề mới hỏi */
+  figure?: boolean
   /** câu trả lời đã ghép thành văn bản gửi model */
   onSubmit: (text: string) => void
   onSkip: () => void
@@ -126,7 +129,7 @@ export function AiAskPanel({
   /** đề Toán (theo yêu cầu gốc hoặc câu đã chọn) mà AI chưa hỏi về hình → thêm câu hình ở cuối */
   const questionsFor = (ans: string[][]): AiAskQuestion[] => {
     const askedFig = base.some((x) => /minh ho[ạa]|hình vẽ|có hình/i.test(x.q))
-    const math = /toán/i.test(request) || ans.some((a) => a.some((x) => /toán/i.test(x)))
+    const math = figure && (/toán/i.test(request) || ans.some((a) => a.some((x) => /toán/i.test(x))))
     return !askedFig && math ? [...base, FIG_Q] : base
   }
   const questions = questionsFor(answers)

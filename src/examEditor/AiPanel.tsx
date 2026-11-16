@@ -1582,6 +1582,7 @@ export function AiPanel({
         <AiAskPanel
           key={openAsk.id}
           ask={openAsk.ask}
+          figure={mode !== 'slide'}
           request={turns.filter((t) => t.role === 'user').map((t) => t.text).join(' ')}
           onSubmit={answerAsk}
           onSkip={() => answerAsk(ASK_DEFAULT.replace('Những gì chưa chọn: l', 'L'))}
