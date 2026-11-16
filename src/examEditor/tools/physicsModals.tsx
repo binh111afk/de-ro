@@ -1,6 +1,7 @@
 /** Hộp công cụ Vật lí: mạch điện, chuyển động, chất khí, cảnh vật, mặt phẳng nghiêng, chuyển thể, thấu kính, điện trường. */
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { cn } from '@/lib/cn'
+import { prepareToolDoc } from '@/lib/objects'
 import { inputClass } from '@/components/ui'
 import { type ToolDoc } from '@/lib/toolSpec'
 import { svgDataUrl } from '@/lib/plot'
@@ -274,7 +275,12 @@ export function GasModal({ initial, submitLabel, onClose, onInsert }: Props<GasS
 export function SceneModal({ initial, submitLabel, onClose, onInsert }: Props<SceneSpec>) {
   const [spec, setSpec] = useState<SceneSpec>(initial ?? SCENE_DEFAULT)
   const [move, setMove] = useState(false)
-  const doc = useMemo((): ToolDoc => ({ kind: 'scene', spec }), [spec])
+  // nạp kho hình vật (+ vật ngoài kho của hình cũ) rồi vẽ lại; không tự vẽ vật mới theo từng phím gõ (tốn điểm)
+  const [spritesTick, setSpritesTick] = useState(0)
+  useEffect(() => {
+    void prepareToolDoc({ kind: 'scene', spec: initial ?? SCENE_DEFAULT }).finally(() => setSpritesTick(1))
+  }, [initial])
+  const doc = useMemo((): ToolDoc => ({ kind: 'scene', spec: spritesTick ? spec : { ...spec } }), [spec, spritesTick])
   const { preview, error } = useRender(doc)
   const inputs = (
     <TextBlock

@@ -1,0 +1,15 @@
+{
+  "basket": { "placement": "inside", "mouth": { "cx": 0.5, "cy": 0.27, "rx": 0.48, "ry": 0.22 }, "rim": 0.1, "labelY": 0.68 },
+  "gio": { "placement": "inside", "mouth": { "cx": 0.5, "cy": 0.53, "rx": 0.46, "ry": 0.08 }, "rim": 0, "labelY": 0.8 },
+  "box": { "placement": "inside", "mouth": { "cx": 0.5, "cy": 0.3, "rx": 0.3, "ry": 0.1 }, "rim": 0, "labelY": 0.72 },
+  "bucket": { "placement": "inside", "mouth": { "cx": 0.5, "cy": 0.14, "rx": 0.46, "ry": 0.1 }, "rim": 0, "labelY": 0.6 },
+  "basin": { "placement": "inside", "mouth": { "cx": 0.5, "cy": 0.2, "rx": 0.42, "ry": 0.1 }, "rim": 0, "labelY": 0.65 },
+  "plate": { "placement": "on_top", "mouth": { "cx": 0.5, "cy": 0.5, "rx": 0.34, "ry": 0.28 }, "rim": 0, "labelY": 0.5, "size": 0.75 },
+  "tray": { "placement": "on_top", "mouth": { "cx": 0.5, "cy": 0.46, "rx": 0.42, "ry": 0.35 }, "rim": 0, "labelY": 0.5, "size": 0.8 },
+  "pond": { "placement": "on_top", "mouth": { "cx": 0.5, "cy": 0.48, "rx": 0.42, "ry": 0.35 }, "rim": 0, "labelY": 0.5 },
+  "bag": { "placement": "label", "mouth": { "cx": 0.5, "cy": 0.5, "rx": 0.4, "ry": 0.1 }, "rim": 0, "labelY": 0.62 },
+  "packet": { "placement": "label", "mouth": { "cx": 0.5, "cy": 0.5, "rx": 0.4, "ry": 0.1 }, "rim": 0, "labelY": 0.55, "size": 0.8 },
+  "crate": { "placement": "label", "mouth": { "cx": 0.5, "cy": 0.5, "rx": 0.4, "ry": 0.1 }, "rim": 0, "labelY": 0.6 },
+  "jar": { "placement": "label", "mouth": { "cx": 0.5, "cy": 0.5, "rx": 0.4, "ry": 0.1 }, "rim": 0, "labelY": 0.6 },
+  "coop": { "placement": "label", "mouth": { "cx": 0.5, "cy": 0.5, "rx": 0.4, "ry": 0.1 }, "rim": 0, "labelY": 0.7 }
+}

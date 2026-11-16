@@ -1,0 +1,2589 @@
+{
+  "objects": [
+    {
+      "id": "apple",
+      "name": "quả táo",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "cao",
+      "containers": [
+        "basket",
+        "plate",
+        "gio",
+        "box",
+        "bag",
+        "crate"
+      ],
+      "prompt": "A single apple, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "orange",
+      "name": "quả cam",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "cao",
+      "containers": [
+        "basket",
+        "plate",
+        "gio",
+        "box",
+        "bag",
+        "crate"
+      ],
+      "prompt": "A single round orange fruit with a small leaf, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "egg",
+      "name": "quả trứng",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "cao",
+      "containers": [
+        "basket",
+        "tray",
+        "egg_tray",
+        "plate",
+        "box"
+      ],
+      "prompt": "A single egg, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "cake",
+      "name": "cái bánh",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "cao",
+      "containers": [
+        "box",
+        "tray",
+        "plate"
+      ],
+      "prompt": "A single round cake, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "marble",
+      "name": "viên bi",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "cao",
+      "containers": [
+        "box",
+        "bag"
+      ],
+      "prompt": "A single glass marble, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "candy",
+      "name": "cái kẹo",
+      "grades": [
+        1,
+        2,
+        3
+      ],
+      "freq": "cao",
+      "containers": [
+        "bag",
+        "box",
+        "packet",
+        "jar",
+        "plate"
+      ],
+      "prompt": "A single wrapped candy, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "flower",
+      "name": "bông hoa",
+      "grades": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "freq": "cao",
+      "containers": [
+        "jar"
+      ],
+      "prompt": "A single flower, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "counting_stick",
+      "name": "que tính",
+      "grades": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "freq": "cao",
+      "containers": [
+        "box"
+      ],
+      "prompt": "A single counting stick, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "pencil",
+      "name": "bút chì",
+      "grades": [
+        1,
+        2,
+        3
+      ],
+      "freq": "cao",
+      "containers": [
+        "box",
+        "bag"
+      ],
+      "prompt": "A single pencil, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "pen",
+      "name": "bút mực / bút bi",
+      "grades": [
+        2,
+        3
+      ],
+      "freq": "cao",
+      "containers": [
+        "box",
+        "bag"
+      ],
+      "prompt": "A single pen, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "book",
+      "name": "quyển vở / quyển sách",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "cao",
+      "containers": [
+        "bookshelf",
+        "bag",
+        "crate"
+      ],
+      "prompt": "A single notebook, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "ball",
+      "name": "quả bóng",
+      "grades": [
+        1,
+        2,
+        3
+      ],
+      "freq": "cao",
+      "containers": [
+        "box",
+        "bag",
+        "crate",
+        "basket"
+      ],
+      "prompt": "A single small striped rubber ball, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "balloon",
+      "name": "quả bóng bay",
+      "grades": [
+        1,
+        2,
+        3
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single balloon, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "chicken",
+      "name": "con gà",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "cao",
+      "containers": [
+        "coop"
+      ],
+      "prompt": "A single chicken, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "fish",
+      "name": "con cá",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "cao",
+      "containers": [
+        "fish_tank",
+        "pond",
+        "basket",
+        "crate"
+      ],
+      "prompt": "A single fish, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "duck",
+      "name": "con vịt",
+      "grades": [
+        1,
+        2,
+        4
+      ],
+      "freq": "cao",
+      "containers": [
+        "pond"
+      ],
+      "prompt": "A single duck, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "bird",
+      "name": "con chim",
+      "grades": [
+        1,
+        2
+      ],
+      "freq": "cao",
+      "containers": [
+        "branch"
+      ],
+      "prompt": "A single bird, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "banana",
+      "name": "quả chuối",
+      "grades": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "freq": "vừa",
+      "containers": [
+        "plate"
+      ],
+      "prompt": "A single banana, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "mango",
+      "name": "quả xoài",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "vừa",
+      "containers": [
+        "basket",
+        "bag"
+      ],
+      "prompt": "A single mango, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "watermelon",
+      "name": "quả dưa hấu",
+      "grades": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "vừa",
+      "containers": [
+        "tray",
+        "crate"
+      ],
+      "prompt": "A single watermelon, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "pomelo",
+      "name": "quả bưởi",
+      "grades": [
+        2,
+        3
+      ],
+      "freq": "vừa",
+      "containers": [
+        "basket",
+        "gio",
+        "crate"
+      ],
+      "prompt": "A single pomelo, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "strawberry",
+      "name": "quả dâu tây",
+      "grades": [
+        2,
+        3
+      ],
+      "freq": "vừa",
+      "containers": [
+        "box",
+        "plate"
+      ],
+      "prompt": "A single strawberry, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "carrot",
+      "name": "củ cà rốt",
+      "grades": [
+        1,
+        2,
+        3
+      ],
+      "freq": "cao",
+      "containers": [
+        "basket",
+        "gio",
+        "plate",
+        "bag"
+      ],
+      "prompt": "A single carrot with leafy top, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "tomato",
+      "name": "quả cà chua",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "vừa",
+      "containers": [
+        "basket",
+        "crate"
+      ],
+      "prompt": "A single tomato, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "grape",
+      "name": "quả nho",
+      "grades": [
+        3,
+        5
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single bunch of grapes, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "pear",
+      "name": "quả lê",
+      "grades": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "freq": "vừa",
+      "containers": [
+        "crate"
+      ],
+      "prompt": "A single pear, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "mandarin",
+      "name": "quả quýt",
+      "grades": [
+        3,
+        4
+      ],
+      "freq": "vừa",
+      "containers": [
+        "basket"
+      ],
+      "prompt": "A single mandarin orange, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "guava",
+      "name": "quả ổi",
+      "grades": [
+        1,
+        5
+      ],
+      "freq": "vừa",
+      "containers": [
+        "basket"
+      ],
+      "prompt": "A single guava, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "lemon",
+      "name": "quả chanh",
+      "grades": [
+        5
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single lemon, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "jackfruit",
+      "name": "quả mít",
+      "grades": [
+        2,
+        5
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single jackfruit, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "papaya",
+      "name": "quả đu đủ",
+      "grades": [
+        2,
+        3
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single papaya, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "mangosteen",
+      "name": "quả măng cụt",
+      "grades": [
+        1,
+        3
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single mangosteen, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "rambutan",
+      "name": "quả chôm chôm",
+      "grades": [
+        3
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single rambutan, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "pumpkin",
+      "name": "quả bí ngô",
+      "grades": [
+        2,
+        3
+      ],
+      "freq": "vừa",
+      "containers": [
+        "crate"
+      ],
+      "prompt": "A single pumpkin, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "cantaloupe",
+      "name": "quả dưa lưới",
+      "grades": [
+        4
+      ],
+      "freq": "vừa",
+      "containers": [
+        "crate"
+      ],
+      "prompt": "A single cantaloupe, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "persimmon",
+      "name": "quả hồng",
+      "grades": [
+        4
+      ],
+      "freq": "vừa",
+      "containers": [
+        "plate"
+      ],
+      "prompt": "A single persimmon, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "rabbit",
+      "name": "con thỏ",
+      "grades": [
+        2,
+        3,
+        4
+      ],
+      "freq": "vừa",
+      "containers": [
+        "coop"
+      ],
+      "prompt": "A single rabbit, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "cat",
+      "name": "con mèo",
+      "grades": [
+        1,
+        2,
+        4
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single cat, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "dog",
+      "name": "con chó",
+      "grades": [
+        2,
+        4
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single dog, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "pig",
+      "name": "con lợn",
+      "grades": [
+        1,
+        2
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single pig, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "frog",
+      "name": "con ếch",
+      "grades": [
+        1,
+        4
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single frog, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "bee",
+      "name": "con ong",
+      "grades": [
+        1,
+        3,
+        4
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single bee, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "fox",
+      "name": "con cáo",
+      "grades": [
+        1
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single fox, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "wooden_log",
+      "name": "khúc gỗ",
+      "grades": [
+        1
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single wooden log, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "candle",
+      "name": "cây nến",
+      "grades": [
+        1,
+        2
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single candle, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "button",
+      "name": "cúc áo",
+      "grades": [
+        3
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single round sewing button with four holes, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "car_wheel",
+      "name": "bánh xe",
+      "grades": [
+        3
+      ],
+      "freq": "vừa",
+      "containers": [
+        "box"
+      ],
+      "prompt": "A single car wheel, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "cloth",
+      "name": "tấm vải",
+      "grades": [
+        4,
+        5
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single piece of cloth, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "colored_paper",
+      "name": "tờ giấy màu",
+      "grades": [
+        3,
+        4
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single colored paper sheet, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "brick",
+      "name": "viên gạch",
+      "grades": [
+        4
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single brick, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "milk_box",
+      "name": "hộp sữa",
+      "grades": [
+        2,
+        4,
+        5
+      ],
+      "freq": "vừa",
+      "containers": [
+        "egg_tray",
+        "crate"
+      ],
+      "prompt": "A single milk carton, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "water_bottle",
+      "name": "chai nước",
+      "grades": [
+        2,
+        4,
+        5
+      ],
+      "freq": "vừa",
+      "containers": [
+        "box",
+        "crate"
+      ],
+      "prompt": "A single water bottle, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "schoolbag",
+      "name": "cái cặp sách",
+      "grades": [
+        2,
+        3
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single school backpack, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "chair",
+      "name": "cái ghế",
+      "grades": [
+        1,
+        2,
+        4
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single chair, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "table",
+      "name": "cái bàn",
+      "grades": [
+        1,
+        2
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single table, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "clothes",
+      "name": "quần áo",
+      "grades": [
+        1,
+        2,
+        3,
+        5
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single shirt, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "bicycle",
+      "name": "xe đạp",
+      "grades": [
+        1,
+        2,
+        4
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single bicycle, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "scene": true,
+      "aliases": [
+        "xe đạp"
+      ]
+    },
+    {
+      "id": "toy_car",
+      "name": "ô tô đồ chơi",
+      "grades": [
+        1,
+        2,
+        3
+      ],
+      "freq": "vừa",
+      "containers": [
+        "box"
+      ],
+      "prompt": "A single toy car, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "star",
+      "name": "ngôi sao (giấy)",
+      "grades": [
+        2,
+        4
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single paper star, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "paper_crane",
+      "name": "con hạc giấy",
+      "grades": [
+        4
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single paper crane, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "notebook_label",
+      "name": "nhãn vở",
+      "grades": [
+        1,
+        2
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single notebook label sticker, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "teddy_bear",
+      "name": "gấu bông",
+      "grades": [
+        1
+      ],
+      "freq": "vừa",
+      "containers": [
+        "basket"
+      ],
+      "prompt": "A single teddy bear, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "tree",
+      "name": "cây xanh",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single tree, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "scene": true,
+      "aliases": [
+        "cây",
+        "cái cây",
+        "cây cối"
+      ]
+    },
+    {
+      "id": "cup",
+      "name": "cái cốc",
+      "grades": [
+        2,
+        3,
+        5
+      ],
+      "freq": "vừa",
+      "containers": [
+        "box",
+        "tray"
+      ],
+      "prompt": "A single cup, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "peach",
+      "name": "quả đào",
+      "grades": [
+        3,
+        4
+      ],
+      "freq": "thấp",
+      "containers": [
+        "crate"
+      ],
+      "prompt": "A single peach, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "longan",
+      "name": "quả nhãn",
+      "grades": [
+        3,
+        4
+      ],
+      "freq": "thấp",
+      "containers": [
+        "crate"
+      ],
+      "prompt": "A single longan, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "plum",
+      "name": "quả mận",
+      "grades": [
+        1,
+        2
+      ],
+      "freq": "thấp",
+      "containers": [
+        "basket",
+        "gio"
+      ],
+      "prompt": "A single plum, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "starfruit",
+      "name": "quả khế",
+      "grades": [
+        2
+      ],
+      "freq": "thấp",
+      "containers": [],
+      "prompt": "A single starfruit, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "butterfly",
+      "name": "con bướm",
+      "grades": [
+        1,
+        3,
+        4
+      ],
+      "freq": "thấp",
+      "containers": [],
+      "prompt": "A single butterfly, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "sheep",
+      "name": "con cừu",
+      "grades": [
+        1
+      ],
+      "freq": "thấp",
+      "containers": [],
+      "prompt": "A single sheep, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "goat",
+      "name": "con dê",
+      "grades": [
+        1
+      ],
+      "freq": "thấp",
+      "containers": [],
+      "prompt": "A single goat, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "crab",
+      "name": "con cua",
+      "grades": [
+        3
+      ],
+      "freq": "thấp",
+      "containers": [],
+      "prompt": "A single crab, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "star_lantern",
+      "name": "đèn ông sao",
+      "grades": [
+        2
+      ],
+      "freq": "thấp",
+      "containers": [],
+      "prompt": "A single star lantern, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "hand",
+      "name": "bàn tay",
+      "grades": [
+        1,
+        2
+      ],
+      "freq": "thấp",
+      "containers": [],
+      "prompt": "A single open hand, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "pill",
+      "name": "viên thuốc",
+      "grades": [
+        3,
+        4
+      ],
+      "freq": "thấp",
+      "containers": [
+        "egg_tray"
+      ],
+      "prompt": "A single pill, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "soda_can",
+      "name": "lon nước ngọt",
+      "grades": [
+        4,
+        5
+      ],
+      "freq": "thấp",
+      "containers": [
+        "box"
+      ],
+      "prompt": "A single soda can, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "sandals",
+      "name": "đôi dép",
+      "grades": [
+        2
+      ],
+      "freq": "thấp",
+      "containers": [],
+      "prompt": "A single pair of sandals, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background"
+    },
+    {
+      "id": "person",
+      "name": "người",
+      "grades": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single person standing upright, full body, front view, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "người",
+        "bạn",
+        "cậu bé",
+        "cô bé",
+        "học sinh",
+        "người quan sát"
+      ]
+    },
+    {
+      "id": "house",
+      "name": "ngôi nhà",
+      "grades": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single small house, front view, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "nhà",
+        "căn nhà"
+      ]
+    },
+    {
+      "id": "building",
+      "name": "toà nhà",
+      "grades": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single tall apartment building, front view, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "toà nhà",
+        "nhà cao tầng",
+        "chung cư"
+      ]
+    },
+    {
+      "id": "flagpole",
+      "name": "cột cờ",
+      "grades": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single tall flagpole with a flag on top, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "cột cờ"
+      ]
+    },
+    {
+      "id": "electric_pole",
+      "name": "cột điện",
+      "grades": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single tall wooden electric utility pole, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "cột điện"
+      ]
+    },
+    {
+      "id": "streetlight",
+      "name": "cột đèn",
+      "grades": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single tall street lamp post, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "cột đèn",
+        "đèn đường"
+      ]
+    },
+    {
+      "id": "lighthouse",
+      "name": "ngọn hải đăng",
+      "grades": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single lighthouse tower, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "hải đăng",
+        "ngọn hải đăng"
+      ]
+    },
+    {
+      "id": "tower",
+      "name": "tháp",
+      "grades": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single tall tower, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "tháp",
+        "toà tháp"
+      ]
+    },
+    {
+      "id": "ladder",
+      "name": "cái thang",
+      "grades": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single straight wooden ladder standing vertically, front view, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "thang",
+        "chiếc thang"
+      ]
+    },
+    {
+      "id": "boat",
+      "name": "con thuyền",
+      "grades": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single small rowing boat, side view, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "thuyền",
+        "chiếc thuyền",
+        "ca nô"
+      ]
+    },
+    {
+      "id": "ship",
+      "name": "tàu thuỷ",
+      "grades": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single ship, side view, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "tàu",
+        "tàu thuỷ",
+        "con tàu"
+      ]
+    },
+    {
+      "id": "car",
+      "name": "ô tô",
+      "grades": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single car, side view, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "ô tô",
+        "xe ô tô",
+        "xe hơi",
+        "xe"
+      ]
+    },
+    {
+      "id": "airplane",
+      "name": "máy bay",
+      "grades": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single airplane flying, side view, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "máy bay"
+      ]
+    },
+    {
+      "id": "hot_air_balloon",
+      "name": "khinh khí cầu",
+      "grades": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single hot air balloon, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "khinh khí cầu"
+      ]
+    },
+    {
+      "id": "kite",
+      "name": "con diều",
+      "grades": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single flying kite with a tail, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "diều",
+        "con diều"
+      ]
+    },
+    {
+      "id": "mountain",
+      "name": "ngọn núi",
+      "grades": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single mountain peak, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "núi",
+        "ngọn núi"
+      ]
+    },
+    {
+      "id": "sun",
+      "name": "mặt trời",
+      "grades": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single sun with rays, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "mặt trời"
+      ]
+    },
+    {
+      "id": "tent",
+      "name": "cái lều",
+      "grades": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single camping tent, front view, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "lều"
+      ]
+    },
+    {
+      "id": "slide",
+      "name": "cầu trượt",
+      "grades": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single playground slide, side view, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "cầu trượt"
+      ]
+    },
+    {
+      "id": "water_tank",
+      "name": "bồn nước",
+      "grades": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single cylindrical water tank, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "bồn nước",
+        "tháp nước"
+      ]
+    }
+  ],
+  "containers": [
+    {
+      "id": "basket",
+      "name": "rổ",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "cao",
+      "holds": [
+        "apple",
+        "orange",
+        "egg",
+        "mango",
+        "tomato",
+        "guava",
+        "plum",
+        "fish",
+        "teddy_bear",
+        "carrot"
+      ],
+      "placement": "inside",
+      "prompt": "A single woven basket, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background, empty, front view, slightly from above"
+    },
+    {
+      "id": "gio",
+      "name": "giỏ",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "cao",
+      "holds": [
+        "apple",
+        "orange",
+        "pomelo",
+        "plum",
+        "carrot"
+      ],
+      "placement": "inside",
+      "prompt": "A single basket with handle, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background, empty, front view, slightly from above"
+    },
+    {
+      "id": "plate",
+      "name": "đĩa",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "cao",
+      "holds": [
+        "apple",
+        "orange",
+        "banana",
+        "cake",
+        "candy",
+        "persimmon",
+        "egg",
+        "strawberry",
+        "carrot"
+      ],
+      "placement": "on_top",
+      "prompt": "A single plate, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background, empty, front view, slightly from above"
+    },
+    {
+      "id": "box",
+      "name": "hộp",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "cao",
+      "holds": [
+        "pencil",
+        "pen",
+        "cake",
+        "candy",
+        "marble",
+        "ball",
+        "milk_box",
+        "water_bottle",
+        "cup",
+        "toy_car",
+        "soda_can"
+      ],
+      "placement": "inside",
+      "prompt": "A single open cardboard box, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background, empty, front view, slightly from above"
+    },
+    {
+      "id": "bag",
+      "name": "túi",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "cao",
+      "holds": [
+        "candy",
+        "marble",
+        "pencil",
+        "pen",
+        "orange",
+        "mango",
+        "apple",
+        "carrot"
+      ],
+      "placement": "inside",
+      "prompt": "A single paper bag, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background, empty, front view, slightly from above"
+    },
+    {
+      "id": "tray",
+      "name": "khay",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "cao",
+      "holds": [
+        "egg",
+        "apple",
+        "cake",
+        "watermelon",
+        "cup"
+      ],
+      "placement": "on_top",
+      "prompt": "A single tray, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background, empty, front view, slightly from above"
+    },
+    {
+      "id": "crate",
+      "name": "thùng",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "cao",
+      "holds": [
+        "apple",
+        "orange",
+        "milk_box",
+        "water_bottle",
+        "candy",
+        "pumpkin",
+        "cantaloupe",
+        "pear",
+        "peach",
+        "longan"
+      ],
+      "placement": "inside",
+      "prompt": "A single wooden crate, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background, empty, front view, slightly from above"
+    },
+    {
+      "id": "egg_tray",
+      "name": "vỉ",
+      "grades": [
+        2,
+        3,
+        4
+      ],
+      "freq": "vừa",
+      "holds": [
+        "egg",
+        "milk_box",
+        "pill"
+      ],
+      "placement": "inside",
+      "prompt": "A single egg tray, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background, empty, front view, slightly from above"
+    },
+    {
+      "id": "jar",
+      "name": "lọ",
+      "grades": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "freq": "vừa",
+      "holds": [
+        "flower",
+        "candy"
+      ],
+      "placement": "inside",
+      "prompt": "A single glass jar, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background, empty, front view, slightly from above"
+    },
+    {
+      "id": "coop",
+      "name": "chuồng",
+      "grades": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "freq": "vừa",
+      "holds": [
+        "chicken",
+        "rabbit"
+      ],
+      "placement": "inside",
+      "prompt": "A single chicken coop, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background, empty, front view, slightly from above"
+    },
+    {
+      "id": "pond",
+      "name": "ao",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "vừa",
+      "holds": [
+        "fish",
+        "duck"
+      ],
+      "placement": "inside",
+      "prompt": "A single pond, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background, empty, front view, slightly from above"
+    },
+    {
+      "id": "fish_tank",
+      "name": "bể",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "vừa",
+      "holds": [
+        "fish"
+      ],
+      "placement": "inside",
+      "prompt": "A single fish tank, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background, empty, front view, slightly from above"
+    },
+    {
+      "id": "bucket",
+      "name": "xô",
+      "grades": [
+        1,
+        2,
+        3
+      ],
+      "freq": "vừa",
+      "holds": [
+        "fish"
+      ],
+      "placement": "inside",
+      "prompt": "A single bucket, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background, empty, front view, slightly from above"
+    },
+    {
+      "id": "basin",
+      "name": "chậu",
+      "grades": [
+        1,
+        2,
+        3
+      ],
+      "freq": "vừa",
+      "holds": [
+        "flower"
+      ],
+      "placement": "inside",
+      "prompt": "A single flower pot, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background, empty, front view, slightly from above"
+    },
+    {
+      "id": "branch",
+      "name": "cành cây",
+      "grades": [
+        1,
+        2,
+        3
+      ],
+      "freq": "vừa",
+      "holds": [
+        "bird",
+        "apple",
+        "orange"
+      ],
+      "placement": "on_top",
+      "prompt": "A single tree branch, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background, empty, front view, slightly from above"
+    },
+    {
+      "id": "bookshelf",
+      "name": "kệ sách",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "vừa",
+      "holds": [
+        "book"
+      ],
+      "placement": "on_top",
+      "prompt": "A single bookshelf, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background, empty, front view, slightly from above"
+    },
+    {
+      "id": "packet",
+      "name": "gói",
+      "grades": [
+        2,
+        3
+      ],
+      "freq": "vừa",
+      "holds": [
+        "candy"
+      ],
+      "placement": "inside",
+      "prompt": "A single small paper packet, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background, empty, front view, slightly from above"
+    }
+  ],
+  "rule_based": [
+    {
+      "id": "clock",
+      "name": "đồng hồ kim",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "cao",
+      "asks": "đọc giờ đúng, giờ rưỡi, giờ kém; hai kim tạo thành góc gì; đồng hồ chạy nhanh/chậm",
+      "params": [
+        "hour",
+        "minute",
+        "second"
+      ]
+    },
+    {
+      "id": "calendar",
+      "name": "lịch tháng",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "cao",
+      "asks": "thứ/ngày/tháng; hôm qua–hôm nay–ngày mai; tháng nào có 30/31 ngày; năm nhuận",
+      "params": [
+        "month",
+        "year",
+        "day",
+        "weekday"
+      ]
+    },
+    {
+      "id": "money",
+      "name": "tiền Việt Nam",
+      "grades": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "cao",
+      "asks": "nhận biết mệnh giá; đếm tổng tiền; chọn tiền trả; đổi tiền; tiền thừa; lãi/lỗ, giảm giá %",
+      "params": [
+        "denomination",
+        "count"
+      ]
+    },
+    {
+      "id": "balance_scale",
+      "name": "cân đĩa",
+      "grades": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "cao",
+      "asks": "bên nào nặng hơn; cân thăng bằng tìm khối lượng; cân bằng quả cân",
+      "params": [
+        "left_weight",
+        "right_weight",
+        "weights"
+      ]
+    },
+    {
+      "id": "ruler",
+      "name": "thước kẻ",
+      "grades": [
+        1,
+        2,
+        3
+      ],
+      "freq": "cao",
+      "asks": "đo độ dài; dài hơn/ngắn hơn; đổi mm–cm",
+      "params": [
+        "length",
+        "unit"
+      ]
+    },
+    {
+      "id": "measuring_jug",
+      "name": "ca / bình chia vạch (lít, ml)",
+      "grades": [
+        2,
+        3
+      ],
+      "freq": "cao",
+      "asks": "mực nước ở vạch mấy lít; rót được mấy ca 1 lít; đổ đầy chai + cốc thì chai đựng bao nhiêu",
+      "params": [
+        "capacity_l",
+        "marks_ml",
+        "water_level"
+      ]
+    },
+    {
+      "id": "base_ten_blocks",
+      "name": "khối lập phương – thanh chục – tấm trăm – khối nghìn",
+      "grades": [
+        2
+      ],
+      "freq": "cao",
+      "asks": "đọc/viết số theo trăm–chục–đơn vị; đếm theo chục/trăm",
+      "params": [
+        "hundreds",
+        "tens",
+        "ones"
+      ]
+    },
+    {
+      "id": "bundle_of_ten",
+      "name": "bó chục que tính",
+      "grades": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "freq": "cao",
+      "asks": "đếm theo chục; gộp 10 đơn vị = 1 chục",
+      "params": [
+        "tens"
+      ]
+    },
+    {
+      "id": "pictograph",
+      "name": "biểu đồ tranh",
+      "grades": [
+        2,
+        3,
+        4
+      ],
+      "freq": "cao",
+      "asks": "loại nào nhiều/ít nhất; nhiều hơn bao nhiêu; mỗi hình = 1 đơn vị",
+      "params": [
+        "categories",
+        "count_per_category",
+        "value_per_icon"
+      ]
+    },
+    {
+      "id": "data_table",
+      "name": "bảng số liệu",
+      "grades": [
+        3,
+        4,
+        5
+      ],
+      "freq": "cao",
+      "asks": "đọc bảng (hàng/cột); ngày nào nhiều/ít nhất; tính tổng",
+      "params": [
+        "rows",
+        "columns",
+        "values"
+      ]
+    },
+    {
+      "id": "bar_chart",
+      "name": "biểu đồ cột",
+      "grades": [
+        4
+      ],
+      "freq": "cao",
+      "asks": "cột nào cao/thấp nhất; giá trị mỗi cột; nhiều hơn/ít hơn bao nhiêu",
+      "params": [
+        "categories",
+        "values"
+      ]
+    },
+    {
+      "id": "pie_chart",
+      "name": "biểu đồ hình quạt tròn",
+      "grades": [
+        5
+      ],
+      "freq": "cao",
+      "asks": "đọc % từng phần; tính số lượng từ % và tổng; phần còn thiếu",
+      "params": [
+        "percentages",
+        "total"
+      ]
+    },
+    {
+      "id": "fraction_shape",
+      "name": "hình tô màu một phần mấy",
+      "grades": [
+        3,
+        4
+      ],
+      "freq": "cao",
+      "asks": "viết/đọc phân số chỉ phần tô màu; tử số/mẫu số là mấy",
+      "params": [
+        "total_parts",
+        "shaded_parts"
+      ]
+    },
+    {
+      "id": "square",
+      "name": "hình vuông",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "cao",
+      "asks": "nhận biết; chu vi/diện tích; đếm ô vuông",
+      "params": [
+        "side"
+      ]
+    },
+    {
+      "id": "rectangle",
+      "name": "hình chữ nhật",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "cao",
+      "asks": "nhận biết; chu vi/diện tích; cặp cạnh song song/vuông góc",
+      "params": [
+        "length",
+        "width"
+      ]
+    },
+    {
+      "id": "triangle",
+      "name": "hình tam giác",
+      "grades": [
+        1,
+        2,
+        3,
+        5
+      ],
+      "freq": "cao",
+      "asks": "kể tên đỉnh/cạnh/góc; diện tích; tìm đáy/chiều cao",
+      "params": [
+        "base",
+        "height"
+      ]
+    },
+    {
+      "id": "circle",
+      "name": "hình tròn (tâm/bán kính/đường kính)",
+      "grades": [
+        1,
+        2,
+        3,
+        5
+      ],
+      "freq": "cao",
+      "asks": "tìm tâm, bán kính, đường kính; chu vi; diện tích; quãng đường bánh xe lăn",
+      "params": [
+        "center",
+        "radius",
+        "diameter"
+      ]
+    },
+    {
+      "id": "cube",
+      "name": "khối lập phương",
+      "grades": [
+        1,
+        2,
+        3,
+        5
+      ],
+      "freq": "cao",
+      "asks": "nhận biết; đếm đỉnh/mặt/cạnh; diện tích xung quanh/toàn phần; thể tích",
+      "params": [
+        "edge"
+      ]
+    },
+    {
+      "id": "cuboid",
+      "name": "khối hộp chữ nhật",
+      "grades": [
+        1,
+        2,
+        3,
+        5
+      ],
+      "freq": "cao",
+      "asks": "nhận biết; đếm đỉnh/mặt/cạnh; diện tích; thể tích",
+      "params": [
+        "length",
+        "width",
+        "height"
+      ]
+    },
+    {
+      "id": "digital_clock",
+      "name": "đồng hồ điện tử",
+      "grades": [
+        2,
+        3,
+        5
+      ],
+      "freq": "vừa",
+      "asks": "nối đồng hồ điện tử với tranh hoạt động; đổi giờ 24h",
+      "params": [
+        "hour",
+        "minute"
+      ]
+    },
+    {
+      "id": "dial_scale",
+      "name": "cân đồng hồ / cân sức khỏe",
+      "grades": [
+        2,
+        3,
+        4
+      ],
+      "freq": "vừa",
+      "asks": "đọc kim chỉ bao nhiêu kg",
+      "params": [
+        "needle_value",
+        "unit"
+      ]
+    },
+    {
+      "id": "set_square",
+      "name": "ê-ke",
+      "grades": [
+        3,
+        4
+      ],
+      "freq": "vừa",
+      "asks": "góc nào vuông/không vuông; vẽ góc vuông; kiểm tra góc vuông",
+      "params": [
+        "right_angle"
+      ]
+    },
+    {
+      "id": "compass",
+      "name": "compa",
+      "grades": [
+        3
+      ],
+      "freq": "vừa",
+      "asks": "vẽ đường tròn tâm O; vẽ bán kính, đường kính",
+      "params": [
+        "center",
+        "radius"
+      ]
+    },
+    {
+      "id": "protractor",
+      "name": "thước đo góc",
+      "grades": [
+        4
+      ],
+      "freq": "vừa",
+      "asks": "đọc/đo số đo góc; đặt tâm thước trùng đỉnh, một cạnh trùng vạch 0",
+      "params": [
+        "angle_degrees"
+      ]
+    },
+    {
+      "id": "angle",
+      "name": "góc (nhọn/vuông/tù/bẹt)",
+      "grades": [
+        3,
+        4
+      ],
+      "freq": "vừa",
+      "asks": "gọi tên góc theo đỉnh + 2 cạnh; đếm góc mỗi loại; kim đồng hồ tạo góc gì",
+      "params": [
+        "vertex",
+        "sides",
+        "degrees"
+      ]
+    },
+    {
+      "id": "perpendicular_lines",
+      "name": "hai đường thẳng vuông góc",
+      "grades": [
+        4
+      ],
+      "freq": "vừa",
+      "asks": "nêu cặp vuông góc; vẽ đường qua điểm H vuông góc với AB",
+      "params": [
+        "lines",
+        "intersection"
+      ]
+    },
+    {
+      "id": "parallel_lines",
+      "name": "hai đường thẳng song song",
+      "grades": [
+        4
+      ],
+      "freq": "vừa",
+      "asks": "nêu cặp song song; vẽ đường qua M song song AB; ví dụ thực tế (đường ray, lan can)",
+      "params": [
+        "lines"
+      ]
+    },
+    {
+      "id": "thermometer",
+      "name": "nhiệt kế",
+      "grades": [
+        3,
+        5
+      ],
+      "freq": "vừa",
+      "asks": "đọc nhiệt độ °C; chọn nhiệt kế phù hợp (nước khoáng 26°C, trà nóng 70°C)",
+      "params": [
+        "temperature_c"
+      ]
+    },
+    {
+      "id": "number_line",
+      "name": "tia số",
+      "grades": [
+        2,
+        3
+      ],
+      "freq": "vừa",
+      "asks": "số liền trước/sau; điền số còn thiếu; làm tròn trên tia số",
+      "params": [
+        "start",
+        "step",
+        "marks"
+      ]
+    },
+    {
+      "id": "hundred_chart",
+      "name": "bảng các số 1–100",
+      "grades": [
+        1
+      ],
+      "freq": "vừa",
+      "asks": "điền số còn thiếu; đếm cách đều",
+      "params": [
+        "range",
+        "missing_numbers"
+      ]
+    },
+    {
+      "id": "split_merge",
+      "name": "sơ đồ tách – gộp",
+      "grades": [
+        1
+      ],
+      "freq": "vừa",
+      "asks": "tách/gộp số thành bảng cộng, trừ",
+      "params": [
+        "whole",
+        "parts"
+      ]
+    },
+    {
+      "id": "data_list",
+      "name": "dãy số liệu thống kê",
+      "grades": [
+        4
+      ],
+      "freq": "vừa",
+      "asks": "viết dãy số liệu; sắp xếp bé→lớn; tính trung bình cộng",
+      "params": [
+        "numbers"
+      ]
+    },
+    {
+      "id": "fraction_strip",
+      "name": "băng giấy phân số",
+      "grades": [
+        4
+      ],
+      "freq": "vừa",
+      "asks": "tô màu ? băng giấy; so sánh 2 băng giấy (3/4 vs 3/8)",
+      "params": [
+        "total_parts",
+        "shaded_parts"
+      ]
+    },
+    {
+      "id": "fraction_circle",
+      "name": "bánh tròn / pizza phân số",
+      "grades": [
+        4
+      ],
+      "freq": "vừa",
+      "asks": "mỗi bạn được mấy phần cái bánh; ai ăn nhiều nhất",
+      "params": [
+        "total_parts",
+        "parts_per_person"
+      ]
+    },
+    {
+      "id": "trapezoid",
+      "name": "hình thang",
+      "grades": [
+        5
+      ],
+      "freq": "vừa",
+      "asks": "diện tích; tìm đáy/chiều cao; mảnh đất dạng thang",
+      "params": [
+        "base1",
+        "base2",
+        "height"
+      ]
+    },
+    {
+      "id": "parallelogram",
+      "name": "hình bình hành",
+      "grades": [
+        4
+      ],
+      "freq": "vừa",
+      "asks": "hình nào là hình bình hành; cặp cạnh song song + bằng nhau; chu vi; diện tích",
+      "params": [
+        "base",
+        "height",
+        "side"
+      ]
+    },
+    {
+      "id": "rhombus",
+      "name": "hình thoi",
+      "grades": [
+        4
+      ],
+      "freq": "vừa",
+      "asks": "hình nào là hình thoi; 4 cạnh bằng nhau; chu vi; 2 đường chéo",
+      "params": [
+        "side",
+        "diagonal1",
+        "diagonal2"
+      ]
+    },
+    {
+      "id": "cylinder",
+      "name": "khối trụ",
+      "grades": [
+        2,
+        3,
+        5
+      ],
+      "freq": "vừa",
+      "asks": "đồ vật nào dạng khối trụ; nhận dạng; diện tích xung quanh/toàn phần (lớp 5)",
+      "params": [
+        "radius",
+        "height"
+      ]
+    },
+    {
+      "id": "sphere",
+      "name": "khối cầu",
+      "grades": [
+        2,
+        3,
+        5
+      ],
+      "freq": "vừa",
+      "asks": "đồ vật nào dạng khối cầu; nhận dạng (không tính diện tích/thể tích)",
+      "params": [
+        "radius"
+      ]
+    },
+    {
+      "id": "net",
+      "name": "hình khai triển",
+      "grades": [
+        5
+      ],
+      "freq": "vừa",
+      "asks": "hình nào là khai triển của hình nào; gấp thành hộp rồi tính thể tích",
+      "params": [
+        "solid_type",
+        "face_dimensions"
+      ]
+    },
+    {
+      "id": "map_scale",
+      "name": "tỉ lệ bản đồ",
+      "grades": [
+        4,
+        5
+      ],
+      "freq": "vừa",
+      "asks": "đọc tỉ lệ; tính khoảng cách/diện tích thật từ bản đồ",
+      "params": [
+        "scale",
+        "map_distance",
+        "real_distance"
+      ]
+    },
+    {
+      "id": "calculator",
+      "name": "máy tính cầm tay",
+      "grades": [
+        5
+      ],
+      "freq": "vừa",
+      "asks": "chọn dãy phím bấm đúng; tính %; kiểm tra kết quả",
+      "params": [
+        "buttons",
+        "display"
+      ]
+    },
+    {
+      "id": "coin",
+      "name": "đồng xu (sấp/ngửa)",
+      "grades": [
+        3,
+        4
+      ],
+      "freq": "vừa",
+      "asks": "tung 5/20 lần: mặt N mấy lần, mặt S mấy lần; mặt trên có thể là gì",
+      "params": [
+        "heads",
+        "tails"
+      ]
+    },
+    {
+      "id": "dice",
+      "name": "xúc xắc",
+      "grades": [
+        1,
+        3,
+        4
+      ],
+      "freq": "vừa",
+      "asks": "gieo 10 lần: mặt 1 chấm mấy lần; gieo 2 xúc xắc tính tích số chấm",
+      "params": [
+        "faces",
+        "dots"
+      ]
+    },
+    {
+      "id": "spinner",
+      "name": "vòng quay may mắn",
+      "grades": [
+        3,
+        4
+      ],
+      "freq": "vừa",
+      "asks": "quay 20 lần, mũi tên dừng ở màu nào mấy lần; có thể/chắc chắn/không thể quay vào màu nào",
+      "params": [
+        "sectors",
+        "colors"
+      ]
+    },
+    {
+      "id": "closed_box",
+      "name": "hộp kín (bóng/thẻ)",
+      "grades": [
+        3,
+        4
+      ],
+      "freq": "vừa",
+      "asks": "không nhìn, lấy 1 quả bóng/thẻ — có thể lấy được màu/số nào; chắc chắn/có thể/không thể",
+      "params": [
+        "colors",
+        "numbers"
+      ]
+    },
+    {
+      "id": "wheel",
+      "name": "bánh xe (hình tròn lăn)",
+      "grades": [
+        5
+      ],
+      "freq": "vừa",
+      "asks": "quãng đường = chu vi × số vòng; số vòng = quãng đường : chu vi",
+      "params": [
+        "diameter",
+        "revolutions",
+        "distance"
+      ]
+    },
+    {
+      "id": "water_tank",
+      "name": "bể nước (thể tích)",
+      "grades": [
+        5
+      ],
+      "freq": "vừa",
+      "asks": "thể tích bể; thời gian đầy bể khi vòi chảy; mực nước dâng khi bỏ vật vào",
+      "params": [
+        "length",
+        "width",
+        "height",
+        "water_level",
+        "flow_rate"
+      ]
+    },
+    {
+      "id": "multiplication_table",
+      "name": "bảng nhân / bảng chia",
+      "grades": [
+        3
+      ],
+      "freq": "vừa",
+      "asks": "dùng bảng nhân kiểm tra/tìm tích; hoàn thiện bảng",
+      "params": [
+        "factor",
+        "product"
+      ]
+    },
+    {
+      "id": "points_lines",
+      "name": "điểm, đoạn thẳng, đường thẳng, đường cong, đường gấp khúc",
+      "grades": [
+        2,
+        3
+      ],
+      "freq": "vừa",
+      "asks": "đếm đoạn thẳng; nhận biết đường gấp khúc; ba điểm thẳng hàng; độ dài đường gấp khúc",
+      "params": [
+        "points",
+        "segment_lengths"
+      ]
+    },
+    {
+      "id": "grid_paper",
+      "name": "lưới ô vuông 1 cm²",
+      "grades": [
+        3
+      ],
+      "freq": "vừa",
+      "asks": "diện tích hình bằng ? cm²; đếm ô vuông; tô màu hình chữ nhật diện tích 8 cm²",
+      "params": [
+        "cell_size_cm",
+        "count"
+      ]
+    },
+    {
+      "id": "timetable",
+      "name": "thời khóa biểu",
+      "grades": [
+        2
+      ],
+      "freq": "thấp",
+      "asks": "lúc 10h30 thứ Năm học môn gì",
+      "params": [
+        "hour",
+        "weekday",
+        "subject"
+      ]
+    },
+    {
+      "id": "street_map",
+      "name": "lược đồ đường phố",
+      "grades": [
+        4
+      ],
+      "freq": "thấp",
+      "asks": "nêu 2 con đường vuông góc/song song",
+      "params": [
+        "streets",
+        "intersections"
+      ]
+    },
+    {
+      "id": "receipt",
+      "name": "hoá đơn",
+      "grades": [
+        4
+      ],
+      "freq": "thấp",
+      "asks": "tính giá trị hoá đơn; đọc bảng tiền",
+      "params": [
+        "items",
+        "prices",
+        "total"
+      ]
+    }
+  ],
+  "sources": [
+    "https://vietjack.com/toan-3-kn/bai-tap-toan-lop-3.jsp",
+    "https://vietjack.com/toan-4-kn/bai-tap-toan-lop-4.jsp",
+    "https://vietjack.com/toan-5-kn/bai-tap-toan-lop-5.jsp",
+    "https://vietjack.com/toan-2-chan-troi/ly-thuyet-bieu-do-tranh.jsp",
+    "https://vietjack.com/toan-2-ket-noi/bai-46-khoi-tru-khoi-cau.jsp",
+    "https://vietjack.com/toan-4-kn/ly-thuyet-bieu-do-cot.jsp",
+    "https://vietjack.com/toan-5-kn/ly-thuyet-bieu-do-hinh-quat-tron.jsp",
+    "https://vietjack.com/toan-3-kn/bai-32-mi-li-lit.jsp",
+    "https://vietjack.com/toan-3-ct/tien-viet-nam.jsp",
+    "https://vietjack.com/toan-4-ct/bai-17-bieu-do-cot.jsp",
+    "https://vietjack.com/de-kiem-tra-lop-1/de-thi-hoc-ki-2-toan-lop-1-ket-noi-tri-thuc-2022.jsp",
+    "https://vietjack.com/de-kiem-tra-lop-2/de-thi-hoc-ki-2-toan-lop-2-co-dap-an-cd.jsp",
+    "https://vietjack.com/de-kiem-tra-lop-3/bai-tap-cuoi-tuan-toan-lop-3-hoc-ki-2.jsp",
+    "https://loigiaihay.com/toan-lop-1-trang-20-bai-3-nhieu-hon-it-hon-bang-nhau-sgk-ket-noi-tri-thuc",
+    "https://loigiaihay.com/giai-bai-56-gioi-thieu-tien-viet-nam-vo-bai-tap-toan-2-ket-noi-tri-thuc-voi-cuoc-song",
+    "https://loigiaihay.com/giai-bai-16-lit-toan-2-ket-noi-tri-thuc-voi-cuoc-song-a86520.html",
+    "https://loigiaihay.com/chu-de-6-phep-nhan-phep-chia-trong-pham-vi-1-000-sgk-toan-lop-3-ket-noi-tri-thuc-e25050.html",
+    "https://loigiaihay.com/de-kiem-tra-hoc-ki-1-toan-5-chan-troi-sang-tao-de-so-9-a189588.html",
+    "https://vndoc.com/toan-lop-2-bai-16-lit-sach-ket-noi-tri-thuc-voi-cuoc-song-240530",
+    "https://vndoc.com/toan-lop-3-trang-75-76-77-tien-viet-nam-chan-troi-sang-tao-292531",
+    "https://vndoc.com/giai-vo-bai-tap-toan-lop-2-bai-46-khoi-tru-khoi-cau-368054",
+    "https://vndoc.com/toan-lop-5-ket-noi-tri-thuc-bai-55-luyen-tap-chung-336082",
+    "https://timdapan.com/dapan/toan-lop-3-trang-58-tien-viet-nam-sgk-canh-dieu",
+    "https://timdapan.com/dapan/toan-lop-3-trang-99-nhiet-do-sgk-canh-dieu",
+    "https://timdapan.com/dapan/toan-lop-3-trang-101-goc-vuong-goc-khong-vuong-sgk-canh-dieu",
+    "https://timdapan.com/dapan/de-kiem-tra-hoc-ki-2-toan-3-ket-noi-tri-thuc-de-so-3",
+    "https://timdapan.com/dapan/de-so-12-de-kiem-tra-hoc-ki-2-toan-lop-5",
+    "https://daotrithuc.com/lop-1/toan-lop-1/de-thi-toan-lop-1/de-thi-cuoi-hoc-ki-1-toan-lop-1-ket-noi-tri-thuc/",
+    "https://daotrithuc.com/lop-2/toan-lop-2/de-thi-toan-lop-2/de-thi-cuoi-hoc-ki-1-toan-lop-2-canh-dieu/",
+    "https://daotrithuc.com/lop-5/toan-lop-5/de-thi-toan-lop-5/de-thi-cuoi-hoc-ki-1-toan-lop-5-ket-noi-tri-thuc/",
+    "https://contuhoc.com/bai-toan-co-loi-van-lop-1",
+    "https://contuhoc.com/bai-toan-co-loi-van-lop-2?zarsrc=30",
+    "https://contuhoc.com/bai-tap-ve-lit-lop-2-co-dap-an",
+    "https://dethi.edu.vn/bo-32-de-thi-toan-lop-4-cuoi-ki-2-co-dap-an-29722/",
+    "https://dethilop4.com/10-de-kiem-tra-cuoi-hoc-ki-2-toan-lop-4-nam-hoc-2021-2022-co-dap-an-320/",
+    "https://www.mamhoc.com/toan-lop-5/bai-64-bieu-do-hinh-quat-tron/",
+    "https://apanda.vn/khoi-tru-khoi-cau-toan-lop-2/"
+  ]
+}

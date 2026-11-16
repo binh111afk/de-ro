@@ -7,6 +7,7 @@ import type { Editor, JSONContent } from '@tiptap/core'
 import { svgDataUrl, svgToPng } from '@/lib/plot'
 import { parseToolJson, renderTool, type ToolDoc, type ToolKind } from '@/lib/toolSpec'
 import { toolFromRaw } from '@/lib/docRewrite'
+import { prepareToolDoc } from '@/lib/objects'
 
 /** bề rộng mặc định (px) và chữ thay thế của ảnh công cụ trong trang đề */
 export const TOOL_DOC_IMAGE: Record<ToolKind, { width: number; alt: string }> = {
@@ -39,6 +40,8 @@ export const TOOL_DOC_IMAGE: Record<ToolKind, { width: number; alt: string }> = 
   punnett: { width: 560, alt: 'Bảng lai Punnett' },
   foodweb: { width: 440, alt: 'Lưới thức ăn' },
   field: { width: 340, alt: 'Đường sức điện trường, từ trường' },
+  objects: { width: 520, alt: 'Hình minh hoạ' },
+  clock: { width: 170, alt: 'Đồng hồ' },
 }
 
 /** cấu hình dạng chữ (như AI trả, hoặc trong kho câu hỏi) → ToolDoc; sai thì null */
@@ -59,7 +62,7 @@ export function figureImageAttrs(doc: ToolDoc) {
 }
 
 /** hình có cỡ tuỳ nội dung (bảng, phương trình): giữ cỡ thật, không phóng quá mức chuẩn; hình khác dùng mức chuẩn */
-const FIT_KINDS = new Set<ToolKind>(['table', 'chemeq', 'punnett', 'foodweb'])
+const FIT_KINDS = new Set<ToolKind>(['table', 'chemeq', 'punnett', 'foodweb', 'objects'])
 export function toolImageWidth(kind: ToolKind, natural: number) {
   const max = TOOL_DOC_IMAGE[kind].width
   return FIT_KINDS.has(kind) ? Math.min(max, Math.round(natural)) : max
@@ -78,6 +81,8 @@ export async function pngifyToolImages(editor: Editor) {
     const doc = parseToolJson(node.attrs.plot)
     if (doc) jobs.push({ pos, doc })
   })
+  // tranh đếm / hình thực tế có hình vật: nạp kho, tải / vẽ vật ngoài kho xong mới dựng PNG (lúc chèn tạm hiện ô tên)
+  await Promise.all(jobs.map(({ doc }) => prepareToolDoc(doc)))
   for (const { pos, doc } of jobs) {
     const img = renderTool(doc)
     const src = await svgToPng(img.svg, img.width, img.height).catch(() => null)

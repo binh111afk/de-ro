@@ -25,6 +25,7 @@ import { renderPedigreeSvg, type PedigreeSpec } from './pedigree'
 import { renderPunnettSvg, type PunnettSpec } from './punnett'
 import { renderFoodWebSvg, type FoodWebSpec } from './foodweb'
 import { renderFieldSvg, type FieldSpec } from './field'
+import { renderClockSvg, renderObjectsSvg, type ClockSpec, type ObjectsSpec } from './objects'
 
 export type ToolDoc =
   | { kind: 'graph'; spec: PlotSpec }
@@ -56,6 +57,8 @@ export type ToolDoc =
   | { kind: 'punnett'; spec: PunnettSpec }
   | { kind: 'foodweb'; spec: FoodWebSpec }
   | { kind: 'field'; spec: FieldSpec }
+  | { kind: 'objects'; spec: ObjectsSpec }
+  | { kind: 'clock'; spec: ClockSpec }
 
 export type ToolKind = ToolDoc['kind']
 
@@ -178,6 +181,10 @@ function renderToolRaw(doc: ToolDoc): ToolImage {
       return renderFoodWebSvg(doc.spec, toolDesc(doc))
     case 'field':
       return renderFieldSvg(doc.spec, toolDesc(doc))
+    case 'objects':
+      return renderObjectsSvg(doc.spec, toolDesc(doc))
+    case 'clock':
+      return renderClockSvg(doc.spec, toolDesc(doc))
   }
 }
 

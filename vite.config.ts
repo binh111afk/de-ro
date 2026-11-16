@@ -6,6 +6,7 @@ import { llmMiddleware, loadDotEnv } from './server/llmProxy'
 import { extractMiddleware } from './server/extract'
 import { searchMiddleware } from './server/searchProxy'
 import { imageMiddleware } from './server/imageProxy'
+import { figureSpriteMiddleware } from './server/figureSprite'
 import { uploadMiddleware, fileMiddleware } from './server/r2'
 import { attemptMiddleware } from './server/attempt'
 import { examMiddleware } from './server/exam'
@@ -29,6 +30,7 @@ export default defineConfig({
         server.middlewares.use('/api/extract', extractMiddleware)
         server.middlewares.use('/api/search', searchMiddleware)
         server.middlewares.use('/api/image', imageMiddleware)
+        server.middlewares.use('/api/figure-sprite', figureSpriteMiddleware)
         server.middlewares.use('/api/upload', uploadMiddleware)
         server.middlewares.use('/api/files', fileMiddleware)
         server.middlewares.use('/api/attempt', attemptMiddleware)

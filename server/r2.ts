@@ -25,7 +25,8 @@ const EXT: Record<string, string> = {
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
 }
 const DOC_TYPES = new Set(['pdf', 'docx'])
-const KEY_PATTERN = /^(img|doc)\/[a-f0-9]{40}\.(png|jpg|webp|gif|pdf|docx)$/
+// fig/: kho hình đồ vật dùng chung (tên theo đồ vật, xem figureSprite.ts)
+const KEY_PATTERN = /^(?:(img|doc)\/[a-f0-9]{40}\.(png|jpg|webp|gif|pdf|docx)|fig\/[a-z0-9-]{2,40}\.png)$/
 
 /** Thông tin để admin xem (không có secret). */
 export function r2Info() {
@@ -88,6 +89,20 @@ async function r2Request(
     body: body ? new Uint8Array(body) : undefined,
     signal: AbortSignal.timeout(30_000),
   })
+}
+
+/** kho hình đồ vật: có tệp chưa (HEAD) / ghi tệp */
+export async function r2Exists(key: string): Promise<boolean> {
+  if (!KEY_PATTERN.test(key)) return false
+  const r = await r2Request('HEAD', key, null)
+  if (r.ok) return true
+  if (r.status === 404) return false
+  throw new Error(`R2 trả lỗi ${r.status}`)
+}
+
+export async function r2Put(key: string, buf: Buffer, contentType: string): Promise<boolean> {
+  if (!KEY_PATTERN.test(key)) return false
+  return (await r2Request('PUT', key, buf, contentType)).ok
 }
 
 /** Admin kiểm tra R2: đọc một key không tồn tại; 404 = chữ ký đúng, bucket truy cập được. */

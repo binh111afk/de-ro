@@ -10,9 +10,16 @@
  *   góc ABC "60°"                  cung góc tại B;  vuông ABC = kí hiệu góc vuông tại B
  *   nhãn AB "?"                    chữ ở giữa đoạn AB (không vẽ đoạn)
  *   đất AB / tường AB              gạch chéo dưới đoạn (mặt đất) hoặc bên cạnh (bức tường)
+ *   hình cây AB                    hình vật (kho tranh nét) đứng từ chân A lên đỉnh B, xoay theo AB (thang dựa tường)
+ *   hình ô tô A                    hình vật đặt đứng tại A (cao 1/4 hình); vật ngoài kho: hình en:teapot A
  */
+import { getSprite } from './figureSprites'
+import { resolveSpriteId, spriteDef } from './objects'
+import { OBJECTS } from './objectsCatalog'
 
 const FAM = `font-family="'Times New Roman',serif"`
+/** vật rộng: đặt mặt (mép gần) lên đoạn thay vì đặt giữa */
+const EDGE_ANCHOR = new Set(['building', 'house', 'tent', 'water_tank'])
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 const f1 = (n: number) => Math.round(n * 10) / 10
 
@@ -32,6 +39,7 @@ type Cmd =
   | { t: 'right'; a: string; o: string; b: string }
   | { t: 'label'; a: string; b: string; text: string }
   | { t: 'ground'; a: string; b: string; wall: boolean }
+  | { t: 'sprite'; id: string; name: string; a: string; b?: string }
 
 const NUM = String.raw`(-?\d+(?:[.,]\d+)?)`
 const toNum = (s: string) => Number(s.replace(',', '.'))
@@ -85,7 +93,14 @@ export function parseScene(text: string): { pts: Map<string, P>; cmds: Cmd[] } {
       if (n.length !== 3) throw new Error(`Dòng ${line}: cần đúng 3 điểm, vd. ABC (đỉnh ở giữa)`)
       return n
     }
-    if (m && /^(kích thước|kt)$/.test(kw)) {
+    const spr = /^hình\s+(.+?)\s+([A-Za-z0-9_'-]+)$/u.exec(head)
+    if (spr) {
+      // vật chưa có trong kho: bỏ dòng này, phần hình học vẫn vẽ (đừng để cả hình hỏng vì một hình minh hoạ)
+      const id = resolveSpriteId(spr[1])
+      const n = splitNames(spr[2], pts, line)
+      if (n.length > 2) throw new Error(`Dòng ${line}: hình vật cần 1 điểm (đặt tại) hoặc 2 điểm (chân, đỉnh)`)
+      if (id) cmds.push({ t: 'sprite', id, name: spr[1], a: n[0], b: n[1] })
+    } else if (m && /^(kích thước|kt)$/.test(kw)) {
       const [a, b] = two(m[2])
       cmds.push({ t: 'dim', a, b, text: q })
     } else if (m && /^(góc vuông|vuông)$/.test(kw)) {
@@ -119,8 +134,49 @@ export function parseScene(text: string): { pts: Map<string, P>; cmds: Cmd[] } {
 
 export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; width: number; height: number } {
   const { pts, cmds } = parseScene(spec.text)
-  const xs = [...pts.values()].map((p) => p[0])
-  const ys = [...pts.values()].map((p) => p[1])
+  const px = [...pts.values()].map((p) => p[0])
+  const py = [...pts.values()].map((p) => p[1])
+  // hình vật: hình chữ nhật (đơn vị của hình) — chân giữa cạnh dưới, xoay theo hướng chân → đỉnh
+  const ptSpan = Math.max(Math.max(...py) - Math.min(...py), (Math.max(...px) - Math.min(...px)) * 0.5) || 1
+  // tâm các điểm có tên (điểm ẩn "_" thường là mép mặt đất kéo dài, không tính)
+  const named = [...pts].filter(([nm]) => !nm.startsWith('_')).map(([, p]) => p)
+  const ptCx = named.reduce((s, p) => s + p[0], 0) / (named.length || 1)
+  const ptCy = named.reduce((s, p) => s + p[1], 0) / (named.length || 1)
+  const sprites = cmds
+    .filter((c): c is Extract<Cmd, { t: 'sprite' }> => c.t === 'sprite')
+    .map((c) => {
+      const sp = getSprite(c.id)
+      const aspect = sp ? sp.w / sp.h : 0.6
+      let foot = pts.get(c.a)!
+      let top: P = c.b ? pts.get(c.b)! : [foot[0], foot[1] + ptSpan * 0.25]
+      const len = Math.hypot(top[0] - foot[0], top[1] - foot[1]) || ptSpan * 0.25
+      const u: P = [(top[0] - foot[0]) / len, (top[1] - foot[1]) / len]
+      const n: P = [u[1], -u[0]]
+      const hw = (len * aspect) / 2
+      // vật nghiêng (thang dựa tường): thân lệch ra phía ngoài hình
+      // (đặt giữa thì thò vào tường, cắm xuống đất); vật đứng thẳng vẫn đặt giữa điểm chân
+      // nhà rộng (toà nhà, ngôi nhà…): mặt nhà nằm đúng trên đoạn, thân lùi ra sau — tia nhìn chạm góc mái
+      const wide = EDGE_ANCHOR.has(c.id)
+      const shifted = Boolean(c.b) && (Math.abs(u[0]) > 0.09 || wide)
+      if (shifted) {
+        const mx = (foot[0] + top[0]) / 2 - ptCx
+        const my = (foot[1] + top[1]) / 2 - ptCy
+        const sgn = mx * n[0] + my * n[1] >= 0 ? 1 : -1
+        // thang: lệch nửa bề rộng (ảnh thường vẽ phối cảnh, thuôn dần; lệch hẳn một mép thì hở khỏi tường)
+        const off = hw * (wide ? 1 : 0.5) * sgn
+        foot = [foot[0] + n[0] * off, foot[1] + n[1] * off]
+        top = [top[0] + n[0] * off, top[1] + n[1] * off]
+      }
+      const corners: P[] = [
+        [foot[0] + n[0] * hw, foot[1] + n[1] * hw],
+        [foot[0] - n[0] * hw, foot[1] - n[1] * hw],
+        [top[0] + n[0] * hw, top[1] + n[1] * hw],
+        [top[0] - n[0] * hw, top[1] - n[1] * hw],
+      ]
+      return { c, sp, foot, top, len, corners, shifted, hw }
+    })
+  const xs = [...px, ...sprites.flatMap((s) => s.corners.map((p) => p[0]))]
+  const ys = [...py, ...sprites.flatMap((s) => s.corners.map((p) => p[1]))]
   const minX = Math.min(...xs)
   const maxX = Math.max(...xs)
   const minY = Math.min(...ys)
@@ -167,6 +223,26 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
       b += line(o, [o[0] + n[0] * 8 - u[0] * 6, o[1] + n[1] * 8 - u[1] * 6], 'stroke-width="0.9"')
     }
   }
+
+  // hình vật: trên mặt đất, dưới các nét đo (đoạn, góc, kích thước vẫn đọc được)
+  const usedSprites = new Set<string>()
+  for (const s of sprites) {
+    const f = S(s.foot)
+    const t = S(s.top)
+    const hp = s.len * k
+    const deg = (Math.atan2(t[0] - f[0], f[1] - t[1]) * 180) / Math.PI
+    const rot = `translate(${f1(f[0])} ${f1(f[1])}) rotate(${f1(deg)})`
+    if (s.sp) {
+      usedSprites.add(s.c.id)
+      const sc = hp / s.sp.h
+      b += `<use href="#sp-${s.c.id}" transform="${rot} translate(${f1((-s.sp.w * sc) / 2)} ${f1(-hp)}) scale(${+sc.toFixed(4)})"/>`
+    } else {
+      const wp = hp * 0.6
+      const name = OBJECTS[s.c.id] ?? s.c.name.replace(/^en\s*:\s*/i, '')
+      b += `<g transform="${rot}"><rect x="${f1(-wp / 2)}" y="${f1(-hp)}" width="${f1(wp)}" height="${f1(hp)}" fill="#fff" stroke="#888" stroke-dasharray="4 3"/><text y="${f1(-hp / 2)}" text-anchor="middle" font-size="11" fill="#666" ${FAM}>${esc(name)}</text></g>`
+    }
+  }
+  b = b.replace('</defs>', [...usedSprites].map(spriteDef).join('') + '</defs>')
 
   for (const c of cmds) {
     if (c.t === 'poly') {
@@ -220,8 +296,16 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
     } else if (c.t === 'label') {
       const p = at(c.a)
       const q = at(c.b)
-      const n = outward(p, q)
-      b += text((p[0] + q[0]) / 2 + n[0] * 14, (p[1] + q[1]) / 2 + n[1] * 14 + 5, c.text, Math.abs(n[0]) > 0.7 ? (n[0] > 0 ? 'start' : 'end') : 'middle', 15, `lbl:${c.a}${c.b}`)
+      let n = outward(p, q)
+      // vật nghiêng nằm dọc đoạn này (thang) lệch ra phía ngoài: ghi nhãn phía trong cho khỏi đè hình
+      const alongSeg = (s: (typeof sprites)[number]) =>
+        s.c.b !== undefined && ((s.c.a === c.a && s.c.b === c.b) || (s.c.a === c.b && s.c.b === c.a))
+      // vật lệch ra ngoài (thang, toà nhà): nhãn sang phía trong; vật đặt giữa (cây, cột): nhãn ra ngoài, quá bề rộng vật
+      const along = sprites.find(alongSeg)
+      let off = 14
+      if (along?.shifted) n = [-n[0], -n[1]]
+      else if (along) off += along.hw * k
+      b += text((p[0] + q[0]) / 2 + n[0] * off, (p[1] + q[1]) / 2 + n[1] * off + 5, c.text, Math.abs(n[0]) > 0.7 ? (n[0] > 0 ? 'start' : 'end') : 'middle', 15, `lbl:${c.a}${c.b}`)
     }
   }
 
@@ -251,6 +335,11 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
       const n = outward(p, q)
       segs.push([[p[0] + n[0] * 18, p[1] + n[1] * 18], [q[0] + n[0] * 18, q[1] + n[1] * 18]])
     }
+  }
+  // khung hình vật (người, cột cờ…): nhãn điểm né ra, không đè lên hình
+  for (const s of sprites) {
+    const c = s.corners.map(S)
+    segs.push([c[0], c[2]], [c[1], c[3]], [c[2], c[3]], [c[0], c[1]])
   }
   const distSeg = (x: number, y: number, [p, q]: [P, P]) => {
     const dx = q[0] - p[0]
@@ -293,15 +382,15 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
     }
     let best: P = [x + dx * 13, y + dy * 13]
     let bestScore = Infinity
-    for (let k = 0; k < 16; k++) {
+    for (let k = 0; k < 24; k++) {
       const a = ((k % 8) * Math.PI) / 4
       const ux = Math.cos(a)
       const uy = Math.sin(a)
       // tâm chữ (chữ cao ~11px, rộng ~9px/kí tự); vòng ngoài xa hơn, phạt nhẹ
-      const rad = k < 8 ? 14 : 22
+      const rad = k < 8 ? 14 : k < 16 ? 22 : 30
       const lx = x + ux * rad
       const ly = y + uy * rad
-      let score = -(ux * dx + uy * dy) * 2 + (k < 8 ? 0 : 4)
+      let score = -(ux * dx + uy * dy) * 2 + (k < 8 ? 0 : k < 16 ? 4 : 8)
       for (const n of hatch) if (ux * n[0] + uy * n[1] > 0.2) score += 40
       for (const sg of segs) {
         const d = distSeg(lx, ly, sg)
@@ -357,6 +446,15 @@ export const SCENE_HELP = [
       { code: 'vuông ABC', what: 'Kí hiệu góc vuông tại B' },
       { code: 'nhãn AB "?"', what: 'Chữ cạnh đoạn AB (cạnh cần tìm)' },
       { code: 'đất AB / tường AB', what: 'Gạch chéo mặt đất / bức tường' },
+    ],
+  },
+  {
+    group: 'Hình vật',
+    items: [
+      { code: 'hình cây AB', what: 'Cây đứng từ chân A lên ngọn B (cao đúng AB)' },
+      { code: 'hình cái thang CB', what: 'Thang dọc đoạn CB, xoay theo độ nghiêng' },
+      { code: 'hình người A', what: 'Người đứng tại A; có: toà nhà, cột cờ, hải đăng, thuyền, ô tô…' },
+      { code: 'hình en:teapot A', what: 'Vật chưa có trong kho: tên tiếng Anh, vẽ thêm một lần (tốn điểm lần đầu)' },
     ],
   },
 ]

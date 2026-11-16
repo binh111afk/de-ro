@@ -11,6 +11,9 @@ import { cleanRewrite } from './slideRewrite'
 import { AC_DEFAULT, OSC_DEFAULT, OSC_Y_DEFAULT, STANDING_DEFAULT, oscPeriod, parseOscExpr, type OscQty, type OscSpec, type OscStart, type OscStartX0 } from './oscillation'
 import { LENS_DEFAULT, type LensNames, type LensRay, type LensType } from './lens'
 import { FIELD_DEFAULT, type FieldScene } from './field'
+import { normalizeObjects, prepareToolDoc } from './objects'
+import { dynamicId } from './figureSprites'
+import { CONTAINERS, OBJECTS, SCENE_OBJECTS } from './objectsCatalog'
 
 export const DOC_REWRITE_PRESETS = [
   { label: 'Viết lại rõ hơn', ask: 'Viết lại rõ ràng, chặt chẽ hơn, giữ nguyên ý' },
@@ -132,7 +135,9 @@ export const FIGURE_GUIDE =
   'Lệnh: "A(1; 2)", "M(2; 3) chiếu", "AB, BC", "vectơ AB", "vectơ u(2; 1)", "d: 2x - y + 1 = 0", "đường thẳng AB", "x = 2", "(P): y = x^2 - 2x", "đường tròn (I; 2)", "đường tròn (1; -2) 3", "x + y <= 4".\n' +
   '5) Hình học phẳng: {"kind":"geo2d","shape":"triangle|right-triangle|isosceles|equilateral|square|rectangle|parallelogram|trapezoid|rhombus|circle|inscribed-triangle|free","names":["A","B","C"],"altitude":false,"median":false,"diagonals":false,"circumcircle":false,"extras":"mỗi dòng một lệnh dựng thêm"}. ' +
   'Mẫu "free" (tự do theo toạ độ, "names":[]): trong "extras" (cũng dùng được cho các mẫu) hỗ trợ "A(0; 4)" / "M(2,5; 0)", "nhãn AB \\"4 km\\"", "kích thước BC \\"7 km\\"" (thêm trên/dưới/trái/phải), "đường BC kéo dài", "tia BC".\n' +
-  '5b) Hình thực tế nét đơn (thang dựa tường, gấp giấy, đo chiều cao qua góc nhìn, mảnh vườn…): {"kind":"scene","text":"mỗi dòng một lệnh"}. Lệnh: "A(0; 0) B(4; 0) C(0; 3)" khai báo điểm (y hướng lên; tên bắt đầu _ thì ẩn nhãn, nối điểm ẩn bằng gạch: _G-_K); "AB, BC" đoạn; "ABCD" đa giác; "đứt MN" nét đứt; "kích thước AB \"15 cm\"" mũi tên kích thước; "góc ABC \"60°\"" cung góc tại B; "vuông ABC" góc vuông tại B; "nhãn AB \"?\"" chữ cạnh đoạn; "đất AB" / "tường AB" gạch chéo. Toạ độ gần đúng tỉ lệ số liệu đề, nhưng đoạn quá ngắn so với hình (chiều cao mắt 1,5 m bên khoảng cách 50 m…) thì vẽ to hơn tỉ lệ cho dễ nhìn; cạnh/góc đã biết dùng kích thước hoặc nhãn; cạnh cần tìm ghi \"?\" hoặc chữ, KHÔNG ghi đáp số.\n' +
+  '5b) Hình thực tế nét đơn (thang dựa tường, gấp giấy, đo chiều cao qua góc nhìn, mảnh vườn…): {"kind":"scene","text":"mỗi dòng một lệnh"}. Lệnh: "A(0; 0) B(4; 0) C(0; 3)" khai báo điểm (y hướng lên; tên bắt đầu _ thì ẩn nhãn, nối điểm ẩn bằng gạch: _G-_K); "AB, BC" đoạn; "ABCD" đa giác; "đứt MN" nét đứt; "kích thước AB \"15 cm\"" mũi tên kích thước; "góc ABC \"60°\"" cung góc tại B; "vuông ABC" góc vuông tại B; "nhãn AB \"?\"" chữ cạnh đoạn; "đất AB" / "tường AB" gạch chéo; "hình <vật> AB" vẽ hình vật đứng từ chân A lên đỉnh B (cao đúng AB, xoay theo AB — thang dựa tường đặt dọc đoạn thang), "hình <vật> A" đặt vật đứng tại A. Vật có sẵn: ' +
+  SCENE_OBJECTS.map((id) => OBJECTS[id]).filter(Boolean).join(', ') +
+  '; vật khác ghi "hình en:<tên tiếng Anh> A". Bài có cây, người, toà nhà, cột cờ, thang, thuyền… thì NÊN thêm hình vật cho dễ hình dung; đoạn đo vẫn vẽ như thường.Toạ độ gần đúng tỉ lệ số liệu đề, nhưng đoạn quá ngắn so với hình (chiều cao mắt 1,5 m bên khoảng cách 50 m…) thì vẽ to hơn tỉ lệ cho dễ nhìn; cạnh/góc đã biết dùng kích thước hoặc nhãn; cạnh cần tìm ghi \"?\" hoặc chữ, KHÔNG ghi đáp số.\n' +
   '6) Hình không gian: {"kind":"geo3d","shape":"pyramid3|pyramid3-sa|pyramid3-regular|pyramid4|pyramid4-sa|pyramid4-regular|tetrahedron|prism3|box|cube|cone|cylinder|sphere","names":["S","A","B","C","D"],"height":true,"diagonals":false,"circumsphere":false,"extras":"mỗi dòng một lệnh dựng thêm"}. "circumsphere": true vẽ mặt cầu ngoại tiếp khối (hộp, lập phương, chóp/lăng trụ đều); trong "extras" có thể đặt/đổi toạ độ 3D dạng "S(1; 0,5; 2)". ' +
   'Lệnh dựng thêm (5 và 6; không dùng cho nón, trụ, cầu): "M = trung điểm SC", "N = SB 1/3", "O = AC cắt BD", "H = hình chiếu S lên (ABCD)", "K = hình chiếu A lên SB", "G = trọng tâm ABC", "O = tâm ngoại tiếp ABC", "đường cao AH", "trung tuyến AM", "MN" (nối), "đứt MN". Đề gọi tên điểm nào (trung điểm, giao điểm, tâm I…) thì PHẢI dựng điểm đó cho hiện trên hình.\n' +
   '7) Biểu đồ thống kê: {"kind":"stats","chart":"bar|line|pie|hist|table","title":"","xLabel":"","yLabel":"","data":"dòng 1: nhãn cách nhau bởi ;\\nTên dãy: số; số; ..."}. Ghép nhóm dùng nhãn "[40; 50) [50; 60)".\n' +
@@ -156,13 +161,19 @@ export const FIGURE_GUIDE =
   '23) Sơ đồ phả hệ (Sinh học 12): {"kind":"pedigree","text":"1: nam bt\\n2: nữ bệnh\\n1 x 2 -> 3, 4\\n3: nam bt\\n4: nữ mang gen\\nhỏi 4"}. Khai báo người "id: nam|nữ|? bt|bệnh|mang gen|chết"; vợ chồng "1 x 2" (cận huyết "1 xx 2"); con "1 x 2 -> 3, 4" (sinh đôi cùng trứng "(5 6)", khác trứng "[7 8]"); "hỏi 10" đánh dấu người hỏi; đặt tên bệnh: bệnh "mù màu".\n' +
   '24) Bảng lai Punnett (Sinh học 9 & 12): {"kind":"punnett","cross":"AaBb x Aabb"}. Tối đa 3 cặp gen phân li độc lập (khung tối đa 8x8), hỗ trợ gen liên kết giới tính (XAXa x XaY), trội không hoàn toàn, tên kiểu hình, để trống (blankGrid: true).\n' +
   '25) Chuỗi và lưới thức ăn (Sinh học): {"kind":"foodweb","text":"Cỏ -> Thỏ, Chuột\\nThỏ, Chuột -> Cáo\\nVi sinh vật: phân giải","direction":"bottom-up|left-right","nodeStyle":"box|text","showLevels":true|false,"connectDecomposers":true|false}. Mũi tên -> chỉ chiều năng lượng (thức ăn -> vật ăn); máy tự xếp bậc dinh dưỡng từ dưới lên. Dùng [A] hoặc ?A để ẩn tên loài làm câu hỏi.\n' +
-  '26) Đường sức điện trường / từ trường (Vật lí 11): {"kind":"field","scene":{"type":"two-charges","signs":["+","-"],"ratio":1},"lines":8,"showArrows":true,"labels":true}. scene.type: "charge" (sign:"+"|"-"), "two-charges" (signs:["+"|"-","+"|"-"], ratio), "plates", "wire" (current:"out"|"in"), "wire-side" (current:"up"|"down"), "loop" (current:"cw"|"ccw"), "solenoid" (current:"left"|"right"), "magnet" (orient:"h"|"v"). Tuỳ chọn probe:{"x":0,"y":0.6,"vector":"E"|"B"}.\n' +
+  '27) Tranh đếm đồ vật (Toán tiểu học: đếm, cộng trừ, chia đều, nhân): {"kind":"objects","groups":[{"container":"basket","item":"apple","each":5,"count":3}]}. Mỗi nhóm: "count" đồ chứa giống nhau, mỗi cái có đúng "each" đồ vật; bỏ "container" thì vẽ "count" nhóm đồ vật rời, mỗi nhóm "each" cái; "label" (tuỳ chọn) ghi số trên đồ chứa, vd túi ghi "10" ("each": 0 nếu chỉ cần đồ chứa có nhãn). Tối đa 4 nhóm, mỗi đồ chứa tối đa 20 vật. Số trên hình phải khớp đề. CHỈ dùng id có sẵn — đồ vật: ' +
+  Object.entries(OBJECTS).map(([id, name]) => `${id} (${name})`).join(', ') +
+  '; đồ chứa: ' +
+  Object.entries(CONTAINERS).map(([id, c]) => `${id} (${c.name}${c.placement === 'label' ? ', chỉ để ghi số' : ''})`).join(', ') +
+  '. Vật không có trong danh sách: "item" ghi tên tiếng Việt và thêm "en" là tên tiếng Anh 1–3 từ không dấu (vd {"item":"ấm trà","en":"teapot","each":4,"count":1}); app tự vẽ thêm. Đồ chứa chỉ dùng id trong danh sách.\n' +
+  '28) Đồng hồ kim: {"kind":"clock","hour":8,"minute":15}. Câu hỏi đọc giờ thì KHÔNG ghi đáp án ra chữ cạnh hình.\n' +
+  '26) Đường sức điện trường / từ trường (Vật lí 11):{"kind":"field","scene":{"type":"two-charges","signs":["+","-"],"ratio":1},"lines":8,"showArrows":true,"labels":true}. scene.type: "charge" (sign:"+"|"-"), "two-charges" (signs:["+"|"-","+"|"-"], ratio), "plates", "wire" (current:"out"|"in"), "wire-side" (current:"up"|"down"), "loop" (current:"cw"|"ccw"), "solenoid" (current:"left"|"right"), "magnet" (orient:"h"|"v"). Tuỳ chọn probe:{"x":0,"y":0.6,"vector":"E"|"B"}.\n' +
 
   'Biểu thức dùng biến x, ^ cho luỹ thừa, sqrt(), ln, sin, cos; nhân ngầm được (2x).'
 
 /** loại hình hợp từng môn (số mục trong FIGURE_GUIDE) — đề một môn khỏi phải gửi cả hướng dẫn mạch điện, phả hệ… */
 const FIGURE_BY_SUBJECT: Array<[RegExp, string[]]> = [
-  [/to[aá]n/i, ['1', '2', '3', '4', '5', '5b', '6', '7', '8', '9', '10', '11', '11b', '18']],
+  [/to[aá]n/i, ['1', '2', '3', '4', '5', '5b', '6', '7', '8', '9', '10', '11', '11b', '18', '27', '28']],
   [/v[aậ]t\s*l[ií]|m[oô]n\s*l[ý]/i, ['1', '4', '5b', '7', '12', '13', '14', '15b', '18', '20', '21', '22', '26']],
   [/ho[aá]\s*h[oọ]c|m[oô]n\s*ho[aá]/i, ['7', '15', '16', '17', '18', '19']],
   [/sinh\s*h[oọ]c|m[oô]n\s*sinh/i, ['7', '18', '23', '24', '25']],
@@ -210,7 +221,9 @@ export async function planTool(text: string, context: string, signal?: AbortSign
   } catch {
     throw new Error('AI trả về cấu hình hình vẽ không đọc được, thử lại nhé.')
   }
-  return { doc: toolFromRaw(raw), note: typeof raw.note === 'string' ? raw.note.trim() : '' }
+  const doc = toolFromRaw(raw)
+  await prepareToolDoc(doc)
+  return { doc, note: typeof raw.note === 'string' ? raw.note.trim() : '' }
 }
 
 /** cấu hình chữ AI trả về → ToolDoc đã vẽ thử được; sai thì ném lỗi (kèm note nếu có) */
@@ -647,6 +660,33 @@ export function toolFromRaw(raw: Record<string, unknown>): ToolDoc {
       }
       break
     }
+
+    case 'objects': {
+      const groups = (Array.isArray(raw.groups) ? raw.groups : [])
+        .filter((g): g is Record<string, unknown> => Boolean(g) && typeof g === 'object')
+        .map((g) => {
+          // đồ vật ngoài kho có sẵn: AI ghi tên tiếng Việt + "en" → kho dùng chung (vẽ một lần, lưu lại)
+          const item = typeof g.item === 'string' ? g.item.trim() : ''
+          const dyn = item && !OBJECTS[item] && typeof g.en === 'string' ? dynamicId(g.en) : null
+          return { g, item: dyn ?? (item || undefined), itemName: dyn ? item : undefined }
+        })
+        .map(({ g, item, itemName }) => ({
+          item,
+          itemName,
+          container: typeof g.container === 'string' ? g.container : undefined,
+          each: num(g.each, 0),
+          count: num(g.count, 1),
+          label: typeof g.label === 'string' || typeof g.label === 'number' ? String(g.label) : undefined,
+        }))
+      const spec = normalizeObjects({ groups })
+      if (!spec.groups.length) throw new Error(note || 'Không có đồ vật nào trong kho hình để vẽ.')
+      doc = { kind: 'objects', spec }
+      break
+    }
+
+    case 'clock':
+      doc = { kind: 'clock', spec: { hour: Math.round(num(raw.hour, 8)), minute: Math.round(num(raw.minute, 0)), numbers: bool('numbers', true) } }
+      break
 
     default:
       throw new Error(note || 'Không thấy gì để vẽ minh hoạ trong đoạn đã chọn.')

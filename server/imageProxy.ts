@@ -174,34 +174,48 @@ async function generate(config: ImageConfig, prompt: string): Promise<string> {
   throw new ImageError(504, 'Tạo ảnh quá lâu (quá 4 phút)')
 }
 
-export async function handleImageRequest(
+/**
+ * Đăng nhập + trừ điểm + vẽ một ảnh (thử lần lượt từng nhà cung cấp). Lỗi thì đã tự trả response và
+ * cho null; được thì cho dataUrl, người gọi tự trả response. Dùng chung cho /api/image và kho hình đồ vật.
+ * `prompt` có thể là hàm (đọc body sau khi đã giữ chỗ điểm).
+ */
+export async function chargeAndGenerate(
   req: IncomingMessage,
   res: ServerResponse,
-): Promise<void> {
-  if (!(await guard(req, res, 'image'))) return
-  if (req.method === 'OPTIONS') return json(res, 204, {})
-  if (req.method !== 'POST') return json(res, 405, { error: 'Method not allowed' })
+  getPrompt: () => Promise<string>,
+): Promise<{ dataUrl: string; model: string; quota: unknown } | null> {
   // vẽ ảnh AI chỉ cho người đã đăng nhập (máy dev không cần)
   const ip = clientIp(req)
   const userId = await userFromToken(req)
-  if (!isLocal(ip) && !userId) return json(res, 401, { error: LOGIN_REQUIRED, loginRequired: true })
+  if (!isLocal(ip) && !userId) {
+    json(res, 401, { error: LOGIN_REQUIRED, loginRequired: true })
+    return null
+  }
   // trừ điểm AI: giữ chỗ trước khi vẽ, vẽ được mới tính
   const cost = IMAGE_TOKENS()
   const quota = cost ? await readQuota(userId, ip) : null
   if (quota && quota.limit - quota.used < cost) {
-    return json(res, 429, { error: quota.limit - quota.used >= 1000 ? `Vẽ một ảnh cần ${cost / TOKENS_PER_POINT} điểm AI, bạn chỉ còn ${Math.floor((quota.limit - quota.used) / TOKENS_PER_POINT)} điểm.` : quotaMessage(quota), quota })
+    json(res, 429, { error: quota.limit - quota.used >= 1000 ? `Vẽ một ảnh cần ${cost / TOKENS_PER_POINT} điểm AI, bạn chỉ còn ${Math.floor((quota.limit - quota.used) / TOKENS_PER_POINT)} điểm.` : quotaMessage(quota), quota })
+    return null
   }
   const release = quota ? await reserveQuota(userId, ip, quota, cost) : async () => {}
-  if (!release) return json(res, 429, { error: 'Đang có nhiều yêu cầu AI cùng lúc so với số điểm còn lại, thử lại sau ít giây.', quota })
+  if (!release) {
+    json(res, 429, { error: 'Đang có nhiều yêu cầu AI cùng lúc so với số điểm còn lại, thử lại sau ít giây.', quota })
+    return null
+  }
 
   try {
-    const body = JSON.parse(await readBody(req)) as { prompt?: unknown }
-    const prompt = typeof body.prompt === 'string' ? body.prompt.trim().slice(0, MAX_PROMPT) : ''
-    if (!prompt) return json(res, 400, { error: 'prompt là bắt buộc' })
-
+    const prompt = (await getPrompt()).trim().slice(0, MAX_PROMPT)
+    if (!prompt) {
+      await release()
+      json(res, 400, { error: 'prompt là bắt buộc' })
+      return null
+    }
     const configs = resolveConfigs()
     if (!configs.length) {
-      return json(res, 503, { error: 'Chưa cấu hình AGNES_API_KEY hoặc IMAGE_API_KEY.' })
+      await release()
+      json(res, 503, { error: 'Chưa cấu hình AGNES_API_KEY hoặc IMAGE_API_KEY.' })
+      return null
     }
     const errors: string[] = []
     let lastStatus = 502
@@ -209,18 +223,34 @@ export async function handleImageRequest(
       try {
         const dataUrl = await generate(config, prompt)
         const [after] = await Promise.all([addUsage(userId, ip, cost, quota), release()])
-        return json(res, 200, { dataUrl, model: config.model, quota: after })
+        return { dataUrl, model: config.model, quota: after }
       } catch (err) {
         lastStatus = err instanceof ImageError ? err.status : 502
         errors.push(`${config.model}: ${err instanceof Error ? err.message : String(err)}`)
       }
     }
     await release()
-    return json(res, lastStatus, { error: errors.join(' | ') })
+    json(res, lastStatus, { error: errors.join(' | ') })
+    return null
   } catch (err) {
     await release()
-    return json(res, 500, { error: err instanceof Error ? err.message : String(err) })
+    json(res, 500, { error: err instanceof Error ? err.message : String(err) })
+    return null
   }
+}
+
+export async function handleImageRequest(
+  req: IncomingMessage,
+  res: ServerResponse,
+): Promise<void> {
+  if (!(await guard(req, res, 'image'))) return
+  if (req.method === 'OPTIONS') return json(res, 204, {})
+  if (req.method !== 'POST') return json(res, 405, { error: 'Method not allowed' })
+  const got = await chargeAndGenerate(req, res, async () => {
+    const body = JSON.parse(await readBody(req)) as { prompt?: unknown }
+    return typeof body.prompt === 'string' ? body.prompt : ''
+  })
+  if (got) json(res, 200, got)
 }
 
 export function imageMiddleware(

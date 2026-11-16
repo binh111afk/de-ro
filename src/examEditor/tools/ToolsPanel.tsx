@@ -4,7 +4,7 @@
  */
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
-import { ArrowRightLeft, Box, Search, Flame, ChartColumn, ChartSpline, ClipboardList, Grid3x3, SquarePlus, Table, Table2, TableProperties, Triangle, TriangleRight, Zap, ChartLine, Atom, Hexagon, FlaskConical, CircleDot, Network, MoveHorizontal, Circle, Thermometer, Shuffle, Sigma, Waves, Focus, GitFork, Dna, Workflow, Magnet } from 'lucide-react'
+import { Apple, Clock, ArrowRightLeft, Box, Search, Flame, ChartColumn, ChartSpline, ClipboardList, Grid3x3, SquarePlus, Table, Table2, TableProperties, Triangle, TriangleRight, Zap, ChartLine, Atom, Hexagon, FlaskConical, CircleDot, Network, MoveHorizontal, Circle, Thermometer, Shuffle, Sigma, Waves, Focus, GitFork, Dna, Workflow, Magnet } from 'lucide-react'
 import type { ToolImage, ToolKind } from '@/lib/toolSpec'
 import type { ExamBlock, ExamDoc } from '@/data/docTypes'
 import { ToolModal } from './ToolModal'
@@ -33,6 +33,8 @@ const SUBJECTS: Array<{ name: string; tools: Array<{ id: ToolId; label: string; 
       { id: 'probtree', label: 'Sơ đồ cây xác suất', desc: 'Nhánh ghi xác suất, biến cố đối, tích cuối nhánh', Icon: Network },
       { id: 'numberline', label: 'Trục số', desc: 'Khoảng, đoạn, nửa khoảng; gạch phần bỏ đi', Icon: MoveHorizontal },
       { id: 'venn', label: 'Biểu đồ Ven', desc: '2–3 tập; tô giao, hợp, hiệu, phần bù; số phần tử', Icon: Circle },
+      { id: 'objects', label: 'Tranh đếm đồ vật', desc: 'Rổ, đĩa, nhóm đồ vật đúng số lượng (tiểu học)', Icon: Apple },
+      { id: 'clock', label: 'Đồng hồ', desc: 'Đồng hồ kim theo giờ, phút', Icon: Clock },
     ],
   },
   {

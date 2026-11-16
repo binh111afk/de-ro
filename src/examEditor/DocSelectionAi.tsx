@@ -46,6 +46,8 @@ const TOOL_NAME: Record<ToolDoc['kind'], string> = {
   punnett: 'Bảng lai Punnett',
   foodweb: 'Lưới thức ăn',
   field: 'Đường sức',
+  objects: 'Hình đếm đồ vật',
+  clock: 'Đồng hồ',
 }
 const PLOT_ASK = 'Vẽ hình minh hoạ cho đề này'
 const PANEL_W = 340

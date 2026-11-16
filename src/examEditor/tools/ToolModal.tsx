@@ -39,6 +39,8 @@ import { FoodWebModal } from './MoreToolModals'
 import type { FoodWebSpec } from '@/lib/foodweb'
 import { FieldModal } from './MoreToolModals'
 import type { FieldSpec } from '@/lib/field'
+import { ClockModal, ObjectsModal } from './objectsModals'
+import type { ClockSpec, ObjectsSpec } from '@/lib/objects'
 
 export function ToolModal({
   kind,
@@ -113,5 +115,9 @@ export function ToolModal({
       return <FoodWebModal initial={initial as FoodWebSpec | null | undefined} {...common} />
     case 'field':
       return <FieldModal initial={initial as FieldSpec | null | undefined} {...common} />
+    case 'objects':
+      return <ObjectsModal initial={initial as ObjectsSpec | null | undefined} {...common} />
+    case 'clock':
+      return <ClockModal initial={initial as ClockSpec | null | undefined} {...common} />
   }
 }

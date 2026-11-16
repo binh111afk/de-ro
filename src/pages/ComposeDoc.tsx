@@ -99,7 +99,13 @@ type ToolMods = { ti: typeof import('@/examEditor/toolImages'); ts: typeof impor
 let tools: ToolMods | null = null
 let toolsLoading: Promise<ToolMods> | null = null
 const loadTools = (): Promise<ToolMods> =>
-  (toolsLoading ??= Promise.all([import('@/examEditor/toolImages'), import('@/lib/toolSpec'), import('@/lib/plot')]).then(
+  (toolsLoading ??= Promise.all([
+    import('@/examEditor/toolImages'),
+    import('@/lib/toolSpec'),
+    import('@/lib/plot'),
+    // kho hình đồ vật (tranh đếm tiểu học): phải có trước khi vẽ, kẻo hình ra ô trống
+    import('@/lib/figureSprites').then((m) => m.loadSprites()),
+  ]).then(
     ([ti, ts, plot]) => (tools = { ti, ts, plot }),
   ))
 const AiPanel = lazyPage(() => import('@/examEditor/AiPanel').then((m) => ({ default: m.AiPanel })))
