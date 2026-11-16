@@ -405,7 +405,8 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
     }
     /** lượt thành công: hoàn biên nhận (nếu có) rồi cộng token đã dùng */
     const settle = async (spent: number) => {
-      const q = receipt ? await refundReceipt(userId, receipt, quota) : quota
+      // hoàn tối đa bằng số lượt gọi lại này tốn (xem refundReceipt)
+      const q = receipt ? await refundReceipt(userId, receipt, quota, spent) : quota
       return addUsage(userId, ip, spent + wasted, q)
     }
     const log = (t: Target, t0: number, ok: boolean, error: string | null, usage?: unknown) => {

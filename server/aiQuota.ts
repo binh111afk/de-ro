@@ -206,16 +206,23 @@ export function checkReceipt(receipt: string, userId: string | null, hash: strin
   return r && r.h && r.h === hash ? r : null
 }
 
-/** Hoàn token theo biên nhận đã kiểm (vào số đã dùng tháng trước, phần còn lại trả về số dư điểm); trả hạn mức mới. */
-export async function refundReceipt(userId: string | null, r: Receipt | null, prev: Quota | null): Promise<Quota | null> {
+/**
+ * Hoàn token theo biên nhận đã kiểm (vào số đã dùng tháng trước, phần còn lại trả về số dư điểm); trả hạn mức mới.
+ * `cap` = số token chính lượt gọi lại vừa tốn: hoàn KHÔNG vượt mức đó. Lượt gọi lại là đúng yêu cầu cũ nên trúng
+ * cache prompt, chỉ tốn ~1/10; hoàn đủ biên nhận thì cặp "gọi + gọi lại" chỉ tốn 1/10 → nuôi được ~20 lần hạn mức.
+ * Có trần thì cặp đó luôn tốn ít nhất bằng lượt đắt hơn trong hai lượt.
+ */
+export async function refundReceipt(userId: string | null, r: Receipt | null, prev: Quota | null, cap: number): Promise<Quota | null> {
   if (!prev || !userId || !r) return prev
   const s = supa()
   if (!s) return prev
+  const tokens = Math.min(r.t, Math.max(0, Math.floor(cap)))
+  if (!(tokens > 0)) return prev
   try {
     const res = await fetch(`${s.base}/rest/v1/rpc/refund_ai_usage`, {
       method: 'POST',
       headers: s.headers,
-      body: JSON.stringify({ p_user: userId, p_month: r.m, p_receipt: r.n, p_tokens: r.t }),
+      body: JSON.stringify({ p_user: userId, p_month: r.m, p_receipt: r.n, p_tokens: tokens }),
     })
     return res.ok && (await res.json()) != null ? await readQuota(userId) : prev
   } catch {

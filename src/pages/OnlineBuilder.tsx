@@ -429,7 +429,7 @@ export default function OnlineBuilder() {
               </div>
               <Toggle
                 label="Hiện đáp án và giải thích ngay"
-                hint="Trắc nghiệm: chọn xong là hiện đúng/sai và giải thích. Các dạng khác có nút Kiểm tra đáp án."
+                hint="Trắc nghiệm: chọn xong là hiện đúng/sai và giải thích. Các dạng khác có nút Kiểm tra đáp án. Tắt thì nộp xong học sinh chỉ thấy điểm, không thấy đáp án."
                 checked={Boolean(item.settings.instantFeedback)}
                 onChange={(v) => setSettings({ instantFeedback: v })}
               />
@@ -453,7 +453,7 @@ export default function OnlineBuilder() {
               <div className={cn(item.publishedListed && 'pointer-events-none opacity-40')}>
                 <Toggle
                   label="Mỗi học sinh chỉ làm một lần"
-                  hint="Chặn theo thiết bị: máy đã nộp bài thì không làm lại được."
+                  hint="Học sinh phải đăng nhập để làm; mỗi tài khoản nộp được một lần."
                   checked={Boolean(item.settings.oneAttempt)}
                   onChange={(v) => setSettings({ oneAttempt: v })}
                 />

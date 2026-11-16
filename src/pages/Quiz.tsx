@@ -162,7 +162,7 @@ export default function Quiz() {
           className: info?.className,
           seat: info?.seat,
         })
-        useApp.getState().applyGrading(exam.id, graded.score, graded.max, graded.key ?? {}, graded.gradable)
+        useApp.getState().applyGrading(exam.id, graded.score, graded.max, graded.key ?? {}, graded.gradable, graded.correct)
         setSent('sent')
       } catch {
         setSent('failed')
@@ -257,6 +257,7 @@ export default function Quiz() {
         score={lastResult.score}
         totalPoints={totalPoints}
         gradable={gradable}
+        correctCount={lastResult.correct}
         pending={pending}
         questions={questions}
         answers={answers}
@@ -916,6 +917,7 @@ function ResultView({
   score,
   totalPoints,
   gradable,
+  correctCount,
   pending,
   questions,
   answers,
@@ -923,6 +925,8 @@ function ResultView({
   onRestart,
   onReview,
 }: {
+  /** số câu đúng do server đếm — đề giấu đáp án thì máy không có đáp án để tự đếm */
+  correctCount?: number
   note?: string
   examTitle: string
   score: number
@@ -937,7 +941,7 @@ function ResultView({
   onReview: () => void
 }) {
   const pct = gradable > 0 ? (score / gradable) * 100 : 0
-  const correct = questions.filter((q) => isFullyCorrect(q, answers[q.id])).length
+  const correct = correctCount ?? questions.filter((q) => isFullyCorrect(q, answers[q.id])).length
   const gradedCount = questions.filter(isAutoGraded).length
   const noKey = !pending && gradable <= 0
   const skipped = Math.round((totalPoints - gradable) * 1000) / 1000

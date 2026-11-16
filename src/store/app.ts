@@ -41,7 +41,7 @@ interface AppState {
   quizSubmitted: boolean
   /** last graded result */
   /** gradable: tổng điểm các câu chấm được (có đáp án) */
-  lastResult: { examId: string; score: number; total: number; gradable?: number; at: number } | null
+  lastResult: { examId: string; score: number; total: number; gradable?: number; correct?: number; at: number } | null
 
   setMode: (m: Mode) => void
   createDraft: (meta: DraftMeta) => void
@@ -75,7 +75,7 @@ interface AppState {
   resetQuiz: () => void
   setQuizSubmitted: (v: boolean) => void
   /** đề link không kèm đáp án: server chấm xong trả điểm + đáp án, gắn vào đề và kết quả */
-  applyGrading: (examId: string, score: number, total: number, key: Record<string, { answer?: string; explanation?: string; solution?: string[] }>, gradable?: number) => void
+  applyGrading: (examId: string, score: number, total: number, key: Record<string, { answer?: string; explanation?: string; solution?: string[] }>, gradable?: number, correct?: number) => void
 }
 
 const uid = () => Math.random().toString(36).slice(2, 10)
@@ -423,7 +423,7 @@ export const useApp = create<AppState>()(
 
       setQuizSubmitted: (v) => set({ quizSubmitted: v }),
 
-      applyGrading: (examId, score, total, key, gradable) =>
+      applyGrading: (examId, score, total, key, gradable, correct) =>
         set((s) => ({
           myExams: s.myExams.map((e) =>
             e.id !== examId
@@ -439,7 +439,7 @@ export const useApp = create<AppState>()(
                   })),
                 },
           ),
-          lastResult: s.lastResult && s.lastResult.examId === examId ? { ...s.lastResult, score, total, ...(gradable !== undefined ? { gradable } : {}) } : s.lastResult,
+          lastResult: s.lastResult && s.lastResult.examId === examId ? { ...s.lastResult, score, total, ...(gradable !== undefined ? { gradable } : {}), ...(correct !== undefined ? { correct } : {}) } : s.lastResult,
         })),
     }),
     {

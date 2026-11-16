@@ -592,20 +592,29 @@ async function extractPptxSlides(data: Buffer): Promise<string[]> {
 const ZIP_MAX_ENTRIES = 3000
 const ZIP_MAX_ENTRY = 24 * 1024 * 1024
 const ZIP_MAX_TOTAL = 48 * 1024 * 1024
-function assertSafeZip(buf: Buffer) {
+export function assertSafeZip(buf: Buffer) {
   // tìm End Of Central Directory (0x06054b50) trong 64 KB cuối
   let eocd = -1
   for (let i = buf.length - 22; i >= Math.max(0, buf.length - 65557); i--) {
     if (buf.readUInt32LE(i) === 0x06054b50) { eocd = i; break }
   }
   if (eocd < 0) throw new Error('Tệp hỏng hoặc không đúng định dạng.')
-  const count = buf.readUInt16LE(eocd + 10)
+  const bad = () => new Error('Tệp hỏng hoặc không đúng định dạng.')
+  const declared = buf.readUInt16LE(eocd + 10)
+  const cdSize = buf.readUInt32LE(eocd + 12)
   let off = buf.readUInt32LE(eocd + 16)
-  if (count === 0xffff || off === 0xffffffff) throw new Error('Tệp quá lớn hoặc không hỗ trợ (zip64).')
-  if (count > ZIP_MAX_ENTRIES) throw new Error('Tệp có quá nhiều thành phần.')
+  if (declared === 0xffff || cdSize === 0xffffffff || off === 0xffffffff) throw new Error('Tệp quá lớn hoặc không hỗ trợ (zip64).')
+  // Phải duyệt ĐÚNG danh sách mà JSZip sẽ đọc, nếu không mọi trần bên dưới chỉ áp cho một phần tệp:
+  // - JSZip đi theo chữ ký bản ghi tới khi hết, không theo số khai trong EOCD → đếm theo chữ ký, rồi bắt khớp số khai;
+  // - JSZip dời mọi offset khi central directory không kết thúc ngay trước EOCD (coi là có dữ liệu chèn đầu tệp)
+  //   → bắt central directory nằm sát EOCD, không chèn, không thừa byte.
+  if (buf.readUInt16LE(eocd + 4) !== 0 || buf.readUInt16LE(eocd + 6) !== 0 || buf.readUInt16LE(eocd + 8) !== declared) throw bad()
+  if (off + cdSize !== eocd || eocd + 22 + buf.readUInt16LE(eocd + 20) !== buf.length) throw bad()
   let total = 0
-  for (let n = 0; n < count; n++) {
-    if (off + 46 > buf.length || buf.readUInt32LE(off) !== 0x02014b50) throw new Error('Tệp hỏng hoặc không đúng định dạng.')
+  let count = 0
+  for (; off < eocd; count++) {
+    if (count >= ZIP_MAX_ENTRIES) throw new Error('Tệp có quá nhiều thành phần.')
+    if (off + 46 > eocd || buf.readUInt32LE(off) !== 0x02014b50) throw bad()
     const method = buf.readUInt16LE(off + 10)
     const csize = buf.readUInt32LE(off + 20)
     const size = buf.readUInt32LE(off + 24)
@@ -630,6 +639,8 @@ function assertSafeZip(buf: Buffer) {
     if (total > ZIP_MAX_TOTAL) throw new Error('Tệp giải nén ra quá lớn.')
     off += 46 + buf.readUInt16LE(off + 28) + buf.readUInt16LE(off + 30) + buf.readUInt16LE(off + 32)
   }
+  // bản ghi cuối phải kết thúc đúng tại EOCD, và số bản ghi thật phải bằng số khai
+  if (off !== eocd || count !== declared) throw bad()
 }
 
 export async function extractFile(name: string, data: Buffer, marks = false): Promise<ExtractedFile> {

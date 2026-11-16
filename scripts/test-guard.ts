@@ -99,8 +99,12 @@ const jwt = (sub: string) => `h.${Buffer.from(JSON.stringify({ sub })).toString(
   await userFromToken(reqWith('Bearer h.e30.s', '198.51.100.20')) // JWT không có sub
   check('token quá dài / không phải JWT / thiếu sub → không hỏi Supabase', calls === 0)
   calls = 0
-  for (let i = 0; i < 100; i++) await userFromToken(reqWith(`Bearer ${jwt('victim-x')}.${i}`.replace(/\.(\d+)$/, '$1'), '198.51.100.21'))
-  check(`100 token giả cùng một sub → chỉ hỏi Supabase 30 lần (hỏi ${calls})`, calls === 30)
+  // Strix lần 4: ngân sách khoá theo mã băm token, không theo `sub` chưa kiểm chữ ký
+  for (let i = 0; i < 20; i++) await userFromToken(reqWith(`Bearer ${jwt('victim-x')}`, '198.51.100.21'))
+  check(`cùng một token giả gửi 20 lần → chỉ hỏi Supabase 1 lần (kết quả sai được nhớ; hỏi ${calls})`, calls === 1)
+  for (let i = 0; i < 40; i++) await userFromToken(reqWith(`Bearer ${jwt('real-9')}.x${i}`.replace(/\.x(\d+)$/, 'x$1'), '198.51.100.23'))
+  const victim = await checkToken(reqWith(`Bearer ${jwt('real-9')}`, '198.51.100.24'))
+  check('40 token giả mang sub của người khác → người thật vẫn được nhận ra (không 503)', victim.userId === 'real-9' && !victim.busy)
   // người thật cùng IP vẫn đăng nhập được dù kẻ kia đã spam
   const real = await checkToken(reqWith(`Bearer ${jwt('real-1')}`, '198.51.100.21'))
   check('người dùng thật cùng IP vẫn được nhận ra sau khi có người spam', real.userId === 'real-1' && !real.busy)
@@ -135,6 +139,8 @@ const jwt = (sub: string) => `h.${Buffer.from(JSON.stringify({ sub })).toString(
   globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
     const url = String(input)
     const method = init.method ?? 'GET'
+    // kiểm tài khoản bị khoá (mọi API): ở đây không ai bị khoá; không ghi vào calls để khỏi lệch thứ tự
+    if (url.includes('/auth/v1/admin/users/')) return new Response('{}', { status: 200 })
     calls.push(`${method} ${url}`)
     if (url.includes('/auth/v1/user')) {
       const auth = String((init.headers as Record<string, string>).Authorization)
@@ -263,6 +269,7 @@ const jwt = (sub: string) => `h.${Buffer.from(JSON.stringify({ sub })).toString(
   const realFetch = globalThis.fetch
   globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
     const url = String(input)
+    if (url.includes('/auth/v1/admin/users/')) return new Response('{}', { status: 200 })
     seen.push(`${init.method ?? 'GET'} ${url}`)
     if (url.includes('/auth/v1/user')) {
       const auth = String((init.headers as Record<string, string>).Authorization)
@@ -322,6 +329,186 @@ const jwt = (sub: string) => `h.${Buffer.from(JSON.stringify({ sub })).toString(
   saveDown = false
   check('lưu bài lỗi thì nhả khoá: nộp lại được', (await submit(`Bearer ${jwt('stu-4')}`)).status === 200)
   check('không còn tra exam_attempts theo device_id', !seen.some((s) => s.includes('device_id')))
+  globalThis.fetch = realFetch
+}
+
+// Strix lần 4 (1/7): ZIP khai số mục trong EOCD ít hơn thật / chèn dữ liệu đầu tệp → từ chối trước khi giải nén
+{
+  const JSZip = (await import('jszip')).default
+  const { assertSafeZip } = await import('../server/extract.ts')
+  const z = new JSZip()
+  for (let i = 0; i < 5; i++) z.file(`word/p${i}.xml`, '<a/>'.repeat(100))
+  const honest = await z.generateAsync({ type: 'nodebuffer', compression: 'DEFLATE' })
+  const rejects = (b: Buffer) => {
+    try {
+      assertSafeZip(b)
+      return false
+    } catch {
+      return true
+    }
+  }
+  check('ZIP thật (5 mục) qua kiểm tra', !rejects(honest))
+  const eocd = honest.lastIndexOf(Buffer.from([0x50, 0x4b, 0x05, 0x06]))
+  const under = Buffer.from(honest)
+  under.writeUInt16LE(1, eocd + 8)
+  under.writeUInt16LE(1, eocd + 10)
+  check('EOCD khai 1 mục nhưng có 5 → từ chối', rejects(under))
+  const zero = Buffer.from(honest)
+  zero.writeUInt16LE(0, eocd + 8)
+  zero.writeUInt16LE(0, eocd + 10)
+  check('EOCD khai 0 mục → từ chối', rejects(zero))
+  check('chèn byte rác đầu tệp (JSZip sẽ dời offset) → từ chối', rejects(Buffer.concat([Buffer.alloc(64, 7), honest])))
+  const tail = Buffer.concat([honest, Buffer.alloc(10)])
+  check('thừa byte sau EOCD → từ chối', rejects(tail))
+}
+
+// Strix lần 4 (2/7): đề link giấu đáp án — nộp bài không trả gì theo từng câu (máy dò đáp án); chỉ điểm + số câu đúng
+{
+  process.env.VITE_SUPABASE_URL = 'http://sb.test'
+  process.env.SUPABASE_SERVICE_ROLE_KEY = 'svc'
+  const EXAM = '99999999-2222-3333-4444-555555555555'
+  const online = {
+    title: 'Đề giấu đáp án',
+    settings: {},
+    sections: [{ id: 's', title: 'I', questions: [
+      { id: 'q1', type: 'trac-nghiem', prompt: 'x', options: ['a', 'b', 'c', 'd'], answer: 'B', explanation: 'vì B', points: 1 },
+      { id: 'q2', type: 'trac-nghiem', prompt: 'y', options: ['a', 'b', 'c', 'd'], answer: 'C', explanation: 'vì C', points: 1 },
+    ] }],
+  }
+  let listed = false
+  const realFetch = globalThis.fetch
+  globalThis.fetch = (async (input: string | URL) => {
+    const url = String(input)
+    if (url.includes('/rest/v1/community_exams')) return new Response(JSON.stringify([{ doc: { online }, listed }]), { status: 200 })
+    if (url.includes('/rest/v1/exam_attempts')) return new Response(null, { status: 201 })
+    return new Response('{}', { status: 404 })
+  }) as typeof fetch
+  const { handleAttemptRequest } = await import('../server/attempt.ts')
+  const submit = async (answers: Record<string, string>, ipLast: number) => {
+    const body = Buffer.from(JSON.stringify({ examId: EXAM, name: 'Hs', answers }))
+    const req = Object.assign((async function* () { yield body })(), {
+      method: 'POST',
+      headers: { host: 'de-ro-lac.vercel.app', origin: 'https://de-ro-lac.vercel.app' },
+      socket: { remoteAddress: `198.51.100.${ipLast}` },
+    }) as unknown as IncomingMessage
+    const out = { status: 0, body: '' }
+    const res = {
+      headersSent: false,
+      setHeader() {},
+      writeHead(c: number) {
+        out.status = c
+        return this
+      },
+      end(b?: string) {
+        out.body = b ?? ''
+      },
+    } as unknown as ServerResponse
+    await handleAttemptRequest(req, res)
+    return { status: out.status, data: JSON.parse(out.body || '{}') as { score?: number; correct?: number; key?: Record<string, unknown> } }
+  }
+  const r = await submit({ q1: 'B', q2: 'A' }, 150)
+  check('đề giấu đáp án: làm đúng 1 câu → điểm 1, số câu đúng 1', r.status === 200 && r.data.score === 1 && r.data.correct === 1)
+  check('đề giấu đáp án: không trả đáp án / giải thích / đúng-sai của câu nào', JSON.stringify(r.data.key) === '{}' && !JSON.stringify(r.data).includes('vì B'))
+  // nộp dồn dập cùng đề từ một IP: quá 60 lượt / 10 phút → 429
+  let blocked = 0
+  for (let i = 0; i < 70; i++) if ((await submit({ q1: 'A' }, 151)).status === 429) blocked++
+  check(`nộp một đề quá 60 lượt / 10 phút cùng IP → 429 (${blocked} lượt bị chặn)`, blocked === 10)
+  globalThis.fetch = realFetch
+  void listed
+  listed = true
+}
+
+// Strix lần 4 (3,5/7): token kiểm chữ ký ES256 tại server (JWKS) — token giả bị loại ngay, không hỏi Supabase,
+// không đốt hạn mức của ai; tài khoản bị khoá → 403 ở MỌI API (không chỉ admin)
+{
+  const { generateKeyPairSync, sign } = await import('node:crypto')
+  const { privateKey, publicKey } = generateKeyPairSync('ec', { namedCurve: 'P-256' })
+  const KID = 'kid-test-1'
+  const jwk = { ...publicKey.export({ format: 'jwk' }), kid: KID, alg: 'ES256', use: 'sig' }
+  process.env.VITE_SUPABASE_URL = 'http://sb4.test'
+  process.env.VITE_SUPABASE_PUBLISHABLE_KEY = 'pk'
+  process.env.SUPABASE_SERVICE_ROLE_KEY = 'svc'
+  const b64 = (o: unknown) => Buffer.from(JSON.stringify(o)).toString('base64url')
+  const es256 = (claims: Record<string, unknown>, kid = KID, key = privateKey) => {
+    const head = b64({ alg: 'ES256', kid, typ: 'JWT' })
+    const body = b64({ iss: 'http://sb4.test/auth/v1', aud: 'authenticated', role: 'authenticated', exp: Math.floor(Date.now() / 1000) + 3600, ...claims })
+    const sig = sign('sha256', Buffer.from(`${head}.${body}`), { key, dsaEncoding: 'ieee-p1363' }).toString('base64url')
+    return `${head}.${body}.${sig}`
+  }
+  const banned = new Set(['ban-1'])
+  let banDown = false
+  let userCalls = 0
+  let jwksCalls = 0
+  const realFetch = globalThis.fetch
+  globalThis.fetch = (async (input: string | URL) => {
+    const url = String(input)
+    if (url.endsWith('/auth/v1/.well-known/jwks.json')) {
+      jwksCalls++
+      return new Response(JSON.stringify({ keys: [jwk] }), { status: 200 })
+    }
+    if (url.includes('/auth/v1/admin/users/')) {
+      if (banDown) return new Response('{}', { status: 500 })
+      const id = decodeURIComponent(url.split('/').pop()!)
+      return new Response(JSON.stringify({ id, banned_until: banned.has(id) ? '2999-01-01T00:00:00Z' : null }), { status: 200 })
+    }
+    if (url.includes('/auth/v1/user')) {
+      userCalls++
+      return new Response('{}', { status: 401 })
+    }
+    return new Response('{}', { status: 404 })
+  }) as typeof fetch
+  const { checkToken, guard: g, _resetJwks, _resetBanCache } = await import('../server/guard.ts')
+  _resetJwks()
+  _resetBanCache()
+  const reqWith = (auth: string, ip: string) => ({ headers: { authorization: auth }, socket: { remoteAddress: ip } }) as unknown as IncomingMessage
+  const good = await checkToken(reqWith(`Bearer ${es256({ sub: 'u-good' })}`, '198.51.100.160'))
+  check('token ES256 hợp lệ → nhận ra người dùng, không hỏi /auth/v1/user', good.userId === 'u-good' && userCalls === 0)
+  const { privateKey: evil } = generateKeyPairSync('ec', { namedCurve: 'P-256' })
+  const forged = await checkToken(reqWith(`Bearer ${es256({ sub: 'u-good' }, KID, evil)}`, '198.51.100.161'))
+  check('token ký bằng khoá khác (giả) → khách, không hỏi Supabase', forged.userId === null && !forged.busy && userCalls === 0)
+  const expired = await checkToken(reqWith(`Bearer ${es256({ sub: 'u-x', exp: Math.floor(Date.now() / 1000) - 10 })}`, '198.51.100.162'))
+  check('token hết hạn → khách', expired.userId === null && !expired.busy)
+  const wrongIss = await checkToken(reqWith(`Bearer ${es256({ sub: 'u-x', iss: 'http://khac/auth/v1' })}`, '198.51.100.162'))
+  check('token của project khác (sai issuer) → khách', wrongIss.userId === null)
+  // 1000 token giả mang sub nạn nhân, cùng IP với nạn nhân → nạn nhân vẫn vào được, Supabase không bị hỏi lần nào
+  for (let i = 0; i < 1000; i++) await checkToken(reqWith(`Bearer ${es256({ sub: 'u-victim', n: i }, KID, evil)}`, '198.51.100.163'))
+  const victim = await checkToken(reqWith(`Bearer ${es256({ sub: 'u-victim' })}`, '198.51.100.163'))
+  check(`1000 token giả mang sub nạn nhân cùng IP → nạn nhân vẫn vào (hỏi Supabase ${userCalls} lần)`, victim.userId === 'u-victim' && !victim.busy && userCalls === 0)
+  check(`kid lạ không ép tải JWKS liên tục (tải ${jwksCalls} lần)`, jwksCalls <= 2)
+  // tài khoản bị khoá
+  const m = mock({ ...host, authorization: `Bearer ${es256({ sub: 'ban-1' })}` }, '198.51.100.164')
+  const passed = await g(m.req, m.res, 'llm')
+  check('tài khoản bị khoá gọi /api/llm → 403', !passed && m.out.status === 403)
+  const bc = await checkToken(reqWith(`Bearer ${es256({ sub: 'ban-1', n: 2 })}`, '198.51.100.164'))
+  check('tài khoản bị khoá: checkToken trả banned, không có userId', bc.userId === null && bc.banned === true)
+  banDown = true
+  const m2 = mock({ ...host, authorization: `Bearer ${es256({ sub: 'u-new' })}` }, '198.51.100.165')
+  const p2 = await g(m2.req, m2.res, 'upload')
+  check('không hỏi được trạng thái khoá → 503 (fail-closed, không coi là chưa khoá)', !p2 && m2.out.status === 503)
+  banDown = false
+  globalThis.fetch = realFetch
+}
+
+// Strix lần 4 (4/7): hoàn lượt AI theo biên nhận không vượt số token chính lượt gọi lại tốn
+{
+  process.env.VITE_SUPABASE_URL = 'http://sb.test'
+  process.env.SUPABASE_SERVICE_ROLE_KEY = 'svc'
+  const sent: number[] = []
+  const realFetch = globalThis.fetch
+  globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
+    if (String(input).includes('/rpc/refund_ai_usage')) {
+      sent.push((JSON.parse(String(init.body)) as { p_tokens: number }).p_tokens)
+      return new Response('100', { status: 200 })
+    }
+    return new Response('[]', { status: 200 })
+  }) as typeof fetch
+  const { refundReceipt } = await import('../server/aiQuota.ts')
+  const prev = { used: 0, limit: 1000, scope: 'month' as const }
+  const r = { u: 'u1', m: '2026-11', t: 20000, e: Date.now() + 60_000, n: 'rcpt-1', h: 'x' }
+  await refundReceipt('u1', r, prev, 2000)
+  check(`biên nhận 20000 token, lượt gọi lại tốn 2000 → chỉ hoàn 2000 (hoàn ${sent[0]})`, sent[0] === 2000)
+  await refundReceipt('u1', { ...r, n: 'rcpt-2' }, prev, 50000)
+  check(`lượt gọi lại tốn hơn biên nhận → hoàn tối đa bằng biên nhận (hoàn ${sent[1]})`, sent[1] === 20000)
   globalThis.fetch = realFetch
 }
 

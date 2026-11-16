@@ -113,7 +113,8 @@ globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
 
   // Reports
   if (url.includes('/rest/v1/reports')) {
-    if (method === 'PATCH') return new Response(null, { status: 204 })
+    // PATCH trả dòng đã sửa (return=representation); server ghim exam_id cho moderator
+    if (method === 'PATCH') return ok([{ id: 1, exam_id: 'e1111111-1111-4111-8111-111111111111' }])
     if (url.includes('status=eq.open&exam_id=in.')) {
       return ok([{ exam_id: 'e1111111-1111-4111-8111-111111111111' }])
     }

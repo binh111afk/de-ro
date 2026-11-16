@@ -284,6 +284,8 @@ export async function handleFileRequest(req: IncomingMessage, res: ServerRespons
     }
     res.writeHead(200, {
       'Content-Type': got.headers.get('content-type') ?? 'application/octet-stream',
+      // không cho trình duyệt đoán lại kiểu (tệp người dùng gửi lên bị đoán thành HTML/JS chạy trong origin)
+      'X-Content-Type-Options': 'nosniff',
       // tên file là hash nội dung nên không bao giờ đổi; tài liệu riêng thì không cho proxy/CDN giữ
       'Cache-Control': isDoc ? 'private, no-store' : 'public, max-age=31536000, immutable',
     })

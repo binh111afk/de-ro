@@ -342,22 +342,27 @@ export const CONTENT_ACTIONS: ActionMap = {
         throw new HttpError(400, 'Trạng thái xử lý không hợp lệ.')
       }
 
+      // moderator: chỉ báo cáo của đề đã đăng cộng đồng. PATCH của PostgREST không lọc được theo bảng nối,
+      // nên đọc exam_id trong phạm vi rồi ghim nó vào chính lệnh ghi (báo cáo đã bị đổi sang đề khác → 0 dòng)
+      let pin = ''
       if (ctx.role !== 'admin') {
-        const { data: rep } = await call<unknown[]>(
+        const { data: rep } = await call<Array<{ exam_id: string }>>(
           ctx.s,
-          `/rest/v1/reports?id=eq.${reportId}&select=id,community_exams!inner(id)${scopeQs(ctx, 'community_exams.')}`,
+          `/rest/v1/reports?id=eq.${reportId}&select=exam_id,community_exams!inner(id)${scopeQs(ctx, 'community_exams.')}`,
         )
-        if (!rep.length) throw new HttpError(404, 'Không tìm thấy báo cáo.')
+        if (!rep.length || !UUID.test(rep[0].exam_id ?? '')) throw new HttpError(404, 'Không tìm thấy báo cáo.')
+        pin = `&exam_id=eq.${rep[0].exam_id}`
       }
-      await call(ctx.s, `/rest/v1/reports?id=eq.${reportId}`, {
+      const { data: done } = await call<unknown[]>(ctx.s, `/rest/v1/reports?id=eq.${reportId}${pin}`, {
         method: 'PATCH',
-        headers: { Prefer: 'return=minimal' },
+        headers: { Prefer: 'return=representation' },
         body: JSON.stringify({
           status,
           resolved_by: ctx.userId,
           resolved_at: new Date().toISOString(),
         }),
       })
+      if (!Array.isArray(done) || !done.length) throw new HttpError(404, 'Không tìm thấy báo cáo.')
 
       await audit(ctx, 'content.reports.resolve', String(reportId), { status })
       return { ok: true }
