@@ -10,7 +10,9 @@ Tiếp [phiên 44](phien-44.md). Không có migration mới. Repo chỉ có nhá
 4. Kéo marker trên thước: sự kiện giả chạy đúng, kéo bằng chuột của công cụ thì không nhúc nhích. Cần người dùng thử tay.
 5. Thiết lập trang (`pageSetup` trong `ComposeDoc.tsx`) dùng chung mọi tab: nhập Word đổi lề cho cả tab khác. Nếu phiền thì chuyển sang lưu theo từng tài liệu.
 6. App chỉ có khổ A4 (dọc/ngang). File Letter nhập vào vẫn thành A4.
-7. File chưa commit, hỏi trước khi đụng: `.claude/`, `.rls-audit/`, `.strix/`, `public/brand/logo-120*.png`, `scripts/probe-imports.mts`.
+7. **Tìm trên web cần `DEEPSEEK_API_KEY` trên Vercel** (chưa đặt; tài khoản DeepSeek phải có tiền). Thiếu key thì nút báo "Tìm trên web chưa được bật trên máy chủ". Chưa thử tìm web với soạn slide.
+8. Model chính trên web vẫn là opencode. Báo cáo chi phí có số đo DeepSeek chính hãng nếu muốn chuyển.
+9. File chưa commit, hỏi trước khi đụng: `.claude/`, `.rls-audit/`, `.strix/`, `public/brand/logo-120*.png`, `scripts/probe-imports.mts`.
 
 ## Đã làm
 
@@ -25,6 +27,8 @@ Tiếp [phiên 44](phien-44.md). Không có migration mới. Repo chỉ có nhá
 | `3a5772d` | Thước như Word: số 0 ở lề trái, thụt treo giữ dòng đầu; bỏ nút "L" chết |
 | `63cb17f` | Thanh trạng thái gọn, số đo lề vào tooltip |
 | `570e2f6` | Mục lục tự động |
+| `e2b050e` (agy), `85c0388`, merge `88974d2` | Đo lại chi phí AI; lượt hỏi rút gọn khi chưa nêu môn; đề lớp 6+ bỏ hướng dẫn tranh đếm/đồng hồ |
+| `d9222b4` | Nút Tìm trên web (DeepSeek `deepseek_web_search`) |
 
 ## Panel hỏi lại (AI soạn đề / slide)
 
@@ -64,8 +68,25 @@ Tiếp [phiên 44](phien-44.md). Không có migration mới. Repo chỉ có nhá
 - Vẽ lại khi `docChanged`, khi có meta `pageGapsKey` (phân trang đổi), hoặc `tocRefresh`. Bấm dòng: đặt con trỏ trước rồi mới cuộn.
 - Xuất Word: đề mục có `outlineLevel`, mục lục là `TableOfContents` (`useAppliedParagraphOutlineLevel`), Document có `features.updateFields`. In/HTML chỉ liệt kê đề mục, không có số trang.
 
+## Chi phí AI (xem `docs/bao-cao-chi-phi-ai.md`, 2 mục cuối)
+
+- agy đo lại trên opencode (nhánh đã merge, đã xoá): đề THPT ~25 điểm theo script, **trên web ~27–29** (web gửi thêm khung chương trình + quy tắc nguồn); 15 slide ~35; lượt hỏi "soạn đề đi" ~11 điểm. Script mới: `scripts/eval-ask-exam.mjs` (2 lượt hỏi → soạn).
+- Hai chỗ rút prompt, đo bằng DeepSeek chính hãng (`EVAL_MODEL=deepseek-flash`):
+  - `figureGuideFor`: đề có "lớp 6–12 / THCS / THPT / tốt nghiệp…" (`UPPER_GRADE`) bỏ mục 27 (tranh đếm) và 28 (đồng hồ). Prompt đề Toán THPT 8.309 → 7.064 token.
+  - `needsAskFirst` + `ASK_ONLY_SYSTEM` (`AiAskPanel.tsx`): lượt đầu, tài liệu trống, yêu cầu < 80 ký tự không có tên môn → gọi prompt hỏi ngắn (~500 token thay vì ~10.500). Model đoán được môn thì trả `{"action":"proceed"}` và `AiPanel` chạy luồng đầy đủ.
+
+## Tìm trên web
+
+- Nút quả địa cầu trên ô nhập AI (soạn đề, slide; không có ở bảng vẽ). Mặc định tắt, không nhớ qua lần mở trang.
+- Bật lần đầu: `dialog.choose` (nút phụ `altLabel` mới trong `src/components/Dialog.tsx`) — Huỷ / "Bật, không hỏi lại" (localStorage `dethinhbien-web-search-warned`) / Bật.
+- Khi bật, trước lượt soạn chính: `callLlm(..., { webSearch: true, maxTokens: 4000 })` với `WEB_SEARCH_SYSTEM` (tóm tắt ≤ 25 dòng số liệu + nguồn). Kết quả nối vào system prompt mục "NGUỒN TÌM TRÊN WEB"; `citations` → `turn.webSources`, hiện thành link trong nút "Nguồn".
+- Server (`server/llmProxy.ts`): `body.webSearch` → chỉ một target DeepSeek chính hãng, gửi `tools: [{type: "deepseek_web_search"}]`, `thinking: {type: "disabled"}` (bật suy luận = tìm nhiều bước, đắt 2–4 lần). Trả `citations` từ `message.annotations` (`url_citation`). `requestHash` thêm tiền tố `web:` vào model.
+- Đo: 5 câu Địa lí, lượt tìm 12.456 token (~12 điểm, 4 nguồn) + lượt soạn 9.573. Ước tính đề/bộ slide đầy đủ có tìm: ~30–40 điểm (chưa đo).
+- Tài liệu API: `https://api-docs.deepseek.com/guides/build_a_chatbot`.
+
 ## Lưu ý cách làm
 
 - Script Python có `\r\n` hoặc `\n` trong chuỗi, viết qua heredoc của Bash, hay hỏng (chuỗi bị cắt dòng). Viết script bằng công cụ Write, dùng `chr(13)`/`chr(10)`.
 - Thử module trong trình duyệt: `await import('/src/...')`; thư viện npm lấy ở `/node_modules/.vite/deps/<tên>.js`. `npx tsx` chạy script ngoài thư mục dự án thì không nhận alias `@/`.
+- Đổi `server/llmProxy.ts` phải khởi động lại dev server (Vite không nạp lại middleware).
 - rAF không chạy khi pane trình duyệt không vẽ, nên mục lục trống trong lúc thử. Đó không phải lỗi.
