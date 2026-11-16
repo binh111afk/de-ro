@@ -2,7 +2,7 @@
 
 Chỉ mở phiên liên quan đến việc đang làm. Mới nhất ở trên.
 
-- [phiên 44](phien-44.md): bỏ chữ thừa UI + trang chủ; admin ghi điểm AI đúng như người dùng thấy; hộp xác nhận qua portal; **tranh đếm đồ vật, đồng hồ, hình vật trong hình thực tế** (kho 114 hình nét vector + kho dùng chung R2 `fig/`); logo OAuth chờ lưu
+- [phiên 44](phien-44.md): bỏ chữ thừa UI + trang chủ; admin ghi điểm AI đúng như người dùng thấy; hộp xác nhận qua portal; **tranh đếm đồ vật, đồng hồ, hình vật trong hình thực tế** (kho 114 hình nét vector + kho dùng chung R2 `fig/`)
 - [phiên 43](phien-43.md): **vá Strix lần 3–5** (đề một lần bắt đăng nhập, đề giấu đáp án ẩn điểm + nút `showScore`, JWT ES256 kiểm tại server, chặn tài khoản khoá ở mọi API + tầng DB, hạn mức lưu trữ nguyên tử, moderator không khôi phục đề đã gỡ); **Vercel `sin1`** (admin nhanh hẳn); **trang 404**; lưu ý chạy Strix chỉ đọc, worktree khi agy làm song song
 - [phiên 42](phien-42.md): số trang (Ribbon), vá Strix lần 1–2, DeepSeek chính hãng thay Mercury, giảm chi phí AI, hướng sửa gốc Strix lần 3
 - [phiên 41](phien-41.md): **đăng nhập Google** (Production, xác minh thương hiệu, trang Quyền riêng tư/Điều khoản sơ bộ), báo trùng email; **SEO** (robots, sitemap đã gửi Search Console); **10 bộ màu slide sáng** (28 bộ); **tải sau phần nặng** ở slide (`graphicsMeta`, `loadGraphics`, `slideIcons`), bảng vẽ, soạn đề (`loadTools`); **`/api/quota`**; **vá 4 lỗi Strix** (trần maxTokens + model, biên nhận gắn yêu cầu, tệp `doc/` chỉ chủ tệp, chặn spam token); thanh Tìm kiểu Docs (chưa commit)

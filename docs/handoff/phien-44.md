@@ -6,11 +6,10 @@ Tiếp [phiên 43](phien-43.md). Không có migration mới. Repo chỉ có nhá
 
 ## Việc còn treo
 
-1. **Logo OAuth Google:** file nền trong suốt `public/brand/logo-120-trong-suot.png` (chưa commit). Lưu ở Google Auth Platform › Branding báo lỗi "An error occurred when saving the branding information" 2 lần trong khung trình duyệt của app — người dùng thử lại bằng Chrome của mình. Nếu vẫn lỗi: nghi domain `ddcyhsxytbcdpgpggexh.supabase.co` trong Authorized domains (app đã xác minh, đổi logo phải xác minh lại).
-2. **Agnes gói miễn phí** giới hạn tần suất (429 sau ~10 ảnh, mở lại sau một lúc). Server đã tự rơi sang Xkiro/SenseNova; nút vẽ ảnh slide cũng chịu chung.
-3. **Chưa thử đầu-cuối bằng AI soạn đề thật**: đề Toán lớp 2 có tranh đếm / đồng hồ, đề toán thực tế có `hình <vật>`; vật ngoài kho (`en`) trên bản deploy (cần R2 env trên Vercel — đã có từ trước).
-4. Chân thang hơi chạm qua mép đất; "tháp" trông giống hải đăng.
-5. File chưa commit, hỏi trước khi đụng: `.claude/`, `.rls-audit/`, `.strix/`, `public/brand/logo-120*.png`, `scripts/probe-imports.mts`.
+1. **Agnes gói miễn phí** giới hạn tần suất (429 sau ~10 ảnh, mở lại sau một lúc). Server đã tự rơi sang Xkiro/SenseNova; nút vẽ ảnh slide cũng chịu chung.
+2. **Chưa thử đầu-cuối bằng AI soạn đề thật**: đề Toán lớp 2 có tranh đếm / đồng hồ, đề toán thực tế có `hình <vật>`; vật ngoài kho (`en`) trên bản deploy (cần R2 env trên Vercel — đã có từ trước).
+3. Chân thang hơi chạm qua mép đất; "tháp" trông giống hải đăng.
+4. File chưa commit, hỏi trước khi đụng: `.claude/`, `.rls-audit/`, `.strix/`, `public/brand/logo-120*.png`, `scripts/probe-imports.mts`.
 
 ## Đã làm (đã push)
 
