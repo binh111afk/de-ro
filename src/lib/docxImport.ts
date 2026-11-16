@@ -5,11 +5,42 @@
  * Kiểu đoạn (styles.xml) được trải ra theo chuỗi basedOn, đè bằng định dạng trực tiếp.
  */
 import JSZip from 'jszip'
+import { ommlToLatex } from './ommlLatex'
 import type { ExamBlock, FormatAttrs, Mark, Span, TableCellData } from '@/data/docTypes'
 
 const W = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'
 const TW_PX = 15 // twip → px (96 dpi)
 const EMU_PX = 9525
+const MAX_BYTES = 12 * 1024 * 1024
+/** ảnh lớn hơn thì thu lại (cạnh dài ≤ IMG_MAX px), để tài liệu không phình */
+const IMG_SHRINK_BYTES = 250 * 1024
+const IMG_MAX = 1600
+
+async function shrink(blob: Blob, type: string): Promise<Blob> {
+  if (blob.size <= IMG_SHRINK_BYTES || type === 'image/svg+xml' || type === 'image/gif') return blob
+  try {
+    const bmp = await createImageBitmap(blob)
+    const k = Math.min(1, IMG_MAX / Math.max(bmp.width, bmp.height))
+    const c = document.createElement('canvas')
+    c.width = Math.round(bmp.width * k)
+    c.height = Math.round(bmp.height * k)
+    c.getContext('2d')!.drawImage(bmp, 0, 0, c.width, c.height)
+    bmp.close()
+    // png có thể trong suốt: webp giữ được nền trong; ảnh chụp: jpeg
+    const out = await new Promise<Blob | null>((res) => c.toBlob(res, type === 'image/png' ? 'image/webp' : 'image/jpeg', 0.85))
+    return out && out.size < blob.size ? out : blob
+  } catch {
+    return blob
+  }
+}
+
+const toDataUrl = (b: Blob) =>
+  new Promise<string>((res, rej) => {
+    const fr = new FileReader()
+    fr.onload = () => res(String(fr.result))
+    fr.onerror = () => rej(fr.error)
+    fr.readAsDataURL(b)
+  })
 
 const kids = (el: Element | null | undefined, name?: string) =>
   el ? Array.from(el.children).filter((c) => !name || c.localName === name) : []
@@ -177,7 +208,8 @@ async function imageOf(ctx: Ctx, rid: string): Promise<string | null> {
       const ext = path.split('.').pop()?.toLowerCase() ?? ''
       const type = ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg' : ext === 'png' ? 'image/png' : ext === 'gif' ? 'image/gif' : ext === 'svg' ? 'image/svg+xml' : ext === 'webp' ? 'image/webp' : ''
       if (!f || !type) return null // EMF/WMF: trình duyệt không vẽ được
-      return `data:${type};base64,${await f.async('base64')}`
+      const blob = new Blob([await f.async('uint8array')], { type })
+      return toDataUrl(await shrink(blob, type))
     })())
   }
   return ctx.media.get(path)!
@@ -240,6 +272,14 @@ async function runsOf(ctx: Ctx, el: Element, pr: RunProps, lines: Line[]) {
             push({ text: '', image: { src, ...(width ? { width } : {}) } })
           }
         }
+      }
+    } else if (n === 'oMath') {
+      const tex = ommlToLatex(c)
+      if (tex) push({ text: `$${tex}$` })
+    } else if (n === 'oMathPara') {
+      for (const m of kids(c, 'oMath')) {
+        const tex = ommlToLatex(m)
+        if (tex) push({ text: `$${tex}$` })
       }
     } else if (['hyperlink', 'ins', 'smartTag', 'fldSimple', 'customXml', 'sdt', 'sdtContent'].includes(n)) {
       await runsOf(ctx, n === 'sdt' ? kid(c, 'sdtContent') ?? c : c, pr, lines)
@@ -411,6 +451,7 @@ function readNumbering(xml: Document | null): Map<string, NumLevel> {
 }
 
 export async function docxToBlocks(file: Blob): Promise<ExamBlock[]> {
+  if (file.size > MAX_BYTES) throw new Error('Tệp quá lớn (tối đa 12 MB).')
   const zip = await JSZip.loadAsync(file)
   const parse = async (path: string) => {
     const s = await zip.file(path)?.async('string')
