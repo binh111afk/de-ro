@@ -533,7 +533,7 @@ export default function Quiz() {
       {/* submit confirm */}
       {confirm ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/35 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-[400px] rounded-[8px] bg-canvas p-6 shadow-float anim-sheet">
+          <div className="w-full max-w-[400px] rounded-[8px] bg-canvas p-6 shadow-float anim-pop">
             <p className="font-display text-[20px] font-semibold text-ink">Nộp bài thi?</p>
             <p className="mt-2.5 text-[14px] leading-relaxed text-ink-2">
               Bạn đã trả lời{' '}

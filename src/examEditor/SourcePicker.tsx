@@ -149,7 +149,7 @@ export function SourcePicker({
           role="dialog"
           aria-modal="true"
           aria-label="Thêm nguồn cho trợ lý AI"
-          className="anim-sheet flex max-h-[min(640px,92dvh)] w-full flex-col rounded-t-[12px] bg-surface shadow-float sm:max-w-[560px] sm:rounded-[8px]"
+          className="anim-pop flex max-h-[min(640px,92dvh)] w-full flex-col rounded-t-[12px] bg-surface shadow-float sm:max-w-[560px] sm:rounded-[8px]"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex items-start justify-between gap-4 px-5 pt-5 sm:px-6 sm:pt-6">

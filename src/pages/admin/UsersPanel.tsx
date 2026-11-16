@@ -954,7 +954,7 @@ function GrantCreditsModal({
       role="dialog"
       aria-modal="true"
     >
-      <div className="w-full max-w-md rounded-[8px] border border-line bg-surface p-6 shadow-2xl">
+      <div className="anim-pop w-full max-w-md rounded-[8px] border border-line bg-surface p-6 shadow-2xl">
         <div className="flex items-center justify-between border-b border-line pb-3">
           <div className="flex items-center gap-2">
             <Coins className="size-5 text-clay" />

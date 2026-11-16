@@ -289,7 +289,7 @@ function ReportExamButton({ examId }: { examId: string }) {
         <Portal>
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 p-4 backdrop-blur-xs">
           <div
-            className="w-full max-w-md rounded-[10px] border border-line bg-surface p-6 shadow-float anim-sheet"
+            className="w-full max-w-md rounded-[10px] border border-line bg-surface p-6 shadow-float anim-pop"
             role="dialog"
             aria-modal="true"
           >

@@ -358,7 +358,7 @@ function PublishModal({
         role="dialog"
         aria-modal="true"
         aria-label="Đăng đề"
-        className="anim-sheet w-full max-w-[520px] rounded-[8px] bg-surface p-7 shadow-float"
+        className="anim-pop w-full max-w-[520px] rounded-[8px] bg-surface p-7 shadow-float"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start justify-between gap-4">

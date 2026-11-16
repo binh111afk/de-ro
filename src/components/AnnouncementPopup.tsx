@@ -74,7 +74,7 @@ export function AnnouncementPopup({ items, onPreviewClose }: { items: Announceme
             touchX.current = null
             if (Math.abs(dx) > 50) go(dx < 0 ? 1 : -1)
           }}
-          className="relative flex max-h-[90dvh] w-full max-w-[480px] flex-col md:max-w-[720px] overflow-hidden rounded-[10px] border border-line bg-surface shadow-xl"
+          className="anim-pop relative flex max-h-[90dvh] w-full max-w-[480px] flex-col md:max-w-[720px] overflow-hidden rounded-[10px] border border-line bg-surface shadow-xl"
         >
           <button
             type="button"

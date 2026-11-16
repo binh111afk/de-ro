@@ -115,7 +115,7 @@ function DialogView({ spec }: { spec: Spec }) {
         aria-labelledby={title ? titleId : undefined}
         aria-describedby={bodyId}
         onKeyDown={onKeyDown}
-        className="anim-sheet my-auto w-full max-w-[440px] rounded-[8px] bg-surface p-6 shadow-float sm:p-7"
+        className="anim-pop my-auto w-full max-w-[440px] rounded-[8px] bg-surface p-6 shadow-float sm:p-7"
       >
         {title ? <h2 id={titleId} className="font-display text-[20px] font-semibold leading-snug text-ink">{title}</h2> : null}
         <p

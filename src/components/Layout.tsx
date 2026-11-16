@@ -321,7 +321,7 @@ export function Footer() {
       {feedbackOpen ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 p-4 backdrop-blur-xs">
           <div
-            className="max-h-[90dvh] w-full max-w-md overflow-y-auto rounded-[10px] border border-line bg-surface p-6 shadow-float anim-sheet"
+            className="max-h-[90dvh] w-full max-w-md overflow-y-auto rounded-[10px] border border-line bg-surface p-6 shadow-float anim-pop"
             role="dialog"
             aria-modal="true"
           >

@@ -238,7 +238,7 @@ function AttachmentsModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-ink/40 px-5 py-8 backdrop-blur-sm" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-      <div role="dialog" aria-modal="true" aria-label="File đính kèm" className="anim-sheet my-auto w-full max-w-[460px] rounded-[8px] bg-surface p-6 shadow-float sm:p-7">
+      <div role="dialog" aria-modal="true" aria-label="File đính kèm" className="anim-pop my-auto w-full max-w-[460px] rounded-[8px] bg-surface p-6 shadow-float sm:p-7">
         <div className="flex items-start justify-between gap-4">
           <div>
             <h2 className="font-display text-[20px] font-semibold leading-snug text-ink">File đính kèm</h2>

@@ -15,7 +15,7 @@ function Modal({ title, onClose, children, footer, wide }: { title: string; onCl
     <div className="fixed inset-0 z-[100] grid place-items-center bg-black/30 p-4" onMouseDown={onClose}>
       <div
         role="dialog" aria-modal="true" aria-label={title}
-        className={`flex max-h-[90vh] w-full flex-col rounded-[12px] bg-surface shadow-xl ${wide ? 'max-w-[760px]' : 'max-w-[520px]'}`}
+        className={`anim-pop flex max-h-[90vh] w-full flex-col rounded-[12px] bg-surface shadow-xl ${wide ? 'max-w-[760px]' : 'max-w-[520px]'}`}
         onMouseDown={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between border-b border-line px-4 py-3">

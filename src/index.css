@@ -1012,6 +1012,7 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .anim-crawl,
+  .anim-pop,
   .anim-tab-in,
   .ribbon-tab-page,
   .ai-attachment,

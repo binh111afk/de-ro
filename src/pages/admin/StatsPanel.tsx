@@ -471,7 +471,7 @@ export function StatsPanel({ me: _me }: StatsPanelProps) {
             aria-modal="true"
             aria-labelledby="online-users-modal-title"
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-md rounded-[8px] border border-line bg-surface p-5 shadow-xl sm:p-6"
+            className="anim-pop relative w-full max-w-md rounded-[8px] border border-line bg-surface p-5 shadow-xl sm:p-6"
           >
             <div className="flex items-start justify-between gap-3">
               <div>

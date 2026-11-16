@@ -3306,6 +3306,7 @@
     box-shadow: var(--shadow-modal-strong);
     font-family: var(--gs-font-sans);
     color: var(--text);
+    animation: pop 0.4s var(--ease-bounce) both;
   }
 
   .rb-modal__header {
@@ -4124,6 +4125,7 @@
   border-radius: 14px;
   background: var(--color-surface);
   box-shadow: 0 24px 80px -24px rgb(0 0 0 / 55%);
+  animation: pop 0.4s var(--ease-bounce) both;
 }
 
 .ai-html-modal__head {
