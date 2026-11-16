@@ -42,6 +42,7 @@ import { AI_ATTACH_EVENT, takeAiRefs, type AiRef } from '@/lib/aiAttach'
 import { extractJson } from '@/lib/llm'
 import aiThinkingAnim from '@/assets/ai-assistant.svg'
 import { Markdown } from './markdown'
+import { ASK_DEFAULT, ASK_RULE, AiAskPanel, askHistoryText, parseAsk, type AiAsk } from './AiAskPanel'
 import { IconClose, IconEnter, IconPaperclip, IconStop } from './icons'
 
 type AttachKind = 'doc' | 'sheet' | 'pdf' | 'image'
@@ -162,6 +163,9 @@ export interface ChatTurn {
   stepFailed?: boolean
   /** soạn đề: ghi chú ngắn cạnh từng bước (vd "3 nguồn") */
   stepNotes?: Record<number, string>
+  /** AI hỏi lại vì yêu cầu mơ hồ; 'open' = panel hỏi đang chờ trả lời */
+  ask?: AiAsk
+  askState?: 'open' | 'done'
 }
 
 /** các bước hiện trong khung chat khi AI soạn đề */
@@ -450,6 +454,7 @@ function historyOf(turns: ChatTurn[]): LlmMessage[] {
       role: t.role === 'user' ? 'user' : 'assistant',
       content:
         t.text +
+        (t.ask ? `\n${askHistoryText(t.ask)}` : '') +
         (t.files?.length
           ? `\n[Tệp đính kèm: ${t.files.map((f) => f.name).join(', ')}]`
           : ''),
@@ -967,8 +972,8 @@ export function AiPanel({
     return () => ro.disconnect()
   }, [input])
 
-  const send = useCallback(async () => {
-    const text = input.trim()
+  const send = useCallback(async (override?: string) => {
+    const text = (override ?? input).trim()
     if ((!text && files.length === 0 && refs.length === 0) || busy) return
     const sentRefs = refs
     const refNote = sentRefs.length
@@ -987,7 +992,9 @@ export function AiPanel({
     const displayFiles = sentFiles.map((f) => ({ ...f, file: undefined }))
     const userTurn: ChatTurn = { id: `u${Date.now()}`, role: 'user', text, files: displayFiles, refs: sentRefs.map((r) => r.label) }
     const botId = `a${Date.now()}`
-    const intent = sentFiles.length && !text.trim() ? 'doc' : detectIntent(text, mode)
+    // trả lời panel hỏi lại = tiếp tục yêu cầu soạn ban đầu
+    const answeringAsk = override != null && turns[turns.length - 1]?.ask != null
+    const intent = answeringAsk || (sentFiles.length && !text.trim()) ? 'doc' : detectIntent(text, mode)
     setTurns((t) => [
       ...t,
       userTurn,
@@ -996,7 +1003,7 @@ export function AiPanel({
     const examSteps = intent === 'doc' && mode === 'exam'
     const patchTurn = (p: (turn: ChatTurn) => Partial<ChatTurn>) =>
       setTurns((t) => t.map((turn) => (turn.id === botId ? { ...turn, ...p(turn) } : turn)))
-    setInput('')
+    if (override == null) setInput('')
     setFiles([])
     setRefs([])
     setBusy(true)
@@ -1009,7 +1016,9 @@ export function AiPanel({
     let pack: SourcePack = { tier: 0, items: [], warnings: [] }
     const sentPicked = picked
     const examDoc = intent === 'doc' && mode === 'exam'
-    if (examDoc || sentPicked.length) {
+    // yêu cầu cụt lủn ("soạn đề đi") thường bị hỏi lại: khỏi tìm nguồn web vô ích
+    const vague = examDoc && !sentFiles.length && !sentPicked.length && text.split(/\s+/).length < 5 && !turns.length
+    if ((examDoc && !vague) || sentPicked.length) {
       try {
         if (examDoc) pack = await buildSourcePack(text, sentFiles, sentPicked)
         else {
@@ -1049,6 +1058,9 @@ export function AiPanel({
         : ''
 
     const history = historyOf(turns)
+    // vừa hỏi lại xong thì không hỏi nữa; bảng vẽ và slide HTML không dùng panel hỏi
+    const justAsked = turns.slice(-2).some((t) => t.ask)
+    const askRule = mode === 'board' || justAsked ? '' : ASK_RULE
     const slideDoc = mode === 'slide' && intent === 'doc'
     const htmlMode = mode === 'slide' && intent === 'doc' && slideFormat === 'html'
     const system =
@@ -1057,10 +1069,8 @@ export function AiPanel({
         : mode === 'slide'
         ? (htmlMode
             ? HTML_SYSTEM
-            : slideDoc
-              ? SLIDE_PLAN_SYSTEM
-              : SLIDE_SYSTEM) + (contextSummary ? `\nBài trình bày hiện tại: ${contextSummary}` : '')
-        : examSystemPrompt(documentDigest, `${text}\n${contextSummary ?? ''}`) +
+            : (slideDoc ? SLIDE_PLAN_SYSTEM : SLIDE_SYSTEM) + askRule) + (contextSummary ? `\nBài trình bày hiện tại: ${contextSummary}` : '')
+        : examSystemPrompt(documentDigest, `${text}\n${contextSummary ?? ''}`) + askRule +
           (contextSummary ? `\nTài liệu hiện tại: ${contextSummary}` : '')
 
     const messages: LlmMessage[] = [
@@ -1099,6 +1109,11 @@ export function AiPanel({
         // dàn ý kéo dài 30–60s (dễ vượt timeout proxy) mà không nội dung hơn.
         reasoningEffort: mode === 'slide' ? AI_EFFORT.slide : AI_EFFORT.exam,
       })
+      const ask = askRule && !htmlMode ? parseAsk(res.content) : null
+      if (ask) {
+        patchTurn(() => ({ text: ask.intro || 'Mình cần biết thêm vài điều trước khi soạn.', ask, askState: 'open', pending: false, stepAt: undefined, sources: undefined, sourceNote: undefined }))
+        return
+      }
       if (examSteps) {
         patchTurn(() => ({ stepAt: 3 }))
         // nhường một khung hình để bước "Kiểm tra" kịp hiện trước khi áp đề (việc áp chạy đồng bộ)
@@ -1439,6 +1454,13 @@ export function AiPanel({
   )
 
   const empty = turns.length === 0
+  const lastTurn = turns[turns.length - 1]
+  const openAsk = !busy && lastTurn?.askState === 'open' && lastTurn.ask ? lastTurn : null
+  const answerAsk = (reply: string) => {
+    if (!openAsk) return
+    setTurns((t) => t.map((turn) => (turn.id === openAsk.id ? { ...turn, askState: 'done' } : turn)))
+    void send(reply)
+  }
 
   return (
     <div className="ai-panel">
@@ -1556,6 +1578,14 @@ export function AiPanel({
             <Button variant="primary" size="sm">Đăng nhập</Button>
           </Link>
         </div>
+      ) : openAsk?.ask ? (
+        <AiAskPanel
+          key={openAsk.id}
+          ask={openAsk.ask}
+          request={turns.filter((t) => t.role === 'user').map((t) => t.text).join(' ')}
+          onSubmit={answerAsk}
+          onSkip={() => answerAsk(ASK_DEFAULT.replace('Những gì chưa chọn: l', 'L'))}
+        />
       ) : (
       <div className="ai-composer">
         <div className="ai-input-box">
