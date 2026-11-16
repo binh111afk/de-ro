@@ -29,7 +29,7 @@ const TABS: Array<{
     img: '/landing/hero-exam.webp',
     img2x: '/landing/hero-exam@2x.webp',
     alt: 'Trình soạn đề thi Toán lớp 10 trên đề rõ với công thức KaTeX và đồ thị parabol',
-    caption: 'Gõ thẳng lên trang A4, công thức và đồ thị giữ nguyên khi xuất Word.',
+    caption: 'Gõ trên trang A4. Xuất ra Word vẫn giữ nguyên công thức và đồ thị.',
   },
   {
     key: 'slide',
@@ -39,7 +39,7 @@ const TABS: Array<{
     img: '/landing/hero-slide.webp',
     img2x: '/landing/hero-slide@2x.webp',
     alt: 'Trình soạn slide bài giảng Định luật Bảo toàn Năng lượng trên đề rõ',
-    caption: 'Dàn ý thành slide, sửa trên khung, xuất PowerPoint mang lên lớp.',
+    caption: 'Làm slide từ dàn ý, xuất PowerPoint để chiếu trên lớp.',
   },
   {
     key: 'board',
@@ -49,7 +49,7 @@ const TABS: Array<{
     img: '/landing/hero-board.webp',
     img2x: '/landing/hero-board@2x.webp',
     alt: 'Bảng vẽ giấy ô li: đồ thị parabol dựng bằng công cụ, bảng giá trị và ghi chú viết tay',
-    caption: 'Chèn đồ thị, viết lời giải, khoanh, tô ngay bên cạnh.',
+    caption: 'Chèn đồ thị rồi viết lời giải bằng bút ngay trên bảng.',
   },
 ]
 
@@ -87,11 +87,11 @@ export function HeroSection() {
           <div className="min-w-0 lg:col-span-5">
 
             <h1 style={{ '--d': '80ms' } as React.CSSProperties} className="land-rise text-[clamp(1.75rem,3.6vw,2.75rem)] font-bold leading-[1.12] tracking-[-0.025em] text-ink">
-              Đề thi, bài giảng, bảng dạy — cùng một chỗ.
+              Soạn đề thi, slide bài giảng và bảng vẽ
             </h1>
 
             <p style={{ '--d': '170ms' } as React.CSSProperties} className="land-rise mt-4 text-[15px] leading-[1.65] text-ink-2 sm:text-[16px]">
-              Soạn đề, làm slide, chữa bài trên bảng. Xuất Word, PowerPoint hoặc giao bài online.
+              Đề in ra đúng mẫu hoặc xuất Word, slide xuất PowerPoint. Muốn cho học sinh làm online thì gửi link.
             </p>
 
             <div style={{ '--d': '260ms' } as React.CSSProperties} className="land-rise mt-6 flex flex-col items-start gap-3 min-[460px]:flex-row min-[460px]:flex-wrap min-[460px]:items-center">

@@ -3,30 +3,30 @@ import { ArrowRight, Check, FileText, PenTool, Presentation } from 'lucide-react
 import { useReveal } from './reveal'
 
 const EXAM_POINTS = [
-  'Trang A4 thật, câu hỏi tự đánh số theo Phần I – II – III',
+  'Soạn trên trang A4, câu hỏi tự đánh số theo Phần I, II, III',
   'Gõ công thức LaTeX, chèn hình từ bộ công cụ vẽ',
-  'Lập ma trận, đặc tả; xáo câu và đáp án ra nhiều mã đề',
-  'Xuất Word hoặc in thẳng, công thức và hình không vỡ',
+  'Lập ma trận, bản đặc tả; trộn câu và đáp án ra nhiều mã đề',
+  'Xuất Word hoặc in trực tiếp, công thức và hình giữ nguyên',
 ]
 
 const SECONDARY_WORKSPACES = [
   {
-    id: 'slide',
+    id: 'slide' as const,
     badge: 'Slide · .pptx',
     title: 'Slide bài giảng',
     icon: Presentation,
-    desc: 'Đưa dàn ý cho AI hoặc tự dựng từng trang. Công thức, hình vẽ đặt thẳng lên slide, xuất ra PowerPoint.',
+    desc: 'Nhờ AI làm từ dàn ý hoặc tự làm từng trang. Chèn được công thức, hình vẽ và xuất ra PowerPoint.',
     bullets: [
-      'Chủ đề sáng, tối cho phòng học',
-      'Đồ thị, mạch điện chèn như trong đề',
+      'Có mẫu nền sáng và nền tối',
+      'Chèn đồ thị, mạch điện giống bên soạn đề',
     ],
   },
   {
-    id: 'board',
+    id: 'board' as const,
     badge: 'Bảng vẽ',
     title: 'Bảng vẽ',
     icon: PenTool,
-    desc: 'Viết tay trên giấy trơn hay ô li. Giữ bút một nhịp là nét tay thành đường thẳng, đường tròn.',
+    desc: 'Viết tay trên giấy trơn hoặc ô li. Vẽ xong giữ bút một chút, nét tay sẽ được nắn thành đường thẳng hoặc đường tròn.',
     bullets: [
       'Thước kẻ, thước đo góc, compa',
       'Chèn hình từ bộ công cụ vẽ',
@@ -47,10 +47,10 @@ export function WorkspaceSection() {
             Ba chế độ
           </p>
           <h2 className="mt-2 text-[clamp(1.45rem,2.7vw,2.1rem)] font-bold leading-[1.18] tracking-[-0.02em] text-ink">
-            Một tiết dạy, ba tab.
+            Đề, slide và bảng vẽ mở chung một chỗ
           </h2>
           <p className="mt-3 text-[15px] leading-[1.65] text-ink-2">
-            Đề kiểm tra, slide và bảng của cùng một bài mở cạnh nhau, không phải nhảy qua lại giữa Word, PowerPoint và phần mềm bảng.
+            Mỗi thứ mở thành một tab trong trang soạn, chuyển qua lại như tab trình duyệt.
           </p>
         </div>
 
@@ -72,7 +72,7 @@ export function WorkspaceSection() {
                 Đề thi đúng mẫu
               </h3>
               <p className="mt-2 text-[14.5px] leading-[1.65] text-ink-2">
-                Tiêu đề Sở, Trường; trắc nghiệm, Đúng/Sai, trả lời ngắn, tự luận. Căn lề sẵn, in là dùng.
+                Có sẵn tiêu đề Sở, Trường và đủ các dạng câu: trắc nghiệm, Đúng/Sai, trả lời ngắn, tự luận. Lề trang đã căn, in ra dùng được ngay.
               </p>
 
               <ul className="stagger-kids mt-5 space-y-2.5 border-t border-line pt-5">
@@ -114,6 +114,7 @@ export function WorkspaceSection() {
                       </span>
                       <Link
                         to="/soan-de"
+                        state={{ create: ws.id }}
                         className="inline-flex items-center gap-1 text-[13px] font-semibold text-clay hover:text-clay-deep"
                       >
                         Mở ngay

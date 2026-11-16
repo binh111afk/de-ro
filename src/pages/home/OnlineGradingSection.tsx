@@ -15,10 +15,10 @@ export function OnlineGradingSection() {
             Giao bài, chấm bài
           </p>
           <h2 className="mt-2 text-[clamp(1.45rem,2.7vw,2.1rem)] font-bold leading-[1.18] tracking-[-0.02em] text-ink">
-            Làm bài trên điện thoại, hoặc chấm phiếu giấy.
+            Cho học sinh làm online hoặc chấm phiếu giấy
           </h2>
           <p className="mt-3 text-[15px] leading-[1.65] text-ink-2">
-            Đề soạn xong có thể gửi link cho học sinh làm có tính giờ, hoặc in ra rồi chấm phiếu.
+            Gửi link để học sinh làm bài có tính giờ, hoặc in đề ra rồi chấm phiếu trả lời.
           </p>
         </div>
 
@@ -53,10 +53,10 @@ export function OnlineGradingSection() {
                   <span>Đề online</span>
                 </div>
                 <h3 className="mt-2 text-[19px] font-bold leading-snug text-ink">
-                  Nộp bài là có điểm
+                  Chấm điểm tự động
                 </h3>
                 <p className="mt-2 text-[14px] leading-[1.6] text-ink-2">
-                  Trắc nghiệm, Đúng/Sai, trả lời ngắn. Học sinh thấy đồng hồ và bảng câu đã làm.
+                  Có trắc nghiệm, Đúng/Sai, trả lời ngắn. Học sinh thấy đồng hồ đếm ngược và các câu đã làm.
                 </p>
               </div>
               <div className="mt-5 border-t border-line pt-4">
@@ -101,10 +101,10 @@ export function OnlineGradingSection() {
                   <span>Chấm trắc nghiệm</span>
                 </div>
                 <h3 className="mt-2 text-[19px] font-bold leading-snug text-ink">
-                  Chụp phiếu, ra điểm
+                  Chấm phiếu bằng ảnh chụp
                 </h3>
                 <p className="mt-2 text-[14px] leading-[1.6] text-ink-2">
-                  Lấy đáp án từ đề đã soạn, chụp hoặc nhập phiếu từng em, lưu bảng điểm cả lớp.
+                  Lấy đáp án từ đề đã soạn, chụp hoặc nhập phiếu của từng em, rồi lưu bảng điểm cả lớp.
                 </p>
               </div>
               <div className="mt-5 border-t border-line pt-4">

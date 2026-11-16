@@ -64,10 +64,10 @@ export function DrawingToolsSection() {
               Công cụ vẽ hình
             </p>
             <h2 className="mt-2 text-[clamp(1.45rem,2.7vw,2.1rem)] font-bold leading-[1.18] tracking-[-0.02em] text-ink">
-              Gõ thông số, ra hình như sách giáo khoa.
+              Vẽ hình theo đúng kiểu sách giáo khoa
             </h2>
             <p className="mt-3 text-[15px] leading-[1.65] text-ink-2">
-              Bảng biến thiên, hình chóp, mạch điện, phả hệ… Hình nét ở mọi cỡ, chèn được vào đề, slide, bảng. Cần sửa thì nháy đúp vào hình.
+              Bảng biến thiên, hình chóp, mạch điện, sơ đồ phả hệ… Nhập số liệu là có hình, chèn được vào đề, slide và bảng vẽ. Muốn sửa thì nháy đúp vào hình.
             </p>
           </div>
 

@@ -1,11 +1,10 @@
-import { Link } from 'react-router-dom'
-import { ArrowRight, Check, Smartphone } from 'lucide-react'
+import { Check, Smartphone } from 'lucide-react'
 import { useReveal } from './reveal'
 
 const MOBILE_NOTES = [
-  'Vẫn gọn khi bạn để cỡ chữ máy to',
-  'Xem trang A4 như lúc in',
-  'Nhờ AI thêm câu hỏi ngay trên điện thoại',
+  'Giao diện không vỡ khi để cỡ chữ lớn',
+  'Xem trước trang A4 như bản in',
+  'Dùng trợ lý AI ngay trên điện thoại',
 ]
 
 export function MobileSection() {
@@ -25,11 +24,11 @@ export function MobileSection() {
             </div>
 
             <h2 className="mt-4 text-[clamp(1.4rem,2.5vw,2rem)] font-bold leading-[1.2] tracking-[-0.02em] text-ink">
-              Sửa đề lúc không ngồi máy tính.
+              Sửa đề trên điện thoại
             </h2>
 
             <p className="mt-3 text-[15px] leading-[1.65] text-ink-2">
-              Mở đúng đề đang soạn trên máy tính, sửa một câu, thêm một hình.
+              Đề soạn trên máy tính mở được trên điện thoại để sửa câu, thêm hình.
             </p>
 
             <ul className="stagger-kids mt-5 space-y-2.5 border-t border-line pt-5">
@@ -40,16 +39,6 @@ export function MobileSection() {
                 </li>
               ))}
             </ul>
-
-            <div className="mt-6">
-              <Link
-                to="/soan-de"
-                className="inline-flex min-h-[40px] items-center gap-1.5 text-[14px] font-semibold text-clay hover:text-clay-deep"
-              >
-                Mở trên điện thoại
-                <ArrowRight className="h-4 w-4" aria-hidden />
-              </Link>
-            </div>
           </div>
 
           <div className="flex justify-center lg:col-span-6">

@@ -8,7 +8,7 @@ const LIBRARY_ROUTES = [
     icon: Globe,
     label: 'Đề cộng đồng',
     badge: '1.798 câu hỏi',
-    desc: 'Đề giáo viên khác chia sẻ. Lấy về một bản rồi sửa cho lớp mình.',
+    desc: 'Đề do giáo viên khác chia sẻ, lấy về sửa lại cho lớp mình được.',
     cta: 'Xem đề',
   },
   {
@@ -24,7 +24,7 @@ const LIBRARY_ROUTES = [
     icon: FolderOpen,
     label: 'Đề của tôi',
     badge: '',
-    desc: 'Đề, slide, bảng vẽ bạn đã làm. Đăng nhập là thấy trên mọi máy.',
+    desc: 'Đề, slide, bảng vẽ bạn đã làm. Đăng nhập máy nào cũng mở được.',
     cta: 'Mở',
   },
 ]
@@ -42,10 +42,10 @@ export function CommunityCtaSection() {
             Kho đề
           </p>
           <h2 className="mt-2 text-[clamp(1.45rem,2.7vw,2.1rem)] font-bold leading-[1.18] tracking-[-0.02em] text-ink">
-            Năm sau mở ra dùng tiếp.
+            Đề đã soạn được lưu lại
           </h2>
           <p className="mt-3 text-[15px] leading-[1.65] text-ink-2">
-            Đề của mình nằm một chỗ, đề của đồng nghiệp ở ngay bên cạnh.
+            Đề của bạn và đề giáo viên khác chia sẻ đều ở đây.
           </p>
         </div>
 
@@ -94,10 +94,10 @@ export function CommunityCtaSection() {
         >
           <div className="max-w-xl min-w-0">
             <h2 className="text-[clamp(1.45rem,2.6vw,2.05rem)] font-bold leading-[1.18] tracking-[-0.02em] text-deep-text">
-              Thử với tiết dạy tuần sau.
+              Dùng ngay trên trình duyệt
             </h2>
             <p className="mt-2.5 text-[14.5px] leading-[1.65] text-deep-muted sm:text-[15.5px]">
-              Mở trình duyệt là dùng, không cài đặt, không mất tiền.
+              Không cần cài đặt, không mất phí.
             </p>
           </div>
 

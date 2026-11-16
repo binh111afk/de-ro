@@ -423,9 +423,10 @@ export default function ComposeDoc() {
   const [findTab, setFindTab] = useState<'find' | 'replace' | null>(null)
   // tab khởi động (trang bắt đầu) hiện thay cho sân soạn khi được chọn
   // trang khác đã mở sẵn một tab (vd. Lưu vào trình soạn thảo ở trang xem đề) thì vào thẳng tab đó
-  const { state: navState } = useLocation() as { state: { openTab?: boolean; open?: { kind: 'exam' | 'slide' | 'board'; id: string } } | null }
+  // create: trang chủ bấm "Mở bảng vẽ" / "Mở ngay" (Slide) → mở thẳng một slide / bảng vẽ trống
+  const { state: navState } = useLocation() as { state: { openTab?: boolean; open?: { kind: 'exam' | 'slide' | 'board'; id: string }; create?: 'slide' | 'board' } | null }
   // F5 không về màn Bắt đầu: phiên (tab đang mở, tab đang xem) giữ trong sessionStorage — xem effect khôi phục bên dưới
-  const [startChosen, setStartOpen] = useState(() => (navState?.openTab ? false : (readSession()?.start ?? true)))
+  const [startChosen, setStartOpen] = useState(() => (navState?.openTab || navState?.create ? false : (readSession()?.start ?? true)))
   // không còn tab nào (mới vào trang, hoặc vừa đóng tab cuối) thì luôn ở màn Bắt đầu
   const startOpen = startChosen || tabs.length === 0
   // màn hẹp (tablet/điện thoại): trợ lý AI nổi đè lên trang nên mặc định đóng
@@ -464,6 +465,7 @@ export default function ComposeDoc() {
 
   // mở lại tab của phiên trước (F5); không tự tạo tab trống — mới vào chỉ có màn Bắt đầu, người dùng tự chọn
   const restoredRef = useRef(false)
+  const createdRef = useRef(false)
   useEffect(() => {
     restoreSession()
     restoredRef.current = true
@@ -479,6 +481,12 @@ export default function ComposeDoc() {
         const doc = myDocs.find((d) => d.id === want.id)
         if (doc) openDoc(doc)
       }
+      navigate('.', { replace: true, state: null })
+    } else if (navState?.create && !createdRef.current) {
+      // StrictMode chạy effect hai lần ở dev: không tạo hai bảng/slide
+      createdRef.current = true
+      if (navState.create === 'board') newBoard()
+      else newSlide()
       navigate('.', { replace: true, state: null })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

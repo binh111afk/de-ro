@@ -33,12 +33,12 @@ const BOARD_SPECS = [
   {
     icon: Compass,
     title: 'Thước, compa',
-    text: 'Đặt thước lên bảng rồi kẻ dọc theo mép. Quay compa ra cung tròn thật.',
+    text: 'Đặt thước lên bảng rồi kẻ theo mép thước. Dùng compa để vẽ cung tròn.',
   },
   {
     icon: FileUp,
     title: 'Chèn hình, mở PDF',
-    text: 'Đồ thị, hình học từ bộ công cụ vẽ đặt thẳng lên bảng. Cần chữa đề có sẵn thì mở file PDF ra ghi chú.',
+    text: 'Chèn đồ thị, hình học từ bộ công cụ vẽ. Mở file PDF để viết lời giải lên đề có sẵn.',
   },
 ]
 
@@ -59,10 +59,10 @@ export function BoardSection() {
               Bảng vẽ
             </p>
             <h2 className="mt-2 text-[clamp(1.45rem,2.7vw,2.1rem)] font-bold leading-[1.18] tracking-[-0.02em] text-deep-text">
-              Vẽ, giảng, chữa đề trên một tấm bảng.
+              Bảng để giảng và chữa bài
             </h2>
             <p className="mt-3 text-[15px] leading-[1.65] text-deep-muted">
-              Chiếu lên lớp hoặc chia sẻ màn hình khi dạy online. Viết tay, kẻ thước, quay compa, chèn đồ thị ngay trên bảng.
+              Dùng khi chiếu lên lớp hoặc dạy online. Viết tay, kẻ thước, vẽ compa và chèn đồ thị lên bảng.
             </p>
           </div>
         </div>
@@ -129,6 +129,7 @@ export function BoardSection() {
             <div>
               <Link
                 to="/soan-de"
+                state={{ create: 'board' }}
                 className="inline-flex min-h-[42px] items-center justify-center gap-2 rounded-[6px] bg-clay px-4 py-2 text-[14px] font-semibold text-white transition-colors hover:bg-clay-deep active:scale-[0.98]"
               >
                 <span>Mở bảng vẽ</span>

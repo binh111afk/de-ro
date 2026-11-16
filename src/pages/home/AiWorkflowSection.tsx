@@ -5,23 +5,23 @@ import { useReveal } from './reveal'
 const AI_STEPS = [
   {
     no: '01',
-    title: 'Ra đề từ vài dòng mô tả',
-    body: 'Nói môn, lớp, phạm vi và tỉ lệ mức độ. AI viết đủ trắc nghiệm, Đúng/Sai, trả lời ngắn theo cấu trúc mới, có công thức.',
+    title: 'Ra đề theo yêu cầu',
+    body: 'Cho biết môn, lớp, phạm vi kiến thức và tỉ lệ mức độ, AI soạn câu trắc nghiệm, Đúng/Sai, trả lời ngắn theo cấu trúc đề mới.',
   },
   {
     no: '02',
-    title: 'Hình vẽ bằng công cụ, không phải ảnh bịa',
-    body: 'Câu nào cần đồ thị, bảng biến thiên hay mạch điện, AI dựng bằng chính công cụ vẽ. Sai số liệu thì nháy đúp sửa.',
+    title: 'Hình vẽ sửa được',
+    body: 'Câu cần đồ thị, bảng biến thiên hay mạch điện thì AI vẽ bằng bộ công cụ vẽ có sẵn. Số liệu sai thì nháy đúp vào hình để sửa.',
   },
   {
     no: '03',
     title: 'Slide theo dàn ý',
-    body: 'AI lập dàn ý cho bạn duyệt, rồi mới viết từng trang.',
+    body: 'AI đưa dàn ý để bạn xem và sửa trước, sau đó mới làm từng slide.',
   },
   {
     no: '04',
-    title: 'Đề giấy thành đề sửa được',
-    body: 'Gửi ảnh chụp đề cũ, AI chép lại thành câu hỏi và công thức trên trang A4.',
+    title: 'Chuyển đề giấy thành đề sửa được',
+    body: 'Gửi ảnh chụp đề cũ, AI gõ lại câu hỏi và công thức lên trang A4.',
   },
 ]
 
@@ -40,15 +40,15 @@ export function AiWorkflowSection() {
             </div>
 
             <h2 className="mt-4 text-[clamp(1.45rem,2.7vw,2.1rem)] font-bold leading-[1.18] tracking-[-0.02em] text-ink">
-              AI làm phần việc nặng, bạn duyệt.
+              Trợ lý AI trong trang soạn
             </h2>
 
             <p className="mt-3 text-[15px] leading-[1.65] text-ink-2">
-              Trợ lý nằm cạnh trang soạn và viết thẳng vào đề, không phải chép qua lại từ cửa sổ chat.
+              Khung AI nằm bên cạnh trang đề, nội dung AI viết được chèn thẳng vào đề.
             </p>
 
             <div className="mt-6 rounded-[10px] border border-clay-line bg-clay-tint p-4 text-[13.5px] leading-[1.6] text-ink-2">
-              Những gì AI viết ra vẫn là câu hỏi, slide bình thường: sửa chữ, đổi đáp án, thay số trên hình như khi bạn tự soạn.
+              Câu hỏi và slide do AI viết vẫn sửa như bình thường: đổi chữ, đổi đáp án, đổi số trên hình.
             </div>
 
             <div className="mt-6">
