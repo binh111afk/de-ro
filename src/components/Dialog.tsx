@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { create } from 'zustand'
 import { Button, inputClass } from '@/components/ui'
 
@@ -42,7 +43,8 @@ export const dialog = {
 export function DialogHost() {
   const spec = useDialogs((s) => s.queue[0])
   if (!spec) return null
-  return <DialogView key={spec.id} spec={spec} />
+  // gắn vào body: #root có z-index riêng nên hộp nằm trong đó sẽ bị ngăn kéo/modal Portal (cũng ở body) đè lên
+  return createPortal(<DialogView key={spec.id} spec={spec} />, document.body)
 }
 
 const FOCUSABLE = 'button:not([disabled]), input:not([disabled]), [href], [tabindex]:not([tabindex="-1"])'
