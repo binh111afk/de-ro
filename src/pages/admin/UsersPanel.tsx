@@ -45,6 +45,7 @@ import {
   AdminError,
 } from '@/lib/adminApi'
 import { formatViDate, formatViDateTime, formatNumber, shortenId } from './adminUtils'
+import { TOKENS_PER_POINT } from '@/lib/llm'
 
 interface UsersPanelProps {
   me?: AdminMe
@@ -519,17 +520,15 @@ function UserDetailDrawer({
     }
   }
 
-  // Tiến độ hạn mức AI
-  const limitValue = quota?.override
-    ? quota.override.monthlyTokens
-    : quota?.defaultLimit ?? 150_000
+  // Điểm AI còn lại — cùng công thức người dùng thấy ở Hồ sơ / khung AI (server/aiQuota.ts):
+  // (hạn mức tháng + điểm cộng − đã dùng tháng này) / 1.000 token
+  const limitValue = quota?.override ? quota.override.monthlyTokens : quota?.defaultLimit ?? 0
   const usedValue = quota?.usedThisMonth ?? user.tokensThisMonth
-  const limitDisplay =
-    limitValue === null ? 'Không giới hạn' : `${formatNumber(limitValue)} token`
-  const pct =
-    limitValue === null || limitValue <= 0
-      ? 100
-      : Math.min(100, Math.round((usedValue / limitValue) * 100))
+  const creditsValue = quota?.credits ?? 0
+  const toPoints = (tokens: number) => Math.floor(tokens / TOKENS_PER_POINT)
+  const pointsLeft = limitValue === null ? null : Math.max(0, toPoints(limitValue + creditsValue - usedValue))
+  // thanh so với quà chào mừng 120 điểm, giống Hồ sơ
+  const pct = pointsLeft === null ? 100 : Math.min(100, Math.round((pointsLeft / Math.max(120, pointsLeft)) * 100))
 
   return (
     <Portal>
@@ -651,22 +650,28 @@ function UserDetailDrawer({
                 {/* Thanh tiến độ */}
                 <div>
                   <div className="flex items-center justify-between text-[13px]">
-                    <span className="text-ink-2">Đã dùng tháng này:</span>
+                    <span className="text-ink-2">Điểm AI còn lại:</span>
                     <span className="tnum font-semibold text-ink">
-                      {formatNumber(usedValue)} / {limitDisplay}
+                      {pointsLeft === null ? 'Không giới hạn' : `${formatNumber(pointsLeft)} điểm`}
                     </span>
                   </div>
                   <div className="mt-2 h-2.5 overflow-hidden rounded-full bg-sunken">
                     <div
                       className={`h-full rounded-full transition-all duration-500 ${
-                        pct > 90 ? 'bg-clay' : 'bg-sage'
+                        pointsLeft !== null && pointsLeft < 20 ? 'bg-clay' : 'bg-sage'
                       }`}
-                      style={{ width: `${limitValue === null ? 100 : pct}%` }}
+                      style={{ width: `${pct}%` }}
                     />
                   </div>
-                  <div className="mt-1 flex justify-between text-[11.5px] text-ink-3">
-                    <span>{quota?.requestsThisMonth ?? 0} lượt yêu cầu</span>
-                    <span>{limitValue === null ? 'Không giới hạn' : `${pct}%`}</span>
+                  <div className="mt-1 flex flex-wrap justify-between gap-x-3 text-[11.5px] text-ink-3">
+                    <span>
+                      Tháng này đã dùng {formatNumber(toPoints(usedValue))} điểm · {quota?.requestsThisMonth ?? 0} lượt
+                    </span>
+                    <span>
+                      {limitValue === null
+                        ? 'Hạn mức tháng: không giới hạn'
+                        : `Hạn mức tháng ${formatNumber(toPoints(limitValue))} + điểm cộng ${formatNumber(toPoints(creditsValue))}`}
+                    </span>
                   </div>
                 </div>
 
