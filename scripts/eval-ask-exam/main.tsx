@@ -6,7 +6,7 @@
  */
 import '../lib/forceModel'
 import { examSystemPrompt } from '@/examEditor/AiPanel'
-import { ASK_RULE, askAnswerText, askHistoryText, parseAsk, type AiAskQuestion } from '@/examEditor/AiAskPanel'
+import { ASK_ONLY_SYSTEM, ASK_RULE, askAnswerText, askHistoryText, needsAskFirst, parseAsk, type AiAskQuestion } from '@/examEditor/AiAskPanel'
 import { callLlm, extractJson, type LlmMessage } from '@/lib/llm'
 
 interface CallUsage {
@@ -100,7 +100,8 @@ async function main() {
   const topic = q.get('topic') ?? 'soạn đề đi'
 
   // Lượt 1 (#2): yêu cầu mơ hồ
-  const sys1 = examSystemPrompt(undefined, topic) + ASK_RULE
+  // như AiPanel: lượt đầu chưa nêu môn thì dùng prompt hỏi ngắn
+  const sys1 = needsAskFirst(topic) ? ASK_ONLY_SYSTEM : examSystemPrompt(undefined, topic) + ASK_RULE
   const t0 = performance.now()
   const res1 = await callLlm(
     [

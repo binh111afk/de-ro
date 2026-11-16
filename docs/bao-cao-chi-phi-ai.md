@@ -122,7 +122,7 @@ Tham số: DeepSeek tắt suy luận được bằng `thinking: {type: "disabled
 
 | | Opencode (đang chạy trên web) | DeepSeek chính hãng (khi chuyển làm model chính) |
 |---|---|---|
-| 1 đề Toán THPT QG | **~23–26 điểm** (đo 3 đề sau phiên 45: 23.147–26.103 token, trung bình **~25**) | **~22 điểm** khi cache lạnh, ~20 khi trúng cache (ước cộng thêm ~2.000 token prompt từ phiên 44–45) |
+| 1 đề Toán THPT QG | **~23–26 điểm** theo script đo (3 đề sau phiên 45: 23.147–26.103 token, trung bình **~25**); **trên web thật ~27–29 điểm** vì web gửi thêm khung chương trình + quy tắc nguồn (~1.800–4.000 token) mà script không gửi | **~22 điểm** khi cache lạnh, ~20 khi trúng cache (ước cộng thêm ~2.000 token prompt từ phiên 44–45) |
 | 1 đề qua lượt hỏi lại (#2 + #3) | **~25–33 điểm** token thật (trung bình **~29** = ~11 lượt hỏi + ~18 lượt soạn; ~20–27 nếu lượt 2 trúng cache) | chưa đo riêng |
 | 1 bộ 15 slide | **~34–41 điểm** (3 lần không lỗi sau phiên 45: 33.877–36.005 token, trung bình **~35**; lên ~41 nếu có lượt sửa) | **~20–26 điểm** lúc đông người dùng; ~28–30 khi cache lạnh |
 | Thời gian | đề ~145–172 s (lượt hỏi ~7 s), slide ~80–100 s | đề ~85 s, slide ~30 s |
@@ -209,3 +209,28 @@ Log từng lượt gọi: bảng `ai_calls` trên Supabase, hoặc `%TEMP%/dethi
   - **Nên rút `FIGURE_GUIDE` theo cấp học (đề xuất lớn nhất, không đổi hành vi):** tách mục `27) Tranh đếm đồ vật` (`2.882` ký tự) và `28) Đồng hồ kim` (`110` ký tự) khỏi các đề Toán nhận ra lớp 6–12 / THPT (`figureGuideFor` trong `src/lib/docRewrite.ts`). Việc này cắt ngay **~3.000 ký tự (~1.350–1.400 token ≈ 1,4 điểm)** cho mọi đề Toán THCS/THPT mà hoàn toàn không ảnh hưởng Toán tiểu học.
   - **Nên tránh gửi cả `FIGURE_GUIDE` khi lượt hỏi đang xử lý yêu cầu quá ngắn/mơ hồ:** khi yêu cầu như `"soạn đề đi"` chưa nêu môn, `AiPanel.tsx` có thể dùng prompt rút gọn (hoặc bỏ phần chi tiết 28 loại hình ở lượt 1) vì lượt đó nhiều khả năng chỉ trả `{"action":"ask",...}`, lượt 2 sau khi biết môn mới gửi `figureGuideFor` chuẩn. Cách này có thể kéo lượt hỏi từ **~11 điểm xuống ~2–3 điểm**.
   - **`ASK_RULE` (`827` ký tự ≈ ~380 token):** không bắt buộc rút ngay; nếu muốn gọn hơn nữa có thể nén câu chữ xuống ~550 ký tự (bớt ví dụ dài dòng, giữ nguyên schema JSON và các chữ viết hoa `KHÔNG`/`CHƯA`) để tiết kiệm thêm ~120 token/lượt đầu.
+
+## DeepSeek chính hãng: trước và sau hai chỗ rút prompt (16/11/2026)
+
+Đo bằng `EVAL_MODEL=deepseek-flash` (gọi thẳng DeepSeek chính hãng), mức low, mỗi trường hợp 2 lần. Hai chỗ sửa:
+
+1. **Đề từ lớp 6 trở lên bỏ mục tranh đếm (27) và đồng hồ kim (28)** khỏi hướng dẫn hình (`UPPER_GRADE` trong `figureGuideFor`, `src/lib/docRewrite.ts`). Đề tiểu học giữ nguyên.
+2. **Lượt hỏi rút gọn**: lượt đầu, tài liệu trống, yêu cầu ngắn chưa nêu môn (`needsAskFirst` trong `AiAskPanel.tsx`) thì gọi `ASK_ONLY_SYSTEM` (~1.000 ký tự) thay vì cả prompt soạn đề (~24.000 ký tự). Model đoán được môn thì trả `{"action":"proceed"}` và app chạy luồng đầy đủ như cũ.
+
+| DeepSeek chính hãng, low | Prompt | Tổng token (lần 1 · 2) | Điểm bị trừ* | Kết quả |
+|---|---|---|---|---|
+| Đề Toán THPT, **trước** | 8.309 | 28.246 · 20.018 | ~28 · ~20 | lần 2 **sai cấu trúc** (13 câu trắc nghiệm, không có phần đúng/sai, trả lời ngắn, đáp án) |
+| Đề Toán THPT, **sau** | **7.064** | 28.283 · 24.439 | ~28 · ~24 | cả 2 lần đúng 12/4/6, đủ 22 đáp án |
+| "soạn đề đi" lượt hỏi, **trước** | 10.555 | 10.811 · 10.800 | ~5,4 · ~1,5 (trúng cache 6.016 / 10.368) | hỏi đúng JSON |
+| "soạn đề đi" lượt hỏi, **sau** | **491** | **1.694 · 1.042** | **~1,7 · ~0,8** | hỏi đúng JSON |
+| Lượt soạn sau khi trả lời, **trước** | ~8.210 | 27.028 · 17.870 | ~20,1 · ~11,0 | không hỏi vòng lại |
+| Lượt soạn sau khi trả lời, **sau** | ~6.950 | 14.595 · 18.432 | ~8,8 · ~12,6 | không hỏi vòng lại |
+| Yêu cầu đoán được môn ("đề phương trình bậc hai lớp 9"), lượt hỏi ngắn | 502 | 814 | ~0,6 | trả `proceed` đúng, app chạy tiếp luồng đầy đủ |
+
+\* Điểm theo `billOf`: phần trúng cache tính 1/10. Script đề (`eval-exam`) không ghi số cache nên cột điểm của đề lấy bằng token thật.
+
+- **Prompt đề Toán lớp 6–12 giảm 1.245 token (−15%)**, đúng như ước tính (~2.994 ký tự). Tổng token mỗi đề vẫn do phần suy luận quyết định (9.900–17.200 token, dao động mạnh giữa các lần), nên 2 lần đo chưa đủ để thấy tổng giảm rõ; tính chắc chắn được là **~1,2 điểm/đề**, cộng dồn ở mọi lượt soạn đề Toán THCS/THPT.
+- **Lượt hỏi giảm từ ~10.800 xuống ~1.000–1.700 token (−85–90%)**. Khi cache lạnh, lượt hỏi trước tốn ~10,8 điểm, nay ~1–2 điểm. Prompt ngắn khiến model suy luận nhiều hơn một chút (350–1.000 token so với ~20), vẫn rẻ hơn nhiều.
+- Lượt soạn sau khi trả lời cũng nhẹ hơn ~1.260 token prompt (cùng sửa 1, vì câu trả lời có "Toán lớp 9").
+- Rủi ro của sửa 2: yêu cầu ngắn không có tên môn nhưng đoán được (vd "đề phương trình bậc hai") tốn thêm một lượt ~800 token + ~3 s trước khi soạn. Đã thử: model trả `proceed` đúng.
+- Lần đề "trước" sai cấu trúc là dao động của model, không do sửa đổi (prompt "trước" là bản đang chạy trên web).

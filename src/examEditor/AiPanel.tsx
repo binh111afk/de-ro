@@ -40,7 +40,7 @@ import { AI_ATTACH_EVENT, takeAiRefs, type AiRef } from '@/lib/aiAttach'
 import { extractJson } from '@/lib/llm'
 import aiThinkingAnim from '@/assets/ai-assistant.svg'
 import { Markdown } from './markdown'
-import { ASK_DEFAULT, ASK_RULE, AiAskPanel, askHistoryText, parseAsk, type AiAsk } from './AiAskPanel'
+import { ASK_DEFAULT, ASK_ONLY_SYSTEM, ASK_RULE, AiAskPanel, askHistoryText, needsAskFirst, parseAsk, type AiAsk } from './AiAskPanel'
 import { IconClose, IconEnter, IconPaperclip, IconStop } from './icons'
 
 type AttachKind = 'doc' | 'sheet' | 'pdf' | 'image'
@@ -1081,6 +1081,16 @@ export function AiPanel({
                 : turn,
             ),
           )
+          return
+        }
+      }
+      // lượt đầu, tài liệu trống, chưa nêu môn: hỏi bằng prompt ngắn (~1.000 token thay vì ~10.000).
+      // Model thấy đoán được môn thì trả "proceed" và chạy luồng đầy đủ như cũ.
+      if (askRule && !htmlMode && intent === 'doc' && !history.length && !documentDigest && !sentFiles.length && !sentRefs.length && !(mode === 'slide' && existingSlideCount > 0) && needsAskFirst(text)) {
+        const quick = await callLlm([{ role: 'system', content: ASK_ONLY_SYSTEM }, { role: 'user', content: text }], { signal: controller.signal, reasoningEffort: 'low' })
+        const quickAsk = parseAsk(quick.content)
+        if (quickAsk) {
+          patchTurn(() => ({ text: quickAsk.intro || 'Mình cần biết thêm vài điều trước khi soạn.', ask: quickAsk, askState: 'open', pending: false, stepAt: undefined, sources: undefined, sourceNote: undefined }))
           return
         }
       }
