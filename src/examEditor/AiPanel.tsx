@@ -24,9 +24,7 @@ import {
   type DeckPlanSlide,
 } from '@/lib/aiDeck'
 import { batchSystemPrompt, checkSlide, dropRepeatedGraphic, pageSystemPrompt, parseBatchSlides, planDecorKit, repairPrompt } from '@/lib/slideAi'
-import { SLIDE_LAYOUTS } from '@/lib/slideLayouts'
 import { DECK_THEMES } from '@/lib/slideTheme'
-import { stylePackById } from '@/lib/slideStyles'
 import { designById } from '@/lib/slideDesigns'
 import { HTML_DECK_SYSTEM } from '@/lib/htmlDeckPrompt'
 import { splitHtmlDeck } from '@/lib/htmlDeck'
@@ -443,9 +441,6 @@ export const SLIDE_PLAN_SYSTEM =
   '"decorKit" chọn một bộ trang trí hợp chủ đề và đối tượng (dùng cho cả bài); bài trang trọng chọn "toi-gian".\n' +
   '- Không bịa số liệu thật; số liệu minh hoạ phải ghi rõ "ví dụ". Tiếng Việt chuẩn.'
 
-/** Tên layout để hiện trong thẻ dàn ý. */
-const layoutName = (id: string) => SLIDE_LAYOUTS.find((layout) => layout.id === id)?.name ?? id
-
 /** Lịch sử hội thoại gửi kèm mỗi lượt gọi model. */
 function historyOf(turns: ChatTurn[]): LlmMessage[] {
   return turns
@@ -476,62 +471,48 @@ function PlanCard({
   onCancel: () => void
 }) {
   if (!plan) return null
-  const themeName = plan.theme
-    ? DECK_THEMES.find((theme) => theme.id === plan.theme)?.name
-    : undefined
+  const theme = plan.theme ? DECK_THEMES.find((t) => t.id === plan.theme) : undefined
   const designName = plan.design ? designById(plan.design)?.name : undefined
-  const meta = [
-    designName ? `Thiết kế ${designName}` : null,
-    themeName ? `Bộ màu ${themeName}` : null,
-    plan.stylePack ? `Style ${stylePackById(plan.stylePack)?.name ?? plan.stylePack}` : null,
-    plan.audience,
-    `${plan.slides.length} slide`,
-  ]
-    .filter(Boolean)
-    .join(' · ')
+  const tags = [`${plan.slides.length} slide`, designName, theme?.name, plan.audience].filter(Boolean) as string[]
 
   return (
-    <div className="ai-plan">
+    <div className={`ai-plan${state !== 'pending' ? ' is-done' : ''}`}>
       <div className="ai-plan-head">
-        <span className="ai-plan-title">{plan.title || 'Dàn ý bài trình bày'}</span>
-        <span className="ai-plan-meta">{meta}</span>
+        <div className="ai-plan-title">{plan.title || 'Dàn ý bài trình bày'}</div>
+        <div className="ai-plan-meta">{tags.join(' · ')}</div>
       </div>
-      {plan.mainIdeas.length ? (
-        <div className="ai-plan-ideas">{plan.mainIdeas.join(' · ')}</div>
-      ) : null}
       <ol className="ai-plan-list">
         {plan.slides.map((slide, index) => (
           <li key={`${index}-${slide.title}`} className="ai-plan-row">
-            <span className="ai-plan-index">{String(index + 1).padStart(2, '0')}</span>
-            <span className="ai-plan-slide">
-              <span className="ai-plan-slide-title">{slide.title}</span>
-              <span className="ai-plan-slide-meta">
-                {layoutName(slide.layout)}
-                {slide.tone ? ` · ${slide.tone}` : ''}
-                {slide.brief ? ` — ${slide.brief}` : ''}
-              </span>
-            </span>
+            <span className="ai-plan-index">{index + 1}</span>
+            <div className="ai-plan-slide">
+              <div className="ai-plan-slide-title">{slide.title}</div>
+              {slide.brief ? (
+                <div className="ai-plan-brief" title={slide.brief}>
+                  {slide.brief}
+                </div>
+              ) : null}
+            </div>
           </li>
         ))}
       </ol>
-      {plan.style ? <div className="ai-plan-style">{plan.style}</div> : null}
       {state === 'pending' ? (
         <div className="ai-plan-actions">
+          <button type="button" className="ai-plan-ghost" onClick={onCancel}>
+            Huỷ
+          </button>
           <button
             type="button"
             className="ai-plan-primary"
             onClick={() => onApprove(plan)}
             disabled={busy}
           >
-            Tạo slide
-          </button>
-          <button type="button" className="ai-plan-ghost" onClick={onCancel}>
-            Huỷ
+            Tạo {plan.slides.length} slide
           </button>
         </div>
       ) : (
         <div className="ai-plan-state">
-          {state === 'approved' ? 'Đã duyệt dàn ý.' : 'Đã huỷ dàn ý.'}
+          {state === 'approved' ? 'Đã tạo slide từ dàn ý này' : 'Đã huỷ'}
         </div>
       )}
     </div>
