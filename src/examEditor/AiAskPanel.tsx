@@ -28,6 +28,17 @@ export const ASK_RULE =
   'KHÔNG hỏi về hình minh hoạ (app tự hỏi với đề Toán). ' +
   'Yêu cầu đã đủ rõ, hoặc là lệnh sửa/thêm trên tài liệu đang có, hoặc chỉ là câu hỏi thường thì làm/trả lời luôn, không hỏi.'
 
+const SUBJECT_RE =
+  /to[aá]n|v[aậ]t\s*l|m[oô]n\s*l[ýy]|h[oó][aá]|sinh|v[aă]n|ti[ếe]ng|anh|english|s[ửu]|[đd][iị]a|gdcd|c[ôo]ng\s*d[âa]n|tin\s*h[ọo]c|c[ôo]ng\s*ngh[ệe]|khtn|khoa\s*h[ọo]c|[âa]m\s*nh[ạa]c|m[ỹy]\s*thu[ậa]t|th[ểe]\s*d[ụu]c|qu[ốo]c\s*ph[òo]ng|ph[áa]p|nh[ậa]t|h[àa]n\s*qu[ốo]c|trung\s*qu[ốo]c/i
+
+/** yêu cầu ngắn, chưa nêu môn (vd "soạn đề đi"): hỏi bằng prompt ngắn trước, khỏi gửi cả hướng dẫn hình mọi môn */
+export const needsAskFirst = (text: string) => text.trim().length < 80 && !SUBJECT_RE.test(text)
+
+export const ASK_ONLY_SYSTEM =
+  'Bạn là trợ lý soạn đề thi và bài giảng cho giáo viên Việt Nam.' +
+  ASK_RULE +
+  '\nNếu từ yêu cầu đoán hợp lý được môn và nội dung (vd "đề phương trình bậc hai" là Toán) thì KHÔNG hỏi, chỉ trả đúng {"action":"proceed"}.'
+
 /** đọc JSON hỏi lại của model; không phải thì null */
 export function parseAsk(raw: string): AiAsk | null {
   if (!/"action"\s*:\s*"ask"/.test(raw)) return null

@@ -12,6 +12,7 @@ import '@/index.css'
 import { createRoot } from 'react-dom/client'
 import { SlideThumb } from '@/examEditor/SlideEditor'
 import { AI_EFFORT, SLIDE_BATCH, SLIDE_PLAN_SYSTEM, generateSlide, generateSlideBatch, polishSlide } from '@/examEditor/AiPanel'
+import { ASK_RULE, parseAsk } from '@/examEditor/AiAskPanel'
 import { callLlm } from '@/lib/llm'
 import { parseDeckPlan } from '@/lib/aiDeck'
 import { dropRepeatedGraphic, slideFromAi, withImage } from '@/lib/slideAi'
@@ -52,9 +53,14 @@ async function main() {
   const t0 = performance.now()
 
   const res = await callLlm(
-    [{ role: 'system', content: SLIDE_PLAN_SYSTEM }, { role: 'user', content: topic }],
+    [{ role: 'system', content: SLIDE_PLAN_SYSTEM + ASK_RULE }, { role: 'user', content: topic }],
     { signal: controller.signal, reasoningEffort: AI_EFFORT.slide },
   )
+  const ask = parseAsk(res.content)
+  if (ask) {
+    done({ fatal: 'AI hỏi lại thay vì lập dàn ý', raw: res.content })
+    return
+  }
   const plan = parseDeckPlan(res.content)
   if (!plan) {
     done({ fatal: 'Không parse được dàn ý', raw: res.content })

@@ -184,10 +184,15 @@ const FIGURE_BY_SUBJECT: Array<[RegExp, string[]]> = [
  * FIGURE_GUIDE rút theo môn đoán từ yêu cầu. Không đoán được môn (hoặc đề nhiều môn) thì trả đủ.
  * Môn không có hình (Văn, Sử, ngoại ngữ…) vẫn trả đủ: hiếm khi dùng, không đáng rủi ro đoán sai.
  */
+/** đề từ lớp 6 trở lên: không cần tranh đếm (27), đồng hồ kim (28) — hai mục dành cho tiểu học, dài ~3.000 ký tự */
+const UPPER_GRADE = /l[ớo]p\s*(?:[6-9]|1[0-2])(?!\d)|thcs|thpt|t[ốo]t\s*nghi[ệe]p|tuy[ểe]n\s*sinh|[đd][ạa]i\s*h[ọo]c/i
+const PRIMARY_ONLY = new Set(['27', '28'])
+
 export function figureGuideFor(request: string): string {
   const hits = FIGURE_BY_SUBJECT.filter(([re]) => re.test(request))
   if (hits.length !== 1) return FIGURE_GUIDE
-  const keep = new Set(hits[0][1])
+  const upper = UPPER_GRADE.test(request)
+  const keep = new Set(hits[0][1].filter((id) => !(upper && PRIMARY_ONLY.has(id))))
   const lines = FIGURE_GUIDE.split('\n')
   const tail = lines.pop() ?? ''
   return lines.filter((l) => keep.has(/^(\d+b?)\)/.exec(l)?.[1] ?? '')).join('\n') + '\n' + tail

@@ -4,6 +4,7 @@
  */
 import '../lib/forceModel'
 import { examSystemPrompt } from '@/examEditor/AiPanel'
+import { ASK_RULE, parseAsk } from '@/examEditor/AiAskPanel'
 import { callLlm, extractJson } from '@/lib/llm'
 
 const tokens = { calls: 0, prompt: 0, completion: 0, reasoning: 0 }
@@ -31,24 +32,26 @@ async function main() {
   const q = new URLSearchParams(location.search)
   const effort = (q.get('effort') ?? 'max') as 'low' | 'medium' | 'high' | 'max'
   const topic = q.get('topic') ?? 'Tạo đề thi tốt nghiệp THPT môn Toán theo đúng cấu trúc đề tham khảo 2025, có đáp án.'
+  const system = examSystemPrompt(undefined, topic) + ASK_RULE
   // ?dump=1: chỉ trả system prompt (để thí nghiệm ngoài app), không gọi model
-  if (q.get('dump')) return done({ effort, system: examSystemPrompt(undefined, topic), tokens, raw: '' })
+  if (q.get('dump')) return done({ effort, system, promptChars: system.length, tokens, raw: '' })
   const t0 = performance.now()
   const res = await callLlm(
     [
-      { role: 'system', content: examSystemPrompt(undefined, topic) },
+      { role: 'system', content: system },
       { role: 'user', content: topic },
     ],
     { reasoningEffort: effort },
   )
   await new Promise((r) => setTimeout(r, 300))
+  const ask = parseAsk(res.content)
   let parsed: unknown = null
   try {
     parsed = extractJson(res.content)
   } catch {
     /* JSON hỏng */
   }
-  done({ effort, model: res.model, ms: Math.round(performance.now() - t0), tokens, raw: res.content, parsed })
+  done({ effort, model: res.model, ms: Math.round(performance.now() - t0), promptChars: system.length, ask: !!ask, tokens, raw: res.content, parsed })
 }
 
 main().catch((err) => done({ fatal: String(err?.stack ?? err) }))
