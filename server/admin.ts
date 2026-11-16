@@ -94,17 +94,15 @@ export async function requireAdmin(req: IncomingMessage, res: ServerResponse, ne
   return { s, userId, role }
 }
 
-const banCache = new Map<string, { banned: boolean; until: number }>()
+/**
+ * Hỏi thật mỗi request admin, KHÔNG nhớ: lượng request admin rất ít, còn nhớ 60 s thì admin vừa bị khoá
+ * vẫn dùng quyền thêm một phút (mỗi instance Vercel một bộ nhớ, ban/unban không xoá được hết).
+ */
 async function isBanned(s: Supa, userId: string): Promise<boolean> {
-  const hit = banCache.get(userId)
-  if (hit && hit.until > Date.now()) return hit.banned
   const r = await fetch(`${s.base}/auth/v1/admin/users/${encodeURIComponent(userId)}`, { headers: s.headers })
   if (!r.ok) throw new Error(`auth ${r.status}`)
   const u = (await r.json()) as { banned_until?: string | null }
-  const banned = !!u.banned_until && new Date(u.banned_until).getTime() > Date.now()
-  if (banCache.size > 1000) banCache.clear()
-  banCache.set(userId, { banned, until: Date.now() + 60_000 })
-  return banned
+  return !!u.banned_until && new Date(u.banned_until).getTime() > Date.now()
 }
 
 /**
@@ -219,10 +217,17 @@ async function getUser(s: Supa, id: string): Promise<AuthUser> {
   return (await call<AuthUser>(s, `/auth/v1/admin/users/${id}`)).data
 }
 
-/** Không cho admin tự khoá / xoá mình, và không đụng tới tài khoản admin khác. */
-export async function protectTarget(ctx: AdminCtx, id: string) {
-  if (id === ctx.userId) throw new HttpError(400, 'Không thao tác trên chính tài khoản của bạn.')
-  if ((await roleOf(ctx.s, id)) === 'admin') throw new HttpError(400, 'Không thao tác trên tài khoản admin khác.')
+/**
+ * Không cho admin tự thao tác trên mình (khoá, xoá, tự nâng hạn mức...) và không đụng tới tài khoản admin
+ * khác. Lượt bị từ chối cũng ghi nhật ký (`<action>.denied`). Khôi phục admin bị khoá: làm bằng SQL /
+ * dashboard Supabase (gỡ `banned_until`), cố ý không mở đường trong app.
+ */
+export async function protectTarget(ctx: AdminCtx, id: string, action: string) {
+  const why =
+    id === ctx.userId ? 'Không thao tác trên chính tài khoản của bạn.' : (await roleOf(ctx.s, id)) === 'admin' ? 'Không thao tác trên tài khoản admin khác.' : null
+  if (!why) return
+  await audit(ctx, `${action}.denied`, id, { reason: why }).catch(() => {})
+  throw new HttpError(400, why)
 }
 
 export type Body = Record<string, unknown>
@@ -273,7 +278,7 @@ const ACTIONS: ActionMap = {
     need: 'admin',
     run: async (ctx, b) => {
       const id = needUser(b.userId)
-      await protectTarget(ctx, id)
+      await protectTarget(ctx, id, 'users.ban')
       // không ghi số giờ = khoá vô thời hạn (~100 năm)
       const hours = Math.floor(Number(b.hours) || 0)
       const reason = str(b.reason, 500)
@@ -288,7 +293,7 @@ const ACTIONS: ActionMap = {
     run: async (ctx, b) => {
       const id = needUser(b.userId)
       // như ban/xoá: không tự gỡ khoá cho mình, không đụng admin khác
-      await protectTarget(ctx, id)
+      await protectTarget(ctx, id, 'users.unban')
       await call(ctx.s, `/auth/v1/admin/users/${id}`, { method: 'PUT', body: JSON.stringify({ ban_duration: 'none' }) })
       // vẫn giữ số lần vi phạm; chỉ bỏ mốc khoá để lần vi phạm sau được tính
       await call(ctx.s, `/rest/v1/security_flags?user_id=eq.${id}`, { method: 'PATCH', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ locked_until: null }) }).catch(() => {})
@@ -302,7 +307,7 @@ const ACTIONS: ActionMap = {
     need: 'admin',
     run: async (ctx, b) => {
       const id = needUser(b.userId)
-      await protectTarget(ctx, id)
+      await protectTarget(ctx, id, 'security.clear')
       await call(ctx.s, `/rest/v1/security_flags?user_id=eq.${id}`, { method: 'DELETE', headers: { Prefer: 'return=minimal' } })
       await audit(ctx, 'security.clear', id)
       return { ok: true }
@@ -318,7 +323,7 @@ const ACTIONS: ActionMap = {
     need: 'admin',
     run: async (ctx, b) => {
       const id = needUser(b.userId)
-      await protectTarget(ctx, id)
+      await protectTarget(ctx, id, 'users.delete')
       const user = await getUser(ctx.s, id)
       if (!user.email || str(b.confirmEmail).toLowerCase() !== user.email.toLowerCase()) throw new HttpError(400, 'Email xác nhận không khớp.')
       const { data: docs } = await call<Array<{ url: string }>>(ctx.s, `/rest/v1/user_documents?owner_id=eq.${id}&select=url`)
@@ -350,6 +355,7 @@ const ACTIONS: ActionMap = {
     need: 'admin',
     run: async (ctx, b) => {
       const id = needUser(b.userId)
+      await protectTarget(ctx, id, 'quota.set')
       const raw = b.monthlyTokens
       const monthly = raw === null ? null : Math.floor(Number(raw))
       if (monthly !== null && !(monthly >= 0 && monthly <= 1e9)) throw new HttpError(400, 'Hạn mức không hợp lệ.')
@@ -369,6 +375,7 @@ const ACTIONS: ActionMap = {
     need: 'admin',
     run: async (ctx, b) => {
       const id = needUser(b.userId)
+      await protectTarget(ctx, id, 'credits.grant')
       const tokens = Math.floor(Number(b.tokens))
       if (!(tokens > 0 && tokens <= 100_000_000)) throw new HttpError(400, 'Số điểm cộng phải là số nguyên dương.')
       const note = str(b.note, 300)
@@ -386,6 +393,7 @@ const ACTIONS: ActionMap = {
     need: 'admin',
     run: async (ctx, b) => {
       const id = needUser(b.userId)
+      await protectTarget(ctx, id, 'quota.clear')
       await call(ctx.s, `/rest/v1/ai_quota_overrides?user_id=eq.${id}`, { method: 'DELETE', headers: { Prefer: 'return=minimal' } })
       await audit(ctx, 'quota.clear', id)
       return { ok: true }
@@ -436,6 +444,7 @@ const ACTIONS: ActionMap = {
     need: 'admin',
     run: async (ctx, b) => {
       const id = needUser(b.userId)
+      await protectTarget(ctx, id, 'storage.set')
       if (b.maxBytes === null) {
         await call(ctx.s, `/rest/v1/user_quota?user_id=eq.${id}`, { method: 'DELETE', headers: { Prefer: 'return=minimal' } })
         await audit(ctx, 'storage.clear', id)

@@ -66,7 +66,8 @@ globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
   // Community exams
   if (url.includes('/rest/v1/community_exams')) {
     if (method === 'DELETE') return new Response(null, { status: 204 })
-    if (method === 'PATCH') return new Response(null, { status: 204 })
+    // setStatus PATCH kèm Prefer: return=representation → PostgREST trả các dòng đã đổi
+    if (method === 'PATCH') return ok([{ id: /id=eq\.([0-9a-f-]+)/.exec(url)?.[1] }])
     if (url.includes('id=eq.')) {
       return ok([
         {

@@ -11,7 +11,9 @@ const ADMIN = '11111111-1111-4111-8111-111111111111'
 const MOD = '22222222-2222-4222-8222-222222222222'
 const USER = '33333333-3333-4333-8333-333333333333'
 const TOKENS: Record<string, string> = { tAdmin: ADMIN, tMod: MOD, tUser: USER }
-const ROLES: Record<string, string> = { [ADMIN]: 'admin', [MOD]: 'moderator' }
+const ADMIN2 = '66666666-6666-4666-8666-666666666666'
+const ROLES: Record<string, string> = { [ADMIN]: 'admin', [MOD]: 'moderator', [ADMIN2]: 'admin' }
+let adminBanned = false
 const calls: string[] = []
 const LISTED = '44444444-4444-4444-8444-444444444444'
 const PRIVATE = '55555555-5555-4555-8555-555555555555'
@@ -36,6 +38,7 @@ globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
   if (url.includes('/auth/v1/admin/users?')) return ok({ users: [{ id: USER, email: 'u@x.vn', created_at: '2026-11-01T00:00:00Z', user_metadata: { display_name: 'Cô Lan', avatar_url: 'https://x/a.jpg' } }] }, { 'x-total-count': '1' })
   if (url.includes('/rpc/admin_user_stats')) return ok([{ user_id: USER, docs: 3, decks: 1, tokens: 500, role: null }])
   if (url.includes(`/auth/v1/admin/users/${USER}`) && method === 'GET') return ok({ id: USER, email: 'u@x.vn', created_at: '' })
+  if (url.includes(`/auth/v1/admin/users/${ADMIN}`) && method === 'GET') return ok({ id: ADMIN, banned_until: adminBanned ? '2999-01-01T00:00:00Z' : null })
   if (url.includes('/auth/v1/admin/users/')) return ok({})
   if (url.includes('/rest/v1/user_documents')) return ok([])
   if (url.includes('/rpc/grant_ai_credits')) return ok(1500)
@@ -303,6 +306,30 @@ check('xoá tệp: nhận tài liệu', r2DocKeyFromUrl(`/api/files/doc/${H}.pdf
   const aids = ((al.data.exams as Array<{ id: string }>) ?? []).map((e) => e.id)
   check('admin vẫn thấy cả đề riêng', aids.includes(LISTED) && aids.includes(PRIVATE))
   check('admin gỡ đề riêng → được', (await hit({ action: 'content.exams.setStatus', examId: PRIVATE, status: 'hidden' }, 'tAdmin')).status === 200)
+}
+
+// Strix lần 3 mục 5: không nhớ trạng thái khoá — admin vừa bị khoá mất quyền ngay request kế tiếp
+{
+  check('admin chưa bị khoá → dùng được', (await hit({ action: 'me' }, 'tAdmin')).status === 200)
+  adminBanned = true
+  check('admin vừa bị khoá → request ngay sau bị 403 (không chờ cache 60 s)', (await hit({ action: 'me' }, 'tAdmin')).status === 403)
+  adminBanned = false
+}
+
+// Strix lần 3 mục 6: protectTarget ở cả quota/credits/storage; lượt bị từ chối có ghi nhật ký
+for (const [action, extra] of [
+  ['quota.set', { monthlyTokens: 1000 }],
+  ['quota.clear', {}],
+  ['credits.grant', { tokens: 500 }],
+  ['storage.set', { maxBytes: 50 * 1024 * 1024 }],
+] as const) {
+  calls.length = 0
+  bodies.length = 0
+  const self = await hit({ action, userId: ADMIN, ...extra }, 'tAdmin')
+  const other = await hit({ action, userId: ADMIN2, ...extra }, 'tAdmin')
+  const denied = bodies.filter((b) => b.includes(`${action}.denied`)).length
+  check(`${action}: tự nhắm mình và nhắm admin khác → 400, ghi ${action}.denied (${denied} dòng)`, self.status === 400 && other.status === 400 && denied === 2)
+  check(`${action}: user thường vẫn làm được`, (await hit({ action, userId: USER, ...extra }, 'tAdmin')).status === 200)
 }
 
 if (fail) {
