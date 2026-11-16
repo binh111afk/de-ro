@@ -694,7 +694,11 @@ export default function ComposeDoc() {
       // .docx đọc trên trình duyệt để giữ định dạng; .doc/.xlsx… vẫn qua server lấy chữ
       const isDocx = /\.docx$/i.test(file.name)
       const data = isDocx ? { title: file.name.replace(/\.[^.]+$/, '').trim().slice(0, 120) || 'Tài liệu nhập', text: '' } : await readImportFile(file)
-      const blocks = isDocx ? await (await import('@/lib/docxImport')).docxToBlocks(file) : textToBlocks(data.text)
+      const imported = isDocx ? await (await import('@/lib/docxImport')).docxImport(file) : null
+      const blocks = imported ? imported.blocks : textToBlocks(data.text)
+      // lề và hướng trang theo tệp Word (khổ giấy vẫn A4)
+      const page = imported?.page
+      if (page) setPageSetup((p) => ({ ...p, margins: page.margins, orientation: page.orientation }))
       if (!blocks.length) throw new Error('Tệp không có nội dung văn bản để nhập.')
       const id = newDoc()
       renameTab(id, data.title)

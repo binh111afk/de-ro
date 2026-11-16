@@ -450,7 +450,32 @@ function readNumbering(xml: Document | null): Map<string, NumLevel> {
   return out
 }
 
+/** lề (cm, làm tròn 0,1) và hướng trang của tệp Word, lấy ở w:sectPr cuối thân */
+export interface DocxPage {
+  margins: { top: number; right: number; bottom: number; left: number }
+  orientation: 'portrait' | 'landscape'
+}
+
+function readPage(bodyEl: Element): DocxPage | undefined {
+  const sect = kid(bodyEl, 'sectPr')
+  const mar = kid(sect, 'pgMar')
+  if (!mar) return undefined
+  // twip → cm; lề âm (chữ tràn lề) coi như 0
+  const cm = (k: string) => Math.max(0, Math.round((Math.abs(Number(val(mar, k) ?? 0)) / 567) * 10) / 10)
+  const sz = kid(sect, 'pgSz')
+  const landscape = val(sz, 'orient') === 'landscape' || Number(val(sz, 'w')) > Number(val(sz, 'h'))
+  // gáy sách (gutter) cộng vào lề trái như Word
+  return {
+    margins: { top: cm('top'), right: cm('right'), bottom: cm('bottom'), left: Math.round((cm('left') + cm('gutter')) * 10) / 10 },
+    orientation: landscape ? 'landscape' : 'portrait',
+  }
+}
+
 export async function docxToBlocks(file: Blob): Promise<ExamBlock[]> {
+  return (await docxImport(file)).blocks
+}
+
+export async function docxImport(file: Blob): Promise<{ blocks: ExamBlock[]; page?: DocxPage }> {
   if (file.size > MAX_BYTES) throw new Error('Tệp quá lớn (tối đa 12 MB).')
   const zip = await JSZip.loadAsync(file)
   const parse = async (path: string) => {
@@ -473,8 +498,9 @@ export async function docxToBlocks(file: Blob): Promise<ExamBlock[]> {
     counters: new Map(),
   }
   const out: ExamBlock[] = []
-  await body(ctx, kid(doc.documentElement, 'body')!, out)
+  const bodyEl = kid(doc.documentElement, 'body')!
+  await body(ctx, bodyEl, out)
   // bỏ đoạn trống thừa ở cuối
   while (out.length && out.at(-1)!.type === 'paragraph' && !hasContent(((out.at(-1) as { text: Span[] | string }).text || []) as Span[])) out.pop()
-  return out
+  return { blocks: out, page: readPage(bodyEl) }
 }
