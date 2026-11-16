@@ -82,8 +82,15 @@ export function clientIp(req: IncomingMessage): string {
   return req.socket?.remoteAddress || ''
 }
 
-/** chỉ miễn hạn mức khi chạy dev ở máy, không bao giờ trên Vercel */
-export const isLocal = (ip: string) => !onVercel && (ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1')
+/**
+ * Miễn Origin / hạn mức / token cho loopback CHỈ khi bật rõ ràng: `vite` dev (tự đặt NODE_ENV=development)
+ * hoặc `ALLOW_LOCAL_BYPASS=1`; không bao giờ trên Vercel. Tự host sau reverse proxy thì mọi request đều
+ * đến từ 127.0.0.1 — nếu chỉ xét IP thì cả Internet được miễn.
+ */
+export const isLocal = (ip: string) =>
+  !onVercel &&
+  (process.env.NODE_ENV === 'development' || process.env.ALLOW_LOCAL_BYPASS === '1') &&
+  (ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1')
 
 /** Origin hợp lệ: cùng host với request, localhost, hoặc liệt kê trong ALLOWED_ORIGINS (cách nhau dấu phẩy) */
 function originAllowed(req: IncomingMessage): boolean {

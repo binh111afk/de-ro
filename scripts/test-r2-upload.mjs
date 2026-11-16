@@ -4,6 +4,7 @@ import assert from 'node:assert/strict'
 import http from 'node:http'
 import { loadDotEnv } from '../server/llmProxy.ts'
 import { uploadMiddleware, fileMiddleware } from '../server/r2.ts'
+process.env.NODE_ENV ??= 'development' // giả lập `vite` dev: isLocal chỉ miễn trừ loopback khi NODE_ENV=development
 
 loadDotEnv()
 

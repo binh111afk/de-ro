@@ -7,6 +7,7 @@
  */
 import { createServer } from 'vite'
 import { withPage, waitFor } from './lib/cdp.mjs'
+process.env.NODE_ENV ??= 'development' // giả lập `vite` dev: isLocal chỉ miễn trừ loopback khi NODE_ENV=development
 
 const server = await createServer({
   logLevel: 'error',

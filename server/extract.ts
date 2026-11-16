@@ -587,9 +587,11 @@ async function extractPptxSlides(data: Buffer): Promise<string[]> {
  * Chặn "zip bomb": đọc central directory (không giải nén) và từ chối nếu quá nhiều mục
  * hoặc tổng/mỗi mục khai báo giải nén quá lớn.
  */
-const ZIP_MAX_ENTRIES = 5000
-const ZIP_MAX_ENTRY = 50 * 1024 * 1024
-const ZIP_MAX_TOTAL = 100 * 1024 * 1024
+// trần theo tài liệu thật (tệp gửi lên ≤ 12 MB): document.xml của đề dày vài trăm trang cỡ vài MB,
+// ảnh nhúng gần như không nén thêm. Trần cũ (50 / 100 MB) để tệp hợp lệ gần trần tốn ~500 MB RAM.
+const ZIP_MAX_ENTRIES = 3000
+const ZIP_MAX_ENTRY = 24 * 1024 * 1024
+const ZIP_MAX_TOTAL = 48 * 1024 * 1024
 function assertSafeZip(buf: Buffer) {
   // tìm End Of Central Directory (0x06054b50) trong 64 KB cuối
   let eocd = -1

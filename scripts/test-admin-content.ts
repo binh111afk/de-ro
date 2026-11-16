@@ -10,6 +10,7 @@
  */
 import { Readable } from 'node:stream'
 import type { IncomingMessage, ServerResponse } from 'node:http'
+process.env.NODE_ENV ??= 'development' // giả lập `vite` dev: isLocal chỉ miễn trừ loopback khi NODE_ENV=development
 
 process.env.VITE_SUPABASE_URL = 'http://sb'
 process.env.VITE_SUPABASE_PUBLISHABLE_KEY = 'pk'

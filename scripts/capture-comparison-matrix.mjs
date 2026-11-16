@@ -1,6 +1,7 @@
 import { writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { withPage } from './lib/cdp.mjs'
+process.env.NODE_ENV ??= 'development' // giả lập `vite` dev: isLocal chỉ miễn trừ loopback khi NODE_ENV=development
 
 const OUT_DIR = join(process.cwd(), 'docs/handoff/mau-slide-anh')
 const COLOR_PNG = join(OUT_DIR, 'bang-so-sanh-8-bo.png')

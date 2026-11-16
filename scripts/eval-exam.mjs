@@ -7,6 +7,7 @@ import { createServer } from 'vite'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { withPage, waitFor } from './lib/cdp.mjs'
+process.env.NODE_ENV ??= 'development' // giả lập `vite` dev: isLocal chỉ miễn trừ loopback khi NODE_ENV=development
 
 const efforts = process.argv.slice(2).length ? process.argv.slice(2) : ['max', 'high', 'medium', 'low']
 const outDir = 'eval-out'

@@ -2,6 +2,7 @@
  * Ngoài Vercel guard lấy IP từ socket (bỏ qua x-forwarded-for vì giả được), nên mỗi ca đặt remoteAddress riêng. */
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { guard } from '../server/guard.ts'
+process.env.NODE_ENV ??= 'development' // giả lập `vite` dev: isLocal chỉ miễn trừ loopback khi NODE_ENV=development
 
 let pass = 0
 let fail = 0
@@ -56,6 +57,17 @@ const host = { host: 'de-ro-lac.vercel.app' }
     ok &&= await guard(m.req, m.res, 'llm')
   }
   check('máy dev (localhost) không bị giới hạn', ok)
+}
+// Strix lần 3 mục 7: tự host sau reverse proxy (NODE_ENV=production) thì loopback KHÔNG được miễn
+{
+  process.env.NODE_ENV = 'production'
+  let okCount = 0
+  for (let i = 0; i < 25; i++) if (await guard(mock({ ...host }, '::1').req, mock({ ...host }, '::1').res, 'llm')) okCount++
+  check(`NODE_ENV=production: loopback bị giới hạn như khách (qua ${okCount}/25)`, okCount === 20)
+  process.env.ALLOW_LOCAL_BYPASS = '1'
+  check('ALLOW_LOCAL_BYPASS=1 bật lại miễn trừ', await guard(mock({ ...host }, '::1').req, mock({ ...host }, '::1').res, 'llm'))
+  delete process.env.ALLOW_LOCAL_BYPASS
+  process.env.NODE_ENV = 'development'
 }
 {
   const m = mock({ ...host, authorization: 'Bearer token-sai' }, '198.51.100.5')
