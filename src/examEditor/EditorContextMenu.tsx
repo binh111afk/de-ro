@@ -84,7 +84,7 @@ export function EditorContextMenu({ editor }: { editor: Editor | null }) {
   }, [pos])
 
   if (!editor || editor.isDestroyed) return null
-  if (!pos) return link ? <LinkDialog editor={editor} initialHref={link.href} onClose={() => setLink(null)} /> : null
+  if (!pos) return link ? <Portal><LinkDialog editor={editor} initialHref={link.href} onClose={() => setLink(null)} /></Portal> : null
 
   const empty = editor.state.selection.empty
   const inTable = editor.isActive('table')

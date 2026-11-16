@@ -3335,6 +3335,39 @@
     color: var(--text);
   }
 
+  .rb-modal--eq {
+    width: 560px;
+  }
+  .eq-snippets {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+    gap: 4px;
+    min-height: 92px;
+    align-content: start;
+  }
+  .eq-snippet {
+    display: grid;
+    place-items: center;
+    height: 40px;
+    padding: 0 4px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--surface);
+    color: var(--text);
+    font-size: 13px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.12s, background 0.12s;
+  }
+  .eq-snippet:hover {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .eq-snippet .katex {
+    font-size: 1em;
+    white-space: nowrap;
+  }
+
   .rb-modal__body {
     padding: 14px;
     display: flex;

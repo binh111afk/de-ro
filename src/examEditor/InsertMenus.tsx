@@ -7,13 +7,16 @@
  *   - ImagePicker: chọn ảnh từ máy → chèn base64
  */
 import { dialog } from '@/components/Dialog'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import type { Editor } from '@tiptap/core'
 import katex from 'katex'
 import { cn } from '@/lib/cn'
 import { uploadImage } from '@/lib/mediaStore'
 import { IconClose, IconEquation, IconLink, IconPicture, IconShapes, IconSymbol, IconTable } from './icons'
 import { RibbonButton } from './Layout'
+import { Portal } from '@/components/Portal'
+import { Segmented } from '@/components/Segmented'
+import { SNIPPET_GROUPS, applySnippet } from './mathSnippets'
 import { useAnchoredPopover, popoverStyle } from './useAnchoredPopover'
 
 /* ------------------------------------------------------------------ *
@@ -168,11 +171,21 @@ export function EquationDialog({
 }) {
   const [tex, setTex] = useState(initial ?? '')
   const [err, setErr] = useState('')
+  const [group, setGroup] = useState(SNIPPET_GROUPS[0].key)
   const inputRef = useRef<HTMLTextAreaElement>(null)
+  /** vị trí con trỏ cần đặt sau khi chèn lệnh (đặt ngay sau lần vẽ kế tiếp) */
+  const caretRef = useRef<number | null>(null)
 
   useEffect(() => {
     inputRef.current?.focus()
   }, [])
+  useLayoutEffect(() => {
+    const ta = inputRef.current
+    if (caretRef.current === null || !ta) return
+    ta.focus()
+    ta.setSelectionRange(caretRef.current, caretRef.current)
+    caretRef.current = null
+  }, [tex])
 
   const preview = () => {
     try {
@@ -182,69 +195,114 @@ export function EquationDialog({
     }
   }
 
+  /** bấm một lệnh: chèn vào chỗ con trỏ trong ô LaTeX, chữ đang chọn vào chỗ nhập, con trỏ đặt sẵn để gõ tiếp */
+  const addSnippet = (snip: string) => {
+    const ta = inputRef.current
+    const start = ta?.selectionStart ?? tex.length
+    const end = ta?.selectionEnd ?? tex.length
+    const next = applySnippet(tex, start, end, snip)
+    caretRef.current = next.caret
+    setTex(next.text)
+    setErr('')
+  }
+
   const insert = () => {
-    if (!tex.trim()) return
-    if (onSave) {
-      onSave(tex.trim())
-      onClose()
-      return
-    }
-    // chèn dạng text $...$ để MathText/export nhận diện được
-    editor.chain().focus().insertContent(` $${tex.trim()}$ `).run()
+    const latex = tex.trim()
+    if (!latex) return
+    if (onSave) onSave(latex)
+    // chèn thẳng thành node công thức (lưu lại vẫn là $...$ như quy ước cũ)
+    else editor.chain().focus().insertContent([{ type: 'inlineMath', attrs: { latex } }, { type: 'text', text: ' ' }]).run()
     onClose()
   }
 
   const p = tex.trim() ? preview() : null
+  const items = SNIPPET_GROUPS.find((g) => g.key === group)?.items ?? []
 
+  // ra thẳng body: mở từ trong khung trang đang zoom thì lớp nền mờ đặt tại chỗ chỉ phủ một phần trang
   return (
-    <div className="rb-modal-backdrop" onMouseDown={onClose}>
-      <div className="rb-modal" onMouseDown={(e) => e.stopPropagation()}>
-        <div className="rb-modal__header">
-          <IconEquation size={16} />
-          <b>Công thức</b>
-          <button type="button" className="rb-modal__close" onClick={onClose} aria-label="Đóng">
-            <IconClose size={14} />
-          </button>
-        </div>
-        <div className="rb-modal__body">
-          <textarea
-            ref={inputRef}
-            className="rb-modal__input"
-            rows={3}
-            placeholder="Nhập LaTeX, ví dụ: \frac{a}{b} + \sqrt{x^2}"
-            value={tex}
-            onChange={(e) => {
-              setTex(e.target.value)
-              setErr('')
-            }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault()
-                insert()
-              }
-              if (e.key === 'Escape') onClose()
-            }}
-          />
-          {p && (
-            <div
-              className="rb-modal__preview"
-              dangerouslySetInnerHTML={{ __html: p.html }}
-              aria-label="Xem trước công thức"
+    <Portal>
+      <div className="rb-modal-backdrop" onMouseDown={onClose}>
+        <div className="rb-modal rb-modal--eq" onMouseDown={(e) => e.stopPropagation()}>
+          <div className="rb-modal__header">
+            <IconEquation size={16} />
+            <b>Công thức</b>
+            <button type="button" className="rb-modal__close" onClick={onClose} aria-label="Đóng">
+              <IconClose size={14} />
+            </button>
+          </div>
+          <div className="rb-modal__body">
+            <Segmented
+              value={group}
+              onChange={setGroup}
+              label="Nhóm lệnh công thức"
+              className="!h-8 w-full [&>button]:flex-1 [&>button]:justify-center [&>button]:px-1.5 [&>button]:text-[12px]"
+              options={SNIPPET_GROUPS.map((g) => ({ key: g.key, label: g.label }))}
             />
-          )}
-          {err && <div className="rb-modal__err">{err}</div>}
-        </div>
-        <div className="rb-modal__footer">
-          <button type="button" className="rb-modal__btn" onClick={onClose}>
-            Hủy
-          </button>
-          <button type="button" className="rb-modal__btn rb-modal__btn--primary" onClick={insert}>
-            {onSave ? 'Lưu' : 'Chèn'}
-          </button>
+            <div className="eq-snippets" role="toolbar" aria-label="Lệnh công thức">
+              {items.map((it) => (
+                <button
+                  key={it.tip}
+                  type="button"
+                  className="eq-snippet"
+                  data-tip={it.tip}
+                  aria-label={it.tip}
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => addSnippet(it.snip)}
+                  dangerouslySetInnerHTML={{ __html: snippetHtml(it.show ?? it.snip.replace(/#/g, '\\square')) }}
+                />
+              ))}
+            </div>
+            <textarea
+              ref={inputRef}
+              className="rb-modal__input"
+              rows={3}
+              placeholder="Nhập LaTeX hoặc bấm lệnh phía trên, ví dụ: \frac{a}{b} + \sqrt{x^2}"
+              value={tex}
+              spellCheck={false}
+              onChange={(e) => {
+                setTex(e.target.value)
+                setErr('')
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault()
+                  insert()
+                }
+                if (e.key === 'Escape') onClose()
+              }}
+            />
+            {p && (
+              <div
+                className="rb-modal__preview"
+                dangerouslySetInnerHTML={{ __html: p.html }}
+                aria-label="Xem trước công thức"
+              />
+            )}
+            {err && <div className="rb-modal__err">{err}</div>}
+          </div>
+          <div className="rb-modal__footer">
+            <button type="button" className="rb-modal__btn" onClick={onClose}>
+              Hủy
+            </button>
+            <button type="button" className="rb-modal__btn rb-modal__btn--primary" onClick={insert}>
+              {onSave ? 'Lưu' : 'Chèn'}
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </Portal>
   )
+}
+
+/** KaTeX của nút lệnh, vẽ một lần rồi nhớ */
+const snippetCache = new Map<string, string>()
+function snippetHtml(tex: string) {
+  let html = snippetCache.get(tex)
+  if (html === undefined) {
+    html = katex.renderToString(tex, { throwOnError: false, strict: false })
+    snippetCache.set(tex, html)
+  }
+  return html
 }
 
 /* ------------------------------------------------------------------ *
