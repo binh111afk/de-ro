@@ -108,7 +108,7 @@ export function UsersPanel({ me: _me }: UsersPanelProps) {
         <div>
           <h1 className="text-[22px] font-bold tracking-tight text-ink">Quản lý người dùng</h1>
           <p className="text-[13.5px] text-ink-3">
-            Xem danh sách, quản lý hạn mức AI, phân quyền và khoá tài khoản ({total} người dùng).
+            {total} người dùng
           </p>
         </div>
 
@@ -351,12 +351,12 @@ function UserDetailDrawer({
           setQuotaLimitInput('')
         } else {
           setIsUnlimited(false)
-          setQuotaLimitInput(String(q.override.monthlyTokens))
+          setQuotaLimitInput(String(q.override.monthlyTokens / TOKENS_PER_POINT))
         }
         setQuotaNote(q.override.note || '')
       } else {
         setIsUnlimited(false)
-        setQuotaLimitInput(String(q.defaultLimit))
+        setQuotaLimitInput(String(q.defaultLimit / TOKENS_PER_POINT))
         setQuotaNote('')
       }
     } catch (err: unknown) {
@@ -376,11 +376,13 @@ function UserDetailDrawer({
   const handleSaveQuota = async () => {
     setSavingQuota(true)
     try {
-      const monthlyTokens = isUnlimited ? null : Number(quotaLimitInput)
-      if (!isUnlimited && (isNaN(monthlyTokens as number) || (monthlyTokens as number) < 0)) {
-        await dialog.alert('Vui lòng nhập hạn mức token hợp lệ (số lớn hơn hoặc bằng 0).')
+      // ô nhập theo điểm, server lưu token
+      const points = Number(quotaLimitInput)
+      if (!isUnlimited && (quotaLimitInput.trim() === '' || isNaN(points) || points < 0)) {
+        await dialog.alert('Vui lòng nhập hạn mức điểm hợp lệ (số lớn hơn hoặc bằng 0).')
         return
       }
+      const monthlyTokens = isUnlimited ? null : Math.round(points * TOKENS_PER_POINT)
       await setQuota(user.id, monthlyTokens, quotaNote.trim())
       showNotice('Đã cập nhật hạn mức AI thành công.')
       await loadQuotaData()
@@ -663,23 +665,13 @@ function UserDetailDrawer({
                       style={{ width: `${pct}%` }}
                     />
                   </div>
-                  <div className="mt-1 flex flex-wrap justify-between gap-x-3 text-[11.5px] text-ink-3">
-                    <span>
-                      Tháng này đã dùng {formatNumber(toPoints(usedValue))} điểm · {quota?.requestsThisMonth ?? 0} lượt
-                    </span>
-                    <span>
-                      {limitValue === null
-                        ? 'Hạn mức tháng: không giới hạn'
-                        : `Hạn mức tháng ${formatNumber(toPoints(limitValue))} + điểm cộng ${formatNumber(toPoints(creditsValue))}`}
-                    </span>
-                  </div>
                 </div>
 
                 {/* Form chỉnh hạn mức */}
                 <div className="space-y-3 border-t border-line-2 pt-3">
                   <div>
                     <label className="mb-1 block text-[12.5px] font-medium text-ink-2">
-                      Hạn mức tháng (token)
+                      Hạn mức tháng (điểm)
                     </label>
                     <div className="flex gap-2">
                       <input
@@ -687,7 +679,7 @@ function UserDetailDrawer({
                         disabled={isUnlimited}
                         value={isUnlimited ? '' : quotaLimitInput}
                         onChange={(e) => setQuotaLimitInput(e.target.value)}
-                        placeholder={isUnlimited ? 'Không giới hạn' : 'Ví dụ: 300000'}
+                        placeholder={isUnlimited ? 'Không giới hạn' : 'Ví dụ: 300'}
                         className={`${inputClass} flex-1 text-[13.5px]`}
                       />
                       <Button
@@ -750,8 +742,8 @@ function UserDetailDrawer({
               <div>
                 <span className="block text-[12.5px] text-ink-3">Điểm cộng còn lại</span>
                 <span className="tnum font-display text-[22px] font-bold text-ink">
-                  {formatNumber(quota?.credits ?? 0)}
-                  <span className="text-[13px] font-normal text-ink-3"> token</span>
+                  {formatNumber(toPoints(quota?.credits ?? 0))}
+                  <span className="text-[13px] font-normal text-ink-3"> điểm</span>
                 </span>
               </div>
               <Button
@@ -906,7 +898,7 @@ function UserDetailDrawer({
           onClose={() => setGrantModalOpen(false)}
           onSuccess={async (newBalance) => {
             if (quota) setQuotaState({ ...quota, credits: newBalance })
-            showNotice(`Đã cộng điểm thành công! Số dư mới: ${formatNumber(newBalance)} token.`)
+            showNotice(`Đã cộng điểm thành công! Số dư mới: ${formatNumber(Math.floor(newBalance / TOKENS_PER_POINT))} điểm.`)
             await onReloadList()
           }}
         />
@@ -930,13 +922,16 @@ function GrantCreditsModal({
   onClose: () => void
   onSuccess: (newBalance: number) => Promise<void>
 }) {
-  const [tokensInput, setTokensInput] = useState('')
+  const [pointsInput, setPointsInput] = useState('')
   const [note, setNote] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [resultBalance, setResultBalance] = useState<number | null>(null)
 
-  const numTokens = Number(tokensInput)
-  const isValid = Number.isInteger(numTokens) && numTokens > 0 && numTokens <= 1e8
+  // admin nhập điểm, server nhận token (giới hạn server: 1e8 token = 100.000 điểm)
+  const numPoints = Number(pointsInput)
+  const isValid = Number.isInteger(numPoints) && numPoints > 0 && numPoints <= 100_000
+  const numTokens = numPoints * TOKENS_PER_POINT
+  const pts = (tokens: number) => formatNumber(Math.floor(tokens / TOKENS_PER_POINT))
 
   const handleGrant = async () => {
     if (!isValid) return
@@ -976,26 +971,26 @@ function GrantCreditsModal({
 
         <div className="space-y-4 py-4 text-[13.5px]">
           <p className="text-ink-2">
-            Cộng điểm token vào tài khoản <strong>{user.email}</strong>. Điểm được cộng dồn vào số dư
+            Cộng điểm AI vào tài khoản <strong>{user.email}</strong>. Điểm được cộng dồn vào số dư
             và không bị mất khi sang tháng mới.
           </p>
 
           <div className="rounded-[6px] bg-sunken/60 p-3 text-[13px]">
             <span className="text-ink-3">Số dư điểm hiện có: </span>
-            <strong className="text-ink">{formatNumber(currentCredits)} token</strong>
+            <strong className="text-ink">{pts(currentCredits)} điểm</strong>
           </div>
 
           <div>
             <label className="mb-1 block text-[13px] font-medium text-ink-2">
-              Số điểm cộng thêm (token)
+              Số điểm cộng thêm
             </label>
             <input
               type="number"
               min="1"
-              step="1000"
-              value={tokensInput}
-              onChange={(e) => setTokensInput(e.target.value)}
-              placeholder="Ví dụ: 50000"
+              step="1"
+              value={pointsInput}
+              onChange={(e) => setPointsInput(e.target.value)}
+              placeholder="Ví dụ: 50"
               className={`${inputClass} text-[13.5px]`}
               autoFocus
             />
@@ -1017,7 +1012,7 @@ function GrantCreditsModal({
           {resultBalance !== null ? (
             <div className="flex items-center gap-2 rounded-[6px] bg-sage-soft p-3 text-[13px] font-medium text-sage">
               <Check className="size-4 shrink-0" />
-              <span>Đã cộng thành công! Số dư mới: {formatNumber(resultBalance)} token.</span>
+              <span>Đã cộng thành công! Số dư mới: {pts(resultBalance)} điểm.</span>
             </div>
           ) : null}
         </div>

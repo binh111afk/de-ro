@@ -90,9 +90,6 @@ export function ContentPanel({ me }: ContentPanelProps) {
       <div className="flex flex-col gap-4">
         <div>
           <h1 className="text-[22px] font-bold tracking-tight text-ink">Quản lý nội dung</h1>
-          <p className="text-[13.5px] text-ink-3">
-            Kiểm duyệt đề thi cộng đồng, xử lý báo cáo, quản lý tệp lưu trữ và góp ý người dùng.
-          </p>
         </div>
 
         <div className="-mb-1 max-w-full overflow-x-auto pb-1">

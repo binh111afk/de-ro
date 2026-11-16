@@ -92,7 +92,7 @@ export function AnnouncementsEditor({ initial, onNotice }: { initial: Announceme
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="max-w-[520px] text-[12.5px] text-ink-3">Hiện giữa trang chủ mỗi lần vào app. Người xem đóng rồi thì lần vào sau mới hiện lại. Bật tối đa 5 thông báo cùng lúc.</p>
+        <p className="max-w-[520px] text-[12.5px] text-ink-3">Bật tối đa 5 thông báo cùng lúc.</p>
         <div className="flex flex-wrap items-center gap-2">
           <input
             ref={addImagesRef}

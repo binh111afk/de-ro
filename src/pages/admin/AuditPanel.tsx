@@ -42,9 +42,6 @@ export function AuditPanel() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-[22px] font-bold tracking-tight text-ink">Nhật ký hoạt động</h1>
-          <p className="text-[13.5px] text-ink-3">
-            Lịch sử các thao tác quản trị viên đã thực hiện trên hệ thống.
-          </p>
         </div>
         <div className="flex items-center gap-2">
           <Button
@@ -85,7 +82,6 @@ export function AuditPanel() {
                     <EmptyState
                       icon={<History className="size-6 text-ink-4" />}
                       title="Chưa có nhật ký nào"
-                      description="Các thao tác như khoá tài khoản, đổi hạn mức AI sẽ được ghi lại tại đây."
                     />
                   </td>
                 </tr>

@@ -365,9 +365,6 @@ export function OpsPanel({ me: _me }: OpsPanelProps) {
       <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-[22px] font-bold tracking-tight text-ink">AI & Máy chủ</h1>
-          <p className="text-[13.5px] text-ink-3">
-            Vận hành hệ thống: chế độ bảo trì, thông báo chung, tình trạng máy chủ và thống kê AI.
-          </p>
         </div>
       </div>
 
@@ -500,7 +497,7 @@ export function OpsPanel({ me: _me }: OpsPanelProps) {
           <div>
             <h2 className="text-[17px] font-bold text-ink">Tình trạng server</h2>
             <p className="text-[12.5px] text-ink-3">
-              Đo độ trễ thực tế tới từng dịch vụ. Kiểm tra provider AI tiêu hao một lượng nhỏ token, kiểm tra tất cả có thể mất tới ~30 giây.
+              Kiểm tra provider AI tốn một ít token. Kiểm tra tất cả mất khoảng 30 giây.
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -598,9 +595,6 @@ export function OpsPanel({ me: _me }: OpsPanelProps) {
         <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-line pb-4">
           <div>
             <h2 className="text-[17px] font-bold text-ink">Thống kê AI</h2>
-            <p className="text-[12.5px] text-ink-3">
-              Theo dõi lượt gọi API, tỉ lệ lỗi, lượng token tiêu thụ và chi phí ước tính.
-            </p>
           </div>
           <div className="flex items-center gap-2">
             <Segmented<'7' | '30'>
@@ -815,9 +809,6 @@ export function OpsPanel({ me: _me }: OpsPanelProps) {
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-line pb-4">
           <div>
             <h2 className="text-[17px] font-bold text-ink">Lỗi gần đây</h2>
-            <p className="text-[12.5px] text-ink-3">
-              Danh sách tối đa 30 lỗi gọi AI phát sinh gần nhất để theo dõi và xử lý sự cố.
-            </p>
           </div>
           <Button
             variant="outline"
@@ -840,7 +831,6 @@ export function OpsPanel({ me: _me }: OpsPanelProps) {
             <EmptyState
               icon={<Check className="size-6 text-sage" />}
               title="Chưa có lỗi nào"
-              description="Hệ thống không ghi nhận bất kỳ sự cố gọi AI nào trong các lượt gần nhất."
             />
           </div>
         ) : (

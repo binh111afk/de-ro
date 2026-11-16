@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Users, FileText, BookOpen, Cpu, ArrowRight } from 'lucide-react'
 import { Card, Spinner } from '@/components/ui'
-import { listUsers, getAiStats, type AdminMe } from '@/lib/adminApi'
+import { listUsers, getAiStats } from '@/lib/adminApi'
 import { listContentExams, listContentReports } from '@/lib/adminContentApi'
 import { loadFullBank } from '@/data/bank'
 import { formatNumber } from './adminUtils'
 
-export function OverviewPanel({ me }: { me: AdminMe }) {
+export function OverviewPanel() {
   const { search } = useLocation()
   const [totalUsers, setTotalUsers] = useState<number | null>(null)
   const [loading, setLoading] = useState(true)
@@ -65,13 +65,6 @@ export function OverviewPanel({ me }: { me: AdminMe }) {
       <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-[22px] font-bold tracking-tight text-ink">Tổng quan quản trị</h1>
-          <p className="text-[13.5px] text-ink-3">
-            Xin chào, vai trò của bạn là{' '}
-            <span className="font-semibold text-ink">
-              {me.role === 'admin' ? 'Quản trị viên (admin)' : 'Kiểm duyệt viên'}
-            </span>
-            .
-          </p>
         </div>
       </div>
 

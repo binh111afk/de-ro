@@ -133,9 +133,6 @@ export function StatsPanel({ me: _me }: StatsPanelProps) {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-[22px] font-bold tracking-tight text-ink">Thống kê số liệu</h1>
-          <p className="text-[13px] text-ink-3">
-            Theo dõi người dùng mới, hoạt động tạo đề & slide và người đang online.
-          </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
@@ -189,9 +186,6 @@ export function StatsPanel({ me: _me }: StatsPanelProps) {
               )}
             </div>
           </div>
-          <p className="mt-3 border-t border-line-2 pt-2.5 text-[11.5px] text-ink-4">
-            Toàn bộ tài khoản
-          </p>
         </Card>
 
         {/* Thẻ 2: Đăng ký mới (trong khoảng) */}
@@ -274,9 +268,6 @@ export function StatsPanel({ me: _me }: StatsPanelProps) {
               )}
             </div>
           </div>
-          <p className="mt-3 border-t border-line-2 pt-2.5 text-[11.5px] text-ink-4">
-            Đăng nhập hoặc có nhịp
-          </p>
         </Card>
 
         {/* Thẻ 4: Hoạt động 30 ngày */}
@@ -300,9 +291,6 @@ export function StatsPanel({ me: _me }: StatsPanelProps) {
               )}
             </div>
           </div>
-          <p className="mt-3 border-t border-line-2 pt-2.5 text-[11.5px] text-ink-4">
-            Đăng nhập hoặc có nhịp
-          </p>
         </Card>
       </div>
 
@@ -311,7 +299,6 @@ export function StatsPanel({ me: _me }: StatsPanelProps) {
         <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
           <div>
             <h3 className="text-[14px] font-semibold text-ink">Đăng ký mới theo ngày</h3>
-            <p className="text-[12px] text-ink-4">Ngày cũ bên trái, ngày mới bên phải</p>
           </div>
           <div className="text-[12px] text-ink-3">
             Tổng:{' '}
@@ -380,7 +367,6 @@ export function StatsPanel({ me: _me }: StatsPanelProps) {
             <h3 className="text-[14px] font-semibold text-ink">
               Đề và slide tạo mới theo ngày
             </h3>
-            <p className="text-[12px] text-ink-4">Ngày cũ bên trái, ngày mới bên phải</p>
           </div>
           <div className="flex flex-wrap items-center gap-4 text-[12px]">
             <div className="flex items-center gap-1.5">
@@ -499,7 +485,7 @@ export function StatsPanel({ me: _me }: StatsPanelProps) {
                   </h3>
                 </div>
                 <p className="mt-1 text-[12px] text-ink-3">
-                  Chỉ tính người đã đăng nhập (hoạt động trong 2 phút gần nhất)
+                  Hoạt động trong 2 phút gần nhất
                 </p>
               </div>
 

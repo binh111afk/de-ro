@@ -49,7 +49,7 @@ export function HealthDrawer({
               API key
               <p className="mt-1 rounded-[6px] bg-sunken px-3 py-2 font-mono text-[13px] font-normal text-ink-2">{target.service.keyMask || 'Chưa cấu hình'}</p>
             </div>
-            <p className="text-[12.5px] leading-relaxed text-ink-3">Mục này chỉ xem. Muốn đổi thì sửa biến môi trường trên Vercel, vì lưu sai từ đây có thể làm cả app ngừng hoạt động.</p>
+            <p className="text-[12.5px] leading-relaxed text-ink-3">Chỉ xem. Muốn đổi thì sửa biến môi trường trên Vercel.</p>
           </div>
         )}
       </aside>
@@ -104,7 +104,7 @@ function ProviderForm({ provider: p, onCancel, onSaved }: { provider: HealthProv
             className={cn(field, needKey && 'border-clay')}
           />
         </label>
-        <p className="text-[12.5px] leading-relaxed text-ink-3">Bấm Lưu là áp dụng cho cả app sau tối đa 30 giây và được ghi vào Nhật ký. Sau khi lưu, hệ thống tự kiểm tra lại provider này. Endpoint khác mặc định phải có tên miền trong AI_ENDPOINT_ALLOWED_HOSTS trên Vercel.</p>
+        <p className="text-[12.5px] leading-relaxed text-ink-3">Lưu xong áp dụng cho cả app sau tối đa 30 giây. Endpoint khác mặc định phải có tên miền trong AI_ENDPOINT_ALLOWED_HOSTS trên Vercel.</p>
       </div>
       <div className="flex items-center justify-between gap-2 border-t border-line px-6 py-4">
         {p.custom ? (

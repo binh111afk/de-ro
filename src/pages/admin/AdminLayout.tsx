@@ -64,9 +64,6 @@ export function AdminLayout({ me }: AdminLayoutProps) {
                   </Badge>
                 ) : null}
               </div>
-              <p className="text-[12.5px] text-ink-3">
-                Bảng điều khiển và công cụ vận hành ứng dụng
-              </p>
             </div>
           </div>
 
@@ -115,14 +112,14 @@ export function AdminLayout({ me }: AdminLayoutProps) {
             {/* App.tsx giữ nguyên khung admin; chỉ phần nội dung chạy hiệu ứng khi đổi mục */}
             <div key={pathname.split('/')[2] ?? ''} className="page-enter">
             <Routes>
-              <Route index element={<OverviewPanel me={me} />} />
+              <Route index element={<OverviewPanel />} />
               <Route path="nguoi-dung" element={<UsersPanel me={me} />} />
               <Route path="noi-dung/*" element={<ContentPanel me={me} />} />
               <Route path="ngan-hang/*" element={<BankPanel me={me} />} />
               <Route path="so-lieu/*" element={<StatsPanel me={me} />} />
               <Route path="ai" element={<OpsPanel me={me} />} />
               <Route path="nhat-ky" element={<AuditPanel />} />
-              <Route path="*" element={<OverviewPanel me={me} />} />
+              <Route path="*" element={<OverviewPanel />} />
             </Routes>
             </div>
           </main>

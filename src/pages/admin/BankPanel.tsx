@@ -327,7 +327,7 @@ export function BankPanel({ me: _me }: { me: AdminMe }) {
         <div>
           <h1 className="text-[22px] font-bold tracking-tight text-ink">Ngân hàng câu hỏi</h1>
           <p className="text-[13.5px] text-ink-3">
-            Kho câu hỏi tích hợp sẵn và lưu chỉnh sửa từ máy chủ. Tổng {items.length.toLocaleString('vi-VN')} câu.
+            Tổng {items.length.toLocaleString('vi-VN')} câu.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -535,7 +535,6 @@ export function BankPanel({ me: _me }: { me: AdminMe }) {
         <EmptyState
           icon={<BookOpen className="size-8 text-ink-4" />}
           title="Không tìm thấy câu hỏi"
-          description="Thử thay đổi từ khoá tìm kiếm hoặc các tiêu chí bộ lọc phía trên."
         />
       ) : (
         <Card className="divide-y divide-line overflow-hidden">

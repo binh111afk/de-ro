@@ -59,14 +59,15 @@ export function formatAuditDetail(_action: string, detail: unknown): string {
     if (d.monthlyTokens === null) {
       parts.push('Hạn mức: Không giới hạn')
     } else {
-      parts.push(`Hạn mức: ${formatNumber(Number(d.monthlyTokens))} token`)
+      // server lưu token; hiện theo điểm như người dùng thấy (1 điểm = 1.000 token)
+      parts.push(`Hạn mức tháng: ${formatNumber(Number(d.monthlyTokens) / 1000)} điểm`)
     }
   }
   if (d.tokens !== undefined) {
     const num = Number(d.tokens)
     const sign = num > 0 ? '+' : ''
     const noteStr = d.note ? ` (${d.note})` : ''
-    parts.push(`Số điểm: ${sign}${formatNumber(num)} token${noteStr}`)
+    parts.push(`Số điểm: ${sign}${formatNumber(num / 1000)} điểm${noteStr}`)
   }
   if (d.hours !== undefined) {
     parts.push(`Thời hạn: ${d.hours} giờ`)
