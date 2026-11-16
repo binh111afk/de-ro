@@ -19,6 +19,8 @@ export interface Construction {
   segs: Array<{ a: string; b: string; dashed?: boolean }>
   /** đoạn kéo dài (hình phẳng): 'both' = đường BC kéo dài, 'end' = tia BC */
   extends: Array<{ a: string; b: string; mode: 'both' | 'end'; dashed?: boolean }>
+  /** vectơ (hình phẳng: mũi tên ở đầu cuối; hình không gian: đoạn thường); `name` = tên riêng như "u" */
+  vecs: Array<{ a: string; b: string; name?: string }>
   /** nhãn ghi trên cạnh: nhãn AB "4 km" */
   labels: Array<{ a: string; b: string; text: string }>
   /** đường kích thước: kích thước BC "7 km" */
@@ -204,6 +206,7 @@ export function construct(text: string, known: Map<string, Vec>, opts: Construct
     coords: [],
     segs: [],
     extends: [],
+    vecs: [],
     labels: [],
     dims: [],
     rights: [],
@@ -606,6 +609,23 @@ export function construct(text: string, known: Map<string, Vec>, opts: Construct
       return
     }
 
+    // ---------- vectơ: "vectơ AB, AD" hoặc "vectơ AC \"u\"" (tên riêng ghi cạnh mũi tên)
+    const vecM = s.match(/^(?:vectơ|vecto|vector|vec)\s+(.+)$/i)
+    if (vecM) {
+      const q = vecM[1].match(/["“]([^"”]+)["”]/)
+      const body = vecM[1].replace(q?.[0] ?? '', ' ').trim()
+      const groups = body.split(/[\s,;]+/).filter(Boolean)
+      if (!groups.length) return err('ví dụ: vectơ AB hoặc vectơ AC "u"')
+      for (const g of groups) {
+        const ns = names(g)
+        if (ns.length !== 2 || ns.join('') !== g) return err(`"${g}": vectơ cần đúng 2 điểm, ví dụ vectơ AB`)
+        if (!getAll(ns)) return
+        seg(ns[0], ns[1], false)
+        out.vecs.push({ a: ns[0], b: ns[1], ...(q && groups.length === 1 ? { name: q[1].trim() } : {}) })
+      }
+      return
+    }
+
     // ---------- nối đoạn: "AM, MN đứt"
     const dashed = /(^|\s)(đứt|dut)(\s|$)/.test(lower) ? true : /(^|\s)(liền|lien)(\s|$)/.test(lower) ? false : undefined
     const groups = s.replace(/(^|\s)(đứt|liền|dut|lien|nối|noi)(?=\s|$)/gi, ' ').split(/[\s,;]+/).filter(Boolean)
@@ -676,6 +696,8 @@ export const GEO_HELP: Array<{ group: string; items: Array<{ code: string; what:
     items: [
       { code: 'AM, MN, SO', what: 'Nối đoạn (nét khuất tự vẽ đứt)' },
       { code: 'AM đứt', what: 'Ép nét đứt (hoặc "liền")' },
+      { code: 'vectơ AB, AD', what: 'Vectơ: mũi tên từ A tới B (hình phẳng)' },
+      { code: 'vectơ AC "u"', what: 'Vectơ có tên riêng, ghi cạnh mũi tên' },
       { code: 'vuông H S A', what: 'Kí hiệu góc vuông tại H, giữa HS và HA' },
       { code: 'bằng SM MC', what: 'Gạch đánh dấu các đoạn bằng nhau' },
       { code: 'tô MNP', what: 'Tô nhạt thiết diện / mặt phẳng' },

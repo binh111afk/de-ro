@@ -551,6 +551,31 @@ function renderExtras2d(
     parts.push(seg(pa, pb, g.dashed === true, isFree ? 1.5 : 1.3))
     freeSegsPx.push([pa, pb])
   }
+  // vectơ: đầu mũi tên đặc ở điểm cuối (lùi khỏi nhãn điểm một chút cho khỏi đè chấm)
+  for (const v of c.vecs) {
+    const pa = at(v.a)
+    const pb = at(v.b)
+    const d = unit(sub(pb, pa))
+    const n: P2 = [-d[1], d[0]]
+    const tip = pb
+    const base = sub(tip, mul(d, 11))
+    const l = add(base, mul(n, 4.2))
+    const rr = add(base, mul(n, -4.2))
+    parts.push(`<path d="M${f1(tip[0])} ${f1(tip[1])}L${f1(l[0])} ${f1(l[1])}L${f1(rr[0])} ${f1(rr[1])}Z" fill="${STROKE}" stroke="none"/>`)
+    if (v.name) {
+      // tên vectơ (vd u) đặt giữa đoạn, phía ngoài hình, có mũi tên nhỏ phía trên chữ
+      const side = outward2(pa, pb, center, false)
+      const m = add(mid(pa, pb), mul(side, 16))
+      const w = Math.max(9, v.name.length * 8)
+      const y = m[1] + 5
+      const ay = y - 15
+      parts.push(
+        `<text x="${f1(m[0])}" y="${f1(y)}" ${LABEL_FONT} text-anchor="middle" font-style="italic" data-lbl="vec:${esc(v.a + v.b)}">${esc(v.name)}</text>`,
+        `<path d="M${f1(m[0] - w / 2)} ${f1(ay)}L${f1(m[0] + w / 2)} ${f1(ay)}M${f1(m[0] + w / 2 - 3.5)} ${f1(ay - 2.5)}L${f1(m[0] + w / 2)} ${f1(ay)}L${f1(m[0] + w / 2 - 3.5)} ${f1(ay + 2.5)}" stroke="${STROKE}" stroke-width="1" fill="none"/>`,
+      )
+      all.push([m[0] - w, ay - 6], [m[0] + w, y + 4])
+    }
+  }
   for (const r of c.rights) {
     const ra = at(r.at)
     const ru = at(r.u)
