@@ -1710,6 +1710,24 @@
     cursor: pointer;
   }
   .ai-retry:hover { border-color: var(--primary); color: var(--primary); }
+  .ai-dislike {
+    display: inline-flex;
+    margin: 6px 0 0 6px;
+    padding: 4px;
+    border: none;
+    border-radius: 6px;
+    background: none;
+    color: var(--muted, #888);
+    cursor: pointer;
+    opacity: 0.6;
+  }
+  .ai-msg:hover .ai-dislike { opacity: 1; }
+  .ai-dislike:hover:not(:disabled) { background: var(--hover, rgba(0, 0, 0, 0.05)); color: var(--danger); }
+  .ai-dislike.is-on { color: var(--danger); opacity: 1; cursor: default; }
+  .ai-dislike:disabled:not(.is-on) { opacity: 0.3; cursor: default; }
+  .ai-vote { display: inline-flex; margin-left: 2px; }
+  .ai-vote .ai-dislike { margin-left: 2px; }
+  .ai-like:hover:not(:disabled), .ai-like.is-on { color: var(--primary); }
 
   .ai-msg-sources {
     display: flex;

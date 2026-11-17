@@ -28,6 +28,8 @@ export interface LlmOptions {
   retryOf?: string
   /** tìm trên web trước khi trả lời (DeepSeek chính hãng), kết quả có `citations` */
   webSearch?: boolean
+  /** lượt trước không dùng được: server thử model mạnh hơn trước (tốn điểm hơn) */
+  strong?: boolean
   /** có thì gọi dạng stream: báo tiến độ thật trong lúc model suy luận / viết */
   onProgress?: (p: LlmProgress) => void
 }
@@ -102,6 +104,7 @@ async function callOnce(messages: LlmMessage[], opts: LlmOptions): Promise<LlmRe
         reasoningEffort: opts.reasoningEffort ?? 'max',
         ...(opts.temperature !== undefined ? { temperature: opts.temperature } : {}),
         ...(opts.webSearch ? { webSearch: true } : {}),
+        ...(opts.strong ? { strong: true } : {}),
         ...(opts.onProgress && !opts.webSearch ? { stream: true } : {}),
       }),
     })

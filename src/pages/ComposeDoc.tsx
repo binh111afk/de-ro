@@ -48,6 +48,7 @@ import { emptyDoc } from '@/data/docTypes'
 import { cn } from '@/lib/cn'
 import { attachToAi } from '@/lib/aiAttach'
 import { blockKey, blocksText, focusNote, keyIndex, type AiApplyResult } from '@/lib/aiDocContext'
+import { reportAi, takeRecentAiTurn } from '@/lib/aiFeedback'
 
 const SESSION_KEY = 'dethinhbien-compose-session'
 const MOBILE_VIEW_KEY = 'dethinhbien-mobile-view'
@@ -782,6 +783,19 @@ export default function ComposeDoc() {
    * Không phải JSON (trả lời thường) → undefined. Trông như sửa đề mà không áp được → `failed`
    * kèm bản chữ của phần AI viết (nếu đọc được) để giáo viên vẫn dùng được.
    */
+  // hoàn tác ngay sau khi AI sửa đề = tín hiệu AI làm chưa đúng ý (bảng ai_feedback)
+  useEffect(() => {
+    if (!editor) return
+    const on = ({ transaction }: { transaction: { getMeta: (k: string) => unknown } }) => {
+      const meta = transaction.getMeta('history$') as { redo?: boolean } | undefined
+      if (!meta || meta.redo) return
+      const t = takeRecentAiTurn()
+      if (t) reportAi('undo', t)
+    }
+    editor.on('transaction', on)
+    return () => void editor.off('transaction', on)
+  }, [editor])
+
   const handleAiResult = useCallback(
     (text: string): AiApplyResult | undefined => {
       if (!activeId || !editor || editor.isDestroyed) return undefined

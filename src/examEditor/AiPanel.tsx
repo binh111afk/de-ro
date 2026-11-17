@@ -31,8 +31,9 @@ import { splitHtmlDeck } from '@/lib/htmlDeck'
 import { editSystemPrompt, looksLikeEdit, parseEditCommands, type SlideEditOp } from '@/lib/slideEdit'
 import { useSlidingThumb } from './useSlidingThumb'
 import { buildSourcePack, loadPickedSources, pickedKey, sourcePrompt, sourceRule, type PickedSource, type SourcePack } from '@/lib/sources'
-import { BookOpen, Globe, RotateCcw } from 'lucide-react'
+import { BookOpen, Globe, RotateCcw, ThumbsDown, ThumbsUp } from 'lucide-react'
 import type { AiApplyResult } from '@/lib/aiDocContext'
+import { looksLikeComplaint, nearlySame, rememberAiTurn, reportAi } from '@/lib/aiFeedback'
 import { dialog } from '@/components/Dialog'
 import { SourcePicker } from './SourcePicker'
 import { cn } from '@/lib/cn'
@@ -166,6 +167,8 @@ export interface ChatTurn {
   askState?: 'open' | 'done'
   /** kết quả không áp được vào đề: yêu cầu để gửi lại bằng nút Thử lại */
   retry?: string
+  /** người dùng đã bấm 👎 */
+  vote?: 'up' | 'down'
 }
 
 interface ActStep {
@@ -1039,7 +1042,7 @@ export function AiPanel({
     return () => ro.disconnect()
   }, [input])
 
-  const send = useCallback(async (override?: string) => {
+  const send = useCallback(async (override?: string, opt: { strong?: boolean } = {}) => {
     const text = (override ?? input).trim()
     if ((!text && files.length === 0 && refs.length === 0) || busy) return
     const sentRefs = refs
@@ -1061,6 +1064,14 @@ export function AiPanel({
     const botId = `a${Date.now()}`
     // trả lời panel hỏi lại = tiếp tục yêu cầu soạn ban đầu
     const answeringAsk = override != null && turns[turns.length - 1]?.ask != null
+    // tín hiệu không hài lòng với lượt trước: "sai rồi…" hoặc gửi lại gần giống
+    const prevUser = [...turns].reverse().find((t) => t.role === 'user')
+    const prevBot = turns[turns.length - 1]
+    if (prevUser && prevBot?.role === 'assistant' && !answeringAsk) {
+      const info = { mode, request: prevUser.text, reply: prevBot.text || prevBot.error || '', context: documentDigest }
+      if (looksLikeComplaint(text)) reportAi('complaint', info, text)
+      else if (override == null && nearlySame(text, prevUser.text)) reportAi('resend', info, text)
+    }
     const intent = answeringAsk || (sentFiles.length && !text.trim()) ? 'doc' : detectIntent(text, mode)
     setTurns((t) => [
       ...t,
@@ -1257,6 +1268,7 @@ export function AiPanel({
           // dàn ý kéo dài 30–60s (dễ vượt timeout proxy) mà không nội dung hơn.
           reasoningEffort: mode === 'slide' ? AI_EFFORT.slide : AI_EFFORT.exam,
           onProgress,
+          strong: opt.strong,
         })
       } finally {
         clearInterval(ticker)
@@ -1383,7 +1395,8 @@ export function AiPanel({
         let result = onApplyBlocks?.(res.content)
         // đề trả JSON hỏng (thường bị cắt cụt): hoàn token lượt đó và soạn lại đúng một lần
         if (result?.failed && onApplyBlocks) {
-          const again = await callLlm(messages, { signal: controller.signal, reasoningEffort: AI_EFFORT.exam, retryOf: res.receipt })
+          // gọi lại bằng model mạnh hơn (lượt đầu model nhanh không làm được)
+          const again = await callLlm(messages, { signal: controller.signal, reasoningEffort: AI_EFFORT.exam, retryOf: res.receipt, strong: true })
           result = onApplyBlocks(again.content) ?? result
         }
         // không áp được: hiện trong chat (kèm phần AI viết nếu đọc được) + nút Thử lại
@@ -1392,6 +1405,7 @@ export function AiPanel({
         const looksJson = failed
         const text = result?.text ?? res.content
         if (failed) console.warn('[AI] JSON không áp được:', res.content)
+        if (summary) rememberAiTurn({ mode, request: userTurn.text, reply: summary, context: documentDigest })
         setTurns((t) =>
           t.map((turn) =>
             turn.id === botId
@@ -1735,9 +1749,32 @@ export function AiPanel({
               {turn.sources?.length || turn.webSources?.length || turn.sourceNote ? <SourcesButton sources={turn.sources} web={turn.webSources} note={turn.sourceNote} /> : null}
               {turn.error ? <div className="ai-msg-error">{turn.error}</div> : null}
               {turn.retry && !busy && turn.id === turns[turns.length - 1]?.id ? (
-                <button type="button" className="ai-retry" onClick={() => void send(turn.retry)}>
+                <button type="button" className="ai-retry" onClick={() => void send(turn.retry, { strong: true })}>
                   <RotateCcw size={13} /> Thử lại
                 </button>
+              ) : null}
+              {turn.role === 'assistant' && !turn.pending && !turn.ask && (turn.text || turn.error) ? (
+                <span className="ai-vote">
+                  {(['up', 'down'] as const).map((v) => (
+                    <button
+                      key={v}
+                      type="button"
+                      className={cn('ai-dislike', v === 'up' && 'ai-like', turn.vote === v && 'is-on')}
+                      data-tip={v === 'up' ? 'Tốt' : 'Chưa tốt'}
+                      aria-label={v === 'up' ? 'Tốt' : 'Chưa tốt'}
+                      aria-pressed={turn.vote === v}
+                      disabled={!!turn.vote}
+                      onClick={() => {
+                        const i = turns.findIndex((t) => t.id === turn.id)
+                        const req = [...turns.slice(0, i)].reverse().find((t) => t.role === 'user')
+                        reportAi(v, { mode, request: req?.text ?? '', reply: turn.text || turn.error || '', context: documentDigest })
+                        setTurns((ts) => ts.map((t) => (t.id === turn.id ? { ...t, vote: v } : t)))
+                      }}
+                    >
+                      {v === 'up' ? <ThumbsUp size={13} /> : <ThumbsDown size={13} />}
+                    </button>
+                  ))}
+                </span>
               ) : null}
             </div>
           ))

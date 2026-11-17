@@ -52,6 +52,42 @@ export async function logAiCall(c: AiCall): Promise<void> {
   }
 }
 
+export const AI_FEEDBACK_KINDS = ['up', 'down', 'undo', 'resend', 'complaint'] as const
+export type AiFeedback = {
+  userId: string | null
+  kind: (typeof AI_FEEDBACK_KINDS)[number]
+  mode: 'exam' | 'slide' | 'board'
+  request: string
+  reply: string
+  context: string
+  note: string
+}
+
+/** Ghi một dòng `ai_feedback` (người dùng không hài lòng với câu trả lời AI). Trả false nếu không ghi được. */
+export async function logAiFeedback(f: AiFeedback): Promise<boolean> {
+  const s = supa()
+  if (!s) return false
+  try {
+    const r = await fetch(`${s.base}/rest/v1/ai_feedback`, {
+      method: 'POST',
+      headers: { ...s.headers, Prefer: 'return=minimal' },
+      body: JSON.stringify({
+        user_id: f.userId,
+        kind: f.kind,
+        mode: f.mode,
+        request: f.request.slice(0, 4000),
+        reply: f.reply.slice(0, 8000),
+        context: f.context.slice(0, 12000),
+        note: f.note.slice(0, 500),
+      }),
+      signal: AbortSignal.timeout(3000),
+    })
+    return r.ok
+  } catch {
+    return false
+  }
+}
+
 /** Chi phí từ usage của opencode (`usage.opencode.list_cost`, USD) nếu có. */
 export function costFromUsage(usage: unknown): number | null {
   const v = (usage as { opencode?: { list_cost?: unknown } } | undefined)?.opencode?.list_cost

@@ -52,6 +52,12 @@ function upstreamTimeoutMs(): number {
   return Number.isFinite(raw) && raw >= 10_000 ? raw : DEFAULT_UPSTREAM_TIMEOUT_MS
 }
 
+/** hệ số nhân điểm khi dùng model mạnh (`STRONG_POINT_FACTOR`, mặc định 3, trong khoảng 1–10) */
+function strongFactor(): number {
+  const raw = Number(process.env.STRONG_POINT_FACTOR)
+  return Number.isFinite(raw) && raw >= 1 && raw <= 10 ? raw : 3
+}
+
 /**
  * Gateway opencode.ai đòi header `x-opencode-session` để định tuyến/cache; thiếu
  * thì trả 400 MissingSessionID. Một id cho cả process là đủ (app chạy cục bộ).
@@ -168,6 +174,8 @@ function providerConfig() {
     deepseekApiKey: process.env.DEEPSEEK_API_KEY?.trim() || '',
     deepseekBaseURL: assertAllowedUrl((process.env.DEEPSEEK_BASE_URL?.trim() || 'https://api.deepseek.com').replace(/\/+$/, '')).toString().replace(/\/+$/, ''),
     deepseekModel: process.env.DEEPSEEK_MODEL?.trim() || 'deepseek-flash',
+    // model mạnh cho lượt "Thử lại" sau khi kết quả không áp được (body.strong); trống = không có, chạy chuỗi thường
+    deepseekStrongModel: process.env.DEEPSEEK_STRONG_MODEL?.trim() || '',
     fostaApiKey: process.env.FOSTA_API_KEY?.trim() || '',
     fostaBaseURL: assertAllowedUrl((process.env.FOSTA_BASE_URL?.trim() || 'https://codex.fosta.app/v1').replace(/\/+$/, '')).toString().replace(/\/+$/, ''),
     fostaModel: process.env.FOSTA_MODEL?.trim() || 'gpt-6-luna',
@@ -399,6 +407,8 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
     webSearch?: boolean
     /** trả về dạng SSE (tiến độ thật): sự kiện `delta` / `retry`, cuối cùng `done` hoặc `error` */
     stream?: boolean
+    /** lượt trước không dùng được: thử model mạnh (DEEPSEEK_STRONG_MODEL) trước, điểm nhân STRONG_POINT_FACTOR */
+    strong?: boolean
   }
   try {
     // 2 MB chữ ≈ 700k token — đủ cho đề + nguồn tham khảo dài nhất app gửi; to hơn là lạm dụng
@@ -502,7 +512,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
     // `opencode` = gửi x-opencode-session + reasoning_effort; `effort` = chỉ gửi reasoning_effort (DeepSeek chính hãng).
     // `anthropic`: gọi Claude qua SDK (Messages API), không qua fetch kiểu OpenAI.
     // `stream`: gọi stream:true rồi gom SSE lại (AnyRouter)
-    type Target = { model: string; url: string; key: string; opencode: boolean; anthropic?: boolean; stream?: boolean; effort?: boolean; search?: boolean }
+    type Target = { model: string; url: string; key: string; opencode: boolean; anthropic?: boolean; stream?: boolean; effort?: boolean; search?: boolean; strong?: boolean }
     // tên provider cho log ai_calls
     const providerOf = (t: Target) =>
       t.anthropic ? 'anthropic' : t.opencode ? 'opencode' : t.key === prov.deepseekApiKey ? 'deepseek' : t.key === prov.fostaApiKey ? 'fosta' : t.key === prov.anyrouterApiKey ? 'anyrouter' : t.key === prov.nightrouterApiKey ? 'nightrouter' : 'khac'
@@ -511,15 +521,17 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
     const pending: Promise<void>[] = []
     // token provider đã tính nhưng lượt đó hỏng (trả rỗng…): vẫn trừ vào hạn mức
     let wasted = 0
+    // model mạnh đắt hơn: nhân điểm khi lượt đang chạy là model mạnh
+    let billFactor = 1
     /** usage thật; provider không trả usage (stream thiếu) thì ước theo độ dài vào + ra */
     const billOf = (usage: unknown, out: string) => {
       const u = usage as { total_tokens?: number; prompt_cache_hit_tokens?: number; prompt_tokens_details?: { cached_tokens?: number } } | undefined
       const n = Number(u?.total_tokens)
       // phần đầu vào nhà cung cấp lấy từ cache chỉ tốn ~1/10 giá → chỉ tính 1/10 điểm
       const cached = Math.max(0, Number(u?.prompt_cache_hit_tokens ?? u?.prompt_tokens_details?.cached_tokens) || 0)
-      if (Number.isFinite(n) && n > 0) return Math.max(1, Math.ceil(n - Math.min(cached, n) * 0.9))
+      if (Number.isFinite(n) && n > 0) return Math.max(1, Math.ceil((n - Math.min(cached, n) * 0.9) * billFactor))
       // nhà cung cấp không báo usage: tính mức trần (prompt + toàn bộ phần đầu ra cho phép), không đoán thấp
-      return Number.isFinite(n) && n > 0 ? n : promptTokens + Math.max(maxTokens, Math.ceil(out.length / 3))
+      return Math.ceil((promptTokens + Math.max(maxTokens, Math.ceil(out.length / 3))) * billFactor)
     }
     /** lượt thành công: hoàn biên nhận (nếu có) rồi cộng token đã dùng */
     const settle = async (spent: number) => {
@@ -569,6 +581,9 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
       if (!prov.deepseekApiKey) return json(res, 400, { error: 'Tìm trên web chưa được bật trên máy chủ.' })
       targets.splice(0, targets.length, { model: prov.deepseekModel, url: `${prov.deepseekBaseURL}/chat/completions`, key: prov.deepseekApiKey, opencode: false, search: true })
     }
+    // Thử lại sau lượt hỏng: model mạnh đứng đầu, hỏng thì vẫn rơi về chuỗi thường
+    if (body.strong === true && !body.webSearch && prov.deepseekApiKey && prov.deepseekStrongModel)
+      targets.unshift({ model: prov.deepseekStrongModel, url: `${prov.deepseekBaseURL}/chat/completions`, key: prov.deepseekApiKey, opencode: false, effort: true, strong: true })
     // model dự phòng được chỉ định → thử nó trước tiên
     if (wantsBackup) {
       const i = targets.findIndex((t) => t.model === body.model)
@@ -578,6 +593,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
     const errs: string[] = []
     for (const [modelIndex, target] of targets.entries()) {
       const selectedModel = target.model
+      billFactor = target.strong ? strongFactor() : 1
       let lastErr: string | null = null
       const t0 = Date.now()
       if (target.anthropic) {
