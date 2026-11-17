@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { ChevronRight, FileText, LogOut, Shield } from 'lucide-react'
-import { getMe, type AdminMe } from '@/lib/adminApi'
+import { AdminError, getMe, type AdminMe } from '@/lib/adminApi'
 import { Button, inputClass } from '@/components/ui'
 import { signOut, updateProfile, type Session } from '@/lib/auth'
 import { uploadImage } from '@/lib/mediaStore'
@@ -43,15 +43,43 @@ function ProfilePage({ user }: { user: Session['user'] }) {
   )
 }
 
+const ADMIN_ME_KEY = 'dero.adminMe'
+
 /** Chỉ hiện với admin/kiểm duyệt (server xác nhận qua getMe); người thường không thấy gì. */
 function AdminCard() {
-  const [me, setMe] = useState<AdminMe | null>(null)
+  // nhớ vai trò ở máy để card hiện ngay (hàm /api/admin nguội mất vài giây); server vẫn kiểm quyền khi vào /admin
+  const userId = useSession()?.user.id
+  const [me, setMe] = useState<AdminMe | null>(() => {
+    try {
+      const m = JSON.parse(localStorage.getItem(ADMIN_ME_KEY) ?? 'null') as AdminMe | null
+      return m && m.userId === userId ? m : null
+    } catch {
+      return null
+    }
+  })
   const navigate = useNavigate()
   useEffect(() => {
     let alive = true
+    const remember = (m: AdminMe | null) => {
+      try {
+        if (m) localStorage.setItem(ADMIN_ME_KEY, JSON.stringify(m))
+        else localStorage.removeItem(ADMIN_ME_KEY)
+      } catch {
+        /* bỏ qua */
+      }
+    }
     getMe()
-      .then((m) => alive && setMe(m))
-      .catch(() => {})
+      .then((m) => {
+        remember(m)
+        if (alive) setMe(m)
+      })
+      .catch((err: unknown) => {
+        // chỉ quên khi server trả lời rõ là không có quyền, lỗi mạng thì giữ
+        if (err instanceof AdminError && (err.status === 401 || err.status === 403)) {
+          remember(null)
+          if (alive) setMe(null)
+        }
+      })
     return () => {
       alive = false
     }
