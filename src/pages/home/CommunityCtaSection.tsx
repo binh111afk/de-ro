@@ -35,7 +35,7 @@ export function CommunityCtaSection() {
   const ctaRev = useReveal<HTMLDivElement>(80)
 
   return (
-    <section className="landing-below-fold bg-canvas py-14 sm:py-16 lg:py-20">
+    <section className="landing-below-fold bg-canvas py-10 sm:py-16 lg:py-20">
       <div className="mx-auto max-w-[1260px] px-4 sm:px-6">
         <div {...head.revealProps} className="max-w-2xl">
           <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-clay-deep">
@@ -44,21 +44,21 @@ export function CommunityCtaSection() {
           <h2 className="mt-2 text-[clamp(1.45rem,2.7vw,2.1rem)] font-bold leading-[1.18] tracking-[-0.02em] text-ink">
             Đề đã soạn được lưu lại
           </h2>
-          <p className="mt-3 text-[15px] leading-[1.65] text-ink-2">
+          <p className="mt-2.5 text-[15px] leading-[1.65] text-ink-2 md:mt-3">
             Đề của bạn và đề giáo viên khác chia sẻ đều ở đây.
           </p>
         </div>
 
         <div
           {...listRev.revealProps}
-          className="stagger-kids mt-8 divide-y divide-line overflow-hidden rounded-[12px] border border-line bg-surface"
+          className="stagger-kids no-scrollbar max-md:-mx-4 mt-6 max-md:flex max-md:snap-x max-md:snap-mandatory max-md:scroll-pl-4 max-md:gap-3.5 max-md:overflow-x-auto max-md:px-4 md:mt-8 md:divide-y md:divide-line md:overflow-hidden md:rounded-[12px] md:border md:border-line md:bg-surface"
         >
           {LIBRARY_ROUTES.map((item) => {
             const Icon = item.icon
             return (
               <div
                 key={item.to}
-                className="flex flex-col justify-between gap-4 p-5 sm:flex-row sm:items-center sm:p-6"
+                className="flex flex-col justify-between gap-4 max-md:w-[80%] max-md:shrink-0 max-md:snap-start max-md:rounded-[12px] max-md:border max-md:border-line max-md:bg-surface max-md:p-4 md:flex-row md:items-center md:p-6"
               >
                 <div className="flex min-w-0 items-start gap-3.5">
                   <span className="mt-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[8px] border border-line bg-canvas text-clay">
@@ -77,7 +77,7 @@ export function CommunityCtaSection() {
 
                 <Link
                   to={item.to}
-                  className="inline-flex min-h-[40px] shrink-0 items-center gap-1.5 text-[13.5px] font-semibold text-clay-deep hover:text-clay sm:pl-4"
+                  className="inline-flex min-h-[40px] shrink-0 items-center gap-1.5 text-[13.5px] font-semibold text-clay-deep hover:text-clay md:pl-4"
                 >
                   <span>{item.cta}</span>
                   <ArrowRight className="h-4 w-4 shrink-0" aria-hidden />
@@ -90,7 +90,7 @@ export function CommunityCtaSection() {
         {/* dải CTA kết trang: nền tối sắc nét, không phát sáng */}
         <div
           {...ctaRev.revealProps}
-          className="mt-12 rounded-[14px] bg-deep px-5 py-9 text-deep-text sm:px-9 sm:py-11 lg:flex lg:items-center lg:justify-between lg:gap-10"
+          className="mt-8 rounded-[14px] bg-deep px-5 py-7 text-deep-text sm:px-9 sm:py-11 md:mt-12 lg:flex lg:items-center lg:justify-between lg:gap-10"
         >
           <div className="max-w-xl min-w-0">
             <h2 className="text-[clamp(1.45rem,2.6vw,2.05rem)] font-bold leading-[1.18] tracking-[-0.02em] text-deep-text">

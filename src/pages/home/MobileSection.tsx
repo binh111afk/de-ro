@@ -11,11 +11,11 @@ export function MobileSection() {
   const reveal = useReveal<HTMLDivElement>()
 
   return (
-    <section className="landing-below-fold border-b border-line bg-surface py-14 sm:py-16 lg:py-20">
+    <section className="landing-below-fold border-b border-line bg-surface py-10 sm:py-16 lg:py-20">
       <div className="mx-auto max-w-[1260px] px-4 sm:px-6">
         <div
           {...reveal.revealProps}
-          className="grid grid-cols-1 items-center gap-8 rounded-[14px] border border-line bg-canvas p-5 sm:p-8 lg:grid-cols-12 lg:gap-12 lg:p-10"
+          className="grid grid-cols-1 items-center gap-5 rounded-[14px] border border-line bg-canvas p-4 sm:p-8 md:gap-8 lg:grid-cols-12 lg:gap-12 lg:p-10"
         >
           <div className="min-w-0 lg:col-span-6">
             <div className="inline-flex items-center gap-2 rounded-[6px] border border-line bg-surface px-2.5 py-1 text-[12px] font-semibold text-ink-2">
@@ -23,15 +23,15 @@ export function MobileSection() {
               <span>Điện thoại, máy tính bảng</span>
             </div>
 
-            <h2 className="mt-4 text-[clamp(1.4rem,2.5vw,2rem)] font-bold leading-[1.2] tracking-[-0.02em] text-ink">
+            <h2 className="mt-3 text-[clamp(1.4rem,2.5vw,2rem)] font-bold leading-[1.2] tracking-[-0.02em] text-ink md:mt-4">
               Sửa đề trên điện thoại
             </h2>
 
-            <p className="mt-3 text-[15px] leading-[1.65] text-ink-2">
+            <p className="mt-2.5 text-[15px] leading-[1.65] text-ink-2 md:mt-3">
               Đề soạn trên máy tính mở được trên điện thoại để sửa câu, thêm hình.
             </p>
 
-            <ul className="stagger-kids mt-5 space-y-2.5 border-t border-line pt-5">
+            <ul className="stagger-kids mt-4 space-y-2 border-t border-line pt-4 md:mt-5 md:space-y-2.5 md:pt-5">
               {MOBILE_NOTES.map((n) => (
                 <li key={n} className="flex items-start gap-2.5 text-[14px] leading-relaxed text-ink-2">
                   <Check className="mt-1 h-4 w-4 shrink-0 text-clay" aria-hidden />
@@ -42,7 +42,7 @@ export function MobileSection() {
           </div>
 
           <div className="flex justify-center lg:col-span-6">
-            <div className="land-float w-full max-w-[290px] overflow-hidden rounded-[22px] border-4 border-ink bg-surface shadow-[0_12px_28px_rgba(20,24,28,0.1)] sm:max-w-[320px]">
+            <div className="land-float max-h-[340px] w-full max-w-[260px] overflow-hidden rounded-[22px] border-4 border-ink bg-surface shadow-[0_12px_28px_rgba(20,24,28,0.1)] sm:max-w-[320px] md:max-h-none">
               <div className="aspect-[390/780] w-full">
                 <img
                   src="/landing/mobile-compose.webp"

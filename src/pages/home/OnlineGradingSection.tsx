@@ -8,7 +8,7 @@ export function OnlineGradingSection() {
   const gradeRev = useReveal<HTMLDivElement>(80)
 
   return (
-    <section id="thi-va-cham" className="landing-below-fold border-b border-line bg-canvas py-14 sm:py-16 lg:py-20">
+    <section id="thi-va-cham" className="landing-below-fold border-b border-line bg-canvas py-10 sm:py-16 lg:py-20">
       <div className="mx-auto max-w-[1260px] px-4 sm:px-6">
         <div {...head.revealProps} className="max-w-2xl">
           <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-clay">
@@ -17,18 +17,18 @@ export function OnlineGradingSection() {
           <h2 className="mt-2 text-[clamp(1.45rem,2.7vw,2.1rem)] font-bold leading-[1.18] tracking-[-0.02em] text-ink">
             Cho học sinh làm online hoặc chấm phiếu giấy
           </h2>
-          <p className="mt-3 text-[15px] leading-[1.65] text-ink-2">
+          <p className="mt-2.5 text-[15px] leading-[1.65] text-ink-2 md:mt-3">
             Gửi link để học sinh làm bài có tính giờ, hoặc in đề ra rồi chấm phiếu trả lời.
           </p>
         </div>
 
-        <div className="mt-9 grid grid-cols-1 gap-6 lg:grid-cols-12">
+        <div className="no-scrollbar -mx-4 mt-6 flex snap-x snap-mandatory scroll-pl-4 gap-3.5 overflow-x-auto px-4 md:mx-0 md:mt-9 md:grid md:grid-cols-1 md:gap-6 md:overflow-visible md:px-0 md:scroll-pl-0 lg:grid-cols-12">
           {/* Màn hình Làm bài online */}
           <div
             {...onlineRev.revealProps}
-            className="flex flex-col overflow-hidden rounded-[12px] border border-line bg-surface lg:col-span-6"
+            className="flex w-[82%] shrink-0 snap-start flex-col overflow-hidden rounded-[12px] border border-line bg-surface md:w-auto lg:col-span-6"
           >
-            <div className="border-b border-line bg-sunken/70 p-3 sm:p-4">
+            <div className="border-b border-line bg-sunken/70 p-2.5 sm:p-4">
               <div className="overflow-hidden rounded-[8px] border border-line bg-surface">
                 <div className="aspect-[960/540] w-full">
                   <img
@@ -46,7 +46,7 @@ export function OnlineGradingSection() {
               </div>
             </div>
 
-            <div className="flex flex-1 flex-col justify-between p-5 sm:p-6">
+            <div className="flex flex-1 flex-col justify-between p-4 sm:p-6">
               <div>
                 <div className="inline-flex items-center gap-2 text-[12.5px] font-semibold text-clay">
                   <Clock className="h-4 w-4 shrink-0" aria-hidden />
@@ -59,7 +59,7 @@ export function OnlineGradingSection() {
                   Có trắc nghiệm, Đúng/Sai, trả lời ngắn. Học sinh thấy đồng hồ đếm ngược và các câu đã làm.
                 </p>
               </div>
-              <div className="mt-5 border-t border-line pt-4">
+              <div className="mt-4 border-t border-line pt-3.5 md:mt-5 md:pt-4">
                 <Link
                   to="/tao-de-online"
                   className="inline-flex min-h-[42px] items-center justify-center gap-2 rounded-[6px] border border-line-2 bg-white px-4 py-2 text-[14px] font-semibold text-ink transition-colors hover:border-ink-4 hover:bg-sunken/60 active:scale-[0.98]"
@@ -74,9 +74,9 @@ export function OnlineGradingSection() {
           {/* Màn hình Chấm phiếu trắc nghiệm */}
           <div
             {...gradeRev.revealProps}
-            className="flex flex-col overflow-hidden rounded-[12px] border border-line bg-surface lg:col-span-6"
+            className="flex w-[82%] shrink-0 snap-start flex-col overflow-hidden rounded-[12px] border border-line bg-surface md:w-auto lg:col-span-6"
           >
-            <div className="border-b border-line bg-sunken/70 p-3 sm:p-4">
+            <div className="border-b border-line bg-sunken/70 p-2.5 sm:p-4">
               <div className="overflow-hidden rounded-[8px] border border-line bg-surface">
                 <div className="aspect-[960/509] w-full">
                   <img
@@ -94,7 +94,7 @@ export function OnlineGradingSection() {
               </div>
             </div>
 
-            <div className="flex flex-1 flex-col justify-between p-5 sm:p-6">
+            <div className="flex flex-1 flex-col justify-between p-4 sm:p-6">
               <div>
                 <div className="inline-flex items-center gap-2 text-[12.5px] font-semibold text-clay">
                   <CheckSquare className="h-4 w-4 shrink-0" aria-hidden />
@@ -107,7 +107,7 @@ export function OnlineGradingSection() {
                   Lấy đáp án từ đề đã soạn, chụp hoặc nhập phiếu của từng em, rồi lưu bảng điểm cả lớp.
                 </p>
               </div>
-              <div className="mt-5 border-t border-line pt-4">
+              <div className="mt-4 border-t border-line pt-3.5 md:mt-5 md:pt-4">
                 <Link
                   to="/cham-trac-nghiem"
                   className="inline-flex min-h-[42px] items-center justify-center gap-2 rounded-[6px] border border-line-2 bg-white px-4 py-2 text-[14px] font-semibold text-ink transition-colors hover:border-ink-4 hover:bg-sunken/60 active:scale-[0.98]"

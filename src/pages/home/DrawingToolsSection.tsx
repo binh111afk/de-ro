@@ -56,9 +56,9 @@ export function DrawingToolsSection() {
   }, [renderFn, gridReveal.shown, subject])
 
   return (
-    <section id="cong-cu" className="landing-below-fold border-b border-line bg-canvas py-14 sm:py-16 lg:py-20">
+    <section id="cong-cu" className="landing-below-fold border-b border-line bg-canvas py-10 sm:py-16 lg:py-20">
       <div className="mx-auto max-w-[1260px] px-4 sm:px-6">
-        <div {...headerReveal.revealProps} className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
+        <div {...headerReveal.revealProps} className="flex flex-col justify-between gap-4 md:gap-6 lg:flex-row lg:items-end">
           <div className="max-w-2xl min-w-0">
             <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-clay">
               Công cụ vẽ hình
@@ -66,7 +66,7 @@ export function DrawingToolsSection() {
             <h2 className="mt-2 text-[clamp(1.45rem,2.7vw,2.1rem)] font-bold leading-[1.18] tracking-[-0.02em] text-ink">
               Vẽ hình theo đúng kiểu sách giáo khoa
             </h2>
-            <p className="mt-3 text-[15px] leading-[1.65] text-ink-2">
+            <p className="mt-2.5 text-[15px] leading-[1.65] text-ink-2 md:mt-3">
               Bảng biến thiên, hình chóp, mạch điện, sơ đồ phả hệ… Nhập số liệu là có hình, chèn được vào đề, slide và bảng vẽ. Muốn sửa thì nháy đúp vào hình.
             </p>
           </div>
@@ -75,7 +75,7 @@ export function DrawingToolsSection() {
             ref={subjRef}
             role="tablist"
             aria-label="Chọn môn học xem công cụ vẽ hình"
-            className="relative flex flex-wrap gap-1.5 rounded-[10px] border border-line bg-sunken p-1"
+            className="no-scrollbar relative flex flex-nowrap gap-1 overflow-x-auto rounded-[10px] border border-line bg-sunken p-1 md:flex-wrap md:gap-1.5 md:overflow-visible"
           >
             <TabThumb active={subject} className="rounded-[7px] bg-surface shadow-xs ring-1 ring-line" />
             {SUBJECT_GROUPS.map((g) => {
@@ -88,7 +88,7 @@ export function DrawingToolsSection() {
                   aria-selected={active}
                   onClick={() => setSubject(g.key)}
                   className={cn(
-                    'relative inline-flex min-h-[40px] items-center gap-1.5 rounded-[7px] px-3 py-1.5 text-[13.5px] font-semibold transition-colors',
+                    'relative inline-flex min-h-[38px] shrink-0 items-center gap-1.5 rounded-[7px] px-2.5 py-1.5 text-[13px] font-semibold transition-colors md:min-h-[40px] md:px-3 md:text-[13.5px]',
                     active ? 'text-ink' : 'text-ink-2 hover:text-ink',
                   )}
                 >
@@ -108,13 +108,13 @@ export function DrawingToolsSection() {
         </div>
 
         {/* Giới thiệu ngắn môn đang chọn + toàn bộ công cụ trong nhóm */}
-        <div className="mt-6 flex flex-col gap-3 rounded-[10px] border border-line bg-surface px-4 py-3.5 sm:px-5">
+        <div className="mt-4 flex flex-col gap-2.5 rounded-[10px] border border-line bg-surface px-4 py-3 sm:px-5 md:mt-6 md:gap-3 md:py-3.5">
           <p className="text-[14px] leading-relaxed text-ink-2">{group.summary}</p>
-          <div className="flex flex-wrap gap-1.5">
+          <div className="no-scrollbar -mx-4 flex gap-1.5 overflow-x-auto px-4 md:mx-0 md:flex-wrap md:overflow-visible md:px-0">
             {group.allTools.map((name) => (
               <span
                 key={name}
-                className="rounded-[5px] border border-line bg-canvas px-2.5 py-1 text-[12px] font-medium text-ink-2"
+                className="shrink-0 rounded-[5px] border border-line bg-canvas px-2.5 py-1 text-[12px] font-medium text-ink-2"
               >
                 {name}
               </span>
@@ -127,7 +127,7 @@ export function DrawingToolsSection() {
           {...gridReveal.revealProps}
           ref={(el) => { gridReveal.ref.current = el; gridRef.current = el }}
           key={subject}
-          className="land-draw stagger-kids mt-6 grid grid-cols-1 gap-5 md:grid-cols-3"
+          className="land-draw stagger-kids no-scrollbar -mx-4 mt-4 flex snap-x snap-mandatory scroll-pl-4 gap-3.5 overflow-x-auto px-4 md:mx-0 md:mt-6 md:grid md:grid-cols-3 md:gap-5 md:overflow-visible md:px-0 md:scroll-pl-0"
         >
           {group.demos.map((demo) => {
             let svgHtml = ''
@@ -141,7 +141,7 @@ export function DrawingToolsSection() {
             return (
               <div
                 key={demo.id}
-                className="flex flex-col overflow-hidden rounded-[12px] border border-line bg-surface"
+                className="flex w-[80%] shrink-0 snap-start flex-col overflow-hidden rounded-[12px] border border-line bg-surface md:w-auto"
               >
                 <div className="flex aspect-[4/3] w-full items-center justify-center border-b border-line bg-white p-3">
                   {svgHtml ? (
@@ -155,7 +155,7 @@ export function DrawingToolsSection() {
                     <div className="h-full w-full rounded-[6px] bg-sunken/70" aria-hidden />
                   )}
                 </div>
-                <div className="p-4">
+                <div className="p-3.5 md:p-4">
                   <h3 className="text-[15.5px] font-bold text-ink">{demo.title}</h3>
                   <p className="mt-1 text-[13px] leading-relaxed text-ink-2">{demo.caption}</p>
                 </div>
@@ -165,7 +165,7 @@ export function DrawingToolsSection() {
         </div>
 
         {/* Thanh bổ sung Ma trận & đặc tả + Xáo đề */}
-        <div className="mt-6 flex flex-col gap-3 rounded-[10px] border border-clay-line bg-clay-tint px-4 py-3.5 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-5">
+        <div className="mt-4 flex flex-col gap-2.5 rounded-[10px] border border-clay-line bg-clay-tint px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-5 md:mt-6 md:gap-3 md:py-3.5">
           <div className="min-w-0 flex-1 text-[13.5px] leading-relaxed text-ink-2">
             Cũng trong tab Công cụ: <strong className="font-semibold text-ink">lập ma trận, đặc tả</strong> và <strong className="font-semibold text-ink">xáo đề</strong> ra nhiều mã kèm đáp án.
           </div>

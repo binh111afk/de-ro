@@ -80,9 +80,9 @@ export function HeroSection() {
   const countRefs = [r0, r1, r2]
 
   return (
-    <section className="border-b border-line bg-canvas pt-6 pb-10 sm:pt-9 sm:pb-12 lg:pt-10 lg:pb-14">
+    <section className="border-b border-line bg-canvas pt-4 pb-7 sm:pt-9 sm:pb-12 lg:pt-10 lg:pb-14">
       <div className="mx-auto max-w-[1260px] px-4 sm:px-6">
-        <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-10">
+        <div className="grid grid-cols-1 items-center gap-5 md:gap-8 lg:grid-cols-12 lg:gap-10">
           {/* Cột nội dung chính */}
           <div className="min-w-0 lg:col-span-5">
 
@@ -90,21 +90,21 @@ export function HeroSection() {
               Soạn đề thi, slide bài giảng và bảng vẽ
             </h1>
 
-            <p style={{ '--d': '170ms' } as React.CSSProperties} className="land-rise mt-4 text-[15px] leading-[1.65] text-ink-2 sm:text-[16px]">
+            <p style={{ '--d': '170ms' } as React.CSSProperties} className="land-rise mt-2.5 text-[15px] leading-[1.65] text-ink-2 sm:mt-4 sm:text-[16px]">
               Đề in ra đúng mẫu hoặc xuất Word, slide xuất PowerPoint. Muốn cho học sinh làm online thì gửi link.
             </p>
 
-            <div style={{ '--d': '260ms' } as React.CSSProperties} className="land-rise mt-6 flex flex-col items-start gap-3 min-[460px]:flex-row min-[460px]:flex-wrap min-[460px]:items-center">
+            <div style={{ '--d': '260ms' } as React.CSSProperties} className="land-rise mt-4 flex flex-wrap items-center gap-2.5 sm:mt-6 sm:gap-3">
               <Link
                 to="/soan-de"
-                className="inline-flex min-h-[44px] shrink-0 items-center justify-center gap-2 rounded-[8px] bg-clay px-5 py-2.5 text-center text-[15px] font-semibold leading-snug text-white shadow-[0_1px_2px_rgba(180,83,42,0.2),0_10px_20px_-10px_rgba(180,83,42,0.5)] transition-colors hover:bg-clay-deep active:scale-[0.98]"
+                className="inline-flex min-h-[44px] shrink-0 items-center justify-center gap-2 rounded-[8px] bg-clay px-4 py-2.5 text-center text-[15px] font-semibold leading-snug text-white shadow-[0_1px_2px_rgba(180,83,42,0.2),0_10px_20px_-10px_rgba(180,83,42,0.5)] transition-colors hover:bg-clay-deep active:scale-[0.98] sm:px-5"
               >
                 <span>Bắt đầu soạn</span>
                 <ArrowRight className="h-4 w-4 shrink-0" aria-hidden />
               </Link>
               <Link
                 to="/de-cong-dong"
-                className="inline-flex min-h-[44px] shrink-0 items-center justify-center gap-2 rounded-[8px] border border-line-2 bg-white px-4 py-2.5 text-center text-[15px] font-semibold leading-snug text-ink transition-colors hover:border-ink-4 hover:bg-sunken/60 active:scale-[0.98]"
+                className="inline-flex min-h-[44px] shrink-0 items-center justify-center gap-2 rounded-[8px] border border-line-2 bg-white px-3.5 py-2.5 text-center text-[15px] font-semibold leading-snug text-ink transition-colors hover:border-ink-4 hover:bg-sunken/60 active:scale-[0.98] sm:px-4"
               >
                 Xem đề cộng đồng
               </Link>
@@ -112,7 +112,7 @@ export function HeroSection() {
 
             <dl
               ref={statsReveal.ref}
-              className="mt-7 grid grid-cols-2 gap-x-5 gap-y-3 border-t border-line pt-5 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3"
+              className="mt-4 grid grid-cols-3 gap-x-3 gap-y-3 border-t border-line pt-3.5 sm:mt-7 sm:gap-x-5 sm:pt-5 lg:grid-cols-2 xl:grid-cols-3"
             >
               {STATS.map((s, idx) => (
                 <div key={s.label} className="min-w-0">
@@ -145,7 +145,7 @@ export function HeroSection() {
                         aria-selected={isSelected}
                         onClick={() => { setTab(item.key); setAuto(false) }}
                         className={cn(
-                          'relative inline-flex min-h-[38px] items-center gap-1.5 rounded-[7px] px-3 py-1.5 text-[13px] font-semibold transition-colors',
+                          'relative inline-flex min-h-[38px] items-center gap-1.5 rounded-[7px] px-2.5 py-1.5 text-[13px] font-semibold transition-colors sm:px-3',
                           isSelected ? 'text-ink' : 'text-ink-2 hover:text-ink',
                         )}
                       >

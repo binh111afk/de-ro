@@ -40,7 +40,7 @@ export function WorkspaceSection() {
   const right = useReveal<HTMLDivElement>(80)
 
   return (
-    <section id="khong-gian" className="landing-below-fold border-b border-line bg-surface py-14 sm:py-16 lg:py-20">
+    <section id="khong-gian" className="landing-below-fold border-b border-line bg-surface py-10 sm:py-16 lg:py-20">
       <div className="mx-auto max-w-[1260px] px-4 sm:px-6">
         <div {...head.revealProps} className="max-w-2xl">
           <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-clay">
@@ -49,16 +49,16 @@ export function WorkspaceSection() {
           <h2 className="mt-2 text-[clamp(1.45rem,2.7vw,2.1rem)] font-bold leading-[1.18] tracking-[-0.02em] text-ink">
             Đề, slide và bảng vẽ mở chung một chỗ
           </h2>
-          <p className="mt-3 text-[15px] leading-[1.65] text-ink-2">
+          <p className="mt-2.5 text-[15px] leading-[1.65] text-ink-2 md:mt-3">
             Mỗi thứ mở thành một tab trong trang soạn, chuyển qua lại như tab trình duyệt.
           </p>
         </div>
 
-        <div className="mt-9 grid grid-cols-1 gap-6 lg:grid-cols-12">
+        <div className="no-scrollbar -mx-4 mt-6 flex snap-x snap-mandatory scroll-pl-4 gap-3.5 overflow-x-auto px-4 md:mx-0 md:mt-9 md:grid md:grid-cols-1 md:gap-6 md:overflow-visible md:px-0 md:scroll-pl-0 lg:grid-cols-12">
           {/* Thẻ chính: Trình soạn Đề thi */}
           <div
             {...lead.revealProps}
-            className="flex flex-col justify-between rounded-[12px] border border-line bg-canvas p-5 sm:p-7 lg:col-span-6"
+            className="flex w-[80vw] max-w-[310px] shrink-0 snap-start flex-col justify-between rounded-[12px] border border-line bg-canvas p-4 sm:p-7 md:w-auto md:max-w-none lg:col-span-6"
           >
             <div>
               <div className="flex flex-wrap items-center justify-between gap-2">
@@ -68,16 +68,16 @@ export function WorkspaceSection() {
                 </span>
               </div>
 
-              <h3 className="mt-4 text-[21px] font-bold leading-snug tracking-[-0.015em] text-ink">
+              <h3 className="mt-3.5 text-[19px] font-bold leading-snug tracking-[-0.015em] text-ink md:mt-4 md:text-[21px]">
                 Đề thi đúng mẫu
               </h3>
-              <p className="mt-2 text-[14.5px] leading-[1.65] text-ink-2">
+              <p className="mt-2 text-[14.5px] leading-[1.6] text-ink-2 md:leading-[1.65]">
                 Có sẵn tiêu đề Sở, Trường và đủ các dạng câu: trắc nghiệm, Đúng/Sai, trả lời ngắn, tự luận. Lề trang đã căn, in ra dùng được ngay.
               </p>
 
-              <ul className="stagger-kids mt-5 space-y-2.5 border-t border-line pt-5">
-                {EXAM_POINTS.map((p) => (
-                  <li key={p} className="flex items-start gap-2.5 text-[14px] leading-relaxed text-ink-2">
+              <ul className="stagger-kids mt-4 space-y-2 border-t border-line pt-4 md:mt-5 md:space-y-2.5 md:pt-5">
+                {EXAM_POINTS.map((p, idx) => (
+                  <li key={p} className={`items-start gap-2.5 text-[14px] leading-relaxed text-ink-2 ${idx >= 3 ? 'hidden md:flex' : 'flex'}`}>
                     <Check className="mt-1 h-4 w-4 shrink-0 text-clay" aria-hidden />
                     <span className="min-w-0">{p}</span>
                   </li>
@@ -85,7 +85,7 @@ export function WorkspaceSection() {
               </ul>
             </div>
 
-            <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-5">
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-4 md:mt-6 md:pt-5">
               <span />
               <Link
                 to="/soan-de"
@@ -98,13 +98,13 @@ export function WorkspaceSection() {
           </div>
 
           {/* Cột phải: Slide & Bảng vẽ xếp dọc không đồng đều */}
-          <div {...right.revealProps} className="stagger-kids flex flex-col gap-6 lg:col-span-6">
+          <div {...right.revealProps} className="stagger-kids flex shrink-0 gap-3.5 md:shrink md:flex-col md:gap-6 lg:col-span-6">
             {SECONDARY_WORKSPACES.map((ws) => {
               const Icon = ws.icon
               return (
                 <div
                   key={ws.id}
-                  className="flex flex-1 flex-col justify-between rounded-[12px] border border-line bg-surface p-5 sm:p-6"
+                  className="flex w-[80vw] max-w-[310px] shrink-0 snap-start flex-col justify-between rounded-[12px] border border-line bg-surface p-4 sm:p-6 md:w-auto md:max-w-none md:flex-1"
                 >
                   <div>
                     <div className="flex flex-wrap items-center justify-between gap-2">
