@@ -12,6 +12,7 @@ import {
   boughtPacks,
   clampVnd,
   DEFAULT_PACK_VND,
+  loadPricing,
   MAX_POINTS,
   MAX_VND,
   MIN_VND,
@@ -57,6 +58,11 @@ function caretPosAfterDigits(text: string, targetDigits: number): number {
 export default function Pricing() {
   const session = useSession()
   const [allowed, setAllowed] = useState<'loading' | boolean>(() => (PRICING_PUBLIC ? true : 'loading'))
+  const [priced, setPriced] = useState(false)
+
+  useEffect(() => {
+    void loadPricing().then(() => setPriced(true))
+  }, [])
 
   useEffect(() => {
     if (PRICING_PUBLIC) {
@@ -86,7 +92,7 @@ export default function Pricing() {
     }
   }, [allowed])
 
-  if (allowed === 'loading') return <PricingSkeleton />
+  if (allowed === 'loading' || (allowed && !priced)) return <PricingSkeleton />
   if (!allowed) return <NotFound />
   return <PricingContent />
 }

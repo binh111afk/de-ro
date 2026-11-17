@@ -91,9 +91,9 @@ export function Header() {
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
-          <Link to="/soan-de" className="hidden xl:block">
+          <Link to="/bang-gia" className="hidden xl:block">
             <Button variant="primary" size="sm" className="whitespace-nowrap">
-              Soạn đề
+              Nạp điểm
             </Button>
           </Link>
 
@@ -165,9 +165,9 @@ export function Header() {
                 {item.label}
               </NavLink>
             ))}
-            <Link to="/soan-de" className="mt-2 block sm:hidden">
+            <Link to="/bang-gia" className="mt-2 block sm:hidden">
               <Button variant="primary" className="w-full">
-                Soạn đề
+                Nạp điểm
               </Button>
             </Link>
             <div className="mt-2 border-t border-line/70 pt-2 md:hidden">

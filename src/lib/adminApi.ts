@@ -5,6 +5,7 @@
  * Kiểu ở đây phải khớp với `toRow` và các action trong server/admin.ts.
  */
 import { apiFetch } from './apiFetch'
+import { applyPricing, type PricingConfig } from './pricing'
 
 export type AdminRole = 'admin' | 'moderator'
 
@@ -273,6 +274,8 @@ export interface Announcement {
 export interface AppSettings {
   maintenance: MaintenanceSetting
   announcements: { items: Announcement[] }
+  /** null = chưa lưu lần nào, trang giá dùng mặc định */
+  pricing: PricingConfig | null
 }
 export interface AiStatRow {
   /** yyyy-mm-dd theo giờ VN */
@@ -310,6 +313,7 @@ export interface HealthReport {
 const mockImage = (color: string) => `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540"><rect width="960" height="540" fill="${color}"/></svg>`)}`
 const mockSettings: AppSettings = {
   maintenance: { on: false, message: '' },
+  pricing: null,
   announcements: {
     items: [
       { id: 'mock-1', on: true, title: 'Xáo đề giữ nguyên đáp án', text: 'Tạo nhiều mã đề từ một đề gốc chỉ với một lần bấm.', image: mockImage('#c9805f'), tryPath: '/soan-de', until: null },
@@ -359,6 +363,14 @@ export function setAnnouncements(items: Announcement[]): Promise<{ ok: true }> {
     return wait({ ok: true as const })
   }
   return post('settings.set', { key: 'announcements', value: { items } })
+}
+
+export async function setPricing(v: PricingConfig): Promise<PricingConfig> {
+  let saved = v
+  if (isAdminMock()) mockSettings.pricing = v
+  else saved = (await post<{ ok: true; value: PricingConfig }>('settings.set', { key: 'pricing', value: v })).value
+  applyPricing(saved)
+  return saved
 }
 
 export function getAiStats(days = 7): Promise<{ days: number; rows: AiStatRow[] }> {

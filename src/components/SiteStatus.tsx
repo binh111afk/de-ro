@@ -21,7 +21,7 @@ async function fetchSettings(): Promise<AppSettings | null> {
   if (!r.ok) return null
   const rows = (await r.json()) as Array<{ key: string; value: never }>
   const get = (k: string) => rows.find((x) => x.key === k)?.value
-  return { maintenance: get('maintenance') ?? { on: false }, announcements: get('announcements') ?? { items: [] } }
+  return { maintenance: get('maintenance') ?? { on: false }, announcements: get('announcements') ?? { items: [] }, pricing: null }
 }
 
 const OPEN_PATHS = ['/dang-nhap', '/quen-mat-khau', '/dat-lai-mat-khau', '/admin']

@@ -494,9 +494,9 @@ const ACTIONS: ActionMap = {
   'settings.get': {
     need: 'moderator',
     run: async ({ s }) => {
-      const { data } = await call<Array<{ key: string; value: unknown }>>(s, '/rest/v1/app_settings?select=key,value&key=in.(maintenance,announcements)')
+      const { data } = await call<Array<{ key: string; value: unknown }>>(s, '/rest/v1/app_settings?select=key,value&key=in.(maintenance,announcements,pricing)')
       const get = (k: string) => data.find((r) => r.key === k)?.value
-      return { maintenance: get('maintenance') ?? { on: false }, announcements: get('announcements') ?? { items: [] } }
+      return { maintenance: get('maintenance') ?? { on: false }, announcements: get('announcements') ?? { items: [] }, pricing: get('pricing') ?? null }
     },
   },
 
@@ -525,6 +525,27 @@ const ACTIONS: ActionMap = {
         })
         if (items.filter((a) => a.on).length > 5) throw new HttpError(400, 'Chỉ bật tối đa 5 thông báo cùng lúc.')
         value = { items }
+      } else if (key === 'pricing') {
+        const int = (x: unknown) => (typeof x === 'number' && Number.isInteger(x) ? x : NaN)
+        const pointsPer1000 = int(v.pointsPer1000)
+        const minVnd = int(v.minVnd)
+        const maxVnd = int(v.maxVnd)
+        if (!(pointsPer1000 >= 1 && pointsPer1000 <= 1000)) throw new HttpError(400, 'Số điểm mỗi 1.000đ phải từ 1 đến 1.000.')
+        if (!(minVnd >= 1000 && maxVnd <= 10_000_000 && minVnd <= maxVnd) || minVnd % 1000 || maxVnd % 1000)
+          throw new HttpError(400, 'Mức nạp tối thiểu / tối đa phải là bội số 1.000đ, tối thiểu ≤ tối đa.')
+        const raw = Array.isArray(v.packs) ? (v.packs as Array<Record<string, unknown>>) : []
+        if (raw.length < 1 || raw.length > 8) throw new HttpError(400, 'Cần từ 1 đến 8 gói.')
+        const packs = raw.map((p) => {
+          const vnd = int(p?.vnd)
+          const bonus = typeof p?.bonus === 'number' ? Math.round(p.bonus * 1000) / 1000 : NaN
+          if (!(vnd >= minVnd && vnd <= maxVnd) || vnd % 1000) throw new HttpError(400, 'Giá mỗi gói phải là bội số 1.000đ, nằm trong mức nạp tối thiểu – tối đa.')
+          if (!(bonus >= 0 && bonus <= 1)) throw new HttpError(400, 'Thưởng lần đầu phải từ 0% đến 100%.')
+          return { vnd, bonus }
+        })
+        if (new Set(packs.map((p) => p.vnd)).size !== packs.length) throw new HttpError(400, 'Hai gói trùng giá.')
+        packs.sort((a, b) => a.vnd - b.vnd)
+        const defaultVnd = packs.some((p) => p.vnd === v.defaultVnd) ? (v.defaultVnd as number) : packs[0].vnd
+        value = { pointsPer1000, minVnd, maxVnd, packs, defaultVnd }
       } else throw new HttpError(400, 'Cài đặt không tồn tại.')
       await call(ctx.s, '/rest/v1/app_settings?on_conflict=key', {
         method: 'POST',

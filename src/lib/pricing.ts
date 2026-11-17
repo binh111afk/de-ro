@@ -1,27 +1,65 @@
 /** Khi `false`, chỉ tài khoản `admin` mới mở được `/bang-gia` và link điều hướng được ẩn. */
 export const PRICING_PUBLIC = false
 
-/** Giá gốc: 1.000đ = 25 điểm (40đ/điểm). */
-export const POINTS_PER_1000 = 25
-export const MIN_VND = 2_000
-export const MAX_VND = 100_000
+/** Bảng giá admin sửa được (`app_settings` key `pricing`); giá trị dưới đây là mặc định khi chưa có. */
+export interface PricingConfig {
+  /** số điểm cho mỗi 1.000đ */
+  pointsPer1000: number
+  minVnd: number
+  maxVnd: number
+  /** `bonus` CHỈ áp cho LẦN NẠP ĐẦU TIÊN của đúng gói đó (mỗi gói một lần); số tiền tự nhập không có thưởng. */
+  packs: Array<{ vnd: number; bonus: number }>
+  /** gói chọn sẵn khi mở trang */
+  defaultVnd: number
+}
 
-/**
- * Các gói có sẵn. `bonus` CHỈ áp cho LẦN NẠP ĐẦU TIÊN của đúng gói đó (mỗi gói một lần):
- * nạp gói 5.000đ lần đầu → +5%; nạp gói 5.000đ lần hai → không thưởng; gói 10.000đ chưa nạp lần nào → vẫn +10%.
- * Số tiền tự nhập không phải gói → không có thưởng.
- */
-export const PACKS = [
-  { vnd: 2_000, bonus: 0 },     //   50 điểm
-  { vnd: 5_000, bonus: 0.05 },  //  125 → lần đầu 131
-  { vnd: 10_000, bonus: 0.10 }, //  250 → lần đầu 275
-  { vnd: 20_000, bonus: 0.15 }, //  500 → lần đầu 575
-  { vnd: 50_000, bonus: 0.20 }, // 1250 → lần đầu 1500
-] as const
+export const DEFAULT_PRICING: PricingConfig = {
+  pointsPer1000: 25,
+  minVnd: 2_000,
+  maxVnd: 100_000,
+  packs: [
+    { vnd: 2_000, bonus: 0 },
+    { vnd: 5_000, bonus: 0.05 },
+    { vnd: 10_000, bonus: 0.1 },
+    { vnd: 20_000, bonus: 0.15 },
+    { vnd: 50_000, bonus: 0.2 },
+  ],
+  defaultVnd: 10_000,
+}
 
-export type PricingPack = (typeof PACKS)[number]
+// các biến dưới đây là binding sống: `applyPricing` đổi thì mọi nơi import đọc giá trị mới
+export let POINTS_PER_1000 = DEFAULT_PRICING.pointsPer1000
+export let MIN_VND = DEFAULT_PRICING.minVnd
+export let MAX_VND = DEFAULT_PRICING.maxVnd
+export let PACKS: ReadonlyArray<{ vnd: number; bonus: number }> = DEFAULT_PRICING.packs
+export let DEFAULT_PACK_VND = DEFAULT_PRICING.defaultVnd
+export let MAX_POINTS = 0
 
-export const DEFAULT_PACK_VND = PACKS.find((p) => p.vnd === 10_000)?.vnd ?? PACKS[0].vnd
+export type PricingPack = { vnd: number; bonus: number }
+
+export function applyPricing(c: PricingConfig) {
+  POINTS_PER_1000 = c.pointsPer1000
+  MIN_VND = c.minVnd
+  MAX_VND = c.maxVnd
+  PACKS = [...c.packs].sort((a, b) => a.vnd - b.vnd)
+  DEFAULT_PACK_VND = PACKS.find((p) => p.vnd === c.defaultVnd)?.vnd ?? PACKS[0]?.vnd ?? MIN_VND
+  MAX_POINTS = basePoints(MAX_VND)
+}
+
+let loading: Promise<void> | null = null
+/** Đọc bảng giá admin đã lưu (một lần mỗi phiên); lỗi hoặc chưa có thì giữ mặc định. */
+export function loadPricing(): Promise<void> {
+  loading ??= fetch(`${import.meta.env.VITE_SUPABASE_URL}/rest/v1/app_settings?select=value&key=eq.pricing`, {
+    headers: { apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY, Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}` },
+  })
+    .then((r) => (r.ok ? r.json() : []))
+    .then((rows: Array<{ value?: Partial<PricingConfig> }>) => {
+      const v = rows[0]?.value
+      if (v && Array.isArray(v.packs) && v.packs.length > 0) applyPricing({ ...DEFAULT_PRICING, ...v } as PricingConfig)
+    })
+    .catch(() => {})
+  return loading
+}
 
 /** Ước tính điểm mỗi lượt (số đo thật trong docs/bao-cao-chi-phi-ai.md, làm tròn lên). */
 export const USAGE = [
@@ -39,7 +77,7 @@ export function basePoints(vnd: number): number {
   return Math.floor((vnd / 1000) * POINTS_PER_1000 + 1e-9)
 }
 
-export const MAX_POINTS = basePoints(MAX_VND)
+MAX_POINTS = basePoints(MAX_VND)
 
 /** Số điểm nhận được khi chọn một gói (cộng thưởng nếu là lần đầu nạp gói đó). */
 export function packPoints(pack: { vnd: number; bonus: number }, firstTime: boolean): number {
