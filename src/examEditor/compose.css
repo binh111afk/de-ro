@@ -1851,6 +1851,11 @@
   .ai-step--active .ai-step__icon {
     border-color: transparent;
   }
+  .ai-step__mascot {
+    width: 16px;
+    height: 16px;
+    transform: scale(1.55);
+  }
   .ai-step__spin {
     width: 14px;
     height: 14px;

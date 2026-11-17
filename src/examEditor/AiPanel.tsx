@@ -197,7 +197,7 @@ function ActLog({ steps }: { steps: ActStep[] }) {
       {steps.map((s, i) => (
         <li key={i} className={`ai-step ai-step--${s.state}`}>
           <span className="ai-step__icon" aria-hidden="true">
-            {s.state === 'done' ? '✓' : s.state === 'failed' ? '!' : <span className="ai-step__spin" />}
+            {s.state === 'done' ? '✓' : s.state === 'failed' ? '!' : <img className="ai-step__mascot" src={aiThinkingAnim} alt="" />}
           </span>
           <span className="ai-step__label">{s.label}</span>
           {s.note ? <span className="ai-step__note">{s.note}</span> : null}
@@ -1076,9 +1076,10 @@ export function AiPanel({
     setTurns((t) => [
       ...t,
       userTurn,
-      { id: botId, role: 'assistant', text: '', pending: true, intent, ...(intent === 'doc' && mode === 'exam' ? { log: [] } : {}) },
+      { id: botId, role: 'assistant', text: '', pending: true, intent, ...(mode === 'exam' ? { log: [] } : {}) },
     ])
-    const examSteps = intent === 'doc' && mode === 'exam'
+    // đề luôn hiện nhật ký suy nghĩ thật, kể cả lượt hỏi chuyện
+    const examSteps = mode === 'exam'
     const patchTurn = (p: (turn: ChatTurn) => Partial<ChatTurn>) =>
       setTurns((t) => t.map((turn) => (turn.id === botId ? { ...turn, ...p(turn) } : turn)))
     const logSet = (f: (log: ActStep[]) => ActStep[]) => patchTurn((t) => (t.log ? { log: f(t.log) } : {}))
@@ -1245,7 +1246,7 @@ export function AiPanel({
               if (phase === 'think') logSet((l) => closeLog(l, 'done', took))
               phase = 'write'
               phaseAt = Date.now()
-              logStart('Viết đề')
+              logStart(intent === 'doc' ? 'Viết đề' : 'Trả lời')
             }
             if (Date.now() - liveAt < 200) return
             liveAt = Date.now()
@@ -1282,7 +1283,8 @@ export function AiPanel({
         const n = (res.content.match(/"type"\s*:\s*"question"/g) ?? []).length
         const note = phase === 'write' ? (n ? `${n} câu` : undefined) : phase === 'think' ? secs() : undefined
         logSet((l) => closeLog(l, 'done', note))
-        logStart('Đưa vào đề')
+        // lượt hỏi chuyện không kèm sửa đề thì không có bước này
+        if (intent === 'doc' || /"(type|op)"\s*:/.test(res.content)) logStart('Đưa vào đề')
         // nhường một khung hình để bước "Đưa vào đề" kịp hiện trước khi áp đề (việc áp chạy đồng bộ)
         await new Promise((r) => setTimeout(r, 350))
       }
