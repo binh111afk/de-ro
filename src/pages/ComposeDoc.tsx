@@ -393,6 +393,9 @@ function sanitizePatches(raw: unknown): Array<{ id: string; block: ExamBlock }> 
 /** Gom text của một node TipTap (để tóm tắt tài liệu cho AI). */
 function nodeText(node: JSONContent): string {
   if (node.type === 'text') return node.text ?? ''
+  // công thức nằm ở attrs, không có node text: thiếu nhánh này thì AI thấy "Giải hệ phương trình … là" mà mất hệ phương trình
+  if (node.type === 'inlineMath' || node.type === 'blockMath') return `$${String(node.attrs?.latex ?? '')}$`
+  if (node.type === 'image') return '[hình]'
   return (node.content ?? []).map(nodeText).join(' ')
 }
 
@@ -580,7 +583,7 @@ export default function ComposeDoc() {
 
   /**
    * Bản tóm tắt đề cho AI: mỗi khối cấp cao nhất một dòng `[id] loại: trích đoạn`.
-   * Có id để model patch đúng khối; giới hạn 80 dòng / 160 ký tự mỗi dòng.
+   * Có id để model patch đúng khối; giới hạn 80 dòng / 320 ký tự mỗi dòng, công thức giữ dạng $LaTeX$.
    */
   const documentDigest = useMemo(() => {
     if (!activeId) return undefined
@@ -595,8 +598,11 @@ export default function ComposeDoc() {
       const shortType = type.startsWith('exam')
         ? type[4].toLowerCase() + type.slice(5)
         : type
-      const text = nodeText(node).replace(/\s+/g, ' ').trim().slice(0, 160)
-      lines.push(`- [${id}] ${shortType}${text ? `: ${text}` : ''}`)
+      // 320 ký tự: câu hỏi kèm công thức + 4 phương án vẫn đủ để AI viết lời giải / sửa đúng chỗ
+      const text = nodeText(node).replace(/\s+/g, ' ').trim().slice(0, 320)
+      // số câu: giáo viên nói "câu 4" thì AI phải biết khối nào là câu 4 (trước đây thiếu → sửa nhầm câu 1)
+      const no = (type === 'examQuestion' || type === 'examEssay') && node.attrs?.no != null ? ` ${type === 'examEssay' ? 'Bài' : 'Câu'} ${node.attrs.no}` : ''
+      lines.push(`- [${id}] ${shortType}${no}${text ? `: ${text}` : ''}`)
       if (lines.length >= 80) {
         lines.push('… (còn nữa)')
         break

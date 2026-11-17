@@ -145,6 +145,37 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
     if (c.t !== 'angle' && c.t !== 'right') continue
     for (const x of [c.a, c.b]) if (!drawn(c.o, x)) cmds.push({ t: 'seg', a: c.o, b: x, dashed: false })
   }
+  // thang (vật nghiêng) mà AI quên vẽ tường: đỉnh thang nằm thẳng trên một điểm có tên ở mặt đất → tự dựng tường + góc vuông,
+  // không thì thang dựa vào khoảng không
+  {
+    const allX = [...pts.values()].map((p) => p[0])
+    const tol = (Math.max(...allX) - Math.min(...allX) || 1) * 0.03
+    for (const c of [...cmds]) {
+      if (c.t !== 'sprite' || c.id !== 'ladder' || !c.b) continue
+      const foot = pts.get(c.a)!
+      const top = pts.get(c.b)!
+      const base = [...pts].find(([nm, p]) => nm !== c.a && nm !== c.b && !nm.startsWith('_') && Math.abs(p[0] - top[0]) <= tol && Math.abs(p[1] - foot[1]) <= tol && top[1] > p[1])
+      if (!base) continue
+      const [w] = base
+      if (!drawn(w, c.b)) cmds.push({ t: 'ground', a: w, b: c.b, wall: true })
+      if (!cmds.some((g) => g.t === 'right' && g.o === w)) cmds.push({ t: 'right', a: c.a, o: w, b: c.b })
+    }
+  }
+  // nhiều góc chung một đỉnh (vd. góc nâng 40° và 50° cùng nhìn từ D): góc nhỏ ở trong, góc lớn ở ngoài, bán kính tăng dần
+  const angleSize = (g: Extract<Cmd, { t: 'angle' }>) => {
+    const o = pts.get(g.o)!
+    const pa = pts.get(g.a)!
+    const pb = pts.get(g.b)!
+    let d = Math.atan2(pb[1] - o[1], pb[0] - o[0]) - Math.atan2(pa[1] - o[1], pa[0] - o[0])
+    while (d > Math.PI) d -= 2 * Math.PI
+    while (d < -Math.PI) d += 2 * Math.PI
+    return Math.abs(d)
+  }
+  const ring = new Map<Cmd, number>()
+  for (const o of new Set(cmds.flatMap((g) => (g.t === 'angle' ? [g.o] : [])))) {
+    const group = cmds.filter((g): g is Extract<Cmd, { t: 'angle' }> => g.t === 'angle' && g.o === o)
+    group.sort((x, y) => angleSize(x) - angleSize(y)).forEach((g, i) => ring.set(g, i))
+  }
 
   // hình vật: hình chữ nhật (đơn vị của hình) — chân giữa cạnh dưới, xoay theo hướng chân → đỉnh
   const ptSpan = Math.max(Math.max(...py) - Math.min(...py), (Math.max(...px) - Math.min(...px)) * 0.5) || 1
@@ -288,12 +319,15 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
       while (d > Math.PI) d -= 2 * Math.PI
       while (d < -Math.PI) d += 2 * Math.PI
       a2 = a1 + d
-      const r = 22
+      // góc thứ i chung đỉnh: cung to dần 16px, nhãn đặt ngoài cung của chính nó
+      const i = ring.get(c) ?? 0
+      const r = 22 + i * 16
       const sweep = d > 0 ? 1 : 0
       b += `<path d="M${f1(o[0] + r * Math.cos(a1))} ${f1(o[1] + r * Math.sin(a1))}A${r} ${r} 0 0 ${sweep} ${f1(o[0] + r * Math.cos(a2))} ${f1(o[1] + r * Math.sin(a2))}" stroke="#111" fill="none" stroke-width="1"/>`
       if (c.text) {
         const mid = a1 + d / 2
-        b += text(o[0] + 36 * Math.cos(mid), o[1] + 36 * Math.sin(mid) + 5, c.text, 'middle', 14, `ang:${c.a}${c.o}${c.b}`)
+        const rl = r + 14
+        b += text(o[0] + rl * Math.cos(mid), o[1] + rl * Math.sin(mid) + 5, c.text, 'middle', 14, `ang:${c.a}${c.o}${c.b}`)
       }
     } else if (c.t === 'dim') {
       const p = at(c.a)

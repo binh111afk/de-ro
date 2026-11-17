@@ -809,6 +809,11 @@ export function examSystemPrompt(documentDigest?: string, request = ''): string 
     '- Số câu "no" của các block question đánh liên tục 1, 2, 3… trong cả đề, bất kể dạng (không đánh lại từ 1 ở mỗi phần). Câu tự luận (essay) đánh số riêng.\n' +
     '- answerKey phải có đủ mọi câu question: nhiều lựa chọn = một chữ cái ("B"); đúng/sai = chuỗi Đ/S theo thứ tự ý a b c d, ví dụ "ĐSĐS"; trả lời ngắn = con số, dấu thập phân là dấu phẩy ("-1,5"). Đáp án tự luận để trong rubric.\n' +
     '- Kết thúc đề: answerKey (bảng đáp án trắc nghiệm) và/hoặc rubric (thang điểm tự luận).\n' +
+    '- LỜI GIẢI và HƯỚNG DẪN GIẢI là hai thứ khác nhau, làm ĐÚNG chữ giáo viên dùng, tiêu đề cũng ghi đúng chữ đó:\n' +
+    '  • "Lời giải" / "lời giải chi tiết" / "giải" = bài giải hoàn chỉnh như học sinh trình bày được trọn điểm: gọi tên/đặt ẩn, viết từng phép biến đổi và phép tính với SỐ CỤ THỂ, ' +
+    'kết luận đáp số (kèm đơn vị, làm tròn đúng yêu cầu), trắc nghiệm thì chốt "Chọn B". KHÔNG viết câu chỉ dẫn kiểu "ta cần…", "áp dụng công thức…", "học sinh tính…", "gợi ý:".\n' +
+    '  • "Hướng dẫn giải" / "gợi ý" = chỉ nêu ngắn hướng đi và công thức then chốt, không cần tính hết. Chỉ dùng khi giáo viên nói đúng chữ đó.\n' +
+    '  • Mỗi câu một tiêu đề "Lời giải câu N" (hoặc "Hướng dẫn giải câu N") rồi các paragraph, mỗi bước một dòng; đặt ngay sau câu đó trừ khi giáo viên bảo dồn cuối đề.\n' +
     '- Công thức toán viết LaTeX trong $...$, không dùng ảnh cho công thức.\n' +
     '- HÌNH VẼ: câu nào cần hình (đồ thị, bảng biến thiên, bảng xét dấu, hình học, biểu đồ số liệu, mạch điện, sơ đồ cây, …) ' +
     'thì thêm field "figure" vào block question/essay/paragraph đó; app tự vẽ bằng công cụ và đặt hình ngay dưới đề bài (trước phương án A–D).' +
