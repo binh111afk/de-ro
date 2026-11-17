@@ -1220,7 +1220,12 @@ export function AiPanel({
       let phase = '' as '' | 'think' | 'write'
       let phaseAt = Date.now()
       let liveAt = 0
-      const secs = () => `${Math.max(1, Math.round((Date.now() - phaseAt) / 1000))} giây`
+      const secs = () => {
+        const s = Math.max(1, Math.round((Date.now() - phaseAt) / 1000))
+        const h = Math.floor(s / 3600)
+        const m = Math.floor((s % 3600) / 60)
+        return h ? `${h} giờ${m ? ` ${m} phút` : ''}` : m ? `${m} phút${s % 60 ? ` ${s % 60} giây` : ''}` : `${s} giây`
+      }
       const onProgress = examSteps
         ? (p: LlmProgress) => {
             if (p.phase === 'retry') {
