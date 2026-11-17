@@ -300,33 +300,33 @@ function PricingContent() {
                     aria-pressed={selected}
                     onClick={() => selectPack(pack)}
                     className={cn(
-                      'flex min-w-0 flex-col items-start rounded-[10px] border p-3.5 text-left transition-[border-color,background-color] duration-150 motion-reduce:transition-none',
+                      'relative flex min-w-0 flex-col rounded-[10px] border px-4 pb-3.5 pt-4 text-left transition-[border-color,background-color] duration-150 motion-reduce:transition-none',
                       selected
                         ? 'border-clay bg-clay-tint shadow-[inset_0_0_0_1px_var(--color-clay)]'
                         : 'border-line bg-surface hover:border-line-2',
                     )}
                   >
-                    <div className="min-h-[1.375rem] max-w-full">
-                      {hasBonus ? (
-                        <span className="inline-block max-w-full rounded-full bg-clay-soft px-2 py-0.5 text-[0.6875rem] font-semibold leading-snug text-clay">
-                          +{Math.round(pack.bonus * 100)}% lần đầu
-                        </span>
-                      ) : null}
-                    </div>
+                    {hasBonus ? (
+                      <span
+                        data-tip="Thưởng lần đầu nạp gói này"
+                        className="absolute right-2.5 top-2.5 rounded-full bg-clay-soft px-1.5 py-px text-[0.6875rem] font-semibold leading-snug text-clay tnum"
+                      >
+                        +{Math.round(pack.bonus * 100)}%
+                      </span>
+                    ) : null}
 
-                    <div className="mt-2 min-w-0">
-                      <div className="text-[1.1875rem] font-bold leading-tight text-ink tnum">
-                        {fmt(pts)}{' '}
-                        <span className="text-[0.8125rem] font-semibold text-ink-2">điểm</span>
-                      </div>
-                      <div className="mt-0.5 min-h-[1.125rem] text-[0.75rem] text-ink-4 tnum">
-                        {hasBonus ? <span className="line-through">{fmt(base)}</span> : null}
-                      </div>
-                    </div>
-
-                    <span className="mt-auto pt-2 text-[0.875rem] font-semibold text-ink-2 tnum">
+                    <span className="text-[1.25rem] font-bold leading-tight text-ink tnum">
                       {fmt(pack.vnd)}đ
                     </span>
+
+                    <div className="mt-3 border-t border-line pt-2.5">
+                      <div className="text-[0.9375rem] font-semibold text-ink-2 tnum">
+                        {fmt(pts)} điểm
+                      </div>
+                      <div className="min-h-[1.125rem] text-[0.75rem] text-clay tnum">
+                        {hasBonus ? `${fmt(base)} + ${fmt(pts - base)} thưởng` : null}
+                      </div>
+                    </div>
                   </button>
                 )
               })}
