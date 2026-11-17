@@ -1163,6 +1163,10 @@ export function AiPanel({
         patchTurn(() => ({ webSources: found.citations }))
         if (examSteps) logSet((l) => closeLog(l, 'done', found.citations?.length ? `${found.citations.length} trang web` : undefined))
       }
+      // phần suy nghĩ hiện thẳng cho giáo viên xem → bắt suy nghĩ bằng tiếng Việt (model mặc định nghĩ tiếng Anh)
+      if (examSteps) {
+        messages[0] = { ...messages[0], content: `${messages[0].content}\n\nNGÔN NGỮ SUY NGHĨ: toàn bộ phần suy nghĩ (reasoning) viết bằng tiếng Việt, câu ngắn, như giáo viên tự nhẩm: chọn nội dung, tính và kiểm đáp án. Không viết tiếng Anh.` }
+      }
       // nhật ký thật khi soạn đề (stream): Suy nghĩ (dòng suy luận chạy theo + số giây) → Viết đề (câu đang viết, N/T câu)
       const totalQ = Number(text.match(/(\d+)\s*câu/i)?.[1]) || 0
       // `as`: được gán trong callback nên TS không được thu hẹp kiểu về ''
