@@ -650,14 +650,22 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
         let text: string
         if (upstream.ok && wantStream) {
           startStream()
-          let thought = 0
+          // gom mẩu suy luận ~250ms một lần (DeepSeek gửi từng vài ký tự) cho đỡ số sự kiện
+          let thinkBuf = ''
           let thinkAt = 0
           const got = await readUpstreamSse(upstream, (d) => {
-            if (d.content) send({ type: 'delta', c: d.content })
-            thought += d.reasoning.length
-            if (d.reasoning && Date.now() - thinkAt > 400) {
-              thinkAt = Date.now()
-              send({ type: 'think', n: thought })
+            if (d.reasoning) {
+              thinkBuf += d.reasoning
+              if (Date.now() - thinkAt > 250) {
+                thinkAt = Date.now()
+                send({ type: 'think', d: thinkBuf })
+                thinkBuf = ''
+              }
+            }
+            if (d.content) {
+              if (thinkBuf) send({ type: 'think', d: thinkBuf })
+              thinkBuf = ''
+              send({ type: 'delta', c: d.content })
             }
           })
           if (got.broken) {

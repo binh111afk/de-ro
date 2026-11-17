@@ -37,6 +37,8 @@ export interface LlmProgress {
   phase: 'think' | 'write' | 'retry'
   /** số ký tự suy luận đã nhận (lượt hiện tại) */
   thought: number
+  /** phần suy luận đã nhận (lượt hiện tại) — để hiện dòng "đang nghĩ" chạy theo */
+  thinking: string
   /** phần câu trả lời đã nhận (lượt hiện tại) */
   text: string
 }
@@ -140,11 +142,11 @@ async function readStream(res: Response, opts: LlmOptions): Promise<LlmResult & 
   const dec = new TextDecoder()
   let buf = ''
   let text = ''
-  let thought = 0
+  let thinking = ''
   let final = null as (LlmResult & { quota?: unknown }) | null
   const handle = (line: string) => {
     if (!line.startsWith('data:')) return
-    let ev: { type?: string; c?: string; n?: number; error?: string; status?: number; quota?: unknown } & Partial<LlmResult>
+    let ev: { type?: string; c?: string; d?: string; error?: string; status?: number; quota?: unknown } & Partial<LlmResult>
     try {
       ev = JSON.parse(line.slice(5))
     } catch {
@@ -152,14 +154,15 @@ async function readStream(res: Response, opts: LlmOptions): Promise<LlmResult & 
     }
     if (ev.type === 'delta') {
       text += ev.c ?? ''
-      opts.onProgress?.({ phase: 'write', thought, text })
+      opts.onProgress?.({ phase: 'write', thought: thinking.length, thinking, text })
     } else if (ev.type === 'think') {
-      thought = ev.n ?? thought
-      opts.onProgress?.({ phase: 'think', thought, text })
+      thinking += ev.d ?? ''
+      // suy luận đến sau khi đã có chữ (hiếm): vẫn coi là đang viết
+      opts.onProgress?.({ phase: text ? 'write' : 'think', thought: thinking.length, thinking, text })
     } else if (ev.type === 'retry') {
       text = ''
-      thought = 0
-      opts.onProgress?.({ phase: 'retry', thought, text })
+      thinking = ''
+      opts.onProgress?.({ phase: 'retry', thought: 0, thinking, text })
     } else if (ev.type === 'done') {
       final = ev as LlmResult & { quota?: unknown }
     } else if (ev.type === 'error') {

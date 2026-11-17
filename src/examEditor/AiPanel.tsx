@@ -158,36 +158,46 @@ export interface ChatTurn {
   planState?: 'pending' | 'approved' | 'cancelled'
   /** tiến trình sinh từng slide (chặng 26b) */
   progress?: { done: number; total: number; current?: string }
-  /** soạn đề: chỉ số bước đang chạy trong EXAM_STEPS (≥ length = xong hết) */
-  stepAt?: number
-  /** soạn đề: bước đang chạy thì lỗi/dừng */
-  stepFailed?: boolean
-  /** soạn đề: ghi chú ngắn cạnh từng bước (vd "3 nguồn") */
-  stepNotes?: Record<number, string>
+  /** soạn đề: nhật ký việc AI đang làm (chỉ bước có thật), bước cuối `active` là bước đang chạy */
+  log?: ActStep[]
   /** AI hỏi lại vì yêu cầu mơ hồ; 'open' = panel hỏi đang chờ trả lời */
   ask?: AiAsk
   askState?: 'open' | 'done'
 }
 
-/** các bước hiện trong khung chat khi AI soạn đề */
-const EXAM_STEPS = ['Đọc yêu cầu', 'Tìm nguồn tham khảo', 'Soạn nội dung đề', 'Kiểm tra và đưa vào đề']
+interface ActStep {
+  label: string
+  state: 'active' | 'done' | 'failed'
+  /** tóm tắt ngắn bên phải (vd "45 giây", "7/20 câu") */
+  note?: string
+  /** dòng chữ mờ chạy theo khi bước đang chạy: AI đang nghĩ gì / đang viết câu nào */
+  live?: string
+}
 
-/** danh sách bước kiểu "đang làm / đã xong" — thay cho dòng chữ chạy khi soạn đề */
-function StepList({ at, failed, notes }: { at: number; failed?: boolean; notes?: Record<number, string> }) {
+/** đóng bước đang chạy (xong / lỗi) */
+const closeLog = (log: ActStep[], state: 'done' | 'failed', note?: string): ActStep[] =>
+  log.map((s) => (s.state === 'active' ? { ...s, state, live: undefined, ...(note !== undefined ? { note } : {}) } : s))
+
+/** một dòng, giữ phần cuối (chữ mới nhất) */
+const tailLine = (s: string, n: number) => {
+  const t = s.replace(/\s+/g, ' ').trim()
+  return t.length > n ? `…${t.slice(-n)}` : t
+}
+
+/** nhật ký kiểu app code: bước đang chạy có dòng chạy theo, bước xong để lại tóm tắt */
+function ActLog({ steps }: { steps: ActStep[] }) {
   return (
-    <ol className="ai-steps" aria-label="Tiến trình soạn đề">
-      {EXAM_STEPS.map((label, i) => {
-        const state = i < at ? 'done' : i === at ? (failed ? 'failed' : 'active') : 'todo'
-        return (
-          <li key={label} className={`ai-step ai-step--${state}`}>
-            <span className="ai-step__icon" aria-hidden="true">
-              {state === 'done' ? '✓' : state === 'failed' ? '!' : state === 'active' ? <span className="ai-step__spin" /> : null}
-            </span>
-            <span className="ai-step__label">{label}</span>
-            {notes?.[i] ? <span className="ai-step__note">{notes[i]}</span> : null}
-          </li>
-        )
-      })}
+    <ol className="ai-steps" aria-label="AI đang làm">
+      {steps.map((s, i) => (
+        <li key={i} className={`ai-step ai-step--${s.state}`}>
+          <span className="ai-step__icon" aria-hidden="true">
+            {s.state === 'done' ? '✓' : s.state === 'failed' ? '!' : <span className="ai-step__spin" />}
+          </span>
+          <span className="ai-step__label">{s.label}</span>
+          {s.note ? <span className="ai-step__note">{s.note}</span> : null}
+          {s.state === 'active' && s.live ? <span className="ai-step__live">{s.live}</span> : null}
+        </li>
+      ))}
     </ol>
   )
 }
@@ -1020,11 +1030,15 @@ export function AiPanel({
     setTurns((t) => [
       ...t,
       userTurn,
-      { id: botId, role: 'assistant', text: '', pending: true, intent, ...(intent === 'doc' && mode === 'exam' ? { stepAt: 1 } : {}) },
+      { id: botId, role: 'assistant', text: '', pending: true, intent, ...(intent === 'doc' && mode === 'exam' ? { log: [] } : {}) },
     ])
     const examSteps = intent === 'doc' && mode === 'exam'
     const patchTurn = (p: (turn: ChatTurn) => Partial<ChatTurn>) =>
       setTurns((t) => t.map((turn) => (turn.id === botId ? { ...turn, ...p(turn) } : turn)))
+    const logSet = (f: (log: ActStep[]) => ActStep[]) => patchTurn((t) => (t.log ? { log: f(t.log) } : {}))
+    /** mở bước mới (bước đang chạy trước đó coi như xong) */
+    const logStart = (label: string, note?: string) => logSet((l) => [...closeLog(l, 'done'), { label, state: 'active', note }])
+    const logPatch = (p: Partial<ActStep>) => logSet((l) => l.map((s, i) => (i === l.length - 1 && s.state === 'active' ? { ...s, ...p } : s)))
     if (override == null) setInput('')
     setFiles([])
     setRefs([])
@@ -1064,7 +1078,7 @@ export function AiPanel({
         ),
       )
     }
-    if (examSteps) patchTurn(() => ({ stepAt: 2, stepNotes: { 1: sourceNames.length ? `${sourceNames.length} nguồn` : 'không cần' } }))
+    if (examSteps && sourceNames.length) logSet((l) => [...l, { label: 'Đọc nguồn', state: 'done', note: `${sourceNames.length} nguồn` }])
     const sourceText = sourcePrompt(pack)
     // khung chương trình Toán: đoán lớp/chương từ yêu cầu; lượt nối tiếp ("thêm 2 câu") thì lấy từ các lượt trước và đầu đề
     let khungBlock = ''
@@ -1131,12 +1145,13 @@ export function AiPanel({
         const quick = await callLlm([{ role: 'system', content: ASK_ONLY_SYSTEM }, { role: 'user', content: text }], { signal: controller.signal, reasoningEffort: 'low' })
         const quickAsk = parseAsk(quick.content)
         if (quickAsk) {
-          patchTurn(() => ({ text: quickAsk.intro || 'Mình cần biết thêm vài điều trước khi soạn.', ask: quickAsk, askState: 'open', pending: false, stepAt: undefined, sources: undefined, sourceNote: undefined }))
+          patchTurn(() => ({ text: quickAsk.intro || 'Mình cần biết thêm vài điều trước khi soạn.', ask: quickAsk, askState: 'open', pending: false, log: undefined, sources: undefined, sourceNote: undefined }))
           return
         }
       }
       // bật Tìm trên web: một lượt tìm + tóm tắt nguồn (DeepSeek, tắt suy luận), rồi soạn như thường với phần tóm tắt trong prompt
       if (webSearch && intent === 'doc' && mode !== 'board') {
+        if (examSteps) logStart('Tìm trên web')
         const found = await callLlm(
           [
             { role: 'system', content: WEB_SEARCH_SYSTEM },
@@ -1145,37 +1160,79 @@ export function AiPanel({
           { signal: controller.signal, webSearch: true, maxTokens: 4000 },
         )
         messages[0] = { ...messages[0], content: `${messages[0].content}\n\nNGUỒN TÌM TRÊN WEB (số liệu mới, ưu tiên dùng; số liệu lấy từ đây thì ghi nguồn ngắn trong đề/slide):\n${found.content.trim()}` }
-        patchTurn((t) => ({ webSources: found.citations, stepNotes: { ...t.stepNotes, 1: found.citations?.length ? `${found.citations.length} trang web` : 'web' } }))
+        patchTurn(() => ({ webSources: found.citations }))
+        if (examSteps) logSet((l) => closeLog(l, 'done', found.citations?.length ? `${found.citations.length} trang web` : undefined))
       }
-      // tiến độ thật của bước "Soạn nội dung đề" (stream): đang suy nghĩ → đếm câu đã viết → đang thử lại
-      let noteAt = 0
-      let lastNote = ''
+      // nhật ký thật khi soạn đề (stream): Suy nghĩ (dòng suy luận chạy theo + số giây) → Viết đề (câu đang viết, N/T câu)
+      const totalQ = Number(text.match(/(\d+)\s*câu/i)?.[1]) || 0
+      // `as`: được gán trong callback nên TS không được thu hẹp kiểu về ''
+      let phase = '' as '' | 'think' | 'write'
+      let phaseAt = Date.now()
+      let liveAt = 0
+      const secs = () => `${Math.max(1, Math.round((Date.now() - phaseAt) / 1000))} giây`
       const onProgress = examSteps
         ? (p: LlmProgress) => {
+            if (p.phase === 'retry') {
+              logSet((l) => closeLog(l, 'failed', 'lỗi kết nối'))
+              logStart('Thử lại với model dự phòng')
+              phase = ''
+              return
+            }
+            if (p.phase === 'think') {
+              if (phase !== 'think') {
+                phase = 'think'
+                phaseAt = Date.now()
+                logStart('Suy nghĩ')
+              }
+              if (Date.now() - liveAt < 200) return
+              liveAt = Date.now()
+              logPatch({ note: secs(), live: tailLine(p.thinking, 140) || undefined })
+              return
+            }
+            if (phase !== 'write') {
+              // tính số giây TRƯỚC khi đổi phaseAt (hàm cập nhật state chạy sau)
+              const took = secs()
+              if (phase === 'think') logSet((l) => closeLog(l, 'done', took))
+              phase = 'write'
+              phaseAt = Date.now()
+              logStart('Viết đề')
+            }
+            if (Date.now() - liveAt < 200) return
+            liveAt = Date.now()
             const n = (p.text.match(/"type"\s*:\s*"question"/g) ?? []).length
-            const note = p.phase === 'retry' ? 'đang thử lại' : p.phase === 'think' || !p.text ? 'đang suy nghĩ' : n ? `${n} câu` : 'đang viết'
-            if (note === lastNote || (Date.now() - noteAt < 250 && p.phase !== 'retry')) return
-            noteAt = Date.now()
-            lastNote = note
-            patchTurn((t) => ({ stepNotes: { ...t.stepNotes, 2: note } }))
+            const stem = [...p.text.matchAll(/"text"\s*:\s*"((?:[^"\\]|\\.)*)/g)].at(-1)?.[1]
+            logPatch({
+              note: n ? (totalQ ? `${Math.min(n, totalQ)}/${totalQ} câu` : `${n} câu`) : undefined,
+              live: stem ? tailLine(stem.replace(/\\n/g, ' ').replace(/\\(.)/g, '$1'), 110) : undefined,
+            })
           }
         : undefined
-      onProgress?.({ phase: 'think', thought: 0, text: '' })
-      const res = await callLlm(messages, {
-        signal: controller.signal,
-        // Soạn slide trả JSON có schema rõ ràng; reasoning 'max' chỉ làm lượt
-        // dàn ý kéo dài 30–60s (dễ vượt timeout proxy) mà không nội dung hơn.
-        reasoningEffort: mode === 'slide' ? AI_EFFORT.slide : AI_EFFORT.exam,
-        onProgress,
-      })
+      onProgress?.({ phase: 'think', thought: 0, thinking: '', text: '' })
+      // model chưa gửi gì (đang xếp hàng / suy luận không stream): số giây vẫn chạy
+      const ticker = examSteps ? setInterval(() => phase === 'think' && logPatch({ note: secs() }), 1000) : undefined
+      let res: Awaited<ReturnType<typeof callLlm>>
+      try {
+        res = await callLlm(messages, {
+          signal: controller.signal,
+          // Soạn slide trả JSON có schema rõ ràng; reasoning 'max' chỉ làm lượt
+          // dàn ý kéo dài 30–60s (dễ vượt timeout proxy) mà không nội dung hơn.
+          reasoningEffort: mode === 'slide' ? AI_EFFORT.slide : AI_EFFORT.exam,
+          onProgress,
+        })
+      } finally {
+        clearInterval(ticker)
+      }
       const ask = askRule && !htmlMode ? parseAsk(res.content) : null
       if (ask) {
-        patchTurn(() => ({ text: ask.intro || 'Mình cần biết thêm vài điều trước khi soạn.', ask, askState: 'open', pending: false, stepAt: undefined, sources: undefined, sourceNote: undefined }))
+        patchTurn(() => ({ text: ask.intro || 'Mình cần biết thêm vài điều trước khi soạn.', ask, askState: 'open', pending: false, log: undefined, sources: undefined, sourceNote: undefined }))
         return
       }
       if (examSteps) {
-        patchTurn(() => ({ stepAt: 3 }))
-        // nhường một khung hình để bước "Kiểm tra" kịp hiện trước khi áp đề (việc áp chạy đồng bộ)
+        const n = (res.content.match(/"type"\s*:\s*"question"/g) ?? []).length
+        const note = phase === 'write' ? (n ? `${n} câu` : undefined) : phase === 'think' ? secs() : undefined
+        logSet((l) => closeLog(l, 'done', note))
+        logStart('Đưa vào đề')
+        // nhường một khung hình để bước "Đưa vào đề" kịp hiện trước khi áp đề (việc áp chạy đồng bộ)
         await new Promise((r) => setTimeout(r, 350))
       }
       if (htmlMode) {
@@ -1308,12 +1365,12 @@ export function AiPanel({
                   text,
                   pending: false,
                   // chỉ có bước khi là lượt soạn đề; trả lời thường (không JSON) thì bỏ danh sách bước
-                  ...(turn.stepAt != null
+                  ...(turn.log
                     ? summary
-                      ? { stepAt: EXAM_STEPS.length }
+                      ? { log: closeLog(turn.log, 'done') }
                       : looksJson
-                        ? { stepFailed: true }
-                        : { stepAt: undefined }
+                        ? { log: closeLog(turn.log, 'failed') }
+                        : { log: undefined }
                     : {}),
                 }
               : turn,
@@ -1329,7 +1386,7 @@ export function AiPanel({
                 ...turn,
                 text: turn.text || '',
                 pending: false,
-                ...(turn.stepAt != null ? { stepFailed: true } : {}),
+                ...(turn.log ? { log: closeLog(turn.log, 'failed') } : {}),
                 error: aborted
                   ? 'Đã dừng.'
                   : (err as Error)?.message || 'Không gọi được AI.',
@@ -1569,9 +1626,9 @@ export function AiPanel({
                 turn.role === 'user' ? 'ai-msg-user' : 'ai-msg-assistant',
               )}
             >
-              {turn.stepAt != null ? <StepList at={turn.stepAt} failed={turn.stepFailed} notes={turn.stepNotes} /> : null}
+              {turn.log?.length ? <ActLog steps={turn.log} /> : null}
               {turn.pending && !turn.text ? (
-                turn.stepAt != null ? null : turn.progress ? (
+                turn.log?.length ? null : turn.progress ? (
                   <DeckProgress {...turn.progress} />
                 ) : (
                   <ThinkingLine mode={mode} intent={turn.intent} />

@@ -1831,7 +1831,25 @@
     margin-left: auto;
     font-size: 11.5px;
     font-weight: 400;
+    font-variant-numeric: tabular-nums;
     color: var(--color-text-tertiary, #999);
+  }
+  .ai-step {
+    flex-wrap: wrap;
+  }
+  /* dòng chạy theo của bước đang làm: AI đang nghĩ gì / đang viết câu nào */
+  .ai-step__live {
+    flex-basis: 100%;
+    min-width: 0;
+    padding-left: 24px;
+    overflow: hidden;
+    font-size: 12px;
+    font-weight: 400;
+    font-style: italic;
+    line-height: 1.45;
+    color: var(--color-text-tertiary, #999);
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
   @keyframes ai-step-spin {
     to {
