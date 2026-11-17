@@ -8,6 +8,7 @@
 - **Đầu phiên:** đọc `AGENTS.md` → `context.md` → `git status` + `git branch --show-current` + `git log --oneline -5`. Có thay đổi chưa commit mà không phải của mình thì hỏi người dùng, đừng đè.
 - **Người dùng bảo "ghi context":** cập nhật `context.md` để agent khác (không thấy cuộc trò chuyện này) làm tiếp được: việc vừa xong (kèm commit), việc đang dở + bước tiếp theo, quyết định đã chốt và lý do, bẫy mới gặp. Viết gọn, xoá thông tin đã cũ; chi tiết dài đưa vào `docs/handoff/` hoặc `docs/bai-hoc-va-loi.md`. Luật mới người dùng dặn mà áp dụng lâu dài → ghi vào **file này**, không chỉ vào bộ nhớ riêng của công cụ.
 - **Hai agent không làm cùng lúc trong cùng một thư mục.** Làm lần lượt; muốn song song thì mỗi agent một worktree / nhánh riêng và cổng dev riêng.
+- Xoá worktree: nếu trong đó có `node_modules` là liên kết về dự án chính thì `unlink <worktree>/node_modules` **trước**, rồi mới `git worktree remove` (không thì nó xoá theo liên kết, mất `node_modules` chính).
 
 ## 2. Git
 

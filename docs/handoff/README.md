@@ -2,6 +2,7 @@
 
 Chỉ mở phiên liên quan đến việc đang làm. Mới nhất ở trên.
 
+- [phiên 46](phien-46.md): đầu/chân trang, khổ giấy, cột, menu chuột phải, hình dạng, sửa công thức bấm đúp; **Strix 6**; **nhập .pptx giữ bố cục**; trang chủ điện thoại gọn; **AGENTS.md**; **/api/llm stream + nhật ký soạn đề/slide, suy nghĩ tiếng Việt** (số đo token/chất lượng); lời giải ≠ hướng dẫn giải, AI thấy công thức + số câu; **trang Bảng giá** (chỉ admin); việc phiên sau: 5 việc chống AI chết cứng
 - [phiên 45](phien-45.md): **panel AI hỏi lại** khi yêu cầu mơ hồ; sửa hình (tam giác vuông, góc + thang, **vectơ AB**); **nhập Word giữ định dạng** (đề mục đánh số, bảng, ảnh, công thức, lề trang); thước như Word; thanh trạng thái gọn; **mục lục tự động**; đo lại chi phí AI + lượt hỏi rút gọn; **nút Tìm trên web** (DeepSeek, cần key trên Vercel)
 - [phiên 44](phien-44.md): bỏ chữ thừa UI + trang chủ; admin ghi điểm AI đúng như người dùng thấy; hộp xác nhận qua portal; **tranh đếm đồ vật, đồng hồ, hình vật trong hình thực tế** (kho 114 hình nét vector + kho dùng chung R2 `fig/`)
 - [phiên 43](phien-43.md): **vá Strix lần 3–5** (đề một lần bắt đăng nhập, đề giấu đáp án ẩn điểm + nút `showScore`, JWT ES256 kiểm tại server, chặn tài khoản khoá ở mọi API + tầng DB, hạn mức lưu trữ nguyên tử, moderator không khôi phục đề đã gỡ); **Vercel `sin1`** (admin nhanh hẳn); **trang 404**; lưu ý chạy Strix chỉ đọc, worktree khi agy làm song song
