@@ -157,7 +157,7 @@ export interface ChatTurn {
   plan?: DeckPlan
   planState?: 'pending' | 'approved' | 'cancelled'
   /** tiến trình sinh từng slide (chặng 26b) */
-  progress?: { done: number; total: number; current?: string }
+  progress?: { done: number; total: number; current?: string; written?: number; live?: string }
   /** soạn đề: nhật ký việc AI đang làm (chỉ bước có thật), bước cuối `active` là bước đang chạy */
   log?: ActStep[]
   /** AI hỏi lại vì yêu cầu mơ hồ; 'open' = panel hỏi đang chờ trả lời */
@@ -549,12 +549,20 @@ function DeckProgress({
   done,
   total,
   current,
+  written,
+  live,
 }: {
   done: number
   total: number
   current?: string
+  /** số trang đã viết xong (kể cả trang trong lô đang chạy, chưa chèn) */
+  written?: number
+  /** dòng chạy theo: AI đang nghĩ gì / đang viết trang nào */
+  live?: string
 }) {
-  const percent = total ? Math.round((done / total) * 100) : 0
+  const shown = Math.max(done, written ?? 0)
+  const percent = total ? Math.round((shown / total) * 100) : 0
+  done = shown
   return (
     <div className="ai-progress">
       <div className="ai-progress-head">
@@ -579,6 +587,7 @@ function DeckProgress({
       >
         <span style={{ width: `${percent}%` }} />
       </div>
+      {live ? <div className="ai-step__live ai-progress-live">{live}</div> : null}
     </div>
   )
 }
@@ -643,6 +652,9 @@ export const AI_EFFORT: { exam: 'low' | 'medium' | 'high' | 'max'; slide: 'low' 
   slide: 'low',
 }
 
+/** phần suy nghĩ hiện thẳng cho giáo viên xem → bắt suy nghĩ bằng tiếng Việt (model mặc định nghĩ tiếng Anh) */
+const THINK_VI = '\n\nNGÔN NGỮ SUY NGHĨ: toàn bộ phần suy nghĩ (reasoning) viết bằng tiếng Việt, câu ngắn, như giáo viên tự nhẩm. Không viết tiếng Anh.'
+
 /** Số slide mỗi lần gọi model: gộp để không gửi lại prompt chung cho từng slide. */
 export const SLIDE_BATCH = 5
 
@@ -654,6 +666,8 @@ export async function generateSlideBatch(
   plan: DeckPlan,
   indices: number[],
   signal: AbortSignal,
+  /** có thì gọi dạng stream để hiện tiến độ thật của lô (suy nghĩ, trang đang viết) */
+  onProgress?: (p: LlmProgress) => void,
 ): Promise<Array<AiSlidePayload | null>> {
   if (indices.length === 1) return [await generateSlide(plan, plan.slides[indices[0]], indices[0], signal)]
   const decorKit = planDecorKit(plan)
@@ -661,10 +675,10 @@ export async function generateSlideBatch(
   // cả nhóm không đọc được (JSON hỏng/cụt) → hoàn token lượt đó, gọi lại một lần
   const res = await callLlmChecked(
     [
-      { role: 'system', content: batchSystemPrompt(plan, indices) },
+      { role: 'system', content: batchSystemPrompt(plan, indices) + (onProgress ? THINK_VI : '') },
       { role: 'user', content: `Viết slide ${indices.map((i) => i + 1).join(', ')}.` },
     ],
-    { signal, reasoningEffort: AI_EFFORT.slide },
+    { signal, reasoningEffort: AI_EFFORT.slide, onProgress },
     (content) => parseBatchSlides(parseAiObject(content), indices.length).some(Boolean),
   )
   const items = parseBatchSlides(parseAiObject(res.content), indices.length)
@@ -1165,7 +1179,7 @@ export function AiPanel({
       }
       // phần suy nghĩ hiện thẳng cho giáo viên xem → bắt suy nghĩ bằng tiếng Việt (model mặc định nghĩ tiếng Anh)
       if (examSteps) {
-        messages[0] = { ...messages[0], content: `${messages[0].content}\n\nNGÔN NGỮ SUY NGHĨ: toàn bộ phần suy nghĩ (reasoning) viết bằng tiếng Việt, câu ngắn, như giáo viên tự nhẩm: chọn nội dung, tính và kiểm đáp án. Không viết tiếng Anh.` }
+        messages[0] = { ...messages[0], content: messages[0].content + THINK_VI }
       }
       // nhật ký thật khi soạn đề (stream): Suy nghĩ (dòng suy luận chạy theo + số giây) → Viết đề (câu đang viết, N/T câu)
       const totalQ = Number(text.match(/(\d+)\s*câu/i)?.[1]) || 0
@@ -1445,14 +1459,39 @@ export function AiPanel({
       let lastError = ''
       const usedGraphics = new Set<string>()
 
+      /** lô đang chạy (stream): số trang đã viết trong lô, theo chỉ số trang đầu lô */
+      const inFlight = new Map<number, number>()
+      let live: string | undefined
+      let liveAt = 0
       const progress = (current?: string) => {
         // editor vẽ số ô skeleton còn lại = total - cursor (kể cả trang bị bỏ)
         onPendingSlides?.({ done: cursor, total })
+        const written = Math.min(total, results.filter((r) => r !== undefined).length + [...inFlight.values()].reduce((a, b) => a + b, 0))
         setTurns((t) =>
           t.map((turn) =>
-            turn.id === botId ? { ...turn, progress: { done: cursor, total, current } } : turn,
+            turn.id === botId
+              ? { ...turn, progress: { done: cursor, total, current: current ?? turn.progress?.current, written, live } }
+              : turn,
           ),
         )
+      }
+      const batchProgress = (start: number, size: number) => (p: LlmProgress) => {
+        if (p.phase === 'retry') {
+          inFlight.set(start, 0)
+          live = 'Lỗi kết nối, đang thử lại…'
+          return progress()
+        }
+        // trang đã viết xong trong lô = số trang đã sang trang kế (mỗi trang có "layout")
+        const n = Math.max(0, (p.text.match(/"layout"\s*:/g) ?? []).length - 1)
+        inFlight.set(start, Math.min(size, n))
+        if (Date.now() - liveAt < 250) return
+        liveAt = Date.now()
+        if (p.phase === 'think') live = tailLine(p.thinking, 140) || undefined
+        else {
+          const title = [...p.text.matchAll(/"title"\s*:\s*"((?:[^"\\]|\\.)*)"/g)].at(-1)?.[1]
+          live = title ? `Đang viết: ${title.replace(/\\(.)/g, '$1')}` : undefined
+        }
+        progress()
       }
 
       const landReady = async () => {
@@ -1478,12 +1517,14 @@ export function AiPanel({
           const indices = Array.from({ length: nextIndex - start }, (_, k) => start + k)
           progress(plan.slides[start].title)
           try {
-            const pages = await generateSlideBatch(plan, indices, controller.signal)
+            const pages = await generateSlideBatch(plan, indices, controller.signal, batchProgress(start, indices.length))
             indices.forEach((index, k) => { results[index] = pages[k] })
+            inFlight.delete(start)
           } catch (err) {
             if (controller.signal.aborted) return
             lastError = (err as Error)?.message || 'Lỗi không rõ'
             indices.forEach((index) => { results[index] = null })
+            inFlight.delete(start)
           }
           await landReady()
         }

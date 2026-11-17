@@ -27,7 +27,10 @@ const realFetch = window.fetch.bind(window)
 window.fetch = async (...args: Parameters<typeof fetch>) => {
   const res = await realFetch(...args)
   if (String(args[0]).includes('/api/llm')) {
-    void res.clone().json().then((j: { usage?: { prompt_tokens?: number; completion_tokens?: number; completion_tokens_details?: { reasoning_tokens?: number } } }) => {
+    // stream (SSE): usage nằm trong sự kiện `done` cuối luồng
+    void res.clone().text().then((raw) => {
+      const sse = raw.split('\n\n').filter((b) => b.startsWith('data:')).map((b) => JSON.parse(b.slice(5))).find((e) => e.type === 'done')
+      const j = (sse ?? JSON.parse(raw)) as { usage?: { prompt_tokens?: number; completion_tokens?: number; completion_tokens_details?: { reasoning_tokens?: number } } }
       const u = j.usage
       if (!u) return
       tokens.calls++
@@ -78,7 +81,8 @@ async function main() {
         next = Math.min(plan.slides.length, start + SLIDE_BATCH)
         const idx = Array.from({ length: next - start }, (_, k) => start + k)
         try {
-          const got = await generateSlideBatch(plan, idx, controller.signal)
+          // ?vi=1: như app hiện giờ — gọi stream (có tiến độ) nên kèm câu bắt suy nghĩ tiếng Việt
+          const got = await generateSlideBatch(plan, idx, controller.signal, new URLSearchParams(location.search).get('vi') ? () => {} : undefined)
           idx.forEach((i, k) => { pages[i] = got[k] })
         } catch {
           idx.forEach((i) => { pages[i] = null })

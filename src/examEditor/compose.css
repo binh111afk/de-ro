@@ -1838,6 +1838,10 @@
     flex-wrap: wrap;
   }
   /* dòng chạy theo của bước đang làm: AI đang nghĩ gì / đang viết câu nào */
+  .ai-step__live.ai-progress-live {
+    margin-top: 6px;
+    padding-left: 0;
+  }
   .ai-step__live {
     flex-basis: 100%;
     min-width: 0;

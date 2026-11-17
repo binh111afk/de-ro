@@ -110,8 +110,22 @@ function applyFixes(doc, fixes) {
   return { ...doc, blocks }
 }
 
+// V (OV / AV): bắt suy nghĩ tiếng Việt — đúng câu THINK_VI app thêm khi hiện dòng suy nghĩ (AiPanel.tsx)
+const THINK_VI = '\n\nNGÔN NGỮ SUY NGHĨ: toàn bộ phần suy nghĩ (reasoning) viết bằng tiếng Việt, câu ngắn, như giáo viên tự nhẩm. Không viết tiếng Anh.'
+
 async function generate(variant) {
   const calls = []
+  if (variant === 'OC' || variant === 'OV') {
+    // opencode với prompt hiện tại (system.txt); OV thêm THINK_VI
+    const gen = await chat({ model: OC.model, max_tokens: 32000, reasoning_effort: 'low', messages: [{ role: 'system', content: SYSTEM + (variant === 'OV' ? THINK_VI : '') }, { role: 'user', content: TOPIC }] }, OC)
+    calls.push({ step: 'soạn', ...gen.usage, ms: gen.ms })
+    return { doc: json(gen.content), calls, fixes: [] }
+  }
+  if (variant === 'AV') {
+    const gen = await chat({ model: MODEL, max_tokens: 32000, messages: [{ role: 'system', content: SYSTEM + THINK_VI }, { role: 'user', content: TOPIC }] })
+    calls.push({ step: 'soạn', ...gen.usage, ms: gen.ms })
+    return { doc: json(gen.content), calls, fixes: [] }
+  }
   if (variant === 'O' || variant === 'OD') {
     const gen = await chat({ model: OC.model, max_tokens: 32000, reasoning_effort: 'low', messages: [{ role: 'system', content: variant === 'O' ? SYSTEM_OLD : SYSTEM_D }, { role: 'user', content: TOPIC }] }, OC)
     calls.push({ step: 'soạn', ...gen.usage, ms: gen.ms })
