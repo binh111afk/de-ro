@@ -1697,6 +1697,20 @@
     color: var(--danger);
   }
 
+  .ai-retry {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 8px;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface, #fff);
+    font-size: 12.5px;
+    cursor: pointer;
+  }
+  .ai-retry:hover { border-color: var(--primary); color: var(--primary); }
+
   .ai-msg-sources {
     display: flex;
     flex-direction: column;

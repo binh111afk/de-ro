@@ -31,7 +31,8 @@ import { splitHtmlDeck } from '@/lib/htmlDeck'
 import { editSystemPrompt, looksLikeEdit, parseEditCommands, type SlideEditOp } from '@/lib/slideEdit'
 import { useSlidingThumb } from './useSlidingThumb'
 import { buildSourcePack, loadPickedSources, pickedKey, sourcePrompt, sourceRule, type PickedSource, type SourcePack } from '@/lib/sources'
-import { BookOpen, Globe } from 'lucide-react'
+import { BookOpen, Globe, RotateCcw } from 'lucide-react'
+import type { AiApplyResult } from '@/lib/aiDocContext'
 import { dialog } from '@/components/Dialog'
 import { SourcePicker } from './SourcePicker'
 import { cn } from '@/lib/cn'
@@ -163,6 +164,8 @@ export interface ChatTurn {
   /** AI hỏi lại vì yêu cầu mơ hồ; 'open' = panel hỏi đang chờ trả lời */
   ask?: AiAsk
   askState?: 'open' | 'done'
+  /** kết quả không áp được vào đề: yêu cầu để gửi lại bằng nút Thử lại */
+  retry?: string
 }
 
 interface ActStep {
@@ -753,21 +756,31 @@ const SCOPE_RULE =
  * System prompt cho chế độ soạn đề — hợp đồng JSON kiểu plan/patch của
  * soandethi (thu gọn còn 1 lượt gọi) + quy ước đề thi Việt Nam.
  *
- * Hợp đồng: {"action":"replace|append|patch","blocks":[...],"patch":[{"id","block"}]}
+ * Hợp đồng: {"action":"replace|append|patch","say":"…","blocks":[...],"patch":[{"op","id","blocks"}]}
  * - replace: soạn mới / viết lại toàn bộ → thay cả đề.
  * - append: thêm vào cuối, giữ nguyên phần đang có.
- * - patch: sửa vài khối theo id trong bản tóm tắt tài liệu.
+ * - patch: đường chính khi đề đã có nội dung — thay / chèn sau / chèn trước / xoá từng khối theo id `k<vị trí>`.
  * - không sửa tài liệu: trả lời văn bản thường (không JSON).
+ *
+ * Đứng trên mọi quy ước là NGUYÊN TẮC: lời giáo viên thắng quy ước mặc định; yêu cầu không khớp
+ * quy ước nào thì làm cách hợp lý nhất rồi nói ngắn đã hiểu thế nào (`say`) — không để AI "chết cứng".
  */
 export function examSystemPrompt(documentDigest?: string, request = ''): string {
   return (
     'Bạn là trợ lý AI của trình soạn đề thi tiếng Việt (THCS/THPT). Trả lời ngắn gọn, đúng ngữ pháp.\n\n' +
+    'NGUYÊN TẮC TRÊN HẾT (đứng trên mọi quy ước bên dưới): lời giáo viên thắng quy ước mặc định. ' +
+    'Yêu cầu khác quy ước thì làm theo giáo viên. Yêu cầu không khớp quy ước nào thì vẫn làm theo cách hợp lý nhất, ' +
+    'rồi nói ngắn trong "say" mình đã hiểu yêu cầu thế nào. Không từ chối hay trả lời chung chung chỉ vì yêu cầu lạ hoặc không đúng mẫu.\n\n' +
     'KHI SINH HOẶC SỬA NỘI DUNG ĐỀ, chỉ trả về DUY NHẤT một JSON hợp lệ (không bọc markdown, không chữ ngoài JSON):\n' +
-    '{"action":"replace"|"append"|"patch","blocks":[khối...],"patch":[{"id":"...","block":{...}}]}\n' +
-    '- "replace": người dùng yêu cầu soạn đề mới hoặc viết lại toàn bộ → "blocks" là toàn bộ đề.\n' +
-    '- "append": thêm câu/ý/phần vào cuối mà không đổi phần đang có → "blocks" chỉ gồm khối cần thêm.\n' +
-    '- "patch": sửa một vài khối đang có → "patch" gồm {"id":"<id trong TÀI LIỆU HIỆN TẠI>","block":{...}}; không trả "blocks".\n' +
-    'Khi người dùng chỉ hỏi/tư vấn, không cần sửa tài liệu: trả lời bằng văn bản thường, KHÔNG trả JSON.\n\n' +
+    '{"action":"replace"|"append"|"patch","say":"1–2 câu báo giáo viên","blocks":[khối...],"patch":[thao tác...]}\n' +
+    '- "patch" (MẶC ĐỊNH khi đề đã có nội dung): chỉ đụng tới khối cần đổi, giữ nguyên phần còn lại. Mỗi thao tác:\n' +
+    '  {"op":"replace","id":"k5","blocks":[khối mới]} thay khối k5 · {"op":"insertAfter","id":"k5","blocks":[...]} chèn ngay sau k5 · ' +
+    '{"op":"insertBefore","id":"k5","blocks":[...]} chèn ngay trước k5 · {"op":"delete","id":"k5"} xoá k5. ' +
+    'id lấy đúng trong TÀI LIỆU HIỆN TẠI. Ví dụ "thêm lời giải câu 4" → một insertAfter ngay sau khối câu 4 (và sau hình của câu đó nếu có), KHÔNG trả lại cả đề.\n' +
+    '- "append": thêm câu/ý/phần vào cuối đề → "blocks" chỉ gồm khối cần thêm.\n' +
+    '- "replace": CHỈ khi giáo viên bảo soạn đề mới hoặc viết lại toàn bộ đề → "blocks" là toàn bộ đề.\n' +
+    '- "say": nói ngắn đã làm gì, đã hiểu yêu cầu thế nào nếu yêu cầu có thể hiểu nhiều cách. Không lặp lại yêu cầu.\n' +
+    'Khi giáo viên chỉ hỏi/tư vấn, không cần sửa tài liệu: trả lời bằng văn bản thường, KHÔNG trả JSON.\n\n' +
     'CÁC LOẠI KHỐI: header, title, meta, student, heading, paragraph, bullets, grid, question, essay, answerKey, rubric, pageBreak, divider.\n' +
     'CẤU TRÚC TỪNG LOẠI KHỐI (đúng tên field, không thêm field lạ):\n' +
     '- {"type":"header","left":"SỞ GIÁO DỤC VÀ ĐÀO TẠO …\\nTRƯỜNG THPT …\\nĐề chính thức","right":"ĐỀ KHẢO SÁT CHẤT LƯỢNG ĐẦU NĂM\\nNăm học 2025 – 2026\\nMôn: Toán – Lớp 9\\nThời gian làm bài: 90 phút"}\n' +
@@ -781,7 +794,7 @@ export function examSystemPrompt(documentDigest?: string, request = ''): string 
     '- {"type":"question","no":1,"text":"Nội dung câu hỏi","options":[{"label":"A","text":"..."},{"label":"B","text":"..."},{"label":"C","text":"..."},{"label":"D","text":"..."}]}\n' +
     '- Câu có hình: {"type":"question","no":5,"text":"Cho hàm số $y=f(x)$ có bảng biến thiên như hình bên dưới. Hàm số đạt cực đại tại","figure":{"kind":"vartable","expr":"x^3-3x+1","fname":"y"},"options":[…]}\n' +
     '- {"type":"question","kind":"tf","no":13,"text":"Lời dẫn của câu đúng/sai","options":[{"label":"a","text":"mệnh đề a"},{"label":"b","text":"mệnh đề b"},{"label":"c","text":"mệnh đề c"},{"label":"d","text":"mệnh đề d"}]}  (câu đúng/sai: đúng 4 ý a, b, c, d; nhãn chữ thường)\n' +
-    '- {"type":"question","kind":"short","no":17,"text":"Nội dung câu hỏi","options":[]}  (câu trả lời ngắn: không có phương án; đáp án là MỘT SỐ, tối đa 4 ký tự kể cả dấu âm và dấu phẩy, ví dụ 12, -3,5, 0,25)\n' +
+    '- {"type":"question","kind":"short","no":17,"text":"Nội dung câu hỏi","options":[]}  (câu trả lời ngắn: không có phương án; đáp án là MỘT SỐ, tối đa 4 ký tự kể cả dấu âm và dấu phẩy, ví dụ 12, -3,5, 0,25). Câu điền chỗ trống bằng chữ thì không dùng "short": để "options":[] không có kind, chỗ trống viết bằng dòng chấm "……"\n' +
     '- {"type":"essay","no":1,"score":2,"text":"Nội dung","sub":["a) …","b) …"]}\n' +
     '- {"type":"answerKey","items":[{"no":1,"answer":"A"},{"no":2,"answer":"C"}]}  (items là object {no, answer}, KHÔNG phải chuỗi)\n' +
     '- {"type":"rubric","title":"A. HƯỚNG DẪN CHUNG","items":[{"label":"1.","text":"Ý đúng — 1,0 điểm"}]}\n' +
@@ -858,12 +871,15 @@ export function AiPanel({
   onPendingSlides,
   contextSummary,
   documentDigest,
+  focusFor,
   mode = 'exam',
   attachKey,
   onBoardOps,
 }: {
-  /** nhận nội dung AI sinh ra để áp vào tài liệu; trả về một câu tóm tắt để hiện trong chat */
-  onApplyBlocks?: (text: string) => string | undefined
+  /** nhận nội dung AI sinh ra để áp vào tài liệu; trả về câu báo lại (failed = không áp được) */
+  onApplyBlocks?: (text: string) => AiApplyResult | undefined
+  /** nguyên văn đầy đủ các khối giáo viên nhắc tới trong yêu cầu (nối vào lượt người dùng) */
+  focusFor?: (request: string) => string
   /** nhận nội dung AI sinh ra để áp thành slide mới (khi AI trả về JSON deck) */
   onApplySlides?: (text: string, plan?: DeckPlan) => void
   /** chèn ngay một slide vừa sinh vào cuối deck (chặng 26b) */
@@ -1131,7 +1147,7 @@ export function AiPanel({
     const messages: LlmMessage[] = [
       { role: 'system', content: system + sourceBlock },
       ...history,
-      { role: 'user', content: (text || (sentRefs.length ? 'Giải thích hoặc góp ý cho phần đang chọn.' : 'Hãy xử lý các tệp đính kèm sau.')) + fileNote + refNote },
+      { role: 'user', content: (text || (sentRefs.length ? 'Giải thích hoặc góp ý cho phần đang chọn.' : 'Hãy xử lý các tệp đính kèm sau.')) + fileNote + refNote + (mode === 'exam' && focusFor ? focusFor(text) : '') },
     ]
 
     try {
@@ -1364,22 +1380,18 @@ export function AiPanel({
       } else {
         // JSON đề đã được áp vào tài liệu → hiện câu tóm tắt thay vì JSON thô;
         // câu trả lời văn bản thường (không sửa tài liệu) giữ nguyên.
-        let summary = onApplyBlocks?.(res.content)
+        let result = onApplyBlocks?.(res.content)
         // đề trả JSON hỏng (thường bị cắt cụt): hoàn token lượt đó và soạn lại đúng một lần
-        if (!summary && /^\s*[[{]/.test(res.content) && onApplyBlocks) {
+        if (result?.failed && onApplyBlocks) {
           const again = await callLlm(messages, { signal: controller.signal, reasoningEffort: AI_EFFORT.exam, retryOf: res.receipt })
-          summary = onApplyBlocks(again.content)
+          result = onApplyBlocks(again.content) ?? result
         }
-        // Áp thất bại nhưng trông như envelope JSON → nói rõ lý do thay vì để
-        // người dùng tưởng AI "gửi JSON chứ không soạn đề" (thường do JSON bị
-        // cắt cụt hoặc trang đang chạy code cũ). Vẫn giữ JSON gốc để đối chiếu.
-        const looksJson = /^\s*[[{]/.test(res.content)
-        const text =
-          summary ??
-          (looksJson
-            ? '⚠️ AI soạn đề bị lỗi định dạng nên chưa đưa vào được. Bạn bấm gửi lại giúp mình, hoặc yêu cầu ngắn hơn (ít câu hơn).'
-            : res.content)
-        if (!summary && looksJson) console.warn('[AI] JSON không áp được:', res.content)
+        // không áp được: hiện trong chat (kèm phần AI viết nếu đọc được) + nút Thử lại
+        const failed = !!result?.failed
+        const summary = result && !failed ? result.text : undefined
+        const looksJson = failed
+        const text = result?.text ?? res.content
+        if (failed) console.warn('[AI] JSON không áp được:', res.content)
         setTurns((t) =>
           t.map((turn) =>
             turn.id === botId
@@ -1387,6 +1399,7 @@ export function AiPanel({
                   ...turn,
                   text,
                   pending: false,
+                  ...(failed && userTurn.text ? { retry: userTurn.text } : {}),
                   // chỉ có bước khi là lượt soạn đề; trả lời thường (không JSON) thì bỏ danh sách bước
                   ...(turn.log
                     ? summary
@@ -1721,6 +1734,11 @@ export function AiPanel({
               ) : null}
               {turn.sources?.length || turn.webSources?.length || turn.sourceNote ? <SourcesButton sources={turn.sources} web={turn.webSources} note={turn.sourceNote} /> : null}
               {turn.error ? <div className="ai-msg-error">{turn.error}</div> : null}
+              {turn.retry && !busy && turn.id === turns[turns.length - 1]?.id ? (
+                <button type="button" className="ai-retry" onClick={() => void send(turn.retry)}>
+                  <RotateCcw size={13} /> Thử lại
+                </button>
+              ) : null}
             </div>
           ))
         )}
