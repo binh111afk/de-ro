@@ -12,6 +12,7 @@ import { rest } from '@/lib/documents'
 import { currentSession, getSession } from '@/lib/auth'
 import { ProgressBar } from '@/components/ProgressBar'
 import { Avatar } from '@/components/Avatar'
+import { PRICING_PUBLIC } from '@/lib/pricing'
 
 export default function Profile() {
   const session = useSession()
@@ -253,10 +254,17 @@ function CreditCard() {
     const pct = Math.min(100, Math.round((left / Math.max(120, left)) * 100))
     body = (
       <>
-        <p className="mt-7 font-display text-[44px] font-semibold leading-none tracking-[-0.02em] text-ink tnum">
-          {fmt(left)}
-          <span className="text-[18px] font-medium text-ink-3"> điểm còn lại</span>
-        </p>
+        <div className="mt-7 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
+          <p className="font-display text-[44px] font-semibold leading-none tracking-[-0.02em] text-ink tnum">
+            {fmt(left)}
+            <span className="text-[18px] font-medium text-ink-3"> điểm còn lại</span>
+          </p>
+          {PRICING_PUBLIC ? (
+            <Link to="/bang-gia" className="text-[13.5px] font-semibold text-clay hover:underline">
+              Mua thêm điểm
+            </Link>
+          ) : null}
+        </div>
         <ProgressBar pct={pct} label="Phần trăm điểm AI còn lại" />
         {q.base ? (
           <p className="mt-3 text-[12.5px] text-ink-3">Hạn mức tháng: {fmt(Math.floor(q.base / 1000))} điểm.</p>
