@@ -315,6 +315,65 @@ function sseToJson(raw: string): string {
   return JSON.stringify({ model, usage, choices: [{ finish_reason: finish, message: { content, reasoning_content: reasoning } }] })
 }
 
+interface StreamedBody {
+  content: string
+  reasoning: string
+  usage: unknown
+  finish?: string
+  model?: string
+  /** luồng đứt giữa chừng (mạng / quá giờ) — phần đã nhận vẫn bị nhà cung cấp tính tiền */
+  broken: boolean
+}
+
+/**
+ * Đọc dần SSE chat/completions của upstream, gọi `onDelta` mỗi mẩu. Không ném lỗi: đứt giữa chừng thì
+ * trả `broken: true` cùng phần đã nhận (để vẫn tính tiền phần đó).
+ */
+async function readUpstreamSse(
+  upstream: Response,
+  onDelta: (d: { content: string; reasoning: string }) => void,
+): Promise<StreamedBody> {
+  const out: StreamedBody = { content: '', reasoning: '', usage: undefined, broken: false }
+  const reader = upstream.body?.getReader()
+  if (!reader) return { ...out, broken: true }
+  const dec = new TextDecoder()
+  let buf = ''
+  const eat = (line: string) => {
+    const l = line.trim()
+    if (!l.startsWith('data:') || l === 'data: [DONE]') return
+    try {
+      const j = JSON.parse(l.slice(5)) as { model?: string; usage?: unknown; choices?: Array<{ finish_reason?: string; delta?: { content?: string; reasoning_content?: string } }> }
+      const c = j.choices?.[0]
+      const content = c?.delta?.content ?? ''
+      const reasoning = c?.delta?.reasoning_content ?? ''
+      out.content += content
+      out.reasoning += reasoning
+      out.finish = c?.finish_reason ?? out.finish
+      out.usage = j.usage ?? out.usage
+      out.model = j.model ?? out.model
+      if (content || reasoning) onDelta({ content, reasoning })
+    } catch {
+      /* bỏ dòng hỏng */
+    }
+  }
+  try {
+    for (;;) {
+      const { done, value } = await reader.read()
+      if (done) break
+      buf += dec.decode(value, { stream: true })
+      let nl: number
+      while ((nl = buf.indexOf('\n')) >= 0) {
+        eat(buf.slice(0, nl))
+        buf = buf.slice(nl + 1)
+      }
+    }
+    if (buf) eat(buf)
+  } catch {
+    out.broken = true
+  }
+  return out
+}
+
 /** Xử lý một lời gọi /api/llm. Luôn tự ghi response. */
 export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse): Promise<void> {
   if (!(await guard(req, res, 'llm'))) return
@@ -338,6 +397,8 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
     model?: string
     /** tìm trên web trước khi trả lời: chỉ DeepSeek chính hãng (tool deepseek_web_search, tắt suy luận) */
     webSearch?: boolean
+    /** trả về dạng SSE (tiến độ thật): sự kiện `delta` / `retry`, cuối cùng `done` hoặc `error` */
+    stream?: boolean
   }
   try {
     // 2 MB chữ ≈ 700k token — đủ cho đề + nguồn tham khảo dài nhất app gửi; to hơn là lạm dụng
@@ -381,6 +442,46 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
   const reserveFor = quota && pendingRefund ? { ...quota, limit: quota.limit + pendingRefund } : quota
   const release = reserveFor ? await reserveQuota(userId, ip, reserveFor, promptTokens + maxTokens) : async () => {}
   if (!release) return json(res, 429, { error: 'Đang có nhiều yêu cầu AI chạy cùng lúc, vui lòng thử lại sau ít giây.', quota })
+
+  // ---- chế độ stream (SSE): chỉ mở luồng khi upstream đầu tiên đã trả 200, lỗi trước đó vẫn trả JSON như cũ.
+  // Client đóng tab giữa chừng thì server VẪN đọc hết upstream và tự trừ điểm (client không quyết được việc bị tính).
+  const wantStream = body.stream === true && !body.webSearch
+  let streaming = false
+  let ping: ReturnType<typeof setInterval> | undefined
+  const send = (ev: Record<string, unknown>) => {
+    if (!streaming || res.writableEnded || res.destroyed) return
+    try {
+      res.write(`data: ${JSON.stringify(ev)}\n\n`)
+    } catch {
+      /* client đã đóng */
+    }
+  }
+  const startStream = () => {
+    if (streaming) return
+    streaming = true
+    res.writeHead(200, {
+      'Content-Type': 'text/event-stream; charset=utf-8',
+      'Cache-Control': 'no-cache, no-transform',
+      Connection: 'keep-alive',
+      'X-Accel-Buffering': 'no',
+    })
+    res.flushHeaders?.()
+    // model suy luận lâu chưa ra chữ: giữ kết nối (mạng di động / proxy cắt kết nối im lặng)
+    ping = setInterval(() => {
+      if (res.writableEnded || res.destroyed) return
+      try {
+        res.write(': ping\n\n')
+      } catch {
+        /* client đã đóng */
+      }
+    }, 15_000)
+  }
+  const reply = (status: number, payload: Record<string, unknown>) => {
+    if (!streaming) return json(res, status, payload)
+    clearInterval(ping)
+    send(status === 200 ? { type: 'done', ...payload } : { type: 'error', status, ...payload })
+    if (!res.writableEnded) res.end()
+  }
 
   try {
 
@@ -480,6 +581,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
       let lastErr: string | null = null
       const t0 = Date.now()
       if (target.anthropic) {
+        if (modelIndex > 0) send({ type: 'retry' })
         try {
           const r = await callAnthropic({
             apiKey: target.key,
@@ -495,7 +597,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
             log(target, t0, true, null, r.usage)
             const spent = billOf(r.usage, r.content)
             const [after] = await Promise.all([settle(spent), release(), ...pending])
-            return json(res, 200, { content: r.content, reasoning: '', usage: r.usage, model: r.model, finishReason: r.finishReason, quota: after, receipt: receiptFor(spent) })
+            return reply(200, { content: r.content, reasoning: '', usage: r.usage, model: r.model, finishReason: r.finishReason, quota: after, receipt: receiptFor(spent) })
           }
           errs.push(`${selectedModel}: empty content (finish_reason=${r.finishReason})`)
         } catch (err) {
@@ -513,9 +615,10 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
         // bật suy luận thì DeepSeek chuyển sang tìm nhiều bước (đắt gấp 2–4 lần): lượt tìm chỉ cần tóm tắt nguồn
         ...(target.search ? { tools: [{ type: 'deepseek_web_search' }], thinking: { type: 'disabled' } } : {}),
         ...(body.temperature !== undefined ? { temperature: body.temperature } : {}),
-        ...(target.stream ? { stream: true, stream_options: { include_usage: true } } : {}),
+        ...(target.stream || (wantStream && !target.search) ? { stream: true, stream_options: { include_usage: true } } : {}),
       })
       for (let attempt = 0; attempt < 2; attempt++) {
+        if (attempt > 0 || modelIndex > 0) send({ type: 'retry' })
         let upstream: Response
         try {
           upstream = await fetch(target.url, {
@@ -544,7 +647,30 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
           break
         }
 
-        const text = target.stream && upstream.ok ? sseToJson(await upstream.text()) : await upstream.text()
+        let text: string
+        if (upstream.ok && wantStream) {
+          startStream()
+          let thought = 0
+          let thinkAt = 0
+          const got = await readUpstreamSse(upstream, (d) => {
+            if (d.content) send({ type: 'delta', c: d.content })
+            thought += d.reasoning.length
+            if (d.reasoning && Date.now() - thinkAt > 400) {
+              thinkAt = Date.now()
+              send({ type: 'think', n: thought })
+            }
+          })
+          if (got.broken) {
+            // đứt giữa chừng: nhà cung cấp vẫn tính phần đã sinh → ước theo độ dài đã nhận (không phải mức trần)
+            wasted += promptTokens + Math.ceil((got.content.length + got.reasoning.length) / 3)
+            lastErr = `${selectedModel}: luồng trả lời bị ngắt giữa chừng`
+            writeRawLog(got.content, { _model: selectedModel, _attempt: attempt, broken: true, reasoning: got.reasoning })
+            break
+          }
+          text = JSON.stringify({ model: got.model, usage: got.usage, choices: [{ finish_reason: got.finish, message: { content: got.content, reasoning_content: got.reasoning } }] })
+        } else {
+          text = target.stream && upstream.ok ? sseToJson(await upstream.text()) : await upstream.text()
+        }
         if (!upstream.ok) {
           const authFailed = upstream.status === 401 || upstream.status === 403
           lastErr = `${selectedModel}: upstream ${upstream.status}`
@@ -590,7 +716,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
           const citations = target.search
             ? [...new Map((msg.annotations ?? []).filter((a) => a.type === 'url_citation' && a.url_citation?.url).map((a) => [a.url_citation!.url!, { url: a.url_citation!.url!, title: a.url_citation!.title || a.url_citation!.url! }])).values()].slice(0, 20)
             : undefined
-          return json(res, 200, { content, reasoning, usage: data.usage ?? null, model: data.model ?? selectedModel, finishReason: choice?.finish_reason ?? 'unknown', quota: after, receipt: receiptFor(spent), ...(citations ? { citations } : {}) })
+          return reply(200, { content, reasoning, usage: data.usage ?? null, model: data.model ?? selectedModel, finishReason: choice?.finish_reason ?? 'unknown', quota: after, receipt: receiptFor(spent), ...(citations ? { citations } : {}) })
         }
         lastErr = `${selectedModel}: empty content (finish_reason=${choice?.finish_reason ?? 'unknown'})`
         // trả rỗng vẫn tốn token (thường là suy luận hết trần) → tính vào hạn mức
@@ -610,10 +736,11 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
 
     // báo lỗi TỪNG model, không chỉ cái cuối (lỗi cuối hay là fallback phụ, che mất nguyên nhân thật)
     await Promise.all([wasted ? addUsage(userId, ip, wasted, quota) : null, release(), ...pending])
-    return json(res, 502, { error: `Các model AI đều không phản hồi. ${errs.join(' · ')}`.trim() })
+    return reply(502, { error: `Các model AI đều không phản hồi. ${errs.join(' · ')}`.trim() })
   } catch (err) {
-    return json(res, 500, { error: err instanceof Error ? err.message : String(err) })
+    return reply(500, { error: err instanceof Error ? err.message : String(err) })
   } finally {
+    clearInterval(ping)
     await release()
   }
 }

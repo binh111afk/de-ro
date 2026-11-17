@@ -28,6 +28,17 @@ export interface LlmOptions {
   retryOf?: string
   /** tìm trên web trước khi trả lời (DeepSeek chính hãng), kết quả có `citations` */
   webSearch?: boolean
+  /** có thì gọi dạng stream: báo tiến độ thật trong lúc model suy luận / viết */
+  onProgress?: (p: LlmProgress) => void
+}
+
+export interface LlmProgress {
+  /** `think`: đang suy luận, chưa ra chữ; `write`: đang viết câu trả lời; `retry`: model lỗi, đang gọi lại / đổi model */
+  phase: 'think' | 'write' | 'retry'
+  /** số ký tự suy luận đã nhận (lượt hiện tại) */
+  thought: number
+  /** phần câu trả lời đã nhận (lượt hiện tại) */
+  text: string
 }
 
 const ENDPOINT = '/api/llm'
@@ -89,6 +100,7 @@ async function callOnce(messages: LlmMessage[], opts: LlmOptions): Promise<LlmRe
         reasoningEffort: opts.reasoningEffort ?? 'max',
         ...(opts.temperature !== undefined ? { temperature: opts.temperature } : {}),
         ...(opts.webSearch ? { webSearch: true } : {}),
+        ...(opts.onProgress && !opts.webSearch ? { stream: true } : {}),
       }),
     })
   } catch (err) {
@@ -109,7 +121,9 @@ async function callOnce(messages: LlmMessage[], opts: LlmOptions): Promise<LlmRe
     if (res.status >= 500) throw new TransientLlmError(detail)
     throw new Error(detail)
   }
-  const data = (await res.json()) as LlmResult & { quota?: unknown }
+  const data = (res.headers.get('content-type') ?? '').includes('text/event-stream')
+    ? await readStream(res, opts)
+    : ((await res.json()) as LlmResult & { quota?: unknown })
   reportQuota(data.quota)
   if (!data.content?.trim()) {
     throw new Error(
@@ -117,6 +131,61 @@ async function callOnce(messages: LlmMessage[], opts: LlmOptions): Promise<LlmRe
     )
   }
   return data
+}
+
+/** Đọc SSE của /api/llm: `think` / `delta` / `retry` báo tiến độ, `done` là kết quả như khi gọi thường. */
+async function readStream(res: Response, opts: LlmOptions): Promise<LlmResult & { quota?: unknown }> {
+  const reader = res.body?.getReader()
+  if (!reader) throw new TransientLlmError('Không đọc được phản hồi của AI')
+  const dec = new TextDecoder()
+  let buf = ''
+  let text = ''
+  let thought = 0
+  let final = null as (LlmResult & { quota?: unknown }) | null
+  const handle = (line: string) => {
+    if (!line.startsWith('data:')) return
+    let ev: { type?: string; c?: string; n?: number; error?: string; status?: number; quota?: unknown } & Partial<LlmResult>
+    try {
+      ev = JSON.parse(line.slice(5))
+    } catch {
+      return
+    }
+    if (ev.type === 'delta') {
+      text += ev.c ?? ''
+      opts.onProgress?.({ phase: 'write', thought, text })
+    } else if (ev.type === 'think') {
+      thought = ev.n ?? thought
+      opts.onProgress?.({ phase: 'think', thought, text })
+    } else if (ev.type === 'retry') {
+      text = ''
+      thought = 0
+      opts.onProgress?.({ phase: 'retry', thought, text })
+    } else if (ev.type === 'done') {
+      final = ev as LlmResult & { quota?: unknown }
+    } else if (ev.type === 'error') {
+      reportQuota(ev.quota)
+      const msg = ev.error || 'AI lỗi'
+      throw (ev.status ?? 500) >= 500 ? new TransientLlmError(msg) : new Error(msg)
+    }
+  }
+  try {
+    for (;;) {
+      const { done, value } = await reader.read()
+      if (done) break
+      buf += dec.decode(value, { stream: true })
+      let sep: number
+      while ((sep = buf.indexOf('\n\n')) >= 0) {
+        for (const line of buf.slice(0, sep).split('\n')) handle(line.trim())
+        buf = buf.slice(sep + 2)
+      }
+    }
+  } catch (err) {
+    if ((err as Error)?.name === 'AbortError' || opts.signal?.aborted) throw err
+    if (err instanceof TransientLlmError || (err instanceof Error && !(err instanceof TypeError))) throw err
+    throw new TransientLlmError('Mất kết nối khi đang nhận câu trả lời của AI')
+  }
+  if (!final) throw new TransientLlmError('Kết nối tới AI bị ngắt giữa chừng')
+  return final
 }
 
 /**

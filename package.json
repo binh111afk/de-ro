@@ -51,6 +51,7 @@
     "test:ma-tran": "tsx --tsconfig tsconfig.app.json scripts/check-ma-tran.ts",
     "test:admin": "tsx scripts/test-admin.ts",
     "test:ai-abuse": "tsx scripts/test-ai-abuse.ts",
+    "test:ai-stream": "tsx scripts/test-ai-stream.ts",
     "test:admin-content": "tsx scripts/test-admin-content.ts",
     "test:admin-bank": "tsx scripts/test-admin-bank.ts",
     "test:admin-stats": "tsx scripts/test-admin-stats.ts"

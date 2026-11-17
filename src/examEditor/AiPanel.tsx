@@ -12,7 +12,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useSession } from '@/lib/useSession'
 import { Button } from '@/components/ui'
-import { aiPointsLeft, callLlm, callLlmChecked, lastAiQuota, type AiQuota, type LlmMessage } from '@/lib/llm'
+import { aiPointsLeft, callLlm, callLlmChecked, lastAiQuota, type AiQuota, type LlmMessage, type LlmProgress } from '@/lib/llm'
 import { khungPromptFor } from '@/lib/khungPrompt'
 import {
   parseAiObject,
@@ -1147,11 +1147,26 @@ export function AiPanel({
         messages[0] = { ...messages[0], content: `${messages[0].content}\n\nNGUỒN TÌM TRÊN WEB (số liệu mới, ưu tiên dùng; số liệu lấy từ đây thì ghi nguồn ngắn trong đề/slide):\n${found.content.trim()}` }
         patchTurn((t) => ({ webSources: found.citations, stepNotes: { ...t.stepNotes, 1: found.citations?.length ? `${found.citations.length} trang web` : 'web' } }))
       }
+      // tiến độ thật của bước "Soạn nội dung đề" (stream): đang suy nghĩ → đếm câu đã viết → đang thử lại
+      let noteAt = 0
+      let lastNote = ''
+      const onProgress = examSteps
+        ? (p: LlmProgress) => {
+            const n = (p.text.match(/"type"\s*:\s*"question"/g) ?? []).length
+            const note = p.phase === 'retry' ? 'đang thử lại' : p.phase === 'think' || !p.text ? 'đang suy nghĩ' : n ? `${n} câu` : 'đang viết'
+            if (note === lastNote || (Date.now() - noteAt < 250 && p.phase !== 'retry')) return
+            noteAt = Date.now()
+            lastNote = note
+            patchTurn((t) => ({ stepNotes: { ...t.stepNotes, 2: note } }))
+          }
+        : undefined
+      onProgress?.({ phase: 'think', thought: 0, text: '' })
       const res = await callLlm(messages, {
         signal: controller.signal,
         // Soạn slide trả JSON có schema rõ ràng; reasoning 'max' chỉ làm lượt
         // dàn ý kéo dài 30–60s (dễ vượt timeout proxy) mà không nội dung hơn.
         reasoningEffort: mode === 'slide' ? AI_EFFORT.slide : AI_EFFORT.exam,
+        onProgress,
       })
       const ask = askRule && !htmlMode ? parseAsk(res.content) : null
       if (ask) {
