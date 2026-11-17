@@ -9,6 +9,7 @@ import { useSession } from '@/lib/useSession'
 import { submitFeedback } from '@/lib/community'
 import { dialog } from '@/components/Dialog'
 import { Avatar } from '@/components/Avatar'
+import { PRICING_PUBLIC } from '@/lib/pricing'
 
 /**
  * Thanh nav chính — chỉ 4 mục, mỗi mục nằm trên MỘT dòng (không xuống
@@ -21,6 +22,7 @@ const NAV = [
   { to: '/tao-de-online', label: 'Tạo đề online' },
   { to: '/de-cong-dong', label: 'Đề cộng đồng' },
   { to: '/kho-tai-lieu', label: 'Kho tài liệu' },
+  ...(PRICING_PUBLIC ? [{ to: '/bang-gia', label: 'Bảng giá' }] : []),
 ]
 
 /**

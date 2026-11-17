@@ -53,7 +53,8 @@
     "test:ai-abuse": "tsx scripts/test-ai-abuse.ts",
     "test:admin-content": "tsx scripts/test-admin-content.ts",
     "test:admin-bank": "tsx scripts/test-admin-bank.ts",
-    "test:admin-stats": "tsx scripts/test-admin-stats.ts"
+    "test:admin-stats": "tsx scripts/test-admin-stats.ts",
+    "test:pricing": "tsx scripts/test-pricing.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.6.0",
