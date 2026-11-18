@@ -39,7 +39,6 @@ export default function BoardEditor({ id }: { id: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   /** canvas trong suốt nằm trên, chỉ vẽ nét bút đang viết */
   const liveRef = useRef<HTMLCanvasElement>(null)
-  const predicted = useRef<Pt[]>([])
   const live = useRef<El | null>(null)
   const liveRaf = useRef(0)
   const saved = useRef(load(id))
@@ -196,15 +195,7 @@ export default function BoardEditor({ id }: { id: string }) {
   /** chỉ vẽ lại nét đang viết */
   const redrawLive = useCallback(() => {
     cancelAnimationFrame(liveRaf.current)
-    liveRaf.current = requestAnimationFrame(() => {
-      if (!liveRef.current) return
-      const e = live.current, pred = predicted.current
-      // điểm trình duyệt đoán bút sắp tới: chỉ vẽ tạm cho đầu nét theo sát ngòi, không lưu vào nét
-      const shown = e && pred.length && e.points
-        ? { ...e, ver: -1, points: [...e.points, ...pred], pressures: e.pressures && [...e.pressures, ...pred.map(() => e.pressures![e.pressures!.length - 1])] }
-        : e
-      renderLive(liveRef.current, shown, view.current)
-    })
+    liveRaf.current = requestAnimationFrame(() => { if (liveRef.current) renderLive(liveRef.current, live.current, view.current) })
   }, [])
 
   const saveTimer = useRef(0)
@@ -791,7 +782,6 @@ export default function BoardEditor({ id }: { id: string }) {
     const guide = t === 'freedraw' ? guideAt(instRef.current, p, 22 / v.zoom) ?? undefined : undefined
     const el = newElement(t as Kind, guide ? projectGuide(guide, p) : p)
     if (el.kind === 'freedraw') {
-      predicted.current = []
       // chuột thường luôn báo lực 0,5; bảng vẽ chạy chế độ chuột vẫn có thể gửi lực thật → coi như bút
       if (ev.pointerType === 'pen' || (ev.pointerType === 'mouse' && ev.pressure > 0 && ev.pressure !== 0.5)) el.pressures = [ev.pressure || 0.5]
       if (opts.current.snap && !guide) armHold(ev.clientX, ev.clientY)
@@ -962,11 +952,6 @@ export default function BoardEditor({ id }: { id: string }) {
             }
           }
           e.ver++
-          // thước kẻ: nét đã bám mép, không đoán thêm
-          predicted.current = d.guide ? [] : (ev.nativeEvent.getPredictedEvents?.() ?? []).slice(0, 2).map((pe) => {
-            const q = toScene(pe.clientX, pe.clientY)
-            return [q[0] - e.x, q[1] - e.y] as Pt
-          })
           if (opts.current.snap && !d.guide && Math.hypot(ev.clientX - hold.current.x, ev.clientY - hold.current.y) > 4) armHold(ev.clientX, ev.clientY)
           if (live.current === e) { redrawLive(); return }
         } else if (isLinear(e)) {

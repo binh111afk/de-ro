@@ -840,9 +840,9 @@ export function render(
  * mỗi lần bút di chỉ vẽ lại đúng một nét thay vì cả bảng.
  */
 export function renderLive(canvas: HTMLCanvasElement, e: El | null, view: View) {
-  // { desynchronized: true } = canvas trễ thấp (nét bám ngòi bút sát hơn, như OneNote). Lần gọi getContext đầu
-  // tiên quyết định chế độ. Không bật trên Android: canvas đó bị ghép như lớp đục → tấm đen che kín bảng
-  const ctx = canvas.getContext('2d', { desynchronized: !/Android/i.test(navigator.userAgent) })!
+  // không dùng { desynchronized: true }: canvas đó đưa từng lệnh vẽ lên màn hình ngay, mà mỗi khung hình nét
+  // bị xoá rồi vẽ lại → chữ chớp liên tục khi viết (Windows); trên Android còn thành tấm đen che kín bảng
+  const ctx = canvas.getContext('2d')!
   ctx.setTransform(1, 0, 0, 1, 0, 0)
   ctx.clearRect(0, 0, canvas.width, canvas.height)
   if (!e) return
