@@ -15,8 +15,24 @@ export async function boughtPacks(): Promise<number[]> {
 }
 
 /** Tạo đơn nạp; trả link trang thanh toán PayOS. */
+export type PaymentOrder = {
+  orderCode: number
+  checkoutUrl: string
+  points: number
+  vnd: number
+  /** chuỗi VietQR để vẽ mã QR */
+  qrCode: string
+  /** mã ngân hàng (BIN Napas) của tài khoản nhận */
+  bin: string
+  accountNumber: string
+  accountName: string
+  /** nội dung chuyển khoản */
+  description: string
+  /** hết hạn (giây Unix) */
+  expiresAt: number
+}
 export function createPayment(vnd: number) {
-  return call<{ orderCode: number; checkoutUrl: string; points: number }>('/api/pay', {
+  return call<PaymentOrder>('/api/pay', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ vnd }),

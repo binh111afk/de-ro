@@ -157,11 +157,12 @@ async function createOrder(req: IncomingMessage, res: ServerResponse, userId: st
   // tài khoản ngân hàng không liên kết qua PayOS chỉ nhận nội dung tối đa 9 ký tự
   const description = `DR${orderCode}`.slice(0, 9)
   const req0 = { orderCode, amount: vnd, description, returnUrl, cancelUrl }
-  const r = await payos<{ checkoutUrl: string; paymentLinkId: string }>('/v2/payment-requests', {
+  const expiresAt = Math.floor(Date.now() / 1000) + LINK_TTL_S
+  const r = await payos<{ checkoutUrl: string; paymentLinkId: string; qrCode?: string; bin?: string; accountNumber?: string; accountName?: string; description?: string }>('/v2/payment-requests', {
     method: 'POST',
     body: {
       ...req0,
-      expiredAt: Math.floor(Date.now() / 1000) + LINK_TTL_S,
+      expiredAt: expiresAt,
       items: [{ name: `${points} điểm AI`, quantity: 1, price: vnd }],
       signature: signCreate(env().checksum, req0),
     },
@@ -174,7 +175,20 @@ async function createOrder(req: IncomingMessage, res: ServerResponse, userId: st
     method: 'PATCH',
     body: { checkout_url: r.data.checkoutUrl, payment_link_id: r.data.paymentLinkId ?? null },
   })
-  return json(res, 200, { orderCode, checkoutUrl: r.data.checkoutUrl, points })
+  // trang tự vẽ QR + thông tin chuyển khoản (chuỗi VietQR PayOS trả), checkoutUrl để mở trang PayOS nếu cần
+  return json(res, 200, {
+    orderCode,
+    checkoutUrl: r.data.checkoutUrl,
+    points,
+    vnd,
+    qrCode: r.data.qrCode ?? '',
+    bin: r.data.bin ?? '',
+    accountNumber: r.data.accountNumber ?? '',
+    accountName: r.data.accountName ?? '',
+    // PayOS gắn thêm mã riêng vào nội dung (vd `CS9BSJTYZW1 DR100001`): phải chuyển đúng chuỗi này thì PayOS mới khớp đơn
+    description: r.data.description || description,
+    expiresAt,
+  })
 }
 
 async function orderStatus(res: ServerResponse, userId: string, orderCode: number) {

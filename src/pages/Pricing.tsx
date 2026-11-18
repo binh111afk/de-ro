@@ -23,16 +23,10 @@ import {
   type PricingPack,
 } from '@/lib/pricing'
 import { useSession } from '@/lib/useSession'
-import { boughtPacks, createPayment, paymentStatus } from '@/lib/payClient'
-// thư viện chính thức của PayOS: nhúng trang thanh toán (iframe pay.payos.vn) ngay trong trang. Không phải hook React thật
-// (mỗi lần gọi tạo một phiên mới) nên đổi tên để gọi trong effect.
-import { usePayOS as createPayOSCheckout } from '@payos/payos-checkout'
-import { X } from 'lucide-react'
-import { Portal } from '@/components/Portal'
+import { boughtPacks, createPayment, paymentStatus, type PaymentOrder } from '@/lib/payClient'
+import { PayCheckout } from '@/pages/PayCheckout'
 
 type InputMode = 'vnd' | 'points'
-
-const PAYOS_ELEMENT_ID = 'payos-checkout'
 
 const fmt = (n: number) => n.toLocaleString('vi-VN')
 
@@ -141,8 +135,8 @@ function PricingContent() {
   const [rawInput, setRawInput] = useState(() => fmt(DEFAULT_PACK_VND))
   const [inputError, setInputError] = useState<string | null>(null)
   const [paying, setPaying] = useState(false)
-  /** đơn đang mở khung thanh toán PayOS nhúng trong trang */
-  const [checkout, setCheckout] = useState<{ orderCode: number; url: string; vnd: number } | null>(null)
+  /** đơn đang mở khung thanh toán (QR tự vẽ) */
+  const [checkout, setCheckout] = useState<PaymentOrder | null>(null)
   const [params, setParams] = useSearchParams()
   const aliveRef = useRef(true)
   useEffect(() => {
@@ -180,33 +174,6 @@ function PricingContent() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session])
 
-  // mở khung thanh toán PayOS trong trang
-  useEffect(() => {
-    if (!checkout) return
-    let open = true
-    const close = () => {
-      open = false
-      setCheckout(null)
-    }
-    const payos = createPayOSCheckout({
-      RETURN_URL: `${window.location.origin}/bang-gia?order=${checkout.orderCode}`,
-      ELEMENT_ID: PAYOS_ELEMENT_ID,
-      CHECKOUT_URL: checkout.url,
-      embedded: true,
-      onSuccess: () => {
-        close()
-        void confirmOrder(checkout.orderCode)
-      },
-      onCancel: close,
-      onExit: close,
-    })
-    payos.open()
-    return () => {
-      // thư viện tự gỡ iframe khi báo thành công / huỷ; chỉ gỡ khi người dùng tự đóng khung
-      if (open) payos.exit()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [checkout])
 
   useEffect(() => {
     if (!session) return
@@ -349,7 +316,7 @@ function PricingContent() {
     }
     setPaying(true)
     createPayment(summary.vnd)
-      .then((r) => setCheckout({ orderCode: r.orderCode, url: r.checkoutUrl, vnd: summary.vnd }))
+      .then((r) => (r.qrCode ? setCheckout(r) : window.location.assign(r.checkoutUrl)))
       .catch((err: unknown) => {
         void dialog.alert(err instanceof Error ? err.message : 'Có lỗi xảy ra, thử lại sau.', { title: 'Chưa tạo được đơn nạp' })
       })
@@ -562,31 +529,15 @@ function PricingContent() {
       </div>
 
       {checkout ? (
-        <Portal>
-          <div
-            className="fixed inset-0 z-[300] flex items-center justify-center bg-ink/45 p-3 sm:p-6"
-            role="dialog"
-            aria-modal="true"
-            aria-label="Thanh toán"
-            onKeyDown={(e) => e.key === 'Escape' && closeCheckout()}
-          >
-            <div className="flex h-[min(38rem,92vh)] w-full max-w-[30rem] flex-col overflow-hidden rounded-[12px] bg-surface shadow-lift">
-              <div className="flex items-center justify-between border-b border-line px-4 py-2.5">
-                <span className="text-[0.9375rem] font-semibold text-ink">Thanh toán {fmt(checkout.vnd)}đ</span>
-                <button
-                  type="button"
-                  onClick={closeCheckout}
-                  className="grid size-8 place-items-center rounded-full text-ink-3 hover:bg-sunken hover:text-ink"
-                  aria-label="Đóng"
-                  data-tip="Đóng"
-                >
-                  <X className="size-4" />
-                </button>
-              </div>
-              <div id={PAYOS_ELEMENT_ID} className="min-h-0 flex-1 [&>iframe]:block [&>iframe]:h-full [&>iframe]:border-0" />
-            </div>
-          </div>
-        </Portal>
+        <PayCheckout
+          order={checkout}
+          onClose={closeCheckout}
+          onPaid={(points) => {
+            setCheckout(null)
+            void boughtPacks().then(setBought).catch(() => {})
+            void dialog.alert(`Đã cộng ${fmt(points)} điểm vào tài khoản.`, { title: 'Nạp điểm thành công' })
+          }}
+        />
       ) : null}
     </section>
   )
