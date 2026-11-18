@@ -269,8 +269,8 @@ export function Footer() {
         </svg>
       </div>
 
-      <div className="mx-auto grid max-w-[1180px] gap-10 px-5 pb-14 pt-2 sm:px-6 md:grid-cols-2 lg:grid-cols-4">
-        <div>
+      <div className="mx-auto grid max-w-[1180px] grid-cols-2 gap-x-6 gap-y-7 px-5 pb-8 pt-2 sm:px-6 md:gap-10 md:pb-14 lg:grid-cols-4">
+        <div className="col-span-2 md:col-span-1">
           <div className="flex items-center gap-2.5">
             <Logo className="h-7 w-auto" />
           </div>
@@ -298,7 +298,7 @@ export function Footer() {
             { label: 'In đề A4', to: '/soan-de' },
           ]}
         />
-        <div>
+        <div className="col-span-2 md:col-span-1">
           <p className="eyebrow mb-3.5">Liên hệ</p>
           <ul className="space-y-2.5 text-[13px] text-ink-3">
             <li>
@@ -322,7 +322,7 @@ export function Footer() {
       </div>
 
       <div className="border-t border-line/60">
-        <div className="mx-auto flex max-w-[1180px] flex-wrap items-center justify-between gap-2 px-5 py-5 sm:px-6">
+        <div className="mx-auto flex max-w-[1180px] flex-wrap items-center justify-between gap-x-4 gap-y-2 px-5 py-4 sm:px-6 sm:py-5">
           <p className="text-[12px] text-ink-4">
             © 2026 đề rõ
           </p>
@@ -330,12 +330,13 @@ export function Footer() {
             <button
               type="button"
               onClick={handleOpenFeedback}
-              className="text-[12px] font-medium text-ink-3 hover:text-ink hover:underline max-[359px]:min-h-9"
+              className="hidden text-[12px] font-medium text-ink-3 hover:text-ink hover:underline sm:block"
             >
               Hòm thư góp ý
             </button>
             <Link to="/quyen-rieng-tu" className="text-[12px] font-medium text-ink-3 hover:text-ink hover:underline">Quyền riêng tư</Link>
-            <Link to="/dieu-khoan" className="text-[12px] font-medium text-ink-3 hover:text-ink hover:underline">Điều khoản</Link>            <p className="text-[12px] font-semibold text-ink-3">Dành cho giáo viên Việt Nam</p>
+            <Link to="/dieu-khoan" className="text-[12px] font-medium text-ink-3 hover:text-ink hover:underline">Điều khoản</Link>
+            <p className="hidden text-[12px] font-semibold text-ink-3 sm:block">Dành cho giáo viên Việt Nam</p>
           </div>
         </div>
       </div>

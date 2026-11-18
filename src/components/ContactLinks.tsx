@@ -1,14 +1,15 @@
-import { Facebook, Mail } from 'lucide-react'
+import { Mail } from 'lucide-react'
 import { CONTACT } from '@/lib/contact'
 import { cn } from '@/lib/cn'
 
-/** Email + icon Zalo, Facebook. Icon chưa có link thì hiện mờ. */
+const SOCIAL = [
+  { label: 'Zalo', tip: `Zalo: ${CONTACT.phone}`, href: CONTACT.zalo, src: '/brand/social/zalo.svg' },
+  { label: 'Facebook', tip: 'Facebook', href: CONTACT.facebook, src: '/brand/social/facebook.svg' },
+  { label: 'Threads', tip: 'Threads', href: CONTACT.threads, src: '/brand/social/threads.svg' },
+]
+
+/** Email + icon Zalo, Facebook, Threads. */
 export function ContactLinks({ className, showEmail = true }: { className?: string; showEmail?: boolean }) {
-  const icon = 'flex size-8 items-center justify-center rounded-full border border-line text-ink-2 transition-colors'
-  const items = [
-    { label: 'Zalo', href: CONTACT.zalo, node: <ZaloIcon /> },
-    { label: 'Facebook', href: CONTACT.facebook, node: <Facebook className="size-4" /> },
-  ]
   return (
     <div className={cn('flex flex-wrap items-center gap-2', className)}>
       {showEmail && (
@@ -17,26 +18,19 @@ export function ContactLinks({ className, showEmail = true }: { className?: stri
           {CONTACT.email}
         </a>
       )}
-      {items.map((it) =>
-        it.href ? (
-          <a key={it.label} href={it.href} target="_blank" rel="noopener noreferrer" aria-label={it.label} data-tip={it.label} className={cn(icon, 'hover:border-clay hover:text-clay')}>
-            {it.node}
-          </a>
-        ) : (
-          <span key={it.label} aria-label={it.label} data-tip={it.label} className={cn(icon, 'opacity-50')}>
-            {it.node}
-          </span>
-        ),
-      )}
+      {SOCIAL.map((s) => (
+        <a
+          key={s.label}
+          href={s.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={s.tip}
+          data-tip={s.tip}
+          className="block size-8 shrink-0 rounded-[8px] transition-transform hover:-translate-y-0.5"
+        >
+          <img src={s.src} alt="" width={32} height={32} className="size-8" />
+        </a>
+      ))}
     </div>
-  )
-}
-
-function ZaloIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="size-4" aria-hidden>
-      <path fill="currentColor" d="M12 2.5c-5.52 0-10 3.95-10 8.83 0 2.68 1.36 5.08 3.5 6.7l-.6 3.47 3.54-1.87c1.11.34 2.31.53 3.56.53 5.52 0 10-3.95 10-8.83S17.52 2.5 12 2.5Z" opacity=".18" />
-      <text x="12" y="13.9" textAnchor="middle" fontSize="6.4" fontWeight="700" fontFamily="Arial, sans-serif" fill="currentColor">Zalo</text>
-    </svg>
   )
 }
