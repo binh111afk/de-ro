@@ -9,7 +9,7 @@ import { useSession } from '@/lib/useSession'
 import { submitFeedback } from '@/lib/community'
 import { dialog } from '@/components/Dialog'
 import { Avatar } from '@/components/Avatar'
-import { PRICING_PUBLIC } from '@/lib/pricing'
+import { usePricingAccess } from '@/lib/usePricingAccess'
 
 /**
  * Thanh nav chính — chỉ 4 mục, mỗi mục nằm trên MỘT dòng (không xuống
@@ -22,7 +22,6 @@ const NAV = [
   { to: '/tao-de-online', label: 'Tạo đề online', beta: true },
   { to: '/de-cong-dong', label: 'Đề cộng đồng' },
   { to: '/kho-tai-lieu', label: 'Kho tài liệu' },
-  ...(PRICING_PUBLIC ? [{ to: '/bang-gia', label: 'Bảng giá' }] : []),
 ]
 
 /** nhãn tính năng đang thử nghiệm cạnh mục nav */
@@ -46,6 +45,8 @@ export function Header() {
   const menuAnim = useAnimatedPresence(menuOpen, 140)
   const location = useLocation()
   const session = useSession()
+  const canPay = usePricingAccess() === true
+  const nav = canPay ? [...NAV, { to: '/bang-gia', label: 'Bảng giá' }] : NAV
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10)
@@ -71,7 +72,7 @@ export function Header() {
         </Link>
 
         <nav className="ml-4 hidden items-center gap-0.5 lg:flex">
-          {NAV.map((item) => (
+          {nav.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
@@ -97,11 +98,13 @@ export function Header() {
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
-          <Link to="/bang-gia" className="hidden xl:block">
-            <Button variant="primary" size="sm" className="whitespace-nowrap">
-              Nạp điểm
-            </Button>
-          </Link>
+          {canPay ? (
+            <Link to="/bang-gia" className="hidden xl:block">
+              <Button variant="primary" size="sm" className="whitespace-nowrap">
+                Nạp điểm
+              </Button>
+            </Link>
+          ) : null}
 
           {session ? (
             <div className="hidden items-center gap-1 md:flex">
@@ -156,7 +159,7 @@ export function Header() {
       {menuAnim.mounted ? (
         <div className={cn('border-t border-line/70 bg-canvas/95 backdrop-blur-xl lg:hidden', menuAnim.closing ? 'slide-out-up' : 'anim-slide')}>
           <div className="mx-auto max-w-[1180px] px-5 py-2.5 sm:px-6">
-            {NAV.map((item) => (
+            {nav.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
@@ -172,11 +175,13 @@ export function Header() {
                 {'beta' in item && item.beta ? <BetaTag /> : null}
               </NavLink>
             ))}
-            <Link to="/bang-gia" className="mt-2 block sm:hidden">
-              <Button variant="primary" className="w-full">
-                Nạp điểm
-              </Button>
-            </Link>
+            {canPay ? (
+              <Link to="/bang-gia" className="mt-2 block sm:hidden">
+                <Button variant="primary" className="w-full">
+                  Nạp điểm
+                </Button>
+              </Link>
+            ) : null}
             <div className="mt-2 border-t border-line/70 pt-2 md:hidden">
               {session ? (
                 <>

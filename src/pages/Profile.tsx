@@ -12,7 +12,7 @@ import { rest } from '@/lib/documents'
 import { currentSession, getSession } from '@/lib/auth'
 import { ProgressBar } from '@/components/ProgressBar'
 import { Avatar } from '@/components/Avatar'
-import { PRICING_PUBLIC } from '@/lib/pricing'
+import { usePricingAccess } from '@/lib/usePricingAccess'
 
 export default function Profile() {
   const session = useSession()
@@ -237,6 +237,7 @@ function cachedQuota(): QuotaState {
 }
 
 function CreditCard() {
+  const canPay = usePricingAccess() === true
   const [q, setQ] = useState<QuotaState>(cachedQuota)
   // lần đầu đọc điểm, máy chủ mới tặng quà chào mừng → lịch sử phải đọc lại sau đó mới thấy dòng quà
   const [fetched, setFetched] = useState(0)
@@ -287,7 +288,7 @@ function CreditCard() {
             {fmt(left)}
             <span className="text-[18px] font-medium text-ink-3"> điểm còn lại</span>
           </p>
-          {PRICING_PUBLIC ? (
+          {canPay ? (
             <Link to="/bang-gia" className="text-[13.5px] font-semibold text-clay hover:underline">
               Mua thêm điểm
             </Link>

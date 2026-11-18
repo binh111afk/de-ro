@@ -4,7 +4,7 @@ import NotFound from '@/pages/NotFound'
 import { Segmented } from '@/components/Segmented'
 import { Button, inputClass } from '@/components/ui'
 import { dialog } from '@/components/Dialog'
-import { getMe, isAdminMock } from '@/lib/adminApi'
+import { usePricingAccess } from '@/lib/usePricingAccess'
 import { rememberReturnPath } from '@/lib/auth'
 import { cn } from '@/lib/cn'
 import {
@@ -17,7 +17,6 @@ import {
   MIN_VND,
   PACKS,
   packPoints,
-  PRICING_PUBLIC,
   usesFor,
   vndFor,
   type PricingPack,
@@ -57,32 +56,13 @@ function caretPosAfterDigits(text: string, targetDigits: number): number {
 }
 
 export default function Pricing() {
-  const session = useSession()
-  const [allowed, setAllowed] = useState<'loading' | boolean>(() => (PRICING_PUBLIC ? true : 'loading'))
+  const allowed = usePricingAccess()
   const [priced, setPriced] = useState(false)
 
   useEffect(() => {
     void loadPricing().then(() => setPriced(true))
   }, [])
 
-  useEffect(() => {
-    if (PRICING_PUBLIC) {
-      setAllowed(true)
-      return
-    }
-    if (!session && !isAdminMock()) {
-      setAllowed(false)
-      return
-    }
-    let alive = true
-    setAllowed('loading')
-    getMe()
-      .then((m) => alive && setAllowed(m.role === 'admin'))
-      .catch(() => alive && setAllowed(false))
-    return () => {
-      alive = false
-    }
-  }, [session])
 
   useEffect(() => {
     if (allowed !== true) return

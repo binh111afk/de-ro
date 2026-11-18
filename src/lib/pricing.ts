@@ -1,5 +1,5 @@
 /** Khi `false`, chỉ tài khoản `admin` mới mở được `/bang-gia` và link điều hướng được ẩn. */
-export const PRICING_PUBLIC = true
+export const PRICING_PUBLIC = false
 
 /** Bảng giá admin sửa được (`app_settings` key `pricing`); giá trị dưới đây là mặc định khi chưa có. */
 export interface PricingConfig {

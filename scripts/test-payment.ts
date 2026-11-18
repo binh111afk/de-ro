@@ -63,7 +63,7 @@ globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
   const body = init.body ? JSON.parse(String(init.body)) : null
   if (url.endsWith('/auth/v1/.well-known/jwks.json')) return res200({ keys: [jwk] })
   if (url.includes('/auth/v1/admin/users/')) return res200({ id: url.split('/').pop(), email: `${url.split('/').pop()}@example.com`, banned_until: null })
-  if (url.includes('/rest/v1/user_roles')) return res200(url.includes('admin-1') ? [{ role: 'admin' }] : [])
+  if (url.includes('/rest/v1/user_roles')) return res200(url.includes('admin-1') || url.includes('user-a') ? [{ role: 'admin' }] : [])
   if (url.includes('/rest/v1/admin_audit')) return (audits.push(body), new Response(null, { status: 201 }))
   if (url.includes('/rest/v1/security_flags') || url.includes('/rest/v1/rpc/security_strike')) return res200([])
   if (url.includes('/rest/v1/app_settings')) return res200([])
@@ -138,6 +138,7 @@ async function call(method: string, path: string, opts: { body?: unknown; auth?:
 const U = 'user-a'
 const tk = token(U)
 
+check('trang nạp đóng: người không phải admin tạo đơn → 403', (await call('POST', '/api/pay', { body: { vnd: 10000 }, auth: token('user-b') })).status === 403)
 check('khách tạo đơn → 401', (await call('POST', '/api/pay', { body: { vnd: 10000 } })).status === 401)
 check('số tiền ngoài khoảng → 400', (await call('POST', '/api/pay', { body: { vnd: 500 }, auth: tk })).status === 400)
 check('số tiền lẻ (không bội 1.000) → 400', (await call('POST', '/api/pay', { body: { vnd: 10500 }, auth: tk })).status === 400)
@@ -211,7 +212,7 @@ async function admin(action: string, body: Record<string, unknown>, who = 'admin
   await handleAdminRequest(req, res)
   return { status: out.status, data: JSON.parse(out.body || '{}') as Record<string, unknown> }
 }
-check('người không phải admin xem đơn nạp → bị chặn', [401, 403].includes((await admin('payments.list', {}, 'user-a')).status))
+check('người không phải admin xem đơn nạp → bị chặn', [401, 403].includes((await admin('payments.list', {}, 'user-c')).status))
 const lst = await admin('payments.list', { filter: 'all' })
 const its = lst.data.items as Array<Record<string, unknown>>
 check('admin xem danh sách đơn: có email + tổng tiền đã thu', lst.status === 200 && its.length > 0 && String(its[0].email).endsWith('@example.com') && Number((lst.data.revenue as Record<string, number>).all) > 0)

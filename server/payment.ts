@@ -13,7 +13,7 @@ import { createHmac, timingSafeEqual } from 'node:crypto'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { json, readBody } from './http.js'
 import { LOGIN_REQUIRED, guard, rateLimitOnly, userFromToken } from './guard.js'
-import { DEFAULT_PRICING, MAX_VND, MIN_VND, PACKS, applyPricing, basePoints, packPoints, type PricingConfig } from '../src/lib/pricing.js'
+import { DEFAULT_PRICING, PRICING_PUBLIC, MAX_VND, MIN_VND, PACKS, applyPricing, basePoints, packPoints, type PricingConfig } from '../src/lib/pricing.js'
 
 const PAYOS_API = 'https://api-merchant.payos.vn'
 /** link thanh toán hết hạn sau 15 phút */
@@ -291,7 +291,14 @@ export async function handlePayRequest(req: IncomingMessage, res: ServerResponse
       await cancelOwnPending(userId, order)
       return await orderStatus(res, userId, order)
     }
-    if (req.method === 'POST') return await createOrder(req, res, userId)
+    if (req.method === 'POST') {
+      // trang nạp đang đóng: chỉ admin tạo được đơn (đơn cũ vẫn tra / huỷ được ở trên)
+      if (!PRICING_PUBLIC) {
+        const r = await db<Array<{ role: string }>>(`/user_roles?select=role&user_id=eq.${userId}`)
+        if (r.data?.[0]?.role !== 'admin') return json(res, 403, { error: 'Thanh toán chưa mở, bạn quay lại sau nhé.', notConfigured: true })
+      }
+      return await createOrder(req, res, userId)
+    }
     if (req.method === 'GET') {
       const order = Number(url.searchParams.get('order'))
       if (url.searchParams.has('order')) {
