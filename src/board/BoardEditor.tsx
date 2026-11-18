@@ -535,12 +535,17 @@ export default function BoardEditor({ id }: { id: string }) {
     const tol = 6 / view.current.zoom
     // trang PDF khoá làm nền: không bấm chọn được
     for (let i = els.current.length - 1; i >= 0; i--) if (!isPage(els.current[i]) && hitTest(els.current[i], p, tol)) return els.current[i]
-    // hình công cụ (đồ thị, sơ đồ…) là nhiều nét rời: bấm chỗ trống trong khung của nhóm cũng chọn được
+    const inside = (b: Bounds | null) => !!b && p[0] >= b[0] - tol && p[0] <= b[2] + tol && p[1] >= b[1] - tol && p[1] <= b[3] + tol
+    // đang chọn nhiều hình: bấm chỗ trống trong khung chọn cũng kéo được cả vùng
+    const s = sel()
+    if (s.length > 1 && inside(unionBounds(s))) return s[0]
+    // nhóm là nhiều nét rời (nhóm tự tạo, hình công cụ): bấm chỗ trống trong khung của nhóm cũng chọn được
+    const seen = new Set<string>()
     for (let i = els.current.length - 1; i >= 0; i--) {
-      const e = els.current[i]
-      if (!e.tool || !e.groupId) continue
-      const b = unionBounds(els.current.filter((o) => o.groupId === e.groupId))
-      if (b && p[0] >= b[0] - tol && p[0] <= b[2] + tol && p[1] >= b[1] - tol && p[1] <= b[3] + tol) return e
+      const g = els.current[i].groupId
+      if (!g || seen.has(g)) continue
+      seen.add(g)
+      if (inside(unionBounds(els.current.filter((o) => o.groupId === g)))) return els.current[i]
     }
     return null
   }
@@ -2030,7 +2035,8 @@ export default function BoardEditor({ id }: { id: string }) {
     opts.current = { ...opts.current, [recentKey]: [c, ...list.filter((x) => x.toLowerCase() !== c.toLowerCase())].slice(0, list.length || 6) }
     setProp('stroke', c)
   }
-  const widths = isHighlight ? [4, 6, 8, 11, 14, 18] : [0.5, 1, 1.5, 2, 3, 5]
+  // bút: nét = nấc × cỡ ngòi (bút bi 2,2) nên chia nhỏ phần mảnh, nấc 4 / 6 là mặc định của bút bi / bút máy
+  const widths = isHighlight ? [4, 6, 8, 11, 14, 18] : ctxTool === 'pen' ? [0.5, 0.65, 0.8, 1, 1.5, 2] : [0.5, 1, 1.5, 2, 3, 5]
   const WIDTH_NAMES = ['rất mảnh', 'mảnh', 'vừa', 'hơi đậm', 'đậm', 'rất đậm']
 
   /* nhóm tuỳ chọn dùng lại giữa các công cụ */
@@ -2104,7 +2110,7 @@ export default function BoardEditor({ id }: { id: string }) {
         {widths.map((w, i) => (
           <Chip key={w} active={cur.strokeWidth === w} onClick={() => setProp('strokeWidth', w)} title={`Nét ${WIDTH_NAMES[i]}`}>
             <span className="flex h-4 w-5 items-center justify-center">
-              <span className="block w-4 rounded-full bg-current" style={{ height: [1, 1.5, 2.5, 3.5, 5, 7][i] }} />
+              <span className="block w-4 rounded-full bg-current" style={{ height: ctxTool === 'pen' && !isHighlight ? w * 2.2 : [1, 1.5, 2.5, 3.5, 5, 7][i] }} />
             </span>
           </Chip>
         ))}
