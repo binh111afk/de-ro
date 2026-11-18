@@ -313,6 +313,7 @@ type CreditEvent = { id: number; kind: string; tokens: number; created_at: strin
 const EVENT_LABELS: Record<string, string> = {
   welcome: 'Quà chào mừng',
   admin: 'Quản trị viên tặng',
+  topup: 'Nạp điểm',
 }
 
 /** Lịch sử điểm được cộng: 20 lần mới nhất (bảng ai_credit_events, chỉ đọc dòng của mình). */

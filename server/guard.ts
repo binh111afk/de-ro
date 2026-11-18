@@ -10,7 +10,7 @@ import { createHash, createPublicKey, verify as cryptoVerify, type KeyObject } f
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { json } from './http.js'
 
-type Api = 'llm' | 'image' | 'upload' | 'extract' | 'attempt' | 'exam' | 'admin'
+type Api = 'llm' | 'image' | 'upload' | 'extract' | 'attempt' | 'exam' | 'admin' | 'pay'
 
 /** số lượt mỗi cửa sổ 10 phút: [khách theo IP, người đã đăng nhập] */
 const LIMITS: Record<Api, [number, number]> = {
@@ -23,6 +23,8 @@ const LIMITS: Record<Api, [number, number]> = {
   exam: [1000, 1000],
   // trang admin: khách gọi bị 401 ngay, giới hạn chặt để khỏi dò
   admin: [20, 600],
+  // nạp điểm: khách bị 401; mỗi lần bấm Thanh toán tạo một đơn PayOS
+  pay: [10, 120],
 }
 const WINDOW_MS = 10 * 60 * 1000
 

@@ -1,5 +1,5 @@
 import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type ChangeEvent } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import NotFound from '@/pages/NotFound'
 import { Segmented } from '@/components/Segmented'
 import { Button, inputClass } from '@/components/ui'
@@ -9,7 +9,6 @@ import { rememberReturnPath } from '@/lib/auth'
 import { cn } from '@/lib/cn'
 import {
   basePoints,
-  boughtPacks,
   clampVnd,
   DEFAULT_PACK_VND,
   loadPricing,
@@ -24,6 +23,7 @@ import {
   type PricingPack,
 } from '@/lib/pricing'
 import { useSession } from '@/lib/useSession'
+import { boughtPacks, createPayment, paymentStatus } from '@/lib/payClient'
 
 type InputMode = 'vnd' | 'points'
 
@@ -133,8 +133,41 @@ function PricingContent() {
   const [mode, setMode] = useState<InputMode>('vnd')
   const [rawInput, setRawInput] = useState(() => fmt(DEFAULT_PACK_VND))
   const [inputError, setInputError] = useState<string | null>(null)
+  const [paying, setPaying] = useState(false)
+  const [params, setParams] = useSearchParams()
+
+  // quay về từ trang PayOS (?order=…): hỏi trạng thái đơn vài lần (webhook có thể đến sau vài giây)
+  useEffect(() => {
+    const order = Number(params.get('order'))
+    if (!session || !Number.isSafeInteger(order) || order <= 0) return
+    const cancelled = params.get('huy') === '1'
+    setParams({}, { replace: true })
+    let alive = true
+    void (async () => {
+      for (let i = 0; i < (cancelled ? 1 : 8) && alive; i++) {
+        const o = await paymentStatus(order).catch(() => null)
+        if (!alive) return
+        if (o?.status === 'paid') {
+          setBought(await boughtPacks().catch(() => []))
+          void dialog.alert(`Đã cộng ${fmt(o.points)} điểm vào tài khoản.`, { title: 'Nạp điểm thành công' })
+          return
+        }
+        if (o && o.status !== 'pending') break
+        if (cancelled) break
+        await new Promise((r) => setTimeout(r, 2500))
+      }
+      if (alive && !cancelled) {
+        void dialog.alert('Chưa nhận được tiền cho đơn này. Nếu bạn đã chuyển khoản, điểm sẽ được cộng trong ít phút.', { title: 'Đang chờ thanh toán' })
+      }
+    })()
+    return () => {
+      alive = false
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session])
 
   useEffect(() => {
+    if (!session) return
     let alive = true
     boughtPacks()
       .then((list) => {
@@ -144,7 +177,7 @@ function PricingContent() {
     return () => {
       alive = false
     }
-  }, [])
+  }, [session])
 
   useLayoutEffect(() => {
     const digits = pendingCaretDigits.current
@@ -272,12 +305,14 @@ function PricingContent() {
       navigate('/dang-nhap')
       return
     }
-    void dialog.alert('Thanh toán trực tuyến đang chờ kích hoạt. Điểm chưa được cộng tự động.', {
-      title: 'Chờ kích hoạt thanh toán',
-    })
+    setPaying(true)
+    createPayment(summary.vnd)
+      .then((r) => window.location.assign(r.checkoutUrl))
+      .catch((err: unknown) => {
+        setPaying(false)
+        void dialog.alert(err instanceof Error ? err.message : 'Có lỗi xảy ra, thử lại sau.', { title: 'Chưa tạo được đơn nạp' })
+      })
   }
-
-  const transferNote = session ? `DR ${session.user.id.slice(0, 6)}` : null
 
   return (
     <section className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-10">
@@ -458,91 +493,18 @@ function PricingContent() {
               </div>
             </dl>
 
-            <div className="mt-4 flex flex-col items-center">
-              <MockQr />
-              <span className="mt-1.5 text-[0.75rem] font-medium text-ink-3">QR mẫu</span>
-            </div>
-
-            {transferNote ? (
-              <div className="mt-3.5 flex flex-wrap items-center justify-between gap-2 rounded-[8px] border border-line bg-canvas px-3 py-2">
-                <span className="text-[0.8125rem] text-ink-3">Nội dung chuyển khoản</span>
-                <span className="font-mono text-[0.875rem] font-semibold text-ink">{transferNote}</span>
-              </div>
-            ) : null}
-
             <Button
               type="button"
               variant="clay"
               onClick={handlePayClick}
+              disabled={paying || !!inputError}
               className="mt-4 h-auto min-h-11 w-full whitespace-normal py-2.5 text-[0.9375rem]"
             >
-              {session ? 'Tôi đã chuyển khoản' : 'Đăng nhập để thanh toán'}
+              {session ? (paying ? 'Đang mở trang thanh toán…' : `Thanh toán ${fmt(summary.vnd)}đ`) : 'Đăng nhập để thanh toán'}
             </Button>
           </div>
         </aside>
       </div>
     </section>
-  )
-}
-
-/**
- * Ma trận 21×21 cố định cho khung QR mẫu (ba ô định vị ở góc).
- * // TODO PayOS: thay bằng checkoutUrl/qrCode từ API tạo đơn
- */
-const QR_SIZE = 21
-const QR_CELLS: Array<[number, number]> = (() => {
-  const filled: Array<[number, number]> = []
-  const isFinder = (r: number, c: number) =>
-    (r < 7 && c < 7) || (r < 7 && c >= QR_SIZE - 7) || (r >= QR_SIZE - 7 && c < 7)
-  const inFinderPattern = (r: number, c: number, r0: number, c0: number) => {
-    const dr = r - r0
-    const dc = c - c0
-    if (dr === 0 || dr === 6 || dc === 0 || dc === 6) return true
-    if (dr >= 2 && dr <= 4 && dc >= 2 && dc <= 4) return true
-    return false
-  }
-  const isSeparator = (r: number, c: number) =>
-    (r === 7 && c <= 7) ||
-    (c === 7 && r <= 7) ||
-    (r === 7 && c >= QR_SIZE - 8) ||
-    (c === QR_SIZE - 8 && r <= 7) ||
-    (r === QR_SIZE - 8 && c <= 7) ||
-    (c === 7 && r >= QR_SIZE - 8)
-
-  for (let r = 0; r < QR_SIZE; r++) {
-    for (let c = 0; c < QR_SIZE; c++) {
-      let on = false
-      if (r < 7 && c < 7) on = inFinderPattern(r, c, 0, 0)
-      else if (r < 7 && c >= QR_SIZE - 7) on = inFinderPattern(r, c, 0, QR_SIZE - 7)
-      else if (r >= QR_SIZE - 7 && c < 7) on = inFinderPattern(r, c, QR_SIZE - 7, 0)
-      else if (isSeparator(r, c)) on = false
-      else if (r === 6 || c === 6) on = (r + c) % 2 === 0
-      else if (!isFinder(r, c)) {
-        const hash = (r * 31 + c * 17 + r * c * 7) % 11
-        on = hash < 5
-      }
-      if (on) filled.push([c, r])
-    }
-  }
-  return filled
-})()
-
-function MockQr() {
-  // TODO PayOS: thay bằng checkoutUrl/qrCode từ API tạo đơn
-  return (
-    <div className="flex aspect-square w-[12.5rem] max-w-full items-center justify-center rounded-[8px] border border-line bg-white p-2.5">
-      <svg
-        viewBox={`0 0 ${QR_SIZE} ${QR_SIZE}`}
-        className="h-full w-full text-ink"
-        shapeRendering="crispEdges"
-        role="img"
-        aria-label="Mã QR chuyển khoản mẫu"
-      >
-        <rect width={QR_SIZE} height={QR_SIZE} fill="#ffffff" />
-        {QR_CELLS.map(([x, y]) => (
-          <rect key={`${x}-${y}`} x={x} y={y} width={1} height={1} fill="currentColor" />
-        ))}
-      </svg>
-    </div>
   )
 }
