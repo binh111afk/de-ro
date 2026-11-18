@@ -4,7 +4,7 @@
  * Chỉ thử các provider đọc được ảnh, lần lượt tới khi có kết quả.
  */
 import { callAnthropic } from './anthropic.js'
-import { visionTargets } from './llmProxy.js'
+import { OPENCODE_HEADERS, visionTargets } from './llmProxy.js'
 import { costFromUsage, logAiCall } from './ops.js'
 
 const MAX_IMAGES = 4
@@ -33,7 +33,7 @@ export async function readExamPages(images: unknown, userId: string): Promise<{ 
   const pages = images as string[]
 
   const targets = await visionTargets()
-  if (targets.length === 0) throw new Error('Chưa có provider đọc được ảnh. Cần cấu hình FOSTA_API_KEY hoặc ANTHROPIC_API_KEY.')
+  if (targets.length === 0) throw new Error('Chưa có provider đọc được ảnh. Cần cấu hình LLM_API_KEY, FOSTA_API_KEY hoặc ANTHROPIC_API_KEY.')
 
   const errs: string[] = []
   for (const t of targets) {
@@ -52,10 +52,11 @@ export async function readExamPages(images: unknown, userId: string): Promise<{ 
       } else {
         const r = await fetch(t.url, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${t.key}` },
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${t.key}`, ...(t.opencode ? OPENCODE_HEADERS : {}) },
           body: JSON.stringify({
             model: t.model,
             max_tokens: MAX_TOKENS,
+            ...(t.opencode ? { reasoning_effort: 'low' } : {}),
             messages: [{ role: 'user', content: [{ type: 'text', text: PROMPT }, ...pages.map((url) => ({ type: 'image_url', image_url: { url } }))] }],
           }),
           redirect: 'error',
@@ -67,6 +68,8 @@ export async function readExamPages(images: unknown, userId: string): Promise<{ 
         usage = data.usage
       }
       if (!content.trim()) throw new Error('trả về rỗng')
+      // model không thật sự nhìn thấy ảnh hay trả {"questions":[]} → thử model kế tiếp
+      if (!/"prompt"\s*:\s*"[^"]/.test(content)) throw new Error('không đọc ra câu nào')
       await log(true, null, usage)
       return { content, model: t.model }
     } catch (err) {

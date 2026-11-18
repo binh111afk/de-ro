@@ -62,6 +62,7 @@ function strongFactor(): number {
  * thì trả 400 MissingSessionID. Một id cho cả process là đủ (app chạy cục bộ).
  */
 const SESSION_ID = randomUUID()
+export const OPENCODE_HEADERS = { 'x-opencode-session': SESSION_ID, 'User-Agent': 'de-ro/1.0' }
 
 /**
  * Nạp `.env` (KEY=VALUE, bỏ qua dòng trống/comment) vào `process.env`.
@@ -229,7 +230,7 @@ function pingTargets(p: ReturnType<typeof providerConfig>) {
 /** Provider đọc được ảnh đề, theo thứ tự thử (Claude đắt nhất nên để cuối). */
 export async function visionTargets() {
   const all = pingTargets(await liveConfig())
-  return ['fosta', 'anthropic'].flatMap((name) => all.filter((t) => t.provider === name))
+  return ['opencode', 'fosta', 'anthropic'].flatMap((name) => all.filter((t) => t.provider === name))
 }
 
 const maskKey = (k: string) => (k ? `••••${k.length >= 8 ? k.slice(-4) : ''}` : '')
