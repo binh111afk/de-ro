@@ -4,7 +4,6 @@ import tailwindcss from '@tailwindcss/vite'
 import path from 'node:path'
 import { llmMiddleware, loadDotEnv } from './server/llmProxy'
 import { extractMiddleware } from './server/extract'
-import { searchMiddleware } from './server/searchProxy'
 import { imageMiddleware } from './server/imageProxy'
 import { figureSpriteMiddleware } from './server/figureSprite'
 import { uploadMiddleware, fileMiddleware } from './server/r2'
@@ -28,7 +27,6 @@ export default defineConfig({
         server.middlewares.use('/api/quota', quotaMiddleware)
         server.middlewares.use('/api/llm', llmMiddleware)
         server.middlewares.use('/api/extract', extractMiddleware)
-        server.middlewares.use('/api/search', searchMiddleware)
         server.middlewares.use('/api/image', imageMiddleware)
         server.middlewares.use('/api/figure-sprite', figureSpriteMiddleware)
         server.middlewares.use('/api/upload', uploadMiddleware)

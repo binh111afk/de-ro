@@ -25,7 +25,6 @@ import { costFromUsage, logAiCall, maintenanceBlock } from './ops.js'
 import { readAiOverrides } from './aiSettings.js'
 import { callAnthropic } from './anthropic.js'
 import { handleExtractRequest } from './extract.js'
-import { handleSearchRequest } from './searchProxy.js'
 import { handleImageRequest } from './imageProxy.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -420,6 +419,10 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
   // model rỗng / không phải chuỗi = không chọn (đừng để chuỗi rỗng khớp model chưa cấu hình rồi bỏ qua model chính)
   // chỉ máy dev (script đo / so model) được chọn model: điểm tính theo một giá, người dùng chọn model đắt là trả giá rẻ (Strix 7)
   if (typeof body.model !== 'string' || !body.model.trim() || !isLocal(ip)) body.model = undefined
+  // tham số lạ làm các model rẻ trả 400 → chuỗi dự phòng rơi xuống Claude (đắt nhất, bỏ qua temperature) mà vẫn tính giá rẻ (Strix 8)
+  const temp = Number(body.temperature)
+  body.temperature = body.temperature !== undefined && Number.isFinite(temp) ? Math.min(2, Math.max(0, temp)) : undefined
+  if (!['low', 'medium', 'high', 'max'].includes(body.reasoningEffort as string)) body.reasoningEffort = undefined
   // chỉ chuyển {role, content} lên model: trường lạ (name, …) cũng bị tính tiền mà trước đây không được đếm
   body.messages = body.messages.map((m) => ({ role: String(m?.role ?? 'user'), content: m?.content })) as typeof body.messages
   const promptTokens = estimatePromptTokens(body.messages)
@@ -794,10 +797,6 @@ export function createAppServer() {
     }
     if (url.pathname === '/api/extract') {
       await handleExtractRequest(req, res)
-      return
-    }
-    if (url.pathname === '/api/search') {
-      await handleSearchRequest(req, res)
       return
     }
     if (url.pathname === '/api/image') {

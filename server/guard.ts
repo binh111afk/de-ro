@@ -10,7 +10,7 @@ import { createHash, createPublicKey, verify as cryptoVerify, type KeyObject } f
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { json } from './http.js'
 
-type Api = 'llm' | 'image' | 'upload' | 'extract' | 'search' | 'attempt' | 'exam' | 'admin'
+type Api = 'llm' | 'image' | 'upload' | 'extract' | 'attempt' | 'exam' | 'admin'
 
 /** số lượt mỗi cửa sổ 10 phút: [khách theo IP, người đã đăng nhập] */
 const LIMITS: Record<Api, [number, number]> = {
@@ -18,7 +18,6 @@ const LIMITS: Record<Api, [number, number]> = {
   image: [3, 40],
   upload: [20, 300],
   extract: [20, 200],
-  search: [20, 200],
   // mở đề và nộp bài: cả lớp/cả trường thường đi chung một IP, và hai API này không gọi AI nên rẻ
   attempt: [500, 500],
   exam: [1000, 1000],
