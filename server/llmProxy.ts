@@ -512,7 +512,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
       })
     }
 
-    // Thứ tự thử: opencode (model chính [+ LLM_FALLBACK_MODEL nếu đặt]) → Mercury → FOSTA (gpt-6-luna) → AnyRouter (gpt-6.1-terra) → NightRouter → Claude (cuối cùng).
+    // Thứ tự thử: DeepSeek chính hãng → opencode (model chính [+ LLM_FALLBACK_MODEL nếu đặt]) → FOSTA (gpt-6-luna) → AnyRouter (gpt-6.1-terra) → NightRouter → Claude (cuối cùng).
     // Provider dự phòng nào không có key thì bỏ qua.
     // `opencode` = gửi x-opencode-session + reasoning_effort; `effort` = chỉ gửi reasoning_effort (DeepSeek chính hãng).
     // `anthropic`: gọi Claude qua SDK (Messages API), không qua fetch kiểu OpenAI.
@@ -569,12 +569,13 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
       (!!prov.fostaApiKey && body.model === prov.fostaModel) ||
       (!!prov.anyrouterApiKey && body.model === prov.anyrouterModel) ||
       (!!prov.nightrouterApiKey && body.model === prov.nightrouterModel)
+    // ưu tiên 1: DeepSeek chính hãng (rẻ, có cache prompt); ưu tiên 2: opencode
+    if (prov.deepseekApiKey) targets.push({ model: prov.deepseekModel, url: `${prov.deepseekBaseURL}/chat/completions`, key: prov.deepseekApiKey, opencode: false, effort: true })
     if (prov.apiKey && !wantsBackup) {
       for (const m of [body.model ?? prov.model, prov.fallbackModel]) {
         if (m && !targets.some((t) => t.model === m)) targets.push({ model: m, url: prov.endpoint.toString(), key: prov.apiKey, opencode: true })
       }
     }
-    if (prov.deepseekApiKey) targets.push({ model: prov.deepseekModel, url: `${prov.deepseekBaseURL}/chat/completions`, key: prov.deepseekApiKey, opencode: false, effort: true })
     if (prov.fostaApiKey) targets.push({ model: prov.fostaModel, url: `${prov.fostaBaseURL}/chat/completions`, key: prov.fostaApiKey, opencode: false })
     if (prov.anyrouterApiKey)
       targets.push({ model: prov.anyrouterModel, url: `${prov.anyrouterBaseURL}/chat/completions`, key: prov.anyrouterApiKey, opencode: false, stream: true })

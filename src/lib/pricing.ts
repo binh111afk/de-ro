@@ -63,10 +63,10 @@ export function loadPricing(): Promise<void> {
   return loading
 }
 
-/** Ước tính điểm mỗi lượt (số đo thật trong docs/bao-cao-chi-phi-ai.md, làm tròn lên). */
+/** Ước tính điểm mỗi lượt — phải khớp Điều khoản sử dụng mục 5 (src/pages/Legal.tsx). */
 export const USAGE = [
-  { id: 'exam', label: 'Soạn 1 đề (vd. Toán THPT, 22 câu)', points: 30 },
-  { id: 'slide', label: 'Soạn 1 bộ slide 15 trang', points: 45 },
+  { id: 'exam', label: 'Soạn 1 đề (vd. Toán THPT, 22 câu)', points: 20 },
+  { id: 'slide', label: 'Soạn 1 bộ slide 15 trang', points: 26 },
   { id: 'ask', label: '1 lượt AI hỏi lại trước khi soạn', points: 10 },
   { id: 'edit', label: '1 lượt sửa / hỏi thêm', points: 5 },
   { id: 'search', label: '1 lượt tìm trên web', points: 5 },
