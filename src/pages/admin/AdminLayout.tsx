@@ -8,6 +8,7 @@ import {
   LayoutDashboard,
   Shield,
   Users,
+  Wallet,
 } from 'lucide-react'
 import { Badge } from '@/components/ui'
 import { isAdminMock, type AdminMe } from '@/lib/adminApi'
@@ -18,6 +19,7 @@ import { OpsPanel } from './OpsPanel'
 import { ContentPanel } from './ContentPanel'
 import { BankPanel } from './BankPanel'
 import { StatsPanel } from './StatsPanel'
+import { PaymentsPanel } from './PaymentsPanel'
 
 interface AdminLayoutProps {
   me: AdminMe
@@ -36,6 +38,7 @@ const NAV_ITEMS: NavItem[] = [
   { path: '/admin/noi-dung', label: 'Nội dung', icon: FileText, exact: false },
   { path: '/admin/ngan-hang', label: 'Ngân hàng', icon: BookOpen, exact: false },
   { path: '/admin/so-lieu', label: 'Số liệu', icon: ChartColumn, exact: false },
+  { path: '/admin/nap-diem', label: 'Nạp điểm', icon: Wallet, exact: false },
   { path: '/admin/ai', label: 'AI & Server', icon: Cpu, exact: false },
   { path: '/admin/nhat-ky', label: 'Nhật ký', icon: History, exact: false },
 ]
@@ -117,6 +120,7 @@ export function AdminLayout({ me }: AdminLayoutProps) {
               <Route path="noi-dung/*" element={<ContentPanel me={me} />} />
               <Route path="ngan-hang/*" element={<BankPanel me={me} />} />
               <Route path="so-lieu/*" element={<StatsPanel me={me} />} />
+              <Route path="nap-diem" element={<PaymentsPanel />} />
               <Route path="ai" element={<OpsPanel me={me} />} />
               <Route path="nhat-ky" element={<AuditPanel />} />
               <Route path="*" element={<OverviewPanel />} />

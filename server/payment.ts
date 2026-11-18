@@ -191,6 +191,29 @@ async function createOrder(req: IncomingMessage, res: ServerResponse, userId: st
   })
 }
 
+/**
+ * Hỏi PayOS trạng thái một đơn còn chờ rồi cập nhật: đã trả → cộng điểm (qua hàm DB, cộng một lần), huỷ / hết hạn → đóng đơn.
+ * Trả trạng thái PayOS báo (hoặc undefined nếu không hỏi được). Dùng ở trang Bảng giá và màn admin Nạp điểm.
+ */
+export async function reconcileOrder(orderCode: number): Promise<string | undefined> {
+  const r = await payos<{ status?: string; amount?: number; amountPaid?: number; amountRemaining?: number; transactions?: Array<{ reference?: string }> }>(
+    `/v2/payment-requests/${orderCode}`,
+  )
+  const st = r.code === '00' ? r.data?.status : undefined
+  if (st === 'PAID' || st === 'UNDERPAID') {
+    // trả thiếu: hàm DB giữ đơn 'pending' + ghi chú để đối soát; trả đủ / dư thì cộng điểm
+    await credit(orderCode, validAmount(r.data?.amountPaid), r.data?.transactions?.[0]?.reference ?? 'tra-cuu')
+  } else if (st === 'CANCELLED' || st === 'EXPIRED') {
+    await db(`/payment_orders?order_code=eq.${orderCode}&status=eq.pending`, { method: 'PATCH', body: { status: st === 'CANCELLED' ? 'cancelled' : 'expired' } })
+  }
+  return st
+}
+
+/** cộng điểm tay cho đơn (admin đã đối soát tiền về tài khoản); dùng đúng số tiền của đơn */
+export async function creditOrderManually(orderCode: number, vnd: number, note: string) {
+  return credit(orderCode, vnd, `TAY ${note}`.slice(0, 120))
+}
+
 async function orderStatus(res: ServerResponse, userId: string, orderCode: number) {
   const get = () => db<Order[]>(`/payment_orders?select=order_code,user_id,vnd,points,bonus_points,status&order_code=eq.${orderCode}&user_id=eq.${userId}`)
   let { data } = await get()
@@ -198,16 +221,7 @@ async function orderStatus(res: ServerResponse, userId: string, orderCode: numbe
   if (!o) return json(res, 404, { error: 'Không tìm thấy đơn nạp.' })
   if (o.status === 'pending') {
     // webhook có thể đến chậm / không đến (máy dev): hỏi thẳng PayOS
-    const r = await payos<{ status?: string; amount?: number; amountPaid?: number; amountRemaining?: number; transactions?: Array<{ reference?: string }> }>(
-      `/v2/payment-requests/${orderCode}`,
-    )
-    const st = r.code === '00' ? r.data?.status : undefined
-    if (st === 'PAID' || st === 'UNDERPAID') {
-      // trả thiếu: hàm DB giữ đơn 'pending' + ghi chú để đối soát; trả đủ / dư thì cộng điểm
-      await credit(orderCode, validAmount(r.data?.amountPaid), r.data?.transactions?.[0]?.reference ?? 'tra-cuu')
-    } else if (st === 'CANCELLED' || st === 'EXPIRED') {
-      await db(`/payment_orders?order_code=eq.${orderCode}&status=eq.pending`, { method: 'PATCH', body: { status: st === 'CANCELLED' ? 'cancelled' : 'expired' } })
-    }
+    const st = await reconcileOrder(orderCode)
     if (st && st !== 'PENDING' && st !== 'PROCESSING') {
       ;({ data } = await get())
       o = data?.[0] ?? o

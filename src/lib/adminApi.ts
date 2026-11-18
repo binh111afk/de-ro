@@ -525,6 +525,7 @@ export const AUDIT_LABEL: Record<string, string> = {
   'users.delete.failed': 'Xoá tài khoản thất bại',
   'quota.set': 'Đặt hạn mức AI',
   'credits.grant': 'Cộng điểm AI',
+  'payments.credit': 'Cộng điểm đơn nạp (tay)',
   'quota.clear': 'Bỏ hạn mức riêng',
   'storage.set': 'Đặt dung lượng lưu trữ',
   'storage.clear': 'Bỏ dung lượng riêng',

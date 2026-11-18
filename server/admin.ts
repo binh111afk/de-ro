@@ -18,6 +18,7 @@ import { readExamPages, VisionInputError } from './bankVision.js'
 import { CONTENT_ACTIONS } from './adminContent.js'
 import { BANK_ACTIONS } from './adminBank.js'
 import { STATS_ACTIONS } from './adminStats.js'
+import { PAYMENT_ACTIONS } from './adminPayments.js'
 
 const MODEL_NAME = /^[\w.:/-]+$/
 
@@ -241,6 +242,7 @@ const ACTIONS: ActionMap = {
   ...CONTENT_ACTIONS,
   ...BANK_ACTIONS,
   ...STATS_ACTIONS,
+  ...PAYMENT_ACTIONS,
 
   /** giao diện hỏi "tôi có quyền gì" để quyết định hiện trang hay 404 */
   me: { need: 'moderator', run: async (ctx) => ({ userId: ctx.userId, role: ctx.role }) },
