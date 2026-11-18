@@ -66,6 +66,7 @@
     "@fontsource/nunito": "^5.3.0",
     "@fontsource/patrick-hand": "^5.3.0",
     "@fontsource/space-grotesk": "^5.3.0",
+    "@payos/payos-checkout": "1.0.9",
     "@phosphor-icons/react": "^2.1.10",
     "@tiptap/core": "^3.32.0",
     "@tiptap/extension-highlight": "^3.32.0",

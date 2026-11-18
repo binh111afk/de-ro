@@ -105,7 +105,14 @@ async function bonusedPacks(userId: string): Promise<number[]> {
 
 type Order = { order_code: number; user_id: string; vnd: number; points: number; bonus_points: number; status: string; checkout_url: string | null }
 
-async function credit(orderCode: number, amount: number, reference: string) {
+/** số tiền cổng báo: chỉ nhận số nguyên dương; thiếu / sai kiểu thì không gọi cộng điểm (để webhook / lần tra sau xử lý) */
+const validAmount = (v: unknown) => {
+  const n = typeof v === 'number' ? v : typeof v === 'string' && /^\d+$/.test(v) ? Number(v) : NaN
+  return Number.isSafeInteger(n) && n > 0 ? n : null
+}
+
+async function credit(orderCode: number, amount: number | null, reference: string) {
+  if (amount === null) return 'unknown_amount'
   const { ok, data } = await db<string>('/rpc/credit_payment_order', {
     method: 'POST',
     body: { p_order: orderCode, p_amount: amount, p_reference: reference },
@@ -177,10 +184,13 @@ async function orderStatus(res: ServerResponse, userId: string, orderCode: numbe
   if (!o) return json(res, 404, { error: 'Không tìm thấy đơn nạp.' })
   if (o.status === 'pending') {
     // webhook có thể đến chậm / không đến (máy dev): hỏi thẳng PayOS
-    const r = await payos<{ status: string; amountPaid: number; transactions?: Array<{ reference?: string }> }>(`/v2/payment-requests/${orderCode}`)
+    const r = await payos<{ status?: string; amount?: number; amountPaid?: number; amountRemaining?: number; transactions?: Array<{ reference?: string }> }>(
+      `/v2/payment-requests/${orderCode}`,
+    )
     const st = r.code === '00' ? r.data?.status : undefined
-    if (st === 'PAID') {
-      await credit(orderCode, Number(r.data?.amountPaid), r.data?.transactions?.[0]?.reference ?? 'tra-cuu')
+    if (st === 'PAID' || st === 'UNDERPAID') {
+      // trả thiếu: hàm DB giữ đơn 'pending' + ghi chú để đối soát; trả đủ / dư thì cộng điểm
+      await credit(orderCode, validAmount(r.data?.amountPaid), r.data?.transactions?.[0]?.reference ?? 'tra-cuu')
     } else if (st === 'CANCELLED' || st === 'EXPIRED') {
       await db(`/payment_orders?order_code=eq.${orderCode}&status=eq.pending`, { method: 'PATCH', body: { status: st === 'CANCELLED' ? 'cancelled' : 'expired' } })
     }
@@ -208,7 +218,7 @@ async function handleWebhook(req: IncomingMessage, res: ServerResponse) {
   const orderCode = Number(data.orderCode)
   // dữ liệu mẫu PayOS gửi khi xác nhận URL webhook (đơn không có thật) vẫn trả 200
   if (body.code === '00' && data.code === '00' && Number.isSafeInteger(orderCode)) {
-    const result = await credit(orderCode, Number(data.amount), String(data.reference ?? ''))
+    const result = await credit(orderCode, validAmount(data.amount), String(data.reference ?? ''))
     if (result === 'error') return json(res, 500, { error: 'retry' })
   }
   return json(res, 200, { ok: true })

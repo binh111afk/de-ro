@@ -35,12 +35,15 @@ const orders: Row[] = []
 const balance = new Map<string, number>()
 let seq = 100001
 let payosStatus = 'PENDING'
+/** amountPaid PayOS trả khi tra đơn: 'full' = đúng số tiền đơn, 'none' = thiếu trường, số = số tiền cụ thể */
+let payosPaid: 'full' | 'none' | number = 'full'
 let lastCreate: Record<string, unknown> | null = null
 const creditFn = (code: number, amount: number) => {
   const o = orders.find((r) => r.order_code === code)
   if (!o) return 'missing'
   if (o.status === 'paid') return 'already'
-  if (amount !== o.vnd) return (o.status = 'failed'), 'amount_mismatch'
+  if (amount === null || !(amount > 0)) return 'unknown_amount'
+  if (amount < o.vnd) return 'underpaid'
   let pts = o.points
   if (o.bonus_points > 0 && orders.some((p) => p !== o && p.user_id === o.user_id && p.pack_vnd === o.pack_vnd && p.status === 'paid' && p.bonus_points > 0)) {
     pts -= o.bonus_points
@@ -85,7 +88,7 @@ globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
   if (url.startsWith('https://api-merchant.payos.vn/v2/payment-requests/')) {
     const code = Number(url.split('/').pop())
     const o = orders.find((r) => r.order_code === code)
-    return res200({ code: '00', desc: 'success', data: { status: payosStatus, amountPaid: payosStatus === 'PAID' ? o?.vnd : 0, transactions: [{ reference: 'FT123' }] } })
+    return res200({ code: '00', desc: 'success', data: { status: payosStatus, ...(payosPaid === 'none' ? {} : { amountPaid: payosPaid === 'full' ? o?.vnd : payosPaid }), transactions: [{ reference: 'FT123' }] } })
   }
   return new Response('{}', { status: 404 })
 }) as typeof fetch
@@ -157,6 +160,27 @@ check('tra đơn còn chờ → pending', (await call('GET', `/api/pay?order=${o
 payosStatus = 'PAID'
 const st = await call('GET', `/api/pay?order=${o3.order_code}`, { auth: tk })
 check('PayOS báo đã trả → tra đơn tự cộng điểm (575)', st.data.status === 'paid' && balance.get(U) === 275_000 + 575_000)
+// Strix ce3e: số tiền thiếu / lệch / trả thiếu không được làm đơn 'failed' vĩnh viễn, cũng không được cộng điểm
+const before = balance.get(U)
+const o4 = (await call('POST', '/api/pay', { body: { vnd: 5000 }, auth: tk }), orders[orders.length - 1])
+payosPaid = 'none'
+const s4 = await call('GET', `/api/pay?order=${o4.order_code}`, { auth: tk })
+check('PAID nhưng thiếu amountPaid → vẫn pending, không cộng', s4.data.status === 'pending' && balance.get(U) === before)
+payosPaid = 3000
+const s5 = await call('GET', `/api/pay?order=${o4.order_code}`, { auth: tk })
+check('PAID với số tiền ít hơn đơn → vẫn pending, không cộng', s5.data.status === 'pending' && balance.get(U) === before)
+payosStatus = 'UNDERPAID'
+const s6 = await call('GET', `/api/pay?order=${o4.order_code}`, { auth: tk })
+check('UNDERPAID → vẫn pending (tra lại được), không cộng', s6.data.status === 'pending' && balance.get(U) === before)
+payosStatus = 'PAID'
+payosPaid = 'full'
+const s7 = await call('GET', `/api/pay?order=${o4.order_code}`, { auth: tk })
+check('sau đó trả đủ → tra lại được và cộng điểm', s7.data.status === 'paid' && balance.get(U)! > before!)
+const o5 = (await call('POST', '/api/pay', { body: { vnd: 3000 }, auth: tk }), orders[orders.length - 1])
+const bal5 = balance.get(U)
+const hookNoAmount: Record<string, unknown> = { ...hookData, orderCode: o5.order_code }
+delete hookNoAmount.amount
+check('webhook thiếu amount (chữ ký đúng) → 200, đơn vẫn pending, không cộng', (await hook(hookNoAmount)).status === 200 && o5.status === 'pending' && balance.get(U) === bal5)
 check('người khác không xem được đơn của mình → 404', (await call('GET', `/api/pay?order=${o3.order_code}`, { auth: token('user-b') })).status === 404)
 
 // thiếu cấu hình
