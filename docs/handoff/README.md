@@ -2,6 +2,7 @@
 
 Chỉ mở phiên liên quan đến việc đang làm. Mới nhất ở trên.
 
+- [phiên 48](phien-48.md): **trang nạp mở cho mọi người**, bỏ tab Bảng giá; **Điều khoản / Quyền riêng tư** đầy đủ + ô tick đồng ý khi đăng nhập; icon liên hệ, chân trang gọn; vá Strix a70c (webhook theo `amountPaid`, đơn đã huỷ vẫn cộng), chuyển thiếu cộng theo giá nạp lẻ; đọc PDF ngân hàng bằng opencode; bảng vẽ kéo nhóm từ chỗ trống, nấc nét bút, lực nhấn; **DeepSeek ưu tiên 1**; việc sau: prompt lộ trên trình duyệt
 - [phiên 47](phien-47.md): **PayOS nạp điểm** (QR tự vẽ, huỷ đơn khi đóng, webhook, tra đơn lỡ webhook), **admin Nạp điểm** (Hỏi PayOS, Cộng tay), trang nạp chỉ admin; Strix 7–8, gỡ Tavily; AI 👍/👎 + patch + Thử lại model mạnh; logo mail chế độ tối
 - [phiên 46](phien-46.md): đầu/chân trang, khổ giấy, cột, menu chuột phải, hình dạng, sửa công thức bấm đúp; **Strix 6**; **nhập .pptx giữ bố cục**; trang chủ điện thoại gọn; **AGENTS.md**; **/api/llm stream + nhật ký soạn đề/slide, suy nghĩ tiếng Việt** (số đo token/chất lượng); lời giải ≠ hướng dẫn giải, AI thấy công thức + số câu; **trang Bảng giá** (chỉ admin); việc phiên sau: 5 việc chống AI chết cứng
 - [phiên 45](phien-45.md): **panel AI hỏi lại** khi yêu cầu mơ hồ; sửa hình (tam giác vuông, góc + thang, **vectơ AB**); **nhập Word giữ định dạng** (đề mục đánh số, bảng, ảnh, công thức, lề trang); thước như Word; thanh trạng thái gọn; **mục lục tự động**; đo lại chi phí AI + lượt hỏi rút gọn; **nút Tìm trên web** (DeepSeek, cần key trên Vercel)
