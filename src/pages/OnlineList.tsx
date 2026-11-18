@@ -2,7 +2,7 @@ import { dialog } from '@/components/Dialog'
 import { Pager, usePaged } from '@/components/Pager'
 import { useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
-import { Clock, History, MonitorPlay, Plus, Send, Sparkles, Upload } from 'lucide-react'
+import { Clock, History, MonitorPlay, Plus, Send, Sparkles, TriangleAlert, Upload } from 'lucide-react'
 import { TrashIcon } from '@/components/appIcons'
 import { Badge, Button, EmptyState } from '@/components/ui'
 import { CopyLink } from '@/components/CopyLink'
@@ -33,6 +33,7 @@ export default function OnlineList() {
           <p className="eyebrow mb-3.5">Công cụ</p>
           <h1 className="font-display text-[38px] font-semibold leading-[1.06] tracking-[-0.025em] text-ink sm:text-[48px]">
             Tạo đề online
+            <Badge tone="clay" className="ml-3 align-middle text-[12px] font-bold uppercase tracking-wide">Beta</Badge>
           </h1>
           <p className="mt-4 max-w-[56ch] text-[15px] leading-[1.75] text-ink-2">
             Nhập câu hỏi, đáp án và lời giải rồi cho học sinh làm trực tiếp.
@@ -43,6 +44,11 @@ export default function OnlineList() {
           Tạo đề mới
         </Button>
       </header>
+
+      <div role="note" className="mb-8 flex items-start gap-2.5 rounded-[8px] border border-honey/40 bg-honey-soft px-4 py-3 text-[14px] leading-[1.6] text-ink-2">
+        <TriangleAlert className="mt-0.5 size-4 shrink-0 text-honey" />
+        Tính năng đang thử nghiệm, có thể còn lỗi hoặc thay đổi. Bài kiểm tra quan trọng nên giữ thêm bản Word hoặc bản in.
+      </div>
 
       <div className="mb-8">
         <Segmented

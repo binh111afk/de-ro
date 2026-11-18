@@ -19,11 +19,16 @@ import { PRICING_PUBLIC } from '@/lib/pricing'
 const NAV = [
   { to: '/', label: 'Trang chủ', end: true },
   { to: '/soan-de', label: 'Soạn đề' },
-  { to: '/tao-de-online', label: 'Tạo đề online' },
+  { to: '/tao-de-online', label: 'Tạo đề online', beta: true },
   { to: '/de-cong-dong', label: 'Đề cộng đồng' },
   { to: '/kho-tai-lieu', label: 'Kho tài liệu' },
   ...(PRICING_PUBLIC ? [{ to: '/bang-gia', label: 'Bảng giá' }] : []),
 ]
+
+/** nhãn tính năng đang thử nghiệm cạnh mục nav */
+function BetaTag() {
+  return <span className="ml-1.5 rounded-full bg-clay-soft px-1.5 py-px align-[2px] text-[10px] font-bold uppercase tracking-wide text-clay">Beta</span>
+}
 
 /**
  * Logo "đề rõ" — file SVG gốc ở `public/brand/logo-de-ro.svg`
@@ -81,6 +86,7 @@ export function Header() {
               {({ isActive }) => (
                 <>
                   {item.label}
+                  {'beta' in item && item.beta ? <BetaTag /> : null}
                   {isActive ? (
                     <span className="absolute inset-x-3.5 -bottom-0.5 h-[3px] rounded-full bg-clay/70" />
                   ) : null}
@@ -163,6 +169,7 @@ export function Header() {
                 }
               >
                 {item.label}
+                {'beta' in item && item.beta ? <BetaTag /> : null}
               </NavLink>
             ))}
             <Link to="/bang-gia" className="mt-2 block sm:hidden">
