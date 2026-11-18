@@ -142,7 +142,8 @@ export function penOutline(pts: number[][], o: { pen: PenKind; width: number; sh
   const t = PEN_TRAITS[o.pen]
   // bút thật: đa số bảng vẽ báo lực rất nhỏ khi đặt bút nhẹ → nét mảnh tới mức phải nhấn mạnh mới thấy.
   // Nâng đường cong lực: chạm nhẹ đã ra nét rõ, nhấn mạnh vẫn dày hơn.
-  if (o.real) pts = pts.map(([x, y, p]) => [x, y, 0.35 + 0.65 * Math.sqrt(Math.max(0, Math.min(1, p ?? 0.5)))])
+  // Nâng nhẹ đường cong lực: chạm nhẹ vẫn ra nét, nhưng giữ khoảng đổi rộng để thấy rõ nhẹ / mạnh tay.
+  if (o.real) pts = pts.map(([x, y, p]) => [x, y, 0.15 + 0.85 * Math.pow(Math.max(0, Math.min(1, p ?? 0.5)), 0.75)])
   const sens = o.sens ?? 0.5, sharp = o.sharp ?? 0.5
   // bút máy, bút lông: tự tính độ dày từng điểm thay cho giả lập lực của perfect-freehand
   // (giả lập đó chỉ theo tốc độ, ra nét gần như đều → trông như bút bi)
@@ -151,7 +152,9 @@ export function penOutline(pts: number[][], o: { pen: PenKind; width: number; sh
   const size = o.width * t.size
   // độ đổi dày theo lực nhấn vừa phải (Excalidraw: 0,6) — quá mạnh thì mép nét lồi lõm, trông lem
   // bút máy / bút lông đã tự tính độ dày mượt → cho đổi dày mạnh hơn mới ra dáng nét thanh nét đậm
-  const thinning = shaped ? (o.pen === 'fountain' ? 0.9 : 0.75 + 0.15 * sens) : o.pen === 'highlight' ? 0 : Math.max(-0.85, Math.min(0.85, t.thin * (0.4 + 1.2 * sens)))
+  // bút thật (có lực nhấn): đổi dày theo lực mạnh hơn hẳn giả lập theo tốc độ, không thì nhấn nhẹ hay mạnh trông như nhau
+  const base = t.thin * (0.4 + 1.2 * sens) + (o.real ? 0.4 + 0.2 * sens : 0)
+  const thinning = shaped ? (o.pen === 'fountain' ? 0.9 : 0.75 + 0.15 * sens) : o.pen === 'highlight' ? 0 : Math.max(-0.85, Math.min(0.85, base))
   // vuốt nhọn không dài quá nét: nét ngắn / chấm bút không bị vuốt mất
   // (vuốt nhọn dù chỉ 0,0001px cũng làm perfect-freehand bỏ mất chấm, nên dưới 1px thì tắt hẳn)
   const tp = t.taper ? Math.min(sharp * size * t.taper, pathLength(pts) * 0.35) : 0
@@ -162,7 +165,8 @@ export function penOutline(pts: number[][], o: { pen: PenKind; width: number; sh
     thinning,
     smoothing: t.smooth,
     easing: easeOutSine,
-    streamline: 0.5,
+    // bút thật cho tín hiệu chuẩn: làm mượt ít để đầu nét không trôi sau ngòi; chuột rung tay nên làm mượt nhiều hơn
+    streamline: o.real ? 0.3 : 0.5,
     simulatePressure: !o.real && !shaped && thinning > 0,
     start: { cap, taper },
     end: { cap, taper },
@@ -836,9 +840,9 @@ export function render(
  * mỗi lần bút di chỉ vẽ lại đúng một nét thay vì cả bảng.
  */
 export function renderLive(canvas: HTMLCanvasElement, e: El | null, view: View) {
-  // không dùng { desynchronized: true }: trên Android canvas đó bị ghép như lớp đục (bỏ kênh alpha)
-  // → lớp trong suốt này thành tấm đen che kín bảng
-  const ctx = canvas.getContext('2d')!
+  // { desynchronized: true } = canvas trễ thấp (nét bám ngòi bút sát hơn, như OneNote). Lần gọi getContext đầu
+  // tiên quyết định chế độ. Không bật trên Android: canvas đó bị ghép như lớp đục → tấm đen che kín bảng
+  const ctx = canvas.getContext('2d', { desynchronized: !/Android/i.test(navigator.userAgent) })!
   ctx.setTransform(1, 0, 0, 1, 0, 0)
   ctx.clearRect(0, 0, canvas.width, canvas.height)
   if (!e) return
