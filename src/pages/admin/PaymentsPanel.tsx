@@ -1,6 +1,8 @@
 /** Admin › Nạp điểm: đơn nạp PayOS, tiền đã thu, hỏi lại PayOS cho đơn treo, cộng điểm tay khi đã đối soát sao kê. */
-import { useEffect, useState } from 'react'
-import { RefreshCw, Search, Wallet } from 'lucide-react'
+import { useEffect, useState, type ReactNode } from 'react'
+import { RefreshCw, Search, Wallet, X } from 'lucide-react'
+import { Portal } from '@/components/Portal'
+import { useDrawerExit } from './useDrawerExit'
 import { Badge, Button, Card, EmptyState, inputClass, Spinner } from '@/components/ui'
 import { Pager } from '@/components/Pager'
 import { Segmented } from '@/components/Segmented'
@@ -27,6 +29,7 @@ export function PaymentsPanel() {
   const [loading, setLoading] = useState(true)
   const [busy, setBusy] = useState<number | null>(null)
   const [tick, setTick] = useState(0)
+  const [open, setOpen] = useState<number | null>(null)
   const reload = () => setTick((t) => t + 1)
 
   useEffect(() => {
@@ -81,6 +84,7 @@ export function PaymentsPanel() {
   }
 
   const items = data?.items ?? []
+  const selected = items.find((p) => p.orderCode === open) ?? null
   const pages = data ? Math.max(1, Math.ceil(data.total / data.perPage)) : 1
 
   return (
@@ -150,7 +154,7 @@ export function PaymentsPanel() {
 
       <Card className="overflow-hidden border border-line shadow-soft">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[860px] border-collapse text-left text-[13.5px]">
+          <table className="w-full min-w-[640px] border-collapse text-left text-[13.5px]">
             <thead className="whitespace-nowrap border-b border-line bg-sunken/80 text-[12px] font-semibold uppercase tracking-wider text-ink-3">
               <tr>
                 <th className="px-4 py-3">Mã đơn</th>
@@ -159,27 +163,29 @@ export function PaymentsPanel() {
                 <th className="px-4 py-3 text-right">Số tiền</th>
                 <th className="px-4 py-3 text-right">Điểm</th>
                 <th className="px-4 py-3">Trạng thái</th>
-                <th className="px-4 py-3">Ghi chú</th>
-                <th className="px-4 py-3" />
               </tr>
             </thead>
             <tbody className="divide-y divide-line-2">
               {loading && !items.length ? (
                 <tr>
-                  <td colSpan={8} className="py-16 text-center text-ink-3">
+                  <td colSpan={6} className="py-16 text-center text-ink-3">
                     <Spinner className="mr-2 text-ink-3" />
                     <span>Đang tải…</span>
                   </td>
                 </tr>
               ) : !items.length ? (
                 <tr>
-                  <td colSpan={8} className="py-12">
+                  <td colSpan={6} className="py-12">
                     <EmptyState icon={<Wallet className="size-6 text-ink-4" />} title="Chưa có đơn nạp nào" />
                   </td>
                 </tr>
               ) : (
                 items.map((p) => (
-                  <tr key={p.orderCode} className={cn('transition-colors hover:bg-sunken/40', p.attention && 'bg-honey-soft/40')}>
+                  <tr
+                    key={p.orderCode}
+                    onClick={() => setOpen(p.orderCode)}
+                    className={cn('cursor-pointer transition-colors hover:bg-sunken/40', p.attention && 'bg-honey-soft/40', open === p.orderCode && 'bg-sunken/60')}
+                  >
                     <td className="whitespace-nowrap px-4 py-3 font-mono text-[12.5px] text-ink-2">{p.orderCode}</td>
                     <td className="tnum whitespace-nowrap px-4 py-3 text-ink-2">{formatViDateTime(p.createdAt)}</td>
                     <td className="max-w-[14rem] truncate px-4 py-3 text-ink" data-tip={p.userId}>
@@ -193,21 +199,6 @@ export function PaymentsPanel() {
                     <td className="whitespace-nowrap px-4 py-3">
                       <Badge tone={STATUS[p.status]?.tone ?? 'neutral'}>{STATUS[p.status]?.label ?? p.status}</Badge>
                     </td>
-                    <td className="max-w-[16rem] truncate px-4 py-3 font-mono text-[12px] text-ink-3" data-tip={p.reference ?? undefined}>
-                      {p.reference ?? ''}
-                    </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-right">
-                      {p.status !== 'paid' ? (
-                        <div className="flex justify-end gap-1.5">
-                          <Button variant="outline" size="sm" disabled={busy === p.orderCode} onClick={() => void sync(p)}>
-                            Hỏi PayOS
-                          </Button>
-                          <Button variant="outline" size="sm" disabled={busy === p.orderCode} onClick={() => void credit(p)}>
-                            Cộng tay
-                          </Button>
-                        </div>
-                      ) : null}
-                    </td>
                   </tr>
                 ))
               )}
@@ -220,7 +211,101 @@ export function PaymentsPanel() {
           </div>
         ) : null}
       </Card>
+
+      {selected ? (
+        <PaymentDrawer
+          key={selected.orderCode}
+          p={selected}
+          busy={busy === selected.orderCode}
+          onSync={() => void sync(selected)}
+          onCredit={() => void credit(selected)}
+          onClose={() => setOpen(null)}
+        />
+      ) : null}
     </div>
+  )
+}
+
+function Row({ label, children, mono }: { label: string; children: ReactNode; mono?: boolean }) {
+  return (
+    <div className="grid grid-cols-[7rem_1fr] gap-3 py-2.5">
+      <dt className="text-[13px] text-ink-3">{label}</dt>
+      <dd className={cn('min-w-0 break-all text-[13.5px] text-ink', mono && 'font-mono text-[12.5px]')}>{children}</dd>
+    </div>
+  )
+}
+
+function PaymentDrawer({
+  p,
+  busy,
+  onSync,
+  onCredit,
+  onClose,
+}: {
+  p: AdminPayment
+  busy: boolean
+  onSync: () => void
+  onCredit: () => void
+  onClose: () => void
+}) {
+  const { close, backdropClass, panelClass } = useDrawerExit(onClose)
+  return (
+    <Portal>
+      <div className={cn('fixed inset-0 z-40 bg-ink/40 backdrop-blur-xs', backdropClass)} onClick={close} aria-hidden="true" />
+      <aside
+        className={cn('fixed inset-y-0 right-0 z-50 flex w-full max-w-full flex-col border-l border-line bg-surface shadow-2xl sm:w-[440px]', panelClass)}
+        role="dialog"
+        aria-label={`Đơn ${p.orderCode}`}
+        onKeyDown={(e) => e.key === 'Escape' && close()}
+      >
+        <div className="flex items-center justify-between border-b border-line px-6 py-4">
+          <div>
+            <h2 className="font-mono text-[16px] font-bold text-ink">{p.orderCode}</h2>
+            <div className="mt-1">
+              <Badge tone={STATUS[p.status]?.tone ?? 'neutral'}>{STATUS[p.status]?.label ?? p.status}</Badge>
+            </div>
+          </div>
+          <button type="button" onClick={close} className="rounded-[6px] p-1.5 text-ink-3 hover:bg-sunken hover:text-ink" aria-label="Đóng">
+            <X className="size-5" />
+          </button>
+        </div>
+
+        <dl className="flex-1 divide-y divide-line-2 overflow-y-auto px-6 py-2">
+          <Row label="Tài khoản">{p.email || '—'}</Row>
+          <Row label="Mã người dùng" mono>
+            {p.userId}
+          </Row>
+          <Row label="Số tiền">
+            <span className="font-semibold tnum">{fmt(p.vnd)}đ</span>
+          </Row>
+          <Row label="Điểm">
+            <span className="tnum">
+              {fmt(p.points)}
+              {p.bonusPoints ? <span className="ml-1 text-clay">(thưởng {fmt(p.bonusPoints)})</span> : null}
+            </span>
+          </Row>
+          <Row label="Nội dung CK" mono>
+            DR{p.orderCode}
+          </Row>
+          <Row label="Tạo lúc">{formatViDateTime(p.createdAt)}</Row>
+          <Row label="Trả lúc">{p.paidAt ? formatViDateTime(p.paidAt) : '—'}</Row>
+          <Row label="Ghi chú" mono>
+            {p.reference || '—'}
+          </Row>
+        </dl>
+
+        {p.status !== 'paid' ? (
+          <div className="flex gap-2 border-t border-line px-6 py-4">
+            <Button variant="outline" className="flex-1" disabled={busy} onClick={onSync}>
+              Hỏi PayOS
+            </Button>
+            <Button variant="outline" className="flex-1" disabled={busy} onClick={onCredit}>
+              Cộng tay
+            </Button>
+          </div>
+        ) : null}
+      </aside>
+    </Portal>
   )
 }
 export default PaymentsPanel
