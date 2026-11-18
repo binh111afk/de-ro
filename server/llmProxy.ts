@@ -418,7 +418,8 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
   }
   if (!Array.isArray(body.messages) || !body.messages.length) return json(res, 400, { error: 'messages is required' })
   // model rỗng / không phải chuỗi = không chọn (đừng để chuỗi rỗng khớp model chưa cấu hình rồi bỏ qua model chính)
-  if (typeof body.model !== 'string' || !body.model.trim()) body.model = undefined
+  // chỉ máy dev (script đo / so model) được chọn model: điểm tính theo một giá, người dùng chọn model đắt là trả giá rẻ (Strix 7)
+  if (typeof body.model !== 'string' || !body.model.trim() || !isLocal(ip)) body.model = undefined
   // chỉ chuyển {role, content} lên model: trường lạ (name, …) cũng bị tính tiền mà trước đây không được đếm
   body.messages = body.messages.map((m) => ({ role: String(m?.role ?? 'user'), content: m?.content })) as typeof body.messages
   const promptTokens = estimatePromptTokens(body.messages)

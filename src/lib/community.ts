@@ -66,7 +66,8 @@ async function rest<T>(
     body: init.body === undefined ? undefined : JSON.stringify(init.body),
   })
   const data = (await res.json().catch(() => null)) as { message?: string } | null
-  if (!res.ok) throw new Error(data?.message ?? `Không kết nối được máy chủ (${res.status}).`)
+  // trigger báo lỗi cho người dùng dạng "QUOTA:<lời báo>"
+  if (!res.ok) throw new Error(data?.message?.replace(/^QUOTA:/, '') ?? `Không kết nối được máy chủ (${res.status}).`)
   return data as T
 }
 

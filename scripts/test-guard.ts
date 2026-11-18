@@ -378,19 +378,25 @@ const jwt = (sub: string) => `h.${Buffer.from(JSON.stringify({ sub })).toString(
     ] }],
   }
   let listed = false
+  let anonCount = 0
+  let deviceCount = 0
   const realFetch = globalThis.fetch
-  globalThis.fetch = (async (input: string | URL) => {
+  globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
     const url = String(input)
     if (url.includes('/rest/v1/community_exams')) {
       const doc = url.includes(EXAM_SCORE) ? { online: { ...online, settings: { showScore: true } } } : { online }
       return new Response(JSON.stringify([{ doc, listed }]), { status: 200 })
     }
-    if (url.includes('/rest/v1/exam_attempts')) return new Response(null, { status: 201 })
+    if (url.includes('/rest/v1/exam_attempts')) {
+      // đếm bài đã nộp (trần số bài mỗi đề, Strix 7)
+      if (init.method === 'HEAD') return new Response(null, { status: 200, headers: { 'content-range': `*/${url.includes('device_id=') ? deviceCount : anonCount}` } })
+      return new Response(null, { status: 201 })
+    }
     return new Response('{}', { status: 404 })
   }) as typeof fetch
   const { handleAttemptRequest } = await import('../server/attempt.ts')
-  const submit = async (answers: Record<string, string>, ipLast: number, examId = EXAM) => {
-    const body = Buffer.from(JSON.stringify({ examId, name: 'Hs', answers }))
+  const submit = async (answers: Record<string, string>, ipLast: number, examId = EXAM, deviceId?: string) => {
+    const body = Buffer.from(JSON.stringify({ examId, name: 'Hs', answers, deviceId }))
     const req = Object.assign((async function* () { yield body })(), {
       method: 'POST',
       headers: { host: 'de-ro-lac.vercel.app', origin: 'https://de-ro-lac.vercel.app' },
@@ -424,6 +430,14 @@ const jwt = (sub: string) => `h.${Buffer.from(JSON.stringify({ sub })).toString(
   let blocked = 0
   for (let i = 0; i < 70; i++) if ((await submit({ q1: 'A' }, 151)).status === 429) blocked++
   check(`nộp một đề quá 60 lượt / 10 phút cùng IP → 429 (${blocked} lượt bị chặn)`, blocked === 10)
+  // Strix 7: trần số bài nộp không đăng nhập mỗi đề / mỗi thiết bị (không thì bơm "học sinh" giả vô hạn)
+  anonCount = 400
+  check('đề đã có 400 bài nộp không đăng nhập → 429', (await submit({ q1: 'B' }, 160)).status === 429)
+  anonCount = 10
+  deviceCount = 20
+  check('một thiết bị đã nộp 20 lượt → 429', (await submit({ q1: 'B' }, 161, EXAM, 'thiet-bi-01')).status === 429)
+  deviceCount = 19
+  check('thiết bị dưới trần → nộp được', (await submit({ q1: 'B' }, 162, EXAM, 'thiet-bi-01')).status === 200)
   globalThis.fetch = realFetch
   void listed
   listed = true

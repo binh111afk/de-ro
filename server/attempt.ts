@@ -12,6 +12,10 @@ import { json, readBody } from './http.js'
 import { getExamRow } from './examCache.js'
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+/** số lượt nộp tối đa của một tài khoản / một thiết bị cho một đề */
+const ATTEMPTS_PER_STUDENT = 20
+/** tổng bài nộp không đăng nhập của một đề (vài lớp × vài lượt) */
+const ANON_ATTEMPTS_PER_EXAM = 400
 const str = (v: unknown, max: number) => (typeof v === 'string' ? v.trim().slice(0, max) : '')
 
 export async function handleAttemptRequest(req: IncomingMessage, res: ServerResponse): Promise<void> {
@@ -54,6 +58,29 @@ export async function handleAttemptRequest(req: IncomingMessage, res: ServerResp
       if (lock.status === 409) return json(res, 409, { error: 'Em đã nộp bài cho đề này rồi.' })
       if (!lock.ok) return json(res, 503, { error: 'Máy chủ bận, em nộp lại sau ít phút.' })
       locked = true
+    }
+    // trần số bài mỗi đề (Strix 7: không trần thì ai có link cũng bơm được hàng nghìn "học sinh" giả vào sổ điểm).
+    // Tên + mã thiết bị do trình duyệt tự khai nên trần chính tính theo cả đề; tài khoản / thiết bị thêm trần riêng.
+    if (!locked) {
+      const count = async (filter: string) => {
+        const r = await fetch(`${base}/rest/v1/exam_attempts?select=exam_id&exam_id=eq.${examId}${filter}`, {
+          method: 'HEAD',
+          headers: { ...headers, Prefer: 'count=exact' },
+        }).catch(() => null)
+        const n = Number(r?.headers.get('content-range')?.split('/')[1])
+        return Number.isFinite(n) ? n : null
+      }
+      const [mine, total] = await Promise.all([
+        userId
+          ? count(`&user_id=eq.${userId}`)
+          : device.length >= 8
+            ? count(`&user_id=is.null&device_id=eq.${encodeURIComponent(device)}`)
+            : Promise.resolve(0),
+        userId ? Promise.resolve(0) : count('&user_id=is.null'),
+      ])
+      if (mine === null || total === null) return json(res, 503, { error: 'Máy chủ bận, em nộp lại sau ít phút.' })
+      if (mine >= ATTEMPTS_PER_STUDENT) return json(res, 429, { error: 'Em đã nộp bài này nhiều lần rồi.' })
+      if (total >= ANON_ATTEMPTS_PER_EXAM) return json(res, 429, { error: 'Đề đã nhận đủ số bài nộp không đăng nhập, em đăng nhập để nộp.', loginRequired: true })
     }
     const unlock = () =>
       locked
