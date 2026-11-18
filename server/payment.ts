@@ -18,6 +18,8 @@ import { DEFAULT_PRICING, PRICING_PUBLIC, MAX_VND, MIN_VND, PACKS, applyPricing,
 const PAYOS_API = 'https://api-merchant.payos.vn'
 /** link thanh toán hết hạn sau 15 phút */
 const LINK_TTL_S = 15 * 60
+/** đơn đã huỷ / hết hạn trong khoảng này vẫn hỏi lại PayOS khi xem trạng thái (tiền có thể về sau khi đóng khung) */
+const RECHECK_CLOSED_MS = 48 * 3600 * 1000
 
 const env = () => ({
   clientId: (process.env.PAYOS_CLIENT_ID ?? '').trim(),
@@ -103,7 +105,7 @@ async function bonusedPacks(userId: string): Promise<number[]> {
   return ok ? [...new Set(data.map((r) => r.pack_vnd))] : []
 }
 
-type Order = { order_code: number; user_id: string; vnd: number; points: number; bonus_points: number; status: string; checkout_url: string | null }
+type Order = { order_code: number; user_id: string; vnd: number; points: number; bonus_points: number; status: string; checkout_url: string | null; created_at?: string }
 
 /** số tiền cổng báo: chỉ nhận số nguyên dương; thiếu / sai kiểu thì không gọi cộng điểm (để webhook / lần tra sau xử lý) */
 const validAmount = (v: unknown) => {
@@ -202,11 +204,16 @@ export async function reconcileOrder(orderCode: number): Promise<string | undefi
     `/v2/payment-requests/${orderCode}`,
   )
   const st = r.code === '00' ? r.data?.status : undefined
+  const paid = validAmount(r.data?.amountPaid)
+  const ref = r.data?.transactions?.[0]?.reference ?? 'tra-cuu'
   if (st === 'PAID' || st === 'UNDERPAID') {
     // trả thiếu: hàm DB giữ đơn 'pending' + ghi chú để đối soát; trả đủ / dư thì cộng điểm
-    await credit(orderCode, validAmount(r.data?.amountPaid), r.data?.transactions?.[0]?.reference ?? 'tra-cuu')
+    const result = await credit(orderCode, paid, ref)
+    if (result === 'error') return undefined
   } else if (st === 'CANCELLED' || st === 'EXPIRED') {
     await db(`/payment_orders?order_code=eq.${orderCode}&status=eq.pending`, { method: 'PATCH', body: { status: st === 'CANCELLED' ? 'cancelled' : 'expired' } })
+    // đơn đã đóng mà có tiền về (trả một phần trước khi huỷ / hết hạn): cộng nếu đủ, thiếu thì ghi chú THIEU để admin thấy
+    if (paid) await credit(orderCode, paid, ref)
   }
   return st
 }
@@ -234,12 +241,13 @@ export async function creditOrderManually(orderCode: number, vnd: number, note: 
 }
 
 async function orderStatus(res: ServerResponse, userId: string, orderCode: number) {
-  const get = () => db<Order[]>(`/payment_orders?select=order_code,user_id,vnd,points,bonus_points,status&order_code=eq.${orderCode}&user_id=eq.${userId}`)
+  const get = () => db<Order[]>(`/payment_orders?select=order_code,user_id,vnd,points,bonus_points,status,created_at&order_code=eq.${orderCode}&user_id=eq.${userId}`)
   let { data } = await get()
   let o = data?.[0]
   if (!o) return json(res, 404, { error: 'Không tìm thấy đơn nạp.' })
-  if (o.status === 'pending') {
-    // webhook có thể đến chậm / không đến (máy dev): hỏi thẳng PayOS
+  // webhook có thể đến chậm / không đến: hỏi thẳng PayOS. Đơn đã huỷ / hết hạn gần đây cũng hỏi (tiền về sau khi đóng khung)
+  const recentClosed = (o.status === 'cancelled' || o.status === 'expired') && Date.now() - new Date(o.created_at ?? 0).getTime() < RECHECK_CLOSED_MS
+  if (o.status === 'pending' || recentClosed) {
     const st = await reconcileOrder(orderCode)
     if (st && st !== 'PENDING' && st !== 'PROCESSING') {
       ;({ data } = await get())
@@ -263,10 +271,15 @@ async function handleWebhook(req: IncomingMessage, res: ServerResponse) {
     return json(res, 401, { error: 'invalid signature' })
   }
   const orderCode = Number(data.orderCode)
-  // dữ liệu mẫu PayOS gửi khi xác nhận URL webhook (đơn không có thật) vẫn trả 200
-  if (body.code === '00' && data.code === '00' && Number.isSafeInteger(orderCode)) {
-    const result = await credit(orderCode, validAmount(data.amount), String(data.reference ?? ''))
-    if (result === 'error') return json(res, 500, { error: 'retry' })
+  if (body.code === '00' && data.code === '00' && Number.isSafeInteger(orderCode) && orderCode > 0) {
+    // dữ liệu mẫu PayOS gửi khi xác nhận URL webhook (đơn không có thật) vẫn trả 200
+    const found = await db<Order[]>(`/payment_orders?select=order_code&order_code=eq.${orderCode}`)
+    if (!found.ok) return json(res, 500, { error: 'retry' })
+    if (found.data?.length) {
+      // webhook chỉ là tín hiệu: số tiền lấy từ PayOS (amountPaid) qua cùng đường với tra cứu, không tin `amount` trong body
+      const st = await reconcileOrder(orderCode)
+      if (!st) return json(res, 500, { error: 'retry' })
+    }
   }
   return json(res, 200, { ok: true })
 }

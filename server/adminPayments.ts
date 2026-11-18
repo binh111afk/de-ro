@@ -44,8 +44,9 @@ export const PAYMENT_ACTIONS: ActionMap = {
       else if (filter === 'paid') qs.set('status', 'eq.paid')
       else if (filter === 'closed') qs.set('status', 'in.(cancelled,expired,failed)')
       else if (filter === 'attention') {
-        qs.set('status', 'eq.pending')
-        qs.set('or', `(reference.like.THIEU*,created_at.lt.${new Date(Date.now() - STALE_MS).toISOString()})`)
+        // trả thiếu (kể cả đơn đã huỷ / hết hạn mà tiền vẫn về) hoặc đơn chờ quá lâu
+        qs.set('status', 'neq.paid')
+        qs.set('or', `(reference.like.THIEU*,and(status.eq.pending,created_at.lt.${new Date(Date.now() - STALE_MS).toISOString()}))`)
       }
       const code = Number(b.orderCode)
       if (Number.isSafeInteger(code) && code > 0) qs.set('order_code', `eq.${code}`)
@@ -87,7 +88,7 @@ export const PAYMENT_ACTIONS: ActionMap = {
           reference: r.reference,
           createdAt: r.created_at,
           paidAt: r.paid_at,
-          attention: r.status === 'pending' && ((r.reference ?? '').startsWith('THIEU') || new Date(r.created_at).getTime() < staleBefore),
+          attention: r.status !== 'paid' && ((r.reference ?? '').startsWith('THIEU') || (r.status === 'pending' && new Date(r.created_at).getTime() < staleBefore)),
         })),
       }
     },
