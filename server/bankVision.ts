@@ -55,12 +55,12 @@ export async function readExamPages(images: unknown, userId: string): Promise<{ 
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${t.key}`, ...(t.opencode ? OPENCODE_HEADERS : {}) },
           body: JSON.stringify({
             model: t.model,
-            max_tokens: MAX_TOKENS,
-            ...(t.opencode ? { reasoning_effort: 'low' } : {}),
+            max_tokens: t.opencode ? 64_000 : MAX_TOKENS,
+            ...(t.opencode ? { reasoning_effort: 'max' } : {}),
             messages: [{ role: 'user', content: [{ type: 'text', text: PROMPT }, ...pages.map((url) => ({ type: 'image_url', image_url: { url } }))] }],
           }),
           redirect: 'error',
-          signal: AbortSignal.timeout(TIMEOUT_MS),
+          signal: AbortSignal.timeout(t.opencode ? 240_000 : TIMEOUT_MS),
         })
         if (!r.ok) throw new Error(`HTTP ${r.status}`)
         const data = (await r.json()) as { choices?: Array<{ message?: { content?: string } }>; usage?: unknown }

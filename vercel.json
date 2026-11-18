@@ -9,7 +9,7 @@
     "api/extract.ts": { "maxDuration": 60 },
     "api/image.ts": { "maxDuration": 120 },
     "api/figure-sprite.ts": { "maxDuration": 120 },
-    "api/admin.ts": { "maxDuration": 180 }
+    "api/admin.ts": { "maxDuration": 300 }
   },
   "rewrites": [
     { "source": "/api/files/:key*", "destination": "/api/files?key=:key*" },
