@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
-import { LogOut, Menu, MessageSquare, X } from 'lucide-react'
+import { Coins, LogOut, Menu, MessageSquare, X } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import { useAnimatedPresence } from '@/lib/useAnimatedPresence'
 import { Button, inputClass } from '@/components/ui'
@@ -10,6 +10,8 @@ import { submitFeedback } from '@/lib/community'
 import { dialog } from '@/components/Dialog'
 import { Avatar } from '@/components/Avatar'
 import { usePricingAccess } from '@/lib/usePricingAccess'
+import { ContactLinks } from '@/components/ContactLinks'
+import { CONTACT } from '@/lib/contact'
 
 /**
  * Thanh nav chính — chỉ 4 mục, mỗi mục nằm trên MỘT dòng (không xuống
@@ -46,7 +48,7 @@ export function Header() {
   const location = useLocation()
   const session = useSession()
   const canPay = usePricingAccess() === true
-  const nav = canPay ? [...NAV, { to: '/bang-gia', label: 'Bảng giá' }] : NAV
+  const nav = NAV
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10)
@@ -99,9 +101,10 @@ export function Header() {
 
         <div className="ml-auto flex items-center gap-2">
           {canPay ? (
-            <Link to="/bang-gia" className="hidden xl:block">
-              <Button variant="primary" size="sm" className="whitespace-nowrap">
-                Nạp điểm
+            <Link to="/bang-gia" className="hidden lg:block" aria-label="Nạp điểm">
+              <Button variant="primary" size="sm" className="whitespace-nowrap max-xl:px-2.5" data-tip="Nạp điểm">
+                <Coins className="size-4 xl:hidden" />
+                <span className="max-xl:hidden">Nạp điểm</span>
               </Button>
             </Link>
           ) : null}
@@ -110,7 +113,7 @@ export function Header() {
             <div className="hidden items-center gap-1 md:flex">
               <Link
                 to="/ho-so"
-                className="flex max-w-[220px] items-center gap-2 rounded-full bg-cream py-1.5 pl-1.5 pr-3.5 text-[13px] font-semibold text-ink shadow-soft transition-colors hover:text-clay"
+                className="flex max-w-[150px] items-center gap-2 xl:max-w-[220px] rounded-full bg-cream py-1.5 pl-1.5 pr-3.5 text-[13px] font-semibold text-ink shadow-soft transition-colors hover:text-clay"
               >
                 <Avatar
                   src={session.user.avatar}
@@ -123,10 +126,12 @@ export function Header() {
               <button
                 type="button"
                 onClick={() => void signOut()}
-                className="flex shrink-0 items-center gap-1.5 rounded-full px-3 py-2 text-[13px] font-semibold text-ink-3 transition-colors hover:text-ink"
+                aria-label="Đăng xuất"
+                data-tip="Đăng xuất"
+                className="flex shrink-0 items-center gap-1.5 rounded-full px-3 py-2 text-[13px] font-semibold text-ink-3 transition-colors hover:text-ink max-xl:px-2"
               >
                 <LogOut className="size-3.5" />
-                Đăng xuất
+                <span className="max-xl:hidden">Đăng xuất</span>
               </button>
             </div>
           ) : (
@@ -176,7 +181,7 @@ export function Header() {
               </NavLink>
             ))}
             {canPay ? (
-              <Link to="/bang-gia" className="mt-2 block sm:hidden">
+              <Link to="/bang-gia" className="mt-2 block">
                 <Button variant="primary" className="w-full">
                   Nạp điểm
                 </Button>
@@ -296,8 +301,12 @@ export function Footer() {
         <div>
           <p className="eyebrow mb-3.5">Liên hệ</p>
           <ul className="space-y-2.5 text-[13px] text-ink-3">
-            <li>quanbinh@example.edu.vn</li>
-            <li>Zalo: 0909 000 000</li>
+            <li>
+              <a href={`mailto:${CONTACT.email}`} className="break-all hover:text-ink hover:underline">{CONTACT.email}</a>
+            </li>
+            <li>
+              <ContactLinks showEmail={false} />
+            </li>
             <li>
               <button
                 type="button"
@@ -326,8 +335,7 @@ export function Footer() {
               Hòm thư góp ý
             </button>
             <Link to="/quyen-rieng-tu" className="text-[12px] font-medium text-ink-3 hover:text-ink hover:underline">Quyền riêng tư</Link>
-            <Link to="/dieu-khoan" className="text-[12px] font-medium text-ink-3 hover:text-ink hover:underline">Điều khoản</Link>
-            <p className="text-[12px] font-semibold text-ink-3">Dành cho giáo viên Việt Nam</p>
+            <Link to="/dieu-khoan" className="text-[12px] font-medium text-ink-3 hover:text-ink hover:underline">Điều khoản</Link>            <p className="text-[12px] font-semibold text-ink-3">Dành cho giáo viên Việt Nam</p>
           </div>
         </div>
       </div>

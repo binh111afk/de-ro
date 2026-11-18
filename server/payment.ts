@@ -207,15 +207,35 @@ export async function reconcileOrder(orderCode: number): Promise<string | undefi
   const paid = validAmount(r.data?.amountPaid)
   const ref = r.data?.transactions?.[0]?.reference ?? 'tra-cuu'
   if (st === 'PAID' || st === 'UNDERPAID') {
-    // trả thiếu: hàm DB giữ đơn 'pending' + ghi chú để đối soát; trả đủ / dư thì cộng điểm
     const result = await credit(orderCode, paid, ref)
     if (result === 'error') return undefined
+    if (result === 'underpaid' && paid && (await creditPartial(orderCode, paid, ref)) === 'error') return undefined
   } else if (st === 'CANCELLED' || st === 'EXPIRED') {
     await db(`/payment_orders?order_code=eq.${orderCode}&status=eq.pending`, { method: 'PATCH', body: { status: st === 'CANCELLED' ? 'cancelled' : 'expired' } })
-    // đơn đã đóng mà có tiền về (trả một phần trước khi huỷ / hết hạn): cộng nếu đủ, thiếu thì ghi chú THIEU để admin thấy
-    if (paid) await credit(orderCode, paid, ref)
+    // đơn đã đóng mà có tiền về (trả trước khi huỷ / hết hạn): đủ thì cộng như thường, thiếu thì cộng theo giá nạp lẻ
+    if (paid && (await credit(orderCode, paid, ref)) === 'underpaid') await creditPartial(orderCode, paid, ref)
   }
   return st
+}
+
+/**
+ * Chuyển thiếu (điều khoản mục 7): khoá link PayOS để không nhận thêm tiền, đổi đơn thành đơn nạp lẻ đúng số tiền
+ * thực nhận (không thưởng gói) rồi cộng điểm. Đơn vẫn giữ ghi chú số tiền gốc để đối soát.
+ */
+async function creditPartial(orderCode: number, paid: number, ref: string) {
+  const { ok, data } = await db<Order[]>(`/payment_orders?select=vnd,status&order_code=eq.${orderCode}`)
+  const o = ok ? data?.[0] : undefined
+  if (!o || o.status === 'paid' || paid >= o.vnd) return ok ? 'skip' : 'error'
+  await loadServerPricing()
+  // quá ít tiền (chưa đủ 1 điểm): giữ ghi chú THIEU cho admin xử lý
+  if (basePoints(paid) < 1) return 'skip'
+  await payos(`/v2/payment-requests/${orderCode}/cancel`, { method: 'POST', body: { cancellationReason: 'Chuyển thiếu' } }).catch(() => undefined)
+  const patched = await db(`/payment_orders?order_code=eq.${orderCode}&status=neq.paid`, {
+    method: 'PATCH',
+    body: { vnd: paid, points: basePoints(paid), bonus_points: 0, pack_vnd: null },
+  })
+  if (!patched.ok) return 'error'
+  return credit(orderCode, paid, `THIEU ${paid}d/${o.vnd}d ${ref}`)
 }
 
 /**

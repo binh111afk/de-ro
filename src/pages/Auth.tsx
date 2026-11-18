@@ -34,6 +34,16 @@ const COPY: Record<Mode, { eyebrow: string; title: string; body: string; submit:
 }
 
 const MIN_PASSWORD = 8
+const TERMS_KEY = 'dero.terms-accepted'
+const TERMS_ERROR = 'Tick đồng ý Điều khoản sử dụng và Chính sách quyền riêng tư để tiếp tục.'
+
+function readAccepted() {
+  try {
+    return localStorage.getItem(TERMS_KEY) === '1'
+  } catch {
+    return false
+  }
+}
 
 export default function Auth({ mode }: { mode: Mode }) {
   const navigate = useNavigate()
@@ -46,6 +56,24 @@ export default function Auth({ mode }: { mode: Mode }) {
   const [error, setError] = useState<string | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
   const [recoveryToken, setRecoveryToken] = useState<string | null>(null)
+  const [accepted, setAccepted] = useState(readAccepted)
+  const needsTerms = mode === 'login' || mode === 'register'
+
+  const toggleAccepted = (v: boolean) => {
+    setAccepted(v)
+    if (v) setError((e) => (e === TERMS_ERROR ? null : e))
+    try {
+      if (v) localStorage.setItem(TERMS_KEY, '1')
+      else localStorage.removeItem(TERMS_KEY)
+    } catch {
+      /* chế độ riêng tư: chỉ nhớ trong trang này */
+    }
+  }
+
+  const google = () => {
+    if (!accepted) return setError(TERMS_ERROR)
+    void signInWithGoogle()
+  }
 
   // Link đặt lại mật khẩu từ email trả token trong hash: #access_token=...&type=recovery
   useEffect(() => {
@@ -60,6 +88,7 @@ export default function Auth({ mode }: { mode: Mode }) {
     setError(null)
     setNotice(null)
 
+    if (needsTerms && !accepted) return setError(TERMS_ERROR)
     if (mode === 'register' && !name.trim()) return setError('Nhập tên hiển thị của bạn.')
     if (mode === 'register' || mode === 'reset') {
       if (password.length < MIN_PASSWORD) return setError(`Mật khẩu cần ít nhất ${MIN_PASSWORD} ký tự.`)
@@ -129,11 +158,25 @@ export default function Auth({ mode }: { mode: Mode }) {
             </div>
           ) : (
             <form onSubmit={submit} className="space-y-3.5" noValidate>
-              {(mode === 'login' || mode === 'register') && (
+              {needsTerms && (
                 <>
+                  <label className="flex cursor-pointer items-start gap-2.5 text-[13.5px] leading-snug text-ink-2">
+                    <input
+                      type="checkbox"
+                      checked={accepted}
+                      onChange={(e) => toggleAccepted(e.target.checked)}
+                      className="mt-0.5 size-4 shrink-0 accent-clay"
+                    />
+                    <span>
+                      Tôi đồng ý với{' '}
+                      <Link to="/dieu-khoan" target="_blank" className="font-semibold text-clay hover:underline">Điều khoản sử dụng</Link>
+                      {' '}và{' '}
+                      <Link to="/quyen-rieng-tu" target="_blank" className="font-semibold text-clay hover:underline">Chính sách quyền riêng tư</Link>
+                    </span>
+                  </label>
                   <button
                     type="button"
-                    onClick={signInWithGoogle}
+                    onClick={google}
                     className="flex h-11 w-full items-center justify-center gap-3 rounded-[6px] border border-[#dadce0] bg-white text-[14.5px] font-medium text-[#1f1f1f] transition-colors hover:bg-[#f8f9fa]"
                   >
                     <GoogleLogo />

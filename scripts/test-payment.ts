@@ -77,7 +77,8 @@ globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
       return new Response(JSON.stringify([row]), { status: 201 })
     }
     let rows = orders.filter((r) => (!eq('order_code') || String(r.order_code) === eq('order_code')) && (!eq('user_id') || r.user_id === eq('user_id')))
-    if (eq('status')) rows = rows.filter((r) => r.status === eq('status'))
+    if (q.get('status')?.startsWith('neq.')) rows = rows.filter((r) => r.status !== q.get('status')!.slice(4))
+    else if (eq('status') && !q.get('status')?.startsWith('in.(')) rows = rows.filter((r) => r.status === eq('status'))
     if (q.get('status')?.startsWith('in.(')) rows = rows.filter((r) => q.get('status')!.slice(4, -1).split(',').includes(r.status))
     if (q.get('bonus_points') === 'gt.0') rows = rows.filter((r) => r.bonus_points > 0)
     if (method === 'PATCH') {
@@ -140,7 +141,7 @@ async function call(method: string, path: string, opts: { body?: unknown; auth?:
 const U = 'user-a'
 const tk = token(U)
 
-check('trang nạp đóng: người không phải admin tạo đơn → 403', (await call('POST', '/api/pay', { body: { vnd: 10000 }, auth: token('user-b') })).status === 403)
+check('trang nạp mở: người dùng thường tạo đơn → 200', (await call('POST', '/api/pay', { body: { vnd: 10000 }, auth: token('user-b') })).status === 200)
 check('khách tạo đơn → 401', (await call('POST', '/api/pay', { body: { vnd: 10000 } })).status === 401)
 check('số tiền ngoài khoảng → 400', (await call('POST', '/api/pay', { body: { vnd: 500 }, auth: tk })).status === 400)
 check('số tiền lẻ (không bội 1.000) → 400', (await call('POST', '/api/pay', { body: { vnd: 10500 }, auth: tk })).status === 400)
@@ -160,10 +161,6 @@ const hook = (data: Record<string, unknown>, sig?: string) =>
   call('POST', '/api/pay?webhook=1', { origin: null, body: { code: '00', desc: 'success', success: true, data, signature: sig ?? signData('checksum-secret', data) } })
 check('webhook chữ ký sai → 401, không cộng', (await hook(hookData, 'ab'.repeat(32))).status === 401 && !balance.get(U))
 check('webhook sửa số tiền (chữ ký cũ) → 401', (await hook({ ...hookData, amount: 1 }, signData('checksum-secret', hookData))).status === 401)
-// Strix a70c: webhook không tin `amount` trong body, số tiền lấy từ PayOS (amountPaid)
-payosStatus = 'UNDERPAID'
-payosPaid = 1000
-check('webhook ghi đủ tiền nhưng PayOS báo trả thiếu → không cộng', (await hook(hookData)).status === 200 && o1.status === 'pending' && !balance.get(U))
 payosStatus = 'PAID'
 payosPaid = 'full'
 check('webhook hợp lệ → 200, cộng 275 điểm', (await hook(hookData)).status === 200 && balance.get(U) === 275_000)
@@ -189,16 +186,27 @@ const before = balance.get(U)
 payosPaid = 'none'
 const s4 = await call('GET', `/api/pay?order=${o4.order_code}`, { auth: tk })
 check('PAID nhưng thiếu amountPaid → vẫn pending, không cộng', s4.data.status === 'pending' && balance.get(U) === before)
-payosPaid = 3000
-const s5 = await call('GET', `/api/pay?order=${o4.order_code}`, { auth: tk })
-check('PAID với số tiền ít hơn đơn → vẫn pending, không cộng', s5.data.status === 'pending' && balance.get(U) === before)
-payosStatus = 'UNDERPAID'
-const s6 = await call('GET', `/api/pay?order=${o4.order_code}`, { auth: tk })
-check('UNDERPAID → vẫn pending (tra lại được), không cộng', s6.data.status === 'pending' && balance.get(U) === before)
-payosStatus = 'PAID'
 payosPaid = 'full'
 const s7 = await call('GET', `/api/pay?order=${o4.order_code}`, { auth: tk })
-check('sau đó trả đủ → tra lại được và cộng điểm', s7.data.status === 'paid' && balance.get(U)! > before!)
+check('sau đó PayOS báo số tiền đủ → tra lại được và cộng điểm', s7.data.status === 'paid' && balance.get(U)! > before!)
+// chuyển thiếu: cộng theo giá nạp lẻ trên số tiền thực nhận, đóng link PayOS
+const oU = (await call('POST', '/api/pay', { body: { vnd: 10000 }, auth: tk }), orders[orders.length - 1])
+payosStatus = 'UNDERPAID'
+payosPaid = 4000
+const balU = balance.get(U)!
+const sU = await call('GET', `/api/pay?order=${oU.order_code}`, { auth: tk })
+check('UNDERPAID 4.000đ/10.000đ → cộng 100 điểm (nạp lẻ), đơn paid ghi số tiền thật', sU.data.status === 'paid' && balance.get(U) === balU + 100_000 && oU.vnd === 4000 && oU.bonus_points === 0)
+// Strix a70c: webhook không tin `amount` trong body (10.000đ), số tiền lấy từ PayOS
+const oW = (await call('POST', '/api/pay', { body: { vnd: 10000 }, auth: tk }), orders[orders.length - 1])
+payosPaid = 2000
+const balW = balance.get(U)!
+check('webhook ghi 10.000đ nhưng PayOS báo 2.000đ → chỉ cộng 50 điểm', (await hook({ ...hookData, orderCode: oW.order_code })).status === 200 && balance.get(U) === balW + 50_000)
+payosPaid = 10
+const oT = (await call('POST', '/api/pay', { body: { vnd: 10000 }, auth: tk }), orders[orders.length - 1])
+const balT = balance.get(U)!
+check('chuyển quá ít (chưa đủ 1 điểm) → không cộng, đơn còn để admin xử lý', (await call('GET', `/api/pay?order=${oT.order_code}`, { auth: tk })).status === 200 && oT.status === 'pending' && balance.get(U) === balT)
+payosStatus = 'PAID'
+payosPaid = 'full'
 const o5 = (await call('POST', '/api/pay', { body: { vnd: 3000 }, auth: tk }), orders[orders.length - 1])
 const bal5 = balance.get(U)
 payosPaid = 'none'
@@ -266,7 +274,7 @@ payosPaid = 1000
 const o12 = (await call('POST', '/api/pay', { body: { vnd: 2000 }, auth: tk }), orders[orders.length - 1])
 o12.status = 'cancelled'
 const bal12 = balance.get(U)!
-check('đơn huỷ có tiền về thiếu → không cộng, vẫn tra được', (await call('GET', `/api/pay?order=${o12.order_code}`, { auth: tk })).status === 200 && o12.status === 'cancelled' && balance.get(U) === bal12)
+check('đơn huỷ có tiền về thiếu 1.000đ → cộng 25 điểm', (await call('GET', `/api/pay?order=${o12.order_code}`, { auth: tk })).status === 200 && o12.status === 'paid' && balance.get(U) === bal12 + 25_000)
 payosPaid = 'full'
 
 // thiếu cấu hình
