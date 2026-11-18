@@ -174,8 +174,8 @@ payosStatus = 'PAID'
 const st = await call('GET', `/api/pay?order=${o3.order_code}`, { auth: tk })
 check('PayOS báo đã trả → tra đơn tự cộng điểm (575)', st.data.status === 'paid' && balance.get(U) === 275_000 + 575_000)
 // Strix ce3e: số tiền thiếu / lệch / trả thiếu không được làm đơn 'failed' vĩnh viễn, cũng không được cộng điểm
-const before = balance.get(U)
 const o4 = (await call('POST', '/api/pay', { body: { vnd: 5000 }, auth: tk }), orders[orders.length - 1])
+const before = balance.get(U)
 payosPaid = 'none'
 const s4 = await call('GET', `/api/pay?order=${o4.order_code}`, { auth: tk })
 check('PAID nhưng thiếu amountPaid → vẫn pending, không cộng', s4.data.status === 'pending' && balance.get(U) === before)
@@ -226,6 +226,23 @@ const o7 = (await call('POST', '/api/pay', { body: { vnd: 4000 }, auth: tk }), o
 payosStatus = 'PAID'
 const sy = await admin('payments.sync', { orderCode: o7.order_code })
 check('Hỏi PayOS: PayOS báo đã trả → đơn paid, cộng điểm', sy.status === 200 && sy.data.status === 'paid' && o7.status === 'paid')
+
+// huỷ đơn: đóng khung / tạo đơn mới
+payosStatus = 'PENDING'
+const o8 = (await call('POST', '/api/pay', { body: { vnd: 2000 }, auth: tk }), orders[orders.length - 1])
+check('khách khác huỷ đơn của mình → 404, đơn vẫn chờ', (await call('POST', `/api/pay?cancel=${o8.order_code}`, { auth: token('user-b') })).status === 404 && o8.status === 'pending')
+payosStatus = 'CANCELLED'
+const cx = await call('POST', `/api/pay?cancel=${o8.order_code}`, { auth: tk })
+check('huỷ đơn của mình → cancelled', cx.status === 200 && cx.data.status === 'cancelled' && o8.status === 'cancelled')
+payosStatus = 'PENDING'
+const o9 = (await call('POST', '/api/pay', { body: { vnd: 2000 }, auth: tk }), orders[orders.length - 1])
+payosStatus = 'CANCELLED'
+const o10 = (await call('POST', '/api/pay', { body: { vnd: 2000 }, auth: tk }), orders[orders.length - 1])
+check('tạo đơn mới → đơn chờ cũ bị huỷ, đơn mới vẫn chờ', o9.status === 'cancelled' && o10.status === 'pending')
+payosStatus = 'PAID'
+const bal10 = balance.get(U)!
+const c10 = await call('POST', `/api/pay?cancel=${o10.order_code}`, { auth: tk })
+check('huỷ đơn lỡ đã trả → vẫn cộng điểm, báo paid', c10.data.status === 'paid' && balance.get(U) === bal10 + 50_000)
 
 // thiếu cấu hình
 delete process.env.PAYOS_CHECKSUM_KEY

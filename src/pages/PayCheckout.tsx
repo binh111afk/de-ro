@@ -7,7 +7,8 @@ import qrcode from 'qrcode-generator'
 import { Check, Copy, X } from 'lucide-react'
 import { Portal } from '@/components/Portal'
 import { Spinner } from '@/components/ui'
-import { paymentStatus, type PaymentOrder } from '@/lib/payClient'
+import { dialog } from '@/components/Dialog'
+import { cancelPayment, paymentStatus, type PaymentOrder } from '@/lib/payClient'
 
 /** BIN Napas → tên ngân hàng (các ngân hàng PayOS hay liên kết); lạ thì hiện mã */
 const BANKS: Record<string, string> = {
@@ -59,10 +60,10 @@ function CopyRow({ label, value, copy }: { label: string; value: string; copy?: 
     })
   }
   return (
-    <div className="flex items-center justify-between gap-3 py-2">
-      <span className="shrink-0 text-[0.8125rem] text-ink-3">{label}</span>
+    <div className="flex items-center justify-between gap-3 py-2 md:py-2.5">
+      <span className="shrink-0 text-[0.8125rem] text-ink-3 md:text-[0.875rem]">{label}</span>
       <span className="flex min-w-0 items-center gap-1.5">
-        <span className="truncate text-right text-[0.875rem] font-semibold text-ink tnum">{value}</span>
+        <span className="truncate text-right text-[0.875rem] font-semibold text-ink tnum md:text-[0.9375rem]">{value}</span>
         {copy ? (
           <button
             type="button"
@@ -123,14 +124,36 @@ export function PayCheckout({
     box.current?.focus()
   }, [])
 
+  const closing = useRef(false)
+  // đóng khi mã còn hạn = huỷ giao dịch (không để đơn treo); lỡ tiền đã về thì server vẫn cộng điểm
+  const close = async () => {
+    if (closing.current) return
+    if (expired) return onClose()
+    closing.current = true
+    const ok = await dialog.confirm('Nếu đã chuyển khoản, hãy chờ thêm vài giây để hệ thống xác nhận.', {
+      title: 'Huỷ giao dịch?',
+      confirmLabel: 'Huỷ giao dịch',
+      cancelLabel: 'Tiếp tục chờ',
+      danger: true,
+    })
+    if (!ok) {
+      closing.current = false
+      box.current?.focus()
+      return
+    }
+    const o = await cancelPayment(order.orderCode).catch(() => null)
+    if (o?.status === 'paid') return onPaid(o.points)
+    onClose()
+  }
+
   const mm = String(Math.floor(left / 60000)).padStart(2, '0')
   const ss = String(Math.floor((left % 60000) / 1000)).padStart(2, '0')
 
   return (
     <Portal>
       <div
-        className="fixed inset-0 z-[300] flex items-center justify-center overflow-y-auto bg-ink/40 px-4 py-6 backdrop-blur-sm"
-        onMouseDown={(e) => e.target === e.currentTarget && onClose()}
+        className="fixed inset-0 z-[150] flex items-center justify-center overflow-y-auto bg-ink/40 px-4 py-6 backdrop-blur-sm"
+        onMouseDown={(e) => e.target === e.currentTarget && void close()}
       >
         <div
           ref={box}
@@ -138,17 +161,17 @@ export function PayCheckout({
           role="dialog"
           aria-modal="true"
           aria-label={`Thanh toán ${fmt(order.vnd)}đ`}
-          onKeyDown={(e) => e.key === 'Escape' && onClose()}
-          className="anim-pop my-auto w-full max-w-[25rem] rounded-[12px] bg-surface shadow-float outline-none"
+          onKeyDown={(e) => e.key === 'Escape' && void close()}
+          className="anim-pop my-auto w-full max-w-[25rem] rounded-[12px] bg-surface shadow-float outline-none md:max-w-[46rem] 2xl:max-w-[54rem]"
         >
-          <div className="flex items-center justify-between px-5 pb-1 pt-4">
+          <div className="flex items-center justify-between px-5 pb-1 pt-4 md:px-7 md:pt-6">
             <div>
-              <div className="text-[1.125rem] font-bold text-ink tnum">{fmt(order.vnd)}đ</div>
-              <div className="text-[0.8125rem] text-ink-3 tnum">{fmt(order.points)} điểm AI</div>
+              <div className="text-[1.125rem] font-bold text-ink tnum md:text-[1.375rem]">{fmt(order.vnd)}đ</div>
+              <div className="text-[0.8125rem] text-ink-3 tnum md:text-[0.875rem]">{fmt(order.points)} điểm AI</div>
             </div>
             <button
               type="button"
-              onClick={onClose}
+              onClick={() => void close()}
               className="grid size-8 place-items-center rounded-full text-ink-3 transition-colors hover:bg-sunken hover:text-ink"
               aria-label="Đóng"
               data-tip="Đóng"
@@ -157,8 +180,9 @@ export function PayCheckout({
             </button>
           </div>
 
-          <div className="px-5 pt-3">
-            <div className="relative mx-auto aspect-square w-[13.5rem] max-w-full overflow-hidden rounded-[10px] border border-line bg-white p-1.5">
+          <div className="md:grid md:grid-cols-[auto_1fr] md:items-center md:gap-7 md:px-7 md:pb-7 md:pt-4">
+          <div className="px-5 pt-3 md:px-0 md:pt-0">
+            <div className="relative mx-auto aspect-square w-[13.5rem] max-w-full md:w-[18rem] 2xl:w-[21rem] overflow-hidden rounded-[10px] border border-line bg-white p-1.5">
               {order.qrCode ? <QrSvg text={order.qrCode} /> : null}
               {expired ? (
                 <div className="absolute inset-0 grid place-items-center bg-white/90 text-[0.875rem] font-semibold text-ink-2">Mã đã hết hạn</div>
@@ -176,12 +200,13 @@ export function PayCheckout({
             </div>
           </div>
 
-          <div className="mx-5 mb-5 mt-4 divide-y divide-line rounded-[10px] border border-line px-3.5">
+          <div className="mx-5 mb-5 mt-4 divide-y divide-line rounded-[10px] border border-line px-3.5 md:m-0 md:px-4 md:py-1">
             <CopyRow label="Ngân hàng" value={BANKS[order.bin] ?? order.bin} />
             <CopyRow label="Số tài khoản" value={order.accountNumber} copy={order.accountNumber} />
             <CopyRow label="Chủ tài khoản" value={order.accountName} />
             <CopyRow label="Số tiền" value={`${fmt(order.vnd)}đ`} copy={String(order.vnd)} />
             <CopyRow label="Nội dung" value={order.description} copy={order.description} />
+          </div>
           </div>
         </div>
       </div>

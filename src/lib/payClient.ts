@@ -39,6 +39,11 @@ export function createPayment(vnd: number) {
   })
 }
 
+/** huỷ đơn đang chờ (trả trạng thái sau khi huỷ: lỡ đã trả thì vẫn là 'paid') */
+export function cancelPayment(orderCode: number) {
+  return call<{ orderCode: number; status: PayStatus; vnd: number; points: number }>(`/api/pay?cancel=${orderCode}`, { method: 'POST' })
+}
+
 export type PayStatus = 'pending' | 'paid' | 'cancelled' | 'expired' | 'failed'
 export function paymentStatus(orderCode: number) {
   return call<{ orderCode: number; status: PayStatus; vnd: number; points: number }>(`/api/pay?order=${orderCode}`)

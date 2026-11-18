@@ -138,6 +138,8 @@ async function createOrder(req: IncomingMessage, res: ServerResponse, userId: st
   if (!Number.isFinite(vnd) || vnd < MIN_VND || vnd > MAX_VND || vnd % 1000 !== 0) {
     return json(res, 400, { error: `Số tiền nạp từ ${MIN_VND.toLocaleString('vi-VN')}đ đến ${MAX_VND.toLocaleString('vi-VN')}đ, bội số 1.000đ.` })
   }
+  // mỗi người chỉ giữ một đơn chờ: đơn cũ (khung đã tắt) huỷ luôn
+  await cancelOwnPending(userId)
   const pack = PACKS.find((p) => p.vnd === vnd) ?? null
   const firstTime = pack ? !(await bonusedPacks(userId)).includes(pack.vnd) : false
   const points = pack ? packPoints(pack, firstTime) : basePoints(vnd)
@@ -209,6 +211,23 @@ export async function reconcileOrder(orderCode: number): Promise<string | undefi
   return st
 }
 
+/**
+ * Người dùng đóng khung / tạo đơn mới: huỷ link PayOS rồi hỏi lại trạng thái.
+ * Lỡ tiền đã về (PayOS từ chối huỷ) thì reconcile vẫn cộng điểm như thường.
+ */
+async function cancelOrder(orderCode: number) {
+  await payos(`/v2/payment-requests/${orderCode}/cancel`, { method: 'POST', body: { cancellationReason: 'Người dùng huỷ' } })
+  return reconcileOrder(orderCode)
+}
+
+async function cancelOwnPending(userId: string, only?: number) {
+  const { data } = await db<Order[]>(
+    `/payment_orders?select=order_code&user_id=eq.${userId}&status=eq.pending${only ? `&order_code=eq.${only}` : ''}&limit=20`,
+  )
+  await Promise.all((data ?? []).map((o) => cancelOrder(Number(o.order_code)).catch(() => undefined)))
+  return (data ?? []).length
+}
+
 /** cộng điểm tay cho đơn (admin đã đối soát tiền về tài khoản); dùng đúng số tiền của đơn */
 export async function creditOrderManually(orderCode: number, vnd: number, note: string) {
   return credit(orderCode, vnd, `TAY ${note}`.slice(0, 120))
@@ -266,6 +285,12 @@ export async function handlePayRequest(req: IncomingMessage, res: ServerResponse
   if (!payosConfigured()) return json(res, 503, { error: 'Thanh toán chưa mở, bạn quay lại sau nhé.', notConfigured: true })
 
   try {
+    if (req.method === 'POST' && url.searchParams.has('cancel')) {
+      const order = Number(url.searchParams.get('cancel'))
+      if (!Number.isSafeInteger(order) || order <= 0) return json(res, 400, { error: 'Mã đơn không hợp lệ.' })
+      await cancelOwnPending(userId, order)
+      return await orderStatus(res, userId, order)
+    }
     if (req.method === 'POST') return await createOrder(req, res, userId)
     if (req.method === 'GET') {
       const order = Number(url.searchParams.get('order'))
