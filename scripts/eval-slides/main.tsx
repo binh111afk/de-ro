@@ -11,9 +11,8 @@ import '@fontsource/be-vietnam-pro/700.css'
 import '@/index.css'
 import { createRoot } from 'react-dom/client'
 import { SlideThumb } from '@/examEditor/SlideEditor'
-import { AI_EFFORT, SLIDE_BATCH, SLIDE_PLAN_SYSTEM, generateSlide, generateSlideBatch, polishSlide } from '@/examEditor/AiPanel'
+import { AI_EFFORT, SLIDE_BATCH, generateSlide, generateSlideBatch, polishSlide } from '@/examEditor/AiPanel'
 import { parseAsk } from '@/examEditor/AiAskPanel'
-import { ASK_RULE } from '@/lib/prompts/common'
 import { callLlm } from '@/lib/llm'
 import { parseDeckPlan } from '@/lib/aiDeck'
 import { dropRepeatedGraphic, slideFromAi, withImage } from '@/lib/slideAi'
@@ -57,8 +56,9 @@ async function main() {
   const t0 = performance.now()
 
   const res = await callLlm(
-    [{ role: 'system', content: SLIDE_PLAN_SYSTEM + ASK_RULE }, { role: 'user', content: topic }],
-    { signal: controller.signal, reasoningEffort: AI_EFFORT.slide },
+    [{ role: 'user', content: topic }],
+    // prompt dàn ý do SERVER ghép từ task (đúng đường app chạy)
+    { signal: controller.signal, reasoningEffort: AI_EFFORT.slide, task: { name: 'slide-chat', input: { variant: 'plan', ask: true } } },
   )
   const ask = parseAsk(res.content)
   if (ask) {

@@ -5,7 +5,7 @@
 import { DIFFICULTY_RULE } from '../difficulty.js'
 import { ASK_RULE, THINK_VI } from './common.js'
 import { figureGuideFor } from './figureGuide.js'
-import { sourcePrompt, sourceRule, type PromptSource } from './sources.js'
+import { sourceSection, webSection, type SourceInput } from './sources.js'
 
 /**
  * Phạm vi trả lời — áp cho cả hai chế độ. Web này là công cụ soạn đề/bài giảng;
@@ -127,7 +127,7 @@ export const ASK_ONLY_SYSTEM =
  * ------------------------------------------------------------------ */
 
 /** Dữ liệu người dùng client gửi cho lượt soạn đề (không có chữ prompt nào). */
-export interface ExamTaskInput {
+export interface ExamTaskInput extends SourceInput {
   /** yêu cầu của người dùng ở lượt này */
   text: string
   /** bản rút gọn tài liệu hiện tại, mỗi dòng "[id] loại: nội dung" */
@@ -135,12 +135,6 @@ export interface ExamTaskInput {
   contextSummary?: string
   /** bật luật hỏi lại khi yêu cầu mơ hồ */
   ask?: boolean
-  /** lượt có phần "nguồn" (soạn/sửa đề hoặc có nguồn giáo viên chọn) */
-  withSources?: boolean
-  sourceTier?: number
-  sources?: PromptSource[]
-  /** đoạn khung chương trình (client dựng từ dữ liệu công khai) */
-  khung?: string
   /** tóm tắt tìm trên web (chế độ Tìm trên web) */
   webFound?: string
   /** bắt model suy nghĩ bằng tiếng Việt (lượt có nhật ký suy nghĩ) */
@@ -153,13 +147,5 @@ export function buildExamSystem(i: ExamTaskInput): string {
     examSystemPrompt(i.digest, `${i.text}\n${ctx ?? ''}`) +
     (i.ask ? ASK_RULE : '') +
     (ctx ? `\nTài liệu hiện tại: ${ctx}` : '')
-  const items = i.sources ?? []
-  const sourceText = sourcePrompt(items)
-  const sourceBlock = i.withSources
-    ? `\n\n${sourceRule(i.sourceTier ?? 0)}${sourceText ? `\n\n${sourceText}` : ''}${i.khung ? `\n\n${i.khung}` : ''}`
-    : ''
-  const web = i.webFound
-    ? `\n\nNGUỒN TÌM TRÊN WEB (số liệu mới, ưu tiên dùng; số liệu lấy từ đây thì ghi nguồn ngắn trong đề/slide):\n${i.webFound.trim()}`
-    : ''
-  return system + sourceBlock + web + (i.think ? THINK_VI : '')
+  return system + sourceSection(i) + webSection(i.webFound) + (i.think ? THINK_VI : '')
 }

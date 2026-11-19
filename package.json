@@ -54,6 +54,8 @@
     "test:ai-abuse": "tsx scripts/test-ai-abuse.ts",
     "test:ai-stream": "tsx scripts/test-ai-stream.ts",
     "test:ai-prompts": "tsx scripts/test-ai-prompts.ts",
+    "test:ai-prompts-slide": "tsx scripts/test-ai-prompts-slide.ts",
+    "build:prompts": "node scripts/build-server-prompts.mjs --write",
     "test:admin-content": "tsx scripts/test-admin-content.ts",
     "test:admin-bank": "tsx scripts/test-admin-bank.ts",
     "test:admin-stats": "tsx scripts/test-admin-stats.ts",

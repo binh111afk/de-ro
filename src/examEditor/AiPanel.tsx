@@ -18,28 +18,23 @@ import {
   parseAiObject,
   parseDeckPlan,
   summarizeAiDeck,
-  slideCatalogText,
   type AiSlidePayload,
   type DeckPlan,
   type DeckPlanSlide,
 } from '@/lib/aiDeck'
-import { batchSystemPrompt, checkSlide, dropRepeatedGraphic, pageSystemPrompt, parseBatchSlides, planDecorKit, repairPrompt } from '@/lib/slideAi'
+import { checkSlide, dropRepeatedGraphic, parseBatchSlides, planDecorKit, repairPrompt } from '@/lib/slideAi'
 import { DECK_THEMES } from '@/lib/slideTheme'
 import { designById } from '@/lib/slideDesigns'
-import { HTML_DECK_SYSTEM } from '@/lib/htmlDeckPrompt'
 import { splitHtmlDeck } from '@/lib/htmlDeck'
-import { editSystemPrompt, looksLikeEdit, parseEditCommands, type SlideEditOp } from '@/lib/slideEdit'
+import { looksLikeEdit, parseEditCommands, type SlideEditOp } from '@/lib/slideEdit'
 import { useSlidingThumb } from './useSlidingThumb'
-import { buildSourcePack, loadPickedSources, pickedKey, sourcePrompt, sourceRule, type PickedSource, type SourcePack } from '@/lib/sources'
+import { buildSourcePack, loadPickedSources, pickedKey, type PickedSource, type SourcePack } from '@/lib/sources'
 import { BookOpen, Globe, RotateCcw, ThumbsDown, ThumbsUp } from 'lucide-react'
 import type { AiApplyResult } from '@/lib/aiDocContext'
 import { looksLikeComplaint, nearlySame, rememberAiTurn, reportAi } from '@/lib/aiFeedback'
 import { dialog } from '@/components/Dialog'
 import { SourcePicker } from './SourcePicker'
 import { cn } from '@/lib/cn'
-import { FIGURE_GUIDE } from '@/lib/docRewrite'
-import { ASK_RULE, THINK_VI } from '@/lib/prompts/common'
-import type { ExamTaskInput } from '@/lib/prompts/exam'
 import { AI_ATTACH_EVENT, takeAiRefs, type AiRef } from '@/lib/aiAttach'
 import { extractJson } from '@/lib/llm'
 import aiThinkingAnim from '@/assets/ai-assistant.svg'
@@ -285,27 +280,6 @@ const BOARD_STARTERS = [
   },
 ]
 
-const BOARD_SYSTEM =
-  'Bạn là trợ lý của giáo viên Việt Nam đang giảng bài trên bảng vẽ điện tử (vẽ tay bằng bút, có hình khối, ' +
-  'mũi tên, chữ, đồ thị chèn từ công cụ). Trả lời bằng tiếng Việt, ngắn gọn, dễ làm theo khi đang đứng lớp: ' +
-  'gợi ý cách vẽ hình minh hoạ từng bước, cách chia bố cục bảng, ví dụ ngắn giải được trên bảng, câu hỏi gợi mở. ' +
-  'Công thức toán trong câu trả lời chữ viết bằng LaTeX trong $...$.'
-
-/** lệnh vẽ của bảng vẽ: AI trả JSON {"say","ops"} thì bảng vẽ thực hiện */
-const BOARD_OPS_GUIDE =
-  '\n\nBẠN VẼ ĐƯỢC LÊN BẢNG. Khi người dùng nhờ vẽ, ghi, đổi hoặc xoá thứ gì trên bảng, CHỈ trả về một JSON (không bọc markdown): ' +
-  '{"say":"câu ngắn báo đã làm gì","ops":[...]}. Câu hỏi bình thường thì trả lời bằng chữ như thường, không JSON.\n' +
-  'Toạ độ là đơn vị của bảng (x sang phải, y xuống dưới), đặt hình trong vùng đang nhìn thấy (xem "Vùng nhìn thấy"), ' +
-  'chừa khoảng cách để không đè lên hình có sẵn. Màu dạng "#rrggbb". Các lệnh:\n' +
-  '- {"op":"figure","figure":{...cấu hình hình vẽ, xem danh sách bên dưới},"x":100,"y":80,"w":360} — đồ thị, bảng biến thiên, hình học, mạch điện… vẽ CHUẨN bằng công cụ có sẵn. Ưu tiên lệnh này cho mọi hình toán, lí, hoá.\n' +
-  '- {"op":"shape","shape":"rectangle|ellipse|diamond","x":0,"y":0,"w":160,"h":90,"stroke":"#1e1e1e","fill":"transparent|#rrggbb","fillStyle":"hachure|solid|glass","strokeStyle":"solid|dashed|dotted","strokeWidth":2,"rough":true,"label":"chữ ở giữa (tuỳ chọn)"}\n' +
-  '- {"op":"line","arrow":true,"points":[[x1,y1],[x2,y2]],"stroke":"#1e1e1e","strokeStyle":"solid","strokeWidth":2} — mũi tên / đường thẳng / đường gấp khúc.\n' +
-  '- {"op":"text","text":"...","x":0,"y":0,"fontSize":24,"color":"#1e1e1e"} — chữ thường, không LaTeX.\n' +
-  '- {"op":"pen","pen":"pencil|ball|fountain|brush|marker|highlight","color":"#1e1e1e","width":2,"points":[[x,y],...]} — nét vẽ tay bằng bút; hoặc thay "points" bằng "curve":{"type":"circle|ellipse|wave|star|polygon","cx":0,"cy":0,"r":60,"rx":80,"ry":50,"n":5,"len":300,"amp":20,"points":[[x,y],...]}. Chỉ dùng khi người dùng muốn vẽ bằng bút; hình phức tạp thì giữ đơn giản.\n' +
-  '- {"op":"update","id":"<id>","stroke":"#...","fill":"#...","x":0,"y":0,"w":0,"h":0,"text":"..."} — sửa hình có sẵn (id trong danh sách hình trên bảng hoặc phần đang chọn).\n' +
-  '- {"op":"delete","ids":["<id>",...]}\n' +
-  'Cấu hình "figure" (giống công cụ của app):\n' + FIGURE_GUIDE
-
 function RefIcon() {
   return (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -399,79 +373,7 @@ function ThinkingLine({ mode, intent }: { mode: AiMode; intent?: 'doc' | 'chat' 
   )
 }
 
-/** system prompt khi đang soạn slide — yêu cầu JSON dạng deck */
-const SLIDE_SYSTEM =
-  'Bạn là trợ lý AI của trình soạn bài trình bày tiếng Việt. Trả lời ngắn gọn, đúng ngữ pháp. ' +
-  'Khi được yêu cầu sinh hoặc sửa nội dung slide, trả về JSON hợp lệ theo cấu trúc ' +
-  '{"title":"...","slides":[{"layout":"bullets","title":"...","bullets":["..."],"notes":["..."]}]} . ' +
-  'Mỗi slide chọn "layout" trong: title, section, statement, bullets, cards, two-column, ' +
-  'comparison, quote, closing, agenda, table, image-left, image-right, image-full, stats, ' +
-  'stat-image, timeline, cycle, quiz, example, hook, mindmap. ' +
-  'Field theo layout: title/section/closing dùng {title, kicker, subtitle}; statement dùng ' +
-  '{kicker, body (một câu lớn), author}; bullets dùng {title, kicker, bullets (2-4 ý ngắn)}; ' +
-  'cards dùng {title, items (2-5 thẻ)}; two-column dùng {title, left (2-3 ý), right (2-3 ý)}; ' +
-  'comparison dùng {title, leftTitle, left, rightTitle, right}; quote dùng {quote, author}; ' +
-  'agenda dùng {kicker, title, items (3-5 mục)}; table dùng {title, rows (2-6 hàng × 2-6 cột)}; ' +
-  'image-left/image-right/image-full dùng {title, bullets (2-4) hoặc body, image (tuỳ chọn)}; ' +
-  'stats dùng {title, stats (1-4 mục {value, label})}; stat-image dùng {title, stats (1-2), image}; ' +
-  'timeline/cycle dùng {title, steps (3-5 bước)}; mindmap dùng {title, body (chủ đề giữa), items (3-6 nhánh dạng "Nhãn: ý con; ý con")}; quiz dùng ' +
-  '{kicker, question, options (2-4 phương án), answer (chỉ số 0-based hoặc "A"), explanation}; ' +
-  'example dùng {title, problem (đề bài), steps (2-4 bước giải), conclusion}; ' +
-  'hook dùng {kicker, title, body (câu hỏi mở bài), items (2-3 gợi ý ngắn)}. ' +
-  '"tone" tuỳ chọn: theme | soft | accent; thiếu thì theo mặc định của layout. "notes" là mảng ' +
-  'chuỗi ghi chú trình bày (tuỳ chọn). Công thức toán viết bằng ký tự Unicode (², √, ·, ×, Δ…), ' +
-  'không dùng LaTeX. Không thêm trường khác, không bọc markdown.'
-
-/** Chế độ HTML: model tự dựng một tệp HTML tự chứa (brief trong lib/htmlDeckPrompt). */
-const HTML_SYSTEM = HTML_DECK_SYSTEM
-
-/**
- * Lượt 1 của pipeline slide (chặng 26a): lập dàn ý + chọn style, chưa viết nội
- * dung chi tiết. Người dùng duyệt dàn ý rồi mới gọi lượt sinh deck.
- */
-export const SLIDE_PLAN_SYSTEM =
-  'Bạn là trợ lý AI của trình soạn bài trình bày tiếng Việt. Nhiệm vụ: LẬP DÀN Ý, ' +
-  'chưa viết nội dung chi tiết. Chỉ trả về DUY NHẤT một JSON hợp lệ (không bọc markdown, ' +
-  'không chữ ngoài JSON):\n' +
-  '{"title":"...","theme":"<id>","stylePack":"<id>","decorKit":"<id>","design":"<id>","subject":"<id>","audience":"...","style":"...","mainIdeas":["..."],' +
-  '"slides":[{"title":"...","layout":"<id>","tone":"theme|soft|accent","kicker":"...","brief":"..."}]}\n\n' +
-  slideCatalogText() +
-  '\n\nQUY TẮC:\n' +
-  '- Nếu người dùng yêu cầu làm theo một bộ thiết kế cụ thể (ví dụ "theo thiết kế Thanh lịch", "giống mẫu bảng đen", "kiểu tối giản"…), hãy điền "design": "<id>" đúng bộ thiết kế đó, chọn đúng "theme", "decorKit", "stylePack" tương ứng và bám theo nhịp bố cục của bộ.\n' +
-  '- Số slide theo yêu cầu; nếu không nêu thì 6–10 slide, tối đa 16. Mỗi slide chỉ một ý lớn; ' +
-  'nếu một mục có quá 4 ý thì tách thành slide mới.\n' +
-  '- Chọn nhịp deck theo nội dung (bài giảng / báo cáo / hội thảo / kể chuyện) — không dùng ' +
-  'một chuỗi cố định kiểu tiêu đề → nội dung → 4 thẻ → ý tổng hợp → timeline cho mọi đề.\n' +
-  '- Đa dạng bố cục: không dùng cùng một layout ở hai slide liền nhau; deck 6 slide phải có ' +
-  'ít nhất 4 layout khác nhau; "cards" tối đa 1 lần trong 6 slide; chỉ dùng layout cần dữ liệu ' +
-  '(table, stats, stat-image, quiz) khi nội dung thật có dữ liệu.\n' +
-  '- Bám cấu trúc bài gợi ý của môn đã chọn (xem MÔN HỌC) nhưng gộp/bỏ bước nếu deck ngắn; ' +
-  'ưu tiên layout gợi ý của môn khi nội dung hợp.\n' +
-  '- Bài giảng có ví dụ: dùng "example" cho ví dụ mẫu có lời giải (đề bài → các bước → kết luận) và ' +
-  '"hook" cho mở bài gợi mở (câu hỏi/tình huống) ngay sau slide tiêu đề hoặc nội dung bài.\n' +
-  '- Slide đầu dùng "title"; slide cuối dùng "closing" hoặc "quote" nếu phù hợp.\n' +
-  '- Ưu tiên layout có bố cục rõ: "agenda" cho tổng quan, "statement" cho một thông điệp lớn, ' +
-  '"comparison" khi có hai mặt đối lập, "bullets" chỉ khi thật sự có 2–4 ý ngắn.\n' +
-  '- "mindmap" (sơ đồ tư duy: chủ đề giữa + 3–6 nhánh) dùng để tổng kết/hệ thống hoá kiến thức hoặc khi người dùng yêu cầu sơ đồ tư duy; tối đa 1–2 slide trong deck.\n' +
-  '- Layout ảnh ("image-left", "image-right", "image-full", "stat-image") dùng tối đa 3 slide ' +
-  'trong cả deck và chỉ khi brief có hình ảnh minh hoạ.\n' +
-  '- "brief" đúng 1 câu ngắn (≤ 140 ký tự) nêu dữ kiện chính; "title" ≤ 10 từ.\n' +
-  '- "tone" chỉ dùng khi cần nhấn mạnh; bỏ trống để layout tự chọn.\n' +
-  '- Cứ khoảng 3 slide phải có một slide điểm nhấn (statement, stats, quote hoặc title/section ' +
-  'nền nhấn) để deck có nhịp, không phẳng.\n' +
-  '- "theme" chọn theo chủ đề, cảm xúc và đối tượng — không bắt buộc theo môn; ' +
-  'chủ đề tự do (hướng nghiệp, kỹ năng, sự kiện…) vẫn chọn bộ màu hợp tông. ' +
-  '"stylePack" chọn một id trong danh sách style pack để quyết định nhịp và mật độ nội dung; ' +
-  '"style" 2 câu tả phong cách (nhịp bố cục, điểm nhấn màu, số liệu, hình ảnh). ' +
-  '"decorKit" chọn một bộ trang trí hợp chủ đề và đối tượng (dùng cho cả bài); bài trang trọng chọn "toi-gian".\n' +
-  '- Không bịa số liệu thật; số liệu minh hoạ phải ghi rõ "ví dụ". Tiếng Việt chuẩn.'
-
 const WEB_WARN_KEY = 'dethinhbien-web-search-warned'
-
-const WEB_SEARCH_SYSTEM =
-  'Tìm trên web thông tin, số liệu mới và chính xác phục vụ yêu cầu soạn đề / bài giảng của giáo viên dưới đây. ' +
-  'Chỉ trả bản tóm tắt gạch đầu dòng (tối đa 25 dòng), mỗi dòng một dữ kiện hoặc số liệu kèm tên nguồn và năm. ' +
-  'Ưu tiên nguồn chính thống (cơ quan nhà nước, sách giáo khoa, báo lớn). Không soạn đề, không bình luận.'
 
 /** Lịch sử hội thoại gửi kèm mỗi lượt gọi model. */
 function historyOf(turns: ChatTurn[]): LlmMessage[] {
@@ -609,18 +511,13 @@ export async function generateSlide(
   index: number,
   signal: AbortSignal,
 ): Promise<AiSlidePayload | null> {
-  const system = pageSystemPrompt(plan, planSlide, index)
+  // system prompt do server ghép từ dàn ý (task slide-trang)
+  const task = { name: 'slide-trang', input: { plan, index } }
   const user = `Viết slide ${index + 1}: "${planSlide.title}".`
   // bộ trang trí là của cả deck (chọn ở dàn ý), gắn vào mọi trang
   const decorKit = planDecorKit(plan)
   const withKit = (page: AiSlidePayload): AiSlidePayload => ({ ...page, decorKit })
-  const first = await callLlm(
-    [
-      { role: 'system', content: system },
-      { role: 'user', content: user },
-    ],
-    { signal, reasoningEffort: AI_EFFORT.slide },
-  )
+  const first = await callLlm([{ role: 'user', content: user }], { signal, reasoningEffort: AI_EFFORT.slide, task })
   const check = checkSlide(
     parseAiObject(first.content),
     planSlide.layout,
@@ -630,13 +527,12 @@ export async function generateSlide(
 
   const repaired = await callLlm(
     [
-      { role: 'system', content: system },
       { role: 'user', content: user },
       { role: 'assistant', content: first.content },
       { role: 'user', content: repairPrompt([...check.errors, ...check.readability]) },
     ],
     // lượt đầu không dùng được: hoàn token lượt đó
-    { signal, reasoningEffort: AI_EFFORT.slide, retryOf: first.receipt },
+    { signal, reasoningEffort: AI_EFFORT.slide, retryOf: first.receipt, task },
   )
   const second = checkSlide(
     parseAiObject(repaired.content),
@@ -679,10 +575,9 @@ export async function generateSlideBatch(
   // cả nhóm không đọc được (JSON hỏng/cụt) → hoàn token lượt đó, gọi lại một lần
   const res = await callLlmChecked(
     [
-      { role: 'system', content: batchSystemPrompt(plan, indices) + (onProgress ? THINK_VI : '') },
       { role: 'user', content: `Viết slide ${indices.map((i) => i + 1).join(', ')}.` },
     ],
-    { signal, reasoningEffort: AI_EFFORT.slide, onProgress },
+    { signal, reasoningEffort: AI_EFFORT.slide, onProgress, task: { name: 'slide-lo', input: { plan, indices, think: !!onProgress } } },
     (content) => parseBatchSlides(parseAiObject(content), indices.length).some(Boolean),
   )
   const items = parseBatchSlides(parseAiObject(res.content), indices.length)
@@ -692,15 +587,13 @@ export async function generateSlideBatch(
       if (!items[k]) return generateSlide(plan, planSlide, index, signal)
       const check = checkSlide(items[k], planSlide.layout, planSlide.tone)
       if (!check.errors.length && !check.readability.length) return withKit(check.page)
-      const system = pageSystemPrompt(plan, planSlide, index)
       const repaired = await callLlm(
         [
-          { role: 'system', content: system },
           { role: 'user', content: `Viết slide ${index + 1}: "${planSlide.title}".` },
           { role: 'assistant', content: JSON.stringify(items[k]) },
           { role: 'user', content: repairPrompt([...check.errors, ...check.readability]) },
         ],
-        { signal, reasoningEffort: AI_EFFORT.slide },
+        { signal, reasoningEffort: AI_EFFORT.slide, task: { name: 'slide-trang', input: { plan, index } } },
       )
       const second = checkSlide(parseAiObject(repaired.content), planSlide.layout, planSlide.tone)
       if (second.errors.length) return check.errors.length ? null : withKit(check.page)
@@ -724,7 +617,6 @@ export async function polishSlide(
 ): Promise<AiSlidePayload | null> {
   const reply = await callLlm(
     [
-      { role: 'system', content: pageSystemPrompt(plan, planSlide, index) },
       { role: 'user', content: `Viết slide ${index + 1}: "${planSlide.title}".` },
       { role: 'assistant', content: JSON.stringify(previous) },
       {
@@ -735,7 +627,7 @@ export async function polishSlide(
           'bỏ "graphic" nếu bị chê lạc nghĩa), giữ nguyên layout, trả DUY NHẤT một JSON hợp lệ.',
       },
     ],
-    { signal, reasoningEffort: AI_EFFORT.slide },
+    { signal, reasoningEffort: AI_EFFORT.slide, task: { name: 'slide-trang', input: { plan, index } } },
   )
   const check = checkSlide(parseAiObject(reply.content), planSlide.layout, planSlide.tone)
   return check.errors.length ? null : { ...check.page, decorKit: planDecorKit(plan) }
@@ -1016,7 +908,6 @@ export function AiPanel({
       )
     }
     if (examSteps && sourceNames.length) logSet((l) => [...l, { label: 'Đọc nguồn', state: 'done', note: `${sourceNames.length} nguồn` }])
-    const sourceText = sourcePrompt(pack)
     // khung chương trình Toán: đoán lớp/chương từ yêu cầu; lượt nối tiếp ("thêm 2 câu") thì lấy từ các lượt trước và đầu đề
     let khungBlock = ''
     if (intent === 'doc' && mode === 'exam') {
@@ -1025,42 +916,28 @@ export function AiPanel({
         (await khungPromptFor(text)) ||
         (await khungPromptFor([text, ...prev, contextSummary ?? '', (documentDigest ?? '').slice(0, 800)].join('\n')))
     }
-    const sourceBlock =
-      examDoc || pack.items.length
-        ? `\n\n${sourceRule(pack)}${sourceText ? `\n\n${sourceText}` : ''}${khungBlock ? `\n\n${khungBlock}` : ''}`
-        : ''
 
     const history = historyOf(turns)
     // vừa hỏi lại xong thì không hỏi nữa; bảng vẽ và slide HTML không dùng panel hỏi
     const justAsked = turns.slice(-2).some((t) => t.ask)
-    const askRule = mode === 'board' || justAsked ? '' : ASK_RULE
+    const askRule = !(mode === 'board' || justAsked)
     const slideDoc = mode === 'slide' && intent === 'doc'
     const htmlMode = mode === 'slide' && intent === 'doc' && slideFormat === 'html'
-    const system =
+    // server ghép system prompt từ `task` + dữ liệu người dùng này (client không giữ chữ prompt)
+    const srcInput = {
+      withSources: examDoc || pack.items.length > 0,
+      sourceTier: pack.tier,
+      sources: pack.items.map((s) => ({ tier: s.tier, name: s.name, url: s.url, text: s.text })),
+      khung: khungBlock,
+    }
+    const mainTask: { name: string; input: Record<string, unknown> } =
       mode === 'board'
-        ? BOARD_SYSTEM + (onBoardOps ? BOARD_OPS_GUIDE : '') + (contextSummary ? `\nBảng vẽ hiện tại:\n${contextSummary}` : '')
+        ? { name: 'bang-ve', input: { ops: !!onBoardOps, contextSummary, ...srcInput } }
         : mode === 'slide'
-        ? (htmlMode
-            ? HTML_SYSTEM
-            : (slideDoc ? SLIDE_PLAN_SYSTEM : SLIDE_SYSTEM) + askRule) + (contextSummary ? `\nBài trình bày hiện tại: ${contextSummary}` : '')
-        : ''
-    // soạn đề: server ghép system prompt từ dữ liệu này (client không giữ chữ prompt); bảng vẽ / slide còn ghép ở client
-    const examTask: ExamTaskInput | undefined =
-      mode === 'exam'
-        ? {
-            text,
-            digest: documentDigest,
-            contextSummary,
-            ask: !!askRule,
-            withSources: examDoc || pack.items.length > 0,
-            sourceTier: pack.tier,
-            sources: pack.items.map((s) => ({ tier: s.tier, name: s.name, url: s.url, text: s.text })),
-            khung: khungBlock,
-          }
-        : undefined
+        ? { name: 'slide-chat', input: { variant: htmlMode ? 'html' : slideDoc ? 'plan' : 'chat', ask: askRule, contextSummary, ...srcInput } }
+        : { name: 'soan-de', input: { text, digest: documentDigest, contextSummary, ask: askRule, ...srcInput } }
 
     const messages: LlmMessage[] = [
-      ...(examTask ? [] : [{ role: 'system' as const, content: system + sourceBlock }]),
       ...history,
       { role: 'user', content: (text || (sentRefs.length ? 'Giải thích hoặc góp ý cho phần đang chọn.' : 'Hãy xử lý các tệp đính kèm sau.')) + fileNote + refNote + (mode === 'exam' && focusFor ? focusFor(text) : '') },
     ]
@@ -1070,11 +947,8 @@ export function AiPanel({
       // engine áp dụng. Không phải yêu cầu sửa ("action":"none") thì rơi xuống luồng soạn bình thường.
       if (mode === 'slide' && !htmlMode && existingSlideCount > 0 && onApplyEdits && looksLikeEdit(text)) {
         const editRes = await callLlm(
-          [
-            { role: 'system', content: editSystemPrompt(editContext ?? contextSummary ?? '') },
-            { role: 'user', content: text },
-          ],
-          { signal: controller.signal, reasoningEffort: 'low' },
+          [{ role: 'user', content: text }],
+          { signal: controller.signal, reasoningEffort: 'low', task: { name: 'slide-sua', input: { context: editContext ?? contextSummary ?? '' } } },
         )
         const { ops, errors } = parseEditCommands(editRes.content)
         if (ops.length) {
@@ -1104,20 +978,17 @@ export function AiPanel({
         if (examSteps) logStart('Tìm trên web')
         const found = await callLlm(
           [
-            { role: 'system', content: WEB_SEARCH_SYSTEM },
             { role: 'user', content: [...turns.filter((t) => t.role === 'user').slice(-2).map((t) => t.text), text].filter(Boolean).join('\n') },
           ],
-          { signal: controller.signal, webSearch: true, maxTokens: 4000 },
+          { signal: controller.signal, webSearch: true, maxTokens: 4000, task: { name: 'tim-web' } },
         )
-        if (examTask) examTask.webFound = found.content.trim()
-        else messages[0] = { ...messages[0], content: `${messages[0].content}\n\nNGUỒN TÌM TRÊN WEB (số liệu mới, ưu tiên dùng; số liệu lấy từ đây thì ghi nguồn ngắn trong đề/slide):\n${found.content.trim()}` }
+        mainTask.input.webFound = found.content.trim()
         patchTurn(() => ({ webSources: found.citations }))
         if (examSteps) logSet((l) => closeLog(l, 'done', found.citations?.length ? `${found.citations.length} trang web` : undefined))
       }
       // phần suy nghĩ hiện thẳng cho giáo viên xem → bắt suy nghĩ bằng tiếng Việt (model mặc định nghĩ tiếng Anh)
       if (examSteps) {
-        if (examTask) examTask.think = true
-        else messages[0] = { ...messages[0], content: messages[0].content + THINK_VI }
+        mainTask.input.think = true
       }
       // nhật ký thật khi soạn đề (stream): Suy nghĩ (dòng suy luận chạy theo + số giây) → Viết đề (câu đang viết, N/T câu)
       const totalQ = Number(text.match(/(\d+)\s*câu/i)?.[1]) || 0
@@ -1180,7 +1051,7 @@ export function AiPanel({
           reasoningEffort: mode === 'slide' ? AI_EFFORT.slide : AI_EFFORT.exam,
           onProgress,
           strong: opt.strong,
-          task: examTask ? { name: 'soan-de', input: examTask } : undefined,
+          task: mainTask,
         })
       } finally {
         clearInterval(ticker)
@@ -1272,7 +1143,7 @@ export function AiPanel({
                   'ngắn gọn hơn: mỗi "brief" ≤ 100 ký tự, không xuống dòng trong chuỗi.',
               },
             ],
-            { signal: controller.signal, reasoningEffort: AI_EFFORT.slide, retryOf: res.receipt },
+            { signal: controller.signal, reasoningEffort: AI_EFFORT.slide, retryOf: res.receipt, task: mainTask },
           )
           plan = parseDeckPlan(again.content)
         }
@@ -1309,7 +1180,7 @@ export function AiPanel({
         // đề trả JSON hỏng (thường bị cắt cụt): hoàn token lượt đó và soạn lại đúng một lần
         if (result?.failed && onApplyBlocks) {
           // gọi lại bằng model mạnh hơn (lượt đầu model nhanh không làm được)
-          const again = await callLlm(messages, { signal: controller.signal, reasoningEffort: AI_EFFORT.exam, retryOf: res.receipt, strong: true, task: examTask ? { name: 'soan-de', input: examTask } : undefined })
+          const again = await callLlm(messages, { signal: controller.signal, reasoningEffort: AI_EFFORT.exam, retryOf: res.receipt, strong: true, task: mainTask })
           result = onApplyBlocks(again.content) ?? result
         }
         // không áp được: hiện trong chat (kèm phần AI viết nếu đọc được) + nút Thử lại

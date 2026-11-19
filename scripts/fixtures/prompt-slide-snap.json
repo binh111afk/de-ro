@@ -1,0 +1,172 @@
+{
+ "plans": {
+  "toan": {
+   "title": "Hàm số bậc nhất",
+   "theme": "sang",
+   "stylePack": "editorial",
+   "decorKit": "toi-gian",
+   "subject": "toan",
+   "audience": "học sinh lớp 9",
+   "style": "rõ ràng, nhiều ví dụ",
+   "slides": [
+    {
+     "title": "Mở đầu",
+     "layout": "title",
+     "kicker": "Bài 1",
+     "brief": "Giới thiệu bài."
+    },
+    {
+     "title": "Khái niệm chính",
+     "layout": "bullets",
+     "brief": "Nêu 3 ý chính của khái niệm."
+    },
+    {
+     "title": "Ví dụ mẫu",
+     "layout": "example",
+     "brief": "Một ví dụ có lời giải."
+    },
+    {
+     "title": "Số liệu",
+     "layout": "stats",
+     "tone": "accent",
+     "brief": "Ba con số minh hoạ."
+    },
+    {
+     "title": "Kiểm tra nhanh",
+     "layout": "quiz",
+     "brief": "Một câu trắc nghiệm."
+    },
+    {
+     "title": "Tổng kết",
+     "layout": "closing",
+     "brief": "Chốt bài."
+    }
+   ]
+  },
+  "sinh": {
+   "title": "Quang hợp ở thực vật",
+   "theme": "sang",
+   "stylePack": "editorial",
+   "decorKit": "toi-gian",
+   "subject": "sinh",
+   "audience": "học sinh lớp 9",
+   "style": "rõ ràng, nhiều ví dụ",
+   "slides": [
+    {
+     "title": "Mở đầu",
+     "layout": "title",
+     "kicker": "Bài 1",
+     "brief": "Giới thiệu bài."
+    },
+    {
+     "title": "Khái niệm chính",
+     "layout": "bullets",
+     "brief": "Nêu 3 ý chính của khái niệm."
+    },
+    {
+     "title": "Ví dụ mẫu",
+     "layout": "example",
+     "brief": "Một ví dụ có lời giải."
+    },
+    {
+     "title": "Số liệu",
+     "layout": "stats",
+     "tone": "accent",
+     "brief": "Ba con số minh hoạ."
+    },
+    {
+     "title": "Kiểm tra nhanh",
+     "layout": "quiz",
+     "brief": "Một câu trắc nghiệm."
+    },
+    {
+     "title": "Tổng kết",
+     "layout": "closing",
+     "brief": "Chốt bài."
+    }
+   ]
+  }
+ },
+ "items": [
+  {
+   "name": "BOARD_SYSTEM",
+   "len": 385,
+   "sha256": "3de37b71d8efd265b01eb45fa4694489580f9582ef8a046cde4b77bf56d23cd6"
+  },
+  {
+   "name": "BOARD_OPS_GUIDE",
+   "len": 16068,
+   "sha256": "918c46a59be145eaf4c5c9095d792be8a21580913f4a78146fa9f512e7935d81"
+  },
+  {
+   "name": "SLIDE_SYSTEM",
+   "len": 1771,
+   "sha256": "264ffdc0bd87a9c654810a88dcd9c87437a59e1594590ed5214b9cae6dbc7166"
+  },
+  {
+   "name": "SLIDE_PLAN_SYSTEM",
+   "len": 23526,
+   "sha256": "43b183e4907751c053ef6c6117bfb93cddcddc2ded832018714b8ecc356a98b2"
+  },
+  {
+   "name": "WEB_SEARCH_SYSTEM",
+   "len": 319,
+   "sha256": "2490dc2fe01cb8957fd8ff51fc79badd96da4563b20596adf883742bf9f29903"
+  },
+  {
+   "name": "HTML_DECK_SYSTEM",
+   "len": 2425,
+   "sha256": "ab334f4074a238205a2ca7822fba365a0d6b7a57efd8fb77eafacfd3983e2176"
+  },
+  {
+   "name": "editSystemPrompt",
+   "len": 5838,
+   "sha256": "c5940dd5a8dc4aff15dd0737b3ab3c77fcc22c9e12c19a717eb99b2628157f9b"
+  },
+  {
+   "name": "repairPrompt",
+   "len": 136,
+   "sha256": "feba02b425ce11daa49ae4dd6b11e6b67ef94f07b71e43115ef12d6f7faf0ffd"
+  },
+  {
+   "name": "pageSystemPrompt:toan:1",
+   "len": 7465,
+   "sha256": "f823cf38464b2c06d009958da4aecb61795168ef0a5872c0ee5263908a10cfeb"
+  },
+  {
+   "name": "pageSystemPrompt:toan:4",
+   "len": 3151,
+   "sha256": "db45d840e94bddd165ff703fbaf0a861d7bd85838bd89b35fc643e1620fe41a8"
+  },
+  {
+   "name": "batchSystemPrompt:toan:0-4",
+   "len": 11148,
+   "sha256": "b91312de33789338f10f706c3b144395e7d87522d020ca69c3f522f7a7b476c0"
+  },
+  {
+   "name": "batchSystemPrompt:toan:2-5",
+   "len": 10080,
+   "sha256": "1c22363bf7c950d1bb0e68b127ebb0bd305977c61251e00f09218b90a344fc55"
+  },
+  {
+   "name": "pageSystemPrompt:sinh:1",
+   "len": 4473,
+   "sha256": "a8a1a27b678b83aa9752909b76d5d2f5f75b7439833d30a5d5168d263b0adfa3"
+  },
+  {
+   "name": "pageSystemPrompt:sinh:4",
+   "len": 2794,
+   "sha256": "ae71e1984961c9d2a4835e0f5d8595d07bd7b32ca1d4acd5ba71320b6aac5de6"
+  },
+  {
+   "name": "batchSystemPrompt:sinh:0-4",
+   "len": 8223,
+   "sha256": "7a9a26b650d5ef34cde8a410afe13d43482e458ee5d36aa3638b69dfb6bb9580"
+  },
+  {
+   "name": "batchSystemPrompt:sinh:2-5",
+   "len": 7185,
+   "sha256": "2cb47a050fcb2064b4968bbf942291c3031bd9d2ebadd55aa14006822948ee7c"
+  }
+ ]
+}

@@ -45,3 +45,27 @@ export function sourcePrompt(items: PromptSource[]): string {
   })
   return `NGUỒN CHO LƯỢT NÀY:\n${parts.join('\n\n')}`
 }
+
+/** Dữ liệu nguồn client gửi cho một lượt (tệp đính kèm, "Thêm nguồn", khung chương trình). */
+export interface SourceInput {
+  /** lượt có phần "nguồn" (soạn/sửa đề hoặc có nguồn giáo viên chọn) */
+  withSources?: boolean
+  sourceTier?: number
+  sources?: PromptSource[]
+  /** đoạn khung chương trình (client dựng từ dữ liệu công khai) */
+  khung?: string
+}
+
+/** Phần nguồn nối sau system prompt: luật nguồn + nội dung nguồn + khung chương trình. */
+export function sourceSection(i: SourceInput): string {
+  if (!i.withSources) return ''
+  const sourceText = sourcePrompt(i.sources ?? [])
+  return `\n\n${sourceRule(i.sourceTier ?? 0)}${sourceText ? `\n\n${sourceText}` : ''}${i.khung ? `\n\n${i.khung}` : ''}`
+}
+
+/** Phần "tìm trên web" nối sau cùng (chế độ Tìm trên web). */
+export function webSection(found?: string): string {
+  return found
+    ? `\n\nNGUỒN TÌM TRÊN WEB (số liệu mới, ưu tiên dùng; số liệu lấy từ đây thì ghi nguồn ngắn trong đề/slide):\n${found.trim()}`
+    : ''
+}
