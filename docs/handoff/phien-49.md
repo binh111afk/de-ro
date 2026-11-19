@@ -9,7 +9,8 @@ Ngày 19–20/11/2026. Nhánh `main`, commit cuối `4d9dff8` (đã push, repo c
 3. **Chưa kiểm trên production**: header bảo mật mới (`curl.exe -sI https://de-ro-lac.vercel.app`), tab Nạp điểm với đơn thật (dòng so sánh kỳ trước, thu theo tháng), tên người đăng đề cộng đồng, kho hình mới do AI soạn đề dùng (thử đề Toán tiểu học có hình), tooltip biểu đồ trên điện thoại.
 4. Lỗi nhỏ còn lại: `catch` giữ `err.message` có chủ ý ở `server/admin.ts` (lỗi nghiệp vụ, `pingProvider`, `handleVision`), `server/extract.ts` (cảnh báo tệp người dùng tải), `pingProviders`, `pingR2` — chỉ admin hoặc người dùng thấy, không phải lỗ hổng. `Access-Control-Allow-Origin: *` giữ nguyên (đã có `guard` chặn Origin lạ); chưa thêm CSP (dễ làm hỏng KaTeX, font, ảnh R2).
 5. Người dùng chưa quyết: hỏi về tiếng Nhật / Trung / Pháp… — chỉ tiếng Anh có khung chương trình (`khungAnh.json`); các tiếng khác AI ra theo hiểu biết chung, chưa thử xuất Word với chữ CJK. Hiện ở trạng thái "trả lời rồi, chưa làm gì".
-6. Còn treo từ [phiên 48](phien-48.md) mục 2–5: bảng vẽ chớp (chờ phản hồi), đọc PDF ngân hàng (opencode, chưa thử PDF thật), `DEEPSEEK_STRONG_MODEL` / `ANYROUTER_API_KEY` trên Vercel, xoá `MERCURY_*` `TAVILY_*`, tắt r2.dev bucket R2, các điểm phụ Strix a70c cần migration. Mục 1 của phiên 48 (prompt lộ trình duyệt) **đã xong**.
+6. **Lỗi nhẹ Codex rà ra, chưa sửa** (cần người dùng chốt hoặc nhẹ): (a) adapter Anthropic (`server/anthropic.ts:75`) gộp token đọc cache vào `prompt_tokens` nên `estimateCost` tính chi phí Claude cao hơn thật, sửa thì đổi luôn cách tính điểm khi chạy Claude (`billOf` giảm 90% phần cache) — quyết định về giá; (b) `paid_at = now()` của `credit_payment_order` đẩy khoản tiền về cuối tháng nhưng đối soát tay sang tháng sau vào "Thu theo tháng"; (c) `payments.list` chạy 3 truy vấn riêng nên tổng tháng và bảng theo tháng có thể lệch một đơn webhook đến giữa chừng; (d) `welcomePending` của tài khoản hạn mức "Không giới hạn" có thể hiện "Chưa dùng AI" dù đã dùng (`readQuota` thoát sớm trước khi tặng quà).
+7. Còn treo từ [phiên 48](phien-48.md) mục 2–5: bảng vẽ chớp (chờ phản hồi), đọc PDF ngân hàng (opencode, chưa thử PDF thật), `DEEPSEEK_STRONG_MODEL` / `ANYROUTER_API_KEY` trên Vercel, xoá `MERCURY_*` `TAVILY_*`, tắt r2.dev bucket R2, các điểm phụ Strix a70c cần migration. Mục 1 của phiên 48 (prompt lộ trình duyệt) **đã xong**.
 
 ## Đã làm (theo nhóm)
 
@@ -25,6 +26,8 @@ Ngày 19–20/11/2026. Nhánh `main`, commit cuối `4d9dff8` (đã push, repo c
 | `f006340` | Tooltip biểu đồ "Lượt gọi theo ngày" (`OpsPanel.tsx`): gắn `data-tip` vào đúng chiều cao cột thay vì cả cột (trước nằm tít đỉnh, xa cột thấp). |
 | `f908613`…`4d9dff8` (agy) | **Kho hình +74** (97 → 171 đồ vật, 188 sprite): công trình (nhà chọc trời, nhà sàn, chùa, cầu, cối xay gió, giếng…), thang gấp, cầu thang, **vẽ lại `ladder` và `tower`**, đồ dùng, thực phẩm, động vật, phương tiện, dụng cụ khoa học. `src/data/figureSprites.json` gzip ~490 KB → ~790 KB (nạp lười cùng `loadTools`). Đã xem tay cả 76 hình: nét đồng nhất. |
 
+| `84172e1` | Codex rà + viết test: `AI_PRICE_*` có ô trống / chữ / âm dùng giá mặc định, nhà cung cấp lạ → `null` (`server/ops.ts`), `scripts/test-ai-cost.ts` (18 ca, `npm run test:ai-cost`). `credits.grant`: người chưa có dòng `ai_credits` được tặng quà chào mừng (`claim_ai_welcome`) trước rồi mới cộng, khớp số dư hiện ở hộp thoại; `test-admin` thêm 2 ca. |
+
 Ngoài code: xoá 20 deploy Vercel cũ (còn 10 mới nhất, CLI `npx --no-install vercel rm`); áp 2 migration bằng MCP Supabase (cần người dùng cho phép rõ khi bị chặn); xoá các `docs/prompt-*` và `docs/bao-cao-*` của đợt agy này.
 
 ## Quyết định đã chốt
@@ -33,6 +36,7 @@ Ngoài code: xoá 20 deploy Vercel cũ (còn 10 mới nhất, CLI `npx --no-inst
 - Chất lượng soạn đề / slide đo trước-sau (7 đề, 3 slide): cấu trúc, đáp án, hình giữ nguyên; token ngang hoặc giảm; prompt giữ **đúng từng byte** (sha256).
 - Lỗi production trả câu chung, chi tiết chỉ ở log server.
 - "Ai đang online": đã có ở admin tab Số liệu (`stats.online`, bảng `presence`, nhịp 2 phút); **không** hiện công khai vì lộ thông tin cá nhân.
+- **Codex** (đã thử): `npx --yes @openai/codex@0.170.0 exec -m gpt-6.2-sol --sandbox read-only|workspace-write -C <thư mục> - < prompt.txt` (đăng nhập sẵn bằng ChatGPT; mặc định máy là `gpt-5.6-terra`). Tốt ở rà lỗi chỉ đọc (6 mục, 3 mục đã kiểm đều đúng, ghi "chưa chắc" khi không chắc) và viết test + sửa lỗi nhỏ có chạy kiểm. **Không commit được trong worktree** (sandbox chặn `index.lock` của git worktree) — người rà phải commit hộ. Việc nhạy cảm (tiền, bảo mật, migration, prompt AI) vẫn cho agent mạnh rà diff.
 - Chia việc: agent mạnh làm bảo mật, ước tính chi phí, quyết định thiết kế; agy làm việc máy móc (mobile, kho hình, 7 chỗ prompt nhỏ) trên nhánh riêng, agent mạnh xem diff + chạy lại test rồi gộp.
 
 ## Bẫy mới
