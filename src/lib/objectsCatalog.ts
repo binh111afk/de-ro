@@ -149,6 +149,26 @@ export const OBJECTS: Record<string, string> = {
   spoon: 'cái thìa',
   chopsticks: 'đôi đũa',
   hand_fan: 'quạt giấy',
+  bread: 'bánh mì',
+  banh_chung: 'bánh chưng',
+  ice_cream: 'que kem',
+  potato: 'củ khoai tây',
+  corn: 'bắp ngô',
+  chili: 'quả ớt',
+  cucumber: 'quả dưa chuột',
+  cabbage: 'cây bắp cải',
+  lollipop: 'kẹo mút',
+  cookie: 'bánh quy',
+  pizza: 'bánh pizza',
+  chick: 'gà con',
+  cow: 'con bò',
+  horse: 'con ngựa',
+  elephant: 'con voi',
+  deer: 'con hươu',
+  dolphin: 'cá heo',
+  snail: 'ốc sên',
+  sunflower: 'hoa hướng dương',
+  pine_tree: 'cây thông',
 }
 
 export const CONTAINERS: Record<string, ContainerMeta> = {
@@ -168,7 +188,7 @@ export const CONTAINERS: Record<string, ContainerMeta> = {
 }
 
 /** vật hay dùng trong hình thực tế (lệnh "hình <vật> AB") */
-export const SCENE_OBJECTS: string[] = ['bicycle', 'tree', 'person', 'house', 'building', 'flagpole', 'electric_pole', 'streetlight', 'lighthouse', 'tower', 'ladder', 'boat', 'ship', 'car', 'airplane', 'hot_air_balloon', 'kite', 'mountain', 'sun', 'tent', 'slide', 'water_tank', 'skyscraper', 'tile_house', 'stilt_house', 'school', 'hospital', 'market', 'pagoda', 'church', 'bridge', 'village_gate', 'traffic_light', 'fence', 'water_well', 'water_tower', 'windmill', 'warehouse', 'step_ladder', 'stairs']
+export const SCENE_OBJECTS: string[] = ['bicycle', 'tree', 'person', 'house', 'building', 'flagpole', 'electric_pole', 'streetlight', 'lighthouse', 'tower', 'ladder', 'boat', 'ship', 'car', 'airplane', 'hot_air_balloon', 'kite', 'mountain', 'sun', 'tent', 'slide', 'water_tank', 'skyscraper', 'tile_house', 'stilt_house', 'school', 'hospital', 'market', 'pagoda', 'church', 'bridge', 'village_gate', 'traffic_light', 'fence', 'water_well', 'water_tower', 'windmill', 'warehouse', 'step_ladder', 'stairs', 'cow', 'horse', 'elephant', 'deer', 'pine_tree']
 
 /** tên gọi khác (không dấu, chữ thường) → id */
 export const OBJECT_ALIASES: Record<string, string> = {
@@ -306,4 +326,42 @@ export const OBJECT_ALIASES: Record<string, string> = {
   'dua': 'chopsticks',
   'quat giay': 'hand_fan',
   'quat nan': 'hand_fan',
+  'banh mi': 'bread',
+  'o banh mi': 'bread',
+  'banh chung': 'banh_chung',
+  'kem': 'ice_cream',
+  'cay kem': 'ice_cream',
+  'que kem': 'ice_cream',
+  'khoai tay': 'potato',
+  'cu khoai': 'potato',
+  'ngo': 'corn',
+  'bap ngo': 'corn',
+  'trai bap': 'corn',
+  'ot': 'chili',
+  'dua chuot': 'cucumber',
+  'dua leo': 'cucumber',
+  'bap cai': 'cabbage',
+  'keo mut': 'lollipop',
+  'cay keo mut': 'lollipop',
+  'banh quy': 'cookie',
+  'cai banh quy': 'cookie',
+  'pizza': 'pizza',
+  'mieng pizza': 'pizza',
+  'ga con': 'chick',
+  'con ga con': 'chick',
+  'bo': 'cow',
+  'bo sua': 'cow',
+  'ngua': 'horse',
+  'voi': 'elephant',
+  'huou': 'deer',
+  'con nai': 'deer',
+  'nai': 'deer',
+  'ca heo': 'dolphin',
+  'con ca heo': 'dolphin',
+  'oc sen': 'snail',
+  'con oc sen': 'snail',
+  'hoa huong duong': 'sunflower',
+  'huong duong': 'sunflower',
+  'cay thong': 'pine_tree',
+  'thong': 'pine_tree',
 }

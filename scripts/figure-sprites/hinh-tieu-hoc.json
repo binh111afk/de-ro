@@ -2146,6 +2146,401 @@
         "quạt giấy",
         "quạt nan"
       ]
+    },
+    {
+      "id": "bread",
+      "name": "bánh mì",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "cao",
+      "containers": [
+        "basket",
+        "bag",
+        "plate",
+        "tray"
+      ],
+      "prompt": "A single loaf of baguette bread with three diagonal score lines, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "bánh mì",
+        "ổ bánh mì"
+      ]
+    },
+    {
+      "id": "banh_chung",
+      "name": "bánh chưng",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "vừa",
+      "containers": [
+        "plate",
+        "tray"
+      ],
+      "prompt": "A single square Vietnamese banh chung rice cake wrapped in leaves and tied with crisscross strings, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "bánh chưng"
+      ]
+    },
+    {
+      "id": "ice_cream",
+      "name": "que kem",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single ice cream cone with one round scoop on top, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "kem",
+        "cây kem",
+        "que kem"
+      ]
+    },
+    {
+      "id": "potato",
+      "name": "củ khoai tây",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "vừa",
+      "containers": [
+        "basket",
+        "bag",
+        "crate"
+      ],
+      "prompt": "A single smooth oval potato with a few tiny eye dots, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "khoai tây",
+        "củ khoai"
+      ]
+    },
+    {
+      "id": "corn",
+      "name": "bắp ngô",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "cao",
+      "containers": [
+        "basket",
+        "crate"
+      ],
+      "prompt": "A single ear of corn with two peeled husk leaves at the base, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "ngô",
+        "bắp ngô",
+        "trái bắp"
+      ]
+    },
+    {
+      "id": "chili",
+      "name": "quả ớt",
+      "grades": [
+        1,
+        2,
+        3
+      ],
+      "freq": "vừa",
+      "containers": [
+        "basket",
+        "plate"
+      ],
+      "prompt": "A single curved chili pepper with stem, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "ớt"
+      ]
+    },
+    {
+      "id": "cucumber",
+      "name": "quả dưa chuột",
+      "grades": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "freq": "vừa",
+      "containers": [
+        "basket",
+        "plate"
+      ],
+      "prompt": "A single cucumber with small stem, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "dưa chuột",
+        "dưa leo"
+      ]
+    },
+    {
+      "id": "cabbage",
+      "name": "cây bắp cải",
+      "grades": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "freq": "vừa",
+      "containers": [
+        "basket",
+        "crate"
+      ],
+      "prompt": "A single round cabbage head with outer leaves, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "bắp cải"
+      ]
+    },
+    {
+      "id": "lollipop",
+      "name": "kẹo mút",
+      "grades": [
+        1,
+        2,
+        3
+      ],
+      "freq": "cao",
+      "containers": [
+        "jar",
+        "bag",
+        "box"
+      ],
+      "prompt": "A single round swirl lollipop candy on a stick, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "kẹo mút",
+        "cây kẹo mút"
+      ]
+    },
+    {
+      "id": "cookie",
+      "name": "bánh quy",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "cao",
+      "containers": [
+        "plate",
+        "box",
+        "jar",
+        "tray"
+      ],
+      "prompt": "A single round chocolate chip cookie with simple circles for chips, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "bánh quy",
+        "cái bánh quy"
+      ]
+    },
+    {
+      "id": "pizza",
+      "name": "bánh pizza",
+      "grades": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "cao",
+      "containers": [
+        "plate",
+        "box"
+      ],
+      "prompt": "A single triangular slice of pizza with crust and three round toppings, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "pizza",
+        "miếng pizza"
+      ]
+    },
+    {
+      "id": "chick",
+      "name": "gà con",
+      "grades": [
+        1,
+        2,
+        3
+      ],
+      "freq": "cao",
+      "containers": [
+        "coop"
+      ],
+      "prompt": "A single cute baby chick standing, side view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "gà con",
+        "con gà con"
+      ]
+    },
+    {
+      "id": "cow",
+      "name": "con bò",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single cow standing, side view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "bò",
+        "bò sữa"
+      ]
+    },
+    {
+      "id": "horse",
+      "name": "con ngựa",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single horse standing, side view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "ngựa"
+      ]
+    },
+    {
+      "id": "elephant",
+      "name": "con voi",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single elephant standing, side view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "voi"
+      ]
+    },
+    {
+      "id": "deer",
+      "name": "con hươu",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single deer with antlers standing, side view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "hươu",
+        "con nai",
+        "nai"
+      ]
+    },
+    {
+      "id": "dolphin",
+      "name": "cá heo",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single dolphin leaping, side view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "cá heo",
+        "con cá heo"
+      ]
+    },
+    {
+      "id": "snail",
+      "name": "ốc sên",
+      "grades": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single cute snail with spiral shell, side view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "ốc sên",
+        "con ốc sên"
+      ]
+    },
+    {
+      "id": "sunflower",
+      "name": "hoa hướng dương",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single sunflower with stem and two leaves, front view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "hoa hướng dương",
+        "hướng dương"
+      ]
+    },
+    {
+      "id": "pine_tree",
+      "name": "cây thông",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single pine evergreen tree with tiered triangular branches and trunk, front view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "cây thông",
+        "thông"
+      ]
     }
   ],
   "containers": [
