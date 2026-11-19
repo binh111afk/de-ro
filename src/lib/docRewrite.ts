@@ -23,22 +23,15 @@ export const DOC_REWRITE_PRESETS = [
   { label: 'Dễ hiểu hơn', ask: 'Viết lại dễ hiểu hơn cho học sinh' },
 ] as const
 
-const SYSTEM =
-  'Bạn sửa MỘT đoạn chữ trong đề thi/tài liệu tiếng Việt theo yêu cầu của giáo viên. ' +
-  'Chỉ trả về đoạn chữ mới: không giải thích, không tiêu đề, không dấu ngoặc kép bao quanh, không markdown. ' +
-  'Giữ nguyên công thức $...$, số liệu và thuật ngữ chuyên môn. Không thêm đáp án hay lời giải nếu không được yêu cầu. ' +
-  'Nếu yêu cầu là một câu hỏi về đoạn chữ (không phải sửa), hãy trả lời ngắn gọn.'
-
 export async function rewriteSelection(text: string, instruction: string, context: string, signal?: AbortSignal): Promise<string> {
   const res = await callLlm(
     [
-      { role: 'system', content: SYSTEM },
       {
         role: 'user',
         content: `${context ? `Ngữ cảnh: ${context}\n` : ''}Đoạn chữ đang chọn:\n${text}\n\nYêu cầu: ${instruction}`,
       },
     ],
-    { signal, reasoningEffort: 'low' },
+    { signal, reasoningEffort: 'low', task: { name: 'sua-cau' } },
   )
   const out = cleanRewrite(res.content).replace(/\*\*(.+?)\*\*/g, '$1')
   if (!out) throw new Error('AI không trả về nội dung, thử lại nhé.')

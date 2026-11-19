@@ -6,6 +6,7 @@
  */
 import { ASK_ONLY_SYSTEM, buildExamSystem, type ExamTaskInput } from '../src/lib/prompts/exam.js'
 import { buildDeOnlineSystem, type DeOnlineQuestionSummary } from '../src/lib/prompts/de-online.js'
+import { buildSuaCauSystem } from '../src/lib/prompts/sua-cau.js'
 import type { PromptSource } from '../src/lib/prompts/sources.js'
 
 const MAX_FIELD = 600_000
@@ -73,6 +74,7 @@ const TASKS: Record<string, (input: unknown) => string | null> = {
   'soan-de': soanDe,
   'hoi-truoc': hoiTruoc,
   'de-online': deOnline,
+  'sua-cau': buildSuaCauSystem,
 }
 
 /** system prompt của tác vụ; null nếu tên lạ hoặc dữ liệu sai kiểu */
