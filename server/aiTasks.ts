@@ -9,6 +9,7 @@ import { buildDeOnlineSystem, type DeOnlineQuestionSummary } from '../src/lib/pr
 import { buildSuaCauSystem } from '../src/lib/prompts/sua-cau.js'
 import { buildVeDoThiSystem } from '../src/lib/prompts/ve-do-thi.js'
 import { buildChonHinhSystem } from '../src/lib/prompts/chon-hinh.js'
+import { buildNganHangSystem } from '../src/lib/prompts/ngan-hang.js'
 import type { PromptSource } from '../src/lib/prompts/sources.js'
 
 const MAX_FIELD = 600_000
@@ -79,6 +80,7 @@ const TASKS: Record<string, (input: unknown) => string | null> = {
   'sua-cau': buildSuaCauSystem,
   've-do-thi': buildVeDoThiSystem,
   'chon-hinh': buildChonHinhSystem,
+  'ngan-hang': buildNganHangSystem,
 }
 
 /** system prompt của tác vụ; null nếu tên lạ hoặc dữ liệu sai kiểu */
