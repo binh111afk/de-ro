@@ -65,12 +65,13 @@ export function loadPricing(): Promise<void> {
 
 /** Ước tính điểm mỗi lượt — phải khớp Điều khoản sử dụng mục 5 (src/pages/Legal.tsx). */
 export const USAGE = [
-  { id: 'exam', label: 'Soạn 1 đề (vd. Toán THPT, 22 câu)', points: 20 },
-  { id: 'slide', label: 'Soạn 1 bộ slide 15 trang', points: 26 },
-  { id: 'ask', label: '1 lượt AI hỏi lại trước khi soạn', points: 10 },
-  { id: 'edit', label: '1 lượt sửa / hỏi thêm', points: 5 },
-  { id: 'search', label: '1 lượt tìm trên web', points: 5 },
-  { id: 'image', label: '1 ảnh minh hoạ AI', points: 5 },
+  // `points` = mức cao (dùng để ước số lượt, trừ hao); `min` = mức thấp
+  { id: 'exam', label: 'Soạn 1 đề (vd. Toán THPT, 22 câu)', min: 20, points: 27 },
+  { id: 'slide', label: 'Soạn 1 bộ slide 15 trang', min: 26, points: 35 },
+  { id: 'ask', label: '1 lượt AI hỏi lại trước khi soạn', min: 10, points: 10 },
+  { id: 'edit', label: '1 lượt sửa / hỏi thêm', min: 5, points: 5 },
+  { id: 'search', label: '1 lượt tìm trên web', min: 5, points: 5 },
+  { id: 'image', label: '1 ảnh minh hoạ AI', min: 5, points: 5 },
 ] as const
 
 /** Số điểm ứng với một số tiền (không tính thưởng gói). */

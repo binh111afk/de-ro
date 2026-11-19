@@ -456,7 +456,7 @@ function PricingContent() {
                 >
                   <span className="min-w-[10rem] flex-1 text-ink">{item.label}</span>
                   <div className="ml-auto flex shrink-0 flex-wrap items-baseline justify-end gap-x-3 gap-y-0.5 text-right tnum">
-                    <span className="text-[0.8125rem] text-ink-3">{fmt(item.points)} điểm/lượt</span>
+                    <span className="text-[0.8125rem] text-ink-3">{item.min !== item.points ? `${fmt(item.min)}–${fmt(item.points)}` : fmt(item.points)} điểm/lượt</span>
                     <span className="min-w-[5rem] font-semibold text-ink">
                       ≈ {fmt(item.count)} lượt
                     </span>
