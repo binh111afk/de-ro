@@ -8,10 +8,17 @@ import { Pager } from '@/components/Pager'
 import { Segmented } from '@/components/Segmented'
 import { dialog } from '@/components/Dialog'
 import { cn } from '@/lib/cn'
-import { creditPayment, listPayments, syncPayment, type AdminPayment, type PaymentFilter, type PaymentPage } from '@/lib/adminPaymentsApi'
+import { creditPayment, listPayments, syncPayment, type AdminPayment, type PaymentFilter, type PaymentPage, type RevenuePeriod } from '@/lib/adminPaymentsApi'
 import { formatViDateTime } from './adminUtils'
 
 const fmt = (n: number) => n.toLocaleString('vi-VN')
+
+const PERIODS: Array<{ key: RevenuePeriod; label: string; title: string }> = [
+  { key: 'day', label: 'Hôm nay', title: 'Thu hôm nay' },
+  { key: 'week', label: 'Tuần này', title: 'Thu tuần này' },
+  { key: 'month', label: 'Tháng này', title: 'Thu tháng này' },
+  { key: 'all', label: 'Tất cả', title: 'Tổng đã thu' },
+]
 
 const STATUS: Record<AdminPayment['status'], { label: string; tone: 'sage' | 'honey' | 'neutral' | 'clay' }> = {
   paid: { label: 'Đã trả', tone: 'sage' },
@@ -22,6 +29,7 @@ const STATUS: Record<AdminPayment['status'], { label: string; tone: 'sage' | 'ho
 }
 
 export function PaymentsPanel() {
+  const [period, setPeriod] = useState<RevenuePeriod>('month')
   const [filter, setFilter] = useState<PaymentFilter>('all')
   const [page, setPage] = useState(1)
   const [code, setCode] = useState('')
@@ -101,17 +109,25 @@ export function PaymentsPanel() {
         <div className="rounded-[8px] border border-honey/40 bg-honey-soft px-4 py-3 text-[13.5px] text-ink-2">Chưa cấu hình PayOS trên server (thiếu biến PAYOS_*).</div>
       ) : null}
 
-      <div className="grid gap-3 sm:grid-cols-3">
-        {[
-          { label: 'Thu tháng này', value: data ? `${fmt(data.revenue.month)}đ` : '…' },
-          { label: 'Tổng đã thu', value: data ? `${fmt(data.revenue.all)}đ` : '…' },
-          { label: 'Số đơn đã trả', value: data ? fmt(data.revenue.paidCount) : '…' },
-        ].map((c) => (
-          <Card key={c.label} className="border border-line px-4 py-3.5 shadow-soft">
-            <div className="text-[12.5px] text-ink-3">{c.label}</div>
-            <div className="mt-1 text-[20px] font-bold text-ink tnum">{c.value}</div>
-          </Card>
-        ))}
+      <div className="space-y-3">
+        <Segmented
+          value={period}
+          onChange={setPeriod}
+          label="Khoảng thời gian doanh thu"
+          options={PERIODS.map(({ key, label }) => ({ key, label }))}
+          className="[&>button]:px-2.5 sm:[&>button]:px-4"
+        />
+        <div className="grid grid-cols-2 gap-3">
+          {[
+            { label: PERIODS.find((p) => p.key === period)!.title, value: data ? `${fmt(data.revenue[period])}đ` : '…' },
+            { label: 'Số đơn đã trả', value: data ? fmt(data.revenue.counts[period]) : '…' },
+          ].map((c) => (
+            <Card key={c.label} className="min-w-0 border border-line px-4 py-3.5 shadow-soft">
+              <div className="text-[12.5px] text-ink-3">{c.label}</div>
+              <div className="mt-1 truncate text-[19px] font-bold text-ink tnum sm:text-[20px]">{c.value}</div>
+            </Card>
+          ))}
+        </div>
       </div>
 
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">

@@ -3,6 +3,16 @@ import { isAdminMock, post, wait } from './adminApi'
 
 export type PaymentStatus = 'pending' | 'paid' | 'cancelled' | 'expired' | 'failed'
 export type PaymentFilter = 'all' | 'attention' | 'pending' | 'paid' | 'closed'
+export type RevenuePeriod = 'day' | 'week' | 'month' | 'all'
+
+export interface PaymentRevenue {
+  day: number
+  week: number
+  month: number
+  all: number
+  counts: Record<RevenuePeriod, number>
+  paidCount: number
+}
 
 export interface AdminPayment {
   orderCode: number
@@ -25,7 +35,7 @@ export interface PaymentPage {
   perPage: number
   total: number
   configured: boolean
-  revenue: { month: number; all: number; paidCount: number }
+  revenue: PaymentRevenue
   items: AdminPayment[]
 }
 
@@ -43,7 +53,14 @@ export function listPayments(opts: { filter?: PaymentFilter; page?: number; orde
     const items = MOCK.filter((p) =>
       f === 'all' ? true : f === 'attention' ? p.attention : f === 'closed' ? ['cancelled', 'expired', 'failed'].includes(p.status) : p.status === f,
     ).filter((p) => !opts.orderCode || p.orderCode === opts.orderCode)
-    return wait({ page: 1, perPage: 20, total: items.length, configured: true, revenue: { month: 60000, all: 60000, paidCount: 2 }, items })
+    return wait({
+      page: 1,
+      perPage: 20,
+      total: items.length,
+      configured: true,
+      revenue: { day: 10000, week: 60000, month: 60000, all: 110000, counts: { day: 1, week: 2, month: 2, all: 3 }, paidCount: 3 },
+      items,
+    })
   }
   return post('payments.list', { filter: opts.filter ?? 'all', page: opts.page ?? 1, orderCode: opts.orderCode }, false)
 }

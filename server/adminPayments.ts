@@ -21,6 +21,60 @@ type OrderRow = {
 const COLS = 'order_code,user_id,vnd,points,bonus_points,status,reference,created_at,paid_at'
 /** đơn còn chờ quá thời hạn link (15 phút) mà chưa đóng: cần xem lại */
 const STALE_MS = 20 * 60 * 1000
+const VN_OFFSET_MS = 7 * 60 * 60 * 1000
+
+/** Mốc 0h hôm nay, 0h thứ Hai tuần này, 0h ngày 1 tháng này theo giờ Việt Nam (UTC+7), trả về timestamp UTC (ms). */
+export function vnPeriodStarts(nowMs = Date.now()) {
+  const vn = new Date(nowMs + VN_OFFSET_MS)
+  const y = vn.getUTCFullYear()
+  const m = vn.getUTCMonth()
+  const d = vn.getUTCDate()
+  const daysSinceMon = (vn.getUTCDay() + 6) % 7
+  return {
+    day: Date.UTC(y, m, d) - VN_OFFSET_MS,
+    week: Date.UTC(y, m, d - daysSinceMon) - VN_OFFSET_MS,
+    month: Date.UTC(y, m, 1) - VN_OFFSET_MS,
+  }
+}
+
+export function summarizeRevenue(paid: Array<{ vnd: number; paid_at: string | null }>, nowMs = Date.now()) {
+  const starts = vnPeriodStarts(nowMs)
+  let day = 0
+  let week = 0
+  let month = 0
+  let all = 0
+  let dayCount = 0
+  let weekCount = 0
+  let monthCount = 0
+  let allCount = 0
+  for (const r of paid) {
+    const vnd = Number(r.vnd) || 0
+    all += vnd
+    allCount++
+    const t = r.paid_at ? new Date(r.paid_at).getTime() : NaN
+    if (Number.isNaN(t)) continue
+    if (t >= starts.month) {
+      month += vnd
+      monthCount++
+    }
+    if (t >= starts.week) {
+      week += vnd
+      weekCount++
+    }
+    if (t >= starts.day) {
+      day += vnd
+      dayCount++
+    }
+  }
+  return {
+    day,
+    week,
+    month,
+    all,
+    counts: { day: dayCount, week: weekCount, month: monthCount, all: allCount },
+    paidCount: allCount,
+  }
+}
 
 const needOrder = (v: unknown) => {
   const n = Number(v)
@@ -53,13 +107,10 @@ export const PAYMENT_ACTIONS: ActionMap = {
 
       const [{ data: rows, res }, { data: paid }] = await Promise.all([
         call<OrderRow[]>(s, `/rest/v1/payment_orders?${qs}`, { headers: { Prefer: 'count=exact' } }),
-        call<Array<{ vnd: number; paid_at: string }>>(s, '/rest/v1/payment_orders?select=vnd,paid_at&status=eq.paid&limit=100000'),
+        call<Array<{ vnd: number; paid_at: string | null }>>(s, '/rest/v1/payment_orders?select=vnd,paid_at&status=eq.paid&limit=100000'),
       ])
       const total = Number(res.headers.get('content-range')?.split('/')[1] ?? rows.length)
-      const monthStart = new Date()
-      monthStart.setUTCDate(1)
-      monthStart.setUTCHours(0, 0, 0, 0)
-      const sum = (list: typeof paid) => list.reduce((n, r) => n + r.vnd, 0)
+      const revenue = summarizeRevenue(paid)
 
       // email người nạp (mỗi trang tối đa 50 đơn)
       const ids = [...new Set(rows.map((r) => r.user_id))]
@@ -76,7 +127,7 @@ export const PAYMENT_ACTIONS: ActionMap = {
         perPage,
         total,
         configured: payosConfigured(),
-        revenue: { month: sum(paid.filter((r) => new Date(r.paid_at) >= monthStart)), all: sum(paid), paidCount: paid.length },
+        revenue,
         items: rows.map((r) => ({
           orderCode: r.order_code,
           userId: r.user_id,

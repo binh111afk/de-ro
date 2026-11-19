@@ -232,7 +232,71 @@ async function admin(action: string, body: Record<string, unknown>, who = 'admin
 check('người không phải admin xem đơn nạp → bị chặn', [401, 403].includes((await admin('payments.list', {}, 'user-c')).status))
 const lst = await admin('payments.list', { filter: 'all' })
 const its = lst.data.items as Array<Record<string, unknown>>
-check('admin xem danh sách đơn: có email + tổng tiền đã thu', lst.status === 200 && its.length > 0 && String(its[0].email).endsWith('@example.com') && Number((lst.data.revenue as Record<string, number>).all) > 0)
+const rev = lst.data.revenue as { day: number; week: number; month: number; all: number; counts: Record<'day' | 'week' | 'month' | 'all', number>; paidCount: number }
+check(
+  'admin xem danh sách đơn: có email + doanh thu ngày/tuần/tháng/tất cả + số đơn',
+  lst.status === 200 &&
+    its.length > 0 &&
+    String(its[0].email).endsWith('@example.com') &&
+    rev.all > 0 &&
+    typeof rev.day === 'number' &&
+    typeof rev.week === 'number' &&
+    typeof rev.month === 'number' &&
+    rev.counts.all === rev.paidCount &&
+    typeof rev.counts.day === 'number' &&
+    typeof rev.counts.week === 'number' &&
+    typeof rev.counts.month === 'number',
+)
+
+// kiểm mốc ngày / tuần (thứ Hai) / tháng theo giờ Việt Nam (UTC+7)
+const { vnPeriodStarts, summarizeRevenue } = await import('../server/adminPayments.ts')
+// Thứ Hai 2026-11-23 00:30 giờ VN = Chủ Nhật 2026-11-22T17:30:00Z (UTC vẫn là Chủ Nhật)
+const monEarlyVn = Date.parse('2026-11-22T17:30:00Z')
+const monStarts = vnPeriodStarts(monEarlyVn)
+check(
+  'mốc 0h VN sáng thứ Hai (UTC vẫn Chủ Nhật): đầu ngày và đầu tuần đều là 2026-11-22T17:00:00Z, đầu tháng là 2026-10-31T17:00:00Z',
+  monStarts.day === Date.parse('2026-11-22T17:00:00Z') &&
+    monStarts.week === Date.parse('2026-11-22T17:00:00Z') &&
+    monStarts.month === Date.parse('2026-10-31T17:00:00Z'),
+)
+// Chủ Nhật 2026-11-22 23:30 giờ VN = 2026-11-22T16:30:00Z -> tuần bắt đầu thứ Hai 16/11 0h VN (15/11T17:00Z)
+const sunLateVn = Date.parse('2026-11-22T16:30:00Z')
+const sunStarts = vnPeriodStarts(sunLateVn)
+check(
+  'mốc tối Chủ Nhật giờ VN: tuần bắt đầu từ 0h thứ Hai tuần đó',
+  sunStarts.day === Date.parse('2026-11-21T17:00:00Z') &&
+    sunStarts.week === Date.parse('2026-11-15T17:00:00Z') &&
+    sunStarts.month === Date.parse('2026-10-31T17:00:00Z'),
+)
+// Thứ Ba 2026-12-01 01:00 giờ VN = 2026-11-30T18:00:00Z -> tuần bắt đầu thứ Hai 30/11 (tháng trước), tháng bắt đầu 1/12
+const dec1Vn = Date.parse('2026-11-30T18:00:00Z')
+const decStarts = vnPeriodStarts(dec1Vn)
+check(
+  'mốc đầu tháng giao tuần (T3 1/12 giờ VN): tuần lùi về T2 30/11, tháng bắt đầu 1/12 0h VN',
+  decStarts.day === Date.parse('2026-11-30T17:00:00Z') &&
+    decStarts.week === Date.parse('2026-11-29T17:00:00Z') &&
+    decStarts.month === Date.parse('2026-11-30T17:00:00Z'),
+)
+const sumTest = summarizeRevenue(
+  [
+    { vnd: 10000, paid_at: '2026-11-22T17:05:00Z' }, // T2 00:05 VN -> hôm nay + tuần + tháng + tất cả
+    { vnd: 20000, paid_at: '2026-11-22T16:59:00Z' }, // CN 23:59 VN -> chỉ tháng + tất cả (khác ngày & khác tuần)
+    { vnd: 50000, paid_at: '2026-10-31T16:59:00Z' }, // 31/10 23:59 VN -> chỉ tất cả
+  ],
+  monEarlyVn,
+)
+check(
+  'tổng hợp doanh thu và số đơn tách đúng theo ranh giới 0h giờ VN',
+  sumTest.day === 10000 &&
+    sumTest.week === 10000 &&
+    sumTest.month === 30000 &&
+    sumTest.all === 80000 &&
+    sumTest.counts.day === 1 &&
+    sumTest.counts.week === 1 &&
+    sumTest.counts.month === 2 &&
+    sumTest.counts.all === 3 &&
+    sumTest.paidCount === 3,
+)
 const o6 = (await call('POST', '/api/pay', { body: { vnd: 2000 }, auth: tk }), orders[orders.length - 1])
 payosStatus = 'PENDING'
 const bal6 = balance.get(U)
