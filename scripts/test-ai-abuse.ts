@@ -21,6 +21,8 @@ process.env.AI_RECEIPT_SECRET = 'test-secret'
 process.env.LLM_API_KEY = 'dummy'
 process.env.LLM_MODEL = 'app-model'
 process.env.AI_WELCOME_POINTS = '120'
+// các ca kiểm trừ điểm / lạm dụng dùng yêu cầu không task; việc bắt buộc task được kiểm ở test-ai-stream.ts
+process.env.AI_ALLOW_TASKLESS = '1'
 process.env.AI_MONTHLY_TOKENS = '0'
 for (const k of ['VERCEL', 'DEEPSEEK_API_KEY', 'FOSTA_API_KEY', 'ANYROUTER_API_KEY', 'NIGHTROUTER_API_KEY', 'ANTHROPIC_API_KEY', 'LLM_FALLBACK_MODEL']) delete process.env[k]
 

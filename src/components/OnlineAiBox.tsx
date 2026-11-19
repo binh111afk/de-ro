@@ -6,7 +6,7 @@ import { Button } from '@/components/ui'
 import type { Question } from '@/data/types'
 import { readImportFile } from '@/lib/importFile'
 import { callLlm } from '@/lib/llm'
-import { attachmentsPrompt, parseAiReply, systemPrompt, type AiAttachment } from '@/lib/onlineAi'
+import { attachmentsPrompt, parseAiReply, type AiAttachment } from '@/lib/onlineAi'
 import type { OnlineMeta } from '@/lib/onlineExam'
 
 const ACCEPT = '.docx,.pdf,.txt,.md'
@@ -68,11 +68,19 @@ export function OnlineAiBox({
     abort.current = ctrl
     try {
       const res = await callLlm(
-        [
-          { role: 'system', content: systemPrompt(meta, questions) },
-          { role: 'user', content: (text || 'Dựa vào tài liệu đính kèm, soạn các câu hỏi phù hợp cho đề này.') + attachmentsPrompt(attached) },
-        ],
-        { signal: ctrl.signal, reasoningEffort: 'medium', maxTokens: 12000 },
+        [{ role: 'user', content: (text || 'Dựa vào tài liệu đính kèm, soạn các câu hỏi phù hợp cho đề này.') + attachmentsPrompt(attached) }],
+        {
+          signal: ctrl.signal,
+          reasoningEffort: 'medium',
+          maxTokens: 12000,
+          task: {
+            name: 'de-online',
+            input: {
+              meta: { title: meta.title, subject: meta.subject, grade: meta.grade },
+              questions: questions.map((q) => ({ number: q.number, type: q.type, prompt: q.prompt })),
+            },
+          },
+        },
       )
       const { message, questions: qs } = parseAiReply(res.content)
       if (qs.length) latest.current(qs)

@@ -92,13 +92,12 @@ export async function generateDrafts(input: { request: string; subject: string; 
           : 'không có options, lời giải đặt ở explanation'
   const res = await callLlm(
     [
-      { role: 'system', content: 'Bạn là giáo viên Việt Nam ra đề theo chương trình GDPT 2018. Câu hỏi chính xác, đáp án đúng, không trùng lặp. Công thức toán viết LaTeX trong $...$. Chỉ trả về JSON.' },
       {
         role: 'user',
         content: `Soạn ${input.count} câu hỏi môn ${input.subject}, ${input.grade}, dạng ${input.type}.\nYêu cầu: ${input.request.trim() || 'theo chương trình của khối lớp'}\nTrả về JSON dạng {"questions":[{"type":"${input.type}","prompt":"...","options":[{"key":"A","text":"..."}],"answer":"...","explanation":"..."}]}. Với dạng này: ${shape}. prompt không ghi "Câu N".`,
       },
     ],
-    { reasoningEffort: 'medium', maxTokens: 16000 },
+    { reasoningEffort: 'medium', maxTokens: 16000, task: { name: 'ngan-hang' } },
   )
   const data = extractJson<{ questions?: RawQuestion[] }>(res.content)
   const drafts = (data.questions ?? []).map((q) => toDraft(q, input.type)).filter((d): d is BankDraft => !!d)

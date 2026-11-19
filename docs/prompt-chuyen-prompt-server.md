@@ -49,7 +49,7 @@ Cùng cách làm cho mọi dòng. Khi chuyển một chỗ mà thấy prompt dù
 ## Điều cấm
 
 - Đổi chữ prompt, tham số `reasoningEffort`, `temperature`, `maxTokens`, cách xử lý kết quả của chỗ gọi (chỉ đổi chỗ prompt được ghép).
-- Sửa `AiPanel.tsx`, `AiAskPanel.tsx`, `llmProxy.ts` phần chọn model / tính điểm / stream, hay `AI_REJECT_CLIENT_SYSTEM`. Cờ này **chỉ agent mạnh bật** sau khi mọi chỗ đã chuyển.
+- Sửa `AiPanel.tsx`, `AiAskPanel.tsx`, `llmProxy.ts` phần chọn model / tính điểm / stream, hay đoạn bắt buộc `task` (từ nay `/api/llm` từ chối yêu cầu không có `task`; công tắc tạm `AI_ALLOW_TASKLESS=1` chỉ agent mạnh dùng).
 - Thêm thư viện. Ghi đường dẫn tuyệt đối ra ngoài dự án.
 - Gửi chữ prompt, tên model hay nhà cung cấp về trình duyệt (kể cả lỗi): phản hồi lỗi chỉ báo chung.
 - Gộp vào `main` hay push. Chỉ commit trên nhánh riêng khi người dùng bảo.

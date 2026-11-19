@@ -5,6 +5,13 @@
  * Thêm tác vụ mới: viết hàm ghép trong `src/lib/prompts/`, thêm vào `TASKS` ở đây, kiểm kiểu dữ liệu client gửi.
  */
 import { ASK_ONLY_SYSTEM, buildExamSystem, type ExamTaskInput } from '../src/lib/prompts/exam.js'
+import { buildDeOnlineSystem, type DeOnlineQuestionSummary } from '../src/lib/prompts/de-online.js'
+import { buildSuaCauSystem } from '../src/lib/prompts/sua-cau.js'
+import { buildVeDoThiSystem } from '../src/lib/prompts/ve-do-thi.js'
+import { buildChonHinhSystem } from '../src/lib/prompts/chon-hinh.js'
+import { buildNganHangSystem } from '../src/lib/prompts/ngan-hang.js'
+import { buildMaTranSystem } from '../src/lib/prompts/ma-tran.js'
+import { buildSuaSlideSystem } from '../src/lib/prompts/sua-slide.js'
 import type { PromptSource } from '../src/lib/prompts/sources.js'
 import {
   WEB_SEARCH_SYSTEM,
@@ -127,6 +134,42 @@ function slideSua(raw: unknown): string | null {
   return context === undefined ? null : buildSlideEditSystem(context)
 }
 
+/** `de-online`: trợ lý AI trong trình tạo đề online. */
+function deOnline(raw: unknown): string | null {
+  if (!raw || typeof raw !== 'object') return null
+  const o = raw as Record<string, unknown>
+  if (!o.meta || typeof o.meta !== 'object' || Array.isArray(o.meta)) return null
+  const m = o.meta as Record<string, unknown>
+  const subject = str(m.subject, 100)
+  const grade = str(m.grade, 100)
+  if (subject === undefined || grade === undefined) return null
+  if (!Array.isArray(o.questions)) return null
+  const questions: DeOnlineQuestionSummary[] = o.questions.slice(0, 500).map((item, i) => {
+    const q = (item && typeof item === 'object' ? item : {}) as Record<string, unknown>
+    return {
+      number: typeof q.number === 'number' && Number.isFinite(q.number) ? q.number : i + 1,
+      type: str(q.type, 50) ?? 'trac-nghiem',
+      prompt: str(q.prompt, 10_000) ?? '',
+    }
+  })
+  return buildDeOnlineSystem({ meta: { title: str(m.title, 500) ?? '', subject, grade }, questions })
+}
+
+/** `ma-tran`: phân loại câu hỏi theo ma trận đặc tả. */
+function maTran(raw: unknown): string | null {
+  if (!raw || typeof raw !== 'object') return null
+  const o = raw as Record<string, unknown>
+  const subject = str(o.subject, 100)
+  if (subject === undefined) return null
+  if (typeof o.grade !== 'number' || !Number.isFinite(o.grade)) return null
+  if (!Array.isArray(o.chapters)) return null
+  const chapters = o.chapters
+    .slice(0, 100)
+    .filter((c): c is string => typeof c === 'string')
+    .map((c) => c.slice(0, 300))
+  return buildMaTranSystem({ subject, grade: o.grade, chapters })
+}
+
 const TASKS: Record<string, (input: unknown) => string | null> = {
   'slide-chat': slideChat,
   'bang-ve': bangVe,
@@ -136,6 +179,13 @@ const TASKS: Record<string, (input: unknown) => string | null> = {
   'tim-web': () => WEB_SEARCH_SYSTEM,
   'soan-de': soanDe,
   'hoi-truoc': hoiTruoc,
+  'de-online': deOnline,
+  'sua-cau': buildSuaCauSystem,
+  've-do-thi': buildVeDoThiSystem,
+  'chon-hinh': buildChonHinhSystem,
+  'ngan-hang': buildNganHangSystem,
+  'ma-tran': maTran,
+  'sua-slide': buildSuaSlideSystem,
 }
 
 /** system prompt của tác vụ; null nếu tên lạ hoặc dữ liệu sai kiểu */

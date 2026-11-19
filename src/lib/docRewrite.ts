@@ -14,7 +14,6 @@ import { FIELD_DEFAULT, type FieldScene } from './field'
 import { normalizeObjects, prepareToolDoc } from './objects'
 import { dynamicId } from './figureSprites'
 import { OBJECTS } from './objectsCatalog'
-import { FIGURE_GUIDE } from './prompts/figureGuide.js'
 
 export const DOC_REWRITE_PRESETS = [
   { label: 'Viết lại rõ hơn', ask: 'Viết lại rõ ràng, chặt chẽ hơn, giữ nguyên ý' },
@@ -23,22 +22,15 @@ export const DOC_REWRITE_PRESETS = [
   { label: 'Dễ hiểu hơn', ask: 'Viết lại dễ hiểu hơn cho học sinh' },
 ] as const
 
-const SYSTEM =
-  'Bạn sửa MỘT đoạn chữ trong đề thi/tài liệu tiếng Việt theo yêu cầu của giáo viên. ' +
-  'Chỉ trả về đoạn chữ mới: không giải thích, không tiêu đề, không dấu ngoặc kép bao quanh, không markdown. ' +
-  'Giữ nguyên công thức $...$, số liệu và thuật ngữ chuyên môn. Không thêm đáp án hay lời giải nếu không được yêu cầu. ' +
-  'Nếu yêu cầu là một câu hỏi về đoạn chữ (không phải sửa), hãy trả lời ngắn gọn.'
-
 export async function rewriteSelection(text: string, instruction: string, context: string, signal?: AbortSignal): Promise<string> {
   const res = await callLlm(
     [
-      { role: 'system', content: SYSTEM },
       {
         role: 'user',
         content: `${context ? `Ngữ cảnh: ${context}\n` : ''}Đoạn chữ đang chọn:\n${text}\n\nYêu cầu: ${instruction}`,
       },
     ],
-    { signal, reasoningEffort: 'low' },
+    { signal, reasoningEffort: 'low', task: { name: 'sua-cau' } },
   )
   const out = cleanRewrite(res.content).replace(/\*\*(.+?)\*\*/g, '$1')
   if (!out) throw new Error('AI không trả về nội dung, thử lại nhé.')
@@ -49,16 +41,6 @@ export async function rewriteSelection(text: string, instruction: string, contex
  * "Vẽ đồ thị": AI chỉ đọc đề và trả cấu hình, app tự vẽ bằng lib/plot.ts
  * ------------------------------------------------------------------ */
 
-const PLOT_SYSTEM =
-  'Bạn đọc một đề bài Toán tiếng Việt và chọn đồ thị hàm số y = f(x) cần vẽ minh hoạ. ' +
-  'Chỉ trả về MỘT object JSON, không giải thích: ' +
-  '{"curves": ["biểu thức f(x)", ...], "xMin": số, "xMax": số, "labels": true|false, "note": "ghi chú ngắn hoặc chuỗi rỗng"}. ' +
-  'Biểu thức viết theo biến x, dùng ^ cho luỹ thừa, sqrt(), abs() hoặc |...|, sin, cos, tan, ln, log, exp, pi; nhân ngầm được (2x). ' +
-  'Tối đa 4 hàm; labels = true khi có từ 2 hàm. Chọn [xMin, xMax] vừa đủ thấy các điểm đặc biệt (đỉnh, giao điểm với trục, tiệm cận), độ rộng 6–16 đơn vị, ưu tiên số nguyên. ' +
-  'Hàm có tham số (m, a…) thì chọn một giá trị minh hoạ hợp lí và ghi trong note, ví dụ "Chọn m = 1 để minh hoạ". ' +
-  'note CHỈ dùng cho việc đó (hoặc khi không vẽ được); TUYỆT ĐỐI không ghi lời giải, toạ độ đỉnh, giao điểm hay đáp số — đây là đề cho học sinh. ' +
-  'Nếu đề không có hàm số nào để vẽ, trả {"curves": [], "note": "lí do ngắn"}.'
-
 export interface PlotPlan {
   spec: PlotSpec
   note: string
@@ -66,11 +48,8 @@ export interface PlotPlan {
 
 export async function planPlot(text: string, context: string, signal?: AbortSignal): Promise<PlotPlan> {
   const res = await callLlm(
-    [
-      { role: 'system', content: PLOT_SYSTEM },
-      { role: 'user', content: `${context ? `Ngữ cảnh: ${context}\n` : ''}Đề bài:\n${text}` },
-    ],
-    { signal, reasoningEffort: 'low' },
+    [{ role: 'user', content: `${context ? `Ngữ cảnh: ${context}\n` : ''}Đề bài:\n${text}` }],
+    { signal, reasoningEffort: 'low', task: { name: 've-do-thi' } },
   )
   let raw: Record<string, unknown>
   try {
@@ -129,13 +108,6 @@ function planFromRaw(raw: Record<string, unknown>): ToolPlan {
 
 export { FIGURE_GUIDE, figureGuideFor } from './prompts/figureGuide.js'
 
-const TOOL_SYSTEM =
-  'Bạn đọc một đề bài tiếng Việt và chọn MỘT hình minh hoạ cần vẽ. Chỉ trả về MỘT object JSON, không giải thích. Các loại:\n' +
-  FIGURE_GUIDE +
-  ' Có thể thêm "note". Hàm có tham số thì chọn giá trị minh hoạ và ghi trong note. ' +
-  'note chỉ để ghi giá trị tham số đã chọn hoặc lí do không vẽ được; TUYỆT ĐỐI không ghi lời giải hay đáp số. ' +
-  'Nếu đề không có gì để vẽ, trả {"kind":"none","note":"lí do ngắn"}.'
-
 export interface ToolPlan {
   doc: ToolDoc
   note: string
@@ -145,11 +117,8 @@ const num = (v: unknown, d: number) => (Number.isFinite(Number(v)) ? Number(v) :
 
 export async function planTool(text: string, context: string, signal?: AbortSignal): Promise<ToolPlan> {
   const res = await callLlm(
-    [
-      { role: 'system', content: TOOL_SYSTEM },
-      { role: 'user', content: `${context ? `Ngữ cảnh: ${context}\n` : ''}Đề bài:\n${text}` },
-    ],
-    { signal, reasoningEffort: 'low' },
+    [{ role: 'user', content: `${context ? `Ngữ cảnh: ${context}\n` : ''}Đề bài:\n${text}` }],
+    { signal, reasoningEffort: 'low', task: { name: 'chon-hinh' } },
   )
   let raw: Record<string, unknown>
   try {

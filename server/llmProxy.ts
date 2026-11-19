@@ -422,14 +422,15 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
   }
   if (!Array.isArray(body.messages) || !body.messages.length) return json(res, 400, { error: 'messages is required' })
   // có `task`: server tự ghép system prompt, bỏ mọi role system client gửi (client không tự đặt được prompt).
-  // Không có `task` (đường cũ, các chỗ gọi AI nhỏ chưa chuyển): vẫn nhận role system cho tới khi AI_REJECT_CLIENT_SYSTEM=1.
+  // Không có `task`: từ chối (không để /api/llm thành ô chat tự do). Trừ máy dev (script đo) và khi bật tạm AI_ALLOW_TASKLESS=1.
   if (body.task !== undefined) {
     const system = buildTaskSystem(body.task, body.taskInput)
     const rest = body.messages.filter((m) => m?.role !== 'system')
     if (system === null || !rest.length) return json(res, 400, { error: 'Tác vụ AI không hợp lệ.' })
     body.messages = [{ role: 'system', content: system }, ...rest]
-  } else if (process.env.AI_REJECT_CLIENT_SYSTEM === '1' && body.messages.some((m) => m?.role === 'system')) {
-    return json(res, 400, { error: 'Yêu cầu AI không hợp lệ.' })
+  } else if (!isLocal(ip) && process.env.AI_ALLOW_TASKLESS !== '1') {
+    // thường là tab mở từ bản trang cũ (trước khi chuyển prompt lên server)
+    return json(res, 400, { error: 'Phiên bản trang đã cũ, hãy tải lại trang (F5) rồi thử lại.' })
   }
   // model rỗng / không phải chuỗi = không chọn (đừng để chuỗi rỗng khớp model chưa cấu hình rồi bỏ qua model chính)
   // chỉ máy dev (script đo / so model) được chọn model: điểm tính theo một giá, người dùng chọn model đắt là trả giá rẻ (Strix 7)
