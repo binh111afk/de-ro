@@ -52,17 +52,17 @@ export function AdminLayout({ me }: AdminLayoutProps) {
       <div className="mx-auto max-w-[1280px] px-4 py-6 sm:px-6 lg:px-8">
         {/* Thanh tiêu đề quản trị trên cùng */}
         <header className="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-line pb-4">
-          <div className="flex items-center gap-3">
-            <div className="flex size-9 items-center justify-center rounded-[6px] bg-clay font-bold text-white shadow-soft">
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="flex size-9 shrink-0 items-center justify-center rounded-[6px] bg-clay font-bold text-white shadow-soft">
               <Shield className="size-5" />
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-[19px] font-bold tracking-tight text-ink">
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <h1 className="whitespace-nowrap text-[17px] font-bold tracking-tight text-ink sm:text-[19px]">
                   Quản trị hệ thống
                 </h1>
                 {isMock ? (
-                  <Badge tone="honey" className="text-[11px]">
+                  <Badge tone="honey" className="whitespace-nowrap text-[11px]">
                     Dữ liệu giả (mock)
                   </Badge>
                 ) : null}
@@ -71,7 +71,7 @@ export function AdminLayout({ me }: AdminLayoutProps) {
           </div>
 
           {/* Góc trên phải hiện vai trò (Badge): admin / kiểm duyệt */}
-          <div className="flex items-center gap-2">
+          <div className="flex shrink-0 items-center gap-2">
             <span className="text-[13px] text-ink-3">Vai trò:</span>
             <Badge tone={me.role === 'admin' ? 'clay' : 'neutral'}>
               {me.role === 'admin' ? 'admin' : 'kiểm duyệt'}
@@ -79,14 +79,14 @@ export function AdminLayout({ me }: AdminLayoutProps) {
           </div>
         </header>
 
-        {/* Bố cục 2 cột (Desktop) / Tab ngang (Mobile < 768px) */}
-        <div className="flex flex-col gap-6 md:flex-row md:items-start">
-          {/* Menu trái cố định (~220px) trên desktop, cuộn ngang trên mobile */}
+        {/* Bố cục 2 cột (Desktop >= 1024px) / Tab ngang (Mobile & Tablet < 1024px) */}
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
+          {/* Menu trái cố định (~220px) trên desktop, cuộn ngang trên mobile/tablet */}
           <nav
             aria-label="Menu quản trị"
-            className="sticky top-[68px] z-30 w-full shrink-0 bg-canvas py-2 md:top-[88px] md:w-[220px] md:bg-transparent md:py-0"
+            className="sticky top-[68px] z-30 w-full shrink-0 bg-canvas py-1.5 lg:top-[88px] lg:w-[220px] lg:bg-transparent lg:py-0"
           >
-            <div className="flex flex-row gap-1.5 overflow-x-auto pb-2 md:flex-col md:overflow-visible md:pb-0">
+            <div className="flex flex-row gap-1.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:flex-col lg:overflow-visible">
               {NAV_ITEMS.map((item) => {
                 const isActive = item.exact
                   ? pathname === '/admin' || pathname === '/admin/'

@@ -89,7 +89,7 @@ export function PaymentsPanel() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-[22px] font-bold tracking-tight text-ink">Nạp điểm</h1>
         <Button variant="outline" size="sm" onClick={reload} disabled={loading}>
           <RefreshCw className={cn('size-3.5', loading && 'animate-spin')} />
@@ -144,7 +144,7 @@ export function PaymentsPanel() {
             inputMode="numeric"
             placeholder="Mã đơn"
             aria-label="Tìm theo mã đơn"
-            className={cn(inputClass, 'h-9 w-36')}
+            className={cn(inputClass, 'h-9 min-w-0 flex-1 sm:w-40 sm:flex-none')}
           />
           <Button type="submit" variant="outline" size="sm" aria-label="Tìm">
             <Search className="size-3.5" />
@@ -228,7 +228,7 @@ export function PaymentsPanel() {
 
 function Row({ label, children, mono }: { label: string; children: ReactNode; mono?: boolean }) {
   return (
-    <div className="grid grid-cols-[7rem_1fr] gap-3 py-2.5">
+    <div className="grid grid-cols-[6.5rem_1fr] gap-3 py-2.5 sm:grid-cols-[7rem_1fr]">
       <dt className="text-[13px] text-ink-3">{label}</dt>
       <dd className={cn('min-w-0 break-all text-[13.5px] text-ink', mono && 'font-mono text-[12.5px]')}>{children}</dd>
     </div>
@@ -258,7 +258,7 @@ function PaymentDrawer({
         aria-label={`Đơn ${p.orderCode}`}
         onKeyDown={(e) => e.key === 'Escape' && close()}
       >
-        <div className="flex items-center justify-between border-b border-line px-6 py-4">
+        <div className="flex items-center justify-between border-b border-line px-4 py-3.5 sm:px-6 sm:py-4">
           <div>
             <h2 className="font-mono text-[16px] font-bold text-ink">{p.orderCode}</h2>
             <div className="mt-1">
@@ -270,7 +270,7 @@ function PaymentDrawer({
           </button>
         </div>
 
-        <dl className="flex-1 divide-y divide-line-2 overflow-y-auto px-6 py-2">
+        <dl className="flex-1 divide-y divide-line-2 overflow-y-auto px-4 py-2 sm:px-6">
           <Row label="Tài khoản">{p.email || '—'}</Row>
           <Row label="Mã người dùng" mono>
             {p.userId}
@@ -295,7 +295,7 @@ function PaymentDrawer({
         </dl>
 
         {p.status !== 'paid' ? (
-          <div className="flex gap-2 border-t border-line px-6 py-4">
+          <div className="flex gap-2 border-t border-line px-4 py-3.5 sm:px-6 sm:py-4">
             <Button variant="outline" className="flex-1" disabled={busy} onClick={onSync}>
               Hỏi PayOS
             </Button>

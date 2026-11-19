@@ -358,9 +358,9 @@ export function BankPanel({ me: _me }: { me: AdminMe }) {
       {/* Khối đếm môn × độ khó */}
       {showMatrix && (
         <Card className="p-4 sm:p-5">
-          <div className="mb-3 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <BookOpen className="size-4 text-ink-3" />
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+              <BookOpen className="size-4 shrink-0 text-ink-3" />
               <h2 className="text-[14px] font-bold text-ink">Số câu theo môn & độ khó</h2>
               <span className="text-[12px] text-ink-4">(câu đang sử dụng)</span>
             </div>
@@ -458,7 +458,7 @@ export function BankPanel({ me: _me }: { me: AdminMe }) {
         </div>
 
         {/* Các select lọc */}
-        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-5">
+        <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5">
           <SiteSelect
             label="Môn học"
             value={subjectFilter}
@@ -701,10 +701,10 @@ function QuestionDrawer({
         aria-label="Chi tiết câu hỏi"
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-line px-5 py-4">
-          <div className="flex items-center gap-2">
-            <Badge tone={ORIGIN_TONE[item.origin]}>{ORIGIN_LABEL[item.origin]}</Badge>
-            <h2 className="font-mono text-[13px] font-semibold text-ink truncate max-w-[280px]" data-tip={e.id}>
+        <div className="flex items-center justify-between gap-2 border-b border-line px-4 py-3.5 sm:px-5 sm:py-4">
+          <div className="flex min-w-0 items-center gap-2">
+            <Badge tone={ORIGIN_TONE[item.origin]} className="shrink-0">{ORIGIN_LABEL[item.origin]}</Badge>
+            <h2 className="truncate font-mono text-[13px] font-semibold text-ink" data-tip={e.id}>
               {e.id}
             </h2>
           </div>

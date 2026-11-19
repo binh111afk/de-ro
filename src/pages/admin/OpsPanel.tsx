@@ -552,7 +552,7 @@ export function OpsPanel({ me: _me }: OpsPanelProps) {
                     <span className="text-[12px] text-ink-4">{row.note}</span>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 self-end sm:self-auto">
+                <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-3">
                   {result?.error ? (
                     <span className="max-w-[140px] truncate font-mono text-[12px] text-clay sm:max-w-[220px]" data-tip={result.error}>
                       {result.error}
@@ -614,52 +614,52 @@ export function OpsPanel({ me: _me }: OpsPanelProps) {
 
         {/* 4 ô số liệu trên cùng */}
         <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
-          <div className="rounded-[6px] border border-line bg-surface p-3.5 shadow-xs sm:p-4">
+          <div className="min-w-0 rounded-[6px] border border-line bg-surface p-3.5 shadow-xs sm:p-4">
             <span className="text-[12px] font-medium text-ink-3">Tổng lượt gọi</span>
             <div className="mt-1">
               {loadingStats ? (
                 <Spinner className="size-4 text-ink-3" />
               ) : (
-                <span className="tnum text-[24px] font-bold tracking-tight text-ink sm:text-[28px]">
+                <span className="tnum block truncate text-[18px] font-bold tracking-tight text-ink sm:text-[24px] lg:text-[26px]">
                   {formatNumber(totalCalls)}
                 </span>
               )}
             </div>
           </div>
 
-          <div className="rounded-[6px] border border-line bg-surface p-3.5 shadow-xs sm:p-4">
+          <div className="min-w-0 rounded-[6px] border border-line bg-surface p-3.5 shadow-xs sm:p-4">
             <span className="text-[12px] font-medium text-ink-3">Tỉ lệ lỗi</span>
             <div className="mt-1">
               {loadingStats ? (
                 <Spinner className="size-4 text-ink-3" />
               ) : (
-                <span className="tnum text-[24px] font-bold tracking-tight text-ink sm:text-[28px]">
+                <span className="tnum block truncate text-[18px] font-bold tracking-tight text-ink sm:text-[24px] lg:text-[26px]">
                   {errorRateStr}
                 </span>
               )}
             </div>
           </div>
 
-          <div className="rounded-[6px] border border-line bg-surface p-3.5 shadow-xs sm:p-4">
+          <div className="min-w-0 rounded-[6px] border border-line bg-surface p-3.5 shadow-xs sm:p-4">
             <span className="text-[12px] font-medium text-ink-3">Tổng token</span>
             <div className="mt-1">
               {loadingStats ? (
                 <Spinner className="size-4 text-ink-3" />
               ) : (
-                <span className="tnum text-[24px] font-bold tracking-tight text-ink sm:text-[28px]">
+                <span className="tnum block truncate text-[18px] font-bold tracking-tight text-ink sm:text-[24px] lg:text-[26px]" data-tip={formatNumber(totalTokens)}>
                   {formatNumber(totalTokens)}
                 </span>
               )}
             </div>
           </div>
 
-          <div className="rounded-[6px] border border-line bg-surface p-3.5 shadow-xs sm:p-4">
+          <div className="min-w-0 rounded-[6px] border border-line bg-surface p-3.5 shadow-xs sm:p-4">
             <span className="text-[12px] font-medium text-ink-3">Chi phí (USD)</span>
             <div className="mt-1">
               {loadingStats ? (
                 <Spinner className="size-4 text-ink-3" />
               ) : (
-                <span className="tnum text-[24px] font-bold tracking-tight text-ink sm:text-[28px]">
+                <span className="tnum block truncate text-[18px] font-bold tracking-tight text-ink sm:text-[24px] lg:text-[26px]">
                   {totalCostStr}
                 </span>
               )}

@@ -548,9 +548,9 @@ function UserDetailDrawer({
         aria-label="Chi tiết người dùng"
       >
         {/* Header ngăn kéo */}
-        <div className="flex items-center justify-between border-b border-line px-6 py-4">
-          <div className="flex items-center gap-3">
-            <UserAvatar user={user} className="size-10 text-[15px]" />
+        <div className="flex items-center justify-between gap-2 border-b border-line px-4 py-3.5 sm:px-6 sm:py-4">
+          <div className="flex min-w-0 items-center gap-3">
+            <UserAvatar user={user} className="size-10 shrink-0 text-[15px]" />
             <div className="min-w-0">
               <h2 className="truncate text-[16px] font-bold text-ink">
                 {user.name || 'Người dùng'}
@@ -561,7 +561,7 @@ function UserDetailDrawer({
           <button
             type="button"
             onClick={handleClose}
-            className="rounded-[6px] p-1.5 text-ink-3 hover:bg-sunken hover:text-ink"
+            className="shrink-0 rounded-[6px] p-1.5 text-ink-3 hover:bg-sunken hover:text-ink"
             aria-label="Đóng ngăn"
           >
             <X className="size-5" />
@@ -570,14 +570,14 @@ function UserDetailDrawer({
 
         {/* Thông báo nhanh nếu có */}
         {notice ? (
-          <div className="flex items-center gap-2 bg-sage-soft px-6 py-2.5 text-[13px] font-medium text-sage">
+          <div className="flex items-center gap-2 bg-sage-soft px-4 py-2.5 text-[13px] font-medium text-sage sm:px-6">
             <Check className="size-4 shrink-0" />
             <span>{notice}</span>
           </div>
         ) : null}
 
         {/* Nội dung cuộn được */}
-        <div className="flex-1 space-y-6 overflow-y-auto p-6 text-[13.5px]">
+        <div className="flex-1 space-y-6 overflow-y-auto p-4 text-[13.5px] sm:p-6">
           {/* 1. Thông tin tài khoản */}
           <section className="space-y-3">
             <h3 className="text-[12px] font-bold uppercase tracking-wider text-ink-3">
@@ -673,20 +673,21 @@ function UserDetailDrawer({
                     <label className="mb-1 block text-[12.5px] font-medium text-ink-2">
                       Hạn mức tháng (điểm)
                     </label>
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2">
                       <input
                         type="number"
                         disabled={isUnlimited}
                         value={isUnlimited ? '' : quotaLimitInput}
                         onChange={(e) => setQuotaLimitInput(e.target.value)}
                         placeholder={isUnlimited ? 'Không giới hạn' : 'Ví dụ: 300'}
-                        className={`${inputClass} flex-1 text-[13.5px]`}
+                        className={`${inputClass} min-w-0 flex-1 text-[13.5px]`}
                       />
                       <Button
                         type="button"
                         variant={isUnlimited ? 'primary' : 'outline'}
                         size="sm"
                         onClick={() => setIsUnlimited(!isUnlimited)}
+                        className="shrink-0"
                       >
                         Không giới hạn
                       </Button>
@@ -738,7 +739,7 @@ function UserDetailDrawer({
             <h3 className="text-[12px] font-bold uppercase tracking-wider text-ink-3">
               Cộng điểm AI
             </h3>
-            <div className="flex items-center justify-between rounded-[8px] border border-line-2 bg-sunken/40 p-4">
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-[8px] border border-line-2 bg-sunken/40 p-3.5 sm:p-4">
               <div>
                 <span className="block text-[12.5px] text-ink-3">Điểm cộng còn lại</span>
                 <span className="tnum font-display text-[22px] font-bold text-ink">
@@ -785,7 +786,7 @@ function UserDetailDrawer({
               <h3 className="text-[12px] font-bold uppercase tracking-wider text-ink-3">
                 Khoá tài khoản
               </h3>
-              <div className="space-y-3 rounded-[8px] border border-line-2 bg-sunken/40 p-4">
+              <div className="space-y-3 rounded-[8px] border border-line-2 bg-sunken/40 p-3.5 sm:p-4">
                 {isBanned ? (
                   <div className="space-y-3">
                     <div className="flex items-center gap-2 text-[13px] text-clay">
@@ -815,7 +816,7 @@ function UserDetailDrawer({
                         options={[...BAN_DURATIONS]}
                         onChange={(v) => setBanDuration(v as typeof banDuration)}
                         label="Thời hạn khoá"
-                        className="w-full [&>button]:flex-auto [&>button]:justify-center [&>button]:whitespace-nowrap"
+                        className="w-full [&>button]:flex-auto [&>button]:justify-center [&>button]:px-2 [&>button]:text-[12.5px] sm:[&>button]:px-3.5 sm:[&>button]:text-[13.5px]"
                       />
                     </div>
                     <div>
@@ -955,7 +956,7 @@ function GrantCreditsModal({
       role="dialog"
       aria-modal="true"
     >
-      <div className="anim-pop w-full max-w-md rounded-[8px] border border-line bg-surface p-6 shadow-2xl">
+      <div className="anim-pop w-full max-w-md rounded-[8px] border border-line bg-surface p-4 shadow-2xl sm:p-6">
         <div className="flex items-center justify-between border-b border-line pb-3">
           <div className="flex items-center gap-2">
             <Coins className="size-5 text-clay" />

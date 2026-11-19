@@ -41,7 +41,7 @@ export function Switch({
         <label
           htmlFor={id}
           className={cn(
-            'cursor-pointer text-[13.5px] font-medium text-ink',
+            'cursor-pointer whitespace-nowrap text-[13.5px] font-medium text-ink',
             disabled && 'cursor-not-allowed opacity-40',
           )}
           onClick={() => !disabled && onChange(!checked)}

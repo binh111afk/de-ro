@@ -23,7 +23,10 @@ export function Segmented<T extends string>({
       ref={ref}
       role="radiogroup"
       aria-label={label}
-      className={cn('relative inline-flex h-11 max-w-full items-center rounded-[8px] bg-sunken p-[3px]', className)}
+      className={cn(
+        'relative inline-flex h-11 max-w-full items-center overflow-x-auto rounded-[8px] bg-sunken p-[3px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
+        className,
+      )}
     >
       {thumb ? (
         <span
@@ -42,7 +45,7 @@ export function Segmented<T extends string>({
             aria-checked={active}
             onClick={() => onChange(o.key)}
             className={cn(
-              'relative z-10 flex h-full items-center gap-2 rounded-[6px] px-4 text-[13.5px] font-semibold transition-colors duration-200 active:scale-[0.97]',
+              'relative z-10 flex h-full shrink-0 items-center gap-2 whitespace-nowrap rounded-[6px] px-3 text-[13.5px] font-semibold transition-colors duration-200 active:scale-[0.97] sm:px-4',
               active ? 'text-ink' : 'text-ink-3 hover:text-ink',
             )}
           >

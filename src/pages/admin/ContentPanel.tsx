@@ -92,15 +92,12 @@ export function ContentPanel({ me }: ContentPanelProps) {
           <h1 className="text-[22px] font-bold tracking-tight text-ink">Quản lý nội dung</h1>
         </div>
 
-        <div className="-mb-1 max-w-full overflow-x-auto pb-1">
-          <Segmented
-            value={tab}
-            onChange={(val) => setTab(val)}
-            options={tabOptions}
-            label="Mục quản lý nội dung"
-            className="max-w-none [&>button]:whitespace-nowrap"
-          />
-        </div>
+        <Segmented
+          value={tab}
+          onChange={(val) => setTab(val)}
+          options={tabOptions}
+          label="Mục quản lý nội dung"
+        />
       </div>
 
       {/* Nội dung theo từng tab */}
@@ -1061,9 +1058,8 @@ function DocsTab({ me: _me }: { me: AdminMe }) {
             ) : null}
           </div>
 
-          <Button variant="outline" size="icon" onClick={() => void loadDocs()} data-tip="Làm mới" aria-label="Làm mới" className="h-11 w-11">
+          <Button variant="outline" size="icon" onClick={() => void loadDocs()} data-tip="Làm mới" aria-label="Làm mới" className="h-11 w-11 shrink-0">
             <RefreshCw className="size-4" />
-            <span>Tải lại</span>
           </Button>
         </div>
 
@@ -1209,15 +1205,15 @@ function FeedbackTab({ me: _me }: { me: AdminMe }) {
     <div className="space-y-4">
       {/* Bộ lọc đã đọc / chưa đọc */}
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-[8px] border border-line bg-surface p-3.5 shadow-xs">
-        <div className="flex items-center gap-2">
-          <span className="text-[13px] font-medium text-ink-3">Trạng thái:</span>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="whitespace-nowrap text-[13px] font-medium text-ink-3">Trạng thái:</span>
           <button
             type="button"
             onClick={() => {
               setReadFilter('all')
               setPage(1)
             }}
-            className={`rounded-[6px] px-3 py-1.5 text-[13px] font-semibold transition-colors ${
+            className={`whitespace-nowrap rounded-[6px] px-3 py-1.5 text-[13px] font-semibold transition-colors ${
               readFilter === 'all' ? 'bg-ink text-white' : 'text-ink-2 hover:bg-sunken'
             }`}
           >
@@ -1229,7 +1225,7 @@ function FeedbackTab({ me: _me }: { me: AdminMe }) {
               setReadFilter('unread')
               setPage(1)
             }}
-            className={`rounded-[6px] px-3 py-1.5 text-[13px] font-semibold transition-colors ${
+            className={`whitespace-nowrap rounded-[6px] px-3 py-1.5 text-[13px] font-semibold transition-colors ${
               readFilter === 'unread' ? 'bg-ink text-white' : 'text-ink-2 hover:bg-sunken'
             }`}
           >
@@ -1241,7 +1237,7 @@ function FeedbackTab({ me: _me }: { me: AdminMe }) {
               setReadFilter('read')
               setPage(1)
             }}
-            className={`rounded-[6px] px-3 py-1.5 text-[13px] font-semibold transition-colors ${
+            className={`whitespace-nowrap rounded-[6px] px-3 py-1.5 text-[13px] font-semibold transition-colors ${
               readFilter === 'read' ? 'bg-ink text-white' : 'text-ink-2 hover:bg-sunken'
             }`}
           >

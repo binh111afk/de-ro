@@ -84,7 +84,7 @@ export function PricingEditor({ initial, onNotice }: { initial: PricingConfig | 
       <div className="mt-5 overflow-x-auto">
         <table className="w-full min-w-[480px] text-[13px]">
           <thead>
-            <tr className="text-left text-[12px] font-semibold text-ink-3">
+            <tr className="whitespace-nowrap text-left text-[12px] font-semibold text-ink-3">
               <th className="pb-2 pr-3 font-semibold">Giá gói (đ)</th>
               <th className="pb-2 pr-3 font-semibold">Thưởng lần đầu (%)</th>
               <th className="pb-2 pr-3 font-semibold">Điểm nhận</th>
