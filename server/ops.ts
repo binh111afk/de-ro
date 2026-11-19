@@ -89,9 +89,36 @@ export async function logAiFeedback(f: AiFeedback): Promise<boolean> {
 }
 
 /** Chi phí từ usage của opencode (`usage.opencode.list_cost`, USD) nếu có. */
-export function costFromUsage(usage: unknown): number | null {
+export function costFromUsage(usage: unknown, provider?: string): number | null {
   const v = (usage as { opencode?: { list_cost?: unknown } } | undefined)?.opencode?.list_cost
-  return typeof v === 'number' && Number.isFinite(v) ? v : null
+  if (typeof v === 'number' && Number.isFinite(v)) return v
+  return provider ? estimateCost(usage, provider) : null
+}
+
+/** Giá ước tính USD / 1 triệu token: [đầu vào, đầu vào trúng cache, đầu ra]. Đặt lại bằng env AI_PRICE_<NHÀ_CUNG_CẤP>="vào,cache,ra". */
+const DEFAULT_PRICE: Record<string, [number, number, number]> = {
+  deepseek: [0.27, 0.027, 1.1],
+  opencode: [0.27, 0.27, 1.1],
+  fosta: [0.27, 0.27, 1.1],
+  anyrouter: [0.27, 0.27, 1.1],
+  nightrouter: [0.27, 0.27, 1.1],
+  anthropic: [3, 0.3, 15],
+}
+
+/** Provider không báo giá (mọi nơi trừ opencode): ước theo token × bảng giá. Không có usage thì null. */
+export function estimateCost(usage: unknown, provider: string): number | null {
+  const u = usage as
+    | { prompt_tokens?: number; completion_tokens?: number; input_tokens?: number; output_tokens?: number; prompt_cache_hit_tokens?: number; prompt_tokens_details?: { cached_tokens?: number } }
+    | undefined
+  const inTok = Number(u?.prompt_tokens ?? u?.input_tokens) || 0
+  const outTok = Number(u?.completion_tokens ?? u?.output_tokens) || 0
+  if (inTok + outTok <= 0) return null
+  const raw = process.env[`AI_PRICE_${provider.toUpperCase()}`]
+  const fromEnv = raw ? raw.split(',').map(Number) : []
+  const p = fromEnv.length === 3 && fromEnv.every((n) => Number.isFinite(n) && n >= 0) ? (fromEnv as [number, number, number]) : DEFAULT_PRICE[provider]
+  if (!p) return null
+  const cached = Math.min(inTok, Math.max(0, Number(u?.prompt_cache_hit_tokens ?? u?.prompt_tokens_details?.cached_tokens) || 0))
+  return ((inTok - cached) * p[0] + cached * p[1] + outTok * p[2]) / 1_000_000
 }
 
 export type Maintenance = { on: boolean; message?: string; until?: string | null }

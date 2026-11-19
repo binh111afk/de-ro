@@ -745,6 +745,7 @@ function UserDetailDrawer({
                   {formatNumber(toPoints(quota?.credits ?? 0))}
                   <span className="text-[13px] font-normal text-ink-3"> điểm</span>
                 </span>
+                {quota?.welcomePending && <span className="mt-0.5 block text-[12px] text-ink-3">Chưa dùng AI, sẽ nhận ở lượt đầu</span>}
               </div>
               <Button
                 variant="outline"

@@ -48,6 +48,8 @@ export interface UserQuota {
   requestsThisMonth: number
   /** số dư điểm cộng (token), cộng thêm vào hạn mức tháng, không mất khi sang tháng */
   credits: number
+  /** chưa dùng AI lần nào: `credits` là quà chào mừng sẽ nhận ở lượt đầu */
+  welcomePending?: boolean
 }
 
 export interface UserStorage {

@@ -18,7 +18,7 @@ const num = (v: string | undefined, d: number) => {
 }
 export const TOKENS_PER_POINT = 1000
 export const MONTHLY_LIMIT = () => num(process.env.AI_MONTHLY_TOKENS, 0)
-const WELCOME_TOKENS = () => num(process.env.AI_WELCOME_POINTS, 120) * TOKENS_PER_POINT
+export const WELCOME_TOKENS = () => num(process.env.AI_WELCOME_POINTS, 120) * TOKENS_PER_POINT
 
 /** limit = hạn mức tháng (base) + số dư điểm (credits); dùng vượt base thì trừ vào credits */
 export type Quota = { used: number; limit: number; scope: 'month'; base?: number; credits?: number }

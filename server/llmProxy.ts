@@ -569,7 +569,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
         error,
         promptTokens: u?.prompt_tokens ?? u?.input_tokens,
         completionTokens: u?.completion_tokens ?? u?.output_tokens,
-        cost: costFromUsage(usage),
+        cost: costFromUsage(usage, providerOf(t)),
         ms: Date.now() - t0,
       }))
     }

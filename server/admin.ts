@@ -7,7 +7,7 @@
  */
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { clientIp, forgetBan, guard, isLocal, userFromToken } from './guard.js'
-import { MONTHLY_LIMIT } from './aiQuota.js'
+import { MONTHLY_LIMIT, WELCOME_TOKENS } from './aiQuota.js'
 import { json, readBody, safeError } from './http.js'
 import { deleteR2Object, pingR2, r2DocKeyFromUrl, r2Info } from './r2.js'
 import { assertSafeEndpoint, listProviders, pingProviders } from './llmProxy.js'
@@ -421,7 +421,9 @@ const ACTIONS: ActionMap = {
         defaultLimit,
         usedThisMonth: Number(use[0]?.tokens ?? 0),
         requestsThisMonth: Number(use[0]?.requests ?? 0),
-        credits: Number(cr[0]?.balance ?? 0),
+        // chưa có dòng số dư = chưa dùng AI lần nào: sẽ nhận quà chào mừng ở lượt đầu, hiện luôn số đó thay vì 0
+        credits: cr[0] ? Number(cr[0].balance) : WELCOME_TOKENS(),
+        welcomePending: !cr[0],
       }
     },
   },
