@@ -1188,7 +1188,7 @@ export function AiPanel({
         const summary = result && !failed ? result.text : undefined
         const looksJson = failed
         const text = result?.text ?? res.content
-        if (failed) console.warn('[AI] JSON không áp được:', res.content)
+        if (failed && import.meta.env.DEV) console.warn('[AI] JSON không áp được:', res.content)
         if (summary) rememberAiTurn({ mode, request: userTurn.text, reply: summary, context: documentDigest })
         setTurns((t) =>
           t.map((turn) =>
