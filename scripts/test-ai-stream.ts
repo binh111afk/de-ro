@@ -185,7 +185,8 @@ const spentBy = async (fn: () => Promise<Out>) => {
   const { r, spent } = await spentBy(() => hit({ messages: msgs('soạn đề d'), maxTokens: 8000, stream: true }))
   const types = r.events.map((e) => e.type)
   check('dự phòng: có sự kiện retry', types.includes('retry'), types)
-  check('dự phòng: gọi DeepSeek trước, kết thúc done bằng opencode', calls[n0]?.model === 'deepseek-flash' && calls[n0 + 1]?.model === 'app-model' && r.events.at(-1)?.type === 'done' && r.events.at(-1)?.model === 'app-model', r.events.at(-1))
+  check('dự phòng: gọi DeepSeek trước, kết thúc done bằng opencode', calls[n0]?.model === 'deepseek-flash' && calls[n0 + 1]?.model === 'app-model' && r.events.at(-1)?.type === 'done' && r.events.at(-1)?.model === undefined, r.events.at(-1))
+check('không lộ tên model cho trình duyệt', !JSON.stringify(r.events).includes('app-model') && !JSON.stringify(r.events).includes('deepseek-flash'))
   check('dự phòng: đứt thì chuyển ngay sang dự phòng (2 lượt)', calls.length - n0 === 2, calls.slice(n0))
   check('dự phòng: trừ lượt dự phòng + phần hỏng', spent > 5_000, spent)
   delete process.env.DEEPSEEK_API_KEY

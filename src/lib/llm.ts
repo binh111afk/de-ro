@@ -12,7 +12,8 @@ export interface LlmResult {
   content: string
   reasoning: string
   usage: unknown
-  model: string
+  /** chỉ có khi chạy máy dev (script đo); server không gửi tên model cho trình duyệt */
+  model?: string
   /** biên nhận để xin hoàn token nếu kết quả không dùng được (gửi lại qua `retryOf`) */
   receipt?: string
   /** lượt `webSearch`: các trang web model đã dẫn */

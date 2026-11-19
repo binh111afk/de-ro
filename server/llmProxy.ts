@@ -619,7 +619,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
             log(target, t0, true, null, r.usage)
             const spent = billOf(r.usage, r.content)
             const [after] = await Promise.all([settle(spent), release(), ...pending])
-            return reply(200, { content: r.content, reasoning: '', usage: r.usage, model: r.model, finishReason: r.finishReason, quota: after, receipt: receiptFor(spent) })
+            return reply(200, { content: r.content, reasoning: '', usage: r.usage, ...(isLocal(ip) ? { model: r.model } : {}), finishReason: r.finishReason, quota: after, receipt: receiptFor(spent) })
           }
           errs.push(`${selectedModel}: empty content (finish_reason=${r.finishReason})`)
         } catch (err) {
@@ -746,7 +746,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
           const citations = target.search
             ? [...new Map((msg.annotations ?? []).filter((a) => a.type === 'url_citation' && a.url_citation?.url).map((a) => [a.url_citation!.url!, { url: a.url_citation!.url!, title: a.url_citation!.title || a.url_citation!.url! }])).values()].slice(0, 20)
             : undefined
-          return reply(200, { content, reasoning, usage: data.usage ?? null, model: data.model ?? selectedModel, finishReason: choice?.finish_reason ?? 'unknown', quota: after, receipt: receiptFor(spent), ...(citations ? { citations } : {}) })
+          return reply(200, { content, reasoning, usage: data.usage ?? null, ...(isLocal(ip) ? { model: data.model ?? selectedModel } : {}), finishReason: choice?.finish_reason ?? 'unknown', quota: after, receipt: receiptFor(spent), ...(citations ? { citations } : {}) })
         }
         lastErr = `${selectedModel}: empty content (finish_reason=${choice?.finish_reason ?? 'unknown'})`
         // trả rỗng vẫn tốn token (thường là suy luận hết trần) → tính vào hạn mức
@@ -766,7 +766,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
 
     // báo lỗi TỪNG model, không chỉ cái cuối (lỗi cuối hay là fallback phụ, che mất nguyên nhân thật)
     await Promise.all([wasted ? addUsage(userId, ip, wasted, quota) : null, release(), ...pending])
-    return reply(502, { error: `Các model AI đều không phản hồi. ${errs.join(' · ')}`.trim() })
+    return reply(502, { error: isLocal(ip) ? `Các model AI đều không phản hồi. ${errs.join(' · ')}`.trim() : 'Các model AI đều không phản hồi. Vui lòng thử lại sau.' })
   } catch (err) {
     return reply(500, { error: err instanceof Error ? err.message : String(err) })
   } finally {
