@@ -782,6 +782,7 @@ export function examSystemPrompt(documentDigest?: string, request = ''): string 
     'id lấy đúng trong TÀI LIỆU HIỆN TẠI. Ví dụ "thêm lời giải câu 4" → một insertAfter ngay sau khối câu 4 (và sau hình của câu đó nếu có), KHÔNG trả lại cả đề.\n' +
     '- "append": thêm câu/ý/phần vào cuối đề → "blocks" chỉ gồm khối cần thêm.\n' +
     '- "replace": CHỈ khi giáo viên bảo soạn đề mới hoặc viết lại toàn bộ đề → "blocks" là toàn bộ đề.\n' +
+    '- "name" (chỉ khi "replace"): tên ngắn để lưu đề, theo bài/chủ đề + môn lớp, ≤ 60 ký tự, vd. "Hệ thức lượng trong tam giác vuông – Toán 9".\n' +
     '- "say": nói ngắn đã làm gì, đã hiểu yêu cầu thế nào nếu yêu cầu có thể hiểu nhiều cách. Không lặp lại yêu cầu.\n' +
     'Khi giáo viên chỉ hỏi/tư vấn, không cần sửa tài liệu: trả lời bằng văn bản thường, KHÔNG trả JSON.\n\n' +
     'CÁC LOẠI KHỐI: header, title, meta, student, heading, paragraph, bullets, grid, question, essay, answerKey, rubric, pageBreak, divider.\n' +

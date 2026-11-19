@@ -830,8 +830,12 @@ export function appendSlidesToDeck(
   const kit = plan?.decorKit
   const pagesWithDecor = kit ? pages.map((page) => ({ ...page, decorKit: page.decorKit ?? kit })) : pages
   const added = pagesWithDecor.map((page) => slideFromAi(page, nextTheme))
+  // Bộ chưa đặt tên thì lấy tên bài từ dàn ý AI.
+  const aiTitle = plan?.title?.trim().slice(0, 120)
+  const rename = aiTitle && (!latest.title.trim() || latest.title === 'Bài giảng mới')
   return {
     patch: {
+      ...(rename ? { title: aiTitle } : {}),
       ...(themeChanged ? { theme: nextTheme } : {}),
       ...(plan?.style ? { style: plan.style } : {}),
       slides: [

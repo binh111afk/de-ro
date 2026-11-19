@@ -176,6 +176,8 @@ interface AiExamEnvelope {
   patch?: unknown
   /** câu trả lời ngắn cho giáo viên (đã hiểu yêu cầu thế nào, đã làm gì) — hiện trong chat */
   say?: unknown
+  /** tên đề theo bài (chỉ khi replace) — đặt cho tab còn tên mặc định */
+  name?: unknown
   /** một câu nhắc người dùng (vd. nội dung họ yêu cầu nằm ngoài chương trình 2018) — hiện kèm câu tóm tắt */
   warning?: unknown
 }
@@ -839,6 +841,9 @@ export default function ComposeDoc() {
           // lấy lớp Selection từ chính editor (không import runtime ProseMirror vào trang chung)
           const Sel = editor.state.selection.constructor as typeof Selection
           editor.commands.setTextSelection(Sel.near(editor.state.doc.resolve(1)).from)
+          const name = typeof raw.name === 'string' ? raw.name.trim().slice(0, 120) : ''
+          const tab = useComposeStore.getState().tabs.find((t) => t.id === activeId)
+          if (name && tab && (!tab.title.trim() || tab.title === 'Đề thi mới')) renameTab(activeId, name)
           return done(`Đã soạn xong đề (${blocks.length} khối).`)
         }
         if (action === 'append' && blocks.length) {
@@ -897,7 +902,7 @@ export default function ComposeDoc() {
       if (say) return { text: `${say}${warn}` }
       return looksJson ? fallback('AI chưa đưa ra thay đổi nào cho đề.') : undefined
     },
-    [activeId, editor],
+    [activeId, editor, renameTab],
   )
 
   /** Chèn khối mẫu — đường chèn chung xem `insertBlockTemplate` (templates.ts). */
