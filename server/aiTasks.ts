@@ -5,6 +5,7 @@
  * Thêm tác vụ mới: viết hàm ghép trong `src/lib/prompts/`, thêm vào `TASKS` ở đây, kiểm kiểu dữ liệu client gửi.
  */
 import { ASK_ONLY_SYSTEM, buildExamSystem, type ExamTaskInput } from '../src/lib/prompts/exam.js'
+import { buildDeOnlineSystem, type DeOnlineQuestionSummary } from '../src/lib/prompts/de-online.js'
 import type { PromptSource } from '../src/lib/prompts/sources.js'
 
 const MAX_FIELD = 600_000
@@ -47,9 +48,31 @@ function soanDe(raw: unknown): string | null {
 /** `hoi-truoc`: yêu cầu ngắn chưa nêu môn — hỏi lại bằng prompt ngắn trước khi soạn. */
 const hoiTruoc = (): string => ASK_ONLY_SYSTEM
 
+/** `de-online`: trợ lý AI trong trình tạo đề online. */
+function deOnline(raw: unknown): string | null {
+  if (!raw || typeof raw !== 'object') return null
+  const o = raw as Record<string, unknown>
+  if (!o.meta || typeof o.meta !== 'object' || Array.isArray(o.meta)) return null
+  const m = o.meta as Record<string, unknown>
+  const subject = str(m.subject, 100)
+  const grade = str(m.grade, 100)
+  if (subject === undefined || grade === undefined) return null
+  if (!Array.isArray(o.questions)) return null
+  const questions: DeOnlineQuestionSummary[] = o.questions.slice(0, 500).map((item, i) => {
+    const q = (item && typeof item === 'object' ? item : {}) as Record<string, unknown>
+    return {
+      number: typeof q.number === 'number' && Number.isFinite(q.number) ? q.number : i + 1,
+      type: str(q.type, 50) ?? 'trac-nghiem',
+      prompt: str(q.prompt, 10_000) ?? '',
+    }
+  })
+  return buildDeOnlineSystem({ meta: { title: str(m.title, 500) ?? '', subject, grade }, questions })
+}
+
 const TASKS: Record<string, (input: unknown) => string | null> = {
   'soan-de': soanDe,
   'hoi-truoc': hoiTruoc,
+  'de-online': deOnline,
 }
 
 /** system prompt của tác vụ; null nếu tên lạ hoặc dữ liệu sai kiểu */

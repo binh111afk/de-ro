@@ -7,6 +7,7 @@ import { createHash } from 'node:crypto'
 import { readFileSync } from 'node:fs'
 import { ASK_RULE, THINK_VI } from '../src/lib/prompts/common.ts'
 import { ASK_ONLY_SYSTEM, buildExamSystem, examSystemPrompt } from '../src/lib/prompts/exam.ts'
+import { buildDeOnlineSystem, type DeOnlineInput } from '../src/lib/prompts/de-online.ts'
 import { sourcePrompt, sourceRule } from '../src/lib/prompts/sources.ts'
 
 let fail = 0
@@ -40,6 +41,21 @@ for (const s of snaps) {
 
 // prompt hỏi trước (chưa nêu môn) giữ nguyên chữ cũ ở AiAskPanel
 check('ASK_ONLY_SYSTEM đúng chữ cũ', ASK_ONLY_SYSTEM === 'Bạn là trợ lý soạn đề thi và bài giảng cho giáo viên Việt Nam.' + ASK_RULE + '\nNếu từ yêu cầu đoán hợp lý được môn và nội dung (vd "đề phương trình bậc hai" là Toán) thì KHÔNG hỏi, chỉ trả đúng {"action":"proceed"}.')
+
+// de-online
+{
+  const snaps = JSON.parse(readFileSync(new URL('./fixtures/prompt-de-online-snap.json', import.meta.url), 'utf8')) as Array<{
+    name: string
+    meta: DeOnlineInput['meta']
+    questions: DeOnlineInput['questions']
+    len: number
+    sha256: string
+  }>
+  for (const s of snaps) {
+    const built = buildDeOnlineSystem({ meta: s.meta, questions: s.questions })
+    check(`de-online (${s.name}): khớp bản chụp`, built.length === s.len && sha(built) === s.sha256, { len: built.length, want: s.len })
+  }
+}
 
 console.log(fail ? `\n${fail} lỗi` : '\nTất cả đều qua')
 process.exit(fail ? 1 : 0)

@@ -223,6 +223,17 @@ check('không lộ tên model cho trình duyệt', !JSON.stringify(r.events).inc
   check('task hoi-truoc: dùng prompt hỏi ngắn', r.status === 200 && calls.at(-1)!.messages[0].content.startsWith('Bạn là trợ lý soạn đề thi và bài giảng'), calls.at(-1)!.messages[0].content.slice(0, 60))
 }
 {
+  plan = ['ok']
+  const r = await hit({
+    task: 'de-online',
+    taskInput: { meta: { title: 'Đề 1', subject: 'Toán', grade: 'Lớp 12' }, questions: [{ number: 1, type: 'trac-nghiem', prompt: 'Tính đạo hàm' }] },
+    messages: [{ role: 'system', content: 'HACK' }, { role: 'user', content: 'Thêm 2 câu' }],
+    maxTokens: 8000,
+  })
+  const sent = calls.at(-1)!.messages
+  check('task de-online: server ghép prompt + bỏ system client', r.status === 200 && sent[0].role === 'system' && sent[0].content.startsWith('Bạn là trợ lý soạn đề trắc nghiệm online') && !JSON.stringify(sent).includes('HACK'), sent[0].content.slice(0, 60))
+}
+{
   const n0 = calls.length
   const bad = await hit({ task: 'khong-co-task-nay', messages: msgs('x'), maxTokens: 8000 })
   const noInput = await hit({ task: 'soan-de', taskInput: { digest: 'thiếu text' }, messages: msgs('x'), maxTokens: 8000 })

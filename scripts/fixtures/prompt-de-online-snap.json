@@ -1,0 +1,140 @@
+[
+ {
+  "name": "empty",
+  "meta": {
+   "title": "",
+   "subject": "Toán",
+   "grade": "Lớp 12",
+   "school": "",
+   "year": "",
+   "term": "",
+   "durationMinutes": 90
+  },
+  "questions": [],
+  "len": 3698,
+  "sha256": "b3cb40f2b73844b63c3e5a1d64a6322996ff43ab06f67fa9d2051acbb868171e"
+ },
+ {
+  "name": "with-questions",
+  "meta": {
+   "title": "Kiểm tra giữa kì 1",
+   "subject": "Vật lí",
+   "grade": "Lớp 11",
+   "school": "THPT A",
+   "year": "2026",
+   "term": "HK1",
+   "durationMinutes": 45
+  },
+  "questions": [
+   {
+    "id": "1",
+    "number": 1,
+    "type": "trac-nghiem",
+    "prompt": "Dao động điều hoà là gì?",
+    "points": 0.25
+   },
+   {
+    "id": "2",
+    "number": 2,
+    "type": "dung-sai",
+    "prompt": "Cho phương trình $x = 5\\cos(2\\pi t)$ với biên độ và tần số góc xác định.",
+    "points": 1
+   },
+   {
+    "id": "3",
+    "number": 3,
+    "type": "tu-luan-dong",
+    "prompt": "Tính chu kì dao động.",
+    "points": 1
+   }
+  ],
+  "len": 3906,
+  "sha256": "500b4bfa9b49bdbee1ddee4a935e253c710189d0ff7f6cd2444cfdd6dc4bc646"
+ },
+ {
+  "name": "many-questions-long-prompt",
+  "meta": {
+   "title": "Đề tổng hợp",
+   "subject": "Hoá học",
+   "grade": "Lớp 10",
+   "school": "",
+   "year": "",
+   "term": "",
+   "durationMinutes": 60
+  },
+  "questions": [
+   {
+    "id": "1",
+    "number": 1,
+    "type": "trac-nghiem",
+    "prompt": "Câu hỏi mẫu số 1 có nội dung rất dài để kiểm tra việc cắt bớt chuỗi vượt quá 90 ký tự trong hàm clip của onlineAi.ts nhằm đảm bảo giống hệt từng byte.",
+    "points": 1
+   },
+   {
+    "id": "2",
+    "number": 2,
+    "type": "dung-sai",
+    "prompt": "Câu hỏi mẫu số 2 có nội dung rất dài để kiểm tra việc cắt bớt chuỗi vượt quá 90 ký tự trong hàm clip của onlineAi.ts nhằm đảm bảo giống hệt từng byte.",
+    "points": 1
+   },
+   {
+    "id": "3",
+    "number": 3,
+    "type": "tra-loi-ngan",
+    "prompt": "Câu hỏi mẫu số 3 có nội dung rất dài để kiểm tra việc cắt bớt chuỗi vượt quá 90 ký tự trong hàm clip của onlineAi.ts nhằm đảm bảo giống hệt từng byte.",
+    "points": 1
+   },
+   {
+    "id": "4",
+    "number": 4,
+    "type": "tu-luan",
+    "prompt": "Câu hỏi mẫu số 4 có nội dung rất dài để kiểm tra việc cắt bớt chuỗi vượt quá 90 ký tự trong hàm clip của onlineAi.ts nhằm đảm bảo giống hệt từng byte.",
+    "points": 1
+   },
+   {
+    "id": "5",
+    "number": 5,
+    "type": "trac-nghiem",
+    "prompt": "Câu hỏi mẫu số 5 có nội dung rất dài để kiểm tra việc cắt bớt chuỗi vượt quá 90 ký tự trong hàm clip của onlineAi.ts nhằm đảm bảo giống hệt từng byte.",
+    "points": 1
+   },
+   {
+    "id": "6",
+    "number": 6,
+    "type": "dung-sai",
+    "prompt": "Câu hỏi mẫu số 6 có nội dung rất dài để kiểm tra việc cắt bớt chuỗi vượt quá 90 ký tự trong hàm clip của onlineAi.ts nhằm đảm bảo giống hệt từng byte.",
+    "points": 1
+   },
+   {
+    "id": "7",
+    "number": 7,
+    "type": "tra-loi-ngan",
+    "prompt": "Câu hỏi mẫu số 7 có nội dung rất dài để kiểm tra việc cắt bớt chuỗi vượt quá 90 ký tự trong hàm clip của onlineAi.ts nhằm đảm bảo giống hệt từng byte.",
+    "points": 1
+   },
+   {
+    "id": "8",
+    "number": 8,
+    "type": "tu-luan",
+    "prompt": "Câu hỏi mẫu số 8 có nội dung rất dài để kiểm tra việc cắt bớt chuỗi vượt quá 90 ký tự trong hàm clip của onlineAi.ts nhằm đảm bảo giống hệt từng byte.",
+    "points": 1
+   },
+   {
+    "id": "9",
+    "number": 9,
+    "type": "trac-nghiem",
+    "prompt": "Câu hỏi mẫu số 9 có nội dung rất dài để kiểm tra việc cắt bớt chuỗi vượt quá 90 ký tự trong hàm clip của onlineAi.ts nhằm đảm bảo giống hệt từng byte.",
+    "points": 1
+   },
+   {
+    "id": "10",
+    "number": 10,
+    "type": "dung-sai",
+    "prompt": "Câu hỏi mẫu số 10 có nội dung rất dài để kiểm tra việc cắt bớt chuỗi vượt quá 90 ký tự trong hàm clip của onlineAi.ts nhằm đảm bảo giống hệt từng byte.",
+    "points": 1
+   }
+  ],
+  "len": 4533,
+  "sha256": "6fc45d576d38f1ba0aa777b06eff5b5aed2d9131d61fc728407e3a7698d2d325"
+ }
+]
