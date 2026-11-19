@@ -183,7 +183,7 @@ export async function chargeAndGenerate(
   req: IncomingMessage,
   res: ServerResponse,
   getPrompt: () => Promise<string>,
-): Promise<{ dataUrl: string; model: string; quota: unknown } | null> {
+): Promise<{ dataUrl: string; quota: unknown } | null> {
   // vẽ ảnh AI chỉ cho người đã đăng nhập (máy dev không cần)
   const ip = clientIp(req)
   const userId = await userFromToken(req)
@@ -223,18 +223,25 @@ export async function chargeAndGenerate(
       try {
         const dataUrl = await generate(config, prompt)
         const [after] = await Promise.all([addUsage(userId, ip, cost, quota), release()])
-        return { dataUrl, model: config.model, quota: after }
+        return { dataUrl, quota: after }
       } catch (err) {
         lastStatus = err instanceof ImageError ? err.status : 502
         errors.push(`${config.model}: ${err instanceof Error ? err.message : String(err)}`)
       }
     }
     await release()
-    json(res, lastStatus, { error: errors.join(' | ') })
+    const detail = errors.join(' | ')
+    console.error('[imageProxy]', detail)
+    json(res, lastStatus, { error: isLocal(ip) ? detail : 'Không tạo được ảnh, thử lại sau.' })
     return null
   } catch (err) {
     await release()
-    json(res, 500, { error: err instanceof Error ? err.message : String(err) })
+    console.error('[imageProxy]', err)
+    json(res, 500, {
+      error: isLocal(ip)
+        ? (err instanceof Error ? err.message : String(err))
+        : 'Không tạo được ảnh, thử lại sau.',
+    })
     return null
   }
 }
@@ -261,6 +268,11 @@ export function imageMiddleware(
   if (req.method !== 'POST' && req.method !== 'OPTIONS') return next()
   handleImageRequest(req, res).catch((err: unknown) => {
     if (res.headersSent) return res.end()
-    json(res, 500, { error: err instanceof Error ? err.message : String(err) })
+    console.error('[imageProxy]', err)
+    json(res, 500, {
+      error: isLocal(clientIp(req))
+        ? (err instanceof Error ? err.message : String(err))
+        : 'Không tạo được ảnh, thử lại sau.',
+    })
   })
 }
