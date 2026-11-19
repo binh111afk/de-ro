@@ -169,6 +169,24 @@ export const OBJECTS: Record<string, string> = {
   snail: 'ốc sên',
   sunflower: 'hoa hướng dương',
   pine_tree: 'cây thông',
+  bus: 'xe buýt',
+  motorbike: 'xe máy',
+  train: 'tàu hoả',
+  truck: 'xe tải',
+  sailboat: 'thuyền buồm',
+  fire_truck: 'xe cứu hoả',
+  soccer_ball: 'quả bóng đá',
+  racket: 'cái vợt',
+  shuttlecock: 'quả cầu lông',
+  globe: 'quả địa cầu',
+  compass: 'la bàn',
+  magnifying_glass: 'kính lúp',
+  microscope: 'kính hiển vi',
+  test_tube: 'ống nghiệm',
+  battery: 'cục pin',
+  light_bulb: 'bóng đèn',
+  magnet: 'nam châm',
+  rocket: 'tên lửa',
 }
 
 export const CONTAINERS: Record<string, ContainerMeta> = {
@@ -188,7 +206,7 @@ export const CONTAINERS: Record<string, ContainerMeta> = {
 }
 
 /** vật hay dùng trong hình thực tế (lệnh "hình <vật> AB") */
-export const SCENE_OBJECTS: string[] = ['bicycle', 'tree', 'person', 'house', 'building', 'flagpole', 'electric_pole', 'streetlight', 'lighthouse', 'tower', 'ladder', 'boat', 'ship', 'car', 'airplane', 'hot_air_balloon', 'kite', 'mountain', 'sun', 'tent', 'slide', 'water_tank', 'skyscraper', 'tile_house', 'stilt_house', 'school', 'hospital', 'market', 'pagoda', 'church', 'bridge', 'village_gate', 'traffic_light', 'fence', 'water_well', 'water_tower', 'windmill', 'warehouse', 'step_ladder', 'stairs', 'cow', 'horse', 'elephant', 'deer', 'pine_tree']
+export const SCENE_OBJECTS: string[] = ['bicycle', 'tree', 'person', 'house', 'building', 'flagpole', 'electric_pole', 'streetlight', 'lighthouse', 'tower', 'ladder', 'boat', 'ship', 'car', 'airplane', 'hot_air_balloon', 'kite', 'mountain', 'sun', 'tent', 'slide', 'water_tank', 'skyscraper', 'tile_house', 'stilt_house', 'school', 'hospital', 'market', 'pagoda', 'church', 'bridge', 'village_gate', 'traffic_light', 'fence', 'water_well', 'water_tower', 'windmill', 'warehouse', 'step_ladder', 'stairs', 'cow', 'horse', 'elephant', 'deer', 'pine_tree', 'bus', 'motorbike', 'train', 'truck', 'sailboat', 'fire_truck', 'rocket']
 
 /** tên gọi khác (không dấu, chữ thường) → id */
 export const OBJECT_ALIASES: Record<string, string> = {
@@ -364,4 +382,41 @@ export const OBJECT_ALIASES: Record<string, string> = {
   'huong duong': 'sunflower',
   'cay thong': 'pine_tree',
   'thong': 'pine_tree',
+  'xe buyt': 'bus',
+  'o to khach': 'bus',
+  'xe khach': 'bus',
+  'xe may': 'motorbike',
+  'xe gan may': 'motorbike',
+  'mo to': 'motorbike',
+  'tau hoa': 'train',
+  'xe lua': 'train',
+  'doan tau': 'train',
+  'xe tai': 'truck',
+  'o to tai': 'truck',
+  'thuyen buom': 'sailboat',
+  'tau buom': 'sailboat',
+  'xe cuu hoa': 'fire_truck',
+  'xe chua chay': 'fire_truck',
+  'xe thang': 'fire_truck',
+  'bong da': 'soccer_ball',
+  'trai bong': 'soccer_ball',
+  'vot': 'racket',
+  'vot cau long': 'racket',
+  'cau long': 'shuttlecock',
+  'qua cau': 'shuttlecock',
+  'dia cau': 'globe',
+  'la ban': 'compass',
+  'cai la ban': 'compass',
+  'kinh lup': 'magnifying_glass',
+  'cai kinh lup': 'magnifying_glass',
+  'kinh hien vi': 'microscope',
+  'ong nghiem': 'test_tube',
+  'pin': 'battery',
+  'vien pin': 'battery',
+  'bong den': 'light_bulb',
+  'den dien': 'light_bulb',
+  'nam cham': 'magnet',
+  'nam cham chu u': 'magnet',
+  'ten lua': 'rocket',
+  'tau vu tru': 'rocket',
 }

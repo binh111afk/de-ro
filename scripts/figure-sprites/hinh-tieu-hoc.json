@@ -2541,6 +2541,382 @@
         "cây thông",
         "thông"
       ]
+    },
+    {
+      "id": "bus",
+      "name": "xe buýt",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single school bus, side view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "xe buýt",
+        "ô tô khách",
+        "xe khách"
+      ]
+    },
+    {
+      "id": "motorbike",
+      "name": "xe máy",
+      "grades": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single classic motorcycle motorbike with headlight, fuel tank, seat and two spoked wheels, side view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "xe máy",
+        "xe gắn máy",
+        "mô tô"
+      ]
+    },
+    {
+      "id": "train",
+      "name": "tàu hoả",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single steam train locomotive, side view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "tàu hoả",
+        "xe lửa",
+        "đoàn tàu"
+      ]
+    },
+    {
+      "id": "truck",
+      "name": "xe tải",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single cargo delivery truck, side view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "xe tải",
+        "ô tô tải"
+      ]
+    },
+    {
+      "id": "sailboat",
+      "name": "thuyền buồm",
+      "grades": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single sailboat with triangular sail, side view, no water, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "thuyền buồm",
+        "tàu buồm"
+      ]
+    },
+    {
+      "id": "fire_truck",
+      "name": "xe cứu hoả",
+      "grades": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single fire engine truck with ladder on top, side view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "xe cứu hoả",
+        "xe chữa cháy",
+        "xe thang"
+      ]
+    },
+    {
+      "id": "soccer_ball",
+      "name": "quả bóng đá",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "freq": "cao",
+      "containers": [
+        "box",
+        "bag",
+        "basket"
+      ],
+      "prompt": "A single classic soccer ball with simple pentagon pattern, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "bóng đá",
+        "trái bóng"
+      ]
+    },
+    {
+      "id": "racket",
+      "name": "cái vợt",
+      "grades": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single badminton racket with simple coarse grid strings, front view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "vợt",
+        "vợt cầu lông"
+      ]
+    },
+    {
+      "id": "shuttlecock",
+      "name": "quả cầu lông",
+      "grades": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "vừa",
+      "containers": [
+        "box",
+        "basket"
+      ],
+      "prompt": "A single badminton shuttlecock, side view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "cầu lông",
+        "quả cầu"
+      ]
+    },
+    {
+      "id": "globe",
+      "name": "quả địa cầu",
+      "grades": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single classroom desktop globe on a stand with simple continent outlines, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "địa cầu"
+      ]
+    },
+    {
+      "id": "compass",
+      "name": "la bàn",
+      "grades": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single round navigation compass with pointed needle and four tick marks, no letters, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "la bàn",
+        "cái la bàn"
+      ]
+    },
+    {
+      "id": "magnifying_glass",
+      "name": "kính lúp",
+      "grades": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single handheld magnifying glass, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "kính lúp",
+        "cái kính lúp"
+      ]
+    },
+    {
+      "id": "microscope",
+      "name": "kính hiển vi",
+      "grades": [
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single school laboratory microscope, side view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "kính hiển vi"
+      ]
+    },
+    {
+      "id": "test_tube",
+      "name": "ống nghiệm",
+      "grades": [
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single glass laboratory test tube standing upright with wavy liquid line inside, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "ống nghiệm"
+      ]
+    },
+    {
+      "id": "battery",
+      "name": "cục pin",
+      "grades": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [
+        "box"
+      ],
+      "prompt": "A single cylindrical AA battery standing upright with positive cap on top, no text, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "pin",
+        "viên pin"
+      ]
+    },
+    {
+      "id": "light_bulb",
+      "name": "bóng đèn",
+      "grades": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [
+        "box"
+      ],
+      "prompt": "A single incandescent light bulb with screw base and simple filament, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "bóng đèn",
+        "đèn điện"
+      ]
+    },
+    {
+      "id": "magnet",
+      "name": "nam châm",
+      "grades": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single horseshoe U-shaped magnet with marked end bands, no letters, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "nam châm",
+        "nam châm chữ u"
+      ]
+    },
+    {
+      "id": "rocket",
+      "name": "tên lửa",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single space rocket standing upright with pointed nose, round porthole window and fins, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "tên lửa",
+        "tàu vũ trụ"
+      ]
     }
   ],
   "containers": [
