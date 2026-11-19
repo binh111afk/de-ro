@@ -11,8 +11,8 @@
  */
 import { createHmac, timingSafeEqual } from 'node:crypto'
 import type { IncomingMessage, ServerResponse } from 'node:http'
-import { json, readBody } from './http.js'
-import { LOGIN_REQUIRED, guard, rateLimitOnly, userFromToken } from './guard.js'
+import { json, readBody, safeError } from './http.js'
+import { LOGIN_REQUIRED, clientIp, guard, isLocal, rateLimitOnly, userFromToken } from './guard.js'
 import { DEFAULT_PRICING, PRICING_PUBLIC, MAX_VND, MIN_VND, PACKS, applyPricing, basePoints, packPoints, type PricingConfig } from '../src/lib/pricing.js'
 
 const PAYOS_API = 'https://api-merchant.payos.vn'
@@ -342,11 +342,11 @@ export async function handlePayRequest(req: IncomingMessage, res: ServerResponse
     }
     return json(res, 405, { error: 'Method not allowed' })
   } catch (err) {
-    return json(res, 500, { error: err instanceof Error ? err.message : String(err) })
+    return json(res, 500, { error: safeError(err, isLocal(clientIp(req))) })
   }
 }
 
 export function payMiddleware(req: IncomingMessage, res: ServerResponse, next: (err?: unknown) => void): void {
   if (req.method !== 'GET' && req.method !== 'POST' && req.method !== 'OPTIONS') return next()
-  handlePayRequest(req, res).catch((err: unknown) => json(res, 500, { error: String(err) }))
+  handlePayRequest(req, res).catch((err: unknown) => json(res, 500, { error: safeError(err, isLocal(clientIp(req))) }))
 }

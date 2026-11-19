@@ -10,7 +10,7 @@
  */
 import { createHash, createHmac } from 'node:crypto'
 import type { IncomingMessage, ServerResponse } from 'node:http'
-import { json, readBody } from './http.js'
+import { json, readBody, safeError } from './http.js'
 import { guard, isLocal, clientIp, rateLimitOnly, userFromToken } from './guard.js'
 import { maintenanceBlock } from './ops.js'
 
@@ -222,7 +222,7 @@ export async function handleUploadRequest(req: IncomingMessage, res: ServerRespo
     }
     return json(res, 200, doc ? { url, doc } : { url })
   } catch (err) {
-    return json(res, 500, { error: err instanceof Error ? err.message : String(err) })
+    return json(res, 500, { error: safeError(err, isLocal(clientIp(req))) })
   }
 }
 
@@ -261,7 +261,7 @@ async function handleDeleteDocument(req: IncomingMessage, res: ServerResponse): 
     if (!del.ok) return json(res, 503, { error: 'Máy chủ bận, thử lại sau ít phút.' })
     return json(res, 200, { ok: true })
   } catch (err) {
-    return json(res, 500, { error: err instanceof Error ? err.message : String(err) })
+    return json(res, 500, { error: safeError(err, isLocal(clientIp(req))) })
   }
 }
 
@@ -312,7 +312,7 @@ export async function handleFileRequest(req: IncomingMessage, res: ServerRespons
     })
     res.end(Buffer.from(await got.arrayBuffer()))
   } catch (err) {
-    return json(res, 500, { error: err instanceof Error ? err.message : String(err) })
+    return json(res, 500, { error: safeError(err, isLocal(clientIp(req))) })
   }
 }
 
@@ -320,7 +320,7 @@ export function uploadMiddleware(req: IncomingMessage, res: ServerResponse, next
   if (req.method !== 'POST' && req.method !== 'DELETE' && req.method !== 'OPTIONS') return next()
   handleUploadRequest(req, res).catch((err: unknown) => {
     if (res.headersSent) return res.end()
-    json(res, 500, { error: err instanceof Error ? err.message : String(err) })
+    json(res, 500, { error: safeError(err, isLocal(clientIp(req))) })
   })
 }
 
@@ -328,6 +328,6 @@ export function fileMiddleware(req: IncomingMessage, res: ServerResponse, next: 
   if (req.method !== 'GET') return next()
   handleFileRequest(req, res).catch((err: unknown) => {
     if (res.headersSent) return res.end()
-    json(res, 500, { error: err instanceof Error ? err.message : String(err) })
+    json(res, 500, { error: safeError(err, isLocal(clientIp(req))) })
   })
 }

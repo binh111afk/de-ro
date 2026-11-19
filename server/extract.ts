@@ -7,8 +7,8 @@ import { inflateRawSync } from 'node:zlib'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { extname } from 'node:path'
 import type { TextItem } from 'pdfjs-dist/types/src/display/api'
-import { json, readBody } from './http.js'
-import { guard } from './guard.js'
+import { json, readBody, safeError } from './http.js'
+import { clientIp, guard, isLocal } from './guard.js'
 
 const MAX_BYTES = 12 * 1024 * 1024
 const MAX_TEXT = 60_000
@@ -715,7 +715,7 @@ export async function handleExtractRequest(
     }
     return json(res, 200, await extractFile(body.name, buf, body.marks === true))
   } catch (err) {
-    return json(res, 400, { error: err instanceof Error ? err.message : String(err) })
+    return json(res, 400, { error: safeError(err, isLocal(clientIp(req)), 'Dữ liệu không hợp lệ.') })
   }
 }
 
@@ -727,6 +727,6 @@ export function extractMiddleware(
   if (req.method !== 'POST' && req.method !== 'OPTIONS') return next()
   handleExtractRequest(req, res).catch((err: unknown) => {
     if (res.headersSent) return res.end()
-    json(res, 500, { error: err instanceof Error ? err.message : String(err) })
+    json(res, 500, { error: safeError(err, isLocal(clientIp(req))) })
   })
 }

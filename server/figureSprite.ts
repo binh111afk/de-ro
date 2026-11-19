@@ -9,8 +9,8 @@
  * nối bằng gạch ngang; prompt chỉ dựng từ tên đó nên ai gửi cũng ra cùng một kiểu hình.
  */
 import type { IncomingMessage, ServerResponse } from 'node:http'
-import { json, readBody } from './http.js'
-import { guard } from './guard.js'
+import { json, readBody, safeError } from './http.js'
+import { clientIp, guard, isLocal } from './guard.js'
 import { chargeAndGenerate } from './imageProxy.js'
 import { r2Exists, r2Put } from './r2.js'
 
@@ -58,6 +58,6 @@ export function figureSpriteMiddleware(req: IncomingMessage, res: ServerResponse
   if (req.method !== 'POST' && req.method !== 'OPTIONS') return next()
   handleFigureSpriteRequest(req, res).catch((err: unknown) => {
     if (res.headersSent) return res.end()
-    json(res, 500, { error: err instanceof Error ? err.message : String(err) })
+    json(res, 500, { error: safeError(err, isLocal(clientIp(req))) })
   })
 }

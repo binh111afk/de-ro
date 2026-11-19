@@ -6,7 +6,7 @@
  * để không thêm hàm Vercel mới.
  */
 import type { IncomingMessage, ServerResponse } from 'node:http'
-import { json, readBody } from './http.js'
+import { json, readBody, safeError } from './http.js'
 import { clientIp, guard, isLocal, userFromToken } from './guard.js'
 import { hasQuotaStore, readQuota } from './aiQuota.js'
 import { AI_FEEDBACK_KINDS, logAiFeedback, type AiFeedback } from './ops.js'
@@ -52,5 +52,5 @@ export async function handleQuotaRequest(req: IncomingMessage, res: ServerRespon
 
 export function quotaMiddleware(req: IncomingMessage, res: ServerResponse, next: (err?: unknown) => void): void {
   if (req.method !== 'GET' && req.method !== 'POST' && req.method !== 'OPTIONS') return next()
-  handleQuotaRequest(req, res).catch((err: unknown) => json(res, 500, { error: String(err) }))
+  handleQuotaRequest(req, res).catch((err: unknown) => json(res, 500, { error: safeError(err, isLocal(clientIp(req))) }))
 }

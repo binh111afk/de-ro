@@ -18,7 +18,7 @@ import { isIP } from 'node:net'
 import { lookup } from 'node:dns/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { json, readBody } from './http.js'
+import { json, readBody, safeError } from './http.js'
 import { LOGIN_REQUIRED, clientIp, guard, isLocal, userFromToken } from './guard.js'
 import { TOKENS_PER_POINT, addUsage, checkReceipt, estimatePromptTokens, hasQuotaStore, issueReceipt, quotaMessage, readQuota, refundReceipt, requestHash, reserveQuota } from './aiQuota.js'
 import { buildTaskSystem } from './aiTasks.js'
@@ -519,7 +519,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
     try {
       prov = await liveConfig()
     } catch (err) {
-      return json(res, 500, { error: err instanceof Error ? err.message : String(err) })
+      return json(res, 500, { error: safeError(err, isLocal(ip)) })
     }
     if (!prov.apiKey && !prov.anyrouterApiKey && !prov.anthropicApiKey && !prov.deepseekApiKey && !prov.fostaApiKey && !prov.nightrouterApiKey) {
       return json(res, 500, {
@@ -783,7 +783,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
     await Promise.all([wasted ? addUsage(userId, ip, wasted, quota) : null, release(), ...pending])
     return reply(502, { error: isLocal(ip) ? `Các model AI đều không phản hồi. ${errs.join(' · ')}`.trim() : 'Các model AI đều không phản hồi. Vui lòng thử lại sau.' })
   } catch (err) {
-    return reply(500, { error: err instanceof Error ? err.message : String(err) })
+    return reply(500, { error: safeError(err, isLocal(ip)) })
   } finally {
     clearInterval(ping)
     await release()
@@ -799,7 +799,7 @@ export function llmMiddleware(
   if (!['POST', 'OPTIONS', 'GET'].includes(req.method ?? '')) return next()
   handleLlmRequest(req, res).catch((err: unknown) => {
     if (res.headersSent) return res.end()
-    json(res, 500, { error: err instanceof Error ? err.message : String(err) })
+    json(res, 500, { error: safeError(err, isLocal(clientIp(req))) })
   })
 }
 

@@ -5,8 +5,8 @@
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import type { ExamDoc } from '../src/data/docTypes'
 import { docToExam } from '../src/lib/docToExam.js'
-import { guard } from './guard.js'
-import { json, readBody } from './http.js'
+import { clientIp, guard, isLocal } from './guard.js'
+import { json, readBody, safeError } from './http.js'
 import { getExamRow } from './examCache.js'
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
@@ -38,11 +38,11 @@ export async function handleExamRequest(req: IncomingMessage, res: ServerRespons
     }
     return json(res, 200, { doc: { ...row.doc, blocks: [], online }, hidden: true })
   } catch (err) {
-    return json(res, 400, { error: err instanceof Error ? err.message : String(err) })
+    return json(res, 400, { error: safeError(err, isLocal(clientIp(req)), 'Dữ liệu không hợp lệ.') })
   }
 }
 
 export function examMiddleware(req: IncomingMessage, res: ServerResponse, next: (err?: unknown) => void): void {
   if (req.method !== 'POST' && req.method !== 'OPTIONS') return next()
-  handleExamRequest(req, res).catch((err: unknown) => json(res, 500, { error: String(err) }))
+  handleExamRequest(req, res).catch((err: unknown) => json(res, 500, { error: safeError(err, isLocal(clientIp(req))) }))
 }

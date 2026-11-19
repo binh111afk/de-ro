@@ -6,9 +6,9 @@
  * - Tài khoản: Supabase Auth Admin API (`/auth/v1/admin/users`), cần SUPABASE_SERVICE_ROLE_KEY.
  */
 import type { IncomingMessage, ServerResponse } from 'node:http'
-import { clientIp, forgetBan, guard, userFromToken } from './guard.js'
+import { clientIp, forgetBan, guard, isLocal, userFromToken } from './guard.js'
 import { MONTHLY_LIMIT } from './aiQuota.js'
-import { json, readBody } from './http.js'
+import { json, readBody, safeError } from './http.js'
 import { deleteR2Object, pingR2, r2DocKeyFromUrl, r2Info } from './r2.js'
 import { assertSafeEndpoint, listProviders, pingProviders } from './llmProxy.js'
 import { encryptKey, hasAiSecret, isAllowedEndpoint, resetAiOverrides } from './aiSettings.js'
@@ -751,11 +751,11 @@ export async function handleAdminRequest(req: IncomingMessage, res: ServerRespon
     return json(res, 200, await entry.run(ctx, body))
   } catch (err) {
     if (err instanceof HttpError) return json(res, err.code, { error: err.message })
-    return json(res, 500, { error: err instanceof Error ? err.message : String(err) })
+    return json(res, 500, { error: safeError(err, isLocal(clientIp(req))) })
   }
 }
 
 export function adminMiddleware(req: IncomingMessage, res: ServerResponse, next: (err?: unknown) => void): void {
   if (req.method !== 'POST' && req.method !== 'OPTIONS') return next()
-  handleAdminRequest(req, res).catch((err: unknown) => json(res, 500, { error: String(err) }))
+  handleAdminRequest(req, res).catch((err: unknown) => json(res, 500, { error: safeError(err, isLocal(clientIp(req))) }))
 }

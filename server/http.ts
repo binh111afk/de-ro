@@ -27,3 +27,10 @@ export async function readBody(req: IncomingMessage, maxBytes = 20 * 1024 * 1024
   }
   return Buffer.concat(chunks).toString('utf8')
 }
+
+/** Trả thông báo lỗi an toàn cho client: máy dev giữ chi tiết, production trả câu chung và log server. */
+export function safeError(err: unknown, local = false, fallback = 'Máy chủ đang bận, thử lại sau.'): string {
+  if (local) return err instanceof Error ? err.message : String(err)
+  console.error('[server]', err)
+  return fallback
+}

@@ -7,8 +7,8 @@ import type { IncomingMessage, ServerResponse } from 'node:http'
 import type { ExamDoc } from '../src/data/docTypes'
 import { docToExam } from '../src/lib/docToExam.js'
 import { gradableMax, scoreQuestion } from '../src/lib/grading.js'
-import { guard, rateLimitOnly, userFromToken } from './guard.js'
-import { json, readBody } from './http.js'
+import { clientIp, guard, isLocal, rateLimitOnly, userFromToken } from './guard.js'
+import { json, readBody, safeError } from './http.js'
 import { getExamRow } from './examCache.js'
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
@@ -135,11 +135,11 @@ export async function handleAttemptRequest(req: IncomingMessage, res: ServerResp
     if (!revealScore) return json(res, 200, { submitted: true, hidden: true })
     return json(res, 200, { score, max, gradable: gradableMax(questions), correct, key: answerKey })
   } catch (err) {
-    return json(res, 400, { error: err instanceof Error ? err.message : String(err) })
+    return json(res, 400, { error: safeError(err, isLocal(clientIp(req)), 'Dữ liệu không hợp lệ.') })
   }
 }
 
 export function attemptMiddleware(req: IncomingMessage, res: ServerResponse, next: (err?: unknown) => void): void {
   if (req.method !== 'POST' && req.method !== 'OPTIONS') return next()
-  handleAttemptRequest(req, res).catch((err: unknown) => json(res, 500, { error: String(err) }))
+  handleAttemptRequest(req, res).catch((err: unknown) => json(res, 500, { error: safeError(err, isLocal(clientIp(req))) }))
 }
