@@ -67,6 +67,15 @@ globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
   if (url.includes('/rest/v1/admin_audit')) return (audits.push(body), new Response(null, { status: 201 }))
   if (url.includes('/rest/v1/security_flags') || url.includes('/rest/v1/rpc/security_strike')) return res200([])
   if (url.includes('/rest/v1/app_settings')) return res200([])
+  if (url.includes('/rest/v1/rpc/admin_revenue_ranges')) {
+    // giống hàm SQL: cộng đơn paid có paid_at trong [from, to) theo từng khoảng
+    const out = (body.p_from as string[]).map((f, i) => {
+      const hit = orders.filter((r) => r.status === 'paid' && Date.parse('2026-11-18T00:00:00Z') >= Date.parse(f) && Date.parse('2026-11-18T00:00:00Z') < Date.parse(body.p_to[i]))
+      return { idx: i + 1, vnd: hit.reduce((n, r) => n + r.vnd, 0), n: hit.length }
+    })
+    return res200(out)
+  }
+  if (url.includes('/rest/v1/rpc/admin_revenue_monthly')) return res200([{ month: '2026-11', vnd: 7000, n: 2 }, { month: '2026-10', vnd: 3000, n: 1 }])
   if (url.includes('/rest/v1/rpc/credit_payment_order')) return res200(creditFn(body.p_order, body.p_amount))
   if (url.includes('/rest/v1/payment_orders')) {
     const q = new URL(url).searchParams
@@ -245,11 +254,13 @@ check(
     rev.counts.all === rev.paidCount &&
     typeof rev.counts.day === 'number' &&
     typeof rev.counts.week === 'number' &&
-    typeof rev.counts.month === 'number',
+    typeof rev.counts.month === 'number' &&
+    typeof (rev as unknown as { prev: { day: { vnd: number } } }).prev.day.vnd === 'number' &&
+    (rev as unknown as { months: unknown[] }).months.length === 2,
 )
 
 // kiểm mốc ngày / tuần (thứ Hai) / tháng theo giờ Việt Nam (UTC+7)
-const { vnPeriodStarts, summarizeRevenue } = await import('../server/adminPayments.ts')
+const { vnPeriodStarts, revenueRanges, buildRevenue } = await import('../server/adminPayments.ts')
 // Thứ Hai 2026-11-23 00:30 giờ VN = Chủ Nhật 2026-11-22T17:30:00Z (UTC vẫn là Chủ Nhật)
 const monEarlyVn = Date.parse('2026-11-22T17:30:00Z')
 const monStarts = vnPeriodStarts(monEarlyVn)
@@ -277,25 +288,35 @@ check(
     decStarts.week === Date.parse('2026-11-29T17:00:00Z') &&
     decStarts.month === Date.parse('2026-11-30T17:00:00Z'),
 )
-const sumTest = summarizeRevenue(
+// kỳ trước cùng thời điểm: thứ Hai 23/11/2026 00:30 giờ VN
+const rg = revenueRanges(monEarlyVn)
+const t = (k: number, side: 'from' | 'to') => Date.parse(rg[side][k])
+check(
+  'khoảng so sánh: hôm qua tới cùng giờ, tuần trước tới cùng thứ + giờ, tháng trước tới cùng ngày + giờ',
+  rg.from.length === 7 &&
+    t(1, 'from') === Date.parse('2026-11-21T17:00:00Z') &&
+    t(1, 'to') === Date.parse('2026-11-21T17:30:00Z') &&
+    t(3, 'from') === Date.parse('2026-11-15T17:00:00Z') &&
+    t(3, 'to') === Date.parse('2026-11-15T17:30:00Z') &&
+    t(5, 'from') === Date.parse('2026-09-30T17:00:00Z') &&
+    t(5, 'to') === Date.parse('2026-10-22T17:30:00Z'),
+)
+// 31/3 -> tháng trước (2 tháng) ngắn hơn: kỳ trước không vượt sang tháng này
+const longRg = revenueRanges(Date.parse('2026-03-30T16:00:00Z')) // 30/3 23:00 VN... đầu tháng 3, đã trôi 29 ngày 23h
+check('tháng trước ngắn hơn thì kỳ so sánh bị chặn ở hết tháng trước', Date.parse(longRg.to[5]) <= Date.parse(longRg.from[4]))
+const built = buildRevenue(
   [
-    { vnd: 10000, paid_at: '2026-11-22T17:05:00Z' }, // T2 00:05 VN -> hôm nay + tuần + tháng + tất cả
-    { vnd: 20000, paid_at: '2026-11-22T16:59:00Z' }, // CN 23:59 VN -> chỉ tháng + tất cả (khác ngày & khác tuần)
-    { vnd: 50000, paid_at: '2026-10-31T16:59:00Z' }, // 31/10 23:59 VN -> chỉ tất cả
+    { idx: 1, vnd: 10000, n: 1 }, { idx: 2, vnd: 5000, n: 1 }, { idx: 3, vnd: 30000, n: 2 }, { idx: 4, vnd: 20000, n: 1 },
+    { idx: 5, vnd: 70000, n: 3 }, { idx: 6, vnd: 0, n: 0 }, { idx: 7, vnd: 180000, n: 7 },
   ],
-  monEarlyVn,
+  [{ month: '2026-11', vnd: '70000', n: '3' }],
 )
 check(
-  'tổng hợp doanh thu và số đơn tách đúng theo ranh giới 0h giờ VN',
-  sumTest.day === 10000 &&
-    sumTest.week === 10000 &&
-    sumTest.month === 30000 &&
-    sumTest.all === 80000 &&
-    sumTest.counts.day === 1 &&
-    sumTest.counts.week === 1 &&
-    sumTest.counts.month === 2 &&
-    sumTest.counts.all === 3 &&
-    sumTest.paidCount === 3,
+  'gộp doanh thu: kỳ này, kỳ trước, tất cả và theo tháng',
+  built.day === 10000 && built.week === 30000 && built.month === 70000 && built.all === 180000 &&
+    built.counts.all === 7 && built.paidCount === 7 &&
+    built.prev.day.vnd === 5000 && built.prev.week.count === 1 && built.prev.month.vnd === 0 &&
+    built.months[0].month === '2026-11' && built.months[0].vnd === 70000,
 )
 const o6 = (await call('POST', '/api/pay', { body: { vnd: 2000 }, auth: tk }), orders[orders.length - 1])
 payosStatus = 'PENDING'

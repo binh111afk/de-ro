@@ -37,42 +37,57 @@ export function vnPeriodStarts(nowMs = Date.now()) {
   }
 }
 
-export function summarizeRevenue(paid: Array<{ vnd: number; paid_at: string | null }>, nowMs = Date.now()) {
-  const starts = vnPeriodStarts(nowMs)
-  let day = 0
-  let week = 0
-  let month = 0
-  let all = 0
-  let dayCount = 0
-  let weekCount = 0
-  let monthCount = 0
-  let allCount = 0
-  for (const r of paid) {
-    const vnd = Number(r.vnd) || 0
-    all += vnd
-    allCount++
-    const t = r.paid_at ? new Date(r.paid_at).getTime() : NaN
-    if (Number.isNaN(t)) continue
-    if (t >= starts.month) {
-      month += vnd
-      monthCount++
-    }
-    if (t >= starts.week) {
-      week += vnd
-      weekCount++
-    }
-    if (t >= starts.day) {
-      day += vnd
-      dayCount++
-    }
+/** Mốc 0h ngày 1 của tháng trước theo giờ VN (ms UTC). */
+function prevMonthStart(monthStartMs: number) {
+  const vn = new Date(monthStartMs + VN_OFFSET_MS)
+  return Date.UTC(vn.getUTCFullYear(), vn.getUTCMonth() - 1, 1) - VN_OFFSET_MS
+}
+
+const DAY_MS = 24 * 60 * 60 * 1000
+export const REVENUE_KEYS = ['day', 'prevDay', 'week', 'prevWeek', 'month', 'prevMonth', 'all'] as const
+export type RevenueKey = (typeof REVENUE_KEYS)[number]
+
+/**
+ * Các khoảng cần cộng tiền, theo thứ tự REVENUE_KEYS. Kỳ trước lấy cùng độ dài đã trôi qua của kỳ này
+ * (hôm qua tới cùng giờ, tuần trước tới cùng thứ + giờ, tháng trước tới cùng ngày + giờ) để so công bằng.
+ */
+export function revenueRanges(nowMs = Date.now()) {
+  const st = vnPeriodStarts(nowMs)
+  const pm = prevMonthStart(st.month)
+  const iso = (ms: number) => new Date(ms).toISOString()
+  const ranges: Array<[number, number]> = [
+    [st.day, nowMs],
+    [st.day - DAY_MS, nowMs - DAY_MS],
+    [st.week, nowMs],
+    [st.week - 7 * DAY_MS, nowMs - 7 * DAY_MS],
+    [st.month, nowMs],
+    [pm, Math.min(pm + (nowMs - st.month), st.month)],
+    [0, Date.UTC(2100, 0, 1)],
+  ]
+  return { from: ranges.map((r) => iso(r[0])), to: ranges.map((r) => iso(r[1])) }
+}
+
+export type RevenueSlot = { vnd: number; count: number }
+
+/** rows: kết quả hàm SQL admin_revenue_ranges (idx bắt đầu từ 1 theo thứ tự REVENUE_KEYS). */
+export function buildRevenue(rows: Array<{ idx: number; vnd: number | string; n: number | string }>, months: Array<{ month: string; vnd: number | string; n: number | string }>) {
+  const slot = {} as Record<RevenueKey, RevenueSlot>
+  REVENUE_KEYS.forEach((k) => (slot[k] = { vnd: 0, count: 0 }))
+  for (const r of rows) {
+    const k = REVENUE_KEYS[Number(r.idx) - 1]
+    if (k) slot[k] = { vnd: Number(r.vnd) || 0, count: Number(r.n) || 0 }
   }
   return {
-    day,
-    week,
-    month,
-    all,
-    counts: { day: dayCount, week: weekCount, month: monthCount, all: allCount },
-    paidCount: allCount,
+    day: slot.day.vnd,
+    week: slot.week.vnd,
+    month: slot.month.vnd,
+    all: slot.all.vnd,
+    counts: { day: slot.day.count, week: slot.week.count, month: slot.month.count, all: slot.all.count },
+    paidCount: slot.all.count,
+    /** cùng khoảng của kỳ trước (không có cho "tất cả") */
+    prev: { day: slot.prevDay, week: slot.prevWeek, month: slot.prevMonth },
+    /** thu từng tháng (giờ VN), mới nhất trước */
+    months: months.map((m) => ({ month: String(m.month), vnd: Number(m.vnd) || 0, count: Number(m.n) || 0 })),
   }
 }
 
@@ -105,12 +120,14 @@ export const PAYMENT_ACTIONS: ActionMap = {
       const code = Number(b.orderCode)
       if (Number.isSafeInteger(code) && code > 0) qs.set('order_code', `eq.${code}`)
 
-      const [{ data: rows, res }, { data: paid }] = await Promise.all([
+      const rg = revenueRanges()
+      const [{ data: rows, res }, { data: sums }, { data: months }] = await Promise.all([
         call<OrderRow[]>(s, `/rest/v1/payment_orders?${qs}`, { headers: { Prefer: 'count=exact' } }),
-        call<Array<{ vnd: number; paid_at: string | null }>>(s, '/rest/v1/payment_orders?select=vnd,paid_at&status=eq.paid&limit=100000'),
+        call<Array<{ idx: number; vnd: number; n: number }>>(s, '/rest/v1/rpc/admin_revenue_ranges', { method: 'POST', body: JSON.stringify({ p_from: rg.from, p_to: rg.to }) }),
+        call<Array<{ month: string; vnd: number; n: number }>>(s, '/rest/v1/rpc/admin_revenue_monthly', { method: 'POST', body: JSON.stringify({ p_months: 12 }) }),
       ])
       const total = Number(res.headers.get('content-range')?.split('/')[1] ?? rows.length)
-      const revenue = summarizeRevenue(paid)
+      const revenue = buildRevenue(sums, months)
 
       // email người nạp (mỗi trang tối đa 50 đơn)
       const ids = [...new Set(rows.map((r) => r.user_id))]

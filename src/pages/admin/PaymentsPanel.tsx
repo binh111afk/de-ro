@@ -1,6 +1,6 @@
 /** Admin › Nạp điểm: đơn nạp PayOS, tiền đã thu, hỏi lại PayOS cho đơn treo, cộng điểm tay khi đã đối soát sao kê. */
 import { useEffect, useState, type ReactNode } from 'react'
-import { RefreshCw, Search, Wallet, X } from 'lucide-react'
+import { RefreshCw, Search, TrendingDown, TrendingUp, Wallet, X } from 'lucide-react'
 import { Portal } from '@/components/Portal'
 import { useDrawerExit } from './useDrawerExit'
 import { Badge, Button, Card, EmptyState, inputClass, Spinner } from '@/components/ui'
@@ -20,12 +20,53 @@ const PERIODS: Array<{ key: RevenuePeriod; label: string; title: string }> = [
   { key: 'all', label: 'Tất cả', title: 'Tổng đã thu' },
 ]
 
+const PREV_LABEL = { day: 'hôm qua', week: 'tuần trước', month: 'tháng trước' } as const
+
+/** Tăng/giảm so với kỳ trước cùng thời điểm. Không có kỳ trước (tất cả) hoặc cả hai đều 0 thì không hiện. */
+function Delta({ cur, prev, label }: { cur: number; prev: number; label: string }) {
+  if (cur === 0 && prev === 0) return null
+  const up = cur >= prev
+  const diff = cur - prev
+  const text = prev === 0 ? `Mới, ${label} chưa có thu` : `${up ? '+' : '−'}${Math.round((Math.abs(diff) / prev) * 100)}% so với ${label} (${diff >= 0 ? '+' : '−'}${fmt(Math.abs(diff))}đ)`
+  const Icon = up ? TrendingUp : TrendingDown
+  return (
+    <div className={cn('mt-1 flex items-center gap-1 text-[12.5px] font-medium', up ? 'text-sage' : 'text-clay')}>
+      <Icon className="size-3.5 shrink-0" />
+      <span className="min-w-0">{text}</span>
+    </div>
+  )
+}
+
 const STATUS: Record<AdminPayment['status'], { label: string; tone: 'sage' | 'honey' | 'neutral' | 'clay' }> = {
   paid: { label: 'Đã trả', tone: 'sage' },
   pending: { label: 'Chờ trả', tone: 'honey' },
   expired: { label: 'Hết hạn', tone: 'neutral' },
   cancelled: { label: 'Đã huỷ', tone: 'neutral' },
   failed: { label: 'Lỗi', tone: 'clay' },
+}
+
+function MonthlyRevenue({ months }: { months: PaymentPage['revenue']['months'] }) {
+  const max = Math.max(1, ...months.map((m) => m.vnd))
+  return (
+    <Card className="border border-line px-4 py-3.5 shadow-soft">
+      <div className="mb-2 text-[12.5px] text-ink-3">Thu theo tháng</div>
+      <ul className="space-y-1.5">
+        {months.map((m, i) => {
+          const [y, mo] = m.month.split('-')
+          return (
+            <li key={m.month} className="flex items-center gap-3 text-[13.5px]">
+              <span className="w-[72px] shrink-0 text-ink-2 tnum">{`${Number(mo)}/${y}`}</span>
+              <span className="h-2 min-w-0 flex-1 overflow-hidden rounded-full bg-sunken">
+                <span className={cn('block h-full rounded-full', i === 0 ? 'bg-clay' : 'bg-sage')} style={{ width: `${Math.max(2, (m.vnd / max) * 100)}%` }} />
+              </span>
+              <span className="w-[92px] shrink-0 text-right font-semibold text-ink tnum">{fmt(m.vnd)}đ</span>
+              <span className="hidden w-12 shrink-0 text-right text-ink-3 tnum sm:block">{m.count} đơn</span>
+            </li>
+          )
+        })}
+      </ul>
+    </Card>
+  )
 }
 
 export function PaymentsPanel() {
@@ -119,15 +160,25 @@ export function PaymentsPanel() {
         />
         <div className="grid grid-cols-2 gap-3">
           {[
-            { label: PERIODS.find((p) => p.key === period)!.title, value: data ? `${fmt(data.revenue[period])}đ` : '…' },
-            { label: 'Số đơn đã trả', value: data ? fmt(data.revenue.counts[period]) : '…' },
+            {
+              label: PERIODS.find((p) => p.key === period)!.title,
+              value: data ? `${fmt(data.revenue[period])}đ` : '…',
+              delta: data && period !== 'all' ? <Delta cur={data.revenue[period]} prev={data.revenue.prev[period].vnd} label={PREV_LABEL[period]} /> : null,
+            },
+            {
+              label: 'Số đơn đã trả',
+              value: data ? fmt(data.revenue.counts[period]) : '…',
+              delta: data && period !== 'all' ? <Delta cur={data.revenue.counts[period]} prev={data.revenue.prev[period].count} label={PREV_LABEL[period]} /> : null,
+            },
           ].map((c) => (
             <Card key={c.label} className="min-w-0 border border-line px-4 py-3.5 shadow-soft">
               <div className="text-[12.5px] text-ink-3">{c.label}</div>
               <div className="mt-1 truncate text-[19px] font-bold text-ink tnum sm:text-[20px]">{c.value}</div>
+              {c.delta}
             </Card>
           ))}
         </div>
+        {data && data.revenue.months.length > 0 ? <MonthlyRevenue months={data.revenue.months} /> : null}
       </div>
 
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">

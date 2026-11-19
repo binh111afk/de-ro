@@ -12,6 +12,10 @@ export interface PaymentRevenue {
   all: number
   counts: Record<RevenuePeriod, number>
   paidCount: number
+  /** cùng khoảng của kỳ trước (hôm qua tới cùng giờ, tuần trước, tháng trước); không có cho "tất cả" */
+  prev: Record<'day' | 'week' | 'month', { vnd: number; count: number }>
+  /** thu từng tháng theo giờ VN, mới nhất trước */
+  months: Array<{ month: string; vnd: number; count: number }>
 }
 
 export interface AdminPayment {
@@ -58,7 +62,19 @@ export function listPayments(opts: { filter?: PaymentFilter; page?: number; orde
       perPage: 20,
       total: items.length,
       configured: true,
-      revenue: { day: 10000, week: 60000, month: 60000, all: 110000, counts: { day: 1, week: 2, month: 2, all: 3 }, paidCount: 3 },
+      revenue: {
+        day: 10000,
+        week: 60000,
+        month: 60000,
+        all: 110000,
+        counts: { day: 1, week: 2, month: 2, all: 3 },
+        paidCount: 3,
+        prev: { day: { vnd: 5000, count: 1 }, week: { vnd: 40000, count: 2 }, month: { vnd: 0, count: 0 } },
+        months: [
+          { month: '2026-11', vnd: 60000, count: 2 },
+          { month: '2026-10', vnd: 50000, count: 1 },
+        ],
+      },
       items,
     })
   }
