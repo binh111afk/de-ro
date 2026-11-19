@@ -10,6 +10,7 @@ import { buildSuaCauSystem } from '../src/lib/prompts/sua-cau.js'
 import { buildVeDoThiSystem } from '../src/lib/prompts/ve-do-thi.js'
 import { buildChonHinhSystem } from '../src/lib/prompts/chon-hinh.js'
 import { buildNganHangSystem } from '../src/lib/prompts/ngan-hang.js'
+import { buildMaTranSystem } from '../src/lib/prompts/ma-tran.js'
 import type { PromptSource } from '../src/lib/prompts/sources.js'
 
 const MAX_FIELD = 600_000
@@ -73,6 +74,21 @@ function deOnline(raw: unknown): string | null {
   return buildDeOnlineSystem({ meta: { title: str(m.title, 500) ?? '', subject, grade }, questions })
 }
 
+/** `ma-tran`: phân loại câu hỏi theo ma trận đặc tả. */
+function maTran(raw: unknown): string | null {
+  if (!raw || typeof raw !== 'object') return null
+  const o = raw as Record<string, unknown>
+  const subject = str(o.subject, 100)
+  if (subject === undefined) return null
+  if (typeof o.grade !== 'number' || !Number.isFinite(o.grade)) return null
+  if (!Array.isArray(o.chapters)) return null
+  const chapters = o.chapters
+    .slice(0, 100)
+    .filter((c): c is string => typeof c === 'string')
+    .map((c) => c.slice(0, 300))
+  return buildMaTranSystem({ subject, grade: o.grade, chapters })
+}
+
 const TASKS: Record<string, (input: unknown) => string | null> = {
   'soan-de': soanDe,
   'hoi-truoc': hoiTruoc,
@@ -81,6 +97,7 @@ const TASKS: Record<string, (input: unknown) => string | null> = {
   've-do-thi': buildVeDoThiSystem,
   'chon-hinh': buildChonHinhSystem,
   'ngan-hang': buildNganHangSystem,
+  'ma-tran': maTran,
 }
 
 /** system prompt của tác vụ; null nếu tên lạ hoặc dữ liệu sai kiểu */
