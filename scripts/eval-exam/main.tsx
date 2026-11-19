@@ -3,8 +3,8 @@
  * do gateway trả về. `eval-exam.mjs` đọc kết quả để so chất lượng giữa các mức.
  */
 import '../lib/forceModel'
-import { examSystemPrompt } from '@/examEditor/AiPanel'
-import { ASK_RULE, parseAsk } from '@/examEditor/AiAskPanel'
+import { buildExamSystem } from '@/lib/prompts/exam'
+import { parseAsk } from '@/examEditor/AiAskPanel'
 import { callLlm, extractJson } from '@/lib/llm'
 
 const tokens = { calls: 0, prompt: 0, completion: 0, reasoning: 0 }
@@ -32,17 +32,15 @@ async function main() {
   const q = new URLSearchParams(location.search)
   const effort = (q.get('effort') ?? 'max') as 'low' | 'medium' | 'high' | 'max'
   const topic = q.get('topic') ?? 'Tạo đề thi tốt nghiệp THPT môn Toán theo đúng cấu trúc đề tham khảo 2025, có đáp án.'
-  const system = examSystemPrompt(undefined, topic) + ASK_RULE
+  // prompt do SERVER ghép từ `task` (đúng đường app chạy); `system` chỉ để báo số ký tự và cho ?dump=1
+  const system = buildExamSystem({ text: topic, ask: true })
   // ?dump=1: chỉ trả system prompt (để thí nghiệm ngoài app), không gọi model
   if (q.get('dump')) return done({ effort, system, promptChars: system.length, tokens, raw: '' })
   const t0 = performance.now()
-  const res = await callLlm(
-    [
-      { role: 'system', content: system },
-      { role: 'user', content: topic },
-    ],
-    { reasoningEffort: effort },
-  )
+  const res = await callLlm([{ role: 'user', content: topic }], {
+    reasoningEffort: effort,
+    task: { name: 'soan-de', input: { text: topic, ask: true } },
+  })
   await new Promise((r) => setTimeout(r, 300))
   const ask = parseAsk(res.content)
   let parsed: unknown = null

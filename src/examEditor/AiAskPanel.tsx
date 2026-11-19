@@ -17,27 +17,11 @@ export interface AiAsk {
   questions: AiAskQuestion[]
 }
 
-/** luật đưa vào system prompt: thiếu thông tin cốt lõi thì hỏi, không soạn bừa */
-export const ASK_RULE =
-  '\n\nHỎI LẠI KHI YÊU CẦU MƠ HỒ: nếu người dùng nhờ soạn nhưng thiếu thông tin cốt lõi mà không đoán hợp lý được từ yêu cầu, ' +
-  'lịch sử chat hay tài liệu hiện tại (ví dụ chỉ nói "soạn đề đi": chưa rõ môn, lớp, số câu, dạng đề, độ khó), thì CHƯA soạn, ' +
-  'chỉ trả về DUY NHẤT một JSON (không bọc markdown): ' +
-  '{"action":"ask","intro":"một câu ngắn, tự nhiên","questions":[{"q":"Câu hỏi ngắn?","options":["…","…"],"multi":false}]}. ' +
-  '1–4 câu hỏi, mỗi câu 2–5 lựa chọn ngắn (≤ 6 từ), lựa chọn hay gặp nhất đặt đầu; "multi":true khi chọn được nhiều cái. ' +
-  'KHÔNG thêm lựa chọn "Khác"/"Tự nhập" (app tự có ô tự nhập). Chỉ hỏi điều thật sự thiếu, gộp lớp vào câu môn nếu được. ' +
-  'KHÔNG hỏi về hình minh hoạ (app tự hỏi với đề Toán). ' +
-  'Yêu cầu đã đủ rõ, hoặc là lệnh sửa/thêm trên tài liệu đang có, hoặc chỉ là câu hỏi thường thì làm/trả lời luôn, không hỏi.'
-
 const SUBJECT_RE =
   /to[aá]n|v[aậ]t\s*l|m[oô]n\s*l[ýy]|h[oó][aá]|sinh|v[aă]n|ti[ếe]ng|anh|english|s[ửu]|[đd][iị]a|gdcd|c[ôo]ng\s*d[âa]n|tin\s*h[ọo]c|c[ôo]ng\s*ngh[ệe]|khtn|khoa\s*h[ọo]c|[âa]m\s*nh[ạa]c|m[ỹy]\s*thu[ậa]t|th[ểe]\s*d[ụu]c|qu[ốo]c\s*ph[òo]ng|ph[áa]p|nh[ậa]t|h[àa]n\s*qu[ốo]c|trung\s*qu[ốo]c/i
 
 /** yêu cầu ngắn, chưa nêu môn (vd "soạn đề đi"): hỏi bằng prompt ngắn trước, khỏi gửi cả hướng dẫn hình mọi môn */
 export const needsAskFirst = (text: string) => text.trim().length < 80 && !SUBJECT_RE.test(text)
-
-export const ASK_ONLY_SYSTEM =
-  'Bạn là trợ lý soạn đề thi và bài giảng cho giáo viên Việt Nam.' +
-  ASK_RULE +
-  '\nNếu từ yêu cầu đoán hợp lý được môn và nội dung (vd "đề phương trình bậc hai" là Toán) thì KHÔNG hỏi, chỉ trả đúng {"action":"proceed"}.'
 
 /** đọc JSON hỏi lại của model; không phải thì null */
 export function parseAsk(raw: string): AiAsk | null {

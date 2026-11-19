@@ -5,8 +5,8 @@
  * Dựng lịch sử giống hệt `historyOf` và `askAnswerText` trong AiPanel / AiAskPanel.
  */
 import '../lib/forceModel'
-import { examSystemPrompt } from '@/examEditor/AiPanel'
-import { ASK_ONLY_SYSTEM, ASK_RULE, askAnswerText, askHistoryText, needsAskFirst, parseAsk, type AiAskQuestion } from '@/examEditor/AiAskPanel'
+import { ASK_ONLY_SYSTEM, buildExamSystem } from '@/lib/prompts/exam'
+import { askAnswerText, askHistoryText, needsAskFirst, parseAsk, type AiAskQuestion } from '@/examEditor/AiAskPanel'
 import { callLlm, extractJson, type LlmMessage } from '@/lib/llm'
 
 interface CallUsage {
@@ -101,15 +101,14 @@ async function main() {
 
   // Lượt 1 (#2): yêu cầu mơ hồ
   // như AiPanel: lượt đầu chưa nêu môn thì dùng prompt hỏi ngắn
-  const sys1 = needsAskFirst(topic) ? ASK_ONLY_SYSTEM : examSystemPrompt(undefined, topic) + ASK_RULE
+  // prompt do server ghép từ `task` (đúng đường app chạy); sys1 / sys2 chỉ để báo số ký tự
+  const askFirst = needsAskFirst(topic)
+  const sys1 = askFirst ? ASK_ONLY_SYSTEM : buildExamSystem({ text: topic, ask: true })
   const t0 = performance.now()
-  const res1 = await callLlm(
-    [
-      { role: 'system', content: sys1 },
-      { role: 'user', content: topic },
-    ],
-    { reasoningEffort: effort },
-  )
+  const res1 = await callLlm([{ role: 'user', content: topic }], {
+    reasoningEffort: effort,
+    task: askFirst ? { name: 'hoi-truoc' } : { name: 'soan-de', input: { text: topic, ask: true } },
+  })
   const ms1 = Math.round(performance.now() - t0)
   await new Promise((r) => setTimeout(r, 200))
   const ask = parseAsk(res1.content)
@@ -136,16 +135,12 @@ async function main() {
   ]
 
   // Lượt 2 (#3): justAsked = true nên không gửi ASK_RULE
-  const sys2 = examSystemPrompt(undefined, reply)
+  const sys2 = buildExamSystem({ text: reply })
   const t1 = performance.now()
-  const res2 = await callLlm(
-    [
-      { role: 'system', content: sys2 },
-      ...history,
-      { role: 'user', content: reply },
-    ],
-    { reasoningEffort: effort },
-  )
+  const res2 = await callLlm([...history, { role: 'user', content: reply }], {
+    reasoningEffort: effort,
+    task: { name: 'soan-de', input: { text: reply } },
+  })
   const ms2 = Math.round(performance.now() - t1)
   await new Promise((r) => setTimeout(r, 200))
 

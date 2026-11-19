@@ -33,6 +33,8 @@ export interface LlmOptions {
   strong?: boolean
   /** có thì gọi dạng stream: báo tiến độ thật trong lúc model suy luận / viết */
   onProgress?: (p: LlmProgress) => void
+  /** tác vụ do server ghép system prompt (messages không cần role system): tên + dữ liệu người dùng của tác vụ */
+  task?: { name: string; input?: unknown }
 }
 
 export interface LlmProgress {
@@ -101,6 +103,7 @@ async function callOnce(messages: LlmMessage[], opts: LlmOptions): Promise<LlmRe
       signal: opts.signal,
       body: JSON.stringify({
         messages,
+        ...(opts.task ? { task: opts.task.name, taskInput: opts.task.input } : {}),
         maxTokens: opts.maxTokens ?? 32000,
         reasoningEffort: opts.reasoningEffort ?? 'max',
         ...(opts.temperature !== undefined ? { temperature: opts.temperature } : {}),

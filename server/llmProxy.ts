@@ -21,6 +21,7 @@ import { fileURLToPath } from 'node:url'
 import { json, readBody } from './http.js'
 import { LOGIN_REQUIRED, clientIp, guard, isLocal, userFromToken } from './guard.js'
 import { TOKENS_PER_POINT, addUsage, checkReceipt, estimatePromptTokens, hasQuotaStore, issueReceipt, quotaMessage, readQuota, refundReceipt, requestHash, reserveQuota } from './aiQuota.js'
+import { buildTaskSystem } from './aiTasks.js'
 import { costFromUsage, logAiCall, maintenanceBlock } from './ops.js'
 import { readAiOverrides } from './aiSettings.js'
 import { callAnthropic } from './anthropic.js'
@@ -399,6 +400,9 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
   // đọc body TRƯỚC khi hoàn điểm / giữ chỗ: biên nhận hoàn điểm gắn với đúng nội dung yêu cầu
   let body: {
     messages?: Array<{ role: string; content: string }>
+    /** tác vụ do server ghép system prompt (xem aiTasks.ts) + dữ liệu người dùng của tác vụ đó */
+    task?: string
+    taskInput?: unknown
     maxTokens?: number
     reasoningEffort?: 'low' | 'medium' | 'high' | 'max'
     temperature?: number
@@ -417,6 +421,16 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
     return json(res, 400, { error: 'Yêu cầu không hợp lệ hoặc quá lớn.' })
   }
   if (!Array.isArray(body.messages) || !body.messages.length) return json(res, 400, { error: 'messages is required' })
+  // có `task`: server tự ghép system prompt, bỏ mọi role system client gửi (client không tự đặt được prompt).
+  // Không có `task` (đường cũ, các chỗ gọi AI nhỏ chưa chuyển): vẫn nhận role system cho tới khi AI_REJECT_CLIENT_SYSTEM=1.
+  if (body.task !== undefined) {
+    const system = buildTaskSystem(body.task, body.taskInput)
+    const rest = body.messages.filter((m) => m?.role !== 'system')
+    if (system === null || !rest.length) return json(res, 400, { error: 'Tác vụ AI không hợp lệ.' })
+    body.messages = [{ role: 'system', content: system }, ...rest]
+  } else if (process.env.AI_REJECT_CLIENT_SYSTEM === '1' && body.messages.some((m) => m?.role === 'system')) {
+    return json(res, 400, { error: 'Yêu cầu AI không hợp lệ.' })
+  }
   // model rỗng / không phải chuỗi = không chọn (đừng để chuỗi rỗng khớp model chưa cấu hình rồi bỏ qua model chính)
   // chỉ máy dev (script đo / so model) được chọn model: điểm tính theo một giá, người dùng chọn model đắt là trả giá rẻ (Strix 7)
   if (typeof body.model !== 'string' || !body.model.trim() || !isLocal(ip)) body.model = undefined
