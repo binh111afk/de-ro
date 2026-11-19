@@ -13,6 +13,7 @@ import { buildVeDoThiSystem } from '../src/lib/prompts/ve-do-thi.ts'
 import { buildChonHinhSystem } from '../src/lib/prompts/chon-hinh.ts'
 import { buildNganHangSystem } from '../src/lib/prompts/ngan-hang.ts'
 import { buildMaTranSystem } from '../src/lib/prompts/ma-tran.ts'
+import { buildSuaSlideSystem } from '../src/lib/prompts/sua-slide.ts'
 import { sourcePrompt, sourceRule } from '../src/lib/prompts/sources.ts'
 
 let fail = 0
@@ -111,6 +112,15 @@ check('ASK_ONLY_SYSTEM đúng chữ cũ', ASK_ONLY_SYSTEM === 'Bạn là trợ l
   for (const s of snaps) {
     const built = buildMaTranSystem({ subject: s.subject, grade: s.grade, chapters: s.chapters })
     check(`ma-tran (${s.name}): khớp bản chụp`, built.length === s.len && sha(built) === s.sha256, { len: built.length, want: s.len })
+  }
+}
+
+// sua-slide
+{
+  const snaps = JSON.parse(readFileSync(new URL('./fixtures/prompt-sua-slide-snap.json', import.meta.url), 'utf8')) as Array<{ name: string; len: number; sha256: string }>
+  for (const s of snaps) {
+    const built = buildSuaSlideSystem()
+    check(`sua-slide (${s.name}): khớp bản chụp`, built.length === s.len && sha(built) === s.sha256, { len: built.length, want: s.len })
   }
 }
 

@@ -14,12 +14,6 @@ export const REWRITE_PRESETS = [
   { label: 'Viết lại', ask: 'Viết lại hay hơn, giữ nguyên ý' },
 ] as const
 
-const SYSTEM =
-  'Bạn sửa MỘT ô chữ trên slide bài giảng tiếng Việt theo yêu cầu của người dùng. ' +
-  'Chỉ trả về nội dung mới của ô đó: không giải thích, không tiêu đề, không dấu ngoặc kép bao quanh, không markdown (trừ **đậm** cho 1–2 từ khoá). ' +
-  'Giữ cấu trúc dòng của ô gốc (mỗi ý một dòng; nếu dòng gốc bắt đầu bằng "• " thì giữ). Giữ nguyên công thức $...$. ' +
-  'Không dài hơn bản gốc quá nhiều trừ khi yêu cầu thêm nội dung — ô trên slide rất nhỏ.'
-
 /** Bỏ hàng rào code, ngoặc kép bao ngoài và cụm đậm thừa trong câu trả lời của model. */
 export function cleanRewrite(raw: string): string {
   let text = raw.trim().replace(/^```[a-z]*\n?|\n?```$/gi, '').trim()
@@ -51,11 +45,8 @@ export async function rewriteElement(
 ): Promise<Partial<SlideElement>> {
   const original = el.text ?? ''
   const res = await callLlm(
-    [
-      { role: 'system', content: SYSTEM },
-      { role: 'user', content: `Slide: ${slideTitle || '(không có tiêu đề)'}\nNội dung ô hiện tại:\n${original}\n\nYêu cầu: ${instruction}` },
-    ],
-    { signal, reasoningEffort: 'low' },
+    [{ role: 'user', content: `Slide: ${slideTitle || '(không có tiêu đề)'}\nNội dung ô hiện tại:\n${original}\n\nYêu cầu: ${instruction}` }],
+    { signal, reasoningEffort: 'low', task: { name: 'sua-slide' } },
   )
   const text = cleanRewrite(res.content)
   if (!text) throw new Error('AI không trả về nội dung, thử lại nhé.')

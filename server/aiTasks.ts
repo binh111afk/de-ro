@@ -11,6 +11,7 @@ import { buildVeDoThiSystem } from '../src/lib/prompts/ve-do-thi.js'
 import { buildChonHinhSystem } from '../src/lib/prompts/chon-hinh.js'
 import { buildNganHangSystem } from '../src/lib/prompts/ngan-hang.js'
 import { buildMaTranSystem } from '../src/lib/prompts/ma-tran.js'
+import { buildSuaSlideSystem } from '../src/lib/prompts/sua-slide.js'
 import type { PromptSource } from '../src/lib/prompts/sources.js'
 
 const MAX_FIELD = 600_000
@@ -98,6 +99,7 @@ const TASKS: Record<string, (input: unknown) => string | null> = {
   'chon-hinh': buildChonHinhSystem,
   'ngan-hang': buildNganHangSystem,
   'ma-tran': maTran,
+  'sua-slide': buildSuaSlideSystem,
 }
 
 /** system prompt của tác vụ; null nếu tên lạ hoặc dữ liệu sai kiểu */
