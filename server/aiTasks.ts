@@ -8,6 +8,7 @@ import { ASK_ONLY_SYSTEM, buildExamSystem, type ExamTaskInput } from '../src/lib
 import { buildDeOnlineSystem, type DeOnlineQuestionSummary } from '../src/lib/prompts/de-online.js'
 import { buildSuaCauSystem } from '../src/lib/prompts/sua-cau.js'
 import { buildVeDoThiSystem } from '../src/lib/prompts/ve-do-thi.js'
+import { buildChonHinhSystem } from '../src/lib/prompts/chon-hinh.js'
 import type { PromptSource } from '../src/lib/prompts/sources.js'
 
 const MAX_FIELD = 600_000
@@ -77,6 +78,7 @@ const TASKS: Record<string, (input: unknown) => string | null> = {
   'de-online': deOnline,
   'sua-cau': buildSuaCauSystem,
   've-do-thi': buildVeDoThiSystem,
+  'chon-hinh': buildChonHinhSystem,
 }
 
 /** system prompt của tác vụ; null nếu tên lạ hoặc dữ liệu sai kiểu */

@@ -14,7 +14,6 @@ import { FIELD_DEFAULT, type FieldScene } from './field'
 import { normalizeObjects, prepareToolDoc } from './objects'
 import { dynamicId } from './figureSprites'
 import { OBJECTS } from './objectsCatalog'
-import { FIGURE_GUIDE } from './prompts/figureGuide.js'
 
 export const DOC_REWRITE_PRESETS = [
   { label: 'Viết lại rõ hơn', ask: 'Viết lại rõ ràng, chặt chẽ hơn, giữ nguyên ý' },
@@ -109,13 +108,6 @@ function planFromRaw(raw: Record<string, unknown>): ToolPlan {
 
 export { FIGURE_GUIDE, figureGuideFor } from './prompts/figureGuide.js'
 
-const TOOL_SYSTEM =
-  'Bạn đọc một đề bài tiếng Việt và chọn MỘT hình minh hoạ cần vẽ. Chỉ trả về MỘT object JSON, không giải thích. Các loại:\n' +
-  FIGURE_GUIDE +
-  ' Có thể thêm "note". Hàm có tham số thì chọn giá trị minh hoạ và ghi trong note. ' +
-  'note chỉ để ghi giá trị tham số đã chọn hoặc lí do không vẽ được; TUYỆT ĐỐI không ghi lời giải hay đáp số. ' +
-  'Nếu đề không có gì để vẽ, trả {"kind":"none","note":"lí do ngắn"}.'
-
 export interface ToolPlan {
   doc: ToolDoc
   note: string
@@ -125,11 +117,8 @@ const num = (v: unknown, d: number) => (Number.isFinite(Number(v)) ? Number(v) :
 
 export async function planTool(text: string, context: string, signal?: AbortSignal): Promise<ToolPlan> {
   const res = await callLlm(
-    [
-      { role: 'system', content: TOOL_SYSTEM },
-      { role: 'user', content: `${context ? `Ngữ cảnh: ${context}\n` : ''}Đề bài:\n${text}` },
-    ],
-    { signal, reasoningEffort: 'low' },
+    [{ role: 'user', content: `${context ? `Ngữ cảnh: ${context}\n` : ''}Đề bài:\n${text}` }],
+    { signal, reasoningEffort: 'low', task: { name: 'chon-hinh' } },
   )
   let raw: Record<string, unknown>
   try {

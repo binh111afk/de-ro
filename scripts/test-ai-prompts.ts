@@ -10,6 +10,7 @@ import { ASK_ONLY_SYSTEM, buildExamSystem, examSystemPrompt } from '../src/lib/p
 import { buildDeOnlineSystem, type DeOnlineInput } from '../src/lib/prompts/de-online.ts'
 import { buildSuaCauSystem } from '../src/lib/prompts/sua-cau.ts'
 import { buildVeDoThiSystem } from '../src/lib/prompts/ve-do-thi.ts'
+import { buildChonHinhSystem } from '../src/lib/prompts/chon-hinh.ts'
 import { sourcePrompt, sourceRule } from '../src/lib/prompts/sources.ts'
 
 let fail = 0
@@ -74,6 +75,15 @@ check('ASK_ONLY_SYSTEM đúng chữ cũ', ASK_ONLY_SYSTEM === 'Bạn là trợ l
   for (const s of snaps) {
     const built = buildVeDoThiSystem()
     check(`ve-do-thi (${s.name}): khớp bản chụp`, built.length === s.len && sha(built) === s.sha256, { len: built.length, want: s.len })
+  }
+}
+
+// chon-hinh
+{
+  const snaps = JSON.parse(readFileSync(new URL('./fixtures/prompt-chon-hinh-snap.json', import.meta.url), 'utf8')) as Array<{ name: string; len: number; sha256: string }>
+  for (const s of snaps) {
+    const built = buildChonHinhSystem()
+    check(`chon-hinh (${s.name}): khớp bản chụp`, built.length === s.len && sha(built) === s.sha256, { len: built.length, want: s.len })
   }
 }
 

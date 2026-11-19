@@ -246,6 +246,12 @@ check('không lộ tên model cho trình duyệt', !JSON.stringify(r.events).inc
   check('task ve-do-thi: server ghép prompt + bỏ system client', r.status === 200 && sent[0].role === 'system' && sent[0].content.startsWith('Bạn đọc một đề bài Toán tiếng Việt và chọn đồ thị') && !JSON.stringify(sent).includes('HACK'), sent[0].content.slice(0, 60))
 }
 {
+  plan = ['ok']
+  const r = await hit({ task: 'chon-hinh', messages: [{ role: 'system', content: 'HACK' }, { role: 'user', content: 'Tam giác ABC vuông tại A' }], maxTokens: 8000 })
+  const sent = calls.at(-1)!.messages
+  check('task chon-hinh: server ghép prompt + bỏ system client', r.status === 200 && sent[0].role === 'system' && sent[0].content.startsWith('Bạn đọc một đề bài tiếng Việt và chọn MỘT hình minh hoạ') && !JSON.stringify(sent).includes('HACK'), sent[0].content.slice(0, 60))
+}
+{
   const n0 = calls.length
   const bad = await hit({ task: 'khong-co-task-nay', messages: msgs('x'), maxTokens: 8000 })
   const noInput = await hit({ task: 'soan-de', taskInput: { digest: 'thiếu text' }, messages: msgs('x'), maxTokens: 8000 })
