@@ -1184,7 +1184,7 @@
       "freq": "cao",
       "containers": [],
       "scene": true,
-      "prompt": "A single tall tower, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "prompt": "A single tall steel lattice observation tower tapering to a pointed spire at top, front view, distinct from a lighthouse, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
       "aliases": [
         "tháp",
         "toà tháp"
@@ -1204,7 +1204,7 @@
       "freq": "cao",
       "containers": [],
       "scene": true,
-      "prompt": "A single straight wooden ladder standing vertically, front view, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "prompt": "A single straight wooden ladder standing vertically, strictly flat orthographic front view with two parallel vertical side rails and seven horizontal rungs, flat level bottom feet, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
       "aliases": [
         "thang",
         "chiếc thang"
@@ -1425,8 +1425,389 @@
       "scene": true,
       "prompt": "A single cylindrical water tank, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
       "aliases": [
-        "bồn nước",
-        "tháp nước"
+        "bồn nước"
+      ]
+    },
+    {
+      "id": "skyscraper",
+      "name": "nhà chọc trời",
+      "grades": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single modern tall skyscraper with stepped top and antenna spire, front view, simple geometric windows, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "nhà chọc trời",
+        "cao ốc",
+        "toà nhà cao tầng"
+      ]
+    },
+    {
+      "id": "tile_house",
+      "name": "nhà mái ngói",
+      "grades": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single traditional Vietnamese one-story house with sloped tiled roof, front view, simple door and two windows, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "nhà mái ngói",
+        "nhà ngói",
+        "nhà cấp 4"
+      ]
+    },
+    {
+      "id": "stilt_house",
+      "name": "nhà sàn",
+      "grades": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single wooden stilt house raised on vertical stilts with a small ladder, front view, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "nhà sàn"
+      ]
+    },
+    {
+      "id": "school",
+      "name": "trường học",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single school building with pitched roof, clock on pediment and small flagpole on top, front view, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "trường học",
+        "ngôi trường",
+        "trường"
+      ]
+    },
+    {
+      "id": "hospital",
+      "name": "bệnh viện",
+      "grades": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single hospital building with a simple medical cross emblem on the front facade, front view, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "bệnh viện",
+        "trạm y tế",
+        "phòng khám"
+      ]
+    },
+    {
+      "id": "market",
+      "name": "chợ",
+      "grades": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single small market stall with striped awning canopy and counter, front view, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "chợ",
+        "gian hàng",
+        "quầy hàng"
+      ]
+    },
+    {
+      "id": "pagoda",
+      "name": "chùa",
+      "grades": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single Asian curved-roof temple pagoda with two tiers, front view, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "chùa",
+        "ngôi chùa",
+        "đình"
+      ]
+    },
+    {
+      "id": "church",
+      "name": "nhà thờ",
+      "grades": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single church building with tall pointed steeple and cross on top, front view, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "nhà thờ"
+      ]
+    },
+    {
+      "id": "bridge",
+      "name": "cây cầu",
+      "grades": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single simple arch bridge structure only, no water, no grass, flat side view, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "cầu",
+        "cây cầu",
+        "chiếc cầu"
+      ]
+    },
+    {
+      "id": "village_gate",
+      "name": "cổng làng",
+      "grades": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single traditional arched gateway with tiled roof top, front view, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "cổng làng",
+        "cổng",
+        "cổng chào"
+      ]
+    },
+    {
+      "id": "traffic_light",
+      "name": "đèn giao thông",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single traffic light on a vertical pole with three round lights, front view, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "đèn giao thông",
+        "cột đèn giao thông",
+        "đèn tín hiệu"
+      ]
+    },
+    {
+      "id": "fence",
+      "name": "hàng rào",
+      "grades": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single wooden picket fence section, front view, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "hàng rào",
+        "rào"
+      ]
+    },
+    {
+      "id": "water_well",
+      "name": "giếng nước",
+      "grades": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single stone water well with small wooden roof and hanging bucket, front view, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "giếng nước",
+        "giếng",
+        "cái giếng"
+      ]
+    },
+    {
+      "id": "water_tower",
+      "name": "tháp nước",
+      "grades": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single elevated water tower with tank on tall four-legged steel frame, front view, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "tháp nước",
+        "đài nước"
+      ]
+    },
+    {
+      "id": "windmill",
+      "name": "cối xay gió",
+      "grades": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single windmill with four large blades, front view, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "cối xay gió",
+        "cối xay",
+        "tuabin gió"
+      ]
+    },
+    {
+      "id": "warehouse",
+      "name": "nhà kho",
+      "grades": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single simple barn warehouse building with wide double doors, front view, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "nhà kho",
+        "kho",
+        "nhà xưởng"
+      ]
+    },
+    {
+      "id": "step_ladder",
+      "name": "thang gấp",
+      "grades": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single A-frame folding step ladder standing open, side view, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "thang gấp",
+        "thang chữ a",
+        "thang xếp"
+      ]
+    },
+    {
+      "id": "stairs",
+      "name": "cầu thang",
+      "grades": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single flight of stairs with handrail, side view, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "cầu thang",
+        "cầu thang bộ",
+        "bậc thang"
       ]
     }
   ],
