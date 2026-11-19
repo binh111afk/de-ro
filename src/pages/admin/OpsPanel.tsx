@@ -709,23 +709,26 @@ export function OpsPanel({ me: _me }: OpsPanelProps) {
                     <div
                       key={d.day}
                       className="group relative flex h-full flex-1 min-w-[16px] flex-col items-center justify-end"
-                      data-tip={`${d.day}: ${formatNumber(d.calls)} lượt (${formatNumber(d.success)} thành công, ${formatNumber(d.errors)} lỗi)`}
                     >
-                      {/* Cột chồng thành công / lỗi */}
+                      {/* Vùng chỉ tooltip: đúng bằng chiều cao cột nên tooltip luôn nằm sát đỉnh cột */}
                       <div
-                        className="flex w-full max-w-[32px] flex-col justify-end overflow-hidden rounded-t-[3px] bg-sunken/40 transition-all group-hover:brightness-95"
+                        className="flex w-full justify-center"
                         style={{ height: `${heightPercent}%` }}
+                        data-tip={`${label}: ${formatNumber(d.calls)} lượt, ${formatNumber(d.success)} thành công, ${formatNumber(d.errors)} lỗi`}
                       >
-                        {d.errors > 0 ? (
+                        {/* Cột chồng thành công / lỗi */}
+                        <div className="flex h-full w-full max-w-[32px] flex-col justify-end overflow-hidden rounded-t-[3px] bg-sunken/40 transition-all group-hover:brightness-95">
+                          {d.errors > 0 ? (
+                            <div
+                              className="w-full bg-clay transition-all"
+                              style={{ height: `${errPercent}%` }}
+                            />
+                          ) : null}
                           <div
-                            className="w-full bg-clay transition-all"
-                            style={{ height: `${errPercent}%` }}
+                            className="w-full bg-sage transition-all"
+                            style={{ height: `${succPercent}%` }}
                           />
-                        ) : null}
-                        <div
-                          className="w-full bg-sage transition-all"
-                          style={{ height: `${succPercent}%` }}
-                        />
+                        </div>
                       </div>
 
                       {/* Nhãn ngày dd/MM */}
