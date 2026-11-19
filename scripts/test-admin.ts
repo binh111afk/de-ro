@@ -15,6 +15,7 @@ const TOKENS: Record<string, string> = { tAdmin: ADMIN, tMod: MOD, tUser: USER }
 const ADMIN2 = '66666666-6666-4666-8666-666666666666'
 const ROLES: Record<string, string> = { [ADMIN]: 'admin', [MOD]: 'moderator', [ADMIN2]: 'admin' }
 let adminBanned = false
+let noCreditRow = false
 const calls: string[] = []
 const LISTED = '44444444-4444-4444-8444-444444444444'
 const PRIVATE = '55555555-5555-4555-8555-555555555555'
@@ -50,6 +51,8 @@ globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
   if (url.includes(`/auth/v1/admin/users/${ADMIN}`) && method === 'GET') return ok({ id: ADMIN, banned_until: adminBanned ? '2999-01-01T00:00:00Z' : null })
   if (url.includes('/auth/v1/admin/users/')) return ok({})
   if (url.includes('/rest/v1/user_documents')) return ok([])
+  if (url.includes('/rest/v1/ai_credits') && method === 'GET') return ok(noCreditRow ? [] : [{ balance: 500 }])
+  if (url.includes('/rpc/claim_ai_welcome')) return (calls.push('claim_ai_welcome'), ok(120000))
   if (url.includes('/rpc/grant_ai_credits')) return ok(1500)
   if (url.includes('/rpc/record_security_strike')) return strikeReply === 'error' ? new Response('{}', { status: 500 }) : ok(strikeReply)
   if (url.includes('/rest/v1/admin_audit')) return new Response(null, { status: 201 })
@@ -136,6 +139,11 @@ check('moderator cộng điểm → 403', (await hit({ action: 'credits.grant', 
 check('cộng điểm 0 → 400', (await hit({ action: 'credits.grant', userId: USER, tokens: 0 }, 'tAdmin')).status === 400)
 const g = await hit({ action: 'credits.grant', userId: USER, tokens: 1000 }, 'tAdmin')
 check('cộng điểm → 200, trả số dư cộng dồn', g.status === 200 && g.data.balance === 1500)
+check('cộng điểm cho người đã có số dư → không tặng quà thêm', !calls.includes('claim_ai_welcome'))
+noCreditRow = true
+const g2 = await hit({ action: 'credits.grant', userId: USER, tokens: 1000 }, 'tAdmin')
+check('cộng điểm cho người chưa có số dư → tặng quà chào mừng trước rồi mới cộng', g2.status === 200 && calls.includes('claim_ai_welcome'))
+noCreditRow = false
 
 
 // giai đoạn 2

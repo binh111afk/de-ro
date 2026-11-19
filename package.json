@@ -24,6 +24,7 @@
     "test:online": "tsx --tsconfig tsconfig.app.json scripts/test-online-exam.ts",
     "test:docx": "tsx --tsconfig tsconfig.app.json scripts/test-docx.ts",
     "test:guard": "tsx scripts/test-guard.ts",
+    "test:ai-cost": "tsx scripts/test-ai-cost.ts",
     "test:payment": "tsx scripts/test-payment.ts",
     "compare:llm": "tsx scripts/compare-llm.ts",
     "test:slide-text": "tsx --tsconfig tsconfig.app.json scripts/test-slide-text.mjs",

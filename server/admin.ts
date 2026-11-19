@@ -385,6 +385,11 @@ const ACTIONS: ActionMap = {
       const tokens = Math.floor(Number(b.tokens))
       if (!(tokens > 0 && tokens <= 100_000_000)) throw new HttpError(400, 'Số điểm cộng phải là số nguyên dương.')
       const note = str(b.note, 300)
+      // chưa có dòng số dư: tặng quà chào mừng trước, không thì cộng tay sẽ tạo dòng và người này mất quà
+      const { data: have } = await call<Array<{ balance: number }>>(ctx.s, `/rest/v1/ai_credits?user_id=eq.${id}&select=balance`)
+      if (!have[0]) {
+        await call(ctx.s, '/rest/v1/rpc/claim_ai_welcome', { method: 'POST', body: JSON.stringify({ p_user: id, p_tokens: WELCOME_TOKENS() }) })
+      }
       const { data: balance } = await call<number>(ctx.s, '/rest/v1/rpc/grant_ai_credits', {
         method: 'POST',
         body: JSON.stringify({ p_user: id, p_tokens: tokens }),

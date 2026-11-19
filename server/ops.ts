@@ -112,11 +112,10 @@ export function estimateCost(usage: unknown, provider: string): number | null {
     | undefined
   const inTok = Number(u?.prompt_tokens ?? u?.input_tokens) || 0
   const outTok = Number(u?.completion_tokens ?? u?.output_tokens) || 0
-  if (inTok + outTok <= 0) return null
+  if (inTok + outTok <= 0 || !Object.hasOwn(DEFAULT_PRICE, provider)) return null
   const raw = process.env[`AI_PRICE_${provider.toUpperCase()}`]
-  const fromEnv = raw ? raw.split(',').map(Number) : []
+  const fromEnv = raw ? raw.split(',').map((part) => part.trim() ? Number(part) : NaN) : []
   const p = fromEnv.length === 3 && fromEnv.every((n) => Number.isFinite(n) && n >= 0) ? (fromEnv as [number, number, number]) : DEFAULT_PRICE[provider]
-  if (!p) return null
   const cached = Math.min(inTok, Math.max(0, Number(u?.prompt_cache_hit_tokens ?? u?.prompt_tokens_details?.cached_tokens) || 0))
   return ((inTok - cached) * p[0] + cached * p[1] + outTok * p[2]) / 1_000_000
 }
