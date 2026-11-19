@@ -1501,7 +1501,6 @@
       ],
       "ghi_chu_chua_chac": [
         "Chỉ tra được mục lục đầy đủ của KNTT (hai định hướng); tên chủ đề CTST/CD ghi theo chương trình 2018, chưa đối chiếu tên bài từng sách",
-        "File khungTin.json cũ trong src/data đánh CSDL/SQL lớp 11 là riêng CS; theo mục lục KNTT (loigiaihay) chủ đề CSDL là phần CHUNG của cả hai định hướng — cần Claude đối chiếu lại khi gộp",
         "Mã mach A–G ghi theo nội dung chủ đề của chương trình 2018; SGK KNTT đánh chủ đề bằng số, chưa thấy tài liệu chính thức công bố bộ chữ A–G"
       ]
     },
@@ -1629,7 +1628,7 @@
             "Tìm và sửa lỗi thẻ/cấu trúc trang",
             "Viết đoạn HTML cho yêu cầu hiển thị cụ thể"
           ],
-          "luu_y_ra_de": "Chỉ dùng thẻ HTML và thuộc tính CSS trong chương trình; không ra đề về thư viện hay công cụ biên dịch. Claude sửa: HTML/CSS thuộc phần chung lớp 12 (chủ đề F), không riêng CS."
+          "luu_y_ra_de": "Chỉ dùng thẻ HTML và thuộc tính CSS trong chương trình; không ra đề về thư viện hay công cụ biên dịch. HTML/CSS thuộc phần chung lớp 12 (chủ đề F), không riêng CS."
         },
         {
           "id": "tin12-mang-thiet-bi-thiet-ke-mang",
@@ -1791,7 +1790,6 @@
       ],
       "ghi_chu_chua_chac": [
         "Chỉ tra được mục lục KNTT CS đầy đủ từ loigiaihay; mục lục ICT 12 ghép từ kết quả tìm kiếm giáo án (marketing điện tử và đồ án trang web marketing, khoảng Bài 19–26) — số thứ tự bài có thể lệch, cần đối chiếu SGK in",
-        "File khungTin.json cũ có chương lập trình hướng đối tượng (OOP) lớp 12 CS; theo YEU_CAU (phản ánh chương trình 2018) OOP không thuộc chương trình — bản này không đưa OOP vào chương bắt buộc và xếp OOP vào chua_duoc_dung; cần Claude quyết khi gộp",
         "Đề tốt nghiệp Tin học 2025: cấu trúc ghi theo đề phổ biến (Phần I: 12 câu TN gồm 6 chung + 6 riêng; Phần II: 4 câu ĐS gồm 2 chung + 2 riêng; Phần III: 6 câu trả lời ngắn phần riêng) — tỉ lệ chung/riêng cần đối chiếu ma trận đề chính thức của Bộ"
       ]
     }
@@ -2899,7 +2897,6 @@
       "ti_le_muc_do": "NB 30%, TH 40%, VD 30%"
     }
   ],
-  "phien_ban": "Claude ghép 08/11/2026 từ nhánh feat/khung-chuong-trinh: lớp 11–12 làm lại theo mục lục; HTML/CSS lớp 12 chuyển về phần chung.",
   "muc_luc_da_tra": [
     "Lớp 11 – KNTT (chung) – Bài 1. Hệ điều hành",
     "Lớp 11 – KNTT (chung) – Bài 2. Thực hành sử dụng hệ điều hành",

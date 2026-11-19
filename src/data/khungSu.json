@@ -1882,7 +1882,7 @@
             "So sánh con đường giành độc lập của các nước",
             "Khai thác tư liệu về một phong trào tiêu biểu"
           ],
-          "luu_y_ra_de": "Chủ đề này do Claude thêm khi rà soát (agent bỏ sót, thay vào chủ đề \"đối ngoại thời trung đại\" không có trong lớp 11). Các mốc đã kiểm; tên bài theo CTST, CD cần đối chiếu."
+          "luu_y_ra_de": ""
         }
       ],
       "chuyen_de": [
@@ -1890,9 +1890,7 @@
         "Chuyên đề 11.2: Chiến tranh bảo vệ Tổ quốc và chiến tranh giải phóng dân tộc trong lịch sử Việt Nam",
         "Chuyên đề 11.3: Danh nhân trong lịch sử Việt Nam"
       ],
-      "ghi_chu_chua_chac": [
-        "Chủ đề \"Quá trình giành độc lập dân tộc của các quốc gia Đông Nam Á\" do Claude thêm; thứ tự học kỳ theo KNTT."
-      ]
+      "ghi_chu_chua_chac": []
     },
     {
       "lop": 12,
@@ -2952,6 +2950,5 @@
       ],
       "ti_le_muc_do": "30% Nhận biết - 40% Thông hiểu - 20% Vận dụng - 10% Vận dụng cao (Quyết định số 764/QĐ-BGDĐT của Bộ GD&ĐT)"
     }
-  ],
-  "phien_ban": "Claude rà soát 08/11/2026: lớp 11 thay chủ đề \"đối ngoại thời trung đại\" (không có) bằng \"Quá trình giành độc lập dân tộc của các quốc gia Đông Nam Á\"; sửa mốc thành lập Đảng; xoá ký tự lạ."
+  ]
 }
