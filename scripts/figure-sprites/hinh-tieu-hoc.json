@@ -1809,6 +1809,343 @@
         "cầu thang bộ",
         "bậc thang"
       ]
+    },
+    {
+      "id": "ruler",
+      "name": "thước kẻ",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "freq": "cao",
+      "containers": [
+        "box",
+        "bag"
+      ],
+      "prompt": "A single straight school ruler with simple tick marks and no numbers, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "thước",
+        "cái thước",
+        "thước thẳng"
+      ]
+    },
+    {
+      "id": "compass_tool",
+      "name": "compa",
+      "grades": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "freq": "vừa",
+      "containers": [
+        "box"
+      ],
+      "prompt": "A single geometry drawing compass tool with pencil tip, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "cái compa",
+        "com-pa"
+      ]
+    },
+    {
+      "id": "eraser",
+      "name": "cục tẩy",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "cao",
+      "containers": [
+        "box",
+        "bag"
+      ],
+      "prompt": "A single rectangular school rubber eraser with paper sleeve, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "tẩy",
+        "gôm",
+        "cục gôm"
+      ]
+    },
+    {
+      "id": "scissors",
+      "name": "cái kéo",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "cao",
+      "containers": [
+        "box"
+      ],
+      "prompt": "A single pair of school scissors slightly open, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "kéo",
+        "chiếc kéo"
+      ]
+    },
+    {
+      "id": "wall_clock",
+      "name": "đồng hồ treo tường",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single simple round wall clock with two hands and simple hour tick marks without numbers, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "đồng hồ"
+      ]
+    },
+    {
+      "id": "desk_lamp",
+      "name": "đèn bàn",
+      "grades": [
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single study desk lamp, side view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "đèn bàn",
+        "đèn học",
+        "cái đèn"
+      ]
+    },
+    {
+      "id": "electric_fan",
+      "name": "cái quạt",
+      "grades": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single standing electric table fan with three blades, front view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "quạt điện",
+        "quạt máy",
+        "quạt"
+      ]
+    },
+    {
+      "id": "wardrobe",
+      "name": "cái tủ",
+      "grades": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single wooden wardrobe cabinet with two doors and round knobs, front view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "tủ",
+        "tủ quần áo"
+      ]
+    },
+    {
+      "id": "bed",
+      "name": "cái giường",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single simple wooden bed with pillow and blanket, side view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "giường",
+        "giường ngủ"
+      ]
+    },
+    {
+      "id": "sofa",
+      "name": "ghế sofa",
+      "grades": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single simple two-seater sofa couch, front view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "sofa",
+        "ghế dài"
+      ]
+    },
+    {
+      "id": "vase",
+      "name": "bình hoa",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single simple ceramic flower vase, front view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "bình hoa",
+        "lọ hoa",
+        "cái bình"
+      ]
+    },
+    {
+      "id": "teapot",
+      "name": "ấm trà",
+      "grades": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single simple round teapot with lid, spout and handle, side view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "ấm trà",
+        "cái ấm",
+        "ấm nước"
+      ]
+    },
+    {
+      "id": "pot",
+      "name": "cái nồi",
+      "grades": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single cooking pot with lid and two side handles, front view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "nồi",
+        "xoong"
+      ]
+    },
+    {
+      "id": "pan",
+      "name": "cái chảo",
+      "grades": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single frying pan with long handle, slightly angled view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "chảo"
+      ]
+    },
+    {
+      "id": "bowl",
+      "name": "cái bát",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "cao",
+      "containers": [
+        "tray"
+      ],
+      "prompt": "A single simple ceramic rice bowl, front view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "bát",
+        "chén",
+        "cái chén"
+      ]
+    },
+    {
+      "id": "spoon",
+      "name": "cái thìa",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single simple metal spoon, vertical top view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "thìa",
+        "muỗng",
+        "cái muỗng"
+      ]
+    },
+    {
+      "id": "chopsticks",
+      "name": "đôi đũa",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single pair of wooden chopsticks side by side diagonally, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "đũa"
+      ]
+    },
+    {
+      "id": "hand_fan",
+      "name": "quạt giấy",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single open folding paper hand fan, front view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "quạt giấy",
+        "quạt nan"
+      ]
     }
   ],
   "containers": [
