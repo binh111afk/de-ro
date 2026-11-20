@@ -102,17 +102,16 @@ export function AiQuotaRing({ className }: { className?: string }) {
         </svg>
       </button>
       {open ? (
-        <div role="dialog" aria-label="Điểm AI" className="anim-pop absolute right-0 bottom-[calc(100%+8px)] z-30 w-52 rounded-[10px] bg-surface p-3.5 shadow-float">
-          <p className="text-[12px] text-ink-3">Điểm AI còn lại</p>
+        <div role="dialog" aria-label="Điểm AI" className="anim-pop absolute right-0 bottom-[calc(100%+8px)] z-30 flex items-center gap-3 whitespace-nowrap rounded-[8px] bg-surface px-3 py-2 text-[13px] shadow-float">
           {state.unlimited ? (
-            <p className="mt-1 text-[20px] font-semibold leading-none text-ink">Không giới hạn</p>
+            <span className="font-semibold text-ink">Không giới hạn</span>
           ) : (
-            <p className={cn('tnum mt-1 text-[26px] font-semibold leading-none', low ? 'text-clay-deep' : 'text-ink')}>
-              {points.toLocaleString('vi-VN')}
-            </p>
+            <span className="text-ink-3">
+              <span className={cn('tnum text-[14px] font-semibold', low ? 'text-clay-deep' : 'text-ink')}>{points.toLocaleString('vi-VN')}</span> điểm còn lại
+            </span>
           )}
           {canPay && !state.unlimited ? (
-            <Link to="/bang-gia" className="mt-3 inline-block text-[13px] font-semibold text-clay hover:underline">
+            <Link to="/bang-gia" className="font-semibold text-clay hover:underline">
               Nạp điểm
             </Link>
           ) : null}
