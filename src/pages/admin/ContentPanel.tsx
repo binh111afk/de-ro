@@ -97,6 +97,7 @@ export function ContentPanel({ me }: ContentPanelProps) {
           onChange={(val) => setTab(val)}
           options={tabOptions}
           label="Mục quản lý nội dung"
+          className="self-start"
         />
       </div>
 
