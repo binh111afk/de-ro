@@ -1,43 +1,45 @@
 /** Hộp công cụ tiểu học: tranh đếm đồ vật (ghép từ kho hình) và đồng hồ kim. */
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useId, useMemo, useState } from 'react'
 import { Plus, Trash2 } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import { inputClass } from '@/components/ui'
+import { SiteSelect } from '@/components/SiteSelect'
 import { type ToolDoc } from '@/lib/toolSpec'
 import { CLOCK_DEFAULT, OBJECTS_DEFAULT, prepareObjects, type ClockSpec, type ObjectsGroup, type ObjectsSpec } from '@/lib/objects'
 import { CONTAINERS, OBJECTS } from '@/lib/objectsCatalog'
-import { Dropdown } from '../Dropdown'
 import { Check, ToolShell, sectionTitle } from './ToolShell'
 import { type Props, useRender } from './toolModalKit'
 
 const numInput = cn(inputClass, 'h-8 w-14 px-2 py-1 text-[13px]')
+const groupInput = cn(inputClass, 'h-8 px-2 py-1 text-[13px]')
 const ITEM_OPTIONS = [{ value: '', label: 'Không có' }, ...Object.entries(OBJECTS).map(([value, label]) => ({ value, label }))]
 const CONT_OPTIONS = [{ value: '', label: 'Để rời' }, ...Object.entries(CONTAINERS).map(([value, c]) => ({ value, label: c.name }))]
 
 function GroupRow({ g, onChange, onRemove }: { g: ObjectsGroup; onChange: (p: Partial<ObjectsGroup>) => void; onRemove?: () => void }) {
+  const id = useId()
   const num = (v: string, d: number) => (v === '' || !Number.isFinite(Number(v)) ? d : Number(v))
+  const itemOptions = g.item && !OBJECTS[g.item]
+    ? [...ITEM_OPTIONS, { value: g.item, label: g.itemName ?? g.item.replace(/^x-/, '').replace(/-/g, ' ') }]
+    : ITEM_OPTIONS
   return (
-    <div className="flex flex-col gap-2 rounded-[8px] border border-line p-2.5">
-      <div className="flex items-center gap-2 text-[13px] text-ink-2">
-        <input type="number" min={1} max={10} value={g.count} onChange={(e) => onChange({ count: num(e.target.value, 1) })} className={numInput} aria-label="Số đồ chứa" />
-        <Dropdown value={g.container ?? ''} options={CONT_OPTIONS} onPick={(v) => onChange({ container: v || undefined })} ariaLabel="Đồ chứa" width={130} />
-        {onRemove ? (
-          <button type="button" onClick={onRemove} aria-label="Xoá nhóm" className="ml-auto rounded p-1 text-ink-3 hover:bg-sunken hover:text-clay">
-            <Trash2 className="size-4" />
-          </button>
-        ) : null}
-      </div>
-      <div className="flex items-center gap-2 text-[13px] text-ink-2">
-        <span className="shrink-0">{g.container ? 'mỗi cái có' : 'mỗi nhóm'}</span>
-        <input type="number" min={0} max={20} value={g.each} onChange={(e) => onChange({ each: num(e.target.value, 0) })} className={numInput} aria-label="Số đồ vật" />
-        <Dropdown
-          value={g.item ?? ''}
-          options={g.item && !OBJECTS[g.item] ? [...ITEM_OPTIONS, { value: g.item, label: g.itemName ?? g.item.replace(/^x-/, '').replace(/-/g, ' ') }] : ITEM_OPTIONS} onPick={(v) => onChange({ item: v || undefined })} ariaLabel="Đồ vật" width={130} />
-      </div>
-      <label className="flex items-center gap-2 text-[13px] text-ink-2">
-        <span className="shrink-0">Ghi số</span>
-        <input value={g.label ?? ''} maxLength={8} onChange={(e) => onChange({ label: e.target.value || undefined })} className={cn(inputClass, 'h-8 w-20 px-2 py-1 text-[13px]')} aria-label="Số ghi trên hình" placeholder="10" />
-      </label>
+    <div className="grid grid-cols-[minmax(0,1fr)_5.5rem] content-start items-start gap-x-2 gap-y-1.5 rounded-[8px] border border-line p-2.5 text-[13px] text-ink-2">
+      <span>Đồ chứa</span>
+      <label htmlFor={`${id}-count`}>Số nhóm</label>
+      <SiteSelect inline value={g.container ?? ''} options={CONT_OPTIONS} onChange={(v) => onChange({ container: v || undefined })} label="Đồ chứa" />
+      <input id={`${id}-count`} type="number" min={1} max={10} value={g.count} onChange={(e) => onChange({ count: num(e.target.value, 1) })} className={groupInput} />
+
+      <span>Đồ vật</span>
+      <label htmlFor={`${id}-each`}>Số mỗi nhóm</label>
+      <SiteSelect inline searchable value={g.item ?? ''} options={itemOptions} onChange={(v) => onChange({ item: v || undefined })} label="Đồ vật" />
+      <input id={`${id}-each`} type="number" min={0} max={20} value={g.each} onChange={(e) => onChange({ each: num(e.target.value, 0) })} className={groupInput} />
+
+      <label htmlFor={`${id}-label`} className="col-span-2">Ghi số</label>
+      <input id={`${id}-label`} value={g.label ?? ''} maxLength={8} onChange={(e) => onChange({ label: e.target.value || undefined })} className={groupInput} placeholder="10" />
+      {onRemove ? (
+        <button type="button" onClick={onRemove} aria-label="Xoá nhóm" className="flex size-8 items-center justify-center justify-self-end rounded text-ink-3 hover:bg-sunken hover:text-clay">
+          <Trash2 className="size-4" />
+        </button>
+      ) : null}
     </div>
   )
 }
