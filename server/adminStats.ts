@@ -87,18 +87,26 @@ export const STATS_ACTIONS: ActionMap = {
       const users = await Promise.all(
         (rows || []).slice(0, 20).map(async (r) => {
           let email = ''
+          let name = ''
+          let avatar = ''
           try {
-            const { data: u } = await call<{ id: string; email?: string }>(
-              ctx.s,
-              `/auth/v1/admin/users/${r.user_id}`,
-            )
+            const { data: u } = await call<{
+              id: string
+              email?: string
+              user_metadata?: { display_name?: string; full_name?: string; name?: string; avatar_url?: string; picture?: string }
+            }>(ctx.s, `/auth/v1/admin/users/${r.user_id}`)
             email = u?.email ?? ''
+            const m = u?.user_metadata
+            name = m?.display_name || m?.full_name || m?.name || email.split('@')[0] || ''
+            avatar = m?.avatar_url || m?.picture || ''
           } catch {
             // bỏ qua lỗi nếu không đọc được user
           }
           return {
             userId: r.user_id,
             email,
+            name,
+            avatar,
             lastSeen: r.last_seen,
           }
         }),

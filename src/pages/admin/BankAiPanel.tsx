@@ -1,6 +1,6 @@
 /** Tab "AI và tệp" của form thêm câu: tạo bản nháp từ AI, tệp đề hoặc JSON. */
 import { useRef, useState, type ReactNode } from 'react'
-import { FileUp, ImageOff, Pencil, Sparkles } from 'lucide-react'
+import { FileUp, Pencil, Sparkles } from 'lucide-react'
 import { TrashIcon } from '@/components/appIcons'
 import { Badge, Button, Card, EmptyState, Spinner, inputClass } from '@/components/ui'
 import { dialog } from '@/components/Dialog'
@@ -8,6 +8,7 @@ import { MathText } from '@/components/MathText'
 import { draftReady, generateDrafts, importDrafts, IMPORT_FILE_ACCEPT, parseJsonDrafts, type BankDraft } from '@/lib/bankImport'
 import { TYPE_LABEL, type QuestionType } from '@/data/types'
 import { cn } from '@/lib/cn'
+import { imageToSrc, pastedImage } from '@/lib/questionImage'
 
 const answerText = (d: BankDraft) => (d.type === 'tu-luan' || d.type === 'tu-luan-dong' ? 'Tự luận' : d.answer || 'Chưa có đáp án')
 
@@ -32,20 +33,28 @@ export function BankAiPanel({
 }) {
   const [request, setRequest] = useState('')
   const [json, setJson] = useState('')
+  const [jsonError, setJsonError] = useState<string | null>(null)
   const [count, setCount] = useState(5)
   const [busy, setBusy] = useState<string | null>(null)
   const [warning, setWarning] = useState<string | null>(null)
-  const [saving, setSaving] = useState(false)
+  const [savingIds, setSavingIds] = useState<Set<string> | null>(null)
+  const [imageStates, setImageStates] = useState<Record<string, true | string>>({})
+  const uploadingImages = useRef(new Set<string>())
   const fileRef = useRef<HTMLInputElement>(null)
   const jsonFileRef = useRef<HTMLInputElement>(null)
+  const imageFileRef = useRef<HTMLInputElement>(null)
+  const imageDraftId = useRef<string | null>(null)
+
+  const addDrafts = (res: { drafts: BankDraft[]; warning?: string }) => {
+    setDrafts((list) => [...list, ...res.drafts])
+    setWarning(res.warning ?? null)
+  }
 
   const run = async (label: string, action: () => Promise<{ drafts: BankDraft[]; warning?: string }>) => {
     setBusy(label)
     setWarning(null)
     try {
-      const res = await action()
-      setDrafts((list) => [...list, ...res.drafts])
-      setWarning(res.warning ?? null)
+      addDrafts(await action())
     } catch (err) {
       await dialog.alert(err instanceof Error ? err.message : 'Không tạo được câu hỏi.', { title: 'Lỗi' })
     } finally {
@@ -58,13 +67,48 @@ export function BankAiPanel({
     if (file) void run('Đang đọc tệp…', () => importDrafts(file, setBusy))
   }
 
+  const importJson = () => {
+    setJsonError(null)
+    setWarning(null)
+    try {
+      addDrafts(parseJsonDrafts(json))
+      setJson('')
+    } catch (err) {
+      setJsonError(err instanceof Error ? err.message : 'Không đọc được JSON.')
+    }
+  }
+
+  const setDraftImage = (id: string, src?: string) => {
+    setDrafts((list) => list.map((d) => d.id === id ? { ...d, image: src ? { ...d.image, src } : undefined } : d))
+  }
+
+  const clearImageState = (id: string) => {
+    setImageStates(({ [id]: _state, ...rest }) => rest)
+  }
+
+  const pickImage = async (id: string, file: File) => {
+    if (uploadingImages.current.has(id) || savingIds?.has(id)) return
+    uploadingImages.current.add(id)
+    setImageStates((states) => ({ ...states, [id]: true }))
+    try {
+      const src = await imageToSrc(file)
+      if (src.startsWith('data:') && src.length > 40_000) throw new Error('Không tải được ảnh lên máy chủ, thử lại sau.')
+      setDraftImage(id, src)
+      clearImageState(id)
+    } catch (err) {
+      setImageStates((states) => ({ ...states, [id]: err instanceof Error ? err.message : 'Không đọc được ảnh.' }))
+    } finally {
+      uploadingImages.current.delete(id)
+    }
+  }
+
   const chosen = drafts.filter((d) => d.selected)
   const saveChosen = async () => {
-    setSaving(true)
+    setSavingIds(new Set(chosen.map((d) => d.id)))
     try {
       await onSaveDrafts(chosen)
     } finally {
-      setSaving(false)
+      setSavingIds(null)
     }
   }
 
@@ -140,9 +184,15 @@ export function BankAiPanel({
             id="bank-json"
             rows={4}
             value={json}
-            onChange={(e) => setJson(e.target.value)}
+            onChange={(e) => {
+              setJson(e.target.value)
+              setJsonError(null)
+            }}
+            aria-invalid={jsonError ? true : undefined}
+            aria-describedby={jsonError ? 'bank-json-error' : undefined}
             className={cn(inputClass, 'h-auto py-2.5 font-mono text-[13px]')}
           />
+          {jsonError ? <p id="bank-json-error" role="alert" className="text-[12px] text-clay">{jsonError}</p> : null}
           <input
             ref={jsonFileRef}
             type="file"
@@ -162,7 +212,7 @@ export function BankAiPanel({
               <FileUp className="size-4" />
               Chọn tệp JSON
             </Button>
-            <Button variant="clay" size="sm" onClick={() => void run('Đang đọc JSON…', async () => parseJsonDrafts(json))} disabled={!!busy || !json.trim()}>
+            <Button variant="clay" size="sm" onClick={importJson} disabled={!!busy || !json.trim()}>
               Nhập
             </Button>
           </div>
@@ -178,12 +228,24 @@ export function BankAiPanel({
       </div>
 
       <div className="flex min-h-0 flex-col">
+        <input
+          ref={imageFileRef}
+          type="file"
+          accept="image/*"
+          hidden
+          aria-label="Chọn tệp ảnh"
+          onChange={(e) => {
+            const file = e.target.files?.[0]
+            e.target.value = ''
+            if (file && imageDraftId.current) void pickImage(imageDraftId.current, file)
+          }}
+        />
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line px-5 py-3">
           <p className="text-[13.5px] font-semibold text-ink">
             {drafts.length} câu nháp, chọn {chosen.length}
           </p>
-          <Button variant="clay" size="sm" onClick={() => void saveChosen()} disabled={saving || chosen.length === 0}>
-            {saving ? <Spinner className="size-3.5" /> : null}
+          <Button variant="clay" size="sm" onClick={() => void saveChosen()} disabled={!!savingIds || chosen.length === 0 || chosen.some((d) => imageStates[d.id] === true)}>
+            {savingIds ? <Spinner className="size-3.5" /> : null}
             <span>Lưu {chosen.length} câu vào ngân hàng</span>
           </Button>
         </div>
@@ -193,8 +255,23 @@ export function BankAiPanel({
           ) : (
             drafts.map((d, i) => {
               const ready = draftReady(d)
+              const imageState = imageStates[d.id]
+              const imageBusy = imageState === true
+              const draftSaving = savingIds?.has(d.id)
+              const imageLocked = imageBusy || draftSaving
               return (
-                <article key={d.id} className="rounded-[8px] border border-line p-4">
+                <article
+                  key={d.id}
+                  tabIndex={0}
+                  aria-label={`Câu ${i + 1}`}
+                  onPaste={(e) => {
+                    const file = pastedImage(e)
+                    if (!file) return
+                    e.preventDefault()
+                    void pickImage(d.id, file)
+                  }}
+                  className="rounded-[8px] border border-line p-4"
+                >
                   <div className="mb-3 flex items-center gap-2.5">
                     <input
                       type="checkbox"
@@ -208,10 +285,13 @@ export function BankAiPanel({
                     <Badge tone="outline">{TYPE_LABEL[d.type]}</Badge>
                     {ready ? null : <Badge tone="honey">Cần bổ sung</Badge>}
                     <div className="ml-auto flex items-center text-ink-3">
-                      <button type="button" onClick={() => onEdit(d)} aria-label={`Sửa câu ${i + 1}`} className="rounded p-1.5 hover:text-ink">
+                      <button type="button" disabled={imageLocked} onClick={() => onEdit(d)} aria-label={`Sửa câu ${i + 1}`} className="rounded p-1.5 hover:text-ink disabled:opacity-40">
                         <Pencil className="size-4" />
                       </button>
-                      <button type="button" onClick={() => setDrafts((list) => list.filter((x) => x.id !== d.id))} aria-label={`Bỏ câu ${i + 1}`} className="rounded p-1.5 hover:text-clay">
+                      <button type="button" disabled={imageLocked} onClick={() => {
+                        clearImageState(d.id)
+                        setDrafts((list) => list.filter((x) => x.id !== d.id))
+                      }} aria-label={`Bỏ câu ${i + 1}`} className="rounded p-1.5 hover:text-clay disabled:opacity-40">
                         <TrashIcon className="size-4" />
                       </button>
                     </div>
@@ -235,16 +315,42 @@ export function BankAiPanel({
                       <p className={cn('text-[14px] font-semibold', d.answer || d.type.startsWith('tu-luan') ? 'text-ink' : 'text-honey')}>{answerText(d)}</p>
                       {d.explanation ? <MathText as="div" className="mt-1 text-[13px] leading-relaxed text-ink-3">{d.explanation}</MathText> : null}
                     </section>
-                    <section>
-                      <h4 className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-ink-4">Ảnh</h4>
+                    <section
+                      className="self-start"
+                      onDragOver={(e) => {
+                        if (e.dataTransfer.types.includes('Files')) e.preventDefault()
+                      }}
+                      onDrop={(e) => {
+                        e.preventDefault()
+                        const file = e.dataTransfer.files[0]
+                        if (file) void pickImage(d.id, file)
+                      }}
+                    >
+                      <h4 className="mb-1 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-ink-4">
+                        Ảnh
+                        {imageBusy ? <span role="status" aria-label="Đang tải ảnh"><Spinner className="size-3" /></span> : null}
+                      </h4>
                       {d.image ? (
-                        <img src={d.image.src} alt={`Hình câu ${i + 1}`} className="max-h-32 w-full rounded-[6px] border border-line bg-white object-contain" />
-                      ) : (
-                        <span className="flex items-center gap-1.5 text-[12.5px] text-ink-4">
-                          <ImageOff className="size-3.5" />
-                          Không có
-                        </span>
-                      )}
+                        <img src={d.image.src} alt={d.image.alt || `Hình câu ${i + 1}`} className="max-h-32 w-full rounded-[6px] border border-line bg-white object-contain" />
+                      ) : null}
+                      <div className="mt-1 flex flex-wrap gap-1">
+                        <Button type="button" variant="soft" size="sm" className="h-7 px-2 text-[12px]" disabled={imageLocked} onClick={() => {
+                          imageDraftId.current = d.id
+                          imageFileRef.current?.click()
+                        }}>
+                          {d.image ? <Pencil className="size-3.5" /> : <FileUp className="size-3.5" />}
+                          {d.image ? 'Đổi ảnh' : 'Thêm ảnh'}
+                        </Button>
+                        {d.image ? (
+                          <Button type="button" variant="ghost" size="icon" className="size-7" disabled={imageLocked} aria-label="Bỏ ảnh" data-tip="Bỏ ảnh" onClick={() => {
+                            setDraftImage(d.id)
+                            clearImageState(d.id)
+                          }}>
+                            <TrashIcon className="size-3.5" />
+                          </Button>
+                        ) : null}
+                      </div>
+                      {typeof imageState === 'string' ? <p role="alert" className="mt-1 text-[12px] text-clay">{imageState}</p> : null}
                     </section>
                   </div>
                 </article>

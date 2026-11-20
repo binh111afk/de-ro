@@ -25,6 +25,7 @@ import {
 import type { AdminMe } from '@/lib/adminApi'
 import { formatNumber, shortenId } from './adminUtils'
 import { Portal } from '@/components/Portal'
+import { Avatar } from '@/components/Avatar'
 import { cn } from '@/lib/cn'
 
 interface StatsPanelProps {
@@ -516,11 +517,9 @@ export function StatsPanel({ me: _me }: StatsPanelProps) {
                     className="flex items-center justify-between gap-2 py-2.5 text-[13px]"
                   >
                     <div className="flex min-w-0 items-center gap-2.5">
-                      <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-sunken text-[11px] font-semibold text-ink-3">
-                        {u.email ? u.email[0].toUpperCase() : '?'}
-                      </div>
-                      <span className="truncate font-medium text-ink" data-tip={u.email}>
-                        {u.email || shortenId(u.userId)}
+                      <Avatar src={u.avatar} name={u.name || u.email} className="size-7 text-[11px]" />
+                      <span className="truncate font-medium text-ink">
+                        {u.name || shortenId(u.userId)}
                       </span>
                     </div>
                     <span className="shrink-0 text-[11.5px] text-ink-4">

@@ -25,6 +25,9 @@ export interface StatsOverview {
 export interface OnlineUser {
   userId: string
   email: string
+  /** tên hiển thị (hoặc phần trước @ của email nếu chưa đặt) */
+  name?: string
+  avatar?: string
   lastSeen: string
 }
 
