@@ -8,7 +8,7 @@
  *   - trạng thái trống có tiêu đề + gợi ý dạng pill viền;
  *   - composer là thẻ bo 16px, Enter gửi, Shift+Enter xuống dòng, Esc để dừng.
  */
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState, type DragEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { useSession } from '@/lib/useSession'
 import { Button } from '@/components/ui'
@@ -88,7 +88,7 @@ const SOURCE_KIND_LABEL = {
   library: 'Kho tài liệu',
 }
 
-const PDF_SCAN_NOTICE = 'PDF scan (không có chữ) sẽ được AI đọc bằng ảnh nên tốn thêm điểm.'
+const PDF_SCAN_NOTICE = 'PDF có công thức, hình hoặc là bản scan sẽ được AI đọc bằng ảnh nên tốn thêm điểm.'
 
 const newId = (() => {
   let seq = 0
@@ -830,6 +830,21 @@ function AiConversation({
   const taRef = useRef<HTMLTextAreaElement>(null)
   const fileRef = useRef<HTMLInputElement>(null)
   const filesRef = useRef<Attachment[]>([])
+  const dragDepth = useRef(0)
+  const pageDrag = useRef<globalThis.DragEvent | null>(null)
+  const [draggingFiles, setDraggingFiles] = useState(false)
+
+  useEffect(() => {
+    // Ảnh kéo từ trong trang cũng có thể mang kiểu Files.
+    const start = (event: globalThis.DragEvent) => { pageDrag.current = event }
+    const end = () => { pageDrag.current = null }
+    document.addEventListener('dragstart', start, true)
+    document.addEventListener('dragend', end, true)
+    return () => {
+      document.removeEventListener('dragstart', start, true)
+      document.removeEventListener('dragend', end, true)
+    }
+  }, [])
 
   // giữ ref đồng bộ để cleanup unmount thu hồi đúng URL
   useEffect(() => {
@@ -1518,6 +1533,11 @@ function AiConversation({
   const empty = turns.length === 0
   const lastTurn = turns[turns.length - 1]
   const openAsk = !busy && lastTurn?.askState === 'open' && lastTurn.ask ? lastTurn : null
+  const canAttachFiles = !busy && !needsLogin && !openAsk
+  const isFileDrag = (e: DragEvent<HTMLDivElement>) =>
+    (!pageDrag.current || pageDrag.current.defaultPrevented) &&
+    e.dataTransfer.types.includes('Files') &&
+    e.target instanceof Node && e.currentTarget.contains(e.target)
   const answerAsk = (reply: string) => {
     if (!openAsk) return
     setTurns((t) => t.map((turn) => (turn.id === openAsk.id ? { ...turn, askState: 'done', askSourcePack: undefined } : turn)))
@@ -1525,7 +1545,32 @@ function AiConversation({
   }
 
   return (
-    <div className="ai-panel">
+    <div
+      className="ai-panel"
+      onDragEnter={(e) => {
+        if (!isFileDrag(e)) return
+        if (++dragDepth.current === 1) setDraggingFiles(true)
+      }}
+      onDragLeave={(e) => {
+        if (!isFileDrag(e) || dragDepth.current === 0) return
+        if (--dragDepth.current === 0) setDraggingFiles(false)
+      }}
+      onDragOver={(e) => {
+        if (!isFileDrag(e)) return
+        e.preventDefault()
+        e.dataTransfer.dropEffect = canAttachFiles ? 'copy' : 'none'
+      }}
+      onDrop={(e) => {
+        if (!isFileDrag(e)) return
+        e.preventDefault()
+        dragDepth.current = 0
+        setDraggingFiles(false)
+        if (canAttachFiles) addFiles(e.dataTransfer.files)
+      }}
+    >
+      {canAttachFiles && draggingFiles ? (
+        <div className="ai-file-drop-overlay">Thả tệp để đính kèm</div>
+      ) : null}
       <div className="ai-panel-header">
         <span className="ai-panel-title">
           Trợ lý AI
@@ -1767,6 +1812,7 @@ function AiConversation({
               className="ai-attach-btn"
               data-tip="Đính kèm tệp (docx, xlsx, pdf, ảnh)"
               aria-label="Đính kèm tệp"
+              disabled={!canAttachFiles}
               onClick={() => fileRef.current?.click()}
             >
               <IconPaperclip size={16} />
@@ -1798,8 +1844,9 @@ function AiConversation({
               multiple
               accept={ATTACH_ACCEPT}
               className="ai-attach-input"
+              disabled={!canAttachFiles}
               onChange={(e) => {
-                addFiles(e.target.files)
+                if (canAttachFiles) addFiles(e.target.files)
                 e.target.value = ''
               }}
             />

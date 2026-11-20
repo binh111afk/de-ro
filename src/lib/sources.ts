@@ -49,16 +49,35 @@ export interface PickedSource {
 export const pickedKey = (p: Pick<PickedSource, 'kind' | 'id'>) => `${p.kind}:${p.id}`
 
 const VISION_PAGES_PER_CALL = 3
+const PDF_SPLIT_LETTER_RATIO = 0.03
 
 export const isPdf = (name: string, mime?: string) =>
   /\.pdf$/i.test(name) || mime === 'application/pdf'
+
+export function pdfTextNeedsVision(text: string): boolean {
+  const normalized = text.trim().normalize('NFC')
+  if (!normalized) return false
+
+  // Chữ có dấu bị tách giữa từ thường gặp khi pdf.js làm vỡ cả chữ lẫn công thức.
+  const words = normalized.match(/\p{L}+/gu) ?? []
+  const splitLetters = words.filter((word) => /^(?![a-zàáôồơờởừý])\p{L}$/iu.test(word)).length
+  if (splitLetters >= 3 && splitLetters > words.length * PDF_SPLIT_LETTER_RATIO) return true
+
+  // Hình có thể biến mất khỏi bản tách chữ, kể cả khi câu dẫn vẫn đọc được.
+  if (/hình\s+(?:vẽ|minh họa|bên|dưới đây)|(?:đồ thị|biểu đồ|sơ đồ)\s+(?:bên|sau|dưới đây)|bảng biến thiên/iu.test(normalized)) return true
+  if (/[∫∑√≤≥≠±₀-₉]|[×÷→⇌]\s*[\dA-Z]/u.test(normalized)) return true
+  if (/(?<![\p{L}\d])(?:[A-Za-z]|\d+)\s*(?:[²³]|[=+−]\s*[\w(−-])|(?:^|\n)\s*[A-D]\.\s*=/u.test(normalized)) return true
+
+  const mathLines = normalized.split(/\r?\n/).filter((line) => /^(?:[A-Za-z\d+−–-]|=.+)$/u.test(line.trim())).length
+  return mathLines >= 2 && /đồ thị|hình (?:chóp|lập phương|hộp|không gian)|hàm số|phân số|phương trình|công thức|phản ứng/iu.test(normalized)
+}
 
 type SourceReadOptions = { onProgress?: (message: string) => void; signal?: AbortSignal }
 
 export async function readVisionPages(
   pages: HTMLCanvasElement[],
   total: number,
-  { onProgress, signal }: SourceReadOptions = {},
+  { onProgress, signal, requireAll }: SourceReadOptions & { requireAll?: boolean } = {},
 ): Promise<{ text: string; warning?: string }> {
   const texts: string[] = []
   const failed: string[] = []
@@ -87,10 +106,11 @@ export async function readVisionPages(
         throw new Error(payload?.error || `Không đọc được ảnh (${response.status}).`)
       }
       const text = payload.text.trim()
-      if (text) texts.push(text)
+      if (!text) throw new Error('Không nhận được nội dung từ ảnh.')
+      texts.push(text)
     } catch (err) {
       signal?.throwIfAborted()
-      if (err instanceof AiQuotaError) throw err
+      if (requireAll || err instanceof AiQuotaError) throw err
       failed.push(label)
     }
   }
@@ -102,10 +122,10 @@ export async function readVisionPages(
   return { text: texts.join('\n\n'), warning: warning || undefined }
 }
 
-export async function readPdfByVision(file: File, onProgress?: SourceReadOptions['onProgress'], signal?: AbortSignal) {
+export async function readPdfByVision(file: File, onProgress?: SourceReadOptions['onProgress'], signal?: AbortSignal, requireAll = false) {
   signal?.throwIfAborted()
   const { pages, total } = await renderPdfPages(file)
-  return readVisionPages(pages, total, { onProgress, signal })
+  return readVisionPages(pages, total, { onProgress, signal, requireAll })
 }
 
 function fileToBase64(file: File): Promise<string> {
@@ -148,11 +168,25 @@ async function extractSourceFile(file: File, name: string, warnings: string[], o
   options.signal?.throwIfAborted()
   const extracted = await extractAttachment(file)
   options.signal?.throwIfAborted()
-  if (!extracted.text.trim() && isPdf(file.name, file.type)) {
-    const { text, warning } = await readPdfByVision(file, options.onProgress, options.signal)
-    warnings.push(`${name}: đọc bằng AI nhìn ảnh.`)
-    if (warning) warnings.push(`${name}: ${warning}`)
-    return { text, warning }
+  const hasText = Boolean(extracted.text.trim())
+  if (isPdf(file.name, file.type) && (!hasText || pdfTextNeedsVision(extracted.text))) {
+    options.onProgress?.(`Đang chuẩn bị đọc ${name} bằng ảnh…`)
+    try {
+      const { text, warning } = await readPdfByVision(file, options.onProgress, options.signal, hasText)
+      if (!text) throw new Error(warning || 'Không nhận được nội dung từ ảnh.')
+      warnings.push(`${name}: đọc bằng AI nhìn ảnh.`)
+      if (warning) warnings.push(`${name}: ${warning}`)
+      return { text, warning }
+    } catch (err) {
+      options.signal?.throwIfAborted()
+      const warning = err instanceof AiQuotaError
+        ? 'PDF này cần AI đọc bằng ảnh nhưng không đủ điểm, kết quả có thể sai công thức và hình.'
+        : hasText
+          ? 'Không đọc được PDF bằng ảnh. Dùng chữ tách từ PDF, kết quả có thể sai công thức và hình.'
+          : 'Không đọc được PDF bằng ảnh.'
+      warnings.push(`${name}: ${warning}`)
+      if (!hasText) return { text: extracted.text, warning }
+    }
   }
   if (extracted.warning) warnings.push(`${name}: ${extracted.warning}`)
   return extracted

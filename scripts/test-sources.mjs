@@ -6,7 +6,23 @@ import assert from 'node:assert/strict'
 import { AiQuotaError } from '../src/lib/llm.ts'
 import { emptyDoc } from '../src/data/docTypes.ts'
 import { useDocStore } from '../src/store/docs.ts'
-import { buildSourcePack, readVisionPages, sourcePrompt, sourceRule } from '../src/lib/sources.ts'
+import { buildSourcePack, pdfTextNeedsVision, readVisionPages, sourcePrompt, sourceRule } from '../src/lib/sources.ts'
+
+const brokenPdfText = `S Ở GIÁO D ỤC VÀ ĐÀO TẠ O
+Câu 1: [MAP] Cho hình chóp S.ABC có c ạ nh bên SA vuông góc v ới đáy ( ABC) . Góc t ạ o b ở i SC và
+Câu 3: [MAP] Cho hàm s ố = y f (x) xác đị nh và liên t ụ c trên − [ ; ] 2 2 và có đồ th ị là đườ ng cong
+trong hình v ẽ bên. Hàm s ố f (x) đạ t c ự c ti ể u t ại điể m
+A. = x 2 . B. ( ; ) 1 4 . C. = − x 1 . D. = x 1 .
+Câu 4: [MAP] Cho hình h ộ p ch ữ nh ậ t ABCD.A'B'C'D' . Kh ẳng định nào dưới đây là đúng?
+A.   = AB D C
+ . B.   = AD A C`
+assert.equal(pdfTextNeedsVision(brokenPdfText), true)
+assert.equal(pdfTextNeedsVision('Hà Nội là thủ đô của Việt Nam. Thành phố nằm bên bờ sông Hồng và có lịch sử hơn một nghìn năm. Mỗi mùa thu, hàng nghìn du khách đến đây để thưởng thức cốm và ngắm hoa sữa nở.'), false)
+assert.equal(pdfTextNeedsVision(''), false)
+assert.equal(pdfTextNeedsVision('Cho hình lập phương ABCD.\nx\ny\n+'), true)
+assert.equal(pdfTextNeedsVision('Quan sát sơ đồ bên dưới và cho biết chiều dòng điện.'), true)
+assert.equal(pdfTextNeedsVision('Viết phương trình: H₂ + O₂ → H₂O.'), true)
+console.log('✅ nhận diện chữ PDF tách hỏng, hình và công thức')
 
 const grade7 = emptyDoc({ title: 'Đề giữa kỳ Toán 7', grade: 'Lớp 7', subject: 'Toán' })
 grade7.blocks = [
@@ -119,4 +135,4 @@ try {
   globalThis.FileReader = originalFileReader
 }
 
-console.log('\n8/8 pass, 0 fail')
+console.log('\n9/9 pass, 0 fail')

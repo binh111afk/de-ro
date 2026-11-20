@@ -1306,6 +1306,21 @@
       opacity 180ms cubic-bezier(0.4, 0, 0.2, 1);
   }
 
+  .ai-file-drop-overlay {
+    position: absolute;
+    inset: 8px;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    border: 2px dashed var(--color-clay);
+    border-radius: var(--radius-16);
+    background: color-mix(in srgb, var(--color-bg-page) 92%, transparent);
+    color: var(--color-clay);
+    font-size: 14px;
+    font-weight: 600;
+    pointer-events: none;
+  }
+
   .ai-panel-header {
     display: flex;
     justify-content: space-between;
@@ -2164,7 +2179,12 @@
     padding: 0;
   }
 
-  .ai-attach-btn:hover {
+  .ai-attach-btn:disabled {
+    cursor: default;
+    opacity: 0.5;
+  }
+
+  .ai-attach-btn:hover:not(:disabled) {
     background: var(--color-bg-subtle);
     color: var(--color-text-primary);
   }
