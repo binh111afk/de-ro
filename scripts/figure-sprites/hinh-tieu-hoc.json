@@ -1227,8 +1227,7 @@
       "prompt": "A single small rowing boat, side view, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
       "aliases": [
         "thuyền",
-        "chiếc thuyền",
-        "ca nô"
+        "chiếc thuyền"
       ]
     },
     {
@@ -1742,8 +1741,7 @@
       "prompt": "A single windmill with four large blades, front view, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
       "aliases": [
         "cối xay gió",
-        "cối xay",
-        "tuabin gió"
+        "cối xay"
       ]
     },
     {
@@ -2916,6 +2914,943 @@
       "aliases": [
         "tên lửa",
         "tàu vũ trụ"
+      ]
+    },
+    {
+      "id": "antenna_tower",
+      "name": "cột ăng-ten",
+      "grades": [
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single tall triangular lattice radio antenna tower standing upright on a flat horizontal base, straight orthographic front view, simple minimal details, few details, perfectly symmetric, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "ăng-ten",
+        "tháp ăng-ten",
+        "cột phát sóng",
+        "trạm phát sóng"
+      ]
+    },
+    {
+      "id": "chimney",
+      "name": "ống khói",
+      "grades": [
+        8,
+        9,
+        10
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single tall tapered industrial factory chimney standing upright on a flat horizontal base, small simple cloud puff at top, straight orthographic front view, perfectly symmetric, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "ống khói nhà máy"
+      ]
+    },
+    {
+      "id": "statue",
+      "name": "tượng đài",
+      "grades": [
+        8,
+        9,
+        10
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single simple monument statue standing upright on a rectangular stepped pedestal with a flat horizontal bottom base, straight orthographic front view, simple minimal details, few details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "bức tượng",
+        "tượng",
+        "đài tưởng niệm"
+      ]
+    },
+    {
+      "id": "arch_gate",
+      "name": "cổng vòm",
+      "grades": [
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single symmetric parabolic arch gateway standing upright with flat horizontal bottom feet, straight orthographic front view, perfectly symmetric, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "cổng parabol",
+        "cổng hình parabol",
+        "vòm cổng"
+      ]
+    },
+    {
+      "id": "suspension_bridge",
+      "name": "cầu treo",
+      "grades": [
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single symmetric suspension bridge with two vertical towers, parabolic main cables and horizontal deck, flat bottom base, straight orthographic side view, simple minimal details, few details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "cầu dây võng",
+        "cầu dây văng"
+      ]
+    },
+    {
+      "id": "arch_bridge",
+      "name": "cầu vòm",
+      "grades": [
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single symmetric stone arch bridge with one large parabolic arch opening and flat horizontal road deck on top, flat bottom base, straight orthographic side view, simple minimal details, few details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "cầu hình vòm",
+        "cầu parabol"
+      ]
+    },
+    {
+      "id": "tunnel",
+      "name": "đường hầm",
+      "grades": [
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single symmetric arched tunnel entrance portal with flat horizontal bottom ground line, straight orthographic front view, perfectly symmetric, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "cửa hầm",
+        "hầm chui"
+      ]
+    },
+    {
+      "id": "road_sign",
+      "name": "biển báo giao thông",
+      "grades": [
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single street traffic sign with a blank round circular sign board mounted on a straight vertical pole with a flat bottom base, no text, no symbols, no letters, straight orthographic front view, perfectly symmetric, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "biển báo",
+        "biển báo đường bộ"
+      ]
+    },
+    {
+      "id": "billboard",
+      "name": "biển quảng cáo",
+      "grades": [
+        8,
+        9,
+        10
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single large blank rectangular roadside billboard frame supported by two straight vertical legs with flat horizontal bottom bases, no text, no image inside, straight orthographic front view, perfectly symmetric, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "bảng quảng cáo",
+        "pa-nô"
+      ]
+    },
+    {
+      "id": "basketball_hoop",
+      "name": "rổ bóng rổ",
+      "grades": [
+        8,
+        9,
+        10
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single basketball hoop stand with a straight vertical pole, rectangular backboard, circular rim and simple net, flat horizontal bottom base, straight orthographic side-angle view, simple minimal details, few details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "cột bóng rổ",
+        "bảng rổ"
+      ]
+    },
+    {
+      "id": "goal",
+      "name": "khung thành",
+      "grades": [
+        8,
+        9,
+        10
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single soccer goal frame with two vertical posts, horizontal crossbar and simple net, flat horizontal bottom base, straight orthographic front view, simple minimal details, few details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "khung thành bóng đá",
+        "cầu môn"
+      ]
+    },
+    {
+      "id": "fountain",
+      "name": "đài phun nước",
+      "grades": [
+        8,
+        9,
+        10
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single symmetric outdoor water fountain with a round basin on a flat horizontal base, central spout and two thick solid curved water streams arcing into the basin, straight orthographic front view, perfectly symmetric, simple minimal details, very thick bold solid black outlines, thick continuous lines, no thin or faint lines, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "vòi phun nước"
+      ]
+    },
+    {
+      "id": "wind_turbine",
+      "name": "tua-bin gió",
+      "grades": [
+        8,
+        9,
+        10,
+        11
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single modern wind turbine with a tall straight vertical tower on a flat horizontal base and three sleek rotor blades, straight orthographic front view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "tua bin gió",
+        "tuabin gió",
+        "cột điện gió",
+        "quạt gió khổng lồ"
+      ]
+    },
+    {
+      "id": "solar_panel",
+      "name": "tấm pin mặt trời",
+      "grades": [
+        8,
+        9,
+        10
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single tilted rectangular solar panel with simple grid lines mounted on a straight support stand with a flat horizontal bottom base, straight orthographic side view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "pin mặt trời",
+        "tấm pin năng lượng mặt trời"
+      ]
+    },
+    {
+      "id": "power_pylon",
+      "name": "trụ điện cao thế",
+      "grades": [
+        8,
+        9,
+        10
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single tall high-voltage steel lattice electricity pylon tower with two cross arms standing upright on a flat horizontal base, straight orthographic front view, perfectly symmetric, simple minimal details, few details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "cột điện cao thế",
+        "tháp điện cao thế"
+      ]
+    },
+    {
+      "id": "factory",
+      "name": "nhà máy",
+      "grades": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single simple factory building with a sawtooth roof, rectangular doorway, a few simple windows and one tall chimney on a flat horizontal ground base, straight orthographic front view, simple minimal details, few details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "xí nghiệp",
+        "phân xưởng"
+      ]
+    },
+    {
+      "id": "protractor",
+      "name": "thước đo góc",
+      "grades": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single semicircular plastic protractor with simple tick marks along the curved edge and a hollow semicircle center cutout, no numbers, no text, flat bottom edge, straight orthographic front view, perfectly symmetric, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "thước đo độ"
+      ]
+    },
+    {
+      "id": "set_square",
+      "name": "ê ke",
+      "grades": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single right-angled triangular drafting set square ruler with a triangular inner cutout and simple tick marks on one edge, no numbers, no text, flat horizontal bottom edge, straight orthographic front view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "thước ê ke",
+        "ê-ke"
+      ]
+    },
+    {
+      "id": "tape_measure",
+      "name": "thước dây cuộn",
+      "grades": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single coiled measuring tape case with a short strip of tape extending horizontally with simple tick marks, no numbers, no text, straight side view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "thước cuộn",
+        "thước dây"
+      ]
+    },
+    {
+      "id": "theodolite",
+      "name": "giác kế",
+      "grades": [
+        9,
+        10
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single surveyor theodolite angle measuring telescope mounted on a tall tripod stand with flat horizontal bottom feet, straight orthographic side view, simple minimal details, few details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "máy đo góc",
+        "máy kinh vĩ",
+        "giác kế đứng"
+      ]
+    },
+    {
+      "id": "scale",
+      "name": "cân đĩa",
+      "grades": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single classic two-pan balance scale with a vertical central pillar on a flat horizontal base and two hanging weighing pans level with each other, straight orthographic front view, perfectly symmetric, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "cân hai đĩa",
+        "cân thăng bằng",
+        "cái cân"
+      ]
+    },
+    {
+      "id": "thermometer",
+      "name": "nhiệt kế",
+      "grades": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single vertical glass mercury thermometer with a round bulb at the bottom and simple horizontal tick marks along the stem, no numbers, no text, straight orthographic front view, perfectly symmetric, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "ống nhiệt kế"
+      ]
+    },
+    {
+      "id": "stopwatch",
+      "name": "đồng hồ bấm giờ",
+      "grades": [
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single round handheld stopwatch with a top crown button, side button, simple dial tick marks and one hand, no numbers, no text, straight orthographic front view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "bấm giờ"
+      ]
+    },
+    {
+      "id": "calculator",
+      "name": "máy tính cầm tay",
+      "grades": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single rectangular pocket calculator with a blank rectangular screen at top and a clean grid of small blank rectangular buttons below, no numbers, no letters, no symbols, straight orthographic front view, perfectly symmetric, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "máy tính bỏ túi"
+      ]
+    },
+    {
+      "id": "helicopter",
+      "name": "trực thăng",
+      "grades": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single helicopter with a top main rotor blade, cabin window, tail rotor and landing skids, straight orthographic side view facing right, simple minimal details, few details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "máy bay trực thăng"
+      ]
+    },
+    {
+      "id": "drone",
+      "name": "flycam",
+      "grades": [
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single simple quadcopter drone with a sturdy central body, two landing legs and four thick solid horizontal propeller arms and blades, straight orthographic front view, perfectly symmetric, simple minimal details, very thick bold solid black outlines, thick continuous lines, no thin or faint lines, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "thiết bị bay không người lái",
+        "máy bay không người lái",
+        "drone"
+      ]
+    },
+    {
+      "id": "speedboat",
+      "name": "ca nô",
+      "grades": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single sleek motor speedboat with a windshield and small outboard motor at the stern, straight orthographic side view facing right, flat bottom waterline, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "ca nô cao tốc",
+        "xuồng máy"
+      ]
+    },
+    {
+      "id": "rowboat",
+      "name": "thuyền chèo",
+      "grades": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single simple wooden rowboat with two oars resting on its sides, straight orthographic side view, flat bottom waterline, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "xuồng",
+        "chiếc xuồng",
+        "xuồng chèo"
+      ]
+    },
+    {
+      "id": "crane",
+      "name": "cần cẩu",
+      "grades": [
+        7,
+        8,
+        9,
+        10
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single tall construction tower crane with a vertical mast on a flat horizontal base, horizontal jib boom, counterweight and hanging hook, straight orthographic side view, simple minimal details, few details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "cần trục",
+        "cẩu tháp",
+        "xe cẩu"
+      ]
+    },
+    {
+      "id": "excavator",
+      "name": "máy xúc",
+      "grades": [
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single construction excavator digger with caterpillar tracks on a flat horizontal base, operator cab, articulated arm and bucket, straight orthographic side view facing right, simple minimal details, few details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "xe xúc",
+        "máy đào"
+      ]
+    },
+    {
+      "id": "tractor",
+      "name": "máy kéo",
+      "grades": [
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single farm tractor with a large rear wheel, small front wheel, cab and engine hood resting on a flat horizontal line, straight orthographic side view facing right, simple minimal details, few details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "xe máy kéo",
+        "máy cày"
+      ]
+    },
+    {
+      "id": "satellite",
+      "name": "vệ tinh",
+      "grades": [
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single space satellite with a cylindrical central body, small dish antenna and two symmetric rectangular solar panel wings with simple grid lines, straight orthographic front view, perfectly symmetric, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "vệ tinh nhân tạo"
+      ]
+    },
+    {
+      "id": "paper_plane",
+      "name": "máy bay giấy",
+      "grades": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single folded origami paper airplane pointing to the right, clean straight geometric fold lines, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "tàu bay giấy"
+      ]
+    },
+    {
+      "id": "parachute",
+      "name": "cái dù",
+      "grades": [
+        8,
+        9,
+        10
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single simple open dome parachute with a bold curved canopy and six thick straight solid black cord lines connecting the canopy down to a small box payload at the bottom, straight orthographic front view, perfectly symmetric, simple minimal details, very thick bold solid black outlines, thick continuous lines, no thin or faint lines, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "dù lượn",
+        "chiếc dù"
+      ]
+    },
+    {
+      "id": "person_walking",
+      "name": "người đi bộ",
+      "grades": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single person walking forward, full body, straight orthographic side view facing right, both feet touching flat ground line, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "người đi",
+        "khách bộ hành"
+      ]
+    },
+    {
+      "id": "person_running",
+      "name": "người chạy bộ",
+      "grades": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single person running forward in stride, full body, straight orthographic side view facing right, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "người chạy",
+        "vận động viên chạy"
+      ]
+    },
+    {
+      "id": "person_cycling",
+      "name": "người đạp xe",
+      "grades": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single person riding a bicycle, full body and bicycle, straight orthographic side view facing right, wheels touching flat horizontal ground line, simple minimal details, few details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "người đi xe đạp"
+      ]
+    },
+    {
+      "id": "cardboard_box",
+      "name": "thùng carton",
+      "grades": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single closed rectangular cardboard shipping box with a tape seam on top, clean geometric rectangular prism shape, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "thùng giấy",
+        "hộp carton",
+        "thùng các tông"
+      ]
+    },
+    {
+      "id": "gift_box",
+      "name": "hộp quà",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single square gift box with a vertical ribbon band and a symmetric bow on top, straight orthographic front view, perfectly symmetric, flat horizontal bottom base, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "gói quà",
+        "quà tặng"
+      ]
+    },
+    {
+      "id": "barrel",
+      "name": "thùng phi",
+      "grades": [
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single upright cylindrical metal oil drum barrel with two horizontal reinforcement ribs, straight vertical axis, perfectly symmetric geometric cylinder, flat horizontal bottom, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "thùng phuy",
+        "thùng hình trụ"
+      ]
+    },
+    {
+      "id": "horizontal_tank",
+      "name": "bồn chứa nằm ngang",
+      "grades": [
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single horizontal cylindrical storage tank resting on two low support saddles on a flat horizontal base, straight horizontal axis, simple geometric cylinder silhouette, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "bồn nằm ngang",
+        "bể chứa nằm ngang",
+        "bồn xăng"
+      ]
+    },
+    {
+      "id": "pipe",
+      "name": "ống nước",
+      "grades": [
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single hollow cylindrical drainage pipe lying horizontally showing the circular hollow opening at one end, straight horizontal axis, clean geometric hollow cylinder, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "ống cống",
+        "đoạn ống",
+        "ống trụ"
+      ]
+    },
+    {
+      "id": "funnel",
+      "name": "cái phễu",
+      "grades": [
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single upright conical funnel with a wide circular top rim tapering symmetrically to a narrow straight cylindrical spout at the bottom, straight vertical axis, perfectly symmetric, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "phễu"
+      ]
+    },
+    {
+      "id": "cone_cup",
+      "name": "cốc giấy hình nón",
+      "grades": [
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single conical paper water cup pointing downward with a circular top rim and pointed tip at the bottom, straight vertical axis, perfectly symmetric geometric cone, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "ly giấy hình nón",
+        "cốc hình nón"
+      ]
+    },
+    {
+      "id": "wine_glass",
+      "name": "ly vang",
+      "grades": [
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single tall stemmed wine glass standing upright on a flat circular base, straight vertical axis, perfectly symmetric smooth bowl and stem, straight orthographic front view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "ly thuỷ tinh",
+        "ly rượu vang",
+        "cái ly"
+      ]
+    },
+    {
+      "id": "ice_cream_cone",
+      "name": "kem ốc quế",
+      "grades": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single ice cream cone with one round hemispherical scoop on top of a pointed triangular waffle cone with simple criss-cross lines, straight vertical axis, perfectly symmetric, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "ốc quế",
+        "cây kem ốc quế"
+      ]
+    },
+    {
+      "id": "conical_hat",
+      "name": "nón lá",
+      "grades": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single traditional Vietnamese conical hat with a smooth wide triangle cone silhouette, thick solid outer triangle contour and two simple curved horizontal rim lines, straight vertical axis, perfectly symmetric, straight orthographic front view, simple minimal details, very thick bold solid black outlines, thick continuous lines, no thin or faint lines, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "chiếc nón lá",
+        "cái nón"
+      ]
+    },
+    {
+      "id": "tin_can",
+      "name": "lon thiếc",
+      "grades": [
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single upright cylindrical tin food can with clean top and bottom rims and two simple horizontal ridges, no label, no text, straight vertical axis, perfectly symmetric geometric cylinder, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "hộp thiếc",
+        "lon sữa bò",
+        "hộp sữa hình trụ"
+      ]
+    },
+    {
+      "id": "swimming_pool",
+      "name": "bể bơi",
+      "grades": [
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single side cross-section diagram of a swimming pool with vertical walls, a gently sloping bottom floor, wavy water surface line on top and a small pool ladder on one side, straight orthographic side view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "hồ bơi"
+      ]
+    },
+    {
+      "id": "hourglass",
+      "name": "đồng hồ cát",
+      "grades": [
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single classic hourglass sand timer with two symmetric conical glass bulbs between flat horizontal top and bottom wooden frames, straight vertical axis, perfectly symmetric, straight orthographic front view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "bình đồng hồ cát"
       ]
     }
   ],
