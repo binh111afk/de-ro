@@ -1756,8 +1756,8 @@
   .ai-dislike.is-on { color: var(--danger); opacity: 1; cursor: default; }
   .ai-dislike:disabled:not(.is-on) { opacity: 0.3; cursor: default; }
   .ai-vote { display: inline-flex; margin-left: 2px; }
-  .ai-vote .ai-dislike { margin-left: 2px; }
-  .ai-vote { align-items: center; }
+  .ai-vote .ai-dislike { margin-left: 2px; margin-top: 0; }
+  .ai-vote { align-items: center; margin-top: 6px; }
   .ai-cost { margin-left: 6px; font-size: 11.5px; color: var(--color-ink-3, #8a8a8a); white-space: nowrap; }
   .ai-like:hover:not(:disabled), .ai-like.is-on { color: var(--primary); }
 

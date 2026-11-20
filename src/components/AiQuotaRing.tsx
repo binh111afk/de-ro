@@ -110,7 +110,7 @@ export function AiQuotaRing({ className }: { className?: string }) {
         </svg>
       </button>
       {open ? (
-        <div role="dialog" aria-label="Điểm AI" className="anim-pop absolute right-0 bottom-[calc(100%+8px)] z-30 flex items-center gap-3 whitespace-nowrap rounded-[8px] bg-surface px-3 py-2 text-[13px] shadow-float">
+        <div role="dialog" aria-label="Điểm AI" className="anim-pop absolute right-0 bottom-[calc(100%+8px)] z-30 flex items-center gap-3 whitespace-nowrap rounded-[8px] border border-line-2 bg-surface px-3 py-2 text-[13px] shadow-[0_6px_20px_rgba(0,0,0,0.16)]">
           {state.unlimited ? (
             <span className="font-semibold text-ink">Không giới hạn</span>
           ) : (

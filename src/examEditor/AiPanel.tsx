@@ -216,7 +216,10 @@ const leftTokens = () => (lastAiQuota ? lastAiQuota.limit - lastAiQuota.used : n
 /** token đã tiêu kể từ `start` (số còn lại lúc bắt đầu lượt); undefined khi không biết hoặc không tốn */
 const spentSince = (start: number | null) => {
   const now = leftTokens()
-  return start != null && now != null && start > now ? start - now : undefined
+  if (start == null || now == null || start <= now) return undefined
+  // tính theo số điểm vòng điểm hiển thị (làm tròn xuống) để hiệu khớp với con số người dùng đọc
+  const pts = Math.floor(start / TOKENS_PER_POINT) - Math.floor(now / TOKENS_PER_POINT)
+  return Math.max(1, pts) * TOKENS_PER_POINT
 }
 
 /** nút "Nguồn (n)" bấm mở danh sách nguồn + cảnh báo, thay cho dòng chữ lộ thiên dưới tin nhắn */

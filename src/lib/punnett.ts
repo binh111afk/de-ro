@@ -665,7 +665,7 @@ function determinePhenotype(
         nameParts.push(phenos?.[0] || `${g} (trội)`)
       } else if (isHetero) {
         keyParts.push(`${g}(trung gian)`)
-        nameParts.push(phenos?.[1] || (phenos ? `trung gian (${phenos[0]}-${phenos[phenos.length - 1]})` : `${g} (trung gian)`))
+        nameParts.push((phenos?.length === 3 && phenos[1]) || (phenos ? `trung gian (${phenos[0]}-${phenos[phenos.length - 1]})` : `${g} (trung gian)`))
       } else {
         keyParts.push(`${g}(lặn)`)
         nameParts.push(phenos ? phenos[phenos.length - 1] : `${g.toLowerCase()} (lặn)`)
@@ -677,7 +677,7 @@ function determinePhenotype(
         nameParts.push(phenos?.[0] || `${g} (1)`)
       } else if (isHetero) {
         keyParts.push(`${g}(đồng trội)`)
-        nameParts.push(phenos?.[1] || `${g} (đồng trội)`)
+        nameParts.push((phenos?.length === 3 && phenos[1]) || `${g} (đồng trội)`)
       } else {
         keyParts.push(`${g}(2)`)
         nameParts.push(phenos ? phenos[phenos.length - 1] : `${g.toLowerCase()} (2)`)
@@ -726,7 +726,7 @@ function determinePhenotype(
           nameParts.push(`cái ${phenos?.[0] || 'trội'}`)
         } else if (isHetero) {
           keyParts.push('♀_X^A X^a')
-          nameParts.push(`cái ${phenos?.[1] || 'trung gian'}`)
+          nameParts.push(`cái ${(phenos?.length === 3 && phenos[1]) || 'trung gian'}`)
         } else {
           keyParts.push('♀_X^a X^a')
           nameParts.push(`cái ${phenos ? phenos[phenos.length - 1] : 'lặn'}`)

@@ -31,7 +31,7 @@ const INTERVAL = /[[(]\s*-?[\d.,]+\s*;\s*-?[\d.,]+\s*[\])]/g
 
 function splitCats(line: string): string[] {
   const iv = line.match(INTERVAL)
-  if (iv && iv.length >= 2) return iv.map((s) => s.replace(/\s+/g, ' ').replace(/;\s*/, '; '))
+  if (iv && (iv.length >= 2 || iv[0] === line)) return iv.map((s) => s.replace(/\s+/g, ' ').replace(/;\s*/, '; '))
   return line
     .split(/[;|\t]/)
     .map((s) => s.trim())

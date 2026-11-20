@@ -3,6 +3,7 @@
  * đoạn chữ mới, người dùng xem trước rồi mới thay vào.
  */
 import { callLlm, extractJson } from './llm'
+import { GEO2D_SHAPES, GEO3D_SHAPES } from './geometry'
 import { PLOT_COLORS, autoYRange, parseExpr, type PlotSpec } from './plot'
 import { renderTool, type ToolDoc } from './toolSpec'
 import { autoSignTable } from './signTable'
@@ -14,6 +15,7 @@ import { FIELD_DEFAULT, type FieldScene } from './field'
 import { normalizeObjects, prepareToolDoc } from './objects'
 import { dynamicId } from './figureSprites'
 import { OBJECTS } from './objectsCatalog'
+import type { GeneTrait } from './punnett'
 
 export const DOC_REWRITE_PRESETS = [
   { label: 'Viết lại rõ hơn', ask: 'Viết lại rõ ràng, chặt chẽ hơn, giữ nguyên ý' },
@@ -164,28 +166,45 @@ export function toolFromRaw(raw: Record<string, unknown>): ToolDoc {
       break
     }
     case 'geo2d': {
-      const shape = pick('shape', ['triangle', 'right-triangle', 'isosceles', 'equilateral', 'square', 'rectangle', 'parallelogram', 'trapezoid', 'rhombus', 'circle', 'inscribed-triangle', 'free'] as const, 'triangle')
+      const { id: shape, names: templateNames } = GEO2D_SHAPES.find((s) => s.id === raw.shape) ?? GEO2D_SHAPES.find((s) => s.id === 'triangle')!
+      const circumcircle = bool('circumcircle', false)
+      const defaults = circumcircle && templateNames.length === 3 ? [...templateNames, 'O'] : templateNames
+      const given = shape !== 'free' && Array.isArray(raw.names)
+        ? raw.names.map((n) => typeof n === 'string' ? n.trim() : '')
+        : []
+      const used = new Set(given.filter(Boolean))
+      const filled = defaults.map((d, i) => {
+        if (given[i]) return given[i]
+        let name = used.has(d) ? defaults.find((n) => !used.has(n)) ?? d : d
+        while (used.has(name)) name += "'"
+        used.add(name)
+        return name
+      })
       doc = {
         kind: 'geo2d',
         spec: {
           shape,
-          names: shape === 'free' ? [] : names(['A', 'B', 'C', 'D']),
+          names: filled.concat(given.slice(defaults.length)),
           altitude: bool('altitude', false),
           median: bool('median', false),
           diagonals: bool('diagonals', false),
-          circumcircle: bool('circumcircle', false),
+          circumcircle,
           marks: bool('marks', true),
-          extras: str('extras') || undefined,
+          extras: shape === 'free' ? need('extras', 'Không thấy lệnh dựng hình theo toạ độ.') : str('extras') || undefined,
         },
       }
       break
     }
-    case 'geo3d':
+    case 'geo3d': {
+      const shape3 = pick('shape', ['pyramid3', 'pyramid3-sa', 'pyramid3-regular', 'pyramid4', 'pyramid4-sa', 'pyramid4-regular', 'tetrahedron', 'prism3', 'box', 'cube', 'cone', 'cylinder', 'sphere'] as const, 'pyramid4')
+      // AI hay chỉ gửi tên đáy (A,B,C,D) hoặc bỏ trống: bù tên mặc định của khối cho đủ đỉnh (A', B'…)
+      const def3 = GEO3D_SHAPES.find((s) => s.id === shape3)?.names ?? []
+      const given3 = names([])
       doc = {
         kind: 'geo3d',
         spec: {
-          shape: pick('shape', ['pyramid3', 'pyramid3-sa', 'pyramid3-regular', 'pyramid4', 'pyramid4-sa', 'pyramid4-regular', 'tetrahedron', 'prism3', 'box', 'cube', 'cone', 'cylinder', 'sphere'] as const, 'pyramid4'),
-          names: names(['S', 'A', 'B', 'C', 'D']),
+          shape: shape3,
+          names: def3.map((d, i) => given3[i] || d).concat(given3.slice(def3.length)),
           height: bool('height', true),
           diagonals: bool('diagonals', false),
           marks: bool('marks', true),
@@ -195,6 +214,7 @@ export function toolFromRaw(raw: Record<string, unknown>): ToolDoc {
         },
       }
       break
+    }
     case 'stats':
       doc = {
         kind: 'stats',
@@ -322,13 +342,15 @@ export function toolFromRaw(raw: Record<string, unknown>): ToolDoc {
       }
       const parsePeriodFrom = (src: Record<string, unknown>, def: OscSpec['period']): OscSpec['period'] => {
         const pRaw = src.period && typeof src.period === 'object' ? (src.period as Record<string, unknown>) : null
+        const { T, omega } = oscPeriod({ period: def })
+        const defaults = { T, f: 1 / T, omega }
         if (pRaw) {
-          const by = (['T', 'f', 'omega'] as const).find((k) => k === pRaw.by) ?? 'T'
-          return { by, value: parseVal(pRaw.value, by === 'omega', by === 'T' ? 2 : 1) }
+          const by = (['T', 'f', 'omega'] as const).find((k) => k === pRaw.by) ?? def.by
+          return { by, value: parseVal(pRaw.value, by === 'omega', defaults[by]) }
         }
-        if (src.omega !== undefined) return { by: 'omega', value: parseVal(src.omega, true, Math.PI) }
-        if (src.f !== undefined) return { by: 'f', value: parseVal(src.f, false, 1) }
-        if (src.T !== undefined) return { by: 'T', value: parseVal(src.T, false, 2) }
+        if (src.omega !== undefined) return { by: 'omega', value: parseVal(src.omega, true, defaults.omega) }
+        if (src.f !== undefined) return { by: 'f', value: parseVal(src.f, false, defaults.f) }
+        if (src.T !== undefined) return { by: 'T', value: parseVal(src.T, false, defaults.T) }
         return def
       }
       if (raw.mode === 'ac') {
@@ -397,7 +419,7 @@ export function toolFromRaw(raw: Record<string, unknown>): ToolDoc {
       }
       const qty: OscQty = pick('qty', QTYS, 'x')
       const A = parseVal(raw.A, false, 8)
-      const period = parsePeriodFrom(raw, { by: 'T', value: 2 })
+      const period = parsePeriodFrom(raw, OSC_DEFAULT.period)
       const start = parseStart(
         raw.start ?? (raw.phiPi !== undefined ? { by: 'phi', phiPi: raw.phiPi } : null),
         { by: 'state', x0: '0', dir: 'down' },
@@ -438,9 +460,11 @@ export function toolFromRaw(raw: Record<string, unknown>): ToolDoc {
       const f = Math.abs(rawF) > 0 ? Math.abs(rawF) : LENS_DEFAULT.f
       const d = num(raw.d, LENS_DEFAULT.d)
       const h = num(raw.h, LENS_DEFAULT.h ?? 2)
-      const rays: LensRay[] = Array.isArray(raw.rays)
-        ? raw.rays.filter((r): r is LensRay => RAYS.includes(r as LensRay))
-        : ['parallel', 'center', 'focal']
+      let rays = LENS_DEFAULT.rays
+      if (Array.isArray(raw.rays)) {
+        const validRays = raw.rays.filter((r): r is LensRay => RAYS.includes(r as LensRay))
+        if (validRays.length || !raw.rays.length) rays = validRays
+      }
       const rawNames = raw.names && typeof raw.names === 'object' ? (raw.names as Record<string, unknown>) : null
       const lensNames: LensNames | undefined = rawNames
         ? {
@@ -482,11 +506,25 @@ export function toolFromRaw(raw: Record<string, unknown>): ToolDoc {
       }
       break
 
-    case 'punnett':
+    case 'punnett': {
+      const traits: GeneTrait[] = []
+      for (const entry of Array.isArray(raw.traits) ? raw.traits : []) {
+        const { gene, dominance, phenotypes } = (entry ?? {}) as Record<string, unknown>
+        if (typeof gene !== 'string' || !/^[a-z]$/i.test(gene.trim())) continue
+        const trait: GeneTrait = { gene: gene.trim().toUpperCase() }
+        if (dominance === 'complete' || dominance === 'incomplete' || dominance === 'codominant') trait.dominance = dominance
+        if (Array.isArray(phenotypes) && phenotypes.every((n) => typeof n === 'string' && n.trim())) {
+          const [first, second, third] = phenotypes.map((n: string) => n.trim())
+          if (phenotypes.length === 2) trait.phenotypes = [first, second]
+          if (phenotypes.length === 3) trait.phenotypes = [first, second, third]
+        }
+        if (trait.dominance || trait.phenotypes) traits.push(trait)
+      }
       doc = {
         kind: 'punnett',
         spec: {
           cross: need('cross', 'Chưa có phép lai P.'),
+          ...(traits.length ? { traits } : {}),
           showGametes: bool('showGametes', true),
           showGrid: bool('showGrid', true),
           showGenotypeRatio: bool('showGenotypeRatio', true),
@@ -497,6 +535,7 @@ export function toolFromRaw(raw: Record<string, unknown>): ToolDoc {
         },
       }
       break
+    }
 
     case 'foodweb':
       doc = {
@@ -520,9 +559,9 @@ export function toolFromRaw(raw: Record<string, unknown>): ToolDoc {
           scene = { type: 'charge', sign: sc.sign === '-' ? '-' : '+' }
           break
         case 'two-charges': {
-          const arr = Array.isArray(sc.signs) ? sc.signs : ['+', '-']
+          const arr = Array.isArray(sc.signs) ? sc.signs : []
           const s1 = arr[0] === '-' ? '-' : '+'
-          const s2 = arr[1] === '-' ? '-' : '+'
+          const s2 = arr[1] === '+' ? '+' : '-'
           const ratio = typeof sc.ratio === 'number' && Number.isFinite(sc.ratio) && sc.ratio > 0 ? sc.ratio : 1
           scene = { type: 'two-charges', signs: [s1, s2], ratio }
           break
