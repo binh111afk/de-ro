@@ -12,7 +12,8 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useSession } from '@/lib/useSession'
 import { Button } from '@/components/ui'
-import { aiPointsLeft, callLlm, callLlmChecked, lastAiQuota, type AiQuota, type LlmMessage, type LlmProgress } from '@/lib/llm'
+import { AiQuotaRing } from '@/components/AiQuotaRing'
+import { callLlm, callLlmChecked, type LlmMessage, type LlmProgress } from '@/lib/llm'
 import { khungPromptFor } from '@/lib/khungPrompt'
 import {
   parseAiObject,
@@ -641,17 +642,6 @@ export async function polishSlide(
   return check.errors.length ? null : { ...check.page, decorKit: planDecorKit(plan) }
 }
 
-/** Hạn mức AI server báo về sau mỗi lần gọi (null khi chưa gọi lần nào hoặc không giới hạn). */
-function useAiQuota(): AiQuota | null {
-  const [q, setQ] = useState<AiQuota | null>(lastAiQuota)
-  useEffect(() => {
-    const on = (e: Event) => setQ((e as CustomEvent<AiQuota>).detail)
-    window.addEventListener('ai-quota', on)
-    return () => window.removeEventListener('ai-quota', on)
-  }, [])
-  return q
-}
-
 export function AiPanel({ historyKey, ...props }: Omit<React.ComponentProps<typeof AiConversation>, 'storageKey'> & { historyKey?: string }) {
   const mode = props.mode ?? 'exam'
   const storageKey = historyKey && mode !== 'board' ? chatHistoryKey(mode, historyKey) : undefined
@@ -722,7 +712,6 @@ function AiConversation({
     lastSaved.current = encoded
   }, [storageKey, turns])
   const [input, setInput] = useState('')
-  const quota = useAiQuota()
   const [files, setFiles] = useState<Attachment[]>([])
   const [refs, setRefs] = useState<AiRef[]>([])
   /** nguồn chọn trong modal "Thêm nguồn" — giữ qua các lượt tới khi giáo viên bỏ */
@@ -1793,14 +1782,7 @@ function AiConversation({
               </div>
             ) : null}
             <span className="ai-input-spacer" />
-            {quota ? (
-              <span
-                className={cn('ai-quota', aiPointsLeft(quota) < 20 && 'is-low')}
-                data-tip="Điểm AI còn lại"
-              >
-                Còn {aiPointsLeft(quota).toLocaleString('vi-VN')} điểm
-              </span>
-            ) : null}
+            <AiQuotaRing className="mr-1" />
             {busy ? (
               <button
                 type="button"

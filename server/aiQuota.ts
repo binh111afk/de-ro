@@ -60,6 +60,19 @@ export async function readQuota(userId: string | null, _ip?: string): Promise<Qu
   }
 }
 
+/** Tổng token đã được cộng (quà chào mừng, admin tặng, nạp) theo `ai_credit_events`; lỗi thì 0. */
+export async function readGranted(userId: string): Promise<number> {
+  const s = supa()
+  if (!s) return 0
+  try {
+    const r = await fetch(`${s.base}/rest/v1/ai_credit_events?user_id=eq.${encodeURIComponent(userId)}&select=tokens&limit=1000`, { headers: s.headers })
+    if (!r.ok) return 0
+    return ((await r.json()) as Array<{ tokens: number }>).reduce((sum, e) => sum + Number(e.tokens || 0), 0)
+  } catch {
+    return 0
+  }
+}
+
 /** Tặng điểm chào mừng; trả số dư sau khi tặng (đã có dòng thì không tặng lại). */
 async function claimWelcome(userId: string): Promise<number> {
   const s = supa()

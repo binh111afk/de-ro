@@ -8,7 +8,7 @@
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { json, readBody, safeError } from './http.js'
 import { clientIp, guard, isLocal, userFromToken } from './guard.js'
-import { hasQuotaStore, readQuota } from './aiQuota.js'
+import { hasQuotaStore, readGranted, readQuota } from './aiQuota.js'
 import { AI_FEEDBACK_KINDS, logAiFeedback, type AiFeedback } from './ops.js'
 
 const str = (v: unknown) => (typeof v === 'string' ? v : '')
@@ -47,7 +47,8 @@ export async function handleQuotaRequest(req: IncomingMessage, res: ServerRespon
   const userId = isLocal(ip) ? null : await userFromToken(req)
   const quota = isLocal(ip) ? null : await readQuota(userId, ip)
   // null = máy dev / ngoại lệ không giới hạn (cùng quy ước với GET /api/llm)
-  json(res, 200, { quota, unlimited: !!userId && quota === null && hasQuotaStore() })
+  const granted = userId && quota ? await readGranted(userId) : 0
+  json(res, 200, { quota, granted, unlimited: !!userId && quota === null && hasQuotaStore() })
 }
 
 export function quotaMiddleware(req: IncomingMessage, res: ServerResponse, next: (err?: unknown) => void): void {
