@@ -665,6 +665,14 @@ function UserDetailDrawer({
                       style={{ width: `${pct}%` }}
                     />
                   </div>
+                  {quota?.emptyDay != null && (
+                    <div className="mt-2 flex items-center justify-between text-[13px]">
+                      <span className="text-ink-2">Lượt rỗng 24 giờ:</span>
+                      <span className={cn('tnum font-semibold', quota.freeEmpty != null && quota.emptyDay >= quota.freeEmpty ? 'text-clay' : 'text-ink')}>
+                        {quota.emptyDay}{quota.freeEmpty != null ? ` / ${quota.freeEmpty}` : ''}
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Form chỉnh hạn mức */}

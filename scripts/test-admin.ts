@@ -22,6 +22,7 @@ const LISTED = '44444444-4444-4444-8444-444444444444'
 const PRIVATE = '55555555-5555-4555-8555-555555555555'
 const REMOVED = '77777777-7777-4777-8777-777777777777'
 const OWN = '88888888-8888-4888-8888-888888888888'
+const LOOKUP_UNAVAILABLE = '99999999-9999-4999-8999-999999999999'
 // status / owner_id cho các ca kiểm duyệt (Strix lần 5): đề admin đã gỡ, đề của chính moderator
 const EXAMS: Array<{ id: string; listed: boolean; status: string; owner_id: string }> = [
   { id: LISTED, listed: true, status: 'published', owner_id: USER },
@@ -66,7 +67,8 @@ globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
     ]
     return ok(rows.filter((r) => ids?.includes(r.user_id) && r.lastSeen >= since).map(({ user_id }) => ({ user_id })))
   }
-  if (url.includes(`/auth/v1/admin/users/${USER}`) && method === 'GET') return ok({ id: USER, email: 'u@x.vn', created_at: '' })
+  if (url.endsWith(`/auth/v1/admin/users/${USER}`) && method === 'GET') return ok({ id: USER, email: 'u@x.vn', created_at: '', user_metadata: { full_name: 'Cô Lan' } })
+  if (url.endsWith(`/auth/v1/admin/users/${LOOKUP_UNAVAILABLE}`) && method === 'GET') return new Response('{}', { status: 503 })
   if (url.includes(`/auth/v1/admin/users/${ADMIN}`) && method === 'GET') return ok({ id: ADMIN, banned_until: adminBanned ? '2999-01-01T00:00:00Z' : null })
   if (url.includes('/auth/v1/admin/users/')) return ok({})
   if (url.includes('/rest/v1/user_documents')) return ok([])
@@ -78,6 +80,28 @@ globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
   if (url.includes('/rest/v1/ai_provider_settings')) return method === 'GET' ? ok([]) : new Response(null, { status: 201 })
   if (url.includes('/rest/v1/app_settings') && method === 'GET') return ok([{ key: 'maintenance', value: { on: true, message: 'x' } }])
   if (url.includes('/rest/v1/app_settings')) return new Response(null, { status: 201 })
+  if (url.includes('/rest/v1/ai_calls?')) {
+    const q = new URL(url).searchParams
+    const now = Date.now()
+    const rows = [
+      { id: 7, user_id: USER, error: 'model: empty content', hoursAgo: 1, ok: false },
+      { id: 6, user_id: USER, error: 'model: timeout', hoursAgo: 2, ok: false },
+      { id: 5, user_id: LOOKUP_UNAVAILABLE, error: 'model: empty content', hoursAgo: 3, ok: false },
+      { id: 4, user_id: null, error: 'model: empty content', hoursAgo: 4, ok: false },
+      { id: 3, user_id: USER, error: 'model: empty content', hoursAgo: 5, ok: false },
+      { id: 2, user_id: USER, error: 'model: empty content', hoursAgo: 6, ok: true },
+      { id: 1, user_id: USER, error: 'model: empty content', hoursAgo: 25, ok: false },
+    ].map((r) => ({ ...r, model: 'm', provider: 'opencode', ms: 1200, created_at: new Date(now - r.hoursAgo * 3600_000).toISOString() }))
+    const ids = q.get('user_id')?.match(/^in\.\((.*)\)$/)?.[1]?.split(',')
+    const since = q.get('created_at')?.match(/^gte\.(.*)$/)?.[1]
+    return ok(rows.filter((r) =>
+      (q.get('ok') !== 'eq.false' || !r.ok) &&
+      (q.get('error') !== 'like.*empty content*' || r.error.includes('empty content')) &&
+      (!since || r.created_at >= since) &&
+      (!ids || (r.user_id && ids.includes(r.user_id))) &&
+      (!q.get('user_id')?.startsWith('eq.') || r.user_id === q.get('user_id')!.slice(3)),
+    ).slice(0, Number(q.get('limit') ?? rows.length)))
+  }
   if (url.includes('/rpc/admin_ai_stats')) return ok([{ day: '2026-11-10', model: 'm', provider: 'opencode', calls: 3, errors: 1, tokens: 900, cost: null, avg_ms: 1200 }])
   if (url.includes('/rest/v1/community_exams')) {
     // một đề cộng đồng (listed) và một đề link riêng; lọc theo id / listed như PostgREST
@@ -200,6 +224,27 @@ check('bật bảo trì ghi nhật ký', calls.some((c) => c.startsWith('POST /r
 const st = await hit({ action: 'ai.stats', days: 500 }, 'tAdmin')
 check('ai.stats kẹp days ≤ 90, đổi tên cột', st.status === 200 && st.data.days === 90 && (st.data.rows as Array<{ avgMs: number }>)[0].avgMs === 1200)
 check('moderator xem ai.stats → 403', (await hit({ action: 'ai.stats' }, 'tMod')).status === 403)
+const aiErrors = { action: 'ai.errors', limit: 4 }
+check('không token xem ai.errors → 401', (await hit(aiErrors)).status === 401)
+check('user thường xem ai.errors → 403', (await hit(aiErrors, 'tUser')).status === 403)
+check('moderator xem ai.errors → 403', (await hit(aiErrors, 'tMod')).status === 403)
+const aiErrorsFrom = calls.length
+const aiErrorsResult = await hit(aiErrors, 'tAdmin')
+const errorRows = aiErrorsResult.data.items as Array<{ id: number; userName: string; userEmail: string; emptyDay: number }> | undefined
+check('admin xem ai.errors → 200, trả ngưỡng miễn điểm và giữ thứ tự', aiErrorsResult.status === 200 &&
+  aiErrorsResult.data.freeEmpty === 3 && errorRows?.map((r) => r.id).join(',') === '7,6,5,4')
+check('ai.errors trả tên, email và đếm đúng lượt lỗi rỗng trong 24 giờ ngoài cả trang hiện tại', errorRows?.[0]?.userName === 'Cô Lan' &&
+  errorRows[0].userEmail === 'u@x.vn' && errorRows[0].emptyDay === 2 && errorRows[1]?.emptyDay === 2)
+check('ai.errors vẫn trả lượt rỗng khi tra tài khoản lỗi, lượt khách đếm 0', errorRows?.[2]?.userName === '' &&
+  errorRows[2].userEmail === '' && errorRows[2].emptyDay === 1 && errorRows[3]?.emptyDay === 0)
+const aiErrorCalls = calls.slice(aiErrorsFrom)
+check('ai.errors tra mỗi tài khoản một lần và đếm theo cả nhóm', aiErrorCalls.filter((c) => c === `GET /auth/v1/admin/users/${USER}`).length === 1 &&
+  aiErrorCalls.filter((c) => c.startsWith('GET /rest/v1/ai_calls?user_id=in.')).length === 1 &&
+  aiErrorCalls.some((c) => c.includes(`user_id=in.(${USER},${LOOKUP_UNAVAILABLE})`)))
+{
+  const qg = (await hit({ action: 'quota.get', userId: USER }, 'tAdmin')).data as { emptyDay?: number; freeEmpty?: number }
+  check('quota.get trả số lượt rỗng 24 giờ và ngưỡng miễn', qg.emptyDay === 2 && qg.freeEmpty === 3, qg)
+}
 check('moderator chạy health → 403', (await hit({ action: 'health' }, 'tMod')).status === 403)
 check('moderator xem health.targets → 403', (await hit({ action: 'health.targets' }, 'tMod')).status === 403)
 {

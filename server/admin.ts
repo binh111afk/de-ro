@@ -12,7 +12,7 @@ import { json, readBody, safeError } from './http.js'
 import { deleteR2Object, pingR2, r2DocKeyFromUrl, r2Info } from './r2.js'
 import { assertSafeEndpoint, listProviders, pingProviders } from './llmProxy.js'
 import { encryptKey, hasAiSecret, isAllowedEndpoint, resetAiOverrides } from './aiSettings.js'
-import { _resetOpsCache } from './ops.js'
+import { EMPTY_FREE_PER_DAY, _resetOpsCache } from './ops.js'
 import { readDbMetrics } from './dbMetrics.js'
 import { readExamPages, VisionInputError } from './bankVision.js'
 import { CONTENT_ACTIONS } from './adminContent.js'
@@ -425,10 +425,13 @@ const ACTIONS: ActionMap = {
     need: 'admin',
     run: async ({ s }, b) => {
       const id = needUser(b.userId)
-      const [{ data: ov }, { data: use }, { data: cr }] = await Promise.all([
+      const since = new Date(Date.now() - 24 * 3600_000).toISOString()
+      const [{ data: ov }, { data: use }, { data: cr }, empty] = await Promise.all([
         call<Array<{ monthly_tokens: number | null; note: string | null }>>(s, `/rest/v1/ai_quota_overrides?user_id=eq.${id}&select=monthly_tokens,note`),
         call<Array<{ tokens: number; requests: number }>>(s, `/rest/v1/ai_usage?user_id=eq.${id}&month=eq.${month()}&select=tokens,requests`),
         call<Array<{ balance: number }>>(s, `/rest/v1/ai_credits?user_id=eq.${id}&select=balance`),
+        // lượt AI trả rỗng 24 giờ qua (được miễn điểm tới EMPTY_FREE_PER_DAY lượt): không đọc được thì bỏ qua
+        call<Array<{ id: number }>>(s, `/rest/v1/ai_calls?user_id=eq.${id}&ok=eq.false&error=like.*empty%20content*&created_at=gte.${encodeURIComponent(since)}&select=id&limit=100`).catch(() => null),
       ])
       const defaultLimit = MONTHLY_LIMIT()
       return {
@@ -439,6 +442,8 @@ const ACTIONS: ActionMap = {
         // chưa có dòng số dư = chưa dùng AI lần nào: sẽ nhận quà chào mừng ở lượt đầu, hiện luôn số đó thay vì 0
         credits: cr[0] ? Number(cr[0].balance) : WELCOME_TOKENS(),
         welcomePending: !cr[0],
+        emptyDay: empty?.data.length ?? 0,
+        freeEmpty: EMPTY_FREE_PER_DAY,
       }
     },
   },
@@ -612,7 +617,35 @@ const ACTIONS: ActionMap = {
         s,
         `/rest/v1/ai_calls?ok=eq.false&select=id,user_id,model,provider,error,ms,created_at&order=created_at.desc&limit=${limit}`,
       )
-      return { items: data.map((r) => ({ id: r.id, userId: r.user_id, model: r.model, provider: r.provider, error: r.error, ms: r.ms, createdAt: r.created_at })) }
+      const ids = [...new Set(data.flatMap((r) => r.user_id ? [r.user_id] : []))]
+      const since = new Date(Date.now() - 24 * 3600_000).toISOString()
+      const [accounts, emptyCalls] = await Promise.all([
+        Promise.all(ids.map((id) => getUser(s, id).catch(() => null))),
+        ids.length ? call<Array<{ user_id: string }>>(
+          s,
+          `/rest/v1/ai_calls?user_id=in.(${ids.join(',')})&ok=eq.false&error=like.*empty%20content*&created_at=gte.${encodeURIComponent(since)}&select=user_id`,
+        ) : null,
+      ])
+      const users = new Map(ids.map((id, i) => {
+        const account = accounts[i]
+        return [id, account ? toRow(account) : null] as const
+      }))
+      const emptyCounts = new Map<string, number>()
+      for (const { user_id } of emptyCalls?.data ?? []) {
+        emptyCounts.set(user_id, (emptyCounts.get(user_id) ?? 0) + 1)
+      }
+      return {
+        freeEmpty: EMPTY_FREE_PER_DAY,
+        items: data.map((r) => {
+          const user = r.user_id ? users.get(r.user_id) : null
+          return {
+            id: r.id, userId: r.user_id, model: r.model, provider: r.provider, error: r.error, ms: r.ms, createdAt: r.created_at,
+            userName: user?.name ?? '',
+            userEmail: user?.email ?? '',
+            emptyDay: r.user_id ? emptyCounts.get(r.user_id) ?? 0 : 0,
+          }
+        }),
+      }
     },
   },
 

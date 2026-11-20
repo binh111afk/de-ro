@@ -51,6 +51,9 @@ export interface UserQuota {
   credits: number
   /** chưa dùng AI lần nào: `credits` là quà chào mừng sẽ nhận ở lượt đầu */
   welcomePending?: boolean
+  /** lượt AI trả rỗng trong 24 giờ qua / số lượt được miễn điểm mỗi ngày */
+  emptyDay?: number
+  freeEmpty?: number
 }
 
 export interface UserStorage {
@@ -243,6 +246,9 @@ export interface AiStatRow {
 export interface AiErrorRow {
   id: number
   userId: string | null
+  userName?: string
+  userEmail?: string
+  emptyDay?: number
   model: string
   provider: string
   error: string | null
@@ -298,7 +304,7 @@ export async function getAiStats(days = 7): Promise<{ days: number; rows: AiStat
   return post('ai.stats', { days })
 }
 
-export async function getAiErrors(limit = 30): Promise<{ items: AiErrorRow[] }> {
+export async function getAiErrors(limit = 30): Promise<{ items: AiErrorRow[]; freeEmpty: number }> {
   if (import.meta.env.DEV && isAdminMock()) return (await import('./adminMock')).mockGetAiErrors(limit)
   return post('ai.errors', { limit })
 }

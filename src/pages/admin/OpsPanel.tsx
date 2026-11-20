@@ -31,7 +31,6 @@ import {
   type HealthProvider,
   type HealthService,
   type AiStatRow,
-  type AiErrorRow,
   type AdminMe,
 } from '@/lib/adminApi'
 import { formatNumber, formatViDateTime, toDatetimeLocalString, toIsoString } from './adminUtils'
@@ -112,7 +111,8 @@ export function OpsPanel({ me: _me }: OpsPanelProps) {
   const [loadingStats, setLoadingStats] = useState(true)
 
   // 4. Lỗi gần đây
-  const [aiErrors, setAiErrors] = useState<AiErrorRow[]>([])
+  const [aiErrorResult, setAiErrorResult] = useState<Awaited<ReturnType<typeof getAiErrors>>>()
+  const { items: aiErrors = [], freeEmpty } = aiErrorResult ?? {}
   const [loadingErrors, setLoadingErrors] = useState(true)
 
   // Tải cài đặt ban đầu
@@ -169,7 +169,7 @@ export function OpsPanel({ me: _me }: OpsPanelProps) {
     setLoadingErrors(true)
     getAiErrors(30)
       .then((res) => {
-        setAiErrors(res.items)
+        setAiErrorResult(res)
       })
       .catch((err: unknown) => {
         const msg = err instanceof AdminError || err instanceof Error ? err.message : 'Không tải được nhật ký lỗi AI'
@@ -842,10 +842,11 @@ export function OpsPanel({ me: _me }: OpsPanelProps) {
         ) : (
           <div className="w-full overflow-hidden rounded-[6px] border border-line">
             <div className="w-full overflow-x-auto">
-              <table className="w-full min-w-[640px] border-collapse text-left text-[13px]">
+              <table className="w-full min-w-[800px] border-collapse text-left text-[13px]">
                 <thead className="border-b border-line bg-sunken/80 text-[11.5px] font-semibold uppercase tracking-wider text-ink-3">
                   <tr>
                     <th className="px-4 py-2.5">Thời gian</th>
+                    <th className="min-w-[160px] whitespace-nowrap px-4 py-2.5">Người dùng</th>
                     <th className="px-4 py-2.5">Model</th>
                     <th className="px-4 py-2.5">Provider</th>
                     <th className="px-4 py-2.5">Lỗi</th>
@@ -857,6 +858,17 @@ export function OpsPanel({ me: _me }: OpsPanelProps) {
                     <tr key={err.id} className="transition-colors hover:bg-sunken/30">
                       <td className="tnum whitespace-nowrap px-4 py-2.5 font-mono text-[12px] text-ink-3">
                         {formatViDateTime(err.createdAt)}
+                      </td>
+                      <td className="px-4 py-2.5">
+                        <div className="font-medium text-ink [overflow-wrap:anywhere]">{err.userName || err.userEmail || '—'}</div>
+                        {err.userName && err.userEmail && err.userEmail !== err.userName && (
+                          <div className="text-[12px] text-ink-3 [overflow-wrap:anywhere]">{err.userEmail}</div>
+                        )}
+                        {err.error?.includes('empty content') && err.emptyDay != null && err.emptyDay > 0 && (
+                          <div className={cn('tnum whitespace-nowrap text-[12px]', freeEmpty != null && err.emptyDay >= freeEmpty ? 'text-clay' : 'text-ink-3')}>
+                            {err.emptyDay} lượt rỗng / 24 giờ
+                          </div>
+                        )}
                       </td>
                       <td className="whitespace-nowrap px-4 py-2.5 font-medium text-ink">
                         {err.model}

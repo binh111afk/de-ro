@@ -127,7 +127,7 @@ export function mockDeleteUser(userId: string, confirmEmail: string): Promise<{ 
 
 export function mockGetQuota(userId: string): Promise<UserQuota> {
   const u = MOCK_USERS.find((x) => x.id === userId)
-  return wait({ override: null, defaultLimit: 150_000, usedThisMonth: u?.tokensThisMonth ?? 0, requestsThisMonth: 12, credits: mockCredits.get(userId) ?? 0 })
+  return wait({ override: null, defaultLimit: 150_000, usedThisMonth: u?.tokensThisMonth ?? 0, requestsThisMonth: 12, credits: mockCredits.get(userId) ?? 0, emptyDay: 2, freeEmpty: 3 })
 }
 
 export function mockGrantCredits(userId: string, tokens: number): Promise<{ ok: true; balance: number }> {
@@ -194,13 +194,14 @@ export function mockGetAiStats(days = 7): Promise<{ days: number; rows: AiStatRo
   return wait({ days, rows })
 }
 
-export function mockGetAiErrors(limit = 30): Promise<{ items: AiErrorRow[] }> {
-  return wait({
-    items: [
-      { id: 2, userId: MOCK_USERS[3].id, model: 'gpt-5.5', provider: 'opencode', error: 'gpt-5.5: upstream 503', ms: 12040, createdAt: '2026-11-10T09:12:00Z' },
-      { id: 1, userId: null, model: 'mercury-3', provider: 'mercury', error: 'mercury-3: quá thời gian chờ 280s', ms: 280000, createdAt: '2026-11-09T14:30:00Z' },
-    ].slice(0, limit),
-  })
+export function mockGetAiErrors(limit = 30): Promise<{ items: AiErrorRow[]; freeEmpty: number }> {
+  const now = Date.now()
+  const items: AiErrorRow[] = [
+    { id: 3, userId: MOCK_USERS[3].id, userName: MOCK_USERS[3].name, userEmail: MOCK_USERS[3].email, emptyDay: 3, model: 'gpt-5.5', provider: 'opencode', error: 'gpt-5.5: empty content', ms: 12040, createdAt: new Date(now - 60_000).toISOString() },
+    { id: 2, userId: MOCK_USERS[4].id, userEmail: MOCK_USERS[4].email, emptyDay: 1, model: 'deepseek-flash', provider: 'deepseek', error: 'deepseek-flash: empty content', ms: 9200, createdAt: new Date(now - 120_000).toISOString() },
+    { id: 1, userId: null, model: 'mercury-3', provider: 'mercury', error: 'mercury-3: quá thời gian chờ 280s', ms: 280000, createdAt: new Date(now - 180_000).toISOString() },
+  ]
+  return wait({ items: items.slice(0, limit), freeEmpty: 3 })
 }
 
 export function mockGetHealthTargets(): Promise<{ providers: HealthProvider[]; services: { supabase: HealthService; r2: HealthService } }> {
