@@ -2,32 +2,32 @@
  {
   "name": "toan12",
   "topic": "Soạn đề thi thử tốt nghiệp THPT môn Toán 12 theo cấu trúc 2025 (12 câu nhiều lựa chọn, 4 câu đúng/sai, 6 câu trả lời ngắn), có đáp án, có các câu đọc hình.",
-  "len": 18379,
-  "sha256": "92e3b70c4fc097076b5a08ba061b633e89cc05c81abebdc5a47980bb464ddc66"
+  "len": 18765,
+  "sha256": "d72e7e77cf51dbc6364172870ebd28ad4f02f28dcd13ad907cfb075df07df365"
  },
  {
   "name": "ly11",
   "topic": "Soạn đề kiểm tra Vật lí 11 chương Dao động cơ, 20 câu trắc nghiệm 4 phương án, có đáp án, vài câu có đồ thị.",
-  "len": 17857,
-  "sha256": "63e118a5cdc3970413d5996bbb9970aa22dbb960ed53118b6cde0a11ae9a706c"
+  "len": 18243,
+  "sha256": "208eaab30ba6b2c35e83a670774237ff9f5444285d55cd6e6036f4d6ccb8375b"
  },
  {
   "name": "van9",
   "topic": "Soạn đề kiểm tra giữa kì Ngữ văn 9 gồm phần đọc hiểu một đoạn văn bản (4 câu) và phần viết đoạn văn nghị luận, có hướng dẫn chấm.",
-  "len": 28056,
-  "sha256": "998d1af99bbfce3cef38d5e017fb9d83517df2990a48960cb95949da1f9e1009"
+  "len": 29673,
+  "sha256": "9b4fa1745f1674093fd96c16cd94842ab2cd5fc47bdfc9457e1a8b576d00a154"
  },
  {
   "name": "hinh9",
   "topic": "Soạn đề Toán 9 chương Hệ thức lượng trong tam giác vuông, 10 câu trắc nghiệm 4 phương án, ít nhất 4 câu có hình vẽ, có đáp án.",
-  "len": 22914,
-  "sha256": "28ba6e5ee3afab658e7dca40b80b7f0352da668d875890cf2ec64759c89a2fb8"
+  "len": 24531,
+  "sha256": "421177e687cc9ef19d1f8d62a407e448ef6f9d8d8ffd1197abd203a446064138"
  },
  {
   "name": "toan8",
   "topic": "Soạn đề kiểm tra 15 phút Toán 8 chương Phân thức đại số, 10 câu trắc nghiệm 4 phương án và 2 câu tự luận, có đáp án và thang điểm.",
-  "len": 22914,
-  "sha256": "28ba6e5ee3afab658e7dca40b80b7f0352da668d875890cf2ec64759c89a2fb8"
+  "len": 24531,
+  "sha256": "421177e687cc9ef19d1f8d62a407e448ef6f9d8d8ffd1197abd203a446064138"
  },
  {
   "name": "hoa10",
@@ -38,14 +38,14 @@
  {
   "name": "su12",
   "topic": "Soạn đề kiểm tra Lịch sử 12 bài Cách mạng tháng Tám năm 1945, 20 câu trắc nghiệm 4 phương án, có đáp án.",
-  "len": 28056,
-  "sha256": "998d1af99bbfce3cef38d5e017fb9d83517df2990a48960cb95949da1f9e1009"
+  "len": 29673,
+  "sha256": "9b4fa1745f1674093fd96c16cd94842ab2cd5fc47bdfc9457e1a8b576d00a154"
  },
  {
   "name": "hoi-dap",
   "topic": "Giải thích cân bằng phản ứng hóa học.",
   "intent": "chat",
-  "len": 27344,
-  "sha256": "e593ee646ebb6aaae5482e285eb85955ece69d09639568223eda555c191fa6a3"
+  "len": 28961,
+  "sha256": "bb6bf5fa44b94e817eb043af0c5c4648695288621b3ce3cd9d65578cba4f7a17"
  }
 ]
