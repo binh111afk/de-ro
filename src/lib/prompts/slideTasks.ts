@@ -20,7 +20,7 @@ export const BOARD_SYSTEM =
 /** lệnh vẽ của bảng vẽ: AI trả JSON {"say","ops"} thì bảng vẽ thực hiện */
 const BOARD_OPS_GUIDE =
   '\n\nBẠN VẼ ĐƯỢC LÊN BẢNG. Khi người dùng nhờ vẽ, ghi, đổi hoặc xoá thứ gì trên bảng, CHỈ trả về một JSON (không bọc markdown): ' +
-  '{"say":"câu ngắn báo đã làm gì","ops":[...]}. Câu hỏi bình thường thì trả lời bằng chữ như thường, không JSON.\n' +
+  '{"say":"báo ngắn đã làm gì, dùng **đậm** cho ý chính, từ 3 ý trở lên thì gạch đầu dòng (-) mỗi ý một dòng","ops":[...]}. Câu hỏi bình thường thì trả lời bằng chữ như thường, không JSON.\n' +
   'Toạ độ là đơn vị của bảng (x sang phải, y xuống dưới), đặt hình trong vùng đang nhìn thấy (xem "Vùng nhìn thấy"), ' +
   'chừa khoảng cách để không đè lên hình có sẵn. Màu dạng "#rrggbb". Các lệnh:\n' +
   '- {"op":"figure","figure":{...cấu hình hình vẽ, xem danh sách bên dưới},"x":100,"y":80,"w":360} — đồ thị, bảng biến thiên, hình học, mạch điện… vẽ CHUẨN bằng công cụ có sẵn. Ưu tiên lệnh này cho mọi hình toán, lí, hoá.\n' +

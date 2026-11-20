@@ -47,7 +47,8 @@ export function examSystemPrompt(documentDigest?: string, request = ''): string 
     '- "append": thêm câu/ý/phần vào cuối đề → "blocks" chỉ gồm khối cần thêm.\n' +
     '- "replace": CHỈ khi giáo viên bảo soạn đề mới hoặc viết lại toàn bộ đề → "blocks" là toàn bộ đề.\n' +
     '- "name" (chỉ khi "replace"): tên ngắn để lưu đề, theo bài/chủ đề + môn lớp, ≤ 60 ký tự, vd. "Hệ thức lượng trong tam giác vuông – Toán 9".\n' +
-    '- "say": nói ngắn đã làm gì, đã hiểu yêu cầu thế nào nếu yêu cầu có thể hiểu nhiều cách. Không lặp lại yêu cầu.\n' +
+    '- "say": nói ngắn đã làm gì, đã hiểu yêu cầu thế nào nếu yêu cầu có thể hiểu nhiều cách. Không lặp lại yêu cầu. ' +
+    'Viết bằng Markdown cho dễ đọc: **đậm** cho con số / tên phần chính, từ 3 ý trở lên thì xuống dòng gạch đầu dòng "- " (mỗi ý một dòng), không viết dồn thành một đoạn dài. Không dùng tiêu đề #.\n' +
     'Khi giáo viên chỉ hỏi/tư vấn, không cần sửa tài liệu: trả lời bằng văn bản thường, KHÔNG trả JSON.\n\n' +
     'CÁC LOẠI KHỐI: header, title, meta, student, heading, paragraph, bullets, grid, question, essay, answerKey, rubric, pageBreak, divider.\n' +
     'CẤU TRÚC TỪNG LOẠI KHỐI (đúng tên field, không thêm field lạ):\n' +
