@@ -6,8 +6,8 @@
 import { apiFetch } from '@/lib/apiFetch'
 import { AuthError, currentSession } from '@/lib/auth'
 
-const BASE = import.meta.env.VITE_SUPABASE_URL as string
-const KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string
+const BASE = import.meta.env?.VITE_SUPABASE_URL as string
+const KEY = import.meta.env?.VITE_SUPABASE_PUBLISHABLE_KEY as string
 
 export const MAX_DOC_MB = 20
 
@@ -32,10 +32,11 @@ const COLUMNS = 'id,name,mime,size,url,subject,created_at'
 
 export async function rest<T>(
   path: string,
-  init: { method?: string; body?: unknown; token: string; prefer?: string },
+  init: { method?: string; body?: unknown; token: string; prefer?: string; signal?: AbortSignal },
 ): Promise<T> {
   const res = await fetch(`${BASE}/rest/v1${path}`, {
     method: init.method ?? 'GET',
+    signal: init.signal,
     headers: {
       apikey: KEY,
       Authorization: `Bearer ${init.token}`,

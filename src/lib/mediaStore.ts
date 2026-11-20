@@ -5,16 +5,19 @@
 import { apiFetch } from '@/lib/apiFetch'
 
 /** Đẩy data URL lên R2, trả về đường dẫn. Chuỗi không phải data URL thì giữ nguyên. */
-export async function uploadImage(src: string): Promise<string> {
+export async function uploadImage(src: string, auth?: { token: string; signal: AbortSignal }): Promise<string> {
   if (!src.startsWith('data:image/')) return src
-  const res = await apiFetch('/api/upload', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ dataUrl: src }),
-  })
+  const init = { method: 'POST', body: JSON.stringify({ dataUrl: src }) }
+  const res = await (auth
+    ? fetch('/api/upload', {
+        ...init,
+        signal: auth.signal,
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${auth.token}` },
+      })
+    : apiFetch('/api/upload', { ...init, headers: { 'Content-Type': 'application/json' } }))
   const body = (await res.json().catch(() => ({}))) as { url?: string; error?: string }
   // khách chưa đăng nhập: server không nhận ảnh (ảnh tính vào hạn mức theo tài khoản) → giữ data URL, vẫn dùng được
-  if (res.status === 401) return src
+  if (res.status === 401 && !auth) return src
   if (!res.ok || !body.url) throw new Error(body.error ?? `Không tải ảnh lên được (${res.status})`)
   return body.url
 }

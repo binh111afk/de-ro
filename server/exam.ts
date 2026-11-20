@@ -1,6 +1,6 @@
 /**
  * Học sinh mở đề bằng link: đề chỉ-link (không ở cộng đồng) được trả về KHÔNG kèm đáp án và lời giải,
- * nộp bài xong `api/attempt` mới trả điểm và đáp án. Đề ở cộng đồng trả nguyên (giáo viên khác cần đáp án để dùng lại).
+ * nộp bài xong `api/attempt` mới trả điểm và đáp án. Đề cộng đồng giữ đáp án để dùng lại, bỏ danh sách lớp.
  */
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import type { ExamDoc } from '../src/data/docTypes'
@@ -23,7 +23,13 @@ export async function handleExamRequest(req: IncomingMessage, res: ServerRespons
     if (typeof id !== 'string' || !UUID.test(id)) return json(res, 400, { error: 'Link đề không hợp lệ.' })
     const row = await getExamRow(base, key, id)
     if (!row?.doc) return json(res, 404, { error: 'Đề này không còn được xuất bản.' })
-    if (row.listed) return json(res, 200, { doc: row.doc })
+    if (row.listed) {
+      const { online } = row.doc
+      if (!online?.settings) return json(res, 200, { doc: row.doc })
+      const settings = { ...online.settings }
+      delete settings.roster
+      return json(res, 200, { doc: { ...row.doc, online: { ...online, settings } } })
+    }
     const exam = docToExam(row.doc, id)
     // giáo viên bật "hiện đúng/sai ngay khi chọn" thì trình duyệt cần đáp án: giữ nguyên
     if (exam.settings?.instantFeedback) return json(res, 200, { doc: row.doc })

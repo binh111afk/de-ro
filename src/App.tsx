@@ -109,8 +109,8 @@ export default function App() {
     let stopPresence: (() => void) | undefined
     let dead = false
     void import('@/lib/sync')
-      .then((m) => m.startSync())
-      .then((fn) => (dead ? fn() : (stopSync = fn)))
+      .then((m) => dead ? undefined : m.startSync())
+      .then((fn) => (dead ? fn?.() : (stopSync = fn)))
       .catch(() => {})
     void import('@/lib/presence')
       .then((m) => {

@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import App from './App'
+import { DISCARD_USER_VIEW } from './lib/localData'
 import { reloadForNewVersion } from './lib/lazyPage'
 import './index.css'
 // Be Vietnam Pro — có đủ subset tiếng Việt (latin + latin-ext + vietnamese).
@@ -35,7 +36,9 @@ window.addEventListener('vite:preloadError', (ev) => {
   if (reloadForNewVersion()) ev.preventDefault()
 })
 
-createRoot(document.getElementById('root')!).render(
+const root = createRoot(document.getElementById('root')!)
+window.addEventListener(DISCARD_USER_VIEW, () => root.unmount(), { once: true })
+root.render(
   <StrictMode>
     <BrowserRouter>
       <App />

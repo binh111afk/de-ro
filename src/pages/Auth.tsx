@@ -108,7 +108,11 @@ export default function Auth({ mode }: { mode: Mode }) {
         await requestReset(email.trim())
         setNotice('Nếu email này có tài khoản, liên kết đặt lại mật khẩu đã được gửi. Kiểm tra cả hộp thư rác.')
       } else if (mode === 'reset' && recoveryToken) {
+        const recoveryUrl = window.location.href
         await setNewPassword(recoveryToken, password)
+        if (window.location.href === recoveryUrl) {
+          window.history.replaceState(window.history.state, '', window.location.pathname + window.location.search)
+        }
         setNotice('Đã đổi mật khẩu. Đăng nhập bằng mật khẩu mới.')
         setPassword('')
         setConfirm('')

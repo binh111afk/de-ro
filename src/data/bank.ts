@@ -4,7 +4,7 @@ import { BANK_FIGURES } from './bankFigures'
 /** Kho đầy đủ: BANK + câu THPT (bankThpt.ts, bankThpt2.ts, bankThpt3.ts) tải sau để không nặng gói tải đầu trang. */
 export interface BankOverrideRow {
   id: string
-  data: BankEntry
+  data: BankEntry | null
   status: 'published' | 'hidden'
 }
 
@@ -87,8 +87,10 @@ async function fetchBankOverrides(timeoutMs = 4000): Promise<BankOverrideRow[] |
   const timer = setTimeout(() => controller.abort(), timeoutMs)
 
   try {
-    const res = await fetch(`${base}/rest/v1/bank_questions?select=id,data,status`, {
-      headers: { apikey: key, Authorization: `Bearer ${key}` },
+    const res = await fetch(`${base}/rest/v1/rpc/bank_overrides`, {
+      method: 'POST',
+      headers: { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+      body: '{}',
       signal: controller.signal,
     })
     if (!res.ok) return null

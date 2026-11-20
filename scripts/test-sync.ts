@@ -62,16 +62,18 @@ const none = await startSync()
 assert.equal(requests, 0)
 none()
 
-// 2. đăng nhập A: mục trên máy được đẩy lên, mục trên máy chủ được kéo về
+// 2. đăng nhập A: mục chưa rõ chủ ở lại trên máy, mục máy chủ được kéo về
 server.set('A', new Map([['online', new Map([['r1', online('từ máy chủ', '2026-01-01T00:00:00.000Z')]])]]))
 login('A')
 let stop = await startSync()
 await wait(50)
 assert.deepEqual(titles(), ['nháp khi chưa đăng nhập', 'từ máy chủ'])
-assert.deepEqual(remote('A', 'online'), ['nháp khi chưa đăng nhập', 'từ máy chủ'])
+assert.deepEqual(remote('A', 'online'), ['từ máy chủ'])
+useOnline.getState().remove(useOnline.getState().items.find((it) => it.meta.title === 'nháp khi chưa đăng nhập')!.id)
+add('nháp của A')
 
 // 3. sửa và xoá được đẩy lên sau độ trễ, không có gì đổi thì không gọi lại
-const localId = useOnline.getState().items.find((it) => it.meta.title.startsWith('nháp'))!.id
+const localId = useOnline.getState().items.find((it) => it.meta.title === 'nháp của A')!.id
 useOnline.getState().update(localId, { meta: { ...defaultMeta(), title: 'đã sửa' } })
 useOnline.getState().remove('r1')
 await wait(1800)

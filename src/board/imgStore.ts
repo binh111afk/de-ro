@@ -9,6 +9,7 @@ export const IDB_PREFIX = 'idb:'
 const MIN = 16_000
 
 let dbp: Promise<IDBDatabase> | null = null
+let discarding = false
 function db() {
   dbp ??= new Promise((ok, fail) => {
     const r = indexedDB.open(DB, 1)
@@ -21,6 +22,7 @@ function db() {
 
 function tx<T>(mode: IDBTransactionMode, fn: (s: IDBObjectStore) => IDBRequest<T>) {
   return db().then((d) => new Promise<T>((ok, fail) => {
+    if (discarding) return fail(new Error('Đang dọn ảnh bảng vẽ.'))
     const r = fn(d.transaction(STORE, mode).objectStore(STORE))
     r.onsuccess = () => ok(r.result)
     r.onerror = () => fail(r.error)
@@ -40,6 +42,23 @@ const srcs = new Map<string, string>() // khoá → src đã đọc
 /** khoá → đường dẫn trên kho file (đã đẩy lên lúc đồng bộ); có rồi thì bản lưu dùng đường dẫn thay cho ảnh */
 const urls = new Map<string, string>()
 const urlChecked = new Set<string>()
+
+/** Chặn bản ghi đến muộn và chờ giao dịch xoá ảnh lẫn đường dẫn hoàn tất trước khi tải lại. */
+export async function clearBoardImages() {
+  discarding = true
+  keys.clear()
+  srcs.clear()
+  urls.clear()
+  urlChecked.clear()
+  if (typeof indexedDB === 'undefined') return
+  const d = await db()
+  await new Promise<void>((ok, fail) => {
+    const tx = d.transaction(STORE, 'readwrite')
+    tx.oncomplete = () => ok()
+    tx.onabort = () => fail(tx.error)
+    tx.objectStore(STORE).clear()
+  })
+}
 
 const urlKey = (k: string) => `u:${k}`
 
@@ -94,6 +113,7 @@ export async function toRemote(src: string, upload: (dataUrl: string) => Promise
   const data = isKey ? await unstash(src) : src
   if (!data) return null
   const url = await upload(data)
+  if (discarding) return null
   urls.set(k, url)
   await tx('readwrite', (s) => s.put(url, urlKey(k))).catch(() => {})
   return url

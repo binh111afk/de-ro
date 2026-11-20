@@ -70,14 +70,15 @@ function AdminCard() {
     }
     getMe()
       .then((m) => {
+        if (!alive) return
         remember(m)
-        if (alive) setMe(m)
+        setMe(m)
       })
       .catch((err: unknown) => {
         // chỉ quên khi server trả lời rõ là không có quyền, lỗi mạng thì giữ
-        if (err instanceof AdminError && (err.status === 401 || err.status === 403)) {
+        if (alive && err instanceof AdminError && (err.status === 401 || err.status === 403)) {
           remember(null)
-          if (alive) setMe(null)
+          setMe(null)
         }
       })
     return () => {
@@ -247,16 +248,15 @@ function CreditCard() {
     apiFetch('/api/quota')
       .then((r) => (r.ok ? r.json() : Promise.reject()))
       .then((d: { quota: Quota | null; unlimited?: boolean }) => {
+        if (!alive) return
         const next: QuotaState = d.unlimited ? 'unlimited' : d.quota
         try {
           localStorage.setItem(quotaKey(), JSON.stringify(next))
         } catch {
           // chặn localStorage: chỉ mất phần nhớ số
         }
-        if (alive) {
-          setQ(next)
-          setFetched((n) => n + 1)
-        }
+        setQ(next)
+        setFetched((n) => n + 1)
       })
       .catch(() => alive && setQ((cur) => (cur === 'loading' ? 'error' : cur)))
     return () => {

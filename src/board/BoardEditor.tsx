@@ -26,7 +26,7 @@ import { recognize } from './recognize'
 import { ExportDialog, FormulaDialog, PdfPagesDialog, type ExportChoice, type FormulaResult } from './BoardDialogs'
 import { canvasToA4Pdf, download, openPdf, pagesToPdf, pdfPageSize, readImageFile, renderPdfPage, renderRegion, savePng, type Picture } from './io'
 import { cachedSrc, IDB_PREFIX, stash, unstash } from './imgStore'
-import { useBoards, type BoardData } from '@/store/boards'
+import { pendingBoardSaves, useBoards, type BoardData } from '@/store/boards'
 import { texToSvg } from './formula'
 import { bindToScene, guideAt, Instruments, placeInstrument, projectGuide, type InstApi, type InstKind, type InstState } from './Instruments'
 import { type Tool, type Slot, type Opts, DEFAULT_TIP, CHALK_WHITE, LIGHT_COLORS, CHALK_COLORS, DEFAULT_OPTS, DEFAULT_STYLES, ERASE_R, CLIP_MARK, SHAPES, type Saved, load, type Drag, computeSnap, TOOL_KEYS, MOD_KEY, SHAPE_KEYS, FILLS, CURSOR } from './boardModel'
@@ -201,18 +201,30 @@ export default function BoardEditor({ id }: { id: string }) {
   const saveTimer = useRef(0)
   const persist = useCallback(() => {
     window.clearTimeout(saveTimer.current)
-    saveTimer.current = window.setTimeout(async () => {
+    let running: Promise<boolean> | undefined
+    const write = async () => {
       try {
         // ảnh lớn (ảnh chèn, trang PDF) cất vào IndexedDB, bản lưu chỉ giữ khoá
         const elements = await Promise.all(els.current.map(async (e) => (e.src ? { ...e, src: await stash(e.src) } : e)))
+        if (pendingBoardSaves.get(id) !== save) return false
         const data: Saved = { v: 2, elements, view: view.current, styles: styles.current, opts: opts.current }
         useBoards.getState().save(id, data as unknown as BoardData)
+        pendingBoardSaves.delete(id)
         setSaveErr(false)
+        return true
       } catch {
         // đầy bộ nhớ trình duyệt (thường do ảnh / PDF lớn): báo để người dùng biết bảng chưa được lưu
         setSaveErr(true)
+        return false
       }
-    }, 400)
+    }
+    const save = () => {
+      window.clearTimeout(saveTimer.current)
+      if (pendingBoardSaves.get(id) !== save) return Promise.resolve(false)
+      return (running ??= write().finally(() => { running = undefined }))
+    }
+    pendingBoardSaves.set(id, save)
+    saveTimer.current = window.setTimeout(() => void save(), 400)
   }, [id])
 
   const changed = useCallback(() => {

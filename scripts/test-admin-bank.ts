@@ -7,6 +7,7 @@
  * - Hàm gộp mergeBank: ghi đè đúng id, bỏ câu ẩn, thêm câu mới.
  * - loadFullBank fallback: lỗi mạng hoặc timeout trả nguyên bản tĩnh.
  */
+import assert from 'node:assert/strict'
 import { Readable } from 'node:stream'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { mergeBank, loadFullBank, _resetBankCache, type BankEntry, type BankOverrideRow } from '../src/data/bank.ts'
@@ -30,7 +31,8 @@ interface AuditLogItem {
 }
 
 const auditLogs: AuditLogItem[] = []
-const dbRows: BankOverrideRow[] = []
+const dbRows: (BankOverrideRow & { data: BankEntry })[] = []
+let bankRpcCalls = 0
 let networkFail = false
 
 globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
@@ -60,7 +62,17 @@ globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
     return new Response(null, { status: 201 })
   }
 
+  if (url.endsWith('/rest/v1/rpc/bank_overrides')) {
+    bankRpcCalls++
+    const headers = new Headers(init.headers)
+    if (method !== 'POST' || init.body !== '{}' || headers.get('Content-Type') !== 'application/json') return ok({}, 400)
+    if (headers.get('apikey') !== 'pk' || headers.get('Authorization') !== 'Bearer pk') return ok({}, 403)
+    return ok(dbRows.map((row) => ({ ...row, data: row.status === 'hidden' ? null : row.data })))
+  }
+
   if (url.includes('/rest/v1/bank_questions')) {
+    const headers = new Headers(init.headers)
+    if (headers.get('apikey') !== 'sk' || headers.get('Authorization') !== 'Bearer sk') return ok({}, 403)
     if (method === 'GET') {
       if (url.includes('id=eq.')) {
         const idMatch = /id=eq\.([^&]+)/.exec(url)?.[1]
@@ -261,12 +273,29 @@ check('bank.hide ghi nhật ký audit', auditLogs.some((l) => l.action === 'bank
 
 auditLogs.length = 0
 check('bank.unhide thiếu id → 400', (await hit({ action: 'bank.unhide' }, 'tAdmin')).status === 400)
+const hiddenList = await hit({ action: 'bank.overrides.list' }, 'tAdmin')
+assert.equal(hiddenList.status, 200)
+const adminHidden = (hiddenList.data.overrides as BankOverrideRow[]).find((row) => row.id === 'toan-l6-01')
+assert.equal(adminHidden?.status, 'hidden')
+assert.equal(adminHidden?.data?.answer, sampleValidEntry.answer)
+
+_resetBankCache()
+const bankWithHiddenOverride = await loadFullBank()
+assert.equal(bankRpcCalls, 1)
+assert.ok(!bankWithHiddenOverride.some((q) => q.id === 'toan-l6-01'))
+assert.ok(bankWithHiddenOverride.some((q) => q.id === createdId))
+
 const unhideRes = await hit({ action: 'bank.unhide', id: 'toan-l6-01' }, 'tAdmin')
 check('bank.unhide hợp lệ → 200', unhideRes.status === 200)
 check('bank.unhide ghi nhật ký audit', auditLogs.some((l) => l.action === 'bank.unhide' && l.target === 'toan-l6-01'))
 
 auditLogs.length = 0
 check('bank.revert thiếu id → 400', (await hit({ action: 'bank.revert' }, 'tAdmin')).status === 400)
+_resetBankCache()
+const bankWithPublishedOverride = await loadFullBank()
+assert.notEqual(bankWithPublishedOverride.find((q) => q.id === 'toan-l6-01')?.prompt, undefined)
+assert.equal(bankWithPublishedOverride.find((q) => q.id === 'toan-l6-01')?.prompt, dbRows.find((row) => row.id === 'toan-l6-01')?.data.prompt)
+
 const revertRes = await hit({ action: 'bank.revert', id: 'toan-l6-01' }, 'tAdmin')
 check('bank.revert hợp lệ → 200', revertRes.status === 200)
 check('bank.revert ghi nhật ký audit', auditLogs.some((l) => l.action === 'bank.revert' && l.target === 'toan-l6-01'))
@@ -280,7 +309,7 @@ const staticSample: BankEntry[] = [
 
 const overridesSample: BankOverrideRow[] = [
   // q1 bị ẩn
-  { id: 'q1', data: { ...sampleValidEntry, id: 'q1' }, status: 'hidden' },
+  { id: 'q1', data: null, status: 'hidden' },
   // q2 được sửa
   { id: 'q2', data: { ...sampleValidEntry, id: 'q2', prompt: 'Câu 2 đã sửa' }, status: 'published' },
   // q4 là câu mới

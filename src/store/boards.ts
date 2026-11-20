@@ -25,6 +25,9 @@ interface BoardsState {
   replaceAll: (items: BoardItem[]) => void
 }
 
+/** Bản vẽ đang chờ ghi vào store, có thể lưu ngay trước khi đồng bộ. */
+export const pendingBoardSaves = new Map<string, () => Promise<boolean>>()
+
 export const defaultBoardTitle = () => `Bảng vẽ ${new Date().toLocaleDateString('vi-VN')}`
 
 export const useBoards = create<BoardsState>()(
@@ -40,7 +43,10 @@ export const useBoards = create<BoardsState>()(
         }),
       rename: (id, title) =>
         set((s) => ({ items: s.items.map((b) => (b.id === id ? { ...b, title, updatedAt: new Date().toISOString() } : b)) })),
-      remove: (id) => set((s) => ({ items: s.items.filter((b) => b.id !== id) })),
+      remove: (id) => {
+        pendingBoardSaves.delete(id)
+        set((s) => ({ items: s.items.filter((b) => b.id !== id) }))
+      },
       replaceAll: (items) => set({ items }),
     }),
     {

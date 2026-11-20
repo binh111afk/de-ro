@@ -39,9 +39,10 @@ function saveSession(s: Session | null) {
   window.dispatchEvent(new Event(AUTH_EVENT))
 }
 
-async function request<T>(path: string, init: { method?: string; body?: unknown; token?: string } = {}): Promise<T> {
+async function request<T>(path: string, init: { method?: string; body?: unknown; token?: string; keepalive?: boolean } = {}): Promise<T> {
   const res = await fetch(`${BASE}/auth/v1${path}`, {
     method: init.method ?? 'POST',
+    keepalive: init.keepalive,
     headers: {
       apikey: KEY,
       'Content-Type': 'application/json',
@@ -131,10 +132,52 @@ export async function signIn(email: string, password: string): Promise<Session> 
   return s
 }
 
-export async function signOut(): Promise<void> {
-  const s = getSession()
+let signingOut: Promise<void> | undefined
+
+export function signOut(): Promise<void> {
+  return (signingOut ??= finishSignOut().finally(() => { signingOut = undefined }))
+}
+
+async function finishSignOut(): Promise<void> {
+  const session = getSession()
+  const [{ flushSync, stopSync }, { useComposeStore }, { pendingBoardSaves }, { purgeUserData, DISCARD_USER_VIEW }] = await Promise.all([
+    import('@/lib/sync'), import('@/store/compose'), import('@/store/boards'), import('@/lib/localData'),
+  ])
+  const compose = useComposeStore.getState()
+  if (session) {
+    let ok = false
+    try {
+      // Tab đang mở có thể chưa đến lượt tự lưu, nên ghi vào store trước khi đẩy.
+      for (const tab of compose.tabs) if (tab.dirty) compose.saveTab(tab.id)
+      const flushed = await flushSync()
+      ok = flushed.ok && !useComposeStore.getState().tabs.some((tab) => tab.dirty)
+    } catch {
+      // Lưu trên máy cũng có thể lỗi khi trình duyệt hết chỗ.
+    }
+    if (!ok) {
+      const { dialog } = await import('@/components/Dialog')
+      if (!(await dialog.confirm('Còn mục chưa đồng bộ lên tài khoản, đăng xuất sẽ xoá khỏi máy này. Vẫn đăng xuất?', {
+        cancelLabel: 'Huỷ', confirmLabel: 'Vẫn đăng xuất', danger: true,
+      }))) return
+    }
+  }
+  const current = getSession()
+  if (current && current.user.id !== session?.user.id) return
+
+  stopSync()
+  pendingBoardSaves.clear()
+  useComposeStore.setState(useComposeStore.getInitialState(), true)
+  // Tháo giao diện trước khi dọn để huỷ hiệu ứng và tránh tự lưu lại khi reload.
+  window.dispatchEvent(new Event(DISCARD_USER_VIEW))
   saveSession(null)
-  if (s) await request('/logout', { token: s.access_token }).catch(() => {})
+  const token = current?.access_token ?? session?.access_token
+  if (token) void request('/logout', { token, keepalive: true }).catch(() => {})
+  try {
+    await purgeUserData()
+  } catch (err) {
+    console.warn('Không dọn được ảnh bảng vẽ', err)
+  }
+  window.location.reload()
 }
 
 /** Đổi tên hiển thị và/hoặc ảnh đại diện (lưu trong user_metadata, Supabase gộp các trường). */
@@ -145,7 +188,8 @@ export async function updateProfile(patch: { name?: string; avatar?: string }): 
   if (patch.name !== undefined) data.display_name = patch.name
   if (patch.avatar !== undefined) data.avatar_url = patch.avatar
   const user = await request<RawUser>('/user', { method: 'PUT', token: s.access_token, body: { data } })
-  saveSession({ ...s, user: toUser(user) })
+  const current = getSession()
+  if (current?.user.id === s.user.id) saveSession({ ...current, user: toUser(user) })
 }
 
 /** Gửi email đặt lại mật khẩu. Luôn báo thành công để không lộ email nào đã có tài khoản. */
@@ -226,19 +270,30 @@ export function takeReturnPath(): string | null {
 }
 
 /** Phiên còn hiệu lực; tự làm mới bằng refresh token khi sắp hết hạn. */
-export async function currentSession(): Promise<Session | null> {
+let refreshing: { token: string; result: Promise<Session> } | undefined
+
+export async function currentSession({ keepOnError = false } = {}): Promise<Session | null> {
   const s = getSession()
   if (!s) return null
   if (s.expires_at - 60 > Date.now() / 1000) return s
-  try {
-    const data = await request<Record<string, unknown>>('/token?grant_type=refresh_token', {
-      body: { refresh_token: s.refresh_token },
+  if (refreshing?.token !== s.refresh_token) {
+    const token = s.refresh_token
+    const result = request<Record<string, unknown>>('/token?grant_type=refresh_token', {
+      body: { refresh_token: token },
+    }).then(toSession).finally(() => {
+      if (refreshing?.result === result) refreshing = undefined
     })
-    const next = toSession(data)
+    refreshing = { token, result }
+  }
+  try {
+    const next = await refreshing.result
+    const current = getSession()
+    // Lượt refresh đang chờ có thể về sau khi đã đăng xuất hoặc đổi tài khoản.
+    if (current?.refresh_token !== s.refresh_token) return current?.user.id === s.user.id ? current : null
     saveSession(next)
     return next
   } catch {
-    saveSession(null)
+    if (!keepOnError && getSession()?.refresh_token === s.refresh_token) saveSession(null)
     return null
   }
 }
