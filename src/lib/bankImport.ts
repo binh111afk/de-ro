@@ -4,6 +4,7 @@
  * PDF và ảnh chụp dựng thành ảnh trang rồi cho AI đọc, hình vẽ được cắt ra theo khung AI trả về.
  */
 import { bankVision, isAdminMock } from '@/lib/adminApi'
+import { MAX_PDF_PAGES, PAGE_SIDE, renderPdfPages } from '@/lib/pdfPages'
 import type { Option, QuestionImage, QuestionType } from '@/data/types'
 import { uid } from '@/data/docTypes'
 import { callLlm, extractJson } from '@/lib/llm'
@@ -35,9 +36,7 @@ interface RawQuestion {
 }
 
 export const IMPORT_FILE_ACCEPT = '.pdf,.docx,image/png,image/jpeg,image/webp'
-const MAX_PAGES = 12
 const PAGES_PER_CALL = 2
-const PAGE_SIDE = 1600
 const MAX_BYTES = 12 * 1024 * 1024
 const TYPES: QuestionType[] = ['trac-nghiem', 'dung-sai', 'tra-loi-ngan', 'tu-luan', 'tu-luan-dong']
 
@@ -156,29 +155,7 @@ async function renderPages(file: File): Promise<{ pages: HTMLCanvasElement[]; to
     c.getContext('2d')!.drawImage(bmp, 0, 0, c.width, c.height)
     return { pages: [c], total: 1 }
   }
-  const [pdfjs, worker] = await Promise.all([import('pdfjs-dist'), import('pdfjs-dist/build/pdf.worker.min.mjs?url')])
-  pdfjs.GlobalWorkerOptions.workerSrc = worker.default
-  const task = pdfjs.getDocument({ data: new Uint8Array(await file.arrayBuffer()) })
-  const doc = await task.promise
-  try {
-    const pages: HTMLCanvasElement[] = []
-    for (let n = 1; n <= Math.min(doc.numPages, MAX_PAGES); n++) {
-      const page = await doc.getPage(n)
-      const base = page.getViewport({ scale: 1 })
-      const viewport = page.getViewport({ scale: PAGE_SIDE / Math.max(base.width, base.height) })
-      const canvas = document.createElement('canvas')
-      canvas.width = Math.round(viewport.width)
-      canvas.height = Math.round(viewport.height)
-      const ctx = canvas.getContext('2d')!
-      ctx.fillStyle = '#fff'
-      ctx.fillRect(0, 0, canvas.width, canvas.height)
-      await page.render({ canvas, canvasContext: ctx, viewport }).promise
-      pages.push(canvas)
-    }
-    return { pages, total: doc.numPages }
-  } finally {
-    await task.destroy()
-  }
+  return renderPdfPages(file)
 }
 
 async function cropFigure(page: HTMLCanvasElement, box: unknown): Promise<QuestionImage | undefined> {
@@ -231,7 +208,7 @@ async function readByVision(file: File, onProgress: (msg: string) => void): Prom
     d.selected = draftReady(d)
   }
   if (drafts.length === 0 && failed.length) throw new Error(`Không đọc được: ${failed.join('; ')}`)
-  const notes = [total > MAX_PAGES ? `Chỉ đọc ${MAX_PAGES}/${total} trang đầu.` : '', failed.length ? `Bỏ qua ${failed.join('; ')}.` : ''].filter(Boolean)
+  const notes = [total > MAX_PDF_PAGES ? `Chỉ đọc ${MAX_PDF_PAGES}/${total} trang đầu.` : '', failed.length ? `Bỏ qua ${failed.join('; ')}.` : ''].filter(Boolean)
   return { drafts, warning: notes.join(' ') || undefined }
 }
 

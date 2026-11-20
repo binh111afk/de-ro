@@ -706,6 +706,8 @@ export async function handleExtractRequest(
   if (!(await guard(req, res, 'extract'))) return
   if (req.method === 'OPTIONS') return json(res, 204, {})
   if (req.method !== 'POST') return json(res, 405, { error: 'Method not allowed' })
+  // ảnh trang PDF scan → chữ bằng AI nhìn ảnh (tốn điểm); nạp muộn để tránh vòng import với llmProxy
+  if (new URL(req.url ?? '/', 'http://x').searchParams.has('vision')) return (await import('./sourceVision.js')).handleSourceVision(req, res)
 
   try {
     const body = JSON.parse(await readBody(req)) as { name?: unknown; data?: unknown; marks?: unknown }

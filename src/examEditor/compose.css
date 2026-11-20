@@ -1468,11 +1468,19 @@
   /* lượt người dùng: pill xám bo tròn */
   .ai-msg-user {
     align-self: flex-end;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+    max-width: 80%;
+  }
+
+  .ai-msg-bubble {
     background: var(--color-bg-subtle);
     color: var(--color-text-primary);
     padding: 8px 16px;
     border-radius: 14px;
-    max-width: 80%;
+    max-width: 100%;
     line-height: 1.5;
   }
 
@@ -2174,7 +2182,8 @@
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
-    margin-top: 8px;
+    justify-content: flex-end;
+    max-width: 100%;
   }
 
   .ai-msg-file {

@@ -29,7 +29,7 @@ import { designById } from '@/lib/slideDesigns'
 import { splitHtmlDeck } from '@/lib/htmlDeck'
 import { looksLikeEdit, parseEditCommands, type SlideEditOp } from '@/lib/slideEdit'
 import { useSlidingThumb } from './useSlidingThumb'
-import { buildSourcePack, loadPickedSources, pickedKey, type PickedSource, type SourcePack } from '@/lib/sources'
+import { buildSourcePack, isPdf, pickedKey, type PickedSource, type SourcePack } from '@/lib/sources'
 import { BookOpen, Globe, RotateCcw, ThumbsDown, ThumbsUp } from 'lucide-react'
 import type { AiApplyResult } from '@/lib/aiDocContext'
 import { looksLikeComplaint, nearlySame, rememberAiTurn, reportAi } from '@/lib/aiFeedback'
@@ -67,10 +67,10 @@ const ATTACH_ICONS: Record<Exclude<AttachKind, 'image'>, string> = {
 /** Chỉ nhận tài liệu Word/Excel/PDF và ảnh — đúng danh sách người dùng chốt. */
 const ATTACH_ACCEPT = '.doc,.docx,.xls,.xlsx,.csv,.pdf,image/*'
 
-function attachKind(file: File): AttachKind | null {
+function attachKind(file: { name: string; type?: string }): AttachKind | null {
   const name = file.name.toLowerCase()
-  if (file.type.startsWith('image/')) return 'image'
-  if (name.endsWith('.pdf') || file.type === 'application/pdf') return 'pdf'
+  if (file.type?.startsWith('image/')) return 'image'
+  if (isPdf(file.name, file.type)) return 'pdf'
   if (/\.(docx?|rtf)$/.test(name)) return 'doc'
   if (/\.(xlsx?|csv)$/.test(name)) return 'sheet'
   return null
@@ -81,6 +81,14 @@ function formatSize(bytes: number): string {
   if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`
   return `${(bytes / 1024 / 1024).toFixed(1)} MB`
 }
+
+const SOURCE_KIND_LABEL = {
+  mine: 'Đề của tôi',
+  community: 'Đề cộng đồng',
+  library: 'Kho tài liệu',
+}
+
+const PDF_SCAN_NOTICE = 'PDF scan (không có chữ) sẽ được AI đọc bằng ảnh nên tốn thêm điểm.'
 
 const newId = (() => {
   let seq = 0
@@ -141,6 +149,8 @@ export interface ChatTurn {
   /** tệp đính kèm của lượt người dùng (để hiển thị lại trong chat) */
   files?: Attachment[]
   fileNames?: string[]
+  pickedSources?: Pick<PickedSource, 'name' | 'kind'>[]
+  askSourcePack?: SourcePack
   /** thành phần đang chọn được đính kèm (bảng vẽ, câu hỏi, slide) */
   refs?: string[]
   /** true khi đang chờ model */
@@ -209,6 +219,39 @@ function ActLog({ steps }: { steps: ActStep[] }) {
         </li>
       ))}
     </ol>
+  )
+}
+
+function SentAttachments({ turn }: { turn: ChatTurn }) {
+  const files = turn.files ?? turn.fileNames?.map((name) => ({ name, kind: attachKind({ name }), url: undefined }))
+  if (!files?.length && !turn.refs?.length && !turn.pickedSources?.length) return null
+  return (
+    <div className="ai-msg-files">
+      {turn.refs?.map((label, i) => (
+        <span key={`ref-${i}`} className="ai-msg-file" data-tip={label}>
+          <span className="text-clay"><RefIcon /></span>
+          <span>{label}</span>
+        </span>
+      ))}
+      {files?.map((file, i) => (
+        <span key={`file-${i}`} className="ai-msg-file" data-tip={file.name}>
+          {file.url ? (
+            <img src={file.url} alt="" className="ai-msg-file__thumb" />
+          ) : file.kind && file.kind !== 'image' ? (
+            <img src={ATTACH_ICONS[file.kind]} alt="" className="ai-msg-file__icon" />
+          ) : (
+            <IconPaperclip size={13} />
+          )}
+          <span>{file.name}</span>
+        </span>
+      ))}
+      {turn.pickedSources?.map((p, i) => (
+        <span key={`source-${i}`} className="ai-msg-file" data-tip={`${SOURCE_KIND_LABEL[p.kind]} · ${p.name}`}>
+          <BookOpen size={13} strokeWidth={1.75} aria-hidden="true" />
+          <span>{p.name}</span>
+        </span>
+      ))}
+    </div>
   )
 }
 
@@ -402,12 +445,14 @@ const WEB_WARN_KEY = 'dethinhbien-web-search-warned'
 function historyOf(turns: ChatTurn[]): LlmMessage[] {
   return turns.flatMap((t) => {
     const names = t.files?.map((f) => f.name) ?? t.fileNames
-    if (!t.text.trim() && !names?.length && !t.refs?.length) return []
+    const pickedNames = t.pickedSources?.map((p) => p.name)
+    if (!t.text.trim() && !names?.length && !pickedNames?.length && !t.refs?.length) return []
     return [{
       role: t.role,
       content: t.text +
         (t.ask ? `\n${askHistoryText(t.ask)}` : '') +
         (names?.length ? `\n[Tệp đính kèm: ${names.join(', ')}]` : '') +
+        (pickedNames?.length ? `\n[Nguồn đính kèm: ${pickedNames.join(', ')}]` : '') +
         (t.refs?.length ? `\n[Phần đính kèm: ${t.refs.join(', ')}]` : ''),
     }]
   })
@@ -728,7 +773,7 @@ function AiConversation({
   const [input, setInput] = useState('')
   const [files, setFiles] = useState<Attachment[]>([])
   const [refs, setRefs] = useState<AiRef[]>([])
-  /** nguồn chọn trong modal "Thêm nguồn" — giữ qua các lượt tới khi giáo viên bỏ */
+  /** nguồn chọn trong modal "Thêm nguồn" cho lượt đang soạn */
   const [picked, setPicked] = useState<PickedSource[]>([])
   // tìm trên web trước mỗi lượt soạn (tốn thêm điểm); tắt mặc định
   const [webSearch, setWebSearch] = useState(false)
@@ -801,11 +846,11 @@ function AiConversation({
 
   const addFiles = (list: FileList | null) => {
     if (!list?.length) return
-    const picked: Attachment[] = []
+    const added: Attachment[] = []
     for (const file of Array.from(list)) {
       const kind = attachKind(file)
       if (!kind) continue
-      picked.push({
+      added.push({
         id: newId(),
         name: file.name,
         size: file.size,
@@ -814,7 +859,8 @@ function AiConversation({
         file,
       })
     }
-    if (picked.length) setFiles((current) => [...current, ...picked])
+    if (added.length) setFiles((current) => [...current, ...added])
+    if (added.some((file) => file.kind === 'pdf')) void dialog.alert(PDF_SCAN_NOTICE)
   }
 
   const removeFile = (id: string) => {
@@ -854,13 +900,14 @@ function AiConversation({
 
   const send = useCallback(async (override?: string, opt: { strong?: boolean } = {}) => {
     const text = (override ?? input).trim()
-    if ((!text && files.length === 0 && refs.length === 0) || busy || abortRef.current) return
+    if ((!text && !files.length && !refs.length && !picked.length) || busy || abortRef.current) return
     const sentRefs = refs
     const refNote = sentRefs.length
       ? `\n\nPhần đang chọn (người dùng hỏi về phần này):\n${sentRefs.map((r) => `- ${r.label}: ${r.detail}`).join('\n')}`
       : ''
 
     const sentFiles = files
+    const sentPicked = picked
     const fileNote = sentFiles.length
       ? `\n\nTệp đính kèm: ${sentFiles
           .map((f) => `${f.name} (${f.kind === 'image' ? 'ảnh' : f.kind === 'doc' ? 'Word' : f.kind === 'sheet' ? 'bảng tính' : 'PDF'})`)
@@ -870,10 +917,18 @@ function AiConversation({
     // Giữ File trong `sentFiles` để trích nội dung; lượt chat chỉ lưu metadata
     // để không giữ cả tệp lớn trong state sau khi gửi.
     const displayFiles = sentFiles.map((f) => ({ ...f, file: undefined }))
-    const userTurn: ChatTurn = { id: `u${Date.now()}`, role: 'user', text, files: displayFiles, refs: sentRefs.map((r) => r.label) }
+    const userTurn: ChatTurn = {
+      id: `u${Date.now()}`,
+      role: 'user',
+      text,
+      files: displayFiles,
+      refs: sentRefs.map((r) => r.label),
+      ...(sentPicked.length ? { pickedSources: sentPicked.map(({ name, kind }) => ({ name, kind })) } : {}),
+    }
     const botId = `a${Date.now()}`
     // trả lời panel hỏi lại = tiếp tục yêu cầu soạn ban đầu
-    const answeringAsk = override != null && turns[turns.length - 1]?.ask != null
+    const previousTurn = turns.at(-1)
+    const answeringAsk = override != null && previousTurn?.ask != null
     // tín hiệu không hài lòng với lượt trước: "sai rồi…" hoặc gửi lại gần giống
     const prevUser = [...turns].reverse().find((t) => t.role === 'user')
     const prevBot = turns[turns.length - 1]
@@ -882,7 +937,7 @@ function AiConversation({
       if (looksLikeComplaint(text)) reportAi('complaint', info, text)
       else if (override == null && nearlySame(text, prevUser.text)) reportAi('resend', info, text)
     }
-    const intent = answeringAsk || (sentFiles.length && !text.trim()) ? 'doc' : detectIntent(text, mode)
+    const intent = answeringAsk || (!text && (sentFiles.length || sentPicked.length)) ? 'doc' : detectIntent(text, mode)
     setTurns((t) => [
       ...t,
       userTurn,
@@ -899,79 +954,66 @@ function AiConversation({
     if (override == null) setInput('')
     setFiles([])
     setRefs([])
+    setPicked([])
     setBusy(true)
     const leftAtStart = leftTokens()
 
     const controller = new AbortController()
     abortRef.current = controller
 
-    // Chỉ dùng nguồn giáo viên tự đưa vào (tệp đính kèm, "Thêm nguồn") — không tự lấy đề đã lưu hay tìm web.
-    // Tệp đính kèm chỉ áp cho soạn/sửa ĐỀ; nguồn tự chọn áp cho mọi chế độ (soạn đề, slide, hỏi đáp).
-    let pack: SourcePack = { tier: 0, items: [], warnings: [] }
-    const sentPicked = picked
-    const examDoc = intent === 'doc' && mode === 'exam'
-    // yêu cầu cụt lủn ("soạn đề đi") thường bị hỏi lại: khỏi tìm nguồn web vô ích
-    const vague = examDoc && !sentFiles.length && !sentPicked.length && text.split(/\s+/).length < 5 && !turns.length
-    if ((examDoc && !vague) || sentPicked.length) {
-      try {
-        if (examDoc) pack = await buildSourcePack(sentFiles, sentPicked)
-        else {
-          const got = await loadPickedSources(sentPicked)
-          pack = { tier: got.items.length ? 1 : 0, items: got.items, warnings: got.warnings }
-        }
-      } catch (err) {
-        pack = {
-          tier: 0,
-          items: [],
-          warnings: [`Không dựng được nguồn: ${err instanceof Error ? err.message : String(err)}`],
-        }
-      }
-    }
-    const sourceNames = pack.items.map((s) => s.name)
-    const sourceNote = pack.warnings.length ? pack.warnings.join(' ') : undefined
-    if (sourceNames.length || sourceNote) {
-      setTurns((t) =>
-        t.map((turn) =>
-          turn.id === botId ? { ...turn, sources: sourceNames, sourceNote } : turn,
-        ),
-      )
-    }
-    if (examSteps && sourceNames.length) logSet((l) => [...l, { label: 'Đọc nguồn', state: 'done', note: `${sourceNames.length} nguồn` }])
-    // khung chương trình Toán: đoán lớp/chương từ yêu cầu; lượt nối tiếp ("thêm 2 câu") thì lấy từ các lượt trước và đầu đề
-    let khungBlock = ''
-    if (intent === 'doc' && mode === 'exam') {
-      const prev = turns.filter((t) => t.role === 'user').slice(-3).map((t) => t.text).reverse()
-      khungBlock =
-        (await khungPromptFor(text)) ||
-        (await khungPromptFor([text, ...prev, contextSummary ?? '', (documentDigest ?? '').slice(0, 800)].join('\n')))
-    }
-
-    const history = historyOf(turns)
-    // vừa hỏi lại xong thì không hỏi nữa; bảng vẽ và slide HTML không dùng panel hỏi
-    const justAsked = turns.slice(-2).some((t) => t.ask)
-    const askRule = !(mode === 'board' || justAsked)
-    const slideDoc = mode === 'slide' && intent === 'doc'
-    const htmlMode = mode === 'slide' && intent === 'doc' && slideFormat === 'html'
-    // server ghép system prompt từ `task` + dữ liệu người dùng này (client không giữ chữ prompt)
-    const srcInput = {
-      withSources: examDoc || pack.items.length > 0,
-      sourceTier: pack.tier,
-      sources: pack.items.map((s) => ({ tier: s.tier, name: s.name, url: s.url, text: s.text })),
-      khung: khungBlock,
-    }
-    const mainTask: { name: string; input: Record<string, unknown> } =
-      mode === 'board'
-        ? { name: 'bang-ve', input: { ops: !!onBoardOps, contextSummary, ...srcInput } }
-        : mode === 'slide'
-        ? { name: 'slide-chat', input: { variant: htmlMode ? 'html' : slideDoc ? 'plan' : 'chat', ask: askRule, contextSummary, ...srcInput } }
-        : { name: 'soan-de', input: { text, intent, digest: documentDigest, contextSummary, ask: askRule, ...srcInput } }
-
-    const messages: LlmMessage[] = [
-      ...history,
-      { role: 'user', content: (text || (sentRefs.length ? 'Giải thích hoặc góp ý cho phần đang chọn.' : 'Hãy xử lý các tệp đính kèm sau.')) + fileNote + refNote + (mode === 'exam' && focusFor ? focusFor(text) : '') },
-    ]
-
     try {
+      const examDoc = intent === 'doc' && mode === 'exam'
+      // Ngoài luồng soạn đề, PDF và nguồn đã chọn vẫn được đọc khi gửi.
+      const sourceFiles = examDoc ? sentFiles : sentFiles.filter((f) => f.kind === 'pdf')
+      let pack: SourcePack = (answeringAsk && previousTurn?.askSourcePack) || { tier: 0, items: [], warnings: [] }
+      if (sourceFiles.length || sentPicked.length) {
+        if (examSteps) logStart('Đọc nguồn')
+        const added = await buildSourcePack(sourceFiles, sentPicked, {
+          onProgress: examSteps ? (note) => logPatch({ note }) : undefined,
+          signal: controller.signal,
+        })
+        pack = { tier: pack.tier || added.tier, items: [...pack.items, ...added.items], warnings: [...pack.warnings, ...added.warnings] }
+        if (examSteps) logSet((l) => closeLog(l, 'done', `${pack.items.length} nguồn`))
+      }
+      const sourceNote = pack.warnings.length ? pack.warnings.join(' ') : undefined
+      if (pack.items.length || sourceNote) {
+        patchTurn(() => ({ sources: pack.items.map((s) => s.name), sourceNote }))
+      }
+      controller.signal.throwIfAborted()
+      // khung chương trình Toán: đoán lớp/chương từ yêu cầu; lượt nối tiếp ("thêm 2 câu") thì lấy từ các lượt trước và đầu đề
+      let khungBlock = ''
+      if (intent === 'doc' && mode === 'exam') {
+        const prev = turns.filter((t) => t.role === 'user').slice(-3).map((t) => t.text).reverse()
+        khungBlock =
+          (await khungPromptFor(text)) ||
+          (await khungPromptFor([text, ...prev, contextSummary ?? '', (documentDigest ?? '').slice(0, 800)].join('\n')))
+      }
+
+      const history = historyOf(turns)
+      // vừa hỏi lại xong thì không hỏi nữa; bảng vẽ và slide HTML không dùng panel hỏi
+      const justAsked = turns.slice(-2).some((t) => t.ask)
+      const askRule = !(mode === 'board' || justAsked)
+      const slideDoc = mode === 'slide' && intent === 'doc'
+      const htmlMode = mode === 'slide' && intent === 'doc' && slideFormat === 'html'
+      // server ghép system prompt từ `task` + dữ liệu người dùng này (client không giữ chữ prompt)
+      const srcInput = {
+        withSources: examDoc || pack.items.length > 0,
+        sourceTier: pack.tier,
+        sources: pack.items.map((s) => ({ tier: s.tier, name: s.name, url: s.url, text: s.text })),
+        khung: khungBlock,
+      }
+      const mainTask: { name: string; input: Record<string, unknown> } =
+        mode === 'board'
+          ? { name: 'bang-ve', input: { ops: !!onBoardOps, contextSummary, ...srcInput } }
+          : mode === 'slide'
+          ? { name: 'slide-chat', input: { variant: htmlMode ? 'html' : slideDoc ? 'plan' : 'chat', ask: askRule, contextSummary, ...srcInput } }
+          : { name: 'soan-de', input: { text, intent, digest: documentDigest, contextSummary, ask: askRule, ...srcInput } }
+
+      const messages: LlmMessage[] = [
+        ...history,
+        { role: 'user', content: (text || (sentRefs.length ? 'Giải thích hoặc góp ý cho phần đang chọn.' : sentFiles.length ? 'Hãy xử lý các tệp đính kèm sau.' : 'Hãy xử lý các nguồn đã chọn.')) + fileNote + refNote + (mode === 'exam' && focusFor ? focusFor(text) : '') },
+      ]
+
       // Sửa slide CÓ SẴN (đổi phông/màu/theme/tông, xoá, dời slide): model chỉ trả lệnh có cấu trúc,
       // engine áp dụng. Không phải yêu cầu sửa ("action":"none") thì rơi xuống luồng soạn bình thường.
       if (mode === 'slide' && !htmlMode && existingSlideCount > 0 && onApplyEdits && looksLikeEdit(text)) {
@@ -995,7 +1037,7 @@ function AiConversation({
       }
       // lượt đầu, tài liệu trống, chưa nêu môn: hỏi bằng prompt ngắn (~1.000 token thay vì ~10.000).
       // Model thấy đoán được môn thì trả "proceed" và chạy luồng đầy đủ như cũ.
-      if (askRule && !htmlMode && intent === 'doc' && !history.length && !documentDigest && !sentFiles.length && !sentRefs.length && !(mode === 'slide' && existingSlideCount > 0) && needsAskFirst(text)) {
+      if (askRule && !htmlMode && intent === 'doc' && !history.length && !documentDigest && !sentFiles.length && !sentRefs.length && !sentPicked.length && !(mode === 'slide' && existingSlideCount > 0) && needsAskFirst(text)) {
         const quick = await callLlm([{ role: 'user', content: text }], { signal: controller.signal, reasoningEffort: 'low', task: { name: 'hoi-truoc' } })
         const quickAsk = parseAsk(quick.content)
         if (quickAsk) {
@@ -1088,7 +1130,7 @@ function AiConversation({
       }
       const ask = askRule && !htmlMode ? parseAsk(res.content) : null
       if (ask) {
-        patchTurn(() => ({ text: ask.intro || 'Mình cần biết thêm vài điều trước khi soạn.', ask, askState: 'open', intent: 'doc', pending: false, log: undefined, sources: undefined, sourceNote: undefined }))
+        patchTurn(() => ({ text: ask.intro || 'Mình cần biết thêm vài điều trước khi soạn.', ask, askState: 'open', intent: 'doc', pending: false, log: undefined, askSourcePack: pack }))
         return
       }
       if (examSteps) {
@@ -1271,7 +1313,7 @@ function AiConversation({
       setBusy(false)
       abortRef.current = null
     }
-  }, [input, files, refs, busy, turns, contextSummary, documentDigest, mode, onApplyBlocks, onApplySlides, slideFormat, existingSlideCount, editContext, onApplyEdits, onBoardOps])
+  }, [input, files, refs, picked, busy, turns, contextSummary, documentDigest, mode, onApplyBlocks, onApplySlides, slideFormat, existingSlideCount, editContext, onApplyEdits, onBoardOps])
 
   const stop = useCallback(() => {
     abortRef.current?.abort()
@@ -1478,7 +1520,7 @@ function AiConversation({
   const openAsk = !busy && lastTurn?.askState === 'open' && lastTurn.ask ? lastTurn : null
   const answerAsk = (reply: string) => {
     if (!openAsk) return
-    setTurns((t) => t.map((turn) => (turn.id === openAsk.id ? { ...turn, askState: 'done' } : turn)))
+    setTurns((t) => t.map((turn) => (turn.id === openAsk.id ? { ...turn, askState: 'done', askSourcePack: undefined } : turn)))
     void send(reply)
   }
 
@@ -1530,6 +1572,7 @@ function AiConversation({
                 turn.role === 'user' ? 'ai-msg-user' : 'ai-msg-assistant',
               )}
             >
+              {turn.role === 'user' ? <SentAttachments turn={turn} /> : null}
               {turn.log?.length ? <ActLog steps={turn.log} /> : null}
               {turn.pending && !turn.text ? (
                 turn.log?.length ? null : turn.progress ? (
@@ -1538,11 +1581,15 @@ function AiConversation({
                   <ThinkingLine mode={mode} intent={turn.intent} />
                 )
               ) : (
-                <TypedMarkdown
-                  text={turn.text}
-                  chat={turn.role === 'assistant' && turn.intent === 'chat'}
-                  animate={!restoredTurnIds.has(turn.id)}
-                />
+                turn.role === 'user' ? (
+                  turn.text ? (
+                    <div className="ai-msg-bubble">
+                      <TypedMarkdown text={turn.text} chat={false} animate={!restoredTurnIds.has(turn.id)} />
+                    </div>
+                  ) : null
+                ) : (
+                  <TypedMarkdown text={turn.text} chat={turn.intent === 'chat'} animate={!restoredTurnIds.has(turn.id)} />
+                )
               )}
               <PlanCard
                 plan={turn.plan}
@@ -1553,35 +1600,6 @@ function AiConversation({
                 }
                 onCancel={() => cancelPlan(turn.id)}
               />
-              {turn.refs?.length ? (
-                <div className="ai-msg-files">
-                  {turn.refs.map((label, i) => (
-                    <span key={i} className="ai-msg-file" data-tip={label}>
-                      <span className="text-clay"><RefIcon /></span>
-                      <span>{label}</span>
-                    </span>
-                  ))}
-                </div>
-              ) : null}
-              {turn.files?.length ? (
-                <div className="ai-msg-files">
-                  {turn.files.map((f) => (
-                    <span key={f.id} className="ai-msg-file" data-tip={f.name}>
-                      {f.kind !== 'image' ? (
-                        <img src={ATTACH_ICONS[f.kind]} alt="" className="ai-msg-file__icon" />
-                      ) : f.url ? (
-                        <img src={f.url} alt="" className="ai-msg-file__thumb" />
-                      ) : null}
-                      <span>{f.name}</span>
-                    </span>
-                  ))}
-                </div>
-              ) : null}
-              {turn.fileNames?.length ? (
-                <div className="ai-msg-files">
-                  {turn.fileNames.map((name, i) => <span key={i} className="ai-msg-file" data-tip={name}><span>{name}</span></span>)}
-                </div>
-              ) : null}
               {turn.sources?.length || turn.webSources?.length || turn.sourceNote ? <SourcesButton sources={turn.sources} web={turn.webSources} note={turn.sourceNote} /> : null}
               {turn.error ? (
                 <div className="ai-msg-error">
@@ -1632,9 +1650,13 @@ function AiConversation({
           value={picked}
           onClose={() => setPickerOpen(false)}
           onDone={(next) => {
+            const addedPdf = next.some((p) =>
+              p.kind === 'library' && isPdf(p.name, p.mime) && !picked.some((previous) => pickedKey(previous) === pickedKey(p)),
+            )
             setPicked(next)
             setPickerOpen(false)
             taRef.current?.focus()
+            if (addedPdf) void dialog.alert(PDF_SCAN_NOTICE)
           }}
         />
       ) : null}
@@ -1682,7 +1704,7 @@ function AiConversation({
                   <span className="ai-attachment__meta">
                     <span className="ai-attachment__name" data-tip={p.name}>{p.name}</span>
                     <span className="ai-attachment__size">
-                      {p.kind === 'mine' ? 'Đề của tôi' : p.kind === 'community' ? 'Đề cộng đồng' : 'Kho tài liệu'}
+                      {SOURCE_KIND_LABEL[p.kind]}
                     </span>
                   </span>
                   <button type="button" className="ai-attachment__remove" data-tip="Bỏ nguồn" aria-label={`Bỏ nguồn ${p.name}`}
@@ -1830,7 +1852,7 @@ function AiConversation({
                 type="button"
                 className="ai-send-btn"
                 onClick={() => void send()}
-                disabled={!input.trim() && files.length === 0}
+                disabled={!input.trim() && !files.length && !refs.length && !picked.length}
                 data-tip="Gửi"
                 aria-label="Gửi"
               >

@@ -3,9 +3,10 @@
  * Chạy: npm run test:sources
  */
 import assert from 'node:assert/strict'
+import { AiQuotaError } from '../src/lib/llm.ts'
 import { emptyDoc } from '../src/data/docTypes.ts'
 import { useDocStore } from '../src/store/docs.ts'
-import { buildSourcePack, sourcePrompt, sourceRule } from '../src/lib/sources.ts'
+import { buildSourcePack, readVisionPages, sourcePrompt, sourceRule } from '../src/lib/sources.ts'
 
 const grade7 = emptyDoc({ title: 'Đề giữa kỳ Toán 7', grade: 'Lớp 7', subject: 'Toán' })
 grade7.blocks = [
@@ -42,4 +43,80 @@ console.log('✅ rule ưu tiên 1 + chống prompt injection')
 assert.equal(sourcePrompt({ tier: 0, items: [], warnings: [] }), '')
 console.log('✅ không có nguồn thì không chèn khối NGUỒN')
 
-console.log('\n4/4 pass, 0 fail')
+const pages = Array.from({ length: 7 }, (_, i) => ({
+  toDataURL(type, quality) {
+    assert.equal(type, 'image/jpeg')
+    assert.equal(quality, 0.82)
+    return `data:image/jpeg;base64,${i + 1}`
+  },
+}))
+const originalFetch = globalThis.fetch
+const batches = []
+const progress = []
+let responses = []
+globalThis.fetch = async (url, init) => {
+  assert.equal(url, '/api/extract?vision=1')
+  assert.equal(init.method, 'POST')
+  const { images } = JSON.parse(init.body)
+  batches.push(images.map((image) => Number(image.split(',')[1])))
+  return responses.shift()
+}
+try {
+  responses = [
+    Response.json({ text: '  Lô đầu  ' }),
+    Response.json({ error: 'Đang bận' }, { status: 429 }),
+    Response.json({ text: 'Lô cuối' }),
+  ]
+  const result = await readVisionPages(pages, pages.length, { onProgress: (msg) => progress.push(msg) })
+  assert.deepEqual(batches, [[1, 2, 3], [4, 5, 6], [7]])
+  assert.deepEqual(progress, ['Đang đọc trang 1-3/7…', 'Đang đọc trang 4-6/7…', 'Đang đọc trang 7/7…'])
+  assert.deepEqual(result, { text: 'Lô đầu\n\nLô cuối', warning: 'Không đọc được trang 4-6.' })
+  console.log('✅ đọc PDF theo lô 3 trang, nối chữ và bỏ qua lô lỗi')
+
+  responses = Array.from({ length: 4 }, () => Response.json({ text: 'Trang' }))
+  const capped = await readVisionPages([...pages, ...pages.slice(0, 5)], 17)
+  assert.equal(capped.warning, 'Chỉ đọc 12/17 trang đầu.')
+  console.log('✅ cảnh báo khi chỉ đọc 12 trang đầu')
+
+  batches.length = 0
+  const quotaMessage = 'Đọc ảnh PDF cần khoảng 16 điểm AI mỗi lượt nhưng bạn chỉ còn 5 điểm.'
+  responses = [
+    Response.json({ text: 'Lô đầu' }),
+    Response.json({ code: 'quota', error: quotaMessage }, { status: 429 }),
+  ]
+  await assert.rejects(readVisionPages(pages, pages.length), { constructor: AiQuotaError, message: quotaMessage })
+  assert.deepEqual(batches, [[1, 2, 3], [4, 5, 6]])
+  console.log('✅ dừng khi hết điểm và giữ thông báo máy chủ')
+} finally {
+  globalThis.fetch = originalFetch
+}
+
+const originalFileReader = globalThis.FileReader
+globalThis.FileReader = class {
+  readAsDataURL() {
+    this.result = 'data:application/pdf;base64,AA=='
+    this.onload()
+  }
+}
+const pdf = new File(['PDF'], 'Tệp có chữ.PDF', { type: 'application/pdf' })
+const textRequests = []
+globalThis.fetch = async (url) => {
+  textRequests.push(url)
+  if (url === '/api/files/test.pdf') return new Response(pdf)
+  return Response.json({ text: 'Chữ trong PDF' })
+}
+try {
+  const pack = await buildSourcePack(
+    [{ name: pdf.name, kind: 'pdf', file: pdf }],
+    [{ kind: 'library', id: 'pdf', name: pdf.name, mime: pdf.type, url: '/api/files/test.pdf' }],
+  )
+  assert.deepEqual(pack.items.map((item) => item.text), ['Chữ trong PDF', 'Chữ trong PDF'])
+  assert.deepEqual(pack.warnings, [])
+  assert.deepEqual(textRequests, ['/api/files/test.pdf', '/api/extract', '/api/extract'])
+  console.log('✅ PDF có chữ từ Kho tài liệu và tệp đính kèm đi qua bộ tách chữ')
+} finally {
+  globalThis.fetch = originalFetch
+  globalThis.FileReader = originalFileReader
+}
+
+console.log('\n8/8 pass, 0 fail')

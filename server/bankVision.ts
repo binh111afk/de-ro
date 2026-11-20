@@ -27,12 +27,24 @@ Quy tắc:
 
 export class VisionInputError extends Error {}
 
-export async function readExamPages(images: unknown, userId: string): Promise<{ content: string; model: string }> {
-  if (!Array.isArray(images) || images.length === 0 || images.length > MAX_IMAGES) throw new VisionInputError(`Cần gửi từ 1 đến ${MAX_IMAGES} ảnh.`)
+/** Đọc chữ trang tài liệu làm nguồn cho khung chat AI: chép nguyên văn, không dựng JSON câu hỏi. */
+const TEXT_PROMPT = `Các ảnh sau là các trang liên tiếp của một tài liệu tiếng Việt (thường là đề thi hoặc bài học). Chép lại toàn bộ chữ nhìn thấy, đúng thứ tự từ trên xuống, không tóm tắt, không sửa, không giải bài.
+Công thức toán viết LaTeX trong $...$. Bảng viết dạng các dòng, ô cách nhau bằng " | ". Hình vẽ, biểu đồ thì ghi ngắn trong ngoặc vuông, ví dụ [Hình: đồ thị hàm số bậc hai]. Chỉ trả về phần chữ chép lại, không kèm lời dẫn.`
+
+export type VisionResult = { content: string; model: string; tokens: number }
+
+export async function readExamPages(
+  images: unknown,
+  userId: string,
+  opts: { text?: boolean; maxImages?: number; order?: string[] } = {},
+): Promise<VisionResult> {
+  const maxImages = opts.maxImages ?? MAX_IMAGES
+  if (!Array.isArray(images) || images.length === 0 || images.length > maxImages) throw new VisionInputError(`Cần gửi từ 1 đến ${maxImages} ảnh.`)
   if (!images.every((x) => typeof x === 'string' && IMAGE.test(x))) throw new VisionInputError('Ảnh không hợp lệ.')
   const pages = images as string[]
+  const prompt = opts.text ? TEXT_PROMPT : PROMPT
 
-  const targets = await visionTargets()
+  const targets = await visionTargets(opts.order)
   if (targets.length === 0) throw new Error('Chưa có provider đọc được ảnh. Cần cấu hình LLM_API_KEY, FOSTA_API_KEY hoặc ANTHROPIC_API_KEY.')
 
   const errs: string[] = []
@@ -46,7 +58,7 @@ export async function readExamPages(images: unknown, userId: string): Promise<{ 
       let content = ''
       let usage: unknown
       if (t.anthropic) {
-        const r = await callAnthropic({ apiKey: t.key, baseURL: t.url, model: t.model, messages: [{ role: 'user', content: PROMPT }], images: pages, maxTokens: MAX_TOKENS, effort: 'low', signal: AbortSignal.timeout(TIMEOUT_MS) })
+        const r = await callAnthropic({ apiKey: t.key, baseURL: t.url, model: t.model, messages: [{ role: 'user', content: prompt }], images: pages, maxTokens: MAX_TOKENS, effort: 'low', signal: AbortSignal.timeout(TIMEOUT_MS) })
         content = r.content
         usage = r.usage
       } else {
@@ -57,7 +69,7 @@ export async function readExamPages(images: unknown, userId: string): Promise<{ 
             model: t.model,
             max_tokens: t.opencode ? 64_000 : MAX_TOKENS,
             ...(t.opencode ? { reasoning_effort: 'max' } : {}),
-            messages: [{ role: 'user', content: [{ type: 'text', text: PROMPT }, ...pages.map((url) => ({ type: 'image_url', image_url: { url } }))] }],
+            messages: [{ role: 'user', content: [{ type: 'text', text: prompt }, ...pages.map((url) => ({ type: 'image_url', image_url: { url } }))] }],
           }),
           redirect: 'error',
           signal: AbortSignal.timeout(t.opencode ? 240_000 : TIMEOUT_MS),
@@ -69,9 +81,12 @@ export async function readExamPages(images: unknown, userId: string): Promise<{ 
       }
       if (!content.trim()) throw new Error('trả về rỗng')
       // model không thật sự nhìn thấy ảnh hay trả {"questions":[]} → thử model kế tiếp
-      if (!/"prompt"\s*:\s*"[^"]/.test(content)) throw new Error('không đọc ra câu nào')
+      if (!opts.text && !/"prompt"\s*:\s*"[^"]/.test(content)) throw new Error('không đọc ra câu nào')
       await log(true, null, usage)
-      return { content, model: t.model }
+      const u = usage as { total_tokens?: number; prompt_tokens?: number; completion_tokens?: number } | undefined
+      // thiếu usage thì ước cao (mỗi ảnh ~2.000 token) để không đọc miễn phí
+      const tokens = Number(u?.total_tokens) || Number(u?.prompt_tokens ?? 0) + Number(u?.completion_tokens ?? 0) || pages.length * 2000 + Math.ceil(content.length / 3)
+      return { content, model: t.model, tokens }
     } catch (err) {
       const msg = err instanceof Error ? err.message.slice(0, 200) : String(err)
       errs.push(`${t.provider}: ${msg}`)

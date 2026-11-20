@@ -4,11 +4,12 @@
  * tìm web đi qua nút "Tìm trên web" riêng). Không có nguồn — dùng kiến thức chung, phải cảnh báo.
  */
 import { apiFetch } from '@/lib/apiFetch'
+import { AiQuotaError, reportQuota } from '@/lib/llm'
+import { MAX_PDF_PAGES, renderPdfPages } from '@/lib/pdfPages'
 import { sourcePrompt as promptOf, sourceRule as ruleOf } from '@/lib/prompts/sources'
 import type { ExamBlock, ExamDoc, RichText } from '@/data/docTypes'
 import { plainText } from '@/examEditor/convert'
 import { useDocStore } from '@/store/docs'
-import { getCommunityDoc } from '@/lib/community'
 
 export interface SourceFile {
   name: string
@@ -47,6 +48,66 @@ export interface PickedSource {
 
 export const pickedKey = (p: Pick<PickedSource, 'kind' | 'id'>) => `${p.kind}:${p.id}`
 
+const VISION_PAGES_PER_CALL = 3
+
+export const isPdf = (name: string, mime?: string) =>
+  /\.pdf$/i.test(name) || mime === 'application/pdf'
+
+type SourceReadOptions = { onProgress?: (message: string) => void; signal?: AbortSignal }
+
+export async function readVisionPages(
+  pages: HTMLCanvasElement[],
+  total: number,
+  { onProgress, signal }: SourceReadOptions = {},
+): Promise<{ text: string; warning?: string }> {
+  const texts: string[] = []
+  const failed: string[] = []
+
+  for (let i = 0; i < pages.length; i += VISION_PAGES_PER_CALL) {
+    signal?.throwIfAborted()
+    const batch = pages.slice(i, i + VISION_PAGES_PER_CALL)
+    const label = batch.length > 1 ? `${i + 1}-${i + batch.length}` : `${i + 1}`
+    onProgress?.(`Đang đọc trang ${label}/${pages.length}…`)
+    try {
+      const response = await apiFetch('/api/extract?vision=1', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ images: batch.map((page) => page.toDataURL('image/jpeg', 0.82)) }),
+        signal,
+      })
+      const payload = (await response.json().catch(() => null)) as
+        | { text?: string; error?: string; code?: string; quota?: unknown }
+        | null
+      signal?.throwIfAborted()
+      reportQuota(payload?.quota)
+      if (response.status === 429 && payload?.code === 'quota') {
+        throw new AiQuotaError(payload.error || 'Bạn không đủ điểm AI để đọc PDF.')
+      }
+      if (!response.ok || typeof payload?.text !== 'string') {
+        throw new Error(payload?.error || `Không đọc được ảnh (${response.status}).`)
+      }
+      const text = payload.text.trim()
+      if (text) texts.push(text)
+    } catch (err) {
+      signal?.throwIfAborted()
+      if (err instanceof AiQuotaError) throw err
+      failed.push(label)
+    }
+  }
+
+  const warning = [
+    total > MAX_PDF_PAGES ? `Chỉ đọc ${MAX_PDF_PAGES}/${total} trang đầu.` : '',
+    failed.length ? `Không đọc được trang ${failed.join(', ')}.` : '',
+  ].filter(Boolean).join(' ')
+  return { text: texts.join('\n\n'), warning: warning || undefined }
+}
+
+export async function readPdfByVision(file: File, onProgress?: SourceReadOptions['onProgress'], signal?: AbortSignal) {
+  signal?.throwIfAborted()
+  const { pages, total } = await renderPdfPages(file)
+  return readVisionPages(pages, total, { onProgress, signal })
+}
+
 function fileToBase64(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
@@ -81,6 +142,20 @@ export async function extractAttachment(
     ...(payload?.images?.length ? { images: payload.images } : {}),
     warning: payload?.warning,
   }
+}
+
+async function extractSourceFile(file: File, name: string, warnings: string[], options: SourceReadOptions) {
+  options.signal?.throwIfAborted()
+  const extracted = await extractAttachment(file)
+  options.signal?.throwIfAborted()
+  if (!extracted.text.trim() && isPdf(file.name, file.type)) {
+    const { text, warning } = await readPdfByVision(file, options.onProgress, options.signal)
+    warnings.push(`${name}: đọc bằng AI nhìn ảnh.`)
+    if (warning) warnings.push(`${name}: ${warning}`)
+    return { text, warning }
+  }
+  if (extracted.warning) warnings.push(`${name}: ${extracted.warning}`)
+  return extracted
 }
 
 function blockText(b: ExamBlock): string {
@@ -135,44 +210,53 @@ function docText(doc: ExamDoc): string {
 }
 
 /** Tải nội dung các nguồn giáo viên đã chọn (lúc bấm gửi, không lúc chọn). Nguồn lỗi thì bỏ qua kèm cảnh báo. */
-export async function loadPickedSources(list: PickedSource[]): Promise<{ items: SourceItem[]; warnings: string[] }> {
+export async function loadPickedSources(
+  list: PickedSource[],
+  options: SourceReadOptions = {},
+): Promise<{ items: SourceItem[]; warnings: string[] }> {
   const warnings: string[] = []
-  const items = await Promise.all(
-    list.map(async (p): Promise<SourceItem | null> => {
-      try {
-        let text = ''
-        if (p.kind === 'mine') {
-          const doc = useDocStore.getState().myDocs.find((d) => d.id === p.id)
-          if (!doc) throw new Error('đề không còn trong máy')
-          text = docText(doc)
-        } else if (p.kind === 'community') {
-          text = docText(await getCommunityDoc(p.id))
-        } else {
-          if (!p.url) throw new Error('thiếu đường dẫn tệp')
-          // tệp trong kho là tài liệu riêng: máy chủ chỉ trả cho chủ tệp → gửi kèm token
-          const res = await apiFetch(p.url)
-          if (!res.ok) throw new Error(`không tải được tệp (${res.status})`)
-          const blob = await res.blob()
-          const extracted = await extractAttachment(new File([blob], p.name, { type: p.mime || blob.type }))
-          if (extracted.warning) warnings.push(`${p.name}: ${extracted.warning}`)
-          text = extracted.text
-        }
-        if (!text.trim()) {
-          warnings.push(`${p.name}: không có chữ để làm nguồn.`)
-          return null
-        }
-        return { tier: 1, name: p.name, text: text.slice(0, MAX_PICKED_CHARS) }
-      } catch (err) {
-        warnings.push(`${p.name}: ${err instanceof Error ? err.message : String(err)}`)
-        return null
+  const items: SourceItem[] = []
+  for (const p of list) {
+    options.signal?.throwIfAborted()
+    try {
+      let text = ''
+      if (p.kind === 'mine') {
+        const doc = useDocStore.getState().myDocs.find((d) => d.id === p.id)
+        if (!doc) throw new Error('đề không còn trong máy')
+        text = docText(doc)
+      } else if (p.kind === 'community') {
+        const { getCommunityDoc } = await import('@/lib/community')
+        text = docText(await getCommunityDoc(p.id))
+      } else {
+        if (!p.url) throw new Error('thiếu đường dẫn tệp')
+        // tệp trong kho là tài liệu riêng: máy chủ chỉ trả cho chủ tệp → gửi kèm token
+        const res = await apiFetch(p.url, { signal: options.signal })
+        if (!res.ok) throw new Error(`không tải được tệp (${res.status})`)
+        const blob = await res.blob()
+        const file = new File([blob], p.name, { type: p.mime || blob.type })
+        const extracted = await extractSourceFile(file, p.name, warnings, options)
+        text = extracted.text
       }
-    }),
-  )
-  return { items: items.filter((x): x is SourceItem => x !== null), warnings }
+      if (text.trim()) {
+        items.push({ tier: 1, name: p.name, text: text.slice(0, MAX_PICKED_CHARS) })
+      } else {
+        warnings.push(`${p.name}: không có chữ để làm nguồn.`)
+      }
+    } catch (err) {
+      options.signal?.throwIfAborted()
+      if (err instanceof AiQuotaError) throw err
+      warnings.push(`${p.name}: ${err instanceof Error ? err.message : String(err)}`)
+    }
+  }
+  return { items, warnings }
 }
 
-export async function buildSourcePack(files: SourceFile[], picked: PickedSource[] = []): Promise<SourcePack> {
-  const loaded = picked.length ? await loadPickedSources(picked) : { items: [], warnings: [] }
+export async function buildSourcePack(
+  files: SourceFile[],
+  picked: PickedSource[] = [],
+  options: SourceReadOptions = {},
+): Promise<SourcePack> {
+  const loaded = await loadPickedSources(picked, options)
   const warnings: string[] = [...loaded.warnings]
   const attached: SourceItem[] = [...loaded.items]
 
@@ -183,14 +267,15 @@ export async function buildSourcePack(files: SourceFile[], picked: PickedSource[
     }
     if (!f.file) continue
     try {
-      const extracted = await extractAttachment(f.file)
-      if (extracted.warning) warnings.push(`${f.name}: ${extracted.warning}`)
+      const extracted = await extractSourceFile(f.file, f.name, warnings, options)
       if (extracted.text.trim()) {
         attached.push({ tier: 1, name: f.name, text: extracted.text })
       } else if (!extracted.warning) {
         warnings.push(`${f.name}: không trích được chữ (có thể là ảnh scan).`)
       }
     } catch (err) {
+      options.signal?.throwIfAborted()
+      if (err instanceof AiQuotaError) throw err
       warnings.push(`${f.name}: ${err instanceof Error ? err.message : String(err)}`)
     }
   }

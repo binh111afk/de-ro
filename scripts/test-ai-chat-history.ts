@@ -3,6 +3,11 @@ import type { ChatTurn } from '../src/examEditor/AiPanel'
 import { chatHistoryKey, decodeChatHistory, encodeChatHistory } from '../src/lib/aiChatHistory'
 
 const turns: ChatTurn[] = Array.from({ length: 65 }, (_, i) => ({ id: String(i), role: 'user', text: 'Câu hỏi' }))
+turns[64].pickedSources = [
+  { kind: 'library', name: 'Bài tập.pdf' },
+  { kind: 'mine', name: 'Đề Toán' },
+  { kind: 'community', name: 'Đề mẫu' },
+]
 turns.push({
   id: 'answer', role: 'assistant', text: 'Trả lời', intent: 'chat',
   files: [{ id: 'file', name: 'ảnh.png', size: 32, kind: 'image', url: 'blob:private' }],
@@ -20,6 +25,8 @@ const encoded = encodeChatHistory(turns)
 const restored = decodeChatHistory(encoded)
 assert.equal(restored.length, 60)
 assert.equal(restored[0].id, '6')
+assert.equal(restored[0].pickedSources, undefined)
+assert.deepEqual(restored.at(-2)?.pickedSources, turns[64].pickedSources)
 assert.deepEqual(restored.at(-1), {
   id: 'answer', role: 'assistant', text: 'Trả lời', intent: 'chat',
   fileNames: ['ảnh.png'], refs: ['Câu 1'], sources: ['Tài liệu.pdf'],

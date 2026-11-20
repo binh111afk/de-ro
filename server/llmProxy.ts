@@ -229,9 +229,9 @@ function pingTargets(p: ReturnType<typeof providerConfig>) {
 }
 
 /** Provider đọc được ảnh đề, theo thứ tự thử (Claude đắt nhất nên để cuối). */
-export async function visionTargets() {
+export async function visionTargets(order: string[] = ['opencode', 'fosta', 'anthropic']) {
   const all = pingTargets(await liveConfig())
-  return ['opencode', 'fosta', 'anthropic'].flatMap((name) => all.filter((t) => t.provider === name))
+  return order.flatMap((name) => all.filter((t) => t.provider === name))
 }
 
 const maskKey = (k: string) => (k ? `••••${k.length >= 8 ? k.slice(-4) : ''}` : '')
