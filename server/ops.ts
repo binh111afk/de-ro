@@ -53,7 +53,7 @@ export async function logAiCall(c: AiCall): Promise<void> {
 }
 
 /** Số lượt trả rỗng (hết trần token…) mỗi người được miễn điểm trong 24 giờ; từ lượt kế tiếp tính điểm như thường. */
-export const EMPTY_FREE_PER_DAY = 5
+export const EMPTY_FREE_PER_DAY = 3
 
 /** Số lượt trả rỗng gần nhất của người dùng trong 24 giờ qua (đếm tối đa `limit`). Không đọc được DB thì coi là 0 (miễn điểm). */
 export async function recentEmptyCalls(userId: string, limit = EMPTY_FREE_PER_DAY): Promise<number> {

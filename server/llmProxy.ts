@@ -765,7 +765,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
         }
         lastErr = `${selectedModel}: empty content (finish_reason=${choice?.finish_reason ?? 'unknown'})`
         // trả rỗng (thường là suy luận hết trần) người dùng không nhận được gì → miễn điểm, chi phí nhà cung cấp do hệ thống chịu.
-        // Trần EMPTY_FREE_PER_DAY lượt / người / 24 giờ (đếm theo ai_calls) để không ai cố ý đốt tiền bằng lượt rỗng; quá trần thì tính như cũ.
+        // Trần EMPTY_FREE_PER_DAY (3) lượt / người / 24 giờ (đếm theo ai_calls) để không ai cố ý đốt tiền bằng lượt rỗng; quá trần thì tính như cũ.
         if (userId && (await recentEmptyCalls(userId)) >= EMPTY_FREE_PER_DAY) wasted += billOf(data.usage, reasoning)
         // hết trần token vì suy luận: gọi lại cùng model cùng trần vẫn hết trần (mất thêm vài chục giây + tiền) → sang model khác ngay.
         // opencode có đường riêng: lần sau hạ mức suy luận xuống medium.

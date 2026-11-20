@@ -30,7 +30,7 @@ for (const k of ['VERCEL', 'DEEPSEEK_API_KEY', 'FOSTA_API_KEY', 'ANYROUTER_API_K
 const db = { credits: 120_000, used: 0, refunds: new Set<string>() }
 let nextUsage = 30_000
 let emptyReply = false
-// số lượt rỗng đã ghi trong ai_calls 24 giờ qua (server chỉ đếm tối đa 5)
+// số lượt rỗng đã ghi trong ai_calls 24 giờ qua (server chỉ đếm tối đa 3)
 let emptyToday = 0
 let upstreamDown = false
 const upstream: Array<{ model: string; max_tokens: number; messages?: unknown[] }> = []
@@ -46,7 +46,7 @@ globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
     return ok({ model: body.model, choices: [{ finish_reason: 'stop', message: { content: 'nội dung' } }], usage: { total_tokens: nextUsage } })
   }
   if (url.endsWith('/auth/v1/user')) return ok({ id: USER })
-  if (url.includes('/rest/v1/ai_calls') && !init.method) return ok(Array.from({ length: Math.min(emptyToday, 5) }, (_, i) => ({ id: i })))
+  if (url.includes('/rest/v1/ai_calls') && !init.method) return ok(Array.from({ length: Math.min(emptyToday, 3) }, (_, i) => ({ id: i })))
   if (url.includes('/rest/v1/ai_quota_overrides')) return ok([])
   if (url.includes('/rest/v1/ai_usage')) return ok([{ tokens: db.used }])
   if (url.includes('/rest/v1/ai_credits')) return ok([{ balance: db.credits }])
@@ -173,24 +173,24 @@ emptyReply = false
 // lượt gọi model trả rỗng (kể cả lượt tự thử lại) không trừ điểm người dùng
 check('model trả rỗng → không trừ điểm', upstream.length > 0 && db.credits === before8, { before8, now: db.credits, calls: upstream.length })
 
-// 8b. đã đủ trần miễn điểm (5 lượt rỗng / 24 giờ) → các lượt rỗng tiếp theo tính điểm như cũ
-emptyToday = 5
+// 8b. đã đủ trần miễn điểm (3 lượt rỗng / 24 giờ) → các lượt rỗng tiếp theo tính điểm như cũ
+emptyToday = 3
 emptyReply = true
 nextUsage = 5_000
 const before8b = db.credits
 upstream.length = 0
 await hit({ messages: msgs('soạn đề 8b'), maxTokens: 32_000 })
 emptyReply = false
-check('đủ trần 5 lượt rỗng / ngày → trừ điểm mỗi lượt gọi', upstream.length > 0 && db.credits === before8b - 5_000 * upstream.length, { before8b, now: db.credits, calls: upstream.length })
+check('đủ trần 3 lượt rỗng / ngày → trừ điểm mỗi lượt gọi', upstream.length > 0 && db.credits === before8b - 5_000 * upstream.length, { before8b, now: db.credits, calls: upstream.length })
 
-// 8c. mới 4 lượt rỗng → còn được miễn
-emptyToday = 4
+// 8c. mới 2 lượt rỗng → còn được miễn
+emptyToday = 2
 emptyReply = true
 const before8c = db.credits
 await hit({ messages: msgs('soạn đề 8c'), maxTokens: 32_000 })
 emptyReply = false
 emptyToday = 0
-check('mới 4 lượt rỗng / ngày → vẫn miễn điểm', db.credits === before8c, { before8c, now: db.credits })
+check('mới 2 lượt rỗng / ngày → vẫn miễn điểm', db.credits === before8c, { before8c, now: db.credits })
 
 // 9. model rỗng "" không được coi là lựa chọn
 upstream.length = 0
