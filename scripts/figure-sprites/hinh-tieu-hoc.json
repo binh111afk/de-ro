@@ -2948,7 +2948,7 @@
       "freq": "cao",
       "containers": [],
       "scene": true,
-      "prompt": "A single tall tapered industrial factory chimney standing upright on a flat horizontal base, small simple cloud puff at top, straight orthographic front view, perfectly symmetric, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "prompt": "A single tall thick vertical brick smokestack chimney with simple rectangular brick pattern lines and a wide sturdy flat horizontal base, thick vertical tapered brick tower shaft, one tiny simple cloud puff of smoke rising from the flat open top rim, not a thin pole, straight orthographic front view, simple minimal details, few details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
       "aliases": [
         "ống khói nhà máy"
       ]
@@ -3619,7 +3619,7 @@
       ],
       "freq": "cao",
       "containers": [],
-      "prompt": "A single closed rectangular cardboard shipping box with a tape seam on top, clean geometric rectangular prism shape, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "prompt": "A single closed rectangular cardboard shipping box seen straight-on from the front, completely flat 2D orthographic front elevation view, no perspective, no 3D angle, no side faces visible, a clean rectangle with a horizontal top lid line and a short vertical center tape strip at the top middle, flat horizontal bottom edge, perfectly symmetric, simple minimal details, very thick bold solid black outlines, thick continuous lines, no thin or faint lines, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
       "aliases": [
         "thùng giấy",
         "hộp carton",
@@ -3851,6 +3851,751 @@
       "prompt": "A single classic hourglass sand timer with two symmetric conical glass bulbs between flat horizontal top and bottom wooden frames, straight vertical axis, perfectly symmetric, straight orthographic front view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
       "aliases": [
         "bình đồng hồ cát"
+      ]
+    },
+    {
+      "id": "banknote",
+      "name": "tờ tiền",
+      "grades": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single flat rectangular paper banknote bill with a simple inner rectangular border and an empty plain oval in the center, completely blank inside with no text, no numbers, no letters, no currency symbols, no dollar sign, straight orthographic front view, perfectly symmetric, simple minimal details, very thick bold solid black outlines, thick continuous lines, no thin or faint lines, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "tiền giấy",
+        "tiền"
+      ]
+    },
+    {
+      "id": "coin",
+      "name": "đồng xu",
+      "grades": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single round flat metal coin seen straight-on from the front with a double circular rim and a simple five-pointed star in the center, no text, no numbers, no letters, no currency symbols, straight orthographic front view, perfectly symmetric, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "xu",
+        "tiền xu"
+      ]
+    },
+    {
+      "id": "piggy_bank",
+      "name": "heo đất",
+      "grades": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single cute round piggy bank with a small rectangular coin slot on its back, snout, small ears, curly tail and four short legs standing on a flat horizontal line, straight orthographic side view, no text, no symbols, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "lợn đất",
+        "ống heo"
+      ]
+    },
+    {
+      "id": "wallet",
+      "name": "cái ví",
+      "grades": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single closed folded rectangular leather wallet with a simple clasp strap and stitched border, straight orthographic front view, no text, no symbols, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "ví tiền",
+        "ví"
+      ]
+    },
+    {
+      "id": "bank_card",
+      "name": "thẻ ngân hàng",
+      "grades": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single flat rounded rectangular plastic bank payment card seen straight-on from the front with a small blank rectangular microchip icon on the left and two simple horizontal lines below, completely no text, no numbers, no letters, no logos, straight orthographic front view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "thẻ tín dụng",
+        "thẻ atm"
+      ]
+    },
+    {
+      "id": "bank",
+      "name": "ngân hàng",
+      "grades": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single classic bank building with a triangular pediment roof, four vertical columns, central entrance doorway and stepped flat horizontal base, no text, no letters, no currency symbols on roof, straight orthographic front view, perfectly symmetric, simple minimal details, few details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "toà nhà ngân hàng"
+      ]
+    },
+    {
+      "id": "dice",
+      "name": "xúc xắc",
+      "grades": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single six-sided cubic gaming die showing three faces with clean round black dots (one dot on top, two dots on left, three dots on right), rounded corners, no numbers, no text, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "con xúc xắc",
+        "xí ngầu"
+      ]
+    },
+    {
+      "id": "playing_card",
+      "name": "lá bài",
+      "grades": [
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single upright rectangular playing card with rounded corners and one single clean heart shape in the center, completely blank corners with no letters, no numbers, no text, straight orthographic front view, perfectly symmetric, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "quân bài",
+        "thẻ bài"
+      ]
+    },
+    {
+      "id": "lucky_wheel",
+      "name": "vòng quay may mắn",
+      "grades": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single circular prize spinning wheel divided into 8 equal blank pie wedges with a small triangle pointer at the top and a simple sturdy stand with flat horizontal base at the bottom, completely empty blank segments with no text, no numbers, no letters, straight orthographic front view, perfectly symmetric, simple minimal details, very thick bold solid black outlines, thick continuous lines, no thin or faint lines, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "vòng quay",
+        "bánh xe may mắn"
+      ]
+    },
+    {
+      "id": "ticket",
+      "name": "tấm vé",
+      "grades": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single flat rectangular admission ticket stub with semicircular notches on the left and right edges, a dashed vertical tear line on the right, and a simple inner border with a small star, completely blank with no text, no numbers, no letters, straight orthographic front view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "vé",
+        "vé xem phim",
+        "vé vào cửa"
+      ]
+    },
+    {
+      "id": "envelope",
+      "name": "phong bì",
+      "grades": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single closed rectangular paper mail envelope seen straight-on from the back showing the clean triangular top flap, no text, no stamps, straight orthographic front view, perfectly symmetric, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "bao thư",
+        "bì thư"
+      ]
+    },
+    {
+      "id": "ballot_box",
+      "name": "hòm phiếu",
+      "grades": [
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single simple cubic ballot voting box with a horizontal slot on top and a blank folded paper ballot card half inserted into the slot, completely blank front with no text, no letters, no checkmarks, straight orthographic front view, flat horizontal bottom edge, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "thùng phiếu"
+      ]
+    },
+    {
+      "id": "shopping_cart",
+      "name": "xe đẩy siêu thị",
+      "grades": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single empty supermarket shopping cart trolley with simple coarse grid basket, handle and two round wheels touching a flat horizontal ground line, straight orthographic side view, simple minimal details, few details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "xe đẩy hàng",
+        "xe đẩy"
+      ]
+    },
+    {
+      "id": "price_tag",
+      "name": "nhãn giá",
+      "grades": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single blank rectangular hanging retail price tag with angled top corners, a small round eyelet hole and a simple loop of string at the top, completely blank empty body with no text, no numbers, no currency symbols, straight orthographic front view, perfectly symmetric, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "thẻ giá"
+      ]
+    },
+    {
+      "id": "crowd",
+      "name": "đám đông",
+      "grades": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "scene": true,
+      "prompt": "A small group of five simple standing people side by side in a row, full bodies with feet aligned on a flat horizontal ground line, straight orthographic front view, simple minimal details, few details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire group fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "nhóm người",
+        "đoàn người"
+      ]
+    },
+    {
+      "id": "bacteria",
+      "name": "vi khuẩn",
+      "grades": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single simple rod-shaped bacterium microorganism with rounded capsule body, a few tiny dots inside and two simple wavy flagella tails on one end, simple minimal details, few details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "con vi khuẩn"
+      ]
+    },
+    {
+      "id": "cell",
+      "name": "tế bào",
+      "grades": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single simple circular biological animal cell cross-section diagram with a smooth outer membrane circle, a round central nucleus circle and three simple small oval organelles, no labels, no text, simple minimal details, few details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "tế bào sinh học"
+      ]
+    },
+    {
+      "id": "laptop",
+      "name": "máy tính xách tay",
+      "grades": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single open laptop computer seen straight-on from the front with a blank rectangular screen and a thin horizontal base keyboard bottom edge, completely blank screen with no text, no icons, straight orthographic front view, perfectly symmetric, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "laptop"
+      ]
+    },
+    {
+      "id": "smartphone",
+      "name": "điện thoại",
+      "grades": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single upright modern smartphone seen straight-on from the front with rounded rectangular frame, blank empty screen, tiny speaker line at top and small round button at bottom, no text, no numbers, no icons, straight orthographic front view, perfectly symmetric, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "điện thoại di động",
+        "điện thoại thông minh"
+      ]
+    },
+    {
+      "id": "tv",
+      "name": "tivi",
+      "grades": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single modern flat-screen widescreen television standing on two short bottom feet, completely blank empty rectangular screen, no text, no picture inside, straight orthographic front view, perfectly symmetric, flat horizontal bottom, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "ti vi",
+        "máy thu hình"
+      ]
+    },
+    {
+      "id": "monitor",
+      "name": "màn hình máy tính",
+      "grades": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single desktop computer monitor with a blank rectangular screen mounted on a central neck and flat horizontal pedestal stand base, no text, no icons, straight orthographic front view, perfectly symmetric, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "màn hình"
+      ]
+    },
+    {
+      "id": "camera",
+      "name": "máy ảnh",
+      "grades": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single classic rectangular photo camera seen straight-on from the front with a large round central lens, small top shutter button and small rectangular flash, no text, no logos, straight orthographic front view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "máy chụp ảnh"
+      ]
+    },
+    {
+      "id": "projector",
+      "name": "máy chiếu",
+      "grades": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single compact rectangular digital classroom video projector seen straight-on from the front with a round lens on one side, ventilation slots on the other side and two tiny flat bottom feet, no text, no light beams, straight orthographic front view, flat horizontal bottom, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "đèn chiếu"
+      ]
+    },
+    {
+      "id": "rice_plant",
+      "name": "cây lúa",
+      "grades": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single simple stylized clump of rice plant with a few broad curved leaves and three plump drooping golden-style grain stalks, cartoon textbook drawing, no sketchy fine lines, no ground line, straight orthographic front view, simple minimal details, few details, very thick bold solid black outlines, thick continuous lines, no thin or faint lines, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "bông lúa",
+        "bụi lúa"
+      ]
+    },
+    {
+      "id": "coconut_tree",
+      "name": "cây dừa",
+      "grades": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single tall coconut palm tree with a slightly curved ringed trunk, three round coconuts and simple fan-like palm fronds at the top, flat horizontal base at bottom of trunk, straight orthographic front view, simple minimal details, few details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "dừa xiêm",
+        "gốc dừa"
+      ]
+    },
+    {
+      "id": "bamboo",
+      "name": "cây tre",
+      "grades": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A small cluster of two tall upright thick bamboo stalks side by side with clear segmented horizontal nodes and several simple pointed bamboo leaves branching off, flat bottom, no ground line, straight orthographic front view, simple minimal details, few details, very thick bold solid black outlines, thick continuous lines, no thin or faint lines, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "tre",
+        "khóm tre"
+      ]
+    },
+    {
+      "id": "buffalo",
+      "name": "con trâu",
+      "grades": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single Vietnamese water buffalo standing upright with large curved crescent horns and four hooves aligned on a flat horizontal ground line, straight orthographic side view, simple minimal details, few details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "trâu"
+      ]
+    },
+    {
+      "id": "haystack",
+      "name": "đống rơm",
+      "grades": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single smooth rounded conical haystack mound of straw with a clean solid outline, flat horizontal bottom base, and only four simple short curved lines inside, no fuzzy hair strokes, no sketchy fine lines, no ground line, straight orthographic front view, perfectly symmetric, simple minimal details, few details, very thick bold solid black outlines, thick continuous lines, no thin or faint lines, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "cây rơm",
+        "ụ rơm"
+      ]
+    },
+    {
+      "id": "barn",
+      "name": "chuồng trại",
+      "grades": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single classic rural farm barn building with a gambrel roof, double X-braced barn doors in front and flat horizontal bottom base, straight orthographic front view, perfectly symmetric, simple minimal details, few details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "nhà kho nông trại",
+        "chuồng bò"
+      ]
+    },
+    {
+      "id": "farmer",
+      "name": "người nông dân",
+      "grades": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single Vietnamese farmer standing upright wearing a traditional conical hat and simple shirt and trousers, full body standing straight with both feet together, NO ground line, NO floor line, NO shadow, straight orthographic front view, simple minimal details, few details, very thick bold solid black outlines, thick continuous lines, no thin or faint lines, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "nông dân",
+        "bác nông dân"
+      ]
+    },
+    {
+      "id": "basketball",
+      "name": "quả bóng rổ",
+      "grades": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single round basketball with classic curved rib seam lines, perfectly circular outline, straight orthographic front view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "bóng rổ"
+      ]
+    },
+    {
+      "id": "volleyball",
+      "name": "quả bóng chuyền",
+      "grades": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single round volleyball with classic curved paneled stripes, perfectly circular outline, straight orthographic front view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "bóng chuyền"
+      ]
+    },
+    {
+      "id": "tennis_ball",
+      "name": "quả bóng tennis",
+      "grades": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "vừa",
+      "containers": [],
+      "prompt": "A single round tennis ball with two smooth curved C-shaped seam lines on opposite left and right sides that curve outward and do NOT touch or cross each other in the center, perfectly circular outline, straight orthographic front view, simple minimal details, very thick bold solid black outlines, thick continuous lines, no thin or faint lines, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "bóng tennis",
+        "bóng quần vợt"
+      ]
+    },
+    {
+      "id": "earth",
+      "name": "trái đất",
+      "grades": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "cao",
+      "containers": [],
+      "prompt": "A single round cartoon planet Earth globe sphere with only 3 or 4 very simple smooth continent shapes inside, no stand, no ring, perfectly circular outline, straight orthographic front view, simple minimal details, few details, very thick bold solid black outlines, thick continuous lines, no thin or faint lines, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "hành tinh trái đất"
+      ]
+    },
+    {
+      "id": "moon",
+      "name": "mặt trăng",
+      "grades": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "freq": "cao",
+      "containers": [],
+      "scene": true,
+      "prompt": "A single simple crescent moon shape with smooth curved outer and inner arcs and two tiny crater circles, no face, no stars, straight orthographic front view, simple minimal details, black and white line art, clean bold outlines, no shading, no color, no background, no text, centered, children's textbook illustration style, coloring book style, entire object fully visible with generous margin, uniform bold outline weight, white background",
+      "aliases": [
+        "trăng khuyết",
+        "vầng trăng"
       ]
     }
   ],
