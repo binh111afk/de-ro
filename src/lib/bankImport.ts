@@ -1,5 +1,5 @@
 /**
- * Tạo câu hỏi nháp cho Ngân hàng: AI soạn theo yêu cầu, hoặc tách từ tệp đề.
+ * Tạo câu hỏi nháp cho Ngân hàng từ AI, tệp đề hoặc JSON.
  * Word đọc bằng bộ tách có sẵn (giữ đúng chữ và ảnh nhúng, không tốn token).
  * PDF và ảnh chụp dựng thành ảnh trang rồi cho AI đọc, hình vẽ được cắt ra theo khung AI trả về.
  */
@@ -7,7 +7,6 @@ import { bankVision, isAdminMock } from '@/lib/adminApi'
 import type { Option, QuestionImage, QuestionType } from '@/data/types'
 import { uid } from '@/data/docTypes'
 import { callLlm, extractJson } from '@/lib/llm'
-import { readImportFile } from '@/lib/importFile'
 import { parseExamText } from '@/lib/parseExamText'
 import { imageToSrc, uploadQuestionImages } from '@/lib/questionImage'
 
@@ -30,6 +29,8 @@ interface RawQuestion {
   options?: unknown
   answer?: unknown
   explanation?: unknown
+  solution?: unknown
+  image?: unknown
   figure?: { page?: unknown; box?: unknown }
 }
 
@@ -57,6 +58,20 @@ function normalizeAnswer(type: QuestionType, raw: string): string {
   return raw
 }
 
+function toDraftImage(value: unknown): QuestionImage | undefined {
+  if (!value || typeof value !== 'object') return undefined
+  const { src: rawSrc, position, width, alt, plot } = value as Partial<Record<keyof QuestionImage, unknown>>
+  const src = text(rawSrc)
+  if (!/^(\/api\/files\/img\/[a-f0-9]{40}\.(png|jpg|webp|gif)$|data:image\/(png|jpeg|webp|gif);base64,)/.test(src)) return undefined
+  return {
+    src,
+    position: position === 'top' || position === 'bottom' || position === 'left' || position === 'right' ? position : undefined,
+    width: typeof width === 'number' && width > 0 && width <= 100 ? width : undefined,
+    alt: text(alt) || undefined,
+    plot: text(plot) || undefined,
+  }
+}
+
 function toDraft(q: RawQuestion, fallback?: QuestionType): BankDraft | null {
   const prompt = text(q.prompt)
   if (!prompt) return null
@@ -64,17 +79,43 @@ function toDraft(q: RawQuestion, fallback?: QuestionType): BankDraft | null {
   const options = Array.isArray(q.options)
     ? (q.options as Array<{ key?: unknown; text?: unknown }>).map((o) => ({ key: text(o?.key), text: text(o?.text) })).filter((o) => o.key)
     : []
+  const solution = Array.isArray(q.solution) ? q.solution.map(text).filter(Boolean) : []
   const draft: BankDraft = {
     id: uid(),
     type,
     prompt,
     answer: normalizeAnswer(type, text(q.answer)) || undefined,
     explanation: text(q.explanation) || undefined,
+    solution: solution.length ? solution : undefined,
+    image: toDraftImage(q.image),
     selected: false,
     ...(options.length && (type === 'trac-nghiem' || type === 'dung-sai') ? { options } : {}),
   }
   draft.selected = draftReady(draft)
   return draft
+}
+
+export function parseJsonDrafts(source: string): { drafts: BankDraft[]; warning?: string } {
+  let data: unknown
+  try {
+    data = JSON.parse(source.trim())
+  } catch {
+    throw new Error('JSON sai cú pháp.')
+  }
+  const questions = data && typeof data === 'object' && 'questions' in data ? data.questions : data
+  if (!Array.isArray(questions)) throw new Error('JSON phải là mảng câu hỏi hoặc có trường questions là một mảng.')
+
+  const drafts: BankDraft[] = []
+  let firstSkipped = 0
+  questions.forEach((q: unknown, index) => {
+    const draft = q && typeof q === 'object' ? toDraft(q as RawQuestion) : null
+    if (draft) drafts.push(draft)
+    else if (!firstSkipped) firstSkipped = index + 1
+  })
+  const skipped = questions.length - drafts.length
+  const warning = skipped ? `Bỏ qua ${skipped} câu thiếu nội dung hoặc sai cấu trúc. Câu lỗi đầu tiên ở vị trí ${firstSkipped}.` : undefined
+  if (!drafts.length) throw new Error(`Không có câu hỏi hợp lệ. ${warning ?? 'Mảng câu hỏi trống.'}`)
+  return { drafts, warning }
 }
 
 export async function generateDrafts(input: { request: string; subject: string; grade: string; type: QuestionType; count: number }): Promise<BankDraft[]> {
@@ -195,6 +236,7 @@ async function readByVision(file: File, onProgress: (msg: string) => void): Prom
 }
 
 async function readDocx(file: File): Promise<{ drafts: BankDraft[]; warning?: string }> {
+  const { readImportFile } = await import('@/lib/importFile')
   const data = await readImportFile(file, true)
   const parsed = parseExamText(data.text, data.images ?? [])
   const questions = await uploadQuestionImages(parsed.questions)
@@ -209,6 +251,7 @@ async function readDocx(file: File): Promise<{ drafts: BankDraft[]; warning?: st
 export async function importDrafts(file: File, onProgress: (msg: string) => void): Promise<{ drafts: BankDraft[]; warning?: string }> {
   if (file.size > MAX_BYTES) throw new Error('Tệp quá lớn (tối đa 12 MB).')
   const name = file.name.toLowerCase()
+  if (name.endsWith('.json')) return parseJsonDrafts(await file.text())
   let result: { drafts: BankDraft[]; warning?: string }
   if (name.endsWith('.docx')) {
     onProgress('Đang đọc tệp Word…')
@@ -216,7 +259,7 @@ export async function importDrafts(file: File, onProgress: (msg: string) => void
   } else if (name.endsWith('.pdf') || file.type.startsWith('image/')) {
     result = await readByVision(file, onProgress)
   } else {
-    throw new Error('Chỉ nhận PDF, Word (.docx) hoặc ảnh PNG, JPG, WEBP.')
+    throw new Error('Chỉ nhận PDF, Word (.docx), JSON (.json) hoặc ảnh PNG, JPG, WEBP.')
   }
   if (result.drafts.length === 0) throw new Error('Không tìm thấy câu hỏi nào trong tệp.')
   return result

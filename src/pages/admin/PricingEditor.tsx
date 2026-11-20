@@ -1,4 +1,4 @@
-/** Khối "Bảng giá" trong Vận hành: tỉ giá điểm, mức nạp, các gói và thưởng lần đầu. */
+/** Khối "Bảng giá" trong Nạp điểm: tỉ giá điểm, mức nạp, các gói và thưởng lần đầu. */
 import { useState } from 'react'
 import { Plus } from 'lucide-react'
 import { TrashIcon } from '@/components/appIcons'

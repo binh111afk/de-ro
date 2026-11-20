@@ -8,8 +8,10 @@ import { Pager } from '@/components/Pager'
 import { Segmented } from '@/components/Segmented'
 import { dialog } from '@/components/Dialog'
 import { cn } from '@/lib/cn'
+import { getSettings, type AppSettings } from '@/lib/adminApi'
 import { creditPayment, listPayments, syncPayment, type AdminPayment, type PaymentFilter, type PaymentPage, type RevenuePeriod } from '@/lib/adminPaymentsApi'
 import { formatViDateTime } from './adminUtils'
+import { PricingEditor } from './PricingEditor'
 
 const fmt = (n: number) => n.toLocaleString('vi-VN')
 
@@ -70,6 +72,9 @@ function MonthlyRevenue({ months }: { months: PaymentPage['revenue']['months'] }
 }
 
 export function PaymentsPanel() {
+  const [tab, setTab] = useState<'orders' | 'pricing'>('orders')
+  const [settings, setSettings] = useState<AppSettings | null>(null)
+  const [pricingError, setPricingError] = useState<string | null>(null)
   const [period, setPeriod] = useState<RevenuePeriod>('month')
   const [filter, setFilter] = useState<PaymentFilter>('all')
   const [page, setPage] = useState(1)
@@ -80,6 +85,17 @@ export function PaymentsPanel() {
   const [tick, setTick] = useState(0)
   const [open, setOpen] = useState<number | null>(null)
   const reload = () => setTick((t) => t + 1)
+
+  useEffect(() => {
+    if (tab !== 'pricing' || settings || pricingError !== null) return
+    let alive = true
+    getSettings()
+      .then((result) => alive && setSettings(result))
+      .catch((err: unknown) => alive && setPricingError(err instanceof Error ? err.message : 'Không tải được bảng giá.'))
+    return () => {
+      alive = false
+    }
+  }, [tab, settings, pricingError])
 
   useEffect(() => {
     let alive = true
@@ -136,16 +152,8 @@ export function PaymentsPanel() {
   const selected = items.find((p) => p.orderCode === open) ?? null
   const pages = data ? Math.max(1, Math.ceil(data.total / data.perPage)) : 1
 
-  return (
+  const orders = (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-[22px] font-bold tracking-tight text-ink">Nạp điểm</h1>
-        <Button variant="outline" size="sm" onClick={reload} disabled={loading}>
-          <RefreshCw className={cn('size-3.5', loading && 'animate-spin')} />
-          <span>Làm mới</span>
-        </Button>
-      </div>
-
       {data && !data.configured ? (
         <div className="rounded-[8px] border border-honey/40 bg-honey-soft px-4 py-3 text-[13.5px] text-ink-2">Chưa cấu hình PayOS trên server (thiếu biến PAYOS_*).</div>
       ) : null}
@@ -288,6 +296,44 @@ export function PaymentsPanel() {
           onCredit={() => void credit(selected)}
           onClose={() => setOpen(null)}
         />
+      ) : null}
+    </div>
+  )
+
+  return (
+    <div className="space-y-6">
+      <h1 className="text-[22px] font-bold tracking-tight text-ink">Nạp điểm</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <Segmented
+          value={tab}
+          onChange={setTab}
+          label="Nạp điểm"
+          options={[{ key: 'orders', label: 'Đơn nạp' }, { key: 'pricing', label: 'Bảng giá' }]}
+        />
+        {tab === 'orders' ? (
+          <Button variant="outline" size="sm" onClick={reload} disabled={loading}>
+            <RefreshCw className={cn('size-3.5', loading && 'animate-spin')} />
+            <span>Làm mới</span>
+          </Button>
+        ) : null}
+      </div>
+      {tab === 'orders' ? orders : null}
+      {settings ? (
+        <div hidden={tab !== 'pricing'}>
+          <PricingEditor initial={settings.pricing} onNotice={(msg) => void dialog.alert(msg, { title: 'Bảng giá' })} />
+        </div>
+      ) : tab === 'pricing' ? (
+        pricingError !== null ? (
+          <div className="flex flex-wrap items-center gap-3">
+            <p role="alert" className="text-[13px] text-clay">{pricingError}</p>
+            <Button variant="outline" size="sm" onClick={() => setPricingError(null)}>Thử lại</Button>
+          </div>
+        ) : (
+          <p role="status" className="flex items-center gap-2 text-[13px] text-ink-3">
+            <Spinner className="size-3.5" />
+            Đang tải bảng giá…
+          </p>
+        )
       ) : null}
     </div>
   )

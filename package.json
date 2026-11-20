@@ -62,6 +62,7 @@
     "build:prompts": "node scripts/build-server-prompts.mjs --write",
     "test:admin-content": "tsx scripts/test-admin-content.ts",
     "test:admin-bank": "tsx scripts/test-admin-bank.ts",
+    "test:bank-json": "tsx --tsconfig tsconfig.app.json scripts/test-bank-json.ts",
     "test:admin-stats": "tsx scripts/test-admin-stats.ts",
     "test:pricing": "tsx scripts/test-pricing.mjs"
   },

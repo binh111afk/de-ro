@@ -39,7 +39,6 @@ import { DbStatusCard } from './DbStatusCard'
 import { HealthDrawer, type HealthDrawerTarget } from './HealthDrawer'
 import { Switch } from './Switch'
 import { AnnouncementsEditor } from './AnnouncementsEditor'
-import { PricingEditor } from './PricingEditor'
 
 interface OpsPanelProps {
   me?: AdminMe
@@ -489,8 +488,6 @@ export function OpsPanel({ me: _me }: OpsPanelProps) {
           ) : null}
         </div>
       </Card>
-
-      {settings ? <PricingEditor initial={settings.pricing} onNotice={showNotice} /> : null}
 
       {/* =========================================================================
           KHỐI 2: TÌNH TRẠNG SERVER

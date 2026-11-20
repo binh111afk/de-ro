@@ -1,11 +1,11 @@
-/** Tab "AI và tệp" của form thêm câu: AI soạn hoặc tách từ tệp đề ra danh sách nháp, tách riêng câu hỏi, đáp án, ảnh. */
+/** Tab "AI và tệp" của form thêm câu: tạo bản nháp từ AI, tệp đề hoặc JSON. */
 import { useRef, useState, type ReactNode } from 'react'
 import { FileUp, ImageOff, Pencil, Sparkles } from 'lucide-react'
 import { TrashIcon } from '@/components/appIcons'
-import { Badge, Button, EmptyState, Spinner, inputClass } from '@/components/ui'
+import { Badge, Button, Card, EmptyState, Spinner, inputClass } from '@/components/ui'
 import { dialog } from '@/components/Dialog'
 import { MathText } from '@/components/MathText'
-import { draftReady, generateDrafts, importDrafts, IMPORT_FILE_ACCEPT, type BankDraft } from '@/lib/bankImport'
+import { draftReady, generateDrafts, importDrafts, IMPORT_FILE_ACCEPT, parseJsonDrafts, type BankDraft } from '@/lib/bankImport'
 import { TYPE_LABEL, type QuestionType } from '@/data/types'
 import { cn } from '@/lib/cn'
 
@@ -31,11 +31,13 @@ export function BankAiPanel({
   onSaveDrafts: (list: BankDraft[]) => Promise<void>
 }) {
   const [request, setRequest] = useState('')
+  const [json, setJson] = useState('')
   const [count, setCount] = useState(5)
   const [busy, setBusy] = useState<string | null>(null)
   const [warning, setWarning] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
+  const jsonFileRef = useRef<HTMLInputElement>(null)
 
   const run = async (label: string, action: () => Promise<{ drafts: BankDraft[]; warning?: string }>) => {
     setBusy(label)
@@ -130,13 +132,49 @@ export function BankAiPanel({
           </Button>
         </div>
 
+        <Card className="space-y-2.5 border border-line-2 bg-paper p-4">
+          <label className="block text-[13px] font-semibold text-ink" htmlFor="bank-json">
+            Dán JSON
+          </label>
+          <textarea
+            id="bank-json"
+            rows={4}
+            value={json}
+            onChange={(e) => setJson(e.target.value)}
+            className={cn(inputClass, 'h-auto py-2.5 font-mono text-[13px]')}
+          />
+          <input
+            ref={jsonFileRef}
+            type="file"
+            accept=".json"
+            hidden
+            aria-label="Chọn tệp JSON"
+            onChange={(e) => {
+              const file = e.target.files?.[0]
+              e.target.value = ''
+              if (!file) return
+              if (file.name.toLowerCase().endsWith('.json')) pickFile(file)
+              else void dialog.alert('Chỉ nhận tệp .json.', { title: 'Lỗi' })
+            }}
+          />
+          <div className="flex flex-wrap justify-between gap-2">
+            <Button variant="soft" size="sm" onClick={() => jsonFileRef.current?.click()} disabled={!!busy}>
+              <FileUp className="size-4" />
+              Chọn tệp JSON
+            </Button>
+            <Button variant="clay" size="sm" onClick={() => void run('Đang đọc JSON…', async () => parseJsonDrafts(json))} disabled={!!busy || !json.trim()}>
+              Nhập
+            </Button>
+          </div>
+        </Card>
+
         {busy ? (
           <p className="flex items-center gap-2 text-[13px] font-medium text-ink-2">
             <Spinner className="size-3.5" />
             {busy}
           </p>
         ) : null}
-        {warning ? <p className="text-[12.5px] leading-relaxed text-honey">{warning}</p> : null}
+        {warning ? <p role="status" className="text-[12.5px] leading-relaxed text-honey">{warning}</p> : null}
       </div>
 
       <div className="flex min-h-0 flex-col">
