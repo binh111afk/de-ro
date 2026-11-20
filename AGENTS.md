@@ -43,3 +43,4 @@ Nhiều file dùng **CRLF** (không có `.gitattributes`, `core.autocrlf=false`)
 
 - Việc cần phán đoán, thiết kế, bảo mật, kiểm đúng sai: agent mạnh tự làm.
 - Việc dài, máy móc, đã rõ cách làm: viết `docs/prompt-<việc>.md` tự đủ (file cần đọc, việc cụ thể, điều cấm, cách kiểm, nhánh riêng, mẫu báo cáo) để người dùng giao cho agent khác; agent mạnh review rồi mới merge.
+- **Gọi Codex từ agent khác** (đã dùng ở phiên 49): `npx --yes @openai/codex@0.170.0 exec -m gpt-6.2-sol --sandbox read-only -C <thư mục> - < prompt.txt` (rà lỗi, chỉ đọc) hoặc `--sandbox workspace-write` trong một worktree riêng (viết test, sửa nhỏ); đăng nhập sẵn bằng ChatGPT của người dùng. Tốt ở rà lỗi và viết test có chạy kiểm; **không commit được trong worktree** (sandbox chặn `index.lock`) nên agent gọi phải tự rà diff, chạy lại test rồi commit. Không giao việc tiền, bảo mật, migration, prompt AI. Gửi mã lên OpenAI bằng tài khoản người dùng: chỉ làm khi người dùng bảo.
