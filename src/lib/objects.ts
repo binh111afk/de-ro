@@ -181,6 +181,41 @@ function clusterBox(g: ObjectsGroup, used: Set<string>): Box {
   }
 }
 
+/** Kiểm nhóm AI gửi trước khi chuẩn hoá số lượng để vẽ. */
+export function objectGroupFromRaw(raw: Record<string, unknown>, index: number): ObjectsGroup {
+  const group = `Nhóm ${index + 1}`
+  const name = String(raw.item ?? '').trim()
+  // Tên tiếng Anh hợp lệ có thể dùng để lấy vật ngoài kho qua kho dùng chung.
+  const dynamic = name && !Object.hasOwn(OBJECTS, name) && typeof raw.en === 'string' ? dynamicId(raw.en) : null
+  const item = dynamic ?? (name ? resolveSpriteId(name) ?? undefined : undefined)
+  if (name && !item) throw new Error(`${group}: không có đồ vật "${name}" trong kho hình.`)
+
+  const container = String(raw.container ?? '').trim() || undefined
+  if (container && !Object.hasOwn(CONTAINERS, container)) {
+    throw new Error(`${group}: mã đồ chứa "${container}" không hợp lệ.`)
+  }
+
+  const count = Number(raw.count ?? 1)
+  const label = typeof raw.label === 'string' || typeof raw.label === 'number' ? String(raw.label) : undefined
+  const hasEach = raw.each != null && String(raw.each).trim() !== ''
+  let each = hasEach ? Number(raw.each) : 0
+  if (!hasEach) {
+    if (item) {
+      // total là tổng của các nhóm giống nhau. Nhãn số biểu thị số lượng trên từng nhóm.
+      const total = raw.total == null || String(raw.total).trim() === '' ? undefined : Number(raw.total)
+      each = total !== undefined ? total / count : Number(label)
+      if (!Number.isInteger(each) || each < 1 || each > 20 || !Number.isInteger(count) || count < 1 || count > 10) {
+        throw new Error(`${group}: thiếu each (số vật mỗi nhóm). Cần số lượng hợp lệ hoặc total chia đều cho count.`)
+      }
+    } else if (!container || !label?.trim()) {
+      throw new Error(`${group}: thiếu each (số vật mỗi nhóm) hoặc nhãn cho đồ chứa.`)
+    }
+  } else if (!Number.isFinite(each)) {
+    throw new Error(`${group}: each phải là số vật mỗi nhóm.`)
+  }
+  return { item, itemName: dynamic ? name : undefined, container, each, count, label }
+}
+
 /** chuẩn hoá cấu hình (giới hạn số lượng để hình không vỡ khổ) */
 export function normalizeObjects(spec: ObjectsSpec): ObjectsSpec {
   const groups = (Array.isArray(spec.groups) ? spec.groups : [])
@@ -235,12 +270,12 @@ const CLASSIFIER = /^(cai|con|qua|chiec|cu|bong|vien|toa|ngon|ngoi|cay|tau|cot) 
  */
 export function resolveSpriteId(name: string): string | null {
   const raw = name.trim()
-  if (OBJECTS[raw] || DYNAMIC_ID.test(raw)) return raw
+  if (Object.hasOwn(OBJECTS, raw) || DYNAMIC_ID.test(raw)) return raw
   // vật ngoài kho: "en:teapot" → kho dùng chung (vẽ một lần, lưu lại)
   const en = /^en\s*:\s*(.+)$/i.exec(raw)
   if (en) return dynamicId(en[1])
   const q = fold(raw)
-  if (OBJECT_ALIASES[q]) return OBJECT_ALIASES[q]
+  if (Object.hasOwn(OBJECT_ALIASES, q)) return OBJECT_ALIASES[q]
   let hit: string | null = null
   for (const [id, n] of Object.entries(OBJECTS)) {
     const f = fold(n)

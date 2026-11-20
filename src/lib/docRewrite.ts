@@ -4,7 +4,9 @@
  */
 import { callLlm, extractJson } from './llm'
 import { GEO2D_SHAPES, GEO3D_SHAPES } from './geometry'
-import { PLOT_COLORS, autoYRange, parseExpr, type PlotSpec } from './plot'
+import { PLOT_COLORS, autoYRange, fitAutoBounds, parseExpr, parsePlotPoints, type PlotSpec } from './plot'
+import { fitOxyBounds } from './oxy'
+import { defaultGasProcesses, parseGasStates } from './gas'
 import { renderTool, type ToolDoc } from './toolSpec'
 import { autoSignTable } from './signTable'
 import { autoVarTable } from './varTable'
@@ -12,9 +14,7 @@ import { cleanRewrite } from './slideRewrite'
 import { AC_DEFAULT, OSC_DEFAULT, OSC_Y_DEFAULT, STANDING_DEFAULT, oscPeriod, parseOscExpr, type OscQty, type OscSpec, type OscStart, type OscStartX0 } from './oscillation'
 import { LENS_DEFAULT, type LensNames, type LensRay, type LensType } from './lens'
 import { FIELD_DEFAULT, type FieldScene } from './field'
-import { normalizeObjects, prepareToolDoc } from './objects'
-import { dynamicId } from './figureSprites'
-import { OBJECTS } from './objectsCatalog'
+import { normalizeObjects, objectGroupFromRaw, prepareToolDoc } from './objects'
 import type { GeneTrait } from './punnett'
 
 export const DOC_REWRITE_PRESETS = [
@@ -77,14 +77,18 @@ function planFromRaw(raw: Record<string, unknown>): ToolPlan {
     })
     .slice(0, 4)
   if (exprs.length === 0) throw new Error(note || 'Không thấy hàm số nào để vẽ trong đoạn đã chọn.')
-  let xMin = Number(raw.xMin)
-  let xMax = Number(raw.xMax)
-  if (!(Number.isFinite(xMin) && Number.isFinite(xMax) && xMin < xMax && xMax - xMin <= 200)) [xMin, xMax] = [-5, 5]
-  const fns = exprs.map((e) => parseExpr(e))
-  let [yMin, yMax] = autoYRange(fns, xMin, xMax)
+  const points = typeof raw.points === 'string' && raw.points.trim() ? raw.points : undefined
+  const named = parsePlotPoints(points)
+  const [x0, x1] = [optionalNum(raw.xMin), optionalNum(raw.xMax)]
+  const [xMin, xMax] = x0 !== undefined && x1 !== undefined && !(x0 < x1 && x1 - x0 <= 200)
+    ? [-5, 5]
+    : fitAutoBounds(x0, x1, [-5, 5], named.map((p) => p.x))
+  const [y0, y1] = [optionalNum(raw.yMin), optionalNum(raw.yMax)]
   // khung dọc ghi sẵn (vd câu trong kho) thì theo đó, để không bị nhánh dốc kéo dãn
-  const [y0, y1] = [Number(raw.yMin), Number(raw.yMax)]
-  if (raw.yMin != null && raw.yMax != null && Number.isFinite(y0) && Number.isFinite(y1) && y0 < y1) [yMin, yMax] = [y0, y1]
+  const defaultY = () => autoYRange(exprs.map(parseExpr), xMin, xMax)
+  const [yMin, yMax] = y0 !== undefined && y1 !== undefined
+    ? y0 < y1 ? [y0, y1] : defaultY()
+    : fitAutoBounds(y0, y1, defaultY(), named.map((p) => p.y))
   return {
     note,
     doc: {
@@ -97,7 +101,7 @@ function planFromRaw(raw: Record<string, unknown>): ToolPlan {
         yMax,
         grid: raw.grid === true,
         labels: raw.labels === true || exprs.length > 1,
-        points: typeof raw.points === 'string' && raw.points.trim() ? raw.points : undefined,
+        points,
       },
     },
   }
@@ -116,6 +120,7 @@ export interface ToolPlan {
 }
 
 const num = (v: unknown, d: number) => (Number.isFinite(Number(v)) ? Number(v) : d)
+const optionalNum = (v: unknown) => v == null || (typeof v === 'string' && !v.trim()) || !Number.isFinite(Number(v)) ? undefined : Number(v)
 
 export async function planTool(text: string, context: string, signal?: AbortSignal): Promise<ToolPlan> {
   const res = await callLlm(
@@ -157,12 +162,9 @@ export function toolFromRaw(raw: Record<string, unknown>): ToolDoc {
       doc = { kind: 'signtable', spec: autoSignTable(need('expr', 'Không thấy biểu thức để xét dấu.')) }
       break
     case 'oxy': {
-      const xMin = num(raw.xMin, -5)
-      const xMax = num(raw.xMax, 5)
-      const yMin = num(raw.yMin, -5)
-      const yMax = num(raw.yMax, 5)
       const items = need('items', 'AI không đưa ra được hình trên hệ trục.')
-      doc = { kind: 'oxy', spec: { xMin, xMax: xMax > xMin ? xMax : xMin + 10, yMin, yMax: yMax > yMin ? yMax : yMin + 10, grid: false, numbers: true, items } }
+      const bounds = fitOxyBounds(items, { xMin: optionalNum(raw.xMin), xMax: optionalNum(raw.xMax), yMin: optionalNum(raw.yMin), yMax: optionalNum(raw.yMax) })
+      doc = { kind: 'oxy', spec: { ...bounds, grid: false, numbers: true, items } }
       break
     }
     case 'geo2d': {
@@ -255,13 +257,14 @@ export function toolFromRaw(raw: Record<string, unknown>): ToolDoc {
     case 'scene':
       doc = { kind: 'scene', spec: { text: need('text', 'Không thấy lệnh vẽ hình.') } }
       break
-    case 'gas':
+    case 'gas': {
+      const states = need('states', 'Không thấy các trạng thái khí.')
       doc = {
         kind: 'gas',
         spec: {
           axes: pick('axes', ['pV', 'pT', 'VT'] as const, 'pV'),
-          states: need('states', 'Không thấy các trạng thái khí.'),
-          processes: str('processes'),
+          states,
+          processes: raw.processes == null ? defaultGasProcesses(parseGasStates(states)) : str('processes'),
           pUnit: str('pUnit'),
           vUnit: str('vUnit'),
           tUnit: str('tUnit') || 'K',
@@ -273,6 +276,7 @@ export function toolFromRaw(raw: Record<string, unknown>): ToolDoc {
         },
       }
       break
+    }
     case 'incline':
       doc = { kind: 'incline', spec: { angle: num(raw.angle, 30), P: bool('P', true), N: bool('N', true), fms: dir('fms'), F: dir('F'), showAngle: true } }
       break
@@ -325,7 +329,7 @@ export function toolFromRaw(raw: Record<string, unknown>): ToolDoc {
           yName: str('yName') || 't (°C)',
           tName: str('tName') || 'T (phút)',
           points: need('points', 'Không thấy số liệu đồ thị chuyển thể.'),
-          extend: bool('extend', true),
+          extend: bool('extend', false),
           dashed: bool('dashed', true),
           dots: bool('dots', true),
         },
@@ -608,20 +612,7 @@ export function toolFromRaw(raw: Record<string, unknown>): ToolDoc {
     case 'objects': {
       const groups = (Array.isArray(raw.groups) ? raw.groups : [])
         .filter((g): g is Record<string, unknown> => Boolean(g) && typeof g === 'object')
-        .map((g) => {
-          // đồ vật ngoài kho có sẵn: AI ghi tên tiếng Việt + "en" → kho dùng chung (vẽ một lần, lưu lại)
-          const item = typeof g.item === 'string' ? g.item.trim() : ''
-          const dyn = item && !OBJECTS[item] && typeof g.en === 'string' ? dynamicId(g.en) : null
-          return { g, item: dyn ?? (item || undefined), itemName: dyn ? item : undefined }
-        })
-        .map(({ g, item, itemName }) => ({
-          item,
-          itemName,
-          container: typeof g.container === 'string' ? g.container : undefined,
-          each: num(g.each, 0),
-          count: num(g.count, 1),
-          label: typeof g.label === 'string' || typeof g.label === 'number' ? String(g.label) : undefined,
-        }))
+        .map(objectGroupFromRaw)
       const spec = normalizeObjects({ groups })
       if (!spec.groups.length) throw new Error(note || 'Không có đồ vật nào trong kho hình để vẽ.')
       doc = { kind: 'objects', spec }
@@ -629,7 +620,7 @@ export function toolFromRaw(raw: Record<string, unknown>): ToolDoc {
     }
 
     case 'clock':
-      doc = { kind: 'clock', spec: { hour: Math.round(num(raw.hour, 8)), minute: Math.round(num(raw.minute, 0)), numbers: bool('numbers', true) } }
+      doc = { kind: 'clock', spec: { hour: Math.round(num(raw.hour ?? 8, 8)), minute: Math.round(num(raw.minute, 0)), numbers: bool('numbers', true) } }
       break
 
     default:

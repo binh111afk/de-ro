@@ -5,7 +5,7 @@
  *
  * Mỗi dòng một lệnh (xem OXY_HELP). Hai trục cùng đơn vị.
  */
-import { parseExpr } from './plot'
+import { fitAutoBounds, parseExpr } from './plot'
 
 export interface OxySpec {
   xMin: number
@@ -16,6 +16,8 @@ export interface OxySpec {
   /** hiện số trên trục */
   numbers: boolean
   items: string
+  /** Giữ khung tự chọn có miền lớn ở kích thước đọc được. */
+  autoScale?: boolean
   /** độ lệch nhãn do người dùng kéo (khoá = id nhãn trên attr `data-lbl`) */
   labelPos?: Record<string, [number, number]>
 }
@@ -203,6 +205,85 @@ export function parseOxy(text: string): { items: Item[]; errors: Array<{ line: n
   return { items, errors }
 }
 
+type OxyBounds = Pick<OxySpec, 'xMin' | 'xMax' | 'yMin' | 'yMax'>
+
+/** Mốc hữu hạn cho đường cong không có đầu mút. Tìm xa hơn khi khung chưa gặp miền xác định. */
+function curveAnchor(src: string, bounds: OxyBounds, fixed: Partial<OxyBounds>): V | undefined {
+  const f = parseExpr(src)
+  const { xMin, xMax, yMin, yMax } = bounds
+  const width = xMax - xMin
+  let best: V | undefined
+  let distance = Infinity
+  for (let k = 0; k <= 8 && !best; k++) {
+    const extra = width * (2 ** k - 1) / 2
+    const left = fixed.xMin ?? xMin - extra
+    const right = fixed.xMax ?? xMax + extra
+    for (let i = 0; i <= 40; i++) {
+      const x = left + (right - left) * i / 40
+      const y = f(x)
+      if (!Number.isFinite(y)) continue
+      const d = Math.max(yMin - y, y - yMax, 0)
+      if (d === 0) return [x, y]
+      if (d < distance) {
+        best = [x, y]
+        distance = d
+      }
+    }
+  }
+  return best
+}
+
+export function fitOxyBounds(text: string, bounds: Partial<OxyBounds>): OxyBounds & Pick<OxySpec, 'autoScale'> {
+  const { xMin, xMax, yMin, yMax } = bounds
+  if (xMin !== undefined && xMax !== undefined && yMin !== undefined && yMax !== undefined) {
+    return { xMin, xMax: xMax > xMin ? xMax : xMin + 10, yMin, yMax: yMax > yMin ? yMax : yMin + 10 }
+  }
+  const xs: number[] = []
+  const ys: number[] = []
+  const curves: string[] = []
+  const include = ([x, y]: V) => {
+    xs.push(x)
+    ys.push(y)
+  }
+  for (const item of parseOxy(text).items) {
+    switch (item.t) {
+      case 'point':
+        include(item.p)
+        break
+      case 'seg':
+      case 'vec':
+        include(item.a)
+        include(item.b)
+        break
+      case 'circle':
+        include([item.c[0] - item.r, item.c[1] - item.r])
+        include([item.c[0] + item.r, item.c[1] + item.r])
+        break
+      case 'line':
+      case 'ineq':
+        // Đường bờ kéo dài vô hạn. Lấy các giao điểm hữu hạn với trục làm mốc.
+        if (item.a !== 0) xs.push(-item.c / item.a)
+        if (item.b !== 0) ys.push(-item.c / item.b)
+        break
+      case 'curve':
+        curves.push(item.src)
+        break
+    }
+  }
+  const fit = () => {
+    const [left, right] = fitAutoBounds(xMin, xMax, [-5, 5], xs)
+    const [bottom, top] = fitAutoBounds(yMin, yMax, [-5, 5], ys)
+    return { xMin: left, xMax: right > left ? right : left + 10, yMin: bottom, yMax: top > bottom ? top : bottom + 10 }
+  }
+  const initial = fit()
+  for (const src of curves) {
+    const anchor = curveAnchor(src, initial, bounds)
+    if (anchor) include(anchor)
+  }
+  const fitted = curves.length ? fit() : initial
+  return Math.max(fitted.xMax - fitted.xMin, fitted.yMax - fitted.yMin) > 40 ? { ...fitted, autoScale: true } : fitted
+}
+
 /* ------------------------------------------------------------------ *
  * Vẽ
  * ------------------------------------------------------------------ */
@@ -237,7 +318,9 @@ export function renderOxySvg(spec: OxySpec, desc: string): { svg: string; width:
   const xMax = Math.max(spec.xMax, 0.5)
   const yMin = Math.min(spec.yMin, -0.5)
   const yMax = Math.max(spec.yMax, 0.5)
-  const unit = Math.max(14, Math.min(48, 380 / (xMax - xMin)))
+  const span = Math.max(xMax - xMin, yMax - yMin)
+  const unit = spec.autoScale ? 380 / span : Math.max(14, Math.min(48, 380 / (xMax - xMin)))
+  const tickStep = spec.autoScale ? 10 ** Math.ceil(Math.log10(span / 20)) : 1
   const pad = 26
   const padEnd = 38 // phía phải / trên: chỗ cho mũi tên dài + tên trục
   const W = Math.round((xMax - xMin) * unit + pad + padEnd)
@@ -257,8 +340,8 @@ export function renderOxySvg(spec: OxySpec, desc: string): { svg: string; width:
   // lưới
   if (spec.grid) {
     let g = ''
-    for (let x = Math.ceil(xMin); x <= xMax; x++) g += `M${f1(X(x))} ${f1(Y(yMin))}V${f1(Y(yMax))}`
-    for (let y = Math.ceil(yMin); y <= yMax; y++) g += `M${f1(X(xMin))} ${f1(Y(y))}H${f1(X(xMax))}`
+    for (let x = Math.ceil(xMin / tickStep) * tickStep; x <= xMax; x += tickStep) g += `M${f1(X(x))} ${f1(Y(yMin))}V${f1(Y(yMax))}`
+    for (let y = Math.ceil(yMin / tickStep) * tickStep; y <= yMax; y += tickStep) g += `M${f1(X(xMin))} ${f1(Y(y))}H${f1(X(xMax))}`
     back.push(`<path d="${g}" stroke="#d6d6d6" stroke-width="0.8"/>`)
   }
   // miền gạch bỏ (phần không thoả từng bất phương trình)
@@ -278,14 +361,14 @@ export function renderOxySvg(spec: OxySpec, desc: string): { svg: string; width:
   labels.push(`<text x="${f1(X(0) - 8)}" y="${f1(Y(yMax) - 12)}" ${FONT} font-style="italic" text-anchor="end" data-lbl="ax:y">y</text>`)
   labels.push(`<text x="${f1(X(0) - 13)}" y="${f1(Y(0) + 16)}" ${FONT} font-style="italic" data-lbl="ax:O">O</text>`)
   // vạch chia + số
-  const step = unit < 20 ? 2 : 1
+  const step = spec.autoScale ? tickStep : unit < 20 ? 2 : 1
   let ticks = ''
-  for (let x = Math.ceil(xMin); x <= xMax; x++) {
+  for (let x = Math.ceil(xMin / tickStep) * tickStep; x <= xMax; x += tickStep) {
     if (x === 0) continue
     ticks += `M${f1(X(x))} ${f1(Y(0) - 3)}v6`
     if (spec.numbers && x % step === 0) labels.push(`<text x="${f1(X(x))}" y="${f1(Y(0) + 17)}" ${FAM} font-size="13" text-anchor="middle" data-lbl="x:${x}">${fmt(x)}</text>`)
   }
-  for (let y = Math.ceil(yMin); y <= yMax; y++) {
+  for (let y = Math.ceil(yMin / tickStep) * tickStep; y <= yMax; y += tickStep) {
     if (y === 0) continue
     ticks += `M${f1(X(0) - 3)} ${f1(Y(y))}h6`
     if (spec.numbers && y % step === 0) labels.push(`<text x="${f1(X(0) - 7)}" y="${f1(Y(y) + 4.5)}" ${FAM} font-size="13" text-anchor="end" data-lbl="y:${y}">${fmt(y)}</text>`)

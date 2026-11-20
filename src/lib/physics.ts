@@ -27,8 +27,23 @@ export interface MotionSpec {
 export function parseMotionPoints(text: string): Array<[number, number]> {
   const out: Array<[number, number]> = []
   const re = /\(\s*(-?\d+(?:[.,]\d+)?)\s*;\s*(-?\d+(?:[.,]\d+)?)\s*\)/g
-  let m: RegExpExecArray | null
-  while ((m = re.exec(text))) out.push([Number(m[1].replace(',', '.')), Number(m[2].replace(',', '.'))])
+  let end = 0
+  const fail = (part: string) => {
+    throw new Error(`Sai cú pháp điểm "${part}". Viết dạng "(0; 0) (2; 4)"`)
+  }
+  const checkGap = (gap: string) => {
+    const invalid = gap.replace(/^[\s;,]+/, '').trim()
+    if (invalid) fail(invalid)
+  }
+  for (const m of text.matchAll(re)) {
+    checkGap(text.slice(end, m.index))
+    end = m.index + m[0].length
+    const x = Number(m[1].replace(',', '.'))
+    const y = Number(m[2].replace(',', '.'))
+    if (!Number.isFinite(x) || !Number.isFinite(y)) fail(m[0])
+    out.push([x, y])
+  }
+  checkGap(text.slice(end))
   if (out.length < 2) throw new Error('Cần ít nhất 2 điểm dạng (t; giá trị), vd. (0; 0) (2; 4)')
   for (let i = 1; i < out.length; i++) if (out[i][0] < out[i - 1][0]) throw new Error('Thời gian t phải tăng dần')
   return out

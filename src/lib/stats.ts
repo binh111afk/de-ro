@@ -151,6 +151,8 @@ export function renderStatsSvg(spec: StatsSpec, desc: string): { svg: string; wi
 
   /* ---------- quạt tròn ---------- */
   if (spec.chart === 'pie') {
+    // Mỗi dãy có thể mô tả một tổng thể riêng. Tự cộng sẽ đổi ý nghĩa tỉ lệ.
+    if (series.length !== 1) throw new Error('Biểu đồ tròn cần đúng một dãy số liệu.')
     const vals = series[0].vals
     const sum = vals.reduce((a, b) => a + b, 0) || 1
     const R = 110

@@ -50,12 +50,22 @@ const toNum = (s: string) => Number(s.replace(',', '.'))
 export function parseGasStates(text: string): Map<string, [number, number]> {
   const out = new Map<string, [number, number]>()
   const re = new RegExp(String.raw`([\p{L}\p{N}'’]+)\s*[:=]?\s*\(\s*${NUM}\s*;\s*${NUM}\s*\)`, 'gu')
+  let end = 0
+  const checkGap = (gap: string) => {
+    const invalid = gap.replace(/^[\s;,]+/, '').trim()
+    if (invalid) throw new Error(`Sai cú pháp trạng thái "${invalid.split('\n')[0].trim()}". Viết dạng "1: (2; 3)"`)
+  }
   for (const m of text.matchAll(re)) {
+    checkGap(text.slice(end, m.index))
+    end = m.index + m[0].length
     const x = toNum(m[2])
     const y = toNum(m[3])
+    if (!Number.isFinite(x) || !Number.isFinite(y)) throw new Error(`Trạng thái ${m[1]} có toạ độ ngoài phạm vi số`)
     if (x < 0 || y < 0) throw new Error(`Trạng thái ${m[1]}: p, V, T phải không âm`)
+    if (out.has(m[1])) throw new Error(`Trạng thái ${m[1]} được khai báo nhiều lần`)
     out.set(m[1], [x, y])
   }
+  checkGap(text.slice(end))
   if (out.size < 2) throw new Error('Cần ít nhất 2 trạng thái dạng "1: (2; 3)"')
   return out
 }
@@ -161,9 +171,15 @@ const formatProcLabel = (raw: string) =>
     return /^\d+$/.test(s) ? sub(s) : `<tspan baseline-shift="sub" font-size="70%">${s}</tspan>`
   })
 
+export function defaultGasProcesses(states: Map<string, [number, number]>): string {
+  // Thiếu danh sách quá trình: nối thẳng theo thứ tự khai báo, không suy đoán loại quá trình.
+  const names = [...states.keys()]
+  return names.slice(1).map((to, i) => `${names[i]}-${to}: thẳng`).join('\n')
+}
+
 export function renderGasSvg(spec: GasSpec, desc: string): { svg: string; width: number; height: number } {
   const states = parseGasStates(spec.states)
-  const procs = parseGasProcesses(spec.processes ?? '', states)
+  const procs = parseGasProcesses(spec.processes ?? defaultGasProcesses(states), states)
   const { x: xv, y: yv } = axisVars(spec.axes)
   const paths = procs.map((p) => ({ ...p, ...processPath(spec.axes, p.kind, states.get(p.from)!, states.get(p.to)!, `${p.from}-${p.to}`) }))
 

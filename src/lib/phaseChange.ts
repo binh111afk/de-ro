@@ -20,7 +20,7 @@ export interface PhaseSpec {
    *  toạ độ có thể kèm kí hiệu hiện trên trục: "C: (60 = T_1; 0)" hoặc "(70 = T_2; 0)";
    *  thêm "_" trước toạ độ "_(80; 20)" để vẽ đoạn tiếp theo mà không hiện vạch số trên trục */
   points: string
-  /** phần kéo dài sau điểm cuối (đoạn ngang ra mép đồ thị), mặc định true */
+  /** true để kéo dài đoạn ngang sau điểm cuối ra mép đồ thị */
   extend: boolean
   dashed: boolean
   dots: boolean

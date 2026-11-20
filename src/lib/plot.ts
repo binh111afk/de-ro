@@ -222,6 +222,30 @@ function niceStep(span: number) {
   return (m <= 1 ? 1 : m <= 2 ? 2 : m <= 5 ? 5 : 10) * p
 }
 
+/** Mở các đầu trục tự chọn đủ chứa đối tượng và chừa chỗ cho nhãn. */
+export function fitAutoBounds(
+  min: number | undefined,
+  max: number | undefined,
+  fallback: [number, number],
+  values: number[],
+): [number, number] {
+  if (min !== undefined && max !== undefined) return [min, max]
+  const [baseMin, baseMax] = fallback
+  let lo = min ?? (max !== undefined && max <= baseMin ? max - (baseMax - baseMin) : baseMin)
+  let hi = max ?? (min !== undefined && min >= baseMax ? min + (baseMax - baseMin) : baseMax)
+  const finite = values.filter(Number.isFinite)
+  if (finite.length) {
+    const first = Math.min(...finite)
+    const last = Math.max(...finite)
+    const span = Math.max(hi, last) - Math.min(lo, first)
+    const margin = span * 0.08
+    const step = niceStep(span)
+    if (min === undefined && first - margin < lo) lo = Math.floor((first - margin) / step) * step
+    if (max === undefined && last + margin > hi) hi = Math.ceil((last + margin) / step) * step
+  }
+  return [lo, hi]
+}
+
 const fmt = (v: number) => String(Math.round(v * 1000) / 1000).replace('.', ',').replace('-', '−')
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
