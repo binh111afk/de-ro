@@ -279,8 +279,8 @@ function CreditCard() {
   else if (q === null) body = <p className="mt-6 text-[13px] text-ink-3">Máy dev: không giới hạn token AI.</p>
   else {
     const left = aiPointsLeft({ ...q, scope: 'month' })
-    // thanh so với quà chào mừng 120 điểm (nạp thêm vượt mức thì thanh đầy)
-    const pct = Math.min(100, Math.round((left / Math.max(120, left)) * 100))
+    // thanh so với quà chào mừng 80 điểm (nạp thêm vượt mức thì thanh đầy)
+    const pct = Math.min(100, Math.round((left / Math.max(80, left)) * 100))
     body = (
       <>
         <div className="mt-7 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">

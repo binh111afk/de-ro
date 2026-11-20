@@ -529,8 +529,8 @@ function UserDetailDrawer({
   const creditsValue = quota?.credits ?? 0
   const toPoints = (tokens: number) => Math.floor(tokens / TOKENS_PER_POINT)
   const pointsLeft = limitValue === null ? null : Math.max(0, toPoints(limitValue + creditsValue - usedValue))
-  // thanh so với quà chào mừng 120 điểm, giống Hồ sơ
-  const pct = pointsLeft === null ? 100 : Math.min(100, Math.round((pointsLeft / Math.max(120, pointsLeft)) * 100))
+  // thanh so với quà chào mừng 80 điểm, giống Hồ sơ
+  const pct = pointsLeft === null ? 100 : Math.min(100, Math.round((pointsLeft / Math.max(80, pointsLeft)) * 100))
 
   return (
     <Portal>

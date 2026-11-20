@@ -2,7 +2,7 @@ import { createHash, createHmac, randomUUID, timingSafeEqual } from 'node:crypto
 
 /**
  * Điểm AI (chỉ người đã đăng nhập; khách bị chặn ở llmProxy):
- * - Lần đầu dùng AI, tài khoản được tặng một lần AI_WELCOME_POINTS điểm (mặc định 120), cất vào
+ * - Lần đầu dùng AI, tài khoản được tặng một lần AI_WELCOME_POINTS điểm (mặc định 80), cất vào
  *   số dư `ai_credits`. 1 điểm = TOKENS_PER_POINT token. Dùng hết là hết; sau này có gói nạp thêm.
  * - Hạn mức tháng (`AI_MONTHLY_TOKENS`, mặc định 0 = không có) vẫn giữ để bật lại nếu cần;
  *   ngoại lệ từng tài khoản ở `ai_quota_overrides` (monthly_tokens null = không giới hạn).
@@ -18,7 +18,7 @@ const num = (v: string | undefined, d: number) => {
 }
 export const TOKENS_PER_POINT = 1000
 export const MONTHLY_LIMIT = () => num(process.env.AI_MONTHLY_TOKENS, 0)
-export const WELCOME_TOKENS = () => num(process.env.AI_WELCOME_POINTS, 120) * TOKENS_PER_POINT
+export const WELCOME_TOKENS = () => num(process.env.AI_WELCOME_POINTS, 80) * TOKENS_PER_POINT
 
 /** limit = hạn mức tháng (base) + số dư điểm (credits); dùng vượt base thì trừ vào credits */
 export type Quota = { used: number; limit: number; scope: 'month'; base?: number; credits?: number }
