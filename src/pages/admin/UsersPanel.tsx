@@ -195,7 +195,7 @@ export function UsersPanel({ me: _me }: UsersPanelProps) {
                       {/* Email + tên */}
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-3">
-                          <UserAvatar user={u} className="size-8 text-[13px]" />
+                          <UserAvatarWithPresence user={u} className="size-8 text-[13px]" />
                           <div className="flex min-w-0 flex-col">
                             <span className="truncate font-semibold text-ink">
                               {u.name || <span className="font-normal italic text-ink-3">Chưa đặt tên</span>}
@@ -550,7 +550,7 @@ function UserDetailDrawer({
         {/* Header ngăn kéo */}
         <div className="flex items-center justify-between gap-2 border-b border-line px-4 py-3.5 sm:px-6 sm:py-4">
           <div className="flex min-w-0 items-center gap-3">
-            <UserAvatar user={user} className="size-10 shrink-0 text-[15px]" />
+            <UserAvatarWithPresence user={user} className="size-10 text-[15px]" />
             <div className="min-w-0">
               <h2 className="truncate text-[16px] font-bold text-ink">
                 {user.name || 'Người dùng'}
@@ -1043,6 +1043,22 @@ export default UsersPanel
 /** Ảnh đại diện người dùng; chưa có ảnh hoặc ảnh lỗi thì hiện chữ cái đầu. */
 function UserAvatar({ user, className }: { user: AdminUser; className?: string }) {
   return <Avatar src={user.avatar} name={user.name || user.email} className={className} />
+}
+
+function UserAvatarWithPresence({ user, className }: { user: AdminUser; className?: string }) {
+  return (
+    <span className="relative inline-flex shrink-0">
+      <UserAvatar user={user} className={className} />
+      {user.online && (
+        <span
+          className="absolute right-0 bottom-0 size-2.5 rounded-full bg-emerald-500 ring-2 ring-white"
+          data-tip="Đang online"
+          role="img"
+          aria-label="Đang online"
+        />
+      )}
+    </span>
+  )
 }
 
 const MB = 1024 * 1024

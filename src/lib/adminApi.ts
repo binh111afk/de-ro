@@ -20,6 +20,7 @@ export interface AdminUser {
   name: string
   /** URL ảnh đại diện; null = chưa đặt */
   avatar: string | null
+  online?: boolean
   /** ISO */
   createdAt: string
   lastSignInAt: string | null

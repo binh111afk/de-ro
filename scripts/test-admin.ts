@@ -16,6 +16,7 @@ const ADMIN2 = '66666666-6666-4666-8666-666666666666'
 const ROLES: Record<string, string> = { [ADMIN]: 'admin', [MOD]: 'moderator', [ADMIN2]: 'admin' }
 let adminBanned = false
 let noCreditRow = false
+let presenceUnavailable = false
 const calls: string[] = []
 const LISTED = '44444444-4444-4444-8444-444444444444'
 const PRIVATE = '55555555-5555-4555-8555-555555555555'
@@ -45,8 +46,26 @@ globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
     const id = /user_id=eq\.([0-9a-f-]+)/.exec(url)?.[1] ?? ''
     return ok(ROLES[id] ? [{ role: ROLES[id] }] : [])
   }
-  if (url.includes('/auth/v1/admin/users?')) return ok({ users: [{ id: USER, email: 'u@x.vn', created_at: '2026-11-01T00:00:00Z', user_metadata: { display_name: 'Cô Lan', avatar_url: 'https://x/a.jpg' } }] }, { 'x-total-count': '1' })
+  if (url.includes('/auth/v1/admin/users?')) {
+    const filter = new URL(url).searchParams.get('filter')
+    const user = { id: USER, email: 'u@x.vn', created_at: '2026-11-01T00:00:00Z', user_metadata: { display_name: 'Cô Lan', avatar_url: 'https://x/a.jpg' } }
+    const users = filter ? [user] : [user, ...[ADMIN2, MOD, ADMIN].map((id) => ({ id, created_at: user.created_at }))]
+    return ok({ users }, { 'x-total-count': String(users.length) })
+  }
   if (url.includes('/rpc/admin_user_stats')) return ok([{ user_id: USER, docs: 3, decks: 1, tokens: 500, role: null }])
+  if (url.includes('/rest/v1/presence?')) {
+    if (presenceUnavailable) return new Response('{}', { status: 503 })
+    const params = new URL(url).searchParams
+    const ids = params.get('user_id')?.match(/^in\.\((.*)\)$/)?.[1]?.split(',')
+    const since = Date.parse(params.get('last_seen')?.match(/^gte\.(.*)$/)?.[1] ?? '')
+    const now = Date.now()
+    const rows = [
+      { user_id: ADMIN, lastSeen: now - 10_000 },
+      { user_id: USER, lastSeen: now - 180_000 },
+      { user_id: ADMIN2, lastSeen: now - 60_000 },
+    ]
+    return ok(rows.filter((r) => ids?.includes(r.user_id) && r.lastSeen >= since).map(({ user_id }) => ({ user_id })))
+  }
   if (url.includes(`/auth/v1/admin/users/${USER}`) && method === 'GET') return ok({ id: USER, email: 'u@x.vn', created_at: '' })
   if (url.includes(`/auth/v1/admin/users/${ADMIN}`) && method === 'GET') return ok({ id: ADMIN, banned_until: adminBanned ? '2999-01-01T00:00:00Z' : null })
   if (url.includes('/auth/v1/admin/users/')) return ok({})
@@ -121,6 +140,20 @@ const u = (list.data.users as Array<Record<string, unknown>>)?.[0]
 check('admin users.list → 200, ghép số đề/token', list.status === 200 && u?.docs === 3 && u?.tokensThisMonth === 500 && list.data.total === 1)
 check('users.list lấy tên hiển thị + ảnh đại diện', u?.name === 'Cô Lan' && u?.avatar === 'https://x/a.jpg')
 check('users.list gửi filter email', calls.some((c) => c.includes('/auth/v1/admin/users?') && c.includes('filter=u%40')))
+
+const onlineList = await hit({ action: 'users.list' }, 'tAdmin')
+const onlineUsers = onlineList.data.users as Array<{ id: string; online: boolean }> | undefined
+check('users.list gắn online trong 2 phút và giữ thứ tự trong từng nhóm', onlineList.status === 200 &&
+  onlineUsers?.map((row) => row.id).join(',') === [ADMIN2, ADMIN, USER, MOD].join(',') &&
+  onlineUsers.every((row, i) => row.online === (i < 2)))
+
+presenceUnavailable = true
+const offlineList = await hit({ action: 'users.list' }, 'tAdmin')
+presenceUnavailable = false
+const offlineUsers = offlineList.data.users as typeof onlineUsers
+check('users.list giữ danh sách và thứ tự cũ khi presence lỗi', offlineList.status === 200 &&
+  offlineUsers?.map((row) => row.id).join(',') === [USER, ADMIN2, MOD, ADMIN].join(',') &&
+  offlineUsers.every((row) => row.online === false))
 
 check('admin tự khoá mình → 400', (await hit({ action: 'users.ban', userId: ADMIN }, 'tAdmin')).status === 400)
 check('khoá admin khác → 400', (await hit({ action: 'users.ban', userId: ADMIN }, 'tAdmin')).status === 400)

@@ -258,22 +258,32 @@ const ACTIONS: ActionMap = {
       const { data, res } = await call<{ users: AuthUser[]; total?: number }>(s, `/auth/v1/admin/users?${qs}`)
       const users = data.users ?? []
       const total = Number(res.headers.get('x-total-count') ?? data.total ?? users.length)
-      // số liệu và cờ hỏi song song
-      const [stats, flags] = users.length
+      const ids = users.map((u) => u.id)
+      const since = new Date(Date.now() - 2 * 60_000).toISOString()
+      const [stats, flags, presence] = ids.length
         ? await Promise.all([
             call<Array<{ user_id: string; docs: number; decks: number; tokens: number; role: Role | null }>>(s, '/rest/v1/rpc/admin_user_stats', {
               method: 'POST',
-              body: JSON.stringify({ p_ids: users.map((u) => u.id), p_month: month() }),
+              body: JSON.stringify({ p_ids: ids, p_month: month() }),
             }).then((r) => r.data),
             // bảng cờ lỗi thì danh sách vẫn phải hiện
-            call<FlagRow[]>(s, `/rest/v1/security_flags?user_id=in.(${users.map((u) => u.id).join(',')})&select=user_id,strikes,last_at,last_action,last_ip`)
+            call<FlagRow[]>(s, `/rest/v1/security_flags?user_id=in.(${ids.join(',')})&select=user_id,strikes,last_at,last_action,last_ip`)
               .then((r) => r.data)
               .catch(() => [] as FlagRow[]),
+            call<Array<{ user_id: string }>>(s, `/rest/v1/presence?user_id=in.(${ids.join(',')})&last_seen=gte.${encodeURIComponent(since)}&select=user_id`)
+              .then((r) => r.data ?? [])
+              .catch(() => []),
           ])
-        : [[], [] as FlagRow[]]
+        : [[], [], []]
       const byId = new Map(stats.map((x) => [x.user_id, x]))
       const flagById = new Map(flags.map((f) => [f.user_id, f]))
-      return { users: users.map((u) => toRow(u, byId.get(u.id), flagById.get(u.id))), total, page, perPage }
+      const onlineIds = new Set(presence.map((r) => r.user_id))
+      const rows = users.map((u) => ({
+        ...toRow(u, byId.get(u.id), flagById.get(u.id)),
+        online: onlineIds.has(u.id),
+      }))
+      rows.sort((a, b) => Number(b.online) - Number(a.online))
+      return { users: rows, total, page, perPage }
     },
   },
 
