@@ -864,9 +864,9 @@ export function OpsPanel({ me: _me }: OpsPanelProps) {
                         {err.userName && err.userEmail && err.userEmail !== err.userName && (
                           <div className="text-[12px] text-ink-3 [overflow-wrap:anywhere]">{err.userEmail}</div>
                         )}
-                        {err.error?.includes('empty content') && err.emptyDay != null && err.emptyDay > 0 && (
+                        {(err.error?.includes('empty content') || err.error?.includes('ngắt giữa chừng')) && err.emptyDay != null && err.emptyDay > 0 && (
                           <div className={cn('tnum whitespace-nowrap text-[12px]', freeEmpty != null && err.emptyDay >= freeEmpty ? 'text-clay' : 'text-ink-3')}>
-                            {err.emptyDay} lượt rỗng / 24 giờ
+                            {err.emptyDay} lượt miễn điểm / 24 giờ
                           </div>
                         )}
                       </td>

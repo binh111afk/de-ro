@@ -184,14 +184,20 @@ const spentBy = async (fn: () => Promise<Out>) => {
   check('đóng tab giữa chừng: vẫn trừ đủ 5.000 token', spent === 5_000, spent)
 }
 
-// 3. upstream đứt giữa chừng → trừ theo phần đã nhận, sự kiện error
+// 3. upstream đứt giữa chừng → sự kiện error; người dùng không nhận được gì nên miễn điểm trong trần 3 lượt / 24 giờ (chung với lượt rỗng)
 {
   plan = ['break']
   const { r, spent } = await spentBy(() => hit({ messages: msgs('soạn đề c'), maxTokens: 8000, stream: true }))
   const last = r.events.at(-1)
   check('đứt giữa chừng: kết thúc bằng sự kiện error', last?.type === 'error', r.events.map((e) => e.type))
-  check('đứt giữa chừng: có trừ điểm phần đã sinh', spent > 0, spent)
-  check('đứt giữa chừng: không trừ mức trần (≤ 2 × (prompt + phần nhận))', spent < 2 * 8_000, spent)
+  check('đứt giữa chừng: chưa đủ trần → miễn điểm', spent === 0, spent)
+  // đủ trần 3 lượt hỏng / 24 giờ → trừ theo phần đã nhận, không phải mức trần
+  emptyToday = 3
+  plan = ['break']
+  const over = await spentBy(() => hit({ messages: msgs('soạn đề c2'), maxTokens: 8000, stream: true }))
+  emptyToday = 0
+  check('đứt giữa chừng: đủ trần → có trừ điểm phần đã sinh', over.spent > 0, over.spent)
+  check('đứt giữa chừng: đủ trần → không trừ mức trần (≤ 2 × (prompt + phần nhận))', over.spent < 2 * 8_000, over.spent)
 }
 
 // 4. DeepSeek (ưu tiên 1) đứt → opencode (ưu tiên 2)
@@ -206,7 +212,13 @@ const spentBy = async (fn: () => Promise<Out>) => {
   check('dự phòng: gọi DeepSeek trước, kết thúc done bằng opencode', calls[n0]?.model === 'deepseek-flash' && calls[n0 + 1]?.model === 'app-model' && r.events.at(-1)?.type === 'done' && r.events.at(-1)?.model === undefined, r.events.at(-1))
 check('không lộ tên model cho trình duyệt', !JSON.stringify(r.events).includes('app-model') && !JSON.stringify(r.events).includes('deepseek-flash'))
   check('dự phòng: đứt thì chuyển ngay sang dự phòng (2 lượt)', calls.length - n0 === 2, calls.slice(n0))
-  check('dự phòng: trừ lượt dự phòng + phần hỏng', spent > 5_000, spent)
+  check('dự phòng: lượt đứt được miễn điểm, chỉ trừ lượt dự phòng (5.000)', spent === 5_000, spent)
+  // đủ trần 3 lượt hỏng / 24 giờ → lượt đứt bị tính thêm như cũ
+  emptyToday = 3
+  plan = ['break', 'ok']
+  const over = await spentBy(() => hit({ messages: msgs('soạn đề d2'), maxTokens: 8000, stream: true }))
+  emptyToday = 0
+  check('dự phòng: đủ trần → trừ lượt dự phòng + phần hỏng', over.spent > 5_000, over.spent)
   delete process.env.DEEPSEEK_API_KEY
 }
 

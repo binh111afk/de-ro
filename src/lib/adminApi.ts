@@ -51,7 +51,7 @@ export interface UserQuota {
   credits: number
   /** chưa dùng AI lần nào: `credits` là quà chào mừng sẽ nhận ở lượt đầu */
   welcomePending?: boolean
-  /** lượt AI trả rỗng trong 24 giờ qua / số lượt được miễn điểm mỗi ngày */
+  /** lượt AI hỏng (trả rỗng, luồng đứt) trong 24 giờ qua / số lượt được miễn điểm mỗi ngày */
   emptyDay?: number
   freeEmpty?: number
 }

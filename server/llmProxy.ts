@@ -22,7 +22,7 @@ import { json, readBody, safeError } from './http.js'
 import { LOGIN_REQUIRED, clientIp, guard, isLocal, userFromToken } from './guard.js'
 import { TOKENS_PER_POINT, addUsage, checkReceipt, estimatePromptTokens, hasQuotaStore, issueReceipt, quotaMessage, readQuota, refundReceipt, requestHash, reserveQuota } from './aiQuota.js'
 import { buildTaskSystem } from './aiTasks.js'
-import { EMPTY_FREE_PER_DAY, costFromUsage, logAiCall, maintenanceBlock, recentEmptyCalls } from './ops.js'
+import { EMPTY_FREE_PER_DAY, costFromUsage, logAiCall, maintenanceBlock, recentFreeFails } from './ops.js'
 import { readAiOverrides } from './aiSettings.js'
 import { callAnthropic } from './anthropic.js'
 import { handleExtractRequest } from './extract.js'
@@ -707,7 +707,8 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
           })
           if (got.broken) {
             // đứt giữa chừng: nhà cung cấp vẫn tính phần đã sinh → ước theo độ dài đã nhận (không phải mức trần)
-            wasted += promptTokens + Math.ceil((got.content.length + got.reasoning.length) / 3)
+            // người dùng không nhận được gì: miễn điểm trong trần EMPTY_FREE_PER_DAY lượt / 24 giờ (chung với lượt trả rỗng), quá trần mới tính
+            if (userId && (await recentFreeFails(userId)) >= EMPTY_FREE_PER_DAY) wasted += promptTokens + Math.ceil((got.content.length + got.reasoning.length) / 3)
             lastErr = `${selectedModel}: luồng trả lời bị ngắt giữa chừng`
             writeRawLog(got.content, { _model: selectedModel, _attempt: attempt, broken: true, reasoning: got.reasoning })
             break
@@ -765,8 +766,8 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
         }
         lastErr = `${selectedModel}: empty content (finish_reason=${choice?.finish_reason ?? 'unknown'})`
         // trả rỗng (thường là suy luận hết trần) người dùng không nhận được gì → miễn điểm, chi phí nhà cung cấp do hệ thống chịu.
-        // Trần EMPTY_FREE_PER_DAY (3) lượt / người / 24 giờ (đếm theo ai_calls) để không ai cố ý đốt tiền bằng lượt rỗng; quá trần thì tính như cũ.
-        if (userId && (await recentEmptyCalls(userId)) >= EMPTY_FREE_PER_DAY) wasted += billOf(data.usage, reasoning)
+        // Trần EMPTY_FREE_PER_DAY (3) lượt hỏng (rỗng + luồng đứt) / người / 24 giờ (đếm theo ai_calls) để không ai cố ý đốt tiền bằng lượt rỗng; quá trần thì tính như cũ.
+        if (userId && (await recentFreeFails(userId)) >= EMPTY_FREE_PER_DAY) wasted += billOf(data.usage, reasoning)
         // hết trần token vì suy luận: gọi lại cùng model cùng trần vẫn hết trần (mất thêm vài chục giây + tiền) → sang model khác ngay.
         // opencode có đường riêng: lần sau hạ mức suy luận xuống medium.
         if (choice?.finish_reason === 'length' && !target.opencode) break

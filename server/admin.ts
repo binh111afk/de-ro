@@ -12,7 +12,7 @@ import { json, readBody, safeError } from './http.js'
 import { deleteR2Object, pingR2, r2DocKeyFromUrl, r2Info } from './r2.js'
 import { assertSafeEndpoint, listProviders, pingProviders } from './llmProxy.js'
 import { encryptKey, hasAiSecret, isAllowedEndpoint, resetAiOverrides } from './aiSettings.js'
-import { EMPTY_FREE_PER_DAY, _resetOpsCache } from './ops.js'
+import { EMPTY_FREE_PER_DAY, FREE_FAIL_FILTER, _resetOpsCache } from './ops.js'
 import { readDbMetrics } from './dbMetrics.js'
 import { readExamPages, VisionInputError } from './bankVision.js'
 import { CONTENT_ACTIONS } from './adminContent.js'
@@ -430,8 +430,8 @@ const ACTIONS: ActionMap = {
         call<Array<{ monthly_tokens: number | null; note: string | null }>>(s, `/rest/v1/ai_quota_overrides?user_id=eq.${id}&select=monthly_tokens,note`),
         call<Array<{ tokens: number; requests: number }>>(s, `/rest/v1/ai_usage?user_id=eq.${id}&month=eq.${month()}&select=tokens,requests`),
         call<Array<{ balance: number }>>(s, `/rest/v1/ai_credits?user_id=eq.${id}&select=balance`),
-        // lượt AI trả rỗng 24 giờ qua (được miễn điểm tới EMPTY_FREE_PER_DAY lượt): không đọc được thì bỏ qua
-        call<Array<{ id: number }>>(s, `/rest/v1/ai_calls?user_id=eq.${id}&ok=eq.false&error=like.*empty%20content*&created_at=gte.${encodeURIComponent(since)}&select=id&limit=100`).catch(() => null),
+        // lượt AI hỏng (trả rỗng / luồng đứt) 24 giờ qua, được miễn điểm tới EMPTY_FREE_PER_DAY lượt: không đọc được thì bỏ qua
+        call<Array<{ id: number }>>(s, `/rest/v1/ai_calls?user_id=eq.${id}&${FREE_FAIL_FILTER}&created_at=gte.${encodeURIComponent(since)}&select=id&limit=100`).catch(() => null),
       ])
       const defaultLimit = MONTHLY_LIMIT()
       return {
@@ -623,7 +623,7 @@ const ACTIONS: ActionMap = {
         Promise.all(ids.map((id) => getUser(s, id).catch(() => null))),
         ids.length ? call<Array<{ user_id: string }>>(
           s,
-          `/rest/v1/ai_calls?user_id=in.(${ids.join(',')})&ok=eq.false&error=like.*empty%20content*&created_at=gte.${encodeURIComponent(since)}&select=user_id`,
+          `/rest/v1/ai_calls?user_id=in.(${ids.join(',')})&${FREE_FAIL_FILTER}&created_at=gte.${encodeURIComponent(since)}&select=user_id`,
         ) : null,
       ])
       const users = new Map(ids.map((id, i) => {

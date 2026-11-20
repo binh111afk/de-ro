@@ -85,7 +85,7 @@ globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
     const now = Date.now()
     const rows = [
       { id: 7, user_id: USER, error: 'model: empty content', hoursAgo: 1, ok: false },
-      { id: 6, user_id: USER, error: 'model: timeout', hoursAgo: 2, ok: false },
+      { id: 6, user_id: USER, error: 'model: luồng trả lời bị ngắt giữa chừng', hoursAgo: 2, ok: false },
       { id: 5, user_id: LOOKUP_UNAVAILABLE, error: 'model: empty content', hoursAgo: 3, ok: false },
       { id: 4, user_id: null, error: 'model: empty content', hoursAgo: 4, ok: false },
       { id: 3, user_id: USER, error: 'model: empty content', hoursAgo: 5, ok: false },
@@ -96,7 +96,7 @@ globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
     const since = q.get('created_at')?.match(/^gte\.(.*)$/)?.[1]
     return ok(rows.filter((r) =>
       (q.get('ok') !== 'eq.false' || !r.ok) &&
-      (q.get('error') !== 'like.*empty content*' || r.error.includes('empty content')) &&
+      (!q.get('or') || /empty content|ngắt giữa chừng/.test(r.error)) &&
       (!since || r.created_at >= since) &&
       (!ids || (r.user_id && ids.includes(r.user_id))) &&
       (!q.get('user_id')?.startsWith('eq.') || r.user_id === q.get('user_id')!.slice(3)),
@@ -234,7 +234,7 @@ const errorRows = aiErrorsResult.data.items as Array<{ id: number; userName: str
 check('admin xem ai.errors → 200, trả ngưỡng miễn điểm và giữ thứ tự', aiErrorsResult.status === 200 &&
   aiErrorsResult.data.freeEmpty === 3 && errorRows?.map((r) => r.id).join(',') === '7,6,5,4')
 check('ai.errors trả tên, email và đếm đúng lượt lỗi rỗng trong 24 giờ ngoài cả trang hiện tại', errorRows?.[0]?.userName === 'Cô Lan' &&
-  errorRows[0].userEmail === 'u@x.vn' && errorRows[0].emptyDay === 2 && errorRows[1]?.emptyDay === 2)
+  errorRows[0].userEmail === 'u@x.vn' && errorRows[0].emptyDay === 3 && errorRows[1]?.emptyDay === 3)
 check('ai.errors vẫn trả lượt rỗng khi tra tài khoản lỗi, lượt khách đếm 0', errorRows?.[2]?.userName === '' &&
   errorRows[2].userEmail === '' && errorRows[2].emptyDay === 1 && errorRows[3]?.emptyDay === 0)
 const aiErrorCalls = calls.slice(aiErrorsFrom)
@@ -243,7 +243,7 @@ check('ai.errors tra mỗi tài khoản một lần và đếm theo cả nhóm',
   aiErrorCalls.some((c) => c.includes(`user_id=in.(${USER},${LOOKUP_UNAVAILABLE})`)))
 {
   const qg = (await hit({ action: 'quota.get', userId: USER }, 'tAdmin')).data as { emptyDay?: number; freeEmpty?: number }
-  check('quota.get trả số lượt rỗng 24 giờ và ngưỡng miễn', qg.emptyDay === 2 && qg.freeEmpty === 3, qg)
+  check('quota.get trả số lượt hỏng (rỗng + luồng đứt) 24 giờ và ngưỡng miễn', qg.emptyDay === 3 && qg.freeEmpty === 3, qg)
 }
 check('moderator chạy health → 403', (await hit({ action: 'health' }, 'tMod')).status === 403)
 check('moderator xem health.targets → 403', (await hit({ action: 'health.targets' }, 'tMod')).status === 403)
