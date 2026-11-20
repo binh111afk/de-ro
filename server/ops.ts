@@ -52,6 +52,25 @@ export async function logAiCall(c: AiCall): Promise<void> {
   }
 }
 
+/** Số lượt trả rỗng (hết trần token…) mỗi người được miễn điểm trong 24 giờ; từ lượt kế tiếp tính điểm như thường. */
+export const EMPTY_FREE_PER_DAY = 5
+
+/** Số lượt trả rỗng gần nhất của người dùng trong 24 giờ qua (đếm tối đa `limit`). Không đọc được DB thì coi là 0 (miễn điểm). */
+export async function recentEmptyCalls(userId: string, limit = EMPTY_FREE_PER_DAY): Promise<number> {
+  const s = supa()
+  if (!s) return 0
+  try {
+    const since = new Date(Date.now() - 24 * 3600_000).toISOString()
+    const q = `user_id=eq.${encodeURIComponent(userId)}&ok=eq.false&error=like.*empty%20content*&created_at=gte.${encodeURIComponent(since)}&select=id&limit=${limit}`
+    const r = await fetch(`${s.base}/rest/v1/ai_calls?${q}`, { headers: s.headers, signal: AbortSignal.timeout(3000) })
+    if (!r.ok) return 0
+    const rows = (await r.json()) as unknown
+    return Array.isArray(rows) ? rows.length : 0
+  } catch {
+    return 0
+  }
+}
+
 export const AI_FEEDBACK_KINDS = ['up', 'down', 'undo', 'resend', 'complaint'] as const
 export type AiFeedback = {
   userId: string | null

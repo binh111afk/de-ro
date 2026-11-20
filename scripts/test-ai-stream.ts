@@ -36,6 +36,8 @@ const db = { credits: 120_000, used: 0 }
 type Mode = 'ok' | 'break' | 'fail' | 'empty-stop' | 'empty-length'
 let plan: Mode[] = []
 let deepseekHitsTokenLimit = false
+// số lượt rỗng đã ghi trong ai_calls 24 giờ qua (server chỉ đếm tối đa 5)
+let emptyToday = 0
 const calls: Array<{ model: string; stream: boolean; reasoningEffort?: string; messages: Array<{ role: string; content: string }> }> = []
 const ok = (b: unknown) => new Response(JSON.stringify(b), { status: 200 })
 const enc = new TextEncoder()
@@ -79,6 +81,7 @@ globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
     return ok({ model: body.model, choices: [{ finish_reason: 'stop', message: { content: 'nội dung' } }], usage: { total_tokens: 5_000 } })
   }
   if (url.endsWith('/auth/v1/user')) return ok({ id: USER })
+  if (url.includes('/rest/v1/ai_calls') && !init.method) return ok(Array.from({ length: Math.min(emptyToday, 5) }, (_, i) => ({ id: i })))
   if (url.includes('/rest/v1/ai_quota_overrides')) return ok([])
   if (url.includes('/rest/v1/ai_usage')) return ok([{ tokens: db.used }])
   if (url.includes('/rest/v1/ai_credits')) return ok([{ balance: db.credits }])
@@ -325,8 +328,14 @@ check('không lộ tên model cho trình duyệt', !JSON.stringify(r.events).inc
     check(`${label} length: trả 200 với nội dung dự phòng`, r.status === 200 && (stream
       ? r.type.includes('event-stream') && r.events.some((e) => e.type === 'retry') && done?.type === 'done' && String(done.content).includes('"2+2"')
       : r.json?.content === 'nội dung'), r)
-    check(`${label} length: chỉ tính một lượt hết trần và một lượt dự phòng (14.000 token)`, spent === 14_000, spent)
+    check(`${label} length: lượt hết trần (rỗng) không tính điểm, chỉ tính lượt dự phòng (5.000 token)`, spent === 5_000, spent)
   }
+  // đủ trần miễn điểm 5 lượt rỗng / ngày → lượt hết trần bị tính như cũ (9.000 + 5.000)
+  emptyToday = 5
+  plan = ['ok']
+  const over = await spentBy(() => hit({ messages: msgs('soạn đề hết trần token'), maxTokens: 8000 }))
+  check('đủ trần miễn điểm: lượt hết trần tính điểm (14.000 token)', over.spent === 14_000, over.spent)
+  emptyToday = 0
   deepseekHitsTokenLimit = false
 }
 

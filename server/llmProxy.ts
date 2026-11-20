@@ -22,7 +22,7 @@ import { json, readBody, safeError } from './http.js'
 import { LOGIN_REQUIRED, clientIp, guard, isLocal, userFromToken } from './guard.js'
 import { TOKENS_PER_POINT, addUsage, checkReceipt, estimatePromptTokens, hasQuotaStore, issueReceipt, quotaMessage, readQuota, refundReceipt, requestHash, reserveQuota } from './aiQuota.js'
 import { buildTaskSystem } from './aiTasks.js'
-import { costFromUsage, logAiCall, maintenanceBlock } from './ops.js'
+import { EMPTY_FREE_PER_DAY, costFromUsage, logAiCall, maintenanceBlock, recentEmptyCalls } from './ops.js'
 import { readAiOverrides } from './aiSettings.js'
 import { callAnthropic } from './anthropic.js'
 import { handleExtractRequest } from './extract.js'
@@ -539,7 +539,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
     type Usage = { prompt_tokens?: number; completion_tokens?: number; input_tokens?: number; output_tokens?: number } | undefined
     // Vercel có thể dừng function ngay sau khi trả lời → gom promise log, chờ trước khi return
     const pending: Promise<void>[] = []
-    // token provider đã tính nhưng lượt đó hỏng (trả rỗng…): vẫn trừ vào hạn mức
+    // token provider đã tính nhưng lượt đó hỏng giữa chừng (luồng đứt sau khi đã sinh chữ): vẫn trừ vào hạn mức; lượt trả rỗng thì không
     let wasted = 0
     // model mạnh đắt hơn: nhân điểm khi lượt đang chạy là model mạnh
     let billFactor = 1
@@ -764,8 +764,9 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
           return reply(200, { content, reasoning, usage: data.usage ?? null, ...(isLocal(ip) ? { model: data.model ?? selectedModel } : {}), finishReason: choice?.finish_reason ?? 'unknown', quota: after, receipt: receiptFor(spent), ...(citations ? { citations } : {}) })
         }
         lastErr = `${selectedModel}: empty content (finish_reason=${choice?.finish_reason ?? 'unknown'})`
-        // trả rỗng vẫn tốn token (thường là suy luận hết trần) → tính vào hạn mức
-        wasted += billOf(data.usage, reasoning)
+        // trả rỗng (thường là suy luận hết trần) người dùng không nhận được gì → miễn điểm, chi phí nhà cung cấp do hệ thống chịu.
+        // Trần EMPTY_FREE_PER_DAY lượt / người / 24 giờ (đếm theo ai_calls) để không ai cố ý đốt tiền bằng lượt rỗng; quá trần thì tính như cũ.
+        if (userId && (await recentEmptyCalls(userId)) >= EMPTY_FREE_PER_DAY) wasted += billOf(data.usage, reasoning)
         // hết trần token vì suy luận: gọi lại cùng model cùng trần vẫn hết trần (mất thêm vài chục giây + tiền) → sang model khác ngay.
         // opencode có đường riêng: lần sau hạ mức suy luận xuống medium.
         if (choice?.finish_reason === 'length' && !target.opencode) break
