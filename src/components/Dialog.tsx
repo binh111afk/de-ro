@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { create } from 'zustand'
 import { Button, inputClass } from '@/components/ui'
@@ -23,12 +23,12 @@ interface Options {
   placeholder?: string
 }
 
-type Spec = Options & { id: number; kind: 'alert' | 'confirm' | 'prompt'; message: string; resolve: (v: never) => void }
+type Spec = Options & { id: number; kind: 'alert' | 'confirm' | 'prompt' | 'content'; message: ReactNode; resolve: (v: never) => void }
 
 const useDialogs = create<{ queue: Spec[] }>(() => ({ queue: [] }))
 let seq = 0
 
-function open<T>(kind: Spec['kind'], message: string, o: Options = {}) {
+function open<T>(kind: Spec['kind'], message: ReactNode, o: Options = {}) {
   return new Promise<T>((resolve) => {
     const spec = { ...o, id: ++seq, kind, message, resolve: resolve as (v: never) => void }
     useDialogs.setState((s) => ({ queue: [...s.queue, spec] }))
@@ -36,6 +36,7 @@ function open<T>(kind: Spec['kind'], message: string, o: Options = {}) {
 }
 
 export const dialog = {
+  show: (content: ReactNode, title: string) => open<void>('content', content, { title, confirmLabel: 'Đóng' }),
   alert: (message: string, o?: Options) => open<void>('alert', message, o),
   confirm: (message: string, o?: Options) => open<boolean>('confirm', message, o),
   /** confirm có nút phụ `altLabel`: trả true (nút chính), 'alt' (nút phụ) hoặc false (huỷ) */
@@ -113,17 +114,17 @@ function DialogView({ spec }: { spec: Spec }) {
         role={kind === 'alert' ? 'alertdialog' : 'dialog'}
         aria-modal="true"
         aria-labelledby={title ? titleId : undefined}
-        aria-describedby={bodyId}
+        aria-describedby={kind === 'content' ? undefined : bodyId}
         onKeyDown={onKeyDown}
         className="anim-pop my-auto w-full max-w-[440px] rounded-[8px] bg-surface p-6 shadow-float sm:p-7"
       >
         {title ? <h2 id={titleId} className="font-display text-[20px] font-semibold leading-snug text-ink">{title}</h2> : null}
-        <p
+        <div
           id={bodyId}
           className={`whitespace-pre-line break-words text-[14.5px] leading-relaxed text-ink-2 ${title ? 'mt-2' : ''}`}
         >
           {message}
-        </p>
+        </div>
 
         {kind === 'prompt' ? (
           <label className="mt-5 block">
@@ -139,7 +140,7 @@ function DialogView({ spec }: { spec: Spec }) {
         ) : null}
 
         <div className="mt-7 flex flex-col-reverse gap-2.5 sm:flex-row sm:justify-end">
-          {kind !== 'alert' ? (
+          {kind === 'confirm' || kind === 'prompt' ? (
             <Button data-autofocus={danger ? '' : undefined} variant="soft" onClick={cancel}>
               {spec.cancelLabel ?? 'Huỷ'}
             </Button>

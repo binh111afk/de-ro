@@ -5,7 +5,7 @@
 import assert from 'node:assert/strict'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
-import { parseInline, parseMarkdown, Markdown } from '../src/examEditor/markdown.tsx'
+import { parseInline, parseMarkdown, Markdown } from '../src/lib/aiChatMarkdown.tsx'
 
 let pass = 0
 let fail = 0
@@ -110,6 +110,36 @@ check('render React: JSON hiện trong khối pre', () => {
 check('render React: không chèn HTML thô từ model', () => {
   const html = render('<img src=x onerror=alert(1)>')
   assert.ok(!html.includes('<img'))
+})
+
+check('bảng: giữ dấu | trong công thức và mã nội tuyến', () => {
+  const [table] = parseMarkdown('| Đại lượng | Biểu thức |\n| --- | ---: |\n| **Giá trị** | $|x|$ |\n| Mã | `a|b` |')
+  assert.equal(table.type, 'table')
+  assert.deepEqual(table.rows[0][1], [{ type: 'math', text: '|x|', display: false }])
+  assert.deepEqual(table.rows[1][1], [{ type: 'code', text: 'a|b' }])
+  assert.match(render('| A | B |\n| --- | --- |\n| 1 | 2 |'), /<table><thead>.*<tbody>/)
+})
+
+check('KaTeX trong văn bản, công thức khối và mã nguyên văn', () => {
+  const html = render('**$x^2$**\n\n$$\n\\frac{1}{2}\n$$\n\n```text\n$x^2$\n```')
+  assert.match(html, /<strong>.*class="katex"/)
+  assert.match(html, /class="katex-display"/)
+  assert.match(render('**$a*b$** và _$x_1$_'), /<strong>.*class="katex".*<\/strong>.*<em>.*class="katex"/)
+  assert.match(html, /<code>\$x\^2\$<\/code>/)
+  assert.doesNotMatch(render('$\\href{javascript:alert(1)}{Bấm}$'), /<a\b|href="javascript:/)
+})
+
+check('link đầu tin và các giao thức bị chặn', () => {
+  assert.match(render('[Tài liệu](https://example.com/)'), /href="https:\/\/example\.com\/" target="_blank" rel="noreferrer noopener"/)
+  for (const href of ['mailto:a@example.com', 'javascript:alert', 'data:text/html,a', '/soan-de']) {
+    assert.doesNotMatch(render(`[Bấm](${href})`), /<a\b/)
+  }
+})
+
+check('tin thường và tóm tắt tài liệu giữ cách hiển thị cũ', () => {
+  const html = renderToStaticMarkup(createElement(Markdown, { text: '$x^2$\n\n| A |\n| --- |\n| B |', chat: false }))
+  assert.match(html, /\$x\^2\$/)
+  assert.doesNotMatch(html, /<table>|class="katex"/)
 })
 
 console.log(`\n${pass}/${pass + fail} pass, ${fail} fail`)

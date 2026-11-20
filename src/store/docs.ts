@@ -7,6 +7,7 @@ import { persist } from 'zustand/middleware'
 import type { ExamBlock, ExamDoc } from '@/data/docTypes'
 import { emptyDoc, uid } from '@/data/docTypes'
 import { DECK_THEMES } from '@/lib/slideTheme'
+import { chatHistoryKey, removeChatHistory } from '@/lib/aiChatHistory'
 
 /* ------------------------------------------------------------------ *
  * Slide
@@ -324,11 +325,13 @@ export const useDocStore = create<DocStore>()(
           doc: s.doc?.id === id ? { ...s.doc, title } : s.doc,
         })),
 
-      deleteDoc: (id) =>
+      deleteDoc: (id) => {
+        removeChatHistory(chatHistoryKey('exam', id))
         set((s) => ({
           myDocs: s.myDocs.filter((d) => d.id !== id),
           doc: s.doc?.id === id ? null : s.doc,
-        })),
+        }))
+      },
 
       openDeck: (deck) => set({ deck }),
       newDeck: () => set({ deck: emptyDeck() }),
@@ -350,11 +353,13 @@ export const useDocStore = create<DocStore>()(
           return { myDecks }
         }),
 
-      deleteDeck: (id) =>
+      deleteDeck: (id) => {
+        removeChatHistory(chatHistoryKey('slide', id))
         set((s) => ({
           myDecks: s.myDecks.filter((d) => d.id !== id),
           deck: s.deck?.id === id ? null : s.deck,
-        })),
+        }))
+      },
 
       saveDeckById: (deck) =>
         set((s) => ({

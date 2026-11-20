@@ -26,9 +26,9 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   mod
 ));
 
-// ../dethinhbien/node_modules/react/cjs/react.production.js
+// node_modules/react/cjs/react.production.js
 var require_react_production = __commonJS({
-  "../dethinhbien/node_modules/react/cjs/react.production.js"(exports) {
+  "node_modules/react/cjs/react.production.js"(exports) {
     "use strict";
     var REACT_ELEMENT_TYPE = Symbol.for("react.transitional.element");
     var REACT_PORTAL_TYPE = Symbol.for("react.portal");
@@ -478,9 +478,9 @@ var require_react_production = __commonJS({
   }
 });
 
-// ../dethinhbien/node_modules/react/cjs/react.development.js
+// node_modules/react/cjs/react.development.js
 var require_react_development = __commonJS({
-  "../dethinhbien/node_modules/react/cjs/react.development.js"(exports, module) {
+  "node_modules/react/cjs/react.development.js"(exports, module) {
     "use strict";
     "production" !== process.env.NODE_ENV && (function() {
       function defineDeprecationWarning(methodName, info) {
@@ -1475,9 +1475,9 @@ var require_react_development = __commonJS({
   }
 });
 
-// ../dethinhbien/node_modules/react/index.js
+// node_modules/react/index.js
 var require_react = __commonJS({
-  "../dethinhbien/node_modules/react/index.js"(exports, module) {
+  "node_modules/react/index.js"(exports, module) {
     "use strict";
     if (process.env.NODE_ENV === "production") {
       module.exports = require_react_production();
@@ -1585,7 +1585,81 @@ var OBJECTS = {
   sun: "m\u1EB7t tr\u1EDDi",
   tent: "c\xE1i l\u1EC1u",
   slide: "c\u1EA7u tr\u01B0\u1EE3t",
-  water_tank: "b\u1ED3n n\u01B0\u1EDBc"
+  water_tank: "b\u1ED3n n\u01B0\u1EDBc",
+  skyscraper: "nh\xE0 ch\u1ECDc tr\u1EDDi",
+  tile_house: "nh\xE0 m\xE1i ng\xF3i",
+  stilt_house: "nh\xE0 s\xE0n",
+  school: "tr\u01B0\u1EDDng h\u1ECDc",
+  hospital: "b\u1EC7nh vi\u1EC7n",
+  market: "ch\u1EE3",
+  pagoda: "ch\xF9a",
+  church: "nh\xE0 th\u1EDD",
+  bridge: "c\xE2y c\u1EA7u",
+  village_gate: "c\u1ED5ng l\xE0ng",
+  traffic_light: "\u0111\xE8n giao th\xF4ng",
+  fence: "h\xE0ng r\xE0o",
+  water_well: "gi\u1EBFng n\u01B0\u1EDBc",
+  water_tower: "th\xE1p n\u01B0\u1EDBc",
+  windmill: "c\u1ED1i xay gi\xF3",
+  warehouse: "nh\xE0 kho",
+  step_ladder: "thang g\u1EA5p",
+  stairs: "c\u1EA7u thang",
+  ruler: "th\u01B0\u1EDBc k\u1EBB",
+  compass_tool: "compa",
+  eraser: "c\u1EE5c t\u1EA9y",
+  scissors: "c\xE1i k\xE9o",
+  wall_clock: "\u0111\u1ED3ng h\u1ED3 treo t\u01B0\u1EDDng",
+  desk_lamp: "\u0111\xE8n b\xE0n",
+  electric_fan: "c\xE1i qu\u1EA1t",
+  wardrobe: "c\xE1i t\u1EE7",
+  bed: "c\xE1i gi\u01B0\u1EDDng",
+  sofa: "gh\u1EBF sofa",
+  vase: "b\xECnh hoa",
+  teapot: "\u1EA5m tr\xE0",
+  pot: "c\xE1i n\u1ED3i",
+  pan: "c\xE1i ch\u1EA3o",
+  bowl: "c\xE1i b\xE1t",
+  spoon: "c\xE1i th\xECa",
+  chopsticks: "\u0111\xF4i \u0111\u0169a",
+  hand_fan: "qu\u1EA1t gi\u1EA5y",
+  bread: "b\xE1nh m\xEC",
+  banh_chung: "b\xE1nh ch\u01B0ng",
+  ice_cream: "que kem",
+  potato: "c\u1EE7 khoai t\xE2y",
+  corn: "b\u1EAFp ng\xF4",
+  chili: "qu\u1EA3 \u1EDBt",
+  cucumber: "qu\u1EA3 d\u01B0a chu\u1ED9t",
+  cabbage: "c\xE2y b\u1EAFp c\u1EA3i",
+  lollipop: "k\u1EB9o m\xFAt",
+  cookie: "b\xE1nh quy",
+  pizza: "b\xE1nh pizza",
+  chick: "g\xE0 con",
+  cow: "con b\xF2",
+  horse: "con ng\u1EF1a",
+  elephant: "con voi",
+  deer: "con h\u01B0\u01A1u",
+  dolphin: "c\xE1 heo",
+  snail: "\u1ED1c s\xEAn",
+  sunflower: "hoa h\u01B0\u1EDBng d\u01B0\u01A1ng",
+  pine_tree: "c\xE2y th\xF4ng",
+  bus: "xe bu\xFDt",
+  motorbike: "xe m\xE1y",
+  train: "t\xE0u ho\u1EA3",
+  truck: "xe t\u1EA3i",
+  sailboat: "thuy\u1EC1n bu\u1ED3m",
+  fire_truck: "xe c\u1EE9u ho\u1EA3",
+  soccer_ball: "qu\u1EA3 b\xF3ng \u0111\xE1",
+  racket: "c\xE1i v\u1EE3t",
+  shuttlecock: "qu\u1EA3 c\u1EA7u l\xF4ng",
+  globe: "qu\u1EA3 \u0111\u1ECBa c\u1EA7u",
+  compass: "la b\xE0n",
+  magnifying_glass: "k\xEDnh l\xFAp",
+  microscope: "k\xEDnh hi\u1EC3n vi",
+  test_tube: "\u1ED1ng nghi\u1EC7m",
+  battery: "c\u1EE5c pin",
+  light_bulb: "b\xF3ng \u0111\xE8n",
+  magnet: "nam ch\xE2m",
+  rocket: "t\xEAn l\u1EEDa"
 };
 var CONTAINERS = {
   basket: { name: "r\u1ED5", placement: "inside", mouth: { cx: 0.5, cy: 0.27, rx: 0.48, ry: 0.22 }, rim: 0.1, labelY: 0.68 },
@@ -1602,7 +1676,7 @@ var CONTAINERS = {
   basin: { name: "ch\u1EADu", placement: "inside", mouth: { cx: 0.5, cy: 0.2, rx: 0.42, ry: 0.1 }, rim: 0, labelY: 0.65 },
   packet: { name: "g\xF3i", placement: "label", mouth: { cx: 0.5, cy: 0.5, rx: 0.4, ry: 0.1 }, rim: 0, labelY: 0.55, size: 0.8 }
 };
-var SCENE_OBJECTS = ["bicycle", "tree", "person", "house", "building", "flagpole", "electric_pole", "streetlight", "lighthouse", "tower", "ladder", "boat", "ship", "car", "airplane", "hot_air_balloon", "kite", "mountain", "sun", "tent", "slide", "water_tank"];
+var SCENE_OBJECTS = ["bicycle", "tree", "person", "house", "building", "flagpole", "electric_pole", "streetlight", "lighthouse", "tower", "ladder", "boat", "ship", "car", "airplane", "hot_air_balloon", "kite", "mountain", "sun", "tent", "slide", "water_tank", "skyscraper", "tile_house", "stilt_house", "school", "hospital", "market", "pagoda", "church", "bridge", "village_gate", "traffic_light", "fence", "water_well", "water_tower", "windmill", "warehouse", "step_ladder", "stairs", "cow", "horse", "elephant", "deer", "pine_tree", "bus", "motorbike", "train", "truck", "sailboat", "fire_truck", "rocket"];
 
 // src/lib/prompts/figureGuide.ts
 var FIGURE_GUIDE = '1) \u0110\u1ED3 th\u1ECB h\xE0m s\u1ED1: {"kind":"graph","curves":["x^2-2x"],"xMin":-2,"xMax":4,"points":"M(1; -1) chi\u1EBFu"}. "points" (tu\u1EF3 ch\u1ECDn) ch\u1EA5m v\xE0 ghi t\xEAn \u0111i\u1EC3m \u0111\u1EC1 nh\u1EAFc t\u1EDBi (c\u1EF1c tr\u1ECB, giao \u0111i\u1EC3m\u2026), m\u1ED7i d\xF2ng m\u1ED9t \u0111i\u1EC3m, th\xEAm "chi\u1EBFu" \u0111\u1EC3 k\u1EBB n\xE9t \u0111\u1EE9t xu\u1ED1ng tr\u1EE5c; \u0111\u1EC1 g\u1ECDi t\xEAn \u0111i\u1EC3m n\xE0o th\xEC PH\u1EA2I c\xF3 \u0111i\u1EC3m \u0111\xF3. M\u1EB7c \u0111\u1ECBnh kh\xF4ng c\xF3 l\u01B0\u1EDBi \xF4 vu\xF4ng; th\xEAm "grid": true n\u1EBFu \u0111\u1EC1 c\u1EA7n l\u01B0\u1EDBi.\n2) B\u1EA3ng bi\u1EBFn thi\xEAn c\u1EE7a h\xE0m s\u1ED1: {"kind":"vartable","expr":"x^3-3x+1","fname":"y"}\n3) B\u1EA3ng x\xE9t d\u1EA5u c\u1EE7a m\u1ED9t bi\u1EC3u th\u1EE9c: {"kind":"signtable","expr":"(x-1)(x+2)/(x-3)"}\n4) H\u1EC7 tr\u1EE5c Oxy (\u0111i\u1EC3m, vect\u01A1, \u0111\u01B0\u1EDDng th\u1EB3ng, \u0111\u01B0\u1EDDng tr\xF2n, mi\u1EC1n nghi\u1EC7m): {"kind":"oxy","xMin":-1,"xMax":5,"yMin":-1,"yMax":5,"items":"m\u1ED7i d\xF2ng m\u1ED9t l\u1EC7nh"}. L\u1EC7nh: "A(1; 2)", "M(2; 3) chi\u1EBFu", "AB, BC", "vect\u01A1 AB", "vect\u01A1 u(2; 1)", "d: 2x - y + 1 = 0", "\u0111\u01B0\u1EDDng th\u1EB3ng AB", "x = 2", "(P): y = x^2 - 2x", "\u0111\u01B0\u1EDDng tr\xF2n (I; 2)", "\u0111\u01B0\u1EDDng tr\xF2n (1; -2) 3", "x + y <= 4".\n5) H\xECnh h\u1ECDc ph\u1EB3ng: {"kind":"geo2d","shape":"triangle|right-triangle|isosceles|equilateral|square|rectangle|parallelogram|trapezoid|rhombus|circle|inscribed-triangle|free","names":["A","B","C"],"altitude":false,"median":false,"diagonals":false,"circumcircle":false,"extras":"m\u1ED7i d\xF2ng m\u1ED9t l\u1EC7nh d\u1EF1ng th\xEAm"}. M\u1EABu "free" (t\u1EF1 do theo to\u1EA1 \u0111\u1ED9, "names":[]): trong "extras" (c\u0169ng d\xF9ng \u0111\u01B0\u1EE3c cho c\xE1c m\u1EABu) h\u1ED7 tr\u1EE3 "A(0; 4)" / "M(2,5; 0)", "nh\xE3n AB \\"4 km\\"", "k\xEDch th\u01B0\u1EDBc BC \\"7 km\\"" (th\xEAm tr\xEAn/d\u01B0\u1EDBi/tr\xE1i/ph\u1EA3i), "\u0111\u01B0\u1EDDng BC k\xE9o d\xE0i", "tia BC", "vect\u01A1 AB, AD" (m\u0169i t\xEAn t\u1EEB A t\u1EDBi B; b\xE0i vect\u01A1, quy t\u1EAFc h\xECnh b\xECnh h\xE0nh / ba \u0111i\u1EC3m th\xEC v\u1EBD c\xE1c vect\u01A1 \u0111\u1EC1 nh\u1EAFc t\u1EDBi), "vect\u01A1 AC \\"u\\"" (vect\u01A1 c\xF3 t\xEAn ri\xEAng). To\u1EA1 \u0111\u1ED9 ph\u1EA3i kh\u1EDBp \u0111\u1EC1: "vu\xF4ng t\u1EA1i A" th\xEC g\xF3c vu\xF4ng n\u1EB1m \u1EDF ch\xEDnh \u0111i\u1EC3m A (vd A(0; 0) B(0; 3) C(4; 0)), g\xF3c \u0111\u1EC1 cho (vd g\xF3c B = 60\xB0) ph\u1EA3i \u0111\xFAng s\u1ED1 \u0111o tr\xEAn h\xECnh; tam gi\xE1c vu\xF4ng kh\xF4ng c\u1EA7n to\u1EA1 \u0111\u1ED9 ri\xEAng th\xEC d\xF9ng m\u1EABu right-triangle (vu\xF4ng t\u1EA1i \u0111\u1EC9nh \u0111\u1EA7u c\u1EE7a "names").\n5b) H\xECnh th\u1EF1c t\u1EBF n\xE9t \u0111\u01A1n (thang d\u1EF1a t\u01B0\u1EDDng, g\u1EA5p gi\u1EA5y, \u0111o chi\u1EC1u cao qua g\xF3c nh\xECn, m\u1EA3nh v\u01B0\u1EDDn\u2026): {"kind":"scene","text":"m\u1ED7i d\xF2ng m\u1ED9t l\u1EC7nh"}. L\u1EC7nh: "A(0; 0) B(4; 0) C(0; 3)" khai b\xE1o \u0111i\u1EC3m (y h\u01B0\u1EDBng l\xEAn; t\xEAn b\u1EAFt \u0111\u1EA7u _ th\xEC \u1EA9n nh\xE3n, n\u1ED1i \u0111i\u1EC3m \u1EA9n b\u1EB1ng g\u1EA1ch: _G-_K); "AB, BC" \u0111o\u1EA1n; "ABCD" \u0111a gi\xE1c; "\u0111\u1EE9t MN" n\xE9t \u0111\u1EE9t; "k\xEDch th\u01B0\u1EDBc AB "15 cm"" m\u0169i t\xEAn k\xEDch th\u01B0\u1EDBc; "g\xF3c ABC "60\xB0"" cung g\xF3c t\u1EA1i B; "vu\xF4ng ABC" g\xF3c vu\xF4ng t\u1EA1i B; "nh\xE3n AB "?"" ch\u1EEF c\u1EA1nh \u0111o\u1EA1n; "\u0111\u1EA5t AB" / "t\u01B0\u1EDDng AB" g\u1EA1ch ch\xE9o; "h\xECnh <v\u1EADt> AB" v\u1EBD h\xECnh v\u1EADt \u0111\u1EE9ng t\u1EEB ch\xE2n A l\xEAn \u0111\u1EC9nh B (cao \u0111\xFAng AB, xoay theo AB \u2014 thang d\u1EF1a t\u01B0\u1EDDng \u0111\u1EB7t d\u1ECDc \u0111o\u1EA1n thang), "h\xECnh <v\u1EADt> A" \u0111\u1EB7t v\u1EADt \u0111\u1EE9ng t\u1EA1i A. V\u1EADt c\xF3 s\u1EB5n: ' + SCENE_OBJECTS.map((id) => OBJECTS[id]).filter(Boolean).join(", ") + '; v\u1EADt kh\xE1c ghi "h\xECnh en:<t\xEAn ti\u1EBFng Anh> A". B\xE0i c\xF3 c\xE2y, ng\u01B0\u1EDDi, to\xE0 nh\xE0, c\u1ED9t c\u1EDD, thang, thuy\u1EC1n\u2026 th\xEC N\xCAN th\xEAm h\xECnh v\u1EADt cho d\u1EC5 h\xECnh dung; \u0111o\u1EA1n \u0111o v\u1EABn v\u1EBD nh\u01B0 th\u01B0\u1EDDng.To\u1EA1 \u0111\u1ED9 g\u1EA7n \u0111\xFAng t\u1EC9 l\u1EC7 s\u1ED1 li\u1EC7u \u0111\u1EC1, nh\u01B0ng \u0111o\u1EA1n qu\xE1 ng\u1EAFn so v\u1EDBi h\xECnh (chi\u1EC1u cao m\u1EAFt 1,5 m b\xEAn kho\u1EA3ng c\xE1ch 50 m\u2026) th\xEC v\u1EBD to h\u01A1n t\u1EC9 l\u1EC7 cho d\u1EC5 nh\xECn; c\u1EA1nh/g\xF3c \u0111\xE3 bi\u1EBFt d\xF9ng k\xEDch th\u01B0\u1EDBc ho\u1EB7c nh\xE3n; c\u1EA1nh c\u1EA7n t\xECm ghi "?" ho\u1EB7c ch\u1EEF, KH\xD4NG ghi \u0111\xE1p s\u1ED1. G\xF3c t\u1EA1o v\u1EDBi m\u1EB7t \u0111\u1EA5t/t\u01B0\u1EDDng th\xEC PH\u1EA2I c\xF3 \\"\u0111\u1EA5t\\"/\\"t\u01B0\u1EDDng\\" qua \u0111\u1EC9nh g\xF3c l\xE0m c\u1EA1nh th\u1EE9 hai; \u0111\u1EC9nh g\xF3c l\xE0 ch\xE2n v\u1EADt (g\xF3c \u1EDF A khi \\"h\xECnh c\xE1i thang AB\\").\n6) H\xECnh kh\xF4ng gian: {"kind":"geo3d","shape":"pyramid3|pyramid3-sa|pyramid3-regular|pyramid4|pyramid4-sa|pyramid4-regular|tetrahedron|prism3|box|cube|cone|cylinder|sphere","names":["S","A","B","C","D"],"height":true,"diagonals":false,"circumsphere":false,"extras":"m\u1ED7i d\xF2ng m\u1ED9t l\u1EC7nh d\u1EF1ng th\xEAm"}. "circumsphere": true v\u1EBD m\u1EB7t c\u1EA7u ngo\u1EA1i ti\u1EBFp kh\u1ED1i (h\u1ED9p, l\u1EADp ph\u01B0\u01A1ng, ch\xF3p/l\u0103ng tr\u1EE5 \u0111\u1EC1u); trong "extras" c\xF3 th\u1EC3 \u0111\u1EB7t/\u0111\u1ED5i to\u1EA1 \u0111\u1ED9 3D d\u1EA1ng "S(1; 0,5; 2)". L\u1EC7nh d\u1EF1ng th\xEAm (5 v\xE0 6; kh\xF4ng d\xF9ng cho n\xF3n, tr\u1EE5, c\u1EA7u): "M = trung \u0111i\u1EC3m SC", "N = SB 1/3", "O = AC c\u1EAFt BD", "H = h\xECnh chi\u1EBFu S l\xEAn (ABCD)", "K = h\xECnh chi\u1EBFu A l\xEAn SB", "G = tr\u1ECDng t\xE2m ABC", "O = t\xE2m ngo\u1EA1i ti\u1EBFp ABC", "\u0111\u01B0\u1EDDng cao AH", "trung tuy\u1EBFn AM", "MN" (n\u1ED1i), "\u0111\u1EE9t MN". \u0110\u1EC1 g\u1ECDi t\xEAn \u0111i\u1EC3m n\xE0o (trung \u0111i\u1EC3m, giao \u0111i\u1EC3m, t\xE2m I\u2026) th\xEC PH\u1EA2I d\u1EF1ng \u0111i\u1EC3m \u0111\xF3 cho hi\u1EC7n tr\xEAn h\xECnh.\n7) Bi\u1EC3u \u0111\u1ED3 th\u1ED1ng k\xEA: {"kind":"stats","chart":"bar|line|pie|hist|table","title":"","xLabel":"","yLabel":"","data":"d\xF2ng 1: nh\xE3n c\xE1ch nhau b\u1EDFi ;\\nT\xEAn d\xE3y: s\u1ED1; s\u1ED1; ..."}. Gh\xE9p nh\xF3m d\xF9ng nh\xE3n "[40; 50) [50; 60)".\n8) \u0110\u01B0\u1EDDng tr\xF2n l\u01B0\u1EE3ng gi\xE1c: {"kind":"trig","angles":"m\u1ED7i d\xF2ng m\u1ED9t l\u1EC7nh","values":true|false,"cot":true|false}. L\u1EC7nh m\u1ED7i d\xF2ng: g\xF3c "pi/3", "150\xB0"; h\u1ECD nghi\u1EC7m "\u03C0/4 + k\u03C0/2"; \u0111\u1EB7t t\xEAn \u0111i\u1EC3m "M: pi/6"; \u0111i\u1EC3m theo to\u1EA1 \u0111\u1ED9 "M(1/2; \u221A3/2)"; t\xF4 mi\u1EC1n nghi\u1EC7m "t\xF4: [\u03C0/6 \u2192 5\u03C0/6)" (m\u0169i t\xEAn \u2192, -> ho\u1EB7c \u0111\u1EBFn; [ ] l\u1EA5y \u0111\u1EA7u m\xFAt, ( ) kh\xF4ng l\u1EA5y); \u0111\u01B0\u1EDDng th\u1EB3ng "y = 1/2", "x = -\u221A2/2"; n\u1ED1i \u0111a gi\xE1c "n\u1ED1i t\xF4: M N P" (t\xF4 nh\u1EA1t; "n\u1ED1i t\xF4: h\u1ECD" n\u1ED1i c\u1EA3 h\u1ECD nghi\u1EC7m); cung gi\u1EEFa 2 \u0111i\u1EC3m "cung: M N \\"\u03B1\\"". V\xED d\u1EE5: {"kind":"trig","angles":"M: pi/6\\nN: 5pi/6\\nt\xF4: [pi/6 \u2192 5pi/6]\\ny = 1/2","values":true}. values=true ghi gi\xE1 tr\u1ECB cos, sin tr\xEAn tr\u1EE5c, cot=true v\u1EBD tr\u1EE5c cot. \u0110\u1EC1 g\u1ECDi \u0111i\u1EC3m M, N\u2026 th\xEC ghi M: g\xF3c \u0111\u1EC3 t\xEAn hi\u1EC7n tr\xEAn h\xECnh.\n9) S\u01A1 \u0111\u1ED3 c\xE2y x\xE1c su\u1EA5t: {"kind":"probtree","text":"m\u1ED7i d\xF2ng m\u1ED9t nh\xE1nh \\"T\xEAn: x\xE1c su\u1EA5t\\", th\u1EE5t 2 d\u1EA5u c\xE1ch cho nh\xE1nh con"}\n10) Tr\u1EE5c s\u1ED1 bi\u1EC3u di\u1EC5n t\u1EADp h\u1EE3p: {"kind":"numberline","sets":"m\u1ED7i d\xF2ng m\u1ED9t t\u1EADp, vd (-2; 3] ho\u1EB7c (-oo; -1) \u222A [2; 5]"}\n11) Bi\u1EC3u \u0111\u1ED3 Ven: {"kind":"venn","sets":"A, B","shade":"A \u2229 B","counts":"A: 5\\nAB: 3\\nB: 4"}\n11b) B\u1EA3ng gh\xE9p nh\xF3m (t\u1EA7n s\u1ED1 gh\xE9p nh\xF3m): {"kind":"grouped","groups":"m\u1ED7i d\xF2ng m\u1ED9t nh\xF3m, vd \\"[150; 155): 4\\"","label":"Chi\u1EC1u cao (cm)","freqLabel":"S\u1ED1 h\u1ECDc sinh","view":"htable","polygon":false,"extras":""}. view: "htable" b\u1EA3ng ngang ki\u1EC3u SGK (m\u1EB7c \u0111\u1ECBnh), "vtable" b\u1EA3ng d\u1ECDc, "hist" bi\u1EC3u \u0111\u1ED3 c\u1ED9t li\u1EC1n (polygon=true v\u1EBD th\xEAm \u0111a gi\xE1c t\u1EA7n s\u1ED1); extras (ch\u1EC9 b\u1EA3ng): "mid,cum,rel,total" \u2014 gi\xE1 tr\u1ECB \u0111\u1EA1i di\u1EC7n, t\u1EA7n s\u1ED1 t\xEDch lu\u1EF9, t\u1EA7n s\u1ED1 t\u01B0\u01A1ng \u0111\u1ED1i %, c\u1ED9t/h\xE0ng T\u1ED5ng. Nh\xF3m cu\u1ED1i c\xF3 th\u1EC3 l\xE0 \u0111o\u1EA1n \u0111\xF3ng [a; b]. \u0110\u1EC1 cho b\u1EA3ng t\u1EA7n s\u1ED1 gh\xE9p nh\xF3m th\xEC D\xD9NG lo\u1EA1i n\xE0y thay cho stats.\n12) M\u1EA1ch \u0111i\u1EC7n: {"kind":"circuit","text":"ngu\u1ED3n E = 12 V, r = 1 \u03A9\\nR1=4\u03A9 - (R2=6\u03A9 // R3=3\u03A9)"}. "-" n\u1ED1i ti\u1EBFp, "//" song song, ngo\u1EB7c gom c\u1EE5m; linh ki\u1EC7n theo ch\u1EEF \u0111\u1EA7u: R, Rb, \u0110, A, V, K, C, L, E.\n13) \u0110\u1ED3 th\u1ECB chuy\u1EC3n \u0111\u1ED9ng: {"kind":"motion","yName":"v (m/s)","tName":"t (s)","points":"(0; 0) (2; 4) (5; 4)"}\n14) M\u1EB7t ph\u1EB3ng nghi\xEAng: {"kind":"incline","angle":30,"fms":"none|up|down","F":"none|up|down"}\n15b) \u0110\u1ED3 th\u1ECB tr\u1EA1ng th\xE1i kh\xED (V\u1EADt l\xED 12): {"kind":"gas","axes":"pV|pT|VT","states":"1: (1; 4)\\n2: (4; 1)\\n3: (4; 4)","processes":"1-2: \u0111\u1EB3ng nhi\u1EC7t\\n2-3: \u0111\u1EB3ng t\xEDch\\n3-1: \u0111\u1EB3ng \xE1p","ticks":"value|symbol|none","showStates":true|false}. To\u1EA1 \u0111\u1ED9 (ngang; d\u1ECDc): p\u2013V l\xE0 (V; p), p\u2013T l\xE0 (T; p), V\u2013T l\xE0 (T; V). S\u1ED1 li\u1EC7u ph\u1EA3i kh\u1EDBp qu\xE1 tr\xECnh (\u0111\u1EB3ng nhi\u1EC7t tr\xEAn p\u2013V: p\xB7V b\u1EB1ng nhau; \u0111\u1EB3ng t\xEDch tr\xEAn p\u2013T: p/T b\u1EB1ng nhau\u2026); th\xEAm "| nh\xE3n" sau qu\xE1 tr\xECnh \u0111\u1EC3 ghi t\xEAn \u0111\u01B0\u1EDDng (vd "a-b: \u0111\u1EB3ng \xE1p | p_1"), \u0111\u1EB7t showStates=false \u0111\u1EC3 \u1EA9n ch\u1EA5m/nh\xE3n tr\u1EA1ng th\xE1i; ticks "symbol" ghi p\u2081, V\u2081, T\u2081 thay cho s\u1ED1.\n15) C\u1EA5u h\xECnh electron: {"kind":"electron","element":"Fe"}\n16) C\xF4ng th\u1EE9c c\u1EA5u t\u1EA1o h\u1EEFu c\u01A1: {"kind":"struct","formula":"CH3-CH(CH3)-CH2-OH","style":"condensed|skeletal","ringStyle":"kekule|circle","number":false}. Nh\xE1nh trong ngo\u1EB7c (...); \u0111i\u1EC7n t\xEDch cu\u1ED1i nh\xF3m d\xF9ng ^+, ^-, ^2+, ^2- (vd "CH3-CH(NH3^+)-COO^-"). M\u1EA1ch v\xF2ng: [benzen] ho\u1EB7c C6H5 (v\xF2ng benzen), [xiclo3]\u2026[xiclo6] (v\xF2ng no 3\u20136 c\u1EA1nh), nh\xF3m th\u1EBF theo v\u1ECB tr\xED (1:CH3)(4:NO2). V\xED d\u1EE5 v\xF2ng: {"kind":"struct","formula":"[benzen]-CH=CH2","style":"condensed"} (stiren), {"kind":"struct","formula":"[benzen](1:CH3)(4:NO2)","style":"condensed"} (p-nitrotoluen), {"kind":"struct","formula":"[xiclo6]","style":"skeletal"} (xiclohexan).\n17) \u0110\u1ED3 th\u1ECB s\u1ED1 mol (Ho\xE1): {"kind":"chemgraph","xName":"n CO2","yName":"n\u2193","points":"(0; 0) (0,2; 0,2) (0,4; 0)"}\n18) B\u1EA3ng s\u1ED1 li\u1EC7u / \u0111\u1ED1i chi\u1EBFu tu\u1EF3 \xFD: {"kind":"table","cells":"h\xE0ng 1 | \xF4 2 | \xF4 3\\nh\xE0ng 2 | a | b","header":"row|col|both|none","align":"center|left|right","merges":"","border":"all|outer|horizontal","fontSize":15}. \xD4 xu\u1ED1ng d\xF2ng ghi "\\\\n" (hai k\xED t\u1EF1) trong \xF4; ch\u1EC9 s\u1ED1 d\xF9ng x_1, x^2; g\u1ED9p \xF4 ghi "r1,c1:r2,c2" (vd. "1,1:1,3").\n19) Ph\u01B0\u01A1ng tr\xECnh ho\xE1 h\u1ECDc (Ho\xE1): {"kind":"chemeq","equations":"2KMnO4 -> K2MnO4 + MnO2 + O2 [t\xB0]","autoBalance":false,"fontSize":17,"align":"center"}. M\u0169i t\xEAn ->, <=>, \u0111i\u1EC1u ki\u1EC7n [tr\xEAn | d\u01B0\u1EDBi] (c\xF3 \u0111i\u1EC7n t\xEDch nh\u01B0 [-OH^- | +H^+]); nhi\u1EC1u m\u0169i t\xEAn m\u1ED9t d\xF2ng \u0111\u1EB7t [\u0111i\u1EC1u ki\u1EC7n] ngay sau m\u1ED7i m\u0169i t\xEAn; ch\u1EA5t c\u1EA5u t\u1EA1o b\u1ECDc trong {...} (vd "{CH3-CH(NH3^+)-COOH} <=> [-OH^- | +H^+] {CH3-CH(NH3^+)-COO^-}"). Ch\u1EC9 b\u1EADt autoBalance khi d\xF2ng ch\u1EC9 c\xF3 1 m\u0169i t\xEAn v\xE0 kh\xF4ng c\xF3 {...}.\n20) \u0110\u1ED3 th\u1ECB chuy\u1EC3n th\u1EC3 (V\u1EADt l\xED 12 \u2014 nhi\u1EC7t \u0111\u1ED9 theo th\u1EDDi gian): {"kind":"phase","yName":"t (\xB0C)","tName":"T (ph\xFAt)","points":"(0; -45)\\nA: (15; -8,83)\\nB: (27,4; -8,83)\\nC: (40 = T_1; 0)\\n(54 = T_2; 0)\\n_(66; 16)","extend":false,"dashed":true,"dots":true}. G\u1ED1c O t\u1EF1 \u0111\u1EB7t t\u1EA1i gi\xE1 tr\u1ECB nh\u1ECF nh\u1EA5t c\u1EE7a tr\u1EE5c d\u1ECDc; d\xF9ng "60 = T_1" \u0111\u1EC3 ghi k\xED hi\u1EC7u tr\xEAn tr\u1EE5c, "_(x; y)" cho \u0111i\u1EC3m k\xE9o d\xE0i kh\xF4ng hi\u1EC7n v\u1EA1ch tr\u1EE5c; extend=true v\u1EBD \u0111o\u1EA1n ngang ra m\xE9p ph\u1EA3i sau \u0111i\u1EC3m cu\u1ED1i.\n21) \u0110\u1ED3 th\u1ECB dao \u0111\u1ED9ng \u0111i\u1EC1u ho\xE0 (V\u1EADt l\xED 11): {"kind":"osc","qty":"x|v|a","A":8,"period":{"by":"T|f|omega","value":2},"start":{"by":"state","x0":"0|A|-A|A/2|-A/2|A\u221A2/2|-A\u221A2/2|A\u221A3/2|-A\u221A3/2","dir":"up|down"},"tEnd":2.5,"grid":"T/8|T/4|none","ticks":"value|symbol"}. Ho\u1EB7c start theo pha: {"by":"phi","phiPi":0.5} (\u0111\u01A1n v\u1ECB \u03C0). Th\xEAm "second":{"qty":"v","dashed":true} \u0111\u1EC3 v\u1EBD \u0111\u01B0\u1EDDng th\u1EE9 hai so pha. D\xF9ng cho dao \u0111\u1ED9ng \u0111i\u1EC1u ho\xE0 h\xECnh sin. \u0110i\u1EC7n xoay chi\u1EC1u u-i (V\u1EADt l\xED 12): {"kind":"osc","mode":"ac","ac":{"U0":311.13,"I0":2,"period":{"by":"f","value":50},"phiUPi":0,"phiIPi":-0.3333,"tEnd":0.03,"grid":"T/8","ticks":"value","showPhaseDiff":true}}. S\xF3ng d\u1EEBng (V\u1EADt l\xED 12): {"kind":"osc","mode":"standing","standing":{"length":60,"k":3,"ends":"fixed-fixed|fixed-free","A":4,"showNodes":true,"showAntinodes":true,"showDim":true}}.\n22) Th\u1EA5u k\xEDnh m\u1ECFng (V\u1EADt l\xED 11 \u2014 t\u1EA1o \u1EA3nh qua th\u1EA5u k\xEDnh h\u1ED9i t\u1EE5 / ph\xE2n k\xEC): {"kind":"lens","type":"converging|diverging","f":10,"d":30,"h":2,"rays":["parallel","center","focal"],"show2F":false,"showValues":false,"hideImage":false}. f > 0, d > 0 (cm).\n23) S\u01A1 \u0111\u1ED3 ph\u1EA3 h\u1EC7 (Sinh h\u1ECDc 12): {"kind":"pedigree","text":"1: nam bt\\n2: n\u1EEF b\u1EC7nh\\n1 x 2 -> 3, 4\\n3: nam bt\\n4: n\u1EEF mang gen\\nh\u1ECFi 4"}. Khai b\xE1o ng\u01B0\u1EDDi "id: nam|n\u1EEF|? bt|b\u1EC7nh|mang gen|ch\u1EBFt"; v\u1EE3 ch\u1ED3ng "1 x 2" (c\u1EADn huy\u1EBFt "1 xx 2"); con "1 x 2 -> 3, 4" (sinh \u0111\xF4i c\xF9ng tr\u1EE9ng "(5 6)", kh\xE1c tr\u1EE9ng "[7 8]"); "h\u1ECFi 10" \u0111\xE1nh d\u1EA5u ng\u01B0\u1EDDi h\u1ECFi; \u0111\u1EB7t t\xEAn b\u1EC7nh: b\u1EC7nh "m\xF9 m\xE0u".\n24) B\u1EA3ng lai Punnett (Sinh h\u1ECDc 9 & 12): {"kind":"punnett","cross":"AaBb x Aabb"}. T\u1ED1i \u0111a 3 c\u1EB7p gen ph\xE2n li \u0111\u1ED9c l\u1EADp (khung t\u1ED1i \u0111a 8x8), h\u1ED7 tr\u1EE3 gen li\xEAn k\u1EBFt gi\u1EDBi t\xEDnh (XAXa x XaY), tr\u1ED9i kh\xF4ng ho\xE0n to\xE0n, t\xEAn ki\u1EC3u h\xECnh, \u0111\u1EC3 tr\u1ED1ng (blankGrid: true).\n25) Chu\u1ED7i v\xE0 l\u01B0\u1EDBi th\u1EE9c \u0103n (Sinh h\u1ECDc): {"kind":"foodweb","text":"C\u1ECF -> Th\u1ECF, Chu\u1ED9t\\nTh\u1ECF, Chu\u1ED9t -> C\xE1o\\nVi sinh v\u1EADt: ph\xE2n gi\u1EA3i","direction":"bottom-up|left-right","nodeStyle":"box|text","showLevels":true|false,"connectDecomposers":true|false}. M\u0169i t\xEAn -> ch\u1EC9 chi\u1EC1u n\u0103ng l\u01B0\u1EE3ng (th\u1EE9c \u0103n -> v\u1EADt \u0103n); m\xE1y t\u1EF1 x\u1EBFp b\u1EADc dinh d\u01B0\u1EE1ng t\u1EEB d\u01B0\u1EDBi l\xEAn. D\xF9ng [A] ho\u1EB7c ?A \u0111\u1EC3 \u1EA9n t\xEAn lo\xE0i l\xE0m c\xE2u h\u1ECFi.\n27) Tranh \u0111\u1EBFm \u0111\u1ED3 v\u1EADt (To\xE1n ti\u1EC3u h\u1ECDc: \u0111\u1EBFm, c\u1ED9ng tr\u1EEB, chia \u0111\u1EC1u, nh\xE2n): {"kind":"objects","groups":[{"container":"basket","item":"apple","each":5,"count":3}]}. M\u1ED7i nh\xF3m: "count" \u0111\u1ED3 ch\u1EE9a gi\u1ED1ng nhau, m\u1ED7i c\xE1i c\xF3 \u0111\xFAng "each" \u0111\u1ED3 v\u1EADt; b\u1ECF "container" th\xEC v\u1EBD "count" nh\xF3m \u0111\u1ED3 v\u1EADt r\u1EDDi, m\u1ED7i nh\xF3m "each" c\xE1i; "label" (tu\u1EF3 ch\u1ECDn) ghi s\u1ED1 tr\xEAn \u0111\u1ED3 ch\u1EE9a, vd t\xFAi ghi "10" ("each": 0 n\u1EBFu ch\u1EC9 c\u1EA7n \u0111\u1ED3 ch\u1EE9a c\xF3 nh\xE3n). T\u1ED1i \u0111a 4 nh\xF3m, m\u1ED7i \u0111\u1ED3 ch\u1EE9a t\u1ED1i \u0111a 20 v\u1EADt. S\u1ED1 tr\xEAn h\xECnh ph\u1EA3i kh\u1EDBp \u0111\u1EC1. CH\u1EC8 d\xF9ng id c\xF3 s\u1EB5n \u2014 \u0111\u1ED3 v\u1EADt: ' + Object.entries(OBJECTS).map(([id, name]) => `${id} (${name})`).join(", ") + "; \u0111\u1ED3 ch\u1EE9a: " + Object.entries(CONTAINERS).map(([id, c8]) => `${id} (${c8.name}${c8.placement === "label" ? ", ch\u1EC9 \u0111\u1EC3 ghi s\u1ED1" : ""})`).join(", ") + '. V\u1EADt kh\xF4ng c\xF3 trong danh s\xE1ch: "item" ghi t\xEAn ti\u1EBFng Vi\u1EC7t v\xE0 th\xEAm "en" l\xE0 t\xEAn ti\u1EBFng Anh 1\u20133 t\u1EEB kh\xF4ng d\u1EA5u (vd {"item":"\u1EA5m tr\xE0","en":"teapot","each":4,"count":1}); app t\u1EF1 v\u1EBD th\xEAm. \u0110\u1ED3 ch\u1EE9a ch\u1EC9 d\xF9ng id trong danh s\xE1ch.\n28) \u0110\u1ED3ng h\u1ED3 kim: {"kind":"clock","hour":8,"minute":15}. C\xE2u h\u1ECFi \u0111\u1ECDc gi\u1EDD th\xEC KH\xD4NG ghi \u0111\xE1p \xE1n ra ch\u1EEF c\u1EA1nh h\xECnh.\n26) \u0110\u01B0\u1EDDng s\u1EE9c \u0111i\u1EC7n tr\u01B0\u1EDDng / t\u1EEB tr\u01B0\u1EDDng (V\u1EADt l\xED 11):{"kind":"field","scene":{"type":"two-charges","signs":["+","-"],"ratio":1},"lines":8,"showArrows":true,"labels":true}. scene.type: "charge" (sign:"+"|"-"), "two-charges" (signs:["+"|"-","+"|"-"], ratio), "plates", "wire" (current:"out"|"in"), "wire-side" (current:"up"|"down"), "loop" (current:"cw"|"ccw"), "solenoid" (current:"left"|"right"), "magnet" (orient:"h"|"v"). Tu\u1EF3 ch\u1ECDn probe:{"x":0,"y":0.6,"vector":"E"|"B"}.\nBi\u1EC3u th\u1EE9c d\xF9ng bi\u1EBFn x, ^ cho lu\u1EF9 th\u1EEBa, sqrt(), ln, sin, cos; nh\xE2n ng\u1EA7m \u0111\u01B0\u1EE3c (2x).';
@@ -3323,7 +3397,7 @@ function decorKitCatalogText() {
   ].join("\n");
 }
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/defs/Atom.es.js
+// node_modules/@phosphor-icons/react/dist/defs/Atom.es.js
 var a = __toESM(require_react(), 1);
 var c = /* @__PURE__ */ new Map([
   [
@@ -3358,7 +3432,7 @@ var c = /* @__PURE__ */ new Map([
   ]
 ]);
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/defs/BookOpen.es.js
+// node_modules/@phosphor-icons/react/dist/defs/BookOpen.es.js
 var a2 = __toESM(require_react(), 1);
 var e = /* @__PURE__ */ new Map([
   [
@@ -3393,7 +3467,7 @@ var e = /* @__PURE__ */ new Map([
   ]
 ]);
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/defs/BookOpenText.es.js
+// node_modules/@phosphor-icons/react/dist/defs/BookOpenText.es.js
 var a3 = __toESM(require_react(), 1);
 var e2 = /* @__PURE__ */ new Map([
   [
@@ -3428,7 +3502,7 @@ var e2 = /* @__PURE__ */ new Map([
   ]
 ]);
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/defs/Brain.es.js
+// node_modules/@phosphor-icons/react/dist/defs/Brain.es.js
 var a4 = __toESM(require_react(), 1);
 var e3 = /* @__PURE__ */ new Map([
   [
@@ -3463,7 +3537,7 @@ var e3 = /* @__PURE__ */ new Map([
   ]
 ]);
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/defs/Calculator.es.js
+// node_modules/@phosphor-icons/react/dist/defs/Calculator.es.js
 var a5 = __toESM(require_react(), 1);
 var e4 = /* @__PURE__ */ new Map([
   [
@@ -3492,7 +3566,7 @@ var e4 = /* @__PURE__ */ new Map([
   ]
 ]);
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/defs/ChartBar.es.js
+// node_modules/@phosphor-icons/react/dist/defs/ChartBar.es.js
 var a6 = __toESM(require_react(), 1);
 var e5 = /* @__PURE__ */ new Map([
   [
@@ -3521,7 +3595,7 @@ var e5 = /* @__PURE__ */ new Map([
   ]
 ]);
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/defs/ChartLineUp.es.js
+// node_modules/@phosphor-icons/react/dist/defs/ChartLineUp.es.js
 var a7 = __toESM(require_react(), 1);
 var e6 = /* @__PURE__ */ new Map([
   [
@@ -3550,7 +3624,7 @@ var e6 = /* @__PURE__ */ new Map([
   ]
 ]);
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/defs/CheckCircle.es.js
+// node_modules/@phosphor-icons/react/dist/defs/CheckCircle.es.js
 var e7 = __toESM(require_react(), 1);
 var a8 = /* @__PURE__ */ new Map([
   [
@@ -3579,7 +3653,7 @@ var a8 = /* @__PURE__ */ new Map([
   ]
 ]);
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/defs/ClockCounterClockwise.es.js
+// node_modules/@phosphor-icons/react/dist/defs/ClockCounterClockwise.es.js
 var a9 = __toESM(require_react(), 1);
 var e8 = /* @__PURE__ */ new Map([
   [
@@ -3608,7 +3682,7 @@ var e8 = /* @__PURE__ */ new Map([
   ]
 ]);
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/defs/Code.es.js
+// node_modules/@phosphor-icons/react/dist/defs/Code.es.js
 var a10 = __toESM(require_react(), 1);
 var l = /* @__PURE__ */ new Map([
   [
@@ -3637,7 +3711,7 @@ var l = /* @__PURE__ */ new Map([
   ]
 ]);
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/defs/DeviceMobile.es.js
+// node_modules/@phosphor-icons/react/dist/defs/DeviceMobile.es.js
 var e9 = __toESM(require_react(), 1);
 var a11 = /* @__PURE__ */ new Map([
   [
@@ -3666,7 +3740,7 @@ var a11 = /* @__PURE__ */ new Map([
   ]
 ]);
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/defs/Flask.es.js
+// node_modules/@phosphor-icons/react/dist/defs/Flask.es.js
 var a12 = __toESM(require_react(), 1);
 var e10 = /* @__PURE__ */ new Map([
   [
@@ -3701,7 +3775,7 @@ var e10 = /* @__PURE__ */ new Map([
   ]
 ]);
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/defs/Function.es.js
+// node_modules/@phosphor-icons/react/dist/defs/Function.es.js
 var a13 = __toESM(require_react(), 1);
 var e11 = /* @__PURE__ */ new Map([
   [
@@ -3736,7 +3810,7 @@ var e11 = /* @__PURE__ */ new Map([
   ]
 ]);
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/defs/GlobeHemisphereWest.es.js
+// node_modules/@phosphor-icons/react/dist/defs/GlobeHemisphereWest.es.js
 var a14 = __toESM(require_react(), 1);
 var l2 = /* @__PURE__ */ new Map([
   [
@@ -3771,7 +3845,7 @@ var l2 = /* @__PURE__ */ new Map([
   ]
 ]);
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/defs/Heartbeat.es.js
+// node_modules/@phosphor-icons/react/dist/defs/Heartbeat.es.js
 var a15 = __toESM(require_react(), 1);
 var e12 = /* @__PURE__ */ new Map([
   [
@@ -3806,7 +3880,7 @@ var e12 = /* @__PURE__ */ new Map([
   ]
 ]);
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/defs/Leaf.es.js
+// node_modules/@phosphor-icons/react/dist/defs/Leaf.es.js
 var e13 = __toESM(require_react(), 1);
 var a16 = /* @__PURE__ */ new Map([
   [
@@ -3841,7 +3915,7 @@ var a16 = /* @__PURE__ */ new Map([
   ]
 ]);
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/defs/Lightbulb.es.js
+// node_modules/@phosphor-icons/react/dist/defs/Lightbulb.es.js
 var a17 = __toESM(require_react(), 1);
 var e14 = /* @__PURE__ */ new Map([
   [
@@ -3876,7 +3950,7 @@ var e14 = /* @__PURE__ */ new Map([
   ]
 ]);
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/defs/MapTrifold.es.js
+// node_modules/@phosphor-icons/react/dist/defs/MapTrifold.es.js
 var l3 = __toESM(require_react(), 1);
 var e15 = /* @__PURE__ */ new Map([
   [
@@ -3905,7 +3979,7 @@ var e15 = /* @__PURE__ */ new Map([
   ]
 ]);
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/defs/Microscope.es.js
+// node_modules/@phosphor-icons/react/dist/defs/Microscope.es.js
 var a18 = __toESM(require_react(), 1);
 var e16 = /* @__PURE__ */ new Map([
   [
@@ -3940,7 +4014,7 @@ var e16 = /* @__PURE__ */ new Map([
   ]
 ]);
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/defs/MusicNotes.es.js
+// node_modules/@phosphor-icons/react/dist/defs/MusicNotes.es.js
 var e17 = __toESM(require_react(), 1);
 var a19 = /* @__PURE__ */ new Map([
   [
@@ -3975,7 +4049,7 @@ var a19 = /* @__PURE__ */ new Map([
   ]
 ]);
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/defs/Palette.es.js
+// node_modules/@phosphor-icons/react/dist/defs/Palette.es.js
 var a20 = __toESM(require_react(), 1);
 var e18 = /* @__PURE__ */ new Map([
   [
@@ -4010,7 +4084,7 @@ var e18 = /* @__PURE__ */ new Map([
   ]
 ]);
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/defs/PencilSimple.es.js
+// node_modules/@phosphor-icons/react/dist/defs/PencilSimple.es.js
 var a21 = __toESM(require_react(), 1);
 var e19 = /* @__PURE__ */ new Map([
   [
@@ -4045,7 +4119,7 @@ var e19 = /* @__PURE__ */ new Map([
   ]
 ]);
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/defs/Scroll.es.js
+// node_modules/@phosphor-icons/react/dist/defs/Scroll.es.js
 var a22 = __toESM(require_react(), 1);
 var e20 = /* @__PURE__ */ new Map([
   [
@@ -4080,7 +4154,7 @@ var e20 = /* @__PURE__ */ new Map([
   ]
 ]);
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/defs/Sigma.es.js
+// node_modules/@phosphor-icons/react/dist/defs/Sigma.es.js
 var a23 = __toESM(require_react(), 1);
 var e21 = /* @__PURE__ */ new Map([
   [
@@ -4109,7 +4183,7 @@ var e21 = /* @__PURE__ */ new Map([
   ]
 ]);
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/defs/Target.es.js
+// node_modules/@phosphor-icons/react/dist/defs/Target.es.js
 var e22 = __toESM(require_react(), 1);
 var a24 = /* @__PURE__ */ new Map([
   [
@@ -4138,7 +4212,7 @@ var a24 = /* @__PURE__ */ new Map([
   ]
 ]);
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/defs/Translate.es.js
+// node_modules/@phosphor-icons/react/dist/defs/Translate.es.js
 var a25 = __toESM(require_react(), 1);
 var e23 = /* @__PURE__ */ new Map([
   [
@@ -4173,7 +4247,7 @@ var e23 = /* @__PURE__ */ new Map([
   ]
 ]);
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/defs/UsersThree.es.js
+// node_modules/@phosphor-icons/react/dist/defs/UsersThree.es.js
 var a26 = __toESM(require_react(), 1);
 var e24 = /* @__PURE__ */ new Map([
   [
@@ -4208,10 +4282,10 @@ var e24 = /* @__PURE__ */ new Map([
   ]
 ]);
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/lib/IconBase.es.js
+// node_modules/@phosphor-icons/react/dist/lib/IconBase.es.js
 var e25 = __toESM(require_react(), 1);
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/lib/context.es.js
+// node_modules/@phosphor-icons/react/dist/lib/context.es.js
 var import_react = __toESM(require_react(), 1);
 var o = (0, import_react.createContext)({
   color: "currentColor",
@@ -4220,7 +4294,7 @@ var o = (0, import_react.createContext)({
   mirrored: false
 });
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/lib/IconBase.es.js
+// node_modules/@phosphor-icons/react/dist/lib/IconBase.es.js
 var p = e25.forwardRef(
   (s9, a34) => {
     const {
@@ -4260,163 +4334,163 @@ var p = e25.forwardRef(
 );
 p.displayName = "IconBase";
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/csr/Atom.es.js
+// node_modules/@phosphor-icons/react/dist/csr/Atom.es.js
 var o2 = __toESM(require_react(), 1);
 var t = o2.forwardRef((m4, e42) => /* @__PURE__ */ o2.createElement(p, { ref: e42, ...m4, weights: c }));
 t.displayName = "AtomIcon";
 var n = t;
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/csr/BookOpen.es.js
+// node_modules/@phosphor-icons/react/dist/csr/BookOpen.es.js
 var o3 = __toESM(require_react(), 1);
 var e26 = o3.forwardRef((r7, t6) => /* @__PURE__ */ o3.createElement(p, { ref: t6, ...r7, weights: e }));
 e26.displayName = "BookOpenIcon";
 var c2 = e26;
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/csr/BookOpenText.es.js
+// node_modules/@phosphor-icons/react/dist/csr/BookOpenText.es.js
 var o4 = __toESM(require_react(), 1);
 var e27 = o4.forwardRef((t6, r7) => /* @__PURE__ */ o4.createElement(p, { ref: r7, ...t6, weights: e2 }));
 e27.displayName = "BookOpenTextIcon";
 var c3 = e27;
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/csr/Brain.es.js
+// node_modules/@phosphor-icons/react/dist/csr/Brain.es.js
 var o5 = __toESM(require_react(), 1);
 var r2 = o5.forwardRef((a34, e42) => /* @__PURE__ */ o5.createElement(p, { ref: e42, ...a34, weights: e3 }));
 r2.displayName = "BrainIcon";
 var c4 = r2;
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/csr/Calculator.es.js
+// node_modules/@phosphor-icons/react/dist/csr/Calculator.es.js
 var o6 = __toESM(require_react(), 1);
 var a27 = o6.forwardRef((r7, t6) => /* @__PURE__ */ o6.createElement(p, { ref: t6, ...r7, weights: e4 }));
 a27.displayName = "CalculatorIcon";
 var s = a27;
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/csr/ChartBar.es.js
+// node_modules/@phosphor-icons/react/dist/csr/ChartBar.es.js
 var r3 = __toESM(require_react(), 1);
 var a28 = r3.forwardRef((o23, t6) => /* @__PURE__ */ r3.createElement(p, { ref: t6, ...o23, weights: e5 }));
 a28.displayName = "ChartBarIcon";
 var n2 = a28;
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/csr/ChartLineUp.es.js
+// node_modules/@phosphor-icons/react/dist/csr/ChartLineUp.es.js
 var e28 = __toESM(require_react(), 1);
 var o7 = e28.forwardRef((r7, t6) => /* @__PURE__ */ e28.createElement(p, { ref: t6, ...r7, weights: e6 }));
 o7.displayName = "ChartLineUpIcon";
 var p2 = o7;
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/csr/CheckCircle.es.js
+// node_modules/@phosphor-icons/react/dist/csr/CheckCircle.es.js
 var e29 = __toESM(require_react(), 1);
 var c5 = e29.forwardRef((o23, r7) => /* @__PURE__ */ e29.createElement(p, { ref: r7, ...o23, weights: a8 }));
 c5.displayName = "CheckCircleIcon";
 var s2 = c5;
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/csr/ClockCounterClockwise.es.js
+// node_modules/@phosphor-icons/react/dist/csr/ClockCounterClockwise.es.js
 var o8 = __toESM(require_react(), 1);
 var e30 = o8.forwardRef((c8, r7) => /* @__PURE__ */ o8.createElement(p, { ref: r7, ...c8, weights: e8 }));
 e30.displayName = "ClockCounterClockwiseIcon";
 var a29 = e30;
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/csr/Code.es.js
+// node_modules/@phosphor-icons/react/dist/csr/Code.es.js
 var o9 = __toESM(require_react(), 1);
 var e31 = o9.forwardRef((r7, t6) => /* @__PURE__ */ o9.createElement(p, { ref: t6, ...r7, weights: l }));
 e31.displayName = "CodeIcon";
 var n3 = e31;
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/csr/DeviceMobile.es.js
+// node_modules/@phosphor-icons/react/dist/csr/DeviceMobile.es.js
 var e32 = __toESM(require_react(), 1);
 var o10 = e32.forwardRef((i, c8) => /* @__PURE__ */ e32.createElement(p, { ref: c8, ...i, weights: a11 }));
 o10.displayName = "DeviceMobileIcon";
 var s3 = o10;
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/csr/Flask.es.js
+// node_modules/@phosphor-icons/react/dist/csr/Flask.es.js
 var o11 = __toESM(require_react(), 1);
 var a30 = o11.forwardRef((e42, r7) => /* @__PURE__ */ o11.createElement(p, { ref: r7, ...e42, weights: e10 }));
 a30.displayName = "FlaskIcon";
 var n4 = a30;
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/csr/Function.es.js
+// node_modules/@phosphor-icons/react/dist/csr/Function.es.js
 var o12 = __toESM(require_react(), 1);
 var t2 = o12.forwardRef((n10, c8) => /* @__PURE__ */ o12.createElement(p, { ref: c8, ...n10, weights: e11 }));
 t2.displayName = "FunctionIcon";
 var m = t2;
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/csr/GlobeHemisphereWest.es.js
+// node_modules/@phosphor-icons/react/dist/csr/GlobeHemisphereWest.es.js
 var e33 = __toESM(require_react(), 1);
 var o13 = e33.forwardRef((r7, s9) => /* @__PURE__ */ e33.createElement(p, { ref: s9, ...r7, weights: l2 }));
 o13.displayName = "GlobeHemisphereWestIcon";
 var p3 = o13;
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/csr/Heartbeat.es.js
+// node_modules/@phosphor-icons/react/dist/csr/Heartbeat.es.js
 var e34 = __toESM(require_react(), 1);
 var t3 = e34.forwardRef((a34, o23) => /* @__PURE__ */ e34.createElement(p, { ref: o23, ...a34, weights: e12 }));
 t3.displayName = "HeartbeatIcon";
 var n5 = t3;
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/csr/Leaf.es.js
+// node_modules/@phosphor-icons/react/dist/csr/Leaf.es.js
 var e35 = __toESM(require_react(), 1);
 var o14 = e35.forwardRef((a34, r7) => /* @__PURE__ */ e35.createElement(p, { ref: r7, ...a34, weights: a16 }));
 o14.displayName = "LeafIcon";
 var s4 = o14;
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/csr/Lightbulb.es.js
+// node_modules/@phosphor-icons/react/dist/csr/Lightbulb.es.js
 var o15 = __toESM(require_react(), 1);
 var t4 = o15.forwardRef((e42, r7) => /* @__PURE__ */ o15.createElement(p, { ref: r7, ...e42, weights: e14 }));
 t4.displayName = "LightbulbIcon";
 var s5 = t4;
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/csr/MapTrifold.es.js
+// node_modules/@phosphor-icons/react/dist/csr/MapTrifold.es.js
 var o16 = __toESM(require_react(), 1);
 var r4 = o16.forwardRef((a34, e42) => /* @__PURE__ */ o16.createElement(p, { ref: e42, ...a34, weights: e15 }));
 r4.displayName = "MapTrifoldIcon";
 var p4 = r4;
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/csr/Microscope.es.js
+// node_modules/@phosphor-icons/react/dist/csr/Microscope.es.js
 var o17 = __toESM(require_react(), 1);
 var c6 = o17.forwardRef((e42, r7) => /* @__PURE__ */ o17.createElement(p, { ref: r7, ...e42, weights: e16 }));
 c6.displayName = "MicroscopeIcon";
 var m2 = c6;
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/csr/MusicNotes.es.js
+// node_modules/@phosphor-icons/react/dist/csr/MusicNotes.es.js
 var o18 = __toESM(require_react(), 1);
 var e36 = o18.forwardRef((s9, t6) => /* @__PURE__ */ o18.createElement(p, { ref: t6, ...s9, weights: a19 }));
 e36.displayName = "MusicNotesIcon";
 var m3 = e36;
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/csr/Palette.es.js
+// node_modules/@phosphor-icons/react/dist/csr/Palette.es.js
 var e37 = __toESM(require_react(), 1);
 var t5 = e37.forwardRef((o23, a34) => /* @__PURE__ */ e37.createElement(p, { ref: a34, ...o23, weights: e18 }));
 t5.displayName = "PaletteIcon";
 var n6 = t5;
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/csr/PencilSimple.es.js
+// node_modules/@phosphor-icons/react/dist/csr/PencilSimple.es.js
 var e38 = __toESM(require_react(), 1);
 var o19 = e38.forwardRef((i, m4) => /* @__PURE__ */ e38.createElement(p, { ref: m4, ...i, weights: e19 }));
 o19.displayName = "PencilSimpleIcon";
 var a31 = o19;
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/csr/Scroll.es.js
+// node_modules/@phosphor-icons/react/dist/csr/Scroll.es.js
 var o20 = __toESM(require_react(), 1);
 var r5 = o20.forwardRef((c8, e42) => /* @__PURE__ */ o20.createElement(p, { ref: e42, ...c8, weights: e20 }));
 r5.displayName = "ScrollIcon";
 var s6 = r5;
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/csr/Sigma.es.js
+// node_modules/@phosphor-icons/react/dist/csr/Sigma.es.js
 var o21 = __toESM(require_react(), 1);
 var a32 = o21.forwardRef((m4, e42) => /* @__PURE__ */ o21.createElement(p, { ref: e42, ...m4, weights: e21 }));
 a32.displayName = "SigmaIcon";
 var s7 = a32;
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/csr/Target.es.js
+// node_modules/@phosphor-icons/react/dist/csr/Target.es.js
 var e39 = __toESM(require_react(), 1);
 var o22 = e39.forwardRef((r7, t6) => /* @__PURE__ */ e39.createElement(p, { ref: t6, ...r7, weights: a24 }));
 o22.displayName = "TargetIcon";
 var n7 = o22;
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/csr/Translate.es.js
+// node_modules/@phosphor-icons/react/dist/csr/Translate.es.js
 var a33 = __toESM(require_react(), 1);
 var e40 = a33.forwardRef((o23, r7) => /* @__PURE__ */ a33.createElement(p, { ref: r7, ...o23, weights: e23 }));
 e40.displayName = "TranslateIcon";
 var c7 = e40;
 
-// ../dethinhbien/node_modules/@phosphor-icons/react/dist/csr/UsersThree.es.js
+// node_modules/@phosphor-icons/react/dist/csr/UsersThree.es.js
 var e41 = __toESM(require_react(), 1);
 var r6 = e41.forwardRef((o23, s9) => /* @__PURE__ */ e41.createElement(p, { ref: s9, ...o23, weights: e24 }));
 r6.displayName = "UsersThreeIcon";
@@ -11784,6 +11858,7 @@ var HTML_DECK_SYSTEM = [
 ].join("\n");
 
 // src/lib/prompts/common.ts
+var CHAT_MARKDOWN = "\nKhi tr\u1EA3 l\u1EDDi h\u1ECFi \u0111\xE1p b\u1EB1ng v\u0103n b\u1EA3n, c\xF3 th\u1EC3 d\xF9ng Markdown (\u0111\u1EADm, danh s\xE1ch, b\u1EA3ng, code), c\xF4ng th\u1EE9c v\u1EABn vi\u1EBFt trong $\u2026$.";
 var ASK_RULE = '\n\nH\u1ECEI L\u1EA0I KHI Y\xCAU C\u1EA6U M\u01A0 H\u1ED2: n\u1EBFu ng\u01B0\u1EDDi d\xF9ng nh\u1EDD so\u1EA1n nh\u01B0ng thi\u1EBFu th\xF4ng tin c\u1ED1t l\xF5i m\xE0 kh\xF4ng \u0111o\xE1n h\u1EE3p l\xFD \u0111\u01B0\u1EE3c t\u1EEB y\xEAu c\u1EA7u, l\u1ECBch s\u1EED chat hay t\xE0i li\u1EC7u hi\u1EC7n t\u1EA1i (v\xED d\u1EE5 ch\u1EC9 n\xF3i "so\u1EA1n \u0111\u1EC1 \u0111i": ch\u01B0a r\xF5 m\xF4n, l\u1EDBp, s\u1ED1 c\xE2u, d\u1EA1ng \u0111\u1EC1, \u0111\u1ED9 kh\xF3), th\xEC CH\u01AFA so\u1EA1n, ch\u1EC9 tr\u1EA3 v\u1EC1 DUY NH\u1EA4T m\u1ED9t JSON (kh\xF4ng b\u1ECDc markdown): {"action":"ask","intro":"m\u1ED9t c\xE2u ng\u1EAFn, t\u1EF1 nhi\xEAn","questions":[{"q":"C\xE2u h\u1ECFi ng\u1EAFn?","options":["\u2026","\u2026"],"multi":false}]}. 1\u20134 c\xE2u h\u1ECFi, m\u1ED7i c\xE2u 2\u20135 l\u1EF1a ch\u1ECDn ng\u1EAFn (\u2264 6 t\u1EEB), l\u1EF1a ch\u1ECDn hay g\u1EB7p nh\u1EA5t \u0111\u1EB7t \u0111\u1EA7u; "multi":true khi ch\u1ECDn \u0111\u01B0\u1EE3c nhi\u1EC1u c\xE1i. KH\xD4NG th\xEAm l\u1EF1a ch\u1ECDn "Kh\xE1c"/"T\u1EF1 nh\u1EADp" (app t\u1EF1 c\xF3 \xF4 t\u1EF1 nh\u1EADp). Ch\u1EC9 h\u1ECFi \u0111i\u1EC1u th\u1EADt s\u1EF1 thi\u1EBFu, g\u1ED9p l\u1EDBp v\xE0o c\xE2u m\xF4n n\u1EBFu \u0111\u01B0\u1EE3c. KH\xD4NG h\u1ECFi v\u1EC1 h\xECnh minh ho\u1EA1 (app t\u1EF1 h\u1ECFi v\u1EDBi \u0111\u1EC1 To\xE1n). Y\xEAu c\u1EA7u \u0111\xE3 \u0111\u1EE7 r\xF5, ho\u1EB7c l\xE0 l\u1EC7nh s\u1EEDa/th\xEAm tr\xEAn t\xE0i li\u1EC7u \u0111ang c\xF3, ho\u1EB7c ch\u1EC9 l\xE0 c\xE2u h\u1ECFi th\u01B0\u1EDDng th\xEC l\xE0m/tr\u1EA3 l\u1EDDi lu\xF4n, kh\xF4ng h\u1ECFi.';
 var THINK_VI = "\n\nNG\xD4N NG\u1EEE SUY NGH\u0128: to\xE0n b\u1ED9 ph\u1EA7n suy ngh\u0129 (reasoning) vi\u1EBFt b\u1EB1ng ti\u1EBFng Vi\u1EC7t, c\xE2u ng\u1EAFn, nh\u01B0 gi\xE1o vi\xEAn t\u1EF1 nh\u1EA9m. Kh\xF4ng vi\u1EBFt ti\u1EBFng Anh.";
 
@@ -12091,12 +12166,12 @@ var HTML_SYSTEM = HTML_DECK_SYSTEM;
 var SLIDE_PLAN_SYSTEM = 'B\u1EA1n l\xE0 tr\u1EE3 l\xFD AI c\u1EE7a tr\xECnh so\u1EA1n b\xE0i tr\xECnh b\xE0y ti\u1EBFng Vi\u1EC7t. Nhi\u1EC7m v\u1EE5: L\u1EACP D\xC0N \xDD, ch\u01B0a vi\u1EBFt n\u1ED9i dung chi ti\u1EBFt. Ch\u1EC9 tr\u1EA3 v\u1EC1 DUY NH\u1EA4T m\u1ED9t JSON h\u1EE3p l\u1EC7 (kh\xF4ng b\u1ECDc markdown, kh\xF4ng ch\u1EEF ngo\xE0i JSON):\n{"title":"...","theme":"<id>","stylePack":"<id>","decorKit":"<id>","design":"<id>","subject":"<id>","audience":"...","style":"...","mainIdeas":["..."],"slides":[{"title":"...","layout":"<id>","tone":"theme|soft|accent","kicker":"...","brief":"..."}]}\n\n' + slideCatalogText() + '\n\nQUY T\u1EAEC:\n- N\u1EBFu ng\u01B0\u1EDDi d\xF9ng y\xEAu c\u1EA7u l\xE0m theo m\u1ED9t b\u1ED9 thi\u1EBFt k\u1EBF c\u1EE5 th\u1EC3 (v\xED d\u1EE5 "theo thi\u1EBFt k\u1EBF Thanh l\u1ECBch", "gi\u1ED1ng m\u1EABu b\u1EA3ng \u0111en", "ki\u1EC3u t\u1ED1i gi\u1EA3n"\u2026), h\xE3y \u0111i\u1EC1n "design": "<id>" \u0111\xFAng b\u1ED9 thi\u1EBFt k\u1EBF \u0111\xF3, ch\u1ECDn \u0111\xFAng "theme", "decorKit", "stylePack" t\u01B0\u01A1ng \u1EE9ng v\xE0 b\xE1m theo nh\u1ECBp b\u1ED1 c\u1EE5c c\u1EE7a b\u1ED9.\n- S\u1ED1 slide theo y\xEAu c\u1EA7u; n\u1EBFu kh\xF4ng n\xEAu th\xEC 6\u201310 slide, t\u1ED1i \u0111a 16. M\u1ED7i slide ch\u1EC9 m\u1ED9t \xFD l\u1EDBn; n\u1EBFu m\u1ED9t m\u1EE5c c\xF3 qu\xE1 4 \xFD th\xEC t\xE1ch th\xE0nh slide m\u1EDBi.\n- Ch\u1ECDn nh\u1ECBp deck theo n\u1ED9i dung (b\xE0i gi\u1EA3ng / b\xE1o c\xE1o / h\u1ED9i th\u1EA3o / k\u1EC3 chuy\u1EC7n) \u2014 kh\xF4ng d\xF9ng m\u1ED9t chu\u1ED7i c\u1ED1 \u0111\u1ECBnh ki\u1EC3u ti\xEAu \u0111\u1EC1 \u2192 n\u1ED9i dung \u2192 4 th\u1EBB \u2192 \xFD t\u1ED5ng h\u1EE3p \u2192 timeline cho m\u1ECDi \u0111\u1EC1.\n- \u0110a d\u1EA1ng b\u1ED1 c\u1EE5c: kh\xF4ng d\xF9ng c\xF9ng m\u1ED9t layout \u1EDF hai slide li\u1EC1n nhau; deck 6 slide ph\u1EA3i c\xF3 \xEDt nh\u1EA5t 4 layout kh\xE1c nhau; "cards" t\u1ED1i \u0111a 1 l\u1EA7n trong 6 slide; ch\u1EC9 d\xF9ng layout c\u1EA7n d\u1EEF li\u1EC7u (table, stats, stat-image, quiz) khi n\u1ED9i dung th\u1EADt c\xF3 d\u1EEF li\u1EC7u.\n- B\xE1m c\u1EA5u tr\xFAc b\xE0i g\u1EE3i \xFD c\u1EE7a m\xF4n \u0111\xE3 ch\u1ECDn (xem M\xD4N H\u1ECCC) nh\u01B0ng g\u1ED9p/b\u1ECF b\u01B0\u1EDBc n\u1EBFu deck ng\u1EAFn; \u01B0u ti\xEAn layout g\u1EE3i \xFD c\u1EE7a m\xF4n khi n\u1ED9i dung h\u1EE3p.\n- B\xE0i gi\u1EA3ng c\xF3 v\xED d\u1EE5: d\xF9ng "example" cho v\xED d\u1EE5 m\u1EABu c\xF3 l\u1EDDi gi\u1EA3i (\u0111\u1EC1 b\xE0i \u2192 c\xE1c b\u01B0\u1EDBc \u2192 k\u1EBFt lu\u1EADn) v\xE0 "hook" cho m\u1EDF b\xE0i g\u1EE3i m\u1EDF (c\xE2u h\u1ECFi/t\xECnh hu\u1ED1ng) ngay sau slide ti\xEAu \u0111\u1EC1 ho\u1EB7c n\u1ED9i dung b\xE0i.\n- Slide \u0111\u1EA7u d\xF9ng "title"; slide cu\u1ED1i d\xF9ng "closing" ho\u1EB7c "quote" n\u1EBFu ph\xF9 h\u1EE3p.\n- \u01AFu ti\xEAn layout c\xF3 b\u1ED1 c\u1EE5c r\xF5: "agenda" cho t\u1ED5ng quan, "statement" cho m\u1ED9t th\xF4ng \u0111i\u1EC7p l\u1EDBn, "comparison" khi c\xF3 hai m\u1EB7t \u0111\u1ED1i l\u1EADp, "bullets" ch\u1EC9 khi th\u1EADt s\u1EF1 c\xF3 2\u20134 \xFD ng\u1EAFn.\n- "mindmap" (s\u01A1 \u0111\u1ED3 t\u01B0 duy: ch\u1EE7 \u0111\u1EC1 gi\u1EEFa + 3\u20136 nh\xE1nh) d\xF9ng \u0111\u1EC3 t\u1ED5ng k\u1EBFt/h\u1EC7 th\u1ED1ng ho\xE1 ki\u1EBFn th\u1EE9c ho\u1EB7c khi ng\u01B0\u1EDDi d\xF9ng y\xEAu c\u1EA7u s\u01A1 \u0111\u1ED3 t\u01B0 duy; t\u1ED1i \u0111a 1\u20132 slide trong deck.\n- Layout \u1EA3nh ("image-left", "image-right", "image-full", "stat-image") d\xF9ng t\u1ED1i \u0111a 3 slide trong c\u1EA3 deck v\xE0 ch\u1EC9 khi brief c\xF3 h\xECnh \u1EA3nh minh ho\u1EA1.\n- "brief" \u0111\xFAng 1 c\xE2u ng\u1EAFn (\u2264 140 k\xFD t\u1EF1) n\xEAu d\u1EEF ki\u1EC7n ch\xEDnh; "title" \u2264 10 t\u1EEB.\n- "tone" ch\u1EC9 d\xF9ng khi c\u1EA7n nh\u1EA5n m\u1EA1nh; b\u1ECF tr\u1ED1ng \u0111\u1EC3 layout t\u1EF1 ch\u1ECDn.\n- C\u1EE9 kho\u1EA3ng 3 slide ph\u1EA3i c\xF3 m\u1ED9t slide \u0111i\u1EC3m nh\u1EA5n (statement, stats, quote ho\u1EB7c title/section n\u1EC1n nh\u1EA5n) \u0111\u1EC3 deck c\xF3 nh\u1ECBp, kh\xF4ng ph\u1EB3ng.\n- "theme" ch\u1ECDn theo ch\u1EE7 \u0111\u1EC1, c\u1EA3m x\xFAc v\xE0 \u0111\u1ED1i t\u01B0\u1EE3ng \u2014 kh\xF4ng b\u1EAFt bu\u1ED9c theo m\xF4n; ch\u1EE7 \u0111\u1EC1 t\u1EF1 do (h\u01B0\u1EDBng nghi\u1EC7p, k\u1EF9 n\u0103ng, s\u1EF1 ki\u1EC7n\u2026) v\u1EABn ch\u1ECDn b\u1ED9 m\xE0u h\u1EE3p t\xF4ng. "stylePack" ch\u1ECDn m\u1ED9t id trong danh s\xE1ch style pack \u0111\u1EC3 quy\u1EBFt \u0111\u1ECBnh nh\u1ECBp v\xE0 m\u1EADt \u0111\u1ED9 n\u1ED9i dung; "style" 2 c\xE2u t\u1EA3 phong c\xE1ch (nh\u1ECBp b\u1ED1 c\u1EE5c, \u0111i\u1EC3m nh\u1EA5n m\xE0u, s\u1ED1 li\u1EC7u, h\xECnh \u1EA3nh). "decorKit" ch\u1ECDn m\u1ED9t b\u1ED9 trang tr\xED h\u1EE3p ch\u1EE7 \u0111\u1EC1 v\xE0 \u0111\u1ED1i t\u01B0\u1EE3ng (d\xF9ng cho c\u1EA3 b\xE0i); b\xE0i trang tr\u1ECDng ch\u1ECDn "toi-gian".\n- Kh\xF4ng b\u1ECBa s\u1ED1 li\u1EC7u th\u1EADt; s\u1ED1 li\u1EC7u minh ho\u1EA1 ph\u1EA3i ghi r\xF5 "v\xED d\u1EE5". Ti\u1EBFng Vi\u1EC7t chu\u1EA9n.';
 var WEB_SEARCH_SYSTEM = "T\xECm tr\xEAn web th\xF4ng tin, s\u1ED1 li\u1EC7u m\u1EDBi v\xE0 ch\xEDnh x\xE1c ph\u1EE5c v\u1EE5 y\xEAu c\u1EA7u so\u1EA1n \u0111\u1EC1 / b\xE0i gi\u1EA3ng c\u1EE7a gi\xE1o vi\xEAn d\u01B0\u1EDBi \u0111\xE2y. Ch\u1EC9 tr\u1EA3 b\u1EA3n t\xF3m t\u1EAFt g\u1EA1ch \u0111\u1EA7u d\xF2ng (t\u1ED1i \u0111a 25 d\xF2ng), m\u1ED7i d\xF2ng m\u1ED9t d\u1EEF ki\u1EC7n ho\u1EB7c s\u1ED1 li\u1EC7u k\xE8m t\xEAn ngu\u1ED3n v\xE0 n\u0103m. \u01AFu ti\xEAn ngu\u1ED3n ch\xEDnh th\u1ED1ng (c\u01A1 quan nh\xE0 n\u01B0\u1EDBc, s\xE1ch gi\xE1o khoa, b\xE1o l\u1EDBn). Kh\xF4ng so\u1EA1n \u0111\u1EC1, kh\xF4ng b\xECnh lu\u1EADn.";
 function buildSlideChatSystem(i) {
-  const head = i.variant === "html" ? HTML_SYSTEM : (i.variant === "plan" ? SLIDE_PLAN_SYSTEM : SLIDE_SYSTEM) + (i.ask ? ASK_RULE : "");
+  const head = i.variant === "html" ? HTML_SYSTEM : (i.variant === "plan" ? SLIDE_PLAN_SYSTEM : SLIDE_SYSTEM + CHAT_MARKDOWN) + (i.ask ? ASK_RULE : "");
   return head + (i.contextSummary ? `
 B\xE0i tr\xECnh b\xE0y hi\u1EC7n t\u1EA1i: ${i.contextSummary}` : "") + sourceSection(i) + webSection(i.webFound);
 }
 function buildBoardSystem(i) {
-  return BOARD_SYSTEM + (i.ops ? BOARD_OPS_GUIDE : "") + (i.contextSummary ? `
+  return BOARD_SYSTEM + CHAT_MARKDOWN + (i.ops ? BOARD_OPS_GUIDE : "") + (i.contextSummary ? `
 B\u1EA3ng v\u1EBD hi\u1EC7n t\u1EA1i:
 ${i.contextSummary}` : "") + sourceSection(i);
 }

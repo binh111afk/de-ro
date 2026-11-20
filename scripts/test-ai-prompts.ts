@@ -5,7 +5,7 @@
  */
 import { createHash } from 'node:crypto'
 import { readFileSync } from 'node:fs'
-import { ASK_RULE, THINK_VI } from '../src/lib/prompts/common.ts'
+import { ASK_RULE, CHAT_MARKDOWN, THINK_VI } from '../src/lib/prompts/common.ts'
 import { ASK_ONLY_SYSTEM, buildExamSystem, examSystemPrompt } from '../src/lib/prompts/exam.ts'
 import { buildDeOnlineSystem, type DeOnlineInput } from '../src/lib/prompts/de-online.ts'
 import { buildSuaCauSystem } from '../src/lib/prompts/sua-cau.ts'
@@ -23,8 +23,15 @@ const check = (name: string, cond: boolean, info?: unknown) => {
 }
 const sha = (s: string) => createHash('sha256').update(s).digest('hex')
 
-const snaps = JSON.parse(readFileSync(new URL('./fixtures/prompt-exam-snap.json', import.meta.url), 'utf8')) as Array<{ name: string; topic: string; len: number; sha256: string }>
+const snaps = JSON.parse(readFileSync(new URL('./fixtures/prompt-exam-snap.json', import.meta.url), 'utf8')) as Array<{ name: string; topic: string; intent?: 'chat'; len: number; sha256: string }>
 for (const s of snaps) {
+  if (s.intent === 'chat') {
+    const chat = buildExamSystem({ text: s.topic, intent: 'chat' })
+    const doc = buildExamSystem({ text: s.topic })
+    check(`${s.name}: prompt chat khớp bản chụp`, chat.length === s.len && sha(chat) === s.sha256)
+    check(`${s.name}: chỉ thêm câu Markdown cho chat`, chat === doc + CHAT_MARKDOWN)
+    continue
+  }
   // đúng cách harness cũ ghép: examSystemPrompt(không tài liệu, yêu cầu) + luật hỏi lại
   const legacy = examSystemPrompt(undefined, s.topic) + ASK_RULE
   check(`${s.name}: prompt hàm cũ khớp bản chụp`, legacy.length === s.len && sha(legacy) === s.sha256, { len: legacy.length, want: s.len })

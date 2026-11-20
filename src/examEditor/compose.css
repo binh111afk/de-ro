@@ -1654,6 +1654,35 @@
   .ai-md li::marker {
     color: var(--color-text-tertiary);
   }
+  .ai-md-chat {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .ai-md-chat ul {
+    list-style: disc;
+  }
+  .ai-md-chat ol {
+    list-style: decimal;
+  }
+  .ai-md-table,
+  .ai-md-chat .katex-display {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+  .ai-md-table {
+    margin: 8px 0;
+  }
+  .ai-md-table th,
+  .ai-md-table td {
+    padding: 4px 8px;
+    border: 1px solid var(--color-border-default);
+    text-align: left;
+    white-space: nowrap;
+  }
+  .ai-md-table th {
+    background: var(--color-bg-subtle);
+    font-weight: 600;
+  }
   .ai-md code {
     font-family: var(--font-mono);
     font-size: 0.9em;
@@ -1664,6 +1693,7 @@
     background: rgb(0 0 0 / 6%);
   }
   .ai-md-pre {
+    max-width: 100%;
     margin: 8px 0;
     padding: 10px 12px;
     border-radius: 8px;
@@ -1743,7 +1773,7 @@
     color: var(--color-warning, #9a6700);
   }
 
-  /* nút "Nguồn (n)" + bảng nguồn mở ra khi bấm */
+  /* nút "Nguồn (n)" */
   .ai-sources {
     margin-top: 8px;
     font-size: 12px;
@@ -1770,33 +1800,6 @@
     height: 6px;
     border-radius: 50%;
     background: var(--color-warning, #c98a00);
-  }
-  .ai-sources__chev {
-    font-size: 10px;
-    transition: transform 0.2s;
-  }
-  .ai-sources__chev.is-open {
-    transform: rotate(180deg);
-  }
-  .ai-sources__panel {
-    margin-top: 6px;
-    padding: 8px 10px;
-    border-radius: 8px;
-    background: var(--color-bg-subtle, #f4f1ec);
-    color: var(--color-text-secondary, #555);
-    line-height: 1.45;
-    animation: ai-step-in 0.18s ease-out;
-  }
-  .ai-sources__panel ul {
-    margin: 0;
-    padding-left: 16px;
-    list-style: disc;
-  }
-  .ai-sources__panel p {
-    margin: 4px 0 0;
-  }
-  .ai-sources__panel p:first-child {
-    margin-top: 0;
   }
 
   /* danh sách bước khi AI soạn đề */
@@ -1904,8 +1907,7 @@
     }
   }
   @media (prefers-reduced-motion: reduce) {
-    .ai-step,
-    .ai-sources__panel {
+    .ai-step {
       animation: none;
     }
     .ai-step__spin {

@@ -5,7 +5,7 @@
 import { FIGURE_GUIDE } from '@/lib/prompts/figureGuide'
 import { slideCatalogText } from '@/lib/aiDeck'
 import { HTML_DECK_SYSTEM } from '@/lib/htmlDeckPrompt'
-import { ASK_RULE, THINK_VI } from '@/lib/prompts/common'
+import { ASK_RULE, CHAT_MARKDOWN, THINK_VI } from '@/lib/prompts/common'
 import { sourceSection, webSection, type SourceInput } from '@/lib/prompts/sources'
 import { batchSystemPrompt, pageSystemPrompt } from '@/lib/slideAi'
 import { editSystemPrompt } from '@/lib/slideEdit'
@@ -108,7 +108,7 @@ export const WEB_SEARCH_SYSTEM =
  * Ghép system prompt của các tác vụ slide / bảng vẽ (server gọi qua server/aiTasks.ts)
  * ------------------------------------------------------------------ */
 
-/** Lượt chat slide: `plan` lập dàn ý, `chat` soạn deck một lượt, `html` slide HTML. */
+/** Lượt chat slide: `plan` lập dàn ý, `chat` hỏi đáp, `html` slide HTML. */
 export interface SlideChatInput extends SourceInput {
   variant: 'plan' | 'chat' | 'html'
   /** bật luật hỏi lại (không áp cho `html`) */
@@ -121,7 +121,7 @@ export function buildSlideChatSystem(i: SlideChatInput): string {
   const head =
     i.variant === 'html'
       ? HTML_SYSTEM
-      : (i.variant === 'plan' ? SLIDE_PLAN_SYSTEM : SLIDE_SYSTEM) + (i.ask ? ASK_RULE : '')
+      : (i.variant === 'plan' ? SLIDE_PLAN_SYSTEM : SLIDE_SYSTEM + CHAT_MARKDOWN) + (i.ask ? ASK_RULE : '')
   return head + (i.contextSummary ? `\nBài trình bày hiện tại: ${i.contextSummary}` : '') + sourceSection(i) + webSection(i.webFound)
 }
 
@@ -133,7 +133,7 @@ export interface BoardInput extends SourceInput {
 
 export function buildBoardSystem(i: BoardInput): string {
   return (
-    BOARD_SYSTEM +
+    BOARD_SYSTEM + CHAT_MARKDOWN +
     (i.ops ? BOARD_OPS_GUIDE : '') +
     (i.contextSummary ? `\nBảng vẽ hiện tại:\n${i.contextSummary}` : '') +
     sourceSection(i)

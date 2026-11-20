@@ -801,7 +801,7 @@ export default function ComposeDoc() {
   const handleAiResult = useCallback(
     (text: string): AiApplyResult | undefined => {
       if (!activeId || !editor || editor.isDestroyed) return undefined
-      const looksJson = /^\s*(```(?:json)?\s*)?[[{]/.test(text)
+      const looksJson = /^\s*(```(?:json)?\s*)?[[{]/.test(text) && !/^\s*\[[^\]\n]+\]\(/.test(text)
       const FAIL_JSON = 'AI trả kết quả bị lỗi định dạng nên chưa đưa vào đề được.'
       let raw: AiExamEnvelope
       try {
@@ -1387,6 +1387,7 @@ export default function ComposeDoc() {
           <Suspense fallback={null}>
           <AiPanel
             attachKey="exam"
+            historyKey={activeDoc?.id}
             onApplyBlocks={handleAiResult}
             documentDigest={documentDigest}
             focusFor={(request) => focusNote(activeContent, request)}

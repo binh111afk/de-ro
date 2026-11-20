@@ -3,7 +3,7 @@
  * Trình duyệt không còn giữ chữ này: client chỉ gửi dữ liệu người dùng (yêu cầu, tài liệu, nguồn), xem `buildExamSystem`.
  */
 import { DIFFICULTY_RULE } from '../difficulty.js'
-import { ASK_RULE, THINK_VI } from './common.js'
+import { ASK_RULE, CHAT_MARKDOWN, THINK_VI } from './common.js'
 import { figureGuideFor } from './figureGuide.js'
 import { sourceSection, webSection, type SourceInput } from './sources.js'
 
@@ -130,6 +130,7 @@ export const ASK_ONLY_SYSTEM =
 export interface ExamTaskInput extends SourceInput {
   /** yêu cầu của người dùng ở lượt này */
   text: string
+  intent?: 'chat'
   /** bản rút gọn tài liệu hiện tại, mỗi dòng "[id] loại: nội dung" */
   digest?: string
   contextSummary?: string
@@ -145,6 +146,7 @@ export function buildExamSystem(i: ExamTaskInput): string {
   const ctx = i.contextSummary
   const system =
     examSystemPrompt(i.digest, `${i.text}\n${ctx ?? ''}`) +
+    (i.intent === 'chat' ? CHAT_MARKDOWN : '') +
     (i.ask ? ASK_RULE : '') +
     (ctx ? `\nTài liệu hiện tại: ${ctx}` : '')
   return system + sourceSection(i) + webSection(i.webFound) + (i.think ? THINK_VI : '')

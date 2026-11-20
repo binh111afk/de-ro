@@ -90,18 +90,18 @@
  "items": [
   {
    "name": "BOARD_SYSTEM",
-   "len": 385,
-   "sha256": "3de37b71d8efd265b01eb45fa4694489580f9582ef8a046cde4b77bf56d23cd6"
+   "len": 500,
+   "sha256": "c13ef77165270ec3d3afa03ca524a6301573ff914b164dd721c6ab8cc734da16"
   },
   {
    "name": "BOARD_OPS_GUIDE",
-   "len": 16068,
-   "sha256": "918c46a59be145eaf4c5c9095d792be8a21580913f4a78146fa9f512e7935d81"
+   "len": 17919,
+   "sha256": "28b4ec0d3fe7fc9b5e466a839507c344ffe4649c966b07af5b996aded20698bc"
   },
   {
    "name": "SLIDE_SYSTEM",
-   "len": 1771,
-   "sha256": "264ffdc0bd87a9c654810a88dcd9c87437a59e1594590ed5214b9cae6dbc7166"
+   "len": 1886,
+   "sha256": "29bbc1b18aadbbb9db7f0fcc9c414e8898421eff1b54f6f37a69da37e5862a2e"
   },
   {
    "name": "SLIDE_PLAN_SYSTEM",

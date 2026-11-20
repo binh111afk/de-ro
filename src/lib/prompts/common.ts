@@ -2,6 +2,8 @@
  * Chữ prompt dùng chung nhiều tác vụ AI (soạn đề, slide…). Module thuần: server ghép prompt từ đây.
  */
 
+export const CHAT_MARKDOWN = '\nKhi trả lời hỏi đáp bằng văn bản, có thể dùng Markdown (đậm, danh sách, bảng, code), công thức vẫn viết trong $…$.'
+
 /** luật đưa vào system prompt: thiếu thông tin cốt lõi thì hỏi, không soạn bừa */
 export const ASK_RULE =
   '\n\nHỎI LẠI KHI YÊU CẦU MƠ HỒ: nếu người dùng nhờ soạn nhưng thiếu thông tin cốt lõi mà không đoán hợp lý được từ yêu cầu, ' +

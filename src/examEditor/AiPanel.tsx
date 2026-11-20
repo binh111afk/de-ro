@@ -36,9 +36,11 @@ import { dialog } from '@/components/Dialog'
 import { SourcePicker } from './SourcePicker'
 import { cn } from '@/lib/cn'
 import { AI_ATTACH_EVENT, takeAiRefs, type AiRef } from '@/lib/aiAttach'
+import { chatHistoryKey, encodeChatHistory, loadChatHistory, saveChatHistory } from '@/lib/aiChatHistory'
 import { extractJson } from '@/lib/llm'
 import aiThinkingAnim from '@/assets/ai-assistant.svg'
-import { Markdown } from './markdown'
+import { Markdown } from '@/lib/aiChatMarkdown'
+import 'katex/dist/katex.min.css'
 import { ASK_DEFAULT, AiAskPanel, askHistoryText, needsAskFirst, parseAsk, type AiAsk } from './AiAskPanel'
 import { IconClose, IconEnter, IconPaperclip, IconStop } from './icons'
 
@@ -107,12 +109,12 @@ function useReducedMotion() {
  * Hiện câu trả lời dần dần như đang gõ. Tốc độ co theo độ dài để đề dài không
  * kéo dài quá ~1,6s; tắt hẳn khi `prefers-reduced-motion`.
  */
-function TypedMarkdown({ text }: { text: string }) {
+function TypedMarkdown({ text, chat, animate }: { text: string; chat: boolean; animate: boolean }) {
   const reduced = useReducedMotion()
-  const [shown, setShown] = useState(reduced ? text : '')
+  const [shown, setShown] = useState(reduced || !animate ? text : '')
 
   useEffect(() => {
-    if (reduced || !text) {
+    if (reduced || !animate || !text) {
       setShown(text)
       return
     }
@@ -126,9 +128,9 @@ function TypedMarkdown({ text }: { text: string }) {
     }
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
-  }, [text, reduced])
+  }, [text, reduced, animate])
 
-  return <Markdown text={shown} />
+  return <Markdown text={shown} chat={chat} />
 }
 
 export interface ChatTurn {
@@ -137,6 +139,7 @@ export interface ChatTurn {
   text: string
   /** tệp đính kèm của lượt người dùng (để hiển thị lại trong chat) */
   files?: Attachment[]
+  fileNames?: string[]
   /** thành phần đang chọn được đính kèm (bảng vẽ, câu hỏi, slide) */
   refs?: string[]
   /** true khi đang chờ model */
@@ -206,34 +209,39 @@ function ActLog({ steps }: { steps: ActStep[] }) {
 
 /** nút "Nguồn (n)" bấm mở danh sách nguồn + cảnh báo, thay cho dòng chữ lộ thiên dưới tin nhắn */
 function SourcesButton({ sources, web, note }: { sources?: string[]; web?: Array<{ url: string; title: string }>; note?: string }) {
-  const [open, setOpen] = useState(false)
   const n = (sources?.length ?? 0) + (web?.length ?? 0)
+  const showSources = () => {
+    void dialog.show(
+      <>
+        {n > 0 ? (
+          <ul className="max-h-[55vh] list-disc space-y-1 overflow-auto pl-5 [overflow-wrap:anywhere]">
+            {sources?.map((source, i) => <li key={i}>{source}</li>)}
+            {web?.map(({ url, title }, i) => {
+              const parsed = URL.canParse(url) ? new URL(url) : null
+              return (
+                <li key={i}>
+                  {parsed && (parsed.protocol === 'https:' || parsed.protocol === 'http:') ? (
+                    <>
+                      <a className="underline" href={parsed.href} target="_blank" rel="noopener noreferrer">{title}</a>
+                      <span className="block text-xs text-ink-3">{parsed.hostname}</span>
+                    </>
+                  ) : title}
+                </li>
+              )
+            })}
+          </ul>
+        ) : null}
+        {note ? <p className="ai-msg-source-note">{note}</p> : null}
+      </>,
+      'Nguồn',
+    )
+  }
   return (
     <div className="ai-sources">
-      <button type="button" className="ai-sources__btn" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
-        Nguồn{n ? ` (${n})` : ''}
+      <button type="button" className="ai-sources__btn" aria-haspopup="dialog" onClick={showSources}>
+        Nguồn ({n})
         {note ? <span className="ai-sources__dot" aria-label="có cảnh báo" /> : null}
-        <span className={cn('ai-sources__chev', open && 'is-open')} aria-hidden="true">▾</span>
       </button>
-      {open ? (
-        <div className="ai-sources__panel">
-          {n ? (
-            <ul>
-              {(sources ?? []).map((s) => (
-                <li key={s}>{s}</li>
-              ))}
-              {(web ?? []).map((w) => (
-                <li key={w.url}>
-                  <a href={w.url} target="_blank" rel="noopener noreferrer">{w.title}</a>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>Không dùng nguồn tham khảo.</p>
-          )}
-          {note ? <p className="ai-msg-source-note">{note}</p> : null}
-        </div>
-      ) : null}
     </div>
   )
 }
@@ -377,17 +385,17 @@ const WEB_WARN_KEY = 'dethinhbien-web-search-warned'
 
 /** Lịch sử hội thoại gửi kèm mỗi lượt gọi model. */
 function historyOf(turns: ChatTurn[]): LlmMessage[] {
-  return turns
-    .filter((t) => t.text.trim() || t.files?.length)
-    .map((t) => ({
-      role: t.role === 'user' ? 'user' : 'assistant',
-      content:
-        t.text +
+  return turns.flatMap((t) => {
+    const names = t.files?.map((f) => f.name) ?? t.fileNames
+    if (!t.text.trim() && !names?.length && !t.refs?.length) return []
+    return [{
+      role: t.role,
+      content: t.text +
         (t.ask ? `\n${askHistoryText(t.ask)}` : '') +
-        (t.files?.length
-          ? `\n[Tệp đính kèm: ${t.files.map((f) => f.name).join(', ')}]`
-          : ''),
-    }))
+        (names?.length ? `\n[Tệp đính kèm: ${names.join(', ')}]` : '') +
+        (t.refs?.length ? `\n[Phần đính kèm: ${t.refs.join(', ')}]` : ''),
+    }]
+  })
 }
 
 /** Thẻ dàn ý chờ duyệt — chặng 26a: xem trước khi sinh nội dung từng slide. */
@@ -644,7 +652,13 @@ function useAiQuota(): AiQuota | null {
   return q
 }
 
-export function AiPanel({
+export function AiPanel({ historyKey, ...props }: Omit<React.ComponentProps<typeof AiConversation>, 'storageKey'> & { historyKey?: string }) {
+  const mode = props.mode ?? 'exam'
+  const storageKey = historyKey && mode !== 'board' ? chatHistoryKey(mode, historyKey) : undefined
+  return <AiConversation key={storageKey} {...props} storageKey={storageKey} />
+}
+
+function AiConversation({
   onApplyBlocks,
   onApplySlides,
   onAppendSlide,
@@ -659,6 +673,7 @@ export function AiPanel({
   focusFor,
   mode = 'exam',
   attachKey,
+  storageKey,
   onBoardOps,
 }: {
   /** nhận nội dung AI sinh ra để áp vào tài liệu; trả về câu báo lại (failed = không áp được) */
@@ -689,6 +704,7 @@ export function AiPanel({
   mode?: AiMode
   /** nhận phần đính kèm "Hỏi AI" (attachToAi) có cùng khoá */
   attachKey?: string
+  storageKey?: string
   /** bảng vẽ: áp các lệnh vẽ AI trả về; trả các dòng báo lại người dùng */
   onBoardOps?: (ops: Record<string, unknown>[]) => string[]
 }) {
@@ -696,7 +712,15 @@ export function AiPanel({
   const session = useSession()
   const needsLogin = !session && !/^(localhost|127\.0\.0\.1)$/.test(window.location.hostname)
   const starters = mode === 'slide' ? SLIDE_STARTERS : mode === 'board' ? BOARD_STARTERS : STARTERS
-  const [turns, setTurns] = useState<ChatTurn[]>([])
+  const [turns, setTurns] = useState<ChatTurn[]>(() => storageKey ? loadChatHistory(storageKey) : [])
+  const [restoredTurnIds] = useState(() => new Set(turns.map((turn) => turn.id)))
+  const lastSaved = useRef<string | null>(null)
+  useEffect(() => {
+    if (!storageKey) return
+    const encoded = encodeChatHistory(turns)
+    if (lastSaved.current !== null && encoded !== lastSaved.current) saveChatHistory(storageKey, encoded)
+    lastSaved.current = encoded
+  }, [storageKey, turns])
   const [input, setInput] = useState('')
   const quota = useAiQuota()
   const [files, setFiles] = useState<Attachment[]>([])
@@ -766,6 +790,7 @@ export function AiPanel({
 
   useEffect(
     () => () => {
+      abortRef.current?.abort()
       filesRef.current.forEach((f) => f.url && URL.revokeObjectURL(f.url))
     },
     [],
@@ -826,7 +851,7 @@ export function AiPanel({
 
   const send = useCallback(async (override?: string, opt: { strong?: boolean } = {}) => {
     const text = (override ?? input).trim()
-    if ((!text && files.length === 0 && refs.length === 0) || busy) return
+    if ((!text && files.length === 0 && refs.length === 0) || busy || abortRef.current) return
     const sentRefs = refs
     const refNote = sentRefs.length
       ? `\n\nPhần đang chọn (người dùng hỏi về phần này):\n${sentRefs.map((r) => `- ${r.label}: ${r.detail}`).join('\n')}`
@@ -935,7 +960,7 @@ export function AiPanel({
         ? { name: 'bang-ve', input: { ops: !!onBoardOps, contextSummary, ...srcInput } }
         : mode === 'slide'
         ? { name: 'slide-chat', input: { variant: htmlMode ? 'html' : slideDoc ? 'plan' : 'chat', ask: askRule, contextSummary, ...srcInput } }
-        : { name: 'soan-de', input: { text, digest: documentDigest, contextSummary, ask: askRule, ...srcInput } }
+        : { name: 'soan-de', input: { text, intent, digest: documentDigest, contextSummary, ask: askRule, ...srcInput } }
 
     const messages: LlmMessage[] = [
       ...history,
@@ -951,12 +976,13 @@ export function AiPanel({
           { signal: controller.signal, reasoningEffort: 'low', task: { name: 'slide-sua', input: { context: editContext ?? contextSummary ?? '' } } },
         )
         const { ops, errors } = parseEditCommands(editRes.content)
+        controller.signal.throwIfAborted()
         if (ops.length) {
           const lines = [...onApplyEdits(ops), ...errors.map((e) => `Bỏ qua: ${e}.`)]
           setTurns((t) =>
             t.map((turn) =>
               turn.id === botId
-                ? { ...turn, text: lines.join('\n\n') + '\n\nBấm Ctrl+Z nếu muốn hoàn tác.', pending: false }
+                ? { ...turn, text: lines.join('\n\n') + '\n\nBấm Ctrl+Z nếu muốn hoàn tác.', pending: false, intent: 'doc' }
                 : turn,
             ),
           )
@@ -1058,7 +1084,7 @@ export function AiPanel({
       }
       const ask = askRule && !htmlMode ? parseAsk(res.content) : null
       if (ask) {
-        patchTurn(() => ({ text: ask.intro || 'Mình cần biết thêm vài điều trước khi soạn.', ask, askState: 'open', pending: false, log: undefined, sources: undefined, sourceNote: undefined }))
+        patchTurn(() => ({ text: ask.intro || 'Mình cần biết thêm vài điều trước khi soạn.', ask, askState: 'open', intent: 'doc', pending: false, log: undefined, sources: undefined, sourceNote: undefined }))
         return
       }
       if (examSteps) {
@@ -1070,6 +1096,7 @@ export function AiPanel({
         // nhường một khung hình để bước "Đưa vào đề" kịp hiện trước khi áp đề (việc áp chạy đồng bộ)
         await new Promise((r) => setTimeout(r, 350))
       }
+      controller.signal.throwIfAborted()
       if (htmlMode) {
         const fenced = res.content.match(/```(?:html)?\s*([\s\S]*?)```/i)
         const html = (fenced ? fenced[1] : res.content)
@@ -1111,10 +1138,12 @@ export function AiPanel({
       if (mode === 'board') {
         let say = res.content
         let lines: string[] = []
+        let appliedOps = false
         if (onBoardOps && /"ops"\s*:/.test(res.content)) {
           try {
             const raw = extractJson(res.content) as { say?: unknown; ops?: unknown }
             if (Array.isArray(raw.ops)) {
+              appliedOps = true
               lines = onBoardOps(raw.ops.filter((o): o is Record<string, unknown> => !!o && typeof o === 'object'))
               say = typeof raw.say === 'string' ? raw.say : ''
             }
@@ -1124,7 +1153,7 @@ export function AiPanel({
         }
         const text = [say.trim(), lines.length ? lines.map((l) => `• ${l}`).join('\n') : '', lines.length ? 'Bấm Ctrl+Z trên bảng nếu muốn hoàn tác.' : '']
           .filter(Boolean).join('\n\n')
-        setTurns((t) => t.map((turn) => (turn.id === botId ? { ...turn, text, pending: false } : turn)))
+        patchTurn(() => ({ text, pending: false, intent: appliedOps ? 'doc' : 'chat' }))
         return
       }
       if (mode === 'slide') {
@@ -1146,6 +1175,7 @@ export function AiPanel({
             { signal: controller.signal, reasoningEffort: AI_EFFORT.slide, retryOf: res.receipt, task: mainTask },
           )
           plan = parseDeckPlan(again.content)
+          controller.signal.throwIfAborted()
         }
         if (plan) {
           setTurns((t) =>
@@ -1168,7 +1198,7 @@ export function AiPanel({
         setTurns((t) =>
           t.map((turn) =>
             turn.id === botId
-              ? { ...turn, text: summary ?? res.content, pending: false }
+              ? { ...turn, text: summary ?? res.content, pending: false, intent: summary || slideDoc ? 'doc' : 'chat' }
               : turn,
           ),
         )
@@ -1181,6 +1211,7 @@ export function AiPanel({
         if (result?.failed && onApplyBlocks) {
           // gọi lại bằng model mạnh hơn (lượt đầu model nhanh không làm được)
           const again = await callLlm(messages, { signal: controller.signal, reasoningEffort: AI_EFFORT.exam, retryOf: res.receipt, strong: true, task: mainTask })
+          controller.signal.throwIfAborted()
           result = onApplyBlocks(again.content) ?? result
         }
         // không áp được: hiện trong chat (kèm phần AI viết nếu đọc được) + nút Thử lại
@@ -1197,6 +1228,7 @@ export function AiPanel({
                   ...turn,
                   text,
                   pending: false,
+                  intent: result ? 'doc' : 'chat',
                   ...(failed && userTurn.text ? { retry: userTurn.text } : {}),
                   // chỉ có bước khi là lượt soạn đề; trả lời thường (không JSON) thì bỏ danh sách bước
                   ...(turn.log
@@ -1311,7 +1343,7 @@ export function AiPanel({
       }
 
       const landReady = async () => {
-        while (cursor < total && results[cursor] !== undefined) {
+        while (!controller.signal.aborted && cursor < total && results[cursor] !== undefined) {
           const raw = results[cursor]
           const page = raw ? dropRepeatedGraphic(raw, usedGraphics) : raw
           if (page) {
@@ -1495,7 +1527,11 @@ export function AiPanel({
                   <ThinkingLine mode={mode} intent={turn.intent} />
                 )
               ) : (
-                <TypedMarkdown text={turn.text} />
+                <TypedMarkdown
+                  text={turn.text}
+                  chat={turn.role === 'assistant' && turn.intent === 'chat'}
+                  animate={!restoredTurnIds.has(turn.id)}
+                />
               )}
               <PlanCard
                 plan={turn.plan}
@@ -1528,6 +1564,11 @@ export function AiPanel({
                       <span>{f.name}</span>
                     </span>
                   ))}
+                </div>
+              ) : null}
+              {turn.fileNames?.length ? (
+                <div className="ai-msg-files">
+                  {turn.fileNames.map((name, i) => <span key={i} className="ai-msg-file" data-tip={name}><span>{name}</span></span>)}
                 </div>
               ) : null}
               {turn.sources?.length || turn.webSources?.length || turn.sourceNote ? <SourcesButton sources={turn.sources} web={turn.webSources} note={turn.sourceNote} /> : null}

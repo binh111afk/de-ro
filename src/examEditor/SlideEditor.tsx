@@ -1858,6 +1858,7 @@ export function SlideEditor({
         <AiPanel
           mode="slide"
           attachKey="slide"
+          historyKey={deck.id}
           onApplySlides={applyAiResult}
           onAppendSlide={applyAiSlide}
           onApplyHtmlDeck={applyHtmlDeck}
