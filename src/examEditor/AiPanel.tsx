@@ -12,8 +12,8 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useSession } from '@/lib/useSession'
 import { Button } from '@/components/ui'
-import { AiQuotaRing } from '@/components/AiQuotaRing'
-import { callLlm, callLlmChecked, type LlmMessage, type LlmProgress } from '@/lib/llm'
+import { AiQuotaRing, TopupLink } from '@/components/AiQuotaRing'
+import { AiQuotaError, callLlm, callLlmChecked, lastAiQuota, TOKENS_PER_POINT, type LlmMessage, type LlmProgress } from '@/lib/llm'
 import { khungPromptFor } from '@/lib/khungPrompt'
 import {
   parseAiObject,
@@ -169,6 +169,10 @@ export interface ChatTurn {
   retry?: string
   /** người dùng đã bấm 👎 */
   vote?: 'up' | 'down'
+  /** token đã tiêu cho lượt này (chênh lệch hạn mức trước / sau); không có khi không biết hạn mức */
+  cost?: number
+  /** lỗi do không đủ điểm AI: kèm link nạp điểm */
+  topup?: boolean
 }
 
 interface ActStep {
@@ -206,6 +210,13 @@ function ActLog({ steps }: { steps: ActStep[] }) {
       ))}
     </ol>
   )
+}
+
+const leftTokens = () => (lastAiQuota ? lastAiQuota.limit - lastAiQuota.used : null)
+/** token đã tiêu kể từ `start` (số còn lại lúc bắt đầu lượt); undefined khi không biết hoặc không tốn */
+const spentSince = (start: number | null) => {
+  const now = leftTokens()
+  return start != null && now != null && start > now ? start - now : undefined
 }
 
 /** nút "Nguồn (n)" bấm mở danh sách nguồn + cảnh báo, thay cho dòng chữ lộ thiên dưới tin nhắn */
@@ -886,6 +897,7 @@ function AiConversation({
     setFiles([])
     setRefs([])
     setBusy(true)
+    const leftAtStart = leftTokens()
 
     const controller = new AbortController()
     abortRef.current = controller
@@ -1245,11 +1257,14 @@ function AiConversation({
                 error: aborted
                   ? 'Đã dừng.'
                   : (err as Error)?.message || 'Không gọi được AI.',
+                ...(err instanceof AiQuotaError ? { topup: true } : {}),
               }
             : turn,
         ),
       )
     } finally {
+      const cost = spentSince(leftAtStart)
+      if (cost) patchTurn(() => ({ cost }))
       setBusy(false)
       abortRef.current = null
     }
@@ -1282,6 +1297,7 @@ function AiConversation({
         },
       ])
       setBusy(true)
+      const leftAtStart = leftTokens()
       const controller = new AbortController()
       abortRef.current = controller
       onPendingSlides?.({ done: 0, total })
@@ -1415,11 +1431,14 @@ function AiConversation({
                   error: aborted
                     ? 'Đã dừng.'
                     : (err as Error)?.message || 'Không gọi được AI.',
+                  ...(err instanceof AiQuotaError ? { topup: true } : {}),
                 }
               : turn,
           ),
         )
       } finally {
+        const cost = spentSince(leftAtStart)
+        if (cost) setTurns((t) => t.map((turn) => (turn.id === botId ? { ...turn, cost } : turn)))
         setBusy(false)
         abortRef.current = null
         onPendingSlides?.(null)
@@ -1561,7 +1580,12 @@ function AiConversation({
                 </div>
               ) : null}
               {turn.sources?.length || turn.webSources?.length || turn.sourceNote ? <SourcesButton sources={turn.sources} web={turn.webSources} note={turn.sourceNote} /> : null}
-              {turn.error ? <div className="ai-msg-error">{turn.error}</div> : null}
+              {turn.error ? (
+                <div className="ai-msg-error">
+                  {turn.error}
+                  {turn.topup ? <TopupLink className="ml-1.5 font-semibold underline" /> : null}
+                </div>
+              ) : null}
               {turn.retry && !busy && turn.id === turns[turns.length - 1]?.id ? (
                 <button type="button" className="ai-retry" onClick={() => void send(turn.retry, { strong: true })}>
                   <RotateCcw size={13} /> Thử lại
@@ -1588,6 +1612,11 @@ function AiConversation({
                       {v === 'up' ? <ThumbsUp size={13} /> : <ThumbsDown size={13} />}
                     </button>
                   ))}
+                  {turn.cost ? (
+                    <span className="ai-cost" data-tip="Điểm AI đã tiêu">
+                      {Math.max(1, Math.round(turn.cost / TOKENS_PER_POINT)).toLocaleString('vi-VN')} điểm
+                    </span>
+                  ) : null}
                 </span>
               ) : null}
             </div>

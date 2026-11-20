@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { apiFetch } from '@/lib/apiFetch'
 import { cn } from '@/lib/cn'
-import { lastAiQuota, TOKENS_PER_POINT, type AiQuota } from '@/lib/llm'
+import { lastAiQuota, reportQuota, TOKENS_PER_POINT, type AiQuota } from '@/lib/llm'
 import { usePricingAccess } from '@/lib/usePricingAccess'
 
 interface State {
@@ -22,13 +22,17 @@ const fromQuota = (q: AiQuota & { base?: number }, granted: number): State => {
   return { left, ref: Math.max(left, (q.base ?? 0) + granted), unlimited: false }
 }
 
+/** Link tới trang nạp điểm; ẩn khi trang nạp chưa mở cho người dùng. */
+export function TopupLink({ className }: { className?: string }) {
+  const canPay = usePricingAccess() === true
+  return canPay ? <Link to="/bang-gia" className={className}>Nạp điểm</Link> : null
+}
+
 /** Vòng điểm AI còn lại ở khung chat; bấm mở thanh nổi nhỏ. Ẩn khi chưa biết hạn mức (khách, máy dev). */
 export function AiQuotaRing({ className }: { className?: string }) {
   const [state, setState] = useState<State | null>(() => (lastAiQuota ? fromQuota(lastAiQuota, 0) : null))
   const [open, setOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
-  const canPay = usePricingAccess() === true
-
   useEffect(() => {
     let alive = true
     const load = () =>
@@ -37,7 +41,11 @@ export function AiQuotaRing({ className }: { className?: string }) {
         .then((d: { quota: (AiQuota & { base?: number }) | null; granted?: number; unlimited?: boolean }) => {
           if (!alive) return
           if (d.unlimited) setState({ left: 0, ref: 1, unlimited: true })
-          else if (d.quota) setState(fromQuota(d.quota, Number(d.granted) || 0))
+          else if (d.quota) {
+            setState(fromQuota(d.quota, Number(d.granted) || 0))
+            // mốc để các lượt chat tính được số điểm đã tiêu ngay từ lượt đầu
+            reportQuota(d.quota)
+          }
         })
         .catch(() => {})
     void load()
@@ -110,11 +118,7 @@ export function AiQuotaRing({ className }: { className?: string }) {
               <span className={cn('tnum text-[14px] font-semibold', low ? 'text-clay-deep' : 'text-ink')}>{points.toLocaleString('vi-VN')}</span> điểm còn lại
             </span>
           )}
-          {canPay && !state.unlimited ? (
-            <Link to="/bang-gia" className="font-semibold text-clay hover:underline">
-              Nạp điểm
-            </Link>
-          ) : null}
+          {!state.unlimited ? <TopupLink className="font-semibold text-clay hover:underline" /> : null}
         </div>
       ) : null}
     </div>

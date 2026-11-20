@@ -1,6 +1,6 @@
 import type { ChatTurn } from '../examEditor/AiPanel'
 
-type HistoryTurn = Pick<ChatTurn, 'id' | 'role' | 'text' | 'intent' | 'sources' | 'webSources' | 'sourceNote' | 'error' | 'refs' | 'fileNames'>
+type HistoryTurn = Pick<ChatTurn, 'id' | 'role' | 'text' | 'intent' | 'sources' | 'webSources' | 'sourceNote' | 'error' | 'refs' | 'fileNames' | 'cost'>
 const MAX_TURNS = 60
 
 export const chatHistoryKey = (mode: 'exam' | 'slide', id: string) => `derou.ai-chat.${mode}.${id}`
@@ -9,8 +9,8 @@ export function encodeChatHistory(turns: ChatTurn[]): string {
   return JSON.stringify(turns
     .filter((turn) => !turn.pending && turn.planState !== 'pending' && turn.askState !== 'open')
     .slice(-MAX_TURNS)
-    .map(({ id, role, text, intent, sources, webSources, sourceNote, error, refs, files, fileNames }): HistoryTurn => ({
-      id, role, text, intent, sources, webSources, sourceNote, error, refs,
+    .map(({ id, role, text, intent, sources, webSources, sourceNote, error, refs, files, fileNames, cost }): HistoryTurn => ({
+      id, role, text, intent, sources, webSources, sourceNote, error, refs, ...(cost ? { cost } : {}),
       fileNames: files?.map((file) => file.name) ?? fileNames,
     })))
 }
@@ -42,6 +42,7 @@ export function decodeChatHistory(raw: string): HistoryTurn[] {
         error: asString(turn.error),
         refs: asStrings(turn.refs),
         fileNames: asStrings(turn.fileNames),
+        ...(typeof turn.cost === 'number' && turn.cost > 0 ? { cost: turn.cost } : {}),
       }]
     })
   } catch {

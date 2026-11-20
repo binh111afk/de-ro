@@ -464,7 +464,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
     const error = remaining >= 1000
       ? `Yêu cầu này cần khoảng ${pts(promptTokens + 256)} điểm AI nhưng bạn chỉ còn ${pts(remaining)} điểm. Hãy rút gọn tài liệu nguồn hoặc bớt nội dung gửi kèm.`
       : quotaMessage(quota)
-    return json(res, 429, { error, quota })
+    return json(res, 429, { error, quota, code: 'quota' })
   }
   // phần còn lại sau đầu vào mới là trần đầu ra (bỏ sàn 1.000 từng cho vượt số dư)
   if (quota) maxTokens = Math.min(maxTokens, Math.floor(remaining - promptTokens))

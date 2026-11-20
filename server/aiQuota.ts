@@ -164,7 +164,7 @@ export async function reserveQuota(userId: string | null, _ip: string, q: Quota,
 export function quotaMessage(q: Quota): string {
   return q.base
     ? 'Bạn đã dùng hết điểm AI của tháng này. Hạn mức sẽ được làm mới vào đầu tháng sau.'
-    : 'Bạn đã dùng hết điểm AI. Gói nạp thêm điểm sẽ sớm có.'
+    : 'Bạn đã hết điểm AI. Nạp thêm điểm để tiếp tục.'
 }
 
 /*

@@ -195,7 +195,7 @@ export async function chargeAndGenerate(
   const cost = IMAGE_TOKENS()
   const quota = cost ? await readQuota(userId, ip) : null
   if (quota && quota.limit - quota.used < cost) {
-    json(res, 429, { error: quota.limit - quota.used >= 1000 ? `Vẽ một ảnh cần ${cost / TOKENS_PER_POINT} điểm AI, bạn chỉ còn ${Math.floor((quota.limit - quota.used) / TOKENS_PER_POINT)} điểm.` : quotaMessage(quota), quota })
+    json(res, 429, { error: quota.limit - quota.used >= 1000 ? `Vẽ một ảnh cần ${cost / TOKENS_PER_POINT} điểm AI, bạn chỉ còn ${Math.floor((quota.limit - quota.used) / TOKENS_PER_POINT)} điểm.` : quotaMessage(quota), quota, code: 'quota' })
     return null
   }
   const release = quota ? await reserveQuota(userId, ip, quota, cost) : async () => {}

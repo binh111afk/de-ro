@@ -61,7 +61,7 @@ export const TOKENS_PER_POINT = 1000
 export const aiPointsLeft = (q: AiQuota) => Math.max(0, Math.floor((q.limit - q.used) / TOKENS_PER_POINT))
 /** Lần báo gần nhất + sự kiện `ai-quota` để giao diện cập nhật. */
 export let lastAiQuota: AiQuota | null = null
-function reportQuota(q: unknown) {
+export function reportQuota(q: unknown) {
   if (!q || typeof q !== 'object' || typeof (q as AiQuota).limit !== 'number') return
   lastAiQuota = q as AiQuota
   if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent<AiQuota>('ai-quota', { detail: lastAiQuota }))
@@ -69,6 +69,8 @@ function reportQuota(q: unknown) {
 
 /** Lỗi tạm (mạng, server/gateway 5xx): lượt hỏng không bị tính token nên gọi lại luôn một lần. */
 class TransientLlmError extends Error {}
+/** Không đủ điểm AI cho yêu cầu (server trả 429 kèm code "quota"): giao diện mời nạp điểm. */
+export class AiQuotaError extends Error {}
 
 export async function callLlm(messages: LlmMessage[], opts: LlmOptions = {}): Promise<LlmResult> {
   try {
@@ -121,10 +123,12 @@ async function callOnce(messages: LlmMessage[], opts: LlmOptions): Promise<LlmRe
     const text = await res.text()
     let detail = text.slice(0, 500)
     try {
-      const parsed = JSON.parse(text) as { error?: string; quota?: unknown }
+      const parsed = JSON.parse(text) as { error?: string; quota?: unknown; code?: string }
       if (parsed.error) detail = parsed.error
       reportQuota(parsed.quota)
-    } catch {
+      if (res.status === 429 && parsed.code === 'quota') throw new AiQuotaError(detail)
+    } catch (e) {
+      if (e instanceof AiQuotaError) throw e
       /* giữ raw text */
     }
     if (res.status >= 500) throw new TransientLlmError(detail)
