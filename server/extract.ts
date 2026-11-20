@@ -462,6 +462,10 @@ async function fontStyleOf(page: import('pdfjs-dist/legacy/build/pdf.mjs').PDFPa
 }
 
 async function extractPdf(data: Buffer, marks = false): Promise<string> {
+  // Vercel đóng gói hàm nên pdf.js không tự tìm thấy pdf.worker.mjs; nạp sẵn để nó dùng luôn
+  const g = globalThis as { pdfjsWorker?: unknown }
+  // @ts-expect-error pdf.js không kèm kiểu cho file worker
+  if (!g.pdfjsWorker) g.pdfjsWorker = await import('pdfjs-dist/legacy/build/pdf.worker.mjs')
   const pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs')
   const task = pdfjs.getDocument({ data: new Uint8Array(data), ...(marks ? { fontExtraProperties: true } : {}) })
   const doc = await task.promise
