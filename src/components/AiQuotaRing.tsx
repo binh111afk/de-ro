@@ -84,9 +84,9 @@ export function AiQuotaRing({ className }: { className?: string }) {
         aria-expanded={open}
         data-tip={open ? undefined : 'Điểm AI'}
         onClick={() => setOpen((o) => !o)}
-        className="flex size-7 items-center justify-center rounded-full hover:bg-sunken"
+        className="flex size-6 items-center justify-center rounded-full hover:bg-sunken"
       >
-        <svg viewBox="0 0 22 22" className="size-[22px] -rotate-90" aria-hidden="true">
+        <svg viewBox="0 0 22 22" className="size-4 -rotate-90" aria-hidden="true">
           <circle cx="11" cy="11" r={R} fill="none" strokeWidth="2.5" className="stroke-line-2" />
           <circle
             cx="11"
