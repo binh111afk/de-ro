@@ -11,6 +11,7 @@
  * Mọi icon là SVG stroke `currentColor` từ bộ icon GenOffice — KHÔNG dùng emoji.
  */
 import { Fragment, Suspense, useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
+import { Spinner } from '@/components/ui'
 import type { PageMargins } from './ExamEditor'
 import { ColorPalette } from './ColorPalette'
 import { DEFAULT_PAGE_NUMBER, PAGE_SIZES, type BandSetup, type PageNumberSetup, type PageSizeId } from './pageSetup'
@@ -30,7 +31,8 @@ import { MonitorPlay, ListTree, TableCellsMerge, TableCellsSplit } from 'lucide-
 import { FileMenu } from './FileMenu'
 import { lazyPage } from '@/lib/lazyPage'
 // ngân hàng câu hỏi (kéo theo công cụ vẽ hình ~100 KB gzip) nạp khi mở
-const BankModal = lazyPage(() => import('./BankModal').then((m) => ({ default: m.BankModal })))
+const loadBankModal = () => import('./BankModal')
+const BankModal = lazyPage(() => loadBankModal().then((m) => ({ default: m.BankModal })))
 import { templateById, insertBlockTemplate } from './templates'
 import { applyFormatAttrs, getSelectedBlock, syncDomSelection, type FormatState } from './formatState'
 import { TablePicker, SymbolPicker, ImagePicker, EquationDialog, LinkDialog, ShapePicker } from './InsertMenus'
@@ -346,6 +348,16 @@ export function Ribbon({
   }, [editor, painter])
 
   const [bankOpen, setBankOpen] = useState(false)
+  // nạp sẵn lúc rảnh để bấm Kho câu hỏi là mở ngay (gói modal ~100 KB + dữ liệu câu hỏi)
+  useEffect(() => {
+    const warm = () => {
+      void loadBankModal()
+      void import('@/data/bank').then((m) => m.loadFullBank())
+    }
+    const idle = (window as { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number }).requestIdleCallback
+    const id = idle ? idle(warm, { timeout: 8000 }) : window.setTimeout(warm, 4000)
+    return () => (idle ? (window as { cancelIdleCallback?: (n: number) => void }).cancelIdleCallback?.(id) : window.clearTimeout(id))
+  }, [])
 
   const insertTemplate = (id: string) => {
     const tpl = templateById(id)
@@ -1144,7 +1156,7 @@ export function Ribbon({
       {editor && dialog === 'link' && <LinkDialog editor={editor} onClose={() => setDialog(null)} />}
       {editor && dialog === 'equation' && <EquationDialog editor={editor} onClose={() => setDialog(null)} />}
       {editor && bankOpen && (
-        <Suspense fallback={null}>
+        <Suspense fallback={<div className="fixed inset-0 z-50 grid place-items-center bg-black/20"><Spinner className="size-6" /></div>}>
           <BankModal editor={editor} onClose={() => setBankOpen(false)} />
         </Suspense>
       )}
