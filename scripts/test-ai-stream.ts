@@ -7,6 +7,8 @@
  *  5. upstream lỗi trước khi có chữ: vẫn trả JSON như cũ (chưa mở luồng);
  *  6. không xin stream: trả JSON như cũ;
  *  7. `task`: server tự ghép system prompt, bỏ role system của client; task lạ → 400; không có task bị 400 (trừ khi bật AI_ALLOW_TASKLESS=1).
+ *  8. DeepSeek hết trần token mà trả rỗng → chuyển ngay sang dự phòng, cả JSON lẫn SSE;
+ *  9. DeepSeek trả rỗng với `stop` và opencode trả rỗng với `length` vẫn được thử lại.
  *   npx tsx scripts/test-ai-stream.ts
  */
 import { Readable } from 'node:stream'
@@ -21,6 +23,8 @@ process.env.SUPABASE_SERVICE_ROLE_KEY = 'sk'
 process.env.AI_RECEIPT_SECRET = 'test-secret'
 process.env.LLM_API_KEY = 'dummy'
 process.env.LLM_MODEL = 'app-model'
+process.env.LLM_BASE_URL = 'https://opencode.ai/inference/go/openai/v1'
+process.env.DEEPSEEK_BASE_URL = 'https://api.deepseek.com'
 process.env.AI_WELCOME_POINTS = '120'
 // các ca 1–6 kiểm cơ chế stream / trừ điểm bằng yêu cầu không `task`; ca 7 bỏ biến này để kiểm đúng cách chạy thật
 process.env.AI_ALLOW_TASKLESS = '1'
@@ -29,12 +33,14 @@ for (const k of ['VERCEL', 'DEEPSEEK_API_KEY', 'FOSTA_API_KEY', 'ANYROUTER_API_K
 
 const db = { credits: 120_000, used: 0 }
 /** cách upstream trả lời lượt kế tiếp, theo thứ tự gọi */
-type Mode = 'ok' | 'break' | 'fail'
+type Mode = 'ok' | 'break' | 'fail' | 'empty-stop' | 'empty-length'
 let plan: Mode[] = []
-const calls: Array<{ model: string; stream: boolean; messages: Array<{ role: string; content: string }> }> = []
+let deepseekHitsTokenLimit = false
+const calls: Array<{ model: string; stream: boolean; reasoningEffort?: string; messages: Array<{ role: string; content: string }> }> = []
 const ok = (b: unknown) => new Response(JSON.stringify(b), { status: 200 })
 const enc = new TextEncoder()
 const chunk = (o: unknown) => enc.encode(`data: ${JSON.stringify(o)}\n\n`)
+const tokenLimitUsage = { total_tokens: 9_000, prompt_tokens: 1_000, completion_tokens: 8_000 }
 
 function sse(mode: Mode, model: string): Response {
   const parts = [
@@ -42,13 +48,15 @@ function sse(mode: Mode, model: string): Response {
     chunk({ model, choices: [{ delta: { content: '{"blocks":[{"type":"question","text":"1+1"}' } }] }),
     chunk({ model, choices: [{ delta: { content: ',{"type":"question","text":"2+2"}]}' } }] }),
   ]
+  if (mode === 'empty-length') parts.splice(1)
   let i = 0
   const body = new ReadableStream<Uint8Array>({
     pull(ctrl) {
       if (mode === 'break' && i === 2) return ctrl.error(new TypeError('socket hang up'))
       if (i < parts.length) return ctrl.enqueue(parts[i++])
-      ctrl.enqueue(chunk({ model, choices: [{ finish_reason: 'stop', delta: {} }] }))
-      ctrl.enqueue(chunk({ model, choices: [], usage: { total_tokens: 5_000, prompt_tokens: 1_000, completion_tokens: 4_000 } }))
+      ctrl.enqueue(chunk({ model, choices: [{ finish_reason: mode === 'empty-length' ? 'length' : 'stop', delta: {} }] }))
+      const usage = mode === 'empty-length' ? tokenLimitUsage : { total_tokens: 5_000, prompt_tokens: 1_000, completion_tokens: 4_000 }
+      ctrl.enqueue(chunk({ model, choices: [], usage }))
       ctrl.enqueue(enc.encode('data: [DONE]\n\n'))
       ctrl.close()
     },
@@ -60,10 +68,14 @@ globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
   const url = String(input)
   const body = init.body ? JSON.parse(String(init.body)) : {}
   if (url.includes('/chat/completions')) {
-    calls.push({ model: body.model, stream: !!body.stream, messages: body.messages })
-    const mode = plan.shift() ?? 'ok'
+    calls.push({ model: body.model, stream: !!body.stream, reasoningEffort: body.reasoning_effort, messages: body.messages })
+    const mode = deepseekHitsTokenLimit && url === 'https://api.deepseek.com/chat/completions'
+      ? 'empty-length'
+      : plan.shift() ?? 'ok'
     if (mode === 'fail') return new Response('{}', { status: 400 })
     if (body.stream) return sse(mode, body.model)
+    if (mode === 'empty-length') return ok({ choices: [{ finish_reason: 'length', message: { content: '' } }], usage: tokenLimitUsage })
+    if (mode === 'empty-stop') return ok({ choices: [{ finish_reason: 'stop', message: { content: '' } }], usage: { total_tokens: 1_000 } })
     return ok({ model: body.model, choices: [{ finish_reason: 'stop', message: { content: 'nội dung' } }], usage: { total_tokens: 5_000 } })
   }
   if (url.endsWith('/auth/v1/user')) return ok({ id: USER })
@@ -294,6 +306,45 @@ check('không lộ tên model cho trình duyệt', !JSON.stringify(r.events).inc
   plan = ['ok']
   const allowed = await hit({ messages: msgs('chat tự do'), maxTokens: 8000 })
   check('AI_ALLOW_TASKLESS=1: bật tạm thì không task vẫn chạy', allowed.status === 200, allowed.status)
+}
+
+// 8. DeepSeek hết trần ở mọi lượt gọi, opencode trả kết quả dự phòng
+{
+  process.env.DEEPSEEK_API_KEY = 'ds'
+  process.env.DEEPSEEK_MODEL = 'deepseek-flash'
+  db.credits = 120_000
+  deepseekHitsTokenLimit = true
+  for (const stream of [false, true]) {
+    plan = ['ok']
+    const n0 = calls.length
+    const { r, spent } = await spentBy(() => hit({ messages: msgs('soạn đề hết trần token'), maxTokens: 8000, stream }))
+    const models = calls.slice(n0).map((call) => call.model)
+    const label = stream ? 'SSE' : 'JSON'
+    check(`${label} length: gọi DeepSeek đúng một lần rồi gọi opencode`, models.join(',') === 'deepseek-flash,app-model', models)
+    const done = r.events.at(-1)
+    check(`${label} length: trả 200 với nội dung dự phòng`, r.status === 200 && (stream
+      ? r.type.includes('event-stream') && r.events.some((e) => e.type === 'retry') && done?.type === 'done' && String(done.content).includes('"2+2"')
+      : r.json?.content === 'nội dung'), r)
+    check(`${label} length: chỉ tính một lượt hết trần và một lượt dự phòng (14.000 token)`, spent === 14_000, spent)
+  }
+  deepseekHitsTokenLimit = false
+}
+
+// 9. Các trường hợp vẫn thử lại trên cùng model
+{
+  plan = ['empty-stop', 'ok']
+  const n0 = calls.length
+  const r = await hit({ messages: msgs('soạn đề trả rỗng với stop'), maxTokens: 8000 })
+  const models = calls.slice(n0).map((call) => call.model)
+  check('DeepSeek stop: thử lại cùng model rồi trả nội dung', models.join(',') === 'deepseek-flash,deepseek-flash' && r.status === 200 && r.json?.content === 'nội dung', { models, status: r.status })
+  delete process.env.DEEPSEEK_API_KEY
+}
+{
+  plan = ['empty-length', 'ok']
+  const n0 = calls.length
+  const r = await hit({ messages: msgs('soạn đề qua opencode'), maxTokens: 8000, reasoningEffort: 'high' })
+  const attempts = calls.slice(n0).map(({ model, reasoningEffort }) => [model, reasoningEffort].join(':'))
+  check('opencode length: thử lại cùng model với reasoning_effort medium', attempts.join(',') === 'app-model:high,app-model:medium' && r.status === 200 && r.json?.content === 'nội dung', { attempts, status: r.status })
 }
 
 console.log(fail ? `\n${fail} lỗi` : '\nTất cả đều qua')

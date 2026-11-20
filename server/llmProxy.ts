@@ -766,6 +766,9 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
         lastErr = `${selectedModel}: empty content (finish_reason=${choice?.finish_reason ?? 'unknown'})`
         // trả rỗng vẫn tốn token (thường là suy luận hết trần) → tính vào hạn mức
         wasted += billOf(data.usage, reasoning)
+        // hết trần token vì suy luận: gọi lại cùng model cùng trần vẫn hết trần (mất thêm vài chục giây + tiền) → sang model khác ngay.
+        // opencode có đường riêng: lần sau hạ mức suy luận xuống medium.
+        if (choice?.finish_reason === 'length' && !target.opencode) break
         if (attempt === 0 && target.opencode) {
           const retryBody = JSON.parse(attemptBody) as Record<string, unknown>
           retryBody.reasoning_effort = 'medium'
