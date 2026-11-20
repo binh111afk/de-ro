@@ -12,6 +12,7 @@ import { useCallback, useEffect, useRef, useState, type DragEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { useSession } from '@/lib/useSession'
 import { Button } from '@/components/ui'
+import { IconDocExam } from '@/components/docIcons'
 import { AiQuotaRing, TopupLink } from '@/components/AiQuotaRing'
 import { AiQuotaError, callLlm, callLlmChecked, lastAiQuota, TOKENS_PER_POINT, type LlmMessage, type LlmProgress } from '@/lib/llm'
 import { khungPromptFor } from '@/lib/khungPrompt'
@@ -86,6 +87,13 @@ const SOURCE_KIND_LABEL = {
   mine: 'Đề của tôi',
   community: 'Đề cộng đồng',
   library: 'Kho tài liệu',
+}
+
+function SourceAttachmentIcon({ source }: { source: Pick<PickedSource, 'name' | 'kind'> }) {
+  if (source.kind !== 'library') return <IconDocExam className="ai-attachment__icon" />
+
+  const kind = attachKind({ name: source.name })
+  return <img src={ATTACH_ICONS[kind && kind !== 'image' ? kind : 'doc']} alt="" className="ai-attachment__icon" />
 }
 
 const PDF_SCAN_NOTICE = 'PDF có công thức, hình hoặc là bản scan sẽ được AI đọc bằng ảnh nên tốn thêm điểm.'
@@ -223,32 +231,40 @@ function ActLog({ steps }: { steps: ActStep[] }) {
 }
 
 function SentAttachments({ turn }: { turn: ChatTurn }) {
-  const files = turn.files ?? turn.fileNames?.map((name) => ({ name, kind: attachKind({ name }), url: undefined }))
+  const files = turn.files ?? turn.fileNames?.map((name) => ({ name, kind: attachKind({ name }), url: undefined, size: undefined }))
   if (!files?.length && !turn.refs?.length && !turn.pickedSources?.length) return null
   return (
     <div className="ai-msg-files">
       {turn.refs?.map((label, i) => (
-        <span key={`ref-${i}`} className="ai-msg-file" data-tip={label}>
-          <span className="text-clay"><RefIcon /></span>
-          <span>{label}</span>
+        <span key={`ref-${i}`} className="ai-attachment ai-msg-file" data-tip={label}>
+          <span className="ai-attachment__icon grid place-items-center text-clay"><RefIcon /></span>
+          <span className="ai-attachment__meta">
+            <span className="ai-attachment__name">{label}</span>
+          </span>
         </span>
       ))}
       {files?.map((file, i) => (
-        <span key={`file-${i}`} className="ai-msg-file" data-tip={file.name}>
+        <span key={`file-${i}`} className="ai-attachment ai-msg-file" data-tip={file.name}>
           {file.url ? (
-            <img src={file.url} alt="" className="ai-msg-file__thumb" />
+            <img src={file.url} alt="" className="ai-attachment__thumb" />
           ) : file.kind && file.kind !== 'image' ? (
-            <img src={ATTACH_ICONS[file.kind]} alt="" className="ai-msg-file__icon" />
+            <img src={ATTACH_ICONS[file.kind]} alt="" className="ai-attachment__icon" />
           ) : (
-            <IconPaperclip size={13} />
+            <span className="ai-attachment__icon grid place-items-center"><IconPaperclip size={16} /></span>
           )}
-          <span>{file.name}</span>
+          <span className="ai-attachment__meta">
+            <span className="ai-attachment__name">{file.name}</span>
+            {file.size != null && <span className="ai-attachment__size">{formatSize(file.size)}</span>}
+          </span>
         </span>
       ))}
       {turn.pickedSources?.map((p, i) => (
-        <span key={`source-${i}`} className="ai-msg-file" data-tip={`${SOURCE_KIND_LABEL[p.kind]} · ${p.name}`}>
-          <BookOpen size={13} strokeWidth={1.75} aria-hidden="true" />
-          <span>{p.name}</span>
+        <span key={`source-${i}`} className="ai-attachment ai-msg-file" data-tip={p.name}>
+          <SourceAttachmentIcon source={p} />
+          <span className="ai-attachment__meta">
+            <span className="ai-attachment__name">{p.name}</span>
+            <span className="ai-attachment__size">{SOURCE_KIND_LABEL[p.kind]}</span>
+          </span>
         </span>
       ))}
     </div>
@@ -1745,7 +1761,7 @@ function AiConversation({
             <div className="ai-attachments">
               {picked.map((p) => (
                 <div key={pickedKey(p)} className="ai-attachment">
-                  <span className="ai-attachment__icon grid place-items-center text-clay"><BookOpen size={15} strokeWidth={1.75} /></span>
+                  <SourceAttachmentIcon source={p} />
                   <span className="ai-attachment__meta">
                     <span className="ai-attachment__name" data-tip={p.name}>{p.name}</span>
                     <span className="ai-attachment__size">

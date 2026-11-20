@@ -2083,6 +2083,9 @@
     border: 1px solid var(--color-border-default);
     border-radius: 8px;
     background: var(--color-bg-subtle);
+  }
+
+  .ai-attachments .ai-attachment {
     animation: attach-in 200ms var(--ease-soft) both;
   }
 
@@ -2110,16 +2113,16 @@
   }
 
   .ai-attachment__thumb {
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     object-fit: cover;
     border-radius: 4px;
     flex-shrink: 0;
   }
 
   .ai-attachment__icon {
-    width: 20px;
-    height: 25px;
+    width: 24px;
+    height: 30px;
     object-fit: contain;
     flex-shrink: 0;
   }
@@ -2132,7 +2135,7 @@
   }
 
   .ai-attachment__name {
-    font-size: 11.5px;
+    font-size: 12px;
     color: var(--color-text-primary);
     overflow: hidden;
     text-overflow: ellipsis;
@@ -2207,33 +2210,7 @@
   }
 
   .ai-msg-file {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    max-width: 100%;
-    padding: 2px 6px;
-    border-radius: 6px;
-    background: rgb(0 0 0 / 6%);
-    font-size: 11px;
-  }
-
-  .ai-msg-file__thumb {
-    width: 18px;
-    height: 18px;
-    object-fit: cover;
-    border-radius: 3px;
-  }
-
-  .ai-msg-file__icon {
-    width: 14px;
-    height: 17px;
-    object-fit: contain;
-  }
-
-  .ai-msg-file > span {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    padding: 4px 7px;
   }
 
   /* nút gửi: icon trơn như các nút khác của editor, không phải bong bóng đặc */
