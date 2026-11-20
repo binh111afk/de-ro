@@ -54,6 +54,9 @@ const PDF_SPLIT_LETTER_RATIO = 0.03
 export const isPdf = (name: string, mime?: string) =>
   /\.pdf$/i.test(name) || mime === 'application/pdf'
 
+export const isDocx = (name: string, mime?: string) =>
+  /\.docx$/i.test(name) || mime === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+
 export function pdfTextNeedsVision(text: string): boolean {
   const normalized = text.trim().normalize('NFC')
   if (!normalized) return false
@@ -166,6 +169,19 @@ export async function extractAttachment(
 
 async function extractSourceFile(file: File, name: string, warnings: string[], options: SourceReadOptions) {
   options.signal?.throwIfAborted()
+  if (isDocx(file.name, file.type)) {
+    try {
+      const { docxToBlocks } = await import('@/lib/docxImport')
+      const blocks = await docxToBlocks(file, { imagePlaceholders: true })
+      options.signal?.throwIfAborted()
+      const { text, imageCount } = docxBlocksToSourceText(blocks)
+      if (imageCount) warnings.push(`${name}: có ${imageCount} hình, AI không đọc được nội dung hình.`)
+      return { text }
+    } catch {
+      options.signal?.throwIfAborted()
+      warnings.push(`${name}: dùng bản tách chữ, có thể thiếu công thức và hình.`)
+    }
+  }
   const extracted = await extractAttachment(file)
   options.signal?.throwIfAborted()
   const hasText = Boolean(extracted.text.trim())
@@ -192,8 +208,7 @@ async function extractSourceFile(file: File, name: string, warnings: string[], o
   return extracted
 }
 
-function blockText(b: ExamBlock): string {
-  const rt = (v: RichText) => plainText(v)
+function blockText(b: ExamBlock, rt = plainText, cellText = rt): string {
   switch (b.type) {
     case 'header':
       return `[Đầu đề] ${rt(b.left)} ${rt(b.right)}`.trim()
@@ -228,14 +243,30 @@ function blockText(b: ExamBlock): string {
     case 'rubric':
       return [rt(b.title ?? ''), ...b.items.map((i) => `${i.label ?? ''} ${rt(i.text)}`)].join('\n')
     case 'table':
-      return b.rows.map((r) => r.map((c) => rt(c.text)).join(' | ')).join('\n')
+      return b.rows.map((r) => r.map((c) => cellText(c.text)).join(' | ')).join('\n')
     default:
       return ''
   }
 }
 
+export function docxBlocksToSourceText(blocks: ExamBlock[]): { text: string; imageCount: number } {
+  let imageCount = 0
+  const richText = (value: RichText, singleLine = false) => {
+    const renderText = (text: string) => singleLine ? text.replace(/\r?\n/g, ' ') : text
+    if (typeof value === 'string') return renderText(value)
+    return value.map((span) => {
+      if (!span.image) return renderText(span.text)
+      imageCount += 1
+      return '\n[Hình]\n'
+    }).join('')
+  }
+  const text = blocks.map((b) => blockText(b, (v) => richText(v), (v) => richText(v, true)))
+    .filter(Boolean).join('\n').replace(/[ \t]*\n[ \t]*/g, '\n').replace(/\n{2,}/g, '\n').trim()
+  return { text, imageCount }
+}
+
 function docText(doc: ExamDoc): string {
-  const text = doc.blocks.map(blockText).filter(Boolean).join('\n')
+  const text = doc.blocks.map((b) => blockText(b)).filter(Boolean).join('\n')
   if (text || !doc.online) return text
   // đề tạo online đăng cộng đồng: blocks rỗng, nội dung nằm trong đề tương tác
   return doc.online.sections

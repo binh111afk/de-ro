@@ -6,7 +6,44 @@ import assert from 'node:assert/strict'
 import { AiQuotaError } from '../src/lib/llm.ts'
 import { emptyDoc } from '../src/data/docTypes.ts'
 import { useDocStore } from '../src/store/docs.ts'
-import { buildSourcePack, pdfTextNeedsVision, readVisionPages, sourcePrompt, sourceRule } from '../src/lib/sources.ts'
+import { buildSourcePack, docxBlocksToSourceText, isDocx, pdfTextNeedsVision, readVisionPages, sourcePrompt, sourceRule } from '../src/lib/sources.ts'
+
+const docxMime = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+assert.equal(isDocx('Tệp.DOCX'), true)
+assert.equal(isDocx('Tệp', docxMime), true)
+assert.equal(isDocx('Tệp.doc', 'application/msword'), false)
+assert.deepEqual(docxBlocksToSourceText([
+  { type: 'heading', text: 'Phần I. Trắc nghiệm' },
+  {
+    type: 'question',
+    no: 3,
+    text: [{ text: 'Nghiệm của phương trình ' }, { text: String.raw`$\cos x = \cos\frac{\pi}{5}$` }, { text: ' là' }],
+    options: [
+      { label: 'A', text: [{ text: String.raw`$x = \frac{\pi}{5}$`, marks: [{ type: 'bold' }] }] },
+      { label: 'B', text: '$x = 0$' },
+      { label: 'C', text: '$x = 1$' },
+      { label: 'D', text: '$x = 2$' },
+    ],
+  },
+  { type: 'table', rows: [[{ text: 'Đại lượng\nđo' }, { text: 'Giá trị' }], [{ text: '$x$' }, { text: [{ text: '$2^3$' }] }]] },
+  { type: 'paragraph', text: [{ text: 'Xem hình: ' }, { text: '', image: { src: 'data:image/png;base64,AA==' } }, { text: ' Tính $y$.' }] },
+  { type: 'paragraph', text: [{ text: '', image: { src: '' } }] },
+]), {
+  text: String.raw`Phần I. Trắc nghiệm
+Câu 3. Nghiệm của phương trình $\cos x = \cos\frac{\pi}{5}$ là
+A. $x = \frac{\pi}{5}$
+B. $x = 0$
+C. $x = 1$
+D. $x = 2$
+Đại lượng đo | Giá trị
+$x$ | $2^3$
+Xem hình:
+[Hình]
+Tính $y$.
+[Hình]`,
+  imageCount: 2,
+})
+console.log('✅ DOCX giữ LaTeX, số câu, đề mục, thứ tự phương án, hàng bảng và vị trí hình')
 
 const brokenPdfText = `S Ở GIÁO D ỤC VÀ ĐÀO TẠ O
 Câu 1: [MAP] Cho hình chóp S.ABC có c ạ nh bên SA vuông góc v ới đáy ( ABC) . Góc t ạ o b ở i SC và
@@ -130,9 +167,26 @@ try {
   assert.deepEqual(pack.warnings, [])
   assert.deepEqual(textRequests, ['/api/files/test.pdf', '/api/extract', '/api/extract'])
   console.log('✅ PDF có chữ từ Kho tài liệu và tệp đính kèm đi qua bộ tách chữ')
+
+  const brokenDocx = new File(['Tệp Word cũ'], 'Tệp hỏng.DOCX')
+  const libraryName = 'Tệp Word trong kho'
+  textRequests.length = 0
+  globalThis.fetch = async (url) => {
+    textRequests.push(url)
+    if (url === '/api/files/word') return new Response(brokenDocx)
+    return Response.json({ text: 'Chữ dự phòng' })
+  }
+  const fallback = await buildSourcePack(
+    [{ name: brokenDocx.name, kind: 'doc', file: brokenDocx }],
+    [{ kind: 'library', id: 'word', name: libraryName, mime: docxMime, url: '/api/files/word' }],
+  )
+  assert.deepEqual(fallback.items.map((item) => item.text), ['Chữ dự phòng', 'Chữ dự phòng'])
+  assert.deepEqual(fallback.warnings, [libraryName, brokenDocx.name].map((name) => `${name}: dùng bản tách chữ, có thể thiếu công thức và hình.`))
+  assert.deepEqual(textRequests, ['/api/files/word', '/api/extract', '/api/extract'])
+  console.log('✅ DOCX lỗi ở cả hai nguồn dùng bộ tách chữ dự phòng và có cảnh báo')
 } finally {
   globalThis.fetch = originalFetch
   globalThis.FileReader = originalFileReader
 }
 
-console.log('\n9/9 pass, 0 fail')
+console.log('\n11/11 pass, 0 fail')

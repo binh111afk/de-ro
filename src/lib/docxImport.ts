@@ -191,6 +191,7 @@ function resolveStyle(st: Styles, id: string | null | undefined): Style & { head
 interface Ctx {
   st: Styles
   zip: JSZip
+  imagePlaceholders: boolean
   rels: Map<string, string>
   media: Map<string, Promise<string | null>>
   numFmt: Map<string, NumLevel>
@@ -251,7 +252,10 @@ async function runsOf(ctx: Ctx, el: Element, pr: RunProps, lines: Line[]) {
       const props: RunProps = { ...pr, ...rs.r, ...readRPr(kid(c, 'rPr')) }
       const marks = marksOf(props, ctx.st.defR)
       const mk = marks.length ? { marks } : {}
-      for (const t of kids(c)) {
+      const children = ctx.imagePlaceholders
+        ? kids(c).flatMap((t) => t.localName === 'AlternateContent' ? kids(kid(t, 'Choice') ?? kid(t, 'Fallback')) : [t])
+        : kids(c)
+      for (const t of children) {
         const tn = t.localName
         if (tn === 't') push({ text: props.caps ? (t.textContent ?? '').toLocaleUpperCase('vi') : t.textContent ?? '', ...mk })
         else if (tn === 'tab') push({ text: '\t', ...mk })
@@ -262,7 +266,11 @@ async function runsOf(ctx: Ctx, el: Element, pr: RunProps, lines: Line[]) {
         } else if (tn === 'br' || tn === 'cr') {
           if (val(t, 'type') === 'page') lines[lines.length - 1].pageBreakAfter = true
           lines.push({ spans: [] })
-        } else if (tn === 'drawing' || tn === 'pict') {
+        } else if (tn === 'drawing' || tn === 'pict' || (ctx.imagePlaceholders && tn === 'object')) {
+          if (ctx.imagePlaceholders) {
+            push({ text: '', image: { src: '' } })
+            continue
+          }
           const blip = t.getElementsByTagName('a:blip')[0] ?? t.getElementsByTagName('v:imagedata')[0]
           const rid = blip?.getAttribute('r:embed') ?? blip?.getAttribute('r:id')
           const src = rid ? await imageOf(ctx, rid) : null
@@ -471,11 +479,11 @@ function readPage(bodyEl: Element): DocxPage | undefined {
   }
 }
 
-export async function docxToBlocks(file: Blob): Promise<ExamBlock[]> {
-  return (await docxImport(file)).blocks
+export async function docxToBlocks(file: Blob, options?: { imagePlaceholders?: boolean }): Promise<ExamBlock[]> {
+  return (await docxImport(file, options)).blocks
 }
 
-export async function docxImport(file: Blob): Promise<{ blocks: ExamBlock[]; page?: DocxPage }> {
+export async function docxImport(file: Blob, { imagePlaceholders = false } = {}): Promise<{ blocks: ExamBlock[]; page?: DocxPage }> {
   if (file.size > MAX_BYTES) throw new Error('Tệp quá lớn (tối đa 12 MB).')
   const zip = await JSZip.loadAsync(file)
   const parse = async (path: string) => {
@@ -483,7 +491,8 @@ export async function docxImport(file: Blob): Promise<{ blocks: ExamBlock[]; pag
     return s ? new DOMParser().parseFromString(s, 'application/xml') : null
   }
   const doc = await parse('word/document.xml')
-  if (!doc) throw new Error('Tệp Word không hợp lệ.')
+  const bodyEl = kid(doc?.documentElement, 'body')
+  if (!bodyEl) throw new Error('Tệp Word không hợp lệ.')
   const relsXml = await parse('word/_rels/document.xml.rels')
   const rels = new Map<string, string>()
   for (const r of Array.from(relsXml?.getElementsByTagName('Relationship') ?? [])) {
@@ -492,13 +501,13 @@ export async function docxImport(file: Blob): Promise<{ blocks: ExamBlock[]; pag
   const ctx: Ctx = {
     st: readStyles(await parse('word/styles.xml')),
     zip,
+    imagePlaceholders,
     rels,
     media: new Map(),
     numFmt: readNumbering(await parse('word/numbering.xml')),
     counters: new Map(),
   }
   const out: ExamBlock[] = []
-  const bodyEl = kid(doc.documentElement, 'body')!
   await body(ctx, bodyEl, out)
   // bỏ đoạn trống thừa ở cuối
   while (out.length && out.at(-1)!.type === 'paragraph' && !hasContent(((out.at(-1) as { text: Span[] | string }).text || []) as Span[])) out.pop()

@@ -29,7 +29,7 @@ import { designById } from '@/lib/slideDesigns'
 import { splitHtmlDeck } from '@/lib/htmlDeck'
 import { looksLikeEdit, parseEditCommands, type SlideEditOp } from '@/lib/slideEdit'
 import { useSlidingThumb } from './useSlidingThumb'
-import { buildSourcePack, isPdf, pickedKey, type PickedSource, type SourcePack } from '@/lib/sources'
+import { buildSourcePack, isDocx, isPdf, pickedKey, type PickedSource, type SourcePack } from '@/lib/sources'
 import { BookOpen, Globe, RotateCcw, ThumbsDown, ThumbsUp } from 'lucide-react'
 import type { AiApplyResult } from '@/lib/aiDocContext'
 import { looksLikeComplaint, nearlySame, rememberAiTurn, reportAi } from '@/lib/aiFeedback'
@@ -71,7 +71,7 @@ function attachKind(file: { name: string; type?: string }): AttachKind | null {
   const name = file.name.toLowerCase()
   if (file.type?.startsWith('image/')) return 'image'
   if (isPdf(file.name, file.type)) return 'pdf'
-  if (/\.(docx?|rtf)$/.test(name)) return 'doc'
+  if (isDocx(file.name, file.type) || /\.(doc|rtf)$/.test(name)) return 'doc'
   if (/\.(xlsx?|csv)$/.test(name)) return 'sheet'
   return null
 }
@@ -978,8 +978,8 @@ function AiConversation({
 
     try {
       const examDoc = intent === 'doc' && mode === 'exam'
-      // Ngoài luồng soạn đề, PDF và nguồn đã chọn vẫn được đọc khi gửi.
-      const sourceFiles = examDoc ? sentFiles : sentFiles.filter((f) => f.kind === 'pdf')
+      // Ngoài luồng soạn đề, DOCX, PDF và nguồn đã chọn vẫn được đọc khi gửi.
+      const sourceFiles = examDoc ? sentFiles : sentFiles.filter((f) => f.kind === 'pdf' || (f.kind === 'doc' && isDocx(f.name, f.file?.type)))
       let pack: SourcePack = (answeringAsk && previousTurn?.askSourcePack) || { tier: 0, items: [], warnings: [] }
       if (sourceFiles.length || sentPicked.length) {
         if (examSteps) logStart('Đọc nguồn')
