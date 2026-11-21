@@ -117,7 +117,7 @@ export const EMPTY_FREE_PER_DAY = 3
 /** Điều kiện lọc ai_calls (PostgREST) cho lượt hỏng được miễn điểm: model trả rỗng (hết trần token…) hoặc luồng đứt giữa chừng. Dùng chung cho đếm và admin. */
 export const FREE_FAIL_FILTER = `ok=eq.false&or=(error.like.*empty%20content*,error.like.*${encodeURIComponent('ngắt giữa chừng')}*)`
 
-/** Số lượt hỏng được miễn điểm gần nhất của người dùng trong 24 giờ qua (đếm tối đa `limit`). Không đọc được DB thì coi là 0 (miễn điểm). */
+/** Số lượt hỏng được miễn điểm gần nhất của người dùng trong 24 giờ qua (đếm tối đa `limit`). Không đọc được DB thì coi như đã hết lượt miễn (tính điểm bình thường). */
 export async function recentFreeFails(userId: string, limit = EMPTY_FREE_PER_DAY): Promise<number> {
   const s = supa()
   if (!s) return 0
@@ -125,11 +125,11 @@ export async function recentFreeFails(userId: string, limit = EMPTY_FREE_PER_DAY
     const since = new Date(Date.now() - 24 * 3600_000).toISOString()
     const q = `user_id=eq.${encodeURIComponent(userId)}&${FREE_FAIL_FILTER}&created_at=gte.${encodeURIComponent(since)}&select=id&limit=${limit}`
     const r = await fetch(`${s.base}/rest/v1/ai_calls?${q}`, { headers: s.headers, signal: AbortSignal.timeout(3000) })
-    if (!r.ok) return 0
+    if (!r.ok) return limit
     const rows = (await r.json()) as unknown
-    return Array.isArray(rows) ? rows.length : 0
+    return Array.isArray(rows) ? rows.length : limit
   } catch {
-    return 0
+    return limit
   }
 }
 

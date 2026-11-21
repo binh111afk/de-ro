@@ -470,7 +470,81 @@ async function fontStyleOf(page: import('pdfjs-dist/legacy/build/pdf.mjs').PDFPa
 const PDF_MAX_PAGES = 1500
 const PDF_MIN_BYTES_PER_PAGE = 60
 
+const PDF_MAX_XREF_ENTRIES = 500_000
+
+/** Đọc phần khai báo xref trên byte gốc, trước khi PDF.js có thể cấp phát cho từng mục. */
+function assertSafePdfXref(data: Buffer) {
+  const raw = data.toString('latin1')
+  const header = /(?<![^\x00\t\n\f\r <>()[\]{}/%])(?:obj|trailer)(?:[\x00\t\n\f\r ]|%[^\r\n]*)*<</g
+  const token = /[\x00\t\n\f\r ]+|%[^\r\n]*|<<|>>|\/[^\x00\t\n\f\r <>()[\]{}/%]*|\\[\s\S]|[<>()[\]{}/]|[^\x00\t\n\f\r <>()[\]{}/%\\]+|\\/y
+  const space = /^[\x00\t\n\f\r %]/
+  let cursor = 0
+  const read = (): string | undefined => {
+    token.lastIndex = cursor
+    for (let t; (t = token.exec(raw));) {
+      cursor = token.lastIndex
+      if (space.test(t[0])) continue
+      if (t[0] !== '(') return t[0]
+      // Chuỗi PDF có thể lồng ngoặc, escape ngoặc và chứa ký tự giống tên khoá.
+      let depth = 1
+      for (; cursor < raw.length && depth; cursor++) {
+        if (raw[cursor] === '\\') cursor++
+        else if (raw[cursor] === '(') depth++
+        else if (raw[cursor] === ')') depth--
+      }
+      return '('
+    }
+  }
+  const name = (s: string) => s.replace(/#([\da-f]{2})/gi, (_, hex: string) => String.fromCharCode(parseInt(hex, 16)))
+  const integer = (s?: string) => s && /^[+-]?\d+(?:\.0*)?$/.test(s) ? Number(s) : NaN
+  const indirect = /(?:[\x00\t\n\f\r ]|%[^\r\n]*)+\d+(?:[\x00\t\n\f\r ]|%[^\r\n]*)+R(?=$|[\x00\t\n\f\r <>()[\]{}/%])/y
+  // Giới hạn cả công quét lại nếu byte trong stream trông giống nhiều đầu từ điển lồng nhau.
+  let scanBudget = raw.length * 4
+  for (let start; (start = header.exec(raw));) {
+    cursor = header.lastIndex
+    let size = 0
+    let index = 0
+    let isXref = start[0].startsWith('trailer')
+    let hasWidths = false
+    for (let key; (key = read())?.startsWith('/');) {
+      key = name(key)
+      const value = read()
+      if (key === '/Type' && value && name(value) === '/XRef') isXref = true
+      if (key === '/W') hasWidths = true
+      const n = integer(value)
+      indirect.lastIndex = cursor
+      const isRef = !Number.isNaN(n) && indirect.test(raw)
+      if (isRef) cursor = indirect.lastIndex
+      if (key === '/Size') size = Math.max(size, isRef ? Infinity : n)
+      if (key === '/Index' && value !== '[') index = Infinity
+      if (value === '<' || value === '[' || value === '<<') {
+        const countIndex = key === '/Index' && value === '['
+        let count = 0
+        let items = 0
+        let depth = 1
+        for (let t; depth && (t = read());) {
+          if (t === '[' || t === '<<' || t === '<') depth++
+          else if (t === ']' || t === '>>' || t === '>') depth--
+          else if (countIndex && depth === 1) {
+            const n = integer(t)
+            if (!Number.isSafeInteger(n) || n < 0) count = Infinity
+            else if (items % 2 === 1) count += n
+            items++
+          }
+        }
+        if (countIndex) index = Math.max(index, items % 2 || depth ? Infinity : count)
+      }
+    }
+    isXref ||= hasWidths && read() === 'stream'
+    scanBudget -= cursor - header.lastIndex
+    if (scanBudget < 0 || (isXref && (!Number.isSafeInteger(size) || size > PDF_MAX_XREF_ENTRIES || index > PDF_MAX_XREF_ENTRIES))) {
+      throw new Error('Tệp PDF có bảng tham chiếu bất thường, không đọc được.')
+    }
+  }
+}
+
 async function extractPdf(data: Buffer, marks = false): Promise<string> {
+  assertSafePdfXref(data)
   // Vercel đóng gói hàm nên pdf.js không tự tìm thấy pdf.worker.mjs; nạp sẵn để nó dùng luôn
   const g = globalThis as { pdfjsWorker?: unknown }
   // @ts-expect-error pdf.js không kèm kiểu cho file worker
@@ -658,7 +732,8 @@ export function assertSafeZip(buf: Buffer) {
   if (off !== eocd || count !== declared) throw bad()
 }
 
-export async function extractFile(name: string, data: Buffer, marks = false): Promise<ExtractedFile> {
+/** Đọc tệp ngay trong tiến trình này (không giới hạn bộ nhớ). Worker và test dùng; chỗ khác dùng `extractFile`. */
+export async function extractFileDirect(name: string, data: Buffer, marks = false): Promise<ExtractedFile> {
   const ext = extname(name).toLowerCase()
   try {
     if (ext === '.docx' || ext === '.xlsx' || ext === '.pptx') assertSafeZip(data)
@@ -709,6 +784,47 @@ export async function extractFile(name: string, data: Buffer, marks = false): Pr
       warning: `Không đọc được tệp: ${err instanceof Error ? err.message : String(err)}`,
     }
   }
+}
+
+/** trần của worker; test hạ xuống để thử đường quá tải */
+export const extractLimits = { heapMb: 384, timeoutMs: 25_000 }
+const NEEDS_WORKER = new Set(['.docx', '.xlsx', '.pptx', '.pdf'])
+
+/**
+ * Tệp nhị phân (pdf/docx/xlsx/pptx) được đọc trong worker có trần bộ nhớ và thời gian: tệp độc hại làm parser
+ * phình RAM hay chạy mãi chỉ giết worker, hàm vẫn trả lỗi gọn. Worker không khởi động được (môi trường lạ) thì đọc ngay trong tiến trình.
+ */
+export async function extractFile(name: string, data: Buffer, marks = false): Promise<ExtractedFile> {
+  if (!NEEDS_WORKER.has(extname(name).toLowerCase())) return extractFileDirect(name, data, marks)
+  const fail = (message: string): ExtractedFile => ({ name, kind: 'unsupported', text: '', warning: `Không đọc được tệp: ${message}` })
+  const url = import.meta.url
+  const code = "const { workerData, parentPort } = require('node:worker_threads');" +
+    "import(workerData.url).then(async (m) => { parentPort.postMessage({ ok: await m.extractFileDirect(workerData.name, Buffer.from(workerData.data), workerData.marks) }) }," +
+    " (e) => parentPort.postMessage({ boot: String(e && e.message || e) }))"
+  const { Worker } = await import('node:worker_threads')
+  type Out = { ok?: ExtractedFile; boot?: string; error?: string }
+  const out = await new Promise<Out>((resolve) => {
+    let worker: InstanceType<typeof Worker>
+    try {
+      worker = new Worker(code, {
+        eval: true,
+        workerData: { url, name, data: new Uint8Array(data), marks },
+        resourceLimits: { maxOldGenerationSizeMb: extractLimits.heapMb, maxYoungGenerationSizeMb: 48 },
+        // chạy từ mã .ts (dev, test): worker nạp tsx để hiểu .ts
+        ...(url.endsWith('.ts') ? { execArgv: ['--import', 'tsx'] } : {}),
+      })
+    } catch (err) {
+      return resolve({ boot: String(err) })
+    }
+    const timer = setTimeout(() => { resolve({ error: 'tệp quá nặng hoặc có cấu trúc bất thường.' }); void worker.terminate() }, extractLimits.timeoutMs)
+    const done = (o: Out) => { clearTimeout(timer); resolve(o); void worker.terminate() }
+    worker.once('message', (m: Out) => done(m))
+    worker.once('error', (err: Error & { code?: string }) => done(err.code === 'ERR_WORKER_OUT_OF_MEMORY' ? { error: 'tệp quá nặng, không đọc được.' } : err.code === 'ERR_WORKER_INIT_FAILED' ? { boot: String(err.message) } : { error: 'tiến trình đọc tệp gặp lỗi.' }))
+    worker.once('exit', (code) => done({ error: code ? 'tiến trình đọc tệp bị dừng.' : 'không nhận được kết quả.' }))
+  })
+  if (out.ok) return out.ok
+  if (out.boot !== undefined) return extractFileDirect(name, data, marks)
+  return fail(out.error ?? 'lỗi không rõ.')
 }
 
 export async function handleExtractRequest(

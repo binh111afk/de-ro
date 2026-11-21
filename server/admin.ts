@@ -344,8 +344,13 @@ const ACTIONS: ActionMap = {
       const { data: docs } = await call<Array<{ url: string }>>(ctx.s, `/rest/v1/user_documents?owner_id=eq.${id}&select=url`)
       const keys = [...new Set(docs.map((d) => r2DocKeyFromUrl(d.url ?? '')).filter((k): k is string => !!k))]
       // ảnh img/ của tài khoản: hàng user_images mất theo cascade nên phải lấy key trước khi xoá
-      const { data: imgs } = await call<Array<{ key: string }>>(ctx.s, `/rest/v1/user_images?owner_id=eq.${id}&select=key`)
-      const imgKeys = [...new Set(imgs.map((i) => i.key).filter((k) => typeof k === 'string' && k.startsWith('img/')))]
+      const imgRows: Array<{ key: string }> = []
+      for (let from = 0; ; from += 1000) {
+        const { data: page } = await call<Array<{ key: string }>>(ctx.s, `/rest/v1/user_images?owner_id=eq.${id}&select=key&order=key&limit=1000&offset=${from}`)
+        imgRows.push(...page)
+        if (page.length < 1000) break
+      }
+      const imgKeys = [...new Set(imgRows.map((i) => i.key).filter((k) => typeof k === 'string' && k.startsWith('img/')))]
       // ghi nhật ký TRƯỚC khi xoá: bước sau có lỗi thì vẫn còn dấu vết
       await audit(ctx, 'users.delete', id, { email: user.email, files: keys.length })
       try {
@@ -366,15 +371,19 @@ const ACTIONS: ActionMap = {
         }
       }
       // ảnh: key là hash nội dung nên chỉ xoá khi không còn tài khoản nào khác tải cùng ảnh
+      const failedKeys: string[] = []
       for (const key of imgKeys) {
         try {
           const { data: others } = await call<unknown[]>(ctx.s, `/rest/v1/user_images?key=eq.${encodeURIComponent(key)}&select=owner_id&limit=1`)
-          if (!others.length && (await deleteR2Object(key))) removed++
+          if (others.length) continue
+          if (await deleteR2Object(key)) removed++
+          else failedKeys.push(key)
         } catch {
-          /* ảnh mồ côi vô hại */
+          failedKeys.push(key)
         }
       }
-      return { ok: true, filesRemoved: removed }
+      if (failedKeys.length) await audit(ctx, 'users.delete.images_failed', id, { email: user.email, count: failedKeys.length, keys: failedKeys.slice(0, 50) })
+      return { ok: true, filesRemoved: removed, imagesFailed: failedKeys.length }
     },
   },
 

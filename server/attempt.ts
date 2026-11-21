@@ -12,11 +12,12 @@ import { json, readBody, safeError } from './http.js'
 import { getExamRow } from './examCache.js'
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-/** số lượt nộp tối đa của một tài khoản / một thiết bị cho một đề */
+/** Số lượt nộp tối đa của một tài khoản, thiết bị hoặc tên khách cho một đề. */
 const ATTEMPTS_PER_STUDENT = 20
 /** tổng bài nộp không đăng nhập của một đề (vài lớp × vài lượt) */
 const ANON_ATTEMPTS_PER_EXAM = 400
 const str = (v: unknown, max: number) => (typeof v === 'string' ? v.trim().slice(0, max) : '')
+const rosterName = (name: string) => name.trim().normalize('NFC').toLowerCase()
 
 export async function handleAttemptRequest(req: IncomingMessage, res: ServerResponse): Promise<void> {
   if (!(await guard(req, res, 'attempt'))) return
@@ -31,7 +32,8 @@ export async function handleAttemptRequest(req: IncomingMessage, res: ServerResp
   try {
     const body = JSON.parse(await readBody(req, 256 * 1024)) as Record<string, unknown>
     const examId = str(body.examId, 40)
-    const name = str(body.name, 60)
+    const submittedName = typeof body.name === 'string' ? body.name.trim() : ''
+    let name = submittedName.slice(0, 60)
     if (!UUID.test(examId) || !name) return json(res, 400, { error: 'Thiếu đề hoặc tên học sinh.' })
     const answers = (body.answers && typeof body.answers === 'object' ? body.answers : {}) as Record<string, unknown>
 
@@ -41,7 +43,16 @@ export async function handleAttemptRequest(req: IncomingMessage, res: ServerResp
     if (!row?.doc) return json(res, 404, { error: 'Không tìm thấy đề.' })
 
     const exam = docToExam(row.doc, examId)
-    const seat = Number(body.seat)
+    let seat = Number(body.seat)
+    const roster = exam.settings?.roster
+    if (roster?.length) {
+      const normalized = rosterName(submittedName)
+      const matches = (entry: unknown) => typeof entry === 'string' && rosterName(entry) === normalized
+      const index = Number.isInteger(seat) && seat > 0 && matches(roster[seat - 1]) ? seat - 1 : roster.findIndex(matches)
+      if (index < 0) return json(res, 400, { error: 'Tên không có trong danh sách lớp.' })
+      name = roster[index]
+      seat = index + 1
+    }
     const device = str(body.deviceId, 64)
     const userId = await userFromToken(req)
     // đề "chỉ làm một lần": chỉ tài khoản là danh tính tin được (mã thiết bị trình duyệt tự đặt, đổi là xong).
@@ -60,7 +71,7 @@ export async function handleAttemptRequest(req: IncomingMessage, res: ServerResp
       locked = true
     }
     // trần số bài mỗi đề (Strix 7: không trần thì ai có link cũng bơm được hàng nghìn "học sinh" giả vào sổ điểm).
-    // Tên + mã thiết bị do trình duyệt tự khai nên trần chính tính theo cả đề; tài khoản / thiết bị thêm trần riêng.
+    // Trần chính tính theo cả đề; tài khoản, thiết bị hoặc tên khách có thêm trần riêng.
     if (!locked) {
       const count = async (filter: string) => {
         const r = await fetch(`${base}/rest/v1/exam_attempts?select=exam_id&exam_id=eq.${examId}${filter}`, {
@@ -75,7 +86,7 @@ export async function handleAttemptRequest(req: IncomingMessage, res: ServerResp
           ? count(`&user_id=eq.${userId}`)
           : device.length >= 8
             ? count(`&user_id=is.null&device_id=eq.${encodeURIComponent(device)}`)
-            : Promise.resolve(0),
+            : count(`&user_id=is.null&student_name=eq.${encodeURIComponent(name)}`),
         userId ? Promise.resolve(0) : count('&user_id=is.null'),
       ])
       if (mine === null || total === null) return json(res, 503, { error: 'Máy chủ bận, em nộp lại sau ít phút.' })
