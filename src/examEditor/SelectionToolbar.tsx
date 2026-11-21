@@ -10,6 +10,7 @@ import { TrashIcon } from '@/components/appIcons'
 import type { SlideElement } from '@/store/docs'
 import { REWRITE_PRESETS } from '@/lib/slideRewrite'
 import { graphicById, graphicMainColor } from '@/lib/slideGraphics'
+import { SlideTextEffectsTool } from './SlideTextEffectsTool'
 import { ColorPalette } from './ColorPalette'
 
 const POPOVER = 'absolute top-full z-10 mt-1.5 rounded-lg border border-line bg-surface p-2 shadow-[0_8px_24px_-6px_rgba(35,32,28,0.3)]'
@@ -469,6 +470,9 @@ export function SelectionToolbar({
           </button>
           {sep}
         </>
+      )}
+      {(isText || (el.type === 'shape' && el.text?.trim() && el.shape !== 'line')) && (
+        <SlideTextEffectsTool el={el} accent={accent} onUpdate={onUpdate} />
       )}
       {el.type === 'shape' && el.shape !== 'line' && (
         <>

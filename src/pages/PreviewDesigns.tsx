@@ -1,15 +1,24 @@
-import { useMemo } from 'react'
-import { SLIDE_DESIGNS, buildDesignSlides } from '@/lib/slideDesigns'
-import { normalizeTheme, themeById } from '@/lib/slideTheme'
-import { skinById, themeWithSkinFonts } from '@/lib/slideSkins'
+import { useEffect, useMemo, useState } from 'react'
+import { SLIDE_DESIGNS, buildDesignSlides, designTheme } from '@/lib/slideDesigns'
+import { ensureFonts } from '@/lib/slideFonts'
+import { normalizeTheme } from '@/lib/slideTheme'
+import { skinById } from '@/lib/slideSkins'
 import { SlideThumb } from '@/examEditor/SlideEditor'
 
 export default function PreviewDesigns() {
+  const [ready, setReady] = useState(false)
+  useEffect(() => {
+    let active = true
+    void Promise.all(SLIDE_DESIGNS.map(d => ensureFonts({ theme: designTheme(d), slides: [] }))).then(() => {
+      if (active) setReady(true)
+    })
+    return () => { active = false }
+  }, [])
   const rows = useMemo(() => {
+    if (!ready) return []
     return SLIDE_DESIGNS.map((d) => {
-      const baseTheme = themeById(d.themeId)!
       const skin = skinById(d.id)
-      const theme = normalizeTheme(skin ? themeWithSkinFonts(baseTheme, skin) : baseTheme)
+      const theme = normalizeTheme(designTheme(d))
       const slides = buildDesignSlides(d, theme)
       return {
         design: d,
@@ -20,7 +29,7 @@ export default function PreviewDesigns() {
         slideClosing: slides[slides.length - 1],
       }
     })
-  }, [])
+  }, [ready])
 
   return (
     <div id="comparison-matrix" className="min-h-screen bg-white p-8 text-ink font-sans">

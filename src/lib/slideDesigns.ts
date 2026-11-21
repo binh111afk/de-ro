@@ -7,8 +7,8 @@ import {
   type SlideLayoutContent,
   type SlideLayoutId,
 } from './slideLayouts'
-import { DECK_THEMES, themeById } from './slideTheme'
-import { applySkin, skinById, themeWithSkinFonts } from './slideSkins'
+import { themeById, withThemeFonts } from './slideTheme'
+import { applySkin, skinById } from './slideSkins'
 
 export interface SlideDesign {
   id: string // 'thanh-lich', 'tre-trung'…
@@ -2428,10 +2428,25 @@ export const SLIDE_DESIGNS: SlideDesign[] = [
   },
 ]
 
+const DESIGN_FONT_PAIRS: Record<string, readonly [string, string]> = {
+  'thanh-lich': ['Barlow Condensed', 'Inter'],
+  'tre-trung': ['Montserrat', 'Nunito'],
+  'hoc-thuat': ['Merriweather', 'Source Serif 4'],
+  'thien-nhien': ['Lexend', 'Be Vietnam Pro'],
+  'cong-nghe': ['Saira Condensed', 'Inter'],
+  'co-dien': ['Playfair Display', 'Source Serif 4'],
+  'bang-den': ['Patrick Hand', 'Tahoma'],
+  'so-tay-o-li': ['Caveat', 'Be Vietnam Pro'],
+  'bang-trang': ['Lexend', 'Be Vietnam Pro'],
+}
+
+export function designTheme(design: SlideDesign, palette: DeckTheme = themeById(design.themeId)): DeckTheme {
+  const original = themeById(design.themeId)
+  return withThemeFonts(palette, DESIGN_FONT_PAIRS[design.id] ?? [original.fontHeading, original.fontBody])
+}
+
 export function buildDesignSlides(design: SlideDesign, overrideTheme?: DeckTheme): Slide[] {
-  const baseTheme = overrideTheme ?? themeById(design.themeId) ?? DECK_THEMES[0]
-  const skin = skinById(design.id)
-  const theme = skin ? themeWithSkinFonts(baseTheme, skin) : baseTheme
+  const theme = designTheme(design, overrideTheme)
   const total = design.slides.length
 
   return design.slides.map((spec, i) => {
@@ -2454,7 +2469,7 @@ export function buildDesignSlides(design: SlideDesign, overrideTheme?: DeckTheme
       elements,
       transition: 'none',
     }
-    return applySkin(rawSlide, design.id, theme, i, total)
+    return applySkin(rawSlide, design.id, theme, i, total, true)
   })
 }
 

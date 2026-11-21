@@ -190,10 +190,11 @@ check('sanitizeSlide nhận graphic hợp lệ, bỏ id lạ', () => {
   assert.equal(off.graphic, undefined)
 })
 
-check('prompt title/bullets có catalog, layout khác thì không', () => {
+check('prompt title có shortlist đồ họa theo môn, quiz không có', () => {
   const plan = {
     title: 'Deck',
     theme: 'sang',
+    subject: 'toan',
     slides: [{ title: 'A', layout: 'title' }],
   }
   const titlePrompt = pageSystemPrompt(plan, plan.slides[0], 0)
@@ -214,7 +215,7 @@ check('prompt layout ảnh khuyên dùng graphic thay vẽ ảnh', () => {
   assert.ok(prompt.includes('45–90 giây') && prompt.includes('ĐỂ TRỐNG "image"'))
 })
 
-check('19 layout vẫn dựng được với graphic', () => {
+check('các layout vẫn dựng được với graphic', () => {
   for (const layout of SLIDE_LAYOUTS) {
     const els = composeLayout(theme, layout.id, { ...content, graphic: 'math-eke' })
     assert.ok(Array.isArray(els), layout.id)

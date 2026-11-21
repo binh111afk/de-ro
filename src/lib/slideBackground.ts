@@ -34,14 +34,22 @@ export const firstColor = (bg: string, fallback = '#ffffff'): string => colorsOf
 
 /** SVG của nền chuyển sắc (PPTX không có nền gradient nên vẽ thành ảnh toàn trang); null nếu là màu đặc. */
 export function gradientSvg(bg: string): string | null {
-  const m = /linear-gradient\(\s*(-?\d+)deg\s*,\s*(#[0-9a-f]{6})\s*,\s*(#[0-9a-f]{6})/i.exec(bg)
+  const m = /^linear-gradient\(\s*(-?\d+)deg\s*,\s*(.+)\)$/i.exec(bg)
   if (!m) return null
+  const stops = m[2].split(',').map((stop) => /^\s*(#[0-9a-f]{6})([0-9a-f]{2})?(?:\s+(\d+(?:\.\d+)?)%)?\s*$/i.exec(stop))
+  if (stops.length < 2 || stops.some((stop) => !stop)) return null
+  const markup = stops.map((stop, i) => {
+    const [, color, alpha, offset] = stop!
+    const at = offset === undefined ? i / (stops.length - 1) : offset + '%'
+    const opacity = alpha ? ' stop-opacity="' + parseInt(alpha, 16) / 255 + '"' : ''
+    return '<stop offset="' + at + '" stop-color="' + color + '"' + opacity + '/>'
+  }).join('')
   const rad = (Number(m[1]) * Math.PI) / 180
   const [sin, cos] = [Math.sin(rad), Math.cos(rad)]
   return (
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" preserveAspectRatio="none">' +
     `<defs><linearGradient id="g" x1="${50 - 50 * sin}%" y1="${50 + 50 * cos}%" x2="${50 + 50 * sin}%" y2="${50 - 50 * cos}%">` +
-    `<stop offset="0" stop-color="${m[2]}"/><stop offset="1" stop-color="${m[3]}"/></linearGradient></defs>` +
+    `${markup}</linearGradient></defs>` +
     '<rect width="1280" height="720" fill="url(#g)"/></svg>'
   )
 }

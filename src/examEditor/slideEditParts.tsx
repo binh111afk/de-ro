@@ -12,11 +12,12 @@ import { graphicById } from '@/lib/slideGraphics'
 import { GraphicFill, SlideIcon } from './LazyAssets'
 import { cn } from '@/lib/cn'
 import type { SlideElement } from '@/store/docs'
+import { hasTextEffects } from '@/lib/slideTextEffects'
 import { elementHeight } from '@/lib/slideText'
 import { readableTextOn, type ResolvedTheme } from '@/lib/slideTheme'
 import { uploadImage } from '@/lib/mediaStore'
 import { MathCell, clamp } from './SlideEditor'
-import { fontStack, ConnectorSvg, shapeCss, isHollowShape, HOLLOW_HIT, shapeInner, ShapeText, ChartView, AutoFitText, imageImgStyle, imageStyleParts, VideoView } from './slideRender'
+import { fontStack, ConnectorSvg, shapeCss, isHollowShape, HOLLOW_HIT, shapeInner, ShapeText, ChartView, AutoFitText, imageImgStyle, imageStyleParts, VideoView, SlideElView } from './slideRender'
 
 export const FRAME_HOVER = 'slide-frame-hover'
 
@@ -293,12 +294,13 @@ export function EditableEl({
       />,
       document.body,
     )
+  const height = elementHeight(el, el.variant === 'body' ? theme.fonts.body : theme.fonts.heading)
   const style: React.CSSProperties = {
     position: 'absolute',
     left: `${el.x}%`,
     top: `${el.y}%`,
     width: `${el.w}%`,
-    height: `${elementHeight(el)}%`,
+    height: `${height}%`,
     zIndex: el.zIndex,
     // xoay + lật tách thành `rotate`/`scale` (cùng thứ tự với elTransform) để bấm Lật có chuyển động lật, còn xoay/kéo vẫn tức thì
     rotate: el.rotation ? `${el.rotation}deg` : undefined,
@@ -336,7 +338,7 @@ export function EditableEl({
     const frame = (e.currentTarget as HTMLElement).closest('.slide-frame') as HTMLElement | null
     if (!frame) return
     const rect = frame.getBoundingClientRect()
-    const base = { x: el.x, y: el.y, w: el.w, h: elementHeight(el) }
+    const base = { x: el.x, y: el.y, w: el.w, h: height }
     // đường gióng (kiểu Canva): mép/tâm của slide và của các phần tử khác, tính theo % khung
     const others = [...frame.querySelectorAll<HTMLElement>('[data-el-id]')]
       .filter((n) => n.dataset.elId !== el.id && !group.some((g) => g.id === n.dataset.elId))
@@ -552,11 +554,11 @@ export function EditableEl({
 
   // sát mép dưới slide thì nút xoay không còn chỗ phía dưới (bị cắt) nên lật lên đỉnh;
   // phần tử phủ gần kín slide (không còn chỗ trên lẫn dưới) thì đặt nút xoay vào trong, sát đáy
-  const bottomEdge = el.y + elementHeight(el) > 88
+  const bottomEdge = el.y + height > 88
   const rotTop = bottomEdge && el.y > 10
   const rotInside = bottomEdge && !(el.y > 10)
   // khung slide cắt phần tràn ra ngoài: cạnh nào chạm mép slide thì tay nắm resize dời vào trong để còn kéo được
-  const edgeH = elementHeight(el)
+  const edgeH = height
   const atL = el.x < 1.5
   const atR = el.x + el.w > 98.5
   const atT = el.y < 1.5
@@ -647,7 +649,7 @@ export function EditableEl({
           if (!formatPainterActive) onEditingText(true)
         }}
       >
-        <AutoFitText
+        {!editingText && hasTextEffects(el) ? <SlideElView el={el} theme={theme} embedded /> : <AutoFitText
           locked={!editingText}
           focusOnMount={editingText}
           onDone={() => onEditingText(false)}
@@ -667,7 +669,7 @@ export function EditableEl({
           highlight={el.highlight}
           valign={el.valign === 'middle' || el.fill ? 'middle' : 'top'}
           onChange={(text) => onChange({ text })}
-        />
+        />}
         {chrome}
       </div>
     )
@@ -964,7 +966,7 @@ export function EditableEl({
           <img
             src={el.src}
             alt=""
-            style={imageImgStyle(el.crop)}
+            style={imageImgStyle(el.crop, el.imagePosition)}
             onLoad={(e) => setNatSize({ w: e.currentTarget.naturalWidth, h: e.currentTarget.naturalHeight })}
             onDoubleClick={() => {
               // ảnh vẽ bằng công cụ Đồ thị: nhấp đúp mở lại modal để sửa
@@ -1040,7 +1042,7 @@ export function EditableEl({
             src={el.src}
             alt=""
             style={{
-              ...imageImgStyle(activeCrop),
+              ...imageImgStyle(activeCrop, el.imagePosition),
               opacity: 0.34,
               filter: 'brightness(0.72)',
               pointerEvents: 'none',

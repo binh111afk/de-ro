@@ -6,7 +6,7 @@
  * `overflow: hidden` của ribbon cắt, và hỗ trợ phím mũi tên / Enter / Esc /
  * Home / End khi trigger đang giữ focus.
  */
-import { useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
+import { Fragment, useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { cn } from '@/lib/cn'
 import { IconCaret, IconCheck } from './icons'
 
@@ -17,6 +17,7 @@ export interface DropdownOption<K extends string = string> {
   /** nội dung tùy chỉnh (preview font, icon…) */
   render?: ReactNode
   disabled?: boolean
+  group?: string
 }
 
 function nextEnabled(options: ReadonlyArray<DropdownOption>, start: number, step: 1 | -1): number {
@@ -34,6 +35,7 @@ export function Dropdown<K extends string>({
   ariaLabel,
   disabled,
   width,
+  onOpen,
 }: {
   value: K
   options: ReadonlyArray<DropdownOption<K>>
@@ -43,6 +45,7 @@ export function Dropdown<K extends string>({
   disabled?: boolean
   /** bề rộng trigger (px) — thay cho class cố định */
   width?: number
+  onOpen?: () => void
 }) {
   const [open, setOpen] = useState(false)
   const [active, setActive] = useState(() => {
@@ -56,6 +59,7 @@ export function Dropdown<K extends string>({
   const id = useId()
 
   const selected = options.find((o) => o.value === value)
+  useEffect(() => { if (open) onOpen?.() }, [open, onOpen])
 
   // neo popover theo tọa độ trigger (position: fixed) — thoát khỏi mọi
   // overflow clipping của ribbon body, đúng cách GenOffice làm với dropdown.
@@ -189,8 +193,9 @@ export function Dropdown<K extends string>({
           style={{ position: 'fixed', top: popPos.top, left: popPos.left, minWidth: Math.max(popPos.width, 120) }}
         >
           {options.map((o, i) => (
+            <Fragment key={o.value}>
+            {o.group && o.group !== options[i - 1]?.group && <div role="presentation" className="px-2 pt-2 pb-0.5 text-[10px] font-semibold text-ink-3">{o.group}</div>}
             <div
-              key={o.value}
               role="option"
               aria-selected={o.value === value}
               data-active={i === active}
@@ -209,6 +214,7 @@ export function Dropdown<K extends string>({
               <span className="gs-dd-check" aria-hidden="true">{o.value === value ? <IconCheck size={13} /> : null}</span>
               <span className="gs-dd-label">{o.render ?? o.label}</span>
             </div>
+            </Fragment>
           ))}
         </div>
       )}

@@ -45,6 +45,14 @@ export function buildImagePrompt(
   )
 }
 
+/** Chế độ Chuyên nghiệp: ảnh chụp thật theo mô tả của AI (không minh hoạ vector, không chữ). */
+export function buildPhotoPrompt(description: string): string {
+  return (
+    `${description.trim().replace(/[.\s]+$/, '')}. Authentic editorial photograph, natural light, realistic colour, fine detail, ` +
+    'clear single subject with open space for overlaid text. No text, no letters, no watermark, no logo, no illustration, no cartoon.'
+  )
+}
+
 /** Thu nhỏ + nén; lỗi canvas thì giữ nguyên ảnh gốc. */
 async function shrink(dataUrl: string): Promise<string> {
   const image = new Image()

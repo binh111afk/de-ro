@@ -48,6 +48,8 @@ const WRAP_SAFETY = 0.97
 export interface TextStyleOpts {
   /** độ đậm chữ (400/500/600/700); đậm hơn → rộng hơn */
   weight?: number
+  family?: string
+  italic?: boolean
   /** khoảng cách chữ, tính bằng em mỗi ký tự (kicker in hoa dùng 0,12) */
   letterSpacing?: number
 }
@@ -95,14 +97,21 @@ export async function ensureMeasureFonts(): Promise<void> {
 }
 
 /** Bề rộng chuỗi tính bằng em (đo ở 100px rồi chia, để không phụ thuộc cỡ). */
-function emWidth(ctx: Ctx2d, text: string, weight: number): number {
-  const key = `${weight}|${text}`
+function emWidth(ctx: Ctx2d, text: string, weight: number, family = `"${MEASURE_FONT}", sans-serif`, italic = false): number {
+  const key = `${family}|${weight}|${italic}|${text}`
   const hit = widthCache.get(key)
   if (hit !== undefined) return hit
-  ctx.font = `${weight} 100px "${MEASURE_FONT}", sans-serif`
+  ctx.font = `${italic ? 'italic ' : ''}${weight} 100px ${family}`
   const em = ctx.measureText(text).width / 100
   widthCache.set(key, em)
   return em
+}
+
+/** Cỡ chữ tối đa để giữ giá trị nổi bật trên một dòng. */
+export function singleLineSize(text: string, widthPct: number, size: number, weight: number, family: string): number {
+  const ctx = getMeasureCtx()
+  const width = ctx ? emWidth(ctx, text, weight, family) : text.length * 0.65
+  return Math.min(size, (widthPct - TEXT_PAD_X) * WRAP_SAFETY / Math.max(width, 0.1))
 }
 
 /** Số dòng sau khi ngắt theo từ (greedy, như trình duyệt); từ quá dài bị bẻ theo ký tự. */
@@ -112,15 +121,17 @@ function wrapLines(
   availEm: number,
   weight: number,
   letterSpacing: number,
+  family?: string,
+  italic?: boolean,
 ): number {
-  const space = emWidth(ctx, ' ', weight) + letterSpacing
+  const space = emWidth(ctx, ' ', weight, family, italic) + letterSpacing
   let total = 0
   for (const paragraph of text.split('\n')) {
     let lines = 1
     let line = 0
     for (const word of paragraph.split(/ +/)) {
       if (!word) continue
-      const w = emWidth(ctx, word, weight) + word.length * letterSpacing
+      const w = emWidth(ctx, word, weight, family, italic) + word.length * letterSpacing
       if (w > availEm) {
         const parts = Math.ceil(w / availEm)
         if (line > 0) lines++
@@ -165,7 +176,7 @@ export function textBoxHeight(
   let lines: number
   if (ctx) {
     const availEm = Math.max(1, ((widthPct - TEXT_PAD_X) / fontCqw) * WRAP_SAFETY)
-    lines = wrapLines(ctx, text, availEm, opts.weight ?? 400, opts.letterSpacing ?? 0)
+    lines = wrapLines(ctx, text, availEm, opts.weight ?? 400, opts.letterSpacing ?? 0, opts.family, opts.italic)
   } else {
     const charsPerLine = Math.max(8, (widthPct - TEXT_PAD_X) / (fontCqw * CHAR_WIDTH_EM))
     lines = text
@@ -178,7 +189,7 @@ export function textBoxHeight(
   return Math.round(((lines + extraLines) * linePct + TEXT_PADDING_PCT) * 10) / 10
 }
 
-export interface FitFontOptions {
+export interface FitFontOptions extends TextStyleOpts {
   text: string
   /** bề rộng hộp, % bề rộng slide */
   widthPct: number
@@ -189,8 +200,6 @@ export interface FitFontOptions {
   lineHeight?: number
   /** sàn co, mặc định 60% như FitText */
   minScale?: number
-  weight?: number
-  letterSpacing?: number
 }
 
 /**
@@ -206,9 +215,11 @@ export function fitFontSize({
   minScale = MIN_FIT_SCALE,
   weight,
   letterSpacing,
+  family,
+  italic,
 }: FitFontOptions): number {
   if (!text.trim() || baseCqw <= 0 || heightPct <= 0) return Math.max(0, baseCqw)
-  const style = { weight, letterSpacing }
+  const style = { weight, letterSpacing, family, italic }
   const fits = (size: number) =>
     textBoxHeight(text, widthPct, size, lineHeight, style) <= heightPct + 0.05
   if (fits(baseCqw)) return baseCqw

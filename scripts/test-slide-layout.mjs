@@ -1,5 +1,5 @@
 /**
- * Test layout engine 22 bố cục: catalog/geometry, cards, quote/closing, fallback,
+ * Test layout engine 26 bố cục: catalog/geometry, cards, quote/closing, fallback,
  * đọc nội dung slide, bảng 6×8, timeline/cycle 3–6 bước, quiz 2–4 đáp án, tone,
  * 5 bố cục art-directed (statement/comparison/agenda/image-full/stat-image).
  * Chạy: npm run test:slide-layout
@@ -43,11 +43,22 @@ const rich = {
   question: 'Phân số nào bằng 1/2?',
   options: ['2/4', '2/3', '3/4', '1/3'],
   answer: 0,
+  value: '1.234.567.890',
+  label: 'Giá trị lớn nhất',
+  image: '/anh-truoc.jpg',
+  image2: '/anh-sau.jpg',
+  focusX: 80,
+  focusY: 25,
+  textPosition: 'left',
+  caption: 'Trước',
+  caption2: 'Sau',
+  bars: [{ label: 'Năm trước', value: 240 }, { label: 'Năm sau', value: 120, color: '#a84435' }],
+  credit: 'Nguồn: tư liệu lớp học',
 }
 
-/* 1. Catalog đủ 19 layout; mọi phần tử nằm trong khung 0–100, id không trùng. */
-assert.equal(SLIDE_LAYOUTS.length, 22)
-assert.equal(new Set(SLIDE_LAYOUTS.map((l) => l.id)).size, 22, 'id layout không trùng')
+/* 1. Catalog đủ 26 layout; mọi phần tử nằm trong khung 0–100, id không trùng. */
+assert.equal(SLIDE_LAYOUTS.length, 26)
+assert.equal(new Set(SLIDE_LAYOUTS.map((l) => l.id)).size, 26, 'id layout không trùng')
 for (const layout of SLIDE_LAYOUTS) {
   const elements = composeLayout(theme, layout.id, rich)
   assert.ok(elements.length > 0, `${layout.id} phải dựng được phần tử`)
@@ -56,6 +67,7 @@ for (const layout of SLIDE_LAYOUTS) {
     elements.length,
     `${layout.id}: id phần tử không trùng`,
   )
+  assert.equal(contentFromSlide({ elements }).credit, rich.credit, layout.id)
   for (const el of elements) {
     assert.ok(el.x >= 0 && el.y >= 0 && el.w > 0 && el.h > 0, `${layout.id}: toạ độ âm/0`)
     assert.ok(el.x + el.w <= 100 + 1e-9, `${layout.id}: tràn phải (${el.id})`)
@@ -341,6 +353,18 @@ for (const [layout, key] of [['two-column', 'left'], ['cards', 'items'], ['mindm
   assert.ok(!/\*\*(Lan|Tom|Mai)\b|\*\* (What|I am|Hi)/.test(texts), `${layout}: lộ ** quanh nhãn`)
 }
 
-console.log('✅ layout v3: 22 bố cục, bảng 8×6, timeline/cycle, quiz, tone, art-directed, đọc nội dung + theme')
+const chart = composeLayout(theme, 'bars', rich)
+assert.equal(chart.find((el) => el.id === 'bar-2-custom').w / chart.find((el) => el.id === 'bar-1').w, 0.5)
+const fromChart = contentFromSlide({ elements: chart })
+assert.deepEqual(fromChart.bars.map((bar) => bar.value), [240, 120])
+const fullPhoto = contentFromSlide({ elements: composeLayout(theme, 'photo-full', rich) })
+assert.equal(fullPhoto.textPosition, 'left')
+assert.equal(fullPhoto.focusX, 80)
+assert.equal(fullPhoto.focusY, 25)
+const compare = contentFromSlide({ elements: composeLayout(theme, 'photo-compare', rich) })
+assert.equal(compare.image2, rich.image2)
+assert.equal(compare.caption2, rich.caption2)
+
+console.log('✅ layout v3: 26 bố cục, bảng 8×6, timeline/cycle, quiz, tone, art-directed, đọc nội dung + theme')
 console.log('✅ tương phản: panel ≥1,1:1 và kicker ≥4,5:1 trên mọi theme × tông')
 console.log('\n10/10 pass, 0 fail')

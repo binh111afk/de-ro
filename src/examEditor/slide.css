@@ -266,17 +266,25 @@
   cursor: default;
 }
 
-/* Xuất PDF: lớp in chỉ hiện khi in, ẩn toàn bộ app; mỗi slide một trang 16:9 */
-.slide-print-root { display: none; }
+/* Giữ bản in ngoài màn hình để đo chữ ở đúng kích thước trang trước khi mở hộp thoại. */
+.slide-print-root {
+  position: fixed;
+  left: -100000px;
+  visibility: hidden;
+  pointer-events: none;
+}
+.slide-print-page {
+  width: 13.333in;
+  height: 7.5in;
+  overflow: hidden;
+}
 @media print {
-  @page { size: 13.333in 7.5in; margin: 0; }
+  @page slide-export { size: 13.333in 7.5in; margin: 0; }
   #root { display: none !important; }
-  .slide-print-root { display: block; }
+  .slide-print-root { position: static; visibility: visible; }
   .slide-print-root * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .slide-print-page {
-    width: 13.333in;
-    height: 7.5in;
-    overflow: hidden;
+    page: slide-export;
     break-after: page;
     break-inside: avoid;
   }

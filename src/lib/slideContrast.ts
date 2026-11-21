@@ -10,6 +10,23 @@ import { contrastRatio, readableTextOn } from './slideTheme'
 
 const MIN_RATIO = 3
 
+// Hai vùng chữ nằm về phía đậm của gradient. Giữa và phía còn lại giữ ảnh sáng.
+export const photoScrimFill = (position: 'bottom' | 'left') =>
+  'linear-gradient(' + (position === 'left' ? 270 : 180) + 'deg, #10121400 23%, #101214e6 66%, #101214fa 100%)'
+
+export const PHOTO_CREDIT_FILL = 'linear-gradient(180deg, #10121400 0%, #101214e6 54%, #101214fa 100%)'
+
+// Nền sáng nhất ngay dưới vùng chữ khi ảnh gốc trắng hoàn toàn.
+const PHOTO_TEXT_BG = '#282a2c'
+
+export function photoScrimBackground(shape: SlideElement, x: number, y: number): string | undefined {
+  const down = (y - shape.y) / shape.h
+  if (shape.fill === PHOTO_CREDIT_FILL && down >= 0.54) return PHOTO_TEXT_BG
+  if (shape.fill === photoScrimFill('bottom') && down >= 0.66) return PHOTO_TEXT_BG
+  const left = (shape.x + shape.w - x) / shape.w
+  return shape.fill === photoScrimFill('left') && left >= 0.66 ? PHOTO_TEXT_BG : undefined
+}
+
 /** màu đặc dạng #rgb / #rrggbb; gradient thì lấy mã hex đầu tiên; còn lại (trong suốt, rgba…) bỏ qua */
 function solidHex(css: string | undefined): string | null {
   if (!css) return null
@@ -32,6 +49,8 @@ function bgUnder(el: SlideElement, below: SlideElement[], slideBg: string): stri
     const s = below[k]
     if (s.type !== 'shape' || s.shape === 'line' || (s.opacity ?? 1) < 0.6) continue
     if (cx < s.x || cx > s.x + s.w || cy < s.y || cy > s.y + s.h) continue
+    const scrimBg = photoScrimBackground(s, cx, cy)
+    if (scrimBg) return scrimBg
     const fill = solidHex(s.fill)
     if (fill) return fill
   }

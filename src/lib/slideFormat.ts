@@ -7,6 +7,10 @@ export interface TextFormatSample {
   textDecoration?: SlideElement['textDecoration']
   textColor?: string
   fontFamily?: string
+  textStroke?: SlideElement['textStroke']
+  textShadow?: SlideElement['textShadow']
+  textGradient?: SlideElement['textGradient']
+  textArc?: number
   highlight?: string
   letterSpacing?: number
   lineHeight?: number
@@ -69,6 +73,10 @@ export function clearTextFormatting(el: SlideElement): Partial<SlideElement> {
     textDecoration: undefined,
     textColor: undefined,
     fontFamily: undefined,
+    textStroke: undefined,
+    textShadow: undefined,
+    textGradient: undefined,
+    textArc: undefined,
     highlight: undefined,
     letterSpacing: undefined,
     lineHeight: undefined,
@@ -87,6 +95,10 @@ export function captureTextFormat(el: SlideElement | undefined): TextFormatSampl
     textDecoration: el.textDecoration,
     textColor: el.textColor,
     fontFamily: el.fontFamily,
+    textStroke: el.textStroke,
+    textShadow: el.textShadow,
+    textGradient: el.textGradient,
+    textArc: el.textArc,
     highlight: el.highlight,
     letterSpacing: el.letterSpacing,
     lineHeight: el.lineHeight,
@@ -102,6 +114,10 @@ export function applyTextFormat(sample: TextFormatSample): Partial<SlideElement>
     textDecoration: sample.textDecoration,
     textColor: sample.textColor,
     fontFamily: sample.fontFamily,
+    textStroke: sample.textStroke,
+    textShadow: sample.textShadow,
+    textGradient: sample.textGradient,
+    textArc: sample.textArc,
     highlight: sample.highlight,
     letterSpacing: sample.letterSpacing,
     lineHeight: sample.lineHeight,

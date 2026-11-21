@@ -77,11 +77,35 @@ const rich = {
   problem: 'Đề bài ví dụ',
   conclusion: 'Kết luận ví dụ',
   explanation: 'Vì A đúng',
+  value: '1.234.567.890',
+  label: 'Tổng số',
+  bars: [{ label: 'Một', value: 100 }, { label: 'Hai', value: 50 }],
+  credit: 'Nguồn: Mẫu kiểm thử',
 }
 for (const layout of SLIDE_LAYOUTS) {
   const check = checkSlide(rich, layout.id)
   assert.deepEqual(check.errors, [], `${layout.id} hợp lệ nhưng báo lỗi`)
 }
+
+const proPage = sanitizeSlide({
+  title: 'ế'.repeat(90),
+  credit: '  Nguồn\n  ' + 'a'.repeat(150),
+  image2: 'x'.repeat(2100),
+  caption2: 'đ'.repeat(90),
+}, 'photo-compare')
+assert.equal(proPage.title.length, 80)
+assert.equal(proPage.credit.length, 140)
+assert.ok(!proPage.credit.includes('\n'))
+const fallbackWithCredit = slideFromAi({ layout: 'cards', title: 'Tiêu đề', credit: 'Nguồn' }, normalizeTheme(DECK_THEMES[0]))
+assert.ok(fallbackWithCredit.elements.some((el) => el.text === 'Tiêu đề'))
+assert.equal(fallbackWithCredit.elements.find((el) => el.id === 'credit')?.text, 'Nguồn')
+assert.equal(proPage.image2.length, 2000)
+assert.equal(proPage.caption2.length, 75)
+assert.equal(sanitizeSlide({ focusX: 120, focusY: -10 }, 'photo-full').focusX, 100)
+assert.equal(sanitizeSlide({ focusX: 120, focusY: -10 }, 'photo-full').focusY, 0)
+assert.deepEqual(sanitizeSlide({
+  bars: [{ label: 'sai', value: -1 }, { label: 'thiếu', value: Infinity }, { label: 'a', value: 0.0001, color: 'sai' }],
+}, 'bars').bars, [{ label: 'a', value: 0.0001 }])
 
 /* 3. Lỗi theo layout: thiếu field bắt buộc / sai cấu trúc. */
 const errorsOf = (raw, layout) => validateSlide(sanitizeSlide(raw, layout), layout)

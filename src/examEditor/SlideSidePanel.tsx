@@ -367,11 +367,11 @@ const LAYOUT_GROUPS: Array<{ title: string; layouts: SlideLayoutId[] }> = [
   },
   {
     title: 'Hình ảnh',
-    layouts: ['image-left', 'image-right', 'image-full'],
+    layouts: ['image-left', 'image-right', 'image-full', 'photo-full', 'photo-compare'],
   },
   {
     title: 'Số liệu & bảng',
-    layouts: ['table', 'stats', 'stat-image'],
+    layouts: ['table', 'stats', 'stat-image', 'bignum', 'bars'],
   },
   {
     title: 'Sơ đồ',

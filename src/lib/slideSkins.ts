@@ -9,10 +9,12 @@ import {
   contentFromSlide,
   defaultTone,
   isDecorElement,
+  isEditorialLayout,
   isLayoutId,
   isLayoutOwnedId,
   isSkinDecorId,
   withPlaceholders,
+  withSlideCredit,
   type SlideLayoutContent,
   type SlideLayoutId,
 } from './slideLayouts'
@@ -2226,15 +2228,17 @@ export function applySkin(
   theme: DeckTheme,
   slideIndex = 0,
   totalSlides = 7,
+  useThemeFonts = false,
 ): Slide {
   if (!designId || slide.html) return slide
   // Slide freeform (không có layout) giữ nguyên các phần tử, chỉ đổi nền khi không có customBg
-  if (!slide.layout || !isLayoutId(slide.layout)) return slide
+  if (!slide.layout || !isLayoutId(slide.layout) || isEditorialLayout(slide.layout)) return slide
   const skin = SLIDE_SKINS[designId]
   if (!skin) return slide
 
   const userAdded = slide.elements.filter((el) => !isDecorElement(el) && !isLayoutOwnedId(el.id))
-  const layoutEls = slide.elements.filter((el) => !isDecorElement(el) && isLayoutOwnedId(el.id))
+  const credit = slide.elements.find((el) => el.id === 'credit') ?? null
+  const layoutEls = slide.elements.filter((el) => el !== credit && !isDecorElement(el) && isLayoutOwnedId(el.id))
   const content = contentFromSlide({ ...slide, elements: layoutEls })
 
   let nextSlide = slide
@@ -2245,6 +2249,9 @@ export function applySkin(
       ...el,
       id: el.id || uid(),
       ...(isSkinDecorId(el.id) ? { decor: true } : {}),
+      ...(useThemeFonts && el.type === 'text' ? {
+        fontFamily: el.variant === 'body' ? theme.fontBody : theme.fontHeading,
+      } : {}),
     }))
     // Không nhân bản ảnh/bảng/đồ hoạ người dùng nếu layout đã dựng phần tử tương ứng từ contentFromSlide
     const keptUser = userAdded.filter((el) => {
@@ -2253,7 +2260,7 @@ export function applySkin(
       if (el.type === 'graphic' && decorated.some((e) => e.type === 'graphic' && e.graphicId === el.graphicId)) return false
       return true
     })
-    return [...decorated, ...keptUser]
+    return [...withSlideCredit(decorated, credit), ...keptUser]
   }
 
   if (slide.layout === 'title') {

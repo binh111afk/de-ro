@@ -39,7 +39,7 @@ for (const { id } of SLIDE_LAYOUTS) {
   report.push(`${id}:${steps}`)
   const title = els.find((el) => el.id === 'title' || el.id === 'question')
   if (title) assert.ok(!title.step && !title.lineStep, `${id}: tiêu đề phải hiện sẵn`)
-  if (!['image-full', 'image-left', 'image-right'].includes(id)) assert.ok(steps >= 1, `${id}: phải có hiệu ứng bấm`)
+  if (!['image-full', 'image-left', 'image-right', 'photo-full', 'photo-compare', 'bars'].includes(id)) assert.ok(steps >= 1, `${id}: phải có hiệu ứng bấm`)
 }
 console.log(report.join('  '))
 

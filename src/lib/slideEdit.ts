@@ -3,6 +3,8 @@
  * model chỉ trả `{"action":"edit","commands":[...]}`, engine kiểm tra từng lệnh rồi dựng lại
  * slide bằng layout engine. Lệnh sai/lạ bị bỏ kèm lý do, không làm hỏng deck.
  */
+import { SLIDE_FONTS, slideFontByName } from './slideFonts'
+import { hasTextEffects, textEffectsOf } from './slideTextEffects'
 import type { Deck, DeckTheme, Slide, SlideElement, SlideTone } from '@/store/docs'
 import { parseAiObject } from './aiDeck'
 import {
@@ -11,6 +13,7 @@ import {
   contentFromSlide,
   defaultTone,
   isDecorElement,
+  isEditorialLayout,
   isLayoutId,
   isLayoutOwnedId,
   isTone,
@@ -20,8 +23,8 @@ import {
 import { checkSlide, slideFromAi } from './slideAi'
 import { keepCustomBg } from './slideBackground'
 import { DECK_THEMES, contrastRatio, mixHex, normalizeTheme, resolveThemeId, themeById } from './slideTheme'
-import { SLIDE_DESIGNS, designById, type SlideDesign } from './slideDesigns'
-import { applySkin, skinById, themeWithSkinFonts } from './slideSkins'
+import { SLIDE_DESIGNS, designById, designTheme, type SlideDesign } from './slideDesigns'
+import { applySkin } from './slideSkins'
 
 export type SlideEditOp =
   | { op: 'set_theme'; theme: string }
@@ -42,7 +45,7 @@ export type SlideEditOp =
   | { op: 'rename_deck'; title: string }
 
 /** Phông cho phép: có đủ dấu tiếng Việt (Georgia/Cambria làm vỡ dấu nên không có). */
-export const EDIT_FONTS = ['Be Vietnam Pro', 'Times New Roman', 'Arial', 'Tahoma', 'Verdana', 'Segoe UI', 'Calibri', 'Courier New']
+export const EDIT_FONTS = SLIDE_FONTS.map(font => font.family)
 const TRANSITIONS = ['none', 'fade', 'slide', 'zoom']
 /** Field chữ của slide mà `edit_slide` được đổi (ảnh/đồ hoạ giữ nguyên, không cho AI đụng). */
 const EDITABLE_FIELDS = [
@@ -95,7 +98,7 @@ export function editSystemPrompt(context: string): string {
     '- {"op":"duplicate_slide","slide":3}\n' +
     '- {"op":"set_notes","slide":3,"notes":"ghi chú trình bày"}\n' +
     '- {"op":"rename_deck","title":"tên bài giảng"}\n' +
-    `- {"op":"set_layout","slide":3,"layout":"<id>"} — đổi bố cục một slide, giữ nội dung. Bố cục: ${SLIDE_LAYOUTS.map((l) => `${l.id}=${l.name}`).join(', ')}\n` +
+    `- {"op":"set_layout","slide":3,"layout":"<id>"} — đổi bố cục một slide, giữ nội dung. Bố cục: ${SLIDE_LAYOUTS.filter((l) => !isEditorialLayout(l.id)).map((l) => `${l.id}=${l.name}`).join(', ')}\n` +
     'Nếu yêu cầu KHÔNG phải sửa giao diện/thứ tự slide có sẵn (ví dụ soạn slide mới, viết lại nội dung), trả {"action":"none"}.\n' +
     `Bài trình bày hiện tại: ${context}`
   )
@@ -200,7 +203,11 @@ export function recomposeSlide(theme: DeckTheme, slide: Slide, tone?: SlideTone)
   if (slide.layout && isLayoutId(slide.layout)) {
     const cleanSlide: Slide = { ...slide, elements: slide.elements.filter((el) => !isDecorElement(el)) }
     const t = tone ?? (isTone(slide.tone) ? slide.tone : defaultTone(slide.layout))
-    const elements = composeLayout(theme, slide.layout, contentFromSlide(cleanSlide), t)
+    const previous = new Map(cleanSlide.elements.map(el => [el.id, el]))
+    const elements = composeLayout(theme, slide.layout, contentFromSlide(cleanSlide), t).map(el => {
+      const before = previous.get(el.id)
+      return el.type === 'text' && before && hasTextEffects(before) ? { ...el, ...textEffectsOf(before) } : el
+    })
     if (elements.length > 0) {
       // Giữ lại phần tử người dùng tự thêm (hình khối, icon, chữ, ảnh thứ 2…) khi đổi thiết kế/bộ màu
       const userAdded = cleanSlide.elements.filter((el) => {
@@ -237,9 +244,7 @@ export function applyDeckDesign(deck: Deck, design: SlideDesign | null, palette?
       }),
     }
   }
-  const baseTheme = palette ?? themeById(design.themeId) ?? normalizeTheme(deck.theme)
-  const skin = skinById(design.id)
-  const targetTheme = skin ? themeWithSkinFonts(baseTheme, skin) : baseTheme
+  const targetTheme = designTheme(design, palette)
   const total = deck.slides.length
   return {
     ...deck,
@@ -249,7 +254,7 @@ export function applyDeckDesign(deck: Deck, design: SlideDesign | null, palette?
     slides: deck.slides.map((s, i) => {
       if (s.html) return s
       const nextBase = recomposeSlide(targetTheme, { ...s, decorKit: design.decorKit })
-      return keepGeometry(s, nextBase, applySkin(nextBase, design.id, targetTheme, i, total))
+      return keepGeometry(s, nextBase, applySkin(nextBase, design.id, targetTheme, i, total, true))
     }),
   }
 }
@@ -269,7 +274,7 @@ function keepGeometry(original: Slide, base: Slide, styled: Slide): Slide {
     const look = skinned.get(el.id)
     if (!look || isDecorElement(look)) return el
     const geo = before.get(el.id) ?? el
-    const merged: SlideElement = { ...look }
+    const merged: SlideElement = { ...look, ...textEffectsOf(geo) }
     for (const k of GEOMETRY) (merged as unknown as Record<string, unknown>)[k] = geo[k]
     return merged
   })
@@ -282,7 +287,7 @@ function keepGeometry(original: Slide, base: Slide, styled: Slide): Slide {
 /** Mô tả ngắn một slide (bố cục + nội dung chữ) để đưa vào prompt cho model biết đang sửa gì. */
 export function describeSlide(slide: Slide, index: number): string {
   if (slide.html) return `${index + 1}. (slide HTML, không sửa được)`
-  const { image: _image, graphic: _graphic, ...content } = contentFromSlide(slide)
+  const { image: _image, image2: _image2, graphic: _graphic, ...content } = contentFromSlide(slide)
   const json = JSON.stringify(content, (_k, v) => (v === undefined || (Array.isArray(v) && !v.length) ? undefined : v))
   return `${index + 1}. [${slide.layout ?? 'slide'}] ${json.length > 600 ? json.slice(0, 600) + '…' : json}`
 }
@@ -350,16 +355,17 @@ export function applyEdits(deck: Deck, ops: SlideEditOp[]): EditResult {
         if (target) {
           // Phông người dùng/AI đã đặt riêng (khác mặc định của bộ màu hiện tại) được giữ khi đổi bộ màu.
           const current = DECK_THEMES.find((t) => t.id === resolveThemeId(theme.id))
+          const legacy = normalizeTheme({ ...theme, fonts: undefined, fontHeading: '', fontBody: '' })
           const fonts = { ...target.fonts! }
-          if (current?.fonts && theme.fonts.heading !== current.fonts.heading) fonts.heading = theme.fonts.heading
-          if (current?.fonts && theme.fonts.body !== current.fonts.body) fonts.body = theme.fonts.body
+          if (current?.fonts && ![current.fonts.heading, legacy.fonts.heading].includes(theme.fonts.heading)) fonts.heading = theme.fonts.heading
+          if (current?.fonts && ![current.fonts.body, legacy.fonts.body].includes(theme.fonts.body)) fonts.body = theme.fonts.body
           restyle({ ...target, fontHeading: fonts.heading, fontBody: fonts.body, fonts }, `Đổi bộ màu sang ${target.name}.`)
         }
         else summary.push(`Bỏ qua: không có bộ màu "${op.theme}".`)
         break
       }
       case 'set_fonts': {
-        const find = (name?: string) => (name ? EDIT_FONTS.find((f) => f.toLowerCase() === name.trim().toLowerCase()) : undefined)
+        const find = (name?: string) => slideFontByName(name)?.family
         const heading = find(op.heading)
         const body = find(op.body)
         if ((op.heading && !heading) || (op.body && !body)) {
@@ -438,14 +444,14 @@ export function applyEdits(deck: Deck, ops: SlideEditOp[]): EditResult {
           summary.push(`Bỏ qua: slide ${op.slide} không có field hợp lệ để sửa.`)
           break
         }
-        const { image, graphic, ...current } = contentFromSlide(slide)
+        const { image, image2, imageCrop, image2Crop, graphic, ...current } = contentFromSlide(slide)
         // checkSlide chuẩn hoá (cắt độ dài, giới hạn đậm, NBSP…) và báo field bắt buộc/ngân sách bị vi phạm
         const check = checkSlide({ ...current, ...patch, layout: slide.layout, tone: slide.tone }, slide.layout, slide.tone)
         if (check.errors.length) {
           summary.push(`Bỏ qua sửa slide ${op.slide}: ${check.errors.join('; ')}.`)
           break
         }
-        const built = slideFromAi({ ...check.page, image, graphic: check.page.graphic ?? graphic }, theme)
+        const built = slideFromAi({ ...check.page, image, image2, imageCrop, image2Crop, graphic: check.page.graphic ?? graphic }, theme)
         const updated: Slide = { ...built, id: slide.id, notes: slide.notes, transition: slide.transition }
         next = { ...next, slides: next.slides.map((s) => (s === slide ? updated : s)) }
         const fields = Object.keys(patch).map((k) => FIELD_LABEL[k] ?? k).join(', ')
@@ -473,7 +479,7 @@ export function applyEdits(deck: Deck, ops: SlideEditOp[]): EditResult {
           break
         }
         const rawUpdated: Slide = keepCustomBg(slide, { ...slide, layout: op.layout, tone, background: toneBackground(theme, tone), elements }, theme.fg)
-        const updated = next.design ? applySkin(rawUpdated, next.design, theme, op.slide - 1, next.slides.length) : rawUpdated
+        const updated = next.design ? applySkin(rawUpdated, next.design, theme, op.slide - 1, next.slides.length, true) : rawUpdated
         next = { ...next, slides: next.slides.map((s) => (s === slide ? updated : s)) }
         summary.push(`Đổi bố cục slide ${op.slide} sang ${op.layout}.`)
         break
@@ -491,7 +497,7 @@ export function applyEdits(deck: Deck, ops: SlideEditOp[]): EditResult {
         }
         const built = slideFromAi(check.page, theme)
         const at = Math.min(Math.max((op.position ?? next.slides.length + 1) - 1, 0), next.slides.length)
-        const styledBuilt = next.design ? applySkin(built, next.design, theme, at, next.slides.length + 1) : built
+        const styledBuilt = next.design ? applySkin(built, next.design, theme, at, next.slides.length + 1, true) : built
         const slides = [...next.slides]
         slides.splice(at, 0, styledBuilt)
         next = { ...next, slides }

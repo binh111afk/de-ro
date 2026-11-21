@@ -9,6 +9,17 @@ import '@fontsource/be-vietnam-pro/400.css'
 import '@fontsource/be-vietnam-pro/500.css'
 import '@fontsource/be-vietnam-pro/600.css'
 import '@fontsource/be-vietnam-pro/700.css'
+import '@fontsource/lora/400.css'
+import '@fontsource/lora/600.css'
+import '@fontsource/lora/700.css'
+import '@fontsource/nunito/400.css'
+import '@fontsource/nunito/600.css'
+import '@fontsource/nunito/700.css'
+import '@fontsource/nunito/800.css'
+import '@fontsource/patrick-hand/400.css'
+import '@fontsource/space-grotesk/500.css'
+import '@fontsource/space-grotesk/700.css'
+import '@fontsource-variable/jetbrains-mono'
 import '@/index.css'
 import { flushSync } from 'react-dom'
 import { createRoot } from 'react-dom/client'
@@ -16,11 +27,14 @@ import { SlideThumb } from '@/examEditor/SlideEditor'
 import {
   SLIDE_LAYOUTS,
   composeLayout,
+  isEditorialLayout,
   toneBackground,
   withPlaceholders,
   type SlideLayoutContent,
 } from '@/lib/slideLayouts'
+import { photoScrimBackground } from '@/lib/slideContrast'
 import { ensureMeasureFonts } from '@/lib/slideMeasure'
+import { ensureFonts } from '@/lib/slideFonts'
 import { DECK_THEMES, contrastRatio, normalizeTheme } from '@/lib/slideTheme'
 import type { Slide, SlideElement, SlideTone } from '@/store/docs'
 
@@ -101,6 +115,23 @@ const MEDIUM: SlideLayoutContent = {
   conclusion: 'Kết quả: $\\frac{18}{24} = \\frac{3}{4}$',
 }
 
+const EDITORIAL_STRESS: SlideLayoutContent = {
+  ...STRESS,
+  value: '1.234.567.890',
+  label: 'Tổng số theo nhóm đã được đối chiếu',
+  caption: 'Ảnh thứ nhất ghi lại dấu tích và môi trường cảnh quan xung quanh.',
+  caption2: 'Cùng công trình nhìn từ một vị trí khác sau khi được bảo tồn.',
+  bars: [
+    { label: 'Khu vực tập trung đông dân cư nhất', value: 1_234_567_890 },
+    { label: 'Các cụm dân cư ở phía đông thành phố', value: 990_001 },
+    { label: 'Khu vực rìa đô thị theo hướng tây nam', value: 543 },
+    { label: 'Nhóm chưa hoàn thành đối chiếu số liệu', value: 900 },
+    { label: 'Phần được kiểm kê lần đầu trong năm', value: 10 },
+    { label: 'Khu vực chưa ghi nhận trường hợp nào', value: 0 },
+  ],
+  credit: 'Nguồn: tư liệu dùng để kiểm tra số liệu và chú thích khi trình bày.',
+}
+
 const TONES: SlideTone[] = ['theme', 'soft', 'accent']
 
 type Rule = 'overflow' | 'overlap' | 'bounds' | 'edge' | 'tiny' | 'contrast'
@@ -142,8 +173,8 @@ function backdropOf(elements: SlideElement[], index: number, rect: Rect, frame: 
   let color = bg
   for (let i = 0; i < index; i++) {
     const el = elements[i]
-    if (el.type === 'shape' && isHex(el.fill) && cx >= el.x && cx <= el.x + el.w && cy >= el.y && cy <= el.y + el.h) {
-      color = el.fill
+    if (el.type === 'shape' && cx >= el.x && cx <= el.x + el.w && cy >= el.y && cy <= el.y + el.h) {
+      color = photoScrimBackground(el, cx, cy) ?? (isHex(el.fill) ? el.fill : color)
     }
   }
   return color
@@ -177,7 +208,7 @@ function lintSlide(
       push('bounds', 'error', el.id, 'chữ nằm ngoài khung slide')
     }
     const size = Number.parseFloat(node.style.fontSize)
-    if (size && size < 1.3) push('tiny', 'warn', el.id, `${size}cqw`)
+    if (size && size < 1.3 && el.id !== 'credit') push('tiny', 'warn', el.id, `${size}cqw`)
     const color = el.textColor ?? fg
     // ô chữ có nền riêng (đáp án đúng của quiz) thì lấy nền đó, không lấy shape bên dưới
     const back = isHex(el.fill) ? el.fill : backdropOf(els, i, rect, fr, slide.background)
@@ -222,7 +253,7 @@ function lintSlide(
 }
 
 async function main() {
-  await ensureMeasureFonts()
+  await Promise.all([ensureMeasureFonts(), ...DECK_THEMES.map(theme => ensureFonts({ theme, slides: [] }))])
   await document.fonts.ready
   const host = document.getElementById('host')!
   const root = createRoot(host)
@@ -230,7 +261,7 @@ async function main() {
   let slides = 0
 
   const sets: Array<{ name: string; tones: SlideTone[]; content: (id: (typeof SLIDE_LAYOUTS)[number]['id']) => SlideLayoutContent }> = [
-    { name: 'stress', tones: TONES, content: () => STRESS },
+    { name: 'stress', tones: TONES, content: (id) => isEditorialLayout(id) ? EDITORIAL_STRESS : STRESS },
     { name: 'medium', tones: ['theme'], content: () => MEDIUM },
     { name: 'demo', tones: ['theme'], content: (id) => withPlaceholders(id, {}) },
   ]

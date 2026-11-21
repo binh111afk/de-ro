@@ -32,12 +32,13 @@ import { parseAiDeck, type AiSlidePayload, type DeckPlan } from '@/lib/aiDeck'
 import { HtmlDeckBar, HtmlSlideFrame } from './HtmlSlide'
 import { applyDeckDesign, applyEdits, describeSlide, recomposeSlide, type SlideEditOp } from '@/lib/slideEdit'
 import { elementHeight } from '@/lib/slideText'
-import { normalizeTheme, type ResolvedTheme } from '@/lib/slideTheme'
+import { ensureFonts, slideFontByName } from '@/lib/slideFonts'
+import { normalizeTheme, themeById, withThemeFonts, type ResolvedTheme } from '@/lib/slideTheme'
 import { readableElements } from '@/lib/slideContrast'
-import { type SlideDesign } from '@/lib/slideDesigns'
+import { designById, designTheme, type SlideDesign } from '@/lib/slideDesigns'
 import { applySkin } from '@/lib/slideSkins'
 import { appendSlidesToDeck, withImage } from '@/lib/slideAi'
-import { IMAGE_LAYOUTS, buildImagePrompt, generateSlideImage, queueImage } from '@/lib/imageGen'
+import { IMAGE_LAYOUTS, buildImagePrompt, buildPhotoPrompt, generateSlideImage, queueImage } from '@/lib/imageGen'
 import { uploadImage } from '@/lib/mediaStore'
 import { SLIDE_LAYOUTS, composeLayout, contentFromSlide, defaultTone, isLayoutId, toneBackground, withPlaceholders, type SlideLayoutId } from '@/lib/slideLayouts'
 import { AiPanel } from './AiPanel'
@@ -192,7 +193,7 @@ function PrintDeck({ slides, theme, footer, onDone }: { slides: Slide[]; theme: 
     const finish = () => done.current()
     window.addEventListener('afterprint', finish, { once: true })
     // đợi phông (Be Vietnam Pro, KaTeX) nạp xong rồi mới in, nếu không trang đầu in bằng phông tạm
-    void (document.fonts?.ready ?? Promise.resolve()).then(() => requestAnimationFrame(() => alive && window.print()))
+    void ensureFonts({ theme, slides }).then(() => requestAnimationFrame(() => requestAnimationFrame(() => alive && window.print())))
     return () => {
       alive = false
       window.removeEventListener('afterprint', finish)
@@ -262,6 +263,7 @@ export function SlideEditor({
   // màn hẹp (tablet/điện thoại): trợ lý AI nổi đè lên slide nên mặc định đóng
   const [aiOpen, setAiOpen] = useState(() => window.innerWidth >= 1024)
   const [zoom, setZoom] = useState(100)
+  const designRequest = useRef(0)
   const [openDesignsSignal, setOpenDesignsSignal] = useState(0)
   const [openIconsSignal, setOpenIconsSignal] = useState(0)
   // lưới / đường gióng: nhớ theo trình duyệt
@@ -307,6 +309,16 @@ export function SlideEditor({
     () => slides.find((s) => s.id === selectedSlideId) ?? slides[0] ?? null,
     [slides, selectedSlideId],
   )
+  const [, refreshFontMetrics] = useState(0)
+  useEffect(() => {
+    if (!currentSlide || currentSlide.html) return
+    let alive = true
+    void ensureFonts({ theme, slides: [currentSlide] }).then(() => {
+      if (alive) refreshFontMetrics(revision => revision + 1)
+    })
+    return () => { alive = false }
+  }, [currentSlide, theme])
+  const heightOf = (el: SlideElement) => elementHeight(el, el.variant === 'body' ? theme.fonts.body : theme.fonts.heading)
   const selectedElement = currentSlide?.elements.find((el) => el.id === selectedElementId) ?? null
   const groupEls = currentSlide?.elements.filter((el) => groupIds.includes(el.id)) ?? []
   /** đang chọn đúng một nhóm cố định (đã bấm Nhóm): vẽ một khung bao chung như Canva */
@@ -400,7 +412,11 @@ export function SlideEditor({
   const addSlide = () => addSlideAt(deck.slides.length)
 
   /** thêm một slide mới theo bố cục có sẵn (tab Mẫu) — slide đang mở không đổi */
-  const addLayoutSlide = (layoutId: SlideLayoutId) => {
+  const addLayoutSlide = async (layoutId: SlideLayoutId) => {
+    const id = deckRef.current.id
+    await ensureFonts({ theme, slides: [] })
+    const deck = deckRef.current
+    if (deck.id !== id) return
     const tone = defaultTone(layoutId)
     // slide thêm tay vẫn theo bộ trang trí của deck
     const decorKit = deck.slides.find((slide) => slide.decorKit)?.decorKit
@@ -415,7 +431,7 @@ export function SlideEditor({
       transition: 'none',
     }
     if (deck.design) {
-      s = applySkin(s, deck.design, deck.theme, deck.slides.length, deck.slides.length + 1)
+      s = applySkin(s, deck.design, deck.theme, deck.slides.length, deck.slides.length + 1, true)
     }
     commitDeck({ ...deck, slides: [...deck.slides, s] })
     setSelectedSlideId(s.id)
@@ -504,9 +520,12 @@ export function SlideEditor({
   }
 
   /** Áp dụng bộ thiết kế lên toàn bộ slide hiện có (chỉ restyle, không thêm/bớt slide). */
-  const applyDesignToDeck = (design: SlideDesign | null) => {
+  const applyDesignToDeck = async (design: SlideDesign | null) => {
+    const request = ++designRequest.current
+    const id = deckRef.current.id
+    await ensureFonts({ theme: design ? designTheme(design) : themeById('sang'), slides: [] })
     const latest = deckRef.current
-    if (latest.format === 'html') return
+    if (request !== designRequest.current || latest.id !== id || latest.format === 'html') return
     commitDeck(applyDeckDesign(latest, design))
   }
 
@@ -555,7 +574,7 @@ export function SlideEditor({
 
   const alignGroup = (mode: AlignMode) => {
     if (!currentSlide) return
-    const patches = alignBoxes(groupEls.map((e) => ({ id: e.id, x: e.x, y: e.y, w: e.w, h: elementHeight(e) })), mode)
+    const patches = alignBoxes(groupEls.map((e) => ({ id: e.id, x: e.x, y: e.y, w: e.w, h: heightOf(e) })), mode)
     commitDeck({
       ...deck,
       slides: deck.slides.map((s) =>
@@ -874,7 +893,7 @@ export function SlideEditor({
     const l = Math.min(...els.map((e) => e.x))
     const r = Math.max(...els.map((e) => e.x + e.w))
     const t = Math.min(...els.map((e) => e.y))
-    const b = Math.max(...els.map((e) => e.y + elementHeight(e)))
+    const b = Math.max(...els.map((e) => e.y + heightOf(e)))
     const dx = mode === 'left' ? -l : mode === 'center' ? (100 - (r - l)) / 2 - l : mode === 'right' ? 100 - r : 0
     const dy = mode === 'top' ? -t : mode === 'middle' ? (100 - (b - t)) / 2 - t : mode === 'bottom' ? 100 - b : 0
     patchEls(els.map((e) => e.id), (e) => ({ ...e, x: e.x + dx, y: e.y + dy }))
@@ -977,7 +996,7 @@ export function SlideEditor({
 
   const alignSelected = (action: 'left' | 'center' | 'right' | 'top' | 'middle' | 'bottom') => {
     if (!currentSlide || !selectedElement) return
-    const h = elementHeight(selectedElement)
+    const h = heightOf(selectedElement)
     const patch = action === 'left' ? { x: 0 } : action === 'center' ? { x: (100 - selectedElement.w) / 2 } : action === 'right' ? { x: 100 - selectedElement.w } : action === 'top' ? { y: 0 } : action === 'middle' ? { y: (100 - h) / 2 } : { y: 100 - h }
     updateElement(currentSlide.id, selectedElement.id, patch)
   }
@@ -1016,6 +1035,7 @@ export function SlideEditor({
     if (!currentSlide) return
     const name = SLIDE_LAYOUTS.find((layout) => layout.id === layoutId)?.name ?? layoutId
     if (!(await dialog.confirm('Nội dung hiện tại của slide sẽ được thay.', { title: `Áp bố cục "${name}"?`, confirmLabel: 'Áp bố cục' }))) return
+    await ensureFonts({ theme, slides: [] })
     const content = withPlaceholders(layoutId, contentFromSlide(currentSlide))
     const tone = defaultTone(layoutId)
     const elements = composeLayout(deck.theme, layoutId, content, tone)
@@ -1034,8 +1054,9 @@ export function SlideEditor({
    * sửa/xoá slide trong lúc chờ. Việc dựng slide + đổi theme nằm ở
    * `appendSlidesToDeck` (lib/slideAi.ts) để test được.
    */
-  const appendAiSlides = (pages: AiSlidePayload[], plan?: DeckPlan): Slide[] => {
+  const appendAiSlides = async (pages: AiSlidePayload[], plan?: DeckPlan): Promise<Slide[]> => {
     if (!pages.length) return []
+    await ensureFonts({ theme: plan?.theme ? themeById(plan.theme) : normalizeTheme(deckRef.current.theme), slides: [] })
     // Bài giảng HTML không trộn với slide PPT: dựng PPT mới thì bỏ các slide HTML.
     if (deckRef.current.format === 'html') {
       deckRef.current = { ...deckRef.current, format: undefined, slides: [] }
@@ -1123,7 +1144,20 @@ export function SlideEditor({
   }
 
   /** AI sửa slide có sẵn bằng lệnh có cấu trúc; áp lên deck mới nhất, có lịch sử để hoàn tác. */
-  const applyAiEdits = (ops: SlideEditOp[]): string[] => {
+  const applyAiEdits = async (ops: SlideEditOp[]): Promise<string[]> => {
+    let target = normalizeTheme(deckRef.current.theme)
+    const loads = ops.map(op => {
+      if (op.op === 'set_theme') target = themeById(op.theme)
+      if (op.op === 'apply_design') {
+        const design = designById(op.id)
+        if (design) target = normalizeTheme(designTheme(design))
+      }
+      if (op.op === 'set_fonts') {
+        target = normalizeTheme(withThemeFonts(target, [slideFontByName(op.heading)?.family ?? target.fontHeading, slideFontByName(op.body)?.family ?? target.fontBody]))
+      }
+      return ensureFonts({ theme: target, slides: [] })
+    })
+    await Promise.all(loads)
     const latest = deckRef.current
     const result = applyEdits(latest, ops)
     if (result.changed) {
@@ -1153,17 +1187,17 @@ export function SlideEditor({
   const applyAiResult = (text: string, plan?: DeckPlan) => {
     const parsed = parseAiDeck(text)
     if (!parsed) return
-    appendAiSlides(parsed.slides, plan)
+    void appendAiSlides(parsed.slides, plan)
   }
 
   /** Ghi ảnh AI vào slide theo deck mới nhất lúc ảnh về (slide có thể đã được sửa/xoá). */
-  const setSlideImage = (slideId: string, image: string) => {
+  const setSlideImage = (slideId: string, image: string, slot: 'image' | 'image2' = 'image') => {
     const latest = deckRef.current
     const slide = latest.slides.find((s) => s.id === slideId)
     if (!slide) return
     historyRef.current.past = [...historyRef.current.past, latest].slice(-50)
     historyRef.current.future = []
-    const slides = latest.slides.map((s) => (s.id === slideId ? withImage(s, normalizeTheme(latest.theme), image) : s))
+    const slides = latest.slides.map((s) => (s.id === slideId ? withImage(s, normalizeTheme(latest.theme), image, slot) : s))
     deckRef.current = { ...latest, slides }
     updateDeck({ slides })
   }
@@ -1174,8 +1208,21 @@ export function SlideEditor({
    * nguyên đồ hoạ/icon đang có.
    */
   const applyAiSlide = async (page: AiSlidePayload, plan: DeckPlan) => {
-    const added = appendAiSlides([page], plan)
+    const added = await appendAiSlides([page], plan)
     const slide = added[0]
+    // Chế độ Chuyên nghiệp: AI mô tả ảnh, app vẽ ảnh chụp thật cho các bố cục biên tập
+    if (slide && (page.imagePrompt || page.image2Prompt)) {
+      const jobs: Array<['image' | 'image2', string | undefined]> = [['image', page.image ? undefined : page.imagePrompt], ['image2', page.image2 ? undefined : page.image2Prompt]]
+      for (const [slot, text] of jobs) {
+        if (!text) continue
+        const prompt = buildPhotoPrompt(text)
+        void queueImage(() => generateSlideImage(prompt).catch(() => generateSlideImage(prompt)))
+          .then((generated) => uploadImage(generated.dataUrl))
+          .then((src) => setSlideImage(slide.id, src, slot))
+          .catch(() => {})
+      }
+      return
+    }
     if (!slide || page.image || !IMAGE_LAYOUTS.includes(page.layout ?? '')) return
     const palette = normalizeTheme(deckRef.current.theme).accent
     const isCover = page.layout === 'title'
@@ -1297,7 +1344,7 @@ export function SlideEditor({
                           left: `${el.x}%`,
                           top: `${el.y}%`,
                           width: `${el.w}%`,
-                          height: `${elementHeight(el)}%`,
+                          height: `${heightOf(el)}%`,
                           transform: elTransform(el),
                           zIndex: (el.zIndex ?? 0) + 1,
                           pointerEvents: 'auto',
@@ -1518,7 +1565,7 @@ export function SlideEditor({
                   <span>{{ x: 'X', y: 'Y', w: 'Rộng', h: 'Cao' }[key]}</span>
                   <input
                     type="number"
-                    value={Math.round(key === 'h' ? elementHeight(selectedElement) : selectedElement[key])}
+                    value={Math.round(key === 'h' ? heightOf(selectedElement) : selectedElement[key])}
                     onChange={(e) => {
                       const value = Number(e.target.value)
                       updateElement(
@@ -1608,7 +1655,7 @@ export function SlideEditor({
                     const [l, r] = [Math.min(rect.x0, rect.x1), Math.max(rect.x0, rect.x1)]
                     const [t, b] = [Math.min(rect.y0, rect.y1), Math.max(rect.y0, rect.y1)]
                     // chạm vào khung là tính, như Canva
-                    const hits = currentSlide.elements.filter((el) => el.x < r && el.x + el.w > l && el.y < b && el.y + elementHeight(el) > t)
+                    const hits = currentSlide.elements.filter((el) => el.x < r && el.x + el.w > l && el.y < b && el.y + heightOf(el) > t)
                     setPainter(null)
                     if (hits.length >= 2) {
                       setSelectedElementId(null)
@@ -1643,7 +1690,7 @@ export function SlideEditor({
                       left: `${Math.min(...groupEls.map((el) => el.x))}%`,
                       top: `${Math.min(...groupEls.map((el) => el.y))}%`,
                       width: `${Math.max(...groupEls.map((el) => el.x + el.w)) - Math.min(...groupEls.map((el) => el.x))}%`,
-                      height: `${Math.max(...groupEls.map((el) => el.y + elementHeight(el))) - Math.min(...groupEls.map((el) => el.y))}%`,
+                      height: `${Math.max(...groupEls.map((el) => el.y + heightOf(el))) - Math.min(...groupEls.map((el) => el.y))}%`,
                     }}
                   />
                 )}
@@ -1770,7 +1817,7 @@ export function SlideEditor({
                   )
                   updateElement(currentSlide.id, selectedElement.id, patch)
                 }}
-                height={elementHeight(selectedElement)}
+                height={heightOf(selectedElement)}
                 accent={theme.accent}
                 fg={theme.fg}
                 onUpdate={(patch) => updateElement(currentSlide.id, selectedElement.id, patch)}
@@ -1857,6 +1904,7 @@ export function SlideEditor({
       <AiDock open={aiOpen} onToggle={() => setAiOpen((v) => !v)} width={360} side="right">
         <AiPanel
           mode="slide"
+          panelOpen={aiOpen}
           attachKey="slide"
           historyKey={deck.id}
           onApplySlides={applyAiResult}

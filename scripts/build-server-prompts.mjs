@@ -27,6 +27,16 @@ export async function bundlePrompts() {
     legalComments: 'none',
     logLevel: 'warning',
     banner: { js: BANNER },
+    // phông chữ chỉ dùng ở trình duyệt: server không cần (và không được kéo cả gói phông vào hàm Vercel)
+    plugins: [
+      {
+        name: 'bo-phong-chu',
+        setup(b) {
+          b.onResolve({ filter: /^@fontsource(-variable)?\// }, (a) => ({ path: a.path, namespace: 'bo-phong-chu' }))
+          b.onLoad({ filter: /.*/, namespace: 'bo-phong-chu' }, () => ({ contents: '', loader: 'js' }))
+        },
+      },
+    ],
   })
   return res.outputFiles[0].text
 }

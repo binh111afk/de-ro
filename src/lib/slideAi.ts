@@ -9,6 +9,7 @@ import type { AiSlidePayload } from './aiDeck'
 import type { DeckPlan, DeckPlanSlide } from './aiDeck'
 import type { Deck, DeckTheme, Slide, SlideElement, SlideTone } from '@/store/docs'
 import { normalizeTheme, themeById, type ResolvedTheme } from './slideTheme'
+import { hasTextEffects, sanitizeTextStyle, textEffectsOf } from './slideTextEffects'
 import { keepCustomBg } from './slideBackground'
 import { stylePackById } from './slideStyles'
 import { defaultDecorKit, isDecorKitId } from './slideDecor'
@@ -18,9 +19,12 @@ import { graphicShortlistText, graphicFits, isGraphicId, searchGraphics } from '
 import {
   composeLayout,
   contentFromSlide,
+  creditElement,
+  withSlideCredit,
   fitRatio,
   defaultTone,
   isLayoutId,
+  isEditorialLayout,
   isTone,
   resolveAnswer,
   SLIDE_LAYOUTS,
@@ -37,6 +41,12 @@ const clean = (value: unknown, max: number): string | undefined => {
     .slice(0, max)
   return trimmed || undefined
 }
+
+const MAX_CREDIT = 140
+const BAR_LABEL_MAX = 42
+const BAR_VALUE_MAX = 1_000_000_000_000
+const cleanSingleLine = (value: unknown, max: number) =>
+  typeof value === 'string' ? value.trim().replace(/\s+/g, ' ').slice(0, max).trimEnd() || undefined : undefined
 
 const cleanList = (value: unknown, maxItems: number, maxLen: number): string[] | undefined => {
   if (!Array.isArray(value)) return undefined
@@ -65,10 +75,34 @@ export function sanitizeSlide(raw: unknown, layout: string, tone?: SlideTone): A
     raw && typeof raw === 'object' && !Array.isArray(raw)
       ? (raw as Record<string, unknown>)
       : {}
+  const entries = source.textStyles && typeof source.textStyles === 'object' ? Object.entries(source.textStyles).slice(0, 48) : []
+  const textStyles = Object.fromEntries(entries.filter(([key]) => /^[a-z][a-z0-9-]{0,63}$/.test(key)).map(([key, value]) => [key, sanitizeTextStyle(value)]))
   const aiTone = isTone(source.tone) ? source.tone : undefined
-  const title = clean(source.title, 160)
-  const kicker = clean(source.kicker, 80)
-  const subtitle = clean(source.subtitle, 240)
+  const limits = BUDGETS[id].fields
+  const editorial = isEditorialLayout(id)
+  const title = clean(source.title, editorial ? limits?.title ?? 80 : 160)
+  const kicker = clean(source.kicker, id === 'bignum' ? limits!.kicker! : 80)
+  const subtitle = clean(source.subtitle, id === 'bignum' || id === 'photo-full' ? limits!.subtitle! : 240)
+  const credit = cleanSingleLine(source.credit, MAX_CREDIT)
+  const position = (value: unknown) => typeof value === 'number' && Number.isFinite(value)
+    ? Math.min(100, Math.max(0, value))
+    : undefined
+  const extra = id === 'bignum' || id === 'photo-full'
+    ? { focusX: position(source.focusX), focusY: position(source.focusY) }
+    : {}
+  const bars = id === 'bars' && Array.isArray(source.bars)
+    ? source.bars.flatMap((item) => {
+        if (!item || typeof item !== 'object') return []
+        const { label: rawLabel, value, color } = item as Record<string, unknown>
+        const label = cleanSingleLine(rawLabel, BAR_LABEL_MAX)
+        if (!label || typeof value !== 'number' || !Number.isFinite(value) || value < 0 || value > BAR_VALUE_MAX) return []
+        return [{
+          label,
+          value,
+          ...(typeof color === 'string' && /^#[0-9a-f]{6}$/i.test(color) ? { color } : {}),
+        }]
+      }).slice(0, 6)
+    : undefined
   const body = clean(source.body, 1200)
   const bullets = cleanList(source.bullets, 6, 220)
   const items = cleanList(source.items, 6, 220)
@@ -79,6 +113,8 @@ export function sanitizeSlide(raw: unknown, layout: string, tone?: SlideTone): A
   const quote = clean(source.quote, 300)
   const author = clean(source.author, 80)
   const image = clean(source.image, 2000)
+  const imagePrompt = editorial ? cleanSingleLine(source.imagePrompt, 280) : undefined
+  const image2Prompt = id === 'photo-compare' ? cleanSingleLine(source.image2Prompt, 280) : undefined
   const graphic =
     isGraphicId(source.graphic) &&
     graphicFits(source.graphic, [title, kicker, subtitle, body, ...(bullets ?? []), ...(items ?? [])].join(' '))
@@ -114,6 +150,22 @@ export function sanitizeSlide(raw: unknown, layout: string, tone?: SlideTone): A
 
   return {
     layout: id,
+    ...(Object.keys(textStyles).length ? { textStyles } : {}),
+    ...(credit ? { credit } : {}),
+    ...extra,
+    ...(id === 'bignum' ? {
+      value: cleanSingleLine(source.value, limits!.value!),
+      label: clean(source.label, limits!.label!),
+    } : {}),
+    ...(id === 'photo-full' && (source.textPosition === 'left' || source.textPosition === 'bottom')
+      ? { textPosition: source.textPosition }
+      : {}),
+    ...(id === 'photo-compare' ? {
+      image2: clean(source.image2, 2000),
+      caption: clean(source.caption, limits!.caption!),
+      caption2: clean(source.caption2, limits!.caption2!),
+    } : {}),
+    ...(bars?.length ? { bars } : {}),
     ...((tone ?? aiTone) ? { tone: tone ?? aiTone } : {}),
     ...(title ? { title } : {}),
     ...(kicker ? { kicker } : {}),
@@ -129,6 +181,8 @@ export function sanitizeSlide(raw: unknown, layout: string, tone?: SlideTone): A
     ...(author ? { author } : {}),
     ...(rows?.length ? { rows } : {}),
     ...(image ? { image } : {}),
+    ...(imagePrompt ? { imagePrompt } : {}),
+    ...(image2Prompt ? { image2Prompt } : {}),
     ...(graphic ? { graphic } : {}),
     ...(isDecorKitId(source.decorKit) ? { decorKit: source.decorKit } : {}),
     ...(stats?.length ? { stats } : {}),
@@ -154,7 +208,7 @@ interface Budget {
   fields?: Partial<
     Record<
       | 'title' | 'kicker' | 'subtitle' | 'body' | 'quote' | 'author' | 'question' | 'leftTitle' | 'rightTitle'
-      | 'problem' | 'conclusion' | 'explanation',
+      | 'problem' | 'conclusion' | 'explanation' | 'value' | 'label' | 'caption' | 'caption2',
       number
     >
   >
@@ -218,6 +272,10 @@ const BUDGETS: Record<SlideLayoutId, Budget> = {
   'image-full': { total: 260, fields: { title: 80, body: 120 } },
   stats: { total: 380, fields: { title: 80 }, stats: { label: 45 } },
   'stat-image': { total: 420, fields: { title: 80 }, stats: { label: 45 } },
+  bignum: { total: 208, fields: { kicker: 42, value: 24, label: 52, subtitle: 90 } },
+  'photo-full': { total: 180, fields: { title: 80, subtitle: 100 } },
+  'photo-compare': { total: 230, fields: { title: 80, caption: 75, caption2: 75 } },
+  bars: { total: 332, fields: { title: 80 } },
   timeline: {
     total: 420,
     fields: { title: 80 },
@@ -257,6 +315,8 @@ const budgetOf = (id: SlideLayoutId) => BUDGETS[id] ?? DEFAULT_BUDGET
 /** Tổng ký tự của đúng các field layout dùng (không cộng field thừa AI trả về). */
 function totalChars(page: AiSlidePayload, fields: Array<keyof SlideLayoutContent>): number {
   return fields.reduce((sum, field) => {
+    if (field === 'image' || field === 'image2') return sum
+    if (field === 'bars') return sum + (page.bars ?? []).reduce((n, bar) => n + bar.label.length, 0)
     if (field === 'rows') return sum + (page.rows ?? []).flat().join('').length
     if (field === 'stats') {
       return (
@@ -372,6 +432,15 @@ export function validateSlide(page: AiSlidePayload, layout: string): string[] {
     case 'image-right':
       need(!!page.title, 'thiếu "title"')
       break
+    case 'bignum':
+      need(!!page.value, 'thiếu "value"')
+      break
+    case 'bars':
+      need(!!page.title, 'thiếu "title"')
+      need((page.bars?.length ?? 0) >= 2, '"bars" cần 2–6 dòng hợp lệ')
+      break
+    case 'photo-full':
+    case 'photo-compare':
     case 'image-full':
       need(!!page.title, 'thiếu "title"')
       break
@@ -418,7 +487,7 @@ export function validateSlide(page: AiSlidePayload, layout: string): string[] {
  * Prompt từng slide
  * ------------------------------------------------------------------ */
 
-const FIELD_HINTS: Record<keyof SlideLayoutContent, string> = {
+const FIELD_HINTS: Partial<Record<keyof SlideLayoutContent, string>> = {
   // app gán từ dàn ý, không layout nào yêu cầu AI điền
   decorKit: '"decorKit" — không điền',
   title: '"title" — tiêu đề slide (chuỗi ≤ 80 ký tự, ≤ 10 từ)',
@@ -444,6 +513,15 @@ const FIELD_HINTS: Record<keyof SlideLayoutContent, string> = {
   problem: '"problem" — đề bài/yêu cầu của ví dụ (chuỗi ≤ 170)',
   conclusion: '"conclusion" — kết luận/đáp số một dòng (≤ 90)',
   explanation: '"explanation" — giải thích ngắn vì sao đáp án đúng (≤ 150)',
+  value: '"value" — con số / mốc / giá trị nổi bật, ngắn (≤ 24 ký tự, vd "08:15", "12.187", "2021", "70%")',
+  label: '"label" — nhãn nói con số đó là gì (≤ 52 ký tự)',
+  focusX: '"focusX" — số 0–100, vị trí ngang của chủ thể trong ảnh (50 = giữa); chỉ điền khi có ảnh',
+  focusY: '"focusY" — số 0–100, vị trí dọc của chủ thể trong ảnh (40 thường hợp với chân dung)',
+  image2: '"image2" — để trống (app tự lấy ảnh thứ hai)',
+  caption: '"caption" — chú thích ảnh bên trái (≤ 75 ký tự: nêu ai / đâu / năm nào)',
+  caption2: '"caption2" — chú thích ảnh bên phải (≤ 75 ký tự)',
+  textPosition: '"textPosition" — "bottom" (chữ dưới ảnh) hoặc "left" (chữ cột trái) tuỳ chủ thể nằm đâu trong ảnh',
+  bars: '"bars" — mảng 2–6 dòng {"label","value","color"}; value là SỐ (không đơn vị), color tuỳ chọn dạng "#rrggbb"; xếp từ lớn đến nhỏ',
 }
 
 /** Lưu ý riêng của từng layout, chèn sau danh sách field. */
@@ -456,6 +534,14 @@ const LAYOUT_NOTES: Partial<Record<SlideLayoutId, string>> = {
     '- Ví dụ mẫu: "steps" 2–4 bước giải, mỗi bước một phép biến đổi/ý có số liệu cụ thể; "conclusion" nêu kết quả cuối. Lời giải phải ĐÚNG, tự kiểm tra lại phép tính.\n',
   hook:
     '- Mở bài: "body" là câu hỏi/tình huống gần gũi kết thúc bằng câu hỏi; "items" là 2–3 gợi ý ngắn (≤ 30 ký tự) dẫn học sinh tới bài mới.\n',
+  bignum:
+    '- Số nổi bật: "value" là CON SỐ chính của cả slide (một mốc, một kết quả, một tỉ lệ), đúng sự thật, không bịa; "label" nói số đó là gì; "subtitle" thêm một dòng bối cảnh. Có "imagePrompt" thì ảnh nằm bên phải.\n',
+  'photo-full':
+    '- Ảnh tràn nền: dùng cho slide mở đầu, chuyển chương hoặc khoảnh khắc nhấn mạnh; tiêu đề ngắn, giàu cảm xúc, đọc như một câu lớn trên ảnh. Chủ thể ảnh nằm bên nào thì đặt chữ ở bên kia ("textPosition").\n',
+  'photo-compare':
+    '- So sánh hai ảnh: trước / sau, xưa / nay, hai đối tượng; mỗi ảnh một "caption" nói rõ ai, đâu, khi nào; hai mô tả ảnh phải cùng góc nhìn để đặt cạnh nhau hợp lý.\n',
+  bars:
+    '- Biểu đồ thanh: chỉ dùng số liệu có thật và hợp lý, ghi nguồn ở "credit"; số liệu minh hoạ phải ghi "ví dụ" trong "credit". Thanh đầu là giá trị lớn nhất.\n',
   quiz:
     '- Quiz: chỉ MỘT đáp án đúng chắc chắn; "explanation" nêu lý do ngắn gọn (kể cả vì sao các phương án khác sai khi cần).\n',
 }
@@ -485,9 +571,9 @@ function budgetLine(id: SlideLayoutId): string {
 const GRAPHIC_LAYOUTS = new Set(['title', 'section', 'closing', 'hook', 'bullets', 'image-left', 'image-right'])
 
 /** Phần riêng của một slide: layout, field, ngân sách chữ, gợi ý đồ hoạ. */
-function slideSpecBlock(slide: DeckPlanSlide): string {
+function slideSpecBlock(slide: DeckPlanSlide, pro = false): string {
   const layout = SLIDE_LAYOUTS.find((item) => item.id === slide.layout) ?? SLIDE_LAYOUTS[2]
-  const fields = layout.fields.map((field) => `- ${FIELD_HINTS[field]}`).join('\n')
+  const fields = layout.fields.flatMap((field) => FIELD_HINTS[field] ? ['- ' + FIELD_HINTS[field]] : []).join('\n')
   const supportsGraphic = GRAPHIC_LAYOUTS.has(layout.id)
   const isImageLayout = layout.id === 'image-left' || layout.id === 'image-right'
   const hints = supportsGraphic
@@ -505,6 +591,23 @@ function slideSpecBlock(slide: DeckPlanSlide): string {
     (isImageLayout
       ? '\nLayout ảnh: ĐỂ TRỐNG "image" (app tự vẽ ảnh minh hoạ nền sau 45–90 giây). Có id đồ hoạ phù hợp thì ' +
         'đặt "graphic" để slide có hình ngay trong lúc chờ ảnh.'
+      : '') +
+    (pro ? proSpecBlock(layout.id) : '')
+  )
+}
+
+/** Chế độ Chuyên nghiệp: ảnh nền do app vẽ từ mô tả, dòng ghi nguồn ở chân slide. */
+function proSpecBlock(id: SlideLayoutId): string {
+  const hasPhoto = id === 'bignum' || id === 'photo-full' || id === 'photo-compare'
+  return (
+    '\nCHẾ ĐỘ CHUYÊN NGHIỆP:\n' +
+    '- "credit" — dòng ghi nguồn số liệu / ảnh ở chân slide (≤ 140 ký tự, vd "Nguồn: IAEA, 2024 · Ảnh minh hoạ do AI tạo"); ' +
+    'số liệu không chắc chắn thì ghi "số liệu minh hoạ". Đừng bỏ trống khi slide có số liệu hoặc ảnh.\n' +
+    (hasPhoto
+      ? '- "imagePrompt" — mô tả ảnh cần vẽ (≤ 280 ký tự, tiếng Anh, một câu): chủ thể cụ thể, bối cảnh, ánh sáng, ống kính; ' +
+        'phong cách ảnh chụp thật (documentary / editorial photograph), KHÔNG chữ, KHÔNG logo, KHÔNG người nổi tiếng có thật, ' +
+        'chủ thể nằm ở giữa hoặc lệch trái / phải đúng như "focusX", chừa vùng trống cho chữ.\n' +
+        (id === 'photo-compare' ? '- "image2Prompt" — mô tả ảnh thứ hai, cùng góc nhìn với "imagePrompt".\n' : '')
       : '')
   )
 }
@@ -578,11 +681,12 @@ export function pageSystemPrompt(
   plan: DeckPlan,
   slide: DeckPlanSlide,
   index: number,
+  pro = false,
 ): string {
   return (
     'Bạn là trợ lý AI của trình soạn bài trình bày tiếng Việt. Viết nội dung cho ĐÚNG MỘT slide. ' +
     'Chỉ trả về DUY NHẤT một JSON hợp lệ, không bọc markdown, không chữ ngoài JSON.\n\n' +
-    slideSpecBlock(slide) +
+    slideSpecBlock(slide, pro) +
     (GRAPHIC_LAYOUTS.has(slide.layout) ? graphicBlock(plan, [slide]) : '') +
     deckContextBlock(plan) +
     'SLIDE CẦN VIẾT: ' + slideHeading(plan, slide, index)
@@ -593,10 +697,10 @@ export function pageSystemPrompt(
  * System prompt cho một nhóm slide liền nhau trong MỘT lần gọi: phần quy tắc, bối cảnh,
  * dàn ý và catalog đồ hoạ chỉ gửi một lần thay vì lặp lại cho từng slide (đỡ token).
  */
-export function batchSystemPrompt(plan: DeckPlan, indices: number[]): string {
+export function batchSystemPrompt(plan: DeckPlan, indices: number[], pro = false): string {
   const needsGraphic = indices.some((i) => GRAPHIC_LAYOUTS.has(plan.slides[i].layout))
   const specs = indices
-    .map((i) => `### SLIDE ${slideHeading(plan, plan.slides[i], i)}${slideSpecBlock(plan.slides[i])}`)
+    .map((i) => `### SLIDE ${slideHeading(plan, plan.slides[i], i)}${slideSpecBlock(plan.slides[i], pro)}`)
     .join('\n\n')
   return (
     'Bạn là trợ lý AI của trình soạn bài trình bày tiếng Việt. Viết nội dung cho ' +
@@ -657,7 +761,7 @@ export const READABLE_MIN = 1.9
 /** Chữ bị co quá mức này so với cỡ thiết kế thì coi là nhồi quá nhiều chữ. */
 const READABLE_SHRINK = 0.78
 /** Nhãn/số thứ tự nhỏ theo thiết kế, không tính. */
-const SMALL_BY_DESIGN = /kicker|index|mark|author|-title$/
+const SMALL_BY_DESIGN = /kicker|index|mark|author|^credit$|-title$/
 
 /**
  * Dựng thử slide bằng layout engine (hình học không phụ thuộc theme) và báo hộp
@@ -687,6 +791,18 @@ const newId = () => `ai-${Date.now().toString(36)}-${(seq++).toString(36)}`
 
 function contentOfPage(page: AiSlidePayload): SlideLayoutContent {
   return {
+    credit: page.credit,
+    value: page.value,
+    label: page.label,
+    focusX: page.focusX,
+    focusY: page.focusY,
+    imageCrop: page.imageCrop,
+    image2: page.image2,
+    image2Crop: page.image2Crop,
+    caption: page.caption,
+    caption2: page.caption2,
+    textPosition: page.textPosition,
+    bars: page.bars,
     title: page.title,
     kicker: page.kicker,
     subtitle: page.subtitle,
@@ -719,17 +835,32 @@ function contentOfPage(page: AiSlidePayload): SlideLayoutContent {
  * các phần tử của slide nên chữ người dùng đã sửa trong lúc chờ ảnh không mất;
  * layout không dựng được thì giữ nguyên slide.
  */
-export function withImage(slide: Slide, theme: DeckTheme, image: string): Slide {
+export function withImage(slide: Slide, theme: DeckTheme, image: string, slot: 'image' | 'image2' = 'image'): Slide {
   const layout = slide.layout
   if (!layout || !isLayoutId(layout)) return slide
-  const elements = composeLayout(theme, layout, { ...contentFromSlide(slide), image }, slide.tone)
-  return elements.length ? { ...slide, elements } : slide
+  const elements = composeLayout(theme, layout, { ...contentFromSlide(slide), [slot]: image }, slide.tone)
+  return elements.length ? { ...slide, elements: elements.map(el => {
+    const before = slide.elements.find(entry => entry.id === el.id)
+    return el.type === 'text' && before?.type === 'text' && (hasTextEffects(before) || before.fontFamily)
+      ? { ...el, ...textEffectsOf(before), ...(before.fontFamily ? { fontFamily: before.fontFamily } : {}) }
+      : el
+  }) } : slide
 }
 
 /** Dựng một slide AI bằng layout engine; layout lạ rơi về title + bullets. */
 export function slideFromAi(page: AiSlidePayload, theme: ResolvedTheme): Slide {
-  const content = contentOfPage(page)
   const layout = page.layout?.trim()
+  const content = contentOfPage(page)
+  if (layout && isEditorialLayout(layout)) {
+    const { image, image2, imageCrop, image2Crop } = content
+    Object.assign(content, contentOfPage(sanitizeSlide(page, layout)), {
+      image: typeof image === 'string' ? image : undefined,
+      image2: typeof image2 === 'string' ? image2 : undefined,
+      imageCrop,
+      image2Crop,
+    })
+  }
+  content.credit = cleanSingleLine(content.credit, MAX_CREDIT)
   const tone = isTone(page.tone) ? page.tone : defaultTone(layout ?? 'bullets')
   const composed =
     layout && isLayoutId(layout) ? composeLayout(theme, layout, content, tone) : []
@@ -742,7 +873,7 @@ export function slideFromAi(page: AiSlidePayload, theme: ResolvedTheme): Slide {
       layout,
       tone,
       ...(page.decorKit ? { decorKit: page.decorKit } : {}),
-      elements: composed,
+      elements: page.textStyles ? composed.map(el => el.type === 'text' && Object.hasOwn(page.textStyles!, el.id) ? { ...el, ...sanitizeTextStyle(page.textStyles![el.id]) } : el) : composed,
     }
   }
 
@@ -788,6 +919,7 @@ export function slideFromAi(page: AiSlidePayload, theme: ResolvedTheme): Slide {
       src: el.src,
       rows: el.rows,
       chart: el.chart,
+      ...((el.type ?? 'text') === 'text' ? sanitizeTextStyle(el) : {}),
     })),
   ]
   return {
@@ -795,7 +927,7 @@ export function slideFromAi(page: AiSlidePayload, theme: ResolvedTheme): Slide {
     background: theme.bg,
     transition: 'none',
     notes: page.notes?.join('\n') || undefined,
-    elements,
+    elements: withSlideCredit(elements, creditElement(content.credit, theme.muted)),
   }
 }
 

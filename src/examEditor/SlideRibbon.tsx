@@ -94,6 +94,8 @@ import {
   type RibbonTabDef,
 } from './Layout'
 import { useAnchoredPopover, popoverStyle } from './useAnchoredPopover'
+import { previewSlideFonts, primaryFont, SLIDE_FONTS } from '@/lib/slideFonts'
+import { SlideTextEffectsTool } from './SlideTextEffectsTool'
 import type { Deck, DeckFooter, Slide, SlideElement, SlideElType, SlideTone } from '@/store/docs'
 import {
   SLIDE_SYMBOLS,
@@ -230,7 +232,12 @@ const TRANSITIONS: Array<{ id: NonNullable<Slide['transition']>; label: string }
   { id: 'zoom', label: 'Thu phóng' },
 ]
 
-const FONT_FAMILIES = ['Be Vietnam Pro', 'Times New Roman', 'Arial', 'Georgia', 'JetBrains Mono Variable']
+const FONT_OPTIONS = ['Tiêu đề đậm', 'Serif', 'Sans', 'Viết tay', 'Mono', 'Hệ thống'].flatMap(group =>
+  SLIDE_FONTS.filter(font => font.group === group).map(font => ({
+    value: font.family, label: font.label, group: font.group,
+    render: <span style={{ fontFamily: font.family }}>{font.label}</span>,
+  })),
+)
 const FONT_SIZES = [12, 14, 16, 18, 20, 24, 28, 32, 36, 44, 54]
 /** 1cqw ≈ 9.6px ở khung 960px, 1pt ≈ 1.333px → 1pt ≈ 0.139cqw */
 const PT_TO_CQW = 0.139
@@ -607,15 +614,12 @@ export function SlideRibbon(props: SlideRibbonProps) {
               width={132}
               ariaLabel="Phông chữ"
               value={
-                selected?.fontFamily ??
-                (selected && selected.variant !== 'body' ? deck.theme.fontHeading : deck.theme.fontBody)
+                primaryFont(selected?.fontFamily ??
+                (selected && selected.variant !== 'body' ? deck.theme.fonts?.heading ?? deck.theme.fontHeading : deck.theme.fonts?.body ?? deck.theme.fontBody))
               }
               disabled={!isText}
-              options={FONT_FAMILIES.map((f) => ({
-                value: f,
-                label: f,
-                render: <span style={{ fontFamily: f }}>{f}</span>,
-              }))}
+              options={FONT_OPTIONS}
+              onOpen={previewSlideFonts}
               onPick={(fontFamily) => onUpdateSelected({ fontFamily })}
             />
             <Dropdown
@@ -783,6 +787,7 @@ export function SlideRibbon(props: SlideRibbonProps) {
                 }}
               />
             </Anchored>
+            <SlideTextEffectsTool el={selected ?? undefined} accent={deck.theme.accent} onUpdate={onUpdateSelected} ribbon />
             <button
               type="button"
               className="rb-icon"
@@ -2061,7 +2066,7 @@ export function SlideRibbon(props: SlideRibbonProps) {
           onDownload={onDownload ?? (() => {})}
           downloadHint=".pptx"
           extra={{ label: 'Xuất PDF', hint: 'Mở hộp thoại in → chọn Lưu thành PDF', onClick: onExportPdf }}
-          downloadNote="File .pptx tạm dùng phông Arial thay phông của bài giảng."
+          downloadNote="Máy thiếu phông sẽ dùng phông thay thế."
         />
       ) : null}
       <span className="qa-sep" aria-hidden="true" />
@@ -2093,7 +2098,7 @@ export function SlideRibbon(props: SlideRibbonProps) {
                 onDownload={onDownload ?? (() => {})}
                 downloadHint=".pptx"
                 extra={{ label: 'Xuất PDF', hint: 'Mở hộp thoại in → chọn Lưu thành PDF', onClick: onExportPdf }}
-                downloadNote="File .pptx tạm dùng phông Arial thay phông của bài giảng."
+                downloadNote="Máy thiếu phông sẽ dùng phông thay thế."
               />
             ) : null}
             {onSave && (

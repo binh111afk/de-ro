@@ -5,9 +5,10 @@
 import type { CSSProperties } from 'react'
 import { Check } from 'lucide-react'
 import { cn } from '@/lib/cn'
-import { SLIDE_DESIGNS, type SlideDesign } from '@/lib/slideDesigns'
+import { SLIDE_DESIGNS, designTheme, type SlideDesign } from '@/lib/slideDesigns'
+import { previewSlideFont, slideFontStack } from '@/lib/slideFonts'
 import { skinById } from '@/lib/slideSkins'
-import { DECK_THEMES, normalizeTheme, themeById } from '@/lib/slideTheme'
+import { DECK_THEMES, normalizeTheme } from '@/lib/slideTheme'
 
 interface SlideDesignGridProps {
   activeDesignId?: string
@@ -28,7 +29,7 @@ interface DesignSwatch {
 const DEFAULT_THEME = normalizeTheme(DECK_THEMES[0])
 
 const SWATCHES: DesignSwatch[] = SLIDE_DESIGNS.map((design) => {
-  const base = themeById(design.themeId) ?? DECK_THEMES[0]
+  const base = normalizeTheme(designTheme(design))
   const skin = skinById(design.id)
   const bg = skin?.getBackground ? skin.getBackground(base, 'theme') : base.bg
   return {
@@ -37,7 +38,7 @@ const SWATCHES: DesignSwatch[] = SLIDE_DESIGNS.map((design) => {
     fg: base.fg,
     accent: base.accent,
     secondary: base.secondary,
-    headingFont: skin?.fonts.heading ?? base.fontHeading ?? 'Inter, sans-serif',
+    headingFont: base.fontHeading,
   }
 })
 
@@ -104,6 +105,8 @@ export function SlideDesignGrid({
               aria-pressed={isActive}
               data-tip={design.description}
               onClick={() => onSelect(design)}
+              onPointerEnter={() => void previewSlideFont(headingFont)}
+              onFocus={() => void previewSlideFont(headingFont)}
               className={cn('slide-design-card', isActive && 'active')}
             >
               <span
@@ -120,7 +123,7 @@ export function SlideDesignGrid({
               >
                 <span
                   className="slide-design-card__aa"
-                  style={{ fontFamily: headingFont, color: fg }}
+                  style={{ fontFamily: slideFontStack(headingFont), color: fg }}
                 >
                   Aa
                 </span>

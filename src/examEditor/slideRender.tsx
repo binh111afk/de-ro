@@ -1,5 +1,5 @@
 /** Slide — hiển thị phần tử (chữ tự co, hình, biểu đồ, ảnh thu nhỏ slide). */
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useId, useLayoutEffect, useReducer, useRef, useState } from 'react'
 import { parseSlideVideo } from '@/lib/slideVideo'
 import { slideBgStyle } from '@/lib/slideBackground'
 import { FRAME_PLACEHOLDER, photoFrameClip, photoFrameRadius, shapeClipOf } from '@/lib/slideShapes'
@@ -8,6 +8,8 @@ import { graphicById } from '@/lib/slideGraphics'
 import { GraphicFill, SlideIcon } from './LazyAssets'
 import { hasRich } from '@/lib/slideMath'
 import { shouldShowSlideFooter } from '@/lib/slideFormat'
+import { gradientLine, textArcLayout } from '@/lib/slideTextEffects'
+import { ensureFonts, slideFontStack } from '@/lib/slideFonts'
 import { cn } from '@/lib/cn'
 import type { DeckFooter, Slide, SlideElement } from '@/store/docs'
 import { HtmlSlideFrame } from './HtmlSlide'
@@ -58,6 +60,7 @@ export function SlideThumb({
   footer?: DeckFooter
   slideIndex?: number
 }) {
+  useEffect(() => { if (!slide.html) void ensureFonts({ theme, slides: [slide] }) }, [slide, theme])
   if (slide.html) return <HtmlSlideFrame html={slide.html} />
   return (
     <div
@@ -112,7 +115,9 @@ export function FitText({
   highlight,
   baseSize,
   style,
+  effects,
 }: {
+  effects?: SlideElement
   children: React.ReactNode
   /** HTML đã vẽ công thức (KaTeX) — có thì dùng thay cho `children` */
   html?: string
@@ -155,13 +160,35 @@ export function FitText({
       stopFonts()
       ro.disconnect()
     }
-  }, [children, html, baseSize])
+  }, [children, html, baseSize, style.fontFamily, style.fontWeight, style.fontStyle, style.letterSpacing])
 
   const box: React.CSSProperties = {
     ...style,
     fontSize: `${size}cqw`,
     whiteSpace: 'pre-wrap',
     overflow: 'hidden',
+  }
+  const gradient = effects?.textGradient
+  const ink: React.CSSProperties = gradient ? {
+    backgroundImage: `linear-gradient(${gradient.angle}deg, ${gradient.from}, ${gradient.to})`,
+    backgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+  } : {}
+  const stroke = effects?.textStroke
+  const shadow = effects?.textShadow
+  if (stroke) {
+    ink.WebkitTextStroke = `${stroke.width / 10}cqw ${stroke.color}`
+    ink.paintOrder = 'stroke fill'
+  }
+  if (shadow) {
+    const offset = `${shadow.x / 10}cqw ${shadow.y / 10}cqw ${shadow.blur / 10}cqw ${shadow.color}`
+    if (gradient) ink.filter = `drop-shadow(${offset})`
+    else ink.textShadow = offset
+  }
+  if (stroke || gradient || shadow) {
+    const content = html === undefined ? children : <span dangerouslySetInnerHTML={{ __html: html }} />
+    const hi = highlightSpanStyle(highlight)
+    return <div ref={ref} style={box}><div style={ink}>{hi ? <span style={hi}>{content}</span> : content}</div></div>
   }
   const hi = highlightSpanStyle(highlight)
   // Công thức (hoặc tô sáng) nằm trong một khối div bọc ngoài để span inline ôm sát
@@ -205,14 +232,7 @@ export function elTransform(el: SlideElement): string | undefined {
 }
 
 /** font của theme đã là CSS stack đầy đủ, font người dùng chọn chỉ là tên */
-export function fontStack(font: string): string {
-  if (font.includes(',')) return font
-  if (font === 'Lora') return 'Lora, Georgia, serif'
-  if (font === 'JetBrains Mono Variable') return "'JetBrains Mono Variable', ui-monospace, monospace"
-  if (font === 'Patrick Hand') return "'Patrick Hand', 'Nunito', sans-serif"
-  if (font === 'Space Grotesk') return "'Space Grotesk', 'Be Vietnam Pro', sans-serif"
-  return `${font}, sans-serif`
-}
+export const fontStack = slideFontStack
 
 /** Đường nối cong (connector): S-curve tiếp tuyến ngang trong hộp phần tử; lật dọc bằng `flipY`. */
 export function ConnectorSvg({ el, theme }: { el: SlideElement; theme: ResolvedTheme }) {
@@ -312,11 +332,56 @@ export function shapeInner(el: SlideElement, theme: ResolvedTheme): React.ReactN
   return <div style={{ position: 'absolute', inset: border, background: el.fill ?? theme.accent, clipPath: clip }} />
 }
 
+function CurvedText({ el, family, color, style }: { el: SlideElement; family: string; color: string; style: React.CSSProperties }) {
+  const id = useId()
+  const [, refresh] = useReducer(n => n + 1, 0)
+  useEffect(() => refitOnFonts(refresh), [family])
+  const arc = textArcLayout(el, family)
+  if (!arc) return null
+  const shadow = el.textShadow
+  const gradient = el.textGradient
+  const [x1, y1, x2, y2] = gradientLine(arc.w, arc.h, gradient?.angle ?? 0)
+  const gx = (x: number) => (x - arc.x) / arc.scale
+  const gy = (y: number) => (y - arc.y) / arc.scale
+  return (
+    <svg role="img" aria-label={arc.text} viewBox={`0 0 ${arc.w} ${arc.h}`} style={{ ...style, display: 'block', overflow: 'hidden' }}>
+      <defs>
+        <path id={id} d={arc.path} />
+        {gradient && <linearGradient id={`${id}-ink`} gradientUnits="userSpaceOnUse" x1={gx(x1)} y1={gy(y1)} x2={gx(x2)} y2={gy(y2)}>
+          <stop stopColor={gradient.from} />
+          <stop offset="1" stopColor={gradient.to} />
+        </linearGradient>}
+      </defs>
+      <g transform={`translate(${arc.x} ${arc.y}) scale(${arc.scale})`}>
+        <text
+          fill={gradient ? `url(#${id}-ink)` : color}
+          stroke={el.textStroke?.color}
+          strokeWidth={el.textStroke?.width ?? 0}
+          strokeLinejoin="round"
+          paintOrder="stroke fill"
+          textAnchor="middle"
+          fontFamily={family}
+          fontWeight={arc.weight}
+          fontStyle={el.fontStyle}
+          fontSize={arc.size}
+          letterSpacing={arc.spacing}
+          textDecoration={el.textDecoration}
+          style={{ filter: shadow ? `drop-shadow(${shadow.x}px ${shadow.y}px ${shadow.blur}px ${shadow.color})` : undefined }}
+        >
+          <textPath href={`#${id}`} startOffset="50%">{arc.text}</textPath>
+        </text>
+      </g>
+    </svg>
+  )
+}
+
 /** Chữ nằm trong hình khối (căn giữa, tự co cho vừa); màu mặc định đọc được trên màu tô. */
 export function ShapeText({ el, theme }: { el: SlideElement; theme: ResolvedTheme }) {
   if (!el.text?.trim() || el.shape === 'line') return null
+  if (el.textArc) return <CurvedText el={{ ...el, w: el.w * 0.76, h: el.h * 0.8, align: el.align ?? 'center' }} family={fontStack(el.fontFamily ?? theme.fonts.body)} color={el.textColor ?? readableTextOn(el.fill ?? theme.accent)} style={{ position: 'absolute', top: '10%', left: '12%', width: '76%', height: '80%' }} />
   return (
     <FitText
+      effects={el}
       html={hasRich(el.text) ? slideMathHtml(el.text) : undefined}
       baseSize={el.fontSize ?? 2.4}
       style={{
@@ -377,8 +442,8 @@ export function VideoView({ el, theme, live, style }: { el: SlideElement; theme:
 }
 
 /** Style của `<img>` bên trong khung ảnh: có `crop` thì phóng to + dời đúng vùng cắt, không thì `cover`. */
-export function imageImgStyle(crop?: SlideElement['crop']): React.CSSProperties {
-  if (!crop) return { width: '100%', height: '100%', objectFit: 'cover' }
+export function imageImgStyle(crop?: SlideElement['crop'], position?: SlideElement['imagePosition']): React.CSSProperties {
+  if (!crop) return { width: '100%', height: '100%', objectFit: 'cover', objectPosition: position ? `${position.x}% ${position.y}%` : undefined }
   const visW = Math.max(10, 100 - crop.l - crop.r)
   const visH = Math.max(10, 100 - crop.t - crop.b)
   return {
@@ -409,8 +474,8 @@ export function imageStyleParts(el: SlideElement, theme: ResolvedTheme) {
   return { clip, frameRadius, borderW, borderColor, borderStyle, borderRadius, cssBorder, polygonBorder, shadowFilter }
 }
 
-export function SlideElView({ el, theme, revealStep, live }: { el: SlideElement; theme: ResolvedTheme; revealStep?: number; live?: boolean }) {
-  const style: React.CSSProperties = {
+export function SlideElView({ el, theme, revealStep, live, embedded }: { el: SlideElement; theme: ResolvedTheme; revealStep?: number; live?: boolean; embedded?: boolean }) {
+  const style: React.CSSProperties = embedded ? { position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' } : {
     position: 'absolute',
     left: `${el.x}%`,
     top: `${el.y}%`,
@@ -426,8 +491,12 @@ export function SlideElView({ el, theme, revealStep, live }: { el: SlideElement;
     // trình chiếu: mỗi dòng là một khối riêng để hiện lần lượt (bố cục không đổi vì chỉ đổi opacity/translate)
     const lines = el.lineStep && revealStep !== undefined ? (el.text ?? '').split('\n') : null
     const lineHi = highlightSpanStyle(el.highlight)
+    if (el.textArc && el.text?.trim()) {
+      return <CurvedText el={el} family={fontStack(el.fontFamily ?? (isBody ? theme.fonts.body : theme.fonts.heading))} color={el.textColor ?? theme.fg} style={{ ...style, ...(lines ? revealStyle((el.lineStep ?? 0) <= (revealStep ?? 0), el.anim, el.animMs) : {}), transform: style.transform, background: el.fill, borderRadius: el.fill ? '0.6cqw' : undefined }} />
+    }
     return (
       <FitText
+        effects={el}
         // công thức `$...$` vẽ bằng KaTeX (HTML do KaTeX sinh, không phải input thô)
         html={!lines && hasRich(el.text) ? slideMathHtml(el.text ?? '') : undefined}
         highlight={lines ? undefined : el.highlight}
@@ -530,7 +599,7 @@ export function SlideElView({ el, theme, revealStep, live }: { el: SlideElement;
         }}
       >
         {el.src ? (
-          <img src={el.src} alt="" style={imageImgStyle(el.crop)} />
+          <img src={el.src} alt="" style={imageImgStyle(el.crop, el.imagePosition)} />
         ) : parts.clip ? (
           <img src={FRAME_PLACEHOLDER} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         ) : (
@@ -845,7 +914,7 @@ export function AutoFitText({
       stopFonts()
       ro.disconnect()
     }
-  }, [value, baseSize, showFit, middle])
+  }, [value, baseSize, showFit, middle, fontFamily, fontStyle, weight, letterSpacing])
 
   if (showFit) {
     return (

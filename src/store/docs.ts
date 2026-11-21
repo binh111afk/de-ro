@@ -48,6 +48,8 @@ export interface SlideElement {
   src?: string
   /** ảnh: vùng cắt, phần trăm cắt bớt mỗi cạnh của ảnh gốc (0–90); thiếu = không cắt */
   crop?: { l: number; t: number; r: number; b: number }
+  /** Vị trí ảnh trong khung cover (0–100%); crop thủ công được ưu tiên. */
+  imagePosition?: { x: number; y: number }
   /** icon semantic trong catalog slideAssets — optional để deck cũ không đổi */
   assetId?: string
   /** id đồ hoạ vector trong catalog slideGraphics (chặng 2) */
@@ -66,6 +68,12 @@ export interface SlideElement {
   valign?: 'top' | 'middle'
   fontWeight?: number
   fontFamily?: string
+  /** Kích thước viền/bóng tính theo px trên slide rộng 1000 px. */
+  textStroke?: { width: number; color: string }
+  textShadow?: { x: number; y: number; blur: number; color: string }
+  textGradient?: { from: string; to: string; angle: number }
+  /** Độ mở của cung tròn, dương cong lên, âm cong xuống. */
+  textArc?: number
   textColor?: string
   fontStyle?: 'normal' | 'italic'
   textDecoration?: 'none' | 'underline' | 'line-through'

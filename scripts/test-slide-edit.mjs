@@ -3,9 +3,9 @@
  * Chạy: npm run test:slide-edit
  */
 import assert from 'node:assert/strict'
+import { sanitizeSlide, slideFromAi } from '../src/lib/slideAi.ts'
 import { applyDeckDesign, applyEdits, looksLikeEdit, parseEditCommands } from '../src/lib/slideEdit.ts'
 import { designById } from '../src/lib/slideDesigns.ts'
-import { slideFromAi } from '../src/lib/slideAi.ts'
 import { DECK_THEMES, normalizeTheme } from '../src/lib/slideTheme.ts'
 import { applyTextFormat, captureTextFormat, clearTextFormatting, normalizeSlideHref, shouldShowSlideFooter } from '../src/lib/slideFormat.ts'
 import { buildDeckPptx } from '../src/lib/exportDeck.ts'
@@ -47,7 +47,10 @@ assert.equal(parseEditCommands('{"action":"edit","commands":[{"op":"set_tone","t
   assert.ok(t.fonts.body.includes('Arial'))
   assert.equal(r.deck.slides.length, 3)
   assert.ok(r.deck.slides[0].elements.length > 0, 'slide được dựng lại')
-  const bad = applyEdits(deck(), [{ op: 'set_fonts', heading: 'Georgia' }])
+  const newFonts = applyEdits(deck(), [{ op: 'set_fonts', heading: 'barlow-condensed', body: 'Source Serif 4' }])
+  assert.match(newFonts.deck.theme.fontHeading, /Barlow Condensed/)
+  assert.match(newFonts.deck.theme.fontBody, /Source Serif 4/)
+  const bad = applyEdits(deck(), [{ op: 'set_fonts', heading: 'Phông không tồn tại' }])
   assert.equal(bad.changed, false, 'Georgia làm vỡ dấu → không hỗ trợ')
 }
 
@@ -278,6 +281,10 @@ assert.equal(normalizeSlideHref('   '), null)
     textColor: '#1d4ed8',
     fontFamily: 'Georgia',
     highlight: '#fde047',
+    textStroke: { width: 2, color: '#111111' },
+    textShadow: { x: 2, y: 3, blur: 4, color: '#111111' },
+    textGradient: { from: '#112233', to: '#445566', angle: 45 },
+    textArc: -90,
     fontSize: 4,
     align: 'right',
   }
@@ -307,6 +314,28 @@ assert.equal(normalizeSlideHref('   '), null)
   assert.equal(painted.letterSpacing, undefined)
   assert.equal(painted.lineHeight, undefined)
   assert.equal(painted.text, 'Đích')
+  const cleared = { ...painted, ...clearTextFormatting(painted) }
+  for (const key of ['textStroke', 'textShadow', 'textGradient', 'textArc']) {
+    assert.deepEqual(painted[key], src[key])
+    assert.equal(cleared[key], undefined)
+  }
+}
+
+{
+  const page = sanitizeSlide({
+    title: 'Ánh sáng',
+    textStyles: {
+      title: { fontFamily: 'playfair-display', textArc: 190, textStroke: { width: 2, color: '#123456' } },
+      subtitle: { textGradient: { from: 'url(bad)', to: '#000000', angle: 50 } },
+    },
+  }, 'title')
+  assert.deepEqual(page.textStyles, {
+    title: { fontFamily: 'Playfair Display', textArc: 180, textStroke: { width: 2, color: '#123456' } },
+    subtitle: {},
+  })
+  const title = slideFromAi(page, normalizeTheme(deck().theme)).elements.find(el => el.id === 'title')
+  assert.equal(title.textArc, 180)
+  assert.equal(title.fontFamily, 'Playfair Display')
 }
 
 // --- điều kiện hiện chân trang & xuất PPTX có gạch ngang, tô sáng, liên kết, chân trang
@@ -343,6 +372,10 @@ assert.equal(normalizeSlideHref('   '), null)
             h: 20,
             text: 'Chữ gạch ngang tô sáng',
             textDecoration: 'line-through',
+            fontFamily: 'Oswald, Arial',
+            textStroke: { width: 2, color: '#223344' },
+            textShadow: { x: 3, y: 4, blur: 0, color: '#445566' },
+            textGradient: { from: '#203040', to: '#405060', angle: 90 },
             highlight: '#fef08a',
             href: 'https://vi.wikipedia.org/',
           },
@@ -359,6 +392,10 @@ assert.equal(normalizeSlideHref('   '), null)
   const s2Xml = await zip.file('ppt/slides/slide2.xml').async('string')
   const s2Rels = await zip.file('ppt/slides/_rels/slide2.xml.rels').async('string')
   assert.ok(!s1Xml.includes('Trường THPT A'), 'skipTitle phải ẩn chân trang ở slide đầu')
+  assert.match(s2Xml, /<a:rPr\b[^>]*>(?:(?!<\/a:rPr>)[\s\S])*?<a:outerShdw blurRad="0" dist="45720"/, 'bóng nằm ở run chữ PPTX')
+  assert.match(s2Xml, /<a:ln w="\d+"><a:solidFill><a:srgbClr val="223344"/, 'viền chữ PPTX')
+  assert.match(s2Xml, /<a:srgbClr val="304050"/, 'màu giữa gradient')
+  assert.match(s2Xml, /<a:latin typeface="Oswald"/, 'giữ tên phông PPTX')
   assert.ok(s2Xml.includes('strike="sngStrike"'), 'PPTX phải có gạch ngang strike')
   assert.ok(s2Xml.includes('<a:highlight><a:srgbClr val="FEF08A"/></a:highlight>'), 'PPTX phải có highlight FEF08A')
   assert.ok(s2Xml.includes('<a:hlinkClick'), 'PPTX phải gắn hlinkClick')

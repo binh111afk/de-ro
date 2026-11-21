@@ -11,9 +11,11 @@ import { normalizeSlideHref, shouldShowSlideFooter } from './slideFormat'
 import { parseSlideVideo } from './slideVideo'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
-import type { Deck } from '@/store/docs'
+import type { Deck, SlideElement } from '@/store/docs'
 import { elementHeight } from './slideText'
-import { readableTextOn } from './slideTheme'
+import { mixHex, normalizeTheme, readableTextOn } from './slideTheme'
+import { ensureFonts, primaryFont, slideFontStack } from './slideFonts'
+import { curvedTextPng } from './slideTextEffects'
 import { slideIconById } from './slideIconLibrary'
 import { graphicMarkup, loadGraphics } from './slideGraphics'
 import { firstColor, gradientSvg } from './slideBackground'
@@ -26,26 +28,33 @@ const hex = (value: string | undefined, fallback = 'FFFFFF') => {
   return /^[0-9a-f]{6}$/i.test(v) ? v.toUpperCase() : fallback
 }
 
-/** Phông có sẵn trên Windows/Mac cùng PowerPoint; phông web (Be Vietnam Pro…) không nằm trong .pptx nên đổi sang Arial. */
-const SAFE_FONTS = ['Times New Roman', 'Arial', 'Georgia', 'Tahoma', 'Verdana', 'Segoe UI', 'Calibri', 'Courier New']
-/** font web không có sẵn trong PowerPoint → font hệ thống gần giống */
-const WEB_FONT_FALLBACK: Record<string, string> = {
-  nunito: 'Arial',
-  lora: 'Georgia',
-  'be vietnam pro': 'Arial',
-  'patrick hand': 'Comic Sans MS',
-  'space grotesk': 'Arial',
-  'jetbrains mono variable': 'Courier New',
+export const pptxFont = (stack: string | undefined) => {
+  const face = primaryFont(stack)
+  return face === 'JetBrains Mono Variable' ? 'JetBrains Mono' : face || 'Arial'
 }
-const pptxFont = (stack: string | undefined) => {
-  // lấy font đầu tiên trong chuỗi mà PowerPoint chắc có (font web như Nunito/Lora → font dự phòng kế tiếp)
-  for (const part of (stack ?? '').split(',')) {
-    const name = part.replace(/['"]/g, '').trim().toLowerCase()
-    const hit = SAFE_FONTS.find((f) => f.toLowerCase() === name)
-    if (hit) return hit
-    if (WEB_FONT_FALLBACK[name]) return WEB_FONT_FALLBACK[name]
+
+function pptxTextEffects(el: SlideElement, fallback: string) {
+  const stroke = el.textStroke
+  const gradient = el.textGradient
+  return {
+    color: hex(gradient ? mixHex(gradient.from, gradient.to, 0.5) : el.textColor ?? fallback),
+    ...(stroke?.width ? { outline: { color: hex(stroke.color), size: stroke.width * 0.72 } } : {}),
   }
-  return 'Arial'
+}
+
+/** PptxGenJS đặt shadow của addText lên cả hộp. DrawingML hỗ trợ bóng riêng từng run. */
+function applyRunShadows(xml: string, shadows: Map<string, NonNullable<SlideElement['textShadow']>>): string {
+  if (!shadows.size) return xml
+  return xml.replace(/<p:sp>[\s\S]*?<\/p:sp>/g, shape => {
+    const key = shape.match(/<p:cNvPr\b[^>]*\bname="(slide-text-shadow-\d+)"/)?.[1]
+    const shadow = key && shadows.get(key)
+    if (!shadow) return shape
+    const blur = Math.round(Math.max(0, shadow.blur) * 9144)
+    const offset = Math.round(Math.hypot(shadow.x, shadow.y) * 9144)
+    const angle = Math.round((Math.atan2(shadow.y, shadow.x) * 180 / Math.PI + 360) % 360 * 60000)
+    const effect = `<a:effectLst><a:outerShdw blurRad="${blur}" dist="${offset}" dir="${angle}" algn="ctr" rotWithShape="0"><a:srgbClr val="${hex(shadow.color, '000000')}" /></a:outerShdw></a:effectLst>`
+    return shape.replace(/(<a:rPr\b[^>]*>(?:(?!<\/a:rPr>)[\s\S])*?)(<a:latin\b)/g, (_match, props, latin) => props + effect + latin)
+  })
 }
 
 /** cỡ chữ của deck là cqw (1% bề rộng); slide 16:9 rộng 10in → 1cqw = 7,2pt */
@@ -133,7 +142,7 @@ async function renderImageForPptx(
   defaultBorderColor: string,
 ): Promise<string> {
   if (typeof document === 'undefined') return dataUrl
-  const needsCanvas = Boolean(el.crop || el.shape || (el.radius !== undefined ? el.radius > 0 : true) || (el.border ?? 0) > 0)
+  const needsCanvas = Boolean(el.crop || el.imagePosition || el.shape || (el.radius !== undefined ? el.radius > 0 : true) || (el.border ?? 0) > 0)
   if (!needsCanvas) return dataUrl
   try {
     const img = await new Promise<HTMLImageElement>((resolve, reject) => {
@@ -172,10 +181,10 @@ async function renderImageForPptx(
       const boxRatio = cw / ch
       if (imgRatio > boxRatio) {
         sw = nh * boxRatio
-        sx = (nw - sw) / 2
+        sx = (nw - sw) * (el.imagePosition?.x ?? 50) / 100
       } else if (boxRatio > imgRatio) {
         sh = nw / boxRatio
-        sy = (nh - sh) / 2
+        sy = (nh - sh) * (el.imagePosition?.y ?? 50) / 100
       }
     }
     ctx.drawImage(img, sx, sy, sw, sh, 0, 0, cw, ch)
@@ -216,10 +225,18 @@ export async function exportDeckPptx(deck: Deck): Promise<void> {
 
 export async function buildDeckPptx(deck: Deck): Promise<ArrayBuffer> {
   if (deck.format === 'html') throw new Error('Bài giảng HTML chỉ trình chiếu trên web, không xuất PowerPoint được.')
-  const [{ default: PptxGenJS }] = await Promise.all([import('pptxgenjs'), loadGraphics()])
+  const theme = normalizeTheme(deck.theme)
+  const [{ default: PptxGenJS }] = await Promise.all([import('pptxgenjs'), loadGraphics(), ensureFonts({ theme, slides: deck.slides })])
   const pptx = new PptxGenJS()
   pptx.layout = 'LAYOUT_16x9'
   pptx.title = deck.title
+  const shadows = new Map<string, NonNullable<SlideElement['textShadow']>>()
+  const shadowName = (el: SlideElement) => {
+    if (!el.textShadow) return undefined
+    const name = `slide-text-shadow-${shadows.size}`
+    shadows.set(name, el.textShadow)
+    return name
+  }
 
   const slides = deck.slides.length > 0 ? deck.slides : [{ id: 'blank', background: '#ffffff', elements: [] }]
   for (const [slideIndex, source] of slides.entries()) {
@@ -236,14 +253,25 @@ export async function buildDeckPptx(deck: Deck): Promise<ArrayBuffer> {
 
     const elements = [...readableElements(source, deck.theme)].sort((a, b) => (a.zIndex ?? 0) - (b.zIndex ?? 0))
     for (const el of elements) {
+      const inheritedFace = el.variant === 'body' ? theme.fontBody : theme.fontHeading
       const box = {
         x: pct(el.x),
         y: pct(el.y),
         w: pct(el.w),
-        h: pct(el.type === 'text' ? elementHeight(el) : el.h),
+        h: pct(el.type === 'text' ? elementHeight(el, inheritedFace) : el.h),
       }
       const rotate = el.rotation ?? 0
+      const gradientFill = el.type === 'shape' && el.fill?.startsWith('linear-gradient(') ? gradientSvg(el.fill) : null
       if (el.type === 'text') {
+        const face = el.fontFamily ?? inheritedFace
+        const png = el.textArc ? curvedTextPng(el, slideFontStack(face), el.textColor ?? theme.fg) : undefined
+        if (png) {
+          const fill = el.fill
+          if (fill) slide.addShape('rect', { ...box, rotate, fill: { color: hex(fill) }, line: { type: 'none' } })
+          const href = el.href && normalizeSlideHref(el.href)
+          slide.addImage({ ...box, data: png, rotate, flipH: el.flipX, flipV: el.flipY, hyperlink: href ? { url: href } : undefined, altText: el.text })
+          continue
+        }
         const baseBold = (el.fontWeight ?? 400) >= 600
         const size = pt(el.fontSize ?? (el.variant === 'body' ? 2.4 : 3.6))
         const align = el.align ?? 'left'
@@ -290,14 +318,15 @@ export async function buildDeckPptx(deck: Deck): Promise<ArrayBuffer> {
         }
         slide.addText(runs.length ? runs : '', {
           ...box,
-          h: pct(centered ? el.h : elementHeight(el)),
+          h: pct(centered ? el.h : elementHeight(el, inheritedFace)),
           rotate,
           fontSize: size,
           // khoảng cách dòng cố định theo pt, khớp line-height của bản xem (PowerPoint mặc định là 1,0)
           lineSpacing: Math.round(size * (el.lineHeight ?? 1.25) * 10) / 10,
           charSpacing: el.letterSpacing ? Math.round(el.letterSpacing * size * 10) / 10 : undefined,
-          fontFace: pptxFont(el.fontFamily ?? (el.variant === 'body' ? deck.theme.fontBody : deck.theme.fontHeading)),
-          color: hex(el.textColor ?? deck.theme.fg),
+          fontFace: pptxFont(face),
+          objectName: shadowName(el),
+          ...pptxTextEffects(el, theme.fg),
           bold: (el.fontWeight ?? 400) >= 600,
           italic: el.fontStyle === 'italic',
           underline,
@@ -341,6 +370,8 @@ export async function buildDeckPptx(deck: Deck): Promise<ArrayBuffer> {
           flipV: el.flipY,
           line: { color: hex(el.borderColor ?? deck.theme.accent), width: (el.border ?? 3) * 0.75 },
         } as never)
+      } else if (gradientFill) {
+        slide.addImage({ ...box, rotate, data: `data:image/svg+xml;base64,${btoa(gradientFill)}` })
       } else if (el.type === 'shape' && el.shape === 'line') {
         // đường thẳng: chạy dọc giữa hộp; đầu mũi tên là thuộc tính của nét
         const arrow = el.lineArrow ?? 'none'
@@ -376,6 +407,13 @@ export async function buildDeckPptx(deck: Deck): Promise<ArrayBuffer> {
           continue
         }
         if (el.text?.trim()) {
+          const curvedBox = { ...el, w: el.w * 0.76, h: el.h * 0.8, align: el.align ?? 'center' as const }
+          const png = el.textArc ? curvedTextPng(curvedBox, slideFontStack(el.fontFamily ?? theme.fontBody), el.textColor ?? readableTextOn(el.fill ?? theme.accent)) : undefined
+          if (png) {
+            slide.addShape(kind, options as never)
+            slide.addImage({ data: png, x: pct(el.x + el.w * 0.12), y: pct(el.y + el.h * 0.1), w: pct(curvedBox.w), h: pct(curvedBox.h), rotate, flipH: el.flipX, flipV: el.flipY, altText: el.text })
+            continue
+          }
           // hình có chữ: PowerPoint giữ chữ bên trong hình (sửa được), không phải hộp chữ chồng lên
           const plainShapeText = mathToPlain(el.text)
           slide.addText(
@@ -388,8 +426,9 @@ export async function buildDeckPptx(deck: Deck): Promise<ArrayBuffer> {
               margin: 4,
               fit: 'shrink',
               fontSize: pt(el.fontSize ?? 2.4),
-              fontFace: pptxFont(el.fontFamily ?? deck.theme.fontBody),
-              color: hex(el.textColor ?? readableTextOn(el.fill ?? deck.theme.accent)),
+              fontFace: pptxFont(el.fontFamily ?? theme.fontBody),
+              objectName: shadowName(el),
+              ...pptxTextEffects(el, readableTextOn(el.fill ?? theme.accent)),
               bold: (el.fontWeight ?? 600) >= 600,
               italic: el.fontStyle === 'italic',
               strike: el.textDecoration === 'line-through' ? 'sngStrike' : undefined,
@@ -535,7 +574,8 @@ export async function buildDeckPptx(deck: Deck): Promise<ArrayBuffer> {
   const { default: JSZip } = await import('jszip')
   const zip = await JSZip.loadAsync((await pptx.write({ outputType: 'arraybuffer' })) as ArrayBuffer)
   for (const path of Object.keys(zip.files).filter((p) => /^ppt\/slides\/slide\d+\.xml$/.test(p))) {
-    zip.file(path, dedupeParagraphProps(await zip.file(path)!.async('string')))
+    const xml = dedupeParagraphProps(await zip.file(path)!.async('string'))
+    zip.file(path, applyRunShadows(xml, shadows))
   }
   return zip.generateAsync({ type: 'arraybuffer' })
 }

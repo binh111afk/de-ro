@@ -98,11 +98,19 @@ function soanDe(raw: unknown): string | null {
 /** `hoi-truoc`: yêu cầu ngắn chưa nêu môn — hỏi lại bằng prompt ngắn trước khi soạn. */
 const hoiTruoc = (): string => ASK_ONLY_SYSTEM
 
+type SlideTaskInput = Record<string, unknown> & { pro?: boolean }
+
+// Chỉ nhận cờ boolean. Các hàm ghép prompt hiện dùng các trường cũ.
+function slideInput(raw: unknown): SlideTaskInput {
+  const { pro, ...input } = (raw ?? {}) as Record<string, unknown>
+  return { ...input, pro: pro === true }
+}
+
 /** `slide-chat`: lượt chat trong trình soạn slide (variant: plan = lập dàn ý, chat, html). */
 function slideChat(raw: unknown): string | null {
-  const o = (raw ?? {}) as Record<string, unknown>
+  const o = slideInput(raw)
   if (o.variant !== 'plan' && o.variant !== 'chat' && o.variant !== 'html') return null
-  return buildSlideChatSystem({ variant: o.variant, ask: o.ask === true, contextSummary: str(o.contextSummary), webFound: str(o.webFound), ...sourceFields(o) })
+  return buildSlideChatSystem({ variant: o.variant, pro: o.pro === true, ask: o.ask === true, contextSummary: str(o.contextSummary), webFound: str(o.webFound), ...sourceFields(o) })
 }
 
 /** `bang-ve`: trợ lý bảng vẽ (hỏi đáp, hoặc nhận lệnh vẽ khi `ops`). */
@@ -113,25 +121,25 @@ function bangVe(raw: unknown): string {
 
 /** `slide-lo`: viết một nhóm slide liền nhau trong một lượt. */
 function slideLo(raw: unknown): string | null {
-  const o = (raw ?? {}) as Record<string, unknown>
+  const o = slideInput(raw)
   const plan = planOf(o.plan)
   const idx = Array.isArray(o.indices) ? o.indices.slice(0, 40).map(Number) : []
   if (!plan || !idx.length || idx.some((i) => !Number.isInteger(i) || i < 0 || i >= plan.slides.length)) return null
-  return buildSlideBatchSystem(plan, idx, o.think === true)
+  return buildSlideBatchSystem(plan, idx, o.think === true, o.pro === true)
 }
 
 /** `slide-trang`: viết / sửa lỗi / chấm lại MỘT slide của dàn ý. */
 function slideTrang(raw: unknown): string | null {
-  const o = (raw ?? {}) as Record<string, unknown>
+  const o = slideInput(raw)
   const plan = planOf(o.plan)
   const i = Number(o.index)
   if (!plan || !Number.isInteger(i) || i < 0 || i >= plan.slides.length) return null
-  return buildSlidePageSystem(plan, i)
+  return buildSlidePageSystem(plan, i, o.pro === true)
 }
 
 /** `slide-sua`: sửa slide có sẵn bằng lệnh có cấu trúc (đổi phông, màu, bố cục…). */
 function slideSua(raw: unknown): string | null {
-  const context = str(((raw ?? {}) as Record<string, unknown>).context)
+  const context = str(slideInput(raw).context)
   return context === undefined ? null : buildSlideEditSystem(context)
 }
 

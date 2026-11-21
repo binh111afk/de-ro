@@ -4,15 +4,18 @@
  * AI có thể trả về JSON thuần, JSON bọc trong ```json fence, hoặc lời văn
  * kèm JSON. Ta thử bóc fence trước, rồi tìm đoạn JSON đầu tiên hợp lệ.
  */
+import type { SlideTextStyle } from './slideTextEffects'
 import type { SlideElement, SlideTone } from '@/store/docs'
-import { isLayoutId, isTone, SLIDE_LAYOUTS } from './slideLayouts'
+import { isEditorialLayout, isLayoutId, isTone, SLIDE_LAYOUTS, type SlideLayoutContent } from './slideLayouts'
 import { DECK_THEMES, resolveThemeId } from './slideTheme'
 import { inferSubject, isSubjectId, subjectCatalogText } from './slideSubjects'
 import { isStylePackId, stylePackCatalogText } from './slideStyles'
 import { decorKitCatalogText, isDecorKitId } from './slideDecor'
 import { designById, designCatalogText } from './slideDesigns'
 
-export interface AiSlidePayload {
+export interface AiSlidePayload extends Pick<SlideLayoutContent,
+  'credit' | 'value' | 'label' | 'focusX' | 'focusY' | 'imageCrop' | 'image2' | 'image2Crop' | 'caption' | 'caption2' | 'textPosition' | 'bars'
+> {
   title?: string
   /** id layout của lib/slideLayouts.ts; thiếu/sai thì rơi về title+bullets cũ */
   layout?: string
@@ -36,6 +39,9 @@ export interface AiSlidePayload {
   /** bảng cho layout table */
   rows?: string[][]
   image?: string
+  /** chế độ Chuyên nghiệp: mô tả ngắn ảnh cần vẽ (app tạo ảnh nền từ mô tả này) */
+  imagePrompt?: string
+  image2Prompt?: string
   /** id đồ hoạ vector trong catalog slideGraphics (ưu tiên hơn ảnh AI) */
   graphic?: string
   /** bộ trang trí của deck (lib/slideDecor.ts) — app gán từ dàn ý, không do AI chọn từng slide */
@@ -55,6 +61,8 @@ export interface AiSlidePayload {
   notes?: string[]
   /** mô tả ngắn gọn nội dung deck */
   summary?: string
+  /** Kiểu chữ cho id phần tử do layout sinh, ví dụ title, subtitle, bignum-value. */
+  textStyles?: Record<string, SlideTextStyle>
   /** element do AI mô tả thêm (nếu có) */
   elements?: Array<Partial<Omit<SlideElement, 'type'>> & { type?: string }>
 }
@@ -318,7 +326,9 @@ export function parseDeckPlan(raw: string): DeckPlan | null {
  * Catalog layout + theme dạng text cho prompt — sinh từ chính hai catalog
  * trong code để prompt không lệch khi thêm layout/theme.
  */
-export function slideCatalogText(): string {
+export function slideCatalogText(includeEditorial = false): string {
+  // Prompt server hiện vẫn chọn trong catalog cũ. Bật catalog mới khi phần server đã sẵn sàng.
+  const layouts = includeEditorial ? SLIDE_LAYOUTS : SLIDE_LAYOUTS.filter((layout) => !isEditorialLayout(layout.id))
   return [
     'BỘ MÀU (chọn "theme" đúng một id — theo chủ đề, cảm xúc và đối tượng; tags chỉ là gợi ý, không bắt buộc theo môn):',
     ...DECK_THEMES.map(
@@ -335,7 +345,7 @@ export function slideCatalogText(): string {
     subjectCatalogText(),
     '',
     'BỐ CỤC (chọn "layout" đúng một id; field trong ngoặc là field nội dung):',
-    ...SLIDE_LAYOUTS.map(
+    ...layouts.map(
       (layout) => `- ${layout.id}: ${layout.description} [${layout.fields.join(', ')}]`,
     ),
   ].join('\n')

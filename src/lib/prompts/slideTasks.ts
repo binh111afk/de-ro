@@ -99,6 +99,21 @@ export const SLIDE_PLAN_SYSTEM =
   '"decorKit" chọn một bộ trang trí hợp chủ đề và đối tượng (dùng cho cả bài); bài trang trọng chọn "toi-gian".\n' +
   '- Không bịa số liệu thật; số liệu minh hoạ phải ghi rõ "ví dụ". Tiếng Việt chuẩn.'
 
+/** Chế độ Chuyên nghiệp: catalog có thêm bố cục biên tập + luật dựng deck kiểu ấn phẩm. */
+const PRO_PLAN_RULES =
+  '\n\nCHẾ ĐỘ CHUYÊN NGHIỆP (ưu tiên hơn các luật nhịp ở trên khi mâu thuẫn): dựng deck như một ấn phẩm biên tập, không như slide điền mẫu.\n' +
+  '- Dùng bố cục biên tập: "photo-full" cho slide mở đầu, chuyển chương và kết (ảnh tràn nền, một câu tiêu đề mạnh); ' +
+  '"bignum" cho mỗi con số then chốt của bài (3–4 slide); "bars" khi có từ 2 số liệu cùng đại lượng để so sánh; ' +
+  '"photo-compare" khi có cặp trước/sau hoặc xưa/nay. Không dùng "cards" hay "bullets" ở hai slide liền nhau; mỗi slide chỉ một ý.\n' +
+  '- Tối đa 6 slide có ảnh (photo-full, photo-compare, bignum có ảnh) trong cả deck; deck ≤ 6 slide thì tối đa 3.\n' +
+  '- Nhịp: xen "tone" tối (accent) và sáng (theme/soft), cứ 2–3 slide sáng thì có một slide tối nhấn mạnh.\n' +
+  '- "title" ngắn, mạnh, giàu hình ảnh (≤ 8 từ); "kicker" là nhãn chuyên mục viết hoa ngắn; chỉ dùng con số và dữ kiện thật, ' +
+  'không bịa; số liệu không chắc thì nói rõ là minh hoạ.\n' +
+  '- "brief" của slide ảnh nêu rõ ảnh cần thể hiện gì.'
+
+export const slidePlanSystem = (pro?: boolean): string =>
+  pro ? SLIDE_PLAN_SYSTEM.replace(slideCatalogText(), slideCatalogText(true)) + PRO_PLAN_RULES : SLIDE_PLAN_SYSTEM
+
 export const WEB_SEARCH_SYSTEM =
   'Tìm trên web thông tin, số liệu mới và chính xác phục vụ yêu cầu soạn đề / bài giảng của giáo viên dưới đây. ' +
   'Chỉ trả bản tóm tắt gạch đầu dòng (tối đa 25 dòng), mỗi dòng một dữ kiện hoặc số liệu kèm tên nguồn và năm. ' +
@@ -110,6 +125,7 @@ export const WEB_SEARCH_SYSTEM =
 
 /** Lượt chat slide: `plan` lập dàn ý, `chat` hỏi đáp, `html` slide HTML. */
 export interface SlideChatInput extends SourceInput {
+  pro?: boolean
   variant: 'plan' | 'chat' | 'html'
   /** bật luật hỏi lại (không áp cho `html`) */
   ask?: boolean
@@ -121,7 +137,7 @@ export function buildSlideChatSystem(i: SlideChatInput): string {
   const head =
     i.variant === 'html'
       ? HTML_SYSTEM
-      : (i.variant === 'plan' ? SLIDE_PLAN_SYSTEM : SLIDE_SYSTEM + CHAT_MARKDOWN) + (i.ask ? ASK_RULE : '')
+      : (i.variant === 'plan' ? slidePlanSystem(i.pro) : SLIDE_SYSTEM + CHAT_MARKDOWN) + (i.ask ? ASK_RULE : '')
   return head + (i.contextSummary ? `\nBài trình bày hiện tại: ${i.contextSummary}` : '') + sourceSection(i) + webSection(i.webFound)
 }
 
@@ -141,10 +157,10 @@ export function buildBoardSystem(i: BoardInput): string {
 }
 
 /** một nhóm slide liền nhau trong MỘT lượt gọi (`think`: lượt stream, bắt suy nghĩ tiếng Việt) */
-export const buildSlideBatchSystem = (plan: DeckPlan, indices: number[], think?: boolean): string =>
-  batchSystemPrompt(plan, indices) + (think ? THINK_VI : '')
+export const buildSlideBatchSystem = (plan: DeckPlan, indices: number[], think?: boolean, pro?: boolean): string =>
+  batchSystemPrompt(plan, indices, pro) + (think ? THINK_VI : '')
 
 /** một slide (viết, sửa lỗi, chấm lại) */
-export const buildSlidePageSystem = (plan: DeckPlan, index: number): string => pageSystemPrompt(plan, plan.slides[index], index)
+export const buildSlidePageSystem = (plan: DeckPlan, index: number, pro?: boolean): string => pageSystemPrompt(plan, plan.slides[index], index, pro)
 
 export const buildSlideEditSystem = (context: string): string => editSystemPrompt(context)

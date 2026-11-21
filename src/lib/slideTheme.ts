@@ -72,7 +72,7 @@ const FONTS_SERIF = { heading: SERIF, body: SANS, serif: SERIF, mono: MONO }
  * Tím). Bỏ hoạ tiết ồn (confetti/waves/grid/dots): hoạ tiết chỉ còn vân giấy và
  * vệt sáng góc. Id cũ vẫn tra được qua `LEGACY_THEME_IDS`.
  */
-export const DECK_THEMES: DeckTheme[] = [
+const LEGACY_DECK_THEMES: DeckTheme[] = [
   {
     id: 'sang',
     name: 'Sáng',
@@ -653,6 +653,37 @@ const LEGACY_THEME_IDS: Record<string, string> = {
   'ngoai-ngu-tin': 'tim',
 }
 
+const THEME_FONT_PAIRS: Record<string, readonly [string, string]> = {
+  'dem-xanh': ['Saira Condensed', 'Inter'],
+  'rung': ['Lexend', 'Be Vietnam Pro'],
+  'tim': ['Montserrat', 'Nunito'],
+  'do': ['Oswald', 'Inter'],
+  'vang-nang': ['Barlow Condensed', 'Lexend'],
+  'bien-xanh': ['Roboto Condensed', 'Inter'],
+  'cam-nang-dong': ['Barlow Condensed', 'Be Vietnam Pro'],
+  'lich-su-co': ['Merriweather', 'Be Vietnam Pro'],
+  'phong-thi-nghiem': ['JetBrains Mono', 'Inter'],
+  'bac-au-toi-gian': ['Montserrat', 'Inter'],
+  'vu-tru': ['Saira Condensed', 'Space Grotesk'],
+  'rung-dem': ['Source Serif 4', 'Inter'],
+  'bac-ha': ['Lexend', 'Nunito'],
+  'hong-dao': ['Playfair Display', 'Inter'],
+  'oai-huong': ['Playfair Display', 'Lora'],
+  'cat-vang': ['Merriweather', 'Roboto Condensed'],
+  'chanh-tuoi': ['Caveat', 'Lexend'],
+  'bau-troi': ['Roboto Condensed', 'Be Vietnam Pro'],
+  'bao-tuong': ['Oswald', 'Source Serif 4'],
+}
+
+export function withThemeFonts(theme: DeckTheme, [heading, body]: readonly [string, string]): DeckTheme {
+  return { ...theme, fontHeading: heading, fontBody: body, fonts: { serif: SERIF, mono: MONO, ...theme.fonts, heading, body } }
+}
+
+export const DECK_THEMES = LEGACY_DECK_THEMES.map(theme => {
+  const pair = THEME_FONT_PAIRS[theme.id ?? '']
+  return pair ? withThemeFonts(theme, pair) : theme
+})
+
 /** Id catalog hợp lệ (đã đổi id cũ sang id mới), hoặc `undefined` nếu lạ. */
 export function resolveThemeId(id?: string): string | undefined {
   if (!id) return undefined
@@ -732,7 +763,8 @@ export interface ResolvedTheme extends DeckTheme {
 export function normalizeTheme(theme?: DeckTheme | null): ResolvedTheme {
   const source = theme ?? DECK_THEMES[0]
   const sourceId = resolveThemeId(source.id)
-  const catalog = DECK_THEMES.find(
+  // Deck đã lưu có thể chỉ mang id/màu, nên giá trị suy ra phải đến từ bộ phông cũ.
+  const catalog = LEGACY_DECK_THEMES.find(
     (t) => (sourceId && t.id === sourceId) || (t.bg && source.bg && t.bg.toLowerCase() === source.bg.toLowerCase()),
   )
   const bg = source.bg || catalog?.bg || '#ffffff'

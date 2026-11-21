@@ -26,6 +26,370 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   mod
 ));
 
+// bo-phong-chu:@fontsource/barlow-condensed/400.css
+var require__ = __commonJS({
+  "bo-phong-chu:@fontsource/barlow-condensed/400.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/barlow-condensed/600.css
+var require__2 = __commonJS({
+  "bo-phong-chu:@fontsource/barlow-condensed/600.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/barlow-condensed/700.css
+var require__3 = __commonJS({
+  "bo-phong-chu:@fontsource/barlow-condensed/700.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/barlow-condensed/800.css
+var require__4 = __commonJS({
+  "bo-phong-chu:@fontsource/barlow-condensed/800.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/oswald/400.css
+var require__5 = __commonJS({
+  "bo-phong-chu:@fontsource/oswald/400.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/oswald/600.css
+var require__6 = __commonJS({
+  "bo-phong-chu:@fontsource/oswald/600.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/oswald/700.css
+var require__7 = __commonJS({
+  "bo-phong-chu:@fontsource/oswald/700.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/saira-condensed/400.css
+var require__8 = __commonJS({
+  "bo-phong-chu:@fontsource/saira-condensed/400.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/saira-condensed/600.css
+var require__9 = __commonJS({
+  "bo-phong-chu:@fontsource/saira-condensed/600.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/saira-condensed/700.css
+var require__10 = __commonJS({
+  "bo-phong-chu:@fontsource/saira-condensed/700.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/saira-condensed/800.css
+var require__11 = __commonJS({
+  "bo-phong-chu:@fontsource/saira-condensed/800.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/roboto-condensed/400.css
+var require__12 = __commonJS({
+  "bo-phong-chu:@fontsource/roboto-condensed/400.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/roboto-condensed/500.css
+var require__13 = __commonJS({
+  "bo-phong-chu:@fontsource/roboto-condensed/500.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/roboto-condensed/600.css
+var require__14 = __commonJS({
+  "bo-phong-chu:@fontsource/roboto-condensed/600.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/roboto-condensed/700.css
+var require__15 = __commonJS({
+  "bo-phong-chu:@fontsource/roboto-condensed/700.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/roboto-condensed/800.css
+var require__16 = __commonJS({
+  "bo-phong-chu:@fontsource/roboto-condensed/800.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/playfair-display/400.css
+var require__17 = __commonJS({
+  "bo-phong-chu:@fontsource/playfair-display/400.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/playfair-display/600.css
+var require__18 = __commonJS({
+  "bo-phong-chu:@fontsource/playfair-display/600.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/playfair-display/700.css
+var require__19 = __commonJS({
+  "bo-phong-chu:@fontsource/playfair-display/700.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/playfair-display/800.css
+var require__20 = __commonJS({
+  "bo-phong-chu:@fontsource/playfair-display/800.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/merriweather/400.css
+var require__21 = __commonJS({
+  "bo-phong-chu:@fontsource/merriweather/400.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/merriweather/600.css
+var require__22 = __commonJS({
+  "bo-phong-chu:@fontsource/merriweather/600.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/merriweather/700.css
+var require__23 = __commonJS({
+  "bo-phong-chu:@fontsource/merriweather/700.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/merriweather/800.css
+var require__24 = __commonJS({
+  "bo-phong-chu:@fontsource/merriweather/800.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/source-serif-4/400.css
+var require__25 = __commonJS({
+  "bo-phong-chu:@fontsource/source-serif-4/400.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/source-serif-4/500.css
+var require__26 = __commonJS({
+  "bo-phong-chu:@fontsource/source-serif-4/500.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/source-serif-4/600.css
+var require__27 = __commonJS({
+  "bo-phong-chu:@fontsource/source-serif-4/600.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/source-serif-4/700.css
+var require__28 = __commonJS({
+  "bo-phong-chu:@fontsource/source-serif-4/700.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/source-serif-4/800.css
+var require__29 = __commonJS({
+  "bo-phong-chu:@fontsource/source-serif-4/800.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/montserrat/400.css
+var require__30 = __commonJS({
+  "bo-phong-chu:@fontsource/montserrat/400.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/montserrat/500.css
+var require__31 = __commonJS({
+  "bo-phong-chu:@fontsource/montserrat/500.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/montserrat/600.css
+var require__32 = __commonJS({
+  "bo-phong-chu:@fontsource/montserrat/600.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/montserrat/700.css
+var require__33 = __commonJS({
+  "bo-phong-chu:@fontsource/montserrat/700.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/montserrat/800.css
+var require__34 = __commonJS({
+  "bo-phong-chu:@fontsource/montserrat/800.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/lexend/400.css
+var require__35 = __commonJS({
+  "bo-phong-chu:@fontsource/lexend/400.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/lexend/500.css
+var require__36 = __commonJS({
+  "bo-phong-chu:@fontsource/lexend/500.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/lexend/600.css
+var require__37 = __commonJS({
+  "bo-phong-chu:@fontsource/lexend/600.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/lexend/700.css
+var require__38 = __commonJS({
+  "bo-phong-chu:@fontsource/lexend/700.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/lexend/800.css
+var require__39 = __commonJS({
+  "bo-phong-chu:@fontsource/lexend/800.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/inter/400.css
+var require__40 = __commonJS({
+  "bo-phong-chu:@fontsource/inter/400.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/inter/500.css
+var require__41 = __commonJS({
+  "bo-phong-chu:@fontsource/inter/500.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/inter/600.css
+var require__42 = __commonJS({
+  "bo-phong-chu:@fontsource/inter/600.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/inter/700.css
+var require__43 = __commonJS({
+  "bo-phong-chu:@fontsource/inter/700.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/inter/800.css
+var require__44 = __commonJS({
+  "bo-phong-chu:@fontsource/inter/800.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/caveat/400.css
+var require__45 = __commonJS({
+  "bo-phong-chu:@fontsource/caveat/400.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/caveat/600.css
+var require__46 = __commonJS({
+  "bo-phong-chu:@fontsource/caveat/600.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/caveat/700.css
+var require__47 = __commonJS({
+  "bo-phong-chu:@fontsource/caveat/700.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/jetbrains-mono/400.css
+var require__48 = __commonJS({
+  "bo-phong-chu:@fontsource/jetbrains-mono/400.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/jetbrains-mono/500.css
+var require__49 = __commonJS({
+  "bo-phong-chu:@fontsource/jetbrains-mono/500.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/jetbrains-mono/600.css
+var require__50 = __commonJS({
+  "bo-phong-chu:@fontsource/jetbrains-mono/600.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/jetbrains-mono/700.css
+var require__51 = __commonJS({
+  "bo-phong-chu:@fontsource/jetbrains-mono/700.css"() {
+    "use strict";
+  }
+});
+
+// bo-phong-chu:@fontsource/jetbrains-mono/800.css
+var require__52 = __commonJS({
+  "bo-phong-chu:@fontsource/jetbrains-mono/800.css"() {
+    "use strict";
+  }
+});
+
 // node_modules/react/cjs/react.production.js
 var require_react_production = __commonJS({
   "node_modules/react/cjs/react.production.js"(exports) {
@@ -1816,6 +2180,123 @@ function autoAnimate(elements, layoutId) {
   });
 }
 
+// src/lib/slideFonts.ts
+var web = (id, family, group, weights, load, label = family) => ({ id, label, family, group, weights, load });
+var system = (id, family) => web(id, family, "H\u1EC7 th\u1ED1ng", [400, 700]);
+var SLIDE_FONTS = [
+  web("barlow-condensed", "Barlow Condensed", "Ti\xEAu \u0111\u1EC1 \u0111\u1EADm", [400, 600, 700, 800], () => Promise.all([
+    Promise.resolve().then(() => __toESM(require__(), 1)),
+    Promise.resolve().then(() => __toESM(require__2(), 1)),
+    Promise.resolve().then(() => __toESM(require__3(), 1)),
+    Promise.resolve().then(() => __toESM(require__4(), 1))
+  ])),
+  web("oswald", "Oswald", "Ti\xEAu \u0111\u1EC1 \u0111\u1EADm", [400, 600, 700], () => Promise.all([
+    Promise.resolve().then(() => __toESM(require__5(), 1)),
+    Promise.resolve().then(() => __toESM(require__6(), 1)),
+    Promise.resolve().then(() => __toESM(require__7(), 1))
+  ])),
+  web("saira-condensed", "Saira Condensed", "Ti\xEAu \u0111\u1EC1 \u0111\u1EADm", [400, 600, 700, 800], () => Promise.all([
+    Promise.resolve().then(() => __toESM(require__8(), 1)),
+    Promise.resolve().then(() => __toESM(require__9(), 1)),
+    Promise.resolve().then(() => __toESM(require__10(), 1)),
+    Promise.resolve().then(() => __toESM(require__11(), 1))
+  ])),
+  web("roboto-condensed", "Roboto Condensed", "Ti\xEAu \u0111\u1EC1 \u0111\u1EADm", [400, 500, 600, 700, 800], () => Promise.all([
+    Promise.resolve().then(() => __toESM(require__12(), 1)),
+    Promise.resolve().then(() => __toESM(require__13(), 1)),
+    Promise.resolve().then(() => __toESM(require__14(), 1)),
+    Promise.resolve().then(() => __toESM(require__15(), 1)),
+    Promise.resolve().then(() => __toESM(require__16(), 1))
+  ])),
+  web("playfair-display", "Playfair Display", "Serif", [400, 600, 700, 800], () => Promise.all([
+    Promise.resolve().then(() => __toESM(require__17(), 1)),
+    Promise.resolve().then(() => __toESM(require__18(), 1)),
+    Promise.resolve().then(() => __toESM(require__19(), 1)),
+    Promise.resolve().then(() => __toESM(require__20(), 1))
+  ])),
+  web("merriweather", "Merriweather", "Serif", [400, 600, 700, 800], () => Promise.all([
+    Promise.resolve().then(() => __toESM(require__21(), 1)),
+    Promise.resolve().then(() => __toESM(require__22(), 1)),
+    Promise.resolve().then(() => __toESM(require__23(), 1)),
+    Promise.resolve().then(() => __toESM(require__24(), 1))
+  ])),
+  web("source-serif-4", "Source Serif 4", "Serif", [400, 500, 600, 700, 800], () => Promise.all([
+    Promise.resolve().then(() => __toESM(require__25(), 1)),
+    Promise.resolve().then(() => __toESM(require__26(), 1)),
+    Promise.resolve().then(() => __toESM(require__27(), 1)),
+    Promise.resolve().then(() => __toESM(require__28(), 1)),
+    Promise.resolve().then(() => __toESM(require__29(), 1))
+  ])),
+  web("montserrat", "Montserrat", "Sans", [400, 500, 600, 700, 800], () => Promise.all([
+    Promise.resolve().then(() => __toESM(require__30(), 1)),
+    Promise.resolve().then(() => __toESM(require__31(), 1)),
+    Promise.resolve().then(() => __toESM(require__32(), 1)),
+    Promise.resolve().then(() => __toESM(require__33(), 1)),
+    Promise.resolve().then(() => __toESM(require__34(), 1))
+  ])),
+  web("lexend", "Lexend", "Sans", [400, 500, 600, 700, 800], () => Promise.all([
+    Promise.resolve().then(() => __toESM(require__35(), 1)),
+    Promise.resolve().then(() => __toESM(require__36(), 1)),
+    Promise.resolve().then(() => __toESM(require__37(), 1)),
+    Promise.resolve().then(() => __toESM(require__38(), 1)),
+    Promise.resolve().then(() => __toESM(require__39(), 1))
+  ])),
+  web("inter", "Inter", "Sans", [400, 500, 600, 700, 800], () => Promise.all([
+    Promise.resolve().then(() => __toESM(require__40(), 1)),
+    Promise.resolve().then(() => __toESM(require__41(), 1)),
+    Promise.resolve().then(() => __toESM(require__42(), 1)),
+    Promise.resolve().then(() => __toESM(require__43(), 1)),
+    Promise.resolve().then(() => __toESM(require__44(), 1))
+  ])),
+  web("caveat", "Caveat", "Vi\u1EBFt tay", [400, 600, 700], () => Promise.all([
+    Promise.resolve().then(() => __toESM(require__45(), 1)),
+    Promise.resolve().then(() => __toESM(require__46(), 1)),
+    Promise.resolve().then(() => __toESM(require__47(), 1))
+  ])),
+  web("jetbrains-mono", "JetBrains Mono", "Mono", [400, 500, 600, 700, 800], () => Promise.all([
+    Promise.resolve().then(() => __toESM(require__48(), 1)),
+    Promise.resolve().then(() => __toESM(require__49(), 1)),
+    Promise.resolve().then(() => __toESM(require__50(), 1)),
+    Promise.resolve().then(() => __toESM(require__51(), 1)),
+    Promise.resolve().then(() => __toESM(require__52(), 1))
+  ])),
+  web("lora", "Lora", "Serif", [400, 600, 700]),
+  web("be-vietnam-pro", "Be Vietnam Pro", "Sans", [400, 500, 600, 700]),
+  web("nunito", "Nunito", "Sans", [400, 600, 700, 800]),
+  web("space-grotesk", "Space Grotesk", "Sans", [500, 700]),
+  web("patrick-hand", "Patrick Hand", "Vi\u1EBFt tay", [400]),
+  web("jetbrains-mono-variable", "JetBrains Mono Variable", "Mono", [100, 200, 300, 400, 500, 600, 700, 800], void 0),
+  system("times-new-roman", "Times New Roman"),
+  system("arial", "Arial"),
+  system("arial-narrow", "Arial Narrow"),
+  system("georgia", "Georgia"),
+  system("tahoma", "Tahoma"),
+  system("verdana", "Verdana"),
+  system("segoe-ui", "Segoe UI"),
+  system("calibri", "Calibri"),
+  system("courier-new", "Courier New")
+];
+var primaryFont = (stack) => (stack ?? "").split(",")[0].trim().replace(/^['"]|['"]$/g, "");
+var slideFontByName = (name) => {
+  const key = primaryFont(name).toLowerCase();
+  return SLIDE_FONTS.find((font) => font.id === key || font.family.toLowerCase() === key);
+};
+function slideFontStack(family) {
+  if (family.includes(",")) return family;
+  switch (family) {
+    case "Lora":
+      return "Lora, Georgia, serif";
+    case "JetBrains Mono Variable":
+      return "'JetBrains Mono Variable', ui-monospace, monospace";
+    case "Patrick Hand":
+      return "'Patrick Hand', 'Nunito', sans-serif";
+    case "Space Grotesk":
+      return "'Space Grotesk', 'Be Vietnam Pro', sans-serif";
+    default:
+      return slideFontByName(family)?.load ? `"${family}", "Be Vietnam Pro", sans-serif` : `${family}, sans-serif`;
+  }
+}
+
 // src/lib/slideMath.ts
 var MATH_SPAN = /\$([^ $](?:[^$]{0,200}[^ $])?)\$/g;
 var SYMBOLS = {
@@ -1969,24 +2450,29 @@ function getMeasureCtx() {
   }
   return measureCtx;
 }
-function emWidth(ctx, text, weight) {
-  const key = `${weight}|${text}`;
+function emWidth(ctx, text, weight, family = `"${MEASURE_FONT}", sans-serif`, italic = false) {
+  const key = `${family}|${weight}|${italic}|${text}`;
   const hit = widthCache.get(key);
   if (hit !== void 0) return hit;
-  ctx.font = `${weight} 100px "${MEASURE_FONT}", sans-serif`;
+  ctx.font = `${italic ? "italic " : ""}${weight} 100px ${family}`;
   const em = ctx.measureText(text).width / 100;
   widthCache.set(key, em);
   return em;
 }
-function wrapLines(ctx, text, availEm, weight, letterSpacing) {
-  const space = emWidth(ctx, " ", weight) + letterSpacing;
+function singleLineSize(text, widthPct, size, weight, family) {
+  const ctx = getMeasureCtx();
+  const width = ctx ? emWidth(ctx, text, weight, family) : text.length * 0.65;
+  return Math.min(size, (widthPct - TEXT_PAD_X) * WRAP_SAFETY / Math.max(width, 0.1));
+}
+function wrapLines(ctx, text, availEm, weight, letterSpacing, family, italic) {
+  const space = emWidth(ctx, " ", weight, family, italic) + letterSpacing;
   let total = 0;
   for (const paragraph of text.split("\n")) {
     let lines = 1;
     let line = 0;
     for (const word of paragraph.split(/ +/)) {
       if (!word) continue;
-      const w = emWidth(ctx, word, weight) + word.length * letterSpacing;
+      const w = emWidth(ctx, word, weight, family, italic) + word.length * letterSpacing;
       if (w > availEm) {
         const parts = Math.ceil(w / availEm);
         if (line > 0) lines++;
@@ -2013,7 +2499,7 @@ function textBoxHeight(text, widthPct, fontCqw, lineHeight = 1.25, opts = {}) {
   let lines;
   if (ctx) {
     const availEm = Math.max(1, (widthPct - TEXT_PAD_X) / fontCqw * WRAP_SAFETY);
-    lines = wrapLines(ctx, text, availEm, opts.weight ?? 400, opts.letterSpacing ?? 0);
+    lines = wrapLines(ctx, text, availEm, opts.weight ?? 400, opts.letterSpacing ?? 0, opts.family, opts.italic);
   } else {
     const charsPerLine = Math.max(8, (widthPct - TEXT_PAD_X) / (fontCqw * CHAR_WIDTH_EM));
     lines = text.split("\n").reduce((total, line) => total + Math.max(1, Math.ceil(line.length / charsPerLine)), 0);
@@ -2030,10 +2516,12 @@ function fitFontSize({
   lineHeight = 1.4,
   minScale = MIN_FIT_SCALE,
   weight,
-  letterSpacing
+  letterSpacing,
+  family,
+  italic
 }) {
   if (!text.trim() || baseCqw <= 0 || heightPct <= 0) return Math.max(0, baseCqw);
-  const style = { weight, letterSpacing };
+  const style = { weight, letterSpacing, family, italic };
   const fits = (size) => textBoxHeight(text, widthPct, size, lineHeight, style) <= heightPct + 0.05;
   if (fits(baseCqw)) return baseCqw;
   const min = Math.max(0.2, baseCqw * minScale);
@@ -2042,6 +2530,739 @@ function fitFontSize({
   }
   return Math.round(min * 100) / 100;
 }
+
+// src/lib/slideTheme.ts
+var SANS = "Be Vietnam Pro";
+var SERIF = "'Times New Roman', 'Liberation Serif', serif";
+var MONO = "'JetBrains Mono Variable', ui-monospace, monospace";
+function oklch(l4, c8, hue) {
+  const a34 = c8 * Math.cos(hue * Math.PI / 180);
+  const b = c8 * Math.sin(hue * Math.PI / 180);
+  const l_ = (l4 + 0.3963377774 * a34 + 0.2158037573 * b) ** 3;
+  const m_ = (l4 - 0.1055613458 * a34 - 0.0638541728 * b) ** 3;
+  const s_ = (l4 - 0.0894841775 * a34 - 1.291485548 * b) ** 3;
+  const linear = [
+    4.0767416621 * l_ - 3.3077115913 * m_ + 0.2309699292 * s_,
+    -1.2684380046 * l_ + 2.6097574011 * m_ - 0.3413193965 * s_,
+    -0.0041960863 * l_ - 0.7034186147 * m_ + 1.707614701 * s_
+  ];
+  const encode = (x) => {
+    const v = Math.max(0, Math.min(1, x));
+    return v <= 31308e-7 ? 12.92 * v : 1.055 * v ** (1 / 2.4) - 0.055;
+  };
+  return `#${linear.map((v) => Math.round(encode(v) * 255).toString(16).padStart(2, "0")).join("")}`;
+}
+function palette(hue, opts = {}) {
+  const { chroma = 0.15, dark = false } = opts;
+  const hue2 = hue + 150;
+  return dark ? {
+    bg: oklch(0.2, 0.03, hue),
+    fg: oklch(0.96, 0.01, hue),
+    surface: oklch(0.27, 0.035, hue),
+    muted: oklch(0.76, 0.03, hue),
+    accent: oklch(0.78, chroma * 0.85, hue),
+    secondary: oklch(0.78, 0.1, hue2),
+    chart: [0, 60, -60, 120, 210].map((d, i) => oklch(0.76, i ? 0.11 : chroma * 0.85, hue + d))
+  } : {
+    bg: oklch(0.985, 8e-3, hue),
+    fg: oklch(0.24, 0.035, hue),
+    surface: oklch(0.955, 0.02, hue),
+    muted: oklch(0.46, 0.03, hue),
+    accent: oklch(0.5, chroma, hue),
+    secondary: oklch(0.5, 0.1, hue2),
+    chart: [0, 150, 60, -60, 210].map((d, i) => oklch(i ? 0.58 : 0.5, i ? 0.11 : chroma, hue + d))
+  };
+}
+var FONTS_SANS = { heading: SANS, body: SANS, serif: SERIF, mono: MONO };
+var FONTS_SERIF = { heading: SERIF, body: SANS, serif: SERIF, mono: MONO };
+var LEGACY_DECK_THEMES = [
+  {
+    id: "sang",
+    name: "S\xE1ng",
+    vibe: "tin c\u1EADy, h\u1ECDc thu\u1EADt, ch\xEDnh x\xE1c \u2014 an to\xE0n cho m\u1ECDi ch\u1EE7 \u0111\u1EC1, h\u1EE3p to\xE1n l\xFD ho\xE1",
+    ...palette(262, { chroma: 0.17 }),
+    radius: 14,
+    shadow: "soft",
+    fontHeading: SANS,
+    fontBody: SANS,
+    fonts: FONTS_SANS,
+    decor: "none",
+    dark: false,
+    tags: ["c\u01A1 b\u1EA3n", "to\xE1n", "l\xFD", "ho\xE1", "khoa h\u1ECDc", "t\u1EF1 nhi\xEAn"]
+  },
+  {
+    id: "dem-xanh",
+    name: "\u0110\xEAm xanh",
+    vibe: "c\xF4ng ngh\u1EC7, hi\u1EC7n \u0111\u1EA1i, tr\xECnh chi\u1EBFu trong ph\xF2ng t\u1ED1i",
+    ...palette(240, { chroma: 0.15, dark: true }),
+    radius: 14,
+    shadow: "none",
+    fontHeading: SANS,
+    fontBody: SANS,
+    fonts: FONTS_SANS,
+    decor: "none",
+    dark: true,
+    tags: ["c\u01A1 b\u1EA3n", "c\xF4ng ngh\u1EC7", "tin h\u1ECDc"]
+  },
+  {
+    id: "giay-am",
+    name: "Gi\u1EA5y \u1EA5m",
+    vibe: "\u1EA5m, truy\u1EC1n th\u1ED1ng, v\u0103n ch\u01B0\u01A1ng, l\u1ECBch s\u1EED, ho\xE0i ni\u1EC7m",
+    ...palette(50, { chroma: 0.13 }),
+    radius: 24,
+    shadow: "soft",
+    fontHeading: SERIF,
+    fontBody: SANS,
+    fonts: FONTS_SERIF,
+    decor: "grain",
+    dark: false,
+    tags: ["c\u01A1 b\u1EA3n", "v\u0103n", "s\u1EED", "\u0111\u1ECBa", "x\xE3 h\u1ED9i"]
+  },
+  {
+    id: "rung",
+    name: "R\u1EEBng",
+    vibe: "t\u01B0\u01A1i, d\u1ECBu, t\u1EF1 nhi\xEAn, sinh th\xE1i, sinh h\u1ECDc",
+    ...palette(155, { chroma: 0.12 }),
+    radius: 18,
+    shadow: "soft",
+    fontHeading: SANS,
+    fontBody: SANS,
+    fonts: FONTS_SANS,
+    decor: "none",
+    dark: false,
+    tags: ["c\u01A1 b\u1EA3n", "sinh", "sinh h\u1ECDc", "t\u1EF1 nhi\xEAn"]
+  },
+  {
+    id: "tim",
+    name: "T\xEDm",
+    vibe: "s\xE1ng t\u1EA1o, tr\u1EBB trung, ngh\u1EC7 thu\u1EADt, ngo\u1EA1i ng\u1EEF",
+    ...palette(305, { chroma: 0.16 }),
+    radius: 24,
+    shadow: "soft",
+    fontHeading: SANS,
+    fontBody: SANS,
+    fonts: FONTS_SANS,
+    decor: "glow",
+    dark: false,
+    tags: ["c\u01A1 b\u1EA3n", "ngo\u1EA1i ng\u1EEF", "ti\u1EBFng anh", "ngh\u1EC7 thu\u1EADt"]
+  },
+  {
+    id: "do",
+    name: "\u0110\u1ECF",
+    vibe: "m\u1EA1nh, c\u1EA3nh b\xE1o, n\u0103ng l\u01B0\u1EE3ng cao \u2014 ki\u1EC3u poster",
+    ...palette(28, { chroma: 0.18 }),
+    radius: 0,
+    shadow: "hard",
+    border: 2,
+    borderColor: oklch(0.24, 0.035, 28),
+    fontHeading: SERIF,
+    fontBody: SANS,
+    fonts: FONTS_SERIF,
+    decor: "none",
+    dark: false,
+    tags: ["c\u01A1 b\u1EA3n"]
+  },
+  {
+    id: "vang-nang",
+    name: "V\xE0ng n\u1EAFng",
+    vibe: "vui t\u01B0\u01A1i, n\u0103ng \u0111\u1ED9ng, phong c\xE1ch ho\u1EA1t h\xECnh truy\u1EC7n tranh",
+    bg: "#fffbeb",
+    fg: "#1e1b4b",
+    surface: "#fef08a",
+    muted: "#71717a",
+    accent: "#7c3aed",
+    secondary: "#f97316",
+    chart: ["#7c3aed", "#f97316", "#06b6d4", "#e11d48", "#10b981"],
+    radius: 14,
+    shadow: "soft",
+    border: 0,
+    borderColor: "#e2e8f0",
+    fontHeading: "Verdana",
+    fontBody: "Verdana",
+    fonts: { heading: "Verdana", body: "Verdana", serif: SERIF, mono: MONO },
+    decor: "none",
+    dark: false,
+    tags: ["ti\u1EC3u h\u1ECDc", "tr\u1EBB em", "ho\u1EA1t h\xECnh", "vui t\u01B0\u01A1i"]
+  },
+  {
+    id: "bang-den",
+    name: "B\u1EA3ng \u0111en",
+    vibe: "l\u1EDBp h\u1ECDc, s\u01B0 ph\u1EA1m, ph\u1EA5n tr\u1EAFng tr\xEAn n\u1EC1n b\u1EA3ng xanh r\xEAu t\u1ED1i",
+    bg: "#14231a",
+    fg: "#f8fafc",
+    surface: "#1b3024",
+    muted: "#94a3b8",
+    accent: "#fef08a",
+    secondary: "#86efac",
+    chart: ["#fef08a", "#86efac", "#38bdf8", "#f472b6", "#cbd5e1"],
+    radius: 4,
+    shadow: "none",
+    border: 0,
+    borderColor: "#92400e",
+    fontHeading: "Tahoma",
+    fontBody: "Tahoma",
+    fonts: { heading: "Tahoma", body: "Tahoma", serif: SERIF, mono: MONO },
+    decor: "none",
+    dark: true,
+    tags: ["l\u1EDBp h\u1ECDc", "to\xE1n", "b\xE0i gi\u1EA3ng", "b\u1EA3ng \u0111en"]
+  },
+  {
+    id: "pastel-mam-non",
+    name: "Pastel m\u1EA7m non",
+    vibe: "d\u1ECBu d\xE0ng, h\u1ED3ng ph\u1EA5n v\xE0 xanh b\u1EA1c h\xE0, bo tr\xF2n l\u1EDBn cho ti\u1EC3u h\u1ECDc",
+    bg: "#fff5f8",
+    fg: "#3b1530",
+    surface: "#e9faf3",
+    muted: "#724060",
+    accent: "#db2777",
+    secondary: "#0d9488",
+    chart: ["#db2777", "#0d9488", "#f59e0b", "#8b5cf6", "#06b6d4"],
+    radius: 28,
+    shadow: "soft",
+    border: 1,
+    borderColor: "#fbcfe8",
+    fontHeading: "Nunito",
+    fontBody: "Nunito",
+    fonts: { heading: "Nunito", body: "Nunito", serif: SERIF, mono: MONO },
+    decor: "none",
+    dark: false,
+    tags: ["ti\u1EC3u h\u1ECDc", "m\u1EA7m non", "pastel", "vui t\u01B0\u01A1i"]
+  },
+  {
+    id: "bien-xanh",
+    name: "Bi\u1EC3n xanh",
+    vibe: "xanh ng\u1ECDc \u0111\u1EA1i d\u01B0\u01A1ng k\u1EBFt h\u1EE3p s\u1EAFc c\xE1t \u1EA5m, d\u1ECBu m\u1EAFt",
+    bg: "#f0fafa",
+    fg: "#0b2c3c",
+    surface: "#fdf6e7",
+    muted: "#2e5c6e",
+    accent: "#0e7490",
+    secondary: "#b45309",
+    chart: ["#0e7490", "#b45309", "#0284c7", "#059669", "#6366f1"],
+    radius: 16,
+    shadow: "soft",
+    border: 1,
+    borderColor: "#a5f3fc",
+    fontHeading: SANS,
+    fontBody: SANS,
+    fonts: FONTS_SANS,
+    decor: "none",
+    dark: false,
+    tags: ["\u0111\u1ECBa l\xFD", "sinh h\u1ECDc bi\u1EC3n", "thi\xEAn nhi\xEAn"]
+  },
+  {
+    id: "so-tay-o-li",
+    name: "S\u1ED5 tay \xF4 li",
+    vibe: "gi\u1EA5y v\u1EDF kem nh\u1EB9, m\u1EF1c xanh b\xFAt bi v\xE0 n\xE9t ch\u1EEF vi\u1EBFt tay th\xE2n thu\u1ED9c",
+    bg: "#fcfaf0",
+    fg: "#1e293b",
+    surface: "#eef4fc",
+    muted: "#475569",
+    accent: "#1d4ed8",
+    secondary: "#dc2626",
+    chart: ["#1d4ed8", "#dc2626", "#059669", "#d97706", "#7c3aed"],
+    radius: 4,
+    shadow: "none",
+    border: 1,
+    borderColor: "#cbd5e1",
+    fontHeading: "Patrick Hand",
+    fontBody: SANS,
+    fonts: { heading: "'Patrick Hand', 'Nunito', sans-serif", body: SANS, serif: SERIF, mono: MONO },
+    decor: "grain",
+    dark: false,
+    tags: ["\xF4n t\u1EADp", "ghi ch\xE9p", "s\u1ED5 tay", "l\u1EDBp h\u1ECDc"]
+  },
+  {
+    id: "cam-nang-dong",
+    name: "Cam n\u0103ng \u0111\u1ED9ng",
+    vibe: "th\u1EC3 thao, nhi\u1EC7t huy\u1EBFt v\u1EDBi cam ch\xE1y v\xE0 xanh navy s\u1EAFc n\xE9t",
+    bg: "#fff9f3",
+    fg: "#0f172a",
+    surface: "#ffedd5",
+    muted: "#475569",
+    accent: "#c2410c",
+    secondary: "#1e3a8a",
+    chart: ["#c2410c", "#1e3a8a", "#0284c7", "#16a34a", "#9333ea"],
+    radius: 6,
+    shadow: "hard",
+    border: 2,
+    borderColor: "#1e3a8a",
+    fontHeading: "Space Grotesk",
+    fontBody: SANS,
+    fonts: { heading: "'Space Grotesk', 'Be Vietnam Pro', sans-serif", body: SANS, serif: SERIF, mono: MONO },
+    decor: "none",
+    dark: false,
+    tags: ["th\u1EC3 d\u1EE5c", "k\u1EF9 n\u0103ng s\u1ED1ng", "n\u0103ng \u0111\u1ED9ng", "ho\u1EA1t \u0111\u1ED9ng"]
+  },
+  {
+    id: "lich-su-co",
+    name: "L\u1ECBch s\u1EED c\u1ED5",
+    vibe: "gi\u1EA5y c\u1ED5 ng\u1EA3 v\xE0ng, n\xE2u \u0111\u1ECF son v\xE0 vi\u1EC1n v\xE0ng \u0111\u1ED3ng trang tr\u1ECDng",
+    bg: "#faf3e6",
+    fg: "#2c1610",
+    surface: "#f1e2c8",
+    muted: "#664433",
+    accent: "#881337",
+    secondary: "#a16207",
+    chart: ["#881337", "#a16207", "#7c2d12", "#1e3a8a", "#3f6212"],
+    radius: 2,
+    shadow: "none",
+    border: 1.5,
+    borderColor: "#b45309",
+    fontHeading: "Lora",
+    fontBody: SANS,
+    fonts: { heading: "Lora", body: SANS, serif: "Lora, Georgia, serif", mono: MONO },
+    decor: "grain",
+    dark: false,
+    tags: ["l\u1ECBch s\u1EED", "v\u0103n h\u1ECDc trung \u0111\u1EA1i", "v\u0103n ho\xE1"]
+  },
+  {
+    id: "phong-thi-nghiem",
+    name: "Ph\xF2ng th\xED nghi\u1EC7m",
+    vibe: "tr\u1EAFng s\u1EA1ch ph\xF2ng lab, xanh l\xE1 chanh v\xE0 ti\xEAu \u0111\u1EC1 ch\u1EEF \u0111\u01A1n c\xE1ch ch\xEDnh x\xE1c",
+    bg: "#f6fcf6",
+    fg: "#0e281b",
+    surface: "#ebf9d4",
+    muted: "#3d5a48",
+    accent: "#4d7c0f",
+    secondary: "#0369a1",
+    chart: ["#4d7c0f", "#0369a1", "#0d9488", "#d97706", "#7c3aed"],
+    radius: 4,
+    shadow: "none",
+    border: 1,
+    borderColor: "#a3e635",
+    fontHeading: "JetBrains Mono Variable",
+    fontBody: SANS,
+    fonts: { heading: MONO, body: SANS, serif: SERIF, mono: MONO },
+    decor: "none",
+    dark: false,
+    tags: ["ho\xE1", "sinh", "th\xED nghi\u1EC7m", "khoa h\u1ECDc"]
+  },
+  {
+    id: "bac-au-toi-gian",
+    name: "T\u1ED1i gi\u1EA3n B\u1EAFc \xC2u",
+    vibe: "x\xE1m \u1EA5m thanh b\xECnh v\xE0 m\u1ED9t \u0111i\u1EC3m nh\u1EA5n \u0111\u1EA5t nung r\u1EA5t ti\u1EBFt ch\u1EBF",
+    bg: "#f4f2ed",
+    fg: "#1c1917",
+    surface: "#e8e4dc",
+    muted: "#57534e",
+    accent: "#b93815",
+    secondary: "#4d7c5b",
+    chart: ["#b93815", "#4d7c5b", "#57534e", "#a16207", "#334155"],
+    radius: 8,
+    shadow: "none",
+    border: 0,
+    borderColor: "#d6d3cd",
+    fontHeading: SANS,
+    fontBody: SANS,
+    fonts: FONTS_SANS,
+    decor: "none",
+    dark: false,
+    tags: ["m\u1ECDi m\xF4n", "h\u1ECDp ph\u1EE5 huynh", "b\xE1o c\xE1o", "t\u1ED1i gi\u1EA3n"]
+  },
+  {
+    id: "hoa-si-mau-nuoc",
+    name: "Ho\u1EA1 s\u0129 m\xE0u n\u01B0\u1EDBc",
+    vibe: "gi\u1EA5y v\u1EBD m\u1EC1m, s\u1EAFc hoa h\u1ED3ng t\xEDm d\u1ECBu v\xE0 ph\xF4ng c\xF3 ch\xE2n uy\u1EC3n chuy\u1EC3n",
+    bg: "#fdf7f9",
+    fg: "#2e1f33",
+    surface: "#f7e7f0",
+    muted: "#6a4966",
+    accent: "#be185d",
+    secondary: "#6d28d9",
+    chart: ["#be185d", "#6d28d9", "#0e7490", "#d97706", "#059669"],
+    radius: 20,
+    shadow: "soft",
+    border: 1,
+    borderColor: "#f5d0fe",
+    fontHeading: "Lora",
+    fontBody: "Lora",
+    fonts: { heading: "Lora", body: "Lora", serif: "Lora, Georgia, serif", mono: MONO },
+    decor: "glow",
+    dark: false,
+    tags: ["m\u0129 thu\u1EADt", "v\u0103n", "ngh\u1EC7 thu\u1EADt", "\xE2m nh\u1EA1c"]
+  },
+  {
+    id: "vu-tru",
+    name: "V\u0169 tr\u1EE5",
+    vibe: "n\u1EC1n t\u1ED1i t\xEDm than s\xE2u th\u1EB3m, xanh neon nh\u1EB9 v\xE0 ch\u1EA5m sao thi\xEAn h\xE0",
+    bg: "#0d0b26",
+    fg: "#f8fafc",
+    surface: "#191642",
+    muted: "#a5b4fc",
+    accent: "#22d3ee",
+    secondary: "#c084fc",
+    chart: ["#22d3ee", "#c084fc", "#4ade80", "#f472b6", "#facc15"],
+    radius: 12,
+    shadow: "none",
+    border: 1,
+    borderColor: "#22d3ee",
+    fontHeading: "Space Grotesk",
+    fontBody: SANS,
+    fonts: { heading: "'Space Grotesk', 'Be Vietnam Pro', sans-serif", body: SANS, serif: SERIF, mono: MONO },
+    decor: "glow",
+    dark: true,
+    tags: ["v\u1EADt l\xFD", "thi\xEAn v\u0103n", "tin h\u1ECDc", "n\u1EC1n t\u1ED1i"]
+  },
+  {
+    id: "rung-dem",
+    name: "R\u1EEBng \u0111\xEAm",
+    vibe: "xanh r\xEAu \u0111\xEAm s\xE2u l\u1EAFng, \xE1nh v\xE0ng m\u1EADt ong \u1EA5m v\xE0 \u0111om \u0111\xF3m r\u1EEBng",
+    bg: "#0b1d17",
+    fg: "#f5f1e6",
+    surface: "#142f26",
+    muted: "#9ec2b0",
+    accent: "#f59e0b",
+    secondary: "#4ade80",
+    chart: ["#f59e0b", "#4ade80", "#38bdf8", "#fb7185", "#e2e8f0"],
+    radius: 16,
+    shadow: "none",
+    border: 1.2,
+    borderColor: "#b45309",
+    fontHeading: "Lora",
+    fontBody: SANS,
+    fonts: { heading: "Lora", body: SANS, serif: "Lora, Georgia, serif", mono: MONO },
+    decor: "glow",
+    dark: true,
+    tags: ["sinh h\u1ECDc", "k\u1EC3 chuy\u1EC7n", "thi\xEAn nhi\xEAn", "n\u1EC1n t\u1ED1i"]
+  },
+  {
+    id: "bac-ha",
+    name: "B\u1EA1c h\xE0",
+    vibe: "t\u01B0\u01A1i m\xE1t, xanh b\u1EA1c h\xE0 ng\u1ECDc thanh khi\u1EBFt v\xE0 tr\u1EAFng \xE1nh l\u1EE5c d\u1ECBu m\u1EAFt cho sinh h\u1ECDc",
+    bg: "#f2fbf7",
+    fg: "#0d281e",
+    surface: "#e1f6ec",
+    muted: "#2d5744",
+    accent: "#047857",
+    secondary: "#0d9488",
+    chart: ["#047857", "#0d9488", "#10b981", "#0284c7", "#d97706"],
+    radius: 14,
+    shadow: "soft",
+    border: 1,
+    borderColor: "#a7f3d0",
+    fontHeading: "Nunito",
+    fontBody: SANS,
+    fonts: { heading: "Nunito", body: SANS, serif: SERIF, mono: MONO },
+    decor: "none",
+    dark: false,
+    tags: ["sinh h\u1ECDc", "khtn", "t\u01B0\u01A1i m\xE1t", "b\u1EA1c h\xE0", "m\xF4i tr\u01B0\u1EDDng"]
+  },
+  {
+    id: "hong-dao",
+    name: "H\u1ED3ng \u0111\xE0o",
+    vibe: "kem \u0111\xE0o \u1EA5m \xE1p, san h\xF4 \u0111\u1EADm \u0111\u1EB1m th\u1EAFm v\xE0 tinh t\u1EBF cho v\u0103n h\u1ECDc v\xE0 k\u1EF9 n\u0103ng s\u1ED1ng",
+    bg: "#fdf6f0",
+    fg: "#2b1b17",
+    surface: "#ffe8dc",
+    muted: "#6e4a42",
+    accent: "#b91c1c",
+    secondary: "#ea580c",
+    chart: ["#b91c1c", "#ea580c", "#f59e0b", "#7c3aed", "#059669"],
+    radius: 18,
+    shadow: "soft",
+    border: 1,
+    borderColor: "#fed7aa",
+    fontHeading: "Lora",
+    fontBody: SANS,
+    fonts: { heading: "Lora", body: SANS, serif: "Lora, Georgia, serif", mono: MONO },
+    decor: "none",
+    dark: false,
+    tags: ["ng\u1EEF v\u0103n", "k\u1EF9 n\u0103ng s\u1ED1ng", "\u1EA5m \xE1p", "h\u1ED3ng \u0111\xE0o", "thanh l\u1ECBch"]
+  },
+  {
+    id: "oai-huong",
+    name: "O\u1EA3i h\u01B0\u01A1ng",
+    vibe: "t\xEDm lavender nh\u1EA1t m\u01A1 m\xE0ng, t\xEDm than \u0111\xE0i c\xE1c cho \xE2m nh\u1EA1c v\xE0 m\u0129 thu\u1EADt",
+    bg: "#f8f5fd",
+    fg: "#231634",
+    surface: "#ede5fc",
+    muted: "#5c4a73",
+    accent: "#6d28d9",
+    secondary: "#9333ea",
+    chart: ["#6d28d9", "#9333ea", "#ec4899", "#0284c7", "#059669"],
+    radius: 16,
+    shadow: "soft",
+    border: 1,
+    borderColor: "#ddd6fe",
+    fontHeading: "Lora",
+    fontBody: SANS,
+    fonts: { heading: "Lora", body: SANS, serif: "Lora, Georgia, serif", mono: MONO },
+    decor: "none",
+    dark: false,
+    tags: ["\xE2m nh\u1EA1c", "m\u0129 thu\u1EADt", "ngh\u1EC7 thu\u1EADt", "o\u1EA3i h\u01B0\u01A1ng", "m\u1ED9ng m\u01A1"]
+  },
+  {
+    id: "cat-vang",
+    name: "C\xE1t v\xE0ng",
+    vibe: "be c\xE1t \u1EA5m m\u1ED9c m\u1EA1c, n\xE2u \u0111\u1EA5t \u0111\u1EB1m s\xE2u v\xE0 xanh \xF4 liu t\u1EF1 nhi\xEAn cho \u0111\u1ECBa l\xED v\xE0 du l\u1ECBch",
+    bg: "#f8f4ec",
+    fg: "#261c14",
+    surface: "#ede3d1",
+    muted: "#635345",
+    accent: "#854d0e",
+    secondary: "#4d7c0f",
+    chart: ["#854d0e", "#4d7c0f", "#c2410c", "#0369a1", "#7c3aed"],
+    radius: 8,
+    shadow: "none",
+    border: 1,
+    borderColor: "#d6c7b2",
+    fontHeading: SANS,
+    fontBody: SANS,
+    fonts: FONTS_SANS,
+    decor: "grain",
+    dark: false,
+    tags: ["\u0111\u1ECBa l\xED", "du l\u1ECBch", "v\u0103n ho\xE1", "c\xE1t v\xE0ng", "sa m\u1EA1c"]
+  },
+  {
+    id: "chanh-tuoi",
+    name: "Chanh t\u01B0\u01A1i",
+    vibe: "tr\u1EAFng tinh kh\xF4i, v\xE0ng chanh r\u1EF1c r\u1EE1 v\xE0 xanh l\xE1 t\u01B0\u01A1i m\xE1t cho ti\u1EC3u h\u1ECDc v\xE0 tr\xF2 ch\u01A1i",
+    bg: "#fcfee8",
+    fg: "#1a2e05",
+    surface: "#f4fcc4",
+    muted: "#4d6328",
+    accent: "#15803d",
+    secondary: "#ca8a04",
+    chart: ["#15803d", "#ca8a04", "#0284c7", "#ea580c", "#7c3aed"],
+    radius: 20,
+    shadow: "soft",
+    border: 1.5,
+    borderColor: "#bef264",
+    fontHeading: "Nunito",
+    fontBody: "Nunito",
+    fonts: { heading: "Nunito", body: "Nunito", serif: SERIF, mono: MONO },
+    decor: "none",
+    dark: false,
+    tags: ["ti\u1EC3u h\u1ECDc", "tr\xF2 ch\u01A1i", "to\xE1n", "chanh t\u01B0\u01A1i", "s\xF4i n\u1ED5i"]
+  },
+  {
+    id: "bau-troi",
+    name: "B\u1EA7u tr\u1EDDi",
+    vibe: "xanh da tr\u1EDDi d\u1ECBu m\xE1t, xanh d\u01B0\u01A1ng \u0111\u1EADm thanh khi\u1EBFt v\xE0 motif m\xE2y b\u1ED3ng b\u1EC1nh cho KHTN, V\u1EADt l\xED",
+    bg: "#f1f7fd",
+    fg: "#0c2340",
+    surface: "#dbeafe",
+    muted: "#2d527c",
+    accent: "#0369a1",
+    secondary: "#0284c7",
+    chart: ["#0369a1", "#0284c7", "#0d9488", "#f59e0b", "#8b5cf6"],
+    radius: 16,
+    shadow: "soft",
+    border: 1,
+    borderColor: "#bae6fd",
+    fontHeading: SANS,
+    fontBody: SANS,
+    fonts: FONTS_SANS,
+    decor: "none",
+    dark: false,
+    tags: ["khtn", "v\u1EADt l\xED", "thi\xEAn nhi\xEAn", "b\u1EA7u tr\u1EDDi", "khoa h\u1ECDc"]
+  },
+  {
+    id: "bao-tuong",
+    name: "B\xE1o t\u01B0\u1EDDng",
+    vibe: "phong c\xE1ch t\u1EA1p ch\xED tin t\u1EE9c, \u0111en tr\u1EAFng t\u01B0\u01A1ng ph\u1EA3n cao, \u0111i\u1EC3m nh\u1EA5n \u0111\u1ECF son v\xE0 ch\u1EEF c\xF3 ch\xE2n trang tr\u1ECDng",
+    bg: "#f9f9f8",
+    fg: "#111827",
+    surface: "#ebeae7",
+    muted: "#4b5563",
+    accent: "#b91c1c",
+    secondary: "#1e293b",
+    chart: ["#b91c1c", "#1e293b", "#475569", "#d97706", "#0284c7"],
+    radius: 0,
+    shadow: "none",
+    border: 2,
+    borderColor: "#111827",
+    fontHeading: "Lora",
+    fontBody: SANS,
+    fonts: { heading: "Lora", body: SANS, serif: "Lora, Georgia, serif", mono: MONO },
+    decor: "none",
+    dark: false,
+    tags: ["l\u1ECBch s\u1EED", "gdcd", "tin t\u1EE9c", "b\xE1o ch\xED", "t\u1EA1p ch\xED", "b\xE1o t\u01B0\u1EDDng"]
+  },
+  {
+    id: "hinh-hoc-mau",
+    name: "H\xECnh h\u1ECDc m\xE0u",
+    vibe: "tr\u01B0\u1EDDng ph\xE1i Bauhaus hi\u1EC7n \u0111\u1EA1i, c\xE1c kh\u1ED1i c\u01A1 b\u1EA3n xanh cobalt, v\xE0ng ochre, \u0111\u1ECF th\u1EAFm tr\xEAn n\u1EC1n tr\u1EAFng s\xE1ng",
+    bg: "#fafbfc",
+    fg: "#090d16",
+    surface: "#e8eef8",
+    muted: "#3e4c5e",
+    accent: "#1d4ed8",
+    secondary: "#dc2626",
+    chart: ["#1d4ed8", "#dc2626", "#b45309", "#059669", "#7c3aed"],
+    radius: 4,
+    shadow: "hard",
+    border: 2,
+    borderColor: "#090d16",
+    fontHeading: "Space Grotesk",
+    fontBody: SANS,
+    fonts: { heading: "'Space Grotesk', 'Be Vietnam Pro', sans-serif", body: SANS, serif: SERIF, mono: MONO },
+    decor: "none",
+    dark: false,
+    tags: ["to\xE1n h\xECnh", "m\u0129 thu\u1EADt", "bauhaus", "h\xECnh h\u1ECDc", "ki\u1EBFn tr\xFAc"]
+  },
+  {
+    id: "bang-trang",
+    name: "B\u1EA3ng tr\u1EAFng",
+    vibe: "b\u1EA3ng tr\u1EAFng l\u1EDBp h\u1ECDc hi\u1EC7n \u0111\u1EA1i, n\xE9t b\xFAt d\u1EA1 xanh d\u01B0\u01A1ng v\xE0 \u0111\u1ECF ghi ch\xFA tr\u1EF1c quan sinh \u0111\u1ED9ng",
+    bg: "#f5f7fa",
+    fg: "#18202f",
+    surface: "#e4e9f2",
+    muted: "#475569",
+    accent: "#0369a1",
+    secondary: "#e11d48",
+    chart: ["#0369a1", "#e11d48", "#16a34a", "#d97706", "#9333ea"],
+    radius: 10,
+    shadow: "soft",
+    border: 1.5,
+    borderColor: "#cbd5e1",
+    fontHeading: "Nunito",
+    fontBody: SANS,
+    fonts: { heading: "Nunito", body: SANS, serif: SERIF, mono: MONO },
+    decor: "none",
+    dark: false,
+    tags: ["l\u1EDBp h\u1ECDc", "b\xE0i gi\u1EA3ng", "b\u1EA3ng tr\u1EAFng", "h\u1EB1ng ng\xE0y", "ghi ch\xE9p"]
+  },
+  {
+    id: "tet-xuan",
+    name: "T\u1EBFt xu\xE2n",
+    vibe: "kh\xF4ng kh\xED l\u1EC5 h\u1ED9i t\u1EBFt truy\u1EC1n th\u1ED1ng, n\u1EC1n kem \u1EA5m, \u0111\u1ECF son may m\u1EAFn v\xE0 v\xE0ng kim r\u1EA1ng r\u1EE1",
+    bg: "#fff7ed",
+    fg: "#31100b",
+    surface: "#fceddc",
+    muted: "#6e453b",
+    accent: "#991b1b",
+    secondary: "#b45309",
+    chart: ["#991b1b", "#b45309", "#15803d", "#d97706", "#6d28d9"],
+    radius: 12,
+    shadow: "soft",
+    border: 1.5,
+    borderColor: "#fed7aa",
+    fontHeading: "Lora",
+    fontBody: SANS,
+    fonts: { heading: "Lora", body: SANS, serif: "Lora, Georgia, serif", mono: MONO },
+    decor: "glow",
+    dark: false,
+    tags: ["t\u1EBFt", "m\xF9a xu\xE2n", "l\u1EC5 h\u1ED9i", "s\u1EF1 ki\u1EC7n", "truy\u1EC1n th\u1ED1ng"]
+  }
+];
+var LEGACY_THEME_IDS = {
+  "khoa-hoc": "sang",
+  "van-su-dia": "giay-am",
+  "sinh-hoc": "rung",
+  "ngoai-ngu-tin": "tim"
+};
+var THEME_FONT_PAIRS = {
+  "dem-xanh": ["Saira Condensed", "Inter"],
+  "rung": ["Lexend", "Be Vietnam Pro"],
+  "tim": ["Montserrat", "Nunito"],
+  "do": ["Oswald", "Inter"],
+  "vang-nang": ["Barlow Condensed", "Lexend"],
+  "bien-xanh": ["Roboto Condensed", "Inter"],
+  "cam-nang-dong": ["Barlow Condensed", "Be Vietnam Pro"],
+  "lich-su-co": ["Merriweather", "Be Vietnam Pro"],
+  "phong-thi-nghiem": ["JetBrains Mono", "Inter"],
+  "bac-au-toi-gian": ["Montserrat", "Inter"],
+  "vu-tru": ["Saira Condensed", "Space Grotesk"],
+  "rung-dem": ["Source Serif 4", "Inter"],
+  "bac-ha": ["Lexend", "Nunito"],
+  "hong-dao": ["Playfair Display", "Inter"],
+  "oai-huong": ["Playfair Display", "Lora"],
+  "cat-vang": ["Merriweather", "Roboto Condensed"],
+  "chanh-tuoi": ["Caveat", "Lexend"],
+  "bau-troi": ["Roboto Condensed", "Be Vietnam Pro"],
+  "bao-tuong": ["Oswald", "Source Serif 4"]
+};
+function withThemeFonts(theme, [heading, body]) {
+  return { ...theme, fontHeading: heading, fontBody: body, fonts: { serif: SERIF, mono: MONO, ...theme.fonts, heading, body } };
+}
+var DECK_THEMES = LEGACY_DECK_THEMES.map((theme) => {
+  const pair = THEME_FONT_PAIRS[theme.id ?? ""];
+  return pair ? withThemeFonts(theme, pair) : theme;
+});
+function resolveThemeId(id) {
+  if (!id) return void 0;
+  const mapped = LEGACY_THEME_IDS[id] ?? id;
+  return DECK_THEMES.some((t6) => t6.id === mapped) ? mapped : void 0;
+}
+function rgb(hex) {
+  const raw = hex.replace("#", "").trim();
+  const full = raw.length === 3 ? raw.split("").map((c8) => c8 + c8).join("") : raw;
+  const n10 = Number.parseInt(full, 16);
+  if (full.length !== 6 || !Number.isFinite(n10)) return [255, 255, 255];
+  return [n10 >> 16 & 255, n10 >> 8 & 255, n10 & 255];
+}
+function toHex(value) {
+  return Math.max(0, Math.min(255, Math.round(value))).toString(16).padStart(2, "0");
+}
+function mixHex(a34, b, ratio) {
+  const [r1, g1, b1] = rgb(a34);
+  const [r22, g2, b2] = rgb(b);
+  return `#${toHex(r1 + (r22 - r1) * ratio)}${toHex(g1 + (g2 - g1) * ratio)}${toHex(b1 + (b2 - b1) * ratio)}`;
+}
+function relativeLuminance(hex) {
+  const channel = (value) => {
+    const s9 = value / 255;
+    return s9 <= 0.03928 ? s9 / 12.92 : ((s9 + 0.055) / 1.055) ** 2.4;
+  };
+  const [r7, g, b] = rgb(hex);
+  return 0.2126 * channel(r7) + 0.7152 * channel(g) + 0.0722 * channel(b);
+}
+function contrastRatio(a34, b) {
+  const la = relativeLuminance(a34);
+  const lb = relativeLuminance(b);
+  return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+}
+function readableTextOn(bg) {
+  return contrastRatio(bg, "#111827") >= contrastRatio(bg, "#ffffff") ? "#111827" : "#ffffff";
+}
+function normalizeTheme(theme) {
+  const source = theme ?? DECK_THEMES[0];
+  const sourceId = resolveThemeId(source.id);
+  const catalog = LEGACY_DECK_THEMES.find(
+    (t6) => sourceId && t6.id === sourceId || t6.bg && source.bg && t6.bg.toLowerCase() === source.bg.toLowerCase()
+  );
+  const bg = source.bg || catalog?.bg || "#ffffff";
+  const fg = source.fg || catalog?.fg || readableTextOn(bg);
+  const accent = source.accent || catalog?.accent || "#2563eb";
+  const secondary = source.secondary ?? catalog?.secondary ?? mixHex(accent, fg, 0.25);
+  const fontHeading = source.fontHeading || catalog?.fontHeading || SANS;
+  const fontBody = source.fontBody || catalog?.fontBody || SANS;
+  const fonts = {
+    heading: source.fonts?.heading ?? fontHeading,
+    body: source.fonts?.body ?? fontBody,
+    serif: source.fonts?.serif ?? catalog?.fonts?.serif ?? SERIF,
+    mono: source.fonts?.mono ?? catalog?.fonts?.mono ?? MONO
+  };
+  return {
+    ...catalog,
+    ...source,
+    id: source.id ?? catalog?.id ?? "custom",
+    name: source.name ?? catalog?.name ?? "T\xF9y ch\u1EC9nh",
+    bg,
+    fg,
+    accent,
+    fontHeading: fonts.heading,
+    fontBody: fonts.body,
+    tags: source.tags ?? catalog?.tags ?? [],
+    dark: source.dark ?? catalog?.dark ?? readableTextOn(bg) === "#ffffff",
+    surface: source.surface ?? catalog?.surface ?? mixHex(bg, fg, 0.06),
+    muted: source.muted ?? catalog?.muted ?? mixHex(bg, fg, 0.55),
+    secondary,
+    decor: source.decor ?? catalog?.decor ?? "none",
+    chart: source.chart ?? catalog?.chart ?? [accent, secondary, mixHex(accent, fg, 0.2), mixHex(accent, bg, 0.35)],
+    fonts,
+    radius: source.radius ?? catalog?.radius ?? 12,
+    shadow: source.shadow ?? catalog?.shadow ?? "none",
+    border: source.border ?? catalog?.border ?? 0,
+    borderColor: source.borderColor ?? catalog?.borderColor ?? mixHex(fg, bg, 0.35)
+  };
+}
+
+// src/lib/slideContrast.ts
+var photoScrimFill = (position) => "linear-gradient(" + (position === "left" ? 270 : 180) + "deg, #10121400 23%, #101214e6 66%, #101214fa 100%)";
+var PHOTO_CREDIT_FILL = "linear-gradient(180deg, #10121400 0%, #101214e6 54%, #101214fa 100%)";
 
 // src/lib/graphicsMeta.ts
 var RAW = [
@@ -4661,708 +5882,8 @@ function pickSlideAsset(text, used) {
   return best;
 }
 
-// src/lib/slideTheme.ts
-var SANS = "Be Vietnam Pro";
-var SERIF = "'Times New Roman', 'Liberation Serif', serif";
-var MONO = "'JetBrains Mono Variable', ui-monospace, monospace";
-function oklch(l4, c8, hue) {
-  const a34 = c8 * Math.cos(hue * Math.PI / 180);
-  const b = c8 * Math.sin(hue * Math.PI / 180);
-  const l_ = (l4 + 0.3963377774 * a34 + 0.2158037573 * b) ** 3;
-  const m_ = (l4 - 0.1055613458 * a34 - 0.0638541728 * b) ** 3;
-  const s_ = (l4 - 0.0894841775 * a34 - 1.291485548 * b) ** 3;
-  const linear = [
-    4.0767416621 * l_ - 3.3077115913 * m_ + 0.2309699292 * s_,
-    -1.2684380046 * l_ + 2.6097574011 * m_ - 0.3413193965 * s_,
-    -0.0041960863 * l_ - 0.7034186147 * m_ + 1.707614701 * s_
-  ];
-  const encode = (x) => {
-    const v = Math.max(0, Math.min(1, x));
-    return v <= 31308e-7 ? 12.92 * v : 1.055 * v ** (1 / 2.4) - 0.055;
-  };
-  return `#${linear.map((v) => Math.round(encode(v) * 255).toString(16).padStart(2, "0")).join("")}`;
-}
-function palette(hue, opts = {}) {
-  const { chroma = 0.15, dark = false } = opts;
-  const hue2 = hue + 150;
-  return dark ? {
-    bg: oklch(0.2, 0.03, hue),
-    fg: oklch(0.96, 0.01, hue),
-    surface: oklch(0.27, 0.035, hue),
-    muted: oklch(0.76, 0.03, hue),
-    accent: oklch(0.78, chroma * 0.85, hue),
-    secondary: oklch(0.78, 0.1, hue2),
-    chart: [0, 60, -60, 120, 210].map((d, i) => oklch(0.76, i ? 0.11 : chroma * 0.85, hue + d))
-  } : {
-    bg: oklch(0.985, 8e-3, hue),
-    fg: oklch(0.24, 0.035, hue),
-    surface: oklch(0.955, 0.02, hue),
-    muted: oklch(0.46, 0.03, hue),
-    accent: oklch(0.5, chroma, hue),
-    secondary: oklch(0.5, 0.1, hue2),
-    chart: [0, 150, 60, -60, 210].map((d, i) => oklch(i ? 0.58 : 0.5, i ? 0.11 : chroma, hue + d))
-  };
-}
-var FONTS_SANS = { heading: SANS, body: SANS, serif: SERIF, mono: MONO };
-var FONTS_SERIF = { heading: SERIF, body: SANS, serif: SERIF, mono: MONO };
-var DECK_THEMES = [
-  {
-    id: "sang",
-    name: "S\xE1ng",
-    vibe: "tin c\u1EADy, h\u1ECDc thu\u1EADt, ch\xEDnh x\xE1c \u2014 an to\xE0n cho m\u1ECDi ch\u1EE7 \u0111\u1EC1, h\u1EE3p to\xE1n l\xFD ho\xE1",
-    ...palette(262, { chroma: 0.17 }),
-    radius: 14,
-    shadow: "soft",
-    fontHeading: SANS,
-    fontBody: SANS,
-    fonts: FONTS_SANS,
-    decor: "none",
-    dark: false,
-    tags: ["c\u01A1 b\u1EA3n", "to\xE1n", "l\xFD", "ho\xE1", "khoa h\u1ECDc", "t\u1EF1 nhi\xEAn"]
-  },
-  {
-    id: "dem-xanh",
-    name: "\u0110\xEAm xanh",
-    vibe: "c\xF4ng ngh\u1EC7, hi\u1EC7n \u0111\u1EA1i, tr\xECnh chi\u1EBFu trong ph\xF2ng t\u1ED1i",
-    ...palette(240, { chroma: 0.15, dark: true }),
-    radius: 14,
-    shadow: "none",
-    fontHeading: SANS,
-    fontBody: SANS,
-    fonts: FONTS_SANS,
-    decor: "none",
-    dark: true,
-    tags: ["c\u01A1 b\u1EA3n", "c\xF4ng ngh\u1EC7", "tin h\u1ECDc"]
-  },
-  {
-    id: "giay-am",
-    name: "Gi\u1EA5y \u1EA5m",
-    vibe: "\u1EA5m, truy\u1EC1n th\u1ED1ng, v\u0103n ch\u01B0\u01A1ng, l\u1ECBch s\u1EED, ho\xE0i ni\u1EC7m",
-    ...palette(50, { chroma: 0.13 }),
-    radius: 24,
-    shadow: "soft",
-    fontHeading: SERIF,
-    fontBody: SANS,
-    fonts: FONTS_SERIF,
-    decor: "grain",
-    dark: false,
-    tags: ["c\u01A1 b\u1EA3n", "v\u0103n", "s\u1EED", "\u0111\u1ECBa", "x\xE3 h\u1ED9i"]
-  },
-  {
-    id: "rung",
-    name: "R\u1EEBng",
-    vibe: "t\u01B0\u01A1i, d\u1ECBu, t\u1EF1 nhi\xEAn, sinh th\xE1i, sinh h\u1ECDc",
-    ...palette(155, { chroma: 0.12 }),
-    radius: 18,
-    shadow: "soft",
-    fontHeading: SANS,
-    fontBody: SANS,
-    fonts: FONTS_SANS,
-    decor: "none",
-    dark: false,
-    tags: ["c\u01A1 b\u1EA3n", "sinh", "sinh h\u1ECDc", "t\u1EF1 nhi\xEAn"]
-  },
-  {
-    id: "tim",
-    name: "T\xEDm",
-    vibe: "s\xE1ng t\u1EA1o, tr\u1EBB trung, ngh\u1EC7 thu\u1EADt, ngo\u1EA1i ng\u1EEF",
-    ...palette(305, { chroma: 0.16 }),
-    radius: 24,
-    shadow: "soft",
-    fontHeading: SANS,
-    fontBody: SANS,
-    fonts: FONTS_SANS,
-    decor: "glow",
-    dark: false,
-    tags: ["c\u01A1 b\u1EA3n", "ngo\u1EA1i ng\u1EEF", "ti\u1EBFng anh", "ngh\u1EC7 thu\u1EADt"]
-  },
-  {
-    id: "do",
-    name: "\u0110\u1ECF",
-    vibe: "m\u1EA1nh, c\u1EA3nh b\xE1o, n\u0103ng l\u01B0\u1EE3ng cao \u2014 ki\u1EC3u poster",
-    ...palette(28, { chroma: 0.18 }),
-    radius: 0,
-    shadow: "hard",
-    border: 2,
-    borderColor: oklch(0.24, 0.035, 28),
-    fontHeading: SERIF,
-    fontBody: SANS,
-    fonts: FONTS_SERIF,
-    decor: "none",
-    dark: false,
-    tags: ["c\u01A1 b\u1EA3n"]
-  },
-  {
-    id: "vang-nang",
-    name: "V\xE0ng n\u1EAFng",
-    vibe: "vui t\u01B0\u01A1i, n\u0103ng \u0111\u1ED9ng, phong c\xE1ch ho\u1EA1t h\xECnh truy\u1EC7n tranh",
-    bg: "#fffbeb",
-    fg: "#1e1b4b",
-    surface: "#fef08a",
-    muted: "#71717a",
-    accent: "#7c3aed",
-    secondary: "#f97316",
-    chart: ["#7c3aed", "#f97316", "#06b6d4", "#e11d48", "#10b981"],
-    radius: 14,
-    shadow: "soft",
-    border: 0,
-    borderColor: "#e2e8f0",
-    fontHeading: "Verdana",
-    fontBody: "Verdana",
-    fonts: { heading: "Verdana", body: "Verdana", serif: SERIF, mono: MONO },
-    decor: "none",
-    dark: false,
-    tags: ["ti\u1EC3u h\u1ECDc", "tr\u1EBB em", "ho\u1EA1t h\xECnh", "vui t\u01B0\u01A1i"]
-  },
-  {
-    id: "bang-den",
-    name: "B\u1EA3ng \u0111en",
-    vibe: "l\u1EDBp h\u1ECDc, s\u01B0 ph\u1EA1m, ph\u1EA5n tr\u1EAFng tr\xEAn n\u1EC1n b\u1EA3ng xanh r\xEAu t\u1ED1i",
-    bg: "#14231a",
-    fg: "#f8fafc",
-    surface: "#1b3024",
-    muted: "#94a3b8",
-    accent: "#fef08a",
-    secondary: "#86efac",
-    chart: ["#fef08a", "#86efac", "#38bdf8", "#f472b6", "#cbd5e1"],
-    radius: 4,
-    shadow: "none",
-    border: 0,
-    borderColor: "#92400e",
-    fontHeading: "Tahoma",
-    fontBody: "Tahoma",
-    fonts: { heading: "Tahoma", body: "Tahoma", serif: SERIF, mono: MONO },
-    decor: "none",
-    dark: true,
-    tags: ["l\u1EDBp h\u1ECDc", "to\xE1n", "b\xE0i gi\u1EA3ng", "b\u1EA3ng \u0111en"]
-  },
-  {
-    id: "pastel-mam-non",
-    name: "Pastel m\u1EA7m non",
-    vibe: "d\u1ECBu d\xE0ng, h\u1ED3ng ph\u1EA5n v\xE0 xanh b\u1EA1c h\xE0, bo tr\xF2n l\u1EDBn cho ti\u1EC3u h\u1ECDc",
-    bg: "#fff5f8",
-    fg: "#3b1530",
-    surface: "#e9faf3",
-    muted: "#724060",
-    accent: "#db2777",
-    secondary: "#0d9488",
-    chart: ["#db2777", "#0d9488", "#f59e0b", "#8b5cf6", "#06b6d4"],
-    radius: 28,
-    shadow: "soft",
-    border: 1,
-    borderColor: "#fbcfe8",
-    fontHeading: "Nunito",
-    fontBody: "Nunito",
-    fonts: { heading: "Nunito", body: "Nunito", serif: SERIF, mono: MONO },
-    decor: "none",
-    dark: false,
-    tags: ["ti\u1EC3u h\u1ECDc", "m\u1EA7m non", "pastel", "vui t\u01B0\u01A1i"]
-  },
-  {
-    id: "bien-xanh",
-    name: "Bi\u1EC3n xanh",
-    vibe: "xanh ng\u1ECDc \u0111\u1EA1i d\u01B0\u01A1ng k\u1EBFt h\u1EE3p s\u1EAFc c\xE1t \u1EA5m, d\u1ECBu m\u1EAFt",
-    bg: "#f0fafa",
-    fg: "#0b2c3c",
-    surface: "#fdf6e7",
-    muted: "#2e5c6e",
-    accent: "#0e7490",
-    secondary: "#b45309",
-    chart: ["#0e7490", "#b45309", "#0284c7", "#059669", "#6366f1"],
-    radius: 16,
-    shadow: "soft",
-    border: 1,
-    borderColor: "#a5f3fc",
-    fontHeading: SANS,
-    fontBody: SANS,
-    fonts: FONTS_SANS,
-    decor: "none",
-    dark: false,
-    tags: ["\u0111\u1ECBa l\xFD", "sinh h\u1ECDc bi\u1EC3n", "thi\xEAn nhi\xEAn"]
-  },
-  {
-    id: "so-tay-o-li",
-    name: "S\u1ED5 tay \xF4 li",
-    vibe: "gi\u1EA5y v\u1EDF kem nh\u1EB9, m\u1EF1c xanh b\xFAt bi v\xE0 n\xE9t ch\u1EEF vi\u1EBFt tay th\xE2n thu\u1ED9c",
-    bg: "#fcfaf0",
-    fg: "#1e293b",
-    surface: "#eef4fc",
-    muted: "#475569",
-    accent: "#1d4ed8",
-    secondary: "#dc2626",
-    chart: ["#1d4ed8", "#dc2626", "#059669", "#d97706", "#7c3aed"],
-    radius: 4,
-    shadow: "none",
-    border: 1,
-    borderColor: "#cbd5e1",
-    fontHeading: "Patrick Hand",
-    fontBody: SANS,
-    fonts: { heading: "'Patrick Hand', 'Nunito', sans-serif", body: SANS, serif: SERIF, mono: MONO },
-    decor: "grain",
-    dark: false,
-    tags: ["\xF4n t\u1EADp", "ghi ch\xE9p", "s\u1ED5 tay", "l\u1EDBp h\u1ECDc"]
-  },
-  {
-    id: "cam-nang-dong",
-    name: "Cam n\u0103ng \u0111\u1ED9ng",
-    vibe: "th\u1EC3 thao, nhi\u1EC7t huy\u1EBFt v\u1EDBi cam ch\xE1y v\xE0 xanh navy s\u1EAFc n\xE9t",
-    bg: "#fff9f3",
-    fg: "#0f172a",
-    surface: "#ffedd5",
-    muted: "#475569",
-    accent: "#c2410c",
-    secondary: "#1e3a8a",
-    chart: ["#c2410c", "#1e3a8a", "#0284c7", "#16a34a", "#9333ea"],
-    radius: 6,
-    shadow: "hard",
-    border: 2,
-    borderColor: "#1e3a8a",
-    fontHeading: "Space Grotesk",
-    fontBody: SANS,
-    fonts: { heading: "'Space Grotesk', 'Be Vietnam Pro', sans-serif", body: SANS, serif: SERIF, mono: MONO },
-    decor: "none",
-    dark: false,
-    tags: ["th\u1EC3 d\u1EE5c", "k\u1EF9 n\u0103ng s\u1ED1ng", "n\u0103ng \u0111\u1ED9ng", "ho\u1EA1t \u0111\u1ED9ng"]
-  },
-  {
-    id: "lich-su-co",
-    name: "L\u1ECBch s\u1EED c\u1ED5",
-    vibe: "gi\u1EA5y c\u1ED5 ng\u1EA3 v\xE0ng, n\xE2u \u0111\u1ECF son v\xE0 vi\u1EC1n v\xE0ng \u0111\u1ED3ng trang tr\u1ECDng",
-    bg: "#faf3e6",
-    fg: "#2c1610",
-    surface: "#f1e2c8",
-    muted: "#664433",
-    accent: "#881337",
-    secondary: "#a16207",
-    chart: ["#881337", "#a16207", "#7c2d12", "#1e3a8a", "#3f6212"],
-    radius: 2,
-    shadow: "none",
-    border: 1.5,
-    borderColor: "#b45309",
-    fontHeading: "Lora",
-    fontBody: SANS,
-    fonts: { heading: "Lora", body: SANS, serif: "Lora, Georgia, serif", mono: MONO },
-    decor: "grain",
-    dark: false,
-    tags: ["l\u1ECBch s\u1EED", "v\u0103n h\u1ECDc trung \u0111\u1EA1i", "v\u0103n ho\xE1"]
-  },
-  {
-    id: "phong-thi-nghiem",
-    name: "Ph\xF2ng th\xED nghi\u1EC7m",
-    vibe: "tr\u1EAFng s\u1EA1ch ph\xF2ng lab, xanh l\xE1 chanh v\xE0 ti\xEAu \u0111\u1EC1 ch\u1EEF \u0111\u01A1n c\xE1ch ch\xEDnh x\xE1c",
-    bg: "#f6fcf6",
-    fg: "#0e281b",
-    surface: "#ebf9d4",
-    muted: "#3d5a48",
-    accent: "#4d7c0f",
-    secondary: "#0369a1",
-    chart: ["#4d7c0f", "#0369a1", "#0d9488", "#d97706", "#7c3aed"],
-    radius: 4,
-    shadow: "none",
-    border: 1,
-    borderColor: "#a3e635",
-    fontHeading: "JetBrains Mono Variable",
-    fontBody: SANS,
-    fonts: { heading: MONO, body: SANS, serif: SERIF, mono: MONO },
-    decor: "none",
-    dark: false,
-    tags: ["ho\xE1", "sinh", "th\xED nghi\u1EC7m", "khoa h\u1ECDc"]
-  },
-  {
-    id: "bac-au-toi-gian",
-    name: "T\u1ED1i gi\u1EA3n B\u1EAFc \xC2u",
-    vibe: "x\xE1m \u1EA5m thanh b\xECnh v\xE0 m\u1ED9t \u0111i\u1EC3m nh\u1EA5n \u0111\u1EA5t nung r\u1EA5t ti\u1EBFt ch\u1EBF",
-    bg: "#f4f2ed",
-    fg: "#1c1917",
-    surface: "#e8e4dc",
-    muted: "#57534e",
-    accent: "#b93815",
-    secondary: "#4d7c5b",
-    chart: ["#b93815", "#4d7c5b", "#57534e", "#a16207", "#334155"],
-    radius: 8,
-    shadow: "none",
-    border: 0,
-    borderColor: "#d6d3cd",
-    fontHeading: SANS,
-    fontBody: SANS,
-    fonts: FONTS_SANS,
-    decor: "none",
-    dark: false,
-    tags: ["m\u1ECDi m\xF4n", "h\u1ECDp ph\u1EE5 huynh", "b\xE1o c\xE1o", "t\u1ED1i gi\u1EA3n"]
-  },
-  {
-    id: "hoa-si-mau-nuoc",
-    name: "Ho\u1EA1 s\u0129 m\xE0u n\u01B0\u1EDBc",
-    vibe: "gi\u1EA5y v\u1EBD m\u1EC1m, s\u1EAFc hoa h\u1ED3ng t\xEDm d\u1ECBu v\xE0 ph\xF4ng c\xF3 ch\xE2n uy\u1EC3n chuy\u1EC3n",
-    bg: "#fdf7f9",
-    fg: "#2e1f33",
-    surface: "#f7e7f0",
-    muted: "#6a4966",
-    accent: "#be185d",
-    secondary: "#6d28d9",
-    chart: ["#be185d", "#6d28d9", "#0e7490", "#d97706", "#059669"],
-    radius: 20,
-    shadow: "soft",
-    border: 1,
-    borderColor: "#f5d0fe",
-    fontHeading: "Lora",
-    fontBody: "Lora",
-    fonts: { heading: "Lora", body: "Lora", serif: "Lora, Georgia, serif", mono: MONO },
-    decor: "glow",
-    dark: false,
-    tags: ["m\u0129 thu\u1EADt", "v\u0103n", "ngh\u1EC7 thu\u1EADt", "\xE2m nh\u1EA1c"]
-  },
-  {
-    id: "vu-tru",
-    name: "V\u0169 tr\u1EE5",
-    vibe: "n\u1EC1n t\u1ED1i t\xEDm than s\xE2u th\u1EB3m, xanh neon nh\u1EB9 v\xE0 ch\u1EA5m sao thi\xEAn h\xE0",
-    bg: "#0d0b26",
-    fg: "#f8fafc",
-    surface: "#191642",
-    muted: "#a5b4fc",
-    accent: "#22d3ee",
-    secondary: "#c084fc",
-    chart: ["#22d3ee", "#c084fc", "#4ade80", "#f472b6", "#facc15"],
-    radius: 12,
-    shadow: "none",
-    border: 1,
-    borderColor: "#22d3ee",
-    fontHeading: "Space Grotesk",
-    fontBody: SANS,
-    fonts: { heading: "'Space Grotesk', 'Be Vietnam Pro', sans-serif", body: SANS, serif: SERIF, mono: MONO },
-    decor: "glow",
-    dark: true,
-    tags: ["v\u1EADt l\xFD", "thi\xEAn v\u0103n", "tin h\u1ECDc", "n\u1EC1n t\u1ED1i"]
-  },
-  {
-    id: "rung-dem",
-    name: "R\u1EEBng \u0111\xEAm",
-    vibe: "xanh r\xEAu \u0111\xEAm s\xE2u l\u1EAFng, \xE1nh v\xE0ng m\u1EADt ong \u1EA5m v\xE0 \u0111om \u0111\xF3m r\u1EEBng",
-    bg: "#0b1d17",
-    fg: "#f5f1e6",
-    surface: "#142f26",
-    muted: "#9ec2b0",
-    accent: "#f59e0b",
-    secondary: "#4ade80",
-    chart: ["#f59e0b", "#4ade80", "#38bdf8", "#fb7185", "#e2e8f0"],
-    radius: 16,
-    shadow: "none",
-    border: 1.2,
-    borderColor: "#b45309",
-    fontHeading: "Lora",
-    fontBody: SANS,
-    fonts: { heading: "Lora", body: SANS, serif: "Lora, Georgia, serif", mono: MONO },
-    decor: "glow",
-    dark: true,
-    tags: ["sinh h\u1ECDc", "k\u1EC3 chuy\u1EC7n", "thi\xEAn nhi\xEAn", "n\u1EC1n t\u1ED1i"]
-  },
-  {
-    id: "bac-ha",
-    name: "B\u1EA1c h\xE0",
-    vibe: "t\u01B0\u01A1i m\xE1t, xanh b\u1EA1c h\xE0 ng\u1ECDc thanh khi\u1EBFt v\xE0 tr\u1EAFng \xE1nh l\u1EE5c d\u1ECBu m\u1EAFt cho sinh h\u1ECDc",
-    bg: "#f2fbf7",
-    fg: "#0d281e",
-    surface: "#e1f6ec",
-    muted: "#2d5744",
-    accent: "#047857",
-    secondary: "#0d9488",
-    chart: ["#047857", "#0d9488", "#10b981", "#0284c7", "#d97706"],
-    radius: 14,
-    shadow: "soft",
-    border: 1,
-    borderColor: "#a7f3d0",
-    fontHeading: "Nunito",
-    fontBody: SANS,
-    fonts: { heading: "Nunito", body: SANS, serif: SERIF, mono: MONO },
-    decor: "none",
-    dark: false,
-    tags: ["sinh h\u1ECDc", "khtn", "t\u01B0\u01A1i m\xE1t", "b\u1EA1c h\xE0", "m\xF4i tr\u01B0\u1EDDng"]
-  },
-  {
-    id: "hong-dao",
-    name: "H\u1ED3ng \u0111\xE0o",
-    vibe: "kem \u0111\xE0o \u1EA5m \xE1p, san h\xF4 \u0111\u1EADm \u0111\u1EB1m th\u1EAFm v\xE0 tinh t\u1EBF cho v\u0103n h\u1ECDc v\xE0 k\u1EF9 n\u0103ng s\u1ED1ng",
-    bg: "#fdf6f0",
-    fg: "#2b1b17",
-    surface: "#ffe8dc",
-    muted: "#6e4a42",
-    accent: "#b91c1c",
-    secondary: "#ea580c",
-    chart: ["#b91c1c", "#ea580c", "#f59e0b", "#7c3aed", "#059669"],
-    radius: 18,
-    shadow: "soft",
-    border: 1,
-    borderColor: "#fed7aa",
-    fontHeading: "Lora",
-    fontBody: SANS,
-    fonts: { heading: "Lora", body: SANS, serif: "Lora, Georgia, serif", mono: MONO },
-    decor: "none",
-    dark: false,
-    tags: ["ng\u1EEF v\u0103n", "k\u1EF9 n\u0103ng s\u1ED1ng", "\u1EA5m \xE1p", "h\u1ED3ng \u0111\xE0o", "thanh l\u1ECBch"]
-  },
-  {
-    id: "oai-huong",
-    name: "O\u1EA3i h\u01B0\u01A1ng",
-    vibe: "t\xEDm lavender nh\u1EA1t m\u01A1 m\xE0ng, t\xEDm than \u0111\xE0i c\xE1c cho \xE2m nh\u1EA1c v\xE0 m\u0129 thu\u1EADt",
-    bg: "#f8f5fd",
-    fg: "#231634",
-    surface: "#ede5fc",
-    muted: "#5c4a73",
-    accent: "#6d28d9",
-    secondary: "#9333ea",
-    chart: ["#6d28d9", "#9333ea", "#ec4899", "#0284c7", "#059669"],
-    radius: 16,
-    shadow: "soft",
-    border: 1,
-    borderColor: "#ddd6fe",
-    fontHeading: "Lora",
-    fontBody: SANS,
-    fonts: { heading: "Lora", body: SANS, serif: "Lora, Georgia, serif", mono: MONO },
-    decor: "none",
-    dark: false,
-    tags: ["\xE2m nh\u1EA1c", "m\u0129 thu\u1EADt", "ngh\u1EC7 thu\u1EADt", "o\u1EA3i h\u01B0\u01A1ng", "m\u1ED9ng m\u01A1"]
-  },
-  {
-    id: "cat-vang",
-    name: "C\xE1t v\xE0ng",
-    vibe: "be c\xE1t \u1EA5m m\u1ED9c m\u1EA1c, n\xE2u \u0111\u1EA5t \u0111\u1EB1m s\xE2u v\xE0 xanh \xF4 liu t\u1EF1 nhi\xEAn cho \u0111\u1ECBa l\xED v\xE0 du l\u1ECBch",
-    bg: "#f8f4ec",
-    fg: "#261c14",
-    surface: "#ede3d1",
-    muted: "#635345",
-    accent: "#854d0e",
-    secondary: "#4d7c0f",
-    chart: ["#854d0e", "#4d7c0f", "#c2410c", "#0369a1", "#7c3aed"],
-    radius: 8,
-    shadow: "none",
-    border: 1,
-    borderColor: "#d6c7b2",
-    fontHeading: SANS,
-    fontBody: SANS,
-    fonts: FONTS_SANS,
-    decor: "grain",
-    dark: false,
-    tags: ["\u0111\u1ECBa l\xED", "du l\u1ECBch", "v\u0103n ho\xE1", "c\xE1t v\xE0ng", "sa m\u1EA1c"]
-  },
-  {
-    id: "chanh-tuoi",
-    name: "Chanh t\u01B0\u01A1i",
-    vibe: "tr\u1EAFng tinh kh\xF4i, v\xE0ng chanh r\u1EF1c r\u1EE1 v\xE0 xanh l\xE1 t\u01B0\u01A1i m\xE1t cho ti\u1EC3u h\u1ECDc v\xE0 tr\xF2 ch\u01A1i",
-    bg: "#fcfee8",
-    fg: "#1a2e05",
-    surface: "#f4fcc4",
-    muted: "#4d6328",
-    accent: "#15803d",
-    secondary: "#ca8a04",
-    chart: ["#15803d", "#ca8a04", "#0284c7", "#ea580c", "#7c3aed"],
-    radius: 20,
-    shadow: "soft",
-    border: 1.5,
-    borderColor: "#bef264",
-    fontHeading: "Nunito",
-    fontBody: "Nunito",
-    fonts: { heading: "Nunito", body: "Nunito", serif: SERIF, mono: MONO },
-    decor: "none",
-    dark: false,
-    tags: ["ti\u1EC3u h\u1ECDc", "tr\xF2 ch\u01A1i", "to\xE1n", "chanh t\u01B0\u01A1i", "s\xF4i n\u1ED5i"]
-  },
-  {
-    id: "bau-troi",
-    name: "B\u1EA7u tr\u1EDDi",
-    vibe: "xanh da tr\u1EDDi d\u1ECBu m\xE1t, xanh d\u01B0\u01A1ng \u0111\u1EADm thanh khi\u1EBFt v\xE0 motif m\xE2y b\u1ED3ng b\u1EC1nh cho KHTN, V\u1EADt l\xED",
-    bg: "#f1f7fd",
-    fg: "#0c2340",
-    surface: "#dbeafe",
-    muted: "#2d527c",
-    accent: "#0369a1",
-    secondary: "#0284c7",
-    chart: ["#0369a1", "#0284c7", "#0d9488", "#f59e0b", "#8b5cf6"],
-    radius: 16,
-    shadow: "soft",
-    border: 1,
-    borderColor: "#bae6fd",
-    fontHeading: SANS,
-    fontBody: SANS,
-    fonts: FONTS_SANS,
-    decor: "none",
-    dark: false,
-    tags: ["khtn", "v\u1EADt l\xED", "thi\xEAn nhi\xEAn", "b\u1EA7u tr\u1EDDi", "khoa h\u1ECDc"]
-  },
-  {
-    id: "bao-tuong",
-    name: "B\xE1o t\u01B0\u1EDDng",
-    vibe: "phong c\xE1ch t\u1EA1p ch\xED tin t\u1EE9c, \u0111en tr\u1EAFng t\u01B0\u01A1ng ph\u1EA3n cao, \u0111i\u1EC3m nh\u1EA5n \u0111\u1ECF son v\xE0 ch\u1EEF c\xF3 ch\xE2n trang tr\u1ECDng",
-    bg: "#f9f9f8",
-    fg: "#111827",
-    surface: "#ebeae7",
-    muted: "#4b5563",
-    accent: "#b91c1c",
-    secondary: "#1e293b",
-    chart: ["#b91c1c", "#1e293b", "#475569", "#d97706", "#0284c7"],
-    radius: 0,
-    shadow: "none",
-    border: 2,
-    borderColor: "#111827",
-    fontHeading: "Lora",
-    fontBody: SANS,
-    fonts: { heading: "Lora", body: SANS, serif: "Lora, Georgia, serif", mono: MONO },
-    decor: "none",
-    dark: false,
-    tags: ["l\u1ECBch s\u1EED", "gdcd", "tin t\u1EE9c", "b\xE1o ch\xED", "t\u1EA1p ch\xED", "b\xE1o t\u01B0\u1EDDng"]
-  },
-  {
-    id: "hinh-hoc-mau",
-    name: "H\xECnh h\u1ECDc m\xE0u",
-    vibe: "tr\u01B0\u1EDDng ph\xE1i Bauhaus hi\u1EC7n \u0111\u1EA1i, c\xE1c kh\u1ED1i c\u01A1 b\u1EA3n xanh cobalt, v\xE0ng ochre, \u0111\u1ECF th\u1EAFm tr\xEAn n\u1EC1n tr\u1EAFng s\xE1ng",
-    bg: "#fafbfc",
-    fg: "#090d16",
-    surface: "#e8eef8",
-    muted: "#3e4c5e",
-    accent: "#1d4ed8",
-    secondary: "#dc2626",
-    chart: ["#1d4ed8", "#dc2626", "#b45309", "#059669", "#7c3aed"],
-    radius: 4,
-    shadow: "hard",
-    border: 2,
-    borderColor: "#090d16",
-    fontHeading: "Space Grotesk",
-    fontBody: SANS,
-    fonts: { heading: "'Space Grotesk', 'Be Vietnam Pro', sans-serif", body: SANS, serif: SERIF, mono: MONO },
-    decor: "none",
-    dark: false,
-    tags: ["to\xE1n h\xECnh", "m\u0129 thu\u1EADt", "bauhaus", "h\xECnh h\u1ECDc", "ki\u1EBFn tr\xFAc"]
-  },
-  {
-    id: "bang-trang",
-    name: "B\u1EA3ng tr\u1EAFng",
-    vibe: "b\u1EA3ng tr\u1EAFng l\u1EDBp h\u1ECDc hi\u1EC7n \u0111\u1EA1i, n\xE9t b\xFAt d\u1EA1 xanh d\u01B0\u01A1ng v\xE0 \u0111\u1ECF ghi ch\xFA tr\u1EF1c quan sinh \u0111\u1ED9ng",
-    bg: "#f5f7fa",
-    fg: "#18202f",
-    surface: "#e4e9f2",
-    muted: "#475569",
-    accent: "#0369a1",
-    secondary: "#e11d48",
-    chart: ["#0369a1", "#e11d48", "#16a34a", "#d97706", "#9333ea"],
-    radius: 10,
-    shadow: "soft",
-    border: 1.5,
-    borderColor: "#cbd5e1",
-    fontHeading: "Nunito",
-    fontBody: SANS,
-    fonts: { heading: "Nunito", body: SANS, serif: SERIF, mono: MONO },
-    decor: "none",
-    dark: false,
-    tags: ["l\u1EDBp h\u1ECDc", "b\xE0i gi\u1EA3ng", "b\u1EA3ng tr\u1EAFng", "h\u1EB1ng ng\xE0y", "ghi ch\xE9p"]
-  },
-  {
-    id: "tet-xuan",
-    name: "T\u1EBFt xu\xE2n",
-    vibe: "kh\xF4ng kh\xED l\u1EC5 h\u1ED9i t\u1EBFt truy\u1EC1n th\u1ED1ng, n\u1EC1n kem \u1EA5m, \u0111\u1ECF son may m\u1EAFn v\xE0 v\xE0ng kim r\u1EA1ng r\u1EE1",
-    bg: "#fff7ed",
-    fg: "#31100b",
-    surface: "#fceddc",
-    muted: "#6e453b",
-    accent: "#991b1b",
-    secondary: "#b45309",
-    chart: ["#991b1b", "#b45309", "#15803d", "#d97706", "#6d28d9"],
-    radius: 12,
-    shadow: "soft",
-    border: 1.5,
-    borderColor: "#fed7aa",
-    fontHeading: "Lora",
-    fontBody: SANS,
-    fonts: { heading: "Lora", body: SANS, serif: "Lora, Georgia, serif", mono: MONO },
-    decor: "glow",
-    dark: false,
-    tags: ["t\u1EBFt", "m\xF9a xu\xE2n", "l\u1EC5 h\u1ED9i", "s\u1EF1 ki\u1EC7n", "truy\u1EC1n th\u1ED1ng"]
-  }
-];
-var LEGACY_THEME_IDS = {
-  "khoa-hoc": "sang",
-  "van-su-dia": "giay-am",
-  "sinh-hoc": "rung",
-  "ngoai-ngu-tin": "tim"
-};
-function resolveThemeId(id) {
-  if (!id) return void 0;
-  const mapped = LEGACY_THEME_IDS[id] ?? id;
-  return DECK_THEMES.some((t6) => t6.id === mapped) ? mapped : void 0;
-}
-function rgb(hex) {
-  const raw = hex.replace("#", "").trim();
-  const full = raw.length === 3 ? raw.split("").map((c8) => c8 + c8).join("") : raw;
-  const n10 = Number.parseInt(full, 16);
-  if (full.length !== 6 || !Number.isFinite(n10)) return [255, 255, 255];
-  return [n10 >> 16 & 255, n10 >> 8 & 255, n10 & 255];
-}
-function toHex(value) {
-  return Math.max(0, Math.min(255, Math.round(value))).toString(16).padStart(2, "0");
-}
-function mixHex(a34, b, ratio) {
-  const [r1, g1, b1] = rgb(a34);
-  const [r22, g2, b2] = rgb(b);
-  return `#${toHex(r1 + (r22 - r1) * ratio)}${toHex(g1 + (g2 - g1) * ratio)}${toHex(b1 + (b2 - b1) * ratio)}`;
-}
-function relativeLuminance(hex) {
-  const channel = (value) => {
-    const s9 = value / 255;
-    return s9 <= 0.03928 ? s9 / 12.92 : ((s9 + 0.055) / 1.055) ** 2.4;
-  };
-  const [r7, g, b] = rgb(hex);
-  return 0.2126 * channel(r7) + 0.7152 * channel(g) + 0.0722 * channel(b);
-}
-function contrastRatio(a34, b) {
-  const la = relativeLuminance(a34);
-  const lb = relativeLuminance(b);
-  return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
-}
-function readableTextOn(bg) {
-  return contrastRatio(bg, "#111827") >= contrastRatio(bg, "#ffffff") ? "#111827" : "#ffffff";
-}
-function normalizeTheme(theme) {
-  const source = theme ?? DECK_THEMES[0];
-  const sourceId = resolveThemeId(source.id);
-  const catalog = DECK_THEMES.find(
-    (t6) => sourceId && t6.id === sourceId || t6.bg && source.bg && t6.bg.toLowerCase() === source.bg.toLowerCase()
-  );
-  const bg = source.bg || catalog?.bg || "#ffffff";
-  const fg = source.fg || catalog?.fg || readableTextOn(bg);
-  const accent = source.accent || catalog?.accent || "#2563eb";
-  const secondary = source.secondary ?? catalog?.secondary ?? mixHex(accent, fg, 0.25);
-  const fontHeading = source.fontHeading || catalog?.fontHeading || SANS;
-  const fontBody = source.fontBody || catalog?.fontBody || SANS;
-  const fonts = {
-    heading: source.fonts?.heading ?? fontHeading,
-    body: source.fonts?.body ?? fontBody,
-    serif: source.fonts?.serif ?? catalog?.fonts?.serif ?? SERIF,
-    mono: source.fonts?.mono ?? catalog?.fonts?.mono ?? MONO
-  };
-  return {
-    ...catalog,
-    ...source,
-    id: source.id ?? catalog?.id ?? "custom",
-    name: source.name ?? catalog?.name ?? "T\xF9y ch\u1EC9nh",
-    bg,
-    fg,
-    accent,
-    fontHeading: fonts.heading,
-    fontBody: fonts.body,
-    tags: source.tags ?? catalog?.tags ?? [],
-    dark: source.dark ?? catalog?.dark ?? readableTextOn(bg) === "#ffffff",
-    surface: source.surface ?? catalog?.surface ?? mixHex(bg, fg, 0.06),
-    muted: source.muted ?? catalog?.muted ?? mixHex(bg, fg, 0.55),
-    secondary,
-    decor: source.decor ?? catalog?.decor ?? "none",
-    chart: source.chart ?? catalog?.chart ?? [accent, secondary, mixHex(accent, fg, 0.2), mixHex(accent, bg, 0.35)],
-    fonts,
-    radius: source.radius ?? catalog?.radius ?? 12,
-    shadow: source.shadow ?? catalog?.shadow ?? "none",
-    border: source.border ?? catalog?.border ?? 0,
-    borderColor: source.borderColor ?? catalog?.borderColor ?? mixHex(fg, bg, 0.35)
-  };
-}
-
 // src/lib/slideLayouts.ts
+var isEditorialLayout = (id) => id === "bignum" || id === "photo-full" || id === "photo-compare" || id === "bars";
 var SLIDE_LAYOUTS = [
   {
     id: "title",
@@ -5461,6 +5982,30 @@ var SLIDE_LAYOUTS = [
     fields: ["title", "stats", "image"]
   },
   {
+    id: "bignum",
+    name: "S\u1ED1 n\u1ED5i b\u1EADt",
+    description: "M\u1ED9t con s\u1ED1 r\u1EA5t l\u1EDBn, k\xE8m nh\xE3n, d\xF2ng ph\u1EE5 v\xE0 \u1EA3nh b\xEAn ph\u1EA3i n\u1EBFu c\xF3.",
+    fields: ["kicker", "value", "label", "subtitle", "image", "focusX", "focusY"]
+  },
+  {
+    id: "photo-full",
+    name: "\u1EA2nh tr\xE0n n\u1EC1n",
+    description: "\u1EA2nh ph\u1EE7 k\xEDn slide, ti\xEAu \u0111\u1EC1 v\xE0 d\xF2ng ph\u1EE5 tr\xEAn l\u1EDBp ph\u1EE7 t\u1ED1i chuy\u1EC3n s\u1EAFc.",
+    fields: ["title", "subtitle", "image", "textPosition", "focusX", "focusY"]
+  },
+  {
+    id: "photo-compare",
+    name: "So s\xE1nh hai \u1EA3nh",
+    description: "Ti\xEAu \u0111\u1EC1 ph\xEDa tr\xEAn, hai \u1EA3nh c\u1EA1nh nhau v\xE0 ch\xFA th\xEDch ri\xEAng.",
+    fields: ["title", "image", "image2", "caption", "caption2"]
+  },
+  {
+    id: "bars",
+    name: "Bi\u1EC3u \u0111\u1ED3 thanh ngang",
+    description: "Hai \u0111\u1EBFn s\xE1u thanh ngang c\xF9ng t\u1EC9 l\u1EC7, ghi gi\xE1 tr\u1ECB \u1EDF cu\u1ED1i thanh.",
+    fields: ["title", "bars"]
+  },
+  {
     id: "timeline",
     name: "Ti\u1EBFn tr\xECnh",
     description: "Ti\xEAu \u0111\u1EC1 + 3\u20136 b\u01B0\u1EDBc tr\xEAn m\u1ED9t tr\u1EE5c ngang.",
@@ -5521,6 +6066,8 @@ function legible(color, bgs, fg) {
 function paletteOf(theme, tone) {
   const onAccent = readableTextOn(theme.accent);
   const base = {
+    displayFont: theme.fonts.heading === "Be Vietnam Pro" ? "Arial Narrow, Arial" : theme.fonts.heading,
+    text: (id, value, box, style, minScale) => textEl(id, value, box, style, minScale, style.variant === "body" ? theme.fonts.body : theme.fonts.heading),
     tone,
     fg: theme.fg,
     accent: theme.accent,
@@ -5545,12 +6092,15 @@ function paletteOf(theme, tone) {
   };
 }
 var BASE_SIZE = /* @__PURE__ */ new WeakMap();
-function textEl(id, value, box, style) {
+function textEl(id, value, box, style, minScale, inheritedFont) {
   const text = value?.trim();
   if (!text) return null;
   const lineHeight = style.lineHeight ?? (style.variant === "title" ? 1.15 : 1.4);
   const baseSize = style.fontSize ?? (style.variant === "title" ? 4.2 : 2.6);
   const letterSpacing = style.letterSpacing ?? (id === "kicker" ? 0.12 : void 0);
+  const font = style.fontFamily ?? inheritedFont;
+  const family = font ? slideFontStack(font) : void 0;
+  const metrics = { family, italic: style.fontStyle === "italic" };
   const oneLine = textBoxHeight(text.split("\n")[0], 1e3, baseSize, lineHeight);
   if (!style.valign && box.h < oneLine) box = { ...box, h: oneLine };
   const fontSize = fitFontSize({
@@ -5559,17 +6109,19 @@ function textEl(id, value, box, style) {
     heightPct: box.h,
     baseCqw: baseSize,
     lineHeight,
+    ...metrics,
     // Renderer mặc định title 600 / body 500 (SlideElView) — đo đúng độ đậm đó.
     weight: style.fontWeight ?? (style.variant === "title" ? 600 : 500),
     letterSpacing,
     // Tiêu đề dài được phép co sâu hơn thân bài (55% so với 60%) — hộp tiêu đề
     // của layout chỉ cao 12–13% nên 60% không đủ cho tiêu đề 60–80 ký tự.
-    minScale: style.variant === "title" ? 0.55 : void 0
+    minScale: minScale ?? (style.variant === "title" ? 0.55 : void 0)
   });
   const need = textBoxHeight(text, box.w, fontSize, lineHeight, {
     weight: style.fontWeight ?? (style.variant === "title" ? 600 : 500),
-    letterSpacing
-  }) + 0.5;
+    letterSpacing,
+    ...metrics
+  }) + (id === "bignum-value" ? 1.7 : 0.5);
   if (need < box.h - 2) {
     const spare = box.h - need;
     const shift = style.valign === "middle" ? spare / 2 : 0;
@@ -5666,7 +6218,7 @@ function titleEls(p5, title, box, sizes, rule = false, color = p5.fg) {
   const size = sizes.find((s9) => need(s9) <= box.h) ?? sizes[sizes.length - 1];
   const h = Math.min(box.h, Math.max(4, need(size)));
   return compact([
-    textEl("title", text, { ...box, h }, {
+    p5.text("title", text, { ...box, h }, {
       variant: "title",
       fontSize: size,
       fontWeight: 700,
@@ -5703,19 +6255,19 @@ function composeTitle(p5, content) {
       graphicEl("hero-graphic", graphic, { x: 73.5, y: 31.5, w: 13, h: 23.1 }, GRAPHIC_INK)
     ] : [iconEl("hero-icon", pickSlideAsset(`${content.title ?? ""} ${content.kicker ?? ""}`) ?? "idea", { x: 73, y: 30.65, w: 14, h: 24.9 }, p5.onAccent)],
     p5.tone === "accent" ? shapeEl("accent-band", { x: 0, y: 0, w: 100, h: 1.4 }, p5.accent) : null,
-    textEl("kicker", content.kicker, { x: 9, y: 25, w: 56, h: 6.5 }, {
+    p5.text("kicker", content.kicker, { x: 9, y: 25, w: 56, h: 6.5 }, {
       variant: "body",
       fontSize: 1.8,
       fontWeight: 700,
       textColor: p5.ink
     }),
-    textEl("title", content.title, { x: 9, y, w: 58, h: 30 }, {
+    p5.text("title", content.title, { x: 9, y, w: 58, h: 30 }, {
       variant: "title",
       fontSize: 5.3,
       fontWeight: 700,
       textColor: p5.fg
     }),
-    textEl("subtitle", content.subtitle, { x: 9, y: y + 34, w: 54, h: 17 }, {
+    p5.text("subtitle", content.subtitle, { x: 9, y: y + 34, w: 54, h: 17 }, {
       variant: "body",
       fontSize: 2.4,
       textColor: p5.muted
@@ -5730,7 +6282,7 @@ function composeSection(p5, content) {
   const graphic = chosenGraphic(content);
   return compact([
     shapeEl("section-panel", { x: 0, y: 0, w: 34, h: 100 }, p5.accent),
-    textEl("kicker", kicker, { x: 5, y: 27, w: 24, h: kickerH }, {
+    p5.text("kicker", kicker, { x: 5, y: 27, w: 24, h: kickerH }, {
       variant: "body",
       fontSize: 1.7,
       fontWeight: 700,
@@ -5743,7 +6295,7 @@ function composeSection(p5, content) {
       shapeEl("section-graphic-plate", { x: 72, y: 32.2, w: 20, h: 35.6 }, GRAPHIC_PLATE, "ellipse"),
       graphicEl("section-graphic", graphic, { x: 75.5, y: 38.45, w: 13, h: 23.1 }, GRAPHIC_INK)
     ] : [],
-    textEl("subtitle", content.subtitle, { x: 42, y: 40, w: graphic ? 27 : 48, h: 20 }, {
+    p5.text("subtitle", content.subtitle, { x: 42, y: 40, w: graphic ? 27 : 48, h: 20 }, {
       variant: "body",
       fontSize: 2.6,
       textColor: p5.fg,
@@ -5757,21 +6309,21 @@ function composeStatement(p5, content) {
   return compact([
     ornament("decor-1", "orn-nhanh-hoa-goc", 88, 3, 8, p5.ink),
     ornament("decor-2", "orn-canh-hoa-roi", 4, 76, 9, p5.ink),
-    textEl("kicker", content.kicker, { x: 14, y: 18, w: 76, h: 6 }, {
+    p5.text("kicker", content.kicker, { x: 14, y: 18, w: 76, h: 6 }, {
       variant: "body",
       fontSize: 1.7,
       fontWeight: 600,
       textColor: p5.ink
     }),
     // Câu dài (> 90 ký tự) hạ cỡ để vẫn là một khối gọn thay vì tràn hộp.
-    textEl("body", text, { x: 14, y: 27, w: 76, h: 42 }, {
+    p5.text("body", text, { x: 14, y: 27, w: 76, h: 42 }, {
       variant: "title",
       fontSize: text.length > 90 ? 3.7 : 4.6,
       fontWeight: 600,
       textColor: p5.fg
     }),
     shapeEl("rule", { x: 14, y: 73, w: 12, h: 0.7 }, p5.accent),
-    textEl("author", content.author, { x: 14, y: 77, w: 76, h: 8 }, {
+    p5.text("author", content.author, { x: 14, y: 77, w: 76, h: 8 }, {
       variant: "body",
       fontSize: 1.8,
       fontWeight: 600,
@@ -5797,14 +6349,14 @@ function composeBullets(p5, content) {
     shapeEl("content-panel", { x: 7, y: top - 3, w: graphic ? 66 : 86, h: boxH + 6 }, p5.panel, "round"),
     shapeEl("accent-rail", { x: 5.6, y: top, w: 0.9, h: boxH }, p5.accent),
     ...graphic ? graphicPlate("bullet-graphic", graphic, { x: 75, y: top - 3, w: 18, h: boxH + 6 }, p5) : [],
-    textEl("kicker", content.kicker, { x: 8, y: 9, w: 84, h: 6 }, {
+    p5.text("kicker", content.kicker, { x: 8, y: 9, w: 84, h: 6 }, {
       variant: "body",
       fontSize: 1.7,
       fontWeight: 600,
       textColor: p5.ink
     }),
     ...header,
-    textEl("bullets", text, { x: 8, y: top, w: textW, h: boxH }, {
+    p5.text("bullets", text, { x: 8, y: top, w: textW, h: boxH }, {
       variant: "body",
       fontSize: size,
       textColor: p5.fg,
@@ -5858,7 +6410,7 @@ function composeCards(p5, content) {
       return [
         { id: `card-${index + 1}-panel`, type: "shape", shape: "round", fill: p5.surface, shadow: p5.shadow !== "none", radius: p5.radius, border: p5.border, borderColor: p5.borderColor, x, y, w: cardW, h: cardH },
         shapeEl(`card-${index + 1}-badge`, { x: x + 2, y: y + 2, w: badgeW2, h: badgeH2 }, p5.accent, "ellipse"),
-        textEl(`card-${index + 1}-index`, String(index + 1).padStart(2, "0"), {
+        p5.text(`card-${index + 1}-index`, String(index + 1).padStart(2, "0"), {
           x: x + 2,
           y: y + 2,
           w: badgeW2,
@@ -5871,14 +6423,14 @@ function composeCards(p5, content) {
           align: "center",
           valign: "middle"
         }),
-        textEl(`card-${index + 1}-heading`, heading, { x: x + 10.5, y: y + 2.5, w: cardW - 12.5 - (asset ? iconW + 1 : 0), h: 11 }, {
+        p5.text(`card-${index + 1}-heading`, heading, { x: x + 10.5, y: y + 2.5, w: cardW - 12.5 - (asset ? iconW + 1 : 0), h: 11 }, {
           variant: "title",
           fontSize: heading.length > 24 ? 2.1 : 2.5,
           fontWeight: 700,
           textColor: p5.fg
         }),
         asset ? iconEl(`card-${index + 1}-icon`, asset, { x: x + cardW - iconW - 2, y: y + 2.5, w: iconW, h: 12 }, p5.accent) : null,
-        textEl(`card-${index + 1}`, body, bodyBox, {
+        p5.text(`card-${index + 1}`, body, bodyBox, {
           variant: "body",
           fontSize: font2,
           fontWeight: 400,
@@ -5913,7 +6465,7 @@ function composeCards(p5, content) {
       shapeEl(`card-${index + 1}-stripe`, { x, y, w: cardW, h: 0.9 }, p5.accent),
       asset ? shapeEl(`card-${index + 1}-icon-badge`, { x: x + cardW - badgeW - 2.5, y: y + 3, w: badgeW, h: badgeH }, p5.accent, "round") : null,
       asset ? iconEl(`card-${index + 1}-icon`, asset, { x: x + cardW - badgeW - 1.8, y: y + 3.4, w: badgeW - 1.4, h: badgeH - 0.8 }, p5.onAccent) : null,
-      textEl(`card-${index + 1}-index`, String(index + 1).padStart(2, "0"), {
+      p5.text(`card-${index + 1}-index`, String(index + 1).padStart(2, "0"), {
         x: x + 2.5,
         y: y + 3,
         w: cardW - badgeW - 7,
@@ -5924,7 +6476,7 @@ function composeCards(p5, content) {
         fontWeight: 700,
         textColor: p5.ink
       }),
-      textEl(`card-${index + 1}`, item, {
+      p5.text(`card-${index + 1}`, item, {
         x: x + 2.5,
         y: textTop,
         w: cardW - 5,
@@ -5975,13 +6527,13 @@ function composeTwoColumn(p5, content) {
     return compact([
       ...titleEls(p5, content.title, HEADER_BOX, HEADER_SIZES, true),
       both ? shapeEl("divider", { x: 49.4, y: 27, w: 0.6, h: 60 }, p5.muted) : null,
-      textEl("body", bulletText(left), boxFor("left"), {
+      p5.text("body", bulletText(left), boxFor("left"), {
         variant: "body",
         fontSize: size2,
         textColor: p5.fg,
         valign: "middle"
       }),
-      textEl("body-2", bulletText(right), boxFor("right"), {
+      p5.text("body-2", bulletText(right), boxFor("right"), {
         variant: "body",
         fontSize: size2,
         textColor: p5.fg,
@@ -6009,7 +6561,7 @@ function composeTwoColumn(p5, content) {
       if (block.label) {
         const h2 = labelH(block.label, size);
         out.push(
-          textEl(`${id}-heading`, block.label, { x: box.x, y, w: colW, h: h2 }, {
+          p5.text(`${id}-heading`, block.label, { x: box.x, y, w: colW, h: h2 }, {
             variant: "body",
             fontSize: size,
             fontWeight: 700,
@@ -6021,7 +6573,7 @@ function composeTwoColumn(p5, content) {
       }
       const h = textBoxHeight(block.text, colW, size * 0.95, 1.4, { weight: 500 });
       out.push(
-        textEl(id, block.text, { x: box.x, y, w: colW, h }, {
+        p5.text(id, block.text, { x: box.x, y, w: colW, h }, {
           variant: "body",
           fontSize: size * 0.95,
           textColor: p5.fg
@@ -6053,14 +6605,14 @@ function composeComparison(p5, content) {
       w: 40,
       h: 66
     },
-    textEl(x < 50 ? "left-title" : "right-title", title, { x: x + 2, y: 28, w: 36, h: 8 }, {
+    p5.text(x < 50 ? "left-title" : "right-title", title, { x: x + 2, y: 28, w: 36, h: 8 }, {
       variant: "body",
       fontSize: 2.1,
       fontWeight: 700,
       textColor: color,
       align: "center"
     }),
-    textEl(x < 50 ? "body" : "body-2", bulletText(items), { x: x + 2.5, y: 38, w: 35, h: 51 }, {
+    p5.text(x < 50 ? "body" : "body-2", bulletText(items), { x: x + 2.5, y: 38, w: 35, h: 51 }, {
       variant: "body",
       fontSize: 2.8,
       textColor: p5.fg,
@@ -6072,7 +6624,7 @@ function composeComparison(p5, content) {
     ...side(left, content.leftTitle, 8, p5.ink),
     ...side(right, content.rightTitle, 52, p5.ink),
     shapeEl("vs-badge", { x: 47.5, y: 52, w: 5, h: 8.9 }, p5.accent, "ellipse"),
-    textEl("mark", "VS", { x: 47.5, y: 52, w: 5, h: 8.9 }, {
+    p5.text("mark", "VS", { x: 47.5, y: 52, w: 5, h: 8.9 }, {
       variant: "body",
       fontSize: 1.6,
       fontWeight: 700,
@@ -6086,20 +6638,20 @@ function composeQuote(p5, content) {
   const quote = content.quote?.trim() || linesOf(content.body).join(" ") || cleanList(content.bullets)[0];
   if (!quote) return [];
   return compact([
-    textEl("mark", "\u201C", { x: 8, y: 12, w: 12, h: 16 }, {
+    p5.text("mark", "\u201C", { x: 8, y: 12, w: 12, h: 16 }, {
       variant: "title",
       fontSize: 9,
       fontWeight: 700,
       textColor: p5.ink
     }),
     shapeEl("quote-bar", { x: 8, y: 28, w: 0.5, h: 32 }, p5.accent),
-    textEl("quote", quote, { x: 13, y: 28, w: 75, h: 30 }, {
+    p5.text("quote", quote, { x: 13, y: 28, w: 75, h: 30 }, {
       variant: "body",
       fontSize: 3.2,
       fontStyle: "italic",
       textColor: p5.fg
     }),
-    textEl("author", content.author, { x: 13, y: 60, w: 75, h: 8 }, {
+    p5.text("author", content.author, { x: 13, y: 60, w: 75, h: 8 }, {
       variant: "body",
       fontSize: 1.8,
       fontWeight: 600,
@@ -6116,14 +6668,14 @@ function composeClosing(p5, content) {
     graphic ? graphicEl("closing-graphic", graphic, { x: 45, y: 10, w: 10, h: 17.8 }, GRAPHIC_INK) : null,
     ornament("decor-2", "orn-bo-hoa", 85, 72, 10, p5.ink),
     shapeEl("accent-line", { x: 47, y: 32, w: 6, h: 0.8 }, p5.accent),
-    textEl("title", title, { x: 8, y: 36, w: 84, h: 18 }, {
+    p5.text("title", title, { x: 8, y: 36, w: 84, h: 18 }, {
       variant: "title",
       fontSize: 5.2,
       fontWeight: 700,
       textColor: p5.fg,
       align: "center"
     }),
-    textEl("subtitle", content.subtitle, { x: 12, y: 57, w: 76, h: 16 }, {
+    p5.text("subtitle", content.subtitle, { x: 12, y: 57, w: 76, h: 16 }, {
       variant: "body",
       fontSize: 2.2,
       textColor: p5.muted,
@@ -6149,7 +6701,7 @@ function composeAgenda(p5, content) {
       h: 100,
       fill: p5.accent
     },
-    textEl("kicker", agendaKicker, { x: 6, y: 24, w: 24, h: agendaKickerH }, {
+    p5.text("kicker", agendaKicker, { x: 6, y: 24, w: 24, h: agendaKickerH }, {
       variant: "body",
       fontSize: 1.6,
       fontWeight: 600,
@@ -6160,7 +6712,7 @@ function composeAgenda(p5, content) {
     ...items.flatMap((item, index) => {
       const y = top + index * rowH;
       return [
-        textEl(`card-${index + 1}-index`, String(index + 1).padStart(2, "0"), {
+        p5.text(`card-${index + 1}-index`, String(index + 1).padStart(2, "0"), {
           x: 41,
           y: y + 1,
           w: 8,
@@ -6171,7 +6723,7 @@ function composeAgenda(p5, content) {
           fontWeight: 700,
           textColor: p5.ink
         }),
-        textEl(`card-${index + 1}`, item.replace(/^\s*\d{1,2}\s*[.)·:\-–]\s*/, ""), {
+        p5.text(`card-${index + 1}`, item.replace(/^\s*\d{1,2}\s*[.)·:\-–]\s*/, ""), {
           x: 51,
           y,
           w: 41,
@@ -6237,7 +6789,7 @@ function composeImageSide(p5, content, side) {
         ...imageBox
       }
     ],
-    textEl("bullets", bulletText(lines), {
+    p5.text("bullets", bulletText(lines), {
       x: imageOnLeft ? 50 : 8,
       y: 26,
       w: 44,
@@ -6256,13 +6808,13 @@ function composeImageFull(p5, content) {
     { id: "image-1", type: "image", src: content.image, x: 0, y: 0, w: 100, h: 100 },
     shapeEl("scrim", { x: 6, y: 64, w: 56, h: 28 }, p5.surface, "round"),
     shapeEl("accent-bar", { x: 6, y: 64, w: 0.7, h: 28 }, p5.accent),
-    textEl("title", content.title, { x: 10, y: 67, w: 48, h: 12 }, {
+    p5.text("title", content.title, { x: 10, y: 67, w: 48, h: 12 }, {
       variant: "title",
       fontSize: 3.2,
       fontWeight: 700,
       textColor: p5.fg
     }),
-    textEl("body", content.body, { x: 10, y: 79, w: 48, h: 12 }, {
+    p5.text("body", content.body, { x: 10, y: 79, w: 48, h: 12 }, {
       variant: "body",
       fontSize: 1.8,
       textColor: p5.muted
@@ -6304,7 +6856,7 @@ function composeStats(p5, content) {
       panel,
       asset ? shapeEl(`stat-${index + 1}-icon-badge`, { x: x + cellW / 2 - 9, y: area.y + 2, w: 18, h: 14 }, p5.accent, "round") : null,
       asset ? iconEl(`stat-${index + 1}-icon`, asset, { x: x + cellW / 2 - 8, y: area.y + 3, w: 16, h: 12 }, p5.onAccent) : null,
-      textEl(`stat-${index + 1}-value`, stat.value || stat.label, { x, y: area.y + 17, w: cellW, h: 16 }, {
+      p5.text(`stat-${index + 1}-value`, stat.value || stat.label, { x, y: area.y + 17, w: cellW, h: 16 }, {
         variant: "title",
         fontSize: 6.2,
         fontWeight: 700,
@@ -6312,7 +6864,7 @@ function composeStats(p5, content) {
         align: "center",
         valign: "middle"
       }),
-      stat.value ? textEl(`stat-${index + 1}-label`, stat.label, { x, y: area.y + 35, w: cellW, h: 13 }, {
+      stat.value ? p5.text(`stat-${index + 1}-label`, stat.label, { x, y: area.y + 35, w: cellW, h: 13 }, {
         variant: "body",
         fontSize: 2.1,
         textColor: p5.muted,
@@ -6339,13 +6891,13 @@ function composeStatImage(p5, content) {
     ...stats.flatMap((stat, index) => {
       const y = 33 + index * rowH;
       return [
-        textEl(`stat-${index + 1}-value`, stat.value, { x: 8, y, w: 42, h: 14 }, {
+        p5.text(`stat-${index + 1}-value`, stat.value, { x: 8, y, w: 42, h: 14 }, {
           variant: "title",
           fontSize: 6.4,
           fontWeight: 700,
           textColor: p5.ink
         }),
-        textEl(`stat-${index + 1}-label`, stat.label, { x: 8, y: y + 15, w: 42, h: 8 }, {
+        p5.text(`stat-${index + 1}-label`, stat.label, { x: 8, y: y + 15, w: 42, h: 8 }, {
           variant: "body",
           fontSize: 1.8,
           textColor: p5.muted
@@ -6353,6 +6905,181 @@ function composeStatImage(p5, content) {
       ];
     })
   ]);
+}
+var EDITORIAL_TITLE = { variant: "title", fontWeight: 800, lineHeight: 1.1, valign: "top" };
+var PHOTO_FOREGROUND = "#ffffff";
+var PHOTO_MUTED = "#e2e0dc";
+function layoutPhoto(id, src, box, crop, x = 50, y = 50) {
+  return { id, type: "image", src, ...box, crop, imagePosition: { x, y }, radius: 0 };
+}
+function composeBigNum(p5, c8) {
+  const w = c8.image ? 52 : 88;
+  const value = c8.value?.trim();
+  const size = value ? singleLineSize(value, w, c8.image ? 20 : 23, 800, slideFontStack(p5.displayFont)) : 20;
+  return compact([
+    c8.image ? layoutPhoto("image-1", c8.image, { x: 60, y: 9, w: 34, h: 76 }, c8.imageCrop, c8.focusX, c8.focusY) : null,
+    p5.text("kicker", c8.kicker, { x: 5, y: 8, w, h: 11 }, {
+      variant: "body",
+      fontSize: 1.55,
+      fontWeight: 700,
+      textColor: p5.muted,
+      valign: "top",
+      lineHeight: 1.2
+    }),
+    p5.text("bignum-value", value, { x: 5, y: 19, w, h: 44 }, {
+      ...EDITORIAL_TITLE,
+      fontFamily: p5.displayFont,
+      fontSize: size,
+      lineHeight: 1,
+      textColor: p5.ink,
+      valign: "middle"
+    }),
+    p5.text("bignum-label", c8.label, { x: 5, y: 67, w, h: 13 }, {
+      ...EDITORIAL_TITLE,
+      fontSize: 3.6,
+      textColor: p5.fg
+    }, 0.45),
+    p5.text("subtitle", c8.subtitle, { x: 5, y: 80, w, h: 9 }, {
+      variant: "body",
+      fontSize: 1.75,
+      lineHeight: 1.18,
+      textColor: p5.muted,
+      valign: "top"
+    }, 0.45)
+  ]);
+}
+function composePhotoFull(p5, c8) {
+  const position = c8.textPosition ?? "bottom";
+  const left = position === "left";
+  const w = left ? 29 : 86;
+  const titleY = left ? 23 : c8.subtitle ? 66 : 69;
+  const titleH = left ? 39 : c8.subtitle ? 15 : 19;
+  return compact([
+    layoutPhoto("image-1", c8.image, { x: 0, y: 0, w: 100, h: 100 }, c8.imageCrop, c8.focusX, c8.focusY ?? (left ? 45 : 30)),
+    { ...shapeEl("photo-scrim", { x: 0, y: 0, w: 100, h: 100 }, photoScrimFill(position)), border: 0, shadowLevel: 0 },
+    left && c8.credit ? {
+      ...shapeEl("photo-credit-scrim", { x: 0, y: 76, w: 100, h: 24 }, PHOTO_CREDIT_FILL),
+      border: 0,
+      shadowLevel: 0
+    } : null,
+    p5.text("title", c8.title, { x: 5, y: titleY, w, h: titleH }, {
+      ...EDITORIAL_TITLE,
+      fontSize: left ? 5 : 5.6,
+      textColor: PHOTO_FOREGROUND,
+      valign: "middle"
+    }, 0.38),
+    p5.text("subtitle", c8.subtitle, { x: 5, y: left ? 62 : 81, w, h: left ? 21 : 8 }, {
+      variant: "body",
+      fontSize: 1.9,
+      lineHeight: 1.16,
+      textColor: PHOTO_MUTED,
+      valign: "top"
+    }, 0.48)
+  ]);
+}
+function composePhotoCompare(p5, c8) {
+  const captions = Boolean(c8.caption || c8.caption2);
+  const imageH = captions ? 52 : c8.credit ? 62 : 67;
+  return compact([
+    p5.text("title", c8.title, { x: 5, y: 6, w: 90, h: 18 }, {
+      ...EDITORIAL_TITLE,
+      fontSize: 5.3,
+      textColor: p5.fg
+    }, 0.4),
+    layoutPhoto("image-1", c8.image, { x: 6, y: 24, w: 43, h: imageH }, c8.imageCrop),
+    layoutPhoto("image-2", c8.image2, { x: 51, y: 24, w: 43, h: imageH }, c8.image2Crop),
+    p5.text("photo-caption", c8.caption, { x: 5, y: 77, w: 45, h: 11 }, {
+      variant: "body",
+      fontSize: 1.7,
+      lineHeight: 1.16,
+      textColor: p5.muted,
+      valign: "top"
+    }, 0.5),
+    p5.text("photo-caption-2", c8.caption2, { x: 50, y: 77, w: 45, h: 11 }, {
+      variant: "body",
+      fontSize: 1.7,
+      lineHeight: 1.16,
+      textColor: p5.muted,
+      valign: "top"
+    }, 0.5)
+  ]);
+}
+var BAR_INTEGER = new Intl.NumberFormat("vi-VN");
+function formatBarValue(value) {
+  if (value > 0 && value < 1e-3) return value.toExponential().replace(".", ",");
+  const [integer, decimal] = String(value).split(".");
+  return BAR_INTEGER.format(Number(integer)) + (decimal ? "," + decimal : "");
+}
+function composeBars(p5, c8) {
+  const bars = (Array.isArray(c8.bars) ? c8.bars : []).filter((bar) => bar?.label && Number.isFinite(bar.value) && bar.value >= 0).slice(0, 6);
+  const max = Math.max(...bars.map((bar) => bar.value), 0);
+  const row = Math.min(24, 60 / Math.max(bars.length, 1));
+  const top = 26 + (60 - row * bars.length) / 2;
+  const axis = 31;
+  return compact([
+    p5.text("title", c8.title, { x: 5, y: 6, w: 90, h: 18 }, {
+      ...EDITORIAL_TITLE,
+      fontSize: 5.3,
+      textColor: p5.fg
+    }, 0.4),
+    bars.length ? { ...shapeEl("bars-axis", { x: axis - 0.16, y: top, w: 0.16, h: row * bars.length }, p5.muted), border: 0, shadowLevel: 0 } : null,
+    ...bars.flatMap((bar, i) => {
+      const id = "bar-" + (i + 1);
+      const y = top + i * row;
+      const h = Math.min(row * 0.53, 8);
+      const w = max > 0 ? 46 * (bar.value / max) : 0;
+      const value = formatBarValue(bar.value);
+      return [
+        p5.text(id + "-label", bar.label, { x: 5, y, w: 25, h: row }, {
+          variant: "body",
+          fontSize: bars.length > 4 ? 1.65 : 2.05,
+          lineHeight: 1.15,
+          textColor: p5.fg,
+          valign: "middle"
+        }, 0.55),
+        w > 0 ? {
+          ...shapeEl(id + (bar.color ? "-custom" : ""), { x: axis, y: y + (row - h) / 2, w, h }, bar.color ?? p5.ink),
+          border: 0,
+          shadowLevel: 0
+        } : null,
+        p5.text(id + "-value", value, { x: axis + w + 0.35, y, w: 17.65, h: row }, {
+          ...EDITORIAL_TITLE,
+          fontSize: singleLineSize(value, 17.65, 2, 800, slideFontStack(p5.displayFont)),
+          textColor: p5.fg,
+          valign: "middle"
+        })
+      ];
+    })
+  ]);
+}
+function creditElement(credit, color) {
+  return textEl("credit", credit?.trim().replace(/\s+/g, " "), { x: 5, y: 89, w: 89, h: 6.1 }, {
+    fontSize: 1.2,
+    fontFamily: "Arial",
+    lineHeight: 1.1,
+    textColor: color,
+    valign: "top"
+  }, 0.72);
+}
+function withSlideCredit(elements, credit) {
+  if (!credit) return elements;
+  const content = elements.filter((el) => el.id !== "credit");
+  const isFullHeight = (el) => el.y === 0 && el.h === 100 && el.type !== "text";
+  const bottom = bottomOf(content.filter((el) => !isFullHeight(el) && el.id !== "photo-credit-scrim"));
+  const scale = bottom > credit.y ? credit.y / bottom : 1;
+  const fitted = scale === 1 ? content : content.map((el) => {
+    if (isFullHeight(el) || el.id === "photo-credit-scrim") return el;
+    const sized = {
+      ...el,
+      y: el.y * scale,
+      h: el.h * scale,
+      ...el.fontSize ? { fontSize: el.fontSize * scale } : {}
+    };
+    const base = BASE_SIZE.get(el);
+    if (base) BASE_SIZE.set(sized, base);
+    return sized;
+  });
+  return [...fitted, credit];
 }
 function stepsOf(content) {
   let steps = cleanList(content.steps);
@@ -6369,7 +7096,7 @@ function composeTimeline(p5, content) {
     const center = 8 + slot * (index + 0.5);
     const left = center - slot / 2;
     const tag = numberTag(`step-${index + 1}`, index + 1, p5.panel, center - 2.1, 44, 4.2);
-    const label = textEl(`item-${index + 1}`, step, {
+    const label = p5.text(`item-${index + 1}`, step, {
       x: left + 1,
       y: 51,
       w: slot - 2,
@@ -6382,7 +7109,7 @@ function composeTimeline(p5, content) {
     });
     if (tag) return [tag, label];
     return [
-      textEl(`step-${index + 1}-index`, String(index + 1).padStart(2, "0"), {
+      p5.text(`step-${index + 1}-index`, String(index + 1).padStart(2, "0"), {
         x: left,
         y: 34,
         w: slot,
@@ -6438,7 +7165,7 @@ function composeCycle(p5, content) {
         h: nodeH
       },
       // Chữ nằm trong hình chữ nhật nội tiếp của hình tròn (≈ 78% × 60%), không ép vào hộp 10% cố định.
-      textEl(`item-${index + 1}`, step, {
+      p5.text(`item-${index + 1}`, step, {
         x: cx - nodeW * 0.78 / 2,
         y: cy - nodeH * 0.6 / 2,
         w: nodeW * 0.78,
@@ -6453,7 +7180,7 @@ function composeCycle(p5, content) {
       }),
       // Số thứ tự trên vành node: không có mũi tên nên người xem cần biết bắt đầu từ đâu.
       { ...shapeEl(`node-${index + 1}-badge`, { x: cx - nodeW / 2 - 0.6, y: cy - nodeH / 2 - 1, w: 4, h: 7.1 }, p5.background, "ellipse") },
-      textEl(`node-${index + 1}-index`, String(index + 1), {
+      p5.text(`node-${index + 1}-index`, String(index + 1), {
         x: cx - nodeW / 2 - 0.6,
         y: cy - nodeH / 2 - 1,
         w: 4,
@@ -6518,13 +7245,13 @@ function composeQuiz(p5, content) {
   const explanation = content.explanation?.trim();
   const answerText = answer >= 0 ? `\u0110\xE1p \xE1n: ${String.fromCharCode(65 + answer)}${explanation ? ` \u2014 ${explanation}` : ""}` : "";
   return compact([
-    textEl("kicker", content.kicker, { x: 8, y: 10, w: 84, h: 6 }, {
+    p5.text("kicker", content.kicker, { x: 8, y: 10, w: 84, h: 6 }, {
       variant: "body",
       fontSize: 1.7,
       fontWeight: 600,
       textColor: p5.ink
     }),
-    textEl("question", question, { x: 8, y: 18, w: 84, h: 18 }, {
+    p5.text("question", question, { x: 8, y: 18, w: 84, h: 18 }, {
       variant: "title",
       fontSize: 3.2,
       fontWeight: 700,
@@ -6533,7 +7260,7 @@ function composeQuiz(p5, content) {
     ...optionEls,
     answerText ? shapeEl("answer-bar", { x: 8, y: 77, w: 84, h: 14 }, p5.surface, "round") : null,
     answerText ? shapeEl("answer-stripe", { x: 8, y: 77, w: 0.8, h: 14 }, p5.accent) : null,
-    textEl("answer", answerText, { x: 10.5, y: 77, w: 80, h: 14 }, {
+    p5.text("answer", answerText, { x: 10.5, y: 77, w: 80, h: 14 }, {
       variant: "body",
       fontSize: 2.1,
       fontWeight: 600,
@@ -6561,14 +7288,14 @@ function composeExample(p5, content) {
   return compact([
     ...header,
     shapeEl("problem-panel", { x: 8, y: top, w: leftW, h: areaH }, p5.panel, "round"),
-    textEl("problem-label", "\u0110\u1EC0 B\xC0I", { x: 10, y: top + 2, w: leftW - 4, h: 6 }, {
+    p5.text("problem-label", "\u0110\u1EC0 B\xC0I", { x: 10, y: top + 2, w: leftW - 4, h: 6 }, {
       variant: "body",
       fontSize: 1.7,
       fontWeight: 700,
       textColor: p5.ink,
       letterSpacing: 0.12
     }),
-    textEl("problem", problem, { x: 10, y: top + 9, w: leftW - 4, h: areaH - 11 }, {
+    p5.text("problem", problem, { x: 10, y: top + 9, w: leftW - 4, h: areaH - 11 }, {
       variant: "body",
       fontSize: 2.5,
       textColor: p5.fg
@@ -6579,7 +7306,7 @@ function composeExample(p5, content) {
       return [
         ...tag ? [tag] : [
           shapeEl(`step-${index + 1}-badge`, { x: 43, y: y + (rowH - badgeH) / 2, w: badgeW, h: badgeH }, p5.accent, "ellipse"),
-          textEl(`step-${index + 1}-index`, String(index + 1), {
+          p5.text(`step-${index + 1}-index`, String(index + 1), {
             x: 43,
             y: y + (rowH - badgeH) / 2,
             w: badgeW,
@@ -6593,7 +7320,7 @@ function composeExample(p5, content) {
             valign: "middle"
           })
         ],
-        textEl(`item-${index + 1}`, step, { x: 49, y, w: 43, h: rowH }, {
+        p5.text(`item-${index + 1}`, step, { x: 49, y, w: 43, h: rowH }, {
           variant: "body",
           fontSize: 2.2,
           textColor: p5.fg,
@@ -6602,7 +7329,7 @@ function composeExample(p5, content) {
       ];
     }),
     conclusion ? shapeEl("conclusion-bar", { x: 8, y: barY, w: 84, h: barH }, p5.accent, "round") : null,
-    textEl("conclusion", conclusion, { x: 10, y: barY, w: 80, h: barH }, {
+    p5.text("conclusion", conclusion, { x: 10, y: barY, w: 80, h: barH }, {
       variant: "body",
       fontSize: 2.4,
       fontWeight: 700,
@@ -6622,14 +7349,14 @@ function composeHook(p5, content) {
   const pillsTop = 46;
   return compact([
     shapeEl("hook-bar", { x: 8, y: 13, w: 0.7, h: 74 }, p5.accent),
-    textEl("kicker", content.kicker, { x: 11, y: 12, w: 50, h: 6 }, {
+    p5.text("kicker", content.kicker, { x: 11, y: 12, w: 50, h: 6 }, {
       variant: "body",
       fontSize: 1.7,
       fontWeight: 600,
       textColor: p5.ink
     }),
     ...titleEls(p5, content.title, { x: 11, y: 18, w: 50, h: 14 }, [3.4, 3, 2.7], false),
-    textEl("body", body, { x: 11, y: 36, w: 50, h: 52 }, {
+    p5.text("body", body, { x: 11, y: 36, w: 50, h: 52 }, {
       variant: "title",
       fontSize: 3.3,
       fontWeight: 600,
@@ -6638,7 +7365,7 @@ function composeHook(p5, content) {
     }),
     shapeEl("hook-panel", { x: 66, y: 11, w: 27, h: 80 }, p5.panel, "round"),
     ...graphic ? graphicPlate("hook-graphic", graphic, art, p5) : [iconEl("hook-icon", pickSlideAsset(`${content.title ?? ""} ${body}`) ?? "idea", art, p5.accent)],
-    pills.length ? textEl("hook-label", "G\u1EE2I \xDD", { x: 68.5, y: 40.5, w: 22, h: 4.5 }, {
+    pills.length ? p5.text("hook-label", "G\u1EE2I \xDD", { x: 68.5, y: 40.5, w: 22, h: 4.5 }, {
       variant: "body",
       fontSize: 1.5,
       fontWeight: 700,
@@ -6650,7 +7377,7 @@ function composeHook(p5, content) {
       const y = pillsTop + index * (pillH + 2);
       return [
         shapeEl(`pill-${index + 1}`, { x: 68.5, y, w: 22, h: pillH }, p5.background, "round"),
-        textEl(`card-${index + 1}`, pill, { x: 69.5, y, w: 20, h: pillH }, {
+        p5.text(`card-${index + 1}`, pill, { x: 69.5, y, w: 20, h: pillH }, {
           variant: "body",
           fontSize: 1.8,
           fontWeight: 600,
@@ -6719,7 +7446,7 @@ function composeMindmap(p5, content) {
       );
       nodes.push(
         { ...shapeEl(`card-${index + 1}-box`, { x, y, w: colW, h: labelH }, mixHex(color, p5.background, 0.8), "round"), radius: 14, border: 2, borderColor: color, shadow: false },
-        textEl(`card-${index + 1}-heading`, branch.label, { x: x + 1, y, w: colW - 2, h: labelH }, {
+        p5.text(`card-${index + 1}-heading`, branch.label, { x: x + 1, y, w: colW - 2, h: labelH }, {
           variant: "body",
           fontSize: 1.9,
           fontWeight: 700,
@@ -6730,7 +7457,7 @@ function composeMindmap(p5, content) {
       );
       if (branch.children.length) {
         nodes.push(
-          textEl(`card-${index + 1}`, branch.children.map((c8) => `\u2022 ${c8}`).join("\n"), { x: x + 0.5, y: y + labelH + 1, w: colW - 1, h: kidsH }, {
+          p5.text(`card-${index + 1}`, branch.children.map((c8) => `\u2022 ${c8}`).join("\n"), { x: x + 0.5, y: y + labelH + 1, w: colW - 1, h: kidsH }, {
             variant: "body",
             fontSize: size,
             textColor: p5.fg,
@@ -6747,7 +7474,7 @@ function composeMindmap(p5, content) {
     ...header,
     ...els,
     { ...shapeEl("center-node", { x: 50 - nodeW / 2, y: cy - nodeH / 2, w: nodeW, h: nodeH }, p5.accent, "round"), radius: 40, shadow: false },
-    textEl("body", center, { x: 51 - nodeW / 2, y: cy - nodeH / 2, w: nodeW - 2, h: nodeH }, {
+    p5.text("body", center, { x: 51 - nodeW / 2, y: cy - nodeH / 2, w: nodeW - 2, h: nodeH }, {
       variant: "body",
       fontSize: nodeSize,
       fontWeight: 700,
@@ -6771,7 +7498,9 @@ function composeStatic(theme, layoutId, content, tone) {
   const resolved = normalizeTheme(theme);
   const id = isLayoutId(layoutId) ? layoutId : "bullets";
   const palette2 = paletteOf(resolved, tone && isTone(tone) ? tone : defaultTone(id));
-  return withKitDecor(id, composeById(id, palette2, content), content, palette2);
+  const elements = withKitDecor(id, composeById(id, palette2, content), content, palette2);
+  if (!elements.length) return elements;
+  return withSlideCredit(elements, creditElement(content.credit, id === "photo-full" ? PHOTO_MUTED : palette2.muted));
 }
 function composeById(id, palette2, content) {
   switch (id) {
@@ -6809,6 +7538,14 @@ function composeById(id, palette2, content) {
       return composeStats(palette2, content);
     case "stat-image":
       return composeStatImage(palette2, content);
+    case "bignum":
+      return composeBigNum(palette2, content);
+    case "photo-full":
+      return composePhotoFull(palette2, content);
+    case "photo-compare":
+      return composePhotoCompare(palette2, content);
+    case "bars":
+      return composeBars(palette2, content);
     case "timeline":
       return composeTimeline(palette2, content);
     case "cycle":
@@ -6876,6 +7613,25 @@ var DEMO = {
       { value: "12", label: "B\xE0i h\u1ECDc" },
       { value: "3", label: "M\u1EE9c \u0111\u1ED9" }
     ]
+  },
+  bignum: {
+    kicker: "M\u1ED0C TH\u1EDCI GIAN",
+    value: "2021",
+    label: "M\u1ED9t d\u1EA5u m\u1ED1c m\u1EDBi",
+    subtitle: "C\xF3 hi\u1EC7u l\u1EF1c t\u1EEB ng\xE0y 22 th\xE1ng 1."
+  },
+  "photo-full": {
+    title: "M\u1ED9t g\xF3c nh\xECn kh\xE1c",
+    subtitle: "To\xE0n c\u1EA3nh nh\xECn t\u1EEB b\u1EDD s\xF4ng."
+  },
+  "photo-compare": {
+    title: "C\xF9ng m\u1ED9t \u0111\u1ECBa \u0111i\u1EC3m qua th\u1EDDi gian",
+    caption: "\u1EA2nh t\u01B0 li\u1EC7u \xB7 n\u0103m 1921",
+    caption2: "C\xF9ng g\xF3c nh\xECn \xB7 n\u0103m 2019"
+  },
+  bars: {
+    title: "L\u01B0\u1EE3ng kh\xE1ch theo n\u0103m",
+    bars: [{ label: "2022", value: 14e4 }, { label: "2023", value: 7e4 }]
   },
   "stat-image": {
     title: "Con s\u1ED1 n\u1ED5i b\u1EADt",
@@ -6990,6 +7746,25 @@ function withPlaceholders(layoutId, content) {
     case "stats":
       if (!has(out.title)) out.title = demo.title;
       if (!list(out.stats)) out.stats = demo.stats;
+      break;
+    case "bignum":
+      if (!has(out.value)) out.value = out.stats?.[0]?.value ?? demo.value;
+      if (!has(out.label)) out.label = out.stats?.[0]?.label ?? out.title ?? demo.label;
+      if (!has(out.subtitle)) out.subtitle = demo.subtitle;
+      if (!has(out.kicker)) out.kicker = demo.kicker;
+      break;
+    case "photo-full":
+      if (!has(out.title)) out.title = demo.title;
+      if (!has(out.subtitle)) out.subtitle = out.body ?? demo.subtitle;
+      break;
+    case "photo-compare":
+      if (!has(out.title)) out.title = demo.title;
+      if (!has(out.caption) && !has(out.image)) out.caption = demo.caption;
+      if (!has(out.caption2) && !has(out.image2)) out.caption2 = demo.caption2;
+      break;
+    case "bars":
+      if (!has(out.title)) out.title = demo.title;
+      if (!list(out.bars)) out.bars = demo.bars;
       break;
     case "stat-image":
       if (!has(out.title)) out.title = demo.title;
@@ -11882,7 +12657,8 @@ function designCatalogText() {
 }
 
 // src/lib/aiDeck.ts
-function slideCatalogText() {
+function slideCatalogText(includeEditorial = false) {
+  const layouts = includeEditorial ? SLIDE_LAYOUTS : SLIDE_LAYOUTS.filter((layout) => !isEditorialLayout(layout.id));
   return [
     'B\u1ED8 M\xC0U (ch\u1ECDn "theme" \u0111\xFAng m\u1ED9t id \u2014 theo ch\u1EE7 \u0111\u1EC1, c\u1EA3m x\xFAc v\xE0 \u0111\u1ED1i t\u01B0\u1EE3ng; tags ch\u1EC9 l\xE0 g\u1EE3i \xFD, kh\xF4ng b\u1EAFt bu\u1ED9c theo m\xF4n):',
     ...DECK_THEMES.map(
@@ -11898,7 +12674,7 @@ function slideCatalogText() {
     subjectCatalogText(),
     "",
     'B\u1ED0 C\u1EE4C (ch\u1ECDn "layout" \u0111\xFAng m\u1ED9t id; field trong ngo\u1EB7c l\xE0 field n\u1ED9i dung):',
-    ...SLIDE_LAYOUTS.map(
+    ...layouts.map(
       (layout) => `- ${layout.id}: ${layout.description} [${layout.fields.join(", ")}]`
     )
   ].join("\n");
@@ -11993,6 +12769,9 @@ NGU\u1ED2N T\xCCM TR\xCAN WEB (s\u1ED1 li\u1EC7u m\u1EDBi, \u01B0u ti\xEAn d\xF9
 ${found.trim()}` : "";
 }
 
+// src/lib/slideTextEffects.ts
+var graphemes = new Intl.Segmenter("vi", { granularity: "grapheme" });
+
 // src/lib/slideAi.ts
 var BUDGETS = {
   title: { total: 260, fields: { title: 80, kicker: 50, subtitle: 110 } },
@@ -12045,6 +12824,10 @@ var BUDGETS = {
   "image-full": { total: 260, fields: { title: 80, body: 120 } },
   stats: { total: 380, fields: { title: 80 }, stats: { label: 45 } },
   "stat-image": { total: 420, fields: { title: 80 }, stats: { label: 45 } },
+  bignum: { total: 208, fields: { kicker: 42, value: 24, label: 52, subtitle: 90 } },
+  "photo-full": { total: 180, fields: { title: 80, subtitle: 100 } },
+  "photo-compare": { total: 230, fields: { title: 80, caption: 75, caption2: 75 } },
+  bars: { total: 332, fields: { title: 80 } },
   timeline: {
     total: 420,
     fields: { title: 80 },
@@ -12104,13 +12887,26 @@ var FIELD_HINTS = {
   answer: '"answer" \u2014 ch\u1EC9 s\u1ED1 0-based c\u1EE7a ph\u01B0\u01A1ng \xE1n \u0111\xFAng trong "options"',
   problem: '"problem" \u2014 \u0111\u1EC1 b\xE0i/y\xEAu c\u1EA7u c\u1EE7a v\xED d\u1EE5 (chu\u1ED7i \u2264 170)',
   conclusion: '"conclusion" \u2014 k\u1EBFt lu\u1EADn/\u0111\xE1p s\u1ED1 m\u1ED9t d\xF2ng (\u2264 90)',
-  explanation: '"explanation" \u2014 gi\u1EA3i th\xEDch ng\u1EAFn v\xEC sao \u0111\xE1p \xE1n \u0111\xFAng (\u2264 150)'
+  explanation: '"explanation" \u2014 gi\u1EA3i th\xEDch ng\u1EAFn v\xEC sao \u0111\xE1p \xE1n \u0111\xFAng (\u2264 150)',
+  value: '"value" \u2014 con s\u1ED1 / m\u1ED1c / gi\xE1 tr\u1ECB n\u1ED5i b\u1EADt, ng\u1EAFn (\u2264 24 k\xFD t\u1EF1, vd "08:15", "12.187", "2021", "70%")',
+  label: '"label" \u2014 nh\xE3n n\xF3i con s\u1ED1 \u0111\xF3 l\xE0 g\xEC (\u2264 52 k\xFD t\u1EF1)',
+  focusX: '"focusX" \u2014 s\u1ED1 0\u2013100, v\u1ECB tr\xED ngang c\u1EE7a ch\u1EE7 th\u1EC3 trong \u1EA3nh (50 = gi\u1EEFa); ch\u1EC9 \u0111i\u1EC1n khi c\xF3 \u1EA3nh',
+  focusY: '"focusY" \u2014 s\u1ED1 0\u2013100, v\u1ECB tr\xED d\u1ECDc c\u1EE7a ch\u1EE7 th\u1EC3 trong \u1EA3nh (40 th\u01B0\u1EDDng h\u1EE3p v\u1EDBi ch\xE2n dung)',
+  image2: '"image2" \u2014 \u0111\u1EC3 tr\u1ED1ng (app t\u1EF1 l\u1EA5y \u1EA3nh th\u1EE9 hai)',
+  caption: '"caption" \u2014 ch\xFA th\xEDch \u1EA3nh b\xEAn tr\xE1i (\u2264 75 k\xFD t\u1EF1: n\xEAu ai / \u0111\xE2u / n\u0103m n\xE0o)',
+  caption2: '"caption2" \u2014 ch\xFA th\xEDch \u1EA3nh b\xEAn ph\u1EA3i (\u2264 75 k\xFD t\u1EF1)',
+  textPosition: '"textPosition" \u2014 "bottom" (ch\u1EEF d\u01B0\u1EDBi \u1EA3nh) ho\u1EB7c "left" (ch\u1EEF c\u1ED9t tr\xE1i) tu\u1EF3 ch\u1EE7 th\u1EC3 n\u1EB1m \u0111\xE2u trong \u1EA3nh',
+  bars: '"bars" \u2014 m\u1EA3ng 2\u20136 d\xF2ng {"label","value","color"}; value l\xE0 S\u1ED0 (kh\xF4ng \u0111\u01A1n v\u1ECB), color tu\u1EF3 ch\u1ECDn d\u1EA1ng "#rrggbb"; x\u1EBFp t\u1EEB l\u1EDBn \u0111\u1EBFn nh\u1ECF'
 };
 var LAYOUT_NOTES = {
   mindmap: '- S\u01A1 \u0111\u1ED3 t\u01B0 duy: "body" l\xE0 ch\u1EE7 \u0111\u1EC1 trung t\xE2m (\u2264 40 k\xFD t\u1EF1); "items" l\xE0 3\u20136 nh\xE1nh, m\u1ED7i nh\xE1nh vi\u1EBFt d\u1EA1ng "Nh\xE3n nh\xE1nh: \xFD con 1; \xFD con 2" (nh\xE3n \u2264 25 k\xFD t\u1EF1, t\u1ED1i \u0111a 3 \xFD con, m\u1ED7i \xFD con \u2264 28 k\xFD t\u1EF1, ng\u0103n b\u1EB1ng d\u1EA5u ch\u1EA5m ph\u1EA9y). KH\xD4NG \u0111\u01B0a to\u1EA1 \u0111\u1ED9.\n',
   statement: '- Th\xF4ng \u0111i\u1EC7p l\u1EDBn: "body" l\xE0 M\u1ED8T c\xE2u ng\u1EAFn (\u2264 90 k\xFD t\u1EF1) ho\u1EB7c m\u1ED9t k\u1EBFt qu\u1EA3/c\xF4ng th\u1EE9c, n\xEAu \u0111\xFAng \xFD ch\xEDnh; kh\xF4ng li\u1EC7t k\xEA, kh\xF4ng gi\u1EA3i th\xEDch d\xE0i (ph\u1EA7n gi\u1EA3i th\xEDch d\xE0nh cho slide kh\xE1c).\n',
   example: '- V\xED d\u1EE5 m\u1EABu: "steps" 2\u20134 b\u01B0\u1EDBc gi\u1EA3i, m\u1ED7i b\u01B0\u1EDBc m\u1ED9t ph\xE9p bi\u1EBFn \u0111\u1ED5i/\xFD c\xF3 s\u1ED1 li\u1EC7u c\u1EE5 th\u1EC3; "conclusion" n\xEAu k\u1EBFt qu\u1EA3 cu\u1ED1i. L\u1EDDi gi\u1EA3i ph\u1EA3i \u0110\xDANG, t\u1EF1 ki\u1EC3m tra l\u1EA1i ph\xE9p t\xEDnh.\n',
   hook: '- M\u1EDF b\xE0i: "body" l\xE0 c\xE2u h\u1ECFi/t\xECnh hu\u1ED1ng g\u1EA7n g\u0169i k\u1EBFt th\xFAc b\u1EB1ng c\xE2u h\u1ECFi; "items" l\xE0 2\u20133 g\u1EE3i \xFD ng\u1EAFn (\u2264 30 k\xFD t\u1EF1) d\u1EABn h\u1ECDc sinh t\u1EDBi b\xE0i m\u1EDBi.\n',
+  bignum: '- S\u1ED1 n\u1ED5i b\u1EADt: "value" l\xE0 CON S\u1ED0 ch\xEDnh c\u1EE7a c\u1EA3 slide (m\u1ED9t m\u1ED1c, m\u1ED9t k\u1EBFt qu\u1EA3, m\u1ED9t t\u1EC9 l\u1EC7), \u0111\xFAng s\u1EF1 th\u1EADt, kh\xF4ng b\u1ECBa; "label" n\xF3i s\u1ED1 \u0111\xF3 l\xE0 g\xEC; "subtitle" th\xEAm m\u1ED9t d\xF2ng b\u1ED1i c\u1EA3nh. C\xF3 "imagePrompt" th\xEC \u1EA3nh n\u1EB1m b\xEAn ph\u1EA3i.\n',
+  "photo-full": '- \u1EA2nh tr\xE0n n\u1EC1n: d\xF9ng cho slide m\u1EDF \u0111\u1EA7u, chuy\u1EC3n ch\u01B0\u01A1ng ho\u1EB7c kho\u1EA3nh kh\u1EAFc nh\u1EA5n m\u1EA1nh; ti\xEAu \u0111\u1EC1 ng\u1EAFn, gi\xE0u c\u1EA3m x\xFAc, \u0111\u1ECDc nh\u01B0 m\u1ED9t c\xE2u l\u1EDBn tr\xEAn \u1EA3nh. Ch\u1EE7 th\u1EC3 \u1EA3nh n\u1EB1m b\xEAn n\xE0o th\xEC \u0111\u1EB7t ch\u1EEF \u1EDF b\xEAn kia ("textPosition").\n',
+  "photo-compare": '- So s\xE1nh hai \u1EA3nh: tr\u01B0\u1EDBc / sau, x\u01B0a / nay, hai \u0111\u1ED1i t\u01B0\u1EE3ng; m\u1ED7i \u1EA3nh m\u1ED9t "caption" n\xF3i r\xF5 ai, \u0111\xE2u, khi n\xE0o; hai m\xF4 t\u1EA3 \u1EA3nh ph\u1EA3i c\xF9ng g\xF3c nh\xECn \u0111\u1EC3 \u0111\u1EB7t c\u1EA1nh nhau h\u1EE3p l\xFD.\n',
+  bars: '- Bi\u1EC3u \u0111\u1ED3 thanh: ch\u1EC9 d\xF9ng s\u1ED1 li\u1EC7u c\xF3 th\u1EADt v\xE0 h\u1EE3p l\xFD, ghi ngu\u1ED3n \u1EDF "credit"; s\u1ED1 li\u1EC7u minh ho\u1EA1 ph\u1EA3i ghi "v\xED d\u1EE5" trong "credit". Thanh \u0111\u1EA7u l\xE0 gi\xE1 tr\u1ECB l\u1EDBn nh\u1EA5t.\n',
   quiz: '- Quiz: ch\u1EC9 M\u1ED8T \u0111\xE1p \xE1n \u0111\xFAng ch\u1EAFc ch\u1EAFn; "explanation" n\xEAu l\xFD do ng\u1EAFn g\u1ECDn (k\u1EC3 c\u1EA3 v\xEC sao c\xE1c ph\u01B0\u01A1ng \xE1n kh\xE1c sai khi c\u1EA7n).\n'
 };
 var LIST_LABEL = {
@@ -12133,9 +12929,9 @@ function budgetLine(id) {
   return `NG\xC2N S\xC1CH CH\u1EEE: ${parts.join("; ")}.`;
 }
 var GRAPHIC_LAYOUTS = /* @__PURE__ */ new Set(["title", "section", "closing", "hook", "bullets", "image-left", "image-right"]);
-function slideSpecBlock(slide) {
+function slideSpecBlock(slide, pro = false) {
   const layout = SLIDE_LAYOUTS.find((item) => item.id === slide.layout) ?? SLIDE_LAYOUTS[2];
-  const fields = layout.fields.map((field) => `- ${FIELD_HINTS[field]}`).join("\n");
+  const fields = layout.fields.flatMap((field) => FIELD_HINTS[field] ? ["- " + FIELD_HINTS[field]] : []).join("\n");
   const supportsGraphic = GRAPHIC_LAYOUTS.has(layout.id);
   const isImageLayout = layout.id === "image-left" || layout.id === "image-right";
   const hints = supportsGraphic ? searchGraphics(`${slide.title} ${slide.brief ?? ""}`, 6).map((g) => `${g.id}=${g.name}`) : [];
@@ -12145,7 +12941,11 @@ ${fields}
 - "notes" \u2014 m\u1EA3ng 0\u20136 chu\u1ED7i ghi ch\xFA tr\xECnh b\xE0y (tu\u1EF3 ch\u1ECDn).
 ` + (LAYOUT_NOTES[layout.id] ?? "") + (supportsGraphic ? '- "graphic" \u2014 id \u0111\u1ED3 ho\u1EA1 c\xF3 s\u1EB5n (tu\u1EF3 ch\u1ECDn).\n' : "") + `- "layout" ph\u1EA3i \u0111\xFAng "${layout.id}"; kh\xF4ng th\xEAm field kh\xE1c.
 ` + budgetLine(layout.id) + (hints.length ? `
-G\u1EE3i \xFD \u0111\u1ED3 ho\u1EA1 kh\u1EDBp t\u1EEB kho\xE1 ti\xEAu \u0111\u1EC1 (x\xE9t tr\u01B0\u1EDBc): ${hints.join(", ")}.` : "") + (isImageLayout ? '\nLayout \u1EA3nh: \u0110\u1EC2 TR\u1ED0NG "image" (app t\u1EF1 v\u1EBD \u1EA3nh minh ho\u1EA1 n\u1EC1n sau 45\u201390 gi\xE2y). C\xF3 id \u0111\u1ED3 ho\u1EA1 ph\xF9 h\u1EE3p th\xEC \u0111\u1EB7t "graphic" \u0111\u1EC3 slide c\xF3 h\xECnh ngay trong l\xFAc ch\u1EDD \u1EA3nh.' : "");
+G\u1EE3i \xFD \u0111\u1ED3 ho\u1EA1 kh\u1EDBp t\u1EEB kho\xE1 ti\xEAu \u0111\u1EC1 (x\xE9t tr\u01B0\u1EDBc): ${hints.join(", ")}.` : "") + (isImageLayout ? '\nLayout \u1EA3nh: \u0110\u1EC2 TR\u1ED0NG "image" (app t\u1EF1 v\u1EBD \u1EA3nh minh ho\u1EA1 n\u1EC1n sau 45\u201390 gi\xE2y). C\xF3 id \u0111\u1ED3 ho\u1EA1 ph\xF9 h\u1EE3p th\xEC \u0111\u1EB7t "graphic" \u0111\u1EC3 slide c\xF3 h\xECnh ngay trong l\xFAc ch\u1EDD \u1EA3nh.' : "") + (pro ? proSpecBlock(layout.id) : "");
+}
+function proSpecBlock(id) {
+  const hasPhoto = id === "bignum" || id === "photo-full" || id === "photo-compare";
+  return '\nCH\u1EBE \u0110\u1ED8 CHUY\xCAN NGHI\u1EC6P:\n- "credit" \u2014 d\xF2ng ghi ngu\u1ED3n s\u1ED1 li\u1EC7u / \u1EA3nh \u1EDF ch\xE2n slide (\u2264 140 k\xFD t\u1EF1, vd "Ngu\u1ED3n: IAEA, 2024 \xB7 \u1EA2nh minh ho\u1EA1 do AI t\u1EA1o"); s\u1ED1 li\u1EC7u kh\xF4ng ch\u1EAFc ch\u1EAFn th\xEC ghi "s\u1ED1 li\u1EC7u minh ho\u1EA1". \u0110\u1EEBng b\u1ECF tr\u1ED1ng khi slide c\xF3 s\u1ED1 li\u1EC7u ho\u1EB7c \u1EA3nh.\n' + (hasPhoto ? '- "imagePrompt" \u2014 m\xF4 t\u1EA3 \u1EA3nh c\u1EA7n v\u1EBD (\u2264 280 k\xFD t\u1EF1, ti\u1EBFng Anh, m\u1ED9t c\xE2u): ch\u1EE7 th\u1EC3 c\u1EE5 th\u1EC3, b\u1ED1i c\u1EA3nh, \xE1nh s\xE1ng, \u1ED1ng k\xEDnh; phong c\xE1ch \u1EA3nh ch\u1EE5p th\u1EADt (documentary / editorial photograph), KH\xD4NG ch\u1EEF, KH\xD4NG logo, KH\xD4NG ng\u01B0\u1EDDi n\u1ED5i ti\u1EBFng c\xF3 th\u1EADt, ch\u1EE7 th\u1EC3 n\u1EB1m \u1EDF gi\u1EEFa ho\u1EB7c l\u1EC7ch tr\xE1i / ph\u1EA3i \u0111\xFAng nh\u01B0 "focusX", ch\u1EEBa v\xF9ng tr\u1ED1ng cho ch\u1EEF.\n' + (id === "photo-compare" ? '- "image2Prompt" \u2014 m\xF4 t\u1EA3 \u1EA3nh th\u1EE9 hai, c\xF9ng g\xF3c nh\xECn v\u1EDBi "imagePrompt".\n' : "") : "");
 }
 function graphicBlock(plan, slides) {
   return '\n\n\u0110\u1ED2 HO\u1EA0 C\xD3 S\u1EB4N \u2014 ch\u1ECDn M\u1ED8T id kh\u1EDBp ch\u1EE7 \u0111\u1EC1 cho field "graphic" (nhanh, \u0111\xFAng m\xE0u, kh\xF4ng t\u1ED1n l\u01B0\u1EE3t v\u1EBD \u1EA3nh):\n' + graphicShortlistText(subjectById(plan.subject)?.graphicGroups, slides.map((s9) => `${s9.title} ${s9.brief ?? ""}`)) + '\n- "graphic" ch\u1EC9 d\xF9ng id trong danh s\xE1ch tr\xEAn; KH\xD4NG b\u1ECBa id m\u1EDBi.\n- Ch\u1ECDn theo NGH\u0128A C\u1EE6A N\u1ED8I DUNG slide, kh\xF4ng theo h\xECnh t\u01B0\u1EE3ng chung c\u1EE7a m\xF4n (vd: c\xE1i c\xE2n kh\xF4ng h\u1EE3p v\u1EDBi \u01AFCLN). N\xCAN ch\u1ECDn m\u1ED9t h\xECnh: h\xECnh g\u1EA7n ngh\u0129a (c\xF9ng ch\u1EE7 \u0111\u1EC1, c\xF9ng ho\u1EA1t \u0111\u1ED9ng \u2014 vd: m\u1EE5c ti\xEAu \u2192 c\u1EDD \u0111\xEDch, luy\u1EC7n t\u1EADp \u2192 b\xFAt ch\xEC, t\u1ED5ng k\u1EBFt \u2192 s\xE1ch/b\xE0i tr\u1EAFc nghi\u1EC7m) v\u1EABn t\u1ED1t h\u01A1n \u0111\u1EC3 tr\u1ED1ng. Ch\u1EC9 B\u1ECE TR\u1ED0NG khi m\u1ECDi id \u0111\u1EC1u l\u1EC7ch h\u1EB3n ngh\u0129a.\n';
@@ -12182,12 +12982,12 @@ function slideHeading(plan, slide, index) {
 ` + (slide.brief ? `Brief: ${slide.brief}
 ` : "");
 }
-function pageSystemPrompt(plan, slide, index) {
-  return "B\u1EA1n l\xE0 tr\u1EE3 l\xFD AI c\u1EE7a tr\xECnh so\u1EA1n b\xE0i tr\xECnh b\xE0y ti\u1EBFng Vi\u1EC7t. Vi\u1EBFt n\u1ED9i dung cho \u0110\xDANG M\u1ED8T slide. Ch\u1EC9 tr\u1EA3 v\u1EC1 DUY NH\u1EA4T m\u1ED9t JSON h\u1EE3p l\u1EC7, kh\xF4ng b\u1ECDc markdown, kh\xF4ng ch\u1EEF ngo\xE0i JSON.\n\n" + slideSpecBlock(slide) + (GRAPHIC_LAYOUTS.has(slide.layout) ? graphicBlock(plan, [slide]) : "") + deckContextBlock(plan) + "SLIDE C\u1EA6N VI\u1EBET: " + slideHeading(plan, slide, index);
+function pageSystemPrompt(plan, slide, index, pro = false) {
+  return "B\u1EA1n l\xE0 tr\u1EE3 l\xFD AI c\u1EE7a tr\xECnh so\u1EA1n b\xE0i tr\xECnh b\xE0y ti\u1EBFng Vi\u1EC7t. Vi\u1EBFt n\u1ED9i dung cho \u0110\xDANG M\u1ED8T slide. Ch\u1EC9 tr\u1EA3 v\u1EC1 DUY NH\u1EA4T m\u1ED9t JSON h\u1EE3p l\u1EC7, kh\xF4ng b\u1ECDc markdown, kh\xF4ng ch\u1EEF ngo\xE0i JSON.\n\n" + slideSpecBlock(slide, pro) + (GRAPHIC_LAYOUTS.has(slide.layout) ? graphicBlock(plan, [slide]) : "") + deckContextBlock(plan) + "SLIDE C\u1EA6N VI\u1EBET: " + slideHeading(plan, slide, index);
 }
-function batchSystemPrompt(plan, indices) {
+function batchSystemPrompt(plan, indices, pro = false) {
   const needsGraphic = indices.some((i) => GRAPHIC_LAYOUTS.has(plan.slides[i].layout));
-  const specs = indices.map((i) => `### SLIDE ${slideHeading(plan, plan.slides[i], i)}${slideSpecBlock(plan.slides[i])}`).join("\n\n");
+  const specs = indices.map((i) => `### SLIDE ${slideHeading(plan, plan.slides[i], i)}${slideSpecBlock(plan.slides[i], pro)}`).join("\n\n");
   return `B\u1EA1n l\xE0 tr\u1EE3 l\xFD AI c\u1EE7a tr\xECnh so\u1EA1n b\xE0i tr\xECnh b\xE0y ti\u1EBFng Vi\u1EC7t. Vi\u1EBFt n\u1ED9i dung cho ${indices.length} slide li\u1EC7t k\xEA \u1EDF cu\u1ED1i. Ch\u1EC9 tr\u1EA3 v\u1EC1 DUY NH\u1EA4T m\u1ED9t JSON h\u1EE3p l\u1EC7 d\u1EA1ng {"slides":[{...},{...}]} \u2014 m\u1ED7i ph\u1EA7n t\u1EED l\xE0 JSON c\u1EE7a m\u1ED9t slide, \u0110\xDANG TH\u1EE8 T\u1EF0 v\xE0 \u0110\u1EE6 s\u1ED1 slide, kh\xF4ng b\u1ECDc markdown, kh\xF4ng ch\u1EEF ngo\xE0i JSON.` + // phần giống nhau giữa các lượt đặt TRƯỚC (cache prompt của nhà cung cấp chỉ khớp phần đầu trùng nhau)
   deckContextBlock(plan) + (needsGraphic ? graphicBlock(plan, indices.map((i) => plan.slides[i])) : "") + `C\xC1C SLIDE C\u1EA6N VI\u1EBET (m\u1ED7i slide tu\xE2n th\u1EE7 \u0111\xFAng layout, field, ng\xE2n s\xE1ch ch\u1EEF c\u1EE7a n\xF3):
 
@@ -12196,7 +12996,7 @@ ${specs}
 }
 
 // src/lib/slideEdit.ts
-var EDIT_FONTS = ["Be Vietnam Pro", "Times New Roman", "Arial", "Tahoma", "Verdana", "Segoe UI", "Calibri", "Courier New"];
+var EDIT_FONTS = SLIDE_FONTS.map((font) => font.family);
 var EDITABLE_FIELDS = [
   "title",
   "kicker",
@@ -12238,7 +13038,7 @@ L\u1EC7nh cho ph\xE9p (slides = m\u1EA3ng s\u1ED1 th\u1EE9 t\u1EF1 b\u1EAFt \u01
 - {"op":"duplicate_slide","slide":3}
 - {"op":"set_notes","slide":3,"notes":"ghi ch\xFA tr\xECnh b\xE0y"}
 - {"op":"rename_deck","title":"t\xEAn b\xE0i gi\u1EA3ng"}
-- {"op":"set_layout","slide":3,"layout":"<id>"} \u2014 \u0111\u1ED5i b\u1ED1 c\u1EE5c m\u1ED9t slide, gi\u1EEF n\u1ED9i dung. B\u1ED1 c\u1EE5c: ${SLIDE_LAYOUTS.map((l4) => `${l4.id}=${l4.name}`).join(", ")}
+- {"op":"set_layout","slide":3,"layout":"<id>"} \u2014 \u0111\u1ED5i b\u1ED1 c\u1EE5c m\u1ED9t slide, gi\u1EEF n\u1ED9i dung. B\u1ED1 c\u1EE5c: ${SLIDE_LAYOUTS.filter((l4) => !isEditorialLayout(l4.id)).map((l4) => `${l4.id}=${l4.name}`).join(", ")}
 N\u1EBFu y\xEAu c\u1EA7u KH\xD4NG ph\u1EA3i s\u1EEDa giao di\u1EC7n/th\u1EE9 t\u1EF1 slide c\xF3 s\u1EB5n (v\xED d\u1EE5 so\u1EA1n slide m\u1EDBi, vi\u1EBFt l\u1EA1i n\u1ED9i dung), tr\u1EA3 {"action":"none"}.
 B\xE0i tr\xECnh b\xE0y hi\u1EC7n t\u1EA1i: ${context}`;
 }
@@ -12249,9 +13049,11 @@ var BOARD_OPS_GUIDE = '\n\nB\u1EA0N V\u1EBC \u0110\u01AF\u1EE2C L\xCAN B\u1EA2NG
 var SLIDE_SYSTEM = 'B\u1EA1n l\xE0 tr\u1EE3 l\xFD AI c\u1EE7a tr\xECnh so\u1EA1n b\xE0i tr\xECnh b\xE0y ti\u1EBFng Vi\u1EC7t. Tr\u1EA3 l\u1EDDi ng\u1EAFn g\u1ECDn, \u0111\xFAng ng\u1EEF ph\xE1p. Khi \u0111\u01B0\u1EE3c y\xEAu c\u1EA7u sinh ho\u1EB7c s\u1EEDa n\u1ED9i dung slide, tr\u1EA3 v\u1EC1 JSON h\u1EE3p l\u1EC7 theo c\u1EA5u tr\xFAc {"title":"...","slides":[{"layout":"bullets","title":"...","bullets":["..."],"notes":["..."]}]} . M\u1ED7i slide ch\u1ECDn "layout" trong: title, section, statement, bullets, cards, two-column, comparison, quote, closing, agenda, table, image-left, image-right, image-full, stats, stat-image, timeline, cycle, quiz, example, hook, mindmap. Field theo layout: title/section/closing d\xF9ng {title, kicker, subtitle}; statement d\xF9ng {kicker, body (m\u1ED9t c\xE2u l\u1EDBn), author}; bullets d\xF9ng {title, kicker, bullets (2-4 \xFD ng\u1EAFn)}; cards d\xF9ng {title, items (2-5 th\u1EBB)}; two-column d\xF9ng {title, left (2-3 \xFD), right (2-3 \xFD)}; comparison d\xF9ng {title, leftTitle, left, rightTitle, right}; quote d\xF9ng {quote, author}; agenda d\xF9ng {kicker, title, items (3-5 m\u1EE5c)}; table d\xF9ng {title, rows (2-6 h\xE0ng \xD7 2-6 c\u1ED9t)}; image-left/image-right/image-full d\xF9ng {title, bullets (2-4) ho\u1EB7c body, image (tu\u1EF3 ch\u1ECDn)}; stats d\xF9ng {title, stats (1-4 m\u1EE5c {value, label})}; stat-image d\xF9ng {title, stats (1-2), image}; timeline/cycle d\xF9ng {title, steps (3-5 b\u01B0\u1EDBc)}; mindmap d\xF9ng {title, body (ch\u1EE7 \u0111\u1EC1 gi\u1EEFa), items (3-6 nh\xE1nh d\u1EA1ng "Nh\xE3n: \xFD con; \xFD con")}; quiz d\xF9ng {kicker, question, options (2-4 ph\u01B0\u01A1ng \xE1n), answer (ch\u1EC9 s\u1ED1 0-based ho\u1EB7c "A"), explanation}; example d\xF9ng {title, problem (\u0111\u1EC1 b\xE0i), steps (2-4 b\u01B0\u1EDBc gi\u1EA3i), conclusion}; hook d\xF9ng {kicker, title, body (c\xE2u h\u1ECFi m\u1EDF b\xE0i), items (2-3 g\u1EE3i \xFD ng\u1EAFn)}. "tone" tu\u1EF3 ch\u1ECDn: theme | soft | accent; thi\u1EBFu th\xEC theo m\u1EB7c \u0111\u1ECBnh c\u1EE7a layout. "notes" l\xE0 m\u1EA3ng chu\u1ED7i ghi ch\xFA tr\xECnh b\xE0y (tu\u1EF3 ch\u1ECDn). C\xF4ng th\u1EE9c to\xE1n vi\u1EBFt b\u1EB1ng k\xFD t\u1EF1 Unicode (\xB2, \u221A, \xB7, \xD7, \u0394\u2026), kh\xF4ng d\xF9ng LaTeX. Kh\xF4ng th\xEAm tr\u01B0\u1EDDng kh\xE1c, kh\xF4ng b\u1ECDc markdown.';
 var HTML_SYSTEM = HTML_DECK_SYSTEM;
 var SLIDE_PLAN_SYSTEM = 'B\u1EA1n l\xE0 tr\u1EE3 l\xFD AI c\u1EE7a tr\xECnh so\u1EA1n b\xE0i tr\xECnh b\xE0y ti\u1EBFng Vi\u1EC7t. Nhi\u1EC7m v\u1EE5: L\u1EACP D\xC0N \xDD, ch\u01B0a vi\u1EBFt n\u1ED9i dung chi ti\u1EBFt. Ch\u1EC9 tr\u1EA3 v\u1EC1 DUY NH\u1EA4T m\u1ED9t JSON h\u1EE3p l\u1EC7 (kh\xF4ng b\u1ECDc markdown, kh\xF4ng ch\u1EEF ngo\xE0i JSON):\n{"title":"...","theme":"<id>","stylePack":"<id>","decorKit":"<id>","design":"<id>","subject":"<id>","audience":"...","style":"...","mainIdeas":["..."],"slides":[{"title":"...","layout":"<id>","tone":"theme|soft|accent","kicker":"...","brief":"..."}]}\n\n' + slideCatalogText() + '\n\nQUY T\u1EAEC:\n- N\u1EBFu ng\u01B0\u1EDDi d\xF9ng y\xEAu c\u1EA7u l\xE0m theo m\u1ED9t b\u1ED9 thi\u1EBFt k\u1EBF c\u1EE5 th\u1EC3 (v\xED d\u1EE5 "theo thi\u1EBFt k\u1EBF Thanh l\u1ECBch", "gi\u1ED1ng m\u1EABu b\u1EA3ng \u0111en", "ki\u1EC3u t\u1ED1i gi\u1EA3n"\u2026), h\xE3y \u0111i\u1EC1n "design": "<id>" \u0111\xFAng b\u1ED9 thi\u1EBFt k\u1EBF \u0111\xF3, ch\u1ECDn \u0111\xFAng "theme", "decorKit", "stylePack" t\u01B0\u01A1ng \u1EE9ng v\xE0 b\xE1m theo nh\u1ECBp b\u1ED1 c\u1EE5c c\u1EE7a b\u1ED9.\n- S\u1ED1 slide theo y\xEAu c\u1EA7u; n\u1EBFu kh\xF4ng n\xEAu th\xEC 6\u201310 slide, t\u1ED1i \u0111a 16. M\u1ED7i slide ch\u1EC9 m\u1ED9t \xFD l\u1EDBn; n\u1EBFu m\u1ED9t m\u1EE5c c\xF3 qu\xE1 4 \xFD th\xEC t\xE1ch th\xE0nh slide m\u1EDBi.\n- Ch\u1ECDn nh\u1ECBp deck theo n\u1ED9i dung (b\xE0i gi\u1EA3ng / b\xE1o c\xE1o / h\u1ED9i th\u1EA3o / k\u1EC3 chuy\u1EC7n) \u2014 kh\xF4ng d\xF9ng m\u1ED9t chu\u1ED7i c\u1ED1 \u0111\u1ECBnh ki\u1EC3u ti\xEAu \u0111\u1EC1 \u2192 n\u1ED9i dung \u2192 4 th\u1EBB \u2192 \xFD t\u1ED5ng h\u1EE3p \u2192 timeline cho m\u1ECDi \u0111\u1EC1.\n- \u0110a d\u1EA1ng b\u1ED1 c\u1EE5c: kh\xF4ng d\xF9ng c\xF9ng m\u1ED9t layout \u1EDF hai slide li\u1EC1n nhau; deck 6 slide ph\u1EA3i c\xF3 \xEDt nh\u1EA5t 4 layout kh\xE1c nhau; "cards" t\u1ED1i \u0111a 1 l\u1EA7n trong 6 slide; ch\u1EC9 d\xF9ng layout c\u1EA7n d\u1EEF li\u1EC7u (table, stats, stat-image, quiz) khi n\u1ED9i dung th\u1EADt c\xF3 d\u1EEF li\u1EC7u.\n- B\xE1m c\u1EA5u tr\xFAc b\xE0i g\u1EE3i \xFD c\u1EE7a m\xF4n \u0111\xE3 ch\u1ECDn (xem M\xD4N H\u1ECCC) nh\u01B0ng g\u1ED9p/b\u1ECF b\u01B0\u1EDBc n\u1EBFu deck ng\u1EAFn; \u01B0u ti\xEAn layout g\u1EE3i \xFD c\u1EE7a m\xF4n khi n\u1ED9i dung h\u1EE3p.\n- B\xE0i gi\u1EA3ng c\xF3 v\xED d\u1EE5: d\xF9ng "example" cho v\xED d\u1EE5 m\u1EABu c\xF3 l\u1EDDi gi\u1EA3i (\u0111\u1EC1 b\xE0i \u2192 c\xE1c b\u01B0\u1EDBc \u2192 k\u1EBFt lu\u1EADn) v\xE0 "hook" cho m\u1EDF b\xE0i g\u1EE3i m\u1EDF (c\xE2u h\u1ECFi/t\xECnh hu\u1ED1ng) ngay sau slide ti\xEAu \u0111\u1EC1 ho\u1EB7c n\u1ED9i dung b\xE0i.\n- Slide \u0111\u1EA7u d\xF9ng "title"; slide cu\u1ED1i d\xF9ng "closing" ho\u1EB7c "quote" n\u1EBFu ph\xF9 h\u1EE3p.\n- \u01AFu ti\xEAn layout c\xF3 b\u1ED1 c\u1EE5c r\xF5: "agenda" cho t\u1ED5ng quan, "statement" cho m\u1ED9t th\xF4ng \u0111i\u1EC7p l\u1EDBn, "comparison" khi c\xF3 hai m\u1EB7t \u0111\u1ED1i l\u1EADp, "bullets" ch\u1EC9 khi th\u1EADt s\u1EF1 c\xF3 2\u20134 \xFD ng\u1EAFn.\n- "mindmap" (s\u01A1 \u0111\u1ED3 t\u01B0 duy: ch\u1EE7 \u0111\u1EC1 gi\u1EEFa + 3\u20136 nh\xE1nh) d\xF9ng \u0111\u1EC3 t\u1ED5ng k\u1EBFt/h\u1EC7 th\u1ED1ng ho\xE1 ki\u1EBFn th\u1EE9c ho\u1EB7c khi ng\u01B0\u1EDDi d\xF9ng y\xEAu c\u1EA7u s\u01A1 \u0111\u1ED3 t\u01B0 duy; t\u1ED1i \u0111a 1\u20132 slide trong deck.\n- Layout \u1EA3nh ("image-left", "image-right", "image-full", "stat-image") d\xF9ng t\u1ED1i \u0111a 3 slide trong c\u1EA3 deck v\xE0 ch\u1EC9 khi brief c\xF3 h\xECnh \u1EA3nh minh ho\u1EA1.\n- "brief" \u0111\xFAng 1 c\xE2u ng\u1EAFn (\u2264 140 k\xFD t\u1EF1) n\xEAu d\u1EEF ki\u1EC7n ch\xEDnh; "title" \u2264 10 t\u1EEB.\n- "tone" ch\u1EC9 d\xF9ng khi c\u1EA7n nh\u1EA5n m\u1EA1nh; b\u1ECF tr\u1ED1ng \u0111\u1EC3 layout t\u1EF1 ch\u1ECDn.\n- C\u1EE9 kho\u1EA3ng 3 slide ph\u1EA3i c\xF3 m\u1ED9t slide \u0111i\u1EC3m nh\u1EA5n (statement, stats, quote ho\u1EB7c title/section n\u1EC1n nh\u1EA5n) \u0111\u1EC3 deck c\xF3 nh\u1ECBp, kh\xF4ng ph\u1EB3ng.\n- "theme" ch\u1ECDn theo ch\u1EE7 \u0111\u1EC1, c\u1EA3m x\xFAc v\xE0 \u0111\u1ED1i t\u01B0\u1EE3ng \u2014 kh\xF4ng b\u1EAFt bu\u1ED9c theo m\xF4n; ch\u1EE7 \u0111\u1EC1 t\u1EF1 do (h\u01B0\u1EDBng nghi\u1EC7p, k\u1EF9 n\u0103ng, s\u1EF1 ki\u1EC7n\u2026) v\u1EABn ch\u1ECDn b\u1ED9 m\xE0u h\u1EE3p t\xF4ng. "stylePack" ch\u1ECDn m\u1ED9t id trong danh s\xE1ch style pack \u0111\u1EC3 quy\u1EBFt \u0111\u1ECBnh nh\u1ECBp v\xE0 m\u1EADt \u0111\u1ED9 n\u1ED9i dung; "style" 2 c\xE2u t\u1EA3 phong c\xE1ch (nh\u1ECBp b\u1ED1 c\u1EE5c, \u0111i\u1EC3m nh\u1EA5n m\xE0u, s\u1ED1 li\u1EC7u, h\xECnh \u1EA3nh). "decorKit" ch\u1ECDn m\u1ED9t b\u1ED9 trang tr\xED h\u1EE3p ch\u1EE7 \u0111\u1EC1 v\xE0 \u0111\u1ED1i t\u01B0\u1EE3ng (d\xF9ng cho c\u1EA3 b\xE0i); b\xE0i trang tr\u1ECDng ch\u1ECDn "toi-gian".\n- Kh\xF4ng b\u1ECBa s\u1ED1 li\u1EC7u th\u1EADt; s\u1ED1 li\u1EC7u minh ho\u1EA1 ph\u1EA3i ghi r\xF5 "v\xED d\u1EE5". Ti\u1EBFng Vi\u1EC7t chu\u1EA9n.';
+var PRO_PLAN_RULES = '\n\nCH\u1EBE \u0110\u1ED8 CHUY\xCAN NGHI\u1EC6P (\u01B0u ti\xEAn h\u01A1n c\xE1c lu\u1EADt nh\u1ECBp \u1EDF tr\xEAn khi m\xE2u thu\u1EABn): d\u1EF1ng deck nh\u01B0 m\u1ED9t \u1EA5n ph\u1EA9m bi\xEAn t\u1EADp, kh\xF4ng nh\u01B0 slide \u0111i\u1EC1n m\u1EABu.\n- D\xF9ng b\u1ED1 c\u1EE5c bi\xEAn t\u1EADp: "photo-full" cho slide m\u1EDF \u0111\u1EA7u, chuy\u1EC3n ch\u01B0\u01A1ng v\xE0 k\u1EBFt (\u1EA3nh tr\xE0n n\u1EC1n, m\u1ED9t c\xE2u ti\xEAu \u0111\u1EC1 m\u1EA1nh); "bignum" cho m\u1ED7i con s\u1ED1 then ch\u1ED1t c\u1EE7a b\xE0i (3\u20134 slide); "bars" khi c\xF3 t\u1EEB 2 s\u1ED1 li\u1EC7u c\xF9ng \u0111\u1EA1i l\u01B0\u1EE3ng \u0111\u1EC3 so s\xE1nh; "photo-compare" khi c\xF3 c\u1EB7p tr\u01B0\u1EDBc/sau ho\u1EB7c x\u01B0a/nay. Kh\xF4ng d\xF9ng "cards" hay "bullets" \u1EDF hai slide li\u1EC1n nhau; m\u1ED7i slide ch\u1EC9 m\u1ED9t \xFD.\n- T\u1ED1i \u0111a 6 slide c\xF3 \u1EA3nh (photo-full, photo-compare, bignum c\xF3 \u1EA3nh) trong c\u1EA3 deck; deck \u2264 6 slide th\xEC t\u1ED1i \u0111a 3.\n- Nh\u1ECBp: xen "tone" t\u1ED1i (accent) v\xE0 s\xE1ng (theme/soft), c\u1EE9 2\u20133 slide s\xE1ng th\xEC c\xF3 m\u1ED9t slide t\u1ED1i nh\u1EA5n m\u1EA1nh.\n- "title" ng\u1EAFn, m\u1EA1nh, gi\xE0u h\xECnh \u1EA3nh (\u2264 8 t\u1EEB); "kicker" l\xE0 nh\xE3n chuy\xEAn m\u1EE5c vi\u1EBFt hoa ng\u1EAFn; ch\u1EC9 d\xF9ng con s\u1ED1 v\xE0 d\u1EEF ki\u1EC7n th\u1EADt, kh\xF4ng b\u1ECBa; s\u1ED1 li\u1EC7u kh\xF4ng ch\u1EAFc th\xEC n\xF3i r\xF5 l\xE0 minh ho\u1EA1.\n- "brief" c\u1EE7a slide \u1EA3nh n\xEAu r\xF5 \u1EA3nh c\u1EA7n th\u1EC3 hi\u1EC7n g\xEC.';
+var slidePlanSystem = (pro) => pro ? SLIDE_PLAN_SYSTEM.replace(slideCatalogText(), slideCatalogText(true)) + PRO_PLAN_RULES : SLIDE_PLAN_SYSTEM;
 var WEB_SEARCH_SYSTEM = "T\xECm tr\xEAn web th\xF4ng tin, s\u1ED1 li\u1EC7u m\u1EDBi v\xE0 ch\xEDnh x\xE1c ph\u1EE5c v\u1EE5 y\xEAu c\u1EA7u so\u1EA1n \u0111\u1EC1 / b\xE0i gi\u1EA3ng c\u1EE7a gi\xE1o vi\xEAn d\u01B0\u1EDBi \u0111\xE2y. Ch\u1EC9 tr\u1EA3 b\u1EA3n t\xF3m t\u1EAFt g\u1EA1ch \u0111\u1EA7u d\xF2ng (t\u1ED1i \u0111a 25 d\xF2ng), m\u1ED7i d\xF2ng m\u1ED9t d\u1EEF ki\u1EC7n ho\u1EB7c s\u1ED1 li\u1EC7u k\xE8m t\xEAn ngu\u1ED3n v\xE0 n\u0103m. \u01AFu ti\xEAn ngu\u1ED3n ch\xEDnh th\u1ED1ng (c\u01A1 quan nh\xE0 n\u01B0\u1EDBc, s\xE1ch gi\xE1o khoa, b\xE1o l\u1EDBn). Kh\xF4ng so\u1EA1n \u0111\u1EC1, kh\xF4ng b\xECnh lu\u1EADn.";
 function buildSlideChatSystem(i) {
-  const head = i.variant === "html" ? HTML_SYSTEM : (i.variant === "plan" ? SLIDE_PLAN_SYSTEM : SLIDE_SYSTEM + CHAT_MARKDOWN) + (i.ask ? ASK_RULE : "");
+  const head = i.variant === "html" ? HTML_SYSTEM : (i.variant === "plan" ? slidePlanSystem(i.pro) : SLIDE_SYSTEM + CHAT_MARKDOWN) + (i.ask ? ASK_RULE : "");
   return head + (i.contextSummary ? `
 B\xE0i tr\xECnh b\xE0y hi\u1EC7n t\u1EA1i: ${i.contextSummary}` : "") + sourceSection(i) + webSection(i.webFound);
 }
@@ -12260,8 +13062,8 @@ function buildBoardSystem(i) {
 B\u1EA3ng v\u1EBD hi\u1EC7n t\u1EA1i:
 ${i.contextSummary}` : "") + sourceSection(i);
 }
-var buildSlideBatchSystem = (plan, indices, think) => batchSystemPrompt(plan, indices) + (think ? THINK_VI : "");
-var buildSlidePageSystem = (plan, index) => pageSystemPrompt(plan, plan.slides[index], index);
+var buildSlideBatchSystem = (plan, indices, think, pro) => batchSystemPrompt(plan, indices, pro) + (think ? THINK_VI : "");
+var buildSlidePageSystem = (plan, index, pro) => pageSystemPrompt(plan, plan.slides[index], index, pro);
 var buildSlideEditSystem = (context) => editSystemPrompt(context);
 export {
   BOARD_SYSTEM,
@@ -12271,5 +13073,6 @@ export {
   buildSlideBatchSystem,
   buildSlideChatSystem,
   buildSlideEditSystem,
-  buildSlidePageSystem
+  buildSlidePageSystem,
+  slidePlanSystem
 };

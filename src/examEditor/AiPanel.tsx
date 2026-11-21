@@ -31,7 +31,7 @@ import { splitHtmlDeck } from '@/lib/htmlDeck'
 import { looksLikeEdit, parseEditCommands, type SlideEditOp } from '@/lib/slideEdit'
 import { useSlidingThumb } from './useSlidingThumb'
 import { buildSourcePack, isDocx, isPdf, pickedKey, type PickedSource, type SourcePack } from '@/lib/sources'
-import { BookOpen, Globe, RotateCcw, ThumbsDown, ThumbsUp } from 'lucide-react'
+import { BookOpen, Globe, LayoutTemplate, RotateCcw, ThumbsDown, ThumbsUp } from 'lucide-react'
 import type { AiApplyResult } from '@/lib/aiDocContext'
 import { looksLikeComplaint, nearlySame, rememberAiTurn, reportAi } from '@/lib/aiFeedback'
 import { dialog } from '@/components/Dialog'
@@ -455,6 +455,7 @@ function ThinkingLine({ mode, intent }: { mode: AiMode; intent?: 'doc' | 'chat' 
   )
 }
 
+const SLIDE_PRO_WARN_KEY = 'dethinhbien-slide-pro-warned'
 const WEB_WARN_KEY = 'dethinhbien-web-search-warned'
 
 /** Lịch sử hội thoại gửi kèm mỗi lượt gọi model. */
@@ -594,9 +595,10 @@ export async function generateSlide(
   planSlide: DeckPlanSlide,
   index: number,
   signal: AbortSignal,
+  pro?: boolean,
 ): Promise<AiSlidePayload | null> {
   // system prompt do server ghép từ dàn ý (task slide-trang)
-  const task = { name: 'slide-trang', input: { plan, index } }
+  const task = { name: 'slide-trang', input: { plan, index, pro: pro === true || undefined } }
   const user = `Viết slide ${index + 1}: "${planSlide.title}".`
   // bộ trang trí là của cả deck (chọn ở dàn ý), gắn vào mọi trang
   const decorKit = planDecorKit(plan)
@@ -652,8 +654,9 @@ export async function generateSlideBatch(
   signal: AbortSignal,
   /** có thì gọi dạng stream để hiện tiến độ thật của lô (suy nghĩ, trang đang viết) */
   onProgress?: (p: LlmProgress) => void,
+  pro?: boolean,
 ): Promise<Array<AiSlidePayload | null>> {
-  if (indices.length === 1) return [await generateSlide(plan, plan.slides[indices[0]], indices[0], signal)]
+  if (indices.length === 1) return [await generateSlide(plan, plan.slides[indices[0]], indices[0], signal, pro)]
   const decorKit = planDecorKit(plan)
   const withKit = (page: AiSlidePayload): AiSlidePayload => ({ ...page, decorKit })
   // cả nhóm không đọc được (JSON hỏng/cụt) → hoàn token lượt đó, gọi lại một lần
@@ -661,14 +664,14 @@ export async function generateSlideBatch(
     [
       { role: 'user', content: `Viết slide ${indices.map((i) => i + 1).join(', ')}.` },
     ],
-    { signal, reasoningEffort: AI_EFFORT.slide, onProgress, task: { name: 'slide-lo', input: { plan, indices, think: !!onProgress } } },
+    { signal, reasoningEffort: AI_EFFORT.slide, onProgress, task: { name: 'slide-lo', input: { plan, indices, think: !!onProgress, pro: pro === true || undefined } } },
     (content) => parseBatchSlides(parseAiObject(content), indices.length).some(Boolean),
   )
   const items = parseBatchSlides(parseAiObject(res.content), indices.length)
   return Promise.all(
     indices.map(async (index, k) => {
       const planSlide = plan.slides[index]
-      if (!items[k]) return generateSlide(plan, planSlide, index, signal)
+      if (!items[k]) return generateSlide(plan, planSlide, index, signal, pro)
       const check = checkSlide(items[k], planSlide.layout, planSlide.tone)
       if (!check.errors.length && !check.readability.length) return withKit(check.page)
       const repaired = await callLlm(
@@ -677,7 +680,7 @@ export async function generateSlideBatch(
           { role: 'assistant', content: JSON.stringify(items[k]) },
           { role: 'user', content: repairPrompt([...check.errors, ...check.readability]) },
         ],
-        { signal, reasoningEffort: AI_EFFORT.slide, task: { name: 'slide-trang', input: { plan, index } } },
+        { signal, reasoningEffort: AI_EFFORT.slide, task: { name: 'slide-trang', input: { plan, index, pro: pro === true || undefined } } },
       )
       const second = checkSlide(parseAiObject(repaired.content), planSlide.layout, planSlide.tone)
       if (second.errors.length) return check.errors.length ? null : withKit(check.page)
@@ -698,6 +701,7 @@ export async function polishSlide(
   previous: AiSlidePayload,
   issues: string[],
   signal: AbortSignal,
+  pro?: boolean,
 ): Promise<AiSlidePayload | null> {
   const reply = await callLlm(
     [
@@ -711,7 +715,7 @@ export async function polishSlide(
           'bỏ "graphic" nếu bị chê lạc nghĩa), giữ nguyên layout, trả DUY NHẤT một JSON hợp lệ.',
       },
     ],
-    { signal, reasoningEffort: AI_EFFORT.slide, task: { name: 'slide-trang', input: { plan, index } } },
+    { signal, reasoningEffort: AI_EFFORT.slide, task: { name: 'slide-trang', input: { plan, index, pro: pro === true || undefined } } },
   )
   const check = checkSlide(parseAiObject(reply.content), planSlide.layout, planSlide.tone)
   return check.errors.length ? null : { ...check.page, decorKit: planDecorKit(plan) }
@@ -739,6 +743,7 @@ function AiConversation({
   mode = 'exam',
   attachKey,
   storageKey,
+  panelOpen = true,
   onBoardOps,
 }: {
   /** nhận nội dung AI sinh ra để áp vào tài liệu; trả về câu báo lại (failed = không áp được) */
@@ -758,7 +763,7 @@ function AiConversation({
   /** mô tả deck hiện tại (theme, phông, danh sách slide) cho lệnh sửa slide bằng AI */
   editContext?: string
   /** áp lệnh sửa slide có sẵn do AI trả về; trả các dòng báo lại người dùng */
-  onApplyEdits?: (ops: SlideEditOp[]) => string[]
+  onApplyEdits?: (ops: SlideEditOp[]) => string[] | Promise<string[]>
   /** báo số slide còn chờ để editor vẽ ô skeleton (null = xong/huỷ) */
   onPendingSlides?: (state: { done: number; total: number } | null) => void
   /** mô tả ngắn tài liệu hiện tại, đưa vào system prompt */
@@ -770,6 +775,7 @@ function AiConversation({
   /** nhận phần đính kèm "Hỏi AI" (attachToAi) có cùng khoá */
   attachKey?: string
   storageKey?: string
+  panelOpen?: boolean
   /** bảng vẽ: áp các lệnh vẽ AI trả về; trả các dòng báo lại người dùng */
   onBoardOps?: (ops: Record<string, unknown>[]) => string[]
 }) {
@@ -816,6 +822,34 @@ function AiConversation({
       }
     }
     setWebSearch(true)
+  }
+  const [slidePro, setSlidePro] = useState(false)
+  useEffect(() => {
+    if (!panelOpen) setSlidePro(false)
+  }, [panelOpen])
+  const toggleSlidePro = async () => {
+    if (slidePro) return setSlidePro(false)
+    let skip = false
+    try {
+      skip = localStorage.getItem(SLIDE_PRO_WARN_KEY) === '1'
+    } catch {
+      /* chế độ riêng tư: hỏi mỗi lần */
+    }
+    if (!skip) {
+      const answer = await dialog.choose(
+        'Slide có bố cục đa dạng hơn, ảnh tư liệu, số liệu nổi bật và ghi nguồn. Chế độ này tốn thêm điểm AI.',
+        { title: 'Chuyên nghiệp', cancelLabel: 'Hủy', confirmLabel: 'Bật', altLabel: 'Bật, không hỏi lại' },
+      )
+      if (!answer) return
+      if (answer === 'alt') {
+        try {
+          localStorage.setItem(SLIDE_PRO_WARN_KEY, '1')
+        } catch {
+          /* bỏ qua */
+        }
+      }
+    }
+    setSlidePro(true)
   }
   const [pickerOpen, setPickerOpen] = useState(false)
   useEffect(() => {
@@ -1037,7 +1071,7 @@ function AiConversation({
         mode === 'board'
           ? { name: 'bang-ve', input: { ops: !!onBoardOps, contextSummary, ...srcInput } }
           : mode === 'slide'
-          ? { name: 'slide-chat', input: { variant: htmlMode ? 'html' : slideDoc ? 'plan' : 'chat', ask: askRule, contextSummary, ...srcInput } }
+          ? { name: 'slide-chat', input: { variant: htmlMode ? 'html' : slideDoc ? 'plan' : 'chat', ask: askRule, contextSummary, ...srcInput, pro: slidePro || undefined } }
           : { name: 'soan-de', input: { text, intent, digest: documentDigest, contextSummary, ask: askRule, ...srcInput } }
 
       const messages: LlmMessage[] = [
@@ -1050,12 +1084,12 @@ function AiConversation({
       if (mode === 'slide' && !htmlMode && existingSlideCount > 0 && onApplyEdits && looksLikeEdit(text)) {
         const editRes = await callLlm(
           [{ role: 'user', content: text }],
-          { signal: controller.signal, reasoningEffort: 'low', task: { name: 'slide-sua', input: { context: editContext ?? contextSummary ?? '' } } },
+          { signal: controller.signal, reasoningEffort: 'low', task: { name: 'slide-sua', input: { context: editContext ?? contextSummary ?? '', pro: slidePro || undefined } } },
         )
         const { ops, errors } = parseEditCommands(editRes.content)
         controller.signal.throwIfAborted()
         if (ops.length) {
-          const lines = [...onApplyEdits(ops), ...errors.map((e) => `Bỏ qua: ${e}.`)]
+          const lines = [...await onApplyEdits(ops), ...errors.map((e) => `Bỏ qua: ${e}.`)]
           setTurns((t) =>
             t.map((turn) =>
               turn.id === botId
@@ -1344,7 +1378,7 @@ function AiConversation({
       setBusy(false)
       abortRef.current = null
     }
-  }, [input, files, refs, picked, busy, turns, contextSummary, documentDigest, mode, onApplyBlocks, onApplySlides, slideFormat, existingSlideCount, editContext, onApplyEdits, onBoardOps])
+  }, [input, files, refs, picked, busy, turns, contextSummary, documentDigest, mode, onApplyBlocks, onApplySlides, slideFormat, slidePro, existingSlideCount, editContext, onApplyEdits, onBoardOps])
 
   const stop = useCallback(() => {
     abortRef.current?.abort()
@@ -1446,7 +1480,7 @@ function AiConversation({
           const indices = Array.from({ length: nextIndex - start }, (_, k) => start + k)
           progress(plan.slides[start].title)
           try {
-            const pages = await generateSlideBatch(plan, indices, controller.signal, batchProgress(start, indices.length))
+            const pages = await generateSlideBatch(plan, indices, controller.signal, batchProgress(start, indices.length), slidePro)
             indices.forEach((index, k) => { results[index] = pages[k] })
             inFlight.delete(start)
           } catch (err) {
@@ -1520,7 +1554,7 @@ function AiConversation({
         onPendingSlides?.(null)
       }
     },
-    [busy, onAppendSlide, onApplySlides, onPendingSlides],
+    [busy, onAppendSlide, onApplySlides, onPendingSlides, slidePro],
   )
 
   const cancelPlan = useCallback((planTurnId: string) => {
@@ -1852,6 +1886,18 @@ function AiConversation({
                 onClick={() => void toggleWebSearch()}
               >
                 <Globe size={16} strokeWidth={1.75} />
+              </button>
+            ) : null}
+            {mode === 'slide' ? (
+              <button
+                type="button"
+                className={cn('ai-attach-btn', slidePro && 'is-on')}
+                data-tip={slidePro ? 'Chuyên nghiệp: đang bật' : 'Chuyên nghiệp'}
+                aria-label="Chuyên nghiệp"
+                aria-pressed={slidePro}
+                onClick={() => void toggleSlidePro()}
+              >
+                <LayoutTemplate size={16} strokeWidth={1.75} />
               </button>
             ) : null}
             <input
