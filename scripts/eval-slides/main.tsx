@@ -16,7 +16,7 @@ import { parseAsk } from '@/examEditor/AiAskPanel'
 import { callLlm } from '@/lib/llm'
 import { parseDeckPlan } from '@/lib/aiDeck'
 import { dropRepeatedGraphic, slideFromAi, withImage } from '@/lib/slideAi'
-import { IMAGE_LAYOUTS, buildImagePrompt, generateSlideImage, queueImage } from '@/lib/imageGen'
+import { IMAGE_LAYOUTS, buildImagePrompt, buildPhotoPrompt, generateSlideImage, queueImage } from '@/lib/imageGen'
 import { ensureMeasureFonts } from '@/lib/slideMeasure'
 import { themeById } from '@/lib/slideTheme'
 import type { Slide } from '@/store/docs'
@@ -49,6 +49,7 @@ const done = (payload: unknown) => {
 async function main() {
   const topic = new URLSearchParams(location.search).get('topic') ?? 'Hàm số bậc nhất'
   const effort = new URLSearchParams(location.search).get('effort')
+  const pro = !!new URLSearchParams(location.search).get('pro')
   if (effort) AI_EFFORT.slide = effort as typeof AI_EFFORT.slide
   await ensureMeasureFonts()
   await document.fonts.ready
@@ -58,7 +59,7 @@ async function main() {
   const res = await callLlm(
     [{ role: 'user', content: topic }],
     // prompt dàn ý do SERVER ghép từ task (đúng đường app chạy)
-    { signal: controller.signal, reasoningEffort: AI_EFFORT.slide, task: { name: 'slide-chat', input: { variant: 'plan', ask: true } } },
+    { signal: controller.signal, reasoningEffort: AI_EFFORT.slide, task: { name: 'slide-chat', input: { variant: 'plan', ask: true, pro: pro || undefined } } },
   )
   const ask = parseAsk(res.content)
   if (ask) {
@@ -83,7 +84,7 @@ async function main() {
         const idx = Array.from({ length: next - start }, (_, k) => start + k)
         try {
           // ?vi=1: như app hiện giờ — gọi stream (có tiến độ) nên kèm câu bắt suy nghĩ tiếng Việt
-          const got = await generateSlideBatch(plan, idx, controller.signal, new URLSearchParams(location.search).get('vi') ? () => {} : undefined)
+          const got = await generateSlideBatch(plan, idx, controller.signal, new URLSearchParams(location.search).get('vi') ? () => {} : undefined, pro)
           idx.forEach((i, k) => { pages[i] = got[k] })
         } catch {
           idx.forEach((i) => { pages[i] = null })
@@ -97,7 +98,7 @@ async function main() {
       while (next < plan.slides.length) {
         const i = next++
         try {
-          pages[i] = await generateSlide(plan, plan.slides[i], i, controller.signal)
+          pages[i] = await generateSlide(plan, plan.slides[i], i, controller.signal, pro)
         } catch {
           pages[i] = null
         }
@@ -113,8 +114,25 @@ async function main() {
   const theme = themeById(plan.theme ?? 'sang')
   const failed: string[] = []
   const built: Array<Slide | null> = pages.map((page) => (page ? slideFromAi(page, theme) : null))
+  if (pro && new URLSearchParams(location.search).get('images')) {
+    const jobs: Array<Promise<void>> = []
+    built.forEach((slide, i) => {
+      const page = pages[i]
+      if (!slide || !page) return
+      for (const [slot, text] of [['image', page.imagePrompt], ['image2', page.image2Prompt]] as Array<['image' | 'image2', string | undefined]>) {
+        if (!text) continue
+        const prompt = buildPhotoPrompt(text)
+        jobs.push(
+          queueImage(() => generateSlideImage(prompt).catch(() => generateSlideImage(prompt)))
+            .then((img) => { built[i] = withImage(built[i]!, theme, img.dataUrl, slot) })
+            .catch(() => {}),
+        )
+      }
+    })
+    await Promise.all(jobs)
+  }
   // ?images=1: sinh ảnh AI thật cho bìa + layout ảnh (như app làm nền) rồi mới chụp
-  if (new URLSearchParams(location.search).get('images')) {
+  if (!pro && new URLSearchParams(location.search).get('images')) {
     await Promise.all(
       built.map(async (slide, i) => {
         const page = pages[i]
