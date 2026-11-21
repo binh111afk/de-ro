@@ -25,28 +25,87 @@ export type AiCall = {
   completionTokens?: number
   cost?: number | null
   ms: number
+  /** nhãn loại việc (xem aiKind) */
+  kind?: string
+  /** token tính vào hạn mức người dùng cho lượt này (chỉ lượt thành công) */
+  billed?: number
+}
+
+/**
+ * Nhãn loại việc của một lượt gọi AI, suy ra từ tên task + dữ liệu client gửi (không tin chữ client tự đặt nhãn).
+ *   task-doc      soạn / sửa đề         question       hỏi đáp chữ thường (đề, slide)
+ *   ask-clarify   hỏi lại trước khi soạn task-slide     lập dàn ý / viết slide
+ *   task-slide-html slide HTML          edit-slide     sửa slide có sẵn bằng lệnh
+ *   board         bảng vẽ               web-search     tìm trên web
+ *   task-exam-online đề tương tác       edit-question  sửa một câu / một đoạn
+ *   figure        hình / đồ thị         bank           ngân hàng câu hỏi (admin)
+ *   matrix        ma trận đề            image          vẽ ảnh
+ *   vision-source đọc ảnh PDF làm nguồn vision-bank    đọc ảnh đề cho ngân hàng
+ */
+export function aiKind(task?: unknown, input?: unknown): string {
+  const o = (input && typeof input === 'object' ? input : {}) as Record<string, unknown>
+  switch (task) {
+    case 'soan-de':
+      return o.intent === 'chat' ? 'question' : 'task-doc'
+    case 'hoi-truoc':
+      return 'ask-clarify'
+    case 'slide-chat':
+      return o.variant === 'chat' ? 'question' : o.variant === 'html' ? 'task-slide-html' : 'task-slide'
+    case 'slide-lo':
+    case 'slide-trang':
+      return 'task-slide'
+    case 'slide-sua':
+    case 'sua-slide':
+      return 'edit-slide'
+    case 'bang-ve':
+      return 'board'
+    case 'tim-web':
+      return 'web-search'
+    case 'de-online':
+      return 'task-exam-online'
+    case 'sua-cau':
+      return 'edit-question'
+    case 've-do-thi':
+    case 'chon-hinh':
+      return 'figure'
+    case 'ngan-hang':
+      return 'bank'
+    case 'ma-tran':
+      return 'matrix'
+    default:
+      return typeof task === 'string' ? 'other' : 'untagged'
+  }
 }
 
 export async function logAiCall(c: AiCall): Promise<void> {
   const s = supa()
   if (!s) return
-  try {
-    await fetch(`${s.base}/rest/v1/ai_calls`, {
+  const row = {
+    user_id: c.userId,
+    model: c.model.slice(0, 120),
+    provider: c.provider.slice(0, 40),
+    ok: c.ok,
+    error: c.error ? c.error.slice(0, 500) : null,
+    prompt_tokens: Math.max(0, Math.round(c.promptTokens ?? 0)),
+    completion_tokens: Math.max(0, Math.round(c.completionTokens ?? 0)),
+    cost: c.cost ?? null,
+    ms: Math.max(0, Math.round(c.ms)),
+  }
+  const post = (body: object) =>
+    fetch(`${s.base}/rest/v1/ai_calls`, {
       method: 'POST',
       headers: { ...s.headers, Prefer: 'return=minimal' },
-      body: JSON.stringify({
-        user_id: c.userId,
-        model: c.model.slice(0, 120),
-        provider: c.provider.slice(0, 40),
-        ok: c.ok,
-        error: c.error ? c.error.slice(0, 500) : null,
-        prompt_tokens: Math.max(0, Math.round(c.promptTokens ?? 0)),
-        completion_tokens: Math.max(0, Math.round(c.completionTokens ?? 0)),
-        cost: c.cost ?? null,
-        ms: Math.max(0, Math.round(c.ms)),
-      }),
+      body: JSON.stringify(body),
       signal: AbortSignal.timeout(3000),
     })
+  try {
+    const r = await post({
+      ...row,
+      kind: c.kind ? c.kind.slice(0, 40) : null,
+      billed: c.billed === undefined ? null : Math.max(0, Math.round(c.billed)),
+    })
+    // chưa áp migration cột kind / billed: ghi lại không có hai cột đó để log (và luật miễn điểm lượt hỏng) không mất
+    if (r.status === 400) await post(row)
   } catch {
     /* log hỏng thì thôi */
   }

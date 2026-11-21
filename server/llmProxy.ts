@@ -22,7 +22,7 @@ import { json, readBody, safeError } from './http.js'
 import { LOGIN_REQUIRED, clientIp, guard, isLocal, userFromToken } from './guard.js'
 import { TOKENS_PER_POINT, addUsage, checkReceipt, estimatePromptTokens, hasQuotaStore, issueReceipt, quotaMessage, readQuota, refundReceipt, requestHash, reserveQuota } from './aiQuota.js'
 import { buildTaskSystem } from './aiTasks.js'
-import { EMPTY_FREE_PER_DAY, costFromUsage, logAiCall, maintenanceBlock, recentFreeFails } from './ops.js'
+import { EMPTY_FREE_PER_DAY, costFromUsage, logAiCall, maintenanceBlock, recentFreeFails, aiKind } from './ops.js'
 import { readAiOverrides } from './aiSettings.js'
 import { callAnthropic } from './anthropic.js'
 import { handleExtractRequest } from './extract.js'
@@ -559,7 +559,8 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
       const q = receipt ? await refundReceipt(userId, receipt, quota, spent) : quota
       return addUsage(userId, ip, spent + wasted, q)
     }
-    const log = (t: Target, t0: number, ok: boolean, error: string | null, usage?: unknown) => {
+    const kind = aiKind(body.task, body.taskInput)
+    const log = (t: Target, t0: number, ok: boolean, error: string | null, usage?: unknown, billed?: number) => {
       const u = usage as Usage
       pending.push(logAiCall({
         userId,
@@ -571,6 +572,8 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
         completionTokens: u?.completion_tokens ?? u?.output_tokens,
         cost: costFromUsage(usage, providerOf(t)),
         ms: Date.now() - t0,
+        kind,
+        billed,
       }))
     }
     const targets: Target[] = []
@@ -631,8 +634,8 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
           })
           if (r.content.trim()) {
             writeRawLog(JSON.stringify(r), { _model: selectedModel, _attempt: 0, finishReason: r.finishReason, usage: r.usage, content: r.content })
-            log(target, t0, true, null, r.usage)
             const spent = billOf(r.usage, r.content)
+            log(target, t0, true, null, r.usage, spent)
             const [after] = await Promise.all([settle(spent), release(), ...pending])
             return reply(200, { content: r.content, reasoning: '', usage: r.usage, ...(isLocal(ip) ? { model: r.model } : {}), finishReason: r.finishReason, quota: after, receipt: receiptFor(spent) })
           }
@@ -756,7 +759,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
 
         if (content.trim()) {
           const spent = billOf(data.usage, content + reasoning)
-          log(target, t0, true, null, data.usage)
+          log(target, t0, true, null, data.usage, spent)
           const [after] = await Promise.all([settle(spent), release(), ...pending])
           // nguồn web model đã dẫn (bỏ trùng link)
           const citations = target.search

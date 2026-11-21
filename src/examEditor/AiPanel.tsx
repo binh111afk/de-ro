@@ -42,6 +42,7 @@ import { chatHistoryKey, encodeChatHistory, loadChatHistory, saveChatHistory } f
 import { extractJson } from '@/lib/llm'
 import aiThinkingAnim from '@/assets/ai-assistant.svg'
 import { Markdown } from '@/lib/aiChatMarkdown'
+import { compactHistory } from '@/lib/aiHistory'
 import 'katex/dist/katex.min.css'
 import { ASK_DEFAULT, AiAskPanel, askHistoryText, needsAskFirst, parseAsk, type AiAsk } from './AiAskPanel'
 import { IconClose, IconEnter, IconPaperclip, IconStop } from './icons'
@@ -1054,7 +1055,8 @@ function AiConversation({
           (await khungPromptFor([text, ...prev, contextSummary ?? '', (documentDigest ?? '').slice(0, 800)].join('\n')))
       }
 
-      const history = historyOf(turns)
+      // lượt cũ gộp thành bản tóm tắt ngắn để token đầu vào không phình theo độ dài cuộc trò chuyện
+      const history = compactHistory(historyOf(turns))
       // vừa hỏi lại xong thì không hỏi nữa; bảng vẽ và slide HTML không dùng panel hỏi
       const justAsked = turns.slice(-2).some((t) => t.ask)
       const askRule = !(mode === 'board' || justAsked)

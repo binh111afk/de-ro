@@ -124,7 +124,7 @@ const TERMS: Section[] = [
     b: [
       [
         '1 điểm = 1.000 token AI. Chi phí hiện tại: soạn 1 đề khoảng 20–27 điểm; 1 bộ slide 15 trang khoảng 26–35 điểm; hỏi lại trước khi soạn 10 điểm; sửa/hỏi thêm 5 điểm; tìm trên web 5 điểm; ảnh minh họa 5 điểm.',
-        'Tài khoản mới được tặng 80 điểm dùng thử, một lần duy nhất cho mỗi người.',
+        'Tài khoản mới được tặng 120 điểm dùng thử, một lần duy nhất cho mỗi người.',
         "Điểm chỉ dùng để trả cho các tính năng có phí trên 'đề rõ'. Điểm không được quy đổi để rút tiền mặt, không chuyển nhượng sang tài khoản khác.",
         'Tạo nhiều tài khoản để nhận điểm dùng thử là vi phạm điều khoản, tài khoản vi phạm có thể bị khóa và điểm bị thu hồi.',
       ],

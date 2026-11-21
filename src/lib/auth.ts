@@ -108,9 +108,9 @@ export function signInWithGoogle(): void {
 }
 
 /** Đăng ký. Trả về `true` nếu cần xác nhận email (chưa có phiên). */
-export async function signUp(email: string, password: string, name: string): Promise<{ needsConfirm: boolean }> {
+export async function signUp(email: string, password: string, name: string, captchaToken?: string): Promise<{ needsConfirm: boolean }> {
   const data = await request<Record<string, unknown>>('/signup', {
-    body: { email, password, data: { display_name: name } },
+    body: { email, password, data: { display_name: name }, ...captcha(captchaToken) },
   })
   // Email đã có tài khoản (kể cả tài khoản tạo bằng Google): Supabase không tạo mới mà trả user giả
   // với `identities: []`. Báo trùng để không ai tưởng đăng ký được thêm tài khoản (và thêm điểm AI).
@@ -125,8 +125,11 @@ export async function signUp(email: string, password: string, name: string): Pro
   return { needsConfirm: true }
 }
 
-export async function signIn(email: string, password: string): Promise<Session> {
-  const data = await request<Record<string, unknown>>('/token?grant_type=password', { body: { email, password } })
+/** Mã Turnstile (khi Supabase bật CAPTCHA, đăng ký / đăng nhập / quên mật khẩu đều phải kèm). */
+const captcha = (token?: string) => (token ? { gotrue_meta_security: { captcha_token: token } } : {})
+
+export async function signIn(email: string, password: string, captchaToken?: string): Promise<Session> {
+  const data = await request<Record<string, unknown>>('/token?grant_type=password', { body: { email, password, ...captcha(captchaToken) } })
   const s = toSession(data)
   saveSession(s)
   return s
@@ -193,9 +196,9 @@ export async function updateProfile(patch: { name?: string; avatar?: string }): 
 }
 
 /** Gửi email đặt lại mật khẩu. Luôn báo thành công để không lộ email nào đã có tài khoản. */
-export async function requestReset(email: string): Promise<void> {
+export async function requestReset(email: string, captchaToken?: string): Promise<void> {
   const redirect = `${window.location.origin}/dat-lai-mat-khau`
-  await request(`/recover?redirect_to=${encodeURIComponent(redirect)}`, { body: { email } })
+  await request(`/recover?redirect_to=${encodeURIComponent(redirect)}`, { body: { email, ...captcha(captchaToken) } })
 }
 
 /** Đặt mật khẩu mới bằng token trong link email (nằm ở hash của URL). */
