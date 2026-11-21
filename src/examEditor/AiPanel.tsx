@@ -28,11 +28,9 @@ import {
 import { checkSlide, dropRepeatedGraphic, parseBatchSlides, planDecorKit, repairPrompt } from '@/lib/slideAi'
 import { DECK_THEMES, PRO_THEMES } from '@/lib/slideTheme'
 import { designById } from '@/lib/slideDesigns'
-import { splitHtmlDeck } from '@/lib/htmlDeck'
 import { looksLikeEdit, parseEditCommands, type SlideEditOp } from '@/lib/slideEdit'
-import { useSlidingThumb } from './useSlidingThumb'
 import { buildSourcePack, isDocx, isPdf, pickedKey, type PickedSource, type SourcePack } from '@/lib/sources'
-import { BookOpen, Check, Globe, LayoutTemplate, RotateCcw, ThumbsDown, ThumbsUp } from 'lucide-react'
+import { BookOpen, Check, ChevronDown, Globe, RotateCcw, ThumbsDown, ThumbsUp } from 'lucide-react'
 import { ContextMenu, type MenuState } from './ContextMenu'
 import type { AiApplyResult } from '@/lib/aiDocContext'
 import { looksLikeComplaint, nearlySame, rememberAiTurn, reportAi } from '@/lib/aiFeedback'
@@ -734,7 +732,6 @@ function AiConversation({
   onApplyBlocks,
   onApplySlides,
   onAppendSlide,
-  onApplyHtmlDeck,
   existingSlideCount = 0,
   onClearSlides,
   editContext,
@@ -758,7 +755,6 @@ function AiConversation({
   /** chèn ngay một slide vừa sinh vào cuối deck (chặng 26b) */
   onAppendSlide?: (page: AiSlidePayload, plan: DeckPlan) => void | Promise<void>
   /** chế độ HTML: nhận danh sách slide HTML (mỗi phần tử là một tài liệu HTML) để thay vào bài giảng */
-  onApplyHtmlDeck?: (htmls: string[]) => void
   /** số slide đã có nội dung: > 0 thì duyệt dàn ý sẽ hỏi ghi đè hay nối tiếp */
   existingSlideCount?: number
   /** xoá toàn bộ slide hiện có (khi người dùng chọn ghi đè) */
@@ -870,14 +866,9 @@ function AiConversation({
   }, [attachKey])
   const [removingFiles, setRemovingFiles] = useState<string[]>([])
   const [busy, setBusy] = useState(false)
-  /** slide: 'deck' = layout engine (PPT), 'html' = một tệp HTML tự chứa */
-  const [slideFormat, setSlideFormat] = useState<'deck' | 'html'>('deck')
-  /** modal lưu ý hiện khi bấm sang HTML (chỉ trình chiếu, không sửa/xuất PPT) */
-  const [htmlNotice, setHtmlNotice] = useState(false)
+
   /** dàn ý vừa duyệt khi deck đã có slide: chờ người dùng chọn ghi đè / nối tiếp */
   const [overwriteAsk, setOverwriteAsk] = useState<{ turnId: string; plan: DeckPlan } | null>(null)
-  const segRef = useRef<HTMLDivElement>(null)
-  const segThumb = useSlidingThumb(segRef, '.ai-format-opt.active', slideFormat)
   const abortRef = useRef<AbortController | null>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
   const taRef = useRef<HTMLTextAreaElement>(null)
@@ -1059,11 +1050,10 @@ function AiConversation({
 
       // lượt cũ gộp thành bản tóm tắt ngắn để token đầu vào không phình theo độ dài cuộc trò chuyện
       const history = compactHistory(historyOf(turns))
-      // vừa hỏi lại xong thì không hỏi nữa; bảng vẽ và slide HTML không dùng panel hỏi
+      // vừa hỏi lại xong thì không hỏi nữa; bảng vẽ không dùng panel hỏi
       const justAsked = turns.slice(-2).some((t) => t.ask)
       const askRule = !(mode === 'board' || justAsked)
       const slideDoc = mode === 'slide' && intent === 'doc'
-      const htmlMode = mode === 'slide' && intent === 'doc' && slideFormat === 'html'
       // server ghép system prompt từ `task` + dữ liệu người dùng này (client không giữ chữ prompt)
       const srcInput = {
         withSources: examDoc || pack.items.length > 0,
@@ -1075,7 +1065,7 @@ function AiConversation({
         mode === 'board'
           ? { name: 'bang-ve', input: { ops: !!onBoardOps, contextSummary, ...srcInput } }
           : mode === 'slide'
-          ? { name: 'slide-chat', input: { variant: htmlMode ? 'html' : slideDoc ? 'plan' : 'chat', ask: askRule, contextSummary, ...srcInput, pro: slidePro || undefined } }
+          ? { name: 'slide-chat', input: { variant: slideDoc ? 'plan' : 'chat', ask: askRule, contextSummary, ...srcInput, pro: slidePro || undefined } }
           : { name: 'soan-de', input: { text, intent, digest: documentDigest, contextSummary, ask: askRule, ...srcInput } }
 
       const messages: LlmMessage[] = [
@@ -1085,7 +1075,7 @@ function AiConversation({
 
       // Sửa slide CÓ SẴN (đổi phông/màu/theme/tông, xoá, dời slide): model chỉ trả lệnh có cấu trúc,
       // engine áp dụng. Không phải yêu cầu sửa ("action":"none") thì rơi xuống luồng soạn bình thường.
-      if (mode === 'slide' && !htmlMode && existingSlideCount > 0 && onApplyEdits && looksLikeEdit(text)) {
+      if (mode === 'slide' && existingSlideCount > 0 && onApplyEdits && looksLikeEdit(text)) {
         const editRes = await callLlm(
           [{ role: 'user', content: text }],
           { signal: controller.signal, reasoningEffort: 'low', task: { name: 'slide-sua', input: { context: editContext ?? contextSummary ?? '', pro: slidePro || undefined } } },
@@ -1106,7 +1096,7 @@ function AiConversation({
       }
       // lượt đầu, tài liệu trống, chưa nêu môn: hỏi bằng prompt ngắn (~1.000 token thay vì ~10.000).
       // Model thấy đoán được môn thì trả "proceed" và chạy luồng đầy đủ như cũ.
-      if (askRule && !htmlMode && intent === 'doc' && !history.length && !documentDigest && !sentFiles.length && !sentRefs.length && !sentPicked.length && !(mode === 'slide' && existingSlideCount > 0) && needsAskFirst(text)) {
+      if (askRule && intent === 'doc' && !history.length && !documentDigest && !sentFiles.length && !sentRefs.length && !sentPicked.length && !(mode === 'slide' && existingSlideCount > 0) && needsAskFirst(text)) {
         const quick = await callLlm([{ role: 'user', content: text }], { signal: controller.signal, reasoningEffort: 'low', task: { name: 'hoi-truoc' } })
         const quickAsk = parseAsk(quick.content)
         if (quickAsk) {
@@ -1197,7 +1187,7 @@ function AiConversation({
       } finally {
         clearInterval(ticker)
       }
-      const ask = askRule && !htmlMode ? parseAsk(res.content) : null
+      const ask = askRule ? parseAsk(res.content) : null
       if (ask) {
         patchTurn(() => ({ text: ask.intro || 'Mình cần biết thêm vài điều trước khi soạn.', ask, askState: 'open', intent: 'doc', pending: false, log: undefined, askSourcePack: pack }))
         return
@@ -1212,44 +1202,6 @@ function AiConversation({
         await new Promise((r) => setTimeout(r, 350))
       }
       controller.signal.throwIfAborted()
-      if (htmlMode) {
-        const fenced = res.content.match(/```(?:html)?\s*([\s\S]*?)```/i)
-        const html = (fenced ? fenced[1] : res.content)
-          .trim()
-          .normalize('NFC')
-          // Georgia/Cambria làm vỡ dấu tiếng Việt trên Windows → thay bằng Times
-          .replace(/Georgia|Cambria/gi, '"Times New Roman"')
-        if (!/^<!doctype html/i.test(html)) {
-          setTurns((t) =>
-            t.map((turn) =>
-              turn.id === botId
-                ? { ...turn, text: '', pending: false, error: 'AI không trả về tệp HTML hợp lệ. Thử lại với yêu cầu ngắn hơn.' }
-                : turn,
-            ),
-          )
-          return
-        }
-        const htmlSlides = splitHtmlDeck(html)
-        if (!htmlSlides.length) {
-          setTurns((t) =>
-            t.map((turn) =>
-              turn.id === botId
-                ? { ...turn, text: '', pending: false, error: 'HTML của AI không có slide nào (<section class="slide">). Thử lại.' }
-                : turn,
-            ),
-          )
-          return
-        }
-        onApplyHtmlDeck?.(htmlSlides)
-        setTurns((t) =>
-          t.map((turn) =>
-            turn.id === botId
-              ? { ...turn, text: `Đã tạo ${htmlSlides.length} slide HTML trong bài giảng. Bấm Trình chiếu để xem; bản này không sửa hay xuất PPT được.`, pending: false }
-              : turn,
-          ),
-        )
-        return
-      }
       if (mode === 'board') {
         let say = res.content
         let lines: string[] = []
@@ -1383,7 +1335,7 @@ function AiConversation({
       setBusy(false)
       abortRef.current = null
     }
-  }, [input, files, refs, picked, busy, turns, contextSummary, documentDigest, mode, onApplyBlocks, onApplySlides, slideFormat, slidePro, existingSlideCount, editContext, onApplyEdits, onBoardOps])
+  }, [input, files, refs, picked, busy, turns, contextSummary, documentDigest, mode, onApplyBlocks, onApplySlides, slidePro, existingSlideCount, editContext, onApplyEdits, onBoardOps])
 
   const stop = useCallback(() => {
     abortRef.current?.abort()
@@ -1642,9 +1594,7 @@ function AiConversation({
               {mode === 'board'
                 ? 'Nhờ AI gợi ý cách vẽ minh hoạ, dàn ý trình bày trên bảng, ví dụ và câu hỏi gợi mở cho bài đang giảng.'
                 : mode === 'slide'
-                ? slideFormat === 'html'
-                  ? 'AI dựng từng slide bằng HTML (16:9) để trình chiếu trên web. Không sửa hay xuất PPT được.'
-                  : 'Mô tả chủ đề bài giảng; AI lập dàn ý để bạn duyệt rồi viết nội dung từng slide.'
+                ? 'Mô tả chủ đề bài giảng; AI lập dàn ý để bạn duyệt rồi viết nội dung từng slide.'
                 : 'Mô tả môn học và các ý chính, hoặc dán tài liệu tham khảo; AI sẽ viết bản nháp đầu tiên thẳng vào trang.'}
             </div>
             <div className="ai-starter-list">
@@ -1850,9 +1800,7 @@ function AiConversation({
               mode === 'board'
                 ? 'Hỏi về bài đang giảng trên bảng…'
                 : mode === 'slide'
-                ? slideFormat === 'html'
-                  ? 'Mô tả bài trình bày cần tạo (slide HTML)…'
-                  : 'Mô tả bài giảng cần soạn…'
+                ? 'Mô tả bài giảng cần soạn…'
                 : 'Mô tả đề cần soạn…'
             }
             value={input}
@@ -1897,8 +1845,7 @@ function AiConversation({
               <>
                 <button
                   type="button"
-                  className={cn('ai-attach-btn', slidePro && 'is-on')}
-                  data-tip={slidePro ? 'Chế độ: Chuyên nghiệp' : 'Chế độ: Tiêu chuẩn'}
+                  className={cn('ai-attach-btn', 'ai-attach-btn--label', slidePro && 'is-on')}
                   aria-label="Chế độ slide"
                   aria-haspopup="menu"
                   onClick={(e) => {
@@ -1914,7 +1861,8 @@ function AiConversation({
                     })
                   }}
                 >
-                  <LayoutTemplate size={16} strokeWidth={1.75} />
+                  {slidePro ? 'Chuyên nghiệp' : 'Tiêu chuẩn'}
+                  <ChevronDown size={14} strokeWidth={2} />
                 </button>
                 <ContextMenu menu={proMenu} onClose={() => setProMenu(null)} />
               </>
@@ -1931,38 +1879,6 @@ function AiConversation({
                 e.target.value = ''
               }}
             />
-            {mode === 'slide' ? (
-              <div className="ai-format-seg" ref={segRef} role="tablist" aria-label="Định dạng đầu ra">
-                {segThumb ? (
-                  <span
-                    className="ai-format-thumb"
-                    style={{ transform: `translateX(${segThumb.x}px)`, width: segThumb.w }}
-                  />
-                ) : null}
-                <button
-                  type="button"
-                  role="tab"
-                  aria-selected={slideFormat === 'deck'}
-                  className={cn('ai-format-opt', slideFormat === 'deck' && 'active')}
-                  onClick={() => setSlideFormat('deck')}
-                  disabled={busy}
-                  data-tip="Slide dựng bằng layout engine, sửa được"
-                >
-                  PPT
-                </button>
-                <button
-                  type="button"
-                  role="tab"
-                  aria-selected={slideFormat === 'html'}
-                  className={cn('ai-format-opt', slideFormat === 'html' && 'active')}
-                  onClick={() => (slideFormat === 'html' ? undefined : setHtmlNotice(true))}
-                  disabled={busy}
-                  data-tip="Slide HTML: chỉ trình chiếu trên web, không sửa/xuất PPT"
-                >
-                  HTML
-                </button>
-              </div>
-            ) : null}
             <span className="ai-input-spacer" />
             <AiQuotaRing className="mr-1" />
             {busy ? (
@@ -2020,31 +1936,6 @@ function AiConversation({
                 }}
               >
                 Ghi đè
-              </button>
-            </div>
-          </div>
-        </div>
-      ) : null}
-      {htmlNotice ? (
-        <div className="ai-html-modal" role="dialog" aria-modal="true" aria-label="Lưu ý chế độ HTML">
-          <div className="ai-html-modal__box ai-html-modal__box--notice">
-            <h3>Chế độ HTML chỉ dùng để trình chiếu</h3>
-            <ul>
-              <li>Mỗi slide do AI dựng bằng HTML nên <b>không sửa được</b> bằng trình soạn (chỉ xoá hoặc đổi thứ tự slide).</li>
-              <li><b>Không xuất được PowerPoint</b>; bài giảng chỉ trình chiếu trên web.</li>
-              <li>Tạo bản HTML sẽ <b>thay toàn bộ slide hiện có</b> của bài giảng này (hoàn tác được bằng Ctrl+Z). Muốn giữ bản PPT, hãy mở bài giảng mới.</li>
-            </ul>
-            <div className="ai-html-modal__actions">
-              <button type="button" onClick={() => setHtmlNotice(false)}>Quay lại PPT</button>
-              <button
-                type="button"
-                className="is-primary"
-                onClick={() => {
-                  setSlideFormat('html')
-                  setHtmlNotice(false)
-                }}
-              >
-                Tiếp tục với HTML
               </button>
             </div>
           </div>

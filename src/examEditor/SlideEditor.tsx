@@ -1175,14 +1175,6 @@ export function SlideEditor({
     '\n' + deck.slides.map(describeSlide).join('\n')
 
   /** Chế độ HTML: thay toàn bộ slide bằng các slide HTML (hoàn tác được bằng lịch sử). */
-  const applyHtmlDeck = (htmls: string[]) => {
-    const next: Slide[] = htmls.map((html) => ({ id: uid(), background: '#ffffff', elements: [], transition: 'none', html }))
-    if (!next.length) return
-    commitDeck({ ...deck, format: 'html', slides: next })
-    setSelectedSlideId(next[0].id)
-    setSelectedElementId(null)
-  }
-
   /** Đường deck một lượt (dàn ý không parse được hoặc câu trả lời cũ). */
   const applyAiResult = (text: string, plan?: DeckPlan) => {
     const parsed = parseAiDeck(text)
@@ -1912,7 +1904,6 @@ export function SlideEditor({
           historyKey={deck.id}
           onApplySlides={applyAiResult}
           onAppendSlide={applyAiSlide}
-          onApplyHtmlDeck={applyHtmlDeck}
           existingSlideCount={hasContent ? deck.slides.length : 0}
           onClearSlides={clearSlides}
           editContext={editContext}
