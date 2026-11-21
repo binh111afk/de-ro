@@ -5,6 +5,7 @@ import { handleFileRequest } from '../server/r2.js'
 
 export default function handler(req: IncomingMessage, res: ServerResponse) {
   const key = new URL(req.url ?? '/', 'http://x').searchParams.get('key') ?? ''
-  req.url = `/${key}`
+  // searchParams đã giải mã một lần; mã hoá lại để handleFileRequest (giải mã một lần) không giải mã kép
+  req.url = `/${encodeURIComponent(key)}`
   return handleFileRequest(req, res)
 }

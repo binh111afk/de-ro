@@ -250,16 +250,22 @@ async function prepareDocx(data: Buffer): Promise<{ data: Buffer; images: string
  * (1 KB → hàng chục giây). Quét tuyến tính độ lồng thẻ của mọi phần XML trước khi đưa cho mammoth.
  */
 const MAX_XML_DEPTH = 200
+// số thẻ: tệp nén vài KB nhân lên hàng chục nghìn đoạn làm parser ăn hàng trăm MB; tài liệu thật xa mức này
+const MAX_XML_TAGS_PART = 400_000
+const MAX_XML_TAGS_TOTAL = 800_000
 async function assertSaneDocxXml(data: Buffer) {
   const mod = await import('jszip')
   const zip = await mod.default.loadAsync(data)
+  let tags = 0
   for (const name of Object.keys(zip.files)) {
     if (!name.endsWith('.xml') && !name.endsWith('.rels')) continue
     const xml = await zip.files[name].async('string')
     let depth = 0
+    let partTags = 0
     for (let i = xml.indexOf('<'); i >= 0; i = xml.indexOf('<', i + 1)) {
       const c = xml[i + 1]
       if (c === '?' || c === '!') continue
+      if (++partTags > MAX_XML_TAGS_PART || ++tags > MAX_XML_TAGS_TOTAL) throw new Error('Tệp có cấu trúc bất thường, không đọc được.')
       if (c === '/') { depth--; continue }
       const gt = xml.indexOf('>', i)
       if (gt < 0) throw new Error('Tệp Word hỏng.')
@@ -461,6 +467,9 @@ async function fontStyleOf(page: import('pdfjs-dist/legacy/build/pdf.mjs').PDFPa
   return /bold|italic|oblique|black|heavy/i.test(font?.name ?? '')
 }
 
+const PDF_MAX_PAGES = 1500
+const PDF_MIN_BYTES_PER_PAGE = 60
+
 async function extractPdf(data: Buffer, marks = false): Promise<string> {
   // Vercel đóng gói hàm nên pdf.js không tự tìm thấy pdf.worker.mjs; nạp sẵn để nó dùng luôn
   const g = globalThis as { pdfjsWorker?: unknown }
@@ -471,6 +480,8 @@ async function extractPdf(data: Buffer, marks = false): Promise<string> {
   const doc = await task.promise
   const pages: string[] = []
   try {
+    // trang thật tốn ít nhất vài trăm byte; cây trang lặp một trang (~6 byte/trang) là tấn công cạn bộ nhớ
+    if (doc.numPages > PDF_MAX_PAGES || doc.numPages * PDF_MIN_BYTES_PER_PAGE > data.length) throw new Error('Tệp PDF có số trang bất thường, không đọc được.')
     for (let p = 1; p <= doc.numPages; p++) {
       const page = await doc.getPage(p)
       const content = await page.getTextContent()
@@ -651,6 +662,7 @@ export async function extractFile(name: string, data: Buffer, marks = false): Pr
   const ext = extname(name).toLowerCase()
   try {
     if (ext === '.docx' || ext === '.xlsx' || ext === '.pptx') assertSafeZip(data)
+    if (ext === '.xlsx' || ext === '.pptx') await assertSaneDocxXml(data)
     if (ext === '.docx') {
       const doc = await extractDocx(data, marks)
       const cut = capped(doc.text)
