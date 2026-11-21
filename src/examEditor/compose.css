@@ -1639,6 +1639,7 @@
 
   .ai-plan.is-done .ai-plan-list {
     max-height: 180px;
+    overflow-y: auto;
   }
 
   /* ---------- markdown trong câu trả lời AI ---------- */

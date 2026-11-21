@@ -1076,8 +1076,10 @@ function AiConversation({
       // lượt đầu, tài liệu trống, chưa nêu môn: hỏi bằng prompt ngắn (~1.000 token thay vì ~10.000).
       // Model thấy đoán được môn thì trả "proceed" và chạy luồng đầy đủ như cũ.
       if (askRule && intent === 'doc' && !history.length && !documentDigest && !sentFiles.length && !sentRefs.length && !sentPicked.length && !(mode === 'slide' && existingSlideCount > 0) && needsAskFirst(text)) {
+        logStart('Phân tích yêu cầu')
         const quick = await callLlm([{ role: 'user', content: text }], { signal: controller.signal, reasoningEffort: 'low', task: { name: 'hoi-truoc' } })
         const quickAsk = parseAsk(quick.content)
+        if (!quickAsk) logSet((l) => closeLog(l, 'done'))
         if (quickAsk) {
           patchTurn(() => ({ text: quickAsk.intro || 'Mình cần biết thêm vài điều trước khi soạn.', ask: quickAsk, askState: 'open', pending: false, log: undefined, sources: undefined, sourceNote: undefined }))
           return
