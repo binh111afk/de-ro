@@ -69,7 +69,7 @@ const rich = {
     ['Cột 1', 'Cột 2'],
     ['a', 'b'],
   ],
-  stats: [{ value: '85%', label: 'Tỉ lệ' }],
+  stats: [{ value: '85%', label: 'Tỉ lệ' }, { value: '12', label: 'Bài' }, { value: '3', label: 'Mức' }],
   steps: ['một', 'hai', 'ba'],
   question: 'Chọn đáp án đúng?',
   options: ['A', 'B'],

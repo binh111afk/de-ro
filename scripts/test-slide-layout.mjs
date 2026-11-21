@@ -1,5 +1,5 @@
 /**
- * Test layout engine 26 bố cục: catalog/geometry, cards, quote/closing, fallback,
+ * Test layout engine 29 bố cục: catalog/geometry, cards, quote/closing, fallback,
  * đọc nội dung slide, bảng 6×8, timeline/cycle 3–6 bước, quiz 2–4 đáp án, tone,
  * 5 bố cục art-directed (statement/comparison/agenda/image-full/stat-image).
  * Chạy: npm run test:slide-layout
@@ -56,9 +56,9 @@ const rich = {
   credit: 'Nguồn: tư liệu lớp học',
 }
 
-/* 1. Catalog đủ 26 layout; mọi phần tử nằm trong khung 0–100, id không trùng. */
-assert.equal(SLIDE_LAYOUTS.length, 26)
-assert.equal(new Set(SLIDE_LAYOUTS.map((l) => l.id)).size, 26, 'id layout không trùng')
+/* 1. Catalog đủ 29 layout; mọi phần tử nằm trong khung 0–100, id không trùng. */
+assert.equal(SLIDE_LAYOUTS.length, 29)
+assert.equal(new Set(SLIDE_LAYOUTS.map((l) => l.id)).size, 29, 'id layout không trùng')
 for (const layout of SLIDE_LAYOUTS) {
   const elements = composeLayout(theme, layout.id, rich)
   assert.ok(elements.length > 0, `${layout.id} phải dựng được phần tử`)
@@ -365,6 +365,6 @@ const compare = contentFromSlide({ elements: composeLayout(theme, 'photo-compare
 assert.equal(compare.image2, rich.image2)
 assert.equal(compare.caption2, rich.caption2)
 
-console.log('✅ layout v3: 26 bố cục, bảng 8×6, timeline/cycle, quiz, tone, art-directed, đọc nội dung + theme')
+console.log('✅ layout v3: 29 bố cục, bảng 8×6, timeline/cycle, quiz, tone, art-directed, đọc nội dung + theme')
 console.log('✅ tương phản: panel ≥1,1:1 và kicker ≥4,5:1 trên mọi theme × tông')
 console.log('\n10/10 pass, 0 fail')

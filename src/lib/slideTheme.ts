@@ -684,11 +684,45 @@ export const DECK_THEMES = LEGACY_DECK_THEMES.map(theme => {
   return pair ? withThemeFonts(theme, pair) : theme
 })
 
+/**
+ * Theme của chế độ Chuyên nghiệp: giấy kem + mực, một màu nhấn, tiêu đề chữ hẹp đậm.
+ * Tông "accent" của theme này là nền mực đen (xem `paletteOf`), không phải nền pha màu nhấn.
+ * Không nằm trong DECK_THEMES nên danh sách chọn bộ màu và prompt thường không đổi.
+ */
+const PRO_FONTS = { serif: SERIF, mono: MONO, heading: 'Barlow Condensed', body: SANS }
+const proTheme = (id: string, name: string, vibe: string, accent: string, secondary: string, tags: string[]): DeckTheme => ({
+  id, name, vibe, tags,
+  pro: true,
+  bg: '#ece7dc',
+  fg: '#1b1a17',
+  ink: '#161513',
+  surface: '#e2dccf',
+  muted: '#5b574e',
+  accent,
+  secondary,
+  chart: [accent, secondary, '#8a7f6a', '#c9a24a', '#3d3a34'],
+  radius: 0,
+  shadow: 'none',
+  border: 0,
+  borderColor: '#1b1a17',
+  fontHeading: 'Barlow Condensed',
+  fontBody: SANS,
+  fonts: PRO_FONTS,
+  decor: 'none',
+  dark: false,
+})
+export const PRO_THEMES: DeckTheme[] = [
+  proTheme('tap-chi-do', 'Tạp chí đỏ', 'lịch sử, chiến tranh, xã hội, báo chí điều tra: giấy kem, mực đen, đỏ gạch', '#b3321e', '#2f6a5e', ['lịch sử', 'xã hội', 'báo chí']),
+  proTheme('tap-chi-xanh', 'Tạp chí xanh', 'khoa học, môi trường, địa lí, sức khoẻ: giấy kem, mực đen, xanh rêu', '#2b6a5c', '#b3321e', ['khoa học', 'môi trường', 'địa lí']),
+  proTheme('tap-chi-vang', 'Tạp chí vàng', 'kinh tế, công nghệ, hướng nghiệp, kỹ năng: giấy kem, mực đen, vàng nghệ', '#9a5b08', '#1f4e79', ['kinh tế', 'công nghệ', 'kỹ năng']),
+  proTheme('tap-chi-lam', 'Tạp chí lam', 'văn học, nghệ thuật, triết học, giáo dục: giấy kem, mực đen, lam chàm', '#2a4d86', '#a2492e', ['văn học', 'nghệ thuật', 'giáo dục']),
+]
+
 /** Id catalog hợp lệ (đã đổi id cũ sang id mới), hoặc `undefined` nếu lạ. */
 export function resolveThemeId(id?: string): string | undefined {
   if (!id) return undefined
   const mapped = LEGACY_THEME_IDS[id] ?? id
-  return DECK_THEMES.some((t) => t.id === mapped) ? mapped : undefined
+  return DECK_THEMES.some((t) => t.id === mapped) || PRO_THEMES.some((t) => t.id === mapped) ? mapped : undefined
 }
 
 /* ------------------------------------------------------------------ *
@@ -764,7 +798,7 @@ export function normalizeTheme(theme?: DeckTheme | null): ResolvedTheme {
   const source = theme ?? DECK_THEMES[0]
   const sourceId = resolveThemeId(source.id)
   // Deck đã lưu có thể chỉ mang id/màu, nên giá trị suy ra phải đến từ bộ phông cũ.
-  const catalog = LEGACY_DECK_THEMES.find(
+  const catalog = [...LEGACY_DECK_THEMES, ...PRO_THEMES].find(
     (t) => (sourceId && t.id === sourceId) || (t.bg && source.bg && t.bg.toLowerCase() === source.bg.toLowerCase()),
   )
   const bg = source.bg || catalog?.bg || '#ffffff'
@@ -808,5 +842,5 @@ export function normalizeTheme(theme?: DeckTheme | null): ResolvedTheme {
 /** Theme theo id; id lạ rơi về theme đầu tiên thay vì làm hỏng deck. */
 export function themeById(id: string): ResolvedTheme {
   const mapped = resolveThemeId(id)
-  return normalizeTheme(DECK_THEMES.find((t) => t.id === mapped) ?? DECK_THEMES[0])
+  return normalizeTheme([...DECK_THEMES, ...PRO_THEMES].find((t) => t.id === mapped) ?? DECK_THEMES[0])
 }

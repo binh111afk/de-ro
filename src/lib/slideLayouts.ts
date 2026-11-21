@@ -38,6 +38,9 @@ export type SlideLayoutId =
   | 'photo-full'
   | 'photo-compare'
   | 'bars'
+  | 'rules'
+  | 'editorial-text'
+  | 'manifesto'
   | 'timeline'
   | 'cycle'
   | 'quiz'
@@ -51,7 +54,11 @@ export interface SlideStat {
 }
 
 export const isEditorialLayout = (id: string): boolean =>
-  id === 'bignum' || id === 'photo-full' || id === 'photo-compare' || id === 'bars'
+  id === 'bignum' || id === 'photo-full' || id === 'photo-compare' || id === 'bars' ||
+  id === 'rules' || id === 'editorial-text' || id === 'manifesto'
+
+/** Bố cục dùng được trong chế độ Chuyên nghiệp: không thẻ hộp, không icon trong khung, không hoạ tiết. */
+export const PRO_LAYOUT_IDS = ['photo-full', 'manifesto', 'editorial-text', 'rules', 'bignum', 'bars', 'photo-compare'] as const
 
 export interface SlideBar {
   label: string
@@ -240,6 +247,24 @@ export const SLIDE_LAYOUTS: SlideLayoutDef[] = [
     fields: ['title', 'bars'],
   },
   {
+    id: 'rules',
+    name: 'Danh sách kẻ dòng',
+    description: 'Tiêu đề và 3–5 hàng ngăn bằng đường kẻ mảnh: mốc/nhãn ngắn bên trái (stats.value), nội dung bên phải (stats.label).',
+    fields: ['kicker', 'title', 'stats'],
+  },
+  {
+    id: 'editorial-text',
+    name: 'Chữ biên tập',
+    description: 'Tiêu đề lớn bên trái, vài đoạn chữ ngắn bên phải ngăn bằng đường kẻ đứng; không thẻ, không icon.',
+    fields: ['kicker', 'title', 'body', 'bullets'],
+  },
+  {
+    id: 'manifesto',
+    name: 'Câu chủ đề',
+    description: 'Một câu rất lớn trên nền mực đen: mở bài, luận điểm, trích dẫn (author = nguồn), lời kết.',
+    fields: ['kicker', 'body', 'author'],
+  },
+  {
     id: 'timeline',
     name: 'Tiến trình',
     description: 'Tiêu đề + 3–6 bước trên một trục ngang.',
@@ -296,7 +321,7 @@ export function isTone(value: unknown): value is SlideTone {
 /** Tông mặc định theo layout (title/section nền nhấn, quote/quiz/closing nền dịu). */
 export function defaultTone(layoutId: string): SlideTone {
   const id: SlideLayoutId = isLayoutId(layoutId) ? layoutId : 'bullets'
-  if (id === 'title' || id === 'section' || id === 'statement') return 'accent'
+  if (id === 'title' || id === 'section' || id === 'statement' || id === 'manifesto') return 'accent'
   if (id === 'quote' || id === 'quiz' || id === 'closing' || id === 'agenda' || id === 'hook') return 'soft'
   return 'theme'
 }
@@ -354,22 +379,29 @@ function paletteOf(theme: ReturnType<typeof normalizeTheme>, tone: SlideTone): L
   }
   // Nền + tỉ lệ pha accent cho panel: panel đủ nhạt để chữ đọc thoải mái và
   // accent chỉ chiếm diện tích nhỏ (vạch, badge), không tô cả khối chữ.
-  const pick =
+  const pick0 =
     tone === 'accent'
       ? { background: mixHex(theme.bg, theme.accent, theme.dark ? 0.2 : 0.07), surface: theme.bg, panelMix: theme.dark ? 0.18 : 0.14 }
       : tone === 'soft'
         ? { background: theme.surface, surface: theme.bg, panelMix: theme.dark ? 0.18 : 0.14 }
         : { background: theme.bg, surface: theme.surface, panelMix: theme.dark ? 0.18 : 0.12 }
+  // Theme Chuyên nghiệp: tông "accent" là nền mực đen, chữ màu giấy.
+  const proDark = !!theme.pro && tone === 'accent'
+  const pick = proDark ? { background: theme.ink ?? '#161513', surface: mixHex(theme.ink ?? '#161513', theme.bg, 0.08), panelMix: 0.1 } : pick0
+  const fgc = proDark ? theme.bg : theme.fg
+  const accentc = proDark ? mixHex(theme.accent, '#ffffff', 0.28) : theme.accent
   const panel = mixHex(pick.background, theme.accent, pick.panelMix)
   const bgs = [pick.background, panel, pick.surface]
   return {
     ...base,
+    fg: fgc,
+    accent: accentc,
     background: pick.background,
     surface: pick.surface,
     panel,
     // chữ phụ/nhấn phải đọc được trên cả nền slide lẫn panel/thẻ
-    muted: legible(theme.muted, bgs, theme.fg),
-    ink: legible(theme.accent, bgs, theme.fg),
+    muted: legible(proDark ? mixHex(theme.bg, pick.background, 0.4) : theme.muted, bgs, fgc),
+    ink: legible(accentc, bgs, fgc),
   }
 }
 
@@ -1315,7 +1347,7 @@ function composeBigNum(p: LayoutPalette, c: SlideLayoutContent): SlideElement[] 
   const size = value ? singleLineSize(value, w, c.image ? 20 : 23, 800, slideFontStack(p.displayFont)) : 20
   return compact([
     c.image ? layoutPhoto('image-1', c.image, { x: 60, y: 9, w: 34, h: 76 }, c.imageCrop, c.focusX, c.focusY) : null,
-    p.text('kicker', c.kicker, { x: 5, y: 8, w, h: 11 }, {
+    p.text('kicker', upper(c.kicker), { x: 5, y: 8, w, h: 11 }, {
       variant: 'body', fontSize: 1.55, fontWeight: 700, textColor: p.muted, valign: 'top', lineHeight: 1.2,
     }),
     p.text('bignum-value', value, { x: 5, y: 19, w, h: 44 }, {
@@ -1367,6 +1399,81 @@ function composePhotoCompare(p: LayoutPalette, c: SlideLayoutContent): SlideElem
     p.text('photo-caption-2', c.caption2, { x: 50, y: 77, w: 45, h: 11 }, {
       variant: 'body', fontSize: 1.7, lineHeight: 1.16, textColor: p.muted, valign: 'top',
     }, 0.5),
+  ])
+}
+
+const upper = (text?: string): string | undefined => text?.toLocaleUpperCase('vi')
+
+const hairline = (id: string, box: Box, color: string): SlideElement =>
+  ({ ...shapeEl(id, box, color), border: 0, shadowLevel: 0 as const })
+
+function composeRules(p: LayoutPalette, c: SlideLayoutContent): SlideElement[] {
+  const rows = (c.stats ?? [])
+    .map((s) => ({ value: String(s.value ?? '').trim(), label: String(s.label ?? '').trim() }))
+    .filter((s) => s.value || s.label)
+    .slice(0, 5)
+  if (rows.length === 0) return []
+  const top = 38
+  const row = Math.min(14, 50 / rows.length)
+  const longest = Math.max(...rows.map((r) => r.value.length))
+  const valueSize = longest <= 9 ? 3.6 : longest <= 14 ? 3.1 : 2.7
+  return compact([
+    p.text('kicker', upper(c.kicker), { x: 5, y: 8, w: 80, h: 5 }, {
+      variant: 'body', fontSize: 1.85, fontWeight: 700, textColor: p.ink, valign: 'top', lineHeight: 1.2,
+    }),
+    p.text('title', c.title, { x: 5, y: 13, w: 90, h: 20 }, {
+      ...EDITORIAL_TITLE, fontSize: 5.3, textColor: p.fg,
+    }, 0.4),
+    ...rows.flatMap((r, i) => {
+      const y = top + i * row
+      return [
+        hairline(`divider-${i + 1}`, { x: 5, y, w: 90, h: 0.18 }, p.muted),
+        p.text(`item-${i + 1}-value`, r.value, { x: 5, y: y + 0.6, w: 21, h: row - 1.2 }, {
+          ...EDITORIAL_TITLE, fontSize: valueSize, textColor: p.ink, valign: 'middle',
+        }, 0.9),
+        p.text(`item-${i + 1}-label`, r.label, { x: 28, y: y + 0.6, w: 67, h: row - 1.2 }, {
+          variant: 'body', fontSize: rows.length > 4 ? 1.9 : 2.15, lineHeight: 1.22, textColor: p.fg, valign: 'middle',
+        }, 0.55),
+      ]
+    }),
+    hairline(`divider-${rows.length + 1}`, { x: 5, y: top + rows.length * row, w: 90, h: 0.18 }, p.muted),
+  ])
+}
+
+function composeEditorialText(p: LayoutPalette, c: SlideLayoutContent): SlideElement[] {
+  let lines = cleanList(c.bullets)
+  if (lines.length === 0) lines = linesOf(c.body)
+  if (lines.length === 0 && !c.title?.trim()) return []
+  const text = lines.join('\n\n')
+  return compact([
+    p.text('kicker', upper(c.kicker), { x: 5, y: 8, w: 80, h: 5 }, {
+      variant: 'body', fontSize: 1.85, fontWeight: 700, textColor: p.ink, valign: 'top', lineHeight: 1.2,
+    }),
+    p.text('title', c.title, { x: 5, y: 15, w: 40, h: 60 }, {
+      ...EDITORIAL_TITLE, fontSize: 6, textColor: p.fg,
+    }, 0.4),
+    hairline('divider-1', { x: 48.5, y: 16, w: 0.12, h: 62 }, p.muted),
+    p.text('body', text, { x: 52, y: 15, w: 43, h: 66 }, {
+      variant: 'body', fontSize: lines.length > 3 ? 1.95 : 2.2, lineHeight: 1.3, textColor: p.fg, valign: 'top',
+    }, 0.55),
+  ])
+}
+
+function composeManifesto(p: LayoutPalette, c: SlideLayoutContent): SlideElement[] {
+  const text = c.body?.trim() || c.quote?.trim() || cleanList(c.bullets).join(' ') || c.title?.trim() || ''
+  if (!text) return []
+  const size = text.length > 180 ? 3.7 : text.length > 110 ? 4.5 : 5.6
+  return compact([
+    p.text('kicker', upper(c.kicker), { x: 6, y: 12, w: 80, h: 5 }, {
+      variant: 'body', fontSize: 1.85, fontWeight: 700, textColor: p.ink, valign: 'top', lineHeight: 1.2,
+    }),
+    p.text('body', text, { x: 6, y: 21, w: 86, h: 52 }, {
+      ...EDITORIAL_TITLE, fontSize: size, textColor: p.fg, valign: 'top',
+    }, 0.45),
+    c.author?.trim() ? hairline('rule', { x: 6, y: 77, w: 8, h: 0.4 }, p.accent) : null,
+    p.text('author', c.author, { x: 6, y: 79, w: 86, h: 7 }, {
+      variant: 'body', fontSize: 1.8, fontWeight: 600, textColor: p.muted, valign: 'top',
+    }, 0.6),
   ])
 }
 
@@ -1887,6 +1994,12 @@ function composeById(id: SlideLayoutId, palette: LayoutPalette, content: SlideLa
       return composePhotoCompare(palette, content)
     case 'bars':
       return composeBars(palette, content)
+    case 'rules':
+      return composeRules(palette, content)
+    case 'editorial-text':
+      return composeEditorialText(palette, content)
+    case 'manifesto':
+      return composeManifesto(palette, content)
     case 'timeline':
       return composeTimeline(palette, content)
     case 'cycle':
@@ -2137,6 +2250,25 @@ const DEMO: Record<SlideLayoutId, SlideLayoutContent> = {
   bars: {
     title: 'Lượng khách theo năm',
     bars: [{ label: '2022', value: 140000 }, { label: '2023', value: 70000 }],
+  },
+  rules: {
+    kicker: 'DÒNG THỜI GIAN',
+    title: 'Ba mốc làm nên bước ngoặt',
+    stats: [
+      { value: '1945', label: 'Sự kiện mở đầu chuỗi biến cố.' },
+      { value: '1954', label: 'Mốc quyết định thay đổi cục diện.' },
+      { value: '1975', label: 'Kết thúc một giai đoạn dài.' },
+    ],
+  },
+  'editorial-text': {
+    kicker: 'BỐI CẢNH',
+    title: 'Một quyết định thay đổi cả cục diện',
+    bullets: ['Đoạn đầu nêu dữ kiện chính của slide.', 'Đoạn hai giải thích vì sao dữ kiện đó quan trọng.'],
+  },
+  manifesto: {
+    kicker: 'LUẬN ĐIỂM',
+    body: 'Một câu đủ mạnh để cả lớp nhớ.',
+    author: 'Nguồn hoặc người nói',
   },
   'stat-image': {
     title: 'Con số nổi bật',

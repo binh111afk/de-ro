@@ -19,13 +19,14 @@ import { khungPromptFor } from '@/lib/khungPrompt'
 import {
   parseAiObject,
   parseDeckPlan,
+  proPlan,
   summarizeAiDeck,
   type AiSlidePayload,
   type DeckPlan,
   type DeckPlanSlide,
 } from '@/lib/aiDeck'
 import { checkSlide, dropRepeatedGraphic, parseBatchSlides, planDecorKit, repairPrompt } from '@/lib/slideAi'
-import { DECK_THEMES } from '@/lib/slideTheme'
+import { DECK_THEMES, PRO_THEMES } from '@/lib/slideTheme'
 import { designById } from '@/lib/slideDesigns'
 import { splitHtmlDeck } from '@/lib/htmlDeck'
 import { looksLikeEdit, parseEditCommands, type SlideEditOp } from '@/lib/slideEdit'
@@ -491,7 +492,7 @@ function PlanCard({
   onCancel: () => void
 }) {
   if (!plan) return null
-  const theme = plan.theme ? DECK_THEMES.find((t) => t.id === plan.theme) : undefined
+  const theme = plan.theme ? [...DECK_THEMES, ...PRO_THEMES].find((t) => t.id === plan.theme) : undefined
   const designName = plan.design ? designById(plan.design)?.name : undefined
   const tags = [`${plan.slides.length} slide`, designName, theme?.name, plan.audience].filter(Boolean) as string[]
 
@@ -1290,6 +1291,7 @@ function AiConversation({
           plan = parseDeckPlan(again.content)
           controller.signal.throwIfAborted()
         }
+        if (plan && slidePro) plan = proPlan(plan)
         if (plan) {
           setTurns((t) =>
             t.map((turn) =>

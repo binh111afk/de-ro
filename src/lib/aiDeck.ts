@@ -6,8 +6,8 @@
  */
 import type { SlideTextStyle } from './slideTextEffects'
 import type { SlideElement, SlideTone } from '@/store/docs'
-import { isEditorialLayout, isLayoutId, isTone, SLIDE_LAYOUTS, type SlideLayoutContent } from './slideLayouts'
-import { DECK_THEMES, resolveThemeId } from './slideTheme'
+import { isEditorialLayout, isLayoutId, isTone, PRO_LAYOUT_IDS, SLIDE_LAYOUTS, type SlideLayoutContent } from './slideLayouts'
+import { DECK_THEMES, PRO_THEMES, resolveThemeId } from './slideTheme'
 import { inferSubject, isSubjectId, subjectCatalogText } from './slideSubjects'
 import { isStylePackId, stylePackCatalogText } from './slideStyles'
 import { decorKitCatalogText, isDecorKitId } from './slideDecor'
@@ -227,6 +227,53 @@ const RHYTHM_ALTERNATES: Record<string, string[]> = {
 /** Tỉ lệ tối đa slide `bullets` trong một deck dài (≥ 6 slide). */
 const MAX_BULLET_SHARE = 0.4
 
+/** Layout của chế độ thường → layout Chuyên nghiệp cùng họ nội dung (brief vẫn dùng được). */
+const PRO_LAYOUT_MAP: Record<string, string> = {
+  title: 'photo-full', 'image-full': 'photo-full', 'image-left': 'photo-full', 'image-right': 'photo-full',
+  section: 'manifesto', statement: 'manifesto', hook: 'manifesto', quote: 'manifesto', closing: 'manifesto', mindmap: 'manifesto',
+  bullets: 'editorial-text', 'two-column': 'editorial-text', comparison: 'editorial-text', example: 'editorial-text', quiz: 'editorial-text',
+  cards: 'rules', agenda: 'rules', timeline: 'rules', cycle: 'rules', table: 'rules', stats: 'rules', 'stat-image': 'bignum',
+}
+const PRO_ALTERNATES: Record<string, string[]> = {
+  'editorial-text': ['rules', 'manifesto'],
+  rules: ['editorial-text', 'bignum'],
+  manifesto: ['editorial-text', 'rules'],
+  bignum: ['rules', 'editorial-text'],
+  bars: ['rules'],
+  'photo-compare': ['editorial-text'],
+  'photo-full': ['manifesto'],
+}
+const PRO_LIGHT_LAYOUTS = new Set(['editorial-text', 'rules', 'bignum', 'bars'])
+
+/**
+ * Ép dàn ý của chế độ Chuyên nghiệp vào đúng bộ thiết kế biên tập (prompt chỉ khuyên, model vẫn lẫn layout thường):
+ * theme thuộc PRO_THEMES, không bộ thiết kế / hoạ tiết, chỉ dùng PRO_LAYOUT_IDS, slide đầu là ảnh tràn nền,
+ * không hai slide liền kề cùng layout, cứ hai slide sáng liền nhau thì slide sau chuyển nền mực đen.
+ */
+export function proPlan(plan: DeckPlan): DeckPlan {
+  const allowed = new Set<string>(PRO_LAYOUT_IDS)
+  const last = plan.slides.length - 1
+  const slides = plan.slides.map((slide, i) => {
+    let layout = allowed.has(slide.layout) ? slide.layout : PRO_LAYOUT_MAP[slide.layout] ?? 'editorial-text'
+    if (i === 0) layout = 'photo-full'
+    else if (layout === 'photo-full' && i !== last) layout = 'manifesto'
+    return { ...slide, layout, tone: undefined as SlideTone | undefined }
+  })
+  for (let i = 1; i < slides.length; i++) {
+    if (slides[i].layout !== slides[i - 1].layout) continue
+    const avoid = new Set([slides[i - 1].layout, slides[i + 1]?.layout ?? ''])
+    const alt = (PRO_ALTERNATES[slides[i].layout] ?? []).find((id) => !avoid.has(id))
+    if (alt) slides[i].layout = alt
+  }
+  let light = 0
+  for (const slide of slides) {
+    if (!PRO_LIGHT_LAYOUTS.has(slide.layout)) { light = 0; continue }
+    if (++light > 2) { slide.tone = 'accent'; light = 0 }
+  }
+  const theme = PRO_THEMES.some((t) => t.id === plan.theme) ? plan.theme : PRO_THEMES[0].id
+  return { ...plan, theme, design: undefined, stylePack: 'editorial', decorKit: 'toi-gian', slides }
+}
+
 /**
  * Ép nhịp deck bằng code (prompt chỉ khuyên, model vẫn hay lặp): không có hai
  * slide liền kề cùng layout, `bullets` ≤ 40%. Slide đầu và cuối giữ nguyên.
@@ -348,6 +395,22 @@ export function slideCatalogText(includeEditorial = false): string {
     ...layouts.map(
       (layout) => `- ${layout.id}: ${layout.description} [${layout.fields.join(', ')}]`,
     ),
+  ].join('\n')
+}
+
+/** Catalog của chế độ Chuyên nghiệp: chỉ bộ màu biên tập + bố cục biên tập (không bộ thiết kế, style pack, hoạ tiết). */
+export function slideProCatalogText(): string {
+  return [
+    'BỘ MÀU (chọn "theme" đúng một id; cả bốn đều là giấy kem + mực đen, chỉ khác màu nhấn — chọn theo chủ đề):',
+    ...PRO_THEMES.map((theme) => `- ${theme.id}: ${theme.name} — ${theme.vibe}`),
+    '',
+    subjectCatalogText(),
+    '',
+    'BỐ CỤC (chọn "layout" đúng một id; field trong ngoặc là field nội dung):',
+    ...PRO_LAYOUT_IDS.map((id) => {
+      const layout = SLIDE_LAYOUTS.find((l) => l.id === id)!
+      return `- ${layout.id}: ${layout.description} [${layout.fields.join(', ')}]`
+    }),
   ].join('\n')
 }
 

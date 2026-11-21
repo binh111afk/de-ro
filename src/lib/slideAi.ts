@@ -276,6 +276,13 @@ const BUDGETS: Record<SlideLayoutId, Budget> = {
   'photo-full': { total: 180, fields: { title: 80, subtitle: 100 } },
   'photo-compare': { total: 230, fields: { title: 80, caption: 75, caption2: 75 } },
   bars: { total: 332, fields: { title: 80 } },
+  rules: { total: 560, fields: { title: 70, kicker: 40 }, stats: { label: 120 } },
+  'editorial-text': {
+    total: 620,
+    fields: { title: 70, kicker: 40, body: 200 },
+    lists: [{ field: 'bullets', max: 3, itemMax: 190 }],
+  },
+  manifesto: { total: 260, fields: { body: 190, kicker: 40, author: 60 } },
   timeline: {
     total: 420,
     fields: { title: 80 },
@@ -435,6 +442,17 @@ export function validateSlide(page: AiSlidePayload, layout: string): string[] {
     case 'bignum':
       need(!!page.value, 'thiếu "value"')
       break
+    case 'rules':
+      need(!!page.title, 'thiếu "title"')
+      need((page.stats ?? []).filter((stat) => !!stat.value && !!stat.label).length >= 3, '"stats" cần 3–5 hàng có cả "value" và "label"')
+      break
+    case 'editorial-text':
+      need(!!page.title, 'thiếu "title"')
+      need(!!page.body || (page.bullets?.length ?? 0) > 0, 'cần "body" hoặc "bullets"')
+      break
+    case 'manifesto':
+      need(!!page.body, 'thiếu "body"')
+      break
     case 'bars':
       need(!!page.title, 'thiếu "title"')
       need((page.bars?.length ?? 0) >= 2, '"bars" cần 2–6 dòng hợp lệ')
@@ -542,6 +560,12 @@ const LAYOUT_NOTES: Partial<Record<SlideLayoutId, string>> = {
     '- So sánh hai ảnh: trước / sau, xưa / nay, hai đối tượng; mỗi ảnh một "caption" nói rõ ai, đâu, khi nào; hai mô tả ảnh phải cùng góc nhìn để đặt cạnh nhau hợp lý.\n',
   bars:
     '- Biểu đồ thanh: chỉ dùng số liệu có thật và hợp lý, ghi nguồn ở "credit"; số liệu minh hoạ phải ghi "ví dụ" trong "credit". Thanh đầu là giá trị lớn nhất.\n',
+  rules:
+    '- Danh sách kẻ dòng: "stats" là 3–5 hàng; "value" là mốc/nhãn NGẮN bên trái (ngày tháng, năm, số thứ tự, tên riêng; ≤ 18 ký tự), "label" là nội dung một câu bên phải. Dùng cho dòng thời gian, các bước, các nhân vật, các nguyên nhân. KHÔNG dùng "bullets".\n',
+  'editorial-text':
+    '- Chữ biên tập: "title" nêu thẳng kết luận của slide; "bullets" là 1–3 đoạn văn ngắn (mỗi đoạn một ý, có dữ kiện cụ thể), KHÔNG gạch đầu dòng, không liệt kê vụn.\n',
+  manifesto:
+    '- Câu chủ đề: "body" là MỘT câu mạnh (≤ 150 ký tự) — luận điểm, câu hỏi mở bài, trích dẫn có nguồn hoặc lời kết; "author" là nguồn trích hoặc dòng phụ ngắn (bỏ trống nếu không có). Không giải thích thêm.\n',
   quiz:
     '- Quiz: chỉ MỘT đáp án đúng chắc chắn; "explanation" nêu lý do ngắn gọn (kể cả vì sao các phương án khác sai khi cần).\n',
 }

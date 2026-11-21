@@ -14,7 +14,7 @@ import { SlideThumb } from '@/examEditor/SlideEditor'
 import { AI_EFFORT, SLIDE_BATCH, generateSlide, generateSlideBatch, polishSlide } from '@/examEditor/AiPanel'
 import { parseAsk } from '@/examEditor/AiAskPanel'
 import { callLlm } from '@/lib/llm'
-import { parseDeckPlan } from '@/lib/aiDeck'
+import { parseDeckPlan, proPlan } from '@/lib/aiDeck'
 import { dropRepeatedGraphic, slideFromAi, withImage } from '@/lib/slideAi'
 import { IMAGE_LAYOUTS, buildImagePrompt, buildPhotoPrompt, generateSlideImage, queueImage } from '@/lib/imageGen'
 import { ensureMeasureFonts } from '@/lib/slideMeasure'
@@ -66,7 +66,8 @@ async function main() {
     done({ fatal: 'AI hỏi lại thay vì lập dàn ý', raw: res.content })
     return
   }
-  const plan = parseDeckPlan(res.content)
+  const parsedPlan = parseDeckPlan(res.content)
+  const plan = parsedPlan && pro ? proPlan(parsedPlan) : parsedPlan
   if (!plan) {
     done({ fatal: 'Không parse được dàn ý', raw: res.content })
     return

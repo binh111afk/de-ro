@@ -185,6 +185,10 @@ export interface DeckTheme {
   radius?: number
   /** kiểu bóng: soft (mềm), hard (khối lệch kiểu poster), none */
   shadow?: 'none' | 'soft' | 'hard'
+  /** theme riêng của chế độ Chuyên nghiệp (không nằm trong catalog thường) */
+  pro?: boolean
+  /** màu mực của tông tối trong theme Chuyên nghiệp (nền slide nhấn) */
+  ink?: string
   /** viền mặc định cho thẻ/panel (px) */
   border?: number
   borderColor?: string

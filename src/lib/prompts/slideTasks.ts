@@ -3,7 +3,7 @@
  * `scripts/build-server-prompts.mjs`). Trình duyệt không còn giữ chữ này: client gửi `task` + dữ liệu người dùng.
  */
 import { FIGURE_GUIDE } from '@/lib/prompts/figureGuide'
-import { slideCatalogText } from '@/lib/aiDeck'
+import { slideCatalogText, slideProCatalogText } from '@/lib/aiDeck'
 import { HTML_DECK_SYSTEM } from '@/lib/htmlDeckPrompt'
 import { ASK_RULE, CHAT_MARKDOWN, THINK_VI } from '@/lib/prompts/common'
 import { sourceSection, webSection, type SourceInput } from '@/lib/prompts/sources'
@@ -99,20 +99,29 @@ export const SLIDE_PLAN_SYSTEM =
   '"decorKit" chọn một bộ trang trí hợp chủ đề và đối tượng (dùng cho cả bài); bài trang trọng chọn "toi-gian".\n' +
   '- Không bịa số liệu thật; số liệu minh hoạ phải ghi rõ "ví dụ". Tiếng Việt chuẩn.'
 
-/** Chế độ Chuyên nghiệp: catalog có thêm bố cục biên tập + luật dựng deck kiểu ấn phẩm. */
-const PRO_PLAN_RULES =
-  '\n\nCHẾ ĐỘ CHUYÊN NGHIỆP (ưu tiên hơn các luật nhịp ở trên khi mâu thuẫn): dựng deck như một ấn phẩm biên tập, không như slide điền mẫu.\n' +
-  '- Dùng bố cục biên tập: "photo-full" cho slide mở đầu, chuyển chương và kết (ảnh tràn nền, một câu tiêu đề mạnh); ' +
-  '"bignum" cho mỗi con số then chốt của bài (3–4 slide); "bars" khi có từ 2 số liệu cùng đại lượng để so sánh; ' +
-  '"photo-compare" khi có cặp trước/sau hoặc xưa/nay. Không dùng "cards" hay "bullets" ở hai slide liền nhau; mỗi slide chỉ một ý.\n' +
-  '- Tối đa 6 slide có ảnh (photo-full, photo-compare, bignum có ảnh) trong cả deck; deck ≤ 6 slide thì tối đa 3.\n' +
-  '- Nhịp: xen "tone" tối (accent) và sáng (theme/soft), cứ 2–3 slide sáng thì có một slide tối nhấn mạnh.\n' +
-  '- "title" ngắn, mạnh, giàu hình ảnh (≤ 8 từ); "kicker" là nhãn chuyên mục viết hoa ngắn; chỉ dùng con số và dữ kiện thật, ' +
-  'không bịa; số liệu không chắc thì nói rõ là minh hoạ.\n' +
-  '- "brief" của slide ảnh nêu rõ ảnh cần thể hiện gì.'
+/**
+ * Chế độ Chuyên nghiệp: prompt riêng, không dùng chung catalog bộ thiết kế / hoạ tiết / bố cục thẻ của chế độ thường.
+ * App còn ép lại bằng code (`proPlan` ở aiDeck.ts) nên prompt này chỉ cần dẫn model đi đúng hướng.
+ */
+const PRO_PLAN_SYSTEM =
+  'Bạn là trợ lý AI của trình soạn bài trình bày tiếng Việt, đang dựng một deck như một ấn phẩm biên tập (tạp chí / phóng sự), ' +
+  'không phải slide điền mẫu. Nhiệm vụ: LẬP DÀN Ý, chưa viết nội dung chi tiết. Chỉ trả về DUY NHẤT một JSON hợp lệ (không bọc markdown, ' +
+  'không chữ ngoài JSON):\n' +
+  '{"title":"...","theme":"<id>","subject":"<id>","audience":"...","style":"...","mainIdeas":["..."],' +
+  '"slides":[{"title":"...","layout":"<id>","kicker":"...","brief":"..."}]}\n\n' +
+  slideProCatalogText() +
+  '\n\nQUY TẮC:\n' +
+  '- Số slide theo yêu cầu; nếu không nêu thì 8–12 slide, tối đa 16. Mỗi slide đúng MỘT ý; một mục quá 4 ý thì tách slide.\n' +
+  '- Slide đầu LUÔN là "photo-full" (ảnh tràn nền, tiêu đề ≤ 8 từ). "photo-full" chỉ dùng thêm tối đa 1–2 lần nữa cho chuyển chương hoặc lời kết.\n' +
+  '- Nhịp: "manifesto" (một câu lớn nền đen) mở đầu mỗi phần hoặc nêu luận điểm; "editorial-text" cho phần giải thích; ' +
+  '"rules" cho dòng thời gian, các bước, các nhân vật, các nguyên nhân (3–5 hàng, mỗi hàng có nhãn ngắn); ' +
+  '"bignum" cho mỗi con số then chốt (2–4 slide); "bars" khi có từ 2 số liệu cùng đại lượng; "photo-compare" khi có cặp xưa/nay, trước/sau.\n' +
+  '- Không dùng cùng một layout ở hai slide liền nhau. Không quá 2 slide "editorial-text" trong cả deck.\n' +
+  '- "title" nêu thẳng kết luận hoặc hình ảnh mạnh (≤ 10 từ), không phải nhãn chủ đề chung chung. "kicker" là nhãn chuyên mục viết hoa ngắn (≤ 4 từ).\n' +
+  '- "brief" đúng 1 câu (≤ 140 ký tự) nêu dữ kiện chính; slide ảnh thì nêu rõ ảnh cần thể hiện gì. Chỉ dùng dữ kiện và con số thật, ' +
+  'không bịa; số liệu không chắc thì nói rõ là minh hoạ. Tiếng Việt chuẩn.'
 
-export const slidePlanSystem = (pro?: boolean): string =>
-  pro ? SLIDE_PLAN_SYSTEM.replace(slideCatalogText(), slideCatalogText(true)) + PRO_PLAN_RULES : SLIDE_PLAN_SYSTEM
+export const slidePlanSystem = (pro?: boolean): string => (pro ? PRO_PLAN_SYSTEM : SLIDE_PLAN_SYSTEM)
 
 export const WEB_SEARCH_SYSTEM =
   'Tìm trên web thông tin, số liệu mới và chính xác phục vụ yêu cầu soạn đề / bài giảng của giáo viên dưới đây. ' +
