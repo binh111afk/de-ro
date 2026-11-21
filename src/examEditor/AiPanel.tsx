@@ -32,7 +32,8 @@ import { splitHtmlDeck } from '@/lib/htmlDeck'
 import { looksLikeEdit, parseEditCommands, type SlideEditOp } from '@/lib/slideEdit'
 import { useSlidingThumb } from './useSlidingThumb'
 import { buildSourcePack, isDocx, isPdf, pickedKey, type PickedSource, type SourcePack } from '@/lib/sources'
-import { BookOpen, Globe, LayoutTemplate, RotateCcw, ThumbsDown, ThumbsUp } from 'lucide-react'
+import { BookOpen, Check, Globe, LayoutTemplate, RotateCcw, ThumbsDown, ThumbsUp } from 'lucide-react'
+import { ContextMenu, type MenuState } from './ContextMenu'
 import type { AiApplyResult } from '@/lib/aiDocContext'
 import { looksLikeComplaint, nearlySame, rememberAiTurn, reportAi } from '@/lib/aiFeedback'
 import { dialog } from '@/components/Dialog'
@@ -826,11 +827,11 @@ function AiConversation({
     setWebSearch(true)
   }
   const [slidePro, setSlidePro] = useState(false)
+  const [proMenu, setProMenu] = useState<MenuState>(null)
   useEffect(() => {
     if (!panelOpen) setSlidePro(false)
   }, [panelOpen])
   const toggleSlidePro = async () => {
-    if (slidePro) return setSlidePro(false)
     let skip = false
     try {
       skip = localStorage.getItem(SLIDE_PRO_WARN_KEY) === '1'
@@ -1893,16 +1894,30 @@ function AiConversation({
               </button>
             ) : null}
             {mode === 'slide' ? (
-              <button
-                type="button"
-                className={cn('ai-attach-btn', slidePro && 'is-on')}
-                data-tip={slidePro ? 'Chuyên nghiệp: đang bật' : 'Chuyên nghiệp'}
-                aria-label="Chuyên nghiệp"
-                aria-pressed={slidePro}
-                onClick={() => void toggleSlidePro()}
-              >
-                <LayoutTemplate size={16} strokeWidth={1.75} />
-              </button>
+              <>
+                <button
+                  type="button"
+                  className={cn('ai-attach-btn', slidePro && 'is-on')}
+                  data-tip={slidePro ? 'Chuyên nghiệp: đang bật' : 'Chuyên nghiệp'}
+                  aria-label="Chuyên nghiệp"
+                  aria-pressed={slidePro}
+                  onClick={(e) => {
+                    if (!slidePro) return void toggleSlidePro()
+                    const r = e.currentTarget.getBoundingClientRect()
+                    setProMenu({
+                      x: r.left,
+                      y: r.top - 84,
+                      items: [
+                        { label: 'Chuyên nghiệp', icon: <Check size={14} strokeWidth={2} /> },
+                        { label: 'Tiêu chuẩn', onClick: () => setSlidePro(false) },
+                      ],
+                    })
+                  }}
+                >
+                  <LayoutTemplate size={16} strokeWidth={1.75} />
+                </button>
+                <ContextMenu menu={proMenu} onClose={() => setProMenu(null)} />
+              </>
             ) : null}
             <input
               ref={fileRef}
