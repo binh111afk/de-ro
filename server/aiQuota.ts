@@ -18,7 +18,29 @@ const num = (v: string | undefined, d: number) => {
 }
 export const TOKENS_PER_POINT = 1000
 export const MONTHLY_LIMIT = () => num(process.env.AI_MONTHLY_TOKENS, 0)
-export const WELCOME_TOKENS = () => num(process.env.AI_WELCOME_POINTS, 120) * TOKENS_PER_POINT
+
+let welcomeCache: { v: number; until: number } | null = null
+export const resetWelcomeCache = () => (welcomeCache = null)
+
+/** Điểm chào mừng: admin đặt ở app_settings 'ai_welcome' (nhớ 30 giây), chưa đặt hoặc đọc lỗi thì theo AI_WELCOME_POINTS (mặc định 120). */
+export async function welcomeTokens(): Promise<number> {
+  if (welcomeCache && welcomeCache.until > Date.now()) return welcomeCache.v
+  let points = num(process.env.AI_WELCOME_POINTS, 120)
+  const s = supa()
+  if (s) {
+    try {
+      const r = await fetch(`${s.base}/rest/v1/app_settings?key=eq.ai_welcome&select=value`, { headers: s.headers, signal: AbortSignal.timeout(3000) })
+      if (r.ok) {
+        const p = ((await r.json()) as Array<{ value?: { points?: unknown } }>)[0]?.value?.points
+        if (typeof p === 'number' && Number.isInteger(p) && p >= 0) points = p
+      } else if (welcomeCache) return welcomeCache.v
+    } catch {
+      if (welcomeCache) return welcomeCache.v
+    }
+  }
+  welcomeCache = { v: points * TOKENS_PER_POINT, until: Date.now() + 30_000 }
+  return welcomeCache.v
+}
 
 /** limit = hạn mức tháng (base) + số dư điểm (credits); dùng vượt base thì trừ vào credits */
 export type Quota = { used: number; limit: number; scope: 'month'; base?: number; credits?: number }
@@ -80,7 +102,7 @@ async function claimWelcome(userId: string): Promise<number> {
   const r = await fetch(`${s.base}/rest/v1/rpc/claim_ai_welcome`, {
     method: 'POST',
     headers: s.headers,
-    body: JSON.stringify({ p_user: userId, p_tokens: WELCOME_TOKENS() }),
+    body: JSON.stringify({ p_user: userId, p_tokens: await welcomeTokens() }),
   })
   return r.ok ? Number(await r.json()) : 0
 }

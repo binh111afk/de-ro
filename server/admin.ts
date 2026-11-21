@@ -7,7 +7,7 @@
  */
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { clientIp, forgetBan, guard, isLocal, userFromToken } from './guard.js'
-import { MONTHLY_LIMIT, WELCOME_TOKENS } from './aiQuota.js'
+import { MONTHLY_LIMIT, resetWelcomeCache, welcomeTokens } from './aiQuota.js'
 import { json, readBody, safeError } from './http.js'
 import { deleteR2Object, pingR2, r2DocKeyFromUrl, r2Info } from './r2.js'
 import { assertSafeEndpoint, listProviders, pingProviders } from './llmProxy.js'
@@ -419,7 +419,7 @@ const ACTIONS: ActionMap = {
       // chưa có dòng số dư: tặng quà chào mừng trước, không thì cộng tay sẽ tạo dòng và người này mất quà
       const { data: have } = await call<Array<{ balance: number }>>(ctx.s, `/rest/v1/ai_credits?user_id=eq.${id}&select=balance`)
       if (!have[0]) {
-        await call(ctx.s, '/rest/v1/rpc/claim_ai_welcome', { method: 'POST', body: JSON.stringify({ p_user: id, p_tokens: WELCOME_TOKENS() }) })
+        await call(ctx.s, '/rest/v1/rpc/claim_ai_welcome', { method: 'POST', body: JSON.stringify({ p_user: id, p_tokens: await welcomeTokens() }) })
       }
       const { data: balance } = await call<number>(ctx.s, '/rest/v1/rpc/grant_ai_credits', {
         method: 'POST',
@@ -461,7 +461,7 @@ const ACTIONS: ActionMap = {
         usedThisMonth: Number(use[0]?.tokens ?? 0),
         requestsThisMonth: Number(use[0]?.requests ?? 0),
         // chưa có dòng số dư = chưa dùng AI lần nào: sẽ nhận quà chào mừng ở lượt đầu, hiện luôn số đó thay vì 0
-        credits: cr[0] ? Number(cr[0].balance) : WELCOME_TOKENS(),
+        credits: cr[0] ? Number(cr[0].balance) : await welcomeTokens(),
         welcomePending: !cr[0],
         emptyDay: empty?.data.length ?? 0,
         freeEmpty: EMPTY_FREE_PER_DAY,
@@ -539,9 +539,14 @@ const ACTIONS: ActionMap = {
   'settings.get': {
     need: 'moderator',
     run: async ({ s }) => {
-      const { data } = await call<Array<{ key: string; value: unknown }>>(s, '/rest/v1/app_settings?select=key,value&key=in.(maintenance,announcements,pricing)')
+      const { data } = await call<Array<{ key: string; value: unknown }>>(s, '/rest/v1/app_settings?select=key,value&key=in.(maintenance,announcements,pricing,ai_welcome)')
       const get = (k: string) => data.find((r) => r.key === k)?.value
-      return { maintenance: get('maintenance') ?? { on: false }, announcements: get('announcements') ?? { items: [] }, pricing: get('pricing') ?? null }
+      return {
+        maintenance: get('maintenance') ?? { on: false },
+        announcements: get('announcements') ?? { items: [] },
+        pricing: get('pricing') ?? null,
+        aiWelcome: get('ai_welcome') ?? null,
+      }
     },
   },
 
@@ -591,6 +596,10 @@ const ACTIONS: ActionMap = {
         packs.sort((a, b) => a.vnd - b.vnd)
         const defaultVnd = packs.some((p) => p.vnd === v.defaultVnd) ? (v.defaultVnd as number) : packs[0].vnd
         value = { pointsPer1000, minVnd, maxVnd, packs, defaultVnd }
+      } else if (key === 'ai_welcome') {
+        const points = v.points
+        if (typeof points !== 'number' || !Number.isInteger(points) || points < 0 || points > 10_000) throw new HttpError(400, 'Điểm chào mừng phải là số nguyên từ 0 đến 10.000.')
+        value = { points }
       } else throw new HttpError(400, 'Cài đặt không tồn tại.')
       await call(ctx.s, '/rest/v1/app_settings?on_conflict=key', {
         method: 'POST',
@@ -598,6 +607,7 @@ const ACTIONS: ActionMap = {
         body: JSON.stringify({ key, value, updated_at: new Date().toISOString() }),
       })
       _resetOpsCache()
+      resetWelcomeCache()
       await audit(ctx, 'settings.set', key, value)
       return { ok: true, value }
     },

@@ -58,6 +58,7 @@ const mockImage = (color: string) =>
 const mockSettings: AppSettings = {
   maintenance: { on: false, message: '' },
   pricing: null,
+  aiWelcome: null,
   announcements: {
     items: [
       { id: 'mock-1', on: true, title: 'Xáo đề giữ nguyên đáp án', text: 'Tạo nhiều mã đề từ một đề gốc chỉ với một lần bấm.', image: mockImage('#c9805f'), tryPath: '/soan-de', until: null },

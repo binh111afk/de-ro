@@ -230,6 +230,8 @@ export interface AppSettings {
   announcements: { items: Announcement[] }
   /** null = chưa lưu lần nào, trang giá dùng mặc định */
   pricing: PricingConfig | null
+  /** null = chưa đặt, server dùng AI_WELCOME_POINTS (mặc định 120) */
+  aiWelcome: { points: number } | null
 }
 export interface AiStatRow {
   /** yyyy-mm-dd theo giờ VN */
@@ -297,6 +299,11 @@ export async function setPricing(v: PricingConfig): Promise<PricingConfig> {
   else saved = (await post<{ ok: true; value: PricingConfig }>('settings.set', { key: 'pricing', value: v })).value
   applyPricing(saved)
   return saved
+}
+
+export async function setWelcomePoints(points: number): Promise<number> {
+  if (import.meta.env.DEV && isAdminMock()) return points
+  return (await post<{ ok: true; value: { points: number } }>('settings.set', { key: 'ai_welcome', value: { points } })).value.points
 }
 
 export async function getAiStats(days = 7): Promise<{ days: number; rows: AiStatRow[] }> {

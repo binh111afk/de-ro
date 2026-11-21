@@ -207,7 +207,11 @@ noCreditRow = false
 const sg = await hit({ action: 'settings.get' }, 'tMod')
 check('moderator đọc cài đặt → 200', sg.status === 200 && (sg.data.maintenance as { on: boolean }).on === true && (sg.data.announcements as { items: unknown[] }).items.length === 0)
 check('moderator bật bảo trì → 403', (await hit({ action: 'settings.set', key: 'maintenance', value: { on: true } }, 'tMod')).status === 403)
-check('cài đặt lạ → 400', (await hit({ action: 'settings.set', key: 'drop', value: {} }, 'tAdmin')).status === 400)
+const setWelcome = async (points: unknown, who = 'tAdmin') => (await hit({ action: 'settings.set', key: 'ai_welcome', value: { points } }, who)).status
+check('điểm chào mừng: moderator → 403', (await setWelcome(50, 'tMod')) === 403)
+check('điểm chào mừng: âm / lẻ / quá lớn / chữ → 400', (await setWelcome(-1)) === 400 && (await setWelcome(1.5)) === 400 && (await setWelcome(10001)) === 400 && (await setWelcome('50')) === 400)
+check('điểm chào mừng: admin đặt 50 → 200', (await setWelcome(50)) === 200)
+check('cài đặt lạ → 400',(await hit({ action: 'settings.set', key: 'drop', value: {} }, 'tAdmin')).status === 400)
 const setAnn = async (items: unknown[]) => (await hit({ action: 'settings.set', key: 'announcements', value: { items } }, 'tAdmin')).status
 const ann = (o: object) => ({ id: 'a1', on: true, title: 'Mới', ...o })
 check('thông báo hợp lệ → 200', (await setAnn([ann({ tryPath: '/soan-de', image: '/api/files/img/' + 'a'.repeat(40) + '.png' })])) === 200)

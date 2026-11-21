@@ -40,6 +40,8 @@ import { HealthDrawer, type HealthDrawerTarget } from './HealthDrawer'
 import { Switch } from './Switch'
 import { AnnouncementsEditor } from './AnnouncementsEditor'
 
+import { WelcomePointsCard } from './WelcomePointsCard'
+
 interface OpsPanelProps {
   me?: AdminMe
 }
@@ -488,6 +490,8 @@ export function OpsPanel({ me: _me }: OpsPanelProps) {
           ) : null}
         </div>
       </Card>
+
+      {settings ? <WelcomePointsCard initial={settings.aiWelcome?.points ?? null} onNotice={showNotice} /> : null}
 
       {/* =========================================================================
           KHỐI 2: TÌNH TRẠNG SERVER
