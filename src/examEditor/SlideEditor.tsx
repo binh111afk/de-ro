@@ -38,7 +38,7 @@ import { readableElements } from '@/lib/slideContrast'
 import { designById, designTheme, type SlideDesign } from '@/lib/slideDesigns'
 import { applySkin } from '@/lib/slideSkins'
 import { appendSlidesToDeck, withImage } from '@/lib/slideAi'
-import { IMAGE_LAYOUTS, buildImagePrompt, buildPhotoPrompt, generateSlideImage, queueImage } from '@/lib/imageGen'
+import { IMAGE_LAYOUTS, buildImagePrompt, generateSlideImage, loadProPhoto, queueImage } from '@/lib/imageGen'
 import { uploadImage } from '@/lib/mediaStore'
 import { SLIDE_LAYOUTS, composeLayout, contentFromSlide, defaultTone, isLayoutId, toneBackground, withPlaceholders, type SlideLayoutId } from '@/lib/slideLayouts'
 import { AiPanel } from './AiPanel'
@@ -1191,13 +1191,13 @@ export function SlideEditor({
   }
 
   /** Ghi ảnh AI vào slide theo deck mới nhất lúc ảnh về (slide có thể đã được sửa/xoá). */
-  const setSlideImage = (slideId: string, image: string, slot: 'image' | 'image2' = 'image') => {
+  const setSlideImage = (slideId: string, image: string, slot: 'image' | 'image2' = 'image', credit?: string) => {
     const latest = deckRef.current
     const slide = latest.slides.find((s) => s.id === slideId)
     if (!slide) return
     historyRef.current.past = [...historyRef.current.past, latest].slice(-50)
     historyRef.current.future = []
-    const slides = latest.slides.map((s) => (s.id === slideId ? withImage(s, normalizeTheme(latest.theme), image, slot) : s))
+    const slides = latest.slides.map((s) => (s.id === slideId ? withImage(s, normalizeTheme(latest.theme), image, slot, credit) : s))
     deckRef.current = { ...latest, slides }
     updateDeck({ slides })
   }
@@ -1211,14 +1211,17 @@ export function SlideEditor({
     const added = await appendAiSlides([page], plan)
     const slide = added[0]
     // Chế độ Chuyên nghiệp: AI mô tả ảnh, app vẽ ảnh chụp thật cho các bố cục biên tập
-    if (slide && (page.imagePrompt || page.image2Prompt)) {
-      const jobs: Array<['image' | 'image2', string | undefined]> = [['image', page.image ? undefined : page.imagePrompt], ['image2', page.image2 ? undefined : page.image2Prompt]]
-      for (const [slot, text] of jobs) {
-        if (!text) continue
-        const prompt = buildPhotoPrompt(text)
-        void queueImage(() => generateSlideImage(prompt).catch(() => generateSlideImage(prompt)))
-          .then((generated) => uploadImage(generated.dataUrl))
-          .then((src) => setSlideImage(slide.id, src, slot))
+    if (slide && (page.imagePrompt || page.image2Prompt || page.photoQuery || page.photo2Query)) {
+      const jobs: Array<['image' | 'image2', string | undefined, string | undefined]> = [
+        ['image', page.image ? undefined : page.photoQuery, page.image ? undefined : page.imagePrompt],
+        ['image2', page.image2 ? undefined : page.photo2Query, page.image2 ? undefined : page.image2Prompt],
+      ]
+      for (const [slot, query, text] of jobs) {
+        if (!query && !text) continue
+        // ảnh tư liệu thật (Wikimedia Commons, có ghi nguồn) trước, không có thì vẽ ảnh AI
+        void loadProPhoto(query, text)
+          .then(async (photo) => (photo ? { src: await uploadImage(photo.dataUrl), credit: photo.credit } : null))
+          .then((done) => { if (done) setSlideImage(slide.id, done.src, slot, done.credit) })
           .catch(() => {})
       }
       return

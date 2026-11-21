@@ -6,6 +6,7 @@
  * localStorage không bị đầy sau vài ảnh.
  */
 import { apiFetch } from '@/lib/apiFetch'
+import { findCommonsPhoto } from '@/lib/wikimedia'
 
 const MAX_EDGE = 1280
 const JPEG_QUALITY = 0.85
@@ -108,4 +109,29 @@ export async function queueImage<T>(task: () => Promise<T>): Promise<T> {
     running--
     waiting.shift()?.()
   }
+}
+
+export interface ProPhoto {
+  dataUrl: string
+  /** dòng ghi nguồn: tác giả + giấy phép (Wikimedia Commons) hoặc "Ảnh minh hoạ do AI tạo" */
+  credit: string
+}
+
+/**
+ * Chế độ Chuyên nghiệp: ưu tiên ảnh tư liệu thật trên Wikimedia Commons (có ghi nguồn + giấy phép),
+ * không tìm được thì vẽ ảnh AI theo mô tả. Trả null khi cả hai đều không có.
+ */
+export async function loadProPhoto(query: string | undefined, description: string | undefined): Promise<ProPhoto | null> {
+  if (query?.trim()) {
+    try {
+      const photo = await findCommonsPhoto(query)
+      if (photo) return { dataUrl: photo.dataUrl, credit: photo.credit }
+    } catch {
+      // Commons chậm / lỗi mạng: rơi về ảnh AI
+    }
+  }
+  if (!description?.trim()) return null
+  const prompt = buildPhotoPrompt(description)
+  const generated = await queueImage(() => generateSlideImage(prompt).catch(() => generateSlideImage(prompt)))
+  return { dataUrl: generated.dataUrl, credit: 'Ảnh minh hoạ do AI tạo' }
 }

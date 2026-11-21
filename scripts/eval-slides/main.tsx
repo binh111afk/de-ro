@@ -16,7 +16,7 @@ import { parseAsk } from '@/examEditor/AiAskPanel'
 import { callLlm } from '@/lib/llm'
 import { parseDeckPlan, proPlan } from '@/lib/aiDeck'
 import { dropRepeatedGraphic, slideFromAi, withImage } from '@/lib/slideAi'
-import { IMAGE_LAYOUTS, buildImagePrompt, buildPhotoPrompt, generateSlideImage, queueImage } from '@/lib/imageGen'
+import { IMAGE_LAYOUTS, buildImagePrompt, generateSlideImage, loadProPhoto, queueImage } from '@/lib/imageGen'
 import { ensureMeasureFonts } from '@/lib/slideMeasure'
 import { themeById } from '@/lib/slideTheme'
 import type { Slide } from '@/store/docs'
@@ -120,12 +120,11 @@ async function main() {
     built.forEach((slide, i) => {
       const page = pages[i]
       if (!slide || !page) return
-      for (const [slot, text] of [['image', page.imagePrompt], ['image2', page.image2Prompt]] as Array<['image' | 'image2', string | undefined]>) {
-        if (!text) continue
-        const prompt = buildPhotoPrompt(text)
+      for (const [slot, query, text] of [['image', page.photoQuery, page.imagePrompt], ['image2', page.photo2Query, page.image2Prompt]] as Array<['image' | 'image2', string | undefined, string | undefined]>) {
+        if (!query && !text) continue
         jobs.push(
-          queueImage(() => generateSlideImage(prompt).catch(() => generateSlideImage(prompt)))
-            .then((img) => { built[i] = withImage(built[i]!, theme, img.dataUrl, slot) })
+          loadProPhoto(query, text)
+            .then((photo) => { if (photo) built[i] = withImage(built[i]!, theme, photo.dataUrl, slot, photo.credit) })
             .catch(() => {}),
         )
       }

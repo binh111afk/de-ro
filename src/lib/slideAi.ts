@@ -83,7 +83,8 @@ export function sanitizeSlide(raw: unknown, layout: string, tone?: SlideTone): A
   const title = clean(source.title, editorial ? limits?.title ?? 80 : 160)
   const kicker = clean(source.kicker, id === 'bignum' ? limits!.kicker! : 80)
   const subtitle = clean(source.subtitle, id === 'bignum' || id === 'photo-full' ? limits!.subtitle! : 240)
-  const credit = cleanSingleLine(source.credit, MAX_CREDIT)
+  const rawCredit = cleanSingleLine(source.credit, MAX_CREDIT)
+  const credit = editorial ? stripPhotoSources(rawCredit) : rawCredit
   const position = (value: unknown) => typeof value === 'number' && Number.isFinite(value)
     ? Math.min(100, Math.max(0, value))
     : undefined
@@ -115,6 +116,8 @@ export function sanitizeSlide(raw: unknown, layout: string, tone?: SlideTone): A
   const image = clean(source.image, 2000)
   const imagePrompt = editorial ? cleanSingleLine(source.imagePrompt, 280) : undefined
   const image2Prompt = id === 'photo-compare' ? cleanSingleLine(source.image2Prompt, 280) : undefined
+  const photoQuery = editorial ? cleanSingleLine(source.photoQuery, 90) : undefined
+  const photo2Query = id === 'photo-compare' ? cleanSingleLine(source.photo2Query, 90) : undefined
   const graphic =
     isGraphicId(source.graphic) &&
     graphicFits(source.graphic, [title, kicker, subtitle, body, ...(bullets ?? []), ...(items ?? [])].join(' '))
@@ -183,6 +186,8 @@ export function sanitizeSlide(raw: unknown, layout: string, tone?: SlideTone): A
     ...(image ? { image } : {}),
     ...(imagePrompt ? { imagePrompt } : {}),
     ...(image2Prompt ? { image2Prompt } : {}),
+    ...(photoQuery ? { photoQuery } : {}),
+    ...(photo2Query ? { photo2Query } : {}),
     ...(graphic ? { graphic } : {}),
     ...(isDecorKitId(source.decorKit) ? { decorKit: source.decorKit } : {}),
     ...(stats?.length ? { stats } : {}),
@@ -625,13 +630,17 @@ function proSpecBlock(id: SlideLayoutId): string {
   const hasPhoto = id === 'bignum' || id === 'photo-full' || id === 'photo-compare'
   return (
     '\nCHẾ ĐỘ CHUYÊN NGHIỆP:\n' +
-    '- "credit" — dòng ghi nguồn số liệu / ảnh ở chân slide (≤ 140 ký tự, vd "Nguồn: IAEA, 2024 · Ảnh minh hoạ do AI tạo"); ' +
-    'số liệu không chắc chắn thì ghi "số liệu minh hoạ". Đừng bỏ trống khi slide có số liệu hoặc ảnh.\n' +
+    '- "credit" — dòng ghi nguồn SỐ LIỆU / trích dẫn ở chân slide (≤ 140 ký tự, vd "Nguồn: IAEA, 2024"); ' +
+    'số liệu không chắc chắn thì ghi "số liệu minh hoạ". KHÔNG ghi nguồn ảnh (app tự thêm). Đừng bỏ trống khi slide có số liệu.\n' +
     (hasPhoto
       ? '- "imagePrompt" — mô tả ảnh cần vẽ (≤ 280 ký tự, tiếng Anh, một câu): chủ thể cụ thể, bối cảnh, ánh sáng, ống kính; ' +
         'phong cách ảnh chụp thật (documentary / editorial photograph), KHÔNG chữ, KHÔNG logo, KHÔNG người nổi tiếng có thật, ' +
         'chủ thể nằm ở giữa hoặc lệch trái / phải đúng như "focusX", chừa vùng trống cho chữ.\n' +
-        (id === 'photo-compare' ? '- "image2Prompt" — mô tả ảnh thứ hai, cùng góc nhìn với "imagePrompt".\n' : '')
+        (id === 'photo-compare' ? '- "image2Prompt" — mô tả ảnh thứ hai, cùng góc nhìn với "imagePrompt".\n' : '') +
+        '- "photoQuery" — truy vấn tiếng Anh 2–6 từ để tìm ẢNH TƯ LIỆU THẬT trên Wikimedia Commons: tên riêng cụ thể (sự kiện + năm, địa danh, nhân vật, công trình, loài vật), ' +
+        'vd "Dien Bien Phu 1954 French paratroopers", "Mekong Delta mangrove". Chỉ điền khi chủ đề có ảnh thật (lịch sử, địa lí, nhân vật, thiên nhiên, công trình); ' +
+        'khái niệm trừu tượng thì bỏ trống. Không có ảnh thật thì app dùng "imagePrompt" để vẽ.\n' +
+        (id === 'photo-compare' ? '- "photo2Query" — truy vấn cho ảnh thứ hai.\n' : '')
       : '')
   )
 }
@@ -855,14 +864,33 @@ function contentOfPage(page: AiSlidePayload): SlideLayoutContent {
 }
 
 /**
+ * Dòng nguồn do AI viết cho slide biên tập chỉ giữ nguồn SỐ LIỆU: các đoạn nhắc tới ảnh / Wikimedia bị bỏ
+ * (AI hay bịa nguồn ảnh; nguồn ảnh thật do app thêm sau khi tìm / vẽ ảnh, xem `mergePhotoCredit`).
+ */
+export function stripPhotoSources(credit: string | undefined): string | undefined {
+  if (!credit) return credit
+  const kept = credit.split(/\s*[·;|]\s*/).filter((part) => part && !/ảnh|wikimedia|commons|getty|shutterstock/i.test(part))
+  return kept.length ? kept.join(' · ') : undefined
+}
+
+/** Nối nguồn ảnh (Wikimedia Commons hoặc "Ảnh minh hoạ do AI tạo") vào dòng nguồn số liệu của slide. */
+export function mergePhotoCredit(current: string | undefined, photoCredit: string): string {
+  if (current?.includes(photoCredit)) return current
+  const merged = current?.trim() ? `${current.trim()} · ${photoCredit}` : photoCredit
+  return merged.length > 220 ? merged.slice(0, 219).trimEnd() + '…' : merged
+}
+
+/**
  * Dựng lại slide với ảnh AI (ảnh về sau khi slide đã hiện). Đọc nội dung từ chính
  * các phần tử của slide nên chữ người dùng đã sửa trong lúc chờ ảnh không mất;
  * layout không dựng được thì giữ nguyên slide.
  */
-export function withImage(slide: Slide, theme: DeckTheme, image: string, slot: 'image' | 'image2' = 'image'): Slide {
+export function withImage(slide: Slide, theme: DeckTheme, image: string, slot: 'image' | 'image2' = 'image', photoCredit?: string): Slide {
   const layout = slide.layout
   if (!layout || !isLayoutId(layout)) return slide
-  const elements = composeLayout(theme, layout, { ...contentFromSlide(slide), [slot]: image }, slide.tone)
+  const content = { ...contentFromSlide(slide), [slot]: image }
+  if (photoCredit) content.credit = mergePhotoCredit(content.credit, photoCredit)
+  const elements = composeLayout(theme, layout, content, slide.tone)
   return elements.length ? { ...slide, elements: elements.map(el => {
     const before = slide.elements.find(entry => entry.id === el.id)
     return el.type === 'text' && before?.type === 'text' && (hasTextEffects(before) || before.fontFamily)
