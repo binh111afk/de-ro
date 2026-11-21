@@ -685,19 +685,22 @@ export const DECK_THEMES = LEGACY_DECK_THEMES.map(theme => {
 })
 
 /**
- * Theme của chế độ Chuyên nghiệp: giấy kem + mực, một màu nhấn, tiêu đề chữ hẹp đậm.
- * Tông "accent" của theme này là nền mực đen (xem `paletteOf`), không phải nền pha màu nhấn.
+ * Theme của chế độ Chuyên nghiệp: giấy + mực, một màu nhấn, tiêu đề chữ hẹp đậm.
+ * Tông "accent" dùng màu mực làm nền (xem `paletteOf`).
  * Không nằm trong DECK_THEMES nên danh sách chọn bộ màu và prompt thường không đổi.
  */
 const PRO_FONTS = { serif: SERIF, mono: MONO, heading: 'Barlow Condensed', body: SANS }
-const proTheme = (id: string, name: string, vibe: string, accent: string, secondary: string, tags: string[]): DeckTheme => ({
+const proTheme = (
+  id: string, name: string, vibe: string, accent: string, secondary: string, tags: string[],
+  paper: Pick<DeckTheme, 'bg' | 'ink'> = { bg: '#ece7dc', ink: '#161513' },
+): DeckTheme => ({
   id, name, vibe, tags,
   pro: true,
-  bg: '#ece7dc',
-  fg: '#1b1a17',
-  ink: '#161513',
-  surface: '#e2dccf',
-  muted: '#5b574e',
+  bg: paper.bg,
+  fg: paper.ink ?? '#161513',
+  ink: paper.ink,
+  surface: mixHex(paper.bg, paper.ink ?? '#161513', 0.05),
+  muted: mixHex(paper.ink ?? '#161513', paper.bg, 0.3),
   accent,
   secondary,
   chart: [accent, secondary, '#8a7f6a', '#c9a24a', '#3d3a34'],
@@ -712,10 +715,14 @@ const proTheme = (id: string, name: string, vibe: string, accent: string, second
   dark: false,
 })
 export const PRO_THEMES: DeckTheme[] = [
-  proTheme('tap-chi-do', 'Tạp chí đỏ', 'lịch sử, chiến tranh, xã hội, báo chí điều tra: giấy kem, mực đen, đỏ gạch', '#b3321e', '#2f6a5e', ['lịch sử', 'xã hội', 'báo chí']),
-  proTheme('tap-chi-xanh', 'Tạp chí xanh', 'khoa học, môi trường, địa lí, sức khoẻ: giấy kem, mực đen, xanh rêu', '#2b6a5c', '#b3321e', ['khoa học', 'môi trường', 'địa lí']),
-  proTheme('tap-chi-vang', 'Tạp chí vàng', 'kinh tế, công nghệ, hướng nghiệp, kỹ năng: giấy kem, mực đen, vàng nghệ', '#9a5b08', '#1f4e79', ['kinh tế', 'công nghệ', 'kỹ năng']),
-  proTheme('tap-chi-lam', 'Tạp chí lam', 'văn học, nghệ thuật, triết học, giáo dục: giấy kem, mực đen, lam chàm', '#2a4d86', '#a2492e', ['văn học', 'nghệ thuật', 'giáo dục']),
+  proTheme('tap-chi-do', 'Tạp chí đỏ', 'giấy kem, mực đen, đỏ gạch', '#a32c1d', '#2f6a5e', ['lịch sử', 'chiến tranh', 'sự kiện xã hội', 'báo chí']),
+  proTheme('tap-chi-xanh', 'Tạp chí xanh', 'giấy ngà hơi xanh, mực đen, xanh lá', '#3f632c', '#648446', ['sinh học', 'quang hợp', 'thực vật', 'rừng', 'hệ sinh thái trên cạn'], { bg: '#edf0e5', ink: '#151a13' }),
+  proTheme('tap-chi-vang', 'Tạp chí vàng', 'giấy kem, mực đen, vàng đất', '#875108', '#1f4e79', ['kinh tế', 'tài chính cá nhân', 'giáo dục công dân', 'hướng nghiệp', 'kỹ năng sống']),
+  proTheme('tap-chi-lam', 'Tạp chí lam', 'giấy kem, mực đen, lam chàm', '#2a4d86', '#a2492e', ['văn học', 'triết học', 'toán', 'hóa học', 'ngoại ngữ']),
+  proTheme('tap-chi-bien', 'Tạp chí lam ngọc', 'giấy màu sương, mực xanh sâu, lam ngọc', '#146273', '#367b86', ['địa lý biển', 'Vịnh Hạ Long', 'đại dương', 'đảo', 'sông nước', 'sinh thái biển'], { bg: '#e6efed', ink: '#102027' }),
+  proTheme('tap-chi-dem', 'Tạp chí tím than', 'giấy xám tím nhạt, mực đêm, tím chàm', '#534782', '#74619e', ['thiên văn', 'vật lý', 'tin học', 'lập trình', 'công nghệ'], { bg: '#eceaf3', ink: '#191626' }),
+  proTheme('tap-chi-dat', 'Tạp chí cam đất', 'giấy hồng ngà, mực nâu, cam đất', '#98432f', '#ad664f', ['thể thao', 'mỹ thuật', 'âm nhạc', 'thủ công', 'văn hóa'], { bg: '#f2e8df', ink: '#211713' }),
+  proTheme('tap-chi-hong', 'Tạp chí hồng đất', 'giấy hồng nhạt, mực mận, hồng đất', '#9a3b55', '#b0675e', ['tình yêu', 'tình bạn', 'gia đình', 'tuổi học trò', 'cảm xúc', 'thơ ca', 'lễ hội'], { bg: '#f4e7e6', ink: '#2a1620' }),
 ]
 
 /** Id catalog hợp lệ (đã đổi id cũ sang id mới), hoặc `undefined` nếu lạ. */

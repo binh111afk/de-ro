@@ -12,17 +12,22 @@ const MIN_RATIO = 3
 
 // Hai vùng chữ nằm về phía đậm của gradient. Giữa và phía còn lại giữ ảnh sáng.
 export const photoScrimFill = (position: 'bottom' | 'left') =>
-  'linear-gradient(' + (position === 'left' ? 270 : 180) + 'deg, #10121400 23%, #101214e6 66%, #101214fa 100%)'
+  position === 'left'
+    ? 'linear-gradient(270deg, #10121400 23%, #101214e6 66%, #101214fa 100%)'
+    : 'linear-gradient(180deg, #10121400 36%, #101214b8 65%, #101214e6 100%)'
 
 export const PHOTO_CREDIT_FILL = 'linear-gradient(180deg, #10121400 0%, #101214e6 54%, #101214fa 100%)'
 
 // Nền sáng nhất ngay dưới vùng chữ khi ảnh gốc trắng hoàn toàn.
 const PHOTO_TEXT_BG = '#282a2c'
+const PHOTO_BOTTOM_BG = '#535455'
+const LEGACY_BOTTOM_SCRIM = 'linear-gradient(180deg, #10121400 23%, #101214e6 66%, #101214fa 100%)'
 
 export function photoScrimBackground(shape: SlideElement, x: number, y: number): string | undefined {
   const down = (y - shape.y) / shape.h
   if (shape.fill === PHOTO_CREDIT_FILL && down >= 0.54) return PHOTO_TEXT_BG
-  if (shape.fill === photoScrimFill('bottom') && down >= 0.66) return PHOTO_TEXT_BG
+  if (shape.fill === LEGACY_BOTTOM_SCRIM && down >= 0.66) return PHOTO_TEXT_BG
+  if (shape.fill === photoScrimFill('bottom') && down >= 0.65) return PHOTO_BOTTOM_BG
   const left = (shape.x + shape.w - x) / shape.w
   return shape.fill === photoScrimFill('left') && left >= 0.66 ? PHOTO_TEXT_BG : undefined
 }

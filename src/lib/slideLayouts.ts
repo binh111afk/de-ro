@@ -330,6 +330,7 @@ export function defaultTone(layoutId: string): SlideTone {
  * Bảng màu theo tông
  * ------------------------------------------------------------------ */
 interface LayoutPalette {
+  pro: boolean
   displayFont: string
   text: typeof textEl
   tone: SlideTone
@@ -364,6 +365,7 @@ function legible(color: string, bgs: string[], fg: string): string {
 function paletteOf(theme: ReturnType<typeof normalizeTheme>, tone: SlideTone): LayoutPalette {
   const onAccent = readableTextOn(theme.accent)
   const base = {
+    pro: !!theme.pro,
     displayFont: theme.fonts.heading === 'Be Vietnam Pro' ? 'Arial Narrow, Arial' : theme.fonts.heading,
     text: (id: string, value: string | undefined, box: Box, style: Partial<SlideElement>, minScale?: number) =>
       textEl(id, value, box, style, minScale, style.variant === 'body' ? theme.fonts.body : theme.fonts.heading),
@@ -385,11 +387,11 @@ function paletteOf(theme: ReturnType<typeof normalizeTheme>, tone: SlideTone): L
       : tone === 'soft'
         ? { background: theme.surface, surface: theme.bg, panelMix: theme.dark ? 0.18 : 0.14 }
         : { background: theme.bg, surface: theme.surface, panelMix: theme.dark ? 0.18 : 0.12 }
-  // Theme Chuyên nghiệp: tông "accent" là nền mực đen, chữ màu giấy.
+  // Theme Chuyên nghiệp: tông "accent" dùng nền mực, chữ màu giấy.
   const proDark = !!theme.pro && tone === 'accent'
   const pick = proDark ? { background: theme.ink ?? '#161513', surface: mixHex(theme.ink ?? '#161513', theme.bg, 0.08), panelMix: 0.1 } : pick0
   const fgc = proDark ? theme.bg : theme.fg
-  const accentc = proDark ? mixHex(theme.accent, '#ffffff', 0.28) : theme.accent
+  const accentc = proDark ? mixHex(theme.accent, theme.bg, 0.42) : theme.accent
   const panel = mixHex(pick.background, theme.accent, pick.panelMix)
   const bgs = [pick.background, panel, pick.surface]
   return {
@@ -400,7 +402,7 @@ function paletteOf(theme: ReturnType<typeof normalizeTheme>, tone: SlideTone): L
     surface: pick.surface,
     panel,
     // chữ phụ/nhấn phải đọc được trên cả nền slide lẫn panel/thẻ
-    muted: legible(proDark ? mixHex(theme.bg, pick.background, 0.4) : theme.muted, bgs, fgc),
+    muted: legible(proDark ? mixHex(theme.bg, pick.background, 0.32) : theme.muted, bgs, fgc),
     ink: legible(accentc, bgs, fgc),
   }
 }
@@ -1350,14 +1352,14 @@ function composeBigNum(p: LayoutPalette, c: SlideLayoutContent): SlideElement[] 
     p.text('kicker', upper(c.kicker), { x: 5, y: 8, w, h: 11 }, {
       variant: 'body', fontSize: 1.55, fontWeight: 700, textColor: p.muted, valign: 'top', lineHeight: 1.2,
     }),
-    p.text('bignum-value', value, { x: 5, y: 19, w, h: 44 }, {
+    p.text('bignum-value', value, { x: 5, y: 20, w, h: 44 }, {
       ...EDITORIAL_TITLE, fontFamily: p.displayFont, fontSize: size, lineHeight: 1, textColor: p.ink, valign: 'middle',
     }),
-    p.text('bignum-label', c.label, { x: 5, y: 67, w, h: 13 }, {
+    p.text('bignum-label', c.label, { x: 5, y: p.pro ? 64 : 67, w, h: p.pro ? 14 : 13 }, {
       ...EDITORIAL_TITLE, fontSize: 3.6, textColor: p.fg,
     }, 0.45),
-    p.text('subtitle', c.subtitle, { x: 5, y: 80, w, h: 9 }, {
-      variant: 'body', fontSize: 1.75, lineHeight: 1.18, textColor: p.muted, valign: 'top',
+    p.text('subtitle', c.subtitle, { x: 5, y: p.pro ? 78 : 80, w, h: p.pro ? 11 : 9 }, {
+      variant: 'body', fontSize: p.pro ? 1.9 : 1.75, lineHeight: 1.18, textColor: p.muted, valign: 'top',
     }, 0.45),
   ])
 }
@@ -1413,8 +1415,8 @@ function composeRules(p: LayoutPalette, c: SlideLayoutContent): SlideElement[] {
     .filter((s) => s.value || s.label)
     .slice(0, 5)
   if (rows.length === 0) return []
-  const top = 38
-  const row = Math.min(14, 50 / rows.length)
+  const top = p.pro ? 34 : 38
+  const row = Math.min(p.pro ? 16 : 14, (88 - top) / rows.length)
   const longest = Math.max(...rows.map((r) => r.value.length))
   const valueSize = longest <= 9 ? 3.6 : longest <= 14 ? 3.1 : 2.7
   return compact([
@@ -1488,7 +1490,7 @@ function formatBarValue(value: number): string {
 function composeBars(p: LayoutPalette, c: SlideLayoutContent): SlideElement[] {
   const bars = (Array.isArray(c.bars) ? c.bars : []).filter((bar) => bar?.label && Number.isFinite(bar.value) && bar.value >= 0).slice(0, 6)
   const max = Math.max(...bars.map((bar) => bar.value), 0)
-  const row = Math.min(24, 60 / Math.max(bars.length, 1))
+  const row = Math.min(p.pro ? 28 : 24, 60 / Math.max(bars.length, 1))
   const top = 26 + (60 - row * bars.length) / 2
   const axis = 31
   return compact([
@@ -1500,7 +1502,8 @@ function composeBars(p: LayoutPalette, c: SlideLayoutContent): SlideElement[] {
       const id = 'bar-' + (i + 1)
       const y = top + i * row
       const h = Math.min(row * 0.53, 8)
-      const w = max > 0 ? 46 * (bar.value / max) : 0
+      const valueW = p.pro ? 12.65 : 17.65
+      const w = max > 0 ? (95 - axis - 0.35 - valueW) * (bar.value / max) : 0
       const value = formatBarValue(bar.value)
       return [
         p.text(id + '-label', bar.label, { x: 5, y, w: 25, h: row }, {
@@ -1510,8 +1513,8 @@ function composeBars(p: LayoutPalette, c: SlideLayoutContent): SlideElement[] {
           ...shapeEl(id + (bar.color ? '-custom' : ''), { x: axis, y: y + (row - h) / 2, w, h }, bar.color ?? p.ink),
           border: 0, shadowLevel: 0 as const,
         } : null,
-        p.text(id + '-value', value, { x: axis + w + 0.35, y, w: 17.65, h: row }, {
-          ...EDITORIAL_TITLE, fontSize: singleLineSize(value, 17.65, 2, 800, slideFontStack(p.displayFont)), textColor: p.fg, valign: 'middle',
+        p.text(id + '-value', value, { x: axis + w + 0.35, y, w: valueW, h: row }, {
+          ...EDITORIAL_TITLE, fontSize: singleLineSize(value, valueW, 2, 800, slideFontStack(p.displayFont)), textColor: p.fg, valign: 'middle',
         }),
       ]
     }),
@@ -1519,9 +1522,9 @@ function composeBars(p: LayoutPalette, c: SlideLayoutContent): SlideElement[] {
 }
 
 /** Nguồn là hộp chữ chỉnh sửa được, lưu cùng các phần tử của slide. */
-export function creditElement(credit: string | undefined, color: string): SlideElement | null {
+export function creditElement(credit: string | undefined, color: string, fontSize = 1.2): SlideElement | null {
   return textEl('credit', credit?.trim().replace(/\s+/g, ' '), { x: 5, y: 89, w: 89, h: 6.1 }, {
-    fontSize: 1.2, fontFamily: 'Arial', lineHeight: 1.1, textColor: color, valign: 'top',
+    fontSize, fontFamily: 'Arial', lineHeight: 1.1, textColor: color, valign: 'top',
   }, 0.72)
 }
 
@@ -1947,7 +1950,7 @@ function composeStatic(
   const palette = paletteOf(resolved, tone && isTone(tone) ? tone : defaultTone(id))
   const elements = withKitDecor(id, composeById(id, palette, content), content, palette)
   if (!elements.length) return elements
-  return withSlideCredit(elements, creditElement(content.credit, id === 'photo-full' ? PHOTO_MUTED : palette.muted))
+  return withSlideCredit(elements, creditElement(content.credit, id === 'photo-full' ? PHOTO_MUTED : palette.muted, palette.pro ? 1.45 : undefined))
 }
 
 function composeById(id: SlideLayoutId, palette: LayoutPalette, content: SlideLayoutContent): SlideElement[] {

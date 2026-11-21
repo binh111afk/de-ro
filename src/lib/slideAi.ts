@@ -38,15 +38,23 @@ const clean = (value: unknown, max: number): string | undefined => {
   // Tập hợp {1, 2, 3} và nhóm ngoặc ngắn không được ngắt dòng giữa chừng: đổi dấu cách trong đó thành NBSP.
   const trimmed = limitBold(fixMathEscapes(value.trim()))
     .replace(/\{[^{}$]{1,40}\}/g, (group) => group.replace(/ /g, '\u00a0'))
-    .slice(0, max)
-  return trimmed || undefined
+  return cutAtWord(trimmed, max) || undefined
+}
+
+/** Cắt tối đa `max` ký tự ở ranh giới từ, thêm "…" khi có cắt (không để câu dừng giữa từ). */
+export function cutAtWord(text: string, max: number): string {
+  if (text.length <= max) return text
+  const head = text.slice(0, Math.max(1, max - 1))
+  const space = /\s/.test(text[head.length] ?? '') ? head.length : head.search(/\s\S*$/)
+  const kept = space >= max * 0.5 ? head.slice(0, space) : head
+  return kept.replace(/[\s,;:\-–—(]+$/, '') + '…'
 }
 
 const MAX_CREDIT = 140
 const BAR_LABEL_MAX = 42
 const BAR_VALUE_MAX = 1_000_000_000_000
 const cleanSingleLine = (value: unknown, max: number) =>
-  typeof value === 'string' ? value.trim().replace(/\s+/g, ' ').slice(0, max).trimEnd() || undefined : undefined
+  typeof value === 'string' ? cutAtWord(value.trim().replace(/\s+/g, ' '), max) || undefined : undefined
 
 const cleanList = (value: unknown, maxItems: number, maxLen: number): string[] | undefined => {
   if (!Array.isArray(value)) return undefined
@@ -140,10 +148,10 @@ export function sanitizeSlide(raw: unknown, layout: string, tone?: SlideTone): A
     ? source.stats
         .map((item) => {
           const entry = item && typeof item === 'object' ? (item as Record<string, unknown>) : {}
-          return { value: clean(entry.value, 24), label: clean(entry.label, 80) }
+          return { value: clean(entry.value, 24), label: clean(entry.label, id === 'rules' ? 220 : 80) }
         })
         .filter((item) => !!item.value)
-        .slice(0, 4)
+        .slice(0, id === 'rules' ? 5 : 4)
     : undefined
 
   const answer =
@@ -632,7 +640,12 @@ function proSpecBlock(id: SlideLayoutId): string {
       ? '- "imagePrompt" — mô tả ảnh cần vẽ (≤ 280 ký tự, tiếng Anh, một câu): chủ thể cụ thể, bối cảnh, ánh sáng, ống kính; ' +
         'phong cách ảnh chụp thật (documentary / editorial photograph), KHÔNG chữ, KHÔNG logo, KHÔNG người nổi tiếng có thật, ' +
         'chủ thể nằm ở giữa hoặc lệch trái / phải đúng như "focusX", chừa vùng trống cho chữ.\n' +
-        (id === 'photo-compare' ? '- "image2Prompt" — mô tả ảnh thứ hai, cùng góc nhìn với "imagePrompt".\n' : '')
+        '- ẢNH LÀ ẢNH AI VẼ, không phải ảnh thật: chữ trên slide ("subtitle", "caption", "label", "body") KHÔNG được gọi nó là ảnh chụp / ảnh thật / ảnh từ tàu, vệ tinh, kính thiên văn / tư liệu lịch sử; chỉ mô tả nội dung hoặc ý nghĩa.\n' +
+        '- Mô tả ảnh chỉ nêu cảnh, vật, người nói chung chung. TUYỆT ĐỐI không nhờ vẽ thứ AI vẽ dễ sai: cúp / huy chương cụ thể, cờ quốc gia, huy hiệu, logo, tượng đài / công trình nổi tiếng, mặt người có thật, bản đồ, đồ thị, sơ đồ khoa học, công thức, chữ. ' +
+        'Chủ đề cần hình khoa học hoặc toán thì chọn vật đời thường có hình dạng liên quan (vòi nước phun thành vòng cung, quả bóng bay, cây cầu), không vẽ đồ thị.\n' +
+        (id === 'photo-compare'
+          ? '- "image2Prompt" — mô tả ảnh thứ hai, CÙNG một bối cảnh và góc nhìn với "imagePrompt", chỉ khác thời điểm hoặc tình trạng (trước/sau, xưa/nay); hai ảnh không được là hai nơi khác nhau.\n'
+          : '')
       : '')
   )
 }
@@ -903,6 +916,9 @@ export function slideFromAi(page: AiSlidePayload, theme: ResolvedTheme): Slide {
       imageCrop,
       image2Crop,
     })
+  }
+  if (theme.pro && layout === 'bars' && content.bars) {
+    content.bars = content.bars.map(({ label, value }) => ({ label, value }))
   }
   content.credit = cleanSingleLine(content.credit, MAX_CREDIT)
   const tone = isTone(page.tone) ? page.tone : defaultTone(layout ?? 'bullets')

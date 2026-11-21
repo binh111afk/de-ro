@@ -119,7 +119,12 @@ const PRO_PLAN_SYSTEM =
   '- Không dùng cùng một layout ở hai slide liền nhau. Không quá 2 slide "editorial-text" trong cả deck.\n' +
   '- "title" nêu thẳng kết luận hoặc hình ảnh mạnh (≤ 10 từ), không phải nhãn chủ đề chung chung. "kicker" là nhãn chuyên mục viết hoa ngắn (≤ 4 từ).\n' +
   '- "brief" đúng 1 câu (≤ 140 ký tự) nêu dữ kiện chính; slide ảnh thì nêu rõ ảnh cần thể hiện gì. Chỉ dùng dữ kiện và con số thật, ' +
-  'không bịa; số liệu không chắc thì nói rõ là minh hoạ. Tiếng Việt chuẩn.'
+  'không bịa; số liệu không chắc thì nói rõ là minh hoạ. Tiếng Việt chuẩn.\n' +
+  '- "bignum" và "bars" chỉ dùng cho số liệu THẬT có nguồn và năm (thống kê, mốc lịch sử, đại lượng khoa học). Chủ đề cảm xúc / xã hội không có thống kê chắc chắn (tình yêu, tình bạn…) thì KHÔNG bịa tỉ lệ phần trăm người; dùng "manifesto", "rules", "editorial-text". Số giả định chỉ để tính toán trong ví dụ (toán, tài chính) và phải ghi "ví dụ" ngay ở nhãn.\n' +
+  '- Số liệu khảo sát nêu rõ năm và phạm vi (vd "UNESCO 2019, 144 nước"), không bỏ kỳ tham chiếu.\n' +
+  '- Nội dung hướng dẫn học sinh về an toàn (bắt nạt, tai nạn, sức khoẻ…): đặt an toàn lên trước, khuyên báo người lớn / giáo viên đáng tin; KHÔNG khuyên học sinh trực tiếp can thiệp, đứng chắn hay đối đầu khi có nguy cơ xô xát.\n' +
+  '- Công thức toán dùng LaTeX trong $…$ với \\frac cho phân số; không viết dạng a/b mơ hồ. Mọi hình ảnh và chú thích phải khớp nhau; dạng đồ thị hay sơ đồ dạy kiến thức thì đừng dùng ảnh AI.\n' +
+  '- Không hứa hẹn hay mô tả như chưa xảy ra những sự kiện có thể đã diễn ra (giải đấu, chương trình, mốc năm gần đây); nếu không chắc kết quả mới nhất thì ghi "tính đến <năm>".'
 
 export const slidePlanSystem = (pro?: boolean): string => (pro ? PRO_PLAN_SYSTEM : SLIDE_PLAN_SYSTEM)
 

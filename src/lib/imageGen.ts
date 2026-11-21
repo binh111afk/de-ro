@@ -120,6 +120,10 @@ export interface ProPhoto {
 export async function loadProPhoto(description: string | undefined): Promise<ProPhoto | null> {
   if (!description?.trim()) return null
   const prompt = buildPhotoPrompt(description)
-  const generated = await queueImage(() => generateSlideImage(prompt).catch(() => generateSlideImage(prompt)))
+  // Lỗi thoáng qua thì thử lại; vẫn hỏng (thường do nhà cung cấp từ chối cảnh có người) thì vẽ bản không người để bìa không trống.
+  const safe = buildPhotoPrompt(`Atmospheric scene with no people, evoking: ${description.trim().slice(0, 140)}`)
+  const generated = await queueImage(() =>
+    generateSlideImage(prompt).catch(() => generateSlideImage(prompt)).catch(() => generateSlideImage(safe)),
+  )
   return { dataUrl: generated.dataUrl, credit: 'Ảnh minh hoạ do AI tạo' }
 }

@@ -401,8 +401,8 @@ export function slideCatalogText(includeEditorial = false): string {
 /** Catalog của chế độ Chuyên nghiệp: chỉ bộ màu biên tập + bố cục biên tập (không bộ thiết kế, style pack, hoạ tiết). */
 export function slideProCatalogText(): string {
   return [
-    'BỘ MÀU (chọn "theme" đúng một id; cả bốn đều là giấy kem + mực đen, chỉ khác màu nhấn — chọn theo chủ đề):',
-    ...PRO_THEMES.map((theme) => `- ${theme.id}: ${theme.name} — ${theme.vibe}`),
+    'BỘ MÀU (chọn "theme" đúng một id theo chủ đề):',
+    ...PRO_THEMES.map((theme) => `- ${theme.id}: ${theme.name} — ${theme.vibe}. Dùng cho ${theme.tags?.join(', ')}.`),
     '',
     subjectCatalogText(),
     '',

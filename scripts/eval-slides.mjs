@@ -26,7 +26,7 @@ mkdirSync(outDir, { recursive: true })
 
 const server = await createServer({
   logLevel: 'error',
-  server: { port: 0, host: '127.0.0.1' },
+  server: { port: 0, host: '127.0.0.1', fs: { strict: false } }, // worktree dùng node_modules liên kết: không thì font bị chặn
   optimizeDeps: { entries: ['index.html', 'scripts/eval-slides/index.html'] },
 })
 await server.listen()
@@ -81,7 +81,7 @@ try {
     if (result.tokens && result.images) {
       const text = (result.tokens.prompt + result.tokens.completion) / 1000
       const ai = result.images.ai * 5
-      console.log(`  ảnh: ${result.images.ai} AI (${ai} điểm)`)
+      console.log(`  ảnh: ${result.images.ai} AI (${ai} điểm)${result.images.failed ? `, ${result.images.failed} ẢNH LỖI (ô trống)` : ''}`)
       console.log(`  điểm ước tính: chữ ≈ ${text.toFixed(1)} (chưa trừ cache) + ảnh ${ai} ≈ ${(text + ai).toFixed(1)}`)
     }
   }
