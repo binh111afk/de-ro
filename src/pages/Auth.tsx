@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
 import { Button, PasswordInput } from '@/components/ui'
+import { TURNSTILE_SITE_KEY, Turnstile } from '@/components/Turnstile'
 import { AuthError, requestReset, setNewPassword, signIn, signInWithGoogle, signUp, takeReturnPath } from '@/lib/auth'
 
 type Mode = 'login' | 'register' | 'forgot' | 'reset'
@@ -57,7 +58,10 @@ export default function Auth({ mode }: { mode: Mode }) {
   const [notice, setNotice] = useState<string | null>(null)
   const [recoveryToken, setRecoveryToken] = useState<string | null>(null)
   const [accepted, setAccepted] = useState(readAccepted)
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null)
+  const [captchaRound, setCaptchaRound] = useState(0)
   const needsTerms = mode === 'login' || mode === 'register'
+  const needsCaptcha = !!TURNSTILE_SITE_KEY && (mode === 'login' || mode === 'register' || mode === 'forgot')
 
   const toggleAccepted = (v: boolean) => {
     setAccepted(v)
@@ -89,6 +93,7 @@ export default function Auth({ mode }: { mode: Mode }) {
     setNotice(null)
 
     if (needsTerms && !accepted) return setError(TERMS_ERROR)
+    if (needsCaptcha && !captchaToken) return setError('Hãy hoàn tất bước xác minh bên dưới.')
     if (mode === 'register' && !name.trim()) return setError('Nhập tên hiển thị của bạn.')
     if (mode === 'register' || mode === 'reset') {
       if (password.length < MIN_PASSWORD) return setError(`Mật khẩu cần ít nhất ${MIN_PASSWORD} ký tự.`)
@@ -98,14 +103,14 @@ export default function Auth({ mode }: { mode: Mode }) {
     setBusy(true)
     try {
       if (mode === 'login') {
-        await signIn(email.trim(), password)
+        await signIn(email.trim(), password, captchaToken ?? undefined)
         navigate(takeReturnPath() ?? '/')
       } else if (mode === 'register') {
-        const { needsConfirm } = await signUp(email.trim(), password, name.trim())
+        const { needsConfirm } = await signUp(email.trim(), password, name.trim(), captchaToken ?? undefined)
         if (needsConfirm) setNotice('Đã gửi email xác nhận. Mở email và bấm liên kết để kích hoạt tài khoản.')
         else navigate('/')
       } else if (mode === 'forgot') {
-        await requestReset(email.trim())
+        await requestReset(email.trim(), captchaToken ?? undefined)
         setNotice('Nếu email này có tài khoản, liên kết đặt lại mật khẩu đã được gửi. Kiểm tra cả hộp thư rác.')
       } else if (mode === 'reset' && recoveryToken) {
         const recoveryUrl = window.location.href
@@ -121,6 +126,7 @@ export default function Auth({ mode }: { mode: Mode }) {
       setError(err instanceof AuthError ? err.message : 'Có lỗi xảy ra, thử lại sau.')
     } finally {
       setBusy(false)
+      if (needsCaptcha) setCaptchaRound((n) => n + 1)
     }
   }
 
@@ -240,6 +246,8 @@ export default function Auth({ mode }: { mode: Mode }) {
                   />
                 </Field>
               )}
+
+              {needsCaptcha && <Turnstile key={mode} onToken={setCaptchaToken} resetKey={captchaRound} />}
 
               {error && <p role="alert" className="text-[13.5px] font-medium text-clay-deep">{error}</p>}
               {notice && <p role="status" className="rounded-[6px] bg-sage-soft px-3.5 py-2.5 text-[13.5px] leading-relaxed text-sage">{notice}</p>}
