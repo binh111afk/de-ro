@@ -116,8 +116,6 @@ export function sanitizeSlide(raw: unknown, layout: string, tone?: SlideTone): A
   const image = clean(source.image, 2000)
   const imagePrompt = editorial ? cleanSingleLine(source.imagePrompt, 280) : undefined
   const image2Prompt = id === 'photo-compare' ? cleanSingleLine(source.image2Prompt, 280) : undefined
-  const photoQuery = editorial ? cleanSingleLine(source.photoQuery, 90) : undefined
-  const photo2Query = id === 'photo-compare' ? cleanSingleLine(source.photo2Query, 90) : undefined
   const graphic =
     isGraphicId(source.graphic) &&
     graphicFits(source.graphic, [title, kicker, subtitle, body, ...(bullets ?? []), ...(items ?? [])].join(' '))
@@ -186,8 +184,6 @@ export function sanitizeSlide(raw: unknown, layout: string, tone?: SlideTone): A
     ...(image ? { image } : {}),
     ...(imagePrompt ? { imagePrompt } : {}),
     ...(image2Prompt ? { image2Prompt } : {}),
-    ...(photoQuery ? { photoQuery } : {}),
-    ...(photo2Query ? { photo2Query } : {}),
     ...(graphic ? { graphic } : {}),
     ...(isDecorKitId(source.decorKit) ? { decorKit: source.decorKit } : {}),
     ...(stats?.length ? { stats } : {}),
@@ -636,11 +632,7 @@ function proSpecBlock(id: SlideLayoutId): string {
       ? '- "imagePrompt" — mô tả ảnh cần vẽ (≤ 280 ký tự, tiếng Anh, một câu): chủ thể cụ thể, bối cảnh, ánh sáng, ống kính; ' +
         'phong cách ảnh chụp thật (documentary / editorial photograph), KHÔNG chữ, KHÔNG logo, KHÔNG người nổi tiếng có thật, ' +
         'chủ thể nằm ở giữa hoặc lệch trái / phải đúng như "focusX", chừa vùng trống cho chữ.\n' +
-        (id === 'photo-compare' ? '- "image2Prompt" — mô tả ảnh thứ hai, cùng góc nhìn với "imagePrompt".\n' : '') +
-        '- "photoQuery" — truy vấn tiếng Anh 2–6 từ để tìm ẢNH TƯ LIỆU THẬT trên Wikimedia Commons: tên riêng cụ thể (sự kiện + năm, địa danh, nhân vật, công trình, loài vật), ' +
-        'vd "Dien Bien Phu 1954 French paratroopers", "Mekong Delta mangrove". Chỉ điền khi chủ đề có ảnh thật (lịch sử, địa lí, nhân vật, thiên nhiên, công trình); ' +
-        'khái niệm trừu tượng thì bỏ trống. Không có ảnh thật thì app dùng "imagePrompt" để vẽ.\n' +
-        (id === 'photo-compare' ? '- "photo2Query" — truy vấn cho ảnh thứ hai.\n' : '')
+        (id === 'photo-compare' ? '- "image2Prompt" — mô tả ảnh thứ hai, cùng góc nhìn với "imagePrompt".\n' : '')
       : '')
   )
 }

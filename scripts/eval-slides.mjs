@@ -81,7 +81,7 @@ try {
     if (result.tokens && result.images) {
       const text = (result.tokens.prompt + result.tokens.completion) / 1000
       const ai = result.images.ai * 5
-      console.log(`  ảnh: ${result.images.commons} Commons (0 điểm) · ${result.images.ai} AI (${ai} điểm)`)
+      console.log(`  ảnh: ${result.images.ai} AI (${ai} điểm)`)
       console.log(`  điểm ước tính: chữ ≈ ${text.toFixed(1)} (chưa trừ cache) + ảnh ${ai} ≈ ${(text + ai).toFixed(1)}`)
     }
   }

@@ -42,9 +42,6 @@ export interface AiSlidePayload extends Pick<SlideLayoutContent,
   /** chế độ Chuyên nghiệp: mô tả ngắn ảnh cần vẽ (app tạo ảnh nền từ mô tả này) */
   imagePrompt?: string
   image2Prompt?: string
-  /** chế độ Chuyên nghiệp: truy vấn tiếng Anh tìm ảnh tư liệu thật trên Wikimedia Commons (thử trước ảnh AI) */
-  photoQuery?: string
-  photo2Query?: string
   /** id đồ hoạ vector trong catalog slideGraphics (ưu tiên hơn ảnh AI) */
   graphic?: string
   /** bộ trang trí của deck (lib/slideDecor.ts) — app gán từ dàn ý, không do AI chọn từng slide */

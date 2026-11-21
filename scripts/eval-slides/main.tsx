@@ -121,10 +121,10 @@ async function main() {
     built.forEach((slide, i) => {
       const page = pages[i]
       if (!slide || !page) return
-      for (const [slot, query, text] of [['image', page.photoQuery, page.imagePrompt], ['image2', page.photo2Query, page.image2Prompt]] as Array<['image' | 'image2', string | undefined, string | undefined]>) {
-        if (!query && !text) continue
+      for (const [slot, text] of [['image', page.imagePrompt], ['image2', page.image2Prompt]] as Array<['image' | 'image2', string | undefined]>) {
+        if (!text) continue
         jobs.push(
-          loadProPhoto(query, text)
+          loadProPhoto(text)
             .then((photo) => {
               if (!photo) return
               photo.credit.startsWith('Ảnh minh hoạ') ? photoCount.ai++ : photoCount.commons++

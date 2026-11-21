@@ -1202,16 +1202,15 @@ export function SlideEditor({
   const applyAiSlide = async (page: AiSlidePayload, plan: DeckPlan) => {
     const added = await appendAiSlides([page], plan)
     const slide = added[0]
-    // Chế độ Chuyên nghiệp: AI mô tả ảnh, app vẽ ảnh chụp thật cho các bố cục biên tập
-    if (slide && (page.imagePrompt || page.image2Prompt || page.photoQuery || page.photo2Query)) {
-      const jobs: Array<['image' | 'image2', string | undefined, string | undefined]> = [
-        ['image', page.image ? undefined : page.photoQuery, page.image ? undefined : page.imagePrompt],
-        ['image2', page.image2 ? undefined : page.photo2Query, page.image2 ? undefined : page.image2Prompt],
+    // Chế độ Chuyên nghiệp: AI mô tả ảnh, app vẽ ảnh cho các bố cục biên tập
+    if (slide && (page.imagePrompt || page.image2Prompt)) {
+      const jobs: Array<['image' | 'image2', string | undefined]> = [
+        ['image', page.image ? undefined : page.imagePrompt],
+        ['image2', page.image2 ? undefined : page.image2Prompt],
       ]
-      for (const [slot, query, text] of jobs) {
-        if (!query && !text) continue
-        // ảnh tư liệu thật (Wikimedia Commons, có ghi nguồn) trước, không có thì vẽ ảnh AI
-        void loadProPhoto(query, text)
+      for (const [slot, text] of jobs) {
+        if (!text) continue
+        void loadProPhoto(text)
           .then(async (photo) => (photo ? { src: await uploadImage(photo.dataUrl), credit: photo.credit } : null))
           .then((done) => { if (done) setSlideImage(slide.id, done.src, slot, done.credit) })
           .catch(() => {})
