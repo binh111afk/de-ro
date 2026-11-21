@@ -19,6 +19,8 @@ export function SiteSelect<K extends string>({
   className,
   inline = false,
   searchable = false,
+  up = false,
+  triggerClassName,
 }: {
   value: K
   options: ReadonlyArray<SiteSelectOption<K>>
@@ -27,6 +29,10 @@ export function SiteSelect<K extends string>({
   className?: string
   inline?: boolean
   searchable?: boolean
+  /** danh sách mở lên trên nút (nút nằm sát đáy khung) */
+  up?: boolean
+  /** thay kiểu mặc định của nút (vd nút nhỏ trong thanh công cụ) */
+  triggerClassName?: string
 }) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
@@ -104,14 +110,14 @@ export function SiteSelect<K extends string>({
           setOpen(!open)
         }}
         onKeyDown={inline && open ? moveFocus : undefined}
-        className={cn(
+        className={triggerClassName ?? cn(
           'flex w-full items-center justify-between rounded-[6px] border border-line-2 bg-white font-semibold text-ink transition-all duration-200 hover:border-ink-4 focus:border-clay focus:outline-none focus:ring-2 focus:ring-clay/15',
           inline ? 'h-8 gap-2 px-2 text-[13px]' : 'h-11 gap-3 px-4 text-[14.5px]',
         )}
       >
         <span className="truncate">{selected?.label}</span>
         <ChevronDown
-          className={cn('size-4 shrink-0 text-ink-3 transition-transform duration-300', open && 'rotate-180')}
+          className={cn('shrink-0 transition-transform duration-200', triggerClassName ? 'size-3.5' : 'size-4 text-ink-3', open && 'rotate-180')}
         />
       </button>
 
@@ -119,7 +125,9 @@ export function SiteSelect<K extends string>({
         <div
           className={cn(
             'rounded-[8px] bg-surface p-1.5 shadow-float',
-            inline ? 'mt-1 w-full border border-line' : 'anim-pop absolute left-0 top-[calc(100%+8px)] z-30 w-max min-w-full',
+            inline ? 'mt-1 w-full border border-line'
+              : up ? 'anim-pop-up absolute bottom-[calc(100%+10px)] left-0 z-30 w-max min-w-[9.5rem] border border-line'
+              : 'anim-pop absolute left-0 top-[calc(100%+8px)] z-30 w-max min-w-full',
           )}
         >
           {searchable && (
@@ -158,7 +166,9 @@ export function SiteSelect<K extends string>({
                     onClick={() => pick(o)}
                     className={cn(
                       'flex w-full items-center justify-between rounded-[6px] text-left transition-colors',
-                      inline ? 'min-h-8 gap-2 px-2 py-1 text-[13px] break-words' : 'gap-6 whitespace-nowrap px-3.5 py-2.5 text-[14.5px]',
+                      inline ? 'min-h-8 gap-2 px-2 py-1 text-[13px] break-words'
+                        : up ? 'min-h-8 gap-4 whitespace-nowrap px-2.5 py-1.5 text-[13px]'
+                        : 'gap-6 whitespace-nowrap px-3.5 py-2.5 text-[14.5px]',
                       active ? 'bg-clay-soft font-semibold text-clay' : 'text-ink-2 hover:bg-sunken hover:text-ink',
                     )}
                   >

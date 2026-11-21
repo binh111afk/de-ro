@@ -974,6 +974,17 @@
 .anim-pop {
   animation: pop 0.4s var(--ease-bounce) both;
 }
+/* danh sách mở lên trên nút (nút nằm sát đáy khung): trượt nhẹ từ nút lên */
+@keyframes pop-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 6px, 0) scale(0.96);
+  }
+}
+.anim-pop-up {
+  transform-origin: bottom left;
+  animation: pop-up 0.18s var(--ease-soft, ease-out) both;
+}
 .anim-sheet {
   animation: sheet-in 0.6s var(--ease-soft) both;
 }
@@ -1013,6 +1024,7 @@
 @media (prefers-reduced-motion: reduce) {
   .anim-crawl,
   .anim-pop,
+  .anim-pop-up,
   .anim-tab-in,
   .ribbon-tab-page,
   .ai-attachment,

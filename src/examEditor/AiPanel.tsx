@@ -30,8 +30,8 @@ import { DECK_THEMES, PRO_THEMES } from '@/lib/slideTheme'
 import { designById } from '@/lib/slideDesigns'
 import { looksLikeEdit, parseEditCommands, type SlideEditOp } from '@/lib/slideEdit'
 import { buildSourcePack, isDocx, isPdf, pickedKey, type PickedSource, type SourcePack } from '@/lib/sources'
-import { BookOpen, Check, ChevronDown, Globe, RotateCcw, ThumbsDown, ThumbsUp } from 'lucide-react'
-import { ContextMenu, type MenuState } from './ContextMenu'
+import { BookOpen, Globe, RotateCcw, ThumbsDown, ThumbsUp } from 'lucide-react'
+import { SiteSelect } from '@/components/SiteSelect'
 import type { AiApplyResult } from '@/lib/aiDocContext'
 import { looksLikeComplaint, nearlySame, rememberAiTurn, reportAi } from '@/lib/aiFeedback'
 import { dialog } from '@/components/Dialog'
@@ -457,6 +457,10 @@ function ThinkingLine({ mode, intent }: { mode: AiMode; intent?: 'doc' | 'chat' 
 }
 
 const SLIDE_PRO_WARN_KEY = 'dethinhbien-slide-pro-warned'
+const SLIDE_MODES = [
+  { value: 'std', label: 'Tiêu chuẩn' },
+  { value: 'pro', label: 'Chuyên nghiệp' },
+] as const
 const WEB_WARN_KEY = 'dethinhbien-web-search-warned'
 
 /** Lịch sử hội thoại gửi kèm mỗi lượt gọi model. */
@@ -823,7 +827,6 @@ function AiConversation({
     setWebSearch(true)
   }
   const [slidePro, setSlidePro] = useState(false)
-  const [proMenu, setProMenu] = useState<MenuState>(null)
   useEffect(() => {
     if (!panelOpen) setSlidePro(false)
   }, [panelOpen])
@@ -1842,30 +1845,15 @@ function AiConversation({
               </button>
             ) : null}
             {mode === 'slide' ? (
-              <>
-                <button
-                  type="button"
-                  className={cn('ai-attach-btn', 'ai-attach-btn--label', slidePro && 'is-on')}
-                  aria-label="Chế độ slide"
-                  aria-haspopup="menu"
-                  onClick={(e) => {
-                    const r = e.currentTarget.getBoundingClientRect()
-                    const tick = <Check size={14} strokeWidth={2} />
-                    setProMenu({
-                      x: r.left,
-                      y: r.top - 84,
-                      items: [
-                        { label: 'Tiêu chuẩn', icon: slidePro ? undefined : tick, onClick: () => setSlidePro(false) },
-                        { label: 'Chuyên nghiệp', icon: slidePro ? tick : undefined, onClick: () => { if (!slidePro) void toggleSlidePro() } },
-                      ],
-                    })
-                  }}
-                >
-                  {slidePro ? 'Chuyên nghiệp' : 'Tiêu chuẩn'}
-                  <ChevronDown size={14} strokeWidth={2} />
-                </button>
-                <ContextMenu menu={proMenu} onClose={() => setProMenu(null)} />
-              </>
+              <SiteSelect
+                up
+                label="Chế độ slide"
+                value={slidePro ? 'pro' : 'std'}
+                options={SLIDE_MODES}
+                onChange={(v) => (v === 'pro' ? void toggleSlidePro() : setSlidePro(false))}
+                triggerClassName={cn('ai-attach-btn', 'ai-attach-btn--label', slidePro && 'is-on')}
+                className="shrink-0"
+              />
             ) : null}
             <input
               ref={fileRef}
