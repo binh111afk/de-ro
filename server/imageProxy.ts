@@ -20,6 +20,7 @@ import { json, readBody } from './http.js'
 import { LOGIN_REQUIRED, clientIp, guard, isLocal, userFromToken } from './guard.js'
 import { TOKENS_PER_POINT, addUsage, quotaMessage, readQuota, reserveQuota } from './aiQuota.js'
 import { assertPublicHttpsUrl } from './llmProxy.js'
+import { logAiCall } from './ops.js'
 
 /** điểm AI trừ cho mỗi ảnh vẽ thành công (ảnh tốn tiền nhà cung cấp như chữ) */
 const IMAGE_TOKENS = () => Math.max(0, Number(process.env.AI_IMAGE_POINTS ?? 5) || 0) * TOKENS_PER_POINT
@@ -220,9 +221,14 @@ export async function chargeAndGenerate(
     const errors: string[] = []
     let lastStatus = 502
     for (const config of configs) {
+      const t0 = Date.now()
       try {
         const dataUrl = await generate(config, prompt)
-        const [after] = await Promise.all([addUsage(userId, ip, cost, quota), release()])
+        const [after] = await Promise.all([
+          addUsage(userId, ip, cost, quota),
+          release(),
+          logAiCall({ userId, model: config.model, provider: 'image', ok: true, ms: Date.now() - t0, kind: 'image', billed: cost }),
+        ])
         return { dataUrl, quota: after }
       } catch (err) {
         lastStatus = err instanceof ImageError ? err.status : 502

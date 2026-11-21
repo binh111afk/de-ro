@@ -54,7 +54,7 @@ export async function readExamPages(
     const t0 = Date.now()
     const log = (ok: boolean, error: string | null, usage?: unknown) => {
       const u = usage as { prompt_tokens?: number; completion_tokens?: number } | undefined
-      return logAiCall({ userId, model: t.model, provider: t.provider, ok, error, promptTokens: u?.prompt_tokens, completionTokens: u?.completion_tokens, cost: costFromUsage(usage, t.provider), ms: Date.now() - t0 })
+      return logAiCall({ userId, model: t.model, provider: t.provider, ok, error, promptTokens: u?.prompt_tokens, completionTokens: u?.completion_tokens, cost: costFromUsage(usage, t.provider), ms: Date.now() - t0, kind: opts.text ? 'vision-source' : 'vision-bank' })
     }
     try {
       let content = ''
