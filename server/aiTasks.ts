@@ -110,13 +110,13 @@ function slideInput(raw: unknown): SlideTaskInput {
 function slideChat(raw: unknown): string | null {
   const o = slideInput(raw)
   if (o.variant !== 'plan' && o.variant !== 'chat' && o.variant !== 'html') return null
-  return buildSlideChatSystem({ variant: o.variant, pro: o.pro === true, ask: o.ask === true, contextSummary: str(o.contextSummary), webFound: str(o.webFound), ...sourceFields(o) })
+  return buildSlideChatSystem({ variant: o.variant, pro: o.pro === true, ask: o.ask === true, contextSummary: str(o.contextSummary), webFound: str(o.webFound), think: o.think === true, ...sourceFields(o) })
 }
 
 /** `bang-ve`: trợ lý bảng vẽ (hỏi đáp, hoặc nhận lệnh vẽ khi `ops`). */
 function bangVe(raw: unknown): string {
   const o = (raw ?? {}) as Record<string, unknown>
-  return buildBoardSystem({ ops: o.ops === true, contextSummary: str(o.contextSummary), ...sourceFields(o) })
+  return buildBoardSystem({ ops: o.ops === true, contextSummary: str(o.contextSummary), think: o.think === true, ...sourceFields(o) })
 }
 
 /** `slide-lo`: viết một nhóm slide liền nhau trong một lượt. */

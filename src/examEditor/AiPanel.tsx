@@ -560,34 +560,10 @@ function DeckProgress({
   live?: string
 }) {
   const shown = Math.max(done, written ?? 0)
-  const percent = total ? Math.round((shown / total) * 100) : 0
-  done = shown
   return (
-    <div className="ai-progress">
-      <div className="ai-progress-head">
-        <img
-          className="ai-thinking__anim"
-          src={aiThinkingAnim}
-          alt=""
-          aria-hidden="true"
-          width={22}
-          height={22}
-        />
-        <span>
-          {current ? `Đang viết: ${current}` : 'Đang chuẩn bị…'} · {done}/{total} slide
-        </span>
-      </div>
-      <div
-        className="ai-progress-bar"
-        role="progressbar"
-        aria-valuenow={done}
-        aria-valuemin={0}
-        aria-valuemax={total}
-      >
-        <span style={{ width: `${percent}%` }} />
-      </div>
-      {live ? <div className="ai-step__live ai-progress-live">{live}</div> : null}
-    </div>
+    <ActLog
+      steps={[{ label: 'Viết slide', state: 'active', note: `${shown}/${total} slide`, live: live ?? (current ? `Đang viết: ${current}` : undefined) }]}
+    />
   )
 }
 
@@ -1003,10 +979,10 @@ function AiConversation({
     setTurns((t) => [
       ...t,
       userTurn,
-      { id: botId, role: 'assistant', text: '', pending: true, intent, ...(mode === 'exam' ? { log: [] } : {}) },
+      { id: botId, role: 'assistant', text: '', pending: true, intent, log: [] },
     ])
-    // đề luôn hiện nhật ký suy nghĩ thật, kể cả lượt hỏi chuyện
-    const examSteps = mode === 'exam'
+    // mọi chế độ (đề, slide, bảng vẽ) hiện nhật ký suy nghĩ thật, kể cả lượt hỏi chuyện
+    const examSteps = true
     const patchTurn = (p: (turn: ChatTurn) => Partial<ChatTurn>) =>
       setTurns((t) => t.map((turn) => (turn.id === botId ? { ...turn, ...p(turn) } : turn)))
     const logSet = (f: (log: ActStep[]) => ActStep[]) => patchTurn((t) => (t.log ? { log: f(t.log) } : {}))
@@ -1090,7 +1066,7 @@ function AiConversation({
           setTurns((t) =>
             t.map((turn) =>
               turn.id === botId
-                ? { ...turn, text: lines.join('\n\n') + '\n\nBấm Ctrl+Z nếu muốn hoàn tác.', pending: false, intent: 'doc' }
+                ? { ...turn, text: lines.join('\n\n') + '\n\nBấm Ctrl+Z nếu muốn hoàn tác.', pending: false, intent: 'doc', log: undefined }
                 : turn,
             ),
           )
@@ -1161,7 +1137,7 @@ function AiConversation({
               if (phase === 'think') logSet((l) => closeLog(l, 'done', took))
               phase = 'write'
               phaseAt = Date.now()
-              logStart(intent === 'doc' ? 'Viết đề' : 'Trả lời')
+              logStart(intent !== 'doc' ? 'Trả lời' : mode === 'slide' ? 'Lập dàn ý' : mode === 'board' ? 'Chuẩn bị nét vẽ' : 'Viết đề')
             }
             if (Date.now() - liveAt < 200) return
             liveAt = Date.now()
@@ -1200,9 +1176,11 @@ function AiConversation({
         const note = phase === 'write' ? (n ? `${n} câu` : undefined) : phase === 'think' ? secs() : undefined
         logSet((l) => closeLog(l, 'done', note))
         // lượt hỏi chuyện không kèm sửa đề thì không có bước này
-        if (intent === 'doc' || /"(type|op)"\s*:/.test(res.content)) logStart('Đưa vào đề')
-        // nhường một khung hình để bước "Đưa vào đề" kịp hiện trước khi áp đề (việc áp chạy đồng bộ)
-        await new Promise((r) => setTimeout(r, 350))
+        // slide: thẻ dàn ý hiện ngay bên dưới nên không cần bước này
+        const apply = mode === 'board' ? /"ops"\s*:/.test(res.content) : mode === 'exam' && (intent === 'doc' || /"(type|op)"\s*:/.test(res.content))
+        if (apply) logStart(mode === 'board' ? 'Vẽ lên bảng' : 'Đưa vào đề')
+        // nhường một khung hình để bước kịp hiện trước khi áp (việc áp chạy đồng bộ)
+        if (apply) await new Promise((r) => setTimeout(r, 350))
       }
       controller.signal.throwIfAborted()
       if (mode === 'board') {
@@ -1223,7 +1201,7 @@ function AiConversation({
         }
         const text = [say.trim(), lines.length ? lines.map((l) => `• ${l}`).join('\n') : '', lines.length ? 'Bấm Ctrl+Z trên bảng nếu muốn hoàn tác.' : '']
           .filter(Boolean).join('\n\n')
-        patchTurn(() => ({ text, pending: false, intent: appliedOps ? 'doc' : 'chat' }))
+        patchTurn((t) => ({ text, pending: false, intent: appliedOps ? 'doc' : 'chat', ...(t.log ? { log: appliedOps ? closeLog(t.log, 'done') : undefined } : {}) }))
         return
       }
       if (mode === 'slide') {
@@ -1258,6 +1236,7 @@ function AiConversation({
                     plan,
                     planState: 'pending',
                     pending: false,
+                    ...(turn.log ? { log: closeLog(turn.log, 'done') } : {}),
                   }
                 : turn,
             ),
@@ -1269,7 +1248,7 @@ function AiConversation({
         setTurns((t) =>
           t.map((turn) =>
             turn.id === botId
-              ? { ...turn, text: summary ?? res.content, pending: false, intent: summary || slideDoc ? 'doc' : 'chat' }
+              ? { ...turn, text: summary ?? res.content, pending: false, intent: summary || slideDoc ? 'doc' : 'chat', ...(turn.log ? { log: summary || slideDoc ? closeLog(turn.log, 'done') : undefined } : {}) }
               : turn,
           ),
         )

@@ -140,6 +140,8 @@ export interface SlideChatInput extends SourceInput {
   ask?: boolean
   contextSummary?: string
   webFound?: string
+  /** lượt stream hiện nhật ký suy nghĩ: bắt suy nghĩ tiếng Việt */
+  think?: boolean
 }
 
 export function buildSlideChatSystem(i: SlideChatInput): string {
@@ -147,13 +149,14 @@ export function buildSlideChatSystem(i: SlideChatInput): string {
     i.variant === 'html'
       ? HTML_SYSTEM
       : (i.variant === 'plan' ? slidePlanSystem(i.pro) : SLIDE_SYSTEM + CHAT_MARKDOWN) + (i.ask ? ASK_RULE : '')
-  return head + (i.contextSummary ? `\nBài trình bày hiện tại: ${i.contextSummary}` : '') + sourceSection(i) + webSection(i.webFound)
+  return head + (i.contextSummary ? `\nBài trình bày hiện tại: ${i.contextSummary}` : '') + sourceSection(i) + webSection(i.webFound) + (i.think ? THINK_VI : '')
 }
 
 export interface BoardInput extends SourceInput {
   /** bảng vẽ nhận được lệnh vẽ của AI */
   ops?: boolean
   contextSummary?: string
+  think?: boolean
 }
 
 export function buildBoardSystem(i: BoardInput): string {
@@ -161,7 +164,8 @@ export function buildBoardSystem(i: BoardInput): string {
     BOARD_SYSTEM + CHAT_MARKDOWN +
     (i.ops ? BOARD_OPS_GUIDE : '') +
     (i.contextSummary ? `\nBảng vẽ hiện tại:\n${i.contextSummary}` : '') +
-    sourceSection(i)
+    sourceSection(i) +
+    (i.think ? THINK_VI : '')
   )
 }
 

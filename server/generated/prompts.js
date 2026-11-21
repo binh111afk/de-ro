@@ -13263,12 +13263,12 @@ var WEB_SEARCH_SYSTEM = "T\xECm tr\xEAn web th\xF4ng tin, s\u1ED1 li\u1EC7u m\u1
 function buildSlideChatSystem(i) {
   const head = i.variant === "html" ? HTML_SYSTEM : (i.variant === "plan" ? slidePlanSystem(i.pro) : SLIDE_SYSTEM + CHAT_MARKDOWN) + (i.ask ? ASK_RULE : "");
   return head + (i.contextSummary ? `
-B\xE0i tr\xECnh b\xE0y hi\u1EC7n t\u1EA1i: ${i.contextSummary}` : "") + sourceSection(i) + webSection(i.webFound);
+B\xE0i tr\xECnh b\xE0y hi\u1EC7n t\u1EA1i: ${i.contextSummary}` : "") + sourceSection(i) + webSection(i.webFound) + (i.think ? THINK_VI : "");
 }
 function buildBoardSystem(i) {
   return BOARD_SYSTEM + CHAT_MARKDOWN + (i.ops ? BOARD_OPS_GUIDE : "") + (i.contextSummary ? `
 B\u1EA3ng v\u1EBD hi\u1EC7n t\u1EA1i:
-${i.contextSummary}` : "") + sourceSection(i);
+${i.contextSummary}` : "") + sourceSection(i) + (i.think ? THINK_VI : "");
 }
 var buildSlideBatchSystem = (plan, indices, think, pro) => batchSystemPrompt(plan, indices, pro) + (think ? THINK_VI : "");
 var buildSlidePageSystem = (plan, index, pro) => pageSystemPrompt(plan, plan.slides[index], index, pro);
