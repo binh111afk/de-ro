@@ -1898,18 +1898,18 @@ function AiConversation({
                 <button
                   type="button"
                   className={cn('ai-attach-btn', slidePro && 'is-on')}
-                  data-tip={slidePro ? 'Chuyên nghiệp: đang bật' : 'Chuyên nghiệp'}
-                  aria-label="Chuyên nghiệp"
-                  aria-pressed={slidePro}
+                  data-tip={slidePro ? 'Chế độ: Chuyên nghiệp' : 'Chế độ: Tiêu chuẩn'}
+                  aria-label="Chế độ slide"
+                  aria-haspopup="menu"
                   onClick={(e) => {
-                    if (!slidePro) return void toggleSlidePro()
                     const r = e.currentTarget.getBoundingClientRect()
+                    const tick = <Check size={14} strokeWidth={2} />
                     setProMenu({
                       x: r.left,
                       y: r.top - 84,
                       items: [
-                        { label: 'Chuyên nghiệp', icon: <Check size={14} strokeWidth={2} /> },
-                        { label: 'Tiêu chuẩn', onClick: () => setSlidePro(false) },
+                        { label: 'Tiêu chuẩn', icon: slidePro ? undefined : tick, onClick: () => setSlidePro(false) },
+                        { label: 'Chuyên nghiệp', icon: slidePro ? tick : undefined, onClick: () => { if (!slidePro) void toggleSlidePro() } },
                       ],
                     })
                   }}
