@@ -823,7 +823,10 @@ export async function extractFile(name: string, data: Buffer, marks = false): Pr
     worker.once('exit', (code) => done({ error: code ? 'tiến trình đọc tệp bị dừng.' : 'không nhận được kết quả.' }))
   })
   if (out.ok) return out.ok
-  if (out.boot !== undefined) return extractFileDirect(name, data, marks)
+  if (out.boot !== undefined) {
+    console.warn('extract: worker không chạy, đọc trong tiến trình:', out.boot.slice(0, 300))
+    return extractFileDirect(name, data, marks)
+  }
   return fail(out.error ?? 'lỗi không rõ.')
 }
 
