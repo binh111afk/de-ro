@@ -78,6 +78,12 @@ try {
     console.log(`  subject=${result.subject} decorKit=${result.decorKit ?? '(app tự suy)'}`)
     console.log(`  graphics: ${result.graphics.map((g, k) => `${k + 1}:${g ?? '-'}`).join(' ')}`)
     if (result.tokens) console.log(`  tokens: ${result.tokens.calls} lượt gọi · vào ${result.tokens.prompt} · ra ${result.tokens.completion} (suy luận ${result.tokens.reasoning})`)
+    if (result.tokens && result.images) {
+      const text = (result.tokens.prompt + result.tokens.completion) / 1000
+      const ai = result.images.ai * 5
+      console.log(`  ảnh: ${result.images.commons} Commons (0 điểm) · ${result.images.ai} AI (${ai} điểm)`)
+      console.log(`  điểm ước tính: chữ ≈ ${text.toFixed(1)} (chưa trừ cache) + ảnh ${ai} ≈ ${(text + ai).toFixed(1)}`)
+    }
   }
 } finally {
   await server.close()

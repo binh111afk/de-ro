@@ -23,6 +23,7 @@ import type { Slide } from '@/store/docs'
 
 /** Cộng token thật của mọi lượt gọi /api/llm (usage do gateway trả) để biết một deck tốn bao nhiêu. */
 const tokens = { calls: 0, prompt: 0, completion: 0, reasoning: 0 }
+const photoCount = { commons: 0, ai: 0 }
 const realFetch = window.fetch.bind(window)
 window.fetch = async (...args: Parameters<typeof fetch>) => {
   const res = await realFetch(...args)
@@ -124,7 +125,11 @@ async function main() {
         if (!query && !text) continue
         jobs.push(
           loadProPhoto(query, text)
-            .then((photo) => { if (photo) built[i] = withImage(built[i]!, theme, photo.dataUrl, slot, photo.credit) })
+            .then((photo) => {
+              if (!photo) return
+              photo.credit.startsWith('Ảnh minh hoạ') ? photoCount.ai++ : photoCount.commons++
+              built[i] = withImage(built[i]!, theme, photo.dataUrl, slot, photo.credit)
+            })
             .catch(() => {}),
         )
       }
@@ -203,6 +208,7 @@ async function main() {
       return { x: r.left + scrollX, y: r.top + scrollY, w: r.width, h: r.height, layout: plan.slides[i]?.layout }
     }),
     tokens,
+    images: photoCount,
     planMs,
     totalMs: Math.round(performance.now() - t0),
   })
