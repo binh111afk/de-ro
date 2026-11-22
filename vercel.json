@@ -6,7 +6,7 @@
   "regions": ["sin1"],
   "functions": {
     "api/llm.ts": { "maxDuration": 300 },
-    "api/extract.ts": { "maxDuration": 60 },
+    "api/extract.ts": { "maxDuration": 300 },
     "api/image.ts": { "maxDuration": 120 },
     "api/figure-sprite.ts": { "maxDuration": 120 },
     "api/admin.ts": { "maxDuration": 300 }
