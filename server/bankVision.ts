@@ -71,6 +71,8 @@ export async function readExamPages(
             model: t.model,
             max_tokens: t.opencode ? 64_000 : MAX_TOKENS,
             ...(t.opencode ? { reasoning_effort: 'max' } : {}),
+            // chép chữ không cần suy luận: tắt thinking nhanh ~4 lần (12 s thay vì 45 s / 3 trang), không còn hết token trả rỗng
+            ...(t.provider === 'deepseek' ? { thinking: { type: 'disabled' } } : {}),
             messages: [{ role: 'user', content: [{ type: 'text', text: prompt }, ...pages.map((url) => ({ type: 'image_url', image_url: { url } }))] }],
           }),
           redirect: 'error',
