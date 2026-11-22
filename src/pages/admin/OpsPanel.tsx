@@ -35,6 +35,7 @@ import {
 } from '@/lib/adminApi'
 import { formatNumber, formatViDateTime, toDatetimeLocalString, toIsoString } from './adminUtils'
 import { cn } from '@/lib/cn'
+import { AiMarginCard } from './AiMarginCard'
 import { DbStatusCard } from './DbStatusCard'
 import { HealthDrawer, type HealthDrawerTarget } from './HealthDrawer'
 import { Switch } from './Switch'
@@ -808,6 +809,7 @@ export function OpsPanel({ me: _me }: OpsPanelProps) {
           </div>
         </div>
       </Card>
+      <AiMarginCard onNotice={showNotice} />
 
       {/* =========================================================================
           KHỐI 4: LỖI GẦN ĐÂY

@@ -18,6 +18,7 @@ import { readExamPages, VisionInputError } from './bankVision.js'
 import { CONTENT_ACTIONS } from './adminContent.js'
 import { BANK_ACTIONS } from './adminBank.js'
 import { STATS_ACTIONS } from './adminStats.js'
+import { AI_MARGIN_ACTIONS } from './adminAiMargin.js'
 import { PAYMENT_ACTIONS } from './adminPayments.js'
 import { presenceReturnStats, type PresenceReturnRow } from './presenceReturnStats.js'
 
@@ -243,6 +244,7 @@ const ACTIONS: ActionMap = {
   ...CONTENT_ACTIONS,
   ...BANK_ACTIONS,
   ...STATS_ACTIONS,
+  ...AI_MARGIN_ACTIONS,
   ...PAYMENT_ACTIONS,
 
   /** giao diện hỏi "tôi có quyền gì" để quyết định hiện trang hay 404 */
