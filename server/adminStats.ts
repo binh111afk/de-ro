@@ -6,6 +6,7 @@
  */
 import type { ActionMap } from './admin.js'
 import { call } from './admin.js'
+import { mapAdminFunnel, type AdminFunnelRaw } from './adminFunnel.js'
 
 interface DailyStatsRaw {
   day: string
@@ -26,6 +27,23 @@ interface StatsOverviewRaw {
 interface PresenceRow {
   user_id: string
   last_seen: string
+}
+
+async function readStatsUser(s: Parameters<typeof call>[0], userId: string) {
+  try {
+    const { data: user } = await call<{
+      email?: string
+      user_metadata?: { display_name?: string; full_name?: string; name?: string; avatar_url?: string; picture?: string }
+    }>(s, `/auth/v1/admin/users/${encodeURIComponent(userId)}`)
+    const metadata = user?.user_metadata
+    return {
+      email: user?.email ?? '',
+      name: metadata?.display_name || metadata?.full_name || metadata?.name || '',
+      avatar: metadata?.avatar_url || metadata?.picture || '',
+    }
+  } catch {
+    return { email: '', name: '', avatar: '' }
+  }
 }
 
 export const STATS_ACTIONS: ActionMap = {
@@ -70,6 +88,24 @@ export const STATS_ACTIONS: ActionMap = {
     },
   },
 
+  'stats.funnel': {
+    need: 'admin',
+    run: async ({ s }, b) => {
+      const days = b.days === 7 || b.days === 30 || b.days === 90 ? b.days : 0
+      const { data } = await call<AdminFunnelRaw | null>(s, '/rest/v1/rpc/admin_funnel', {
+        method: 'POST',
+        body: JSON.stringify({ p_days: days }),
+      })
+      const funnel = mapAdminFunnel(data, days)
+      const hot = await Promise.all(funnel.hot.map(async (row) => {
+        if (!row.userId) return row
+        const { email, name } = await readStatsUser(s, row.userId)
+        return { ...row, email, name }
+      }))
+      return { ...funnel, hot }
+    },
+  },
+
   /** Số lượng và danh sách tối đa 20 người dùng đang online (có nhịp trong vòng 2 phút) */
   'stats.online': {
     need: 'admin',
@@ -86,26 +122,11 @@ export const STATS_ACTIONS: ActionMap = {
 
       const users = await Promise.all(
         (rows || []).slice(0, 20).map(async (r) => {
-          let email = ''
-          let name = ''
-          let avatar = ''
-          try {
-            const { data: u } = await call<{
-              id: string
-              email?: string
-              user_metadata?: { display_name?: string; full_name?: string; name?: string; avatar_url?: string; picture?: string }
-            }>(ctx.s, `/auth/v1/admin/users/${r.user_id}`)
-            email = u?.email ?? ''
-            const m = u?.user_metadata
-            name = m?.display_name || m?.full_name || m?.name || email.split('@')[0] || ''
-            avatar = m?.avatar_url || m?.picture || ''
-          } catch {
-            // bỏ qua lỗi nếu không đọc được user
-          }
+          const { email, name, avatar } = await readStatsUser(ctx.s, r.user_id)
           return {
             userId: r.user_id,
             email,
-            name,
+            name: name || email.split('@')[0] || '',
             avatar,
             lastSeen: r.last_seen,
           }

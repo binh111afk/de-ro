@@ -3,6 +3,7 @@
  * Gọi server bằng `post(action, body, read)` từ './adminApi'; dữ liệu giả khi `isAdminMock()` (dùng `wait`).
  */
 import { post, isAdminMock, wait } from './adminApi'
+import type { FunnelDays, FunnelSteps } from './adminFunnel'
 
 export interface DailyStat {
   day: string // 'YYYY-MM-DD'
@@ -35,6 +36,13 @@ export interface StatsOnline {
   onlineCount: number
   emails: string[]
   users: OnlineUser[]
+}
+
+export interface StatsFunnel {
+  days: FunnelDays
+  steps: FunnelSteps
+  weeks: Array<FunnelSteps & { week: string }>
+  hot: Array<{ userId: string; email: string; name: string; calls: number; billed: number }>
 }
 
 // ---------- Dữ liệu giả ----------
@@ -108,6 +116,22 @@ function mockStatsOnline(): StatsOnline {
   }
 }
 
+function mockStatsFunnel(days: FunnelDays): StatsFunnel {
+  const weekCount = days === 0 ? 12 : Math.min(12, Math.ceil(days / 7))
+  const monday = new Date()
+  monday.setUTCDate(monday.getUTCDate() - (monday.getUTCDay() + 6) % 7)
+  const weeks = Array.from({ length: weekCount }, (_, i) => ({
+    week: new Date(monday.getTime() - i * 7 * 86_400_000).toISOString().slice(0, 10),
+    signedUp: 12, returned: 8, made: 5, usedAi: 4, paid: 1,
+  }))
+  return {
+    days,
+    steps: { signedUp: 12 * weekCount, returned: 8 * weekCount, made: 5 * weekCount, usedAi: 4 * weekCount, paid: weekCount },
+    weeks,
+    hot: [{ userId: 'mock-funnel-1', email: 'giaovien1@example.com', name: 'Giáo viên 1', calls: 18, billed: 23_000 }],
+  }
+}
+
 // ---------- API ----------
 
 /**
@@ -126,4 +150,9 @@ export function getStatsOverview(days: 7 | 30 | 90 = 7): Promise<StatsOverview> 
 export function getStatsOnline(): Promise<StatsOnline> {
   if (isAdminMock()) return wait(mockStatsOnline())
   return post<StatsOnline>('stats.online', {}, false)
+}
+
+export function getStatsFunnel(days: FunnelDays): Promise<StatsFunnel> {
+  if (isAdminMock()) return wait(mockStatsFunnel(days))
+  return post<StatsFunnel>('stats.funnel', { days }, true)
 }

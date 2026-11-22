@@ -18,12 +18,15 @@ import { Segmented } from '@/components/Segmented'
 import {
   getStatsOverview,
   getStatsOnline,
+  getStatsFunnel,
+  type StatsFunnel,
   type StatsOverview,
   type StatsOnline,
   type OnlineUser,
 } from '@/lib/adminStatsApi'
 import type { AdminMe } from '@/lib/adminApi'
-import { formatNumber, shortenId } from './adminUtils'
+import { FUNNEL_STEPS, funnelPercentages, type FunnelDays } from '@/lib/adminFunnel'
+import { formatNumber, formatViDate, shortenId } from './adminUtils'
 import { Portal } from '@/components/Portal'
 import { Avatar } from '@/components/Avatar'
 import { cn } from '@/lib/cn'
@@ -41,6 +44,134 @@ function formatRelativeTime(iso: string | null | undefined): string {
   if (secs < 60) return `${secs} giây trước`
   const mins = Math.floor(secs / 60)
   return `${mins} phút trước`
+}
+
+const funnelLabels = {
+  signedUp: { bar: 'Đăng ký', column: 'Đăng ký' },
+  returned: { bar: 'Quay lại', column: 'Quay lại' },
+  made: { bar: 'Đã tạo nội dung', column: 'Tạo nội dung' },
+  usedAi: { bar: 'Đã dùng AI', column: 'Dùng AI' },
+  paid: { bar: 'Đã nạp tiền', column: 'Nạp' },
+}
+
+const funnelPercentFormat = new Intl.NumberFormat('vi-VN', { maximumFractionDigits: 1 })
+
+function formatFunnelPercent(percent: number | null) {
+  return percent === null ? '—' : `${funnelPercentFormat.format(percent)}%`
+}
+
+function FunnelCard() {
+  const [days, setDays] = useState<'0' | '7' | '30' | '90'>('0')
+  const [data, setData] = useState<StatsFunnel | null>(null)
+  const [failed, setFailed] = useState(false)
+
+  useEffect(() => {
+    let current = true
+    void getStatsFunnel(Number(days) as FunnelDays).then(
+      (value) => { if (current) setData(value) },
+      () => { if (current) setFailed(true) },
+    )
+    return () => { current = false }
+  }, [days])
+
+  return (
+    <Card as="section" className="space-y-5 border border-line p-4 sm:p-5">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-[14px] font-semibold text-ink">Phễu người dùng</h2>
+        <Segmented
+          value={days}
+          onChange={(value) => {
+            if (value === days) return
+            setData(null)
+            setFailed(false)
+            setDays(value)
+          }}
+          label="Khoảng thời gian phễu"
+          options={[
+            { key: '0', label: 'Tất cả' },
+            { key: '7', label: '7 ngày' },
+            { key: '30', label: '30 ngày' },
+            { key: '90', label: '90 ngày' },
+          ]}
+        />
+      </div>
+
+      {failed ? (
+        <p role="alert" className="py-8 text-center text-[13px] text-ink-3">Không tải được phễu người dùng.</p>
+      ) : !data ? (
+        <div role="status" className="flex h-44 items-center justify-center gap-2 text-[13px] text-ink-3">
+          <Spinner className="size-4" />
+          Đang tải phễu…
+        </div>
+      ) : (
+        <>
+          <ol className="space-y-3">
+            {funnelPercentages(data.steps).map(({ key, count, fromSignup }) => (
+              <li key={key} className="grid gap-1.5 text-[13px]">
+                <div className="flex justify-between gap-3">
+                  <span className="font-medium text-ink">{funnelLabels[key].bar}</span>
+                  <span className="tnum whitespace-nowrap text-ink-3">
+                    <span className="font-semibold text-ink">{formatNumber(count)}</span>{' '}
+                    ({formatFunnelPercent(fromSignup)})
+                  </span>
+                </div>
+                <div aria-hidden="true" className="h-2 overflow-hidden rounded-full bg-sunken">
+                  <div className="h-full rounded-full bg-sage/80" style={{ width: `${fromSignup ?? 0}%` }} />
+                </div>
+              </li>
+            ))}
+          </ol>
+
+          <div className="overflow-x-auto">
+            <table className="w-full whitespace-nowrap text-[13px]">
+              <caption className="sr-only">Phễu theo tuần đăng ký</caption>
+              <thead className="border-b border-line text-ink-3">
+                <tr>
+                  <th scope="col" className="py-2 pr-3 text-left font-medium">Tuần bắt đầu</th>
+                  {FUNNEL_STEPS.map((key) => (
+                    <th key={key} scope="col" className="py-2 pl-3 text-right font-medium">{funnelLabels[key].column}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-line-2">
+                {data.weeks.length === 0 ? (
+                  <tr><td colSpan={6} className="py-3 text-ink-4">Chưa có dữ liệu theo tuần.</td></tr>
+                ) : data.weeks.map((week, index) => (
+                  <tr key={week.week || index}>
+                    <th scope="row" className="py-2 pr-3 text-left font-medium text-ink">{formatViDate(week.week)}</th>
+                    {funnelPercentages(week).map(({ key, count, fromSignup }) => (
+                      <td key={key} className="tnum py-2 pl-3 text-right text-ink">
+                        {formatNumber(count)} <span className="text-ink-3">({formatFunnelPercent(fromSignup)})</span>
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="border-t border-line pt-4">
+            <h3 className="text-[14px] font-semibold text-ink">Dùng AI nhiều, chưa nạp</h3>
+            {data.hot.length === 0 ? (
+              <p className="mt-2 text-[13px] text-ink-4">Chưa có người dùng.</p>
+            ) : (
+              <ul className="mt-1 divide-y divide-line-2">
+                {data.hot.map((user, index) => (
+                  <li key={user.userId || index} className="flex justify-between gap-3 py-2 text-[13px]">
+                    <span className="min-w-0 break-all text-ink">
+                      {user.email || shortenId(user.userId)}
+                      {user.name && <span className="text-ink-3"> ({user.name})</span>}
+                    </span>
+                    <span className="tnum shrink-0 text-ink-3">{formatNumber(user.calls)} lượt</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </>
+      )}
+    </Card>
+  )
 }
 
 export function StatsPanel({ me: _me }: StatsPanelProps) {
@@ -458,6 +589,8 @@ export function StatsPanel({ me: _me }: StatsPanelProps) {
           * Đề tạo trước ngày bật thống kê không có ngày tạo nên không tính.
         </p>
       </div>
+
+      <FunnelCard />
 
       {/* Modal danh sách người dùng đang online */}
       {showOnlineModal ? (
