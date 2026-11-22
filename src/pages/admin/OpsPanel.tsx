@@ -41,6 +41,7 @@ import { Switch } from './Switch'
 import { AnnouncementsEditor } from './AnnouncementsEditor'
 
 import { WelcomePointsCard } from './WelcomePointsCard'
+import { AiFeedbackCard } from './AiFeedbackCard'
 
 interface OpsPanelProps {
   me?: AdminMe
@@ -809,6 +810,7 @@ export function OpsPanel({ me: _me }: OpsPanelProps) {
         </div>
       </Card>
 
+      {_me?.role === 'admin' ? <AiFeedbackCard /> : null}
       {/* =========================================================================
           KHỐI 4: LỖI GẦN ĐÂY
           ========================================================================= */}
