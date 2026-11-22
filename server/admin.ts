@@ -19,6 +19,7 @@ import { CONTENT_ACTIONS } from './adminContent.js'
 import { BANK_ACTIONS } from './adminBank.js'
 import { STATS_ACTIONS } from './adminStats.js'
 import { PAYMENT_ACTIONS } from './adminPayments.js'
+import { presenceReturnStats, type PresenceReturnRow } from './presenceReturnStats.js'
 
 const MODEL_NAME = /^[\w.:/-]+$/
 
@@ -259,8 +260,9 @@ const ACTIONS: ActionMap = {
       const users = data.users ?? []
       const total = Number(res.headers.get('x-total-count') ?? data.total ?? users.length)
       const ids = users.map((u) => u.id)
-      const since = new Date(Date.now() - 2 * 60_000).toISOString()
-      const [stats, flags, presence] = ids.length
+      const now = Date.now()
+      const since = new Date(now - 2 * 60_000).toISOString()
+      const [stats, flags, presence, returns] = ids.length
         ? await Promise.all([
             call<Array<{ user_id: string; docs: number; decks: number; tokens: number; role: Role | null }>>(s, '/rest/v1/rpc/admin_user_stats', {
               method: 'POST',
@@ -273,14 +275,19 @@ const ACTIONS: ActionMap = {
             call<Array<{ user_id: string }>>(s, `/rest/v1/presence?user_id=in.(${ids.join(',')})&last_seen=gte.${encodeURIComponent(since)}&select=user_id`)
               .then((r) => r.data ?? [])
               .catch(() => []),
+            call<PresenceReturnRow[]>(s, `/rest/v1/presence?user_id=in.(${ids.join(',')})&select=user_id,visits,active_days,first_day`)
+              .then((r) => r.data ?? [])
+              .catch(() => []),
           ])
-        : [[], [], []]
+        : [[], [], [], []]
       const byId = new Map(stats.map((x) => [x.user_id, x]))
       const flagById = new Map(flags.map((f) => [f.user_id, f]))
       const onlineIds = new Set(presence.map((r) => r.user_id))
+      const returnById = new Map(returns.map((r) => [r.user_id, r]))
       const rows = users.map((u) => ({
         ...toRow(u, byId.get(u.id), flagById.get(u.id)),
         online: onlineIds.has(u.id),
+        ...presenceReturnStats(returnById.get(u.id), now),
       }))
       rows.sort((a, b) => Number(b.online) - Number(a.online))
       return { users: rows, total, page, perPage }

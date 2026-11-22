@@ -21,6 +21,9 @@ export interface AdminUser {
   /** URL ảnh đại diện; null = chưa đặt */
   avatar: string | null
   online?: boolean
+  visits: number
+  returnDays: number
+  returnRate: number | null
   /** ISO */
   createdAt: string
   lastSignInAt: string | null

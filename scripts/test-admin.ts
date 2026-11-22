@@ -17,6 +17,7 @@ const ROLES: Record<string, string> = { [ADMIN]: 'admin', [MOD]: 'moderator', [A
 let adminBanned = false
 let noCreditRow = false
 let presenceUnavailable = false
+let returnColumnsUnavailable = false
 const calls: string[] = []
 const LISTED = '44444444-4444-4444-8444-444444444444'
 const PRIVATE = '55555555-5555-4555-8555-555555555555'
@@ -58,6 +59,12 @@ globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
     if (presenceUnavailable) return new Response('{}', { status: 503 })
     const params = new URL(url).searchParams
     const ids = params.get('user_id')?.match(/^in\.\((.*)\)$/)?.[1]?.split(',')
+    if (params.get('select') === 'user_id,visits,active_days,first_day') {
+      if (returnColumnsUnavailable) return new Response('{"code":"42703"}', { status: 400 })
+      return ok(ids?.includes(USER)
+        ? [{ user_id: USER, visits: 5, active_days: 3, first_day: '2020-01-01' }]
+        : [])
+    }
     const since = Date.parse(params.get('last_seen')?.match(/^gte\.(.*)$/)?.[1] ?? '')
     const now = Date.now()
     const rows = [
@@ -166,10 +173,25 @@ check('users.list lấy tên hiển thị + ảnh đại diện', u?.name === 'C
 check('users.list gửi filter email', calls.some((c) => c.includes('/auth/v1/admin/users?') && c.includes('filter=u%40')))
 
 const onlineList = await hit({ action: 'users.list' }, 'tAdmin')
-const onlineUsers = onlineList.data.users as Array<{ id: string; online: boolean }> | undefined
+type ListedUser = { id: string; online: boolean; visits: number; returnDays: number; returnRate: number | null }
+const onlineUsers = onlineList.data.users as ListedUser[] | undefined
 check('users.list gắn online trong 2 phút và giữ thứ tự trong từng nhóm', onlineList.status === 200 &&
   onlineUsers?.map((row) => row.id).join(',') === [ADMIN2, ADMIN, USER, MOD].join(',') &&
   onlineUsers.every((row, i) => row.online === (i < 2)))
+
+const returningUser = onlineUsers?.find((row) => row.id === USER)
+check('users.list ghép số quay lại cho người dùng offline', returningUser?.online === false &&
+  returningUser.visits === 5 && returningUser.returnDays === 2 &&
+  returningUser.returnRate != null && returningUser.returnRate > 0)
+check('users.list trả tỉ lệ null khi không có dòng presence', onlineUsers?.find((row) => row.id === MOD)?.returnRate === null)
+
+returnColumnsUnavailable = true
+const beforeMigration = await hit({ action: 'users.list' }, 'tAdmin')
+returnColumnsUnavailable = false
+const beforeMigrationUsers = beforeMigration.data.users as typeof onlineUsers
+check('users.list vẫn trả người dùng online khi chưa có các cột quay lại', beforeMigration.status === 200 &&
+  beforeMigrationUsers?.map((row) => row.id).join(',') === [ADMIN2, ADMIN, USER, MOD].join(',') &&
+  beforeMigrationUsers.every((row, i) => row.online === (i < 2) && row.returnRate === null))
 
 presenceUnavailable = true
 const offlineList = await hit({ action: 'users.list' }, 'tAdmin')

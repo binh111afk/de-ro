@@ -57,6 +57,7 @@
     "test:shuffle": "tsx --tsconfig tsconfig.app.json scripts/test-shuffle.ts",
     "test:ma-tran": "tsx --tsconfig tsconfig.app.json scripts/check-ma-tran.ts",
     "test:admin": "tsx scripts/test-admin.ts",
+    "test:return-rate": "tsx scripts/test-return-rate.ts",
     "test:ai-abuse": "tsx scripts/test-ai-abuse.ts",
     "test:ai-stream": "tsx scripts/test-ai-stream.ts",
     "test:ai-chat-history": "tsx scripts/test-ai-chat-history.ts",

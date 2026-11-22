@@ -145,6 +145,7 @@ export function UsersPanel({ me: _me }: UsersPanelProps) {
                 <th className="px-4 py-3">Người dùng</th>
                 <th className="px-4 py-3">Ngày tạo</th>
                 <th className="px-4 py-3">Đăng nhập gần nhất</th>
+                <th className="whitespace-nowrap px-4 py-3 text-right">Quay lại</th>
                 <th className="px-4 py-3 text-right">Số đề</th>
                 <th className="px-4 py-3 text-right">Số slide</th>
                 <th className="px-4 py-3">Trạng thái</th>
@@ -154,14 +155,14 @@ export function UsersPanel({ me: _me }: UsersPanelProps) {
             <tbody className="divide-y divide-line-2">
               {loading && users.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="py-16 text-center text-ink-3">
+                  <td colSpan={8} className="py-16 text-center text-ink-3">
                     <Spinner className="mr-2 text-ink-3" />
                     <span>Đang tải danh sách người dùng…</span>
                   </td>
                 </tr>
               ) : users.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="py-12">
+                  <td colSpan={8} className="py-12">
                     <EmptyState
                       icon={<Users className="size-6 text-ink-4" />}
                       title="Không tìm thấy người dùng"
@@ -214,6 +215,13 @@ export function UsersPanel({ me: _me }: UsersPanelProps) {
                       {/* Đăng nhập gần nhất */}
                       <td className="tnum whitespace-nowrap px-4 py-3 text-ink-2">
                         {u.lastSignInAt ? formatViDateTime(u.lastSignInAt) : 'Chưa từng'}
+                      </td>
+
+                      <td className="tnum whitespace-nowrap px-4 py-3 text-right font-medium text-ink-2">
+                        {u.visits > 0 ? u.returnDays : '—'}
+                        {u.returnRate != null && (
+                          <span className="hidden text-ink-3 xl:inline"> · {Math.round(u.returnRate * 100)}%</span>
+                        )}
                       </td>
 
                       {/* Số đề */}
@@ -610,6 +618,18 @@ function UserDetailDrawer({
                 <span className="block text-[12px] text-ink-3">Đăng nhập gần nhất</span>
                 <span className="font-medium text-ink">
                   {user.lastSignInAt ? formatViDateTime(user.lastSignInAt) : 'Chưa từng'}
+                </span>
+              </div>
+              <div>
+                <span className="block text-[12px] text-ink-3">Số lần quay lại</span>
+                <span className="tnum font-medium text-ink">
+                  {user.visits > 0 ? `${user.returnDays} (${user.visits} phiên)` : '—'}
+                </span>
+              </div>
+              <div>
+                <span className="block text-[12px] text-ink-3">Tỉ lệ quay lại</span>
+                <span className="tnum font-medium text-ink">
+                  {user.returnRate == null ? '—' : `${Math.round(user.returnRate * 100)}%`}
                 </span>
               </div>
               <div>

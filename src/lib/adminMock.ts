@@ -36,6 +36,9 @@ const MOCK_USERS: AdminUser[] = Array.from({ length: 57 }, (_, i) => ({
   docs: (i * 7) % 23,
   decks: (i * 3) % 6,
   tokensThisMonth: (i * 13_337) % 160_000,
+  visits: i % 5 === 4 ? 0 : 1 + 2 * (i % 9),
+  returnDays: i % 5 === 4 ? 0 : i % 9,
+  returnRate: i % 5 === 4 ? null : (i % 9) / 8,
   flag:
     i === 7
       ? { strikes: 2, lastAt: '2026-11-09T08:12:00Z', lastAction: 'users.list', lastIp: '203.0.113.7' }
