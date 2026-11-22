@@ -49,7 +49,7 @@ export function AdminLayout({ me }: AdminLayoutProps) {
 
   return (
     <div className="w-full max-w-full overflow-x-clip">
-      <div className="mx-auto max-w-[1280px] px-4 py-6 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8">
         {/* Thanh tiêu đề quản trị trên cùng */}
         <header className="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-line pb-4">
           <div className="flex min-w-0 items-center gap-3">

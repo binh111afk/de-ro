@@ -60,7 +60,8 @@ export function UsersPanel({ me: _me }: UsersPanelProps) {
   const [debouncedSearch, setDebouncedSearch] = useState('')
   const [loading, setLoading] = useState(true)
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null)
-  const perPage = 20
+  const [pageSize, setPageSize] = useState<'15' | '30'>('15')
+  const perPage = Number(pageSize)
 
   // Debounce tÃ¬m kiáº¿m 400ms
   useEffect(() => {
@@ -94,11 +95,11 @@ export function UsersPanel({ me: _me }: UsersPanelProps) {
     } finally {
       setLoading(false)
     }
-  }, [debouncedSearch, page, selectedUser])
+  }, [debouncedSearch, page, perPage, selectedUser])
 
   useEffect(() => {
     void loadUsers()
-  }, [debouncedSearch, page])
+  }, [debouncedSearch, page, perPage])
 
   const totalPages = Math.max(1, Math.ceil(total / perPage))
 
@@ -267,9 +268,18 @@ export function UsersPanel({ me: _me }: UsersPanelProps) {
         </div>
 
         {/* PhÃ¢n trang */}
-        {totalPages > 1 ? (
-          <div className="border-t border-line px-4 py-3">
-            <Pager page={page} pages={totalPages} go={(p) => setPage(p)} />
+        {total > 15 ? (
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line px-4 py-3">
+            <Segmented
+              label="SÑ dòng m×i trang"
+              value={pageSize}
+              options={[{ key: '15', label: '15' }, { key: '30', label: '30' }]}
+              onChange={(v) => {
+                setPageSize(v)
+                setPage(1)
+              }}
+            />
+            {totalPages > 1 ? <Pager page={page} pages={totalPages} go={(p) => setPage(p)} /> : null}
           </div>
         ) : null}
       </Card>
