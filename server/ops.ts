@@ -171,15 +171,26 @@ export async function logAiFeedback(f: AiFeedback): Promise<boolean> {
 }
 
 /** Chi phí từ usage của opencode (`usage.opencode.list_cost`, USD) nếu có. */
-export function costFromUsage(usage: unknown, provider?: string): number | null {
+export function costFromUsage(usage: unknown, provider?: string, at: Date = new Date()): number | null {
   const v = (usage as { opencode?: { list_cost?: unknown } } | undefined)?.opencode?.list_cost
   if (typeof v === 'number' && Number.isFinite(v)) return v
-  return provider ? estimateCost(usage, provider) : null
+  return provider ? estimateCost(usage, provider, at) : null
+}
+
+/** DeepSeek deepseek-flash (api-docs.deepseek.com/quick_start/pricing): giờ thấp điểm bằng một nửa giờ cao điểm. */
+const DEEPSEEK_PEAK: [number, number, number] = [0.3, 0.006, 1.2]
+const DEEPSEEK_OFF_PEAK: [number, number, number] = [0.15, 0.003, 0.6]
+
+/** Cao điểm: thứ Hai–thứ Sáu, 01:00–04:00 và 06:00–10:00 UTC. Không biết ngày lễ Trung Quốc (ngày đó tính cao hơn thật). */
+export function isDeepseekPeak(at: Date): boolean {
+  const day = at.getUTCDay()
+  const hour = at.getUTCHours()
+  return day >= 1 && day <= 5 && ((hour >= 1 && hour < 4) || (hour >= 6 && hour < 10))
 }
 
 /** Giá ước tính USD / 1 triệu token: [đầu vào, đầu vào trúng cache, đầu ra]. Đặt lại bằng env AI_PRICE_<NHÀ_CUNG_CẤP>="vào,cache,ra". */
 const DEFAULT_PRICE: Record<string, [number, number, number]> = {
-  deepseek: [0.27, 0.027, 1.1],
+  deepseek: DEEPSEEK_PEAK,
   opencode: [0.27, 0.27, 1.1],
   fosta: [0.27, 0.27, 1.1],
   anyrouter: [0.27, 0.27, 1.1],
@@ -188,7 +199,7 @@ const DEFAULT_PRICE: Record<string, [number, number, number]> = {
 }
 
 /** Provider không báo giá (mọi nơi trừ opencode): ước theo token × bảng giá. Không có usage thì null. */
-export function estimateCost(usage: unknown, provider: string): number | null {
+export function estimateCost(usage: unknown, provider: string, at: Date = new Date()): number | null {
   const u = usage as
     | { prompt_tokens?: number; completion_tokens?: number; input_tokens?: number; output_tokens?: number; prompt_cache_hit_tokens?: number; prompt_tokens_details?: { cached_tokens?: number } }
     | undefined
@@ -197,7 +208,7 @@ export function estimateCost(usage: unknown, provider: string): number | null {
   if (inTok + outTok <= 0 || !Object.hasOwn(DEFAULT_PRICE, provider)) return null
   const raw = process.env[`AI_PRICE_${provider.toUpperCase()}`]
   const fromEnv = raw ? raw.split(',').map((part) => part.trim() ? Number(part) : NaN) : []
-  const p = fromEnv.length === 3 && fromEnv.every((n) => Number.isFinite(n) && n >= 0) ? (fromEnv as [number, number, number]) : DEFAULT_PRICE[provider]
+  const p = fromEnv.length === 3 && fromEnv.every((n) => Number.isFinite(n) && n >= 0) ? (fromEnv as [number, number, number]) : provider === 'deepseek' && !isDeepseekPeak(at) ? DEEPSEEK_OFF_PEAK : DEFAULT_PRICE[provider]
   const cached = Math.min(inTok, Math.max(0, Number(u?.prompt_cache_hit_tokens ?? u?.prompt_tokens_details?.cached_tokens) || 0))
   return ((inTok - cached) * p[0] + cached * p[1] + outTok * p[2]) / 1_000_000
 }
