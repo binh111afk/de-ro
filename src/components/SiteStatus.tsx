@@ -4,11 +4,12 @@
  * - `maintenance`: người thường thấy trang "Đang bảo trì"; admin/moderator vẫn dùng bình thường.
  *   Trang đăng nhập và /admin luôn mở để admin vào tắt bảo trì. Server cũng chặn AI/upload (server/ops.ts).
  */
-import { useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Wrench } from 'lucide-react'
 import { getMe, getSettings, isAdminMock, type AppSettings } from '@/lib/adminApi'
-import { AnnouncementPopup } from '@/components/AnnouncementPopup'
+import { activeAnnouncements, AnnouncementPopup, seenAnnouncementsThisVisit } from '@/components/AnnouncementPopup'
+import { useWelcomeGift, WelcomeGiftPopup } from '@/components/WelcomeGiftPopup'
 import { useSession } from '@/lib/useSession'
 
 const BASE = import.meta.env.VITE_SUPABASE_URL as string
@@ -29,13 +30,14 @@ const OPEN_PATHS = ['/dang-nhap', '/quen-mat-khau', '/dat-lai-mat-khau', '/admin
 export function SiteStatus({ children }: { children: ReactNode }) {
   const { pathname } = useLocation()
   const session = useSession()
-  const [st, setSt] = useState<AppSettings | null>(null)
+  const [st, setSt] = useState<AppSettings | null>()
   const [staff, setStaff] = useState(false)
+  const [announcementSeen, setAnnouncementSeen] = useState(seenAnnouncementsThisVisit)
 
   useEffect(() => {
     fetchSettings()
       .then(setSt)
-      .catch(() => {})
+      .catch(() => setSt(null))
   }, [])
 
   // chỉ hỏi quyền khi đang bảo trì và đã đăng nhập (đỡ gọi /api/admin cho mọi người)
@@ -52,6 +54,13 @@ export function SiteStatus({ children }: { children: ReactNode }) {
   }, [maintenanceOn, session])
 
   const blocked = maintenanceOn && !staff && !OPEN_PATHS.some((p) => pathname.startsWith(p))
+  const announcementItems = !blocked && pathname === '/' ? st?.announcements.items : undefined
+  const announcement = useMemo(() => {
+    if (announcementSeen || !announcementItems) return null
+    const asOf = Date.now()
+    return activeAnnouncements(announcementItems, asOf).length ? { items: announcementItems, asOf } : null
+  }, [announcementItems, announcementSeen])
+  const { gift, closeGift } = useWelcomeGift(blocked ? undefined : session?.user, st !== undefined && !announcement)
 
   return (
     <>
@@ -63,7 +72,11 @@ export function SiteStatus({ children }: { children: ReactNode }) {
           </Link>
         </div>
       ) : null}
-      {pathname === '/' && !blocked && st ? <AnnouncementPopup items={st.announcements.items} /> : null}
+      {gift ? (
+        <WelcomeGiftPopup key={gift.userId} points={gift.points} onClose={closeGift} />
+      ) : announcement ? (
+        <AnnouncementPopup items={announcement.items} asOf={announcement.asOf} onDismiss={() => setAnnouncementSeen(true)} />
+      ) : null}
       {blocked ? <Maintenance message={st?.maintenance.message} until={st?.maintenance.until} /> : children}
     </>
   )

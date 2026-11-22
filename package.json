@@ -67,7 +67,8 @@
     "test:admin-bank": "tsx scripts/test-admin-bank.ts",
     "test:bank-json": "tsx --tsconfig tsconfig.app.json scripts/test-bank-json.ts",
     "test:admin-stats": "tsx scripts/test-admin-stats.ts",
-    "test:pricing": "tsx scripts/test-pricing.mjs"
+    "test:pricing": "tsx scripts/test-pricing.mjs",
+    "test:welcome-gift": "tsx --tsconfig tsconfig.app.json scripts/test-welcome-gift.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.6.0",

@@ -13,7 +13,7 @@ import { cn } from '@/lib/cn'
 const SEEN_KEY = 'announcements-seen'
 const MAX_SHOWN = 5
 
-function seenThisVisit() {
+export function seenAnnouncementsThisVisit() {
   try {
     return sessionStorage.getItem(SEEN_KEY) === '1'
   } catch {
@@ -21,15 +21,19 @@ function seenThisVisit() {
   }
 }
 
+export function activeAnnouncements(items: Announcement[], now = Date.now()) {
+  return items.filter((a) => a.on && (!a.until || Date.parse(a.until) > now)).slice(0, MAX_SHOWN)
+}
+
 /** `onPreviewClose` = admin đang xem thử: luôn hiện, không ghi nhớ, nút Dùng thử không chuyển trang. */
-export function AnnouncementPopup({ items, onPreviewClose }: { items: Announcement[]; onPreviewClose?: () => void }) {
+export function AnnouncementPopup({ items, onPreviewClose, onDismiss, asOf }: { items: Announcement[]; onPreviewClose?: () => void; onDismiss?: () => void; asOf?: number }) {
   const preview = !!onPreviewClose
   const navigate = useNavigate()
-  const [closed, setClosed] = useState(() => !preview && seenThisVisit())
+  const [closed, setClosed] = useState(() => !preview && seenAnnouncementsThisVisit())
   const [page, setPage] = useState(0)
   const touchX = useRef<number | null>(null)
 
-  const shown = useMemo(() => items.filter((a) => a.on && (!a.until || Date.parse(a.until) > Date.now())).slice(0, MAX_SHOWN), [items])
+  const shown = useMemo(() => activeAnnouncements(items, asOf), [items, asOf])
   const count = shown.length
   const open = !closed && count > 0
 
@@ -41,6 +45,7 @@ export function AnnouncementPopup({ items, onPreviewClose }: { items: Announceme
     } catch {
       /* bỏ qua */
     }
+    onDismiss?.()
   }
   const go = (delta: number) => setPage((p) => Math.min(count - 1, Math.max(0, p + delta)))
 
