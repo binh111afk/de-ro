@@ -1,5 +1,7 @@
 /** Slide — hiển thị phần tử (chữ tự co, hình, biểu đồ, ảnh thu nhỏ slide). */
-import { useEffect, useId, useLayoutEffect, useReducer, useRef, useState } from 'react'
+import { useContext, useEffect, useId, useLayoutEffect, useReducer, useRef, useState } from 'react'
+import { Button } from '@/components/ui'
+import { withImage } from '@/lib/slideAi'
 import { parseSlideVideo } from '@/lib/slideVideo'
 import { slideBgStyle } from '@/lib/slideBackground'
 import { FRAME_PLACEHOLDER, photoFrameClip, photoFrameRadius, shapeClipOf } from '@/lib/slideShapes'
@@ -16,6 +18,8 @@ import { HtmlSlideFrame } from './HtmlSlide'
 import { readableTextOn, type ResolvedTheme } from '@/lib/slideTheme'
 import { readableElements } from '@/lib/slideContrast'
 import { revealStyle, slideMathHtml, decorStyle } from './SlideEditor'
+import { SlideImageContext, useSlideImagePresentation } from './slideImageContext'
+import { slideImageElementIds, type SlideImageSlot } from './slideImageStatus'
 
 export function SlideFooterView({
   footer,
@@ -69,8 +73,9 @@ export function SlideThumb({
       style={{ ...slideBgStyle(slide), ...decorStyle(theme) }}
     >
       {readableElements(slide, theme).map((el) => (
-        <SlideElView key={el.id} el={el} theme={theme} />
+        <SlideElView key={el.id} el={el} theme={theme} slideId={slide.id} />
       ))}
+      <SlideImageStatuses slide={slide} theme={theme} />
       <SlideFooterView footer={footer} slide={slide} slideIndex={slideIndex} theme={theme} />
     </div>
   )
@@ -474,7 +479,62 @@ export function imageStyleParts(el: SlideElement, theme: ResolvedTheme) {
   return { clip, frameRadius, borderW, borderColor, borderStyle, borderRadius, cssBorder, polygonBorder, shadowFilter }
 }
 
-export function SlideElView({ el, theme, revealStep, live, embedded }: { el: SlideElement; theme: ResolvedTheme; revealStep?: number; live?: boolean; embedded?: boolean }) {
+export function SlideImageStatuses({ slide, theme, editable }: { slide: Slide; theme: ResolvedTheme; editable?: boolean }) {
+  const jobs = useContext(SlideImageContext)?.jobs
+  if (!jobs) return null
+
+  return (Object.keys(slideImageElementIds) as SlideImageSlot[]).map(slot => {
+    const status = jobs.status(slide.id, slot)
+    if (!status) return null
+    const isSlot = (el: SlideElement) => el.type === 'image' && slideImageElementIds[slot].some(id => id === el.id)
+    const existing = slide.elements.find(isSlot)
+    if (existing?.src) return null
+    // Bìa, đồ hoạ bên cạnh chữ và số nổi bật có thể chưa có phần tử ảnh.
+    // Lấy khung từ bố cục khi có ảnh, chỉ để hiển thị trạng thái.
+    const el = existing ?? withImage(slide, theme, 'preview', slot).elements.find(isSlot)
+    if (!el) return null
+    const { clip, borderRadius } = imageStyleParts(el, theme)
+
+    return (
+      <div
+        key={slot}
+        className={cn('slide-img-status', status === 'pending' && 'slide-img-pending', !existing && 'slide-img-preview')}
+        style={{
+          left: `${el.x}%`,
+          top: `${el.y}%`,
+          width: `${el.w}%`,
+          height: `${el.h}%`,
+          fontSize: `max(5px, ${Math.min(2.5, el.w * 0.08)}cqw)`,
+          clipPath: clip,
+          borderRadius,
+          transform: elTransform(el),
+        }}
+      >
+        <span className="slide-img-label" role={editable ? 'status' : undefined}>
+          {status === 'pending' ? 'Đang vẽ ảnh…' : 'Chưa vẽ được ảnh'}
+        </span>
+        {editable && status === 'failed' && (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="slide-img-retry"
+            onPointerDown={(event) => event.stopPropagation()}
+            onClick={(event) => {
+              event.stopPropagation()
+              void jobs.retry(slide.id, slot)
+            }}
+          >
+            Vẽ lại
+          </Button>
+        )}
+      </div>
+    )
+  })
+}
+
+export function SlideElView({ el, theme, revealStep, live, embedded, slideId }: { el: SlideElement; theme: ResolvedTheme; revealStep?: number; live?: boolean; embedded?: boolean; slideId?: string }) {
+  const { status, fadeOnLoad } = useSlideImagePresentation(slideId, el.id, el.type === 'image' ? el.src : undefined)
   const style: React.CSSProperties = embedded ? { position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' } : {
     position: 'absolute',
     left: `${el.x}%`,
@@ -586,7 +646,8 @@ export function SlideElView({ el, theme, revealStep, live, embedded }: { el: Sli
           alignItems: 'center',
           justifyContent: 'center',
           // khung chờ ảnh ở bản xem là panel theme (nét đứt chỉ có ở bản chỉnh sửa)
-          background: el.src ? undefined : `linear-gradient(135deg, ${theme.surface} 0 48%, ${theme.accent}22 48% 54%, ${theme.surface} 54% 100%)`,
+          // đang vẽ / vẽ lỗi: nền phẳng, vì vạch chéo của khung chờ dễ nhầm với một lỗi hiển thị
+          background: el.src ? undefined : status ? theme.surface : `linear-gradient(135deg, ${theme.surface} 0 48%, ${theme.accent}22 48% 54%, ${theme.surface} 54% 100%)`,
           border: parts.cssBorder ?? (el.src || parts.clip ? undefined : `1px solid ${theme.accent}66`),
           borderRadius: parts.polygonBorder ? 0 : parts.borderRadius,
           clipPath: parts.frameRadius ? undefined : parts.clip,
@@ -599,8 +660,8 @@ export function SlideElView({ el, theme, revealStep, live, embedded }: { el: Sli
         }}
       >
         {el.src ? (
-          <img src={el.src} alt="" style={imageImgStyle(el.crop, el.imagePosition)} />
-        ) : parts.clip ? (
+          <img key={el.src} src={el.src} alt="" style={imageImgStyle(el.crop, el.imagePosition)} onLoad={fadeOnLoad} />
+        ) : status ? null : parts.clip ? (
           <img src={FRAME_PLACEHOLDER} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         ) : (
           'Ảnh minh hoạ'

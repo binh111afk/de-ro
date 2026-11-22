@@ -17,6 +17,7 @@ import { elementHeight } from '@/lib/slideText'
 import { readableTextOn, type ResolvedTheme } from '@/lib/slideTheme'
 import { uploadImage } from '@/lib/mediaStore'
 import { MathCell, clamp } from './SlideEditor'
+import { useSlideImagePresentation } from './slideImageContext'
 import { fontStack, ConnectorSvg, shapeCss, isHollowShape, HOLLOW_HIT, shapeInner, ShapeText, ChartView, AutoFitText, imageImgStyle, imageStyleParts, VideoView, SlideElView } from './slideRender'
 
 export const FRAME_HOVER = 'slide-frame-hover'
@@ -217,6 +218,7 @@ export const HANDLE_DIRS: ResizeDir[] = ['nw', 'n', 'ne', 'e', 'se', 's', 'sw', 
 
 export function EditableEl({
   el,
+  slideId,
   theme,
   selected,
   onSelect,
@@ -238,6 +240,7 @@ export function EditableEl({
   onPaintApply,
 }: {
   el: SlideElement
+  slideId: string
   theme: ResolvedTheme
   selected: boolean
   onSelect: () => void
@@ -268,6 +271,7 @@ export function EditableEl({
   formatPainterActive?: boolean
   onPaintApply?: () => void
 }) {
+  const { status, fadeOnLoad } = useSlideImagePresentation(slideId, el.id, el.type === 'image' ? el.src : undefined)
   const movedRef = useRef(false)
   const [imageBusy, setImageBusy] = useState(false)
   const [imageError, setImageError] = useState<string | null>(null)
@@ -964,17 +968,21 @@ export function EditableEl({
           />
         ) : el.src ? (
           <img
+            key={el.src}
             src={el.src}
             alt=""
             style={imageImgStyle(el.crop, el.imagePosition)}
-            onLoad={(e) => setNatSize({ w: e.currentTarget.naturalWidth, h: e.currentTarget.naturalHeight })}
+            onLoad={(e) => {
+              fadeOnLoad?.(e)
+              setNatSize({ w: e.currentTarget.naturalWidth, h: e.currentTarget.naturalHeight })
+            }}
             onDoubleClick={() => {
               // ảnh vẽ bằng công cụ Đồ thị: nhấp đúp mở lại modal để sửa
               const doc = readToolDoc(el.src)
               if (doc) setPlotEdit(doc)
             }}
           />
-        ) : parts.clip ? (
+        ) : status ? null : parts.clip ? (
           <img src={FRAME_PLACEHOLDER} alt="" className="pointer-events-none h-full w-full object-cover" />
         ) : (
           <div className="flex flex-col items-center gap-1 px-1 text-center">

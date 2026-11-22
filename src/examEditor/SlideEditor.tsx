@@ -7,7 +7,7 @@
  * Model dữ liệu (`Deck` / `Slide` / `SlideElement`) nằm ở `store/docs.ts`.
  */
 import { dialog } from '@/components/Dialog'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { ColorPalette } from './ColorPalette'
 import { SelectionToolbar } from './SelectionToolbar'
@@ -45,7 +45,9 @@ import { AiPanel } from './AiPanel'
 import { AiDock } from './Layout'
 import { SlideRibbon, type SlideRibbonTab } from './SlideRibbon'
 import { attachToAi } from '@/lib/aiAttach'
-import { SlideThumb, SlideElView, SlideFooterView, elTransform } from './slideRender'
+import { SlideThumb, SlideElView, SlideFooterView, SlideImageStatuses, elTransform } from './slideRender'
+import { SlideImageContext } from './slideImageContext'
+import { SlideImageJobs, type SlideImageSlot } from './slideImageStatus'
 import { InkLayer, PresentToolbar, PresenterWindow, usePresentTools } from './PresentTools'
 import { GroupToolbar, SnapGuides, EditableEl, setSnapEnabled } from './slideEditParts'
 
@@ -287,6 +289,9 @@ export function SlideEditor({
   const historyRef = useRef<{ past: Deck[]; future: Deck[] }>({ past: [], future: [] })
   /** deck mới nhất — ảnh AI tạo xong sau ~20s không được ghi đè sửa đổi trong lúc chờ */
   const deckRef = useRef(deck)
+  const [, refreshImageStatus] = useState(0)
+  const imageJobs = useMemo(() => new SlideImageJobs(() => refreshImageStatus(revision => revision + 1)), [deck.id])
+  const activeImageJobs = useRef<SlideImageJobs | null>(null)
   /** vừa kéo/resize/xoay: bỏ qua cú click kế tiếp rơi ra ngoài phần tử */
   const didDragRef = useRef(false)
   /** kéo trên nền slide để quét chọn nhiều phần tử (giống Canva) — toạ độ % của slide */
@@ -301,9 +306,18 @@ export function SlideEditor({
   /** theme đã điền đủ token — deck cũ chỉ có bg/fg/accent vẫn dựng đúng */
   const theme = useMemo(() => normalizeTheme(deck.theme), [deck.theme])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    activeImageJobs.current = imageJobs
+    return () => {
+      activeImageJobs.current = null
+      imageJobs.clear()
+    }
+  }, [imageJobs])
+
+  useLayoutEffect(() => {
     deckRef.current = deck
-  }, [deck])
+    imageJobs.removeMissingSlides(new Set(deck.slides.map(slide => slide.id)))
+  }, [deck, imageJobs])
 
   const currentSlide = useMemo(
     () => slides.find((s) => s.id === selectedSlideId) ?? slides[0] ?? null,
@@ -465,6 +479,7 @@ export function SlideEditor({
 
   const removeSlide = (id: string) => {
     const next = deck.slides.filter((s) => s.id !== id)
+    imageJobs.removeMissingSlides(new Set(next.map(slide => slide.id)))
     commitDeck({ ...deck, slides: next })
     if (selectedSlideId === id) {
       setSelectedSlideId(next[0]?.id ?? null)
@@ -1057,6 +1072,7 @@ export function SlideEditor({
   const appendAiSlides = async (pages: AiSlidePayload[], plan?: DeckPlan): Promise<Slide[]> => {
     if (!pages.length) return []
     await ensureFonts({ theme: plan?.theme ? themeById(plan.theme) : normalizeTheme(deckRef.current.theme), slides: [] })
+    if (activeImageJobs.current !== imageJobs) return []
     // Bài giảng HTML không trộn với slide PPT: dựng PPT mới thì bỏ các slide HTML.
     if (deckRef.current.format === 'html') {
       deckRef.current = { ...deckRef.current, format: undefined, slides: [] }
@@ -1137,6 +1153,7 @@ export function SlideEditor({
   /** Người dùng chọn "Ghi đè": xoá hết slide cũ (hoàn tác được), slide mới sinh ra bắt đầu từ deck rỗng. */
   const clearSlides = () => {
     const next: Deck = { ...deck, format: undefined, slides: [] }
+    imageJobs.clear()
     commitDeck(next)
     deckRef.current = next
     setSelectedSlideId(null)
@@ -1183,51 +1200,55 @@ export function SlideEditor({
   }
 
   /** Ghi ảnh AI vào slide theo deck mới nhất lúc ảnh về (slide có thể đã được sửa/xoá). */
-  const setSlideImage = (slideId: string, image: string, slot: 'image' | 'image2' = 'image', credit?: string) => {
+  const setSlideImage = (slideId: string, image: string, slot: SlideImageSlot, credit?: string) => {
     const latest = deckRef.current
     const slide = latest.slides.find((s) => s.id === slideId)
-    if (!slide) return
+    if (!slide || activeImageJobs.current !== imageJobs) return false
+    const next = withImage(slide, normalizeTheme(latest.theme), image, slot, credit)
+    if (next === slide) return false
     historyRef.current.past = [...historyRef.current.past, latest].slice(-50)
     historyRef.current.future = []
-    const slides = latest.slides.map((s) => (s.id === slideId ? withImage(s, normalizeTheme(latest.theme), image, slot, credit) : s))
+    const slides = latest.slides.map((s) => (s.id === slideId ? next : s))
     deckRef.current = { ...latest, slides }
     updateDeck({ slides })
+    return true
   }
 
   /**
    * Đường 26b: mỗi trang xong được chèn NGAY (đúng thứ tự); ảnh AI mất 45–90 giây
-   * nên sinh nền sau rồi thay vào — bìa và layout ảnh. Lỗi provider thì giữ
-   * nguyên đồ hoạ/icon đang có.
+   * nên xếp hàng vẽ ảnh sau cho bìa và bố cục ảnh.
    */
   const applyAiSlide = async (page: AiSlidePayload, plan: DeckPlan) => {
     const added = await appendAiSlides([page], plan)
     const slide = added[0]
+    if (!slide || activeImageJobs.current !== imageJobs || !deckRef.current.slides.some(s => s.id === slide.id)) return
     // Chế độ Chuyên nghiệp: AI mô tả ảnh, app vẽ ảnh cho các bố cục biên tập
-    if (slide && (page.imagePrompt || page.image2Prompt)) {
-      const jobs: Array<['image' | 'image2', string | undefined]> = [
+    if (page.imagePrompt || page.image2Prompt) {
+      const jobs: Array<[SlideImageSlot, string | undefined]> = [
         ['image', page.image ? undefined : page.imagePrompt],
         ['image2', page.image2 ? undefined : page.image2Prompt],
       ]
       for (const [slot, text] of jobs) {
-        if (!text) continue
-        void loadProPhoto(text)
-          .then(async (photo) => (photo ? { src: await uploadImage(photo.dataUrl), credit: photo.credit } : null))
-          .then((done) => { if (done) setSlideImage(slide.id, done.src, slot, done.credit) })
-          .catch(() => {})
+        if (!text?.trim()) continue
+        void imageJobs.start(slide.id, slot, async () => {
+          const photo = await loadProPhoto(text)
+          if (!photo) throw new Error('Thiếu mô tả ảnh')
+          return { src: await uploadImage(photo.dataUrl), credit: photo.credit }
+        }, ({ src, credit }) => setSlideImage(slide.id, src, slot, credit))
       }
       return
     }
-    if (!slide || page.image || !IMAGE_LAYOUTS.includes(page.layout ?? '')) return
+    if (page.image || !IMAGE_LAYOUTS.includes(page.layout ?? '')) return
     const palette = normalizeTheme(deckRef.current.theme).accent
     const isCover = page.layout === 'title'
     const bullets = page.bullets ?? page.steps ?? page.items ?? [page.subtitle ?? '']
     const orientation = isCover ? 'square' : page.layout === 'image-left' || page.layout === 'image-right' ? 'portrait' : 'landscape'
     const prompt = buildImagePrompt(page.title, bullets, orientation, palette)
-    // Provider hay quá hạn/lỗi thoáng qua: thử lại một lần trong cùng lượt hàng đợi.
-    void queueImage(() => generateSlideImage(prompt).catch(() => generateSlideImage(prompt)))
-      .then((generated) => uploadImage(generated.dataUrl))
-      .then((src) => setSlideImage(slide.id, src))
-      .catch(() => {})
+    void imageJobs.start(slide.id, 'image', async () => {
+      // Provider hay quá hạn/lỗi thoáng qua: thử lại một lần trong cùng lượt hàng đợi.
+      const generated = await queueImage(() => generateSlideImage(prompt).catch(() => generateSlideImage(prompt)))
+      return { src: await uploadImage(generated.dataUrl) }
+    }, ({ src }) => setSlideImage(slide.id, src, 'image'))
   }
 
   /* ---------------------------------------------------------------- *
@@ -1269,6 +1290,7 @@ export function SlideEditor({
       )
     }
     return (
+      <SlideImageContext.Provider value={{ jobs: imageJobs }}>
       <div
         className="fixed inset-0 z-[100] select-none overflow-hidden bg-black touch-pan-y"
         onPointerDown={(e) => {
@@ -1348,16 +1370,17 @@ export function SlideEditor({
                     ) : null
                   return el.step ? (
                     <RevealLayer key={el.id} el={el} shown={el.step <= presentStep}>
-                      <SlideElView el={el} theme={theme} live />
+                      <SlideElView el={el} theme={theme} slideId={slide.id} live />
                       {linkHitbox}
                     </RevealLayer>
                   ) : (
                     <div key={el.id} style={{ display: 'contents' }}>
-                      <SlideElView el={el} theme={theme} revealStep={presentStep} live />
+                      <SlideElView el={el} theme={theme} slideId={slide.id} revealStep={presentStep} live />
                       {linkHitbox}
                     </div>
                   )
                 })}
+                <SlideImageStatuses slide={slide} theme={theme} />
                 <SlideFooterView footer={deck.footer} slide={slide} slideIndex={presentIndex} theme={theme} />
                 <InkLayer
                   tool={presentTools.tool}
@@ -1407,6 +1430,7 @@ export function SlideEditor({
           onNext={goNext}
         />
       </div>
+      </SlideImageContext.Provider>
     )
   }
 
@@ -1415,8 +1439,13 @@ export function SlideEditor({
    * ---------------------------------------------------------------- */
   return (
     // điện thoại: chừa chỗ cho thanh tab đáy (SlideSidePanel) để dải slide không bị che
+    <SlideImageContext.Provider value={{ jobs: imageJobs }}>
     <div className="slide-editor flex min-h-0 min-w-0 flex-1 flex-col max-sm:pb-14">
-      {printing && <PrintDeck slides={deck.slides} theme={theme} footer={deck.footer} onDone={() => setPrinting(false)} />}
+      {printing && (
+        <SlideImageContext.Provider value={null}>
+          <PrintDeck slides={deck.slides} theme={theme} footer={deck.footer} onDone={() => setPrinting(false)} />
+        </SlideImageContext.Provider>
+      )}
       {deck.format === 'html' ? (
         <HtmlDeckBar
           onSave={onSave}
@@ -1725,6 +1754,7 @@ export function SlideEditor({
                   <EditableEl
                     key={el.id}
                     el={el}
+                    slideId={currentSlide.id}
                     theme={theme}
                     selected={selectedElementId === el.id}
                     onSelect={() => selectEl(el)}
@@ -1773,6 +1803,7 @@ export function SlideEditor({
                     }}
                   />
                 ))}
+                <SlideImageStatuses slide={currentSlide} theme={theme} editable />
                 <SlideFooterView
                   footer={deck.footer}
                   slide={currentSlide}
@@ -1913,6 +1944,7 @@ export function SlideEditor({
       </AiDock>
       </div>
     </div>
+    </SlideImageContext.Provider>
   )
 }
 

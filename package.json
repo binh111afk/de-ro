@@ -43,6 +43,7 @@
     "test:slide-graphics": "tsx --tsconfig tsconfig.app.json scripts/test-slide-graphics.mjs",
     "test:slide-plan": "tsx --tsconfig tsconfig.app.json scripts/test-slide-plan.mjs",
     "test:slide-ai": "tsx --tsconfig tsconfig.app.json scripts/test-slide-ai.mjs",
+    "test:slide-image-status": "tsx --tsconfig tsconfig.app.json scripts/test-slide-image-status.mjs",
     "test:slide-edit": "tsx --tsconfig tsconfig.app.json scripts/test-slide-edit.mjs",
     "test:slide-anim": "tsx --tsconfig tsconfig.app.json scripts/test-slide-anim.mjs",
     "test:slide-rewrite": "tsx --tsconfig tsconfig.app.json scripts/test-slide-rewrite.mjs",
