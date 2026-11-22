@@ -30,6 +30,7 @@
     "test:docx": "tsx --tsconfig tsconfig.app.json scripts/test-docx.ts",
     "test:guard": "tsx scripts/test-guard.ts",
     "test:alerts": "tsx scripts/test-alerts.ts",
+    "test:ai-margin": "tsx scripts/test-ai-margin.ts",
     "test:ai-cost": "tsx scripts/test-ai-cost.ts",
     "test:payment": "tsx scripts/test-payment.ts",
     "compare:llm": "tsx scripts/compare-llm.ts",
