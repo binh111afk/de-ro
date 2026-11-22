@@ -172,6 +172,8 @@ async function createOrder(req: IncomingMessage, res: ServerResponse, userId: st
     },
   })
   if (r.code !== '00' || !r.data?.checkoutUrl) {
+    // chỉ ghi mã và lời PayOS trả (không có khoá), để biết vì sao tạo link lỗi
+    console.error('[pay] PayOS không tạo được link:', r.code, r.desc.slice(0, 200), 'order', orderCode, 'vnd', vnd)
     await db(`/payment_orders?order_code=eq.${orderCode}`, { method: 'PATCH', body: { status: 'failed' } })
     return json(res, 502, { error: 'Cổng thanh toán đang lỗi, thử lại sau ít phút.' })
   }
