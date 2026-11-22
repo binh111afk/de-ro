@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict'
-import { shouldShowWelcomeGift, welcomeGiftCount, WELCOME_GIFT_COUNT_MS } from '../src/lib/welcomeGift.ts'
+import { shouldShowWelcomeGift, welcomeGiftCount, WELCOME_GIFT_COUNT_MS, WELCOME_GIFT_SINCE } from '../src/lib/welcomeGift.ts'
 
-const now = Date.parse('2026-11-22T12:00:00Z')
-const eligible = { userId: 'user-a', createdAt: '2026-11-15T12:00:00Z', now, points: 80, unlimited: false, seen: false }
+const now = Date.parse('2026-11-29T12:00:00Z')
+const eligible = { userId: 'user-a', createdAt: '2026-11-22T12:00:00Z', now, points: 80, welcome: 80, unlimited: false, seen: false }
 const allowed = (overrides) => shouldShowWelcomeGift({ ...eligible, ...overrides })
 
 assert.equal(allowed(), true, 'Đúng bảy ngày vẫn đủ điều kiện')
@@ -16,7 +16,12 @@ assert.equal(allowed({ seen: true }), false)
 assert.equal(allowed({ userId: 'user-b', seen: false }), true)
 assert.equal(allowed({ unlimited: true }), false)
 for (const points of [0, -1, NaN, Infinity]) assert.equal(allowed({ points }), false)
-assert.equal(allowed({ points: 1 }), true)
+assert.equal(allowed({ points: 57 }), false, 'Đã dùng một phần quà thì không hiện')
+assert.equal(allowed({ points: 79 }), false)
+assert.equal(allowed({ points: 120 }), true, 'Có nạp thêm mà quà còn nguyên vẫn hiện')
+assert.equal(allowed({ welcome: 0 }), false, 'Admin đặt 0 điểm thì không có quà')
+assert.equal(allowed({ welcome: 100, points: 80 }), false, 'Quà hiện hành là 100 mà chỉ còn 80')
+assert.equal(allowed({ welcome: 50, points: 50 }), true)
 
 const duration = WELCOME_GIFT_COUNT_MS
 assert.equal(welcomeGiftCount(80, -1), 0)
@@ -34,3 +39,7 @@ for (let elapsed = 0; elapsed <= duration; elapsed += 1) {
   previous = count
 }
 console.log('Quà chào mừng: các ca điều kiện hiển thị và đếm điểm đều đạt.')
+
+assert.equal(allowed({ createdAt: new Date(WELCOME_GIFT_SINCE).toISOString(), now: WELCOME_GIFT_SINCE + 1000 }), true, 'Tạo đúng mốc phát hành vẫn hiện')
+assert.equal(allowed({ createdAt: new Date(WELCOME_GIFT_SINCE - 1).toISOString(), now: WELCOME_GIFT_SINCE + 1000 }), false, 'Đăng ký trước mốc phát hành thì không hiện')
+assert.equal(allowed({ createdAt: '2026-11-19T01:00:00Z', now: Date.parse('2026-11-22T12:00:00Z') }), false, 'Người đăng ký 19/11 không hiện')

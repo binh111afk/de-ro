@@ -6,6 +6,7 @@ import { Button } from '@/components/ui'
 import { apiFetch } from '@/lib/apiFetch'
 import { getAccountCreatedAt, getSession, type Session } from '@/lib/auth'
 import { aiPointsLeft, type AiQuota } from '@/lib/llm'
+import { loadPricing, WELCOME_POINTS } from '@/lib/pricing'
 import { isNewAccount, shouldShowWelcomeGift, welcomeGiftCount, WELCOME_GIFT_COUNT_MS } from '@/lib/welcomeGift'
 
 function hasSeenGift(key: string): boolean {
@@ -67,12 +68,14 @@ export function useWelcomeGift(user: Session['user'] | undefined, ready: boolean
       if (!response.ok) return
       const { quota, unlimited } = await response.json() as { quota: AiQuota | null; unlimited?: boolean }
       const points = quota ? aiPointsLeft(quota) : 0
+      await loadPricing()
+      const welcome = WELCOME_POINTS
 
       const show = () => {
         if (signal.aborted || getSession()?.user.id !== userId) return
         const seen = hasSeenGift(key)
-        if (!shouldShowWelcomeGift({ userId, createdAt: date, now: Date.now(), points, unlimited: !!unlimited, seen })) return
-        if (markGiftSeen(key)) flushSync(() => setGift({ userId, points }))
+        if (!shouldShowWelcomeGift({ userId, createdAt: date, now: Date.now(), points, welcome, unlimited: !!unlimited, seen })) return
+        if (markGiftSeen(key)) flushSync(() => setGift({ userId, points: welcome }))
       }
 
       await withGiftLock(key, signal, show)
