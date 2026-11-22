@@ -974,6 +974,62 @@
 .anim-pop {
   animation: pop 0.4s var(--ease-bounce) both;
 }
+
+.welcome-gift-dialog::backdrop {
+  background: color-mix(in oklab, var(--color-ink) 34%, transparent);
+  backdrop-filter: blur(2px);
+}
+
+.welcome-gift-card {
+  animation: welcome-gift-enter 450ms cubic-bezier(.22, 1.45, .5, 1) both;
+}
+
+.welcome-gift-glow {
+  animation: welcome-gift-glow 900ms ease-out 120ms both;
+}
+
+.welcome-gift-lid {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: welcome-gift-lid 560ms cubic-bezier(.19, 1.3, .4, 1) 130ms both;
+}
+
+.welcome-gift-particle {
+  fill: var(--color-clay-2);
+  animation: welcome-gift-confetti 740ms ease-out var(--welcome-gift-delay) both;
+}
+
+.welcome-gift-particles > :nth-child(3n + 1) > path { fill: var(--color-honey); }
+.welcome-gift-particles > :nth-child(3n + 2) > path { fill: var(--color-sage); }
+
+@keyframes welcome-gift-enter {
+  from { opacity: 0; transform: scale(.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes welcome-gift-glow {
+  0% { opacity: .2; }
+  45% { opacity: 1; }
+  100% { opacity: .64; }
+}
+
+@keyframes welcome-gift-lid {
+  from { transform: none; }
+  to { transform: translate(-10px, -30px) rotate(-12deg); }
+}
+
+@keyframes welcome-gift-confetti {
+  0% { opacity: 0; transform: scale(.45); }
+  28% { opacity: 1; }
+  65% { opacity: .8; }
+  100% { opacity: 0; transform: translate(var(--welcome-gift-x), var(--welcome-gift-y)) rotate(105deg) scale(.7); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .welcome-gift-card, .welcome-gift-glow, .welcome-gift-lid { animation: none; }
+  .welcome-gift-lid { transform: translate(-10px, -30px) rotate(-12deg); }
+  .welcome-gift-particles { display: none; }
+}
 /* danh sách mở lên trên nút (nút nằm sát đáy khung): trượt nhẹ từ nút lên */
 @keyframes pop-up {
   from {

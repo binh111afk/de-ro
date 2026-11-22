@@ -11,7 +11,7 @@ export interface Session {
   access_token: string
   refresh_token: string
   expires_at: number
-  user: { id: string; email: string; name?: string; avatar?: string }
+  user: { id: string; email: string; name?: string; avatar?: string; created_at?: string }
 }
 
 export class AuthError extends Error {}
@@ -68,15 +68,25 @@ function toVietnamese(data: Record<string, unknown>, status: number): string {
   return raw || 'Có lỗi xảy ra, thử lại sau.'
 }
 
-type RawUser = { id: string; email: string; user_metadata?: { display_name?: string; full_name?: string; name?: string; avatar_url?: string; picture?: string } }
+type RawUser = { id: string; email: string; created_at?: string; user_metadata?: { display_name?: string; full_name?: string; name?: string; avatar_url?: string; picture?: string } }
 
 function toUser(u: RawUser): Session['user'] {
   return {
     id: u.id,
     email: u.email,
+    created_at: u.created_at,
     name: u.user_metadata?.display_name || u.user_metadata?.full_name || u.user_metadata?.name || undefined,
     avatar: u.user_metadata?.avatar_url || u.user_metadata?.picture || undefined,
   }
+}
+
+/** Phiên đã lưu trước khi có created_at cần đọc lại ngày tạo từ Supabase. */
+export async function getAccountCreatedAt(userId: string): Promise<string | undefined> {
+  const session = await currentSession()
+  if (session?.user.id !== userId) return
+  if (session.user.created_at) return session.user.created_at
+  const user = await request<RawUser>('/user', { method: 'GET', token: session.access_token })
+  if (user.id === userId) return user.created_at
 }
 
 function toSession(data: Record<string, unknown>): Session {
