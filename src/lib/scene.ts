@@ -34,7 +34,7 @@ type P = [number, number]
 type ShapeKind = 'tròn' | 'elip' | 'hộp'
 type Cmd =
   | { t: 'seg'; a: string; b: string; dashed: boolean; arrow?: boolean }
-  | { t: 'poly'; names: string[] }
+  | { t: 'poly'; names: string[]; fill?: string }
   | { t: 'dim'; a: string; b: string; text: string }
   | { t: 'angle'; a: string; o: string; b: string; text: string }
   | { t: 'right'; a: string; o: string; b: string }
@@ -42,33 +42,70 @@ type Cmd =
   | { t: 'ground'; a: string; b: string; wall: boolean }
   | { t: 'sprite'; id: string; name: string; a: string; b?: string }
   | { t: 'shape'; kind: ShapeKind; o: string; rx: number; ry: number; text: string; dashed: boolean; fill: string; rounded: boolean }
+  | { t: 'arc'; kind: 'cung' | 'quạt'; o: string; r: number; start: number; sweep: number; text: string; dashed: boolean; fill: string }
   | { t: 'text'; o: string; text: string; large: boolean; bold: boolean }
 
 const NUM = String.raw`(-?\d+(?:[.,]\d+)?)`
 const toNum = (s: string) => Number(s.replace(',', '.'))
-const FREE = /^(tròn|elip|hộp|chữ|mũi\s+tên)(?=\s|$)/u
+const FREE = /^(tròn|elip|hộp|cung|quạt|chữ|mũi\s+tên)(?=\s|$)/u
 const QUOTED = /"([^"]*)"|“([^”]*)”/g
 const SIZE = new RegExp(`^${NUM}$`)
 const COLORS = new Map(Object.entries({
   đen: '#111111', đỏ: '#d62828', xanh: '#2563eb', lục: '#15803d', vàng: '#eab308',
   cam: '#ea580c', tím: '#7e22ce', hồng: '#db2777', xám: '#6b7280', nâu: '#92400e', trắng: '#ffffff',
 }))
+
+function parseFill(value: string | undefined, line: number): string {
+  const name = value?.toLowerCase()
+  if (!name) throw new Error(`Dòng ${line}: thiếu màu tô`)
+  const hex = COLORS.get(name) ?? name
+  if (!/^#[\da-f]{6}$/.test(hex)) throw new Error(`Dòng ${line}: màu tô không hợp lệ "${name}"`)
+  // Pha với trắng để màu vẫn che kín đoạn nối và chữ đen dễ đọc.
+  const channels = hex.slice(1).match(/../g)!
+  return '#' + channels.map((s) => Math.round(255 * 0.8 + parseInt(s, 16) * 0.2).toString(16)).join('')
+}
+
+function wrapDegrees(angle: number): number {
+  const rem = angle % 360
+  return rem < 0 ? rem + 360 : rem
+}
+
+function direction(angle: number): P {
+  const deg = wrapDegrees(angle)
+  if (deg === 0) return [1, 0]
+  if (deg === 90) return [0, 1]
+  if (deg === 180) return [-1, 0]
+  if (deg === 270) return [0, -1]
+  const rad = deg * Math.PI / 180
+  return [Math.cos(rad), Math.sin(rad)]
+}
+
+function arcPoint([x, y]: P, radius: number, angle: number): P {
+  const [dx, dy] = direction(angle)
+  return [x + radius * dx, y + radius * dy]
+}
+
 /** tách "ABC" / "A'B" / "A1B" thành tên điểm có trong bảng */
 function splitNames(s: string, pts: Map<string, P>, line: number): string[] {
+  // điểm khai báo ẩn nhãn (_A) mà lệnh viết thiếu dấu _ (AB) vẫn hiểu là _A, trừ khi có sẵn điểm A
+  const alias = new Map<string, string>()
+  for (const n of pts.keys()) if (n.startsWith('_') && n.length > 1 && !pts.has(n.slice(1))) alias.set(n.slice(1), n)
+  const real = (n: string) => (pts.has(n) ? n : alias.get(n))
   // viết tách "_G-_K" hoặc "A1-B2": mỗi phần là một tên
   if (s.includes('-'))
     return s.split('-').map((n) => {
-      if (!pts.has(n)) throw new Error(`Dòng ${line}: chưa khai báo điểm "${n}"`)
-      return n
+      const r = real(n)
+      if (!r) throw new Error(`Dòng ${line}: chưa khai báo điểm "${n}"`)
+      return r
     })
   const out: string[] = []
   let i = 0
   while (i < s.length) {
     // tên dài nhất khớp trước (A1, A', _M…)
     let hit = ''
-    for (const n of pts.keys()) if (s.startsWith(n, i) && n.length > hit.length) hit = n
+    for (const n of [...pts.keys(), ...alias.keys()]) if (s.startsWith(n, i) && n.length > hit.length) hit = n
     if (!hit) throw new Error(`Dòng ${line}: chưa khai báo điểm "${s.slice(i)}"`)
-    out.push(hit)
+    out.push(real(hit) as string)
     i += hit.length
   }
   return out
@@ -89,8 +126,9 @@ function parseFreeCmd(kind: string, rest: string, pts: Map<string, P>, line: num
     return { t: 'seg', a, b, dashed, arrow: true }
   }
 
+  const arc = kind === 'cung' || kind === 'quạt'
   const o = args.shift()
-  if (!o) return fail(`thiếu điểm đặt ${kind}`)
+  if (!o || (arc && SIZE.test(o))) return fail(arc ? `thiếu điểm tâm của ${kind}` : `thiếu điểm đặt ${kind}`)
   if (!pts.has(o)) fail(`chưa khai báo điểm "${o}"`)
   const label = (s: string) => s.startsWith('"') || s.startsWith('“')
   const unquote = (s: string) => s.slice(1, -1)
@@ -109,25 +147,36 @@ function parseFreeCmd(kind: string, rest: string, pts: Map<string, P>, line: num
     return n
   }
   const rx = kind === 'hộp' ? size('chiều rộng') / 2 : size('bán kính')
-  const ry = kind === 'tròn' ? rx : kind === 'hộp' ? size('chiều cao') / 2 : size('bán kính trục y')
+  const ry = kind === 'elip' ? size('bán kính trục y') : kind === 'hộp' ? size('chiều cao') / 2 : rx
+  let start = 0
+  let sweep = 0
+  if (arc) {
+    const angle = (name: string) => {
+      const value = args.shift()
+      if (!value || !SIZE.test(value) || !Number.isFinite(toNum(value))) return fail(`${name} phải là số`)
+      return toNum(value)
+    }
+    const from = angle('góc đầu')
+    const to = angle('góc cuối')
+    start = wrapDegrees(from)
+    const delta = to - from
+    if (delta >= 360) sweep = 360
+    else if (delta >= 0) sweep = delta
+    else sweep = wrapDegrees(Number.isFinite(delta) ? delta : wrapDegrees(to) - start) || 360
+  }
   let text: string | undefined
-  let fill = '#fff'
+  let fill = arc ? 'none' : '#fff'
   let dashed = false
   let rounded = false
   for (let i = 0; i < args.length; i++) {
     const opt = args[i]
-    if (label(opt) && text === undefined) text = unquote(opt)
+    if (label(opt) && kind !== 'quạt' && text === undefined) text = unquote(opt)
     else if (opt === 'đứt') dashed = true
     else if (opt === 'bo' && kind === 'hộp') rounded = true
-    else if (opt === 'tô') {
-      const name = args[++i]?.toLowerCase()
-      if (!name) return fail('thiếu màu tô')
-      const hex = COLORS.get(name) ?? (/^#[\da-f]{6}$/.test(name) ? name : fail(`màu tô không hợp lệ "${name}"`))
-      // Pha với trắng để màu vẫn che kín đoạn nối và chữ đen dễ đọc.
-      const channels = hex.slice(1).match(/../g)!
-      fill = '#' + channels.map((s) => Math.round(255 * 0.8 + parseInt(s, 16) * 0.2).toString(16)).join('')
-    } else fail(`tuỳ chọn ${kind} không hợp lệ "${opt}"`)
+    else if (opt === 'tô') fill = parseFill(args[++i], line)
+    else fail(`tuỳ chọn ${kind} không hợp lệ "${opt}"`)
   }
+  if (arc) return { t: 'arc', kind, o, r: rx, start, sweep, text: text ?? '', dashed, fill }
   return { t: 'shape', kind: kind as ShapeKind, o, rx, ry, text: text ?? '', dashed, fill, rounded }
 }
 
@@ -196,6 +245,13 @@ export function parseScene(text: string): { pts: Map<string, P>; cmds: Cmd[] } {
       const [a, b] = two(m[2])
       cmds.push({ t: 'ground', a, b, wall: kw === 'tường' })
     } else {
+      const filled = /^([A-Z_][A-Za-z0-9_'-]*)\s+tô(?:\s+(.*))?$/u.exec(l)
+      if (filled) {
+        const names = splitNames(filled[1], pts, line)
+        if (names.length < 3) throw new Error(`Dòng ${line}: đa giác cần ít nhất 3 điểm, vd. ABC`)
+        cmds.push({ t: 'poly', names, fill: parseFill(filled[2], line) })
+        return
+      }
       // danh sách đoạn / đa giác: "AB, BC" hoặc "ABCD"
       for (const part of head.split(/[,;]\s*|\s+/).filter(Boolean)) {
         const dashed = part.endsWith('*')
@@ -341,17 +397,35 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
     xs.push(x - c.rx, x + c.rx)
     ys.push(y - c.ry, y + c.ry)
   }
+  const arcs = cmds.filter((c) => c.t === 'arc')
+  for (const c of arcs) {
+    const center = pts.get(c.o)!
+    const angles = [c.start, c.start + c.sweep]
+    // Cực trị theo hai trục chỉ xuất hiện ở đầu mút hoặc góc phần tư nằm trên cung.
+    for (const angle of [0, 90, 180, 270]) {
+      if (wrapDegrees(angle - c.start) <= c.sweep) angles.push(angle)
+    }
+    for (const angle of angles) {
+      const [x, y] = arcPoint(center, c.r, angle)
+      xs.push(x)
+      ys.push(y)
+    }
+  }
   const labels = cmds.flatMap((c, i) => {
-    if ((c.t !== 'shape' && c.t !== 'text') || !c.text) return []
+    if ((c.t !== 'shape' && c.t !== 'text' && c.t !== 'arc') || !c.text) return []
     const size = c.t === 'text' && c.large ? 21 : 15
     const lines = c.text.split('\\n')
-    return [{ o: c.o, id: `free:${c.o}:${i}`, lines, size, step: size * 1.2, bold: c.t === 'text' && c.bold, insideShape: c.t === 'shape' }]
+    const center = pts.get(c.o)!
+    const mid = c.t === 'arc' ? c.start + c.sweep / 2 : 0
+    const point = c.t === 'arc' ? arcPoint(center, c.r, mid) : center
+    const [dx, dy] = c.t === 'arc' ? direction(mid) : [0, 0]
+    return [{ point, dx: 14 * dx, dy: -14 * dy, id: `free:${c.o}:${i}`, lines, size, step: size * 1.2, bold: c.t === 'text' && c.bold, insideShape: c.t !== 'text' }]
   })
   const minX = Math.min(...xs)
   const maxX = Math.max(...xs)
   const minY = Math.min(...ys)
   const maxY = Math.max(...ys)
-  const freeLayout = shapes.length > 0 || cmds.some((c) => c.t === 'text' || (c.t === 'seg' && c.arrow))
+  const freeLayout = shapes.length > 0 || arcs.length > 0 || cmds.some((c) => c.t === 'text' || (c.t === 'seg' && c.arrow))
   const spanX = maxX - minX || (freeLayout ? 0 : 1)
   const spanY = maxY - minY || (freeLayout ? 0 : 1)
   const k = spanX || spanY ? Math.min(300 / spanX, 230 / spanY) : 1
@@ -360,9 +434,9 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
   const height = Math.round(spanY * k + pad * 2) - pad * 2
   const bounds = { left: 0, right: width, top: 0, bottom: height }
   for (const c of labels) {
-    const [x, y] = pts.get(c.o)!
-    const lx = (x - minX) * k
-    const ly = height - (y - minY) * k
+    const [x, y] = c.point
+    const lx = (x - minX) * k + c.dx
+    const ly = height - (y - minY) * k + c.dy
     const hw = Math.max(...c.lines.map(textWidthEm)) * c.size / 2
     const hh = (c.lines.length - 1) * c.step / 2 + c.size
     bounds.left = Math.min(bounds.left, Math.floor(lx - hw))
@@ -429,10 +503,15 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
   }
   b = b.replace('</defs>', [...usedSprites].map(spriteDef).join('') + '</defs>')
 
-  for (const c of cmds) {
+  const filledPolys = cmds.filter((c) => c.t === 'poly' && c.fill)
+  const baseLine = (c: Cmd) => c.t === 'seg' || (c.t === 'poly' && !c.fill)
+  const ordered = filledPolys.length ? [
+    ...cmds.filter(baseLine), ...filledPolys, ...cmds.filter((c) => !baseLine(c) && c.t !== 'poly'),
+  ] : cmds
+  for (const c of ordered) {
     if (c.t === 'poly') {
       const d = c.names.map((n, i) => `${i ? 'L' : 'M'}${f1(at(n)[0])} ${f1(at(n)[1])}`).join('') + 'Z'
-      b += `<path d="${d}" stroke="#111" fill="none" stroke-width="1.6" stroke-linejoin="round"/>`
+      b += `<path d="${d}" stroke="#111" fill="${c.fill ?? 'none'}" stroke-width="1.6" stroke-linejoin="round"/>`
     } else if (c.t === 'seg') {
       const p = at(c.a)
       let q = at(c.b)
@@ -510,6 +589,20 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
     }
   }
 
+  for (const c of arcs) {
+    const center = pts.get(c.o)!
+    const point = (angle: number) => S(arcPoint(center, c.r, angle)).join(' ')
+    const start = point(c.start)
+    const radius = c.r * k
+    // Trục y của SVG hướng xuống nên sweep-flag 0 đi ngược chiều kim đồng hồ.
+    const turn = (end: string, large: number) => `A${radius} ${radius} 0 ${large} 0 ${end}`
+    const full = c.sweep === 360
+    const curve = full ? turn(point(c.start + 180), 0) + turn(start, 0) : turn(point(c.start + c.sweep), Number(c.sweep > 180))
+    // SVG tự khép vùng tô theo dây cung, không vẽ nét trên dây.
+    const d = c.kind === 'quạt' && !full ? `M${S(center).join(' ')}L${start}${curve}Z` : `M${start}${curve}${full ? 'Z' : ''}`
+    const dash = c.dashed ? ' stroke-dasharray="5 4"' : ''
+    b += `<path d="${d}" stroke="#111" fill="${c.fill}" stroke-width="1.6" stroke-linejoin="round"${dash}/>`
+  }
   for (const c of shapes) {
     const [x, y] = at(c.o)
     const rx = c.rx * k
@@ -520,7 +613,9 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
     else b += `<rect x="${f1(x - rx)}" y="${f1(y - ry)}" width="${2 * rx}" height="${2 * ry}" rx="${cornerRadius(c) * k}" ${style}/>`
   }
   for (const c of labels) {
-    const [x, y] = at(c.o)
+    const [px, py] = S(c.point)
+    const x = px + c.dx
+    const y = py + c.dy
     const start = y + c.size * 0.32 - (c.lines.length - 1) * c.step / 2
     const body = c.lines.length === 1 ? esc(c.lines[0]) : c.lines.map((s, i) =>
       `<tspan x="${f1(x)}" y="${f1(start + i * c.step)}">${esc(s)}</tspan>`).join('')
@@ -532,6 +627,11 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
   const segs: [P, P][] = []
   for (const c of cmds) {
     if (c.t === 'seg' || c.t === 'ground') segs.push([at(c.a), at(c.b)])
+    else if (c.t === 'arc' && c.kind === 'quạt' && c.sweep < 360) {
+      const center = pts.get(c.o)!
+      const o = S(center)
+      segs.push([o, S(arcPoint(center, c.r, c.start))], [o, S(arcPoint(center, c.r, c.start + c.sweep))])
+    }
     else if (c.t === 'right') {
       // kí hiệu góc vuông: hai cạnh ô vuông 10px
       const o = at(c.o)
@@ -682,6 +782,9 @@ export const SCENE_HELP = [
       { code: 'tròn O 0.6 "Nhãn"', what: 'Vòng tròn tâm O, bán kính 0.6; thêm đứt, tô <màu>' },
       { code: 'elip O 1 0.6 đứt', what: 'Elip tâm O, hai bán kính; thêm nhãn, tô <màu>' },
       { code: 'hộp O 2 1 "Nhãn" bo tô xanh', what: 'Hộp tâm O, rộng 2, cao 1; thêm bo, đứt, tô <màu> (tên hoặc #rrggbb)' },
+      { code: 'cung O 4 0 60 "Nhãn"', what: 'Cung tâm O, bán kính 4, từ 0° đến 60° ngược chiều kim đồng hồ; thêm đứt, tô <màu>' },
+      { code: 'quạt O 4 0 60 tô vàng', what: 'Hình quạt tâm O với hai bán kính; thêm đứt, tô <màu>' },
+      { code: 'ABC tô đỏ', what: 'Đa giác tô màu (tên hoặc #rrggbb)' },
       { code: 'chữ O "Dòng 1\\nDòng 2" to đậm', what: 'Chữ căn giữa tại O; thêm to, đậm' },
       { code: 'mũi tên AB / mũi tên đứt AB', what: 'Mũi tên từ A đến B' },
     ],

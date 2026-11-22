@@ -119,6 +119,91 @@ assert.ok(numAttr(first, 'x') - longLine.length * 21 / 2 >= 62)
 near(numAttr(second, 'y') - numAttr(first, 'y'), 25.2)
 assert.ok(numAttr(first, 'y') > 62 && numAttr(second, 'y') + 10 < wordImage.height - 62)
 
+const sector = 'O(0; 0) A(4; 0) B(2; 3.46)\nquạt O 4 0 60 tô vàng'
+const semicircle = 'O(0; 0) A(4; 0) B(-4; 0)\ncung O 4 0 180\nAB'
+const stadium = [
+  '_L(-3; 0) _R(3; 0) _A(-3; 1.5) _B(3; 1.5) _C(3; -1.5) _D(-3; -1.5)',
+  'cung _R 1.5 -90 90',
+  'cung _L 1.5 90 270',
+  '_A-_B, _C-_D',
+].join('\n')
+const house = [
+  '_A(0; 0) _B(4; 0) _C(4; 4) _D(0; 4) _E(2; 6) _O(2; 1)',
+  '_A-_B-_C-_D tô trắng',
+  '_D-_C-_E tô đỏ',
+  '_A-_B',
+  'hộp _O 1.2 2 tô nâu',
+].join('\n')
+const draw = (text: string) => renderSceneSvg({ text }, '').svg
+const paths = (svg: string) => tags(svg, 'path').slice(1) // Bỏ đầu mũi tên trong defs.
+const pathTokens = (tag: string) => attr(tag, 'd')!.match(/[MLAZ]|-?\d+(?:\.\d+)?(?:e[+-]?\d+)?/gi)!
+function checkPath(tag: string, expected: (string | number)[]) {
+  const tokens = pathTokens(tag)
+  assert.equal(tokens.length, expected.length, tag)
+  expected.forEach((value, i) => {
+    if (typeof value === 'number') near(Number(tokens[i]), value)
+    else assert.equal(tokens[i], value)
+  })
+}
+
+assert.equal(parseScene(sector).cmds.length, 1) // Hai bán kính đều nằm trong path của hình quạt.
+const sectorSvg = draw(sector)
+const sectorHeight = 4 * Math.sin(Math.PI / 3)
+const sectorFrame = frame(sectorSvg, 4, sectorHeight)
+const sectorRadius = 4 * sectorFrame.k
+const [sectorPath] = paths(sectorSvg)
+assert.equal(paths(sectorSvg).length, 1)
+assert.equal(attr(sectorPath, 'fill'), '#fbf0ce')
+assert.ok(Math.abs(Number(pathTokens(sectorPath)[7]) - sectorRadius) < 1e-8)
+checkPath(sectorPath, ['M', 62, 292, 'L', 62 + sectorRadius, 292, 'A', sectorRadius, sectorRadius, '0', '0', '0', 62 + 2 * sectorFrame.k, 62, 'Z'])
+
+assert.equal(parseScene(semicircle).cmds.length, 2)
+const semiSvg = draw(semicircle)
+frame(semiSvg, 8, 4) // Đỉnh y = 4 dù mọi điểm khai báo đều có y = 0.
+const [diameter, semiPath] = paths(semiSvg)
+checkPath(diameter, ['M', 362, 212, 'L', 62, 212])
+checkPath(semiPath, ['M', 362, 212, 'A', 150, 150, '0', '0', '0', 62, 212])
+assert.equal(paths(semiSvg).length, 2)
+assert.equal(attr(semiPath, 'fill'), 'none')
+
+assert.equal(parseScene(stadium).cmds.length, 4)
+const stadiumSvg = draw(stadium)
+frame(stadiumSvg, 9, 3) // Hai đầu ở x = ±4.5, biên ngang ở y = ±1.5.
+const [topEdge, bottomEdge, rightArc, leftArc] = paths(stadiumSvg)
+checkPath(topEdge, ['M', 112, 62, 'L', 312, 62])
+checkPath(bottomEdge, ['M', 312, 162, 'L', 112, 162])
+checkPath(rightArc, ['M', 312, 162, 'A', 50, 50, '0', '0', '0', 312, 62])
+checkPath(leftArc, ['M', 112, 62, 'A', 50, 50, '0', '0', '0', 112, 162])
+assert.equal(paths(stadiumSvg).length, 4)
+
+const houseSvg = draw(house)
+assert.equal(parseScene(house).cmds.length, 4)
+frame(houseSvg, 4, 6)
+const [base, walls, roof] = paths(houseSvg)
+assert.equal(attr(base, 'fill'), 'none')
+assert.equal(attr(walls, 'fill'), '#ffffff')
+assert.equal(attr(roof, 'fill'), '#f7d4d4')
+for (const p of [walls, roof]) assert.equal(attr(p, 'stroke'), '#111')
+const door = tags(houseSvg, 'rect')[1]
+assert.ok(houseSvg.indexOf(roof) < houseSvg.indexOf(door))
+const captionedHouse = draw(house + '\nchữ _O "Cửa"\nnhãn _A-_B "Đáy"')
+assert.ok(captionedHouse.indexOf(roof) >= 0 && captionedHouse.indexOf(roof) < captionedHouse.indexOf('<text'))
+assert.match(draw('A(0; 0) B(3; 0) C(0; 3)\nABC tô #ff0000'), /stroke="#111" fill="#ffcccc"/)
+
+// Qua 360°, cung lớn, một vòng tròn đủ và vùng tô giữa cung với dây.
+const arcOnly = (command: string) => draw('_O(0; 0)\n' + command)
+assert.equal(arcOnly('cung _O 4 330 390'), arcOnly('cung _O 4 330 30'))
+const wrapped = arcOnly('cung _O 4 330 390')
+frame(wrapped, 4, 4)
+const major = arcOnly('cung _O 4 0 270 đứt tô #ff0000 "Cung & dây"')
+assert.match(paths(major)[0], /A\d[^"]* 0 1 0 [^"]+" stroke="#111" fill="#ffcccc".*stroke-dasharray="5 4"/)
+assert.deepEqual(pathTokens(paths(major)[0]).filter((t) => /^[MLAZ]$/.test(t)), ['M', 'A'])
+assert.match(major, /data-lbl="free:_O:0"[^>]*>Cung &amp; dây<\/text>/)
+const full = arcOnly('quạt _O 4 30 390 đứt')
+frame(full, 8, 8)
+assert.match(paths(full)[0], /stroke-dasharray="5 4"/)
+assert.deepEqual(pathTokens(paths(full)[0]).filter((t) => /^[MLAZ]$/.test(t)), ['M', 'A', 'A', 'Z'])
+
 for (const [command, message] of [
   ['tròn O', /bán kính/],
   ['tròn O 0', /lớn hơn 0/],
@@ -130,10 +215,21 @@ for (const [command, message] of [
   ['chữ O "chưa đóng', /ngoặc kép/],
   ['chữ A "chữ"', /chưa khai báo điểm/],
   ['mũi tên O', /cần đúng 2 điểm/],
+  ['cung', /thiếu điểm tâm/],
+  ['quạt 4 0 60', /thiếu điểm tâm/],
+  ['cung A 4 0 60', /chưa khai báo điểm/],
+  ['cung O', /bán kính/],
+  ['quạt O -4 0 60', /lớn hơn 0/],
+  ['cung O 4 sai 60', /góc đầu phải là số/],
+  ['quạt O 4 0', /góc cuối phải là số/],
+  ['cung O 4 0 60°', /góc cuối phải là số/],
+  ['cung O 4 0 60 tô lạ', /màu tô không hợp lệ/],
+  ['quạt O 4 0 60 tô', /thiếu màu tô/],
 ] as const) {
   assert.throws(() => parseScene('O(0; 0)\n\n' + command), (err) =>
     err instanceof Error && err.message.startsWith('Dòng 3: ') && message.test(err.message))
 }
+assert.throws(() => parseScene('A(0; 0) B(3; 0) C(0; 3)\nABC tô lạ'), /^Error: Dòng 2: màu tô không hợp lệ/)
 
 // SHA-256 của SVG từ git show HEAD:src/lib/scene.ts, commit 079c5ce.
 for (const [spec, hash] of [
@@ -144,10 +240,25 @@ for (const [spec, hash] of [
   assert.equal(createHash('sha256').update(renderSceneSvg(spec, '').svg).digest('hex'), hash)
 }
 
+// điểm khai báo _A, _B mà lệnh viết AB / AB-BC (thiếu dấu _) vẫn ra đúng hình như viết _A-_B
+{
+  const hidden = renderSceneSvg({ text: '_A(0; 0) _B(4; 0) _C(2; 3)\n_A-_B\n_B-_C\n_C-_A' }, '').svg
+  const lenient = renderSceneSvg({ text: '_A(0; 0) _B(4; 0) _C(2; 3)\nAB\nBC\nCA' }, '').svg
+  assert.equal(lenient, hidden)
+  const polygon = renderSceneSvg({ text: '_A(0; 0) _B(4; 0) _C(2; 3)\nABC tô đỏ' }, '').svg
+  assert.equal(polygon, renderSceneSvg({ text: '_A(0; 0) _B(4; 0) _C(2; 3)\n_A_B_C tô đỏ' }, '').svg)
+  // có sẵn điểm A thì A là A, không bị hiểu thành _A
+  assert.doesNotThrow(() => renderSceneSvg({ text: 'A(0; 0) _A(1; 1) B(4; 0)\nAB' }, ''))
+}
+
 if (process.argv.includes('--svg')) {
   const dir = mkdtempSync(join(tmpdir(), 'de-ro-scene-'))
   writeFileSync(join(dir, 'hinh-sao.svg'), starSvg)
   writeFileSync(join(dir, 'chu-trinh-nuoc.svg'), cycleSvg)
+  writeFileSync(join(dir, 'quat-tron.svg'), sectorSvg)
+  writeFileSync(join(dir, 'ban-nguyet.svg'), semiSvg)
+  writeFileSync(join(dir, 'san-van-dong.svg'), stadiumSvg)
+  writeFileSync(join(dir, 'ngoi-nha.svg'), houseSvg)
   console.log(dir)
 }
 console.log('test-scene-free: ok')
