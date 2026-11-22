@@ -71,11 +71,11 @@ async function shrink(dataUrl: string): Promise<string> {
   return canvas.toDataURL('image/jpeg', JPEG_QUALITY)
 }
 
-export async function generateSlideImage(prompt: string): Promise<GeneratedImage> {
+export async function generateSlideImage(prompt: string, pro?: boolean): Promise<GeneratedImage> {
   const res = await apiFetch('/api/image', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ prompt }),
+    body: JSON.stringify({ prompt, ...(pro ? { pro: true } : {}) }),
   })
   const body = (await res.json().catch(() => ({}))) as { dataUrl?: string; model?: string; error?: string }
   if (!res.ok) throw new Error(body.error ?? `Tạo ảnh thất bại (${res.status})`)
@@ -123,7 +123,7 @@ export async function loadProPhoto(description: string | undefined): Promise<Pro
   // Lỗi thoáng qua thì thử lại; vẫn hỏng (thường do nhà cung cấp từ chối cảnh có người) thì vẽ bản không người để bìa không trống.
   const safe = buildPhotoPrompt(`Atmospheric scene with no people, evoking: ${description.trim().slice(0, 140)}`)
   const generated = await queueImage(() =>
-    generateSlideImage(prompt).catch(() => generateSlideImage(prompt)).catch(() => generateSlideImage(safe)),
+    generateSlideImage(prompt, true).catch(() => generateSlideImage(prompt, true)).catch(() => generateSlideImage(safe, true)),
   )
   return { dataUrl: generated.dataUrl, credit: 'Ảnh minh hoạ do AI tạo' }
 }

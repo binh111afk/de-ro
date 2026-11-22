@@ -35,11 +35,12 @@ export type AiCall = {
  * Nhãn loại việc của một lượt gọi AI, suy ra từ tên task + dữ liệu client gửi (không tin chữ client tự đặt nhãn).
  *   task-doc      soạn / sửa đề         question       hỏi đáp chữ thường (đề, slide)
  *   ask-clarify   hỏi lại trước khi soạn task-slide     lập dàn ý / viết slide
+ *   task-slide-pro lập dàn ý / viết slide chế độ Chuyên nghiệp (task-slide = chế độ thường)
  *   task-slide-html slide HTML          edit-slide     sửa slide có sẵn bằng lệnh
  *   board         bảng vẽ               web-search     tìm trên web
  *   task-exam-online đề tương tác       edit-question  sửa một câu / một đoạn
  *   figure        hình / đồ thị         bank           ngân hàng câu hỏi (admin)
- *   matrix        ma trận đề            image          vẽ ảnh
+ *   matrix        ma trận đề            image          vẽ ảnh (image-pro = ảnh slide Chuyên nghiệp)
  *   vision-source đọc ảnh PDF làm nguồn vision-bank    đọc ảnh đề cho ngân hàng
  */
 export function aiKind(task?: unknown, input?: unknown): string {
@@ -50,10 +51,10 @@ export function aiKind(task?: unknown, input?: unknown): string {
     case 'hoi-truoc':
       return 'ask-clarify'
     case 'slide-chat':
-      return o.variant === 'chat' ? 'question' : o.variant === 'html' ? 'task-slide-html' : 'task-slide'
+      return o.variant === 'chat' ? 'question' : o.variant === 'html' ? 'task-slide-html' : o.pro === true ? 'task-slide-pro' : 'task-slide'
     case 'slide-lo':
     case 'slide-trang':
-      return 'task-slide'
+      return o.pro === true ? 'task-slide-pro' : 'task-slide'
     case 'slide-sua':
     case 'sua-slide':
       return 'edit-slide'

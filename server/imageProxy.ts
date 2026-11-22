@@ -187,6 +187,8 @@ export async function chargeAndGenerate(
   req: IncomingMessage,
   res: ServerResponse,
   getPrompt: () => Promise<string>,
+  /** getPrompt có thể đặt `kind` (nhãn log) sau khi đọc body */
+  tag: { kind?: string } = {},
 ): Promise<{ dataUrl: string; quota: unknown } | null> {
   // vẽ ảnh AI chỉ cho người đã đăng nhập (máy dev không cần)
   const ip = clientIp(req)
@@ -230,7 +232,7 @@ export async function chargeAndGenerate(
         const [after] = await Promise.all([
           addUsage(userId, ip, cost, quota),
           release(),
-          logAiCall({ userId, model: config.model, provider: 'image', ok: true, ms: Date.now() - t0, kind: 'image', billed: cost }),
+          logAiCall({ userId, model: config.model, provider: 'image', ok: true, ms: Date.now() - t0, kind: tag.kind ?? 'image', billed: cost }),
         ])
         return { dataUrl, quota: after }
       } catch (err) {
@@ -262,10 +264,12 @@ export async function handleImageRequest(
   if (!(await guard(req, res, 'image'))) return
   if (req.method === 'OPTIONS') return json(res, 204, {})
   if (req.method !== 'POST') return json(res, 405, { error: 'Method not allowed' })
+  const tag: { kind?: string } = {}
   const got = await chargeAndGenerate(req, res, async () => {
-    const body = JSON.parse(await readBody(req)) as { prompt?: unknown }
+    const body = JSON.parse(await readBody(req)) as { prompt?: unknown; pro?: unknown }
+    if (body.pro === true) tag.kind = 'image-pro'
     return typeof body.prompt === 'string' ? body.prompt : ''
-  })
+  }, tag)
   if (got) json(res, 200, got)
 }
 
