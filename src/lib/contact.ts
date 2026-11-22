@@ -1,7 +1,7 @@
 /** Kênh liên hệ hiện ở trang Điều khoản / Quyền riêng tư và chân trang. Icon ở public/brand/social/. */
 export const CONTACT = {
   name: 'Quang Bình',
-  email: 'lienhe@dero.id.vn',
+  email: 'afkbinh1412007@gmail.com',
   phone: '0867 981 647',
   zalo: 'https://zalo.me/0867981647',
   facebook: 'https://www.facebook.com/quang.binh.705377',
