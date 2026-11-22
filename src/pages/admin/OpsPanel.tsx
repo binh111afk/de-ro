@@ -1,4 +1,5 @@
-import { useEffect, useState, useMemo } from 'react'
+import { Activity as PanelActivity, useEffect, useState, useMemo } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import {
   Activity,
   Check,
@@ -43,6 +44,13 @@ import { AnnouncementsEditor } from './AnnouncementsEditor'
 
 import { WelcomePointsCard } from './WelcomePointsCard'
 import { AiFeedbackCard } from './AiFeedbackCard'
+
+const OPS_TABS = [
+  { key: 'settings', label: 'Cài đặt' },
+  { key: 'server', label: 'Server' },
+  { key: 'ai-cost', label: 'Chi phí AI' },
+  { key: 'feedback', label: 'Phản hồi' },
+] as const
 
 interface OpsPanelProps {
   me?: AdminMe
@@ -363,29 +371,12 @@ export function OpsPanel({ me: _me }: OpsPanelProps) {
     return list.sort((a, b) => b.calls - a.calls)
   }, [aiStatsRows])
 
-  return (
-    <div className="space-y-6">
-      {/* Tiêu đề trang */}
-      <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-[22px] font-bold tracking-tight text-ink">AI & Máy chủ</h1>
-        </div>
-      </div>
+  const [searchParams, setSearchParams] = useSearchParams()
+  const tabs = OPS_TABS.filter(({ key }) => key !== 'feedback' || _me?.role === 'admin')
+  const tab = tabs.find(({ key }) => key === searchParams.get('tab'))?.key ?? 'settings'
 
-      {/* Thông báo thao tác ngắn */}
-      {notice ? (
-        <div
-          role="status"
-          className="flex items-center gap-2 rounded-[6px] bg-sage-soft px-4 py-2.5 text-[13px] font-medium text-sage shadow-xs"
-        >
-          <Check className="size-4 shrink-0" />
-          <span>{notice}</span>
-        </div>
-      ) : null}
-
-      {/* =========================================================================
-          KHỐI 1: BẢO TRÌ VÀ THÔNG BÁO
-          ========================================================================= */}
+  const settingsPanel = (
+    <PanelActivity mode={tab === 'settings' ? 'visible' : 'hidden'}>
       <Card className="overflow-hidden border border-line p-5 shadow-soft sm:p-6">
         <div className="mb-5 flex flex-wrap items-center justify-between gap-2 border-b border-line pb-4">
           <div className="flex items-center gap-2.5">
@@ -494,10 +485,11 @@ export function OpsPanel({ me: _me }: OpsPanelProps) {
       </Card>
 
       {settings ? <WelcomePointsCard initial={settings.aiWelcome?.points ?? null} onNotice={showNotice} /> : null}
+    </PanelActivity>
+  )
 
-      {/* =========================================================================
-          KHỐI 2: TÌNH TRẠNG SERVER
-          ========================================================================= */}
+  const serverStatus = (
+    <PanelActivity mode={tab === 'server' ? 'visible' : 'hidden'}>
       <Card className="overflow-hidden border border-line p-5 shadow-soft sm:p-6">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-line pb-4">
           <div>
@@ -593,10 +585,11 @@ export function OpsPanel({ me: _me }: OpsPanelProps) {
           />
         ) : null}
       </Card>
+    </PanelActivity>
+  )
 
-      {/* =========================================================================
-          KHỐI 3: THỐNG KÊ AI
-          ========================================================================= */}
+  const aiCost = (
+    <>
       <Card className="overflow-hidden border border-line p-5 shadow-soft sm:p-6">
         <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-line pb-4">
           <div>
@@ -811,11 +804,11 @@ export function OpsPanel({ me: _me }: OpsPanelProps) {
         </div>
       </Card>
       <AiMarginCard onNotice={showNotice} />
+    </>
+  )
 
-      {_me?.role === 'admin' ? <AiFeedbackCard /> : null}
-      {/* =========================================================================
-          KHỐI 4: LỖI GẦN ĐÂY
-          ========================================================================= */}
+  const recentErrors = (
+    <>
       <Card className="overflow-hidden border border-line p-5 shadow-soft sm:p-6">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-line pb-4">
           <div>
@@ -900,6 +893,45 @@ export function OpsPanel({ me: _me }: OpsPanelProps) {
           </div>
         )}
       </Card>
+    </>
+  )
+
+  return (
+    <div className="space-y-6">
+      {/* Tiêu đề trang */}
+      <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-[22px] font-bold tracking-tight text-ink">AI & Máy chủ</h1>
+        </div>
+      </div>
+
+      {/* Thông báo thao tác ngắn */}
+      {notice ? (
+        <div
+          role="status"
+          className="flex items-center gap-2 rounded-[6px] bg-sage-soft px-4 py-2.5 text-[13px] font-medium text-sage shadow-xs"
+        >
+          <Check className="size-4 shrink-0" />
+          <span>{notice}</span>
+        </div>
+      ) : null}
+
+      <Segmented
+        label="AI & Máy chủ"
+        options={tabs}
+        value={tab}
+        onChange={(nextTab) => {
+          const nextParams = new URLSearchParams(searchParams)
+          nextParams.set('tab', nextTab)
+          setSearchParams(nextParams, { replace: true })
+        }}
+      />
+
+      {settingsPanel}
+      {serverStatus}
+      {tab === 'server' ? recentErrors : null}
+      {tab === 'ai-cost' ? aiCost : null}
+      {tab === 'feedback' && _me?.role === 'admin' ? <AiFeedbackCard /> : null}
     </div>
   )
 }
