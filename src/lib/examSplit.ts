@@ -132,11 +132,12 @@ export function mergeChunks(chunks: ChunkJson[], figs?: boolean[][]): string {
     }
   })
   if (keys.length) blocks.push({ type: 'answerKey', items: keys.sort((a, b) => a.no - b.no) })
-  const say = chunks.map((c) => (typeof c.say === 'string' ? c.say.trim() : '')).filter(Boolean)
+  // lời báo từng lượt dài và lộ "lượt i/n" → chỉ báo gọn số câu + câu có hình
+  const withFig = blocks.filter((b) => b.type === 'question' && b.figure).map((b) => b.no)
   return JSON.stringify({
     action: 'replace',
     ...(typeof chunks[0]?.name === 'string' ? { name: chunks[0].name } : {}),
-    say: say.length ? `Đã soạn ${no} câu.\n\n${say.map((s) => `- ${s.replace(/\n+/g, ' ')}`).join('\n')}` : `Đã soạn ${no} câu.`,
+    say: `Đã soạn ${no} câu theo đề mẫu.${withFig.length ? ` Câu có hình: ${withFig.join(', ')}.` : ''}`,
     blocks,
   })
 }
