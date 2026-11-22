@@ -844,7 +844,7 @@ export default function ComposeDoc() {
           const name = typeof raw.name === 'string' ? raw.name.trim().slice(0, 120) : ''
           const tab = useComposeStore.getState().tabs.find((t) => t.id === activeId)
           if (name && tab && (!tab.title.trim() || tab.title === 'Đề thi mới')) renameTab(activeId, name)
-          return say ? { text: `${say}${warn}` } : done('Đã soạn xong đề.')
+          return say ? { text: `${say}${warn}` } : done('Mình soạn xong đề rồi, bạn xem qua nhé.')
         }
         if (action === 'append' && blocks.length) {
           const content = blocksToTipTap(blocks).content ?? []

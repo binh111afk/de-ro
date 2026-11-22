@@ -137,7 +137,10 @@ export function mergeChunks(chunks: ChunkJson[], figs?: boolean[][]): string {
   return JSON.stringify({
     action: 'replace',
     ...(typeof chunks[0]?.name === 'string' ? { name: chunks[0].name } : {}),
-    say: `Đã soạn ${no} câu theo đề mẫu.${withFig.length ? ` Câu có hình: ${withFig.join(', ')}.` : ''}`,
+    say:
+      `Mình soạn xong đề ${no} câu theo đúng cấu trúc đề mẫu rồi nhé. ` +
+      (withFig.length ? `Các câu ${withFig.join(', ')} có hình như đề gốc, mình đã vẽ lại theo số liệu mới. ` : '') +
+      'Đáp án ở cuối đề, bạn xem qua, chỗ nào chưa ưng cứ bảo mình sửa.',
     blocks,
   })
 }
