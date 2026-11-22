@@ -40,6 +40,7 @@ import { cn } from '@/lib/cn'
 import { AI_ATTACH_EVENT, takeAiRefs, type AiRef } from '@/lib/aiAttach'
 import { chatHistoryKey, encodeChatHistory, loadChatHistory, saveChatHistory } from '@/lib/aiChatHistory'
 import { extractJson } from '@/lib/llm'
+import { mergeChunks, parseChunk, planExamSplit, type ChunkJson } from '@/lib/examSplit'
 import aiThinkingAnim from '@/assets/ai-assistant.svg'
 import { Markdown } from '@/lib/aiChatMarkdown'
 import { compactHistory } from '@/lib/aiHistory'
@@ -1151,6 +1152,52 @@ function AiConversation({
             })
           }
         : undefined
+      // đề nguồn dài + "soạn lại / đổi số liệu": chia nhiều lượt nhỏ (một lượt cả đề thì model hết token)
+      const split =
+        mode === 'exam' && intent === 'doc' && onApplyBlocks && pack.items.length && !/\bquestion\b/.test(documentDigest ?? '')
+          ? planExamSplit(text, pack.items.map((s) => s.text).join('\n\n'))
+          : null
+      if (split) {
+        const parts: ChunkJson[] = []
+        const skipped: number[] = []
+        const figsOf: boolean[][] = []
+        const splitTask = { ...mainTask, input: { ...mainTask.input, ask: false } }
+        const lastMsg = messages[messages.length - 1]
+        for (let i = 0; i < split.length; i++) {
+          controller.signal.throwIfAborted()
+          logStart(`Viết đề (lượt ${i + 1}/${split.length})`)
+          const msgs: LlmMessage[] = [...messages.slice(0, -1), { role: 'user', content: lastMsg.content + split[i].note }]
+          const opts = { signal: controller.signal, reasoningEffort: AI_EFFORT.exam, task: splitTask }
+          let r = await callLlm(msgs, opts)
+          let part = parseChunk(r.content)
+          if (!part) {
+            controller.signal.throwIfAborted()
+            r = await callLlm(msgs, { ...opts, retryOf: r.receipt, strong: true })
+            part = parseChunk(r.content)
+          }
+          if (part) {
+            parts.push(part)
+            figsOf.push(split[i].figs)
+          } else skipped.push(i + 1)
+          logSet((l) => closeLog(l, part ? 'done' : 'failed', part ? `${split[i].count} câu` : 'không soạn được'))
+        }
+        controller.signal.throwIfAborted()
+        if (!parts.length) throw new Error('AI không soạn được đề, bạn thử lại nhé.')
+        logStart('Đưa vào đề')
+        await new Promise((r) => setTimeout(r, 350))
+        const result = onApplyBlocks!(mergeChunks(parts, figsOf))
+        const ok = !!result && !result.failed
+        const note = skipped.length ? `\n\nLượt ${skipped.join(', ')} không soạn được, thiếu các câu của lượt đó.` : ''
+        if (ok) rememberAiTurn({ mode, request: userTurn.text, reply: result.text, context: documentDigest })
+        patchTurn((t) => ({
+          text: (result?.text ?? '') + note,
+          pending: false,
+          intent: 'doc',
+          ...(!ok && userTurn.text ? { retry: userTurn.text } : {}),
+          ...(t.log ? { log: closeLog(t.log, ok ? 'done' : 'failed') } : {}),
+        }))
+        return
+      }
       onProgress?.({ phase: 'think', thought: 0, thinking: '', text: '' })
       // model chưa gửi gì (đang xếp hàng / suy luận không stream): số giây vẫn chạy
       const ticker = examSteps ? setInterval(() => phase === 'think' && logPatch({ note: secs() }), 1000) : undefined

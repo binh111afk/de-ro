@@ -14,7 +14,7 @@ import { buildChonHinhSystem } from '../src/lib/prompts/chon-hinh.ts'
 import { buildNganHangSystem } from '../src/lib/prompts/ngan-hang.ts'
 import { buildMaTranSystem } from '../src/lib/prompts/ma-tran.ts'
 import { buildSuaSlideSystem } from '../src/lib/prompts/sua-slide.ts'
-import { sourcePrompt, sourceRule } from '../src/lib/prompts/sources.ts'
+import { liftAskAboveFigure, sourcePrompt, sourceRule } from '../src/lib/prompts/sources.ts'
 
 let fail = 0
 const check = (name: string, cond: boolean, info?: unknown) => {
@@ -44,12 +44,20 @@ for (const s of snaps) {
   const items = [{ tier: 1, name: 'de-mau.docx', text: 'Câu 1. …' }]
   const full = buildExamSystem({ text: 'soạn đề', contextSummary: 'tóm tắt', ask: true, withSources: true, sourceTier: 1, sources: items, khung: 'KHUNG', webFound: ' web ', think: true })
   const want =
-    examSystemPrompt(undefined, 'soạn đề\ntóm tắt') + ASK_RULE + '\nTài liệu hiện tại: tóm tắt' +
+    examSystemPrompt(undefined, 'soạn đề\ntóm tắt', true) + ASK_RULE + '\nTài liệu hiện tại: tóm tắt' +
     `\n\n${sourceRule(1)}\n\n${sourcePrompt(items)}\n\nKHUNG` +
     '\n\nNGUỒN TÌM TRÊN WEB (số liệu mới, ưu tiên dùng; số liệu lấy từ đây thì ghi nguồn ngắn trong đề/slide):\nweb' + THINK_VI
   check('ghép đủ nguồn + khung + web + suy nghĩ', full === want)
   check('không có nguồn: không thêm phần nguồn', !buildExamSystem({ text: 'x' }).includes('NGUỒN'))
   check('withSources không nguồn: có luật "không có nguồn"', buildExamSystem({ text: 'x', withSources: true }).includes('KHÔNG CÓ NGUỒN CHO LƯỢT NÀY'))
+}
+
+// câu hỏi nằm sau hình trong đề nguồn được đưa lên trước hình
+{
+  const src = 'Câu 9: Cho hàm số có bảng biến thiên như sau:\n[Hình: Bảng biến thiên …]\nHàm số nghịch biến trên khoảng nào?\nA. $(-1;3)$. B. $(3;+\\infty)$.'
+  check('đưa câu hỏi lên trước hình', liftAskAboveFigure(src) === 'Câu 9: Cho hàm số có bảng biến thiên như sau:\nHàm số nghịch biến trên khoảng nào?\n[Hình: Bảng biến thiên …]\nA. $(-1;3)$. B. $(3;+\\infty)$.')
+  const keep = 'Câu 3: Cho đồ thị\n[Hình: đồ thị]\nA. 1. B. 2.'
+  check('hình ngay trước phương án: giữ nguyên', liftAskAboveFigure(keep) === keep)
 }
 
 // prompt hỏi trước (chưa nêu môn) giữ nguyên chữ cũ ở AiAskPanel

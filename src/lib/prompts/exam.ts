@@ -32,7 +32,7 @@ export const SCOPE_RULE =
  * Đứng trên mọi quy ước là NGUYÊN TẮC: lời giáo viên thắng quy ước mặc định; yêu cầu không khớp
  * quy ước nào thì làm cách hợp lý nhất rồi nói ngắn đã hiểu thế nào (`say`) — không để AI "chết cứng".
  */
-export function examSystemPrompt(documentDigest?: string, request = ''): string {
+export function examSystemPrompt(documentDigest?: string, request = '', fromSource = false): string {
   return (
     'Bạn là trợ lý AI của trình soạn đề thi tiếng Việt (THCS/THPT). Trả lời ngắn gọn, đúng ngữ pháp.\n\n' +
     'NGUYÊN TẮC TRÊN HẾT (đứng trên mọi quy ước bên dưới): lời giáo viên thắng quy ước mặc định. ' +
@@ -80,7 +80,7 @@ export function examSystemPrompt(documentDigest?: string, request = ''): string 
     'phải "TÊN ĐỀ …\\nNăm học 20… – 20…\\nMôn: …\\nThời gian làm bài: …" (dòng cuối italic). ' +
     'Tên đề nằm ở dòng đầu cột phải; KHÔNG sinh thêm block title/meta trùng nội dung header.\n' +
     '- Chỉ dùng title/meta khi người dùng yêu cầu đề không có header (không ghi sở/trường). Sau header chỉ thêm student khi đề cần ô họ tên/số báo danh, rồi heading từng phần, ví dụ "PHẦN I. TRẮC NGHIỆM (3,0 điểm)".\n' +
-    '- Câu trắc nghiệm: block question, đúng 4 phương án A–D, đúng một đáp án, không trùng ý. Phương án nhiễu phải là lỗi sai thường gặp (nhầm dấu, nhầm công thức, quên điều kiện), không bịa ngẫu nhiên.\n' +
+    '- Câu trắc nghiệm: block question, đúng 4 phương án A–D, đúng một đáp án, không trùng ý. Phương án nhiễu phải là lỗi sai thường gặp (nhầm dấu, nhầm công thức, quên điều kiện), không bịa ngẫu nhiên. Phương án nhiễu không được chứa hay ghép kèm đáp án đúng (sai: "D. $\\widehat{SPM}$ và $\\widehat{SNP}$" khi B là $\\widehat{SPM}$).\n' +
     '- ' +
     DIFFICULTY_RULE +
     '- Câu tự luận: block essay có score, các ý a) b) trong sub.\n' +
@@ -100,11 +100,14 @@ export function examSystemPrompt(documentDigest?: string, request = ''): string 
     '- HÌNH VẼ: câu nào cần hình (đồ thị, bảng biến thiên, bảng xét dấu, hình học, biểu đồ số liệu, mạch điện, sơ đồ cây, …) ' +
     'thì thêm field "figure" vào block question/essay/paragraph đó; app tự vẽ bằng công cụ và đặt hình ngay dưới đề bài (trước phương án A–D).' +
     'Không mô tả hình bằng chữ kiểu "(hình vẽ bên)" mà không kèm figure. Hình phải khớp số liệu trong đề và không lộ đáp án. ' +
-    'Mỗi khối tối đa một figure. Đề thật luôn có nhiều câu đọc hình, nên CHỦ ĐỘNG ra câu có hình: ' +
-    'đề Toán, Vật lí, Hoá học, Sinh học, Địa lí thì khoảng 25–35% số câu có figure (đề 12 câu trắc nghiệm → ít nhất 3–4 hình; câu tự luận về hàm số/hình học cũng nên có). ' +
-    'Ưu tiên dạng "Cho hàm số $y=f(x)$ có đồ thị / bảng biến thiên / bảng xét dấu đạo hàm như hình" (học sinh phải đọc hình mới làm được), hình học phẳng/không gian, biểu đồ số liệu, mạch điện, đồ thị chuyển động. ' +
-    'Bài toán thực tế đã được mô hình hoá sẵn bằng công thức (ví dụ "lợi nhuận $P(x)=…$", "nhiệt độ $T(t)=…$") thì không cần ép có hình. ' +
-    'Môn không có hình phù hợp (Văn, Sử, ngoại ngữ…) thì không cần figure. Các loại figure:\n' +
+    'Mỗi khối tối đa một figure. ' +
+    (fromSource
+      ? 'Lượt này soạn theo tệp mẫu: câu nào trong tệp mẫu có hình thì câu mới có hình cùng loại; câu mẫu không có hình thì KHÔNG thêm figure (bảng số liệu của câu mẫu vẫn giữ). Không tự thêm câu có hình. Các loại figure:\n'
+      : 'Đề thật luôn có nhiều câu đọc hình, nên CHỦ ĐỘNG ra câu có hình: ' +
+        'đề Toán, Vật lí, Hoá học, Sinh học, Địa lí thì khoảng 25–35% số câu có figure (đề 12 câu trắc nghiệm → ít nhất 3–4 hình; câu tự luận về hàm số/hình học cũng nên có). ' +
+        'Ưu tiên dạng "Cho hàm số $y=f(x)$ có đồ thị / bảng biến thiên / bảng xét dấu đạo hàm như hình" (học sinh phải đọc hình mới làm được), hình học phẳng/không gian, biểu đồ số liệu, mạch điện, đồ thị chuyển động. ' +
+        'Bài toán thực tế đã được mô hình hoá sẵn bằng công thức (ví dụ "lợi nhuận $P(x)=…$", "nhiệt độ $T(t)=…$") thì không cần ép có hình. ' +
+        'Môn không có hình phù hợp (Văn, Sử, ngoại ngữ…) thì không cần figure. Các loại figure:\n') +
     figureGuideFor(request) +
     '\n' +
     '- Tiếng Việt chuẩn, số liệu nhất quán, mọi câu phải có đáp án đúng.\n\n' +
@@ -146,7 +149,7 @@ export interface ExamTaskInput extends SourceInput {
 export function buildExamSystem(i: ExamTaskInput): string {
   const ctx = i.contextSummary
   const system =
-    examSystemPrompt(i.digest, `${i.text}\n${ctx ?? ''}`) +
+    examSystemPrompt(i.digest, `${i.text}\n${ctx ?? ''}`, i.sourceTier === 1 && !!i.sources?.length) +
     (i.intent === 'chat' ? CHAT_MARKDOWN : '') +
     (i.ask ? ASK_RULE : '') +
     (ctx ? `\nTài liệu hiện tại: ${ctx}` : '')
