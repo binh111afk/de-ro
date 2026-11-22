@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { ContactLinks } from '@/components/ContactLinks'
+import { useWelcomePoints } from '@/lib/useWelcomePoints'
 
 const UPDATED = '18/11/2026'
 
@@ -124,7 +125,7 @@ const TERMS: Section[] = [
     b: [
       [
         '1 điểm = 1.000 token AI. Chi phí hiện tại: soạn 1 đề khoảng 20–27 điểm; 1 bộ slide 15 trang khoảng 26–35 điểm; hỏi lại trước khi soạn 10 điểm; sửa/hỏi thêm 5 điểm; tìm trên web 5 điểm; ảnh minh họa 5 điểm.',
-        'Tài khoản mới được tặng 120 điểm dùng thử, một lần duy nhất cho mỗi người.',
+        'Tài khoản mới được tặng {WELCOME} điểm dùng thử, một lần duy nhất cho mỗi người.',
         "Điểm chỉ dùng để trả cho các tính năng có phí trên 'đề rõ'. Điểm không được quy đổi để rút tiền mặt, không chuyển nhượng sang tài khoản khác.",
         'Tạo nhiều tài khoản để nhận điểm dùng thử là vi phạm điều khoản, tài khoản vi phạm có thể bị khóa và điểm bị thu hồi.',
       ],
@@ -237,6 +238,7 @@ const TERMS: Section[] = [
 
 export default function Legal({ kind }: { kind: 'privacy' | 'terms' }) {
   const privacy = kind === 'privacy'
+  const welcome = String(useWelcomePoints())
   const sections = privacy ? PRIVACY : TERMS
   return (
     <article className="mx-auto max-w-[760px] px-5 py-12 sm:px-6">
@@ -255,10 +257,10 @@ export default function Legal({ kind }: { kind: 'privacy' | 'terms' }) {
                   <ContactLinks key={i} className="pt-1 text-[14px]" />
                 ) : Array.isArray(block) ? (
                   <ul key={i} className="list-disc space-y-1 pl-5 marker:text-ink-4">
-                    {block.map((t) => <li key={t}>{t}</li>)}
+                    {block.map((t) => <li key={t}>{t.replace('{WELCOME}', welcome)}</li>)}
                   </ul>
                 ) : (
-                  <p key={i}>{block}</p>
+                  <p key={i}>{block.replace('{WELCOME}', welcome)}</p>
                 ),
               )}
             </div>

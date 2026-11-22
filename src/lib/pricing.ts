@@ -35,6 +35,11 @@ export let PACKS: ReadonlyArray<{ vnd: number; bonus: number }> = DEFAULT_PRICIN
 export let DEFAULT_PACK_VND = DEFAULT_PRICING.defaultVnd
 export let MAX_POINTS = 0
 
+/** Điểm chào mừng admin đặt (`app_settings` key `ai_welcome`); mặc định khi chưa đặt, khớp AI_WELCOME_POINTS ở server/aiQuota.ts. */
+export const DEFAULT_WELCOME_POINTS = 80
+export let WELCOME_POINTS = DEFAULT_WELCOME_POINTS
+export const applyWelcomePoints = (n: number) => { WELCOME_POINTS = n }
+
 export type PricingPack = { vnd: number; bonus: number }
 
 export function applyPricing(c: PricingConfig) {
@@ -51,13 +56,15 @@ let loading: Promise<void> | null = null
 export function loadPricing(): Promise<void> {
   // file này server (server/payment.ts) cũng import để tính điểm: chỉ đọc import.meta.env khi gọi trên trình duyệt
   const env = (import.meta as unknown as { env: Record<string, string> }).env
-  loading ??= fetch(`${env.VITE_SUPABASE_URL}/rest/v1/app_settings?select=value&key=eq.pricing`, {
+  loading ??= fetch(`${env.VITE_SUPABASE_URL}/rest/v1/app_settings?select=key,value&key=in.(pricing,ai_welcome)`, {
     headers: { apikey: env.VITE_SUPABASE_PUBLISHABLE_KEY, Authorization: `Bearer ${env.VITE_SUPABASE_PUBLISHABLE_KEY}` },
   })
-    .then((r) => (r.ok ? (r.json() as Promise<Array<{ value?: Partial<PricingConfig> }>>) : []))
+    .then((r) => (r.ok ? (r.json() as Promise<Array<{ key: string; value?: Record<string, unknown> }>>) : []))
     .then((rows) => {
-      const v = rows[0]?.value
+      const v = rows.find((x) => x.key === 'pricing')?.value as Partial<PricingConfig> | undefined
       if (v && Array.isArray(v.packs) && v.packs.length > 0) applyPricing({ ...DEFAULT_PRICING, ...v } as PricingConfig)
+      const w = rows.find((x) => x.key === 'ai_welcome')?.value?.points
+      if (typeof w === 'number' && Number.isInteger(w) && w >= 0) WELCOME_POINTS = w
     })
     .catch(() => {})
   return loading

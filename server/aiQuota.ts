@@ -2,7 +2,7 @@ import { createHash, createHmac, randomUUID, timingSafeEqual } from 'node:crypto
 
 /**
  * Điểm AI (chỉ người đã đăng nhập; khách bị chặn ở llmProxy):
- * - Lần đầu dùng AI, tài khoản được tặng một lần AI_WELCOME_POINTS điểm (mặc định 120), cất vào
+ * - Lần đầu dùng AI, tài khoản được tặng một lần AI_WELCOME_POINTS điểm (mặc định 80), cất vào
  *   số dư `ai_credits`. 1 điểm = TOKENS_PER_POINT token. Dùng hết là hết; sau này có gói nạp thêm.
  * - Hạn mức tháng (`AI_MONTHLY_TOKENS`, mặc định 0 = không có) vẫn giữ để bật lại nếu cần;
  *   ngoại lệ từng tài khoản ở `ai_quota_overrides` (monthly_tokens null = không giới hạn).
@@ -22,10 +22,10 @@ export const MONTHLY_LIMIT = () => num(process.env.AI_MONTHLY_TOKENS, 0)
 let welcomeCache: { v: number; until: number } | null = null
 export const resetWelcomeCache = () => (welcomeCache = null)
 
-/** Điểm chào mừng: admin đặt ở app_settings 'ai_welcome' (nhớ 30 giây), chưa đặt hoặc đọc lỗi thì theo AI_WELCOME_POINTS (mặc định 120). */
+/** Điểm chào mừng: admin đặt ở app_settings 'ai_welcome' (nhớ 30 giây), chưa đặt hoặc đọc lỗi thì theo AI_WELCOME_POINTS (mặc định 80). */
 export async function welcomeTokens(): Promise<number> {
   if (welcomeCache && welcomeCache.until > Date.now()) return welcomeCache.v
-  let points = num(process.env.AI_WELCOME_POINTS, 120)
+  let points = num(process.env.AI_WELCOME_POINTS, 80)
   const s = supa()
   if (s) {
     try {

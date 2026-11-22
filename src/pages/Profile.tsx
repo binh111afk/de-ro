@@ -13,6 +13,7 @@ import { currentSession, getSession } from '@/lib/auth'
 import { ProgressBar } from '@/components/ProgressBar'
 import { Avatar } from '@/components/Avatar'
 import { usePricingAccess } from '@/lib/usePricingAccess'
+import { useWelcomePoints } from '@/lib/useWelcomePoints'
 
 export default function Profile() {
   const session = useSession()
@@ -238,6 +239,7 @@ function cachedQuota(): QuotaState {
 }
 
 function CreditCard() {
+  const welcome = useWelcomePoints()
   const canPay = usePricingAccess() === true
   const [q, setQ] = useState<QuotaState>(cachedQuota)
   // lần đầu đọc điểm, máy chủ mới tặng quà chào mừng → lịch sử phải đọc lại sau đó mới thấy dòng quà
@@ -279,8 +281,8 @@ function CreditCard() {
   else if (q === null) body = <p className="mt-6 text-[13px] text-ink-3">Máy dev: không giới hạn token AI.</p>
   else {
     const left = aiPointsLeft({ ...q, scope: 'month' })
-    // thanh so với quà chào mừng 120 điểm (nạp thêm vượt mức thì thanh đầy)
-    const pct = Math.min(100, Math.round((left / Math.max(120, left)) * 100))
+    // thanh so với quà chào mừng (nạp thêm vượt mức thì thanh đầy)
+    const pct = Math.min(100, Math.round((left / Math.max(welcome, left, 1)) * 100))
     body = (
       <>
         <div className="mt-7 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">

@@ -5,7 +5,7 @@
  * Kiểu ở đây phải khớp với `toRow` và các action trong server/admin.ts.
  */
 import { apiFetch } from './apiFetch'
-import { applyPricing, type PricingConfig } from './pricing'
+import { applyPricing, applyWelcomePoints, type PricingConfig } from './pricing'
 
 export type AdminRole = 'admin' | 'moderator'
 
@@ -302,8 +302,11 @@ export async function setPricing(v: PricingConfig): Promise<PricingConfig> {
 }
 
 export async function setWelcomePoints(points: number): Promise<number> {
-  if (import.meta.env.DEV && isAdminMock()) return points
-  return (await post<{ ok: true; value: { points: number } }>('settings.set', { key: 'ai_welcome', value: { points } })).value.points
+  const saved = import.meta.env.DEV && isAdminMock()
+    ? points
+    : (await post<{ ok: true; value: { points: number } }>('settings.set', { key: 'ai_welcome', value: { points } })).value.points
+  applyWelcomePoints(saved)
+  return saved
 }
 
 export async function getAiStats(days = 7): Promise<{ days: number; rows: AiStatRow[] }> {

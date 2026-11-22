@@ -46,6 +46,7 @@ import {
 } from '@/lib/adminApi'
 import { formatViDate, formatViDateTime, formatNumber, shortenId } from './adminUtils'
 import { TOKENS_PER_POINT } from '@/lib/llm'
+import { useWelcomePoints } from '@/lib/useWelcomePoints'
 
 interface UsersPanelProps {
   me?: AdminMe
@@ -529,8 +530,9 @@ function UserDetailDrawer({
   const creditsValue = quota?.credits ?? 0
   const toPoints = (tokens: number) => Math.floor(tokens / TOKENS_PER_POINT)
   const pointsLeft = limitValue === null ? null : Math.max(0, toPoints(limitValue + creditsValue - usedValue))
-  // thanh so với quà chào mừng 120 điểm, giống Hồ sơ
-  const pct = pointsLeft === null ? 100 : Math.min(100, Math.round((pointsLeft / Math.max(120, pointsLeft)) * 100))
+  // thanh so với quà chào mừng, giống Hồ sơ
+  const welcome = useWelcomePoints()
+  const pct = pointsLeft === null ? 100 : Math.min(100, Math.round((pointsLeft / Math.max(welcome, pointsLeft, 1)) * 100))
 
   return (
     <Portal>
