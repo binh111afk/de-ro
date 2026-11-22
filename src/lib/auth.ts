@@ -14,7 +14,11 @@ export interface Session {
   user: { id: string; email: string; name?: string; avatar?: string; created_at?: string }
 }
 
-export class AuthError extends Error {}
+export class AuthError extends Error {
+  constructor(message: string, readonly status?: number) {
+    super(message)
+  }
+}
 
 /** Phiên lưu trong localStorage của trình duyệt — chỉ để nhớ đăng nhập, không phải nguồn sự thật. */
 export function getSession(): Session | null {
@@ -51,7 +55,7 @@ async function request<T>(path: string, init: { method?: string; body?: unknown;
     body: init.body === undefined ? undefined : JSON.stringify(init.body),
   })
   const data = (await res.json().catch(() => ({}))) as Record<string, unknown>
-  if (!res.ok) throw new AuthError(toVietnamese(data, res.status))
+  if (!res.ok) throw new AuthError(toVietnamese(data, res.status), res.status)
   return data as T
 }
 
@@ -305,8 +309,10 @@ export async function currentSession({ keepOnError = false } = {}): Promise<Sess
     if (current?.refresh_token !== s.refresh_token) return current?.user.id === s.user.id ? current : null
     saveSession(next)
     return next
-  } catch {
-    if (!keepOnError && getSession()?.refresh_token === s.refresh_token) saveSession(null)
+  } catch (e) {
+    // Chỉ bỏ phiên khi máy chủ từ chối refresh token. Mất mạng, lỗi 5xx, 429 thì giữ phiên để lần sau thử lại.
+    const rejected = e instanceof AuthError && (e.status === 400 || e.status === 401 || e.status === 403 || e.status === 422)
+    if (rejected && !keepOnError && getSession()?.refresh_token === s.refresh_token) saveSession(null)
     return null
   }
 }
