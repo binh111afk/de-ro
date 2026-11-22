@@ -13,9 +13,14 @@ export const FIGURE_GUIDE =
   'Lệnh: "A(1; 2)", "M(2; 3) chiếu", "AB, BC", "vectơ AB", "vectơ u(2; 1)", "d: 2x - y + 1 = 0", "đường thẳng AB", "x = 2", "(P): y = x^2 - 2x", "đường tròn (I; 2)", "đường tròn (1; -2) 3", "x + y <= 4".\n' +
   '5) Hình học phẳng: {"kind":"geo2d","shape":"triangle|right-triangle|isosceles|equilateral|square|rectangle|parallelogram|trapezoid|rhombus|circle|inscribed-triangle|free","names":["A","B","C"],"altitude":false,"median":false,"diagonals":false,"circumcircle":false,"extras":"mỗi dòng một lệnh dựng thêm"}. ' +
   'Mẫu "free" (tự do theo toạ độ, "names":[]): trong "extras" (cũng dùng được cho các mẫu) hỗ trợ "A(0; 4)" / "M(2,5; 0)", "nhãn AB \\"4 km\\"", "kích thước BC \\"7 km\\"" (thêm trên/dưới/trái/phải), "đường BC kéo dài", "tia BC", "vectơ AB, AD" (mũi tên từ A tới B; bài vectơ, quy tắc hình bình hành / ba điểm thì vẽ các vectơ đề nhắc tới), "vectơ AC \\"u\\"" (vectơ có tên riêng). Toạ độ phải khớp đề: "vuông tại A" thì góc vuông nằm ở chính điểm A (vd A(0; 0) B(0; 3) C(4; 0)), góc đề cho (vd góc B = 60°) phải đúng số đo trên hình; tam giác vuông không cần toạ độ riêng thì dùng mẫu right-triangle (vuông tại đỉnh đầu của "names").\n' +
-  '5b) Hình thực tế nét đơn (thang dựa tường, gấp giấy, đo chiều cao qua góc nhìn, mảnh vườn…): {"kind":"scene","text":"mỗi dòng một lệnh"}. Lệnh: "A(0; 0) B(4; 0) C(0; 3)" khai báo điểm (y hướng lên; tên bắt đầu _ thì ẩn nhãn, nối điểm ẩn bằng gạch: _G-_K); "AB, BC" đoạn; "ABCD" đa giác; "đứt MN" nét đứt; "kích thước AB \"15 cm\"" mũi tên kích thước; "góc ABC \"60°\"" cung góc tại B; "vuông ABC" góc vuông tại B; "nhãn AB \"?\"" chữ cạnh đoạn; "đất AB" / "tường AB" gạch chéo; "hình <vật> AB" vẽ hình vật đứng từ chân A lên đỉnh B (cao đúng AB, xoay theo AB — thang dựa tường đặt dọc đoạn thang), "hình <vật> A" đặt vật đứng tại A. Vật có sẵn: ' +
+  '5b) Hình thực tế nét đơn (thang dựa tường, gấp giấy, đo chiều cao qua góc nhìn, mảnh vườn…): {"kind":"scene","text":"mỗi dòng một lệnh"}. Lệnh: "A(0; 0) B(4; 0) C(0; 3)" khai báo điểm (y hướng lên; tên bắt đầu _ thì ẩn nhãn, nối điểm ẩn bằng gạch: _G-_K); "AB, BC" đoạn; "ABCD" đa giác; "đứt MN" nét đứt; "kích thước AB \"15 cm\"" mũi tên kích thước; "góc ABC \"60°\"" cung góc tại B; "vuông ABC" góc vuông tại B; "nhãn AB \"?\"" chữ cạnh đoạn; "đất AB" / "tường AB" gạch chéo; "hình <vật> AB" vẽ hình vật đứng từ chân A lên đỉnh B (cao đúng AB, xoay theo AB — thang dựa tường đặt dọc đoạn thang), "hình <vật> A" đặt vật đứng tại A. ' +
+  'Vật có sẵn: ' +
   SCENE_OBJECTS.map((id) => OBJECTS[id]).filter(Boolean).join(', ') +
   '; vật khác ghi "hình en:<tên tiếng Anh> A". Bài có cây, người, toà nhà, cột cờ, thang, thuyền… thì NÊN thêm hình vật cho dễ hình dung; đoạn đo vẫn vẽ như thường.Toạ độ gần đúng tỉ lệ số liệu đề, nhưng đoạn quá ngắn so với hình (chiều cao mắt 1,5 m bên khoảng cách 50 m…) thì vẽ to hơn tỉ lệ cho dễ nhìn; cạnh/góc đã biết dùng kích thước hoặc nhãn; cạnh cần tìm ghi \"?\" hoặc chữ, KHÔNG ghi đáp số. Góc tạo với mặt đất/tường thì PHẢI có \\"đất\\"/\\"tường\\" qua đỉnh góc làm cạnh thứ hai; đỉnh góc là chân vật (góc ở A khi \\"hình cái thang AB\\").\n' +
+  '5c) Sơ đồ tự do, cùng {"kind":"scene","text":"mỗi dòng một lệnh"} như 5b; dùng khi hình cần vẽ KHÔNG khớp công cụ chuyên dụng nào khác: sơ đồ khối, chu trình, mạng nối vòng tròn, sơ đồ tư duy, mô hình thanh…, thì dùng mục này thay vì bỏ hình): ' +
+  'đặt các điểm tâm bằng A(x; y) (thường tên bắt đầu _ để ẩn nhãn điểm), rồi "tròn _O 0.6 \\"nhãn\\" đứt tô xanh" vòng tròn (bán kính theo đơn vị toạ độ), "elip _O 1 0.6", "hộp _O 2 1 \\"chữ\\" bo tô vàng" hình chữ nhật tâm _O rộng 2 cao 1, "chữ _O \\"dòng 1\\\\ndòng 2\\" to đậm" chữ căn giữa, "mũi tên AB" / "mũi tên đứt AB" đoạn có đầu mũi tên ở B, "đứt AB" nét đứt, "_O-_A" đoạn nối hai điểm; màu: đen, đỏ, xanh, lục, vàng, cam, tím, hồng, xám, nâu, trắng hoặc #rrggbb. ' +
+  'Hình luôn tô trắng và vẽ sau các đoạn nên đoạn nối từ tâm này sang tâm kia tự dừng ở mép hình. Cách bố trí: tính toạ độ tâm bằng hình học (vd. 6 vòng quanh một vòng giữa: tâm cách 3 đơn vị, các góc 90°, 30°, -30°, -90°, -150°, 150°), kích thước hộp đủ chứa chữ (hộp rộng ~0,45 đơn vị cho mỗi chữ cái), các hình không chồng lên nhau. Ví dụ hình sao: "_O(0; 0) _A(0; 3) _B(2.6; 1.5) _C(2.6; -1.5) _D(0; -3) _E(-2.6; -1.5) _F(-2.6; 1.5)\\nđứt _O-_A\\nđứt _O-_B\\nđứt _O-_C\\nđứt _O-_D\\nđứt _O-_E\\nđứt _O-_F\\ntròn _O 0.55\\ntròn _A 0.55\\ntròn _B 0.55\\ntròn _C 0.55\\ntròn _D 0.55\\ntròn _E 0.55\\ntròn _F 0.55". ' +
+  'Sơ đồ có hộp nối bằng mũi tên (chu trình, quy trình, sơ đồ khối, sơ đồ tư duy) PHẢI dùng mục này với "hộp" + "mũi tên", KHÔNG thay bằng bảng 18 hay mô tả chữ. KHÔNG có kind "flow", "mindmap", "diagram", "shape", "network"…: sơ đồ nào cũng là {"kind":"scene","text":"..."}.Ví dụ chu trình 4 hộp: "_A(-2.4; 1.2) _B(2.4; 1.2) _C(2.4; -1.2) _D(-2.4; -1.2)\\nhộp _A 2.2 1 \\"Bay hơi\\"\\nhộp _B 2.2 1 \\"Ngưng tụ\\"\\nhộp _C 2.2 1 \\"Mưa\\"\\nhộp _D 2.2 1 \\"Thấm\\"\\nmũi tên _A-_B\\nmũi tên _B-_C\\nmũi tên _C-_D\\nmũi tên _D-_A". Sơ đồ tư duy: hộp giữa ở gốc toạ độ, các hộp nhánh quanh nó, nối bằng đoạn thẳng ("_O-_A").\n' +
   '6) Hình không gian: {"kind":"geo3d","shape":"pyramid3|pyramid3-sa|pyramid3-regular|pyramid4|pyramid4-sa|pyramid4-regular|tetrahedron|prism3|box|cube|cone|cylinder|sphere","names":["S","A","B","C","D"],"height":true,"diagonals":false,"circumsphere":false,"extras":"mỗi dòng một lệnh dựng thêm"}. "circumsphere": true vẽ mặt cầu ngoại tiếp khối (hộp, lập phương, chóp/lăng trụ đều); trong "extras" có thể đặt/đổi toạ độ 3D dạng "S(1; 0,5; 2)". ' +
   'Lệnh dựng thêm (5 và 6; không dùng cho nón, trụ, cầu): "M = trung điểm SC", "N = SB 1/3", "O = AC cắt BD", "H = hình chiếu S lên (ABCD)", "K = hình chiếu A lên SB", "G = trọng tâm ABC", "O = tâm ngoại tiếp ABC", "đường cao AH", "trung tuyến AM", "MN" (nối), "đứt MN". Đề gọi tên điểm nào (trung điểm, giao điểm, tâm I…) thì PHẢI dựng điểm đó cho hiện trên hình.\n' +
   '7) Biểu đồ thống kê: {"kind":"stats","chart":"bar|line|pie|hist|table","title":"","xLabel":"","yLabel":"","data":"dòng 1: nhãn cách nhau bởi ;\\nTên dãy: số; số; ..."}. Ghép nhóm dùng nhãn "[40; 50) [50; 60)".\n' +
@@ -51,11 +56,11 @@ export const FIGURE_GUIDE =
 
 /** loại hình hợp từng môn (số mục trong FIGURE_GUIDE) — đề một môn khỏi phải gửi cả hướng dẫn mạch điện, phả hệ… */
 const FIGURE_BY_SUBJECT: Array<[RegExp, string[]]> = [
-  [/to[aá]n/i, ['1', '2', '3', '4', '5', '5b', '6', '7', '8', '9', '10', '11', '11b', '18', '27', '28']],
-  [/v[aậ]t\s*l[ií]|m[oô]n\s*l[ý]/i, ['1', '4', '5b', '7', '12', '13', '14', '15b', '18', '20', '21', '22', '26']],
-  [/ho[aá]\s*h[oọ]c|m[oô]n\s*ho[aá]/i, ['7', '15', '16', '17', '18', '19']],
-  [/sinh\s*h[oọ]c|m[oô]n\s*sinh/i, ['7', '18', '23', '24', '25']],
-  [/[đd][iị]a\s*l[ií]/i, ['7', '18']],
+  [/to[aá]n/i, ['1', '2', '3', '4', '5', '5b', '5c', '6', '7', '8', '9', '10', '11', '11b', '18', '27', '28']],
+  [/v[aậ]t\s*l[ií]|m[oô]n\s*l[ý]/i, ['1', '4', '5b', '5c', '7', '12', '13', '14', '15b', '18', '20', '21', '22', '26']],
+  [/ho[aá]\s*h[oọ]c|m[oô]n\s*ho[aá]/i, ['5c', '7', '15', '16', '17', '18', '19']],
+  [/sinh\s*h[oọ]c|m[oô]n\s*sinh/i, ['5c', '7', '18', '23', '24', '25']],
+  [/[đd][iị]a\s*l[ií]/i, ['5c', '7', '18']],
 ]
 
 /**
@@ -73,5 +78,5 @@ export function figureGuideFor(request: string): string {
   const keep = new Set(hits[0][1].filter((id) => !(upper && PRIMARY_ONLY.has(id))))
   const lines = FIGURE_GUIDE.split('\n')
   const tail = lines.pop() ?? ''
-  return lines.filter((l) => keep.has(/^(\d+b?)\)/.exec(l)?.[1] ?? '')).join('\n') + '\n' + tail
+  return lines.filter((l) => keep.has(/^(\d+[bc]?)\)/.exec(l)?.[1] ?? '')).join('\n') + '\n' + tail
 }

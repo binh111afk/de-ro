@@ -28,6 +28,7 @@
     "test:attempt": "tsx --tsconfig tsconfig.app.json scripts/test-attempt.ts",
     "test:exam-public": "tsx --tsconfig tsconfig.app.json scripts/test-exam-public.ts",
     "test:docx": "tsx --tsconfig tsconfig.app.json scripts/test-docx.ts",
+    "test:scene": "tsx --tsconfig tsconfig.app.json scripts/test-scene-free.ts",
     "test:guard": "tsx scripts/test-guard.ts",
     "test:alerts": "tsx scripts/test-alerts.ts",
     "test:ai-margin": "tsx scripts/test-ai-margin.ts",

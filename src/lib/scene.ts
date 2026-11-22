@@ -31,8 +31,9 @@ export interface SceneSpec {
 }
 
 type P = [number, number]
+type ShapeKind = 'tròn' | 'elip' | 'hộp'
 type Cmd =
-  | { t: 'seg'; a: string; b: string; dashed: boolean }
+  | { t: 'seg'; a: string; b: string; dashed: boolean; arrow?: boolean }
   | { t: 'poly'; names: string[] }
   | { t: 'dim'; a: string; b: string; text: string }
   | { t: 'angle'; a: string; o: string; b: string; text: string }
@@ -40,9 +41,18 @@ type Cmd =
   | { t: 'label'; a: string; b: string; text: string }
   | { t: 'ground'; a: string; b: string; wall: boolean }
   | { t: 'sprite'; id: string; name: string; a: string; b?: string }
+  | { t: 'shape'; kind: ShapeKind; o: string; rx: number; ry: number; text: string; dashed: boolean; fill: string; rounded: boolean }
+  | { t: 'text'; o: string; text: string; large: boolean; bold: boolean }
 
 const NUM = String.raw`(-?\d+(?:[.,]\d+)?)`
 const toNum = (s: string) => Number(s.replace(',', '.'))
+const FREE = /^(tròn|elip|hộp|chữ|mũi\s+tên)(?=\s|$)/u
+const QUOTED = /"([^"]*)"|“([^”]*)”/g
+const SIZE = new RegExp(`^${NUM}$`)
+const COLORS = new Map(Object.entries({
+  đen: '#111111', đỏ: '#d62828', xanh: '#2563eb', lục: '#15803d', vàng: '#eab308',
+  cam: '#ea580c', tím: '#7e22ce', hồng: '#db2777', xám: '#6b7280', nâu: '#92400e', trắng: '#ffffff',
+}))
 /** tách "ABC" / "A'B" / "A1B" thành tên điểm có trong bảng */
 function splitNames(s: string, pts: Map<string, P>, line: number): string[] {
   // viết tách "_G-_K" hoặc "A1-B2": mỗi phần là một tên
@@ -64,19 +74,86 @@ function splitNames(s: string, pts: Map<string, P>, line: number): string[] {
   return out
 }
 
+function parseFreeCmd(kind: string, rest: string, pts: Map<string, P>, line: number): Cmd {
+  const fail = (message: string): never => { throw new Error(`Dòng ${line}: ${message}`) }
+  const parts = [...rest.matchAll(/(?:^|\s+)("[^"]*"|“[^”]*”|[^\s"“”]+)(?=\s|$)/gu)]
+  if (parts.map((m) => m[0]).join('') !== rest) fail('nhãn cần đặt trong dấu ngoặc kép, cách tuỳ chọn bằng khoảng trắng')
+  const args = parts.map((m) => m[1])
+  if (/^mũi\s+tên$/u.test(kind)) {
+    const dashed = args[0] === 'đứt'
+    if (dashed) args.shift()
+    const [arg] = args
+    if (!arg || args.length !== 1) fail('mũi tên cần đúng 2 điểm, vd. AB')
+    const [a, b, extra] = splitNames(arg, pts, line)
+    if (!a || !b || extra) fail('mũi tên cần đúng 2 điểm, vd. AB')
+    return { t: 'seg', a, b, dashed, arrow: true }
+  }
+
+  const o = args.shift()
+  if (!o) return fail(`thiếu điểm đặt ${kind}`)
+  if (!pts.has(o)) fail(`chưa khai báo điểm "${o}"`)
+  const label = (s: string) => s.startsWith('"') || s.startsWith('“')
+  const unquote = (s: string) => s.slice(1, -1)
+  if (kind === 'chữ') {
+    const [content, ...options] = args
+    if (!content || !label(content)) fail('chữ cần văn bản trong dấu ngoặc kép')
+    for (const opt of options) if (opt !== 'to' && opt !== 'đậm') fail(`tuỳ chọn chữ không hợp lệ "${opt}"`)
+    return { t: 'text', o, text: unquote(content), large: options.includes('to'), bold: options.includes('đậm') }
+  }
+
+  const size = (name: string) => {
+    const value = args.shift()
+    if (!value || !SIZE.test(value)) return fail(`${name} phải là số lớn hơn 0`)
+    const n = toNum(value)
+    if (!Number.isFinite(n) || n <= 0) fail(`${name} phải là số lớn hơn 0`)
+    return n
+  }
+  const rx = kind === 'hộp' ? size('chiều rộng') / 2 : size('bán kính')
+  const ry = kind === 'tròn' ? rx : kind === 'hộp' ? size('chiều cao') / 2 : size('bán kính trục y')
+  let text: string | undefined
+  let fill = '#fff'
+  let dashed = false
+  let rounded = false
+  for (let i = 0; i < args.length; i++) {
+    const opt = args[i]
+    if (label(opt) && text === undefined) text = unquote(opt)
+    else if (opt === 'đứt') dashed = true
+    else if (opt === 'bo' && kind === 'hộp') rounded = true
+    else if (opt === 'tô') {
+      const name = args[++i]?.toLowerCase()
+      if (!name) return fail('thiếu màu tô')
+      const hex = COLORS.get(name) ?? (/^#[\da-f]{6}$/.test(name) ? name : fail(`màu tô không hợp lệ "${name}"`))
+      // Pha với trắng để màu vẫn che kín đoạn nối và chữ đen dễ đọc.
+      const channels = hex.slice(1).match(/../g)!
+      fill = '#' + channels.map((s) => Math.round(255 * 0.8 + parseInt(s, 16) * 0.2).toString(16)).join('')
+    } else fail(`tuỳ chọn ${kind} không hợp lệ "${opt}"`)
+  }
+  return { t: 'shape', kind: kind as ShapeKind, o, rx, ry, text: text ?? '', dashed, fill, rounded }
+}
+
 export function parseScene(text: string): { pts: Map<string, P>; cmds: Cmd[] } {
   const pts = new Map<string, P>()
   const cmds: Cmd[] = []
   const lines = text.split('\n')
   // lượt 1: điểm (để lệnh viết trước điểm vẫn đọc được)
   const pointRe = new RegExp(String.raw`([A-Z_][A-Za-z0-9_']*)\s*\(\s*${NUM}\s*;\s*${NUM}\s*\)`, 'g')
-  lines.forEach((l) => {
-    for (const m of l.matchAll(pointRe)) pts.set(m[1], [toNum(m[2]), toNum(m[3])])
+  const clean = (l: string) => l.trim().replace(/^[,;]+|[,;]+$/g, '').trim()
+  const quotedOrPoint = new RegExp(`${QUOTED.source}|${pointRe.source}`, 'g')
+  const commands = lines.map((l) => clean(l.replace(quotedOrPoint, (m) => /^["“]/.test(m) ? m : '')))
+  const free = commands.map((l) => FREE.exec(l)?.[0])
+  lines.forEach((l, idx) => {
+    const source = free[idx] ? l.replace(QUOTED, ' ') : l
+    for (const m of source.matchAll(pointRe)) pts.set(m[1], [toNum(m[2]), toNum(m[3])])
   })
-  if (pts.size < 2) throw new Error('Cần ít nhất 2 điểm, vd. A(0; 0) B(4; 0)')
+  if (pts.size < 2 && !free.some(Boolean)) throw new Error('Cần ít nhất 2 điểm, vd. A(0; 0) B(4; 0)')
   lines.forEach((raw, idx) => {
     const line = idx + 1
-    const l = raw.replace(pointRe, '').trim().replace(/^[,;]+|[,;]+$/g, '').trim()
+    const kind = free[idx]
+    if (kind) {
+      cmds.push(parseFreeCmd(kind, commands[idx].slice(kind.length).trim(), pts, line))
+      return
+    }
+    const l = clean(raw.replace(pointRe, ''))
     if (!l) return
     const quoted = l.match(/"([^"]*)"|“([^”]*)”/)
     const q = quoted ? (quoted[1] ?? quoted[2] ?? '') : ''
@@ -130,6 +207,38 @@ export function parseScene(text: string): { pts: Map<string, P>; cmds: Cmd[] } {
     }
   })
   return { pts, cmds }
+}
+
+type Shape = Extract<Cmd, { t: 'shape' }>
+const cornerRadius = (c: Shape) => c.rounded ? Math.min(c.rx, c.ry) * 0.35 : 0
+
+/** Khoảng cách từ tâm tới mép hình theo hướng (dx, dy). */
+function shapeEdge(c: Shape, dx: number, dy: number): number {
+  if (c.kind !== 'hộp') return 1 / Math.hypot(dx / c.rx, dy / c.ry)
+  const x = Math.abs(dx)
+  const y = Math.abs(dy)
+  let hi = Math.min(c.rx / x, c.ry / y)
+  const r = cornerRadius(c)
+  if (!r) return hi
+  let lo = 0
+  for (let i = 0; i < 20; i++) {
+    const d = (lo + hi) / 2
+    if (Math.hypot(Math.max(0, d * x - c.rx + r), Math.max(0, d * y - c.ry + r)) <= r) lo = d
+    else hi = d
+  }
+  return hi
+}
+
+/** Ước lượng bề rộng chữ Times New Roman theo em, kể cả ngoài trình duyệt. */
+function textWidthEm(s: string): number {
+  let width = 0
+  for (const ch of s.normalize('NFD').replace(/\p{Mark}/gu, '')) {
+    if (/[ilIftjr\s.,;:!'|]/.test(ch)) width += 0.4
+    else if (/[A-LN-VX-Z]/.test(ch)) width += 0.85
+    else if (/[a-ln-vx-z0-9đ]/.test(ch)) width += 0.6
+    else width += 1
+  }
+  return width
 }
 
 export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; width: number; height: number } {
@@ -226,17 +335,44 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
     })
   const xs = [...px, ...sprites.flatMap((s) => s.corners.map((p) => p[0]))]
   const ys = [...py, ...sprites.flatMap((s) => s.corners.map((p) => p[1]))]
+  const shapes = cmds.filter((c): c is Shape => c.t === 'shape')
+  for (const c of shapes) {
+    const [x, y] = pts.get(c.o)!
+    xs.push(x - c.rx, x + c.rx)
+    ys.push(y - c.ry, y + c.ry)
+  }
+  const labels = cmds.flatMap((c, i) => {
+    if ((c.t !== 'shape' && c.t !== 'text') || !c.text) return []
+    const size = c.t === 'text' && c.large ? 21 : 15
+    const lines = c.text.split('\\n')
+    return [{ o: c.o, id: `free:${c.o}:${i}`, lines, size, step: size * 1.2, bold: c.t === 'text' && c.bold, insideShape: c.t === 'shape' }]
+  })
   const minX = Math.min(...xs)
   const maxX = Math.max(...xs)
   const minY = Math.min(...ys)
   const maxY = Math.max(...ys)
-  const spanX = maxX - minX || 1
-  const spanY = maxY - minY || 1
-  const k = Math.min(300 / spanX, 230 / spanY)
+  const freeLayout = shapes.length > 0 || cmds.some((c) => c.t === 'text' || (c.t === 'seg' && c.arrow))
+  const spanX = maxX - minX || (freeLayout ? 0 : 1)
+  const spanY = maxY - minY || (freeLayout ? 0 : 1)
+  const k = spanX || spanY ? Math.min(300 / spanX, 230 / spanY) : 1
   const pad = 62
-  const W = Math.round(spanX * k + pad * 2)
-  const H = Math.round(spanY * k + pad * 2)
-  const S = ([x, y]: P): P => [pad + (x - minX) * k, H - pad - (y - minY) * k]
+  const width = Math.round(spanX * k + pad * 2) - pad * 2
+  const height = Math.round(spanY * k + pad * 2) - pad * 2
+  const bounds = { left: 0, right: width, top: 0, bottom: height }
+  for (const c of labels) {
+    const [x, y] = pts.get(c.o)!
+    const lx = (x - minX) * k
+    const ly = height - (y - minY) * k
+    const hw = Math.max(...c.lines.map(textWidthEm)) * c.size / 2
+    const hh = (c.lines.length - 1) * c.step / 2 + c.size
+    bounds.left = Math.min(bounds.left, Math.floor(lx - hw))
+    bounds.right = Math.max(bounds.right, Math.ceil(lx + hw))
+    bounds.top = Math.min(bounds.top, Math.floor(ly - hh))
+    bounds.bottom = Math.max(bounds.bottom, Math.ceil(ly + hh))
+  }
+  const W = bounds.right - bounds.left + pad * 2
+  const H = bounds.bottom - bounds.top + pad * 2
+  const S = ([x, y]: P): P => [pad - bounds.left + (x - minX) * k, height + pad - bounds.top - (y - minY) * k]
   const at = (n: string) => S(pts.get(n)!)
   // tâm hình: để đặt kích thước / nhãn điểm ra phía ngoài
   const cx = [...pts.values()].reduce((s, p) => s + S(p)[0], 0) / pts.size
@@ -298,7 +434,20 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
       const d = c.names.map((n, i) => `${i ? 'L' : 'M'}${f1(at(n)[0])} ${f1(at(n)[1])}`).join('') + 'Z'
       b += `<path d="${d}" stroke="#111" fill="none" stroke-width="1.6" stroke-linejoin="round"/>`
     } else if (c.t === 'seg') {
-      b += line(at(c.a), at(c.b), c.dashed ? 'stroke-width="1.2" stroke-dasharray="5 4"' : 'stroke-width="1.6"')
+      const p = at(c.a)
+      let q = at(c.b)
+      const style = c.dashed ? 'stroke-width="1.2" stroke-dasharray="5 4"' : 'stroke-width="1.6"'
+      if (c.arrow) {
+        const len = Math.hypot(q[0] - p[0], q[1] - p[1])
+        if (!len) continue
+        const dx = (q[0] - p[0]) / len
+        const dy = (q[1] - p[1]) / len
+        // Đầu mũi tên dừng ở mép khi B là tâm hình, để phần tô không che đầu nhọn.
+        const inset = Math.max(0, ...shapes.filter((s) => s.o === c.b).map((s) => shapeEdge(s, dx, dy) * k))
+        if (inset >= len) continue
+        q = [q[0] - dx * inset, q[1] - dy * inset]
+      }
+      b += line(p, q, style + (c.arrow ? ' marker-end="url(#scarr)"' : ''))
     } else if (c.t === 'right') {
       const o = at(c.o)
       const ua = at(c.a)
@@ -359,6 +508,24 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
       else if (along) off += along.hw * k
       b += text((p[0] + q[0]) / 2 + n[0] * off, (p[1] + q[1]) / 2 + n[1] * off + 5, c.text, Math.abs(n[0]) > 0.7 ? (n[0] > 0 ? 'start' : 'end') : 'middle', 15, `lbl:${c.a}${c.b}`)
     }
+  }
+
+  for (const c of shapes) {
+    const [x, y] = at(c.o)
+    const rx = c.rx * k
+    const ry = c.ry * k
+    const style = `fill="${c.fill}" stroke="#111" stroke-width="1.2"${c.dashed ? ' stroke-dasharray="5 4"' : ''}`
+    if (c.kind === 'tròn') b += `<circle cx="${f1(x)}" cy="${f1(y)}" r="${rx}" ${style}/>`
+    else if (c.kind === 'elip') b += `<ellipse cx="${f1(x)}" cy="${f1(y)}" rx="${rx}" ry="${ry}" ${style}/>`
+    else b += `<rect x="${f1(x - rx)}" y="${f1(y - ry)}" width="${2 * rx}" height="${2 * ry}" rx="${cornerRadius(c) * k}" ${style}/>`
+  }
+  for (const c of labels) {
+    const [x, y] = at(c.o)
+    const start = y + c.size * 0.32 - (c.lines.length - 1) * c.step / 2
+    const body = c.lines.length === 1 ? esc(c.lines[0]) : c.lines.map((s, i) =>
+      `<tspan x="${f1(x)}" y="${f1(start + i * c.step)}">${esc(s)}</tspan>`).join('')
+    const style = c.insideShape ? ' stroke="none"' : c.bold ? ' font-weight="bold"' : ''
+    b += `<text x="${f1(x)}" y="${f1(start)}" ${FAM} font-size="${c.size}"${style} data-lbl="${c.id}" text-anchor="middle">${body}</text>`
   }
 
   // các nét đã vẽ, để nhãn điểm né (đoạn, cạnh đa giác, mặt đất, mũi tên kích thước)
@@ -507,6 +674,16 @@ export const SCENE_HELP = [
       { code: 'hình cái thang CB', what: 'Thang dọc đoạn CB, xoay theo độ nghiêng' },
       { code: 'hình người A', what: 'Người đứng tại A; có: toà nhà, cột cờ, hải đăng, thuyền, ô tô…' },
       { code: 'hình en:teapot A', what: 'Vật chưa có trong kho: tên tiếng Anh, vẽ thêm một lần (tốn điểm lần đầu)' },
+    ],
+  },
+  {
+    group: 'Hình tự do',
+    items: [
+      { code: 'tròn O 0.6 "Nhãn"', what: 'Vòng tròn tâm O, bán kính 0.6; thêm đứt, tô <màu>' },
+      { code: 'elip O 1 0.6 đứt', what: 'Elip tâm O, hai bán kính; thêm nhãn, tô <màu>' },
+      { code: 'hộp O 2 1 "Nhãn" bo tô xanh', what: 'Hộp tâm O, rộng 2, cao 1; thêm bo, đứt, tô <màu> (tên hoặc #rrggbb)' },
+      { code: 'chữ O "Dòng 1\\nDòng 2" to đậm', what: 'Chữ căn giữa tại O; thêm to, đậm' },
+      { code: 'mũi tên AB / mũi tên đứt AB', what: 'Mũi tên từ A đến B' },
     ],
   },
 ]
