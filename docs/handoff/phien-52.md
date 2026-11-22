@@ -1,10 +1,10 @@
 # Phiên 52 — điểm chào mừng do admin đặt, popup quà, kind slide Pro, trạng thái vẽ ảnh, email liên hệ
 
-Ngày 21–22/11/2026. `main` đã push tới `08a0661`. Migration `20261219_public_ai_welcome.sql` **đã áp** lên DB `dethinhbien` (`ddcyhsxytbcdpgpggexh`). Nhánh `feat/slide-chuyen-nghiep` đã xoá (cục bộ + origin). Còn một nhánh dở: `feat/slide-pro-web` (xem mục A).
+Ngày 21–22/11/2026. `main` đã push tới `08a0661`. Migration `20261219_public_ai_welcome.sql` **đã áp** lên DB `dethinhbien` (`ddcyhsxytbcdpgpggexh`). Nhánh `feat/slide-chuyen-nghiep` đã xoá (cục bộ + origin). Không còn nhánh dở.
 
 ## Việc phiên sau
 
-A. **Nhánh `feat/slide-pro-web` (worktree `../dethinhbien-slide-web`) chưa commit, chưa gộp, chưa push; người dùng chưa trả lời có gộp không.** Nội dung: Tìm trên web cho slide Pro — khi người dùng bật Tìm trên web thì kết quả tìm được đi theo dàn ý (`DeckPlan.webFound`, `webGround()` trong `src/lib/prompts/slideTasks.ts`, `server/aiTasks.ts` nhận `webFound` ≤ 8000 ký tự, `AiPanel.tsx` gắn khi người dùng bật tìm) để các slide dùng số liệu đã tra; không bật tìm thì chịu. Kèm cờ `--web` cho `scripts/eval-slides.mjs`. Gộp thì: chạy `npm run build:prompts`, `test:ai-prompts-slide`, `tsc`. Đừng áp `webGround` cho `slide-chat` (làm hỏng `test:ai-prompts-slide`, ở đó dùng `webSection`). Xoá worktree: `rmdir`/`unlink` `node_modules` (junction) **trước**, rồi `git worktree remove`.
+A. **Nhánh `feat/slide-pro-web` (Tìm trên web cho slide Pro) đã XOÁ theo ý người dùng (22/11): người dùng tự bật Tìm trên web thì tự chịu, không cần đưa kết quả tra vào từng lượt viết slide.** Ý tưởng cũ: lưu kết quả tra web vào `DeckPlan.webFound` rồi gắn vào prompt từng slide; nếu cần làm lại thì tự viết lại (không còn patch trong repo).
 B. **Email liên hệ `lienhe@dero.id.vn` đã chạy nhưng CHƯA đổi trên web** — chờ Bộ Công Thương duyệt hồ sơ. Chi tiết và các bước nằm ở `AGENTS.md` mục 7 (đọc mục đó trước khi đụng `src/lib/contact.ts`).
 C. Chưa kiểm trên web thật sau deploy: popup quà chào mừng (chỉ tài khoản tạo từ 22/11 10:25 giờ VN và quà còn nguyên), Điều khoản / Hồ sơ / bảng người dùng theo số điểm admin đặt, trạng thái ảnh (nút Vẽ lại, hiệu ứng hiện dần, `prefers-reduced-motion`) trong trình soạn thật.
 D. Đề xuất, người dùng chưa duyệt: làm cứng luồng nạp PayOS (huỷ đơn chờ tuần tự thay vì song song, bỏ qua đơn chờ đã hết hạn, thử lại khi 429); layout đồ thị toạ độ cho slide Pro (môn Toán chưa có); ép tối thiểu số ảnh mỗi deck Pro; báo điểm sẽ tốn trước khi tạo; nhắc nạp khi còn ít điểm; hỏi 6 người đã bấm nạp rồi huỷ ở trang PayOS.
