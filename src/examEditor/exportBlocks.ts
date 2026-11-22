@@ -9,6 +9,7 @@ import type { BandSetup, PageNumberSetup } from './pageSetup'
 import 'katex/contrib/mhchem' // \ce{...}
 import type { ExamBlock, ExamDoc, FormatAttrs, RichText, Span } from '@/data/docTypes'
 import type { SummaryAnswerData } from '@/lib/shuffleExam'
+import { mathTableImageSrc } from '@/lib/table'
 import { estimateChoiceCols } from './choiceCols'
 import { splitRichLines } from './convert'
 
@@ -76,7 +77,7 @@ function textToHtml(text: string): string {
 function spanToHtml(s: Span): string {
   if (s.image) {
     const w = s.image.width ? ` width="${css(Math.round(s.image.width))}"` : ''
-    return `<img src="${s.image.src.replace(/"/g, '&quot;')}" alt="${escapeHtml(s.image.alt ?? '')}"${w} style="max-width:100%">`
+    return `<img src="${escapeHtml(mathTableImageSrc(s.image.src, s.image.plot))}" alt="${escapeHtml(s.image.alt ?? '')}"${w} style="max-width:100%">`
   }
   let inner = textToHtml(s.text)
   for (const m of s.marks ?? []) {

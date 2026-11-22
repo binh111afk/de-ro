@@ -2,50 +2,50 @@
  {
   "name": "toan12",
   "topic": "Soạn đề thi thử tốt nghiệp THPT môn Toán 12 theo cấu trúc 2025 (12 câu nhiều lựa chọn, 4 câu đúng/sai, 6 câu trả lời ngắn), có đáp án, có các câu đọc hình.",
-  "len": 21987,
-  "sha256": "6a871b55bbd7ca72d5ac6b565fd29c6c44bb7397074b0a826979eb29ad19099a"
+  "len": 22849,
+  "sha256": "41297810d4d3536c21a33cf5d72e3be092b7dc16a3a0b141b64d5c881acfa8bf"
  },
  {
   "name": "ly11",
   "topic": "Soạn đề kiểm tra Vật lí 11 chương Dao động cơ, 20 câu trắc nghiệm 4 phương án, có đáp án, vài câu có đồ thị.",
-  "len": 21465,
-  "sha256": "7da723259ec121151a20be333f545ce9b04152cdbb6263b9914b4e79949aa2c4"
+  "len": 21631,
+  "sha256": "5ca0fc576cb95012ee4cc80d494380b9aa52e116fa10416e77b0c735a470e7f4"
  },
  {
   "name": "van9",
   "topic": "Soạn đề kiểm tra giữa kì Ngữ văn 9 gồm phần đọc hiểu một đoạn văn bản (4 câu) và phần viết đoạn văn nghị luận, có hướng dẫn chấm.",
-  "len": 33665,
-  "sha256": "86dc72ff0a027eb568c85ec41dcbe5c0c5788a8d3f8f76d7603a379b104c69a8"
+  "len": 34527,
+  "sha256": "968b4be4d330c186793f930795bd9187a1d0dba4df43a24ff595443b902fd484"
  },
  {
   "name": "hinh9",
   "topic": "Soạn đề Toán 9 chương Hệ thức lượng trong tam giác vuông, 10 câu trắc nghiệm 4 phương án, ít nhất 4 câu có hình vẽ, có đáp án.",
-  "len": 28523,
-  "sha256": "888a254e265a52de90698b45e7db347b6ee29b107f09748d1d80977ad54d3a13"
+  "len": 29385,
+  "sha256": "32207802be868b2cfc698b921a3b6511b96cc71c48382dee62be7ce5c3b63ee2"
  },
  {
   "name": "toan8",
   "topic": "Soạn đề kiểm tra 15 phút Toán 8 chương Phân thức đại số, 10 câu trắc nghiệm 4 phương án và 2 câu tự luận, có đáp án và thang điểm.",
-  "len": 28523,
-  "sha256": "888a254e265a52de90698b45e7db347b6ee29b107f09748d1d80977ad54d3a13"
+  "len": 29385,
+  "sha256": "32207802be868b2cfc698b921a3b6511b96cc71c48382dee62be7ce5c3b63ee2"
  },
  {
   "name": "hoa10",
   "topic": "Soạn đề kiểm tra Hoá học 10 bài Liên kết hoá học, 15 câu trắc nghiệm và 2 câu tự luận, có đáp án.",
-  "len": 16868,
-  "sha256": "d115164375c385ab9da6b6b262197800a8a79887e0ee817b7c696fec14613cb6"
+  "len": 16920,
+  "sha256": "2387c43f6900caa8ee7488556c37a37888d6b104f08609b928d51dedb29794db"
  },
  {
   "name": "su12",
   "topic": "Soạn đề kiểm tra Lịch sử 12 bài Cách mạng tháng Tám năm 1945, 20 câu trắc nghiệm 4 phương án, có đáp án.",
-  "len": 33665,
-  "sha256": "86dc72ff0a027eb568c85ec41dcbe5c0c5788a8d3f8f76d7603a379b104c69a8"
+  "len": 34527,
+  "sha256": "968b4be4d330c186793f930795bd9187a1d0dba4df43a24ff595443b902fd484"
  },
  {
   "name": "hoi-dap",
   "topic": "Giải thích cân bằng phản ứng hóa học.",
   "intent": "chat",
-  "len": 32953,
-  "sha256": "8b21eb9568619737f11f9b67e4e9f1bfcf285a1fe6d5d1f4c9c51f088692f009"
+  "len": 33815,
+  "sha256": "b607168d9ebe9ff6cec8416e5a4f9c6d81a3bbf886db9988ca92b95ffa058d6b"
  }
 ]

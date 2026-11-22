@@ -42,7 +42,7 @@ assert.equal(mcq.questions[0].answer, 'B')
 assert.equal(mcq.questions[1].answer, 'B')
 assert.deepEqual(mcq.questions[1].options, [{ key: 'A', text: '4' }, { key: 'B', text: '7' }])
 assert.equal(mcq.questions[0].prompt, 'Giá trị của $x^2$ khi $x=2$?')
-assert.equal(mcq.questions[0].options?.[1].text, '4')
+assert.equal(mcq.questions[0].options?.[1].text, '**4**')
 
 assert.equal(essay.questions.length, 1)
 assert.equal(essay.questions[0].type, 'tu-luan')
@@ -91,9 +91,21 @@ const withImg = docToExam(
   'img',
 )
 const [q1, q2, q3] = withImg.sections[0].questions
-assert.deepEqual(q1.image, { src: png, position: 'top', width: 40 })
+assert.deepEqual(q1.image, { src: png, position: 'top', width: 10 }) // 40 px → tối thiểu 10% trên đề online
 assert.equal(q1.prompt, 'Cho hình vẽ.')
 assert.deepEqual(q2.image, { src: '/api/files/x.png', position: 'bottom' })
 assert.equal(q3.image, undefined)
+
+const withTable = docToExam({ ...doc, blocks: [
+  { type: 'question', no: 1, text: 'Cho bảng số liệu sau:', options: [] },
+  { type: 'table', rows: [[{ text: 'Điểm' }, { text: '$[5;6)$' }], [{ text: 'Số học sinh' }, { text: '3' }]] },
+  { type: 'question', no: 2, text: 'Tính 1 + 1', options: [] },
+  { type: 'table', rows: [[{ text: 'Đáp án' }, { text: '2' }]] },
+]}, 'bang')
+const [tableQuestion, plainQuestion] = withTable.sections[0].questions
+const tableSvg = Buffer.from(tableQuestion.prompt.match(/data:image\/svg\+xml;base64,([^)]+)/)?.[1] ?? '', 'base64').toString('utf8')
+assert.match(tableSvg, /aria-label="\[5;6\)"/)
+assert.doesNotMatch(tableSvg, /\$/)
+assert.equal(plainQuestion.prompt, 'Tính 1 + 1')
 
 console.log('test-doc-to-exam: OK')

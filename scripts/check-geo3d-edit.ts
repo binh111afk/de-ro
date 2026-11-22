@@ -8,6 +8,7 @@
  * Chạy: npx tsx --tsconfig tsconfig.app.json scripts/check-geo3d-edit.ts
  */
 import assert from 'node:assert/strict'
+import { toolFromRaw } from '../src/lib/docRewrite'
 import { construct, extractCoords } from '../src/lib/geoConstruct'
 import { renderGeo2dSvg, renderGeo3dSvg, type Geo3dSpec } from '../src/lib/geometry'
 import { readToolDoc, renderTool } from '../src/lib/toolSpec'
@@ -81,6 +82,28 @@ const countRightMarks = (svg: string) => (svg.match(/stroke-width="1\.1"/g) ?? [
 assert.equal(countRightMarks(pyrSaDefault.svg), 2, 'mẫu SA ⊥ đáy có 2 kí hiệu góc vuông')
 assert.equal(countRightMarks(pyrSaMoved.svg), 0, 'khi S rời khỏi trục A, kí hiệu góc vuông SA ⊥ đáy không vẽ nữa')
 console.log('✓ Ghi đè đỉnh mẫu, 5 nút pyramid4, tính lại trung điểm, ẩn góc vuông không còn đúng')
+
+// Chóp có đáy hình thang vuông tại A, D, với AB=2 và AD=CD=1.
+const trapezoid = toolFromRaw({
+  kind: 'geo3d', shape: 'pyramid4', names: ['A', 'B', 'C', 'D'], height: false,
+  extras: 'A(0; 0; 0)\nB(2; 0; 0)\nC(1; 1; 0)\nD(0; 1; 0)\nM = trung điểm AD\nvuông A B D\nvuông D C A',
+})
+assert.equal(trapezoid.kind, 'geo3d')
+const trapImg = renderTool(trapezoid)
+assert.deepEqual(trapImg.errors, [])
+const trapPt = (name: string) => trapImg.pick!.points.find((p) => p.name === name)!
+assert.deepEqual(trapPt('S').v, [2 / 3, 2 / 3, 1.5])
+assert.deepEqual(trapPt('M').v, [0, 0.5, 0])
+assert.equal(trapPt('A').y, trapPt('B').y)
+assert.equal(trapPt('C').y, trapPt('D').y)
+assert.ok(Math.abs(trapPt('D').x + trapPt('D').y) < 1e-9)
+assert.ok(Math.abs(Math.hypot(trapPt('D').x, trapPt('D').y) - 60) < 1e-9)
+assert.match(trapImg.svg, /d="M42\.4 -42\.4L0\.0 0\.0"[^>]*stroke-dasharray="6 4"/)
+assert.match(trapImg.svg, /d="M0\.0 0\.0L240\.0 0\.0" stroke="#222" stroke-width="1\.6" fill="none"/)
+const aboveM = renderTool({ ...trapezoid, spec: { ...trapezoid.spec, height: true, extras: trapezoid.spec.extras + '\nS(0; 0,5; 2)' } })
+assert.deepEqual(aboveM.pick!.points.find((p) => p.name === 'S')!.v, [0, 0.5, 2])
+assert.deepEqual(aboveM.pick!.points.find((p) => p.name === 'O')!.v, [0, 0.5, 0])
+console.log('✓ Chóp đáy thang vuông chiếu 45°, đỉnh S và cạnh khuất đúng')
 
 // 3. Suy ngược toạ độ màn hình -> (x, y) trên mặt phẳng ngang
 const pick4 = pyr4Img.pick!

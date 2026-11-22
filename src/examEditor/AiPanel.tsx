@@ -1691,7 +1691,7 @@ function AiConversation({
                     </div>
                   ) : null
                 ) : (
-                  <TypedMarkdown text={turn.text} chat={turn.intent === 'chat'} animate={!restoredTurnIds.has(turn.id)} />
+                  <TypedMarkdown text={turn.text} chat animate={!restoredTurnIds.has(turn.id)} />
                 )
               )}
               <PlanCard

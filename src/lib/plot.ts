@@ -193,7 +193,7 @@ export interface PlotSpec {
 export function parsePlotPoints(text: string | undefined): Array<{ name: string; x: number; y: number; proj: boolean }> {
   const out: Array<{ name: string; x: number; y: number; proj: boolean }> = []
   for (const line of (text ?? '').split(/\n|;\s*(?=[A-Z])/)) {
-    const m = /^\s*([A-Z][A-Za-z0-9']*)\s*\(\s*(-?[\d.,]+)\s*;\s*(-?[\d.,]+)\s*\)\s*(chiếu)?/i.exec(line.replace(/−/g, '-'))
+    const m = /^\s*([A-Z][A-Za-z0-9']*)\s*\(\s*(-?[\d.,]+(?:e[+-]?\d+)?)\s*;\s*(-?[\d.,]+(?:e[+-]?\d+)?)\s*\)\s*(chiếu)?/i.exec(line.replace(/−/g, '-'))
     if (!m) continue
     const x = Number(m[2].replace(',', '.'))
     const y = Number(m[3].replace(',', '.'))
@@ -206,7 +206,7 @@ export const PLOT_COLORS = ['#1f5fbf', '#c0392b', '#2e7d32', '#8e44ad']
 
 /** bề rộng khung vẽ (px); chiều cao tính theo miền y để hai trục cùng đơn vị */
 const W = 640
-const PAD = 18
+const PAD = 36
 const H_MIN = 220
 const H_MAX = 720
 
@@ -491,14 +491,28 @@ export function renderPlotSvg(spec: PlotSpec): { svg: string; width: number; hei
   const stepY = Math.abs((H - 2 * PAD) / (yMax - yMin) - unit) < 1e-6 ? stepX : sY || niceStep(yMax - yMin)
   const ticks = (lo: number, hi: number, step: number) => {
     const r: number[] = []
-    for (let v = Math.ceil(lo / step) * step; v <= hi + 1e-9; v += step) r.push(Math.round(v / step) * step)
+    for (let v = Math.ceil(lo / step - 1e-9) * step; v <= hi + 1e-9; v += step) r.push(Math.round(v / step) * step)
     return r
   }
-  // 0 nằm ngoài miền → trục bám mép: kẻ dấu ngắt trục, bỏ số sát chỗ trục (kẻo "29" nằm ngay chỗ O)
+  const plotPoints = parsePlotPoints(spec.points)
+    .filter((p) => p.x >= xMin && p.x <= xMax && p.y >= yMin && p.y <= yMax)
+  // Giữ vạch ở mút miền khi đó cũng là toạ độ của một điểm đã đánh dấu.
+  const matches = (a: number, b: number) => Math.abs(a - b) < 1e-9
+  const specialX = [spec.xMin, spec.xMax].filter((v) => plotPoints.some((p) => matches(v, p.x)))
+  const specialY = [spec.yMin, spec.yMax].filter((v) => plotPoints.some((p) => matches(v, p.y)))
+  const axisTicks = (lo: number, hi: number, step: number, special: number[], axis: number, scale: (v: number) => number) => {
+    const regular = ticks(lo, hi, step).filter((v) =>
+      (axis === 0 || Math.abs(scale(v) - scale(axis)) > 24) &&
+      !special.some((bound) => Math.abs(bound - v) < step * 0.45),
+    )
+    return [...regular, ...special]
+  }
+  // 0 nằm ngoài miền → trục bám mép và có dấu ngắt.
   const breakY = ax !== 0
   const breakX = ay !== 0
-  const tx = ticks(xMin, xMax, stepX).filter((v) => !breakX || Math.abs(sx(v) - X0) > 24)
-  const ty = ticks(yMin, yMax, stepY).filter((v) => !breakY || Math.abs(sy(v) - Y0) > 24)
+  const tx = axisTicks(xMin, xMax, stepX, specialX, ay, sx)
+  const ty = axisTicks(yMin, yMax, stepY, specialY, ax, sy)
+  const showOrigin = !specialX.some((v) => breakX && matches(v, ay)) && !specialY.some((v) => breakY && matches(v, ax))
 
   if (spec.grid) {
     const g = [
@@ -508,13 +522,20 @@ export function renderPlotSvg(spec: PlotSpec): { svg: string; width: number; hei
     out.push(`<path d="${g}" stroke="#d9dde2" stroke-width="1" fill="none"/>`)
   }
 
+  for (const p of plotPoints) {
+    if (!p.proj || p.x === ay || p.y === ax) continue
+    const px = sx(p.x).toFixed(1)
+    const py = sy(p.y).toFixed(1)
+    out.push(`<path d="M${px} ${py}V${Y0.toFixed(1)}M${px} ${py}H${X0.toFixed(1)}" stroke="#222" stroke-width="1" stroke-dasharray="4 3" fill="none"/>`)
+  }
+
   // trục + mũi tên
   out.push(
     `<path d="M${PAD - 6} ${Y0}H${W - 4}M${X0} ${H - PAD + 6}V4" stroke="#222" stroke-width="1.4" fill="none"/>`,
     `<path d="M${W - 4} ${Y0}l-9 -4v8z M${X0} 4l-4 9h8z" fill="#222"/>`,
     `<text x="${W - 10}" y="${Y0 - 10}" ${font} font-style="italic" text-anchor="end" data-lbl="ax:x">x</text>`,
     `<text x="${X0 + 9}" y="16" ${font} font-style="italic" data-lbl="ax:y">y</text>`,
-    `<text x="${X0 - 5}" y="${Y0 + 16}" ${font} font-style="italic" text-anchor="end" data-lbl="ax:O">O</text>`,
+    showOrigin ? `<text x="${X0 - 5}" y="${Y0 + 16}" ${font} font-style="italic" text-anchor="end" data-lbl="ax:O">O</text>` : '',
   )
   // dấu ngắt trục (hai gạch chéo sát gốc O), nền trắng che khúc trục ở giữa
   if (breakY)
@@ -526,26 +547,22 @@ export function renderPlotSvg(spec: PlotSpec): { svg: string; width: number; hei
   for (const v of tx) {
     if (Math.abs(v) < 1e-9) continue
     const x = sx(v)
-    if (x > W - 22) continue
     tickPath.push(`M${x.toFixed(1)} ${Y0 - 3}v6`)
     out.push(`<text x="${x.toFixed(1)}" y="${Y0 + 17}" ${font} text-anchor="middle" data-lbl="x:${Math.round(v * 1000) / 1000}">${fmt(v)}</text>`)
   }
   for (const v of ty) {
     if (Math.abs(v) < 1e-9) continue
     const y = sy(v)
-    if (y < 22) continue
     tickPath.push(`M${X0 - 3} ${y.toFixed(1)}h6`)
     out.push(`<text x="${X0 - 7}" y="${(y + 5).toFixed(1)}" ${font} text-anchor="end" data-lbl="y:${Math.round(v * 1000) / 1000}">${fmt(v)}</text>`)
   }
   out.push(`<path d="${tickPath.join('')}" stroke="#222" stroke-width="1.2"/>`)
 
-  // điểm đặt tên: "M(0; 0)", thêm "chiếu" để kẻ nét đứt xuống hai trục
-  const plotPoints = parsePlotPoints(spec.points)
-
   // đường cong: lấy mẫu dày, ngắt nét ở chỗ không xác định hoặc nhảy vọt (tiệm cận)
-  out.push(`<clipPath id="plotclip"><rect x="${PAD}" y="${PAD}" width="${W - 2 * PAD}" height="${H - 2 * PAD}"/></clipPath>`)
+  out.push(`<clipPath id="plotclip"><rect x="${PAD - 2}" y="${PAD - 2}" width="${W - 2 * PAD + 4}" height="${H - 2 * PAD + 4}"/></clipPath>`)
   const N = 1200
   const span = yMax - yMin
+  const domain = spec.xMax - spec.xMin
   const marginW = (W - 2 * PAD) * 0.08
   const marginH = (H - 2 * PAD) * 0.08
   const safeX0 = PAD + marginW
@@ -582,7 +599,7 @@ export function renderPlotSvg(spec: PlotSpec): { svg: string; width: number; hei
     const points: CurvePoint[] = []
 
     for (let k = 0; k <= N; k++) {
-      const x = xMin + ((xMax - xMin) * k) / N
+      const x = spec.xMin + (domain * k) / N
       const y = f(x)
       const ok = Number.isFinite(y) && Math.abs(y - yMin) < span * 20 && Math.abs(y - yMax) < span * 20
       const jump = ok && Number.isFinite(prev) && Math.abs(y - prev) > span * 1.5
@@ -599,7 +616,7 @@ export function renderPlotSvg(spec: PlotSpec): { svg: string; width: number; hei
       }
       prev = ok ? y : NaN
     }
-    out.push(`<path d="${d}" stroke="${c.color}" stroke-width="2.2" fill="none" stroke-linejoin="round" clip-path="url(#plotclip)"/>`)
+    out.push(`<path d="${d}" stroke="${c.color}" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round" clip-path="url(#plotclip)"/>`)
 
     // Tìm các vị trí mỏ neo hợp lệ: trong miền 8% mép trong và không sát chỗ nhảy tiệm cận
     const validIndices: number[] = []
@@ -635,9 +652,7 @@ export function renderPlotSvg(spec: PlotSpec): { svg: string; width: number; hei
       ...ty.map((v) => ({ x: X0 - 7, y: sy(v) })),
     ]
 
-    const userPoints = plotPoints
-      .filter((p) => p.x >= xMin && p.x <= xMax && p.y >= yMin && p.y <= yMax)
-      .map((p) => ({ x: sx(p.x), y: sy(p.y) }))
+    const userPoints = plotPoints.map((p) => ({ x: sx(p.x), y: sy(p.y) }))
 
     const intersections: Array<{ x: number; y: number }> = []
     for (let a = 0; a < curveRecords.length; a++) {
@@ -849,9 +864,7 @@ export function renderPlotSvg(spec: PlotSpec): { svg: string; width: number; hei
 
   // điểm đặt tên: "M(0; 0)", thêm "chiếu" để kẻ nét đứt xuống hai trục
   for (const p of plotPoints) {
-    if (p.x < xMin || p.x > xMax || p.y < yMin || p.y > yMax) continue
     const [px, py] = [sx(p.x), sy(p.y)]
-    if (p.proj) out.push(`<path d="M${px.toFixed(1)} ${py.toFixed(1)}V${Y0.toFixed(1)}M${px.toFixed(1)} ${py.toFixed(1)}H${X0.toFixed(1)}" stroke="#222" stroke-width="1" stroke-dasharray="4 3" fill="none"/>`)
     out.push(`<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="3.6" fill="#111"/>`)
     // nằm trên đường cong ở đáy lõm (cực tiểu) thì ghi tên phía dưới, kẻo đè lên nét
     let below = py < 40

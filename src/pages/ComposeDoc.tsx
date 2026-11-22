@@ -43,7 +43,7 @@ import { DECK_THEMES } from '@/lib/slideTheme'
 import { extractJson } from '@/lib/llm'
 import { importedSlides, readImportFile, textToBlocks } from '@/lib/importFile'
 import { IconZoomIn, IconZoomOut } from '@/examEditor/icons'
-import type { ExamBlock, ExamDoc, FormatAttrs, RichText } from '@/data/docTypes'
+import type { ExamBlock, ExamDoc, FormatAttrs, RichText, TableCellData } from '@/data/docTypes'
 import { emptyDoc } from '@/data/docTypes'
 import { cn } from '@/lib/cn'
 import { attachToAi } from '@/lib/aiAttach'
@@ -216,7 +216,7 @@ function expandFigures(raw: unknown): unknown {
     if (!doc) return [block]
     const { src, alt, width, plot } = tools!.ti.figureImageAttrs(doc)
     // câu trắc nghiệm: ảnh vào cuối đề bài (dòng riêng) để nằm TRƯỚC phương án A–D
-    if (block.type === 'question') {
+    if (block.type === 'question' || block.type === 'essay') {
       const t = block.text
       const spans = typeof t === 'string' ? [{ text: t }] : Array.isArray(t) ? t : []
       return [{ ...block, text: [...spans, { text: '', image: { src, alt, width, plot } }] }]
@@ -373,6 +373,25 @@ function sanitizeBlocks(raw: unknown): ExamBlock[] {
           ),
         })
         break
+      case 'table': {
+        const rows = list(b.rows).filter(Array.isArray).filter((row) => row.length).map((row) =>
+          row.map((cell: unknown): TableCellData => {
+            if (typeof cell === 'string' || Array.isArray(cell)) return { text: rich(cell) }
+            if (typeof cell === 'number') return { text: String(cell) }
+            const c = (cell ?? {}) as Record<string, unknown>
+            return {
+              text: typeof c.text === 'number' ? String(c.text) : rich(c.text),
+              ...(c.header === true ? { header: true } : {}),
+              ...(typeof c.colSpan === 'number' && c.colSpan > 1 ? { colSpan: Math.min(100, Math.floor(c.colSpan)) } : {}),
+              ...(typeof c.rowSpan === 'number' && c.rowSpan > 1 ? { rowSpan: Math.min(100, Math.floor(c.rowSpan)) } : {}),
+              ...(c.align === 'left' || c.align === 'center' || c.align === 'right' ? { align: c.align } : {}),
+              ...(typeof c.shading === 'string' ? { shading: c.shading } : {}),
+            }
+          }),
+        )
+        if (rows.length) out.push({ type: 'table', rows, format: fmt(b.format) })
+        break
+      }
       case 'pageBreak':
         out.push({ type: 'pageBreak' })
         break
@@ -827,7 +846,7 @@ export default function ComposeDoc() {
             : blocks.length
               ? 'replace'
               : 'none'
-      const done = (line: string) => ({ text: `${say ? `${say}\n\n` : ''}${line}${warn}` })
+      const done = (line: string) => ({ text: say || `${line}${warn}` })
       // phần AI viết mà không áp được: hiện thành chữ trong chat
       const fallback = (why: string): AiApplyResult => {
         const plain = blocksPlain([...blocks, ...patches.flatMap((p) => p.blocks)])
@@ -849,7 +868,7 @@ export default function ComposeDoc() {
         if (action === 'append' && blocks.length) {
           const content = blocksToTipTap(blocks).content ?? []
           editor.chain().focus().insertContentAt(editor.state.doc.content.size, content).run()
-          return done(`Đã thêm ${blocks.length} khối vào cuối đề.`)
+          return done('Mình thêm vào cuối đề rồi, bạn xem nhé.')
         }
         if (action === 'patch' && patches.length) {
           const { state, view } = editor
@@ -860,7 +879,6 @@ export default function ComposeDoc() {
           const ops = patches
             .filter((p) => p.index < count)
             .sort((a, b) => b.index - a.index || rank[a.op] - rank[b.op])
-          const stat = { edit: 0, add: 0, del: 0 }
           const touched = new Set<number>()
           for (const p of ops) {
             // mỗi khối chỉ thay/xoá một lần (AI trả trùng thì lấy mục đầu)
@@ -871,26 +889,18 @@ export default function ComposeDoc() {
             const nodes = (blocksToTipTap(p.blocks).content ?? []).map((j) => state.schema.nodeFromJSON(j))
             if (p.op === 'delete') {
               tr.delete(from, to)
-              stat.del++
             } else if (p.op === 'replace') {
               if (!nodes.length) continue
               tr.replaceWith(from, to, nodes)
-              stat.edit++
             } else {
               if (!nodes.length) continue
               tr.insert(p.op === 'insertAfter' ? to : from, nodes)
-              stat.add += nodes.length
             }
             if (p.op === 'replace' || p.op === 'delete') touched.add(p.index)
           }
-          if (stat.edit + stat.add + stat.del) {
+          if (tr.docChanged) {
             view.dispatch(tr.scrollIntoView())
-            const parts = [
-              stat.edit ? `sửa ${stat.edit} khối` : '',
-              stat.add ? `thêm ${stat.add} khối` : '',
-              stat.del ? `xoá ${stat.del} khối` : '',
-            ].filter(Boolean)
-            return done(`Đã ${parts.join(', ')} trong đề.`)
+            return done('Mình sửa xong rồi, bạn xem lại nhé.')
           }
           return fallback('Không tìm thấy chỗ cần sửa trong đề.')
         }

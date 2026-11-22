@@ -70,3 +70,13 @@ assert.throws(() => parseMerges('1,1:2,2\n2,2:3,3', 3, 4), /chồng lên vùng/)
 assert.throws(() => parseMerges('2,2:1,1', 3, 4), /ô cuối phải nằm sau/)
 assert.throws(() => parseMerges('abc', 3, 4), /cần dạng hàng,cột:hàng,cột/)
 console.log('✓ Kiểm tra báo lỗi ngoài bảng, chồng nhau, sai cú pháp')
+
+const formula = renderTool({ kind: 'table', spec: {
+  ...TABLE_DEFAULT, cells: 'Điểm | $[5;6)$ | $|x|$ | ' + String.raw`$x\neq\frac{1}{2}$` + '\nSố học sinh | 2 | 4 | 6',
+} })
+assert.equal(parseCells('Điểm | $|x|$').cols, 2)
+const visible = formula.svg.replace(/<desc>.*?<\/desc>/s, '')
+assert.match(visible, /aria-label="\[5;6\)"/)
+assert.match(visible, /data-mml-node="mfrac"/)
+assert.doesNotMatch(visible, /\$/)
+console.log('✓ Bảng SVG vẽ LaTeX, khoảng nửa mở, trị tuyệt đối và phân số')

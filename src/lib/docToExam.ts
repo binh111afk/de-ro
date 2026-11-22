@@ -1,5 +1,7 @@
-import type { EssayBlock, ExamDoc, QuestionBlock, RichText } from '@/data/docTypes'
+import type { EssayBlock, ExamDoc, QuestionBlock, RichText, TableBlock } from '@/data/docTypes'
 import type { Exam, Question, QuestionImage, Section, Subject } from '@/data/types'
+import { mathTableImageSrc, renderExamTableSvg } from './table'
+import { svgDataUrl } from './plot'
 import { formatTrueFalse, normalizeShort, parseTrueFalse } from './grading.js'
 
 /**
@@ -13,7 +15,8 @@ function toRich(rt: RichText | undefined, skip?: unknown): string {
     .map((s) => {
       if (s.image) {
         if (s.image === skip) return ''
-        const { src, alt, width } = s.image
+        const { alt, width } = s.image
+        const src = mathTableImageSrc(s.image.src, s.image.plot)
         const pct = width ? Math.min(100, Math.max(10, Math.round((width / 643) * 100))) : 0
         return `\n![${(alt ?? '').replace(/[\]|\n]/g, ' ')}${pct ? `|${pct}` : ''}](${src})\n`
       }
@@ -50,7 +53,8 @@ function promptImage(...parts: Array<RichText | undefined>): (QuestionImage & { 
     if (!rt || typeof rt === 'string') continue
     const at = rt.findIndex((sp) => sp.image)
     if (at < 0) continue
-    const { src, alt, width, plot } = rt[at].image!
+    const { src: storedSrc, alt, width, plot } = rt[at].image!
+    const src = mathTableImageSrc(storedSrc, plot)
     const first = !rt.slice(0, at).some((sp) => sp.text.trim())
     // width trong trang đề là px; đề tương tác dùng % — quy theo bề ngang chữ trang A4 (~643px)
     const pct = width ? Math.min(100, Math.max(10, Math.round((width / 643) * 100))) : undefined
@@ -142,6 +146,27 @@ export function docToExam(doc: ExamDoc, id: string): Exam {
     (keys.get(no) ?? []).find((a) => !letterOf(a) && !(used.get(no) ?? []).includes(a))
 
   const explain = explanations(doc.blocks)
+  // Chỉ gắn bảng đứng ngay sau câu dẫn nhắc tới bảng.
+  const tables = new Map<QuestionBlock | EssayBlock, TableBlock[]>()
+  let owner: QuestionBlock | EssayBlock | undefined
+  for (const block of doc.blocks) {
+    if (block.type === 'question' || block.type === 'essay') owner = /(?<!\p{L})bảng(?!\p{L})/iu.test(toPlain(block.text)) ? block : undefined
+    else if (block.type === 'table' && owner) {
+      tables.set(owner, [...(tables.get(owner) ?? []), block])
+    } else owner = undefined
+  }
+  const tableImages = (block: QuestionBlock | EssayBlock): string[] =>
+    (tables.get(block) ?? []).flatMap((table) => {
+      const img = renderExamTableSvg(table)
+      if (!img) return []
+      const pct = Math.min(100, Math.max(10, Math.round((img.width / 643) * 100)))
+      return [`![Bảng số liệu|${pct}%](${svgDataUrl(img.svg)})`]
+    })
+  const questionContent = (block: QuestionBlock | EssayBlock) => {
+    const extra = block.type === 'essay' ? block.sub ?? [] : []
+    const content = withImage(block.text, ...extra)
+    return { ...content, prompt: [content.prompt, ...tableImages(block)].filter(Boolean).join('\n') }
+  }
   const questionBlocks = doc.blocks.filter((b): b is QuestionBlock => b.type === 'question')
   const mcqBlocks = questionBlocks.filter((b) => b.kind !== 'tf' && b.kind !== 'short')
   const tfBlocks = questionBlocks.filter((b) => b.kind === 'tf')
@@ -159,7 +184,7 @@ export function docToExam(doc: ExamDoc, id: string): Exam {
     id: `${id}-m${i}`,
     number: ++counter,
     type: 'trac-nghiem',
-    ...withImage(b.text),
+    ...questionContent(b),
     ...alignOf(b),
     options: b.options.map((o) => ({ key: o.label, text: toRich(o.text).trim() })),
     answer: mcqAnswer(b.no),
@@ -175,7 +200,7 @@ export function docToExam(doc: ExamDoc, id: string): Exam {
       id: `${id}-t${i}`,
       number: ++counter,
       type: 'dung-sai',
-      ...withImage(b.text),
+      ...questionContent(b),
       ...alignOf(b),
       options: b.options.map((o) => ({ key: o.label.toLowerCase(), text: toRich(o.text).trim() })),
       answer: parsed ? formatTrueFalse(parsed) : undefined,
@@ -190,7 +215,7 @@ export function docToExam(doc: ExamDoc, id: string): Exam {
       id: `${id}-s${i}`,
       number: ++counter,
       type: 'tra-loi-ngan',
-      ...withImage(b.text),
+      ...questionContent(b),
       ...alignOf(b),
       answer: raw ? normalizeShort(raw) : undefined,
       explanation: explain.get(`c${b.no}`) || undefined,
@@ -205,9 +230,8 @@ export function docToExam(doc: ExamDoc, id: string): Exam {
       id: `${id}-e${i}`,
       number: i + 1,
       type: 'tu-luan',
-      prompt: [toRich(b.text), ...(b.sub ?? []).map(toRich)].filter(Boolean).join('\n'),
+      ...questionContent(b),
       ...alignOf(b),
-      image: promptImage(b.text, ...(b.sub ?? [])),
       points: b.score,
       solution: written ? written.split('\n') : answer ? [answer] : undefined,
     }

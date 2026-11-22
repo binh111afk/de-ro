@@ -77,8 +77,8 @@ function planFromRaw(raw: Record<string, unknown>): ToolPlan {
     })
     .slice(0, 4)
   if (exprs.length === 0) throw new Error(note || 'Không thấy hàm số nào để vẽ trong đoạn đã chọn.')
-  const points = typeof raw.points === 'string' && raw.points.trim() ? raw.points : undefined
-  const named = parsePlotPoints(points)
+  const named = parsePlotPoints(typeof raw.points === 'string' ? raw.points : undefined)
+  const points = named.length ? named.map((p) => `${p.name}(${p.x}; ${p.y}) chiếu`).join('\n') : undefined
   const [x0, x1] = [optionalNum(raw.xMin), optionalNum(raw.xMax)]
   const [xMin, xMax] = x0 !== undefined && x1 !== undefined && !(x0 < x1 && x1 - x0 <= 200)
     ? [-5, 5]
@@ -202,6 +202,8 @@ export function toolFromRaw(raw: Record<string, unknown>): ToolDoc {
       // AI hay chỉ gửi tên đáy (A,B,C,D) hoặc bỏ trống: bù tên mặc định của khối cho đủ đỉnh (A', B'…)
       const def3 = GEO3D_SHAPES.find((s) => s.id === shape3)?.names ?? []
       const given3 = names([])
+      const baseOnly = shape3.startsWith('pyramid') && given3.length === (shape3.startsWith('pyramid4') ? 4 : 3)
+      if (baseOnly && given3[0] !== def3[0]) given3.unshift(def3[0])
       doc = {
         kind: 'geo3d',
         spec: {

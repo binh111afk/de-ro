@@ -34,9 +34,10 @@ const SAFE_HREF = /^https?:\/\//i
 
 const INLINE_RE =
   /(`[^`\n]+`|\*\*(?=\S)[^*\n]*?\*\*|__(?=\S)[^_\n]*?__|\*(?=\S)[^*\n]*?\*|(?<![A-Za-z0-9])_(?=\S)[^_\n]*?_(?![A-Za-z0-9])|\[[^\]\n]+\]\([^)\s]+\))/g
-const INLINE_MATH_RE = /\$[^$\n]+?\$/
-const MATH_RE = /\$\$[\s\S]*?\$\$|\$[^$\n]+?\$/
-const markContents = (delimiter: string) => String.raw`(?:${INLINE_MATH_RE.source}|[^${delimiter}$\n]|\$(?![^$\n]+\$))*?`
+const INLINE_MATH_RE = /(?<![\\$])\$(?![\s$])[^$\n]*?(?<![\s\\])\$(?![\d$])/
+const DISPLAY_MATH_RE = /(?<!\\)\$\$[\s\S]+?(?<!\\)\$\$/
+const MATH_RE = new RegExp(`(?:${DISPLAY_MATH_RE.source}|${INLINE_MATH_RE.source})`)
+const markContents = (delimiter: string) => String.raw`(?:${MATH_RE.source}|(?!${MATH_RE.source})[^${delimiter}\n])*?`
 const CHAT_INLINE_RE = new RegExp(MATH_RE.source + '|' + INLINE_RE.source
   .replaceAll('[^*\\n]*?', markContents('*'))
   .replaceAll('[^_\\n]*?', markContents('_')), 'g')
@@ -84,12 +85,13 @@ const HR_RE = /^\s*(?:-{3,}|\*{3,}|_{3,})\s*$/
 const FENCE_RE = /^\s*```(.*)$/
 const FENCE_END_RE = /^\s*```\s*$/
 const QUOTE_RE = /^\s*>\s?(.*)$/
+const TABLE_CELL_RE = new RegExp('`[^`]*`|' + MATH_RE.source + String.raw`|\\\||\||[^|\x60$\\]+|.`, 'g')
 
 // Ống trong công thức, mã nội tuyến hoặc \| không ngắt ô.
 function tableCells(line: string): string[] | null {
   if (!line.includes('|')) return null
   const cells = ['']
-  for (const [part] of line.trim().matchAll(/`[^`]*`|\$\$.*?\$\$|\$[^$]+\$|\\\||\||[^|`$\\]+|./g)) {
+  for (const [part] of line.trim().matchAll(TABLE_CELL_RE)) {
     if (part === '|') cells.push('')
     else cells[cells.length - 1] += part === '\\|' ? '|' : part
   }
@@ -114,8 +116,8 @@ export function parseMarkdown(src: string, chat = true): Block[] {
     const line = lines[i]
 
     if (chat && line.trim() === '$$') {
-      const end = lines.findIndex((next, j) => j > i && next.trim() === '$$')
-      if (end !== -1) {
+      const end = lines.findIndex((next, j) => j > i && (next.trim() === '$$' || FENCE_RE.test(next)))
+      if (end !== -1 && lines[end].trim() === '$$') {
         flush()
         blocks.push({ type: 'p', inlines: [{ type: 'math', text: lines.slice(i + 1, end).join('\n').trim(), display: true }] })
         i = end

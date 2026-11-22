@@ -12,6 +12,7 @@
 import { TocNode } from './toc'
 import { Mark, Node, mergeAttributes, nodeInputRule } from '@tiptap/core'
 import katex from 'katex'
+import { mathTableImageSrc } from '@/lib/table'
 
 /** Thuộc tính chung: id để AI/undo tham chiếu ổn định. */
 export interface ExamNodeAttrs {
@@ -905,9 +906,16 @@ export const ImageNode = Node.create({
       })
       dom.append(img, ...handles)
       let current = node
+      let lastSrc: string | undefined
+      let lastPlot: unknown
       const paint = () => {
         const { src, alt, width, plot } = current.attrs
-        img.src = String(src ?? '')
+        const storedSrc = String(src ?? '')
+        if (storedSrc !== lastSrc || plot !== lastPlot) {
+          img.src = mathTableImageSrc(storedSrc, plot)
+          lastSrc = storedSrc
+          lastPlot = plot
+        }
         img.alt = String(alt ?? '')
         img.style.width = width ? `${width}px` : ''
         if (plot) img.setAttribute('data-plot', String(plot))

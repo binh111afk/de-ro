@@ -4,6 +4,16 @@
  * dưới/trên (x_1, x^2, x^{n+1}, x^(1/2)).
  */
 
+import type { TableBlock } from '../data/docTypes'
+import { svgDataUrl } from './plot'
+import { mathjax } from 'mathjax-full/js/mathjax.js'
+import { liteAdaptor } from 'mathjax-full/js/adaptors/liteAdaptor.js'
+import { RegisterHTMLHandler } from 'mathjax-full/js/handlers/html.js'
+import { TeX } from 'mathjax-full/js/input/tex.js'
+import { SVG } from 'mathjax-full/js/output/svg.js'
+import 'mathjax-full/js/input/tex/ams/AmsConfiguration.js'
+import 'mathjax-full/js/input/tex/mhchem/MhchemConfiguration.js'
+
 export type TableHeader = 'none' | 'row' | 'col' | 'both'
 export type TableAlign = 'left' | 'center' | 'right'
 export type TableBorder = 'all' | 'outer' | 'horizontal'
@@ -41,6 +51,71 @@ export interface TableMerge {
 interface RichToken {
   kind: 'text' | 'sub' | 'sup'
   text: string
+}
+
+const MATH_SOURCE = String.raw`(?<![\\$])\$\$[^\n]+?\$\$|(?<![\\$])\$(?![\s$])[^$\n]*?(?<![\s\\])\$(?![\d$])`
+const CELL_TOKEN = new RegExp(MATH_SOURCE + String.raw`|\\\||\|`, 'g')
+const MATH_TOKEN = new RegExp(MATH_SOURCE, 'g')
+const HAS_MATH = new RegExp(MATH_SOURCE)
+const LINE_TOKEN = new RegExp(MATH_SOURCE + String.raw`|\\n`, 'g')
+
+type CellPart = { text: RichToken[]; w: number; h: number } | { math: string; w: number; h: number }
+let convertMath: ((tex: string) => string) | undefined
+
+function mathPart(tex: string, fontSize: number): CellPart | undefined {
+  // Chỉ nạp các gói công thức, không cho LaTeX trong ô tạo liên kết / HTML.
+  if (!convertMath) {
+    const adaptor = liteAdaptor()
+    RegisterHTMLHandler(adaptor)
+    const doc = mathjax.document('', {
+      InputJax: new TeX({ packages: ['base', 'ams', 'mhchem'] }),
+      OutputJax: new SVG({ fontCache: 'none' }),
+    })
+    convertMath = (body) => adaptor.innerHTML(doc.convert(body, { display: false }))
+  }
+  const svg = convertMath(tex)
+  if (svg.includes('data-mjx-error')) return undefined
+  const w = Number(/\bwidth="([\d.]+)ex"/.exec(svg)?.[1]) * fontSize * 0.442
+  const h = Number(/\bheight="([\d.]+)ex"/.exec(svg)?.[1]) * fontSize * 0.442
+  const viewBox = /\bviewBox="([^"]+)"/.exec(svg)?.[1]
+  const body = svg.slice(svg.indexOf('>') + 1, svg.lastIndexOf('</svg>'))
+  if (!viewBox || !(w > 0) || !(h > 0)) return undefined
+  const label = esc(tex).replace(/"/g, '&quot;')
+  const math = `<svg width="${f1(w)}" height="${f1(h)}" viewBox="${viewBox}" aria-label="${label}">${body}</svg>`
+  return { math, w, h }
+}
+
+function splitOutsideMath(raw: string, tokens: RegExp, separator: string): string[] {
+  const parts: string[] = []
+  let at = 0
+  for (const m of raw.matchAll(tokens)) {
+    if (m[0] !== separator) continue
+    parts.push(raw.slice(at, m.index))
+    at = m.index + separator.length
+  }
+  parts.push(raw.slice(at))
+  return parts
+}
+
+function cellLine(raw: string, fontSize: number, bold: boolean): CellPart[] {
+  const parts: CellPart[] = []
+  const textPart = (value: string) => {
+    if (!value) return
+    const text = tokenizeRich(value.replace(/\\\|/g, '|'))
+    parts.push({ text, w: measureTokens(text, fontSize, bold), h: fontSize })
+  }
+  let at = 0
+  for (const m of raw.matchAll(MATH_TOKEN)) {
+    textPart(raw.slice(at, m.index))
+    const width = m[0].startsWith('$$') ? 2 : 1
+    const tex = m[0].slice(width, -width)
+    const part = mathPart(tex, fontSize)
+    if (part) parts.push(part)
+    else textPart(tex)
+    at = m.index + m[0].length
+  }
+  textPart(raw.slice(at))
+  return parts
 }
 
 const SUB_SUP_RE = /([_^])(?:\{([^}]+)\}|\(([^)]+)\)|([+-]?(?:\d+|[A-Za-z])))/g
@@ -102,7 +177,7 @@ export function parseCells(text: string): { grid: string[][]; rows: number; cols
     .split('\n')
     .filter((l) => l.trim().length > 0)
   if (!rawLines.length) throw new Error('Nhập ít nhất một hàng dữ liệu, các ô cách nhau bằng |')
-  const parsed = rawLines.map((line) => line.split('|').map((c) => c.trim()))
+  const parsed = rawLines.map((line) => splitOutsideMath(line, CELL_TOKEN, '|').map((c) => c.trim()))
   const cols = Math.max(...parsed.map((r) => r.length))
   if (cols === 0) throw new Error('Nhập ít nhất một ô dữ liệu')
   const grid = parsed.map((r) => (r.length < cols ? [...r, ...Array(cols - r.length).fill('')] : r))
@@ -160,15 +235,77 @@ interface CellBox {
   c1: number
   r2: number
   c2: number
-  lines: RichToken[][]
+  lines: CellPart[][]
   isHeader: boolean
+  align: TableAlign
+}
+
+/** Bảng đã chèn dạng ảnh giữ cấu hình gốc trong thuộc tính plot. */
+export function renderStoredMathTable(plot: unknown) {
+  if (typeof plot !== 'string' || !plot.includes('"table"')) return
+  try {
+    const { kind, spec } = JSON.parse(plot)
+    if (kind === 'table' && typeof spec?.cells === 'string' && HAS_MATH.test(spec.cells)) {
+      return renderTableSvg(spec, '')
+    }
+  } catch {
+    // Giữ ảnh đã lưu nếu cấu hình cũ không hợp lệ.
+  }
+}
+
+export function mathTableImageSrc(src: string, plot: unknown): string {
+  const table = renderStoredMathTable(plot)
+  return table ? svgDataUrl(table.svg) : src
 }
 
 export function renderTableSvg(spec: TableSpec, desc: string): { svg: string; width: number; height: number } {
   const { grid, rows, cols } = parseCells(spec.cells)
   const { merges, owner } = parseMerges(spec.merges ?? '', rows, cols)
+  return renderTableGrid(grid, merges, owner, spec, desc)
+}
+
+/** Bảng sau đề bài khi chuyển tài liệu soạn sang đề tương tác. */
+export function renderExamTableSvg(table: TableBlock) {
+  if (!table.rows.some((row) => row.length)) return null
+  const grid = table.rows.map((): string[] => [])
+  const owner = table.rows.map((): number[] => [])
+  const merges: TableMerge[] = []
+  const cells = new Map<string, TableBlock['rows'][number][number]>()
+  table.rows.forEach((row, r) => {
+    let c = 0
+    for (const cell of row) {
+      while (owner[r][c] >= 0) c++
+      const r2 = Math.min(grid.length - 1, r + (cell.rowSpan ?? 1) - 1)
+      const c2 = c + (cell.colSpan ?? 1) - 1
+      if (r2 > r || c2 > c) {
+        const index = merges.length
+        merges.push({ r1: r, c1: c, r2, c2, raw: '' })
+        for (let ri = r; ri <= r2; ri++) {
+          for (let ci = c; ci <= c2; ci++) owner[ri][ci] = index
+        }
+      }
+      const text = typeof cell.text === 'string' ? cell.text : cell.text.map((s) => s.text).join('')
+      grid[r][c] = text
+      cells.set(`${r},${c}`, cell)
+      c = c2 + 1
+    }
+  })
+  const cols = Math.max(...grid.map((row, r) => Math.max(row.length, owner[r].length)))
+  for (const row of grid) row.length = cols
+  return renderTableGrid(grid, merges, owner, { ...TABLE_DEFAULT, header: 'none', align: 'left' }, '', cells)
+}
+
+function renderTableGrid(
+  grid: string[][],
+  merges: TableMerge[],
+  owner: number[][],
+  spec: TableSpec,
+  desc: string,
+  cells?: ReadonlyMap<string, TableBlock['rows'][number][number]>,
+) {
+  const rows = grid.length
+  const cols = grid[0].length
   const header: TableHeader = spec.header ?? 'row'
-  const align: TableAlign = spec.align ?? 'center'
   const border: TableBorder = spec.border ?? 'all'
   const fontSize = Math.min(20, Math.max(12, Math.round(Number(spec.fontSize) || 15)))
 
@@ -184,7 +321,15 @@ export function renderTableSvg(spec: TableSpec, desc: string): { svg: string; wi
   const isHeaderAt = (r: number, c: number) =>
     ((header === 'row' || header === 'both') && r === 0) || ((header === 'col' || header === 'both') && c === 0)
 
-  const toLines = (raw: string) => raw.split('\\n').map((s) => tokenizeRich(s.trim()))
+  const toLines = (r: number, c: number) => {
+    const cell = cells?.get(`${r},${c}`)
+    const isHeader = cell?.header ?? isHeaderAt(r, c)
+    const align = cell?.align ?? spec.align ?? 'center'
+    const lines = (grid[r][c] ?? '').split('\n').flatMap((raw) =>
+      splitOutsideMath(raw, LINE_TOKEN, '\\n').map((line) => cellLine(line.trim(), fontSize, isHeader)),
+    )
+    return { lines, isHeader, align }
+  }
 
   merges.forEach((m, idx) => {
     const id = rows * cols + idx + 1
@@ -197,14 +342,13 @@ export function renderTableSvg(spec: TableSpec, desc: string): { svg: string; wi
       c1: m.c1,
       r2: m.r2,
       c2: m.c2,
-      lines: toLines(grid[m.r1][m.c1]),
-      isHeader: isHeaderAt(m.r1, m.c1),
+      ...toLines(m.r1, m.c1),
     })
   })
 
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
-      if (owner[r][c] !== -1) continue
+      if (owner[r][c] >= 0) continue
       const id = r * cols + c + 1
       cellId[r][c] = id
       boxes.push({
@@ -213,8 +357,7 @@ export function renderTableSvg(spec: TableSpec, desc: string): { svg: string; wi
         c1: c,
         r2: r,
         c2: c,
-        lines: toLines(grid[r][c]),
-        isHeader: isHeaderAt(r, c),
+        ...toLines(r, c),
       })
     }
   }
@@ -223,14 +366,15 @@ export function renderTableSvg(spec: TableSpec, desc: string): { svg: string; wi
   const colW = Array<number>(cols).fill(minColW)
   const rowH = Array<number>(rows).fill(minRowH)
 
+  const lineWidth = (line: CellPart[]) => line.reduce((sum, t) => sum + t.w, 0)
+  const lineHeight = (line: CellPart[]) => Math.max(lineH, ...line.map((t) => t.h + lineH - fontSize))
   const boxNeedW = (box: CellBox) => {
-    const maxLineW = Math.max(0, ...box.lines.map((tk) => measureTokens(tk, fontSize, box.isHeader)))
+    const maxLineW = Math.max(0, ...box.lines.map((tk) => lineWidth(tk)))
     return Math.ceil(maxLineW + padX * 2)
   }
   const boxNeedH = (box: CellBox) => {
-    const n = box.lines.length
-    if (n <= 1) return minRowH
-    return Math.max(minRowH, Math.ceil((n - 1) * lineH + fontSize + padY * 2))
+    const total = box.lines.reduce((sum, line) => sum + lineHeight(line), 0)
+    return Math.max(minRowH, Math.ceil(total - (lineH - fontSize) + padY * 2))
   }
 
   for (const box of boxes) {
@@ -271,7 +415,6 @@ export function renderTableSvg(spec: TableSpec, desc: string): { svg: string; wi
   const W = colX[cols] + PAD
   const H = rowY[rows] + PAD
   const FAM = `font-family="'Times New Roman',serif"`
-  const anchor = align === 'left' ? 'start' : align === 'right' ? 'end' : 'middle'
 
   let fills = ''
   let texts = ''
@@ -285,15 +428,29 @@ export function renderTableSvg(spec: TableSpec, desc: string): { svg: string; wi
       fills += `<rect x="${f1(x0)}" y="${f1(y0)}" width="${f1(w)}" height="${f1(h)}" fill="#efefef"/>`
     }
     if (box.lines.every((tk) => tk.length === 0)) continue
+    const { align } = box
     const tx = align === 'left' ? x0 + padX : align === 'right' ? x0 + w - padX : x0 + w / 2
-    const n = box.lines.length
-    const yFirst = y0 + (h - (n - 1) * lineH) / 2 + fontSize * 0.34
+    const anchor = align === 'left' ? 'start' : align === 'right' ? 'end' : 'middle'
     const boldAttr = box.isHeader ? ' font-weight="bold"' : ''
-    box.lines.forEach((tk, li) => {
-      if (tk.length === 0) return
-      const ty = yFirst + li * lineH
-      texts += `<text x="${f1(tx)}" y="${f1(ty)}" ${FAM} font-size="${fontSize}"${boldAttr} text-anchor="${anchor}" stroke="none">${richToSvg(tk)}</text>`
-    })
+    const lineHeights = box.lines.map(lineHeight)
+    let top = y0 + (h - lineHeights.reduce((sum, height) => sum + height, 0)) / 2
+    for (const [i, line] of box.lines.entries()) {
+      const center = top + lineHeights[i] / 2
+      top += lineHeights[i]
+      const ty = center + fontSize * 0.34
+      if (line.length === 1 && 'text' in line[0]) {
+        texts += `<text x="${f1(tx)}" y="${f1(ty)}" ${FAM} font-size="${fontSize}"${boldAttr} text-anchor="${anchor}" stroke="none">${richToSvg(line[0].text)}</text>`
+        continue
+      }
+      const width = lineWidth(line)
+      let x = tx - (align === 'left' ? 0 : align === 'right' ? width : width / 2)
+      for (const part of line) {
+        texts += 'math' in part
+          ? part.math.replace('<svg ', `<svg x="${f1(x)}" y="${f1(center - part.h / 2)}" `)
+          : `<text x="${f1(x)}" y="${f1(ty)}" ${FAM} font-size="${fontSize}"${boldAttr} xml:space="preserve" stroke="none">${richToSvg(part.text)}</text>`
+        x += part.w
+      }
+    }
   }
 
   // đường kẻ bảng: bỏ qua cạnh nội bộ bên trong ô đã gộp

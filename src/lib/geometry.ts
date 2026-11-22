@@ -905,8 +905,18 @@ function renderSolid(spec: Geo3dSpec, desc: string) {
       s.pts[4] = footPlane3(s.pts[0], s.pts[1], s.pts[2], s.pts[3]) ?? [s.pts[0][0], s.pts[0][1], s.pts[1][2]]
     } else if (spec.shape === 'pyramid3-regular' && !overriddenIdx.has(4)) {
       s.pts[4] = avg3([s.pts[1], s.pts[2], s.pts[3]])
-    } else if ((spec.shape === 'pyramid4' || spec.shape === 'pyramid4-sa' || spec.shape === 'pyramid4-regular') && !overriddenIdx.has(5)) {
-      s.pts[5] = intersectLines3(s.pts[1], s.pts[3], s.pts[2], s.pts[4]) ?? avg3([s.pts[1], s.pts[2], s.pts[3], s.pts[4]])
+    } else if (spec.shape.startsWith('pyramid4')) {
+      const [, a, b, c, d] = s.pts
+      const center = intersectLines3(a, c, b, d) ?? avg3([a, b, c, d])
+      if (!overriddenIdx.has(0) && ([1, 2, 3, 4].every((i) => overriddenIdx.has(i)) || overriddenIdx.has(5))) {
+        const origin = spec.shape === 'pyramid4-sa' ? a : overriddenIdx.has(5) ? s.pts[5] : center
+        s.pts[0] = [origin[0], origin[1], origin[2] + 1.5 * spec.tall]
+      }
+      if (!overriddenIdx.has(5)) {
+        s.pts[5] = spec.height && !spec.diagonals && spec.shape !== 'pyramid4-sa'
+          ? footPlane3(s.pts[0], a, b, c) ?? center
+          : center
+      }
     }
   }
   // dựng thêm: điểm mới nối vào cuối danh sách đỉnh, đoạn mới thành đoạn phụ

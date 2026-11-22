@@ -832,7 +832,7 @@ export function TableModal({ initial, submitLabel, onClose, onInsert }: Props<Ta
       set({ cells: 'Ô 1 | Ô 2 | Ô 3' })
       return
     }
-    const cols = Math.max(1, ...lines.map((l) => l.split('|').length))
+    const { cols } = parseCells(spec.cells)
     const row = Array.from({ length: cols }, () => '').join(' | ')
     const base = spec.cells.replace(/\s+$/, '')
     set({ cells: base ? `${base}\n${row}` : row })

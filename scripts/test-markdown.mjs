@@ -129,6 +129,14 @@ check('KaTeX trong văn bản, công thức khối và mã nguyên văn', () => 
   assert.doesNotMatch(render('$\\href{javascript:alert(1)}{Bấm}$'), /<a\b|href="javascript:/)
 })
 
+check('giữ dấu đô la của giá tiền cạnh công thức', () => {
+  const html = render('**Giá $50** hay $60. Tính $S.ABCD$ với $AB=2$.\n\n- $$x^2$$\n- `$x$`')
+  assert.match(html, /<strong>Giá \$50<\/strong> hay \$60\./)
+  assert.equal((html.match(/class="katex"/g) ?? []).length, 3)
+  assert.match(html, /<code[^>]*>\$x\$<\/code>/)
+  assert.match(render('| Giá A | Giá B |\n| --- | --- |\n| $50 | $60 |'), /<td>\$50<\/td><td>\$60<\/td>/)
+})
+
 check('link đầu tin và các giao thức bị chặn', () => {
   assert.match(render('[Tài liệu](https://example.com/)'), /href="https:\/\/example\.com\/" target="_blank" rel="noreferrer noopener"/)
   for (const href of ['mailto:a@example.com', 'javascript:alert', 'data:text/html,a', '/soan-de']) {

@@ -159,7 +159,21 @@ export async function inlineDocImages<T>(value: T): Promise<T> {
       if (k === 'image' && v && typeof v === 'object' && typeof (v as { src?: unknown }).src === 'string' && 'text' in o) {
         const img = v as NonNullable<Span['image']>
         try {
-          out[k] = { ...img, src: await toDataUrl(img.src) }
+          let src: string | undefined
+          if (typeof img.plot === 'string' && img.plot.includes('"table"')) {
+            const { renderStoredMathTable } = await import('@/lib/table')
+            const table = renderStoredMathTable(img.plot)
+            if (table) {
+              try {
+                const { svgToPng } = await import('@/lib/plot')
+                const { svg, width, height } = table
+                src = await svgToPng(svg, width, height)
+              } catch {
+                // Nếu không vẽ được, thử dùng ảnh đã lưu.
+              }
+            }
+          }
+          out[k] = { ...img, src: src ?? await toDataUrl(img.src) }
         } catch {
           // bỏ ảnh
         }
