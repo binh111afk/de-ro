@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { ChevronDown } from 'lucide-react'
-import { Card, Spinner } from '@/components/ui'
+import { Badge, Card, Spinner } from '@/components/ui'
 import { Segmented } from '@/components/Segmented'
 import { Pager, usePaged } from '@/components/Pager'
 import {
@@ -32,44 +32,50 @@ function FeedbackItem({ item }: { item: AiFeedbackItem }) {
   }
 
   return (
-    <details className="group py-3" onToggle={(event) => { if (event.currentTarget.open) loadDetail() }}>
-      <summary className="grid cursor-pointer list-none grid-cols-[minmax(0,1fr)_auto] items-start gap-3 rounded-sm text-[13px] [&::-webkit-details-marker]:hidden">
-        <span className="block min-w-0 space-y-1">
-          <span className="flex flex-wrap items-baseline gap-x-2 text-ink-3">
-            <span className="font-semibold text-ink">{kindLabel[item.kind]}</span>
-            <span>{modeLabel[item.mode]}</span>
-            <time dateTime={item.createdAt}>{formatViDateTime(item.createdAt)}</time>
+    <details className="group" onToggle={(event) => { if (event.currentTarget.open) loadDetail() }}>
+      <summary className="grid cursor-pointer list-none grid-cols-[minmax(0,1fr)_auto] items-start gap-2 rounded-sm px-2 py-2.5 text-[13px] hover:bg-sunken/60 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-clay [&::-webkit-details-marker]:hidden">
+        <span className="block min-w-0 space-y-1.5">
+          <span className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-ink-3">
+            <span className="inline-flex items-center gap-2">
+              <Badge className="py-0.5">{kindLabel[item.kind]}</Badge>
+              <span>{modeLabel[item.mode]}</span>
+            </span>
+            <time className="ml-auto text-right tabular-nums" dateTime={item.createdAt}>{formatViDateTime(item.createdAt)}</time>
           </span>
-          {item.user && (
-            <span className="flex flex-wrap gap-x-2 [overflow-wrap:anywhere]">
-              {item.user.name && <span className="font-medium text-ink">{item.user.name}</span>}
-              {item.user.email && <span className="text-ink-3">{item.user.email}</span>}
+          {item.user && (item.user.name || item.user.email) && (
+            <span className="flex min-w-0 gap-2">
+              {item.user.name && <span className="truncate font-semibold text-ink">{item.user.name}</span>}
+              {item.user.email && <span className="truncate text-ink-3">{item.user.email}</span>}
             </span>
           )}
-          {(item.request || item.reply) && (
-            <span className="block truncate text-ink-3 group-open:hidden">{item.request || '—'} → {item.reply || '—'}</span>
+          {item.request && (
+            <span className="line-clamp-2 text-ink-2 [overflow-wrap:anywhere] group-open:hidden">{item.request}</span>
           )}
         </span>
         <ChevronDown aria-hidden className="mt-0.5 size-4 text-ink-3 group-open:rotate-180" />
       </summary>
-      <div className="mt-3 grid gap-3 text-[13px]">
+      <div className="grid gap-3 px-2 pb-3 text-[13px]">
         {detail === 'loading' || detail === undefined ? (
           <div role="status" aria-label="Đang tải nội dung"><Spinner className="size-4" /></div>
         ) : detail === null ? (
           <p role="alert" className="text-clay">Không tải được nội dung phản hồi.</p>
         ) : (
-          <dl className="grid gap-3 sm:grid-cols-2">
-            <div className="min-w-0">
-              <dt className="font-semibold text-ink">Yêu cầu</dt>
-              <dd className="whitespace-pre-wrap text-ink-2 [overflow-wrap:anywhere]">{detail.request || '—'}</dd>
-            </div>
-            <div className="min-w-0">
-              <dt className="font-semibold text-ink">Trả lời</dt>
-              <dd className="whitespace-pre-wrap text-ink-2 [overflow-wrap:anywhere]">{detail.reply || '—'}</dd>
-            </div>
-          </dl>
+          <>
+            <dl className="grid gap-2 sm:grid-cols-2">
+              <div className="min-w-0 rounded-md bg-sunken p-2.5">
+                <dt className="mb-1 text-xs font-semibold text-ink">Yêu cầu</dt>
+                <dd tabIndex={0} className="max-h-48 overflow-y-auto whitespace-pre-wrap text-ink-2 [overflow-wrap:anywhere]">{detail.request || '—'}</dd>
+              </div>
+              <div className="min-w-0 rounded-md bg-sunken p-2.5">
+                <dt className="mb-1 text-xs font-semibold text-ink">Trả lời</dt>
+                <dd tabIndex={0} className="max-h-48 overflow-y-auto whitespace-pre-wrap text-ink-2 [overflow-wrap:anywhere]">{detail.reply || '—'}</dd>
+              </div>
+            </dl>
+            {item.note.trim() && item.note.trim() !== detail.request.trim() && (
+              <p className="whitespace-pre-wrap text-ink-2 [overflow-wrap:anywhere]">{item.note}</p>
+            )}
+          </>
         )}
-        {item.note && <p className="whitespace-pre-wrap text-ink-2 [overflow-wrap:anywhere]">{item.note}</p>}
       </div>
     </details>
   )
@@ -99,7 +105,7 @@ function FeedbackOverview({ days }: { days: AiFeedbackDays }) {
             <tr>
               <th scope="col" className="px-2 py-2.5 font-semibold sm:px-4">Chế độ</th>
               <th scope="col" className="px-2 py-2.5 text-right font-semibold sm:px-4">Lượt AI</th>
-              <th scope="col" aria-label="Thích" className="px-2 py-2.5 text-right font-semibold sm:px-4">👍</th>
+              <th scope="col" className="px-2 py-2.5 text-right font-semibold sm:px-4">Hài lòng</th>
               <th scope="col" className="px-2 py-2.5 text-right font-semibold sm:px-4">Không hài lòng</th>
               <th scope="col" className="px-2 py-2.5 text-right font-semibold sm:px-4">Tỉ lệ</th>
             </tr>
