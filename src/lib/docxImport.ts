@@ -15,6 +15,8 @@ const MAX_BYTES = 12 * 1024 * 1024
 /** ảnh lớn hơn thì thu lại (cạnh dài ≤ IMG_MAX px), để tài liệu không phình */
 const IMG_SHRINK_BYTES = 250 * 1024
 const IMG_MAX = 1600
+const UNREADABLE_FORMULA = '[Công thức ảnh chưa đọc được]'
+const UNREADABLE_IMAGE = '[Hình chưa đọc được]'
 
 async function shrink(blob: Blob, type: string): Promise<Blob> {
   if (blob.size <= IMG_SHRINK_BYTES || type === 'image/svg+xml' || type === 'image/gif') return blob
@@ -203,12 +205,13 @@ async function imageOf(ctx: Ctx, rid: string): Promise<string | null> {
   const target = ctx.rels.get(rid)
   if (!target) return null
   const path = target.startsWith('/') ? target.slice(1) : `word/${target}`.replace(/\/[^/]+\/\.\.\//g, '/')
+  const f = ctx.zip.file(path)
+  const ext = path.split('.').pop()?.toLowerCase() ?? ''
+  const type = ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg' : ext === 'png' ? 'image/png' : ext === 'gif' ? 'image/gif' : ext === 'svg' ? 'image/svg+xml' : ext === 'webp' ? 'image/webp' : ''
+  if (!f || !type) return null // EMF/WMF: trình duyệt không vẽ được
+  if (ctx.imagePlaceholders) return ''
   if (!ctx.media.has(path)) {
     ctx.media.set(path, (async () => {
-      const f = ctx.zip.file(path)
-      const ext = path.split('.').pop()?.toLowerCase() ?? ''
-      const type = ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg' : ext === 'png' ? 'image/png' : ext === 'gif' ? 'image/gif' : ext === 'svg' ? 'image/svg+xml' : ext === 'webp' ? 'image/webp' : ''
-      if (!f || !type) return null // EMF/WMF: trình duyệt không vẽ được
       const blob = new Blob([await f.async('uint8array')], { type })
       return toDataUrl(await shrink(blob, type))
     })())
@@ -234,6 +237,7 @@ function marksOf(r: RunProps, base: RunProps): Mark[] {
 }
 
 const sameMarks = (a?: Mark[], b?: Mark[]) => JSON.stringify(a ?? []) === JSON.stringify(b ?? [])
+const alternateBranch = (el: Element) => kid(el, 'Choice') ?? kid(el, 'Fallback')
 
 interface Line { spans: Span[]; pageBreakAfter?: boolean }
 
@@ -252,9 +256,7 @@ async function runsOf(ctx: Ctx, el: Element, pr: RunProps, lines: Line[]) {
       const props: RunProps = { ...pr, ...rs.r, ...readRPr(kid(c, 'rPr')) }
       const marks = marksOf(props, ctx.st.defR)
       const mk = marks.length ? { marks } : {}
-      const children = ctx.imagePlaceholders
-        ? kids(c).flatMap((t) => t.localName === 'AlternateContent' ? kids(kid(t, 'Choice') ?? kid(t, 'Fallback')) : [t])
-        : kids(c)
+      const children = kids(c).flatMap((t) => t.localName === 'AlternateContent' ? kids(alternateBranch(t)) : [t])
       for (const t of children) {
         const tn = t.localName
         if (tn === 't') push({ text: props.caps ? (t.textContent ?? '').toLocaleUpperCase('vi') : t.textContent ?? '', ...mk })
@@ -266,21 +268,24 @@ async function runsOf(ctx: Ctx, el: Element, pr: RunProps, lines: Line[]) {
         } else if (tn === 'br' || tn === 'cr') {
           if (val(t, 'type') === 'page') lines[lines.length - 1].pageBreakAfter = true
           lines.push({ spans: [] })
-        } else if (tn === 'drawing' || tn === 'pict' || (ctx.imagePlaceholders && tn === 'object')) {
-          if (ctx.imagePlaceholders) {
-            push({ text: '', image: { src: '' } })
-            continue
-          }
+        } else if (tn === 'object') {
+          push({ text: UNREADABLE_FORMULA, ...mk })
+        } else if (tn === 'drawing' || tn === 'pict') {
           const blip = t.getElementsByTagName('a:blip')[0] ?? t.getElementsByTagName('v:imagedata')[0]
-          const rid = blip?.getAttribute('r:embed') ?? blip?.getAttribute('r:id')
+          const rid = blip?.getAttribute('r:embed') || blip?.getAttribute('r:id')
           const src = rid ? await imageOf(ctx, rid) : null
-          if (src) {
+          if (src === null) push({ text: UNREADABLE_IMAGE, ...mk })
+          else if (ctx.imagePlaceholders) push({ text: '', image: { src } })
+          else {
             const ext = t.getElementsByTagName('wp:extent')[0]
             const width = ext ? Math.round(Number(ext.getAttribute('cx')) / EMU_PX) : undefined
             push({ text: '', image: { src, ...(width ? { width } : {}) } })
           }
         }
       }
+    } else if (n === 'AlternateContent') {
+      const branch = alternateBranch(c)
+      if (branch) await runsOf(ctx, branch, pr, lines)
     } else if (n === 'oMath') {
       const tex = ommlToLatex(c)
       if (tex) push({ text: `$${tex}$` })

@@ -423,7 +423,7 @@ function detectIntent(text: string, mode: AiMode): 'doc' | 'chat' {
   const hints =
     mode === 'slide'
       ? ['slide', 'bài giảng', 'dàn ý', 'tóm tắt', 'hình ảnh', 'thêm', 'sửa', 'đổi', 'soạn', 'sinh', 'viết']
-      : ['soạn', 'sinh đề', 'tạo đề', 'viết đề', 'làm đề', 'thêm câu', 'bổ sung', 'sửa', 'rà soát', 'đổi', 'chỉnh', 'xuất đề', 'in đề']
+      : ['soạn', 'sinh đề', 'tạo đề', 'viết đề', 'làm đề', 'thêm câu', 'bổ sung', 'sửa', 'rà soát', 'đổi', 'chỉnh', 'xuất đề', 'in đề', 'chọn', 'lấy', 'trích', 'ra đề', 'tạo']
   return hints.some((h) => t.includes(h)) ? 'doc' : 'chat'
 }
 

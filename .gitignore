@@ -14,3 +14,4 @@ eval-out/
 .vercel
 .env*
 compare-llm-result*.md
+/injection-result.md

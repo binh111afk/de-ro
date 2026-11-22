@@ -1,5 +1,5 @@
 /**
- * Kiểm tra xuất .docx thật: file là zip OOXML, mammoth (bộ đọc Word) đọc lại được, nội dung đúng thứ tự.
+ * Kiểm tra xuất .docx thật và giữ dấu tại vị trí công thức/hình bị thiếu khi nhập.
  * Chạy: npm run test:docx
  */
 import assert from 'node:assert/strict'
@@ -8,8 +8,12 @@ import JSZip from 'jszip'
 import mammoth from 'mammoth'
 import { Packer } from 'docx'
 import { deflateSync } from 'node:zlib'
+import { DOMParser as XmlDOMParser } from '@xmldom/xmldom'
 import { buildDocx } from '../src/examEditor/docxBlocks'
+import { docxImport } from '../src/lib/docxImport'
 import { examToDoc } from '../src/lib/exportDocx'
+import { buildSourcePack } from '../src/lib/sources'
+import { useDocStore } from '../src/store/docs'
 import { COMMUNITY_EXAMS } from '../src/data/community'
 import type { ExamDoc } from '../src/data/docTypes'
 
@@ -156,6 +160,72 @@ const qi2 = sideXml.indexOf('Câu 2. ')
 const row2 = sideXml.slice(sideXml.lastIndexOf('<w:tbl>', qi2), sideXml.indexOf('</w:tr>', qi2))
 assert.ok(row2.indexOf('Câu 2. ') < row2.indexOf('<w:drawing>'), 'right: ảnh ở ô phải')
 assert.ok((await mammoth.extractRawText({ buffer: sideBuf })).value.includes('Câu 2.'))
+
+// DOMParser của Node cần thuộc tính children như DOM trình duyệt.
+Object.assign(globalThis, {
+  DOMParser: class extends XmlDOMParser {
+    parseFromString(...args: Parameters<XmlDOMParser['parseFromString']>) {
+      const parsed = super.parseFromString(...args)
+      for (const el of Array.from(parsed.getElementsByTagName('*'))) {
+        Object.defineProperty(el, 'children', { value: Array.from(el.childNodes).filter((node) => node.nodeType === 1) })
+      }
+      return parsed
+    }
+  },
+  FileReader: class {
+    result = ''
+    onload?: () => void
+
+    async readAsDataURL(blob: Blob) {
+      this.result = `data:${blob.type};base64,${Buffer.from(await blob.arrayBuffer()).toString('base64')}`
+      this.onload?.()
+    }
+  },
+})
+
+const importZip = new JSZip()
+const ole = '<w:object><v:shape><v:imagedata r:id="wmf"/></v:shape><o:OLEObject ProgID="Equation.DSMT4" r:id="ole"/></w:object>'
+importZip.file('word/document.xml', `
+  <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+    xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+    xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math"
+    xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006">
+    <w:body>
+      <w:p><w:r><w:t>Tính </w:t>${ole}<w:t>.</w:t></w:r></w:p>
+      <w:p><w:r><w:pict><v:imagedata r:id="emf"/></w:pict><w:pict><v:imagedata r:id="png"/></w:pict></w:r></w:p>
+      <w:p><mc:AlternateContent><mc:Choice Requires="m"><m:oMath><m:r><m:t>x=2</m:t></m:r></m:oMath></mc:Choice>
+        <mc:Fallback><w:r>${ole}</w:r></mc:Fallback></mc:AlternateContent></w:p>
+    </w:body>
+  </w:document>`)
+importZip.file('word/_rels/document.xml.rels', `
+  <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+    <Relationship Id="wmf" Target="media/preview.wmf"/>
+    <Relationship Id="emf" Target="media/figure.emf"/>
+    <Relationship Id="png" Target="media/figure.png"/>
+  </Relationships>`)
+importZip.file('word/media/preview.wmf', 'WMF')
+importZip.file('word/media/figure.emf', 'EMF')
+const figure = png(1, 1, [200, 40, 40])
+importZip.file('word/media/figure.png', figure.split(',')[1], { base64: true })
+const file = new File([await importZip.generateAsync({ type: 'arraybuffer' })], 'MathType.docx')
+const { blocks } = await docxImport(file)
+const formula = 'Tính [Công thức ảnh chưa đọc được].'
+const image = '[Hình chưa đọc được]'
+assert.deepEqual(blocks, [
+  { type: 'paragraph', text: [{ text: formula }] },
+  { type: 'paragraph', text: [{ text: image }, { text: '', image: { src: figure } }] },
+  { type: 'paragraph', text: [{ text: '$x=2$' }] },
+])
+
+const attached = await buildSourcePack([{ name: file.name, kind: 'doc', file }])
+assert.equal(attached.items[0]?.text, `${formula}\n${image}\n[Hình]\n$x=2$`)
+assert.deepEqual(attached.warnings, [`${file.name}: có 3 công thức/hình AI không đọc được.`])
+
+useDocStore.setState({ myDocs: [{ ...doc, blocks }] })
+const picked = await buildSourcePack([], [{ kind: 'mine', id: doc.id, name: doc.title }])
+assert.equal(picked.items[0]?.text, `${formula}\n${image}[Hình]\n$x=2$`)
+assert.deepEqual(picked.warnings, [`${doc.title}: có 3 công thức/hình AI không đọc được.`])
 
 if (process.env.KEEP_DOCX) {
   writeFileSync(process.env.KEEP_DOCX, buf)

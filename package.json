@@ -34,6 +34,7 @@
     "test:ai-cost": "tsx scripts/test-ai-cost.ts",
     "test:payment": "tsx scripts/test-payment.ts",
     "compare:llm": "tsx scripts/compare-llm.ts",
+    "test:injection": "tsx scripts/test-prompt-injection.ts",
     "test:slide-text": "tsx --tsconfig tsconfig.app.json scripts/test-slide-text.mjs",
     "test:slide-theme": "tsx --tsconfig tsconfig.app.json scripts/test-slide-theme.mjs",
     "test:slide-layout": "tsx --tsconfig tsconfig.app.json scripts/test-slide-layout.mjs",

@@ -8,7 +8,6 @@ import { AiQuotaError, reportQuota } from '@/lib/llm'
 import { MAX_PDF_PAGES, renderPdfPages } from '@/lib/pdfPages'
 import { sourcePrompt as promptOf, sourceRule as ruleOf } from '@/lib/prompts/sources'
 import type { ExamBlock, ExamDoc, RichText } from '@/data/docTypes'
-import { plainText } from '@/examEditor/convert'
 import { useDocStore } from '@/store/docs'
 
 export interface SourceFile {
@@ -175,7 +174,7 @@ async function extractSourceFile(file: File, name: string, warnings: string[], o
       const blocks = await docxToBlocks(file, { imagePlaceholders: true })
       options.signal?.throwIfAborted()
       const { text, imageCount } = docxBlocksToSourceText(blocks)
-      if (imageCount) warnings.push(`${name}: có ${imageCount} hình, AI không đọc được nội dung hình.`)
+      warnUnreadable(name, imageCount, warnings)
       return { text }
     } catch {
       options.signal?.throwIfAborted()
@@ -206,6 +205,18 @@ async function extractSourceFile(file: File, name: string, warnings: string[], o
   }
   if (extracted.warning) warnings.push(`${name}: ${extracted.warning}`)
   return extracted
+}
+
+function plainText(value: RichText): string {
+  return typeof value === 'string' ? value : value.map((span) => span.text || (span.image ? '[Hình]' : '')).join('')
+}
+
+function countUnreadable(text: string): number {
+  return (text.match(/\[(?:Hình|Hình chưa đọc được|Công thức ảnh chưa đọc được)\]/g) ?? []).length
+}
+
+function warnUnreadable(name: string, count: number, warnings: string[]) {
+  if (count) warnings.push(`${name}: có ${count} công thức/hình AI không đọc được.`)
 }
 
 function blockText(b: ExamBlock, rt = plainText, cellText = rt): string {
@@ -250,19 +261,14 @@ function blockText(b: ExamBlock, rt = plainText, cellText = rt): string {
 }
 
 export function docxBlocksToSourceText(blocks: ExamBlock[]): { text: string; imageCount: number } {
-  let imageCount = 0
   const richText = (value: RichText, singleLine = false) => {
     const renderText = (text: string) => singleLine ? text.replace(/\r?\n/g, ' ') : text
     if (typeof value === 'string') return renderText(value)
-    return value.map((span) => {
-      if (!span.image) return renderText(span.text)
-      imageCount += 1
-      return '\n[Hình]\n'
-    }).join('')
+    return value.map((span) => span.image ? '\n[Hình]\n' : renderText(span.text)).join('')
   }
   const text = blocks.map((b) => blockText(b, (v) => richText(v), (v) => richText(v, true)))
     .filter(Boolean).join('\n').replace(/[ \t]*\n[ \t]*/g, '\n').replace(/\n{2,}/g, '\n').trim()
-  return { text, imageCount }
+  return { text, imageCount: countUnreadable(text) }
 }
 
 function docText(doc: ExamDoc): string {
@@ -303,7 +309,9 @@ export async function loadPickedSources(
         text = extracted.text
       }
       if (text.trim()) {
-        items.push({ tier: 1, name: p.name, text: text.slice(0, MAX_PICKED_CHARS) })
+        const clipped = text.slice(0, MAX_PICKED_CHARS)
+        if (p.kind !== 'library') warnUnreadable(p.name, countUnreadable(clipped), warnings)
+        items.push({ tier: 1, name: p.name, text: clipped })
       } else {
         warnings.push(`${p.name}: không có chữ để làm nguồn.`)
       }

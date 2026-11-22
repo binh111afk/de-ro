@@ -27,7 +27,11 @@ function tierRule(tier: number): string {
       'dạng này sang dạng khác. Câu mẫu có hình (đồ thị, bảng biến thiên, hình không gian, sơ đồ) thì ra câu mới CÓ hình ' +
       'cùng loại, vẽ lại cho khớp số liệu mới và khớp từng chữ trong đề (tên điểm, vị trí điểm theo tỉ lệ đề cho); câu mẫu ' +
       'không có hình thì không tự thêm hình. Phần nào của tệp mẫu đọc không rõ (ghi [Hình: ...] hoặc công thức lỗi) thì ' +
-      'nói rõ với giáo viên thay vì đoán rồi báo là đã giữ nguyên. Không báo "chỉ đổi số liệu" nếu đã đổi cấu trúc.'
+      'nói rõ với giáo viên thay vì đoán rồi báo là đã giữ nguyên. Không báo "chỉ đổi số liệu" nếu đã đổi cấu trúc. ' +
+      'Khi yêu cầu là CHỌN / LẤY / TRÍCH N câu từ tệp: chọn các câu đa dạng trong số những câu đọc được đầy đủ, giữ nguyên đề bài, ' +
+      'số liệu, công thức, phương án và đáp án có trong tệp. Bỏ qua câu thiếu dữ kiện, hình, công thức hoặc đáp án cần thiết ' +
+      '([Hình], [Công thức ảnh chưa đọc được], "Đáp án:" để trống). Chưa đủ N câu thì báo số câu chọn được và phần tệp cần bổ sung. ' +
+      'Tuyệt đối không dựng lại hay suy ngược số liệu từ đáp án.'
     )
   }
   return (
