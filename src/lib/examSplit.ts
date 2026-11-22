@@ -136,7 +136,7 @@ export function mergeChunks(chunks: ChunkJson[], figs?: boolean[][]): string {
   return JSON.stringify({
     action: 'replace',
     ...(typeof chunks[0]?.name === 'string' ? { name: chunks[0].name } : {}),
-    say: say.length ? `Soạn ${no} câu qua ${chunks.length} lượt.\n\n${say.map((s) => `- ${s.replace(/\n+/g, ' ')}`).join('\n')}` : `Soạn ${no} câu qua ${chunks.length} lượt.`,
+    say: say.length ? `Đã soạn ${no} câu.\n\n${say.map((s) => `- ${s.replace(/\n+/g, ' ')}`).join('\n')}` : `Đã soạn ${no} câu.`,
     blocks,
   })
 }

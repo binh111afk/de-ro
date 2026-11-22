@@ -1007,10 +1007,15 @@ function AiConversation({
       let pack: SourcePack = (answeringAsk && previousTurn?.askSourcePack) || { tier: 0, items: [], warnings: [] }
       if (sourceFiles.length || sentPicked.length) {
         if (examSteps) logStart('Đọc nguồn')
+        // đọc ảnh PDF mỗi lô mất vài chục giây: đếm giây để không trông như treo
+        let readNote = ''
+        const readAt = Date.now()
+        const readSecs = () => `${Math.max(1, Math.round((Date.now() - readAt) / 1000))} giây`
+        const tick = examSteps ? setInterval(() => logPatch({ note: readNote ? `${readNote} · ${readSecs()}` : readSecs() }), 1000) : undefined
         const added = await buildSourcePack(sourceFiles, sentPicked, {
-          onProgress: examSteps ? (note) => logPatch({ note }) : undefined,
+          onProgress: examSteps ? (note) => { readNote = note.replace(/…$/, ''); logPatch({ note: `${readNote} · ${readSecs()}` }) } : undefined,
           signal: controller.signal,
-        })
+        }).finally(() => clearInterval(tick))
         pack = { tier: pack.tier || added.tier, items: [...pack.items, ...added.items], warnings: [...pack.warnings, ...added.warnings] }
         if (examSteps) logSet((l) => closeLog(l, 'done', `${pack.items.length} nguồn`))
       }
@@ -1163,11 +1168,26 @@ function AiConversation({
         const figsOf: boolean[][] = []
         const splitTask = { ...mainTask, input: { ...mainTask.input, ask: false } }
         const lastMsg = messages[messages.length - 1]
+        // nhật ký như một lượt thường: Suy nghĩ → Viết đề (N/T câu); suy nghĩ của các lượt sau chạy ngay trong bước Viết đề
+        const total = split.reduce((s, c) => s + c.count, 0)
+        let doneQ = 0
+        const chunkProgress = examSteps
+          ? (p: LlmProgress) => {
+              if (p.phase === 'retry') return
+              if (p.phase === 'think' && phase !== 'write') return onProgress!(p)
+              if (phase !== 'write') onProgress!({ ...p, phase: 'write', text: '' })
+              if (Date.now() - liveAt < 200) return
+              liveAt = Date.now()
+              const n = (p.text.match(/"type"\s*:\s*"question"/g) ?? []).length
+              const stem = [...p.text.matchAll(/"text"\s*:\s*"((?:[^"\\]|\\.)*)/g)].at(-1)?.[1]
+              const live = p.phase === 'think' ? tailLine(p.thinking, 140) : stem ? tailLine(stem.replace(/\\n/g, ' ').replace(/\\(.)/g, '$1'), 110) : ''
+              logPatch({ note: `${Math.min(doneQ + n, total)}/${total} câu`, live: live || undefined })
+            }
+          : undefined
         for (let i = 0; i < split.length; i++) {
           controller.signal.throwIfAborted()
-          logStart(`Viết đề (lượt ${i + 1}/${split.length})`)
           const msgs: LlmMessage[] = [...messages.slice(0, -1), { role: 'user', content: lastMsg.content + split[i].note }]
-          const opts = { signal: controller.signal, reasoningEffort: AI_EFFORT.exam, task: splitTask }
+          const opts = { signal: controller.signal, reasoningEffort: AI_EFFORT.exam, task: splitTask, onProgress: chunkProgress }
           let r = await callLlm(msgs, opts)
           let part = parseChunk(r.content)
           if (!part) {
@@ -1179,15 +1199,17 @@ function AiConversation({
             parts.push(part)
             figsOf.push(split[i].figs)
           } else skipped.push(i + 1)
-          logSet((l) => closeLog(l, part ? 'done' : 'failed', part ? `${split[i].count} câu` : 'không soạn được'))
+          doneQ += split[i].count
         }
         controller.signal.throwIfAborted()
         if (!parts.length) throw new Error('AI không soạn được đề, bạn thử lại nhé.')
+        logSet((l) => closeLog(l, 'done', `${doneQ - skipped.reduce((s, k) => s + split[k - 1].count, 0)} câu`))
         logStart('Đưa vào đề')
         await new Promise((r) => setTimeout(r, 350))
         const result = onApplyBlocks!(mergeChunks(parts, figsOf))
         const ok = !!result && !result.failed
-        const note = skipped.length ? `\n\nLượt ${skipped.join(', ')} không soạn được, thiếu các câu của lượt đó.` : ''
+        const missing = skipped.map((k) => { const a = split.slice(0, k - 1).reduce((s, c) => s + c.count, 0) + 1; const b = a + split[k - 1].count - 1; return a === b ? `${a}` : `${a}–${b}` })
+        const note = skipped.length ? `\n\nChưa soạn được câu ${missing.join(', ')}, bạn bảo AI soạn thêm các câu này nhé.` : ''
         if (ok) rememberAiTurn({ mode, request: userTurn.text, reply: result.text, context: documentDigest })
         patchTurn((t) => ({
           text: (result?.text ?? '') + note,
