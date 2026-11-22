@@ -1,12 +1,11 @@
 import { audit, call, HttpError, type ActionMap } from './admin.js'
-import { summarizeAiMargin, type AiCall } from './aiMargin.js'
+import { summarizeAiMargin, type AiCallGroup } from './aiMargin.js'
 import { DEFAULT_PRICING, type PricingConfig } from '../src/lib/pricing.js'
 import type { AiMarginSettings } from '../src/lib/adminAiMarginApi.js'
 
 type Supabase = Parameters<typeof call>[0]
 const DEFAULT_SETTINGS: AiMarginSettings = { usdVnd: 25_000, unitCostUsd: {}, actual: {} }
 const SETTINGS_KEY = 'ai_margin'
-const PAGE_SIZE = 1000
 const DAY_MS = 86_400_000
 const ID = /^[a-z0-9][a-z0-9_-]{0,39}$/
 const MONTH = /^[1-9]\d{3}-(0[1-9]|1[0-2])$/
@@ -51,20 +50,17 @@ function validateSettings(value: unknown): AiMarginSettings {
   }
 }
 
-/** Duyệt theo id để các trang không bị xê dịch khi có lượt gọi mới. */
-async function readCalls(s: Supabase, since: number, now: number): Promise<AiCall[]> {
-  const query = new URLSearchParams({
-    select: 'id,kind,provider,ok,billed,cost,created_at', order: 'id.desc', limit: String(PAGE_SIZE),
+/** Gộp ở DB (RPC `admin_ai_margin_groups`): vài chục dòng cho dù có bao nhiêu lượt gọi. */
+async function readGroups(s: Supabase, since: number, monthStart: number, now: number): Promise<AiCallGroup[]> {
+  const { data } = await call<AiCallGroup[]>(s, '/rest/v1/rpc/admin_ai_margin_groups', {
+    method: 'POST',
+    body: JSON.stringify({
+      p_since: new Date(since).toISOString(),
+      p_month_start: new Date(monthStart).toISOString(),
+      p_until: new Date(now).toISOString(),
+    }),
   })
-  query.append('created_at', `gte.${new Date(since).toISOString()}`)
-  query.append('created_at', `lte.${new Date(now).toISOString()}`)
-  const calls: AiCall[] = []
-  for (;;) {
-    const { data } = await call<AiCall[]>(s, `/rest/v1/ai_calls?${query}`)
-    if (!data.length) return calls
-    for (const row of data) calls.push(row)
-    query.set('id', `lt.${data[data.length - 1].id}`)
-  }
+  return data ?? []
 }
 
 export const AI_MARGIN_ACTIONS: ActionMap = {
@@ -75,9 +71,9 @@ export const AI_MARGIN_ACTIONS: ActionMap = {
       const now = Date.now()
       const month = monthInVietnam(now)
       const since = now - days * DAY_MS
-      const [config, calls] = await Promise.all([
+      const [config, groups] = await Promise.all([
         call<Array<{ key: string; value: unknown }>>(s, '/rest/v1/app_settings?select=key,value&key=in.(ai_margin,pricing)'),
-        readCalls(s, Math.min(since, Date.parse(`${month}-01T00:00:00+07:00`)), now),
+        readGroups(s, since, Date.parse(`${month}-01T00:00:00+07:00`), now),
       ])
       const saved = config.data.find(({ key }) => key === SETTINGS_KEY)
       const settings = saved ? validateSettings(saved.value) : DEFAULT_SETTINGS
@@ -85,7 +81,7 @@ export const AI_MARGIN_ACTIONS: ActionMap = {
       const points = pricing?.pointsPer1000
       const pointsPer1000 = Array.isArray(pricing?.packs) && pricing.packs.length > 0 && typeof points === 'number' && Number.isFinite(points) && points > 0
         ? points : DEFAULT_PRICING.pointsPer1000
-      return summarizeAiMargin(calls, settings, pointsPer1000, since, month)
+      return summarizeAiMargin(groups, settings, pointsPer1000, month)
     },
   },
   'aiMargin.settings': {

@@ -32,8 +32,29 @@ const calls = [
   { id: 1, kind: 'task-doc', provider: 'text', ok: true, billed: 5000, cost: 1, created_at: '2026-12-31T16:59:59Z' },
 ]
 
+const monthStart = Date.parse(`${month}-01T00:00:00+07:00`)
+
+/** Mô phỏng RPC admin_ai_margin_groups: gộp theo (tác vụ, nhà cung cấp, ok, thiếu cost, có trừ điểm, trong kỳ, trong tháng); số về dạng chuỗi như numeric / bigint. */
+function groupCalls(rows: typeof calls, from: number, monthFrom: number, until = Infinity) {
+  const groups = new Map<string, { n: number; billed: number; cost: number; key: Record<string, unknown> }>()
+  for (const row of rows) {
+    const time = Date.parse(row.created_at)
+    if (time < Math.min(from, monthFrom) || time > until) continue
+    const key = {
+      kind: row.kind?.trim() || 'other', provider: row.provider, ok: row.ok, cost_null: row.cost === null,
+      billed_pos: (row.billed ?? 0) > 0, in_window: time >= from, in_month: time >= monthFrom,
+    }
+    const group = groups.get(JSON.stringify(key)) ?? { n: 0, billed: 0, cost: 0, key }
+    group.n++
+    group.billed += row.billed ?? 0
+    group.cost += row.cost ?? 0
+    groups.set(JSON.stringify(key), group)
+  }
+  return [...groups.values()].map(({ key, n, billed, cost }) => ({ ...key, n: String(n), billed: String(billed), cost: String(cost) }))
+}
+
 const { summarizeAiMargin } = await import('../server/aiMargin.ts')
-const report = summarizeAiMargin(calls, settings, 50, since, month)
+const report = summarizeAiMargin(groupCalls(calls, since, monthStart) as never, settings, 50, month)
 const row = (kind: string) => {
   const item = report.rows.find((entry) => entry.kind === kind)
   assert.ok(item, `Thiếu tác vụ ${kind}`)
@@ -62,7 +83,7 @@ assert.deepEqual(report.comparison, [
 console.log('OK tính biên âm/dương, thiếu giá, giá 0, chia 0 và đối chiếu theo tháng VN')
 
 let saved: AiMarginSettings | undefined
-const reads: URL[] = []
+const reads: Array<{ p_since: string; p_month_start: string; p_until: string }> = []
 const audits: unknown[] = []
 globalThis.fetch = async (input, init) => {
   const url = new URL(String(input))
@@ -93,16 +114,12 @@ globalThis.fetch = async (input, init) => {
       assert.equal(url.searchParams.get('key'), 'in.(ai_margin,pricing)')
       return json([...rows, { key: 'pricing', value: { pointsPer1000: 50, packs: [{ vnd: 2000, bonus: 0.2 }] } }])
     }
-    case '/rest/v1/ai_calls': {
-      reads.push(url)
-      assert.equal(url.searchParams.get('order'), 'id.desc')
-      const [min, max] = url.searchParams.getAll('created_at').map((value) => Date.parse(value.slice(4)))
-      const beforeId = Number(url.searchParams.get('id')?.slice(3) ?? Infinity)
-      // Giả lập PostgREST giới hạn trang nhỏ hơn limit yêu cầu.
-      return json(calls.filter((call) => {
-        const time = Date.parse(call.created_at)
-        return call.id < beforeId && time >= min && time <= max
-      }).slice(0, 2))
+    case '/rest/v1/rpc/admin_ai_margin_groups': {
+      const params = body()
+      assert.equal(init?.method, 'POST')
+      assert.deepEqual(Object.keys(params).sort(), ['p_month_start', 'p_since', 'p_until'])
+      reads.push(params)
+      return json(groupCalls(calls, Date.parse(params.p_since), Date.parse(params.p_month_start), Date.parse(params.p_until)))
     }
     default:
       throw new Error('Đường dẫn Supabase ngoài dự kiến')
@@ -166,11 +183,17 @@ assert.equal(reads.length, 0)
 const result = await hit({ action: 'aiMargin.get', days: 7 })
 assert.equal(result.status, 200)
 assert.deepEqual(result.data, report)
-assert.deepEqual(reads.map((url) => url.searchParams.get('id')), [null, 'lt.7', 'lt.5', 'lt.3', 'lt.2'])
+// Một lần gọi RPC cho mỗi lần xem, không phụ thuộc số lượt AI.
+assert.deepEqual(reads, [{ p_since: new Date(since).toISOString(), p_month_start: new Date(monthStart).toISOString(), p_until: new Date(now).toISOString() }])
 for (const days of [30, 90]) {
   const longer = await hit({ action: 'aiMargin.get', days })
   assert.equal(longer.status, 200)
   assert.equal((longer.data as AiMarginReport).total.billed, 26_250)
-  assert.deepEqual((longer.data as AiMarginReport).comparison, report.comparison)
+  // Kỳ khác nhau gộp nhóm khác nhau nên thứ tự cộng số thực khác: so sánh sau khi làm tròn.
+  const rounded = (rows: AiMarginReport['comparison']) => rows.map((item) => ({
+    ...item, estimatedUsd: Number(item.estimatedUsd.toFixed(9)), ratio: item.ratio === null ? null : Number(item.ratio.toFixed(9)),
+  }))
+  assert.deepEqual(rounded((longer.data as AiMarginReport).comparison), rounded(report.comparison))
 }
-console.log('OK aiMargin.get qua Supabase giả lập, đủ trang và đủ ba kỳ')
+assert.equal(reads.length, 3)
+console.log('OK aiMargin.get qua RPC gộp ở DB (Supabase giả lập), đủ ba kỳ')
