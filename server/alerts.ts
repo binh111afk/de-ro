@@ -5,7 +5,7 @@
  */
 import { timingSafeEqual } from 'node:crypto'
 import type { IncomingMessage, ServerResponse } from 'node:http'
-import { json, safeError } from './http.js'
+import { json, safeError, supabaseServiceConfig } from './http.js'
 
 export type AlertMetrics = {
   signups_1h: number
@@ -15,6 +15,8 @@ export type AlertMetrics = {
   ai_ok_10m: number
   ai_cost_today: number
   maintenance_since: string | null
+  api_5xx_15m?: number
+  pay_failed_1h?: number
 }
 
 const num = (name: string, fallback: number) => {
@@ -42,13 +44,13 @@ export function evaluateAlerts(m: AlertMetrics, now = Date.now()): [string, stri
   if (m.maintenance_since && now - Date.parse(m.maintenance_since) > maxMaint * 60_000) {
     out.push(['maintenance', `Đang bảo trì hơn ${maxMaint} phút (từ ${new Date(m.maintenance_since).toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' })}).`])
   }
-  return out
-}
 
-function supa() {
-  const base = (process.env.VITE_SUPABASE_URL ?? process.env.SUPABASE_URL ?? '').replace(/\/+$/, '')
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY ?? ''
-  return base && key ? { base, headers: { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' } } : null
+  const apiErrors = m.api_5xx_15m ?? 0
+  if (apiErrors >= num('ALERT_API_5XX', 5)) out.push(['api_5xx', `API lỗi 5xx: ${apiErrors} lần trong 15 phút.`])
+
+  const failedPayments = m.pay_failed_1h ?? 0
+  if (failedPayments >= num('ALERT_PAY_FAILED', 1)) out.push(['pay_failed', `Đơn nạp PayOS lỗi: ${failedPayments} đơn trong 1 giờ.`])
+  return out
 }
 
 function authorized(req: IncomingMessage): boolean {
@@ -74,10 +76,19 @@ async function sendTelegram(text: string): Promise<boolean> {
 
 export async function handleAlertRequest(req: IncomingMessage, res: ServerResponse): Promise<void> {
   if (!authorized(req)) return json(res, 401, { error: 'Không được phép.' })
-  const s = supa()
+  const s = supabaseServiceConfig()
   if (!s) return json(res, 503, { error: 'Thiếu cấu hình Supabase.' })
   try {
-    const r = await fetch(`${s.base}/rest/v1/rpc/alert_metrics`, { method: 'POST', headers: s.headers, body: '{}', signal: AbortSignal.timeout(15_000) })
+    const cutoff = new Date(Date.now() - 3 * 86_400_000).toISOString()
+    const cleanup = Promise.resolve().then(() => fetch(`${s.base}/rest/v1/api_errors?at=lt.${cutoff}`, {
+      method: 'DELETE',
+      headers: s.headers,
+      signal: AbortSignal.timeout(3_000),
+    })).catch(() => {})
+    const [r] = await Promise.all([
+      fetch(`${s.base}/rest/v1/rpc/alert_metrics`, { method: 'POST', headers: s.headers, body: '{}', signal: AbortSignal.timeout(15_000) }),
+      cleanup,
+    ])
     if (!r.ok) throw new Error(`alert_metrics ${r.status}`)
     const metrics = (await r.json()) as AlertMetrics
     const active = evaluateAlerts(metrics)
