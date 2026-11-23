@@ -41,13 +41,13 @@ const SLIDE_SYSTEM =
   'comparison, quote, closing, agenda, table, image-left, image-right, image-full, stats, ' +
   'stat-image, timeline, cycle, quiz, example, hook, mindmap. ' +
   'Field theo layout: title/section/closing dùng {title, kicker, subtitle}; statement dùng ' +
-  '{kicker, body (một câu lớn), author}; bullets dùng {title, kicker, bullets (2-4 ý ngắn)}; ' +
-  'cards dùng {title, items (2-5 thẻ)}; two-column dùng {title, left (2-3 ý), right (2-3 ý)}; ' +
+  '{kicker, body (một câu lớn), author}; bullets dùng {title, kicker, bullets (1-6 ý ngắn)}; ' +
+  'cards dùng {title, items (2-6 thẻ)}; two-column dùng {title, left (2-3 ý), right (2-3 ý)}; ' +
   'comparison dùng {title, leftTitle, left, rightTitle, right}; quote dùng {quote, author}; ' +
-  'agenda dùng {kicker, title, items (3-5 mục)}; table dùng {title, rows (2-6 hàng × 2-6 cột)}; ' +
-  'image-left/image-right/image-full dùng {title, bullets (2-4) hoặc body, image (tuỳ chọn)}; ' +
+  'agenda dùng {kicker, title, items (1-5 mục)}; table dùng {title, rows (2-8 hàng × 2-6 cột)}; ' +
+  'image-left/image-right dùng {title, bullets (1-6 ý ngắn), image (tuỳ chọn)}; image-full dùng {title, body, image (tuỳ chọn)}; ' +
   'stats dùng {title, stats (1-4 mục {value, label})}; stat-image dùng {title, stats (1-2), image}; ' +
-  'timeline/cycle dùng {title, steps (3-5 bước)}; mindmap dùng {title, body (chủ đề giữa), items (3-6 nhánh dạng "Nhãn: ý con; ý con")}; quiz dùng ' +
+  'timeline/cycle dùng {title, steps (3-6 bước)}; mindmap dùng {title, body (chủ đề giữa), items (2-6 nhánh dạng "Nhãn: ý con; ý con")}; quiz dùng ' +
   '{kicker, question, options (2-4 phương án), answer (chỉ số 0-based hoặc "A"), explanation}; ' +
   'example dùng {title, problem (đề bài), steps (2-4 bước giải), conclusion}; ' +
   'hook dùng {kicker, title, body (câu hỏi mở bài), items (2-3 gợi ý ngắn)}. ' +
@@ -72,7 +72,7 @@ export const SLIDE_PLAN_SYSTEM =
   '\n\nQUY TẮC:\n' +
   '- Nếu người dùng yêu cầu làm theo một bộ thiết kế cụ thể (ví dụ "theo thiết kế Thanh lịch", "giống mẫu bảng đen", "kiểu tối giản"…), hãy điền "design": "<id>" đúng bộ thiết kế đó, chọn đúng "theme", "decorKit", "stylePack" tương ứng và bám theo nhịp bố cục của bộ.\n' +
   '- Số slide theo yêu cầu; nếu không nêu thì 6–10 slide, tối đa 16. Mỗi slide chỉ một ý lớn; ' +
-  'nếu một mục có quá 4 ý thì tách thành slide mới.\n' +
+  'chọn bố cục chứa đủ các mục ngắn liên quan (ví dụ 5–6 thẻ) và tách slide khi nội dung vượt giới hạn bố cục.\n' +
   '- Chọn nhịp deck theo nội dung (bài giảng / báo cáo / hội thảo / kể chuyện) — không dùng ' +
   'một chuỗi cố định kiểu tiêu đề → nội dung → 4 thẻ → ý tổng hợp → timeline cho mọi đề.\n' +
   '- Đa dạng bố cục: không dùng cùng một layout ở hai slide liền nhau; deck 6 slide phải có ' +
@@ -84,8 +84,8 @@ export const SLIDE_PLAN_SYSTEM =
   '"hook" cho mở bài gợi mở (câu hỏi/tình huống) ngay sau slide tiêu đề hoặc nội dung bài.\n' +
   '- Slide đầu dùng "title"; slide cuối dùng "closing" hoặc "quote" nếu phù hợp.\n' +
   '- Ưu tiên layout có bố cục rõ: "agenda" cho tổng quan, "statement" cho một thông điệp lớn, ' +
-  '"comparison" khi có hai mặt đối lập, "bullets" chỉ khi thật sự có 2–4 ý ngắn.\n' +
-  '- "mindmap" (sơ đồ tư duy: chủ đề giữa + 3–6 nhánh) dùng để tổng kết/hệ thống hoá kiến thức hoặc khi người dùng yêu cầu sơ đồ tư duy; tối đa 1–2 slide trong deck.\n' +
+  '"comparison" khi có hai mặt đối lập, "bullets" cho tối đa 6 ý ngắn.\n' +
+  '- "mindmap" (sơ đồ tư duy: chủ đề giữa + 2–6 nhánh) dùng để tổng kết/hệ thống hoá kiến thức hoặc khi người dùng yêu cầu sơ đồ tư duy; tối đa 1–2 slide trong deck.\n' +
   '- Layout ảnh ("image-left", "image-right", "image-full", "stat-image") dùng tối đa 3 slide ' +
   'trong cả deck và chỉ khi brief có hình ảnh minh hoạ.\n' +
   '- "brief" đúng 1 câu ngắn (≤ 140 ký tự) nêu dữ kiện chính; "title" ≤ 10 từ.\n' +

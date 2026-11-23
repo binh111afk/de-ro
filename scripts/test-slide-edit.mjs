@@ -6,6 +6,8 @@ import assert from 'node:assert/strict'
 import { sanitizeSlide, slideFromAi } from '../src/lib/slideAi.ts'
 import { applyDeckDesign, applyEdits, looksLikeEdit, parseEditCommands } from '../src/lib/slideEdit.ts'
 import { designById } from '../src/lib/slideDesigns.ts'
+import { contentFromSlide } from '../src/lib/slideLayouts.ts'
+import { textBoxHeight } from '../src/lib/slideMeasure.ts'
 import { DECK_THEMES, normalizeTheme } from '../src/lib/slideTheme.ts'
 import { applyTextFormat, captureTextFormat, clearTextFormatting, normalizeSlideHref, shouldShowSlideFooter } from '../src/lib/slideFormat.ts'
 import { buildDeckPptx } from '../src/lib/exportDeck.ts'
@@ -29,6 +31,7 @@ assert.equal(looksLikeEdit('soạn bài giảng về quang hợp'), false)
 assert.equal(looksLikeEdit('sửa tiêu đề slide 2 thành Mở đầu'), true)
 assert.equal(looksLikeEdit('rút gọn slide 3'), true)
 assert.equal(looksLikeEdit('đổi bố cục slide 4 sang mốc thời gian'), true)
+assert.equal(looksLikeEdit('slide 2 có 5 loại biểu đồ, bạn sửa lại thành 5 mục riêng rẽ đi, ghi đầy đủ là biểu đồ gì'), true)
 
 // --- parse
 const parsed = parseEditCommands('```json\n{"action":"edit","commands":[{"op":"set_theme","theme":"rung"},{"op":"zzz"},{"op":"delete_slides","slides":[2]}]}\n```')
@@ -109,6 +112,50 @@ assert.equal(parseEditCommands('{"action":"edit","commands":[{"op":"set_tone","t
   assert.equal(applyEdits(d, [{ op: 'edit_slide', slide: 2, fields: { bullets: [] } }]).changed, false, 'xoá hết ý → bị chặn')
   assert.equal(applyEdits(d, [{ op: 'edit_slide', slide: 9, fields: { title: 'x' } }]).changed, false)
   assert.equal(applyEdits(d, [{ op: 'edit_slide', slide: 1, fields: { image: 'x' } }]).changed, false, 'không cho đổi ảnh')
+}
+
+// --- 5–6 thẻ giữ đủ tên biểu đồ, vừa khung. Quá 6 mục phải báo rõ.
+{
+  const items = [
+    'Biểu đồ cột đơn',
+    'Biểu đồ cột ghép',
+    'Biểu đồ đoạn thẳng',
+    'Biểu đồ hình quạt tròn',
+    'Biểu đồ tranh',
+    'Biểu đồ phân tán',
+  ]
+  const d = deck()
+  d.slides[1] = slideFromAi({ layout: 'cards', title: 'Các loại biểu đồ', items: items.slice(0, 4) }, theme)
+  const editItems = (input, list) => applyEdits(input, [{ op: 'edit_slide', slide: 2, fields: { items: list } }])
+  const dense = items.map((item) => `${item}: dùng để trình bày số liệu và so sánh các đại lượng trong một tập dữ liệu.`)
+  for (const expected of [items.slice(0, 5), items, dense]) {
+    const result = editItems(d, expected)
+    assert.equal(result.changed, true)
+    const slide = result.deck.slides[1]
+    assert.equal(slide.id, d.slides[1].id)
+    assert.deepEqual(contentFromSlide(slide).items, expected)
+    for (const [index, item] of expected.entries()) {
+      const box = slide.elements.find((e) => e.id === `card-${index + 1}`)
+      const panel = slide.elements.find((e) => e.id === `card-${index + 1}-panel`)
+      assert.equal(box.text, item)
+      assert.ok(textBoxHeight(box.text, box.w, box.fontSize, box.lineHeight ?? 1.4, { weight: box.fontWeight }) <= box.h + 0.05)
+      assert.ok(box.y >= panel.y && box.y + box.h <= panel.y + panel.h)
+    }
+  }
+  const overflow = editItems(d, [...items, 'Biểu đồ miền'])
+  assert.equal(overflow.deck, d)
+  assert.match(overflow.summary[0], /slide 2.*danh sách thẻ có 7 mục.*chia nội dung thành hai slide/)
+
+  const agenda = deck()
+  agenda.slides[1] = slideFromAi({ layout: 'agenda', title: 'Các loại biểu đồ', items: items.slice(0, 5) }, theme)
+  for (const input of [deck(), agenda]) {
+    const converted = editItems(input, items)
+    assert.equal(converted.deck.slides.length, input.slides.length)
+    assert.equal(converted.deck.slides[1].layout, 'cards')
+    assert.equal(converted.deck.slides[1].id, input.slides[1].id)
+    assert.equal(converted.deck.slides[0], input.slides[0])
+    assert.deepEqual(contentFromSlide(converted.deck.slides[1]).items, items)
+  }
 }
 
 // --- đổi bố cục
@@ -394,7 +441,7 @@ assert.equal(normalizeSlideHref('   '), null)
   assert.ok(!s1Xml.includes('Trường THPT A'), 'skipTitle phải ẩn chân trang ở slide đầu')
   assert.match(s2Xml, /<a:rPr\b[^>]*>(?:(?!<\/a:rPr>)[\s\S])*?<a:outerShdw blurRad="0" dist="45720"/, 'bóng nằm ở run chữ PPTX')
   assert.match(s2Xml, /<a:ln w="\d+"><a:solidFill><a:srgbClr val="223344"/, 'viền chữ PPTX')
-  assert.match(s2Xml, /<a:srgbClr val="304050"/, 'màu giữa gradient')
+  assert.match(s2Xml, /<a:gradFill><a:gsLst><a:gs pos="0"><a:srgbClr val="203040">.*?<a:gs pos="100000"><a:srgbClr val="405060">/, 'hai màu gradient của chữ PPTX')
   assert.match(s2Xml, /<a:latin typeface="Oswald"/, 'giữ tên phông PPTX')
   assert.ok(s2Xml.includes('strike="sngStrike"'), 'PPTX phải có gạch ngang strike')
   assert.ok(s2Xml.includes('<a:highlight><a:srgbClr val="FEF08A"/></a:highlight>'), 'PPTX phải có highlight FEF08A')

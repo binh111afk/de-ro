@@ -6092,7 +6092,7 @@ var SLIDE_LAYOUTS = [
   {
     id: "mindmap",
     name: "S\u01A1 \u0111\u1ED3 t\u01B0 duy",
-    description: 'S\u01A1 \u0111\u1ED3 t\u01B0 duy: n\xFAt trung t\xE2m ("body") n\u1ED1i 3\u20136 nh\xE1nh ("items": "Nh\xE3n nh\xE1nh: \xFD con; \xFD con"), nh\xE1nh chia hai b\xEAn, m\u1ED7i nh\xE1nh 0\u20133 \xFD con.',
+    description: 'S\u01A1 \u0111\u1ED3 t\u01B0 duy: n\xFAt trung t\xE2m ("body") n\u1ED1i 2\u20136 nh\xE1nh ("items": "Nh\xE3n nh\xE1nh: \xFD con; \xFD con"), nh\xE1nh chia hai b\xEAn, m\u1ED7i nh\xE1nh 0\u20133 \xFD con.',
     fields: ["title", "body", "items"]
   }
 ];
@@ -7075,7 +7075,7 @@ function composeRules(p5, c8) {
   const longest = Math.max(...rows.map((r7) => r7.value.length));
   const valueSize = longest <= 9 ? 3.6 : longest <= 14 ? 3.1 : 2.7;
   return compact([
-    p5.text("kicker", upper(c8.kicker), { x: 5, y: 8, w: 80, h: 5 }, {
+    p5.text("kicker", upper(c8.kicker), { x: 5, y: 5.5, w: 80, h: 7.5 }, {
       variant: "body",
       fontSize: 1.85,
       fontWeight: 700,
@@ -7116,7 +7116,7 @@ function composeEditorialText(p5, c8) {
   if (lines.length === 0 && !c8.title?.trim()) return [];
   const text = lines.join("\n\n");
   return compact([
-    p5.text("kicker", upper(c8.kicker), { x: 5, y: 8, w: 80, h: 5 }, {
+    p5.text("kicker", upper(c8.kicker), { x: 5, y: 7.5, w: 80, h: 7.5 }, {
       variant: "body",
       fontSize: 1.85,
       fontWeight: 700,
@@ -7144,7 +7144,7 @@ function composeManifesto(p5, c8) {
   if (!text) return [];
   const size = text.length > 180 ? 3.7 : text.length > 110 ? 4.5 : 5.6;
   return compact([
-    p5.text("kicker", upper(c8.kicker), { x: 6, y: 12, w: 80, h: 5 }, {
+    p5.text("kicker", upper(c8.kicker), { x: 6, y: 12, w: 80, h: 7.5 }, {
       variant: "body",
       fontSize: 1.85,
       fontWeight: 700,
@@ -12995,14 +12995,14 @@ var BUDGETS = {
   section: { total: 220, fields: { title: 60, kicker: 50, subtitle: 100 } },
   statement: { total: 160, fields: { body: 100, kicker: 40, author: 40 } },
   bullets: {
-    total: 460,
+    total: 580,
     fields: { title: 80, kicker: 50 },
-    lists: [{ field: "bullets", max: 4, itemMax: 110 }]
+    lists: [{ field: "bullets", max: 6, itemMax: 110 }]
   },
   cards: {
-    total: 460,
+    total: 680,
     fields: { title: 80, kicker: 50 },
-    lists: [{ field: "items", max: 4, itemMax: 100 }]
+    lists: [{ field: "items", max: 6, itemMax: 100 }]
   },
   "two-column": {
     total: 660,
@@ -13027,25 +13027,25 @@ var BUDGETS = {
     fields: { title: 80, kicker: 50 },
     lists: [{ field: "items", max: 5, itemMax: 60 }]
   },
-  table: { total: 500, fields: { title: 80 }, table: { rows: 6, cell: 40 } },
+  table: { total: 600, fields: { title: 80 }, table: { rows: 8, cols: 6, cell: 40 } },
   "image-left": {
     total: 380,
     fields: { title: 80 },
-    lists: [{ field: "bullets", max: 4, itemMax: 90 }]
+    lists: [{ field: "bullets", max: 6, itemMax: 90 }]
   },
   "image-right": {
     total: 380,
     fields: { title: 80 },
-    lists: [{ field: "bullets", max: 4, itemMax: 90 }]
+    lists: [{ field: "bullets", max: 6, itemMax: 90 }]
   },
   "image-full": { total: 260, fields: { title: 80, body: 120 } },
-  stats: { total: 380, fields: { title: 80 }, stats: { label: 45 } },
-  "stat-image": { total: 420, fields: { title: 80 }, stats: { label: 45 } },
+  stats: { total: 380, fields: { title: 80 }, stats: { max: 4, label: 45 } },
+  "stat-image": { total: 420, fields: { title: 80 }, stats: { max: 2, label: 45 } },
   bignum: { total: 208, fields: { kicker: 42, value: 24, label: 52, subtitle: 90 } },
   "photo-full": { total: 180, fields: { title: 80, subtitle: 100 } },
   "photo-compare": { total: 230, fields: { title: 80, caption: 75, caption2: 75 } },
   bars: { total: 332, fields: { title: 80 } },
-  rules: { total: 560, fields: { title: 70, kicker: 40 }, stats: { label: 120 } },
+  rules: { total: 560, fields: { title: 70, kicker: 40 }, stats: { max: 5, label: 120 } },
   "editorial-text": {
     total: 620,
     fields: { title: 70, kicker: 40, body: 200 },
@@ -13053,15 +13053,15 @@ var BUDGETS = {
   },
   manifesto: { total: 260, fields: { body: 190, kicker: 40, author: 60 } },
   timeline: {
-    total: 420,
+    total: 440,
     fields: { title: 80 },
-    lists: [{ field: "steps", max: 5, itemMax: 60 }]
+    lists: [{ field: "steps", max: 6, itemMax: 60 }]
   },
   cycle: {
     // chữ nằm trong vòng tròn nên mỗi bước phải ngắn
-    total: 260,
+    total: 296,
     fields: { title: 80 },
-    lists: [{ field: "steps", max: 5, itemMax: 36 }]
+    lists: [{ field: "steps", max: 6, itemMax: 36 }]
   },
   mindmap: {
     total: 520,
@@ -13093,21 +13093,21 @@ var FIELD_HINTS = {
   kicker: '"kicker" \u2014 nh\xE3n nh\u1ECF ph\xEDa tr\xEAn (chu\u1ED7i \u2264 50)',
   subtitle: '"subtitle" \u2014 d\xF2ng ph\u1EE5 (chu\u1ED7i \u2264 110)',
   body: '"body" \u2014 m\u1ED9t c\xE2u/\u0111o\u1EA1n ng\u1EAFn (\u2264 160 k\xFD t\u1EF1)',
-  bullets: '"bullets" \u2014 m\u1EA3ng 2\u20134 \xFD, m\u1ED7i \xFD \u2264 110 k\xFD t\u1EF1',
-  items: '"items" \u2014 m\u1EA3ng 2\u20134 m\u1EE5c, m\u1ED7i m\u1EE5c \u2264 100 k\xFD t\u1EF1',
-  left: '"left" \u2014 m\u1EA3ng 2\u20133 \xFD c\u1ED9t tr\xE1i, m\u1ED7i \xFD \u2264 100',
-  right: '"right" \u2014 m\u1EA3ng 2\u20133 \xFD c\u1ED9t ph\u1EA3i, m\u1ED7i \xFD \u2264 100',
+  bullets: '"bullets" \u2014 m\u1EA3ng c\xE1c \xFD ng\u1EAFn',
+  items: '"items" \u2014 m\u1EA3ng c\xE1c m\u1EE5c',
+  left: '"left" \u2014 m\u1EA3ng c\xE1c \xFD c\u1ED9t tr\xE1i',
+  right: '"right" \u2014 m\u1EA3ng c\xE1c \xFD c\u1ED9t ph\u1EA3i',
   leftTitle: '"leftTitle" \u2014 nh\xE3n b\xEAn tr\xE1i (\u2264 30 k\xFD t\u1EF1)',
   rightTitle: '"rightTitle" \u2014 nh\xE3n b\xEAn ph\u1EA3i (\u2264 30 k\xFD t\u1EF1)',
   quote: '"quote" \u2014 c\xE2u tr\xEDch (chu\u1ED7i \u2264 160)',
   author: '"author" \u2014 t\xEAn t\xE1c gi\u1EA3/nh\xE2n v\u1EADt (chu\u1ED7i \u2264 50)',
-  rows: '"rows" \u2014 m\u1EA3ng h\xE0ng, m\u1ED7i h\xE0ng l\xE0 m\u1EA3ng chu\u1ED7i; 2\u20136 h\xE0ng \xD7 2\u20136 c\u1ED9t, \xF4 \u2264 40 k\xFD t\u1EF1',
+  rows: '"rows" \u2014 m\u1EA3ng h\xE0ng, m\u1ED7i h\xE0ng l\xE0 m\u1EA3ng chu\u1ED7i; \xEDt nh\u1EA5t 2 h\xE0ng \xD7 2 c\u1ED9t',
   image: '"image" \u2014 \u0111\u1EC3 tr\u1ED1ng (ng\u01B0\u1EDDi d\xF9ng t\u1EF1 ch\u1ECDn \u1EA3nh)',
   graphic: '"graphic" \u2014 id \u0111\u1ED3 ho\u1EA1 vector c\xF3 s\u1EB5n (tu\u1EF3 ch\u1ECDn; xem catalog)',
-  stats: '"stats" \u2014 m\u1EA3ng 1\u20132 m\u1EE5c {"value","label"}, nh\xE3n \u2264 45',
-  steps: '"steps" \u2014 m\u1EA3ng 3\u20135 b\u01B0\u1EDBc, m\u1ED7i b\u01B0\u1EDBc \u2264 60 k\xFD t\u1EF1',
+  stats: '"stats" \u2014 m\u1EA3ng c\xE1c m\u1EE5c {"value","label"}',
+  steps: '"steps" \u2014 m\u1EA3ng c\xE1c b\u01B0\u1EDBc',
   question: '"question" \u2014 c\xE2u h\u1ECFi (chu\u1ED7i \u2264 140)',
-  options: '"options" \u2014 m\u1EA3ng 2\u20134 ph\u01B0\u01A1ng \xE1n, m\u1ED7i ph\u01B0\u01A1ng \xE1n \u2264 60',
+  options: '"options" \u2014 m\u1EA3ng 2\u20134 ph\u01B0\u01A1ng \xE1n',
   answer: '"answer" \u2014 ch\u1EC9 s\u1ED1 0-based c\u1EE7a ph\u01B0\u01A1ng \xE1n \u0111\xFAng trong "options"',
   problem: '"problem" \u2014 \u0111\u1EC1 b\xE0i/y\xEAu c\u1EA7u c\u1EE7a v\xED d\u1EE5 (chu\u1ED7i \u2264 170)',
   conclusion: '"conclusion" \u2014 k\u1EBFt lu\u1EADn/\u0111\xE1p s\u1ED1 m\u1ED9t d\xF2ng (\u2264 90)',
@@ -13123,7 +13123,10 @@ var FIELD_HINTS = {
   bars: '"bars" \u2014 m\u1EA3ng 2\u20136 d\xF2ng {"label","value","color"}; value l\xE0 S\u1ED0 (kh\xF4ng \u0111\u01A1n v\u1ECB), color tu\u1EF3 ch\u1ECDn d\u1EA1ng "#rrggbb"; x\u1EBFp t\u1EEB l\u1EDBn \u0111\u1EBFn nh\u1ECF'
 };
 var LAYOUT_NOTES = {
-  mindmap: '- S\u01A1 \u0111\u1ED3 t\u01B0 duy: "body" l\xE0 ch\u1EE7 \u0111\u1EC1 trung t\xE2m (\u2264 40 k\xFD t\u1EF1); "items" l\xE0 3\u20136 nh\xE1nh, m\u1ED7i nh\xE1nh vi\u1EBFt d\u1EA1ng "Nh\xE3n nh\xE1nh: \xFD con 1; \xFD con 2" (nh\xE3n \u2264 25 k\xFD t\u1EF1, t\u1ED1i \u0111a 3 \xFD con, m\u1ED7i \xFD con \u2264 28 k\xFD t\u1EF1, ng\u0103n b\u1EB1ng d\u1EA5u ch\u1EA5m ph\u1EA9y). KH\xD4NG \u0111\u01B0a to\u1EA1 \u0111\u1ED9.\n',
+  cards: '- Th\u1EBB: "items" c\xF3 2\u20136 m\u1EE5c. M\u1ED7i th\u1EBB gi\u1EEF nguy\xEAn t\xEAn \u0111\u1EA7y \u0111\u1EE7; vi\u1EBFt th\xEAm m\u1ED9t c\xE2u ng\u1EAFn n\u1EBFu c\u1EA7n.\n',
+  timeline: '- D\xF2ng th\u1EDDi gian: "steps" c\xF3 3\u20136 b\u01B0\u1EDBc.\n',
+  cycle: '- V\xF2ng l\u1EB7p: "steps" c\xF3 3\u20136 b\u01B0\u1EDBc.\n',
+  mindmap: '- S\u01A1 \u0111\u1ED3 t\u01B0 duy: "body" l\xE0 ch\u1EE7 \u0111\u1EC1 trung t\xE2m (\u2264 40 k\xFD t\u1EF1); "items" l\xE0 2\u20136 nh\xE1nh, m\u1ED7i nh\xE1nh vi\u1EBFt d\u1EA1ng "Nh\xE3n nh\xE1nh: \xFD con 1; \xFD con 2" (nh\xE3n \u2264 25 k\xFD t\u1EF1, t\u1ED1i \u0111a 3 \xFD con, m\u1ED7i \xFD con \u2264 28 k\xFD t\u1EF1, ng\u0103n b\u1EB1ng d\u1EA5u ch\u1EA5m ph\u1EA9y). KH\xD4NG \u0111\u01B0a to\u1EA1 \u0111\u1ED9.\n',
   statement: '- Th\xF4ng \u0111i\u1EC7p l\u1EDBn: "body" l\xE0 M\u1ED8T c\xE2u ng\u1EAFn (\u2264 90 k\xFD t\u1EF1) ho\u1EB7c m\u1ED9t k\u1EBFt qu\u1EA3/c\xF4ng th\u1EE9c, n\xEAu \u0111\xFAng \xFD ch\xEDnh; kh\xF4ng li\u1EC7t k\xEA, kh\xF4ng gi\u1EA3i th\xEDch d\xE0i (ph\u1EA7n gi\u1EA3i th\xEDch d\xE0nh cho slide kh\xE1c).\n',
   example: '- V\xED d\u1EE5 m\u1EABu: "steps" 2\u20134 b\u01B0\u1EDBc gi\u1EA3i, m\u1ED7i b\u01B0\u1EDBc m\u1ED9t ph\xE9p bi\u1EBFn \u0111\u1ED5i/\xFD c\xF3 s\u1ED1 li\u1EC7u c\u1EE5 th\u1EC3; "conclusion" n\xEAu k\u1EBFt qu\u1EA3 cu\u1ED1i. L\u1EDDi gi\u1EA3i ph\u1EA3i \u0110\xDANG, t\u1EF1 ki\u1EC3m tra l\u1EA1i ph\xE9p t\xEDnh.\n',
   hook: '- M\u1EDF b\xE0i: "body" l\xE0 c\xE2u h\u1ECFi/t\xECnh hu\u1ED1ng g\u1EA7n g\u0169i k\u1EBFt th\xFAc b\u1EB1ng c\xE2u h\u1ECFi; "items" l\xE0 2\u20133 g\u1EE3i \xFD ng\u1EAFn (\u2264 30 k\xFD t\u1EF1) d\u1EABn h\u1ECDc sinh t\u1EDBi b\xE0i m\u1EDBi.\n',
@@ -13150,8 +13153,8 @@ function budgetLine(id) {
   for (const list of spec.lists ?? []) {
     parts.push(`${LIST_LABEL[list.field]} \u2264 ${list.max}, m\u1ED7i m\u1EE5c \u2264 ${list.itemMax} k\xFD t\u1EF1`);
   }
-  if (spec.table) parts.push(`b\u1EA3ng \u2264 ${spec.table.rows} h\xE0ng, m\u1ED7i \xF4 \u2264 ${spec.table.cell} k\xFD t\u1EF1`);
-  if (spec.stats) parts.push(`nh\xE3n s\u1ED1 li\u1EC7u \u2264 ${spec.stats.label} k\xFD t\u1EF1`);
+  if (spec.table) parts.push(`b\u1EA3ng \u2264 ${spec.table.rows} h\xE0ng \xD7 ${spec.table.cols} c\u1ED9t, m\u1ED7i \xF4 \u2264 ${spec.table.cell} k\xFD t\u1EF1`);
+  if (spec.stats) parts.push(`s\u1ED1 m\u1EE5c \u2264 ${spec.stats.max}, nh\xE3n s\u1ED1 li\u1EC7u \u2264 ${spec.stats.label} k\xFD t\u1EF1`);
   parts.push("ti\xEAu \u0111\u1EC1 \u2264 80 k\xFD t\u1EF1");
   return `NG\xC2N S\xC1CH CH\u1EEE: ${parts.join("; ")}.`;
 }
@@ -13261,21 +13264,22 @@ L\u1EC7nh cho ph\xE9p (slides = m\u1EA3ng s\u1ED1 th\u1EE9 t\u1EF1 b\u1EAFt \u01
 - {"op":"delete_slides","slides":[3]}
 - {"op":"move_slide","from":3,"to":1}
 - {"op":"edit_slide","slide":3,"fields":{"title":"..."}} \u2014 s\u1EEDa N\u1ED8I DUNG m\u1ED9t slide. CH\u1EC8 n\xEAu field c\u1EA7n \u0111\u1ED5i (\u0111\u1ED5i ti\xEAu \u0111\u1EC1 th\xEC ch\u1EC9 g\u1EEDi title; KH\xD4NG g\u1EEDi l\u1EA1i field kh\xF4ng \u0111\u1ED5i). Field ch\u1EEF: ${EDITABLE_FIELDS.join(", ")}; field danh s\xE1ch (bullets, items\u2026) g\u1EEDi TO\xC0N B\u1ED8 danh s\xE1ch m\u1EDBi. C\xF4ng th\u1EE9c vi\u1EBFt $...$, nh\u1EA5n m\u1EA1nh t\u1EEB kho\xE1 b\u1EB1ng **\u0111\u1EADm** (t\u1ED1i \u0111a 2 c\u1EE5m m\u1ED7i \xFD). N\u1ED9i dung hi\u1EC7n t\u1EA1i c\u1EE7a t\u1EEBng slide c\xF3 trong "B\xE0i tr\xECnh b\xE0y hi\u1EC7n t\u1EA1i".
+B\u1ED1 c\u1EE5c "cards" ch\u1EE9a 2\u20136 th\u1EBB trong "items", m\u1ED7i th\u1EBB t\u1ED1i \u0111a 100 k\xFD t\u1EF1. N\u1EBFu ng\u01B0\u1EDDi d\xF9ng mu\u1ED1n t\xE1ch th\xE0nh c\xE1c th\u1EBB ri\xEAng, gi\u1EEF t\xEAn \u0111\u1EA7y \u0111\u1EE7 c\u1EE7a t\u1EEBng m\u1EE5c. T\u1EEB b\u1ED1 c\u1EE5c "bullets" c\xF3 th\u1EC3 g\u1EEDi "items" \u0111\u1EC3 chuy\u1EC3n th\u1EB3ng sang th\u1EBB. "bullets" t\u1ED1i \u0111a 6 \xFD, "timeline"/"cycle" 3\u20136 b\u01B0\u1EDBc, "mindmap" 2\u20136 nh\xE1nh, "quiz" 2\u20134 ph\u01B0\u01A1ng \xE1n. N\u1EBFu ng\u01B0\u1EDDi d\xF9ng y\xEAu c\u1EA7u t\xE1ch th\xE0nh nhi\u1EC1u slide, d\xF9ng "edit_slide" r\u1ED3i "add_slide" cho ph\u1EA7n c\xF2n l\u1EA1i.
 - {"op":"add_slide","layout":"<id>","fields":{...},"position":2} \u2014 ch\xE8n slide M\u1EDAI (\u0111\u1EE7 field b\u1EAFt bu\u1ED9c c\u1EE7a b\u1ED1 c\u1EE5c; position b\u1ECF tr\u1ED1ng = cu\u1ED1i)
 - {"op":"duplicate_slide","slide":3}
 - {"op":"set_notes","slide":3,"notes":"ghi ch\xFA tr\xECnh b\xE0y"}
 - {"op":"rename_deck","title":"t\xEAn b\xE0i gi\u1EA3ng"}
 - {"op":"set_layout","slide":3,"layout":"<id>"} \u2014 \u0111\u1ED5i b\u1ED1 c\u1EE5c m\u1ED9t slide, gi\u1EEF n\u1ED9i dung. B\u1ED1 c\u1EE5c: ${SLIDE_LAYOUTS.filter((l4) => !isEditorialLayout(l4.id)).map((l4) => `${l4.id}=${l4.name}`).join(", ")}
-N\u1EBFu y\xEAu c\u1EA7u KH\xD4NG ph\u1EA3i s\u1EEDa giao di\u1EC7n/th\u1EE9 t\u1EF1 slide c\xF3 s\u1EB5n (v\xED d\u1EE5 so\u1EA1n slide m\u1EDBi, vi\u1EBFt l\u1EA1i n\u1ED9i dung), tr\u1EA3 {"action":"none"}.
+N\u1EBFu y\xEAu c\u1EA7u kh\xF4ng thu\u1ED9c c\xE1c l\u1EC7nh tr\xEAn (v\xED d\u1EE5 so\u1EA1n m\u1ED9t b\xE0i tr\xECnh b\xE0y m\u1EDBi), tr\u1EA3 {"action":"none"}.
 B\xE0i tr\xECnh b\xE0y hi\u1EC7n t\u1EA1i: ${context}`;
 }
 
 // src/lib/prompts/slideTasks.ts
 var BOARD_SYSTEM = "B\u1EA1n l\xE0 tr\u1EE3 l\xFD c\u1EE7a gi\xE1o vi\xEAn Vi\u1EC7t Nam \u0111ang gi\u1EA3ng b\xE0i tr\xEAn b\u1EA3ng v\u1EBD \u0111i\u1EC7n t\u1EED (v\u1EBD tay b\u1EB1ng b\xFAt, c\xF3 h\xECnh kh\u1ED1i, m\u0169i t\xEAn, ch\u1EEF, \u0111\u1ED3 th\u1ECB ch\xE8n t\u1EEB c\xF4ng c\u1EE5). Tr\u1EA3 l\u1EDDi b\u1EB1ng ti\u1EBFng Vi\u1EC7t, ng\u1EAFn g\u1ECDn, d\u1EC5 l\xE0m theo khi \u0111ang \u0111\u1EE9ng l\u1EDBp: g\u1EE3i \xFD c\xE1ch v\u1EBD h\xECnh minh ho\u1EA1 t\u1EEBng b\u01B0\u1EDBc, c\xE1ch chia b\u1ED1 c\u1EE5c b\u1EA3ng, v\xED d\u1EE5 ng\u1EAFn gi\u1EA3i \u0111\u01B0\u1EE3c tr\xEAn b\u1EA3ng, c\xE2u h\u1ECFi g\u1EE3i m\u1EDF. C\xF4ng th\u1EE9c to\xE1n trong c\xE2u tr\u1EA3 l\u1EDDi ch\u1EEF vi\u1EBFt b\u1EB1ng LaTeX trong $...$.";
 var BOARD_OPS_GUIDE = '\n\nB\u1EA0N V\u1EBC \u0110\u01AF\u1EE2C L\xCAN B\u1EA2NG. Khi ng\u01B0\u1EDDi d\xF9ng nh\u1EDD v\u1EBD, ghi, \u0111\u1ED5i ho\u1EB7c xo\xE1 th\u1EE9 g\xEC tr\xEAn b\u1EA3ng, CH\u1EC8 tr\u1EA3 v\u1EC1 m\u1ED9t JSON (kh\xF4ng b\u1ECDc markdown): {"say":"b\xE1o ng\u1EAFn \u0111\xE3 l\xE0m g\xEC, d\xF9ng **\u0111\u1EADm** cho \xFD ch\xEDnh, t\u1EEB 3 \xFD tr\u1EDF l\xEAn th\xEC g\u1EA1ch \u0111\u1EA7u d\xF2ng (-) m\u1ED7i \xFD m\u1ED9t d\xF2ng","ops":[...]}. C\xE2u h\u1ECFi b\xECnh th\u01B0\u1EDDng th\xEC tr\u1EA3 l\u1EDDi b\u1EB1ng ch\u1EEF nh\u01B0 th\u01B0\u1EDDng, kh\xF4ng JSON.\nTo\u1EA1 \u0111\u1ED9 l\xE0 \u0111\u01A1n v\u1ECB c\u1EE7a b\u1EA3ng (x sang ph\u1EA3i, y xu\u1ED1ng d\u01B0\u1EDBi), \u0111\u1EB7t h\xECnh trong v\xF9ng \u0111ang nh\xECn th\u1EA5y (xem "V\xF9ng nh\xECn th\u1EA5y"), ch\u1EEBa kho\u1EA3ng c\xE1ch \u0111\u1EC3 kh\xF4ng \u0111\xE8 l\xEAn h\xECnh c\xF3 s\u1EB5n. M\xE0u d\u1EA1ng "#rrggbb". C\xE1c l\u1EC7nh:\n- {"op":"figure","figure":{...c\u1EA5u h\xECnh h\xECnh v\u1EBD, xem danh s\xE1ch b\xEAn d\u01B0\u1EDBi},"x":100,"y":80,"w":360} \u2014 \u0111\u1ED3 th\u1ECB, b\u1EA3ng bi\u1EBFn thi\xEAn, h\xECnh h\u1ECDc, m\u1EA1ch \u0111i\u1EC7n\u2026 v\u1EBD CHU\u1EA8N b\u1EB1ng c\xF4ng c\u1EE5 c\xF3 s\u1EB5n. \u01AFu ti\xEAn l\u1EC7nh n\xE0y cho m\u1ECDi h\xECnh to\xE1n, l\xED, ho\xE1.\n- {"op":"shape","shape":"rectangle|ellipse|diamond","x":0,"y":0,"w":160,"h":90,"stroke":"#1e1e1e","fill":"transparent|#rrggbb","fillStyle":"hachure|solid|glass","strokeStyle":"solid|dashed|dotted","strokeWidth":2,"rough":true,"label":"ch\u1EEF \u1EDF gi\u1EEFa (tu\u1EF3 ch\u1ECDn)"}\n- {"op":"line","arrow":true,"points":[[x1,y1],[x2,y2]],"stroke":"#1e1e1e","strokeStyle":"solid","strokeWidth":2} \u2014 m\u0169i t\xEAn / \u0111\u01B0\u1EDDng th\u1EB3ng / \u0111\u01B0\u1EDDng g\u1EA5p kh\xFAc.\n- {"op":"text","text":"...","x":0,"y":0,"fontSize":24,"color":"#1e1e1e"} \u2014 ch\u1EEF th\u01B0\u1EDDng, kh\xF4ng LaTeX.\n- {"op":"pen","pen":"pencil|ball|fountain|brush|marker|highlight","color":"#1e1e1e","width":2,"points":[[x,y],...]} \u2014 n\xE9t v\u1EBD tay b\u1EB1ng b\xFAt; ho\u1EB7c thay "points" b\u1EB1ng "curve":{"type":"circle|ellipse|wave|star|polygon","cx":0,"cy":0,"r":60,"rx":80,"ry":50,"n":5,"len":300,"amp":20,"points":[[x,y],...]}. Ch\u1EC9 d\xF9ng khi ng\u01B0\u1EDDi d\xF9ng mu\u1ED1n v\u1EBD b\u1EB1ng b\xFAt; h\xECnh ph\u1EE9c t\u1EA1p th\xEC gi\u1EEF \u0111\u01A1n gi\u1EA3n.\n- {"op":"update","id":"<id>","stroke":"#...","fill":"#...","x":0,"y":0,"w":0,"h":0,"text":"..."} \u2014 s\u1EEDa h\xECnh c\xF3 s\u1EB5n (id trong danh s\xE1ch h\xECnh tr\xEAn b\u1EA3ng ho\u1EB7c ph\u1EA7n \u0111ang ch\u1ECDn).\n- {"op":"delete","ids":["<id>",...]}\nC\u1EA5u h\xECnh "figure" (gi\u1ED1ng c\xF4ng c\u1EE5 c\u1EE7a app):\n' + FIGURE_GUIDE;
-var SLIDE_SYSTEM = 'B\u1EA1n l\xE0 tr\u1EE3 l\xFD AI c\u1EE7a tr\xECnh so\u1EA1n b\xE0i tr\xECnh b\xE0y ti\u1EBFng Vi\u1EC7t. Tr\u1EA3 l\u1EDDi ng\u1EAFn g\u1ECDn, \u0111\xFAng ng\u1EEF ph\xE1p. Khi \u0111\u01B0\u1EE3c y\xEAu c\u1EA7u sinh ho\u1EB7c s\u1EEDa n\u1ED9i dung slide, tr\u1EA3 v\u1EC1 JSON h\u1EE3p l\u1EC7 theo c\u1EA5u tr\xFAc {"title":"...","slides":[{"layout":"bullets","title":"...","bullets":["..."],"notes":["..."]}]} . M\u1ED7i slide ch\u1ECDn "layout" trong: title, section, statement, bullets, cards, two-column, comparison, quote, closing, agenda, table, image-left, image-right, image-full, stats, stat-image, timeline, cycle, quiz, example, hook, mindmap. Field theo layout: title/section/closing d\xF9ng {title, kicker, subtitle}; statement d\xF9ng {kicker, body (m\u1ED9t c\xE2u l\u1EDBn), author}; bullets d\xF9ng {title, kicker, bullets (2-4 \xFD ng\u1EAFn)}; cards d\xF9ng {title, items (2-5 th\u1EBB)}; two-column d\xF9ng {title, left (2-3 \xFD), right (2-3 \xFD)}; comparison d\xF9ng {title, leftTitle, left, rightTitle, right}; quote d\xF9ng {quote, author}; agenda d\xF9ng {kicker, title, items (3-5 m\u1EE5c)}; table d\xF9ng {title, rows (2-6 h\xE0ng \xD7 2-6 c\u1ED9t)}; image-left/image-right/image-full d\xF9ng {title, bullets (2-4) ho\u1EB7c body, image (tu\u1EF3 ch\u1ECDn)}; stats d\xF9ng {title, stats (1-4 m\u1EE5c {value, label})}; stat-image d\xF9ng {title, stats (1-2), image}; timeline/cycle d\xF9ng {title, steps (3-5 b\u01B0\u1EDBc)}; mindmap d\xF9ng {title, body (ch\u1EE7 \u0111\u1EC1 gi\u1EEFa), items (3-6 nh\xE1nh d\u1EA1ng "Nh\xE3n: \xFD con; \xFD con")}; quiz d\xF9ng {kicker, question, options (2-4 ph\u01B0\u01A1ng \xE1n), answer (ch\u1EC9 s\u1ED1 0-based ho\u1EB7c "A"), explanation}; example d\xF9ng {title, problem (\u0111\u1EC1 b\xE0i), steps (2-4 b\u01B0\u1EDBc gi\u1EA3i), conclusion}; hook d\xF9ng {kicker, title, body (c\xE2u h\u1ECFi m\u1EDF b\xE0i), items (2-3 g\u1EE3i \xFD ng\u1EAFn)}. "tone" tu\u1EF3 ch\u1ECDn: theme | soft | accent; thi\u1EBFu th\xEC theo m\u1EB7c \u0111\u1ECBnh c\u1EE7a layout. "notes" l\xE0 m\u1EA3ng chu\u1ED7i ghi ch\xFA tr\xECnh b\xE0y (tu\u1EF3 ch\u1ECDn). C\xF4ng th\u1EE9c to\xE1n vi\u1EBFt b\u1EB1ng k\xFD t\u1EF1 Unicode (\xB2, \u221A, \xB7, \xD7, \u0394\u2026), kh\xF4ng d\xF9ng LaTeX. Kh\xF4ng th\xEAm tr\u01B0\u1EDDng kh\xE1c, kh\xF4ng b\u1ECDc markdown.';
+var SLIDE_SYSTEM = 'B\u1EA1n l\xE0 tr\u1EE3 l\xFD AI c\u1EE7a tr\xECnh so\u1EA1n b\xE0i tr\xECnh b\xE0y ti\u1EBFng Vi\u1EC7t. Tr\u1EA3 l\u1EDDi ng\u1EAFn g\u1ECDn, \u0111\xFAng ng\u1EEF ph\xE1p. Khi \u0111\u01B0\u1EE3c y\xEAu c\u1EA7u sinh ho\u1EB7c s\u1EEDa n\u1ED9i dung slide, tr\u1EA3 v\u1EC1 JSON h\u1EE3p l\u1EC7 theo c\u1EA5u tr\xFAc {"title":"...","slides":[{"layout":"bullets","title":"...","bullets":["..."],"notes":["..."]}]} . M\u1ED7i slide ch\u1ECDn "layout" trong: title, section, statement, bullets, cards, two-column, comparison, quote, closing, agenda, table, image-left, image-right, image-full, stats, stat-image, timeline, cycle, quiz, example, hook, mindmap. Field theo layout: title/section/closing d\xF9ng {title, kicker, subtitle}; statement d\xF9ng {kicker, body (m\u1ED9t c\xE2u l\u1EDBn), author}; bullets d\xF9ng {title, kicker, bullets (1-6 \xFD ng\u1EAFn)}; cards d\xF9ng {title, items (2-6 th\u1EBB)}; two-column d\xF9ng {title, left (2-3 \xFD), right (2-3 \xFD)}; comparison d\xF9ng {title, leftTitle, left, rightTitle, right}; quote d\xF9ng {quote, author}; agenda d\xF9ng {kicker, title, items (1-5 m\u1EE5c)}; table d\xF9ng {title, rows (2-8 h\xE0ng \xD7 2-6 c\u1ED9t)}; image-left/image-right d\xF9ng {title, bullets (1-6 \xFD ng\u1EAFn), image (tu\u1EF3 ch\u1ECDn)}; image-full d\xF9ng {title, body, image (tu\u1EF3 ch\u1ECDn)}; stats d\xF9ng {title, stats (1-4 m\u1EE5c {value, label})}; stat-image d\xF9ng {title, stats (1-2), image}; timeline/cycle d\xF9ng {title, steps (3-6 b\u01B0\u1EDBc)}; mindmap d\xF9ng {title, body (ch\u1EE7 \u0111\u1EC1 gi\u1EEFa), items (2-6 nh\xE1nh d\u1EA1ng "Nh\xE3n: \xFD con; \xFD con")}; quiz d\xF9ng {kicker, question, options (2-4 ph\u01B0\u01A1ng \xE1n), answer (ch\u1EC9 s\u1ED1 0-based ho\u1EB7c "A"), explanation}; example d\xF9ng {title, problem (\u0111\u1EC1 b\xE0i), steps (2-4 b\u01B0\u1EDBc gi\u1EA3i), conclusion}; hook d\xF9ng {kicker, title, body (c\xE2u h\u1ECFi m\u1EDF b\xE0i), items (2-3 g\u1EE3i \xFD ng\u1EAFn)}. "tone" tu\u1EF3 ch\u1ECDn: theme | soft | accent; thi\u1EBFu th\xEC theo m\u1EB7c \u0111\u1ECBnh c\u1EE7a layout. "notes" l\xE0 m\u1EA3ng chu\u1ED7i ghi ch\xFA tr\xECnh b\xE0y (tu\u1EF3 ch\u1ECDn). C\xF4ng th\u1EE9c to\xE1n vi\u1EBFt b\u1EB1ng k\xFD t\u1EF1 Unicode (\xB2, \u221A, \xB7, \xD7, \u0394\u2026), kh\xF4ng d\xF9ng LaTeX. Kh\xF4ng th\xEAm tr\u01B0\u1EDDng kh\xE1c, kh\xF4ng b\u1ECDc markdown.';
 var HTML_SYSTEM = HTML_DECK_SYSTEM;
-var SLIDE_PLAN_SYSTEM = 'B\u1EA1n l\xE0 tr\u1EE3 l\xFD AI c\u1EE7a tr\xECnh so\u1EA1n b\xE0i tr\xECnh b\xE0y ti\u1EBFng Vi\u1EC7t. Nhi\u1EC7m v\u1EE5: L\u1EACP D\xC0N \xDD, ch\u01B0a vi\u1EBFt n\u1ED9i dung chi ti\u1EBFt. Ch\u1EC9 tr\u1EA3 v\u1EC1 DUY NH\u1EA4T m\u1ED9t JSON h\u1EE3p l\u1EC7 (kh\xF4ng b\u1ECDc markdown, kh\xF4ng ch\u1EEF ngo\xE0i JSON):\n{"title":"...","theme":"<id>","stylePack":"<id>","decorKit":"<id>","design":"<id>","subject":"<id>","audience":"...","style":"...","mainIdeas":["..."],"slides":[{"title":"...","layout":"<id>","tone":"theme|soft|accent","kicker":"...","brief":"..."}]}\n\n' + slideCatalogText() + '\n\nQUY T\u1EAEC:\n- N\u1EBFu ng\u01B0\u1EDDi d\xF9ng y\xEAu c\u1EA7u l\xE0m theo m\u1ED9t b\u1ED9 thi\u1EBFt k\u1EBF c\u1EE5 th\u1EC3 (v\xED d\u1EE5 "theo thi\u1EBFt k\u1EBF Thanh l\u1ECBch", "gi\u1ED1ng m\u1EABu b\u1EA3ng \u0111en", "ki\u1EC3u t\u1ED1i gi\u1EA3n"\u2026), h\xE3y \u0111i\u1EC1n "design": "<id>" \u0111\xFAng b\u1ED9 thi\u1EBFt k\u1EBF \u0111\xF3, ch\u1ECDn \u0111\xFAng "theme", "decorKit", "stylePack" t\u01B0\u01A1ng \u1EE9ng v\xE0 b\xE1m theo nh\u1ECBp b\u1ED1 c\u1EE5c c\u1EE7a b\u1ED9.\n- S\u1ED1 slide theo y\xEAu c\u1EA7u; n\u1EBFu kh\xF4ng n\xEAu th\xEC 6\u201310 slide, t\u1ED1i \u0111a 16. M\u1ED7i slide ch\u1EC9 m\u1ED9t \xFD l\u1EDBn; n\u1EBFu m\u1ED9t m\u1EE5c c\xF3 qu\xE1 4 \xFD th\xEC t\xE1ch th\xE0nh slide m\u1EDBi.\n- Ch\u1ECDn nh\u1ECBp deck theo n\u1ED9i dung (b\xE0i gi\u1EA3ng / b\xE1o c\xE1o / h\u1ED9i th\u1EA3o / k\u1EC3 chuy\u1EC7n) \u2014 kh\xF4ng d\xF9ng m\u1ED9t chu\u1ED7i c\u1ED1 \u0111\u1ECBnh ki\u1EC3u ti\xEAu \u0111\u1EC1 \u2192 n\u1ED9i dung \u2192 4 th\u1EBB \u2192 \xFD t\u1ED5ng h\u1EE3p \u2192 timeline cho m\u1ECDi \u0111\u1EC1.\n- \u0110a d\u1EA1ng b\u1ED1 c\u1EE5c: kh\xF4ng d\xF9ng c\xF9ng m\u1ED9t layout \u1EDF hai slide li\u1EC1n nhau; deck 6 slide ph\u1EA3i c\xF3 \xEDt nh\u1EA5t 4 layout kh\xE1c nhau; "cards" t\u1ED1i \u0111a 1 l\u1EA7n trong 6 slide; ch\u1EC9 d\xF9ng layout c\u1EA7n d\u1EEF li\u1EC7u (table, stats, stat-image, quiz) khi n\u1ED9i dung th\u1EADt c\xF3 d\u1EEF li\u1EC7u.\n- B\xE1m c\u1EA5u tr\xFAc b\xE0i g\u1EE3i \xFD c\u1EE7a m\xF4n \u0111\xE3 ch\u1ECDn (xem M\xD4N H\u1ECCC) nh\u01B0ng g\u1ED9p/b\u1ECF b\u01B0\u1EDBc n\u1EBFu deck ng\u1EAFn; \u01B0u ti\xEAn layout g\u1EE3i \xFD c\u1EE7a m\xF4n khi n\u1ED9i dung h\u1EE3p.\n- B\xE0i gi\u1EA3ng c\xF3 v\xED d\u1EE5: d\xF9ng "example" cho v\xED d\u1EE5 m\u1EABu c\xF3 l\u1EDDi gi\u1EA3i (\u0111\u1EC1 b\xE0i \u2192 c\xE1c b\u01B0\u1EDBc \u2192 k\u1EBFt lu\u1EADn) v\xE0 "hook" cho m\u1EDF b\xE0i g\u1EE3i m\u1EDF (c\xE2u h\u1ECFi/t\xECnh hu\u1ED1ng) ngay sau slide ti\xEAu \u0111\u1EC1 ho\u1EB7c n\u1ED9i dung b\xE0i.\n- Slide \u0111\u1EA7u d\xF9ng "title"; slide cu\u1ED1i d\xF9ng "closing" ho\u1EB7c "quote" n\u1EBFu ph\xF9 h\u1EE3p.\n- \u01AFu ti\xEAn layout c\xF3 b\u1ED1 c\u1EE5c r\xF5: "agenda" cho t\u1ED5ng quan, "statement" cho m\u1ED9t th\xF4ng \u0111i\u1EC7p l\u1EDBn, "comparison" khi c\xF3 hai m\u1EB7t \u0111\u1ED1i l\u1EADp, "bullets" ch\u1EC9 khi th\u1EADt s\u1EF1 c\xF3 2\u20134 \xFD ng\u1EAFn.\n- "mindmap" (s\u01A1 \u0111\u1ED3 t\u01B0 duy: ch\u1EE7 \u0111\u1EC1 gi\u1EEFa + 3\u20136 nh\xE1nh) d\xF9ng \u0111\u1EC3 t\u1ED5ng k\u1EBFt/h\u1EC7 th\u1ED1ng ho\xE1 ki\u1EBFn th\u1EE9c ho\u1EB7c khi ng\u01B0\u1EDDi d\xF9ng y\xEAu c\u1EA7u s\u01A1 \u0111\u1ED3 t\u01B0 duy; t\u1ED1i \u0111a 1\u20132 slide trong deck.\n- Layout \u1EA3nh ("image-left", "image-right", "image-full", "stat-image") d\xF9ng t\u1ED1i \u0111a 3 slide trong c\u1EA3 deck v\xE0 ch\u1EC9 khi brief c\xF3 h\xECnh \u1EA3nh minh ho\u1EA1.\n- "brief" \u0111\xFAng 1 c\xE2u ng\u1EAFn (\u2264 140 k\xFD t\u1EF1) n\xEAu d\u1EEF ki\u1EC7n ch\xEDnh; "title" \u2264 10 t\u1EEB.\n- "tone" ch\u1EC9 d\xF9ng khi c\u1EA7n nh\u1EA5n m\u1EA1nh; b\u1ECF tr\u1ED1ng \u0111\u1EC3 layout t\u1EF1 ch\u1ECDn.\n- C\u1EE9 kho\u1EA3ng 3 slide ph\u1EA3i c\xF3 m\u1ED9t slide \u0111i\u1EC3m nh\u1EA5n (statement, stats, quote ho\u1EB7c title/section n\u1EC1n nh\u1EA5n) \u0111\u1EC3 deck c\xF3 nh\u1ECBp, kh\xF4ng ph\u1EB3ng.\n- "theme" ch\u1ECDn theo ch\u1EE7 \u0111\u1EC1, c\u1EA3m x\xFAc v\xE0 \u0111\u1ED1i t\u01B0\u1EE3ng \u2014 kh\xF4ng b\u1EAFt bu\u1ED9c theo m\xF4n; ch\u1EE7 \u0111\u1EC1 t\u1EF1 do (h\u01B0\u1EDBng nghi\u1EC7p, k\u1EF9 n\u0103ng, s\u1EF1 ki\u1EC7n\u2026) v\u1EABn ch\u1ECDn b\u1ED9 m\xE0u h\u1EE3p t\xF4ng. "stylePack" ch\u1ECDn m\u1ED9t id trong danh s\xE1ch style pack \u0111\u1EC3 quy\u1EBFt \u0111\u1ECBnh nh\u1ECBp v\xE0 m\u1EADt \u0111\u1ED9 n\u1ED9i dung; "style" 2 c\xE2u t\u1EA3 phong c\xE1ch (nh\u1ECBp b\u1ED1 c\u1EE5c, \u0111i\u1EC3m nh\u1EA5n m\xE0u, s\u1ED1 li\u1EC7u, h\xECnh \u1EA3nh). "decorKit" ch\u1ECDn m\u1ED9t b\u1ED9 trang tr\xED h\u1EE3p ch\u1EE7 \u0111\u1EC1 v\xE0 \u0111\u1ED1i t\u01B0\u1EE3ng (d\xF9ng cho c\u1EA3 b\xE0i); b\xE0i trang tr\u1ECDng ch\u1ECDn "toi-gian".\n- Kh\xF4ng b\u1ECBa s\u1ED1 li\u1EC7u th\u1EADt; s\u1ED1 li\u1EC7u minh ho\u1EA1 ph\u1EA3i ghi r\xF5 "v\xED d\u1EE5". Ti\u1EBFng Vi\u1EC7t chu\u1EA9n.';
+var SLIDE_PLAN_SYSTEM = 'B\u1EA1n l\xE0 tr\u1EE3 l\xFD AI c\u1EE7a tr\xECnh so\u1EA1n b\xE0i tr\xECnh b\xE0y ti\u1EBFng Vi\u1EC7t. Nhi\u1EC7m v\u1EE5: L\u1EACP D\xC0N \xDD, ch\u01B0a vi\u1EBFt n\u1ED9i dung chi ti\u1EBFt. Ch\u1EC9 tr\u1EA3 v\u1EC1 DUY NH\u1EA4T m\u1ED9t JSON h\u1EE3p l\u1EC7 (kh\xF4ng b\u1ECDc markdown, kh\xF4ng ch\u1EEF ngo\xE0i JSON):\n{"title":"...","theme":"<id>","stylePack":"<id>","decorKit":"<id>","design":"<id>","subject":"<id>","audience":"...","style":"...","mainIdeas":["..."],"slides":[{"title":"...","layout":"<id>","tone":"theme|soft|accent","kicker":"...","brief":"..."}]}\n\n' + slideCatalogText() + '\n\nQUY T\u1EAEC:\n- N\u1EBFu ng\u01B0\u1EDDi d\xF9ng y\xEAu c\u1EA7u l\xE0m theo m\u1ED9t b\u1ED9 thi\u1EBFt k\u1EBF c\u1EE5 th\u1EC3 (v\xED d\u1EE5 "theo thi\u1EBFt k\u1EBF Thanh l\u1ECBch", "gi\u1ED1ng m\u1EABu b\u1EA3ng \u0111en", "ki\u1EC3u t\u1ED1i gi\u1EA3n"\u2026), h\xE3y \u0111i\u1EC1n "design": "<id>" \u0111\xFAng b\u1ED9 thi\u1EBFt k\u1EBF \u0111\xF3, ch\u1ECDn \u0111\xFAng "theme", "decorKit", "stylePack" t\u01B0\u01A1ng \u1EE9ng v\xE0 b\xE1m theo nh\u1ECBp b\u1ED1 c\u1EE5c c\u1EE7a b\u1ED9.\n- S\u1ED1 slide theo y\xEAu c\u1EA7u; n\u1EBFu kh\xF4ng n\xEAu th\xEC 6\u201310 slide, t\u1ED1i \u0111a 16. M\u1ED7i slide ch\u1EC9 m\u1ED9t \xFD l\u1EDBn; ch\u1ECDn b\u1ED1 c\u1EE5c ch\u1EE9a \u0111\u1EE7 c\xE1c m\u1EE5c ng\u1EAFn li\xEAn quan (v\xED d\u1EE5 5\u20136 th\u1EBB) v\xE0 t\xE1ch slide khi n\u1ED9i dung v\u01B0\u1EE3t gi\u1EDBi h\u1EA1n b\u1ED1 c\u1EE5c.\n- Ch\u1ECDn nh\u1ECBp deck theo n\u1ED9i dung (b\xE0i gi\u1EA3ng / b\xE1o c\xE1o / h\u1ED9i th\u1EA3o / k\u1EC3 chuy\u1EC7n) \u2014 kh\xF4ng d\xF9ng m\u1ED9t chu\u1ED7i c\u1ED1 \u0111\u1ECBnh ki\u1EC3u ti\xEAu \u0111\u1EC1 \u2192 n\u1ED9i dung \u2192 4 th\u1EBB \u2192 \xFD t\u1ED5ng h\u1EE3p \u2192 timeline cho m\u1ECDi \u0111\u1EC1.\n- \u0110a d\u1EA1ng b\u1ED1 c\u1EE5c: kh\xF4ng d\xF9ng c\xF9ng m\u1ED9t layout \u1EDF hai slide li\u1EC1n nhau; deck 6 slide ph\u1EA3i c\xF3 \xEDt nh\u1EA5t 4 layout kh\xE1c nhau; "cards" t\u1ED1i \u0111a 1 l\u1EA7n trong 6 slide; ch\u1EC9 d\xF9ng layout c\u1EA7n d\u1EEF li\u1EC7u (table, stats, stat-image, quiz) khi n\u1ED9i dung th\u1EADt c\xF3 d\u1EEF li\u1EC7u.\n- B\xE1m c\u1EA5u tr\xFAc b\xE0i g\u1EE3i \xFD c\u1EE7a m\xF4n \u0111\xE3 ch\u1ECDn (xem M\xD4N H\u1ECCC) nh\u01B0ng g\u1ED9p/b\u1ECF b\u01B0\u1EDBc n\u1EBFu deck ng\u1EAFn; \u01B0u ti\xEAn layout g\u1EE3i \xFD c\u1EE7a m\xF4n khi n\u1ED9i dung h\u1EE3p.\n- B\xE0i gi\u1EA3ng c\xF3 v\xED d\u1EE5: d\xF9ng "example" cho v\xED d\u1EE5 m\u1EABu c\xF3 l\u1EDDi gi\u1EA3i (\u0111\u1EC1 b\xE0i \u2192 c\xE1c b\u01B0\u1EDBc \u2192 k\u1EBFt lu\u1EADn) v\xE0 "hook" cho m\u1EDF b\xE0i g\u1EE3i m\u1EDF (c\xE2u h\u1ECFi/t\xECnh hu\u1ED1ng) ngay sau slide ti\xEAu \u0111\u1EC1 ho\u1EB7c n\u1ED9i dung b\xE0i.\n- Slide \u0111\u1EA7u d\xF9ng "title"; slide cu\u1ED1i d\xF9ng "closing" ho\u1EB7c "quote" n\u1EBFu ph\xF9 h\u1EE3p.\n- \u01AFu ti\xEAn layout c\xF3 b\u1ED1 c\u1EE5c r\xF5: "agenda" cho t\u1ED5ng quan, "statement" cho m\u1ED9t th\xF4ng \u0111i\u1EC7p l\u1EDBn, "comparison" khi c\xF3 hai m\u1EB7t \u0111\u1ED1i l\u1EADp, "bullets" cho t\u1ED1i \u0111a 6 \xFD ng\u1EAFn.\n- "mindmap" (s\u01A1 \u0111\u1ED3 t\u01B0 duy: ch\u1EE7 \u0111\u1EC1 gi\u1EEFa + 2\u20136 nh\xE1nh) d\xF9ng \u0111\u1EC3 t\u1ED5ng k\u1EBFt/h\u1EC7 th\u1ED1ng ho\xE1 ki\u1EBFn th\u1EE9c ho\u1EB7c khi ng\u01B0\u1EDDi d\xF9ng y\xEAu c\u1EA7u s\u01A1 \u0111\u1ED3 t\u01B0 duy; t\u1ED1i \u0111a 1\u20132 slide trong deck.\n- Layout \u1EA3nh ("image-left", "image-right", "image-full", "stat-image") d\xF9ng t\u1ED1i \u0111a 3 slide trong c\u1EA3 deck v\xE0 ch\u1EC9 khi brief c\xF3 h\xECnh \u1EA3nh minh ho\u1EA1.\n- "brief" \u0111\xFAng 1 c\xE2u ng\u1EAFn (\u2264 140 k\xFD t\u1EF1) n\xEAu d\u1EEF ki\u1EC7n ch\xEDnh; "title" \u2264 10 t\u1EEB.\n- "tone" ch\u1EC9 d\xF9ng khi c\u1EA7n nh\u1EA5n m\u1EA1nh; b\u1ECF tr\u1ED1ng \u0111\u1EC3 layout t\u1EF1 ch\u1ECDn.\n- C\u1EE9 kho\u1EA3ng 3 slide ph\u1EA3i c\xF3 m\u1ED9t slide \u0111i\u1EC3m nh\u1EA5n (statement, stats, quote ho\u1EB7c title/section n\u1EC1n nh\u1EA5n) \u0111\u1EC3 deck c\xF3 nh\u1ECBp, kh\xF4ng ph\u1EB3ng.\n- "theme" ch\u1ECDn theo ch\u1EE7 \u0111\u1EC1, c\u1EA3m x\xFAc v\xE0 \u0111\u1ED1i t\u01B0\u1EE3ng \u2014 kh\xF4ng b\u1EAFt bu\u1ED9c theo m\xF4n; ch\u1EE7 \u0111\u1EC1 t\u1EF1 do (h\u01B0\u1EDBng nghi\u1EC7p, k\u1EF9 n\u0103ng, s\u1EF1 ki\u1EC7n\u2026) v\u1EABn ch\u1ECDn b\u1ED9 m\xE0u h\u1EE3p t\xF4ng. "stylePack" ch\u1ECDn m\u1ED9t id trong danh s\xE1ch style pack \u0111\u1EC3 quy\u1EBFt \u0111\u1ECBnh nh\u1ECBp v\xE0 m\u1EADt \u0111\u1ED9 n\u1ED9i dung; "style" 2 c\xE2u t\u1EA3 phong c\xE1ch (nh\u1ECBp b\u1ED1 c\u1EE5c, \u0111i\u1EC3m nh\u1EA5n m\xE0u, s\u1ED1 li\u1EC7u, h\xECnh \u1EA3nh). "decorKit" ch\u1ECDn m\u1ED9t b\u1ED9 trang tr\xED h\u1EE3p ch\u1EE7 \u0111\u1EC1 v\xE0 \u0111\u1ED1i t\u01B0\u1EE3ng (d\xF9ng cho c\u1EA3 b\xE0i); b\xE0i trang tr\u1ECDng ch\u1ECDn "toi-gian".\n- Kh\xF4ng b\u1ECBa s\u1ED1 li\u1EC7u th\u1EADt; s\u1ED1 li\u1EC7u minh ho\u1EA1 ph\u1EA3i ghi r\xF5 "v\xED d\u1EE5". Ti\u1EBFng Vi\u1EC7t chu\u1EA9n.';
 var PRO_PLAN_SYSTEM = 'B\u1EA1n l\xE0 tr\u1EE3 l\xFD AI c\u1EE7a tr\xECnh so\u1EA1n b\xE0i tr\xECnh b\xE0y ti\u1EBFng Vi\u1EC7t, \u0111ang d\u1EF1ng m\u1ED9t deck nh\u01B0 m\u1ED9t \u1EA5n ph\u1EA9m bi\xEAn t\u1EADp (t\u1EA1p ch\xED / ph\xF3ng s\u1EF1), kh\xF4ng ph\u1EA3i slide \u0111i\u1EC1n m\u1EABu. Nhi\u1EC7m v\u1EE5: L\u1EACP D\xC0N \xDD, ch\u01B0a vi\u1EBFt n\u1ED9i dung chi ti\u1EBFt. Ch\u1EC9 tr\u1EA3 v\u1EC1 DUY NH\u1EA4T m\u1ED9t JSON h\u1EE3p l\u1EC7 (kh\xF4ng b\u1ECDc markdown, kh\xF4ng ch\u1EEF ngo\xE0i JSON):\n{"title":"...","theme":"<id>","subject":"<id>","audience":"...","style":"...","mainIdeas":["..."],"slides":[{"title":"...","layout":"<id>","kicker":"...","brief":"..."}]}\n\n' + slideProCatalogText() + '\n\nQUY T\u1EAEC:\n- S\u1ED1 slide theo y\xEAu c\u1EA7u; n\u1EBFu kh\xF4ng n\xEAu th\xEC 8\u201312 slide, t\u1ED1i \u0111a 16. M\u1ED7i slide \u0111\xFAng M\u1ED8T \xFD; m\u1ED9t m\u1EE5c qu\xE1 4 \xFD th\xEC t\xE1ch slide.\n- Slide \u0111\u1EA7u LU\xD4N l\xE0 "photo-full" (\u1EA3nh tr\xE0n n\u1EC1n, ti\xEAu \u0111\u1EC1 \u2264 8 t\u1EEB). "photo-full" ch\u1EC9 d\xF9ng th\xEAm t\u1ED1i \u0111a 1\u20132 l\u1EA7n n\u1EEFa cho chuy\u1EC3n ch\u01B0\u01A1ng ho\u1EB7c l\u1EDDi k\u1EBFt.\n- Nh\u1ECBp: "manifesto" (m\u1ED9t c\xE2u l\u1EDBn n\u1EC1n \u0111en) m\u1EDF \u0111\u1EA7u m\u1ED7i ph\u1EA7n ho\u1EB7c n\xEAu lu\u1EADn \u0111i\u1EC3m; "editorial-text" cho ph\u1EA7n gi\u1EA3i th\xEDch; "rules" cho d\xF2ng th\u1EDDi gian, c\xE1c b\u01B0\u1EDBc, c\xE1c nh\xE2n v\u1EADt, c\xE1c nguy\xEAn nh\xE2n (3\u20135 h\xE0ng, m\u1ED7i h\xE0ng c\xF3 nh\xE3n ng\u1EAFn); "bignum" cho m\u1ED7i con s\u1ED1 then ch\u1ED1t (2\u20134 slide); "bars" khi c\xF3 t\u1EEB 2 s\u1ED1 li\u1EC7u c\xF9ng \u0111\u1EA1i l\u01B0\u1EE3ng; "photo-compare" khi c\xF3 c\u1EB7p x\u01B0a/nay, tr\u01B0\u1EDBc/sau.\n- Kh\xF4ng d\xF9ng c\xF9ng m\u1ED9t layout \u1EDF hai slide li\u1EC1n nhau. Kh\xF4ng qu\xE1 2 slide "editorial-text" trong c\u1EA3 deck.\n- "title" n\xEAu th\u1EB3ng k\u1EBFt lu\u1EADn ho\u1EB7c h\xECnh \u1EA3nh m\u1EA1nh (\u2264 10 t\u1EEB), kh\xF4ng ph\u1EA3i nh\xE3n ch\u1EE7 \u0111\u1EC1 chung chung. "kicker" l\xE0 nh\xE3n chuy\xEAn m\u1EE5c vi\u1EBFt hoa ng\u1EAFn (\u2264 4 t\u1EEB).\n- "brief" \u0111\xFAng 1 c\xE2u (\u2264 140 k\xFD t\u1EF1) n\xEAu d\u1EEF ki\u1EC7n ch\xEDnh; slide \u1EA3nh th\xEC n\xEAu r\xF5 \u1EA3nh c\u1EA7n th\u1EC3 hi\u1EC7n g\xEC. Ch\u1EC9 d\xF9ng d\u1EEF ki\u1EC7n v\xE0 con s\u1ED1 th\u1EADt, kh\xF4ng b\u1ECBa; s\u1ED1 li\u1EC7u kh\xF4ng ch\u1EAFc th\xEC n\xF3i r\xF5 l\xE0 minh ho\u1EA1. Ti\u1EBFng Vi\u1EC7t chu\u1EA9n.\n- "bignum" v\xE0 "bars" ch\u1EC9 d\xF9ng cho s\u1ED1 li\u1EC7u TH\u1EACT c\xF3 ngu\u1ED3n v\xE0 n\u0103m (th\u1ED1ng k\xEA, m\u1ED1c l\u1ECBch s\u1EED, \u0111\u1EA1i l\u01B0\u1EE3ng khoa h\u1ECDc). Ch\u1EE7 \u0111\u1EC1 c\u1EA3m x\xFAc / x\xE3 h\u1ED9i kh\xF4ng c\xF3 th\u1ED1ng k\xEA ch\u1EAFc ch\u1EAFn (t\xECnh y\xEAu, t\xECnh b\u1EA1n\u2026) th\xEC KH\xD4NG b\u1ECBa t\u1EC9 l\u1EC7 ph\u1EA7n tr\u0103m ng\u01B0\u1EDDi; d\xF9ng "manifesto", "rules", "editorial-text". S\u1ED1 gi\u1EA3 \u0111\u1ECBnh ch\u1EC9 \u0111\u1EC3 t\xEDnh to\xE1n trong v\xED d\u1EE5 (to\xE1n, t\xE0i ch\xEDnh) v\xE0 ph\u1EA3i ghi "v\xED d\u1EE5" ngay \u1EDF nh\xE3n.\n- S\u1ED1 li\u1EC7u kh\u1EA3o s\xE1t n\xEAu r\xF5 n\u0103m v\xE0 ph\u1EA1m vi (vd "UNESCO 2019, 144 n\u01B0\u1EDBc"), kh\xF4ng b\u1ECF k\u1EF3 tham chi\u1EBFu.\n- N\u1ED9i dung h\u01B0\u1EDBng d\u1EABn h\u1ECDc sinh v\u1EC1 an to\xE0n (b\u1EAFt n\u1EA1t, tai n\u1EA1n, s\u1EE9c kho\u1EBB\u2026): \u0111\u1EB7t an to\xE0n l\xEAn tr\u01B0\u1EDBc, khuy\xEAn b\xE1o ng\u01B0\u1EDDi l\u1EDBn / gi\xE1o vi\xEAn \u0111\xE1ng tin; KH\xD4NG khuy\xEAn h\u1ECDc sinh tr\u1EF1c ti\u1EBFp can thi\u1EC7p, \u0111\u1EE9ng ch\u1EAFn hay \u0111\u1ED1i \u0111\u1EA7u khi c\xF3 nguy c\u01A1 x\xF4 x\xE1t.\n- C\xF4ng th\u1EE9c to\xE1n d\xF9ng LaTeX trong $\u2026$ v\u1EDBi \\frac cho ph\xE2n s\u1ED1; kh\xF4ng vi\u1EBFt d\u1EA1ng a/b m\u01A1 h\u1ED3. M\u1ECDi h\xECnh \u1EA3nh v\xE0 ch\xFA th\xEDch ph\u1EA3i kh\u1EDBp nhau; d\u1EA1ng \u0111\u1ED3 th\u1ECB hay s\u01A1 \u0111\u1ED3 d\u1EA1y ki\u1EBFn th\u1EE9c th\xEC \u0111\u1EEBng d\xF9ng \u1EA3nh AI.\n- Kh\xF4ng h\u1EE9a h\u1EB9n hay m\xF4 t\u1EA3 nh\u01B0 ch\u01B0a x\u1EA3y ra nh\u1EEFng s\u1EF1 ki\u1EC7n c\xF3 th\u1EC3 \u0111\xE3 di\u1EC5n ra (gi\u1EA3i \u0111\u1EA5u, ch\u01B0\u01A1ng tr\xECnh, m\u1ED1c n\u0103m g\u1EA7n \u0111\xE2y); n\u1EBFu kh\xF4ng ch\u1EAFc k\u1EBFt qu\u1EA3 m\u1EDBi nh\u1EA5t th\xEC ghi "t\xEDnh \u0111\u1EBFn <n\u0103m>".';
 var slidePlanSystem = (pro) => pro ? PRO_PLAN_SYSTEM : SLIDE_PLAN_SYSTEM;
 var WEB_SEARCH_SYSTEM = "T\xECm tr\xEAn web th\xF4ng tin, s\u1ED1 li\u1EC7u m\u1EDBi v\xE0 ch\xEDnh x\xE1c ph\u1EE5c v\u1EE5 y\xEAu c\u1EA7u so\u1EA1n \u0111\u1EC1 / b\xE0i gi\u1EA3ng c\u1EE7a gi\xE1o vi\xEAn d\u01B0\u1EDBi \u0111\xE2y. Ch\u1EC9 tr\u1EA3 b\u1EA3n t\xF3m t\u1EAFt g\u1EA1ch \u0111\u1EA7u d\xF2ng (t\u1ED1i \u0111a 25 d\xF2ng), m\u1ED7i d\xF2ng m\u1ED9t d\u1EEF ki\u1EC7n ho\u1EB7c s\u1ED1 li\u1EC7u k\xE8m t\xEAn ngu\u1ED3n v\xE0 n\u0103m. \u01AFu ti\xEAn ngu\u1ED3n ch\xEDnh th\u1ED1ng (c\u01A1 quan nh\xE0 n\u01B0\u1EDBc, s\xE1ch gi\xE1o khoa, b\xE1o l\u1EDBn). Kh\xF4ng so\u1EA1n \u0111\u1EC1, kh\xF4ng b\xECnh lu\u1EADn.";

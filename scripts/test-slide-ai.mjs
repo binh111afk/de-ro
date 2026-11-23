@@ -83,7 +83,8 @@ const rich = {
   credit: 'Nguồn: Mẫu kiểm thử',
 }
 for (const layout of SLIDE_LAYOUTS) {
-  const check = checkSlide(rich, layout.id)
+  const sample = layout.id === 'stat-image' ? { ...rich, stats: rich.stats.slice(0, 2) } : rich
+  const check = checkSlide(sample, layout.id)
   assert.deepEqual(check.errors, [], `${layout.id} hợp lệ nhưng báo lỗi`)
 }
 
@@ -116,7 +117,7 @@ assert.ok(errorsOf({ rows: [['a', 'b']] }, 'table').length > 0, 'table cần 2 h
 assert.ok(errorsOf({ rows: [['a'], ['b']] }, 'table').length > 0, 'table cần 2 cột')
 assert.ok(errorsOf({ stats: [{ label: 'x' }] }, 'stats').length > 0, 'stats thiếu value')
 assert.ok(errorsOf({ title: 'x' }, 'quote').length > 0, 'quote thiếu trích dẫn')
-assert.ok(errorsOf({ steps: ['một'] }, 'timeline').length > 0, 'timeline cần 2 bước')
+assert.ok(errorsOf({ steps: ['một', 'hai'] }, 'timeline').length > 0, 'timeline cần 3 bước')
 assert.ok(errorsOf({ title: 'x' }, 'title').length === 0, 'title chỉ cần title')
 
 /* 4. Quiz: đáp án theo chỉ số, chữ cái, nguyên văn; sai thì báo lỗi. */
@@ -150,8 +151,8 @@ assert.ok(prompt.includes('ART DIRECTION'), 'style pack có trong prompt')
 assert.ok(prompt.includes('Tiêu đề nêu thẳng luận điểm'), 'luật style pack có trong prompt')
 assert.ok(prompt.includes('DÀN Ý CẢ DECK'))
 assert.ok(prompt.includes('SLIDE CẦN VIẾT: 2/2'))
-assert.ok(prompt.includes('"bullets" — mảng 2–4 ý'))
-assert.ok(prompt.includes('NGÂN SÁCH CHỮ: tổng ≤ 460 ký tự'), 'prompt có ngân sách chữ')
+assert.ok(prompt.includes('số ý ≤ 6'))
+assert.ok(prompt.includes('NGÂN SÁCH CHỮ: tổng ≤ 580 ký tự'), 'prompt có ngân sách chữ')
 assert.ok(prompt.includes('MỘT thông điệp chính mỗi slide'), 'prompt ép một thông điệp chính')
 assert.ok(prompt.includes('làm điểm nhấn của slide'), 'prompt yêu cầu điểm nhấn')
 assert.ok(!prompt.includes('"cards":') && !prompt.includes('BỐ CỤC'), 'không gửi catalog 19 layout')
@@ -180,12 +181,12 @@ assert.deepEqual(repaired.errors, [])
 const longBullet = checkSlide({ title: 'T', bullets: ['x'.repeat(120), 'ý ngắn'] }, 'bullets')
 assert.ok(longBullet.errors.some((error) => error.includes('dài')), 'bắt ý quá dài')
 const manyBullets = checkSlide(
-  { title: 'T', bullets: Array.from({ length: 6 }, (_, i) => `ý ${i}`) },
+  { title: 'T', bullets: Array.from({ length: 7 }, (_, i) => `ý ${i}`) },
   'bullets',
 )
-assert.ok(manyBullets.errors.some((error) => error.includes('tối đa 4')), 'bắt quá số ý')
+assert.ok(manyBullets.errors.some((error) => error.includes('7 mục (tối đa 6)')), 'bắt quá số ý trước khi cắt')
 const tooMuch = checkSlide(
-  { title: 'T'.repeat(60), bullets: ['x'.repeat(110), 'y'.repeat(110), 'z'.repeat(110), 'w'.repeat(110)] },
+  { title: 'T'.repeat(60), bullets: Array.from({ length: 5 }, () => 'x'.repeat(110)) },
   'bullets',
 )
 assert.ok(tooMuch.errors.some((error) => error.includes('quá nhiều chữ')), 'bắt tổng quá dài')
@@ -195,16 +196,26 @@ const concise = checkSlide(
 )
 assert.deepEqual(concise.errors, [], 'slide ngắn gọn không bị báo lỗi')
 
-// bảng: quá 6 hàng / ô quá 40 ký tự
+const six = Array.from({ length: 6 }, (_, i) => `Mục ${i + 1}`)
+assert.deepEqual(checkSlide({ bullets: six }, 'bullets').errors, [])
+for (const layout of ['image-left', 'image-right']) {
+  assert.deepEqual(checkSlide({ title: 'Tiêu đề', bullets: six }, layout).errors, [])
+}
+for (const layout of ['timeline', 'cycle']) {
+  assert.deepEqual(checkSlide({ steps: six }, layout).errors, [])
+}
+assert.deepEqual(checkSlide({ body: 'Chủ đề', items: six }, 'mindmap').errors, [])
+assert.deepEqual(checkSlide({ body: 'Chủ đề', items: six.slice(0, 2) }, 'mindmap').errors, [])
+assert.ok(checkSlide({ question: '?', options: six.slice(0, 5), answer: 0 }, 'quiz').errors.some((e) => e.includes('tối đa 4')))
+assert.ok(checkSlide({ stats: six.slice(0, 3).map((value) => ({ value })) }, 'stat-image').errors.some((e) => e.includes('tối đa 2')))
+
+// bảng: quá 8 hàng / quá 6 cột / ô quá 40 ký tự
+const rows = Array.from({ length: 8 }, () => ['a', 'b'])
+assert.deepEqual(checkSlide({ rows }, 'table').errors, [])
 assert.ok(
-  errorsOf(
-    {
-      title: 'Bảng',
-      rows: [['a', 'b'], ['c', 'd'], ['e', 'f'], ['g', 'h'], ['i', 'j'], ['k', 'l'], ['m', 'n']],
-    },
-    'table',
-  ).some((error) => error.includes('tối đa 6 hàng')),
+  checkSlide({ rows: [...rows, ['c', 'd']] }, 'table').errors.some((error) => error.includes('tối đa 8 hàng')),
 )
+assert.ok(checkSlide({ rows: [[...six, 'Mục 7'], six] }, 'table').errors.some((e) => e.includes('tối đa 6 cột')))
 assert.ok(
   errorsOf({ title: 'Bảng', rows: [['a', 'b'], ['c'.repeat(41), 'd']] }, 'table').some((error) =>
     error.includes('ô bảng dài'),

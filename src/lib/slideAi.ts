@@ -66,7 +66,7 @@ const cleanList = (value: unknown, maxItems: number, maxLen: number): string[] |
 }
 
 export interface SlideCheck {
-  page: AiSlidePayload
+  page: AiSlidePayload & { layout: SlideLayoutId }
   /** lỗi cứng: thiếu field/vượt ngân sách — slide không dùng được */
   errors: string[]
   /** lỗi mềm: dựng thử layout thấy chữ bị co nhỏ — nên rút ngắn, nhưng vẫn dùng được */
@@ -77,7 +77,7 @@ export interface SlideCheck {
  * Chuẩn hoá phản hồi AI thành shape của `AiSlidePayload`: layout do dàn ý quyết
  * định (AI không được đổi), mọi field cắt theo giới hạn layout chịu được.
  */
-export function sanitizeSlide(raw: unknown, layout: string, tone?: SlideTone): AiSlidePayload {
+export function sanitizeSlide(raw: unknown, layout: string, tone?: SlideTone): SlideCheck['page'] {
   const id = isLayoutId(layout) ? layout : 'bullets'
   const source =
     raw && typeof raw === 'object' && !Array.isArray(raw)
@@ -151,7 +151,7 @@ export function sanitizeSlide(raw: unknown, layout: string, tone?: SlideTone): A
           return { value: clean(entry.value, 24), label: clean(entry.label, id === 'rules' ? 220 : 80) }
         })
         .filter((item) => !!item.value)
-        .slice(0, id === 'rules' ? 5 : 4)
+        .slice(0, BUDGETS[id].stats?.max ?? 4)
     : undefined
 
   const answer =
@@ -207,6 +207,7 @@ export function sanitizeSlide(raw: unknown, layout: string, tone?: SlideTone): A
 }
 
 const count = (list?: string[]) => list?.filter((item) => item.trim()).length ?? 0
+const isNonemptyText = (value: unknown): boolean => typeof value === 'string' && !!value.trim()
 
 /* ------------------------------------------------------------------ *
  * Ngân sách chữ — slide thuyết trình phải ít chữ, không để FitText thu nhỏ
@@ -226,8 +227,8 @@ interface Budget {
     max: number
     itemMax: number
   }>
-  table?: { rows: number; cell: number }
-  stats?: { label: number }
+  table?: { rows: number; cols: number; cell: number }
+  stats?: { max: number; label: number }
 }
 
 const BUDGETS: Record<SlideLayoutId, Budget> = {
@@ -235,14 +236,14 @@ const BUDGETS: Record<SlideLayoutId, Budget> = {
   section: { total: 220, fields: { title: 60, kicker: 50, subtitle: 100 } },
   statement: { total: 160, fields: { body: 100, kicker: 40, author: 40 } },
   bullets: {
-    total: 460,
+    total: 580,
     fields: { title: 80, kicker: 50 },
-    lists: [{ field: 'bullets', max: 4, itemMax: 110 }],
+    lists: [{ field: 'bullets', max: 6, itemMax: 110 }],
   },
   cards: {
-    total: 460,
+    total: 680,
     fields: { title: 80, kicker: 50 },
-    lists: [{ field: 'items', max: 4, itemMax: 100 }],
+    lists: [{ field: 'items', max: 6, itemMax: 100 }],
   },
   'two-column': {
     total: 660,
@@ -267,25 +268,25 @@ const BUDGETS: Record<SlideLayoutId, Budget> = {
     fields: { title: 80, kicker: 50 },
     lists: [{ field: 'items', max: 5, itemMax: 60 }],
   },
-  table: { total: 500, fields: { title: 80 }, table: { rows: 6, cell: 40 } },
+  table: { total: 600, fields: { title: 80 }, table: { rows: 8, cols: 6, cell: 40 } },
   'image-left': {
     total: 380,
     fields: { title: 80 },
-    lists: [{ field: 'bullets', max: 4, itemMax: 90 }],
+    lists: [{ field: 'bullets', max: 6, itemMax: 90 }],
   },
   'image-right': {
     total: 380,
     fields: { title: 80 },
-    lists: [{ field: 'bullets', max: 4, itemMax: 90 }],
+    lists: [{ field: 'bullets', max: 6, itemMax: 90 }],
   },
   'image-full': { total: 260, fields: { title: 80, body: 120 } },
-  stats: { total: 380, fields: { title: 80 }, stats: { label: 45 } },
-  'stat-image': { total: 420, fields: { title: 80 }, stats: { label: 45 } },
+  stats: { total: 380, fields: { title: 80 }, stats: { max: 4, label: 45 } },
+  'stat-image': { total: 420, fields: { title: 80 }, stats: { max: 2, label: 45 } },
   bignum: { total: 208, fields: { kicker: 42, value: 24, label: 52, subtitle: 90 } },
   'photo-full': { total: 180, fields: { title: 80, subtitle: 100 } },
   'photo-compare': { total: 230, fields: { title: 80, caption: 75, caption2: 75 } },
   bars: { total: 332, fields: { title: 80 } },
-  rules: { total: 560, fields: { title: 70, kicker: 40 }, stats: { label: 120 } },
+  rules: { total: 560, fields: { title: 70, kicker: 40 }, stats: { max: 5, label: 120 } },
   'editorial-text': {
     total: 620,
     fields: { title: 70, kicker: 40, body: 200 },
@@ -293,15 +294,15 @@ const BUDGETS: Record<SlideLayoutId, Budget> = {
   },
   manifesto: { total: 260, fields: { body: 190, kicker: 40, author: 60 } },
   timeline: {
-    total: 420,
+    total: 440,
     fields: { title: 80 },
-    lists: [{ field: 'steps', max: 5, itemMax: 60 }],
+    lists: [{ field: 'steps', max: 6, itemMax: 60 }],
   },
   cycle: {
     // chữ nằm trong vòng tròn nên mỗi bước phải ngắn
-    total: 260,
+    total: 296,
     fields: { title: 80 },
-    lists: [{ field: 'steps', max: 5, itemMax: 36 }],
+    lists: [{ field: 'steps', max: 6, itemMax: 36 }],
   },
   mindmap: {
     total: 520,
@@ -349,7 +350,7 @@ function totalChars(page: AiSlidePayload, fields: Array<keyof SlideLayoutContent
   }, 0)
 }
 
-function budgetErrors(page: AiSlidePayload, id: SlideLayoutId): string[] {
+function budgetErrors(page: AiSlidePayload, id: SlideLayoutId, source?: Record<string, unknown>): string[] {
   const spec = budgetOf(id)
   const def = SLIDE_LAYOUTS.find((layout) => layout.id === id)
   const errors: string[] = []
@@ -364,10 +365,11 @@ function budgetErrors(page: AiSlidePayload, id: SlideLayoutId): string[] {
     }
   }
   for (const list of spec.lists ?? []) {
-    const items = page[list.field]
-    if (!items?.length) continue
-    if (items.length > list.max) {
-      errors.push(`"${list.field}" có ${items.length} mục (tối đa ${list.max})`)
+    const items = page[list.field] ?? []
+    const raw = source?.[list.field]
+    const length = Array.isArray(raw) ? raw.filter(isNonemptyText).length : items.length
+    if (length > list.max) {
+      errors.push(`"${list.field}" có ${length} mục (tối đa ${list.max})`)
     }
     const long = items.find((item) => item.length > list.itemMax)
     if (long) {
@@ -376,8 +378,13 @@ function budgetErrors(page: AiSlidePayload, id: SlideLayoutId): string[] {
   }
   if (spec.table) {
     const rows = page.rows ?? []
-    if (rows.length > spec.table.rows) {
-      errors.push(`bảng có ${rows.length} hàng (tối đa ${spec.table.rows} hàng)`)
+    const rawRows = Array.isArray(source?.rows) ? source.rows.filter(Array.isArray) : rows
+    if (rawRows.length > spec.table.rows) {
+      errors.push(`bảng có ${rawRows.length} hàng (tối đa ${spec.table.rows} hàng)`)
+    }
+    const cols = rawRows.reduce((max, row) => Math.max(max, row.length), 0)
+    if (cols > spec.table.cols) {
+      errors.push(`bảng có ${cols} cột (tối đa ${spec.table.cols} cột)`)
     }
     const long = rows.flat().find((cell) => cell.length > spec.table!.cell)
     if (long) {
@@ -385,6 +392,12 @@ function budgetErrors(page: AiSlidePayload, id: SlideLayoutId): string[] {
     }
   }
   if (spec.stats) {
+    const length = Array.isArray(source?.stats)
+      ? source.stats.filter((item) => item && isNonemptyText(item.value)).length
+      : page.stats?.length ?? 0
+    if (length > spec.stats.max) {
+      errors.push(`"stats" có ${length} mục (tối đa ${spec.stats.max})`)
+    }
     for (const stat of page.stats ?? []) {
       if ((stat.label?.length ?? 0) > spec.stats.label) {
         errors.push(`nhãn số liệu dài ${stat.label!.length} ký tự (tối đa ${spec.stats.label})`)
@@ -395,7 +408,7 @@ function budgetErrors(page: AiSlidePayload, id: SlideLayoutId): string[] {
 }
 
 /** Lỗi theo layout — dùng cho cả quyết định repair và prompt sửa. */
-export function validateSlide(page: AiSlidePayload, layout: string): string[] {
+export function validateSlide(page: AiSlidePayload, layout: string, source?: Record<string, unknown>): string[] {
   const id = isLayoutId(layout) ? layout : isLayoutId(page.layout) ? page.layout : 'bullets'
   const errors: string[] = []
   const need = (ok: boolean, message: string) => {
@@ -412,10 +425,10 @@ export function validateSlide(page: AiSlidePayload, layout: string): string[] {
       need(!!page.body, 'thiếu "body" (một câu/ý lớn)')
       break
     case 'bullets':
-      need(count(page.bullets) >= 1, '"bullets" cần ít nhất 1 ý (nên 2–4)')
+      need(count(page.bullets) >= 1, '"bullets" cần ít nhất 1 ý')
       break
     case 'cards':
-      need(count(page.items) >= 2, '"items" cần 2–5 thẻ')
+      need(count(page.items) >= 2, '"items" cần ít nhất 2 thẻ')
       break
     case 'two-column':
       need(count(page.left) + count(page.right) >= 2, 'cần ít nhất 2 ý ở "left"/"right"')
@@ -436,7 +449,7 @@ export function validateSlide(page: AiSlidePayload, layout: string): string[] {
       need(!!page.body, 'thiếu "body" (câu hỏi/tình huống mở bài)')
       break
     case 'agenda':
-      need(count(page.items) >= 3, '"items" cần ít nhất 3 mục')
+      need(count(page.items) >= 1, '"items" cần ít nhất 1 mục')
       break
     case 'table': {
       const rows = page.rows ?? []
@@ -485,11 +498,11 @@ export function validateSlide(page: AiSlidePayload, layout: string): string[] {
       break
     case 'timeline':
     case 'cycle':
-      need(count(page.steps) >= 2, '"steps" cần 2–5 bước')
+      need(count(page.steps) >= 3, '"steps" cần ít nhất 3 bước')
       break
     case 'mindmap':
       need(!!page.body, 'thiếu "body" (nút trung tâm)')
-      need(count(page.items) >= 3, '"items" cần 3–6 nhánh')
+      need(count(page.items) >= 2, '"items" cần ít nhất 2 nhánh')
       break
     case 'quiz': {
       need(!!page.question, 'thiếu "question"')
@@ -507,7 +520,7 @@ export function validateSlide(page: AiSlidePayload, layout: string): string[] {
   const plain = JSON.parse(JSON.stringify(page), (_key, value) =>
     typeof value === 'string' ? mathToPlain(value) : value,
   ) as AiSlidePayload
-  return [...errors, ...budgetErrors(plain, id)]
+  return [...errors, ...budgetErrors(plain, id, source)]
 }
 
 /* ------------------------------------------------------------------ *
@@ -521,21 +534,21 @@ const FIELD_HINTS: Partial<Record<keyof SlideLayoutContent, string>> = {
   kicker: '"kicker" — nhãn nhỏ phía trên (chuỗi ≤ 50)',
   subtitle: '"subtitle" — dòng phụ (chuỗi ≤ 110)',
   body: '"body" — một câu/đoạn ngắn (≤ 160 ký tự)',
-  bullets: '"bullets" — mảng 2–4 ý, mỗi ý ≤ 110 ký tự',
-  items: '"items" — mảng 2–4 mục, mỗi mục ≤ 100 ký tự',
-  left: '"left" — mảng 2–3 ý cột trái, mỗi ý ≤ 100',
-  right: '"right" — mảng 2–3 ý cột phải, mỗi ý ≤ 100',
+  bullets: '"bullets" — mảng các ý ngắn',
+  items: '"items" — mảng các mục',
+  left: '"left" — mảng các ý cột trái',
+  right: '"right" — mảng các ý cột phải',
   leftTitle: '"leftTitle" — nhãn bên trái (≤ 30 ký tự)',
   rightTitle: '"rightTitle" — nhãn bên phải (≤ 30 ký tự)',
   quote: '"quote" — câu trích (chuỗi ≤ 160)',
   author: '"author" — tên tác giả/nhân vật (chuỗi ≤ 50)',
-  rows: '"rows" — mảng hàng, mỗi hàng là mảng chuỗi; 2–6 hàng × 2–6 cột, ô ≤ 40 ký tự',
+  rows: '"rows" — mảng hàng, mỗi hàng là mảng chuỗi; ít nhất 2 hàng × 2 cột',
   image: '"image" — để trống (người dùng tự chọn ảnh)',
   graphic: '"graphic" — id đồ hoạ vector có sẵn (tuỳ chọn; xem catalog)',
-  stats: '"stats" — mảng 1–2 mục {"value","label"}, nhãn ≤ 45',
-  steps: '"steps" — mảng 3–5 bước, mỗi bước ≤ 60 ký tự',
+  stats: '"stats" — mảng các mục {"value","label"}',
+  steps: '"steps" — mảng các bước',
   question: '"question" — câu hỏi (chuỗi ≤ 140)',
-  options: '"options" — mảng 2–4 phương án, mỗi phương án ≤ 60',
+  options: '"options" — mảng 2–4 phương án',
   answer: '"answer" — chỉ số 0-based của phương án đúng trong "options"',
   problem: '"problem" — đề bài/yêu cầu của ví dụ (chuỗi ≤ 170)',
   conclusion: '"conclusion" — kết luận/đáp số một dòng (≤ 90)',
@@ -553,8 +566,12 @@ const FIELD_HINTS: Partial<Record<keyof SlideLayoutContent, string>> = {
 
 /** Lưu ý riêng của từng layout, chèn sau danh sách field. */
 const LAYOUT_NOTES: Partial<Record<SlideLayoutId, string>> = {
+  cards:
+    '- Thẻ: "items" có 2–6 mục. Mỗi thẻ giữ nguyên tên đầy đủ; viết thêm một câu ngắn nếu cần.\n',
+  timeline: '- Dòng thời gian: "steps" có 3–6 bước.\n',
+  cycle: '- Vòng lặp: "steps" có 3–6 bước.\n',
   mindmap:
-    '- Sơ đồ tư duy: "body" là chủ đề trung tâm (≤ 40 ký tự); "items" là 3–6 nhánh, mỗi nhánh viết dạng "Nhãn nhánh: ý con 1; ý con 2" (nhãn ≤ 25 ký tự, tối đa 3 ý con, mỗi ý con ≤ 28 ký tự, ngăn bằng dấu chấm phẩy). KHÔNG đưa toạ độ.\n',
+    '- Sơ đồ tư duy: "body" là chủ đề trung tâm (≤ 40 ký tự); "items" là 2–6 nhánh, mỗi nhánh viết dạng "Nhãn nhánh: ý con 1; ý con 2" (nhãn ≤ 25 ký tự, tối đa 3 ý con, mỗi ý con ≤ 28 ký tự, ngăn bằng dấu chấm phẩy). KHÔNG đưa toạ độ.\n',
   statement:
     '- Thông điệp lớn: "body" là MỘT câu ngắn (≤ 90 ký tự) hoặc một kết quả/công thức, nêu đúng ý chính; không liệt kê, không giải thích dài (phần giải thích dành cho slide khác).\n',
   example:
@@ -595,8 +612,8 @@ function budgetLine(id: SlideLayoutId): string {
   for (const list of spec.lists ?? []) {
     parts.push(`${LIST_LABEL[list.field]} ≤ ${list.max}, mỗi mục ≤ ${list.itemMax} ký tự`)
   }
-  if (spec.table) parts.push(`bảng ≤ ${spec.table.rows} hàng, mỗi ô ≤ ${spec.table.cell} ký tự`)
-  if (spec.stats) parts.push(`nhãn số liệu ≤ ${spec.stats.label} ký tự`)
+  if (spec.table) parts.push(`bảng ≤ ${spec.table.rows} hàng × ${spec.table.cols} cột, mỗi ô ≤ ${spec.table.cell} ký tự`)
+  if (spec.stats) parts.push(`số mục ≤ ${spec.stats.max}, nhãn số liệu ≤ ${spec.stats.label} ký tự`)
   parts.push('tiêu đề ≤ 80 ký tự')
   return `NGÂN SÁCH CHỮ: ${parts.join('; ')}.`
 }
@@ -790,7 +807,9 @@ export function dropRepeatedGraphic<T extends { graphic?: string }>(page: T, use
 
 export function checkSlide(raw: unknown, layout: string, tone?: SlideTone): SlideCheck {
   const page = sanitizeSlide(raw, layout, tone)
-  const errors = validateSlide(page, layout)
+  // Kiểm số mục gốc để biết có mục bị cắt khi chuẩn hoá.
+  const source = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw as Record<string, unknown> : undefined
+  const errors = validateSlide(page, layout, source)
   return { page, errors, readability: errors.length ? [] : readabilityIssues(page, layout) }
 }
 

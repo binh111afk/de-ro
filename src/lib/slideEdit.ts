@@ -19,6 +19,7 @@ import {
   isTone,
   toneBackground,
   type SlideLayoutContent,
+  type SlideLayoutId,
 } from './slideLayouts'
 import { checkSlide, slideFromAi } from './slideAi'
 import { keepCustomBg } from './slideBackground'
@@ -53,12 +54,37 @@ const EDITABLE_FIELDS = [
   'quote', 'author', 'steps', 'question', 'options', 'answer', 'problem', 'conclusion', 'explanation', 'rows', 'stats',
 ] as const
 const FIELD_LABEL: Record<string, string> = {
-  title: 'tiêu đề', kicker: 'nhãn', subtitle: 'phụ đề', body: 'nội dung', bullets: 'các ý', items: 'các thẻ',
+  title: 'tiêu đề', kicker: 'nhãn', subtitle: 'phụ đề', body: 'nội dung', bullets: 'danh sách ý', items: 'danh sách mục',
   left: 'cột trái', right: 'cột phải', leftTitle: 'nhãn cột trái', rightTitle: 'nhãn cột phải', quote: 'trích dẫn',
   author: 'tác giả', steps: 'các bước', question: 'câu hỏi', options: 'phương án', answer: 'đáp án',
   problem: 'đề bài', conclusion: 'kết luận', explanation: 'giải thích', rows: 'bảng', stats: 'số liệu',
 }
 const HEX = /^#[0-9a-f]{6}$/i
+
+function fieldLabel(field: string, layout: string): string {
+  if (field === 'items' && layout === 'cards') return 'danh sách thẻ'
+  if (field === 'items' && layout === 'mindmap') return 'danh sách nhánh'
+  return FIELD_LABEL[field] ?? field
+}
+
+function editFailure(action: string, layout: string, errors: string[]): string {
+  const reason = errors.map((error) => error.replace(/"([a-zA-Z]+)"/g, (_, field: string) => fieldLabel(field, layout)))
+  const suggestSplit = errors.some((error) => /tối đa|quá nhiều chữ/.test(error))
+  return `Mình chưa ${action} được vì ${reason.join(', ')}.${suggestSplit ? ' Bạn có thể chia nội dung thành hai slide để giữ đủ các mục.' : ''}`
+}
+
+function checkEditContent(patch: Record<string, unknown>, layout: SlideLayoutId, tone?: SlideTone, current?: SlideLayoutContent) {
+  const fields = { ...current, ...patch }
+  // "items" trên slide danh sách là yêu cầu chuyển các ý thành thẻ.
+  const hasItems = Array.isArray(patch.items)
+  if (hasItems && layout === 'bullets' && !Object.hasOwn(patch, 'bullets')) return checkSlide(fields, 'cards', tone)
+  const check = checkSlide(fields, layout, tone)
+  if (hasItems && layout === 'agenda' && check.errors.length) {
+    const cards = checkSlide(fields, 'cards', tone)
+    if (!cards.errors.length) return cards
+  }
+  return check
+}
 
 const stackOf = (font: string): string =>
   font === 'Times New Roman'
@@ -94,12 +120,15 @@ export function editSystemPrompt(context: string): string {
     `- {"op":"edit_slide","slide":3,"fields":{"title":"..."}} — sửa NỘI DUNG một slide. CHỈ nêu field cần đổi (đổi tiêu đề thì chỉ gửi title; ` +
     `KHÔNG gửi lại field không đổi). Field chữ: ${EDITABLE_FIELDS.join(', ')}; field danh sách (bullets, items…) gửi TOÀN BỘ danh sách mới. ` +
     'Công thức viết $...$, nhấn mạnh từ khoá bằng **đậm** (tối đa 2 cụm mỗi ý). Nội dung hiện tại của từng slide có trong "Bài trình bày hiện tại".\n' +
+    'Bố cục "cards" chứa 2–6 thẻ trong "items", mỗi thẻ tối đa 100 ký tự. Nếu người dùng muốn tách thành các thẻ riêng, giữ tên đầy đủ của từng mục. ' +
+    'Từ bố cục "bullets" có thể gửi "items" để chuyển thẳng sang thẻ. "bullets" tối đa 6 ý, "timeline"/"cycle" 3–6 bước, "mindmap" 2–6 nhánh, "quiz" 2–4 phương án. ' +
+    'Nếu người dùng yêu cầu tách thành nhiều slide, dùng "edit_slide" rồi "add_slide" cho phần còn lại.\n' +
     '- {"op":"add_slide","layout":"<id>","fields":{...},"position":2} — chèn slide MỚI (đủ field bắt buộc của bố cục; position bỏ trống = cuối)\n' +
     '- {"op":"duplicate_slide","slide":3}\n' +
     '- {"op":"set_notes","slide":3,"notes":"ghi chú trình bày"}\n' +
     '- {"op":"rename_deck","title":"tên bài giảng"}\n' +
     `- {"op":"set_layout","slide":3,"layout":"<id>"} — đổi bố cục một slide, giữ nội dung. Bố cục: ${SLIDE_LAYOUTS.filter((l) => !isEditorialLayout(l.id)).map((l) => `${l.id}=${l.name}`).join(', ')}\n` +
-    'Nếu yêu cầu KHÔNG phải sửa giao diện/thứ tự slide có sẵn (ví dụ soạn slide mới, viết lại nội dung), trả {"action":"none"}.\n' +
+    'Nếu yêu cầu không thuộc các lệnh trên (ví dụ soạn một bài trình bày mới), trả {"action":"none"}.\n' +
     `Bài trình bày hiện tại: ${context}`
   )
 }
@@ -446,16 +475,19 @@ export function applyEdits(deck: Deck, ops: SlideEditOp[]): EditResult {
         }
         const { image, image2, imageCrop, image2Crop, graphic, ...current } = contentFromSlide(slide)
         // checkSlide chuẩn hoá (cắt độ dài, giới hạn đậm, NBSP…) và báo field bắt buộc/ngân sách bị vi phạm
-        const check = checkSlide({ ...current, ...patch, layout: slide.layout, tone: slide.tone }, slide.layout, slide.tone)
+        const check = checkEditContent(patch, slide.layout, slide.tone, current)
         if (check.errors.length) {
-          summary.push(`Bỏ qua sửa slide ${op.slide}: ${check.errors.join('; ')}.`)
+          summary.push(editFailure(`sửa slide ${op.slide}`, check.page.layout, check.errors))
           break
         }
         const built = slideFromAi({ ...check.page, image, image2, imageCrop, image2Crop, graphic: check.page.graphic ?? graphic }, theme)
-        const updated: Slide = { ...built, id: slide.id, notes: slide.notes, transition: slide.transition }
+        const converted = check.page.layout !== slide.layout
+        const rebuilt = converted && next.design ? applySkin(built, next.design, theme, op.slide - 1, next.slides.length, true) : built
+        const updated = keepCustomBg(slide, { ...rebuilt, id: slide.id, notes: slide.notes, transition: slide.transition }, theme.fg)
         next = { ...next, slides: next.slides.map((s) => (s === slide ? updated : s)) }
-        const fields = Object.keys(patch).map((k) => FIELD_LABEL[k] ?? k).join(', ')
-        summary.push(`Sửa slide ${op.slide}: ${fields}.${check.readability.length ? ' (chữ khá dày, có thể co nhỏ)' : ''}`)
+        const fields = Object.keys(patch).map((k) => fieldLabel(k, check.page.layout)).join(', ')
+        const message = converted ? `Mình đã chuyển slide ${op.slide} sang bố cục thẻ.` : `Mình đã cập nhật ${fields} ở slide ${op.slide}.`
+        summary.push(message + (check.readability.length ? ' Chữ có thể hơi nhỏ.' : ''))
         break
       }
       case 'set_layout': {
@@ -490,9 +522,9 @@ export function applyEdits(deck: Deck, ops: SlideEditOp[]): EditResult {
           break
         }
         const patch = Object.fromEntries(Object.entries(op.fields).filter(([k]) => (EDITABLE_FIELDS as readonly string[]).includes(k)))
-        const check = checkSlide({ ...patch, layout: op.layout }, op.layout)
+        const check = checkEditContent(patch, op.layout)
         if (check.errors.length) {
-          summary.push(`Bỏ qua thêm slide: ${check.errors.join('; ')}.`)
+          summary.push(editFailure('thêm slide', check.page.layout, check.errors))
           break
         }
         const built = slideFromAi(check.page, theme)
@@ -501,7 +533,7 @@ export function applyEdits(deck: Deck, ops: SlideEditOp[]): EditResult {
         const slides = [...next.slides]
         slides.splice(at, 0, styledBuilt)
         next = { ...next, slides }
-        summary.push(`Thêm slide mới (${op.layout}) tại vị trí ${at + 1}.`)
+        summary.push(`Thêm slide mới (${check.page.layout}) tại vị trí ${at + 1}.`)
         break
       }
       case 'duplicate_slide': {
