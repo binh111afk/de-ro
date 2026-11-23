@@ -32,7 +32,7 @@ import { looksLikeEdit, parseEditCommands, type SlideEditOp } from '@/lib/slideE
 import { buildSourcePack, isDocx, isPdf, pickedKey, type PickedSource, type SourcePack } from '@/lib/sources'
 import { BookOpen, Globe, RotateCcw, ThumbsDown, ThumbsUp } from 'lucide-react'
 import { SiteSelect } from '@/components/SiteSelect'
-import type { AiApplyResult } from '@/lib/aiDocContext'
+import { CONTINUE_EXAM_EDIT, examIntent, isExamMutationReply, rewritesWholeExam, type AiApplyResult } from '@/lib/aiDocContext'
 import { looksLikeComplaint, nearlySame, rememberAiTurn, reportAi } from '@/lib/aiFeedback'
 import { dialog } from '@/components/Dialog'
 import { SourcePicker } from './SourcePicker'
@@ -420,11 +420,9 @@ const CHAT_THINKING = [
 /** Đoán nhanh yêu cầu có sửa tài liệu không, để chọn dải trạng thái phù hợp. */
 function detectIntent(text: string, mode: AiMode): 'doc' | 'chat' {
   if (mode === 'board') return 'chat'
+  if (mode === 'exam') return examIntent(text)
   const t = text.toLowerCase()
-  const hints =
-    mode === 'slide'
-      ? ['slide', 'bài giảng', 'dàn ý', 'tóm tắt', 'hình ảnh', 'thêm', 'sửa', 'đổi', 'soạn', 'sinh', 'viết']
-      : ['soạn', 'sinh đề', 'tạo đề', 'viết đề', 'làm đề', 'thêm câu', 'bổ sung', 'sửa', 'rà soát', 'đổi', 'chỉnh', 'xuất đề', 'in đề', 'chọn', 'lấy', 'trích', 'ra đề', 'tạo']
+  const hints = ['slide', 'bài giảng', 'dàn ý', 'tóm tắt', 'hình ảnh', 'thêm', 'sửa', 'đổi', 'soạn', 'sinh', 'viết']
   return hints.some((h) => t.includes(h)) ? 'doc' : 'chat'
 }
 
@@ -728,7 +726,7 @@ function AiConversation({
   onBoardOps,
 }: {
   /** nhận nội dung AI sinh ra để áp vào tài liệu; trả về câu báo lại (failed = không áp được) */
-  onApplyBlocks?: (text: string) => AiApplyResult | undefined
+  onApplyBlocks?: (text: string, allowReplace: boolean) => AiApplyResult | undefined
   /** nguyên văn đầy đủ các khối giáo viên nhắc tới trong yêu cầu (nối vào lượt người dùng) */
   focusFor?: (request: string) => string
   /** nhận nội dung AI sinh ra để áp thành slide mới (khi AI trả về JSON deck) */
@@ -967,7 +965,7 @@ function AiConversation({
     const botId = `a${Date.now()}`
     // trả lời panel hỏi lại = tiếp tục yêu cầu soạn ban đầu
     const previousTurn = turns.at(-1)
-    const answeringAsk = override != null && previousTurn?.ask != null
+    const answeringAsk = override != null && previousTurn?.askState === 'open' && previousTurn.ask != null
     // tín hiệu không hài lòng với lượt trước: "sai rồi…" hoặc gửi lại gần giống
     const prevUser = [...turns].reverse().find((t) => t.role === 'user')
     const prevBot = turns[turns.length - 1]
@@ -977,6 +975,9 @@ function AiConversation({
       else if (override == null && nearlySame(text, prevUser.text)) reportAi('resend', info, text)
     }
     const intent = answeringAsk || (!text && (sentFiles.length || sentPicked.length)) ? 'doc' : detectIntent(text, mode)
+    const originalRequest = answeringAsk ? turns.at(-2)?.text ?? text : text
+    const requestWithAnswer = answeringAsk && originalRequest !== text ? `${originalRequest}\n\n${text}` : text
+    const revisingExam = mode === 'exam' && intent === 'doc' && !!documentDigest && !rewritesWholeExam(originalRequest)
     setTurns((t) => [
       ...t,
       userTurn,
@@ -1037,7 +1038,7 @@ function AiConversation({
       const history = compactHistory(historyOf(turns))
       // vừa hỏi lại xong thì không hỏi nữa; bảng vẽ không dùng panel hỏi
       const justAsked = turns.slice(-2).some((t) => t.ask)
-      const askRule = !(mode === 'board' || justAsked)
+      const askRule = !(mode === 'board' || justAsked || (mode === 'exam' && (intent === 'chat' || revisingExam)))
       const slideDoc = mode === 'slide' && intent === 'doc'
       // server ghép system prompt từ `task` + dữ liệu người dùng này (client không giữ chữ prompt)
       const srcInput = {
@@ -1051,11 +1052,11 @@ function AiConversation({
           ? { name: 'bang-ve', input: { ops: !!onBoardOps, contextSummary, ...srcInput } }
           : mode === 'slide'
           ? { name: 'slide-chat', input: { variant: slideDoc ? 'plan' : 'chat', ask: askRule, contextSummary, ...srcInput, pro: slidePro || undefined } }
-          : { name: 'soan-de', input: { text, intent, digest: documentDigest, contextSummary, ask: askRule, ...srcInput } }
+          : { name: 'soan-de', input: { text: requestWithAnswer, intent, digest: documentDigest, contextSummary, revising: revisingExam, ask: askRule, ...srcInput } }
 
       const messages: LlmMessage[] = [
         ...history,
-        { role: 'user', content: (text || (sentRefs.length ? 'Giải thích hoặc góp ý cho phần đang chọn.' : sentFiles.length ? 'Hãy xử lý các tệp đính kèm sau.' : 'Hãy xử lý các nguồn đã chọn.')) + fileNote + refNote + (mode === 'exam' && focusFor ? focusFor(text) : '') },
+        { role: 'user', content: (requestWithAnswer || (sentRefs.length ? 'Giải thích hoặc góp ý cho phần đang chọn.' : sentFiles.length ? 'Hãy xử lý các tệp đính kèm sau.' : 'Hãy xử lý các nguồn đã chọn.')) + fileNote + refNote + (mode === 'exam' && focusFor ? focusFor(originalRequest) : '') },
       ]
 
       // Sửa slide CÓ SẴN (đổi phông/màu/theme/tông, xoá, dời slide): model chỉ trả lệnh có cấu trúc,
@@ -1159,7 +1160,7 @@ function AiConversation({
         : undefined
       // đề nguồn dài + "soạn lại / đổi số liệu": chia nhiều lượt nhỏ (một lượt cả đề thì model hết token)
       const split =
-        mode === 'exam' && intent === 'doc' && onApplyBlocks && pack.items.length && !/\bquestion\b/.test(documentDigest ?? '')
+        mode === 'exam' && intent === 'doc' && onApplyBlocks && pack.items.length && !revisingExam
           ? planExamSplit(text, pack.items.map((s) => s.text).join('\n\n'))
           : null
       if (split) {
@@ -1206,7 +1207,7 @@ function AiConversation({
         logSet((l) => closeLog(l, 'done', `${doneQ - skipped.reduce((s, k) => s + split[k - 1].count, 0)} câu`))
         logStart('Đưa vào đề')
         await new Promise((r) => setTimeout(r, 350))
-        const result = onApplyBlocks!(mergeChunks(parts, figsOf))
+        const result = onApplyBlocks!(mergeChunks(parts, figsOf), true)
         const ok = !!result && !result.failed
         const missing = skipped.map((k) => { const a = split.slice(0, k - 1).reduce((s, c) => s + c.count, 0) + 1; const b = a + split[k - 1].count - 1; return a === b ? `${a}` : `${a}–${b}` })
         const note = skipped.length ? `\n\nChưa soạn được câu ${missing.join(', ')}, bạn bảo AI soạn thêm các câu này nhé.` : ''
@@ -1248,7 +1249,7 @@ function AiConversation({
         logSet((l) => closeLog(l, 'done', note))
         // lượt hỏi chuyện không kèm sửa đề thì không có bước này
         // slide: thẻ dàn ý hiện ngay bên dưới nên không cần bước này
-        const apply = mode === 'board' ? /"ops"\s*:/.test(res.content) : mode === 'exam' && (intent === 'doc' || /"(type|op)"\s*:/.test(res.content))
+        const apply = mode === 'board' ? /"ops"\s*:/.test(res.content) : mode === 'exam' && intent === 'doc'
         if (apply) logStart(mode === 'board' ? 'Vẽ lên bảng' : 'Đưa vào đề')
         // nhường một khung hình để bước kịp hiện trước khi áp (việc áp chạy đồng bộ)
         if (apply) await new Promise((r) => setTimeout(r, 350))
@@ -1327,19 +1328,23 @@ function AiConversation({
       } else {
         // JSON đề đã được áp vào tài liệu → hiện câu tóm tắt thay vì JSON thô;
         // câu trả lời văn bản thường (không sửa tài liệu) giữ nguyên.
-        let result = onApplyBlocks?.(res.content)
+        const apply = (content: string) => onApplyBlocks?.(content, !revisingExam)
+        const invalidChat = intent === 'chat' && isExamMutationReply(res.content)
+        let result = intent === 'doc' ? apply(res.content) : undefined
         // đề trả JSON hỏng (thường bị cắt cụt): hoàn token lượt đó và soạn lại đúng một lần
-        if (result?.failed && onApplyBlocks) {
+        if (result?.failed && result.retryable !== false && onApplyBlocks) {
           // gọi lại bằng model mạnh hơn (lượt đầu model nhanh không làm được)
-          const again = await callLlm(messages, { signal: controller.signal, reasoningEffort: AI_EFFORT.exam, retryOf: res.receipt, strong: true, task: mainTask })
+          const again = await callLlm([...messages, {
+            role: 'user',
+            content: 'Kết quả trước chưa đưa được vào đề. Hãy trả đủ thao tác hợp lệ với đúng id và nội dung, không chỉ báo đã hoàn tất.',
+          }], { signal: controller.signal, reasoningEffort: AI_EFFORT.exam, retryOf: res.receipt, strong: true, task: mainTask })
           controller.signal.throwIfAborted()
-          result = onApplyBlocks(again.content) ?? result
+          result = apply(again.content) ?? result
         }
         // không áp được: hiện trong chat (kèm phần AI viết nếu đọc được) + nút Thử lại
-        const failed = !!result?.failed
+        const failed = !!result?.failed || invalidChat
         const summary = result && !failed ? result.text : undefined
-        const looksJson = failed
-        const text = result?.text ?? res.content
+        const text = invalidChat ? 'AI chưa trả lời được câu hỏi này.' : result?.text ?? res.content
         if (failed && import.meta.env.DEV) console.warn('[AI] JSON không áp được:', res.content)
         if (summary) rememberAiTurn({ mode, request: userTurn.text, reply: summary, context: documentDigest })
         setTurns((t) =>
@@ -1350,12 +1355,12 @@ function AiConversation({
                   text,
                   pending: false,
                   intent: result ? 'doc' : 'chat',
-                  ...(failed && userTurn.text ? { retry: userTurn.text } : {}),
+                  ...(failed && originalRequest ? { retry: originalRequest } : {}),
                   // chỉ có bước khi là lượt soạn đề; trả lời thường (không JSON) thì bỏ danh sách bước
                   ...(turn.log
                     ? summary
                       ? { log: closeLog(turn.log, 'done') }
-                      : looksJson
+                      : result?.failed
                         ? { log: closeLog(turn.log, 'failed') }
                         : { log: undefined }
                     : {}),
@@ -1777,7 +1782,9 @@ function AiConversation({
           figure={mode !== 'slide'}
           request={turns.filter((t) => t.role === 'user').map((t) => t.text).join(' ')}
           onSubmit={answerAsk}
-          onSkip={() => answerAsk(ASK_DEFAULT.replace('Những gì chưa chọn: l', 'L'))}
+          onSkip={() => answerAsk(mode === 'exam' && documentDigest
+            ? CONTINUE_EXAM_EDIT
+            : ASK_DEFAULT.replace('Những gì chưa chọn: l', 'L'))}
         />
       ) : (
       <div className="ai-composer">

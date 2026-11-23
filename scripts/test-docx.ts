@@ -43,6 +43,9 @@ const doc: ExamDoc = {
       text: 'Công thức: $\\frac{a+b}{2}$, $x^2+\\sqrt{3}$, $\\sqrt[3]{8}=2$, $\\sum_{i=1}^{n} a_i$, $\\int_0^1 x^2\\,dx$, $\\left(\\frac{1}{2}\\right)^2$, $\\lim_{x\\to 0}\\frac{\\sin x}{x}=1$, $\\vec{AB}\\cdot\\vec{AC}$, $\\alpha \\le \\beta$, $H_2O$, $x_1^2$, $\\mathbb{R}$',
     },
     { type: 'paragraph', text: '$$\\Delta = b^2 - 4ac$$' },
+    { type: 'paragraph', text: '$^{56}_{26}\\text{Fe}$, $^{79}\\mathrm{Br}$, $P(A \\mid B)$, $\\begin{cases}2x+y=5 \\\\ x-y=1\\end{cases}$, $(A\\ \\text{AND}\\ B) \\lor (\\text{NOT C})$' },
+    { type: 'paragraph', text: "n = 7\nif n % 2 == 0:\n    print('Chẵn')", format: { align: 'justify' } },
+    { type: 'question', no: 4, text: 'Kết quả của `f(1)` là?', options: ['15,0% và 85,0%', '22,0% và 78,0%', '45,0% và 55,0%', '55,0% và 45,0%'].map((text, i) => ({ text, label: 'ABCD'[i] })) },
     { type: 'table', rows: [[{ text: 'Điểm' }, { text: '$[5;6)$' }], [{ text: 'Số học sinh' }, { text: '3' }]] },
     { type: 'essay', no: 1, score: 2, text: 'Chứng minh …', sub: ['a) Ý một'] },
     { type: 'pageBreak' },
@@ -64,6 +67,18 @@ assert.ok(stops.length >= 3 && stops[1] - stops[0] === 2440 && stops[2] - stops[
 assert.ok(xml.includes('Câu 1. '), 'đánh số câu theo thứ tự khối, bỏ qua block.no')
 assert.ok(xml.includes('Câu 3. '))
 assert.ok(!xml.includes('Câu 9.'))
+assert.equal(stops.length, 5, 'phương án phần trăm chỉ dùng hai cột')
+assert.match(xml, /<m:sPre><m:sPrePr\/><m:sub>.*?26.*?<\/m:sub><m:sup>.*?56.*?<\/m:sup><m:e>.*?Fe.*?<\/m:e><\/m:sPre>/)
+assert.match(xml, /P\(A\|B\)/)
+assert.match(xml, /<m:begChr m:val="\{"\/><m:endChr m:val=""\/>.*?<m:eqArr>.*?2x\+y=5.*?x-y=1.*?<\/m:eqArr>/)
+assert.match(xml, /<m:nor m:val="1"\/><\/m:rPr><m:t[^>]*>Br<\/m:t>/)
+assert.match(xml, /<m:nor m:val="1"\/><\/m:rPr><m:t[^>]*>NOT C<\/m:t>/)
+const codeStart = xml.indexOf('n = 7')
+const codePara = xml.slice(xml.lastIndexOf('<w:p>', codeStart), xml.indexOf('</w:p>', codeStart))
+assert.match(codePara, /<w:jc w:val="(?:left|start)"\/>/)
+assert.match(codePara, /w:ascii="Consolas"/)
+assert.match(codePara, /<w:br[^>]*\/>.*?> {4}print\((?:'|&apos;)Chẵn(?:'|&apos;)\)</)
+assert.ok(!xml.includes('`f(1)`'), 'bỏ dấu Markdown quanh mã')
 assert.ok(xml.includes('Bài 1 (2 điểm). '))
 assert.ok(xml.includes('<w:caps'), 'tiêu đề in hoa')
 assert.ok(xml.includes('<w:lastRenderedPageBreak') || xml.includes('w:type="page"'), 'ngắt trang')
@@ -123,13 +138,14 @@ const imgDoc: ExamDoc = {
   blocks: [
     { type: 'question', no: 1, text: [{ text: 'Cho hình sau.' }, { text: '\n' }, { text: '', image: { src: png(120, 60, [200, 40, 40]), alt: 'hình 1' } }], options: ['1', '2', '3', '4'].map((t, i) => ({ label: 'ABCD'[i], text: t })) },
     { type: 'question', no: 2, text: [{ text: '\n' }, { text: '', image: { src: png(40, 40, [40, 80, 200]), width: 150 } }, { text: '\n' }, { text: 'Hình trên là gì?' }], options: [{ label: 'A', text: 'x' }] },
+    { type: 'essay', no: 1, score: 2, text: [{ text: 'Quan sát sơ đồ tự luận.' }, { text: '', image: { src: png(90, 30, [50, 100, 70]), alt: 'Sơ đồ tự luận' } }], sub: ['a) Ý sau hình', 'b) Ý cuối'] },
     { type: 'paragraph', text: [{ text: '', image: { src: 'data:image/webp;base64,AAAA' } }, { text: 'WebP bị bỏ qua êm' }] },
   ],
 }
 const imgBuf = await Packer.toBuffer(buildDocx(imgDoc))
 const imgZip = await JSZip.loadAsync(imgBuf)
 const media = Object.keys(imgZip.files).filter((n) => n.startsWith('word/media/'))
-assert.equal(media.length, 2, 'có 2 ảnh trong word/media')
+assert.equal(media.length, 3, 'có 3 ảnh trong word/media')
 const imgXml = await imgZip.file('word/document.xml')!.async('string')
 assert.ok(imgXml.includes('<w:drawing>'), 'có drawing')
 assert.ok(imgXml.includes(`cx="${150 * 9525}"`) && imgXml.includes(`cy="${150 * 9525}"`), 'width px giữ tỉ lệ 1:1')
@@ -137,7 +153,10 @@ assert.ok(imgXml.includes(`cx="${120 * 9525}"`) && imgXml.includes(`cy="${60 * 9
 const imgText = (await mammoth.extractRawText({ buffer: imgBuf })).value
 assert.ok(imgText.includes('Cho hình sau.') && imgText.includes('WebP bị bỏ qua êm'))
 const html = (await mammoth.convertToHtml({ buffer: imgBuf })).value
-assert.equal((html.match(/<img /g) ?? []).length, 2, 'mammoth thấy 2 ảnh')
+assert.equal((html.match(/<img /g) ?? []).length, 3, 'mammoth thấy 3 ảnh')
+const essayLead = imgXml.indexOf('Quan sát sơ đồ tự luận.')
+const essayDrawing = imgXml.indexOf('<w:drawing>', essayLead)
+assert.ok(essayLead < essayDrawing && essayDrawing < imgXml.indexOf('a) Ý sau hình'), 'ảnh tự luận nằm trước ý a')
 
 // examToDoc: Question.image top / bottom
 const qExam = structuredClone(exam)

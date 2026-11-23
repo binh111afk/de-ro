@@ -3,7 +3,7 @@
  * Hai bước: đọc LaTeX thành cây nhỏ, rồi dựng thành phần `docx`.
  *
  * ponytail: chỉ phủ phân số, căn, mũ/chỉ số, ngoặc \left\right, tổng/tích phân/giới hạn, chữ Hy Lạp, ký hiệu hay dùng.
- * Hệ phương trình (cases/aligned) ra từng dòng cách nhau bằng "; ", chưa có dấu ngoặc nhọn bao. Lệnh lạ in tên lệnh.
+ * Lệnh lạ in tên lệnh.
  */
 import {
   BuilderElement,
@@ -12,6 +12,7 @@ import {
   MathFraction,
   MathIntegral,
   MathLimitLower,
+  MathPreSubSuperScript,
   MathRadical,
   MathRoundBrackets,
   MathRun,
@@ -26,10 +27,11 @@ type XmlComponent = InstanceType<typeof BuilderElement>
 type MathComponent = ConstructorParameters<typeof MathFraction>[0]['numerator'][number]
 
 type Node =
-  | { t: 'text'; s: string }
+  | { t: 'text'; s: string; style?: 'plain' | 'normal' | 'bold' | 'italic' }
   | { t: 'frac'; n: Node[]; d: Node[] }
   | { t: 'sqrt'; deg?: Node[]; body: Node[] }
-  | { t: 'script'; base: Node[]; sub?: Node[]; sup?: Node[] }
+  | { t: 'script'; base: Node[]; sub?: Node[]; sup?: Node[]; pre?: boolean }
+  | { t: 'cases'; rows: Node[][] }
   | { t: 'brackets'; open: string; close: string; body: Node[] }
   | { t: 'nary'; kind: 'sum' | 'int'; sub?: Node[]; sup?: Node[]; body: Node[] }
   | { t: 'lim'; name: string; sub: Node[]; body: Node[] }
@@ -40,6 +42,7 @@ const SYMBOLS: Record<string, string> = {
   kappa: 'κ', lambda: 'λ', mu: 'μ', nu: 'ν', xi: 'ξ', pi: 'π', rho: 'ρ', sigma: 'σ', tau: 'τ', upsilon: 'υ', phi: 'φ', varphi: 'φ', chi: 'χ', psi: 'ψ', omega: 'ω',
   Gamma: 'Γ', Delta: 'Δ', Theta: 'Θ', Lambda: 'Λ', Xi: 'Ξ', Pi: 'Π', Sigma: 'Σ', Phi: 'Φ', Psi: 'Ψ', Omega: 'Ω',
   cdot: '·', times: '×', div: '÷', pm: '±', mp: '∓', le: '≤', leq: '≤', ge: '≥', geq: '≥', ne: '≠', neq: '≠', approx: '≈', equiv: '≡', sim: '∼', propto: '∝',
+  mid: '|', vert: '|',
   infty: '∞', to: '→', rightarrow: '→', leftarrow: '←', Rightarrow: '⇒', Leftarrow: '⇐', Leftrightarrow: '⇔', leftrightarrow: '↔', mapsto: '↦',
   in: '∈', notin: '∉', ni: '∋', subset: '⊂', subseteq: '⊆', supset: '⊃', supseteq: '⊇', cup: '∪', cap: '∩', emptyset: '∅', varnothing: '∅',
   forall: '∀', exists: '∃', neg: '¬', land: '∧', lor: '∨', perp: '⊥', parallel: '∥', angle: '∠', triangle: '△', circ: '∘', degree: '°',
@@ -54,7 +57,7 @@ const ACCENTS: Record<string, string> = { vec: '⃗', overrightarrow: '⃗', ove
 const BLACKBOARD: Record<string, string> = { R: 'ℝ', N: 'ℕ', Z: 'ℤ', Q: 'ℚ', C: 'ℂ', P: 'ℙ' }
 const ARRAYS = new Set(['cases', 'aligned', 'align', 'array', 'matrix', 'pmatrix', 'bmatrix', 'gathered', 'split'])
 
-type Tok = { k: 'cmd' | 'ch' | 'open' | 'close' | 'sup' | 'sub' | 'amp'; v: string }
+type Tok = { k: 'cmd' | 'ch' | 'open' | 'close' | 'sup' | 'sub' | 'amp' | 'space'; v: string }
 
 function tokenize(src: string): Tok[] {
   const out: Tok[] = []
@@ -74,7 +77,7 @@ function tokenize(src: string): Tok[] {
     else if (c === '^') out.push({ k: 'sup', v: c })
     else if (c === '_') out.push({ k: 'sub', v: c })
     else if (c === '&') out.push({ k: 'amp', v: c })
-    else if (!/\s/.test(c)) out.push({ k: 'ch', v: c })
+    else out.push({ k: /\s/.test(c) ? 'space' : 'ch', v: c })
   }
   return out
 }
@@ -83,7 +86,10 @@ class Parser {
   private i = 0
   constructor(private readonly toks: Tok[]) {}
 
-  private peek = () => this.toks[this.i]
+  private peek() {
+    while (this.toks[this.i]?.k === 'space') this.i++
+    return this.toks[this.i]
+  }
 
   /** Đọc dãy phần tử tới khi gặp `}` (không nuốt) hoặc hết, hoặc tới lệnh `stop` (không nuốt). */
   seq(stop?: (t: Tok) => boolean): Node[] {
@@ -97,7 +103,9 @@ class Parser {
 
   /** Một phần tử kèm chỉ số trên/dưới theo sau. */
   private term(): Node[] {
-    const base = this.atom()
+    const leading = this.peek()
+    const pre = leading?.k === 'sup' || leading?.k === 'sub'
+    const base = pre ? [] : this.atom()
     let sub: Node[] | undefined
     let sup: Node[] | undefined
     for (;;) {
@@ -111,18 +119,20 @@ class Parser {
       } else break
     }
     if (!sub && !sup) return base
+    if (!base.length) {
+      const next = this.peek()
+      const children = next && (next.k === 'ch' || next.k === 'open' || (next.k === 'cmd' && next.v !== 'end' && next.v !== 'right'))
+        ? this.term()
+        : []
+      return [{ t: 'script', base: children, sub, sup, pre: true }]
+    }
     const last = base[base.length - 1]
     // tổng/tích phân/giới hạn nhận chỉ số làm cận
     if (last && (last.t === 'nary' || last.t === 'lim')) {
       Object.assign(last, last.t === 'nary' ? { sub, sup } : { sub: sub ?? [] })
       return base
     }
-    // chỉ số chỉ bám vào phần tử liền trước (một ký tự), không bám cả cụm chữ
-    if (last?.t === 'text' && last.s.length > 1) {
-      const head = last.s.slice(0, -1)
-      return [...base.slice(0, -1), { t: 'text', s: head }, { t: 'script', base: [{ t: 'text', s: last.s.slice(-1) }], sub, sup }]
-    }
-    return [{ t: 'script', base: base.length ? base : [{ t: 'text', s: '' }], sub, sup }]
+    return [{ t: 'script', base, sub, sup }]
   }
 
   /** Đối số của lệnh/chỉ số: `{…}` hoặc một ký tự/lệnh. */
@@ -146,7 +156,7 @@ class Parser {
       return this.arg()
     }
     if (t.k === 'ch') return [{ t: 'text', s: t.v }]
-    if (t.k === 'amp') return [{ t: 'text', s: ' ' }]
+    if (t.k === 'amp') return [{ t: 'text', s: ' ', style: 'normal' }]
     if (t.k === 'sup' || t.k === 'sub') return []
     return this.command(t.v)
   }
@@ -193,15 +203,19 @@ class Parser {
         return [{ t: 'lim', name: 'lim', sub: [], body: [] }]
       case 'text':
       case 'textrm':
+        return [{ t: 'text', s: this.literalText(), style: 'normal' }]
       case 'textbf':
       case 'textit':
+        return [{ t: 'text', s: this.literalText(), style: name === 'textbf' ? 'bold' : 'italic' }]
       case 'mathrm':
       case 'mathbf':
       case 'mathit':
       case 'operatorname':
       case 'mathcal':
-      case 'mathsf':
-        return [{ t: 'text', s: flatText(this.arg()) }]
+      case 'mathsf': {
+        const style = name === 'mathbf' ? 'bold' : name === 'mathit' ? 'italic' : name === 'mathrm' ? 'normal' : 'plain'
+        return this.arg().map((n) => styled(n, style))
+      }
       case 'mathbb': {
         const s = flatText(this.arg())
         return [{ t: 'text', s: s.split('').map((c) => BLACKBOARD[c] ?? c).join('') }]
@@ -210,20 +224,22 @@ class Parser {
         const env = flatText(this.arg())
         if (!ARRAYS.has(env)) return []
         if (env === 'array') this.arg()
-        const rows: Node[] = []
+        const rows: Node[][] = [[]]
         for (;;) {
           const t = this.peek()
-          if (!t || (t.k === 'cmd' && t.v === 'end')) break
+          if (!t || t.k === 'close' || (t.k === 'cmd' && t.v === 'end')) break
           if (t.k === 'cmd' && t.v === '\\') {
             this.i++
-            rows.push({ t: 'text', s: '; ' })
-          } else rows.push(...this.term())
+            rows.push([])
+          } else rows[rows.length - 1].push(...this.term())
         }
-        if (this.peek()) {
+        if (this.peek()?.v === 'end') {
           this.i++
           this.arg()
         }
-        return rows
+        return env === 'cases'
+          ? [{ t: 'cases', rows: rows.filter((row) => row.length) }]
+          : rows.flatMap((row, i) => i ? [{ t: 'text', s: '; ', style: 'normal' }, ...row] : row)
       }
       case 'end':
         this.arg()
@@ -231,11 +247,30 @@ class Parser {
     }
     if (name in ACCENTS) return [{ t: 'acc', chr: ACCENTS[name], body: this.arg() }]
     if (FUNCTIONS.has(name)) return [{ t: 'text', s: name + ' ' }]
-    if (name in SYMBOLS) return [{ t: 'text', s: SYMBOLS[name] }]
+    if (name in SYMBOLS) {
+      const s = SYMBOLS[name]
+      return [{ t: 'text', s, ...(s && !s.trim() ? { style: 'normal' } : {}) }]
+    }
     return [{ t: 'text', s: name }]
   }
 
+  private literalText(): string {
+    if (this.peek()?.k !== 'open') return flatText(this.arg())
+    this.i++
+    let depth = 1
+    let out = ''
+    while (depth && this.i < this.toks.length) {
+      const t = this.toks[this.i++]
+      if (t.k === 'open') depth++
+      else if (t.k === 'close') depth--
+      else if (t.k === 'cmd') out += SYMBOLS[t.v] ?? t.v
+      else out += t.v
+    }
+    return out
+  }
+
   private delim(): string {
+    this.peek()
     const t = this.toks[this.i++]
     if (!t) return '.'
     return t.k === 'cmd' ? '\\' + t.v : t.v
@@ -245,17 +280,34 @@ class Parser {
 const flatText = (nodes: Node[]): string =>
   nodes.map((n) => (n.t === 'text' ? n.s : n.t === 'script' ? flatText(n.base) : '')).join('')
 
+function styled(n: Node, style: 'plain' | 'normal' | 'bold' | 'italic'): Node {
+  if (n.t === 'text') return { ...n, style: n.style ?? style }
+  if (n.t === 'script') return { ...n, base: n.base.map((child) => styled(child, style)) }
+  return n
+}
+
 /* ---- dựng thành phần docx ---- */
+
+function mathElement(name: string, children: unknown[] = [], value?: string): XmlComponent {
+  return new BuilderElement({
+    name: `m:${name}`,
+    children: children as XmlComponent[],
+    ...(value !== undefined ? { attributes: { val: { key: 'm:val', value } } } : {}),
+  })
+}
 
 function emit(nodes: Node[]): MathComponent[] {
   const out: MathComponent[] = []
   let text = ''
+  let style: Extract<Node, { t: 'text' }>['style']
   const flush = () => {
-    if (text) out.push(new MathRun(text))
+    if (text) out.push(new MathRun(style === 'normal' ? { text, normalText: true } : { text, style }))
     text = ''
   }
   for (const n of nodes) {
     if (n.t === 'text') {
+      if (n.style !== style) flush()
+      style = n.style
       text += n.s
       continue
     }
@@ -270,15 +322,30 @@ function emit(nodes: Node[]): MathComponent[] {
         break
       case 'script': {
         const base = emit(n.base)
-        if (n.sub && n.sup) out.push(new MathSubSuperScript({ children: base, subScript: emit(n.sub), superScript: emit(n.sup) }))
+        if (n.pre) out.push(new MathPreSubSuperScript({
+          children: base,
+          subScript: n.sub?.length ? emit(n.sub) : [new MathRun('\u200b')],
+          superScript: n.sup?.length ? emit(n.sup) : [new MathRun('\u200b')],
+        }))
+        else if (n.sub && n.sup) out.push(new MathSubSuperScript({ children: base, subScript: emit(n.sub), superScript: emit(n.sup) }))
         else if (n.sup) out.push(new MathSuperScript({ children: base, superScript: emit(n.sup) }))
         else out.push(new MathSubScript({ children: base, subScript: emit(n.sub ?? []) }))
         break
       }
+      case 'cases':
+        if (n.rows.length) out.push(mathElement('d', [
+          mathElement('dPr', [mathElement('begChr', [], '{'), mathElement('endChr', [], '')]),
+          mathElement('e', [mathElement('eqArr', n.rows.map((row) => mathElement('e', emit(row))))]),
+        ]) as unknown as MathComponent)
+        break
       case 'brackets': {
         const body = emit(n.body)
         if (n.open === '(' ) out.push(new MathRoundBrackets({ children: body }))
         else if (n.open === '[') out.push(new MathSquareBrackets({ children: body }))
+        else if (n.open === '\\{' && n.close === '.') out.push(mathElement('d', [
+          mathElement('dPr', [mathElement('begChr', [], '{'), mathElement('endChr', [], '')]),
+          mathElement('e', body),
+        ]) as unknown as MathComponent)
         else if (n.open === '\\{') out.push(new MathCurlyBrackets({ children: body }))
         else if (n.open === '\\langle') out.push(new MathAngledBrackets({ children: body }))
         else out.push(new MathRun(n.open === '.' ? '' : n.open.replace(/^\\/, '')), ...body, new MathRun(n.close === '.' ? '' : n.close.replace(/^\\/, '')))
@@ -321,6 +388,7 @@ function attachBodies(nodes: Node[]): Node[] {
     } else out.push(n)
   }
   return out.map((n) => {
+    if (n.t === 'cases') return { ...n, rows: n.rows.map(attachBodies) }
     if (n.t === 'frac') return { ...n, n: attachBodies(n.n), d: attachBodies(n.d) }
     if (n.t === 'brackets') return { ...n, body: attachBodies(n.body) }
     if (n.t === 'sqrt' || n.t === 'acc') return { ...n, body: attachBodies(n.body) }

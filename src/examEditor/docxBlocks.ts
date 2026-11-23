@@ -4,6 +4,7 @@
  *
  * Công thức `$…$` / `$$…$$` thành equation Word (xem `lib/latexMath.ts`).
  */
+import { isCodeSpan, splitExamCode } from '@/lib/examCode'
 import {
   AlignmentType,
   BorderStyle,
@@ -236,6 +237,10 @@ function spanRuns(s: Span, base: Base): ParagraphChild[] {
   const text = (t: string) => {
     if (t) t.split('\n').forEach((line, i) => out.push(new TextRun({ ...opts, text: line, break: i > 0 ? 1 : undefined })))
   }
+  if (isCodeSpan(s)) {
+    text(s.text.replace(/\t/g, '    '))
+    return out
+  }
   for (const m of s.text.matchAll(/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g)) {
     text(s.text.slice(at, m.index))
     out.push(new OMath({ children: latexToMath(m[1] ?? m[2]) }))
@@ -248,7 +253,7 @@ function spanRuns(s: Span, base: Base): ParagraphChild[] {
 /** Rich text → các run; `string` và mảng trộn string + span đều nhận. */
 function runs(rt: RichText, base: Base = {}): ParagraphChild[] {
   const spans: Span[] = typeof rt === 'string' ? [{ text: rt }] : (rt as Array<Span | string>).map((s) => (typeof s === 'string' ? { text: s } : s))
-  return spans.flatMap((s) => spanRuns(s, base))
+  return spans.flatMap(splitExamCode).flatMap((s) => spanRuns(s, base))
 }
 
 const ALIGN = {
@@ -284,7 +289,9 @@ function fmtOpts(f: FormatAttrs | undefined): IParagraphOptions {
 
 /** Có ảnh (hoặc xuống dòng mềm) thì căn trái: căn đều sẽ giãn cả dòng đứng trước chỗ ngắt. */
 const hasImage = (rt: RichText) => typeof rt !== 'string' && (rt as Array<Span | string>).some((s) => typeof s !== 'string' && s.image)
-const justify = (rt: RichText) => (hasImage(rt) ? AlignmentType.LEFT : AlignmentType.BOTH)
+const multiline = (rt: RichText) => (typeof rt === 'string' ? [rt] : rt)
+  .some((s) => (typeof s === 'string' ? s : s.text).includes('\n'))
+const justify = (rt: RichText) => (hasImage(rt) || multiline(rt) ? AlignmentType.LEFT : AlignmentType.BOTH)
 
 /** Tách ảnh khỏi đề bài để đặt vào ô bên cạnh (chỉ khi imagePosition là left/right). */
 function sideImage(text: RichText, pos: 'left' | 'right' | undefined) {
@@ -421,7 +428,7 @@ function blockToDocx(b: ExamBlock, ctx: Ctx): Out[] {
     }
 
     case 'paragraph':
-      return [para(runs(b.text), { alignment: AlignmentType.BOTH, spacing: { after: 90 }, ...fmtOpts(b.format) })]
+      return [para(runs(b.text), { alignment: justify(b.text), spacing: { after: 90 }, ...fmtOpts(b.format), ...(multiline(b.text) && b.format?.align === 'justify' ? { alignment: AlignmentType.LEFT } : {}) })]
 
     case 'bullets': {
       const instance = ++ctx.lists
@@ -458,6 +465,7 @@ function blockToDocx(b: ExamBlock, ctx: Ctx): Out[] {
         spacing: { before: 120, after: 45 },
         keepNext: true,
         ...fmtOpts(b.format),
+        ...(multiline(headText) && b.format?.align === 'justify' ? { alignment: AlignmentType.LEFT } : {}),
       })
       const trailParas = trail
         ? [para(trail.imgs.flatMap((s) => imageRun(s.image!)), { alignment: AlignmentType.CENTER, spacing: { after: 45 }, keepNext: true })]
@@ -488,9 +496,9 @@ function blockToDocx(b: ExamBlock, ctx: Ctx): Out[] {
       if (!b.options.length) return [...pre, head, ...trailParas]
       // đúng/sai: mỗi ý một dòng, nhãn "a)"; trắc nghiệm: 4/3/2/1 cột theo độ dài như trên màn hình, nhãn "A."
       const tf = b.kind === 'tf'
-      const cols = tf ? 1 : estimateChoiceCols(b.options.map((o) => o.text))
+      const cols = tf ? 1 : estimateChoiceCols(b.options.map((o) => o.text), (ctx.contentW - OPT_INDENT) / 20, 1.2)
       // xếp cột bằng điểm dừng tab (không dùng bảng): mở trong Word không hiện lưới / tay nắm bảng
-      const w = Math.floor((CONTENT_W - OPT_INDENT) / cols)
+      const w = Math.floor((ctx.contentW - OPT_INDENT) / cols)
       const item = (o: (typeof b.options)[number]) => [new TextRun({ text: `${o.label}${tf ? ')' : '.'} `, bold: true }), ...runs(o.text)]
       const lines = chunk(b.options, cols).map((row, r, all) => {
         const last = r === all.length - 1
@@ -512,14 +520,18 @@ function blockToDocx(b: ExamBlock, ctx: Ctx): Out[] {
       ctx.essay += 1
       const side = sideImage(b.text, b.imagePosition)
       const lead = side ? null : leadImage(b.text)
-      const headText = side ? side.rest : lead ? lead.rest : b.text
+      const trail = side || lead ? null : trailImage(b.text)
+      const headText = side ? side.rest : lead ? lead.rest : trail ? trail.rest : b.text
       const pre: Out[] = lead ? [para(lead.imgs.flatMap((s) => imageRun(s.image!)), { spacing: { before: 120 }, keepNext: true, ...fmtOpts(b.format) })] : []
       const headPara = para([new TextRun({ text: `Bài ${ctx.essay}${b.score ? ` (${fmt(b.score)} điểm)` : ''}. `, bold: true }), ...runs(headText)], {
         alignment: justify(headText),
         spacing: { before: 120, after: 45 },
+        keepNext: !!trail,
         ...fmtOpts(b.format),
+        ...(multiline(headText) && b.format?.align === 'justify' ? { alignment: AlignmentType.LEFT } : {}),
       })
       const out: Out[] = [...pre, side ? sideTable(side.pos, [headPara], side.imgs) : headPara]
+      if (trail) out.push(para(trail.imgs.flatMap((s) => imageRun(s.image!)), { alignment: AlignmentType.CENTER, spacing: { after: 45 } }))
       for (const s of b.sub ?? []) out.push(para(runs(s), { indent: { left: OPT_INDENT }, spacing: { after: 45 } }))
       return out
     }

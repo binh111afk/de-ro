@@ -4,6 +4,7 @@
  * Tách riêng khỏi `exportDocx.ts` vì file đó xuất từ mô hình `Exam` (dùng cho
  * đề cộng đồng), còn trình soạn dùng mô hình block `ExamDoc`.
  */
+import { isCodeSpan, splitExamCode } from '@/lib/examCode'
 import katex from 'katex'
 import type { BandSetup, PageNumberSetup } from './pageSetup'
 import 'katex/contrib/mhchem' // \ce{...}
@@ -48,8 +49,8 @@ function css(v: unknown): string {
 
 /** Rich text → HTML có mark (`<b>/<i>/<u>/<s>/<sub>/<sup>/<span style>`). */
 function richToHtml(rt: RichText): string {
-  if (typeof rt === 'string') return textToHtml(rt)
-  return rt.map(spanToHtml).join('')
+  const spans = typeof rt === 'string' ? [{ text: rt }] : rt
+  return spans.flatMap(splitExamCode).map(spanToHtml).join('')
 }
 
 /** Mỗi dòng của đầu đề thành một dòng trong ô bảng (Word không cần paragraph). */
@@ -79,7 +80,8 @@ function spanToHtml(s: Span): string {
     const w = s.image.width ? ` width="${css(Math.round(s.image.width))}"` : ''
     return `<img src="${escapeHtml(mathTableImageSrc(s.image.src, s.image.plot))}" alt="${escapeHtml(s.image.alt ?? '')}"${w} style="max-width:100%">`
   }
-  let inner = textToHtml(s.text)
+  const code = isCodeSpan(s)
+  let inner = code ? `<code>${escapeHtml(s.text)}</code>` : textToHtml(s.text)
   for (const m of s.marks ?? []) {
     switch (m.type) {
       case 'bold':
@@ -111,7 +113,7 @@ function spanToHtml(s: Span): string {
       case 'textStyle': {
         const a = m.attrs ?? {}
         const st: string[] = []
-        if (a.fontFamily) st.push(`font-family:${css(a.fontFamily)}`)
+        if (a.fontFamily && !code) st.push(`font-family:${css(a.fontFamily)}`)
         if (a.fontSize) st.push(`font-size:${css(a.fontSize)}`)
         if (a.color) st.push(`color:${css(a.color)}`)
         if (st.length) inner = `<span style="${st.join(';')}">${inner}</span>`
@@ -346,6 +348,9 @@ const EXPORT_CSS = `
   .grid { width: 100%; border: none; border-collapse: collapse; margin: 4px 0; }
   .grid td { border: none; vertical-align: top; padding: 0 6px 0 0; }
   .q { margin: 8px 0 3px; text-align: justify; }
+  .p, .q, .sub, .opts td { white-space: pre-wrap; }
+  .p:has(code), .q:has(code) { text-align: left !important; }
+  code { white-space: pre-wrap; tab-size: 4; font-family: Consolas, monospace; }
   .q > img:last-child { display: block; margin: 4px auto 0; }
   /* Phương án 2 cột bằng bảng: Word không hiểu flex, dùng bảng để file Word
      và bản in giống nhau. */

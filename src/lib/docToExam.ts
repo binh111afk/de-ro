@@ -1,3 +1,4 @@
+import { isCodeSpan, splitExamCode } from './examCode'
 import type { EssayBlock, ExamDoc, QuestionBlock, RichText, TableBlock } from '@/data/docTypes'
 import type { Exam, Question, QuestionImage, Section, Subject } from '@/data/types'
 import { mathTableImageSrc, renderExamTableSvg } from './table'
@@ -10,8 +11,8 @@ import { formatTrueFalse, normalizeShort, parseTrueFalse } from './grading.js'
  */
 function toRich(rt: RichText | undefined, skip?: unknown): string {
   if (!rt) return ''
-  if (typeof rt === 'string') return rt
-  return rt
+  const spans = typeof rt === 'string' ? [{ text: rt }] : rt
+  return spans.flatMap(splitExamCode)
     .map((s) => {
       if (s.image) {
         if (s.image === skip) return ''
@@ -20,6 +21,7 @@ function toRich(rt: RichText | undefined, skip?: unknown): string {
         const pct = width ? Math.min(100, Math.max(10, Math.round((width / 643) * 100))) : 0
         return `\n![${(alt ?? '').replace(/[\]|\n]/g, ' ')}${pct ? `|${pct}` : ''}](${src})\n`
       }
+      if (isCodeSpan(s)) return /[\n`]/.test(s.text) ? `\n\`\`\`\n${s.text}\n\`\`\`\n` : `\`${s.text}\``
       const has = (t: string) => s.marks?.some((m) => m.type === t)
       const core = s.text.trim()
       if (!core || s.text.includes('$') || !s.marks?.length) return s.text
@@ -112,15 +114,80 @@ function explanations(blocks: ExamDoc['blocks']): Map<string, string> {
   return out
 }
 
+type ScoredBlock = QuestionBlock | EssayBlock
+const POINTS = /(\d+(?:[.,]\d{1,2})?)\s*(?:điểm|đ)(?!\p{L})/iu
+const asCents = (s: string) => Math.round(Number(s.replace(',', '.')) * 100)
+
+function sourceScores(doc: ExamDoc): Map<ScoredBlock, number> {
+  const scores = new Map<ScoredBlock, number>()
+  const all: ScoredBlock[] = []
+  const sections: { total: number; blocks: ScoredBlock[] }[] = []
+  let section: (typeof sections)[number] | undefined
+  let rate: number | undefined
+  for (const block of doc.blocks) {
+    if (block.type === 'heading') {
+      const title = toPlain(block.text).normalize('NFC')
+      const amount = POINTS.exec(title)
+      if (!amount && block.level !== 1 && !/^\s*phần\s+[\divxlc]+\b/iu.test(title)) continue
+      section = undefined
+      rate = undefined
+      if (amount) {
+        const cents = asCents(amount[1])
+        if (/^\s*(?:\/|mỗi\s+)\s*(?:câu|bài)/iu.test(title.slice(amount.index + amount[0].length))) rate = cents
+        else {
+          section = { total: cents, blocks: [] }
+          sections.push(section)
+        }
+      }
+      continue
+    }
+    if (block.type !== 'question' && block.type !== 'essay') continue
+    all.push(block)
+    section?.blocks.push(block)
+    const text = toPlain(block.text).trim()
+    const scoreLabel = /[([]\s*(\d+(?:[.,]\d{1,2})?)\s*(?:điểm|đ)\s*[)\]]/giu
+    const stated = [...text.matchAll(scoreLabel)].find((m) =>
+      m.index === 0 || /^[.\s]*$/.test(text.slice(m.index + m[0].length)),
+    )?.[1]
+    if (block.type === 'essay' && block.score > 0) scores.set(block, Math.round(block.score * 100))
+    else if (stated !== undefined) scores.set(block, asCents(stated))
+    else if (rate !== undefined) scores.set(block, rate)
+  }
+
+  const assigned = (blocks: ScoredBlock[]) => blocks.reduce((sum, b) => sum + (scores.get(b) ?? 0), 0)
+  const distribute = (blocks: ScoredBlock[], total: number, weight = (_: ScoredBlock) => 1) => {
+    const sum = blocks.reduce((n, b) => n + weight(b), 0)
+    let cumulative = 0
+    let previous = 0
+    for (const block of blocks) {
+      cumulative += weight(block)
+      const next = Math.round(Math.max(0, total) * cumulative / sum)
+      scores.set(block, next - previous)
+      previous = next
+    }
+  }
+  for (const s of sections) distribute(s.blocks.filter((b) => !scores.has(b)), s.total - assigned(s.blocks))
+  const open = all.filter((b) => !scores.has(b))
+  const defaultPoints = (b: ScoredBlock) => b.type === 'essay' || b.kind === 'tf' ? 100
+    : b.kind === 'short' && doc.subject === 'Toán' ? 50 : 25
+  const mcq = open.filter((b) => b.type === 'question' && b.kind !== 'tf' && b.kind !== 'short')
+  const other = open.filter((b) => !mcq.includes(b))
+  const remaining = 1000 - assigned(all)
+  const reserved = other.reduce((n, b) => n + defaultPoints(b), 0)
+  if (mcq.length && reserved <= remaining) {
+    for (const b of other) scores.set(b, defaultPoints(b))
+    distribute(mcq, remaining - reserved)
+  } else distribute(open, remaining, defaultPoints)
+  return scores
+}
+
 /** Số La Mã cho tên phần (tối đa 4 phần: trắc nghiệm, đúng/sai, trả lời ngắn, tự luận). */
 const ROMAN = ['I', 'II', 'III', 'IV']
 
 /**
  * Chuyển đề soạn (ExamDoc, dạng khối) sang đề tương tác (Exam) để làm bài và chấm.
- * - Trắc nghiệm: đáp án lấy từ khối `answerKey` theo số câu; điểm chia đều phần còn lại của 10 điểm.
- * - Đúng/sai (kind 'tf'): 4 ý a–d, đáp án dạng "ĐSĐS"; 1 điểm/câu, chấm theo số ý đúng (xem `grading.ts`).
- * - Trả lời ngắn (kind 'short'): đáp án là số; 0,5 điểm/câu môn Toán, 0,25 điểm các môn khác.
- * - Tự luận: giữ nội dung và điểm; đáp án (nếu có) làm lời giải tham khảo, không tự chấm.
+ * Giữ điểm ghi trong đề trước khi chia điểm còn thiếu. Đáp án được đọc theo số câu và dạng;
+ * lời giải của bài tự luận dùng làm đáp án tham khảo.
  */
 export function docToExam(doc: ExamDoc, id: string): Exam {
   if (doc.online) return { ...doc.online, id }
@@ -172,11 +239,8 @@ export function docToExam(doc: ExamDoc, id: string): Exam {
   const tfBlocks = questionBlocks.filter((b) => b.kind === 'tf')
   const shortBlocks = questionBlocks.filter((b) => b.kind === 'short')
   const essayBlocks = doc.blocks.filter((b): b is EssayBlock => b.type === 'essay')
-  const essayTotal = essayBlocks.reduce((n, b) => n + (b.score || 0), 0)
-  const shortPoints = doc.subject === 'Toán' ? 0.5 : 0.25
-  const fixedTotal = essayTotal + tfBlocks.length + shortBlocks.length * shortPoints
-  const mcqTotal = fixedTotal > 0 ? Math.max(10 - fixedTotal, 0) : 10
-  const mcqPoints = mcqBlocks.length ? round2(mcqTotal / mcqBlocks.length) : 0
+  const scores = sourceScores(doc)
+  const points = (b: ScoredBlock) => (scores.get(b) ?? 0) / 100
 
   // số câu hiển thị chạy liên tục qua trắc nghiệm, đúng/sai, trả lời ngắn (khớp "Câu N" trong trình soạn)
   let counter = 0
@@ -189,7 +253,7 @@ export function docToExam(doc: ExamDoc, id: string): Exam {
     options: b.options.map((o) => ({ key: o.label, text: toRich(o.text).trim() })),
     answer: mcqAnswer(b.no),
     explanation: explain.get(`c${b.no}`) || undefined,
-    points: mcqPoints,
+    points: points(b),
   }))
 
   const tfs: Question[] = tfBlocks.map((b, i) => {
@@ -205,7 +269,7 @@ export function docToExam(doc: ExamDoc, id: string): Exam {
       options: b.options.map((o) => ({ key: o.label.toLowerCase(), text: toRich(o.text).trim() })),
       answer: parsed ? formatTrueFalse(parsed) : undefined,
       explanation: explain.get(`c${b.no}`) || undefined,
-      points: 1,
+      points: points(b),
     }
   })
 
@@ -219,7 +283,7 @@ export function docToExam(doc: ExamDoc, id: string): Exam {
       ...alignOf(b),
       answer: raw ? normalizeShort(raw) : undefined,
       explanation: explain.get(`c${b.no}`) || undefined,
-      points: shortPoints,
+      points: points(b),
     }
   })
 
@@ -232,7 +296,7 @@ export function docToExam(doc: ExamDoc, id: string): Exam {
       type: 'tu-luan',
       ...questionContent(b),
       ...alignOf(b),
-      points: b.score,
+      points: points(b),
       solution: written ? written.split('\n') : answer ? [answer] : undefined,
     }
   })

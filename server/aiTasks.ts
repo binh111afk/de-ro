@@ -81,7 +81,8 @@ function soanDe(raw: unknown): string | null {
   if (text === undefined) return null
   const input: ExamTaskInput = {
     text,
-    intent: o.intent === 'chat' ? 'chat' : undefined,
+    intent: o.intent === 'chat' || o.intent === 'doc' ? o.intent : undefined,
+    revising: o.revising === true,
     digest: str(o.digest),
     contextSummary: str(o.contextSummary),
     ask: o.ask === true,

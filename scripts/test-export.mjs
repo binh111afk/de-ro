@@ -94,6 +94,16 @@ check('công thức $…$ xuất MathML (bản in/PDF không còn dấu $ thô)'
   assert.ok(html.includes('giá 5 đồng'))
 })
 
+check('mã nhiều dòng và backtick giữ thụt lề trong HTML in', () => {
+  const html = buildWordHtml(doc([
+    { type: 'paragraph', text: 'Đoạn mã:\n```python\nif n > 0:\n    print(n)\n```' },
+    { type: 'paragraph', text: 'Gọi `f(1)`.' },
+  ]))
+  assert.match(html, /<code>if n &gt; 0:\n    print\(n\)<\/code>/)
+  assert.match(html, /Gọi <code>f\(1\)<\/code>/)
+  assert.match(html, /code \{ white-space: pre-wrap;/)
+})
+
 check('CSS dùng chung cho Word và bản in', () => {
   const html = buildWordHtml(doc([{ type: 'paragraph', text: 'x' }]))
   assert.match(html, /@page \{ size: A4; margin: 1\.8cm 1\.6cm; \}/)

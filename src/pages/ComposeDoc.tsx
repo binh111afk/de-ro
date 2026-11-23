@@ -20,7 +20,6 @@ import { PageErrorBoundary } from '@/components/PageErrorBoundary'
 import { useLocation, useNavigate } from 'react-router-dom'
 import type { Editor } from '@tiptap/core'
 import type { JSONContent } from '@tiptap/core'
-import type { Selection } from '@tiptap/pm/state'
 import { pageGeometry, marginsOf, paperCm, CM, PAGE_SIZES, type PageSetup } from '@/examEditor/pageSetup'
 import { Ribbon } from '@/examEditor/Ribbon'
 import { TabStrip } from '@/examEditor/TabStrip'
@@ -32,7 +31,7 @@ import type { ToolDoc, ToolImage } from '@/lib/toolSpec'
 type PlotTarget = { replace: number } | { after: number }
 import { insertBlockTemplate, type BlockTemplate } from '@/examEditor/templates'
 import { AiDock, Ruler, useViewportSize } from '@/examEditor/Layout'
-import { tipTapToBlocks, blocksToTipTap, plainText } from '@/examEditor/convert'
+import { tipTapToBlocks, blocksToTipTap } from '@/examEditor/convert'
 import { useFormatState, applyFormatAttrs } from '@/examEditor/formatState'
 import { useComposeStore } from '@/store/compose'
 import { useDocStore } from '@/store/docs'
@@ -40,14 +39,14 @@ import { useOnline } from '@/store/online'
 import { docToExam } from '@/lib/docToExam'
 import { examToDraft } from '@/lib/onlineExam'
 import { DECK_THEMES } from '@/lib/slideTheme'
-import { extractJson } from '@/lib/llm'
+import { applyExamReply } from '@/examEditor/examAiResult'
 import { importedSlides, readImportFile, textToBlocks } from '@/lib/importFile'
 import { IconZoomIn, IconZoomOut } from '@/examEditor/icons'
-import type { ExamBlock, ExamDoc, FormatAttrs, RichText, TableCellData } from '@/data/docTypes'
+import type { ExamBlock, ExamDoc } from '@/data/docTypes'
 import { emptyDoc } from '@/data/docTypes'
 import { cn } from '@/lib/cn'
 import { attachToAi } from '@/lib/aiAttach'
-import { blockKey, blocksText, focusNote, keyIndex, type AiApplyResult } from '@/lib/aiDocContext'
+import { blocksText, examDigest, focusNote, type AiApplyResult } from '@/lib/aiDocContext'
 import { reportAi, takeRecentAiTurn } from '@/lib/aiFeedback'
 
 const SESSION_KEY = 'dethinhbien-compose-session'
@@ -167,298 +166,6 @@ function SlideEditorSkeleton() {
       </div>
     </div>
   )
-}
-
-/** Hợp đồng AI trả về: thay cả đề / thêm cuối / sửa từng khối theo id (`k<vị trí>`). */
-interface AiExamEnvelope {
-  action?: string
-  blocks?: unknown
-  patch?: unknown
-  /** câu trả lời ngắn cho giáo viên (đã hiểu yêu cầu thế nào, đã làm gì) — hiện trong chat */
-  say?: unknown
-  /** tên đề theo bài (chỉ khi replace) — đặt cho tab còn tên mặc định */
-  name?: unknown
-  /** một câu nhắc người dùng (vd. nội dung họ yêu cầu nằm ngoài chương trình 2018) — hiện kèm câu tóm tắt */
-  warning?: unknown
-}
-
-const AI_BLOCK_TYPES = new Set([
-  'header',
-  'title',
-  'meta',
-  'student',
-  'heading',
-  'paragraph',
-  'bullets',
-  'grid',
-  'question',
-  'essay',
-  'answerKey',
-  'rubric',
-  'pageBreak',
-  'divider',
-  'table',
-])
-
-/** Chuẩn hoá block AI trả về: đúng loại + field tối thiểu, sai thì bỏ. */
-/**
- * AI soạn đề gắn `figure` (cấu hình công cụ vẽ) vào khối cần hình → vẽ bằng công cụ,
- * đặt thành đoạn ảnh căn giữa ngay dưới khối. Ảnh tạm là SVG; `pngifyToolImages` đổi sang PNG sau
- * (xuất Word không đọc SVG). Hình nào cấu hình sai thì bỏ qua, đề vẫn chèn bình thường.
- */
-function expandFigures(raw: unknown): unknown {
-  if (!Array.isArray(raw)) return raw
-  return raw.flatMap((item) => {
-    if (!item || typeof item !== 'object' || !('figure' in item)) return [item]
-    const { figure, ...block } = item as Record<string, unknown>
-    // công cụ chưa tải (hiếm: tải sẵn khi mở trình soạn) thì chèn đề không kèm hình
-    const doc = tools?.ti.figureDoc(figure)
-    if (!doc) return [block]
-    const { src, alt, width, plot } = tools!.ti.figureImageAttrs(doc)
-    // câu trắc nghiệm: ảnh vào cuối đề bài (dòng riêng) để nằm TRƯỚC phương án A–D
-    if (block.type === 'question' || block.type === 'essay') {
-      const t = block.text
-      const spans = typeof t === 'string' ? [{ text: t }] : Array.isArray(t) ? t : []
-      return [{ ...block, text: [...spans, { text: '', image: { src, alt, width, plot } }] }]
-    }
-    return [block,{ type: 'paragraph', text: [{ text: '', image: { src, alt, width, plot } }], format: { align: 'center' } }]
-  })
-}
-
-function sanitizeBlocks(raw: unknown): ExamBlock[] {
-  if (!Array.isArray(raw)) return []
-  // AI có lúc trả mảng trộn string + span; chuẩn hoá về Span[] để converter/export đọc được.
-  const rich = (v: unknown): RichText =>
-    typeof v === 'string'
-      ? v
-      : Array.isArray(v)
-        ? (v.map((s) => (typeof s === 'string' ? { text: s } : s)) as RichText)
-        : ''
-  const fmt = (v: unknown): FormatAttrs | undefined =>
-    v && typeof v === 'object' ? (v as FormatAttrs) : undefined
-  const list = (v: unknown): unknown[] => (Array.isArray(v) ? v : [])
-  const out: ExamBlock[] = []
-  for (const item of raw) {
-    if (!item || typeof item !== 'object') continue
-    const b = item as Record<string, unknown>
-    const type = typeof b.type === 'string' ? b.type : ''
-    if (!AI_BLOCK_TYPES.has(type)) continue
-    switch (type) {
-      case 'header': {
-        // dạng cũ {"type":"header","text":"…"} → đưa vào cột trái thay vì header rỗng
-        const left = rich(b.left) || (typeof b.text === 'string' ? b.text : '')
-        out.push({ type: 'header', left, right: rich(b.right) })
-        break
-      }
-      case 'title':
-        out.push({ type: 'title', text: rich(b.text), format: fmt(b.format) })
-        break
-      case 'meta':
-        out.push({
-          type: 'meta',
-          rows: list(b.rows)
-            .map((row, i) =>
-              Array.isArray(row)
-                ? ([String(row[0] ?? ''), rich(row[1])] as [string, RichText])
-                : row && typeof row === 'object'
-                  ? ([
-                      String((row as Record<string, unknown>).label ?? `Dòng ${i + 1}`),
-                      rich((row as Record<string, unknown>).value),
-                    ] as [string, RichText])
-                  : null,
-            )
-            .filter((r): r is [string, RichText] => r !== null),
-        })
-        break
-      case 'student':
-        out.push({ type: 'student', text: rich(b.text), format: fmt(b.format) })
-        break
-      case 'heading':
-        out.push({
-          type: 'heading',
-          text: rich(b.text),
-          level: (b.level === 2 || b.level === 3 ? b.level : 1) as 1 | 2 | 3,
-          format: fmt(b.format),
-        })
-        break
-      case 'paragraph':
-        out.push({ type: 'paragraph', text: rich(b.text), format: fmt(b.format) })
-        break
-      case 'bullets':
-        out.push({
-          type: 'bullets',
-          items: list(b.items) as RichText[],
-          ...(b.ordered === true ? { ordered: true } : {}),
-          ...(Array.isArray(b.levels) ? { levels: b.levels.map(Number) } : {}),
-          format: fmt(b.format),
-        })
-        break
-      case 'grid':
-        out.push({
-          type: 'grid',
-          cols: b.cols === 3 ? 3 : 2,
-          cells: list(b.cells) as RichText[],
-          format: fmt(b.format),
-        })
-        break
-      case 'question': {
-        // kind: 'tf' = đúng/sai (4 ý a–d), 'short' = trả lời ngắn (không có phương án); còn lại là trắc nghiệm A–D
-        let kind: 'tf' | 'short' | undefined = b.kind === 'tf' || b.kind === 'short' ? b.kind : undefined
-        // câu điền chỗ trống bằng chữ (đề đã có dòng chấm) không vẽ 4 ô đáp số của dạng trả lời ngắn
-        if (kind === 'short' && /…{3,}|\.{5,}/.test(plainText(rich(b.text)))) kind = undefined
-        out.push({
-          type: 'question',
-          no: typeof b.no === 'number' ? b.no : 1,
-          ...(kind ? { kind } : {}),
-          text: rich(b.text),
-          // chấp nhận cả dạng viết tắt: options: ["A. …", "B. …"]
-          options:
-            kind === 'short'
-              ? []
-              : list(b.options).map((o, i) => {
-                  const letter = String.fromCharCode((kind === 'tf' ? 97 : 65) + i)
-                  if (typeof o === 'string') return { label: letter, text: o }
-                  const opt = (o ?? {}) as Record<string, unknown>
-                  return {
-                    label: typeof opt.label === 'string' ? (kind === 'tf' ? opt.label.toLowerCase() : opt.label) : letter,
-                    text: rich(opt.text),
-                    format: fmt(opt.format),
-                  }
-                }),
-          format: fmt(b.format),
-        })
-        break
-      }
-      case 'essay':
-        out.push({
-          type: 'essay',
-          no: typeof b.no === 'number' ? b.no : 1,
-          score: typeof b.score === 'number' ? b.score : 0,
-          text: rich(b.text),
-          sub: Array.isArray(b.sub) ? (b.sub as RichText[]) : undefined,
-          format: fmt(b.format),
-        })
-        break
-      case 'answerKey':
-        // chấp nhận items: [{no, answer}] hoặc chuỗi rút gọn "Câu 1. A"
-        out.push({
-          type: 'answerKey',
-          items: list(b.items).map((it, i) =>
-            typeof it === 'string'
-              ? { no: i + 1, answer: it }
-              : {
-                  no: typeof (it as Record<string, unknown>)?.no === 'number'
-                    ? ((it as Record<string, unknown>).no as number)
-                    : i + 1,
-                  answer: rich((it as Record<string, unknown>)?.answer),
-                },
-          ),
-        })
-        break
-      case 'rubric':
-        out.push({
-          type: 'rubric',
-          title: b.title == null ? undefined : rich(b.title),
-          // chấp nhận items: [{label, text}] hoặc chuỗi rút gọn
-          items: list(b.items).map((it, i) =>
-            typeof it === 'string'
-              ? { label: `${i + 1}.`, text: it }
-              : {
-                  label:
-                    typeof (it as Record<string, unknown>)?.label === 'string'
-                      ? ((it as Record<string, unknown>).label as string)
-                      : `${i + 1}.`,
-                  text: rich((it as Record<string, unknown>)?.text),
-                },
-          ),
-        })
-        break
-      case 'table': {
-        const rows = list(b.rows).filter(Array.isArray).filter((row) => row.length).map((row) =>
-          row.map((cell: unknown): TableCellData => {
-            if (typeof cell === 'string' || Array.isArray(cell)) return { text: rich(cell) }
-            if (typeof cell === 'number') return { text: String(cell) }
-            const c = (cell ?? {}) as Record<string, unknown>
-            return {
-              text: typeof c.text === 'number' ? String(c.text) : rich(c.text),
-              ...(c.header === true ? { header: true } : {}),
-              ...(typeof c.colSpan === 'number' && c.colSpan > 1 ? { colSpan: Math.min(100, Math.floor(c.colSpan)) } : {}),
-              ...(typeof c.rowSpan === 'number' && c.rowSpan > 1 ? { rowSpan: Math.min(100, Math.floor(c.rowSpan)) } : {}),
-              ...(c.align === 'left' || c.align === 'center' || c.align === 'right' ? { align: c.align } : {}),
-              ...(typeof c.shading === 'string' ? { shading: c.shading } : {}),
-            }
-          }),
-        )
-        if (rows.length) out.push({ type: 'table', rows, format: fmt(b.format) })
-        break
-      }
-      case 'pageBreak':
-        out.push({ type: 'pageBreak' })
-        break
-      case 'divider':
-        out.push({ type: 'divider' })
-        break
-    }
-  }
-  return out
-}
-
-type PatchOp = 'replace' | 'insertAfter' | 'insertBefore' | 'delete'
-interface ExamPatch {
-  op: PatchOp
-  /** vị trí khối cấp cao nhất (id `k<vị trí>`) */
-  index: number
-  blocks: ExamBlock[]
-}
-
-/** Các mục patch: {op, id, block|blocks}; thiếu op = thay khối (dạng cũ). Mục sai thì bỏ. */
-function sanitizePatches(raw: unknown): ExamPatch[] {
-  if (!Array.isArray(raw)) return []
-  const out: ExamPatch[] = []
-  for (const item of raw) {
-    if (!item || typeof item !== 'object') continue
-    const p = item as Record<string, unknown>
-    const index = typeof p.id === 'string' ? keyIndex(p.id) : -1
-    if (index < 0) continue
-    const op: PatchOp =
-      p.op === 'insertAfter' || p.op === 'insertBefore' || p.op === 'delete' ? p.op : 'replace'
-    if (op === 'delete') {
-      out.push({ op, index, blocks: [] })
-      continue
-    }
-    const list = Array.isArray(p.blocks) ? p.blocks : p.block ? [p.block] : []
-    const blocks = sanitizeBlocks(expandFigures(list))
-    if (blocks.length) out.push({ op, index, blocks })
-  }
-  return out
-}
-
-/** Bản chữ của các khối (khi không áp được vào đề thì hiện trong chat để giáo viên vẫn dùng được). */
-function blocksPlain(blocks: ExamBlock[]): string {
-  const lines: string[] = []
-  for (const b of blocks) {
-    if (b.type === 'question') {
-      lines.push(`**Câu ${b.no}.** ${plainText(b.text)}`)
-      for (const o of b.options) lines.push(`${o.label}. ${plainText(o.text)}`)
-    } else if (b.type === 'essay') {
-      lines.push(`**Bài ${b.no}.** ${plainText(b.text)}`)
-      for (const s of b.sub ?? []) lines.push(plainText(s))
-    } else if (b.type === 'heading' || b.type === 'title') lines.push(`**${plainText(b.text)}**`)
-    else if (b.type === 'paragraph' || b.type === 'student') lines.push(plainText(b.text))
-    else if (b.type === 'bullets') for (const it of b.items) lines.push(`- ${plainText(it)}`)
-    else if (b.type === 'answerKey') lines.push(b.items.map((it) => `${it.no}. ${plainText(it.answer)}`).join('; '))
-    else if (b.type === 'rubric') for (const it of b.items) lines.push(`${it.label} ${plainText(it.text)}`)
-  }
-  return lines.filter((l) => l.trim()).join('\n\n')
-}
-
-/** Gom text của một node TipTap (để tóm tắt tài liệu cho AI). */
-function nodeText(node: JSONContent): string {
-  if (node.type === 'text') return node.text ?? ''
-  // công thức nằm ở attrs, không có node text: thiếu nhánh này thì AI thấy "Giải hệ phương trình … là" mà mất hệ phương trình
-  if (node.type === 'inlineMath' || node.type === 'blockMath') return `$${String(node.attrs?.latex ?? '')}$`
-  if (node.type === 'image') return '[hình]'
-  return (node.content ?? []).map(nodeText).join(' ')
 }
 
 export default function ComposeDoc() {
@@ -643,36 +350,7 @@ export default function ComposeDoc() {
     }
   }, [activeId, contents, tabs])
 
-  /**
-   * Bản tóm tắt đề cho AI: mỗi khối cấp cao nhất một dòng `[k<vị trí>] loại: trích đoạn`.
-   * Id là vị trí khối (`blockKey`) để model patch đúng khối; giới hạn 80 dòng / 320 ký tự mỗi dòng,
-   * công thức giữ dạng $LaTeX$. Câu giáo viên nhắc tới được gửi nguyên văn riêng (`focusNote`).
-   */
-  const documentDigest = useMemo(() => {
-    if (!activeId) return undefined
-    const json = contents[activeId]
-    const nodes = json?.content ?? []
-    if (!nodes.length) return undefined
-    const lines: string[] = []
-    for (const [index, node] of nodes.entries()) {
-      const type = node.type ?? ''
-      if (type === 'paragraph' && !node.content?.length) continue
-      const id = blockKey(index)
-      const shortType = type.startsWith('exam')
-        ? type[4].toLowerCase() + type.slice(5)
-        : type
-      // 320 ký tự: câu hỏi kèm công thức + 4 phương án vẫn đủ để AI viết lời giải / sửa đúng chỗ
-      const text = nodeText(node).replace(/\s+/g, ' ').trim().slice(0, 320)
-      // số câu: giáo viên nói "câu 4" thì AI phải biết khối nào là câu 4 (trước đây thiếu → sửa nhầm câu 1)
-      const no = (type === 'examQuestion' || type === 'examEssay') && node.attrs?.no != null ? ` ${type === 'examEssay' ? 'Bài' : 'Câu'} ${node.attrs.no}` : ''
-      lines.push(`- [${id}] ${shortType}${no}${text ? `: ${text}` : ''}`)
-      if (lines.length >= 80) {
-        lines.push('… (còn nữa)')
-        break
-      }
-    }
-    return lines.join('\n')
-  }, [activeId, contents])
+  const documentDigest = useMemo(() => examDigest(activeId ? contents[activeId] : undefined), [activeId, contents])
 
   const activeContent = useMemo<JSONContent>(
     () => contents[activeId ?? ''] ?? { type: 'doc', content: [] },
@@ -799,11 +477,6 @@ export default function ComposeDoc() {
     void import('@/examEditor/exportBlocks').then(({ printDoc }) => printDoc(activeDoc, { landscape: pageSetup.orientation === 'landscape', paper: paperCm(pageSetup), margins: marginsOf(pageSetup), pageNumber: pageSetup.pageNumber, header: pageSetup.header, footer: pageSetup.footer }))
   }, [activeDoc, pageSetup])
 
-  /**
-   * AI trả về JSON đề → áp theo `action` (replace / append / patch), trả câu báo lại cho chat.
-   * Không phải JSON (trả lời thường) → undefined. Trông như sửa đề mà không áp được → `failed`
-   * kèm bản chữ của phần AI viết (nếu đọc được) để giáo viên vẫn dùng được.
-   */
   // hoàn tác ngay sau khi AI sửa đề = tín hiệu AI làm chưa đúng ý (bảng ai_feedback)
   useEffect(() => {
     if (!editor) return
@@ -818,101 +491,22 @@ export default function ComposeDoc() {
   }, [editor])
 
   const handleAiResult = useCallback(
-    (text: string): AiApplyResult | undefined => {
-      if (!activeId || !editor || editor.isDestroyed) return undefined
-      const looksJson = /^\s*(```(?:json)?\s*)?[[{]/.test(text) && !/^\s*\[[^\]\n]+\]\(/.test(text)
-      const FAIL_JSON = 'AI trả kết quả bị lỗi định dạng nên chưa đưa vào đề được.'
-      let raw: AiExamEnvelope
-      try {
-        raw = extractJson<AiExamEnvelope>(text)
-      } catch {
-        // AI trả lời tự do — không phải JSON thì bỏ qua, người dùng đọc trong panel
-        return looksJson ? { text: FAIL_JSON, failed: true } : undefined
-      }
-      if (!raw || typeof raw !== 'object') return looksJson ? { text: FAIL_JSON, failed: true } : undefined
-
-      const say = typeof raw.say === 'string' ? raw.say.trim().slice(0, 1200) : ''
-      const blocks = sanitizeBlocks(expandFigures(raw.blocks))
-      const patches = sanitizePatches(raw.patch)
-      const hasPlot = (list: ExamBlock[]) => list.some((b) => (b.type === 'paragraph' || b.type === 'question') && Array.isArray(b.text) && b.text.some((s) => s.image?.plot))
-      if (hasPlot(blocks) || patches.some((p) => hasPlot(p.blocks)))
+    (text: string, allowReplace: boolean): AiApplyResult => {
+      const current = useComposeStore.getState()
+      if (!activeId || !editor || editor.isDestroyed || current.activeId !== activeId || current.contents[activeId] !== contents[activeId])
+        return { text: 'Đề đã thay đổi trong khi AI xử lý. Hãy gửi lại yêu cầu.', failed: true, retryable: false }
+      return applyExamReply(editor, text, allowReplace, (figure) => {
+        const ti = tools?.ti
+        const doc = ti?.figureDoc(figure)
+        return doc ? ti?.figureImageAttrs(doc) : undefined
+      }, () => {
         setTimeout(() => void loadTools().then(({ ti }) => ti.pngifyToolImages(editor)), 0)
-      const warn = typeof raw.warning === 'string' && raw.warning.trim() ? `\n\nLưu ý: ${raw.warning.trim().slice(0, 300)}` : ''
-      const action =
-        raw.action === 'append' || raw.action === 'patch' || raw.action === 'replace'
-          ? raw.action
-          : patches.length
-            ? 'patch'
-            : blocks.length
-              ? 'replace'
-              : 'none'
-      const done = (line: string) => ({ text: say || `${line}${warn}` })
-      // phần AI viết mà không áp được: hiện thành chữ trong chat
-      const fallback = (why: string): AiApplyResult => {
-        const plain = blocksPlain([...blocks, ...patches.flatMap((p) => p.blocks)])
-        return { text: `${say ? `${say}\n\n` : ''}${why}${plain ? `\n\n${plain}` : ''}`, failed: true }
-      }
-      try {
-        if (action === 'replace' && blocks.length) {
-          editor.commands.setContent(blocksToTipTap(blocks))
-          // setContent thay cả tài liệu nên selection cũ được map lại tuỳ vị trí
-          // → có thể rơi vào khối bất kỳ. Đặt lại con trỏ về đầu đề.
-          // lấy lớp Selection từ chính editor (không import runtime ProseMirror vào trang chung)
-          const Sel = editor.state.selection.constructor as typeof Selection
-          editor.commands.setTextSelection(Sel.near(editor.state.doc.resolve(1)).from)
-          const name = typeof raw.name === 'string' ? raw.name.trim().slice(0, 120) : ''
-          const tab = useComposeStore.getState().tabs.find((t) => t.id === activeId)
-          if (name && tab && (!tab.title.trim() || tab.title === 'Đề thi mới')) renameTab(activeId, name)
-          return say ? { text: `${say}${warn}` } : done('Mình soạn xong đề rồi, bạn xem qua nhé.')
-        }
-        if (action === 'append' && blocks.length) {
-          const content = blocksToTipTap(blocks).content ?? []
-          editor.chain().focus().insertContentAt(editor.state.doc.content.size, content).run()
-          return done('Mình thêm vào cuối đề rồi, bạn xem nhé.')
-        }
-        if (action === 'patch' && patches.length) {
-          const { state, view } = editor
-          const tr = state.tr
-          const count = tr.doc.childCount
-          // vị trí lớn trước để vị trí nhỏ hơn không bị lệch; cùng khối: chèn sau → thay/xoá → chèn trước
-          const rank: Record<PatchOp, number> = { insertAfter: 0, replace: 1, delete: 1, insertBefore: 2 }
-          const ops = patches
-            .filter((p) => p.index < count)
-            .sort((a, b) => b.index - a.index || rank[a.op] - rank[b.op])
-          const touched = new Set<number>()
-          for (const p of ops) {
-            // mỗi khối chỉ thay/xoá một lần (AI trả trùng thì lấy mục đầu)
-            if ((p.op === 'replace' || p.op === 'delete') && touched.has(p.index)) continue
-            let from = 0
-            for (let i = 0; i < p.index; i++) from += tr.doc.child(i).nodeSize
-            const to = from + tr.doc.child(p.index).nodeSize
-            const nodes = (blocksToTipTap(p.blocks).content ?? []).map((j) => state.schema.nodeFromJSON(j))
-            if (p.op === 'delete') {
-              tr.delete(from, to)
-            } else if (p.op === 'replace') {
-              if (!nodes.length) continue
-              tr.replaceWith(from, to, nodes)
-            } else {
-              if (!nodes.length) continue
-              tr.insert(p.op === 'insertAfter' ? to : from, nodes)
-            }
-            if (p.op === 'replace' || p.op === 'delete') touched.add(p.index)
-          }
-          if (tr.docChanged) {
-            view.dispatch(tr.scrollIntoView())
-            return done('Mình sửa xong rồi, bạn xem lại nhé.')
-          }
-          return fallback('Không tìm thấy chỗ cần sửa trong đề.')
-        }
-      } catch (err) {
-        // Không áp được (block lạ, vị trí sai…) — log để chẩn đoán, panel hiện nút Thử lại
-        console.error('[AI] không áp được kết quả vào đề', err)
-        return fallback('Chưa đưa được phần này vào đề.')
-      }
-      if (say) return { text: `${say}${warn}` }
-      return looksJson ? fallback('AI chưa đưa ra thay đổi nào cho đề.') : undefined
+      }, (name) => {
+        const tab = current.tabs.find((t) => t.id === activeId)
+        if (tab && (!tab.title.trim() || tab.title === 'Đề thi mới')) renameTab(activeId, name)
+      })
     },
-    [activeId, editor, renameTab],
+    [activeId, contents, editor, renameTab],
   )
 
   /** Chèn khối mẫu — đường chèn chung xem `insertBlockTemplate` (templates.ts). */

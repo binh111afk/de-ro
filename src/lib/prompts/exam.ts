@@ -47,10 +47,10 @@ export function examSystemPrompt(documentDigest?: string, request = '', fromSour
     '- "append": thêm câu/ý/phần vào cuối đề → "blocks" chỉ gồm khối cần thêm.\n' +
     '- "replace": CHỈ khi giáo viên bảo soạn đề mới hoặc viết lại toàn bộ đề → "blocks" là toàn bộ đề.\n' +
     '- "name" (chỉ khi "replace"): tên ngắn để lưu đề, theo bài/chủ đề + môn lớp, ≤ 60 ký tự, vd. "Hệ thức lượng trong tam giác vuông – Toán 9".\n' +
-    '- "say": nói ngắn đã làm gì, đã hiểu yêu cầu thế nào nếu yêu cầu có thể hiểu nhiều cách. Không lặp lại yêu cầu. ' +
+    '- "say": dùng từ giáo viên quen dùng, không nhắc tên trường nội bộ như figure hay lặp nội dung trong warning. Nói ngắn đã làm gì, đã hiểu yêu cầu thế nào nếu yêu cầu có thể hiểu nhiều cách. Không lặp lại yêu cầu. ' +
     'Viết bằng Markdown cho dễ đọc: **đậm** cho con số / tên phần chính, từ 3 ý trở lên thì xuống dòng gạch đầu dòng "- " (mỗi ý một dòng), không viết dồn thành một đoạn dài. Không dùng tiêu đề #.\n' +
-    'Khi giáo viên chỉ hỏi/tư vấn, không cần sửa tài liệu: trả lời bằng văn bản thường, KHÔNG trả JSON.\n\n' +
-    'CÁC LOẠI KHỐI: header, title, meta, student, heading, paragraph, bullets, grid, question, essay, answerKey, rubric, pageBreak, divider.\n' +
+    'Hỏi cách làm, lý do hoặc xin giải thích: chỉ trả lời trong chat. Chỉ chèn lời giải khi giáo viên yêu cầu đưa vào đề.\n\n' +
+    'CÁC LOẠI KHỐI: header, title, meta, student, heading, paragraph, bullets, grid, question, essay, answerKey, rubric, table, pageBreak, divider.\n' +
     'CẤU TRÚC TỪNG LOẠI KHỐI (đúng tên field, không thêm field lạ):\n' +
     '- {"type":"header","left":"SỞ GIÁO DỤC VÀ ĐÀO TẠO …\\nTRƯỜNG THPT …\\nĐề chính thức","right":"ĐỀ KHẢO SÁT CHẤT LƯỢNG ĐẦU NĂM\\nNăm học 2025 – 2026\\nMôn: Toán – Lớp 9\\nThời gian làm bài: 90 phút"}\n' +
     '- {"type":"title","text":"ĐỀ KIỂM TRA …"}\n' +
@@ -60,6 +60,7 @@ export function examSystemPrompt(documentDigest?: string, request = '', fromSour
     '- {"type":"paragraph","text":"..."}\n' +
     '- {"type":"bullets","items":["ý 1","ý 2"]}\n' +
     '- {"type":"grid","cols":2,"cells":["cột 1","cột 2"]}\n' +
+    '- {"type":"table","rows":[["Khoảng điểm","$[5;6)$"],["Tần số",3]]} (bảng số liệu đứng ngay sau câu dùng bảng).\n' +
     '- {"type":"question","no":1,"text":"Nội dung câu hỏi","options":[{"label":"A","text":"..."},{"label":"B","text":"..."},{"label":"C","text":"..."},{"label":"D","text":"..."}]}\n' +
     '- Câu có hình: {"type":"question","no":5,"text":"Cho hàm số $y=f(x)$ có bảng biến thiên như hình bên dưới. Hàm số đạt cực đại tại","figure":{"kind":"vartable","expr":"x^3-3x+1","fname":"y"},"options":[…]}\n' +
     '- {"type":"question","kind":"tf","no":13,"text":"Lời dẫn của câu đúng/sai","options":[{"label":"a","text":"mệnh đề a"},{"label":"b","text":"mệnh đề b"},{"label":"c","text":"mệnh đề c"},{"label":"d","text":"mệnh đề d"}]}  (câu đúng/sai: đúng 4 ý a, b, c, d; nhãn chữ thường)\n' +
@@ -90,16 +91,17 @@ export function examSystemPrompt(documentDigest?: string, request = '', fromSour
     'Ví dụ đề Toán: 12 câu nhiều lựa chọn, 4 câu đúng/sai, 6 câu trả lời ngắn. Chỉ dùng kind "tf"/"short" khi người dùng yêu cầu dạng đó hoặc đề theo định dạng này.\n' +
     '- Số câu "no" của các block question đánh liên tục 1, 2, 3… trong cả đề, bất kể dạng (không đánh lại từ 1 ở mỗi phần). Câu tự luận (essay) đánh số riêng.\n' +
     '- answerKey phải có đủ mọi câu question: nhiều lựa chọn = một chữ cái ("B"); đúng/sai = chuỗi Đ/S theo thứ tự ý a b c d, ví dụ "ĐSĐS"; trả lời ngắn = con số, dấu thập phân là dấu phẩy ("-1,5"). Đáp án tự luận để trong rubric.\n' +
-    '- Kết thúc đề: answerKey (bảng đáp án trắc nghiệm) và/hoặc rubric (thang điểm tự luận).\n' +
+    '- Kết thúc đề: answerKey và/hoặc rubric. Khi thay/xoá câu, cập nhật đáp án liên quan. Khi thay/xoá bài tự luận, patch mục của bài trong rubric hiện có, giữ các bài khác, không chèn thêm hướng dẫn chấm trùng.\n' +
     '- LỜI GIẢI và HƯỚNG DẪN GIẢI là hai thứ khác nhau, làm ĐÚNG chữ giáo viên dùng, tiêu đề cũng ghi đúng chữ đó:\n' +
     '  • "Lời giải" / "lời giải chi tiết" / "giải" = bài giải hoàn chỉnh như học sinh trình bày được trọn điểm: gọi tên/đặt ẩn, viết từng phép biến đổi và phép tính với SỐ CỤ THỂ, ' +
     'kết luận đáp số (kèm đơn vị, làm tròn đúng yêu cầu), trắc nghiệm thì chốt "Chọn B". KHÔNG viết câu chỉ dẫn kiểu "ta cần…", "áp dụng công thức…", "học sinh tính…", "gợi ý:".\n' +
     '  • "Hướng dẫn giải" / "gợi ý" = chỉ nêu ngắn hướng đi và công thức then chốt, không cần tính hết. Chỉ dùng khi giáo viên nói đúng chữ đó.\n' +
     '  • Mỗi câu một tiêu đề "Lời giải câu N" (hoặc "Hướng dẫn giải câu N") rồi các paragraph, mỗi bước một dòng; đặt ngay sau câu đó trừ khi giáo viên bảo dồn cuối đề.\n' +
     '- Công thức toán viết LaTeX trong $...$, không dùng ảnh cho công thức.\n' +
+    '- Đoạn mã dùng dấu xuống dòng và giữ khoảng trắng thụt lề, có thể bọc khối mã Markdown.\n' +
     '- HÌNH VẼ: câu nào cần hình (đồ thị, bảng biến thiên, bảng xét dấu, hình học, biểu đồ số liệu, mạch điện, sơ đồ cây, …) ' +
     'thì thêm field "figure" vào block question/essay/paragraph đó; app tự vẽ bằng công cụ và đặt hình ngay dưới đề bài (trước phương án A–D).' +
-    'Không mô tả hình bằng chữ kiểu "(hình vẽ bên)" mà không kèm figure. Hình phải khớp số liệu trong đề và không lộ đáp án. ' +
+    'Không mô tả hình bằng chữ kiểu "(hình vẽ bên)" mà không kèm figure. Hình chỉ ghi dữ kiện đã cho, khớp số liệu trong đề. Bỏ nhãn, tỉ lệ hoặc lực mà đề yêu cầu tìm. ' +
     'Mỗi khối tối đa một figure. ' +
     (fromSource
       ? 'Lượt này soạn theo tệp mẫu: câu nào trong tệp mẫu có hình thì câu mới có hình cùng loại; câu mẫu không có hình thì KHÔNG thêm figure (bảng số liệu của câu mẫu vẫn giữ). Không tự thêm câu có hình. Các loại figure:\n'
@@ -110,7 +112,9 @@ export function examSystemPrompt(documentDigest?: string, request = '', fromSour
         'Môn không có hình phù hợp (Văn, Sử, ngoại ngữ…) thì không cần figure. Các loại figure:\n') +
     figureGuideFor(request) +
     '\n' +
-    '- Tiếng Việt chuẩn, số liệu nhất quán, mọi câu phải có đáp án đúng.\n\n' +
+    '- Trước khi trả, tự giải lại từ dữ kiện của đề và hình, đối chiếu bảng đáp án: A–D đúng duy nhất một phương án, kiểm từng ý Đ/S, đáp số và làm tròn. ' +
+    'Bổ sung hằng số, đơn vị, điều kiện/miền xác định cần thiết và sửa dữ kiện mâu thuẫn. Kiểm tổng điểm từng tiêu chí, bỏ câu hoặc bảng trùng. ' +
+    'Dùng nhất quán nội dung và danh pháp GDPT 2018 (trừ khi giáo viên yêu cầu chương trình khác). Khi sửa số liệu, giữ nguyên các giá trị không được yêu cầu đổi.\n\n' +
     (documentDigest
       ? 'TÀI LIỆU HIỆN TẠI (mỗi dòng "[id] loại khối: nội dung rút gọn" — dùng đúng id khi patch):\n' +
         documentDigest +
@@ -134,7 +138,8 @@ export const ASK_ONLY_SYSTEM =
 export interface ExamTaskInput extends SourceInput {
   /** yêu cầu của người dùng ở lượt này */
   text: string
-  intent?: 'chat'
+  intent?: 'doc' | 'chat'
+  revising?: boolean
   /** bản rút gọn tài liệu hiện tại, mỗi dòng "[id] loại: nội dung" */
   digest?: string
   contextSummary?: string
@@ -150,7 +155,8 @@ export function buildExamSystem(i: ExamTaskInput): string {
   const ctx = i.contextSummary
   const system =
     examSystemPrompt(i.digest, `${i.text}\n${ctx ?? ''}`, i.sourceTier === 1 && !!i.sources?.length) +
-    (i.intent === 'chat' ? CHAT_MARKDOWN : '') +
+    (i.intent === 'chat' ? '\nLượt này chỉ trả lời trong chat, không trả lệnh sửa đề.' + CHAT_MARKDOWN : i.intent === 'doc' ? '\nLượt này trả JSON theo hợp đồng trên.' : '') +
+    (i.revising ? '\nGiữ đề hiện tại. Chỉ dùng patch hoặc append cho yêu cầu này.' : '') +
     (i.ask ? ASK_RULE : '') +
     (ctx ? `\nTài liệu hiện tại: ${ctx}` : '')
   return system + sourceSection(i) + webSection(i.webFound) + (i.think ? THINK_VI : '')

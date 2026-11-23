@@ -9,6 +9,7 @@
  * (`string` = plain text, `Span[]` = có marks). Chuyển đổi giữ nguyên marks
  * và `FormatAttrs` (align/lineHeight/indent/space/borders/shading).
  */
+import { isCodeSpan, splitExamCode } from '../lib/examCode'
 import type { JSONContent } from '@tiptap/core'
 import type { ExamBlock, FormatAttrs, Mark, MarkType, RichText, Span, TableCellData } from '@/data/docTypes'
 import { TF_PARTS, groupAnswers, gridRows, tfParts } from '../lib/answerKey'
@@ -470,9 +471,9 @@ function splitMath(text: string, marks?: JSONContent['marks']): JSONContent[] {
 }
 
 function richNodes(rt: RichText): JSONContent[] {
-  if (typeof rt === 'string') return rt ? splitMath(rt) : []
+  const spans = typeof rt === 'string' ? [{ text: rt }] : rt
   const out: JSONContent[] = []
-  for (const s of rt) {
+  for (const s of spans.flatMap(splitExamCode)) {
     if (s.image) {
       out.push({ type: 'image', attrs: { src: s.image.src, alt: s.image.alt ?? null, width: s.image.width ?? null, plot: s.image.plot ?? null } })
       continue
@@ -480,7 +481,8 @@ function richNodes(rt: RichText): JSONContent[] {
     const marks = s.marks?.length
       ? s.marks.map((m) => ({ type: m.type, ...(m.attrs ? { attrs: m.attrs } : {}) }))
       : undefined
-    out.push(...splitMath(s.text, marks))
+    if (s.text && isCodeSpan(s)) out.push({ type: 'text', text: s.text, marks })
+    else out.push(...splitMath(s.text, marks))
   }
   return out
 }

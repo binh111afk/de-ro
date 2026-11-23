@@ -31,14 +31,14 @@ function widthPt(text: string): number {
   return w + (text.length - at) * CHAR_PT
 }
 
-export function estimateChoiceCols(options: RichText[]): number {
+export function estimateChoiceCols(options: RichText[], available = AVAILABLE_PT, widthFactor = 1): number {
   if (options.length < 2) return 1
   const texts = options.map(plain)
   // xuống dòng cứng hoặc công thức dạng khối: một phương án cần cả hàng
   if (texts.some((t) => t.includes('\n') || t.includes('$$'))) return 1
   const widths = texts.map(widthPt)
   for (let n = Math.min(options.length, MAX_COLS); n >= 2; n--) {
-    if (options.length % n === 0 && widths.every((w) => w <= AVAILABLE_PT / n)) return n
+    if (options.length % n === 0 && widths.every((w) => w * widthFactor <= available / n)) return n
   }
   return 1
 }

@@ -1,3 +1,4 @@
+import { CODE_PATTERN } from './examCode'
 import katex from 'katex'
 import 'katex/contrib/mhchem' // \ce{...} cho phương trình hoá học
 import 'katex/dist/katex.min.css'
@@ -14,12 +15,19 @@ export function renderMath(input: string): string {
 
   // split on $$...$$ first, then $...$
   // ảnh chèn giữa chữ (đề tương tác): ![alt|rộng%](src)
-  const token = /(\$\$[\s\S]*?\$\$|\$[^$\n]+?\$|!\[[^\]\n]*\]\((?:https?:|data:image\/|\/)[^)\s]+\))/g
+  const mathOrImage = /\$\$[\s\S]*?\$\$|\$[^$\n]+?\$|!\[[^\]\n]*\]\((?:https?:|data:image\/|\/)[^)\s]+\)/.source
+  const token = new RegExp(`${mathOrImage}|${CODE_PATTERN}`, 'g')
   let match: RegExpExecArray | null
 
   while ((match = token.exec(input)) !== null) {
     if (match.index > cursor) out.push(inlineMarks(escapeHtml(input.slice(cursor, match.index))))
     const raw = match[0]
+    const code = match[1] ?? match[2]
+    if (code !== undefined) {
+      out.push(`<code style="white-space:pre-wrap;tab-size:4;font-family:Consolas,monospace">${escapeHtml(code)}</code>`)
+      cursor = match.index + raw.length
+      continue
+    }
     if (raw.startsWith('![')) {
       out.push(inlineImage(raw))
       cursor = match.index + raw.length

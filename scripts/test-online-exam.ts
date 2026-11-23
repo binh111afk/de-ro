@@ -60,4 +60,23 @@ assert.equal(back.questions[0].answer, 'ĐSĐS')
 assert.equal(back.questions[0].explanation, 'Vì …')
 assert.equal(back.meta.title, 'Đề thử')
 
+const q = (no: number, kind?: 'tf' | 'short') => ({
+  type: 'question' as const, no, kind, text: `Câu ${no}`, options: [],
+})
+const fallback = docToExam({ ...doc, online: undefined, blocks: [
+  ...Array.from({ length: 12 }, (_, i) => q(i + 1)), q(13, 'tf'), q(14, 'tf'),
+] }, 'fallback')
+assert.deepEqual(fallback.sections.map((s) => s.points), [8, 2])
+const explicit = docToExam({ ...doc, online: undefined, blocks: [
+  { type: 'heading', level: 1, text: 'PHẦN I. Trắc nghiệm (3,00 điểm)' },
+  { ...q(1), text: '(1 điểm) Tính `f(1)`' }, q(2),
+  { type: 'heading', level: 1, text: 'PHẦN II. Đúng/sai (4 điểm)' }, q(3, 'tf'),
+  { type: 'heading', level: 1, text: 'PHẦN III. Trả lời ngắn (3 điểm)' },
+  ...Array.from({ length: 7 }, (_, i) => q(i + 4, 'short')),
+] }, 'explicit')
+assert.deepEqual(explicit.sections.map((s) => s.points), [3, 4, 3])
+assert.deepEqual(explicit.sections[0].questions.map((b) => b.points), [1, 2])
+assert.equal(explicit.sections[1].questions[0].points, 4)
+assert.equal(Math.round(explicit.sections[2].questions.reduce((n, b) => n + b.points, 0) * 100), 300)
+
 console.log('test-online-exam: OK')
