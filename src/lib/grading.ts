@@ -22,14 +22,26 @@ export const SHORT_MAX_CHARS = 4
  * Trả `null` khi không đọc được đủ `n` ý.
  */
 export function parseTrueFalse(raw: string | undefined, n: number): boolean[] | null {
-  if (!raw) return null
-  const letters = raw
-    .toUpperCase()
+  if (!raw || n <= 0) return null
+  // Bỏ nhãn ý "a)", "b.", "c-" trước khi đếm ký tự đáp án để "d)" không lẫn thành chữ D.
+  const stripped = raw.replace(/(?:^|[\s,;·|/]+)(?:[a-d]\s*[.):–-]|[A-D][.)])\s*/g, ' ').trim()
+  const upper = stripped.toUpperCase()
+  const vi = upper
     .replace(/ĐÚNG/g, 'Đ')
     .replace(/SAI/g, 'S')
     .replace(/[^ĐS]/g, '')
-  if (letters.length !== n) return null
-  return [...letters].map((c) => c === 'Đ')
+  if (vi.length === n) return [...vi].map((c) => c === 'Đ')
+  const ds = upper.replace(/DUNG/g, 'D').replace(/SAI/g, 'S')
+  if (!/[^DS\s,;.\-–—/|()]/.test(ds)) {
+    const letters = ds.replace(/[^DS]/g, '')
+    if (letters.length === n) return [...letters].map((c) => c === 'D')
+  }
+  const tf = upper.replace(/TRUE/g, 'T').replace(/FALSE/g, 'F')
+  if (!/[^TF\s,;.\-–—/|()]/.test(tf)) {
+    const letters = tf.replace(/[^TF]/g, '')
+    if (letters.length === n) return [...letters].map((c) => c === 'T')
+  }
+  return null
 }
 
 /** Ghi bài làm đúng/sai thành chuỗi: Đ, S, hoặc "_" cho ý chưa chọn. */

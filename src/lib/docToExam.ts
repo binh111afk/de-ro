@@ -1,9 +1,10 @@
 import { isCodeSpan, splitExamInline } from './examCode'
-import type { EssayBlock, ExamDoc, QuestionBlock, RichText, TableBlock } from '@/data/docTypes'
+import type { EssayBlock, ExamBlock, ExamDoc, QuestionBlock, RichText, Span, TableBlock } from '@/data/docTypes'
 import type { Exam, Question, QuestionImage, Section, Subject } from '@/data/types'
 import { mathTableImageSrc, renderExamTableSvg } from './table'
 import { svgDataUrl } from './plot'
 import { formatTrueFalse, normalizeShort, parseTrueFalse } from './grading.js'
+import { parseExamText } from './parseExamText'
 
 /**
  * Chữ của một đoạn rich text cho đề tương tác: giữ công thức `$…$`, đậm/nghiêng/gạch chân
@@ -186,6 +187,92 @@ function sourceScores(doc: ExamDoc): Map<ScoredBlock, number> {
   return scores
 }
 
+const SUP_CHARS: Record<string, string> = {
+  '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹',
+  '+': '⁺', '-': '⁻', '=': '⁼', '(': '⁽', ')': '⁾', n: 'ⁿ', i: 'ⁱ',
+}
+const SUB_CHARS: Record<string, string> = {
+  '0': '₀', '1': '₁', '2': '₂', '3': '₃', '4': '₄', '5': '₅', '6': '₆', '7': '₇', '8': '₈', '9': '₉',
+  '+': '₊', '-': '₋', '=': '₌', '(': '₍', ')': '₎',
+}
+
+function isColorEmph(hex: unknown): boolean {
+  if (typeof hex !== 'string') return false
+  const m = hex.match(/^#?([0-9a-f]{6})$/i)
+  if (!m) return false
+  const c = m[1]
+  const [r, g, b] = [0, 2, 4].map((i) => parseInt(c.slice(i, i + 2), 16))
+  return Math.max(r, g, b) - Math.min(r, g, b) > 40 || Math.max(r, g, b) > 110
+}
+
+function scriptText(text: string, kind: 'super' | 'sub'): string {
+  const map = kind === 'super' ? SUP_CHARS : SUB_CHARS
+  const chars = Array.from(text)
+  if (chars.every((c) => c === ' ' || c in map)) return chars.map((c) => map[c] ?? c).join('')
+  return `${kind === 'super' ? '^' : '_'}{${text}}`
+}
+
+/** Chuyển tài liệu chỉ gồm đoạn văn/bảng (như nhập từ .docx vào trình soạn) sang câu hỏi tương tác qua `parseExamText`. */
+function blocksToParsedQuestions(blocks: ExamBlock[]): Question[] {
+  const images: string[] = []
+  const addImg = (src: string) => {
+    let idx = images.indexOf(src)
+    if (idx < 0) { idx = images.length; images.push(src) }
+    return `\uE002${idx}\uE003`
+  }
+  const rtMarked = (rt: RichText | undefined): string => {
+    if (!rt) return ''
+    const spans: Span[] = typeof rt === 'string' ? [{ text: rt }] : rt
+    return spans.map((s) => {
+      if (s.image?.src) return addImg(mathTableImageSrc(s.image.src, s.image.plot))
+      let txt = s.text
+      if (!txt) return ''
+      let mask = 0
+      let script: 'super' | 'sub' | null = null
+      for (const m of s.marks ?? []) {
+        if (m.type === 'bold') mask |= 1
+        else if (m.type === 'italic') mask |= 2
+        else if (m.type === 'underline') mask |= 4
+        else if (m.type === 'textStyle' && isColorEmph(m.attrs?.color)) mask |= 8
+        else if (m.type === 'highlight') mask |= 16
+        else if (m.type === 'strike') mask |= 32
+        else if (m.type === 'super') script = 'super'
+        else if (m.type === 'sub') script = 'sub'
+      }
+      if (script && txt.trim()) txt = scriptText(txt, script)
+      if (!mask) return txt
+      const open = String.fromCharCode(0xe010 + mask)
+      return txt.split('\n').map((part) => (/\S/.test(part) ? `${open}${part}\uE001` : part)).join('\n')
+    }).join('')
+  }
+
+  const lines: string[] = []
+  for (const b of blocks) {
+    if (b.type === 'title' || b.type === 'heading' || b.type === 'paragraph' || b.type === 'student') {
+      lines.push(rtMarked(b.text))
+    } else if (b.type === 'bullets') {
+      for (const it of b.items) lines.push(rtMarked(it))
+    } else if (b.type === 'table') {
+      const hasLayoutQ = b.rows.some((row) => row.length >= 2 && row.some((c) => /^\s*(?:Câu|Bài|Question)\s*\d+/i.test(toPlain(c.text))) && row.some((c) => (typeof c.text !== 'string' && c.text.some((s) => s.image)) || toPlain(c.text).length > 80))
+      if (hasLayoutQ) {
+        for (const row of b.rows) for (const c of row) lines.push(rtMarked(c.text))
+      } else {
+        for (const row of b.rows) {
+          if (row.length >= 2) {
+            const cells = row.map((c) => rtMarked(c.text).replace(/\n+/g, ' ').trim())
+            if (cells.some(Boolean)) lines.push(`\uE006${cells.join('\uE005')}`)
+          } else if (row[0]) {
+            lines.push(rtMarked(row[0].text))
+          }
+        }
+      }
+    } else if (b.type === 'columns') {
+      for (const c of b.cols) lines.push(rtMarked(c))
+    }
+  }
+  return parseExamText(lines.join('\n'), images).questions
+}
+
 /** Số La Mã cho tên phần (tối đa 4 phần: trắc nghiệm, đúng/sai, trả lời ngắn, tự luận). */
 const ROMAN = ['I', 'II', 'III', 'IV']
 
@@ -240,71 +327,80 @@ export function docToExam(doc: ExamDoc, id: string): Exam {
     return { ...content, prompt: [content.prompt, ...tableImages(block)].filter(Boolean).join('\n') }
   }
   const questionBlocks = doc.blocks.filter((b): b is QuestionBlock => b.type === 'question')
+  const essayBlocks = doc.blocks.filter((b): b is EssayBlock => b.type === 'essay')
+  const fallback = questionBlocks.length === 0 && essayBlocks.length === 0 ? blocksToParsedQuestions(doc.blocks) : null
   const mcqBlocks = questionBlocks.filter((b) => b.kind !== 'tf' && b.kind !== 'short')
   const tfBlocks = questionBlocks.filter((b) => b.kind === 'tf')
   const shortBlocks = questionBlocks.filter((b) => b.kind === 'short')
-  const essayBlocks = doc.blocks.filter((b): b is EssayBlock => b.type === 'essay')
   const scores = sourceScores(doc)
   const points = (b: ScoredBlock) => (scores.get(b) ?? 0) / 100
 
   // số câu hiển thị chạy liên tục qua trắc nghiệm, đúng/sai, trả lời ngắn (khớp "Câu N" trong trình soạn)
   let counter = 0
-  const mcqs: Question[] = mcqBlocks.map((b, i) => ({
-    id: `${id}-m${i}`,
-    number: ++counter,
-    type: 'trac-nghiem',
-    ...questionContent(b),
-    ...alignOf(b),
-    options: b.options.map((o) => ({ key: o.label, text: toRich(o.text).trim() })),
-    answer: mcqAnswer(b.no),
-    explanation: explain.get(`c${b.no}`) || undefined,
-    points: points(b),
-  }))
+  const mcqs: Question[] = fallback
+    ? fallback.filter((q) => q.type === 'trac-nghiem').map((q, i) => ({ ...q, id: `${id}-m${i}`, number: ++counter }))
+    : mcqBlocks.map((b, i) => ({
+        id: `${id}-m${i}`,
+        number: ++counter,
+        type: 'trac-nghiem',
+        ...questionContent(b),
+        ...alignOf(b),
+        options: b.options.map((o) => ({ key: o.label, text: toRich(o.text).trim() })),
+        answer: mcqAnswer(b.no),
+        explanation: explain.get(`c${b.no}`) || undefined,
+        points: points(b),
+      }))
 
-  const tfs: Question[] = tfBlocks.map((b, i) => {
-    const n = b.options.length
-    const raw = take(b.no, (a) => parseTrueFalse(a, n) !== null)
-    const parsed = parseTrueFalse(raw, n)
-    return {
-      id: `${id}-t${i}`,
-      number: ++counter,
-      type: 'dung-sai',
-      ...questionContent(b),
-      ...alignOf(b),
-      options: b.options.map((o) => ({ key: o.label.toLowerCase(), text: toRich(o.text).trim() })),
-      answer: parsed ? formatTrueFalse(parsed) : undefined,
-      explanation: explain.get(`c${b.no}`) || undefined,
-      points: points(b),
-    }
-  })
+  const tfs: Question[] = fallback
+    ? fallback.filter((q) => q.type === 'dung-sai').map((q, i) => ({ ...q, id: `${id}-t${i}`, number: ++counter }))
+    : tfBlocks.map((b, i) => {
+        const n = b.options.length
+        const raw = take(b.no, (a) => parseTrueFalse(a, n) !== null)
+        const parsed = parseTrueFalse(raw, n)
+        return {
+          id: `${id}-t${i}`,
+          number: ++counter,
+          type: 'dung-sai',
+          ...questionContent(b),
+          ...alignOf(b),
+          options: b.options.map((o) => ({ key: o.label.toLowerCase(), text: toRich(o.text).trim() })),
+          answer: parsed ? formatTrueFalse(parsed) : undefined,
+          explanation: explain.get(`c${b.no}`) || undefined,
+          points: points(b),
+        }
+      })
 
-  const shorts: Question[] = shortBlocks.map((b, i) => {
-    const raw = take(b.no, (a) => NUMERIC.test(a.replace(/\s+/g, '')))
-    return {
-      id: `${id}-s${i}`,
-      number: ++counter,
-      type: 'tra-loi-ngan',
-      ...questionContent(b),
-      ...alignOf(b),
-      answer: raw ? normalizeShort(raw) : undefined,
-      explanation: explain.get(`c${b.no}`) || undefined,
-      points: points(b),
-    }
-  })
+  const shorts: Question[] = fallback
+    ? fallback.filter((q) => q.type === 'tra-loi-ngan').map((q, i) => ({ ...q, id: `${id}-s${i}`, number: ++counter }))
+    : shortBlocks.map((b, i) => {
+        const raw = take(b.no, (a) => NUMERIC.test(a.replace(/\s+/g, '')))
+        return {
+          id: `${id}-s${i}`,
+          number: ++counter,
+          type: 'tra-loi-ngan',
+          ...questionContent(b),
+          ...alignOf(b),
+          answer: raw ? normalizeShort(raw) : undefined,
+          explanation: explain.get(`c${b.no}`) || undefined,
+          points: points(b),
+        }
+      })
 
-  const essays: Question[] = essayBlocks.map((b, i) => {
-    const answer = essayAnswer(b.no)
-    const written = explain.get(`b${b.no}`)
-    return {
-      id: `${id}-e${i}`,
-      number: i + 1,
-      type: 'tu-luan',
-      ...questionContent(b),
-      ...alignOf(b),
-      points: points(b),
-      solution: written ? written.split('\n') : answer ? [answer] : undefined,
-    }
-  })
+  const essays: Question[] = fallback
+    ? fallback.filter((q) => q.type === 'tu-luan' || q.type === 'tu-luan-dong').map((q, i) => ({ ...q, id: `${id}-e${i}`, number: i + 1 }))
+    : essayBlocks.map((b, i) => {
+        const answer = essayAnswer(b.no)
+        const written = explain.get(`b${b.no}`)
+        return {
+          id: `${id}-e${i}`,
+          number: i + 1,
+          type: 'tu-luan',
+          ...questionContent(b),
+          ...alignOf(b),
+          points: points(b),
+          solution: written ? written.split('\n') : answer ? [answer] : undefined,
+        }
+      })
 
   const sections: Section[] = []
   const addSection = (name: string, questions: Question[]) => {

@@ -109,7 +109,7 @@ export default function OnlineBuilder() {
       setQuestions([...questions, ...found])
       if (!item.meta.title.trim()) setMeta({ title: data.title })
       setSelectedId(found[0].id)
-      setNotice(`Đã nhập ${found.length} câu từ "${file.name}"${noAnswer ? `, ${noAnswer} câu chưa có đáp án` : ''}${imageCount ? `, ${imageCount} câu có ảnh` : ''}${extraImages ? ` (${extraImages} ảnh khác chưa gắn được)` : ''}${noPrompt ? `, ${noPrompt} câu có đề bài là hình ảnh (chưa đọc được)` : ''}. Công thức dạng equation của Word không đọc được, hãy kiểm tra lại từng câu.`)
+      setNotice(`Đã nhập ${found.length} câu từ "${file.name}"${noAnswer ? `, ${noAnswer} câu chưa có đáp án` : ''}${imageCount ? `, ${imageCount} câu có ảnh` : ''}${extraImages ? ` (${extraImages} ảnh khác chưa gắn được)` : ''}${noPrompt ? `, ${noPrompt} câu có đề bài là hình ảnh (chưa đọc được)` : ''}.${data.warning ? ` ${data.warning}` : ''}`)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Không nhập được tệp.')
     } finally {

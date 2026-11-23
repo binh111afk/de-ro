@@ -9,6 +9,7 @@ import { extname } from 'node:path'
 import type { TextItem } from 'pdfjs-dist/types/src/display/api'
 import { json, readBody, safeError } from './http.js'
 import { clientIp, guard, isLocal } from './guard.js'
+import { ommlXmlToLatex } from './ommlXml.js'
 
 const MAX_BYTES = 12 * 1024 * 1024
 const MAX_TEXT = 60_000
@@ -52,11 +53,63 @@ function* xmlBlocks(xml: string, tag: string): Generator<{ start: number; end: n
   }
 }
 
+/** Quét khối XML ngoài cùng có đếm độ lồng cho các thẻ lồng nhau (`w:p`, `w:tbl`, `m:oMath`). */
+function* outerXmlBlocks(xml: string, tag: string): Generator<{ start: number; end: number; el: string; inner: string }> {
+  const open = `<${tag}`
+  const close = `</${tag}>`
+  let pos = 0
+  while (pos < xml.length) {
+    const i = xml.indexOf(open, pos)
+    if (i < 0) return
+    if (!tagEnd(xml[i + open.length])) { pos = i + open.length; continue }
+    const gt = xml.indexOf('>', i)
+    if (gt < 0) return
+    if (xml[gt - 1] === '/') { pos = gt + 1; continue }
+    let depth = 1
+    let cur = gt + 1
+    let end = -1
+    let closeStart = -1
+    while (cur < xml.length && depth > 0) {
+      const nextOpen = xml.indexOf(open, cur)
+      const nextClose = xml.indexOf(close, cur)
+      if (nextClose < 0) break
+      if (nextOpen >= 0 && nextOpen < nextClose) {
+        if (!tagEnd(xml[nextOpen + open.length])) { cur = nextOpen + open.length; continue }
+        const og = xml.indexOf('>', nextOpen)
+        if (og < 0) break
+        if (xml[og - 1] !== '/') depth++
+        cur = og + 1
+      } else {
+        depth--
+        if (depth === 0) {
+          closeStart = nextClose
+          end = nextClose + close.length
+          break
+        }
+        cur = nextClose + close.length
+      }
+    }
+    if (end < 0) return
+    yield { start: i, end, el: xml.slice(i, end), inner: xml.slice(gt + 1, closeStart) }
+    pos = end
+  }
+}
+
 /** Thay từng khối `<tag>…</tag>` bằng kết quả của `fn` (tuyến tính). */
 function mapXmlBlocks(xml: string, tag: string, fn: (el: string, inner: string) => string): string {
   let out = ''
   let last = 0
   for (const b of xmlBlocks(xml, tag)) {
+    out += xml.slice(last, b.start) + fn(b.el, b.inner)
+    last = b.end
+  }
+  return out + xml.slice(last)
+}
+
+function mapOuterXmlBlocks(xml: string, tag: string, fn: (el: string, inner: string) => string): string {
+  let out = ''
+  let last = 0
+  for (const b of outerXmlBlocks(xml, tag)) {
     out += xml.slice(last, b.start) + fn(b.el, b.inner)
     last = b.end
   }
@@ -76,14 +129,15 @@ function openTag(xml: string, tag: string): string {
   }
 }
 
-/** Giá trị thuộc tính trong một thẻ mở (thẻ ngắn, regex không lặp lồng). */
+/** Giá trị thuộc tính trong một thẻ mở (thẻ ngắn, hỗ trợ nháy kép và nháy đơn). */
 const attr = (tag: string, name: string): string | undefined => {
-  const at = tag.indexOf(` ${name}="`) >= 0 ? tag.indexOf(` ${name}="`) : tag.search(new RegExp(`\s${name}="`))
-  if (at < 0) return undefined
-  const from = at + name.length + 3
-  const to = tag.indexOf('"', from)
-  return to < 0 ? undefined : tag.slice(from, to)
+  const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const m = tag.match(new RegExp(`\\s${escaped}=(?:"([^"]*)"|'([^']*)')`))
+  return m ? (m[1] ?? m[2]) : undefined
 }
+
+const encodeXml = (s: string) =>
+  s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 
 function clean(text: string): string {
   return text
@@ -100,20 +154,399 @@ function capped(text: string, warning?: string): { text: string; warning?: strin
   return { text: t.slice(0, MAX_TEXT), warning: 'Tệp dài; chỉ đọc phần đầu.' }
 }
 
-/** Ký tự riêng đánh dấu chữ được nhấn mạnh (đậm, nghiêng, gạch chân, gạch ngang, màu, tô nền) khi đọc đề: U+E000 mở, U+E001 đóng. */
+/**
+ * Ký tự riêng đánh dấu chữ được nhấn mạnh khi đọc đề:
+ * - U+E000 mở chung (PDF), U+E001 đóng.
+ * - U+E011..U+E04F mở mang bitmask (bold=1, italic=2, underline=4, color=8, highlight=16, strike=32).
+ * - U+E005 ngăn cách ô bảng, U+E006 đầu dòng bảng gọn.
+ */
 const EMPH_ON = '\uE000'
 const EMPH_OFF = '\uE001'
+const EMPH_BOLD = 1
+const EMPH_ITALIC = 2
+const EMPH_UNDERLINE = 4
+const EMPH_COLOR = 8
+const EMPH_HIGHLIGHT = 16
+const EMPH_STRIKE = 32
+const CELL_SEP = '\uE005'
+const ROW_MARK = '\uE006'
+const emphOpen = (mask: number) => (mask ? String.fromCharCode(0xe010 + mask) : '')
 
-/** Run có định dạng nổi bật: đậm, nghiêng, gạch chân, gạch ngang, chữ màu (không đen), tô sáng hoặc tô nền. */
-function isEmphasised(rPr: string): boolean {
-  if (/<w:(b|i|strike|dstrike)\s*\/>|<w:(b|i|strike|dstrike)\s+w:val="(1|true|on)"/.test(rPr)) return true
-  if (/<w:u\s+w:val="(?!none")/.test(rPr)) return true
-  if (/<w:highlight\s+w:val="(?!none")/.test(rPr)) return true
-  if (/<w:shd\b[^>]*w:fill="(?!auto"|FFFFFF")/i.test(rPr)) return true
-  const color = rPr.match(/<w:color\s+w:val="([0-9A-Fa-f]{6})"/)?.[1]
-  if (!color) return false
-  const [r, g, b] = [0, 2, 4].map((i) => parseInt(color.slice(i, i + 2), 16))
-  return Math.max(r, g, b) - Math.min(r, g, b) > 40 || Math.max(r, g, b) > 110 // có sắc hoặc xám sáng; đen/xám đậm là chữ thường
+interface RPrFlags {
+  bold?: boolean
+  italic?: boolean
+  underline?: boolean
+  color?: boolean
+  highlight?: boolean
+  strike?: boolean
+  vertAlign?: 'superscript' | 'subscript' | 'baseline'
+}
+
+interface NumRef {
+  id: string
+  level: number
+}
+
+interface ResolvedStyle {
+  rPr: RPrFlags
+  numPr?: NumRef | null
+  basedOn?: string
+}
+
+function readToggle(rPr: string, tagName: string): boolean | undefined {
+  const tag = openTag(rPr, tagName)
+  if (!tag) return undefined
+  const v = attr(tag, 'w:val') ?? attr(tag, 'val')
+  if (v && /^(0|false|off|none)$/i.test(v)) return false
+  return true
+}
+
+function readRPrFlags(rPr: string): RPrFlags {
+  const out: RPrFlags = {}
+  if (!rPr) return out
+  const b = readToggle(rPr, 'w:b')
+  if (b !== undefined) out.bold = b
+  const i = readToggle(rPr, 'w:i')
+  if (i !== undefined) out.italic = i
+  const st = readToggle(rPr, 'w:strike') ?? readToggle(rPr, 'w:dstrike')
+  if (st !== undefined) out.strike = st
+  const uTag = openTag(rPr, 'w:u')
+  if (uTag) {
+    const uv = attr(uTag, 'w:val') ?? attr(uTag, 'val')
+    out.underline = !(uv && /^(none|0|false)$/i.test(uv))
+  }
+  const hTag = openTag(rPr, 'w:highlight')
+  if (hTag) {
+    const hv = attr(hTag, 'w:val') ?? attr(hTag, 'val')
+    out.highlight = !(hv && /^(none|0|false)$/i.test(hv))
+  }
+  const shdTag = openTag(rPr, 'w:shd')
+  if (shdTag) {
+    const fill = attr(shdTag, 'w:fill') ?? attr(shdTag, 'fill')
+    if (fill) {
+      if (/^(auto|ffffff)$/i.test(fill)) {
+        if (out.highlight === undefined) out.highlight = false
+      } else if (/^[0-9a-f]{6}$/i.test(fill)) {
+        out.highlight = true
+      }
+    }
+  }
+  const cTag = openTag(rPr, 'w:color')
+  if (cTag) {
+    const cv = attr(cTag, 'w:val') ?? attr(cTag, 'val')
+    if (cv && /^[0-9a-f]{6}$/i.test(cv)) out.color = isEmphasisColor(`#${cv}`)
+    else if (cv === 'auto') out.color = false
+  }
+  const vaTag = openTag(rPr, 'w:vertAlign')
+  if (vaTag) {
+    const va = attr(vaTag, 'w:val') ?? attr(vaTag, 'val')
+    if (va === 'superscript' || va === 'subscript' || va === 'baseline') out.vertAlign = va
+  }
+  return out
+}
+
+function mergeRPrFlags(...parts: Array<RPrFlags | undefined>): RPrFlags {
+  const out: RPrFlags = {}
+  for (const p of parts) {
+    if (!p) continue
+    if (p.bold !== undefined) out.bold = p.bold
+    if (p.italic !== undefined) out.italic = p.italic
+    if (p.underline !== undefined) out.underline = p.underline
+    if (p.color !== undefined) out.color = p.color
+    if (p.highlight !== undefined) out.highlight = p.highlight
+    if (p.strike !== undefined) out.strike = p.strike
+    if (p.vertAlign !== undefined) out.vertAlign = p.vertAlign
+  }
+  return out
+}
+
+function flagsMask(f: RPrFlags): number {
+  return (
+    (f.bold ? EMPH_BOLD : 0) |
+    (f.italic ? EMPH_ITALIC : 0) |
+    (f.underline ? EMPH_UNDERLINE : 0) |
+    (f.color ? EMPH_COLOR : 0) |
+    (f.highlight ? EMPH_HIGHLIGHT : 0) |
+    (f.strike ? EMPH_STRIKE : 0)
+  )
+}
+
+function readNumPr(pPr: string): NumRef | null | undefined {
+  const np = xmlBlocks(pPr, 'w:numPr').next().value?.inner
+  if (!np) return undefined
+  const id = attr(openTag(np, 'w:numId'), 'w:val')
+  if (!id) return undefined
+  if (id === '0') return null
+  const lv = Number(attr(openTag(np, 'w:ilvl'), 'w:val') ?? '0')
+  return { id, level: Number.isFinite(lv) ? lv : 0 }
+}
+
+interface DocxStyles {
+  defRPr: RPrFlags
+  defaultParaId?: string
+  map: Map<string, ResolvedStyle>
+}
+
+function parseDocxStyles(xml: string | null): DocxStyles {
+  const map = new Map<string, ResolvedStyle>()
+  let defRPr: RPrFlags = {}
+  let defaultParaId: string | undefined
+  if (!xml) return { defRPr, defaultParaId, map }
+  const dd = xmlBlocks(xml, 'w:docDefaults').next().value?.inner ?? ''
+  const rDef = xmlBlocks(xmlBlocks(dd, 'w:rPrDefault').next().value?.inner ?? '', 'w:rPr').next().value?.inner ?? ''
+  if (rDef) defRPr = readRPrFlags(rDef)
+  const raw = new Map<string, ResolvedStyle>()
+  for (const st of xmlBlocks(xml, 'w:style')) {
+    const tag = st.el.slice(0, st.el.indexOf('>') + 1)
+    const id = attr(tag, 'w:styleId')
+    if (!id) continue
+    if (attr(tag, 'w:type') === 'paragraph' && attr(tag, 'w:default') === '1') defaultParaId = id
+    const pPr = xmlBlocks(st.inner, 'w:pPr').next().value?.inner ?? ''
+    const rPr = xmlBlocks(st.inner, 'w:rPr').next().value?.inner ?? ''
+    const basedOn = attr(openTag(st.inner, 'w:basedOn'), 'w:val')
+    raw.set(id, { rPr: readRPrFlags(rPr), numPr: readNumPr(pPr), basedOn })
+  }
+  for (const id of raw.keys()) {
+    const chain: ResolvedStyle[] = []
+    const seen = new Set<string>()
+    let cur: string | undefined = id
+    while (cur && !seen.has(cur) && raw.has(cur)) {
+      seen.add(cur)
+      const s: ResolvedStyle = raw.get(cur)!
+      chain.unshift(s)
+      cur = s.basedOn
+    }
+    let rPr: RPrFlags = {}
+    let numPr: NumRef | null | undefined
+    for (const s of chain) {
+      rPr = mergeRPrFlags(rPr, s.rPr)
+      if (s.numPr !== undefined) numPr = s.numPr
+    }
+    map.set(id, { rPr, numPr })
+  }
+  return { defRPr, defaultParaId, map }
+}
+
+interface NumLevel {
+  fmt: string
+  text: string
+  start: number
+}
+
+function parseDocxNumbering(xml: string | null): Map<string, NumLevel> {
+  const out = new Map<string, NumLevel>()
+  if (!xml) return out
+  const abs = new Map<string, Map<number, NumLevel>>()
+  for (const a of xmlBlocks(xml, 'w:abstractNum')) {
+    const id = attr(a.el.slice(0, a.el.indexOf('>') + 1), 'w:abstractNumId') ?? ''
+    const lv = new Map<number, NumLevel>()
+    for (const l of xmlBlocks(a.inner, 'w:lvl')) {
+      const ilvl = Number(attr(l.el.slice(0, l.el.indexOf('>') + 1), 'w:ilvl') ?? '0')
+      const fmt = attr(openTag(l.inner, 'w:numFmt'), 'w:val') ?? ''
+      const text = attr(openTag(l.inner, 'w:lvlText'), 'w:val') ?? ''
+      const start = Number(attr(openTag(l.inner, 'w:start'), 'w:val') ?? '1')
+      lv.set(ilvl, { fmt, text, start: Number.isFinite(start) ? start : 1 })
+    }
+    abs.set(id, lv)
+  }
+  for (const nm of xmlBlocks(xml, 'w:num')) {
+    const numId = attr(nm.el.slice(0, nm.el.indexOf('>') + 1), 'w:numId') ?? ''
+    const absId = attr(openTag(nm.inner, 'w:abstractNumId'), 'w:val') ?? ''
+    const base = abs.get(absId)
+    if (!base) continue
+    const merged = new Map(base)
+    for (const ov of xmlBlocks(nm.inner, 'w:lvlOverride')) {
+      const ilvl = Number(attr(ov.el.slice(0, ov.el.indexOf('>') + 1), 'w:ilvl') ?? '0')
+      const cur = merged.get(ilvl) ?? { fmt: 'decimal', text: '%1.', start: 1 }
+      const so = attr(openTag(ov.inner, 'w:startOverride'), 'w:val')
+      if (so && Number.isFinite(Number(so))) merged.set(ilvl, { ...cur, start: Number(so) })
+    }
+    merged.forEach((fmt, i) => out.set(`${numId}:${i}`, fmt))
+  }
+  return out
+}
+
+const romanNum = (n: number) => {
+  const t: Array<[number, string]> = [[1000, 'm'], [900, 'cm'], [500, 'd'], [400, 'cd'], [100, 'c'], [90, 'xc'], [50, 'l'], [40, 'xl'], [10, 'x'], [9, 'ix'], [5, 'v'], [4, 'iv'], [1, 'i']]
+  let o = ''
+  for (const [v, c] of t) while (n >= v) { o += c; n -= v }
+  return o
+}
+const alphaNum = (n: number) => String.fromCharCode(96 + (((n - 1) % 26) + 1))
+
+function nextNumberLabel(numFmt: Map<string, NumLevel>, counters: Map<string, number[]>, id: string, level: number): string {
+  const lv = (i: number) => numFmt.get(`${id}:${i}`)
+  const me = lv(level)
+  if (!me || me.fmt === 'bullet' || me.fmt === 'none') return ''
+  const c = counters.get(id) ?? []
+  for (let i = 0; i <= level; i++) if (c[i] == null) c[i] = (lv(i)?.start ?? 1) - (i === level ? 1 : 0)
+  c[level] += 1
+  c.length = level + 1
+  counters.set(id, c)
+  return me.text.replace(/%(\d)/g, (_, k: string) => {
+    const i = Number(k) - 1
+    const n = c[i] ?? 1
+    const f = lv(i)?.fmt ?? 'decimal'
+    return f === 'lowerLetter' ? alphaNum(n) : f === 'upperLetter' ? alphaNum(n).toUpperCase() : f === 'lowerRoman' ? romanNum(n) : f === 'upperRoman' ? romanNum(n).toUpperCase() : String(n)
+  })
+}
+
+const SUP_MAP: Record<string, string> = {
+  '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹',
+  '+': '⁺', '-': '⁻', '=': '⁼', '(': '⁽', ')': '⁾', n: 'ⁿ', i: 'ⁱ',
+}
+const SUB_MAP: Record<string, string> = {
+  '0': '₀', '1': '₁', '2': '₂', '3': '₃', '4': '₄', '5': '₅', '6': '₆', '7': '₇', '8': '₈', '9': '₉',
+  '+': '₊', '-': '₋', '=': '₌', '(': '₍', ')': '₎',
+}
+
+function formatScript(rawXmlText: string, kind: 'superscript' | 'subscript'): string {
+  const plain = decodeXml(rawXmlText)
+  if (!plain.trim()) return rawXmlText
+  const map = kind === 'superscript' ? SUP_MAP : SUB_MAP
+  const chars = Array.from(plain)
+  if (chars.every((c) => c === ' ' || c in map)) {
+    return encodeXml(chars.map((c) => map[c] ?? c).join(''))
+  }
+  return encodeXml(`${kind === 'superscript' ? '^' : '_'}{${plain}}`)
+}
+
+function convertOmmlToRuns(xmlIn: string): string {
+  // Đọc thuộc tính nhấn mạnh bên trong m:oMath (nếu có) để giữ khi chuyển thành run
+  const runWrap = (ommlEl: string) => {
+    const tex = ommlXmlToLatex(ommlEl)
+    if (!tex) return ''
+    const firstRPr = xmlBlocks(ommlEl, 'w:rPr').next().value?.el ?? xmlBlocks(ommlEl, 'm:rPr').next().value?.el ?? ''
+    const rPrXml = firstRPr.startsWith('<w:rPr') ? firstRPr : ''
+    return `<w:r>${rPrXml}<w:t xml:space="preserve">$${encodeXml(tex)}$</w:t></w:r>`
+  }
+  let xml = mapOuterXmlBlocks(xmlIn, 'm:oMathPara', (paraEl) => {
+    const runs: string[] = []
+    for (const m of outerXmlBlocks(paraEl, 'm:oMath')) {
+      const r = runWrap(m.el)
+      if (r) runs.push(r)
+    }
+    return runs.join('<w:r><w:t xml:space="preserve"> </w:t></w:r>')
+  })
+  xml = mapOuterXmlBlocks(xml, 'm:oMath', (el) => runWrap(el))
+  return xml
+}
+
+function processDocxParagraphs(
+  xmlIn: string,
+  styles: DocxStyles,
+  numFmt: Map<string, NumLevel>,
+  counters: Map<string, number[]>,
+  withMarks: boolean,
+): string {
+  const processRunsChunk = (chunk: string, pBase: RPrFlags): string =>
+    mapXmlBlocks(chunk, 'w:r', (run) => {
+      const rPr = xmlBlocks(run, 'w:rPr').next().value?.inner ?? ''
+      const rStyleId = attr(openTag(rPr, 'w:rStyle'), 'w:val')
+      const rStyle = rStyleId ? styles.map.get(rStyleId)?.rPr : undefined
+      const merged = mergeRPrFlags(pBase, rStyle, readRPrFlags(rPr))
+      const mask = withMarks ? flagsMask(merged) : 0
+      const va = merged.vertAlign === 'superscript' || merged.vertAlign === 'subscript' ? merged.vertAlign : null
+      if (!mask && !va) return run
+      return mapXmlBlocks(run, 'w:t', (t, inner) => {
+        if (inner.includes('<')) return t
+        const valText = va ? formatScript(inner, va) : inner
+        const prefix = t.slice(0, t.length - inner.length - 6)
+        if (!mask || !/\S/.test(inner)) return `${prefix}${valText}</w:t>`
+        return `${prefix}${emphOpen(mask)}${valText}${EMPH_OFF}</w:t>`
+      })
+    })
+
+  return mapOuterXmlBlocks(xmlIn, 'w:p', (pEl) => {
+    const gt = pEl.indexOf('>')
+    const head = pEl.slice(0, gt + 1)
+    const inner = pEl.slice(gt + 1, pEl.length - 6)
+    const pPrBlock = xmlBlocks(inner, 'w:pPr').next().value
+    const pPr = pPrBlock?.inner ?? ''
+    const pStyleId = attr(openTag(pPr, 'w:pStyle'), 'w:val') ?? styles.defaultParaId
+    const pStyle = pStyleId ? styles.map.get(pStyleId) : undefined
+    const pBase = mergeRPrFlags(styles.defRPr, pStyle?.rPr)
+    const numRef = readNumPr(pPr) !== undefined ? readNumPr(pPr) : pStyle?.numPr
+
+    // Xử lý phần chạy chữ ngoài <w:txbxContent>, và đệ quy riêng bên trong từng <w:txbxContent>
+    let bodyOut = ''
+    let last = 0
+    for (const tb of outerXmlBlocks(inner, 'w:txbxContent')) {
+      bodyOut += processRunsChunk(inner.slice(last, tb.start), pBase)
+      const tbGt = tb.el.indexOf('>')
+      bodyOut += tb.el.slice(0, tbGt + 1) + processDocxParagraphs(tb.inner, styles, numFmt, counters, withMarks) + '</w:txbxContent>'
+      last = tb.end
+    }
+    bodyOut += processRunsChunk(inner.slice(last), pBase)
+
+    // Chỉ đánh số khi đoạn có chữ hoặc hình (ngoài text box)
+    let prefixRun = ''
+    if (numRef && numFmt.size) {
+      const outsideTxbx = bodyOut.replace(/<w:txbxContent[\s\S]*?<\/w:txbxContent>/g, '')
+      const hasText = [...xmlBlocks(outsideTxbx, 'w:t')].some((t) => /\S/.test(t.inner))
+      const hasMedia = /<w:(?:drawing|pict|object)\b/.test(outsideTxbx)
+      if (hasText || hasMedia) {
+        const label = nextNumberLabel(numFmt, counters, numRef.id, numRef.level)
+        if (label) {
+          const m = withMarks ? flagsMask(pBase) : 0
+          const txt = m ? `${emphOpen(m)}${encodeXml(label)} ${EMPH_OFF}` : `${encodeXml(label)} `
+          prefixRun = `<w:r><w:t xml:space="preserve">${txt}</w:t></w:r>`
+        }
+      }
+    }
+    if (prefixRun) {
+      if (pPrBlock) {
+        const pPrEnd = bodyOut.indexOf('</w:pPr>')
+        if (pPrEnd >= 0) {
+          const at = pPrEnd + 8
+          bodyOut = bodyOut.slice(0, at) + prefixRun + bodyOut.slice(at)
+        } else bodyOut = prefixRun + bodyOut
+      } else {
+        bodyOut = prefixRun + bodyOut
+      }
+    }
+    return `${head}${bodyOut}</w:p>`
+  })
+}
+
+function encodeCompactTables(xmlIn: string): string {
+  return mapOuterXmlBlocks(xmlIn, 'w:tbl', (tblEl, tblInner) => {
+    if (/<w:tbl[\s>/]/.test(tblInner)) return tblEl
+    const trs = [...outerXmlBlocks(tblInner, 'w:tr')]
+    if (!trs.length) return tblEl
+    // Nếu bảng dùng để dàn trang chứa "Câu N." cạnh hình ảnh hoặc ô quá dài thì giữ nguyên từng đoạn
+    const rowData = trs.map((tr) => [...outerXmlBlocks(tr.inner, 'w:tc')])
+    const isLayoutQuestionTable = rowData.some((cells) => {
+      if (cells.length < 2) return false
+      const cellTexts = cells.map((c) => [...xmlBlocks(c.inner, 'w:t')].map((t) => t.inner).join(''))
+      const hasQ = cellTexts.some((txt) => /^\s*(?:Câu|Bài|Question)\s*\d+/i.test(txt.replace(/[\uE000-\uE04F]/g, '')))
+      const hasImgOrLong = cellTexts.some((txt) => txt.includes(IMG_ON) || txt.length > 80)
+      return hasQ && hasImgOrLong
+    })
+    if (isLayoutQuestionTable) return tblEl
+
+    const compactRows: string[] = []
+    for (const cells of rowData) {
+      if (cells.length < 2) return tblEl
+      const cellContents: string[] = []
+      let hasAnyContent = false
+      for (const tc of cells) {
+        const ps = [...outerXmlBlocks(tc.inner, 'w:p')]
+        if (ps.length > 3) return tblEl
+        const parts: string[] = []
+        for (const p of ps) {
+          const cleanP = p.inner.replace(/<w:pPr[\s\S]*?<\/w:pPr>/g, '')
+          const txt = [...xmlBlocks(cleanP, 'w:t')].map((t) => t.inner).join('')
+          if (/\S/.test(txt) || txt.includes(IMG_ON)) hasAnyContent = true
+          if (cleanP.trim()) parts.push(cleanP)
+        }
+        cellContents.push(parts.join('<w:r><w:t xml:space="preserve"> </w:t></w:r>'))
+      }
+      if (!hasAnyContent) continue // bỏ hàng ô trống (vd 4 ô trả lời ngắn)
+      compactRows.push(`<w:p><w:r><w:t>${ROW_MARK}</w:t></w:r>${cellContents.join(`<w:r><w:t>${CELL_SEP}</w:t></w:r>`)}</w:p>`)
+    }
+    return compactRows.join('')
+  })
 }
 
 const IMG_ON = ''
@@ -198,7 +631,7 @@ async function tokenizeImages(zip: import('jszip'), xmlIn: string): Promise<{ xm
   }
   const parts: string[] = []
   let last = 0
-  const found = [...xmlBlocks(xml, 'w:drawing'), ...xmlBlocks(xml, 'w:pict')].sort((a, b) => a.start - b.start)
+  const found = [...xmlBlocks(xml, 'w:drawing'), ...xmlBlocks(xml, 'w:pict'), ...xmlBlocks(xml, 'w:object')].sort((a, b) => a.start - b.start)
   for (const m of found) {
     if (m.start < last) continue // khối lồng trong khối trước
     parts.push(xml.slice(last, m.start))
@@ -227,21 +660,23 @@ async function tokenizeImages(zip: import('jszip'), xmlIn: string): Promise<{ xm
   return { xml: parts.join(''), images, warning: notes.length ? `${notes.join('; ')}.` : undefined }
 }
 
-/** Tiền xử lý .docx khi `marks`: đánh dấu chữ nổi bật và thay ảnh bằng token vị trí. */
-async function prepareDocx(data: Buffer): Promise<{ data: Buffer; images: string[]; warning?: string }> {
+/** Tiền xử lý .docx: đổi OMML sang LaTeX, đọc styles + numbering + chỉ số; khi `marks` bật thêm bitmask nhấn mạnh, token ảnh và cấu trúc bảng. */
+async function prepareDocx(data: Buffer, marks: boolean): Promise<{ data: Buffer; images: string[]; warning?: string }> {
   const mod = await import('jszip')
   const zip = await mod.default.loadAsync(data)
   const file = zip.file('word/document.xml')
   if (!file) return { data, images: [] }
-  const marked = mapXmlBlocks(await file.async('string'), 'w:r', (run) => {
-    const rPr = xmlBlocks(run, 'w:rPr').next().value?.el ?? ''
-    if (!rPr || !isEmphasised(rPr)) return run
-    return mapXmlBlocks(run, 'w:t', (t, inner) =>
-      /\S/.test(inner) && !inner.includes('<') ? `${t.slice(0, t.length - inner.length - 6)}${EMPH_ON}${inner}${EMPH_OFF}</w:t>` : t,
-    )
-  })
-  const { xml, images, warning } = await tokenizeImages(zip, marked)
-  zip.file('word/document.xml', xml)
+  const docXml = convertOmmlToRuns(await file.async('string'))
+  const styles = parseDocxStyles((await zip.file('word/styles.xml')?.async('string')) ?? null)
+  const numbering = parseDocxNumbering((await zip.file('word/numbering.xml')?.async('string')) ?? null)
+  const counters = new Map<string, number[]>()
+  const processed = processDocxParagraphs(docXml, styles, numbering, counters, marks)
+  if (!marks) {
+    zip.file('word/document.xml', processed)
+    return { data: await zip.generateAsync({ type: 'nodebuffer' }), images: [] }
+  }
+  const { xml, images, warning } = await tokenizeImages(zip, processed)
+  zip.file('word/document.xml', encodeCompactTables(xml))
   return { data: await zip.generateAsync({ type: 'nodebuffer' }), images, warning }
 }
 
@@ -279,7 +714,7 @@ async function assertSaneDocxXml(data: Buffer) {
 async function extractDocx(data: Buffer, marks = false): Promise<{ text: string; images: string[]; warning?: string }> {
   const mammoth = await import('mammoth')
   await assertSaneDocxXml(data)
-  const prep = marks ? await prepareDocx(data) : { data, images: [] as string[], warning: undefined }
+  const prep = await prepareDocx(data, marks)
   const result = await mammoth.extractRawText({ buffer: prep.data })
   return { text: result.value, images: prep.images, warning: prep.warning }
 }

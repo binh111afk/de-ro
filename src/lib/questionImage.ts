@@ -58,17 +58,37 @@ export const pastedImage = (e: { clipboardData: DataTransfer | null }): File | n
  * Câu hỏi nhập từ file có ảnh dạng data URL: đưa lên R2 (mỗi ảnh một lần, tối đa 4 ảnh cùng lúc) để đề lưu trong máy không phình;
  * chưa cấu hình R2 hay lỗi thì giữ data URL.
  */
+const DATA_IMG_MD = /!\[([^\]\n]*)\]\((data:image\/[^)\s]+)\)/g
+
 export async function uploadQuestionImages(questions: Question[]): Promise<Question[]> {
-  const todo = [...new Set(questions.map((q) => q.image?.src).filter((s): s is string => Boolean(s?.startsWith('data:'))))]
+  const todo = new Set<string>()
+  const collectMd = (s: string) => {
+    for (const m of s.matchAll(DATA_IMG_MD)) todo.add(m[2])
+  }
+  for (const q of questions) {
+    if (q.image?.src?.startsWith('data:')) todo.add(q.image.src)
+    collectMd(q.prompt)
+    for (const o of q.options ?? []) collectMd(o.text)
+  }
+  const list = [...todo]
   const done = new Map<string, string>()
   let next = 0
   await Promise.all(
-    Array.from({ length: Math.min(4, todo.length) }, async () => {
-      while (next < todo.length) {
-        const src = todo[next++]
+    Array.from({ length: Math.min(4, list.length) }, async () => {
+      while (next < list.length) {
+        const src = list[next++]
         done.set(src, await uploadImage(src).catch(() => src))
       }
     }),
   )
-  return questions.map((q) => (q.image && done.has(q.image.src) ? { ...q, image: { ...q.image, src: done.get(q.image.src)! } } : q))
+  const replaceMd = (s: string) =>
+    s.includes('data:image/')
+      ? s.replace(DATA_IMG_MD, (full, alt: string, src: string) => (done.has(src) ? `![${alt}](${done.get(src)!})` : full))
+      : s
+  return questions.map((q) => ({
+    ...q,
+    prompt: replaceMd(q.prompt),
+    ...(q.options ? { options: q.options.map((o) => ({ ...o, text: replaceMd(o.text) })) } : {}),
+    ...(q.image && done.has(q.image.src) ? { image: { ...q.image, src: done.get(q.image.src)! } } : {}),
+  }))
 }
