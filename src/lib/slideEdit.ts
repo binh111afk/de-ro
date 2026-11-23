@@ -134,7 +134,7 @@ export function editSystemPrompt(context: string): string {
     '- {"op":"duplicate_slide","slide":3}\n' +
     '- {"op":"set_notes","slide":3,"notes":"ghi chú trình bày"}\n' +
     '- {"op":"rename_deck","title":"tên bài giảng"}\n' +
-    `- {"op":"set_layout","slide":3,"layout":"<id>","fields":{...}} — đổi bố cục và nội dung trong cùng một lệnh. Nếu yêu cầu bảng so sánh, dùng table với title và rows (hàng đầu là nhãn cột). Nếu yêu cầu so sánh hai cột, dùng comparison với title, leftTitle, rightTitle, left, right. So sánh đúng các đối tượng được yêu cầu, tuyệt đối không chỉ đổi bố cục. Tách 5 mục trên một slide có thể dùng rules với stats gồm 5 hàng {value,label}, viết value là tên mục và label là ý ngắn. Bố cục: ${SLIDE_LAYOUTS.filter((l) => !isEditorialLayout(l.id)).map((l) => `${l.id}=${l.name}`).join(', ')}\n` +
+    `- {"op":"set_layout","slide":3,"layout":"<id>","fields":{...}} — đổi bố cục và nội dung trong cùng một lệnh. Nếu yêu cầu bảng so sánh, dùng table với title và rows (hàng đầu là nhãn cột). Nếu yêu cầu so sánh hai cột, dùng comparison với title, leftTitle, rightTitle, left, right. So sánh đúng các đối tượng được yêu cầu, tuyệt đối không chỉ đổi bố cục. Tách 5 mục trên một slide có thể dùng rules với stats gồm 5 hàng {value,label}, viết value là tên mục và label là ý ngắn. Bố cục: ${SLIDE_LAYOUTS.map((l) => `${l.id}=${l.name}`).join(', ')}\n` +
     'Chỉ trả {"action":"none"} khi không có thao tác phù hợp. Không trả dàn ý hay cả bài.\n' +
     `Bài trình bày hiện tại: ${context}`
   )

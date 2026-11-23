@@ -157,7 +157,7 @@ async function readStream(res: Response, opts: LlmOptions): Promise<LlmResult & 
   let final = null as (LlmResult & { quota?: unknown }) | null
   const handle = (line: string) => {
     if (!line.startsWith('data:')) return
-    let ev: { type?: string; c?: string; d?: string; error?: string; status?: number; quota?: unknown } & Partial<LlmResult>
+    let ev: { type?: string; c?: string; d?: string; error?: string; status?: number; code?: string; quota?: unknown } & Partial<LlmResult>
     try {
       ev = JSON.parse(line.slice(5))
     } catch {
@@ -179,6 +179,7 @@ async function readStream(res: Response, opts: LlmOptions): Promise<LlmResult & 
     } else if (ev.type === 'error') {
       reportQuota(ev.quota)
       const msg = ev.error || 'AI lỗi'
+      if (ev.status === 429 && ev.code === 'quota') throw new AiQuotaError(msg)
       throw (ev.status ?? 500) >= 500 ? new TransientLlmError(msg) : new Error(msg)
     }
   }

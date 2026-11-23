@@ -183,7 +183,13 @@ export async function reserveQuota(userId: string | null, _ip: string, q: Quota,
   )
 }
 
-export function quotaMessage(q: Quota): string {
+export function quotaMessage(q: Quota, requiredTokens?: number): string {
+  const remaining = q.limit - q.used
+  if (requiredTokens !== undefined && remaining > 0) {
+    const needed = Math.ceil(requiredTokens / TOKENS_PER_POINT).toLocaleString('vi-VN')
+    const left = Math.floor(remaining / TOKENS_PER_POINT).toLocaleString('vi-VN')
+    return `Lượt này cần khoảng ${needed} điểm AI nhưng bạn chỉ còn ${left} điểm. Nạp thêm điểm để tiếp tục.`
+  }
   return q.base
     ? 'Bạn đã dùng hết điểm AI của tháng này. Hạn mức sẽ được làm mới vào đầu tháng sau.'
     : 'Bạn đã hết điểm AI. Nạp thêm điểm để tiếp tục.'

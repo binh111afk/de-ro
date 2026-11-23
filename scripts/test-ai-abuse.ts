@@ -130,7 +130,9 @@ db.credits = 3_000
 db.used = 0
 upstream.length = 0
 nextUsage = 100
+process.env.DEEPSEEK_API_KEY = 'ds'
 await hit({ messages: msgs('ít điểm'), maxTokens: 32_000 })
+delete process.env.DEEPSEEK_API_KEY
 check('còn 3.000 token → trần lượt này ≤ 3.000', upstream[0]?.max_tokens <= 3_000, upstream[0])
 
 // 5. prompt rất dài với số dư ít → chặn trước khi gọi model (trước đây 1 token số dư gọi được ~87.000 token)

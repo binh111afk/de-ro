@@ -1484,6 +1484,7 @@ function AiConversation({
       /** slide kế tiếp được chèn — giữ đúng thứ tự dàn ý dù trang khác xong trước */
       let cursor = 0
       let skipped = 0
+      let quotaError: AiQuotaError | undefined
       const usedGraphics = new Set<string>()
 
       /** lô đang chạy (stream): số trang đã viết trong lô, theo chỉ số trang đầu lô */
@@ -1538,7 +1539,7 @@ function AiConversation({
 
       let landing = Promise.resolve()
       const worker = async () => {
-        while (!controller.signal.aborted) {
+        while (!controller.signal.aborted && !quotaError) {
           const start = nextIndex
           if (start >= total) return
           nextIndex = Math.min(total, start + SLIDE_BATCH)
@@ -1551,6 +1552,7 @@ function AiConversation({
           } catch (err) {
             if (controller.signal.aborted) return
             if (import.meta.env.DEV) console.warn('[AI] lỗi khi tạo slide', err)
+            if (err instanceof AiQuotaError) quotaError ??= err
             indices.forEach((index) => { results[index] = null })
             inFlight.delete(start)
           }
@@ -1577,6 +1579,7 @@ function AiConversation({
         const added = onAppendSlide ? cursor - skipped : collected.length
           ? await onApplySlides?.(JSON.stringify({ title: plan.title, slides: collected }), plan) ?? 0 : 0
         skipped = total - added
+        if (quotaError) throw quotaError
         const message = [
           added
             ? `Đã thêm ${added} slide vào bài trình bày.`
@@ -1603,6 +1606,7 @@ function AiConversation({
                   ...turn,
                   text: '',
                   pending: false,
+                  progress: undefined,
                   error: aborted
                     ? 'Đã dừng.'
                     : (err as Error)?.message || 'Không gọi được AI.',

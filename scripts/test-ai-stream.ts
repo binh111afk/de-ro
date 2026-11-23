@@ -9,10 +9,13 @@
  *  7. `task`: server tự ghép system prompt, bỏ role system của client; task lạ → 400; không có task bị 400 (trừ khi bật AI_ALLOW_TASKLESS=1).
  *  8. DeepSeek hết trần token mà trả rỗng → chuyển ngay sang dự phòng, cả JSON lẫn SSE;
  *  9. DeepSeek trả rỗng với `stop` và opencode trả rỗng với `length` vẫn được thử lại.
+ * 10. Số dư thấp: từ chối trước khi giữ chỗ, giảm suy luận khi phải kẹp trần, và dừng nếu kết quả rỗng do hết trần.
  *   npx tsx scripts/test-ai-stream.ts
  */
 import { Readable } from 'node:stream'
 import type { IncomingMessage, ServerResponse } from 'node:http'
+import { estimatePromptTokens } from '../server/aiQuota.ts'
+import { buildTaskSystem } from '../server/aiTasks.ts'
 
 const SB = 'http://sb.test'
 const USER = 'aaaaaaaa-1111-4111-8111-aaaaaaaaaaaa'
@@ -38,13 +41,15 @@ let plan: Mode[] = []
 let deepseekHitsTokenLimit = false
 // số lượt rỗng đã ghi trong ai_calls 24 giờ qua (server chỉ đếm tối đa 3)
 let emptyToday = 0
-const calls: Array<{ model: string; stream: boolean; reasoningEffort?: string; messages: Array<{ role: string; content: string }> }> = []
+let reservations = 0
+let releases = 0
+const calls: Array<{ model: string; stream: boolean; reasoningEffort?: string; thinking?: { type: string }; maxTokens: number; messages: Array<{ role: string; content: string }> }> = []
 const ok = (b: unknown) => new Response(JSON.stringify(b), { status: 200 })
 const enc = new TextEncoder()
 const chunk = (o: unknown) => enc.encode(`data: ${JSON.stringify(o)}\n\n`)
-const tokenLimitUsage = { total_tokens: 9_000, prompt_tokens: 1_000, completion_tokens: 8_000 }
+const tokenLimitUsage = (maxTokens: number) => ({ total_tokens: 1_000 + maxTokens, prompt_tokens: 1_000, completion_tokens: maxTokens })
 
-function sse(mode: Mode, model: string): Response {
+function sse(mode: Mode, model: string, maxTokens: number): Response {
   const parts = [
     chunk({ model, choices: [{ delta: { reasoning_content: 'nghĩ '.repeat(50) } }] }),
     chunk({ model, choices: [{ delta: { content: '{"blocks":[{"type":"question","text":"1+1"}' } }] }),
@@ -57,7 +62,7 @@ function sse(mode: Mode, model: string): Response {
       if (mode === 'break' && i === 2) return ctrl.error(new TypeError('socket hang up'))
       if (i < parts.length) return ctrl.enqueue(parts[i++])
       ctrl.enqueue(chunk({ model, choices: [{ finish_reason: mode === 'empty-length' ? 'length' : 'stop', delta: {} }] }))
-      const usage = mode === 'empty-length' ? tokenLimitUsage : { total_tokens: 5_000, prompt_tokens: 1_000, completion_tokens: 4_000 }
+      const usage = mode === 'empty-length' ? tokenLimitUsage(maxTokens) : { total_tokens: 5_000, prompt_tokens: 1_000, completion_tokens: 4_000 }
       ctrl.enqueue(chunk({ model, choices: [], usage }))
       ctrl.enqueue(enc.encode('data: [DONE]\n\n'))
       ctrl.close()
@@ -70,13 +75,13 @@ globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
   const url = String(input)
   const body = init.body ? JSON.parse(String(init.body)) : {}
   if (url.includes('/chat/completions')) {
-    calls.push({ model: body.model, stream: !!body.stream, reasoningEffort: body.reasoning_effort, messages: body.messages })
+    calls.push({ model: body.model, stream: !!body.stream, reasoningEffort: body.reasoning_effort, thinking: body.thinking, maxTokens: body.max_tokens, messages: body.messages })
     const mode = deepseekHitsTokenLimit && url === 'https://api.deepseek.com/chat/completions'
       ? 'empty-length'
       : plan.shift() ?? 'ok'
     if (mode === 'fail') return new Response('{}', { status: 400 })
-    if (body.stream) return sse(mode, body.model)
-    if (mode === 'empty-length') return ok({ choices: [{ finish_reason: 'length', message: { content: '' } }], usage: tokenLimitUsage })
+    if (body.stream) return sse(mode, body.model, body.max_tokens)
+    if (mode === 'empty-length') return ok({ choices: [{ finish_reason: 'length', message: { content: '' } }], usage: tokenLimitUsage(body.max_tokens) })
     if (mode === 'empty-stop') return ok({ choices: [{ finish_reason: 'stop', message: { content: '' } }], usage: { total_tokens: 1_000 } })
     return ok({ model: body.model, choices: [{ finish_reason: 'stop', message: { content: 'nội dung' } }], usage: { total_tokens: 5_000 } })
   }
@@ -85,8 +90,14 @@ globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
   if (url.includes('/rest/v1/ai_quota_overrides')) return ok([])
   if (url.includes('/rest/v1/ai_usage')) return ok([{ tokens: db.used }])
   if (url.includes('/rest/v1/ai_credits')) return ok([{ balance: db.credits }])
-  if (url.includes('/rpc/reserve_ai_quota')) return ok(true)
-  if (url.includes('/rpc/release_ai_quota')) return ok(null)
+  if (url.includes('/rpc/reserve_ai_quota')) {
+    reservations++
+    return ok(true)
+  }
+  if (url.includes('/rpc/release_ai_quota')) {
+    releases++
+    return ok(null)
+  }
   if (url.includes('/rpc/add_ai_usage')) {
     db.used += body.p_tokens
     return ok(db.used)
@@ -366,6 +377,70 @@ check('không lộ tên model cho trình duyệt', !JSON.stringify(r.events).inc
   const r = await hit({ messages: msgs('soạn đề qua opencode'), maxTokens: 8000, reasoningEffort: 'high' })
   const attempts = calls.slice(n0).map(({ model, reasoningEffort }) => [model, reasoningEffort].join(':'))
   check('opencode length: thử lại cùng model với reasoning_effort medium', attempts.join(',') === 'app-model:high,app-model:medium' && r.status === 200 && r.json?.content === 'nội dung', { attempts, status: r.status })
+}
+
+// 10. Số dư thấp cho tác vụ soạn đề (đếm cả system prompt do server ghép).
+{
+  process.env.DEEPSEEK_API_KEY = 'ds'
+  process.env.FOSTA_API_KEY = 'fosta'
+  process.env.FOSTA_MODEL = 'fosta-model'
+  const task = 'soan-de'
+  const taskInput = { text: 'Soạn đề Toán lớp 9', intent: 'doc' }
+  const messages = msgs(taskInput.text)
+  const payload = { task, taskInput, messages, maxTokens: 8000, reasoningEffort: 'low' }
+  const promptTokens = estimatePromptTokens([{ role: 'system', content: buildTaskSystem(task, taskInput) }, ...messages])
+  const minimumBalance = promptTokens + 4000
+
+  db.credits = minimumBalance - 1
+  const n0 = calls.length
+  const reservedBefore = reservations
+  const low = await spentBy(() => hit({ ...payload, stream: true }))
+  check('thiếu 1 token soạn đề: JSON 429 quota, báo số điểm và mời nạp', low.r.status === 429 && low.r.json?.code === 'quota' && /cần khoảng \d+ điểm AI.*còn \d+ điểm.*Nạp thêm điểm/.test(String(low.r.json.error)), low.r)
+  check('từ chối trước khi gọi model, giữ chỗ hoặc tính điểm', calls.length === n0 && reservations === reservedBefore && low.spent === 0)
+
+  db.credits = minimumBalance
+  const enough = await hit(payload)
+  const clipped = calls.at(-1)
+  check('vừa đủ soạn đề: DeepSeek nhận đúng 4.000 token và tắt suy luận', enough.status === 200 && clipped?.model === 'deepseek-flash' && clipped.maxTokens === 4000 && clipped.thinking?.type === 'disabled' && clipped.reasoningEffort === undefined, clipped)
+
+  db.credits = minimumBalance
+  const beforeFallback = calls.length
+  plan = ['fail', 'ok']
+  const fallback = await hit(payload)
+  const fallbackModels = calls.slice(beforeFallback).map((c) => c.model)
+  check('bị kẹp và DeepSeek lỗi upstream: bỏ qua opencode, thử FOSTA', fallback.status === 200 && fallbackModels.join(',') === 'deepseek-flash,fosta-model', fallbackModels)
+
+  for (const stream of [false, true]) {
+    db.credits = minimumBalance
+    const beforeLength = calls.length
+    const releasedBefore = releases
+    deepseekHitsTokenLimit = true
+    const { r, spent } = await spentBy(() => hit({ ...payload, stream }))
+    deepseekHitsTokenLimit = false
+    const error = stream ? r.events.at(-1) : r.json
+    check(`hết trần khi bị kẹp (${stream ? 'SSE' : 'JSON'}): trả quota và dừng chuỗi`, error?.code === 'quota' && (stream ? r.status === 200 && error.type === 'error' && error.status === 429 : r.status === 429) && calls.length === beforeLength + 1, r)
+    check('lượt rỗng vẫn miễn điểm trong ngưỡng và nhả giữ chỗ', spent === 0 && releases === releasedBefore + 1)
+  }
+
+  db.credits = minimumBalance
+  emptyToday = 3
+  deepseekHitsTokenLimit = true
+  const over = await spentBy(() => hit(payload))
+  check('đã dùng hết lượt miễn: tính usage của lượt rỗng và báo số dư mới',
+    over.r.status === 429 && over.spent === 5_000 && (over.r.json?.quota as { limit?: number })?.limit === db.credits, over)
+  emptyToday = 0
+  deepseekHitsTokenLimit = false
+
+  db.credits = 120_000
+  plan = ['fail', 'ok']
+  const beforeFull = calls.length
+  const full = await hit(payload)
+  const [deepseek, opencode] = calls.slice(beforeFull)
+  check('đủ số dư: DeepSeek giữ nguyên trần và mức suy luận, opencode vẫn dự phòng', full.status === 200 && deepseek?.maxTokens === 8000 && deepseek.thinking === undefined && deepseek.reasoningEffort === 'low' && opencode?.model === 'app-model', [deepseek?.maxTokens, deepseek?.thinking, deepseek?.reasoningEffort, opencode?.model])
+
+  db.credits = 3000
+  const chat = await hit({ task: 'hoi-truoc', messages: msgs('Soạn đề đi'), maxTokens: 8000 })
+  check('hỏi lại ngắn chạy được với ít hơn 4.000 token đầu ra', chat.status === 200 && calls.at(-1)!.maxTokens < 4000, chat.status)
 }
 
 console.log(fail ? `\n${fail} lỗi` : '\nTất cả đều qua')
