@@ -60,12 +60,12 @@ function prune(map: Map<string, { count: number; reset: number }>) {
 }
 
 /** đếm theo cửa sổ 10 phút; true = còn lượt */
-function take(map: Map<string, { count: number; reset: number }>, key: string, max: number): boolean {
+function take(map: Map<string, { count: number; reset: number }>, key: string, max: number, windowMs = WINDOW_MS): boolean {
   const now = Date.now()
   const cur = map.get(key)
   if (!cur || cur.reset <= now) {
     prune(map)
-    map.set(key, { count: 1, reset: now + WINDOW_MS })
+    map.set(key, { count: 1, reset: now + windowMs })
     return true
   }
   if (cur.count >= max) return false
@@ -77,9 +77,9 @@ function take(map: Map<string, { count: number; reset: number }>, key: string, m
  * Chỉ đếm lượt theo IP (không kiểm Origin, không hỏi token) — cho đường đọc tệp `/api/files/...`:
  * `<img src>` và link tải không gửi Origin nên không dùng được `guard()`. Hết lượt → 429, trả false.
  */
-export function rateLimitOnly(req: IncomingMessage, res: ServerResponse, name: string, max: number): boolean {
+export function rateLimitOnly(req: IncomingMessage, res: ServerResponse, name: string, max: number, options?: { windowMs: number; enforceLocal: boolean }): boolean {
   const ip = clientIp(req)
-  if (isLocal(ip) || take(hits, `${name}:${ip}`, max)) return true
+  if ((!options?.enforceLocal && isLocal(ip)) || take(hits, `${name}:${ip}`, max, options?.windowMs)) return true
   json(res, 429, { error: 'Quá nhiều yêu cầu, thử lại sau ít phút.' })
   return false
 }

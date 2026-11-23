@@ -78,6 +78,30 @@ async function readUser(s: Supa, id: string) {
   }
 }
 
+export async function readMuseFeedback(s: Supa) {
+  const [count, recent] = await Promise.all([
+    call(s, '/rest/v1/ai_feedback?select=id&kind=eq.down&limit=1', {
+      method: 'HEAD',
+      headers: { Prefer: 'count=exact' },
+    }).then(({ res }) => Number(res.headers.get('content-range')?.split('/')[1]) || 0).catch(() => 0),
+    call<Array<Pick<FeedbackRow, 'user_id' | 'mode' | 'created_at'>>>(
+      s, `/rest/v1/ai_feedback?select=user_id,mode,created_at&${negativeFilter}&order=created_at.desc,id.desc&limit=10`,
+    ).then(({ data }) => (data ?? []).slice(0, 10)).catch(() => []),
+  ])
+  const userIds = [...new Set(recent.flatMap((row) => row.user_id ? [row.user_id] : []))]
+  const users = new Map(await Promise.all(userIds.map(async (id) => [id, await readUser(s, id)] as const)))
+  return {
+    dislikes_total: count,
+    recent: recent.map((row) => {
+      const email = row.user_id ? users.get(row.user_id)?.email ?? '' : ''
+      const match = /^([^@\s]+)@([^@\s]+)$/.exec(email)
+      // Dữ liệu tên hiển thị do người dùng nhập có thể chứa email đầy đủ.
+      const user = match ? `${match[1].slice(0, Math.min(2, match[1].length - 1))}***@${match[2]}` : 'Ẩn danh'
+      return { at: row.created_at, kind: row.mode, user }
+    }),
+  }
+}
+
 export const AI_FEEDBACK_ACTIONS: ActionMap = {
   'aiFeedback.overview': {
     need: 'admin',

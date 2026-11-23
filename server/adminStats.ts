@@ -46,45 +46,48 @@ async function readStatsUser(s: Parameters<typeof call>[0], userId: string) {
   }
 }
 
+export async function readStatsOverview(s: Parameters<typeof call>[0], days: number) {
+  const { data } = await call<StatsOverviewRaw | DailyStatsRaw[]>(
+    s,
+    '/rest/v1/rpc/admin_stats_overview',
+    {
+      method: 'POST',
+      body: JSON.stringify({ p_days: days }),
+    },
+  )
+
+  const isArr = Array.isArray(data)
+  const rawDays: DailyStatsRaw[] = isArr ? data : data?.days ?? []
+  const totalUsers = Number(isArr ? (data[0] as any)?.total_users ?? 0 : data?.total_users ?? 0)
+  const active7d = Number(isArr ? (data[0] as any)?.active_7d ?? 0 : data?.active_7d ?? 0)
+  const active30d = Number(isArr ? (data[0] as any)?.active_30d ?? 0 : data?.active_30d ?? 0)
+  const onlineCount = Number(isArr ? (data[0] as any)?.online_count ?? 0 : data?.online_count ?? 0)
+
+  const chartDays = rawDays.map((d) => ({
+    day: String(d.day),
+    newUsers: Number(d.new_users ?? 0),
+    newDocs: Number(d.new_docs ?? 0),
+    newDecks: Number(d.new_decks ?? 0),
+    newCommunityExams: Number(d.new_community_exams ?? 0),
+  }))
+
+  return {
+    days,
+    totalUsers,
+    active7d,
+    active30d,
+    onlineCount,
+    chartDays,
+    daily: chartDays,
+  }
+}
+
 export const STATS_ACTIONS: ActionMap = {
   /** Thống kê số liệu người dùng, tài liệu theo ngày và các tổng; days 1..90 (mặc định 7) */
   'stats.overview': {
     need: 'admin',
     run: async (ctx, b) => {
-      const days = Math.min(90, Math.max(1, Math.floor(Number(b.days) || 7)))
-      const { data } = await call<StatsOverviewRaw | DailyStatsRaw[]>(
-        ctx.s,
-        '/rest/v1/rpc/admin_stats_overview',
-        {
-          method: 'POST',
-          body: JSON.stringify({ p_days: days }),
-        },
-      )
-
-      const isArr = Array.isArray(data)
-      const rawDays: DailyStatsRaw[] = isArr ? data : data?.days ?? []
-      const totalUsers = Number(isArr ? (data[0] as any)?.total_users ?? 0 : data?.total_users ?? 0)
-      const active7d = Number(isArr ? (data[0] as any)?.active_7d ?? 0 : data?.active_7d ?? 0)
-      const active30d = Number(isArr ? (data[0] as any)?.active_30d ?? 0 : data?.active_30d ?? 0)
-      const onlineCount = Number(isArr ? (data[0] as any)?.online_count ?? 0 : data?.online_count ?? 0)
-
-      const chartDays = rawDays.map((d) => ({
-        day: String(d.day),
-        newUsers: Number(d.new_users ?? 0),
-        newDocs: Number(d.new_docs ?? 0),
-        newDecks: Number(d.new_decks ?? 0),
-        newCommunityExams: Number(d.new_community_exams ?? 0),
-      }))
-
-      return {
-        days,
-        totalUsers,
-        active7d,
-        active30d,
-        onlineCount,
-        chartDays,
-        daily: chartDays,
-      }
+      return readStatsOverview(ctx.s, Math.min(90, Math.max(1, Math.floor(Number(b.days) || 7))))
     },
   },
 

@@ -29,6 +29,8 @@
     }
   ],
   "rewrites": [
+    { "source": "/api/admin/muse-stats", "destination": "/api/admin?muse-stats=1" },
+    { "source": "/api/muse-stats", "destination": "/api/admin?muse-stats=1" },
     { "source": "/api/files/:key*", "destination": "/api/files?key=:key*" },
     { "source": "/((?!api/|assets/).*)", "destination": "/index.html" }
   ]

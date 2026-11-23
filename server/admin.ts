@@ -21,13 +21,14 @@ import { STATS_ACTIONS } from './adminStats.js'
 import { AI_MARGIN_ACTIONS } from './adminAiMargin.js'
 import { PAYMENT_ACTIONS } from './adminPayments.js'
 import { AI_FEEDBACK_ACTIONS } from './adminAiFeedback.js'
+import { handleMuseStats, isMuseStatsRequest } from './adminMuseStats.js'
 import { presenceReturnStats, type PresenceReturnRow } from './presenceReturnStats.js'
 
 const MODEL_NAME = /^[\w.:/-]+$/
 
 export type Role = 'admin' | 'moderator'
 
-type Supa = { base: string; headers: Record<string, string> }
+export type Supa = { base: string; headers: Record<string, string> }
 
 function supa(): Supa | null {
   const base = (process.env.VITE_SUPABASE_URL ?? process.env.SUPABASE_URL ?? '').replace(/\/+$/, '')
@@ -219,7 +220,7 @@ export const needUser = (v: unknown) => {
   return v
 }
 
-async function getUser(s: Supa, id: string): Promise<AuthUser> {
+export async function getUser(s: Supa, id: string): Promise<AuthUser> {
   return (await call<AuthUser>(s, `/auth/v1/admin/users/${id}`)).data
 }
 
@@ -240,6 +241,61 @@ export type Body = Record<string, unknown>
 export type Handler = (ctx: AdminCtx, b: Body) => Promise<unknown>
 export type ActionMap = Record<string, { need: Role; run: Handler }>
 
+export async function readAdminUsers(s: Supa, page: number, perPage: number, q: string) {
+  const qs = new URLSearchParams({ page: String(page), per_page: String(perPage) })
+  if (q) qs.set('filter', q)
+  const { data, res } = await call<{ users: AuthUser[]; total?: number }>(s, `/auth/v1/admin/users?${qs}`)
+  const users = data.users ?? []
+  const total = Number(res.headers.get('x-total-count') ?? data.total ?? users.length)
+  return { users, total }
+}
+
+export function readAdminUserStats(s: Supa, ids: string[]) {
+  return call<Array<{ user_id: string; docs: number; decks: number; tokens: number; role: Role | null }>>(s, '/rest/v1/rpc/admin_user_stats', {
+    method: 'POST',
+    body: JSON.stringify({ p_ids: ids, p_month: month() }),
+  }).then((r) => r.data)
+}
+
+export async function readAdminQuota(s: Supa, id: string) {
+  const [{ data: ov }, { data: use }, { data: cr }] = await Promise.all([
+    call<Array<{ monthly_tokens: number | null; note: string | null }>>(s, `/rest/v1/ai_quota_overrides?user_id=eq.${id}&select=monthly_tokens,note`),
+    call<Array<{ tokens: number; requests: number }>>(s, `/rest/v1/ai_usage?user_id=eq.${id}&month=eq.${month()}&select=tokens,requests`),
+    call<Array<{ balance: number }>>(s, `/rest/v1/ai_credits?user_id=eq.${id}&select=balance`),
+  ])
+  const defaultLimit = MONTHLY_LIMIT()
+  return {
+    override: ov[0] ? { monthlyTokens: ov[0].monthly_tokens, note: ov[0].note ?? '' } : null,
+    defaultLimit,
+    usedThisMonth: Number(use[0]?.tokens ?? 0),
+    requestsThisMonth: Number(use[0]?.requests ?? 0),
+    // chưa có dòng số dư = chưa dùng AI lần nào: sẽ nhận quà chào mừng ở lượt đầu, hiện luôn số đó thay vì 0
+    credits: cr[0] ? Number(cr[0].balance) : await welcomeTokens(),
+    welcomePending: !cr[0],
+  }
+}
+
+export async function readAdminAiStats(s: Supa, days: number) {
+  const { data } = await call<Array<{ day: string; model: string; provider: string; calls: number; errors: number; tokens: number; cost: number | null; avg_ms: number }>>(
+    s,
+    '/rest/v1/rpc/admin_ai_stats',
+    { method: 'POST', body: JSON.stringify({ p_days: days }) },
+  )
+  return {
+    days,
+    rows: data.map((r) => ({
+      day: r.day,
+      model: r.model,
+      provider: r.provider,
+      calls: Number(r.calls),
+      errors: Number(r.errors),
+      tokens: Number(r.tokens),
+      cost: r.cost == null ? null : Number(r.cost),
+      avgMs: Number(r.avg_ms),
+    })),
+  }
+}
+
 const ACTIONS: ActionMap = {
   // giai đoạn 3–5: action nằm ở file riêng (mỗi nhánh agent chỉ sửa file của mình)
   ...CONTENT_ACTIONS,
@@ -258,20 +314,13 @@ const ACTIONS: ActionMap = {
       const page = Math.max(1, Math.floor(Number(b.page) || 1))
       const perPage = Math.min(100, Math.max(1, Math.floor(Number(b.perPage) || 20)))
       const q = str(b.q, 100)
-      const qs = new URLSearchParams({ page: String(page), per_page: String(perPage) })
-      if (q) qs.set('filter', q)
-      const { data, res } = await call<{ users: AuthUser[]; total?: number }>(s, `/auth/v1/admin/users?${qs}`)
-      const users = data.users ?? []
-      const total = Number(res.headers.get('x-total-count') ?? data.total ?? users.length)
+      const { users, total } = await readAdminUsers(s, page, perPage, q)
       const ids = users.map((u) => u.id)
       const now = Date.now()
       const since = new Date(now - 2 * 60_000).toISOString()
       const [stats, flags, presence, returns] = ids.length
         ? await Promise.all([
-            call<Array<{ user_id: string; docs: number; decks: number; tokens: number; role: Role | null }>>(s, '/rest/v1/rpc/admin_user_stats', {
-              method: 'POST',
-              body: JSON.stringify({ p_ids: ids, p_month: month() }),
-            }).then((r) => r.data),
+            readAdminUserStats(s, ids),
             // bảng cờ lỗi thì danh sách vẫn phải hiện
             call<FlagRow[]>(s, `/rest/v1/security_flags?user_id=in.(${ids.join(',')})&select=user_id,strikes,last_at,last_action,last_ip`)
               .then((r) => r.data)
@@ -458,22 +507,13 @@ const ACTIONS: ActionMap = {
     run: async ({ s }, b) => {
       const id = needUser(b.userId)
       const since = new Date(Date.now() - 24 * 3600_000).toISOString()
-      const [{ data: ov }, { data: use }, { data: cr }, empty] = await Promise.all([
-        call<Array<{ monthly_tokens: number | null; note: string | null }>>(s, `/rest/v1/ai_quota_overrides?user_id=eq.${id}&select=monthly_tokens,note`),
-        call<Array<{ tokens: number; requests: number }>>(s, `/rest/v1/ai_usage?user_id=eq.${id}&month=eq.${month()}&select=tokens,requests`),
-        call<Array<{ balance: number }>>(s, `/rest/v1/ai_credits?user_id=eq.${id}&select=balance`),
+      const [quota, empty] = await Promise.all([
+        readAdminQuota(s, id),
         // lượt AI hỏng (trả rỗng / luồng đứt) 24 giờ qua, được miễn điểm tới EMPTY_FREE_PER_DAY lượt: không đọc được thì bỏ qua
         call<Array<{ id: number }>>(s, `/rest/v1/ai_calls?user_id=eq.${id}&${FREE_FAIL_FILTER}&created_at=gte.${encodeURIComponent(since)}&select=id&limit=100`).catch(() => null),
       ])
-      const defaultLimit = MONTHLY_LIMIT()
       return {
-        override: ov[0] ? { monthlyTokens: ov[0].monthly_tokens, note: ov[0].note ?? '' } : null,
-        defaultLimit,
-        usedThisMonth: Number(use[0]?.tokens ?? 0),
-        requestsThisMonth: Number(use[0]?.requests ?? 0),
-        // chưa có dòng số dư = chưa dùng AI lần nào: sẽ nhận quà chào mừng ở lượt đầu, hiện luôn số đó thay vì 0
-        credits: cr[0] ? Number(cr[0].balance) : await welcomeTokens(),
-        welcomePending: !cr[0],
+        ...quota,
         emptyDay: empty?.data.length ?? 0,
         freeEmpty: EMPTY_FREE_PER_DAY,
       }
@@ -628,25 +668,7 @@ const ACTIONS: ActionMap = {
   'ai.stats': {
     need: 'admin',
     run: async ({ s }, b) => {
-      const days = Math.min(90, Math.max(1, Math.floor(Number(b.days) || 7)))
-      const { data } = await call<Array<{ day: string; model: string; provider: string; calls: number; errors: number; tokens: number; cost: number | null; avg_ms: number }>>(
-        s,
-        '/rest/v1/rpc/admin_ai_stats',
-        { method: 'POST', body: JSON.stringify({ p_days: days }) },
-      )
-      return {
-        days,
-        rows: data.map((r) => ({
-          day: r.day,
-          model: r.model,
-          provider: r.provider,
-          calls: Number(r.calls),
-          errors: Number(r.errors),
-          tokens: Number(r.tokens),
-          cost: r.cost == null ? null : Number(r.cost),
-          avgMs: Number(r.avg_ms),
-        })),
-      }
+      return readAdminAiStats(s, Math.min(90, Math.max(1, Math.floor(Number(b.days) || 7))))
     },
   },
 
@@ -823,6 +845,7 @@ async function handleVision(req: IncomingMessage, res: ServerResponse): Promise<
 }
 
 export async function handleAdminRequest(req: IncomingMessage, res: ServerResponse): Promise<void> {
+  if (isMuseStatsRequest(req)) return handleMuseStats(req, res)
   if (!(await guard(req, res, 'admin'))) return
   if (req.method === 'OPTIONS') return json(res, 204, {})
   if (req.method !== 'POST') return json(res, 405, { error: 'Method not allowed' })
@@ -848,6 +871,6 @@ export async function handleAdminRequest(req: IncomingMessage, res: ServerRespon
 }
 
 export function adminMiddleware(req: IncomingMessage, res: ServerResponse, next: (err?: unknown) => void): void {
-  if (req.method !== 'POST' && req.method !== 'OPTIONS') return next()
+  if (!isMuseStatsRequest(req) && req.method !== 'POST' && req.method !== 'OPTIONS') return next()
   handleAdminRequest(req, res).catch((err: unknown) => json(res, 500, { error: safeError(err, isLocal(clientIp(req))) }))
 }

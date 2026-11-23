@@ -10,6 +10,7 @@ import { uploadMiddleware, fileMiddleware } from './server/r2'
 import { attemptMiddleware } from './server/attempt'
 import { examMiddleware } from './server/exam'
 import { adminMiddleware } from './server/admin'
+import { isMuseStatsRequest } from './server/adminMuseStats'
 import { quotaMiddleware } from './server/quota'
 import { payMiddleware } from './server/payment'
 
@@ -36,6 +37,10 @@ export default defineConfig({
         server.middlewares.use('/api/attempt', attemptMiddleware)
         server.middlewares.use('/api/exam', examMiddleware)
         server.middlewares.use('/api/admin', adminMiddleware)
+        server.middlewares.use('/api/muse-stats', (req, res, next) => {
+          if (isMuseStatsRequest(req)) return adminMiddleware(req, res, next)
+          next()
+        })
       },
     },
   ],
