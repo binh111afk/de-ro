@@ -42,6 +42,16 @@ function frame(svg: string, spanX: number, spanY: number) {
   return { k, w, h }
 }
 
+const touching = renderSceneSvg({ text: [
+  '_A(0; 0) _B(2.7; -1.5)', 'hộp _A 2 1 "Xử lý"', 'elip _B 1 0.7 "Kết thúc"', 'mũi tên _A-_B',
+].join('\n') }, '').svg
+const terminal = tags(touching, 'ellipse')[0]
+const box = tags(touching, 'rect').at(-1)!
+const nearestX = Math.min(numAttr(box, 'x') + numAttr(box, 'width'), Math.max(numAttr(box, 'x'), numAttr(terminal, 'cx')))
+const nearestY = Math.min(numAttr(box, 'y') + numAttr(box, 'height'), Math.max(numAttr(box, 'y'), numAttr(terminal, 'cy')))
+assert.ok(Math.hypot((nearestX - numAttr(terminal, 'cx')) / numAttr(terminal, 'rx'), (nearestY - numAttr(terminal, 'cy')) / numAttr(terminal, 'ry')) > 1)
+assert.equal(touching.match(/marker-end=/g)?.length, 1)
+
 assert.equal(parseScene(star).cmds.length, 13)
 const starSvg = renderSceneSvg({ text: star }, '').svg
 count(starSvg, 'circle', 7)

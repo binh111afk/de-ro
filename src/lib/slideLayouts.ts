@@ -1420,10 +1420,10 @@ function composeRules(p: LayoutPalette, c: SlideLayoutContent): SlideElement[] {
   const longest = Math.max(...rows.map((r) => r.value.length))
   const valueSize = longest <= 9 ? 3.6 : longest <= 14 ? 3.1 : 2.7
   return compact([
-    p.text('kicker', upper(c.kicker), { x: 5, y: 5.5, w: 80, h: 7.5 }, {
+    p.text('kicker', upper(c.kicker), { x: 5, y: 8, w: 80, h: 7 }, {
       variant: 'body', fontSize: 1.85, fontWeight: 700, textColor: p.ink, valign: 'top', lineHeight: 1.2,
     }),
-    p.text('title', c.title, { x: 5, y: 13, w: 90, h: 20 }, {
+    p.text('title', c.title, { x: 5, y: 15, w: 90, h: 18 }, {
       ...EDITORIAL_TITLE, fontSize: 5.3, textColor: p.fg,
     }, 0.4),
     ...rows.flatMap((r, i) => {
@@ -1448,7 +1448,7 @@ function composeEditorialText(p: LayoutPalette, c: SlideLayoutContent): SlideEle
   if (lines.length === 0 && !c.title?.trim()) return []
   const text = lines.join('\n\n')
   return compact([
-    p.text('kicker', upper(c.kicker), { x: 5, y: 7.5, w: 80, h: 7.5 }, {
+    p.text('kicker', upper(c.kicker), { x: 5, y: 8, w: 80, h: 7 }, {
       variant: 'body', fontSize: 1.85, fontWeight: 700, textColor: p.ink, valign: 'top', lineHeight: 1.2,
     }),
     p.text('title', c.title, { x: 5, y: 15, w: 40, h: 60 }, {
@@ -1466,7 +1466,7 @@ function composeManifesto(p: LayoutPalette, c: SlideLayoutContent): SlideElement
   if (!text) return []
   const size = text.length > 180 ? 3.7 : text.length > 110 ? 4.5 : 5.6
   return compact([
-    p.text('kicker', upper(c.kicker), { x: 6, y: 12, w: 80, h: 7.5 }, {
+    p.text('kicker', upper(c.kicker), { x: 6, y: 12, w: 80, h: 7 }, {
       variant: 'body', fontSize: 1.85, fontWeight: 700, textColor: p.ink, valign: 'top', lineHeight: 1.2,
     }),
     p.text('body', text, { x: 6, y: 21, w: 86, h: 52 }, {

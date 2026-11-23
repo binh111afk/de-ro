@@ -451,8 +451,9 @@ async function picOf(ctx: Ctx, part: Part, pic: El, box: Box): Promise<SlideElem
 function tableOf(ctx: Ctx, frame: El, box: Box): SlideElement | null {
   const tbl = deep(frame, 'tbl')[0]
   if (!tbl) return null
-  const rows = kids(tbl, 'tr').map((tr) =>
-    kids(tr, 'tc').map((tc) =>
+  const cells = kids(tbl, 'tr').map((tr) => kids(tr, 'tc'))
+  const rows = cells.map((row) =>
+    row.map((tc) =>
       kids(kid(tc, 'txBody'), 'p')
         .map((p) => deep(p, 't').map((t) => t.textContent ?? '').join(''))
         .join('\n')
@@ -460,7 +461,12 @@ function tableOf(ctx: Ctx, frame: El, box: Box): SlideElement | null {
     ),
   )
   if (!rows.length) return null
-  return { id: uid(), type: 'table', ...placeBox(ctx, box), rows }
+  const cellFills = cells.map((row) => row.map((tc) => {
+    const props = kid(tc, 'tcPr')
+    if (kid(props, 'noFill')) return 'transparent'
+    return cssColor(colorOf(kid(props, 'solidFill'), ctx.theme)) ?? null
+  }))
+  return { id: uid(), type: 'table', ...placeBox(ctx, box), rows, cellFills }
 }
 
 /* ------------------------------ duyệt cây ------------------------------ */

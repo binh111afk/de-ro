@@ -44,12 +44,17 @@ export function parseStats(text: string): Parsed {
     .map((l) => l.trim())
     .filter(Boolean)
   if (!lines.length) throw new Error('Chưa có dữ liệu')
-  // Một số bảng có tên cột đặt ở đầu dòng nhãn, vd. "Lớp: 6A; 6B; 6C".
-  if (lines.length > 1 && /^[^:]+:\s*.+[;|]/.test(lines[0]) &&
-      /[\p{L}]/u.test(lines[0].slice(lines[0].indexOf(':') + 1))) {
-    lines[0] = lines[0].slice(lines[0].indexOf(':') + 1).trim()
-  }
   let cats: string[] = []
+  // Dòng đầu có thể ghi tên trục trước cả nhãn số, vd. "Năm: 2021; 2022; 2023".
+  const axis = /^([^:]+):\s*(.+[;|\t].*)$/.exec(lines[0])
+  if (lines.length > 1 && axis && lines.slice(1).every(line => line.includes(':'))) {
+    const name = axis[1].normalize('NFC').trim()
+    const axisName = /^(?:x|trục\s*(?:x|hoành)|nhãn(?:\s+.+)?|năm(?:\s+học)?|tháng|quý|ngày|tuần|thời gian|hạng mục|danh mục|khoảng(?:\s+.+)?)(?:\s*\([^)]*\))?$/iu
+    if (axisName.test(name) || /[\p{L}]/u.test(axis[2])) {
+      cats = splitCats(axis[2])
+      lines.shift()
+    }
+  }
   const series: Parsed['series'] = []
   for (const l of lines) {
     const ci = l.lastIndexOf(':')

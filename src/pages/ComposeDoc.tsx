@@ -39,7 +39,7 @@ import { useOnline } from '@/store/online'
 import { docToExam } from '@/lib/docToExam'
 import { examToDraft } from '@/lib/onlineExam'
 import { DECK_THEMES } from '@/lib/slideTheme'
-import { applyExamReply } from '@/examEditor/examAiResult'
+import { applyExamMaintenance, applyExamReply } from '@/examEditor/examAiResult'
 import { importedSlides, readImportFile, textToBlocks } from '@/lib/importFile'
 import { IconZoomIn, IconZoomOut } from '@/examEditor/icons'
 import type { ExamBlock, ExamDoc } from '@/data/docTypes'
@@ -461,15 +461,13 @@ export default function ComposeDoc() {
         if (file.size > 40 * 1024 * 1024) throw new Error('Tệp quá lớn (tối đa 40 MB).')
         const { importPptx } = await import('@/lib/pptxImport')
         const deck = await importPptx(file)
-        const id = newSlide()
-        updateDeck(id, deck)
+        newSlide(deck)
         return
       }
       const data = await readImportFile(file)
-      const id = newSlide()
-      updateDeck(id, { title: data.title, slides: importedSlides(data, DECK_THEMES[0]) })
+      newSlide({ title: data.title, slides: importedSlides(data, DECK_THEMES[0]) })
     },
-    [newSlide, updateDeck],
+    [newSlide],
   )
 
   const handlePrint = useCallback(() => {
@@ -490,8 +488,14 @@ export default function ComposeDoc() {
     return () => void editor.off('transaction', on)
   }, [editor])
 
+  const handleExamMaintenance = useCallback((request: string): AiApplyResult | undefined => {
+    const current = useComposeStore.getState()
+    if (!editor || editor.isDestroyed || !activeId || current.activeId !== activeId) return undefined
+    return applyExamMaintenance(editor, request)
+  }, [editor, activeId])
+
   const handleAiResult = useCallback(
-    (text: string, allowReplace: boolean): AiApplyResult => {
+    (text: string, allowReplace: boolean, request = ''): AiApplyResult => {
       const current = useComposeStore.getState()
       if (!activeId || !editor || editor.isDestroyed || current.activeId !== activeId || current.contents[activeId] !== contents[activeId])
         return { text: 'Đề đã thay đổi trong khi AI xử lý. Hãy gửi lại yêu cầu.', failed: true, retryable: false }
@@ -504,6 +508,9 @@ export default function ComposeDoc() {
       }, (name) => {
         const tab = current.tabs.find((t) => t.id === activeId)
         if (tab && (!tab.title.trim() || tab.title === 'Đề thi mới')) renameTab(activeId, name)
+      }, {
+        allowImageRemoval: /(?:xoá|xóa|bỏ|gỡ)\s+(?:bớt\s+)?(?:hình|ảnh)/iu.test(request.normalize('NFC')),
+        requirePatch: !allowReplace && /(?<!\p{L})(?:xoá|xóa|bỏ|xáo|trộn|sửa|đổi|chỉnh|cập nhật)(?!\p{L})/iu.test(request.normalize('NFC')),
       })
     },
     [activeId, contents, editor, renameTab],
@@ -993,6 +1000,7 @@ export default function ComposeDoc() {
             attachKey="exam"
             historyKey={activeDoc?.id}
             onApplyBlocks={handleAiResult}
+            onExamMaintenance={handleExamMaintenance}
             documentDigest={documentDigest}
             focusFor={(request) => focusNote(activeContent, request)}
             contextSummary={

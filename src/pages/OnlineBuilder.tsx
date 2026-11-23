@@ -25,7 +25,6 @@ import { listItem, publishItem, shareUrl } from '@/lib/onlinePublish'
 import { readImportFile } from '@/lib/importFile'
 import { parseExamText } from '@/lib/parseExamText'
 import { imageToSrc, pastedImage, uploadQuestionImages } from '@/lib/questionImage'
-import { plainText } from '@/lib/mathText'
 import { MathText } from '@/components/MathText'
 import { QuestionBody } from '@/components/QuestionBody'
 import { QuestionImageField } from '@/components/QuestionImageField'
@@ -37,8 +36,7 @@ const KEYS = ['A', 'B', 'C', 'D', 'E', 'F']
 const SUBJECT_OPTIONS = SUBJECTS.map((s) => ({ value: s, label: s }))
 const GRADE_OPTIONS = GRADES.map((g) => ({ value: g, label: g }))
 const textareaClass = inputClass + ' resize-y leading-relaxed'
-const oneLine = (s: string) => plainText(s.replace(/!\[[^\]\n]*\]\([^\s)]+\)/g, '').replace(/`+/g, ''))
-  .replace(/\s+/g, ' ').trim()
+const outlineText = (s: string) => s.replace(/!\[[^\]\n]*\]\([^\s)]+\)/g, '').trim()
 
 export default function OnlineBuilder() {
   const { id } = useParams<{ id: string }>()
@@ -295,9 +293,9 @@ export default function OnlineBuilder() {
                                 >
                                   {q.number}
                                 </span>
-                                <span className="min-w-0 flex-1 truncate text-[13px] text-ink-2">
-                                  {oneLine(q.prompt) || '(chưa có nội dung)'}
-                                </span>
+                                <MathText className="min-w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-[13px] text-ink-2 [&_.katex-display]:inline [&_.katex-display]:m-0 [&_br]:hidden">
+                                  {outlineText(q.prompt) || '(chưa có nội dung)'}
+                                </MathText>
                               </button>
                             </li>
                           )

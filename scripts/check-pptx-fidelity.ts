@@ -4,6 +4,7 @@ import { DOMParser } from '@xmldom/xmldom'
 import JSZip from 'jszip'
 import type { Deck, DeckTheme, Slide, SlideElement } from '../src/store/docs'
 import { buildDeckPptx } from '../src/lib/exportDeck'
+import { importPptx } from '../src/lib/pptxImport'
 import { BACKGROUNDS, firstColor } from '../src/lib/slideBackground'
 import { readableElements } from '../src/lib/slideContrast'
 import { SLIDE_DESIGNS, buildDesignSlides, designTheme } from '../src/lib/slideDesigns'
@@ -18,7 +19,7 @@ import {
 import { mathToPlain } from '../src/lib/slideMath'
 import { isStrokeOnlyShape, prstOf } from '../src/lib/slidePresets'
 import { skinById, themeWithSkinFonts } from '../src/lib/slideSkins'
-import { DECK_THEMES, PRO_THEMES, normalizeTheme, readableTextOn, type ResolvedTheme } from '../src/lib/slideTheme'
+import { DECK_THEMES, PRO_THEMES, normalizeTheme, readableTextOn, themeById, type ResolvedTheme } from '../src/lib/slideTheme'
 
 const TOLERANCE = 1 // Điểm phần trăm theo từng trục, dùng kích thước ghi trong presentation.xml.
 const ALPHA_TOLERANCE = 0.0051 // PptxGenJS nhận độ trong suốt theo số phần trăm nguyên.
@@ -616,8 +617,39 @@ function compareElements(slide: Slide, deck: Deck, theme: ResolvedTheme, index: 
   return { web: web.length, pptx: list.length, paired: matched.size }
 }
 
+async function checkTableRoundTrip() {
+  const theme = themeById('cam-nang-dong')
+  const deck: Deck = {
+    id: 'table', title: 'Bảng màu cam', theme, createdAt: '', updatedAt: '',
+    slides: [{
+      id: 'slide', background: theme.bg,
+      elements: [{ id: 'table-element', type: 'table', x: 8, y: 25, w: 84, h: 55, rows: [['A', 'B'], ['1', '2']] }],
+    }],
+  }
+  const bytes = await buildDeckPptx(deck)
+  Object.assign(globalThis, {
+    DOMParser: class extends DOMParser {
+      parseFromString(...args: Parameters<DOMParser['parseFromString']>) {
+        const parsed = super.parseFromString(...args)
+        for (const el of Array.from(parsed.getElementsByTagName('*'))) {
+          Object.defineProperty(el, 'children', { value: children(el) })
+        }
+        return parsed
+      }
+    },
+  })
+  const imported = await importPptx(new File([bytes], 'table.pptx'))
+  assert.equal(imported.slides.length, 1)
+  const table = imported.slides[0].elements.find(el => el.type === 'table')
+  assert.deepEqual(table?.rows, [['A', 'B'], ['1', '2']])
+  assert.deepEqual(table?.cellFills?.[0].map(color), [color(theme.accent), color(theme.accent)])
+  const again = await importPptx(new File([await buildDeckPptx({ ...deck, theme: DECK_THEMES[0], slides: imported.slides })], 'table.pptx'))
+  assert.deepEqual(again.slides[0].elements.find(el => el.type === 'table')?.cellFills?.[0].map(color), [color(theme.accent), color(theme.accent)])
+}
+
 async function main() {
   await loadGraphics()
+  await checkTableRoundTrip()
   for (const { family, decks } of cases()) {
     const totals = { decks: decks.length, slides: 0, web: 0, pptx: 0, paired: 0 }
     coverage.set(family, totals)

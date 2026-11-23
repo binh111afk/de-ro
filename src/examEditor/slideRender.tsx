@@ -142,14 +142,20 @@ export function FitText({
   useLayoutEffect(() => {
     const el = ref.current
     if (!el) return
-    const min = baseSize * 0.6
     const fit = () => {
       let s = baseSize
-      const fits = (px: number) => {
-        el.style.fontSize = `${px}cqw`
-        return el.scrollHeight <= el.clientHeight + 1
+      const fits = (size: number) => {
+        el.style.fontSize = `${size}cqw`
+        return el.scrollHeight <= el.clientHeight + 1 && el.scrollWidth <= el.clientWidth + 1
       }
-      if (!fits(s)) while (s > min && !fits(s)) s -= 0.1
+      const min = baseSize * 0.6
+      while (s > min && !fits(s)) s = Math.max(min, s - 0.1)
+      fits(s)
+      // Công thức không ngắt dòng có thể cần nhỏ hơn giới hạn co chữ thường.
+      while (el.scrollWidth > el.clientWidth + 1 && el.clientWidth > 0 && s > 0.1) {
+        s = Math.max(0.1, Math.min(s - 0.01, s * el.clientWidth / el.scrollWidth))
+        fits(s)
+      }
       // giữ 2 chữ số: compose-time đã fit tới 0,01cqw, làm tròn lên 0,1 sẽ
       // biến 2,45 thành 2,5 và gây tràn đúng ở biên
       const final = Math.floor(s * 100) / 100
@@ -696,7 +702,6 @@ export function SlideElView({ el, theme, revealStep, live, embedded, slideId }: 
   }
 
   if (el.type === 'table') {
-    const headerFg = readableTextOn(theme.accent)
     const rowCount = el.rows?.length ?? 0
     return (
       <table
@@ -714,23 +719,23 @@ export function SlideElView({ el, theme, revealStep, live, embedded, slideId }: 
         <tbody>
           {(el.rows ?? []).map((r, ri) => (
             <tr key={ri}>
-              {r.map((c, ci) => (
-                <td
+              {r.map((c, ci) => {
+                const fill = el.cellFills?.[ri]?.[ci] ?? (ri === 0 ? theme.accent : ri % 2 === 0 ? theme.surface : 'transparent')
+                return <td
                   key={ci}
                   style={{
                     borderBottom:
                       ri < rowCount - 1 ? `1px solid ${theme.muted}` : undefined,
                     borderRight: ci < r.length - 1 ? `1px solid ${theme.muted}` : undefined,
                     padding: '0.5em 0.7em',
-                    background:
-                      ri === 0 ? theme.accent : ri % 2 === 0 ? theme.surface : 'transparent',
-                    color: ri === 0 ? headerFg : theme.fg,
+                    background: fill,
+                    color: fill !== 'transparent' && (ri === 0 || el.cellFills?.[ri]?.[ci]) ? readableTextOn(fill) : theme.fg,
                     fontWeight: ri === 0 ? 600 : 400,
                   }}
                 >
                   {hasRich(c) ? <span dangerouslySetInnerHTML={{ __html: slideMathHtml(c) }} /> : c}
                 </td>
-              ))}
+              })}
             </tr>
           ))}
         </tbody>

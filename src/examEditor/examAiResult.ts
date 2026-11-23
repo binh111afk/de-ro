@@ -3,7 +3,8 @@ import type { Selection, Transaction } from '@tiptap/pm/state'
 import type { Node as ProseMirrorNode } from '@tiptap/pm/model'
 import type { ExamBlock, FormatAttrs, RichText, Span, TableCellData } from '@/data/docTypes'
 import { extractJson } from '@/lib/llm'
-import { keyIndex, rubricEntries, stripImages, type AiApplyResult } from '@/lib/aiDocContext'
+import { examMaintenance, keyIndex, rubricEntries, stripImages, type AiApplyResult } from '@/lib/aiDocContext'
+import { readKeys, shuffleQuestion } from '@/lib/shuffleExam'
 import { buildScoringTable } from '@/lib/scoringTable'
 import { blocksToTipTap, plainText, splitRichLines, tipTapToBlocks } from './convert'
 
@@ -317,7 +318,7 @@ interface ExamPatch {
 type KeyItem = Extract<ExamBlock, { type: 'answerKey' }>['items'][number]
 
 /** Giữ đáp án cũ theo câu gốc khi chèn/xoá làm dịch số. Mục AI trả mới được ưu tiên. */
-function normalizePatchedQuestions(tr: Transaction, original: ProseMirrorNode) {
+function normalizePatchedQuestions(tr: Transaction, original: ProseMirrorNode, shuffled?: Map<number, string>) {
   const questions: Array<{ node: ProseMirrorNode; pos: number }> = []
   const tables: Array<{ node: ProseMirrorNode; pos: number; items: KeyItem[] }> = []
   const headings: Array<{ node: ProseMirrorNode; pos: number; start: number; end: number }> = []
@@ -345,7 +346,7 @@ function normalizePatchedQuestions(tr: Transaction, original: ProseMirrorNode) {
   const changed = oldQuestions.length !== questions.length ||
     questions.some(({ node }, i) => node.attrs.no !== oldQuestions[i]?.attrs.no)
   const newTables = tables.filter(({ node }) => !oldTables.has(node))
-  if (!changed && (!newTables.length || oldTables.size === 0 && tables.length === 1)) return
+  if (!shuffled?.size && !changed && (!newTables.length || oldTables.size === 0 && tables.length === 1)) return
 
   const fresh = newTables.flatMap(({ items }) => items)
   const prior = new Map<number, RichText>()
@@ -364,7 +365,7 @@ function normalizePatchedQuestions(tr: Transaction, original: ProseMirrorNode) {
     const isOld = oldQuestions.includes(node)
     const fromPatch = fullKey && changed ? incoming.get(no) :
       !isOld || !touched.has(oldNo) ? incoming.get(oldNo) : undefined
-    const answer = fromPatch ?? (isOld || !changed ? prior.get(oldNo) : undefined)
+    const answer = shuffled?.get(oldNo) ?? fromPatch ?? (shuffled || isOld || !changed ? prior.get(oldNo) : undefined)
     if (no !== oldNo) tr.setNodeMarkup(pos, undefined, { ...node.attrs, no })
     return answer === undefined ? [] : [{ no, answer }]
   })
@@ -390,8 +391,75 @@ function normalizePatchedQuestions(tr: Transaction, original: ProseMirrorNode) {
   edits.sort((a, b) => b.pos - a.pos).forEach(({ run }) => run())
 }
 
+/** Xoá/xáo trên node gốc để giữ nguyên hình, công thức và định dạng phương án. */
+export function applyExamMaintenance(editor: Editor, request: string, random = Math.random): AiApplyResult | undefined {
+  const edit = examMaintenance(request)
+  if (!edit) return undefined
+  const { state, view } = editor
+  const tr = state.tr
+  const current = editor.getJSON()
+  const keys = readKeys(tipTapToBlocks(current))
+  const questions: Array<{ node: ProseMirrorNode; index: number }> = []
+  state.doc.forEach((node, _pos, index) => {
+    if (node.type.name === 'examQuestion') questions.push({ node, index })
+  })
+  const fail = (text: string): AiApplyResult => ({ text, failed: true, retryable: false })
+  if (edit.remove.some(no => questions.filter(({ node }) => Number(node.attrs.no) === no).length !== 1))
+    return fail('Mình chưa xác định được câu cần xóa. Bạn kiểm tra lại số câu nhé.')
+  if (edit.first > questions.length) return fail('Đề chưa có đủ số câu để xáo đáp án.')
+
+  const deleteIndices = new Set<number>()
+  for (const { node, index } of questions) {
+    if (!edit.remove.includes(Number(node.attrs.no))) continue
+    deleteIndices.add(index)
+    const next = current.content?.[index + 1]
+    if ((next?.type === 'paragraph' || next?.type === 'examParagraph') &&
+        next.content?.some(el => el.type === 'image') && next.content.every(el => el.type === 'image' || el.type === 'hardBreak')) {
+      deleteIndices.add(index + 1)
+    }
+  }
+  const updates = new Map<number, ProseMirrorNode>()
+  const answers = new Map<number, string>()
+  for (const { node, index } of questions.slice(0, edit.first)) {
+    if (deleteIndices.has(index)) continue
+    const [block] = tipTapToBlocks({ type: 'doc', content: [node.toJSON()] })
+    if (block?.type !== 'question' || block.kind === 'short') continue
+    const prior = keys.get(block.no) ?? []
+    const first = shuffleQuestion(block, prior, true, random)
+    const unchanged = (order: number[]) => order.every((from, i) => from === i)
+    const { q, answer, order } = unchanged(first.order) ? shuffleQuestion(block, prior, true, () => 0) : first
+    if ((prior.length && !answer) || unchanged(order)) continue
+    const options = Array.from({ length: node.childCount - 1 }, (_, i) => node.child(i + 1))
+    const reordered = order.map((from, i) => {
+      const option = options[from]
+      return option.type.create({ ...option.attrs, label: q.options[i].label }, option.content, option.marks)
+    })
+    updates.set(index, node.type.create(node.attrs, [node.firstChild!, ...reordered], node.marks))
+    if (answer) answers.set(block.no, answer)
+  }
+
+  const changes: Array<{ node: ProseMirrorNode; pos: number; index: number }> = []
+  state.doc.forEach((node, pos, index) => {
+    if (deleteIndices.has(index) || updates.has(index)) changes.push({ node, pos, index })
+  })
+  for (const { node, pos, index } of changes.reverse()) {
+    const replacement = updates.get(index)
+    if (replacement) tr.replaceWith(pos, pos + node.nodeSize, replacement)
+    else tr.delete(pos, pos + node.nodeSize)
+  }
+  if (!tr.docChanged) return fail('Chưa có phương án nào đổi chỗ được.')
+  normalizePatchedQuestions(tr, state.doc, answers)
+  view.dispatch(tr.scrollIntoView())
+  const deleted = edit.remove.length ? `Mình đã xóa ${edit.remove.map(no => `câu ${no}`).join(', ')}.` : ''
+  const shuffled = edit.first ? (updates.size ? `Đã xáo phương án của ${updates.size} câu.` : 'Chưa có phương án nào đổi chỗ được.') : ''
+  return { text: [deleted, shuffled].filter(Boolean).join(' ') }
+}
+
 /** Các mục patch: {op, id, block|blocks}; thiếu op = thay khối (dạng cũ). Mục sai thì bỏ. */
-function sanitizePatches(raw: unknown, missing: string[], invalid: string[], draw: DrawFigure, current: ReturnType<Editor['getJSON']>): ExamPatch[] {
+function sanitizePatches(
+  raw: unknown, missing: string[], invalid: string[], draw: DrawFigure,
+  current: ReturnType<Editor['getJSON']>, allowImageRemoval: boolean,
+): ExamPatch[] {
   if (!Array.isArray(raw)) return []
   const out: ExamPatch[] = []
   for (const item of raw) {
@@ -410,6 +478,11 @@ function sanitizePatches(raw: unknown, missing: string[], invalid: string[], dra
     const node = current.content?.[index]
     if (node) stripImages(tipTapToBlocks({ type: 'doc', content: [node] }), originals)
     const blocks = sanitizeBlocks(expandFigures(list, missing, draw), invalid, missing, draw, originals)
+    if (op === 'replace' && !allowImageRemoval && originals.length) {
+      const retained: typeof originals = []
+      stripImages(blocks, retained)
+      if (retained.length < originals.length) invalid.push('Phần sửa làm mất hình đang có')
+    }
     if (blocks.length) out.push({ op, index, blocks })
   }
   return out
@@ -442,6 +515,7 @@ export function applyExamReply(
   draw: DrawFigure,
   onFigures?: () => void,
   onRename?: (name: string) => void,
+  options: { allowImageRemoval?: boolean; requirePatch?: boolean } = {},
 ): AiApplyResult {
   const fail = { text: 'AI chưa trả về thay đổi hợp lệ để đưa vào đề.', failed: true }
   let raw: AiExamEnvelope
@@ -456,10 +530,16 @@ export function applyExamReply(
     ? value.trim().slice(0, max).replace(/\bfigure\b/gi, 'hình').trim()
     : ''
   const say = clean(raw.say, 1200).replace(/(?:^|\n)[ \t]*Đã (?:sửa|thêm|xoá|xóa) \d+ khối[^\n]*/gi, '').trim()
+  if (!allowReplace && (raw.action === 'replace' || (!raw.action && Array.isArray(raw.blocks) && !raw.patch)))
+    return { text: 'Mình chưa áp dụng vì phần trả về sẽ thay cả đề.', failed: true }
+
+  if (options.requirePatch && raw.action === 'append')
+    return { text: 'Mình cần sửa đúng chỗ được yêu cầu trong đề.', failed: true }
+
   const missing: string[] = []
   const invalid: string[] = []
   const blocks = sanitizeBlocks(expandFigures(raw.blocks, missing, draw), invalid, missing, draw)
-  const patches = sanitizePatches(raw.patch, missing, invalid, draw, editor.getJSON())
+  const patches = sanitizePatches(raw.patch, missing, invalid, draw, editor.getJSON(), options.allowImageRemoval === true)
   if (invalid.length) return { text: `Chưa đưa vào đề. ${[...new Set(invalid)].join('. ')}.`, failed: true }
   if (raw.patch != null && (!Array.isArray(raw.patch) || raw.patch.length !== patches.length)) return fail
   if (raw.action && !['replace', 'append', 'patch'].includes(raw.action)) return fail
@@ -467,11 +547,17 @@ export function applyExamReply(
     (b.type === 'paragraph' || b.type === 'question' || b.type === 'essay') &&
     Array.isArray(b.text) && b.text.some((s) => s.image?.plot)
   )
-  const warning = clean(raw.warning, 300).replace(/^lưu ý\s*:\s*/i, '')
-  const shownSay = missing.length ? '' : say
+  const warningLabel = /(?:\*\*|__)?lưu ý\s*(?:\*\*|__)?\s*:(?:\*\*|__)?[ \t]*/giu
+  const warning = clean(raw.warning, 300).replace(warningLabel, '').trim()
+  let hasWarning = false
+  const shownSay = missing.length ? '' : say.replace(warningLabel, label => {
+    if (hasWarning) return ''
+    hasWarning = true
+    return label
+  })
   const norm = (text: string) => text.normalize('NFC').toLowerCase().replace(/[*_`]/g, '').replace(/\s+/g, ' ').trim()
   const warn = warning && !norm(shownSay).includes(norm(warning).replace(/[.!]$/, ''))
-    ? `\n\nLưu ý: ${warning}` : ''
+    ? `\n\n${hasWarning ? '' : 'Lưu ý: '}${warning}` : ''
   const figures = missing.length ? `\n\nChưa dựng được hình hoặc bảng ở ${[...new Set(missing)].join(', ')}.` : ''
   const action =
     raw.action === 'append' || raw.action === 'patch' || raw.action === 'replace'
@@ -494,7 +580,7 @@ export function applyExamReply(
   }
   try {
     if (action === 'replace' && blocks.length) {
-      if (!allowReplace) return { text: 'AI định thay toàn bộ đề. Đề hiện tại vẫn được giữ.', failed: true }
+      if (!allowReplace) return { text: 'Mình chưa áp dụng vì phần trả về sẽ thay cả đề.', failed: true }
       const next = editor.state.schema.nodeFromJSON(blocksToTipTap(blocks))
       if (next.eq(editor.state.doc) || !editor.commands.setContent(next)) return fail
       // setContent thay cả tài liệu nên selection cũ được map lại tuỳ vị trí

@@ -4,6 +4,8 @@
  * Chạy: npm run test:slide-ai
  */
 import assert from 'node:assert/strict'
+import { emptyDeck } from '../src/store/docs.ts'
+import { formatChemicalText } from '../src/lib/slideMath.ts'
 import { parseAiObject } from '../src/lib/aiDeck.ts'
 import {
   appendSlidesToDeck,
@@ -17,6 +19,17 @@ import {
 } from '../src/lib/slideAi.ts'
 import { SLIDE_LAYOUTS } from '../src/lib/slideLayouts.ts'
 import { DECK_THEMES, normalizeTheme } from '../src/lib/slideTheme.ts'
+
+{
+  const starter = emptyDeck()
+  const page = { layout: 'bullets', title: 'Trang thật', bullets: ['Ý chính', 'Ý phụ'] }
+  assert.equal(appendSlidesToDeck(starter, [page]).patch.slides.length, 1)
+  starter.slides[0].elements[0].text = 'Tiêu đề do người dùng nhập'
+  assert.equal(appendSlidesToDeck(starter, [page]).patch.slides.length, 2)
+  assert.equal(sanitizeSlide({ title: 'Chuyển dịch cơ cấu kinh tế Việt Nam', graphic: 'eng-dich-thuat' }, 'title').graphic, undefined)
+  assert.equal(sanitizeSlide({ title: 'Dịch thuật văn bản tiếng Anh', graphic: 'eng-dich-thuat' }, 'title').graphic, 'eng-dich-thuat')
+  assert.equal(formatChemicalText(String.raw`Khí H2, SO2 và n(H2SO4). $\ce{ZnCl2}$`), String.raw`Khí H₂, SO₂ và n(H₂SO₄). $\ce{ZnCl2}$`)
+}
 
 /* 1. Sanitize: layout do dàn ý quyết định, tone ưu tiên dàn ý, cắt giới hạn. */
 const fixed = sanitizeSlide({ layout: 'cards', title: '  A  ', bullets: [' x ', '', 3] }, 'title', 'accent')

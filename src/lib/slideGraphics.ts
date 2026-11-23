@@ -193,8 +193,11 @@ const words = (text: string): Set<string> =>
 export function graphicFits(id: string, text: string): boolean {
   const graphic = graphicById(id)
   if (!graphic) return false
+  const normalized = norm(text)
+  if (id === 'eng-dich-thuat') return /\b(?:dich (?:thuat|tieng|sang|van ban)|phien dich|translat\w*)\b/.test(normalized)
   const hay = words(`${graphic.name} ${graphic.keywords} ${graphic.id.replace(/-/g, ' ')}`)
-  for (const word of words(text)) if (hay.has(word)) return true
+  const generic = /^(?:chuyen|doi|hai|dich|tieng|tren|duoi|trong|ngoai|cach|dung|bang|moi|cua|cac|nhung|theo)$/
+  for (const word of words(text)) if (!generic.test(word) && hay.has(word)) return true
   return false
 }
 

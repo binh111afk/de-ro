@@ -305,6 +305,38 @@ function textWidthEm(s: string): number {
 
 export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; width: number; height: number } {
   const { pts, cmds } = parseScene(spec.text)
+  const shapes = cmds.filter((c): c is Shape => c.t === 'shape')
+  // Hai nút lưu đồ nối nhau cần chừa chỗ cho mũi tên, kể cả khi elip sát góc hộp.
+  for (const arrow of cmds) {
+    if (arrow.t !== 'seg' || !arrow.arrow) continue
+    const ends = [arrow.a, arrow.b]
+    const ellipse = shapes.find(s => s.kind === 'elip' && ends.includes(s.o))
+    const box = shapes.find(s => s.kind === 'hộp' && ends.includes(s.o))
+    if (!ellipse || !box) continue
+    const [x, y] = pts.get(ellipse.o)!
+    const [bx, by] = pts.get(box.o)!
+    const dx = x - bx
+    const dy = y - by
+    const gap = Math.min(box.ry, ellipse.ry) * 0.35
+    const separation = (scale: number) => Math.hypot(
+      Math.max(0, Math.abs(dx) * scale - box.rx) / (ellipse.rx + gap),
+      Math.max(0, Math.abs(dy) * scale - box.ry) / (ellipse.ry + gap),
+    )
+    if (separation(1) >= 1) continue
+    if (!dx && !dy) {
+      pts.set(ellipse.o, [x, y - box.ry - ellipse.ry - gap])
+      continue
+    }
+    let lo = 1
+    let hi = Math.min(dx ? (box.rx + ellipse.rx + gap) / Math.abs(dx) : Infinity,
+      dy ? (box.ry + ellipse.ry + gap) / Math.abs(dy) : Infinity)
+    for (let i = 0; i < 16; i++) {
+      const mid = (lo + hi) / 2
+      if (separation(mid) < 1) lo = mid
+      else hi = mid
+    }
+    pts.set(ellipse.o, [bx + dx * hi, by + dy * hi])
+  }
   const px = [...pts.values()].map((p) => p[0])
   const py = [...pts.values()].map((p) => p[1])
   // cạnh của góc mà AI quên vẽ (thiếu "đất AB"…) thì tự vẽ, không thì cung góc lơ lửng
@@ -397,7 +429,6 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
     })
   const xs = [...px, ...sprites.flatMap((s) => s.corners.map((p) => p[0]))]
   const ys = [...py, ...sprites.flatMap((s) => s.corners.map((p) => p[1]))]
-  const shapes = cmds.filter((c): c is Shape => c.t === 'shape')
   for (const c of shapes) {
     const [x, y] = pts.get(c.o)!
     xs.push(x - c.rx, x + c.rx)

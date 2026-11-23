@@ -8,13 +8,14 @@
 import type { AiSlidePayload } from './aiDeck'
 import type { DeckPlan, DeckPlanSlide } from './aiDeck'
 import type { Deck, DeckTheme, Slide, SlideElement, SlideTone } from '@/store/docs'
+import { isStarterDeck } from './slideStarter'
 import { normalizeTheme, themeById, type ResolvedTheme } from './slideTheme'
 import { hasTextEffects, sanitizeTextStyle, textEffectsOf } from './slideTextEffects'
 import { keepCustomBg } from './slideBackground'
 import { stylePackById } from './slideStyles'
 import { defaultDecorKit, isDecorKitId } from './slideDecor'
 import { subjectById, subjectRulesBlock } from './slideSubjects'
-import { fixMathEscapes, limitBold, mathToPlain } from './slideMath'
+import { fixMathEscapes, formatChemicalText, limitBold, mathToPlain } from './slideMath'
 import { graphicShortlistText, graphicFits, isGraphicId, searchGraphics } from './slideGraphics'
 import {
   composeLayout,
@@ -36,7 +37,7 @@ import {
 const clean = (value: unknown, max: number): string | undefined => {
   if (typeof value !== 'string') return undefined
   // Tập hợp {1, 2, 3} và nhóm ngoặc ngắn không được ngắt dòng giữa chừng: đổi dấu cách trong đó thành NBSP.
-  const trimmed = limitBold(fixMathEscapes(value.trim()))
+  const trimmed = formatChemicalText(limitBold(fixMathEscapes(value.trim())))
     .replace(/\{[^{}$]{1,40}\}/g, (group) => group.replace(/ /g, '\u00a0'))
   return cutAtWord(trimmed, max) || undefined
 }
@@ -706,7 +707,8 @@ function deckContextBlock(plan: DeckPlan): string {
     '- Nhấn mạnh từ khoá bằng **đậm**: mỗi ý chọn 1–2 cụm quan trọng nhất (thuật ngữ, con số, kết quả; mỗi cụm ≤ 5 từ), ' +
       'ví dụ "tìm **ước chung** rồi lấy số **lớn nhất**". KHÔNG bôi đậm cả câu, KHÔNG dùng trong tiêu đề, KHÔNG lồng vào công thức $...$.\n' +
     '- Bám đúng brief của slide; không lặp ý các slide khác.\n' +
-    '- Không bịa số liệu thật; số liệu minh hoạ phải ghi rõ "ví dụ".\n' +
+    '- Số liệu lịch sử, địa lý và khoa học phải lấy từ nguồn đáng tin. Giữ năm, phạm vi hoặc chú thích như "ước tính" nếu nguồn có. Không gắn "(ví dụ)" vào số liệu thật. Thiếu căn cứ thì bỏ con số; chỉ ghi "ví dụ" trong bài tập giả định.\n' +
+    '- Trong cả câu chữ và bảng, viết công thức hoá học nhất quán với chỉ số dưới (H₂, H₂SO₄, SO₂, ZnCl₂). Viết đầy đủ "đặc" hoặc "loãng" khi cần nêu nồng độ axit.\n' +
     '- Công thức đơn giản (x², √, ≤, →, π, α) viết bằng ký tự Unicode. Công thức có phân số, căn dài, ' +
     'chỉ số, tích phân hoặc phương trình hoá học viết LaTeX giữa $...$ ' +
     '(vd $\frac{18}{24}=\frac{3}{4}$, $\ce{Zn + CuSO4 -> ZnSO4 + Cu}$). Trong JSON PHẢI viết hai dấu ' +
@@ -1035,6 +1037,7 @@ export function appendSlidesToDeck(
   plan?: DeckPlan,
 ): { patch: Partial<Deck>; added: Slide[] } {
   if (!pages.length) return { patch: {}, added: [] }
+  const previous = isStarterDeck(latest) ? [] : latest.slides
   const currentTheme = normalizeTheme(latest.theme)
   const nextTheme = plan?.theme ? themeById(plan.theme) : currentTheme
   const themeChanged = nextTheme.id !== currentTheme.id
@@ -1050,7 +1053,7 @@ export function appendSlidesToDeck(
       ...(themeChanged ? { theme: nextTheme } : {}),
       ...(plan?.style ? { style: plan.style } : {}),
       slides: [
-        ...(themeChanged ? recompose(latest.slides, nextTheme) : latest.slides),
+        ...(themeChanged ? recompose(previous, nextTheme) : previous),
         ...added,
       ],
     },

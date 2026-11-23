@@ -128,10 +128,12 @@ function sourceScores(doc: ExamDoc): Map<ScoredBlock, number> {
   let section: (typeof sections)[number] | undefined
   let rate: number | undefined
   for (const block of doc.blocks) {
-    if (block.type === 'heading') {
+    if (block.type === 'heading' || block.type === 'paragraph' || block.type === 'title') {
       const title = toPlain(block.text).normalize('NFC')
+      const sectionTitle = /^\s*(?:phần|mục)\s+[\divxlc]+\b/iu.test(title)
       const amount = POINTS.exec(title)
-      if (!amount && block.level !== 1 && !/^\s*phần\s+[\divxlc]+\b/iu.test(title)) continue
+      if (block.type !== 'heading' && !sectionTitle) continue
+      if (!amount && (block.type !== 'heading' || block.level !== 1) && !sectionTitle) continue
       section = undefined
       rate = undefined
       if (amount) {

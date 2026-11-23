@@ -104,6 +104,14 @@ const BOLD = /\*\*([^*\n]+?)\*\*|\*\*/g
 export const hasBold = (text: string | undefined): boolean => !!text && /\*\*[^*\n]+?\*\*/.test(text)
 
 /** Có gì cần vẽ bằng HTML (công thức hoặc chữ đậm) thay vì chữ thuần. */
+/** Dùng chỉ số dưới cho công thức phổ thông nằm ngoài phần LaTeX. */
+export function formatChemicalText(text: string): string {
+  const chemical = /(?<![\p{L}\p{N}_])(?:H2SO4|H2SO3|H2CO3|H3PO4|HNO3|H2O2?|H2S|NH3|NH4Cl|Na2CO3|NaHCO3|Na2SO4|CaCO3|Ca\(OH\)2|CuSO4|CuCl2|FeCl[23]|ZnCl2|ZnSO4|Fe2O3|Fe3O4|Al2O3|AlCl3|KMnO4|O[23]|N2|Cl2|H2|SO[23]|CO2|NO2|CH4)(?![\p{L}\p{N}_])/gu
+  return text.split(/(\$\$[\s\S]*?\$\$|\$[^$\n]*\$)/).map((part, i) =>
+    i % 2 ? part : part.replace(chemical, formula => formula.replace(/\d/g, digit => '₀₁₂₃₄₅₆₇₈₉'[Number(digit)])),
+  ).join('')
+}
+
 export const hasRich = (text: string | undefined): boolean => hasMath(text) || hasBold(text)
 
 export const stripBold = (text: string): string => (text.includes('**') ? text.replace(BOLD, (_, body?: string) => body ?? '') : text)

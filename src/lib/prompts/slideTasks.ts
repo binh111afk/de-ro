@@ -97,7 +97,7 @@ export const SLIDE_PLAN_SYSTEM =
   '"stylePack" chọn một id trong danh sách style pack để quyết định nhịp và mật độ nội dung; ' +
   '"style" 2 câu tả phong cách (nhịp bố cục, điểm nhấn màu, số liệu, hình ảnh). ' +
   '"decorKit" chọn một bộ trang trí hợp chủ đề và đối tượng (dùng cho cả bài); bài trang trọng chọn "toi-gian".\n' +
-  '- Không bịa số liệu thật; số liệu minh hoạ phải ghi rõ "ví dụ". Tiếng Việt chuẩn.'
+  '- Chỉ dùng số liệu thực có căn cứ. Thiếu nguồn thì bỏ số liệu. Chỉ ghi "ví dụ" cho bài tập giả định. Tiếng Việt chuẩn.'
 
 /**
  * Chế độ Chuyên nghiệp: prompt riêng, không dùng chung catalog bộ thiết kế / hoạ tiết / bố cục thẻ của chế độ thường.
@@ -119,7 +119,7 @@ const PRO_PLAN_SYSTEM =
   '- Không dùng cùng một layout ở hai slide liền nhau. Không quá 2 slide "editorial-text" trong cả deck.\n' +
   '- "title" nêu thẳng kết luận hoặc hình ảnh mạnh (≤ 10 từ), không phải nhãn chủ đề chung chung. "kicker" là nhãn chuyên mục viết hoa ngắn (≤ 4 từ).\n' +
   '- "brief" đúng 1 câu (≤ 140 ký tự) nêu dữ kiện chính; slide ảnh thì nêu rõ ảnh cần thể hiện gì. Chỉ dùng dữ kiện và con số thật, ' +
-  'không bịa; số liệu không chắc thì nói rõ là minh hoạ. Tiếng Việt chuẩn.\n' +
+  'không bịa; thiếu căn cứ thì bỏ số liệu. Tiếng Việt chuẩn.\n' +
   '- "bignum" và "bars" chỉ dùng cho số liệu THẬT có nguồn và năm (thống kê, mốc lịch sử, đại lượng khoa học). Chủ đề cảm xúc / xã hội không có thống kê chắc chắn (tình yêu, tình bạn…) thì KHÔNG bịa tỉ lệ phần trăm người; dùng "manifesto", "rules", "editorial-text". Số giả định chỉ để tính toán trong ví dụ (toán, tài chính) và phải ghi "ví dụ" ngay ở nhãn.\n' +
   '- Số liệu khảo sát nêu rõ năm và phạm vi (vd "UNESCO 2019, 144 nước"), không bỏ kỳ tham chiếu.\n' +
   '- Nội dung hướng dẫn học sinh về an toàn (bắt nạt, tai nạn, sức khoẻ…): đặt an toàn lên trước, khuyên báo người lớn / giáo viên đáng tin; KHÔNG khuyên học sinh trực tiếp can thiệp, đứng chắn hay đối đầu khi có nguy cơ xô xát.\n' +
@@ -181,4 +181,5 @@ export const buildSlideBatchSystem = (plan: DeckPlan, indices: number[], think?:
 /** một slide (viết, sửa lỗi, chấm lại) */
 export const buildSlidePageSystem = (plan: DeckPlan, index: number, pro?: boolean): string => pageSystemPrompt(plan, plan.slides[index], index, pro)
 
-export const buildSlideEditSystem = (context: string): string => editSystemPrompt(context)
+export const buildSlideEditSystem = (context: string, source: SourceInput = {}, webFound?: string): string =>
+  editSystemPrompt(context) + sourceSection(source) + webSection(webFound)

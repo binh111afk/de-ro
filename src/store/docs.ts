@@ -7,6 +7,7 @@ import { persist } from 'zustand/middleware'
 import type { ExamBlock, ExamDoc } from '@/data/docTypes'
 import { emptyDoc, uid } from '@/data/docTypes'
 import { DECK_THEMES } from '@/lib/slideTheme'
+import { STARTER_TEXT } from '@/lib/slideStarter'
 import { chatHistoryKey, removeChatHistory } from '@/lib/aiChatHistory'
 
 /* ------------------------------------------------------------------ *
@@ -55,6 +56,7 @@ export interface SlideElement {
   /** id đồ hoạ vector trong catalog slideGraphics (chặng 2) */
   graphicId?: string
   rows?: string[][]
+  cellFills?: (string | null)[][]
   chart?: { type: 'bar' | 'line' | 'pie'; data: Array<{ label: string; value: number }> }
   /** kiểu chữ: tiêu đề to hơn, nội dung nhỏ hơn */
   variant?: 'title' | 'body'
@@ -212,7 +214,7 @@ export function emptyDeck(title = 'Bài giảng mới'): Deck {
             y: 42,
             w: 84,
             h: 16,
-            text: 'Tiêu đề bài giảng',
+            text: STARTER_TEXT,
           },
         ],
         transition: 'none',

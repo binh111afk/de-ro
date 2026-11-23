@@ -6,14 +6,13 @@
 import { SLIDE_FONTS, slideFontByName } from './slideFonts'
 import { hasTextEffects, textEffectsOf } from './slideTextEffects'
 import type { Deck, DeckTheme, Slide, SlideElement, SlideTone } from '@/store/docs'
-import { parseAiObject } from './aiDeck'
+import { parseAiDeck, parseAiObject } from './aiDeck'
 import {
   SLIDE_LAYOUTS,
   composeLayout,
   contentFromSlide,
   defaultTone,
   isDecorElement,
-  isEditorialLayout,
   isLayoutId,
   isLayoutOwnedId,
   isTone,
@@ -38,7 +37,9 @@ export type SlideEditOp =
   | { op: 'move_slide'; from: number; to: number }
   /** sửa ĐÚNG các field nêu trong `fields` của một slide; field không nêu giữ nguyên */
   | { op: 'edit_slide'; slide: number; fields: Record<string, unknown> }
-  | { op: 'set_layout'; slide: number; layout: string }
+  | { op: 'set_layout'; slide: number; layout: string; fields?: Record<string, unknown> }
+  | { op: 'add_image'; slide: number; description?: string }
+  | { op: 'add_chart'; title: string; chart: NonNullable<SlideElement['chart']>; position?: number }
   /** chèn slide mới (bố cục + field) tại vị trí `position` (1-based, bỏ trống = cuối) */
   | { op: 'add_slide'; layout: string; fields: Record<string, unknown>; position?: number }
   | { op: 'duplicate_slide'; slide: number }
@@ -51,7 +52,7 @@ const TRANSITIONS = ['none', 'fade', 'slide', 'zoom']
 /** Field chữ của slide mà `edit_slide` được đổi (ảnh/đồ hoạ giữ nguyên, không cho AI đụng). */
 const EDITABLE_FIELDS = [
   'title', 'kicker', 'subtitle', 'body', 'bullets', 'items', 'left', 'right', 'leftTitle', 'rightTitle',
-  'quote', 'author', 'steps', 'question', 'options', 'answer', 'problem', 'conclusion', 'explanation', 'rows', 'stats',
+  'quote', 'author', 'steps', 'question', 'options', 'answer', 'problem', 'conclusion', 'explanation', 'rows', 'stats', 'bars', 'value', 'label',
 ] as const
 const FIELD_LABEL: Record<string, string> = {
   title: 'tiêu đề', kicker: 'nhãn', subtitle: 'phụ đề', body: 'nội dung', bullets: 'danh sách ý', items: 'danh sách mục',
@@ -96,17 +97,21 @@ const stackOf = (font: string): string =>
         : `'${font}', 'Be Vietnam Pro', sans-serif`
 
 /** Câu của người dùng có vẻ là yêu cầu SỬA slide có sẵn (bước lọc rẻ trước khi gọi model). */
-export const looksLikeEdit = (text: string): boolean =>
-  /(đổi|thay|chuyển|sửa|chỉnh|set|áp|dùng|chọn|làm giống|theo|sang)[^.\n]{0,40}(phông|font|màu|theme|bộ màu|tông|nền|hiệu ứng|bố cục|thiết kế|bộ mẫu|mẫu slide|mẫu)|(áp dụng)[^.\n]{0,40}(thiết kế|bộ mẫu|mẫu slide|mẫu)|(xoá|xóa|bỏ|xoa)\s+slide|(di chuyển|dời|đưa)\s+slide|(sửa|đổi|thay|chỉnh|rút gọn|viết lại|thêm|bớt|bỏ|ngắn|dài)[^.\n]{0,40}(slide\s*(số\s*)?\d|tiêu đề|bố cục)|slide\s*(số\s*)?\d+[^.\n]{0,40}(sửa|đổi|thay|rút gọn|viết lại|ngắn|dài|thêm|bớt)/i.test(
+export const looksLikeEdit = (text: string): boolean => {
+  text = text.normalize('NFC').trim()
+  if (/^(?:hãy\s+)?(?:soạn|tạo|viết|làm|sinh)\s+(?!thêm\s)(?:(?:cho (?:tôi|mình)|một)\s+)*(?:lại\s+)?(?:\d+\s+slide|slide\s+(?:bài|về|mới)|bài (?:giảng|trình bày))/iu.test(text)) return false
+  if (/slide\s*(?:số\s*)?\d+[^.\n]{0,90}(?:tách|gộp|thêm|xóa|xoá|đổi|rút|chuyển|viết)|(?:thêm|chèn|bổ sung)\s+(?:(?:một|1|vài|\d+)\s+)?(?:slide|trang|ảnh|hình minh họa|hình minh hoạ|hiệu ứng|biểu đồ|câu hỏi trắc nghiệm)|(?:vẽ|tạo|thêm|chèn|làm)\s+(?:(?:một|1)\s+)?(?:sơ đồ tư duy|biểu đồ)/iu.test(text)) return true
+  return /(đổi|thay|chuyển|sửa|chỉnh|set|áp|dùng|chọn|làm giống|theo|sang)[^.\n]{0,40}(phông|font|màu|theme|bộ màu|tông|nền|hiệu ứng|bố cục|thiết kế|bộ mẫu|mẫu slide|mẫu)|(áp dụng)[^.\n]{0,40}(thiết kế|bộ mẫu|mẫu slide|mẫu)|(xoá|xóa|bỏ|xoa)\s+slide|(di chuyển|dời|đưa)\s+slide|(sửa|đổi|thay|chỉnh|rút gọn|viết lại|thêm|bớt|bỏ|ngắn|dài)[^.\n]{0,40}(slide\s*(số\s*)?\d|tiêu đề|bố cục)|slide\s*(số\s*)?\d+[^.\n]{0,40}(sửa|đổi|thay|rút gọn|viết lại|ngắn|dài|thêm|bớt)/i.test(
     text,
   )
+}
 
 /** `context`: mô tả deck hiện tại (theme, phông, danh sách slide) để model chọn đúng. */
 export function editSystemPrompt(context: string): string {
   const themes = DECK_THEMES.map((t) => `${t.id}=${t.name} (${t.vibe})`).join('; ')
   const designs = SLIDE_DESIGNS.map((d) => `${d.id}="${d.name}"`).join(', ')
   return (
-    'Bạn điều khiển trình soạn slide. Người dùng muốn SỬA slide đã có (không viết slide mới). ' +
+    'Bạn điều khiển trình soạn slide. Sửa hoặc chèn đúng những slide người dùng yêu cầu trong bài hiện tại. ' +
     'Chỉ trả về DUY NHẤT một JSON, không chữ ngoài JSON: {"action":"edit","commands":[...]}.\n' +
     'Lệnh cho phép (slides = mảng số thứ tự bắt đầu từ 1; bỏ trống = tất cả):\n' +
     `- {"op":"apply_design","id":"<id>"} — áp dụng trọn gói một bộ thiết kế (theme + phong cách + trang trí) cho cả bài. Thiết kế có sẵn: ${designs}\n` +
@@ -114,7 +119,9 @@ export function editSystemPrompt(context: string): string {
     `- {"op":"set_fonts","heading":"<phông>","body":"<phông>"} — phông chỉ trong: ${EDIT_FONTS.join(', ')} (heading/body chỉ cần nêu cái đổi)\n` +
     '- {"op":"set_colors","bg":"#rrggbb","fg":"#rrggbb","accent":"#rrggbb"} — chỉ nêu màu cần đổi; chữ/nền phải đủ tương phản\n' +
     '- {"op":"set_tone","tone":"theme|soft|accent","slides":[1,2]} — tông nền slide\n' +
-    '- {"op":"set_transition","transition":"none|fade|slide|zoom","slides":[1,2]}\n' +
+    '- {"op":"set_transition","transition":"none|fade|slide|zoom","slides":[1,2]} — lệnh thêm hiệu ứng chung dùng fade nếu không nêu kiểu.\n' +
+    '- {"op":"add_image","slide":3,"description":"chủ thể cần minh hoạ"} — thêm ảnh vào slide được nhắc; nếu không nêu số thì dùng slide đang chọn.\n' +
+    '- {"op":"add_chart","title":"...","chart":{"type":"bar|line|pie","data":[{"label":"...","value":12}]},"position":3} — chèn một slide biểu đồ. Chỉ dùng số liệu người dùng đưa hoặc số có căn cứ từ nguồn. Nếu chưa đủ dữ liệu, trả {"action":"none","reason":"need_data"}.\n' +
     '- {"op":"delete_slides","slides":[3]}\n' +
     '- {"op":"move_slide","from":3,"to":1}\n' +
     `- {"op":"edit_slide","slide":3,"fields":{"title":"..."}} — sửa NỘI DUNG một slide. CHỈ nêu field cần đổi (đổi tiêu đề thì chỉ gửi title; ` +
@@ -123,12 +130,12 @@ export function editSystemPrompt(context: string): string {
     'Bố cục "cards" chứa 2–6 thẻ trong "items", mỗi thẻ tối đa 100 ký tự. Nếu người dùng muốn tách thành các thẻ riêng, giữ tên đầy đủ của từng mục. ' +
     'Từ bố cục "bullets" có thể gửi "items" để chuyển thẳng sang thẻ. "bullets" tối đa 6 ý, "timeline"/"cycle" 3–6 bước, "mindmap" 2–6 nhánh, "quiz" 2–4 phương án. ' +
     'Nếu người dùng yêu cầu tách thành nhiều slide, dùng "edit_slide" rồi "add_slide" cho phần còn lại.\n' +
-    '- {"op":"add_slide","layout":"<id>","fields":{...},"position":2} — chèn slide MỚI (đủ field bắt buộc của bố cục; position bỏ trống = cuối)\n' +
+    '- {"op":"add_slide","layout":"<id>","fields":{...},"position":2} — chèn đúng số slide được yêu cầu; bỏ position để thêm cuối. Với sơ đồ tư duy dùng mindmap, fields có title, body (chủ đề) và items (3–6 nhánh ngắn). Với trắc nghiệm dùng quiz, fields có question, options (2–4 phương án), answer (chỉ số từ 0).\n' +
     '- {"op":"duplicate_slide","slide":3}\n' +
     '- {"op":"set_notes","slide":3,"notes":"ghi chú trình bày"}\n' +
     '- {"op":"rename_deck","title":"tên bài giảng"}\n' +
-    `- {"op":"set_layout","slide":3,"layout":"<id>"} — đổi bố cục một slide, giữ nội dung. Bố cục: ${SLIDE_LAYOUTS.filter((l) => !isEditorialLayout(l.id)).map((l) => `${l.id}=${l.name}`).join(', ')}\n` +
-    'Nếu yêu cầu không thuộc các lệnh trên (ví dụ soạn một bài trình bày mới), trả {"action":"none"}.\n' +
+    `- {"op":"set_layout","slide":3,"layout":"<id>","fields":{...}} — đổi bố cục và nội dung trong cùng một lệnh. Nếu yêu cầu bảng so sánh, dùng table với title và rows (hàng đầu là nhãn cột). Nếu yêu cầu so sánh hai cột, dùng comparison với title, leftTitle, rightTitle, left, right. So sánh đúng các đối tượng được yêu cầu, tuyệt đối không chỉ đổi bố cục. Tách 5 mục trên một slide có thể dùng rules với stats gồm 5 hàng {value,label}, viết value là tên mục và label là ý ngắn. Bố cục: ${SLIDE_LAYOUTS.filter((l) => !isEditorialLayout(l.id)).map((l) => `${l.id}=${l.name}`).join(', ')}\n` +
+    'Chỉ trả {"action":"none"} khi không có thao tác phù hợp. Không trả dàn ý hay cả bài.\n' +
     `Bài trình bày hiện tại: ${context}`
   )
 }
@@ -137,10 +144,11 @@ const isIndexList = (value: unknown): value is number[] =>
   Array.isArray(value) && value.length > 0 && value.every((n) => Number.isInteger(n))
 
 /** Đọc câu trả lời của model → danh sách lệnh hợp lệ về hình dạng (giá trị cụ thể kiểm sau, lúc áp). */
-export function parseEditCommands(raw: string): { ops: SlideEditOp[]; errors: string[] } {
-  const data = parseAiObject(raw) as { action?: unknown; commands?: unknown } | null
+export function parseEditCommands(raw: string): { ops: SlideEditOp[]; errors: string[]; needsData?: boolean } {
+  const data = parseAiObject(raw) as { action?: unknown; commands?: unknown; reason?: unknown } | null
   const ops: SlideEditOp[] = []
   const errors: string[] = []
+  if (data?.action === 'none' && data.reason === 'need_data') return { ops, errors, needsData: true }
   if (!data || data.action !== 'edit' || !Array.isArray(data.commands)) return { ops, errors }
   for (const item of data.commands.slice(0, 12)) {
     const c = (item && typeof item === 'object' ? item : {}) as Record<string, unknown>
@@ -194,9 +202,30 @@ export function parseEditCommands(raw: string): { ops: SlideEditOp[]; errors: st
         } else errors.push('edit_slide thiếu "slide" hoặc "fields"')
         break
       case 'set_layout':
-        if (Number.isInteger(c.slide) && typeof c.layout === 'string') ops.push({ op: 'set_layout', slide: c.slide as number, layout: c.layout })
+        if (Number.isInteger(c.slide) && typeof c.layout === 'string') {
+          const fields = c.fields && typeof c.fields === 'object' && !Array.isArray(c.fields)
+            ? c.fields as Record<string, unknown> : undefined
+          ops.push({ op: 'set_layout', slide: c.slide as number, layout: c.layout, ...(fields ? { fields } : {}) })
+        }
         else errors.push('set_layout thiếu "slide" hoặc "layout"')
         break
+      case 'add_image':
+        if (Number.isInteger(c.slide)) ops.push({ op: 'add_image', slide: c.slide as number, description: typeof c.description === 'string' ? c.description.trim().slice(0, 280) : undefined })
+        else errors.push('Chưa tìm được slide để thêm ảnh')
+        break
+      case 'add_chart': {
+        const chart = c.chart as NonNullable<SlideElement['chart']> | undefined
+        if (typeof c.title === 'string' && c.title.trim() && chart && ['bar', 'line', 'pie'].includes(chart.type) &&
+            Array.isArray(chart.data) && chart.data.length >= 2 && chart.data.length <= 12 &&
+            chart.data.every(d => d && typeof d.label === 'string' && d.label.trim() && Number.isFinite(d.value) && (chart.type !== 'pie' || d.value >= 0)) &&
+            (chart.type !== 'pie' || chart.data.some(d => d.value > 0))) {
+          ops.push({
+            op: 'add_chart', title: c.title.trim().slice(0, 160), position: Number.isInteger(c.position) ? c.position as number : undefined,
+            chart: { type: chart.type, data: chart.data.map(d => ({ label: d.label.trim().slice(0, 60), value: d.value })) },
+          })
+        } else errors.push('Biểu đồ chưa đủ dữ liệu')
+        break
+      }
       case 'add_slide':
         if (typeof c.layout === 'string' && c.fields && typeof c.fields === 'object' && !Array.isArray(c.fields)) {
           ops.push({
@@ -313,6 +342,17 @@ function keepGeometry(original: Slide, base: Slide, styled: Slide): Slide {
   return { ...styled, elements: [...elements, ...motifs] }
 }
 
+/** Một số lượt cũ trả một slide mới dưới dạng bài trình bày. */
+export function parseAddedSlide(raw: string): SlideEditOp | undefined {
+  const deck = parseAiDeck(raw)
+  if (deck?.slides.length !== 1) return undefined
+  const page = deck.slides[0]
+  if (!page || !isLayoutId(page.layout)) return undefined
+  const { layout, ...fields } = page
+  if (checkSlide(page, layout).errors.length) return undefined
+  return { op: 'add_slide', layout, fields }
+}
+
 /** Mô tả ngắn một slide (bố cục + nội dung chữ) để đưa vào prompt cho model biết đang sửa gì. */
 export function describeSlide(slide: Slide, index: number): string {
   if (slide.html) return `${index + 1}. (slide HTML, không sửa được)`
@@ -343,12 +383,14 @@ export interface EditResult {
   /** từng dòng báo lại cho người dùng: lệnh đã làm / lệnh bị bỏ và lý do */
   summary: string[]
   changed: boolean
+  images: Array<{ slideId: string; description?: string }>
 }
 
 /** Áp lần lượt các lệnh lên deck (thuần, không đụng deck gốc). Lệnh lỗi bị bỏ, lệnh còn lại vẫn chạy. */
 export function applyEdits(deck: Deck, ops: SlideEditOp[]): EditResult {
   let next = deck
   const summary: string[] = []
+  const images: EditResult['images'] = []
   const html = deck.format === 'html'
   const pick = (slides: number[] | undefined, count: number): number[] =>
     (slides ?? Array.from({ length: count }, (_, i) => i + 1)).filter((n) => n >= 1 && n <= count)
@@ -501,24 +543,47 @@ export function applyEdits(deck: Deck, ops: SlideEditOp[]): EditResult {
           break
         }
         if (!isLayoutId(op.layout)) {
-          summary.push(`Bỏ qua: không có bố cục "${op.layout}".`)
+          summary.push('Mình chưa tìm được bố cục phù hợp.')
           break
         }
+        const layoutName = SLIDE_LAYOUTS.find(l => l.id === op.layout)!.name.toLowerCase()
         const tone = defaultTone(op.layout)
-        const elements = composeLayout(theme, op.layout, adaptContent(contentFromSlide(slide)), tone)
+        const current = contentFromSlide(slide)
+        const base = adaptContent(current)
+        const fields = Object.fromEntries(Object.entries(op.fields ?? {}).filter(([key]) => (EDITABLE_FIELDS as readonly string[]).includes(key)))
+        const check = op.fields ? checkSlide({ ...base, ...fields }, op.layout, tone) : undefined
+        const elements = check
+          ? check.errors.length ? [] : composeLayout(theme, op.layout, { ...check.page, image: current.image, image2: current.image2, imageCrop: current.imageCrop, image2Crop: current.image2Crop }, tone)
+          : composeLayout(theme, op.layout, base, tone)
         if (!elements.length) {
-          summary.push(`Bỏ qua: nội dung slide ${op.slide} chưa đủ để dùng bố cục ${op.layout}.`)
+          summary.push(`Mình chưa đủ nội dung để đổi slide ${op.slide} sang dạng ${layoutName}.`)
           break
         }
         const rawUpdated: Slide = keepCustomBg(slide, { ...slide, layout: op.layout, tone, background: toneBackground(theme, tone), elements }, theme.fg)
         const updated = next.design ? applySkin(rawUpdated, next.design, theme, op.slide - 1, next.slides.length, true) : rawUpdated
         next = { ...next, slides: next.slides.map((s) => (s === slide ? updated : s)) }
-        summary.push(`Đổi bố cục slide ${op.slide} sang ${op.layout}.`)
+        summary.push(`Mình đã đổi slide ${op.slide} sang dạng ${layoutName}.`)
+        break
+      }
+      case 'add_image': {
+        const slide = next.slides[op.slide - 1]
+        if (slide && !slide.html) images.push({ slideId: slide.id, description: op.description })
+        else summary.push(`Mình chưa tìm được slide ${op.slide} để thêm ảnh.`)
+        break
+      }
+      case 'add_chart': {
+        const slide = slideFromAi({ title: op.title }, theme)
+        slide.elements.push({ id: `${slide.id}-chart`, type: 'chart', x: 8, y: 28, w: 84, h: 65, chart: op.chart })
+        const at = Math.min(Math.max((op.position ?? next.slides.length + 1) - 1, 0), next.slides.length)
+        const slides = [...next.slides]
+        slides.splice(at, 0, slide)
+        next = { ...next, slides }
+        summary.push(`Mình đã thêm biểu đồ ở slide ${at + 1}.`)
         break
       }
       case 'add_slide': {
         if (!isLayoutId(op.layout)) {
-          summary.push(`Bỏ qua: không có bố cục "${op.layout}".`)
+          summary.push('Mình chưa tìm được bố cục phù hợp cho slide mới.')
           break
         }
         const patch = Object.fromEntries(Object.entries(op.fields).filter(([k]) => (EDITABLE_FIELDS as readonly string[]).includes(k)))
@@ -533,7 +598,7 @@ export function applyEdits(deck: Deck, ops: SlideEditOp[]): EditResult {
         const slides = [...next.slides]
         slides.splice(at, 0, styledBuilt)
         next = { ...next, slides }
-        summary.push(`Thêm slide mới (${check.page.layout}) tại vị trí ${at + 1}.`)
+        summary.push(`Mình đã thêm slide ở vị trí ${at + 1}.`)
         break
       }
       case 'duplicate_slide': {
@@ -578,5 +643,5 @@ export function applyEdits(deck: Deck, ops: SlideEditOp[]): EditResult {
       }
     }
   }
-  return { deck: next, summary, changed: next !== deck }
+  return { deck: next, summary, changed: next !== deck, images }
 }

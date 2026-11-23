@@ -191,7 +191,10 @@ function jsonCandidates(raw: string): unknown[] {
 export function parseAiDeck(raw: string): { slides: AiSlidePayload[]; title?: string } | null {
   for (const data of jsonCandidates(raw)) {
     const slides = Array.isArray(data) ? data : (data as { slides?: unknown })?.slides
-    if (Array.isArray(slides) && slides.length > 0) {
+    if (Array.isArray(slides) && slides.length > 0 && slides.every((slide) =>
+      slide && typeof slide === 'object' && !Array.isArray(slide) &&
+      (slide.layout == null || typeof slide.layout === 'string') &&
+      (slide.title == null || typeof slide.title === 'string'))) {
       return {
         slides: slides as AiSlidePayload[],
         title: Array.isArray(data)

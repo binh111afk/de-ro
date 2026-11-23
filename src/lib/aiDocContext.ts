@@ -28,6 +28,19 @@ export function rewritesWholeExam(text: string): boolean {
   return /(?<!\p{L})(?:(?:soạn|tạo|viết|làm|ra)\s+(?:lại\s+)?(?:một\s+)?đề\s+mới|(?:viết|soạn|làm)\s+lại\s+(?:(?:toàn bộ|toàn|cả)\s+)+(?:đề|tài liệu))/iu.test(text.normalize('NFC'))
 }
 
+/** Các lệnh xoá và xáo có phạm vi rõ, dùng số câu của đề trước khi sửa. */
+export function examMaintenance(text: string): { remove: number[]; first: number } | undefined {
+  const request = text.normalize('NFC').trim().replace(/[.!]+$/, '')
+    .replace(/^(?:hãy|giúp mình|giúp tôi)\s+/iu, '')
+  const remove = /^(?:xoá|xóa|bỏ)\s+câu\s+(\d{1,3}(?:\s*(?:,|;|-|–|đến|tới|và)\s*\d{1,3})*)/iu.exec(request)
+  const rest = remove ? request.slice(remove[0].length).replace(/^\s*(?:[,;]|và)\s*/iu, '').trim() : request
+  const shuffle = /^(?:xáo|trộn)\s+(?:thứ tự\s+)?(?:đáp án|phương án)\s+(?:(?:của|cho)\s+)?(\d{1,3})\s+câu\s+đầu(?:\s+tiên)?$/iu.exec(rest)
+  if ((!remove && !shuffle) || (rest && !shuffle)) return undefined
+  const numbers = remove ? numbersIn(remove[1]) : []
+  const first = Number(shuffle?.[1] ?? 0)
+  return numbers.length || first > 0 ? { remove: [...new Set(numbers)], first } : undefined
+}
+
 export const isExamMutationReply = (text: string) =>
   /^\s*(?:```(?:json)?\s*)?\{/i.test(text) && /"(?:action"\s*:\s*"(?:replace|append|patch)"|patch"\s*:\s*\[)/.test(text)
 

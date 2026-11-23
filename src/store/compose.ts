@@ -31,7 +31,7 @@ export interface ComposeStore {
   ensureDoc: () => string
   openDoc: (doc: ExamDoc) => string
   /** tạo bài trình bày mới, mở thành tab slide */
-  newSlide: () => string
+  newSlide: (initial?: Pick<Deck, 'title' | 'slides'>) => string
   /** mở tab bảng vẽ (id có tiền tố `board-`; nội dung tự lưu ở localStorage theo id) */
   newBoard: (id?: string, title?: string) => string
   /** mở một bài trình bày đã lưu */
@@ -71,11 +71,11 @@ export const useComposeStore = create<ComposeStore>()((set, get) => ({
     return id
   },
 
-  newSlide: () => {
-    const deck = emptyDeck()
+  newSlide: (initial) => {
+    const deck = initial ? { ...emptyDeck(initial.title), slides: initial.slides } : emptyDeck()
     const id = deck.id
     set((s) => ({
-      tabs: [...s.tabs, { id, title: deck.title, dirty: false, kind: 'slide' }],
+      tabs: [...s.tabs, { id, title: deck.title, dirty: !!initial, kind: 'slide' }],
       activeId: id,
       decks: { ...s.decks, [id]: deck },
     }))

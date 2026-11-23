@@ -665,17 +665,21 @@ export async function buildDeckPptx(deck: Deck): Promise<ArrayBuffer> {
           ...(el.href ? { hyperlink: { url: el.href } } : {}),
         })
       } else if (el.type === 'table' && el.rows?.length) {
-        const headerFg = readableTextOn(theme.accent)
         slide.addTable(
           el.rows.map((row, ri) =>
-            row.map((cell) => ({
-              text: mathToPlain(cell),
-              options: {
-                fill: pptxFill(ri === 0 ? theme.accent : ri % 2 === 0 ? theme.surface : undefined),
-                ...pptxPaint(ri === 0 ? headerFg : theme.fg),
-                bold: ri === 0,
-              },
-            })),
+            row.map((cell, ci) => {
+              const customFill = el.cellFills?.[ri]?.[ci]
+              const fill = customFill ?? (ri === 0 ? theme.accent : ri % 2 === 0 ? theme.surface : undefined)
+              const foreground = fill && fill !== 'transparent' && (ri === 0 || customFill) ? readableTextOn(fill) : theme.fg
+              return {
+                text: mathToPlain(cell),
+                options: {
+                  fill: pptxFill(fill),
+                  ...pptxPaint(foreground),
+                  bold: ri === 0,
+                },
+              }
+            }),
           ),
           {
             ...box,

@@ -140,8 +140,9 @@ function slideTrang(raw: unknown): string | null {
 
 /** `slide-sua`: sửa slide có sẵn bằng lệnh có cấu trúc (đổi phông, màu, bố cục…). */
 function slideSua(raw: unknown): string | null {
-  const context = str(slideInput(raw).context)
-  return context === undefined ? null : buildSlideEditSystem(context)
+  const input = slideInput(raw)
+  const context = str(input.context)
+  return context === undefined ? null : buildSlideEditSystem(context, sourceFields(input), str(input.webFound))
 }
 
 /** `de-online`: trợ lý AI trong trình tạo đề online. */

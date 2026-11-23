@@ -27,6 +27,7 @@ import { autoAnimate, clearAnimation, slideSteps, applyElementAnim, startOf } fr
 import { EmptyState } from '@/components/ui'
 import { cn } from '@/lib/cn'
 import type { Deck, DeckFooter, Slide, SlideElement, SlideTone } from '@/store/docs'
+import { isStarterDeck } from '@/lib/slideStarter'
 import { applyTextFormat, captureTextFormat, type TextFormatSample, normalizeSlideHref } from '@/lib/slideFormat'
 import { parseAiDeck, type AiSlidePayload, type DeckPlan } from '@/lib/aiDeck'
 import { HtmlDeckBar, HtmlSlideFrame } from './HtmlSlide'
@@ -37,7 +38,7 @@ import { normalizeTheme, themeById, withThemeFonts, type ResolvedTheme } from '@
 import { readableElements } from '@/lib/slideContrast'
 import { designById, designTheme, type SlideDesign } from '@/lib/slideDesigns'
 import { applySkin } from '@/lib/slideSkins'
-import { appendSlidesToDeck, withImage } from '@/lib/slideAi'
+import { appendSlidesToDeck, checkSlide, withImage } from '@/lib/slideAi'
 import { IMAGE_LAYOUTS, buildImagePrompt, generateSlideImage, loadProPhoto, queueImage } from '@/lib/imageGen'
 import { uploadImage } from '@/lib/mediaStore'
 import { SLIDE_LAYOUTS, composeLayout, contentFromSlide, defaultTone, isLayoutId, toneBackground, withPlaceholders, type SlideLayoutId } from '@/lib/slideLayouts'
@@ -1148,7 +1149,7 @@ export function SlideEditor({
   })
 
   /** Deck có nội dung thật (không phải một slide mặc định chưa đụng tới) → duyệt dàn ý phải hỏi ghi đè. */
-  const hasContent = deck.slides.some((s) => s.html || s.layout || s.elements.length > 1)
+  const hasContent = deck.slides.length > 0 && !isStarterDeck(deck)
 
   /** Người dùng chọn "Ghi đè": xoá hết slide cũ (hoàn tác được), slide mới sinh ra bắt đầu từ deck rỗng. */
   const clearSlides = () => {
@@ -1161,7 +1162,7 @@ export function SlideEditor({
   }
 
   /** AI sửa slide có sẵn bằng lệnh có cấu trúc; áp lên deck mới nhất, có lịch sử để hoàn tác. */
-  const applyAiEdits = async (ops: SlideEditOp[]): Promise<string[]> => {
+  const applyAiEdits = async (ops: SlideEditOp[], signal: AbortSignal): Promise<string[]> => {
     let target = normalizeTheme(deckRef.current.theme)
     const loads = ops.map(op => {
       if (op.op === 'set_theme') target = themeById(op.theme)
@@ -1175,7 +1176,11 @@ export function SlideEditor({
       return ensureFonts({ theme: target, slides: [] })
     })
     await Promise.all(loads)
+    signal.throwIfAborted()
+    if (activeImageJobs.current !== imageJobs) return []
     const latest = deckRef.current
+    if (latest.slides.length !== deck.slides.length || latest.slides.some((slide, i) => slide.id !== deck.slides[i].id))
+      return ['Thứ tự slide đã đổi. Bạn gửi lại yêu cầu nhé.']
     const result = applyEdits(latest, ops)
     if (result.changed) {
       historyRef.current.past = [...historyRef.current.past, latest].slice(-50)
@@ -1183,20 +1188,59 @@ export function SlideEditor({
       deckRef.current = result.deck
       updateDeck(result.deck)
     }
-    return result.summary
+    const lines = [...result.summary]
+    for (const { slideId, description } of result.images) {
+      const slide = deckRef.current.slides.find(s => s.id === slideId)
+      if (!slide) continue
+      const content = contentFromSlide(slide)
+      try {
+        const prompt = buildImagePrompt(content.title, description ? [description] : content.bullets, 'portrait', target.accent)
+        const photo = await queueImage(() => {
+          signal.throwIfAborted()
+          return generateSlideImage(prompt)
+        })
+        signal.throwIfAborted()
+        if (activeImageJobs.current !== imageJobs || !deckRef.current.slides.some(s => s.id === slideId)) continue
+        const src = await uploadImage(photo.dataUrl)
+        signal.throwIfAborted()
+        const current = deckRef.current
+        const index = current.slides.findIndex(s => s.id === slideId)
+        if (activeImageJobs.current !== imageJobs || index < 0) continue
+        const selected = current.slides[index]
+        const slot = selected.elements.find(el => el.type === 'image' && !el.src)
+        const elements = slot
+          ? selected.elements.map(el => el === slot ? { ...el, src } : el)
+          : [
+              ...selected.elements.map(el => el.decor || el.y + el.h <= 24 ? el : { ...el, x: el.x * 0.66, w: el.w * 0.66 }),
+              { id: uid(), type: 'image' as const, x: 68, y: 27, w: 26, h: 62, src },
+            ]
+        const updated = { ...current, slides: current.slides.map(s => s === selected ? { ...s, elements, ...(slot ? {} : { layout: undefined }) } : s) }
+        historyRef.current.past = [...historyRef.current.past, current].slice(-50)
+        historyRef.current.future = []
+        deckRef.current = updated
+        updateDeck({ slides: updated.slides })
+        lines.push(`Mình đã thêm ảnh vào slide ${index + 1}.`)
+      } catch {
+        signal.throwIfAborted()
+        lines.push('Mình chưa thêm được ảnh. Bạn thử lại nhé.')
+      }
+    }
+    return lines
   }
 
   /** Mô tả deck cho lệnh sửa: theme, phông, danh sách slide (số thứ tự bắt đầu từ 1). */
   const editContext =
     `bộ màu ${theme.id} (${theme.name}), phông tiêu đề ${theme.fonts.heading}, phông nội dung ${theme.fonts.body}; ` +
-    '\n' + deck.slides.map(describeSlide).join('\n')
+    `\nSlide đang chọn: ${Math.max(1, deck.slides.findIndex(s => s.id === selectedSlideId) + 1)}.\n` + deck.slides.map(describeSlide).join('\n')
 
   /** Chế độ HTML: thay toàn bộ slide bằng các slide HTML (hoàn tác được bằng lịch sử). */
   /** Đường deck một lượt (dàn ý không parse được hoặc câu trả lời cũ). */
-  const applyAiResult = (text: string, plan?: DeckPlan) => {
+  const applyAiResult = async (text: string, plan?: DeckPlan): Promise<number> => {
     const parsed = parseAiDeck(text)
-    if (!parsed) return
-    void appendAiSlides(parsed.slides, plan)
+    if (!parsed) return 0
+    const checked = parsed.slides.map(page => checkSlide(page, page.layout ?? 'bullets'))
+    if (checked.some(check => check.errors.length)) return 0
+    return (await appendAiSlides(checked.map(check => check.page), plan)).length
   }
 
   /** Ghi ảnh AI vào slide theo deck mới nhất lúc ảnh về (slide có thể đã được sửa/xoá). */

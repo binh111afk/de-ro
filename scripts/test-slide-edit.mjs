@@ -4,7 +4,7 @@
  */
 import assert from 'node:assert/strict'
 import { sanitizeSlide, slideFromAi } from '../src/lib/slideAi.ts'
-import { applyDeckDesign, applyEdits, looksLikeEdit, parseEditCommands } from '../src/lib/slideEdit.ts'
+import { applyDeckDesign, applyEdits, looksLikeEdit, parseAddedSlide, parseEditCommands } from '../src/lib/slideEdit.ts'
 import { designById } from '../src/lib/slideDesigns.ts'
 import { contentFromSlide } from '../src/lib/slideLayouts.ts'
 import { textBoxHeight } from '../src/lib/slideMeasure.ts'
@@ -32,6 +32,50 @@ assert.equal(looksLikeEdit('sửa tiêu đề slide 2 thành Mở đầu'), true
 assert.equal(looksLikeEdit('rút gọn slide 3'), true)
 assert.equal(looksLikeEdit('đổi bố cục slide 4 sang mốc thời gian'), true)
 assert.equal(looksLikeEdit('slide 2 có 5 loại biểu đồ, bạn sửa lại thành 5 mục riêng rẽ đi, ghi đầy đủ là biểu đồ gì'), true)
+
+for (const request of [
+  'slide 2 có 5 đại lượng đặc trưng, tách thành 5 mục riêng',
+  'thêm ảnh minh hoạ cho slide 4', 'thêm ảnh minh hoạ', 'thêm hiệu ứng',
+  'thêm biểu đồ cột so sánh lực lượng ta và Pháp', 'thêm slide câu hỏi trắc nghiệm',
+  'vẽ sơ đồ tư duy tổng kết', 'đổi slide 5 thành bảng so sánh Fe và Cu tác dụng với axit',
+]) assert.equal(looksLikeEdit(request), true, request)
+assert.equal(looksLikeEdit('Soạn 10 slide bài mới, thêm biểu đồ'), false)
+
+{
+  const original = deck()
+  const legacy = '{"title":"Tổng kết","slides":[{"layout":"mindmap","title":"Ánh sáng","body":"Phản xạ","items":["Tia tới","Pháp tuyến","Tia phản xạ"]'
+  const added = parseAddedSlide(legacy)
+  assert.equal(added?.op, 'add_slide')
+  const result = applyEdits(original, [added])
+  assert.equal(result.deck.slides.length, 4)
+  assert.equal(result.deck.slides[3].layout, 'mindmap')
+  assert.strictEqual(result.deck.slides[0], original.slides[0])
+  assert.equal(parseAddedSlide('{"slides":[{"layout":"mindmap","title":"thiếu nhánh"}]}'), undefined)
+
+  const { ops } = parseEditCommands(JSON.stringify({ action: 'edit', commands: [
+    { op: 'set_layout', slide: 2, layout: 'table', fields: { title: 'Fe và Cu', rows: [['Kim loại', 'HCl'], ['Fe', 'Có phản ứng'], ['Cu', 'Không phản ứng']] } },
+    { op: 'add_image', slide: 1, description: 'Prism' },
+    { op: 'add_chart', title: 'Quan sát', chart: { type: 'bar', data: [{ label: 'A', value: 4 }, { label: 'B', value: 7 }] } },
+  ] }))
+  const edited = applyEdits(original, ops)
+  assert.equal(edited.deck.slides[1].id, original.slides[1].id)
+  assert.equal(edited.deck.slides[1].elements.find(e => e.type === 'table').rows[2][0], 'Cu')
+  assert.ok(edited.deck.slides[3].elements.some(el => el.type === 'chart' && el.chart.data[1].value === 7))
+  assert.deepEqual(edited.images, [{ slideId: original.slides[0].id, description: 'Prism' }])
+  assert.doesNotMatch(edited.summary.join(' '), /comparison|table/)
+
+  const targeted = applyEdits(original, [
+    { op: 'set_layout', slide: 2, layout: 'rules', fields: {
+      title: 'Năm mục', stats: Array.from({ length: 5 }, (_, i) => ({ value: `Mục ${i + 1}`, label: 'Một ý chính' })),
+    } },
+    { op: 'set_transition', transition: 'fade', slides: [2] },
+    { op: 'add_slide', layout: 'quiz', fields: { question: 'Chọn đáp án đúng?', options: ['A', 'B'], answer: 0 } },
+  ])
+  assert.equal(targeted.deck.slides[1].elements.filter(el => /^item-\d+-label$/.test(el.id)).length, 5)
+  assert.equal(targeted.deck.slides[1].transition, 'fade')
+  assert.equal(targeted.deck.slides[3].layout, 'quiz')
+  assert.strictEqual(targeted.deck.slides[0], original.slides[0])
+}
 
 // --- parse
 const parsed = parseEditCommands('```json\n{"action":"edit","commands":[{"op":"set_theme","theme":"rung"},{"op":"zzz"},{"op":"delete_slides","slides":[2]}]}\n```')
@@ -441,7 +485,7 @@ assert.equal(normalizeSlideHref('   '), null)
   assert.ok(!s1Xml.includes('Trường THPT A'), 'skipTitle phải ẩn chân trang ở slide đầu')
   assert.match(s2Xml, /<a:rPr\b[^>]*>(?:(?!<\/a:rPr>)[\s\S])*?<a:outerShdw blurRad="0" dist="45720"/, 'bóng nằm ở run chữ PPTX')
   assert.match(s2Xml, /<a:ln w="\d+"><a:solidFill><a:srgbClr val="223344"/, 'viền chữ PPTX')
-  assert.match(s2Xml, /<a:gradFill><a:gsLst><a:gs pos="0"><a:srgbClr val="203040">.*?<a:gs pos="100000"><a:srgbClr val="405060">/, 'hai màu gradient của chữ PPTX')
+  assert.match(s2Xml, /<a:gradFill><a:gsLst><a:gs pos="0"><a:srgbClr val="203040"[\s\S]*?<a:gs pos="100000"><a:srgbClr val="405060"/, 'giữ hai màu của gradient trong PPTX')
   assert.match(s2Xml, /<a:latin typeface="Oswald"/, 'giữ tên phông PPTX')
   assert.ok(s2Xml.includes('strike="sngStrike"'), 'PPTX phải có gạch ngang strike')
   assert.ok(s2Xml.includes('<a:highlight><a:srgbClr val="FEF08A"/></a:highlight>'), 'PPTX phải có highlight FEF08A')

@@ -89,7 +89,7 @@ function shuffled<T>(arr: T[], random: () => number): T[] {
 }
 
 /** đáp án gốc theo `no` của câu (khối đáp án có thể ghi nhiều mục cùng số: trắc nghiệm và tự luận) */
-function readKeys(blocks: ExamBlock[]): Map<number, string[]> {
+export function readKeys(blocks: ExamBlock[]): Map<number, string[]> {
   const keys = new Map<number, string[]>()
   for (const b of blocks) {
     if (b.type !== 'answerKey') continue
@@ -112,11 +112,11 @@ function parseTf(s: string, n: number): boolean[] | null {
 }
 
 /** Xáo phương án một câu; trả về câu mới và đáp án mới (chuỗi rỗng nếu không biết đáp án gốc). */
-function shuffleQuestion(q: QuestionBlock, keys: string[], doOptions: boolean, random: () => number): { q: QuestionBlock; answer: string } {
+export function shuffleQuestion(q: QuestionBlock, keys: string[], doOptions: boolean, random: () => number): { q: QuestionBlock; answer: string; order: number[] } {
   const kind = kindOf(q)
   if (kind === 'short' || q.options.length < 2) {
     const ans = keys.find((k) => !letterOf(k)) ?? ''
-    return { q: { ...q, options: q.options.map((o) => ({ ...o })) }, answer: ans }
+    return { q: { ...q, options: q.options.map((o) => ({ ...o })) }, answer: ans, order: q.options.map((_, i) => i) }
   }
   const locked = q.options.some((o) => LOCKED_OPTION.test(plain(o.text)))
   const order = doOptions && !locked ? shuffled(q.options.map((_, i) => i), random) : q.options.map((_, i) => i)
@@ -126,12 +126,12 @@ function shuffleQuestion(q: QuestionBlock, keys: string[], doOptions: boolean, r
   if (kind === 'tf') {
     const raw = keys.map((k) => parseTf(k, q.options.length)).find(Boolean)
     const answer = raw ? order.map((from) => (raw[from] ? 'Đ' : 'S')).join('') : ''
-    return { q: { ...q, options }, answer }
+    return { q: { ...q, options }, answer, order }
   }
   const old = keys.map(letterOf).find(Boolean)
   const oldIndex = old ? q.options.findIndex((o) => o.label.toUpperCase() === old) : -1
   const answer = oldIndex >= 0 ? labels[order.indexOf(oldIndex)] : ''
-  return { q: { ...q, options }, answer }
+  return { q: { ...q, options }, answer, order }
 }
 
 function withCode(blocks: ExamBlock[], code: string): ExamBlock[] {

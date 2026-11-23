@@ -44,7 +44,7 @@ export function examSystemPrompt(documentDigest?: string, request = '', fromSour
     '  {"op":"replace","id":"k5","blocks":[khối mới]} thay khối k5 · {"op":"insertAfter","id":"k5","blocks":[...]} chèn ngay sau k5 · ' +
     '{"op":"insertBefore","id":"k5","blocks":[...]} chèn ngay trước k5 · {"op":"delete","id":"k5"} xoá k5. ' +
     'id lấy đúng trong TÀI LIỆU HIỆN TẠI. Ví dụ "thêm lời giải câu 4" → một insertAfter ngay sau khối câu 4 (và sau hình của câu đó nếu có), KHÔNG trả lại cả đề.\n' +
-    '- id kN là vị trí khối, số câu lấy từ "no". Khi chỉ thêm lời giải, giữ nguyên đề bài, dữ kiện, phương án và đáp án; nếu thấy đáp án cũ sai, báo giáo viên. Giữ image.ref của hình cũ khi thay khối. Khi vẽ lại hình đó, sửa image.figure ngay tại chỗ.\n' +
+    '- Với lệnh xoá hoặc xáo vài câu, patch đúng các câu được yêu cầu và cập nhật đáp án tương ứng. Không viết lại những câu còn lại. id kN là vị trí khối, số câu lấy từ "no". Khi chỉ thêm lời giải, giữ nguyên đề bài, dữ kiện, phương án và đáp án; nếu thấy đáp án cũ sai, báo giáo viên. Giữ image.ref của hình cũ khi thay khối. Khi vẽ lại hình đó, sửa image.figure ngay tại chỗ.\n' +
     '- "append": thêm câu/ý/phần vào cuối đề → "blocks" chỉ gồm khối cần thêm.\n' +
     '- "replace": CHỈ khi giáo viên bảo soạn đề mới hoặc viết lại toàn bộ đề → "blocks" là toàn bộ đề.\n' +
     '- "name" (chỉ khi "replace"): tên ngắn để lưu đề, theo bài/chủ đề + môn lớp, ≤ 60 ký tự, vd. "Hệ thức lượng trong tam giác vuông – Toán 9".\n' +

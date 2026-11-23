@@ -79,6 +79,13 @@ assert.deepEqual(explicit.sections[0].questions.map((b) => b.points), [1, 2])
 assert.equal(explicit.sections[1].questions[0].points, 4)
 assert.equal(Math.round(explicit.sections[2].questions.reduce((n, b) => n + b.points, 0) * 100), 300)
 
+const sixPoints = docToExam({ ...doc, online: undefined, blocks: [
+  { type: 'paragraph', text: 'PHẦN I. Trắc nghiệm (6đ)' },
+  ...Array.from({ length: 10 }, (_, i) => q(i + 1)),
+] }, 'six-points')
+assert.equal(sixPoints.sections[0].questions.length, 10)
+assert.equal(sixPoints.sections[0].points, 6)
+
 const bold = docToExam({ ...doc, online: undefined, blocks: [
   { ...q(1), text: 'Cho **hàm số $f(x)$ liên tục**. Tính `x ** 2`.' },
 ] }, 'bold')

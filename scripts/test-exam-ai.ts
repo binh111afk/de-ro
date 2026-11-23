@@ -9,7 +9,12 @@ import { TextStyle } from '@tiptap/extension-text-style'
 import { FontFamily } from '@tiptap/extension-text-style/font-family'
 import { EXAM_NODES, EXAM_MARKS, BaseParagraphNode } from '../src/examEditor/schema'
 import { blocksToTipTap, plainText, tipTapToBlocks } from '../src/examEditor/convert'
-import { applyExamReply } from '../src/examEditor/examAiResult'
+import { Packer } from 'docx'
+import JSZip from 'jszip'
+import { buildDocx } from '../src/examEditor/docxBlocks'
+import { emptyDoc, type ExamBlock } from '../src/data/docTypes'
+import { parseStats } from '../src/lib/stats'
+import { applyExamMaintenance, applyExamReply } from '../src/examEditor/examAiResult'
 import { figureDoc, figureImageAttrs } from '../src/examEditor/toolImages'
 import { CONTINUE_EXAM_EDIT, examDigest, examIntent, focusNote, isExamMutationReply, rewritesWholeExam } from '../src/lib/aiDocContext'
 import { mergeChunks, parseChunk, planExamSplit, scanSourceQuestions } from '../src/lib/examSplit'
@@ -203,5 +208,46 @@ assert.match(redrawn.text.at(-1)?.image?.plot ?? '', /x\^3-3x/)
 assert.match(patchFigure('dữ liệu hỏng').text, /Chưa dựng được hình/)
 redrawn = tipTapToBlocks(editor.getJSON()).find((b) => b.type === 'question')
 assert.ok(redrawn?.type === 'question' && Array.isArray(redrawn.text) && redrawn.text.at(-1)?.image?.src)
+const imageSrc = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aV9kAAAAASUVORK5CYII='
+const pictured: ExamBlock[] = Array.from({ length: 20 }, (_, i) => ({
+  type: 'question', no: i + 1,
+  text: i >= 8 && i < 16 ? [{ text: `Câu gốc ${i + 1}` }, { text: '', image: { src: imageSrc } }] : `Câu gốc ${i + 1}`,
+  options: ['A', 'B', 'C', 'D'].map(label => ({ label, text: `Lựa chọn ${label}` })),
+}))
+editor.commands.setContent(blocksToTipTap([...pictured, {
+  type: 'answerKey', items: pictured.map((_, i) => ({ no: i + 1, answer: 'A' })),
+}]))
+const before = editor.getJSON()
+assert.equal(apply({ action: 'replace', blocks: [paragraph('Đề viết lại')] }).failed, true)
+assert.deepEqual(editor.getJSON(), before)
+const wrongAppend = applyExamReply(editor, JSON.stringify({ action: 'append', blocks: [paragraph('Không sửa câu nào')] }),
+  false, draw, undefined, undefined, { requirePatch: true })
+assert.equal(wrongAppend.failed, true)
+assert.deepEqual(editor.getJSON(), before)
+const lostImage = apply({ action: 'patch', patch: [{ id: 'k8', block: { ...pictured[8], text: 'Câu mới mất hình' } }] })
+assert.match(lostImage.text, /mất hình/)
+assert.deepEqual(editor.getJSON(), before)
+const local = applyExamMaintenance(editor, 'Xoá câu 6 và xáo đáp án 4 câu đầu', () => 0.99)
+assert.equal(local?.failed, undefined)
+assert.match(local?.text ?? '', /xóa câu 6.*4 câu/)
+const edited = tipTapToBlocks(editor.getJSON())
+const remaining = edited.filter(b => b.type === 'question')
+assert.equal(remaining.length, 19)
+assert.deepEqual(remaining.map(b => plainText(b.text)), pictured.filter((_, i) => i !== 5).map(b => b.type === 'question' ? plainText(b.text) : ''))
+assert.equal(remaining.filter(b => Array.isArray(b.text) && b.text.some(s => s.image?.src === imageSrc)).length, 8)
+assert.deepEqual(remaining[4].options, pictured[4].type === 'question' ? pictured[4].options : [])
+const editedKey = edited.find(b => b.type === 'answerKey')
+assert.deepEqual(editedKey?.items.slice(0, 5).map(it => [it.no, plainText(it.answer)]), [[1, 'D'], [2, 'D'], [3, 'D'], [4, 'D'], [5, 'A']])
+const word = buildDocx({ ...emptyDoc(), title: 'Đề ảnh', blocks: edited })
+const zipped = await JSZip.loadAsync(await Packer.toBuffer(word))
+const documentXml = await zipped.file('word/document.xml')!.async('string')
+assert.equal(documentXml.match(/<w:drawing>/g)?.length, 8)
+const warned = apply({ action: 'append', blocks: [paragraph('Thêm một dòng')], say: 'Đã thêm.\n\n**Lưu ý:** Kiểm tra lại.', warning: 'Lưu ý: Kiểm tra lại số liệu.' })
+assert.equal(warned.text.match(/Lưu ý:/g)?.length, 1)
+
+assert.deepEqual(parseStats('Năm: 2021; 2022; 2023\nLớp 6A: 4; 5; 6'), {
+  cats: ['2021', '2022', '2023'], series: [{ name: 'Lớp 6A', vals: [4, 5, 6] }],
+})
+assert.equal(parseStats('Hà Nội: 4; 5\nHuế: 6; 7').series.length, 2)
 editor.destroy()
 console.log('test-exam-ai: OK')
