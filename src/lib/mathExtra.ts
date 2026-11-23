@@ -595,6 +595,7 @@ export interface VennSpec {
 function setExpr(src: string, names: string[]): (inside: boolean[]) => boolean {
   // "A n B" / "A u B" (chữ n, u thay ∩, ∪) đổi trước khi bỏ dấu cách
   const s = src
+    .normalize('NFC')
     .replace(/\s+n\s+|&/g, '∩')
     .replace(/\s+u\s+|\|/g, '∪')
     .replace(/\s+/g, '')
@@ -609,7 +610,7 @@ function setExpr(src: string, names: string[]): (inside: boolean[]) => boolean {
       if (s[i] !== ')') throw new Error('Thiếu dấu ")"')
       i++
     } else {
-      const m = /^[A-Za-z]\w*/.exec(s.slice(i))
+      const m = /^[\p{L}\p{M}][\p{L}\p{M}\p{N}_]*/u.exec(s.slice(i))
       if (!m) throw new Error(`Không đọc được miền tô ở "${s.slice(i, i + 5) || 'cuối'}"`)
       const k = names.indexOf(m[0])
       if (k < 0) {
@@ -652,6 +653,7 @@ function setExpr(src: string, names: string[]): (inside: boolean[]) => boolean {
 
 export function renderVennSvg(spec: VennSpec, desc: string) {
   const names = spec.sets
+    .normalize('NFC')
     .split(/[,;\s]+/)
     .map((t) => t.trim())
     .filter(Boolean)
@@ -716,7 +718,7 @@ export function renderVennSvg(spec: VennSpec, desc: string) {
     b += `<text x="${f1(three ? lx : a + (k ? 40 : -40))}" y="${f1(three ? ly : ly)}" ${FAM} font-size="17" font-style="italic" text-anchor="middle">${esc(names[k])}</text>`
   })
   // số phần tử
-  for (const raw of spec.counts.split('\n')) {
+  for (const raw of spec.counts.normalize('NFC').split('\n')) {
     const t = raw.trim()
     if (!t) continue
     const m = /^([^:]+):\s*(.+)$/.exec(t)

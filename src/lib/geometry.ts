@@ -740,14 +740,14 @@ const K = 0.62
 const ANG = Math.PI / 4
 const DEPTH_X = K * Math.cos(ANG)
 const DEPTH_Y = K * Math.sin(ANG)
-function proj([x, y, z]: P3, c: number): P2 {
-  return [(x + c * y) * SCALE, -(z + DEPTH_Y * y) * SCALE]
+function proj([x, y, z]: P3, c: number, dy = DEPTH_Y): P2 {
+  return [(x + c * y) * SCALE, -(z + dy * y) * SCALE]
 }
 
 /** Đổi phía nhìn nếu các cạnh xuất phát từ đỉnh chóp gần như chồng lên nhau. */
-function pyramidDepthX(apex: P3, base: P3[]): number {
+function pyramidDepthX(apex: P3, base: P3[], dx = DEPTH_X, dy = DEPTH_Y): number {
   const separation = (c: number) => {
-    const rays = base.map((p) => sub(proj(p, c), proj(apex, c)))
+    const rays = base.map((p) => sub(proj(p, c, dy), proj(apex, c, dy)))
     let gap = Infinity
     for (let i = 0; i < rays.length; i++) for (const b of rays.slice(i + 1)) {
       const a = rays[i]
@@ -756,8 +756,8 @@ function pyramidDepthX(apex: P3, base: P3[]): number {
     }
     return gap
   }
-  const front = separation(DEPTH_X)
-  return front < 14 && separation(-DEPTH_X) > front + 8 ? -DEPTH_X : DEPTH_X
+  const front = separation(dx)
+  return front < 14 && separation(-dx) > front + 8 ? -dx : dx
 }
 
 const sub3 = (a: P3, b: P3): P3 => [a[0] - b[0], a[1] - b[1], a[2] - b[2]]
@@ -1000,11 +1000,25 @@ function renderSolid(spec: Geo3dSpec, desc: string) {
     fills = c.fills
   }
   const center = avg3(s.pts.slice(0, Math.max(3, s.faces.flat().reduce((m, i) => Math.max(m, i), 0) + 1)))
+  // Đáy có chiều sâu y quá nhỏ so với bề ngang x (vd hình thang vuông AB=2, AD=CD=1): nới hệ số sâu để hình chiếu không bị dẹt
+  let depthScale = 1
+  if (overridden && spec.shape.startsWith('pyramid4')) {
+    const basePts = s.pts.slice(1, 5)
+    const xs = basePts.map((p) => p[0])
+    const ys = basePts.map((p) => p[1])
+    const xSpan = Math.max(...xs) - Math.min(...xs)
+    const ySpan = Math.max(...ys) - Math.min(...ys)
+    if (xSpan > 1e-6 && ySpan > 1e-6 && ySpan < 0.75 * xSpan) {
+      depthScale = Math.min(1.65, (0.75 * xSpan) / ySpan)
+    }
+  }
+  const baseDepthX = DEPTH_X * (1 + (depthScale - 1) * 0.18)
+  const depthY = DEPTH_Y * depthScale
   const depthX = spec.shape.startsWith('pyramid')
-    ? pyramidDepthX(s.pts[0], s.pts.slice(1, spec.shape.startsWith('pyramid4') ? 5 : 4))
-    : DEPTH_X
-  const project = (p: P3) => proj(p, depthX)
-  const view: P3 = [-depthX, 1, -DEPTH_Y]
+    ? pyramidDepthX(s.pts[0], s.pts.slice(1, spec.shape.startsWith('pyramid4') ? 5 : 4), baseDepthX, depthY)
+    : baseDepthX
+  const project = (p: P3) => proj(p, depthX, depthY)
+  const view: P3 = [-depthX, 1, -depthY]
   // pháp tuyến hướng ra ngoài của từng mặt + mặt đó có nhìn thấy không
   const visible = s.faces.map((f) => {
     const [a, b, c] = f.map((i) => s.pts[i])

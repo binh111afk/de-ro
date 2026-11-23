@@ -23,7 +23,7 @@ export const TOOL_DOC_IMAGE: Record<ToolKind, { width: number; alt: string }> = 
   incline: { width: 300, alt: 'Mặt phẳng nghiêng' },
   gas: { width: 300, alt: 'Đồ thị trạng thái khí' },
   scene: { width: 300, alt: 'Hình vẽ' },
-  electron: { width: 360, alt: 'Cấu hình electron' },
+  electron: { width: 500, alt: 'Cấu hình electron' },
   struct: { width: 280, alt: 'Công thức cấu tạo' },
   chemgraph: { width: 320, alt: 'Đồ thị số mol' },
   chemeq: { width: 620, alt: 'Phương trình hoá học' },
@@ -63,7 +63,7 @@ export function figureImageAttrs(doc: ToolDoc) {
 }
 
 /** hình có cỡ tuỳ nội dung (bảng, phương trình): giữ cỡ thật, không phóng quá mức chuẩn; hình khác dùng mức chuẩn */
-const FIT_KINDS = new Set<ToolKind>(['table', 'chemeq', 'punnett', 'foodweb', 'objects'])
+const FIT_KINDS = new Set<ToolKind>(['table', 'chemeq', 'punnett', 'foodweb', 'objects', 'electron'])
 export function toolImageWidth(kind: ToolKind, natural: number) {
   const max = TOOL_DOC_IMAGE[kind].width
   return FIT_KINDS.has(kind) ? Math.min(max, Math.round(natural)) : max

@@ -104,32 +104,70 @@ export function renderElectronSvg(spec: ElectronSpec, desc: string) {
   const show = spec.valenceOnly ? shells.filter(([o]) => +o[0] === maxN || (o[1] === 'd' && +o[0] === maxN - 1)) : shells
   const B = 26
   const gap = 14
-  const W0 = show.reduce((w, [o]) => w + (CAP[o[1]] / 2) * B + gap, 0) - gap
-  const W = Math.max(W0 + 40, 300)
-  const H = 125
-  let x = (W - W0) / 2
-  const y = 62
-  // dòng cấu hình
-  const conf = shells.map(([o, k]) => `${o}<tspan font-size="11" dy="-7">${k}</tspan><tspan dy="7"> </tspan>`).join('')
-  let b = `<text x="${W / 2}" y="26" ${FAM} font-size="16" text-anchor="middle">${ionSvg(name)} (Z = ${z}): ${conf}</text>`
-  for (const [o, k] of show) {
-    const boxes = CAP[o[1]] / 2
-    // quy tắc Hund: điền mỗi ô một e ↑ trước, rồi ghép ↓
-    const ups = Math.min(k, boxes)
-    const downs = k - ups
-    for (let i = 0; i < boxes; i++) {
-      const bx = x + i * B
-      b += `<rect x="${f1(bx)}" y="${y}" width="${B}" height="${B}" fill="none" stroke="#111" stroke-width="1.4"/>`
-      const arr = (cx: number, up: boolean) =>
-        up
-          ? `<path d="M${f1(cx)} ${y + B - 5}V${y + 6}M${f1(cx - 3.5)} ${y + 10}L${f1(cx)} ${y + 5}L${f1(cx + 3.5)} ${y + 10}" stroke="#111" stroke-width="1.5" fill="none"/>`
-          : `<path d="M${f1(cx)} ${y + 5}V${y + B - 6}M${f1(cx - 3.5)} ${y + B - 10}L${f1(cx)} ${y + B - 5}L${f1(cx + 3.5)} ${y + B - 10}" stroke="#111" stroke-width="1.5" fill="none"/>`
-      if (i < ups) b += arr(bx + (i < downs ? B * 0.34 : B / 2), true)
-      if (i < downs) b += arr(bx + B * 0.66, false)
+  const MAX_ROW_W = 460
+  const subW = (o: string) => (CAP[o[1]] / 2) * B
+  const rowW = (row: Array<[string, number]>) => row.reduce((w, [o]) => w + subW(o) + gap, 0) - gap
+  const rows: Array<Array<[string, number]>> = []
+  let curRow: Array<[string, number]> = []
+  let curW = 0
+  for (const sh of show) {
+    const w = subW(sh[0])
+    if (curRow.length > 0 && curW + gap + w > MAX_ROW_W) {
+      rows.push(curRow)
+      curRow = [sh]
+      curW = w
+    } else {
+      curW += (curRow.length > 0 ? gap : 0) + w
+      curRow.push(sh)
     }
-    b += `<text x="${f1(x + (boxes * B) / 2)}" y="${y + B + 22}" ${FAM} font-size="15" text-anchor="middle">${o}<tspan font-size="11" dy="-7">${k}</tspan></text>`
-    x += boxes * B + gap
   }
+  if (curRow.length > 0) rows.push(curRow)
+  const maxRowW = Math.max(...rows.map(rowW), 0)
+  // dòng cấu hình: ước lượng chiều rộng và xuống dòng nếu quá dài
+  const confSpan = (sh: Array<[string, number]>) =>
+    sh.map(([o, k]) => `${o}<tspan font-size="11" dy="-7">${k}</tspan><tspan dy="7"> </tspan>`).join('')
+  const prefixText = `${name} (Z = ${z}): `
+  const fullText = prefixText + shells.map(([o, k]) => `${o}${k}`).join(' ')
+  const confEstW = fullText.length * 7.8
+  const W = Math.max(maxRowW + 40, Math.min(confEstW + 40, 500), 320)
+  let confLines: string[]
+  if (confEstW + 40 > W && shells.length > 4) {
+    const mid = Math.ceil(shells.length / 2)
+    confLines = [
+      `${ionSvg(name)} (Z = ${z}): ${confSpan(shells.slice(0, mid))}`,
+      confSpan(shells.slice(mid)),
+    ]
+  } else {
+    confLines = [`${ionSvg(name)} (Z = ${z}): ${confSpan(shells)}`]
+  }
+  const topY = confLines.length > 1 ? 66 : 48
+  const rowH = B + 36
+  const H = topY + rows.length * rowH - 4
+  let b = confLines
+    .map((line, i) => `<text x="${W / 2}" y="${24 + i * 20}" ${FAM} font-size="16" text-anchor="middle">${line}</text>`)
+    .join('')
+  rows.forEach((row, rIdx) => {
+    let x = (W - rowW(row)) / 2
+    const y = topY + rIdx * rowH
+    for (const [o, k] of row) {
+      const boxes = CAP[o[1]] / 2
+      // quy tắc Hund: điền mỗi ô một e ↑ trước, rồi ghép ↓
+      const ups = Math.min(k, boxes)
+      const downs = k - ups
+      for (let i = 0; i < boxes; i++) {
+        const bx = x + i * B
+        b += `<rect x="${f1(bx)}" y="${y}" width="${B}" height="${B}" fill="none" stroke="#111" stroke-width="1.4"/>`
+        const arr = (cx: number, up: boolean) =>
+          up
+            ? `<path d="M${f1(cx)} ${y + B - 5}V${y + 6}M${f1(cx - 3.5)} ${y + 10}L${f1(cx)} ${y + 5}L${f1(cx + 3.5)} ${y + 10}" stroke="#111" stroke-width="1.5" fill="none"/>`
+            : `<path d="M${f1(cx)} ${y + 5}V${y + B - 6}M${f1(cx - 3.5)} ${y + B - 10}L${f1(cx)} ${y + B - 5}L${f1(cx + 3.5)} ${y + B - 10}" stroke="#111" stroke-width="1.5" fill="none"/>`
+        if (i < ups) b += arr(bx + (i < downs ? B * 0.34 : B / 2), true)
+        if (i < downs) b += arr(bx + B * 0.66, false)
+      }
+      b += `<text x="${f1(x + (boxes * B) / 2)}" y="${y + B + 22}" ${FAM} font-size="15" text-anchor="middle">${o}<tspan font-size="11" dy="-7">${k}</tspan></text>`
+      x += boxes * B + gap
+    }
+  })
   return wrap(W, H, desc, b)
 }
 
@@ -369,6 +407,56 @@ function ringSvgFromData(ring: StructRing): string {
 
 const numSvg = (n: number, x: number, y: number) => `<text x="${f1(x)}" y="${f1(y)}" ${FAM} font-size="11" fill="#555" text-anchor="middle">${n}</text>`
 
+/** Khoảng cách từ điểm (px, py) tới đoạn thẳng (x1, y1)-(x2, y2). */
+function distSeg(px: number, py: number, x1: number, y1: number, x2: number, y2: number): number {
+  const dx = x2 - x1
+  const dy = y2 - y1
+  const l2 = dx * dx + dy * dy
+  if (l2 < 1e-6) return Math.hypot(px - x1, py - y1)
+  const t = Math.max(0, Math.min(1, ((px - x1) * dx + (py - y1) * dy) / l2))
+  return Math.hypot(px - (x1 + t * dx), py - (y1 + t * dy))
+}
+
+/** Đánh số đỉnh vòng ở phía ngoài đỉnh (tránh vòng tròn/nét đôi bên trong và lệch hướng nếu đỉnh có nhóm thế). */
+function addRingNumbers(
+  sr: StructRing,
+  subs: RingSub[] | undefined,
+  bonds: StructBond[],
+  bb: Bounds,
+  numbers: StructNumber[],
+  out: string[],
+) {
+  const subPos = new Set((subs ?? []).map((s) => s.pos))
+  for (let k = 0; k < sr.n; k++) {
+    const v = sr.vertices[k]
+    const ux = (v[0] - sr.cx) / sr.r
+    const uy = (v[1] - sr.cy) / sr.r
+    const baseA = Math.atan2(uy, ux)
+    const hasOutBond =
+      subPos.has(k + 1) ||
+      bonds.some((b) => Math.hypot(b.x1 - v[0], b.y1 - v[1]) < 4 || Math.hypot(b.x2 - v[0], b.y2 - v[1]) < 4)
+    const cands = hasOutBond ? [baseA + 0.52, baseA - 0.52] : [baseA]
+    let bestX = sr.cx + (sr.r + 11) * Math.cos(cands[0])
+    let bestY = sr.cy + (sr.r + 11) * Math.sin(cands[0]) + 4
+    if (cands.length > 1) {
+      let bestScore = -1
+      for (const a of cands) {
+        const tx = sr.cx + (sr.r + 11) * Math.cos(a)
+        const ty = sr.cy + (sr.r + 11) * Math.sin(a)
+        const score = bonds.reduce((m, b) => Math.min(m, distSeg(tx, ty, b.x1, b.y1, b.x2, b.y2)), Infinity)
+        if (score > bestScore) {
+          bestScore = score
+          bestX = tx
+          bestY = ty + 4
+        }
+      }
+    }
+    out.push(`<text x="${f1(bestX)}" y="${f1(bestY)}" ${FAM} font-size="10" fill="#555" text-anchor="middle">${k + 1}</text>`)
+    numbers.push({ n: k + 1, x: bestX, y: bestY })
+    bb.add(bestX, bestY - 4, 8)
+  }
+}
+
 /** Khung chữ nhật bao quanh các điểm đã vẽ — để tính khung SVG. */
 class Bounds {
   x0 = Infinity
@@ -486,18 +574,8 @@ function buildCondensed(
     rings.push(sr)
     parts.push(ringSvgFromData(sr))
     for (const p of sr.vertices) bb.add(p[0], p[1], 2)
-    if (numbered) {
-      for (let k = 0; k < sr.n; k++) {
-        const v = sr.vertices[k]
-        const ux = (v[0] - cx) / R
-        const uy = (v[1] - cy) / R
-        const nx = cx + (R - 10) * ux
-        const ny = cy + (R - 10) * uy + 4
-        parts.push(`<text x="${f1(nx)}" y="${f1(ny)}" ${FAM} font-size="10" fill="#555" text-anchor="middle">${k + 1}</text>`)
-        numbers.push({ n: k + 1, x: nx, y: ny })
-      }
-    }
     drawRingSubs(sr, subs)
+    if (numbered) addRingNumbers(sr, subs, bonds, bb, numbers, parts)
   }
 
   // nhánh dọc: luân phiên dưới / trên; nhánh của nhánh đi tiếp cùng chiều
@@ -552,7 +630,14 @@ function buildCondensed(
       label(g.text, cx, 0)
       if (number && isCarbon(g.text)) {
         no++
-        addNum(no, cx, -16)
+        if (g.branches.length >= 2) {
+          addNum(no, cx + 14, -15)
+        } else if (g.branches.length === 1 && singleBranchDir[i] < 0) {
+          addNum(no, cx, 23, 0)
+          bb.add(cx, 25)
+        } else {
+          addNum(no, cx, -16)
+        }
       }
       if (g.branches.length === 1) drawVert(g.branches[0], cx, 0, singleBranchDir[i])
       else g.branches.forEach((b, k) => drawVert(b, cx, 0, k % 2 === 0 ? 1 : -1))
@@ -639,17 +724,6 @@ function buildSkeletal(
           minMainY = Math.min(minMainY, cy)
           maxMainY = Math.max(maxMainY, cy)
         }
-        if (numbered) {
-          for (let k = 0; k < sr.n; k++) {
-            const v = sr.vertices[k]
-            const ux = (v[0] - cx) / R
-            const uy = (v[1] - cy) / R
-            const nx = cx + (R - 10) * ux
-            const ny = cy + (R - 10) * uy + 4
-            pending.push(`<text x="${f1(nx)}" y="${f1(ny)}" ${FAM} font-size="10" fill="#555" text-anchor="middle">${k + 1}</text>`)
-            numbers.push({ n: k + 1, x: nx, y: ny })
-          }
-        }
         if (g.ringSubs?.length) {
           for (const sub of g.ringSubs) {
             const v = sr.vertices[sub.pos - 1]
@@ -678,6 +752,7 @@ function buildSkeletal(
             }
           }
         }
+        if (numbered) addRingNumbers(sr, g.ringSubs, bonds, bb, numbers, pending)
         cur = [cx + R * Math.cos(a), cy + R * Math.sin(a)] // đi ra ở đỉnh đối diện
         side = -side
         return
@@ -699,11 +774,11 @@ function buildSkeletal(
       if (!carbon) text(g.text, next[0], next[1])
       else if (numbered) {
         no++
-        // số đặt phía ngoài góc gấp: đỉnh nhô lên thì ghi trên, đỉnh trũng thì ghi dưới
-        // đỉnh có nhánh: nhánh chiếm phía ngoài nên số lùi vào trong góc, lệch sang phải
-        const high = (moves ? side < 0 : startSide > 0) !== g.branches.length > 0
-        const nx = next[0] + (g.branches.length ? 9 : 0)
-        const ny = next[1] + (high ? -9 : 18)
+        // số đặt phía ngoài góc gấp; đỉnh có nhánh thì đặt vào góc trống lệch sang phải
+        const nx = g.branches.length ? next[0] + (moves ? 13 : -8) : next[0]
+        const ny = g.branches.length
+          ? next[1] + (moves ? (side < 0 ? -5 : 14) : -9)
+          : next[1] + ((moves ? side < 0 : startSide > 0) ? -9 : 18)
         pending.push(numSvg(no, nx, ny))
         numbers.push({ n: no, x: nx, y: ny })
         bb.add(nx, ny, 6)
