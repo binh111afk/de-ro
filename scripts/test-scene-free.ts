@@ -261,6 +261,112 @@ for (const [spec, hash] of [
   assert.doesNotThrow(() => renderSceneSvg({ text: 'A(0; 0) _A(1; 1) B(4; 0)\nAB' }, ''))
 }
 
+// --- Kiểm thử các tính năng nâng cấp mới ---
+{
+  // 1. Cung elip (nửa trước liền, nửa sau đứt, xoay góc)
+  const ellArcSvg = draw('_O(0; 0)\ncung elip _O 2 0.8 180 360\ncung elip _O 2 0.8 0 180 đứt\ncung elip _O 1 0.4 0 90 xoay 30')
+  assert.equal(paths(ellArcSvg).length, 3)
+  assert.match(paths(ellArcSvg)[0], /A[\d.]+ [\d.]+ 0 0 0/)
+  assert.match(paths(ellArcSvg)[1], /stroke-dasharray="5 4"/)
+  assert.match(paths(ellArcSvg)[2], /A[\d.]+ [\d.]+ -30 0 0/)
+
+  // 2. Đường cong mượt: 3 điểm dùng Q (parabol), >= 4 điểm dùng C, kín + mũi tên + màu
+  const qSvg = draw('O(0; 0) _M(3; -1) P(6; 0)\ncong O-_M-P dày màu lam')
+  assert.match(attr(paths(qSvg)[0], 'd') ?? '', /^M[\d.-]+ [\d.-]+Q[\d.-]+ [\d.-]+ [\d.-]+ [\d.-]+$/)
+  assert.match(paths(qSvg)[0], /stroke="#0284c7" stroke-width="2.2"/)
+
+  const cSvg = draw('_A(0; 0) _B(1; 2) _C(3; 1) _D(4; 3)\ncong _A-_B-_C-_D kín tô bóng rêu không viền')
+  assert.match(cSvg, /<linearGradient id="scgr-7c8a56"/)
+  assert.match(attr(paths(cSvg)[0], 'd') ?? '', /^M[\d.-]+ [\d.-]+(?:C[\d.-]+ [\d.-]+ [\d.-]+ [\d.-]+ [\d.-]+ [\d.-]+){4}Z$/)
+  assert.match(paths(cSvg)[0], /stroke="none"[^>]*fill="url\(#scgr-7c8a56\)"|fill="url\(#scgr-7c8a56\)"[^>]*stroke="none"|stroke="none"/)
+
+  // 3. Miền kín cong `vùng` + không kéo điểm tâm ẩn của cung trong vùng vào khung
+  const regSvg = draw([
+    '_K(0; 50)',
+    '_A(-1; 0) _B(1; 0) _C(1; -1) _D(-1; -1)',
+    'vùng cung _K 50.01 268.85 271.15; đoạn _B-_C; đoạn _C-_D; đoạn _D-_A tô đậm đen nền',
+  ].join('\n'))
+  assert.match(paths(regSvg)[0], /fill="#111111"/)
+  assert.ok(regSvg.includes('viewBox="0 0 424 ')) // spanX ≈ 2, spanY ≈ 1 → k ≈ 150, không bị điểm _K(0; 50) kéo phình
+
+  // 4. Lớp `nền`: vẽ trước đoạn thẳng & góc vuông; hình `nền` không cắt đoạn nối tâm
+  const bgSvg = draw([
+    '_O1(-2; 0) _O2(2; 0) _A(-2; 1) _B(2; 1)',
+    'tròn _O1 1 tô xám nền',
+    'tròn _O2 1 tô xám nền',
+    'đứt _O1-_O2',
+    'vuông _O1-_A-_B',
+  ].join('\n'))
+  assert.ok(bgSvg.indexOf('<circle') < bgSvg.lastIndexOf('stroke-dasharray="5 4"'))
+  const centerSeg = paths(bgSvg).find((p) => p.includes('stroke-dasharray="5 4"'))!
+  const [cx1, , cx2] = pathTokens(centerSeg).filter((t) => !/^[ML]$/.test(t)).map(Number)
+  near(cx2 - cx1, 4 * 50) // spanX = 6 -> k = 50; không bị cắt ở mép hình tròn nền
+  const centerCircle = tags(bgSvg, 'circle')[0]
+  near(cx1, numAttr(centerCircle, 'cx'))
+
+  // 5. Mũi tên hai đầu + mũi tên màu + chấm điểm + chữ $...$ nghiêng + khung W H + bán kính cung góc
+  const advSvg = draw([
+    'khung 500 200',
+    'O(0; 0) P(5; 0)',
+    'mũi tên hai đầu đứt O-P màu đỏ dày',
+    'mũi tên O-P màu #00a8f3',
+    'chấm O to',
+    'chấm P trắng',
+    'góc _X-O-P "$θ$" 0.6',
+    '_X(0; 1)',
+    'chữ _L "$y = f(x)$"',
+    '_L(2.5; 1)',
+  ].join('\n'))
+  assert.match(advSvg, /<marker id="scarr-d62828".*fill="#d62828"/)
+  assert.match(advSvg, /<marker id="scarr-00a8f3".*fill="#00a8f3"/)
+  assert.match(advSvg, /marker-start="url\(#scarr-d62828\)" marker-end="url\(#scarr-d62828\)"/)
+  assert.equal(tags(advSvg, 'circle').length, 2)
+  assert.match(tags(advSvg, 'circle')[0], /r="4\.6" fill="#111111" stroke="none"/)
+  assert.match(tags(advSvg, 'circle')[1], /r="3\.2" fill="#ffffff" stroke="#111111"/)
+  assert.match(advSvg, /<tspan font-style="italic">y<\/tspan> = <tspan font-style="italic">f<\/tspan>\(<tspan font-style="italic">x<\/tspan>\)/)
+
+  // 6. Báo lỗi hợp lệ cho lệnh mới
+  for (const [command, message] of [
+    ['khung 0 200', /chiều rộng khung/],
+    ['cung elip O 2', /bán kính trục y/],
+    ['cong O-_X', /ít nhất 3 điểm/],
+    ['vùng', /ít nhất 1 mảnh/],
+    ['chấm O tim', /màu chấm không hợp lệ/],
+    ['tròn O 1 màu', /thiếu màu nét/],
+    ['tròn O 1 tô đậm', /thiếu màu tô/],
+    ['tròn O 1 mờ 1.5', /độ mờ/],
+    ['chữ O "A" xoay x', /góc xoay/],
+  ] as const) {
+    assert.throws(() => parseScene('O(0; 0) _X(1; 0)\n' + command), (err) =>
+      err instanceof Error && err.message.startsWith('Dòng 2: ') && message.test(err.message))
+  }
+
+  // 7. Tô gạch chéo, tô cầu, bán trong suốt mờ, xoay chữ/nhãn dọc, tên điểm chỉ số dưới, spline không đều điểm
+  const hatchSvg = draw('A(0; 0) B(4; 0) C(4; 4) D(0; 4)\nABCD tô gạch\nABC tô gạch xanh')
+  assert.match(hatchSvg, /<pattern id="schat-111111"[^>]*patternTransform="rotate\(45\)"/)
+  assert.match(hatchSvg, /<pattern id="schat-2563eb"/)
+  assert.match(hatchSvg, /fill="url\(#schat-111111\)"/)
+
+  const sphereSvg = draw('_O(0; 0)\ntròn _O 1 tô cầu #374151 mờ 0.45\ntròn _O 0.5 tô đậm lam mờ')
+  assert.match(sphereSvg, /<radialGradient id="scrg-374151"/)
+  assert.match(sphereSvg, /fill="url\(#scrg-374151\)" fill-opacity="0\.45"/)
+  assert.match(sphereSvg, /fill="#0284c7" fill-opacity="0\.45"/)
+
+  const rotSubSvg = draw([
+    'A_1(0; 0) B_2(3; 4)',
+    'A_1-B_2',
+    'nhãn A_1-B_2 "10 cm" dọc',
+    'chữ A_1 "Nghiêng" xoay 30',
+  ].join('\n'))
+  assert.match(rotSubSvg, />A<tspan baseline-shift="sub" font-size="70%">1<\/tspan><\/text>/)
+  assert.match(rotSubSvg, />B<tspan baseline-shift="sub" font-size="70%">2<\/tspan><\/text>/)
+  assert.match(rotSubSvg, /data-lbl="lbl:A_1B_2" transform="rotate\(-53\.1 /)
+  assert.match(rotSubSvg, /data-lbl="free:A_1:2" transform="rotate\(-30 /)
+
+  const unevenSvg = draw('_A(0; 0) _B(0.2; 0.8) _C(3.5; 1.2) _D(3.8; 0)\ncong _A-_B-_C-_D')
+  assert.ok(!unevenSvg.includes('NaN'))
+}
+
 if (process.argv.includes('--svg')) {
   const dir = mkdtempSync(join(tmpdir(), 'de-ro-scene-'))
   writeFileSync(join(dir, 'hinh-sao.svg'), starSvg)
