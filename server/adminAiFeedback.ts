@@ -78,6 +78,11 @@ async function readUser(s: Supa, id: string) {
   }
 }
 
+export function maskMuseEmail(email: string): string {
+  const match = /^([^@\s]+)@([^@\s]+)$/.exec(email)
+  return match ? `${match[1].slice(0, Math.min(2, match[1].length - 1))}***@${match[2]}` : 'Ẩn danh'
+}
+
 export async function readMuseFeedback(s: Supa) {
   const [count, recent] = await Promise.all([
     call(s, '/rest/v1/ai_feedback?select=id&kind=eq.down&limit=1', {
@@ -94,10 +99,7 @@ export async function readMuseFeedback(s: Supa) {
     dislikes_total: count,
     recent: recent.map((row) => {
       const email = row.user_id ? users.get(row.user_id)?.email ?? '' : ''
-      const match = /^([^@\s]+)@([^@\s]+)$/.exec(email)
-      // Dữ liệu tên hiển thị do người dùng nhập có thể chứa email đầy đủ.
-      const user = match ? `${match[1].slice(0, Math.min(2, match[1].length - 1))}***@${match[2]}` : 'Ẩn danh'
-      return { at: row.created_at, kind: row.mode, user }
+      return { at: row.created_at, kind: row.mode, user: maskMuseEmail(email) }
     }),
   }
 }

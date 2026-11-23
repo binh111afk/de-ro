@@ -16,6 +16,39 @@ const OTHER_EMAIL = 'private@example.net'
 const PATH = '/api/admin/muse-stats'
 const ALIAS = '/api/muse-stats'
 process.env.MUSE_WATCHLIST = ` ${WATCH_EMAIL}, teacher, missing, ${WATCH_EMAIL} `
+const userId = (i: number) => `33333333-3333-4333-8333-${String(i).padStart(12, '0')}`
+const allUsers = [
+  ...Array.from({ length: 198 }, (_, i) => ({
+    id: userId(i), email: `user${i}@example.org`, created_at: '2026-11-10T00:00:00Z',
+  })),
+  {
+    id: WATCH_ID, email: WATCH_EMAIL, created_at: '2026-11-10T00:00:00Z',
+    last_sign_in_at: '2026-11-11T00:00:00Z',
+    user_metadata: { display_name: 'Nguyễn An', full_name: 'Tên Google', name: 'Tên khác' },
+  },
+  {
+    id: userId(198), email: 'phone@example.org', created_at: '2026-11-21T00:00:00Z',
+    user_metadata: { display_name: 'An (+84) 912-345-678' },
+  },
+  {
+    id: OTHER_ID, email: OTHER_EMAIL, created_at: '2026-11-12T00:00:00Z',
+    last_sign_in_at: '2026-11-22T00:00:00Z', user_metadata: { full_name: `Tên <${OTHER_EMAIL}>` },
+  },
+  {
+    id: userId(199), email: 'id-name@example.org', created_at: '2026-11-20T00:00:00Z',
+    user_metadata: { name: `An (${userId(199)})` },
+  },
+  {
+    id: userId(200), email: 'full-name@example.org', created_at: '2026-11-19T00:00:00Z',
+    user_metadata: { full_name: 'Tên đầy đủ' },
+  },
+  {
+    id: userId(201), email: 'name@example.org', created_at: '2026-11-18T00:00:00Z',
+    user_metadata: { name: 'Tên bên ngoài' },
+  },
+  { id: userId(202), created_at: '2026-11-17T00:00:00Z' },
+]
+const authPages: number[] = []
 let now = Date.parse('2026-11-22T17:00:00Z')
 Date.now = () => now
 
@@ -27,6 +60,7 @@ globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
   const method = init.method ?? 'GET'
   const request = `${method} ${url.pathname}`
   const params = url.searchParams
+  const batchIds = params.get('user_id')?.match(/^in\.\((.+)\)$/)?.[1].split(',') ?? []
   calls.push(request)
   const ok = (data: unknown) => Response.json(data)
 
@@ -68,20 +102,40 @@ globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
         { id: WATCH_ID, email: 'teacher@school.example' },
       ] })
       if (params.get('filter') === 'missing') return ok({ users: [{ id: OTHER_ID, email: OTHER_EMAIL }] })
+      if (!params.has('filter') && params.get('per_page') === '100') {
+        const page = Number(params.get('page'))
+        authPages.push(page)
+        return ok({ users: allUsers.slice((page - 1) * 100, page * 100), total: allUsers.length })
+      }
       break
     case `GET /auth/v1/admin/users/${OTHER_ID}`:
       return ok({ email: OTHER_EMAIL, user_metadata: { display_name: OTHER_EMAIL } })
-    case 'POST /rest/v1/rpc/admin_user_stats':
-      if (JSON.stringify(JSON.parse(String(init.body)).p_ids) !== JSON.stringify([WATCH_ID])) break
-      return ok([{ user_id: WATCH_ID, docs: '2', decks: 3 }])
+    case 'POST /rest/v1/rpc/admin_user_stats': {
+      const { p_ids: ids } = JSON.parse(String(init.body))
+      if (JSON.stringify(ids) !== JSON.stringify([WATCH_ID]) && ids.length !== 100) break
+      return ok(ids.includes(WATCH_ID) ? [{ user_id: WATCH_ID, docs: '2', decks: 3 }] : [])
+    }
+    case 'GET /rest/v1/presence':
+      if (!batchIds.length || params.get('select') !== 'user_id,last_seen') break
+      return ok(batchIds.includes(WATCH_ID)
+        ? [{ user_id: WATCH_ID, last_seen: '2026-11-22T16:00:00Z' }]
+        : [])
+    case 'GET /rest/v1/app_settings':
+      if (params.get('key') !== 'eq.ai_welcome') break
+      return ok([{ value: { points: 90 } }])
     case 'GET /rest/v1/ai_credits':
       if (params.get('user_id') === `eq.${WATCH_ID}`) return ok([{ balance: 39_000 }])
+      if (batchIds.length === 100) return ok(batchIds.includes(WATCH_ID) ? [{ user_id: WATCH_ID, balance: 39_000 }] : [])
       break
     case 'GET /rest/v1/ai_quota_overrides':
       if (params.get('user_id') === `eq.${WATCH_ID}`) return ok([{ monthly_tokens: 5_000 }])
+      if (batchIds.length === 100) return ok(batchIds.includes(WATCH_ID)
+        ? [{ user_id: WATCH_ID, monthly_tokens: 5_000 }, { user_id: OTHER_ID, monthly_tokens: null }]
+        : [])
       break
     case 'GET /rest/v1/ai_usage':
       if (params.get('user_id') === `eq.${WATCH_ID}`) return ok([{ tokens: 18_000 }])
+      if (batchIds.length === 100) return ok(batchIds.includes(WATCH_ID) ? [{ user_id: WATCH_ID, tokens: 18_000 }] : [])
       break
   }
   unexpected.push(request)
@@ -163,6 +217,53 @@ assert.equal(partial.status, 200)
 assert.deepEqual(JSON.parse(partial.body).watchlist, [])
 assert.equal(JSON.parse(partial.body).ai.calls_7d, 0)
 assert.equal(JSON.parse(partial.body).ai.calls_30d, 8)
+
+process.env.MUSE_WATCHLIST = '*'
+now += 60_000
+const beforeWildcard = calls.length
+const wildcard = await hit(ALIAS, token)
+assert.equal(wildcard.status, 200)
+const { accounts, accounts_total, watchlist } = JSON.parse(wildcard.body)
+assert.deepEqual(watchlist, [])
+assert.equal(accounts_total, 205)
+assert.equal(accounts.length, 200)
+assert.deepEqual(authPages, [1, 2, 3])
+assert.deepEqual(accounts.slice(0, 7), [
+  { name: 'Nguyễn An', points_left: 26, exams: 2, slides: 3 },
+  { name: 'pr***@example.net', points_left: -1, exams: 0, slides: 0 },
+  { name: 'ph***@example.org', points_left: 90, exams: 0, slides: 0 },
+  { name: 'id***@example.org', points_left: 90, exams: 0, slides: 0 },
+  { name: 'Tên đầy đủ', points_left: 90, exams: 0, slides: 0 },
+  { name: 'Tên bên ngoài', points_left: 90, exams: 0, slides: 0 },
+  { name: 'Ẩn danh', points_left: 90, exams: 0, slides: 0 },
+])
+for (const row of accounts) {
+  assert.deepEqual(Object.keys(row).sort(), ['exams', 'name', 'points_left', 'slides'])
+  assert.equal(typeof row.name, 'string')
+  assert.ok([row.exams, row.points_left, row.slides].every(Number.isFinite))
+  if (row.name.includes('@')) assert.match(row.name, /^[^@]*\*\*\*@[^@]+$/)
+}
+const serializedAccounts = JSON.stringify(accounts)
+for (const user of allUsers) {
+  if (user.email) assert.ok(!serializedAccounts.includes(user.email))
+  assert.ok(!serializedAccounts.includes(user.id))
+}
+assert.ok(!serializedAccounts.includes('912-345-678'))
+for (const request of [
+  'POST /rest/v1/rpc/admin_user_stats', 'GET /rest/v1/ai_credits',
+  'GET /rest/v1/ai_quota_overrides', 'GET /rest/v1/ai_usage',
+]) {
+  assert.equal(calls.slice(beforeWildcard).filter((call) => call === request).length, 2, request)
+}
+
+now += 60_000
+process.env.MUSE_WATCHLIST = ` ${WATCH_EMAIL}, *, * `
+const mixed = await hit(ALIAS, token)
+assert.equal(mixed.status, 200)
+const mixedData = JSON.parse(mixed.body)
+assert.deepEqual(mixedData.accounts, accounts)
+assert.equal(mixedData.accounts_total, accounts_total)
+assert.deepEqual(mixedData.watchlist, [{ email: WATCH_EMAIL, points_left: 26, exams: 2, slides: 3 }])
 
 delete process.env.SUPABASE_SERVICE_ROLE_KEY
 const logError = console.error

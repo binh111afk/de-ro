@@ -1,13 +1,15 @@
 import { createHash, timingSafeEqual } from 'node:crypto'
 import type { IncomingMessage, ServerResponse } from 'node:http'
-import { getUser, readAdminAiStats, readAdminQuota, readAdminUsers, readAdminUserStats, type Supa } from './admin.js'
-import { readMuseFeedback } from './adminAiFeedback.js'
+import { adminDisplayName, call, getUser, readAdminAiStats, readAdminQuota, readAdminQuotas, readAdminUsers, readAdminUserStats, type Supa } from './admin.js'
+import { maskMuseEmail, readMuseFeedback } from './adminAiFeedback.js'
 import { readStatsOverview } from './adminStats.js'
 import { TOKENS_PER_POINT } from './aiQuota.js'
 import { rateLimitOnly } from './guard.js'
 import { json, safeError, supabaseServiceConfig } from './http.js'
 
-const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+const UUID_TEXT = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i
+const UUID = new RegExp(`^${UUID_TEXT.source}$`, UUID_TEXT.flags)
+const PHONE_TEXT = /\p{Nd}(?:[\s.()+-]*\p{Nd}){6}/u
 const hash = (value: string) => createHash('sha256').update(value).digest()
 
 export function isMuseStatsRequest(req: IncomingMessage): boolean {
@@ -39,8 +41,13 @@ async function findWatchUser(s: Supa, identifier: string): Promise<string | unde
   }
 }
 
-async function readWatchlist(s: Supa) {
-  const identifiers = [...new Set((process.env.MUSE_WATCHLIST ?? '').split(',').map((entry) => entry.trim()).filter(Boolean))]
+function pointsLeft(quota: Awaited<ReturnType<typeof readAdminQuota>> | null) {
+  if (!quota) return null
+  const limit = quota.override ? quota.override.monthlyTokens : quota.defaultLimit
+  return limit == null ? null : Math.max(0, Math.floor((limit + quota.credits - quota.usedThisMonth) / TOKENS_PER_POINT))
+}
+
+async function readWatchlist(s: Supa, identifiers: string[]) {
   const ids = await Promise.all(identifiers.map((entry) => findWatchUser(s, entry).catch(() => undefined)))
   const uniqueIds = [...new Set(ids.filter((id): id is string => typeof id === 'string' && UUID.test(id)))]
   const [stats, quotas] = await Promise.all([
@@ -52,13 +59,52 @@ async function readWatchlist(s: Supa) {
   return identifiers.map((email, i) => {
     const id = ids[i] ?? ''
     const counts = byId.get(id)
-    const quota = quotaById.get(id)
-    const limit = quota?.override ? quota.override.monthlyTokens : quota?.defaultLimit
-    const pointsLeft = quota && limit != null
-      ? Math.max(0, Math.floor((limit + quota.credits - quota.usedThisMonth) / TOKENS_PER_POINT))
-      : null
-    return { email, points_left: pointsLeft, exams: Number(counts?.docs ?? 0), slides: Number(counts?.decks ?? 0) }
+    return { email, points_left: pointsLeft(quotaById.get(id) ?? null), exams: Number(counts?.docs ?? 0), slides: Number(counts?.decks ?? 0) }
   })
+}
+
+async function readAccounts(s: Supa) {
+  const pageSize = 100
+  const usersById = new Map<string, { id: string; name: string; activeAt: number }>()
+  for (let page = 1; ; page++) {
+    const { users } = await readAdminUsers(s, page, pageSize, '')
+    if (!users.length) break
+    const ids = users.map((user) => user.id)
+    const presence = await call<Array<{ user_id: string; last_seen: string }>>(
+      s, `/rest/v1/presence?user_id=in.(${ids.join(',')})&select=user_id,last_seen`,
+    ).then(({ data }) => data ?? []).catch(() => [])
+    const lastSeen = new Map(presence.map((row) => [row.user_id, Date.parse(row.last_seen)]))
+    for (const user of users) {
+      const activeAt = Math.max(lastSeen.get(user.id) || 0, Date.parse(user.last_sign_in_at ?? '') || 0)
+        || Date.parse(user.created_at) || 0
+      const displayName = adminDisplayName(user)
+      const name = typeof displayName === 'string' ? displayName.trim() : ''
+      const safeName = name && !name.includes('@') && !UUID_TEXT.test(name) && !PHONE_TEXT.test(name)
+        ? name
+        : maskMuseEmail(user.email ?? '')
+      usersById.set(user.id, { id: user.id, name: safeName, activeAt })
+    }
+    if (users.length < pageSize) break
+  }
+
+  const selected = [...usersById.values()].sort((a, b) => b.activeAt - a.activeAt).slice(0, 200)
+  const accounts = []
+  for (let offset = 0; offset < selected.length; offset += pageSize) {
+    const users = selected.slice(offset, offset + pageSize)
+    const ids = users.map((user) => user.id)
+    const [stats, quotas] = await Promise.all([readAdminUserStats(s, ids), readAdminQuotas(s, ids)])
+    const statsById = new Map(stats.map((row) => [row.user_id, row]))
+    for (const [i, { id, name }] of users.entries()) {
+      const counts = statsById.get(id)
+      accounts.push({
+        name,
+        points_left: pointsLeft(quotas[i]) ?? -1, // Hạn mức không giới hạn.
+        exams: Number(counts?.docs ?? 0),
+        slides: Number(counts?.decks ?? 0),
+      })
+    }
+  }
+  return { accounts, accounts_total: usersById.size }
 }
 
 async function summarizeAi(s: Supa, days: 7 | 30) {
@@ -73,12 +119,15 @@ async function summarizeAi(s: Supa, days: 7 | 30) {
 
 async function readMuseStats(s: Supa) {
   const checkedAt = new Date(Date.now() + 7 * 3600_000).toISOString().replace(/\.\d{3}Z$/, '+07:00')
-  const [overview, month, week, feedback, watchlist] = await Promise.all([
+  const identifiers = new Set((process.env.MUSE_WATCHLIST ?? '').split(',').map((entry) => entry.trim()).filter(Boolean))
+  const watchAll = identifiers.delete('*')
+  const [overview, month, week, feedback, watchlist, accounts] = await Promise.all([
     readStatsOverview(s, 7).catch(() => null),
     summarizeAi(s, 30),
     summarizeAi(s, 7),
     readMuseFeedback(s),
-    readWatchlist(s),
+    readWatchlist(s, [...identifiers]),
+    watchAll ? readAccounts(s) : undefined,
   ])
   const days = overview?.chartDays ?? []
   const today = days.find((day) => day.day === checkedAt.slice(0, 10))
@@ -102,6 +151,7 @@ async function readMuseStats(s: Supa) {
     },
     feedback,
     watchlist,
+    ...accounts,
     retention: { since: '2026-11-22', returning_pct: null },
   }
 }

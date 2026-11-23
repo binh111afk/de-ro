@@ -194,6 +194,10 @@ interface AuthUser {
 
 type FlagRow = { user_id: string; strikes: number; last_at: string; last_action: string | null; last_ip: string | null }
 
+export function adminDisplayName(u: AuthUser): string {
+  return u.user_metadata?.display_name || u.user_metadata?.full_name || u.user_metadata?.name || ''
+}
+
 /** Dòng người dùng trả cho giao diện; giữ khớp `AdminUser` trong src/lib/adminApi.ts */
 function toRow(u: AuthUser, st?: { docs: number; decks: number; tokens: number; role: Role | null }, flag?: FlagRow) {
   const banned = !!u.banned_until && new Date(u.banned_until).getTime() > Date.now()
@@ -201,7 +205,7 @@ function toRow(u: AuthUser, st?: { docs: number; decks: number; tokens: number; 
     id: u.id,
     email: u.email ?? '',
     // app lưu ở display_name / avatar_url (src/lib/auth.ts); full_name/name là của đăng nhập bên ngoài
-    name: u.user_metadata?.display_name || u.user_metadata?.full_name || u.user_metadata?.name || '',
+    name: adminDisplayName(u),
     avatar: u.user_metadata?.avatar_url || null,
     createdAt: u.created_at,
     lastSignInAt: u.last_sign_in_at ?? null,
@@ -257,22 +261,40 @@ export function readAdminUserStats(s: Supa, ids: string[]) {
   }).then((r) => r.data)
 }
 
-export async function readAdminQuota(s: Supa, id: string) {
-  const [{ data: ov }, { data: use }, { data: cr }] = await Promise.all([
-    call<Array<{ monthly_tokens: number | null; note: string | null }>>(s, `/rest/v1/ai_quota_overrides?user_id=eq.${id}&select=monthly_tokens,note`),
-    call<Array<{ tokens: number; requests: number }>>(s, `/rest/v1/ai_usage?user_id=eq.${id}&month=eq.${month()}&select=tokens,requests`),
-    call<Array<{ balance: number }>>(s, `/rest/v1/ai_credits?user_id=eq.${id}&select=balance`),
+export async function readAdminQuotas(s: Supa, ids: string[]) {
+  const userFilter = ids.length === 1 ? `eq.${ids[0]}` : `in.(${ids.join(',')})`
+  const userColumn = ids.length === 1 ? '' : 'user_id,'
+  type UserRow = { user_id?: string }
+  const [{ data: overrides }, { data: usage }, { data: credits }] = await Promise.all([
+    call<Array<UserRow & { monthly_tokens: number | null; note: string | null }>>(s, `/rest/v1/ai_quota_overrides?user_id=${userFilter}&select=${userColumn}monthly_tokens,note`),
+    call<Array<UserRow & { tokens: number; requests: number }>>(s, `/rest/v1/ai_usage?user_id=${userFilter}&month=eq.${month()}&select=${userColumn}tokens,requests`),
+    call<Array<UserRow & { balance: number }>>(s, `/rest/v1/ai_credits?user_id=${userFilter}&select=${userColumn}balance`),
   ])
+  const byUser = <T extends UserRow>(rows: T[]) => new Map(rows.map((row) => [row.user_id ?? ids[0], row]))
+  const overrideByUser = byUser(overrides)
+  const usageByUser = byUser(usage)
+  const creditsByUser = byUser(credits)
   const defaultLimit = MONTHLY_LIMIT()
-  return {
-    override: ov[0] ? { monthlyTokens: ov[0].monthly_tokens, note: ov[0].note ?? '' } : null,
-    defaultLimit,
-    usedThisMonth: Number(use[0]?.tokens ?? 0),
-    requestsThisMonth: Number(use[0]?.requests ?? 0),
-    // chưa có dòng số dư = chưa dùng AI lần nào: sẽ nhận quà chào mừng ở lượt đầu, hiện luôn số đó thay vì 0
-    credits: cr[0] ? Number(cr[0].balance) : await welcomeTokens(),
-    welcomePending: !cr[0],
-  }
+  // Chưa có số dư thì admin hiển thị trước số điểm chào mừng.
+  const welcome = ids.some((id) => !creditsByUser.has(id)) ? await welcomeTokens() : 0
+  return ids.map((id) => {
+    const override = overrideByUser.get(id)
+    const use = usageByUser.get(id)
+    const credit = creditsByUser.get(id)
+    return {
+      override: override ? { monthlyTokens: override.monthly_tokens, note: override.note ?? '' } : null,
+      defaultLimit,
+      usedThisMonth: Number(use?.tokens ?? 0),
+      requestsThisMonth: Number(use?.requests ?? 0),
+      credits: credit ? Number(credit.balance) : welcome,
+      welcomePending: !credit,
+    }
+  })
+}
+
+export async function readAdminQuota(s: Supa, id: string) {
+  const [quota] = await readAdminQuotas(s, [id])
+  return quota
 }
 
 export async function readAdminAiStats(s: Supa, days: number) {
